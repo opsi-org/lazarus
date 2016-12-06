@@ -14,6 +14,12 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 opsi-winst/opsi-script (4.11.6.11) stable; urgency=low
 
   * source migrated from svn to git and direcories restructured
+  * compiled with Lazarus 1.6.2
+  * osparser: doOpsiServiceCall: new Parametzer opsiclientd-once (=tscOpsiclientdOnce)
+     resets local_opsidata after servicecall
+  * osparser: CreateAndProcessScript: resets local_opsidata before script
+  * osparser: doAktionen: Statement: 'opsiservicecall /preloginservice' (without sektion) allowed
+  * oswebservice: sendLog: shrinking temporary disabled until size can be asked via service call
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 06 Dec 2016:15:00:00 +0200
 

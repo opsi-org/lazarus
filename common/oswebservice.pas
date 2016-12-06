@@ -3568,12 +3568,15 @@ begin
   t := '';
   Result := True;
 
+  // shrinking temporary disabled until size can be asked via service call
+  (*
   if Logdatei.PartbiggerthanMB(5) then
   begin
     Logdatei.log('Shrinking Logfile to 5 MB....', LLNotice);
     Logdatei.PartShrinkToMB(5);
     Logdatei.log('Shrinking Logfile to 5 MB finidhed.', LLNotice);
   end;
+  *)
   Logdatei.setLogSIndentLevel(0);
   Logdatei.log(
     '-------- submitted part of log file ends here, see the rest of log file on client ----------',

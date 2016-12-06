@@ -5578,7 +5578,8 @@ function TuibInstScript.doOpsiServiceCall
                                                     : TSectionResult;
 
   Type
-    TServiceChoice = (tscGlobal, tscReuse, tscLogin, tscInteractiveLogin, tscOpsiclientd);
+    TServiceChoice = (tscGlobal, tscReuse, tscLogin, tscInteractiveLogin,
+                      tscOpsiclientd, tscOpsiclientdOnce);
 
   Var
    startSIndentLevel : Integer=0;
@@ -5664,6 +5665,10 @@ begin
         if skip ('/opsiclientd', r, r, errorInfo)
         then
            serviceChoice := tscOpsiclientd // we call the local opsiclientd
+
+        else if skip ('/opsiclientd-once', r, r, errorInfo)
+        then
+           serviceChoice := tscOpsiclientdOnce // we call the local opsiclientd and switch back
 
         else if skip ('/preloginservice', r, r, errorInfo)
         then
@@ -6036,7 +6041,7 @@ begin
             {$ENDIF GUI}
           end;
 
-        tscOpsiclientd:
+        tscOpsiclientd, tscOpsiclientdOnce:
            begin
             serviceurl := 'https://localhost:4441/opsiclientd';
             {$IFDEF WINDOWS}
@@ -6171,6 +6176,13 @@ begin
           End;
         end;
       end;
+
+    // trigger reset local_opsidata to tscGlobal if tscOpsiclientdOnce
+    if serviceChoice = tscOpsiclientdOnce then
+    begin
+      local_opsidata.Free;
+      local_opsidata := nil;
+    end;
 
     // finishing our section
     finishSection (Sektion, OldNumberOfErrors, OldNumberOfWarnings,
@@ -17819,7 +17831,13 @@ begin
               tsOpsiServiceCall:
                 begin
                    Parameter := Remaining;
-                   ActionResult := doOpsiServiceCall (ArbeitsSektion, Parameter, output)
+                   if (uppercase(PStatNames^ [tsOpsiServiceCall]) = uppercase(Expressionstr))
+                      and skip ('/preloginservice', Remaining, Remaining, errorInfo)
+                     then
+                   begin
+                     if local_opsidata <> nil then local_opsidata.Free;
+                   end
+                   else ActionResult := doOpsiServiceCall (ArbeitsSektion, Parameter, output)
                 end;
 
                 tsOpsiServiceHashList:
@@ -18404,6 +18422,12 @@ procedure CreateAndProcessScript (Const Scriptdatei : String;
 
 begin
   try
+      // reset Local_opsidata after product
+  if local_opsidata <> nil then
+  begin
+    local_opsidata.Free;
+    local_opsidata := nil;
+  end;
   Script := TuibInstScript.Create;
   // Backup existing depotdrive, depotdir
   depotdrive_bak := depotdrive;
