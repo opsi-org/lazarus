@@ -6181,7 +6181,8 @@ begin
     if serviceChoice = tscOpsiclientdOnce then
     begin
       local_opsidata.Free;
-      local_opsidata := nil;
+      //local_opsidata := nil;
+      local_opsidata := opsidata;
     end;
 
     // finishing our section
@@ -17835,7 +17836,11 @@ begin
                       and skip ('/preloginservice', Remaining, Remaining, errorInfo)
                      then
                    begin
-                     if local_opsidata <> nil then local_opsidata.Free;
+                     if (local_opsidata <> nil) and (local_opsidata <> opsidata) then
+                     begin
+                       local_opsidata.Free;
+                       local_opsidata := opsidata;
+                     end;
                    end
                    else ActionResult := doOpsiServiceCall (ArbeitsSektion, Parameter, output)
                 end;
@@ -18423,10 +18428,11 @@ procedure CreateAndProcessScript (Const Scriptdatei : String;
 begin
   try
       // reset Local_opsidata after product
-  if local_opsidata <> nil then
+  if (local_opsidata <> nil) and (local_opsidata <> opsidata) then
   begin
     local_opsidata.Free;
-    local_opsidata := nil;
+    //local_opsidata := nil;
+    local_opsidata := opsidata;
   end;
   Script := TuibInstScript.Create;
   // Backup existing depotdrive, depotdir
