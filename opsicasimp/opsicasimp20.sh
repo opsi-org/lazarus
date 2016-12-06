@@ -1,0 +1,20 @@
+./opsicasimp --conffile=opsicasimp.conf --clientid=test-2.vmnat.local --ip=192.168.1.2 &
+./opsicasimp --conffile=opsicasimp.conf --clientid=test-3.vmnat.local --ip=192.168.1.3 &
+./opsicasimp --conffile=opsicasimp.conf --clientid=test-4.vmnat.local --ip=192.168.1.4 &
+./opsicasimp --conffile=opsicasimp.conf --clientid=test-5.vmnat.local --ip=192.168.1.5 &
+./opsicasimp --conffile=opsicasimp.conf --clientid=test-6.vmnat.local --ip=192.168.1.6 &
+./opsicasimp --conffile=opsicasimp.conf --clientid=test-7.vmnat.local --ip=192.168.1.7 &
+./opsicasimp --conffile=opsicasimp.conf --clientid=test-8.vmnat.local --ip=192.168.1.8 &
+./opsicasimp --conffile=opsicasimp.conf --clientid=test-9.vmnat.local --ip=192.168.1.9 &
+./opsicasimp --conffile=opsicasimp.conf --clientid=test-10.vmnat.local --ip=192.168.1.10 &
+./opsicasimp --conffile=opsicasimp.conf --clientid=test-11.vmnat.local --ip=192.168.1.11 &
+./opsicasimp --conffile=opsicasimp.conf --clientid=test-12.vmnat.local --ip=192.168.1.12 &
+./opsicasimp --conffile=opsicasimp.conf --clientid=test-13.vmnat.local --ip=192.168.1.13 &
+./opsicasimp --conffile=opsicasimp.conf --clientid=test-14.vmnat.local --ip=192.168.1.14 &
+./opsicasimp --conffile=opsicasimp.conf --clientid=test-15.vmnat.local --ip=192.168.1.15 &
+./opsicasimp --conffile=opsicasimp.conf --clientid=test-16.vmnat.local --ip=192.168.1.16 &
+./opsicasimp --conffile=opsicasimp.conf --clientid=test-17.vmnat.local --ip=192.168.1.17 &
+./opsicasimp --conffile=opsicasimp.conf --clientid=test-18.vmnat.local --ip=192.168.1.18 &
+./opsicasimp --conffile=opsicasimp.conf --clientid=test-19.vmnat.local --ip=192.168.1.19 &
+./opsicasimp --conffile=opsicasimp.conf --clientid=test-20.vmnat.local --ip=192.168.1.20 &
+

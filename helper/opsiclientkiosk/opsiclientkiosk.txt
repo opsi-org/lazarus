@@ -1,0 +1,66 @@
+opsiclientkiosk 4.0.7.4
+
+  * fix installdlg stayontop /
+    HourGlass Cursor for 'Store Actions' and 'Install now'
+    (uib#2016083010000041 — Kiosk - Client : Fenster 'Aktion jetzt ausführen oder später[...] )
+
+-- detlef oertel <d.oertel@uib.de>  Mo, 31 Aug 2016 15:00:00 +0000
+
+
+opsiclientkiosk 4.0.7.3
+
+  * fix empty value in actionrequest (uib#2016082910000044 — kleiner Fehler in OPSI Kiosk Client)
+
+-- detlef oertel <d.oertel@uib.de>  Mo, 29 Aug 2016 15:00:00 +0000
+
+
+opsiclientkiosk 4.0.7.2
+
+  * --lang Option
+
+-- detlef oertel <d.oertel@uib.de>  Mo, 08 Aug 2016 15:00:00 +0000
+
+
+opsiclientkiosk 4.0.7.1
+
+  * new icons for exit,filter,reload,showall
+  * new reloadbutton
+  * use opsiclientd event: fireEvent_software_on_demand
+  * FilterOptions:=[foCaseInsensitive]; (do 11.7.)
+  * makebakfile: change from old style (name.ext.num) to new style (name_num.ext)
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 22 July 2016 15:00:00 +0000
+
+
+opsiclientkiosk 4.0.6.2
+
+  * connect to local opsiclientd via readconf2
+  * connect to opsiserver via readconf
+  * screencenter
+  * translations from transifex 8.6.2016
+  * fix upgrade filter
+  * fix: store actionrequests on DBComboBox1Exit: ZMQueryDataSet1.Post;
+  * customize Header section by opsiclientkioskskin\ png and ini
+  * customize Header section by ..\custom\opsiclientkioskskin\ png and ini
+
+-- detlef oertel <d.oertel@uib.de>  Mon, 06 June 2016 15:00:00 +0000
+
+
+opsiclientkiosk 4.0.6.1
+
+  * set dbmemo for description  and advice   fixes  #2187
+  * new buton 'All' : fixes #2189
+  * Actionrequest combobox in DBGrid (with setup, none and unsinstall (if availiable) fixes #2190
+  * added Hints
+  * german translation
+  * correct logging in c:\opsi.org\opsiclientkiosk.log
+  * no all groups on only one group
+  * no crash at no group
+
+-- detlef oertel <d.oertel@uib.de>  Mon, 23 May 2016 15:00:00 +0000
+
+opsiclientkiosk 4.0.6.0
+
+  * inital proof of concept an design
+
+-- d.oertel

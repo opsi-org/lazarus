@@ -1,0 +1,223 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: ockdata.rsallgroups
+msgid "All groups"
+msgstr "Alle Gruppen"
+
+#: ockdata.rsnogroups
+msgid "No Product Groups found ..."
+msgstr "Keine Produktgruppen gefunden ..."
+
+#: opsiclientkioskgui.rsnoactionsfound
+msgid "No action requests found."
+msgstr "Keine Aktionsanforderungen gefunden ..."
+
+#: oswebservice.rssendlog
+msgid "Sending log file to server ..."
+msgstr ""
+
+#: tfinstalldlg.bitbtnlater.caption
+msgctxt "TFINSTALLDLG.BITBTNLATER.CAPTION"
+msgid "Install at next Standard Event (e.g. Reboot)"
+msgstr "Installiere bei nächster Standard-Gelegenheit (z.B. Neustart)"
+
+#: tfinstalldlg.bitbtnnow.caption
+msgctxt "TFINSTALLDLG.BITBTNNOW.CAPTION"
+msgid "Install now (Close all Applications)"
+msgstr "Installiere jetzt. Alle Anwendungen schließen !"
+
+#: tfinstalldlg.caption
+msgctxt "TFINSTALLDLG.CAPTION"
+msgid "opsi-kiosk-client"
+msgstr ""
+
+#: tfinstalldlg.label1.caption
+msgctxt "TFINSTALLDLG.LABEL1.CAPTION"
+msgid "The following Actions will be done:"
+msgstr "Die folgenden Aktionen werden ausgeführt werden:"
+
+#: tfinstalldlg.toolbar1.caption
+msgctxt "TFINSTALLDLG.TOOLBAR1.CAPTION"
+msgid "ToolBar1"
+msgstr "do not translate"
+
+#: tfopsiclientkiosk.bitbtncancel.caption
+msgid "Exit"
+msgstr ""
+
+#: tfopsiclientkiosk.bitbtncancel.hint
+msgctxt "tfopsiclientkiosk.bitbtncancel.hint"
+msgid "Terminate Program (with out any further action)"
+msgstr "Programm ohne weitere Aktionen beenden."
+
+#: tfopsiclientkiosk.bitbtninfo.caption
+msgid "Info"
+msgstr ""
+
+#: tfopsiclientkiosk.bitbtnshowaction.caption
+msgid "Show Actions"
+msgstr "Zeige Aktionen"
+
+#: tfopsiclientkiosk.bitbtnshowaction.hint
+msgid "Show the list of action requests in the list. "
+msgstr "Zeige die List der Produkte mit Aktionsanforderung."
+
+#: tfopsiclientkiosk.bitbtnstoreaction.caption
+msgid "Store Actions"
+msgstr "Aktionen speichern"
+
+#: tfopsiclientkiosk.bitbtnstoreaction.hint
+msgid "Send the list of action requests in the list to the server, show the results and ask for installation start. "
+msgstr "Sende die erstellte Aktionsliste zu dem Server, zeide den Resultierenden Aktionsplan und frage nach dem Installationsstart."
+
+#: tfopsiclientkiosk.btnupgrade.caption
+msgid "Filter for Upgrade"
+msgstr "Upgradefilter"
+
+#: tfopsiclientkiosk.btnupgrade.hint
+msgid "Filter for Products where an upgrade is possible"
+msgstr "Filtere nach Produkten bei denen ein Upgrade möglich ist."
+
+#: tfopsiclientkiosk.caption
+msgid "opsi-client-kiosk"
+msgstr ""
+
+#: tfopsiclientkiosk.datapanel.caption
+msgid "datapanel"
+msgstr "do not translate"
+
+#: tfopsiclientkiosk.dbgrid1.hint
+msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
+msgstr "In die Spalte ActionRequest klicken um Aktionen (setup/uninstall) zu setzen"
+
+#: tfopsiclientkiosk.grouplist.hint
+msgid "List of possible groups"
+msgstr "Liste der möglichen Gruppen"
+
+#: tfopsiclientkiosk.grouppanel.caption
+msgid "grouppanel"
+msgstr "do not translate"
+
+#: tfopsiclientkiosk.labeladvice.caption
+msgid "Advice:  "
+msgstr "Hinweis:"
+
+#: tfopsiclientkiosk.labelclientverstr.caption
+msgid "Version at Client"
+msgstr "Version auf dem Client"
+
+#: tfopsiclientkiosk.labeldataload.caption
+msgid "LabelDataload"
+msgstr "do not translate"
+
+#: tfopsiclientkiosk.labeldataloaddetail.caption
+msgid "LabelDataLoadDetail"
+msgstr "do not translate"
+
+#: tfopsiclientkiosk.labeldescription.caption
+msgid "Description:  "
+msgstr "Beschreibung:"
+
+#: tfopsiclientkiosk.labelpriority.caption
+msgid "Priority: "
+msgstr "Priorität:"
+
+#: tfopsiclientkiosk.labelverstr.caption
+msgid "Version at Server"
+msgstr "Version auf dem Server"
+
+#: tfopsiclientkiosk.labelwait.caption
+msgid "Please wait ..."
+msgstr "Bitte warten ..."
+
+#: tfopsiclientkiosk.paneldependencies.caption
+msgid "PanelDependencies"
+msgstr "do not translate"
+
+#: tfopsiclientkiosk.panelprogess.caption
+msgid "PanelProgess"
+msgstr "do not translate"
+
+#: tfopsiclientkiosk.paneltoolbar.caption
+msgid "PanelToolbar"
+msgstr "do not translate"
+
+#: tfopsiclientkiosk.productdetailpanel.caption
+msgid "productdetailpanel"
+msgstr "do not translate"
+
+#: tfopsiclientkiosk.productlistpanel.caption
+msgid "productlistpanel"
+msgstr "do not translate"
+
+#: tfopsiclientkiosk.searchedit.hint
+msgid "Search in Productlist"
+msgstr "Suche in Produktliste"
+
+#: tfopsiclientkiosk.speedbutton1.caption
+msgid "Filter"
+msgstr ""
+
+#: tfopsiclientkiosk.speedbutton1.hint
+msgid "Set Filter"
+msgstr "Setze Filter"
+
+#: tfopsiclientkiosk.speedbuttonall.caption
+msgid "Show all"
+msgstr "Zeige alle"
+
+#: tfopsiclientkiosk.speedbuttonall.hint
+msgid "Show all List entries (No Filter)"
+msgstr "Zeige alle Einträge (Kein Filter)"
+
+#: tfopsiclientkiosk.speedbuttonreload.caption
+msgid "Reload"
+msgstr ""
+
+#: tfopsiclientkiosk.statusbar1.panels[0].text
+msgid "Not Connected to opsi server"
+msgstr "Keine Verbindung zum opsiserver"
+
+#: tfopsiclientkiosk.tabsheet1.caption
+msgid "Details"
+msgstr "Details"
+
+#: tfopsiclientkiosk.tabsheet2.caption
+msgid "Dependencies / Priority"
+msgstr "Abhängigkeiten / Prioritäten"
+
+#: tfopsiclientkiosk.titlelabel.caption
+msgid "opsi Client Kiosk"
+msgstr ""
+
+#: tfopsiclientkiosk.toolbar1.caption
+msgctxt "tfopsiclientkiosk.toolbar1.caption"
+msgid "ToolBar1"
+msgstr "do not translate"
+
+#: tform1.bitbtnlater.caption
+msgctxt "tform1.bitbtnlater.caption"
+msgid "Install at next Standard Event (e.g. Reboot)"
+msgstr "Installiere bei nächster Standard-Gelegenheit (z.B. Neustart)"
+
+#: tform1.bitbtnnow.caption
+msgctxt "tform1.bitbtnnow.caption"
+msgid "Install now (Close all Applications)"
+msgstr "Installiere jetzt. Alle Anwendungen schlie�en !"
+
+#: tform1.caption
+msgctxt "tform1.caption"
+msgid "opsi-kiosk-client"
+msgstr ""
+
+#: tform1.label1.caption
+msgctxt "tform1.label1.caption"
+msgid "The following Actions will be done:"
+msgstr "Die folgenden Aktionen werden ausgeführt:"
+
+#: tform1.toolbar1.caption
+msgctxt "TFORM1.TOOLBAR1.CAPTION"
+msgid "ToolBar1"
+msgstr "do not translate"
+

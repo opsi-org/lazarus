@@ -1,0 +1,24 @@
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib gmbh
+; and published under the Terms of the General Public License.
+; credits: http://www.opsi.org/en/credits/
+
+[Actions]
+Message "Profile Patch for VLC ...."
+
+comment "Did we run this script before ? - and set version stamp in profile"
+if getValue("installationstate", getProductMap) = "installed"
+	comment "Product is installed"
+	if not (scriptWasExecutedBefore)
+		comment "loginscript was not run yet "
+		Files_profile_copy
+		Registry_currentuser_set
+	endif
+endif
+
+[Files_profile_copy]
+copy "%Scriptpath%\profiles\*.*" "%CurrentAppdataDir%\ACME"
+
+[Registry_currentuser_set]
+openkey [HKCU\Software\ACME]
+set "show_greeting_window" = "no"

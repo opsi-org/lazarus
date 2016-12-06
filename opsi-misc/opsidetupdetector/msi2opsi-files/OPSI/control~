@@ -1,0 +1,30 @@
+[Package]
+version: 1
+depends: 
+incremental: False
+
+[Product]
+type: localboot
+id: #@#-PRODUCTID-#@#
+name: #@#-PRODUCTNAME-#@#
+description: #@#-PRODUCTDESC-#@#
+advice: 
+version: #@#-PRODUCTVER-#@#
+priority: 0
+licenseRequired: False
+productClasses: 
+setupScript: setup32.ins
+uninstallScript: uninstall32.ins
+updateScript: 
+alwaysScript: 
+onceScript: 
+customScript: 
+userLoginScript:
+
+[Changelog]
+#@#-PRODUCTID-#@# (#@#-PRODUCTVER-#@#-1) stable; urgency=low
+
+	* initial: created automatic by msi2opsi
+
+-- msi2opsi.exe <info@uib.de>  #@#-TIMESTAMP-#@#
+

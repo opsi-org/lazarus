@@ -1,0 +1,92 @@
+object FInstalldlg: TFInstalldlg
+  Left = 524
+  Height = 289
+  Top = 396
+  Width = 559
+  Caption = 'opsi-kiosk-client'
+  ClientHeight = 289
+  ClientWidth = 559
+  FormStyle = fsStayOnTop
+  Position = poMainFormCenter
+  LCLVersion = '1.6.0.4'
+  object ToolBar1: TToolBar
+    Left = 0
+    Height = 65
+    Top = 224
+    Width = 559
+    Align = alBottom
+    Caption = 'ToolBar1'
+    TabOrder = 0
+    object BitBtnNow: TBitBtn
+      Left = 6
+      Height = 22
+      Top = 7
+      Width = 548
+      Align = alTop
+      BorderSpacing.Around = 5
+      Caption = 'Install now (Close all Applications)'
+      Font.CharSet = ANSI_CHARSET
+      Font.Height = -13
+      Font.Name = 'Arial'
+      Font.Pitch = fpVariable
+      Font.Quality = fqDraft
+      OnClick = BitBtnNowClick
+      ParentFont = False
+      TabOrder = 0
+    end
+    object BitBtnLater: TBitBtn
+      Left = 6
+      Height = 22
+      Top = 34
+      Width = 548
+      Align = alTop
+      BorderSpacing.Around = 5
+      Caption = 'Install at next Standard Event (e.g. Reboot)'
+      Font.CharSet = ANSI_CHARSET
+      Font.Height = -13
+      Font.Name = 'Arial'
+      Font.Pitch = fpVariable
+      Font.Quality = fqDraft
+      OnClick = BitBtnLaterClick
+      ParentFont = False
+      TabOrder = 1
+    end
+  end
+  object PanelDlgTop: TPanel
+    Left = 0
+    Height = 32
+    Top = 0
+    Width = 559
+    Align = alTop
+    ClientHeight = 32
+    ClientWidth = 559
+    TabOrder = 1
+    object Label1: TLabel
+      Left = 6
+      Height = 20
+      Top = 6
+      Width = 547
+      Align = alClient
+      Alignment = taCenter
+      BorderSpacing.Around = 5
+      Caption = 'The following Actions will be done:'
+      Font.CharSet = ANSI_CHARSET
+      Font.Height = -16
+      Font.Name = 'Arial'
+      Font.Pitch = fpVariable
+      Font.Quality = fqDraft
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+  end
+  object Memo1: TMemo
+    Left = 0
+    Height = 192
+    Top = 32
+    Width = 559
+    Align = alClient
+    ReadOnly = True
+    TabOrder = 2
+  end
+end

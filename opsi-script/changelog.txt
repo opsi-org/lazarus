@@ -1,0 +1,2913 @@
+﻿#***************************************************************************
+# Subversion:
+# $Revision: 515 $
+# $Author: oertel $
+# $Date: 2016-11-09 15:06:33 +0100 (Mi, 09 Nov 2016) $
+#***************************************************************************
+
+todo:
+isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
+
+
+##################################################################
+
+opsi-winst/opsi-script (4.11.6.11) stable; urgency=low
+
+  * source migrated from svn to git and direcories restructured
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 06 Dec 2016:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.6.10) stable; urgency=low
+
+  * osfuncwin: RunCommandAndCaptureOut: transfer exitcode if process could not start
+  * osparser: execShellCall: new parameter FatalOnFail : boolean = true
+  * osparser: execShellCall: returns exitcode on fail
+  * osparser: evaluateBoolean: FileExists* : call execshellCall with FatalOnFail=false
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 09 Nov 2016:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.6.9) stable; urgency=low
+
+  * osregistry: TuibRegistry.ReadEntry: use RegQueryValueExW on trdString, trdExpandString
+  * osregistry: fix encoding in deletekey
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri, 04 Nov 2016:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.6.8) stable; urgency=low
+
+  * osconf: global bool variable readconfig_done which is set by readconfig to true
+  * osparser: CreateAndProcessScript: do not call readconfig if  readconfig_done
+  * should fix: uib#2016101810000104 — Installation per WAN schlägt auf zufälligen Clients fehl
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri, 28 Oct 2016:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.6.7) stable; urgency=low
+
+  * new unit oskeyboard
+  * linkfolder knows now parameter shortcut for key like Shift-Alt-O
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri, 21 Oct 2016:15:00:00 +0200
+
+opsi-winst/opsi-script (4.11.6.6) stable; urgency=low
+
+  * osmain: GetParameter: log error if readconfig failed
+  * osparser: CreateAndProcessScript: log error if readconfig failed
+  * osparser: CreateAndProcessScript: backup depot path and restor if rad config failed
+  * osparser: CreateAndProcessScript: backup depot path and restor if rad config failed
+  * osparser: evaluateBoolean: Fileexists* calling execShellCall architecture dependent
+  * osparser: produceStinglist: getFileInfoMap32, getFileInfoMap64, getFileInfoMapSysnative
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 20 Oct 2016:15:00:00 +0200
+
+opsi-winst/opsi-script (4.11.6.5) stable; urgency=low
+
+  * osjson: fix at jsonAsObjectGetKeyList
+  * osparser: fix at jsonAsObjectDeleteByKey
+  * osencoding: new overloaded version of reencode with destEncoding
+  * osfunc: fix TXStringlist.savetofile (use new reencode verion)
+  * osparser: fix reencodestr (use new reencode verion)
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 10 Oct 2016:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.6.4) stable; urgency=low
+
+  * osjson: jsonAsObjectGetKeyList: also true on empty keylist
+  * osjson: new functions: jsonAsObjectDeleteByKey, jsonAsArrayDeleteObjectByIndex
+  * osparser: new functions: jsonAsObjectDeleteByKey, jsonAsArrayDeleteObjectByIndex
+  * osencoding:  : trim of found encoding ; fixes #2411 ;  https://forum.opsi.org/viewtopic.php?p=38236#p38236
+  * oswebservice: sendlog: no more reencoding to uft8 ; Perhaps Fehler #2408
+  * osparser: getMSVersionMap: Do not try to read ReleaseID if below win10; fixes #2316
+  * osparser / osmain: use LLCritical in fatal situations; fixes #2263
+  * osparser: CompareDotSeparatedNumbers (str/bool): better wrong parameter handling fixes #2045  #2369
+  * osparser: new boolean command savetextfilewithencoding(<list>,<filename>,<endoding>)
+  * osregistry: readentry: trdString, trdExpandString: expicit use empty value if 0 bytes
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 05 Oct 2016:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.6.3) stable; urgency=low
+
+  * osfunc: new functions: isValidUtf8String(str:string) : boolean;
+                           getFixedUtf8String(str:string) : string;
+  * osparser : new opsiscript functions:
+      isValidUtf8String(str:string) : boolean;
+      getFixedUtf8String(str:string) : string;
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 08 Sep 2016:15:00:00 +0200
+
+opsi-winst/opsi-script (4.11.6.2) stable; urgency=low
+
+  * more Logging for GetProductPropertyList
+  * oswebservice: getProductPropertyList(myproperty: string;
+        defaultlist: TStringList,
+        myClientId,
+        myProductId): TStringList;  overload;
+  * osparser: GetProductPropertyList overload 2 and 4 arguments
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 05 Sep 2016:15:00:00 +0200
+
+opsi-winst/opsi-script (4.11.6.1) stable; urgency=low
+
+  * Merge from (4.11.5.14):
+    * oswebservice: assume opsiservice version=4 in retrieveJSON*
+      to avoid access to opsidata which fails if we use local_opsidata
+      fixes Access Violations in initial opsi-client-agent installation
+    * osfunc: FuncSaveToFile / SaveToFile: logging content on Loglevel 9 ; references #1679
+    * osfuncwin: fix broken Shellbatch /showoutput
+  * Merge from opsi-winst/opsi-script (4.11.5.13) stable; urgency=low
+    * do not try to run non existing external sub sections
+  * Merge from  (4.11.5.12) stable; urgency=low
+    * Bugfix: osparser: doAktionen: fullfilename not initialized:
+      causes causes double load of include or sub if searched file is not existing ; fixes #1656
+    * Bugfix: osparser: Filexists*: do not check for existing file with dir/ls if trim(filename)=''
+      fixes: https://forum.opsi.org/viewtopic.php?f=6&t=7697
+      (FileExists auf leere Variable gibt wahr zurück)
+  * osfunc: rewrite of FindLocalIPData for linux
+  * osfunclin: new: getMyIpByTarget(target): implemented as: ip route get <target>
+  * osfunclin: new: getMyIpByDefaultRoute: implemented as: ip route get 255.255.255.255
+  * osparser:  getMyIpByTarget now also for linux
+  * osfunclin: getCommandResult: Exitcode on higher (+2) loglevel
+  * osfuncwin2: getPid4user: fix logging on not found
+  * osfuncwin2: getPid4user: add logging on process found with wrong user
+  * osfuncwin2: Impersonate2User: 5 retrys of getPid4user and explorer.exe
+  * osconf,osmain: change depotdrive for linux from /mnt to /media/opsi_depot
+  * osmain: new command line parameter: 'credentialfile' for username, password and sessionid in format:
+     username=<username>
+     password=<password>
+     sessionid=<sessionid>
+    If the parameter 'credentialfile' is used all thre parameter will be used from the file and
+    the parameters : username, password and sessionid will be ignored
+  * osmain: BuildPC: create flag files in /var/run/opsiclientd for shutdown or reboot
+    execute reboot only if no opsiclientd in processlist
+  * osparser: savetextfile: call FuncSaveToFile  (merge from 4.11.5.17)
+  * opsiscript.lpr / winst.lpr replace defaulttranslator by lcltranslator
+  * osmain: (GUI) GetParameter: new parameter: lang <2 letter lang code>
+    is set to lcltranslator.SetDefaultLang
+  * osmain: BuildPC: termonate after exception in BuildPC: final ; references #1820
+  * oswebservice: finishOpsiConf: catch exception at backend_exit ; fixes #1820
+  * changes for lazarus 1.6 / FPC 3.0
+  * new unit osjson
+  * new json functions:
+    * jsonIsValid(<jsonstr>) : boolean
+    * jsonIsArray(<jsonstr>) : boolean
+    * jsonIsObject(<jsonstr>) : boolean
+    * jsonAsObjectHasKey(<jsonstr>,<keystr>) : boolean
+    * jsonAsArrayCountElements(<jsonstr>) : intstr
+    * jsonAsObjectCountElements(<jsonstr>) : intstr
+    * jsonAsArrayGetElementByIndex(<jsonstr>, <indexstr>) : jsonstring
+    * jsonAsObjectGetValueByKey(<jsonstr>, <keystr>) : valuestring
+    * jsonAsObjectSetValueByKey(<jsonstr>, <keystr>,<valuestring>) : jsonstring
+    * jsonAsObjectSetStringtypeValueByKey(<jsonstr>, <keystr>,<valuestring>) : jsonstring
+    * jsonAsArrayPutObjectByIndex(<jsonstr>, <indexstr>, <objectstr>) : jsonstring
+    * jsonAsArrayToStringList(<jsonstr>) : stringlist
+    * jsonAsObjectGetKeyList(<jsonstr>) : stringlist
+    * jsonStringListToJsonArray(<strlist>) : jsonstr
+  * new function: setStringInListAtIndex(<newstring>,<list>,<indexstr>) : list
+  * Port from opsi-script 4.11.5.20:
+    * More logging to find bug: loginscrpits do not always can Impersonate (uib#2015121410000075):
+      * osfuncwin2: Impersonate2User: change parameter / add usercontextsid
+      * osfuncwin2: Impersonate2User: more logging if usercontext not found
+      * osparser: doLinkFolderActions: if runLoginScripts: call Impersonate2User with usercontextsid
+  * osparser: at getMSVersionMap list.add ('ReleaseID=' + GetRegistrystringvalue("HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion" "ReleaseID",true));
+  * DosBatch /showoutput:
+    * osfuncwin: switch main window to left/top corner and output window to right/down corner
+    * osfunclin: the same and fixes #1936
+  * fix: strip newline from strLoadTextfile  and strLoadTextFileWithEncoding
+  * new string function md5sumFromFile(<path to file>)
+  * new string function timeStampAsFloatStr (floattostrF(now,ffFixed,15,3))
+  * new bool function processIsRunning(<process string>)
+  * new variant of shellcall as procedure (no result)
+  * new variant of shellcall with result string which have the exitcode
+  * new string function encryptStringBlow(<keystring>,<datastring>)
+  * new string function decryptStringBlow(<keystring>,<datastring>)
+  * new String function startProcess(<string>) returns exitcode from sysnative started process
+  * new String function processCall(<string>) returns exitcode from sysnative started process
+  * osparser: at getLinuxVersionMap list.add ('SubRelease=' (patchlevel from SLES)
+  * osfunclin: function getPackageLock(timeoutsec : integer; kill : boolean) : Boolean;
+  * new bool function waitForPackageLock(<seconds timeout string>,<bool should we kill>) (Linux only)
+  * Linux: check for free start count
+  * osparser:doAktionen:getWord use WorddelimiterSet4 before FindKindOfStatement (needed for 'shellCall(' statement)
+  * osconf: Linux: reading winstversion via fileinfo.TFileVersionInfo
+  * use LazFileUtils in different units (may replace fileutil ?)
+  * osfunclin/osfunc: use FPCProcess.ExitCode instead of ExitStatus to get the final exitcode
+  //* oswebservice: retrieveJSONObject: // test memorystream to raise exception here
+  * oswebservice: productonClients_getObjects__actionrequests: use getProductOrdering
+  * oswebservice: productOnClient_getobject_actualclient: use getProductOrdering
+  * new unit osfuncwin3 with fuctions to windows version
+  * osparser: at getMSVersionMap new key prodInfoNumber from win32 GetProductInfo
+  * osparser: at getMSVersionMap new key prodInfoText from getProductInfoStrByNum from win32 GetProductInfo
+  * osfuncwin3: fix GetWinSystemDirectory
+  * osmain: initialization:  GetDefaultLang;
+  * do not delete temporary cmd files on Loglevel LLconfidential
+  * Logging of productordering to LLDebug2 (8)
+  * Windows: writing ReleaseId and ProductId to log file header
+  * osparser: md5sumFromFile: use ExpandFileName
+  * osparser: getValueFromFile / getValueFromFileBySeparator : empty string on failure
+  * osencoding: internal Defaultencoding=utf8
+  //* oslog: DependentAdd: reencode log strings from utf-8 to system
+  * oslog: Logfile now utf-8 encoded
+  * oswebservice: productonClients_getObjects__actionrequests: fallback to old sorting method
+      if exception in new method (eg. getProductOrdering not reachable)
+  * new stringlist function removeFromListByMatch(<searchstring>,<list>)
+  * new string function getStringFromListAtIndex(<list>,<indexstring>)
+  * osparser: getJsonUrlString: fix for json array as parameter
+  * wispecfolder, osfunc: replace SHGetPathFromIDList by SHGetPathFromIDListW
+  * osfunc: MakeShellLink: for LinkFile.Save filename in system encoding
+  * osparser: takestring: to large index Message is changed from Errorr to Warning
+  * new unit: osregistry: All Tuibregistry stuff moved here from osfunc.
+  * utf8 - system encoding fixes in GetRegistryString*, Patches, ....
+  * osfunc: more logging in LoadNTUserDat
+  * makebakfile: change from old style (name.ext.num) to new style (name_num.ext)
+  * osfunc: encoding of cmd in StartProcess_cp
+  * osfuncwin: encoding of cmd and output in RunCommandAndCaptureOut
+  * osfunclin: getCommandResult overload wirh exitcode
+  * osfunclin: fix getHostnameLin
+
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 22 Sep 2015:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.5.14) stable; urgency=low
+
+  * oswebservice: assume opsiservice version=4 in retrieveJSON*
+    to avoid access to opsidata which fails if we use local_opsidata
+    fixes Access Violations in initial opsi-client-agent installation
+  * osfunc: FuncSaveToFile / SaveToFile: logging content on Loglevel 9 ; references #1679
+  * osfuncwin: fix broken Shellbatch /showoutput
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu,  10 Sep 2015:15:00:00 +0200
+
+opsi-winst/opsi-script (4.11.5.13) stable; urgency=low
+
+  * do not try to run non existing external sub sections
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu,  21 Aug 2015:15:00:00 +0200
+
+opsi-winst/opsi-script (4.11.5.12) stable; urgency=low
+
+  * Bugfix: osparser: doAktionen: fullfilename not initialized:
+    causes causes double load of include or sub if searched file is not existing ; fixes #1656
+  * Bugfix: osparser: Filexists*: do not check for existing file with dir/ls if trim(filename)=''
+    fixes: https://forum.opsi.org/viewtopic.php?f=6&t=7697
+    (FileExists auf leere Variable gibt wahr zurück)
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu,  20 Aug 2015:15:00:00 +0200
+
+opsi-winst/opsi-script (4.11.5.11) stable; urgency=low
+
+  * Bugfix: (FileExist call) changes (GetLastExitCode Result Value):
+    (because it call execshellCall to detect symlinks correctly):
+    osparser: new parameter for execshellCall: FetchExitCodePublic
+    if false result is on FLastPrivateExitCode
+    if false true is on FLastExitCodeOfExe (GetLastExitCode)
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu,  13 Aug 2015:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.5.10) stable; urgency=low
+
+  * oswebservice: retreiveJSONObject
+     * start with (new) correct Mimetype and AcceptEncoding
+       and fall back to old (wrong) parameters
+  * osfunc: FileCopyWin: more log on file in use
+  * osfunc: FileCopyWin: fix for Err 32 on setTimeForFile
+  * osfunc: TuibRegistry.Create(myforce64: boolean; readonly: boolean);
+  * osparser: GetRegistrystringvalue* works now with readonly registry ; fixes #1647
+  * osmain: BuildPC: speed up: only ask for changed action request if there was one (uib#2015080710000015)
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  21 Jul 2015:15:00:00 +0200
+
+opsi-winst/opsi-script (4.11.5.9) stable; urgency=low
+
+  * osmain: initproduct before run update script: refresh getProductMap
+  * osmain: but still use setup as lastaction even if was setup+update
+  * oswebservice: new procedure TOpsi4Data.setActualProductActionRequest
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri,  17 Jul 2015:15:00:00 +0200
+
+opsi-winst/opsi-script (4.11.5.8) stable; urgency=low
+
+  * new statement LoadProductProperties <clientId> <productId> (re-loads productproperty list from Server if possible)
+  * GetProductpropertyList: do not try to use also local_opsidata or opsidata
+  * GetProductproperty: do not try to use also local_opsidata or opsidata
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu,  09 Jul 2015:15:00:00 +0200
+
+opsi-winst/opsi-script (4.11.5.7) stable; urgency=low
+
+  * GetProductproperty: try / except added
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  07 Jul 2015:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.5.6) stable; urgency=low
+
+  * GetProductpropertyList: also with list as second (default) parameter ; fixes #1602
+  * GetProductpropertyList: try to use also local_opsidata, log using default
+  * GetProductproperty: if empty try to use also local_opsidata or opsidata, log using default
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu,  02 Jul 2015:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.5.5) stable; urgency=low
+
+  * upgrade to ssl Libraries 1.0.2c (libeay32.dll, ssleay32.dll); fixes #1586
+  * osfuncwin2: updateEnvironment: do not try to run updateEnvironment on windows < 6; fixes #1591
+  * osmain: BuildPC: process product only if we have a original action request wich is still set
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu,  25 Jun 2015:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.5.4) stable; urgency=low
+
+  * Working with ssl protocol: sslvSSLv23 - auto negotation
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  02 Jun 2015:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.5.3) stable; urgency=low
+
+  * (Security Update) oswebservice: use TLS1.2 instead of SSLv3 and fallback downto SSLv3
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon,  01 Jun 2015:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.5.2) stable; urgency=low
+
+  * upgrade to ssl Libraries 1.0.2a (libeay32.dll, ssleay32.dll)
+  * files commands move / rename / hardlink / symlink now work with overwrite; fixes #1435
+  * if move / rename fails (file is in use) we retry it with MOVEFILE_DELAY_UNTIL_REBOOT
+    So the move will be done at the next reboot. Reboot will be set automatically if not Option -c is set.
+  * file command del / delete now with option -c and retry to delete on next boot if file in use ; fixes # 788
+  * osfunc: new function opsiunquotestr2
+  * new string function unquote2(s1,s2): like unquote but:
+        removes only quotes if they found at start and end
+        s2 may be two chars long. Then the first char is the start mark
+        and the second char is the end mark
+  * osparser: GetString: new boolean switch requote
+  * osparser: GetString requote=true: change double quoted (""str"") to alternative double quoted ('""');  references #1284
+  * new string function: GetShortWinPathName(longpath) ; fixes #581
+        Windows only
+        Gives short path (8.3) from a long path e.g.
+        GetShortWinPathName("C:\Program Files (x86)") gives "C:\PROGRA~2"
+        In case of Error the result is an empty string
+  * osfunc: startprocess_cp: translate windows showWindowFlag to TProcess TShowWindowOptions
+  * osparser: doRegistryHack* : fix for not HKCU reg enties in loginscripts; fixes #1538
+  * oswebservice: more log for "unexpected Result from webservice in retrieveJSONObject, number of lines: 0"
+  * new string function: GetConfidentialProductProperty : like GetProductProperty but handles the result as confidential string ; fixes #462
+  * fixes at GetNTVersion for Win10
+  * new boolean function CompareDotSeparatedNumbers(<str1>,<relation str>,<str2>)
+        <relation str> may be: one of [<,<=,=,>=,>]
+  * new boolean function CompareDotSeparatedStrings(<str1>,<relation str>,<str2>)
+        <relation str> may be: one of [<,<=,=,>=,>]
+  * hide non visible processes (SW_HIDE) like winbatch or shellInAnIcon
+  * (Security Update) oswebservice: use TLS1.2 instead of SSLv3
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed,  01 Apr 2015:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.5.1) stable; urgency=low
+
+  * osparser: commandline := 'cmd64.exe /c "reg delete ""'+key_completepath+'"" /f'; (fixes #1299)
+  * port of the changes since 4.11.4.6 to Linux
+  * osparser: New files commands hardlink, symlink, rename, move
+  * osfunc: new tuibinstall methods: hardlink, symlink, rename (Linux / Windows ; fixes #1319, #362)
+  * osparser: execDosBatch: The path to temporary file is only quoted if it contains spaces
+  * osparser: execDosBatch: Variables are now allowed as Parameters (but no functions) fixes #1312
+  * osparser: executeWith: Variables are now allowed as Parameters (but no functions)
+  * osparser: doAktionen: Variables and functions are now allowed as sleepsecond Parameters; fixes #1193
+  * osparser: %SriptPath%/../lib as additional Path in Search path for includes; fixes #1201
+  * osparser: searchpath for includes are now works also for sub <file> ; fixes #1201
+  * New loop statement: for %s% = $start$ to $stop$ do <statement> ;  references #407
+      - $start$ and $stop$ has to be integer strings
+      - $start$ < $stop$ is required
+      - in fact a stringlist $start$ to $stop$ is generated over which we iterate while loop
+  * osparser: tsLoopForTo  for %s% = $start$ to $stop$ do <statement>
+  * osparser: activating winbatch for linux ; fixes #1170
+  * replacing opsi-winst constants by opsi-script
+  * osparser: produceStringList: New (overloaded) stringlist function (references #1110):
+              - removeFromListByContaining(<search string>, <target list>) removes  <search string> from <target list>
+              - removeFromListByContaining(<search list>, <target list>) removes  <search list> from <target list>
+              - both functions search case insensitive for a matching substring
+  * ospparser: fix for filexists* to detect symlinks
+  * upgrade to ssl Libraries 1.0.1L (libeay32.dll, ssleay32.dll)
+  * osmain: GetParameter + StartProgramModes: more try - except : port from 4.11.4.16
+  * osparser: doOpsiServiceCall: more try - except : port from 4.11.4.16
+  * osparser: doTextPatchMain: do not use CheckFileExists in SaveToFile ; references #171
+  * HowToBuild.txt ; fixes #1372
+  * oswebservice: finishOpsiConf: if runproductlist then Logg-Appendmode := true; references #1379
+  * new Statement: UpdateEnvironment : Triggers Windows to reload Environment from Registry; Win only; references #1364
+  * new Control Statement: Switch  ; references  #740
+    - osparser: Switch <string expr ; normally variable>
+                  Case <string expr; normally const>
+                    statments
+                  EndCase
+                  [Defaultcase
+                    statments
+                  EndCase]
+                EndSwitch
+  * LinkFolder for Linux activated: No BaseFolder, No SubFolder, No Iconindex
+      but link_categories: 'AudioVideo',
+      'Audio', 'Video', 'Development', 'Education', 'Game', 'Graphics',  'Network',
+      'Office', 'Settings', 'System', 'Utility'
+      // from http://standards.freedesktop.org/menu-spec/menu-spec-1.0.html#category-registry
+      changes in osparser, osfunclin and new unit oslindesktop
+  * some more ExpandFilename calls to handle incorrect path delimiter
+  * oswebservice: sendlog: replace old writeLog by new log_write method
+  * New Statement: MaximizeWinst at osparser
+  * New Functions LoadTextFileWithEncoding(file,encoding) strLoadTextFileWithEncoding(file,encoding) at osparser
+  * osencoding: LoadFromFileWithEncoding
+  * oswebservice: sendlog: at Linux do not convert logstrings to uft8
+  * oslog: dependentadd: more try except
+  * osparser: sleepseconds (tsSleep): more try except and more logging
+  * osparser: winbatch: trim targetfilename
+  * osparser: shellBatch: Parameter at Linux (wrong bash parameter)
+  * osmain: User Profile Management (runloginscripts) is now free
+  * osmain: do not switch opsi-script to setup (even if it is opsi-winst); references # 1437
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu,  22 Dec 2014:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.4.14) stable; urgency=low
+
+  * less (only 512 chars) debug output: oswebservice: retrieveJSONObject: log ResultLines.Strings[0] if Result = nil
+  * oswebservice: retrieveJSONObject: FillChar(buffer^, 655360,' '); before read to buffer
+  * manifest extended for win 10: <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}"/>
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu,  04 Dec 2014:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.4.13) stable; urgency=low
+
+  * more debug output: oswebservice: retrieveJSONObject: log ResultLines.Strings[0] if Result = nil
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed,  12 Nov 2014:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.4.12) stable; urgency=low
+
+  * fix: osmain: StartProgramModes: correct Path to the opsiclientd.conf in batch mode
+  * Logdevel while writing log to Service decreased
+  * fix: command typo: ErrorsOccuredSinceMark is wrong, now also allowed: ErrorsOccurredSinceMark  fixes #1121
+  * bakup files of log now are opsi-script.log.x where x is 0 - 8
+  * do not run login scripts if user is 'opsisetupadmin' fixes #1248
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri,  24 Oct 2014:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.4.11) stable; urgency=low
+
+  * new unit: SystemCriticalU
+  * osmain: in StartprogramModes set SystemCritical.IsCritical := true;
+  * osmain: in BuildPC set SystemCritical.IsCritical := true;
+  * osmain: in Terminateapp set SystemCritical.IsCritical := false;
+  * osmain: in different execept set SystemCritical.IsCritical := false;
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed,  09 Oct 2014:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.4.10) stable; urgency=low
+
+  * osparser: doAktionen: tsIncludeInsert: debug outputs for 'index out of range' bug
+  * osparser: LoadValidLinesFromFile : fix add loaded sub lines to FLinesOriginList
+      to fix 'index out of range' at tsIncludeInsert
+  * osparser: new bool function: LineContaining_ExistsIn(<string>, <file name>)
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed,  01 Oct 2014:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.4.9) stable; urgency=low
+
+  *  osfunc: StartProcess_cp: remove wrong setProgress which may lead to division by zero
+  * osbatchgui: new var SavedBatchWindowMode
+  * osparser: on NormalizeWinst and IconizeWinst save BatchWindowMode to SavedBatchWindowMode
+    and set BatchWindowMode to new value.
+    on RestoreWinst set to BatchWindowMode and mode to SavedBatchWindowMode
+    Fixes changing the window mode by every sub section call (do_actions)
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed,  20 Aug 2014:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.4.8) stable; urgency=low
+
+  * osparser: more loggin on LLDebug2 in fileActionsMain: used source and target
+  * osparser: more loggin on LLDebug2 in fileActionsMain: additional trim() an target
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu,  07 Aug 2014:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.4.7) stable; urgency=low
+
+  * osfunc: StartProcess_cp: if timeout is given: use Progressbar to show time progess until Timeout
+  * new unit cCPUusage
+  * skin.ini; new section [Activitybar]
+  * osparser : Line 'Looping through' append trailing '''' fixes # 1116
+  * osparser: typo double instead of doubble  fixes #1117
+  * new switch: AutoActivityDisplay = (true/false) default=false; if true shows marquee while winbatch/dosbatch
+  * osfuncwin: RunCommandAndCaptureOut: non blocking readfile with PeekNamedPipe (so Activitybar may run in Background)
+  * new manifest: with assemblyIdentity (needed for maquee style in Activitybar
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed,  23 Jul 2014:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.4.6) stable; urgency=low
+
+  * osmain: typo (dependenproducts) fixes   #1078
+  * osparser: typo (Windowds) fixes   #1078
+  * osconf: changed version to 4.11.4.6
+  * osparser: fix: RegDeleteKey (https://forum.opsi.org/viewtopic.php?p=27061#p27061) #1086
+  * osparser: set Fatal if shellbatch/execwith could not be executed. fixes #1074
+  * osparser/oslog: new log file .history which always appends just the timestamp, name and version of the installed product.
+  * osparser: PatchTextFile: new command: searchAndReplace <search str> <replace str> (works global and not case sensitive)
+  * The temporary file names have now a random component in order to prevent conflicts between different instances of opsi-script. fixes #774
+  * subsub bug fix: help to find sub sections in external sub section files (calling section as additional parameter in doAktionen)
+  * osparser: getsublist: trim parameters before strtoint
+  * osparser: new stringfunction: strLoadTextFile (<filename>)
+  * osparser: new bool function: sendlog(<clientId>,<filename>,<append>)
+  * set StandardPartLogPath to Path of the given MainLogFile if given by parameter or interactive
+  * new parameter for dosinanicon: /showoutput : shows a windows with the continuous output of the command while running
+  * osfunc: fix in existsession linux: retry reboot with some hardcoded path variants
+  * experimental: starting of win64 PE version
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu,  27 May 2014:15:00:00 +0200
+
+
+
+opsi-winst/opsi-script (4.11.4.5) stable; urgency=low
+
+  * unquote fix:
+    * osparser: 'unquote' function details moved to osfunc: 'opsiunquotestr' function
+      (because synautil.unquotestr is buggy: "tes't" gives "test"
+    * osfunc: new function  opsiunquotestr
+    * osfunc: use of opsiunquotestr in fileexists, chmod
+    * osparser: use of opsiunquotestr in fileactionsmain
+    * osmain: use of opsiunquotestr in getparameter
+  * osparser: doRegistryAllNtUserDats: additional check if we can patch via HKU
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu,  19 May 2014:15:00:00 +0200
+
+
+
+opsi-winst/opsi-script (4.11.4.4) stable; urgency=low
+
+  * osfunclin: RunCommandAndCaptureOut: Log exitcode on Loglevel LLInfo
+  * osparser: linkActionsMain: fix for index out of bound (while (i <= Sektion.count))  fixes: #958
+  * osfunc: StartProcess_cp: log error if time out is reached (inc's error counter)  fixes #506
+  * new commands in PatchTextFile (osparser:doTextpatchMain):
+         'setKeyValueSeparator char' sets Separator for key value pairs (default is '=')
+         'setValueByKey keystr valuestr' search exitsing key and sets the given value.
+           If the key not exists, the key/value pair will be created below the line cursor.
+  * osparser: scriptstopped := true on ExitWindows /ImmediateReboot and  /ImmediateLogout
+  * new function: getValueFromFile (<key string>,<file name> ) : string
+  * new function: getValueFromFileBySeparator (<key string>,<separator string>,<file name> ) : string
+  * new function: saveTextFile(<list>, < filename>) : bool
+  * osparser: TuibInstScript.doAktionen: output initalized (created) fixes #974
+  * osfunc: enhanced: TXStringList.getStringValue
+  * osparser: produceStringlist: fix in emptylist() function
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu,  20 Mar 2014:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.4.3) stable; urgency=low
+
+  * opsparser: doFileActions: fix for mixed File section modifiers
+  * osfunc: TuibRegistry.WriteEntry: fix logging if regtype is changed: fixes #780
+  * osfunc: wait for parent ending also if waitforprocessending is true
+  * osfunc: FileCopyWin: use of windows.copyFile instead of fileutils.copyFile
+  * osparser: Stingreplace with IgnoreCase for %userprofiledir%  fixes #877
+  * osparser: new constant %opsiTmpDir% (c:\opsi.org\tmp ; /tmp )
+  * osparser: new constant %opsiLogDir% (c:\opsi.org\log ; /var/log/opsi-client-agent/opsi-script )
+  * osparser: new command: FatalOnRuntimeError (default = false)
+  * osparser: takeString: LogError if index out of bounds; Fatal if FatalOnSyntaxError
+  * oslog: escape control chars
+  * osfunc: allcopy/execdelete: handle directories with additional attributes (e.g. hidden)
+  * osparser: new function doRegistryNTUserDat
+  * new Registry Parameter /NTuserDat: <path to ntuser.dat>  fixes #302
+  * osmain: ProcessProduct: looks before processing a product if there is still a action request
+  * osparser: for fileExists: replace GetFileInfo by  "FileExists() or DirectoryExists()"
+  * fixes to really stop the script interpretation after isfatalerror, issuccess, issuspended
+  * new unit opsihwbiosinfo based on tsmbios
+  * new infomap getHWBiosInfoMap
+  * new bool function runningOnUefi      fixes #908
+  * new bool function isDriveReady(str)
+  * doFileActions: disable windows critical Error Message boxes (SetErrorMode(SEM_FAILCRITICALERRORS))
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon,  9 Dec 2013:15:00:00 +0200
+
+
+
+opsi-winst/opsi-script (4.11.4.2) stable; urgency=low
+
+  * make 4.11.4 working under windows
+  * osencoding: searchencoding: new methode to read encoding
+  * osinteractivegui: opendialog knows now *.ins and *.opsiscript
+  * new string function reencodestr(str, from, to)
+  * new stringlist function reencodestrlist(strlist, from, to)
+  * new stringlist function shellCall( cmd ) ; returns the output of (sysnative) shell with cmd
+  * getipByName now uses resolveip at linux
+  * manifest extended for win 8.1: <supportedOS Id="{1f676c76-80e1-4239-95bb-83d0f6d0da78}"/>:
+    http://msdn.microsoft.com/en-us/library/windows/desktop/dn302074%28v=vs.85%29.aspx
+  * fix: use of sysnative with winbatch
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon,  23 Sep 2013:15:00:00 +0200
+
+opsi-winst/opsi-script (4.11.4.1) stable; urgency=low
+
+  * splitted project to opsi-script and opsi-script-nogui
+  * splitted unit osmain to osmain and osinteractivegui
+  * changed unit names:  * wi* -> os*
+  * fixed: Feature  491 : real origin file and line number on syntax error (also on included parts)
+  * new unit osencode which contain encoding functions
+      known encodings are
+        UTF-8      utf8
+        UTF-8BOM   utf8bom
+        Ansi       ansi
+        CP1250     cp1250
+        CP1251     cp1251
+        CP1252     cp1252
+        CP1253     cp1253
+        CP1254     cp1254
+        CP1255     cp1255
+        CP1256     cp1256
+        CP1257     cp1257
+        CP1258     cp1258
+        CP437      cp437
+        CP850      cp850
+        CP852      cp852
+        CP866      cp866
+        CP874      cp874
+        CP932      cp932
+        CP936      cp936
+        CP949      cp949
+        CP950      cp950
+        ISO-8859-1 iso8859-1
+        ISO-8859-2 iso8859-2
+        KOI-8      koi8
+        UCS-2LE    ucs2le
+        UCS-2BE    ucs2be
+  * fixed: Bug 554 : includelogtail calls reencode
+  * command IncludeLog has now an optional 3rd parameter sourceEncoding which may be 'auto', 'system' or a valid encoding.
+  * nearly all loadfromfile now with reencode
+  * script encoding can now be given with for example
+      encoding=utf8
+  * loglevel of if/else/endif changed to LLinfo (6) fixes 539
+  * loglevel of setLoglevel  changed to LLinfo (6) fixes 535
+  * new command 'IsSuspended' interupts script execution and leave productOnClient unchanged   Feature #614
+  * shellbatch output is now captured
+  * fix in linux getprocesslist: output now: short binary name;pid;user;full command line
+
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  30 Jul 2013:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.11.4) stable; urgency=low
+
+  * port to Linux
+  * removed logginig via syslog
+  * %opsiDepotId%
+  * changed unit names:
+     * wisynth -> osparser
+     * wibatch -> osbatchgui
+     * wimain -> osmain
+     * wifunc -> osfunc
+     * wiwin32 -> osfuncwin2
+  * new string function: getLinuxDistroType
+  * new stringlist function: getLinuxVersionMap
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  30 Apr 2012:15:00:00 +0200
+
+opsi-winst (4.11.3.8) stable; urgency=low
+
+  * changed TOpsiMethodCall.getJsonHashListString: converting string with SO before assingment
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu,  01 Aug 2013:15:00:00 +0200
+
+opsi-winst (4.11.3.7) stable; urgency=low
+
+  * changed DsiWin32 to work with lazarus 1.0.8/fpc 2.6.2
+  * new command: isSuccess : Terminates Script execution with out error
+  * new command: noUpdateScript : Do not run a update after setup script even if it is there and we are not failed
+  * new function emptylist
+  * new function getlistcontainingList
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  29 Jul 2013:15:00:00 +0200
+
+
+opsi-winst (4.11.3.6) stable; urgency=low
+
+  * fix: no [productId] while listing of products
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu,  11 Mar 2013:15:00:00 +0200
+
+
+opsi-winst (4.11.3.5) stable; urgency=low
+
+  * del / delete will not delete if the given Filename starts with '\' (eg. '\Dummy')
+  * danish localization added
+  * italien localization added
+  * extended LDAPSearch (username/password)
+  * fix: do not store isfatalerror in registry if nor running as admin
+  * execwith: winst (/32bit|/64bit|/sysnative) no allowed
+  * execwith: if 'powershell.exe' is part of the interpreter string the script extension is '.ps1'
+  * winbatch: /32bit|/64bit|/sysnative no allowed
+  * wilog: replace ' -->' by ' ==>' because the opsi web service get in trouble because it is interpreted as xml comment, fixes #350
+  * switch to Lazarus 1.0 / fpc 2.6.0
+  * wisynt: doAktionen, fileActionsMain: do ApplyTextConstants for filesections in fileActionsMain.
+      fixes wrong resolution of %CurrentProfileDir% in Files /AllNTuserProfiles
+  * wisynt: doLinkFolderActions: fix: now comments allowed between set_link and end_link
+  * wisynt: doLinkFolderActions: linkfolder section now  usable in userLoginScripts:
+      the predefined basfolders:
+      'desktop', 'sendto', 'startmenu', 'programs', 'startup', 'desktopdirectory'
+      are pointing to the loggedin user directories if called from userLoginScript
+  * wimain: ProcessNonZeroScript: fix: do not run update after setup if setup is failed, fixes #432
+  * fix: widatamodul: opsidata4.initproduct now boolean function: false = error
+  * new: new winst cli parameter '/productlist <productid>[,<productid>]* as sub parameter to /opsiservice
+    try to run the setup-scripts of the given products, change installation states, send log files
+  * new: string function calculate(<string expr>) ; calculates the mathematical expression and returns the result as string.
+    on error the result is a empty string and the errorcounter is increased
+  * new command 'setConfidential <confidential string>' ; adds the given string to a list of strings which are replaced with '***(confidential)***' while logging
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu,  05 Dec 2012:15:00:00 +0200
+
+
+opsi-winst (4.11.3.4) stable; urgency=low
+
+  * new winbatch parameter /RunAsLoggedOnUser
+  * PatchTextFile sections may now called with  %userprofiledir% as part of the file name and /AllNTuserProfiles
+     so it will run on all profiles.
+     If running in Machine mode, the '/AllNTuserProfiles' is implizit in the [ProfileActions].
+     If running in LoginScript mode, the '%userprofiledir%' is the %CurrentProfileDir%.
+  * will now look for skins (more exactly: skin.ini) in the following sequence:
+    1) by parameter
+    2) new custom directory of opsi-client-agent ../custom/winstskin
+    3) own winstskin: winstskin
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu,  26 Oct 2012:15:00:00 +0200
+
+
+opsi-winst (4.11.3.3) stable; urgency=low
+  * new command setActionProgress <string>
+  * commandline parameter /productid <string>
+      This parameter forces the winst to try to start a service connection using the
+      local opsiclientd.conf. This will be used in the opsi-template-with-admin
+      to run the local script in opsi context
+  * using getHashes instead of getObject if possible
+  * Versioninfo: try to find informations also on other than the stored codepage
+  * wisynth: doRegistryAllNTUserDats: use getProfilesDirList
+  * widatamodul: retrieveJSONObject: JSON Bench Log entry for every service call
+  * wimain: saveVersionToProfile/readVersionFromProfile :
+      if there is no access to Appdata, we use the profile directory for the .opsi.org\userLoginScripts.ini
+-- Detlef Oertel <d.oertel@uib.de>  Thu,  13 S 2012:15:00:00 +0200
+
+opsi-winst (4.11.3.2) stable; urgency=low
+
+  * new command FatalOnSyntaxError (default= true)
+  * every script syntax error is logged
+  * every script syntax error increases the errorcounter
+  * if FatalOnSyntaxError then every script syntax error is a fatal error
+       and 'Syntax Error' is set as actionProgress
+  * now isFatalError accepts a string which is stored to the server as actionprogress and showed in the opsi-configed
+  * includeLogFile now works in head mode if you give a negative number as line count
+       ** changed in TLogInfo.includelogtail
+  * new stringlist function: getProfilesDirList: All existing Profiles dirs except:
+            'localservice','networkservice','systemprofile'
+  * Patches sections may now called with  %userprofiledir% as part of the file name and /AllNTuserProfiles
+     so it will run on all profiles.
+     If running in Machine mode, the '/AllNTuserProfiles' is implizit in the [ProfileActions].
+     If running in LoginScript mode, the '%userprofiledir%' is the %CurrentProfileDir%.
+  * new stringfunction: GetIpByName(<ip addr / ip name>) : string
+  * Files sections changed: wisynth: doFileActions:
+      Modifier /AllNtUserProfiles and /AllNtUserSendto now based on getProfilesDirList
+  * new stringlist commands to retrieve maps from the registry:
+    ** getRegistryVarMap32(<regkey>)
+    ** getRegistryVarMap64(<regkey>)
+    ** getRegistryVarMapSysnative(<regkey>)
+  * winbatch: (Startprocess*) catching exceptions if execute bit is missing on samba4 shares
+  * fix for win2k: remove all GetprocessId
+  * TJsonThroughHTTPS.retrieveJSONObject fix runtime error 210 / retry
+  * new string function: createNewOpsiHostKey : generates a random 32 chars long hex string
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon,  30 Jul 2012:15:00:00 +0200
+
+opsi-winst (4.11.3.1) stable; urgency=low
+
+  * winbatch: /timeoutseconds now allowed without /waitforprocessending (not with /waitsec)
+  * Winbatch: The parameter to /timeoutseconds may now be a variable fixes #352
+  * winbatch /RunElevated
+  * patchhosts sections: 64 bit compatibility, fixes #327
+  * manifest added: <requestedExecutionLevel level="highestAvailable" />:
+         http://www.lazarus.freepascal.org/index.php?topic=14976.0
+         http://lazarus.freepascal.org/index.php/topic,11659.msg69861.html
+         http://msdn.microsoft.com/en-us/library/bb756929.aspx
+  * new stringfunction: getDiffTimeSec (Time in seconds since last marktime)
+  * name of installing product shown in inital info block. fixes #367
+  * Exitcode of DosBatch, Execwith is now logged and can be retrieved by getLastExitcode
+      ** be aware: this is the exitcode of the called program so use something like:
+         exit %ERRORLEVEL% , fixes #161
+  * on userLoginScript: retry if there no user could be detected
+  * wisynth: TuibInstScript.doInfo: optimal fill for LabelInfo
+  * wisynth: executeWith: use extension '.ps1' if interpreter = powershell, fixes #382
+  * new function: NormalizeWinst (set normal window state), fixes #346
+  * old function IconizeWinst  (set minimized window state), fixes #346
+  * old function RestoreWinst  (set maximized window state), fixes #346
+  * new stringfunction: stringReplace(string, oldPattern,newPattern) : string ;
+    this function replaces all occurrences of one substring with another in a string
+    it works not case sensitive , fixes #328
+  * new stringfunction: GetMyIpByTarget(<target ip addr>) : string
+  * new boolean function: contains(<str>, <substr>) : boolean ; case sensitive, fixes #365
+  * old boolean function: isNumber(<str>) : boolean
+  * new stringlist function: getProductPropertyList(<propname>,<default value>)
+  * wispecfolder: fix using winapi call GetDefaultUserProfileDirectory for %DefaultUserProfileDir%
+  * wispecfolder: fix using winapi call GetAllUsersProfileDirectory for %CommonProfileDir%
+  * new stringfunction SidToName(<well known sid>) : gives localized name of the sid
+  * wisynt: try-except in doRegistryHackRegeditFormat
+  * logfiles now again not locked against reading while opsi-winst is running
+                         fixes: https://forum.opsi.org/viewtopic.php?f=7&t=3655
+  * new commands:
+       include_insert "<file name>"   : Replaces the command with a empty line
+                                         and then inserts the content of "<file name>" after this line
+       include_append "<file name>"   : Replaces the command with a empty line
+                                         and then appends the the content of "<file name>"
+                                         to the end of the script
+       **  <file name> is either:
+         *** a complete valid Path
+         *** The name of a file in %WinstDir%\lib
+         *** The name of a file in %ScriptPath%
+       ** should be placed after requiredWinstVersion
+
+  * new stringlist commands to retrieve lists from the registry:
+    ** getRegistryKeyList32(<regkey>)
+    ** getRegistryKeyList64(<regkey>)
+    ** getRegistryKeyListSysnative(<regkey>)
+    ** getRegistryVarList32(<regkey>)
+    ** getRegistryVarList64(<regkey>)
+    ** getRegistryVarListSysnative(<regkey>)
+
+  * new stringfunction strLength(<string>)
+  * new stringfunction strPos(<string>, <substr>)
+  * new stringfunction strPart(<string>, <start pos>, <number of chars>)
+
+  * winbatch: test if extension of exitsting file is exe or com now not case sensitive.
+         fixes: https://forum.opsi.org/viewtopic.php?f=7&t=3592#p18127
+
+not documented
+  * CPAU: using CREATE_NO_WINDOW
+  * new function: LocalAdmin </Create | /Delete>
+  * winbatch /RunAsLoggedOnAdmin
+  * new control command: BlockInput <true|false> which (un)blocks mouse and keyboard, fixes #244
+
+todo
+        * jsonstr2str
+        * wisynth: runtime error 219 at tsOpsiServiceHashList if  {$OBJECTCHECKS ON}
+        * configuration of send behavior
+        * opsi4servicecall getObjects
+        * new function: LocalAdmin </Create | /Delete>
+
+
+
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  11 Jan 2012:15:00:00 +0200
+
+opsi-winst (4.11.2.12) stable; urgency=low
+
+        * fix for getproductmap widatamodul: TOpsi4Data.initProduct: reset FProductOnClient_aktobject with nil
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  31 Jul 2012:15:00:00 +0200
+
+opsi-winst (4.11.2.11) stable; urgency=low
+
+        * wispecfolder: fix for the fix using winapi call GetProfilesDirectory for %profiledir%
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  3 Jun 2012:15:00:00 +0200
+
+
+opsi-winst (4.11.2.10) stable; urgency=low
+
+        * wispecfolder: fix using winapi call GetProfilesDirectory for %profiledir%
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  2 Jun 2012:15:00:00 +0200
+
+opsi-winst (4.11.2.9) stable; urgency=low
+
+        * wispecfolder: fix %CurrentProfileDir% in User Profile Management
+           https://forum.opsi.org/viewtopic.php?f=7&t=3578&p=17148#p17148
+        * getMapOfLoginscripts2Run: fix: avoid duplicate scripts
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  15 May 2012:15:00:00 +0200
+
+
+opsi-winst (4.11.2.8) stable; urgency=low
+
+        * update openSSL to 1.0.0i (http://www.openssl.org/news/secadv_20120419.txt))
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu,  26 Apr 2012:15:00:00 +0200
+
+
+opsi-winst (4.11.2.7) stable; urgency=low
+
+        * Registry: set: Do not change data typ of reg_sz to reg_expand_sz if reg_sz is explict given
+           even if there is a % char in the string.
+           If no data typ is given reg_sz will be used as default
+           but if there is a % char in the string, reg_expand_string will be used.
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  27 Mar 2012:15:00:00 +0200
+
+opsi-winst (4.11.2.6) stable; urgency=low
+
+        * new winst function: ChangeDirectory <dir>
+            - set the working directory of the winst to <dir>
+            - will be reset to the start value at the end of every script
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri,  13 Feb 2012:15:00:00 +0200
+
+opsi-winst (4.11.2.5) stable; urgency=low
+
+        * update openSSL to 1.0.0g (http://www.openssl.org/news/secadv_20120118.txt)
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri,  20 Jan 2012:15:00:00 +0200
+
+
+opsi-winst (4.11.2.4) stable; urgency=low
+
+        * added: wisynth: getProductMap: actionrequest
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  11 Jan 2012:15:00:00 +0200
+
+opsi-winst (4.11.2.3) testing; urgency=low
+
+        * fix: widatamodul: TOpsi4Data.initProduct: no crash if product_hash is empty
+        * fix: widatamodul: TOpsi4Data.getMapOfLoginscripts2Run: only products which on the used depot
+        * wiwin32: new: BlockInput
+        * wiwin32: new: getProfileImagePathfromSid
+        * wisynth: doRegistryAllNTUserDats: work via sid, if found dir =  getProfileImagePathfromSid
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  27 Dec 2011:15:00:00 +0200
+
+
+opsi-winst (4.11.2.2) testing; urgency=low
+
+        * fix: widatamodul: TOpsi4Data.getMapOfLoginscripts2Run: get also scripts which are not in productsonclient
+        * change: wilog: if a log file coud not be opened,
+             try with extension 0 - 9 and at least continue without logging
+             do no user interaction
+        * wisynth: TuibInstScript.doRegistryAllNTUserDats: do not to try the temporary pcpatch account or SYSTEM
+             - sense less and may fail
+        * widatamodul: fix getActualProduct* : works if product is not in productOnClient
+        * fix (crashed WAN-Extension): TJsonThroughHTTPS.makeURL + wisynth: TuibInstScript.doOpsiServiceCall :
+             - makeUrl: not laways use /opsiclientd on calling localhost
+             - include /opsiclientd in serviceurl on 'opsiservicecall /opsiclientd'
+        * gives mswindows version and achitecture at the beginning of the logfile
+        * Winbatch: 'waiting for ending' messages at loglevel 7
+        * registry /allntuserdats: if NT5 and ntuser.dat could not be loaded then try to patch via SID (except Localservice or networkservice)
+
+-- Detlef Oertel <d.oertel@uib.de>  Th,  8 Dec 2011:15:00:00 +0200
+
+opsi-winst (4.11.2.1) testing; urgency=low
+
+        * earlier visibility of FBatchOberflaeche
+        * new parameter /allloginscripts (and /loginscripts) may be used with /opsiservice
+        * new parameter /silent may be used with /opsiservice
+        * new parameter /sessionid may be used with /opsiservice
+        * new primary section [ProfileActions]: if running in LoginScript mode and ProfileAction exists,
+          it will be executed instead of [actions]
+             - wisynth: look for NameProfileActionsSection
+          if ProfileActions is called as sub in machine mode all Files or Registry calls in this sub
+          are implicit called with /AllNTUserDats resp. /AllNTUserProfiles
+             - wisynth: TuibInstScript.doFileActions and look for NameProfileActionsSection in TuibInstScript.doAktionen
+        * wimain: new: TCentralForm.Loginscripts;
+        * widatamodul: new: TOpsi4Data.getMapOfLoginscripts4InstalledProducts
+        * widatamodul: new TOpsi4Data.withRoamingProfiles : boolean;
+        * wimain new boolean flag: runloginscripts (winst called with /loginscripts or /allloginscripts)
+        * wimain new boolean flag: inUsercontext (is true if called with /allloginscripts or /loginscripts but may be switched in the script)
+        * code cleanup
+        * Temporary files (from e.g. Dosbatch) are now for security reasons at c:\opsi.org\tmp
+        * wisynth: doRegistryHack: HKCU removed from key on (flag_all_ntuser or runLoginScripts)
+        * wisynth: doRegistryHackRegeditFormat: HKCU removed from key on (flag_all_ntuser or runLoginScripts)
+        * new boolean winst function isLoginScript
+        * new string winst function: GetScriptMode , possible values 'Machine','Login'
+        * widatamodul: finishOpsiConf: if isLoginScript then Log is send via webservice as type 'userlogin'
+        * wispecfolder: new getUserProfilePath and getProfilesPath
+        * new winst constant %CurrentProfileDir% which points to the loggedin users profile dir
+        * on loginscripts the Filesection constant %userprofiledir% is replaced by %CurrentProfileDir%
+        * on loginscripts in Filesections %CurrentProfileDir% is the preset targetdir
+        * in files sections with /Allntuserprofiles %CurrentProfileDir% may now used instead of %userprofiledir%
+
+        * new winst function: includelog <file name> <tail size>
+        * new opsiservicecall parameter: /opsiclientd : calls the localhosts opsiclientd
+        * new winst file command del : works like delete but on "del -s -f c:\not-exists"
+                 if c:\not-exists not exists it do not search complete c:\ for "not-exits"
+        * code cleanup: wibtch: removed : IViewService, TTestView, TInfoView
+        * code cleanup: windatamodule (datamodule1): completly removed
+        * logs of the xml-patch sections are now included by file
+        * remove all winst.bat directly after use
+        * TOpsiDataJSONService.finishOpsiConf: close session  (winst now closes the session)
+        * wilogsrv removed
+        * wiglob renamed to wilog (because it contains only logging functions)
+        * wilog: writes now simultan to the main log file a partlog to c:\opsi.org\log
+                 which will be not appended and removed at the end
+        * widatamodul: new: sendlog(type) ; type = instlog / userlogin
+        * widatamodul: changed: sendlog now works allways in append mode
+        * widatamodul: changed: sendlog send partlog not full log and shrink it to 5 MB if needed
+        * new winst stringlist function getProductMap in wisynth
+               keys are: id, name, description, advice, productversion, packageversion, priority,
+                         installationstate, lastactionrequest, lastactionresult, installedversion,
+                         installedpackage, installedmodificationtime
+        * new winst string function getValueBySeparator (<key>,<separator>,<list>)
+        * new winst string function unquote (<string,<quote-string>)
+        * new winst commands:
+              - saveVersionToProfile - save productversion-packageversion to local profile
+              - readVersionFromProfile : string - read productversion-packageversion from local profile
+              - scriptWasExecutedBefore : boolean - is true if saved and running productversion-packageversion are identical
+        * wimain: Button_ExecuteClick: TLogInfo.Create only if nil (avoids blocked logfiles while ineractive working)
+        * cleanup TOpsiData (remove Classic and JSONService)
+        * new undocumented winst function: ShrinkFileToMB <file name> <new size in MB>
+        * sending userlogin logs allways in append mode, instlog only if needed
+        * use /usercontext if given - if not, try to detect logged in user
+        * cleanup log messages
+        * fixed stringlist function loadunicodetextfile
+        * fixed Registry: deletekey with /AllNTuserDats
+              (fixed at wifunc: TuibRegistry.OpenKey / TuibRegistry.OpenExistingKey
+               and at wisynth: doRegistryHack : deletekey)
+        * fixed parser error for stringlist functions without arguments (like getMSVersionMap)
+
+
+-- Detlef Oertel <d.oertel@uib.de>  Tu,  1 Nov 2011:15:00:00 +0200
+
+opsi-winst (4.11.1.8-1) testing; urgency=low
+
+        * extended string replace for control characters in TOpsi4Data.sendLog and TOpsiMethodCall.Create
+
+-- Detlef Oertel <d.oertel@uib.de>  Mo,  31 Oct 2011:15:00:00 +0200
+
+
+
+opsi-winst (4.11.1.7-1) testing; urgency=low
+
+        * wisynth: fix in doRegistryHackRegeditFormat: close key before opening a new one
+        * wisynth: fix in doRegistryAllNTUserDats: check if branch = logedon user before working on HK_USERS\sid
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri,  21 Oct 2011:17:00:00 +0200
+
+
+
+ opsi-winst (4.11.1.6-1) testing; urgency=low
+
+        * wifunc: fix in startprocess: go back to the 4.10 Delphi code without TProcess
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri,  09 Sep 2011:17:00:00 +0200
+
+
+opsi-winst (4.11.1.5-1) testing; urgency=low
+
+        * wiwin32: KillProcessbyname: fix: UpperCase(exename)
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri,  09 Sep 2011:17:00:00 +0200
+
+
+
+opsi-winst (4.11.1.4-1) testing; urgency=low
+
+        * wisynth: execDOSBatch / execPython : use tempfile name with incremented number
+        * wifunc: TXStringList.SaveToFile: 5 retries
+        * wifunc: new boolean function FuncSaveToFile
+        * wisynth: execDOSBatch / execPython / ExecWith : FuncSaveToFile instead of proc saveToFile
+        * wisynth: execDOSBatch / execPython / ExecWith : switch to fatal if FuncSaveToFile returns false
+
+ -- Detlef Oertel <d.oertel@uib.de>  Fri,  31 Aug 2011:17:00:00 +0200
+
+
+opsi-winst (4.11.1.3) testing; urgency=low
+
+        * wibtch: setPicture: optimalfill for Labelproduct only if label is large
+        * typo in german po file
+
+ -- Detlef Oertel <d.oertel@uib.de>  Fri,  26 Aug 2011:17:00:00 +0200
+
+
+
+opsi-winst (4.11.1.2) testing; urgency=low
+
+        * removing FPC ifdefs (it is a FPC only source now)
+        * adding IFDEF WINDOWS to start the way towards linux
+        * code cleanup
+        * wishowfile: Richedit1.MaxLength:=MaxInt; to display long logs
+        * new: TuibInstScript.doRegistryAllNTUserDats: patches logged in user by HKUSER/SID
+        * new Registry modifier: /usercontext:
+              - wispecfolder: initializeFoldersForUser(domain,user)
+              - used in wimain: TCentralForm.FormCreate
+              - uses wiwin32: Impersonate2User, getPid4user
+        * new stringlist function: getProcessList gives List of exename;pid;dom/user
+        * killtask now kill also tasks which are started by other
+        * new function GetLoggedInUser
+        * new function GetUsercontext
+        * new function SetUsercontext (needed for testing)
+        * default depotdir does not contain 'install' anymore
+        * wifunc: FileCopy: retries if setTimeForFile fails because file in use
+
+ -- Detlef Oertel <d.oertel@uib.de>  Thu,  9 Jun 2011:17:00:00 +0200
+
+
+opsi-winst (4.11.1.1) testing; urgency=low
+
+        * ErrorNumberMarked will no more set to NumberOfErrors at every section start fixes #219
+        * wisynth: CreateAndProcessScript: no interactive message if script not found. fixes #245
+        * wimain: TCentralForm.ProcessProdukt: Actionrequest to update after setup. fixes #191
+        * wifunc: new expandfilename(): wrapper to sysutils.filename which expands '' to the actual drive (no good idea)
+        * wifunc: TuibFileInstall.AllDelete: filename no more expanded (can lead to dangerous results)
+        * wispecfolder + wisynth: new constant %DefaultUserProfileDir%  fixes #232
+        * wifunc: new internal function: runningasadmin
+        * wisynth: new boolean function runningAsAdmin and Warning in the log if not running as admin , fixes #93
+        * wifunc: TuibFileInstall.AllDelete: denied delete of c:, C:\, \, \\, c:\windows, c:\windows\system32
+        * wisynth: TuibInstScript.doXMLPatch: xmlfilename quoted
+        * error handling in wisynth: doOpsiServiceCall: checkAndRetrieveMap and checkAndRetrieveStringList
+        * error handling in wiglob: DependentAddStringList
+        * translation via i18n
+        * TFBatchOberflaeche.FormClose: prevent closing via Alt-F4
+        * wisynth: execDOSBatch: now (winst /62Bit) or (winst /sysnative) or (winst /32Bit) allowed
+                this will execute the c:\windows\cmd64.exe. If this file not exists, it will be created
+                by copying the real 64Bit cmd.exe to c:\windows as cmd64.exe
+        * upgrade to ssl Libraries 1.0.0.d (libeay32.dll, ssleay32.dll)
+        * now trunk
+
+ -- Detlef Oertel <d.oertel@uib.de>  Thu,  07 Apr 2011:17:00:00 +0200
+
+
+opsi-winst (4.11.1.0) experimental; urgency=low
+        * xmlpatch plugin integrated
+        * dynamic size of LabelProduct fixes #239
+        * change: wimain: readConfig: utilsurl and configurl removed, fixes #235
+        * switch to Lazarus 0.9.30
+        * change: wisynth: full section name now displayed in Labeldetail
+        * change widata: retrieveJSONObject: unexpected result only if ResultLines.Count < 1
+        * widatamodul: some fixes to avoid access violations in swaudit
+        * widatamodul: fixes in withLicenceManagement
+
+ -- Detlef Oertel <d.oertel@uib.de>  Thu,  10 Mar 2011:17:00:00 +0200
+
+
+opsi-winst (4.11.0.0) experimental; urgency=low
+        * very experimental: lazarus compiled winst
+
+ -- Detlef Oertel <d.oertel@uib.de>  Thu,  30 Dec 2010:17:00:00 +0200
+
+
+ opsi-winst (4.10.8.15) stable; urgency=low
+
+* wisynth: TuibInstScript.executeWith: waitsec initialized with 0
+
+ -- Detlef Oertel <d.oertel@uib.de>  Fri,  8 Apr 2011:10:00:00 +0200
+
+
+opsi-winst (4.10.8.14) stable; urgency=low
+        * widatamodul: TOpsi4Data.getOpsiModules : ISuperObject; with opsi 4 methods
+
+ -- Detlef Oertel <d.oertel@uib.de>  Tue,  28 Dec 2010:17:00:00 +0200
+
+opsi-winst (4.10.8.13) stable; urgency=low
+        * widatamodul: TOpsiMethodCall.getJsonHashListString:
+          to avoid datatype conversion values can be prefixed with:
+           'opsistring:'
+
+ -- Detlef Oertel <d.oertel@uib.de>  Tue,  28 Dec 2010:17:00:00 +0200
+
+
+opsi-winst (4.10.9.10-1) stable; urgency=low
+
+        (4.10.9.0a)
+        * wimemo: window in screen center, larger font, no more autosize -> for showmessagefile, fixes #184
+        * wisynth:  product / version at the end of the log , fixes #110
+        * wimain: ProcessNonZeroScript: logmessage 'no script file name given' now LLNotice instead of warning
+        * wisynth: getLocaleInfoMap: system_default_language_id now from  HKLM\System\CurrentControlset\Control\Nls\Language','InstallLanguage', fixes #113
+        * wimain: StartProgramModes: No interactive message if no connection to service, fixes #117
+        * wiglob: DependentAdd: possibility to abort trace mode, fixes #129
+        * widatamodul: getOpsiServerVersion: avoid check for serverversion 3 if we get a 'HTTP/1.1 401 Unauthorized' at the first try
+        * wisynth: No registry redirection for win2k even at /64Bit /Sysnative    (win2k can't handle this), fixes #197
+        * widata: TOpsiMethodCall.getJsonUrlString : String quoted if not in {} (a JSON Object), fixes #198
+        * wispecfolder: get folder locations now from API instead from Registry
+        * new constants: %CommonStartmenuDir% ,%CommonDesktopDir%, %CommonStartupDir%, %CommonProgramsDir%, %AppDataDir%, %StartmenuDir%, %DesktopDir%, %StartupDir%, %ProgramsDir%, %SendToDir%, fixes #175
+        (4.10.9.0b)
+        * new constants: %CurrentAppDataDir%, %ScriptDir%, %CommonProfileDir%, 
+        * constant names changed:  %StartmenuDir% -> %CurrentStartmenuDir%,
+                                   %DesktopDir% -> %CurrentDesktopDir%,
+                                   %StartupDir% -> %CurrentStartupDir%,
+                                   %ProgramsDir% -> %CurrentProgramsDir%,
+                                   %SendToDir% -> %CurrentSendToDir%
+
+ -- Detlef Oertel <d.oertel@uib.de>  Fri,  19 Nov 2010:17:00:00 +0200
+
+
+
+opsi-winst (4.10.8.10-1) stable; urgency=low
+
+        * bugfix: progress was not set on running setup script. fixed in widatamodul:TOpsi4Data.setProductState
+        * new function: TOpsi4Data.setProductProgress (myprogres : String);
+
+ -- Detlef Oertel <d.oertel@uib.de>  Tue,  25 Nov 2010:17:00:00 +0200
+
+
+opsi-winst (4.10.8.9-1) stable; urgency=low
+
+        (4.10.8.9a)
+        * bugfix: at getOpsiServerVersion: if not opsi 4, try to ask opsi3 server
+        * cleanup: Topsi4data: remove not used functions
+        (4.10.8.9b)
+        * uJson removed and replaced by superobject
+        (4.10.8.9c)
+        * TJsonThroughHTTPS.retrieveJSONObjectByHttpPost uses at opsi4 compressed stream (sendlog) (part of #114)
+        * TJsonThroughHTTPS.retrieveJSONObject  uses at opsi4 compressed streams
+        * TJsonThroughHTTPS.retrieveJSONArray  uses at opsi4 compressed streams
+
+ -- Detlef Oertel <d.oertel@uib.de>  Tue,  9 Nov 2010:17:00:00 +0200
+
+
+
+opsi-winst (4.10.8.8-1) stable; urgency=low
+
+        * bugfix: at getOpsiServerVersion reduce errorcounter by 1 if not opsi 4 (bugfix silent installation)
+
+ -- Detlef Oertel <d.oertel@uib.de>  Wed,  26 Okt 2010:17:00:00 +0200
+
+
+
+opsi-winst (4.10.8.7-1) experimental; urgency=high
+
+        * bugfix: SSL connection via SSLv3    fixes #165
+
+ -- Rupert Roeder <r.roeder@uib.de>  Tue, 19 Oct 2010:12:00:00 +0200
+
+
+opsi-winst (4.10.8.6-1) stable; urgency=low
+
+        * bugfix: writing log file only once
+
+ -- Detlef Oertel <d.oertel@uib.de>  Wed,  17 Sep 2010:15:00:00 +0200
+
+opsi-winst (4.10.8.5-1) stable; urgency=low
+
+        * bugfix: Registry deletekey /64 does not work with win 5.2, fixes #131
+        * bugfix: widatamodule: getOpsiServerVersion defaults to '3'
+
+ -- Detlef Oertel <d.oertel@uib.de>  Wed,  15 Sep 2010:15:00:00 +0200
+
+
+opsi-winst (4.10.8.4-1) stable; urgency=low
+
+        * bugfix: LogError and LogWarning wasn't loged if Loglevel was <=4, fixes #115
+
+ -- Detlef Oertel <d.oertel@uib.de>  Wed,  01 Sep 2010:15:00:00 +0200
+
+opsi-winst (4.10.8.3-1) stable; urgency=low
+
+        * added: support for actionrequest: 'custom', fixes #71
+        * added: new constant %WinstVersion%
+        * readded: constant %installingProduct% is valid again but deprecated
+        * new (documented):  CompareDotSeparatedStrings(<string1>, <string2>)
+        * new (documented):  CompareDotSeparatedNumbers(<string1>, <string2>)
+        * new: winst write the real start time to the first log entry
+        * bugfix: if requiredWinstversion fails installation state is set to failed and shows no more interactive message, fixes #80
+        * new: convert2Jsonstr
+        * bugfix: in find&retry in winbatch: call with a not heading '"' will now treated correctly, fixes #104
+        * new: writing message 'Sending log file to server ...' on sendlog
+        * bugfix: getOpsiServerVersion: defaulting to opsi 3
+
+ -- Detlef Oertel <d.oertel@uib.de>  Mon,  23 Aug 2010:15:00:00 +0200
+
+
+opsi-winst (4.10.8.2-1) testing; urgency=low
+
+        * bugfix: opsi service Version 3: Product installation sequence is calculated by winst
+        * bugfix: winbatch: if the targefile dont contain path separators we assume
+          it is a command in the path and we don't try to check the existing of the target file, fixes #92
+
+ -- Detlef Oertel <d.oertel@uib.de>  Wed,  11 Aug 2010:15:00:00 +0200
+
+
+
+opsi-winst (4.10.8.1-1) testing; urgency=low
+
+        * bugfix: winbatch: no retry to find if there is no parameter; fixes #87 
+
+ -- Detlef Oertel <d.oertel@uib.de>  Wed,  9 Aug 2010:15:00:00 +0200
+
+
+
+
+opsi-winst (4.10.8.0-1) experimental; urgency=low
+
+
+	* added support for jpeg pictures at 'Showbitmap'
+        * New Constants: %ProgramFiles32Dir%, %ProgramFiles64Dir%, %ProgramFilesSysnativeDir%, fixes #25
+        * new Modifier for File and Registry Sections and GetRegistry and FileExists Functions: /32Bit /SysNative
+        * new unit: locale.pas
+        * new: LangCodeByHex  (gives de-DE by 0x0407 , gives xx-Null by 0x0000)
+        * new: getLocaleInfoMap: new key: system_default_language_id
+        * new: getLocaleInfoMap: new key: system_default_posix
+        * new: getLocaleInfoMap: new key: system_default_lang_region,  fixes #30
+        * new: getSlowInfoMap(productkey,noredirect):
+                --> reads slowinfocache; productkey is the key below ARPCache;
+                --> noredirect is 'on'/'off' for 64 Bit Registry redirection (not implemented yet)
+                --> hash key may be: hasname, installsize, lastused, usagefrequency, binaryname
+        * new getFileInfoMap: 'file version with dots'
+        * new getFileInfoMap: 'Language name <index>'
+        * new getFileInfoMap: 'Language ID <index>'
+        * new getFileInfoMap: 'file version'
+        * new getFileInfoMap: 'product version'
+        * new: tries to get product sequence from server and if this fails falls back to own sorting
+        * new: in wisynth,TuibInstScript.doLogEntries labelDetail is set to |/-\ instead of if,then,else,endif
+        * new unit wiswaudit with functions for swaudit
+        * new: wisynth: addlisttolist(list,list)
+        * new: wisynth: getSwauditInfoList(uninstallkey,listtype,archticture)
+        * new unit base64
+        * new: wisynth: functions base64EncodeStr, base64DecodeStr, fixes #38
+        * fixed: GPL Header with corrected links in the source code, fixes #32
+        * new: wisynth: SetOutputLevel(int) 3=full, 2=no Activity Label, 1=no Detail and no Activity Labels
+        * new: wibtch: Output to activity-,detail- and command-label  not more than 5 per second
+        * changed: widatamodul: opsidata: all actualProduct calls to actualProductName calls
+        * added: widatamodul: opsidata: actualProductVersion calls
+        * new: wisynth: constants: %installingProdName% and %installingProdVersion%
+        * removed: wisynth: constants: %installingProduct%
+        * change: set, if,then,else,endif now loglevel LLnotice
+        * change: get sorted product list by productOnClient_getObjects
+        * new: widatamodul: getOpsiServerVersion (to decide which methods should be used)
+        * new: widatamodul: getOpsiServiceVersion (to decide which methods should be used)
+        * new: widatamodul: new opsidata: opsi4data for opsi4 service methods
+        * new: wisynt: new constants %installingProdName% %installingProdVersion%
+        * new: Warning if a script try to reopen a existing service connection
+        * fixed: instlog.err entries only if loglevel <= LLwarning
+        * new: widatamodule: on bootmode REINS Product sequence calculated with dependencies by the opsi-server
+        * Config path and utils path is not supported anymore
+        * fixed: wibtch: InnerWidth and InnerHeight little bit larger
+        * new: show batch screen from the start not as Icon (while talking to the server)
+        * new: argument of commandline parameter /opsisevice may have a trailing '/rpc'
+        * new: wisynt: In winbatch sections we look for the target file and retry to find it 10 times.
+          This should prevent Errors at unsteady network connections.
+        * change: wifunc: CheckFileExists we look for the target file and retry to find it 10 times.
+          This should prevent Errors at unsteady network connections.
+        * change: wisynt: set command logs now varname and new value
+        * new: superobject JSON library from http://www.progdigy.com/?page_id=6
+        * new: FProductOnClient_aktobject is now from type ISuperobject
+        * new: widatamodul: opsi4data: using now opsi4 method productOnClient_update no set product states 
+         
+
+ -- Detlef Oertel <d.oertel@uib.de>  Wed,  22 Jun 2010:15:00:00 +0200
+
+
+
+opsi-winst (4.10.7.4-1) testing; urgency=low
+
+
+	* removed all kylix port units and compiler directives
+        * removed all dll compiler directives
+        * removed all 16 Bit parts
+        * moved history from winst.dpr to changelog.txt
+        * added GPL
+        * Bugfix: FormCreate from SystemInfo and Showtextfile in winst.dpr
+        * Bugfix: now also the first load of log file is colored
+        * Bugfix: Fonts / Passwordchar in wiservicepassword
+        * added: widatamodul: IdHTTP.Request.UserAgent:= 'opsi-winst '+wimain.WinstVersion;
+        * added: wibatch: ImageProduct.Repaint;
+        * BugFix: wisynth: in TuibInstScript.doAktionen: UpdateMemo Block replaced by ProcessMess. This was a strong performance break.
+        * BugFix: wifunc: registry read strings: If StrLen() gives a smaller value then the Winapi StrLen is used.
+        * Change: opsisevicecall now via post: widatamodul: TJsonThroughHTTPS: methodGet set to false. Using IdHTTP.Post(Furl,sendstream, mymemorystream)
+        * new function addtolist(list,string)
+        * new section OpsiServiceHashList to send list of hashes
+        * Enhancement: try to reopen log file if writing to log file fails
+
+ -- Detlef Oertel <d.oertel@uib.de>  Wed,  29 May 2010:15:00:00 +0200
+
+
+
+opsi-winst (4.10.6.4-1) experimental; urgency=low
+
+
+	* widatamodul new recreated
+	* wimesg new created
+	* creation of MyMessageDlg now in wimain.form.create (avoids crash at syntax error in opsi mode)
+
+ -- Detlef Oertel <d.oertel@uib.de>  Wed,  29 Apr 2010:15:00:00 +0200
+
+
+opsi-winst (4.10.5.0-1) experimental; urgency=low
+
+	* TOpsiDataJSONService.sendLog send log as UTF-8
+        * start messages at log level LLessential
+        * name for main section changed from 'aktionen' to 'actions'
+        -> 'aktionen' still works but is deprecated from now on
+
+ -- Detlef Oertel <d.oertel@uib.de>  Wed,  21 Apr 2010:15:00:00 +0200
+
+opsi-winst (4.10.4.0-1) experimental; urgency=low
+
+	* bug fix in randomstr: now contains always 2 lower chars, 2 upper chars, 2 special chars, and 4 numeric chars
+
+ -- Detlef Oertel <d.oertel@uib.de>  Tue,  20 Apr 2010:15:00:00 +0200
+
+
+opsi-winst (4.10.3.0-1) experimental; urgency=low
+
+	* code cleanup
+	* new loglevels
+                (* new Loglevels since opsi 3.5:
+                0 = nothing (absolute nothing)
+                1 = essential ("unverzichtbares")
+                2 = critical (unexpected errors that my cause a program abort)
+                3 = error (Errors that don't will abort the running program)
+                4 = warning (you should have a look at this)
+                5 = notice (Important statements to the program flow)
+                6 = info (Additional Infos)
+                7 = debug (important debug messages)
+                8 = debug2 (a lot more debug informations and data)
+                9 = confidential (passwords and other security relevant data)
+                *)
+        * new command <setLogLevel=>
+        * <LogLevel=> is depricated and now implemented as loglevel := loglevel+4 for backward compatibility
+        * GetSystemtype now using windows api wrapper DSiIsWow64
+        * New: Parameter '/64Bit' for Files-Sections (disables file redirection)
+                using: DSiDisableWow64FsRedirection and DSiRevertWow64FsRedirection
+                see http://msdn.microsoft.com/en-us/library/aa365745%28v=VS.85%29.aspx
+        * New: Funktion FileExists64 with disabled file redirection at 64 Bit
+        * Log-Level and timestamp is shown at the start of every Log-Line
+        * LogView with search, color, font size regulation, loglevel filter
+        * Const %ProfileDir% via DSiGetFolderLocation(CSIDL_PROGRAM_FILES)
+        * New: Registry: For 64Bit and AllNtUserDats own redirection
+        * bug fix in postinst (']' missing; also fixed in 4.10.1.0-2)
+        * new: takeFirstStringContaining(<list>,<search string>)
+        * new: getlistcontaining(<list>,<search string>)
+        * wimesg with Richedit component (gives the possibility for copy the messages, and bette encoding than memo)
+
+ -- Detlef Oertel <d.oertel@uib.de>  Tue,  7 Apr 2010:15:00:00 +0200
+
+
+opsi-winst (4.10.2.1-1) experimental; urgency=low
+
+	* All clx components removed
+	* Message also writes to log
+	* new interactive GUI
+	* Log-Level is show at the start of every Log-Line
+
+ -- Detlef Oertel <d.oertel@uib.de>  Tue,  1 Apr 2010:15:00:00 +0200
+
+
+opsi-winst (4.10.1.0-1) stable; urgency=low
+
+	* New: DecStrToHexStr
+	* New: HexStrToDecStr
+
+ -- Detlef Oertel <d.oertel@uib.de>  Tue,  23 Mar 2010:15:00:00 +0200
+ 
+opsi-winst (4.10.0.0-1) stable; urgency=low
+
+	* New: getMSVersionMap
+	* New: GetRegistryStringValue64
+	* New: Parameter '/64Bit' for Registry-Sections
+	* Background infos for getMSVersionMap
+		* http://msdn.microsoft.com/en-us/library/ms724385%28VS.85%29.aspx
+		* http://www.delphi-treff.de/tipps/system/wiki/Windows-Version%20ermitteln/
+		* http://www.tek-tips.com/viewthread.cfm?qid=1573774&page=6
+		* http://msdn.microsoft.com/en-us/library/dd419805.aspx
+		* http://msdn.microsoft.com/en-us/library/ms724833%28VS.85%29.aspx
+	* Background infos for 64 Bit Registry access:
+		* http://msdn.microsoft.com/en-us/library/aa384129%28VS.85%29.aspx
+		* http://msdn.microsoft.com/en-us/library/ms724878%28VS.85%29.aspx
+		* http://www.delphipraxis.net/topic103630_registry+wow6432node.html
+	* postinst: copy files only to utils dir if it exists
+
+ -- Detlef Oertel <d.oertel@uib.de>  Tue,  23 Mar 2010:15:00:00 +0200
+
+opsi-winst (4.9.4.2-1) experimental; urgency=low
+
+	* improved focus handling in interactive login to configuration
+	  service
+
+ -- Rupert Roeder <r.roeder@uib.de>  Tue,  12 Jan 2009:12:31:43 +0200
+
+opsi-winst (4.9.4.1-1) experimental; urgency=low
+
+	* in interactive mode, the batch gui is only shown when activated by
+	  a button          
+
+ -- Rupert Roeder <r.roeder@uib.de>  Mon,  11 Jan 2009:10:31:43 +0200
+
+opsi-winst (4.9.4.0-1) experimental; urgency=low
+
+	* new experiment for getting a second entry in the taskbar          
+
+ -- Rupert Roeder <r.roeder@uib.de>  Thu,  07 Jan 2009:10:31:43 +0200
+
+opsi-winst (4.9.3.5-1) experimental; urgency=low
+
+	* increased logging for setting product action requests on reinstall
+
+ -- Rupert Roeder <r.roeder@uib.de>  Mon,  14 Dec 2009:12:31:43 +0200
+
+opsi-winst (4.9.3.4-1) experimental; urgency=low
+
+	* new algorithm for catch output
+
+ -- Rupert Roeder <r.roeder@uib.de>  Fre,  20 Nov 2009 12:31:43 +0200
+
+opsi-winst (4.9.3.3-1) experimental; urgency=low
+
+	* bugfix
+
+ -- Rupert Roeder <r.roeder@uib.de>  Fre,  13 Nov 2009 16:31:43 +0200
+
+opsi-winst ( opsi-winst_4.9.3.2-1) experimental; urgency=low
+
+	* bugfix for trace mode
+	* fatal error handling also for if clauses
+	* command line option usercontext
+	* patch text file commands set_mozilla_pref, addstringlistelement_to_mozilla_pref
+	* new String function getUserSID
+	* new locations for logfile
+
+opsi-winst ( opsi-winst_4.9.3.1-3) experimental; urgency=low
+
+	* bugfix for fatal error
+
+opsi-winst ( opsi-winst_4.9.3.1-2) experimental; urgency=low
+
+	* on fatal error, winst stops execution also with if
+	* no more trace mode when log file cannot be written, instead message
+	  box
+	* introduction of usercontext in command line and batch mode, new
+	  String function getUserSid
+
+opsi-winst ( opsi-winst_4.9.3.0-2) experimental; urgency=low
+	* setacl.exe removed bardo wolf
+opsi-winst (4.9.3) experimental; urgency=low
+
+  * for temporary batch files the logging directory is used
+
+ -- Rupert Roeder <r.roeder@uib.de>  Mon,  26 Oct 2009 12:31:43 +0200
+opsi-winst (4.9.2) experimental; urgency=low
+
+  * new command in PatchTextFile section: set_mozilla_pref
+  * ensuring that opsi-winst does not set itself to update on reinstallation
+
+ -- Rupert Roeder <r.roeder@uib.de>  Mon,  26 Oct 2009 12:31:43 +0200
+
+opsi-winst (4.9.1.1) experimental; urgency=low
+
+  * user account name on top of winst log
+
+ -- Rupert Roeder <r.roeder@uib.de>  Thu,  08 Oct 2009 12:31:43 +0200
+
+opsi-winst (4.9.1.0) experimental; urgency=low
+
+  * trying to reconnect when a connection error 10054 occured 
+
+ -- Rupert Roeder <r.roeder@uib.de>  Wed,  17 Sep 2009 10:31:43 +0200
+
+opsi-winst (4.9.0.0) stable; urgency=low
+
+  * new functions GetProductProperty, GetSectionLines 
+
+ -- Rupert Roeder <r.roeder@uib.de>  Wed,  16 Sep 2009 10:31:43 +0200
+
+opsi-winst (4.8.8.1-2) stable; urgency=low
+
+  * bg.png template handling in preinst/postinst
+
+ -- detlef oertel <d.oertel@uib.de>  Thu,  02 Jul 2009 17:53:43 +0200
+
+opsi-winst (4.8.8.1) stable; urgency=low
+
+  * bugfix in LDAPsearch result
+
+ -- Rupert Roeder <r.roeder@uib.de>  Thu,  02 Jul 2009 12:31:43 +0200
+opsi-winst (4.8.8.0) stable; urgency=low
+
+  * new command line option /silent
+  * repaired idapi section
+
+ -- Rupert Roeder <r.roeder@uib.de>  Tue,  30 Jun 2009 09:31:43 +0200
+opsi-winst (4.8.7.2) stable; urgency=low
+
+  * bugfix in PatchTextFile, set_netscape_user_pref
+
+ -- Rupert Roeder <r.roeder@uib.de>  Mon,  22 Jun 2009 09:31:43 +0200
+opsi-winst (4.8.7.1) stable; urgency=low
+
+  * new section type ldapsearch
+
+ -- Rupert Roeder <r.roeder@uib.de>  Fri,  19 Jun 2009 14:31:43 +0200
+opsi-winst (4.8.7) stable; urgency=low
+
+  * adaption of sendlog to python 2.6
+
+ -- Rupert Roeder <r.roeder@uib.de>  Tue,  17 Jun 2009 14:31:43 +0200
+opsi-winst (4.8.6-5) stable; urgency=low
+
+  * adaption to changed service methods, bugfixes
+
+ -- Rupert Roeder <r.roeder@uib.de>  Fri,  22  May 2009 14:31:43 +0200
+opsi-winst (4.8.6-4) stable; urgency=low
+
+
+ -- Rupert Roeder <r.roeder@uib.de>  Fri,  12 June 2009 14:21:43 +0200
+opsi-winst (4.8.6-2) stable; urgency=low
+
+  * adaption to changed service methods
+
+ -- Rupert Roeder <r.roeder@uib.de>  Fri,  22  May 2009 14:21:43 +0200
+opsi-winst (4.8.6-1) stable; urgency=low
+
+  * new functions getLastServiceErrorClass, getLastServiceErrorMessage,
+    opsiLicenseManagementEnabled 
+
+ -- Rupert Roeder <r.roeder@uib.de>  Fri,  8 May 2009 14:21:43 +0200
+
+opsi-winst (4.8.5-2) stable; urgency=low
+
+  * bugfix
+
+ -- Rupert Roeder <r.roeder@uib.de>  Fri,  8 May 2009 14:21:43 +0200
+
+opsi-winst (4.8.5-1) stable; urgency=low
+
+  * added support for special version of server based sorting of products
+
+ -- Rupert Roeder <r.roeder@uib.de>  Wed,  6 May 2009 14:21:43 +0200
+
+opsi-winst (4.8.4-2) stable; urgency=low
+
+  * Fixed winstskin copying in postinst
+
+ -- Jan Schneider <j.schneider@uib.de>  Fri,  3 Apr 2009 09:06:43 +0200
+
+opsi-winst (4.8.4-1) stable; urgency=low
+
+  * new option -V for winst copy actions: version control only with regard
+  * to target directory (not for windows system directory)
+ 
+ -- Rupert Roeder <r.roeder@uib.de>  Thu, 19 Mar 2009 09:00:00 +0200
+
+opsi-winst (4.8.3-1) stable; urgency=low
+
+  * bugfix: winst crashed when connection to service failed
+ 
+ -- Rupert Roeder <r.roeder@uib.de>  Mon, 16 Mar 2009 09:00:00 +0200
+
+opsi-winst (4.8.2-1) stable; urgency=low
+
+  * special option for products sorting
+ 
+ -- Rupert Roeder <r.roeder@uib.de>  Wed, 11 Mar 2009 09:00:00 +0200
+
+opsi-winst (4.8.1-1) stable; urgency=low
+
+  * new functions for licence management
+ 
+ -- Rupert Roeder <r.roeder@uib.de>  Fri, 20 Feb 2009 09:00:00 +0200
+
+opsi-winst (4.8.0.1-2) stable; urgency=low
+
+  * changed postinst chmod o+r  $DST_DIR/winst32.exe ... for domainlogins
+ 
+ -- Rupert Roeder <r.roeder@uib.de>  Wed, 28 Jan 2009 09:00:00 +0200
+
+opsi-winst (4.8.0.1-1) stable; urgency=low
+
+  * the symbol ^ in the command line parameter service_options is replaced by "
+ 
+ -- Rupert Roeder <r.roeder@uib.de>  Tue, 27 Jan 2009 09:00:00 +0200
+
+opsi-winst (4.8.0-1) stable; urgency=low
+
+  * supports parameter service_options
+ 
+ -- Rupert Roeder <r.roeder@uib.de>  Mon, 26 Jan 2009 09:00:00 +0200
+
+opsi-winst (4.7.4-6) stable; urgency=low
+
+  * libeay32.dll version 0.9.8.8 (0.9.8 h)
+  * ssleay32.dll version 0.9.8.8 (0.9.8 h)
+ 
+ -- detlef oertel <d.oertel@uib.de>  Tue, 20 Jan 2009 09:00:00 +0200
+
+     Version history:
+
+    <p></p>
+    <table> <tr><th>version</th><th>changes</th></tr>
+
+    <tr><td>4.9.4.2</td>
+    <td>The interactive opsiservice logon window has an improved focus behaviour. 
+    </td>
+    </tr>
+
+    <tr><td>4.9.4.1</td>
+    <td>In interactive mode, the Batch GUI is activated by a new button.
+    </td>
+    </tr>
+
+    <tr><td>4.9.4.0</td>
+    <td>New trial to get a separate task bar entry for the dialog window
+    </td>
+    </tr>
+
+    <tr><td>4.9.3.6</td>
+    <td>Default property of button "Start" set to true (interactive mode)
+    </td>
+    </tr>
+
+    <tr><td>4.9.3.5</td>
+    <td>increased logging for resetting product states on reinstall
+    </td>
+    </tr>
+
+    <tr><td>4.9.3.4</td>
+    <td>catchoutput: new algorithm
+    </td>
+    </tr>
+
+    <tr><td>4.9.3.2</td>
+    <td>fatal error handling: winst stops execution also for if clauses
+    </td>
+    </tr>
+    <tr><td></td><td>when the log file cannot be opened winst offers to continue without logging or abort
+    </td>
+    </tr>
+    <tr><td></td><td>new String function GetUserSID
+    </td>
+    </tr>
+	<tr><td></td><td>new command line option usercontext
+    </td>
+    </tr>
+    <tr><td></td><td>command line option -inifile renamed to -histolist
+    </td>
+    </tr>
+    <tr><td></td><td>in batch resp silent mode it is possible to pass winst a list of scripts (separated by ';')
+    </td>
+    </tr>
+	<tr><td></td>
+	>td>new command in PatchTextFile section: AddStringListElement_To_Mozilla_Pref
+    </td>
+    </tr>
+
+    <tr><td>4.9.3.0</td>
+    <td>Adaptions to user patches
+    </td>
+    </tr>
+    <tr><td></td>
+    <td>the winst log directory is used for temporary batch files
+    </td>
+    </tr>
+
+
+     <tr><td>4.9.2</td>
+    <td>new command in PatchTextFile section: set_mozilla_pref
+    </td>
+    </tr>
+    <tr><td></td>
+    <td>hack which ensures that opsi-winst does not set itself to update on reinstallation
+    </td>
+    </tr>
+
+    <tr><td>4.9.1.1</td>
+    <td>Useraccount is reported on top of winst log
+    </td>
+    </tr>
+    <tr><td></td>
+    </tr>
+
+
+    <tr><td>4.9.1</td>
+    <td>try to reconnect when connection to service fails with 10054
+    </td>
+    </tr>
+    <tr><td></td>
+    </tr>
+
+
+    <tr><td>4.9.0</td>
+    <td>new String function getProductProperty (replaces iniVar)
+    </td>
+    </tr>
+    <tr><td></td>
+    <td>new StringList function GetSectionNames
+    </tr>
+
+
+
+    <tr><td>4.8.9</td>
+    <td>_winst.bat files are deleted on script termination
+    </td>
+    </tr>
+    <tr><td></td>
+    </tr>
+
+    <tr><td>4.8.8</td>
+    <td>new commandline option /silent ( the same as /batch but without display )
+    </td>
+    </tr>
+    <tr><td></td>
+    <td>IDAPI repaired
+    </td>
+    <tr><td></td>
+    <td>LDAPsearch bugfix
+    </td>
+    </tr>
+
+
+    <tr><td>4.8.7</td>
+    <td>new sectiontype LDAPsearch
+    </td>
+    </tr>
+    <tr><td></td>
+    <td>tab is sent in C style when transferring log
+    </td>
+    </tr>
+    <tr><td></td>
+    <td>new winst constant %opsiServer% (only used in opsi service mode)
+    </td>
+    </tr>
+    <tr><td></td>
+    <td>new String list function count() (counts the items in a String list)
+    </td>
+    </tr>
+
+    <tr><td>4.8.6</td>
+    <td>            new String functions getLastServiceErrorClass, getLastServiceErrorMessage,
+					DemandLicenseKey, FreeLicense
+    </td>
+    </tr>
+    <tr><td></td>
+    <td>            new Boolean function opsiLicenseManagementEnabled
+
+    <tr><td>4.8.5</td>
+    <td>            if in HKLM\"WinstRegKey" 'productsFetchMode' = 1 winst does not sort products but
+                    retrieves productlist from action request list with option process priorities
+    </td>
+    </tr>
+    <tr><td></td>
+    <td>            it is checked if a product is installable before changing its state or action request
+                    (in order to avoid setting netboot products when reinstalling)
+    </td>
+
+    <tr><td>4.8.4</td>
+    <td>            version check option -V for copy actions, meaning version check only with regard to files
+                  	in the target directory 
+    </td>
+    </tr>
+
+    <tr><td>4.8.3</td>
+    <td>            bugfix, winst crashed if connection to service failed in method getpossiblemethods
+    </td>
+    </tr>
+
+
+    <tr><td>4.8.2</td>
+    <td>            if registry entry in HKLM\Software\opsi.org\winst, productsfetchmode = 1
+    </td>
+    </tr>
+    <tr><td></td>
+    <td>            then winst fetches only the sorted products for which an action request is set
+    </td>
+    </tr>
+
+
+    <tr><td>4.8.1</td>
+    <td>            licence management: new String functions demandLicenseKey, freelicenseKey
+    </td>
+    </tr>
+    <tr><td></td>
+    <td>            new wInst constant %installingProduct%
+    </td>
+    </tr>
+
+    <tr><td>4.7.5</td>
+    <td>            splitstring now works ignoring lower or upper case
+    </td>
+    </tr>
+
+    <tr><td>4.7.4</td>
+    <td>            new OS version functions
+    </td>
+    </tr><tr><td></td>
+    <td>            GetMSVersionInfo (major + minor version info as given by Windows)
+    </td>
+    </tr><tr><td></td>
+    <td>            GetSystemType (for XP and Vista, possible values '64 Bit System' or 'x86 System');
+    </td>
+    </tr>
+    </tr><tr><td></td>
+    <td>            registry entry sendlogtoservice controls the feature, default=1
+    </td>
+    </tr>
+    </tr><tr><td></td>
+    <td>            interfaced output commented out
+    </td>
+    </tr>
+    </td>
+    </tr>
+    </tr><tr><td></td>
+    <td>            very old bug in tuibregistry.ReadInteger mended
+    </td>
+    </tr>
+    </td>
+    </tr>
+
+    <tr><td>4.7.3</td>
+    <td>            logging as well to service
+    </td>
+    </tr>
+
+    <tr><td>4.7.1</td>
+    <td>            interfaced output of resp. instead of visual out infos
+    </td>
+    </tr>
+
+
+    <tr><td>4.6.0</td>
+    <td>            skinnable winst
+    </td>
+    </tr><tr><td></td>
+    <td>            setSkinPath
+    </td>
+    </tr><tr><td></td>
+    <td>            sleepsSeconds
+    </td>
+    </tr>
+
+    <tr><td>4.5.9</td><td>
+                    new section type execWith
+
+    </td>
+    </tr>
+
+    <tr><td></td><td>
+                    new string function trim, which cuts off leading and trailing whitespace
+
+    </td>
+    </tr>
+
+
+    <tr><td>4.5.8</td><td>
+                    new StringList functions getLocaleInfoMap, getFileVersionMap
+
+    </td>
+    </tr>
+
+    <tr><td></td><td>
+                    new String function getValue (key, list);
+                    if the key does not exist we get result 'NULL'
+    </td>
+    </tr>
+    <tr><td></td><td>
+                    new copy modifier -c
+    </td>
+    </tr>
+    </tr>
+    <tr><td></td><td>
+                    new String function getLastExitCode (for winbatch sections)
+    </td>
+    </tr>
+    <tr><td>
+                    new constants %macAddress%, %ipAddress%, %ipName%
+    </td>
+    </tr>
+    <tr>
+    <td></td><td>
+                    The index in takestring(index, list) now counts downward for negative indices beginning at list.count,
+                    therefore -1 denotes the last list element
+    </td>
+    </tr>
+    <tr>
+    <td></td><td>
+                    new commands for primary sections: sleepSeconds <Int>, markTime, diffTime
+    </td>
+    </tr>
+    <tr>
+    <td></td><td>
+                    elimination of the old versioninfo unit
+    </td>
+    </tr>
+
+
+
+
+    <tr><td>4.5.7</td><td>
+                    Instead of
+                    omc := TOpsiMethodCall.create('getLocalBootProductIdslist', []);
+                    we now use
+                    omc := TOpsiMethodCall.create('getInstallableLocalBootProductIds_list', [actualClient]);
+    </td>
+    </tr>
+
+
+    <tr><td>4.5.6</td>
+    <td>            neu: ExitWindows /ShutdownWanted, produces RegistryFlag ShutdownRequested
+    </td>
+    </tr>	
+
+    <tr><td>4.5.5</td>
+    <td>            bugfix: Indentation in file sections is now ignored as in before 4.5
+    </td>
+    </tr>
+
+
+    <tr><td>4.5.4</td>
+    <td>            it is shown as a syntax error, if deletekey is used for all ntuserdats
+    </td>
+    <td></td>
+    <td>            number of lines which are shown in the log view changed from 80 to 1000;
+                    the log view can be shown in an own window;
+                    some minor GUI changes; 
+    </td>
+    </tr>
+
+    <tr><td>4.5.3</td>
+    <td>            fix that an error message was launched if a read only file was (correctly) copied
+                    fix of translation of installing state and action in classic mode
+    </td></tr>
+
+
+    <tr><td>4.5.2</td>
+    <td>            fix of side effect of introducing python section in xmlpatch
+    </td></tr>
+
+
+    <tr><td>4.5.1</td>
+    <td>            new string functions getLogLevel or shortly loglevel which retrieve the current loglevel
+    </td></tr>
+
+
+    <tr><td>4.5.0</td>
+    <td>            new section type execpython (python.exe is called, the section read as python script)
+                    new constants %opsiserviceURL%, %opsiserviceUser%, %opsiservicePassword%
+                    (using them a python script can connect to the opsi service)
+                    new constant %logfile%
+
+    </td></tr>
+
+    <tr><td>4.4.9</td>
+    <td>            bugfix
+
+    </td></tr>
+
+    <p></p>
+    <table> <tr><th>version</th><th>changes</th></tr>
+
+    <tr><td>4.4.8</td>
+    <td>            bugfix: the product state of the first element of the product list was not read
+
+    </td></tr>
+
+    <tr><td>4.4.7</td>
+    <td>            empty sections are now not treated as syntax errors but a warning is logged
+
+    </td></tr>
+
+    <tr><td>4.4.6</td>
+    <td>            fixed: registry deletekey command should now correctly recurse
+
+    </td></tr>
+    <tr><td>4.4.5</td>
+    <td>            fix: instead of an empty String list nil was returned if a request a map
+                    from the opsi service failed
+
+    </td></tr>
+    <tr><td></td>
+    <td>            Windows NT version 6 is now recognized as "Windows Vista"
+
+    </td></tr>
+
+    <tr><td>4.4.4</td>
+    <td>            added function getMethodSignature to TOpsiDataJSONService (not used at this
+                    moment)
+
+                    comparison string functions and comparison boolean expressions added
+
+    </td></tr>
+
+    <tr><td>4.4.3</td>
+    <td>            in try - finally blocks in sswin32.pas added internal try - except blocks,
+                    perhaps this avoids spurious crashes
+
+    </td></tr>
+
+
+
+    <tr><td>4.4.2</td>
+    <td>            new functions XMLAddNamespace and XMLRemoveNamespace (thanks to A. Pohl!)
+                    the patch of A. Pohl for unit wixml is integrated as well
+
+    </td></tr>
+
+    <tr><td>4.4.1</td>
+    <td>            new section type: opsiservicecall
+
+    </td></tr>
+
+    <tr>
+    <td>4.4.0
+    </td>
+    <td>            if winst is waiting for a started process returning it takes itself (and the processor!!)
+                    a sleep(50) (to prevent idling at 99% cpu time ... )</td>
+    </tr>
+    <tr><td></td>
+    <td>            the waitForProcessEnding parameter of a winbatch call is now really waiting
+                    for a string in the process list (and not for a executable that windows finds in the
+                    file system)
+    </tr>
+    <tr><td></td>
+    <td>            new stringlist function getLocaleInfo with elements
+                    0: two-letter abbreviated language name, eg. DE
+                    1: three-letter abbreviated language name, eg. DEU
+                    2: language name in English, eg. German
+                    3: country name in English, eg. Germany
+                    4: language integer code (hex value as string), eg. 0407
+
+    </td></tr>
+
+
+    <tr><td></td>
+    <td>
+
+    </td></tr>
+
+
+
+        <tr>
+    <td>4.3.10      </td> <td>command line parameters now support blanks in path names; the
+                    program does not compile any longer as dll
+    </td></tr>
+    <td>            </td><td>the registry set command can now be written with single quotation marks
+                    such allowing quoted file pathes in a registry string
+    </td></tr>
+
+
+    <tr>
+    <td>4.3.9       </td> <td>Minor corrections
+    </td></tr>
+    <td>       </td> <td>added a compatibility setting for the old NT version
+    </td></tr>
+
+
+    <tr>
+    <td>4.3.8       </td> <td>Bugfix: Im Modus REINS werden jetzt nicht nur auf dem opsi server,
+                    sondern auch im lokalen Cache alle INSTALLED Produkte auf SETUP gesetz
+    </td></tr>
+    <td>      </td> <td>Bugfix: Das dritte Image des wInst wird jetzt beim Skriptaufruf (und nicht bei jedem Aufruf
+                    einer Aktionen- bzw. Sub-Sektion) zurï¿½ckgesetzt.
+    </td></tr>
+    <tr>
+    <td>4.3.7       </td> <td>Korrektur: Bei der Verarbeitung von Regedit-Dateien werden jetzt die C-Escape-
+                    Strings richtig behandelt.
+    </td></tr>
+    <tr>
+    <td>4.3.6       </td> <td>Korrektur: XMLPatch-File-Name wird geloggt.
+    </td></tr>
+    <tr>
+    <td>      </td> <td>Korrektur: Auch im Service-Modus werden ï¿½nderungen eines ActionRequest
+                    oder eines InstallationStatus nicht nur zum Server zurï¿½ckgeschickt, sondern
+                    auch im lokalen Cache geï¿½ndert.
+    </td></tr>
+    <tr>
+    <td>      </td> <td>Bug bei der Verarbeitung von Regedit-Dateien entfernt. Das Zeichen "@" als Symbol fï¿½r
+                     den Default-Eintrag eines Registry-Keys wird jetzt bearbeitet. 
+    </td></tr>
+    <td>4.3.5       </td> <td>Korrektur: setFatalError beendet jetzt auch die Abarbeitung des Skripts
+
+    </td></tr>
+    <tr>
+    <tr>
+    <td>4.3.4       </td> <td>Korrektur: Fehlermeldungen des opsi-Service werden jetzt protokolliert.
+
+    </td></tr>
+    <tr>
+    <tr>
+    <td>4.3.3       </td> <td>Korrektur: Syntaxfehler nach einigen WinBatch-Parametern wurden nicht
+                    erkannt.
+
+    </td></tr>
+    <tr>
+    <tr>
+    <td>4.3.2       </td> <td>Korrektur: Auslesen des Schluessels, der fuer die Registry-Variable
+                    Rebootflag verwendet wird, aus [HKLM\Software\opsi.org\preloginloader] WinstRegKey;
+                    Default [HKLM\Software\opsi.org\winst]
+
+    </td></tr>
+    <tr>
+    <td>4.3.1       </td> <td>Verwendung des Schluessels opsi.org\winst fuer die Registry-Variable
+                    Rebootflag
+
+    </td></tr><tr>
+    <td>4.3       </td> <td>Die Konfiguration des PCs kann ueber den opsi service ermittelt werden.
+                      Neuer Befehl requiredWinstVersion (z.B. requiredWinstVersion >= 4.3
+
+    </td></tr>
+    <tr>
+    <td> 4.2.7
+                     </td> <td>
+                     syslog-Default-Wert ist jetzt none. <br />
+                     Andere Werte (
+                     koennen in der Registry (Defaultschluessel "HKLM\SOFTWARE\opsi.org\syslogd")
+                     vorgegeben werden (1 heisst Filesystem, 2 bedeutet, dass ein syslog-Dienst angesprochen wird,
+                     der Hostname wird dann der Registry-Variable "sysloghost" entnommen)
+                     <br/>
+                     </td>
+   </tr>
+    <tr>
+    <td> 4.2.6
+                     </td> <td>
+                     neue Registry-Funktion DeleteAllVars (loescht alle Eintraege im geoeffneten Key,
+                      funktioniert auch bei der Anwendung fuer "AllNtUserDats")
+                     <br/>
+                     </td>
+   </tr>
+   <tr>
+    <td> 4.2.5
+                   </td> <td>
+                   Bugfix in DosBatch, DosInAnIcon,...
+                     <br/>
+                     </td>
+
+    </tr>
+   <tr>
+    <td>                 
+     4.2.4
+                      </td> <td>    
+                      Warnung, wenn beim Schreiben eines Registry-Eintrags der Typ der Registry-Variable
+                      geaendert wird
+                       <br/>
+                      Syntaxfehlermeldung, wenn rekursives Loeschen eines Registry-Keys "for all NTUsers"
+                      versucht wird.
+                       <br/>
+                      Bei DosBatch und den anderen Shellkommando-Aufruf-Sektionen werden Zeilen, die
+                      mit ';' beginnen, jetzt uebergangen (und nicht mehr an die Shell uebergeben)
+                       <br/>
+
+                      Bug bei der Behandlung von "once"-Aktionen behoben: Produkt wird danach auf "off"
+                      gesetzt
+                       <br/>
+
+                      Nicht nur Hintergrundfarbe, sondern auch Textfarbe fuer die Batch-Oberflaeche des
+                      wInst konfigurierbar (Parameter textcolor in winst_p.ini)
+                       <br/>
+                       </td>
+
+    </tr>
+   <tr>
+    <td>                  
+     4.2.3     
+                      </td> <td>
+                      Bug in der Behandlung von failed-Zustaenden behoben
+                       <br/>
+                       </td>
+
+    </tr>
+   <tr>
+    <td>
+     4.2.2     
+                      </td> <td>
+                            Der Defaultwert stayontop=false wird wieder beachtet.
+                        <br/>
+                        </td>
+
+    </tr>
+   <tr>
+    <td>
+     4.2
+                      </td> <td>
+
+                      Alle Zugriffe auf Konfigurations-Ini-Dateien sind in einem Datenobjekt gekapselt, das
+                      in kuenftigen Versionen in verschiedenen Varianten existieren wird.
+
+                       <br/>
+
+
+                       Die Angabe des setupPath in der pathnams.ini ist nicht mehr erforderlich, es wird
+                       als Pfad fuer die setup-Skript der Wert depotdrive + depotdir + '\' + produktname
+                       verwendet,
+                       wobei depotdrive und depotdir aus den Registry-Eintraegen depotdrive und depoturl
+                       ermittelt werden.
+                       Wenn doch ein Wert fuer setupPath in der Pathnams.ini vorhanden ist, hat er Vorrang.
+                       Ausserdem koennen absolute Pfade fuer Skripte angegeben werden; ein absoluter Pfad fuer
+                       ein Skript wird direkt verwendet,
+                       die Werte von setupPath wie auch die Eintraege von depotdrive und depoturl werden
+                       ignoriert.
+                        <br/>
+
+
+                       Der LogLevel-Wert kann auch als String-Ausdruck angegeben werden.
+                        <br/>
+                       Die neue Funktion RandomStr erzeugt Zufallsstrings (aus Buchstaben und Ziffern)
+                       der Laenge 10.
+                        <br/>
+
+                       Innerhalb von Files-Sektionen, die mit der Option /allNtUserProfiles aufgerufen werden,
+                       wird die Variable %UserProfileDir% interpretiert (und der Reihe nach fuer die
+                       verschiedenen User mit den entsprechenden Verzeichnisnamen belegt)
+                        <br/>
+                        
+                       </td> 
+
+   </tr>
+   <tr>
+    <td>
+     4.1.5            
+                      </td> <td>
+                      Anzeige "Systeminfo" (Befehl showmessagefile) repariert
+                       Die winst-Konstanten (von %..% eingerahmt) koennen jetzt auch in sub-Sektionen
+                       verwendet werden, ihre Werte muessen daher nicht mehr vorab in winst-Variable eingelesen werden
+                       </td>
+
+    </tr>
+   <tr>
+    <td>
+     4.1.4
+                      </td> <td>
+                       Moeglichkeit einen String-Wert einzulesen, in dem eventuell schon alle Arten von
+                       Anfuehrungszeichen vorkommen (Pseudofunktion "EscapeString:")
+                       Verwendung der Umgebungsvariable "Computername" (statt Pcname, sofern letztere
+                       nicht existiert)
+                       Sicherer Ersatzstring fuer den Wert nicht existierender Umgebungsvariabler
+                       </td>
+
+    </tr>
+   <tr>
+    <td>
+     4.1.3           
+                      </td> <td>
+                       Neuer Parameter /WaitForProcessEnding  fuer WinBatch-Aufruf,
+                       kombinierbar mit nachfolgendem Parameter /timeoutSeconds
+                       Wenn /timeoutSeconds nicht angegeben, ist ein Default von 20 min gesetzt
+                       </td>
+
+                       
+    </tr>
+   <tr>
+    <td>
+     4.1.2
+                      </td> <td>
+                       Parameter /ImmediateLogout for ExitWindows-Kommando eingefuehrt
+                       </td>
+
+    </tr>
+   <tr>
+    <td>
+     4.1.1      
+                      </td> <td>
+                       Neue Syntaxvariante /regedit fuer Registry-Sektionen
+                       Anstelle einer Datei kann jetzt auch eine Stringliste als Inhalt einer Subsektion gesetzt werden
+                       Neue Stringlistenfunktion loadUnicodeTextFile (generiert wird eine Liste mit "gewoehnlichen" Strings)
+
+                       Bugfix Branching in sub-Sektionen
+                       Vorbereitungen configdata Interface
+                       </td>
+
+
+     </tr>
+   <tr>
+    <td>                  
+     4.1            
+                      </td> <td>
+                       Einfuehrung des Umgangs mit "fatalen Fehlern"
+                       </td>
+
+    </tr>
+   
+    </table>
+    
+    Version 4.05           
+                       (vgl. 3.24) Bugfix: Zaehlung der if-then-else-Ebenen wird jetzt in Subfunktionen fortgesetzt
+                       (und nicht mehr neu initialisiert)
+                       Bugfix: wenn Variable bootmode im Registry-Key nicht vorhanden ist, wird der Wert
+                       der Umgebungsvariable entnommen (bisher nur,wenn der Registry-Key insgesamt nicht vorhanden ist)
+
+    Version 4.0         
+                          Kylix-Kompilierbarkeit
+                       weitere Neuerungen:
+                       - Stringlistenverarbeitung
+                       - "Capture" von Ausgaben einer DosBatch/Shell-Aufrufen als Stringliste
+                       - Patchen von XML-Dateien 
+
+
+    Version 3.l9       Vorbereitung von Escaping von '"' in String-Konstanten mittels "\"
+                       Bugfix bei verschobenem Kopieren von system-Dlls
+
+    Version 3.18       Bugfixes
+
+    Version 3.17       Neue globale Skriptkonstanten:
+                       - AppDataDir, typischerweise "C:\Dokumente und Einstellungen\USERNAME\Anwendungsdaten"
+                       - AllUsersProfileDir, typischerweise "C:\Dokumente und Einstellungen\All Users"
+                       - ProgramFilesDir, typischerweise "C:\Programme"
+                       - CommonStartMenuPath, "C:\Dokumente und Einstellungen\All Users\Startmen"
+                       - WinstDir, das Programmverzeichnis der laufenden winst.exe
+
+                       Rekursives Loeschen eines Registry-Schlssels mit deletekey
+
+
+    Version 3.16       Befehl KillTask testweise eingefhrt
+
+    Version 3.15       Funktion StringSplit (Zu_teilender_String, Delimiter, Index)
+
+    Version 3.14       beim Patchen aller NTUser wird jetzt auch der Pseudouser .DEFAULT extra behandelt
+
+    Version 3.13       Fehler in waitForWindowVanish behoben
+                       neu eingerichtet waitForWindowAppearing
+
+    Version 3.12       Modifizierte filecopy-Funktion, direkter winapi-Aufruf mit Shared-Zugriff
+                       opsi-konforme Konfigurationsmoeglichkeit fuer Installationspfade
+                       
+    Version 3.11       Variable ScriptDrive eingefhrt
+
+    Version 3.1        Konfigurationsoptionen werden der Registry entnommen                                                                     
+
+    Version 3.07       Versionscheck fr alle Dateitypen angeschaltet
+    Version 3.06       Auswahlmoeglichkeit fr Hintergrundfarbe
+    Version 3.05       Neue Stringfunktionen
+                       extractfilepath (string)
+                       substringBefore (string, string)
+
+
+    Version 3.04
+                       wenn filecopy eine Kopieraktion erst nach dem Reboot ausfhren kann,
+                       wird ein Reboot nach dem Ende des jeweiligen Produkts angestossen
+                       (und nicht nur RebootWanted gesetzt)
+
+                       winst schreibt in Protokolldatei, wenn das Programm regulaer endet
+
+
+    Version 3.03       Laengenbeschraenkung beim Auslesen von Environment-Variablen aufgehoben
+
+    Version 3.02       Neue Boolesche Funktion hasMinimumSpace (<Laufwerksbezeichnung>, <Groesse>)
+                       Neue Anweisungen logError, logWarning
+                       Korrekturen an der SetPicture-Funktion: sie zeigt jetzt das Default-Leer-BMP an, wenn
+                       ein leerer oder ein ungltiger Bilddateiname bergeben wird.
+
+
+    Version 3.01       Neuer Sektionstyp LinkFolder (als Ersatz fr ProgramGroups)
+
+    Version 3.0        Win 5.x & opsi-ready: Neuimplementation des Prozesstarts
+
+
+    Version 2.94       Beim Patchen der prefs.js mit den Anweisungen set_netscape_user_pref wird die prefs.js
+                       nicht mehr sortiert.
+
+    Version 2.93       Es wird eine Konstante valueEnvVarNotFound verwendet statt des Wertes.
+                       Beim Start eines Skripts wird geprft, ob es die Umgebungsvariablen host oder workgroup
+                       bzw. pcname oder computername gibt und nur bei Vorhandensein ein Vermerk ins Skript
+                       gesetzt.
+                       Layout-Anpassung des Batch-Layouts.
+
+    Version 2.92       * Das Programm meldet den Fehler jetzt auch in bestimmten Situationen, in denen
+                       kein Schreibrecht auf eine Datei besteht
+
+
+    Version 2.91       * Wenn filecopy mit Fehler 32 ("Datei in Benutzung") scheitert und
+                       dann filecopy auch mit Fehler 32 scheitert, wenn die Zieldatei nicht
+                       existiert, wird der Versuch dreimal wiederholt (Hypothese: Serverprozess
+                       hat fr einen Moment die Quelldatei blockiert).
+
+    Version 2.9
+                       * neuer Produktschalter "always":
+                       Bei einem Produkt, das auf "always" gesetzt ist, wird das Skript,
+                       das die pathnams.ini fr den Bearbeitungstyp "alwayswinst" vorgibt,
+                       bei jedem Start des PCs erneut abgearbeitet.
+
+                       * Fehlermeldung an den Benutzer:
+                       Wenn es in der PCname.ini-Datei eine Sektion winst gibt und dort
+                       den Eintrag
+
+                       showErrorMessages=on
+
+                       dann erscheint am Schluss des gesamten Installationsprozesses eine
+                       Meldung an den Benutzer (sich an den PC-Betreuer zu wenden ...)
+
+                       * Protokollierung von Fehlern auf dem Server:
+                       Die (neu gestaltete) Datei instlog.err wird, sofern moeglich,
+                       auch als pcname.err in p:/pcpatch/pclog abgelegt.
+
+                       Der User wird ber aufgetretene Fehler informiert, sofern
+                       showErrorMessages=on
+
+                       * comment-Anweisung:
+                       Neue comment-Anweisung mit der Syntax
+                         comment = ...
+                       oder
+                         comment "..."
+
+                       Der Inhalt des comments wird unabhaengig vom eingestellten LogLevel
+                       angezeigt.
+
+                       * Logging abschalten:
+                       Setzen des LogLevels im Skript hat jetzt die Wirkung, die es haben sollte. Insbesondere
+                       schaltet
+                        LogLevel = -2
+                       die Protokollierung ganz ab (bis auf Inhalte von comments).
+
+
+    Version 2.85       Der winst ermittelt das Profiles-Verzeichnis jetzt mit OS-Mitteln, so dass es
+                       auch unter Win2k das Kopieren in alle NTUser-Verzeichnisse funktionieren sollte
+                       (nach wie vor ist Voraussetzung, dass die Verzeichnisse selbst entsprechend den
+                       Konventionen fr die jeweilige OS-Version angelegt sind)
+
+    Version 2.84       Wenn die Rechte nicht existieren, um ContinueLogFile zu setzen,
+                       wird der Fehler abgefangen (aber nirgends gemeldet).
+                       Unterscheidung auch zwischen Win2k und WinXP durch GetNTVersion
+
+    Version 2.83       Korrekturen beim Erzeugen von Default-Verzeichnissen.
+    = HUPSI 9.24       Einfhrung der Funktion GetNTVersion
+
+    Version 2.82       Beim Dateizeitvergleich wird jetzt eine Ungenauigkeit von +-2 Sekunden zugrundegelegt:
+                       Als gleich gelten Zeiten, die innerhalb dieses Intervalls liegen.
+
+    Version 2.81       Der insert_line-Befehle einer Textpatch-Sektion transportiert jetzt fhrende Leerzeichen
+
+
+    Version 2.8        Die gemaess den Produktreihenfolgeanweisungen sortierten Anwendungen
+                       werden jetzt ans Ende der Produktliste gestellt.
+                       
+                       Umbau von WinBatch-Aufrufen;
+                       u.a. kann jetzt auch eine Wartezeit angegeben werden, bis zu dem der winst nicht
+                       im Programmablauf weitergeht, z.B. 100 Sekunden Wartezeit mit dem
+                       Parameter /WaitSecs 100 beim WinBatch-Aufruf
+
+                       Bisher ist der Winst jedesmal nach der Bearbeitung eines Setup-Skripts ins Update-Skript gelaufen.
+                       Dies geschieht jetzt nicht mehr, sofern innerhalb des Setup-Skripts ein Reboot (oder Logout)
+                       ausgeloest wird.
+
+    Version 2.73       In IdapiConfig-Sektionen werden jetzt auch Dateinamen mit Leerzeichen verarbeitet
+
+    Version 2.72       Bugfix: Bei Reinstallationen werden auch Produkte, die auf update stehen,
+                       auf setup gesetzt.
+
+    Version 2.71       Bugfix im Dateidatumsvergleich
+                       Seit 18.12.2001
+
+    Version 2.70       Das Programm ermittelt jetzt die gewnschte Produktreihenfolge
+                       aus der Produkte.txt (betrifft Modus /pcprofil)
+
+                       Neue Option /AllNTUserProfiles des Files-Befehl:
+                       Sorgt dafr dass die zugehoerige Files-Sektion fr alle NT-User in der
+                       Weise durchlaufen wird, dass das TargetDirectory (fr Kopieraktionen)
+                       auf das Ausgangsverzeichnis des jeweiligen Users gesetzt wird
+                       hupsi-Version 2.21
+
+    Version 2.6.4      Bug, dass die Leerzeichen in Registry-Werten der Form
+                       "Programm.exe"  "Parameter"
+                       nicht mit eingetragen wurden, korrigiert
+                       Seit: 16.10.2001, hupsi-Version 9.19
+
+    Version 2.6.3      Die vom winst gezeigten Default-Graphiken sind jetzt samt Beschriftung durch Eintraege
+                       in der Datei winst_p.ini im Verzeichnis der winst.exe konfigurierbar
+                       Seit: 15.8.2001
+
+    Version 2.6.2      7/2001
+                       Eingefgt: Fehlendes Trennzeichen bei Log-Ausgabe im Falle des Scheiterns des Schreiben in registry
+
+    Version 2.6.1      7/2001
+                       Fehlerkorrektur in supp-Befehl/Registry-Sektion
+    Version 2.6        Neue Textpatch-Funktion deleteline "..."
+
+                       In Registry-Sektionen werden jetzt auch Reg_Multi_SZ-Eintraege untersttzt:
+                       set "[VARNAME]" =REG_MULTI_SZ:"A|B|C", wobei | als Stringseparator fungiert.
+
+                       Mit
+                       SaveValuetoFile "[VARNAME]" "[FILENAME]"
+                       kann ein String-, speziell ein REG_MULTI_SZ-Wert in eine Textdatei exportiert
+                       werden.
+
+                       Mit GetMultiSZFromFile "[VARNAME]" "[FILENAME]"
+                       werden die Zeilen einer Textdatei als ein REG_MULTI_SZ-Wert eingelesen.
+
+
+                       Als neuer Boolscher Ausdruck fr die Aktionen-Sektion ist definiert
+                       LineExistsIn ( Stringausdruck1, Stringausdruck2 )
+                       Der Ausdruck ist wahr, wenn die Zeile mit Inhalt Stringausdruck1
+                       in der Textdatei mit Namen Stringausdruck2 gefunden wird.
+
+
+    Version 2.5.3      Fr Profildateien TIniFile jetzt ersetzt durch TuibIniFile
+                       (wegen Kompatibilitaet mit Delphi 3)
+
+    Version 2.5.2      Fuer Profildateien TIniFile ersetzt durch TMemIniFile
+
+    Version 2.5.1      Dateizeit-Vergleich fr win32 greift jetzt auf Directory-Eintraege zu
+                       und oeffnet nicht mehr die beteiligten Dateien
+
+                       Systemvariable %SystemDrive% wird ermittelt und eingesetzt
+
+    Version 2.5        Aenderungen der TextPatch-Funktionen:
+                       findline, findline_startingwith, findline_containing suchen jetzt nur noch
+                       ab der aktuellen Zeile des Zeilen-Pointers; sollen alle Zeilen
+                       durchsucht werden, muss jetzt ggfs. die Anweisung GoToTop
+                       vorgeschaltet werden.
+                       Wenn die Funktionen den Suchstring nicht finden, bleibt der Zeilen-Pointer
+                       auf der Ausgangszeile (bwz. in der Position Top, d.h. vor der
+                       ersten Zeile) stehen.
+
+
+    Version 2.45       Wenn OS der Win95-Familie angehoert, wird jetzt
+                       -  Explorer als Shell eingestellt
+                       -  kein common program folder gesucht
+                       -  command.com fr DosBatch-Dateien aufgerufen
+
+                       Im Modus /pcprofil wird \pcpatch\pathnams.ini zunaechst auf dem
+                       Laufwerk gesucht, von dem aus das Programm aufgerufen wird;
+                       existiert die Datei dort nicht, wird die Datei auf dem Default-
+                       Laufwerk p: gesucht
+
+
+    Version 2.44       Neuer stop-Befehl als Ersatz fr Abbrechen-Option des pause-Befehls
+
+    Version 2.43       Neue OS-VersionsInfo-Stringfunktion GetOS
+                          (Wert 'Windows_16'/'Windows_95'/'Windows_NT')
+                       Neue Systemvariable %System% (die das Windows-Systemverzeichnis zurckgibt)
+
+                       Neue TextPatch-Funktionen
+                         append_Line
+                         append_File
+                         subtract_File
+                         saveToFile
+                       Behebung eines Bugs, der bewirkte, dass die Funktion findline_startingwith
+                       nicht unabhaengig von Gross- und Kleinschreibung arbeitete
+
+                       Neue Boolesche Funktion
+                          LineBeginning_ExistsIn ([String], [Filename])
+
+
+                       Der delete-Befehl der Files-Sektion hat als neue Option -d[n].
+                       Wird diese Option gesetzt, werden Datei nur geloescht, sofern sie
+                       mindestens n Tage alt sind. Default fr n ist 1.
+
+                       Als Dateien ausgelagerte sub-Sektionen koennen jetzt auch in sich
+                       Sektionen enthalten (die bei eventueller Namensgleichheit mit Sektionen
+                       im die sub-Sektion aufrufenden Skript letztere verdecken)
+
+                       Neue Funktion ShowBitmap in der Aktionen-Sektionen mit folgender Syntax:
+                         ShowBitmap [/Bildnummer] ["BMP-Datei-Name" "Bildunterschrift"]
+
+                         Derzeit sind Bildnummern 1-3 moeglich (links, mitte, rechts). Default ist 2 (mitte)
+                         Ohne Dateiname und Bildunterschrift wird das Standardbild wiederhergestellt.
+
+                         Die Default-Bitmaps heissen winst1.bmp, winst2.bmp, winst3.bmp und muessen mit winst32.exe
+                         und winst.dll mitkopiert werden!
+
+
+    Version 2.42       Einfhrung der IdapiConfig-Sektion zum Patchen der idapi*.cfg-
+                       Dateien, die von der Borland-Database-Engine verwendet werden.
+
+    Version 2.41       In einer Files-Sektion drfen Dateinamen jetzt auch in Anfangszeichen
+                       gesetzt sein (so dass Dateinamen mit Leerzeichen moeglich sind)
+
+                       Beim Aufruf mit dem Parameter /AllNTUserSendTo werden alle Aktionen einer
+                       Files-Sektion unterhalb des SendTo-Verzeichnisses jedes NT-Users
+                       (aber nicht fr "All Users") ausgefhrt.
+
+                       Fr das Patchen der Netscape-Prefs.js-Datei gibt es als eine
+                       zusaetzliche Anweisung AddStringListElement_To_Netscape_User_Pref
+
+
+    Version 2.4        Ergaenzen einer Installations-Variante "once"
+
+    Version 2.35       Das Programm kann jetzt auch mit leeren hosts-Dateien
+                       umgehen;
+                       PatchText-Sektions-Anweisungen sind etwas ausgebaut worden;
+                       vor dem Entpacken einer Datei wird eine Warnung ausgegeben, sofern
+                       voraussichtlich der Plattenplatz auf dem Ziellaufwerk nicht ausreicht.
+
+                       (ausgeliefert mit hupsi Version 9.9)
+
+    Version 2.34       Dateiparameter in der Aktionen-Sektion der Skripte koennen jetzt generell
+                       in Anfhrungszeichen gesetzt oder auch mit Variablen gebildet werden
+
+                       (ausgeliefert mit hupsi Version 9.8)
+
+    Version 2.33       Neuer Sektionstyp PatchTextFile zum Patchen allgemeiner Textdateien mit speziellen
+                       Befehlen fr das Patchen von Netscape-User-Preferences
+
+    Version 2.32       In Registry-Sektionen koennen set- und add-Befehl jetzt auch fuer binaere (bzw.
+                       hexadezimale) Daten verwendet werden, nach folgendem Schema
+
+                       set "Variable"=REG_BINARY:Wert
+
+                       Kein vorgaengiger Patch der Hosts-Datei mehr im Modus /pcprofil.
+
+    Version 2.31       Mit Explorer-Shell werden die Programmgruppen bzw. die Startmen-eintraege
+                       mit spezifischen Funktionen erzeugt
+
+    Version 2.30e      Mit Explorer-Shell entfaellt die Wiederholung der Progman-Eintraege am Schluss
+                       einer Installation mehrer Produkte
+
+    Version 2.30       Umstellung auf Delphi 3 - 4
+
+                       Neue Anweisung add in Registry-Sektionen (berschreibt existierende Werte nicht)
+
+                       Neue Anweisung ExitWindows:
+                         Mit der Option /RebootWanted bzw. /Reboot bzw.
+                         /ImmediateReboot wird im Kontext des Hupsi-Logins ein Reboot nach Ausfhrung
+                         aller Skripts bzw. des betreffenden Skripts bzw. innerhalb des
+                         betreffenden Skripts ausgeloestt
+
+                       Wenn c:\tmp nicht existiert, wird jetzt die Umgebungsvariable TEMP
+                       abgefragt, um das dort bezeichnete Verzeichnis fuer die temporaeren Dateien
+                       zu nutzen.
+
+                       Auch freier Festplattenplatz ber 4 GB wird jetzt korrekt ermittelt
+
+    Version 2.21       Tabs koennen jetzt als Begrenzer bei HostsPatch-Anweisungen verwendet werden
+    Version 2.20       Erweiterungen der Registry-Anweisungen (nur Win32):
+
+                       Wird eine Registry-Sektion mit der Option /AddReg aufgerufen,
+                       so werden in ihr Anweisungen in der Syntax von
+                       AddReg-inf-File-Sektionen, wie sie durch das sysdiff-Tool
+                       erzeugt werden, interpretiert.
+
+                       Die Anweisungen einer Registry-Sektion, die mit dem Parameter /AllNTUserDats
+                       aufgerufen wird, werden bezglich aller User des Systems angewendet: Sie werden
+                       erstens mit Root HKEY_Current_User ausgefhrt, zweitens auf alle anderen User
+                       angewendet (indem deren NTUser.dat-Dateien sukzessive in die Registry eingehaengt
+                       werden). Auch erst spaeter angelegte Accounts werden mit erfasst,
+                       weil die NTUser.dat vom Default User ebenfalls auf diese Weise behandelt wird.
+                       Innerhalb der Sektion mssen relative Key-Pfade stehen.
+
+
+                       Neue Anweisungen innerhalb einer Registry-Sektion:
+                       FlushKey (erzwingt sofortiges Zurckschreiben der Aenderungen in der Registry)
+                       ReconstructFrom <Dateiname> (ersetzt den geoeffneten Registry-Key samt seiner
+                       Unterschlssel durch einen exportierten Registry-Zweig aus der genannten Datei)
+
+
+                       Experimentell (nur Win32): Anweisung AddConnection
+
+
+    Version 2.2        Eine interne Strukturumstellung macht den Quellcode bersichtlicher und
+                       gestattet, dass von der Aktionen-Sektion Sub-Sektionen mit der gleichen Syntax
+                       wie die Aktionen-Sektion aufgerufen werden koenen.
+                       Es wird als Kompressionsformat nur noch ZIP untersttzt.
+
+
+    Version 2.14       Default-Verhalten des copy-Befehls in einer File-Sektion ist jetzt das Ueberschreiben
+                       einer schreibgeschtzten Datei (falls dies nicht gewnscht ist, sondern nur Dateien
+                       mit Schreibzugriff angetastet werden sollen, ist jetzt die Option
+                       -w zu verwenden). NT-Benutzerrechte werden von diesem Verhalten aber nicht angegriffen
+                       (falls nach ihnen kein Schreibzugriff auf eine Datei besteht, kann sie nicht berkopiert
+                       werden)
+
+                       Desgleichen wird ein Schreibschutz von zu patchenden Inidateien entfernt
+
+                       Die allgemeine Produktinfo-Datei pathnams.ini wird jetzt anstelle der Profildatei
+                       zum Nachschauen der Skriptpfadnamen verwendet, falls sie existiert
+
+                       neues Hostspatcher-Kommando SetComment zum Neusetzen eines Kommentars
+                        in der Hosts eingefhrt, Syntax
+                          SetComment Rechnernamen Kommentar
+                          SetComment ip-Nummer Kommentar
+
+
+    Version 2.13        27.10.98 Abfragen der Env.Var HupsiTyp vor HostsBasisPatch
+                        Beim Kopieren bleibt Dateidatum erhalten
+                        Wenn die vorgesehene Logdatei nicht geoeffnet werden kann, wird ein
+                        Ersatzdateiname vorgeschlagen
+                        Weiterer Bug der PatchHosts-Funktion behoben
+
+    Version 2.12        10/98 Mehrere Bugs der PatchHosts-Funktionen behoben
+
+                        10/98 Testweises Einfhrung von ExitWindows /RebootWanted
+                        bzw. ExitWindows /LogoutWanted
+                        (fhrt die gewnschten Aktionen unmittelbar
+                        vor dem Beenden von Winst aus, im Dialogmodus mit Rckfrage,
+                        im Modus /pcprofil wird nur ein Eintrag in der Registry gemacht)
+
+    Version 2.11        10/98 Einfhrung der globalen Systemvariable %ScriptPath%
+
+    Version 2.1         9/98 Die spezifischen Kommandozeilen, die eine
+                        wInst-Anweisung in der Aktionen-Sektion anstoesst, koennen jetzt
+                        (statt in einer Sektion der Skriptdatei) auch in einer
+                        gesonderten Datei stehen.
+                        Dazu ist die wInst-Anweisung "pur" (ohne Sektionsnamens-
+                        spezifizierer, also z.B. PatchHosts) zu verwenden, gefolgt
+                        von einem Stringausdruck, der den gewnschten Dateinamen
+                        enthaelt. Weitere Parameter koennen dann je nach Syntax der
+                        wInst-Anweisung folgen. Beispiel:
+                          PatchHosts "hostspt.txt" Myhosts.
+
+                        9/98 Fr die delete-Anweisung in einer File-Sektion gibt es
+                        jetzt die Option -f ("force"), mit der ein Loeschen von Readonly-Dateien
+                        erzwungen wird.
+
+                        8/98 if then else kann jetzt auch geschachtelt werden
+
+                        message hat wahlweise neue Syntax: message Stringausdruck
+
+    Version 2.07        8/98 Unter NT wird Grund des Nichtfindens einer Datei
+                        bei Skriptfunktion FileExists naeher spezifiziert
+                        9/98 Verbesserte Protokollfunktion bei der delete-Anweisung in der
+                        Files-Sektion
+
+
+    Version 2.06        8/98 Zippen funktioniert jetzt auch mit langen Dateinamen und Extensionen
+    Version 2.05        7/98 Wenn eine (zuvor im Directorylisting bereits gefundene) Datei
+                        beim Versuch, sie zwecks Kopieren zu oeffnen, nicht zugaenglich ist, koennen am
+                        Bildschirm erneute Zugriffsversuche gestartet werden.
+
+    Version 2.04        7/98 Unter NT wird auch unter der Explorer-Shell die korrekte Kommandozeile
+                        installiert.
+                        7/98 Es gibt eine etwas genauere Fehlermeldung, wenn Kopieren scheitert.
+                        7/98 Bug beim Wiedereinspielen der Progman-Gruppen beseitigt
+
+                        7/98 beim Patchen von Ini-Dateien wird jetzt auch beim Namen eines Eintrags
+                        nicht nach Gross- und Kleinschreibung unterschieden.
+
+                        Dateienzahl wird beim Zaehlen und beim Kopieren angegeben.
+
+                        NT: In die Hosts wird bei jedem Start IP-Adresse und -Name
+                        von PC und Host gepatcht.
+
+     Version 2.03       7/98 Logische Ausdruecke koennen jetzt auch mit AND und OR
+                        zusammengesetzt und geklammert werden.
+                        Im Aufrufmodus /pcprofil kann in der bearbeiteten PCProfil-Datei
+                        ("PCName.ini") durch einen Eintrag Logdatei=[...] in der Sektion winst
+                        die wInst-Logdateien dieses PCs auf eine andere als die ansonsten
+                        vorgesehene Datei umgeleitet werden.
+
+     Version 2.02       7/98 fr den WinBatch-Aufruf existiert jetzt alternativ die
+                        Option /WaitForWindowVanish [Fenstertitel]
+                        Sie bedeutet, dass die WinBatch-Sektion, genaugenommen
+                        jeder ihrer Prozessaufrufe, im Fall des gelungenen Startes
+                        des Prozesses erst zurckkehrt, wenn
+                        1. der Prozess beendet ist
+                        2. a) ein Fenster mit im Parameter aufgefhrten Fenstertitel auf
+                              dem Desktop erschienen ist
+                           b) kein Fenster dieses Titels mehr auf dem Desktop liegt
+
+     Version 2.01       7/98 repariert, dass Sysinfo-Formular abstrzt bei Eingabe von Return
+                        Fileexists-Funktion des Skripts repariert
+
+                        7/98 Abfangen des Fehlers "Kann Zeile nicht einfgen" (in memo1add)
+                        neues Logniveau "Info" eingefhrt (unterhalb der Ebene "Warnings")
+
+     Version 2.0        Kopienzaehler (relative Anzeige) eingebaut
+                        Ueberkopieren von Dateien wird nicht mehr als Warnung gezaehlt
+                        zip-Funktion in der Files-Sektion
+                        (nicht aktivierte) Modifikation der DDEwithProgman-Syntax zur Anpassung
+                        an Explorer-Erfordernisse
+                        Registry-Set / Supp jetzt mit Bercksichtigung von Reg_Expand_SZ
+                        Zip-Entpacker integriert
+
+     Version 1.50
+                        FileInfo2 wird nicht mehr betrachtet, stattdessen Produktinfo
+                        auch als DLL-Aufruf verfgbar
+
+                        Anpassung auf Erfordernisse von NT
+                        - Beschleunigung der Abarbeitung der PCName.ini-Dateien
+                        - Wartezeiten beim Abarbeiten von ddewithProgman-Sektionen
+
+                        Einfhrung einer if ... else ... endif - Konstruktion in der Aktionen-Sektion
+
+                        Nach if muss ein boolescher Ausdruck stehen, der entweder
+                        - mit der booleschen Funktion fileExrists ()
+                        - mit not ()
+                        - oder mit einem Ausdruck der Form String1 = String2
+                        gebildet wird.
+
+                        Die String-Werte koennen dabei entweder
+                        - von den StringFunktionen EnvVar (d.h. EnvironmentVariable), IniVar (Wert aus
+                          der produktspezifischen Sektion der PCName-IniDatei), GetHostsName und GetHostsAddr
+                          (lesen die jeweiligen Werte aus der betriebssystemabhaengigen Lokation der Hosts-Datei
+                          aus) geliefert werden
+                        - eine String-Konstante, umrahmt von "" sein
+                        - oder Werte sein, die auf einer Variable stehen
+                        - oder durch die Addition (+) anderer Stringwerte entstehen.
+
+                        Variable werden eingefhrt mit einer DefVar-Anweisung,
+                        mit einem Wert belegt in einer Set-Anweisung.
+
+                        Die Hosts-Datei, die vom Hostpatcher oder von den Funktionen GetHostsName und
+                        GetHostsAddr verwendet wird, wird betriebssystemabhaengig bestimmt.
+
+
+     Version 1.45 kleinere Ungenauigkeiten beseitigt
+     Version 1.44 Warnung wird ausgegeben, wenn Diskspace nicht gengt
+                           alle hosts-Dateien werden gepatcht
+     Version 1.43 1/98  Bug beseitigt, der dazu fuehrte, dass c:\tmp\decompr nicht geloescht wurde
+     Version 1.42 12/97 Umstellung der Reihenfolge der Default-Directories fr Hostpatcher
+     Version 1.41 11/97 Directory-Erkennung funktioniert jetzt auch,
+                           wenn auch noch ein anderes Dateiattribut gesetzt ist.
+
+                           Dateigroessenbestimmung funktioniert jetzt auch bei readonly-
+                           Dateien
+
+                           Default jetzt stayontop=false
+
+     Version 1.4  10/97 Einfhrung der PatchHosts-Sektion
+     Version 1.31 9/97 kleinere Verbesserungen am wInst-Protokoll
+     Version 1.3  9/97 Im /pcprofil-Modus werden alle ddewithProgman-Anweisungen in eigener Datei
+                          gesammel. Sie werden um nach Ausfhrung aller anderer Anweisungen
+                          zum Neuaufbau der Progman-Gruppe(n) genutzt.
+     Version 1.22 9/97 Bugfix: Scriptname wird jetzt tatsaechlich in Logdatei genannt
+     Version 1.21 9/97 Kopiert Auto.grp auf Autostart.grp
+                          Anweisung zum Ausschalten von StayOnTop
+                          /waitOnClose bei WinBatchSektionen ist jetzt Default
+     Version 1.2 8/97 Austausch von LHA gegen LZH
+     Version 1.0 8/97 Systemvariablen Systemroot, Host und PCName werden untersttzt *)
+

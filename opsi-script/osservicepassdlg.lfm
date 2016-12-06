@@ -1,0 +1,106 @@
+object DialogServicePassword: TDialogServicePassword
+  Left = 760
+  Height = 250
+  Top = 456
+  Width = 450
+  HorzScrollBar.Range = 417
+  HorzScrollBar.Visible = False
+  VertScrollBar.Range = 193
+  VertScrollBar.Visible = False
+  ActiveControl = EditUsername
+  Caption = ' DialogServicePassword'
+  ClientHeight = 250
+  ClientWidth = 450
+  Color = clBtnFace
+  Constraints.MaxHeight = 500
+  Constraints.MaxWidth = 900
+  Constraints.MinHeight = 240
+  Constraints.MinWidth = 450
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = 'MS Sans Serif'
+  OnCreate = FormCreate
+  OnShow = FormShow
+  Position = poScreenCenter
+  LCLVersion = '1.0.8.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 250
+    Top = 0
+    Width = 450
+    Align = alClient
+    ClientHeight = 250
+    ClientWidth = 450
+    Constraints.MinHeight = 233
+    Constraints.MinWidth = 433
+    TabOrder = 0
+    object EditPassword: TEdit
+      Left = 185
+      Height = 25
+      Top = 120
+      Width = 225
+      Color = clWhite
+      EchoMode = emPassword
+      PasswordChar = '*'
+      TabOrder = 1
+    end
+    object EditUsername: TEdit
+      Left = 185
+      Height = 25
+      Top = 80
+      Width = 225
+      TabOrder = 0
+    end
+    object EditServiceURL: TEdit
+      Left = 185
+      Height = 24
+      Top = 40
+      Width = 225
+      AutoSize = False
+      TabOrder = 4
+    end
+    object CancelButton: TButton
+      Left = 329
+      Height = 25
+      Top = 160
+      Width = 75
+      Caption = 'Cancel'
+      ModalResult = 2
+      TabOrder = 3
+    end
+    object OKButton: TButton
+      Left = 225
+      Height = 25
+      Top = 160
+      Width = 75
+      Caption = 'o.k.'
+      Default = True
+      ModalResult = 1
+      TabOrder = 2
+    end
+    object LabelUsername: TLabel
+      Left = 17
+      Height = 18
+      Top = 88
+      Width = 68
+      Caption = 'Username'
+      ParentColor = False
+    end
+    object LabelServiceURL: TLabel
+      Left = 17
+      Height = 18
+      Top = 48
+      Width = 109
+      Caption = 'Opsi Service URL'
+      ParentColor = False
+    end
+    object LabelPassword: TLabel
+      Left = 17
+      Height = 18
+      Top = 120
+      Width = 60
+      Caption = 'Password'
+      ParentColor = False
+    end
+  end
+end

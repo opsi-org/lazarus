@@ -1,0 +1,41 @@
+object FormHelp: TFormHelp
+  Left = 526
+  Height = 400
+  Top = 339
+  Width = 500
+  Caption = 'FormHelp'
+  ClientHeight = 400
+  ClientWidth = 500
+  OnCreate = FormCreate
+  OnResize = FormResize
+  LCLVersion = '1.0.12.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 400
+    Top = 0
+    Width = 500
+    Caption = 'Panel1'
+    ClientHeight = 400
+    ClientWidth = 500
+    TabOrder = 0
+    object HTMLViewerHelp: THTMLViewer
+      Left = 1
+      Height = 400
+      Top = 1
+      Width = 498
+      TabOrder = 0
+      Align = alTop
+      BorderStyle = htFocused
+      HistoryMaxCount = 0
+      DefFontName = 'Times New Roman'
+      DefPreFontName = 'Courier New'
+      NoSelect = False
+      CharSet = DEFAULT_CHARSET
+      PrintMarginLeft = 2
+      PrintMarginRight = 2
+      PrintMarginTop = 2
+      PrintMarginBottom = 2
+      PrintScale = 1
+    end
+  end
+end

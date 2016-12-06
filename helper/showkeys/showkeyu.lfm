@@ -1,0 +1,20 @@
+object Form1: TForm1
+  Left = 619
+  Height = 240
+  Top = 488
+  Width = 320
+  Caption = 'opsi show keys'
+  ClientHeight = 240
+  ClientWidth = 320
+  LCLVersion = '1.6.0.4'
+  object Memo1: TMemo
+    Left = 0
+    Height = 240
+    Top = 0
+    Width = 320
+    Align = alClient
+    OnKeyDown = Memo1KeyDown
+    ScrollBars = ssAutoBoth
+    TabOrder = 0
+  end
+end

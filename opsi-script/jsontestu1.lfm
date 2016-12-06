@@ -1,0 +1,44 @@
+object Form1: TForm1
+  Left = 42
+  Height = 707
+  Top = 307
+  Width = 688
+  Caption = 'json test'
+  ClientHeight = 707
+  ClientWidth = 688
+  OnCreate = FormCreate
+  LCLVersion = '1.6.0.4'
+  object Memo1: TMemo
+    Left = 16
+    Height = 120
+    Top = 40
+    Width = 650
+    Lines.Strings = (
+      '[{"clientId":"pctry4detlef.uib.local","actionResult":"successful","installationStatus":"installed","actionRequest":"none","packageVersion":"4","ident":"03-opsi-abo-standard;LocalbootProduct;pctry4detlef.uib.local","productType":"LocalbootProduct","lastAction":"setup","productVersion":"1.0","modificationTime":"2015-01-26 14:41:20","productId":"03-opsi-abo-standard","actionProgress":"","type":"ProductOnClient","targetConfiguration":"installed","actionSequence":-1},'
+      '{"clientId":"pctry4detlef.uib.local","actionResult":"successful","installationStatus":"installed","actionRequest":"none","packageVersion":"1","ident":"7zip;LocalbootProduct;pctry4detlef.uib.local","productType":"LocalbootProduct","lastAction":"setup","productVersion":"9.22","modificationTime":"2015-01-19 17:21:17","productId":"7zip","actionProgress":"","type":"ProductOnClient","targetConfiguration":"installed","actionSequence":-1}]'
+    )
+    OnChange = Memo1Change
+    ScrollBars = ssAutoBoth
+    TabOrder = 0
+  end
+  object Button1: TButton
+    Left = 16
+    Height = 25
+    Top = 8
+    Width = 112
+    Caption = 'run'
+    OnClick = Button1Click
+    TabOrder = 1
+  end
+  object Memo2: TMemo
+    Left = 16
+    Height = 456
+    Top = 176
+    Width = 654
+    Lines.Strings = (
+      'Memo2'
+    )
+    ScrollBars = ssAutoBoth
+    TabOrder = 2
+  end
+end

@@ -1,0 +1,20 @@
+object DataModuleLogServer: TDataModuleLogServer
+  OnCreate = DataModuleCreate
+  OnDestroy = DataModuleDestroy
+  OldCreateOrder = False
+  Height = 148
+  HorizontalOffset = 474
+  VerticalOffset = 704
+  Width = 217
+  object IdUDPServer1: TIdUDPServer
+    Bindings = <    
+      item
+        IP = '127.0.0.1'
+        Port = 4445
+      end>
+    DefaultPort = 0
+    OnUDPRead = IdUDPServer1UDPRead
+    left = 152
+    top = 49
+  end
+end

@@ -1,0 +1,104 @@
+; ----------------------------------------------------------------
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib
+; and published under the Terms of the General Public License.
+; credits: http://www.opsi.org/en/credits/
+; ----------------------------------------------------------------
+
+;****************************************
+; SETUPTYPE      files
+;****************************************
+; PRODUCTID      opsi-setup-detector
+;****************************************
+; LICENSE        false     
+; PRODUCTDESC    opsi Setup Detector - analyze Setup files and create new opsi products (requires opsi package manager, which is not included in this packet)
+; PRODUCTNAME    opsiSetupDetector
+; PRODUCTSIZE    50 MB
+; PRODUCTVER     1.2.0.94
+;****************************************
+; SETUPSCRIPT    setup.opsiscript
+; UNINSSCRIPT    uninstall.opsiscript
+;****************************************
+; INSTALLDIR     %ProgramFilesDir%\opsiSetupDetector
+;****************************************
+; TIMESTAMP      11.10.2013 16:16:06
+;****************************************
+
+[Actions]
+requiredWinstVersion >= "4.11.3.3"
+
+DefVar $SetupType$
+DefVar $ProductId$ 
+DefVar $InstallDir$
+DefVar $MinimumSpace$
+DefVar $ErrorMsg$
+DefVar $LicenseRequired$
+DefVar $LicenseKey$
+DefVar $LicensePool$
+DefVar $LogDir$
+DefVar $DeinstallFlag$
+
+Set $LogDir$ = "%SystemDrive%\tmp"
+
+; ----------------------------------------------------------------
+Set $SetupType$       = "file"
+; ----------------------------------------------------------------
+
+; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
+Set $ProductId$       = "opsi-setup-detector"
+; the path where we find the product after the installation
+Set $InstallDir$      = "%ProgramFilesDir%\opsiSetupDetector"
+Set $MinimumSpace$    = "50 MB"
+; ----------------------------------------------------------------
+Set $DeinstallFlag$ = "false"
+; ----------------------------------------------------------------
+
+if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
+	LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% needed for " + $ProductId$
+	isFatalError "No Space"
+	; Stop process and set installation status to failed
+else
+	comment "Show product picture"
+	ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
+	
+	if FileExists("%ScriptPath%\delsub.opsiscript")
+		comment "Start uninstall sub section"
+		Sub "%ScriptPath%\delsub.opsiscript"
+	endif
+	
+	Message "Installing " + $ProductId$ + " ..."
+	
+	comment "Start setup program"
+	ChangeDirectory "%SCRIPTPATH%"
+   ;----------------------------------------------
+   Files_copy
+   LinkFolder_install
+   ;----------------------------------------------
+   
+endif
+
+
+; ----------------------------------------------------------------
+; install sections
+; ----------------------------------------------------------------
+[Files_copy]
+copy -s "%SCRIPTPATH%\files\*.*" "$InstallDir$"
+
+; ----------------------------------------------------------------
+[LinkFolder_install]
+; create shortcut to the installed exe in AllUsers startmenu
+set_basefolder common_programs
+set_subfolder $ProductId$
+set_link
+   name: $ProductId$
+   target: $InstallDir$\opsisetupdetector
+   parameters:
+   working_dir: $InstallDir$\opsisetupdetector.exe
+   icon_file: $InstallDir$\favicon.ico
+   icon_index:
+end_link
+
+
+
+; ----------------------------------------------------------------
+; ----------------------------------------------------------------

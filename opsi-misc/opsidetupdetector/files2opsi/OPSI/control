@@ -1,0 +1,30 @@
+[Package]
+version: 1
+depends: 
+incremental: False
+
+[Product]
+type: localboot
+id: #@#-PRODUCTID-#@#
+name: #@#-PRODUCTNAME-#@#
+description: #@#-PRODUCTDESC-#@#
+advice: 
+version: #@#-PRODUCTVER-#@#
+priority: 0
+licenseRequired: False
+productClasses: 
+setupScript: #@#-SETUPSCRIPT-#@#
+uninstallScript: #@#-UNINSSCRIPT-#@#
+updateScript: 
+alwaysScript: 
+onceScript: 
+customScript: 
+userLoginScript:
+
+[Changelog]
+#@#-PRODUCTID-#@# (#@#-PRODUCTVER-#@#-1) stable; urgency=low
+
+	* initial: created by opsi-setup-detector
+
+-- opsisetupdetector.exe <info@uib.de>  #@#-TIMESTAMP-#@#
+

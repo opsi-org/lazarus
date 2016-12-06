@@ -1,0 +1,288 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Lars Juul <lju@eucl.dk>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: osbatchgui.rsgetlistofproducts
+msgctxt "osbatchgui.rsgetlistofproducts"
+msgid "get list of products"
+msgstr "Henter program liste"
+
+#: osbatchgui.rsloadingskin
+msgctxt "osbatchgui.rsloadingskin"
+msgid "Loading skin..."
+msgstr "Henter tema"
+
+#: osinteractivegui.rsproductcheck
+msgctxt "osinteractivegui.rsproductcheck"
+msgid "product check"
+msgstr "program kontrol"
+
+#: osmain.rsproductcheck
+msgctxt "osmain.rsproductcheck"
+msgid "product check"
+msgstr "program kontrol"
+
+#: osparser.rsgetpassword
+msgid "Please enter opsi service user password:"
+msgstr ""
+
+#: osparser.rsgetserviceurl
+msgid "Please enter opsi service URL:"
+msgstr ""
+
+#: osparser.rsgetusername
+msgid "Please enter opsi service user name:"
+msgstr ""
+
+#: oswebservice.rssendlog
+msgctxt "oswebservice.rssendlog"
+msgid "Sending log file to server ..."
+msgstr "Sender log fil til server ..."
+
+#: tcentralform.beenden1.caption
+msgctxt "TCENTRALFORM.BEENDEN1.CAPTION"
+msgid "Exit"
+msgstr "Afslut"
+
+#: tcentralform.buttongetclipboardtext.caption
+msgid "Clipboard --> Viewlist"
+msgstr "Klippebord -> Listevisning"
+
+#: tcentralform.buttonprocessmemo.caption
+msgid "Execute viewlist as script"
+msgstr "Kør listevisning som et script"
+
+#: tcentralform.button_show_gui.caption
+msgid "Show GUI"
+msgstr "Vis grænseflade"
+
+#: tcentralform.caption
+msgctxt "tcentralform.caption"
+msgid "  opsi - script"
+msgstr ""
+
+#: tcentralform.combobox1.text
+msgid "ComboBox1"
+msgstr "Komboboks1"
+
+#: tcentralform.datei1.caption
+msgid "File"
+msgstr "Fil"
+
+#: tcentralform.edit1.text
+msgid "Edit1"
+msgstr "Rediger1"
+
+#: tcentralform.edit2.text
+msgid "Edit2"
+msgstr "Rediger2"
+
+#: tcentralform.hilfe1.caption
+msgid "Help"
+msgstr "Hjælp"
+
+#: tcentralform.info1.caption
+msgid "Info .."
+msgstr "Info .."
+
+#: tcentralform.label1.caption
+msgctxt "tcentralform.label1.caption"
+msgid "Label1"
+msgstr "Mærkat1"
+
+#: tcentralform.label2.caption
+msgid "Label2"
+msgstr "Mærkat2"
+
+#: tcentralform.label4.caption
+msgid "Logfile:"
+msgstr "Logfil:"
+
+#: tcentralform.label5.caption
+msgid "Script:"
+msgstr "Script:"
+
+#: tcentralform.label6.caption
+msgctxt "TCENTRALFORM.LABEL6.CAPTION"
+msgid "LabelWinstVersion"
+msgstr ""
+
+#: tcentralform.labelactivity.caption
+msgid "-"
+msgstr ""
+
+#: tcentralform.labelwinstversion.caption
+msgctxt "TCENTRALFORM.LABELWINSTVERSION.CAPTION"
+msgid "LabelWinstVersion"
+msgstr ""
+
+#: tcentralform.panel2.caption
+msgid "Log-View:"
+msgstr "Logfilsvisning:"
+
+#: tcentralform.radiobuttonappendlogfile.caption
+msgid "Append"
+msgstr "Tilføj"
+
+#: tcentralform.radiobuttonnewlogfile.caption
+msgid "New"
+msgstr "Ny"
+
+#: tcentralform.skript1.caption
+msgid "Open Script"
+msgstr "Åben scriptfil"
+
+#: tcentralform.speedbutton1.caption
+msgid "Select Script"
+msgstr "Vælg script"
+
+#: tcentralform.speedbutton2.caption
+msgid "Start"
+msgstr "Start"
+
+#: tcentralform.speedbutton3.caption
+msgid "View Log"
+msgstr "Se Logfil"
+
+#: tcentralform.speedbutton4.caption
+msgid "Hide GUI"
+msgstr "Skjul grænseflade"
+
+#: tcentralform.speedbutton5.caption
+msgctxt "TCENTRALFORM.SPEEDBUTTON5.CAPTION"
+msgid "Exit"
+msgstr "Afslut"
+
+#: tcentralform.toolbar1.caption
+msgid "ToolBar1"
+msgstr "Værktøjslinje1"
+
+#: tdialogservicepassword.cancelbutton.caption
+msgid "Cancel"
+msgstr ""
+
+#: tdialogservicepassword.caption
+msgid " DialogServicePassword"
+msgstr ""
+
+#: tdialogservicepassword.labelpassword.caption
+msgid "Password"
+msgstr ""
+
+#: tdialogservicepassword.labelserviceurl.caption
+msgid "Opsi Service URL"
+msgstr ""
+
+#: tdialogservicepassword.labelusername.caption
+msgid "Username"
+msgstr ""
+
+#: tdialogservicepassword.okbutton.caption
+msgid "o.k."
+msgstr ""
+
+#: tfbatchoberflaeche.caption
+msgctxt "tfbatchoberflaeche.caption"
+msgid "opsi-script"
+msgstr ""
+
+#: tfbatchoberflaeche.labelcommand.caption
+msgid "Command"
+msgstr "Kommando"
+
+#: tfbatchoberflaeche.labeldetail.caption
+msgid "Detail"
+msgstr "Detaljer"
+
+#: tfbatchoberflaeche.labelinfo.caption
+msgid "Info"
+msgstr "Info"
+
+#: tfbatchoberflaeche.labelproduct.caption
+msgid "LabelProductImage"
+msgstr ""
+
+#: tfbatchoberflaeche.labelprogress.caption
+msgid "Activity"
+msgstr "Aktivitet"
+
+#: tfbatchoberflaeche.labelversion.caption
+msgid "LabelVersion"
+msgstr ""
+
+#: tmymessagedlg.abortbtn.caption
+msgid "&Exit"
+msgstr ""
+
+#: tmymessagedlg.cancelbtn.caption
+msgid "&Cancel"
+msgstr ""
+
+#: tmymessagedlg.caption
+msgid "opsi-winst Message"
+msgstr ""
+
+#: tmymessagedlg.nobtn.caption
+msgid "&No"
+msgstr ""
+
+#: tmymessagedlg.okbtn.caption
+msgid "&OK"
+msgstr ""
+
+#: tmymessagedlg.yesbtn.caption
+msgid "&Yes"
+msgstr ""
+
+#: tshowtextfile.bitbtn1.caption
+msgid "Search"
+msgstr "Søg"
+
+#: tshowtextfile.caption
+msgid "opsi-script Logfile"
+msgstr ""
+
+#: tshowtextfile.label1.caption
+msgid "Fontsize"
+msgstr "Fontstørelse"
+
+#: tshowtextfile.label2.caption
+msgid "Filter Loglevel"
+msgstr "Indstil loglevel"
+
+#: tsysteminfo.caption
+msgid "SystemInfo"
+msgstr ""
+
+#: tsysteminfo.label1.caption
+msgctxt "tsysteminfo.label1.caption"
+msgid "Label1"
+msgstr "Mærkat1"
+
+#: wibtch.rsgetlistofproducts
+msgctxt "wibtch.rsgetlistofproducts"
+msgid "get list of products"
+msgstr "Henter program liste"
+
+#: wibtch.rsloadingskin
+msgctxt "wibtch.rsloadingskin"
+msgid "Loading skin..."
+msgstr "Henter tema"
+
+#: widatamodul.rssendlog
+msgctxt "widatamodul.rssendlog"
+msgid "Sending log file to server ..."
+msgstr "Sender log fil til server ..."
+
+#: wimain.rsproductcheck
+msgctxt "wimain.rsproductcheck"
+msgid "product check"
+msgstr "program kontrol"
+

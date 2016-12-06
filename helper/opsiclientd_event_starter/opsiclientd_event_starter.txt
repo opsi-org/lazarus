@@ -1,0 +1,6 @@
+opsiclientd_shutdown_starter 4.0.7.0
+
+  * initial derivated from kioskclient
+
+-- detlef oertel <d.oertel@uib.de>  Thu, 28 Sep 2016 15:00:00 +0000
+

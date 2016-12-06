@@ -1,0 +1,44 @@
+https://svn.opsi.org/opsi-misc
+
+requires: OPSIPackageBuilder (installed)
+
+$Revision: 126 $ 
+$Date: 2014-09-23 17:46:39 +0200 (Di, 23 Sep 2014) $
+
+Rev. 126 - type specific general markers for removing other type specific sections from setup.opsicript
+Rev. 125 - new opsisetupdetector.ico
+Rev. 124 - version info set for testing 
+Rev. 123 - minor changes
+Rev. 122 - removing other setupType install sections from setup.opsicript, use Constants for setupType
+Rev. 121 - InstallShield detection by InstallShield only
+Rev. 120 - fixed redmine #1154 InnoSetup detection
+
+-----------------------------------------------
+Rev. 72
+(MSI, NSIS, InnoSetup, InstallShield(+MSI), Advsnced+MSI)
+
+files:
+- extractMSI.cmd
+- innounp.exe
+- innounp.htm
+- MSIInfo.js
+- ms-strings-Eula.txt
+- opsisetupdetector.exe
+
+diresctories:
+- files-inno2opsi\*
+- files-msi2opsi\*
+- files-nsis2opsi\*
+- languages\*
+-----------------------------------------------
+
+-----------------------------------------------
+Rev. 40
+(MSI only)
+-----------------------------------------------
+
+
+
+
+
+

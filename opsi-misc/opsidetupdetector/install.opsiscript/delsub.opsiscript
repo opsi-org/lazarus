@@ -1,0 +1,86 @@
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib gmbh
+; and published under the Terms of the General Public License.
+; credits: http://www.opsi.org/en/credits/
+
+DefVar $config$
+DefVar $logfile$
+DefVar $opsitemp$
+DefVar $appdata$
+
+
+Message "Uninstalling " + $ProductId$ + " ..."
+
+if (not($InstallDir$ = '')) and FileExists($InstallDir$ + "\opsisetupdetector.exe")
+   Files_uninstall
+endif
+
+;;** delete program shortcut
+comment "Delete program shortcut"
+LinkFolder_uninstall
+
+;** remove config.txt (Packet BaseDir)
+Set $config$ = "%CommonAppdataDir%\opsi setup detector\config.txt"
+if FileExists("$config$")
+   if $DeinstallFlag$ = "true"
+      comment "delete config"
+      Files_del_config
+   else
+      comment "reinstall: keep config"
+   endif
+endif
+
+;** remove Appdata (setup analysis results)
+comment "delete appdata results"
+Set $appdata$ = "%CommonAppdataDir%\opsi setup detector"
+if $DeinstallFlag$ = "true"
+   Files_del_appdata_all
+else
+   Files_del_appdata_part
+endif
+
+
+;** remove logfile
+Set $logfile$ = "C:\opsi.org\log\opsiSetupDetector.log"
+if not FileExists("$logfile$")
+   Set $logfile$ = '%TEMP%\opsitmp\log\opsiSetupDetector.log' 
+if FileExists("$logfile$")
+   Files_del_logfile
+endif
+
+
+;** remove TEMP files
+comment "delete TEMP files"
+Set $opsitemp$ = '%TEMP%\opsitmp\'
+Files_del_opsitemp
+
+
+;-----------------------------------------------------
+;-----------------------------------------------------
+[Files_uninstall]
+del -sf "$InstallDir$\"
+
+[Files_del_config]
+del -f "$config$"
+
+[Files_del_appdata_all]
+del -sf "$appdata$\"
+
+[Files_del_appdata_part]
+del -sf "$appdata$\INNO\"
+del -sf "$appdata$\MSI\"
+
+[Files_del_logfile]
+del -f "$logfile$"
+
+[Files_del_opsitemp]
+del -sf "$opsitemp$\"
+
+;-----------------------------------------------------
+[LinkFolder_uninstall]
+; delete folder from AllUsers startmenu:
+set_basefolder common_programs
+delete_subfolder $ProductId$
+
+;-----------------------------------------------------
+;-----------------------------------------------------

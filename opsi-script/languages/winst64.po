@@ -1,0 +1,73 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: osbatchgui.rsgetlistofproducts
+msgid "get list of products"
+msgstr ""
+
+#: osbatchgui.rsloadingskin
+msgid "Loading skin..."
+msgstr ""
+
+#: osinteractivegui.rsproductcheck
+msgctxt "osinteractivegui.rsproductcheck"
+msgid "product check"
+msgstr ""
+
+#: osmain.rsproductcheck
+msgctxt "osmain.rsproductcheck"
+msgid "product check"
+msgstr ""
+
+#: osparser.rsgetpassword
+msgid "Please enter opsi service user password:"
+msgstr ""
+
+#: osparser.rsgetserviceurl
+msgid "Please enter opsi service URL:"
+msgstr ""
+
+#: osparser.rsgetusername
+msgid "Please enter opsi service user name:"
+msgstr ""
+
+#: oswebservice.rssendlog
+msgid "Sending log file to server ..."
+msgstr ""
+
+#: tfbatchoberflaeche.caption
+msgid "opsi-script"
+msgstr ""
+
+#: tfbatchoberflaeche.labelcommand.caption
+msgid "Command"
+msgstr ""
+
+#: tfbatchoberflaeche.labeldetail.caption
+msgid "Detail"
+msgstr ""
+
+#: tfbatchoberflaeche.labelinfo.caption
+msgid "Info"
+msgstr ""
+
+#: tfbatchoberflaeche.labelproduct.caption
+msgid "LabelProductImage"
+msgstr ""
+
+#: tfbatchoberflaeche.labelprogress.caption
+msgid "Activity"
+msgstr ""
+
+#: tfbatchoberflaeche.labelversion.caption
+msgid "LabelVersion"
+msgstr ""
+
+#: tsysteminfo.caption
+msgid "SystemInfo"
+msgstr ""
+
+#: tsysteminfo.label1.caption
+msgid "Label1"
+msgstr ""
+

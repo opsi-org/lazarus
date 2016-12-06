@@ -1,0 +1,38 @@
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib gmbh
+; and published under the Terms of the General Public License.
+; credits: http://www.opsi.org/en/credits/
+
+[Actions]
+requiredWinstVersion >= "4.11.3.3"
+
+DefVar $SetupType$
+DefVar $LogDir$
+DefVar $ExitCode$
+DefVar $ErrorMsg$
+DefVar $InstallDir$
+DefVar $ProductId$
+DefVar $DeinstallFlag$
+
+;-----------------------------------------------
+Set $SetupType$ = 'files'
+;-----------------------------------------------Set $LogDir$ = "%SystemDrive%\tmp"
+
+; ----------------------------------------------------------------
+Set $ProductId$  = "opsi-setup-detector"
+Set $InstallDir$ = "%ProgramFilesDir%\opsiSetupDetector"
+; ----------------------------------------------------------------
+
+
+comment "Show product picture"
+ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
+
+Message "Uninstalling " + $ProductId$ + " ..."
+
+Set $DeinstallFlag$ = "true"
+
+if FileExists("%ScriptPath%\delsub.opsiscript")
+	comment "Start uninstall sub section"
+	Sub "%ScriptPath%\delsub.opsiscript"
+endif
+

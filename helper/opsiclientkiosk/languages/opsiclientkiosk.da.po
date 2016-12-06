@@ -1,0 +1,237 @@
+# 
+# Translators:
+# Lars Juul, 2016
+msgid ""
+msgstr ""
+"Project-Id-Version: opsi.org\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2016-06-08 09:26+0000\n"
+"Last-Translator: Lars Juul\n"
+"Language-Team: Danish (http://www.transifex.com/opsi-org/opsiorg/language/da/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: da\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#: ockdata.rsallgroups
+msgid "All groups"
+msgstr "Alle grupper"
+
+#: ockdata.rsnogroups
+msgid "No Product Groups found ..."
+msgstr ""
+
+#: opsiclientkioskgui.rsnoactionsfound
+msgid "No action requests found."
+msgstr ""
+
+#: oswebservice.rssendlog
+msgid "Sending log file to server ..."
+msgstr "Sender log fil til server ..."
+
+#: tfinstalldlg.bitbtnlater.caption
+msgctxt "TFINSTALLDLG.BITBTNLATER.CAPTION"
+msgid "Install at next Standard Event (e.g. Reboot)"
+msgstr "Installer ved næste genstart"
+
+#: tfinstalldlg.bitbtnnow.caption
+msgctxt "TFINSTALLDLG.BITBTNNOW.CAPTION"
+msgid "Install now (Close all Applications)"
+msgstr "Installer nu (Luk alle programmer)"
+
+#: tfinstalldlg.caption
+msgctxt "TFINSTALLDLG.CAPTION"
+msgid "opsi-kiosk-client"
+msgstr "opsi-kiosk-klient"
+
+#: tfinstalldlg.label1.caption
+msgctxt "TFINSTALLDLG.LABEL1.CAPTION"
+msgid "The following Actions will be done:"
+msgstr "Følgende handlinger vil blive udført:"
+
+#: tfinstalldlg.toolbar1.caption
+msgctxt "TFINSTALLDLG.TOOLBAR1.CAPTION"
+msgid "ToolBar1"
+msgstr "do not translate"
+
+#: tfopsiclientkiosk.bitbtncancel.caption
+msgid "Exit"
+msgstr ""
+
+#: tfopsiclientkiosk.bitbtncancel.hint
+msgctxt "TFOPSICLIENTKIOSK.BITBTNCANCEL.HINT"
+msgid "Terminate Program (with out any further action)"
+msgstr ""
+
+#: tfopsiclientkiosk.bitbtninfo.caption
+msgid "Info"
+msgstr ""
+
+#: tfopsiclientkiosk.bitbtnshowaction.caption
+msgid "Show Actions"
+msgstr "Vis Handlinger"
+
+#: tfopsiclientkiosk.bitbtnshowaction.hint
+msgid "Show the list of action requests in the list. "
+msgstr ""
+
+#: tfopsiclientkiosk.bitbtnstoreaction.caption
+msgid "Store Actions"
+msgstr "Kiosk Handlinger"
+
+#: tfopsiclientkiosk.bitbtnstoreaction.hint
+msgid "Send the list of action requests in the list to the server, show the results and ask for installation start. "
+msgstr ""
+
+#: tfopsiclientkiosk.btnupgrade.caption
+msgid "Filter for Upgrade"
+msgstr "Filter for upgradering"
+
+#: tfopsiclientkiosk.btnupgrade.hint
+msgid "Filter for Products where an upgrade is possible"
+msgstr "Filter for produkter hvor der er en opgradering tilgængelig"
+
+#: tfopsiclientkiosk.caption
+msgid "opsi-client-kiosk"
+msgstr "opsi-klient-kiosk"
+
+#: tfopsiclientkiosk.datapanel.caption
+msgid "datapanel"
+msgstr "do not translate"
+
+#: tfopsiclientkiosk.dbgrid1.hint
+msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
+msgstr ""
+
+#: tfopsiclientkiosk.grouplist.hint
+msgid "List of possible groups"
+msgstr ""
+
+#: tfopsiclientkiosk.grouppanel.caption
+msgid "grouppanel"
+msgstr "do not translate"
+
+#: tfopsiclientkiosk.labeladvice.caption
+msgid "Advice:  "
+msgstr "Råd:"
+
+#: tfopsiclientkiosk.labelclientverstr.caption
+msgid "Version at Client"
+msgstr "Version på klient"
+
+#: tfopsiclientkiosk.labeldataload.caption
+msgid "LabelDataload"
+msgstr "do not translate"
+
+#: tfopsiclientkiosk.labeldataloaddetail.caption
+msgid "LabelDataLoadDetail"
+msgstr "do not translate"
+
+#: tfopsiclientkiosk.labeldescription.caption
+msgid "Description:  "
+msgstr "Beskrivelse:"
+
+#: tfopsiclientkiosk.labelpriority.caption
+msgid "Priority: "
+msgstr "Priotet:"
+
+#: tfopsiclientkiosk.labelverstr.caption
+msgid "Version at Server"
+msgstr "Version på server"
+
+#: tfopsiclientkiosk.labelwait.caption
+msgid "Please wait ..."
+msgstr "Vent venligst ..."
+
+#: tfopsiclientkiosk.paneldependencies.caption
+msgid "PanelDependencies"
+msgstr "do not translate"
+
+#: tfopsiclientkiosk.panelprogess.caption
+msgid "PanelProgess"
+msgstr "do not translate"
+
+#: tfopsiclientkiosk.paneltoolbar.caption
+msgid "PanelToolbar"
+msgstr "do not translate"
+
+#: tfopsiclientkiosk.productdetailpanel.caption
+msgid "productdetailpanel"
+msgstr "do not translate"
+
+#: tfopsiclientkiosk.productlistpanel.caption
+msgid "productlistpanel"
+msgstr "do not translate"
+
+#: tfopsiclientkiosk.searchedit.hint
+msgid "Search in Productlist"
+msgstr "Søg i produktliste"
+
+#: tfopsiclientkiosk.speedbutton1.caption
+msgid "Filter"
+msgstr "Filter"
+
+#: tfopsiclientkiosk.speedbutton1.hint
+msgid "Set Filter"
+msgstr "Set Filter"
+
+#: tfopsiclientkiosk.speedbuttonall.caption
+msgid "Show all"
+msgstr "Vis alle"
+
+#: tfopsiclientkiosk.speedbuttonall.hint
+msgid "Show all List entries (No Filter)"
+msgstr ""
+
+#: tfopsiclientkiosk.speedbuttonreload.caption
+msgid "Reload"
+msgstr ""
+
+#: tfopsiclientkiosk.statusbar1.panels[0].text
+msgid "Not Connected to opsi server"
+msgstr "Ikke forbundet til opsi serveren"
+
+#: tfopsiclientkiosk.tabsheet1.caption
+msgid "Details"
+msgstr "Detaljer"
+
+#: tfopsiclientkiosk.tabsheet2.caption
+msgid "Dependencies / Priority"
+msgstr ""
+
+#: tfopsiclientkiosk.titlelabel.caption
+msgid "opsi Client Kiosk"
+msgstr "opsi Klient Kiosk"
+
+#: tfopsiclientkiosk.toolbar1.caption
+msgctxt "tfopsiclientkiosk.toolbar1.caption"
+msgid "ToolBar1"
+msgstr "do not translate"
+
+#: tform1.bitbtnlater.caption
+msgctxt "tform1.bitbtnlater.caption"
+msgid "Install at next Standard Event (e.g. Reboot)"
+msgstr "Installer ved næste genstart"
+
+#: tform1.bitbtnnow.caption
+msgctxt "tform1.bitbtnnow.caption"
+msgid "Install now (Close all Applications)"
+msgstr "Installer nu (Luk alle programmer)"
+
+#: tform1.caption
+msgctxt "tform1.caption"
+msgid "opsi-kiosk-client"
+msgstr "opsi-kiosk-klient"
+
+#: tform1.label1.caption
+msgctxt "tform1.label1.caption"
+msgid "The following Actions will be done:"
+msgstr "Følgende handlinger vil blive udført:"
+
+#: tform1.toolbar1.caption
+msgctxt "TFORM1.TOOLBAR1.CAPTION"
+msgid "ToolBar1"
+msgstr "do not translate"
+

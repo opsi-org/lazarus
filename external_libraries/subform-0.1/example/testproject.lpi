@@ -1,0 +1,293 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <ProjectOptions>
+    <PathDelim Value="/"/>
+    <Version Value="5"/>
+    <General>
+      <MainUnit Value="0"/>
+      <IconPath Value="./"/>
+      <TargetFileExt Value=""/>
+      <ActiveEditorIndexAtStart Value="0"/>
+    </General>
+    <VersionInfo>
+      <ProjectVersion Value=""/>
+      <Language Value=""/>
+      <CharSet Value=""/>
+    </VersionInfo>
+    <PublishOptions>
+      <Version Value="2"/>
+      <IgnoreBinaries Value="False"/>
+      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
+      <ExcludeFileFilter Value="*.(bak|ppu|ppw|o|so);*~;backup"/>
+    </PublishOptions>
+    <RunParams>
+      <local>
+        <FormatVersion Value="1"/>
+        <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
+      </local>
+    </RunParams>
+    <RequiredPackages Count="4">
+      <Item1>
+        <PackageName Value="SubFormPackage"/>
+        <MinVersion Valid="True"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="LCL"/>
+      </Item2>
+      <Item3>
+        <PackageName Value="FCL"/>
+        <MinVersion Major="1" Valid="True"/>
+      </Item3>
+      <Item4>
+        <PackageName Value="DBFLaz"/>
+        <MinVersion Minor="1" Release="1" Valid="True"/>
+      </Item4>
+    </RequiredPackages>
+    <Units Count="30">
+      <Unit0>
+        <Filename Value="testproject.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="testproject"/>
+        <UsageCount Value="64"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="testform.pas"/>
+        <ComponentName Value="Form1"/>
+        <IsPartOfProject Value="True"/>
+        <ResourceFilename Value="testform.lrs"/>
+        <UnitName Value="testform"/>
+        <CursorPos X="12" Y="67"/>
+        <TopLine Value="50"/>
+        <EditorIndex Value="0"/>
+        <UsageCount Value="64"/>
+        <Loaded Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="subform.pas"/>
+        <UnitName Value="subform"/>
+        <CursorPos X="46" Y="530"/>
+        <TopLine Value="513"/>
+        <UsageCount Value="42"/>
+        <Bookmarks Count="3">
+          <Item0 X="1" Y="311" ID="1"/>
+          <Item1 X="6" Y="327" ID="2"/>
+          <Item2 X="1" Y="62" ID="9"/>
+        </Bookmarks>
+      </Unit2>
+      <Unit3>
+        <Filename Value="../../svns/lazarus/components/sqlite/registersqlite3.pas"/>
+        <UnitName Value="registersqlite3"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="8"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="../testunit.pas"/>
+        <ComponentName Value="Form1"/>
+        <HasResources Value="True"/>
+        <UnitName Value="testunit"/>
+        <CursorPos X="27" Y="377"/>
+        <TopLine Value="286"/>
+        <UsageCount Value="11"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="../../svns/lazarus/lcl/include/intfbaselcl.inc"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="13"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="../../svns/lazarus/lcl/extctrls.pp"/>
+        <UnitName Value="ExtCtrls"/>
+        <CursorPos X="30" Y="607"/>
+        <TopLine Value="591"/>
+        <UsageCount Value="10"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="../../svns/lazarus/lcl/controls.pp"/>
+        <UnitName Value="Controls"/>
+        <CursorPos X="3" Y="1765"/>
+        <TopLine Value="1749"/>
+        <UsageCount Value="10"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="../../svns/fpc/rtl/objpas/classes/classesh.inc"/>
+        <CursorPos X="15" Y="1335"/>
+        <TopLine Value="1319"/>
+        <UsageCount Value="8"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="../../svns/fpc/rtl/objpas/classes/compon.inc"/>
+        <CursorPos X="31" Y="233"/>
+        <TopLine Value="213"/>
+        <UsageCount Value="8"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="../../svns/lazarus/lcl/include/control.inc"/>
+        <CursorPos X="45" Y="3607"/>
+        <TopLine Value="3587"/>
+        <UsageCount Value="9"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="../../svns/lazarus/lcl/lmessages.pp"/>
+        <UnitName Value="LMessages"/>
+        <CursorPos X="3" Y="646"/>
+        <TopLine Value="630"/>
+        <UsageCount Value="10"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="../../svns/lazarus/lcl/buttons.pp"/>
+        <UnitName Value="Buttons"/>
+        <CursorPos X="3" Y="17"/>
+        <TopLine Value="17"/>
+        <UsageCount Value="8"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="../../svns/lazarus/lcl/lresources.pp"/>
+        <UnitName Value="LResources"/>
+        <CursorPos X="74" Y="280"/>
+        <TopLine Value="262"/>
+        <UsageCount Value="11"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="../../svns/lazarus/lcl/graphics.pp"/>
+        <UnitName Value="Graphics"/>
+        <CursorPos X="22" Y="150"/>
+        <TopLine Value="134"/>
+        <UsageCount Value="9"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="../../svns/lazarus/lcl/graphtype.pp"/>
+        <UnitName Value="GraphType"/>
+        <CursorPos X="3" Y="40"/>
+        <TopLine Value="24"/>
+        <UsageCount Value="9"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="../../svns/lazarus/lcl/include/wincontrol.inc"/>
+        <CursorPos X="32" Y="4420"/>
+        <TopLine Value="4415"/>
+        <UsageCount Value="9"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="../../svns/lazarus/lcl/editbtn.pas"/>
+        <UnitName Value="EditBtn"/>
+        <CursorPos X="1" Y="522"/>
+        <TopLine Value="506"/>
+        <UsageCount Value="9"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="../../svns/lazarus/lcl/dbgrids.pas"/>
+        <UnitName Value="DBGrids"/>
+        <CursorPos X="35" Y="148"/>
+        <TopLine Value="127"/>
+        <UsageCount Value="12"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="../../svns/lazarus/lcl/maps.pp"/>
+        <UnitName Value="maps"/>
+        <CursorPos X="21" Y="421"/>
+        <TopLine Value="403"/>
+        <UsageCount Value="9"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="../../svns/lazarus/lcl/alllclunits.pp"/>
+        <UnitName Value="AllLCLUnits"/>
+        <CursorPos X="1" Y="31"/>
+        <TopLine Value="13"/>
+        <UsageCount Value="9"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="testform.lfm"/>
+        <CursorPos X="6" Y="19"/>
+        <TopLine Value="2"/>
+        <UsageCount Value="9"/>
+        <SyntaxHighlighter Value="LFM"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="/usr/share/fpcsrc/rtl/inc/objpash.inc"/>
+        <CursorPos X="8" Y="62"/>
+        <TopLine Value="46"/>
+        <UsageCount Value="9"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="/usr/share/fpcsrc/rtl/objpas/typinfo.pp"/>
+        <UnitName Value="typinfo"/>
+        <CursorPos X="11" Y="253"/>
+        <TopLine Value="237"/>
+        <UsageCount Value="15"/>
+      </Unit23>
+      <Unit24>
+        <Filename Value="/usr/share/fpcsrc/fcl/db/db.pp"/>
+        <UnitName Value="db"/>
+        <CursorPos X="20" Y="47"/>
+        <TopLine Value="31"/>
+        <UsageCount Value="17"/>
+      </Unit24>
+      <Unit25>
+        <Filename Value="/usr/share/fpcsrc/rtl/objpas/classes/classesh.inc"/>
+        <CursorPos X="3" Y="104"/>
+        <TopLine Value="88"/>
+        <UsageCount Value="17"/>
+      </Unit25>
+      <Unit26>
+        <Filename Value="component.lrs"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit26>
+      <Unit27>
+        <Filename Value="../../svns/lazarus/lcl/include/customedit.inc"/>
+        <CursorPos X="1" Y="355"/>
+        <TopLine Value="339"/>
+        <UsageCount Value="10"/>
+      </Unit27>
+      <Unit28>
+        <Filename Value="../../dbautoedit/dbautoedit.pas"/>
+        <UnitName Value="DBAutoEdit"/>
+        <CursorPos X="35" Y="52"/>
+        <TopLine Value="25"/>
+        <UsageCount Value="10"/>
+      </Unit28>
+      <Unit29>
+        <Filename Value="../../svns/lazarus/lcl/dbctrls.pp"/>
+        <UnitName Value="DbCtrls"/>
+        <CursorPos X="38" Y="158"/>
+        <TopLine Value="133"/>
+        <UsageCount Value="10"/>
+      </Unit29>
+    </Units>
+    <JumpHistory Count="1" HistoryIndex="0">
+      <Position1>
+        <Filename Value="testform.pas"/>
+        <Caret Line="29" Column="41" TopLine="28"/>
+      </Position1>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="5"/>
+    <CodeGeneration>
+      <Generate Value="Faster"/>
+    </CodeGeneration>
+    <Linking>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
+    </Linking>
+    <Other>
+      <CompilerPath Value="$(CompPath)"/>
+    </Other>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="2">
+      <Item1>
+        <Name Value="ECodetoolError"/>
+      </Item1>
+      <Item2>
+        <Name Value="EFOpenError"/>
+      </Item2>
+    </Exceptions>
+  </Debugging>
+</CONFIG>

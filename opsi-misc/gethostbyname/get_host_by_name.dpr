@@ -1,0 +1,74 @@
+program get_host_by_name;
+
+{$APPTYPE CONSOLE}
+
+uses
+  SysUtils, Winsock;
+
+var 
+  Host, IP, Err: string;
+
+
+function GetIPFromHost
+(var HostName, IPaddr, WSAErr: string): Boolean; 
+type 
+  Name = array[0..100] of Char; 
+  PName = ^Name; 
+var 
+  HEnt: pHostEnt; 
+  HName: PName; 
+  WSAData: TWSAData; 
+  i: Integer; 
+begin 
+  Result := False;
+  if WSAStartup($0101, WSAData) <> 0 then begin 
+    WSAErr := 'Winsock is not responding."'; 
+    Exit;
+  end; 
+  IPaddr := '';
+  New(HName);
+  //if GetHostName(HName^, SizeOf(Name)) = 0 then
+  StrPCopy(HName^,Hostname);
+  begin
+    HostName := StrPas(HName^);
+    HEnt := GetHostByName(HName^);
+    for i := 0 to HEnt^.h_length - 1 do 
+     IPaddr :=
+      Concat(IPaddr,
+      IntToStr(Ord(HEnt^.h_addr_list^[i])) + '.'); 
+    SetLength(IPaddr, Length(IPaddr) - 1); 
+    Result := True; 
+  end;
+  (*
+  else begin
+   case WSAGetLastError of
+    WSANOTINITIALISED:WSAErr:='WSANotInitialised';
+    WSAENETDOWN      :WSAErr:='WSAENetDown';
+    WSAEINPROGRESS   :WSAErr:='WSAEInProgress';
+   end;
+  end;
+  *)
+  Dispose(HName);
+  WSACleanup; 
+end; 
+
+
+
+begin
+  { TODO -oUser -cConsole Main : Hier Code einfügen }
+	// based on http://delphi.about.com/od/networking/l/aa103100a.htm
+	host := '';
+  host := paramstr(1);
+	//writeln(host);
+	try
+		if GetIPFromHost(Host, IP, Err) then
+		begin
+			writeln(IP);
+		end
+		else
+			writeln('Error: '+Err);
+	except
+		writeln('Error resolving host: >'+host+'<');
+		halt(1);
+	end
+end.

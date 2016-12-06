@@ -1,0 +1,168 @@
+
+[Sub_check_exitcode]
+
+comment "get the exit code"
+set $ExitCode$ = getLastExitCode
+set $ErrorMsg$ = ""
+
+comment "check the exit code"
+if ($ExitCode$ = "0" OR $ExitCode$ ="1641" OR $ExitCode$ ="3010")
+	comment "non critical Exitcodes"
+	if ($ExitCode$ = "0")
+		comment "ExitCode = "+$ExitCode$+" Action completed successfully."
+	endif
+	if ($ExitCode$ = "1641")
+		comment "ExitCode = "+$ExitCode$+" ERROR_SUCCESS_REBOOT_INITIATED The installer has started a reboot. This error code not available on Windows Installer version 1.0."
+	endif
+	if ($ExitCode$ = "3010")
+		comment "ExitCode = "+$ExitCode$+" ERROR_SUCCESS_REBOOT_REQUIRED A reboot is required to complete the install. This does not include installs where the ForceReboot action is run. This error code not available on Windows Installer version 1.0."
+	endif
+else
+	comment "critical Exitcodes"
+	if ($ExitCode$ = "13")
+		set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INVALID_DATA The data is invalid."
+	endif
+	if ($ExitCode$ = "87")
+		set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INVALID_PARAMETER One of the parameters was invalid."
+	endif
+	if ($ExitCode$ = "120")
+		set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_CALL_NOT_IMPLEMENTED This function is not available for this platform. It is only available on Windows 2000 and Windows XP with Window Installer version 2.0."
+	endif
+	if ($ExitCode$ = "1259")
+		set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_APPHELP_BLOCK This error code only occurs when using Windows Installer version 2.0 and Windows XP or later. If Windows Installer determines a product may be incompatible with the current operating system, it displays a dialog informing the user and asking whether to try to install anyway. This error code is returned if the user chooses not to try the installation."
+	endif
+	if ($ExitCode$ = "1601")
+		set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INSTALL_SERVICE_FAILURE The Windows Installer service could not be accessed. Contact your support personnel to verify that the Windows Installer service is properly registered."
+	endif
+	if ($ExitCode$ = "1602")
+		set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INSTALL_USEREXIT User cancel installation."
+	endif
+	if ($ExitCode$ = "1603")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INSTALL_FAILURE Fatal error during installation."
+	endif
+	if ($ExitCode$ = "1604")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INSTALL_SUSPEND Installation suspended, incomplete."
+	endif
+	if ($ExitCode$ = "1605")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_UNKNOWN_PRODUCT This action is only valid for products that are currently installed."
+	endif
+	if ($ExitCode$ = "1606")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_UNKNOWN_FEATURE Feature ID not registered."
+	endif
+	if ($ExitCode$ = "1607")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_UNKNOWN_COMPONENT Component ID not registered."
+	endif
+	if ($ExitCode$ = "1608")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_UNKNOWN_PROPERTY Unknown property."
+	endif
+	if ($ExitCode$ = "1609")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INVALID_HANDLE_STATE Handle is in an invalid state."
+	endif
+	if ($ExitCode$ = "1610")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_BAD_CONFIGURATION The configuration data for this product is corrupt. Contact your support personnel."
+	endif
+	if ($ExitCode$ = "1611")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INDEX_ABSENT Component qualifier not present."
+	endif
+	if ($ExitCode$ = "1612")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INSTALL_SOURCE_ABSENT The installation source for this product is not available. Verify that the source exists and that you can access it."
+	endif
+	if ($ExitCode$ = "1613")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INSTALL_PACKAGE_VERSION This installation package cannot be installed by the Windows Installer service. You must install a Windows service pack that contains a newer version of the Windows Installer service."
+	endif
+	if ($ExitCode$ = "1614")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_PRODUCT_UNINSTALLED Product is uninstalled."
+	endif
+	if ($ExitCode$ = "1615")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_BAD_QUERY_SYNTAX SQL query syntax invalid or unsupported."
+	endif
+	if ($ExitCode$ = "1616")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INVALID_FIELD Record field does not exist."
+	endif
+	if ($ExitCode$ = "1618")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INSTALL_ALREADY_RUNNING Another installation is already in progress. Complete that installation before proceeding with this install."
+	endif
+	if ($ExitCode$ = "1619")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INSTALL_PACKAGE_OPEN_FAILED This installation package could not be opened. Verify that the package exists and that you can access it, or contact the application vendor to verify that this is a valid Windows Installer package."
+	endif
+	if ($ExitCode$ = "1620")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INSTALL_PACKAGE_INVALID This installation package could not be opened. Contact the application vendor to verify that this is a valid Windows Installer package."
+	endif
+	if ($ExitCode$ = "1621")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INSTALL_UI_FAILURE There was an error starting the Windows Installer service user interface. Contact your support personnel."
+	endif
+	if ($ExitCode$ = "1622")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INSTALL_LOG_FAILURE Error opening installation log file. Verify that the specified log file location exists and is writable."
+	endif
+	if ($ExitCode$ = "1623")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INSTALL_LANGUAGE_UNSUPPORTED This language of this installation package is not supported by your system."
+	endif
+	if ($ExitCode$ = "1624")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INSTALL_TRANSFORM_FAILURE Error applying transforms. Verify that the specified transform paths are valid."
+	endif
+	if ($ExitCode$ = "1625")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INSTALL_PACKAGE_REJECTED This installation is forbidden by system policy. Contact your system administrator."
+	endif
+	if ($ExitCode$ = "1626")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_FUNCTION_NOT_CALLED Function could not be executed."
+	endif
+	if ($ExitCode$ = "1627")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_FUNCTION_FAILED Function failed during execution."
+	endif
+	if ($ExitCode$ = "1628")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INVALID_TABLE Invalid or unknown table specified."
+	endif
+	if ($ExitCode$ = "1629")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_DATATYPE_MISMATCH Data supplied is of wrong type."
+	endif
+	if ($ExitCode$ = "1630")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_UNSUPPORTED_TYPE Data of this type is not supported."
+	endif
+	if ($ExitCode$ = "1631")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_CREATE_FAILED The Windows Installer service failed to start. Contact your support personnel."
+	endif
+	if ($ExitCode$ = "1632")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INSTALL_TEMP_UNWRITABLE The temp folder is either full or inaccessible. Verify that the temp folder exists and that you can write to it."
+	endif
+	if ($ExitCode$ = "1633")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INSTALL_PLATFORM_UNSUPPORTED This installation package is not supported on this platform. Contact your application vendor."
+	endif
+	if ($ExitCode$ = "1634")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INSTALL_NOTUSED Component not used on this machine"
+	endif
+	if ($ExitCode$ = "1635")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_PATCH_PACKAGE_OPEN_FAILED This patch package could not be opened. Verify that the patch package exists and that you can access it, or contact the application vendor to verify that this is a valid Windows Installer patch package."
+	endif
+	if ($ExitCode$ = "1636")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_PATCH_PACKAGE_INVALID This patch package could not be opened. Contact the application vendor to verify that this is a valid Windows Installer patch package."
+	endif
+	if ($ExitCode$ = "1637")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_PATCH_PACKAGE_UNSUPPORTED This patch package cannot be processed by the Windows Installer service. You must install a Windows service pack that contains a newer version of the Windows Installer service."
+	endif
+	if ($ExitCode$ = "1638")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_PRODUCT_VERSION Another version of this product is already installed. Installation of this version cannot continue. To configure or remove the existing version of this product, use Add/Remove Programs on the Control Panel."
+	endif
+	if ($ExitCode$ = "1639")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INVALID_COMMAND_LINE Invalid command line argument. Consult the Windows Installer SDK for detailed command line help."
+	endif
+	if ($ExitCode$ = "1640")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INSTALL_REMOTE_DISALLOWED Installation from a Terminal Server client session not permitted for current user."
+	endif
+	if ($ExitCode$ = "1642")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_PATCH_TARGET_NOT_FOUND The installer cannot install the upgrade patch because the program being upgraded may be missing or the upgrade patch updates a different version of the program. Verify that the program to be upgraded exists on your computer and that you have the correct upgrade patch. This error code is not available on Windows Installer version 1.0."
+	endif
+	if ($ExitCode$ = "1643")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_PATCH_PACKAGE_REJECTED The patch package is not permitted by system policy. This error code is available with Windows Installer versions 2.0 or later."
+	endif
+	if ($ExitCode$ = "1644")
+			set $ErrorMsg$ = "ExitCode = "+$ExitCode$+" ERROR_INSTALL_TRANSFORM_REJECTED One or more customizations are not permitted by system policy. This error code is available with Windows Installer versions 2.0 or later."
+	endif
+	if not ($ErrorMsg$ = "")
+		logError $ErrorMsg$
+		isFatalError "Installer failed"
+	else
+		logError "Unknown Installer Error: Exitcode = "+$ExitCode$
+		isFatalError "Unknown Exitcode"
+	endif
+endif
+
