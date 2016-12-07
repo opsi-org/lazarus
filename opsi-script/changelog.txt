@@ -20,6 +20,9 @@ opsi-winst/opsi-script (4.11.6.11) stable; urgency=low
   * osparser: CreateAndProcessScript: resets local_opsidata before script
   * osparser: doAktionen: Statement: 'opsiservicecall /preloginservice' (without sektion) allowed
   * oswebservice: sendLog: shrinking temporary disabled until size can be asked via service call
+  * osfuncwin: StrSIDToName: do not try empty string
+  * osparser: use 'on e: exception do' in exception handling
+  * osfuncwin2: updateenvironment: use lazarus sendmessage
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 06 Dec 2016:15:00:00 +0200
 

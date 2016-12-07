@@ -112,8 +112,7 @@ function mountSmbShare(drive: string; uncPath: string; Username: string;
   Password: string; RestoreAtLogon: boolean): DWORD;
 function unmountSmbShare(driveOrPath: string; force: boolean): DWORD;
 function getProfilesDirListWin: TStringList;
-function getWinlogonHandleForUser(const myuser: string;
-  var myhandle: THandle): boolean;
+function getWinlogonHandleForUser(const myuser: string; var myhandle: THandle): boolean;
 
 function winCreateHardLink(lpFileName: PChar; lpExistingFileName: PChar;
   lpSecurityAttributes: pointer): winbool;
@@ -956,7 +955,8 @@ begin
           Result := True;
         end
         else
-          LogDatei.log('Found exe: ' + foundexe + ' but for wrong user: ' + domuser, LLDebug2);
+          LogDatei.log('Found exe: ' + foundexe + ' but for wrong user: ' +
+            domuser, LLDebug2);
     end;
     Inc(i);
   end;
@@ -1221,27 +1221,30 @@ var
   Name: string;
 begin
   Result := '';
-  err := ConvertStringSIDToSID(PChar(StrSID), SID);
-  if err then
+  if StrSID <> '' then
   begin
-    NameLen := 0;
-    TempLen := 0;
-    LookupAccountSidA(nil, SID, nil, NameLen, nil, TempLen, peUse);
-    GetMem(Buffer, NameLen);
-    try
-      err := LookupAccountSidA(nil, SID, Buffer, NameLen, nil, TempLen, peUse);
-      if err then
-      begin
-        SetString(Name, Buffer, Namelen);
-        Result := Name;
+    err := ConvertStringSIDToSID(PChar(StrSID), SID);
+    if err then
+    begin
+      NameLen := 0;
+      TempLen := 0;
+      LookupAccountSidA(nil, SID, nil, NameLen, nil, TempLen, peUse);
+      GetMem(Buffer, NameLen);
+      try
+        err := LookupAccountSidA(nil, SID, Buffer, NameLen, nil, TempLen, peUse);
+        if err then
+        begin
+          SetString(Name, Buffer, Namelen);
+          Result := Name;
+        end;
+      finally
+        FreeMem(Buffer);
       end;
-    finally
-      FreeMem(Buffer);
     end;
+    if Assigned(SID) then
+      LocalFree(DWORD(SID));
+    //result := err;
   end;
-  if Assigned(SID) then
-    LocalFree(DWORD(SID));
-  //result := err;
 end;
 
 //http://stackoverflow.com/questions/2444541/create-windows-user-using-delphi
@@ -1930,9 +1933,11 @@ begin
         // the default authentication credentials for a user by using
         // a SOLE_AUTHENTICATION_LIST structure in the pAuthList ----
         // parameter of CoInitializeSecurity ------------------------
-        if Failed(CoInitializeSecurity(nil, -1, nil, nil, RPC_C_AUTHN_LEVEL_DEFAULT,
-          RPC_C_IMP_LEVEL_IMPERSONATE, nil, EOAC_NONE, nil)) then
-          LogDatei.DependentAdd('Error: getIpMacHash: Failed:  CoInitializeSecurity', LLError);
+        if Failed(CoInitializeSecurity(nil, -1, nil, nil,
+          RPC_C_AUTHN_LEVEL_DEFAULT, RPC_C_IMP_LEVEL_IMPERSONATE, nil,
+          EOAC_NONE, nil)) then
+          LogDatei.DependentAdd('Error: getIpMacHash: Failed:  CoInitializeSecurity',
+            LLError);
         // Obtain the initial locator to WMI -------------------------
         if Succeeded(CoCreateInstance(CLSID_WbemLocator, nil,
           CLSCTX_INPROC_SERVER, IID_IWbemLocator, FWbemLocator)) then
@@ -1944,15 +1949,17 @@ begin
               try
                 // Set security levels on the proxy -------------------------
                 if Failed(CoSetProxyBlanket(FWbemServices, RPC_C_AUTHN_WINNT,
-                  RPC_C_AUTHZ_NONE, nil, RPC_C_AUTHN_LEVEL_CALL, RPC_C_IMP_LEVEL_IMPERSONATE,
-                  nil, EOAC_NONE)) then
+                  RPC_C_AUTHZ_NONE, nil, RPC_C_AUTHN_LEVEL_CALL,
+                  RPC_C_IMP_LEVEL_IMPERSONATE, nil, EOAC_NONE)) then
                   Exit;
-                if Succeeded(CoCreateInstance(CLSID_UnsecuredApartment, nil,
-                  CLSCTX_LOCAL_SERVER, IID_IUnsecuredApartment, FUnsecuredApartment)) then
+                if Succeeded(CoCreateInstance(CLSID_UnsecuredApartment,
+                  nil, CLSCTX_LOCAL_SERVER, IID_IUnsecuredApartment,
+                  FUnsecuredApartment)) then
                   try
                     // Use the IWbemServices pointer to make requests of WMI
                     //Succeed := FWbemServices.ExecQuery('WQL', WQL, WBEM_FLAG_FORWARD_ONLY OR WBEM_FLAG_RETURN_IMMEDIATELY, nil, ppEnum);
-                    Succeed := FWbemServices.ExecQuery('WQL', WQL, WBEM_FLAG_FORWARD_ONLY,
+                    Succeed :=
+                      FWbemServices.ExecQuery('WQL', WQL, WBEM_FLAG_FORWARD_ONLY,
                       nil, ppEnum);
                     if Succeeded(Succeed) then
                     begin
@@ -1969,9 +1976,10 @@ begin
                           I := VarArrayLowBound(pIp, 1);
                           if VarIsStr(VarArrayGet(pIp, [I])) then
                           begin
-                            Result.add(VarToStr(VarArrayGet(pIp, [I])) + '=' + VarToStr(pMac));
-                            LogDatei.DependentAdd(VarToStr(VarArrayGet(pIp, [I])) + '=' +
-                              VarToStr(pMac), LLDebug2);
+                            Result.add(VarToStr(VarArrayGet(pIp, [I])) +
+                              '=' + VarToStr(pMac));
+                            LogDatei.DependentAdd(VarToStr(VarArrayGet(pIp, [I])) +
+                              '=' + VarToStr(pMac), LLDebug2);
                             //writeln(VarToStr(VarArrayGet(pIp,[I]))+' '+VarToStr(pMac));
                     (*
                     writeln('IPAddress: '+ VarToStr(VarArrayGet(pIp,[I])));
@@ -2116,8 +2124,7 @@ begin
 end;
 *)
 
-function getWinlogonHandleForUser(const myuser: string;
-  var myhandle: THandle): boolean;
+function getWinlogonHandleForUser(const myuser: string; var myhandle: THandle): boolean;
 var
   myorgtoken: cardinal = 0;
   myduptoken: cardinal = 0;
@@ -2254,12 +2261,12 @@ begin
     begin
       // plan B: try elevated process
       opsiSetupAdmin_runElevated := True;
-      CmdLinePasStr := 'cmd.exe /c mklink "' + lpSymlinkFileName + '" "' +
-        lpExistingFileName + '"';
+      CmdLinePasStr := 'cmd.exe /c mklink "' + lpSymlinkFileName +
+        '" "' + lpExistingFileName + '"';
       LogDatei.log('Missing Priviliges for API Call - start process elevated: ' +
         CmdLinePasStr, LLInfo);
-      Result := StartProcess(CmdLinePasStr, SW_HIDE, False,
-        False, False, False, True, traInvoker, '', 10, Report, ExitCode);
+      Result := StartProcess(CmdLinePasStr, SW_HIDE, False, False,
+        False, False, True, traInvoker, '', 10, Report, ExitCode);
     end;
   except
     on ex: Exception do
@@ -2272,7 +2279,8 @@ end;
 
 function updateEnvironment(): boolean;
 var
-  mylong: lresult;
+  //mylong: lresult;
+  mylong: DWORD_PTR;
   mylparam: lparam;
 begin
   if GetNTVersionMajor < 6 then
@@ -2284,9 +2292,19 @@ begin
     try
       //if SendMessageTimeoutA() ;
       mylparam := lparam(PChar('Environment'));
-      mylong := jwawindows.SendMessage(HWND_BROADCAST, WM_SETTINGCHANGE, 0, mylparam);
-      LogDatei.log('Sended Message to Reload Environment  ', LLDebug);
-      Result := True;
+      if 0 <> SendMessageTimeout(HWND_BROADCAST, WM_SETTINGCHANGE, 0, mylparam,SMTO_ABORTIFHUNG,3000,mylong)
+      then
+      begin
+        //mylong := jwawindows.SendMessage(HWND_BROADCAST, WM_SETTINGCHANGE, 0, mylparam);
+        //mylong := SendMessage(HWND_BROADCAST, WM_SETTINGCHANGE, 0, mylparam);
+        LogDatei.log('Sended Message to Reload Environment  ', LLDebug);
+        Result := True;
+      end
+      else
+      begin
+        LogDatei.log('Timeout Message to Reload Environment  ', LLError);
+        Result := False;
+      end;
     except
       on ex: Exception do
       begin

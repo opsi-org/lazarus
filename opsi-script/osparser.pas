@@ -13216,7 +13216,10 @@ begin
          StringResult := StrSIDToName (s1);
          syntaxCheck := true;
         except
-          InfoSyntaxError := '"' + s1 + '" is not a valid sid string';
+          on e: exception do
+          Begin
+            InfoSyntaxError := '"' + s1 + '" is not a valid sid string';
+          end
         end;
       End
  end
@@ -13235,7 +13238,10 @@ begin
          StringResult := GetLocalUserSidStr(s1);
          syntaxCheck := true;
         except
-          InfoSyntaxError := '"' + s1 + '" is not a valid sid string';
+          on e: exception do
+          Begin
+            InfoSyntaxError := '"' + s1 + '" is not a valid sid string';
+          end;
         end;
       End
  end
