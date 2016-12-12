@@ -1220,7 +1220,8 @@ begin
     begin
       Result := False;
       LogDatei.log('Warning: Querying existing value from "' +
-        Name + '". Problem: ' + IntToStr(regresult), LLWarning);
+        Name + '". Problem: ' + IntToStr(regresult) + ' "' +
+        RemoveLineBreaks(SysErrorMessage(regresult)) + '"', LLWarning);
     end
     else
       LogDatei.log('successful querying for Value from Name: ' +
@@ -1463,6 +1464,7 @@ var
   //ucname: unicodestring = '';
   //ucvalue: unicodestring = '';
   encname, encvalue: string;
+  encnameW, encvalueW: WideString;
 
   //i: integer;
 
@@ -1476,11 +1478,15 @@ begin
   //Utf8ToUnicode(@ucvalue,@value,1024);
   encname := UTF8ToWinCP(Name);
   encvalue := UTF8ToWinCP(Value);
+  encnameW := UTF8ToUTF16(Name);
+  encvalueW := UTF8ToUTF16(Value);
 
   dwType := 0;
   regresult := RegQueryValueEx(mykey, PChar(encname), nil, @dwType, nil, @dwDataSize);
   if regresult = Error_Success then
   begin
+    LogDatei.log('Found Name: ' + Name + ' (encoded: ' + encname +
+      ') bytes:' + IntToStr(dwDataSize), LLDebug3);
     GetMem(lpData_OldValue, dwDataSize);
 
     regresult := RegQueryValueEx(mykey, PChar(encname), nil, @dwType,
@@ -1491,7 +1497,11 @@ begin
       LogDatei.log('Warning: Querying existing value from "' +
         Name + '". Problem: ' + IntToStr(regresult) + ' "' +
         RemoveLineBreaks(SysErrorMessage(regresult)) + '"', LLWarning);
-    end;
+    end
+    else
+      LogDatei.log('successful querying for Value from Name: ' +
+        Name + ' (encoded: ' + encname + ') bytes:' + IntToStr(
+        dwDataSize), LLDebug3);
   end
   else
     datafound := False;
@@ -1549,8 +1559,10 @@ begin
   case regType of
     trdString:
     begin
-      regresult := regSetValueEx(mykey, PChar(encname), 0, REG_SZ,
-        PChar(encvalue), Length(encvalue) + 1);
+      regresult := regSetValueExW(mykey, PWCHAR(encnameW), 0, REG_SZ,
+        PWChar(encvalueW), SizeOf(encvalueW) + 2);
+      //regresult := regSetValueEx(mykey, PChar(encname), 0, REG_SZ,
+      //  PChar(encvalue), Length(encvalue) + 1);
 
       if datafound then
       begin
@@ -1559,8 +1571,8 @@ begin
     end;
     trdExpandString:
     begin
-      regresult := regSetValueEx(mykey, PChar(encname), 0, REG_EXPAND_SZ,
-        PChar(encvalue), Length(encvalue) + 1);
+      regresult := regSetValueExW(mykey, PWCHAR(encnameW), 0, REG_EXPAND_SZ,
+        PWChar(encvalueW), SizeOf(encvalueW) + 2);
       if datafound then
       begin
         compareValue := encvalue;
