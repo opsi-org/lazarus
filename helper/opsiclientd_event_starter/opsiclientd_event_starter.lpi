@@ -21,6 +21,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <RevisionNr Value="7"/>
+      <BuildNr Value="1"/>
       <StringTable CompanyName="uib gmbh" FileDescription="opsiclientd_event_starter" InternalName="opsiclientd_event_starter" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsiclientd_event_starter" ProductName="opsi" ProductVersion="4.0.7"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -34,7 +35,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="indy;synapse40lib"/>
+            <OtherUnitFiles Value="indy;synapse40lib;..\..\common"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -74,7 +75,8 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="indy;synapse40lib"/>
+            <Libraries Value="..\..\external_libraries\indy\Lib"/>
+            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\synapse40lib;..\..\external_libraries\indy;..\..\external_libraries\indy\Lib;..\..\external_libraries\indy\Lib\Core;..\..\external_libraries\indy\Lib\System;..\..\external_libraries\indy\Lib\Protocols"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -106,10 +108,13 @@
         <FormatVersion Value="1"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="1">
+    <RequiredPackages Count="2">
       <Item1>
-        <PackageName Value="LCLBase"/>
+        <PackageName Value="indylaz"/>
       </Item1>
+      <Item2>
+        <PackageName Value="LCLBase"/>
+      </Item2>
     </RequiredPackages>
     <Units Count="5">
       <Unit0>
@@ -117,19 +122,19 @@
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="oslog.pas"/>
+        <Filename Value="opsiclientd_event_starter.txt"/>
         <IsPartOfProject Value="True"/>
       </Unit1>
       <Unit2>
-        <Filename Value="oswebservice.pas"/>
+        <Filename Value="..\..\common\oswebservice.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit2>
       <Unit3>
-        <Filename Value="opsiclientd_event_starter.txt"/>
+        <Filename Value="..\..\common\oslog.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit3>
       <Unit4>
-        <Filename Value="osjson.pas"/>
+        <Filename Value="..\..\common\osjson.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
     </Units>
@@ -142,7 +147,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="indy;synapse40lib"/>
+      <OtherUnitFiles Value="indy;synapse40lib;..\..\common"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Other>

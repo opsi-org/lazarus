@@ -13,20 +13,19 @@ uses
   fileinfo,
   winpeimagereader,
   inifiles,
-  oswebservice,
-  oslog,
   shlobj,
   Windows,
   activex,
-  osjson
-
-  { you can add units after this };
+  oswebservice,
+  osjson,
+  oslog, indylaz,
+  interfaces;
 
 const
   opsiclientdconf = '\opsi.org\opsi-client-agent\opsiclientd\opsiclientd.conf';
   opsilog = 'opsiclientd_event_starter.log';
   SECONDS_TO_SLEEP_AFTER_ACTION = 5;
-  TIMEOUTSECONDS = 60;
+  //TIMEOUTSECONDS = 60;
 
 
 type
@@ -361,10 +360,13 @@ begin
           Sleep(SECONDS_TO_SLEEP_AFTER_ACTION * 1000);
           second_counter := second_counter + SECONDS_TO_SLEEP_AFTER_ACTION;
         end;
-      until (myBoolStr = 'false') or (second_counter > TIMEOUTSECONDS);
-      if (second_counter > TIMEOUTSECONDS) then
-           LogDatei.log('Task aborted by timeout',LLWarning)
-      else LogDatei.log('Task completed',LLNotice)
+
+      until (myBoolStr = 'false');
+      //until (myBoolStr = 'false') or (second_counter > TIMEOUTSECONDS);
+      //if (second_counter > TIMEOUTSECONDS) then
+      //     LogDatei.log('Task aborted by timeout',LLWarning)
+      //else
+      LogDatei.log('Task completed',LLNotice)
     except
       on E: Exception do
       begin
