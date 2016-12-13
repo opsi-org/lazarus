@@ -24,7 +24,7 @@
       <BuildNr Value="11"/>
       <StringTable Comments="Compiled with Lazarus 1.6 / FPC 3.0" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst32.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst32.exe" ProductName="opsi-script" ProductVersion="4.0.7"/>
     </VersionInfo>
-    <BuildModes Count="3">
+    <BuildModes Count="3" Active="Debug">
       <Item1 Name="default" Default="True"/>
       <Item2 Name="Debug">
         <CompilerOptions>
@@ -408,8 +408,9 @@
       </Unit27>
       <Unit28>
         <Filename Value="changelog.txt"/>
+        <IsVisibleTab Value="True"/>
         <TopLine Value="10"/>
-        <CursorPos Y="29"/>
+        <CursorPos X="68" Y="32"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -761,13 +762,13 @@
       <Unit65>
         <Filename Value="osregistry.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="1550"/>
-        <CursorPos X="77" Y="1574"/>
+        <TopLine Value="1265"/>
+        <CursorPos X="13" Y="1277"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <IsVisibleTab Value="True"/>
+          <EditorIndex Value="-1"/>
           <WindowIndex Value="1"/>
           <TopLine Value="1456"/>
           <CursorPos X="14" Y="1437"/>
@@ -1044,7 +1045,7 @@
         <EditorIndex Value="4"/>
         <TopLine Value="1923"/>
         <CursorPos X="3" Y="1949"/>
-        <UsageCount Value="16"/>
+        <UsageCount Value="17"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit98>

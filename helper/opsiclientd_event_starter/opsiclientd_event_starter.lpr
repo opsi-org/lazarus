@@ -18,8 +18,7 @@ uses
   activex,
   oswebservice,
   osjson,
-  oslog, indylaz,
-  interfaces;
+  oslog;
 
 const
   opsiclientdconf = '\opsi.org\opsi-client-agent\opsiclientd\opsiclientd.conf';
