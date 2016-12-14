@@ -1746,6 +1746,8 @@ begin
       Logdatei.Free;
     //writeln('StartProgramModes2');
     Logdatei := TLogInfo.Create;
+    if LogDateiName = '' then
+      LogDateiName := LogPath + logdatei.StandardLogFilename + logdatei.StandardLogFileext;
     //writeln('StartProgramModes3');
     Logdatei.log('opsi-script ' + winstversion + ' started at ' + starttimestr, LLessential);
     Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
@@ -1895,7 +1897,7 @@ begin
           FindLocalIPData(ipName, ipAddress);
           LogPath := StandardLogPath;
           startupmessages.Append('startmessage create log: ' + DateTimeToStr(Now));
-          CreateTheLogfile(LogDateiName);
+          LogDatei.CreateTheLogfile(LogDateiName);
           LogDatei.log('opsi-script cannot connect to service with URL: ' +
             opsiserviceurl +' with user ' + opsiserviceUser +
             '  The message is: >' + testresult + '< - Aborting ', LLcritical);
@@ -1911,13 +1913,13 @@ begin
             LogPath := StandardLogPath;
             LogDateiName := LogPath + getLoggedInUser + '_login.log';
             startupmessages.Append('startmessage create log: ' + DateTimeToStr(Now));
-            CreateTheLogfile(LogDateiName, False);
+            LogDatei.CreateTheLogfile(LogDateiName, False);
           end
           else
           begin
             LogDateiName := OpsiData.getLogFileName(LogDateiName);
             startupmessages.Append('startmessage create log: ' + DateTimeToStr(Now));
-            CreateTheLogfile(LogDateiName);
+            LogDatei.CreateTheLogfile(LogDateiName);
           end;
           extractTmpPathFromLogdatei(LogDateiName);
           TempPath := GetTempPath;
@@ -1977,7 +1979,7 @@ begin
           DontUpdateMemo := True;
           {$ENDIF GUI}
           oslog.StandardPartLogPath:= ExtractFileDir(Logdateiname);
-          CreateTheLogFile(Logdateiname, False);
+          LogDatei.CreateTheLogFile(Logdateiname, False);
           extractTmpPathFromLogdatei(LogDateiName);
           TempPath := GetTempPath;
           extremeErrorLevel := Level_not_initialized;
@@ -2268,7 +2270,8 @@ begin
       LogPath := TempPath;
 
 
-    LogDateiName := LogPath + StandardLogFilename + StandardLogFileext;
+    //LogDateiName := LogPath + StandardLogFilename + StandardLogFileext;
+    LogDateiName := '';
     logfileFromCommandLine := False;
 
     //LogdateiName can be reset via a command line option.

@@ -156,6 +156,47 @@ begin
 end;
 
 
+(*
+todo implement for widestring
+function MakeMultiSz(const Text: widestring; var bytearray: TByteArray;
+  const maxdatalength: DWord; var lpdata: Pointer; var cbdata: DWord;
+  var errortext: string): boolean;
+  //text wird aufgefasst als Stringliste, Strings getrennt mit #10
+  //text muss enden mit doppeltem #10
+
+var
+  i: DWord = 0;
+  //p: Pointer;
+  p1, p2: Pointer;
+
+begin
+  //setlength (bytearray, length (text) + 2);
+  // dynamic Arrays do not work
+  if length(Text) * sizeOf(wchar) > maxdatalength then
+  begin
+    Result := False;
+    errortext := 'MultiSz field too long';
+  end
+  else
+  begin
+    try
+      p1 := @Text;
+      p2 := @bytearray;
+      cbdata := length(Text)  * sizeOf(wchar);
+      for i := 1 to length(Text) do
+        if Text[i] = #10 then
+          bytearray[i - 1] := 0
+        else
+          bytearray[i - 1] := Ord(Text[i]);
+      lpdata := p2;
+      Result := True;
+    except
+      Result := False;
+    end;
+  end;
+end;
+*)
+
 procedure MultiSzToText(const lpdata: Pointer; const cbdata: DWord; var Text: string);
 //text wird aufgefasst als Stringliste, Strings zu trennen mit #13#10
 var
@@ -304,86 +345,7 @@ begin
   end;
 end;
 
-  {$IFDEF WINDOWS}
- (*
-  function GetRegistrystringvalue(aktkey: string; ValueName: string;
-    noredirect: boolean): string;
-  var
-    StringResult: string = '';
-    Regist: Tregistry;
-    KeyOpenMode: longword;
-    basekey, relkey,winencodekey, winencodevaluename: string;
-    rkey: HKey;
-    //keyinfo : TregKeyInfo;
-    regType: TRegDataType;
-    buffer: array [0..1024] of byte;
-  begin
-    winencodekey := UTF8ToWinCP(aktkey);
-    winencodevaluename := UTF8ToWinCP(ValueName);
-    basekey := copy(winencodekey, 0, Pos('\', winencodekey) - 1);
-    LogDatei.log('basekey : ' + basekey, LLdebug3);
-    relkey := copy(winencodekey, Pos('\', winencodekey) + 1, length(winencodekey));
-    LogDatei.log('relkey : ' + relkey, LLdebug3);
-    if noredirect then
-    begin
-      KeyOpenMode := KEY_ALL_ACCESS or KEY_WOW64_64KEY;
-      LogDatei.log('Registry started without redirection (64 Bit)', LLdebug);
-    end
-    else
-    begin
-      KeyOpenMode := KEY_ALL_ACCESS or KEY_WOW64_32KEY;
-      LogDatei.log('Registry started with redirection (32 Bit)', LLdebug);
-    end;
-    try
-      try
-        //LogDatei.log('finished1', LLdebug);
-        Regist := Tregistry.Create(KeyOpenMode);
-        //LogDatei.log('finished2  :'+copy(aktkey, 0, Pos('\', aktkey) - 1), LLdebug);
-        if GetHKey(basekey, rkey) then
-        begin
-          regist.RootKey := rkey;
-          if regist.KeyExists(copy(winencodekey, Pos('\', winencodekey) + 1, length(winencodekey))) then
-          begin
-            regist.OpenKey(relkey, False);
-            if regist.ValueExists(winencodevaluename) then
-            begin
-              //  TRegDataType = (rdUnknown, rdString, rdExpandString, rdBinary, rdInteger);
-              regType := regist.GetDataType(winencodevaluename);
-              case regType of
-                rdString : StringResult := Regist.ReadString(winencodevaluename);
-                rdExpandString : StringResult := Regist.ReadString(winencodevaluename);
-                rdInteger : StringResult := IntToStr(Regist.ReadInteger(winencodevaluename));
-                rdBinary : begin
-                             Regist.ReadBinaryData(winencodevaluename, buffer,1024);
-                             StringResult :=  BinaryToStr(@buffer,1024);
-                           end
-              else logdatei.log('Warning: Not supported data type found.',LLWarning);
-              end;
-              if regist.GetDataType(winencodevaluename) in [rdString,rdExpandString] then
-              begin
-                StringResult := Regist.ReadString(winencodevaluename);
-                StringResult := WinCPToUTF8(StringResult);
-              end
-            end
-            else logdatei.log('Warning: Valuename: '+ValueName+' not found.',LLWarning);
-          end
-          else logdatei.log('Warning: Key: '+aktkey+' not found.',LLWarning);
-          regist.CloseKey;
-        end
-        else
-          LogDatei.log('Could not get root key from : ' + basekey, LLError);
-      except
-        on e: Exception do
-        begin
-          LogDatei.log('Error: GetRegistryStringValue ' + e.message, LLError);
-        end;
-      end
-    finally
-      regist.Free;
-      Result := StringResult;
-    end;
-  end;
-  *)
+{$IFDEF WINDOWS}
 
 function GetRegistrystringvalue(aktkey: string; ValueName: string;
   noredirect: boolean): string;
@@ -395,16 +357,12 @@ var
 begin
   Result := '';
 
-  //winencodekey := UTF8ToWinCP(aktkey);
-  //winencodevaluename := UTF8ToWinCP(ValueName);
-  //basekey := copy(winencodekey, 0, Pos('\', winencodekey) - 1);
   basekey := copy(aktkey, 0, Pos('\', aktkey) - 1);
   LogDatei.log('basekey : ' + basekey, LLdebug3);
   relkey := copy(aktkey, Pos('\', aktkey) + 1, length(aktkey));
   LogDatei.log('relkey : ' + relkey, LLdebug3);
 
   Regist := Tuibregistry.Create(noredirect, True);
-  //if Regist.OpenExistingKey(copy(aktkey, 0, Pos('\', aktkey) - 1), copy(aktkey, Pos('\', aktkey) + 1, length(aktkey))) then
   if Regist.OpenExistingKey(basekey, relkey) then
   begin
     try
@@ -421,7 +379,6 @@ begin
       end;
     end;
     Regist.CloseKey;
-    //StringResult := WinCPToUTF8(StringResult);
     Result := StringResult;
   end;
 end;
@@ -622,7 +579,7 @@ begin
   end;
 end;
 
-  {$ENDIF WINDOWS}
+{$ENDIF WINDOWS}
 
 
 
@@ -1196,7 +1153,7 @@ var
   dwDataSize: Dword = 0;
   lpData_OldValue: pointer;
   ecW: PWChar;
-  dwType: dword;
+  dwType: dword = 0;
   encname, encvalue: string;
   encnameW: WideString;
   //encvalueW: WideString;
@@ -1204,17 +1161,26 @@ var
 begin
   Value := '';
   Result := True;
-  encname := UTF8ToWinCP(Name);
-  encnameW := UTF8ToUTF16(Name);
+  if Name = '' then
+  begin
+    // do not try to encode empty strings
+    encname := '';
+    encnameW := '';
+  end
+  else
+  begin
+    encname := UTF8ToWinCP(Name);
+    encnameW := UTF8ToUTF16(Name);
+  end;
 
-  regresult := RegQueryValueEx(mykey, PChar(encname), nil, @dwType, nil, @dwDataSize);
+  regresult := RegQueryValueExW(mykey, PWChar(encnameW), nil, @dwType, nil, @dwDataSize);
   if regresult = Error_Success then
   begin
     LogDatei.log('Found Name: ' + Name + ' (encoded: ' + encname +
       ') bytes:' + IntToStr(dwDataSize), LLDebug3);
     GetMem(lpData_OldValue, dwDataSize);
 
-    regresult := RegQueryValueEx(mykey, PChar(encname), nil, @dwType,
+    regresult := RegQueryValueExW(mykey, PWChar(encnameW), nil, @dwType,
       lpData_OldValue, @dwDataSize);
     if regresult <> Error_Success then
     begin
@@ -1263,7 +1229,7 @@ begin
           Value := '';
           //encvalueW := '';
           encvalue := '';
-          LogDatei.log('Found Empty Value:  bytes:' + IntToStr(dwDataSize), LLDebug3);
+          LogDatei.log('Found empty Value:  bytes:' + IntToStr(dwDataSize), LLDebug3);
         end
         else
         begin
@@ -1299,63 +1265,17 @@ begin
           '"  not found. Code: ' + IntToStr(regresult)
           , LLWarning);
       end;
-       (*
-      StrLCopy(ecW, lpData_OldValue, dwDataSize);
-      value := UTF16ToUTF8(ecW);
-      LogDatei.log('Found Value0: (encoded: ' +
-          value + ')  bytes:' + IntToStr(dwDataSize), LLDebug3);
-      encvalueW := '';
-      SetLength(encvalueW, dwDataSize);
-      regresult := RegQueryValueExW(mykey, PWCHAR(encnameW), nil, @dwType,
-        pointer(PWChar(encvalueW)), @dwDataSize);
-      LogDatei.log('Found Value1: (encoded: ' +
-          UTF16ToUTF8(encvalueW) + ')  bytes:' + IntToStr(dwDataSize), LLDebug3);
-      //regresult := RegQueryValueEx(mykey, PChar(encname), nil, @dwType,
-      //pointer(PChar(encvalue)), @dwDataSize);
-      //strcopy(PWChar(encvalueW), lpData_OldValue);
-      //if encvalue[dwDataSize] = #0 then Dec(dwDataSize);
-      //SetLength(encvalue,dwDataSize);
-      if dwDataSize = 0 then
-      begin
-        // no bytes - no value
-        Value := '';
-        encvalueW := '';
-        encvalue := '';
-        LogDatei.log('Found Empty Value:  bytes:' + IntToStr(dwDataSize), LLDebug3);
-      end
-      else
-      begin
-        LogDatei.log('Found Value2: (encoded: ' +
-          UTF16ToUTF8(encvalueW) + ')  bytes:' + IntToStr(dwDataSize), LLDebug3);
-        lpData_OldValueW := lpData_OldValue;
-        //FillChar(encvalueW, dwDataSize+8, 0);
-        encvalueW := '';
-        StrLCopy(PWChar(encvalueW), lpData_OldValueW, dwDataSize);
-        LogDatei.log('Found Value3: (encoded: ' + UTF16ToUTF8(encvalueW) + ')', LLDebug3);
-        //FillChar(encvalueW, dwDataSize+8, 0);
-        encvalueW := '';
-        if StrLen(lpData_OldValue) < dwDataSize - 1 then
-        begin
-          SetLength(encvalueW, StrLen(lpData_OldValue));
-          if StrLen(lpData_OldValue) > 1 then
-            StrLCopy(PWChar(encvalueW), lpData_OldValue, StrLen(lpData_OldValue));
-        end
-        else
-        begin
-          SetLength(encvalueW, dwDataSize - 1);
-          if dwDataSize > 1 then
-            StrLCopy(PWChar(encvalueW), lpData_OldValue, dwDataSize);
-        end;
-        //value := WinCPToUTF8(strpas(pchar(encvalue)));
-        Value := UTF16ToUTF8(encvalueW);
-        LogDatei.log('Found Value4: >' + Value + '< (encoded: ' +
-          UTF16ToUTF8(encvalueW) + ')', LLDebug3);
-      end;
-      *)
     end;
 
     trdMultiString:
     begin
+      // todo widestring implementation
+      regresult := RegQueryValueEx(mykey, PChar(encname), nil,
+        @dwType, nil, @dwDataSize);
+      GetMem(lpData_OldValue, dwDataSize + 10);
+      FillChar(lpData_OldValue^, dwDataSize + 8, 0);
+      regresult := RegQueryValueEx(mykey, PChar(encname), nil,
+        @dwType, lpData_OldValue, @dwDataSize);
       MultiSzToText(lpData_OldValue, dwDataSize, encvalue);
       if dwDataSize = 0 then
       begin
@@ -1371,7 +1291,18 @@ begin
     end;
 
 
-    trdBinary: Value := BinaryToStr(lpData_OldValue, dwDataSize);
+    trdBinary:
+    begin
+      // todo widestring implementation
+      regresult := RegQueryValueEx(mykey, PChar(encname), nil,
+        @dwType, nil, @dwDataSize);
+      GetMem(lpData_OldValue, dwDataSize + 10);
+      FillChar(lpData_OldValue^, dwDataSize + 8, 0);
+      regresult := RegQueryValueEx(mykey, PChar(encname), nil,
+        @dwType, lpData_OldValue, @dwDataSize);
+      Value := BinaryToStr(lpData_OldValue, dwDataSize);
+
+    end;
 
     trdInteger: Value := IntToStr(DWord(lpData_OldValue^));
   end;
@@ -1457,39 +1388,48 @@ var
   cbdata: dword = 0;
 
   bytesarray: TByteArray;
-  //buffer: PChar;
-
   errorOccured: boolean;
   errortext: string = '';
-  //ucname: unicodestring = '';
-  //ucvalue: unicodestring = '';
   encname, encvalue: string;
   encnameW, encvalueW: WideString;
-
-  //i: integer;
+  ecW: PWChar;
 
 begin
   oldValue := '';
   datafound := True;
   errortext := '';
-  //ucname := UTF8ToUCS2LE(name);
-  //ucvalue := UTF8ToUCS2LE(Value);
-  //Utf8ToUnicode(@ucname,@name,1024);
-  //Utf8ToUnicode(@ucvalue,@value,1024);
-  encname := UTF8ToWinCP(Name);
-  encvalue := UTF8ToWinCP(Value);
-  encnameW := UTF8ToUTF16(Name);
-  encvalueW := UTF8ToUTF16(Value);
+  if Name = '' then
+  begin
+    // do not try to encode empty strings
+    encname := '';
+    encnameW := '';
+  end
+  else
+  begin
+    encname := UTF8ToWinCP(Name);
+    encnameW := UTF8ToUTF16(Name);
+  end;
+  if Value = '' then
+  begin
+    // do not try to encode empty strings
+    encvalue := '';
+    encvalueW := '';
+  end
+  else
+  begin
+    encvalue := UTF8ToWinCP(Value);
+    encvalueW := UTF8ToUTF16(Value);
+  end;
 
   dwType := 0;
-  regresult := RegQueryValueEx(mykey, PChar(encname), nil, @dwType, nil, @dwDataSize);
+  regresult := RegQueryValueExW(mykey, PWChar(encnameW), nil, @dwType, nil, @dwDataSize);
   if regresult = Error_Success then
   begin
     LogDatei.log('Found Name: ' + Name + ' (encoded: ' + encname +
       ') bytes:' + IntToStr(dwDataSize), LLDebug3);
-    GetMem(lpData_OldValue, dwDataSize);
-
-    regresult := RegQueryValueEx(mykey, PChar(encname), nil, @dwType,
+    GetMem(lpData_OldValue, dwDataSize + 10);
+    FillChar(lpData_OldValue^, dwDataSize + 8, 0);
+    regresult := RegQueryValueExW(mykey, PWChar(encnameW), nil, @dwType,
       lpData_OldValue, @dwDataSize);
     if regresult <> Error_Success then
     begin
@@ -1528,24 +1468,42 @@ begin
   if datafound then
   begin
     case oldRegType of
-      trdString:
+      trdString, trdExpandString:
       begin
+        (*
         SetLength(oldValue, dwDataSize - 1);
         if dwDataSize > 1 then
           StrLCopy(PChar(oldValue), lpData_OldValue, dwDataSize - 1);
-      end;
-      trdExpandString:
-      begin
-        SetLength(oldValue, dwDataSize - 1);
-        if dwDataSize > 1 then
-          StrLCopy(PChar(oldValue), lpData_OldValue, dwDataSize - 1);
+        *)
+        if dwDataSize = 0 then
+        begin
+          // no bytes - no value
+          oldValue := '';
+          encvalue := '';
+          LogDatei.log('Found empty oldvalue:  bytes:' + IntToStr(dwDataSize), LLDebug3);
+        end
+        else
+        begin
+          GetMem(ecW, dwDataSize + 10);
+          FillChar(ecW^, dwDataSize + 8, 0);
+          StrLCopy(ecW, lpData_OldValue, dwDataSize);
+          oldValue := UTF16ToUTF8(ecW);
+          LogDatei.log('Found oldValue: ' + oldValue + ')  bytes:' +
+            IntToStr(dwDataSize), LLDebug3);
+        end;
       end;
       trdMultiString:
       begin
+        // todo widestring implementation
+        regresult := RegQueryValueEx(mykey, PChar(encname), nil,
+          @dwType, lpData_OldValue, @dwDataSize);
         MultiSzToText(lpData_OldValue, dwDataSize, oldValue);
       end;
       trdBinary:
       begin
+        // todo widestring implementation
+        regresult := RegQueryValueEx(mykey, PChar(encname), nil,
+          @dwType, lpData_OldValue, @dwDataSize);
         oldValue := BinaryToStr(lpData_OldValue, dwDataSize);
       end;
       trdInteger:
@@ -1559,23 +1517,22 @@ begin
   case regType of
     trdString:
     begin
+      // length of widestring gives the number of 2 byte blocks (even on 4 byte chars)
       regresult := regSetValueExW(mykey, PWCHAR(encnameW), 0, REG_SZ,
-        PWChar(encvalueW), SizeOf(encvalueW) + 2);
-      //regresult := regSetValueEx(mykey, PChar(encname), 0, REG_SZ,
-      //  PChar(encvalue), Length(encvalue) + 1);
+        PWCHAR(encvalueW), length(encvalueW) * sizeOf(Wchar) + 2);
 
       if datafound then
       begin
-        compareValue := encvalue;
+        compareValue := UTF16ToUTF8(encvalueW);
       end;
     end;
     trdExpandString:
     begin
-      regresult := regSetValueExW(mykey, PWCHAR(encnameW), 0, REG_EXPAND_SZ,
-        PWChar(encvalueW), SizeOf(encvalueW) + 2);
+      regresult := regSetValueExW(mykey, PWCHAR(encnameW), 0,
+        REG_EXPAND_SZ, PWCHAR(encvalueW), length(encvalueW) * sizeOf(Wchar) + 2);
       if datafound then
       begin
-        compareValue := encvalue;
+        compareValue := UTF16ToUTF8(encvalueW);
       end;
     end;
     trdMultiString:
@@ -1586,20 +1543,24 @@ begin
         erroroccured := True
       else
       begin
-        regresult := regSetValueEx(mykey, PChar(encname), 0, REG_MULTI_SZ,
-          lpdata, cbdata);
+        // todo widechar implementation
+        regresult := regSetValueEx(mykey, PChar(encname), 0,
+          REG_MULTI_SZ, lpdata, cbdata);
         if datafound then
         begin
-          compareValue := encvalue;
+          compareValue := WinCPToUTF8(PChar(lpdata));
         end;
       end;
     end;
+
     trdBinary:
     begin
+      // todo widechar implementation
       s := StrAlloc(length(encvalue) + 1);
       StrCopy(s, PChar(encvalue));
       StrToBinary(s, lpdata, cbdata);
-      regresult := regSetValueEx(mykey, PChar(encname), 0, REG_BINARY, lpdata, cbdata);
+      regresult := regSetValueEx(mykey, PChar(encname), 0, REG_BINARY,
+        lpdata, cbdata);
       if datafound then
       begin
         compareValue := BinaryToStr(lpdata, cbdata);
@@ -1609,7 +1570,7 @@ begin
     trdInteger:
     begin
       iValue := StrToINT64(encvalue);
-      regresult := regSetValueEx(mykey, PChar(encname), 0, REG_Dword, @iValue, 4);
+      regresult := regSetValueExW(mykey, PWChar(encnameW), 0, REG_Dword, @iValue, 4);
       if datafound then
       begin
         compareValue := IntToStr(iValue);
@@ -1723,6 +1684,7 @@ begin
   psize := nil;
   freemem(regType);
   regType := nil;
+
 
 
   (*  FoundDataType := GetDataType (Name); *)

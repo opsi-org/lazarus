@@ -587,6 +587,8 @@ resourcestring
   rsGetServiceUrl = 'Please enter opsi service URL:';
   rsGetUserName = 'Please enter opsi service user name:';
   rsGetPassword = 'Please enter opsi service user password:';
+  rsReadyToContinue = 'Ready to continue ?';
+  rsAbortProgram = 'Abort program ?';
 
 
 
@@ -7009,7 +7011,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
           search4file := true;
           cpSpecify := 0;
           if UpperCase (Expressionstr) = 'DEL' then search4file := false;
-          if not GetString (Remaining, Expressionstr, Remaining, errorinfo, false)
+          if not GetString (Remaining, Expressionstr, Remaining, errorinfo, true)
           then
           Begin
              // instead of using (as up to version 4.1)
@@ -7018,7 +7020,8 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
              DivideAtFirst (' ', remaining, Expressionstr, remaining_with_leading_blanks);
              remaining := cutLeftBlanks(remaining_with_leading_blanks);
           End;
-          LogDatei.log ('Remaining: '+Expressionstr, LLDebug2);
+          LogDatei.log ('Remaining before Options: '+remaining, LLDebug2);
+          LogDatei.log ('Expressionstr before Options: '+Expressionstr, LLDebug2);
           recursive := false;
           ignoreReadOnly := false;
           daysback := 0;
@@ -7026,6 +7029,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
           do
           Begin
             Expressionstr := lowerCase (copy (Expressionstr, 2, length (Expressionstr) - 1));
+            LogDatei.log ('Expressionstr while Options: '+Expressionstr, LLDebug3);
             j := 1;
             while j <= length (Expressionstr)
             do
@@ -16658,7 +16662,7 @@ begin
                   then
                   Begin
                     {$IFDEF GUI}
-                    if messagedlg (Parameter + LineEnding + 'Bereit zur Fortsetzung?', mtConfirmation, [mbYes], 0)
+                    if messagedlg (Parameter + LineEnding + rsReadyToContinue, mtConfirmation, [mbYes], 0)
                      = mrNo
                     then
                       ActionResult := tsrExitProcess;
@@ -16721,7 +16725,7 @@ begin
                   then
                   Begin
                     {$IFDEF GUI}
-                    if messagedlg (Parameter + LineEnding + '... beenden?', mtConfirmation, [mbYes, mbNo], 0)
+                    if messagedlg (Parameter + LineEnding + rsAbortProgram, mtConfirmation, [mbYes, mbNo], 0)
                      = mrYes
                     then
                       ActionResult := tsrExitProcess;

@@ -767,7 +767,8 @@ begin
     //Logdatei.Free;
     if Logdatei = nil then
       Logdatei := TLogInfo.Create;
-
+    if LogDateiName = '' then
+      LogDateiName := LogPath + logdatei.StandardLogFilename + logdatei.StandardLogFileext;
     LogDatei.initiate(LogDateiName, False);
     LogDatei.Empty;
     Logdatei.DependentAdd('opsi-script ' + winstversion + ' started at ' + starttimestr,

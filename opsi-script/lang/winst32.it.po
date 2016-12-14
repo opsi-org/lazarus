@@ -31,6 +31,10 @@ msgctxt "osmain.rsproductcheck"
 msgid "product check"
 msgstr "verifica del prodotto ..."
 
+#: osparser.rsabortprogram
+msgid "Abort program ?"
+msgstr ""
+
 #: osparser.rsgetpassword
 msgid "Please enter opsi service user password:"
 msgstr ""
@@ -41,6 +45,10 @@ msgstr ""
 
 #: osparser.rsgetusername
 msgid "Please enter opsi service user name:"
+msgstr ""
+
+#: osparser.rsreadytocontinue
+msgid "Ready to continue ?"
 msgstr ""
 
 #: oswebservice.rssendlog
@@ -232,7 +240,7 @@ msgid "&Cancel"
 msgstr ""
 
 #: tmymessagedlg.caption
-msgid "opsi-winst Message"
+msgid "opsi-script Message"
 msgstr ""
 
 #: tmymessagedlg.nobtn.caption
@@ -247,22 +255,6 @@ msgstr ""
 msgid "&Yes"
 msgstr ""
 
-#: tshowtextfile.bitbtn1.caption
-msgid "Search"
-msgstr "Cerca"
-
-#: tshowtextfile.caption
-msgid "opsi-script Logfile"
-msgstr ""
-
-#: tshowtextfile.label1.caption
-msgid "Fontsize"
-msgstr "Fontsize"
-
-#: tshowtextfile.label2.caption
-msgid "Filter Loglevel"
-msgstr "Livello log"
-
 #: tsysteminfo.caption
 msgid "SystemInfo"
 msgstr ""
@@ -271,24 +263,4 @@ msgstr ""
 msgctxt "tsysteminfo.label1.caption"
 msgid "Label1"
 msgstr "etichetta1"
-
-#: wibtch.rsgetlistofproducts
-msgctxt "wibtch.rsgetlistofproducts"
-msgid "get list of products"
-msgstr "ottenere l'elenco dei prodotti"
-
-#: wibtch.rsloadingskin
-msgctxt "wibtch.rsloadingskin"
-msgid "Loading skin..."
-msgstr "Caricamento del tema ..."
-
-#: widatamodul.rssendlog
-msgctxt "widatamodul.rssendlog"
-msgid "Sending log file to server ..."
-msgstr "Invio del file di log al server ..."
-
-#: wimain.rsproductcheck
-msgctxt "wimain.rsproductcheck"
-msgid "product check"
-msgstr "verifica del prodotto ..."
 

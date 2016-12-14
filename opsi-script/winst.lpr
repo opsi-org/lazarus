@@ -30,7 +30,7 @@ uses
   ///LCLIntf,
   packdefs in 'packdefs.pas',
   {$IFDEF WINDOWS}zipinter in 'zipinter.pas', {$ENDIF}
-  indylaz, IdStream,
+  IdStream,
   osconf,
   osshowsysinfo {SystemInfo},
   //wirequlist in 'wirequlist.pas',
@@ -51,7 +51,7 @@ uses
   osinteractivegui {CentralForm}, {$ENDIF}
   {$IFDEF LINUX}osfunclin {$ENDIF}
   {$IFDEF WINDOWS}jclexcerpt, osfuncwin2, oslocaladmin, osfuncwin,
-  opsihwbiosinfo, osjson, uCpuUsage, SystemCriticalU,
+  opsihwbiosinfo, uCpuUsage, SystemCriticalU,
 osfuncwin3, osregistry{$ENDIF} ;
 
 
@@ -62,7 +62,7 @@ osfuncwin3, osregistry{$ENDIF} ;
 
 
 begin
-  Application.Title := 'opsi-winst';
+  Application.Title:='opsi-winst';
   Application.Initialize;
 
   Application.CreateForm(TCentralForm, CentralForm);

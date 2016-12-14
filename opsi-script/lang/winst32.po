@@ -1,41 +1,27 @@
 msgid ""
-msgstr ""
-"Content-Type: text/plain; charset=UTF-8\n"
-"Project-Id-Version: \n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: detlef oertel <d.oertel@uib.de>\n"
-"Language-Team: \n"
-"MIME-Version: 1.0\n"
-"Content-Transfer-Encoding: 8bit\n"
+msgstr "Content-Type: text/plain; charset=UTF-8"
 
 #: osbatchgui.rsgetlistofproducts
-#, fuzzy
-#| msgid "Lijst met producten"
-msgctxt "osbatchgui.rsgetlistofproducts"
 msgid "get list of products"
-msgstr "Lade Produktliste ..."
+msgstr ""
 
 #: osbatchgui.rsloadingskin
-#, fuzzy
-#| msgid "Uiterlijk laden..."
-msgctxt "osbatchgui.rsloadingskin"
 msgid "Loading skin..."
-msgstr "Lade Oberfläche ..."
+msgstr ""
 
 #: osinteractivegui.rsproductcheck
-#, fuzzy
-#| msgid "Product controleren"
 msgctxt "osinteractivegui.rsproductcheck"
 msgid "product check"
-msgstr "Lade auszührende Aktionen ..."
+msgstr ""
 
 #: osmain.rsproductcheck
-#, fuzzy
-#| msgid "Product controleren"
 msgctxt "osmain.rsproductcheck"
 msgid "product check"
-msgstr "Lade auszührende Aktionen ..."
+msgstr ""
+
+#: osparser.rsabortprogram
+msgid "Abort program ?"
+msgstr ""
 
 #: osparser.rsgetpassword
 msgid "Please enter opsi service user password:"
@@ -49,12 +35,13 @@ msgstr ""
 msgid "Please enter opsi service user name:"
 msgstr ""
 
+#: osparser.rsreadytocontinue
+msgid "Ready to continue ?"
+msgstr ""
+
 #: oswebservice.rssendlog
-#, fuzzy
-#| msgid "Log bestand naar de server sturen..."
-msgctxt "oswebservice.rssendlog"
 msgid "Sending log file to server ..."
-msgstr "Sende Logdatei zum Server ...."
+msgstr ""
 
 #: tcentralform.beenden1.caption
 msgctxt "TCENTRALFORM.BEENDEN1.CAPTION"
@@ -74,7 +61,6 @@ msgid "Show GUI"
 msgstr ""
 
 #: tcentralform.caption
-msgctxt "tcentralform.caption"
 msgid "  opsi - script"
 msgstr ""
 
@@ -129,7 +115,7 @@ msgid "-"
 msgstr ""
 
 #: tcentralform.labelwinstversion.caption
-msgctxt "TCENTRALFORM.LABELWINSTVERSION.CAPTION"
+msgctxt "tcentralform.labelwinstversion.caption"
 msgid "LabelWinstVersion"
 msgstr ""
 
@@ -166,7 +152,7 @@ msgid "Hide GUI"
 msgstr ""
 
 #: tcentralform.speedbutton5.caption
-msgctxt "TCENTRALFORM.SPEEDBUTTON5.CAPTION"
+msgctxt "tcentralform.speedbutton5.caption"
 msgid "Exit"
 msgstr ""
 
@@ -199,7 +185,6 @@ msgid "o.k."
 msgstr ""
 
 #: tfbatchoberflaeche.caption
-msgctxt "tfbatchoberflaeche.caption"
 msgid "opsi-script"
 msgstr ""
 
@@ -236,7 +221,7 @@ msgid "&Cancel"
 msgstr ""
 
 #: tmymessagedlg.caption
-msgid "opsi-winst Message"
+msgid "opsi-script Message"
 msgstr ""
 
 #: tmymessagedlg.nobtn.caption
@@ -251,56 +236,12 @@ msgstr ""
 msgid "&Yes"
 msgstr ""
 
-#: tshowtextfile.bitbtn1.caption
-msgid "Search"
-msgstr ""
-
-#: tshowtextfile.caption
-msgid "opsi-script Logfile"
-msgstr ""
-
-#: tshowtextfile.label1.caption
-msgid "Fontsize"
-msgstr ""
-
-#: tshowtextfile.label2.caption
-msgid "Filter Loglevel"
-msgstr ""
-
 #: tsysteminfo.caption
 msgid "SystemInfo"
 msgstr ""
 
 #: tsysteminfo.label1.caption
-msgctxt "tsysteminfo.label1.caption"
+msgctxt "TSYSTEMINFO.LABEL1.CAPTION"
 msgid "Label1"
 msgstr ""
-
-#: wibtch.rsgetlistofproducts
-#, fuzzy
-#| msgid "Lijst met producten"
-msgctxt "wibtch.rsgetlistofproducts"
-msgid "get list of products"
-msgstr "Lade Produktliste ..."
-
-#: wibtch.rsloadingskin
-#, fuzzy
-#| msgid "Uiterlijk laden..."
-msgctxt "wibtch.rsloadingskin"
-msgid "Loading skin..."
-msgstr "Lade Oberfläche ..."
-
-#: widatamodul.rssendlog
-#, fuzzy
-#| msgid "Log bestand naar de server sturen..."
-msgctxt "widatamodul.rssendlog"
-msgid "Sending log file to server ..."
-msgstr "Sende Logdatei zum Server ...."
-
-#: wimain.rsproductcheck
-#, fuzzy
-#| msgid "Product controleren"
-msgctxt "wimain.rsproductcheck"
-msgid "product check"
-msgstr "Lade auszührende Aktionen ..."
 

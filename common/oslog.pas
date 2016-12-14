@@ -26,7 +26,9 @@ unit oslog;
 {$VARSTRINGCHECKS ON}
 
 {$IFDEF OPSIWINST} {$DEFINE PARTLOG} {$ENDIF}
+{$IFDEF OPSIWINST} {$DEFINE OPSI} {$ENDIF}
 {$IFDEF OPSISCRIPTSTARTER} {$DEFINE PARTLOG} {$ENDIF}
+{$IFDEF OPSISCRIPTSTARTER} {$DEFINE OPSI} {$ENDIF}
 
 
 interface
@@ -93,6 +95,9 @@ type
     FAktProduktId: string;
     FConfidentialStrings : TStringlist;
     FLogProduktId: boolean;
+    FStandardPartLogFilename: string;
+    FStandardLogFilename: string;
+    FStandardLogFileext: string;
 
 
   protected
@@ -138,6 +143,9 @@ type
     procedure PartShrinkToMB(newsize: integer);
     procedure AddToConfidentials(newsecret: string);
     procedure log2history(line: string);
+    procedure CreateTheLogfile(LogDateiname: string); overload;
+    procedure CreateTheLogfile(LogDateiname: string; check4append: boolean); overload;
+
 
     procedure SetNumberOfErrors(Number: integer);
     property LogLevel: integer read FLogLevel write FLogLevel;
@@ -169,6 +177,9 @@ type
     property ActionProgress: string read FActionProgress write FActionProgress;
     property AktProduktId: string read FAktProduktId write FAktProduktId;
     property LogProduktId: boolean read FLogProduktId write FLogProduktId;
+    property StandardPartLogFilename: string read FStandardPartLogFilename write FStandardPartLogFilename;
+    property StandardLogFilename: string read FStandardLogFilename write FStandardLogFilename;
+    property StandardLogFileext: string read FStandardLogFileext write FStandardLogFileext;
 
     //function copyPartLogToFullLog: boolean;
   end;
@@ -179,38 +190,11 @@ type
   TErrorLevel = integer;
 
 const
-  {$IFDEF OPSIWINST}
-  StandardPartLogFilename = 'opsi-script-part-';
-  //{$IFDEF WINDOWS}
-  //StandardLogFilename = 'instlog';
-  //StandardLogFileext = '.txt';
-  //{$ELSE WINDOWS}
-  StandardLogFilename = 'opsi-script';
-  StandardLogFileext = '.log';
-  //{$ENDIF WINDOWS}
-  {$ENDIF OPSIWINST}
-  {$IFDEF OCASIMP}
-  StandardPartLogFilename = 'opsi-script-part-';
-  StandardLogFilename = 'opsi-script';
-  {$ENDIF OCASIMP}
-  {$IFDEF OPSISCRIPTSTARTER}
-  StandardPartLogFilename = 'opsiscriptstarter-part-';
-  StandardLogFilename = 'opsiscriptstarter';
-  {$ENDIF OPSISCRIPTSTARTER}
-  {$IFDEF OPSICLIENTKIOSK}
-  StandardPartLogFilename = 'opsiclientkiosk-part-';
-  StandardLogFilename = 'opsiclientkiosk';
-  {$ENDIF OPSICLIENTKIOSK}
-  {$IFDEF OPSICLIENTD_SHUTDOWN_STARTER}
-  StandardPartLogFilename = 'opsiclientd_shutdown_starter-part-';
-  StandardLogFilename = 'opsiclientd_shutdown_starter';
-  {$ENDIF OPSICLIENTD_SHUTDOWN_STARTER}
-
   StandardPartLogFileext = '.log';
   StandardPartReadFileext = '.read';
-  //StandardLogFileext = '.log';
-  //  StandardLogFilename =  'opsi-winst';
-  //  StandardLogFileext =   '.log';
+  //FStandardLogFileext = '.log';
+  //  FStandardLogFilename =  'opsi-winst';
+  //  FStandardLogFileext =   '.log';
 
 
 (* old Loglevels before opsi 4
@@ -279,8 +263,8 @@ var
 
 
 function getComputerName: string;
-procedure CreateTheLogfile(var LogDateiname: string); overload;
-procedure CreateTheLogfile(var LogDateiname: string; check4append: boolean); overload;
+//procedure CreateTheLogfile(var LogDateiname: string); overload;
+//procedure CreateTheLogfile(var LogDateiname: string; check4append: boolean); overload;
 function GetContinueLogFile(var LogFilename: string): boolean;
 
 implementation
@@ -488,12 +472,12 @@ begin
     LogFilename := ContinueFilename;
 end;
 
-procedure CreateTheLogfile(var LogDateiname: string);
+procedure TLogInfo.CreateTheLogfile(LogDateiname: string);
 begin
   CreateTheLogfile(LogDateiname, True);
 end;
 
-procedure CreateTheLogfile(var LogDateiname: string; check4append: boolean);
+procedure TLogInfo.CreateTheLogfile(LogDateiname: string; check4append: boolean);
 var
   i: integer;
   filelist : TStringlist;
@@ -505,7 +489,7 @@ begin
   // remove old partlog files
   files := TuibFileInstall.Create;
   try
-    files.alldelete(StandardPartLogPath + StandardPartLogFilename + '*', False, True, 0);
+    files.alldelete(StandardPartLogPath + FStandardPartLogFilename + '*', False, True, 0);
   except
   end;
   files.Free;
@@ -513,7 +497,7 @@ begin
   {$IFNDEF OPSIWINST}
   // remove old partlog files
   try
-    filelist := FindAllFiles(StandardPartLogPath, StandardPartLogFilename+'*', false);
+    filelist := FindAllFiles(StandardPartLogPath, FStandardPartLogFilename+'*', false);
     for i:=0 to filelist.Count-1 do
     begin
       // only delete files older than a week
@@ -590,6 +574,29 @@ begin
   FAppendmode := False;
   FConfidentialStrings := TStringlist.Create;
   FLogProduktId := False;
+  FStandardLogFileext := '.log';
+  {$IFDEF OPSIWINST}
+  FStandardPartLogFilename := 'opsi-script-part-';
+  FStandardLogFilename := 'opsi-script';
+  FStandardLogFileext := '.log';
+  {$ENDIF OPSIWINST}
+  {$IFDEF OCASIMP}
+  FStandardPartLogFilename := 'ocasimp-part-';
+  FStandardLogFilename := 'ocasimp';
+  {$ENDIF OCASIMP}
+  {$IFDEF OPSISCRIPTSTARTER}
+  FStandardPartLogFilename = 'opsiscriptstarter-part-';
+  FStandardLogFilename = 'opsiscriptstarter';
+  {$ENDIF OPSISCRIPTSTARTER}
+  {$IFDEF OPSICLIENTKIOSK}
+  FStandardPartLogFilename = 'opsiclientkiosk-part-';
+  FStandardLogFilename = 'opsiclientkiosk';
+  {$ENDIF OPSICLIENTKIOSK}
+  {$IFDEF OPSICLIENTD_SHUTDOWN_STARTER}
+  FStandardPartLogFilename = 'opsiclientd_shutdown_starter-part-';
+  FStandardLogFilename = 'opsiclientd_shutdown_starter';
+  {$ENDIF OPSICLIENTD_SHUTDOWN_STARTER}
+
 end;
 
 
@@ -903,7 +910,7 @@ begin
   PartLogFileExists := False;
   ForceDirectories(StandardPartLogPath);
   Randomize;
-  PartFileName := StandardPartLogPath +PathDelim +StandardPartLogFilename +
+  PartFileName := StandardPartLogPath +PathDelim +FStandardPartLogFilename +
   {$IFDEF OPSIWINST}
   randomstr(False)
   {$ELSE}
@@ -1076,7 +1083,7 @@ begin
     end;
   end;
   try
-    files.alldelete(StandardPartLogPath + StandardPartLogFilename + '*', False, True, 0);
+    files.alldelete(StandardPartLogPath + FStandardPartLogFilename + '*', False, True, 0);
   except
     //LogDatei.DependentAdd('not all files "' + TempPath + TempBatchdatei + '*"  could be deleted', LLnotice);
   end;
@@ -1086,7 +1093,7 @@ begin
   {$IFNDEF OPSIWINST}
   // remove old partlog files
   try
-    filelist := FindAllFiles(StandardPartLogPath, StandardPartLogFilename+'*', false);
+    filelist := FindAllFiles(StandardPartLogPath, FStandardPartLogFilename+'*', false);
     for i:=0 to filelist.Count-1 do
     begin
       DeleteFile(filelist.Strings[i]);
@@ -1666,13 +1673,19 @@ begin
     peakIndicator := peakIndicator + peakIndicatorChar;
 
   {$IFDEF WINDOWS}
+  {$IFDEF OPSI}
   StandardLogPath := 'c:\opsi.org\log\';
-  //StandardMainLogPath := 'c:\tmp\';
   StandardMainLogPath := StandardLogPath;
   StandardPartLogPath := 'c:\opsi.org\log\';
-  {$ELSE}
+  {$ELSE OPSI}
+  StandardLogPath := GetTempDir(false);
+  StandardMainLogPath := GetTempDir(false);
+  StandardPartLogPath := GetTempDir(false);
+  {$ENDIF OPSI}
+  {$ELSE WINDOWS}
   if 0 = fpGetEUid then
   begin
+    {$IFDEF OPSI}
     StandardLogPath := '/var/log/opsi-client-agent/opsi-script/';
     StandardMainLogPath := '/var/log/opsi-client-agent/opsi-script/';
     StandardPartLogPath := '/var/log/opsi-client-agent/opsi-script/';
@@ -1681,6 +1694,11 @@ begin
     StandardMainLogPath := '/var/log/opsi-client-agent/opsiclientd/';
     StandardPartLogPath := '/var/log/opsi-client-agent/opsiclientd/';
     {$ENDIF OPSISCRIPTSTARTER}
+    {$ELSE OPSI}
+    StandardLogPath := '/tmp/';
+    StandardMainLogPath := '/tmp/';
+    StandardPartLogPath := '/tmp/'
+    {$ENDIF OPSI}
   end
   else
   begin
