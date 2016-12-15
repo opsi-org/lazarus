@@ -116,9 +116,10 @@ type
                 tsOpsiServiceHashList,
                 tsDDEwithProgman,
                 // end of section names
-                // start of other commands
+                // start of other commands  after tsWorkOnStringList
                 tsWorkOnStringList,
-        //tsTestCommand,
+                tsOpsiServiceCallStat,
+                //tsTestCommand,
                 tsStayWhileWindowOpen,
                 tsCondOpen, tsCondThen, tsCondElse, tsCondClose,
                 tsSwitch, tsSwitchCaseOpen, tsSwitchCaseClose, tsSwitchDefaultOpen, tsSwitchClose,
@@ -5656,7 +5657,7 @@ begin
 
     if local_opsidata <> nil
     then serviceChoice := tscReuse;
-
+    logdatei.log('Parsingprogress: r: '+r+' exp: '+Expressionstr,LLDebug3);
     if r <> ''
     then
     Begin
@@ -5664,13 +5665,13 @@ begin
       while r <> ''
       do
       Begin
-        if skip ('/opsiclientd', r, r, errorInfo)
-        then
-           serviceChoice := tscOpsiclientd // we call the local opsiclientd
-
-        else if skip ('/opsiclientd-once', r, r, errorInfo)
+        if skip ('/opsiclientd-once', r, r, errorInfo)
         then
            serviceChoice := tscOpsiclientdOnce // we call the local opsiclientd and switch back
+
+        else if skip ('/opsiclientd', r, r, errorInfo)
+        then
+           serviceChoice := tscOpsiclientd // we call the local opsiclientd
 
         else if skip ('/preloginservice', r, r, errorInfo)
         then
@@ -5749,13 +5750,13 @@ begin
         if Skip (':', r, r, errorInfo)
         then
         Begin
+          logdatei.log('Parsingprogress: r: '+r+' exp: '+Expressionstr,LLDebug3);
           if LowerCase (Expressionstr) = LowerCase ('"method"')
           then
           Begin
-            if GetString (r, methodname, r, errorInfo, false)
-            then
-              syntaxcheck := true;
-
+            if GetString (r, methodname, r, errorInfo, true)
+            then  syntaxcheck := true;
+            logdatei.log('Parsingprogress: r: '+r+' exp: '+Expressionstr,LLDebug3);
           end
 
           else if LowerCase (Expressionstr) = LowerCase ('"params"')
@@ -5767,10 +5768,11 @@ begin
              if r = ''
              then
                getNextValidLine (r, i, Sektion);
-
+             logdatei.log('Parsingprogress: r: '+r+' exp: '+Expressionstr,LLDebug3);
              if (i <= Sektion.count) and skip ('[', r, r, errorInfo)
              then
              Begin
+               logdatei.log('Parsingprogress: r: '+r+' exp: '+Expressionstr,LLDebug3);
                inParams := true;
                paramsValueListFound := true;
                paramStartI := i;
@@ -5796,6 +5798,7 @@ begin
                do
                Begin
                   getNextValidLine(r, i, Sektion);
+                  logdatei.log('Parsingprogress: r: '+r+' exp: '+Expressionstr,LLDebug3);
                   if i <= Sektion.count
                   then
                   Begin
@@ -5885,8 +5888,8 @@ begin
 
     if syntaxCheck then
     Begin
-        LogDatei.log('   "method": "' + methodname + '"', LevelComplete);
-      //LogDatei.log('   "params" : "' + jsonParams, LevelComplete);
+        LogDatei.log('   "method": "' + methodname + '"', LLInfo);
+      //LogDatei.log('   "params" : "' + jsonParams, LLInfo);
 
       testresult := 'service not initialized';
       case serviceChoice of
@@ -15559,6 +15562,7 @@ begin
   begin
    //writeln(actionresult);
     Remaining := trim (Sektion.strings [i-1]);
+    //logdatei.log('Parsingprogress: r: '+Remaining+' exp: '+Expressionstr,LLDebug3);
     //writeln(remaining);
     //readln;
 
@@ -15584,8 +15588,10 @@ begin
       end
       else
       Begin
-      call := remaining;
+        call := remaining;
+        //logdatei.log('Parsingprogress: r: '+Remaining+' exp: '+Expressionstr,LLDebug3);
         GetWord (Remaining, Expressionstr, Remaining, WordDelimiterSet4);
+        //logdatei.log('Parsingprogress: r: '+Remaining+' exp: '+Expressionstr,LLDebug3);
         StatKind := FindKindOfStatement (Expressionstr, SectionSpecifier, call);
         ArbeitsSektion.Name := Expressionstr;
         ArbeitsSektion.SectionKind := StatKind;
@@ -17839,13 +17845,14 @@ begin
                   {$ENDIF WINDOWS}
                 end;
 
-              tsOpsiServiceCall:
+              tsOpsiServiceCall, tsOpsiServiceCallStat:
                 begin
                    Parameter := Remaining;
                    if (uppercase(PStatNames^ [tsOpsiServiceCall]) = uppercase(Expressionstr))
                       and skip ('/preloginservice', Remaining, Remaining, errorInfo)
                      then
                    begin
+                     logdatei.log('Execution of OpsiServiceCall /preloginservce',LLInfo);
                      if (local_opsidata <> nil) and (local_opsidata <> opsidata) then
                      begin
                        local_opsidata.Free;
@@ -19124,6 +19131,7 @@ begin
   PStatNames^ [tsExecuteWith_escapingStrings] := 'ExecWith_escapingStrings'; // is implemented via parameterEscapeStrings
   PStatNames^ [tsKillTask]            := 'KillTask';
   PStatNames^ [tsOpsiServiceCall]     := 'OpsiServiceCall';
+  PStatNames^ [tsOpsiServiceCallStat] := 'OpsiServiceCall';
   PStatNames^ [tsOpsiServiceHashList] := 'OpsiServiceHashList';
   PStatNames^ [tsDDEwithProgman]      := 'ProgmanGroups';
 

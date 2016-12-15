@@ -20,7 +20,7 @@ object CentralForm: TCentralForm
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '1.6.0.4'
+  LCLVersion = '1.6.2.0'
   object LabelWinstVersion: TLabel
     Left = 177
     Height = 9

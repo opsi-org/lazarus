@@ -963,6 +963,7 @@ end;
 
 procedure TCentralForm.BitBtnViewLogfileClick(Sender: TObject);
 begin
+  ShowMessage('Logview is temporary not working. Please use the opsi-logviewer product.');
   {$IFDEF WIN32}
   (*
   ShowTextFile.lzRichEdit1.Clear;

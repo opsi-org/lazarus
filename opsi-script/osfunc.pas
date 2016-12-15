@@ -5864,6 +5864,7 @@ begin
      LogS := 'Debug: Item no. ' + IntToStr (i-1)  + ' is ''' + SearchItem + '''';
      LogDatei.DependentAdd (LogS, LevelDebug);
      }
+     if (i / 1000) = 0 then  LogDatei.log('Searching in Item no: '+Inttostr(i), LLDebug2);
   end;
 
   if found then
