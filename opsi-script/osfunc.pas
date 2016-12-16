@@ -31,7 +31,7 @@ interface
 
 uses
 {$IFDEF WINDOWS}
-  jwawinnt,
+  //jwawinnt,
   JwaWinType,
   jwatlhelp32,
   jwawinbase,
@@ -43,7 +43,7 @@ uses
   Windows,
   ActiveX, (* zur Laufzeit von CoCreateInstance benoetigt *)
   winsock,
-  registry,
+  //registry,
   VersionInfoX,
   //unitImpersonator,
   osregistry,
@@ -54,7 +54,7 @@ uses
 oslocaladmin,
 packdefs,
  zipinter,
- uCpuUsage,
+ //uCpuUsage,
 {$ENDIF WIN32}
   //unitImpersonator,
   (* for infozip  *)
@@ -7482,7 +7482,7 @@ begin
   //new:=StrAlloc (length(newfilename)+1);
   exist:=pchar(existingfilename);
   new:=pchar(newfilename);
-  if FileExistsUTF8(newfilename) then
+  if FileExists(newfilename) then
   begin
     if FileGetWriteAccess(newfilename, ActionInfo) then
       if ActionInfo <> '' then LogDatei.log(ActionInfo, LLInfo);

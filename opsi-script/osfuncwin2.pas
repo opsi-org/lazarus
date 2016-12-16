@@ -2243,6 +2243,12 @@ begin
       LogDatei.log('EnablePrivilege Error: ' + IntToStr(GetLastError) +
         ' (' + SysErrorMessage(GetLastError) + ')', LLError);
     end;
+    //next try
+    if not SetProcessPrivilege('SeCreateSymbolicLinkPrivilege')then
+    begin
+      LogDatei.log('EnablePrivilege Error: ' + IntToStr(GetLastError) +
+        ' (' + SysErrorMessage(GetLastError) + ')', LLError);
+    end;
     _CreateSymbolicLinkA := nil;
     if not Assigned(_CreateSymbolicLinkA) then
     begin
