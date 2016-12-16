@@ -7014,13 +7014,16 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
           search4file := true;
           cpSpecify := 0;
           if UpperCase (Expressionstr) = 'DEL' then search4file := false;
-          if not GetString (Remaining, Expressionstr, Remaining, errorinfo, true)
+          if not GetString (Remaining, Expressionstr, Remaining, errorinfo, false)
           then
           Begin
+            LogDatei.log ('No Getstring: '+errorinfo, LLDebug3);
+            LogDatei.log ('after Getstring: rem : '+remaining+' expr: '+Expressionstr, LLDebug3);
              // instead of using (as up to version 4.1)
              // GetWord (Remaining, Expressionstr, Remaining, WordDelimiterWhiteSpace);
              // we want to be exact with the number of blanks
              DivideAtFirst (' ', remaining, Expressionstr, remaining_with_leading_blanks);
+             LogDatei.log ('after DivideAtFirst: rem : '+remaining_with_leading_blanks+' expr: '+Expressionstr, LLDebug3);
              remaining := cutLeftBlanks(remaining_with_leading_blanks);
           End;
           LogDatei.log ('Remaining before Options: '+remaining, LLDebug2);

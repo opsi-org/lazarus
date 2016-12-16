@@ -24,7 +24,12 @@
 # These can be changed by user in Lazarus/project options.
 backup/
 *.bak
-lib/
+#lib/
+i386-win32/
+x86_64-win64/
+i386-linux/
+x86_64-linux/
+
 
 # Application bundle for Mac OS
 *.app/

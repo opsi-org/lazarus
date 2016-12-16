@@ -5046,7 +5046,7 @@ function divideAtFirst(const partialS, S: string; var part1, part2: string): boo
 var
   i: integer = 0;
 begin
-  i := pos(lowercase(partialS), lowercase(s));
+  i := ansipos(lowercase(partialS), lowercase(s));
   if i > 0 then
   begin
     part1 := copy(S, 1, i - 1);
