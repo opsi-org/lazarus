@@ -11,10 +11,6 @@ uses
   //Interfaces, // this includes the LCL widgetset
   Classes,
   SysUtils,
-  superobject,
-  synacode,
-  oslog,
-  oswebservice,
   CustApp ,
   process,
   blowfish,
@@ -24,7 +20,7 @@ uses
   baseunix,
   fileinfo,
   elfreader,
-  inifiles;
+  inifiles,oslog;
 
 
 const

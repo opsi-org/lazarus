@@ -22,8 +22,74 @@
       <BuildNr Value="1"/>
       <StringTable CompanyName="uib gmbh (www.uib.de)" LegalCopyright="uib gmbh under AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="opsiscriptstarter" ProductName="opsi" ProductVersion="4.0.7"/>
     </VersionInfo>
-    <BuildModes Count="1">
+    <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
+      <Item2 Name="Debug">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <Target>
+            <Filename Value="opsiscriptstarter"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="../common;../external_libraries/dcpcrypt/Ciphers;../external_libraries/dcpcrypt/Hashes;../external_libraries/synapse40lib;../external_libraries/misc;../external_libraries/uSMBIOS;../external_libraries/dcpcrypt;../external_libraries/indy/Lib/System;../external_libraries/indy/Lib/Core;../external_libraries/indy/Lib/Protocols;../external_libraries/indy/Lib"/>
+            <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <IncludeAssertionCode Value="True"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2Set"/>
+              <UseHeaptrc Value="True"/>
+              <StripSymbols Value="True"/>
+              <UseExternalDbgSyms Value="True"/>
+            </Debugging>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dOPSISCRIPTSTARTER"/>
+          </Other>
+        </CompilerOptions>
+      </Item2>
+      <Item3 Name="Release">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <Target>
+            <Filename Value="opsiscriptstarter"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="../common;../external_libraries/dcpcrypt/Ciphers;../external_libraries/dcpcrypt/Hashes;../external_libraries/synapse40lib;../external_libraries/misc;../external_libraries/uSMBIOS;../external_libraries/dcpcrypt;../external_libraries/indy/Lib/System;../external_libraries/indy/Lib/Core;../external_libraries/indy/Lib/Protocols;../external_libraries/indy/Lib"/>
+            <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <StripSymbols Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dOPSISCRIPTSTARTER"/>
+          </Other>
+        </CompilerOptions>
+      </Item3>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
@@ -52,23 +118,23 @@
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="superobject.pas"/>
+        <Filename Value="opsiscriptstarter.txt"/>
         <IsPartOfProject Value="True"/>
       </Unit1>
       <Unit2>
-        <Filename Value="synacode.pas"/>
+        <Filename Value="../common/manifest.xml"/>
         <IsPartOfProject Value="True"/>
       </Unit2>
       <Unit3>
-        <Filename Value="oslog.pas"/>
+        <Filename Value="../common/oscrypt.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit3>
       <Unit4>
-        <Filename Value="oswebservice.pas"/>
+        <Filename Value="../common/oslog.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
       <Unit5>
-        <Filename Value="opsiscriptstarter.txt"/>
+        <Filename Value="../common/oswebservice.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit5>
     </Units>
@@ -80,7 +146,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="synapse40lib;dcpcrypt/Ciphers;dcpcrypt/Hashes;indy/Lib/Core;indy/Lib/Protocols;indy/Lib/Security;indy/Lib/System;indy/Lib;dcpcrypt"/>
+      <OtherUnitFiles Value="../common;../external_libraries/dcpcrypt/Ciphers;../external_libraries/dcpcrypt/Hashes;../external_libraries/synapse40lib;../external_libraries/misc;../external_libraries/uSMBIOS;../external_libraries/dcpcrypt;../external_libraries/indy/Lib/System;../external_libraries/indy/Lib/Core;../external_libraries/indy/Lib/Protocols;../external_libraries/indy/Lib"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>

@@ -28,26 +28,17 @@ uses
   packdefs in 'packdefs.pas',
   ///indylaz,
   osfunc,
-  oslog in 'oslog.pas',
   osparser,
-  //Unicode in 'unicode.pas',
-  synacode in 'synacode.pas',
-  synautil in 'synautil.pas',
-  synsock in 'synsock.pas',
-  blcksock in 'blcksock.pas',
   ldapsend in 'ldapsend.pas',
   osmain in 'osmain.pas',
   oslocale,
-  superobject in 'superobject.pas',
   oscalc,
-  oswebservice,
   custapp,
-  osencoding,
   //unicodestringmanager,
   {$IFDEF LINUX}
   osfunclin,
   {$ENDIF LINUX}
-  osconf, opsihwbiosinfo, oscrypt;
+  osconf, opsihwbiosinfo;
 
 
 type
