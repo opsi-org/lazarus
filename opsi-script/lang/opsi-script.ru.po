@@ -1,242 +1,241 @@
+# 
+# Translators:
+# Alexander Savchenko, 2014
+# Вячеслав Сухарников, 2016
 msgid ""
 msgstr ""
-"Content-Type: text/plain; charset=UTF-8\n"
-"Project-Id-Version: \n"
+"Project-Id-Version: opsi.org\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: detlef oertel <d.oertel@uib.de>\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2016-12-20 14:59+0000\n"
+"Last-Translator: d.oertel <d.oertel@uib.de>\n"
+"Language-Team: Russian (http://www.transifex.com/opsi-org/opsiorg/language/ru/)\n"
 "MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: ru\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 
 #: osbatchgui.rsgetlistofproducts
-#, fuzzy
-#| msgid "Lijst met producten"
-msgctxt "osbatchgui.rsgetlistofproducts"
 msgid "get list of products"
-msgstr "Lade Produktliste ..."
+msgstr "Получить список продуктов"
 
 #: osbatchgui.rsloadingskin
-#, fuzzy
-#| msgid "Uiterlijk laden..."
-msgctxt "osbatchgui.rsloadingskin"
 msgid "Loading skin..."
-msgstr "Lade Oberfläche ..."
+msgstr "Загрузка скина..."
 
 #: osinteractivegui.rsproductcheck
-#, fuzzy
-#| msgid "Product controleren"
 msgctxt "osinteractivegui.rsproductcheck"
 msgid "product check"
-msgstr "Lade auszührende Aktionen ..."
+msgstr "Проверка продукта"
 
 #: osmain.rsproductcheck
-#, fuzzy
-#| msgid "Product controleren"
 msgctxt "osmain.rsproductcheck"
 msgid "product check"
-msgstr "Lade auszührende Aktionen ..."
+msgstr "Проверка продукта"
+
+#: osparser.rsabortprogram
+msgid "Abort program ?"
+msgstr ""
 
 #: osparser.rsgetpassword
 msgid "Please enter opsi service user password:"
-msgstr ""
+msgstr "Пожалуйста, введите пароль пользователя OPSI-сервиса:"
 
 #: osparser.rsgetserviceurl
 msgid "Please enter opsi service URL:"
-msgstr ""
+msgstr "Пожалуйста, введите URL OPSI-сервиса:"
 
 #: osparser.rsgetusername
 msgid "Please enter opsi service user name:"
+msgstr "Пожалуйста, введите имя пользователя OPSI-сервиса:"
+
+#: osparser.rsreadytocontinue
+msgid "Ready to continue ?"
 msgstr ""
 
 #: oswebservice.rssendlog
-#, fuzzy
-#| msgid "Log bestand naar de server sturen..."
-msgctxt "oswebservice.rssendlog"
 msgid "Sending log file to server ..."
-msgstr "Sende Logdatei zum Server ...."
+msgstr "Отправка log-файла на сервер ..."
 
 #: tcentralform.beenden1.caption
 msgctxt "TCENTRALFORM.BEENDEN1.CAPTION"
 msgid "Exit"
-msgstr ""
+msgstr "Выход"
 
 #: tcentralform.buttongetclipboardtext.caption
 msgid "Clipboard --> Viewlist"
-msgstr ""
+msgstr "Буфер обмена --> Список просмотра"
 
 #: tcentralform.buttonprocessmemo.caption
 msgid "Execute viewlist as script"
-msgstr ""
+msgstr "Выполнить список просмотра как скрипт"
 
 #: tcentralform.button_show_gui.caption
 msgid "Show GUI"
-msgstr ""
+msgstr "Показать GUI"
 
 #: tcentralform.caption
-msgctxt "tcentralform.caption"
 msgid "  opsi - script"
-msgstr ""
+msgstr "OPSI - скрипт"
 
 #: tcentralform.combobox1.text
 msgid "ComboBox1"
-msgstr ""
+msgstr "ComboBox1"
 
 #: tcentralform.datei1.caption
 msgid "File"
-msgstr ""
+msgstr "Файл"
 
 #: tcentralform.edit1.text
 msgid "Edit1"
-msgstr ""
+msgstr "Edit1"
 
 #: tcentralform.edit2.text
 msgid "Edit2"
-msgstr ""
+msgstr "Edit2"
 
 #: tcentralform.hilfe1.caption
 msgid "Help"
-msgstr ""
+msgstr "Помощь"
 
 #: tcentralform.info1.caption
 msgid "Info .."
-msgstr ""
+msgstr "Инфо ..."
 
 #: tcentralform.label1.caption
 msgctxt "tcentralform.label1.caption"
 msgid "Label1"
-msgstr ""
+msgstr "Label1"
 
 #: tcentralform.label2.caption
 msgid "Label2"
-msgstr ""
+msgstr "Label2"
 
 #: tcentralform.label4.caption
 msgid "Logfile:"
-msgstr ""
+msgstr "Log-файл:"
 
 #: tcentralform.label5.caption
 msgid "Script:"
-msgstr ""
+msgstr "Скрипт:"
 
 #: tcentralform.label6.caption
 msgctxt "TCENTRALFORM.LABEL6.CAPTION"
 msgid "LabelWinstVersion"
-msgstr ""
+msgstr "LabelWinstVersion"
 
 #: tcentralform.labelactivity.caption
 msgid "-"
-msgstr ""
+msgstr "-"
 
 #: tcentralform.labelwinstversion.caption
-msgctxt "TCENTRALFORM.LABELWINSTVERSION.CAPTION"
+msgctxt "tcentralform.labelwinstversion.caption"
 msgid "LabelWinstVersion"
-msgstr ""
+msgstr "LabelWinstVersion"
 
 #: tcentralform.panel2.caption
 msgid "Log-View:"
-msgstr ""
+msgstr "Просмотр лога:"
 
 #: tcentralform.radiobuttonappendlogfile.caption
 msgid "Append"
-msgstr ""
+msgstr "Добавить"
 
 #: tcentralform.radiobuttonnewlogfile.caption
 msgid "New"
-msgstr ""
+msgstr "Новый"
 
 #: tcentralform.skript1.caption
 msgid "Open Script"
-msgstr ""
+msgstr "Открыть скрипт"
 
 #: tcentralform.speedbutton1.caption
 msgid "Select Script"
-msgstr ""
+msgstr "Выбрать скрипт"
 
 #: tcentralform.speedbutton2.caption
 msgid "Start"
-msgstr ""
+msgstr "Старт"
 
 #: tcentralform.speedbutton3.caption
 msgid "View Log"
-msgstr ""
+msgstr "Просмотреть лог"
 
 #: tcentralform.speedbutton4.caption
 msgid "Hide GUI"
-msgstr ""
+msgstr "Скрыть GUI"
 
 #: tcentralform.speedbutton5.caption
-msgctxt "TCENTRALFORM.SPEEDBUTTON5.CAPTION"
+msgctxt "tcentralform.speedbutton5.caption"
 msgid "Exit"
-msgstr ""
+msgstr "Выход"
 
 #: tcentralform.toolbar1.caption
 msgid "ToolBar1"
-msgstr ""
+msgstr "ToolBar1"
 
 #: tdialogservicepassword.cancelbutton.caption
 msgid "Cancel"
-msgstr ""
+msgstr "Отменить"
 
 #: tdialogservicepassword.caption
 msgid " DialogServicePassword"
-msgstr ""
+msgstr "Авторизация"
 
 #: tdialogservicepassword.labelpassword.caption
 msgid "Password"
-msgstr ""
+msgstr "Пароль"
 
 #: tdialogservicepassword.labelserviceurl.caption
 msgid "Opsi Service URL"
-msgstr ""
+msgstr "URL OPSI-сервиса"
 
 #: tdialogservicepassword.labelusername.caption
 msgid "Username"
-msgstr ""
+msgstr "Имя пользователя"
 
 #: tdialogservicepassword.okbutton.caption
 msgid "o.k."
-msgstr ""
+msgstr "o.k."
 
 #: tfbatchoberflaeche.caption
-msgctxt "tfbatchoberflaeche.caption"
 msgid "opsi-script"
-msgstr ""
+msgstr "opsi-script"
 
 #: tfbatchoberflaeche.labelcommand.caption
 msgid "Command"
-msgstr ""
+msgstr "Команда"
 
 #: tfbatchoberflaeche.labeldetail.caption
 msgid "Detail"
-msgstr ""
+msgstr "Детали"
 
 #: tfbatchoberflaeche.labelinfo.caption
 msgid "Info"
-msgstr ""
+msgstr "Инфо"
 
 #: tfbatchoberflaeche.labelproduct.caption
 msgid "LabelProductImage"
-msgstr ""
+msgstr "LabelProductImage"
 
 #: tfbatchoberflaeche.labelprogress.caption
 msgid "Activity"
-msgstr ""
+msgstr "Активность"
 
 #: tfbatchoberflaeche.labelversion.caption
 msgid "LabelVersion"
-msgstr ""
+msgstr "LabelVersion"
 
 #: tmymessagedlg.abortbtn.caption
 msgid "&Exit"
-msgstr ""
+msgstr "Выход"
 
 #: tmymessagedlg.cancelbtn.caption
 msgid "&Cancel"
 msgstr ""
 
 #: tmymessagedlg.caption
-msgid "opsi-winst Message"
+msgid "opsi-script Message"
 msgstr ""
 
 #: tmymessagedlg.nobtn.caption
@@ -251,56 +250,11 @@ msgstr ""
 msgid "&Yes"
 msgstr ""
 
-#: tshowtextfile.bitbtn1.caption
-msgid "Search"
-msgstr ""
-
-#: tshowtextfile.caption
-msgid "opsi-script Logfile"
-msgstr ""
-
-#: tshowtextfile.label1.caption
-msgid "Fontsize"
-msgstr ""
-
-#: tshowtextfile.label2.caption
-msgid "Filter Loglevel"
-msgstr ""
-
 #: tsysteminfo.caption
 msgid "SystemInfo"
-msgstr ""
+msgstr "Информация о системе"
 
 #: tsysteminfo.label1.caption
-msgctxt "tsysteminfo.label1.caption"
+msgctxt "TSYSTEMINFO.LABEL1.CAPTION"
 msgid "Label1"
-msgstr ""
-
-#: wibtch.rsgetlistofproducts
-#, fuzzy
-#| msgid "Lijst met producten"
-msgctxt "wibtch.rsgetlistofproducts"
-msgid "get list of products"
-msgstr "Lade Produktliste ..."
-
-#: wibtch.rsloadingskin
-#, fuzzy
-#| msgid "Uiterlijk laden..."
-msgctxt "wibtch.rsloadingskin"
-msgid "Loading skin..."
-msgstr "Lade Oberfläche ..."
-
-#: widatamodul.rssendlog
-#, fuzzy
-#| msgid "Log bestand naar de server sturen..."
-msgctxt "widatamodul.rssendlog"
-msgid "Sending log file to server ..."
-msgstr "Sende Logdatei zum Server ...."
-
-#: wimain.rsproductcheck
-#, fuzzy
-#| msgid "Product controleren"
-msgctxt "wimain.rsproductcheck"
-msgid "product check"
-msgstr "Lade auszührende Aktionen ..."
-
+msgstr "Label1"

@@ -583,8 +583,9 @@ procedure TIdIMAP4Server.InitComponent;
 begin
   inherited InitComponent;
   //Todo:  Not sure which number is appropriate.  Should be tested
-  FImplicitTLSProtPort := IdPORT_IMAP4S;  //Id_PORT_imap4_ssl_dp;
   FRegularProtPort := IdPORT_IMAP4;
+  FImplicitTLSProtPort := IdPORT_IMAP4S;  //Id_PORT_imap4_ssl_dp;
+  FExplicitTLSProtPort := IdPORT_IMAP4;
   DefaultPort := IdPORT_IMAP4;
   ContextClass := TIdIMAP4PeerContext;
   FSaferMode := False;
@@ -708,39 +709,44 @@ var
   LContext: TIdIMAP4PeerContext;
 begin
   LContext := TIdIMAP4PeerContext(ASender.Context);
-  AMessageNumbers.Clear;
-  //See is it a sequence like 2:4 ...
-  LPos := IndyPos(':', AMessageSet);      {Do not Localize}
-  if LPos > 0 then begin
-    LTemp := Copy(AMessageSet, 1, LPos-1);
-    LStart := IndyStrToInt(LTemp);
-    LTemp := Copy(AMessageSet, LPos+1, MAXINT);
-    if LTemp = '*' then begin  {Do not Localize}
-      if AUseUID then begin
-        LEnd := IndyStrToInt(LContext.MailBox.UIDNext)-1;
-        for LN := LStart to LEnd do begin
-          AMessageNumbers.Add(IntToStr(LN));
+  AMessageNumbers.BeginUpdate;
+  try
+    AMessageNumbers.Clear;
+    //See is it a sequence like 2:4 ...
+    LPos := IndyPos(':', AMessageSet);      {Do not Localize}
+    if LPos > 0 then begin
+      LTemp := Copy(AMessageSet, 1, LPos-1);
+      LStart := IndyStrToInt(LTemp);
+      LTemp := Copy(AMessageSet, LPos+1, MAXINT);
+      if LTemp = '*' then begin  {Do not Localize}
+        if AUseUID then begin
+          LEnd := IndyStrToInt(LContext.MailBox.UIDNext)-1;
+          for LN := LStart to LEnd do begin
+            AMessageNumbers.Add(IntToStr(LN));
+          end;
+        end else begin
+          LEnd := LContext.MailBox.MessageList.Count;
+          for LN := LStart to LEnd do begin
+            AMessageNumbers.Add(IntToStr(LN));
+          end;
         end;
       end else begin
-        LEnd := LContext.MailBox.MessageList.Count;
+        LEnd := IndyStrToInt(LTemp);
         for LN := LStart to LEnd do begin
           AMessageNumbers.Add(IntToStr(LN));
         end;
       end;
     end else begin
-      LEnd := IndyStrToInt(LTemp);
-      for LN := LStart to LEnd do begin
-        AMessageNumbers.Add(IntToStr(LN));
+      //See is it a comma-separated list...
+      LPos := IndyPos(',', AMessageSet);        {Do not Localize}
+      if LPos = 0 then begin
+        AMessageNumbers.Add(AMessageSet);
+      end else begin
+        BreakApart(AMessageSet, ',', AMessageNumbers); {Do not Localize}
       end;
     end;
-  end else begin
-    //See is it a comma-separated list...
-    LPos := IndyPos(',', AMessageSet);        {Do not Localize}
-    if LPos = 0 then begin
-      AMessageNumbers.Add(AMessageSet);
-    end else begin
-      BreakApart(AMessageSet, ',', AMessageNumbers); {Do not Localize}
-    end;
+  finally
+    AMessageNumbers.EndUpdate;
   end;
   Result := True;
 end;
@@ -857,13 +863,18 @@ function TIdIMAP4Server.FlagStringToFlagList(AFlagList: TStrings; AFlagString: s
 var
   LTemp: string;
 begin
-  AFlagList.Clear;
-  if (AFlagString <> '') and (AFlagString[1] = '(') and (AFlagString[Length(AFlagString)] = ')') then begin  {Do not Localize}
-    LTemp := Copy(AFlagString, 2, Length(AFlagString)-2);
-    BreakApart(LTemp, ' ', AFlagList); {Do not Localize}
-    Result := True;
-  end else begin
-    Result := False;
+  AFlagList.BeginUpdate;
+  try
+    AFlagList.Clear;
+    if (AFlagString <> '') and (AFlagString[1] = '(') and (AFlagString[Length(AFlagString)] = ')') then begin  {Do not Localize}
+      LTemp := Copy(AFlagString, 2, Length(AFlagString)-2);
+      BreakApart(LTemp, ' ', AFlagList); {Do not Localize}
+      Result := True;
+    end else begin
+      Result := False;
+    end;
+  finally
+    AFlagList.EndUpdate;
   end;
 end;
 

@@ -253,7 +253,7 @@ type
     property HasCAPA: boolean read FHasCAPA;
   published
     property AuthType : TIdPOP3AuthenticationType read FAuthType write FAuthType default DEF_ATYPE;
-    property AutoLogin: Boolean read FAutoLogin write FAutoLogin;
+    property AutoLogin: Boolean read FAutoLogin write FAutoLogin default True;
     property Host;
     property Username;
     property UseTLS;
@@ -352,6 +352,7 @@ begin
   FSASLMechanisms := TIdSASLEntries.Create(Self);
   FRegularProtPort := IdPORT_POP3;
   FImplicitTLSProtPort := IdPORT_POP3S;
+  FExplicitTLSProtPort := IdPORT_POP3;
   Port := IdPORT_POP3;
   FAuthType := DEF_ATYPE;
 end;
@@ -363,7 +364,7 @@ end;
 
 procedure TIdPOP3.DisconnectNotifyPeer;
 begin
-  inherited;
+  inherited DisconnectNotifyPeer;
   SendCmd('QUIT', ST_OK);    {do not localize}
 end;
 

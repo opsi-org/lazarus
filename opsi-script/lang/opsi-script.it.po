@@ -1,25 +1,25 @@
+# 
+# Translators:
 msgid ""
 msgstr ""
-"Content-Type: text/plain; charset=UTF-8\n"
-"Project-Id-Version: \n"
+"Project-Id-Version: opsi.org\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2013-01-16 15:38+0100\n"
-"Last-Translator: Giuliano Di Vito <giuliano@opensides.be>\n"
-"Language-Team: French <kde-i18n-doc@kde.org>\n"
+"PO-Revision-Date: 2016-12-20 14:59+0000\n"
+"Last-Translator: d.oertel <d.oertel@uib.de>\n"
+"Language-Team: Italian (http://www.transifex.com/opsi-org/opsiorg/language/it/)\n"
 "MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 1.0\n"
+"Language: it\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: osbatchgui.rsgetlistofproducts
-msgctxt "osbatchgui.rsgetlistofproducts"
 msgid "get list of products"
-msgstr "ottenere l'elenco dei prodotti"
+msgstr ""
 
 #: osbatchgui.rsloadingskin
-msgctxt "osbatchgui.rsloadingskin"
 msgid "Loading skin..."
-msgstr "Caricamento del tema ..."
+msgstr ""
 
 #: osinteractivegui.rsproductcheck
 msgctxt "osinteractivegui.rsproductcheck"
@@ -30,6 +30,10 @@ msgstr "verifica del prodotto ..."
 msgctxt "osmain.rsproductcheck"
 msgid "product check"
 msgstr "verifica del prodotto ..."
+
+#: osparser.rsabortprogram
+msgid "Abort program ?"
+msgstr ""
 
 #: osparser.rsgetpassword
 msgid "Please enter opsi service user password:"
@@ -43,8 +47,11 @@ msgstr ""
 msgid "Please enter opsi service user name:"
 msgstr ""
 
+#: osparser.rsreadytocontinue
+msgid "Ready to continue ?"
+msgstr ""
+
 #: oswebservice.rssendlog
-msgctxt "oswebservice.rssendlog"
 msgid "Sending log file to server ..."
 msgstr "Invio del file di log al server ..."
 
@@ -66,11 +73,8 @@ msgid "Show GUI"
 msgstr "Mostra GUI"
 
 #: tcentralform.caption
-#, fuzzy
-#| msgid "  opsi - winst"
-msgctxt "tcentralform.caption"
 msgid "  opsi - script"
-msgstr "  opsi - winst"
+msgstr ""
 
 #: tcentralform.combobox1.text
 msgid "ComboBox1"
@@ -123,7 +127,7 @@ msgid "-"
 msgstr "-"
 
 #: tcentralform.labelwinstversion.caption
-msgctxt "TCENTRALFORM.LABELWINSTVERSION.CAPTION"
+msgctxt "tcentralform.labelwinstversion.caption"
 msgid "LabelWinstVersion"
 msgstr "etichetta versione winst"
 
@@ -160,7 +164,7 @@ msgid "Hide GUI"
 msgstr "Cela GUI"
 
 #: tcentralform.speedbutton5.caption
-msgctxt "TCENTRALFORM.SPEEDBUTTON5.CAPTION"
+msgctxt "tcentralform.speedbutton5.caption"
 msgid "Exit"
 msgstr "Esci"
 
@@ -170,7 +174,7 @@ msgstr "barra degli strumenti1"
 
 #: tdialogservicepassword.cancelbutton.caption
 msgid "Cancel"
-msgstr ""
+msgstr "Annulla"
 
 #: tdialogservicepassword.caption
 msgid " DialogServicePassword"
@@ -178,7 +182,7 @@ msgstr ""
 
 #: tdialogservicepassword.labelpassword.caption
 msgid "Password"
-msgstr ""
+msgstr "Password"
 
 #: tdialogservicepassword.labelserviceurl.caption
 msgid "Opsi Service URL"
@@ -193,11 +197,8 @@ msgid "o.k."
 msgstr ""
 
 #: tfbatchoberflaeche.caption
-#, fuzzy
-#| msgid "opsi-winst"
-msgctxt "tfbatchoberflaeche.caption"
 msgid "opsi-script"
-msgstr "opsi-winst"
+msgstr ""
 
 #: tfbatchoberflaeche.labelcommand.caption
 msgid "Command"
@@ -232,7 +233,7 @@ msgid "&Cancel"
 msgstr ""
 
 #: tmymessagedlg.caption
-msgid "opsi-winst Message"
+msgid "opsi-script Message"
 msgstr ""
 
 #: tmymessagedlg.nobtn.caption
@@ -247,48 +248,11 @@ msgstr ""
 msgid "&Yes"
 msgstr ""
 
-#: tshowtextfile.bitbtn1.caption
-msgid "Search"
-msgstr "Cerca"
-
-#: tshowtextfile.caption
-msgid "opsi-script Logfile"
-msgstr ""
-
-#: tshowtextfile.label1.caption
-msgid "Fontsize"
-msgstr "Fontsize"
-
-#: tshowtextfile.label2.caption
-msgid "Filter Loglevel"
-msgstr "Livello log"
-
 #: tsysteminfo.caption
 msgid "SystemInfo"
 msgstr ""
 
 #: tsysteminfo.label1.caption
-msgctxt "tsysteminfo.label1.caption"
+msgctxt "TSYSTEMINFO.LABEL1.CAPTION"
 msgid "Label1"
 msgstr "etichetta1"
-
-#: wibtch.rsgetlistofproducts
-msgctxt "wibtch.rsgetlistofproducts"
-msgid "get list of products"
-msgstr "ottenere l'elenco dei prodotti"
-
-#: wibtch.rsloadingskin
-msgctxt "wibtch.rsloadingskin"
-msgid "Loading skin..."
-msgstr "Caricamento del tema ..."
-
-#: widatamodul.rssendlog
-msgctxt "widatamodul.rssendlog"
-msgid "Sending log file to server ..."
-msgstr "Invio del file di log al server ..."
-
-#: wimain.rsproductcheck
-msgctxt "wimain.rsproductcheck"
-msgid "product check"
-msgstr "verifica del prodotto ..."
-

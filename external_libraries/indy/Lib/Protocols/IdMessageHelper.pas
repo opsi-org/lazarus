@@ -9,7 +9,9 @@ uses
 
 // TODO: move this to IdCompilerDefines.inc
 {$IFDEF DCC}
-  {$IFDEF VCL_2005_OR_ABOVE}
+  // class helpers were first introduced in D2005, but were buggy and not
+  // officially supported until D2006...
+  {$IFDEF VCL_2006_OR_ABOVE}
     {$DEFINE HAS_CLASS_HELPER}
   {$ENDIF}
 {$ENDIF}
@@ -89,10 +91,10 @@ begin
   end;
 end;
 
-{$I IdDeprecatedImplBugOff.inc}
+{$IFDEF HAS_CLASS_HELPER}{$I IdDeprecatedImplBugOff.inc}{$ENDIF}
 procedure TIdMessageHelper_LoadFromStream(AMsg: TIdMessage; AStream: TStream;
   const AHeadersOnly: Boolean; const AUsesDotTransparency: Boolean);
-{$I IdDeprecatedImplBugOn.inc}
+{$IFDEF HAS_CLASS_HELPER}{$I IdDeprecatedImplBugOn.inc}{$ENDIF}
 begin
   Internal_TIdMessageHelper_LoadFromStream(AMsg, AStream, AHeadersOnly, AUsesDotTransparency);
 end;
@@ -126,10 +128,10 @@ begin
   end;
 end;
 
-{$I IdDeprecatedImplBugOff.inc}
+{$IFDEF HAS_CLASS_HELPER}{$I IdDeprecatedImplBugOff.inc}{$ENDIF}
 procedure TIdMessageHelper_LoadFromFile(AMsg: TIdMessage; const AFileName: string;
   const AHeadersOnly: Boolean; const AUsesDotTransparency: Boolean);
-{$I IdDeprecatedImplBugOn.inc}
+{$IFDEF HAS_CLASS_HELPER}{$I IdDeprecatedImplBugOn.inc}{$ENDIF}
 begin
   Internal_TIdMessageHelper_LoadFromFile(AMsg, AFileName, AHeadersOnly, AUsesDotTransparency);
 end;
@@ -178,10 +180,10 @@ begin
   end;
 end;
 
-{$I IdDeprecatedImplBugOff.inc}
+{$IFDEF HAS_CLASS_HELPER}{$I IdDeprecatedImplBugOff.inc}{$ENDIF}
 procedure TIdMessageHelper_SaveToStream(AMsg: TIdMessage; AStream: TStream;
   const AHeadersOnly: Boolean; const AUseDotTransparency: Boolean);
-{$I IdDeprecatedImplBugOn.inc}
+{$IFDEF HAS_CLASS_HELPER}{$I IdDeprecatedImplBugOn.inc}{$ENDIF}
 begin
   Internal_TIdMessageHelper_SaveToStream(AMsg, AStream, AHeadersOnly, AUseDotTransparency);
 end;
@@ -220,10 +222,10 @@ begin
   end;
 end;
 
-{$I IdDeprecatedImplBugOff.inc}
+{$IFDEF HAS_CLASS_HELPER}{$I IdDeprecatedImplBugOff.inc}{$ENDIF}
 procedure TIdMessageHelper_SaveToFile(AMsg: TIdMessage; const AFileName: string;
   const AHeadersOnly: Boolean; const AUseDotTransparency: Boolean);
-{$I IdDeprecatedImplBugOn.inc}
+{$IFDEF HAS_CLASS_HELPER}{$I IdDeprecatedImplBugOn.inc}{$ENDIF}
 begin
   Internal_TIdMessageHelper_SaveToFile(AMsg, AFileName, AHeadersOnly, AUseDotTransparency);
 end;

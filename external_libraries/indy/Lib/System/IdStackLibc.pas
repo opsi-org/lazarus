@@ -172,6 +172,7 @@ type
     {$ENDIF}
     procedure SetKeepAliveValues(ASocket: TIdStackSocketHandle;
       const AEnabled: Boolean; const ATimeMS, AInterval: Integer); override;
+    function SupportsIPv4: Boolean; overload; override;
     function SupportsIPv6: Boolean; overload; override;
     function CheckIPVersionSupport(const AIPVersion: TIdIPVersion): boolean; override;
     constructor Create; override;
@@ -765,13 +766,15 @@ var
   LParts: TIdUInt64Parts;
   L: UInt32;
 begin
-  LParts.QuadPart := AValue{$IFDEF TIdUInt64_IS_NOT_NATIVE}.QuadPart{$ENDIF};
-  L := htonl(LParts.HighPart);
-  if (L <> LParts.HighPart) then begin
+  if (htonl(1) <> 1) then begin
+    LParts.QuadPart := AValue{$IFDEF TIdUInt64_HAS_QuadPart}.QuadPart{$ENDIF};
+    L := htonl(LParts.HighPart);
     LParts.HighPart := htonl(LParts.LowPart);
     LParts.LowPart := L;
+    Result{$IFDEF TIdUInt64_HAS_QuadPart}.QuadPart{$ENDIF} := LParts.QuadPart;
+  end else begin
+    Result{$IFDEF TIdUInt64_HAS_QuadPart}.QuadPart{$ENDIF} := AValue{$IFDEF TIdUInt64_HAS_QuadPart}.QuadPart{$ENDIF};
   end;
-  Result{$IFDEF TIdUInt64_IS_NOT_NATIVE}.QuadPart{$ENDIF} := LParts.QuadPart;
 end;
 
 function TIdStackLibc.NetworkToHost(AValue: TIdUInt64): TIdUInt64;
@@ -779,13 +782,15 @@ var
   LParts: TIdUInt64Parts;
   L: UInt32;
 begin
-  LParts.QuadPart := AValue{$IFDEF TIdUInt64_IS_NOT_NATIVE}.QuadPart{$ENDIF};
-  L := ntohl(LParts.HighPart);
-  if (L <> LParts.HighPart) then begin
+  if (ntohl(1) <> 1) then begin
+    LParts.QuadPart := AValue{$IFDEF TIdUInt64_HAS_QuadPart}.QuadPart{$ENDIF};
+    L := ntohl(LParts.HighPart);
     LParts.HighPart := ntohl(LParts.LowPart);
     LParts.LowPart := L;
+    Result{$IFDEF TIdUInt64_HAS_QuadPart}.QuadPart{$ENDIF} := LParts.QuadPart;
+  end else begin
+    Result{$IFDEF TIdUInt64_HAS_QuadPart}.QuadPart{$ENDIF} := AValue{$IFDEF TIdUInt64_HAS_QuadPart}.QuadPart{$ENDIF};
   end;
-  Result{$IFDEF TIdUInt64_IS_NOT_NATIVE}.QuadPart{$ENDIF} := LParts.QuadPart;
 end;
 
 procedure TIdStackLibc.GetLocalAddressList(AAddresses: TIdStackLocalAddressList);
@@ -1097,6 +1102,12 @@ begin
 
   // TODO: enable this:
   //Result := CheckForSocketError(AResult, [EAGAIN, EWOULDBLOCK]) <> 0;
+end;
+
+function TIdStackLibc.SupportsIPv4: Boolean;
+begin
+  //In Windows, this does something else.  It checks the LSP's installed.
+  Result := CheckIPVersionSupport(Id_IPv4);
 end;
 
 function TIdStackLibc.SupportsIPv6: Boolean;

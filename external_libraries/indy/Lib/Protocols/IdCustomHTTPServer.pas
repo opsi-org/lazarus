@@ -479,6 +479,9 @@ type
     property OnDoneWithPostStream: TIdHTTPDoneWithPostStream read FOnDoneWithPostStream write FOnDoneWithPostStream;
     property OnCommandGet: TIdHTTPCommandEvent read FOnCommandGet write FOnCommandGet;
   public
+    {$IFDEF WORKAROUND_INLINE_CONSTRUCTORS}
+    constructor Create(AOwner: TComponent); reintroduce; overload;
+    {$ENDIF}
     function CreateSession(AContext:TIdContext;
      HTTPResponse: TIdHTTPResponseInfo;
      HTTPRequest: TIdHTTPRequestInfo): TIdHTTPSession;
@@ -976,6 +979,13 @@ begin
   end;
 end;
 
+{$IFDEF WORKAROUND_INLINE_CONSTRUCTORS}
+constructor TIdCustomHTTPServer.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+end;
+{$ENDIF}
+
 destructor TIdCustomHTTPServer.Destroy;
 var
   // under ARC, convert a weak reference to a strong reference before working with it
@@ -1227,6 +1237,8 @@ var
     // requests do not have bodies...
     else if LRequestInfo.CommandType in [hcPOST, hcPUT] then
     begin
+      // TODO: need to handle the case where the ContentType is 'multipart/...',
+      // which is self-terminating and does not strictly require the above headers...
       if LIOHandler.InputBufferIsEmpty then begin
         LIOHandler.CheckForDataOnSource(1);
       end;
@@ -1400,9 +1412,11 @@ begin
             // Parse Params
             if ParseParams then begin
               if TextIsSame(LContentType, ContentTypeFormUrlencoded) then begin
+                // TODO: decode the data using the algorithm outlined in HTML5 section 4.10.22.6 "URL-encoded form data"
                 LRequestInfo.DecodeAndSetParams(LRequestInfo.UnparsedParams);
               end else begin
                 // Parse only query params when content type is not 'application/x-www-form-urlencoded'    {Do not Localize}
+                // TODO: decode the data using a uer-specified charset, defaulting to UTF-8
                 LRequestInfo.DecodeAndSetParams(LRequestInfo.QueryParams);
               end;
             end;
@@ -1955,7 +1969,7 @@ begin
   end;
   if AuthRealm <> '' then begin
     FRawHeaders.Values['WWW-Authenticate'] := 'Basic realm="' + AuthRealm + '"';    {Do not Localize}
-  end;
+    end;
 end;
 
 procedure TIdHTTPResponseInfo.SetResponseNo(const AValue: Integer);
@@ -2089,9 +2103,9 @@ begin
 
   if not (
     (FRequestInfo.CommandType = hcHEAD) or
-    ((ResponseNo div 100) = 1) or
-    (ResponseNo = 204) or
-    (ResponseNo = 304)
+    ((ResponseNo div 100) = 1) or   // informational
+    (ResponseNo = 204) or           // no content
+    (ResponseNo = 304)              // not modified
     ) then
   begin
     // Always check ContentText first
@@ -2099,11 +2113,27 @@ begin
       FConnection.IOHandler.Write(ContentText, CharsetToEncoding(CharSet));
     end
     else if Assigned(ContentStream) then begin
-      ContentStream.Position := 0;
-      FConnection.IOHandler.Write(ContentStream);
+      // If ContentLength has been assigned then do not send the entire file,
+      // in case it grew after WriteHeader() generated the 'Content-Length'
+      // header.  We cannot exceed the byte count that we told the client
+      // we will be sending...
+
+      // TODO: apply this rule to ContentText as well...
+
+      // TODO: stop resetting Position to 0, send from the current Position...
+
+      if HasContentLength then begin
+        if ContentLength > 0 then begin
+          ContentStream.Position := 0;
+          FConnection.IOHandler.Write(ContentStream, ContentLength, False);
+        end;
+      end else begin
+        ContentStream.Position := 0;
+        FConnection.IOHandler.Write(ContentStream);
+      end;
     end
     else begin
-      FConnection.IOHandler.WriteLn('<HTML><BODY><B>' + IntToStr(ResponseNo) + ' ' + ResponseText    {Do not Localize}
+      FConnection.IOHandler.Write('<HTML><BODY><B>' + IntToStr(ResponseNo) + ' ' + ResponseText    {Do not Localize}
        + '</B></BODY></HTML>', CharsetToEncoding(CharSet));    {Do not Localize}
     end;
   end;
@@ -2159,12 +2189,24 @@ begin
   if (ContentLength = -1) and
     ((TransferEncoding = '') or TextIsSame(TransferEncoding, 'identity')) then {do not localize}
   begin
-    // Always check ContentText first
-    if ContentText <> '' then begin
-      ContentLength := CharsetToEncoding(CharSet).GetByteCount(ContentText);
-    end
-    else if Assigned(ContentStream) then begin
-      ContentLength := ContentStream.Size;
+    if not (
+      (FRequestInfo.CommandType = hcHEAD) or
+      ((ResponseNo div 100) = 1) or   // informational
+      (ResponseNo = 204) or           // no content
+      (ResponseNo = 304)              // not modified
+      ) then
+    begin
+      // Always check ContentText first
+      if ContentText <> '' then begin
+        ContentLength := CharsetToEncoding(CharSet).GetByteCount(ContentText);
+      end
+      else if Assigned(ContentStream) then begin
+        ContentLength := ContentStream.Size;
+      end else begin
+        ContentType := 'text/html; charset=utf-8';    {Do not Localize}
+        ContentText := '<HTML><BODY><B>' + IntToStr(ResponseNo) + ' ' + ResponseText + '</B></BODY></HTML>';    {Do not Localize}
+        ContentLength := CharsetToEncoding(CharSet).GetByteCount(ContentText);
+      end;
     end else begin
       ContentLength := 0;
     end;
@@ -2182,6 +2224,7 @@ begin
   end;
   try
     // Write HTTP status response
+    // TODO: if the client sent an HTTP/1.0 request, send an HTTP/1.0 response?
     FConnection.IOHandler.WriteLn('HTTP/1.1 ' + IntToStr(ResponseNo) + ' ' + ResponseText);    {Do not Localize}
     // Write headers
     FConnection.IOHandler.Write(RawHeaders);

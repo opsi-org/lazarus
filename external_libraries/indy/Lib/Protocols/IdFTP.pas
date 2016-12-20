@@ -727,6 +727,10 @@ type
   public
     procedure Assign(Source: TPersistent); override;
   published
+    // TODO: replace UseKeepAlive with an enum/set that allows keepalives to
+    // be enabled on the command connection for its entire lifetime, not just
+    // during transfers, and maybe also add an option to enable keepalives on
+    // the data connections as well...
     property UseKeepAlive: Boolean read FUseKeepAlive write FUseKeepAlive;
     property IdleTimeMS: Integer read FIdleTimeMS write FIdleTimeMS;
     property IntervalMS: Integer read FIntervalMS write FIntervalMS;
@@ -913,6 +917,10 @@ type
     function IsAccountNeeded : Boolean;
     function GetSupportsVerification : Boolean;
   public
+    {$IFDEF WORKAROUND_INLINE_CONSTRUCTORS}
+    constructor Create(AOwner: TComponent); reintroduce; overload;
+    {$ENDIF}
+
     procedure GetInternalResponse(AEncoding: IIdTextEncoding = nil); override;
     function CheckResponse(const AResponse: Int16; const AAllowedResponses: array of Int16): Int16; override;
 
@@ -1144,6 +1152,13 @@ type
     property UsedMLS: Boolean read FUsedMLS;
   end;
 
+{$IFDEF WORKAROUND_INLINE_CONSTRUCTORS}
+constructor TIdFTP.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+end;
+{$ENDIF}
+
 procedure TIdFTP.InitComponent;
 begin
   inherited InitComponent;
@@ -1151,6 +1166,7 @@ begin
   FAutoLogin := DEF_Id_FTP_AutoLogin;
   FRegularProtPort := IdPORT_FTP;
   FImplicitTLSProtPort := IdPORT_ftps;
+  FExplicitTLSProtPort := IdPORT_FTP;
   //
   Port := IDPORT_FTP;
   Passive := Id_TIdFTP_Passive;
@@ -2109,12 +2125,11 @@ end;
 
 procedure TIdFTP.DisconnectNotifyPeer;
 begin
-  if IOHandler.Connected then begin
-    IOHandler.WriteLn('QUIT');      {do not localize}
-    IOHandler.CheckForDataOnSource(100);
-    if not IOHandler.InputBufferIsEmpty then begin
-      GetInternalResponse;
-    end;
+  inherited DisconnectNotifyPeer;
+  IOHandler.WriteLn('QUIT');      {do not localize}
+  IOHandler.CheckForDataOnSource(100);
+  if not IOHandler.InputBufferIsEmpty then begin
+    GetInternalResponse;
   end;
 end;
 
@@ -2703,9 +2718,10 @@ begin
   case ProxySettings.ProxyType of
   fpcmNone:
     begin
-      LCmd := MakeXAUTCmd( Greeting.Text.Text , FUserName, GetLoginPassword);
-      if (LCmd <> '') and (not GetFIPSMode ) then begin
-        if SendCmd(LCmd, [230, 232, 331]) = 331 then begin {do not localize}
+      LCmd := MakeXAUTCmd(Greeting.Text.Text, FUserName, GetLoginPassword);
+      if (LCmd <> '') and (not GetFIPSMode) then
+      begin
+        if SendCmd(LCmd, [230, 232, 331]) = 331 then begin
           if IsAccountNeeded then begin
             if CheckAccount then begin
               SendCmd('ACCT ' + FAccount, [202, 230, 500]);  {do not localize}
@@ -2714,16 +2730,16 @@ begin
             end;
           end;
         end;
-      end else begin
-        if SendCmd('USER ' + FUserName, [230, 232, 331]) = 331 then begin {do not localize}
-          SendCmd('PASS ' + GetLoginPassword, [230, 332]);  {do not localize}
-          if IsAccountNeeded then begin
-            if CheckAccount then begin
-              SendCmd('ACCT ' + FAccount, [202, 230, 500]);  {do not localize}
-            end else begin
-              RaiseExceptionForLastCmdResult;
-            end;
-         end;
+      end
+      else if SendCmd('USER ' + FUserName, [230, 232, 331]) = 331 then {do not localize}
+      begin
+        SendCmd('PASS ' + GetLoginPassword, [230, 332]);  {do not localize}
+        if IsAccountNeeded then begin
+          if CheckAccount then begin
+            SendCmd('ACCT ' + FAccount, [202, 230, 500]);  {do not localize}
+          end else begin
+            RaiseExceptionForLastCmdResult;
+          end;
         end;
       end;
     end;
@@ -2731,7 +2747,8 @@ begin
     begin
       //This also supports WinProxy
       if Length(ProxySettings.UserName) > 0 then begin
-        if SendCmd('USER ' + ProxySettings.UserName, [230, 331]) = 331 then begin {do not localize}
+        if SendCmd('USER ' + ProxySettings.UserName, [230, 331]) = 331 then {do not localize}
+        begin
           SendCmd('PASS ' + ProxySettings.Password, 230); {do not localize}
           if IsAccountNeeded then begin
             if CheckAccount then begin
@@ -2742,7 +2759,8 @@ begin
           end;
         end;
       end;
-      if SendCmd('USER ' + FUserName + '@' + FtpHost, [230, 232, 331]) = 331 then begin {do not localize}
+      if SendCmd('USER ' + FUserName + '@' + FtpHost, [230, 232, 331]) = 331 then {do not localize}
+      begin
         SendCmd('PASS ' + GetLoginPassword, [230, 331]);  {do not localize}
         if IsAccountNeeded then
         begin
@@ -2868,7 +2886,7 @@ From a WS-FTP Pro firescript at:
 
 http://support.ipswitch.com/kb/WS-20050315-DM01.htm
 
-send ("USER %FwUserId$%HostUserId$%HostAddress") 
+send ("USER %FwUserId$%HostUserId$%HostAddress")
 
 //send ("PASS %FwPassword$%HostPassword")
 
@@ -3169,12 +3187,17 @@ procedure TIdFTP.ExtListItem(ADest: TStrings; AFList : TIdFTPListItems; const AI
 var
   i : Integer;
 begin
-  ADest.Clear;
-  SendCmd(Trim('MLST ' + AItem), 250, IndyTextEncoding_8Bit);  {do not localize}
-  for i := 0 to LastCmdResult.Text.Count -1 do begin
-    if IndyPos(';', LastCmdResult.Text[i]) > 0 then begin
-      ADest.Add(LastCmdResult.Text[i]);
+  ADest.BeginUpdate;
+  try
+    ADest.Clear;
+    SendCmd(Trim('MLST ' + AItem), 250, IndyTextEncoding_8Bit);  {do not localize}
+    for i := 0 to LastCmdResult.Text.Count -1 do begin
+      if IndyPos(';', LastCmdResult.Text[i]) > 0 then begin
+        ADest.Add(LastCmdResult.Text[i]);
+      end;
     end;
+  finally
+    ADest.EndUpdate;
   end;
   if Assigned(AFList) then begin
     IdFTPListParseBase.ParseListing(ADest, AFList, 'MLST'); {do not localize}
@@ -3273,19 +3296,24 @@ var
   i : Integer;
   LBuf, LFact : String;
 begin
-  AResults.Clear;
-  for i := 0 to FCapabilities.Count -1 do begin
-    LBuf := FCapabilities[i];
-    if TextIsSame(Fetch(LBuf), ACmd) then begin
-      LBuf := Trim(LBuf);
-      while LBuf <> '' do begin
-        LFact := Trim(Fetch(LBuf, ';'));
-        if LFact <> '' then begin
-          AResults.Add(LFact);
+  AResults.BeginUpdate;
+  try
+    AResults.Clear;
+    for i := 0 to FCapabilities.Count -1 do begin
+      LBuf := FCapabilities[i];
+      if TextIsSame(Fetch(LBuf), ACmd) then begin
+        LBuf := Trim(LBuf);
+        while LBuf <> '' do begin
+          LFact := Trim(Fetch(LBuf, ';'));
+          if LFact <> '' then begin
+            AResults.Add(LFact);
+          end;
         end;
+        Exit;
       end;
-      Exit;
     end;
+  finally
+    AResults.EndUpdate;
   end;
 end;
 
@@ -3507,8 +3535,6 @@ end;
 
 function TIdFTP.CheckResponse(const AResponse: Int16;
   const AAllowedResponses: array of Int16): Int16;
-var
-  i: Integer;
 begin
   // any FTP command can return a 421 reply if the server is going to shut
   // down the command connection.  This way, we can close the connection
@@ -3519,11 +3545,9 @@ begin
   begin
     // check if the caller explicitally wants to handle 421 replies...
     if High(AAllowedResponses) > -1 then begin
-      for i := Low(AAllowedResponses) to High(AAllowedResponses) do begin
-        if AResponse = AAllowedResponses[i] then begin
-          Result := AResponse;
-          Exit;
-        end;
+      if PosInSmallIntArray(AResponse, AAllowedResponses) <> -1 then begin
+        Result := AResponse;
+        Exit;
       end;
     end;
     Disconnect(False);

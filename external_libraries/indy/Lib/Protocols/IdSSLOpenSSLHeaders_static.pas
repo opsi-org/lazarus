@@ -88,11 +88,13 @@ function SSL_CTX_callback_ctrl_func(ssl : PSSL_CTX; cmd : TIdC_INT; fp : SSL_cal
 
 function SSL_get_error_func(s: PSSL; ret_code: TIdC_INT): TIdC_INT cdecl; external SSL_LIB_NAME name 'SSL_get_error';
 
+{$IFNDEF OPENSSL_NO_SSL2}
 function SSLv2_method_func: PSSL_METHOD cdecl; external SSL_LIB_NAME name 'SSLv2_method';
 
 function SSLv2_server_method_func: PSSL_METHOD cdecl; external SSL_LIB_NAME name 'SSLv2_server_method';
 
 function SSLv2_client_method_func: PSSL_METHOD cdecl; external SSL_LIB_NAME name 'SSLv2_client_method';
+{$ENDIF}
 
 function SSLv3_method_func: PSSL_METHOD cdecl; external SSL_LIB_NAME name 'SSLv3_method';
 
@@ -112,17 +114,17 @@ function TLSv1_server_method_func: PSSL_METHOD cdecl; external SSL_LIB_NAME name
 
 function TLSv1_client_method_func: PSSL_METHOD cdecl; external SSL_LIB_NAME name 'TLSv1_client_method';
 
-//function TLSv1_1_method_func: PSSL_METHOD cdecl; external SSL_LIB_NAME name 'TLSv1_1_method';
+function TLSv1_1_method_func: PSSL_METHOD cdecl; external SSL_LIB_NAME name 'TLSv1_1_method';
 
-//function TLSv1_1_server_method_func: PSSL_METHOD cdecl; external SSL_LIB_NAME name 'TLSv1_1_server_method';
+function TLSv1_1_server_method_func: PSSL_METHOD cdecl; external SSL_LIB_NAME name 'TLSv1_1_server_method';
 
-//function TLSv1_1_client_method_func: PSSL_METHOD cdecl; external SSL_LIB_NAME name 'TLSv1_1_client_method';
+function TLSv1_1_client_method_func: PSSL_METHOD cdecl; external SSL_LIB_NAME name 'TLSv1_1_client_method';
 
-//function TLSv1_2_method_func: PSSL_METHOD cdecl; external SSL_LIB_NAME name 'TLSv1_2_method';
+function TLSv1_2_method_func: PSSL_METHOD cdecl; external SSL_LIB_NAME name 'TLSv1_2_method';
 
-//function TLSv1_2_server_method_func: PSSL_METHOD cdecl; external SSL_LIB_NAME name 'TLSv1_2_server_method';
+function TLSv1_2_server_method_func: PSSL_METHOD cdecl; external SSL_LIB_NAME name 'TLSv1_2_server_method';
 
-//function TLSv1_2_client_method_func: PSSL_METHOD cdecl; external SSL_LIB_NAME name 'TLSv1_2_client_method';
+function TLSv1_2_client_method_func: PSSL_METHOD cdecl; external SSL_LIB_NAME name 'TLSv1_2_client_method';
 
 function DTLSv1_method_func: PSSL_METHOD cdecl; external SSL_LIB_NAME name 'DTLSv1_method';
 
@@ -221,6 +223,8 @@ function X509_add_ext_func(cert: PX509; ext: PX509_EXTENSION; loc: TIdC_INT): TI
 {$IFNDEF OPENSSL_NO_BIO}
 function X509_print_func(bp : PBIO; x : PX509) : TIdC_INT cdecl; external SSLCLIB_LIB_name name 'X509_print';
 {$ENDIF}
+
+procedure RAND_cleanup_func; cdecl; external SSLCLIB_LIB_name name 'RAND_cleanup';
 
 function RAND_bytes_func(buf : PIdAnsiChar; num : integer) : integer; cdecl; external SSLCLIB_LIB_name name 'RAND_bytes';
 
@@ -700,9 +704,15 @@ begin
   SSL_CTX_ctrl := SSL_CTX_ctrl_func;
   SSL_CTX_callback_ctrl := SSL_CTX_callback_ctrl_func;
   SSL_get_error := SSL_get_error_func;
+  {$IFNDEF OPENSSL_NO_SSL2}
   SSLv2_method := SSLv2_method_func;
   SSLv2_server_method := SSLv2_server_method_func;
   SSLv2_client_method := SSLv2_client_method_func;
+  {$ELSE}
+  SSLv2_method := nil;
+  SSLv2_server_method := nil;
+  SSLv2_client_method := nil;
+  {$ENDIF}
   SSLv3_method := SSLv3_method_func;
   SSLv3_server_method := SSLv3_server_method_func;
   SSLv3_client_method := SSLv3_client_method_func;
@@ -770,6 +780,7 @@ begin
   //X509_print
   X509_print := X509_print_func;
   {$ENDIF}
+//  _RAND_cleanup := RAND_cleanup_func;
 //  _RAND_bytes := RAND_bytes_func;
 //  _RAND_pseudo_bytes := RAND_pseudo_bytes_func;
 //  _RAND_seed := RAND_seed_proc;

@@ -527,6 +527,8 @@ type
     property Hash: TIdSSLULong read GetHash;
     property HashAsString: string read GetHashAsString;
     property OneLine: string read CertInOneLine;
+    //
+    property CertificateName: PX509_NAME read fX509Name;
   end;
 
   TIdX509Info = class(TObject)
@@ -536,6 +538,8 @@ type
     FX509 : PX509;
   public
     constructor Create( aX509: PX509);
+    //
+    property Certificate: PX509 read FX509;
   end;
 
   TIdX509Fingerprints = class(TIdX509Info)
@@ -623,6 +627,8 @@ http://csrc.nist.gov/CryptoToolkit/tkhash.html
     property notAfter: TDateTime read RnotAfter;
     property SerialNumber : string read GetSerialNumber;
     property DisplayInfo : TStrings read GetDisplayInfo;
+    //
+    property Certificate: PX509 read FX509;
   end;
 
   TIdSSLCipher = class(TObject)
@@ -686,6 +692,8 @@ uses
   IdExceptionCore,
   IdResourceStrings,
   IdThreadSafe,
+  IdCustomTransparentProxy,
+  IdURI,
   SysUtils,
   SyncObjs;
 
@@ -958,6 +966,7 @@ begin
         FreeAndNil(Certificate);
       end;
     except
+      VerifiedOK := False;
     end;
     //if VerifiedOK and (Ok > 0) then begin
     if VerifiedOK {and (Ok > 0)} then begin
@@ -2362,6 +2371,7 @@ begin
   if Assigned(CRYPTO_set_locking_callback) then begin
     CRYPTO_set_locking_callback(nil);
   end;
+  CleanupRandom;
   IdSSLOpenSSLHeaders.Unload;
   FreeAndNil(LockInfoCB);
   FreeAndNil(LockPassCB);
@@ -2394,8 +2404,7 @@ begin
   // might have been loaded OK before the failure occured. LoadOpenSSLLibrary()
   // does not unload ..
   IdSSLOpenSSL.LoadOpenSSLLibrary;
-  if Assigned(_SSLeay_version) then
-  begin
+  if Assigned(_SSLeay_version) then begin
     Result := String(_SSLeay_version(SSLEAY_VERSION));
   end;
 end;
@@ -2438,7 +2447,6 @@ begin
   end
   else if fSSLVersions = [sslvTLSv1_2 ] then begin
     fMethod := sslvTLSv1_2;
-
   end
   else begin
     fMethod := sslvSSLv23;
@@ -2902,6 +2910,48 @@ var
   LTimeout: Integer;
   {$ENDIF}
   LMode: TIdSSLMode;
+  LHost: string;
+
+  function GetURIHost: string;
+  var
+    LURI: TIdURI;
+  begin
+    Result := '';
+    if URIToCheck <> '' then
+    begin
+      LURI := TIdURI.Create(URIToCheck);
+      try
+        Result := LURI.Host;
+      finally
+        LURI.Free;
+      end;
+    end;
+  end;
+
+  function GetProxyTargetHost: string;
+  var
+    // under ARC, convert a weak reference to a strong reference before working with it
+    LTransparentProxy, LNextTransparentProxy: TIdCustomTransparentProxy;
+  begin
+    Result := '';
+    // RLebeau: not reading from the property as it will create a
+    // default Proxy object if one is not already assigned...
+    LTransparentProxy := FTransparentProxy;
+    if Assigned(LTransparentProxy) then
+    begin
+      if LTransparentProxy.Enabled then
+      begin
+        repeat
+          LNextTransparentProxy := LTransparentProxy.ChainedProxy;
+          if not Assigned(LNextTransparentProxy) then Break;
+          if not LNextTransparentProxy.Enabled then Break;
+          LTransparentProxy := LNextTransparentProxy;
+        until False;
+        Result := LTransparentProxy.Host;
+      end;
+    end;
+  end;
+
 begin
   Assert(Binding<>nil);
   if not Assigned(fSSLSocket) then begin
@@ -2947,7 +2997,15 @@ begin
     end;
   end;
   if LMode = sslmClient then begin
-    fSSLSocket.fHostName := Host;
+    LHost := GetURIHost;
+    if LHost = '' then
+    begin
+      LHost := GetProxyTargetHost;
+      if LHost = '' then begin
+        LHost := Self.Host;
+      end;
+    end;
+    fSSLSocket.fHostName := LHost;
     fSSLSocket.Connect(Binding.Handle);
   end else begin
     fSSLSocket.fHostName := '';
@@ -3099,29 +3157,58 @@ begin
     EIdOSSLCreatingContextError.RaiseException(RSSSLCreatingContextError);
   end;
   //set SSL Versions we will use
-  if not (sslvSSLv2 in SSLVersions) then begin
-    SSL_CTX_set_options(fContext, SSL_OP_NO_SSLv2)
+
+  // in OpenSSL 1.0.2g onwards, SSLv2 is disabled and not exported by default
+  // at compile-time. If OpenSSL is compiled with "enable-ssl2" enabled so the
+  // SSLv2_xxx_method() functions are exported, SSLv2 is still disabled by
+  // default in the SSLv23_xxx_method() functions and must be enabled explicitly...
+  if IsOpenSSL_SSLv2_Available then begin
+    if not (sslvSSLv2 in SSLVersions) then begin
+      SSL_CTX_set_options(fContext, SSL_OP_NO_SSLv2);
+    end
+    else if (fMethod = sslvSSLv23) then begin
+      SSL_CTX_clear_options(fContext, SSL_OP_NO_SSLv2);
+    end;
   end;
-  if not (sslvTLSv1 in SSLVersions) then begin
-    SSL_CTX_set_options(fContext, SSL_OP_NO_TLSv1);
+  // SSLv3 might also be disabled as well..
+  if IsOpenSSL_SSLv3_Available then begin
+    if not (sslvSSLv3 in SSLVersions) then begin
+      SSL_CTX_set_options(fContext, SSL_OP_NO_SSLv3);
+    end
+    else if (fMethod = sslvSSLv23) then begin
+      SSL_CTX_clear_options(fContext, SSL_OP_NO_SSLv3);
+    end;
   end;
-  if not (sslvSSLv3 in SSLVersions) then begin
-    SSL_CTX_set_options(fContext, SSL_OP_NO_SSLv3);
+  // may as well do the same for all of them...
+  if IsOpenSSL_TLSv1_0_Available then begin
+    if not (sslvTLSv1 in SSLVersions) then begin
+      SSL_CTX_set_options(fContext, SSL_OP_NO_TLSv1);
+    end
+    else if (fMethod = sslvSSLv23) then begin
+      SSL_CTX_clear_options(fContext, SSL_OP_NO_TLSv1);
+    end;
   end;
 {IMPORTANT!!!  Do not set SSL_CTX_set_options SSL_OP_NO_TLSv1_1 and
 SSL_OP_NO_TLSv1_2 if that functionality is not available.  OpenSSL 1.0 and
 earlier do not support those flags.  Those flags would only cause
 an invalid MAC when doing SSL.}
-  if not (sslvTLSv1_1 in SSLVersions) then begin
-    if IsOpenSSL_TLSv1_1_Available then begin
+  if IsOpenSSL_TLSv1_1_Available then begin
+    if not (sslvTLSv1_1 in SSLVersions) then begin
       SSL_CTX_set_options(fContext, SSL_OP_NO_TLSv1_1);
+    end
+    else if (fMethod = sslvSSLv23) then begin
+      SSL_CTX_clear_options(fContext, SSL_OP_NO_TLSv1_1);
     end;
   end;
-  if not (sslvTLSv1_2 in SSLVersions) then begin
-    if IsOpenSSL_TLSv1_2_Available then begin
+  if IsOpenSSL_TLSv1_2_Available then begin
+    if not (sslvTLSv1_2 in SSLVersions) then begin
       SSL_CTX_set_options(fContext, SSL_OP_NO_TLSv1_2);
+    end
+    else if (fMethod = sslvSSLv23) then begin
+      SSL_CTX_clear_options(fContext, SSL_OP_NO_TLSv1_2);
     end;
   end;
+
   SSL_CTX_set_mode(fContext, SSL_MODE_AUTO_RETRY);
   // assign a password lookup routine
 //  if PasswordRoutineOn then begin
@@ -3220,7 +3307,7 @@ begin
 
   if (Dirs <> '') or (FileName <> '') then begin
     if IndySSL_CTX_load_verify_locations(fContext, FileName, Dirs) <= 0 then begin
-      EIdOSSLCouldNotLoadSSLLibrary.RaiseException(RSOSSLCouldNotLoadSSLLibrary);
+      raise EIdOSSLCouldNotLoadSSLLibrary.Create(RSOSSLCouldNotLoadSSLLibrary);
     end;
   end;
 
@@ -3230,29 +3317,28 @@ end;
 function SelectTLS1Method(const AMode : TIdSSLMode) : PSSL_METHOD;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
+  Result := nil;
   case AMode of
     sslmServer : begin
-      if not Assigned(TLSv1_server_method) then begin
-        raise EIdOSSLGetMethodError.Create(RSSSLGetMethodError);
+      if Assigned(TLSv1_server_method) then begin
+        Result := TLSv1_server_method();
       end;
-      Result := TLSv1_server_method;
     end;
     sslmClient : begin
-      if not Assigned(TLSv1_client_method) then begin
-        raise EIdOSSLGetMethodError.Create(RSSSLGetMethodError);
+      if Assigned(TLSv1_client_method) then begin
+        Result := TLSv1_client_method();
       end;
-      Result := TLSv1_client_method;
     end;
   else
-    if not Assigned(TLSv1_method) then begin
-      raise EIdOSSLGetMethodError.Create(RSSSLGetMethodError);
+    if Assigned(TLSv1_method) then begin
+      Result := TLSv1_method();
     end;
-    Result := TLSv1_method;
   end;
 end;
 
 function TIdSSLContext.SetSSLMethod: PSSL_METHOD;
 begin
+  Result := nil;
   if fMode = sslmUnassigned then begin
     raise EIdOSSLModeNotSet.Create(RSOSSLModeNotSet);
   end;
@@ -3260,62 +3346,53 @@ begin
     sslvSSLv2:
       case fMode of
         sslmServer : begin
-          if not Assigned(SSLv2_server_method) then begin
-            raise EIdOSSLGetMethodError.Create(RSSSLGetMethodError);
+          if Assigned(SSLv2_server_method) then begin
+            Result := SSLv2_server_method();
           end;
-          Result := SSLv2_server_method;
         end;
         sslmClient : begin
-          if not Assigned(SSLv2_client_method) then begin
-            raise EIdOSSLGetMethodError.Create(RSSSLGetMethodError);
+          if Assigned(SSLv2_client_method) then begin
+            Result := SSLv2_client_method();
           end;
-          Result := SSLv2_client_method;
         end;
       else
-        if not Assigned(SSLv2_method) then begin
-          raise EIdOSSLGetMethodError.Create(RSSSLGetMethodError);
+        if Assigned(SSLv2_method) then begin
+          Result := SSLv2_method();
         end;
-        Result := SSLv2_method;
       end;
     sslvSSLv23:
       case fMode of
         sslmServer : begin
-          if not Assigned(SSLv23_server_method) then begin
-            raise EIdOSSLGetMethodError.Create(RSSSLGetMethodError);
+          if Assigned(SSLv23_server_method) then begin
+            Result := SSLv23_server_method();
           end;
-          Result := SSLv23_server_method;
         end;
         sslmClient : begin
-          if not Assigned(SSLv23_client_method) then begin
-            raise EIdOSSLGetMethodError.Create(RSSSLGetMethodError);
+          if Assigned(SSLv23_client_method) then begin
+            Result := SSLv23_client_method();
           end;
-          Result := SSLv23_client_method;
         end;
       else
-        if not Assigned(SSLv23_method) then begin
-          raise EIdOSSLGetMethodError.Create(RSSSLGetMethodError);
+        if Assigned(SSLv23_method) then begin
+          Result := SSLv23_method();
         end;
-        Result := SSLv23_method;
       end;
     sslvSSLv3:
       case fMode of
         sslmServer : begin
-          if not Assigned(SSLv3_server_method) then begin
-            raise EIdOSSLGetMethodError.Create(RSSSLGetMethodError);
+          if Assigned(SSLv3_server_method) then begin
+            Result := SSLv3_server_method();
           end;
-          Result := SSLv3_server_method;
         end;
         sslmClient : begin
-          if not Assigned(SSLv3_client_method) then begin
-            raise EIdOSSLGetMethodError.Create(RSSSLGetMethodError);
+          if Assigned(SSLv3_client_method) then begin
+            Result := SSLv3_client_method();
           end;
-          Result := SSLv3_client_method;
         end;
       else
-        if not Assigned(SSLv3_method) then begin
-          raise EIdOSSLGetMethodError.Create(RSSSLGetMethodError);
+        if Assigned(SSLv3_method) then begin
+          Result := SSLv3_method();
         end;
-        Result := SSLv3_method;
       end;
       {IMPORTANT!!!  fallback to TLS 1.0 if TLS 1.1 or 1.2 is not available.
       This is important because OpenSSL earlier than 1.0.1 does not support this
@@ -3329,21 +3406,21 @@ begin
       case fMode of
         sslmServer : begin
           if Assigned(TLSv1_1_server_method) then begin
-            Result := TLSv1_1_server_method;
+            Result := TLSv1_1_server_method();
           end else begin
             Result := SelectTLS1Method(fMode);
           end;
         end;
         sslmClient : begin
           if Assigned(TLSv1_1_client_method) then begin
-            Result := TLSv1_1_client_method;
+            Result := TLSv1_1_client_method();
           end else begin
             Result := SelectTLS1Method(fMode);
           end;
         end;
       else
         if Assigned(TLSv1_1_method) then begin
-          Result := TLSv1_1_method;
+          Result := TLSv1_1_method();
         end else begin
           Result := SelectTLS1Method(fMode);
         end;
@@ -3352,26 +3429,30 @@ begin
       case fMode of
         sslmServer : begin
           if Assigned(TLSv1_2_server_method) then begin
-            Result := TLSv1_2_server_method;
+            Result := TLSv1_2_server_method();
           end else begin
+            // TODO: fallback to TLSv1.1 if available?
             Result := SelectTLS1Method(fMode);
           end;
         end;
         sslmClient : begin
           if Assigned(TLSv1_2_client_method) then begin
-            Result := TLSv1_2_client_method;
+            Result := TLSv1_2_client_method();
           end else begin
+            // TODO: fallback to TLSv1.1 if available?
             Result := SelectTLS1Method(fMode);
           end;
         end;
       else
         if Assigned(TLSv1_2_method) then begin
-          Result := TLSv1_2_method;
+          Result := TLSv1_2_method();
         end else begin
+          // TODO: fallback to TLSv1.1 if available?
           Result := SelectTLS1Method(fMode);
         end;
       end;
-  else
+  end;
+  if Result = nil then begin
     raise EIdOSSLGetMethodError.Create(RSSSLGetMethodError);
   end;
 end;
@@ -3389,7 +3470,7 @@ begin
     //OpenSSL 1.0.2 has a new function, SSL_CTX_use_certificate_chain_file
     //that handles a chain of certificates in a PEM file.  That is prefered.
     if Assigned(SSL_CTX_use_certificate_chain_file) then begin
-       Result := IndySSL_CTX_use_certificate_chain_file(fContext, CertFile) >0;
+       Result := IndySSL_CTX_use_certificate_chain_file(fContext, CertFile) > 0;
     end else begin
       Result := IndySSL_CTX_use_certificate_file(fContext, CertFile, SSL_FILETYPE_PEM) > 0;
     end;
@@ -3601,6 +3682,10 @@ begin
   {$ENDIF}
   error := SSL_connect(fSSL);
   if error <= 0 then begin
+    // TODO: if sslv23 is being used, but sslv23 is not being used on the
+    // remote side, SSL_connect() will fail. In that case, before giving up,
+    // try re-connecting using a version-specific method for each enabled
+    // version, maybe one will succeed...
     EIdOSSLConnectError.RaiseException(fSSL, error, RSSSLConnectError);
   end;
   // TODO: even if SSL_connect() returns success, the connection might

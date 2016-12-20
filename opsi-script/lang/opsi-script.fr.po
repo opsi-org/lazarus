@@ -1,52 +1,61 @@
+# 
+# Translators:
+# Benoit Mortier <benoit.mortier@opensides.be>, 2015-2016
+# Daniel Debeus, 2016
 msgid ""
 msgstr ""
-"Content-Type: text/plain; charset=UTF-8\n"
-"Project-Id-Version: \n"
+"Project-Id-Version: opsi.org\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2013-01-09 10:50+0100\n"
-"Last-Translator: Giuliano Di Vito <giuliano@opensides.be>\n"
-"Language-Team: French <kde-i18n-doc@kde.org>\n"
+"PO-Revision-Date: 2016-12-20 14:59+0000\n"
+"Last-Translator: Daniel Debeus\n"
+"Language-Team: French (http://www.transifex.com/opsi-org/opsiorg/language/fr/)\n"
 "MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 1.0\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: osbatchgui.rsgetlistofproducts
-msgctxt "osbatchgui.rsgetlistofproducts"
 msgid "get list of products"
-msgstr "obtenir la liste des produits"
+msgstr "obtenir la liste de produits"
 
 #: osbatchgui.rsloadingskin
-msgctxt "osbatchgui.rsloadingskin"
 msgid "Loading skin..."
-msgstr "Chargement du thème ..."
+msgstr "Chargement thème ..."
 
 #: osinteractivegui.rsproductcheck
 msgctxt "osinteractivegui.rsproductcheck"
 msgid "product check"
-msgstr "contrôle du produit ..."
+msgstr "contrôle du produit"
 
 #: osmain.rsproductcheck
 msgctxt "osmain.rsproductcheck"
 msgid "product check"
 msgstr "contrôle du produit ..."
 
+#: osparser.rsabortprogram
+msgid "Abort program ?"
+msgstr "Arrêter le programme ?"
+
 #: osparser.rsgetpassword
 msgid "Please enter opsi service user password:"
-msgstr ""
+msgstr "S'il vous plaît entrez le mot de passe utilisateur du service opsi :"
 
 #: osparser.rsgetserviceurl
 msgid "Please enter opsi service URL:"
-msgstr ""
+msgstr "S'il vous plaît entrez l'URL du service OPSI :"
 
 #: osparser.rsgetusername
 msgid "Please enter opsi service user name:"
-msgstr ""
+msgstr "S'il vous plaît entrez le nom d'utilisateur du service OPSI :"
+
+#: osparser.rsreadytocontinue
+msgid "Ready to continue ?"
+msgstr "Prêt à continuer ?"
 
 #: oswebservice.rssendlog
-msgctxt "oswebservice.rssendlog"
 msgid "Sending log file to server ..."
-msgstr "Envoi de fichier journal au serveur ..."
+msgstr "Envoi du fichier journal au serveur ..."
 
 #: tcentralform.beenden1.caption
 msgctxt "TCENTRALFORM.BEENDEN1.CAPTION"
@@ -63,14 +72,11 @@ msgstr "Exécuter Viewlist comme script"
 
 #: tcentralform.button_show_gui.caption
 msgid "Show GUI"
-msgstr "Afficher GUI"
+msgstr "Afficher l'interface"
 
 #: tcentralform.caption
-#, fuzzy
-#| msgid "  opsi - winst"
-msgctxt "tcentralform.caption"
 msgid "  opsi - script"
-msgstr "  opsi - winst"
+msgstr "  opsi - script"
 
 #: tcentralform.combobox1.text
 msgid "ComboBox1"
@@ -116,20 +122,20 @@ msgstr "Script:"
 #: tcentralform.label6.caption
 msgctxt "TCENTRALFORM.LABEL6.CAPTION"
 msgid "LabelWinstVersion"
-msgstr "étiquette version winst"
+msgstr "Étiquette version winst"
 
 #: tcentralform.labelactivity.caption
 msgid "-"
 msgstr "-"
 
 #: tcentralform.labelwinstversion.caption
-msgctxt "TCENTRALFORM.LABELWINSTVERSION.CAPTION"
+msgctxt "tcentralform.labelwinstversion.caption"
 msgid "LabelWinstVersion"
-msgstr "étiquette version winst"
+msgstr "Étiquette version winst"
 
 #: tcentralform.panel2.caption
 msgid "Log-View:"
-msgstr "Voir-log:"
+msgstr "Afficher-log:"
 
 #: tcentralform.radiobuttonappendlogfile.caption
 msgid "Append"
@@ -157,10 +163,10 @@ msgstr "Afficher log"
 
 #: tcentralform.speedbutton4.caption
 msgid "Hide GUI"
-msgstr "Cacher GUI"
+msgstr "Cacher l'interface"
 
 #: tcentralform.speedbutton5.caption
-msgctxt "TCENTRALFORM.SPEEDBUTTON5.CAPTION"
+msgctxt "tcentralform.speedbutton5.caption"
 msgid "Exit"
 msgstr "Sortir"
 
@@ -170,34 +176,31 @@ msgstr "Barre d'outils1"
 
 #: tdialogservicepassword.cancelbutton.caption
 msgid "Cancel"
-msgstr ""
+msgstr "Annuler"
 
 #: tdialogservicepassword.caption
 msgid " DialogServicePassword"
-msgstr ""
+msgstr "Mot de passe du service"
 
 #: tdialogservicepassword.labelpassword.caption
 msgid "Password"
-msgstr ""
+msgstr "Mot de passe"
 
 #: tdialogservicepassword.labelserviceurl.caption
 msgid "Opsi Service URL"
-msgstr ""
+msgstr "URL du service Opsi"
 
 #: tdialogservicepassword.labelusername.caption
 msgid "Username"
-msgstr ""
+msgstr "Nom d'utilisateur"
 
 #: tdialogservicepassword.okbutton.caption
 msgid "o.k."
-msgstr ""
+msgstr "o.k."
 
 #: tfbatchoberflaeche.caption
-#, fuzzy
-#| msgid "opsi-winst"
-msgctxt "tfbatchoberflaeche.caption"
 msgid "opsi-script"
-msgstr "opsi-winst"
+msgstr "opsi-script"
 
 #: tfbatchoberflaeche.labelcommand.caption
 msgid "Command"
@@ -225,70 +228,33 @@ msgstr "Étiquette version"
 
 #: tmymessagedlg.abortbtn.caption
 msgid "&Exit"
-msgstr ""
+msgstr "&Quitter"
 
 #: tmymessagedlg.cancelbtn.caption
 msgid "&Cancel"
-msgstr ""
+msgstr "&Annuler"
 
 #: tmymessagedlg.caption
-msgid "opsi-winst Message"
-msgstr ""
+msgid "opsi-script Message"
+msgstr "Message opsi-script"
 
 #: tmymessagedlg.nobtn.caption
 msgid "&No"
-msgstr ""
+msgstr "&Non"
 
 #: tmymessagedlg.okbtn.caption
 msgid "&OK"
-msgstr ""
+msgstr "&OK"
 
 #: tmymessagedlg.yesbtn.caption
 msgid "&Yes"
-msgstr ""
-
-#: tshowtextfile.bitbtn1.caption
-msgid "Search"
-msgstr "Recherche"
-
-#: tshowtextfile.caption
-msgid "opsi-script Logfile"
-msgstr ""
-
-#: tshowtextfile.label1.caption
-msgid "Fontsize"
-msgstr "Taille font"
-
-#: tshowtextfile.label2.caption
-msgid "Filter Loglevel"
-msgstr "Niveau de log"
+msgstr "&Oui"
 
 #: tsysteminfo.caption
 msgid "SystemInfo"
-msgstr ""
+msgstr "Informations système"
 
 #: tsysteminfo.label1.caption
-msgctxt "tsysteminfo.label1.caption"
+msgctxt "TSYSTEMINFO.LABEL1.CAPTION"
 msgid "Label1"
 msgstr "étiquette1"
-
-#: wibtch.rsgetlistofproducts
-msgctxt "wibtch.rsgetlistofproducts"
-msgid "get list of products"
-msgstr "obtenir la liste des produits"
-
-#: wibtch.rsloadingskin
-msgctxt "wibtch.rsloadingskin"
-msgid "Loading skin..."
-msgstr "Chargement du thème ..."
-
-#: widatamodul.rssendlog
-msgctxt "widatamodul.rssendlog"
-msgid "Sending log file to server ..."
-msgstr "Envoi de fichier journal au serveur ..."
-
-#: wimain.rsproductcheck
-msgctxt "wimain.rsproductcheck"
-msgid "product check"
-msgstr "contrôle du produit ..."
-

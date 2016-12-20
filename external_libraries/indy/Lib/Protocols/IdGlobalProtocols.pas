@@ -460,7 +460,8 @@ type
   function IsHeaderMediaTypes(const AHeaderLine: String; const AMediaTypes: array of String): Boolean;
   function ExtractHeaderMediaType(const AHeaderLine: String): String;
   function ExtractHeaderMediaSubType(const AHeaderLine: String): String;
-  function IsHeaderValue(const AHeaderLine: String; const AValue: String): Boolean;
+  function IsHeaderValue(const AHeaderLine: String; const AValue: String): Boolean; overload;
+  function IsHeaderValue(const AHeaderLine: String; const AValues: array of String): Boolean; overload;
   function FileSizeByName(const AFilename: TIdFileName): Int64;
   {$IFDEF WINDOWS}
   function IsVolume(const APathName : TIdFileName) : Boolean;
@@ -540,7 +541,7 @@ type
   //The following is for working on email headers and message part headers...
   function RemoveHeaderEntry(const AHeader, AEntry: string; AQuoteType: TIdHeaderQuotingType): string; overload;
   function RemoveHeaderEntry(const AHeader, AEntry: string; var VOld: String; AQuoteType: TIdHeaderQuotingType): string; overload;
-  function RemoveHeaderEntries(const AHeader: string; AEntries: array of string; AQuoteType: TIdHeaderQuotingType): string;
+  function RemoveHeaderEntries(const AHeader: string; const AEntries: array of string; AQuoteType: TIdHeaderQuotingType): string;
 
   {
     Three functions for easier manipulating of strings.  Don't know of any
@@ -1375,6 +1376,8 @@ function BreakApart(BaseString, BreakString: string; StringList: TStrings): TStr
 var
   EndOfCurrentString: integer;
 begin
+  // TODO: use SplitDelimitedString() instead?
+  // SplitDelimitedString(BaseString, StringList, False, BreakString);
   repeat
     EndOfCurrentString := Pos(BreakString, BaseString);
     if EndOfCurrentString = 0 then begin
@@ -3491,8 +3494,8 @@ begin
     S := AStrings[I];
     // RLebeau 12/13/15: Calling Pos() with a Char as input creates a temporary
     // String.  Normally this is fine, but profiling reveils this to be a big
-    // bottleneck for code that makes a lot of calls to Pos() in a loop, so need
-    // to scan through the string looking for the character without a conversion...
+    // bottleneck for code that makes a lot of calls to Pos() in a loop, so we
+    // will scan through the string looking for the character without a conversion...
     //
     // P := Pos(MimeSeparator, S);
     // if P > 0 then begin
@@ -3516,9 +3519,14 @@ var
   I : Integer;
 begin
   Assert(AStrings <> nil);
-  AStrings.Clear;
-  for I := 0 to FFileExt.Count - 1 do begin
-    AStrings.Add(FFileExt[I] + MimeSeparator + FMIMEList[I]);
+  AStrings.BeginUpdate;
+  try
+    AStrings.Clear;
+    for I := 0 to FFileExt.Count - 1 do begin
+      AStrings.Add(FFileExt[I] + MimeSeparator + FMIMEList[I]);
+    end;
+  finally
+    AStrings.EndUpdate;
   end;
 end;
 
@@ -4015,116 +4023,125 @@ begin
   LMode := none;
   LPos := 0;
   LLen := Length(LRawData);
-  repeat
-    Inc(LPos);
-    if LPos > LLen then begin
-      Break;
-    end;
-    if LRawData[LPos] = '<' then begin {do not localize}
+  if AHeaders <> nil then begin
+    AHeaders.BeginUpdate;
+  end;
+  try
+    repeat
       Inc(LPos);
       if LPos > LLen then begin
         Break;
       end;
-      if LRawData[LPos] = '?' then begin {do not localize}
+      if LRawData[LPos] = '<' then begin {do not localize}
         Inc(LPos);
         if LPos > LLen then begin
           Break;
         end;
-      end
-      else if LRawData[LPos] = '!' then begin {do not localize}
-        Inc(LPos);
-        if LPos > LLen then begin
-          Break;
-        end;
-        //we have to handle comments separately since they appear in any mode.
-        if Copy(LRawData, LPos, 2) = '--' then begin {do not localize}
-          Inc(LPos, 2);
-          DiscardToEndOfComment(LRawData, LPos, LLen);
-          Continue;
-        end;
-      end;
-      DiscardDocWhiteSpace(LRawData, LPos, LLen);
-      LWord := ParseWord(LRawData, LPos, LLen);
-      case LMode of
-        none :
-        begin
-          DiscardUntilEndOfTag(LRawData, LPos, LLen);
-          if TextIsSame(LWord, 'HTML') then begin
-            LMode := html;
+        if LRawData[LPos] = '?' then begin {do not localize}
+          Inc(LPos);
+          if LPos > LLen then begin
+            Break;
+          end;
+        end
+        else if LRawData[LPos] = '!' then begin {do not localize}
+          Inc(LPos);
+          if LPos > LLen then begin
+            Break;
+          end;
+          //we have to handle comments separately since they appear in any mode.
+          if Copy(LRawData, LPos, 2) = '--' then begin {do not localize}
+            Inc(LPos, 2);
+            DiscardToEndOfComment(LRawData, LPos, LLen);
+            Continue;
           end;
         end;
-        html :
-        begin
-          DiscardUntilEndOfTag(LRawData, LPos, LLen);
-          case PosInStrArray(LWord, HTML_MainDocParts, False) of
-            0 : LMode := title;//title
-            1 : LMode := head; //head
-            2 : LMode := body; //body
+        DiscardDocWhiteSpace(LRawData, LPos, LLen);
+        LWord := ParseWord(LRawData, LPos, LLen);
+        case LMode of
+          none :
+          begin
+            DiscardUntilEndOfTag(LRawData, LPos, LLen);
+            if TextIsSame(LWord, 'HTML') then begin
+              LMode := html;
+            end;
           end;
-        end;
-        head :
-        begin
-          case PosInStrArray(LWord, HTML_HeadDocAttrs, False) of
-            0 : //'META'
-            begin
-              DiscardDocWhiteSpace(LRawData, LPos, LLen);
-              LWord := ParseWord(LRawData, LPos, LLen);
-              // '<meta http-equiv="..." content="...">'
-              // '<meta charset="...">' (used in HTML5)
-              // TODO: use ParseUntilEndOfTag() here
-              case PosInStrArray(LWord, HTML_MetaAttrs, False) of {do not localize}
-                0: // HTTP-EQUIV
-                begin
-                  DiscardDocWhiteSpace(LRawData, LPos, LLen);
-                  if LRawData[LPos] = '=' then begin {do not localize}
-                    Inc(LPos);
-                    if LPos > LLen then begin
-                      Break;
-                    end;
-                    if AHeaders <> nil then begin
-                      AHeaders.Add( ParseHTTPMetaEquiveData(LRawData, LPos, LLen) );
-                    end else begin
-                      ParseHTTPMetaEquiveData(LRawData, LPos, LLen);
+          html :
+          begin
+            DiscardUntilEndOfTag(LRawData, LPos, LLen);
+            case PosInStrArray(LWord, HTML_MainDocParts, False) of
+              0 : LMode := title;//title
+              1 : LMode := head; //head
+              2 : LMode := body; //body
+            end;
+          end;
+          head :
+          begin
+            case PosInStrArray(LWord, HTML_HeadDocAttrs, False) of
+              0 : //'META'
+              begin
+                DiscardDocWhiteSpace(LRawData, LPos, LLen);
+                LWord := ParseWord(LRawData, LPos, LLen);
+                // '<meta http-equiv="..." content="...">'
+                // '<meta charset="...">' (used in HTML5)
+                // TODO: use ParseUntilEndOfTag() here
+                case PosInStrArray(LWord, HTML_MetaAttrs, False) of {do not localize}
+                  0: // HTTP-EQUIV
+                  begin
+                    DiscardDocWhiteSpace(LRawData, LPos, LLen);
+                    if LRawData[LPos] = '=' then begin {do not localize}
+                      Inc(LPos);
+                      if LPos > LLen then begin
+                        Break;
+                      end;
+                      if AHeaders <> nil then begin
+                        AHeaders.Add( ParseHTTPMetaEquiveData(LRawData, LPos, LLen) );
+                      end else begin
+                        ParseHTTPMetaEquiveData(LRawData, LPos, LLen);
+                      end;
                     end;
                   end;
-                end;
-                1: // charset
-                begin
-                  DiscardDocWhiteSpace(LRawData, LPos, LLen);
-                  if LRawData[LPos] = '=' then begin {do not localize}
-                    Inc(LPos);
-                    if LPos > LLen then begin
-                      Break;
+                  1: // charset
+                  begin
+                    DiscardDocWhiteSpace(LRawData, LPos, LLen);
+                    if LRawData[LPos] = '=' then begin {do not localize}
+                      Inc(LPos);
+                      if LPos > LLen then begin
+                        Break;
+                      end;
+                      VCharset := ParseMetaCharsetData(LRawData, LPos, LLen);
                     end;
-                    VCharset := ParseMetaCharsetData(LRawData, LPos, LLen);
                   end;
+                else
+                  DiscardUntilEndOfTag(LRawData, LPos, LLen);
                 end;
-              else
+              end;
+              1 :  //'TITLE'
+              begin
                 DiscardUntilEndOfTag(LRawData, LPos, LLen);
+                DiscardUntilCloseTag(LRawData, 'TITLE', LPos, LLen); {do not localize}
+              end;
+              2 : //'SCRIPT'
+              begin
+                DiscardUntilEndOfTag(LRawData, LPos, LLen);
+                DiscardUntilCloseTag(LRawData, 'SCRIPT', LPos, LLen, True); {do not localize}
+              end;
+              3 : //'LINK'
+              begin
+                DiscardUntilEndOfTag(LRawData, LPos, LLen); {do not localize}
               end;
             end;
-            1 :  //'TITLE'
-            begin
-              DiscardUntilEndOfTag(LRawData, LPos, LLen);
-              DiscardUntilCloseTag(LRawData, 'TITLE', LPos, LLen); {do not localize}
-            end;
-            2 : //'SCRIPT'
-            begin
-              DiscardUntilEndOfTag(LRawData, LPos, LLen);
-              DiscardUntilCloseTag(LRawData, 'SCRIPT', LPos, LLen, True); {do not localize}
-            end;
-            3 : //'LINK'
-            begin
-              DiscardUntilEndOfTag(LRawData, LPos, LLen); {do not localize}
-            end;
+          end;
+          body: begin
+            Exit;
           end;
         end;
-        body: begin
-          Exit;
-        end;
       end;
+    until False;
+  finally
+    if AHeaders <> nil then begin
+      AHeaders.EndUpdate;
     end;
-  until False;
+  end;
 end;
 
 {*************************************************************************************************}
@@ -4285,7 +4302,7 @@ begin
       {$IFDEF USE_OBJECT_ARC}
       AItems.Add(TIdHeaderNameValueItem.Create(LName, LValue, LQuoted));
       {$ELSE}
-      AItems.AddObject(LName + '=' + LValue, TObject(LQuoted));
+      IndyAddPair(AItems, LName, LValue, TObject(LQuoted));
       {$ENDIF}
     end;
   end;
@@ -4410,7 +4427,7 @@ begin
       end;
       {$ELSE}
       if I < 0 then begin
-        LItems.Add(ASubItem + '=' + LValue); {do not localize}
+        IndyAddPair(LItems, ASubItem, LValue);
       end else begin
         {$IFDEF HAS_TStrings_ValueFromIndex}
         LItems.ValueFromIndex[I] := LValue;
@@ -4502,6 +4519,11 @@ end;
 function IsHeaderValue(const AHeaderLine: String; const AValue: String): Boolean;
 begin
   Result := TextIsSame(ExtractHeaderItem(AHeaderLine), AValue);
+end;
+
+function IsHeaderValue(const AHeaderLine: String; const AValues: array of String): Boolean;
+begin
+  Result := PosInStrArray(ExtractHeaderItem(AHeaderLine), AValues, False) <> -1;
 end;
 
 function GetClockValue : Int64;
@@ -4765,7 +4787,7 @@ begin
   Result := ReplaceHeaderSubItem(AHeader, AEntry, '', VOld, AQuoteType);
 end;
 
-function RemoveHeaderEntries(const AHeader: string; AEntries: array of string;
+function RemoveHeaderEntries(const AHeader: string; const AEntries: array of string;
   AQuoteType: TIdHeaderQuotingType): string;
 var
   I: Integer;
@@ -4981,6 +5003,12 @@ procedure ReadStringsAsContentType(AStream: TStream; AStrings: TStrings;
   {$IFDEF STRING_IS_ANSI}; ADestEncoding: IIdTextEncoding = nil{$ENDIF}
 );
 begin
+  // TODO: TStrings.Text truncates on an embedded null character, but the
+  // decoded string may contain nulls, depending on the source!  Maybe use
+  // SplitDelimitedString() instead, but give it a new parameter to let it
+  // know to parse line breaks so it can handle CR, LF, and CRLF equally.
+  // Otherwise, create a new function that mimics the TStrings.Text setter
+  // but without the null character limitation...
   AStrings.Text := ReadStringFromStream(AStream, -1, ContentTypeToEncoding(AContentType, AQuoteType){$IFDEF STRING_IS_ANSI}, ADestEncoding{$ENDIF});
 end;
 
@@ -4996,6 +5024,12 @@ procedure ReadStringsAsCharset(AStream: TStream; AStrings: TStrings; const AChar
   {$IFDEF STRING_IS_ANSI}; ADestEncoding: IIdTextEncoding = nil{$ENDIF}
 );
 begin
+  // TODO: TStrings.Text truncates on an embedded null character, but the
+  // decoded string may contain nulls, depending on the source!  Maybe use
+  // SplitDelimitedString() instead, but give it a new parameter to let it
+  // know to parse line breaks so it can handle CR, LF, and CRLF equally.
+  // Otherwise, create a new function that mimics the TStrings.Text setter
+  // but without the null character limitation...
   AStrings.Text := ReadStringFromStream(AStream, -1, CharsetToEncoding(ACharset){$IFDEF STRING_IS_ANSI}, ADestEncoding{$ENDIF});
 end;
 
