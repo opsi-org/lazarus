@@ -6749,7 +6749,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
   remaining : String='';
 
   findresultcode : Integer=0;
-  searchresult : TSearchRec;
+  //searchresult : TSearchRec;
   ch : Char;
   oldDisableWow64FsRedirectionStatus: pointer=nil;
   Wow64FsRedirectionDisabled : boolean;
@@ -6768,7 +6768,9 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
     ///info : string;
     remaining_with_leading_blanks : String='';
     search4file : boolean;
-    mode : string;
+    //mode : string;
+    list1 : TStringlist;
+    shellcallArchParam : String;
 
 
   begin
@@ -7283,6 +7285,16 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
              LogDatei.log ('we try to symlink: '+source+' to '+target, LLDebug2);
              if Install.symlink(Source,target) then
                LogDatei.log ('symlinked: '+source+' to '+target, LLInfo);
+             {$IFDEF WINDOWS}
+             LogDatei.log('Reading symlink via dir to reread the cache', LLInfo);
+             if Wow64FsRedirectionDisabled then shellcallArchParam := '64'
+             else shellcallArchParam := '32';
+             list1 := Tstringlist.create;
+             list1.Clear;
+             list1.Text := execShellCall('dir '+target, shellcallArchParam, 4, false,false).Text;
+             //calling shellCall with FetchExitCodePublic=false result is on FLastPrivateExitCode
+             list1.Free;
+             {$ENDIF WINDOWS}
             end;
           end;
         end
@@ -8605,10 +8617,34 @@ begin
           output, report, showcmd, FLastExitCodeOfExe,showoutput)
       then
       Begin
-        ps := 'Error: ' + Report;
-        LogDatei.log(ps, LLcritical);
-        FExtremeErrorLevel := LevelFatal;
-        scriptstopped := true;
+        // is failed
+        ps := 'Error: ' + IntToStr(FLastExitCodeOfExe) + ' : '+Report;
+        // retry on error 19
+        if FLastExitCodeOfExe = 19 then
+        begin
+          ps := 'We got a Write protect error (19) - we retry';
+          LogDatei.log(ps, LLError);
+          ProcessMess;
+          Sleep(100);
+          if not RunCommandAndCaptureOut
+             (commandline,
+              catchout,
+              output, report, showcmd, FLastExitCodeOfExe,showoutput)
+          then
+          Begin
+            LogDatei.log(ps, LLcritical);
+            FExtremeErrorLevel := LevelFatal;
+            scriptstopped := true;
+          end;
+        // is failed
+        ps := 'Error: ' + IntToStr(FLastExitCodeOfExe) + ' : '+Report;
+        end
+        else
+        begin
+          LogDatei.log(ps, LLcritical);
+          FExtremeErrorLevel := LevelFatal;
+          scriptstopped := true;
+        end;
       End
           //
       else if catchout or (filename = '/usr/bin/xterm') then
@@ -13898,7 +13934,7 @@ var
   s2 : String='';
   s3 : String='';
   syntaxcheck : Boolean;
-  FileRecord : TSearchRec;
+  FileRecord : TUnicodeSearchRec;
   RunTimeInfo : String='';
   BooleanResult0 : Boolean;
   Textfile : TPatchList;
@@ -13922,6 +13958,8 @@ var
   i : integer;
   tmpint : integer;
   tmpbool : boolean;
+  FindResultcode: integer = 0;
+  flushhandle : Thandle;
 
 
 
@@ -13987,10 +14025,13 @@ begin
               BooleanResult := FileExists(s2) or DirectoryExists(s2);
               if (not BooleanResult) and (not (trim(s2) = '')) then
               begin
+                LogDatei.log ('File: '+s2+' not found via FileExists', LLDebug3);
+                (*
                 list1.Clear;
                 list1.Text := execShellCall('dir '+s2, '64',4, false,false).Text;
                 //calling shellCall with FetchExitCodePublic=false result is on FLastPrivateExitCode
                 if (0 = FLastPrivateExitCode) then BooleanResult := true;
+                *)
               end;
             except
               BooleanResult := false;
@@ -14049,10 +14090,13 @@ begin
                 BooleanResult := FileExists(s2) or DirectoryExists(s2);
                 if (not BooleanResult) and (not (trim(s2) = '')) then
                 begin
+                  LogDatei.log ('File: '+s2+' not found via FileExists', LLDebug3);
+                  (*
                   list1.Clear;
                   list1.Text := execShellCall('dir '+s2, 'sysnative',4, false,false).Text;
                   //calling shellCall with FetchExitCodePublic=false result is on FLastPrivateExitCode
                   if (0 = FLastPrivateExitCode) then BooleanResult := true;
+                  *)
                 end;
               except
                 BooleanResult := false;
@@ -14082,10 +14126,13 @@ begin
        BooleanResult := FileExists(s2) or DirectoryExists(s2);
         if (not BooleanResult) and (not (trim(s2) = '')) then
         begin
+          LogDatei.log ('File: '+s2+' not found via FileExists', LLDebug3);
+          (*
           list1.Clear;
           list1.Text := execShellCall('dir '+s2, 'sysnative',4, false,false).Text;
           //calling shellCall with FetchExitCodePublic=false result is on FLastPrivateExitCode
           if (0 = FLastPrivateExitCode) then BooleanResult := true;
+          *)
         end;
       end;
       if not BooleanResult then
@@ -14115,10 +14162,13 @@ begin
           BooleanResult := FileExists(s2) or DirectoryExists(s2);
           if (not BooleanResult) and (not (trim(s2) = '')) then
           begin
-            list1.Clear;
-            list1.Text := execShellCall('dir '+s2, '32',4, false,false).Text;
-            //calling shellCall with FetchExitCodePublic=false result is on FLastPrivateExitCode
-            if (0 = FLastPrivateExitCode) then BooleanResult := true;
+            LogDatei.log ('File: '+s2+' not found via FileExists', LLDebug3);
+            //FindResultcode := SysUtils.FindFirst(s2,faAnyFile - faDirectory, FileRecord);
+            //if FindResultcode = 0 then BooleanResult := true;
+            //list1.Clear;
+            //list1.Text := execShellCall('dir '+s2, '32',4, false,false).Text;
+            ////calling shellCall with FetchExitCodePublic=false result is on FLastPrivateExitCode
+            //if (0 = FLastPrivateExitCode) then BooleanResult := true;
           end;
         except
           BooleanResult := false;
@@ -14145,7 +14195,7 @@ begin
    then
    Begin
      s1 := ExpandFileName(s1);
-      LogDatei.log ('  Starting query if file exist ...', LLNotice);
+      LogDatei.log ('Starting query if file exist ...', LLNotice);
       s2 := s1;
       if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR)
        then s2 := copy(s1,1,length(s1)-1);
@@ -14154,13 +14204,70 @@ begin
       OldWinapiErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
       try
         try
+          (*
+          try
+            flushhandle := FileOpen(ExtractFileDrive(s1),fmOpenRead);
+            FlushFileBuffers(flushhandle);
+          except
+            LogDatei.log ('Exception: while flushfilebuffers', LLDebug3);
+          end;
+          *)
+          (*
+          // wait for getting the cache ready
+          ProcessMess;
+          *)
+          s2 := trim(s2);
           BooleanResult := FileExists(s2) or DirectoryExists(s2);
           if (not BooleanResult) and (not (trim(s2) = '')) then
           begin
+            LogDatei.log ('File: '+s2+' not found via FileExists', LLDebug3);
+            (*
+            // search for s2*
+            LogDatei.log ('Looking for: '+ExtractFilePath(s2)+'*'+' via FindFirst', LLDebug3);
+            FindResultcode := FindFirst(ExtractFilePath(s2)+'*',faAnyFile or faSymlink, FileRecord);
+            while FindResultcode = 0 do
+            begin
+              LogDatei.log ('found: '+ExtractFilePath(s2)+ FileRecord.Name+' via FindFirst/Next', LLDebug3);
+              if ExtractFilePath(s2)+ FileRecord.Name = s2 then
+              begin
+                BooleanResult := true;
+                LogDatei.log ('File: '+s2+' found via FindFirst/Next', LLDebug3);
+              end;
+              FindResultcode := sysutils.FindNext(FileRecord);
+            end;
+            SysUtils.findclose(FileRecord);
+            if not BooleanResult then LogDatei.log ('File: '+s2+' not found via FindFirst/next', LLDebug3);
             list1.Clear;
             list1.Text := execShellCall('dir '+s2, '32',4, false,false).Text;
             //calling shellCall with FetchExitCodePublic=false result is on FLastPrivateExitCode
             if (0 = FLastPrivateExitCode) then BooleanResult := true;
+            LogDatei.log ('Looking for: '+ExtractFilePath(s2)+'*'+' via FindFirst', LLDebug3);
+            FindResultcode := FindFirst(ExtractFilePath(s2)+'*',faAnyFile or faSymlink, FileRecord);
+            while FindResultcode = 0 do
+            begin
+              LogDatei.log ('found: '+ExtractFilePath(s2)+ FileRecord.Name+' via FindFirst/Next', LLDebug3);
+              if ExtractFilePath(s2)+ FileRecord.Name = s2 then
+              begin
+                BooleanResult := true;
+                LogDatei.log ('File: '+s2+' found via FindFirst/Next', LLDebug3);
+              end;
+              FindResultcode := sysutils.FindNext(FileRecord);
+            end;
+            SysUtils.findclose(FileRecord);
+            if not BooleanResult then LogDatei.log ('File: '+s2+' not found via FindFirst/next', LLDebug3);
+            *)
+            (*
+            if FindResultcode = 0 then
+            begin
+              BooleanResult := true;
+              LogDatei.log ('File: '+s2+' found via FindFirst', LLDebug3);
+            end
+            else LogDatei.log ('File: '+s2+' not found via FindFirst', LLDebug3);
+            list1.Clear;
+            list1.Text := execShellCall('dir '+s2, '32',4, false,false).Text;
+            //calling shellCall with FetchExitCodePublic=false result is on FLastPrivateExitCode
+            if (0 = FLastPrivateExitCode) then BooleanResult := true;
+            *)
           end;
         except
           BooleanResult := false;
@@ -14189,6 +14296,7 @@ begin
 
 
  {$IFDEF WINDOWS}
+
  (* XMLAddNamespace(Datei:string,ElementName:string,Namespace:string):Boolean
   True, wenn Namespace noch nicht da war und eingefï¿½gt werden muï¿½te *)
  else if Skip ('XMLAddNamespace', Input, r, sx)
@@ -19016,7 +19124,9 @@ begin
 
   ps := ('___________________');
   LogDatei.log (ps, LLessential);
-  ps := ('script finished');
+  ps := ('script finished: ');
+  if extremeErrorLevel = LevelFatal then ps := ps +'failed'
+  else ps := ps +'success';
   LogDatei.log (ps, LLessential);
   ps := IntToStr (Script.NumberOfErrors) + ' error';
   if Script.NumberOfErrors <> 1 then ps := ps + 's';

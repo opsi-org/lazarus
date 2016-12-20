@@ -7476,6 +7476,7 @@ var
   existisdir : dword;
   {$IFDEF WINDOWS}exitbool : winbool;{$ENDIF WINDOWS}
   ActionInfo : string;
+  list1 : Tstringlist;
 begin
   result := false;
   //exist:=StrAlloc (length(existingfilename)+1);
@@ -7510,8 +7511,21 @@ begin
     result := false;
     LogDatei.log('Could not create sym link from '+exist+' to '+new+' Error: '+removeLineBreaks(SysErrorMessage(GetLastError)) + ' (' + SysErrorMessage(GetLastError) + ')',LLerror);
   end;
-
+  if result then
+  begin
+    LogDatei.log('Reading symlink via dir to reread the cache', LLInfo);
+    (*
+  list1 := Tstringlist.create;
+  list1.Clear;
+  list1.Text := execShellCall('dir '+newfilename, '32',4, false,false).Text;
+  //calling shellCall with FetchExitCodePublic=false result is on FLastPrivateExitCode
+  if (0 = FLastPrivateExitCode) then Result := true
+  else result := false;
+  list1.Free;
+  end;
+  *)
   {$ENDIF WIN32}
+  end;
   //StrDispose(exist);
   //StrDispose(new);
 end;
@@ -7648,6 +7662,7 @@ begin
  CentralForm.VersionInfoResource1.FileName := File1;
  CentralForm.VersionInfoResource2.FileName := File2;
 *)
+
 
   versionFile1 := TVersionInfo.Create(File1);
   versionFile2 := TVersionInfo.Create(File2);

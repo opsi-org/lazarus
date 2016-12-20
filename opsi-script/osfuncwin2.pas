@@ -2234,6 +2234,7 @@ var
   kernel32: HModule;
   _CreateSymbolicLinkA: function(lpSymlinkFileName: PChar;
     lpExistingFileName: PChar; dwFlags: DWORD): winbool; stdcall;
+  list1 :TStringlist;
 begin
   try
     // try api
@@ -2273,6 +2274,12 @@ begin
         CmdLinePasStr, LLInfo);
       Result := StartProcess(CmdLinePasStr, SW_HIDE, False, False,
         False, False, True, traInvoker, '', 10, Report, ExitCode);
+      opsiSetupAdmin_runElevated := False;
+      (*
+      LogDatei.log('Reading symlink via dir to reread the cache', LLInfo);
+      Result := StartProcess('cmd.exe /c dir "' + lpSymlinkFileName+'"', SW_HIDE, False, False,
+        False, False, True, traInvoker, '', 10, Report, ExitCode);
+      *)
     end;
   except
     on ex: Exception do

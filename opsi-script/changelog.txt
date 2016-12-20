@@ -28,6 +28,10 @@ opsi-winst/opsi-script (4.11.6.11) stable; urgency=low
   * osparser: fileactionsmain: GetString with true
   * osfunc: TPatchList.FindFirstItemWith: more logging
   * osinteracticegui: message for not working logview
+  * osparser: symlink: check via cmd.exe after create symlink
+  * osparser: removed cmd.exe call from fileexists%
+  * osparser: success or failed after 'script finished' in log footer
+  * osparser: dosbatch: retry on erroer 19 (WRITE_PROTECT)
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 06 Dec 2016:15:00:00 +0200
 
