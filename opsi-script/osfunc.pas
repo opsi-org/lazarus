@@ -7524,8 +7524,8 @@ begin
   list1.Free;
   end;
   *)
-  {$ENDIF WIN32}
   end;
+  {$ENDIF WIN32}
   //StrDispose(exist);
   //StrDispose(new);
 end;

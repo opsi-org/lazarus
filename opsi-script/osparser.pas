@@ -6768,7 +6768,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
     ///info : string;
     remaining_with_leading_blanks : String='';
     search4file : boolean;
-    //mode : string;
+    mode : string;  // used on linux
     list1 : TStringlist;
     shellcallArchParam : String;
 
