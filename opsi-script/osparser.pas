@@ -834,7 +834,7 @@ function GetString
   (const s : String; var ResultString, Remaining, errorinfo : String;
    StringInStringAllowed : Boolean) : Boolean;
 begin
-  GetString(s, ResultString, Remaining, errorinfo, StringInStringAllowed, false);
+  result := GetString(s, ResultString, Remaining, errorinfo, StringInStringAllowed, false);
 end;
 
 function GetString
@@ -7146,6 +7146,19 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
           End;
 
           mode := Expressionstr;
+          mode := opsiUnquoteStr(mode,'"');
+          mode := opsiUnquoteStr(mode,'''');
+          if mode = '' then
+          begin
+            SyntaxCheck := false;
+            errorinfo := errorinfo := 'Invalid empty string for mode in chmod';
+          end;
+          try
+            i := strToInt(mode);
+          except
+            SyntaxCheck := false;
+            errorinfo := errorinfo := 'Invalid string for mode in chmod. Expected something like 755 found: '+mode;
+          end
 
             if not GetString (Remaining, Expressionstr, Remaining, errorinfo, false)
             then
@@ -7171,7 +7184,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
           if SyntaxCheck
           then
           begin
-           LogDatei.log ('we try to chmod: '+source, LLDebug2);
+           LogDatei.log ('we try to chmod: '+source+' to mode: '+mode, LLDebug2);
            Install.chmod(mode,Source);
           end;
         end

@@ -34,6 +34,8 @@ opsi-winst/opsi-script (4.11.6.11) stable; urgency=low
   * osparser: dosbatch: retry on erroer 19 (WRITE_PROTECT)
   * updateted lang (po) files
   * updated indy lib 10-rev5391
+  * osparser: fix in getstring call chain
+  * osfunc: fix in chmod error handling
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 06 Dec 2016:15:00:00 +0200
 
