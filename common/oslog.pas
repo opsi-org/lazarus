@@ -585,16 +585,16 @@ begin
   FStandardLogFilename := 'ocasimp';
   {$ENDIF OCASIMP}
   {$IFDEF OPSISCRIPTSTARTER}
-  FStandardPartLogFilename = 'opsiscriptstarter-part-';
-  FStandardLogFilename = 'opsiscriptstarter';
+  FStandardPartLogFilename := 'opsiscriptstarter-part-';
+  FStandardLogFilename := 'opsiscriptstarter';
   {$ENDIF OPSISCRIPTSTARTER}
   {$IFDEF OPSICLIENTKIOSK}
-  FStandardPartLogFilename = 'opsiclientkiosk-part-';
-  FStandardLogFilename = 'opsiclientkiosk';
+  FStandardPartLogFilename := 'opsiclientkiosk-part-';
+  FStandardLogFilename := 'opsiclientkiosk';
   {$ENDIF OPSICLIENTKIOSK}
   {$IFDEF OPSICLIENTD_SHUTDOWN_STARTER}
-  FStandardPartLogFilename = 'opsiclientd_shutdown_starter-part-';
-  FStandardLogFilename = 'opsiclientd_shutdown_starter';
+  FStandardPartLogFilename := 'opsiclientd_shutdown_starter-part-';
+  FStandardLogFilename := 'opsiclientd_shutdown_starter';
   {$ENDIF OPSICLIENTD_SHUTDOWN_STARTER}
 
 end;

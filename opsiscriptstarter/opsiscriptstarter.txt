@@ -1,5 +1,13 @@
 [changelog]
 
+opsiscriptstarter 4.0.7.2
+
+* fixes for new git directory structure
+* new indy lib
+* lazarus 1.6.2
+
+-- d.oertel <d.oertel@uib.de> Tue, 03 Jan 2017 15:00
+
 opsiscriptstarter 4.0.7.1
 
 * makebakfile: change from old style (name.ext.num) to new style (name_num.ext)

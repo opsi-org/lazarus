@@ -20,7 +20,10 @@ uses
   baseunix,
   fileinfo,
   elfreader,
-  inifiles,oslog;
+  inifiles,
+  oslog,
+  oswebservice,
+  superobject;
 
 
 const
@@ -509,7 +512,7 @@ function MyOpsiMethodCall2(const method: string; parameters: array of string) : 
     result := true;
     logdatei := TLogInfo.Create;
     logfilename := opsiscriptstarterlog;
-    oslog.CreateTheLogfile(logfilename,false);
+    logdatei.CreateTheLogfile(logfilename,false);
     logdatei.LogLevel:=myloglevel;
   end;
 
