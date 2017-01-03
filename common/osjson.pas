@@ -377,7 +377,7 @@ end;
 
 function jsonAsArrayToStringList(str: string; var strListResult: TStringList): boolean;
 var
-  new_obj: ISuperObject;
+  new_obj : ISuperObject;
   i: integer;
   objstr : string;
 begin
@@ -392,7 +392,8 @@ begin
         objstr := new_obj.AsArray.S[i];
         //objstr := escapeControlChars(objstr);
         objstr := stringreplace(objstr, #10, '\n', [rfReplaceAll, rfIgnoreCase]);
-        strListResult.Append(objstr);
+        if jsonIsObject(objstr) then
+          strListResult.Append(objstr);
       end;
 end;
 

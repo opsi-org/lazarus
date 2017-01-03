@@ -141,7 +141,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="103">
+    <Units Count="94">
       <Unit0>
         <Filename Value="winst.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -713,23 +713,6 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit58>
       <Unit59>
-        <Filename Value="dcpcrypt\dcpblockciphers.pas"/>
-        <UnitName Value="DCPblockciphers"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="15"/>
-        <CursorPos X="26" Y="31"/>
-        <UsageCount Value="0"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit59>
-      <Unit60>
-        <Filename Value="dcpcrypt\dcpcrypt2.pas"/>
-        <UnitName Value="DCPcrypt2"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="64"/>
-        <UsageCount Value="0"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit60>
-      <Unit61>
         <Filename Value="osfuncwin3.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
@@ -737,31 +720,31 @@
         <CursorPos X="32" Y="362"/>
         <UsageCount Value="202"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit61>
-      <Unit62>
+      </Unit59>
+      <Unit60>
         <Filename Value="C:\lazarus\fpc\3.0.0\source\rtl\win32\system.pp"/>
         <UnitName Value="System"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="28"/>
         <CursorPos X="31" Y="53"/>
         <UsageCount Value="31"/>
-      </Unit62>
-      <Unit63>
+      </Unit60>
+      <Unit61>
         <Filename Value="C:\lazarus\components\lazutils\lconvencoding.pas"/>
         <UnitName Value="LConvEncoding"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="155"/>
         <CursorPos X="8" Y="73"/>
         <UsageCount Value="13"/>
-      </Unit63>
-      <Unit64>
+      </Unit61>
+      <Unit62>
         <Filename Value="C:\lazarus\fpc\3.0.0\source\packages\winunits-base\src\shlobj.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="484"/>
         <CursorPos X="50" Y="2317"/>
         <UsageCount Value="19"/>
-      </Unit64>
-      <Unit65>
+      </Unit62>
+      <Unit63>
         <Filename Value="osregistry.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="2"/>
@@ -783,89 +766,35 @@
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit65>
-      <Unit66>
+      </Unit63>
+      <Unit64>
         <Filename Value="C:\lazarus\fpc\3.0.0\source\packages\fcl-registry\src\registry.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="355"/>
         <CursorPos X="43" Y="394"/>
         <UsageCount Value="18"/>
-      </Unit66>
-      <Unit67>
+      </Unit64>
+      <Unit65>
         <Filename Value="C:\lazarus\components\lazutils\lazutf8.pas"/>
         <UnitName Value="LazUTF8"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="160"/>
         <UsageCount Value="5"/>
-      </Unit67>
-      <Unit68>
+      </Unit65>
+      <Unit66>
         <Filename Value="C:\lazarus\components\lazutils\fpcadds.pas"/>
         <UnitName Value="FPCAdds"/>
         <EditorIndex Value="-1"/>
         <UsageCount Value="4"/>
-      </Unit68>
-      <Unit69>
+      </Unit66>
+      <Unit67>
         <Filename Value="C:\lazarus\fpc\3.0.0\source\packages\fcl-registry\src\winreg.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="61"/>
         <CursorPos X="33" Y="24"/>
         <UsageCount Value="18"/>
-      </Unit69>
-      <Unit70>
-        <Filename Value="synapse40lib\synaip.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="61"/>
-        <CursorPos X="24" Y="22"/>
-        <UsageCount Value="0"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit70>
-      <Unit71>
-        <Filename Value="synapse40lib\synachar.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="238"/>
-        <UsageCount Value="0"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit71>
-      <Unit72>
-        <Filename Value="synapse40lib\synafpc.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="90"/>
-        <CursorPos X="30" Y="28"/>
-        <UsageCount Value="0"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit72>
-      <Unit73>
-        <Filename Value="synapse40lib\synaicnv.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="265"/>
-        <CursorPos X="43" Y="22"/>
-        <UsageCount Value="0"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit73>
-      <Unit74>
-        <Filename Value="synapse40lib\synsock.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="26"/>
-        <CursorPos X="34" Y="28"/>
-        <UsageCount Value="0"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit74>
-      <Unit75>
-        <Filename Value="synapse40lib\synamisc.pas"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="25" Y="14"/>
-        <UsageCount Value="0"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit75>
-      <Unit76>
-        <Filename Value="synapse40lib\dnssend.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="552"/>
-        <CursorPos X="30" Y="18"/>
-        <UsageCount Value="0"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit76>
-      <Unit77>
+      </Unit67>
+      <Unit68>
         <Filename Value="dcpcrypt\Ciphers\dcpblowfish.pas"/>
         <UnitName Value="DCPblowfish"/>
         <EditorIndex Value="-1"/>
@@ -873,8 +802,8 @@
         <CursorPos X="24" Y="29"/>
         <UsageCount Value="23"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit77>
-      <Unit78>
+      </Unit68>
+      <Unit69>
         <Filename Value="C:\lazarus\lcl\lcltype.pp"/>
         <UnitName Value="LCLType"/>
         <EditorIndex Value="-1"/>
@@ -888,52 +817,52 @@
           <CursorPos X="3" Y="392"/>
         </ExtraEditor1>
         <UsageCount Value="24"/>
-      </Unit78>
-      <Unit79>
+      </Unit69>
+      <Unit70>
         <Filename Value="oskeyboard.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="410"/>
         <CursorPos X="8" Y="299"/>
         <UsageCount Value="65"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit79>
-      <Unit80>
+      </Unit70>
+      <Unit71>
         <Filename Value="C:\lazarus\fpc\3.0.0\source\rtl\objpas\classes\classesh.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="19"/>
         <CursorPos X="23" Y="47"/>
         <UsageCount Value="6"/>
-      </Unit80>
-      <Unit81>
+      </Unit71>
+      <Unit72>
         <Filename Value="C:\lazarus\lcl\menus.pp"/>
         <UnitName Value="Menus"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="375"/>
         <CursorPos X="75" Y="413"/>
         <UsageCount Value="16"/>
-      </Unit81>
-      <Unit82>
+      </Unit72>
+      <Unit73>
         <Filename Value="C:\lazarus\fpc\3.0.0\source\rtl\win\wininc\ascdef.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="375"/>
         <CursorPos X="18" Y="392"/>
         <UsageCount Value="7"/>
-      </Unit82>
-      <Unit83>
+      </Unit73>
+      <Unit74>
         <Filename Value="C:\lazarus\fpc\3.0.0\source\rtl\inc\strings.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="13"/>
         <CursorPos X="14" Y="29"/>
         <UsageCount Value="6"/>
-      </Unit83>
-      <Unit84>
+      </Unit74>
+      <Unit75>
         <Filename Value="C:\lazarus\fpc\3.0.0\source\rtl\win\wininc\errors.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="55"/>
         <CursorPos X="25" Y="88"/>
         <UsageCount Value="7"/>
-      </Unit84>
-      <Unit85>
+      </Unit75>
+      <Unit76>
         <Filename Value="..\external_libraries\dcpcrypt\Ciphers\dcpblowfish.pas"/>
         <UnitName Value="DCPblowfish"/>
         <EditorIndex Value="-1"/>
@@ -941,155 +870,155 @@
         <CursorPos X="22" Y="31"/>
         <UsageCount Value="4"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit85>
-      <Unit86>
+      </Unit76>
+      <Unit77>
         <Filename Value="..\..\..\svnwork\svn-opsi-org\opsi-winst\branches\4.11.6\indy\Lib\System\IdStream.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="3" Y="29"/>
         <UsageCount Value="3"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit86>
-      <Unit87>
+      </Unit77>
+      <Unit78>
         <Filename Value="..\external_libraries\indy\Lib\System\IdStream.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="40" Y="32"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="102"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit87>
-      <Unit88>
+      </Unit78>
+      <Unit79>
         <Filename Value="..\unused\GR32_PNG.pas"/>
         <EditorIndex Value="-1"/>
         <UsageCount Value="3"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit88>
-      <Unit89>
+      </Unit79>
+      <Unit80>
         <Filename Value="..\common\osencoding.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="102"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit89>
-      <Unit90>
+      </Unit80>
+      <Unit81>
         <Filename Value="..\common\oskeyboard.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="102"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit90>
-      <Unit91>
+      </Unit81>
+      <Unit82>
         <Filename Value="..\common\oscrypt.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="102"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit91>
-      <Unit92>
+      </Unit82>
+      <Unit83>
         <Filename Value="..\common\superobject.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="8"/>
         <TopLine Value="6455"/>
         <CursorPos X="96" Y="6469"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="102"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit92>
-      <Unit93>
+      </Unit83>
+      <Unit84>
         <Filename Value="..\common\oslog.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="3"/>
         <TopLine Value="43"/>
         <CursorPos X="3" Y="43"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="102"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit93>
-      <Unit94>
+      </Unit84>
+      <Unit85>
         <Filename Value="..\common\oswebservice.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="492"/>
         <CursorPos Y="518"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="102"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit94>
-      <Unit95>
+      </Unit85>
+      <Unit86>
         <Filename Value="..\common\osxml.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="102"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit95>
-      <Unit96>
+      </Unit86>
+      <Unit87>
         <Filename Value="..\external_libraries\indy\Lib\System\IdGlobal.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1923"/>
         <CursorPos X="3" Y="1949"/>
         <UsageCount Value="13"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit96>
-      <Unit97>
+      </Unit87>
+      <Unit88>
         <Filename Value="..\external_libraries\indy\Lib\System\IdStreamVCL.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="102"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit97>
-      <Unit98>
+      </Unit88>
+      <Unit89>
         <Filename Value="..\common\osjson.pas"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="357"/>
-        <CursorPos X="9" Y="394"/>
-        <UsageCount Value="89"/>
+        <TopLine Value="360"/>
+        <CursorPos X="11" Y="396"/>
+        <UsageCount Value="92"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit98>
-      <Unit99>
+      </Unit89>
+      <Unit90>
         <Filename Value="C:\lazarus\fpc\3.0.0\source\rtl\objpas\objpas.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="7"/>
         <CursorPos X="22" Y="33"/>
         <UsageCount Value="6"/>
-      </Unit99>
-      <Unit100>
+      </Unit90>
+      <Unit91>
         <Filename Value="C:\lazarus\fpc\3.0.0\source\rtl\inc\systemh.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="548"/>
         <CursorPos X="23" Y="574"/>
         <UsageCount Value="6"/>
-      </Unit100>
-      <Unit101>
+      </Unit91>
+      <Unit92>
         <Filename Value="C:\lazarus\fpc\3.0.0\source\rtl\objpas\sysutils\filutilh.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="121"/>
         <CursorPos X="10" Y="151"/>
         <UsageCount Value="7"/>
-      </Unit101>
-      <Unit102>
+      </Unit92>
+      <Unit93>
         <Filename Value="..\external_libraries\misc\DSiWin32.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="4305"/>
         <CursorPos X="18" Y="4316"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit102>
+      </Unit93>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
