@@ -6764,6 +6764,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
   var
     i : integer=0;
     j: Integer=0;
+    dummyint : integer=0;
     workingSection : TXStringList;
     ///info : string;
     remaining_with_leading_blanks : String='';
@@ -7151,14 +7152,14 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
           if mode = '' then
           begin
             SyntaxCheck := false;
-            errorinfo := errorinfo := 'Invalid empty string for mode in chmod';
+            errorinfo := errorinfo + ' Invalid empty string for mode in chmod';
           end;
           try
-            i := strToInt(mode);
+            dummyint := strToInt(mode);
           except
             SyntaxCheck := false;
-            errorinfo := errorinfo := 'Invalid string for mode in chmod. Expected something like 755 found: '+mode;
-          end
+            errorinfo := errorinfo + ' Invalid string for mode in chmod. Expected something like 755 found: '+mode;
+          end;
 
             if not GetString (Remaining, Expressionstr, Remaining, errorinfo, false)
             then
