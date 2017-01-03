@@ -379,6 +379,7 @@ function jsonAsArrayToStringList(str: string; var strListResult: TStringList): b
 var
   new_obj: ISuperObject;
   i: integer;
+  objstr : string;
 begin
   Result := False;
   strListResult := TStringList.Create;
@@ -388,7 +389,10 @@ begin
       for i := 0 to new_obj.AsArray.Length - 1 do
       begin
         Result := True;
-        strListResult.Append(new_obj.AsArray.S[i]);
+        objstr := new_obj.AsArray.S[i];
+        objstr := escapeControlChars(objstr);
+        //objstr := stringreplace(objstr, #10, '\n', [rfReplaceAll, rfIgnoreCase]);
+        strListResult.Append(objstr);
       end;
 end;
 

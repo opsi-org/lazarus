@@ -11,6 +11,13 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 ##################################################################
 
+opsi-winst/opsi-script (4.11.6.12) stable; urgency=low
+
+  * osjson: escape chars in jsonAsArrayToStringList
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 03 Jan 2017:15:00:00 +0200
+
+
 opsi-winst/opsi-script (4.11.6.11) stable; urgency=low
 
   * source migrated from svn to git and direcories restructured
