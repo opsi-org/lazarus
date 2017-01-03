@@ -390,8 +390,8 @@ begin
       begin
         Result := True;
         objstr := new_obj.AsArray.S[i];
-        objstr := escapeControlChars(objstr);
-        //objstr := stringreplace(objstr, #10, '\n', [rfReplaceAll, rfIgnoreCase]);
+        //objstr := escapeControlChars(objstr);
+        objstr := stringreplace(objstr, #10, '\n', [rfReplaceAll, rfIgnoreCase]);
         strListResult.Append(objstr);
       end;
 end;
