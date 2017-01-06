@@ -14991,7 +14991,12 @@ end
      syntaxcheck and
      hasRelation ( relationSymbol ,
                    getCompareSign (Logdatei.NumberOfErrors - Logdatei.ErrorNumberMarked, errNumber),
-                   BooleanResult, InfoSyntaxError )
+                   BooleanResult, InfoSyntaxError );
+   LogDatei.log('(TotalErrors: '
+                  +intToStr(Logdatei.NumberOfErrors)
+                  +' - ErrorMark: '+intToStr(Logdatei.ErrorNumberMarked)
+                  +') '+relationSymbol+' '
+                  +intToStr(errNumber)+' -> '+BoolToStr(BooleanResult),LLDebug2);
  End
 
  else if Skip ('opsiLicenseManagementEnabled', Input, r, InfoSyntaxError)

@@ -281,6 +281,7 @@ function jsonIsArray(str: string): boolean;
 var
   new_obj: ISuperObject;
 begin
+  result := false;
   new_obj := SO(str);
   if (new_obj <> nil) then
     Result := new_obj.IsType(stArray);
@@ -290,6 +291,7 @@ function jsonAsArrayCountElements(str: string): integer;
 var
   new_obj: ISuperObject;
 begin
+  result := -1;
   new_obj := SO(str);
   if new_obj <> nil then
     if new_obj.IsType(stArray) then

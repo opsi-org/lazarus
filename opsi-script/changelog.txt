@@ -14,6 +14,7 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 opsi-winst/opsi-script (4.11.6.12) stable; urgency=low
 
   * osjson: escape chars in jsonAsArrayToStringList
+  * osparser: Logging at errorsOccurredSinceMark
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 03 Jan 2017:15:00:00 +0200
 
