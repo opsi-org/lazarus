@@ -413,7 +413,8 @@
       </Unit27>
       <Unit28>
         <Filename Value="changelog.txt"/>
-        <CursorPos X="22" Y="17"/>
+        <IsVisibleTab Value="True"/>
+        <CursorPos X="25" Y="13"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -502,8 +503,8 @@
         <Filename Value="osfunc.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="13"/>
-        <TopLine Value="7570"/>
-        <CursorPos X="39" Y="7595"/>
+        <TopLine Value="7516"/>
+        <CursorPos X="26" Y="7533"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="-1"/>
@@ -536,16 +537,16 @@
       <Unit41>
         <Filename Value="osparser.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
-        <TopLine Value="5856"/>
-        <CursorPos X="33" Y="5950"/>
+        <TopLine Value="7207"/>
+        <CursorPos X="44" Y="7239"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
+          <IsVisibleTab Value="True"/>
           <EditorIndex Value="-1"/>
-          <WindowIndex Value="-1"/>
-          <TopLine Value="7266"/>
-          <CursorPos X="55" Y="7291"/>
+          <WindowIndex Value="1"/>
+          <TopLine Value="7264"/>
+          <CursorPos X="101" Y="7305"/>
         </ExtraEditor1>
         <UsageCount Value="209"/>
         <Loaded Value="True"/>
@@ -884,7 +885,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="40" Y="32"/>
-        <UsageCount Value="111"/>
+        <UsageCount Value="115"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit78>
       <Unit79>
@@ -900,7 +901,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="111"/>
+        <UsageCount Value="115"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit80>
       <Unit81>
@@ -910,7 +911,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="111"/>
+        <UsageCount Value="115"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit81>
       <Unit82>
@@ -920,7 +921,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="111"/>
+        <UsageCount Value="115"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit82>
       <Unit83>
@@ -929,7 +930,7 @@
         <EditorIndex Value="8"/>
         <TopLine Value="6455"/>
         <CursorPos X="96" Y="6469"/>
-        <UsageCount Value="111"/>
+        <UsageCount Value="115"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit83>
@@ -939,7 +940,7 @@
         <EditorIndex Value="3"/>
         <TopLine Value="43"/>
         <CursorPos X="3" Y="43"/>
-        <UsageCount Value="111"/>
+        <UsageCount Value="115"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit84>
@@ -949,7 +950,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="492"/>
         <CursorPos Y="518"/>
-        <UsageCount Value="111"/>
+        <UsageCount Value="115"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit85>
       <Unit86>
@@ -959,7 +960,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="111"/>
+        <UsageCount Value="115"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit86>
       <Unit87>
@@ -977,7 +978,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="111"/>
+        <UsageCount Value="115"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit88>
       <Unit89>
@@ -986,7 +987,7 @@
         <EditorIndex Value="1"/>
         <TopLine Value="261"/>
         <CursorPos X="16" Y="294"/>
-        <UsageCount Value="101"/>
+        <UsageCount Value="105"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit89>
@@ -1023,123 +1024,123 @@
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="osparser.pas"/>
-        <Caret Line="9620" TopLine="9596"/>
+        <Caret Line="7684" Column="26" TopLine="7642"/>
       </Position1>
       <Position2>
         <Filename Value="osparser.pas"/>
-        <Caret Line="9617" TopLine="9596"/>
+        <Caret Line="7714" Column="26" TopLine="7672"/>
       </Position2>
       <Position3>
         <Filename Value="osparser.pas"/>
-        <Caret Line="10861" TopLine="10836"/>
+        <Caret Line="7748" Column="26" TopLine="7706"/>
       </Position3>
       <Position4>
         <Filename Value="osparser.pas"/>
-        <Caret Line="10864" TopLine="10836"/>
+        <Caret Line="7780" Column="26" TopLine="7738"/>
       </Position4>
       <Position5>
         <Filename Value="osparser.pas"/>
-        <Caret Line="10865" TopLine="10836"/>
+        <Caret Line="7808" Column="26" TopLine="7766"/>
       </Position5>
       <Position6>
         <Filename Value="osparser.pas"/>
-        <Caret Line="10867" TopLine="10836"/>
+        <Caret Line="7919" Column="31" TopLine="7877"/>
       </Position6>
       <Position7>
         <Filename Value="osparser.pas"/>
-        <Caret Line="10868" TopLine="10836"/>
+        <Caret Line="7943" Column="31" TopLine="7901"/>
       </Position7>
       <Position8>
         <Filename Value="osparser.pas"/>
-        <Caret Line="10869" TopLine="10836"/>
+        <Caret Line="7966" Column="28" TopLine="7924"/>
       </Position8>
       <Position9>
         <Filename Value="osparser.pas"/>
-        <Caret Line="10870" TopLine="10836"/>
+        <Caret Line="7980" Column="24" TopLine="7938"/>
       </Position9>
       <Position10>
         <Filename Value="osparser.pas"/>
-        <Caret Line="10854" Column="98" TopLine="10836"/>
+        <Caret Line="8016" Column="22" TopLine="7974"/>
       </Position10>
       <Position11>
         <Filename Value="osparser.pas"/>
-        <Caret Line="10877" TopLine="10836"/>
+        <Caret Line="12067" Column="45" TopLine="12024"/>
       </Position11>
       <Position12>
         <Filename Value="osparser.pas"/>
-        <Caret Line="10881" TopLine="10838"/>
+        <Caret Line="15748" Column="24" TopLine="15705"/>
       </Position12>
       <Position13>
         <Filename Value="osparser.pas"/>
-        <Caret Line="10883" TopLine="10840"/>
+        <Caret Line="15763" Column="29" TopLine="15720"/>
       </Position13>
       <Position14>
         <Filename Value="osparser.pas"/>
-        <Caret Line="15293" TopLine="15267"/>
+        <Caret Line="15772" Column="24" TopLine="15729"/>
       </Position14>
       <Position15>
         <Filename Value="osparser.pas"/>
-        <Caret Line="15294" TopLine="15267"/>
+        <Caret Line="1689" Column="17" TopLine="1675"/>
       </Position15>
       <Position16>
         <Filename Value="osparser.pas"/>
-        <Caret Line="15295" TopLine="15267"/>
+        <Caret Line="1116" Column="28" TopLine="1093"/>
       </Position16>
       <Position17>
         <Filename Value="osparser.pas"/>
-        <Caret Line="15293" TopLine="15267"/>
+        <Caret Line="1119" Column="9" TopLine="1093"/>
       </Position17>
       <Position18>
         <Filename Value="osparser.pas"/>
-        <Caret Line="15342" TopLine="15317"/>
+        <Caret Line="1125" Column="8" TopLine="1093"/>
       </Position18>
       <Position19>
         <Filename Value="osparser.pas"/>
-        <Caret Line="18443" TopLine="18418"/>
+        <Caret Line="1127" Column="14" TopLine="1093"/>
       </Position19>
       <Position20>
         <Filename Value="osparser.pas"/>
-        <Caret Line="18481" TopLine="18456"/>
+        <Caret Line="1131" Column="15" TopLine="1093"/>
       </Position20>
       <Position21>
         <Filename Value="osparser.pas"/>
-        <Caret Line="18485" TopLine="18456"/>
+        <Caret Line="1156" Column="23" TopLine="1113"/>
       </Position21>
       <Position22>
         <Filename Value="osparser.pas"/>
-        <Caret Line="14992" Column="17" TopLine="14953"/>
+        <Caret Line="10" Column="35"/>
       </Position22>
       <Position23>
         <Filename Value="osparser.pas"/>
-        <Caret Line="774" Column="10" TopLine="748"/>
+        <Caret Line="6775" Column="10" TopLine="6731"/>
       </Position23>
       <Position24>
         <Filename Value="osparser.pas"/>
-        <Caret Line="14992" Column="13" TopLine="14953"/>
+        <Caret Line="309" Column="34" TopLine="304"/>
       </Position24>
       <Position25>
         <Filename Value="osparser.pas"/>
-        <Caret Line="774" Column="10" TopLine="749"/>
+        <Caret Line="6775" Column="10" TopLine="6733"/>
       </Position25>
       <Position26>
         <Filename Value="osparser.pas"/>
-        <Caret Line="14978" Column="40" TopLine="14953"/>
+        <Caret Line="7252" Column="15" TopLine="7211"/>
       </Position26>
       <Position27>
         <Filename Value="osparser.pas"/>
-        <Caret Line="19332" Column="38" TopLine="19306"/>
+        <Caret Line="7269" Column="18" TopLine="7228"/>
       </Position27>
       <Position28>
         <Filename Value="osparser.pas"/>
-        <Caret Line="148" Column="39" TopLine="122"/>
+        <Caret Line="7277" Column="18" TopLine="7236"/>
       </Position28>
       <Position29>
         <Filename Value="osparser.pas"/>
-        <Caret Line="17415" Column="37" TopLine="17393"/>
+        <Caret Line="7299" Column="20" TopLine="7258"/>
       </Position29>
       <Position30>
         <Filename Value="osparser.pas"/>
-        <Caret Line="14978" Column="18" TopLine="14965"/>
+        <Caret Line="7332" Column="16" TopLine="7291"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>

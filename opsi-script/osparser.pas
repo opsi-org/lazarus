@@ -6772,6 +6772,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
     mode : string;  // used on linux
     list1 : TStringlist;
     shellcallArchParam : String;
+    go_on : boolean;
 
 
   begin
@@ -7194,6 +7195,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
         else if (UpperCase (Expressionstr) = 'HARDLINK')
         then
         begin
+          go_on := true;
           if not GetString (Remaining, Expressionstr, Remaining, errorinfo, false)
           then
           Begin
@@ -7209,11 +7211,13 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
           Source := ExpandFileNameUTF8(Source);
           if not (isAbsoluteFileName (Source) and FileExists(Source)) then
           begin
-            syntaxcheck := false;
-            reportError (Sektion, i, Sektion.strings [i-1], source + ' is no existing file or directory');
+            //syntaxcheck := false;
+            //reportError (Sektion, i, Sektion.strings [i-1], source + ' is no existing file or directory');
+            go_on := false;
+            logDatei.log('Error: hardlink: source: '+source + ' is no existing file or directory',LLError);
           end;
 
-          if syntaxcheck then
+          if syntaxcheck and go_on  then
           begin
             if not GetString (Remaining, Target, Remaining, errorinfo, false)
             then Target := Remaining;
@@ -7229,12 +7233,14 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
 
             if not (isAbsoluteFileName (target)) then
             begin
-              syntaxcheck := false;
-              reportError (Sektion, i, Sektion.strings [i-1], target + ' is not a valid file name');
+              //syntaxcheck := false;
+              //reportError (Sektion, i, Sektion.strings [i-1], target + ' is not a valid file name');
+              go_on := false;
+              logDatei.log('Error: hardlink: target: '+target + ' is not a valid file name',LLError);
             end;
 
 
-            if SyntaxCheck
+            if SyntaxCheck and go_on
             then
             begin
              LogDatei.log ('we try to hardlink: '+source+' to '+target, LLDebug2);
@@ -7248,6 +7254,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
         else if (UpperCase (Expressionstr) = 'SYMLINK')
         then
         begin
+         go_on := true;
           if not GetString (Remaining, Expressionstr, Remaining, errorinfo, false)
           then
           Begin
@@ -7262,18 +7269,22 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
           Source := ExpandFileNameUTF8(Source);
           if not (isAbsoluteFileName (Source) and FileExists(Source)) then
           begin
-            syntaxcheck := false;
-            reportError (Sektion, i, Sektion.strings [i-1], source + ' is no existing file or directory');
+            //syntaxcheck := false;
+            //reportError (Sektion, i, Sektion.strings [i-1], source + ' is no existing file or directory');
+            go_on := false;
+            logDatei.log('Error: symlink: source: '+source + ' is no existing file or directory',LLError);
           end;
           {$IFDEF WINDOWS}
           if GetNTVersionMajor < 6 then
           begin
-            syntaxcheck := false;
-            reportError (Sektion, i, Sektion.strings [i-1], 'Symlink on Windows is not avaible on this Release - needs NT6 and up');
+            //syntaxcheck := false;
+            //reportError (Sektion, i, Sektion.strings [i-1], 'Symlink on Windows is not avaible on this Release - needs NT6 and up');
+            go_on := false;
+            logDatei.log('Warning: symlink: Symlink on Windows is not avaible on this Release - needs NT6 and up',LLWarning);
           end;
           {$ENDIF WINDOWS}
 
-          if syntaxcheck then
+          if syntaxcheck and go_on  then
           begin
             if not GetString (Remaining, Target, Remaining, errorinfo, false)
             then Target := Remaining;
@@ -7288,12 +7299,14 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
 
             if not (isAbsoluteFileName (target)) then
             begin
-              syntaxcheck := false;
-              reportError (Sektion, i, Sektion.strings [i-1], target + ' is not a valid file name');
+              //syntaxcheck := false;
+              //reportError (Sektion, i, Sektion.strings [i-1], target + ' is not a valid file name');
+              go_on := false;
+              logDatei.log('Error: symlink: target: '+target + ' is not a valid file name',LLError);
             end;
 
 
-            if SyntaxCheck
+            if SyntaxCheck and go_on
             then
             begin
              LogDatei.log ('we try to symlink: '+source+' to '+target, LLDebug2);
@@ -7321,6 +7334,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
             GetWord (Remaining, Expressionstr, Remaining, WordDelimiterSet0);
 
           cpSpecify := 0;
+          go_on := true;
 
             // which move options
 
@@ -7342,7 +7356,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
               Begin
                 SyntaxCheck := false;
                 reportError(Sektion, i, Sektion.strings [i-1],
-                             Expressionstr[j] + ' is not a valid copy option');
+                             Expressionstr[j] + ' is not a valid rename / move option');
               End;
             End;
             if not GetString (Remaining, Expressionstr, Remaining, errorinfo, false) then
@@ -7371,11 +7385,13 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
           Source := ExpandFileNameUTF8(Source);
           if not (isAbsoluteFileName (Source) and FileExists(Source)) then
           begin
-            syntaxcheck := false;
-            reportError (Sektion, i, Sektion.strings [i-1], source + ' is no existing file or directory');
+            //syntaxcheck := false;
+            //reportError (Sektion, i, Sektion.strings [i-1], source + ' is no existing file or directory');
+            go_on := false;
+            logDatei.log('Error: move/rename: source: '+source + ' is no existing file or directory',LLError);
           end;
 
-          if syntaxcheck then
+          if syntaxcheck and go_on then
           begin
             remaining := cutLeftBlanks(remaining);
             if not GetString (Remaining, Target, Remaining, errorinfo, false)
@@ -7392,11 +7408,13 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
 
             if not (isAbsoluteFileName (target)) then
             begin
-              syntaxcheck := false;
-              reportError (Sektion, i, Sektion.strings [i-1], target + ' is not a valid file name');
+              //syntaxcheck := false;
+              //reportError (Sektion, i, Sektion.strings [i-1], target + ' is not a valid file name');
+              go_on := false;
+              logDatei.log('Error: move/rename: target: '+target + ' is not a valid file name',LLError);
             end;
 
-            if SyntaxCheck
+            if SyntaxCheck  and go_on
             then
             begin
              LogDatei.log ('we try to rename: '+source+' to '+target, LLDebug);
