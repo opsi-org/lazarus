@@ -22,7 +22,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="11"/>
       <RevisionNr Value="6"/>
-      <BuildNr Value="11"/>
+      <BuildNr Value="12"/>
       <StringTable Comments="Compiled with Lazarus 1.6.2" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.0.6"/>
     </VersionInfo>
     <BuildModes Count="3">
