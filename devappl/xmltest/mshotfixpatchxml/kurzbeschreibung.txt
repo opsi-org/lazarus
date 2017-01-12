@@ -1,0 +1,23 @@
+Kurzbeschreibung mshotfixpatchXML (10.1.17)
+
+Datei derzeit nur für Linux kompiliert 
+Logdateien: /tmp/xmlpatch.log 
+
+Ausführen der Datei -> Dialog
+-> Öffnen des inifile
+-> danach Aufforderung zum Öffnen der Package.xml
+-> inidatei wird gepatcht, überschrieben.
+
+Im Fenster werden ein paar Inofs ausgegeben.
+
+Fest einprogrammiert:
+* wenn ini-filename x64 beinhaltet, wird im title nach x64 gesucht. logging, falls nicht vorhanden.
+* wenn ini-filename x86 beinhaltet, wird im title mach x86 gesucht. logging, falls nicht vorhanden.
+* aus dem ini-file werden nur die Sections mit cab berücksichtigt.
+* wenn Windows 10 nicht im title vorkommt, wird eine warning geloggt.
+* wenn Version im title vorhanden wird der vierstellige String der releaseid extrahiert. Wenn nicht vorhanden 1507.
+
+Es sind noch nicht alle Fehler abgefangen!
+bekannt:
+* wenn der Dialog zum Öffnen der inidatei abgebrochen wird, stürzt er noch ab.
+ 
