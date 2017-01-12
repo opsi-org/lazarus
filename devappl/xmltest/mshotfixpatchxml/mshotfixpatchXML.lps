@@ -3,11 +3,11 @@
   <ProjectSession>
     <Version Value="9"/>
     <BuildModes Active="Release"/>
-    <Units Count="14">
+    <Units Count="16">
       <Unit0>
         <Filename Value="mshotfixpatchXML.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="3"/>
         <CursorPos X="25"/>
         <UsageCount Value="80"/>
         <Loaded Value="True"/>
@@ -19,7 +19,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="304"/>
+        <TopLine Value="208"/>
         <CursorPos X="87" Y="208"/>
         <UsageCount Value="80"/>
         <Loaded Value="True"/>
@@ -28,7 +28,7 @@
       <Unit2>
         <Filename Value="osxml.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="1"/>
         <TopLine Value="311"/>
         <CursorPos X="27" Y="337"/>
         <UsageCount Value="80"/>
@@ -36,83 +36,97 @@
       </Unit2>
       <Unit3>
         <Filename Value="oslog.pas"/>
-        <IsPartOfProject Value="True"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="109"/>
         <CursorPos X="40" Y="21"/>
         <UsageCount Value="80"/>
-        <Loaded Value="True"/>
       </Unit3>
       <Unit4>
         <Filename Value="winpatchcollection.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="winpatchCollection"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="2"/>
         <CursorPos X="107" Y="55"/>
         <UsageCount Value="64"/>
         <Loaded Value="True"/>
       </Unit4>
       <Unit5>
-        <Filename Value="osxmltdom.pas"/>
+        <Filename Value="../common/osxmltdom.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="20"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="osxmltdom.pas"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="53"/>
         <CursorPos X="85" Y="51"/>
         <UsageCount Value="52"/>
-        <Loaded Value="True"/>
-      </Unit5>
-      <Unit6>
+      </Unit6>
+      <Unit7>
         <Filename Value="../branches/4.11.6/xmltest.lpr"/>
         <EditorIndex Value="-1"/>
         <UsageCount Value="5"/>
-      </Unit6>
-      <Unit7>
+      </Unit7>
+      <Unit8>
         <Filename Value="../branches/4.11.6/osxml.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="40"/>
         <UsageCount Value="5"/>
-      </Unit7>
-      <Unit8>
+      </Unit8>
+      <Unit9>
         <Filename Value="../branches/4.11.6/xmltestu1.lfm"/>
         <EditorIndex Value="-1"/>
         <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="LFM"/>
-      </Unit8>
-      <Unit9>
+      </Unit9>
+      <Unit10>
         <Filename Value="../branches/4.11.6/xmltestu1.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="116"/>
         <CursorPos X="30" Y="198"/>
         <UsageCount Value="38"/>
-      </Unit9>
-      <Unit10>
+      </Unit10>
+      <Unit11>
         <Filename Value="/usr/share/lazarus/1.6.2/lcl/include/control.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="2714"/>
         <CursorPos Y="2738"/>
         <UsageCount Value="8"/>
-      </Unit10>
-      <Unit11>
+      </Unit11>
+      <Unit12>
         <Filename Value="../branches/4.11.6/osjson.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="652"/>
         <UsageCount Value="7"/>
-      </Unit11>
-      <Unit12>
+      </Unit12>
+      <Unit13>
         <Filename Value="../branches/4.11.6/synapse40lib/mimepart.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1077"/>
         <CursorPos X="71" Y="1086"/>
         <UsageCount Value="10"/>
-      </Unit12>
-      <Unit13>
+      </Unit13>
+      <Unit14>
         <Filename Value="/usr/share/lazarus/1.6.2/lcl/lclmessageglue.pas"/>
         <UnitName Value="LCLMessageGlue"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="91"/>
         <CursorPos Y="114"/>
         <UsageCount Value="10"/>
-      </Unit13>
+      </Unit14>
+      <Unit15>
+        <Filename Value="../common/oslog.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="20"/>
+      </Unit15>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>

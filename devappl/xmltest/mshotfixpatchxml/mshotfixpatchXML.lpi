@@ -31,6 +31,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="../common"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -70,6 +71,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="../common"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -123,16 +125,16 @@
         <IsPartOfProject Value="True"/>
       </Unit2>
       <Unit3>
-        <Filename Value="oslog.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit3>
-      <Unit4>
         <Filename Value="winpatchcollection.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="winpatchCollection"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="../common/osxmltdom.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit4>
       <Unit5>
-        <Filename Value="osxmltdom.pas"/>
+        <Filename Value="../common/oslog.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit5>
     </Units>
@@ -144,6 +146,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
+      <OtherUnitFiles Value="../common"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
