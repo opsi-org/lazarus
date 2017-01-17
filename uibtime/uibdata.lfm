@@ -1,0 +1,707 @@
+object DataModule1: TDataModule1
+  OnCreate = DataModuleCreate
+  OldCreateOrder = False
+  Height = 541
+  HorizontalOffset = 248
+  VerticalOffset = 481
+  Width = 894
+  object IBConnection1: TIBConnection
+    Connected = False
+    LoginPrompt = False
+    KeepConnection = True
+    Password = 'uibtime'
+    Transaction = SQLTransaction1
+    UserName = 'uibtime'
+    CharSet = 'utf-8'
+    LogEvents = []
+    Options = []
+    left = 42
+    top = 16
+  end
+  object SQuibaktuser: TSQLQuery
+    FieldDefs = <    
+      item
+        Name = 'USERID'
+        DataType = ftString
+        Precision = -1
+        Size = 80
+      end    
+      item
+        Name = 'NAME'
+        DataType = ftString
+        Precision = -1
+        Size = 200
+      end    
+      item
+        Name = 'UIBMEMBER'
+        DataType = ftSmallint
+        Precision = -1
+      end>
+    AfterDelete = SQuibaktuserAfterDelete
+    AfterPost = SQuibaktuserAfterPost
+    Database = IBConnection1
+    Transaction = SQLTransaction1
+    SQL.Strings = (
+      'select * from uibaktuser'
+    )
+    Options = []
+    Params = <>
+    UpdateMode = upWhereAll
+    left = 42
+    top = 80
+  end
+  object SQLTransaction1: TSQLTransaction
+    Active = False
+    Action = caNone
+    Database = IBConnection1
+    Options = []
+    left = 147
+    top = 16
+  end
+  object DSuibaktuser: TDataSource
+    DataSet = SQuibaktuser
+    left = 147
+    top = 80
+  end
+  object SQuibaktevent: TSQLQuery
+    PacketRecords = -1
+    IndexFieldNames = 'EVENT'
+    FieldDefs = <    
+      item
+        Name = 'EVENT'
+        DataType = ftString
+        Precision = -1
+        Size = 50
+      end    
+      item
+        Name = 'PARENTEVENT'
+        DataType = ftString
+        Precision = -1
+        Size = 50
+      end    
+      item
+        Name = 'COMMENT'
+        DataType = ftString
+        Precision = -1
+        Size = 500
+      end    
+      item
+        Name = 'ID_STRING'
+        DataType = ftString
+        Precision = -1
+        Size = 50
+      end    
+      item
+        Name = 'BASE_FOR_TIME'
+        DataType = ftString
+        Precision = -1
+        Size = 50
+      end    
+      item
+        Name = 'TIME_H'
+        DataType = ftFloat
+        Precision = -1
+      end    
+      item
+        Name = 'PROJECTSTART'
+        DataType = ftDateTime
+        Precision = -1
+      end>
+    AfterDelete = SQuibakteventAfterDelete
+    AfterInsert = SQuibakteventAfterInsert
+    AfterPost = SQuibakteventAfterPost
+    Database = IBConnection1
+    Transaction = SQLTransaction1
+    SQL.Strings = (
+      'select * from uibaktevent'
+    )
+    Options = []
+    Params = <>
+    UpdateMode = upWhereAll
+    left = 42
+    top = 152
+  end
+  object DSuibaktevent: TDataSource
+    DataSet = SQuibaktevent
+    left = 147
+    top = 152
+  end
+  object DSuiballevent: TDataSource
+    DataSet = SQuiballevent
+    left = 147
+    top = 224
+  end
+  object DSuibevent: TDataSource
+    DataSet = SQuibevent
+    left = 147
+    top = 304
+  end
+  object DSuibuserevent: TDataSource
+    DataSet = SQuibuserevent
+    left = 147
+    top = 384
+  end
+  object DSuibloggedin: TDataSource
+    DataSet = SQuibloggedin
+    left = 147
+    top = 456
+  end
+  object DSuibtimeout: TDataSource
+    DataSet = SQuibtimeout
+    left = 384
+    top = 80
+  end
+  object DSuibcalls: TDataSource
+    DataSet = SQQueryuibevent
+    left = 384
+    top = 152
+  end
+  object DSuibsoll: TDataSource
+    DataSet = SQuibsoll
+    left = 384
+    top = 224
+  end
+  object DSquerytimeout: TDataSource
+    DataSet = SQquerytimeout
+    left = 384
+    top = 304
+  end
+  object DSuibdefproj: TDataSource
+    DataSet = SQuibdefproj
+    left = 384
+    top = 384
+  end
+  object SQuiballevent: TSQLQuery
+    FieldDefs = <    
+      item
+        Name = 'EVENT'
+        DataType = ftString
+        Precision = -1
+        Size = 50
+      end    
+      item
+        Name = 'PARENTEVENT'
+        DataType = ftString
+        Precision = -1
+        Size = 50
+      end    
+      item
+        Name = 'COMMENT'
+        DataType = ftString
+        Precision = -1
+        Size = 500
+      end    
+      item
+        Name = 'ID_STRING'
+        DataType = ftString
+        Precision = -1
+        Size = 50
+      end    
+      item
+        Name = 'BASE_FOR_TIME'
+        DataType = ftString
+        Precision = -1
+        Size = 50
+      end    
+      item
+        Name = 'TIME_H'
+        DataType = ftFloat
+        Precision = -1
+      end    
+      item
+        Name = 'PROJECTSTART'
+        DataType = ftDateTime
+        Precision = -1
+      end>
+    AfterPost = SQuiballeventAfterPost
+    Database = IBConnection1
+    Transaction = SQLTransaction1
+    SQL.Strings = (
+      'select * from uiballevent'
+    )
+    Options = []
+    Params = <>
+    UpdateMode = upWhereAll
+    left = 42
+    top = 224
+  end
+  object SQuibevent: TSQLQuery
+    PacketRecords = -1
+    IndexFieldNames = 'USERID;STARTTIME'
+    FieldDefs = <    
+      item
+        Name = 'PKUSERID'
+        DataType = ftString
+        Precision = -1
+        Size = 80
+      end    
+      item
+        Name = 'PKINITTIME'
+        DataType = ftDateTime
+        Precision = -1
+      end    
+      item
+        Name = 'USERID'
+        DataType = ftString
+        Precision = -1
+        Size = 80
+      end    
+      item
+        Name = 'STARTTIME'
+        DataType = ftDateTime
+        Precision = -1
+      end    
+      item
+        Name = 'EVENT'
+        DataType = ftString
+        Precision = -1
+        Size = 200
+      end    
+      item
+        Name = 'STOPTIME'
+        DataType = ftDateTime
+        Precision = -1
+      end    
+      item
+        Name = 'STUNDEN'
+        DataType = ftBCD
+        Precision = 18
+        Size = 4
+      end>
+    AutoCalcFields = False
+    AfterDelete = SQuibeventAfterDelete
+    AfterInsert = SQuibeventAfterInsert
+    AfterPost = SQuibeventAfterPost
+    BeforeClose = SQuibeventBeforeClose
+    BeforeDelete = SQuibeventBeforeDelete
+    BeforePost = SQuibeventBeforePost
+    Database = IBConnection1
+    Transaction = SQLTransaction1
+    SQL.Strings = (
+      'select * from uibevent'
+    )
+    Options = []
+    Params = <>
+    left = 42
+    top = 304
+  end
+  object SQuibuserevent: TSQLQuery
+    FieldDefs = <    
+      item
+        Name = 'USERID'
+        DataType = ftString
+        Precision = -1
+        Size = 20
+      end    
+      item
+        Name = 'EVENT'
+        DataType = ftString
+        Precision = -1
+        Size = 50
+      end    
+      item
+        Name = 'BUTTON'
+        DataType = ftSmallint
+        Precision = -1
+      end>
+    AfterDelete = SQuibusereventAfterDelete
+    AfterPost = SQuibusereventAfterPost
+    Database = IBConnection1
+    Transaction = SQLTransaction1
+    SQL.Strings = (
+      'select * from uibuserevent'
+    )
+    Options = []
+    Params = <>
+    UpdateMode = upWhereAll
+    left = 42
+    top = 384
+  end
+  object SQuibloggedin: TSQLQuery
+    FieldDefs = <    
+      item
+        Name = 'USERID'
+        DataType = ftString
+        Precision = -1
+        Size = 20
+      end    
+      item
+        Name = 'LOGGEDIN'
+        DataType = ftDateTime
+        Precision = -1
+      end>
+    AfterDelete = SQuibloggedinAfterDelete
+    AfterPost = SQuibloggedinAfterPost
+    Database = IBConnection1
+    Transaction = SQLTransaction1
+    SQL.Strings = (
+      'select userid, loggedin from uibloggedin'
+    )
+    Options = []
+    Params = <>
+    UpdateMode = upWhereAll
+    left = 42
+    top = 456
+  end
+  object SQuibtimeout: TSQLQuery
+    FieldDefs = <    
+      item
+        Name = 'USERID'
+        DataType = ftString
+        Precision = -1
+        Size = 20
+      end    
+      item
+        Name = 'EVENT'
+        DataType = ftString
+        Precision = -1
+        Size = 50
+      end    
+      item
+        Name = 'TIMEOUT_MIN'
+        DataType = ftInteger
+        Precision = -1
+      end>
+    AfterDelete = SQuibtimeoutAfterDelete
+    AfterPost = SQuibtimeoutAfterPost
+    Database = IBConnection1
+    Transaction = SQLTransaction1
+    SQL.Strings = (
+      'select * from uibtimeout'
+    )
+    Options = []
+    Params = <>
+    UpdateMode = upWhereAll
+    left = 266
+    top = 80
+  end
+  object SQQueryuibevent: TSQLQuery
+    FieldDefs = <>
+    Database = IBConnection1
+    Transaction = SQLTransaction1
+    SQL.Strings = (
+      ''
+    )
+    Options = []
+    Params = <>
+    UpdateMode = upWhereAll
+    left = 266
+    top = 152
+  end
+  object SQuibsoll: TSQLQuery
+    FieldDefs = <>
+    AfterDelete = SQuibsollAfterDelete
+    AfterPost = SQuibsollAfterPost
+    Database = IBConnection1
+    Transaction = SQLTransaction1
+    SQL.Strings = (
+      'select * from uibsoll'
+    )
+    Options = []
+    Params = <>
+    UpdateMode = upWhereAll
+    left = 266
+    top = 224
+  end
+  object SQquerytimeout: TSQLQuery
+    FieldDefs = <>
+    Database = IBConnection1
+    Transaction = SQLTransaction1
+    SQL.Strings = (
+      'select timeout_min from uibtimeout'
+      'where (userid = :userid) and'
+      '(event = :event)'
+    )
+    Options = []
+    Params = <    
+      item
+        DataType = ftUnknown
+        Name = 'userid'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'event'
+        ParamType = ptInput
+      end>
+    UpdateMode = upWhereAll
+    left = 266
+    top = 312
+  end
+  object SQuibdefproj: TSQLQuery
+    FieldDefs = <>
+    AfterDelete = SQuibdefprojAfterDelete
+    AfterPost = SQuibdefprojAfterPost
+    Database = IBConnection1
+    Transaction = SQLTransaction1
+    SQL.Strings = (
+      'select * from uibdefproj'
+    )
+    Options = []
+    Params = <>
+    UpdateMode = upWhereAll
+    left = 266
+    top = 384
+  end
+  object PopupMenu1: TPopupMenu
+    left = 496
+    top = 16
+    object Dateneditieren1: TMenuItem
+      Caption = 'Daten editieren'
+      OnClick = Dateneditieren1Click
+    end
+    object Weristda1: TMenuItem
+      Caption = 'Wer ist da ?'
+      OnClick = Weristda1Click
+    end
+    object Statistik1: TMenuItem
+      Caption = 'Statistik'
+      OnClick = Statistik1Click
+    end
+    object Import1: TMenuItem
+      Caption = 'Import'
+      Enabled = False
+      OnClick = Import1Click
+    end
+    object Export1: TMenuItem
+      Caption = 'Export'
+      Enabled = False
+      OnClick = Export1Click
+    end
+    object Datenweitergabe1: TMenuItem
+      Caption = 'Datenweitergabe'
+      Enabled = False
+      OnClick = Datenweitergabe1Click
+    end
+    object Arbeitsberichte: TMenuItem
+      Caption = 'Arbeitsberichte'
+      OnClick = ArbeitsberichteClick
+    end
+    object uibtime2erp: TMenuItem
+      Caption = 'uibtime2erp'
+      OnClick = uibtime2erpClick
+    end
+    object MenuItem8: TMenuItem
+    end
+    object Autologin1: TMenuItem
+      Caption = 'Autologin'
+      OnClick = Autologin1Click
+    end
+    object ZeigenurmeineProjekte1: TMenuItem
+      Caption = 'Zeige nur meine Projekte'
+      OnClick = ZeigenurmeineProjekte1Click
+    end
+    object schmaleLeiste: TMenuItem
+      Caption = 'schmale Leiste'
+      Enabled = False
+      OnClick = schmaleLeisteClick
+    end
+    object LeisteNeuAufbauen1: TMenuItem
+      Caption = 'Leiste neu aufbauen'
+      OnClick = LeisteNeuAufbauen1Click
+    end
+    object MenuItem13: TMenuItem
+    end
+    object Hilfe1: TMenuItem
+      Caption = 'Hilfe'
+      Enabled = False
+      OnClick = Hilfe1Click
+    end
+    object Info1: TMenuItem
+      Caption = 'Info'
+      OnClick = Info1Click
+    end
+    object ShowDebugWindow1: TMenuItem
+      Caption = 'Show Debug Window'
+      OnClick = ShowDebugWindow1Click
+    end
+  end
+  object TimerLogoffOnTop: TTimer
+    Enabled = False
+    OnTimer = TimerLogoffOnTopTimer
+    left = 496
+    top = 80
+  end
+  object TimerOnTop: TTimer
+    Enabled = False
+    Interval = 500
+    OnTimer = TimerOnTopTimer
+    left = 496
+    top = 152
+  end
+  object Timerloggedin: TTimer
+    Enabled = False
+    Interval = 60000
+    OnTimer = TimerloggedinTimer
+    left = 496
+    top = 224
+  end
+  object TimerQueryLoggedIn: TTimer
+    Enabled = False
+    Interval = 60000
+    OnTimer = TimerQueryLoggedInTimer
+    left = 496
+    top = 304
+  end
+  object DSqueryaktevents: TDataSource
+    DataSet = SQuibaktevent
+    left = 384
+    top = 456
+  end
+  object SQQueryAktEvents: TSQLQuery
+    FieldDefs = <    
+      item
+        Name = 'EVENT'
+        DataType = ftString
+        Precision = -1
+        Size = 50
+      end    
+      item
+        Name = 'UPPER'
+        DataType = ftString
+        Precision = -1
+        Size = 50
+      end>
+    Database = IBConnection1
+    Transaction = SQLTransaction1
+    SQL.Strings = (
+      'select event,upper(event)'
+      'from'
+      'UIBaktevent'
+      'ORDER BY'
+      '2'
+    )
+    Options = []
+    Params = <>
+    UpdateMode = upWhereAll
+    left = 266
+    top = 456
+  end
+  object SQqueryloggedin: TSQLQuery
+    PacketRecords = 1
+    FieldDefs = <>
+    Database = IBConnection2
+    Transaction = SQLTransaction2
+    SQL.Strings = (
+      ''
+    )
+    Options = []
+    Params = <>
+    UpdateMode = upWhereChanged
+    left = 496
+    top = 456
+  end
+  object Query_day_report: TSQLQuery
+    FieldDefs = <>
+    Database = IBConnection1
+    Transaction = SQLTransaction1
+    SQL.Strings = (
+      'select'
+      'UIBEVENTTIMESPLIT.EVENT,  '
+      'sum(UIBEVENTTIMESPLIT.STUNDEN) as sumstunden'
+      'from'
+      'UIBEVENTTIMESPLIT'
+      'where'
+      '(UIBEVENTTIMESPLIT.userid   = :userid) and'
+      '(UIBEVENTTIMESPLIT.jahr = :jahr) and'
+      '(UIBEVENTTIMESPLIT.MONAT = :monat) and'
+      '(UIBEVENTTIMESPLIT.tag = :tag) '
+      'GROUP BY'
+      'UIBEVENTTIMESPLIT.jahr,'
+      'UIBEVENTTIMESPLIT.monat,'
+      'UIBEVENTTIMESPLIT.tag,'
+      'UIBEVENTTIMESPLIT.EVENT'
+      'ORDER BY'
+      'UIBEVENTTIMESPLIT.EVENT'
+    )
+    Options = []
+    Params = <    
+      item
+        DataType = ftUnknown
+        Name = 'userid'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'jahr'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'monat'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'tag'
+        ParamType = ptInput
+      end>
+    UpdateMode = upWhereAll
+    left = 266
+    top = 16
+  end
+  object DS_day_report: TDataSource
+    DataSet = Query_day_report
+    left = 384
+    top = 16
+  end
+  object SQwork_description: TSQLQuery
+    FieldDefs = <>
+    AfterDelete = SQwork_descriptionAfterDelete
+    AfterInsert = SQwork_descriptionAfterInsert
+    AfterPost = SQwork_descriptionAfterPost
+    Database = IBConnection1
+    Transaction = SQLTransaction1
+    SQL.Strings = (
+      'select * from uib_work_description'
+      'where userid = :userid'
+      'order by jahr, monat, tag'
+    )
+    Options = []
+    Params = <    
+      item
+        DataType = ftUnknown
+        Name = 'userid'
+        ParamType = ptInput
+      end>
+    UpdateMode = upWhereAll
+    left = 496
+    top = 384
+  end
+  object DS_work_description: TDataSource
+    DataSet = SQwork_description
+    left = 608
+    top = 384
+  end
+  object IBConnection2: TIBConnection
+    Connected = False
+    LoginPrompt = False
+    KeepConnection = True
+    Password = 'uibtime'
+    Transaction = SQLTransaction2
+    UserName = 'uibtime'
+    CharSet = 'utf-8'
+    LogEvents = []
+    Options = []
+    left = 584
+    top = 16
+  end
+  object SQLTransaction2: TSQLTransaction
+    Active = False
+    Database = IBConnection2
+    Options = []
+    left = 598
+    top = 108
+  end
+  object Query4Result: TSQLQuery
+    FieldDefs = <>
+    AfterDelete = Query4ResultAfterDelete
+    AfterPost = Query4ResultAfterPost
+    Database = IBConnection1
+    Transaction = SQLTransaction1
+    Options = []
+    Params = <>
+    left = 609
+    top = 456
+  end
+end

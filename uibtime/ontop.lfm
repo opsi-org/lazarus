@@ -1,0 +1,353 @@
+object FOnTop: TFOnTop
+  Left = 536
+  Height = 239
+  Top = 467
+  Width = 810
+  BorderIcons = []
+  BorderStyle = bsNone
+  Caption = 'FOnTop'
+  ClientHeight = 239
+  ClientWidth = 810
+  Color = clBtnFace
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  FormStyle = fsStayOnTop
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnShow = FormShow
+  Position = poDefault
+  LCLVersion = '1.6.2.0'
+  object ToolBar1: TToolBar
+    Left = 0
+    Height = 25
+    Top = 0
+    Width = 688
+    Align = alNone
+    AutoSize = True
+    ButtonHeight = 21
+    Caption = 'ToolBar1'
+    EdgeBorders = [ebLeft, ebTop, ebRight, ebBottom]
+    EdgeOuter = esRaised
+    PopupMenu = DataModule1.PopupMenu1
+    TabOrder = 0
+    Wrapable = False
+    object Btn_work_description: TSpeedButton
+      Left = 3
+      Height = 21
+      Top = 2
+      Width = 69
+      Caption = 'Bericht'
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Glyph.Data = {
+        8A020000424D8A020000000000008A0000007C00000010000000100000000100
+        10000300000000020000120B0000120B0000000000000000000000F80000E007
+        00001F0000000000000042475273000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000200
+        0000000000000000000000000000008400840084008400840000000000000000
+        0000000000000000000000000000008400840084008400840000FFFFFFFFFFFF
+        FFFFFFFFFFFFFFFFFFFFFFFF0000000000000084000000000000000000000000
+        FFFFFFFF000000000000FFFF0000FF0700000000FFFFE0FFFFFFE0FFFFFFE0FF
+        0000FFFFFFFFFFFFFFFFFFFF0000FF070000FFFFE0FFFFFFE0FF000000000000
+        00000000FFFFFFFF0000FFFF0000FF070000E0FFFFFFE0FFFFFFE0FFFFFFE0FF
+        FFFFE0FF0000FFFFFFFFFFFF0000FF070000FFFFE0FFFFFFE0FF000000000000
+        00000000FFFFFFFF0000FFFF0000FF070000E0FFFFFFE0FFFFFFE0FFFFFFE0FF
+        FFFFE0FF0000FFFFFFFFFFFF0000FF070000FFFFE0FF00000000000000000000
+        00000000FFFFFFFF0000FFFF0000000000000000FFFFE0FF0000FFFFFFFFFFFF
+        FFFFFFFFFFFFFFFFFFFFFFFF0000008400840084000000000000FFFFFFFFFFFF
+        FFFFFFFFFFFFFFFFFFFFFFFF0000008400840084008400840000FFFF00000000
+        0000FFFFFFFF0000000000000000008400840084008400840000FFFFFFFFFFFF
+        FFFFFFFFFFFF0000FFFFFFFF00000084008400840084008400001F001F001F00
+        1F001F001F000000FFFF00000084008400840084008400840000FFFFFFFFFFFF
+        FFFFFFFFFFFF0000000000840084008400840084008400840000000000000000
+        0000000000000000008400840084
+      }
+      OnClick = Btn_work_descriptionClick
+      ParentFont = False
+    end
+    object BtnProjekt: TSpeedButton
+      Left = 72
+      Height = 21
+      Top = 2
+      Width = 72
+      Caption = 'Projekt'
+      Glyph.Data = {
+        8A020000424D8A020000000000008A0000007C00000010000000100000000100
+        10000300000000020000130B0000130B0000000000000000000000F80000E007
+        00001F0000000000000042475273000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000200
+        0000000000000000000000000000008400840084000000000000000000000000
+        00000000000000000000008400840000000000000000FFFFFFFFFFFFFFFFFFFF
+        FFFFFFFFFFFFFFFFFFFF000000840000F7BDF7BDF7BD0000FFFF0000FFFF0000
+        FFFF0000FFFF0000FFFFFFFF00000000F7BDF7BDF7BDF7BD0000FFFFFFFFFFFF
+        FFFFFFFFFFFFFFFFFFFFFFFF00000000F7BDF7BDF7BDF7BD0000000000000000
+        00000000000000000000000000840000F7BDF7BDF7BDF7BD0000008400840084
+        00840000FFFF00000084008400840000F7BDF7BDF7BDF7BD0000008400000000
+        00000000000000000000000000000000FFFFFFFFFFFFFFFF000000840000FFFF
+        FFFFFFFFFFFFFFFFFFFFFFFF00000000F7BD00000000F7BD000000840000FFFF
+        00000000000000000000FFFF00000000FFFFFFFFFFFFFFFF000000840000FFFF
+        0000E007E007FF070000FFFF00000000F7BD00000000F7BD000000840000FFFF
+        00001FF8E0071FF80000FFFF00000000FFFFFFFFFFFFFFFF000000840000FFFF
+        00000000000000000000FFFF00000000FFFFFFFF00F8FFFF000000840000FFFF
+        FFFFFFFFFFFFFFFFFFFFFFFF00000000FFFFFFFFFFFFFFFF0000008400000000
+        0000000000000000000000000000000000000000000000000000008400840084
+        0084008400840084008400840084008400840084008400840084008400840084
+        0084008400840084008400840084
+      }
+      GroupIndex = 1
+      OnClick = BtnProjektClick
+      OnDblClick = BtnProjektDblClick
+    end
+    object Edit1: TEdit
+      Left = 144
+      Height = 21
+      Top = 2
+      Width = 154
+      Color = clWhite
+      OnChange = Edit1Change
+      OnEnter = Edit1Enter
+      OnKeyPress = Edit1KeyPress
+      OnKeyUp = Edit1KeyUp
+      TabOrder = 0
+      Text = 'Edit1'
+    end
+    object SpeedButton1: TSpeedButton
+      Left = 298
+      Height = 21
+      Top = 2
+      Width = 23
+      Glyph.Data = {
+        76010000424D7601000000000000760000002800000020000000100000000100
+        04000000000000010000120B0000120B00001000000000000000000000000000
+        800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333303333
+        333333333337F33333333333333033333333333333373F333333333333090333
+        33333333337F7F33333333333309033333333333337373F33333333330999033
+        3333333337F337F33333333330999033333333333733373F3333333309999903
+        333333337F33337F33333333099999033333333373333373F333333099999990
+        33333337FFFF3FF7F33333300009000033333337777F77773333333333090333
+        33333333337F7F33333333333309033333333333337F7F333333333333090333
+        33333333337F7F33333333333309033333333333337F7F333333333333090333
+        33333333337F7F33333333333300033333333333337773333333
+      }
+      NumGlyphs = 2
+      OnClick = SpeedButton1Click
+    end
+    object DBLCB_topten_event: TDBLookupComboBox
+      Left = 321
+      Height = 21
+      Top = 2
+      Width = 145
+      DataField = 'EVENT'
+      DataSource = DataModule1.DSuibevent
+      DropDownCount = 20
+      KeyField = 'event'
+      ListFieldIndex = 0
+      ListSource = DS_topten_events
+      LookupCache = False
+      OnEnter = DBLCB_topten_eventEnter
+      OnExit = DBLCB_topten_eventExit
+      TabOrder = 1
+    end
+    object EditProjektzeit: TEdit
+      Left = 466
+      Height = 21
+      Top = 2
+      Width = 80
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 2
+    end
+    object Labeluid: TLabel
+      Left = 546
+      Height = 21
+      Top = 2
+      Width = 64
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Labeluid'
+      Color = clBtnFace
+      Font.CharSet = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Font.Pitch = fpVariable
+      Font.Quality = fqDraft
+      ParentColor = False
+      ParentFont = False
+      Transparent = False
+    end
+    object BtnBye: TSpeedButton
+      Left = 610
+      Height = 21
+      Top = 2
+      Width = 69
+      Caption = 'Tschüß'
+      Glyph.Data = {
+        76010000424D7601000000000000760000002800000020000000100000000100
+        0400000000000001000000000000000000001000000010000000000000000000
+        800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00330000000000
+        03333377777777777F333301111111110333337F333333337F33330111111111
+        0333337F333333337F333301111111110333337F333333337F33330111111111
+        0333337F333333337F333301111111110333337F333333337F33330111111111
+        0333337F3333333F7F333301111111B10333337F333333737F33330111111111
+        0333337F333333337F333301111111110333337F33FFFFF37F3333011EEEEE11
+        0333337F377777F37F3333011EEEEE110333337F37FFF7F37F3333011EEEEE11
+        0333337F377777337F333301111111110333337F333333337F33330111111111
+        0333337FFFFFFFFF7F3333000000000003333377777777777333
+      }
+      NumGlyphs = 2
+      OnClick = BtnByeClick
+    end
+  end
+  object TimerNachfrage: TTimer
+    Enabled = False
+    OnTimer = TimerNachfrageTimer
+    left = 68
+    top = 60
+  end
+  object TimerCallCount: TTimer
+    Enabled = False
+    left = 172
+    top = 60
+  end
+  object TimerScrollDisable: TTimer
+    Enabled = False
+    Interval = 60000
+    OnTimer = TimerScrollDisableTimer
+    left = 276
+    top = 60
+  end
+  object TimerNoDblClick: TTimer
+    Enabled = False
+    Interval = 300
+    OnTimer = TimerNoDblClickTimer
+    left = 396
+    top = 60
+  end
+  object Timer_top_ten: TTimer
+    Interval = 3600000
+    OnTimer = Timer_top_tenTimer
+    left = 524
+    top = 60
+  end
+  object TimerProjektzeit: TTimer
+    Interval = 60000
+    OnTimer = TimerProjektzeitTimer
+    left = 644
+    top = 60
+  end
+  object QueryDefproj: TSQLQuery
+    FieldDefs = <>
+    Database = DataModule1.IBConnection1
+    Transaction = DataModule1.SQLTransaction1
+    SQL.Strings = (
+      'select event from uibdefproj '
+      'where userid = :uid'
+    )
+    Options = []
+    Params = <    
+      item
+        DataType = ftUnknown
+        Name = 'uid'
+        ParamType = ptInput
+      end>
+    left = 68
+    top = 124
+  end
+  object QueryUserEvents: TSQLQuery
+    FieldDefs = <    
+      item
+        Name = 'EVENT'
+        DataType = ftString
+        Precision = -1
+        Size = 50
+      end    
+      item
+        Name = 'UPPER'
+        DataType = ftString
+        Precision = -1
+        Size = 50
+      end>
+    Database = DataModule1.IBConnection1
+    Transaction = DataModule1.SQLTransaction1
+    SQL.Strings = (
+      'select event,upper(event)'
+      'from'
+      'UIBuserevent'
+      'where (userid = :uid)'
+      'ORDER BY'
+      '2'
+    )
+    Options = []
+    Params = <    
+      item
+        DataType = ftUnknown
+        Name = 'uid'
+        ParamType = ptInput
+      end>
+    UpdateMode = upWhereAll
+    left = 172
+    top = 124
+  end
+  object QueryUserButtons: TSQLQuery
+    FieldDefs = <>
+    Database = DataModule1.IBConnection1
+    Transaction = DataModule1.SQLTransaction1
+    Options = []
+    Params = <>
+    left = 276
+    top = 124
+  end
+  object Query_top_ten_events: TSQLQuery
+    FieldDefs = <>
+    Database = DataModule1.IBConnection1
+    Transaction = DataModule1.SQLTransaction1
+    SQL.Strings = (
+      'select event, count(event) '
+      'from uibevent'
+      'where '
+      '(userid = :userid) and'
+      '(pkinittime > :inittime)'
+      'group by'
+      'event'
+      'order by'
+      '2 desc'
+    )
+    Options = []
+    Params = <    
+      item
+        DataType = ftUnknown
+        Name = 'userid'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'inittime'
+        ParamType = ptInput
+      end>
+    left = 396
+    top = 124
+  end
+  object DS_topten_events: TDataSource
+    DataSet = Query_top_ten_events
+    left = 396
+    top = 180
+  end
+  object QueryProjektzeit: TSQLQuery
+    FieldDefs = <>
+    Database = DataModule1.IBConnection1
+    Transaction = DataModule1.SQLTransaction1
+    Options = []
+    Params = <>
+    left = 524
+    top = 124
+  end
+  object DSQueryaktprojekt: TDataSource
+    left = 644
+    top = 140
+  end
+end

@@ -1,0 +1,670 @@
+object Fuibtime2erp: TFuibtime2erp
+  Left = 478
+  Height = 925
+  Top = 177
+  Width = 1107
+  Caption = 'uibtime2erp'
+  ClientHeight = 925
+  ClientWidth = 1107
+  OnCreate = FormCreate
+  OnShow = FormShow
+  LCLVersion = '1.6.2.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 50
+    Top = 0
+    Width = 1107
+    Align = alTop
+    Caption = 'uibtime zu Canias-ERP Werkzeug'
+    Font.CharSet = ANSI_CHARSET
+    Font.Color = clGreen
+    Font.Height = -27
+    Font.Name = 'Arial'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+    OnClick = Panel1Click
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 149
+    Top = 776
+    Width = 1107
+    Align = alBottom
+    Caption = 'Panel2'
+    ClientHeight = 149
+    ClientWidth = 1107
+    TabOrder = 1
+    OnClick = Panel2Click
+    object BitBtn1: TBitBtn
+      Left = 1021
+      Height = 64
+      Top = 8
+      Width = 75
+      DefaultCaption = True
+      Kind = bkClose
+      ModalResult = 11
+      OnClick = BitBtn1Click
+      TabOrder = 0
+    end
+    object DBText1: TDBText
+      Left = 183
+      Height = 15
+      Top = 0
+      Width = 43
+      DataField = 'summe'
+      DataSource = DataSource3
+      ParentColor = False
+    end
+    object Label4: TLabel
+      Left = 128
+      Height = 15
+      Top = 0
+      Width = 47
+      Caption = 'Summe: '
+      ParentColor = False
+    end
+    object BtnCreateReport: TButton
+      Left = 360
+      Height = 25
+      Top = 8
+      Width = 292
+      Caption = 'Report anzeigen (vorläufig)'
+      OnClick = BtnCreateReportClick
+      TabOrder = 1
+    end
+    object EditButtonExportDir: TEditButton
+      Left = 14
+      Height = 23
+      Top = 56
+      Width = 416
+      ButtonCaption = 'Exportverzeichnis'
+      ButtonWidth = 188
+      MaxLength = 0
+      NumGlyphs = 1
+      OnChange = EditButtonExportDirChange
+      PasswordChar = #0
+      TabOrder = 2
+      Text = 'N:\verwaltung\kunden'
+    end
+    object PanelExport: TPanel
+      Left = 481
+      Height = 45
+      Top = 40
+      Width = 503
+      Caption = 'PanelExport'
+      ClientHeight = 45
+      ClientWidth = 503
+      Color = 12171775
+      Enabled = False
+      ParentColor = False
+      TabOrder = 3
+      object CheckBox1: TCheckBox
+        Left = 24
+        Height = 19
+        Top = 16
+        Width = 147
+        Caption = 'Übetragung freischalten'
+        OnChange = CheckBox1Change
+        TabOrder = 0
+      end
+      object BitBtnExp2Erp: TBitBtn
+        Left = 192
+        Height = 30
+        Top = 9
+        Width = 288
+        Caption = 'Report erstellen und freigeben'
+        Enabled = False
+        OnClick = BitBtnExp2ErpClick
+        TabOrder = 1
+      end
+    end
+    object BitBtnShowexportTable: TBitBtn
+      Left = 112
+      Height = 30
+      Top = 88
+      Width = 290
+      Caption = 'Anzeige Export Tabelle'
+      OnClick = BitBtnShowexportTableClick
+      TabOrder = 4
+    end
+    object BitBtnEditExportErrorTable: TBitBtn
+      Left = 568
+      Height = 30
+      Top = 88
+      Width = 290
+      Caption = 'Editiere Exportfehler '
+      OnClick = BitBtnEditExportErrorTableClick
+      TabOrder = 5
+    end
+    object CheckBoxAccountexport: TCheckBox
+      Left = 24
+      Height = 19
+      Top = 96
+      Width = 71
+      Caption = 'ReadOnly'
+      Checked = True
+      State = cbChecked
+      TabOrder = 6
+    end
+    object StatusBar1: TStatusBar
+      Left = 11
+      Height = 23
+      Top = 125
+      Width = 1095
+      BorderSpacing.Left = 10
+      Panels = <>
+      SimpleText = 'Status'
+    end
+    object BtnCreateInterimReport: TButton
+      Left = 672
+      Height = 25
+      Top = 8
+      Width = 292
+      Caption = 'Report als Zwischenbericht'
+      OnClick = BtnCreateInterimReportClick
+      TabOrder = 8
+    end
+    object BtnLockReportData: TButton
+      Left = 243
+      Height = 25
+      Top = 8
+      Width = 92
+      Caption = 'Sperren'
+      OnClick = BtnLockReportDataClick
+      TabOrder = 9
+      Visible = False
+    end
+  end
+  object Panel3: TPanel
+    Left = 0
+    Height = 134
+    Top = 50
+    Width = 1107
+    Align = alTop
+    ClientHeight = 134
+    ClientWidth = 1107
+    TabOrder = 2
+    OnClick = Panel3Click
+    object BtnLastMonth: TButton
+      Left = 14
+      Height = 22
+      Top = 10
+      Width = 145
+      Caption = 'letzten Monat einstellen'
+      OnClick = BtnLastMonthClick
+      TabOrder = 0
+    end
+    object BtnLastWeek: TButton
+      Left = 190
+      Height = 22
+      Top = 10
+      Width = 145
+      Caption = 'letzte Woche einstellen'
+      OnClick = BtnLastWeekClick
+      TabOrder = 1
+    end
+    object BtnThisMonth: TButton
+      Left = 16
+      Height = 22
+      Top = 42
+      Width = 143
+      Caption = 'diesen Monat einstellen'
+      OnClick = BtnThisMonthClick
+      TabOrder = 2
+    end
+    object BtnThisWeek: TButton
+      Left = 190
+      Height = 22
+      Top = 42
+      Width = 145
+      Caption = 'diese Woche einstellen'
+      OnClick = BtnThisWeekClick
+      TabOrder = 3
+    end
+    object Label1: TLabel
+      Left = 32
+      Height = 16
+      Top = 77
+      Width = 25
+      Caption = 'von:'
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      ParentColor = False
+      ParentFont = False
+    end
+    object Label2: TLabel
+      Left = 1
+      Height = 16
+      Top = 110
+      Width = 56
+      Caption = 'bis( excl):'
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      ParentColor = False
+      ParentFont = False
+    end
+    object BtnLoadRequiredReports: TButton
+      Left = 448
+      Height = 31
+      Top = 95
+      Width = 238
+      Caption = 'Alle in dieser Zeit'
+      OnClick = BtnLoadRequiredReportsClick
+      TabOrder = 4
+    end
+    object CheckGroup1: TCheckGroup
+      Left = 448
+      Height = 77
+      Hint = 'used > 0 : Nur Datensätze mit Kontierung'#13#10'ganzes Interval bei Ende: Ganzes Freistunden-Intervall abfragen, wenn dessen Ennde innerhalb des Abfragezeitraums gefunden wurde.'#13#10'keine Abgerechneten : Keine Datensätze welche schon in die Exporttabelle fürs ERP geschrieben wurden.'
+      Top = 11
+      Width = 648
+      AutoFill = True
+      Caption = 'Filter'
+      ChildSizing.LeftRightSpacing = 6
+      ChildSizing.TopBottomSpacing = 6
+      ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+      ChildSizing.EnlargeVertical = crsHomogenousChildResize
+      ChildSizing.ShrinkHorizontal = crsScaleChilds
+      ChildSizing.ShrinkVertical = crsScaleChilds
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ChildSizing.ControlsPerLine = 2
+      ClientHeight = 57
+      ClientWidth = 644
+      Columns = 2
+      Items.Strings = (
+        'used > 0'
+        'ganzes Interval bei Ende'
+        'markiere ganzes Interval'
+        'keine Abgerechneten'
+      )
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 5
+      Data = {
+        0400000003030103
+      }
+    end
+    object Edit1: TDateEdit
+      Left = 72
+      Height = 23
+      Top = 77
+      Width = 103
+      CalendarDisplaySettings = [dsShowHeadings, dsShowDayNames]
+      DateOrder = doNone
+      ButtonWidth = 23
+      NumGlyphs = 1
+      MaxLength = 0
+      TabOrder = 6
+    end
+    object Edit2: TDateEdit
+      Left = 72
+      Height = 23
+      Top = 104
+      Width = 103
+      CalendarDisplaySettings = [dsShowHeadings, dsShowDayNames]
+      DateOrder = doNone
+      ButtonWidth = 23
+      NumGlyphs = 1
+      MaxLength = 0
+      TabOrder = 7
+    end
+    object BtnExportZeroAccounting: TButton
+      Left = 696
+      Height = 31
+      Top = 95
+      Width = 400
+      Caption = 'Alle ganzen Intervalle mit used=0 direkt exportieren'
+      OnClick = BtnExportZeroAccountingClick
+      TabOrder = 8
+    end
+  end
+  object PairSplitter1: TPairSplitter
+    Cursor = crVSplit
+    Left = 0
+    Height = 592
+    Top = 184
+    Width = 1107
+    Align = alClient
+    BorderSpacing.InnerBorder = 2
+    Position = 300
+    SplitterType = pstVertical
+    object PairSplitterSide1: TPairSplitterSide
+      Cursor = crArrow
+      Left = 0
+      Height = 300
+      Top = 0
+      Width = 1107
+      ClientWidth = 1107
+      ClientHeight = 300
+      object Panel4: TPanel
+        Left = 0
+        Height = 300
+        Top = 0
+        Width = 1107
+        Align = alClient
+        Caption = 'Panel4'
+        ClientHeight = 300
+        ClientWidth = 1107
+        TabOrder = 0
+        object StringGrid1: TStringGrid
+          Left = 1
+          Height = 298
+          Top = 1
+          Width = 1105
+          Align = alClient
+          AutoEdit = False
+          ColCount = 0
+          ColumnClickSorts = True
+          DefaultColWidth = 70
+          FixedCols = 0
+          FixedRows = 0
+          Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goRowSelect, goSmoothScroll, goCellHints]
+          ParentShowHint = False
+          RowCount = 0
+          ShowHint = True
+          TabOrder = 0
+          OnClick = StringGrid1Click
+          OnDblClick = StringGrid1DblClick
+          OnDrawCell = StringGrid1DrawCell
+          OnGetCellHint = StringGrid1GetCellHint
+          OnShowHint = StringGrid1ShowHint
+        end
+      end
+    end
+    object PairSplitterSide2: TPairSplitterSide
+      Cursor = crArrow
+      Left = 0
+      Height = 287
+      Top = 305
+      Width = 1107
+      ClientWidth = 1107
+      ClientHeight = 287
+      object Panel5: TPanel
+        Left = 0
+        Height = 287
+        Top = 0
+        Width = 1107
+        Align = alClient
+        Caption = 'Panel5'
+        ClientHeight = 287
+        ClientWidth = 1107
+        TabOrder = 0
+        object Panel6: TPanel
+          Left = 1
+          Height = 66
+          Top = 1
+          Width = 1105
+          Align = alTop
+          ClientHeight = 66
+          ClientWidth = 1105
+          TabOrder = 0
+          object DBText2: TDBText
+            Left = 56
+            Height = 15
+            Top = 40
+            Width = 43
+            DataField = 'event'
+            DataSource = DataSource3
+            ParentColor = False
+          end
+          object Label5: TLabel
+            Left = 7
+            Height = 15
+            Top = 40
+            Width = 35
+            Caption = 'Event: '
+            ParentColor = False
+          end
+          object Panel7: TPanel
+            Left = 1
+            Height = 33
+            Top = 1
+            Width = 1103
+            Align = alTop
+            ClientHeight = 33
+            ClientWidth = 1103
+            TabOrder = 0
+            object Panel8: TPanel
+              Left = 1
+              Height = 31
+              Top = 1
+              Width = 607
+              Align = alLeft
+              BorderWidth = 1
+              BorderStyle = bsSingle
+              ClientHeight = 27
+              ClientWidth = 603
+              TabOrder = 0
+              object Label6: TLabel
+                Left = 8
+                Height = 15
+                Top = 6
+                Width = 150
+                Caption = 'Umrechner: Dezimalstunden'
+                ParentColor = False
+              end
+              object BtnHm2Dh: TSpeedButton
+                Left = 280
+                Height = 22
+                Top = 2
+                Width = 23
+                Caption = '<'
+                OnClick = BtnHm2DhClick
+              end
+              object BtnDh2HM: TSpeedButton
+                Left = 304
+                Height = 22
+                Top = 2
+                Width = 23
+                Caption = '>'
+                OnClick = BtnDh2HMClick
+              end
+              object Label7: TLabel
+                Left = 449
+                Height = 15
+                Top = 6
+                Width = 92
+                Caption = 'Stunden:Minuten'
+                ParentColor = False
+              end
+              object MaskEditHm: TMaskEdit
+                Left = 344
+                Height = 23
+                Top = 2
+                Width = 44
+                CharCase = ecNormal
+                MaxLength = 5
+                TabOrder = 0
+                EditMask = '!90:00;1;_'
+                Text = '  :  '
+                SpaceChar = '_'
+              end
+              object MaskEditDh: TMaskEdit
+                Left = 174
+                Height = 23
+                Top = 6
+                Width = 80
+                CharCase = ecNormal
+                MaxLength = 0
+                TabOrder = 1
+                OnChange = MaskEditDhChange
+                SpaceChar = '_'
+              end
+            end
+          end
+          object DBNavigator1: TDBNavigator
+            Left = 270
+            Height = 25
+            Top = 41
+            Width = 241
+            BevelOuter = bvNone
+            ChildSizing.EnlargeHorizontal = crsScaleChilds
+            ChildSizing.EnlargeVertical = crsScaleChilds
+            ChildSizing.ShrinkHorizontal = crsScaleChilds
+            ChildSizing.ShrinkVertical = crsScaleChilds
+            ChildSizing.Layout = cclLeftToRightThenTopToBottom
+            ChildSizing.ControlsPerLine = 100
+            ClientHeight = 25
+            ClientWidth = 241
+            DataSource = DataSource1
+            Options = []
+            TabOrder = 1
+          end
+        end
+        object DBGrid1: TDBGrid
+          Left = 1
+          Height = 219
+          Top = 67
+          Width = 1105
+          Align = alClient
+          Color = clWindow
+          Columns = <          
+            item
+              MaxSize = 20
+              Title.Caption = 'Benutzer'
+              Width = 100
+              FieldName = 'userid'
+            end          
+            item
+              MaxSize = 20
+              Title.Caption = 'Datum'
+              Width = 60
+              FieldName = 'dateday'
+            end          
+            item
+              MaxSize = 20
+              Title.Caption = 'Stunden'
+              Width = 60
+              FieldName = 'stunden'
+              DisplayFormat = '####0.00'
+            end          
+            item
+              MaxSize = 255
+              Title.Caption = 'Beschreibung'
+              Width = 700
+              FieldName = 'description'
+            end          
+            item
+              Title.Caption = 'Sperre'
+              FieldName = 'locked'
+            end>
+          DataSource = DataSource1
+          TabOrder = 1
+        end
+      end
+    end
+  end
+  object query1: TSQLQuery
+    FieldDefs = <>
+    AfterPost = query1AfterPost
+    Database = DataModule1.IBConnection1
+    Transaction = DataModule1.SQLTransaction1
+    Options = []
+    Params = <>
+    left = 672
+    top = 8
+  end
+  object query2: TSQLQuery
+    FieldDefs = <>
+    Database = DataModule1.IBConnection1
+    Transaction = DataModule1.SQLTransaction1
+    Options = []
+    Params = <>
+    left = 728
+    top = 8
+  end
+  object QueryProjektzeit: TSQLQuery
+    FieldDefs = <>
+    Database = DataModule1.IBConnection1
+    Transaction = DataModule1.SQLTransaction1
+    Options = []
+    Params = <>
+    left = 1016
+    top = 8
+  end
+  object CalendarDialog1: TCalendarDialog
+    Date = 42677
+    OKCaption = '&OK'
+    CancelCaption = 'Cancel'
+    left = 40
+    top = 8
+  end
+  object DataSource1: TDataSource
+    DataSet = query1
+    left = 528
+    top = 8
+  end
+  object query3: TSQLQuery
+    FieldDefs = <>
+    Database = DataModule1.IBConnection1
+    Transaction = DataModule1.SQLTransaction1
+    Options = []
+    Params = <>
+    left = 784
+    top = 8
+  end
+  object DataSource3: TDataSource
+    DataSet = query3
+    left = 600
+    top = 8
+  end
+  object frReport1: TfrReport
+    Dataset = frDBDataSet1
+    InitialZoom = pzDefault
+    Options = []
+    PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit]
+    DataType = dtDataSet
+    left = 144
+    top = 608
+  end
+  object frDBDataSet1: TfrDBDataSet
+    DataSet = QueryUibeventaccountreport
+    left = 256
+    top = 608
+  end
+  object frTNPDFExport1: TfrTNPDFExport
+    left = 736
+    top = 608
+  end
+  object QueryUibeventaccountreport: TSQLQuery
+    FieldDefs = <>
+    Database = DataModule1.IBConnection1
+    Transaction = DataModule1.SQLTransaction1
+    Options = []
+    Params = <>
+    left = 344
+    top = 640
+  end
+  object QueryUEARhelper: TSQLQuery
+    FieldDefs = <>
+    Database = DataModule1.IBConnection1
+    Transaction = DataModule1.SQLTransaction1
+    Options = []
+    Params = <>
+    left = 480
+    top = 608
+  end
+  object queryUAE: TSQLQuery
+    FieldDefs = <>
+    Database = DataModule1.IBConnection1
+    Transaction = DataModule1.SQLTransaction1
+    Options = []
+    Params = <>
+    left = 857
+    top = 8
+  end
+  object queryAccEv: TSQLQuery
+    FieldDefs = <>
+    Database = DataModule1.IBConnection1
+    Transaction = DataModule1.SQLTransaction1
+    Options = []
+    Params = <>
+    left = 920
+    top = 8
+  end
+end

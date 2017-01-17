@@ -1,0 +1,383 @@
+object FResult: TFResult
+  Left = 69
+  Height = 420
+  Top = 629
+  Width = 839
+  HelpContext = 17
+  Caption = 'Ergebnis'
+  ClientHeight = 420
+  ClientWidth = 839
+  Color = clBtnFace
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = 'System'
+  OnCreate = FormCreate
+  OnShow = FormShow
+  Position = poDefault
+  LCLVersion = '1.6.2.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 91
+    Top = 0
+    Width = 839
+    Align = alTop
+    ClientHeight = 91
+    ClientWidth = 839
+    TabOrder = 0
+    object BtnPrint: TSpeedButton
+      Left = 188
+      Height = 31
+      Hint = 'Ergebnisstabelle ausdrucken'
+      Top = 0
+      Width = 28
+      Enabled = False
+      Font.Color = clBlack
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Glyph.Data = {
+        76010000424D7601000000000000760000002800000020000000100000000100
+        0400000000000001000000000000000000001000000010000000000000000000
+        800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00300000000000
+        0003377777777777777308888888888888807F33333333333337088888888888
+        88807FFFFFFFFFFFFFF7000000000000000077777777777777770F8F8F8F8F8F
+        8F807F333333333333F708F8F8F8F8F8F9F07F333333333337370F8F8F8F8F8F
+        8F807FFFFFFFFFFFFFF7000000000000000077777777777777773330FFFFFFFF
+        03333337F3FFFF3F7F333330F0000F0F03333337F77773737F333330FFFFFFFF
+        03333337F3FF3FFF7F333330F00F000003333337F773777773333330FFFF0FF0
+        33333337F3F37F3733333330F08F0F0333333337F7337F7333333330FFFF0033
+        33333337FFFF7733333333300000033333333337777773333333
+      }
+      NumGlyphs = 2
+      OnClick = BtnPrintClick
+      ShowHint = True
+      ParentFont = False
+      ParentShowHint = False
+    end
+    object BtnPreview: TSpeedButton
+      Left = 82
+      Height = 31
+      Hint = 'Voransicht der Druckausgabe'
+      Top = 0
+      Width = 107
+      Caption = 'Druckansicht'
+      Font.Color = clBlack
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Glyph.Data = {
+        76010000424D7601000000000000760000002800000020000000100000000100
+        0400000000000001000000000000000000001000000010000000000000000000
+        800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00330000000000
+        033333777777777773333330777777703333333773F333773333333330888033
+        33333FFFF7FFF7FFFFFF0000000000000003777777777777777F0FFFFFFFFFF9
+        FF037F3333333337337F0F78888888887F037F33FFFFFFFFF37F0F7000000000
+        8F037F3777777777F37F0F70AAAAAAA08F037F37F3333337F37F0F70ADDDDDA0
+        8F037F37F3333337F37F0F70A99A99A08F037F37F3333337F37F0F70A99A99A0
+        8F037F37F3333337F37F0F70AAAAAAA08F037F37FFFFFFF7F37F0F7000000000
+        8F037F3777777777337F0F77777777777F037F3333333333337F0FFFFFFFFFFF
+        FF037FFFFFFFFFFFFF7F00000000000000037777777777777773
+      }
+      NumGlyphs = 2
+      OnClick = BtnPreviewClick
+      ShowHint = True
+      ParentFont = False
+      ParentShowHint = False
+    end
+    object Label3: TLabel
+      Left = 1
+      Height = 16
+      Top = 66
+      Width = 67
+      Caption = 'Überschrift:'
+      Font.Color = clBlack
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      ParentColor = False
+      ParentFont = False
+    end
+    object Label4: TLabel
+      Left = 0
+      Height = 16
+      Top = 30
+      Width = 58
+      Caption = 'Optionen'
+      ParentColor = False
+    end
+    object Label9: TLabel
+      Left = 0
+      Height = 16
+      Top = 46
+      Width = 96
+      Caption = 'Druck(ansich)t:'
+      ParentColor = False
+    end
+    object DBNavigator1: TDBNavigator
+      Left = 448
+      Height = 31
+      Top = 56
+      Width = 248
+      BevelOuter = bvNone
+      ChildSizing.EnlargeHorizontal = crsScaleChilds
+      ChildSizing.EnlargeVertical = crsScaleChilds
+      ChildSizing.ShrinkHorizontal = crsScaleChilds
+      ChildSizing.ShrinkVertical = crsScaleChilds
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ChildSizing.ControlsPerLine = 100
+      ClientHeight = 31
+      ClientWidth = 248
+      DataSource = DataSource1
+      Options = []
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 0
+    end
+    object Btnclose: TBitBtn
+      Left = 552
+      Height = 31
+      Hint = 'Fenster verlassen'
+      Top = 0
+      Width = 80
+      Caption = 'Abbruch'
+      Font.Color = clBlack
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Glyph.Data = {
+        BE060000424DBE06000000000000360400002800000024000000120000000100
+        0800000000008802000000000000000000000001000000010000000000000000
+        80000080000000808000800000008000800080800000C0C0C000C0DCC000F0CA
+        A600F0FBFF00A4A0A000808080000000FF0000FF000000FFFF00FF000000FF00
+        FF00FFFF0000FFFFFF0000000000000080000080000000808000800000008000
+        800080800000C0C0C000C0DCC000F0CAA600F0FBFF00A4A0A000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00000000000000
+        80000080000000808000800000008000800080800000C0C0C000C0DCC000F0CA
+        A600F0FBFF00A4A0A000808080000000FF0000FF000000FFFF00FF000000FF00
+        FF00FFFF0000FFFFFF0000000000000080000080000000808000800000008000
+        800080800000C0C0C000C0DCC000F0CAA600F0FBFF00A4A0A000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00000000000000
+        80000080000000808000800000008000800080800000C0C0C000C0DCC000F0CA
+        A600F0FBFF00A4A0A000808080000000FF0000FF000000FFFF00FF000000FF00
+        FF00FFFF0000FFFFFF0000000000000080000080000000808000800000008000
+        800080800000C0C0C000C0DCC000F0CAA600F0FBFF00A4A0A000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00000000000000
+        80000080000000808000800000008000800080800000C0C0C000C0DCC000F0CA
+        A600F0FBFF00A4A0A000808080000000FF0000FF000000FFFF00FF000000FF00
+        FF00FFFF0000FFFFFF0000000000000080000080000000808000800000008000
+        800080800000C0C0C000C0DCC000F0CAA600F0FBFF00A4A0A000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00000000000000
+        80000080000000808000800000008000800080800000C0C0C000C0DCC000F0CA
+        A600F0FBFF00A4A0A000808080000000FF0000FF000000FFFF00FF000000FF00
+        FF00FFFF0000FFFFFF0000000000000080000080000000808000800000008000
+        800080800000C0C0C000C0DCC000F0CAA600F0FBFF00A4A0A000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00000000000000
+        80000080000000808000800000008000800080800000C0C0C000C0DCC000F0CA
+        A600F0FBFF00A4A0A000808080000000FF0000FF000000FFFF00FF000000FF00
+        FF00FFFF0000FFFFFF0000000000000080000080000000808000800000008000
+        800080800000C0C0C000C0DCC000F0CAA600F0FBFF00A4A0A000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00000000000000
+        800000800000008080008000000080008000F0FBFF00A4A0A000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00030303030303
+        0303030303030303030303030303030303030303030303030303030303030303
+        03030C0C03030303030303030303030303030303031303030303030303030303
+        03030303030D01010C03030303030D0C03030303030303030C0C130303030303
+        0313030303030303030D0101010C0303030D01010C0303030303030C13030C13
+        030303130C0C130303030303030D010101010C030D010101010C03030303030C
+        1303030C1303130C03030C130303030303030D010101010C01010101010C0303
+        0303030C130303030C130C030303030C130303030303030D0101010101010101
+        0C030303030303030C130303030C03030303130C03030303030303030D010101
+        0101010C0303030303030303030C13030303030303130C030303030303030303
+        0301010101010C03030303030303030303030C1303030303030C030303030303
+        03030303030D010101010C0303030303030303030303030C130303030C030303
+        03030303030303030D01010101010C0303030303030303030303030C03030303
+        0C130303030303030303030D0101010C0101010C030303030303030303030C03
+        030303030C1303030303030303030D0101010C030D0101010C03030303030303
+        030C0303030C1303030C13030303030303030D01010C0303030D0101010C0303
+        030303030C1303030C030C1303030C13030303030303030D0103030303030D01
+        01010303030303030C13130C0303030C1303030C130303030303030303030303
+        0303030D010D030303030303030C0C03030303030C1313130C03030303030303
+        030303030303030303030303030303030303030303030303030C0C0C03030303
+        0303030303030303030303030303030303030303030303030303030303030303
+        0303
+      }
+      ModalResult = 1
+      NumGlyphs = 2
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+    end
+    object Edit1: TEdit
+      Left = 70
+      Height = 24
+      Hint = 'Überschrift für Druckausgabe eingeben'
+      Top = 62
+      Width = 375
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 2
+    end
+    object RadioGroup1: TRadioGroup
+      Left = 105
+      Height = 31
+      Hint = 'Druckformat: hochkant od. quer'
+      Top = 29
+      Width = 114
+      AutoFill = True
+      Caption = 'Format'
+      ChildSizing.LeftRightSpacing = 6
+      ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+      ChildSizing.EnlargeVertical = crsHomogenousChildResize
+      ChildSizing.ShrinkHorizontal = crsScaleChilds
+      ChildSizing.ShrinkVertical = crsScaleChilds
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ChildSizing.ControlsPerLine = 2
+      ClientHeight = 10
+      ClientWidth = 110
+      Columns = 2
+      Font.Color = clBlack
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      ItemIndex = 0
+      Items.Strings = (
+        'Hoch'
+        'Quer'
+      )
+      ParentFont = False
+      TabOrder = 3
+    end
+    object BtnDBexp: TBitBtn
+      Left = 215
+      Height = 31
+      Hint = 'Ergebnis als Datenbank-Tabelle exportieren'
+      Top = 0
+      Width = 151
+      Caption = 'CSV Export'
+      Font.Color = clBlack
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Glyph.Data = {
+        76010000424D7601000000000000760000002800000020000000100000000100
+        0400000000000001000000000000000000001000000010000000000000000000
+        800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        33333FFFFFFFFFFFFFFF000000000000000077777777777777770FFFFFFFFFFF
+        FFF07F3FF3FF3FF3FFF70F00F00F00F000F07F773773773777370FFFFFFFFFFF
+        FFF07F3FF3FF3FF3FFF70F00F00F00F000F07F773773773777370FFFFFFFFFFF
+        FFF07F3FF3FF3FF3FFF70F00F00F00F000F07F773773773777370FFFFFFFFFFF
+        FFF07F3FF3FF3FF3FFF70F00F00F00F000F07F773773773777370FFFFFFFFFFF
+        FFF07FFFFFFFFFFFFFF70CCCCCCCCCCCCCC07777777777777777088CCCCCCCCC
+        C8807FF7777777777FF700000000000000007777777777777777333333333333
+        3333333333333333333333333333333333333333333333333333
+      }
+      NumGlyphs = 2
+      OnClick = BtnDBexpClick
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 4
+    end
+    object SpinEdit1: TSpinEdit
+      Left = 320
+      Height = 24
+      Top = 36
+      Width = 50
+      MaxValue = 25
+      MinValue = 1
+      TabOrder = 5
+      Value = 1
+    end
+    object Label5: TLabel
+      Left = 232
+      Height = 16
+      Top = 40
+      Width = 78
+      Caption = 'Schriftgröße'
+      ParentColor = False
+    end
+  end
+  object DBGrid1: TDBGrid
+    Left = 0
+    Height = 308
+    Top = 91
+    Width = 839
+    Align = alClient
+    Color = clWindow
+    Columns = <>
+    DataSource = DataSource1
+    Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgAutoSizeColumns]
+    TabOrder = 1
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -13
+    TitleFont.Name = 'System'
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 21
+    Top = 399
+    Width = 839
+    Align = alBottom
+    ClientHeight = 21
+    ClientWidth = 839
+    TabOrder = 2
+    object Label1: TLabel
+      Left = 18
+      Height = 16
+      Top = 0
+      Width = 130
+      Caption = 'Anzahl Datensätze :'
+      ParentColor = False
+    end
+    object Label2: TLabel
+      Left = 173
+      Height = 16
+      Top = 0
+      Width = 91
+      AutoSize = False
+      Caption = '0'
+      ParentColor = False
+    end
+  end
+  object DataSource1: TDataSource
+    DataSet = DataModule1.Query4Result
+    left = 245
+    top = 135
+  end
+  object FrPrintGrid1: TFrPrintGrid
+    DBGrid = DBGrid1
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -13
+    TitleFont.Name = 'System'
+    Caption = 'Grid'
+    ShowCaption = True
+    left = 374
+    top = 133
+  end
+  object frTNPDFExport1: TfrTNPDFExport
+    left = 133
+    top = 147
+  end
+  object CSVExporter1: TCSVExporter
+    ExportFields = <>
+    RestorePosition = False
+    FormatSettings.DecimalSeparator = #0
+    FormatSettings.CurrencyDigits = 0
+    FormatSettings.FieldDelimiter = ','
+    FormatSettings.IgnoreOuterWhitespace = False
+    FormatSettings.RowDelimiter = #13#10
+    FormatSettings.QuoteChar = '"'
+    left = 148
+    top = 232
+  end
+  object SaveDialog1: TSaveDialog
+    DefaultExt = '.csv'
+    FileName = 'uibtimereport'
+    Filter = 'csv|*.csv'
+    left = 383
+    top = 216
+  end
+  object frDBDataSet1: TfrDBDataSet
+    DataSet = DataModule1.Query4Result
+    left = 258
+    top = 219
+  end
+end
