@@ -5,7 +5,6 @@ unit notifierform3a;
 interface
 
 uses
-  windows,
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls;
 
 type

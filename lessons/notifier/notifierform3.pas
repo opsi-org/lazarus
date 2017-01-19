@@ -9,7 +9,12 @@ uses
   windows ,
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
-   xatom, X, xlib, gtk2, gdk2x, GTKProc, GtkDef, ctypes,
+  xatom, X, xlib,
+  gtk2,
+  gdk2x,
+  //GTKProc,
+  //GtkDef,
+  ctypes,
   {$ENDIF LINUX}
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
   ExtDlgs, ExtCtrls, Buttons, Spin, notifierform3a;
@@ -91,6 +96,8 @@ begin
   begin
     sleep(1);
     form2.AlphaBlendValue:=i;
+    form2.Repaint;
+    Application.ProcessMessages;
   end;
 end;
 
@@ -121,16 +128,21 @@ end;
 
 procedure TForm1.ButtonMoveInRBClick(Sender: TObject);
 var
-  x,y,i : integer;
+  x,y,i, startheight : integer;
 begin
   x:= screen.Width;
+  startheight :=  form2.Height;
+  form2.Height:=0;
   y := screen.Height;
   Form2.Top:= y;
   Form2.Left:=x - form2.Width;
-  for i := 1 to form2.Height do
+  for i := 1 to startheight do
   begin
     Sleep(1);
     Form2.Top:= y - i;
+    form2.Height:= Form2.Height + 1;
+    form2.Repaint;
+    Application.ProcessMessages;
   end;
 end;
 
@@ -181,7 +193,7 @@ end;
 procedure TForm1.ButtonTransparent3Click(Sender: TObject);
 begin
   form2.Image1.Transparent:=true;
-  WindowTransparent(Form2.Handle, 100);
+  WindowTransparent(Form2.Handle, 10);
 end;
 
 procedure TForm1.ButtonTransparentClick(Sender: TObject);
