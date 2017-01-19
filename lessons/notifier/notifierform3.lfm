@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 60
+  Left = 332
   Height = 390
-  Top = 169
+  Top = 135
   Width = 494
   Caption = 'Form1'
   ClientHeight = 390
@@ -112,14 +112,14 @@ object Form1: TForm1
     Left = 40
     Height = 25
     Top = 136
-    Width = 118
+    Width = 134
     Caption = 'ButtonTransparent'
     OnClick = ButtonTransparentClick
     TabOrder = 11
   end
   object SpinEdit1: TSpinEdit
     Left = 376
-    Height = 24
+    Height = 23
     Top = 138
     Width = 59
     MaxValue = 255
@@ -139,10 +139,20 @@ object Form1: TForm1
     Left = 40
     Height = 25
     Top = 176
-    Width = 121
+    Width = 134
     Caption = 'ButtonTransparent3'
     OnClick = ButtonTransparent3Click
     TabOrder = 14
+  end
+  object ButtonTransparent4: TButton
+    Left = 225
+    Height = 25
+    Top = 171
+    Width = 129
+    Caption = 'ButtonTransparent4'
+    Enabled = False
+    OnClick = ButtonTransparent4Click
+    TabOrder = 15
   end
   object OpenPictureDialog1: TOpenPictureDialog
     left = 456
