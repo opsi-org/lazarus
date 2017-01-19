@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  Buttons, ComCtrls, osxml, DOM, XMLRead, XMLWrite;
+  Buttons, ComCtrls, osxml, osxmltdom;
 
 type
 
@@ -21,6 +21,7 @@ type
     memo3tomemo1: TButton;
     attributes: TButton;
     Memo1: TMemo;
+    OpenDialog1: TOpenDialog;
     Memo2: TMemo;
     Memo3: TMemo;
     procedure BitBtn1Click(Sender: TObject);
@@ -106,7 +107,7 @@ begin
 
   // hier erstmal die Position bestimmen. docstringlist ist das komplette xmldokument
   memo3.Clear;
-  memo3.append('doc node name: ' + getDocNodeName(docStringlist));
+  memo3.append('doc node name: ' + osxml.getDocNodeNameFromStringList(docStringlist));
   memo3.append('doc node type: ' + getDocNodeType(docStringlist));
   memo3.Append('getDocumentElement');
   docelemstrlist:= getDocumentElementAsStringlist(docstringlist);
@@ -127,7 +128,7 @@ begin
   Application.ProcessMessages;
   // get node by name
   memo3.Append('');
-  if xmlAsStringlistGetChildnodeByName(getDocumentElementAsStringlist(docstringlist),
+  if xmlAsStringlistGetUniqueChildnodeByName(getDocumentElementAsStringlist(docstringlist),
                                   'xx', childnode) then
     begin
       memo3.Append('get node xx from stringlist: ' + childnode.Text);
@@ -140,7 +141,7 @@ begin
   Application.ProcessMessages;
 
     // sles
-  if xmlAsStringlistGetChildnodeByName(docelemstrlist,
+  if xmlAsStringlistGetUniqueChildnodeByName(docelemstrlist,
                                   'software', childnode) then
      //if xmlAsStringlistSetNodevalue(childnode,'ohoho') then
        memo3.append('node software gefunden')
@@ -165,7 +166,7 @@ begin
   memo3.Repaint;
   Application.ProcessMessages;
   // get node and set value
-  if xmlAsStringlistGetChildnodeByName(docelemstrlist,
+  if xmlAsStringlistGetUniqueChildnodeByName(docelemstrlist,
                                   'xx', childnode) then      // da tut was nicht
      if xmlAsStringlistSetNodevalue(childnode,'ohoho') then
        memo3.append(docelemstrlist.Text);
@@ -283,7 +284,7 @@ begin
   memo3.clear;
   // hole knoten mit namen PIDKEY, schau ob Value XXXXX, setze Value teststring
   // wie sieht dann das docelement aus?
-  if xmlAsStringlistGetChildnodeByName(docelemstrlist,
+  if xmlAsStringlistGetUniqueChildnodeByName(docelemstrlist,
                                   'PIDKEY', childnode) then
      begin
        memo3.append('childnode: ' + childnode.Text);
@@ -307,7 +308,7 @@ begin
            memo3.Append('attr: ' + attributevaluelist.text);
          end
       end
-  else memo3.Append('getchildnodebyname failed');
+  else memo3.Append('getchildnodebyname PIDKEY failed');
   memo3.Repaint;
   Application.ProcessMessages;
 end;
@@ -316,7 +317,11 @@ end;
 procedure TForm1.memo3tomemo1Click(Sender: TObject);
 begin
    Memo1.Clear;
-   Memo1.Append(Memo3.text);
+   OpenDialog1.Filter:='xml-file | *.xml';
+   OpenDialog1.Title:='Vorhandene package.xml öffnen';
+   OpenDialog1.Execute;
+   createXmlDocFromFile(OpenDialog1.FileName);
+   Memo1.Append(getXMLDocAsTStringlist().Text);
 end;
 
 
@@ -338,8 +343,6 @@ end;
 
 procedure TForm1.configXMLClick(Sender: TObject);
 var
-  attributevalue: String;
-  //index:integer;
   childnodeSL, attributevalueSL, docelemSL: TStringlist;
 begin
   memo3.clear;
@@ -349,7 +352,7 @@ begin
   docelemSL:= getDocumentElementAsStringlist(memoToTStringlist(memo1));
   // hole knoten mit namen PIDKEY, schau ob Value XXXXX, setze Value teststring
   // wie sieht dann das docelement aus?
-  if xmlAsStringlistGetChildnodeByName(docelemSL,
+  if xmlAsStringlistGetUniqueChildnodeByName(docelemSL,
                                   'PIDKEY', childnodeSL) then
      begin
        memo3.append('childnode: ' + childnodeSL.Text);
@@ -380,19 +383,16 @@ begin
 end;
 procedure TForm1.sles12sp1XMLClick(Sender: TObject);
 var
-  attributevalue: String;
-  //index:integer;
-  childnodeSL, childnodeSL2, attributevalueSL, docelemSL: TStringlist;
+  childnodeSL, childnodeSL2, docelemSL: TStringlist;
 begin
   memo3.clear;
   docelemSL := TStringlist.Create;
-  attributevalueSL  := TStringlist.Create;
   childnodeSL:= TStringlist.Create;
   childnodeSL2:= TStringlist.Create;
   docelemSL:= getDocumentElementAsStringlist(memoToTStringlist(memo1));
-  if xmlAsStringlistGetChildnodeByName(docelemSL,
+  if xmlAsStringlistGetUniqueChildnodeByName(docelemSL,
                                   'software', childnodeSL) then
-     if xmlAsStringlistGetChildnodeByName(childnodeSL,
+     if xmlAsStringlistGetUniqueChildnodeByName(childnodeSL,
                                   'packages', childnodeSL2) then
        if appendXmlNodeToNodeFromStringlist( childnodeSL2, textToTStringList('<package>fitzlibutzli</package>')) then
        begin
@@ -402,9 +402,14 @@ begin
          Application.ProcessMessages;
          memo3.clear;
          memo3.Append('Node software');
+         // zum Erzeugen der Knoten wird das XMLDoc XML in osxmltdom gebraucht
+         createXmlDocFromStringlist(memoToTStringlist(memo1));
          if xmlAsStringlistSetChildnodeByName(childnodeSL,'packages',childnodeSL2) then
            memo3.Append(childnodeSL.Text);
+         freeXmlDoc();
        end;
+  // zum Erzeugen der Knoten wird das XMLDoc XML in osxmltdom gebraucht
+  createXmlDocFromStringlist(memoToTStringlist(memo1));
   if xmlAsStringlistSetChildnodeByName(docelemSL,'software',childnodeSL) then
      begin
         memo3.clear;
@@ -412,6 +417,7 @@ begin
         memo3.Repaint;
         Application.ProcessMessages;
      end;
+  freeXmlDoc();
 end;
 procedure TForm1.Memo1Change(Sender: TObject);
 begin

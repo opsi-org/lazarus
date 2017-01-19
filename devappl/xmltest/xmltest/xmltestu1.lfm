@@ -1,14 +1,14 @@
 object Form1: TForm1
-  Left = 37
+  Left = 66
   Height = 775
-  Top = 282
-  Width = 906
+  Top = 244
+  Width = 826
   ActiveControl = BitBtn1
   Caption = 'Form1'
   ClientHeight = 775
-  ClientWidth = 906
+  ClientWidth = 826
   OnCreate = FormCreate
-  LCLVersion = '1.6.0.4'
+  LCLVersion = '1.6.2.0'
   object Memo1: TMemo
     Left = 32
     Height = 320
@@ -82,7 +82,7 @@ object Form1: TForm1
     Height = 29
     Top = 374
     Width = 117
-    Caption = 'Memo3 to 1'
+    Caption = 'open file'
     OnClick = memo3tomemo1Click
     TabOrder = 6
   end
@@ -112,5 +112,9 @@ object Form1: TForm1
     Caption = 'sles12sp1.xml'
     OnClick = sles12sp1XMLClick
     TabOrder = 9
+  end
+  object OpenDialog1: TOpenDialog
+    left = 642
+    top = 387
   end
 end
