@@ -21,6 +21,11 @@ alter table uibaktevent ADD accountingrequired	boolean not null;
 alter table uibaktevent ADD KD_STRING Varchar(50);
 alter table UIBAKTEVENT DROP BASE_FOR_TIME;
 
+create table caniasimporterror
+   (canimp_rep_id       Integer NOT NULL,
+    errmesg  varchar (255),
+    CONSTRAINT PK_canimperr     PRIMARY KEY (canimp_rep_id));
+
 create table uibeventaccountreport
    (acc_rep_id       Integer NOT NULL,
     userid    varchar(20) not null,
@@ -44,6 +49,7 @@ create table uibevrtemp
                    
 CREATE SEQUENCE uibaccountexport_SEQU;
 CREATE SEQUENCE uibaccountreport_SEQU;
+CREATE SEQUENCE caniasimporterror_SEQU;
 
 create table uibaccountexport
    (acc_exp_id       Integer NOT NULL,
@@ -123,6 +129,15 @@ update uiballevent set acc_per_monthnum = 12
 where (base_for_time = "12month");
 
 /* Trigger */
+
+set term !! ;
+RECREATE TRIGGER  TR_caniasimporterror_in  for caniasimporterror
+         before insert POSITION 0 as
+         begin
+           new.canimp_rep_id = NEXT VALUE FOR caniasimporterror_SEQU;
+         end !!
+set term ; !!
+
 
 set term !! ;
 RECREATE TRIGGER  TR_uibaccountexport_in  for uibaccountexport
@@ -279,6 +294,8 @@ GRANT DELETE, INSERT, REFERENCES, SELECT, UPDATE
 GRANT DELETE, INSERT, REFERENCES, SELECT, UPDATE
  ON uibtversion TO  UIBTIME;
 
+GRANT DELETE, INSERT, REFERENCES, SELECT, UPDATE
+ ON caniasimporterror TO  UIBTIME;
 
 
 GRANT SELECT
@@ -290,6 +307,8 @@ GRANT SELECT
 GRANT SELECT
  ON uibtversion TO  UIBTIMEREAD;
 
+GRANT SELECT
+ ON caniasimporterror TO  UIBTIMEREAD;
 
 
  
@@ -303,4 +322,6 @@ GRANT DELETE, INSERT, REFERENCES, SELECT, UPDATE
 GRANT DELETE, INSERT, REFERENCES, SELECT, UPDATE
  ON uibaccountexport TO  UIBTIME_ERP;
 
+GRANT DELETE, INSERT, REFERENCES, SELECT, UPDATE
+ ON caniasimporterror TO  UIBTIME_ERP;
 
