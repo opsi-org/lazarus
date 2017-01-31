@@ -35,10 +35,10 @@ uses
   activex,
   comobj,
   registry,
+  osfuncwin2,
+osfuncwin3,
 {$IFNDEF WIN64}
   DSiWin32,
-osfuncwin2,
-osfuncwin3,
 {$ENDIF WIN64}
   oslog,
   shellapi,

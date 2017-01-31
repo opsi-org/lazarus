@@ -861,12 +861,14 @@ begin
   ProductvarsForPC.Clear;
 
   {$IFDEF WINDOWS}
+  (*
   if FileExists(GetWinSystemDirectory + 'w32hupsi.dll') then
     // very old version
   begin
     WinstRegKey := veryOldWinstRegKey;
   end
   else
+  *)
   begin
     regist := TRegistry.Create;
     regist.RootKey := HKEY_LOCAL_MACHINE;
