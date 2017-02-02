@@ -108,7 +108,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="6">
+    <Units Count="5">
       <Unit0>
         <Filename Value="mshotfixpatchXML.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -121,22 +121,18 @@
         <ResourceBaseClass Value="Form"/>
       </Unit1>
       <Unit2>
-        <Filename Value="osxml.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit2>
-      <Unit3>
         <Filename Value="winpatchcollection.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="winpatchCollection"/>
-      </Unit3>
-      <Unit4>
+      </Unit2>
+      <Unit3>
         <Filename Value="../common/osxmltdom.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit4>
-      <Unit5>
+      </Unit3>
+      <Unit4>
         <Filename Value="../common/oslog.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit5>
+      </Unit4>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

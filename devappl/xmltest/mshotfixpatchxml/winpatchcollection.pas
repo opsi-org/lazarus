@@ -23,6 +23,7 @@ type
     title: string;
     description : string;
     releaseid : string;
+    installationtype : string;
   public
     // überschreibt den von TCollection geerbten Construktor
     constructor Create(colCollection: TCollection); override;
@@ -33,6 +34,7 @@ type
     property a_title: string read title write title;
     property a_description: string read description write description;
     property a_releaseid: string read releaseid write releaseid;
+    property a_installationtype: string read installationtype write installationtype;
   end;
 
 
