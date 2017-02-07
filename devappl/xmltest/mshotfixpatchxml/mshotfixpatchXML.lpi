@@ -108,7 +108,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="5">
+    <Units Count="6">
       <Unit0>
         <Filename Value="mshotfixpatchXML.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -133,6 +133,10 @@
         <Filename Value="../common/oslog.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
+      <Unit5>
+        <Filename Value="../common/osxml.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit5>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

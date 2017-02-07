@@ -115,11 +115,11 @@
         <ResourceBaseClass Value="Form"/>
       </Unit1>
       <Unit2>
-        <Filename Value="osxml.pas"/>
+        <Filename Value="..\common\osxmltdom.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit2>
       <Unit3>
-        <Filename Value="..\common\osxmltdom.pas"/>
+        <Filename Value="..\common\osxml.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit3>
     </Units>

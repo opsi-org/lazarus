@@ -13,24 +13,26 @@ type
   { TForm1 }
 
   TForm1 = class(TForm)
-    BitBtn1: TBitBtn;
+    Close: TBitBtn;
+    unatt_win10: TButton;
     sles12sp1XML: TButton;
     configXML: TButton;
     nodes: TButton;
     count: TButton;
-    memo3tomemo1: TButton;
+    openFile: TButton;
     attributes: TButton;
     Memo1: TMemo;
     OpenDialog1: TOpenDialog;
     Memo2: TMemo;
     Memo3: TMemo;
-    procedure BitBtn1Click(Sender: TObject);
+    procedure CloseClick(Sender: TObject);
     procedure configXMLClick(Sender: TObject);
     procedure sles12sp1XMLClick(Sender: TObject);
+    procedure unatt_win10Click(Sender: TObject);
     procedure Memo1Change(Sender: TObject);
     procedure nodesClick(Sender: TObject);
     procedure countClick(Sender: TObject);
-    procedure memo3tomemo1Click(Sender: TObject);
+    procedure openFileClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Memo2Change(Sender: TObject);
     procedure attributesClick(Sender: TObject);
@@ -314,14 +316,18 @@ begin
 end;
 
 
-procedure TForm1.memo3tomemo1Click(Sender: TObject);
+procedure TForm1.openFileClick(Sender: TObject);
 begin
    Memo1.Clear;
    OpenDialog1.Filter:='xml-file | *.xml';
    OpenDialog1.Title:='Vorhandene package.xml öffnen';
-   OpenDialog1.Execute;
-   createXmlDocFromFile(OpenDialog1.FileName);
-   Memo1.Append(getXMLDocAsTStringlist().Text);
+   if OpenDialog1.Execute then
+   begin
+      createXmlDocFromFile(OpenDialog1.FileName);
+      Memo1.Append(getXMLDocAsTStringlist().Text);
+   end
+   else
+     Memo1.Append (' no file ');
 end;
 
 
@@ -336,7 +342,7 @@ begin
 
 end;
 
-procedure TForm1.BitBtn1Click(Sender: TObject);
+procedure TForm1.CloseClick(Sender: TObject);
 begin
   Application.Terminate;
 end;
@@ -404,13 +410,13 @@ begin
          memo3.Append('Node software');
          // zum Erzeugen der Knoten wird das XMLDoc XML in osxmltdom gebraucht
          createXmlDocFromStringlist(memoToTStringlist(memo1));
-         if xmlAsStringlistSetChildnodeByName(childnodeSL,'packages',childnodeSL2) then
+         if xmlAsStringlistReplaceUniqueChildnodeByName(childnodeSL,'packages',childnodeSL2) then
            memo3.Append(childnodeSL.Text);
          freeXmlDoc();
        end;
   // zum Erzeugen der Knoten wird das XMLDoc XML in osxmltdom gebraucht
   createXmlDocFromStringlist(memoToTStringlist(memo1));
-  if xmlAsStringlistSetChildnodeByName(docelemSL,'software',childnodeSL) then
+  if xmlAsStringlistReplaceUniqueChildnodeByName(docelemSL,'software',childnodeSL) then
      begin
         memo3.clear;
         memo3.Append(docelemSL.Text);
@@ -419,6 +425,130 @@ begin
      end;
   freeXmlDoc();
 end;
+
+procedure TForm1.unatt_win10Click(Sender: TObject);
+var childnodeSL, childnodeSL2, childnodeSL3, childnodeSL4, childnodeSL5, docelemSL: TStringlist;
+begin
+  // #@fullname*#, #@orgname*#,
+  // #@imagename*#, #@windows_partition_number*#, #@winpe_uilanguage*#,
+  // #@winpe_inputlocale*#, #@system_language*#, #@winpe_uilanguage_fallback*#
+  // #@winpe_uilanguage*#, #@pcname*#, #@system_keyboard_layout*#, #@system_language*#
+  // UILanguage:#@system_language*#, UILanguageFallback:#@system_language*#,
+  // UserLocale:#@system_language*#
+  // TimeZone:#@system_timezone*#
+  // <CommandLine>cmd.exe /c #@winpe_partition_letter*#:\opsi\postinst.cmd</CommandLine>
+  //
+  // settings / component / DiskConfiguration / Disk / ModifyPartitions : #@modify_partitions*#
+  // settings / component / UserData / Key : #@productkey*#
+  memo3.clear;
+  docelemSL := TStringlist.Create;
+  childnodeSL:= TStringlist.Create;
+  childnodeSL2:= TStringlist.Create;
+  childnodeSL3:= TStringlist.Create;
+  childnodeSL4:= TStringlist.Create;
+  childnodeSL5:= TStringlist.Create;
+  docelemSL:= getDocumentElementAsStringlist(memoToTStringlist(memo1));
+  //memo3.Append(docelemSL.Text);
+  if xmlAsStringlistGetChildnodeByNameAndAttributeKeyAndValue(docelemSL,'settings',
+                                   'pass','windowsPE',childnodeSL) then
+        if xmlAsStringlistGetChildnodeByNameAndAttributeKeyAndValue(childnodeSL,'component',
+                                  'name','Microsoft-Windows-Setup',childnodeSL2) then
+          begin
+            //**************************************************************************************
+
+            if xmlAsStringlistGetUniqueChildnodeByName(childnodeSL2,
+                  'DiskConfiguration',childnodeSL3)  then
+              if xmlAsStringlistGetUniqueChildnodeByName(childnodeSL3,
+                  'Disk',childnodeSL4)  then
+                if xmlAsStringlistGetUniqueChildnodeByName(childnodeSL4,
+                  'ModifyPartitions',childnodeSL5)  then
+                  if xmlAsStringlistSetNodevalue(childnodeSL5,'***modify_partitions***') then
+                    if xmlAsStringlistReplaceUniqueChildnodeByName(childnodeSL4,
+                       'ModifyPartitions',childnodeSL5)  then
+                      if xmlAsStringlistReplaceUniqueChildnodeByName(childnodeSL3,
+                        'Disk',childnodeSL4)  then
+                        if xmlAsStringlistReplaceUniqueChildnodeByName(childnodeSL2,
+                          'DiskConfiguration',childnodeSL3)  then
+                            memo3.Append('***modify_partitions*** set')
+                        else memo3.Append('can not replace node DiskConfiguration')
+                      else memo3.Append('can not replace node Disk')
+                    else memo3.Append('can not replace node ModifyPartitions')
+                  else memo3.Append('can not set node ModifyPartitions')
+                else memo3.Append('Node ModifyPartitions not found')
+              else memo3.Append('Node Disk not found')
+            else memo3.Append('Node DiskConfiguration not found');
+
+            //**************************************************************************************
+            (*
+            if xmlAsStringlistGetUniqueChildnodeByName(childnodeSL2,
+                  'UserData',childnodeSL3)  then
+              if xmlAsStringlistGetUniqueChildnodeByName(childnodeSL3,
+                  'ProductKey',childnodeSL4)  then
+                if xmlAsStringlistGetUniqueChildnodeByName(childnodeSL4,
+                  'Key',childnodeSL5)  then
+                  if xmlAsStringlistSetNodevalue(childnodeSL5,'***productkey***') then
+                    if xmlAsStringlistReplaceUniqueChildnodeByName(childnodeSL4,
+                       'Key',childnodeSL5)  then
+                      if xmlAsStringlistReplaceUniqueChildnodeByName(childnodeSL3,
+                        'ProductKey',childnodeSL4)  then   // Fehler, warum???
+                        if xmlAsStringlistReplaceUniqueChildnodeByName(childnodeSL2,
+                          'UserData',childnodeSL3)  then
+                        else memo3.Append('can not replace node UserData')
+                      else memo3.Append('can not replace node ProductKey')
+                    else memo3.Append('can not replace node Key')
+                  else memo3.Append('can not set node Key')
+                else memo3.Append('Node Key not found')
+              else memo3.Append('Node ProductKey not found')
+            else memo3.Append('Node UserData not found');
+            *)
+            if xmlAsStringlistGetUniqueChildnodeByName(childnodeSL2,
+                  'UserData',childnodeSL3)  then
+              begin
+                if xmlAsStringlistGetUniqueChildnodeByName(childnodeSL3,
+                    'FullName',childnodeSL4)  then
+                  if xmlAsStringlistSetNodevalue(childnodeSL4,'***fullname***') then
+                    if xmlAsStringlistReplaceUniqueChildnodeByName(childnodeSL3,
+                         'FullName',childnodeSL4)  then
+                        memo3.Append('***fullname*** set')
+                    else memo3.Append('can not replace node FullName')
+                  else memo3.Append('can not set node FullName')
+                else memo3.Append('Node FullName not found');
+
+                if xmlAsStringlistGetUniqueChildnodeByName(childnodeSL3,
+                    'Organization',childnodeSL4)  then
+                  if xmlAsStringlistSetNodevalue(childnodeSL4,'***orgname***') then
+                    if xmlAsStringlistReplaceUniqueChildnodeByName(childnodeSL3,
+                         'Organization',childnodeSL4)  then
+                      memo3.Append('***orgname*** set')
+                    else memo3.Append('can not replace node Organization')
+                  else memo3.Append('can not set node Organization')
+                else memo3.Append('Node Organization not found');
+
+                if xmlAsStringlistReplaceUniqueChildnodeByName(childnodeSL2,
+                    'UserData',childnodeSL3)  then
+                        memo3.Append('UserDate replaced')
+                else memo3.Append('can not replace node UserData')
+
+              end
+            else memo3.Append('Node UserData not found');
+
+            //**************************************************************************************
+            if xmlAsStringlistReplaceChildnodeByNameAndAttributeKeyAndValue(childnodeSL,
+               'component','name','Microsoft-Windows-Setup',childnodeSL2) then
+              if xmlAsStringlistReplaceChildnodeByNameAndAttributeKeyAndValue(docelemSL,
+                'settings','pass','windowsPE',childnodeSL) then
+                 if createXmlDocFromStringlist(docelemSL) then
+                   memo3.Append(getXMLDocAsTStringlist.Text)
+                 else memo3.Append('can not create xml')
+               else memo3.Append('can not replace node settings')
+             else memo3.Append('can not replace node component')
+            //**************************************************************************************
+          end
+        else memo3.Append('Node component not found')
+    else memo3.Append('Node settings not found');
+  freeXmlDoc();
+end;
+
 procedure TForm1.Memo1Change(Sender: TObject);
 begin
 

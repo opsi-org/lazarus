@@ -1,9 +1,9 @@
 object Form1: TForm1
-  Left = 66
+  Left = 360
   Height = 775
-  Top = 244
+  Top = 186
   Width = 826
-  ActiveControl = BitBtn1
+  ActiveControl = Close
   Caption = 'Form1'
   ClientHeight = 775
   ClientWidth = 826
@@ -57,7 +57,7 @@ object Form1: TForm1
     OnClick = nodesClick
     TabOrder = 3
   end
-  object BitBtn1: TBitBtn
+  object Close: TBitBtn
     Left = 448
     Height = 30
     Top = 0
@@ -65,7 +65,7 @@ object Form1: TForm1
     DefaultCaption = True
     Kind = bkAbort
     ModalResult = 3
-    OnClick = BitBtn1Click
+    OnClick = CloseClick
     TabOrder = 4
   end
   object count: TButton
@@ -83,7 +83,7 @@ object Form1: TForm1
     Top = 374
     Width = 117
     Caption = 'open file'
-    OnClick = memo3tomemo1Click
+    OnClick = openFileClick
     TabOrder = 6
   end
   object attributes: TButton
@@ -112,6 +112,15 @@ object Form1: TForm1
     Caption = 'sles12sp1.xml'
     OnClick = sles12sp1XMLClick
     TabOrder = 9
+  end
+  object unatt_win10: TButton
+    Left = 322
+    Height = 25
+    Top = 424
+    Width = 110
+    Caption = 'unatt_win10'
+    OnClick = unatt_win10Click
+    TabOrder = 10
   end
   object OpenDialog1: TOpenDialog
     left = 642
