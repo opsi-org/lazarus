@@ -22,7 +22,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <RevisionNr Value="7"/>
-      <BuildNr Value="4"/>
+      <BuildNr Value="5"/>
       <StringTable CompanyName="uib gmbh (www.uib.de)" InternalName="opsi-client-kiosk" LegalCopyright="uib gmbh under AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" ProductName="opsi" ProductVersion="4.0.7"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -77,7 +77,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="../../common;../../external_libraries/dcpcrypt/Ciphers;../../external_libraries/dcpcrypt/Hashes;../../external_libraries/synapse40lib;../../external_libraries/indy"/>
+            <OtherUnitFiles Value="../../common;../../external_libraries/dcpcrypt/Ciphers;../../external_libraries/dcpcrypt/Hashes;../../external_libraries/dcpcrypt;../../external_libraries/synapse40lib;../../external_libraries/indy;../../external_libraries/TZMSQL/source"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -120,34 +120,22 @@
         <CommandLineParams Value="--fqdn=pcbon4.uib.local"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="9">
+    <RequiredPackages Count="5">
       <Item1>
         <PackageName Value="LazControls"/>
       </Item1>
       <Item2>
-        <PackageName Value="zmsql"/>
+        <PackageName Value="MemDSLaz"/>
       </Item2>
       <Item3>
-        <PackageName Value="MemDSLaz"/>
+        <PackageName Value="FCL"/>
       </Item3>
       <Item4>
-        <PackageName Value="FCL"/>
+        <PackageName Value="LCL"/>
       </Item4>
       <Item5>
-        <PackageName Value="LCL"/>
-      </Item5>
-      <Item6>
-        <PackageName Value="dcpcrypt"/>
-      </Item6>
-      <Item7>
         <PackageName Value="LazUtils"/>
-      </Item7>
-      <Item8>
-        <PackageName Value="dcpcrypt_laz"/>
-      </Item8>
-      <Item9>
-        <PackageName Value="indylaz"/>
-      </Item9>
+      </Item5>
     </RequiredPackages>
     <Units Count="8">
       <Unit0>

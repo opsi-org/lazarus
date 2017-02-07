@@ -13,7 +13,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '1.6.0.4'
+  LCLVersion = '1.6.2.0'
   object datapanel: TPanel
     Left = 0
     Height = 435

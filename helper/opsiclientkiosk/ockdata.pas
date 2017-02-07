@@ -308,7 +308,7 @@ begin
   Result := True;
   logdatei := TLogInfo.Create;
   logfilename := opsiclientkiosklog;
-  oslog.CreateTheLogfile(logfilename, False);
+  logdatei.CreateTheLogfile(logfilename, False);
   logdatei.LogLevel := myloglevel;
   logdatei.log('opsi-client-kiosk: version: '+myVersion,LLessential);
 end;

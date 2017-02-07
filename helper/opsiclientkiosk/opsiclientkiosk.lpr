@@ -11,7 +11,6 @@ uses
   SysUtils,
   Forms,
   lazcontrols,
-  indylaz,
   lcltranslator,
   inifiles,
   opsiclientkioskgui,

@@ -308,10 +308,13 @@ var
 begin
   try
     screen.Cursor := crHourGlass;
+
     // write back action requests
     ockdata.ZMQUerydataset1.Filtered := False;
     ockdata.ZMQUerydataset1.Filter := 'ActionRequest  <> ""';
     ockdata.ZMQUerydataset1.Filtered := True;
+    Progressbar1.Position := 0;
+    ProgressBar1.Max := ZMQUerydataset1.RecordCount;
     ProcessMess;
     counter := 0;
     ZMQUerydataset1.First;
@@ -321,6 +324,8 @@ begin
         ZMQUerydataset1.FieldByName('ActionRequest').AsString);
       ZMQUerydataset1.Next;
       Inc(counter);
+      Progressbar1.Position := counter;
+      ProcessMess;
     end;
     //if counter > 0 then
     begin
