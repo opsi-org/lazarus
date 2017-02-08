@@ -260,12 +260,12 @@ begin
       if endmonth > 12 then
       begin
         endmonth := endmonth - 12;
-        endyear := year + 1;
+        endyear := endyear + 1;
       end;
       if endmonth > 12 then
       begin
         endmonth := endmonth - 12;
-        endyear := year + 1;
+        endyear := endyear + 1;
       end;
       // here is the result for the last Interval
       lastIntervalStart := EncodeDate(aktstartyear, aktstartmonth, startday);
