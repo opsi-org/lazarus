@@ -1,4 +1,9 @@
 (*
+uibtime (4.1.1.8-1) stable; urgency=low
+
+ * uib2erp: fix in calculate lastIntervalStart
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 10 Feb 2017 15:00:00 +0000
 
 uibtime (4.1.1.7-1) stable; urgency=low
 

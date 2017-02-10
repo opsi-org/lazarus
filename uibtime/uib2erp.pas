@@ -255,6 +255,11 @@ begin
         aktstartmonth := helperint;
         aktstartyear := year;
       end;
+      if aktstartmonth > 12 then
+      begin
+        aktstartmonth := aktstartmonth - 12;
+        aktstartyear := aktstartyear + 1;
+      end;
       endmonth := aktstartmonth + monthsmod;
       endyear := aktstartyear;
       if endmonth > 12 then
