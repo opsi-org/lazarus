@@ -89,7 +89,7 @@ var
   nogui: boolean;
   productgrouplist: TStringList;
   opsidata: Topsi4data;
-  mythread: Tmythread;
+  //mythread: Tmythread;
   //productdataList: TProductDataArray;
   ZMQUerydataset1: TZMQUerydataset;
   ZMQUerydataset2: TZMQUerydataset;
@@ -118,6 +118,9 @@ implementation
 
 uses
   opsiclientkioskgui;
+
+var
+  mythread: Tmythread;
 
 procedure Tmythread.Execute;
 begin

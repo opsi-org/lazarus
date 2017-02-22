@@ -1,3 +1,10 @@
+
+opsiclientkiosk 4.0.7.6
+
+  * fix (thread) for progressbar on button 'store actions' ; fixes #2586
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 22 Feb 2017 15:00:00 +0000
+
 opsiclientkiosk 4.0.7.5
 
   * moved to git/lazarus

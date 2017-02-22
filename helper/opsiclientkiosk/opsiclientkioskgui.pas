@@ -130,6 +130,11 @@ type
     { public declarations }
   end;
 
+  Tmythread2 = class(TThread)
+  public
+    procedure Execute; override;
+  end;
+
 var
   FopsiClientKiosk: TFopsiClientKiosk;
   StartupDone: boolean;
@@ -141,6 +146,54 @@ resourcestring
 implementation
 
 {$R *.lfm}
+
+var
+  mythread: Tmythread2;
+
+procedure Tmythread2.Execute;
+var
+  counter: integer;
+  i : integer;
+begin
+     // write back action requests
+    ockdata.ZMQUerydataset1.Filtered := False;
+    ockdata.ZMQUerydataset1.Filter := 'ActionRequest  <> ""';
+    ockdata.ZMQUerydataset1.Filtered := True;
+    FopsiClientKiosk.Progressbar1.Position := 0;
+    FopsiClientKiosk.ProgressBar1.Max := ZMQUerydataset1.RecordCount;
+    //App
+    counter := 0;
+    ZMQUerydataset1.First;
+    while not ZMQUerydataset1.EOF do
+    begin
+      ockdata.setActionrequest(ZMQUerydataset1.FieldByName('ProductId').AsString,
+        ZMQUerydataset1.FieldByName('ActionRequest').AsString);
+      ZMQUerydataset1.Next;
+      Inc(counter);
+      FopsiClientKiosk.Progressbar1.Position := counter;
+      //ProcessMess;
+    end;
+    Terminate;
+    //if counter > 0 then
+    (*
+    begin
+      installdlg.Finstalldlg.Memo1.Text := ockdata.getActionrequests.Text;
+      if installdlg.Finstalldlg.Memo1.Text = '' then
+        installdlg.Finstalldlg.Memo1.Text := rsNoActionsFound;
+      installdlg.Finstalldlg.Show;
+    end;
+    *)
+    (*
+  if not Terminated then
+  begin
+    ;
+    LogDatei.log('network timeout by thread - aborting program', LLInfo);
+    halt(0);
+  end;
+  *)
+end;
+
+
 
 //http://wiki.freepascal.org/How_to_write_in-memory_database_applications_in_Lazarus/FPC#Sorting_DBGrid_on_TitleClick_event_for_TBufDataSet
 function SortBufDataSet(DataSet: TBufDataSet; const FieldName: string): boolean;
@@ -308,7 +361,10 @@ var
 begin
   try
     screen.Cursor := crHourGlass;
+    mythread := Tmythread2.Create(False);
+    mythread.WaitFor;
 
+    (*
     // write back action requests
     ockdata.ZMQUerydataset1.Filtered := False;
     ockdata.ZMQUerydataset1.Filter := 'ActionRequest  <> ""';
@@ -327,6 +383,7 @@ begin
       Progressbar1.Position := counter;
       ProcessMess;
     end;
+    *)
     //if counter > 0 then
     begin
       installdlg.Finstalldlg.Memo1.Text := ockdata.getActionrequests.Text;
@@ -334,8 +391,11 @@ begin
         installdlg.Finstalldlg.Memo1.Text := rsNoActionsFound;
       installdlg.Finstalldlg.Show;
     end;
+
   finally
+    mythread.Terminate;
     Screen.Cursor := crDefault;
+    mythread.Free;
   end;
 end;
 
