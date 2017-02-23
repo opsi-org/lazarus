@@ -1,0 +1,82 @@
+object Form1: TForm1
+  Left = 28
+  Height = 783
+  Top = 237
+  Width = 749
+  ActiveControl = Close
+  Caption = 'Form1'
+  ClientHeight = 783
+  ClientWidth = 749
+  OnCreate = FormCreate
+  LCLVersion = '1.6.2.0'
+  object Memo1: TMemo
+    Left = 42
+    Height = 320
+    Top = 40
+    Width = 696
+    Lines.Strings = (
+      '<?xml version="1.0"?>'
+      '<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">'
+      '<request_type>PUT_FILE</request_type>'
+      '<username Level="basic" CompletionNotice="no" SuppressModal="yes">123</username>'
+      '<password Id="SETUP_REBOOT">abc</password>'
+      '<PIDKEY Value="XXXXXXXXXXXXXXXXXXXXXXXXX" />'
+      '</xsl:stylesheet>'
+    )
+    OnChange = Memo1Change
+    TabOrder = 0
+  end
+  object Memo3: TMemo
+    Left = 32
+    Height = 257
+    Top = 496
+    Width = 696
+    Lines.Strings = (
+      'Memo3'
+    )
+    ScrollBars = ssAutoVertical
+    TabOrder = 1
+  end
+  object Close: TBitBtn
+    Left = 336
+    Height = 30
+    Top = 8
+    Width = 96
+    DefaultCaption = True
+    Kind = bkAbort
+    ModalResult = 3
+    OnClick = CloseClick
+    TabOrder = 2
+  end
+  object memo3tomemo1: TButton
+    Left = 42
+    Height = 29
+    Top = 374
+    Width = 117
+    Caption = 'open file'
+    OnClick = openFileClick
+    TabOrder = 3
+  end
+  object Button1: TButton
+    Left = 42
+    Height = 30
+    Top = 433
+    Width = 117
+    Caption = 'ConfigXML'
+    OnClick = configXMLClick
+    TabOrder = 4
+  end
+  object Button2: TButton
+    Left = 176
+    Height = 29
+    Top = 433
+    Width = 117
+    Caption = 'unatt win10_x64'
+    OnClick = unatt_win10Click
+    TabOrder = 5
+  end
+  object OpenDialog1: TOpenDialog
+    left = 680
+    top = 448
+  end
+end

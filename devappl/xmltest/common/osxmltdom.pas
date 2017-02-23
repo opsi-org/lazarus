@@ -32,14 +32,23 @@ function createXMLNodeFromString(nodestrlist: TStringList): TDOMNode;
 function createStringListFromXMLNode(mynode: TDOMNode;
   var mystringlist: TStringList): boolean;
 //******************************************************************************
+// actualNode manipulation
+function setActualValueTDOMNode(nodeValue:string): boolean;
+function setActualAttributeValueTDOMNode(attributekey:string; attributevalue:string): boolean;
+//******************************************************************************
 // by name
-function getUniqueChildNodeByName(mynode: TDOMNode; NodeName: string;
+function getUniqueChildNodeByName(mynode: TDOMNode; myName: string;
          var Value: TDOMNode): boolean;
-function replaceUniqueChildNodeByName(var mynode: TDOMNode; NodeName: string;
+
+function getChildnodeByNameAndAttributeKeyAndValue(var mynode:TDOMNode;  myName:String;
+                       attributekey:string; attributevalue:string;
+                       var newnode: TDOMNode) :boolean;
+
+function replaceUniqueChildNodeByName(var mynode: TDOMNode; myName: string;
          Value: TDOMNode): boolean;
-function selectAllNodesByName(var mynode: TDOMNode; NodeName: string): boolean;
+function selectAllNodesByName(var mynode: TDOMNode; myName: string): boolean;
 function replaceChildnodeByNameAndAttributeKeyAndValue(var mynode: TDOMNode;
-         nodename: String; attributekey: String; attributevalue: String;
+         myname: String; attributekey: String; attributevalue: String;
          newnode: TDOMNode) : boolean;
 //******************************************************************************
 // by index
@@ -82,6 +91,7 @@ function stringlistWithoutBreaks(strlist: TStringList): TStringList;
 //******************************************************************************
 implementation
 var XML: TXMLDocument;
+    actualNode: TDOMNode;
 
 function createXmlDocFromStringlist(docstrlist: TStringlist): boolean;
 // XML global, da sonst die zu erzeugenden erzeugten Knoten im Nirvana landen
@@ -188,8 +198,32 @@ begin
   end;
 end;
 //*****************************************************************************
+// actualNode manipulation
+function setActualValueTDOMNode(nodeValue:string): boolean;
+var i:integer;
+begin
+  Result:=false;
+  if actualNode<>NIL then
+     begin
+       actualNode.TextContent := nodeValue;
+       result:=true;
+     end;
+end;
+function setActualAttributeValueTDOMNode(attributekey:string; attributevalue:string): boolean;
+var i:integer;
+begin
+  Result:=false;
+  if actualNode<>NIL then
+    if actualNode.HasAttributes then
+      if actualNode.Attributes[i].NodeName=attributekey then
+        begin
+          actualNode.Attributes[i].TextContent:= attributevalue;
+          result:=true;
+        end;
+end;
+//*****************************************************************************
 // by name
-function getUniqueChildNodeByName(mynode: TDOMNode; NodeName: string; var Value: TDOMNode): boolean;
+function getUniqueChildNodeByName(mynode: TDOMNode; myName: string; var Value: TDOMNode): boolean;
 var
   i: integer;
 begin
@@ -198,16 +232,48 @@ begin
   if (mynode <> nil) then
     while i < mynode.ChildNodes.Count do
     begin
-      if NodeName = mynode.ChildNodes.Item[i].NodeName then
+      if myName = mynode.ChildNodes.Item[i].NodeName then
       begin
         Value := mynode.ChildNodes.Item[i];
+        actualNode:= mynode.ChildNodes.Item[i];
         Result := True;
       end;
       Inc(i);
     end;
 end;
 
-function replaceUniqueChildNodeByName(var mynode: TDOMNode; NodeName: string; Value: TDOMNode): boolean;
+function getChildnodeByNameAndAttributeKeyAndValue(var mynode:TDOMNode;  myName:String;
+                       attributekey:string; attributevalue:string;
+                       var newnode: TDOMNode) :boolean;
+var j,i : integer;
+begin
+  result:=false;
+  try
+    j:=0;
+    while (mynode.hasChildNodes) AND (j < mynode.ChildNodes.Count) AND (Result=false) do
+      begin
+        if ( mynode.ChildNodes.Item[j].HasAttributes ) then
+        begin
+          for i:=0 to mynode.ChildNodes.Item[j].Attributes.Length - 1 do
+          begin
+            if (mynode.ChildNodes.Item[j].NodeName = myName) AND
+               (mynode.ChildNodes.Item[j].Attributes[i].NodeName = attributekey) AND
+               (mynode.ChildNodes.Item[j].Attributes[i].TextContent = attributevalue) then
+               begin
+                 newnode := mynode.ChildNodes.Item[j];
+                 actualNode:= mynode.ChildNodes.Item[j];
+                 Result := True;
+               end;
+           end
+        end;
+        inc(j);
+     end;
+  finally
+    //
+  end;
+
+end;
+function replaceUniqueChildNodeByName(var mynode: TDOMNode; myName: string; Value: TDOMNode): boolean;
 var i: integer;
     selNode: TDOMNode;
 begin
@@ -216,7 +282,7 @@ begin
   if (mynode <> nil) then
     while  (mynode.hasChildNodes) AND (i < mynode.ChildNodes.Count) do
     begin
-      if (NodeName = mynode.ChildNodes.Item[i].NodeName)  AND (Result=false) then
+      if (myName = mynode.ChildNodes.Item[i].NodeName)  AND (Result=false) then
       begin
         selNode := mynode.ChildNodes.Item[i];
         selNode.free;   // remove
@@ -226,16 +292,18 @@ begin
       Inc(i);
     end;
 end;
-function selectAllNodesByName(var mynode: TDOMNode; NodeName: string) : boolean; // TODO
+// get all Nodes by Name ????
+function selectAllNodesByName(var mynode: TDOMNode; myname: string) : boolean; // TODO
 var i:integer;
     selNode: TDOMNode;
+    // eigener Knoten für die Auswahl - mynode in Ruhe lassen??
 begin
   result:=false;
   i:=0;
   if (mynode<>nil) then
   while  (mynode.hasChildNodes) AND (i < mynode.ChildNodes.Count) do
   begin
-    if (NodeName <> mynode.ChildNodes.Item[i].NodeName)
+    if (myname <> mynode.ChildNodes.Item[i].NodeName)
        OR (mynode.ChildNodes.Item[i].NodeType = COMMENT_NODE) then
     begin
       selNode := mynode.ChildNodes.Item[i];
@@ -247,7 +315,7 @@ begin
 end;
 
 function replaceChildnodeByNameAndAttributeKeyAndValue(var mynode: TDOMNode;
-         nodename: String; attributekey: String; attributevalue: String;
+         myName: String; attributekey: String; attributevalue: String;
          newnode: TDOMNode) : boolean;
 var i,j: integer;
     selNode: TDOMNode;
@@ -257,7 +325,7 @@ begin
   if (mynode <> nil) then
     while  (mynode.hasChildNodes) AND (i < mynode.ChildNodes.Count) do
     begin
-      if (NodeName = mynode.ChildNodes.Item[i].NodeName)  AND (Result=false) then
+      if (myName = mynode.ChildNodes.Item[i].NodeName)  AND (Result=false) then
       begin
         for j:=0 to mynode.ChildNodes.Count-1 do
           begin
@@ -447,6 +515,7 @@ begin
           result:=true;
         end;
 end;
+
 //******************************************************************************
 function getNodeType(mynode: TDOMNode): string;
 // ungetestet  , notwendig??
