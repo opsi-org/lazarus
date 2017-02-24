@@ -1,19 +1,21 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <PathDelim Value="/"/>
-    <Version Value="5"/>
+    <Version Value="9"/>
     <General>
+      <Flags>
+        <LRSInOutputDirectory Value="False"/>
+      </Flags>
       <MainUnit Value="0"/>
-      <IconPath Value="./"/>
-      <TargetFileExt Value=""/>
-      <ActiveEditorIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
-      <ProjectVersion Value=""/>
       <Language Value=""/>
       <CharSet Value=""/>
+      <StringTable ProductVersion=""/>
     </VersionInfo>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
       <IgnoreBinaries Value="False"/>
@@ -43,232 +45,276 @@
         <MinVersion Minor="1" Release="1" Valid="True"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="30">
+    <Units Count="31">
       <Unit0>
         <Filename Value="testproject.lpr"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="testproject"/>
         <UsageCount Value="64"/>
       </Unit0>
       <Unit1>
         <Filename Value="testform.pas"/>
-        <ComponentName Value="Form1"/>
         <IsPartOfProject Value="True"/>
-        <ResourceFilename Value="testform.lrs"/>
-        <UnitName Value="testform"/>
-        <CursorPos X="12" Y="67"/>
-        <TopLine Value="50"/>
-        <EditorIndex Value="0"/>
+        <ComponentName Value="Form1"/>
+        <HasResources Value="True"/>
+        <TopLine Value="34"/>
+        <CursorPos X="49" Y="54"/>
         <UsageCount Value="64"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="subform.pas"/>
-        <UnitName Value="subform"/>
-        <CursorPos X="46" Y="530"/>
         <TopLine Value="513"/>
+        <CursorPos X="46" Y="530"/>
         <UsageCount Value="42"/>
         <Bookmarks Count="3">
-          <Item0 X="1" Y="311" ID="1"/>
+          <Item0 Y="311" ID="1"/>
           <Item1 X="6" Y="327" ID="2"/>
-          <Item2 X="1" Y="62" ID="9"/>
+          <Item2 Y="62" ID="9"/>
         </Bookmarks>
       </Unit2>
       <Unit3>
         <Filename Value="../../svns/lazarus/components/sqlite/registersqlite3.pas"/>
-        <UnitName Value="registersqlite3"/>
-        <CursorPos X="1" Y="1"/>
-        <TopLine Value="1"/>
         <UsageCount Value="8"/>
       </Unit3>
       <Unit4>
         <Filename Value="../testunit.pas"/>
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
-        <UnitName Value="testunit"/>
-        <CursorPos X="27" Y="377"/>
         <TopLine Value="286"/>
+        <CursorPos X="27" Y="377"/>
         <UsageCount Value="11"/>
       </Unit4>
       <Unit5>
         <Filename Value="../../svns/lazarus/lcl/include/intfbaselcl.inc"/>
-        <CursorPos X="1" Y="1"/>
-        <TopLine Value="1"/>
         <UsageCount Value="13"/>
       </Unit5>
       <Unit6>
         <Filename Value="../../svns/lazarus/lcl/extctrls.pp"/>
         <UnitName Value="ExtCtrls"/>
-        <CursorPos X="30" Y="607"/>
         <TopLine Value="591"/>
+        <CursorPos X="30" Y="607"/>
         <UsageCount Value="10"/>
       </Unit6>
       <Unit7>
         <Filename Value="../../svns/lazarus/lcl/controls.pp"/>
         <UnitName Value="Controls"/>
-        <CursorPos X="3" Y="1765"/>
         <TopLine Value="1749"/>
+        <CursorPos X="3" Y="1765"/>
         <UsageCount Value="10"/>
       </Unit7>
       <Unit8>
         <Filename Value="../../svns/fpc/rtl/objpas/classes/classesh.inc"/>
-        <CursorPos X="15" Y="1335"/>
         <TopLine Value="1319"/>
+        <CursorPos X="15" Y="1335"/>
         <UsageCount Value="8"/>
       </Unit8>
       <Unit9>
         <Filename Value="../../svns/fpc/rtl/objpas/classes/compon.inc"/>
-        <CursorPos X="31" Y="233"/>
         <TopLine Value="213"/>
+        <CursorPos X="31" Y="233"/>
         <UsageCount Value="8"/>
       </Unit9>
       <Unit10>
         <Filename Value="../../svns/lazarus/lcl/include/control.inc"/>
-        <CursorPos X="45" Y="3607"/>
         <TopLine Value="3587"/>
+        <CursorPos X="45" Y="3607"/>
         <UsageCount Value="9"/>
       </Unit10>
       <Unit11>
         <Filename Value="../../svns/lazarus/lcl/lmessages.pp"/>
         <UnitName Value="LMessages"/>
-        <CursorPos X="3" Y="646"/>
         <TopLine Value="630"/>
+        <CursorPos X="3" Y="646"/>
         <UsageCount Value="10"/>
       </Unit11>
       <Unit12>
         <Filename Value="../../svns/lazarus/lcl/buttons.pp"/>
         <UnitName Value="Buttons"/>
-        <CursorPos X="3" Y="17"/>
         <TopLine Value="17"/>
+        <CursorPos X="3" Y="17"/>
         <UsageCount Value="8"/>
       </Unit12>
       <Unit13>
         <Filename Value="../../svns/lazarus/lcl/lresources.pp"/>
         <UnitName Value="LResources"/>
-        <CursorPos X="74" Y="280"/>
         <TopLine Value="262"/>
+        <CursorPos X="74" Y="280"/>
         <UsageCount Value="11"/>
       </Unit13>
       <Unit14>
         <Filename Value="../../svns/lazarus/lcl/graphics.pp"/>
         <UnitName Value="Graphics"/>
-        <CursorPos X="22" Y="150"/>
         <TopLine Value="134"/>
+        <CursorPos X="22" Y="150"/>
         <UsageCount Value="9"/>
       </Unit14>
       <Unit15>
         <Filename Value="../../svns/lazarus/lcl/graphtype.pp"/>
         <UnitName Value="GraphType"/>
-        <CursorPos X="3" Y="40"/>
         <TopLine Value="24"/>
+        <CursorPos X="3" Y="40"/>
         <UsageCount Value="9"/>
       </Unit15>
       <Unit16>
         <Filename Value="../../svns/lazarus/lcl/include/wincontrol.inc"/>
-        <CursorPos X="32" Y="4420"/>
         <TopLine Value="4415"/>
+        <CursorPos X="32" Y="4420"/>
         <UsageCount Value="9"/>
       </Unit16>
       <Unit17>
         <Filename Value="../../svns/lazarus/lcl/editbtn.pas"/>
         <UnitName Value="EditBtn"/>
-        <CursorPos X="1" Y="522"/>
         <TopLine Value="506"/>
+        <CursorPos Y="522"/>
         <UsageCount Value="9"/>
       </Unit17>
       <Unit18>
         <Filename Value="../../svns/lazarus/lcl/dbgrids.pas"/>
         <UnitName Value="DBGrids"/>
-        <CursorPos X="35" Y="148"/>
         <TopLine Value="127"/>
+        <CursorPos X="35" Y="148"/>
         <UsageCount Value="12"/>
       </Unit18>
       <Unit19>
         <Filename Value="../../svns/lazarus/lcl/maps.pp"/>
-        <UnitName Value="maps"/>
-        <CursorPos X="21" Y="421"/>
         <TopLine Value="403"/>
+        <CursorPos X="21" Y="421"/>
         <UsageCount Value="9"/>
       </Unit19>
       <Unit20>
         <Filename Value="../../svns/lazarus/lcl/alllclunits.pp"/>
         <UnitName Value="AllLCLUnits"/>
-        <CursorPos X="1" Y="31"/>
         <TopLine Value="13"/>
+        <CursorPos Y="31"/>
         <UsageCount Value="9"/>
       </Unit20>
       <Unit21>
         <Filename Value="testform.lfm"/>
-        <CursorPos X="6" Y="19"/>
         <TopLine Value="2"/>
-        <UsageCount Value="9"/>
+        <CursorPos X="6" Y="19"/>
         <SyntaxHighlighter Value="LFM"/>
+        <UsageCount Value="9"/>
       </Unit21>
       <Unit22>
         <Filename Value="/usr/share/fpcsrc/rtl/inc/objpash.inc"/>
-        <CursorPos X="8" Y="62"/>
         <TopLine Value="46"/>
+        <CursorPos X="8" Y="62"/>
         <UsageCount Value="9"/>
       </Unit22>
       <Unit23>
         <Filename Value="/usr/share/fpcsrc/rtl/objpas/typinfo.pp"/>
-        <UnitName Value="typinfo"/>
-        <CursorPos X="11" Y="253"/>
         <TopLine Value="237"/>
+        <CursorPos X="11" Y="253"/>
         <UsageCount Value="15"/>
       </Unit23>
       <Unit24>
         <Filename Value="/usr/share/fpcsrc/fcl/db/db.pp"/>
-        <UnitName Value="db"/>
-        <CursorPos X="20" Y="47"/>
         <TopLine Value="31"/>
+        <CursorPos X="20" Y="47"/>
         <UsageCount Value="17"/>
       </Unit24>
       <Unit25>
         <Filename Value="/usr/share/fpcsrc/rtl/objpas/classes/classesh.inc"/>
-        <CursorPos X="3" Y="104"/>
         <TopLine Value="88"/>
+        <CursorPos X="3" Y="104"/>
         <UsageCount Value="17"/>
       </Unit25>
       <Unit26>
         <Filename Value="component.lrs"/>
-        <CursorPos X="1" Y="1"/>
-        <TopLine Value="1"/>
         <UsageCount Value="10"/>
       </Unit26>
       <Unit27>
         <Filename Value="../../svns/lazarus/lcl/include/customedit.inc"/>
-        <CursorPos X="1" Y="355"/>
         <TopLine Value="339"/>
+        <CursorPos Y="355"/>
         <UsageCount Value="10"/>
       </Unit27>
       <Unit28>
         <Filename Value="../../dbautoedit/dbautoedit.pas"/>
         <UnitName Value="DBAutoEdit"/>
-        <CursorPos X="35" Y="52"/>
         <TopLine Value="25"/>
+        <CursorPos X="35" Y="52"/>
         <UsageCount Value="10"/>
       </Unit28>
       <Unit29>
         <Filename Value="../../svns/lazarus/lcl/dbctrls.pp"/>
         <UnitName Value="DbCtrls"/>
-        <CursorPos X="38" Y="158"/>
         <TopLine Value="133"/>
+        <CursorPos X="38" Y="158"/>
         <UsageCount Value="10"/>
       </Unit29>
+      <Unit30>
+        <Filename Value="../subform.pas"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="318"/>
+        <CursorPos Y="344"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit30>
     </Units>
-    <JumpHistory Count="1" HistoryIndex="0">
+    <JumpHistory Count="13" HistoryIndex="12">
       <Position1>
         <Filename Value="testform.pas"/>
         <Caret Line="29" Column="41" TopLine="28"/>
       </Position1>
+      <Position2>
+        <Filename Value="../subform.pas"/>
+      </Position2>
+      <Position3>
+        <Filename Value="../subform.pas"/>
+        <Caret Line="65" Column="16" TopLine="39"/>
+      </Position3>
+      <Position4>
+        <Filename Value="../subform.pas"/>
+        <Caret Line="67" Column="3" TopLine="39"/>
+      </Position4>
+      <Position5>
+        <Filename Value="../subform.pas"/>
+        <Caret Line="166" Column="48" TopLine="140"/>
+      </Position5>
+      <Position6>
+        <Filename Value="../subform.pas"/>
+        <Caret Line="67" Column="21" TopLine="46"/>
+      </Position6>
+      <Position7>
+        <Filename Value="../subform.pas"/>
+        <Caret Line="66" Column="13" TopLine="18"/>
+      </Position7>
+      <Position8>
+        <Filename Value="../subform.pas"/>
+        <Caret Line="166" Column="48" TopLine="140"/>
+      </Position8>
+      <Position9>
+        <Filename Value="../subform.pas"/>
+        <Caret Line="288" Column="7" TopLine="261"/>
+      </Position9>
+      <Position10>
+        <Filename Value="../subform.pas"/>
+        <Caret Line="149" Column="10" TopLine="143"/>
+      </Position10>
+      <Position11>
+        <Filename Value="../subform.pas"/>
+        <Caret Line="400" Column="28" TopLine="375"/>
+      </Position11>
+      <Position12>
+        <Filename Value="testform.pas"/>
+        <Caret Line="67" Column="12"/>
+      </Position12>
+      <Position13>
+        <Filename Value="testform.pas"/>
+        <Caret Line="54" Column="49" TopLine="34"/>
+      </Position13>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
-    <Version Value="5"/>
-    <CodeGeneration>
-      <Generate Value="Faster"/>
-    </CodeGeneration>
+    <Version Value="11"/>
+    <Parsing>
+      <SyntaxOptions>
+        <UseAnsiStrings Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
     <Linking>
       <Options>
         <Win32>
@@ -276,9 +322,6 @@
         </Win32>
       </Options>
     </Linking>
-    <Other>
-      <CompilerPath Value="$(CompPath)"/>
-    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="2">
