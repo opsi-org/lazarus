@@ -6,33 +6,35 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  StdCtrls;
+  StdCtrls, DbCtrls, Buttons;
 
 type
 
-  TPPanel = ^TPanel;
-  TPLabel = ^TLabel;
 
-
-  (*
-  TProductPanel = record
-    id : TLabel;
-    name : TLabel;
-    binstall : Tbutton;
+  TProductPanel = class(TFlowPanel)
+    LabelId : TLabel;
+    Button1: TButton;
+    procedure Button1Click(Sender: TObject);
+  private
+    { private declarations }
+    //FidCaption : String;
+    //function getIdCaption : string;
+    //procedure setIdCaption(str: string);
+  public
+    { public declarations }
+    constructor create(TheOwner : TWincontrol);
+    //property idCaption: string read getIdCaption write setIdCaption;
   end;
-  *)
 
-  TProductPanel = class(TPanel)
-    constructor create(id : string);
-  end;
+  TPanels = Array of TProductPanel;
 
   { TForm1 }
 
   TForm1 = class(TForm)
     FlowPanel1: TFlowPanel;
+    Memo1: TMemo;
+    procedure BitBtn1Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
-    function create_sub_panel :  TPPanel;
-    procedure create_sub_label(myp :  TPPanel);
   private
     { private declarations }
   public
@@ -50,42 +52,43 @@ implementation
 
 var
   myPanelList : TList;
-  ppanel:TPPanel;
-  plabel: TPLabel;
   labl : TLabel;
 
-  constructor TProductPanel.create(id: string);
+  { TProductPanel }
+
+constructor TProductPanel.Create(TheOwner : TWincontrol);
 begin
-  Inherited;
+  Inherited Create(theOwner);
+  parent := theOwner;
+  width:= 100;
+  Height:=100;;
+  labelId := TLabel.Create(self);
+  LabelId.Parent := self;
+  LabelId.Caption:='id';
+  //LabelId.Width:=width;
+  LabelId.Alignment:=taCenter;
+  labelId.Align:=alTop;
+  Button1 := TButton.Create(self);
+  Button1.Parent := self;
+  Button1.Caption:='btn';
+  Button1.Width:=80;
+  Button1.Height:=20;
+  Button1.OnClick:= @Button1Click;
 end;
+
+  (*
+function TProductPanel.getIdCaption : string;
+begin
+
+end;
+
+procedure TProductPanel.setIdCaption(str: string);
+begin
+
+end;
+*)
 
 { TForm1 }
-
-procedure TForm1.create_sub_label(myp :  TPPanel);
-
-begin
-  new(plabel);
-  plabel^.Parent:= myp^;
-  plabel^.Caption:='huhu';
-  //repaint;
-end;
-
-
-function TForm1.create_sub_panel :  TPPanel;
-
-begin
-  new(result);
-  result^ := TPanel.Create(FlowPanel1);
-  result^.Parent:= FlowPanel1;
-  result^.Width:=100;
-  result^.Height:=100;
-  (*
-  new(plabel);
-  plabel^.Parent:= result^;
-  plabel^.Caption:='huhu';
-  *)
-  //repaint;
-end;
 
 
 procedure TForm1.FormActivate(Sender: TObject);
@@ -93,40 +96,41 @@ var
   mypanel1,mypanel2, panel : TPanel;
   mylabel1, mylabel2 :TLabel;
   myList : TList;
+  myppanel : TProductPanel;
+  mypanelarray :  TPanels;
+  i : integer;
 begin
-  myList := TList.Create;
-  myList.Add(create_sub_panel);
-  create_sub_label(myList[0]);
-  myList.Add(create_sub_panel);
+  panel := TPanel.Create(nil);
+  panel.Parent := FlowPanel1;
+  panel.Width:=100;
+  panel.Height:=100;
+
+  SetLength(mypanelarray,10);
+  mypanelarray[0] :=  TProductPanel.create(FlowPanel1);
+  mypanelarray[0].LabelId.Caption:='hihu';
   repaint;
+  Application.ProcessMessages;
+  sleep(1000);
+  mypanelarray[0].LabelId.Caption:='hohu';
+  mypanelarray[1] :=  TProductPanel.create(FlowPanel1);
+  mypanelarray[1].LabelId.Caption:='hehe';
+  for i := 2 to 5 do
+  begin
+    mypanelarray[i] :=  TProductPanel.create(FlowPanel1);
+    mypanelarray[i].LabelId.Caption:= 'P'+inttostr(i);
+    mypanelarray[i].Caption:=IntToStr(i);
+  end;
+  repaint;
+end;
 
+procedure TForm1.BitBtn1Click(Sender: TObject);
+begin
 
+end;
 
-  (*
-  new(ppanel);
-  ppanel^ := TPanel.Create(FlowPanel1);
-  ppanel^.Parent:= FlowPanel1;
-  ppanel^.
-  *)
-  (*
-  mypanel1 := TPanel.Create(FlowPanel1);
-  mypanel1.Parent:= FlowPanel1;
-  mypanel1.Width:=100;
-  mypanel1.Height:=100;
-  mylabel1 := TLabel.Create(mypanel1);
-  mylabel1.Parent:= mypanel1;
-  mylabel1.Caption:='huhu';
-  mypanel1.Controls[0].Caption:='haha';
-  mypanel1.Repaint;
-
-  mypanel2 := TPanel.Create(FlowPanel1);
-  mypanel2.Parent:= FlowPanel1;
-  //mypanel.Top:=5;
-  //mypanel.Left:=5;
-  mypanel2.Width:=100;
-  mypanel2.Height:=100;
-  mypanel2.Repaint;
-  *)
+procedure TProductPanel.Button1Click(Sender: TObject);
+begin
+   form1.Memo1.Append('click: '+TButton(sender).Parent.Caption);
 end;
 
 end.
