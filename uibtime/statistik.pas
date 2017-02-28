@@ -116,7 +116,7 @@ begin
  if (pos('Alle',combobox1.Text) =0) then
   DataModule1.Query4Result.sql.Add('(userid = :uid) and');
  DataModule1.Query4Result.sql.Add('(starttime >= :start) and');
- DataModule1.Query4Result.sql.Add('(stoptime <= :stop)');
+ DataModule1.Query4Result.sql.Add('(starttime <= :stop)');
  DataModule1.Query4Result.sql.Add('and (not (event = ''Pause''))');
  if not (combobox1.Text = 'Summe Alle') then
   DataModule1.Query4Result.sql.Add('group by userid');
@@ -212,7 +212,7 @@ begin
 (* if not (pos('Alle',combobox1.Text) <>0) then*)
   DataModule1.Query4Result.sql.Add('where (userid = :uid) and');
  DataModule1.Query4Result.sql.Add('(starttime >= :start) and');
- DataModule1.Query4Result.sql.Add('(stoptime <= :stop)');
+ DataModule1.Query4Result.sql.Add('(starttime <= :stop)');
  DataModule1.Query4Result.sql.Add(')) as summe_h');
  DataModule1.Query4Result.sql.Add('from uibsoll where');
  (*if not (pos('Alle',combobox1.Text) <>0) then*)
@@ -262,7 +262,7 @@ begin
  if (pos('Alle',combobox1.Text) =0) then
   DataModule1.Query4Result.sql.Add('(userid = :uid) and');
  DataModule1.Query4Result.sql.Add('(starttime >= :start) and');
- DataModule1.Query4Result.sql.Add('(stoptime <= :stop)');
+ DataModule1.Query4Result.sql.Add('(starttime <= :stop)');
  DataModule1.Query4Result.sql.Add('and (not (event = ''Pause''))');
  DataModule1.Query4Result.sql.Add('group by event ');
  if not (combobox1.Text = 'Summe Alle') then
@@ -315,7 +315,7 @@ begin
  if (pos('Alle',combobox1.Text) =0) then
   DataModule1.Query4Result.sql.Add('(userid = :uid) and');
  DataModule1.Query4Result.sql.Add('(starttime >= :start) and');
- DataModule1.Query4Result.sql.Add('(stoptime <= :stop)');
+ DataModule1.Query4Result.sql.Add('(starttime <= :stop)');
  DataModule1.Query4Result.sql.Add('and (not (event = ''Pause''))');
  if (pos('Alle',combobox1.Text) =0) then
   DataModule1.Query4Result.parambyname('uid').asstring := combobox1.text;
@@ -344,7 +344,7 @@ begin
  if (pos('Alle',combobox1.Text) =0) then
   DataModule1.Query4Result.sql.Add('(userid = :uid) and');
  DataModule1.Query4Result.sql.Add('(starttime >= :start) and');
- DataModule1.Query4Result.sql.Add('(stoptime <= :stop)');
+ DataModule1.Query4Result.sql.Add('(starttime <= :stop)');
  DataModule1.Query4Result.sql.Add('and (not (event = ''Pause''))');
  if (pos('Alle',combobox1.Text) =0) then
   DataModule1.Query4Result.parambyname('uid').asstring := combobox1.text;
@@ -402,7 +402,7 @@ begin
  query1.sql.Add('(a.wochentag = b.daynum) and ');
  query1.sql.Add('(a.userid = :uid) and ');
  query1.sql.Add('(a.starttime >= :start) and ');
- query1.sql.Add('(a.stoptime <= :stop) ');
+ query1.sql.Add('(a.starttime <= :stop) ');
  query1.sql.Add('and (not (event = ''Pause''))');
  query1.parambyname('uid').asstring := combobox1.text;
  query1.parambyname('start').asstring
@@ -653,7 +653,7 @@ begin
  DataModule1.Query4Result.sql.Add('    (event = :below_event)');
  DataModule1.Query4Result.sql.Add('    )');
  DataModule1.Query4Result.sql.Add('    and (starttime >= :von)');
- DataModule1.Query4Result.sql.Add('    and (stoptime < :bis)');
+ DataModule1.Query4Result.sql.Add('    and (starttime < :bis)');
  DataModule1.Query4Result.sql.Add('    group by userid;');
  DataModule1.Query4Result.parambyname('below_event').asstring := ComboBoxAktevent.text;
  DataModule1.Query4Result.parambyname('von').asstring := edit1.text;
@@ -873,7 +873,7 @@ begin
  DataModule1.Query4Result.sql.Add('    ) ');
  DataModule1.Query4Result.sql.Add('    ) ');
  DataModule1.Query4Result.sql.Add('and (UIBEVENTTIMESPLIT.starttime >= '''+edit1.Text+''') ');
- DataModule1.Query4Result.sql.Add('and (UIBEVENTTIMESPLIT.stoptime < '''+edit2.Text+''') ');
+ DataModule1.Query4Result.sql.Add('and (UIBEVENTTIMESPLIT.starttime < '''+edit2.Text+''') ');
  DataModule1.Query4Result.sql.Add('and (UIBEVENTTIMESPLIT.userid like '''+searchuser+''') ');
  DataModule1.Query4Result.sql.Add('GROUP BY ');
  DataModule1.Query4Result.sql.Add('UIBEVENTTIMESPLIT.Jahr,UIBEVENTTIMESPLIT.Monat,UIBEVENTTIMESPLIT.TAG,UIBEVENTTIMESPLIT.EVENT ');
@@ -911,7 +911,7 @@ begin
  DataModule1.Query4Result.sql.Add('from uibeventtimesplit where');
  DataModule1.Query4Result.sql.Add('(userid = :uid) and ');
  DataModule1.Query4Result.sql.Add('(starttime >= :start) and ');
- DataModule1.Query4Result.sql.Add('(stoptime <= :stop) ');
+ DataModule1.Query4Result.sql.Add('(starttime <= :stop) ');
  DataModule1.Query4Result.sql.Add('and (not (event = ''Pause''))');
   DataModule1.Query4Result.parambyname('uid').asstring := combobox1.text;
  DataModule1.Query4Result.parambyname('start').asstring

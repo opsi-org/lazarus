@@ -1,4 +1,11 @@
 (*
+uibtime (4.1.1.9-1) stable; urgency=low
+
+ * statistik: not stoptime <= stop but startime <= stop
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 28 Feb 2017 15:00:00 +0000
+
+
 uibtime (4.1.1.8-1) stable; urgency=low
 
  * uib2erp: fix in calculate lastIntervalStart
