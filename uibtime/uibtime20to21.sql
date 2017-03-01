@@ -24,6 +24,7 @@ alter table UIBAKTEVENT DROP BASE_FOR_TIME;
 create table caniasimporterror
    (canimp_rep_id       Integer NOT NULL,
     errmesg  varchar (255),
+    created timestamp,
     CONSTRAINT PK_canimperr     PRIMARY KEY (canimp_rep_id));
 
 create table uibeventaccountreport
@@ -135,6 +136,7 @@ RECREATE TRIGGER  TR_caniasimporterror_in  for caniasimporterror
          before insert POSITION 0 as
          begin
            new.canimp_rep_id = NEXT VALUE FOR caniasimporterror_SEQU;
+           new.created = current_timestamp;
          end !!
 set term ; !!
 
