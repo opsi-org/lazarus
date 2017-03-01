@@ -1,7 +1,7 @@
 object FopsiClientKiosk: TFopsiClientKiosk
-  Left = 317
+  Left = 532
   Height = 580
-  Top = 426
+  Top = 412
   Width = 888
   Caption = 'opsi-client-kiosk'
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
@@ -653,9 +653,9 @@ object FopsiClientKiosk: TFopsiClientKiosk
           Height = 187
           Top = 0
           Width = 719
-          ActivePage = TabSheet1
+          ActivePage = TabSheet2
           Align = alClient
-          TabIndex = 0
+          TabIndex = 1
           TabOrder = 0
           OnChange = ExtendedNotebook1Change
           object TabSheet1: TTabSheet
@@ -841,7 +841,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
           end
         end
       end
-      object Notebook1: TNotebook
+      object NotebookProducts: TNotebook
         Left = 10
         Height = 190
         Top = 44
@@ -893,8 +893,18 @@ object FopsiClientKiosk: TFopsiClientKiosk
             Visible = False
           end
         end
-        object Page2: TPage
+        object PageTile: TPage
           ChildSizing.Layout = cclLeftToRightThenTopToBottom
+          object FlowPanel1: TFlowPanel
+            Left = 0
+            Height = 190
+            Top = 0
+            Width = 699
+            Align = alClient
+            ControlList = <>
+            FlowStyle = fsLeftRightTopBottom
+            TabOrder = 0
+          end
         end
       end
       object Panelsearch: TPanel

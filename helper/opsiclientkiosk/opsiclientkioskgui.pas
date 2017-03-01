@@ -29,6 +29,24 @@ uses
 
 type
 
+    TProductPanel = class(TFlowPanel)
+    LabelId : TLabel;
+    Button1: TButton;
+    procedure Button1Click(Sender: TObject);
+  private
+    { private declarations }
+    //FidCaption : String;
+    //function getIdCaption : string;
+    //procedure setIdCaption(str: string);
+  public
+    { public declarations }
+    constructor create(TheOwner : TWincontrol);
+    //property idCaption: string read getIdCaption write setIdCaption;
+  end;
+
+  TPanels = Array of TProductPanel;
+
+
   { TFopsiClientKiosk }
 
   TFopsiClientKiosk = class(TForm)
@@ -47,6 +65,7 @@ type
     DBTextVerStr: TDBText;
     DBTextClientVerStr: TDBText;
     ExtendedNotebook1: TExtendedNotebook;
+    FlowPanel1: TFlowPanel;
     Image2: TImage;
     LabelWait: TLabel;
     LabelPriority: TLabel;
@@ -79,9 +98,9 @@ type
     TabSheet2: TTabSheet;
     TitleLabel: TLabel;
     grouplist: TListBox;
-    Notebook1: TNotebook;
+    NotebookProducts: TNotebook;
     PageList: TPage;
-    Page2: TPage;
+    PageTile: TPage;
     PanelToolbar: TPanel;
     grouppanel: TPanel;
     productlistpanel: TPanel;
@@ -138,6 +157,7 @@ type
 var
   FopsiClientKiosk: TFopsiClientKiosk;
   StartupDone: boolean;
+  ProductTilesArray : TPanels;
 
 resourcestring
   rsNoActionsFound = 'No action requests found.';
@@ -150,6 +170,39 @@ implementation
 var
   mythread: Tmythread2;
 
+
+
+constructor TProductPanel.Create(TheOwner : TWincontrol);
+  begin
+    Inherited Create(theOwner);
+    parent := theOwner;
+    width:= 100;
+    Height:=100;;
+    labelId := TLabel.Create(self);
+    LabelId.Parent := self;
+    LabelId.Caption:='id';
+    //LabelId.Width:=width;
+    LabelId.Alignment:=taCenter;
+    labelId.Align:=alTop;
+    Button1 := TButton.Create(self);
+    Button1.Parent := self;
+    Button1.Caption:='btn';
+    Button1.Width:=80;
+    Button1.Height:=20;
+    Button1.OnClick:= Button1Click;
+  end;
+
+procedure TProductPanel.Button1Click(Sender: TObject);
+begin
+   //form1.Memo1.Append('click: '+TButton(sender).Parent.Caption);
+end;
+
+
+procedure rebuildProductTiles;
+begin
+
+end;
+
 procedure Tmythread2.Execute;
 var
   counter: integer;
@@ -161,7 +214,7 @@ begin
     ockdata.ZMQUerydataset1.Filtered := True;
     FopsiClientKiosk.Progressbar1.Position := 0;
     FopsiClientKiosk.ProgressBar1.Max := ZMQUerydataset1.RecordCount;
-    //App
+    Application.ProcessMessages;
     counter := 0;
     ZMQUerydataset1.First;
     while not ZMQUerydataset1.EOF do
@@ -171,7 +224,7 @@ begin
       ZMQUerydataset1.Next;
       Inc(counter);
       FopsiClientKiosk.Progressbar1.Position := counter;
-      //ProcessMess;
+      Application.ProcessMessages;
     end;
     Terminate;
     //if counter > 0 then
@@ -358,32 +411,36 @@ procedure TFopsiClientKiosk.BitBtnStoreActionClick(Sender: TObject);
 var
   counter: integer;
   i : integer;
+  request : string;
 begin
   try
     screen.Cursor := crHourGlass;
+    (*
     mythread := Tmythread2.Create(False);
     mythread.WaitFor;
-
-    (*
+    *)
     // write back action requests
     ockdata.ZMQUerydataset1.Filtered := False;
     ockdata.ZMQUerydataset1.Filter := 'ActionRequest  <> ""';
     ockdata.ZMQUerydataset1.Filtered := True;
     Progressbar1.Position := 0;
     ProgressBar1.Max := ZMQUerydataset1.RecordCount;
+    ProgressBar1.Visible:=true;
     ProcessMess;
     counter := 0;
     ZMQUerydataset1.First;
     while not ZMQUerydataset1.EOF do
     begin
-      ockdata.setActionrequest(ZMQUerydataset1.FieldByName('ProductId').AsString,
-        ZMQUerydataset1.FieldByName('ActionRequest').AsString);
+      request := ZMQUerydataset1.FieldByName('ActionRequest').AsString;
+      if (request = 'setup') or (request = 'uninstall') then
+      begin
+        ockdata.setActionrequest(ZMQUerydataset1.FieldByName('ProductId').AsString, request);
+      end;
       ZMQUerydataset1.Next;
       Inc(counter);
       Progressbar1.Position := counter;
       ProcessMess;
     end;
-    *)
     //if counter > 0 then
     begin
       installdlg.Finstalldlg.Memo1.Text := ockdata.getActionrequests.Text;
@@ -393,9 +450,10 @@ begin
     end;
 
   finally
-    mythread.Terminate;
+    //mythread.Terminate;
     Screen.Cursor := crDefault;
-    mythread.Free;
+    ProgressBar1.Visible:=false;
+    //mythread.Free;
   end;
 end;
 
@@ -705,7 +763,7 @@ end;
 (*
 procedure TFopsiClientKiosk.RadioGroup1Click(Sender: TObject);
 begin
-  Notebook1.PageIndex := RadioGroup1.ItemIndex;
+  NotebookProducts.PageIndex := RadioGroup1.ItemIndex;
 end;
 *)
 
@@ -744,12 +802,12 @@ end;
 
 procedure TFopsiClientKiosk.SpeedButtonViewListClick(Sender: TObject);
 begin
-  Notebook1.PageIndex := 0;
+  NotebookProducts.PageIndex := 0;
 end;
 
 procedure TFopsiClientKiosk.SpeedButtonViewStoreClick(Sender: TObject);
 begin
-  Notebook1.PageIndex := 1;
+  NotebookProducts.PageIndex := 1;
 end;
 
 procedure TFopsiClientKiosk.ZMQueryDataSet1NewRecord(DataSet: TDataSet);

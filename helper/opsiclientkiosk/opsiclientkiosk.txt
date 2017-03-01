@@ -2,6 +2,8 @@
 opsiclientkiosk 4.0.7.6
 
   * fix (thread) for progressbar on button 'store actions' ; fixes #2586
+  * flowpanel on pagetile of NotebookProducts
+  * integrate dbtiletest to opsiclientkiosk
 
 -- detlef oertel <d.oertel@uib.de>  Wed, 22 Feb 2017 15:00:00 +0000
 
