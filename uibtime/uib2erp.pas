@@ -1183,10 +1183,14 @@ begin
       if queryAccEv.Active then
         queryAccEv.Close;
       queryAccEv.sql.Clear;
-      queryAccEv.sql.Add('select event from uibaktevent where');
-      queryAccEv.sql.Add(' (accountingrequired = 1)');
-      queryAccEv.sql.Add(' or (reportrequired = 1)');
+      queryAccEv.sql.Add('select event from uiballevent where');
+      queryAccEv.sql.Add(' ((accountingrequired = 1)');
+      queryAccEv.sql.Add(' or (reportrequired = 1))');
+      queryAccEv.sql.Add(' and event in ');
+      queryAccEv.sql.Add(' (select distinct event from UIBEVENT where starttime > :start) ');
       queryAccEv.sql.Add(' order by 1');
+      // start 3 Month (90 days) before querystart
+      queryAccEv.ParamByName('start').AsDate := startt-90;
       queryAccEv.Open;
       while not queryAccEv.EOF do
       begin

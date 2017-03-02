@@ -1,4 +1,13 @@
 (*
+uibtime (4.1.1.10-1) stable; urgency=low
+
+ * uib2erp: work on the events that really apeared inth the last 3 Month
+   (not only on uibaktevent)
+ * dataedit: new tab rename event
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 28 Feb 2017 15:00:00 +0000
+
+
 uibtime (4.1.1.9-1) stable; urgency=low
 
  * statistik: not stoptime <= stop but startime <= stop

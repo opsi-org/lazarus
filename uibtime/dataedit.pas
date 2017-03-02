@@ -7,15 +7,22 @@ interface
 uses
   LCLIntf, LCLType, {LMessages, Messages,} SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   {StdCtrls,} Buttons, Grids, DBGrids, ExtCtrls, DBCtrls, {ToolWin,} ComCtrls,
-  DB, {DBCGrids, ExtDlgs,} clipbrd, types;
+  DB, sqldb, {DBCGrids, ExtDlgs,} clipbrd, StdCtrls, types;
 
 type
 
   { TFDataedit }
 
   TFDataedit = class(TForm)
+    Button1: TButton;
+    Edit1: TEdit;
+    Edit2: TEdit;
+    Label1: TLabel;
+    Label2: TLabel;
     PageControl1: TPageControl;
+    SQLQueryRenameEvent: TSQLQuery;
     TabSheet1: TTabSheet;
+    TabSheet7: TTabSheet;
     ToolBar1: TToolBar;
     DBNavigator1: TDBNavigator;
     DBGrid1: TDBGrid;
@@ -66,6 +73,7 @@ type
     DBMemo1: TDBMemo;
     DBLookupComboBox4: TDBLookupComboBox;
     DBLookupComboBox5: TDBLookupComboBox;
+    procedure Button1Click(Sender: TObject);
     procedure DBGrid3DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure DBGrid5DrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -147,6 +155,42 @@ begin
        DBLookupComboBox3.Width := Rect.Right - Rect.Left;
        DBLookupComboBox3.Visible := True;
      end;
+  end;
+end;
+
+procedure TFDataedit.Button1Click(Sender: TObject);
+var
+  oldname, newname : string;
+begin
+  try
+     oldname := edit1.text;
+     newname := edit2.text;
+     // create new entry
+     SQLQueryRenameEvent.SQL.Clear;
+     SQLQueryRenameEvent.SQL.Add('insert into uibaktevent (EVENT,PARENTEVENT,');
+     SQLQueryRenameEvent.SQL.Add('COMMENT,ID_STRING,KD_String,TIME_H,PROJECTSTART,');
+     SQLQueryRenameEvent.SQL.Add('REPORTREQUIRED,ACC_PER_MONTHNUM,ACCOUNTINGREQUIRED) ');
+     SQLQueryRenameEvent.SQL.Add('select "'+newname+'", PARENTEVENT,"COMMENT",');
+     SQLQueryRenameEvent.SQL.Add('ID_STRING,KD_String,TIME_H,PROJECTSTART,');
+     SQLQueryRenameEvent.SQL.Add('REPORTREQUIRED,ACC_PER_MONTHNUM,ACCOUNTINGREQUIRED ');
+     SQLQueryRenameEvent.SQL.Add('from uibaktevent where event = :oldname');
+     SQLQueryRenameEvent.ParamByName('oldname').AsString := oldname;
+     SQLQueryRenameEvent.ExecSQL;
+     // del old entry
+     SQLQueryRenameEvent.SQL.Clear;
+     SQLQueryRenameEvent.SQL.Add('delete from uibaktevent ');
+     SQLQueryRenameEvent.SQL.Add('where event = :oldname');
+     SQLQueryRenameEvent.ParamByName('oldname').AsString := oldname;
+     SQLQueryRenameEvent.ExecSQL;
+     // rename in event table
+     SQLQueryRenameEvent.SQL.Clear;
+     SQLQueryRenameEvent.SQL.Add('update uibevent ');
+     SQLQueryRenameEvent.SQL.Add('set event = :newname ');
+     SQLQueryRenameEvent.SQL.Add('where event = :oldname');
+     SQLQueryRenameEvent.ParamByName('oldname').AsString := oldname;
+     SQLQueryRenameEvent.ParamByName('newname').AsString := newname;
+     SQLQueryRenameEvent.ExecSQL;
+  finally
   end;
 end;
 
