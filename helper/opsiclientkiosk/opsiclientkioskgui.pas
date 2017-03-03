@@ -142,6 +142,7 @@ type
     procedure SpeedButtonAllClick(Sender: TObject);
     procedure SpeedButtonViewListClick(Sender: TObject);
     procedure SpeedButtonViewStoreClick(Sender: TObject);
+    procedure TimerProcessMessTimer(Sender: TObject);
     procedure ZMQueryDataSet1NewRecord(DataSet: TDataSet);
   private
     { private declarations }
@@ -204,10 +205,11 @@ begin
 end;
 
 procedure Tmythread2.Execute;
-var
-  counter: integer;
-  i : integer;
+//var
+  //counter: integer;
+  //i : integer;
 begin
+  (*
      // write back action requests
     ockdata.ZMQUerydataset1.Filtered := False;
     ockdata.ZMQUerydataset1.Filter := 'ActionRequest  <> ""';
@@ -215,35 +217,23 @@ begin
     FopsiClientKiosk.Progressbar1.Position := 0;
     FopsiClientKiosk.ProgressBar1.Max := ZMQUerydataset1.RecordCount;
     Application.ProcessMessages;
-    counter := 0;
+    *)
+    //counter := 0;
+  // write back action requests
+    ockdata.ZMQUerydataset1.Filtered := False;
+    ockdata.ZMQUerydataset1.Filter := 'ActionRequest  <> ""';
+    ockdata.ZMQUerydataset1.Filtered := True;
     ZMQUerydataset1.First;
     while not ZMQUerydataset1.EOF do
     begin
       ockdata.setActionrequest(ZMQUerydataset1.FieldByName('ProductId').AsString,
         ZMQUerydataset1.FieldByName('ActionRequest').AsString);
       ZMQUerydataset1.Next;
-      Inc(counter);
-      FopsiClientKiosk.Progressbar1.Position := counter;
-      Application.ProcessMessages;
+      //Inc(counter);
+      //FopsiClientKiosk.Progressbar1.Position := counter;
+      //Application.ProcessMessages;
     end;
     Terminate;
-    //if counter > 0 then
-    (*
-    begin
-      installdlg.Finstalldlg.Memo1.Text := ockdata.getActionrequests.Text;
-      if installdlg.Finstalldlg.Memo1.Text = '' then
-        installdlg.Finstalldlg.Memo1.Text := rsNoActionsFound;
-      installdlg.Finstalldlg.Show;
-    end;
-    *)
-    (*
-  if not Terminated then
-  begin
-    ;
-    LogDatei.log('network timeout by thread - aborting program', LLInfo);
-    halt(0);
-  end;
-  *)
 end;
 
 
@@ -413,35 +403,21 @@ var
   i : integer;
   request : string;
 begin
+  screen.Cursor := crHourGlass;
   try
-    screen.Cursor := crHourGlass;
     (*
-    mythread := Tmythread2.Create(False);
-    mythread.WaitFor;
-    *)
-    // write back action requests
-    ockdata.ZMQUerydataset1.Filtered := False;
-    ockdata.ZMQUerydataset1.Filter := 'ActionRequest  <> ""';
-    ockdata.ZMQUerydataset1.Filtered := True;
-    Progressbar1.Position := 0;
-    ProgressBar1.Max := ZMQUerydataset1.RecordCount;
+    ProgressBar1.Max := 100;
+    ProgressBar1.Min := 0;
+    ProgressBar1.Style:=pbstMarquee;
+    ProgressBar1.Enabled:=true;
     ProgressBar1.Visible:=true;
+    *)
     ProcessMess;
-    counter := 0;
-    ZMQUerydataset1.First;
-    while not ZMQUerydataset1.EOF do
-    begin
-      request := ZMQUerydataset1.FieldByName('ActionRequest').AsString;
-      if (request = 'setup') or (request = 'uninstall') then
-      begin
-        ockdata.setActionrequest(ZMQUerydataset1.FieldByName('ProductId').AsString, request);
-      end;
-      ZMQUerydataset1.Next;
-      Inc(counter);
-      Progressbar1.Position := counter;
-      ProcessMess;
-    end;
-    //if counter > 0 then
+    mythread := Tmythread2.Create(True);
+    //mythread.Priority:=tpLowest;
+    mythread.Resume;
+    mythread.WaitFor;
+
     begin
       installdlg.Finstalldlg.Memo1.Text := ockdata.getActionrequests.Text;
       if installdlg.Finstalldlg.Memo1.Text = '' then
@@ -450,10 +426,11 @@ begin
     end;
 
   finally
-    //mythread.Terminate;
+    mythread.Terminate;
     Screen.Cursor := crDefault;
+    ProgressBar1.Style:=pbstNormal;
     ProgressBar1.Visible:=false;
-    //mythread.Free;
+    mythread.Free;
   end;
 end;
 
@@ -461,13 +438,6 @@ procedure TFopsiClientKiosk.DBGrid1CellClick(Column: TColumn);
 var
   action: string;
 begin
-  (*
-  BtnAction.Caption := ockdata.ZMQUerydataset1.FieldByName('possibleAction').AsString;
-  if BtnAction.Caption = '' then
-    BtnAction.Enabled := False
-  else
-    BtnAction.Enabled := True;
-    *)
   productdetailpanel.Height := 185;
   action := ockdata.ZMQUerydataset1.FieldByName('possibleAction').AsString;
   DBComboBox1.Items.Clear;
@@ -808,6 +778,11 @@ end;
 procedure TFopsiClientKiosk.SpeedButtonViewStoreClick(Sender: TObject);
 begin
   NotebookProducts.PageIndex := 1;
+end;
+
+procedure TFopsiClientKiosk.TimerProcessMessTimer(Sender: TObject);
+begin
+  Application.ProcessMessages;
 end;
 
 procedure TFopsiClientKiosk.ZMQueryDataSet1NewRecord(DataSet: TDataSet);

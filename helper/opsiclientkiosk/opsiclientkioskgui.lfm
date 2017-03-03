@@ -2387,6 +2387,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
         Top = 0
         Width = 608
         Align = alTop
+        Position = 1
         Smooth = True
         Step = 1
         TabOrder = 0
