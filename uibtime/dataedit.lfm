@@ -1,7 +1,7 @@
 object FDataedit: TFDataedit
-  Left = 565
+  Left = 606
   Height = 375
-  Top = 533
+  Top = 622
   Width = 814
   Caption = 'FDataedit'
   ClientHeight = 375
@@ -20,9 +20,9 @@ object FDataedit: TFDataedit
     Height = 375
     Top = 0
     Width = 814
-    ActivePage = TabSheet7
+    ActivePage = TabSheet1
     Align = alClient
-    TabIndex = 8
+    TabIndex = 0
     TabOrder = 0
     TabPosition = tpBottom
     OnEnter = PageControl1Enter
@@ -728,15 +728,14 @@ object FDataedit: TFDataedit
       object Edit1: TEdit
         Left = 52
         Height = 21
-        Top = 73
+        Top = 171
         Width = 156
         TabOrder = 0
-        Text = 'Edit1'
       end
       object Label1: TLabel
         Left = 52
         Height = 13
-        Top = 46
+        Top = 147
         Width = 78
         Caption = 'Alter Eventname'
         ParentColor = False
@@ -744,27 +743,67 @@ object FDataedit: TFDataedit
       object Edit2: TEdit
         Left = 271
         Height = 21
-        Top = 76
+        Top = 174
         Width = 129
         TabOrder = 1
-        Text = 'Edit2'
       end
       object Label2: TLabel
-        Left = 272
+        Left = 271
         Height = 13
-        Top = 51
+        Top = 147
         Width = 86
         Caption = 'Neuer Eventname'
         ParentColor = False
       end
       object Button1: TButton
         Left = 57
-        Height = 25
-        Top = 132
+        Height = 28
+        Top = 231
         Width = 75
         Caption = 'Umbennen'
         OnClick = Button1Click
         TabOrder = 2
+      end
+      object BitBtn10: TBitBtn
+        Left = 624
+        Height = 22
+        Top = 168
+        Width = 113
+        Caption = 'Verlassen'
+        Kind = bkCancel
+        OnClick = BitBtn2Click
+        TabOrder = 3
+      end
+      object Label3: TLabel
+        Left = 112
+        Height = 46
+        Top = 8
+        Width = 494
+        Caption = 'Vorsicht ! Nur für Admins !'
+        Font.Color = clRed
+        Font.Height = -40
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+      end
+      object Label4: TLabel
+        Left = 54
+        Height = 61
+        Top = 67
+        Width = 674
+        AutoSize = False
+        Caption = 'Erstellt aus dem alten Eventnamen in der Tabelle uibaktevent ein neues Event mit den selben Daten aber unter dem neuen Namen.'#13#10'Das alte Event wird aus der Tabelle uibaktevent gelöscht.'#13#10'Alle Einträge in uibevent welche auf das alte Event gebucht waren, werden auf das neue Event geändert.'
+        ParentColor = False
+        WordWrap = True
+      end
+      object LabelProgress: TLabel
+        Left = 166
+        Height = 13
+        Top = 237
+        Width = 120
+        Caption = 'Fortschritt: Keine Aktivität'
+        ParentColor = False
       end
     end
   end
@@ -774,7 +813,7 @@ object FDataedit: TFDataedit
     Transaction = DataModule1.SQLTransaction1
     Options = []
     Params = <>
-    left = 538
-    top = 74
+    left = 704
+    top = 256
   end
 end

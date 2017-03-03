@@ -14,11 +14,15 @@ type
   { TFDataedit }
 
   TFDataedit = class(TForm)
+    BitBtn10: TBitBtn;
     Button1: TButton;
     Edit1: TEdit;
     Edit2: TEdit;
     Label1: TLabel;
     Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    LabelProgress: TLabel;
     PageControl1: TPageControl;
     SQLQueryRenameEvent: TSQLQuery;
     TabSheet1: TTabSheet;
@@ -163,6 +167,9 @@ var
   oldname, newname : string;
 begin
   try
+     screen.Cursor := crHourGlass;
+     LabelProgress.Caption:= 'Erstelle neuen Eintrag ....';
+     Application.ProcessMessages;
      oldname := edit1.text;
      newname := edit2.text;
      // create new entry
@@ -177,12 +184,16 @@ begin
      SQLQueryRenameEvent.ParamByName('oldname').AsString := oldname;
      SQLQueryRenameEvent.ExecSQL;
      // del old entry
+     LabelProgress.Caption:= 'Lösche alten Eintrag ....';
+     Application.ProcessMessages;
      SQLQueryRenameEvent.SQL.Clear;
      SQLQueryRenameEvent.SQL.Add('delete from uibaktevent ');
      SQLQueryRenameEvent.SQL.Add('where event = :oldname');
      SQLQueryRenameEvent.ParamByName('oldname').AsString := oldname;
      SQLQueryRenameEvent.ExecSQL;
      // rename in event table
+     LabelProgress.Caption:= 'Ändere Buchungen ....';
+     Application.ProcessMessages;
      SQLQueryRenameEvent.SQL.Clear;
      SQLQueryRenameEvent.SQL.Add('update uibevent ');
      SQLQueryRenameEvent.SQL.Add('set event = :newname ');
@@ -191,6 +202,9 @@ begin
      SQLQueryRenameEvent.ParamByName('newname').AsString := newname;
      SQLQueryRenameEvent.ExecSQL;
   finally
+    screen.Cursor := crDefault;
+    LabelProgress.Caption:= 'Fertig.';
+    Application.ProcessMessages;
   end;
 end;
 
