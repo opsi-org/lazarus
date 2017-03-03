@@ -158,6 +158,10 @@ msgstr "do not translate"
 msgid "productlistpanel"
 msgstr "do not translate"
 
+#: tfopsiclientkiosk.radiogroupview.caption
+msgid "View"
+msgstr ""
+
 #: tfopsiclientkiosk.searchedit.hint
 msgid "Search in Productlist"
 msgstr ""

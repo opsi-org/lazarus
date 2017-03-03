@@ -165,6 +165,10 @@ msgstr ""
 msgid "productlistpanel"
 msgstr ""
 
+#: tfopsiclientkiosk.radiogroupview.caption
+msgid "View"
+msgstr ""
+
 #: tfopsiclientkiosk.searchedit.hint
 msgid "Search in Productlist"
 msgstr "Buscar en la lista de productos"

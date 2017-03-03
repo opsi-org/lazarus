@@ -165,6 +165,10 @@ msgstr "nie przetłumaczone"
 msgid "productlistpanel"
 msgstr "nie przetłumaczone"
 
+#: tfopsiclientkiosk.radiogroupview.caption
+msgid "View"
+msgstr ""
+
 #: tfopsiclientkiosk.searchedit.hint
 msgid "Search in Productlist"
 msgstr "Szukaj w produkach"
