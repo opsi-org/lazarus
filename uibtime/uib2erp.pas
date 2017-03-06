@@ -154,6 +154,9 @@ var
   //base: string;
   endmonth, year, endyear, month, day, startyear, startmonth, startday,
   aktstartyear, aktstartmonth: word;
+  //endmonthi, endyeari, aktstartyeari, aktstartmonthi: integer;
+  lastIntervalStart_, lastIntervalEnd_: TDateTime;
+
   helperint: integer;
   suchevent: string;
   monthsmod: integer;
@@ -237,10 +240,53 @@ begin
           'Projektstart of: ' + suchevent + ' is in future');
         Exit;
       end;
+      //// startday of projekt end
+      //projektstart := projektstart -1;
       // look for accounting boundaries (intervals)
       //todo (or not todo): work with fraktal month
       monthsmod := trunc(acc_per_monthnum);
       // calculate last interval boundaries
+      (*
+      // look first for end version
+      decodeDate(querystartdt, year, month, day);
+      decodeDate(projektstart, startyear, startmonth, startday);
+      helperint := month - ((12 * (year - startyear) + month - startmonth) mod
+        monthsmod);
+      if helperint < 1 then
+      begin
+        endyeari := year - 1;
+        endmonthi := 12 + helperint;
+      end
+      else
+      begin
+        endmonthi := helperint;
+        endyeari := year;
+      end;
+      if endmonthi > 12 then
+      begin
+        endmonthi := endmonthi - 12;
+        endyeari := endyeari + 1;
+      end;
+      // now start
+      aktstartmonthi := endmonthi - monthsmod;
+      aktstartyeari := endyeari;
+      if aktstartmonthi < 1 then
+      begin
+        aktstartmonthi := aktstartmonthi + 12;
+        aktstartyeari := aktstartyeari - 1;
+      end;
+      if aktstartmonthi < 1 then
+      begin
+        aktstartmonthi := aktstartmonthi + 12;
+        aktstartyeari := aktstartyeari - 1;
+      end;
+      aktstartmonth := aktstartmonthi;
+      aktstartyear := aktstartyeari;
+      endmonth := endmonthi;
+      endyear := endyeari;
+      *)
+
+      // look first for start version
       decodeDate(querystartdt, year, month, day);
       decodeDate(projektstart, startyear, startmonth, startday);
       helperint := month - ((12 * (year - startyear) + month - startmonth) mod
@@ -272,6 +318,7 @@ begin
         endmonth := endmonth - 12;
         endyear := endyear + 1;
       end;
+
       // here is the result for the last Interval
       lastIntervalStart := EncodeDate(aktstartyear, aktstartmonth, startday);
       lastIntervalEnd := EncodeDate(endyear, endmonth, startday);
@@ -285,7 +332,30 @@ begin
         intervalEndFound := True
       else
         intervalEndFound := False;
+      // finding end is mor impotant then start
+      if  intervalStartFound
+          and (lastIntervalStart > querystartdt)
+          and not intervalEndFound then
+      begin
+        // step back one interval
+        lastIntervalStart_ := IncMonth(lastIntervalStart,monthsmod * -1);
+        lastIntervalEnd_ := IncMonth(lastIntervalEnd,monthsmod * -1);
+        if (lastIntervalEnd_ >= querystartdt) and (lastIntervalEnd_ <= queryenddt) then
+        begin
+          lastIntervalEnd := lastIntervalEnd_;
+          lastIntervalStart := lastIntervalStart_;
+        end;
+      end;
+      // use changed data
+      if (lastIntervalStart >= querystartdt) and (lastIntervalStart <= queryenddt) then
+        intervalStartFound := True
+      else
+        intervalStartFound := False;
 
+      if (lastIntervalEnd >= querystartdt) and (lastIntervalEnd <= queryenddt) then
+        intervalEndFound := True
+      else
+        intervalEndFound := False;
     end;
 
     if QueryProjektzeit.Active then
@@ -340,6 +410,7 @@ begin
       hours := hours + 1;
     end;
     availabletime := available / 24;
+
 
     //availabletime := EncodeTimeInterval(hours, minutes, 0, 0);
     // datetime is day.time  so it is also hour.frac-hour *24
@@ -1022,8 +1093,15 @@ begin
       if queryAccEv.Active then
         queryAccEv.Close;
       queryAccEv.sql.Clear;
-      queryAccEv.sql.Add('select event from uibaktevent where');
-      queryAccEv.sql.Add(' accountingrequired = 1');
+      queryAccEv.sql.Add('select event from uiballevent where');
+      queryAccEv.sql.Add(' ((accountingrequired = 1)');
+      queryAccEv.sql.Add(' or (reportrequired = 1))');
+      queryAccEv.sql.Add(' and ((event in ');
+      queryAccEv.sql.Add(' (select distinct event from UIBEVENT where starttime > :start)) ');
+      queryAccEv.sql.Add(' or (event in (select distinct event from uibaktevent))) ');
+      queryAccEv.sql.Add(' order by 1');
+      // start 3 Month (90 days) before querystart
+      queryAccEv.ParamByName('start').AsDate := startt-90;
       queryAccEv.Open;
       while not queryAccEv.EOF do
       begin
@@ -1058,6 +1136,7 @@ begin
             end
             else
               Show := False;
+            (*
             if intervalStartFound then
             begin
               // we will start at the beginning of the accounting interval
@@ -1065,6 +1144,7 @@ begin
             end
             else
               Show := False;
+              *)
             if queryUAE.Active then
               queryUAE.Close;
             QueryUAE.SQL.Clear;
@@ -1137,6 +1217,7 @@ end;
 procedure TFuibtime2erp.BtnLoadRequiredReportsClick(Sender: TObject);
 var
   event, starttime, stoptime: string;
+
   (*
   laststartt, laststopt, startt, stopt: TDateTime;
   sumtime, firststartt: TDatetime;
@@ -1186,8 +1267,9 @@ begin
       queryAccEv.sql.Add('select event from uiballevent where');
       queryAccEv.sql.Add(' ((accountingrequired = 1)');
       queryAccEv.sql.Add(' or (reportrequired = 1))');
-      queryAccEv.sql.Add(' and event in ');
-      queryAccEv.sql.Add(' (select distinct event from UIBEVENT where starttime > :start) ');
+      queryAccEv.sql.Add(' and ((event in ');
+      queryAccEv.sql.Add(' (select distinct event from UIBEVENT where starttime > :start)) ');
+      queryAccEv.sql.Add(' or (event in (select distinct event from uibaktevent))) ');
       queryAccEv.sql.Add(' order by 1');
       // start 3 Month (90 days) before querystart
       queryAccEv.ParamByName('start').AsDate := startt-90;

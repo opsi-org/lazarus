@@ -316,7 +316,7 @@ object Fuibtime2erp: TFuibtime2erp
     object BtnExportZeroAccounting: TButton
       Left = 696
       Height = 31
-      Top = 95
+      Top = 96
       Width = 400
       Caption = 'Alle ganzen Intervalle mit used=0 direkt exportieren'
       OnClick = BtnExportZeroAccountingClick

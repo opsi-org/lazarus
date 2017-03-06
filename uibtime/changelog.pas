@@ -1,4 +1,11 @@
 (*
+
+uibtime (4.1.1.11-1) stable; urgency=low
+
+  * uib2erp: fix in calculate lastIntervalStart (calc end first)
+
+-- detlef oertel <d.oertel@uib.de>  Mon, 06 Mar 2017 15:00:00 +0000
+
 uibtime (4.1.1.10-1) stable; urgency=low
 
  * uib2erp: work on the events that really apeared inth the last 3 Month
