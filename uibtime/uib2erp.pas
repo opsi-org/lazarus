@@ -340,7 +340,9 @@ begin
         // step back one interval
         lastIntervalStart_ := IncMonth(lastIntervalStart,monthsmod * -1);
         lastIntervalEnd_ := IncMonth(lastIntervalEnd,monthsmod * -1);
-        if (lastIntervalEnd_ >= querystartdt) and (lastIntervalEnd_ <= queryenddt) then
+        if (lastIntervalEnd_ >= querystartdt)
+            and (lastIntervalEnd_ <= queryenddt)
+            and (lastIntervalStart_ >= projektstart) then
         begin
           lastIntervalEnd := lastIntervalEnd_;
           lastIntervalStart := lastIntervalStart_;
