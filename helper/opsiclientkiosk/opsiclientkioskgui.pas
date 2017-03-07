@@ -33,11 +33,13 @@ type
   TProductPanel = class(TFlowPanel)
     LabelId: TLabel;
     LabelName: TLabel;
+    LabelState: TLabel;
     RadioGroupAction: TRadioGroup;
     Button1: TButton;
 
     procedure Button1Click(Sender: TObject);
     procedure TileActionChanged(Sender: TObject);
+    procedure ProductTileClick(Sender: TObject);
   private
     { private declarations }
     //FidCaption : String;
@@ -46,6 +48,7 @@ type
   public
     { public declarations }
     constructor Create(TheOwner: TWincontrol);
+    destructor destroy;
     //property idCaption: string read getIdCaption write setIdCaption;
   end;
 
@@ -91,6 +94,7 @@ type
     ProgressBar1: TProgressBar;
     ProgressBarDetail: TProgressBar;
     RadioGroupView: TRadioGroup;
+    ScrollBox1: TScrollBox;
     searchEdit: TEdit;
     Image1: TImage;
     ImageHeader: TImage;
@@ -185,9 +189,12 @@ constructor TProductPanel.Create(TheOwner: TWincontrol);
 begin
   inherited Create(theOwner);
   parent := theOwner;
-  Width := 150;
-  Height := 150;
-  ;
+  Width := 200;
+  Height := 200;
+  self.OnClick:=ProductTileClick;
+  BorderStyle:=bsSingle;
+  BorderSpacing.Around:=3;
+  Color:=clSilver;
   //label ID
   labelId := TLabel.Create(self);
   LabelId.Parent := self;
@@ -195,6 +202,7 @@ begin
   LabelId.Alignment := taCenter;
   LabelId.Width := Width;
   labelId.Align := alTop;
+  labelId.BorderSpacing.Around:=3;
   //label Name
   LabelName := TLabel.Create(self);
   LabelName.Parent := self;
@@ -203,6 +211,17 @@ begin
   LabelName.WordWrap := True;
   LabelName.Alignment := taCenter;
   LabelName.Align := alTop;
+  LabelName.BorderSpacing.Around:=3;
+  //label LabelState
+  LabelState := TLabel.Create(self);
+  LabelState.Parent := self;
+  LabelState.Caption := 'name';
+  LabelState.Width := Width;
+  LabelState.WordWrap := True;
+  LabelState.Alignment := taCenter;
+  LabelState.Align := alTop;
+  LabelState.BorderSpacing.Around:=3;
+
   //RadioGroupAction
   RadioGroupAction := TRadioGroup.Create(self);
   RadioGroupAction.Parent := self;
@@ -210,6 +229,7 @@ begin
   //RadioGroupAction.Alignment := taCenter;
   RadioGroupAction.Align := alTop;
   RadioGroupAction.OnSelectionChanged := TileActionChanged;
+  (*
   //Button
   Button1 := TButton.Create(self);
   Button1.Parent := self;
@@ -217,14 +237,16 @@ begin
   Button1.Width := 80;
   Button1.Height := 20;
   Button1.OnClick := Button1Click;
+  *)
 end;
 
 destructor TProductPanel.destroy;
 begin
   labelId.Destroy;
   LabelName.Destroy;
+  LabelState.Destroy;
   RadioGroupAction.Destroy;
-  Button1.Destroy;
+  //Button1.Destroy;
   inherited destroy;
 end;
 
@@ -244,6 +266,7 @@ begin
     tileindex := TRadioGroup(Sender).Parent.Tag;
     actionindex := ProductTilesArray[tileindex].RadioGroupAction.ItemIndex;
     pid := ProductTilesArray[tileindex].LabelId.Caption;
+    ZMQueryDataSet1.first;
     if ZMQueryDataSet1.Locate('ProductId', VarArrayOf([pid]),
       [loCaseInsensitive]) then
     begin
@@ -255,6 +278,24 @@ begin
   end;
 end;
 
+procedure TProductPanel.ProductTileClick(Sender: TObject);
+var
+  pid: string;
+  tileindex, actionindex: integer;
+begin
+  if not inTileRebuild then
+  begin
+    tileindex := TRadioGroup(Sender).Parent.Tag;
+    actionindex := ProductTilesArray[tileindex].RadioGroupAction.ItemIndex;
+    pid := ProductTilesArray[tileindex].LabelId.Caption;
+    ZMQueryDataSet1.first;
+    if ZMQueryDataSet1.Locate('ProductId', VarArrayOf([pid]),
+      [loCaseInsensitive]) then
+    begin
+      FopsiClientKiosk.productdetailpanel.Height := 185;
+    end;
+  end;
+end;
 
 
 procedure rebuildProductTiles;
@@ -277,6 +318,8 @@ begin
       ZMQueryDataSet1.FieldByName('ProductId').AsString;
     ProductTilesArray[counter].LabelName.Caption :=
       ZMQueryDataSet1.FieldByName('ProductName').AsString;
+    ProductTilesArray[counter].LabelState.Caption :=
+      ZMQueryDataSet1.FieldByName('installationStatus').AsString;
     //radio group
     ProductTilesArray[counter].RadioGroupAction.Items.Add('none');
     ProductTilesArray[counter].RadioGroupAction.Items.Add('setup');
@@ -428,6 +471,7 @@ begin
   productdetailpanel.Height := 0;
 end;
 
+
 procedure TFopsiClientKiosk.PageListBeforeShow(ASender: TObject;
   ANewPage: TPage; ANewIndex: integer);
 begin
@@ -478,6 +522,7 @@ begin
   ockdata.ZMQUerydataset1.Filter := 'ActionRequest <> ""';
   ockdata.ZMQUerydataset1.Filtered := True;
   ProcessMess;
+  RadioGroupViewSelectionChanged(self);
 end;
 
 procedure TFopsiClientKiosk.BitBtnInfoClick(Sender: TObject);
@@ -700,6 +745,7 @@ begin
   ProgressBarDetail.Visible := False;
   LabelWait.Visible := False;
   grouplist.Enabled := True;
+  RadioGroupViewSelectionChanged(self);
 end;
 
 procedure TFopsiClientKiosk.searchEditChange(Sender: TObject);
