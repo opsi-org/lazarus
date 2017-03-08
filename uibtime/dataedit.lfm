@@ -1,7 +1,7 @@
 object FDataedit: TFDataedit
-  Left = 606
+  Left = 333
   Height = 375
-  Top = 622
+  Top = 519
   Width = 814
   Caption = 'FDataedit'
   ClientHeight = 375
@@ -334,14 +334,14 @@ object FDataedit: TFDataedit
     object TabSheet4: TTabSheet
       Caption = 'Alle Events'
       ClientHeight = 349
-      ClientWidth = 692
+      ClientWidth = 806
       ImageIndex = 3
       OnShow = TabSheet4Show
       object ToolBar4: TToolBar
         Left = 0
         Height = 29
         Top = 0
-        Width = 692
+        Width = 806
         ButtonHeight = 24
         Caption = 'ToolBar1'
         TabOrder = 0
@@ -378,7 +378,7 @@ object FDataedit: TFDataedit
         Left = 0
         Height = 320
         Top = 29
-        Width = 692
+        Width = 806
         Align = alClient
         Color = clWindow
         Columns = <>

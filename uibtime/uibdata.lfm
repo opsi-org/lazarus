@@ -113,7 +113,7 @@ object DataModule1: TDataModule1
     Database = IBConnection1
     Transaction = SQLTransaction1
     SQL.Strings = (
-      'select * from uibaktevent'
+      'select * from uibaktevent order by lower(event)'
     )
     Options = []
     Params = <>
@@ -217,7 +217,7 @@ object DataModule1: TDataModule1
     Database = IBConnection1
     Transaction = SQLTransaction1
     SQL.Strings = (
-      'select * from uiballevent'
+      'select * from uiballevent order by lower(event)'
     )
     Options = []
     Params = <>

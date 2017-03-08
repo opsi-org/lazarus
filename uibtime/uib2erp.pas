@@ -193,7 +193,7 @@ begin
     QueryProjektzeit.SQL.Clear;
     QueryProjektzeit.sql.Add(' select time_h, acc_per_monthnum, projectstart, ');
     QueryProjektzeit.sql.Add('    reportrequired, accountingrequired ');
-    QueryProjektzeit.sql.Add('    from uibaktevent');
+    QueryProjektzeit.sql.Add('    from uiballevent');
     QueryProjektzeit.sql.Add('    where (event = :suchevent)');
     QueryProjektzeit.parambyname('suchevent').AsString := suchevent;
     QueryProjektzeit.Open;
@@ -889,7 +889,7 @@ begin
     QueryUEARhelper.Close;
   QueryUEARhelper.SQL.Clear;
   QueryUEARhelper.sql.Add(' select time_h, acc_per_monthnum ');
-  QueryUEARhelper.sql.Add('    from uibaktevent');
+  QueryUEARhelper.sql.Add('    from uiballevent');
   QueryUEARhelper.sql.Add('    where (event = :suchevent)');
   QueryUEARhelper.parambyname('suchevent').AsString := suchevent;
   QueryUEARhelper.Open;
