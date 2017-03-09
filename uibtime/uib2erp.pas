@@ -333,16 +333,15 @@ begin
       else
         intervalEndFound := False;
       // finding end is mor impotant then start
-      if  intervalStartFound
-          and (lastIntervalStart > querystartdt)
-          and not intervalEndFound then
+      if intervalStartFound and (lastIntervalStart > querystartdt) and
+        not intervalEndFound then
       begin
         // step back one interval
-        lastIntervalStart_ := IncMonth(lastIntervalStart,monthsmod * -1);
-        lastIntervalEnd_ := IncMonth(lastIntervalEnd,monthsmod * -1);
-        if (lastIntervalEnd_ >= querystartdt)
-            and (lastIntervalEnd_ <= queryenddt)
-            and (lastIntervalStart_ >= projektstart) then
+        lastIntervalStart_ := IncMonth(lastIntervalStart, monthsmod * -1);
+        lastIntervalEnd_ := IncMonth(lastIntervalEnd, monthsmod * -1);
+        if (lastIntervalEnd_ >= querystartdt) and
+          (lastIntervalEnd_ <= queryenddt) and
+          (lastIntervalStart_ >= projektstart) then
         begin
           lastIntervalEnd := lastIntervalEnd_;
           lastIntervalStart := lastIntervalStart_;
@@ -620,7 +619,8 @@ begin
         query2.FieldByName('dateday').AsDateTime :=
           query1.FieldByName('dateday').AsDateTime;
         query2.FieldByName('event').AsString := query1.FieldByName('event').AsString;
-        query2.FieldByName('stunden').AsFloat := round(query1.FieldByName('stunden').AsFloat*60)/60;
+        query2.FieldByName('stunden').AsFloat :=
+          round(query1.FieldByName('stunden').AsFloat * 60) / 60;
         query2.FieldByName('description').AsString :=
           query1.FieldByName('description').AsString;
         query2.FieldByName('locked').AsInteger := 0;
@@ -1009,8 +1009,7 @@ begin
   end;
 end;
 
-procedure TFuibtime2erp.StringGrid1ShowHint(Sender: TObject; HintInfo: PHintInfo
-  );
+procedure TFuibtime2erp.StringGrid1ShowHint(Sender: TObject; HintInfo: PHintInfo);
 begin
 
 end;
@@ -1099,45 +1098,48 @@ begin
       queryAccEv.sql.Add(' ((accountingrequired = 1)');
       queryAccEv.sql.Add(' or (reportrequired = 1))');
       queryAccEv.sql.Add(' and ((event in ');
-      queryAccEv.sql.Add(' (select distinct event from UIBEVENT where starttime > :start)) ');
+      queryAccEv.sql.Add(
+        ' (select distinct event from UIBEVENT where starttime > :start)) ');
       queryAccEv.sql.Add(' or (event in (select distinct event from uibaktevent))) ');
       queryAccEv.sql.Add(' order by 1');
       // start 3 Month (90 days) before querystart
-      queryAccEv.ParamByName('start').AsDate := startt-90;
+      queryAccEv.ParamByName('start').AsDate := startt - 90;
       queryAccEv.Open;
       while not queryAccEv.EOF do
       begin
         event := queryAccEv.FieldByName('event').AsString;
-        if getLastIntervalInfo(event, starttime, stoptime, lastIntervalStart,
-          lastIntervalEnd, intervalStartFound, intervalEndFound,
-          reportrequired, accountingrequired, basemonth, projektstart,
-          totaltime, usedtime, availabletime, avaiablesign) then
+        if event <> '' then
         begin
-          Inc(numberselected);
-          DateTimeToString(totaltimestr, 'hh:nn', totaltime);
-          DateTimeToString(usedtimestr, 'hh:nn', usedtime);
-          DateTimeToString(availabletimestr, avaiablesign + 'hh:nn', availabletime);
-          querystart := starttime;
-          queryend := stoptime;
-
-
-          Show := True;
-          if (usedtime <> 0) then
-            Show := False;
-
-          if Show then
+          if getLastIntervalInfo(event, starttime, stoptime, lastIntervalStart,
+            lastIntervalEnd, intervalStartFound, intervalEndFound,
+            reportrequired, accountingrequired, basemonth, projektstart,
+            totaltime, usedtime, availabletime, avaiablesign) then
           begin
-            if intervalEndFound then
-            begin
-              if True then
-              begin
-                // we have to query the whole accounting interval
-                querystart := DateToStr(lastIntervalStart);
-              end;
-              queryend := DateToStr(lastIntervalEnd);
-            end
-            else
+            Inc(numberselected);
+            DateTimeToString(totaltimestr, 'hh:nn', totaltime);
+            DateTimeToString(usedtimestr, 'hh:nn', usedtime);
+            DateTimeToString(availabletimestr, avaiablesign + 'hh:nn', availabletime);
+            querystart := starttime;
+            queryend := stoptime;
+
+
+            Show := True;
+            if (usedtime <> 0) then
               Show := False;
+
+            if Show then
+            begin
+              if intervalEndFound then
+              begin
+                if True then
+                begin
+                  // we have to query the whole accounting interval
+                  querystart := DateToStr(lastIntervalStart);
+                end;
+                queryend := DateToStr(lastIntervalEnd);
+              end
+              else
+                Show := False;
             (*
             if intervalStartFound then
             begin
@@ -1147,50 +1149,57 @@ begin
             else
               Show := False;
               *)
-            if queryUAE.Active then
-              queryUAE.Close;
-            QueryUAE.SQL.Clear;
-            queryUAE.SQL.Add('select * from uibaccountexport ');
-            queryUAE.SQL.Add('where ');
-            queryUAE.SQL.Add('(event = :event) and ');
-            queryUAE.SQL.Add('(fromday = :start) and');
-            queryUAE.SQL.Add('(untilday = :stop)');
-            queryUAE.ParamByName('event').AsString := event;
-            queryUAE.ParamByName('start').AsDate := StrToDate(querystart);
-            queryUAE.ParamByName('stop').AsDate := StrToDate(queryend) - 1;
-            queryUAE.ReadOnly := True;
-            queryUAE.Open;
-          end;
-          if filter('keine Abgerechneten') then
-            if queryUAE.RecordCount >= 1 then
-              Show := False;
-          queryUAE.Close;
-          if Show then
-          begin
-            if queryUAE.Active then
-              queryUAE.Close;
-            QueryUAE.SQL.Clear;
-            queryUAE.SQL.Add('insert into uibaccountexport ');
-            QueryUAE.sql.Add(
-              '(event, fromday, untilday, stunden, inerp, erperror, erp_errorstr) ');
-            QueryUAE.sql.Add('values(:event, :fromday, :untilday, :stunden, 0, 0, "") ');
-            QueryUAE.ParamByName('event').AsString := event;
-            fromday := StrToDate(querystart);
-            untilday := StrToDate(queryend) - 1;
-            QueryUAE.ParamByName('fromday').AsDate := fromday;
-            QueryUAE.ParamByName('untilday').AsDate := untilday;
-            QueryUAE.ParamByName('stunden').AsFloat := usedtime;
-            QueryUAE.ExecSQL;
-            Inc(numberexported);
-            DataModule1.debugOut(5, 'ExportZero', 'exp: ' + event +
-              ' ' + DateToStr(fromday) + ' - ' + DateToStr(untilday));
+              if queryUAE.Active then
+                queryUAE.Close;
+              QueryUAE.SQL.Clear;
+              queryUAE.SQL.Add('select * from uibaccountexport ');
+              queryUAE.SQL.Add('where ');
+              queryUAE.SQL.Add('(event = :event) and ');
+              queryUAE.SQL.Add('(fromday = :start) ');
+              //queryUAE.SQL.Add(' and (untilday = :stop)');
+              queryUAE.ParamByName('event').AsString := event;
+              queryUAE.ParamByName('start').AsDate := StrToDate(querystart);
+              //queryUAE.ParamByName('stop').AsDate := StrToDate(queryend) - 1;
+              queryUAE.ReadOnly := True;
+              queryUAE.Open;
+            end;
+            if filter('keine Abgerechneten') then
+              if queryUAE.RecordCount >= 1 then
+                Show := False;
+            queryUAE.Close;
+            if Show then
+            begin
+              if queryUAE.Active then
+                queryUAE.Close;
+              QueryUAE.SQL.Clear;
+              queryUAE.SQL.Add('insert into uibaccountexport ');
+              QueryUAE.sql.Add(
+                '(event, fromday, untilday, stunden, inerp, erperror, erp_errorstr) ');
+              QueryUAE.sql.Add('values(:event, :fromday, :untilday, :stunden, 0, 0, "") ');
+              QueryUAE.ParamByName('event').AsString := event;
+              fromday := StrToDate(querystart);
+              untilday := StrToDate(queryend) - 1;
+              QueryUAE.ParamByName('fromday').AsDate := fromday;
+              QueryUAE.ParamByName('untilday').AsDate := untilday;
+              QueryUAE.ParamByName('stunden').AsFloat := usedtime;
+              try
+                QueryUAE.ExecSQL;
+              except
+                ShowMessage('Kann nicht einfügen: ' + event + ' vom: ' +
+                  querystart + ' bis: ' + DateToStr(untilday));
+              end;
+              Inc(numberexported);
+              DataModule1.debugOut(5, 'ExportZero', 'exp: ' + event +
+                ' ' + DateToStr(fromday) + ' - ' + DateToStr(untilday));
+            end;
           end;
         end;
         queryAccEv.Next;
       end;
       queryAccEv.Close;
-      StatusBar1.SimpleText := 'Null Stunden Datensätze exportiert: ' +
-        IntToStr(numberexported) + ' von ' + IntToStr(numberselected);
+      StatusBar1.SimpleText :=
+        'Null Stunden Datensätze exportiert: ' + IntToStr(numberexported) +
+        ' von ' + IntToStr(numberselected);
     except
       on e: Exception do
       begin
@@ -1270,92 +1279,96 @@ begin
       queryAccEv.sql.Add(' ((accountingrequired = 1)');
       queryAccEv.sql.Add(' or (reportrequired = 1))');
       queryAccEv.sql.Add(' and ((event in ');
-      queryAccEv.sql.Add(' (select distinct event from UIBEVENT where starttime > :start)) ');
+      queryAccEv.sql.Add(
+        ' (select distinct event from UIBEVENT where starttime > :start)) ');
       queryAccEv.sql.Add(' or (event in (select distinct event from uibaktevent))) ');
       queryAccEv.sql.Add(' order by 1');
       // start 3 Month (90 days) before querystart
-      queryAccEv.ParamByName('start').AsDate := startt-90;
+      queryAccEv.ParamByName('start').AsDate := startt - 90;
       queryAccEv.Open;
       while not queryAccEv.EOF do
       begin
         event := queryAccEv.FieldByName('event').AsString;
-        if getLastIntervalInfo(event, starttime, stoptime, lastIntervalStart,
-          lastIntervalEnd, intervalStartFound, intervalEndFound,
-          reportrequired, accountingrequired, basemonth, projektstart,
-          totaltime, usedtime, availabletime, avaiablesign) then
+        if event <> '' then
         begin
-          Inc(numberselected);
-          totaltimestr := IntToStr(trunc(totaltime * 24)) + ':' + Format(
-            '%.*d', [2, round(frac(totaltime * 24) * 60)]);
-          usedtimestr := IntToStr(trunc(usedtime * 24)) + ':' + Format(
-            '%.*d', [2, round(frac(usedtime * 24) * 60)]);
-          availabletimestr := avaiablesign +
-            IntToStr(trunc(availabletime * 24)) + ':' + Format(
-            '%.*d', [2, round(frac(availabletime * 24) * 60)]);
-          //totaltimestr := FormatDateTime('hh:nn', totaltime, [fdoInterval]);
-          //usedtimestr := FormatDateTime('hh:nn', usedtime, [fdoInterval]);
-          //availabletimestr := avaiablesign +FormatDateTime('hh:nn', availabletime, [fdoInterval]);
-          //DateTimeToString(totaltimestr, 'hh:nn', totaltime);
-          //DateTimeToString(usedtimestr, 'hh:nn', usedtime);
-          //DateTimeToString(availabletimestr, avaiablesign + 'hh:nn', availabletime);
-          querystart := starttime;
-          queryend := stoptime;
-          projectStartStr := '';
-          if projektstart > 0 then
-            projectStartStr := DateToStr(projektstart);
-
-          Show := True;
-          if (usedtime <= 0) and filter('used > 0') then
-            Show := False;
-
-          if Show then
+          if getLastIntervalInfo(event, starttime, stoptime, lastIntervalStart,
+            lastIntervalEnd, intervalStartFound, intervalEndFound,
+            reportrequired, accountingrequired, basemonth, projektstart,
+            totaltime, usedtime, availabletime, avaiablesign) then
           begin
-            if intervalEndFound then
+            Inc(numberselected);
+            totaltimestr := IntToStr(trunc(totaltime * 24)) + ':' +
+              Format('%.*d', [2, round(frac(totaltime * 24) * 60)]);
+            usedtimestr := IntToStr(trunc(usedtime * 24)) + ':' + Format(
+              '%.*d', [2, round(frac(usedtime * 24) * 60)]);
+            availabletimestr := avaiablesign + IntToStr(
+              trunc(availabletime * 24)) + ':' + Format('%.*d',
+              [2, round(frac(availabletime * 24) * 60)]);
+            //totaltimestr := FormatDateTime('hh:nn', totaltime, [fdoInterval]);
+            //usedtimestr := FormatDateTime('hh:nn', usedtime, [fdoInterval]);
+            //availabletimestr := avaiablesign +FormatDateTime('hh:nn', availabletime, [fdoInterval]);
+            //DateTimeToString(totaltimestr, 'hh:nn', totaltime);
+            //DateTimeToString(usedtimestr, 'hh:nn', usedtime);
+            //DateTimeToString(availabletimestr, avaiablesign + 'hh:nn', availabletime);
+            querystart := starttime;
+            queryend := stoptime;
+            projectStartStr := '';
+            if projektstart > 0 then
+              projectStartStr := DateToStr(projektstart);
+
+            Show := True;
+            if (usedtime <= 0) and filter('used > 0') then
+              Show := False;
+
+            if Show then
             begin
-              if filter('ganzes Interval bei Ende') then
+              if intervalEndFound then
               begin
-                // we have to query the whole accounting interval
+                if filter('ganzes Interval bei Ende') then
+                begin
+                  // we have to query the whole accounting interval
+                  querystart := DateToStr(lastIntervalStart);
+                end;
+                queryend := DateToStr(lastIntervalEnd);
+                if filter('markiere ganzes Interval') then
+                  rowcolor[StringGrid1.RowCount] := clMoneyGreen;
+              end
+              else
+              if intervalStartFound then
+              begin
+                // we will start at the beginning of the accounting interval
                 querystart := DateToStr(lastIntervalStart);
               end;
-              queryend := DateToStr(lastIntervalEnd);
-              if filter('markiere ganzes Interval') then
-                rowcolor[StringGrid1.RowCount] := clMoneyGreen;
-            end
-            else
-            if intervalStartFound then
-            begin
-              // we will start at the beginning of the accounting interval
-              querystart := DateToStr(lastIntervalStart);
+              if queryUAE.Active then
+                queryUAE.Close;
+              QueryUAE.SQL.Clear;
+              queryUAE.SQL.Add('select * from uibaccountexport ');
+              queryUAE.SQL.Add('where ');
+              queryUAE.SQL.Add('(event = :event) and ');
+              queryUAE.SQL.Add('(fromday = :start) ');
+              //queryUAE.SQL.Add(' and (untilday = :stop) ');
+              queryUAE.ParamByName('event').AsString := event;
+              queryUAE.ParamByName('start').AsDate := StrToDate(querystart);
+              //queryUAE.ParamByName('stop').AsDate := StrToDate(queryend) - 1;
+              queryUAE.ReadOnly := True;
+              queryUAE.Open;
             end;
-            if queryUAE.Active then
-              queryUAE.Close;
-            QueryUAE.SQL.Clear;
-            queryUAE.SQL.Add('select * from uibaccountexport ');
-            queryUAE.SQL.Add('where ');
-            queryUAE.SQL.Add('(event = :event) and ');
-            queryUAE.SQL.Add('(fromday = :start) and');
-            queryUAE.SQL.Add('(untilday = :stop) ');
-            queryUAE.ParamByName('event').AsString := event;
-            queryUAE.ParamByName('start').AsDate := StrToDate(querystart);
-            queryUAE.ParamByName('stop').AsDate := StrToDate(queryend) - 1;
-            queryUAE.ReadOnly := True;
-            queryUAE.Open;
-          end;
-          if filter('keine Abgerechneten') then
-            if queryUAE.RecordCount >= 1 then
-              Show := False;
-          queryUAE.Close;
-          if Show then
-          begin
-            StringGrid1.InsertRowWithValues(StringGrid1.RowCount,
-              [event, BoolToStr(reportrequired, '+', '-'),
-              BoolToStr(intervalStartFound, '+', '-'),
-              BoolToStr(intervalEndFound, '+', '-'), querystart,
-              queryend, projectStartStr, IntToStr(basemonth),
-              totaltimestr, usedtimestr, availabletimestr]);
-            Inc(numberexported);
-            DataModule1.debugOut(5, 'Load NonZero', 'NonZero: ' +
-              event + ' ' + querystart + ' - ' + DateToStr(StrToDate(queryend) - 1));
+            if filter('keine Abgerechneten') then
+              if queryUAE.RecordCount >= 1 then
+                Show := False;
+            queryUAE.Close;
+            if Show then
+            begin
+              StringGrid1.InsertRowWithValues(StringGrid1.RowCount,
+                [event, BoolToStr(reportrequired, '+', '-'),
+                BoolToStr(intervalStartFound, '+', '-'),
+                BoolToStr(intervalEndFound, '+', '-'), querystart,
+                queryend, projectStartStr, IntToStr(basemonth),
+                totaltimestr, usedtimestr, availabletimestr]);
+              Inc(numberexported);
+              DataModule1.debugOut(5, 'Load NonZero', 'NonZero: ' +
+                event + ' ' + querystart + ' - ' + DateToStr(StrToDate(queryend) - 1));
+            end;
           end;
         end;
         queryAccEv.Next;
