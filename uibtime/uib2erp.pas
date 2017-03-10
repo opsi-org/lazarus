@@ -1116,6 +1116,10 @@ begin
             totaltime, usedtime, availabletime, avaiablesign) then
           begin
             Inc(numberselected);
+
+            // Alles was kleiner als 0.001 (1,5 Minuten) ist, wird ignoriert
+            if usedtime < 0.001 then usedtime := 0;
+
             DateTimeToString(totaltimestr, 'hh:nn', totaltime);
             DateTimeToString(usedtimestr, 'hh:nn', usedtime);
             DateTimeToString(availabletimestr, avaiablesign + 'hh:nn', availabletime);
@@ -1297,6 +1301,10 @@ begin
             totaltime, usedtime, availabletime, avaiablesign) then
           begin
             Inc(numberselected);
+
+            // Alles was kleiner als 0.001 (1,5 Minuten) ist, wird ignoriert
+            if usedtime < 0.001 then usedtime := 0;
+
             totaltimestr := IntToStr(trunc(totaltime * 24)) + ':' +
               Format('%.*d', [2, round(frac(totaltime * 24) * 60)]);
             usedtimestr := IntToStr(trunc(usedtime * 24)) + ':' + Format(
