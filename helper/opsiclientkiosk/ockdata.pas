@@ -373,6 +373,158 @@ end;
 //  method productOnClient_getObjects [] {"productId":"opsi-winst","clientId":"pcbon4.uib.local"}
 // method product_getObjects [] {"id":"opsi-winst"}
 
+(*
+{
+   "installedprodver" : "",
+   "hasUninstall" : true,
+   "installedpackver" : "",
+   "description" : "Adobe Reader for PDF-files in german and english (default english)",
+   "possibleAction" : "",
+   "advice" : "Setup sets status of opsiproduct acroread to not_installed",
+   "requirements" :
+       [
+       ],
+   "priority" : 0,
+   "actionresult" : "",
+   "ProductName" : "Adobe Acrobatreader 9.x",
+   "actionrequest" : "",
+   "versionstr" : "9.5.5-1",
+   "updatePossible" : "",
+   "productversion" : "9.5.5",
+   "producttype" : "LocalbootProduct",
+   "installedverstr" : "",
+   "packageversion" : "1",
+   "ProductId" : "acroread9",
+   "installationStatus" : "",
+   "hasSetup" : true
+   }
+
+   *)
+
+procedure fetchProductData_by_getKioskProductInfosForClient;
+var
+  resultstring, groupstring, method, testresult: string;
+  //parameters: array of string;
+  jOResult, new_obj, detail_obj: ISuperObject;
+  //jOArray: TSuperArray;
+  i: integer;
+  str, pid, depotid, pidliststr, reqtype: string;
+  productdatarecord: TProductData;
+  //gridrow: TStringList;
+  //myGridColumn : TGridColumn;
+begin
+  // initialize product meta data list
+  //SetLength(productdataList, 1);
+
+  // get for each product the meta data: product, productOnClient
+  //SetLength(productdataList, productIdsList.Count);
+  ZMQueryDataSet1.EmptyDataSet;
+  ZMQueryDataSet1.Filtered:=false;
+  ZMQueryDataSet2.EmptyDataSet;
+
+  FopsiClientKiosk.ProgressbarDetail.Max := productIdsList.Count;
+  FopsiClientKiosk.LabelDataLoad.Caption := 'Products';
+  FopsiClientKiosk.Progressbar1.Position := 5;
+  FopsiClientKiosk.ProcessMess;
+
+  resultstring := MyOpsiMethodCall('getKioskProductInfosForClient',
+    [myclientid]);
+  new_obj := SO(resultstring).O['result'];
+  str := new_obj.AsString;
+  // product data to database
+  for i := 0 to new_obj.AsArray.Length - 1 do
+  begin
+    detail_obj := new_obj.AsArray.O[i];
+    str := detail_obj.AsString;
+    str := detail_obj.S['productId'];
+    FopsiClientKiosk.LabelDataLoadDetail.Caption := str;
+    FopsiClientKiosk.ProgressbarDetail.Position := i + 1;
+    FopsiClientKiosk.ProcessMess;
+    productdatarecord.id := str;
+
+    ZMQueryDataSet1.Append;
+    ZMQueryDataSet1.FieldByName('ProductId').AsString := detail_obj.S['productId'];
+    ZMQueryDataSet1.FieldByName('productVersion').AsString := detail_obj.S['productVersion'];
+    ZMQueryDataSet1.FieldByName('packageVersion').AsString := detail_obj.S['packageVersion'];
+    ZMQueryDataSet1.FieldByName('versionstr').AsString :=
+             detail_obj.S['productVersion'] + '-' + detail_obj.S['packageVersion'];
+    ZMQueryDataSet1.FieldByName('ProductName').AsString := detail_obj.S['productName'];
+    ZMQueryDataSet1.FieldByName('description').AsString := detail_obj.S['description'];
+    ZMQueryDataSet1.FieldByName('advice').AsString := detail_obj.S['advice'];
+    ZMQueryDataSet1.FieldByName('priority').AsString := detail_obj.S['priority'];
+    ZMQueryDataSet1.FieldByName('producttype').AsString := detail_obj.S['productType'];
+    ZMQueryDataSet1.FieldByName('hasSetup').AsString := detail_obj.S['hasSetup'];
+    ZMQueryDataSet1.FieldByName('hasUninstall').AsString :=  detail_obj.S['hasUninstall'];
+    ZMQueryDataSet1.FieldByName('installationStatus').AsString := detail_obj.S['installationStatus'];
+    ZMQueryDataSet1.FieldByName('installedprodver').AsString := detail_obj.S['installedProdVer'];
+    ZMQueryDataSet1.FieldByName('installedpackver').AsString := detail_obj.S['installedPackVer'];
+    ZMQueryDataSet1.FieldByName('installedverstr').AsString := detail_obj.S['installedVerStr'];
+    ZMQueryDataSet1.FieldByName('actionrequest').AsString := detail_obj.S['actionRequest'];
+    ZMQueryDataSet1.FieldByName('actionresult').AsString := detail_obj.S['actionResult'];
+    ZMQueryDataSet1.FieldByName('updatePossible').AsString := detail_obj.S['updatePossible'];
+    ZMQueryDataSet1.FieldByName('possibleAction').AsString := detail_obj.S['possibleAction'];
+      ZMQueryDataSet1.Post;
+
+
+  // productDependencies
+  end;
+
+  (*
+  resultstring := MyOpsiMethodCall('productDependency_getObjects',
+    ['[]', '{"productId":' + pidliststr + '}']);
+  new_obj := SO(resultstring).O['result'];
+  if new_obj <> nil then
+  begin
+    str := new_obj.AsString;
+    // product data to database
+    for i := 0 to new_obj.AsArray.Length - 1 do
+    begin
+      detail_obj := new_obj.AsArray.O[i];
+      if detail_obj.S['productAction'] = 'setup' then
+      begin
+        str := detail_obj.AsString;
+        str := detail_obj.S['productId'];
+        FopsiClientKiosk.LabelDataLoadDetail.Caption := str;
+        FopsiClientKiosk.ProgressbarDetail.Position := i + 1;
+        FopsiClientKiosk.ProcessMess;
+        productdatarecord.id := str;
+        productdatarecord.productversion := detail_obj.S['productVersion'];
+        productdatarecord.packageversion := detail_obj.S['packageVersion'];
+        productdatarecord.versionstr :=
+          detail_obj.S['productVersion'] + '-' + detail_obj.S['packageVersion'];
+        reqtype := detail_obj.S['requirementType'];
+
+        if ZMQueryDataSet1.Locate('ProductId;versionstr',
+          VarArrayOf([productdatarecord.id, productdatarecord.versionstr]),
+          [loCaseInsensitive]) then
+        begin
+
+          ZMQueryDataSet2.Append;
+          ZMQueryDataSet2.FieldByName('ProductId').AsString := productdatarecord.id;
+          str := detail_obj.S['requiredProductId'];
+          ZMQueryDataSet2.FieldByName('requiredProductId').AsString := str;
+          str := '';
+          if detail_obj.S['requiredAction'] <> '' then
+            str := detail_obj.S['requiredAction'];
+          if detail_obj.S['requiredInstallationStatus'] <> '' then
+            str := detail_obj.S['requiredInstallationStatus'];
+          if reqtype = 'before' then
+            ZMQueryDataSet2.FieldByName('prerequired').AsString := ':' + str;
+          if reqtype = 'after' then
+            ZMQueryDataSet2.FieldByName('postrequired').AsString := ':' + str;
+          if reqtype = '' then
+            ZMQueryDataSet2.FieldByName('required').AsString := ':' + str;
+
+          ZMQueryDataSet2.Post;
+        end;
+      end;
+    end;
+  end;
+  //ZMQueryDataSet2.Close;
+  //ZMQueryDataSet2.Open;
+  *)
+  ZMQueryDataSet1.First;
+end;
 
 function getProductGroupList: TStringList;
 var
