@@ -153,7 +153,6 @@ type
     procedure SpeedButtonAllClick(Sender: TObject);
     procedure SpeedButtonViewListClick(Sender: TObject);
     procedure SpeedButtonViewStoreClick(Sender: TObject);
-    procedure TimerProcessMessTimer(Sender: TObject);
     procedure ZMQueryDataSet1NewRecord(DataSet: TDataSet);
   private
     { private declarations }
@@ -304,10 +303,14 @@ var
   action: string;
 begin
   inTileRebuild := True;
-  counter := length(ProductTilesArray);
-  if counter > 0 then
-  for i:=0 to counter -1 do ProductTilesArray[i].Destroy;
-  SetLength(ProductTilesArray, 0);
+  try
+    counter := length(ProductTilesArray);
+    if counter > 0 then
+    for i:=0 to counter -1 do ProductTilesArray[i].Destroy;
+    SetLength(ProductTilesArray, 0);
+
+  except
+  end;
   counter := 0;
   ZMQUerydataset1.First;
   while not ZMQUerydataset1.EOF do
@@ -677,6 +680,8 @@ procedure TFopsiClientKiosk.grouplistSelectionChange(Sender: TObject; User: bool
 var
   i: integer;
 begin
+  ockdata.fetchProductData_by_getKioskProductInfosForClient;
+  (*
   ProgressBar1.Visible := True;
   ProgressBarDetail.Visible := True;
   LabelWait.Visible := True;
@@ -745,6 +750,7 @@ begin
   ProgressBarDetail.Visible := False;
   LabelWait.Visible := False;
   grouplist.Enabled := True;
+  *)
   RadioGroupViewSelectionChanged(self);
 end;
 
@@ -922,10 +928,6 @@ begin
   NotebookProducts.PageIndex := 1;
 end;
 
-procedure TFopsiClientKiosk.TimerProcessMessTimer(Sender: TObject);
-begin
-  Application.ProcessMessages;
-end;
 
 procedure TFopsiClientKiosk.ZMQueryDataSet1NewRecord(DataSet: TDataSet);
 begin
@@ -933,6 +935,8 @@ begin
 end;
 
 procedure TFopsiClientKiosk.BitBtnCancelClick(Sender: TObject);
+var
+  counter,i : integer;
 begin
   if opsidata <> nil then
   begin
@@ -940,6 +944,15 @@ begin
     //opsidata.finishOpsiConf;
     opsidata.Free;
   end;
+    try
+    counter := length(ProductTilesArray);
+    if counter > 0 then
+    for i:=0 to counter -1 do ProductTilesArray[i].Destroy;
+    SetLength(ProductTilesArray, 0);
+
+  except
+  end;
+
   Application.Terminate;
 end;
 

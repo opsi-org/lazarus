@@ -109,6 +109,7 @@ procedure fetchProductData;
 procedure setActionrequest(pid: string; request: string);
 function getActionrequests: TStringList;
 procedure firePushInstallation;
+procedure fetchProductData_by_getKioskProductInfosForClient;
 
 resourcestring
   rsNoGroups = 'No Product Groups found ...';
@@ -422,25 +423,30 @@ begin
   ZMQueryDataSet1.Filtered:=false;
   ZMQueryDataSet2.EmptyDataSet;
 
-  FopsiClientKiosk.ProgressbarDetail.Max := productIdsList.Count;
-  FopsiClientKiosk.LabelDataLoad.Caption := 'Products';
-  FopsiClientKiosk.Progressbar1.Position := 5;
-  FopsiClientKiosk.ProcessMess;
+  //FopsiClientKiosk.ProgressbarDetail.Max := productIdsList.Count;
+  //FopsiClientKiosk.LabelDataLoad.Caption := 'Products';
+  //FopsiClientKiosk.Progressbar1.Position := 5;
+  //FopsiClientKiosk.ProcessMess;
 
   resultstring := MyOpsiMethodCall('getKioskProductInfosForClient',
     [myclientid]);
   new_obj := SO(resultstring).O['result'];
   str := new_obj.AsString;
+      LogDatei.log('Get products done', LLNotice);
+    FopsiClientKiosk.LabelDataload.Caption := 'Handle Products';
+    FopsiClientKiosk.ProgressBar1.Position := 3;
+    FopsiClientKiosk.ProcessMess;
+
   // product data to database
   for i := 0 to new_obj.AsArray.Length - 1 do
   begin
     detail_obj := new_obj.AsArray.O[i];
-    str := detail_obj.AsString;
-    str := detail_obj.S['productId'];
-    FopsiClientKiosk.LabelDataLoadDetail.Caption := str;
-    FopsiClientKiosk.ProgressbarDetail.Position := i + 1;
-    FopsiClientKiosk.ProcessMess;
-    productdatarecord.id := str;
+    //str := detail_obj.AsString;
+    //str := detail_obj.S['productId'];
+    //FopsiClientKiosk.LabelDataLoadDetail.Caption := str;
+    //FopsiClientKiosk.ProgressbarDetail.Position := i + 1;
+    //FopsiClientKiosk.ProcessMess;
+    //productdatarecord.id := str;
 
     ZMQueryDataSet1.Append;
     ZMQueryDataSet1.FieldByName('ProductId').AsString := detail_obj.S['productId'];
@@ -904,8 +910,8 @@ begin
   FopsiClientKiosk.ProcessMess;
   myexitcode := 0;
   myerror := '';
-  //readconf;
-  readconf2;
+  readconf;
+  //readconf2;
   initlogging(myclientid);
   LogDatei.log('clientid=' + myclientid, LLNotice);
   LogDatei.log('service_url=' + myservice_url, LLNotice);
@@ -914,6 +920,7 @@ begin
   LogDatei.log('host_key=' + myhostkey, LLNotice);
 
   mythread := Tmythread.Create(False);
+  FopsiClientKiosk.ProgressBar1.Max:=3;
   FopsiClientKiosk.LabelDataload.Caption := 'Connect to Service';
   FopsiClientKiosk.ProgressBar1.Position := 1;
   FopsiClientKiosk.ProcessMess;
@@ -921,6 +928,17 @@ begin
   if initConnection(30) then
   begin
     mythread.Terminate;
+    LogDatei.log('init Connection done', LLNotice);
+    FopsiClientKiosk.LabelDataload.Caption := 'Get Products';
+    FopsiClientKiosk.ProgressBar1.Position := 2;
+    FopsiClientKiosk.ProcessMess;
+    fetchProductData_by_getKioskProductInfosForClient;
+    LogDatei.log('Handle products done', LLNotice);
+    FopsiClientKiosk.LabelDataload.Caption := 'Handle Products';
+    FopsiClientKiosk.ProgressBar1.Position := 4;
+    FopsiClientKiosk.ProcessMess;
+
+    (*
     productIdsList := TStringList.Create;
     LogDatei.log('init Connection done', LLNotice);
     FopsiClientKiosk.LabelDataload.Caption := 'Get Groups';
@@ -959,6 +977,7 @@ begin
       LogDatei.log('No productgroups found', LLError);
       Fopsiclientkiosk.StatusBar1.Panels[0].Text := rsNoGroups;
     end;
+    *)
   end
   else
   begin
