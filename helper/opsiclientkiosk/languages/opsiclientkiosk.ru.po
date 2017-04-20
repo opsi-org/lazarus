@@ -23,6 +23,22 @@ msgstr "Все группы"
 msgid "No Product Groups found ..."
 msgstr "Группы продуктов не найдены ..."
 
+#: opsiclientkioskgui.rsactnone
+msgid "Nothing"
+msgstr ""
+
+#: opsiclientkioskgui.rsactrequest
+msgid "Action Request"
+msgstr ""
+
+#: opsiclientkioskgui.rsactsetup
+msgid "Setup"
+msgstr ""
+
+#: opsiclientkioskgui.rsactuninstall
+msgid "Uninstall"
+msgstr ""
+
 #: opsiclientkioskgui.rsnoactionsfound
 msgid "No action requests found."
 msgstr "Запросов действий не найдено."

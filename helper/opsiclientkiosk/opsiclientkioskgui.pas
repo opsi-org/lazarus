@@ -173,6 +173,10 @@ var
 
 resourcestring
   rsNoActionsFound = 'No action requests found.';
+  rsActRequest = 'Action Request';
+  rsActSetup = 'Setup';
+  rsActUninstall = 'Uninstall';
+  rsActNone = 'Nothing';
 
 
 implementation
@@ -181,6 +185,22 @@ implementation
 
 var
   mythread: Tmythread2;
+
+function actionRequestToLocale(actionRequest : string) : string;
+begin
+  if actionRequest = 'setup' then result := rsActSetup
+  else if actionRequest = 'uninstall' then result := rsActUninstall
+  else if actionRequest = 'none' then result := rsActNone
+  else result := 'unknown';
+end;
+
+function localeToActionRequest(localestr : string) : string;
+begin
+  if localestr = rsActSetup then result := 'setup'
+  else if localestr = rsActUninstall then result := 'uninstall'
+  else if localestr = rsActNone then result := 'none'
+  else result := 'unknown';
+end;
 
 
 
@@ -224,7 +244,7 @@ begin
   //RadioGroupAction
   RadioGroupAction := TRadioGroup.Create(self);
   RadioGroupAction.Parent := self;
-  RadioGroupAction.Caption := 'Action';
+  RadioGroupAction.Caption := rsActRequest;
   //RadioGroupAction.Alignment := taCenter;
   RadioGroupAction.Align := alTop;
   RadioGroupAction.OnSelectionChanged := TileActionChanged;
@@ -271,7 +291,7 @@ begin
     begin
       ZMQueryDataSet1.Edit;
       ZMQueryDataSet1.FieldByName('actionrequest').AsString :=
-        ProductTilesArray[tileindex].RadioGroupAction.Items.Strings[actionindex];
+        localeToActionRequest(ProductTilesArray[tileindex].RadioGroupAction.Items.Strings[actionindex]);
       ZMQueryDataSet1.Post;
     end;
   end;
@@ -299,7 +319,7 @@ end;
 
 procedure rebuildProductTiles;
 var
-  counter,i: integer;
+  counter,i, index: integer;
   action: string;
 begin
   inTileRebuild := True;
@@ -324,12 +344,16 @@ begin
     ProductTilesArray[counter].LabelState.Caption :=
       ZMQueryDataSet1.FieldByName('installationStatus').AsString;
     //radio group
-    ProductTilesArray[counter].RadioGroupAction.Items.Add('none');
-    ProductTilesArray[counter].RadioGroupAction.Items.Add('setup');
+    ProductTilesArray[counter].RadioGroupAction.Items.Add(rsActNone);
+    ProductTilesArray[counter].RadioGroupAction.Items.Add(rsActSetup);
     action := Trim(ockdata.ZMQUerydataset1.FieldByName('possibleAction').AsString);
     if (action <> '') and (action <> 'setup') then
-      ProductTilesArray[counter].RadioGroupAction.Items.Add(action);
-    ProductTilesArray[counter].RadioGroupAction.ItemIndex := 0;
+      ProductTilesArray[counter].RadioGroupAction.Items.Add(actionRequestToLocale(action));
+    action := Trim(ockdata.ZMQUerydataset1.FieldByName('actionrequest').AsString);
+    index := 0;
+    index := ProductTilesArray[counter].RadioGroupAction.Items.IndexOf(actionRequestToLocale(action));
+    ProductTilesArray[counter].RadioGroupAction.ItemIndex := index;
+    //ProductTilesArray[counter].RadioGroupAction.ItemIndex := 0;
     (*
     //button
     ProductTilesArray[0].Button1.Caption :=
@@ -522,7 +546,8 @@ var
 begin
   // write back action requests
   ockdata.ZMQUerydataset1.Filtered := False;
-  ockdata.ZMQUerydataset1.Filter := 'ActionRequest <> ""';
+  //ockdata.ZMQUerydataset1.Filter := ' not ((ActionRequest = "") and (ActionRequest = "none"))';
+  ockdata.ZMQUerydataset1.Filter := 'ActionRequest = "setup"';
   ockdata.ZMQUerydataset1.Filtered := True;
   ProcessMess;
   RadioGroupViewSelectionChanged(self);
@@ -954,6 +979,7 @@ begin
   end;
 
   Application.Terminate;
+  halt;
 end;
 
 end.

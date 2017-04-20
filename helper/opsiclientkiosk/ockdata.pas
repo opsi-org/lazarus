@@ -163,23 +163,20 @@ end;
 // from osfunc
 procedure stringsplit(const s, delimiter: string; var Result: TStringList);
 // produziert eine Stringliste aus den Teilstrings, die zwischen den Delimiter-Strings stehen
-
 var
   remainder: string = '';
   item: string = '';
   found: boolean;
 begin
-
   found := divideAtFirst(delimiter, s, item, remainder);
-
   while found do
   begin
     Result.add(item);
     found := divideAtFirst(delimiter, remainder, item, remainder);
   end;
-
   Result.add(item);
 end;
+
 
 procedure initdb;
 begin
