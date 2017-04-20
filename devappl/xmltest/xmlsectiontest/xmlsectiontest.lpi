@@ -102,7 +102,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="6">
+    <Units Count="4">
       <Unit0>
         <Filename Value="xmlsectiontest.pas"/>
         <IsPartOfProject Value="True"/>
@@ -115,21 +115,13 @@
         <ResourceBaseClass Value="Form"/>
       </Unit1>
       <Unit2>
-        <Filename Value="..\common\osxmltdom.pas"/>
+        <Filename Value="..\..\..\common\oslog.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit2>
       <Unit3>
-        <Filename Value="..\common\osxml.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit3>
-      <Unit4>
-        <Filename Value="..\..\..\common\oslog.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit4>
-      <Unit5>
         <Filename Value="..\..\..\common\osencoding.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit5>
+      </Unit3>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

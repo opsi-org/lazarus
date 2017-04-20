@@ -6,21 +6,23 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  Buttons,  DOM, osxml, oslog, osxmltdom, osxmlsections;
+  Buttons,  DOM, oslog, osxmlsections;
 
 type
 
   { TForm1 }
 
   TForm1 = class(TForm)
-      Button1: TButton;
-      Button2: TButton;
+    Button1: TButton;
+    Button2: TButton;
+    Button3: TButton;
     Close: TBitBtn;
     memo3tomemo1: TButton;
     openFile: TButton;
     Memo1: TMemo;
     OpenDialog1: TOpenDialog;
     Memo3: TMemo;
+    procedure addPackagesClick(Sender: TObject);
     procedure unatt_win10Click(Sender: TObject);
     procedure CloseClick(Sender: TObject);
     procedure configXMLClick(Sender: TObject);
@@ -39,7 +41,6 @@ var
   logfilename: String;
 
 implementation
-var xmlnode, selnode:TDOMNode;
 {$R *.lfm}
 
 { TForm1 }
@@ -56,17 +57,22 @@ begin
 end;
 
 procedure TForm1.openFileClick(Sender: TObject);
+var XMLDocObject: TuibXMLDocument;
 begin
+   XMLDocObject:= TuibXMLDocument.Create;
    Memo1.Clear;
    OpenDialog1.Filter:='xml-file | *.xml';
    OpenDialog1.Title:='Vorhandene XML-Datei öffnen';
    if OpenDialog1.Execute then
    begin
-      createXmlDocFromFile(OpenDialog1.FileName);
-      Memo1.Append(getXMLDocAsTStringlist().Text);
+      if XMLDocObject.openXmlFile(OpenDialog1.FileName) then
+        Memo1.Append(XMLDocObject.getXmlStrings().Text)
+      else
+        Memo1.Append('can not read file');
    end
    else
      Memo1.Append (' no file ');
+   XMLDocObject.destroy;
 end;
 
 
@@ -90,62 +96,87 @@ end;
 
 procedure TForm1.unatt_win10Click(Sender: TObject);
 var XMLDocObject: TuibXMLDocument;
-    mystringlist: TStringList;
     k:integer;
-    ps : String;
-    testnode:TDOMNode;
 begin
   Memo3.Clear;
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-
   XMLDocObject:= TuibXMLDocument.Create;
-  mystringlist:=TStringList.Create;
   // createXMLDoc
   if XMLDocObject.createXmlDocFromStringlist(memoToTStringlist(memo1)) then
-    Memo3.Append('hat geklappt')
+    LogDatei.log('success: create xmldoc from stringlist',oslog.LLinfo)
   else
-    Memo3.Append('hat nicht geklappt');
-  Memo3.Append(mystringlist.Text);
-
-  XMLDocObject.openXmlFile('test.xml');
-
+    LogDatei.log('failed: create xmldoc from stringlist',oslog.LLinfo);
   XMLDocObject.setlengthActNodeSet  (1);
   XMLDocObject.actnodeset[0] := XMLDocObject.getDocumentElement;
   for k:= 0 to length(XMLDocObject.actNodeSet)-1 do
-    begin
     if XMLDocObject.actNodeSet[k] <> nil then
-      Memo3.Append('actNodeSet <> nil')
+      LogDatei.log('actNodeSet <> nil',oslog.LLinfo)
     else
-      Memo3.Append('actNodeSet = nil');
-    end;
+      LogDatei.log('actNodeSet = nil',oslog.LLinfo);
   XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
-  //XMLDocObject.getNextGenerationActNodeSet;
+  //XMLDocObject.filterByChildElement (true, 'settings');
   //XMLDocObject.logNodeSets;
-  XMLDocObject.filterByChildElement (true, 'settings');
-  XMLDocObject.logNodeSets;
+  // Nodetext setzen und Attribut setzen :   SetText, SetAttribute
   if XMLDocObject.nodeExists('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add"') then
-    begin Memo3.Append('Knoten gefunden'); Logdatei.log('Knoten gefunden',oslog.LLinfo); end
-  else
-    begin Memo3.Append('Knoten nicht gefunden'); Logdatei.log('Knoten nicht gefunden',oslog.LLinfo); end;
+    if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add" // ModifyPartitions') then
+    begin
+      XMLDocObject.setNodeText('***ModifyPartitions wurde ersetzt***');
+      XMLDocObject.setAttribute('testname','testvalue');
+    end;
 
-  if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add" // ModifyPartitions') then
-    begin Memo3.Append('aktnode gesetzt'); Logdatei.log('aktnode gesetzt',oslog.LLinfo); end
-  else
-    begin Memo3.Append('aktnode nicht gesetzt'); Logdatei.log('aktnode nicht gesetzt',oslog.LLinfo); end;
-  XMLDocObject.setNodeText('***ModifyPartitions ersetzt***');
-  XMLDocObject.setAttribute('testname','testvalue');
-  if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add"') then
-    begin Memo3.Append('aktnode gesetzt'); Logdatei.log('aktnode gesetzt',oslog.LLinfo); end
-  else
-    begin Memo3.Append('aktnode nicht gesetzt'); Logdatei.log('aktnode nicht gesetzt',oslog.LLinfo); end;
-  XMLDocObject.delAttribute('wcm:action');
-  XMLDocObject.addAttribute('wcm','neues Attribut');
-  Memo3.Append('aktnode Attributvalue für wcm: ' + XMLDocObject.getAttributeValue('wcm'));
+  // Knoten löschen: DeleteElement
+  // muss kein openNode gemacht werden, implizit. Wenn der Knoten nicht gefunden wird, wird der zuletzt gefundene
+  // übergeordnete Knoten gelöscht. Daher zuvor ein nodeExists!!
+  if XMLDocObject.nodeExists('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add" // WillWipeDisk') then
+    XMLDocObject.delNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add" // WillWipeDisk');
+
+  // TODO neuen Knoten setzen : am aktuellen Knoten wird ein Knoten angehängt, der neue Knoten wird aktueller Knoten
+  if XMLDocObject.nodeExists('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration') then
+    if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration') then
+    begin
+      XMLDocObject.makeNode('newnode','','');
+      XMLDocObject.setNodeText('newnode Text setzen');
+    end;
+
+  // Attribute löschen und setzen :  DeleteAttribute, AddAttribute, SetAttribute
+  if XMLDocObject.nodeExists('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add"') then
+    if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add"') then
+    begin
+
+      XMLDocObject.delAttribute('wcm:action');
+      XMLDocObject.addAttribute('newwcm','newwcmAttribute');
+      XMLDocObject.setAttribute('newAttribute','newValue');
+    end;
+
+
+
+  // TODO : wie geht Suche mit mehreren Attributen? Notwendig?
+  // TODO : addText
+  // AddText "rtf" : sets the text only if there was no text node given
+
+  // setText: neuen Text setzen. Jeglicher anderer Inhalt wird ersetzt, auch XML_Blätter. Kein XML-Fragment!
+  if XMLDocObject.nodeExists ('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // UserData // ProductKey // WillShowUI') then
+    if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // UserData // ProductKey // WillShowUI') then
+        XMLDocObject.setNodeText('nodeText wurde gesetzt');
+
+  // setText '' : löschen des komplette Knotens
+
+  {
+    return elements
+    fills the selected elements completely (element name and attributes) into the return list.
+    return attributes
+    produces a list of the attributes.
+    return elementnames
+    produces a list of the element names.
+    return attributenames gives a list only of the attribute names.
+    return text
+    list all textual content of the selected elements.
+    return counting
+    gives a report with numerical informations: line 0 contains the number of selected elements, line 1 the number of attributes.
+  }
   Memo3.Append('aktnode Attributvalue für wcm-nix: ' + XMLDocObject.getAttributeValue('wcm-nix'));  // liefert nichts zurück, da es das Attribut nicht gibt.
   Memo3.Append('aktnode Attributvalue für Leerstring: ' + XMLDocObject.getAttributeValue(''));  // liefert auch nichts zurück, da es das Attribut leer ist nicht gibt.  XMLDocObject.makeNode('neuerKnoten','mitAttribut','undValue');
-  XMLDocObject.setNodeText('nodeText gesetzt');
-  XMLDocObject.delNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration');
   XMLDocObject.logNodeSets;
   //XMLDocObject.getNextGenerationActNodeSet;
   {
@@ -166,106 +197,117 @@ begin
 			 (attributenames, attributevalueExists, attributevalues,
 				attributes_strict);
   }
-
-  //**************************************************************
-  {
-  if createXmlDocFromStringlist(memoToTStringlist(memo1)) then
-    begin
-      xmlnode:=getDocumentElement;
-      if getChildnodeByNameAndAttributeKeyAndValue(xmlnode,'settings',
-                                     'pass','windowsPE',selnode) then
-        begin
-          xmlnode:=selnode;
-          if getChildnodeByNameAndAttributeKeyAndValue(xmlnode,'component',
-                                  'name','Microsoft-Windows-Setup',selnode) then
-            begin
-              xmlnode:=selnode;
-              if getUniqueChildNodeByName(xmlnode,'DiskConfiguration',selnode) then
-                begin
-                  xmlnode:=selnode;
-                  if getUniqueChildNodeByName(xmlnode,'Disk',selnode) then
-                    begin
-                      xmlnode:=selnode;
-                      if getUniqueChildNodeByName(xmlnode,'ModifyPartitions',selnode) then
-                        begin
-                          if setActualValueTDOMNode('***modify_partitions***') then
-                            memo3.Append('***modify_partitions*** set')
-                          else Memo3.Append('setActualValueTDOMNode ***modify_partitions*** failed')
-                        end
-                      else Memo3.Append('getUniqueChildNodeByName ModifyPartitions failed')
-                    end
-                  else Memo3.Append('getUniqueChildNodeByName Disk failed')
-                end
-              else Memo3.Append('getUniqueChildNodeByName DiskConfiguration failed');
-            end
-          else Memo3.Append('getChildnodeByNameAndAttributeKeyAndValue(component name Microsoft-Windows-Setup) failed')
-        end
-      else Memo3.Append('getChildnodeByNameAndAttributeKeyAndValue(settings pass windowsPE) failed');
-      //**********************************************************************
-      xmlnode:=getDocumentElement;
-      if getChildnodeByNameAndAttributeKeyAndValue(xmlnode,'settings',
-                                     'pass','windowsPE',selnode) then
-        begin
-          xmlnode:=selnode;
-          if getChildnodeByNameAndAttributeKeyAndValue(xmlnode,'component',
-                                  'name','Microsoft-Windows-Setup',selnode) then
-            begin
-              xmlnode:=selnode;
-              if getUniqueChildNodeByName(xmlnode,'UserData',selnode)  then
-              begin
-                xmlnode:=selnode;
-                if getUniqueChildNodeByName(xmlnode,'FullName',selnode)  then
-                  if setActualValueTDOMNode('***fullname***') then
-                        memo3.Append('***fullname*** set')
-                  else memo3.Append('setActualValueTDOMNode FullName failed')
-                else memo3.Append('getUniqueChildNodeByName UserData failed');
-                if getUniqueChildNodeByName(xmlnode,'Organization',selnode) then
-                  if setActualValueTDOMNode('***orgname***') then
-                     memo3.Append('***orgname*** set')
-                  else memo3.Append('can not set node Organization')
-                else memo3.Append('Node Organization not found');
-              end
-            else memo3.Append('getUniqueChildNodeByName UserData failed');
-            end
-          else Memo3.Append('getChildnodeByNameAndAttributeKeyAndValue(component name Microsoft-Windows-Setup) failed')
-        end
-      else Memo3.Append('getChildnodeByNameAndAttributeKeyAndValue(settings pass windowsPE) failed');
-      //**********************************************************************
-
-    end
-  else Memo3.Append('createXmlDocFromStringlist failed');
-  }
   memo3.Append(XMLDocObject.getXmlStrings().Text);
-
   memo3.Repaint;
   Application.ProcessMessages;
   XMLDocObject.destroy;
 end;
 
-
-
-procedure TForm1.configXMLClick(Sender: TObject);
-
+procedure TForm1.addPackagesClick(Sender: TObject);
+var XMLDocObject: TuibXMLDocument;
+    k: integer;
 begin
   Memo3.Clear;
-  // OpenNodeSet
-  if createXmlDocFromStringlist(memoToTStringlist(memo1)) then
-  begin
-    // documentroot
-    // allchildelemets with elementname: "PIKEY"
-     xmlnode:=getDocumentElement;
-     if getUniqueChildNodeByName(xmlnode, 'PIDKEY',selnode) then
-       if setChildAttributeValueTDOMNode(selnode, 'Value', 'NewValue') then
-         // SetAttribute "Value="XXXXXXXXXXXXXXXXXXXXXXXXX" value="NewValue"
-         memo3.Append(getXMLDocAsTStringlist.Text)
-       else Memo3.Append('setChildAttributeValueTDOMNode failed')
-     else Memo3.Append('selectAllNodesByName failed')
-  end
+  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+  XMLDocObject:= TuibXMLDocument.Create;
+  // createXMLDoc
+  if XMLDocObject.createXmlDocFromStringlist(memoToTStringlist(memo1)) then
+    LogDatei.log('success: create xmldoc from stringlist',oslog.LLinfo)
   else
-    Memo3.Append('createXmlDocFromStringlist failed');
+    LogDatei.log('failed: create xmldoc from stringlist',oslog.LLinfo);
+  XMLDocObject.setlengthActNodeSet  (1);
+  XMLDocObject.actnodeset[0] := XMLDocObject.getDocumentElement;
+  for k:= 0 to length(XMLDocObject.actNodeSet)-1 do
+    if XMLDocObject.actNodeSet[k] <> nil then
+      LogDatei.log('actNodeSet <> nil',oslog.LLinfo)
+    else
+      LogDatei.log('actNodeSet = nil',oslog.LLinfo);
+  XMLDocObject.makeNewDerivedNodeSet;
+  XMLDocObject.logNodeSets;
+  // add nodes
+  if XMLDocObject.nodeExists('packages config:type="list"') then
+    if XMLDocObject.openNode('packages config:type="list"') then
+    begin
+      XMLDocObject.makeNode('package','','');
+      XMLDocObject.setNodeText('thunderbird');
+    end;
+  if XMLDocObject.nodeExists('packages config:type="list"') then
+    if XMLDocObject.openNode('packages config:type="list"') then
+    begin
+      XMLDocObject.makeNode('package','','');
+      XMLDocObject.setNodeText('firefox');
+    end;
+  if XMLDocObject.nodeExists('packages config:type="list"') then
+    if XMLDocObject.openNode('packages config:type="list"') then
+    begin
+      XMLDocObject.makeNode('package','','');
+      XMLDocObject.setNodeText('flowerpower');
+    end;
+  // TODO delete node if text is ... das funktioniert so noch nicht
+  // select node name=package, text=snapper
+  if XMLDocObject.nodeExists('packages config:type="list"') then
+    if XMLDocObject.openNode('packages config:type="list"') then
+    begin
+      if XMLDocObject.findAktnodeByText('snapper') then
+      begin
+        LogDatei.log('found: package snapper',oslog.LLinfo);
+        XMLDocObject.setNodeText('');
+        LogDatei.log('node package snapper deleted',oslog.LLinfo);
+      end
+      else
+        LogDatei.log('not found: package snapper',oslog.LLinfo);
+    end;
+  // select node name=package, text=glibc
+  if XMLDocObject.nodeExists('packages config:type="list"') then
+    if XMLDocObject.openNode('packages config:type="list"') then
+    begin
+      if XMLDocObject.findAktnodeByText('glibc') then
+      begin
+        LogDatei.log('found: package glibc',oslog.LLinfo);
+        XMLDocObject.setNodeText('');
+        LogDatei.log('node package glibc deleted',oslog.LLinfo);
+      end
+      else
+        LogDatei.log('not found: package glibc',oslog.LLinfo);
+    end;
+
+  memo3.Append(XMLDocObject.getXmlStrings().Text);
   memo3.Repaint;
   Application.ProcessMessages;
-  freeXmlDoc();
+  XMLDocObject.destroy;
+end;
+
+procedure TForm1.configXMLClick(Sender: TObject);
+var XMLDocObject: TuibXMLDocument;
+    k: integer;
+begin
+  Memo3.Clear;
+  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+  XMLDocObject:= TuibXMLDocument.Create;
+  // createXMLDoc
+  if XMLDocObject.createXmlDocFromStringlist(memoToTStringlist(memo1)) then
+    LogDatei.log('success: create xmldoc from stringlist',oslog.LLinfo)
+  else
+    LogDatei.log('failed: create xmldoc from stringlist',oslog.LLinfo);
+  XMLDocObject.setlengthActNodeSet  (1);
+  XMLDocObject.actnodeset[0] := XMLDocObject.getDocumentElement;
+  for k:= 0 to length(XMLDocObject.actNodeSet)-1 do
+    if XMLDocObject.actNodeSet[k] <> nil then
+      LogDatei.log('actNodeSet <> nil',oslog.LLinfo)
+    else
+      LogDatei.log('actNodeSet = nil',oslog.LLinfo);
+  XMLDocObject.makeNewDerivedNodeSet;
+  XMLDocObject.logNodeSets;
+  // add packages
+  if XMLDocObject.nodeExists('PIDKEY Value="XXXXXXXXXXXXXXXXXXXXXXXXX"') then
+    if XMLDocObject.openNode('PIDKEY Value="XXXXXXXXXXXXXXXXXXXXXXXXX"') then
+    begin
+      XMLDocObject.setAttribute('Value','Value wird gesetzt');
+    end;
+  memo3.Append(XMLDocObject.getXmlStrings().Text);
+  memo3.Repaint;
+  Application.ProcessMessages;
+  XMLDocObject.destroy;
 end;
 
 

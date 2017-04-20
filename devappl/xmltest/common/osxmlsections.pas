@@ -9,7 +9,7 @@ unit osxmlsections;
 // Text of the GPL: http://www.gnu.org/licenses/gpl.html
 // Unofficial GPL Translations: http://www.gnu.org/licenses/translations.html
 //
-// author: Rupert Roeder, APohl, detlef oertel
+// author: Rupert Roeder, APohl, detlef oertel, m.hammel
 // credits: http://www.opsi.org/credits/
 
 
@@ -17,8 +17,8 @@ unit osxmlsections;
 interface
 
 uses
-	SysUtils, Classes, Types,
-	dom,
+	SysUtils, Classes,
+	DOM,
         XMLRead,
         XMLWrite,
 	//osxmltdom,
@@ -27,7 +27,6 @@ uses
 	Dialogs, StrUtils,
 	ExtCtrls,
         oslog;
-
 	//xmlpluginfunc,
 	//xmlpluginsynth,
 	//pluginlog;
@@ -97,10 +96,10 @@ type
                      :boolean;
     }
 
-    procedure openXmlFile(filename : string);
+    function openXmlFile(filename : string) : boolean;
     //procedure saveXmlFile(filename : string);
     //procedure createXmlFile(filename : string; stringlist : TStringList);
-    function getXmlStrings : TStrings;
+    function getXmlStrings : TStringlist;
 
     procedure getNextGenerationActNodeSet;
     procedure makeNewDerivedNodeSet;
@@ -114,8 +113,9 @@ type
 
     function filterByChildElement (filtering: boolean; elementname: string) : Boolean;
 
-    function filterByText (filtering: boolean; textvalue: string) : Boolean;
+    //function filterByText (filtering: boolean; textvalue: string) : Boolean;
 
+    function findAktnodeByText (textvalue: string) : Boolean;
 
     // The main idea for the following syntax:
 
@@ -381,30 +381,24 @@ begin
  openXmlFile(filename);
 end;
 }
-procedure TuibXMLDocument.openXmlFile(filename : string);
+
+function TuibXMLDocument.openXmlFile(filename : string) : boolean;
+var mystream: TFileStream;
 begin
+ result := false;
  try
-  writelog(5,'try to open File: '+filename);
-  //DatamoduleXML.XMLDocument1 := TXMLDocument.Create(nil);
-  //DatamoduleXML.XMLDocument1.DOMVendor:= GetDOMVendor('Xerces XML');
-  //DatamoduleXML.XMLDocument1.DOMVendor:= GetDOMVendor('Open XML');
-  //writelog(5,'XMLDocument1 domvendor ');
-  //DatamoduleXML.XMLDocument1.ParseOptions := [];
-  writelog(5,'XMLDocument1 parseoptions [] ');
-  //if DatamoduleXML.XMLDocument1.Active then DatamoduleXML.XMLDocument1.Active := false;
-  writelog(5,'XMLDocument1 not active ');
-  //DatamoduleXML.XMLDocument1.LoadFromFile(FileName);
-  writelog(5,'try to load File: '+filename);
-  // possible values: (doNodeAutoCreate, doNodeAutoIndent, doAttrNull, doAutoPrefix, doNamespaceDecl, doAutoSave);
-  // (doAttrNull=false) give empty string if attributename not exists
-  //DatamoduleXML.XMLDocument1.Options := [doNodeAutoIndent, doAutoPrefix, doNamespaceDecl];
-  writelog(5,'XMLDocument1 options  ');
-  //DatamoduleXML.XMLDocument1.Options := [];
-  //DatamoduleXML.XMLDocument1.Active := true;
-  writelog(4,'File: '+filename+' opend');
+    writelog(5,'try to open File: '+filename);
+    mystream := TFilestream.Create(fileName,fmOpenRead);
+    mystream.Position := 0;
+    XML:=Nil;
+    writelog(5,'try to load File: '+filename);
+    ReadXMLFile(XML, mystream);
+    writelog(4,'File: '+filename+' opend');
+    result:=true;
  except
   on e: Exception do writelog(0,'Error in openXmlFile : '+e.Message);
  end;
+ if mystream<>nil then mystream.Free;
 end;
 
 
@@ -434,9 +428,8 @@ begin
 end;
 }
 
-function TuibXMLDocument.getXmlStrings : TStrings;
+function TuibXMLDocument.getXmlStrings : TStringlist;
 var
-
 nodeStream: TMemoryStream;
 mystringlist: TStringList;
 begin
@@ -823,8 +816,52 @@ begin
 
 end;
 
+function TuibXMLDocument.findAktnodeByText (textvalue: string) : Boolean;
+var
+  i, n, j, basejindex: Integer;
+  comparetext : String;
 
-function TuibXMLDocument.filterByText (filtering: boolean; textvalue: string) : Boolean;
+begin
+  result := true;
+  LogDatei.log('set aktnode as child element with text  "' + textvalue + '"', oslog.LLinfo);
+
+  basejindex := 0;
+  i := 0;
+  while (i < length(actNodeSet)) and (result=false) do
+  Begin
+     if actNodeSet[i] <> nil
+     then
+     begin
+       n := actNodeSet[i].childnodes.count;
+       for j:=0 to n-1
+       do
+       begin
+         aktnode:= actNodeSet[i].childnodes.Item[j];
+         if aktnode.NodeType = TEXT_NODE
+         then
+           comparetext := aktnode.TextContent
+         else
+           comparetext := '';
+
+         if AnsiCompareStr ( textvalue, comparetext ) = 0
+         then
+         begin
+           result:=true; // aktnode is
+         end
+         else result:=false;
+
+       end;
+
+       basejindex := basejindex + n;
+
+     end;
+
+     inc (i);
+  end;
+
+end;
+
+{function TuibXMLDocument.filterByText (filtering: boolean; textvalue: string) : Boolean;
 var
   i, n, j, basejindex: Integer;
   comparetext : String;
@@ -882,7 +919,7 @@ begin
   end;
 
 end;
-
+}
 
 procedure TuibXMLDocument.logNodeSets ;
  var i, basejindex, j: Integer;
@@ -1021,8 +1058,16 @@ begin
      end;
      inc(i)
   end;
-  aktNode := nodesInPath[i-1];
-  writelog(fdebuglevel,'aktNode know node '+IntToStr(i)+': nodename: '+ aktnode.TextContent
+  if found then
+   begin
+    aktNode := nodesInPath[i-1];
+    writelog(fdebuglevel,'aktNode know node '+IntToStr(i)+': nodename: '+ aktnode.TextContent
+    // TODO if multiple nodes with same textcontent, continous string of text content -
+                +' attributeName: '+attributeName
+                +' attributeValue: '+attributeValue);
+   end
+  else
+    writelog(fdebuglevel,'node not found '+IntToStr(i)+': nodename: '+ thisnodename
               +' attributeName: '+attributeName
               +' attributeValue: '+attributeValue);
  except
@@ -1167,7 +1212,7 @@ end;
 
 function TuibXMLDocument.makeNode(
                      mynodeName, attributeName, attributeValue : string):boolean;
-// create new node, append to aktnode, set aktnode to newnode
+// create new node, append to aktnode, set newnode as aktnode
 var newnode: TDOMNode;
 begin
   writelog(fdebuglevel + 1,'begin to make node with nodename: '+nodename
@@ -1218,74 +1263,81 @@ var
  leavingPath, thisnodeName, attributeName, attributeValue : string;
 begin
  nodeExists := false;
- begin
-  // the root node
-  nodesInPath[0] := XML.DocumentElement;
-  stringsplit(nodepath, PATHSEPARATOR , pathes);
-  // walk the path
-  // The Path looks like this:
-  // nodedescription PATHSEPARATOR nodedescripton (and so on)
-  // nodedescription looks like this
-  // nodename attributeName="attributeValue"  or
-  // nodename                          (node without attributes)
-  // (!) attributeValue may contain a PATHSEPARATOR string
-  // PATHSEPARATOR = ' // '
-  i := 1;
-  endOfPath := false;
-  found := true;
-  leavingPath := nodePath;
-  writelog(fdebuglevel + 1,'begin to open nodepath: '+nodepath);
-  while i<pathes.Count+1 do
-  begin
-   attributevalue:='';
-   attributename:='';
-   writelog(fdebuglevel + 1,'path element ' + IntToStr(i) + ' : ' + pathes[i-1]);
-   if (pos('=',pathes[i-1])>0) then // only in ths case attributes
-     begin
-       thisnodeName := copy(pathes[i-1],1,pos(' ',pathes[i-1])-1);
-       leavingPath := copy(pathes[i-1],pos(' ',pathes[i-1])+1,length(pathes[i-1]));
-       attributeName := copy(leavingPath,1,pos('=',leavingPath)-1);
-       leavingPath := copy(leavingPath,pos('=',leavingPath)+1,length(leavingPath));
-       if pos('"'+PATHSEPARATOR,leavingPath) > 0 then
-         attributeValue := copy(leavingPath,1,pos('"'+PATHSEPARATOR,leavingPath))
-       else
-         attributeValue := leavingPath;
-       if AnsiStartsStr('"',attributeValue) then
-        attributeValue := copy(attributeValue,2,length(attributeValue));
-       if AnsiEndsStr('"',attributeValue) then
-        attributeValue := copy(attributeValue,1,length(attributeValue)-1);
-     end
-   else
-     thisnodeName := pathes[i-1];   //
-   thisnodeName := Trim(thisnodeName);
-   attributeValue := Trim(attributeValue);
-   attributename := Trim(attributename);
-   writelog(fdebuglevel + 1,'node '+IntToStr(i)+': nodename '+thisnodename
-               +' attributeName: '+attributeName
-               +' attributeValue: '+attributeValue
-               );
-   if not getNode(nodesInPath[i],nodesInPath[i-1],
-                     thisnodeName, attributeName, attributeValue) then
-     begin
-      found := false;
-      writelog(fdebuglevel,'not found node '+IntToStr(i)+': nodename: '+thisnodename
+ try
+   begin
+    // the root node
+    nodesInPath[0] := XML.DocumentElement;
+    stringsplit(nodepath, PATHSEPARATOR , pathes);
+    // walk the path
+    // The Path looks like this:
+    // nodedescription PATHSEPARATOR nodedescripton (and so on)
+    // nodedescription looks like this
+    // nodename attributeName="attributeValue"  or
+    // nodename                          (node without attributes)
+    // (!) attributeValue may contain a PATHSEPARATOR string
+    // PATHSEPARATOR = ' // '
+    i := 1;
+    endOfPath := false;
+    found := true;
+    leavingPath := nodePath;
+    writelog(fdebuglevel + 1,'begin to open nodepath: '+nodepath);
+    while (i<pathes.Count+1) and found do
+    begin
+     attributevalue:='';
+     attributename:='';
+     writelog(fdebuglevel + 1,'path element ' + IntToStr(i) + ' : ' + pathes[i-1]);
+     if (pos('=',pathes[i-1])>0) then // only in ths case attributes
+       begin
+         thisnodeName := copy(pathes[i-1],1,pos(' ',pathes[i-1])-1);
+         leavingPath := copy(pathes[i-1],pos(' ',pathes[i-1])+1,length(pathes[i-1]));
+         attributeName := copy(leavingPath,1,pos('=',leavingPath)-1);
+         leavingPath := copy(leavingPath,pos('=',leavingPath)+1,length(leavingPath));
+         if pos('"'+PATHSEPARATOR,leavingPath) > 0 then
+           attributeValue := copy(leavingPath,1,pos('"'+PATHSEPARATOR,leavingPath))
+         else
+           attributeValue := leavingPath;
+         if AnsiStartsStr('"',attributeValue) then
+          attributeValue := copy(attributeValue,2,length(attributeValue));
+         if AnsiEndsStr('"',attributeValue) then
+          attributeValue := copy(attributeValue,1,length(attributeValue)-1);
+       end
+     else
+       thisnodeName := pathes[i-1];   //
+     thisnodeName := Trim(thisnodeName);
+     attributeValue := Trim(attributeValue);
+     attributename := Trim(attributename);
+     writelog(fdebuglevel + 1,'node '+IntToStr(i)+': nodename '+thisnodename
                  +' attributeName: '+attributeName
                  +' attributeValue: '+attributeValue
                  );
-     end
-   else
-     begin
-      writelog(fdebuglevel,'Found node '+IntToStr(i)+': nodename: '+thisnodename
-                 +' attributeName: '+attributeName
-                 +' attributeValue: '+attributeValue
-                 );
-      found := true;
-     end;
-     inc(i)
-  end;
+     if not getNode(nodesInPath[i],nodesInPath[i-1],
+                       thisnodeName, attributeName, attributeValue) then
+       begin
+        found := false;
+        writelog(fdebuglevel,'not found node '+IntToStr(i)+': nodename: '+thisnodename
+                   +' attributeName: '+attributeName
+                   +' attributeValue: '+attributeValue
+                   );
+       end
+     else
+       begin
+        writelog(fdebuglevel,'Found node '+IntToStr(i)+': nodename: '+thisnodename
+                   +' attributeName: '+attributeName
+                   +' attributeValue: '+attributeValue
+                   );
+        found := true;
+       end;
+       inc(i)
+    end;
 
-  if found then nodeExists := true
-  else nodeExists := false;
+    if found then nodeExists := true
+    else nodeExists := false;
+   end;
+ except
+  LogDatei.log('node not found' +': nodename: '+thisnodename
+                   +' attributeName: '+attributeName
+                   +' attributeValue: ' + attributeValue, oslog.LLwarning );
+   nodeExists := false;
  end;
 end;
 
@@ -1325,14 +1377,16 @@ begin
     for i := 0 to aktnode.Attributes.Length - 1 do
       if aktnode.Attributes[i].NodeName=attributeName then
         begin
-          aktnode.Attributes[i].TextContent:= attributevalue;
+          aktnode.Attributes[i].TextContent:= attributevalue
         end
     end
   else
     begin
       TDOMElement(aktnode).SetAttribute(attributeName,attributeValue);
-      writelog(fdebuglevel + 1,'create attribute with name: '
-              +attributeName+' value: '+attributeValue);
+      LogDatei.log('create attribute with name: '
+              +attributeName+' value: '+attributeValue, oslog.LLinfo);
+      //writelog(fdebuglevel + 1,'create attribute with name: '
+      //        +attributeName+' value: '+attributeValue);
     end;
 end;
 
@@ -1362,8 +1416,7 @@ begin
   writelog(fdebuglevel + 1,'begin to get value of attribute: name: '
               +attributeName);
   getAttributeValue := '';
-  //getNamespaceAndBasename(attributeName,namespaceUri,attribbasename);
-  if aktNode.HasAttributes then
+  if (aktnode<>nil) and aktNode.HasAttributes then
    getAttributeValue := TDOMElement(aktnode).GetAttribute(attributeName)  ;
 end;
 
