@@ -86,6 +86,7 @@ object FInstalldlg: TFInstalldlg
     Top = 32
     Width = 559
     Align = alClient
+    OnChange = Memo1Change
     ReadOnly = True
     TabOrder = 2
   end

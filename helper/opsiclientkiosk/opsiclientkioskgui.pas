@@ -22,8 +22,10 @@ unit opsiclientkioskgui;
 interface
 
 uses
-  Classes, SysUtils, DB, FileUtil, ExtendedNotebook, ZMConnection,
-  ZMQueryDataSet, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
+  Classes, SysUtils, DB, FileUtil, ExtendedNotebook,
+  //ZMConnection,
+  //ZMQueryDataSet,
+  Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
   Buttons, ComCtrls, Grids, DBGrids, DBCtrls, ockdata, CommCtrl,
   BufDataset, typinfo, installdlg, lcltranslator, oslog, inifiles,
   Variants;
@@ -34,12 +36,20 @@ type
     LabelId: TLabel;
     LabelName: TLabel;
     LabelState: TLabel;
-    RadioGroupAction: TRadioGroup;
+    //RadioGroupAction: TRadioGroup;
+    RadioGroupAction: TGroupbox;
+    rbsetup: TRadiobutton;
+    rbNone: TRadiobutton;
+    rbuninstall: TRadiobutton;
+    lbsetup: TLabel;
+    lbnone: TLabel;
+    lbuninstall: TLabel;
     Button1: TButton;
 
     procedure Button1Click(Sender: TObject);
     procedure TileActionChanged(Sender: TObject);
     procedure ProductTileClick(Sender: TObject);
+    procedure ProductTileChildClick(Sender: TObject);
   private
     { private declarations }
     //FidCaption : String;
@@ -48,7 +58,7 @@ type
   public
     { public declarations }
     constructor Create(TheOwner: TWincontrol);
-    destructor destroy;
+    destructor Destroy;
     //property idCaption: string read getIdCaption write setIdCaption;
   end;
 
@@ -136,6 +146,7 @@ type
     procedure PageListBeforeShow(ASender: TObject; ANewPage: TPage;
       ANewIndex: integer);
     procedure ProcessMess;
+    procedure RadioGroupViewClick(Sender: TObject);
     procedure RadioGroupViewSelectionChanged(Sender: TObject);
     procedure SpeedButtonReloadClick(Sender: TObject);
     procedure Terminate;
@@ -170,13 +181,18 @@ var
   StartupDone: boolean;
   ProductTilesArray: TPanels;
   inTileRebuild: boolean = False;
+  lastOrderDirAsc: boolean = True;
+  lastOrderCol: string;
 
 resourcestring
   rsNoActionsFound = 'No action requests found.';
   rsActRequest = 'Action Request';
   rsActSetup = 'Setup';
   rsActUninstall = 'Uninstall';
-  rsActNone = 'Nothing';
+  rsActNone = 'None';
+  rsInstalled = 'Installed';
+  rsNotInstalled = 'Not installed';
+  rsStateUnknown = 'Unknown';
 
 
 implementation
@@ -186,20 +202,28 @@ implementation
 var
   mythread: Tmythread2;
 
-function actionRequestToLocale(actionRequest : string) : string;
+function actionRequestToLocale(actionRequest: string): string;
 begin
-  if actionRequest = 'setup' then result := rsActSetup
-  else if actionRequest = 'uninstall' then result := rsActUninstall
-  else if actionRequest = 'none' then result := rsActNone
-  else result := 'unknown';
+  if actionRequest = 'setup' then
+    Result := rsActSetup
+  else if actionRequest = 'uninstall' then
+    Result := rsActUninstall
+  else if actionRequest = 'none' then
+    Result := rsActNone
+  else
+    Result := 'unknown';
 end;
 
-function localeToActionRequest(localestr : string) : string;
+function localeToActionRequest(localestr: string): string;
 begin
-  if localestr = rsActSetup then result := 'setup'
-  else if localestr = rsActUninstall then result := 'uninstall'
-  else if localestr = rsActNone then result := 'none'
-  else result := 'unknown';
+  if localestr = rsActSetup then
+    Result := 'setup'
+  else if localestr = rsActUninstall then
+    Result := 'uninstall'
+  else if localestr = rsActNone then
+    Result := 'none'
+  else
+    Result := 'unknown';
 end;
 
 
@@ -210,18 +234,21 @@ begin
   parent := theOwner;
   Width := 200;
   Height := 200;
-  self.OnClick:=ProductTileClick;
-  BorderStyle:=bsSingle;
-  BorderSpacing.Around:=3;
-  Color:=clSilver;
+  self.OnClick := ProductTileClick;
+  BorderStyle := bsSingle;
+  BorderSpacing.Around := 3;
+  //Color:=clMoneyGreen;
+  Color := clSkyBlue;
   //label ID
   labelId := TLabel.Create(self);
   LabelId.Parent := self;
   LabelId.Caption := 'id';
+  LabelId.Font.Style := [fsBold];
   LabelId.Alignment := taCenter;
   LabelId.Width := Width;
   labelId.Align := alTop;
-  labelId.BorderSpacing.Around:=3;
+  labelId.BorderSpacing.Around := 3;
+  labelId.OnClick := ProductTileChildClick;
   //label Name
   LabelName := TLabel.Create(self);
   LabelName.Parent := self;
@@ -230,24 +257,87 @@ begin
   LabelName.WordWrap := True;
   LabelName.Alignment := taCenter;
   LabelName.Align := alTop;
-  LabelName.BorderSpacing.Around:=3;
+  LabelName.BorderSpacing.Around := 3;
+  LabelName.OnClick := ProductTileChildClick;
   //label LabelState
   LabelState := TLabel.Create(self);
   LabelState.Parent := self;
-  LabelState.Caption := 'name';
+  LabelState.Caption := 'state';
   LabelState.Width := Width;
   LabelState.WordWrap := True;
   LabelState.Alignment := taCenter;
   LabelState.Align := alTop;
-  LabelState.BorderSpacing.Around:=3;
+  LabelState.BorderSpacing.Around := 3;
+  LabelState.OnClick := ProductTileChildClick;
 
   //RadioGroupAction
-  RadioGroupAction := TRadioGroup.Create(self);
+  //RadioGroupAction := TRadioGroup.Create(self);
+  RadioGroupAction := TGroupbox.Create(self);
   RadioGroupAction.Parent := self;
   RadioGroupAction.Caption := rsActRequest;
   //RadioGroupAction.Alignment := taCenter;
   RadioGroupAction.Align := alTop;
-  RadioGroupAction.OnSelectionChanged := TileActionChanged;
+  //RadioGroupAction.OnClick := self.OnClick;
+  RadioGroupAction.OnClick := ProductTileChildClick;
+  //RadioGroupAction.OnSelectionChanged := TileActionChanged;
+
+  // radiobuttons
+  // none
+  rbNone := TRadioButton.Create(self);
+  rbNone.Caption := '';
+  rbNone.Top := 50;
+  rbNone.Align := alTop;
+  rbNone.Parent := RadioGroupAction;
+  rbNone.OnChange := TileActionChanged;
+  rbNone.Tag := 0;
+  lbnone := TLabel.Create(self);
+  lbnone.Left := 20;
+  lbnone.Caption := rsActNone;
+  lbnone.Font.Color := clDefault;
+  lbnone.Parent := RadioGroupAction;
+  lbnone.top := rbNone.top;
+  lbnone.Left := 20;
+  lbnone.OnClick := rbnone.OnClick;
+
+  // setup
+  rbsetup := TRadioButton.Create(self);
+  rbsetup.Caption := '';
+  rbsetup.Top := 50;
+  rbsetup.Align := alTop;
+  rbsetup.Parent := RadioGroupAction;
+  rbsetup.OnChange := TileActionChanged;
+  rbsetup.Tag := 1;
+  rbsetup.Enabled := False;
+  lbsetup := TLabel.Create(self);
+  lbsetup.Left := 20;
+  lbsetup.Caption := rsActSetup;
+  lbsetup.Font.Color := clRed;
+  lbsetup.Parent := RadioGroupAction;
+  lbsetup.top := rbsetup.top;
+  lbsetup.Left := 20;
+  lbsetup.Enabled := False;
+  lbsetup.OnClick := rbsetup.OnClick;
+
+  // uninstall
+  rbuninstall := TRadioButton.Create(self);
+  rbuninstall.Caption := '';
+  rbuninstall.Top := 50;
+  rbuninstall.Align := alTop;
+  rbuninstall.Parent := RadioGroupAction;
+  rbuninstall.OnChange := TileActionChanged;
+  rbuninstall.Tag := 2;
+  rbuninstall.Enabled := False;
+  lbuninstall := TLabel.Create(self);
+  lbuninstall.Left := 20;
+  lbuninstall.Caption := rsActUninstall;
+  lbuninstall.Font.Color := clBlue;
+  lbuninstall.Parent := RadioGroupAction;
+  lbuninstall.top := rbuninstall.top;
+  lbuninstall.Left := 20;
+  lbuninstall.Enabled := False;
+  lbuninstall.OnClick := rbuninstall.OnClick;
+
+
   (*
   //Button
   Button1 := TButton.Create(self);
@@ -259,14 +349,20 @@ begin
   *)
 end;
 
-destructor TProductPanel.destroy;
+destructor TProductPanel.Destroy;
 begin
-  labelId.Destroy;
-  LabelName.Destroy;
-  LabelState.Destroy;
-  RadioGroupAction.Destroy;
+  labelId.Free;
+  LabelName.Free;
+  LabelState.Free;
+  RadioGroupAction.Free;
+  rbsetup.Free;
+  rbNone.Free;
+  rbuninstall.Free;
+  lbsetup.Free;
+  lbnone.Free;
+  lbuninstall.Free;
   //Button1.Destroy;
-  inherited destroy;
+  inherited Destroy;
 end;
 
 
@@ -277,21 +373,30 @@ end;
 
 procedure TProductPanel.TileActionChanged(Sender: TObject);
 var
-  pid: string;
+  pid, actionstr: string;
   tileindex, actionindex: integer;
 begin
   if not inTileRebuild then
   begin
-    tileindex := TRadioGroup(Sender).Parent.Tag;
-    actionindex := ProductTilesArray[tileindex].RadioGroupAction.ItemIndex;
+    tileindex := TRadioButton(Sender).Parent.Parent.Tag;
+    //actionindex := ProductTilesArray[tileindex].RadioGroupAction.ItemIndex;
+    actionindex := TRadioButton(Sender).Tag;
     pid := ProductTilesArray[tileindex].LabelId.Caption;
-    ZMQueryDataSet1.first;
+    ZMQueryDataSet1.First;
     if ZMQueryDataSet1.Locate('ProductId', VarArrayOf([pid]),
       [loCaseInsensitive]) then
     begin
       ZMQueryDataSet1.Edit;
-      ZMQueryDataSet1.FieldByName('actionrequest').AsString :=
-        localeToActionRequest(ProductTilesArray[tileindex].RadioGroupAction.Items.Strings[actionindex]);
+      case actionindex of
+        0: actionstr := 'none';
+        1: actionstr := 'setup';
+        2: actionstr := 'uninstall';
+        else
+          logdatei.log('Error: Unexpected tag number in TileActionChanged: ' +
+            IntToStr(actionindex), LLError);
+      end;
+      ZMQueryDataSet1.FieldByName('actionrequest').AsString := actionstr;
+      FopsiClientKiosk.productdetailpanel.Height := 185;
       ZMQueryDataSet1.Post;
     end;
   end;
@@ -304,10 +409,10 @@ var
 begin
   if not inTileRebuild then
   begin
-    tileindex := TRadioGroup(Sender).Parent.Tag;
-    actionindex := ProductTilesArray[tileindex].RadioGroupAction.ItemIndex;
+    tileindex := TProductPanel(Sender).Tag;
+    //actionindex := ProductTilesArray[tileindex].RadioGroupAction.ItemIndex;
     pid := ProductTilesArray[tileindex].LabelId.Caption;
-    ZMQueryDataSet1.first;
+    ZMQueryDataSet1.First;
     if ZMQueryDataSet1.Locate('ProductId', VarArrayOf([pid]),
       [loCaseInsensitive]) then
     begin
@@ -317,16 +422,37 @@ begin
 end;
 
 
+procedure TProductPanel.ProductTileChildClick(Sender: TObject);
+var
+  pid: string;
+  tileindex, actionindex: integer;
+begin
+  if not inTileRebuild then
+  begin
+    tileindex := TGroupbox(Sender).Parent.Tag;
+    //actionindex := ProductTilesArray[tileindex].RadioGroupAction.ItemIndex;
+    pid := ProductTilesArray[tileindex].LabelId.Caption;
+    ZMQueryDataSet1.First;
+    if ZMQueryDataSet1.Locate('ProductId', VarArrayOf([pid]),
+      [loCaseInsensitive]) then
+    begin
+      FopsiClientKiosk.productdetailpanel.Height := 185;
+    end;
+  end;
+end;
+
 procedure rebuildProductTiles;
 var
-  counter,i, index: integer;
-  action: string;
+  counter, i, index: integer;
+  action, state: string;
 begin
   inTileRebuild := True;
   try
     counter := length(ProductTilesArray);
     if counter > 0 then
-    for i:=0 to counter -1 do ProductTilesArray[i].Destroy;
+      //for i:=0 to counter -1 do ProductTilesArray[i].Destroy;
+      for i := 0 to counter - 1 do
+        ProductTilesArray[i].Free;
     SetLength(ProductTilesArray, 0);
 
   except
@@ -341,9 +467,33 @@ begin
       ZMQueryDataSet1.FieldByName('ProductId').AsString;
     ProductTilesArray[counter].LabelName.Caption :=
       ZMQueryDataSet1.FieldByName('ProductName').AsString;
-    ProductTilesArray[counter].LabelState.Caption :=
-      ZMQueryDataSet1.FieldByName('installationStatus').AsString;
+    //ProductTilesArray[counter].LabelState.Caption :=
+    state := ZMQueryDataSet1.FieldByName('installationStatus').AsString;
+    if state = 'installed' then
+      ProductTilesArray[counter].LabelState.Caption := rsInstalled
+    else if (state = 'not_installed') or (state = 'not installed') or (state = '') then
+      ProductTilesArray[counter].LabelState.Caption := rsNotInstalled
+    else if state = 'unknown' then
+      ProductTilesArray[counter].LabelState.Caption := rsStateUnknown;
+
     //radio group
+    ProductTilesArray[counter].rbsetup.Enabled := True;
+    ProductTilesArray[counter].lbsetup.Enabled := True;
+    action := Trim(ockdata.ZMQUerydataset1.FieldByName('possibleAction').AsString);
+    if (action = 'uninstall') then
+    begin
+      ProductTilesArray[counter].rbuninstall.Enabled := True;
+      ProductTilesArray[counter].lbuninstall.Enabled := True;
+    end;
+    action := Trim(ockdata.ZMQUerydataset1.FieldByName('actionrequest').AsString);
+    if (action = 'none') or (action = '') then
+      ProductTilesArray[counter].rbNone.Checked := True
+    else if action = 'setup' then
+      ProductTilesArray[counter].rbsetup.Checked := True
+    else if action = 'uninstall' then
+      ProductTilesArray[counter].rbuninstall.Checked := True;
+
+    (*
     ProductTilesArray[counter].RadioGroupAction.Items.Add(rsActNone);
     ProductTilesArray[counter].RadioGroupAction.Items.Add(rsActSetup);
     action := Trim(ockdata.ZMQUerydataset1.FieldByName('possibleAction').AsString);
@@ -354,6 +504,7 @@ begin
     index := ProductTilesArray[counter].RadioGroupAction.Items.IndexOf(actionRequestToLocale(action));
     ProductTilesArray[counter].RadioGroupAction.ItemIndex := index;
     //ProductTilesArray[counter].RadioGroupAction.ItemIndex := 0;
+    *)
     (*
     //button
     ProductTilesArray[0].Button1.Caption :=
@@ -391,7 +542,7 @@ begin
 end;
 
 
-
+(*
 //http://wiki.freepascal.org/How_to_write_in-memory_database_applications_in_Lazarus/FPC#Sorting_DBGrid_on_TitleClick_event_for_TBufDataSet
 function SortBufDataSet(DataSet: TBufDataSet; const FieldName: string): boolean;
 var
@@ -457,12 +608,18 @@ begin
   //Set the index
   SetStrProp(DataSet, 'IndexName', IndexName);
 end;
+*)
 
 { TFopsiClientKiosk }
 
 procedure TFopsiClientKiosk.ProcessMess;
 begin
   Application.ProcessMessages;
+end;
+
+procedure TFopsiClientKiosk.RadioGroupViewClick(Sender: TObject);
+begin
+
 end;
 
 procedure TFopsiClientKiosk.RadioGroupViewSelectionChanged(Sender: TObject);
@@ -484,10 +641,34 @@ begin
 end;
 
 procedure TFopsiClientKiosk.DBGrid1TitleClick(Column: TColumn);
+var
+  direction: string;
 begin
   try
     //ockdata.ZMQUerydataset1.SortDataset(Column.FieldName);
-    SortBufDataSet(TBufDataset(ockdata.ZMQUerydataset1), Column.FieldName);
+    //SortBufDataSet(TBufDataset(ockdata.ZMQUerydataset1), Column.FieldName);
+    if ZMQueryDataSet1.Active then
+      ZMQueryDataSet1.Close;
+    ZMQUerydataset1.SQL.Clear;
+    direction := ' ASC';
+    if LowerCase(lastOrderCol) = LowerCase(Column.FieldName) then
+    begin
+      if lastOrderDirAsc then
+      begin
+        direction := ' DESC';
+        lastOrderDirAsc := false;
+      end
+      else
+      begin
+        direction := ' ASC';
+        lastOrderDirAsc := true;
+      end;
+    end
+    else
+      lastOrderCol := Column.FieldName;
+    ZMQUerydataset1.SQL.Add('select * from kioskmaster order by ' +
+      Column.FieldName + direction);
+    ZMQUerydataset1.Open;
 
   except
   end;
@@ -881,13 +1062,15 @@ begin
   DBGrid2.Columns.Items[3].Title.Caption := 'post-required';
   DBGrid2.Columns.Items[3].Width := 100;
 
-  ockdata.initdb;
+  //ockdata.initdb;
+  (*
   //DataSource1.DataSet:= ockdata.ZMQUerydataset2;
   DataSource1.DataSet := ZMQUerydataset1;
   DBGrid1.DataSource := DataSource1;
   DataSource2.DataSet := ockdata.ZMQUerydataset2;
   DBGrid2.DataSource := DataSource2;
-  ZMQUerydataset2.MasterSource := DataSource1;
+  //ZMQUerydataset2.MasterSource := DataSource1;
+  ZMQUerydataset2.DataSource := DataSource1;
   LabelDataload.Caption := '';
   LabelDataLoadDetail.Caption := '';
   Progressbar1.Position := 0;
@@ -901,6 +1084,7 @@ begin
   //ZMReferentialKey1.MasterDataSet := ZMQUerydataset1;
   //ZMReferentialKey1.SlaveDataSet := ZMQUerydataset2;
   //ZMReferentialKey1.JoinedFields.Add('ProductId=ProductId');
+  *)
 end;
 
 (*
@@ -934,6 +1118,8 @@ begin
   ockdata.ZMQUerydataset1.Filter := Filterstr;
   ockdata.ZMQUerydataset1.FilterOptions := [foCaseInsensitive];
   ockdata.ZMQUerydataset1.Filtered := True;
+  if RadioGroupView.ItemIndex = 1 then
+    rebuildProductTiles;
 end;
 
 procedure TFopsiClientKiosk.SpeedButtonAllClick(Sender: TObject);
@@ -941,6 +1127,8 @@ begin
   searchedit.Text := '';
   ockdata.ZMQUerydataset1.Filter := '"*"';
   ockdata.ZMQUerydataset1.Filtered := False;
+  if RadioGroupView.ItemIndex = 1 then
+    rebuildProductTiles;
 end;
 
 procedure TFopsiClientKiosk.SpeedButtonViewListClick(Sender: TObject);
@@ -961,7 +1149,7 @@ end;
 
 procedure TFopsiClientKiosk.BitBtnCancelClick(Sender: TObject);
 var
-  counter,i : integer;
+  counter, i: integer;
 begin
   if opsidata <> nil then
   begin
@@ -969,10 +1157,12 @@ begin
     //opsidata.finishOpsiConf;
     opsidata.Free;
   end;
-    try
+  try
     counter := length(ProductTilesArray);
     if counter > 0 then
-    for i:=0 to counter -1 do ProductTilesArray[i].Destroy;
+      //for i:=0 to counter -1 do ProductTilesArray[i].Destroy;
+      for i := 0 to counter - 1 do
+        ProductTilesArray[i].Free;
     SetLength(ProductTilesArray, 0);
 
   except

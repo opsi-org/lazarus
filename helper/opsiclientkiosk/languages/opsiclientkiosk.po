@@ -17,7 +17,7 @@ msgid "No Product Groups found ..."
 msgstr ""
 
 #: opsiclientkioskgui.rsactnone
-msgid "Nothing"
+msgid "None"
 msgstr ""
 
 #: opsiclientkioskgui.rsactrequest
@@ -32,8 +32,20 @@ msgstr ""
 msgid "Uninstall"
 msgstr ""
 
+#: opsiclientkioskgui.rsinstalled
+msgid "Installed"
+msgstr ""
+
 #: opsiclientkioskgui.rsnoactionsfound
 msgid "No action requests found."
+msgstr ""
+
+#: opsiclientkioskgui.rsnotinstalled
+msgid "Not installed"
+msgstr ""
+
+#: opsiclientkioskgui.rsstateunknown
+msgid "Unknown"
 msgstr ""
 
 #: oswebservice.rssendlog

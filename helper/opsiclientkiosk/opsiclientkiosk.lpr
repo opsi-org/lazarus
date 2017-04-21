@@ -14,7 +14,7 @@ uses
   lcltranslator,
   inifiles,
   opsiclientkioskgui,
-  ockdata, installdlg;
+  ockdata, installdlg, datadb;
 
 
 {$R *.res}
@@ -25,6 +25,7 @@ begin
   Application.Title:='opsi-client-kiosk';
   Application.CreateForm(TFopsiClientKiosk, FopsiClientKiosk);
   Application.CreateForm(TFInstalldlg, FInstalldlg);
+  Application.CreateForm(TDataModule1, DataModule1);
   Application.Run;
   Application.Free;
 end.

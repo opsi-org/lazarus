@@ -1,7 +1,7 @@
 object FopsiClientKiosk: TFopsiClientKiosk
-  Left = 476
+  Left = 50
   Height = 580
-  Top = 423
+  Top = 375
   Width = 888
   Caption = 'opsi-client-kiosk'
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
@@ -648,6 +648,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
           'List'
           'Tile'
         )
+        OnClick = RadioGroupViewClick
         OnSelectionChanged = RadioGroupViewSelectionChanged
         TabOrder = 2
       end
