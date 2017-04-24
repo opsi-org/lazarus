@@ -68,9 +68,9 @@ type
   { TFopsiClientKiosk }
 
   TFopsiClientKiosk = class(TForm)
+    BitBtn1: TBitBtn;
     BitBtnShowAction: TBitBtn;
     BitBtnCancel: TBitBtn;
-    BitBtnInfo: TBitBtn;
     BitBtnStoreAction: TBitBtn;
     DataSource1: TDataSource;
     DataSource2: TDataSource;
@@ -106,7 +106,6 @@ type
     RadioGroupView: TRadioGroup;
     ScrollBox1: TScrollBox;
     searchEdit: TEdit;
-    Image1: TImage;
     ImageHeader: TImage;
     datapanel: TPanel;
     SpeedButton1: TSpeedButton;
@@ -117,18 +116,16 @@ type
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
     TitleLabel: TLabel;
-    grouplist: TListBox;
     NotebookProducts: TNotebook;
     PageList: TPage;
     PageTile: TPage;
     PanelToolbar: TPanel;
-    grouppanel: TPanel;
     productlistpanel: TPanel;
     productdetailpanel: TPanel;
-    logopanel: TPanel;
     PanelTopImage: TPanel;
     StatusBar1: TStatusBar;
     ToolBar1: TToolBar;
+    ToolBar2: TToolBar;
     procedure BitBtnInfoClick(Sender: TObject);
     procedure BitBtnShowActionClick(Sender: TObject);
     procedure BitBtnStoreActionClick(Sender: TObject);
@@ -193,6 +190,8 @@ resourcestring
   rsInstalled = 'Installed';
   rsNotInstalled = 'Not installed';
   rsStateUnknown = 'Unknown';
+  rsViewList = 'List';
+  rsViewTiles = 'Tiles';
 
 
 implementation
@@ -871,7 +870,7 @@ begin
     ProgressBar1.Visible := False;
     ProgressBarDetail.Visible := False;
     LabelWait.Visible := False;
-    grouplist.Enabled := True;
+    //grouplist.Enabled := True;
     RadioGroupViewSelectionChanged(self);
   end;
 end;
@@ -1032,7 +1031,7 @@ begin
     *)
   end;
   GetDefaultLang;
-  grouplist.Clear;
+  //grouplist.Clear;
   DBGrid1.Columns.Add.FieldName := 'ProductId';
   DBGrid1.Columns.Items[0].Title.Caption := 'ProductId';
   DBGrid1.Columns.Items[0].Width := 150;
@@ -1061,6 +1060,10 @@ begin
   DBGrid2.Columns.Add.FieldName := 'postrequired';
   DBGrid2.Columns.Items[3].Title.Caption := 'post-required';
   DBGrid2.Columns.Items[3].Width := 100;
+
+  // localize RadioGroupView
+  RadioGroupView.Items[0] := rsViewList;
+  RadioGroupView.Items[1] := rsViewTiles;
 
   //ockdata.initdb;
   (*
