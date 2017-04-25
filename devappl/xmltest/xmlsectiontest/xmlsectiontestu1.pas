@@ -126,12 +126,12 @@ begin
     end;
 
   // Knoten löschen: DeleteElement
-  // muss kein openNode gemacht werden, implizit. Wenn der Knoten nicht gefunden wird, wird der zuletzt gefundene
+  // muss kein openNode gemacht werden, ist implizit. Wenn der Knoten nicht gefunden wird, wird der zuletzt gefundene
   // übergeordnete Knoten gelöscht. Daher zuvor ein nodeExists!!
   if XMLDocObject.nodeExists('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add" // WillWipeDisk') then
     XMLDocObject.delNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add" // WillWipeDisk');
 
-  // TODO neuen Knoten setzen : am aktuellen Knoten wird ein Knoten angehängt, der neue Knoten wird aktueller Knoten
+  // neuen Knoten setzen : am aktuellen Knoten wird ein Knoten angehängt, der neue Knoten wird aktueller Knoten
   if XMLDocObject.nodeExists('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration') then
     if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration') then
     begin
@@ -148,8 +148,6 @@ begin
       XMLDocObject.addAttribute('newwcm','newwcmAttribute');
       XMLDocObject.setAttribute('newAttribute','newValue');
     end;
-
-
 
   // TODO : wie geht Suche mit mehreren Attributen? Notwendig?
   // TODO : addText
@@ -248,11 +246,10 @@ begin
   if XMLDocObject.nodeExists('packages config:type="list"') then
     if XMLDocObject.openNode('packages config:type="list"') then
     begin
-      if XMLDocObject.findAktnodeByText('snapper') then
+      if XMLDocObject.setAktnodeIfText('snapper') then
       begin
         LogDatei.log('found: package snapper',oslog.LLinfo);
-        XMLDocObject.setNodeText('');
-        LogDatei.log('node package snapper deleted',oslog.LLinfo);
+        XMLDocObject.delNode;
       end
       else
         LogDatei.log('not found: package snapper',oslog.LLinfo);
@@ -261,11 +258,10 @@ begin
   if XMLDocObject.nodeExists('packages config:type="list"') then
     if XMLDocObject.openNode('packages config:type="list"') then
     begin
-      if XMLDocObject.findAktnodeByText('glibc') then
+      if XMLDocObject.setAktnodeIfText('glibc') then
       begin
         LogDatei.log('found: package glibc',oslog.LLinfo);
-        XMLDocObject.setNodeText('');
-        LogDatei.log('node package glibc deleted',oslog.LLinfo);
+        XMLDocObject.delNode;
       end
       else
         LogDatei.log('not found: package glibc',oslog.LLinfo);
@@ -274,6 +270,7 @@ begin
   memo3.Append(XMLDocObject.getXmlStrings().Text);
   memo3.Repaint;
   Application.ProcessMessages;
+  //XMLDocObject.writeXmlFile('newpackagesfile.xml',memoToTStringlist(memo3));
   XMLDocObject.destroy;
 end;
 

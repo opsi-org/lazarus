@@ -62,8 +62,9 @@ type
     }
     {
     procedure DOMFromStream(AStream: TStream);
-    procedure ErrorHandler(E: EXMLReadError);
     }
+    procedure ErrorHandler(E: EXMLReadError);
+
    public
     destructor destroy; override;
     function createXmlDocFromStringlist(docstrlist: TStringlist): boolean;
@@ -81,6 +82,7 @@ type
                                   var baseName : String);
 
     }
+
     procedure setlengthActNodeSet (newlength : Integer);
     procedure setlengthDerivedNodeSet (newlength : Integer);
     procedure logNodeSets;
@@ -97,12 +99,15 @@ type
     }
 
     function openXmlFile(filename : string) : boolean;
-    //procedure saveXmlFile(filename : string);
+    function writeXmlFile(filename : string) : boolean;
     //procedure createXmlFile(filename : string; stringlist : TStringList);
+
     function getXmlStrings : TStringlist;
+
 
     procedure getNextGenerationActNodeSet;
     procedure makeNewDerivedNodeSet;
+    {
     function filterByAttributeList
                    (var attributenames : Tstringsarray;
                     var attributevalueExists : Tbooleansarray;
@@ -114,8 +119,8 @@ type
     function filterByChildElement (filtering: boolean; elementname: string) : Boolean;
 
     //function filterByText (filtering: boolean; textvalue: string) : Boolean;
-
-    function findAktnodeByText (textvalue: string) : Boolean;
+    }
+    function setAktnodeIfText (textvalue: string) : Boolean;
 
     // The main idea for the following syntax:
 
@@ -141,9 +146,12 @@ type
     // if the node not exists it will be created (also parent nodes)
     // makes this node to the actual node
 
-
+    // TODO: überladene prozedur???
     procedure delNode(nodePath : string);
-    // this node (and all childs) will be deleted
+    // this node (and all childs) will be deleted, afterwards parent will be aktnode
+
+    procedure delNode(); overload;
+    // aktnode (and all childs) will be deleted, afterwards parent will be aktnode
 
     procedure setNodeText(text : string);
     // set text at the actual node
@@ -191,13 +199,12 @@ const
 
 
 var
-
- showErrors : boolean = true;
+  showErrors : boolean = true;
 
  //#####################
  // from osfunc
  function divideAtFirst(const partialS, S: string; var part1, part2: string): boolean;
-   // teilt den String S beim ersten Vorkommen des Teilstrings partialS;
+   //   teilt den String S beim ersten Vorkommen des Teilstrings partialS;
    //   liefert true, wenn partialS vorkommt,
    //   andernfalls false;
    //   wenn partialS nicht vorkommt, enthaelt part1 den Gesamtstring, part2 ist leer
@@ -295,18 +302,16 @@ begin
     Parser.Free;
   end;
 end;
-
+}
 procedure TuibXMLDocument.ErrorHandler(E: EXMLReadError);
 begin
   if E.Severity = esError then  // wir sind nur in Fehlern bezüglich der Verletzung der DTD interessiert
     writelog(LLerror,E.Message);
   // an dieser Stelle können wir auch alles andere machen, was bei einem Fehler getan werden sollte
 end;
-}
+
 
 //*************  TuibXMLDocument ***********************************
-//************* Namespace handling *******************************
-
 destructor TuibXMLDocument.destroy;
 begin
   inherited destroy;
@@ -372,13 +377,12 @@ end;
 //*************  XML File-Handling ***********************************
 {
 procedure TuibXMLDocument.createXmlFile(filename: String; stringlist : TStringList);
+// TODO
 begin
- begin
-  writelog(fdebuglevel + 1,'begin to create File: '+filename);
-  stringlist.SaveToFile(filename);
-  writelog(fdebuglevel,'File: '+filename+' created');
- end;
- openXmlFile(filename);
+ writelog(fdebuglevel + 1,'begin to create File: '+filename);
+ stringlist.SaveToFile(filename);
+ writelog(fdebuglevel,'File: '+filename+' created');
+ //openXmlFile(filename);
 end;
 }
 
@@ -393,17 +397,18 @@ begin
     XML:=Nil;
     writelog(5,'try to load File: '+filename);
     ReadXMLFile(XML, mystream);
-    writelog(4,'File: '+filename+' opend');
+    writelog(4,'File: '+filename+' read');
     result:=true;
  except
-  on e: Exception do writelog(0,'Error in openXmlFile : '+e.Message);
+  on e: Exception do writelog(0,'Error in readXmlFile : '+e.Message);
  end;
  if mystream<>nil then mystream.Free;
 end;
 
 
-{
-procedure TuibXMLDocument.saveXmlFile(filename : string);
+
+function TuibXMLDocument.writeXmlFile(filename : string) : boolean;
+// TODO
 var
  myFile : TextFile;
  myXml : String;
@@ -411,7 +416,7 @@ var
  i : integer;
 
 begin
- begin
+
   writelog(fdebuglevel + 1,'begin to save File: '+filename);
   //DatamoduleXML.XMLDocument.saveToFile(FileName);
   //saveToXML(myXml);
@@ -423,10 +428,9 @@ begin
   //for i:=0 to xmlStrings.Count-1 do
   // writeln(myFile,xmlStrings[i]);
   //CloseFile(myFile);
-  xmlStrings.Free;
- end;
+  //xmlStrings.Free;
 end;
-}
+
 
 function TuibXMLDocument.getXmlStrings : TStringlist;
 var
@@ -546,6 +550,7 @@ begin
   end;
 end;
 
+{
 function TuibXMLDocument.filterByAttributeList
                    (var attributenames : Tstringsarray;
                     var attributevalueExists : Tbooleansarray;
@@ -768,6 +773,7 @@ begin
 
 end;
 
+
 function TuibXMLDocument.filterByChildElement (filtering: boolean; elementname: string) : Boolean;
 var
   i, n, j, basejindex: Integer;
@@ -815,50 +821,36 @@ begin
   end;
 
 end;
-
-function TuibXMLDocument.findAktnodeByText (textvalue: string) : Boolean;
+}
+function TuibXMLDocument.setAktnodeIfText (textvalue: string) : Boolean;
 var
-  i, n, j, basejindex: Integer;
+  i: Integer;
   comparetext : String;
 
 begin
-  result := true;
+  result := false;
   LogDatei.log('set aktnode as child element with text  "' + textvalue + '"', oslog.LLinfo);
-
-  basejindex := 0;
   i := 0;
-  while (i < length(actNodeSet)) and (result=false) do
+  while (i < aktnode.ChildNodes.Count-1) and (result=false) do
   Begin
-     if actNodeSet[i] <> nil
-     then
+     if aktnode.ChildNodes.Item[i] <> nil then
      begin
-       n := actNodeSet[i].childnodes.count;
-       for j:=0 to n-1
-       do
+       if aktnode.ChildNodes.Item[i].NodeType = ELEMENT_NODE then
        begin
-         aktnode:= actNodeSet[i].childnodes.Item[j];
-         if aktnode.NodeType = TEXT_NODE
-         then
-           comparetext := aktnode.TextContent
-         else
-           comparetext := '';
-
-         if AnsiCompareStr ( textvalue, comparetext ) = 0
-         then
+         LogDatei.log('aktnode as child element with text  "' + aktnode.ChildNodes.Item[i].TextContent + '"', oslog.LLinfo);
+         comparetext := aktnode.ChildNodes.Item[i].TextContent;
+         if AnsiCompareStr ( textvalue, comparetext ) = 0 then
          begin
+           aktnode:= aktnode.ChildNodes.Item[i];
            result:=true; // aktnode is
          end
          else result:=false;
-
+       end
+       else
+         comparetext := '';
        end;
-
-       basejindex := basejindex + n;
-
-     end;
-
      inc (i);
-  end;
-
+   end;
 end;
 
 {function TuibXMLDocument.filterByText (filtering: boolean; textvalue: string) : Boolean;
@@ -921,6 +913,7 @@ begin
 end;
 }
 
+
 procedure TuibXMLDocument.logNodeSets ;
  var i, basejindex, j: Integer;
    count_not_nil : Integer;
@@ -982,6 +975,20 @@ begin
   end;
 end;
 
+procedure TuibXMLDocument.delNode; overload;
+// aktnode (and all childs) will be deleted, afterwards aktnode will be parent
+var
+ removeNode : TDOMNode;
+begin
+  writelog(fdebuglevel + 1,'begin to del Node: '+ aktNode.NodeName);
+  removeNode := aktNode ;
+  aktNode := aktNode.ParentNode;
+  try
+    removenode.Free;
+  except
+    writelog(-1,'Error in delNode. Node was not removed');
+  end;
+end;
 
 function TuibXMLDocument.openNode(nodePath : string) : boolean;
 // set aktnode
@@ -989,7 +996,7 @@ var
  nodesInPath : array[0..50] of TDOMNode;
  pathes: TStringlist;
  i : integer;
- endOfPath, found : boolean;
+ found : boolean;
  leavingPath, thisnodeName, attributeName, attributeValue : string;
 begin
  result := true;
@@ -1006,7 +1013,7 @@ begin
   // (!) attributeValue may contain a PATHSEPARATOR string
   // PATHSEPARATOR = ' // '
   i := 1;
-  endOfPath := false;
+
   found := true;
   leavingPath := nodePath;
   writelog(fdebuglevel + 1,'begin to open nodepath: '+nodepath);
@@ -1216,8 +1223,8 @@ function TuibXMLDocument.makeNode(
 var newnode: TDOMNode;
 begin
   writelog(fdebuglevel + 1,'begin to make node with nodename: '+nodename
-               +' attributeName: '+attributeName
-               +' attributeValue: '+attributeValue
+               +' attributeName: '+ attributeName
+               +' attributeValue: '+ attributeValue
                );
   Result := false;
   try
