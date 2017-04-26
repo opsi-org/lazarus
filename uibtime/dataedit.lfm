@@ -755,13 +755,13 @@ object FDataedit: TFDataedit
         Caption = 'Neuer Eventname'
         ParentColor = False
       end
-      object Button1: TButton
+      object ButtonRenameEvent: TButton
         Left = 57
         Height = 28
         Top = 231
         Width = 75
         Caption = 'Umbennen'
-        OnClick = Button1Click
+        OnClick = ButtonRenameEventClick
         TabOrder = 2
       end
       object BitBtn10: TBitBtn

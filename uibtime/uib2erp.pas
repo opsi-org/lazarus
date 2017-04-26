@@ -922,8 +922,11 @@ begin
   frReport1.FindObject('memosumhm').Memo.Text :=
     IntToStr(trunc(summe_h)) + ':' + Format('%.*d', [2, round(frac(summe_h) * 60)]);
   //FormatDateTime('hh:nn', summe_htd);
+  //frReport1.FindObject('memofreistunden').Memo.Text :=
+  //  IntToStr(round(Total)) + ' pro ' + IntToStr(months) + ' Monat(e)';
   frReport1.FindObject('memofreistunden').Memo.Text :=
-    IntToStr(round(Total)) + ' pro ' + IntToStr(months) + ' Monat(e)';
+     IntToStr(trunc(Total)) + ':' + Format('%.*d', [2, round(frac(Total) * 60)])
+     + ' pro ' + IntToStr(months) + ' Monat(e)';
   (*
   hours := trunc(Total);
   minutes := Round(frac(Total) * 60);

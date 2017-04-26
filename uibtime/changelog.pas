@@ -1,5 +1,13 @@
 (*
 
+uibtime (4.1.1.12-1) stable; urgency=low
+
+ * uib2erp: createreport: format freehours as h:mm
+ * dataedit: ButtonRenameEventClick: renamed in UIBEVENTACCOUNTREPORT
+ * uibdata: SQuibeventPostError Handler
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 26 Apr 2017 15:00:00 +0000
+
 uibtime (4.1.1.11-1) stable; urgency=low
 
   * uib2erp: fix in calculate lastIntervalStart (calc end first)

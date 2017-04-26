@@ -275,6 +275,7 @@ object DataModule1: TDataModule1
     BeforeClose = SQuibeventBeforeClose
     BeforeDelete = SQuibeventBeforeDelete
     BeforePost = SQuibeventBeforePost
+    OnPostError = SQuibeventPostError
     Database = IBConnection1
     Transaction = SQLTransaction1
     SQL.Strings = (

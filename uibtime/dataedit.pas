@@ -15,7 +15,7 @@ type
 
   TFDataedit = class(TForm)
     BitBtn10: TBitBtn;
-    Button1: TButton;
+    ButtonRenameEvent: TButton;
     Edit1: TEdit;
     Edit2: TEdit;
     Label1: TLabel;
@@ -77,7 +77,7 @@ type
     DBMemo1: TDBMemo;
     DBLookupComboBox4: TDBLookupComboBox;
     DBLookupComboBox5: TDBLookupComboBox;
-    procedure Button1Click(Sender: TObject);
+    procedure ButtonRenameEventClick(Sender: TObject);
     procedure DBGrid3DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure DBGrid5DrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -162,12 +162,14 @@ begin
   end;
 end;
 
-procedure TFDataedit.Button1Click(Sender: TObject);
+procedure TFDataedit.ButtonRenameEventClick(Sender: TObject);
 var
   oldname, newname : string;
 begin
   try
      screen.Cursor := crHourGlass;
+     debugOut(5, 'dataedit: ButtonRenameEventClick: Rename from '+ edit1.text
+     +' to '+edit1.text);
      LabelProgress.Caption:= 'Erstelle neuen Eintrag ....';
      Application.ProcessMessages;
      oldname := edit1.text;
@@ -183,6 +185,7 @@ begin
      SQLQueryRenameEvent.SQL.Add('from uibaktevent where event = :oldname');
      SQLQueryRenameEvent.ParamByName('oldname').AsString := oldname;
      SQLQueryRenameEvent.ExecSQL;
+     debugOut(5, 'dataedit: ButtonRenameEventClick: created in uibaktevent: '+ newname);
      // del old entry
      LabelProgress.Caption:= 'Lösche alten Eintrag ....';
      Application.ProcessMessages;
@@ -191,8 +194,9 @@ begin
      SQLQueryRenameEvent.SQL.Add('where event = :oldname');
      SQLQueryRenameEvent.ParamByName('oldname').AsString := oldname;
      SQLQueryRenameEvent.ExecSQL;
+     debugOut(5, 'dataedit: ButtonRenameEventClick: deleted from uibaktevent: '+ oldname);
      // rename in event table
-     LabelProgress.Caption:= 'Ändere Buchungen ....';
+     LabelProgress.Caption:= 'Ändere Buchungen uibevent....';
      Application.ProcessMessages;
      SQLQueryRenameEvent.SQL.Clear;
      SQLQueryRenameEvent.SQL.Add('update uibevent ');
@@ -201,9 +205,22 @@ begin
      SQLQueryRenameEvent.ParamByName('oldname').AsString := oldname;
      SQLQueryRenameEvent.ParamByName('newname').AsString := newname;
      SQLQueryRenameEvent.ExecSQL;
+     debugOut(5, 'dataedit: ButtonRenameEventClick: renamed in uibevent'+ oldname+' to'+newname);
+     // rename in UIBEVENTACCOUNTREPORT table
+     LabelProgress.Caption:= 'Ändere Buchungen uibevent....';
+     Application.ProcessMessages;
+     SQLQueryRenameEvent.SQL.Clear;
+     SQLQueryRenameEvent.SQL.Add('update UIBEVENTACCOUNTREPORT ');
+     SQLQueryRenameEvent.SQL.Add('set event = :newname ');
+     SQLQueryRenameEvent.SQL.Add('where event = :oldname');
+     SQLQueryRenameEvent.ParamByName('oldname').AsString := oldname;
+     SQLQueryRenameEvent.ParamByName('newname').AsString := newname;
+     SQLQueryRenameEvent.ExecSQL;
+     debugOut(5, 'dataedit: ButtonRenameEventClick: renamed in UIBEVENTACCOUNTREPORT'+ oldname+' to'+newname);
   finally
     screen.Cursor := crDefault;
     LabelProgress.Caption:= 'Fertig.';
+    debugOut(5, 'dataedit: ButtonRenameEventClick: finished');
     Application.ProcessMessages;
   end;
 end;

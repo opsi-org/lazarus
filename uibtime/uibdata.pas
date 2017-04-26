@@ -118,6 +118,8 @@ type
     procedure SQuibeventBeforeClose(DataSet: TDataSet);
     procedure SQuibeventBeforeDelete(DataSet: TDataSet);
     procedure SQuibeventBeforePost(DataSet: TDataSet);
+    procedure SQuibeventPostError(DataSet: TDataSet; E: EDatabaseError;
+      var DataAction: TDataAction);
     procedure SQuibloggedinAfterDelete(DataSet: TDataSet);
     procedure SQuibloggedinAfterPost(DataSet: TDataSet);
     procedure SQuibsollAfterDelete(DataSet: TDataSet);
@@ -811,6 +813,16 @@ begin
   debugOut(5,'exception in SQuibeventBeforePost (starttransaction)');
  end;
  *)
+end;
+
+procedure TDataModule1.SQuibeventPostError(DataSet: TDataSet;
+  E: EDatabaseError; var DataAction: TDataAction);
+begin
+  ShowMessage('Beim Schreiben des Datensatzes ist ein Fehler aufgetreten: '+ E.Message
+               +' Führe jetzt Cancel auf Datensatz aus.');
+  DataSet.Cancel;
+  DataAction:=daAbort;
+  debugOut(3,'SQuibeventPostError', E.Message');
 end;
 
 procedure TDataModule1.SQuibloggedinAfterDelete(DataSet: TDataSet);
