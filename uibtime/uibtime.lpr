@@ -7,10 +7,10 @@ uses
   cthreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, printer4lazarus, lazdbexport, lazreportpdfexport, uibdata, login,
-  ontop, debug, changelog, treescrolldown, logoff, work_description, dataedit,
-  loggedin_, nachf, statistik, result, sqltext, multiday, runprocess,
-  uibtWorkRepChooser, uib2erp;
+  Forms, printer4lazarus, lazdbexport, datetimectrls, lazreportpdfexport,
+  uibdata, login, ontop, debug, changelog, treescrolldown, logoff,
+  work_description, dataedit, loggedin_, nachf, statistik, result, sqltext,
+  multiday, runprocess, uibtWorkRepChooser, uib2erp;
 
 {$R *.res}
 

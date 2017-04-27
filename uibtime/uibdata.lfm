@@ -651,6 +651,7 @@ object DataModule1: TDataModule1
     AfterDelete = SQwork_descriptionAfterDelete
     AfterInsert = SQwork_descriptionAfterInsert
     AfterPost = SQwork_descriptionAfterPost
+    OnPostError = SQwork_descriptionPostError
     Database = IBConnection1
     Transaction = SQLTransaction1
     SQL.Strings = (

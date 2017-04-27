@@ -1,7 +1,7 @@
 object FDataedit: TFDataedit
-  Left = 333
+  Left = 554
   Height = 375
-  Top = 519
+  Top = 514
   Width = 814
   Caption = 'FDataedit'
   ClientHeight = 375
@@ -20,9 +20,9 @@ object FDataedit: TFDataedit
     Height = 375
     Top = 0
     Width = 814
-    ActivePage = TabSheet1
+    ActivePage = TabSheet7
     Align = alClient
-    TabIndex = 0
+    TabIndex = 8
     TabOrder = 0
     TabPosition = tpBottom
     OnEnter = PageControl1Enter
@@ -566,7 +566,6 @@ object FDataedit: TFDataedit
       ClientHeight = 349
       ClientWidth = 692
       ImageIndex = 7
-      OnContextPopup = TabSheet8ContextPopup
       OnShow = TabSheet8Show
       object ToolBar8: TToolBar
         Left = 0
@@ -725,59 +724,64 @@ object FDataedit: TFDataedit
       Caption = 'Rename Event'
       ClientHeight = 349
       ClientWidth = 806
-      object Edit1: TEdit
-        Left = 52
-        Height = 21
-        Top = 171
-        Width = 156
-        TabOrder = 0
+      object Bevel2: TBevel
+        Left = 16
+        Height = 114
+        Top = 215
+        Width = 619
+      end
+      object Bevel1: TBevel
+        Left = 16
+        Height = 160
+        Top = 40
+        Width = 771
       end
       object Label1: TLabel
-        Left = 52
+        Left = 54
         Height = 13
-        Top = 147
+        Top = 128
         Width = 78
         Caption = 'Alter Eventname'
         ParentColor = False
       end
       object Edit2: TEdit
-        Left = 271
+        Left = 248
         Height = 21
-        Top = 174
-        Width = 129
-        TabOrder = 1
+        Top = 152
+        Width = 153
+        TabOrder = 0
       end
       object Label2: TLabel
-        Left = 271
+        Left = 248
         Height = 13
-        Top = 147
+        Top = 128
         Width = 86
         Caption = 'Neuer Eventname'
         ParentColor = False
       end
       object ButtonRenameEvent: TButton
-        Left = 57
+        Left = 568
         Height = 28
-        Top = 231
+        Top = 148
         Width = 75
         Caption = 'Umbennen'
         OnClick = ButtonRenameEventClick
-        TabOrder = 2
+        TabOrder = 1
       end
       object BitBtn10: TBitBtn
-        Left = 624
+        Left = 672
         Height = 22
-        Top = 168
+        Top = 312
         Width = 113
         Caption = 'Verlassen'
         Kind = bkCancel
         OnClick = BitBtn2Click
-        TabOrder = 3
+        TabOrder = 2
       end
       object Label3: TLabel
         Left = 112
         Height = 46
-        Top = 8
+        Top = 0
         Width = 494
         Caption = 'Vorsicht ! Nur für Admins !'
         Font.Color = clRed
@@ -793,17 +797,110 @@ object FDataedit: TFDataedit
         Top = 67
         Width = 674
         AutoSize = False
-        Caption = 'Erstellt aus dem alten Eventnamen in der Tabelle uibaktevent ein neues Event mit den selben Daten aber unter dem neuen Namen.'#13#10'Das alte Event wird aus der Tabelle uibaktevent gelöscht.'#13#10'Alle Einträge in uibevent welche auf das alte Event gebucht waren, werden auf das neue Event geändert.'
+        Caption = 'Erstellt aus dem alten Eventnamen in der Tabelle uibaktevent ein neues Event mit den selben Daten aber unter dem neuen Namen.'#13#10'Das alte Event wird aus der Tabelle uibaktevent gelöscht.'#13#10'Alle Einträge in uibevent und UIB_WORK_DESCRIPTION welche auf das alte Event gebucht waren, werden auf das neue Event geändert.'
         ParentColor = False
         WordWrap = True
       end
       object LabelProgress: TLabel
-        Left = 166
+        Left = 656
         Height = 13
-        Top = 237
+        Top = 160
         Width = 120
         Caption = 'Fortschritt: Keine Aktivität'
         ParentColor = False
+      end
+      object ComboBoxOldEvent: TComboBox
+        Left = 54
+        Height = 21
+        Top = 152
+        Width = 170
+        ItemHeight = 13
+        OnEnter = ComboBoxOldEventEnter
+        TabOrder = 3
+      end
+      object DateTimePickerFromDate: TDateTimePicker
+        Left = 418
+        Height = 21
+        Top = 153
+        Width = 79
+        CenturyFrom = 1941
+        MaxDate = 2958465
+        MinDate = -53780
+        TabOrder = 4
+        Enabled = False
+        TrailingSeparator = False
+        TextForNullDate = 'NULL'
+        LeadingZeros = True
+        Kind = dtkDate
+        TimeFormat = tf24
+        TimeDisplay = tdHMS
+        DateMode = dmComboBox
+        Date = 42852
+        Time = 0.561060821761203
+        UseDefaultSeparators = True
+        HideDateTimeParts = []
+        MonthNames = 'Long'
+      end
+      object CheckBoxUseDate: TCheckBox
+        Left = 418
+        Height = 19
+        Top = 122
+        Width = 67
+        Caption = 'Ab Datum'
+        OnChange = CheckBoxUseDateChange
+        TabOrder = 5
+      end
+      object Label5: TLabel
+        Left = 48
+        Height = 24
+        Top = 40
+        Width = 211
+        Caption = '1. Rename Altes Event'
+        Font.Color = clWindowText
+        Font.Height = -20
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+      end
+      object Label6: TLabel
+        Left = 56
+        Height = 24
+        Top = 224
+        Width = 307
+        Caption = '2. Gelöschtes Event reaktivieren'
+        Font.Color = clWindowText
+        Font.Height = -20
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+      end
+      object ComboBoxOldAllEvent: TComboBox
+        Left = 64
+        Height = 21
+        Top = 288
+        Width = 170
+        ItemHeight = 13
+        OnEnter = ComboBoxOldAllEventEnter
+        TabOrder = 6
+      end
+      object Label7: TLabel
+        Left = 64
+        Height = 13
+        Top = 264
+        Width = 78
+        Caption = 'Alter Eventname'
+        ParentColor = False
+      end
+      object ButtonReactivate: TButton
+        Left = 268
+        Height = 25
+        Top = 284
+        Width = 148
+        Caption = 'Reaktivieren'
+        OnClick = ButtonReactivateClick
+        TabOrder = 7
       end
     end
   end

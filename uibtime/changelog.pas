@@ -4,7 +4,9 @@ uibtime (4.1.1.12-1) stable; urgency=low
 
  * uib2erp: createreport: format freehours as h:mm
  * dataedit: ButtonRenameEventClick: renamed in UIBEVENTACCOUNTREPORT
- * uibdata: SQuibeventPostError Handler
+ * dataedit: new ButtonReactivateClick
+ * uibdata: Handler for: SQuibeventPostError,  SQwork_descriptionAfterPost
+
 
 -- detlef oertel <d.oertel@uib.de>  Wed, 26 Apr 2017 15:00:00 +0000
 
