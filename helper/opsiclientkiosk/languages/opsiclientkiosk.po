@@ -16,8 +16,44 @@ msgstr ""
 msgid "No Product Groups found ..."
 msgstr ""
 
+#: opsiclientkioskgui.rsactnone
+msgid "None"
+msgstr ""
+
+#: opsiclientkioskgui.rsactrequest
+msgid "Action Request"
+msgstr ""
+
+#: opsiclientkioskgui.rsactsetup
+msgid "Setup"
+msgstr ""
+
+#: opsiclientkioskgui.rsactuninstall
+msgid "Uninstall"
+msgstr ""
+
+#: opsiclientkioskgui.rsinstalled
+msgid "Installed"
+msgstr ""
+
 #: opsiclientkioskgui.rsnoactionsfound
 msgid "No action requests found."
+msgstr ""
+
+#: opsiclientkioskgui.rsnotinstalled
+msgid "Not installed"
+msgstr ""
+
+#: opsiclientkioskgui.rsstateunknown
+msgid "Unknown"
+msgstr ""
+
+#: opsiclientkioskgui.rsviewlist
+msgid "List"
+msgstr ""
+
+#: opsiclientkioskgui.rsviewtiles
+msgid "Tiles"
 msgstr ""
 
 #: oswebservice.rssendlog
@@ -49,6 +85,11 @@ msgctxt "TFINSTALLDLG.TOOLBAR1.CAPTION"
 msgid "ToolBar1"
 msgstr "do not translate"
 
+#: tfopsiclientkiosk.bitbtn1.caption
+msgctxt "TFOPSICLIENTKIOSK.BITBTN1.CAPTION"
+msgid "Info"
+msgstr ""
+
 #: tfopsiclientkiosk.bitbtncancel.caption
 msgid "Exit"
 msgstr ""
@@ -56,10 +97,6 @@ msgstr ""
 #: tfopsiclientkiosk.bitbtncancel.hint
 msgctxt "TFOPSICLIENTKIOSK.BITBTNCANCEL.HINT"
 msgid "Terminate Program (with out any further action)"
-msgstr ""
-
-#: tfopsiclientkiosk.bitbtninfo.caption
-msgid "Info"
 msgstr ""
 
 #: tfopsiclientkiosk.bitbtnshowaction.caption
@@ -97,14 +134,6 @@ msgstr "do not translate"
 #: tfopsiclientkiosk.dbgrid1.hint
 msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
 msgstr ""
-
-#: tfopsiclientkiosk.grouplist.hint
-msgid "List of possible groups"
-msgstr ""
-
-#: tfopsiclientkiosk.grouppanel.caption
-msgid "grouppanel"
-msgstr "do not translate"
 
 #: tfopsiclientkiosk.labeladvice.caption
 msgid "Advice:  "
@@ -154,9 +183,9 @@ msgstr "do not translate"
 msgid "productdetailpanel"
 msgstr "do not translate"
 
-#: tfopsiclientkiosk.productlistpanel.caption
-msgid "productlistpanel"
-msgstr "do not translate"
+#: tfopsiclientkiosk.radiogroupview.caption
+msgid "View"
+msgstr ""
 
 #: tfopsiclientkiosk.searchedit.hint
 msgid "Search in Productlist"
@@ -202,6 +231,10 @@ msgstr ""
 msgctxt "tfopsiclientkiosk.toolbar1.caption"
 msgid "ToolBar1"
 msgstr "do not translate"
+
+#: tfopsiclientkiosk.toolbar2.caption
+msgid "ToolBar2"
+msgstr ""
 
 #: tform1.bitbtnlater.caption
 msgctxt "tform1.bitbtnlater.caption"

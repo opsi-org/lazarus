@@ -47,9 +47,9 @@ uses
   VersionInfoX,
   //unitImpersonator,
   osregistry,
+osfuncwin2,
+osfuncwin3,
 {$IFDEF WIN32}
-  osfuncwin2,
-  osfuncwin3,
   DSiWin32,
 oslocaladmin,
 packdefs,

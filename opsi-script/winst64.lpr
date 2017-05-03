@@ -20,19 +20,10 @@ uses
   cthreads, {$ENDIF} {$ENDIF}
   Interfaces, // this includes the LCL widgetset
   {$IFDEF WINDOWS}{$ENDIF}
-  ///indylaz,
-  //wibtch in 'wibtch.pas' {FBatchOberflaeche},
-  //wifunc in 'wifunc.pas',
-  oslog,
-  osencoding,
   osconf,
   osshowsysinfo {SystemInfo},
   //wirequlist in 'wirequlist.pas',
   {$IFDEF WINDOWS}{$ENDIF}
-  synacode in 'synacode.pas',
-  synautil in 'synautil.pas',
-  synsock in 'synsock.pas',
-  blcksock in 'blcksock.pas',
   {$IFDEF WINDOWS}VersionInfoX in 'VersionInfoX.pas',{$ENDIF}
   ldapsend in 'ldapsend.pas',
   osmain ,
@@ -40,8 +31,7 @@ uses
   osmessagedialog {OKBottomDlg},
   oslocale in 'oslocale.pas',
   {$IFDEF WINDOWS}osswaudit in 'osswaudit.pas',{$ENDIF}
-  superobject in 'superobject.pas',
-  osfunc, osparser, oswebservice,
+  osfunc, osparser,
   {$IFDEF GUI}
   Forms,
   osservicepassdlg {DialogServicePassword},
@@ -51,7 +41,7 @@ uses
   {$IFDEF LINUX}osfunclin {$ENDIF}
   {$IFDEF WIN64}{$ENDIF}
   {$IFDEF WINDOWS} osfuncwin,{$ENDIF}
-  opsihwbiosinfo, osjson;
+  opsihwbiosinfo, osfuncwin2;
 
 
 

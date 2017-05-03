@@ -1,0 +1,44 @@
+object DataModule1: TDataModule1
+  OnCreate = DataModuleCreate
+  OldCreateOrder = False
+  Height = 225
+  HorizontalOffset = 600
+  VerticalOffset = 286
+  Width = 300
+  object SQLite3Connection1: TSQLite3Connection
+    Connected = False
+    LoginPrompt = False
+    KeepConnection = False
+    Transaction = SQLTransaction1
+    Options = []
+    left = 125
+    top = 36
+  end
+  object SQLQuery1: TSQLQuery
+    FieldDefs = <>
+    AfterPost = SQLQuery1AfterPost
+    Database = SQLite3Connection1
+    Transaction = SQLTransaction1
+    Options = []
+    Params = <>
+    left = 78
+    top = 110
+  end
+  object SQLTransaction1: TSQLTransaction
+    Active = False
+    Action = caCommitRetaining
+    Database = SQLite3Connection1
+    Options = []
+    left = 231
+    top = 45
+  end
+  object SQLQuery2: TSQLQuery
+    FieldDefs = <>
+    Database = SQLite3Connection1
+    Transaction = SQLTransaction1
+    Options = []
+    Params = <>
+    left = 166
+    top = 123
+  end
+end

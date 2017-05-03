@@ -9,13 +9,49 @@ msgstr "Alle Gruppen"
 msgid "No Product Groups found ..."
 msgstr "Keine Produktgruppen gefunden ..."
 
+#: opsiclientkioskgui.rsactnone
+msgid "None"
+msgstr "Keine"
+
+#: opsiclientkioskgui.rsactrequest
+msgid "Action Request"
+msgstr "Aktionsanforderung"
+
+#: opsiclientkioskgui.rsactsetup
+msgid "Setup"
+msgstr "Installieren"
+
+#: opsiclientkioskgui.rsactuninstall
+msgid "Uninstall"
+msgstr "Deinstallieren"
+
+#: opsiclientkioskgui.rsinstalled
+msgid "Installed"
+msgstr "Installiert"
+
 #: opsiclientkioskgui.rsnoactionsfound
 msgid "No action requests found."
 msgstr "Keine Aktionsanforderungen gefunden ..."
 
+#: opsiclientkioskgui.rsnotinstalled
+msgid "Not installed"
+msgstr "Nicht Installiert"
+
+#: opsiclientkioskgui.rsstateunknown
+msgid "Unknown"
+msgstr "Unbekannt"
+
+#: opsiclientkioskgui.rsviewlist
+msgid "List"
+msgstr "Listen"
+
+#: opsiclientkioskgui.rsviewtiles
+msgid "Tiles"
+msgstr "Kacheln"
+
 #: oswebservice.rssendlog
 msgid "Sending log file to server ..."
-msgstr ""
+msgstr "Sende Logdatei zum Server ..."
 
 #: tfinstalldlg.bitbtnlater.caption
 msgctxt "TFINSTALLDLG.BITBTNLATER.CAPTION"
@@ -42,18 +78,20 @@ msgctxt "TFINSTALLDLG.TOOLBAR1.CAPTION"
 msgid "ToolBar1"
 msgstr "do not translate"
 
+#: tfopsiclientkiosk.bitbtn1.caption
+#, fuzzy
+msgctxt "tfopsiclientkiosk.bitbtn1.caption"
+msgid "Info"
+msgstr "Info"
+
 #: tfopsiclientkiosk.bitbtncancel.caption
 msgid "Exit"
-msgstr ""
+msgstr "Beenden"
 
 #: tfopsiclientkiosk.bitbtncancel.hint
 msgctxt "tfopsiclientkiosk.bitbtncancel.hint"
 msgid "Terminate Program (with out any further action)"
 msgstr "Programm ohne weitere Aktionen beenden."
-
-#: tfopsiclientkiosk.bitbtninfo.caption
-msgid "Info"
-msgstr ""
 
 #: tfopsiclientkiosk.bitbtnshowaction.caption
 msgid "Show Actions"
@@ -90,14 +128,6 @@ msgstr "do not translate"
 #: tfopsiclientkiosk.dbgrid1.hint
 msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
 msgstr "In die Spalte ActionRequest klicken um Aktionen (setup/uninstall) zu setzen"
-
-#: tfopsiclientkiosk.grouplist.hint
-msgid "List of possible groups"
-msgstr "Liste der möglichen Gruppen"
-
-#: tfopsiclientkiosk.grouppanel.caption
-msgid "grouppanel"
-msgstr "do not translate"
 
 #: tfopsiclientkiosk.labeladvice.caption
 msgid "Advice:  "
@@ -147,9 +177,9 @@ msgstr "do not translate"
 msgid "productdetailpanel"
 msgstr "do not translate"
 
-#: tfopsiclientkiosk.productlistpanel.caption
-msgid "productlistpanel"
-msgstr "do not translate"
+#: tfopsiclientkiosk.radiogroupview.caption
+msgid "View"
+msgstr "Ansicht"
 
 #: tfopsiclientkiosk.searchedit.hint
 msgid "Search in Productlist"
@@ -157,7 +187,7 @@ msgstr "Suche in Produktliste"
 
 #: tfopsiclientkiosk.speedbutton1.caption
 msgid "Filter"
-msgstr ""
+msgstr "Filter"
 
 #: tfopsiclientkiosk.speedbutton1.hint
 msgid "Set Filter"
@@ -173,7 +203,7 @@ msgstr "Zeige alle Einträge (Kein Filter)"
 
 #: tfopsiclientkiosk.speedbuttonreload.caption
 msgid "Reload"
-msgstr ""
+msgstr "Neu laden"
 
 #: tfopsiclientkiosk.statusbar1.panels[0].text
 msgid "Not Connected to opsi server"
@@ -195,6 +225,10 @@ msgstr ""
 msgctxt "tfopsiclientkiosk.toolbar1.caption"
 msgid "ToolBar1"
 msgstr "do not translate"
+
+#: tfopsiclientkiosk.toolbar2.caption
+msgid "ToolBar2"
+msgstr ""
 
 #: tform1.bitbtnlater.caption
 msgctxt "tform1.bitbtnlater.caption"

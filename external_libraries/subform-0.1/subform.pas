@@ -62,7 +62,9 @@ implementation
 
 Uses LResources, lclproc, TypInfo, StdCtrls, Buttons, Maskedit, CheckLst, Grids,
   PairSplitter, ColorBox, ComCtrls, Dialogs, Spin, Arrow, Calendar, EditBtn,
-  FileCtrl, TaChart, ButtonPanel, MemDS;
+  FileCtrl,
+  //TaChart,
+  ButtonPanel, MemDS;
   
 procedure Register;
 Begin
@@ -161,7 +163,7 @@ Begin
   WriteComponentAsBinaryToStream(AStream, AControl);
   AStream.Position := 0;
   Result := nil;
-  ReadComponentFromBinaryStream(AStream, Result, @Self.InternalOnFindClass, NewOwner);
+  ReadComponentFromBinaryStream(AStream, TComponent(Result), @Self.InternalOnFindClass, NewOwner);
   If NewOwner is TWinControl then
     Result.Parent := TWinControl(NewOwner);
   DupeEvents(AControl, Result);
@@ -280,9 +282,11 @@ begin
       ComponentClass:=TCalcEdit
     else if CompareText(AClassName,'TFileListBox')=0 then
       ComponentClass:=TFileListBox
-    else if CompareText(AClassName,'TBarChart')=0 then
-      ComponentClass:=TBarChart
-    else if CompareText(AClassName,'TButtonPanel')=0 then
+    else
+      //if CompareText(AClassName,'TBarChart')=0 then
+      //ComponentClass:=TBarChart
+    //else
+    if CompareText(AClassName,'TButtonPanel')=0 then
       ComponentClass:=TButtonPanel
     else if CompareText(AClassName,'TSubForm')=0 then
       ComponentClass:=TSubform
@@ -393,7 +397,7 @@ begin
       //SelfOperatingOnDataSet := HoldSelfOp;
       //Exit
     End;
-    BookMarks.Add(ABookmark);
+    BookMarks.Add(@ABookmark);
     For I2 := 0 to APanel.ControlCount-1 do
     Begin
       {$IFDEF DEBUGUPDATES}

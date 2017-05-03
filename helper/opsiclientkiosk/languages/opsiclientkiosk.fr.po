@@ -23,9 +23,45 @@ msgstr "Tous les groupes"
 msgid "No Product Groups found ..."
 msgstr "Aucun groupe de produit trouvé ..."
 
+#: opsiclientkioskgui.rsactnone
+msgid "None"
+msgstr ""
+
+#: opsiclientkioskgui.rsactrequest
+msgid "Action Request"
+msgstr ""
+
+#: opsiclientkioskgui.rsactsetup
+msgid "Setup"
+msgstr ""
+
+#: opsiclientkioskgui.rsactuninstall
+msgid "Uninstall"
+msgstr ""
+
+#: opsiclientkioskgui.rsinstalled
+msgid "Installed"
+msgstr ""
+
 #: opsiclientkioskgui.rsnoactionsfound
 msgid "No action requests found."
 msgstr "Aucune demande d'action trouvée ..."
+
+#: opsiclientkioskgui.rsnotinstalled
+msgid "Not installed"
+msgstr ""
+
+#: opsiclientkioskgui.rsstateunknown
+msgid "Unknown"
+msgstr ""
+
+#: opsiclientkioskgui.rsviewlist
+msgid "List"
+msgstr ""
+
+#: opsiclientkioskgui.rsviewtiles
+msgid "Tiles"
+msgstr ""
 
 #: oswebservice.rssendlog
 msgid "Sending log file to server ..."
@@ -56,6 +92,11 @@ msgctxt "TFINSTALLDLG.TOOLBAR1.CAPTION"
 msgid "ToolBar1"
 msgstr ""
 
+#: tfopsiclientkiosk.bitbtn1.caption
+msgctxt "tfopsiclientkiosk.bitbtn1.caption"
+msgid "Info"
+msgstr ""
+
 #: tfopsiclientkiosk.bitbtncancel.caption
 msgid "Exit"
 msgstr ""
@@ -64,10 +105,6 @@ msgstr ""
 msgctxt "TFOPSICLIENTKIOSK.BITBTNCANCEL.HINT"
 msgid "Terminate Program (with out any further action)"
 msgstr "Interrompt le programme."
-
-#: tfopsiclientkiosk.bitbtninfo.caption
-msgid "Info"
-msgstr ""
 
 #: tfopsiclientkiosk.bitbtnshowaction.caption
 msgid "Show Actions"
@@ -104,14 +141,6 @@ msgstr ""
 #: tfopsiclientkiosk.dbgrid1.hint
 msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
 msgstr "Cliquer dans la colonne ActionRequest pour activer l'option (setup/uninstall)"
-
-#: tfopsiclientkiosk.grouplist.hint
-msgid "List of possible groups"
-msgstr "Liste des groupes possibles"
-
-#: tfopsiclientkiosk.grouppanel.caption
-msgid "grouppanel"
-msgstr ""
 
 #: tfopsiclientkiosk.labeladvice.caption
 msgid "Advice:  "
@@ -161,8 +190,8 @@ msgstr ""
 msgid "productdetailpanel"
 msgstr ""
 
-#: tfopsiclientkiosk.productlistpanel.caption
-msgid "productlistpanel"
+#: tfopsiclientkiosk.radiogroupview.caption
+msgid "View"
 msgstr ""
 
 #: tfopsiclientkiosk.searchedit.hint
@@ -208,6 +237,10 @@ msgstr ""
 #: tfopsiclientkiosk.toolbar1.caption
 msgctxt "tfopsiclientkiosk.toolbar1.caption"
 msgid "ToolBar1"
+msgstr ""
+
+#: tfopsiclientkiosk.toolbar2.caption
+msgid "ToolBar2"
 msgstr ""
 
 #: tform1.bitbtnlater.caption

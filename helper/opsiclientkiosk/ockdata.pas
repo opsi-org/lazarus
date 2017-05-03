@@ -27,16 +27,19 @@ uses
   oslog,
   oswebservice,
   superobject,
-  synacode,
+  //synacode,
   oscrypt,
-  ZMConnection, ZMQueryDataSet,
-  ZMReferentialKey,
+  lazfileutils,
+  //ZMConnection, ZMQueryDataSet,
+  //ZMReferentialKey,
+  sqlite3conn, sqldb,
   DB,
   inifiles,
   Variants,
   fileinfo,
   winpeimagereader,
-  lcltranslator;
+  lcltranslator,
+  datadb;
 
 const
   opsiclientdconf =
@@ -89,17 +92,24 @@ var
   nogui: boolean;
   productgrouplist: TStringList;
   opsidata: Topsi4data;
-  mythread: Tmythread;
+  //mythread: Tmythread;
   //productdataList: TProductDataArray;
+  (*
   ZMQUerydataset1: TZMQUerydataset;
   ZMQUerydataset2: TZMQUerydataset;
   ZMConnection1: TZMConnection;
   ZMConnection2: TZMConnection;
   ZMReferentialKey1: TZMReferentialKey;
+  *)
+  ZMQUerydataset1: TSQLQuery;
+  ZMQUerydataset2: TSQLQuery;
+  ZMConnection1: TSQLite3Connection;
+  ZMConnection2: TSQLite3Connection;
+  //ZMReferentialKey1: TZMReferentialKey;
   //DataSource0: TDataSource;
   productIdsList: TStringList;
-  FileVerInfo : TfileVersionInfo;
-  myVersion : String;
+  FileVerInfo: TfileVersionInfo;
+  myVersion: string;
 
 
 procedure initdb;
@@ -109,6 +119,7 @@ procedure fetchProductData;
 procedure setActionrequest(pid: string; request: string);
 function getActionrequests: TStringList;
 procedure firePushInstallation;
+procedure fetchProductData_by_getKioskProductInfosForClient;
 
 resourcestring
   rsNoGroups = 'No Product Groups found ...';
@@ -118,6 +129,9 @@ implementation
 
 uses
   opsiclientkioskgui;
+
+var
+  mythread: Tmythread;
 
 procedure Tmythread.Execute;
 begin
@@ -159,26 +173,145 @@ end;
 // from osfunc
 procedure stringsplit(const s, delimiter: string; var Result: TStringList);
 // produziert eine Stringliste aus den Teilstrings, die zwischen den Delimiter-Strings stehen
-
 var
   remainder: string = '';
   item: string = '';
   found: boolean;
 begin
-
   found := divideAtFirst(delimiter, s, item, remainder);
-
   while found do
   begin
     Result.add(item);
     found := divideAtFirst(delimiter, remainder, item, remainder);
   end;
-
   Result.add(item);
 end;
 
+
 procedure initdb;
+var
+  newFile: boolean;
 begin
+  logdatei.log('startinitdb ', LLInfo);
+  Datamodule1 := Tdatamodule1.Create(nil);
+  Datamodule1.SQLite3Connection1.Close; // Ensure the connection is closed when we start
+
+  try
+    // Since we're making this database for the first time,
+    // check whether the file already exists
+    Datamodule1.SQLite3Connection1.DatabaseName := GetTempDir + 'opsikiosk.db';
+    logdatei.log('db is : ' + Datamodule1.SQLite3Connection1.DatabaseName, LLInfo);
+    if FileExists(Datamodule1.SQLite3Connection1.DatabaseName) then
+      DeleteFileUTF8(Datamodule1.SQLite3Connection1.DatabaseName);
+    newFile := not FileExists(Datamodule1.SQLite3Connection1.DatabaseName);
+
+    if newFile then
+    begin
+      // Create the database and the tables
+      try
+        logdatei.log('Creating new database ', LLInfo);
+        Datamodule1.SQLite3Connection1.Open;
+        Datamodule1.SQLTransaction1.Active := True;
+        ZMQUerydataset1 := Datamodule1.SQLQuery1;
+        ZMQUerydataset2 := Datamodule1.SQLQuery2;
+
+        // Here we're setting up a table named "testtable" in the new database
+        (*
+        if datamodule1.SQLQuery1.Active then datamodule1.SQLQuery1.close;
+        datamodule1.SQLQuery1.SQL.Clear;
+        datamodule1.SQLQuery1.SQL.Add('CREATE TABLE "kioskmaster" (');
+        *)
+        try
+          Datamodule1.SQLite3Connection1.ExecuteDirect(
+            'CREATE TABLE kioskmaster (' + 'ProductId String not null primary key, ' +
+            'ProductName String, ' + 'description String, ' +
+            'advice String, ' + 'productversion String, ' +
+            'packageversion String, ' + 'versionstr String, ' +
+            'priority Integer, ' + 'producttype String, ' +
+            'installationStatus String, ' + 'installedprodver String, ' +
+            'installedpackver String, ' + 'installedverstr String, ' +
+            'actionrequest String, ' + 'actionresult String, ' +
+            'updatePossible String,' + 'hasSetup String, ' +
+            'hasUninstall String, ' + 'possibleAction String);');
+          //Datamodule1.SQLTransaction1.Commit;
+          logdatei.log('Finished kioskmaster ', LLInfo);
+
+
+          // Creating an index based upon id in the DATA Table
+          //Datamodule1.SQLite3Connection1.ExecuteDirect(
+          //  'CREATE UNIQUE INDEX "pid" ON "kioskmaster"( "ProductId" );');
+        except
+          on e: Exception do
+          begin
+            logdatei.log('Exception CREATE TABLE kioskmaster', LLError);
+            logdatei.log('Exception: ' + E.message, LLError);
+          end;
+        end;
+
+
+        //Datamodule1.SQLTransaction1.Commit;
+        try
+          Datamodule1.SQLite3Connection1.ExecuteDirect(
+            'CREATE TABLE kioskslave (ProductId String not null, ' +
+            'requiredProductId String, required String, ' +
+            'prerequired String, postrequired String, '+
+            'PRIMARY KEY(ProductId,requiredProductId));');
+
+          logdatei.log('Fiished kioskslave ', LLInfo);
+        except
+          on e: Exception do
+          begin
+            logdatei.log('Exception CREATE TABLE kioskslave', LLError);
+            logdatei.log('Exception: ' + E.message, LLError);
+          end;
+        end;
+
+        try
+          Datamodule1.SQLTransaction1.Commit;
+        except
+          on e: Exception do
+          begin
+            logdatei.log('Exception commit', LLError);
+            logdatei.log('Exception: ' + E.message, LLError);
+          end;
+        end;
+
+        if ZMQueryDataSet1.Active then
+          ZMQueryDataSet1.Close;
+        ZMQUerydataset1.SQL.Clear;
+        ZMQUerydataset1.SQL.Add('select * from kioskmaster order by ProductId');
+        ZMQUerydataset1.Open;
+        if ZMQueryDataSet2.Active then
+          ZMQueryDataSet2.Close;
+        ZMQUerydataset2.SQL.Clear;
+        ZMQUerydataset2.SQL.Add('select * from kioskslave order by ProductId');
+        ZMQUerydataset2.Open;
+        logdatei.log('Finished initdb', LLInfo);
+
+        //ShowMessage('Succesfully created database.');
+      except
+        //ShowMessage('Unable to Create new Database');
+      end;
+    end;
+  except
+    //ShowMessage('Unable to check if database file exists');
+  end;
+
+  with FopsiClientKiosk do
+  begin
+    DataSource1.DataSet := ZMQUerydataset1;
+    DBGrid1.DataSource := DataSource1;
+    DataSource2.DataSet := ockdata.ZMQUerydataset2;
+    DBGrid2.DataSource := DataSource2;
+    ZMQUerydataset2.DataSource := DataSource1;
+    LabelDataload.Caption := '';
+    LabelDataLoadDetail.Caption := '';
+    Progressbar1.Position := 0;
+    ProgressBar1.Max := 8;
+    ProgressbarDetail.Position := 0;
+    productdetailpanel.Height := 0;
+  end;
+  (*
   ZMConnection1 := TZMConnection.Create(nil);
   ZMConnection1.Connect;
   ZMConnection2 := TZMConnection.Create(nil);
@@ -190,7 +323,7 @@ begin
   //with FopsiClientKiosk do
   begin
     ZMQUerydataset1.ZMConnection := ZMConnection1;
-    //Datasource0.DataSet := ZMQUerydataset1;
+    //Datasource1.DataSet := ZMQUerydataset1;
     //ZMQUerydataset1.DataSource := DataSource0;
     ZMQUerydataset1.FieldDefs.Add('ProductId', ftString, 100);
     ZMQUerydataset1.FieldDefs.Add('ProductName', ftString, 200);
@@ -212,6 +345,7 @@ begin
     ZMQUerydataset1.FieldDefs.Add('hasUninstall', ftString, 100);
     ZMQUerydataset1.FieldDefs.Add('possibleAction', ftString, 100);
     ZMQUerydataset1.TableName := 'kioskmaster';
+
     ZMQUerydataset1.AddIndex('pid', 'ProductId', [ixPrimary, ixUnique,
       ixCaseInsensitive]);
     ZMQUerydataset1.AddIndex('pna', 'ProductName', [ixCaseInsensitive]);
@@ -239,7 +373,10 @@ begin
     ZMQUerydataset2.Active := True;
 
   end;
+  *)
 end;
+
+
 
 procedure readconf;
 var
@@ -308,9 +445,9 @@ begin
   Result := True;
   logdatei := TLogInfo.Create;
   logfilename := opsiclientkiosklog;
-  oslog.CreateTheLogfile(logfilename, False);
+  logdatei.CreateTheLogfile(logfilename, False);
   logdatei.LogLevel := myloglevel;
-  logdatei.log('opsi-client-kiosk: version: '+myVersion,LLessential);
+  logdatei.log('opsi-client-kiosk: version: ' + myVersion, LLessential);
 end;
 
 
@@ -318,7 +455,7 @@ function initConnection(const seconds: integer): boolean;
 var
   networkup, timeout: boolean;
   myseconds: integer;
-  resultstring : string;
+  resultstring: string;
 begin
   FopsiClientKiosk.Cursor := crHourGlass;
   Result := False;
@@ -337,10 +474,11 @@ begin
     try
       if myseconds > 0 then
       begin
-       resultstring := MyOpsiMethodCall('getDepotId',[myclientid]);
-       networkup := True;
+        resultstring := MyOpsiMethodCall('getDepotId', [myclientid]);
+        networkup := True;
       end
-      else timeout := True;
+      else
+        timeout := True;
     except
       LogDatei.log('opsidata not connected - retry', LLInfo);
       myseconds := myseconds - 1;
@@ -370,6 +508,208 @@ end;
 //  method productOnClient_getObjects [] {"productId":"opsi-winst","clientId":"pcbon4.uib.local"}
 // method product_getObjects [] {"id":"opsi-winst"}
 
+(*
+{
+   "installedprodver" : "",
+   "hasUninstall" : true,
+   "installedpackver" : "",
+   "description" : "Adobe Reader for PDF-files in german and english (default english)",
+   "possibleAction" : "",
+   "advice" : "Setup sets status of opsiproduct acroread to not_installed",
+   "requirements" :
+       [
+       ],
+   "priority" : 0,
+   "actionresult" : "",
+   "ProductName" : "Adobe Acrobatreader 9.x",
+   "actionrequest" : "",
+   "versionstr" : "9.5.5-1",
+   "updatePossible" : "",
+   "productversion" : "9.5.5",
+   "producttype" : "LocalbootProduct",
+   "installedverstr" : "",
+   "packageversion" : "1",
+   "ProductId" : "acroread9",
+   "installationStatus" : "",
+   "hasSetup" : true
+   }
+
+   *)
+
+procedure fetchProductData_by_getKioskProductInfosForClient;
+var
+  resultstring, groupstring, method, testresult: string;
+  //parameters: array of string;
+  jOResult, new_obj, detail_obj: ISuperObject;
+  //jOArray: TSuperArray;
+  i: integer;
+  str, pid, depotid, pidliststr, reqtype: string;
+  productdatarecord: TProductData;
+  //gridrow: TStringList;
+  //myGridColumn : TGridColumn;
+begin
+  logdatei.log('starting fetchProductData ....', LLInfo);
+  // initialize product meta data list
+  //SetLength(productdataList, 1);
+
+  // get for each product the meta data: product, productOnClient
+  //SetLength(productdataList, productIdsList.Count);
+  (*
+  ZMQueryDataSet1.EmptyDataSet;
+  ZMQueryDataSet1.Filtered:=false;
+  ZMQueryDataSet2.EmptyDataSet;
+  *)
+  try
+    if ZMQueryDataSet1.Active then
+      ZMQueryDataSet1.Close;
+    ZMQUerydataset1.SQL.Clear;
+    ZMQueryDataSet1.SQL.Add('delete from kioskmaster');
+    ZMQueryDataSet1.ExecSQL;
+  except
+    on e: Exception do
+    begin
+      logdatei.log('Exception delete from kioskmaster', LLError);
+      logdatei.log('Exception: ' + E.message, LLError);
+    end;
+  end;
+  ZMQueryDataSet1.Filtered := False;
+    if ZMQueryDataSet2.Active then
+    ZMQueryDataSet2.Close;
+  ZMQUerydataset2.SQL.Clear;
+  ZMQueryDataSet2.SQL.Add('delete from kioskslave');
+  ZMQueryDataSet2.ExecSQL;
+
+  if ZMQueryDataSet1.Active then
+    ZMQueryDataSet1.Close;
+  ZMQUerydataset1.SQL.Clear;
+  ZMQUerydataset1.SQL.Add('select * from kioskmaster order by PRODUCTID');
+  ZMQUerydataset1.Open;
+  if ZMQueryDataSet2.Active then
+    ZMQueryDataSet2.Close;
+  ZMQUerydataset2.SQL.Clear;
+  ZMQUerydataset2.SQL.Add('select * from kioskslave order by ProductId');
+  ZMQUerydataset2.Open;
+
+  //FopsiClientKiosk.ProgressbarDetail.Max := productIdsList.Count;
+  //FopsiClientKiosk.LabelDataLoad.Caption := 'Products';
+  //FopsiClientKiosk.Progressbar1.Position := 5;
+  //FopsiClientKiosk.ProcessMess;
+
+  resultstring := MyOpsiMethodCall('getKioskProductInfosForClient', [myclientid]);
+  new_obj := SO(resultstring).O['result'];
+  str := new_obj.AsString;
+  LogDatei.log('Get products done', LLNotice);
+  FopsiClientKiosk.LabelDataload.Caption := 'Handle Products';
+  FopsiClientKiosk.ProgressBar1.Position := 3;
+  FopsiClientKiosk.ProcessMess;
+
+  // product data to database
+  for i := 0 to new_obj.AsArray.Length - 1 do
+  begin
+    detail_obj := new_obj.AsArray.O[i];
+    //str := detail_obj.AsString;
+    //str := detail_obj.S['productId'];
+    //FopsiClientKiosk.LabelDataLoadDetail.Caption := str;
+    //FopsiClientKiosk.ProgressbarDetail.Position := i + 1;
+    //FopsiClientKiosk.ProcessMess;
+    //productdatarecord.id := str;
+    logdatei.log('read: ' + detail_obj.S['productId'], LLInfo);
+    ZMQueryDataSet1.Append;
+    ZMQueryDataSet1.FieldByName('ProductId').AsString := detail_obj.S['productId'];
+    ZMQueryDataSet1.FieldByName('productVersion').AsString :=
+      detail_obj.S['productVersion'];
+    ZMQueryDataSet1.FieldByName('packageVersion').AsString :=
+      detail_obj.S['packageVersion'];
+    ZMQueryDataSet1.FieldByName('versionstr').AsString :=
+      detail_obj.S['productVersion'] + '-' + detail_obj.S['packageVersion'];
+    ZMQueryDataSet1.FieldByName('ProductName').AsString := detail_obj.S['productName'];
+    ZMQueryDataSet1.FieldByName('description').AsString := detail_obj.S['description'];
+    ZMQueryDataSet1.FieldByName('advice').AsString := detail_obj.S['advice'];
+    ZMQueryDataSet1.FieldByName('priority').AsString := detail_obj.S['priority'];
+    ZMQueryDataSet1.FieldByName('producttype').AsString := detail_obj.S['productType'];
+    ZMQueryDataSet1.FieldByName('hasSetup').AsString := detail_obj.S['hasSetup'];
+    ZMQueryDataSet1.FieldByName('hasUninstall').AsString :=
+      detail_obj.S['hasUninstall'];
+    ZMQueryDataSet1.FieldByName('installationStatus').AsString :=
+      detail_obj.S['installationStatus'];
+    ZMQueryDataSet1.FieldByName('installedprodver').AsString :=
+      detail_obj.S['installedProdVer'];
+    ZMQueryDataSet1.FieldByName('installedpackver').AsString :=
+      detail_obj.S['installedPackVer'];
+    ZMQueryDataSet1.FieldByName('installedverstr').AsString :=
+      detail_obj.S['installedVerStr'];
+    ZMQueryDataSet1.FieldByName('actionrequest').AsString :=
+      detail_obj.S['actionRequest'];
+    ZMQueryDataSet1.FieldByName('actionresult').AsString := detail_obj.S['actionResult'];
+    ZMQueryDataSet1.FieldByName('updatePossible').AsString :=
+      detail_obj.S['updatePossible'];
+    ZMQueryDataSet1.FieldByName('possibleAction').AsString :=
+      detail_obj.S['possibleAction'];
+    ZMQueryDataSet1.Post;
+
+
+    // productDependencies
+  end;
+
+  (*
+  resultstring := MyOpsiMethodCall('productDependency_getObjects',
+    ['[]', '{"productId":' + pidliststr + '}']);
+  new_obj := SO(resultstring).O['result'];
+  if new_obj <> nil then
+  begin
+    str := new_obj.AsString;
+    // product data to database
+    for i := 0 to new_obj.AsArray.Length - 1 do
+    begin
+      detail_obj := new_obj.AsArray.O[i];
+      if detail_obj.S['productAction'] = 'setup' then
+      begin
+        str := detail_obj.AsString;
+        str := detail_obj.S['productId'];
+        FopsiClientKiosk.LabelDataLoadDetail.Caption := str;
+        FopsiClientKiosk.ProgressbarDetail.Position := i + 1;
+        FopsiClientKiosk.ProcessMess;
+        productdatarecord.id := str;
+        productdatarecord.productversion := detail_obj.S['productVersion'];
+        productdatarecord.packageversion := detail_obj.S['packageVersion'];
+        productdatarecord.versionstr :=
+          detail_obj.S['productVersion'] + '-' + detail_obj.S['packageVersion'];
+        reqtype := detail_obj.S['requirementType'];
+
+        if ZMQueryDataSet1.Locate('ProductId;versionstr',
+          VarArrayOf([productdatarecord.id, productdatarecord.versionstr]),
+          [loCaseInsensitive]) then
+        begin
+
+          ZMQueryDataSet2.Append;
+          ZMQueryDataSet2.FieldByName('ProductId').AsString := productdatarecord.id;
+          str := detail_obj.S['requiredProductId'];
+          ZMQueryDataSet2.FieldByName('requiredProductId').AsString := str;
+          str := '';
+          if detail_obj.S['requiredAction'] <> '' then
+            str := detail_obj.S['requiredAction'];
+          if detail_obj.S['requiredInstallationStatus'] <> '' then
+            str := detail_obj.S['requiredInstallationStatus'];
+          if reqtype = 'before' then
+            ZMQueryDataSet2.FieldByName('prerequired').AsString := ':' + str;
+          if reqtype = 'after' then
+            ZMQueryDataSet2.FieldByName('postrequired').AsString := ':' + str;
+          if reqtype = '' then
+            ZMQueryDataSet2.FieldByName('required').AsString := ':' + str;
+
+          ZMQueryDataSet2.Post;
+        end;
+      end;
+    end;
+  end;
+  //ZMQueryDataSet2.Close;
+  //ZMQueryDataSet2.Open;
+  *)
+  //ZMQueryDataSet1.Refresh;
+  ZMQueryDataSet1.Close;
+  ZMQueryDataSet1.Open;
+  ZMQueryDataSet1.First;
+end;
 
 function getProductGroupList: TStringList;
 var
@@ -443,9 +783,16 @@ begin
 
   // get for each product the meta data: product, productOnClient
   //SetLength(productdataList, productIdsList.Count);
+  (*
   ZMQueryDataSet1.EmptyDataSet;
   ZMQueryDataSet1.Filtered:=false;
   ZMQueryDataSet2.EmptyDataSet;
+  *)
+  ZMQueryDataSet1.SQL.Add('delete kioskmaster;');
+  ZMQueryDataSet1.ExecSQL;
+  ZMQueryDataSet1.Filtered := False;
+  ZMQueryDataSet1.SQL.Add('delete kioskslave;');
+  ZMQueryDataSet1.ExecSQL;
 
   FopsiClientKiosk.ProgressbarDetail.Max := productIdsList.Count;
   FopsiClientKiosk.LabelDataLoad.Caption := 'Products';
@@ -663,7 +1010,7 @@ begin
       if ZMQueryDataSet1.Locate('ProductId', id, [loCaseInsensitive]) then
       begin
         if (productdatarecord.installationStatus = 'installed') and
-           (ZMQueryDataSet1.FieldByName('versionstr').AsString <>
+          (ZMQueryDataSet1.FieldByName('versionstr').AsString <>
           productdatarecord.installedverstr) then
           productdatarecord.updatePossible := True
         else
@@ -683,7 +1030,7 @@ begin
         ZMQueryDataSet1.FieldByName('actionrequest').AsString := actionrequest;
         ZMQueryDataSet1.FieldByName('actionresult').AsString := actionresult;
         ZMQueryDataSet1.FieldByName('updatePossible').AsString :=
-          BoolToStr(updatePossible,true);
+          BoolToStr(updatePossible, True);
         ZMQueryDataSet1.FieldByName('possibleAction').AsString := possibleAction;
         ZMQueryDataSet1.Post;
       end;
@@ -722,7 +1069,7 @@ procedure firePushInstallation;
 var
   resultstring, str: string;
 begin
-  resultstring := MyOpsiMethodCall('fireEvent_software_on_demand',  []);
+  resultstring := MyOpsiMethodCall('fireEvent_software_on_demand', []);
   //resultstring := MyOpsiMethodCall('hostControlSafe_fireEvent',  ['on_demand', '[' + myclientid + ']']);
 end;
 
@@ -734,9 +1081,9 @@ var
   i: integer;
   grouplist: TStringList;
 begin
-  FileVerInfo:=TFileVersionInfo.Create(nil);
+  FileVerInfo := TFileVersionInfo.Create(nil);
   try
-    FileVerInfo.FileName:=paramstr(0);
+    FileVerInfo.FileName := ParamStr(0);
     FileVerInfo.ReadFileInfo;
     myVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
   finally
@@ -749,8 +1096,8 @@ begin
   FopsiClientKiosk.ProcessMess;
   myexitcode := 0;
   myerror := '';
-  //readconf;
-  readconf2;
+  readconf;
+  //readconf2;
   initlogging(myclientid);
   LogDatei.log('clientid=' + myclientid, LLNotice);
   LogDatei.log('service_url=' + myservice_url, LLNotice);
@@ -759,6 +1106,7 @@ begin
   LogDatei.log('host_key=' + myhostkey, LLNotice);
 
   mythread := Tmythread.Create(False);
+  FopsiClientKiosk.ProgressBar1.Max := 3;
   FopsiClientKiosk.LabelDataload.Caption := 'Connect to Service';
   FopsiClientKiosk.ProgressBar1.Position := 1;
   FopsiClientKiosk.ProcessMess;
@@ -766,6 +1114,19 @@ begin
   if initConnection(30) then
   begin
     mythread.Terminate;
+    LogDatei.log('init Connection done', LLNotice);
+    initdb;
+    FopsiClientKiosk.LabelDataload.Caption := 'Get Products';
+    FopsiClientKiosk.ProgressBar1.Position := 2;
+    FopsiClientKiosk.ProcessMess;
+    LogDatei.log('start fetchProductData_by_getKioskProductInfosForClient', LLNotice);
+    fetchProductData_by_getKioskProductInfosForClient;
+    LogDatei.log('Handle products done', LLNotice);
+    FopsiClientKiosk.LabelDataload.Caption := 'Handle Products';
+    FopsiClientKiosk.ProgressBar1.Position := 4;
+    FopsiClientKiosk.ProcessMess;
+
+    (*
     productIdsList := TStringList.Create;
     LogDatei.log('init Connection done', LLNotice);
     FopsiClientKiosk.LabelDataload.Caption := 'Get Groups';
@@ -804,12 +1165,14 @@ begin
       LogDatei.log('No productgroups found', LLError);
       Fopsiclientkiosk.StatusBar1.Panels[0].Text := rsNoGroups;
     end;
+    *)
   end
   else
   begin
     LogDatei.log('init Connection failed - Aborting', LLError);
     mythread.Free;
-    if opsidata <> nil then opsidata.Free;
+    if opsidata <> nil then
+      opsidata.Free;
     Fopsiclientkiosk.Terminate;
     halt(1);
   end;

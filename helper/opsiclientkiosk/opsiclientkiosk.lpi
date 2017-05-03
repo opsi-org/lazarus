@@ -22,7 +22,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <RevisionNr Value="7"/>
-      <BuildNr Value="4"/>
+      <BuildNr Value="7"/>
       <StringTable CompanyName="uib gmbh (www.uib.de)" InternalName="opsi-client-kiosk" LegalCopyright="uib gmbh under AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" ProductName="opsi" ProductVersion="4.0.7"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -31,7 +31,7 @@
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
-            <Filename Value="opsiclientkiosk" ApplyConventions="False"/>
+            <Filename Value="opsiclientkiosk"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -40,6 +40,7 @@
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
+              <SyntaxMode Value="Delphi"/>
               <IncludeAssertionCode Value="True"/>
             </SyntaxOptions>
           </Parsing>
@@ -77,7 +78,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="../../common;../../external_libraries/dcpcrypt/Ciphers;../../external_libraries/dcpcrypt/Hashes;../../external_libraries/synapse40lib;../../external_libraries/indy"/>
+            <OtherUnitFiles Value="../../common;../../external_libraries/dcpcrypt/Ciphers;../../external_libraries/dcpcrypt/Hashes;../../external_libraries/dcpcrypt;../../external_libraries/synapse40lib;../../external_libraries/indy;../../external_libraries/TZMSQL/source"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -120,12 +121,12 @@
         <CommandLineParams Value="--fqdn=pcbon4.uib.local"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="9">
+    <RequiredPackages Count="6">
       <Item1>
-        <PackageName Value="LazControls"/>
+        <PackageName Value="SQLDBLaz"/>
       </Item1>
       <Item2>
-        <PackageName Value="zmsql"/>
+        <PackageName Value="LazControls"/>
       </Item2>
       <Item3>
         <PackageName Value="MemDSLaz"/>
@@ -137,19 +138,10 @@
         <PackageName Value="LCL"/>
       </Item5>
       <Item6>
-        <PackageName Value="dcpcrypt"/>
-      </Item6>
-      <Item7>
         <PackageName Value="LazUtils"/>
-      </Item7>
-      <Item8>
-        <PackageName Value="dcpcrypt_laz"/>
-      </Item8>
-      <Item9>
-        <PackageName Value="indylaz"/>
-      </Item9>
+      </Item6>
     </RequiredPackages>
-    <Units Count="8">
+    <Units Count="9">
       <Unit0>
         <Filename Value="opsiclientkiosk.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -188,6 +180,13 @@
         <Filename Value="../../common/oswebservice.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit7>
+      <Unit8>
+        <Filename Value="datadb.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DataModule1"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="DataModule"/>
+      </Unit8>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -215,7 +214,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="4">
+    <Exceptions Count="5">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -228,6 +227,9 @@
       <Item4>
         <Name Value="EDatabaseError"/>
       </Item4>
+      <Item5>
+        <Name Value="EUpdateError"/>
+      </Item5>
     </Exceptions>
   </Debugging>
 </CONFIG>

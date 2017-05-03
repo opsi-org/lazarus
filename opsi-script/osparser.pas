@@ -37,10 +37,10 @@ DynLibs, Windows,
 registry,
 osregistry,
 oskeyboard,
+osfuncwin3,
 {$IFDEF WIN32}
 DSiWin32,
 osfuncwin2,
-osfuncwin3,
 {$ENDIF WIN32}
 osfuncwin,
 wispecfolder,
@@ -9244,6 +9244,7 @@ var
   dummyActionresult : TSectionResult=0;
   oldDisableWow64FsRedirectionStatus: pointer=nil;
   dummybool : boolean;
+  Wow64FsRedirectionDisabled, boolresult : boolean;
 
 begin
 
@@ -10496,10 +10497,24 @@ begin
       if EvaluateString (r, r, s1, InfoSyntaxError)
       then
       Begin
+        {$IFDEF WIN32}
+        Wow64FsRedirectionDisabled := false;
         if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
         begin
           LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo);
-
+          Wow64FsRedirectionDisabled := true;
+        End
+        else
+        begin
+          Wow64FsRedirectionDisabled := false;
+          LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
+        end;
+       {$ENDIF WIN32}
+    (*
+        if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
+        begin
+          LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo);
+    *)
           if not fileExists (s1) then
           begin
             LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
@@ -10528,13 +10543,24 @@ begin
 
             versionInfo.free;
           end;
+          {$IFDEF WIN32}
+          if Wow64FsRedirectionDisabled then
+          Begin
+            boolresult := DSiRevertWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
+            Wow64FsRedirectionDisabled := false;
+            LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
+          End;
+          {$ENDIF}
+    (*
           dummybool := DSiRevertWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
           LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
+        (*
         end
         else
         begin
           LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
         end;
+        *)
         if Skip (')', r,r, InfoSyntaxError)
         then
         Begin
@@ -10542,6 +10568,7 @@ begin
         End
       End;
    end
+
 
    else if LowerCase(s) = LowerCase ('getFileInfoMapSysnative')
    then
@@ -10554,10 +10581,24 @@ begin
         if Is64BitSystem then
         begin
            LogDatei.log ('  Starting getFileInfoMap (SysNative 64 Bit mode)...', LLNotice);
+            {$IFDEF WIN32}
+            Wow64FsRedirectionDisabled := false;
+            if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
+            begin
+              LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo);
+              Wow64FsRedirectionDisabled := true;
+            End
+            else
+            begin
+              Wow64FsRedirectionDisabled := false;
+              LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
+            end;
+           {$ENDIF WIN32}
+           (*
           if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
           begin
             LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo);
-
+           *)
             if not fileExists (s1) then
             begin
               LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
@@ -10586,6 +10627,15 @@ begin
 
               versionInfo.free;
             end;
+            {$IFDEF WIN32}
+            if Wow64FsRedirectionDisabled then
+            Begin
+              boolresult := DSiRevertWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
+              Wow64FsRedirectionDisabled := false;
+              LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
+            End;
+            {$ENDIF}
+            (*
             dummybool := DSiRevertWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
             LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
           end
@@ -10593,6 +10643,7 @@ begin
           begin
             LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
           end;
+          *)
         end
         else
         begin
