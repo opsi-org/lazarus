@@ -12,7 +12,6 @@ uses
 {$R *.res}
 
 begin
-  Application.Title:='xmlsectiontest';
  // RequireDerivedFormResource := True;
   Application.Initialize;
   Application.CreateForm(TForm1, Form1);

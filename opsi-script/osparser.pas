@@ -97,7 +97,9 @@ LazFileUtils,
   opsihwbiosinfo,
   osjson,
   oscrypt,
-  LAZUTF8;
+  LAZUTF8,
+  DOM,
+  osxmlsections;
 
 
 type
@@ -107,7 +109,10 @@ type
                 tsProfileActions,
                 tsPatchAnyTextFile,
                 tsTests, tsPatchIniFile,
-                tsHostsPatch, tsRegistryHack, tsXMLPatch, tsIdapiConfig, tsLDAPsearch,
+                tsHostsPatch, tsRegistryHack,
+                tsXMLPatch,
+                tsXML2,
+                tsIdapiConfig, tsLDAPsearch,
                 tsFileActions, tsLinkFolder,
                 tsWinBatch, tsDOSBatchFile, tsDOSInAnIcon,
                 tsShellBatchFile, tsShellInAnIcon, tsExecutePython,
@@ -115,7 +120,7 @@ type
                 tsOpsiServiceCall,
                 tsOpsiServiceHashList,
                 tsDDEwithProgman,
-                // end of section names
+                // end of section names : tsDDEwithProgman has to be the last one
                 // start of other commands  after tsWorkOnStringList
                 tsWorkOnStringList,
                 tsOpsiServiceCallStat,
@@ -423,6 +428,11 @@ public
   function doXMLPatch (const Sektion: TWorkSection; Const XMLFilename : String;
            var output: TXStringList)
                                                                  : TSectionResult;
+
+  function doXMLPatch2 (const Sektion: TWorkSection; Const XMLFilename : String;
+           var output: TXStringList)
+                                                                 : TSectionResult;
+
 
   function doOpsiServiceHashList (const Sektion: TWorkSection;
   Const parameter : String; var output: TXStringList)
@@ -6725,6 +6735,336 @@ end;
 
 {$ENDIF WINDOWS}
 
+function TuibInstScript.doXMLPatch2 (const Sektion: TWorkSection; Const XMLFilename : String;
+                var output: TXStringList) : TSectionResult;
+var
+  XMLDocObject: TuibXMLDocument;
+  r : String='';
+  i : Integer=0;
+  k : Integer=0;
+  Expressionstr : String='';
+  SyntaxCheck : Boolean;
+  ErrorInfo : String='';
+  nodeOpened :boolean;
+  nodeOpenCommandExists :boolean;
+  nodepath : string;
+  newtext,newname, newvalue, newnode : string;
+begin
+  result := tsrPositive;
+
+  if not initSection (Sektion, OldNumberOfErrors, OldNumberOfWarnings) then exit;
+  //StartIndentLevel := LogDatei.LogSIndentLevel;
+  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
+  nodeOpened := false;
+  nodeOpenCommandExists := false;
+  nodepath := '';
+
+  // createXMLDoc
+  XMLDocObject:= TuibXMLDocument.Create;
+  // open xmlfile
+  if XMLDocObject.openXmlFile(XMLFilename) then
+    LogDatei.log('success: create xmldoc from file: '+XMLFilename,oslog.LLinfo)
+  else
+    LogDatei.log('failed: create xmldoc from file: '+XMLFilename,oslog.LLError);
+
+  // parse section
+  for i:=1 to Sektion.count
+  do
+  Begin
+    r := cutLeftBlanks(Sektion.strings [i-1]);
+    if (r = '') or (r [1] = LineIsCommentChar)
+    then
+     // continue
+    else
+    Begin
+      GetWord (r, Expressionstr, r, WordDelimiterSet1);
+
+      if LowerCase (Expressionstr) = LowerCase ('OpenNode')
+      then
+      Begin
+        if nodeOpenCommandExists (* i.e., existed already *)
+        then
+           //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1
+        else
+           nodeOpenCommandExists := true;
+
+        SyntaxCheck := false;
+        if Skip ('[', r, r, ErrorInfo)
+        then
+        Begin
+          GetWord (r, nodepath, r, [']']);
+          if Skip (']', r, r, ErrorInfo)
+          then
+          Begin
+            if r = '' then SyntaxCheck := true else ErrorInfo := ErrorRemaining;
+
+            LogDatei.log('nodepath is: '+nodepath, LLdebug);
+           LogDatei.log('We will open Key : '+nodepath, LLdebug);
+          End;
+        End;
+
+        if SyntaxCheck
+        then
+        Begin
+         (*
+          XMLDocObject.setlengthActNodeSet  (1);
+          XMLDocObject.actnodeset[0] := XMLDocObject.getDocumentElement;
+          for k:= 0 to length(XMLDocObject.actNodeSet)-1 do
+            if XMLDocObject.actNodeSet[k] <> nil then
+              LogDatei.log('actNodeSet <> nil',oslog.LLinfo)
+            else
+              LogDatei.log('actNodeSet = nil',oslog.LLinfo);
+          XMLDocObject.makeNewDerivedNodeSet;
+          XMLDocObject.logNodeSets;
+          *)
+          // Nodetext setzen und Attribut setzen :   SetText, SetAttribute
+          //if XMLDocObject.nodeExists('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add"') then
+          if XMLDocObject.nodeExists(nodepath) then
+          begin
+            LogDatei.log('successfully found node: '+nodepath,oslog.LLinfo);
+            //if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add" // ModifyPartitions') then
+            if XMLDocObject.openNode(nodepath) then
+            begin
+              nodeOpened := true;
+              LogDatei.log('successfully opend node: '+nodepath,oslog.LLinfo);
+              //XMLDocObject.setNodeText('***ModifyPartitions wurde ersetzt***');
+              //XMLDocObject.setAttribute('testname','testvalue');
+            end;
+          end;
+        End
+        else
+          reportError (Sektion, i, Sektion.strings [i-1], ErrorInfo);
+      End;   // opnenode
+
+      if LowerCase (Expressionstr) = LowerCase ('DeleteNode')
+      then
+      Begin
+        SyntaxCheck := false;
+        if Skip ('[', r, r, ErrorInfo)
+        then
+        Begin
+          GetWord (r, nodepath, r, [']']);
+          if Skip (']', r, r, ErrorInfo)
+          then
+          Begin
+            if r = '' then SyntaxCheck := true else ErrorInfo := ErrorRemaining;
+
+            LogDatei.log('nodepath is: '+nodepath, LLdebug);
+           LogDatei.log('We will delete Key : '+nodepath, LLdebug);
+          End;
+        End;
+
+        if SyntaxCheck
+        then
+        Begin
+          if XMLDocObject.nodeExists(nodepath) then
+          begin
+            LogDatei.log('successfully found node: '+nodepath,oslog.LLinfo);
+            try
+              XMLDocObject.delNode(nodepath);
+              // After a deleteNode you must use opennode in order to work with open nodes
+              nodeOpened := false;
+              nodeOpenCommandExists := false;
+              LogDatei.log('successfully deleted node: '+nodepath,oslog.LLinfo);
+            except
+              on e: Exception do
+              begin
+                LogDatei.log('Exception in xml2:stettext: ' + e.message, LLError);
+              end;
+            end;
+          end;
+        End
+        else
+          reportError (Sektion, i, Sektion.strings [i-1], ErrorInfo);
+      End;   // deleteNode
+
+      if LowerCase (Expressionstr) = LowerCase ('setNodeText')
+      then
+      Begin
+        syntaxCheck := true;
+        if not (nodeOpened and nodeOpenCommandExists) then
+        begin
+          SyntaxCheck := false;
+          ErrorInfo := 'No open Node. Use OpneNode before '+Expressionstr;
+        end;
+
+        if SyntaxCheck then
+        begin
+          if GetStringA (trim(r), newtext, r, errorinfo, true) then
+          begin
+            LogDatei.log('We will setNodeText : '+newtext, LLdebug);
+            syntaxCheck := true;
+          end
+          else  syntaxCheck := false
+        End;
+
+        if SyntaxCheck
+        then
+        Begin
+          try
+            XMLDocObject.setNodeText(newtext);
+            LogDatei.log('successfully setText node: '+newtext,oslog.LLinfo);
+          except
+            on e: Exception do
+            begin
+              LogDatei.log('Exception in xml2:stettext: ' + e.message, LLError);
+            end;
+          end;
+        End
+        else
+          reportError (Sektion, i, Sektion.strings [i-1], ErrorInfo);
+      End;   // setNodeText
+
+
+      if LowerCase (Expressionstr) = LowerCase ('setAttribute')
+      then
+      Begin
+        syntaxCheck := true;
+        if not (nodeOpened and nodeOpenCommandExists) then
+        begin
+          SyntaxCheck := false;
+          ErrorInfo := 'No open Node. Use OpneNode before '+Expressionstr;
+        end;
+
+        if SyntaxCheck then
+        begin
+          if GetStringA (trim(r), newname, r, errorinfo, true) then
+          begin
+            logdatei.log('name= '+newname,LLDebug2);
+            if GetStringA (trim(r), newvalue, r, errorinfo, true) then
+            begin
+              logdatei.log('value= '+newvalue,LLDebug2);
+              syntaxCheck := true;
+              LogDatei.log('We will setAttribute : '+newname+' : '+newvalue, LLdebug);
+            end
+            else  syntaxCheck := false
+          end
+          else  syntaxCheck := false;
+
+          if r = '' then SyntaxCheck := true else
+          begin
+            SyntaxCheck := false;
+            ErrorInfo := ErrorRemaining;
+          end;
+        End;
+
+        if SyntaxCheck
+        then
+        Begin
+          try
+            XMLDocObject.setAttribute(newname,newvalue);
+            LogDatei.log('successfully setAttribute : '+newname+' : '+newvalue,LLinfo);
+          except
+            on e: Exception do
+            begin
+              LogDatei.log('Exception in xml2:setAttribute: ' + e.message, LLError);
+            end;
+          end;
+        End
+        else
+          reportError (Sektion, i, Sektion.strings [i-1], ErrorInfo);
+      End;   // setAttribute
+
+      if LowerCase (Expressionstr) = LowerCase ('addAttribute')
+      then
+      Begin
+        syntaxCheck := true;
+        if not (nodeOpened and nodeOpenCommandExists) then
+        begin
+          SyntaxCheck := false;
+          ErrorInfo := 'No open Node. Use OpneNode before '+Expressionstr;
+        end;
+
+        if SyntaxCheck then
+        begin
+          if GetStringA (trim(r), newname, r, errorinfo, true) then
+          begin
+            logdatei.log('name= '+newname,LLDebug2);
+            if GetStringA (trim(r), newvalue, r, errorinfo, true) then
+            begin
+              logdatei.log('value= '+newvalue,LLDebug2);
+              syntaxCheck := true;
+              LogDatei.log('We will addAttribute : '+newname+' : '+newvalue, LLdebug);
+            end
+            else  syntaxCheck := false
+          end
+          else  syntaxCheck := false;
+
+          if r = '' then SyntaxCheck := true else
+          begin
+            SyntaxCheck := false;
+            ErrorInfo := ErrorRemaining;
+          end;
+        End;
+
+        if SyntaxCheck
+        then
+        Begin
+          try
+            XMLDocObject.addAttribute(newname,newvalue);
+            LogDatei.log('successfully addAttribute : '+newname+' : '+newvalue,LLinfo);
+          except
+            on e: Exception do
+            begin
+              LogDatei.log('Exception in xml2:addAttribute: ' + e.message, LLError);
+            end;
+          end;
+        End
+        else
+          reportError (Sektion, i, Sektion.strings [i-1], ErrorInfo);
+      End;   // addAttribute
+
+
+      if LowerCase (Expressionstr) = LowerCase ('delAttribute')
+      then
+      Begin
+        syntaxCheck := true;
+        if not (nodeOpened and nodeOpenCommandExists) then
+        begin
+          SyntaxCheck := false;
+          ErrorInfo := 'No open Node. Use OpneNode before '+Expressionstr;
+        end;
+
+        if SyntaxCheck then
+        begin
+          if GetStringA (trim(r), newname, r, errorinfo, true) then
+          begin
+            LogDatei.log('We will delAttribute : '+newname, LLdebug);
+            syntaxCheck := true;
+          end
+          else  syntaxCheck := false
+        End;
+
+        if SyntaxCheck
+        then
+        Begin
+          //LogDatei.log('We will delAttribute : '+newname, LLdebug);
+          try
+            XMLDocObject.delAttribute(newname);
+            LogDatei.log('successfully delAttribute node: '+newname,oslog.LLinfo);
+          except
+            on e: Exception do
+            begin
+              LogDatei.log('Exception in xml2:delAttribute: ' + e.message, LLError);
+            end;
+          end;
+        End
+        else
+          reportError (Sektion, i, Sektion.strings [i-1], ErrorInfo);
+      End;   // delAttribute
+
+
+    end; // not a comment line
+  end; // any line
+
+  // save xml back
+  if XMLDocObject.writeXmlFile(XMLFilename) then
+    LogDatei.log('successful written xmldoc to file: '+XMLFilename,LLinfo)
+  else
+    LogDatei.log('failed to write xmldoc to file: '+XMLFilename,oslog.LLError);
+  XMLDocObject.destroy;
+end;
 
 
 
@@ -9546,7 +9886,7 @@ begin
        localKindOfStatement := findKindOfStatement (s2, SecSpec, s1);
        if
          not (localKindOfStatement in
-         [tsXMLPatch, tsOpsiServiceCall, tsLDAPsearch, tsOpsiServiceHashList]
+         [tsXMLPatch, tsXML2, tsOpsiServiceCall, tsLDAPsearch, tsOpsiServiceHashList]
          )
        then
          InfoSyntaxError := 'not implemented for this kind of section'
@@ -9565,6 +9905,7 @@ begin
 
            case localKindOfStatement of
              tsXMLPatch : dummyActionresult := doxmlpatch (localSection, r1, list);
+             tsXML2 : dummyActionresult := doxmlpatch2 (localSection, r1, list);
              tsOpsiServiceCall : dummyActionresult := doOpsiServiceCall (localSection, r1, list);
              tsOpsiServiceHashList : dummyActionresult := doOpsiServiceHashList (localSection, r1, list);
              tsLDAPsearch :
@@ -18044,6 +18385,18 @@ begin
                   {$ENDIF WINDOWS}
                 end;
 
+                tsXML2:
+                  begin
+                     EvaluateString (Remaining, Remaining, Parameter, InfoSyntaxError);
+                     if Remaining = ''
+                     then
+                        ActionResult := doXMLPatch2 (ArbeitsSektion, Parameter, output)
+                     else
+                        ActionResult := reportError (Sektion, i, Sektion.strings [i-1],
+                                         ' end of line expected');
+                  end;
+
+
               tsOpsiServiceCall, tsOpsiServiceCallStat:
                 begin
                    Parameter := Remaining;
@@ -19309,7 +19662,7 @@ begin
   GetMem (PStatNames, sizeof (TStatementNames));
   PStatNames^ [tsNotDefined]          := '';
   PStatNames^ [tsActions]             := 'Sub';
-   PStatNames^ [tsProfileActions]      := 'ProfileAction';
+  PStatNames^ [tsProfileActions]      := 'ProfileAction';
   PStatNames^ [tsPatchAnyTextfile]    := 'PatchTextFile';
   PStatNames^ [tsTests]               := 'Tests';
   //PStatNames^ [tsTestCommand]         := 'Testcommand';
@@ -19318,6 +19671,7 @@ begin
 
   PStatNames^ [tsRegistryHack]        := 'Registry';
   PStatNames^ [tsXMLPatch]            := 'XMLPatch';
+  PStatNames^ [tsXML2]                := 'XML2';
   PStatNames^ [tsIdapiConfig]         := 'IdapiConfig';
   PStatNames^ [tsLDAPsearch]          := 'LDAPsearch';
   PStatNames^ [tsFileActions]         := 'Files';
