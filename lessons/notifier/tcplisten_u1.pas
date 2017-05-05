@@ -6,15 +6,17 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  ExtCtrls, IdTCPClient,IdSocketHandle, IdAntiFreezeBase, IdAntiFreeze;
+  ExtCtrls, IdTCPClient, IdSocketHandle, IdAntiFreezeBase, IdAntiFreeze;
 
 type
 
   { TForm1 }
 
   TForm1 = class(TForm)
+    Button1: TButton;
     Memo1: TMemo;
     Panel1: TPanel;
+    procedure Button1Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
   private
@@ -23,7 +25,7 @@ type
     { public declarations }
   end;
 
-  type
+type
   Tmythread = class(TThread)
   public
     procedure Execute; override;
@@ -50,29 +52,32 @@ var
 begin
   if not Terminated then
   begin
-      //myFreeze := TIdAntiFreeze.Create;
-  //myFreeze.Active:=true;
-  myTCPClient := TIdTCPClient.Create;
-  myTCPClient.Port := 44003;
-  myTCPClient.Host := '127.0.0.1';
-  myTCPClient.ReadTimeout := 1000;
+    //myFreeze := TIdAntiFreeze.Create;
+    //myFreeze.Active:=true;
+    myTCPClient := TIdTCPClient.Create;
+    myTCPClient.Port := 44003;
+    myTCPClient.Host := '127.0.0.1';
+    myTCPClient.ReadTimeout := 1000;
 
-  //Application.ProcessMessages;
-  repeat
-    try
-      myTCPClient.Connect;
-    except
-    end;
-  until myTCPClient.Connected;
-  for i := 1 to 60 do
-  begin
-    ;
     //Application.ProcessMessages;
-    receiveline := myTCPClient.Socket.ReadLn();
-    Form1.Memo1.Append(receiveline);
-    Form1.Memo1.Append(IntToStr(i) + ' --------------------------------------------------');
-  end;
-
+    repeat
+      try
+        myTCPClient.Connect;
+      except
+      end;
+    until myTCPClient.Connected;
+    i := 1;
+    while (not Terminated) and (i< 160) do
+    begin
+      ;
+      //Application.ProcessMessages;
+      receiveline := myTCPClient.Socket.ReadLn();
+      receiveline := receiveline + myTCPClient.Socket.rea;
+      Form1.Memo1.Append(receiveline);
+      Form1.Memo1.Append(IntToStr(i) +
+        ' --------------------------------------------------');
+      inc(i);
+    end;
   end;
 end;
 
@@ -86,9 +91,14 @@ var
   i: integer;
 begin
   stopped := False;
-   mythread := Tmythread.Create(False);
+  mythread := Tmythread.Create(False);
 
+end;
 
+procedure TForm1.Button1Click(Sender: TObject);
+begin
+  mythread.Terminate;
+  Application.Terminate;
 end;
 
 procedure TForm1.FormCloseQuery(Sender: TObject; var CanClose: boolean);
