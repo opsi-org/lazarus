@@ -1,2 +1,1 @@
-C:\Program Files (x86)\opsi.org\opsi-client-agent>notifier.exe -p 44003 -i event
- -s notifier\\action.ini
+C:\Program Files (x86)\opsi.org\opsi-client-agent>notifier.exe -p 44003 -i event -s notifier\\action.ini
