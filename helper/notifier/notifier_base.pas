@@ -15,7 +15,8 @@ uses
   IdTCPClient,
   Variants,
   fileinfo,
-  winpeimagereader;
+  winpeimagereader,
+  notifierguicontrol;
 
 type
 
@@ -41,17 +42,20 @@ type
   end;
 *)
 procedure Main;
-
+(*
 var
   myport: integer;
   myevent: string;
   myconfigpath, myconfigfile: string;
   myexepath: string;
   myVersion: string;
-
+  *)
 
 
 implementation
+
+uses
+  notifierdatamodule;
 
 
 var
@@ -141,113 +145,19 @@ var
 
 
   procedure Main;
-  var
-    ErrorMsg: string;
-    optionlist: TStringList;
-    FileVerInfo: TFileVersionInfo;
-
   begin
-    (*
-
-    FileVerInfo := TFileVersionInfo.Create(nil);
-    try
-      FileVerInfo.FileName := ParamStr(0);
-      FileVerInfo.ReadFileInfo;
-      myVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
-    finally
-      FileVerInfo.Free;
-    end;
-    // Initialize logging
-    LogDatei := TLogInfo.Create;
-    LogDatei.FileName := ExtractFileNameOnly(myApplication.ExeName);
-    LogDatei.StandardLogFileext:='.log';
-    LogDatei.StandardLogFilename := ExtractFileNameOnly(myApplication.ExeName);
-    LogDatei.StandardPartLogFilename := ExtractFileNameOnly(myApplication.ExeName) + '-part';
-    LogDatei.CreateTheLogfile(ExtractFileNameOnly(myApplication.ExeName)+'.log', True);
-    LogDatei.log('Log for: ' + myApplication.exename +
-      ' version: ' + myVersion + ' opend at : ' + DateTimeToStr(now), LLinfo);
-
-    myexepath := ExtractFilePath(myApplication.ExeName);
-    myport := 44003;
-    stopped := false;
-
-    // quick check parameters
-    optionlist := TStringList.Create;
-    optionlist.Add('help');
-    optionlist.Add('port:');
-    optionlist.Add('showconfigfile:');
-    optionlist.Add('inputevent:');
-    ErrorMsg := myApplication.CheckOptions('hp:s:i:', optionlist);
-    if ErrorMsg <> '' then
-    begin
-      logdatei.log(ErrorMsg, LLcritical);
-      logdatei.Close;
-      //ShowException(Exception.Create(ErrorMsg));
-      myApplication.Terminate;
-      Exit;
-    end;
-
-    // parse parameters
-    if myApplication.HasOption('h', 'help') then
-    begin
-      logdatei.log('Found Parameter help: show and exit', LLInfo);
-      myApplication.WriteHelp;
-      logdatei.Close;
-      myApplication.Terminate;
-      Exit;
-    end;
-
-    { add your program here }
-    if myApplication.HasOption('p', 'port') then
-    begin
-      logdatei.log('Found Parameter port', LLDebug);
-      myport := StrToInt(myApplication.GetOptionValue('p', 'port'));
-      logdatei.log('Found Parameter port: ' + IntToStr(myport), LLInfo);
-    end;
-
-    if myApplication.HasOption('s', 'showconfigfile') then
-    begin
-      logdatei.log('Found Parameter showconfigfile', LLDebug);
-      myconfigpath := myApplication.GetOptionValue('s', 'showconfigfile');
-      logdatei.log('Found Parameter port: ' + IntToStr(myport), LLInfo);
-      myconfigfile := myexepath + myconfigpath;
-      if not FileExists(myconfigfile) then
-      begin
-        logdatei.log('Error: Given config file not found: ' + myconfigfile, LLCritical);
-        logdatei.Close;
-        writeln('Error: Given config file not found: ' + myconfigfile);
-        myApplication.Terminate;
-        Exit;
-      end;
-    end;
-
-    if myApplication.HasOption('i', 'inputevent') then
-    begin
-      logdatei.log('Found Parameter inputevent', LLDebug);
-      myevent := myApplication.GetOptionValue('i', 'inputevent');
-      logdatei.log('Found Parameter inputevent: ' + myevent, LLInfo);
-    end;
-     *)
-
-
     stopped := False;
+    DataModule1.createNform;
+    openSkinIni(myconfigfile);
+    if myport > 0 then
+    begin
     mythread := Tmythread.Create(False);
 
     while not stopped  do
     begin
       Sleep(100);
     end;
-     (*
-    // stop program loop
-    logdatei.log('Program regulary finished', LLInfo);
-    logdatei.Close;
-    writeln('Program regulary finished');
-    //while not mythread.CheckTerminated do
-    //begin
-    //  Sleep(100);
-    //end;
-    myApplication.Terminate;
-    *)
+    end;
   end;
 
 
