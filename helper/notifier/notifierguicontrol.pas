@@ -22,6 +22,11 @@ uses
 
 type
   TNFormPos = (fpTopRight, fpBottomRight, fpTopLeft, fpCenter, fpCustom);
+  TNFormAppear = (fapNone, fapStd, fapFade, fapFadeUp, fapFadeDown,
+    fapUp, fapDown, fapUnknown);
+  TNFormDisappear = (fpdNone, fdpStd, fdpFade, fdpFadeUp, fdpFadeDown);
+  TLabels = array of TLabel;
+  TButtons = array of TButton;
 
 procedure openSkinIni(ininame: string);
 
@@ -35,8 +40,13 @@ var
   navlist: TStringList;
   sectionlist: TStringList;
   nformpos: TNFormPos;
-  fadein, fadeout, hidden: boolean;
+  appearmode: TNFormAppear;
+  disappearmode: TNFormDisappear;
+  fadein, fadeout, hidden, transparent: boolean;
   slidein, slideout: string;
+  LabelArray :  TLabels;
+  ButtonArray : TButtons;
+  labelcounter : integer;
 
   {$IFDEF WINDOWS}
 // from
@@ -70,49 +80,157 @@ begin
   Result := RGBToColor(red, green, blue);
 end;
 
+function calculate_appearmode: TNFormAppear;
+begin
+  if hidden then
+    Result := fapNone
+  else
+  begin // not hidden
+    // transparent could not work with fadein
+    if transparent then
+      fadein := False;
+
+    if fadein = False then
+    begin
+      if slidein = '' then
+      begin
+        Result := fapStd;
+      end
+      else
+      begin
+        if slidein = 'up' then
+          Result := fapUp
+        else if slidein = 'down' then
+          Result := fapDown
+        else
+          Result := fapUnknown;
+      end;
+    end
+    else // now fadein
+    begin
+      if slidein = '' then
+      begin
+        Result := fapFade;
+      end
+      else
+      begin
+        if slidein = 'up' then
+          Result := fapFadeUp
+        else if slidein = 'down' then
+          Result := fapFadeDown
+        else
+          Result := fapUnknown;
+      end;
+    end;
+  end; // not hidden
+  if Result = fapUnknown then
+  begin
+    LogDatei.log('Error: could not calculate appearmode - fall back to standard',
+      LLError);
+    Result := fapStd;
+  end;
+end;
+
 procedure showNForm;
 var
-  startx, starty, stopx, stopy, x, y: integer;
+  startx, starty, stopx, stopy, x, y, i: integer;
 begin
   // position
 
   case nformpos of
     fpTopRight:
     begin
-       x := screen.Width;
-  starty := 20;
-  startx := x - form2.Width - 20;
+      x := screen.Width;
+      starty := 20;
+      startx := x - nform.Width - 20;
+      LogDatei.log('Form position: fpTopRight', LLInfo);
     end;
     fpBottomRight:
     begin
       x := screen.Width;
-  y := screen.Height;
-  starty := y - form2.Height;
-  startx := x - form2.Width;
+      y := screen.Height;
+      starty := y - nform.Height;
+      startx := x - nform.Width;
+      LogDatei.log('Form position: fpBottomRight', LLInfo);
     end;
     fpTopLeft:
     begin
       starty := 20;
       startx := 20;
+      LogDatei.log('Form position: fpTopLeft', LLInfo);
     end;
     fpCenter:
     begin
-       x := screen.Width div 2;
-  y := screen.Height div 2;
-  starty := y - (form2.Height div 2);
-  startx := x - (form2.Width div 2);
+      x := screen.Width div 2;
+      y := screen.Height div 2;
+      starty := y - (nform.Height div 2);
+      startx := x - (nform.Width div 2);
+      LogDatei.log('Form position: fpCenter', LLInfo);
     end;
     fpCustom:
     begin
-       // nothing to change
-      ;
+      // nothing to change
+      LogDatei.log('Form position: fpCustom', LLInfo);
     end;
     else
       LogDatei.log('Error: Unknown Form position', LLError);
   end;
 
-  // show the form
-  nform.Show;
+  // show with appearmode
+
+  case appearmode of
+    fapNone: LogDatei.log('Will not show: fapNone', LLWarning);
+    fapStd:
+    begin
+      nform.Top := starty;
+      nform.Left := startx;
+      nform.Show;
+    end;
+    fapFade:
+    begin
+      nform.Top := starty;
+      nform.Left := startx;
+      nform.AlphaBlend := True;
+      nform.AlphaBlendValue := 0;
+      nform.Show;
+      for i := 1 to 255 do
+      begin
+        sleep(1);
+        nform.AlphaBlendValue := i;
+        nform.Repaint;
+        DataModule1.ProcessMess;
+      end;
+    end;
+    fapFadeUp:
+    begin
+
+    end;
+    fapFadeDown:
+    begin
+
+    end;
+    fapUp:
+    begin
+      x := screen.Width;
+      stopy := nform.Height;
+      nform.Height := 0;
+      y := screen.WorkAreaHeight;
+      nform.Top := y;
+      nform.Left := startx;
+      for i := 1 to stopy do
+      begin
+        Sleep(1);
+        nform.Top := y - i;
+        nform.Height := nform.Height + 1;
+        nform.Repaint;
+        DataModule1.ProcessMess;
+      end;
+    end;
+    fapDown:
+    begin
+
+    end;
+  end;
 end;
 
 function objectByIndex(myIni: TIniFile; aktsection: string): TObject;
@@ -140,7 +258,7 @@ begin
       nform.FormStyle := fsSystemStayOnTop;
 
     //Frame = false
-    if strToBool(myini.ReadString(aktsection, 'Frame', 'false')) then
+    if not strToBool(myini.ReadString(aktsection, 'Frame', 'false')) then
       nform.BorderStyle := bsNone;
 
     //Resizable = false
@@ -187,8 +305,9 @@ begin
     if FileExists(mytmpstr) then
       nform.Icon.LoadFromFile(mytmpstr);
     //Transparent = true
+    transparent := strToBool(myini.ReadString(aktsection, 'Transparent', 'false'));
     //TransparentColor = 255,0,255
-    if strToBool(myini.ReadString(aktsection, 'Transparent', 'false')) then
+    if transparent then
     begin
       mytmpint1 := 0;
       mytmpstr := myini.ReadString(aktsection, 'TransparentColor', '255,255,255');
@@ -211,11 +330,16 @@ begin
     nform.Image1.Picture.LoadFromFile(mytmpstr);
     nform.Image1.Repaint;
     DataModule1.ProcessMess;
-
   end
   else
   if pos('Label', aktsection) > 0 then
   begin
+    (*
+     SetLength(ProductTilesArray, counter + 1);
+    ProductTilesArray[counter] := TProductPanel.Create(FopsiClientKiosk.FlowPanelTiles);
+    ProductTilesArray[counter].LabelId.Caption :=
+      ZMQueryDataSet1.FieldByName('ProductId').AsString;
+      *)
     if aktsection = 'LabelStatus' then
     begin
       myLabel := TLabel.Create(nform);
@@ -235,8 +359,6 @@ begin
       myButton.Caption := myini.ReadString(aktsection, 'Text', 'emppty');
     end;
   end;
-  // show the form
-  showNForm;
 end;
 
 function fillnavlist(var myIni: TIniFile): TStrings;
@@ -279,6 +401,10 @@ begin
     LogDatei.log('Interpreting section: ' + aktsection, LLInfo);
     objectByIndex(myIni, aktsection);
   end;
+  // set appearmode
+  appearmode := calculate_appearmode;
+  // show the form
+  showNForm;
 end;
 
 
