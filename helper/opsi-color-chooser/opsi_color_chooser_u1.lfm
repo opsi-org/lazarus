@@ -1,0 +1,103 @@
+object Form1: TForm1
+  Left = 724
+  Height = 240
+  Top = 437
+  Width = 320
+  Caption = 'opsi-color-chooser'
+  ClientHeight = 240
+  ClientWidth = 320
+  LCLVersion = '1.6.2.0'
+  object ColorBox1: TColorBox
+    Left = 200
+    Height = 24
+    Top = 24
+    Width = 100
+    ItemHeight = 16
+    OnChange = ColorBox1Change
+    TabOrder = 0
+  end
+  object Button1: TButton
+    Left = 24
+    Height = 25
+    Top = 24
+    Width = 128
+    Caption = 'open color dialog'
+    OnClick = Button1Click
+    TabOrder = 1
+  end
+  object EditRGB: TEdit
+    Left = 176
+    Height = 23
+    Top = 200
+    Width = 88
+    ReadOnly = True
+    TabOrder = 2
+  end
+  object Label1: TLabel
+    Left = 28
+    Height = 15
+    Top = 136
+    Width = 53
+    Caption = 'Hexstring:'
+    ParentColor = False
+  end
+  object Label2: TLabel
+    Left = 28
+    Height = 15
+    Top = 200
+    Width = 56
+    Caption = 'RGB String'
+    ParentColor = False
+  end
+  object Label3: TLabel
+    Left = 28
+    Height = 15
+    Top = 168
+    Width = 59
+    Caption = 'Alias String'
+    ParentColor = False
+  end
+  object EditAlias: TEdit
+    Left = 176
+    Height = 23
+    Top = 167
+    Width = 88
+    ReadOnly = True
+    TabOrder = 3
+  end
+  object EditHex: TEdit
+    Left = 176
+    Height = 23
+    Top = 139
+    Width = 88
+    ReadOnly = True
+    TabOrder = 4
+  end
+  object ColorDialog1: TColorDialog
+    Color = clBlack
+    CustomColors.Strings = (
+      'ColorA=000000'
+      'ColorB=000080'
+      'ColorC=008000'
+      'ColorD=008080'
+      'ColorE=800000'
+      'ColorF=800080'
+      'ColorG=808000'
+      'ColorH=808080'
+      'ColorI=C0C0C0'
+      'ColorJ=0000FF'
+      'ColorK=00FF00'
+      'ColorL=00FFFF'
+      'ColorM=FF0000'
+      'ColorN=FF00FF'
+      'ColorO=FFFF00'
+      'ColorP=FFFFFF'
+      'ColorQ=C0DCC0'
+      'ColorR=F0CAA6'
+      'ColorS=F0FBFF'
+      'ColorT=A4A0A0'
+    )
+    left = 264
+    top = 72
+  end
+end

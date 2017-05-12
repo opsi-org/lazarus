@@ -87,11 +87,6 @@ msgctxt "TFINSTALLDLG.LABEL1.CAPTION"
 msgid "The following Actions will be done:"
 msgstr "Les actions suivantes seront réalisées :"
 
-#: tfinstalldlg.toolbar1.caption
-msgctxt "TFINSTALLDLG.TOOLBAR1.CAPTION"
-msgid "ToolBar1"
-msgstr ""
-
 #: tfopsiclientkiosk.bitbtn1.caption
 msgctxt "tfopsiclientkiosk.bitbtn1.caption"
 msgid "Info"
@@ -134,10 +129,6 @@ msgstr "Filtrer les produits dont une mise à jour est possible."
 msgid "opsi-client-kiosk"
 msgstr ""
 
-#: tfopsiclientkiosk.datapanel.caption
-msgid "datapanel"
-msgstr ""
-
 #: tfopsiclientkiosk.dbgrid1.hint
 msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
 msgstr "Cliquer dans la colonne ActionRequest pour activer l'option (setup/uninstall)"
@@ -168,18 +159,6 @@ msgstr "Veuillez patienter ..."
 
 #: tfopsiclientkiosk.paneldependencies.caption
 msgid "PanelDependencies"
-msgstr ""
-
-#: tfopsiclientkiosk.panelprogess.caption
-msgid "PanelProgess"
-msgstr ""
-
-#: tfopsiclientkiosk.paneltoolbar.caption
-msgid "PanelToolbar"
-msgstr ""
-
-#: tfopsiclientkiosk.productdetailpanel.caption
-msgid "productdetailpanel"
 msgstr ""
 
 #: tfopsiclientkiosk.radiogroupview.caption
@@ -218,15 +197,6 @@ msgstr "Dépendances / Priorités"
 msgid "opsi Client Kiosk"
 msgstr ""
 
-#: tfopsiclientkiosk.toolbar1.caption
-msgctxt "tfopsiclientkiosk.toolbar1.caption"
-msgid "ToolBar1"
-msgstr ""
-
-#: tfopsiclientkiosk.toolbar2.caption
-msgid "ToolBar2"
-msgstr ""
-
 #: tform1.bitbtnlater.caption
 msgctxt "tform1.bitbtnlater.caption"
 msgid "Install at next Standard Event (e.g. Reboot)"
@@ -246,9 +216,4 @@ msgstr ""
 msgctxt "tform1.label1.caption"
 msgid "The following Actions will be done:"
 msgstr "Les actions suivantes seront réalisées :"
-
-#: tform1.toolbar1.caption
-msgctxt "TFORM1.TOOLBAR1.CAPTION"
-msgid "ToolBar1"
-msgstr ""
 

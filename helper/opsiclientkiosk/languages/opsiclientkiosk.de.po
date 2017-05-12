@@ -73,11 +73,6 @@ msgctxt "TFINSTALLDLG.LABEL1.CAPTION"
 msgid "The following Actions will be done:"
 msgstr "Die folgenden Aktionen werden ausgeführt werden:"
 
-#: tfinstalldlg.toolbar1.caption
-msgctxt "TFINSTALLDLG.TOOLBAR1.CAPTION"
-msgid "ToolBar1"
-msgstr "do not translate"
-
 #: tfopsiclientkiosk.bitbtn1.caption
 #, fuzzy
 msgctxt "tfopsiclientkiosk.bitbtn1.caption"
@@ -121,10 +116,6 @@ msgstr "Filtere nach Produkten bei denen ein Upgrade möglich ist."
 msgid "opsi-client-kiosk"
 msgstr ""
 
-#: tfopsiclientkiosk.datapanel.caption
-msgid "datapanel"
-msgstr "do not translate"
-
 #: tfopsiclientkiosk.dbgrid1.hint
 msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
 msgstr "In die Spalte ActionRequest klicken um Aktionen (setup/uninstall) zu setzen"
@@ -155,18 +146,6 @@ msgstr "Bitte warten ..."
 
 #: tfopsiclientkiosk.paneldependencies.caption
 msgid "PanelDependencies"
-msgstr "do not translate"
-
-#: tfopsiclientkiosk.panelprogess.caption
-msgid "PanelProgess"
-msgstr "do not translate"
-
-#: tfopsiclientkiosk.paneltoolbar.caption
-msgid "PanelToolbar"
-msgstr "do not translate"
-
-#: tfopsiclientkiosk.productdetailpanel.caption
-msgid "productdetailpanel"
 msgstr "do not translate"
 
 #: tfopsiclientkiosk.radiogroupview.caption
@@ -205,15 +184,6 @@ msgstr "Abhängigkeiten / Prioritäten"
 msgid "opsi Client Kiosk"
 msgstr ""
 
-#: tfopsiclientkiosk.toolbar1.caption
-msgctxt "tfopsiclientkiosk.toolbar1.caption"
-msgid "ToolBar1"
-msgstr "do not translate"
-
-#: tfopsiclientkiosk.toolbar2.caption
-msgid "ToolBar2"
-msgstr ""
-
 #: tform1.bitbtnlater.caption
 msgctxt "tform1.bitbtnlater.caption"
 msgid "Install at next Standard Event (e.g. Reboot)"
@@ -233,9 +203,4 @@ msgstr ""
 msgctxt "tform1.label1.caption"
 msgid "The following Actions will be done:"
 msgstr "Die folgenden Aktionen werden ausgeführt:"
-
-#: tform1.toolbar1.caption
-msgctxt "TFORM1.TOOLBAR1.CAPTION"
-msgid "ToolBar1"
-msgstr "do not translate"
 

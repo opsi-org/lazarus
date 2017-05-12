@@ -417,6 +417,7 @@ procedure readconf;
 var
   myini: TInifile;
 begin
+  //opsiconfd mode
   myini := TIniFile.Create(opsiclientdconf);
   myservice_url := myini.ReadString('config_service', 'url', '');
   myclientid := myini.ReadString('global', 'host_id', '');
@@ -428,6 +429,7 @@ end;
 
 procedure readconf2;
 begin
+  // opsiclientd mode
   myservice_url := 'https://localhost:4441/kiosk';
   //myclientid := 'localhost';
   //myclientid := oslog.getComputerName;
@@ -1099,7 +1101,18 @@ procedure firePushInstallation;
 var
   resultstring, str: string;
 begin
+  // switch to opsiclientd mode
+  readconf2;
+  FreeAndNil(opsidata);
+  initConnection(30);
+  // opsiclientd mode
   resultstring := MyOpsiMethodCall('fireEvent_software_on_demand', []);
+  // switch back to opsiconfd mode
+  readconf;
+  FreeAndNil(opsidata);
+  initConnection(30);
+  // opsiconfd mode
+  // may not work if acl.conf is restricted
   //resultstring := MyOpsiMethodCall('hostControlSafe_fireEvent',  ['on_demand', '[' + myclientid + ']']);
 end;
 
@@ -1126,14 +1139,17 @@ begin
   FopsiClientKiosk.ProcessMess;
   myexitcode := 0;
   myerror := '';
+  // opsiconfd mode
   readconf;
+  // opsiclientd mode
   //readconf2;
+  // do not forget to check firePushInstallation
   initlogging(myclientid);
   LogDatei.log('clientid=' + myclientid, LLNotice);
   LogDatei.log('service_url=' + myservice_url, LLNotice);
   LogDatei.log('service_user=' + myclientid, LLNotice);
   logdatei.AddToConfidentials(myhostkey);
-  LogDatei.log('host_key=' + myhostkey, LLNotice);
+  LogDatei.log('host_key=' + myhostkey, LLdebug3);
 
   mythread := Tmythread.Create(False);
   FopsiClientKiosk.ProgressBar1.Max := 3;

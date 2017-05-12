@@ -2,7 +2,25 @@
 Text= opsi Client Kiosk
 FontName = Arial
 FontSize = 20
-FontColor = $00000000
+FontColor = clBlack
 FontBold = true
 FontItalic = false
 FontUnderline = false
+
+[Tile]
+width = 200
+height = 200
+color =  clSkyBlue
+FontName = Arial
+FontSize = 12
+FontColor = clBlack
+FontBold = true
+FontItalic = false
+FontUnderline = false
+
+[TileRadio]
+fontsize = 10
+none_color = clBlack
+uninstall_color = clBlue
+setup_color = clRed
+

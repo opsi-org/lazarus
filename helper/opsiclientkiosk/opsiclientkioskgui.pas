@@ -208,19 +208,19 @@ implementation
 var
   mythread: Tmythread2;
   //tile
-  tile_color: TColor;
+  tile_color: string;
   tile_Font_Name: string;
   tile_Font_Size: integer;
-  tile_Font_Color: TColor;
+  tile_Font_Color: string;
   tile_Font_Bold: boolean;
   tile_Font_Italic: boolean;
   tile_Font_Underline: boolean;
   tile_width: integer;
   tile_height: integer;
   //TileRadio
-  tile_radio_setup_color: TColor;
-  tile_radio_uninstall_color: TColor;
-  tile_radio_none_color: TColor;
+  tile_radio_setup_color: string;
+  tile_radio_uninstall_color: string;
+  tile_radio_none_color: string;
   tile_radio_font_size: integer;
 
 
@@ -252,6 +252,7 @@ end;
 
 constructor TProductPanel.Create(TheOwner: TWincontrol);
 begin
+  try
   inherited Create(theOwner);
   parent := theOwner;
   Width := tile_width;
@@ -259,10 +260,10 @@ begin
   self.OnClick := ProductTileClick;
   BorderStyle := bsSingle;
   BorderSpacing.Around := 3;
-  Color := tile_color;
+  Color := StringToColor(tile_color);
   Font.Name := tile_Font_Name;
   font.Size := tile_Font_Size;
-  font.Color := tile_Font_Color;
+  font.Color := StringToColor(tile_Font_Color);
   font.Bold := tile_Font_Bold;
   font.Italic := tile_Font_Italic;
   font.Underline := tile_Font_Underline;
@@ -321,7 +322,7 @@ begin
   lbnone := TLabel.Create(self);
   lbnone.Left := 20;
   lbnone.Caption := rsActNone;
-  lbnone.Font.Color := tile_radio_none_color;
+  lbnone.Font.Color := StringToColor(tile_radio_none_color);
   lbnone.Parent := RadioGroupAction;
   lbnone.top := rbNone.top;
   lbnone.Left := 20;
@@ -340,7 +341,7 @@ begin
   lbsetup := TLabel.Create(self);
   lbsetup.Left := 20;
   lbsetup.Caption := rsActSetup;
-  lbsetup.Font.Color := tile_radio_setup_color;
+  lbsetup.Font.Color := StringToColor(tile_radio_setup_color);
   lbsetup.Parent := RadioGroupAction;
   lbsetup.top := rbsetup.top;
   lbsetup.Left := 20;
@@ -360,7 +361,7 @@ begin
   lbuninstall := TLabel.Create(self);
   lbuninstall.Left := 20;
   lbuninstall.Caption := rsActUninstall;
-  lbuninstall.Font.Color := tile_radio_uninstall_color;
+  lbuninstall.Font.Color := StringToColor(tile_radio_uninstall_color);
   lbuninstall.Parent := RadioGroupAction;
   lbuninstall.top := rbuninstall.top;
   lbuninstall.Left := 20;
@@ -378,6 +379,13 @@ begin
   Button1.Height := 20;
   Button1.OnClick := Button1Click;
   *)
+   except
+      on e: Exception do
+      begin
+        logdatei.log('Exception TProductPanel.Create', LLError);
+        logdatei.log('Exception: ' + E.message, LLError);
+      end;
+    end;
 end;
 
 destructor TProductPanel.Destroy;
@@ -1096,19 +1104,19 @@ begin
     ImageHeader.Picture.LoadFromFile(skinpath + 'opsiclientkiosk.png');
   end;
   //tile
-  tile_color := clSkyBlue;
+  tile_color := 'clSkyBlue';
   tile_Font_Name := 'Arial';
   tile_Font_Size := 11;
-  tile_Font_Color := $00000000;
+  tile_Font_Color := 'clBlack';
   tile_Font_Bold := False;
   tile_Font_Italic := False;
   tile_Font_Underline := False;
   tile_width := 200;
   tile_height := 200;
   //TileRadio
-  tile_radio_setup_color := clRed;
-  tile_radio_uninstall_color := clBlue;
-  tile_radio_none_color := clDefault;
+  tile_radio_setup_color := 'clRed';
+  tile_radio_uninstall_color := 'clBlue';
+  tile_radio_none_color := 'clBlack';
   tile_radio_font_size := 10;
   if FileExists(skinpath + 'opsiclientkiosk.ini') then
   begin
@@ -1117,26 +1125,26 @@ begin
       myini.ReadString('TitleLabel', 'text', 'opsi Client Kiosk');
     TitleLabel.Font.Name := myini.ReadString('TitleLabel', 'FontName', 'Arial');
     TitleLabel.Font.Size := myini.ReadInteger('TitleLabel', 'FontSize', 12);
-    TitleLabel.Font.Color := myini.ReadInteger('TitleLabel', 'FontColor', $00000000);
+    TitleLabel.Font.Color := StringToColor(myini.ReadString('TitleLabel', 'FontColor', 'clBlack'));
     TitleLabel.Font.Bold := myini.ReadBool('TitleLabel', 'FontBold', True);
     TitleLabel.Font.Italic := myini.ReadBool('TitleLabel', 'FontItalic', False);
     TitleLabel.Font.Underline := myini.ReadBool('TitleLabel', 'FontUnderline', False);
     //tile
-    tile_color := myini.ReadInteger('Tile', 'color', tile_color);
+    tile_color := myini.ReadString('Tile', 'color', tile_color);
     tile_Font_Name := myini.ReadString('Tile', 'FontName', tile_Font_Name);
     tile_Font_Size := myini.ReadInteger('Tile', 'FontSize', tile_Font_Size);
-    tile_Font_Color := myini.ReadInteger('Tile', 'FontColor', tile_Font_Color);
+    tile_Font_Color := myini.ReadString('Tile', 'FontColor', tile_Font_Color);
     tile_Font_Bold := myini.ReadBool('Tile', 'FontBold', tile_Font_Bold);
     tile_Font_Italic := myini.ReadBool('Tile', 'FontItalic', tile_Font_Italic);
     tile_Font_Underline := myini.ReadBool('Tile', 'FontUnderline', tile_Font_Underline);
     tile_width := myini.ReadInteger('Tile', 'Width', tile_width);
     tile_height := myini.ReadInteger('Tile', 'Height', tile_height);
     //TileRadio
-    tile_radio_setup_color := myini.ReadInteger('TileRadio', 'setup_color',
+    tile_radio_setup_color := myini.ReadString('TileRadio', 'setup_color',
       tile_radio_setup_color);
     tile_radio_uninstall_color :=
-      myini.ReadInteger('TileRadio', 'uninstall_color', tile_radio_uninstall_color);
-    tile_radio_none_color := myini.ReadInteger('TileRadio', 'none_color',
+      myini.ReadString('TileRadio', 'uninstall_color', tile_radio_uninstall_color);
+    tile_radio_none_color := myini.ReadString('TileRadio', 'none_color',
       tile_radio_none_color);
     tile_radio_font_size := myini.ReadInteger('TileRadio', 'fontsize',
       tile_radio_font_size);

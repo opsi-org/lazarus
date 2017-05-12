@@ -15,7 +15,6 @@ object FInstalldlg: TFInstalldlg
     Top = 224
     Width = 559
     Align = alBottom
-    Caption = 'ToolBar1'
     TabOrder = 0
     object BitBtnNow: TBitBtn
       Left = 6

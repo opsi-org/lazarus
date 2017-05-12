@@ -66,7 +66,7 @@
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-dOPSISCRIPTSTARTER"/>
+            <CustomOptions Value="-dOPSICLIENTKIOSK -dOPSI"/>
           </Other>
         </CompilerOptions>
       </Item2>
@@ -105,7 +105,7 @@
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-dOPSICLIENTKIOSK"/>
+            <CustomOptions Value="-dOPSICLIENTKIOSK -dOPSI"/>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -210,7 +210,7 @@
       <LinkSmart Value="True"/>
     </Linking>
     <Other>
-      <CustomOptions Value="-dOPSISCRIPTSTARTER"/>
+      <CustomOptions Value="-dOPSICLIENTKIOSK -dOPSI"/>
     </Other>
   </CompilerOptions>
   <Debugging>
