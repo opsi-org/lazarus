@@ -150,14 +150,6 @@ msgstr "Råd:"
 msgid "Version at Client"
 msgstr "Version på klient"
 
-#: tfopsiclientkiosk.labeldataload.caption
-msgid "LabelDataload"
-msgstr "do not translate"
-
-#: tfopsiclientkiosk.labeldataloaddetail.caption
-msgid "LabelDataLoadDetail"
-msgstr "do not translate"
-
 #: tfopsiclientkiosk.labeldescription.caption
 msgid "Description:  "
 msgstr "Beskrivelse:"
@@ -197,14 +189,6 @@ msgstr ""
 #: tfopsiclientkiosk.searchedit.hint
 msgid "Search in Productlist"
 msgstr "Søg i produktliste"
-
-#: tfopsiclientkiosk.speedbutton1.caption
-msgid "Filter"
-msgstr "Filter"
-
-#: tfopsiclientkiosk.speedbutton1.hint
-msgid "Set Filter"
-msgstr "Set Filter"
 
 #: tfopsiclientkiosk.speedbuttonall.caption
 msgid "Show all"

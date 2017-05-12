@@ -150,14 +150,6 @@ msgstr "Примечание:"
 msgid "Version at Client"
 msgstr "Версия на клиенте"
 
-#: tfopsiclientkiosk.labeldataload.caption
-msgid "LabelDataload"
-msgstr "do not translate"
-
-#: tfopsiclientkiosk.labeldataloaddetail.caption
-msgid "LabelDataLoadDetail"
-msgstr "do not translate"
-
 #: tfopsiclientkiosk.labeldescription.caption
 msgid "Description:  "
 msgstr "Описание:"
@@ -197,14 +189,6 @@ msgstr ""
 #: tfopsiclientkiosk.searchedit.hint
 msgid "Search in Productlist"
 msgstr "Искать в списке продуктов"
-
-#: tfopsiclientkiosk.speedbutton1.caption
-msgid "Filter"
-msgstr "Фильтр"
-
-#: tfopsiclientkiosk.speedbutton1.hint
-msgid "Set Filter"
-msgstr "Установить фильтр"
 
 #: tfopsiclientkiosk.speedbuttonall.caption
 msgid "Show all"

@@ -2,6 +2,18 @@
 opsiclientkiosk 4.0.7.7
 
   * tile GUI
+  * uses now new opsi method: getKioskProductInfosForClient
+  * installdialog now systemStayOnTop
+  * filter button removed
+  * filter input with 500 ms wait for nest input before search
+  * display 'not installed' and 'none' as empty string
+  * faster store of action requests by handling only the note none/empty
+  * using now sqlite3 instead of TZMSQL (this requires sqlite3.dll)
+  * listview: sort on column header click
+  * remove group view and selection
+  * add customize option for product-tiles
+  * add translation for product-tiles
+  * fix in Upgradefilter
 
 -- detlef oertel <d.oertel@uib.de>  Fri, 03 Mar 2017 15:00:00 +0000
 

@@ -6,7 +6,7 @@ object FInstalldlg: TFInstalldlg
   Caption = 'opsi-kiosk-client'
   ClientHeight = 289
   ClientWidth = 559
-  FormStyle = fsStayOnTop
+  FormStyle = fsSystemStayOnTop
   Position = poMainFormCenter
   LCLVersion = '1.6.2.0'
   object ToolBar1: TToolBar

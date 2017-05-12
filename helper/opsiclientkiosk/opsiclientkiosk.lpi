@@ -35,7 +35,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="$(LazarusDir)/components/indy/lib;synapse40lib;TZMSQL;../../common"/>
+            <OtherUnitFiles Value="../../common;../../external_libraries/indy/Lib;../../external_libraries/indy/Lib/System;../../external_libraries/indy/Lib/Protocols;../../external_libraries/indy/Lib/Core;../../external_libraries/synapse40lib;../../external_libraries/dcpcrypt;../../external_libraries/dcpcrypt/Ciphers;../../external_libraries/dcpcrypt/Hashes"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -78,7 +78,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="../../common;../../external_libraries/dcpcrypt/Ciphers;../../external_libraries/dcpcrypt/Hashes;../../external_libraries/dcpcrypt;../../external_libraries/synapse40lib;../../external_libraries/indy;../../external_libraries/TZMSQL/source"/>
+            <OtherUnitFiles Value="../../common;../../external_libraries/indy/Lib;../../external_libraries/indy/Lib/System;../../external_libraries/indy/Lib/Protocols;../../external_libraries/indy/Lib/Core;../../external_libraries/synapse40lib;../../external_libraries/dcpcrypt;../../external_libraries/dcpcrypt/Ciphers;../../external_libraries/dcpcrypt/Hashes"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -196,7 +196,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="$(LazarusDir)/components/indy;synapse40lib;../../common"/>
+      <OtherUnitFiles Value="../../common;../../external_libraries/indy/Lib;../../external_libraries/indy/Lib/System;../../external_libraries/indy/Lib/Protocols;../../external_libraries/indy/Lib/Core;../../external_libraries/synapse40lib;../../external_libraries/dcpcrypt;../../external_libraries/dcpcrypt/Ciphers;../../external_libraries/dcpcrypt/Hashes"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>

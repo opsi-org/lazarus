@@ -137,14 +137,6 @@ msgstr "Hinweis:"
 msgid "Version at Client"
 msgstr "Version auf dem Client"
 
-#: tfopsiclientkiosk.labeldataload.caption
-msgid "LabelDataload"
-msgstr "do not translate"
-
-#: tfopsiclientkiosk.labeldataloaddetail.caption
-msgid "LabelDataLoadDetail"
-msgstr "do not translate"
-
 #: tfopsiclientkiosk.labeldescription.caption
 msgid "Description:  "
 msgstr "Beschreibung:"
@@ -184,14 +176,6 @@ msgstr "Ansicht"
 #: tfopsiclientkiosk.searchedit.hint
 msgid "Search in Productlist"
 msgstr "Suche in Produktliste"
-
-#: tfopsiclientkiosk.speedbutton1.caption
-msgid "Filter"
-msgstr "Filter"
-
-#: tfopsiclientkiosk.speedbutton1.hint
-msgid "Set Filter"
-msgstr "Setze Filter"
 
 #: tfopsiclientkiosk.speedbuttonall.caption
 msgid "Show all"

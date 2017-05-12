@@ -1,0 +1,8 @@
+[TitleLabel]
+Text= Opsi Client Kiosk
+FontName = Arial
+FontSize = 30
+FontColor = $00f60000
+FontBold = true
+FontItalic = true
+FontUnderline = true

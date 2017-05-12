@@ -22,13 +22,16 @@ unit opsiclientkioskgui;
 interface
 
 uses
-  Classes, SysUtils, DB, FileUtil, ExtendedNotebook,
+  Classes, SysUtils, DB,
+  //FileUtil,
+  ExtendedNotebook,
   //ZMConnection,
   //ZMQueryDataSet,
   Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
   Buttons, ComCtrls, Grids, DBGrids, DBCtrls, ockdata, CommCtrl,
   BufDataset, typinfo, installdlg, lcltranslator, oslog, inifiles,
-  Variants;
+  Variants,
+  Lazfileutils;
 
 type
 
@@ -108,13 +111,13 @@ type
     searchEdit: TEdit;
     ImageHeader: TImage;
     datapanel: TPanel;
-    SpeedButton1: TSpeedButton;
     BtnUpgrade: TSpeedButton;
     SpeedButtonReload: TSpeedButton;
     SpeedButtonAll: TSpeedButton;
     Splitter1: TSplitter;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
+    TimerSearchEdit: TTimer;
     TitleLabel: TLabel;
     NotebookProducts: TNotebook;
     PageList: TPage;
@@ -139,6 +142,7 @@ type
     procedure DBGrid1Enter(Sender: TObject);
     procedure DBGrid1Exit(Sender: TObject);
     procedure DBGrid1TitleClick(Column: TColumn);
+    procedure FormDestroy(Sender: TObject);
     procedure grouplistEnter(Sender: TObject);
     procedure PageListBeforeShow(ASender: TObject; ANewPage: TPage;
       ANewIndex: integer);
@@ -152,16 +156,18 @@ type
     procedure ExtendedNotebook1Change(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure grouplistSelectionChange(Sender: TObject; User: boolean);
+    //procedure grouplistSelectionChange(Sender: TObject; User: boolean);
+    procedure reloadDataFromServer;
     procedure searchEditChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     //procedure RadioGroup1Click(Sender: TObject);
     procedure searchEditEnter(Sender: TObject);
-    procedure SpeedButton1Click(Sender: TObject);
     procedure SpeedButtonAllClick(Sender: TObject);
     procedure SpeedButtonViewListClick(Sender: TObject);
     procedure SpeedButtonViewStoreClick(Sender: TObject);
+    procedure TimerSearchEditTimer(Sender: TObject);
     procedure ZMQueryDataSet1NewRecord(DataSet: TDataSet);
+    procedure FilterOnSearch;
   private
     { private declarations }
   public
@@ -180,6 +186,7 @@ var
   inTileRebuild: boolean = False;
   lastOrderDirAsc: boolean = True;
   lastOrderCol: string;
+
 
 resourcestring
   rsNoActionsFound = 'No action requests found.';
@@ -200,6 +207,22 @@ implementation
 
 var
   mythread: Tmythread2;
+  //tile
+  tile_color: TColor;
+  tile_Font_Name: string;
+  tile_Font_Size: integer;
+  tile_Font_Color: TColor;
+  tile_Font_Bold: boolean;
+  tile_Font_Italic: boolean;
+  tile_Font_Underline: boolean;
+  tile_width: integer;
+  tile_height: integer;
+  //TileRadio
+  tile_radio_setup_color: TColor;
+  tile_radio_uninstall_color: TColor;
+  tile_radio_none_color: TColor;
+  tile_radio_font_size: integer;
+
 
 function actionRequestToLocale(actionRequest: string): string;
 begin
@@ -231,13 +254,18 @@ constructor TProductPanel.Create(TheOwner: TWincontrol);
 begin
   inherited Create(theOwner);
   parent := theOwner;
-  Width := 200;
-  Height := 200;
+  Width := tile_width;
+  Height := tile_height;
   self.OnClick := ProductTileClick;
   BorderStyle := bsSingle;
   BorderSpacing.Around := 3;
-  //Color:=clMoneyGreen;
-  Color := clSkyBlue;
+  Color := tile_color;
+  Font.Name := tile_Font_Name;
+  font.Size := tile_Font_Size;
+  font.Color := tile_Font_Color;
+  font.Bold := tile_Font_Bold;
+  font.Italic := tile_Font_Italic;
+  font.Underline := tile_Font_Underline;
   //label ID
   labelId := TLabel.Create(self);
   LabelId.Parent := self;
@@ -274,6 +302,7 @@ begin
   RadioGroupAction := TGroupbox.Create(self);
   RadioGroupAction.Parent := self;
   RadioGroupAction.Caption := rsActRequest;
+  RadioGroupAction.Font.Size := tile_radio_font_size;
   //RadioGroupAction.Alignment := taCenter;
   RadioGroupAction.Align := alTop;
   //RadioGroupAction.OnClick := self.OnClick;
@@ -292,10 +321,11 @@ begin
   lbnone := TLabel.Create(self);
   lbnone.Left := 20;
   lbnone.Caption := rsActNone;
-  lbnone.Font.Color := clDefault;
+  lbnone.Font.Color := tile_radio_none_color;
   lbnone.Parent := RadioGroupAction;
   lbnone.top := rbNone.top;
   lbnone.Left := 20;
+  lbnone.Font.Size := tile_radio_font_size;
   lbnone.OnClick := rbnone.OnClick;
 
   // setup
@@ -310,10 +340,11 @@ begin
   lbsetup := TLabel.Create(self);
   lbsetup.Left := 20;
   lbsetup.Caption := rsActSetup;
-  lbsetup.Font.Color := clRed;
+  lbsetup.Font.Color := tile_radio_setup_color;
   lbsetup.Parent := RadioGroupAction;
   lbsetup.top := rbsetup.top;
   lbsetup.Left := 20;
+  lbsetup.Font.Size := tile_radio_font_size;
   lbsetup.Enabled := False;
   lbsetup.OnClick := rbsetup.OnClick;
 
@@ -329,10 +360,11 @@ begin
   lbuninstall := TLabel.Create(self);
   lbuninstall.Left := 20;
   lbuninstall.Caption := rsActUninstall;
-  lbuninstall.Font.Color := clBlue;
+  lbuninstall.Font.Color := tile_radio_uninstall_color;
   lbuninstall.Parent := RadioGroupAction;
   lbuninstall.top := rbuninstall.top;
   lbuninstall.Left := 20;
+  lbuninstall.Font.Size := tile_radio_font_size;
   lbuninstall.Enabled := False;
   lbuninstall.OnClick := rbuninstall.OnClick;
 
@@ -350,18 +382,31 @@ end;
 
 destructor TProductPanel.Destroy;
 begin
-  labelId.Free;
-  LabelName.Free;
-  LabelState.Free;
-  RadioGroupAction.Free;
-  rbsetup.Free;
-  rbNone.Free;
-  rbuninstall.Free;
-  lbsetup.Free;
-  lbnone.Free;
-  lbuninstall.Free;
-  //Button1.Destroy;
-  inherited Destroy;
+  try
+    try
+      FreeAndNil(labelId);
+      FreeAndNil(LabelName);
+      FreeAndNil(LabelState);
+      FreeAndNil(rbsetup);
+      FreeAndNil(rbNone);
+      FreeAndNil(rbuninstall);
+      FreeAndNil(lbsetup);
+      FreeAndNil(lbnone);
+      FreeAndNil(lbuninstall);
+      FreeAndNil(RadioGroupAction);
+      //Button1.Destroy;
+    except
+      on e: Exception do
+      begin
+        logdatei.log('Exception TProductPanel.Destroy', LLError);
+        logdatei.log('Exception: ' + E.message, LLError);
+      end;
+    end;
+  finally
+    //LogDatei.log('TProductPanel.Destroy', LLDebug2);
+    inherited Destroy;
+  end;
+
 end;
 
 
@@ -404,12 +449,11 @@ end;
 procedure TProductPanel.ProductTileClick(Sender: TObject);
 var
   pid: string;
-  tileindex, actionindex: integer;
+  tileindex: integer;
 begin
   if not inTileRebuild then
   begin
     tileindex := TProductPanel(Sender).Tag;
-    //actionindex := ProductTilesArray[tileindex].RadioGroupAction.ItemIndex;
     pid := ProductTilesArray[tileindex].LabelId.Caption;
     ZMQueryDataSet1.First;
     if ZMQueryDataSet1.Locate('ProductId', VarArrayOf([pid]),
@@ -424,12 +468,11 @@ end;
 procedure TProductPanel.ProductTileChildClick(Sender: TObject);
 var
   pid: string;
-  tileindex, actionindex: integer;
+  tileindex: integer;
 begin
   if not inTileRebuild then
   begin
     tileindex := TGroupbox(Sender).Parent.Tag;
-    //actionindex := ProductTilesArray[tileindex].RadioGroupAction.ItemIndex;
     pid := ProductTilesArray[tileindex].LabelId.Caption;
     ZMQueryDataSet1.First;
     if ZMQueryDataSet1.Locate('ProductId', VarArrayOf([pid]),
@@ -445,52 +488,86 @@ var
   counter, i, index: integer;
   action, state: string;
 begin
-  inTileRebuild := True;
   try
-    counter := length(ProductTilesArray);
-    if counter > 0 then
-      //for i:=0 to counter -1 do ProductTilesArray[i].Destroy;
-      for i := 0 to counter - 1 do
-        ProductTilesArray[i].Free;
-    SetLength(ProductTilesArray, 0);
+    inTileRebuild := True;
+    logdatei.log('rebuildProductTiles start', LLDebug2);
+    FopsiClientKiosk.ProgressBarDetail.Visible := True;
+    FopsiClientKiosk.ProgressBar1.Visible := True;
+    FopsiClientKiosk.LabelDataLoadDetail.Visible := True;
+    FopsiClientKiosk.LabelDataLoad.Visible := True;
+    FopsiClientKiosk.ProgressbarDetail.Position := 0;
+    FopsiClientKiosk.LabelDataload.Caption := 'Clear Tiles';
+    Application.ProcessMessages;
+    try
+      counter := length(ProductTilesArray);
+      if counter > 0 then
+        //for i:=0 to counter -1 do ProductTilesArray[i].Destroy;
+        for i := 0 to counter - 1 do
+        begin
+          //FreeAndNil(ProductTilesArray[i]);
+          ProductTilesArray[i].Visible := False;
+          ProductTilesArray[i] := nil;
+          ProductTilesArray[i].Free;
+          //logdatei.log('FreeAndNil(ProductTilesArray', LLDebug2);
+        end;
+      SetLength(ProductTilesArray, 0);
 
-  except
-  end;
-  counter := 0;
-  ZMQUerydataset1.First;
-  while not ZMQUerydataset1.EOF do
-  begin
-    SetLength(ProductTilesArray, counter + 1);
-    ProductTilesArray[counter] := TProductPanel.Create(FopsiClientKiosk.FlowPanelTiles);
-    ProductTilesArray[counter].LabelId.Caption :=
-      ZMQueryDataSet1.FieldByName('ProductId').AsString;
-    ProductTilesArray[counter].LabelName.Caption :=
-      ZMQueryDataSet1.FieldByName('ProductName').AsString;
-    //ProductTilesArray[counter].LabelState.Caption :=
-    state := ZMQueryDataSet1.FieldByName('installationStatus').AsString;
-    if state = 'installed' then
-      ProductTilesArray[counter].LabelState.Caption := rsInstalled
-    else if (state = 'not_installed') or (state = 'not installed') or (state = '') then
-      ProductTilesArray[counter].LabelState.Caption := rsNotInstalled
-    else if state = 'unknown' then
-      ProductTilesArray[counter].LabelState.Caption := rsStateUnknown;
-
-    //radio group
-    ProductTilesArray[counter].rbsetup.Enabled := True;
-    ProductTilesArray[counter].lbsetup.Enabled := True;
-    action := Trim(ockdata.ZMQUerydataset1.FieldByName('possibleAction').AsString);
-    if (action = 'uninstall') then
-    begin
-      ProductTilesArray[counter].rbuninstall.Enabled := True;
-      ProductTilesArray[counter].lbuninstall.Enabled := True;
+    except
+      on e: Exception do
+      begin
+        logdatei.log('Exception rebuildProductTiles: ProductTilesArray[i].Free;',
+          LLError);
+        logdatei.log('Exception: ' + E.message, LLError);
+      end;
     end;
-    action := Trim(ockdata.ZMQUerydataset1.FieldByName('actionrequest').AsString);
-    if (action = 'none') or (action = '') then
-      ProductTilesArray[counter].rbNone.Checked := True
-    else if action = 'setup' then
-      ProductTilesArray[counter].rbsetup.Checked := True
-    else if action = 'uninstall' then
-      ProductTilesArray[counter].rbuninstall.Checked := True;
+    // use complete window for tiles
+    FopsiClientKiosk.productdetailpanel.Height := 0;
+    // progess
+
+    FopsiClientKiosk.Progressbar1.Position := 80;
+    FopsiClientKiosk.LabelDataload.Caption := 'Fill Tiles';
+    FopsiClientKiosk.ProgressbarDetail.max := ZMQUerydataset1.RecordCount;
+    Application.ProcessMessages;
+    logdatei.log('rebuildProductTiles from db start', LLDebug2);
+    counter := 0;
+    ZMQUerydataset1.First;
+    while not ZMQUerydataset1.EOF do
+    begin
+      FopsiClientKiosk.LabelDataLoadDetail.Caption :=
+        ZMQueryDataSet1.FieldByName('ProductId').AsString;
+      Application.ProcessMessages;
+      SetLength(ProductTilesArray, counter + 1);
+      ProductTilesArray[counter] :=
+        TProductPanel.Create(FopsiClientKiosk.FlowPanelTiles);
+      ProductTilesArray[counter].LabelId.Caption :=
+        ZMQueryDataSet1.FieldByName('ProductId').AsString;
+      ProductTilesArray[counter].LabelName.Caption :=
+        ZMQueryDataSet1.FieldByName('ProductName').AsString;
+      //ProductTilesArray[counter].LabelState.Caption :=
+      state := ZMQueryDataSet1.FieldByName('installationStatus').AsString;
+      if state = 'installed' then
+        ProductTilesArray[counter].LabelState.Caption := rsInstalled
+      else if (state = 'not_installed') or (state = 'not installed') or (state = '') then
+        ProductTilesArray[counter].LabelState.Caption := rsNotInstalled
+      else if state = 'unknown' then
+        ProductTilesArray[counter].LabelState.Caption := rsStateUnknown;
+
+      //radio group
+      ProductTilesArray[counter].rbsetup.Enabled := True;
+      ProductTilesArray[counter].lbsetup.Enabled := True;
+      action := Trim(ockdata.ZMQUerydataset1.FieldByName('possibleAction').AsString);
+      if (action = 'uninstall') then
+      begin
+        ProductTilesArray[counter].rbuninstall.Enabled := True;
+        ProductTilesArray[counter].lbuninstall.Enabled := True;
+      end;
+      action := Trim(ockdata.ZMQUerydataset1.FieldByName('actionrequest').AsString);
+      if (action = 'none') or (action = '') then
+        ProductTilesArray[counter].rbNone.Checked := True
+      else if action = 'setup' then
+        ProductTilesArray[counter].rbsetup.Checked := True
+      else if action = 'uninstall' then
+        ProductTilesArray[counter].rbuninstall.Checked := True;
 
     (*
     ProductTilesArray[counter].RadioGroupAction.Items.Add(rsActNone);
@@ -510,11 +587,21 @@ begin
       ZMQueryDataSet1.FieldByName('ProductId').AsString;
     *)
 
-    ProductTilesArray[counter].Tag := counter;
-    Inc(counter);
-    ZMQUerydataset1.Next;
+      ProductTilesArray[counter].Tag := counter;
+      Inc(counter);
+      FopsiClientKiosk.ProgressbarDetail.Position := counter;
+      Application.ProcessMessages;
+      ZMQUerydataset1.Next;
+    end;
+  finally
+    inTileRebuild := False;
+    logdatei.log('rebuildProductTiles stop', LLDebug2);
+    FopsiClientKiosk.ProgressBar1.Position := 66;
+    FopsiClientKiosk.ProgressBarDetail.Visible := False;
+    FopsiClientKiosk.LabelDataLoadDetail.Visible := False;
+    FopsiClientKiosk.ProgressBar1.Visible := False;
+    FopsiClientKiosk.LabelDataLoad.Visible := False;
   end;
-  inTileRebuild := False;
 end;
 
 procedure Tmythread2.Execute;
@@ -631,7 +718,8 @@ end;
 
 procedure TFopsiClientKiosk.SpeedButtonReloadClick(Sender: TObject);
 begin
-  grouplistSelectionChange(Sender, True);
+  //grouplistSelectionChange(Sender, True);
+  reloadDataFromServer;
 end;
 
 procedure TFopsiClientKiosk.Terminate;
@@ -655,12 +743,12 @@ begin
       if lastOrderDirAsc then
       begin
         direction := ' DESC';
-        lastOrderDirAsc := false;
+        lastOrderDirAsc := False;
       end
       else
       begin
         direction := ' ASC';
-        lastOrderDirAsc := true;
+        lastOrderDirAsc := True;
       end;
     end
     else
@@ -671,6 +759,11 @@ begin
 
   except
   end;
+end;
+
+procedure TFopsiClientKiosk.FormDestroy(Sender: TObject);
+begin
+  LogDatei.log('FopsiClientKiosk.FormDestroy: Application terminates', LLInfo);
 end;
 
 procedure TFopsiClientKiosk.grouplistEnter(Sender: TObject);
@@ -698,8 +791,17 @@ end;
 
 procedure TFopsiClientKiosk.BtnUpgradeClick(Sender: TObject);
 begin
+  searchEdit.Text:='';
+  TimerSearchEdit.Enabled:=false;
+  ockdata.ZMQUerydataset1.Filtered := False;
+  ockdata.ZMQUerydataset1.FilterOptions := [foCaseInsensitive];
   ockdata.ZMQUerydataset1.Filter := 'updatePossible = "True"';
   ockdata.ZMQUerydataset1.Filtered := True;
+  ProcessMess;
+  while inTileRebuild do
+    Sleep(10);
+  if RadioGroupView.ItemIndex = 1 then
+    rebuildProductTiles;
 end;
 
 procedure TFopsiClientKiosk.DBComboBox1Exit(Sender: TObject);
@@ -738,7 +840,7 @@ begin
   ShowMessage('opsi-kiosk-client' + LineEnding + 'Display language: ' +
     GetDefaultLang + Lineending + 'Version: ' + myVersion + Lineending +
     'CopyRight: uib gmbh (http://uib.de) under AGPLv3' + LineEnding +
-    'http://opsi.org' + Lineending + 'Credits to: Lazarus/FPC,indy,zmsql,superobject');
+    'http://opsi.org' + Lineending + 'Credits to: Lazarus/FPC,indy,sqllite,superobject');
 end;
 
 procedure TFopsiClientKiosk.BitBtnStoreActionClick(Sender: TObject);
@@ -757,9 +859,9 @@ begin
     ProgressBar1.Visible:=true;
     *)
     ProcessMess;
-    mythread := Tmythread2.Create(True);
+    mythread := Tmythread2.Create(False);
     //mythread.Priority:=tpLowest;
-    mythread.Resume;
+    //mythread.Resume;
     mythread.WaitFor;
 
     begin
@@ -774,7 +876,7 @@ begin
     Screen.Cursor := crDefault;
     ProgressBar1.Style := pbstNormal;
     ProgressBar1.Visible := False;
-    mythread.Free;
+    FreeAndNil(mythread);
   end;
 end;
 
@@ -881,7 +983,14 @@ begin
   StartupDone := False;
 end;
 
+(*
 procedure TFopsiClientKiosk.grouplistSelectionChange(Sender: TObject; User: boolean);
+begin
+
+end;
+*)
+
+procedure TFopsiClientKiosk.reloadDataFromServer;
 var
   i: integer;
 begin
@@ -962,7 +1071,17 @@ end;
 procedure TFopsiClientKiosk.searchEditChange(Sender: TObject);
 begin
   // search in list
-  SpeedButton1Click(Sender);
+  // if timer running: reset else start (so we wait to finish the input before seach)
+  if TimerSearchEdit.Enabled then
+  begin
+    TimerSearchEdit.Enabled := False;
+    logdatei.log('Got while input wait:' + searchEdit.Text, LLDebug2);
+  end
+  else
+    logdatei.log('Got and start input wait:' + searchEdit.Text, LLDebug2);
+  // start search via timer
+  TimerSearchEdit.Enabled := True;
+  //SpeedButton1Click(Sender);
 end;
 
 procedure TFopsiClientKiosk.FormCreate(Sender: TObject);
@@ -976,17 +1095,52 @@ begin
   begin
     ImageHeader.Picture.LoadFromFile(skinpath + 'opsiclientkiosk.png');
   end;
-  if FileExistsUTF8(skinpath + 'opsiclientkiosk.ini') then
+  //tile
+  tile_color := clSkyBlue;
+  tile_Font_Name := 'Arial';
+  tile_Font_Size := 11;
+  tile_Font_Color := $00000000;
+  tile_Font_Bold := False;
+  tile_Font_Italic := False;
+  tile_Font_Underline := False;
+  tile_width := 200;
+  tile_height := 200;
+  //TileRadio
+  tile_radio_setup_color := clRed;
+  tile_radio_uninstall_color := clBlue;
+  tile_radio_none_color := clDefault;
+  tile_radio_font_size := 10;
+  if FileExists(skinpath + 'opsiclientkiosk.ini') then
   begin
     myini := TIniFile.Create(skinpath + 'opsiclientkiosk.ini');
     TitleLabel.Caption :=
       myini.ReadString('TitleLabel', 'text', 'opsi Client Kiosk');
     TitleLabel.Font.Name := myini.ReadString('TitleLabel', 'FontName', 'Arial');
-    TitleLabel.Font.Size := myini.ReadInteger('TitleLabel', 'FontSize', 20);
+    TitleLabel.Font.Size := myini.ReadInteger('TitleLabel', 'FontSize', 12);
     TitleLabel.Font.Color := myini.ReadInteger('TitleLabel', 'FontColor', $00000000);
     TitleLabel.Font.Bold := myini.ReadBool('TitleLabel', 'FontBold', True);
     TitleLabel.Font.Italic := myini.ReadBool('TitleLabel', 'FontItalic', False);
     TitleLabel.Font.Underline := myini.ReadBool('TitleLabel', 'FontUnderline', False);
+    //tile
+    tile_color := myini.ReadInteger('Tile', 'color', tile_color);
+    tile_Font_Name := myini.ReadString('Tile', 'FontName', tile_Font_Name);
+    tile_Font_Size := myini.ReadInteger('Tile', 'FontSize', tile_Font_Size);
+    tile_Font_Color := myini.ReadInteger('Tile', 'FontColor', tile_Font_Color);
+    tile_Font_Bold := myini.ReadBool('Tile', 'FontBold', tile_Font_Bold);
+    tile_Font_Italic := myini.ReadBool('Tile', 'FontItalic', tile_Font_Italic);
+    tile_Font_Underline := myini.ReadBool('Tile', 'FontUnderline', tile_Font_Underline);
+    tile_width := myini.ReadInteger('Tile', 'Width', tile_width);
+    tile_height := myini.ReadInteger('Tile', 'Height', tile_height);
+    //TileRadio
+    tile_radio_setup_color := myini.ReadInteger('TileRadio', 'setup_color',
+      tile_radio_setup_color);
+    tile_radio_uninstall_color :=
+      myini.ReadInteger('TileRadio', 'uninstall_color', tile_radio_uninstall_color);
+    tile_radio_none_color := myini.ReadInteger('TileRadio', 'none_color',
+      tile_radio_none_color);
+    tile_radio_font_size := myini.ReadInteger('TileRadio', 'fontsize',
+      tile_radio_font_size);
+
     myini.Free;
     (*
     [TitleLabel]
@@ -1102,36 +1256,53 @@ begin
   productdetailpanel.Height := 0;
 end;
 
-procedure TFopsiClientKiosk.SpeedButton1Click(Sender: TObject);
+
+procedure TFopsiClientKiosk.FilterOnSearch;
 var
   Filtercond, Filterstr: string;
 begin
   // search in list
   //ockdata.ZMQUerydataset1.SQL.Text:='select * from kiosk where ProductId like %'+searchedit.Text+'%;';
   //ockdata.ZMQUerydataset1.QueryExecute;
+  //LogDatei.log('Filter for: '+searchedit.Text,LLinfo);
   if searchedit.Text = '' then
-    Filtercond := '"*"'
+  begin
+    Filtercond := '"*"';
+    ockdata.ZMQUerydataset1.Filtered := False;
+    LogDatei.log('Search for: ' + searchedit.Text + ' Filter off.', LLinfo);
+  end
   else
+  begin
     Filtercond := '"*' + searchedit.Text + '*"';
-  Filterstr := 'ProductId =' + Filtercond;
-  Filterstr := Filterstr + 'or ProductName =' + Filtercond;
-  Filterstr := Filterstr + 'or DESCRIPTION =' + Filtercond;
-  Filterstr := Filterstr + 'or ADVICE =' + Filtercond;
-  Filterstr := Filterstr + 'or INSTALLATIONSTATUS =' + Filtercond;
-  ockdata.ZMQUerydataset1.Filter := Filterstr;
-  ockdata.ZMQUerydataset1.FilterOptions := [foCaseInsensitive];
-  ockdata.ZMQUerydataset1.Filtered := True;
+    LogDatei.log('Serach for: ' + searchedit.Text + ' Filter for: ' +
+      Filtercond, LLinfo);
+    Filterstr := 'ProductId =' + Filtercond;
+    Filterstr := Filterstr + 'or ProductName =' + Filtercond;
+    Filterstr := Filterstr + 'or DESCRIPTION =' + Filtercond;
+    Filterstr := Filterstr + 'or ADVICE =' + Filtercond;
+    Filterstr := Filterstr + 'or INSTALLATIONSTATUS =' + Filtercond;
+    ockdata.ZMQUerydataset1.Filter := Filterstr;
+    ockdata.ZMQUerydataset1.FilterOptions := [foCaseInsensitive];
+    ockdata.ZMQUerydataset1.Filtered := True;
+  end;
   if RadioGroupView.ItemIndex = 1 then
     rebuildProductTiles;
 end;
 
 procedure TFopsiClientKiosk.SpeedButtonAllClick(Sender: TObject);
 begin
-  searchedit.Text := '';
+  if searchedit.Text = '' then
+    FilterOnSearch
+  else
+    searchedit.Text := '';
+  // this shoud call  searchEditChange
+  // so we do nothing else here
+  (*
   ockdata.ZMQUerydataset1.Filter := '"*"';
   ockdata.ZMQUerydataset1.Filtered := False;
   if RadioGroupView.ItemIndex = 1 then
     rebuildProductTiles;
+    *)
 end;
 
 procedure TFopsiClientKiosk.SpeedButtonViewListClick(Sender: TObject);
@@ -1142,6 +1313,14 @@ end;
 procedure TFopsiClientKiosk.SpeedButtonViewStoreClick(Sender: TObject);
 begin
   NotebookProducts.PageIndex := 1;
+end;
+
+procedure TFopsiClientKiosk.TimerSearchEditTimer(Sender: TObject);
+begin
+  TimerSearchEdit.Enabled := False;
+  while inTileRebuild do
+    Sleep(10);
+  FilterOnSearch;
 end;
 
 
@@ -1165,10 +1344,19 @@ begin
     if counter > 0 then
       //for i:=0 to counter -1 do ProductTilesArray[i].Destroy;
       for i := 0 to counter - 1 do
+      begin
+        ProductTilesArray[i] := nil;
         ProductTilesArray[i].Free;
+        logdatei.log('FreeAndNil(ProductTilesArray', LLDebug2);
+      end;
     SetLength(ProductTilesArray, 0);
 
   except
+    on e: Exception do
+    begin
+      logdatei.log('Exception BitBtnCancelClick: ProductTilesArray[i].Free;', LLError);
+      logdatei.log('Exception: ' + E.message, LLError);
+    end;
   end;
 
   Application.Terminate;
