@@ -5,7 +5,8 @@ unit notifierform;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,contnrs;
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  StdCtrls, contnrs;
 
 type
 
@@ -14,18 +15,25 @@ type
   TNform = class(TForm)
     Image1: TImage;
     //objlist : TObjectList;
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
+    procedure FormHide(Sender: TObject);
   private
     { private declarations }
     objlist : TObjectList;
   public
     { public declarations }
+    procedure choiceClick(sender : TObject);
   end;
 
 var
   Nform: TNform;
 
 implementation
+
+uses
+  notifierguicontrol;
 
 {$R *.lfm}
 
@@ -34,6 +42,26 @@ implementation
 procedure TNform.FormCreate(Sender: TObject);
 begin
   objlist := TObjectList.Create;
+end;
+
+procedure TNform.FormCloseQuery(Sender: TObject; var CanClose: boolean);
+begin
+  hideNForm;
+end;
+
+procedure TNform.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+  hideNForm;
+end;
+
+procedure TNform.FormHide(Sender: TObject);
+begin
+  //hideNForm;
+end;
+
+procedure TNform.choiceClick(sender : TObject);
+begin
+  myChoiceClick(sender);
 end;
 
 end.

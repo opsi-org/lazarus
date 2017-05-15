@@ -13,7 +13,7 @@ uses
   Variants,
   fileinfo,
   winpeimagereader,
-  Dialogs,
+  Dialogs, ExtCtrls,
   notifier_base,
   notifierform;
 
@@ -22,8 +22,10 @@ type
   { TDataModule1 }
 
   TDataModule1 = class(TDataModule)
+    Timer1: TTimer;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
   private
     { private declarations }
   public
@@ -31,7 +33,10 @@ type
     procedure WriteHelp;
     procedure ProcessMess;
     procedure createNform;
+    procedure hideMainForm;
+    procedure queryend(var Cancel: Boolean);
   end;
+
 
 var
   DataModule1: TDataModule1;
@@ -44,9 +49,20 @@ var
 
 implementation
 
+uses
+  notifierguicontrol;
+
 {$R *.lfm}
 
 { TDataModule1 }
+
+procedure TDataModule1.queryend(var Cancel: Boolean);
+begin
+  //hideNForm;
+  //Nform.Close;
+  self.Destroy;
+  Cancel := false;
+end;
 
 procedure TDataModule1.ProcessMess;
 begin
@@ -97,6 +113,11 @@ begin
   ShowMessage(msg);
 end;
 
+procedure TDataModule1.hideMainForm;
+begin
+  hideNForm;
+end;
+
 procedure TDataModule1.DataModuleCreate(Sender: TObject);
 var
   ErrorMsg: string;
@@ -121,6 +142,7 @@ begin
   LogDatei.CreateTheLogfile(ExtractFileNameOnly(Application.ExeName) + '.log', True);
   LogDatei.log('Log for: ' + Application.exename + ' version: ' +
     myVersion + ' opend at : ' + DateTimeToStr(now), LLinfo);
+  LogDatei.LogLevel:=8;
 
   myexepath := ExtractFilePath(Application.ExeName);
   //myport := 44003;
@@ -190,6 +212,8 @@ begin
     logdatei.log('Found Parameter idevent: ' + myevent, LLInfo);
   end;
 
+  Application.OnQueryEndSession:=@queryend;
+
   // call main procedure
   main;
 
@@ -208,9 +232,19 @@ end;
 
 procedure TDataModule1.DataModuleDestroy(Sender: TObject);
 begin
+  hideNForm;
   // stop program loop
   logdatei.log('Program regulary finished (killed)', LLInfo);
   logdatei.Close;
+  Application.Terminate;
+end;
+
+procedure TDataModule1.Timer1Timer(Sender: TObject);
+begin
+  Timer1.Enabled:=false;
+  //hideNForm;
+  self.Destroy;
+  //Application.Terminate;
 end;
 
 end.

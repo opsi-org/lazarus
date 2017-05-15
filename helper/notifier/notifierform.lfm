@@ -1,12 +1,15 @@
 object Nform: TNform
-  Left = 74
+  Left = 692
   Height = 240
-  Top = 580
+  Top = 256
   Width = 320
   Caption = 'Nform'
   ClientHeight = 240
   ClientWidth = 320
+  OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
+  OnHide = FormHide
   LCLVersion = '1.6.2.0'
   object Image1: TImage
     Left = 0

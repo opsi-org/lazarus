@@ -6,4 +6,11 @@ object DataModule1: TDataModule1
   HorizontalOffset = 258
   VerticalOffset = 243
   Width = 150
+  object Timer1: TTimer
+    Enabled = False
+    Interval = 5000
+    OnTimer = Timer1Timer
+    left = 40
+    top = 30
+  end
 end
