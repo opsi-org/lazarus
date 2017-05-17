@@ -95,9 +95,9 @@ uses
   oslog, osparser, osfunc,
   Menus, Buttons, ComCtrls,
   //IdSysLog,
+//lcltranslator,
   strutils,
-  inifiles,
-  lcltranslator;
+  inifiles;
 
 type
 
@@ -953,7 +953,7 @@ begin
   MyMessageDlg.WiMessage('opsi-script  ' + WinstVersionName + LineEnding +
     'Copyright (c) uib 1995 - 2016' + LineEnding +
     'opsi-script is AGPLv3 licensed Open Source software' + LineEnding +
-    'Detected Language: '+ GetDefaultLang + LineEnding +
+//    'Detected Language: '+ GetDefaultLang + LineEnding +
     'Internet homes: ' + LineEnding + ' www.uib.de  ' + ' www.opsi.org  ',
     [mrOk]);
 end;

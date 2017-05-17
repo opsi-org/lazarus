@@ -12,7 +12,15 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 ##################################################################
 opsi-winst/opsi-script (4.11.7.0) experimental; urgency=low
 
-  * integration of new xml functions
+  * integration of new xml functions:
+    * new section type xml2
+    * osparser: Tuibinstscript: new method doxml2patch:
+      * OpenNode
+      * DeleteNode
+      * setNodeText
+      * setAttribute
+      * addAttribute
+      * delAttribute
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 04 May 2017:15:00:00 +0200
 
