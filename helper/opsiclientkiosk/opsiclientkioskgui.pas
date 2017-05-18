@@ -837,7 +837,7 @@ begin
   // write back action requests
   ockdata.ZMQUerydataset1.Filtered := False;
   //ockdata.ZMQUerydataset1.Filter := ' not ((ActionRequest = "") and (ActionRequest = "none"))';
-  ockdata.ZMQUerydataset1.Filter := 'ActionRequest = "setup"';
+  ockdata.ZMQUerydataset1.Filter := 'ActionRequest <> ""';
   ockdata.ZMQUerydataset1.Filtered := True;
   ProcessMess;
   RadioGroupViewSelectionChanged(self);

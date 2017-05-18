@@ -1102,15 +1102,15 @@ var
   resultstring, str: string;
 begin
   // switch to opsiclientd mode
-  //readconf2;
-  //FreeAndNil(opsidata);
-  //initConnection(30);
+  readconf2;
+  FreeAndNil(opsidata);
+  initConnection(30);
   // opsiclientd mode
   resultstring := MyOpsiMethodCall('fireEvent_software_on_demand', []);
   // switch back to opsiconfd mode
-  //readconf;
-  //FreeAndNil(opsidata);
-  //initConnection(30);
+  readconf;
+  FreeAndNil(opsidata);
+  initConnection(30);
   // opsiconfd mode
   // may not work if acl.conf is restricted
   //resultstring := MyOpsiMethodCall('hostControlSafe_fireEvent',  ['on_demand', '[' + myclientid + ']']);
@@ -1140,9 +1140,9 @@ begin
   myexitcode := 0;
   myerror := '';
   // opsiconfd mode
-  //readconf;
+  readconf;
   // opsiclientd mode
-  readconf2;
+  //readconf2;
   // do not forget to check firePushInstallation
   initlogging(myclientid);
   LogDatei.log('clientid=' + myclientid, LLNotice);
