@@ -232,10 +232,13 @@ end;
 
 procedure TDataModule1.DataModuleDestroy(Sender: TObject);
 begin
-  hideNForm;
+  mythread.Terminate;
+  if not inHideNForm then hideNForm
+  else sleep(5000);
   // stop program loop
   logdatei.log('Program regulary finished (killed)', LLInfo);
   logdatei.Close;
+
   Application.Terminate;
 end;
 

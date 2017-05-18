@@ -35,6 +35,9 @@ procedure openSkinIni(ininame: string);
 procedure myChoiceClick(Sender: TObject);
 procedure hideNForm;
 
+var
+  inHideNForm : boolean = false;
+
 implementation
 
 uses
@@ -427,7 +430,8 @@ procedure hideNForm;
 var
   startx, starty, stopx, stopy, x, y, i: integer;
 begin
-
+  try
+  inHideNForm := true;
   // hide with disappearmode
 
   case disappearmode of
@@ -511,6 +515,10 @@ begin
         DataModule1.ProcessMess;
       end;
     end;
+  end;
+
+  finally
+    inHideNForm := false;
   end;
 end;
 

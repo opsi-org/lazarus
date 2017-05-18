@@ -61,6 +61,7 @@ end;
 
 procedure TNform.choiceClick(sender : TObject);
 begin
+  hideNForm;
   myChoiceClick(sender);
 end;
 

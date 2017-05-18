@@ -22,6 +22,9 @@ uses
 type
 
   Tmythread = class(TThread)
+  private
+    myMessage : string;
+    procedure handleMessage;
   public
     procedure Execute; override;
     constructor Create(CreateSuspended: boolean);
@@ -43,14 +46,10 @@ type
   end;
 *)
 procedure Main;
-(*
+
 var
-  myport: integer;
-  myevent: string;
-  myconfigpath, myconfigfile: string;
-  myexepath: string;
-  myVersion: string;
-  *)
+    stopped: boolean;
+  mythread: Tmythread;
 
 
 implementation
@@ -60,9 +59,8 @@ uses
 
 var
   myTCPClient: TIdTCPClient;
-  myTCPServer: TIdTCPServer;
-  stopped: boolean;
-  mythread: Tmythread;
+ // myTCPServer: TIdTCPServer;
+
 // myApplication: TMyApplication;
 //Application: TMyApplication;
 
@@ -98,12 +96,26 @@ var
   end;
 *)
 
-
+Procedure getmsg(str : string);
+begin
+  DataModule1.ProcessMess;
+  logdatei.log('From hm: '+str, LLInfo);
+end;
 
 constructor TMyThread.Create(CreateSuspended: boolean);
 begin
   FreeOnTerminate := True;
   inherited Create(CreateSuspended);
+end;
+
+procedure TMyThread.handleMessage;
+begin
+  //getmsg(myMessage);
+  logdatei.log('From hm: '+myMessage, LLInfo);
+  //DataModule1.ProcessMess;
+ //     logdatei.log(
+ //       ' --------------------------------------------------', LLInfo);
+
 end;
 
 procedure Tmythread.Execute;
@@ -114,28 +126,10 @@ var
 begin
   if not Terminated then
   begin
-    (*
-    myTCPServer:=TIdTCPServer.Create;
-    myTCPServer.Bindings.Clear;
-     myTCPServer.on
-    with myTCPServer.Bindings.Add do
-    Begin
-      IP := '127.0.0.1';
-      Port := myport;
-    end;
-    TCPServer.Active := True;
-  end;
-  *)
-    //myFreeze := TIdAntiFreeze.Create;
-    //myFreeze.Active:=true;
     myTCPClient := TIdTCPClient.Create;
     myTCPClient.Port := myport;
     myTCPClient.Host := '127.0.0.1';
-    myTCPClient.ReadTimeout := 1000;
-    myTCPClient.Socket.;
-    //myTCPClient.OnStatus:=;
-
-    //Application.ProcessMessages;
+    myTCPClient.ReadTimeout := 500;
     repeat
       try
         myTCPClient.Connect;
@@ -145,17 +139,24 @@ begin
     i := 1;
     while (not Terminated) and (i < 160) do
     begin
-      ;
-      //Application.ProcessMessages;
-      receiveline := myTCPClient.Socket.ReadLn();
-      logdatei.log(receiveline, LLInfo);
-      logdatei.log(IntToStr(i) +
-        ' --------------------------------------------------', LLInfo);
+      myMessage := myTCPClient.Socket.ReadLn();
+      logdatei.log('From Thread: '+mymessage, LLInfo);
+      Synchronize(@handleMessage);
+      //logdatei.log(IntToStr(i) +
+      //  ' --------------------------------------------------', LLInfo);
       Inc(i);
+      //sleep(500);
     end;
+    stopped := True;
+    myTCPClient.Disconnect;
+    myTCPClient.Free;
   end
   else
+  begin
     stopped := True;
+    myTCPClient.Disconnect;
+    myTCPClient.Free;
+  end;
 end;
 
 
@@ -168,11 +169,8 @@ begin
   if myport > 0 then
   begin
     mythread := Tmythread.Create(False);
+    mythread.WaitFor;
 
-    while not stopped do
-    begin
-      Sleep(100);
-    end;
   end;
 end;
 
