@@ -34,14 +34,18 @@ type
 procedure openSkinIni(ininame: string);
 procedure myChoiceClick(Sender: TObject);
 procedure hideNForm;
+procedure setLabelCaptionById(aktId, aktMessage: string);
+procedure setButtonCaptionById(choiceindex: integer; aktMessage: string);
+procedure shutdownNotifier;
 
 var
-  inHideNForm : boolean = false;
+  inHideNForm: boolean = False;
 
 implementation
 
 uses
-  notifierdatamodule;
+  notifierdatamodule,
+  notifier_json;
 
 var
   myini: TIniFile;
@@ -69,24 +73,95 @@ end;
 
   {$ENDIF WINDOWS}
 
+procedure shutdownNotifier;
+begin
+  hideNForm;
+  sleep(1000);
+  DataModule1.Destroy;
+end;
+
+procedure setLabelCaptionById(aktId, aktMessage: string);
+var
+  index: integer;
+  indexstr: string;
+begin
+  logdatei.log('Set for id: "' + aktId + '" the message: "' + aktMessage + '"', LLInfo);
+  try
+    // get labelarray index for aktid stored in labellist
+    indexstr := labellist.Values[aktId];
+    if indexstr <> '' then
+    begin
+      index := StrToInt(indexstr);
+      logdatei.log('Found index: ' + IntToStr(index) + ' for id: "' + aktId, LLDebug2);
+      logdatei.log('Label name by index: Found index: ' +
+        LabelArray[index].Name, LLDebug2);
+      LabelArray[index].Caption := aktMessage;
+      LabelArray[index].Repaint;
+      Application.ProcessMessages;
+      logdatei.log('Finished: Set for id: "' + aktId + '" the message: "' +
+        aktMessage + '"', LLInfo);
+    end
+    else
+      LogDatei.log('No index found for id: ' + aktId, LLDebug2);
+  except
+    on E: Exception do
+    begin
+      LogDatei.log('Error: Label not found by index: ' + IntToStr(index) +
+        ' id: ' + aktId, LLError);
+      LogDatei.log('Error: Message: ' + E.Message, LLError);
+    end;
+  end;
+end;
+
+procedure setButtonCaptionById(choiceindex: integer; aktMessage: string);
+var
+  index: integer;
+  indexstr: string;
+begin
+  logdatei.log('Set for Button id: "' + IntToStr(choiceindex) +
+    '" the caption: "' + aktMessage + '"', LLInfo);
+  try
+    // get labelarray index for aktid stored in labellist
+    indexstr := buttonlist.Values[IntToStr(choiceindex)];
+    if indexstr <> '' then
+    begin
+      index := StrToInt(indexstr);
+      logdatei.log('Found Button index: ' + indexstr + ' for id: "' +
+        IntToStr(choiceindex), LLDebug2);
+      logdatei.log('Button name by index: Found index: ' +
+        ButtonArray[index].Name, LLDebug2);
+      ButtonArray[index].Caption := aktMessage;
+      ButtonArray[index].Repaint;
+      Application.ProcessMessages;
+      logdatei.log('Finished: Set for Button id: "' + IntToStr(choiceindex) +
+        '" the message: "' + aktMessage + '"', LLInfo);
+    end
+    else
+      LogDatei.log('No index found for Button id: ' + IntToStr(choiceindex), LLDebug2);
+  except
+    on E: Exception do
+    begin
+      LogDatei.log('Error: Button not found by index: ' + IntToStr(index) +
+        ' id: ' + IntToStr(choiceindex), LLError);
+      LogDatei.log('Error: Message: ' + E.Message, LLError);
+    end;
+  end;
+end;
+
+
 procedure myChoiceClick(Sender: TObject);
 var
   choice: integer;
 begin
   choice := TSpeedButton(Sender).Tag;
   logdatei.log('Button clicked: choice: ' + IntToStr(choice), LLInfo);
-  (*
-  tileindex := TProductPanel(Sender).Tag;
-    pid := ProductTilesArray[tileindex].LabelId.Caption;
-    *)
-  if choice = 1 then
-    DataModule1.Destroy;
+  buttonPushedToService(choice);
 end;
 
 
 function fontresize(num: integer): integer;
 begin
-  Result := round(num * 0.8);
+  Result := round(num * 0.6);
 end;
 
 function StringToAlignment(str: string): TAlignment;
@@ -431,94 +506,95 @@ var
   startx, starty, stopx, stopy, x, y, i: integer;
 begin
   try
-  inHideNForm := true;
-  // hide with disappearmode
+    inHideNForm := True;
+    // hide with disappearmode
 
-  case disappearmode of
-    fdpNone: LogDatei.log('Will not hide: fdpNone', LLWarning);
-    fdpStd:
-    begin
-      LogDatei.log('Will hide with: fdpStd', LLDebug2);
-      nform.hide;
-    end;
-    fdpFade:
-    begin
-      LogDatei.log('Will hide with: fdpFade', LLDebug2);
-      nform.AlphaBlend := True;
-      nform.AlphaBlendValue := 255;
-      for i := 255 to 1 do
+    case disappearmode of
+      fdpNone: LogDatei.log('Will not hide: fdpNone', LLWarning);
+      fdpStd:
       begin
-        sleep(1);
-        nform.AlphaBlendValue := i;
+        LogDatei.log('Will hide with: fdpStd', LLDebug2);
+        nform.hide;
+      end;
+      fdpFade:
+      begin
+        LogDatei.log('Will hide with: fdpFade', LLDebug2);
+        nform.AlphaBlend := True;
+        nform.AlphaBlendValue := 255;
+        for i := 255 to 1 do
+        begin
+          sleep(10);
+          nform.AlphaBlendValue := i;
+          nform.Repaint;
+          DataModule1.ProcessMess;
+        end;
+        nform.hide;
+      end;
+      fdpFadeUp:
+      begin
+        LogDatei.log('Will hide with: fdpFadeUp', LLDebug2);
+        stopy := nform.Height;
+        nform.AlphaBlend := True;
+        nform.AlphaBlendValue := 255;
+        for i := 1 to stopy do
+        begin
+          Sleep(10);
+          nform.AlphaBlendValue := 255 - i;
+          nform.Height := nform.Height - 1;
+          nform.Repaint;
+          DataModule1.ProcessMess;
+        end;
+      end;
+      fdpFadeDown:
+      begin
+        LogDatei.log('Will hide with: fdpFadeDown', LLDebug2);
+        stopy := nform.Height;
+        y := nform.Top;
+        nform.AlphaBlend := True;
+        nform.AlphaBlendValue := 255;
         nform.Repaint;
         DataModule1.ProcessMess;
+        for i := 1 to stopy do
+        begin
+          Sleep(10);
+          nform.AlphaBlendValue := 255 - i;
+          nform.Height := stopy - i;
+          nform.Top := y + i;
+          nform.Repaint;
+          DataModule1.ProcessMess;
+        end;
+        LogDatei.log('Finished hide with: fdpFadeDown', LLDebug2);
       end;
-      nform.hide;
-    end;
-    fdpFadeUp:
-    begin
-      LogDatei.log('Will hide with: fdpFadeUp', LLDebug2);
-      stopy := nform.Height;
-      nform.AlphaBlend := True;
-      nform.AlphaBlendValue := 255;
-      for i := 1 to stopy do
+      fdpUp:
       begin
-        Sleep(1);
-        nform.AlphaBlendValue := 255 - i;
-        nform.Height := nform.Height - 1;
-        nform.Repaint;
-        DataModule1.ProcessMess;
+        LogDatei.log('Will hide with: fdpUp', LLDebug2);
+        stopy := nform.Height;
+        for i := 1 to stopy do
+        begin
+          Sleep(10);
+          nform.Height := stopy - 1;
+          nform.Repaint;
+          DataModule1.ProcessMess;
+        end;
       end;
-    end;
-    fdpFadeDown:
-    begin
-      LogDatei.log('Will hide with: fdpFadeDown', LLDebug2);
-      stopy := nform.Height;
-      y := nform.Top;
-      nform.AlphaBlend := True;
-      nform.AlphaBlendValue := 255;
-      nform.Repaint;
-      DataModule1.ProcessMess;
-      for i := 1 to stopy do
+      fdpDown:
       begin
-        Sleep(1);
-        nform.AlphaBlendValue := 255 - i;
-        nform.Height := stopy - i;
-        nform.Top := y + i;
-        nform.Repaint;
-        DataModule1.ProcessMess;
-      end;
-      LogDatei.log('Finished hide with: fdpFadeDown', LLDebug2);
-    end;
-    fdpUp:
-    begin
-      LogDatei.log('Will hide with: fdpUp', LLDebug2);
-      stopy := nform.Height;
-      for i := 1 to stopy do
-      begin
-        Sleep(1);
-        nform.Height := stopy - 1;
-        nform.Repaint;
-        DataModule1.ProcessMess;
+        LogDatei.log('Will hide with: fdpDown', LLDebug2);
+        stopy := nform.Height;
+        for i := 1 to stopy do
+        begin
+          Sleep(1);
+          nform.Height := stopy - 1;
+          nform.Top := stopy + i;
+          nform.Repaint;
+          DataModule1.ProcessMess;
+        end;
       end;
     end;
-    fdpDown:
-    begin
-      LogDatei.log('Will hide with: fdpDown', LLDebug2);
-      stopy := nform.Height;
-      for i := 1 to stopy do
-      begin
-        Sleep(1);
-        nform.Height := stopy - 1;
-        nform.Top := stopy + i;
-        nform.Repaint;
-        DataModule1.ProcessMess;
-      end;
-    end;
-  end;
 
   finally
-    inHideNForm := false;
+    inHideNForm := False;
+    LogDatei.log('Finished hideNForm', LLDebug2);
   end;
 end;
 
@@ -529,6 +605,7 @@ var
   myButton: TButton;
   mytmpstr: string;
   mytmpint1, mytmpint2: integer;
+  choiceindex: integer;
 begin
   if aktsection = 'Form' then
   begin
@@ -610,11 +687,12 @@ begin
   begin
     LogDatei.log('Start reading: ' + aktsection, LLDebug);
     Inc(labelcounter);
-    SetLength(LabelArray, labelcounter);
+    SetLength(LabelArray, labelcounter + 1);
     LabelArray[labelcounter] := TLabel.Create(nform);
     LabelArray[labelcounter].Parent := nform;
     LabelArray[labelcounter].AutoSize := False;
     LabelArray[labelcounter].Name := aktsection;
+    LabelArray[labelcounter].WordWrap:=true;
     LabelArray[labelcounter].Left := myini.ReadInteger(aktsection, 'Left', 10);
     LabelArray[labelcounter].Top := myini.ReadInteger(aktsection, 'Top', 10);
     LabelArray[labelcounter].Width := myini.ReadInteger(aktsection, 'Width', 10);
@@ -637,7 +715,10 @@ begin
       strToBool(myini.ReadString(aktsection, 'Transparent', 'false'));
     LabelArray[labelcounter].Tag := labelcounter;
     LabelArray[labelcounter].Caption := myini.ReadString(aktsection, 'Text', '');
-    labellist.Add(IntToStr(labelcounter) + '=' + aktsection);
+    // feed labellist: id = index of LabelArray ; id = aktsection striped by 'Label'
+    labellist.Add(copy(aktsection, 6, 100) + '=' + IntToStr(labelcounter));
+    logdatei.log('labellist add: ' + copy(aktsection, 6, 100) + '=' +
+      IntToStr(labelcounter), LLDebug2);
     LogDatei.log('Finished reading: ' + aktsection, LLDebug2);
   end
   else
@@ -645,7 +726,7 @@ begin
   begin
     LogDatei.log('Start reading: ' + aktsection, LLDebug);
     Inc(buttoncounter);
-    SetLength(ButtonArray, buttoncounter);
+    SetLength(ButtonArray, buttoncounter + 1);
     ButtonArray[buttoncounter] := Tspeedbutton.Create(nform);
     ButtonArray[buttoncounter].Parent := nform;
     ButtonArray[buttoncounter].AutoSize := False;
@@ -670,13 +751,15 @@ begin
     //  StringToAlignment(myini.ReadString(aktsection, 'Alignment', 'alLeft'));
     //ButtonArray[buttoncounter].Transparent :=
     //  strToBool(myini.ReadString(aktsection, 'Transparent', 'false'));
-    ButtonArray[buttoncounter].Tag := myini.ReadInteger(aktsection, 'ChoiceIndex', 0);
+    choiceindex := myini.ReadInteger(aktsection, 'ChoiceIndex', 0);
+    ButtonArray[buttoncounter].Tag := choiceindex;
     ;
     ButtonArray[buttoncounter].OnClick := @nform.ChoiceClick;
     //ButtonArray[buttoncounter].TabStop:= false;
     //ButtonArray[buttoncounter].TabOrder:=-1;
     ButtonArray[buttoncounter].Caption := myini.ReadString(aktsection, 'Text', '');
-    buttonlist.Add(IntToStr(buttoncounter) + '=' + aktsection);
+    // feed buttonlist: id = index of ButtonArray ; id = ChoiceIndex'
+    buttonlist.Add(IntToStr(choiceindex) + '=' + IntToStr(buttoncounter));
     LogDatei.log('Finished reading: ' + aktsection, LLDebug2);
     (*
     if aktsection = 'ButtonStop' then

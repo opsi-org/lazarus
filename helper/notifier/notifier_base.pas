@@ -17,39 +17,29 @@ uses
   Variants,
   fileinfo,
   winpeimagereader,
-  notifierguicontrol;
+  notifierguicontrol,
+  notifier_json;
 
 type
 
   Tmythread = class(TThread)
   private
-    myMessage : string;
-    procedure handleMessage;
+    myMessage: string;
+    procedure messageToMainThread;
+    procedure messageFromMainThread;
   public
     procedure Execute; override;
     constructor Create(CreateSuspended: boolean);
   end;
 
 
-(*
-type
 
-  { TMyApplication }
-
-  TMyApplication = class(TCustomApplication)
-  protected
-    procedure DoRun; override;
-  public
-    constructor Create(TheOwner: TComponent); override;
-    destructor Destroy; override;
-    procedure WriteHelp; virtual;
-  end;
-*)
 procedure Main;
 
 var
-    stopped: boolean;
+  stopped: boolean;
   mythread: Tmythread;
+  myJsonAnswer: string = '';
 
 
 implementation
@@ -59,48 +49,7 @@ uses
 
 var
   myTCPClient: TIdTCPClient;
- // myTCPServer: TIdTCPServer;
 
-// myApplication: TMyApplication;
-//Application: TMyApplication;
-
-  (*
-  constructor TMyApplication.Create(TheOwner: TComponent);
-  begin
-    inherited Create(TheOwner);
-    StopOnException := True;
-  end;
-
-  destructor TMyApplication.Destroy;
-  begin
-    inherited Destroy;
-  end;
-
-  procedure TMyApplication.WriteHelp;
-  var
-    filename: string;
-  begin
-    { add your help code here }
-    filename := ExtractFileName(ExeName);
-    writeln('This is ', filename, ' version: ' + myVersion + ' (c) uib gmbh, AGPLv3');
-    writeln('Usage: ', filename, ' Options');
-    writeln('Options:');
-    writeln(' --help -> write this help and exit');
-    writeln(' -h -> write this help and exit');
-    writeln(' --port=<port> -> tcp port for communication with opsiclientd; required');
-    writeln(' -p <port> -> tcp port for communication with opsiclientd; required');
-    writeln(' --showconfigfile=<path> -> relative path to config file; required');
-    writeln(' -s <path> -> relative path to config file; required');
-    writeln(' --inputevent=<event> -> running event; required');
-    writeln(' -i <event> -> running event; required');
-  end;
-*)
-
-Procedure getmsg(str : string);
-begin
-  DataModule1.ProcessMess;
-  logdatei.log('From hm: '+str, LLInfo);
-end;
 
 constructor TMyThread.Create(CreateSuspended: boolean);
 begin
@@ -108,14 +57,22 @@ begin
   inherited Create(CreateSuspended);
 end;
 
-procedure TMyThread.handleMessage;
+procedure TMyThread.messageToMainThread;
 begin
-  //getmsg(myMessage);
-  logdatei.log('From hm: '+myMessage, LLInfo);
-  //DataModule1.ProcessMess;
- //     logdatei.log(
- //       ' --------------------------------------------------', LLInfo);
+  // pass recieved message to notifier gui control
+  newMessageFromService(myMessage);
+  //logdatei.log('From hm: '+myMessage, LLInfo);
+end;
 
+procedure TMyThread.messageFromMainThread;
+begin
+  // pass answer to thread to send by tcp
+  if myJsonAnswer <> '' then
+  begin
+    myMessage := myJsonAnswer;
+    logdatei.log('messageFromMainThread: ' + myMessage, LLDebug2);
+    myJsonAnswer := '';
+  end;
 end;
 
 procedure Tmythread.Execute;
@@ -137,15 +94,22 @@ begin
       end;
     until myTCPClient.Connected;
     i := 1;
-    while (not Terminated) and (i < 160) do
+    while (not Terminated) do
     begin
+      myMessage := '';
       myMessage := myTCPClient.Socket.ReadLn();
-      logdatei.log('From Thread: '+mymessage, LLInfo);
-      Synchronize(@handleMessage);
-      //logdatei.log(IntToStr(i) +
-      //  ' --------------------------------------------------', LLInfo);
-      Inc(i);
-      //sleep(500);
+      if myMessage <> '' then
+      begin
+        logdatei.log('Received: ' + mymessage, LLDebug2);
+        Synchronize(@messageToMainThread);
+        myMessage := '';
+      end;
+      Synchronize(@messageFromMainThread);
+      if myMessage <> '' then
+      begin
+        myTCPClient.Socket.WriteLn(myMessage);
+        logdatei.log('Sended: ' + mymessage, LLDebug2);
+      end;
     end;
     stopped := True;
     myTCPClient.Disconnect;

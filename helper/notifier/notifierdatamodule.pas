@@ -34,7 +34,7 @@ type
     procedure ProcessMess;
     procedure createNform;
     procedure hideMainForm;
-    procedure queryend(var Cancel: Boolean);
+    procedure queryend(var Cancel: boolean);
   end;
 
 
@@ -45,7 +45,7 @@ var
   myconfigpath, myconfigfile: string;
   myexepath: string;
   myVersion: string;
-  //stopped: boolean;
+//stopped: boolean;
 
 implementation
 
@@ -56,12 +56,12 @@ uses
 
 { TDataModule1 }
 
-procedure TDataModule1.queryend(var Cancel: Boolean);
+procedure TDataModule1.queryend(var Cancel: boolean);
 begin
   //hideNForm;
   //Nform.Close;
-  self.Destroy;
-  Cancel := false;
+  //self.Destroy;
+  //Cancel := false;
 end;
 
 procedure TDataModule1.ProcessMess;
@@ -81,19 +81,6 @@ var
 begin
   { add your help code here }
   filename := ExtractFileName(Application.ExeName);
-    (*
-    writeln('This is ', filename, ' version: ' + myVersion + ' (c) uib gmbh, AGPLv3');
-    writeln('Usage: ', filename, ' Options');
-    writeln('Options:');
-    writeln(' --help -> write this help and exit');
-    writeln(' -h -> write this help and exit');
-    writeln(' --port=<port> -> tcp port for communication with opsiclientd; required');
-    writeln(' -p <port> -> tcp port for communication with opsiclientd; required');
-    writeln(' --showconfigfile=<path> -> relative path to config file; required');
-    writeln(' -s <path> -> relative path to config file; required');
-    writeln(' --inputevent=<event> -> running event; required');
-    writeln(' -i <event> -> running event; required');
-    *)
   msg := 'This is ' + filename + ' version: ' + myVersion +
     ' (c) uib gmbh, AGPLv3' + LineEnding;
   msg := msg + 'Usage: ' + filename + ' Options' + LineEnding;
@@ -101,8 +88,7 @@ begin
   msg := msg + ' --help -> write this help and exit' + LineEnding;
   msg := msg + ' -h -> write this help and exit' + LineEnding;
   msg := msg + ' --port=<port> -> tcp port for communication with opsiclientd; required'
-    +
-    LineEnding;
+    + LineEnding;
   msg := msg + ' -p <port> -> tcp port for communication with opsiclientd; required' +
     LineEnding;
   msg := msg + ' --skinconfigfile=<path> -> relative path to config file; required' +
@@ -115,7 +101,7 @@ end;
 
 procedure TDataModule1.hideMainForm;
 begin
-  hideNForm;
+  //hideNForm;
 end;
 
 procedure TDataModule1.DataModuleCreate(Sender: TObject);
@@ -142,7 +128,7 @@ begin
   LogDatei.CreateTheLogfile(ExtractFileNameOnly(Application.ExeName) + '.log', True);
   LogDatei.log('Log for: ' + Application.exename + ' version: ' +
     myVersion + ' opend at : ' + DateTimeToStr(now), LLinfo);
-  LogDatei.LogLevel:=8;
+  LogDatei.LogLevel := 8;
 
   myexepath := ExtractFilePath(Application.ExeName);
   //myport := 44003;
@@ -191,7 +177,8 @@ begin
     myconfigfile := myexepath + myconfigpath;
     if not FileExists(myconfigfile) then
     begin
-      logdatei.log('Error: Given skinconfig file not found: ' + myconfigfile, LLCritical);
+      logdatei.log('Error: Given skinconfig file not found: ' +
+        myconfigfile, LLCritical);
       logdatei.Close;
       Application.Terminate;
       Exit;
@@ -199,10 +186,10 @@ begin
   end
   else
   begin
-      logdatei.log('Error: No skin config file given. I s required ', LLCritical);
-      logdatei.Close;
-      Application.Terminate;
-      Exit;
+    logdatei.log('Error: No skin config file given. I s required ', LLCritical);
+    logdatei.Close;
+    Application.Terminate;
+    Exit;
   end;
 
   if Application.HasOption('i', 'idevent') then
@@ -212,7 +199,7 @@ begin
     logdatei.log('Found Parameter idevent: ' + myevent, LLInfo);
   end;
 
-  Application.OnQueryEndSession:=@queryend;
+  Application.OnQueryEndSession := @queryend;
 
   // call main procedure
   main;
@@ -233,8 +220,8 @@ end;
 procedure TDataModule1.DataModuleDestroy(Sender: TObject);
 begin
   mythread.Terminate;
-  if not inHideNForm then hideNForm
-  else sleep(5000);
+  //if not inHideNForm then hideNForm
+  //else sleep(5000);
   // stop program loop
   logdatei.log('Program regulary finished (killed)', LLInfo);
   logdatei.Close;
@@ -244,7 +231,7 @@ end;
 
 procedure TDataModule1.Timer1Timer(Sender: TObject);
 begin
-  Timer1.Enabled:=false;
+  Timer1.Enabled := False;
   //hideNForm;
   self.Destroy;
   //Application.Terminate;

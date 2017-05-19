@@ -21,10 +21,10 @@ type
     procedure FormHide(Sender: TObject);
   private
     { private declarations }
-    objlist : TObjectList;
+    objlist: TObjectList;
   public
     { public declarations }
-    procedure choiceClick(sender : TObject);
+    procedure choiceClick(Sender: TObject);
   end;
 
 var
@@ -46,12 +46,12 @@ end;
 
 procedure TNform.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 begin
-  hideNForm;
+  //hideNForm;
 end;
 
 procedure TNform.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-  hideNForm;
+  //hideNForm;
 end;
 
 procedure TNform.FormHide(Sender: TObject);
@@ -59,10 +59,10 @@ begin
   //hideNForm;
 end;
 
-procedure TNform.choiceClick(sender : TObject);
+procedure TNform.choiceClick(Sender: TObject);
 begin
-  hideNForm;
-  myChoiceClick(sender);
+  //hideNForm;
+  myChoiceClick(Sender);
 end;
 
 end.

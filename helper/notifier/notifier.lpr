@@ -7,7 +7,7 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, notifierform, notifierdatamodule, notifierguicontrol
+  Forms, notifierform, notifierdatamodule, notifierguicontrol, notifier_json
   { you can add units after this };
 
 {$R *.res}
