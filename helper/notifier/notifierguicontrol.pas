@@ -152,6 +152,7 @@ end;
 procedure myChoiceClick(Sender: TObject);
 var
   choice: integer;
+
 begin
   choice := TSpeedButton(Sender).Tag;
   logdatei.log('Button clicked: choice: ' + IntToStr(choice), LLInfo);

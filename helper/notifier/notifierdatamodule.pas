@@ -109,7 +109,14 @@ var
   ErrorMsg: string;
   optionlist: TStringList;
   FileVerInfo: TFileVersionInfo;
+  preloglist : TStringlist;
+  i : integer;
+  lfilename : string;
+  logAndTerminate : boolean = False;
 begin
+  preloglist := TStringlist.Create;
+  preloglist.Add('PreLog for: ' + Application.exename +
+    ' opend at : ' + DateTimeToStr(now));
   FileVerInfo := TFileVersionInfo.Create(nil);
   try
     FileVerInfo.FileName := ParamStr(0);
@@ -118,17 +125,8 @@ begin
   finally
     FileVerInfo.Free;
   end;
-  // Initialize logging
-  LogDatei := TLogInfo.Create;
-  LogDatei.FileName := ExtractFileNameOnly(Application.ExeName);
-  LogDatei.StandardLogFileext := '.log';
-  LogDatei.StandardLogFilename := ExtractFileNameOnly(Application.ExeName);
-  LogDatei.StandardPartLogFilename :=
-    ExtractFileNameOnly(Application.ExeName) + '-part';
-  LogDatei.CreateTheLogfile(ExtractFileNameOnly(Application.ExeName) + '.log', True);
-  LogDatei.log('Log for: ' + Application.exename + ' version: ' +
-    myVersion + ' opend at : ' + DateTimeToStr(now), LLinfo);
-  LogDatei.LogLevel := 8;
+  preloglist.Add('Application version: ' + myVersion );
+
 
   myexepath := ExtractFilePath(Application.ExeName);
   //myport := 44003;
@@ -145,59 +143,88 @@ begin
   ErrorMsg := Application.CheckOptions('hp:s:i:', optionlist);
   if ErrorMsg <> '' then
   begin
-    logdatei.log(ErrorMsg, LLcritical);
-    logdatei.Close;
+    preloglist.Add(ErrorMsg);
+    //logdatei.Close;
+    logAndTerminate := true;
     Application.ShowException(Exception.Create(ErrorMsg));
-    Application.Terminate;
-    Exit;
+    //Application.Terminate;
+    //Exit;
   end;
 
   // parse parameters
   if Application.HasOption('h', 'help') then
   begin
-    logdatei.log('Found Parameter help: show and exit', LLInfo);
+    preloglist.Add('Found Parameter help: show and exit');
     WriteHelp;
-    logdatei.Close;
-    Application.Terminate;
-    Exit;
+    logAndTerminate := true;
+    //Application.Terminate;
+    //Exit;
   end;
 
   if Application.HasOption('p', 'port') then
   begin
-    logdatei.log('Found Parameter port', LLDebug);
+    preloglist.Add('Found Parameter port');
     myport := StrToInt(Application.GetOptionValue('p', 'port'));
-    logdatei.log('Found Parameter port: ' + IntToStr(myport), LLInfo);
+    preloglist.Add('Found Parameter port: ' + IntToStr(myport));
   end;
 
   if Application.HasOption('s', 'skinconfigfile') then
   begin
-    logdatei.log('Found Parameter skinconfigfile', LLDebug);
+    preloglist.Add('Found Parameter skinconfigfile');
     myconfigpath := Application.GetOptionValue('s', 'skinconfigfile');
-    logdatei.log('Found Parameter skinconfigfile: ' + myconfigpath, LLInfo);
+    preloglist.Add('Found Parameter skinconfigfile: ' + myconfigpath);
     myconfigfile := myexepath + myconfigpath;
     if not FileExists(myconfigfile) then
     begin
-      logdatei.log('Error: Given skinconfig file not found: ' +
-        myconfigfile, LLCritical);
-      logdatei.Close;
-      Application.Terminate;
-      Exit;
+      preloglist.Add('Error: Given skinconfig file not found: ' +
+        myconfigfile);
+      logAndTerminate := true;
+      //logdatei.Close;
+      //Application.Terminate;
+      //Exit;
     end;
   end
   else
   begin
-    logdatei.log('Error: No skin config file given. I s required ', LLCritical);
-    logdatei.Close;
-    Application.Terminate;
-    Exit;
+    preloglist.Add('Error: No skin config file given. I s required ');
+    logAndTerminate := true;
+    //logdatei.Close;
+    //Application.Terminate;
+    //Exit;
   end;
 
   if Application.HasOption('i', 'idevent') then
   begin
-    logdatei.log('Found Parameter idevent', LLDebug);
+    preloglist.Add('Found Parameter idevent');
     myevent := Application.GetOptionValue('i', 'idevent');
-    logdatei.log('Found Parameter idevent: ' + myevent, LLInfo);
+    preloglist.Add('Found Parameter idevent: ' + myevent);
   end;
+
+   // Initialize logging
+  LogDatei := TLogInfo.Create;
+  lfilename := ExtractFileNameOnly(Application.ExeName);
+  // use different filenames for different instances
+  if myevent <> '' then
+     lfilename :=  lfilename+'_'+myevent;
+  LogDatei.FileName :=  lfilename;
+  LogDatei.StandardLogFileext := '.log';
+  LogDatei.StandardLogFilename := lfilename;
+  LogDatei.StandardPartLogFilename := lfilename+ '-part';
+  LogDatei.CreateTheLogfile(lfilename + '.log', True);
+  // push prrlog buffer to logfile
+  if preloglist.Count > 0 then
+   for i := 0 to preloglist.Count-1 do
+     LogDatei.log(preloglist.Strings[i],LLEssential);
+  if logAndTerminate then
+  begin
+    LogDatei.log('Closing log and terminating due to previus errors.',LLCritical);
+    logdatei.Close;
+    Application.Terminate;
+    Exit;
+  end;
+  LogDatei.log('Log for: ' + Application.exename +
+               ' opend at : ' + DateTimeToStr(now), LLinfo);
+  LogDatei.LogLevel := 8;
 
   Application.OnQueryEndSession := @queryend;
 

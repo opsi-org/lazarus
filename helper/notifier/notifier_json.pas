@@ -11,26 +11,58 @@ uses
   oslog;
 
 procedure newMessageFromService(message: string);
+function newMessageToService(message: string) : boolean;
 procedure buttonPushedToService(buttonindex: integer);
 
 implementation
 
 uses
-  notifier_base;
+  notifier_base,
+  notifierdatamodule;
 
 var
   globalchoicearray: string;
+
+
+function newMessageToService(message: string) : boolean;
+begin
+  result := false;
+  if notifier_base.myJsonAnswer = '' then
+  begin
+    notifier_base.myJsonAnswer := myJsonCall;
+    result := true;
+  end;
+end;
 
 procedure buttonPushedToService(buttonindex: integer);
 var
   myJsonCall: string;
 begin
-  myJsonCall := '{"params": ["choice": [0]], "id": null,' +
-    '"method": "setSelectedIndexes"}';
   // pass JSON answer to notifier_base unit. Will be there handled by messageFromMainThread
-  notifier_base.myJsonAnswer := myJsonCall;
+  result := false;
+  // create answer string 1
+  myJsonCall := '{"params": ["choice": ['+ IntToStr(buttonindex)+']], "id": null,' +
+    '"method": "setSelectedIndexes"}';
+  // push answer string in tcp write buffer
+  if notifier_base.myJsonAnswer = '' then
+  begin
+    if newMessageToService(myJsonCall) then
+    begin
+    end;
+  end;
+  logdatei.log('JSON for Button call1: ' + myJsonCall, LLDebug2);
+  // create answer string 2
+  myJsonCall := '{"params": ["choice"] , "id": null, "method": "selectChoice"}';
+  // push answer string in tcp write buffer
+  // push answer string in tcp write buffer
+  if notifier_base.myJsonAnswer = '' then
+  begin
+    if newMessageToService(myJsonCall) then
+    begin
+    end;
+  end;
+  logdatei.log('JSON for Button call2: ' + myJsonCall, LLDebug2);
   logdatei.log('JSON for Button clicked: choice: ' + IntToStr(buttonindex), LLInfo);
-  '{"params": ["choice "], "id": null, "method": "selectChoice"}'
 end;
 
 (*
@@ -71,7 +103,7 @@ begin
   if lowercase(aktMethod) = lowerCase('endConnection') then
   begin
     // stop, hideNForm and terminate
-    shutdownNotifier;
+    //shutdownNotifier;
   end;
 
   if (lowercase(aktMethod) = lowerCase('messageChanged')) or
