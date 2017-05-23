@@ -6,6 +6,7 @@ object Nform: TNform
   Caption = 'Nform'
   ClientHeight = 240
   ClientWidth = 320
+  FormStyle = fsSystemStayOnTop
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate

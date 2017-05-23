@@ -25,6 +25,7 @@ type
   Tmythread = class(TThread)
   private
     myMessage: string;
+    myMessage2: string;
     procedure messageToMainThread;
     procedure messageFromMainThread;
   public
@@ -40,6 +41,7 @@ var
   stopped: boolean;
   mythread: Tmythread;
   myJsonAnswer: string = '';
+  myJsonAnswer2: string = '';
 
 
 implementation
@@ -70,8 +72,10 @@ begin
   if myJsonAnswer <> '' then
   begin
     myMessage := myJsonAnswer;
+    myMessage2 := myJsonAnswer2;
     logdatei.log('messageFromMainThread: ' + myMessage, LLDebug2);
     myJsonAnswer := '';
+    myJsonAnswer2 := '';
   end;
 end;
 
@@ -94,6 +98,7 @@ begin
       end;
     until myTCPClient.Connected;
     i := 1;
+    myMessage2 := '';
     while (not Terminated) do
     begin
       myMessage := '';
@@ -110,6 +115,17 @@ begin
         myTCPClient.Socket.WriteLn(myMessage);
         logdatei.log('Sended: ' + mymessage, LLDebug2);
       end;
+      (*
+      else
+      begin
+        if myMessage2 <> '' then
+        begin
+          myTCPClient.Socket.WriteLn(myMessage2);
+          logdatei.log('Sended: ' + mymessage2, LLDebug2);
+          myMessage2 := '';
+        end;
+      end;
+      *)
     end;
     stopped := True;
     myTCPClient.Disconnect;

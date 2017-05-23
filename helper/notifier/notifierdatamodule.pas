@@ -9,7 +9,7 @@ uses
   Forms,
   LazFileUtils,
   oslog,
-  IdTCPClient,
+  //IdTCPClient,
   Variants,
   fileinfo,
   winpeimagereader,
@@ -34,14 +34,14 @@ type
     procedure ProcessMess;
     procedure createNform;
     procedure hideMainForm;
-    procedure queryend(var Cancel: boolean);
+    //procedure queryend(var Cancel: boolean);
   end;
 
 
 var
   DataModule1: TDataModule1;
   myport: integer;
-  myevent: string;
+  mynotifierkind: string;
   myconfigpath, myconfigfile: string;
   myexepath: string;
   myVersion: string;
@@ -55,14 +55,6 @@ uses
 {$R *.lfm}
 
 { TDataModule1 }
-
-procedure TDataModule1.queryend(var Cancel: boolean);
-begin
-  //hideNForm;
-  //Nform.Close;
-  //self.Destroy;
-  //Cancel := false;
-end;
 
 procedure TDataModule1.ProcessMess;
 begin
@@ -109,14 +101,14 @@ var
   ErrorMsg: string;
   optionlist: TStringList;
   FileVerInfo: TFileVersionInfo;
-  preloglist : TStringlist;
-  i : integer;
-  lfilename : string;
-  logAndTerminate : boolean = False;
+  preloglist: TStringList;
+  i: integer;
+  lfilename: string;
+  logAndTerminate: boolean = False;
 begin
-  preloglist := TStringlist.Create;
-  preloglist.Add('PreLog for: ' + Application.exename +
-    ' opend at : ' + DateTimeToStr(now));
+  preloglist := TStringList.Create;
+  preloglist.Add('PreLog for: ' + Application.exename + ' opend at : ' +
+    DateTimeToStr(now));
   FileVerInfo := TFileVersionInfo.Create(nil);
   try
     FileVerInfo.FileName := ParamStr(0);
@@ -125,7 +117,7 @@ begin
   finally
     FileVerInfo.Free;
   end;
-  preloglist.Add('Application version: ' + myVersion );
+  preloglist.Add('Application version: ' + myVersion);
 
 
   myexepath := ExtractFilePath(Application.ExeName);
@@ -145,7 +137,7 @@ begin
   begin
     preloglist.Add(ErrorMsg);
     //logdatei.Close;
-    logAndTerminate := true;
+    logAndTerminate := True;
     Application.ShowException(Exception.Create(ErrorMsg));
     //Application.Terminate;
     //Exit;
@@ -156,7 +148,7 @@ begin
   begin
     preloglist.Add('Found Parameter help: show and exit');
     WriteHelp;
-    logAndTerminate := true;
+    logAndTerminate := True;
     //Application.Terminate;
     //Exit;
   end;
@@ -176,9 +168,8 @@ begin
     myconfigfile := myexepath + myconfigpath;
     if not FileExists(myconfigfile) then
     begin
-      preloglist.Add('Error: Given skinconfig file not found: ' +
-        myconfigfile);
-      logAndTerminate := true;
+      preloglist.Add('Error: Given skinconfig file not found: ' + myconfigfile);
+      logAndTerminate := True;
       //logdatei.Close;
       //Application.Terminate;
       //Exit;
@@ -187,7 +178,7 @@ begin
   else
   begin
     preloglist.Add('Error: No skin config file given. I s required ');
-    logAndTerminate := true;
+    logAndTerminate := True;
     //logdatei.Close;
     //Application.Terminate;
     //Exit;
@@ -196,52 +187,43 @@ begin
   if Application.HasOption('i', 'idevent') then
   begin
     preloglist.Add('Found Parameter idevent');
-    myevent := Application.GetOptionValue('i', 'idevent');
-    preloglist.Add('Found Parameter idevent: ' + myevent);
+    mynotifierkind := Application.GetOptionValue('i', 'idevent');
+    preloglist.Add('Found Parameter idevent: ' + mynotifierkind);
   end;
 
-   // Initialize logging
+  // Initialize logging
   LogDatei := TLogInfo.Create;
   lfilename := ExtractFileNameOnly(Application.ExeName);
   // use different filenames for different instances
-  if myevent <> '' then
-     lfilename :=  lfilename+'_'+myevent;
-  LogDatei.FileName :=  lfilename;
+  if mynotifierkind <> '' then
+    lfilename := lfilename + '_' + mynotifierkind;
+  LogDatei.FileName := lfilename;
   LogDatei.StandardLogFileext := '.log';
   LogDatei.StandardLogFilename := lfilename;
-  LogDatei.StandardPartLogFilename := lfilename+ '-part';
+  LogDatei.WritePartLog := False;
+  //LogDatei.StandardPartLogFilename := lfilename+ '-part';
   LogDatei.CreateTheLogfile(lfilename + '.log', True);
-  // push prrlog buffer to logfile
+  // push prelog buffer to logfile
   if preloglist.Count > 0 then
-   for i := 0 to preloglist.Count-1 do
-     LogDatei.log(preloglist.Strings[i],LLEssential);
+    for i := 0 to preloglist.Count - 1 do
+      LogDatei.log(preloglist.Strings[i], LLEssential);
   if logAndTerminate then
   begin
-    LogDatei.log('Closing log and terminating due to previus errors.',LLCritical);
+    LogDatei.log('Closing log and terminating due to previous errors.', LLCritical);
     logdatei.Close;
     Application.Terminate;
     Exit;
   end;
-  LogDatei.log('Log for: ' + Application.exename +
-               ' opend at : ' + DateTimeToStr(now), LLinfo);
+  LogDatei.log('Log for: ' + Application.exename + ' opend at : ' +
+    DateTimeToStr(now), LLinfo);
+
   LogDatei.LogLevel := 8;
 
-  Application.OnQueryEndSession := @queryend;
+  //Application.OnQueryEndSession := @queryend;
 
   // call main procedure
   main;
 
-  (*
-  // stop program loop
-  logdatei.log('Program regulary finished', LLInfo);
-  logdatei.Close;
-  //writeln('Program regulary finished');
-  //while not mythread.CheckTerminated do
-  //begin
-  //  Sleep(100);
-  //end;
-  Application.Terminate;
-  *)
 end;
 
 procedure TDataModule1.DataModuleDestroy(Sender: TObject);

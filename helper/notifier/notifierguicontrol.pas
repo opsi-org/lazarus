@@ -34,7 +34,7 @@ type
 procedure openSkinIni(ininame: string);
 procedure myChoiceClick(Sender: TObject);
 procedure hideNForm;
-procedure setLabelCaptionById(aktId, aktMessage: string);
+function setLabelCaptionById(aktId, aktMessage: string) : boolean;
 procedure setButtonCaptionById(choiceindex: integer; aktMessage: string);
 procedure shutdownNotifier;
 
@@ -80,11 +80,12 @@ begin
   DataModule1.Destroy;
 end;
 
-procedure setLabelCaptionById(aktId, aktMessage: string);
+function setLabelCaptionById(aktId, aktMessage: string) : boolean;
 var
   index: integer;
   indexstr: string;
 begin
+  result := false;
   logdatei.log('Set for id: "' + aktId + '" the message: "' + aktMessage + '"', LLInfo);
   try
     // get labelarray index for aktid stored in labellist
@@ -100,6 +101,7 @@ begin
       Application.ProcessMessages;
       logdatei.log('Finished: Set for id: "' + aktId + '" the message: "' +
         aktMessage + '"', LLInfo);
+      result := true;
     end
     else
       LogDatei.log('No index found for id: ' + aktId, LLDebug2);
@@ -109,6 +111,7 @@ begin
       LogDatei.log('Error: Label not found by index: ' + IntToStr(index) +
         ' id: ' + aktId, LLError);
       LogDatei.log('Error: Message: ' + E.Message, LLError);
+      result := false;
     end;
   end;
 end;
@@ -162,7 +165,7 @@ end;
 
 function fontresize(num: integer): integer;
 begin
-  Result := round(num * 0.6);
+  Result := round(num * 0.7);
 end;
 
 function StringToAlignment(str: string): TAlignment;
@@ -522,10 +525,10 @@ begin
         LogDatei.log('Will hide with: fdpFade', LLDebug2);
         nform.AlphaBlend := True;
         nform.AlphaBlendValue := 255;
-        for i := 255 to 1 do
+        for i := 1 to  255 do
         begin
-          sleep(10);
-          nform.AlphaBlendValue := i;
+          sleep(1);
+          nform.AlphaBlendValue := 255 - i;
           nform.Repaint;
           DataModule1.ProcessMess;
         end;
@@ -539,7 +542,7 @@ begin
         nform.AlphaBlendValue := 255;
         for i := 1 to stopy do
         begin
-          Sleep(10);
+          Sleep(1);
           nform.AlphaBlendValue := 255 - i;
           nform.Height := nform.Height - 1;
           nform.Repaint;
@@ -557,7 +560,7 @@ begin
         DataModule1.ProcessMess;
         for i := 1 to stopy do
         begin
-          Sleep(10);
+          Sleep(1);
           nform.AlphaBlendValue := 255 - i;
           nform.Height := stopy - i;
           nform.Top := y + i;
@@ -572,7 +575,7 @@ begin
         stopy := nform.Height;
         for i := 1 to stopy do
         begin
-          Sleep(10);
+          Sleep(1);
           nform.Height := stopy - 1;
           nform.Repaint;
           DataModule1.ProcessMess;
