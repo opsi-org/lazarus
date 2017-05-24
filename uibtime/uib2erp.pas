@@ -498,6 +498,7 @@ var
   selindex: integer;
   tmpdate: TDate;
   year, month, day: word;
+  summe_h, freed, monthnum, total: double;
 begin
   DataModule1.debugOut(6, 'start StringGrid1DblClick');
   //Cursor:=crHourGlass;
@@ -668,6 +669,51 @@ begin
     query3.parambyname('stop').AsString := bisstr;
     query3.Open;
     DataSource3.Enabled := True;
+    summe_h := query3.FieldByName('summe').AsFloat;
+
+    //query free
+    if QueryUEARhelper.Active then
+      QueryUEARhelper.Close;
+    QueryUEARhelper.SQL.Clear;
+    QueryUEARhelper.sql.Add(' select time_h, acc_per_monthnum ');
+    QueryUEARhelper.sql.Add('    from uiballevent');
+    QueryUEARhelper.sql.Add('    where (event = :suchevent)');
+    QueryUEARhelper.parambyname('suchevent').AsString := suchevent;
+    QueryUEARhelper.Open;
+    monthnum := 0;
+    total := 0;
+    if not QueryUEARhelper.FieldByName('time_h').IsNull then
+    begin
+      total := QueryUEARhelper.FieldByName('time_h').AsFloat;
+      monthnum := round(QueryUEARhelper.FieldByName('acc_per_monthnum').AsFloat);
+    end;
+    QueryUEARhelper.Close;
+
+    //calculate ex gratia  (Kulanz)
+    if (monthnum > 0) and (total > 0.9) then
+    begin
+      // there are real free minutes
+      freed := total - summe_h;
+      // we give about 6 Minutes (= 0.1 h) ex gratia if
+      // this make possible to fit to the free hours
+      if (freed < 0) and (freed > -0.1) then // give ex gratia
+      begin
+        query1.Append;
+        // acc_rep_id will be reset by trigger
+        query1.FieldByName('acc_rep_id').AsInteger := 0;
+        query1.FieldByName('USERID').AsString := 'accounting';
+        query1.FieldByName('DATEDAY').AsDateTime := StrToDate(repbisstr);
+        query1.FieldByName('EVENT').AsString := suchevent;
+        query1.FieldByName('STUNDEN').AsFloat := freed;
+        query1.FieldByName('DESCRIPTION').AsString := 'Gutschrift / Credit entry';
+        query1.FieldByName('locked').AsInteger := 0;
+        query1.Post;
+        query1.ApplyUpdates;
+        DataModule1.SQLTransaction1.CommitRetaining;
+      end;
+    end;
+
+
   finally
     screen.Cursor := crDefault;
     Application.ProcessMessages;
@@ -925,8 +971,8 @@ begin
   //frReport1.FindObject('memofreistunden').Memo.Text :=
   //  IntToStr(round(Total)) + ' pro ' + IntToStr(months) + ' Monat(e)';
   frReport1.FindObject('memofreistunden').Memo.Text :=
-     IntToStr(trunc(Total)) + ':' + Format('%.*d', [2, round(frac(Total) * 60)])
-     + ' pro ' + IntToStr(months) + ' Monat(e)';
+    IntToStr(trunc(Total)) + ':' + Format('%.*d', [2, round(frac(Total) * 60)]) +
+    ' pro ' + IntToStr(months) + ' Monat(e)';
   (*
   hours := trunc(Total);
   minutes := Round(frac(Total) * 60);
@@ -1113,15 +1159,17 @@ begin
         event := queryAccEv.FieldByName('event').AsString;
         if event <> '' then
         begin
-          if getLastIntervalInfo(event, starttime, stoptime, lastIntervalStart,
-            lastIntervalEnd, intervalStartFound, intervalEndFound,
-            reportrequired, accountingrequired, basemonth, projektstart,
-            totaltime, usedtime, availabletime, avaiablesign) then
+          if getLastIntervalInfo(event, starttime, stoptime,
+            lastIntervalStart, lastIntervalEnd, intervalStartFound,
+            intervalEndFound, reportrequired, accountingrequired,
+            basemonth, projektstart, totaltime, usedtime, availabletime,
+            avaiablesign) then
           begin
             Inc(numberselected);
 
             // Alles was kleiner als 0.001 (1,5 Minuten) ist, wird ignoriert
-            if usedtime < 0.001 then usedtime := 0;
+            if usedtime < 0.001 then
+              usedtime := 0;
 
             DateTimeToString(totaltimestr, 'hh:nn', totaltime);
             DateTimeToString(usedtimestr, 'hh:nn', usedtime);
@@ -1182,7 +1230,8 @@ begin
               queryUAE.SQL.Add('insert into uibaccountexport ');
               QueryUAE.sql.Add(
                 '(event, fromday, untilday, stunden, inerp, erperror, erp_errorstr) ');
-              QueryUAE.sql.Add('values(:event, :fromday, :untilday, :stunden, 0, 0, "") ');
+              QueryUAE.sql.Add(
+                'values(:event, :fromday, :untilday, :stunden, 0, 0, "") ');
               QueryUAE.ParamByName('event').AsString := event;
               fromday := StrToDate(querystart);
               untilday := StrToDate(queryend) - 1;
@@ -1298,23 +1347,25 @@ begin
         event := queryAccEv.FieldByName('event').AsString;
         if event <> '' then
         begin
-          if getLastIntervalInfo(event, starttime, stoptime, lastIntervalStart,
-            lastIntervalEnd, intervalStartFound, intervalEndFound,
-            reportrequired, accountingrequired, basemonth, projektstart,
-            totaltime, usedtime, availabletime, avaiablesign) then
+          if getLastIntervalInfo(event, starttime, stoptime,
+            lastIntervalStart, lastIntervalEnd, intervalStartFound,
+            intervalEndFound, reportrequired, accountingrequired,
+            basemonth, projektstart, totaltime, usedtime, availabletime,
+            avaiablesign) then
           begin
             Inc(numberselected);
 
             // Alles was kleiner als 0.001 (1,5 Minuten) ist, wird ignoriert
-            if usedtime < 0.001 then usedtime := 0;
+            if usedtime < 0.001 then
+              usedtime := 0;
 
             totaltimestr := IntToStr(trunc(totaltime * 24)) + ':' +
               Format('%.*d', [2, round(frac(totaltime * 24) * 60)]);
-            usedtimestr := IntToStr(trunc(usedtime * 24)) + ':' + Format(
-              '%.*d', [2, round(frac(usedtime * 24) * 60)]);
-            availabletimestr := avaiablesign + IntToStr(
-              trunc(availabletime * 24)) + ':' + Format('%.*d',
-              [2, round(frac(availabletime * 24) * 60)]);
+            usedtimestr := IntToStr(trunc(usedtime * 24)) + ':' +
+              Format('%.*d', [2, round(frac(usedtime * 24) * 60)]);
+            availabletimestr :=
+              avaiablesign + IntToStr(trunc(availabletime * 24)) +
+              ':' + Format('%.*d', [2, round(frac(availabletime * 24) * 60)]);
             //totaltimestr := FormatDateTime('hh:nn', totaltime, [fdoInterval]);
             //usedtimestr := FormatDateTime('hh:nn', usedtime, [fdoInterval]);
             //availabletimestr := avaiablesign +FormatDateTime('hh:nn', availabletime, [fdoInterval]);

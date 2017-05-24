@@ -1,4 +1,10 @@
 (*
+uibtime (4.1.1.13-1) stable; urgency=low
+
+ * uib2erp: StringGrid1DblClick: calculate ex gratia
+ * result: TFResult.DBGrid1TitleClick(Column: TColumn); (sort by header click)
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 24 May 2017 15:00:00 +0000
 
 uibtime (4.1.1.12-1) stable; urgency=low
 

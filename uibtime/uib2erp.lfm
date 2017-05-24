@@ -1,7 +1,7 @@
 object Fuibtime2erp: TFuibtime2erp
-  Left = 202
+  Left = 459
   Height = 925
-  Top = 192
+  Top = 132
   Width = 1107
   Caption = 'uibtime2erp'
   ClientHeight = 925
