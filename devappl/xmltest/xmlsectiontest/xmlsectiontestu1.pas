@@ -145,11 +145,13 @@ begin
     begin
 
       XMLDocObject.delAttribute('wcm:action');
+      // TODO add nur wenn key nicht existiert, nicht überschreiben!
       XMLDocObject.addAttribute('newwcm','newwcmAttribute');
       XMLDocObject.setAttribute('newAttribute','newValue');
     end;
 
-  // TODO : wie geht Suche mit mehreren Attributen? Notwendig?
+  // TODO : Suche mit mehreren Attributen
+  // TODO : Suche mit Attribut, Toleranz bei weiteren Attributen, die nciht auftauchen
   // TODO : addText
   // AddText "rtf" : sets the text only if there was no text node given
 
@@ -241,7 +243,7 @@ begin
       XMLDocObject.makeNode('package','','');
       XMLDocObject.setNodeText('flowerpower');
     end;
-  // TODO delete node if text is ... das funktioniert so noch nicht
+  // delete node if text is
   // select node name=package, text=snapper
   if XMLDocObject.nodeExists('packages config:type="list"') then
     if XMLDocObject.openNode('packages config:type="list"') then
@@ -296,7 +298,11 @@ begin
   XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
   // add packages
-  if XMLDocObject.nodeExists('PIDKEY Value="XXXXXXXXXXXXXXXXXXXXXXXXX"') then
+  if XMLDocObject.openNode('Display Level="basic" AcceptEula="yes" SuppressModal="no"') then
+    LogDatei.log('Display mit drei Attributen gefunden',oslog.LLinfo)
+  else
+      LogDatei.log('Display mit drei Attributen nicht gefunden',oslog.LLinfo);
+  //if XMLDocObject.nodeExists('PIDKEY Value="XXXXXXXXXXXXXXXXXXXXXXXXX"') then
     if XMLDocObject.openNode('PIDKEY Value="XXXXXXXXXXXXXXXXXXXXXXXXX"') then
     begin
       XMLDocObject.setAttribute('Value','Value wird gesetzt');
@@ -319,10 +325,10 @@ begin
   logdatei := Tloginfo.Create;
   StandardMainLogPath:='/tmp';
   StandardPartLogPath := '/tmp';
-  StandardPartLogFilename := 'xmlpatch';
+  logdatei.StandardPartLogFilename := 'xmlsectiontest';
   logfilename:= 'xmlsectiontest.log';
-  CreateTheLogfile(logfilename);
-  logdatei.AktProduktId:='xmlpatch';
+  logdatei.CreateTheLogfile(logfilename);
+  logdatei.AktProduktId:='xmlsectiontest';
   LogDatei.log('start logging',oslog.LLinfo);
 end.
 

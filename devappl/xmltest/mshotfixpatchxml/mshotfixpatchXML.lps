@@ -18,9 +18,8 @@
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
-        <TopLine Value="307"/>
-        <CursorPos X="86" Y="329"/>
+        <TopLine Value="327"/>
+        <CursorPos X="14" Y="363"/>
         <UsageCount Value="84"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -31,7 +30,7 @@
         <UnitName Value="winpatchCollection"/>
         <EditorIndex Value="2"/>
         <TopLine Value="15"/>
-        <CursorPos X="85" Y="37"/>
+        <CursorPos X="81" Y="37"/>
         <UsageCount Value="68"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -47,87 +46,14 @@
       <Unit4>
         <Filename Value="../common/oslog.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <WindowIndex Value="-1"/>
-        <TopLine Value="-1"/>
-        <CursorPos X="-1" Y="-1"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="262"/>
+        <CursorPos X="11" Y="283"/>
         <UsageCount Value="24"/>
+        <Loaded Value="True"/>
       </Unit4>
       <Unit5>
-        <Filename Value="osxml.pas"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="311"/>
-        <CursorPos X="53" Y="338"/>
-        <UsageCount Value="82"/>
-        <Loaded Value="True"/>
-      </Unit5>
-      <Unit6>
-        <Filename Value="oslog.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="109"/>
-        <CursorPos X="40" Y="21"/>
-        <UsageCount Value="80"/>
-      </Unit6>
-      <Unit7>
-        <Filename Value="osxmltdom.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="53"/>
-        <CursorPos X="85" Y="51"/>
-        <UsageCount Value="52"/>
-      </Unit7>
-      <Unit8>
-        <Filename Value="../branches/4.11.6/xmltest.lpr"/>
-        <EditorIndex Value="-1"/>
-        <UsageCount Value="5"/>
-      </Unit8>
-      <Unit9>
-        <Filename Value="../branches/4.11.6/osxml.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="40"/>
-        <UsageCount Value="5"/>
-      </Unit9>
-      <Unit10>
-        <Filename Value="../branches/4.11.6/xmltestu1.lfm"/>
-        <EditorIndex Value="-1"/>
-        <UsageCount Value="5"/>
-        <DefaultSyntaxHighlighter Value="LFM"/>
-      </Unit10>
-      <Unit11>
-        <Filename Value="../branches/4.11.6/xmltestu1.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="116"/>
-        <CursorPos X="30" Y="198"/>
-        <UsageCount Value="38"/>
-      </Unit11>
-      <Unit12>
-        <Filename Value="/usr/share/lazarus/1.6.2/lcl/include/control.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="2714"/>
-        <CursorPos Y="2738"/>
-        <UsageCount Value="10"/>
-      </Unit12>
-      <Unit13>
-        <Filename Value="../branches/4.11.6/osjson.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="652"/>
-        <UsageCount Value="7"/>
-      </Unit13>
-      <Unit14>
-        <Filename Value="../branches/4.11.6/synapse40lib/mimepart.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="1077"/>
-        <CursorPos X="71" Y="1086"/>
-        <UsageCount Value="10"/>
-      </Unit14>
-      <Unit15>
-        <Filename Value="/usr/share/lazarus/1.6.2/lcl/lclmessageglue.pas"/>
-        <UnitName Value="LCLMessageGlue"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="91"/>
-        <CursorPos Y="114"/>
-        <UsageCount Value="10"/>
-      </Unit15>
-      <Unit16>
         <Filename Value="../common/osxml.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
@@ -135,128 +61,200 @@
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
         <UsageCount Value="20"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="osxml.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="311"/>
+        <CursorPos X="53" Y="338"/>
+        <UsageCount Value="82"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="oslog.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="109"/>
+        <CursorPos X="40" Y="21"/>
+        <UsageCount Value="80"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="osxmltdom.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="53"/>
+        <CursorPos X="85" Y="51"/>
+        <UsageCount Value="52"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="../branches/4.11.6/xmltest.lpr"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="5"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="../branches/4.11.6/osxml.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="40"/>
+        <UsageCount Value="5"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="../branches/4.11.6/xmltestu1.lfm"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="5"/>
+        <DefaultSyntaxHighlighter Value="LFM"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="../branches/4.11.6/xmltestu1.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="116"/>
+        <CursorPos X="30" Y="198"/>
+        <UsageCount Value="38"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="/usr/share/lazarus/1.6.2/lcl/include/control.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="2714"/>
+        <CursorPos Y="2738"/>
+        <UsageCount Value="10"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="../branches/4.11.6/osjson.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="652"/>
+        <UsageCount Value="7"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="../branches/4.11.6/synapse40lib/mimepart.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1077"/>
+        <CursorPos X="71" Y="1086"/>
+        <UsageCount Value="10"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="/usr/share/lazarus/1.6.2/lcl/lclmessageglue.pas"/>
+        <UnitName Value="LCLMessageGlue"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="91"/>
+        <CursorPos Y="114"/>
+        <UsageCount Value="10"/>
       </Unit16>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="293" TopLine="268"/>
+        <Caret Line="304" TopLine="268"/>
       </Position1>
       <Position2>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="295" TopLine="268"/>
+        <Caret Line="254" TopLine="231"/>
       </Position2>
       <Position3>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="296" TopLine="268"/>
+        <Caret Line="256" TopLine="231"/>
       </Position3>
       <Position4>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="303" TopLine="268"/>
+        <Caret Line="257" TopLine="231"/>
       </Position4>
       <Position5>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="304" TopLine="268"/>
+        <Caret Line="258" TopLine="231"/>
       </Position5>
       <Position6>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="254" TopLine="231"/>
+        <Caret Line="259" TopLine="231"/>
       </Position6>
       <Position7>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="256" TopLine="231"/>
+        <Caret Line="260" TopLine="231"/>
       </Position7>
       <Position8>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="257" TopLine="231"/>
+        <Caret Line="261" TopLine="231"/>
       </Position8>
       <Position9>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="258" TopLine="231"/>
+        <Caret Line="262" TopLine="231"/>
       </Position9>
       <Position10>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="259" TopLine="231"/>
+        <Caret Line="91" Column="100" TopLine="56"/>
       </Position10>
       <Position11>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="260" TopLine="231"/>
+        <Caret Line="73" Column="38" TopLine="56"/>
       </Position11>
       <Position12>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="261" TopLine="231"/>
+        <Caret Line="77" TopLine="56"/>
       </Position12>
       <Position13>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="262" TopLine="231"/>
+        <Caret Line="79" TopLine="56"/>
       </Position13>
       <Position14>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="91" Column="100" TopLine="56"/>
+        <Caret Line="81" TopLine="56"/>
       </Position14>
       <Position15>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="73" Column="38" TopLine="56"/>
+        <Caret Line="80" TopLine="56"/>
       </Position15>
       <Position16>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="77" TopLine="56"/>
+        <Caret Line="83" TopLine="56"/>
       </Position16>
       <Position17>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="79" TopLine="56"/>
+        <Caret Line="82" TopLine="56"/>
       </Position17>
       <Position18>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="81" TopLine="56"/>
+        <Caret Line="76" Column="78" TopLine="50"/>
       </Position18>
       <Position19>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="80" TopLine="56"/>
+        <Caret Line="297" Column="24" TopLine="261"/>
       </Position19>
       <Position20>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="83" TopLine="56"/>
+        <Caret Line="286" Column="65" TopLine="263"/>
       </Position20>
       <Position21>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="82" TopLine="56"/>
+        <Caret Line="285" Column="26" TopLine="263"/>
       </Position21>
       <Position22>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="76" Column="78" TopLine="50"/>
+        <Caret Line="286" Column="64" TopLine="263"/>
       </Position22>
       <Position23>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="297" Column="24" TopLine="261"/>
+        <Caret Line="270" Column="31" TopLine="257"/>
       </Position23>
       <Position24>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="286" Column="65" TopLine="263"/>
+        <Caret Line="79" Column="40" TopLine="60"/>
       </Position24>
       <Position25>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="285" Column="26" TopLine="263"/>
+        <Caret Line="76" TopLine="66"/>
       </Position25>
       <Position26>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="286" Column="64" TopLine="263"/>
+        <Caret Line="358" Column="93" TopLine="319"/>
       </Position26>
       <Position27>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="270" Column="31" TopLine="257"/>
+        <Caret Line="361" Column="26" TopLine="327"/>
       </Position27>
       <Position28>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="79" Column="40" TopLine="60"/>
+        <Caret Line="352" Column="24" TopLine="327"/>
       </Position28>
       <Position29>
         <Filename Value="xmlpatch.pas"/>
-        <Caret Line="76" TopLine="66"/>
+        <Caret Line="361" Column="26" TopLine="327"/>
       </Position29>
       <Position30>
-        <Filename Value="xmlpatch.pas"/>
-        <Caret Line="358" Column="93" TopLine="319"/>
+        <Filename Value="../common/oslog.pas"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>
