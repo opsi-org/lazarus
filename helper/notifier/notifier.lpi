@@ -31,7 +31,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\indy\Lib;..\..\external_libraries\indy\Lib\System;..\..\external_libraries\indy\Lib\Protocols;..\..\external_libraries\indy\Lib\Core"/>
+            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\indy\Lib;..\..\external_libraries\indy\Lib\System;..\..\external_libraries\indy\Lib\Protocols;..\..\external_libraries\indy\Lib\Core;..\..\external_libraries\misc"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -75,7 +75,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\indy\Lib;..\..\external_libraries\indy\Lib\System;..\..\external_libraries\indy\Lib\Protocols;..\..\external_libraries\indy\Lib\Core"/>
+            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\indy\Lib;..\..\external_libraries\indy\Lib\System;..\..\external_libraries\indy\Lib\Protocols;..\..\external_libraries\indy\Lib\Core;..\..\external_libraries\misc"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -108,7 +108,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <CommandLineParams Value="-s notifier\action.ini"/>
+        <CommandLineParams Value="-s notifier\event.ini"/>
       </local>
     </RunParams>
     <RequiredPackages Count="1">
@@ -116,7 +116,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="9">
+    <Units Count="10">
       <Unit0>
         <Filename Value="notifier.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -159,6 +159,10 @@
         <Filename Value="..\..\common\superobject.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit8>
+      <Unit9>
+        <Filename Value="notifier.txt"/>
+        <IsPartOfProject Value="True"/>
+      </Unit9>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -169,7 +173,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\..\common;..\..\external_libraries\indy\Lib;..\..\external_libraries\indy\Lib\System;..\..\external_libraries\indy\Lib\Protocols;..\..\external_libraries\indy\Lib\Core"/>
+      <OtherUnitFiles Value="..\..\common;..\..\external_libraries\indy\Lib;..\..\external_libraries\indy\Lib\System;..\..\external_libraries\indy\Lib\Protocols;..\..\external_libraries\indy\Lib\Core;..\..\external_libraries\misc"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>

@@ -280,6 +280,9 @@ begin
   //label Name
   LabelName := TLabel.Create(self);
   LabelName.Parent := self;
+  LabelName.font.Bold := tile_Font_Bold;
+  LabelName.font.Italic := tile_Font_Italic;
+  LabelName.font.Underline := tile_Font_Underline;
   LabelName.Caption := 'name';
   LabelName.Width := Width;
   LabelName.WordWrap := True;
@@ -1126,17 +1129,17 @@ begin
     TitleLabel.Font.Name := myini.ReadString('TitleLabel', 'FontName', 'Arial');
     TitleLabel.Font.Size := myini.ReadInteger('TitleLabel', 'FontSize', 12);
     TitleLabel.Font.Color := StringToColor(myini.ReadString('TitleLabel', 'FontColor', 'clBlack'));
-    TitleLabel.Font.Bold := myini.ReadBool('TitleLabel', 'FontBold', True);
-    TitleLabel.Font.Italic := myini.ReadBool('TitleLabel', 'FontItalic', False);
-    TitleLabel.Font.Underline := myini.ReadBool('TitleLabel', 'FontUnderline', False);
+    TitleLabel.Font.Bold := strToBool(myini.ReadString('TitleLabel', 'FontBold', True));
+    TitleLabel.Font.Italic := strToBool(myini.ReadString('TitleLabel', 'FontItalic', False));
+    TitleLabel.Font.Underline := strToBool(myini.ReadString('TitleLabel', 'FontUnderline', False));
     //tile
     tile_color := myini.ReadString('Tile', 'color', tile_color);
     tile_Font_Name := myini.ReadString('Tile', 'FontName', tile_Font_Name);
     tile_Font_Size := myini.ReadInteger('Tile', 'FontSize', tile_Font_Size);
     tile_Font_Color := myini.ReadString('Tile', 'FontColor', tile_Font_Color);
-    tile_Font_Bold := myini.ReadBool('Tile', 'FontBold', tile_Font_Bold);
-    tile_Font_Italic := myini.ReadBool('Tile', 'FontItalic', tile_Font_Italic);
-    tile_Font_Underline := myini.ReadBool('Tile', 'FontUnderline', tile_Font_Underline);
+    tile_Font_Bold := strToBool(myini.ReadString('Tile', 'FontBold', tile_Font_Bold));
+    tile_Font_Italic := strToBool(myini.ReadString('Tile', 'FontItalic', tile_Font_Italic));
+    tile_Font_Underline := strToBool(myini.ReadString('Tile', 'FontUnderline', tile_Font_Underline));
     tile_width := myini.ReadInteger('Tile', 'Width', tile_width);
     tile_height := myini.ReadInteger('Tile', 'Height', tile_height);
     //TileRadio
@@ -1177,9 +1180,9 @@ begin
     TitleLabel.Font.Name := myini.ReadString('TitleLabel', 'FontName', 'Arial');
     TitleLabel.Font.Size := myini.ReadInteger('TitleLabel', 'FontSize', 20);
     TitleLabel.Font.Color := myini.ReadInteger('TitleLabel', 'FontColor', $00000000);
-    TitleLabel.Font.Bold := myini.ReadBool('TitleLabel', 'FontBold', True);
-    TitleLabel.Font.Italic := myini.ReadBool('TitleLabel', 'FontItalic', False);
-    TitleLabel.Font.Underline := myini.ReadBool('TitleLabel', 'FontUnderline', False);
+    TitleLabel.Font.Bold := strToBool(myini.ReadString('TitleLabel', 'FontBold', True));
+    TitleLabel.Font.Italic := strToBool(myini.ReadString('TitleLabel', 'FontItalic', False));
+    TitleLabel.Font.Underline := strToBool(myini.ReadString('TitleLabel', 'FontUnderline', False));
     myini.Free;
     (*
     [TitleLabel]

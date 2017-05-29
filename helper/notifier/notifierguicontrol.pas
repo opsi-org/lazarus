@@ -707,6 +707,18 @@ begin
       fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
     LabelArray[labelcounter].Font.Color :=
       myStringToTColor(myini.ReadString(aktsection, 'FontColor', 'clBlack'));
+    (*
+    LabelProgress.Font.Style := [];
+        if ('true' = skinIni.ReadString('LabelProgress', 'FontBold', 'false'))
+        then
+          LabelProgress.Font.Style := LabelProgress.Font.Style + [fsBold];
+        if ('true' = skinIni.ReadString('LabelProgress', 'FontItalic', 'false'))
+        then
+          LabelProgress.Font.Style := LabelProgress.Font.Style + [fsItalic];
+        if ('true' = skinIni.ReadString('LabelProgress', 'FontUnderline', 'false'))
+        then
+          LabelProgress.Font.Style := LabelProgress.Font.Style + [fsUnderline];
+     *)
     LabelArray[labelcounter].Font.Bold :=
       strToBool(myini.ReadString(aktsection, 'FontUnderline', 'false'));
     LabelArray[labelcounter].Font.Italic :=

@@ -4136,7 +4136,7 @@ begin
             FProductStates.Add(productEntry.S['productId'] + '=' +
               productEntry.S['installationStatus']);
             LogDatei.DependentAdd(productEntry.S['productId'] +
-              '= lastcation: ' + productEntry.S['lastAction'], LLessential);
+              '= lastAction: ' + productEntry.S['lastAction'], LLessential);
           end;
         end;
       end;

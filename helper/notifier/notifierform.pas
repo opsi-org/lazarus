@@ -6,7 +6,11 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  StdCtrls, contnrs;
+  StdCtrls,
+  {$IFDEF WINDOWS}
+  systemcriticalu,
+  {$ENDIF WINDOWS}
+  contnrs;
 
 type
 
@@ -42,6 +46,7 @@ uses
 procedure TNform.FormCreate(Sender: TObject);
 begin
   objlist := TObjectList.Create;
+  {$IFDEF WINDOWS} SystemCritical.IsCritical := true; {$ENDIF WINDOWS}
 end;
 
 procedure TNform.FormCloseQuery(Sender: TObject; var CanClose: boolean);
@@ -51,12 +56,14 @@ end;
 
 procedure TNform.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-  //hideNForm;
+  //prevents closing batchmode via ALT-F4
+  CloseAction := caNone;
 end;
 
 procedure TNform.FormHide(Sender: TObject);
 begin
   //hideNForm;
+  {$IFDEF WINDOWS} SystemCritical.IsCritical := false; {$ENDIF WINDOWS}
 end;
 
 procedure TNform.choiceClick(Sender: TObject);
