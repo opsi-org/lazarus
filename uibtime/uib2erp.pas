@@ -694,9 +694,9 @@ begin
     begin
       // there are real free minutes
       freed := total - summe_h;
-      // we give about 6 Minutes (= 0.1 h) ex gratia if
+      // we give about 5,4 Minutes (= 0.09 h) ex gratia if
       // this make possible to fit to the free hours
-      if (freed < 0) and (freed > -0.1) then // give ex gratia
+      if (freed < 0) and (freed > -0.09) then // give ex gratia
       begin
         query1.Append;
         // acc_rep_id will be reset by trigger
@@ -705,7 +705,7 @@ begin
         query1.FieldByName('DATEDAY').AsDateTime := StrToDate(repbisstr);
         query1.FieldByName('EVENT').AsString := suchevent;
         query1.FieldByName('STUNDEN').AsFloat := freed;
-        query1.FieldByName('DESCRIPTION').AsString := 'Gutschrift / Credit entry';
+        query1.FieldByName('DESCRIPTION').AsString := 'Kulanz / Ex gratia';
         query1.FieldByName('locked').AsInteger := 0;
         query1.Post;
         query1.ApplyUpdates;
