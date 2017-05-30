@@ -130,7 +130,7 @@ begin
     begin
       index := StrToInt(indexstr);
       logdatei.log('Found Button index: ' + indexstr + ' for id: "' +
-        IntToStr(choiceindex), LLDebug2);
+        IntToStr(choiceindex)+'"', LLDebug2);
       logdatei.log('Button name by index: Found index: ' +
         ButtonArray[index].Name, LLDebug2);
       ButtonArray[index].Caption := aktMessage;
@@ -160,6 +160,12 @@ begin
   choice := TSpeedButton(Sender).Tag;
   logdatei.log('Button clicked: choice: ' + IntToStr(choice), LLInfo);
   buttonPushedToService(choice);
+  if mynotifierkind = 'popup' then
+  begin
+    logdatei.log('We are in popup, button close clicked: terminate', LLInfo);
+    hideNForm;
+    DataModule1.Destroy;
+  end;
 end;
 
 
@@ -284,8 +290,8 @@ begin
   end; // not hidden
   if Result = fapUnknown then
   begin
-    LogDatei.log('Error: could not calculate appearmode - fall back to standard',
-      LLError);
+    LogDatei.log('Warning: could not calculate appearmode - fall back to standard',
+      LLWarning);
     Result := fapStd;
   end;
 end;
@@ -335,8 +341,8 @@ begin
   end; // not hidden
   if Result = fdpUnknown then
   begin
-    LogDatei.log('Error: could not calculate disappearmode - fall back to standard',
-      LLError);
+    LogDatei.log('Warning: could not calculate disappearmode - fall back to standard',
+      LLWarning);
     Result := fdpStd;
   end;
 end;
@@ -694,7 +700,7 @@ begin
     SetLength(LabelArray, labelcounter + 1);
     LabelArray[labelcounter] := TLabel.Create(nform);
     LabelArray[labelcounter].Parent := nform;
-    LabelArray[labelcounter].AutoSize := False;
+    LabelArray[labelcounter].AutoSize := True;
     LabelArray[labelcounter].Name := aktsection;
     LabelArray[labelcounter].WordWrap:=true;
     LabelArray[labelcounter].Left := myini.ReadInteger(aktsection, 'Left', 10);
@@ -769,7 +775,6 @@ begin
     //  strToBool(myini.ReadString(aktsection, 'Transparent', 'false'));
     choiceindex := myini.ReadInteger(aktsection, 'ChoiceIndex', 0);
     ButtonArray[buttoncounter].Tag := choiceindex;
-    ;
     ButtonArray[buttoncounter].OnClick := @nform.ChoiceClick;
     //ButtonArray[buttoncounter].TabStop:= false;
     //ButtonArray[buttoncounter].TabOrder:=-1;
@@ -787,6 +792,7 @@ begin
     end;
     *)
   end;
+  DataModule1.ProcessMess;
 end;
 
 function fillnavlist(var myIni: TIniFile): TStrings;
@@ -835,6 +841,7 @@ begin
   showNForm;
   // set disappearmode
   disappearmode := calculate_disappearmode;
+  LogDatei.log('Finished initial form build in openSkinIni. ', LLDebug2);
 end;
 
 

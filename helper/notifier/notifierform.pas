@@ -10,6 +10,7 @@ uses
   {$IFDEF WINDOWS}
   systemcriticalu,
   {$ENDIF WINDOWS}
+  oslog,
   contnrs;
 
 type
@@ -68,7 +69,7 @@ end;
 
 procedure TNform.choiceClick(Sender: TObject);
 begin
-  //hideNForm;
+  logdatei.log('Button clicked.', LLDebug2);
   myChoiceClick(Sender);
 end;
 

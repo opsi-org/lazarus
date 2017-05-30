@@ -9,13 +9,10 @@ uses
   cthreads, {$ENDIF} {$ENDIF}
   Classes,
   SysUtils,
-  CustApp,
   LazFileUtils,
   oslog,
   IdTCPClient,
-  IdTCPServer,
   Variants,
-  fileinfo,
   winpeimagereader,
   notifierguicontrol,
   notifier_json;
@@ -76,7 +73,9 @@ begin
     logdatei.log('messageFromMainThread: ' + myMessage, LLDebug2);
     myJsonAnswer := '';
     myJsonAnswer2 := '';
-  end;
+  end
+  else logdatei.log('Nothing in messageFromMainThread.', LLDebug2);
+  DataModule1.ProcessMess;
 end;
 
 procedure Tmythread.Execute;
@@ -85,6 +84,7 @@ var
   i: integer;
 
 begin
+  logdatei.log('Starting TCP-Thread: ' +TimeToStr(now), LLDebug2);
   if not Terminated then
   begin
     myTCPClient := TIdTCPClient.Create;
@@ -99,7 +99,8 @@ begin
     until myTCPClient.Connected;
     i := 1;
     myMessage2 := '';
-    while (not Terminated) do
+    logdatei.log('TCP-Thread connected, starting .loop: ' +TimeToStr(now), LLDebug2);
+    while (not Terminated) and myTCPClient.Connected do
     begin
       myMessage := '';
       myMessage := myTCPClient.Socket.ReadLn();
@@ -126,6 +127,8 @@ begin
         end;
       end;
       *)
+      logdatei.log('tcploop :' +TimeToStr(now), LLDebug2);
+      //sleep(1000);
     end;
     stopped := True;
     myTCPClient.Disconnect;
@@ -146,6 +149,7 @@ begin
   stopped := False;
   DataModule1.createNform;
   openSkinIni(myconfigfile);
+  DataModule1.ProcessMess;
   if myport > 0 then
   begin
     mythread := Tmythread.Create(False);

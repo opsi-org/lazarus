@@ -22,10 +22,9 @@ type
   { TDataModule1 }
 
   TDataModule1 = class(TDataModule)
-    Timer1: TTimer;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
-    procedure Timer1Timer(Sender: TObject);
+    //procedure Timer1Timer(Sender: TObject);
   private
     { private declarations }
   public
@@ -188,6 +187,8 @@ begin
   begin
     preloglist.Add('Found Parameter idevent');
     mynotifierkind := Application.GetOptionValue('i', 'idevent');
+    // opsiclientd bug: pupup comes with %id%
+    if mynotifierkind = '%id%' then mynotifierkind := 'popup';
     preloglist.Add('Found Parameter idevent: ' + mynotifierkind);
   end;
 
@@ -238,6 +239,7 @@ begin
   Application.Terminate;
 end;
 
+(*
 procedure TDataModule1.Timer1Timer(Sender: TObject);
 begin
   Timer1.Enabled := False;
@@ -245,5 +247,6 @@ begin
   self.Destroy;
   //Application.Terminate;
 end;
+*)
 
 end.

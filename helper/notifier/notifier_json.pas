@@ -202,6 +202,7 @@ begin
         end;  // id found
       end; // iterate over messages
     end;  // endConnection or other methods
+    logdatei.log('finished newMessageFromService.', LLDebug2);
   end   // known methods
   else
   begin
