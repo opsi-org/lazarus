@@ -181,15 +181,20 @@ begin
     if LowerCase(str) = 'left' then
       Result := taLeftJustify
     else if LowerCase(str) = 'right' then
-      Result := taLeftJustify
+      Result := taRightJustify
     else if LowerCase(str) = 'center' then
       Result := taCenter
     else
       LogDatei.log('Error: Could not convert to Alignment: ' + str, LLError);
+    case result of
+      taCenter : LogDatei.log('Using Alignment taCenter from: ' + str, LLDebug2);
+      taLeftJustify : LogDatei.log('Using Alignment taLeftJustify from: ' + str, LLDebug2);
+      taRightJustify : LogDatei.log('Using Alignment taRightJustify from: ' + str, LLDebug2);
+    end;
   except
     on E: Exception do
     begin
-      LogDatei.log('Error: Could not convert to Color: ' + str, LLError);
+      LogDatei.log('Error: Could not convert to Alignment: ' + str, LLError);
       LogDatei.log('Error: Message: ' + E.Message, LLError);
     end;
   end;
@@ -707,32 +712,22 @@ begin
     LabelArray[labelcounter].Top := myini.ReadInteger(aktsection, 'Top', 10);
     LabelArray[labelcounter].Width := myini.ReadInteger(aktsection, 'Width', 10);
     LabelArray[labelcounter].Height := myini.ReadInteger(aktsection, 'Height', 10);
+    //LabelArray[labelcounter].Anchors := [akTop,akLeft,akRight,akBottom];
+    LabelArray[labelcounter].Anchors := [akTop,akLeft,akRight];
     LabelArray[labelcounter].Font.Name :=
       myini.ReadString(aktsection, 'FontName', 'Arial');
     LabelArray[labelcounter].Font.Size :=
       fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
     LabelArray[labelcounter].Font.Color :=
       myStringToTColor(myini.ReadString(aktsection, 'FontColor', 'clBlack'));
-    (*
-    LabelProgress.Font.Style := [];
-        if ('true' = skinIni.ReadString('LabelProgress', 'FontBold', 'false'))
-        then
-          LabelProgress.Font.Style := LabelProgress.Font.Style + [fsBold];
-        if ('true' = skinIni.ReadString('LabelProgress', 'FontItalic', 'false'))
-        then
-          LabelProgress.Font.Style := LabelProgress.Font.Style + [fsItalic];
-        if ('true' = skinIni.ReadString('LabelProgress', 'FontUnderline', 'false'))
-        then
-          LabelProgress.Font.Style := LabelProgress.Font.Style + [fsUnderline];
-     *)
     LabelArray[labelcounter].Font.Bold :=
-      strToBool(myini.ReadString(aktsection, 'FontUnderline', 'false'));
+      strToBool(myini.ReadString(aktsection, 'FontBold', 'false'));
     LabelArray[labelcounter].Font.Italic :=
-      strToBool(myini.ReadString(aktsection, 'FontUnderline', 'false'));
+      strToBool(myini.ReadString(aktsection, 'FontItalic', 'false'));
     LabelArray[labelcounter].Font.Underline :=
       strToBool(myini.ReadString(aktsection, 'FontUnderline', 'false'));
     LabelArray[labelcounter].Alignment :=
-      StringToAlignment(myini.ReadString(aktsection, 'Alignment', 'alLeft'));
+      StringToAlignment(myini.ReadString(aktsection, 'Alignment', 'left'));
     LabelArray[labelcounter].Transparent :=
       strToBool(myini.ReadString(aktsection, 'Transparent', 'false'));
     LabelArray[labelcounter].Tag := labelcounter;
@@ -764,9 +759,9 @@ begin
     //ButtonArray[buttoncounter].Font.Color :=
     //  myStringToTColor(myini.ReadString(aktsection, 'FontColor', 'clBlack'));
     ButtonArray[buttoncounter].Font.Bold :=
-      strToBool(myini.ReadString(aktsection, 'FontUnderline', 'false'));
+      strToBool(myini.ReadString(aktsection, 'FontBold', 'false'));
     ButtonArray[buttoncounter].Font.Italic :=
-      strToBool(myini.ReadString(aktsection, 'FontUnderline', 'false'));
+      strToBool(myini.ReadString(aktsection, 'FontItalic', 'false'));
     ButtonArray[buttoncounter].Font.Underline :=
       strToBool(myini.ReadString(aktsection, 'FontUnderline', 'false'));
     //ButtonArray[buttoncounter].Alignment :=
@@ -782,15 +777,6 @@ begin
     // feed buttonlist: id = index of ButtonArray ; id = ChoiceIndex'
     buttonlist.Add(IntToStr(choiceindex) + '=' + IntToStr(buttoncounter));
     LogDatei.log('Finished reading: ' + aktsection, LLDebug2);
-    (*
-    if aktsection = 'ButtonStop' then
-    begin
-      myButton := TButton.Create(nform);
-      myButton.Parent := nform;
-      myButton.Name := aktsection;
-      myButton.Caption := myini.ReadString(aktsection, 'Text', 'emppty');
-    end;
-    *)
   end;
   DataModule1.ProcessMess;
 end;

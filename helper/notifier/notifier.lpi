@@ -108,7 +108,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <CommandLineParams Value="-s notifier\popup.ini"/>
+        <CommandLineParams Value="-s notifier\event.ini"/>
       </local>
     </RunParams>
     <RequiredPackages Count="1">

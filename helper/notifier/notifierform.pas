@@ -47,6 +47,7 @@ uses
 procedure TNform.FormCreate(Sender: TObject);
 begin
   objlist := TObjectList.Create;
+  // prevents screensaver to start while running: start
   {$IFDEF WINDOWS} SystemCritical.IsCritical := true; {$ENDIF WINDOWS}
 end;
 
@@ -57,13 +58,14 @@ end;
 
 procedure TNform.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-  //prevents closing batchmode via ALT-F4
+  //prevents closing notifier via ALT-F4
   CloseAction := caNone;
 end;
 
 procedure TNform.FormHide(Sender: TObject);
 begin
   //hideNForm;
+  // prevents screensaver to start while running: stop
   {$IFDEF WINDOWS} SystemCritical.IsCritical := false; {$ENDIF WINDOWS}
 end;
 
