@@ -119,21 +119,21 @@ begin
   //XMLDocObject.logNodeSets;
   // Nodetext setzen und Attribut setzen :   SetText, SetAttribute
   if XMLDocObject.nodeExists('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add"') then
-    if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add" // ModifyPartitions') then
+    if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add" // ModifyPartitions', false) then
     begin
       XMLDocObject.setNodeText('***ModifyPartitions wurde ersetzt***');
       XMLDocObject.setAttribute('testname','testvalue');
     end;
 
   // Knoten löschen: DeleteElement
-  // muss kein openNode gemacht werden, ist implizit. Wenn der Knoten nicht gefunden wird, wird der zuletzt gefundene
+  // muss kein openNode gemacht werden, ist bei delNode implizit. Wenn der Knoten nicht gefunden wird, wird der zuletzt gefundene
   // übergeordnete Knoten gelöscht. Daher zuvor ein nodeExists!!
   if XMLDocObject.nodeExists('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add" // WillWipeDisk') then
     XMLDocObject.delNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add" // WillWipeDisk');
 
   // neuen Knoten setzen : am aktuellen Knoten wird ein Knoten angehängt, der neue Knoten wird aktueller Knoten
   if XMLDocObject.nodeExists('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration') then
-    if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration') then
+    if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration', false) then
     begin
       XMLDocObject.makeNode('newnode','','');
       XMLDocObject.setNodeText('newnode Text setzen');
@@ -141,7 +141,7 @@ begin
 
   // Attribute löschen und setzen :  DeleteAttribute, AddAttribute, SetAttribute
   if XMLDocObject.nodeExists('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add"') then
-    if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add"') then
+    if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add"', false) then
     begin
 
       XMLDocObject.delAttribute('wcm:action');
@@ -150,14 +150,14 @@ begin
       XMLDocObject.setAttribute('newAttribute','newValue');
     end;
 
-  // TODO : Suche mit mehreren Attributen
-  // TODO : Suche mit Attribut, Toleranz bei weiteren Attributen, die nciht auftauchen
+  // TODO : Suche mit mehreren Attributen - openNode mit attributes_strict
+  // TODO : Suche mit Attribut, Toleranz bei weiteren Attributen, die nicht auftauchen
   // TODO : addText
   // AddText "rtf" : sets the text only if there was no text node given
 
   // setText: neuen Text setzen. Jeglicher anderer Inhalt wird ersetzt, auch XML_Blätter. Kein XML-Fragment!
   if XMLDocObject.nodeExists ('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // UserData // ProductKey // WillShowUI') then
-    if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // UserData // ProductKey // WillShowUI') then
+    if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // UserData // ProductKey // WillShowUI', false) then
         XMLDocObject.setNodeText('nodeText wurde gesetzt');
 
   // setText '' : löschen des komplette Knotens
@@ -175,8 +175,8 @@ begin
     return counting
     gives a report with numerical informations: line 0 contains the number of selected elements, line 1 the number of attributes.
   }
-  Memo3.Append('aktnode Attributvalue für wcm-nix: ' + XMLDocObject.getAttributeValue('wcm-nix'));  // liefert nichts zurück, da es das Attribut nicht gibt.
-  Memo3.Append('aktnode Attributvalue für Leerstring: ' + XMLDocObject.getAttributeValue(''));  // liefert auch nichts zurück, da es das Attribut leer ist nicht gibt.  XMLDocObject.makeNode('neuerKnoten','mitAttribut','undValue');
+  LogDatei.log('sollte leer sein, aktnode Attributvalue für wcm-nix: ' + XMLDocObject.getAttributeValue('wcm-nix'), LLinfo);  // liefert nichts zurück, da es das Attribut nicht gibt.
+  LogDatei.log('sollte leer sein, aktnode Attributvalue für Leerstring: ' + XMLDocObject.getAttributeValue(''), LLinfo);  // liefert auch nichts zurück, da es das Attribut leer ist nicht gibt.  XMLDocObject.makeNode('neuerKnoten','mitAttribut','undValue');
   XMLDocObject.logNodeSets;
   //XMLDocObject.getNextGenerationActNodeSet;
   {
@@ -216,6 +216,7 @@ begin
   else
     LogDatei.log('failed: create xmldoc from stringlist',oslog.LLinfo);
   XMLDocObject.setlengthActNodeSet  (1);
+
   XMLDocObject.actnodeset[0] := XMLDocObject.getDocumentElement;
   for k:= 0 to length(XMLDocObject.actNodeSet)-1 do
     if XMLDocObject.actNodeSet[k] <> nil then
@@ -224,31 +225,67 @@ begin
       LogDatei.log('actNodeSet = nil',oslog.LLinfo);
   XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
+
+  LogDatei.log('vor filter byChildElement, kein filtern ',oslog.LLinfo);
+  XMLDocObject.filterByChildElement(true, 'packages');
+  XMLDocObject.logNodeSets;
+  LogDatei.log('nach filter byChildElement ',oslog.LLinfo);
+  XMLDocObject.getNextGenerationActNodeSet;
+  XMLDocObject.makeNewDerivedNodeSet;
+  XMLDocObject.logNodeSets;
+
+  // Anhängen von Knoten, wie???
+  XMLDocObject.filterByChildElement(true, 'package');
+  XMLDocObject.getNextGenerationActNodeSet;
+  XMLDocObject.makeNewDerivedNodeSet;
+  XMLDocObject.logNodeSets;
+  // Löschen des Elements snapper
+    // filterByText arbeitet auf actNodeSet
+  if XMLDocObject.filterByText(true, 'snapper') then
+    begin
+      LogDatei.log('found: package snapper',oslog.LLwarning);
+      //
+    end
+  else
+    begin
+      LogDatei.log('not found: package snapper',oslog.LLwarning);
+    end;
+  // Übernehmen des/der Knoten/s in actNodeSet ??
+  XMLDocObject.logNodeSets;
+
+  // snapper Knoten in actNodeSet
+  XMLDocObject.getNextGenerationActNodeSet;
+  XMLDocObject.makeNewDerivedNodeSet;
+  XMLDocObject.logNodeSets;
+
+
+  { anderer Weg über den nodePath und actNode
   // add nodes
   if XMLDocObject.nodeExists('packages config:type="list"') then
-    if XMLDocObject.openNode('packages config:type="list"') then
+    if XMLDocObject.openNode('packages config:type="list"', false) then
     begin
       XMLDocObject.makeNode('package','','');
       XMLDocObject.setNodeText('thunderbird');
     end;
   if XMLDocObject.nodeExists('packages config:type="list"') then
-    if XMLDocObject.openNode('packages config:type="list"') then
+    if XMLDocObject.openNode('packages config:type="list"', false) then
     begin
       XMLDocObject.makeNode('package','','');
       XMLDocObject.setNodeText('firefox');
     end;
   if XMLDocObject.nodeExists('packages config:type="list"') then
-    if XMLDocObject.openNode('packages config:type="list"') then
+    if XMLDocObject.openNode('packages config:type="list"', false) then
     begin
       XMLDocObject.makeNode('package','','');
       XMLDocObject.setNodeText('flowerpower');
     end;
+
   // delete node if text is
   // select node name=package, text=snapper
   if XMLDocObject.nodeExists('packages config:type="list"') then
-    if XMLDocObject.openNode('packages config:type="list"') then
+    if XMLDocObject.openNode('packages config:type="list"', false) then
     begin
-      if XMLDocObject.setAktnodeIfText('snapper') then
+      if XMLDocObject.setActnodeIfText('snapper') then
       begin
         LogDatei.log('found: package snapper',oslog.LLinfo);
         XMLDocObject.delNode;
@@ -258,9 +295,9 @@ begin
     end;
   // select node name=package, text=glibc
   if XMLDocObject.nodeExists('packages config:type="list"') then
-    if XMLDocObject.openNode('packages config:type="list"') then
+    if XMLDocObject.openNode('packages config:type="list"', false) then
     begin
-      if XMLDocObject.setAktnodeIfText('glibc') then
+      if XMLDocObject.setActnodeIfText('glibc') then
       begin
         LogDatei.log('found: package glibc',oslog.LLinfo);
         XMLDocObject.delNode;
@@ -268,7 +305,7 @@ begin
       else
         LogDatei.log('not found: package glibc',oslog.LLinfo);
     end;
-
+  }
   memo3.Append(XMLDocObject.getXmlStrings().Text);
   memo3.Repaint;
   Application.ProcessMessages;
@@ -297,16 +334,63 @@ begin
       LogDatei.log('actNodeSet = nil',oslog.LLinfo);
   XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
-  // add packages
-  if XMLDocObject.openNode('Display Level="basic" AcceptEula="yes" SuppressModal="no"') then
-    LogDatei.log('Display mit drei Attributen gefunden',oslog.LLinfo)
+
+  {  funktionieren
+  // config.xml --- <Display Level="basic" CompletionNotice="no" SuppressModal="no" AcceptEula="yes" />
+  // test openNode and getNodeStrict
+  if XMLDocObject.openNode('Display Level="basic" CompletionNotice="no" AcceptEula="yes" SuppressModal="no"', true) then
+    LogDatei.log('node Display found',oslog.LLinfo)
   else
-      LogDatei.log('Display mit drei Attributen nicht gefunden',oslog.LLinfo);
-  //if XMLDocObject.nodeExists('PIDKEY Value="XXXXXXXXXXXXXXXXXXXXXXXXX"') then
-    if XMLDocObject.openNode('PIDKEY Value="XXXXXXXXXXXXXXXXXXXXXXXXX"') then
+    LogDatei.log('Display not found',oslog.LLinfo);
+  if XMLDocObject.openNode('Display Level="basic" CompletionNotice="no" AcceptEula="yes" SuppressModal="yes"', true) then
+    LogDatei.log('node Display found',oslog.LLinfo)
+  else
+    LogDatei.log('Display not found',oslog.LLinfo);
+  if XMLDocObject.openNode('Display CompletionNotice="no" AcceptEula="yes" SuppressModal="yes"', true) then
+    LogDatei.log('node Display found',oslog.LLinfo)
+  else
+    LogDatei.log('Display not found',oslog.LLinfo);
+  }
+  { funktionieren
+  // test openNode and getNode
+  if XMLDocObject.openNode('Display Level="basic" CompletionNotice="no" AcceptEula="yes" SuppressModal="no"', false) then
+    LogDatei.log('node Display found',oslog.LLinfo)
+  else
+    LogDatei.log('Display not found',oslog.LLinfo);
+  if XMLDocObject.openNode('Display Level="basic" CompletionNotice="no" AcceptEula="yes" SuppressModal="yes"', false) then
+    LogDatei.log('node Display found',oslog.LLinfo)
+  else
+    LogDatei.log('Display not found',oslog.LLinfo);
+  if XMLDocObject.openNode('Display CompletionNotice="no" AcceptEula="yes" SuppressModal="yes"', false) then
+    LogDatei.log('node Display found',oslog.LLinfo)
+  else
+    LogDatei.log('Display not found',oslog.LLinfo);
+  }
+
+  // if XMLDocObject.nodeExists('PIDKEY Value="XXXXXXXXXXXXXXXXXXXXXXXXX"') then TODO
+
+  // <PIDKEY Value="XXXXXXXXXXXXXXXXXXXXXXXXX" />
+  // test openNode and getNode
+  if XMLDocObject.openNode('PIDKEY Value="XXXXXXXXXXXXXXXXXXXXXXXXX" test="test"', false) then
     begin
       XMLDocObject.setAttribute('Value','Value wird gesetzt');
     end;
+
+  if XMLDocObject.openNode('PIDKEY Value="Value wird gesetzt"', false) then
+    begin
+      XMLDocObject.setAttribute('Value','Value wird gesetzt, 2');
+    end;
+  // test openNode and getNodeStrict
+  if XMLDocObject.openNode('PIDKEY Value="Value wird gesetzt, 2"', true) then
+    begin
+      XMLDocObject.setAttribute('Value','Value wird gesetzt, 3');
+    end;
+
+  if XMLDocObject.openNode('PIDKEY Value="Value wird gesetzt, 3" test="test"', true) then
+    begin
+      XMLDocObject.setAttribute('Value','Value wird gesetzt, 4');
+    end;
+
   memo3.Append(XMLDocObject.getXmlStrings().Text);
   memo3.Repaint;
   Application.ProcessMessages;
