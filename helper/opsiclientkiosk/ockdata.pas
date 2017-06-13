@@ -202,7 +202,7 @@ var
   newFile: boolean;
 begin
   logdatei.log('startinitdb ', LLInfo);
-   with FopsiClientKiosk do
+  with FopsiClientKiosk do
   begin
     FopsiClientKiosk.ProgressBarDetail.Visible := True;
     FopsiClientKiosk.ProgressBar1.Visible := True;
@@ -341,7 +341,7 @@ begin
     Progressbar1.Position := 15;
     ProgressbarDetail.Position := 0;
     productdetailpanel.Height := 0;
-     FopsiClientKiosk.ProgressBarDetail.Visible := False;
+    FopsiClientKiosk.ProgressBarDetail.Visible := False;
     FopsiClientKiosk.ProgressBar1.Visible := False;
     FopsiClientKiosk.LabelDataLoadDetail.Visible := False;
     FopsiClientKiosk.LabelDataLoad.Visible := False;
@@ -486,6 +486,23 @@ begin
 end;
 
 
+procedure closeConnection;
+var
+  resultstring: string;
+  new_obj: ISuperObject;
+begin
+  try
+    resultstring := MyOpsiMethodCall('backend_exit', []);
+    new_obj := SO(resultstring).O['result'];
+  except
+    on e: Exception do
+    begin
+      logdatei.log('Exception closeConnection', LLError);
+      logdatei.log('Exception: ' + E.message, LLError);
+    end;
+  end;
+end;
+
 function initConnection(const seconds: integer): boolean;
 var
   networkup, timeout: boolean;
@@ -503,7 +520,8 @@ begin
   opsidata := TOpsi4Data.Create;
   LogDatei.log('opsidata created', LLDebug2);
   opsidata.setActualClient(myclientid);
-  opsidata.initOpsiConf(myservice_url, myclientid, myhostkey);
+  opsidata.initOpsiConf(myservice_url, myclientid,
+    myhostkey, '', '', '', 'opsi-client-kiosk-' + myVersion);
   LogDatei.log('opsidata initialized', LLDebug2);
   repeat
     try
@@ -638,9 +656,10 @@ begin
   //FopsiClientKiosk.LabelDataLoad.Caption := 'Products';
   //FopsiClientKiosk.Progressbar1.Position := 5;
   //FopsiClientKiosk.ProcessMess;
-
+  initConnection(30);
   FopsiClientKiosk.LabelDataload.Caption := 'Load data from Server';
   resultstring := MyOpsiMethodCall('getKioskProductInfosForClient', [myclientid]);
+  closeConnection;
   new_obj := SO(resultstring).O['result'];
   str := new_obj.AsString;
   LogDatei.log('Get products done', LLNotice);

@@ -43,6 +43,10 @@ msgstr ""
 msgid "Installed"
 msgstr ""
 
+#: opsiclientkioskgui.rsinstallnow
+msgid "Install now"
+msgstr ""
+
 #: opsiclientkioskgui.rsnoactionsfound
 msgid "No action requests found."
 msgstr "Aucune demande d'action trouvée ..."
@@ -54,6 +58,12 @@ msgstr ""
 #: opsiclientkioskgui.rsstateunknown
 msgid "Unknown"
 msgstr ""
+
+#: opsiclientkioskgui.rsstoreactions
+#, fuzzy
+msgctxt "opsiclientkioskgui.rsstoreactions"
+msgid "Store Actions"
+msgstr "Sauver les actions"
 
 #: opsiclientkioskgui.rsviewlist
 msgid "List"
@@ -87,11 +97,6 @@ msgctxt "TFINSTALLDLG.LABEL1.CAPTION"
 msgid "The following Actions will be done:"
 msgstr "Les actions suivantes seront réalisées :"
 
-#: tfopsiclientkiosk.bitbtn1.caption
-msgctxt "tfopsiclientkiosk.bitbtn1.caption"
-msgid "Info"
-msgstr ""
-
 #: tfopsiclientkiosk.bitbtncancel.caption
 msgid "Exit"
 msgstr ""
@@ -100,6 +105,11 @@ msgstr ""
 msgctxt "TFOPSICLIENTKIOSK.BITBTNCANCEL.HINT"
 msgid "Terminate Program (with out any further action)"
 msgstr "Interrompt le programme."
+
+#: tfopsiclientkiosk.bitbtninfo.caption
+msgctxt "tfopsiclientkiosk.bitbtninfo.caption"
+msgid "Info"
+msgstr ""
 
 #: tfopsiclientkiosk.bitbtnshowaction.caption
 msgid "Show Actions"
@@ -110,6 +120,7 @@ msgid "Show the list of action requests in the list. "
 msgstr "Montre la liste de produits avec une action demandée."
 
 #: tfopsiclientkiosk.bitbtnstoreaction.caption
+msgctxt "tfopsiclientkiosk.bitbtnstoreaction.caption"
 msgid "Store Actions"
 msgstr "Sauver les actions"
 
@@ -127,6 +138,10 @@ msgstr "Filtrer les produits dont une mise à jour est possible."
 
 #: tfopsiclientkiosk.caption
 msgid "opsi-client-kiosk"
+msgstr ""
+
+#: tfopsiclientkiosk.checkbox1.caption
+msgid "Expert mode"
 msgstr ""
 
 #: tfopsiclientkiosk.dbgrid1.hint

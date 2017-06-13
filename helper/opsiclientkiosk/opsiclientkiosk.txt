@@ -2,6 +2,13 @@
 opsiclientkiosk 4.0.7.8
 
   * fix for font style
+  * productName instead of productId on top and bold
+  * webservice: use agent name and version
+  * webservice: call backend_exit after rebuild
+  * new checkbox 'expert mode' : less buttons if not checked
+  * detail panel now with klick-on / klick-off
+  * flat tile borders
+  * more left space on radio group
 
 -- detlef oertel <d.oertel@uib.de>  Mon, 29 May 2017 15:00:00 +0000
 

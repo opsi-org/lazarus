@@ -31,7 +31,7 @@ uses
   Buttons, ComCtrls, Grids, DBGrids, DBCtrls, ockdata, CommCtrl,
   BufDataset, typinfo, installdlg, lcltranslator, oslog, inifiles,
   Variants,
-  Lazfileutils;
+  Lazfileutils, Types;
 
 type
 
@@ -53,6 +53,8 @@ type
     procedure TileActionChanged(Sender: TObject);
     procedure ProductTileClick(Sender: TObject);
     procedure ProductTileChildClick(Sender: TObject);
+    procedure Scroll(Sender: TObject; Shift: TShiftState; WheelDelta: integer;
+      MousePos: TPoint; var Handled: boolean);
   private
     { private declarations }
     //FidCaption : String;
@@ -71,10 +73,11 @@ type
   { TFopsiClientKiosk }
 
   TFopsiClientKiosk = class(TForm)
-    BitBtn1: TBitBtn;
+    BitBtnInfo: TBitBtn;
     BitBtnShowAction: TBitBtn;
     BitBtnCancel: TBitBtn;
     BitBtnStoreAction: TBitBtn;
+    CheckBox1: TCheckBox;
     DataSource1: TDataSource;
     DataSource2: TDataSource;
     DBComboBox1: TDBComboBox;
@@ -134,6 +137,7 @@ type
     procedure BitBtnStoreActionClick(Sender: TObject);
     //procedure BtnActionClick(Sender: TObject);
     procedure BtnUpgradeClick(Sender: TObject);
+    procedure CheckBox1Change(Sender: TObject);
     procedure DBComboBox1Exit(Sender: TObject);
     procedure DBGrid1CellClick(Column: TColumn);
     procedure DBGrid1ColExit(Sender: TObject);
@@ -146,9 +150,17 @@ type
     procedure grouplistEnter(Sender: TObject);
     procedure PageListBeforeShow(ASender: TObject; ANewPage: TPage;
       ANewIndex: integer);
+    procedure PageTileBeforeShow(ASender: TObject; ANewPage: TPage;
+      ANewIndex: integer);
+    procedure Panel1MouseWheel(Sender: TObject; Shift: TShiftState;
+      WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
+    procedure Panel1MouseWheelDown(Sender: TObject; Shift: TShiftState;
+      MousePos: TPoint; var Handled: boolean);
     procedure ProcessMess;
     procedure RadioGroupViewClick(Sender: TObject);
     procedure RadioGroupViewSelectionChanged(Sender: TObject);
+    procedure ScrollBox1MouseWheel(Sender: TObject; Shift: TShiftState;
+      WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
     procedure SpeedButtonReloadClick(Sender: TObject);
     procedure Terminate;
     procedure BitBtnCancelClick(Sender: TObject);
@@ -186,6 +198,7 @@ var
   inTileRebuild: boolean = False;
   lastOrderDirAsc: boolean = True;
   lastOrderCol: string;
+  detail_visible : boolean = false;
 
 
 resourcestring
@@ -199,6 +212,8 @@ resourcestring
   rsStateUnknown = 'Unknown';
   rsViewList = 'List';
   rsViewTiles = 'Tiles';
+  rsInstallNow = 'Install now';
+  rsStoreActions = 'Store Actions';
 
 
 implementation
@@ -253,124 +268,140 @@ end;
 constructor TProductPanel.Create(TheOwner: TWincontrol);
 begin
   try
-  inherited Create(theOwner);
-  parent := theOwner;
-  Width := tile_width;
-  Height := tile_height;
-  self.OnClick := ProductTileClick;
-  BorderStyle := bsSingle;
-  BorderSpacing.Around := 3;
-  Color := StringToColor(tile_color);
-  Font.Name := tile_Font_Name;
-  font.Size := tile_Font_Size;
-  font.Color := StringToColor(tile_Font_Color);
-  font.Bold := tile_Font_Bold;
-  font.Italic := tile_Font_Italic;
-  font.Underline := tile_Font_Underline;
-  //label ID
-  labelId := TLabel.Create(self);
-  LabelId.Parent := self;
-  LabelId.Caption := 'id';
-  LabelId.Font.Style := [fsBold];
-  LabelId.Alignment := taCenter;
-  LabelId.Width := Width;
-  labelId.Align := alTop;
-  labelId.BorderSpacing.Around := 3;
-  labelId.OnClick := ProductTileChildClick;
-  //label Name
-  LabelName := TLabel.Create(self);
-  LabelName.Parent := self;
-  LabelName.font.Bold := tile_Font_Bold;
-  LabelName.font.Italic := tile_Font_Italic;
-  LabelName.font.Underline := tile_Font_Underline;
-  LabelName.Caption := 'name';
-  LabelName.Width := Width;
-  LabelName.WordWrap := True;
-  LabelName.Alignment := taCenter;
-  LabelName.Align := alTop;
-  LabelName.BorderSpacing.Around := 3;
-  LabelName.OnClick := ProductTileChildClick;
-  //label LabelState
-  LabelState := TLabel.Create(self);
-  LabelState.Parent := self;
-  LabelState.Caption := 'state';
-  LabelState.Width := Width;
-  LabelState.WordWrap := True;
-  LabelState.Alignment := taCenter;
-  LabelState.Align := alTop;
-  LabelState.BorderSpacing.Around := 3;
-  LabelState.OnClick := ProductTileChildClick;
+    inherited Create(theOwner);
+    parent := theOwner;
+    Width := tile_width;
+    Height := tile_height;
+    self.OnClick := ProductTileClick;
+    //BorderStyle := bsSingle;
+    BorderStyle := bsNone;
+    BorderSpacing.Around := 1;
+    Color := StringToColor(tile_color);
+    Font.Name := tile_Font_Name;
+    font.Size := tile_Font_Size;
+    font.Color := StringToColor(tile_Font_Color);
+    font.Bold := tile_Font_Bold;
+    font.Italic := tile_Font_Italic;
+    font.Underline := tile_Font_Underline;
+    self.OnMouseWheel := scroll;
 
-  //RadioGroupAction
-  //RadioGroupAction := TRadioGroup.Create(self);
-  RadioGroupAction := TGroupbox.Create(self);
-  RadioGroupAction.Parent := self;
-  RadioGroupAction.Caption := rsActRequest;
-  RadioGroupAction.Font.Size := tile_radio_font_size;
-  //RadioGroupAction.Alignment := taCenter;
-  RadioGroupAction.Align := alTop;
-  //RadioGroupAction.OnClick := self.OnClick;
-  RadioGroupAction.OnClick := ProductTileChildClick;
-  //RadioGroupAction.OnSelectionChanged := TileActionChanged;
+    //label Name
+    LabelName := TLabel.Create(self);
+    LabelName.Parent := self;
+    LabelName.font.Style := [fsBold];
+    LabelName.font.Italic := tile_Font_Italic;
+    LabelName.font.Underline := tile_Font_Underline;
+    LabelName.Caption := 'name';
+    LabelName.Width := Width;
+    LabelName.WordWrap := True;
+    LabelName.Alignment := taCenter;
+    LabelName.Align := alTop;
+    LabelName.BorderSpacing.Around := 3;
+    LabelName.OnClick := ProductTileChildClick;
+    LabelName.OnMouseWheel := scroll;
 
-  // radiobuttons
-  // none
-  rbNone := TRadioButton.Create(self);
-  rbNone.Caption := '';
-  rbNone.Top := 50;
-  rbNone.Align := alTop;
-  rbNone.Parent := RadioGroupAction;
-  rbNone.OnChange := TileActionChanged;
-  rbNone.Tag := 0;
-  lbnone := TLabel.Create(self);
-  lbnone.Left := 20;
-  lbnone.Caption := rsActNone;
-  lbnone.Font.Color := StringToColor(tile_radio_none_color);
-  lbnone.Parent := RadioGroupAction;
-  lbnone.top := rbNone.top;
-  lbnone.Left := 20;
-  lbnone.Font.Size := tile_radio_font_size;
-  lbnone.OnClick := rbnone.OnClick;
+    //label ID
+    labelId := TLabel.Create(self);
+    LabelId.Parent := self;
+    LabelId.Caption := 'id';
+    LabelId.Font.Bold := tile_Font_Bold;
+    LabelId.Alignment := taCenter;
+    LabelId.Width := Width;
+    labelId.Align := alTop;
+    labelId.BorderSpacing.Around := 3;
+    labelId.OnClick := ProductTileChildClick;
+    labelId.OnMouseWheel := scroll;
 
-  // setup
-  rbsetup := TRadioButton.Create(self);
-  rbsetup.Caption := '';
-  rbsetup.Top := 50;
-  rbsetup.Align := alTop;
-  rbsetup.Parent := RadioGroupAction;
-  rbsetup.OnChange := TileActionChanged;
-  rbsetup.Tag := 1;
-  rbsetup.Enabled := False;
-  lbsetup := TLabel.Create(self);
-  lbsetup.Left := 20;
-  lbsetup.Caption := rsActSetup;
-  lbsetup.Font.Color := StringToColor(tile_radio_setup_color);
-  lbsetup.Parent := RadioGroupAction;
-  lbsetup.top := rbsetup.top;
-  lbsetup.Left := 20;
-  lbsetup.Font.Size := tile_radio_font_size;
-  lbsetup.Enabled := False;
-  lbsetup.OnClick := rbsetup.OnClick;
+    //label LabelState
+    LabelState := TLabel.Create(self);
+    LabelState.Parent := self;
+    LabelState.Caption := 'state';
+    LabelState.Width := Width;
+    LabelState.WordWrap := True;
+    LabelState.Alignment := taCenter;
+    LabelState.Align := alTop;
+    LabelState.BorderSpacing.Around := 3;
+    LabelState.OnClick := ProductTileChildClick;
+    LabelState.OnMouseWheel := scroll;
 
-  // uninstall
-  rbuninstall := TRadioButton.Create(self);
-  rbuninstall.Caption := '';
-  rbuninstall.Top := 50;
-  rbuninstall.Align := alTop;
-  rbuninstall.Parent := RadioGroupAction;
-  rbuninstall.OnChange := TileActionChanged;
-  rbuninstall.Tag := 2;
-  rbuninstall.Enabled := False;
-  lbuninstall := TLabel.Create(self);
-  lbuninstall.Left := 20;
-  lbuninstall.Caption := rsActUninstall;
-  lbuninstall.Font.Color := StringToColor(tile_radio_uninstall_color);
-  lbuninstall.Parent := RadioGroupAction;
-  lbuninstall.top := rbuninstall.top;
-  lbuninstall.Left := 20;
-  lbuninstall.Font.Size := tile_radio_font_size;
-  lbuninstall.Enabled := False;
-  lbuninstall.OnClick := rbuninstall.OnClick;
+    //RadioGroupAction
+    //RadioGroupAction := TRadioGroup.Create(self);
+    RadioGroupAction := TGroupbox.Create(self);
+    RadioGroupAction.Parent := self;
+    RadioGroupAction.Caption := rsActRequest;
+    RadioGroupAction.BorderSpacing.Left:= 3;
+    RadioGroupAction.Font.Size := tile_radio_font_size;
+    //RadioGroupAction.Alignment := taCenter;
+    RadioGroupAction.Align := alTop;
+    //RadioGroupAction.OnClick := self.OnClick;
+    RadioGroupAction.OnClick := ProductTileChildClick;
+    RadioGroupAction.OnMouseWheel := scroll;
+    //RadioGroupAction.OnSelectionChanged := TileActionChanged;
+
+    // radiobuttons
+    // none
+    rbNone := TRadioButton.Create(self);
+    rbNone.Caption := '';
+    rbNone.Top := 50;
+    rbNone.Align := alTop;
+    rbNone.Parent := RadioGroupAction;
+    rbNone.OnChange := TileActionChanged;
+    rbNone.Tag := 0;
+    rbNone.OnMouseWheel := scroll;
+    lbnone := TLabel.Create(self);
+    lbnone.Left := 20;
+    lbnone.Caption := rsActNone;
+    lbnone.Font.Color := StringToColor(tile_radio_none_color);
+    lbnone.Parent := RadioGroupAction;
+    lbnone.top := rbNone.top;
+    lbnone.Left := 20;
+    lbnone.Font.Size := tile_radio_font_size;
+    lbnone.OnClick := rbnone.OnClick;
+    lbnone.OnMouseWheel := scroll;
+
+    // setup
+    rbsetup := TRadioButton.Create(self);
+    rbsetup.Caption := '';
+    rbsetup.Top := 50;
+    rbsetup.Align := alTop;
+    rbsetup.Parent := RadioGroupAction;
+    rbsetup.OnChange := TileActionChanged;
+    rbsetup.Tag := 1;
+    rbsetup.Enabled := False;
+    rbsetup.OnMouseWheel := scroll;
+    lbsetup := TLabel.Create(self);
+    lbsetup.Left := 20;
+    lbsetup.Caption := rsActSetup;
+    lbsetup.Font.Color := StringToColor(tile_radio_setup_color);
+    lbsetup.Parent := RadioGroupAction;
+    lbsetup.top := rbsetup.top;
+    lbsetup.Left := 20;
+    lbsetup.Font.Size := tile_radio_font_size;
+    lbsetup.Enabled := False;
+    lbsetup.OnClick := rbsetup.OnClick;
+    lbsetup.OnMouseWheel := scroll;
+
+    // uninstall
+    rbuninstall := TRadioButton.Create(self);
+    rbuninstall.Caption := '';
+    rbuninstall.Top := 50;
+    rbuninstall.Align := alTop;
+    rbuninstall.Parent := RadioGroupAction;
+    rbuninstall.OnChange := TileActionChanged;
+    rbuninstall.Tag := 2;
+    rbuninstall.Enabled := False;
+    rbuninstall.OnMouseWheel := scroll;
+    lbuninstall := TLabel.Create(self);
+    lbuninstall.Left := 20;
+    lbuninstall.Caption := rsActUninstall;
+    lbuninstall.Font.Color := StringToColor(tile_radio_uninstall_color);
+    lbuninstall.Parent := RadioGroupAction;
+    lbuninstall.top := rbuninstall.top;
+    lbuninstall.Left := 20;
+    lbuninstall.Font.Size := tile_radio_font_size;
+    lbuninstall.Enabled := False;
+    lbuninstall.OnClick := rbuninstall.OnClick;
+    lbuninstall.OnMouseWheel := scroll;
 
 
   (*
@@ -382,13 +413,13 @@ begin
   Button1.Height := 20;
   Button1.OnClick := Button1Click;
   *)
-   except
-      on e: Exception do
-      begin
-        logdatei.log('Exception TProductPanel.Create', LLError);
-        logdatei.log('Exception: ' + E.message, LLError);
-      end;
+  except
+    on e: Exception do
+    begin
+      logdatei.log('Exception TProductPanel.Create', LLError);
+      logdatei.log('Exception: ' + E.message, LLError);
     end;
+  end;
 end;
 
 destructor TProductPanel.Destroy;
@@ -420,6 +451,16 @@ begin
 
 end;
 
+
+procedure TProductPanel.Scroll(Sender: TObject; Shift: TShiftState;
+  WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
+var
+  oldpos: integer;
+begin
+  oldpos := FopsiClientKiosk.ScrollBox1.VertScrollBar.Position;
+  FopsiClientKiosk.ScrollBox1.VertScrollBar.Position := oldpos + (WheelDelta * -1);
+  logdatei.log('Scroll WheelDelta: ' + IntToStr(WheelDelta), LLDebug2);
+end;
 
 procedure TProductPanel.Button1Click(Sender: TObject);
 begin
@@ -470,7 +511,16 @@ begin
     if ZMQueryDataSet1.Locate('ProductId', VarArrayOf([pid]),
       [loCaseInsensitive]) then
     begin
-      FopsiClientKiosk.productdetailpanel.Height := 185;
+      if detail_visible then
+      begin
+        FopsiClientKiosk.productdetailpanel.Height := 0;
+        detail_visible := false;
+      end
+      else
+      begin
+        FopsiClientKiosk.productdetailpanel.Height := 185;
+        detail_visible := true;
+      end;
     end;
   end;
 end;
@@ -719,12 +769,19 @@ begin
 
 end;
 
+
 procedure TFopsiClientKiosk.RadioGroupViewSelectionChanged(Sender: TObject);
 begin
   NotebookProducts.PageIndex := RadioGroupView.ItemIndex;
   if StartupDone then
     if RadioGroupView.ItemIndex = 1 then
       rebuildProductTiles;
+end;
+
+procedure TFopsiClientKiosk.ScrollBox1MouseWheel(Sender: TObject;
+  Shift: TShiftState; WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
+begin
+  logdatei.log('ScrollBox1MouseWheel WheelDelta: ' + IntToStr(WheelDelta), LLDebug2);
 end;
 
 procedure TFopsiClientKiosk.SpeedButtonReloadClick(Sender: TObject);
@@ -789,6 +846,25 @@ begin
 
 end;
 
+procedure TFopsiClientKiosk.PageTileBeforeShow(ASender: TObject;
+  ANewPage: TPage; ANewIndex: integer);
+begin
+
+end;
+
+procedure TFopsiClientKiosk.Panel1MouseWheel(Sender: TObject;
+  Shift: TShiftState; WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
+begin
+
+end;
+
+procedure TFopsiClientKiosk.Panel1MouseWheelDown(Sender: TObject;
+  Shift: TShiftState; MousePos: TPoint; var Handled: boolean);
+begin
+
+end;
+
+
 procedure TFopsiClientKiosk.DBGrid1Exit(Sender: TObject);
 begin
   //productdetailpanel.Height := 0;
@@ -802,8 +878,8 @@ end;
 
 procedure TFopsiClientKiosk.BtnUpgradeClick(Sender: TObject);
 begin
-  searchEdit.Text:='';
-  TimerSearchEdit.Enabled:=false;
+  searchEdit.Text := '';
+  TimerSearchEdit.Enabled := False;
   ockdata.ZMQUerydataset1.Filtered := False;
   ockdata.ZMQUerydataset1.FilterOptions := [foCaseInsensitive];
   ockdata.ZMQUerydataset1.Filter := 'updatePossible = "True"';
@@ -813,6 +889,34 @@ begin
     Sleep(10);
   if RadioGroupView.ItemIndex = 1 then
     rebuildProductTiles;
+end;
+
+procedure TFopsiClientKiosk.CheckBox1Change(Sender: TObject);
+begin
+  if CheckBox1.Checked then
+  begin
+    // expert mode
+    RadioGroupView.Visible:= true;
+    BitBtnInfo.Visible:= true;
+    SpeedButtonReload.Visible:= true;
+    BtnUpgrade.Visible:= true;
+    SpeedButtonAll.Visible:= true;
+    BitBtnShowAction.Visible:= true;
+    BitBtnStoreAction.Caption:= rsStoreActions;
+  end
+  else
+  begin
+    // standard mode
+    RadioGroupView.Visible:= false;
+    BitBtnInfo.Visible:= false;
+    SpeedButtonReload.Visible:= false;
+    BtnUpgrade.Visible:= false;
+    SpeedButtonAll.Visible:= false;
+    BitBtnShowAction.Visible:= false;
+    BitBtnStoreAction.Caption:= rsInstallNow;
+  end;
+  repaint;
+  Application.ProcessMessages;
 end;
 
 procedure TFopsiClientKiosk.DBComboBox1Exit(Sender: TObject);
@@ -950,6 +1054,7 @@ begin
   if not StartupDone then
   begin
     RadioGroupViewSelectionChanged(self);
+    CheckBox1Change(self);
     StartupDone := True;
     Application.ProcessMessages;
     optionlist := TStringList.Create;
@@ -1128,18 +1233,25 @@ begin
       myini.ReadString('TitleLabel', 'text', 'opsi Client Kiosk');
     TitleLabel.Font.Name := myini.ReadString('TitleLabel', 'FontName', 'Arial');
     TitleLabel.Font.Size := myini.ReadInteger('TitleLabel', 'FontSize', 12);
-    TitleLabel.Font.Color := StringToColor(myini.ReadString('TitleLabel', 'FontColor', 'clBlack'));
-    TitleLabel.Font.Bold := strToBool(myini.ReadString('TitleLabel', 'FontBold', True));
-    TitleLabel.Font.Italic := strToBool(myini.ReadString('TitleLabel', 'FontItalic', False));
-    TitleLabel.Font.Underline := strToBool(myini.ReadString('TitleLabel', 'FontUnderline', False));
+    TitleLabel.Font.Color := StringToColor(myini.ReadString('TitleLabel',
+      'FontColor', 'clBlack'));
+    TitleLabel.Font.Bold := strToBool(myini.ReadString('TitleLabel',
+      'FontBold', 'True'));
+    TitleLabel.Font.Italic :=
+      strToBool(myini.ReadString('TitleLabel', 'FontItalic', 'False'));
+    TitleLabel.Font.Underline :=
+      strToBool(myini.ReadString('TitleLabel', 'FontUnderline', 'False'));
     //tile
     tile_color := myini.ReadString('Tile', 'color', tile_color);
     tile_Font_Name := myini.ReadString('Tile', 'FontName', tile_Font_Name);
     tile_Font_Size := myini.ReadInteger('Tile', 'FontSize', tile_Font_Size);
     tile_Font_Color := myini.ReadString('Tile', 'FontColor', tile_Font_Color);
-    tile_Font_Bold := strToBool(myini.ReadString('Tile', 'FontBold', tile_Font_Bold));
-    tile_Font_Italic := strToBool(myini.ReadString('Tile', 'FontItalic', tile_Font_Italic));
-    tile_Font_Underline := strToBool(myini.ReadString('Tile', 'FontUnderline', tile_Font_Underline));
+    tile_Font_Bold := strToBool(myini.ReadString('Tile', 'FontBold',
+      boolToStr(tile_Font_Bold)));
+    tile_Font_Italic := strToBool(myini.ReadString('Tile', 'FontItalic',
+      boolToStr(tile_Font_Italic)));
+    tile_Font_Underline := strToBool(myini.ReadString('Tile',
+      'FontUnderline', boolToStr(tile_Font_Underline)));
     tile_width := myini.ReadInteger('Tile', 'Width', tile_width);
     tile_height := myini.ReadInteger('Tile', 'Height', tile_height);
     //TileRadio
@@ -1180,9 +1292,12 @@ begin
     TitleLabel.Font.Name := myini.ReadString('TitleLabel', 'FontName', 'Arial');
     TitleLabel.Font.Size := myini.ReadInteger('TitleLabel', 'FontSize', 20);
     TitleLabel.Font.Color := myini.ReadInteger('TitleLabel', 'FontColor', $00000000);
-    TitleLabel.Font.Bold := strToBool(myini.ReadString('TitleLabel', 'FontBold', True));
-    TitleLabel.Font.Italic := strToBool(myini.ReadString('TitleLabel', 'FontItalic', False));
-    TitleLabel.Font.Underline := strToBool(myini.ReadString('TitleLabel', 'FontUnderline', False));
+    TitleLabel.Font.Bold := strToBool(myini.ReadString('TitleLabel',
+      'FontBold', 'True'));
+    TitleLabel.Font.Italic :=
+      strToBool(myini.ReadString('TitleLabel', 'FontItalic', 'False'));
+    TitleLabel.Font.Underline :=
+      strToBool(myini.ReadString('TitleLabel', 'FontUnderline', 'False'));
     myini.Free;
     (*
     [TitleLabel]
