@@ -35,6 +35,8 @@ uses
 
 type
 
+
+
   TNodeSet = array of TDOMNode;
 
   TStringsArray = array of string;
@@ -61,11 +63,6 @@ type
     function getNode(var newNode: TDOMNode; myparentNode: TDOMNode;
       mynodeName: string; attributename: string; attributevalue : string): boolean;
 
-    {
-    function makeNodeAtPos(var newNode:TDOMNode; myparentNode:TDOMNode;
-                         mynodeName, attributeName, attributeValue : string;
-                         Position : integer):boolean;
-    }
 
     procedure makeAttributesSL (var attributeStringList: TStringList; attributePath : String);
 
@@ -80,6 +77,7 @@ type
     function getCountNotNil: integer;
     property debuglevel: integer read FDebugLevel write FDebugLevel;
     property actNodeSet: TNodeSet read factNodeSet write factNodeSet;
+
     property derivedNodeSet: TNodeSet read fDerivedNodeSet write fDerivedNodeSet;
     property CountNotNil: integer read getCountNotNil;
     property CountDerivedNotNil: integer read getCountDerivedNotNil;
@@ -103,20 +101,20 @@ type
 
     function openXmlFile(filename: string): boolean;
     function writeXmlFile(filename: string): boolean;
-    //procedure createXmlFile(filename : string; stringlist : TStringList);
-
     function getXmlStrings: TStringList;
 
 
     procedure getNextGenerationActNodeSet;
     procedure makeNewDerivedNodeSet;
-    {
+
+    // filters
+
     function filterByAttributeList
                    (var attributenames : Tstringsarray;
                     var attributevalueExists : Tbooleansarray;
                     var attributevalues : TStringsArray;
                     attributes_strict : boolean) : Boolean;
-                    }
+
     function filterByAttributeName_existing (name: string) : Boolean;
 
     function filterByAttribute_existing (name: string; value : string) : Boolean;
@@ -126,6 +124,8 @@ type
     function countAttributes ( myxmlnode: TDOMNode ) : integer;
 
     function filterByChildElement (filtering: boolean; elementname: string) : Boolean;
+
+    function setActNodeUniqueFromActnodeSet () : boolean;
 
     function setActNodeIfText(textvalue: string): boolean;
 
@@ -161,8 +161,12 @@ type
     procedure delNode(); overload;
     // aktnode (and all childs) will be deleted, afterwards parent will be aktnode
 
-    procedure setNodeText(Text: string);
+    procedure setNodeTextActNode(Text: string);
     // set text at the actual node
+    function getNodeTextActNode () : String;
+    // get text at the actual node
+
+    function getNodeNameActNode () : string;
 
     procedure setAttribute(attributeName, attributeValue: string);
     // set the attribute at the actual node
@@ -209,7 +213,6 @@ const
 
 var
   showErrors: boolean = True;
-
 //#####################
 // from osfunc
 function divideAtFirst(const partialS, S: string; var part1, part2: string): boolean;
@@ -281,21 +284,6 @@ begin
   showErrors := bValue;
 end;
 
-{
-procedure writelog(level: integer; logmessage: string);
-begin
-  LogDatei.DependentAdd(logmessage, level);
-  {
-  //if externLogProc <> nil then
-   externLogProc(logmessage, level);
-  if showErrors and (level=0) then
-  begin
-   MessageDlg('Error: '+logmessage, mtError, [mbOK], 0, mbOK);
-  end;
-  }
-end;
-}
-
 procedure TuibXMLDocument.ErrorHandler(E: EXMLReadError);
 begin
   if E.Severity = esError then
@@ -317,17 +305,6 @@ end;
 
 
 //*************  XML File-Handling ***********************************
-{
-procedure TuibXMLDocument.createXmlFile(filename: String; stringlist : TStringList);
-// TODO
-begin
- writelog(fdebuglevel + 1,'begin to create File: '+filename);
- stringlist.SaveToFile(filename);
- writelog(fdebuglevel,'File: '+filename+' created');
- //openXmlFile(filename);
-end;
-}
-
 function TuibXMLDocument.openXmlFile(filename: string): boolean;
 var
   mystream: TFileStream;
@@ -413,18 +390,6 @@ begin
     finally
       nodestream.Free;
     end;
- (*
- var myXml : String;
-     xmlStrings : TStrings;
- if Active then
- begin
-  saveToXML(myXml);
-  xmlStrings := TStringList.Create;
-  formatMyXml(myXml,xmlStrings);
-  getXmlStrings := xmlStrings;
- end
- else getXmlStrings := TStringList.Create;
- *)
 end;
 
 // nodeSet & methods
@@ -505,8 +470,6 @@ begin
   mystream.Position := 0;
   XML := nil;
   try
-    //DOMFromStream(mystream); - unklar ob das sinnvoll ist
-    // Beispiel hatte am Anfang einen DTD
     ReadXMLFile(XML, mystream);
     LogDatei.log('XMLDoc created from Stringlist', LLinfo);
     Result := True;
@@ -565,19 +528,21 @@ begin
   end;
 end;
 
-(*
+// Filter
 function TuibXMLDocument.filterByAttributeList
                    (var attributenames : Tstringsarray;
                     var attributevalueExists : Tbooleansarray;
                     var attributevalues : TStringsArray;
                     attributes_strict : boolean) : Boolean;
-
+// TODO - muss noch umgearbeitet werden
   var
   i, n, j, basejindex, k, numberOfAttributes: Integer;
 
   b0, b1, b2 : boolean; // results of the crucial evaluations for each attribute
 
   goon : Boolean;
+  attributename : String; // ergänzt, warum feht es?
+  attributeList: TList;
 
 begin
   result := true;
@@ -586,20 +551,20 @@ begin
   if (numberOfAttributes = 0) and not attributes_strict
   then
   begin
-    LogDatei.log (fdebuglevel, 'no filtering by attributes requested');
+    LogDatei.log ('no filtering by attributes requested', LLWarning);
     exit;
   end;
 
 
-  LogDatei.log (fdebuglevel, 'retaining child elements with the following attribute(s):');
+  LogDatei.log ('retaining child elements with the following attribute(s):', LLinfo);
   for k := 0 to numberOfAttributes - 1
   do
   begin
     if attributevalueExists[k]
     then
-      LogDatei.log (fdebuglevel, '   "' + attributenames[k] + '" value="' + attributevalues[k] + '"')
+      LogDatei.log ('   "' + attributenames[k] + '" value="' + attributevalues[k] + '"', LLinfo)
     else
-      LogDatei.log (fdebuglevel, '   "' + attributenames[k] + '"')
+      LogDatei.log ('   "' + attributenames[k] + '"', LLinfo)
   end;
 
 
@@ -631,12 +596,13 @@ begin
          then
          begin
            if attributes_strict
+              // TODO
               //and
               //( actNodeSet[i].childnodes[j].AttributeNodes.Count <> length (attributenames) )
            then
            begin
              FderivedNodeSet[basejindex + j] := nil;
-             LogDatei.log (fdebuglevel, 'node ' + inttostr (basejindex + j) + ' not accepted: Number of attributes does not match');
+             LogDatei.log ('node ' + inttostr (basejindex + j) + ' not accepted: Number of attributes does not match', LLinfo);
              goon := false;
            end;
 
@@ -644,12 +610,13 @@ begin
            while goon and (k < numberOfAttributes)
            do
            begin
-             getNamespaceAndBasename (attributenames[k], uri, attributename);
-
-             b1 := actNodeSet[i].childnodes.Item[j].HasAttributes (attributename, uri);
+             // TODO
+             //getNamespaceAndBasename (attributenames[k], uri, attributename);
+             attributename:= '';  // nur damit es übersetzt, muss noch umgebaut und getestet werden
+             //b1 := actNodeSet[i].childnodes.Item[j].HasAttributes (attributename);
              if b1
              then
-               b2 := actNodeSet[i].childnodes.Item[j].getattributes(attributename, uri) = attributevalues[k]
+               //b2 := actNodeSet[i].childnodes.Item[j].getattributes(attributename) = attributevalues[k]
              else
                b2 := false;
 
@@ -658,7 +625,7 @@ begin
              begin
                 FderivedNodeSet[basejindex + j] := nil;
 
-                LogDatei.log (fdebuglevel, 'node ' + inttostr (basejindex + j) + ' not accepted: No attribute "' + attributenames[k] + '"');
+                LogDatei.log ('node ' + inttostr (basejindex + j) + ' not accepted: No attribute "' + attributenames[k] + '"', LLinfo);
                 goon := false;
              end
 
@@ -669,9 +636,9 @@ begin
                 begin
                   FderivedNodeSet[basejindex + j] := nil;
 
-                  LogDatei.log (fdebuglevel, 'node ' + inttostr (basejindex + j)
+                  LogDatei.log ('node ' + inttostr (basejindex + j)
                      + ' not accepted: Not the required value "' + attributevalues[k] + '" for attribute "'
-                      + attributenames[k] + '"');
+                      + attributenames[k] + '"', LLinfo);
                   goon := false;
                 end
              end;
@@ -690,14 +657,13 @@ begin
      inc (i);
   end;
 end;
-*)
+
 
 
 function TuibXMLDocument.filterByAttributeName_existing (name: string) : Boolean;
 var
   i, n, j, basejindex: Integer;
   b0, b1 : boolean;
-  uri, attributename : String;
 
 begin
   LogDatei.log ('retaining child elements with attribute "' + name + '"', LLinfo);
@@ -713,13 +679,13 @@ begin
      if actNodeSet[i] <> nil
      then
      begin
-
        n := actNodeSet[i].childnodes.count;
 
        for j:=0 to n-1
        do
        begin
-         b1 := actNodeSet[i].childnodes.Item[j].Attributes[i].NodeName = name;
+         actnode:= actNodeSet[i].ChildNodes.Item[j];
+         b1 := hasAttribute(name);
          b0 := FderivedNodeSet[basejindex + j] <> nil;
 
          if  b1 and b0
@@ -728,14 +694,10 @@ begin
          else
             FderivedNodeSet[basejindex + j] := nil;
        end;
-
        basejindex := basejindex + n;
-
      end;
-
      inc (i);
   end;
-
 end;
 
 
@@ -768,7 +730,7 @@ begin
          actnode:= actNodeSet[i].ChildNodes.Item[j];
          b0 := FderivedNodeSet[basejindex + j] <> nil;
          b1 := hasAttribute(name);
-         b2 := actnode.NodeName = value;
+         b2 := '"' + getAttributeValue(name) + '"' = value;
 
          if b0 and b1 and b2
          then
@@ -833,7 +795,17 @@ begin
 
 end;
 
-
+function TuibXMLDocument.setActNodeUniqueFromActnodeSet () : boolean;
+begin
+  setActNodeUniqueFromActnodeSet:=false;
+  if length(actNodeSet) =1 then
+  begin
+    actNode:= actNodeSet[0];
+    setActNodeUniqueFromActnodeSet:=true
+  end
+  else
+    LogDatei.log('length aktNodeSet is "' + IntToStr(length(actNodeSet)) + '. There has to be only one Element.', LLwarning);
+end;
 
 function TuibXMLDocument.setActNodeIfText(textvalue: string): boolean;
 var
@@ -857,7 +829,7 @@ begin
         if AnsiCompareStr(textvalue, comparetext) = 0 then
         begin
           actNode := actnode.ChildNodes.Item[i];
-          Result := True; // aktnode is
+          Result := True; // actnode is
         end
         else
           Result := False;
@@ -981,9 +953,8 @@ end;
 
 procedure TuibXMLDocument.logActNodeSet;
 var
-  i, basejindex, j: integer;
+  i: integer;
   count_not_nil: integer;
-  count_not_nil_2: integer;
 
 begin
   cleanUpActNodeSet();
@@ -1001,7 +972,6 @@ begin
       Inc(count_not_nil);
     end;
   end;
-
   LogDatei.log('Non-null element(s) in act node set: ' + IntToStr(count_not_nil), LLinfo);
 
 end;
@@ -1439,17 +1409,34 @@ begin
   end;
 end;
 
-procedure TuibXMLDocument.setNodeText(Text: string);
+procedure TuibXMLDocument.setNodeTextActNode(Text: string);
 begin
-  begin
     LogDatei.log('begin to set text to actNode: ' + Text, LLinfo);
     if actNode <> nil then
       actNode.TextContent := Text
     else
       LogDatei.log('actNode is nil, text not set: ' + Text, LLwarning);
-  end;
+end;
+function TuibXMLDocument.getNodeTextActNode() : String;
+// get text at the actual node
+begin
+  getNodeTextActNode:='';
+  LogDatei.log('get text from actNode: ', LLinfo);
+  if actNode <> nil then
+    getNodeTextActNode:= actNode.TextContent
+  else
+    LogDatei.log('actNode is nil, can not get text: ', LLwarning);
 end;
 
+function TuibXMLDocument.getNodeNameActNode ( ) : string;
+begin
+  getNodeNameActNode:='';
+  LogDatei.log('get nodeName from actNode: ', LLinfo);
+  if actNode <> nil then
+    getNodeNameActNode:= actNode.NodeName
+  else
+    LogDatei.log('actNode is nil, can not get nodeName: ', LLwarning);
+end;
 
 function TuibXMLDocument.nodeExists(nodePath: string): boolean;
 // tells if a node exists without changing anything
@@ -1664,7 +1651,7 @@ begin
     getAttributeValue := TDOMElement(actNode).GetAttribute(attributeName)
   else
     LogDatei.log('getAttribute failed, name: ' +
-        attributeName + 'does not exist or actNode is nil',  LLerror)
+        attributeName + 'does not exist or actNode is nil',  LLwarning)
 
 end;
 
