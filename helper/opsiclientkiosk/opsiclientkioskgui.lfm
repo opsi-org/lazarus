@@ -1,7 +1,7 @@
 object FopsiClientKiosk: TFopsiClientKiosk
-  Left = 2082
+  Left = 574
   Height = 700
-  Top = 239
+  Top = 340
   Width = 953
   Caption = 'opsi-client-kiosk'
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
