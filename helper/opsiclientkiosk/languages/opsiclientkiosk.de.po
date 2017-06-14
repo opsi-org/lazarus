@@ -31,6 +31,10 @@ msgstr "Installiert"
 
 #: opsiclientkioskgui.rsinstallnow
 msgid "Install now"
+msgstr "Jetzt Installieren"
+
+#: opsiclientkioskgui.rsinstallnowhint
+msgid "Start the installation (deinstallation) of the selected products"
 msgstr ""
 
 #: opsiclientkioskgui.rsnoactionsfound
@@ -50,6 +54,10 @@ msgstr "Unbekannt"
 msgctxt "opsiclientkioskgui.rsstoreactions"
 msgid "Store Actions"
 msgstr "Aktionen speichern"
+
+#: opsiclientkioskgui.rsstoreactionshint
+msgid "Send the list of action requests in the list to the server, show the results and ask for installation start."
+msgstr ""
 
 #: opsiclientkioskgui.rsviewlist
 msgid "List"
@@ -111,9 +119,9 @@ msgctxt "tfopsiclientkiosk.bitbtnstoreaction.caption"
 msgid "Store Actions"
 msgstr "Aktionen speichern"
 
-#: tfopsiclientkiosk.bitbtnstoreaction.hint
-msgid "Send the list of action requests in the list to the server, show the results and ask for installation start. "
-msgstr "Sende die erstellte Aktionsliste zu dem Server, zeide den Resultierenden Aktionsplan und frage nach dem Installationsstart."
+#: tfopsiclientkiosk.btnclearsearchedit.caption
+msgid "X"
+msgstr ""
 
 #: tfopsiclientkiosk.btnupgrade.caption
 msgid "Filter for Upgrade"
@@ -129,7 +137,7 @@ msgstr ""
 
 #: tfopsiclientkiosk.checkbox1.caption
 msgid "Expert mode"
-msgstr ""
+msgstr "Experten Modus"
 
 #: tfopsiclientkiosk.dbgrid1.hint
 msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
@@ -159,10 +167,6 @@ msgstr "Version auf dem Server"
 msgid "Please wait ..."
 msgstr "Bitte warten ..."
 
-#: tfopsiclientkiosk.paneldependencies.caption
-msgid "PanelDependencies"
-msgstr "do not translate"
-
 #: tfopsiclientkiosk.radiogroupview.caption
 msgid "View"
 msgstr "Ansicht"
@@ -170,6 +174,10 @@ msgstr "Ansicht"
 #: tfopsiclientkiosk.searchedit.hint
 msgid "Search in Productlist"
 msgstr "Suche in Produktliste"
+
+#: tfopsiclientkiosk.searchedit.texthint
+msgid "Search"
+msgstr "Suchen"
 
 #: tfopsiclientkiosk.speedbuttonall.caption
 msgid "Show all"

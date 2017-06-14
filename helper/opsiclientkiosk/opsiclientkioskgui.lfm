@@ -1,13 +1,13 @@
 object FopsiClientKiosk: TFopsiClientKiosk
-  Left = 2003
+  Left = 2082
   Height = 700
-  Top = 185
-  Width = 1024
+  Top = 239
+  Width = 953
   Caption = 'opsi-client-kiosk'
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
   ChildSizing.ControlsPerLine = 2
   ClientHeight = 700
-  ClientWidth = 1024
+  ClientWidth = 953
   Color = clWhite
   OnActivate = FormActivate
   OnCreate = FormCreate
@@ -19,45 +19,38 @@ object FopsiClientKiosk: TFopsiClientKiosk
     Left = 0
     Height = 515
     Top = 162
-    Width = 1024
+    Width = 953
     Align = alClient
     BevelOuter = bvNone
     BorderStyle = bsSingle
     ClientHeight = 511
-    ClientWidth = 1020
+    ClientWidth = 949
     TabOrder = 3
-    object Splitter1: TSplitter
+    object productlistpanel: TPanel
       Left = 0
       Height = 511
       Top = 0
-      Width = 5
-      Beveled = True
-    end
-    object productlistpanel: TPanel
-      Left = 5
-      Height = 511
-      Top = 0
-      Width = 1015
+      Width = 949
       Align = alClient
       BevelOuter = bvNone
       ClientHeight = 511
-      ClientWidth = 1015
-      TabOrder = 1
+      ClientWidth = 949
+      TabOrder = 0
       object productdetailpanel: TPanel
         Left = 0
         Height = 187
         Top = 324
-        Width = 1015
+        Width = 949
         Align = alBottom
         BevelOuter = bvNone
         ClientHeight = 187
-        ClientWidth = 1015
+        ClientWidth = 949
         TabOrder = 1
         object ExtendedNotebook1: TExtendedNotebook
           Left = 0
           Height = 187
           Top = 0
-          Width = 1015
+          Width = 949
           ActivePage = TabSheet1
           Align = alClient
           TabIndex = 0
@@ -66,7 +59,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
           object TabSheet1: TTabSheet
             Caption = 'Details'
             ClientHeight = 159
-            ClientWidth = 1007
+            ClientWidth = 941
             object PanelDetailsLables: TPanel
               Left = 0
               Height = 159
@@ -128,17 +121,17 @@ object FopsiClientKiosk: TFopsiClientKiosk
               Left = 160
               Height = 159
               Top = 0
-              Width = 847
+              Width = 781
               Align = alClient
               BevelOuter = bvNone
               ClientHeight = 159
-              ClientWidth = 847
+              ClientWidth = 781
               TabOrder = 1
               object DBTextVerStr: TDBText
                 Left = 5
                 Height = 15
                 Top = 109
-                Width = 837
+                Width = 771
                 Align = alTop
                 BorderSpacing.Around = 5
                 DataField = 'versionstr'
@@ -149,7 +142,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
                 Left = 5
                 Height = 15
                 Top = 129
-                Width = 837
+                Width = 771
                 Align = alTop
                 BorderSpacing.Around = 5
                 DataField = 'installedverstr'
@@ -160,7 +153,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
                 Left = 5
                 Height = 47
                 Top = 5
-                Width = 837
+                Width = 771
                 Align = alTop
                 BorderSpacing.Around = 5
                 BorderStyle = bsNone
@@ -174,7 +167,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
                 Left = 5
                 Height = 47
                 Top = 57
-                Width = 837
+                Width = 771
                 Align = alTop
                 BorderSpacing.Around = 5
                 BorderStyle = bsNone
@@ -227,7 +220,6 @@ object FopsiClientKiosk: TFopsiClientKiosk
               Width = 1007
               Align = alClient
               BevelOuter = bvNone
-              Caption = 'PanelDependencies'
               ClientHeight = 127
               ClientWidth = 1007
               TabOrder = 1
@@ -250,7 +242,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
         Left = 10
         Height = 264
         Top = 50
-        Width = 995
+        Width = 929
         PageIndex = 0
         Align = alClient
         BorderSpacing.Around = 10
@@ -263,7 +255,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
             Height = 264
             Hint = 'Click to ActionRequest Column, to set action requests (setup/uninstall)'
             Top = 0
-            Width = 995
+            Width = 929
             Align = alClient
             Color = clWindow
             Columns = <>
@@ -333,32 +325,14 @@ object FopsiClientKiosk: TFopsiClientKiosk
         Left = 0
         Height = 40
         Top = 0
-        Width = 1015
+        Width = 949
         Align = alTop
         BevelOuter = bvNone
         ClientHeight = 40
-        ClientWidth = 1015
+        ClientWidth = 949
         TabOrder = 2
-        object searchEdit: TEdit
-          Left = 868
-          Height = 30
-          Hint = 'Search in Productlist'
-          Top = 5
-          Width = 116
-          Align = alRight
-          AutoSize = False
-          BorderSpacing.Left = 10
-          BorderSpacing.Top = 5
-          BorderSpacing.Right = 1
-          BorderSpacing.Bottom = 5
-          OnChange = searchEditChange
-          OnEnter = searchEditEnter
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 0
-        end
         object BtnUpgrade: TSpeedButton
-          Left = 530
+          Left = 410
           Height = 30
           Hint = 'Filter for Products where an upgrade is possible'
           Top = 5
@@ -430,7 +404,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
           ParentShowHint = False
         end
         object SpeedButtonAll: TSpeedButton
-          Left = 725
+          Left = 605
           Height = 30
           Hint = 'Show all List entries (No Filter)'
           Top = 5
@@ -503,81 +477,16 @@ object FopsiClientKiosk: TFopsiClientKiosk
           ShowHint = True
           ParentShowHint = False
         end
-        object SpeedButtonReload: TSpeedButton
-          Left = 409
-          Height = 30
-          Top = 5
-          Width = 116
-          Align = alRight
-          BorderSpacing.Around = 5
-          BorderSpacing.InnerBorder = 2
-          Caption = 'Reload'
-          Glyph.Data = {
-            76060000424D7606000000000000360000002800000014000000140000000100
-            2000000000004006000064000000640000000000000000000000000000000000
-            000000000000000000000000000000000000000000000A0A0AFF131313FF1E1E
-            1EFF2D2D2DFF202020FF00000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000050505FF0E0E
-            0EFF3B3B3BFF787878FF919191FFB0B0B0FF595959FF5E5E5EFF393939FF0000
-            00FF000000000000000000000000000000000000000000000000000000000000
-            000000000000000000FF121212FF171717FF0000000000000000292929FF5B5B
-            5BFFB8B8B8FF919191FF404040FF676767FF191919FF00000000000000000000
-            00000000000000000000000000000000000000000000040404FF000000000000
-            0000000000000000000000000000000000002B2B2BFFA2A2A2FF8E8E8EFF3434
-            34FF4E4E4EFF000000FF00000000000000000000000000000000000000000000
-            0000000000FF0000000000000000000000000000000000000000000000000000
-            0000000000003A3A3AFFABABABFF555555FF595959FF212121FF000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000000000000000000000000000006D6D6DFF8484
-            84FF303030FF525252FF000000FF000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000515151FF838383FF282828FF494949FF000000FF0000
-            0000000000000000000000000000000000000000000000000000000000000B1C
-            02FF000000FF00000000000000001E1E1EFF555555FF202020FF3F3F3FFF5151
-            51FF232323FF383838FF1C1C1CFF353535FF272727FF080808FF000000000000
-            00000000000000000000122B04FF327A09FF1D4606FF000000FF000000003131
-            31FF727272FFBEBEBEFF474747FF1E1E1EFF1E1E1EFF313131FF757575FF7272
-            72FF232323FF00000000000000000000000000000000122B04FF357D0EFF5CBF
-            38FF419819FF183C03FF000000FF00000000212121FF6E6E6EFFB5B5B5FF4343
-            43FF2E2E2EFF6E6E6EFF747474FF1B1B1BFF0000000000000000000000000000
-            00000E2400FF328205FF5BC21FFF4CAF18FF6FD252FF3C9C10FF123700FF0000
-            01FF00000000131313FF6E6E6EFFB1B1B1FF696969FF6E6E6EFF1A1A1AFF0000
-            00000000000000000000000000001C330EFF6ABD4BFF9DE779FF78C752FF41A5
-            0AFF4AA918FF95DA79FF8AD366FF2D5518FF000000FF000000001E1E1EFF6B6B
-            6BFF7F7F7FFF191919FF00000000000000000000000000000000051600FF5579
-            43FF819675FF889980FFB4D8A3FF57B427FF439E10FF576F4AFF75896CFF7698
-            65FF102C00FF0000000000000000333333FF202020FF00000000000000000000
-            00000000000000000000000000000000000000000000093700FFC8D6C3FF6EBD
-            45FF47AB10FF041800FF00000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000001B4007FFBFD2B6FF98D879FF4EA61DFF1A4104FF000000FF0000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000628551FFE4FA
-            DBFF56B226FF3C8A14FF050F00FF000000000000000000000000000000000000
-            0000000000000000000000000000000000FF0000000000000000000000000000
-            00000000000000000000194103FFC7DDBEFFB9E2A5FF46A514FF266006FF030B
-            00FF000000000000000000000000000000000000000000000000061001FF0000
-            000000000000000000000000000000000000000000000000000000000000446E
-            2FFFD5E7CFFFC7EDB5FF65B839FF2C6A0BFF091D00FF000000FF000000000000
-            0000050D01FF081201FF010300FF000000000000000000000000000000000000
-            000000000000000000000000000000000000184202FF839F74FFD8ECCFFFA4DF
-            87FF6DBD43FF3F7E1EFF26560CFF102605FF040B01FF000000FF000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            000000000000000000002E5817FF617F51FF687C5FFF3D6926FF234A0DFF0000
-            0000000000000000000000000000000000000000000000000000
-          }
-          OnClick = SpeedButtonReloadClick
-        end
         object Image2: TImage
-          Left = 985
-          Height = 30
-          Top = 5
+          Left = 919
+          Height = 28
+          Top = 10
           Width = 20
           Align = alRight
           AutoSize = True
-          BorderSpacing.Top = 5
+          BorderSpacing.Top = 10
           BorderSpacing.Right = 10
-          BorderSpacing.Bottom = 5
+          BorderSpacing.Bottom = 2
           Picture.Data = {
             07545069786D6170CF0E00002F2A2058504D202A2F0D0A737461746963206368
             6172202A204E3A5C7569625C6F657274656C5C73766E776F726B5C73766E5F6F
@@ -711,7 +620,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
           Caption = 'Info'
           Kind = bkHelp
           OnClick = BitBtnInfoClick
-          TabOrder = 1
+          TabOrder = 0
         end
         object CheckBox1: TCheckBox
           Left = 96
@@ -720,7 +629,118 @@ object FopsiClientKiosk: TFopsiClientKiosk
           Width = 86
           Caption = 'Expert mode'
           OnChange = CheckBox1Change
+          TabOrder = 1
+        end
+        object PanelSearchEdit: TPanel
+          Left = 748
+          Height = 30
+          Top = 5
+          Width = 170
+          Align = alRight
+          BorderSpacing.Left = 10
+          BorderSpacing.Top = 5
+          BorderSpacing.Right = 1
+          BorderSpacing.Bottom = 5
+          BevelOuter = bvNone
+          BorderStyle = bsSingle
+          ClientHeight = 26
+          ClientWidth = 166
           TabOrder = 2
+          object BtnClearSearchEdit: TSpeedButton
+            Left = 143
+            Height = 26
+            Top = 0
+            Width = 23
+            Align = alRight
+            Caption = 'X'
+            Color = clWhite
+            Flat = True
+            OnClick = BtnClearSearchEditClick
+          end
+          object searchEdit: TEdit
+            Left = 0
+            Height = 26
+            Hint = 'Search in Productlist'
+            Top = 0
+            Width = 143
+            Align = alClient
+            AutoSize = False
+            AutoSelect = False
+            BorderStyle = bsNone
+            Font.Height = -16
+            OnChange = searchEditChange
+            OnEnter = searchEditEnter
+            ParentFont = False
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 0
+            TextHint = 'Search'
+          end
+        end
+        object SpeedButtonReload: TSpeedButton
+          Left = 289
+          Height = 30
+          Top = 5
+          Width = 116
+          Align = alRight
+          BorderSpacing.Around = 5
+          BorderSpacing.InnerBorder = 2
+          Caption = 'Reload'
+          Glyph.Data = {
+            76060000424D7606000000000000360000002800000014000000140000000100
+            2000000000004006000064000000640000000000000000000000000000000000
+            000000000000000000000000000000000000000000000A0A0AFF131313FF1E1E
+            1EFF2D2D2DFF202020FF00000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000050505FF0E0E
+            0EFF3B3B3BFF787878FF919191FFB0B0B0FF595959FF5E5E5EFF393939FF0000
+            00FF000000000000000000000000000000000000000000000000000000000000
+            000000000000000000FF121212FF171717FF0000000000000000292929FF5B5B
+            5BFFB8B8B8FF919191FF404040FF676767FF191919FF00000000000000000000
+            00000000000000000000000000000000000000000000040404FF000000000000
+            0000000000000000000000000000000000002B2B2BFFA2A2A2FF8E8E8EFF3434
+            34FF4E4E4EFF000000FF00000000000000000000000000000000000000000000
+            0000000000FF0000000000000000000000000000000000000000000000000000
+            0000000000003A3A3AFFABABABFF555555FF595959FF212121FF000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            00000000000000000000000000000000000000000000000000006D6D6DFF8484
+            84FF303030FF525252FF000000FF000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            00000000000000000000515151FF838383FF282828FF494949FF000000FF0000
+            0000000000000000000000000000000000000000000000000000000000000B1C
+            02FF000000FF00000000000000001E1E1EFF555555FF202020FF3F3F3FFF5151
+            51FF232323FF383838FF1C1C1CFF353535FF272727FF080808FF000000000000
+            00000000000000000000122B04FF327A09FF1D4606FF000000FF000000003131
+            31FF727272FFBEBEBEFF474747FF1E1E1EFF1E1E1EFF313131FF757575FF7272
+            72FF232323FF00000000000000000000000000000000122B04FF357D0EFF5CBF
+            38FF419819FF183C03FF000000FF00000000212121FF6E6E6EFFB5B5B5FF4343
+            43FF2E2E2EFF6E6E6EFF747474FF1B1B1BFF0000000000000000000000000000
+            00000E2400FF328205FF5BC21FFF4CAF18FF6FD252FF3C9C10FF123700FF0000
+            01FF00000000131313FF6E6E6EFFB1B1B1FF696969FF6E6E6EFF1A1A1AFF0000
+            00000000000000000000000000001C330EFF6ABD4BFF9DE779FF78C752FF41A5
+            0AFF4AA918FF95DA79FF8AD366FF2D5518FF000000FF000000001E1E1EFF6B6B
+            6BFF7F7F7FFF191919FF00000000000000000000000000000000051600FF5579
+            43FF819675FF889980FFB4D8A3FF57B427FF439E10FF576F4AFF75896CFF7698
+            65FF102C00FF0000000000000000333333FF202020FF00000000000000000000
+            00000000000000000000000000000000000000000000093700FFC8D6C3FF6EBD
+            45FF47AB10FF041800FF00000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000001B4007FFBFD2B6FF98D879FF4EA61DFF1A4104FF000000FF0000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000628551FFE4FA
+            DBFF56B226FF3C8A14FF050F00FF000000000000000000000000000000000000
+            0000000000000000000000000000000000FF0000000000000000000000000000
+            00000000000000000000194103FFC7DDBEFFB9E2A5FF46A514FF266006FF030B
+            00FF000000000000000000000000000000000000000000000000061001FF0000
+            000000000000000000000000000000000000000000000000000000000000446E
+            2FFFD5E7CFFFC7EDB5FF65B839FF2C6A0BFF091D00FF000000FF000000000000
+            0000050D01FF081201FF010300FF000000000000000000000000000000000000
+            000000000000000000000000000000000000184202FF839F74FFD8ECCFFFA4DF
+            87FF6DBD43FF3F7E1EFF26560CFF102605FF040B01FF000000FF000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            000000000000000000002E5817FF617F51FF687C5FFF3D6926FF234A0DFF0000
+            0000000000000000000000000000000000000000000000000000
+          }
+          OnClick = SpeedButtonReloadClick
         end
       end
     end
@@ -729,21 +749,21 @@ object FopsiClientKiosk: TFopsiClientKiosk
     Left = 0
     Height = 90
     Top = 52
-    Width = 1024
+    Width = 953
     Align = alTop
     BevelOuter = bvNone
     ClientHeight = 90
-    ClientWidth = 1024
+    ClientWidth = 953
     TabOrder = 0
     object ToolBar1: TToolBar
       Left = 0
       Height = 90
       Top = 0
-      Width = 1024
+      Width = 953
       Align = alClient
       TabOrder = 0
       object BitBtnShowAction: TBitBtn
-        Left = 683
+        Left = 612
         Height = 78
         Hint = 'Show the list of action requests in the list. '
         Top = 7
@@ -761,7 +781,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
         TabOrder = 0
       end
       object BitBtnCancel: TBitBtn
-        Left = 947
+        Left = 876
         Height = 78
         Hint = 'Terminate Program (with out any further action)'
         Top = 7
@@ -854,9 +874,8 @@ object FopsiClientKiosk: TFopsiClientKiosk
         TabOrder = 1
       end
       object BitBtnStoreAction: TBitBtn
-        Left = 816
+        Left = 745
         Height = 78
-        Hint = 'Send the list of action requests in the list to the server, show the results and ask for installation start. '
         Top = 7
         Width = 116
         Align = alRight
@@ -872,7 +891,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
         TabOrder = 2
       end
       object LabelWait: TLabel
-        Left = 285
+        Left = 214
         Height = 78
         Top = 7
         Width = 383
@@ -897,7 +916,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
         Left = 1
         Height = 88
         Top = 2
-        Width = 279
+        Width = 208
         Align = alClient
         TabOrder = 3
         object RadioGroupView: TRadioGroup
@@ -923,6 +942,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
             'List'
             'Tile'
           )
+          OnClick = RadioGroupViewClick
           OnSelectionChanged = RadioGroupViewSelectionChanged
           TabOrder = 0
         end
@@ -933,7 +953,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
     Left = 0
     Height = 23
     Top = 677
-    Width = 1024
+    Width = 953
     Panels = <    
       item
         Text = 'Not Connected to opsi server'
@@ -945,11 +965,11 @@ object FopsiClientKiosk: TFopsiClientKiosk
     Left = 0
     Height = 52
     Top = 0
-    Width = 1024
+    Width = 953
     Align = alTop
     BevelOuter = bvNone
     ClientHeight = 52
-    ClientWidth = 1024
+    ClientWidth = 953
     Font.CharSet = ANSI_CHARSET
     Font.Height = -19
     Font.Name = 'Arial'
@@ -962,7 +982,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
       Left = 0
       Height = 52
       Top = 0
-      Width = 1024
+      Width = 953
       Align = alClient
       Picture.Data = {
         1754506F727461626C654E6574776F726B477261706869639456000089504E47
@@ -1666,7 +1686,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
       Left = 0
       Height = 52
       Top = 0
-      Width = 1024
+      Width = 953
       Align = alClient
       Alignment = taCenter
       Caption = 'opsi Client Kiosk'
@@ -1685,11 +1705,11 @@ object FopsiClientKiosk: TFopsiClientKiosk
     Left = 0
     Height = 20
     Top = 142
-    Width = 1024
+    Width = 953
     Align = alTop
     BevelOuter = bvNone
     ClientHeight = 20
-    ClientWidth = 1024
+    ClientWidth = 953
     TabOrder = 4
     object PanelProgressLabel: TPanel
       Left = 0
@@ -1726,17 +1746,17 @@ object FopsiClientKiosk: TFopsiClientKiosk
       Left = 280
       Height = 20
       Top = 0
-      Width = 744
+      Width = 673
       Align = alClient
       BevelOuter = bvNone
       ClientHeight = 20
-      ClientWidth = 744
+      ClientWidth = 673
       TabOrder = 1
       object ProgressBar1: TProgressBar
         Left = 0
         Height = 10
         Top = 0
-        Width = 744
+        Width = 673
         Align = alTop
         Position = 1
         Smooth = True
@@ -1747,7 +1767,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
         Left = 0
         Height = 10
         Top = 10
-        Width = 744
+        Width = 673
         Align = alBottom
         Position = 20
         Smooth = True

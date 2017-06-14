@@ -47,6 +47,10 @@ msgstr ""
 msgid "Install now"
 msgstr ""
 
+#: opsiclientkioskgui.rsinstallnowhint
+msgid "Start the installation (deinstallation) of the selected products"
+msgstr ""
+
 #: opsiclientkioskgui.rsnoactionsfound
 msgid "No action requests found."
 msgstr ""
@@ -64,6 +68,10 @@ msgstr ""
 msgctxt "opsiclientkioskgui.rsstoreactions"
 msgid "Store Actions"
 msgstr "Kiosk Handlinger"
+
+#: opsiclientkioskgui.rsstoreactionshint
+msgid "Send the list of action requests in the list to the server, show the results and ask for installation start."
+msgstr ""
 
 #: opsiclientkioskgui.rsviewlist
 msgid "List"
@@ -124,8 +132,8 @@ msgctxt "tfopsiclientkiosk.bitbtnstoreaction.caption"
 msgid "Store Actions"
 msgstr "Kiosk Handlinger"
 
-#: tfopsiclientkiosk.bitbtnstoreaction.hint
-msgid "Send the list of action requests in the list to the server, show the results and ask for installation start. "
+#: tfopsiclientkiosk.btnclearsearchedit.caption
+msgid "X"
 msgstr ""
 
 #: tfopsiclientkiosk.btnupgrade.caption
@@ -172,10 +180,6 @@ msgstr "Version på server"
 msgid "Please wait ..."
 msgstr "Vent venligst ..."
 
-#: tfopsiclientkiosk.paneldependencies.caption
-msgid "PanelDependencies"
-msgstr "do not translate"
-
 #: tfopsiclientkiosk.radiogroupview.caption
 msgid "View"
 msgstr ""
@@ -183,6 +187,10 @@ msgstr ""
 #: tfopsiclientkiosk.searchedit.hint
 msgid "Search in Productlist"
 msgstr "Søg i produktliste"
+
+#: tfopsiclientkiosk.searchedit.texthint
+msgid "Search"
+msgstr ""
 
 #: tfopsiclientkiosk.speedbuttonall.caption
 msgid "Show all"

@@ -99,6 +99,7 @@ type
     LabelDataLoadDetail: TLabel;
     LabelAdvice: TLabel;
     LabelClientVerstr: TLabel;
+    PanelSearchEdit: TPanel;
     Panelsearch: TPanel;
     PanelDependencies: TPanel;
     PanelPriority: TPanel;
@@ -115,9 +116,9 @@ type
     ImageHeader: TImage;
     datapanel: TPanel;
     BtnUpgrade: TSpeedButton;
+    BtnClearSearchEdit: TSpeedButton;
     SpeedButtonReload: TSpeedButton;
     SpeedButtonAll: TSpeedButton;
-    Splitter1: TSplitter;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
     TimerSearchEdit: TTimer;
@@ -161,6 +162,7 @@ type
     procedure RadioGroupViewSelectionChanged(Sender: TObject);
     procedure ScrollBox1MouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
+    procedure BtnClearSearchEditClick(Sender: TObject);
     procedure SpeedButtonReloadClick(Sender: TObject);
     procedure Terminate;
     procedure BitBtnCancelClick(Sender: TObject);
@@ -198,7 +200,7 @@ var
   inTileRebuild: boolean = False;
   lastOrderDirAsc: boolean = True;
   lastOrderCol: string;
-  detail_visible : boolean = false;
+  detail_visible: boolean = False;
 
 
 resourcestring
@@ -214,6 +216,8 @@ resourcestring
   rsViewTiles = 'Tiles';
   rsInstallNow = 'Install now';
   rsStoreActions = 'Store Actions';
+  rsInstallNowHint = 'Start the installation (deinstallation) of the selected products';
+  rsStoreActionsHint = 'Send the list of action requests in the list to the server, show the results and ask for installation start.';
 
 
 implementation
@@ -294,6 +298,7 @@ begin
     LabelName.Caption := 'name';
     LabelName.Width := Width;
     LabelName.WordWrap := True;
+    LabelName.AutoSize := True;
     LabelName.Alignment := taCenter;
     LabelName.Align := alTop;
     LabelName.BorderSpacing.Around := 3;
@@ -329,8 +334,9 @@ begin
     RadioGroupAction := TGroupbox.Create(self);
     RadioGroupAction.Parent := self;
     RadioGroupAction.Caption := rsActRequest;
-    RadioGroupAction.BorderSpacing.Left:= 3;
+    RadioGroupAction.BorderSpacing.Left := 3;
     RadioGroupAction.Font.Size := tile_radio_font_size;
+    //RadioGroupAction.AutoSize:= true;
     //RadioGroupAction.Alignment := taCenter;
     RadioGroupAction.Align := alTop;
     //RadioGroupAction.OnClick := self.OnClick;
@@ -403,16 +409,7 @@ begin
     lbuninstall.OnClick := rbuninstall.OnClick;
     lbuninstall.OnMouseWheel := scroll;
 
-
-  (*
-  //Button
-  Button1 := TButton.Create(self);
-  Button1.Parent := self;
-  Button1.Caption := 'btn';
-  Button1.Width := 80;
-  Button1.Height := 20;
-  Button1.OnClick := Button1Click;
-  *)
+    RadioGroupAction.Height:= (lbuninstall.Height + 9) * 3;
   except
     on e: Exception do
     begin
@@ -458,8 +455,8 @@ var
   oldpos: integer;
 begin
   oldpos := FopsiClientKiosk.ScrollBox1.VertScrollBar.Position;
-  FopsiClientKiosk.ScrollBox1.VertScrollBar.Position := oldpos + (WheelDelta * -1);
-  logdatei.log('Scroll WheelDelta: ' + IntToStr(WheelDelta), LLDebug2);
+  FopsiClientKiosk.ScrollBox1.VertScrollBar.Position := oldpos + ((WheelDelta * -1)  div 10);
+  logdatei.log('Scroll WheelDelta: ' + IntToStr(WheelDelta div 10), LLDebug2);
 end;
 
 procedure TProductPanel.Button1Click(Sender: TObject);
@@ -514,12 +511,12 @@ begin
       if detail_visible then
       begin
         FopsiClientKiosk.productdetailpanel.Height := 0;
-        detail_visible := false;
+        detail_visible := False;
       end
       else
       begin
         FopsiClientKiosk.productdetailpanel.Height := 185;
-        detail_visible := true;
+        detail_visible := True;
       end;
     end;
   end;
@@ -539,7 +536,16 @@ begin
     if ZMQueryDataSet1.Locate('ProductId', VarArrayOf([pid]),
       [loCaseInsensitive]) then
     begin
-      FopsiClientKiosk.productdetailpanel.Height := 185;
+       if detail_visible then
+      begin
+        FopsiClientKiosk.productdetailpanel.Height := 0;
+        detail_visible := False;
+      end
+      else
+      begin
+        FopsiClientKiosk.productdetailpanel.Height := 185;
+        detail_visible := True;
+      end;
     end;
   end;
 end;
@@ -784,10 +790,28 @@ begin
   logdatei.log('ScrollBox1MouseWheel WheelDelta: ' + IntToStr(WheelDelta), LLDebug2);
 end;
 
+procedure TFopsiClientKiosk.BtnClearSearchEditClick(Sender: TObject);
+begin
+  try
+    screen.Cursor := crHourGlass;
+    if searchedit.Text = '' then
+      FilterOnSearch
+    else
+      searchedit.Text := '';
+  finally
+    screen.Cursor := crDefault;
+  end;
+end;
+
 procedure TFopsiClientKiosk.SpeedButtonReloadClick(Sender: TObject);
 begin
-  //grouplistSelectionChange(Sender, True);
-  reloadDataFromServer;
+  try
+    screen.Cursor := crHourGlass;
+    reloadDataFromServer;
+    FilterOnSearch;
+  finally
+    screen.Cursor := crDefault;
+  end;
 end;
 
 procedure TFopsiClientKiosk.Terminate;
@@ -896,24 +920,26 @@ begin
   if CheckBox1.Checked then
   begin
     // expert mode
-    RadioGroupView.Visible:= true;
-    BitBtnInfo.Visible:= true;
-    SpeedButtonReload.Visible:= true;
-    BtnUpgrade.Visible:= true;
-    SpeedButtonAll.Visible:= true;
-    BitBtnShowAction.Visible:= true;
-    BitBtnStoreAction.Caption:= rsStoreActions;
+    RadioGroupView.Visible := True;
+    BitBtnInfo.Visible := True;
+    SpeedButtonReload.Visible := True;
+    BtnUpgrade.Visible := True;
+    SpeedButtonAll.Visible := True;
+    BitBtnShowAction.Visible := True;
+    BitBtnStoreAction.Caption := rsStoreActions;
+    BitBtnStoreAction.Hint:= rsStoreActionsHint;
   end
   else
   begin
     // standard mode
-    RadioGroupView.Visible:= false;
-    BitBtnInfo.Visible:= false;
-    SpeedButtonReload.Visible:= false;
-    BtnUpgrade.Visible:= false;
-    SpeedButtonAll.Visible:= false;
-    BitBtnShowAction.Visible:= false;
-    BitBtnStoreAction.Caption:= rsInstallNow;
+    RadioGroupView.Visible := False;
+    BitBtnInfo.Visible := False;
+    SpeedButtonReload.Visible := False;
+    BtnUpgrade.Visible := False;
+    SpeedButtonAll.Visible := False;
+    BitBtnShowAction.Visible := False;
+    BitBtnStoreAction.Caption := rsInstallNow;
+    BitBtnStoreAction.Hint:= rsInstallNowHint;
   end;
   repaint;
   Application.ProcessMessages;
@@ -964,8 +990,10 @@ var
   i: integer;
   request: string;
 begin
-  screen.Cursor := crHourGlass;
-  try
+  if TBitBtn(Sender).Caption = rsStoreActions then
+  begin
+    screen.Cursor := crHourGlass;
+    try
     (*
     ProgressBar1.Max := 100;
     ProgressBar1.Min := 0;
@@ -973,25 +1001,43 @@ begin
     ProgressBar1.Enabled:=true;
     ProgressBar1.Visible:=true;
     *)
-    ProcessMess;
-    mythread := Tmythread2.Create(False);
-    //mythread.Priority:=tpLowest;
-    //mythread.Resume;
-    mythread.WaitFor;
+      ProcessMess;
+      mythread := Tmythread2.Create(False);
+      //mythread.Priority:=tpLowest;
+      //mythread.Resume;
+      mythread.WaitFor;
 
-    begin
-      installdlg.Finstalldlg.Memo1.Text := ockdata.getActionrequests.Text;
-      if installdlg.Finstalldlg.Memo1.Text = '' then
-        installdlg.Finstalldlg.Memo1.Text := rsNoActionsFound;
-      installdlg.Finstalldlg.Show;
+      begin
+        installdlg.Finstalldlg.Memo1.Text := ockdata.getActionrequests.Text;
+        if installdlg.Finstalldlg.Memo1.Text = '' then
+          installdlg.Finstalldlg.Memo1.Text := rsNoActionsFound;
+        installdlg.Finstalldlg.Show;
+      end;
+
+    finally
+      mythread.Terminate;
+      Screen.Cursor := crDefault;
+      ProgressBar1.Style := pbstNormal;
+      ProgressBar1.Visible := False;
+      FreeAndNil(mythread);
     end;
-
-  finally
-    mythread.Terminate;
-    Screen.Cursor := crDefault;
-    ProgressBar1.Style := pbstNormal;
-    ProgressBar1.Visible := False;
-    FreeAndNil(mythread);
+  end
+  else
+  begin
+    // rsInstallNow
+    screen.Cursor := crHourGlass;
+    try
+      ProcessMess;
+      mythread := Tmythread2.Create(False);
+      mythread.WaitFor;
+      ockdata.firePushInstallation;
+    finally
+      mythread.Terminate;
+      Screen.Cursor := crDefault;
+      ProgressBar1.Style := pbstNormal;
+      ProgressBar1.Visible := False;
+      FreeAndNil(mythread);
+    end;
   end;
 end;
 
@@ -1111,76 +1157,6 @@ var
   i: integer;
 begin
   ockdata.fetchProductData_by_getKioskProductInfosForClient;
-  (*
-  ProgressBar1.Visible := True;
-  ProgressBarDetail.Visible := True;
-  LabelWait.Visible := True;
-  grouplist.Enabled := False;
-
-  if (grouplist.Items.Count <= 0) or ('' = grouplist.Items.Strings[0]) then
-  begin
-    LogDatei.log('No productgroups found', LLError);
-    Fopsiclientkiosk.StatusBar1.Panels[0].Text := rsNoGroups;
-  end
-  else
-  begin
-    // fill product list
-    if grouplist.SelCount = 0 then
-    begin
-      ; // clear product list
-      ockdata.ZMQUerydataset1.EmptyDataSet;
-      ockdata.ZMQUerydataset1.Open;
-      ockdata.ZMQUerydataset2.EmptyDataSet;
-      ockdata.ZMQUerydataset2.Open;
-      ockdata.ZMQUerydataset2.MasterFields.Clear;
-      ockdata.ZMQUerydataset2.MasterDetailFiltration := False;
-    end
-    else
-    begin
-      ockdata.ZMQUerydataset1.EmptyDataSet;
-      ockdata.ZMQUerydataset1.Open;
-      ockdata.ZMQUerydataset2.EmptyDataSet;
-      ockdata.ZMQUerydataset2.Open;
-      ockdata.ZMQUerydataset2.MasterFields.Clear;
-      ockdata.ZMQUerydataset2.MasterDetailFiltration := False;
-      productIdsList.Clear;
-      if grouplist.Items.Count = 1 then
-      begin
-        fillproductsbygroup(grouplist.Items.Strings[0]);
-        ockdata.fetchProductData;
-      end
-      else
-      begin
-        if grouplist.Selected[0] and (grouplist.Count > 1) then
-        begin
-          // 'All groups' are selected
-          for i := 1 to grouplist.Items.Count - 1 do
-            fillproductsbygroup(grouplist.Items.Strings[i]);
-          ockdata.fetchProductData;
-        end
-        else
-        begin
-          for i := 1 to grouplist.Items.Count - 1 do
-            if grouplist.Selected[i] then
-              fillproductsbygroup(grouplist.Items.Strings[i]);
-          ockdata.fetchProductData;
-        end;
-      end;
-    end;
-    ZMQUerydataset2.MasterFields.Add('ProductId');
-    //ZMQUerydataset2.MasterReferentialKeys.;
-    try
-      ZMQUerydataset2.MasterDetailFiltration := True;
-    except
-    end;
-  end;
-  LabelDataload.Caption := '';
-  LabelDataLoadDetail.Caption := '';
-  ProgressBar1.Visible := False;
-  ProgressBarDetail.Visible := False;
-  LabelWait.Visible := False;
-  grouplist.Enabled := True;
-  *)
   RadioGroupViewSelectionChanged(self);
 end;
 
@@ -1205,6 +1181,10 @@ var
   skinpath: string;
   myini: TInifile;
 begin
+  NotebookProducts.PageIndex := 1;  //tiles
+  FopsiClientKiosk.productdetailpanel.Height := 0;
+  detail_visible := False;
+
   // Load custom skin
   skinpath := Application.Location + PathDelim + 'opsiclientkioskskin' + PathDelim;
   if FileExistsUTF8(skinpath + 'opsiclientkiosk.png') then
@@ -1417,18 +1397,17 @@ end;
 
 procedure TFopsiClientKiosk.SpeedButtonAllClick(Sender: TObject);
 begin
-  if searchedit.Text = '' then
-    FilterOnSearch
-  else
-    searchedit.Text := '';
-  // this shoud call  searchEditChange
-  // so we do nothing else here
-  (*
-  ockdata.ZMQUerydataset1.Filter := '"*"';
-  ockdata.ZMQUerydataset1.Filtered := False;
-  if RadioGroupView.ItemIndex = 1 then
-    rebuildProductTiles;
-    *)
+  try
+    screen.Cursor := crHourGlass;
+    if searchedit.Text = '' then
+      FilterOnSearch
+    else
+      searchedit.Text := '';
+    // this shoud call  searchEditChange
+    // so we do nothing else here
+  finally
+    screen.Cursor := crDefault;
+  end;
 end;
 
 procedure TFopsiClientKiosk.SpeedButtonViewListClick(Sender: TObject);

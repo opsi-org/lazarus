@@ -8,7 +8,12 @@ opsiclientkiosk 4.0.7.8
   * new checkbox 'expert mode' : less buttons if not checked
   * detail panel now with klick-on / klick-off
   * flat tile borders
-  * more left space on radio group
+  * more left space on radiogroup
+  * resize radiogroup
+  * changed colors for Uninstall=red, Setup=green
+  * order by Upper(ProductName)
+  * new clear-searchedit-button 'in' searchedit field
+  * run only one instance
 
 -- detlef oertel <d.oertel@uib.de>  Mon, 29 May 2017 15:00:00 +0000
 

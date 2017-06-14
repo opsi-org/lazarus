@@ -39,7 +39,8 @@ uses
   fileinfo,
   winpeimagereader,
   lcltranslator,
-  datadb;
+  datadb,
+  ockunique;
 
 const
   opsiclientdconf =
@@ -301,7 +302,7 @@ begin
         if ZMQueryDataSet1.Active then
           ZMQueryDataSet1.Close;
         ZMQUerydataset1.SQL.Clear;
-        ZMQUerydataset1.SQL.Add('select * from kioskmaster order by ProductId');
+        ZMQUerydataset1.SQL.Add('select * from kioskmaster order by Upper(ProductName)');
         ZMQUerydataset1.Open;
         if ZMQueryDataSet2.Active then
           ZMQueryDataSet2.Close;
@@ -644,7 +645,7 @@ begin
   if ZMQueryDataSet1.Active then
     ZMQueryDataSet1.Close;
   ZMQUerydataset1.SQL.Clear;
-  ZMQUerydataset1.SQL.Add('select * from kioskmaster order by PRODUCTID');
+  ZMQUerydataset1.SQL.Add('select * from kioskmaster order by Upper(PRODUCTName)');
   ZMQUerydataset1.Open;
   if ZMQueryDataSet2.Active then
     ZMQueryDataSet2.Close;
@@ -1169,6 +1170,13 @@ begin
   LogDatei.log('service_user=' + myclientid, LLNotice);
   logdatei.AddToConfidentials(myhostkey);
   LogDatei.log('host_key=' + myhostkey, LLdebug3);
+  if numberOfProcessInstances(ExtractFileName(ParamStr(0))) > 1 then
+  begin
+    LogDatei.log('A other instance of this program is running - so we abort', LLCritical);
+    LogDatei.Close;
+    halt(1);
+  end;
+
 
   mythread := Tmythread.Create(False);
   FopsiClientKiosk.ProgressBar1.Max := 3;
