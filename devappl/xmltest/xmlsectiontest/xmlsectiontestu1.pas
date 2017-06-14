@@ -121,7 +121,7 @@ begin
   if XMLDocObject.nodeExists('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add"') then
     if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add" // ModifyPartitions', false) then
     begin
-      XMLDocObject.setNodeText('***ModifyPartitions wurde ersetzt***');
+      XMLDocObject.setNodeTextActNode('***ModifyPartitions wurde ersetzt***');
       XMLDocObject.setAttribute('testname','testvalue');
     end;
 
@@ -136,7 +136,7 @@ begin
     if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration', false) then
     begin
       XMLDocObject.makeNode('newnode','','');
-      XMLDocObject.setNodeText('newnode Text setzen');
+      XMLDocObject.setNodeTextActNode('newnode Text setzen');
     end;
 
   // Attribute löschen und setzen :  DeleteAttribute, AddAttribute, SetAttribute
@@ -158,7 +158,7 @@ begin
   // setText: neuen Text setzen. Jeglicher anderer Inhalt wird ersetzt, auch XML_Blätter. Kein XML-Fragment!
   if XMLDocObject.nodeExists ('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // UserData // ProductKey // WillShowUI') then
     if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // UserData // ProductKey // WillShowUI', false) then
-        XMLDocObject.setNodeText('nodeText wurde gesetzt');
+        XMLDocObject.setNodeTextActNode('nodeText wurde gesetzt');
 
   // setText '' : löschen des komplette Knotens
 
@@ -228,19 +228,69 @@ begin
 
   LogDatei.log('vor filter byChildElement, kein filtern ',oslog.LLinfo);
   XMLDocObject.filterByChildElement(true, 'packages');
-  XMLDocObject.logNodeSets;
-  LogDatei.log('nach filter byChildElement ',oslog.LLinfo);
   XMLDocObject.getNextGenerationActNodeSet;
+  // add node
+  LogDatei.log('nach filter byChildElement ',oslog.LLinfo);
+  if XMLDocObject.setActNodeUniqueFromActnodeSet() then
+    LogDatei.log('actnode is set - do anything with actnode ',oslog.LLinfo)
+  else
+    LogDatei.log('actnode can not be set - no change with actnode ',oslog.LLinfo);
+  LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
+                          XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
+  XMLDocObject.makeNode('package','','');
+  XMLDocObject.setNodeTextActNode('thunderbird');
   XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
 
-  // Anhängen von Knoten, wie???
-  XMLDocObject.filterByChildElement(true, 'package');
-  XMLDocObject.getNextGenerationActNodeSet;
+
+  // nach dem Anhängen des neuen Knotens ist actnode der neue Knoten
+  // nochmal den Knoten aus actNodeSet holen
+  if XMLDocObject.setActNodeUniqueFromActnodeSet() then
+    LogDatei.log('actnode is set - do anything with actnode ',oslog.LLinfo)
+  else
+    LogDatei.log('actnode can not be set - no change with actnode ',oslog.LLinfo);
+  LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
+                          XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
+
+  XMLDocObject.makeNode('package','','');
+  XMLDocObject.setNodeTextActNode('pillepalle');
   XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
-  // Löschen des Elements snapper
-    // filterByText arbeitet auf actNodeSet
+
+  // Löschen des Elements mit TextContent snapper
+  // nach dem Anhängen des neuen Knotens ist actnode der neue Knoten
+  // nochmal den Knoten aus actNodeSet holen
+  if XMLDocObject.setActNodeUniqueFromActnodeSet() then
+    LogDatei.log('actnode is set - do anything with actnode ',oslog.LLinfo)
+  else
+    LogDatei.log('actnode can not be set - no change with actnode ',oslog.LLinfo);
+  LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
+                          XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
+  if XMLDocObject.setActnodeIfText('snapper') then
+      begin
+        LogDatei.log('found: package snapper',oslog.LLinfo);
+        XMLDocObject.delNode;
+      end
+      else
+        LogDatei.log('not found: package snapper',oslog.LLinfo);
+  // nochmal neu aufbauen und schauen, ob alles richtig aussieht
+  XMLDocObject.setlengthActNodeSet  (1);
+  XMLDocObject.actnodeset[0] := XMLDocObject.getDocumentElement;
+  for k:= 0 to length(XMLDocObject.actNodeSet)-1 do
+    if XMLDocObject.actNodeSet[k] <> nil then
+      LogDatei.log('actNodeSet <> nil',oslog.LLinfo)
+    else
+      LogDatei.log('actNodeSet = nil',oslog.LLinfo);
+  XMLDocObject.makeNewDerivedNodeSet;
+  XMLDocObject.logNodeSets;
+
+  {
+  // Löschen des Elements mit TextContent snapper
+  // filterByText arbeitet auf actNodeSet
+  // das klappt irgendwie nicht richtig, das derived Nodest sieht merkwürdig aus
+  // und der Knoten kann zwar geholt werden, es wird aber das schließende Tag nicht gelöscht
+  // daher vorherige Lösung
+  XMLDocObject.getNextGenerationActNodeSet;
   if XMLDocObject.filterByText(true, 'snapper') then
     begin
       LogDatei.log('found: package snapper',oslog.LLwarning);
@@ -250,13 +300,16 @@ begin
     begin
       LogDatei.log('not found: package snapper',oslog.LLwarning);
     end;
-  // Übernehmen des/der Knoten/s in actNodeSet ??
   XMLDocObject.logNodeSets;
+  if XMLDocObject.setActNodeUniqueFromActnodeSet() then
+    LogDatei.log('actnode is set - do anything with actnode ',oslog.LLinfo)
+  else
+    LogDatei.log('actnode can not be set - no change with actnode ',oslog.LLinfo);
+  LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
+                          XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
+  XMLDocObject.delNode;
+  }
 
-  // snapper Knoten in actNodeSet
-  XMLDocObject.getNextGenerationActNodeSet;
-  XMLDocObject.makeNewDerivedNodeSet;
-  XMLDocObject.logNodeSets;
 
 
   { anderer Weg über den nodePath und actNode
@@ -390,6 +443,26 @@ begin
     begin
       XMLDocObject.setAttribute('Value','Value wird gesetzt, 4');
     end;
+
+  XMLDocObject.setlengthActNodeSet  (1);
+  XMLDocObject.actnodeset[0] := XMLDocObject.getDocumentElement;
+  for k:= 0 to length(XMLDocObject.actNodeSet)-1 do
+    if XMLDocObject.actNodeSet[k] <> nil then
+      LogDatei.log('actNodeSet <> nil',oslog.LLinfo)
+    else
+      LogDatei.log('actNodeSet = nil',oslog.LLinfo);
+  XMLDocObject.makeNewDerivedNodeSet;
+  XMLDocObject.logNodeSets;
+
+  // filtern nach Attribut key/value
+  //XMLDocObject.filterByAttribute_existing ('Level', '"basic"');
+
+  // filtern nach Attribut key
+  XMLDocObject.filterByAttributeName_existing ('Level');
+
+  XMLDocObject.getNextGenerationActNodeSet;
+  XMLDocObject.makeNewDerivedNodeSet;
+  XMLDocObject.logNodeSets;
 
   memo3.Append(XMLDocObject.getXmlStrings().Text);
   memo3.Repaint;

@@ -17,11 +17,13 @@ type
   private
     ikey : string;
     ivalue: string;
+    iisvalid : boolean;
   public
     // überschreibt den von TCollection geerbten Construktor
     constructor Create(colCollection: TCollection); override;
     property key: string read ikey write ikey;
     property value: string read ivalue write ivalue;
+    property isvalid: boolean read iisvalid write iisvalid;
   end;
 
 
