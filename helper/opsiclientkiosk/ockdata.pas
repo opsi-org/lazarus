@@ -111,6 +111,7 @@ var
   productIdsList: TStringList;
   FileVerInfo: TfileVersionInfo;
   myVersion: string;
+  opsiclientdmode : boolean = true;
 
 
 procedure initdb;
@@ -1121,16 +1122,17 @@ procedure firePushInstallation;
 var
   resultstring, str: string;
 begin
-  // switch to opsiclientd mode
-  readconf2;
+  // switch to opsiclientd mode if we on opsiconfd
+  if not opsiclientdmode then readconf2;
   FreeAndNil(opsidata);
   initConnection(30);
   // opsiclientd mode
   resultstring := MyOpsiMethodCall('fireEvent_software_on_demand', []);
+  closeConnection;
   // switch back to opsiconfd mode
-  readconf;
-  FreeAndNil(opsidata);
-  initConnection(30);
+  if not opsiclientdmode then readconf;
+  //FreeAndNil(opsidata);
+  //initConnection(30);
   // opsiconfd mode
   // may not work if acl.conf is restricted
   //resultstring := MyOpsiMethodCall('hostControlSafe_fireEvent',  ['on_demand', '[' + myclientid + ']']);
@@ -1159,8 +1161,10 @@ begin
   FopsiClientKiosk.ProcessMess;
   myexitcode := 0;
   myerror := '';
+  if opsiclientdmode then readconf2
+  else readconf;
   // opsiconfd mode
-  readconf;
+  //readconf;
   // opsiclientd mode
   //readconf2;
   // do not forget to check firePushInstallation
@@ -1195,6 +1199,7 @@ begin
     FopsiClientKiosk.ProcessMess;
     LogDatei.log('start fetchProductData_by_getKioskProductInfosForClient', LLNotice);
     fetchProductData_by_getKioskProductInfosForClient;
+    closeconnection;
     LogDatei.log('Handle products done', LLNotice);
     FopsiClientKiosk.LabelDataload.Caption := 'Handle Products';
     FopsiClientKiosk.ProgressBar1.Position := 4;

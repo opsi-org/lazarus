@@ -1,26 +1,26 @@
 [TitleLabel]
-Text= opsi Client Kiosk
+Text= Opsi Client Kiosk
 FontName = Arial
-FontSize = 20
-FontColor = clBlack
-FontBold = true
+FontSize = 15
+FontColor = clWhite
+FontBold = false
 FontItalic = false
 FontUnderline = false
 
 [Tile]
-width = 200
+width = 220
 height = 200
-color =  clSkyBlue
+color =  clCream
 FontName = Arial
 FontSize = 12
 FontColor = clBlack
-FontBold = true
+FontBold = false
 FontItalic = false
 FontUnderline = false
 
 [TileRadio]
 fontsize = 10
 none_color = clBlack
-uninstall_color = clBlue
-setup_color = clRed
+uninstall_color = clRed
+setup_color = clGreen
 

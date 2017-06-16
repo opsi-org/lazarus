@@ -47,9 +47,10 @@ type
     lbsetup: TLabel;
     lbnone: TLabel;
     lbuninstall: TLabel;
-    Button1: TButton;
+    //iconsetup: Timage;
+    //Button1: TButton;
 
-    procedure Button1Click(Sender: TObject);
+//    procedure Button1Click(Sender: TObject);
     procedure TileActionChanged(Sender: TObject);
     procedure ProductTileClick(Sender: TObject);
     procedure ProductTileChildClick(Sender: TObject);
@@ -201,6 +202,7 @@ var
   lastOrderDirAsc: boolean = True;
   lastOrderCol: string;
   detail_visible: boolean = False;
+  skinpath: string;
 
 
 resourcestring
@@ -386,6 +388,12 @@ begin
     lbsetup.Enabled := False;
     lbsetup.OnClick := rbsetup.OnClick;
     lbsetup.OnMouseWheel := scroll;
+    //iconsetup:= Timage.Create(self);
+    //iconsetup.Parent := RadioGroupAction;
+    //iconsetup.top := rbsetup.top;
+    //iconsetup.Height:= lbsetup.Height;
+    //iconsetup.Align:=alRight;
+    //iconsetup.Picture.LoadFromFile(skinpath+Pathdelim+'setup.png');
 
     // uninstall
     rbuninstall := TRadioButton.Create(self);
@@ -459,10 +467,6 @@ begin
   logdatei.log('Scroll WheelDelta: ' + IntToStr(WheelDelta div 10), LLDebug2);
 end;
 
-procedure TProductPanel.Button1Click(Sender: TObject);
-begin
-  //form1.Memo1.Append('click: '+TButton(sender).Parent.tag);
-end;
 
 procedure TProductPanel.TileActionChanged(Sender: TObject);
 var
@@ -1178,7 +1182,6 @@ end;
 
 procedure TFopsiClientKiosk.FormCreate(Sender: TObject);
 var
-  skinpath: string;
   myini: TInifile;
 begin
   NotebookProducts.PageIndex := 1;  //tiles
@@ -1192,18 +1195,18 @@ begin
     ImageHeader.Picture.LoadFromFile(skinpath + 'opsiclientkiosk.png');
   end;
   //tile
-  tile_color := 'clSkyBlue';
+  tile_color := 'clCream';
   tile_Font_Name := 'Arial';
-  tile_Font_Size := 11;
+  tile_Font_Size := 12;
   tile_Font_Color := 'clBlack';
   tile_Font_Bold := False;
   tile_Font_Italic := False;
   tile_Font_Underline := False;
-  tile_width := 200;
+  tile_width := 220;
   tile_height := 200;
   //TileRadio
-  tile_radio_setup_color := 'clRed';
-  tile_radio_uninstall_color := 'clBlue';
+  tile_radio_setup_color := 'clGreen';
+  tile_radio_uninstall_color := 'clRed';
   tile_radio_none_color := 'clBlack';
   tile_radio_font_size := 10;
   if FileExists(skinpath + 'opsiclientkiosk.ini') then
@@ -1245,16 +1248,6 @@ begin
       tile_radio_font_size);
 
     myini.Free;
-    (*
-    [TitleLabel]
-    Text= opsi Client Kiosk
-    FontName = Arial
-    FontSize = 20
-    FontColor = $00000000
-    FontBold = false
-    FontItalic = false
-    FontUnderline = false
-    *)
   end;
 
   // skinpath in opsiclientagent custom dir
@@ -1279,16 +1272,6 @@ begin
     TitleLabel.Font.Underline :=
       strToBool(myini.ReadString('TitleLabel', 'FontUnderline', 'False'));
     myini.Free;
-    (*
-    [TitleLabel]
-    Text= opsi Client Kiosk
-    FontName = Arial
-    FontSize = 20
-    FontColor = $00000000
-    FontBold = false
-    FontItalic = false
-    FontUnderline = false
-    *)
   end;
   GetDefaultLang;
   //grouplist.Clear;
