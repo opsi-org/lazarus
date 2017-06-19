@@ -11,6 +11,15 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 ##################################################################
 
+opsi-winst/opsi-script (4.11.7.0) experimental; urgency=low
+
+  * new unit osdefinedfunctions
+  * osparser: support for defined functions
+  * osparser: moved sync between FExtremeErrorLevel and extremeErrorLevel before final output
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 19 Jun 2017:15:00:00 +0200
+
+
 opsi-winst/opsi-script (4.11.6.13) stable; urgency=low
 
   * oswebservice: typo: lastcation

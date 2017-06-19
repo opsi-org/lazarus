@@ -158,6 +158,7 @@ type
                 tsLoadProductProperties,
                 tsDefineVar, tsDefineStringList,
                 tsDefineFunction,
+                tsEndFunction,
                 tsShellcall,
                 // tsSetVar should be the last here for loop in FindKindOfStatement
                 tsSetVar);
@@ -193,6 +194,8 @@ type
   TShutdownRequest = (tsrNoShutdown, tsrRegisterForShutdown);
 
   TScriptMode = (tsmMachine, tsmLogin);
+
+  TDefindeFunctionsArray = Array of TOsDefinedFunction;
 
 
 
@@ -578,6 +581,8 @@ var
   Script : TuibInstScript;
   scriptsuspendstate : boolean;
   scriptstopped : boolean;
+  definedFunctionArray : TDefindeFunctionsArray;
+  definedFunctioncounter : integer = 0;
 
 
 
@@ -15727,6 +15732,7 @@ function TuibInstScript.doAktionen (const Sektion: TWorkSection; const CallingSe
   LppProductId : string='';
   newDefinedfunction : TOsDefinedFunction;
   dummylist : TStringList;
+  endofDefFuncFound : boolean;
 
 begin
   result := tsrPositive;
@@ -18502,8 +18508,51 @@ begin
                  end
                  else
                  begin
+                   // get all lines until 'endfunction'
+                   endofDefFuncFound := false;
+                   repeat
+                     // get next line of section
+                     inc(i);
+                     if (i < Sektion.Count) then
+                     begin
+                       Remaining := trim (Sektion.strings [i]);
+                       myline := remaining;
+                       GetWord (Remaining, Expressionstr, Remaining, WordDelimiterSet4);
+                       StatKind := FindKindOfStatement (Expressionstr, SectionSpecifier, call);
+                       if StatKind = tsEndFunction then
+                       begin
+                         endofDefFuncFound := true;
+                         // this line is the end and also part of the defined function
+                         newDefinedfunction.addContent(myline);
+                       end
+                       else
+                       begin
+                         // this line is part of the defined function
+                         newDefinedfunction.addContent(myline);
+                       end;
+                     end;
+                   until endofDefFuncFound or (i >= Sektion.Count - 1);
+                   if not endofDefFuncFound then
+                   begin
+                     LogDatei.log('Found DefFunc without EndFunc',LLCritical);
+                     reportError (Sektion, i, Expressionstr, 'Found DefFunc without EndFunc');
+                   end
+                   else
+                   begin
+                     // endfunction found
+                     // append new defined function to the stored (known) functions
+                     inc(definedFunctioncounter);
+                     SetLength(definedFunctionArray, definedFunctioncounter);
+                     definedFunctionArray[definedFunctioncounter-1] := newDefinedfunction;
+                     LogDatei.log('Added defined function:: '+newDefinedfunction.Name+' to the known functions',LLInfo);
+                   end
                  end;
                End;
+
+               tsEndFunction:
+               Begin
+                 // nothing to do
+               end;
 
 
               tsSetVar:
@@ -19210,6 +19259,10 @@ begin
 
   LogDatei.LogSIndentLevel := 0;
 
+  if Script.FExtremeErrorLevel < extremeErrorLevel
+  then extremeErrorLevel := Script.FExtremeErrorLevel;
+
+
   ps := ('___________________');
   LogDatei.log (ps, LLessential);
   ps := ('script finished: ');
@@ -19267,8 +19320,11 @@ begin
     LogDatei.log ('Temp cmd files deleted, next: free script ', LLDebug2);
   end;
 
+  (*
+  moved before final output
   if Script.FExtremeErrorLevel < extremeErrorLevel
   then extremeErrorLevel := Script.FExtremeErrorLevel;
+  *)
 
   // reset current dir to the start value
   SetCurrentDir(opsiWinstStartdir);
@@ -19422,6 +19478,7 @@ begin
   PStatNames^ [tsSetVar]              := 'Set';
   PStatNames^ [tsShellCall]           := 'shellCall';
   PStatNames^ [tsDefineFunction]      := 'DefFunc';
+  PStatNames^ [tsEndFunction]         := 'EndFunc';
 
 
   runProfileActions := false;

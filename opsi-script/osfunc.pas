@@ -630,6 +630,7 @@ const
   WordDelimiterSet3 = [' ', #9, '=', '[', ']', '(', ')', '"', '''', ',', '+', ':'];
   WordDelimiterSet2 = [' ', #9, '"', ''''];
   WordDelimiterSet4 = [' ', #9, '=', '[', ']', '('];
+  WordDelimiterSet5 = [' ', #9, '('];
   WordDelimiterWhiteSpace = [' ', #9];
 
   ddeTimerInterval = 100;
