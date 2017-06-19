@@ -11023,6 +11023,8 @@ var
    seconds : String='';
    ActionResult : TSectionResult=0;
    mydouble : Double;
+   funcindex : integer = 0;
+   funcname : string;
 
 
 
@@ -11035,10 +11037,39 @@ begin
  slist := TStringlist.create;
  StartIndentLevel := LogDatei.LogSIndentLevel;
 
- (* string variable? *)
+ // defined local function ?
+ GetWord (s0, funcname, r, WordDelimiterSet5);
+ FuncIndex := definedFunctionNames.IndexOf (LowerCase (funcname));
+ // string variable?
  GetWord (s0, s, r, WordDelimiterSet3);
  VarIndex := VarList.IndexOf (LowerCase (s));
- if VarIndex >= 0 then
+
+
+ // defined local function ?
+ if FuncIndex >= 0 then
+ begin
+   if not (definedFunctionArray[FuncIndex].datatype = dfpString) then
+   begin
+     // error
+   end
+   else
+   begin
+     if definedFunctionArray[FuncIndex].call(r) then
+     begin
+       r := '';
+       StringResult := definedFunctionArray[FuncIndex].Resultstring;
+       syntaxCheck := true;
+     end
+     else
+     begin
+       // defined function call failed
+       LogDatei.log('Call of defined function: '+funcname+' failed',LLError);
+     end;
+   end;
+ end
+
+ // string variable?
+ else if VarIndex >= 0 then
  begin
    if ValuesList.count - 1 < VarIndex
    then
@@ -11052,7 +11083,7 @@ begin
    End
  end
 
- (* string constant?  *)
+ // string constant?
  else if (length (s0) > 0) and (s0[1] = '"') then
  Begin
    r := copy (s0, 2, length (s0)-1);
@@ -18544,6 +18575,7 @@ begin
                      inc(definedFunctioncounter);
                      SetLength(definedFunctionArray, definedFunctioncounter);
                      definedFunctionArray[definedFunctioncounter-1] := newDefinedfunction;
+                     definedFunctionNames.Append(newDefinedfunction.Name);
                      LogDatei.log('Added defined function:: '+newDefinedfunction.Name+' to the known functions',LLInfo);
                    end
                  end;

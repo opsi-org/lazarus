@@ -38,6 +38,9 @@ type
     DFcontent : TStringList;
     DFLocalVarList : Array of TOsDefinedLocalVar;
     DFResultType : TosdfDataTypes;
+    DFResultString : String;
+    DFResultList : Tstringlist;
+    DFResultBool : boolean;
 
   public
     constructor create;
@@ -61,13 +64,19 @@ type
     function addLocalVarValueBool(name : string; value : boolean) : boolean;
     function addLocalVar(name : string; datatype : TosdfDataTypes) : boolean;
 
-    property Name : String read DFName write DFName;
+    function call(paramstr : string) : boolean;
+
+    property Name : String read DFName;
+    property datatype : TosdfDataTypes read DFResultType;
+    property Resultstring : String read DFResultString;
+    property ResultBool : boolean read DFResultBool;
+    property ResultList : Tstringlist read DFResultList;
   end;
 
 var
   osdfParameterTypesNames : TosdfDataTypesNames;
   remaining : string;
- // PParameterTypesNames : TPStatementNames;
+  definedFunctionNames : Tstringlist;
 
 implementation
 uses
@@ -512,9 +521,17 @@ begin
     until (i >= arraycounter) or found;
 end;
 
+function  TOsDefinedFunction.call(paramstr : string) : boolean;
+begin
+  // test
+  result := true;
+  DFResultString := 'huhu';
+end;
+
 
 begin
   osdfParameterTypesNames[dfpString] :=  'String';
   osdfParameterTypesNames[dfpStringlist] :=  'Stringlist';
   osdfParameterTypesNames[dfpBoolean] :=  'Boolean';
+  definedFunctionNames := TStringList.Create;
 end.
