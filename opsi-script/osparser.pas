@@ -195,7 +195,7 @@ type
 
   TScriptMode = (tsmMachine, tsmLogin);
 
-  TDefindeFunctionsArray = Array of TOsDefinedFunction;
+
 
 
 
@@ -581,8 +581,6 @@ var
   Script : TuibInstScript;
   scriptsuspendstate : boolean;
   scriptstopped : boolean;
-  definedFunctionArray : TDefindeFunctionsArray;
-  definedFunctioncounter : integer = 0;
 
 
 
@@ -9250,6 +9248,8 @@ var
   oldDisableWow64FsRedirectionStatus: pointer=nil;
   dummybool : boolean;
   Wow64FsRedirectionDisabled, boolresult : boolean;
+  funcname : string;
+  funcindex : integer;
 
 begin
 
@@ -9270,6 +9270,9 @@ begin
 
  else
  Begin
+    // defined local function ?
+   GetWord (s0, funcname, r, WordDelimiterSet5);
+   FuncIndex := definedFunctionNames.IndexOf (LowerCase (funcname));
    GetWord (s0, s, r, WordDelimiterSet1);  // getting word s
    list := TXStringList.create; //list to return
    slist := TStringList.Create;  // if we need a real TStringlist
@@ -9283,7 +9286,31 @@ begin
       syntaxCheck := true;
    end
 
-   // Funktion?
+   // defined functions
+   else if FuncIndex >= 0 then
+   begin
+     if not (definedFunctionArray[FuncIndex].datatype = dfpStringlist) then
+     begin
+       // error
+       syntaxCheck := false;
+       LogDatei.log('Syntax Error: defined function: '+funcname+' is not from type stringlist.',LLError);
+     end
+     else
+     begin
+       if definedFunctionArray[FuncIndex].call(r) then
+       begin
+         r := '';
+         list.Text := definedFunctionArray[FuncIndex].ResultList.Text;
+         syntaxCheck := true;
+       end
+       else
+       begin
+         // defined function call failed
+         LogDatei.log('Call of defined function: '+funcname+' failed',LLError);
+         syntaxCheck := false;
+       end;
+     end;
+   end
 
     else if LowerCase (s) = LowerCase ('shellcall')
    then
@@ -11051,6 +11078,8 @@ begin
    if not (definedFunctionArray[FuncIndex].datatype = dfpString) then
    begin
      // error
+     syntaxCheck := false;
+     LogDatei.log('Syntax Error: defined function: '+funcname+' is not from type string.',LLError);
    end
    else
    begin
@@ -11064,7 +11093,24 @@ begin
      begin
        // defined function call failed
        LogDatei.log('Call of defined function: '+funcname+' failed',LLError);
+       syntaxCheck := false;
      end;
+   end;
+ end
+
+ // local variable
+ else if isVisibleLocalVar(s,funcindex)  then
+ begin
+   if not (definedFunctionArray[FuncIndex].getLocalVarDatatype(s) = dfpString) then
+   begin
+     // type error
+     InfoSyntaxError := 'Syntax Error: Type mismatch: String expected but the visible local variable: '
+        +s+' is from type: '+osdfParameterTypesNames[definedFunctionArray[FuncIndex].getLocalVarDatatype(s)];
+   end
+   else
+   begin
+     StringResult := definedFunctionArray[FuncIndex].getLocalVarValueString(s);
+     syntaxCheck := true;
    end;
  end
 
@@ -11074,7 +11120,7 @@ begin
    if ValuesList.count - 1 < VarIndex
    then
    Begin
-    InfoSyntaxError := 'kein Stringwert auf Variable';
+    InfoSyntaxError := 'The variable: '+s+' has no string value';
    End
    else
    Begin
@@ -14079,6 +14125,8 @@ var
   tmpbool : boolean;
   FindResultcode: integer = 0;
   flushhandle : Thandle;
+  funcname : string;
+  funcindex : integer;
 
 
 
@@ -14093,8 +14141,38 @@ begin
 
  LogDatei.log ('EvaluateBoolean: Parsing: '+Input+' ', LLDebug3);
 
+
+ // defined local function ?
+ GetWord (Input, funcname, r, WordDelimiterSet5);
+ FuncIndex := definedFunctionNames.IndexOf (LowerCase (funcname));
+  if FuncIndex >= 0 then
+  begin
+    if not (definedFunctionArray[FuncIndex].datatype = dfpBoolean) then
+    begin
+      // error
+      syntaxCheck := false;
+      LogDatei.log('Syntax Error: defined function: '+funcname+' is not from type boolean.',LLError);
+    end
+    else
+    begin
+      if definedFunctionArray[FuncIndex].call(r) then
+      begin
+        r := '';
+        BooleanResult := definedFunctionArray[FuncIndex].ResultBool;
+        syntaxCheck := true;
+      end
+      else
+      begin
+        // defined function call failed
+        LogDatei.log('Call of defined function: '+funcname+' failed',LLError);
+        syntaxCheck := false;
+      end;
+    end;
+  end
+
+
  // geklammerter Boolescher Ausdruck
- if Skip ('(', Input, r, sx)
+ else if Skip ('(', Input, r, sx)
  then
  begin
    if EvaluateBoolean (r, r, BooleanResult, NestingLevel+1, InfoSyntaxError)
@@ -15384,6 +15462,27 @@ function TuibInstScript.doSetVar (const section: TuibIniScript; const Expression
    r : String='';
    VarIndex : Integer=0;
    list : TXStringList;
+   funcindex : integer = 0;
+
+   function isStringlistVar(varname : string) : boolean;
+   begin
+     result := false;
+     if isVisibleLocalVar(VarName,funcindex)  then
+       if definedFunctionArray[FuncIndex].getLocalVarDatatype(varname) = dfpStringlist then
+         result := true;
+     if listOfStringLists.IndexOf(LowerCase(VarName)) >= 0 then
+         result := true;
+   end;
+
+   function isStringVar(varname : string) : boolean;
+   begin
+     result := false;
+     if isVisibleLocalVar(VarName,funcindex)  then
+       if definedFunctionArray[FuncIndex].getLocalVarDatatype(varname) = dfpString then
+         result := true;
+     if VarList.IndexOf (LowerCase (VarName)) >= 0 then
+         result := true;
+   end;
 
 begin
   result := false;
@@ -15393,48 +15492,51 @@ begin
      InfoSyntaxError := 'variable expected'
   else
   Begin
-    VarIndex := listOfStringLists.IndexOf(LowerCase(VarName));
-    if VarIndex >= 0 // we should get a StringList
+    //VarIndex := listOfStringLists.IndexOf(LowerCase(VarName));
+    if isStringlistVar(Varname) // we should get a StringList
     then
     Begin
       if    Skip ('=', r, r, InfoSyntaxError)
         and produceStringList (section, r, Remaining, list,  InfoSyntaxError)
       then
-      try
-        ContentOfStringLists.Items[VarIndex] := list;
-        result := true;
-      except
-      end;
-
-      {
-      if result
-      then
+      if isVisibleLocalVar(VarName,funcindex)  then
       begin
-         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-         LogDatei.log ('lines retrieved:', LevelComplete);
-         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-         LogDatei.logStringList(list, LevelComplete);
-         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 4;
+        // local var
+        result := definedFunctionArray[FuncIndex].setLocalVarValueList(varname,list);
       end
-      }
-
+      else
+      begin
+        try
+          ContentOfStringLists.Items[VarIndex] := list;
+          result := true;
+        except
+        end;
+      end;
     End
     else
     Begin // it must be a string value
-      VarIndex := VarList.IndexOf (LowerCase (VarName));
-      if VarIndex < 0
+      if not isStringVar(varname)
       then
-        InfoSyntaxError := 'Variable unbekannt'
+        InfoSyntaxError := 'Unknown variable name: '+VarName
       else
       Begin
         if    Skip ('=', r, r, InfoSyntaxError)
           and EvaluateString (r, Remaining, VarValue, InfoSyntaxError)
         then
         Begin
-          try
-            ValuesList [VarIndex] := VarValue;
-            result := true;
-          except
+          if isVisibleLocalVar(VarName,funcindex)  then
+          begin
+            // local var
+            result := definedFunctionArray[FuncIndex].setLocalVarValueString(varname,VarValue);
+          end
+          else
+          begin
+            try
+              VarIndex := VarList.IndexOf (LowerCase (VarName));
+              ValuesList [VarIndex] := VarValue;
+              result := true;
+            except
+            end;
           end;
         End
       End;
@@ -15444,7 +15546,7 @@ begin
       Begin
         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
         LogDatei.log
-        ('The value of the variable "'+Varname+'" is now: "' + VarValue + '"', LevelComplete);
+        ('The value of the variable "'+Varname+'" is now: "' + VarValue + '"', LLInfo);
         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
       End;
     End;
@@ -18544,9 +18646,9 @@ begin
                    repeat
                      // get next line of section
                      inc(i);
-                     if (i < Sektion.Count) then
+                     if (i <= Sektion.Count) then
                      begin
-                       Remaining := trim (Sektion.strings [i]);
+                       Remaining := trim (Sektion.strings [i-1]);
                        myline := remaining;
                        GetWord (Remaining, Expressionstr, Remaining, WordDelimiterSet4);
                        StatKind := FindKindOfStatement (Expressionstr, SectionSpecifier, call);
@@ -18573,6 +18675,7 @@ begin
                      // endfunction found
                      // append new defined function to the stored (known) functions
                      inc(definedFunctioncounter);
+                     newDefinedfunction.Index:= definedFunctioncounter-1;
                      SetLength(definedFunctionArray, definedFunctioncounter);
                      definedFunctionArray[definedFunctioncounter-1] := newDefinedfunction;
                      definedFunctionNames.Append(newDefinedfunction.Name);
@@ -19279,6 +19382,8 @@ begin
       extremeErrorLevel := levelFatal;
     End;
   end;
+
+  freeDefinedFunctions;
 
 
   {$IFDEF GUI}
