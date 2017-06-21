@@ -9297,7 +9297,7 @@ begin
      end
      else
      begin
-       if definedFunctionArray[FuncIndex].call(r) then
+       if definedFunctionArray[FuncIndex].call(r,r) then
        begin
          r := '';
          list.Text := definedFunctionArray[FuncIndex].ResultList.Text;
@@ -11052,6 +11052,7 @@ var
    mydouble : Double;
    funcindex : integer = 0;
    funcname : string;
+   boolresult : boolean;
 
 
 
@@ -11083,9 +11084,8 @@ begin
    end
    else
    begin
-     if definedFunctionArray[FuncIndex].call(r) then
+     if definedFunctionArray[FuncIndex].call(r,r) then
      begin
-       r := '';
        StringResult := definedFunctionArray[FuncIndex].Resultstring;
        syntaxCheck := true;
      end
@@ -12219,6 +12219,64 @@ begin
              ArbeitsSektion.Free;
 ///////////////////
      End
+ end
+
+ else if LowerCase (s) = LowerCase ('boolToString') then
+ begin
+  if Skip ('(', r, r, InfoSyntaxError)
+  then
+  begin
+   StringResult := '';
+   // backup given expr
+   r1 := r;
+   if EvaluateString (r1, r, s1, InfoSyntaxError) then
+   begin
+    try
+     boolresult := strtobool(s1);
+     if Skip (')', r,r, InfoSyntaxError)
+     then
+     Begin
+      syntaxCheck := true;
+      try
+        StringResult := BoolToStr(boolresult,true);
+      except
+        LogDatei.log('Error: boolToString: string expression' + s1 + ' has no boolean value', LLError);
+        StringResult := '';
+      end;
+     End;
+     except
+       LogDatei.log('Error: boolToString: string expression' + s1 + ' has no boolean value', LLDebug2);
+       StringResult := '';
+     end;
+   end;
+   if StringResult = '' then
+   begin
+     // r1 is not a standard boolean string representation
+     // let us try boolean string expression
+     intresult := 0;
+     if EvaluateBoolean (r1, r, boolresult, intresult, InfoSyntaxError)
+     then
+     begin
+       if Skip (')', r,r, InfoSyntaxError)
+       then
+       Begin
+        syntaxCheck := true;
+        try
+          StringResult := BoolToStr(boolresult,true);
+        except
+          LogDatei.log('Error: boolToString: string expression' + r + ' has no boolean value', LLError);
+          StringResult := '';
+        end;
+       End;
+     end
+     else
+     begin
+       // EvaluateBoolean = false
+       LogDatei.log('Error: boolToString: string expression' + r + ' has no boolean value', LLError);
+       StringResult := '';
+     end;
+   end;
+  end;
  end
 
 
@@ -14142,6 +14200,7 @@ begin
  LogDatei.log ('EvaluateBoolean: Parsing: '+Input+' ', LLDebug3);
 
 
+ (*
  // defined local function ?
  GetWord (Input, funcname, r, WordDelimiterSet5);
  FuncIndex := definedFunctionNames.IndexOf (LowerCase (funcname));
@@ -14169,10 +14228,11 @@ begin
       end;
     end;
   end
+  *)
 
 
  // geklammerter Boolescher Ausdruck
- else if Skip ('(', Input, r, sx)
+ if Skip ('(', Input, r, sx)
  then
  begin
    if EvaluateBoolean (r, r, BooleanResult, NestingLevel+1, InfoSyntaxError)
@@ -14940,7 +15000,23 @@ begin
    end;
  End
 
-
+ else if Skip ('stringToBool', Input, r, InfoSyntaxError)
+ then
+ begin
+    if Skip ('(', r, r, InfoSyntaxError)
+    then if EvaluateString (r, r, s1, InfoSyntaxError)
+    then if Skip (')', r, r, InfoSyntaxError)
+    then
+    Begin
+      syntaxCheck := true;
+      try
+        BooleanResult := StrToBool (s1);
+      except
+        BooleanResult := false;
+        logdatei.log('Error: stringToBool: given string expression is not a boolean value: "'+s1+' Defaulting to false',LLError);
+      end
+    end;
+ end
 (*
  else  if AnsiStartsText('CompareDotSeparatedNumbers', trim(Input))
        and AnsiContainsText(Input,'(')

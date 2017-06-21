@@ -10,7 +10,8 @@ uses
   osfunc;
 
 type
-  TosdfDataTypes = (dfpString,dfpStringlist,dfpBoolean);
+  //TosdfDataTypes = (dfpString,dfpStringlist,dfpBoolean);
+  TosdfDataTypes = (dfpString,dfpStringlist);
   TosdfDataTypesNames = Array [TosdfDataTypes] of String [50];
 //  TPosdfParameterTypesNames = TosdfParameterTypesNames^;
 
@@ -26,7 +27,7 @@ type
       varName : string;
       varDataType : TosdfDataTypes;
       varValueString : String;
-      varValueBool : String;  // has to be string, since opsi-script do not know boolean variables
+      //varValueBool : String;  // has to be string, since opsi-script do not know boolean variables
       VarValueList : Tstringlist;
     end;
 
@@ -40,7 +41,7 @@ type
     DFResultType : TosdfDataTypes;
     DFResultString : String;
     DFResultList : Tstringlist;
-    DFResultBool : boolean;
+    //DFResultBool : boolean;
     DFindex : integer;
 
   public
@@ -58,22 +59,22 @@ type
     function getLocalVarDatatype(name : string) : TosdfDataTypes;
     function getLocalVarValueString(name : string) : string;
     function getLocalVarValueList(name : string) : Tstringlist;
-    function getLocalVarValueBool(name : string) : boolean;
+    //function getLocalVarValueBool(name : string) : boolean;
     function setLocalVarValueString(name : string; value : string) : boolean;
     function setLocalVarValueList(name : string; value : Tstringlist) : boolean;
-    function setLocalVarValueBool(name : string; value : boolean) : boolean;
+    //function setLocalVarValueBool(name : string; value : boolean) : boolean;
     function addLocalVarValueString(name : string; value : string) : boolean;
     function addLocalVarValueList(name : string; value : Tstringlist) : boolean;
-    function addLocalVarValueBool(name : string; value : boolean) : boolean;
+    //function addLocalVarValueBool(name : string; value : boolean) : boolean;
     function addLocalVar(name : string; datatype : TosdfDataTypes) : boolean;
 
-    function parseCallParameter(paramline : string; var errorstr : string) : boolean;
-    function call(paramline : string) : boolean;
+    function parseCallParameter(paramline : string; var remaining : string;  var errorstr : string) : boolean;
+    function call(paramline : string; var remaining : string) : boolean;
 
     property Name : String read DFName;
     property datatype : TosdfDataTypes read DFResultType;
     property Resultstring : String read DFResultString;
-    property ResultBool : boolean read DFResultBool;
+    //property ResultBool : boolean read DFResultBool;
     property ResultList : Tstringlist read DFResultList;
     property Index : integer read DFindex write DFindex;
   end;
@@ -125,11 +126,11 @@ begin
     result := true;
     ftype := dfpStringlist;
   end
-  else if LowerCase(str) = LowerCase(osdfParameterTypesNames[dfpBoolean]) then
-  begin
-    result := true;
-    ftype := dfpBoolean;
-  end;
+  //else if LowerCase(str) = LowerCase(osdfParameterTypesNames[dfpBoolean]) then
+  //begin
+  //  result := true;
+  //  ftype := dfpBoolean;
+  //end;
 end;
 
 function TOsDefinedFunction.validIdentifier(identifier : string; var errorstr : string) : boolean;
@@ -247,12 +248,12 @@ begin
                   DFparamList[paramcounter].paramDataType:=dfpStringlist;
                   addLocalVar(paramname,dfpStringlist);
                 end
-                else if lowercase(paramtype) = lowercase(osdfParameterTypesNames[dfpBoolean]) then
-                begin
-                  // Boolean type
-                  DFparamList[paramcounter].paramDataType:=dfpBoolean;
-                  addLocalVar(paramname,dfpBoolean);
-                end
+                //else if lowercase(paramtype) = lowercase(osdfParameterTypesNames[dfpBoolean]) then
+                //begin
+                //  // Boolean type
+                //  DFparamList[paramcounter].paramDataType:=dfpBoolean;
+                //  addLocalVar(paramname,dfpBoolean);
+                //end
                 else
                 begin
                   // given param type not valid
@@ -296,7 +297,7 @@ begin
             case DFResultType of
               dfpString : addLocalVar('$result$',dfpString);
               dfpStringlist : addLocalVar('$result$',dfpStringlist);
-              dfpBoolean : addLocalVar('$result$',dfpBoolean);
+              //dfpBoolean : addLocalVar('$result$',dfpBoolean);
             end;
 
           end;
@@ -393,6 +394,7 @@ begin
   else LogDatei.log('Syntax Error: Double definition of local variable: '+name,LLCritical );
 end;
 
+(*
 function TOsDefinedFunction.addLocalVarValueBool(name : string; value : boolean) : boolean;
 var
   arraycounter : integer;
@@ -410,6 +412,7 @@ begin
   end
   else LogDatei.log('Syntax Error: Double definition of local variable: '+name,LLCritical );
 end;
+*)
 
 function TOsDefinedFunction.addLocalVarValueList(name : string; value : tstringlist) : boolean;
 var
@@ -450,6 +453,7 @@ begin
   else LogDatei.log('Syntax Error: No definition of local variable: '+name,LLCritical );
 end;
 
+(*
 function TOsDefinedFunction.setLocalVarValueBool(name : string; value : boolean) : boolean;
 var
   arrayindex : integer;
@@ -468,6 +472,7 @@ begin
   end
   else LogDatei.log('Syntax Error: No definition of local variable: '+name,LLCritical );
 end;
+*)
 
 function TOsDefinedFunction.setLocalVarValueList(name : string; value : Tstringlist) : boolean;
 var
@@ -530,6 +535,7 @@ begin
     until (i >= arraycounter) or found;
 end;
 
+(*
 function TOsDefinedFunction.getLocalVarValueBool(name : string) : boolean;
 var
   arraycounter,i : integer;
@@ -550,6 +556,7 @@ begin
       inc(i);
     until (i >= arraycounter) or found;
 end;
+*)
 
 function TOsDefinedFunction.getLocalVarDatatype(name : string) : TosdfDataTypes;
 var
@@ -566,7 +573,7 @@ end;
 
 
 
-function TOsDefinedFunction.parseCallParameter(paramline : string; var errorstr : string) : boolean;
+function TOsDefinedFunction.parseCallParameter(paramline : string; var remaining : string; var errorstr : string) : boolean;
 var
   paramname : string;
     paramstr : string;
@@ -576,7 +583,8 @@ var
     paramlistvalue : TXStringlist;
   paramcounter : integer;
   syntax_ok, endOfParamlist : boolean;
-  remaining,r : string;
+  //remaining,
+  r : string;
   section : TuibIniScript;
   NestingLevel : Integer = 0;
 begin
@@ -640,6 +648,7 @@ begin
                                 LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is a stringlist',LLDebug2);
                               end;
                             end;
+            (*
             dfpBoolean :    begin
                               if not Script.EvaluateBoolean(paramstr,r,paramboolvalue,NestingLevel,errorstr) then
                               begin
@@ -654,6 +663,7 @@ begin
                                 LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is boolean: '+BoolToStr(paramboolvalue),LLDebug2);
                               end;
                             end;
+                            *)
           end; // end case
         end; // reference or value
 
@@ -673,7 +683,7 @@ end;
 
 
 // run the function
-function  TOsDefinedFunction.call(paramline : string) : boolean;
+function  TOsDefinedFunction.call(paramline : string; var remaining : string) : boolean;
 var
   errorstr : string;
   section : TWorkSection;
@@ -685,7 +695,7 @@ begin
   inc(inDefinedFuncNestCounter);
   definedFunctionsCallStack.Append(InttoStr(DFIndex));
   //parse parameter
-  if not parseCallParameter(paramline, errorstr) then
+  if not parseCallParameter(paramline, remaining, errorstr) then
   begin
     // parse parameter failed
     LogDatei.log('Syntax Error: Parameter parsing failed: '+errorstr,LLCritical);
@@ -705,9 +715,9 @@ begin
        dfpStringlist : begin
                          DFResultList.Text := getLocalVarValueList('$result$').Text;
                        end;
-       dfpBoolean :    begin
-                         DFResultBool := StrToBool(getLocalVarValueString('$result$'));
-                       end;
+       //dfpBoolean :    begin
+       //                  DFResultBool := StrToBool(getLocalVarValueString('$result$'));
+       //                end;
     end;
   end;
   //DFResultString := 'huhu';
@@ -755,7 +765,7 @@ end;
 begin
   osdfParameterTypesNames[dfpString] :=  'String';
   osdfParameterTypesNames[dfpStringlist] :=  'Stringlist';
-  osdfParameterTypesNames[dfpBoolean] :=  'Boolean';
+  //osdfParameterTypesNames[dfpBoolean] :=  'Boolean';
   definedFunctionNames := TStringList.Create;
   definedFunctionsCallStack := TStringList.Create;
 end.

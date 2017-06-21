@@ -16,6 +16,7 @@ opsi-winst/opsi-script (4.11.7.0) experimental; urgency=low
   * new unit osdefinedfunctions
   * osparser: support for defined functions
   * osparser: moved sync between FExtremeErrorLevel and extremeErrorLevel before final output
+  * osparser: new functions: boolToSting(<bool expression>) and stringToBool(< string>)
 
 -- Detlef Oertel <d.oertel@uib.de>  Mon, 19 Jun 2017:15:00:00 +0200
 
