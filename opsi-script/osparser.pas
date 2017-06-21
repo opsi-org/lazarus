@@ -15942,6 +15942,7 @@ function TuibInstScript.doAktionen (const Sektion: TWorkSection; const CallingSe
   newDefinedfunction : TOsDefinedFunction;
   dummylist : TStringList;
   endofDefFuncFound : boolean;
+  funcindex : integer;
 
 begin
   result := tsrPositive;
@@ -18677,6 +18678,16 @@ begin
                  else if findKindOfStatement (Expressionstr, SectionSpecifier, call) <> tsNotDefined then
                    reportError (Sektion, i, Expressionstr,
                      'Reserved name, must not be used in a variable definition')
+                 // in local function ?
+                 else if inDefinedFuncNestCounter > 0 then
+                 begin
+                   // get the function we are in
+                   funcindex := strToInt(definedFunctionsCallStack.Strings[definedFunctionsCallStack.Count-1]);
+                   if definedFunctionArray[funcindex].addLocalVar(lowercase(Expressionstr),dfpString,false) then
+                     LogDatei.log('Defined local string var: '+lowercase(Expressionstr)+' in local function: '+definedFunctionArray[funcindex].Name,LLDebug2)
+                   else reportError (Sektion, i, Expressionstr, 'name is already in use')
+                 end
+                 // not in local function - make it global
                  else if VarList.IndexOf (lowercase(Expressionstr)) >= 0 then
                    reportError (Sektion, i, Expressionstr, 'name is already in use')
                  else
@@ -18696,6 +18707,17 @@ begin
                  else if findKindOfStatement (Expressionstr, SectionSpecifier, call) <> tsNotDefined then
                    reportError (Sektion, i, Expressionstr,
                      'Reserved name, must not be used in a variable definition')
+                 // in local function ?
+                 else if inDefinedFuncNestCounter > 0 then
+                 begin
+                   // get the function we are in
+                   funcindex := strToInt(definedFunctionsCallStack.Strings[definedFunctionsCallStack.Count-1]);
+                   if definedFunctionArray[funcindex].addLocalVar(lowercase(Expressionstr),dfpStringlist,false) then
+                     LogDatei.log('Defined local stringlist var: '+lowercase(Expressionstr)+' in local function: '+definedFunctionArray[funcindex].Name,LLDebug2)
+                   else reportError (Sektion, i, Expressionstr, 'name is already in use')
+                 end
+                 // not in local function - make it global
+
                  else if VarList.IndexOf (lowercase(Expressionstr))  or listOfStringLists.IndexOf(lowercase(Expressionstr)) >= 0 then
                    reportError (Sektion, i, Expressionstr, 'Name already in use')
                  else
