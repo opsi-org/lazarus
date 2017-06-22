@@ -125,6 +125,7 @@ type
                 tsSwitch, tsSwitchCaseOpen, tsSwitchCaseClose, tsSwitchDefaultOpen, tsSwitchClose,
                 tsLoopStringList, tsLoopForTo,
                 tsMessage, tsMessageFile, tsShowBitmap,
+                tsImportFunc,
                 tsIncludeInsert, tsIncludeAppend,
                 tsIncludeLog,
                 tsShrinkFileToMB,  //internal undocumented
@@ -16734,6 +16735,131 @@ begin
                   ActionResult
                   := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
 
+                tsImportFunc:
+                  begin
+                    syntaxCheck := EvaluateString (Remaining, Remaining, FName, InfoSyntaxError);
+                    if syntaxCheck then
+                    Begin
+                      try
+                        fullincfilename := '';
+                        incfilename := FName;
+                        LogDatei.log('Found Include statement for: '+incfilename,LLDebug);
+                        found := false;
+                        // full file path given ?
+                        testincfilename := ExpandFilename(incfilename);
+                        LogDatei.log('Looking for: '+testincfilename,LLDebug2);
+                        if FileExistsUTF8(testincfilename) then
+                        begin
+                          found := true;
+                          fullincfilename := testincfilename;
+                        end;
+                        if (not found) then
+                        begin
+                          // search in %ScriptPath%
+                          testincfilename := ExtractFileDir(FFilename)+PathDelim+incfilename;
+                          LogDatei.log('Looking for: '+testincfilename,LLDebug2);
+                          if FileExistsUTF8(testincfilename) then
+                          begin
+                            found := true;
+                            fullincfilename := testincfilename;
+                          end;
+                        end;
+                        {$IFDEF WINDOWS}
+                        if (not found) then
+                        begin
+                          // search in %opsiScriptHelperPath%\lib
+                          testincfilename := getSpecialFolder(CSIDL_PROGRAM_FILES)+'\opsi.org\opsiScriptHelper'
+                                               +PathDelim+incfilename;
+                          if FileExistsUTF8(testincfilename) then
+                          begin
+                            found := true;
+                            fullincfilename := testincfilename;
+                          end;
+                        end;
+                        {$ENDIF WINDOWS}
+                        if (not found) then
+                        begin
+                          // search in %ScriptDrive%\lib  aka %ScriptPath%/../lib
+                          testincfilename := ExtractFileDir(FFilename)
+                                              +PathDelim+'..'
+                                              +PathDelim+'lib'+PathDelim+incfilename;
+                          LogDatei.log('Looking for: '+testincfilename,LLDebug2);
+                          if FileExistsUTF8(testincfilename) then
+                          begin
+                            found := true;
+                            fullincfilename := testincfilename;
+                          end;
+                        end;
+                        {$IFDEF WINDOWS}
+                        if (not found) then
+                        begin
+                          // search in %WinstDir%\lib
+                          testincfilename := ExtractFileDir(Paramstr(0))
+                                               +PathDelim+'lib'+PathDelim+incfilename;
+                          LogDatei.log('Looking for: '+testincfilename,LLDebug2);
+                          if FileExistsUTF8(testincfilename) then
+                          begin
+                            found := true;
+                            fullincfilename := testincfilename;
+                          end;
+                        end;
+                        {$ENDIF WINDOWS}
+                        if found then
+                        begin
+                          LogDatei.log('Found File: '+fullincfilename,LLDebug2);
+                          inclist := TStringList.Create;
+                          inclist.LoadFromFile(ExpandFileName(fullincfilename));
+                          Encoding2use := searchencoding(inclist.Text);
+                          //Encoding2use := inclist.Values['encoding'];
+                          inclist.Free;
+                          if Encoding2use = '' then Encoding2use := 'system';
+                          LogDatei.log('Will Include : '+incfilename+' with encoding: '+Encoding2use,LLDebug2);
+                          assignfile(incfile,fullincfilename);
+                          reset(incfile);
+                          //script.Strings[i] := '';
+                          k := 0;
+                          while not eof(incfile) do
+                          begin
+                            inc(k);
+                            readln(incfile, incline);
+                            //LogDatei.log('Will Include line (raw): '+incline,LLDebug3);
+                            incline := reencode(incline, Encoding2use,usedEncoding);
+                            //LogDatei.log('Will Include line (reencoded): '+incline,LLDebug3);
+                            for constcounter := 1 to ConstList.Count   do
+                              if Sektion.replaceInLine(incline, Constlist.Strings [constcounter-1], ConstValuesList.Strings [constcounter-1], false,replacedline)
+                              then incline := replacedline;
+                            LogDatei.log('Will Include line (constants replaced): '+incline,LLDebug3);
+                            Sektion.Insert(i-1+k,incline);
+                            LogDatei.log('Line included at pos: '+inttostr(i-1+k)+' to Sektion with '+inttostr(Sektion.Count)+' lines.',LLDebug3);
+                            //LogDatei.log('Will Include add at pos '+inttostr(Sektion.StartLineNo + i-1+k)+'to FLinesOriginList with count: '+inttostr(script.FLinesOriginList.Count),LLDebug3);
+                            script.FLinesOriginList.Insert(Sektion.StartLineNo + i-1+k,incfilename+ ' Line: '+inttostr(k));
+                            LogDatei.log('Include added to FLinesOriginList.',LLDebug3);
+                          end;
+                          closeFile(incfile);
+                          linecount := Count;
+                          LogDatei.log('Included (insert) file: '+fullincfilename+' with encoding: '+usedEncoding,LLInfo);
+                        end
+                        else
+                        begin
+                          LogDatei.log('Error: Could not find include file :'+incfilename,LLCritical);
+                          FExtremeErrorLevel:= levelFatal;
+                        end;
+                       except
+                            on E: exception do
+                           Begin
+                              Logdatei.log ('Include_Insert "' + Fname + '"', LLCritical);
+                              Logdatei.log (' Failed to include (insert) file, system message: "' + E.Message +'"',
+                                                     LLCritical);
+                              FExtremeErrorLevel:= levelFatal;
+                            End
+                        end;
+                    End
+                    else
+                      ActionResult
+                      := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                  end; // tsImportFunc
+
+
 
                 tsIncludeInsert:
                   begin
@@ -19731,6 +19857,8 @@ begin
   PStatNames^ [tsLogError]            := 'LogError';
   PStatNames^ [tsLogWarning]          := 'LogWarning';
   PStatNames^ [tsSetSkinDir]          := 'SetSkinDirectory';
+
+  PStatNames^ [tsImportFunc]          := 'ImportFunc';
   PStatNames^ [tsIncludeInsert]       := 'Include_Insert';
   PStatNames^ [tsIncludeAppend]       := 'Include_Append';
   PStatNames^ [tsIncludeLog]          := 'IncludeLog';
