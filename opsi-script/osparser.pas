@@ -282,9 +282,9 @@ private
 
 
   FVarList : TStringList;
-  listOfStringLists : TStringList;
+  FlistOfStringLists : TStringList;
   FValuesList : TStringList;
-  ContentOfStringLists : TObjectList;
+  FContentOfStringLists : TObjectList;
   FConstList : TStringList;
   FConstValuesList : TStringList;
   FLastExitCodeOfExe : LongInt;
@@ -320,6 +320,8 @@ public
   property valuesList : TStringList read Fvalueslist write FvaluesList;
   property constList : TStringList read FconstList write FConstList;
   property constValuesList : TStringList read FconstValuesList write FconstValuesList;
+  property listOfStringLists : TStringList read FlistOfStringLists write FlistOfStringLists;
+  property ContentOfStringLists : TObjectList read FContentOfStringLists write FContentOfStringLists;
 
 
   (* Infofunktionen *)
@@ -1653,24 +1655,24 @@ Begin
   FAutoActivityDisplay := false;
   scriptstopped := false;
 
-  VarList := TStringList.create;
+  FVarList := TStringList.create;
   //VarList.add(PreDefinedVariableSkinDirectory);
-  ValuesList := TStringList.create;
+  FValuesList := TStringList.create;
   //ValuesList.add(PreDefinedVariableSkinDirectoryValue);
 
-  listOfStringLists := TStringList.create;
-  ContentOfStringLists := TObjectList.create;
-  ConstList := TStringList.create;
-  ConstValuesList := TStringList.create;
+  FlistOfStringLists := TStringList.create;
+  FContentOfStringLists := TObjectList.create;
+  FConstList := TStringList.create;
+  FConstValuesList := TStringList.create;
   FLinesOriginList := TStringList.create;
 End;
 
 destructor TuibInstScript.destroy;
 begin
-  VarList.free; VarList := nil;
-  ValuesList.free; ValuesList := nil;
-  listOfStringLists.free; listOfStringLists := nil;
-  ContentOfStringLists.free; ContentOfStringLists := nil;
+  FVarList.free; VarList := nil;
+  FValuesList.free; ValuesList := nil;
+  FlistOfStringLists.free; listOfStringLists := nil;
+  FContentOfStringLists.free; ContentOfStringLists := nil;
   FLinesOriginList.free; FLinesOriginList := nil;
 end;
 
@@ -9249,7 +9251,7 @@ var
   dummybool : boolean;
   Wow64FsRedirectionDisabled, boolresult : boolean;
   funcname : string;
-  funcindex : integer;
+  funcindex, funcindexvar : integer;
 
 begin
 
@@ -9276,11 +9278,27 @@ begin
    GetWord (s0, s, r, WordDelimiterSet1);  // getting word s
    list := TXStringList.create; //list to return
    slist := TStringList.Create;  // if we need a real TStringlist
-
-   logstring := s;
-   // clone of an existing list?
    VarIndex := listOfStringLists.IndexOf (LowerCase (s));
-   if VarIndex >= 0 then
+   logstring := s;
+
+   // local variable
+   if isVisibleLocalVar(s,funcindexvar)  then
+   begin
+     if not (definedFunctionArray[funcindexvar].getLocalVarDatatype(s) = dfpStringlist) then
+     begin
+       // type error
+       InfoSyntaxError := 'Syntax Error: Type mismatch: Stringlist expected but the visible local variable: '
+          +s+' is from type: '+osdfParameterTypesNames[definedFunctionArray[funcindexvar].getLocalVarDatatype(s)];
+     end
+     else
+     begin
+       list.Text := definedFunctionArray[funcindexvar].getLocalVarValueList(s).Text;
+       syntaxCheck := true;
+     end;
+   end
+
+   // global var : clone of an existing list?
+   else if VarIndex >= 0 then
    begin
       list.Assign(TStringList(contentOfStringLists[VarIndex]));
       syntaxCheck := true;
@@ -15583,6 +15601,7 @@ begin
       else
       begin
         try
+          VarIndex := listOfStringLists.IndexOf(LowerCase(VarName));
           ContentOfStringLists.Items[VarIndex] := list;
           result := true;
         except
@@ -15806,7 +15825,26 @@ end;
 procedure TuibInstScript.ApplyTextVariables (var Sektion : TXStringList; CStringEscaping : Boolean);
  var
   i: Integer;
+  locallist : Tstringlist;
 begin
+  if inDefinedFuncNestCounter > 0 then
+  begin
+     // first replace local function vars
+     locallist := Tstringlist.Create;
+     locallist.Text:= getVisibleLocalStringVarNameValueList.Text;
+     for i := 1 to locallist.Count
+     do
+     Begin
+       if CStringEscaping
+       then
+          Sektion.GlobalReplace (1, locallist.Names[i-1], CEscaping (locallist.ValueFromIndex[i-1]), false)
+       else
+          Sektion.GlobalReplace (1, locallist.Names[i-1], locallist.ValueFromIndex[i-1], false)
+     end;
+     locallist.Free;
+  end;
+
+  // now the global vars
  for i := 1 to VarList.Count
  do
  Begin
@@ -15822,7 +15860,35 @@ procedure TuibInstScript.ApplyTextVariablesToString (var mystr : String; CString
  var
   i: Integer;
   NewLine : String;
+  locallist : Tstringlist;
 begin
+  if inDefinedFuncNestCounter > 0 then
+  begin
+     // first replace local function vars
+     locallist := Tstringlist.Create;
+     locallist.Text:= getVisibleLocalStringVarNameValueList.Text;
+     for i := 1 to locallist.Count
+     do
+     Begin
+       if CStringEscaping then
+       begin
+         if ReplaceInLine(mystr, locallist.Names[i-1], CEscaping (locallist.ValueFromIndex[i-1]), false, NewLine) then
+         begin
+           mystr := NewLine;
+         end;
+       end
+       else
+       begin
+         if ReplaceInLine(mystr, locallist.Names[i-1], locallist.ValueFromIndex[i-1], false, NewLine) then
+         begin
+           mystr := NewLine;
+         end;
+       end;
+     end;
+     locallist.Free;
+  end;
+
+  // now the global vars
   for i := 1 to VarList.Count
   do
   Begin
@@ -15941,7 +16007,8 @@ function TuibInstScript.doAktionen (const Sektion: TWorkSection; const CallingSe
   LppProductId : string='';
   newDefinedfunction : TOsDefinedFunction;
   dummylist : TStringList;
-  endofDefFuncFound : boolean;
+  //endofDefFuncFound : boolean;
+  inDefFunc : integer = 0;
   funcindex : integer;
 
 begin
@@ -18740,7 +18807,8 @@ begin
                  else
                  begin
                    // get all lines until 'endfunction'
-                   endofDefFuncFound := false;
+                   //endofDefFuncFound := false;
+                   inDefFunc := 1;
                    repeat
                      // get next line of section
                      inc(i);
@@ -18750,7 +18818,10 @@ begin
                        myline := remaining;
                        GetWord (Remaining, Expressionstr, Remaining, WordDelimiterSet4);
                        StatKind := FindKindOfStatement (Expressionstr, SectionSpecifier, call);
-                       if StatKind = tsEndFunction then
+                       if StatKind = tsDefineFunction then inc(inDefFunc);
+                       if StatKind = tsEndFunction then dec(inDefFunc);
+                       newDefinedfunction.addContent(myline);
+                       (*
                        begin
                          endofDefFuncFound := true;
                          // this line is the end and also part of the defined function
@@ -18761,9 +18832,10 @@ begin
                          // this line is part of the defined function
                          newDefinedfunction.addContent(myline);
                        end;
+                       *)
                      end;
-                   until endofDefFuncFound or (i >= Sektion.Count - 1);
-                   if not endofDefFuncFound then
+                   until (inDefFunc <= 0) or (i >= Sektion.Count - 1);
+                   if inDefFunc > 0 then
                    begin
                      LogDatei.log('Found DefFunc without EndFunc',LLCritical);
                      reportError (Sektion, i, Expressionstr, 'Found DefFunc without EndFunc');

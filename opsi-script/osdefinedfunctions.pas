@@ -90,10 +90,14 @@ type
     TDefinedFunctionsArray = Array of TOsDefinedFunction;
 
   function isVisibleLocalVar(varname: string; var index : integer) : boolean;
-  function isVisibleGlobalVar(varname: string; var index : integer) : boolean;
+  function isVisibleGlobalStringVar(varname: string; var index : integer) : boolean;
+  function isVisibleGlobalStringlistVar(varname: string; var index : integer) : boolean;
   procedure freeDefinedFunctions;
   function isVisibleStringVar(varname: string) : boolean;
-  //function getReferenceToVar(varname: string) : pointer;
+  function isVisibleStringlistVar(varname: string) : boolean;
+  function getFirstLineAfterEndFunc(list : TStringlist; startline : integer) : integer;
+  function getVisibleLocalStringVarNameValueList : TStringlist;
+  function IsEndOfLocalFunction(const s: string): boolean;
 
 var
   osdfParameterTypesNames : TosdfDataTypesNames;
@@ -500,6 +504,7 @@ begin
         else
         begin
           // invalid
+          LogDatei.log('Internal Error: Invalid scopeindex in setLocalVarValueString',LLCritical );
         end;
         //setLength(DFLocalVarList[arrayindex].referencevar, length(value));
         //StrCopy(DFLocalVarList[arrayindex].referencevar, pchar(value));
@@ -538,6 +543,9 @@ end;
 function TOsDefinedFunction.setLocalVarValueList(name : string; value : Tstringlist) : boolean;
 var
   arrayindex : integer;
+  callByReference : boolean;
+  scopeindex, VarIndex : integer;
+  varname : string;
 begin
   result := false;
   arrayindex := locaVarIndex(name);
@@ -546,7 +554,31 @@ begin
     if (DFLocalVarList[arrayindex].varName=name)
        and (DFLocalVarList[arrayindex].varDataType =dfpStringlist) then
     begin
-      DFLocalVarList[arrayindex].VarValueList.Text := value.Text;
+      callByReference := DFLocalVarList[arrayindex].callByReference;
+      if callByReference then
+      begin
+        // call by ref
+        scopeindex := DFLocalVarList[arrayindex].referencevarscopeindex;
+        varname := DFLocalVarList[arrayindex].referencevarname;
+        if scopeindex = -1 then
+        begin
+          // global
+          VarIndex := script.listOfStringLists.IndexOf (LowerCase (varname));
+          script.ContentOfStringLists.Items[VarIndex] := value;
+        end
+        else if scopeindex >= 0 then
+        begin
+          // local func
+          definedFunctionArray[scopeindex].setLocalVarValuelist(varname,value);
+        end
+        else
+        begin
+          // invalid
+          LogDatei.log('Internal Error: Invalid scopeindex in setLocalVarValueList',LLCritical );
+        end;
+      end
+      else // call by value
+        DFLocalVarList[arrayindex].VarValueList.Text := value.Text;
       result := true;
     end
     else LogDatei.log('Internal Error: Unexpected type mismatch of local variable: '+name,LLCritical );
@@ -610,6 +642,7 @@ begin
         else
         begin
           // invalid
+          LogDatei.log('Internal Error: Invalid scopeindex in getLocalVarValueString',LLCritical );
         end;
         //setLength(DFLocalVarList[arrayindex].referencevar, length(value));
         //StrCopy(DFLocalVarList[arrayindex].referencevar, pchar(value));
@@ -627,23 +660,49 @@ end;
 function TOsDefinedFunction.getLocalVarValueList(name : string) : Tstringlist;
 var
   arraycounter,i : integer;
-  found : boolean;
+  arrayindex : integer;
+  callByReference : boolean;
+  scopeindex, VarIndex : integer;
+  varname : string;
 begin
   result := Tstringlist.Create;
-  i := 0;
-  found := false;
-  arraycounter := length(DFLocalVarList);
-  if arraycounter > 0 then
-    repeat
-      if lowercase(DFLocalVarList[i].varName) = lowercase(name) then
+  arrayindex := locaVarIndex(name);
+  if arrayindex >= 0 then
+  begin
+    if (DFLocalVarList[arrayindex].varName=name)
+       and (DFLocalVarList[arrayindex].varDataType = dfpStringlist) then
+    begin
+      callByReference := DFLocalVarList[arrayindex].callByReference;
+      if callByReference then
       begin
-        if DFLocalVarList[i].varDataType = dfpStringlist then
-          result.Text := DFLocalVarList[i].varValueList.Text;
-        found := true;
-      end;
-      inc(i);
-    until (i >= arraycounter) or found;
+        // call by ref
+        scopeindex := DFLocalVarList[arrayindex].referencevarscopeindex;
+        varname := DFLocalVarList[arrayindex].referencevarname;
+        if scopeindex = -1 then
+        begin
+          // global
+          VarIndex := script.listOfStringLists.IndexOf (LowerCase (varname));
+          result := TStringlist(script.ContentOfStringLists.Items[VarIndex]);
+        end
+        else if scopeindex >= 0 then
+        begin
+          // local func
+          definedFunctionArray[scopeindex].getLocalVarValuelist(varname);
+        end
+        else
+        begin
+          // invalid
+          LogDatei.log('Internal Error: Invalid scopeindex in getLocalVarValueList',LLCritical );
+        end;
+      end
+      else // call by value
+        result := DFLocalVarList[arrayindex].VarValueList;
+    end
+    else LogDatei.log('Internal Error: Unexpected type mismatch of local variable: '+name,LLCritical );
+  end
+  else LogDatei.log('Syntax Error: No definition of local variable: '+name,LLCritical );
 end;
+
 
 (*
 function TOsDefinedFunction.getLocalVarValueBool(name : string) : boolean;
@@ -746,7 +805,7 @@ begin
                                   DFLocalVarList[paramcounter].referencevarscopeindex := varindex;
                                   LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is a reference to local: '+paramstr,LLDebug2);
                                 end
-                                else if isVisibleGlobalVar(paramstr, varindex) then
+                                else if isVisibleGlobalStringVar(paramstr, varindex) then
                                 begin
                                   // is global var : -1
                                   DFLocalVarList[paramcounter].referencevarscopeindex := -1;
@@ -760,7 +819,8 @@ begin
                               end;
                             end;
             dfpStringlist : begin
-                              if not Script.produceStringList(section,paramstr,r,paramlistvalue,errorstr) then
+                              //if not Script.produceStringList(section,paramstr,r,paramlistvalue,errorstr) then
+                              if not isVisibleStringlistVar(paramstr) then
                               begin
                                 // parameter type mismatch
                                 syntax_ok := false;
@@ -769,9 +829,24 @@ begin
                               else
                               begin
                                 // we got a stringlist - make it to a local var
-                                DFLocalVarList[paramcounter].callByReference:=true;
-                                DFLocalVarList[paramcounter].VarValueList.text := paramlistvalue.Text;
-                                LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is a stringlist',LLDebug2);
+                                DFLocalVarList[paramcounter].referencevarname:= paramstr;
+                                if isVisibleLocalVar(paramstr, varindex) then
+                                begin
+                                  // is local var
+                                  DFLocalVarList[paramcounter].referencevarscopeindex := varindex;
+                                  LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is a reference to local stringlist: '+paramstr,LLDebug2);
+                                end
+                                else if isVisibleGlobalStringlistVar(paramstr, varindex) then
+                                begin
+                                  // is global var : -1
+                                  DFLocalVarList[paramcounter].referencevarscopeindex := -1;
+                                  LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is a reference to global stringlist: '+paramstr,LLDebug2);
+                                end
+                                else
+                                begin
+                                  // failed
+                                  LogDatei.log('Error: Did not found the reference to: '+paramstr,LLError);
+                                end
                               end;
                             end;
           end; // end case
@@ -852,6 +927,7 @@ var
 begin
   call := false;
   // we enter a defined function
+  DFActive:=true;
   inc(inDefinedFuncNestCounter);
   definedFunctionsCallStack.Append(InttoStr(DFIndex));
   //parse parameter
@@ -884,6 +960,7 @@ begin
   // we leave a defined function
   dec(inDefinedFuncNestCounter);
   definedFunctionsCallStack.Delete(definedFunctionsCallStack.Count-1);
+  DFActive:=false;
 end;
 
 (*
@@ -896,36 +973,40 @@ begin
 end;
 *)
 
+function createListOfVisibleParents : TStringlist;
+var
+  fparent, fname : string;
+  searchfinished : boolean;
+  searchindex, index : integer;
+begin
+  result := TStringlist.create;
+  searchfinished := false;
+  // first add the name of the running local function
+  searchindex := definedFunctionsCallStack.Count-1;
+  index := strToInt(definedFunctionsCallStack.Strings[searchindex]);
+  fname := definedFunctionArray[index].Name;
+  result.Append(fname);
+  repeat
+    index := strToInt(definedFunctionsCallStack.Strings[searchindex]);
+    fname := definedFunctionArray[index].Name;
+    if result.IndexOf(fname) >= 0 then
+    begin
+      // the akt function is the running one or a sub func
+      fparent := definedFunctionArray[index].ParentFunc;
+      result.Append(fparent);
+      if fparent = 'global' then  searchfinished:=true;
+    end;
+    dec(searchindex);
+    if searchindex < 0 then searchfinished:=true;
+  until searchfinished;
+end;
+
+
 function isVisibleLocalVar(varname: string; var index : integer) : boolean;
 var
   found, searchfinished : boolean;
   searchindex : integer;
   parentlist : tstringlist;
-
-  procedure createListOfVisibleParents;
-  var
-    fparent, fname : string;
-  begin
-    searchfinished := false;
-    // first add the name of the running local function
-    searchindex := definedFunctionsCallStack.Count-1;
-    index := strToInt(definedFunctionsCallStack.Strings[searchindex]);
-    fname := definedFunctionArray[index].Name;
-    parentlist.Append(fname);
-    repeat
-      index := strToInt(definedFunctionsCallStack.Strings[searchindex]);
-      fname := definedFunctionArray[index].Name;
-      if parentlist.IndexOf(fname) >= 0 then
-      begin
-        // the akt function is the running one or a sub func
-        fparent := definedFunctionArray[index].ParentFunc;
-        parentlist.Append(fparent);
-        if fparent = 'global' then  searchfinished:=true;
-      end;
-      dec(searchindex);
-      if searchindex < 0 then searchfinished:=true;
-    until searchfinished;
-  end;
 
 begin
   result := false;
@@ -935,7 +1016,7 @@ begin
   begin
     // we are in a local function
     parentlist := TStringlist.Create;
-    createListOfVisibleParents;
+    parentlist.Text := createListOfVisibleParents.Text;
     searchfinished := false;
     searchindex := definedFunctionsCallStack.Count-1;
     repeat
@@ -943,7 +1024,8 @@ begin
       if parentlist.IndexOf(definedFunctionArray[index].Name) >= 0 then
       begin
         // local variable of this function are visible (global to this function)
-        if definedFunctionArray[index].locaVarExists(varname) then found := true;
+        if (definedFunctionArray[index].Active
+           and definedFunctionArray[index].locaVarExists(varname)) then found := true;
       end;
       dec(searchindex);
       if searchindex < 0 then searchfinished:=true;
@@ -952,12 +1034,60 @@ begin
   result := found;
 end;
 
-function isVisibleGlobalVar(varname: string; var index : integer) : boolean;
+function getVisibleLocalStringVarNameValueList : TStringlist;
+var
+  resultentry, varname : string;
+  searchfinished : boolean;
+  searchindex, index : integer;
+  parentlist : tstringlist;
+  i : integer;
+
+begin
+  result := Tstringlist.Create;
+  if inDefinedFuncNestCounter > 0 then
+  begin
+    // we are in a local function
+    parentlist := TStringlist.Create;
+    parentlist.Text := createListOfVisibleParents.Text;
+    searchfinished := false;
+    searchindex := definedFunctionsCallStack.Count-1;
+    repeat
+      index := strToInt(definedFunctionsCallStack.Strings[searchindex]);
+      if parentlist.IndexOf(definedFunctionArray[index].Name) >= 0 then
+      begin
+        // local variable of this function are visible (global to this function)
+        if (definedFunctionArray[index].Active) then
+        begin
+          for i := 0 to length(definedFunctionArray[index].DFLocalVarList)-1 do
+            if definedFunctionArray[index].DFLocalVarList[i].varDataType = dfpString then
+            begin
+              varName := definedFunctionArray[index].DFLocalVarList[i].varName;
+              resultentry :=  varName + '=';
+              resultentry :=  resultentry + definedFunctionArray[index].getLocalVarValueString(varname);
+              result.Append(resultentry);
+            end;
+        end;
+      end;
+      dec(searchindex);
+      if searchindex < 0 then searchfinished:=true;
+    until searchfinished;
+  end;
+end;
+
+function isVisibleGlobalStringVar(varname: string; var index : integer) : boolean;
 begin
   index := script.VarList.IndexOf (LowerCase (VarName));
   if index >= 0 then
        result := true;
 end;
+
+function isVisibleGlobalStringlistVar(varname: string; var index : integer) : boolean;
+begin
+  index := script.listOfStringLists.IndexOf(LowerCase (VarName));
+  if index >= 0 then
+       result := true;
+end;
+
 
 function isVisibleStringVar(varname: string) : boolean;
 var
@@ -970,6 +1100,62 @@ begin
    if script.VarList.IndexOf (LowerCase (VarName)) >= 0 then
        result := true;
 end;
+
+function isVisibleStringlistVar(varname: string) : boolean;
+var
+  funcindex : integer;
+begin
+   result := false;
+   if isVisibleLocalVar(VarName,funcindex)  then
+     if definedFunctionArray[FuncIndex].getLocalVarDatatype(varname) = dfpStringlist then
+       result := true;
+   if script.listOfStringLists.IndexOf(LowerCase (VarName)) >= 0 then
+       result := true;
+end;
+
+function getFirstLineAfterEndFunc(list : TStringlist; startline : integer) : integer;
+var
+  i : integer;
+  inDefFunc : integer = 0;
+  line : string;
+  stopsearch : boolean = false;
+begin
+  result := startline;
+  if pos('endfunc', lowercase(list.Text)) > 0 then
+  begin
+    // quick test tells us that we have to make a closer look
+    i := startline;
+    repeat
+      line := trim(lowercase(list.Strings[i]));
+      if  pos('deffunc',line) > 0 then inc(inDefFunc)
+      else if (inDefFunc > 0) and (pos('endfunc',line) > 0) then
+      begin
+        // endfunc
+        dec(inDefFunc);
+        result := i;
+      end
+      else if (inDefFunc = 0) and (pos('[',line) = 1)
+               and (pos(']',line) = length(line)) and (length(line) > 2) then
+      begin
+        // section header found outside of local function
+        stopsearch := true;
+      end;
+      inc(i);
+    until (i >= list.Count) or stopsearch;
+  end;
+end;
+
+function IsEndOfLocalFunction(const s: string): boolean;
+var
+  TestS: string = '';
+begin
+  result := false;
+  if inDefinedFuncNestCounter > 0 then
+  begin
+    if trim(lowercase(s)) = 'endfunc' then result := true;
+  end;
+end;
+
 
 (*
 function getReferenceToVar(varname: string) : pointer;
