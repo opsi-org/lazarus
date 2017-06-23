@@ -12,7 +12,7 @@ unit osxmlsections;
 // author: Rupert Roeder, APohl, detlef oertel, m.hammel
 // credits: http://www.opsi.org/credits/
 
-
+{$mode objfpc}{$H+}
 
 interface
 
@@ -439,25 +439,31 @@ end;
 function TuibXMLDocument.getCountNotNil: integer;
 var
   i: integer;
+  preresult : integer;
 begin
-  getCountNotNil := 0;
+  //getCountNotNil := 0;
+  preresult := 0;
   for i := 0 to length(actnodeset) - 1 do
   begin
     if actnodeset[i] <> nil then
-      Inc(getCountNotNil);
+      Inc(preresult);
   end;
+  getCountNotNil := preresult;
 end;
 
 function TuibXMLDocument.getCountDerivedNotNil: integer;
 var
   i: integer;
+  preresult : integer;
 begin
-  getCountDerivedNotNil := 0;
+  preresult := 0;
+  //getCountDerivedNotNil := 0;
   for i := 0 to length(DerivedNodeSet) - 1 do
   begin
     if derivednodeset[i] <> nil then
-      Inc(getCountDerivedNotNil);
+      Inc(preresult);
   end;
+  getCountDerivedNotNil := preresult;
 end;
 //*************  XML Node-Handling ***********************************
 function TuibXMLDocument.createXmlDocFromStringlist(docstrlist: TStringList): boolean;
@@ -1050,6 +1056,7 @@ var
   attributeList: TList;
 begin
   Result := True;
+  attributeList := TList.Create;
   try
     // the root node
     nodesInPath[0] := XML.DocumentElement;
@@ -1070,6 +1077,7 @@ begin
     logdatei.log('-- pathes.Count: ' + IntToStr(pathes.Count), oslog.LevelInfo);
     while i < pathes.Count + 1 do
     begin
+      attributeList.Clear;
       logdatei.log('path element ' + IntToStr(i) + ' : ' + pathes[i - 1], LLinfo);
       thisnodeName := Trim(copy(pathes[i - 1], 1, pos(' ', pathes[i - 1]) - 1));
       logdatei.log('thisnodename ' + thisnodeName, LLinfo);
@@ -1083,7 +1091,8 @@ begin
            logdatei.log( 'Attribute ' +attributesSL[j], LLinfo );
         logdatei.log( 'Anzahl Attribute ' + IntToStr(attributesSL.Count), LLinfo );
         j:=0;
-        attributeList := TList.Create;
+        //attributeList := TList.Create;
+
         while j < attributesSL.Count do
         begin
           // List of [attributename, attributevalue]
@@ -1344,8 +1353,10 @@ begin
       while (myparentNode.hasChildNodes) and (j < myparentNode.ChildNodes.Count) and
         (getNode = False) do
       begin
+        // compare attributes if if given in parameter and existing
         if (myparentNode.ChildNodes.Item[j].NodeName = mynodeName) then
-          if (myparentNode.ChildNodes.Item[j].HasAttributes) then
+          if (myparentNode.ChildNodes.Item[j].HasAttributes)
+              and (attributename <> '') then
           begin
             for i := 0 to myparentNode.ChildNodes.Item[j].Attributes.Length - 1 do
             begin

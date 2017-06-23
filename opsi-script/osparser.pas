@@ -6750,10 +6750,18 @@ var
   nodepath : string;
   newtext,newname, newvalue, newnode : string;
   myfilename : string;
+  openstrict : boolean = false;
+  testbool : boolean;
 begin
   result := tsrPositive;
 
   myfilename := CleanAndExpandFilename(XMLFilename);
+  if not FileExists(myfilename) then
+  begin
+    LogDatei.log('Error: XML file not found: '+myfilename,LLCritical);
+    result := tsrFatalError;
+    exit;
+  end;
   if not initSection (Sektion, OldNumberOfErrors, OldNumberOfWarnings) then exit;
   //StartIndentLevel := LogDatei.LogSIndentLevel;
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
@@ -6782,6 +6790,37 @@ begin
     else
     Begin
       GetWord (r, Expressionstr, r, WordDelimiterSet1);
+
+
+      if LowerCase (Expressionstr) = LowerCase ('StrictMode')
+      then
+      Begin
+        testbool := false;
+        SyntaxCheck := false;
+        if Skip ('=', r, r, ErrorInfo) then
+        Begin
+          Getword (r, newtext, r, WordDelimiterWhiteSpace);
+          if newtext <> '' then
+          begin
+            try
+              testbool := StrToBool(newtext);
+              openstrict := testbool;
+            except
+              LogDatei.log('StrictMode Argument: '+newtext+' can not converted to a boolean value. Use true or false. Using (fallback): false.', LLError);
+            end;
+            LogDatei.log('StrictMode is set to : '+BoolToStr(openstrict,true), LLdebug);
+            syntaxCheck := true;
+          end
+          else
+          begin
+            LogDatei.log('Empty StrictMode Argument can not converted to a boolean value. Use true or false. Using (fallback): false.', LLError);
+            syntaxCheck := false;
+          end;
+        end
+        else  syntaxCheck := false
+      End;  // StrictMode
+
+
 
       if LowerCase (Expressionstr) = LowerCase ('OpenNode')
       then
@@ -6828,7 +6867,7 @@ begin
           begin
             LogDatei.log('successfully found node: '+nodepath,oslog.LLinfo);
             //if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add" // ModifyPartitions') then
-            if XMLDocObject.openNode(nodepath) then
+            if XMLDocObject.openNode(nodepath, openstrict) then
             begin
               nodeOpened := true;
               LogDatei.log('successfully opend node: '+nodepath,oslog.LLinfo);
@@ -6908,7 +6947,7 @@ begin
           then
           Begin
             try
-              XMLDocObject.setNodeText(newtext);
+              XMLDocObject.setNodeTextActNode(newtext);
               LogDatei.log('successfully setText node: '+newtext,oslog.LLinfo);
             except
               on e: Exception do
@@ -7026,7 +7065,7 @@ begin
       End;   // addAttribute
 
 
-      if LowerCase (Expressionstr) = LowerCase ('delAttribute')
+      if LowerCase (Expressionstr) = LowerCase ('deleteAttribute')
       then
       Begin
         syntaxCheck := true;
