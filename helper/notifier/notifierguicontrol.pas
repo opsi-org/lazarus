@@ -45,7 +45,8 @@ implementation
 
 uses
   notifierdatamodule,
-  notifier_json;
+  notifier_json,
+  notifier_base;
 
 var
   myini: TIniFile;
@@ -75,9 +76,10 @@ end;
 
 procedure shutdownNotifier;
 begin
+  mythread.Terminate;
   hideNForm;
   sleep(1000);
-  DataModule1.Destroy;
+  DataModule1.DataModuleDestroy(nil);
 end;
 
 function setLabelCaptionById(aktId, aktMessage: string) : boolean;
@@ -162,16 +164,18 @@ begin
   buttonPushedToService(choice);
   if mynotifierkind = 'popup' then
   begin
+    mythread.Terminate;
     logdatei.log('We are in popup, button close clicked: terminate', LLInfo);
     hideNForm;
-    DataModule1.Destroy;
+    DataModule1.DataModuleDestroy(nil);
   end;
 end;
 
 
 function fontresize(num: integer): integer;
 begin
-  Result := round(num * 0.7);
+  Result := round(num * 0.6);
+  if result < 8 then result := 8;
 end;
 
 function StringToAlignment(str: string): TAlignment;

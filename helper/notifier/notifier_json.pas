@@ -88,7 +88,7 @@ begin
   if not jsonAsObjectGetValueByKey(message, 'method', aktMethod) then
   begin
     logdatei.log('Error: No method found', LLCritical);
-    DataModule1.Destroy;
+    DataModule1.DataModuleDestroy(nil);
   end;
   logdatei.log('Got method: ' + aktMethod, LLDebug);
 
@@ -104,7 +104,7 @@ begin
     if not jsonAsObjectGetValueByKey(message, 'params', messagearray) then
     begin
       logdatei.log('Error: params not found', LLCritical);
-      DataModule1.Destroy;
+      DataModule1.DataModuleDestroy(nil);
     end;
     logdatei.log('params now: ' + messagearray, LLDebug2);
     if (lowercase(aktMethod) = lowerCase('subjectsChanged')) or
@@ -115,7 +115,7 @@ begin
       if not jsonAsArrayGetElementByIndex(messagearray, 0, messagearray) then
       begin
         logdatei.log('Error: inner array not found', LLCritical);
-        DataModule1.Destroy;
+        DataModule1.DataModuleDestroy(nil);
       end;
       logdatei.log('params now: ' + messagearray, LLDebug2);
     end;
@@ -131,7 +131,7 @@ begin
       if not jsonAsArrayToStringList(messagearray, messagelist) then
       begin
         logdatei.log('Error: could not get messagelist', LLCritical);
-        DataModule1.Destroy;
+        DataModule1.DataModuleDestroy(nil);
       end;
       logdatei.log('params[0] now: ' + messagelist.Strings[0], LLDebug2);
     end;
@@ -146,6 +146,7 @@ begin
         ((mynotifierkind = 'event') and (nkind = '')) then
       begin
         // got end call for this notifier kind : hide form
+        mythread.Terminate;
         hideNForm;
         //shutdownNotifier;
       end;
@@ -207,7 +208,7 @@ begin
   else
   begin
     logdatei.log('Error: unkonwn method: ' + aktMethod, LLCritical);
-    DataModule1.Destroy;
+    DataModule1.DataModuleDestroy(nil);
   end;
 
 end;

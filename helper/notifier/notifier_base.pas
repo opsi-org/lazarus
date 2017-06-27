@@ -90,7 +90,7 @@ begin
     myTCPClient := TIdTCPClient.Create;
     myTCPClient.Port := myport;
     myTCPClient.Host := '127.0.0.1';
-    myTCPClient.ReadTimeout := 500;
+    myTCPClient.ReadTimeout := 100;
     repeat
       try
         myTCPClient.Connect;
