@@ -111,7 +111,7 @@ var
   productIdsList: TStringList;
   FileVerInfo: TfileVersionInfo;
   myVersion: string;
-  opsiclientdmode : boolean = true;
+  opsiclientdmode : boolean = false;
 
 
 procedure initdb;

@@ -1140,6 +1140,10 @@ begin
     LabelWait.Visible := False;
     //grouplist.Enabled := True;
     RadioGroupViewSelectionChanged(self);
+
+    // log
+  LogDatei.log('rsActSetup is: '+rsActSetup+' with color: '+tile_radio_setup_color+' and font size: '+intTostr(tile_radio_font_size),LLDebug2);
+
   end;
 end;
 
@@ -1307,6 +1311,7 @@ begin
   // localize RadioGroupView
   RadioGroupView.Items[0] := rsViewList;
   RadioGroupView.Items[1] := rsViewTiles;
+
 
   //ockdata.initdb;
   (*

@@ -60,7 +60,6 @@ msgid "Unknown"
 msgstr "Unbekannt"
 
 #: opsiclientkioskgui.rsstoreactions
-#, fuzzy
 msgctxt "opsiclientkioskgui.rsstoreactions"
 msgid "Store Actions"
 msgstr "Aktionen speichern"
