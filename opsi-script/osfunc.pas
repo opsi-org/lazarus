@@ -4780,11 +4780,11 @@ begin
     end
     else // symlink and (not followSymlink)
     begin
-      linktarget := fpReadLink(targetfilename);
+      linktarget := fpReadLink(sourcefilename);
       linktarget := CreateRelativePath(linktarget,ExtractFileDir(linktarget));
-      if not fpsymlink(Pchar(),Pchar(targetfilename) then
+      if 0 <> fpsymlink(Pchar(linktarget),Pchar(targetfilename)) then
         problem := 'Could not create symlink: from '
-          +sourcefilename+' to '+targetfilename;
+          +targetfilename+' to '+linktarget;
     end;
   except
     myerrorcode := fpgeterrno;
