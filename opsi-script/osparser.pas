@@ -6917,6 +6917,9 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
               else if Expressionstr[j] = 'n'
               then
                 cpSpecify := cpSpecify or cpNoOverwrite
+              else if Expressionstr[j] = 'h'
+              then
+                cpSpecify := cpSpecify or cpFollowSymlinks
               else if Expressionstr[j] = 'x'  then
               begin
                 {$IFDEF WINDOWS}
@@ -14043,6 +14046,7 @@ var
   tmpbool : boolean;
   FindResultcode: integer = 0;
   flushhandle : Thandle;
+  int64result : Int64;
 
 
 
@@ -14701,8 +14705,7 @@ begin
     Begin
       syntaxCheck := true;
       try
-        intresult := strToInt (s1);
-        BooleanResult := true;
+        BooleanResult := TryStrToInt64(s1,int64result);
       except
         BooleanResult := false;
       end

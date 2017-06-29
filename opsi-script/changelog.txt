@@ -11,6 +11,17 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 ##################################################################
 
+opsi-winst/opsi-script (4.11.6.14) stable; urgency=low
+
+  * osparser: isNumber: now check against int64
+  * osparser: new file section copy option -h (follow symlinks; default=false)
+  * osfunc: support for followsymlinks:
+    FileInstall.AllCopy: AllCopy Recursive: ToCopyOrNotCopy
+    filecopy  : fixes #2537
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 29 Jun 2017:15:00:00 +0200
+
+
 opsi-winst/opsi-script (4.11.6.13) stable; urgency=low
 
   * oswebservice: typo: lastcation

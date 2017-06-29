@@ -484,9 +484,11 @@ procedure MakeBakFile(const FName: string); overload;
 procedure MakeBakFile(const FName: string; maxbaks : integer);  overload;
 function FileCopy
   (const sourcefilename, targetfilename: string; var problem: string;
-  DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean): boolean;
-     (* RebootWanted wird ggfs. nur auf true, sonst unveraendert gelassen;
-        wird nicht bedient unter 16 Bit *)
+  DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean): boolean;  overload;
+function FileCopy
+  (const sourcefilename, targetfilename: string; var problem: string;
+  DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean;
+  followSymlink : boolean): boolean;   overload;
 function Is64BitSystem: boolean;
 function runningAsAdmin: boolean;
 function isUefi: boolean;
@@ -573,24 +575,17 @@ const
   LineIsCommentChar = ';';
   MultiszVisualDelimiter = '|';
 
-  (* additive Konstanten fuer den Typ TcpSpecify *)
-  cpFlat = 0;  (* keine Rekursion und keine Subdirectories,
-                                      unbegrenztes OverWrite *)
+  // additive (mask) sonstanst for TcpSpecify
+  cpFlat = 0;  // ro recursion, no subdirectories, over write
   cpCreateEmptySubdirectories = 1;
   cpRecursive = 2;
-  cpVersionControl = 4;  (* Overwrite bei Dateien mit Extension in ExtensionsForVersionsControl
-                                      nur nach vorheriger Versionskontrolle *)
-  cpDateControl = 8;
-  (* kein Overwrite bei Dateien mit Extension EXE wenn Zieldatei juengeren Datums *)
-  cpUpdate = 16;
-  (* kein Overwrite, wenn Zieldatei juenger oder gleich alt *)
-
-  cpDontForceOverwrite = 32; (* kein Overwrite bei schreibgeschuetzten Dateien *)
-  cpNoOverwrite = 64; (* kein Overwrite *)
-
-  cpExtract = 128; (* beim Kopieren komprimierte Dateien dekomprimieren *)
-
-  cpLeaveReadonly = 256; (* Readonly-Attribute kopierter Dateien belassen *)
+  cpVersionControl = 4;  // overwrite controled by internal version (Windows)
+  cpDateControl = 8;  // no overwrite of younger exe files
+  cpUpdate = 16; // no overwrite if target younger or equal old
+  cpDontForceOverwrite = 32; // overwrite if write protected
+  cpNoOverwrite = 64; // no overwrite
+  cpExtract = 128; // extract on copy
+  cpLeaveReadonly = 256; //
 
   cpNoExtraReboot = 512; (* if on copying a file being in use cannot be overwritten, then
                             the overwrite process is postponed after the next reboot. By default, in this case
@@ -600,6 +595,8 @@ const
                                   (* Overwrite bei Dateien mit Extension in ExtensionsForVersionsControl
                                     nur nach vorheriger Versionskontrolle, beschraenkt auf
                                     Dateien im gleichen Verzeichnis wie die Zieldatai *)
+
+  cpFollowSymlinks = 2048; // resolve symlinks while copy
 
 
   ExtensionsForVersionControl: array [1..13] of Str20 =
@@ -4747,8 +4744,18 @@ end;
 function FileCopy
   (const sourcefilename, targetfilename: string; var problem: string;
   DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean): boolean;
+begin
+  result := FileCopy(sourcefilename,targetfilename,problem,
+                     DelayUntilRebootIfNeeded,RebootWanted,false);
+end;
+
+function FileCopy
+  (const sourcefilename, targetfilename: string; var problem: string;
+  DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean;
+  followSymlink : boolean): boolean;
 var
   myerrorcode : integer;
+  linktarget : string;
 begin
   {$IFDEF WINDOWS}
   Result := FileCopyWin(sourcefilename, targetfilename, problem,
@@ -4759,15 +4766,25 @@ begin
   try
     // remove existing files to avoid problems like: Error: 26 : Text (code segment) file busy
     if FileExistsUTF8(targetfilename) then FileUtil.DeleteFileUTF8(targetfilename);
-    if not copyFile(PChar(sourcefilename), PChar(targetfilename), True) then
+    if (not FileIsSymlink(sourcefilename)) or followSymlink then
     begin
-      myerrorcode := fpgeterrno;
-      problem := 'Could not copy. Error: ' + IntToStr(myerrorcode)
-      + ' : '+SysErrorMessageUTF8(myerrorcode);
-      Result := False;
+      if not copyFile(PChar(sourcefilename), PChar(targetfilename), True) then
+      begin
+        myerrorcode := fpgeterrno;
+        problem := 'Could not copy. Error: ' + IntToStr(myerrorcode)
+        + ' : '+SysErrorMessageUTF8(myerrorcode);
+        Result := False;
+      end
+      else
+        Result := True;
     end
-    else
-      Result := True;
+    else // symlink and (not followSymlink)
+    begin
+      linktarget := fpReadLink(targetfilename);
+      if not fpsymlink(Pchar(),Pchar(targetfilename) then
+        problem := 'Could not create symlink: from '
+          +sourcefilename+' to '+targetfilename;
+    end;
   except
     myerrorcode := fpgeterrno;
     Result := False;
@@ -8269,6 +8286,7 @@ var
     DecompressedSource: string = '';
     FName: string = '';
     SaveLogLevel: integer = 0;
+    followsymlinks : boolean = false;
 
     procedure ToCopyOrNotToCopy(const SourceName, TargetName: string);
     var
@@ -8318,6 +8336,10 @@ var
           begin
             CopyShallTakePlace := FileCheckDate(SourceName, TargetName, False);
           end
+          else if cpSpecify and cpFollowSymlinks = cpFollowSymlinks then
+          begin
+            followsymlinks := true;
+          end
           else if cpSpecify and cpDateControl = cpDateControl then
           begin
             Extension := UpperCase(ExtractFileExt(TargetName));
@@ -8351,7 +8373,8 @@ var
 
         if CopyShallTakePlace then
         begin
-          if FileCopy(SourceName, TargetName, problem, True, rebootWanted) then
+          if FileCopy(SourceName, TargetName, problem,
+                      True, rebootWanted,followsymlinks) then
           begin
             LogS := SourceName + ' copied to ' + TargetPath;
             LogDatei.DependentAdd(LogS, LevelComplete);
@@ -8603,8 +8626,10 @@ var
       LogDatei.DependentAdd('Found: '+SourceName, LLDebug2);
       LogDatei.log('Found: '+SearchResult.Name + ' with attr:'+inttostr(SearchResult.Attr), LLDebug3);
 
-      if not (SearchResult.Attr and faDirectory = faDirectory) and
-          (SearchResult.Name <> '.') and (SearchResult.Name <> '..') then
+      if not ((SearchResult.Attr and faDirectory = faDirectory) and
+          (SearchResult.Name <> '.') and (SearchResult.Name <> '..'))
+          // copy symlinks (even dirs) allways here
+          or (SearchResult.Attr and faSymlink <> faSymlink) then
         if CopyCount.Ready then
         begin
           {$IFDEF GUI}
@@ -8662,6 +8687,8 @@ var
       begin
         LogDatei.log('Found: '+SearchResult.Name + ' with attr:'+inttostr(SearchResult.Attr), LLDebug3);
         if (SearchResult.Attr and faDirectory = faDirectory) and
+           // do not follow symlinks to directories
+           (SearchResult.Attr and faSymlink <> faSymlink) and
           (SearchResult.Name <> '.') and (SearchResult.Name <> '..') then
         begin
           DirectoryError := 0;
