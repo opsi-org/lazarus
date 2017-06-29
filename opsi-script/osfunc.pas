@@ -4781,7 +4781,7 @@ begin
     else // symlink and (not followSymlink)
     begin
       linktarget := fpReadLink(targetfilename);
-      if not fpsymlink(Pchar(),Pchar(targetfilename) then
+      if 0 <> fpsymlink(Pchar(linktarget),Pchar(targetfilename)) then
         problem := 'Could not create symlink: from '
           +sourcefilename+' to '+targetfilename;
     end;
