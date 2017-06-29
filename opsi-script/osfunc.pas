@@ -4781,6 +4781,7 @@ begin
     else // symlink and (not followSymlink)
     begin
       linktarget := fpReadLink(targetfilename);
+      linktarget := CreateRelativePath(linktarget,ExtractFileDir(linktarget));
       if not fpsymlink(Pchar(),Pchar(targetfilename) then
         problem := 'Could not create symlink: from '
           +sourcefilename+' to '+targetfilename;
@@ -8686,9 +8687,11 @@ var
       while FindResultcode = 0 do
       begin
         LogDatei.log('Found: '+SearchResult.Name + ' with attr:'+inttostr(SearchResult.Attr), LLDebug3);
+
         if (SearchResult.Attr and faDirectory = faDirectory) and
            // do not follow symlinks to directories
-           (SearchResult.Attr and faSymlink <> faSymlink) and
+          (SearchResult.Attr and faSymlink <> faSymlink) and
+           not(FileIsSymlink(SearchResult.Name)) and
           (SearchResult.Name <> '.') and (SearchResult.Name <> '..') then
         begin
           DirectoryError := 0;
