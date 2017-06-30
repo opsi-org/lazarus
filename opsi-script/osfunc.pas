@@ -8562,6 +8562,9 @@ var
   begin
     Recursion_Level := Recursion_Level + 1;
     FileFoundOnThisLevel := False;
+    if cpSpecify and cpFollowSymlinks = cpFollowSymlinks then
+            followsymlinks := true
+    else  followsymlinks := false;
 
     // bring Source Mask to standard form
     //CompleteName := UTF8ToWinCP(SourceMask);
@@ -8605,8 +8608,19 @@ var
     LogDatei.DependentAdd('Search: '+SourcePath + SourceFilemask, LLDebug2);
     //FindResultcode := SysUtils.FindFirst(SourcePath + SourceFilemask,
     //  faAnyfile - faDirectory - faVolumeId, SearchResult);
+    {$IFDEF WINDOWS}
     FindResultcode := SysUtils.FindFirst(SourcePath + SourceFilemask,
       (faSymlink or faAnyfile) - faDirectory, SearchResult);
+    {$ELSE}
+      // at Linux we have to search here also for directories because
+      // we need to find symlinks to directories (bug in returned attr)
+      if followsymlinks then
+      FindResultcode := SysUtils.FindFirst(SourcePath + SourceFilemask,
+      (faSymlink or faAnyfile) - faDirectory, SearchResult)
+      else
+      FindResultcode := SysUtils.FindFirst(SourcePath + SourceFilemask,
+      (faSymlink or faAnyfile), SearchResult);
+    {$ENDIF WINDOWS}
 
     if FindResultcode = 0 then
       FileFoundOnThisLevel := True
@@ -8627,10 +8641,11 @@ var
       LogDatei.DependentAdd('Found: '+SourceName, LLDebug2);
       LogDatei.log('Found: '+SearchResult.Name + ' with attr:'+inttostr(SearchResult.Attr), LLDebug3);
 
-      if not ((SearchResult.Attr and faDirectory = faDirectory) and
-          (SearchResult.Name <> '.') and (SearchResult.Name <> '..'))
+      if (SearchResult.Attr and faDirectory <> faDirectory)
+          // and (SearchResult.Name <> '.') and (SearchResult.Name <> '..'))
           // copy symlinks (even dirs) allways here
-          or (SearchResult.Attr and faSymlink <> faSymlink) then
+          //or (SearchResult.Attr and faSymlink <> faSymlink)  //seems to to work
+          or FileIsSymlink(SourcePath+SearchResult.Name) then         // work only in Linux
         if CopyCount.Ready then
         begin
           {$IFDEF GUI}
@@ -8660,6 +8675,7 @@ var
           end
           else
           {$ENDIF WIN32}
+            LogDatei.log('copy candidate: '+SourceName + ' to: '+TargetName, LLDebug3);
             ToCopyOrNotToCopy(SourceName, TargetName);
 
           LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
@@ -8695,11 +8711,11 @@ var
 
         if (SearchResult.Attr and faDirectory = faDirectory) and
            // do not follow symlinks to directories
-          (SearchResult.Attr and faSymlink <> faSymlink) and // seems not work
-           not(FileIsSymlink(SourcePath+SearchResult.Name)) and         // seems not work
-           {$IFDEF LINUX}
-           (fpReadLink(SourcePath+SearchResult.Name) = '') and
-           {$ENDIF LINUX}
+          //(SearchResult.Attr and faSymlink <> faSymlink) and // seems not work
+           (not(FileIsSymlink(SourcePath+SearchResult.Name)) or followsymlinks) and         // work only in Linux
+           //{$IFDEF LINUX}
+           //(fpReadLink(SourcePath+SearchResult.Name) = '') and
+           //{$ENDIF LINUX}
           (SearchResult.Name <> '.') and (SearchResult.Name <> '..') then
         begin
           DirectoryError := 0;
