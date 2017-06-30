@@ -9,9 +9,6 @@
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
-      <XPManifest>
-        <DpiAware Value="True"/>
-      </XPManifest>
       <Icon Value="0"/>
     </General>
     <i18n>
@@ -22,7 +19,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <RevisionNr Value="7"/>
-      <BuildNr Value="8"/>
+      <BuildNr Value="9"/>
       <StringTable CompanyName="uib gmbh (www.uib.de)" InternalName="opsi-client-kiosk" LegalCopyright="uib gmbh under AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" ProductName="opsi" ProductVersion="4.0.7"/>
     </VersionInfo>
     <BuildModes Count="3">

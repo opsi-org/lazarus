@@ -18,6 +18,8 @@ opsi-winst/opsi-script (4.11.6.14) stable; urgency=low
   * osfunc: support for followsymlinks:
     FileInstall.AllCopy: AllCopy Recursive: ToCopyOrNotCopy
     filecopy  : fixes #2537
+    Files section copy: -s : does not follow symlinks but copy the symlink files
+    copy -h : follow symlinks
 
 -- Detlef Oertel <d.oertel@uib.de>  Thu, 29 Jun 2017:15:00:00 +0200
 

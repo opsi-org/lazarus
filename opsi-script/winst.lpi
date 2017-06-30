@@ -409,8 +409,9 @@
       <Unit28>
         <Filename Value="changelog.txt"/>
         <IsPartOfProject Value="True"/>
-        <CursorPos Y="23"/>
-        <UsageCount Value="110"/>
+        <IsVisibleTab Value="True"/>
+        <CursorPos X="30" Y="22"/>
+        <UsageCount Value="111"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit28>
@@ -499,7 +500,6 @@
       <Unit38>
         <Filename Value="osfunc.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="9"/>
         <TopLine Value="8666"/>
         <CursorPos X="35" Y="8701"/>
@@ -518,7 +518,7 @@
       <Unit39>
         <Filename Value="osfuncwin2.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="11"/>
         <TopLine Value="698"/>
         <CursorPos Y="730"/>
         <UsageCount Value="209"/>
@@ -599,10 +599,11 @@
       <Unit45>
         <Filename Value="oscalc.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="103"/>
-        <CursorPos X="101" Y="111"/>
+        <EditorIndex Value="10"/>
+        <TopLine Value="104"/>
+        <CursorPos X="7" Y="38"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit45>
       <Unit46>
@@ -882,7 +883,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="40" Y="32"/>
-        <UsageCount Value="134"/>
+        <UsageCount Value="135"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit78>
       <Unit79>
@@ -898,7 +899,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="134"/>
+        <UsageCount Value="135"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit80>
       <Unit81>
@@ -908,7 +909,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="134"/>
+        <UsageCount Value="135"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit81>
       <Unit82>
@@ -918,7 +919,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="134"/>
+        <UsageCount Value="135"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit82>
       <Unit83>
@@ -927,7 +928,7 @@
         <EditorIndex Value="7"/>
         <TopLine Value="6455"/>
         <CursorPos X="96" Y="6469"/>
-        <UsageCount Value="134"/>
+        <UsageCount Value="135"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit83>
@@ -937,7 +938,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="46"/>
         <CursorPos X="6" Y="69"/>
-        <UsageCount Value="134"/>
+        <UsageCount Value="135"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit84>
       <Unit85>
@@ -946,7 +947,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="3905"/>
         <CursorPos X="109" Y="3909"/>
-        <UsageCount Value="134"/>
+        <UsageCount Value="135"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit85>
       <Unit86>
@@ -956,7 +957,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="134"/>
+        <UsageCount Value="135"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit86>
       <Unit87>
@@ -974,7 +975,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="134"/>
+        <UsageCount Value="135"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit88>
       <Unit89>
@@ -983,7 +984,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="261"/>
         <CursorPos X="16" Y="294"/>
-        <UsageCount Value="124"/>
+        <UsageCount Value="125"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit89>
       <Unit90>
@@ -1016,7 +1017,7 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit93>
     </Units>
-    <JumpHistory Count="25" HistoryIndex="24">
+    <JumpHistory Count="26" HistoryIndex="25">
       <Position1>
         <Filename Value="osparser.pas"/>
         <Caret Line="8" Column="63"/>
@@ -1117,6 +1118,10 @@
         <Filename Value="osfunc.pas"/>
         <Caret Line="8276" Column="17" TopLine="8261"/>
       </Position25>
+      <Position26>
+        <Filename Value="oscalc.pas"/>
+        <Caret Line="111" Column="101" TopLine="103"/>
+      </Position26>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
