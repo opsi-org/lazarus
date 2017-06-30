@@ -8688,17 +8688,17 @@ var
       begin
         LogDatei.log('Found: '+SearchResult.Name + ' with attr:'+inttostr(SearchResult.Attr), LLDebug3);
         LogDatei.log('Found: '+SearchResult.Name + ' is SymLink by Attr: '+BoolToStr((SearchResult.Attr and faSymlink = faSymlink),true), LLDebug3);
-        LogDatei.log('Found: '+SearchResult.Name + ' is SymLink by func: '+BoolToStr(FileIsSymlink(SearchResult.Name),true), LLDebug3);
+        LogDatei.log('Found: '+SearchResult.Name + ' is SymLink by func: '+BoolToStr(FileIsSymlink(SourcePath+SearchResult.Name),true), LLDebug3);
         {$IFDEF LINUX}
-        LogDatei.log('Found: '+SearchResult.Name + ' is SymLink by fpReadLink: '+BoolToStr((fpReadLink(SearchResult.Name) <> ''),true), LLDebug3);
+        LogDatei.log('Found: '+SearchResult.Name + ' is SymLink by fpReadLink: '+BoolToStr((fpReadLink(SourcePath+SearchResult.Name) <> ''),true), LLDebug3);
         {$ENDIF LINUX}
 
         if (SearchResult.Attr and faDirectory = faDirectory) and
            // do not follow symlinks to directories
           (SearchResult.Attr and faSymlink <> faSymlink) and // seems not work
-           not(FileIsSymlink(SearchResult.Name)) and         // seems not work
+           not(FileIsSymlink(SourcePath+SearchResult.Name)) and         // seems not work
            {$IFDEF LINUX}
-           (fpReadLink(SearchResult.Name) = '') and
+           (fpReadLink(SourcePath+SearchResult.Name) = '') and
            {$ENDIF LINUX}
           (SearchResult.Name <> '.') and (SearchResult.Name <> '..') then
         begin
