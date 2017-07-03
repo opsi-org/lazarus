@@ -435,6 +435,7 @@ type
     function setAddDependentProductOnClients(switchon: boolean): boolean;
     function setAddProductPropertyStateDefaults(switchon: boolean): boolean;
     function setAddProductOnClientDefaults(switchon: boolean): boolean;
+    function setAddConfigStateDefaults(switchon: boolean): boolean;
     function getProductPropertyList(myproperty: string;
       defaultlist: TStringList): TStringList;  overload;
     function getProductPropertyList(myproperty: string;
@@ -4886,11 +4887,12 @@ var
   parastr : string;
   jO : ISuperObject;
   errorOccured : boolean = false;
+  omc: TOpsiMethodCall;
 begin
   result := '';
   if setAddConfigStateDefaults(true) then
   begin
-    parastr := '{ "clientId": "' + actualClient + '"}'
+    parastr := '{ "clientId": "' + actualClient + '"}';
     omc := TOpsiMethodCall.Create('configState_getObjects', ['',parastr]);
     //jO := FjsonExecutioner.retrieveJSONObject(omc);
     result := checkAndRetrieveString(omc,errorOccured);

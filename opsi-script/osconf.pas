@@ -43,7 +43,8 @@ uses
   , Windows
   , registry,
 {$ENDIF WINDOWS}
-  inifiles;
+  inifiles,
+  lazfileutils;
 
 
 function readConfig: boolean;
@@ -152,14 +153,14 @@ function writeConfig: boolean;
 var
   myconf : TIniFile;
 begin
-  if nof FileExists(opsiscriptconf) then
+  if not FileExists(opsiscriptconf) then
   begin
     // prepare to create it
     ForceDirectory(ExtractFilePath(opsiscriptconf));
   end;
   myconf := TIniFile.Create(opsiscriptconf);
-  myconf.WriteString('global',BoolToStr(debug_prog,true));
-  myconf.WriteString('global',BoolToStr(debug_lib,true));
+  myconf.WriteString('global','debug_prog',BoolToStr(debug_prog,true));
+  myconf.WriteString('global','debug_lib',BoolToStr(debug_lib,true));
   myconf.Free;
 end;
 
@@ -173,14 +174,14 @@ var
   myconf : TIniFile;
 
 begin
-  if nof FileExists(opsiscriptconf) then
+  if not FileExists(opsiscriptconf) then
   begin
     // prepare to create it
     ForceDirectory(ExtractFilePath(opsiscriptconf));
   end;
   myconf := TIniFile.Create(opsiscriptconf);
-  debug_prog := strToBool(myconf.ReadString('global','debug_prog',debug_prog));
-  debug_lib := strToBool(myconf.ReadString('global','debug_lib',debug_lib));
+  debug_prog := strToBool(myconf.ReadString('global','debug_prog',boolToStr(debug_prog,true)));
+  debug_lib := strToBool(myconf.ReadString('global','debug_lib',boolToStr(debug_lib,true)));
   myconf.Free;
 
 
@@ -244,6 +245,10 @@ begin
     readconfig_done := true;
 end;
 
+procedure readConfigFromService;
+begin
+  // not implemented yet
+end;
 
 
 
