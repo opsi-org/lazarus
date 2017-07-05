@@ -1224,6 +1224,7 @@ end;
 
 function TLogInfo.log_prog(const S: string; LevelOfLine: integer): boolean;
 begin
+  result := false;
   if (LevelOfLine <= LLwarning) or Fdebug_prog then
     result := log('Prog: '+S, LevelOfLine);
 end;
