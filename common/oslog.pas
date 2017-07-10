@@ -99,6 +99,8 @@ type
     FStandardLogFilename: string;
     FStandardLogFileext: string;
     FWritePartLog : boolean;
+    Fdebug_prog : boolean;
+    Fdebug_lib : boolean;
 
 
   protected
@@ -134,6 +136,7 @@ type
     function getLine(var S: string): boolean;
     function getPartLine(var S: string): boolean;
     function log(const S: string; LevelOfLine: integer): boolean;
+    function log_prog(const S: string; LevelOfLine: integer): boolean;
     function DependentAdd(const S: string; LevelOfLine: integer): boolean;
     function DependentAddError(const S: string; LevelOfLine: integer): boolean;
     function DependentAddWarning(const S: string; LevelOfLine: integer): boolean;
@@ -182,6 +185,8 @@ type
     property StandardPartLogFilename: string read FStandardPartLogFilename write FStandardPartLogFilename;
     property StandardLogFilename: string read FStandardLogFilename write FStandardLogFilename;
     property WritePartLog: boolean read FWritePartLog write FWritePartLog;
+    property debug_prog: boolean read Fdebug_prog write Fdebug_prog;
+    property debug_lib: boolean read Fdebug_lib write Fdebug_lib;
 
     //function copyPartLogToFullLog: boolean;
   end;
@@ -1216,6 +1221,14 @@ begin
   else
     Result := False;
 end;
+
+function TLogInfo.log_prog(const S: string; LevelOfLine: integer): boolean;
+begin
+  result := false;
+  if (LevelOfLine <= LLwarning) or Fdebug_prog then
+    result := log('Prog: '+S, LevelOfLine);
+end;
+
 
 function TLogInfo.log(const S: string; LevelOfLine: integer): boolean;
 begin

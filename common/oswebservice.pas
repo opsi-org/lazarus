@@ -356,6 +356,7 @@ type
     procedure productOnClient_getobject_actualclient;
     function getInstallableProducts: TStringList;
     function getOpsiModules: ISuperObject;
+    function getOpsiServiceConfigs: string;
 
   protected
     FServiceLastErrorInfo: TStringList;
@@ -434,6 +435,7 @@ type
     function setAddDependentProductOnClients(switchon: boolean): boolean;
     function setAddProductPropertyStateDefaults(switchon: boolean): boolean;
     function setAddProductOnClientDefaults(switchon: boolean): boolean;
+    function setAddConfigStateDefaults(switchon: boolean): boolean;
     function getProductPropertyList(myproperty: string;
       defaultlist: TStringList): TStringList;  overload;
     function getProductPropertyList(myproperty: string;
@@ -3738,6 +3740,27 @@ begin
   end;
 end;
 
+function TOpsi4Data.setAddConfigStateDefaults(switchon: boolean): boolean;
+var
+  omc: TOpsiMethodCall;
+  productEntry: ISuperObject;
+begin
+  Result := False;
+  try
+    if switchon then
+      omc := TOpsiMethodCall.Create('backend_setOptions',
+        ['{"addConfigStateDefaults": true}'])
+    else
+      omc := TOpsiMethodCall.Create('backend_setOptions',
+        ['{"addConfigStateDefaults": false}']);
+    productEntry := FjsonExecutioner.retrieveJSONObject(omc);
+    Result := True;
+  except
+    Result := False;
+  end;
+end;
+
+
 function TOpsi4Data.setAddProductPropertyStateDefaults(switchon: boolean): boolean;
 var
   omc: TOpsiMethodCall;
@@ -4859,6 +4882,24 @@ begin
   Result := FjsonExecutioner.getFileFromDepot(filename, toStringList, ListResult);
 end;
 
+function TOpsi4Data.getOpsiServiceConfigs : string;
+var
+  parastr : string;
+  jO : ISuperObject;
+  errorOccured : boolean = false;
+  omc: TOpsiMethodCall;
+begin
+  result := '';
+  if setAddConfigStateDefaults(true) then
+  begin
+    parastr := '{ "clientId": "' + actualClient + '"}';
+    omc := TOpsiMethodCall.Create('configState_getObjects', ['',parastr]);
+    //jO := FjsonExecutioner.retrieveJSONObject(omc);
+    result := checkAndRetrieveString(omc,errorOccured);
+    setAddConfigStateDefaults(true);
+  end;
+  omc.Free;
+end;
 
 initialization
   // {$i widatamodul.lrs}

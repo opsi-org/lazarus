@@ -36,16 +36,20 @@ uses
 {$IFDEF LINUX}
   , fileinfo
   //, winpeimagereader {need this for reading exe info}
-  , elfreader {needed for reading ELF executables}
+  , elfreader, // {needed for reading ELF executables}
 {$ENDIF LINUX}
 {$IFDEF WINDOWS}
  , VersionInfoX
   , Windows
-  , registry
-{$ENDIF WINDOWS} ;
+  , registry,
+{$ENDIF WINDOWS}
+  inifiles,
+  lazfileutils;
 
 
 function readConfig: boolean;
+function writeConfig: boolean;
+procedure readConfigFromService;
 
 const
 {$IFDEF WINDOWS}
@@ -136,12 +140,29 @@ opsiservicePORThttps = 4447;
   utilsdrive: string;
   configdrive: string;
   //deprecated stuff end
+  debug_prog : boolean = false;
+  debug_lib: boolean = false;
 
 
 implementation
 uses
 {$IFDEF WINDOWS}osfunc {$ENDIF}
 {$IFDEF LINUX}osfunclin {$ENDIF};
+
+function writeConfig: boolean;
+var
+  myconf : TIniFile;
+begin
+  if not FileExists(opsiscriptconf) then
+  begin
+    // prepare to create it
+    ForceDirectory(ExtractFilePath(opsiscriptconf));
+  end;
+  myconf := TIniFile.Create(opsiscriptconf);
+  myconf.WriteString('global','debug_prog',BoolToStr(debug_prog,true));
+  myconf.WriteString('global','debug_lib',BoolToStr(debug_lib,true));
+  myconf.Free;
+end;
 
 function readConfig: boolean;
 
@@ -150,10 +171,19 @@ const
 
 var
   part1, part2: string;
-
-  ///XProperties :   TStringList;
+  myconf : TIniFile;
 
 begin
+  if not FileExists(opsiscriptconf) then
+  begin
+    // prepare to create it
+    ForceDirectory(ExtractFilePath(opsiscriptconf));
+  end;
+  myconf := TIniFile.Create(opsiscriptconf);
+  debug_prog := strToBool(myconf.ReadString('global','debug_prog',boolToStr(debug_prog,true)));
+  debug_lib := strToBool(myconf.ReadString('global','debug_lib',boolToStr(debug_lib,true)));
+  myconf.Free;
+
 
 {$IFDEF LINUX} computername := getHostnameLin; {$ENDIF LINUX}
 //{$IFDEF LINUX} computername := ''; {$ENDIF LINUX}//
@@ -212,8 +242,13 @@ begin
     readconfig_done := false;
   end;
 {$ENDIF}
+    readconfig_done := true;
 end;
 
+procedure readConfigFromService;
+begin
+  // not implemented yet
+end;
 
 
 

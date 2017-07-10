@@ -20,8 +20,7 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
-      <MinorVersionNr Value="11"/>
-      <RevisionNr Value="7"/>
+      <MinorVersionNr Value="12"/>
       <StringTable Comments="Compiled with Lazarus 1.6.2" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.0.7"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -134,7 +133,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="31">
+    <Units Count="32">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -275,6 +274,10 @@
         <Filename Value="osdefinedfunctions.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit30>
+      <Unit31>
+        <Filename Value="changelog.txt"/>
+        <IsPartOfProject Value="True"/>
+      </Unit31>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

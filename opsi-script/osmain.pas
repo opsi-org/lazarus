@@ -1866,6 +1866,7 @@ begin
               opsiserviceSessionId);
             startupmessages.Append('startmessage: opsidata initialized: ' + DateTimeToStr(Now));
             //OpsiData.setOptions (opsiclientd_serviceoptions);
+            readConfigFromService;
             startTime := now;
             (*
             omc := TOpsiMethodCall.Create('backend_info', []);
