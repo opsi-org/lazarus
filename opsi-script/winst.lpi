@@ -19,9 +19,7 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
-      <MinorVersionNr Value="11"/>
-      <RevisionNr Value="6"/>
-      <BuildNr Value="13"/>
+      <MinorVersionNr Value="12"/>
       <StringTable Comments="Compiled with Lazarus 1.6.2 / FPC 3.0" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst32.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst32.exe" ProductName="opsi-script" ProductVersion="4.0.7"/>
     </VersionInfo>
     <BuildModes Count="3" Active="Release">
@@ -141,11 +139,11 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="94">
+    <Units Count="95">
       <Unit0>
         <Filename Value="winst.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="4"/>
         <CursorPos X="26" Y="50"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -286,11 +284,9 @@
         <ComponentName Value="DialogServicePassword"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="-1"/>
         <CursorPos Y="28"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit15>
       <Unit16>
@@ -299,11 +295,10 @@
         <ComponentName Value="ShowTextFile"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="113"/>
         <CursorPos X="9" Y="135"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit16>
       <Unit17>
@@ -338,9 +333,9 @@
         <ComponentName Value="CentralForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="14"/>
+        <EditorIndex Value="8"/>
         <TopLine Value="134"/>
-        <CursorPos X="15" Y="156"/>
+        <CursorPos X="34" Y="148"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -375,12 +370,10 @@
         <ComponentName Value="MyMessageDlg"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="13"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="6"/>
         <CursorPos X="28" Y="32"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit23>
       <Unit24>
@@ -504,7 +497,7 @@
       <Unit38>
         <Filename Value="osfunc.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="16"/>
+        <EditorIndex Value="10"/>
         <TopLine Value="1101"/>
         <CursorPos X="24" Y="1116"/>
         <ExtraEditorCount Value="1"/>
@@ -521,7 +514,7 @@
       <Unit39>
         <Filename Value="osfuncwin2.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="17"/>
+        <EditorIndex Value="11"/>
         <TopLine Value="698"/>
         <CursorPos Y="730"/>
         <UsageCount Value="209"/>
@@ -540,7 +533,7 @@
       <Unit41>
         <Filename Value="osparser.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="7"/>
         <TopLine Value="14719"/>
         <CursorPos X="15" Y="14749"/>
         <ExtraEditorCount Value="1"/>
@@ -577,8 +570,7 @@
       <Unit43>
         <Filename Value="osfuncwin.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="15"/>
+        <EditorIndex Value="9"/>
         <TopLine Value="7"/>
         <CursorPos X="14" Y="30"/>
         <ExtraEditorCount Value="1"/>
@@ -594,8 +586,8 @@
       <Unit44>
         <Filename Value="osconf.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="8"/>
-        <TopLine Value="68"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="6"/>
         <CursorPos X="8" Y="80"/>
         <UsageCount Value="205"/>
         <Loaded Value="True"/>
@@ -613,7 +605,7 @@
       <Unit46>
         <Filename Value="osmain.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="5"/>
         <TopLine Value="1039"/>
         <CursorPos X="30" Y="1071"/>
         <UsageCount Value="204"/>
@@ -752,24 +744,23 @@
       <Unit63>
         <Filename Value="osregistry.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="4"/>
-        <TopLine Value="1589"/>
-        <CursorPos X="42" Y="1612"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="1"/>
+        <TopLine Value="1348"/>
+        <CursorPos X="34" Y="1373"/>
         <ExtraEditorCount Value="2"/>
         <ExtraEditor1>
-          <EditorIndex Value="-1"/>
-          <WindowIndex Value="1"/>
-          <TopLine Value="1348"/>
-          <CursorPos X="34" Y="1373"/>
-        </ExtraEditor1>
-        <ExtraEditor2>
           <EditorIndex Value="-1"/>
           <WindowIndex Value="-1"/>
           <TopLine Value="151"/>
           <CursorPos X="13" Y="186"/>
+        </ExtraEditor1>
+        <ExtraEditor2>
+          <EditorIndex Value="-1"/>
+          <TopLine Value="1589"/>
+          <CursorPos X="42" Y="1612"/>
         </ExtraEditor2>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit63>
       <Unit64>
@@ -930,17 +921,16 @@
       <Unit83>
         <Filename Value="..\common\superobject.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="6455"/>
         <CursorPos X="96" Y="6469"/>
         <UsageCount Value="124"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit83>
       <Unit84>
         <Filename Value="..\common\oslog.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="3"/>
         <TopLine Value="46"/>
         <CursorPos X="6" Y="69"/>
         <UsageCount Value="124"/>
@@ -988,11 +978,10 @@
       <Unit89>
         <Filename Value="..\common\osjson.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="261"/>
         <CursorPos X="16" Y="294"/>
         <UsageCount Value="114"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit89>
       <Unit90>
@@ -1024,8 +1013,18 @@
         <UsageCount Value="8"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit93>
+      <Unit94>
+        <Filename Value="osdefinedfunctions.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="20"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit94>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="osmain.pas"/>
         <Caret Line="1922" Column="29" TopLine="1893"/>
@@ -1079,73 +1078,69 @@
         <Caret Line="1960" Column="22" TopLine="1921"/>
       </Position13>
       <Position14>
-        <Filename Value="osshowlog.pas"/>
-        <Caret Line="51" Column="18" TopLine="51"/>
+        <Filename Value="..\common\oslog.pas"/>
+        <Caret Line="548" Column="75" TopLine="515"/>
       </Position14>
       <Position15>
         <Filename Value="..\common\oslog.pas"/>
-        <Caret Line="548" Column="75" TopLine="515"/>
+        <Caret Line="652" Column="3" TopLine="629"/>
       </Position15>
       <Position16>
-        <Filename Value="..\common\oslog.pas"/>
-        <Caret Line="652" Column="3" TopLine="629"/>
-      </Position16>
-      <Position17>
         <Filename Value="osmain.pas"/>
         <Caret Line="1071" Column="30" TopLine="1039"/>
+      </Position16>
+      <Position17>
+        <Filename Value="..\common\oswebservice.pas"/>
+        <Caret Line="431" Column="31" TopLine="411"/>
       </Position17>
       <Position18>
         <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="431" Column="31" TopLine="411"/>
+        <Caret Line="860" Column="37" TopLine="822"/>
       </Position18>
       <Position19>
         <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="860" Column="37" TopLine="822"/>
+        <Caret Line="1037" Column="44" TopLine="999"/>
       </Position19>
       <Position20>
         <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="1037" Column="44" TopLine="999"/>
+        <Caret Line="3707" Column="51" TopLine="3682"/>
       </Position20>
       <Position21>
-        <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="3707" Column="51" TopLine="3682"/>
-      </Position21>
-      <Position22>
         <Filename Value="osparser.pas"/>
         <Caret Line="9247" Column="41" TopLine="9208"/>
+      </Position21>
+      <Position22>
+        <Filename Value="osfunc.pas"/>
+        <Caret Line="7533" Column="26" TopLine="7516"/>
       </Position22>
       <Position23>
         <Filename Value="osfunc.pas"/>
-        <Caret Line="7533" Column="26" TopLine="7516"/>
+        <Caret Line="1120" Column="21" TopLine="1093"/>
       </Position23>
       <Position24>
-        <Filename Value="osfunc.pas"/>
-        <Caret Line="1120" Column="21" TopLine="1093"/>
+        <Filename Value="osfuncwin2.pas"/>
+        <Caret Line="84" Column="27" TopLine="60"/>
       </Position24>
       <Position25>
         <Filename Value="osfuncwin2.pas"/>
-        <Caret Line="84" Column="27" TopLine="60"/>
+        <Caret Line="607" Column="34" TopLine="570"/>
       </Position25>
       <Position26>
-        <Filename Value="osfuncwin2.pas"/>
-        <Caret Line="607" Column="34" TopLine="570"/>
+        <Filename Value="osfunc.pas"/>
+        <Caret Line="1120" Column="21" TopLine="1093"/>
       </Position26>
       <Position27>
         <Filename Value="osfunc.pas"/>
-        <Caret Line="1120" Column="21" TopLine="1093"/>
+        <Caret Line="1124" Column="13" TopLine="1101"/>
       </Position27>
       <Position28>
-        <Filename Value="osfunc.pas"/>
-        <Caret Line="1124" Column="13" TopLine="1101"/>
+        <Filename Value="osparser.pas"/>
+        <Caret Line="14741" Column="37" TopLine="14708"/>
       </Position28>
       <Position29>
         <Filename Value="osparser.pas"/>
-        <Caret Line="14741" Column="37" TopLine="14708"/>
-      </Position29>
-      <Position30>
-        <Filename Value="osparser.pas"/>
         <Caret Line="10895" Column="39" TopLine="10873"/>
-      </Position30>
+      </Position29>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
