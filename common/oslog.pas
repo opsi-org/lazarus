@@ -101,6 +101,8 @@ type
     FWritePartLog : boolean;
     Fdebug_prog : boolean;
     Fdebug_lib : boolean;
+    Fforce_min_loglevel : integer;
+    Fdefault_loglevel : integer;
 
 
   protected
@@ -187,6 +189,8 @@ type
     property WritePartLog: boolean read FWritePartLog write FWritePartLog;
     property debug_prog: boolean read Fdebug_prog write Fdebug_prog;
     property debug_lib: boolean read Fdebug_lib write Fdebug_lib;
+    property force_min_loglevel: integer read Fforce_min_loglevel write Fforce_min_loglevel;
+    property default_loglevel: integer read Fdefault_loglevel write Fdefault_loglevel;
 
     //function copyPartLogToFullLog: boolean;
   end;
@@ -1257,6 +1261,7 @@ begin
       if LevelOfLine  = LLCritical then NumberOfErrors := NumberOfErrors + 1;
 
       usedloglevel := loglevel;
+      If usedloglevel < Fforce_min_loglevel then usedloglevel := Fforce_min_loglevel;
       st :=  s;
 
       // now some things we do not want to log:

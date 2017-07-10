@@ -356,7 +356,6 @@ type
     procedure productOnClient_getobject_actualclient;
     function getInstallableProducts: TStringList;
     function getOpsiModules: ISuperObject;
-    function getOpsiServiceConfigs: string;
 
   protected
     FServiceLastErrorInfo: TStringList;
@@ -503,6 +502,7 @@ type
     function getFileFromDepot(filename: string; toStringList: boolean;
       var ListResult: TStringList): boolean;
     function decreaseSslProtocol: boolean;
+    function getOpsiServiceConfigs : string;
   end;
 
 var
