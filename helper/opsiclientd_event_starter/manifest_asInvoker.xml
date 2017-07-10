@@ -10,8 +10,7 @@
   <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
     <security>
       <requestedPrivileges>
-        <requestedExecutionLevel level="highestAvailable"/>
-        <!-- <requestedExecutionLevel level="requireAdministrator" uiAccess="false"/> -->
+        <requestedExecutionLevel level="asInvoker"/>
       </requestedPrivileges>
     </security>
   </trustInfo>

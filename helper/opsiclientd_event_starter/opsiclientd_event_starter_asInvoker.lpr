@@ -1,4 +1,4 @@
-program opsiclientd_event_starter;
+program opsiclientd_event_starter_asInvoker;
 
 {$mode objfpc}{$H+}
 
@@ -95,17 +95,20 @@ var
   myini: TInifile;
   confname : string;
 begin
-  confname := getSpecialFolder(CSIDL_PROGRAM_FILES) +opsiclientdconf;
-  myini := TIniFile.Create(confname);
+  //confname := getSpecialFolder(CSIDL_PROGRAM_FILES) +opsiclientdconf;
+  //myini := TIniFile.Create(confname);
   //myservice_url := myini.ReadString('config_service', 'url', '');
   //myservice_url := 'https://localhost:4441/interface';
   //myservice_url := 'https://localhost:4441';
-  myservice_url := 'https://localhost:4441/opsiclientd';
-  myclientid := myini.ReadString('global', 'host_id', '');
-  myhostkey := myini.ReadString('global', 'opsi_host_key', '');
+  //myservice_url := 'https://localhost:4441/opsiclientd';
+  myservice_url := 'https://localhost:4441/kiosk';
+  myclientid := '';
+  myhostkey := '';
+  //myclientid := myini.ReadString('global', 'host_id', '');
+  //myhostkey := myini.ReadString('global', 'opsi_host_key', '');
   //myloglevel := myini.ReadInteger('global', 'log_level', 5);
-  myloglevel := 7;
-  myini.Free;
+  myloglevel := 8;
+  //myini.Free;
 end;
 
 
@@ -157,7 +160,7 @@ begin
   logfilename := opsilog;
   logdatei.CreateTheLogfile(logfilename, False);
   logdatei.LogLevel := myloglevel;
-  logdatei.log('opsiclientd_shutdown_starter: version: '+myVersion,LLessential);
+  logdatei.log('opsiclientd_event_starter_asInvoker: version: '+myVersion,LLessential);
 end;
 
 
@@ -183,7 +186,8 @@ begin
     try
       if myseconds > 0 then
       begin
-       resultstring := MyOpsiMethodCall('backend_info',[]);
+       //resultstring := MyOpsiMethodCall('backend_info',[]);
+       resultstring := MyOpsiMethodCall('getDepotId', [myclientid]);
        networkup := True;
       end
       else timeout := True;
@@ -229,8 +233,9 @@ begin
 
   optionlist := TStringlist.Create;
   optionlist.Append('help');
-  optionlist.Append('event:');
+  //optionlist.Append('event:');
   optionlist.Append('version');
+  optionlist.Append('fqdn::');
   // quick check parameters
   ErrorMsg:= CheckOptions('h',optionlist);
   if ErrorMsg<>'' then begin
@@ -252,18 +257,25 @@ begin
     Terminate;
     Exit;
   end;
+  readconf;
+  if HasOption('fqdn') then
+  begin
+    myClientId := GetOptionValue('fqdn');
+  end;
+
 
 
   if HasOption('event') then
   begin
     myevent := GetOptionValue('event');
-  end
-  else
+  end;
+(*
   begin
     WriteHelp;
     Terminate;
     Exit;
   end;
+
 
   if myevent ='' then
   begin
@@ -272,12 +284,12 @@ begin
     Terminate;
     Exit;
   end;
-
+  *)
 
   { add your program here }
   myexitcode := 0;
   myerror := '';
-  readconf;
+  //readconf;
   initlogging;
   LogDatei.log('clientid=' + myclientid, LLNotice);
   LogDatei.log('service_url=' + myservice_url, LLNotice);
@@ -291,6 +303,7 @@ begin
   begin
     LogDatei.log('init Connection done', LLNotice);
     try
+      (*
       if trim(LowerCase(myEvent)) = 'on_shutdown' then
       begin
         resultstring := MyOpsiMethodCall('isInstallationPending',[]);
@@ -314,8 +327,10 @@ begin
           Terminate;
         end;
       end;
+      *)
 
-      resultstring := MyOpsiMethodCall('fireEvent',[myEvent]);
+      //resultstring := MyOpsiMethodCall('fireEvent',[myEvent]);
+      resultstring := MyOpsiMethodCall('fireEvent_software_on_demand', []);
       LogDatei.log('resultstring=' + resultstring, LLNotice);
       if jsonIsObject(resultstring) then
       begin
@@ -323,11 +338,11 @@ begin
             LogDatei.log('Error in jsonAsObjectGetValueByKey',LLCritical);
         if myBoolStr = 'null' then
         begin
-          LogDatei.log('Succesfull fired event: '+myEvent,LLNotice)
+          LogDatei.log('Succesfull fired fireEvent_software_on_demand ',LLNotice)
         end
         else
         begin
-          LogDatei.log('Failed fired event: '+myEvent, LLCritical);
+          LogDatei.log('Failed fired fireEvent_software_on_demand: ', LLCritical);
         end;
       end
       else
@@ -336,6 +351,7 @@ begin
         Terminate;
       end;
 
+      (*
       // event fired
       Sleep(SECONDS_TO_SLEEP_AFTER_ACTION * 1000);
       myBoolStr := 'false';
@@ -366,6 +382,7 @@ begin
       //     LogDatei.log('Task aborted by timeout',LLWarning)
       //else
       LogDatei.log('Task completed',LLNotice)
+      *)
     except
       on E: Exception do
       begin
@@ -404,17 +421,18 @@ begin
   writeln('Valid Options:');
   writeln(' -h / --help  : write this help');
   writeln(' --version    : write version string');
-  writeln(' --event=<event>    : starts the event <event>');
-  writeln('      <event> has to be given');
-  writeln('      Example --event=on_shutdown');
-  writeln('      Must run with admin rights');
+  //writeln(' --event=<event>    : starts the event <event>');
+  //writeln('      <event> has to be given');
+  //writeln('      Example --event=on_shutdown');
+  writeln(' --fqdn=<fqdn>    : fqdn of the client');
+  writeln('      May run without admin rights');
 end;
 
 var
   Application: Tstarter;
 
 {$R *.res}
-{$R manifest.rc}
+{$R manifest_asInvoker.rc}
 
 begin
   Application:=Tstarter.Create(nil);

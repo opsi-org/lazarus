@@ -9,7 +9,7 @@
       </Flags>
       <SessionStorage Value="InProjectDir"/>
       <MainUnit Value="0"/>
-      <Title Value="opsiclientd_event_starter"/>
+      <Title Value="opsiclientd_event_starter_asInvoker"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
       <Icon Value="0"/>
@@ -31,7 +31,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="opsiclientd_event_starter"/>
+            <Filename Value="opsiclientd_event_starter_asInvoker"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -71,7 +71,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="opsiclientd_event_starter"/>
+            <Filename Value="opsiclientd_event_starter_asInvoker"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -120,7 +120,7 @@
     </RequiredPackages>
     <Units Count="5">
       <Unit0>
-        <Filename Value="opsiclientd_event_starter.lpr"/>
+        <Filename Value="opsiclientd_event_starter_asInvoker.lpr"/>
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
@@ -145,7 +145,7 @@
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="opsiclientd_event_starter"/>
+      <Filename Value="opsiclientd_event_starter_asInvoker"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
