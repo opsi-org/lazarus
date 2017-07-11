@@ -49,7 +49,7 @@ uses
 
 function readConfig: boolean;
 function writeConfig: boolean;
-procedure readConfigFromService;
+function readConfigFromService : string;
 
 const
 {$IFDEF WINDOWS}
@@ -253,7 +253,7 @@ begin
     readconfig_done := true;
 end;
 
-procedure readConfigFromService;
+function readConfigFromService : string;
 var
   serviceresult : string;
   configid, values, tmpstr : string;
@@ -263,6 +263,7 @@ begin
   // not implemented yet
   configlist := Tstringlist.Create;
   serviceresult := opsidata.getOpsiServiceConfigs;
+  result := serviceresult;
   if jsonIsValid(serviceresult) then
     if jsonIsArray(serviceresult) then
       if jsonAsArrayToStringList(serviceresult,configlist) then

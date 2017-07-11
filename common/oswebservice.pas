@@ -4892,11 +4892,11 @@ begin
   result := '';
   if setAddConfigStateDefaults(true) then
   begin
-    parastr := '{ "clientId": "' + actualClient + '"}';
+    parastr := '{"objectId": "' + actualClient + '"}';
     omc := TOpsiMethodCall.Create('configState_getObjects', ['',parastr]);
     //jO := FjsonExecutioner.retrieveJSONObject(omc);
-    result := checkAndRetrieveString(omc,errorOccured);
-    setAddConfigStateDefaults(true);
+    result := checkAndRetrieve(omc,errorOccured);
+    setAddConfigStateDefaults(false);
   end;
   omc.Free;
 end;

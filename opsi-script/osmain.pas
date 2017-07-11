@@ -1866,7 +1866,9 @@ begin
               opsiserviceSessionId);
             startupmessages.Append('startmessage: opsidata initialized: ' + DateTimeToStr(Now));
             //OpsiData.setOptions (opsiclientd_serviceoptions);
-            readConfigFromService;
+            opsidata.setActualClient(computername);
+            startupmessages.Append(computername);
+            startupmessages.Append(readConfigFromService);
             startTime := now;
             (*
             omc := TOpsiMethodCall.Create('backend_info', []);
@@ -1922,6 +1924,13 @@ begin
             startupmessages.Append('startmessage create log: ' + DateTimeToStr(Now));
             LogDatei.CreateTheLogfile(LogDateiName);
           end;
+          LogDatei.force_min_loglevel:=osconf.force_min_loglevel;
+          LogDatei.debug_prog:=osconf.debug_prog;
+          LogDatei.LogLevel:=osconf.default_loglevel;
+          logDatei.log_prog('force_min_loglevel: '+inttostr(osconf.force_min_loglevel),LLessential);
+          logDatei.log_prog('default_loglevel: '+inttostr(osconf.default_loglevel),LLessential);
+          logDatei.log_prog('debug_prog: '+booleantostr(osconf.debug_prog),LLessential);
+          logDatei.log_prog('debug_lib: '+booleantostr(osconf.debug_lib),LLessential);
           extractTmpPathFromLogdatei(LogDateiName);
           TempPath := GetTempPath;
 

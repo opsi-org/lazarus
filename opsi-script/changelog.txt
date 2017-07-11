@@ -18,6 +18,12 @@ opsi-winst/opsi-script (4.12.0.0) experimental; urgency=low
   * osparser: moved sync between FExtremeErrorLevel and extremeErrorLevel before final output
   * osparser: new functions: boolToSting(<bool expression>) and stringToBool(< string>)
   * osparser: new statement: ImportFunc
+  * oslog: new method log_prog for program debugging
+  * osconf: readConfigFromService reads configstates:
+     opsi-script.global.debug_prog : boolean ; if true log log_prog if > LLWarning
+     opsi-script.global.debug_lib : boolean ; if true log libraries if > LLWarning
+     opsi-script.global.default_loglevel : intstring ; set the default loglevel
+     opsi-script.global.force_min_loglevel : intstring ; set the minimal loglevel
 
 -- Detlef Oertel <d.oertel@uib.de>  Mon, 19 Jun 2017:15:00:00 +0200
 
