@@ -587,8 +587,9 @@ begin
       *)
 
       try
-        ImageBackground.picture.loadFromFile(skinDir + PathDelim +
-          skinIni.ReadString('ImageBackground', 'File', 'bg.png'));
+        filename := skinDir +PathDelim+ skinIni.ReadString('ImageBackground', 'File', 'bg.png');
+        if FileExists(filename) and not IsDirectory(filename) then
+          ImageBackground.picture.loadFromFile(filename);
       except
       end;
 
@@ -600,7 +601,7 @@ begin
         filename := skinDir +PathDelim+
           skinIni.ReadString('ImageProduct', 'File', 'product.png');
         FileName := ExpandFileName(FileName);
-        if FileExists(filename) then
+        if FileExists(filename) and not IsDirectory(filename) then
           ImageProduct.picture.loadFromFile(filename);
       except
       end;
@@ -613,7 +614,7 @@ begin
         filename := skinDir +PathDelim+
           skinIni.ReadString('ImageLogo1', 'File', 'logo1.png');
         FileName := ExpandFileName(FileName);
-        if FileExists(filename) then
+        if FileExists(filename) and not IsDirectory(filename) then
           ImageLogo1.picture.loadFromFile(filename);
       except
       end;
@@ -626,7 +627,7 @@ begin
         filename := skinDir +PathDelim+
           skinIni.ReadString('ImageLogo2', 'File', 'logo2.png');
         FileName := ExpandFileName(FileName);
-        if FileExists(filename) then
+        if FileExists(filename) and not IsDirectory(filename) then
           ImageLogo2.picture.loadFromFile(filename);
       except
       end;
@@ -639,7 +640,7 @@ begin
         filename := skinDir +PathDelim+
           skinIni.ReadString('Image1Over', 'File', 'over1.png');
         FileName := ExpandFileName(FileName);
-        if FileExists(filename) then
+        if FileExists(filename) and not IsDirectory(filename) then
           Image1Over.picture.loadFromFile(filename);
       except
       end;
@@ -652,7 +653,7 @@ begin
         filename := skinDir +PathDelim+
           skinIni.ReadString('Image2Over', 'File', 'over2.png');
         FileName := ExpandFileName(FileName);
-        if FileExists(filename) then
+        if FileExists(filename) and not IsDirectory(filename) then
           Image2Over.picture.loadFromFile(filename);
       except
       end;

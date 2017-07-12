@@ -99,7 +99,8 @@ LazFileUtils,
   oscrypt,
   LAZUTF8,
   DOM,
-  osxmlsections;
+  osxmlsections,
+  osxml;
 
 
 type
@@ -10693,6 +10694,60 @@ begin
     end;
    end
 
+   // #########  start xml2 list functions ###############################
+
+   else if LowerCase (s) = LowerCase ('getXml2Document')
+   then
+   begin
+    if Skip ('(', r, r, InfoSyntaxError)
+    then
+    begin
+      list1 := TXStringList.create;
+      if produceStringList (section,r, r, list1, InfoSyntaxError) //Recursion
+      then
+      Begin
+        list.clear;
+        list.Text:= getDocumentElementAsStringlist(Tstringlist(list1)).Text;
+        if Skip (')', r, r, InfoSyntaxError) then
+          syntaxCheck := true;
+      end;
+      list1.free;
+    end;
+   end
+
+   else if LowerCase (s) = LowerCase ('getXml2UniqueChildnodeByName')
+   then
+   begin
+    if Skip ('(', r, r, InfoSyntaxError)
+    then
+    Begin
+       list1 := TXStringList.create;
+      if produceStringList (section,r, r, list1, InfoSyntaxError) //Recursion
+        and skip (',', r, r, InfoSyntaxError)
+      then
+      Begin
+        if EvaluateString (r, r, s1, InfoSyntaxError)
+        and
+          skip (')', r, r, InfoSyntaxError)
+        then
+        Begin
+          syntaxcheck := true;
+           list.clear;
+           if not xmlAsStringlistGetUniqueChildnodeByName(Tstringlist(list1),s1,TStringlist(list)) then
+           begin
+             LogDatei.log('Error on producing getXml2UniqueChildnodeByName', LLerror);
+           end;
+           list1.Free;
+           list1 := nil;
+         End
+       End
+    End
+   End
+
+
+
+   // #########  end xml2 list functions ###############################
+
    else if LowerCase(s) = LowerCase ('getProductMap')
    then
    Begin
@@ -13723,6 +13778,43 @@ begin
      syntaxCheck := true;
    End
  end
+
+
+  //  #### start xml2 string
+
+    else if LowerCase (s) = LowerCase ('getXml2GetChildAttributeValueByNameAndKey')
+ then
+ begin
+   if Skip ('(', r, r, InfoSyntaxError)
+   then
+   Begin
+     list1 := TXStringList.create;
+     if produceStringList (script, r, r, list1, InfoSyntaxError)
+        and skip (',', r, r, InfoSyntaxError)
+     then
+     Begin
+       if EvaluateString (r, r, s1, InfoSyntaxError) and
+          skip (',', r, r, InfoSyntaxError)
+       then
+       Begin
+         if EvaluateString (r, r, s2, InfoSyntaxError) and
+          skip (')', r, r, InfoSyntaxError)
+         then
+         Begin
+           SyntaxCheck := true;
+           stringResult := '';
+           if not xmlAsStringlistGetChildAttributeValueByNameAndKey(list1,s1,s2,stringResult) then
+           begin
+               LogDatei.log('Error on producing getXml2GetChildAttributeValueByNameAndKey', LLerror);
+           end;
+         end;
+       End
+     End
+   End;
+ End
+
+  //  #### stop xml2 string
+
 
  {$IFDEF WINDOWS}
  {$IFDEF WIN32}

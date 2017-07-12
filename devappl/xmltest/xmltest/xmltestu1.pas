@@ -350,11 +350,14 @@ end;
 procedure TForm1.configXMLClick(Sender: TObject);
 var
   childnodeSL, attributevalueSL, docelemSL: TStringlist;
+  header : string;
 begin
   memo3.clear;
   docelemSL := TStringlist.Create;
   attributevalueSL  := TStringlist.Create;
   childnodeSL:= TStringlist.Create;
+  header :=  getXmlDeclarationFromStringList(memoToTStringlist(memo1)).Text;
+  memo3.append('header: ' +  header);
   docelemSL:= getDocumentElementAsStringlist(memoToTStringlist(memo1));
   // hole knoten mit namen PIDKEY, schau ob Value XXXXX, setze Value teststring
   // wie sieht dann das docelement aus?
