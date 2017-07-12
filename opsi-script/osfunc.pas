@@ -86,7 +86,7 @@ LCLProc,
   process,
   SysUtils,
   Classes,
-  charencstreams,
+  //charencstreams, removed for Lazarus 1.8
   osconf,
   oslog,
   crt,
@@ -557,7 +557,7 @@ procedure ChangeDirectory(newdir: string);
 function strContains(const str: string; const substr: string): boolean;
 function createNewOpsiHostKey: string;
 function getProfilesDirList: TStringList;
-function stringListLoadUtf8FromFile(filename: string): TStringList;
+//function stringListLoadUtf8FromFile(filename: string): TStringList;
 function opsiunquotestr(s1,s2 : string): string;
 function opsiunquotestr2(s1,s2 : string): string;
 function cmdLineInputDialog(var inputstr : string; const message, default : string; confidential : boolean) : boolean;
@@ -750,6 +750,8 @@ begin
   if (inputstr = '') then  inputstr := default;
 end;
 
+(*
+// removed for Lazarus 1.8
 function stringListLoadUtf8FromFile(filename: string): TStringList;
 var
   fCES: TCharEncStream;
@@ -763,6 +765,7 @@ begin
   Result.Text := fCES.UTF8Text;
   fCES.Free;
 end;
+*)
 
 
 function getProfilesDirList: TStringList;
@@ -4758,7 +4761,7 @@ begin
   problem := '';
   try
     // remove existing files to avoid problems like: Error: 26 : Text (code segment) file busy
-    if FileExistsUTF8(targetfilename) then FileUtil.DeleteFileUTF8(targetfilename);
+    if lazfileutils.FileExistsUTF8(targetfilename) then lazfileutils.DeleteFileUTF8(targetfilename);
     if not copyFile(PChar(sourcefilename), PChar(targetfilename), True) then
     begin
       myerrorcode := fpgeterrno;

@@ -9771,7 +9771,10 @@ begin
      Begin
        try
          s1 := ExpandFileName(s1);
-         TStringList(list).Assign(stringListLoadUtf8FromFile(s1));
+         // removed for Lazarus 1.8
+         //TStringList(list).Assign(stringListLoadUtf8FromFile(s1));
+         list.loadfromfile (s1);
+         list.Text:= reencode(list.Text, 'UCS2le');
          //wsloadfromfile (s1, TStringList (list));
        except
          on e: exception do
