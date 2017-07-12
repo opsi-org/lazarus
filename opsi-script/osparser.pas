@@ -10715,6 +10715,22 @@ begin
     end;
    end
 
+   else if LowerCase (s) = LowerCase ('getXml2DocumentFromFile')
+   then
+   begin
+    if Skip ('(', r, r, InfoSyntaxError)
+    then
+    begin
+      if EvaluateString (r, r, s1, InfoSyntaxError)
+          and skip (')', r, r, InfoSyntaxError) then
+      Begin
+        syntaxCheck := true;
+        list.clear;
+        list.Text:= getXMLDocumentElementfromFile(ExpandFileNameUTF8(s1)).Text;
+      end;
+    end;
+   end
+
    else if LowerCase (s) = LowerCase ('getXml2UniqueChildnodeByName')
    then
    begin
@@ -10744,6 +10760,34 @@ begin
     End
    End
 
+   else if LowerCase (s) = LowerCase ('xml2GetFirstChildNodeByName')
+   then
+   begin
+    if Skip ('(', r, r, InfoSyntaxError)
+    then
+    Begin
+       list1 := TXStringList.create;
+      if produceStringList (section,r, r, list1, InfoSyntaxError) //Recursion
+        and skip (',', r, r, InfoSyntaxError)
+      then
+      Begin
+        if EvaluateString (r, r, s1, InfoSyntaxError)
+        and
+          skip (')', r, r, InfoSyntaxError)
+        then
+        Begin
+          syntaxcheck := true;
+           list.clear;
+           if not xml2GetFirstChildNodeByName(Tstringlist(list1),s1,TStringlist(list)) then
+           begin
+             LogDatei.log('Error on producing xml2GetFirstChildNodeByName', LLerror);
+           end;
+           list1.Free;
+           list1 := nil;
+         End
+       End
+    End
+   End
 
 
    // #########  end xml2 list functions ###############################
@@ -13738,10 +13782,9 @@ begin
          SyntaxCheck := true;
          stringResult := '';
          for i := 0 to list1.Count - 2
-         do
-           stringResult := stringResult + list1.strings[i] + s1;
-
-         stringResult := stringResult + list1[list1.count-1];
+         do stringResult := stringResult + list1.strings[i] + s1;
+         if list1.count > 0 then
+           stringResult := stringResult + list1[list1.count-1];
        End
      End
    End;
@@ -13782,7 +13825,7 @@ begin
 
   //  #### start xml2 string
 
-    else if LowerCase (s) = LowerCase ('getXml2GetChildAttributeValueByNameAndKey')
+  else if LowerCase (s) = LowerCase ('getXml2AttributeValueByKey')
  then
  begin
    if Skip ('(', r, r, InfoSyntaxError)
@@ -13794,24 +13837,40 @@ begin
      then
      Begin
        if EvaluateString (r, r, s1, InfoSyntaxError) and
-          skip (',', r, r, InfoSyntaxError)
+        skip (')', r, r, InfoSyntaxError)
        then
        Begin
-         if EvaluateString (r, r, s2, InfoSyntaxError) and
-          skip (')', r, r, InfoSyntaxError)
-         then
-         Begin
-           SyntaxCheck := true;
-           stringResult := '';
-           if not xmlAsStringlistGetChildAttributeValueByNameAndKey(list1,s1,s2,stringResult) then
-           begin
-               LogDatei.log('Error on producing getXml2GetChildAttributeValueByNameAndKey', LLerror);
-           end;
+         SyntaxCheck := true;
+         stringResult := '';
+         if not getXml2AttributeValueByKey(list1,s1,stringResult) then
+         begin
+             LogDatei.log('Error on producing getXml2AttributeValueByKey', LLerror);
          end;
-       End
+       end;
      End
    End;
  End
+
+  else if LowerCase (s) = LowerCase ('getXml2Text')
+  then
+  begin
+    if Skip ('(', r, r, InfoSyntaxError)
+    then
+    Begin
+      list1 := TXStringList.create;
+      if produceStringList (script, r, r, list1, InfoSyntaxError)
+         and skip (')', r, r, InfoSyntaxError)
+      then
+      Begin
+        SyntaxCheck := true;
+        stringResult := '';
+        if not getXml2Text(list1,stringResult) then
+        begin
+            LogDatei.log('Error on producing getXml2Text', LLerror);
+        end;
+      End
+    End;
+  End
 
   //  #### stop xml2 string
 

@@ -226,13 +226,15 @@ end;
 function getUniqueChildNodeByName(mynode: TDOMNode; myName: string; var Value: TDOMNode): boolean;
 var
   i: integer;
+  str : string;
 begin
   Result := False;
   i := 0;
   if (mynode <> nil) then
     while i < mynode.ChildNodes.Count do
     begin
-      if myName = mynode.ChildNodes.Item[i].NodeName then
+      str := mynode.ChildNodes.Item[i].NodeName;
+      if myName = str then
       begin
         Value := mynode.ChildNodes.Item[i];
         actualNode:= mynode.ChildNodes.Item[i];
@@ -458,6 +460,7 @@ begin
   for i := 0 to mynode.Attributes.Length - 1 do
     Result.Append(mynode.Attributes[i].NodeName);
 end;
+
 function getNodeattributeByKey (mynode: TDOMNode; attributekey: String; var value: String) :boolean;
 var
   i, test : integer;  // test - wg eindeutigkeit???
@@ -474,6 +477,7 @@ begin
   end;
   if (test=1) then result:=true;
 end;
+
 function deleteChildAttributeByKey(var mynode: TDOMNode; attributekey: string) : boolean;
 var
   i:integer;
@@ -546,6 +550,7 @@ begin
 
   end;
 end;
+
 function getTextEntry(mynode: TDOMNode): string;
 begin
   Result := '';
