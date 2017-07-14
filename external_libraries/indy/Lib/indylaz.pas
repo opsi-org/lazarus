@@ -9,7 +9,8 @@ interface
 uses
   IdAboutVCL, IdAntiFreeze, IdCoreDsnRegister, IdDsnCoreResourceStrings, 
   IdDsnPropEdBindingVCL, IdDsnRegister, IdDsnResourceStrings, 
-  IdDsnSASLListEditorFormVCL, IdRegister, IdRegisterCore, LazarusPackageIntf;
+  IdDsnSASLListEditorFormVCL, IdRegister, IdRegisterCore, IdStreamVCL, 
+  IdStream, LazarusPackageIntf;
 
 implementation
 

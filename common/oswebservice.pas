@@ -276,10 +276,10 @@ type
     constructor Create(const serviceURL, username, password: string); overload;
     constructor Create(const serviceURL, username, password, sessionid: string);
       overload;
-    //constructor Create(const serviceURL, username, password, sessionid: string;
-    //port: integer); overload;
     constructor Create(const serviceURL, username, password, sessionid,
       ip, port: string); overload;
+        constructor Create(const serviceURL, username, password, sessionid,
+      ip, port, agent: string); overload;
     destructor Destroy; override;
     function retrieveJSONObject(const omc: TOpsiMethodCall;
       logging: boolean; retry: boolean; readOmcMap: boolean): ISuperObject; overload;
@@ -369,6 +369,8 @@ type
     procedure initOpsiConf(serviceURL, username, password: string); overload;
     procedure initOpsiConf(serviceURL, username, password, sessionid: string); overload;
     procedure initOpsiConf(serviceURL, username, password, sessionid, ip, port: string);
+      overload;
+    procedure initOpsiConf(serviceURL, username, password, sessionid, ip, port, agentstring: string);
       overload;
 
     property sslProtocol: TIdSSLVersion read FSslProtocol write FSslProtocol;
@@ -1419,6 +1421,12 @@ end;
 constructor TJsonThroughHTTPS.Create(
   const serviceURL, username, password, sessionid, ip, port: string);
 begin
+  Create(serviceUrl, username, password, sessionid, ip, port, ExtractFileName(ParamStr(0)));
+end;
+
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid, ip, port, agent: string);
+begin
   //portHTTPS := port;
   //portHTTP := 4444;
   FserviceURL := serviceURL;
@@ -1434,7 +1442,7 @@ begin
     {$IFDEF OCASIMP}
   createSocket('ocasimp ', ip, port);
     {$ELSE OCASIMP}
-  createSocket(ExtractFileName(ParamStr(0)), '', '');
+  createSocket(agent, '', '');
     {$ENDIF OCASIMP}
   {$ENDIF OPSIWINST}
   //nullO := Null.create;
@@ -2856,49 +2864,29 @@ end;
 
 procedure TOpsi4Data.initOpsiConf(serviceURL, username, password: string);
 begin
-  initOpsiConf(serviceURL, username, password, '', '', '');
-  (*
-  if FJsonExecutioner <> nil then
-    FJsonExecutioner.Free;
-  FjsonExecutioner := TJsonThroughHTTPS.Create(serviceUrl, username, password);
-  ProfildateiChange := False;
-  FServiceUrl := serviceURL;
-  FDepotId := '';
-  FOpsiServiceVersion := '4';
-  FOpsiModules := nil;
-  FOpsiInformation := nil;
-  FProductOnClientIndex := TStringList.Create;
-  FProductStates := TStringList.Create;
-  *)
+  initOpsiConf(serviceURL, username, password, '', '', '','');
 end;
 
 procedure TOpsi4Data.initOpsiConf(serviceURL, username, password, sessionid: string);
 begin
-  initOpsiConf(serviceURL, username, password, sessionid, '', '');
-  (*
-  if FJsonExecutioner <> nil then
-    FJsonExecutioner.Free;
-  FjsonExecutioner := TJsonThroughHTTPS.Create(serviceUrl, username,
-    password, sessionid);
-  ProfildateiChange := False;
-  FServiceUrl := serviceURL;
-  FDepotId := '';
-  FOpsiServiceVersion := '4';
-  FOpsiModules := nil;
-  FOpsiInformation := nil;
-  FProductOnClientIndex := TStringList.Create;
-  FProductStates := TStringList.Create;
-  *)
+  initOpsiConf(serviceURL, username, password, sessionid, '', '','');
 end;
 
 procedure TOpsi4Data.initOpsiConf(serviceURL, username, password,
   sessionid, ip, port: string);
 begin
+  initOpsiConf(serviceURL, username, password, sessionid, ip, port,'');
+end;
+
+
+procedure TOpsi4Data.initOpsiConf(serviceURL, username, password,
+  sessionid, ip, port, agentstring: string);
+begin
   try
     if FJsonExecutioner <> nil then
       FJsonExecutioner.Free;
     FjsonExecutioner := TJsonThroughHTTPS.Create(serviceUrl, username,
-      password, sessionid, ip, port);
+      password, sessionid, ip, port,agentstring);
     ProfildateiChange := False;
     FServiceUrl := serviceURL;
     FDepotId := '';
@@ -4136,7 +4124,7 @@ begin
             FProductStates.Add(productEntry.S['productId'] + '=' +
               productEntry.S['installationStatus']);
             LogDatei.DependentAdd(productEntry.S['productId'] +
-              '= lastcation: ' + productEntry.S['lastAction'], LLessential);
+              '= lastAction: ' + productEntry.S['lastAction'], LLessential);
           end;
         end;
       end;

@@ -23,8 +23,8 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="11"/>
       <RevisionNr Value="6"/>
-      <BuildNr Value="12"/>
-      <StringTable Comments="Compiled with Lazarus 1.6.2" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script-nogui" InternalName="opsiscriptnogui" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org" ProductName="opsi-script" ProductVersion="4.0.6"/>
+      <BuildNr Value="14"/>
+      <StringTable Comments="Compiled with Lazarus 1.6.2" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script-nogui" InternalName="opsiscriptnogui" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org" ProductName="opsi-script" ProductVersion="4.0.7"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="default" Default="True"/>

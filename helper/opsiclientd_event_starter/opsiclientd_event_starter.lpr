@@ -155,7 +155,7 @@ begin
   Result := True;
   logdatei := TLogInfo.Create;
   logfilename := opsilog;
-  oslog.CreateTheLogfile(logfilename, False);
+  logdatei.CreateTheLogfile(logfilename, False);
   logdatei.LogLevel := myloglevel;
   logdatei.log('opsiclientd_shutdown_starter: version: '+myVersion,LLessential);
 end;

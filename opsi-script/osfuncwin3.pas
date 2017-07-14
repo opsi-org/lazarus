@@ -29,8 +29,11 @@ interface
 uses
   Classes,
   SysUtils,
-  Windows,
-  DSiWin32;
+  JwaWinnt,
+  jwawinbase,
+  JwaWindows,
+    Windows;
+//,  DSiWin32;
 
 var
   GetProductInfo: function(dwOSMajorVersion, dwOSMinorVersion,
@@ -172,11 +175,11 @@ const
 
 
 
-function OSGetProductInfoNum: cardinal;
-function getProductInfoStrByNum(num: cardinal): string;
 function GetWinDirectory: string;
 function GetWinSystemDirectory: string;
 function GetSystemDefaultLocale(const typeOfValue: DWord): string;
+function OSGetProductInfoNum: cardinal;
+function getProductInfoStrByNum(num: cardinal): string;
 function GetOSVersionEx(var lpVersionInformation: TOSVersionInfoEx): LPBOOL;
   stdcall; external kernel32 Name 'GetVersionExA';
 function GetSystemOSVersionInfoEx(const typeOfValue: string): string;
@@ -276,7 +279,6 @@ begin
 end;
 
 
-
   (* http://www.delphi-treff.de/tipps/system/wiki/Windows-Version%20ermitteln/
      http://msdn.microsoft.com/en-us/library/ms724833%28VS.85%29.aspx
      http://msdn.microsoft.com/en-us/library/dd419805.aspx  *)
@@ -302,6 +304,7 @@ begin
     end;
   end;
 end;
+
 
 function GetSystemOSVersionInfoEx(const typeOfValue: string): string;
 const
@@ -466,6 +469,7 @@ begin
   end;
   Result := pdwReturnedProductType;
 end;
+
 
 
 initialization

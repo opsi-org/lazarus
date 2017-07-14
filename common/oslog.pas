@@ -98,6 +98,7 @@ type
     FStandardPartLogFilename: string;
     FStandardLogFilename: string;
     FStandardLogFileext: string;
+    FWritePartLog : boolean;
 
 
   protected
@@ -165,6 +166,7 @@ type
     property RemoteFileLogging: string read FRemoteFileLogging;
     property LogFileExists: boolean read FLogFileExists write FLogFileExists;
     property PartLogFileExists: boolean read FPartLogFileExists write FPartLogFileExists;
+    property StandardLogFileext: string read FStandardLogFileext write FStandardLogFileext;
 
 
     property LogSIndentLevel: integer read FLogSIndentLevel write setLogSIndentLevel;
@@ -179,7 +181,7 @@ type
     property LogProduktId: boolean read FLogProduktId write FLogProduktId;
     property StandardPartLogFilename: string read FStandardPartLogFilename write FStandardPartLogFilename;
     property StandardLogFilename: string read FStandardLogFilename write FStandardLogFilename;
-    property StandardLogFileext: string read FStandardLogFileext write FStandardLogFileext;
+    property WritePartLog: boolean read FWritePartLog write FWritePartLog;
 
     //function copyPartLogToFullLog: boolean;
   end;
@@ -575,6 +577,7 @@ begin
   FConfidentialStrings := TStringlist.Create;
   FLogProduktId := False;
   FStandardLogFileext := '.log';
+  FWritePartLog := true;
   {$IFDEF OPSIWINST}
   FStandardPartLogFilename := 'opsi-script-part-';
   FStandardLogFilename := 'opsi-script';
@@ -907,36 +910,38 @@ begin
   end;
 
   FReportErrorsToUser := False;
-  PartLogFileExists := False;
-  ForceDirectories(StandardPartLogPath);
-  Randomize;
-  PartFileName := StandardPartLogPath +PathDelim +FStandardPartLogFilename +
-  {$IFDEF OPSIWINST}
-  randomstr(False)
-  {$ELSE}
-  //inttostr(Random(MAXLONGINT))+ExtractFileNameWithoutExt(ExtractFileName(FFilename))
-  inttostr(Random(MAXLONGINT))
-  {$ENDIF}
-  + StandardPartLogFileext;
-  //assignfile(LogPartFile, PartFileName);
-  //writeln(PartFileName);
-  try
-    //rewrite(LogPartFile);
-    LogPartFileF := FileCreate(PartFileName);
-    FileClose(LogPartFileF);
-    LogPartFileF := FileOpen(PartFileName, fmOpenReadWrite or fmShareDenyNone);
-    PartLogFileExists := True;
-  except
-    on E: Exception do
-      ps := '"' + PartFileName +
-        '" could not be created as logfile. Exception "' +
-        E.Message + '"';
+  if FWritePartLog then
+  begin
+    PartLogFileExists := False;
+    ForceDirectories(StandardPartLogPath);
+    Randomize;
+    PartFileName := StandardPartLogPath +PathDelim +FStandardPartLogFilename +
+    {$IFDEF OPSIWINST}
+    randomstr(False)
+    {$ELSE}
+    //inttostr(Random(MAXLONGINT))+ExtractFileNameWithoutExt(ExtractFileName(FFilename))
+    inttostr(Random(MAXLONGINT))
+    {$ENDIF}
+    + StandardPartLogFileext;
+    //assignfile(LogPartFile, PartFileName);
+    //writeln(PartFileName);
+    try
+      //rewrite(LogPartFile);
+      LogPartFileF := FileCreate(PartFileName);
+      FileClose(LogPartFileF);
+      LogPartFileF := FileOpen(PartFileName, fmOpenReadWrite or fmShareDenyNone);
+      PartLogFileExists := True;
+    except
+      on E: Exception do
+        ps := '"' + PartFileName +
+          '" could not be created as logfile. Exception "' +
+          E.Message + '"';
+    end;
+
+    DependentAdd('--', LLessential);
+    DependentAdd('--', LLessential);
+    DependentAdd(PartFileName, LLessential);
   end;
-
-  DependentAdd('--', LLessential);
-  DependentAdd('--', LLessential);
-  DependentAdd(PartFileName, LLessential);
-
 end;
 
 destructor TLogInfo.Destroy;
@@ -999,6 +1004,8 @@ end;
 
 procedure TLogInfo.PartReopen;
 begin
+  if FWritePartLog then
+  begin
   if PartLogFileExists then
     try
       LogPartFileF := FileOpen(PartFileName, fmOpenReadWrite or fmShareDenyNone);
@@ -1006,6 +1013,7 @@ begin
     except
       PartLogFileExists := False;
     end;
+  end;
 end;
 
 
@@ -1357,6 +1365,7 @@ begin
           end;
         end;
 
+        if FWritePartLog then
         if PartLogFileExists then
         begin
           try
