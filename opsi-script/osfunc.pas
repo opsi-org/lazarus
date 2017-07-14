@@ -750,6 +750,7 @@ begin
   if (inputstr = '') then  inputstr := default;
 end;
 
+
 function stringListLoadUtf8FromFile(filename: string): TStringList;
 var
   fCES: TCharEncStream;

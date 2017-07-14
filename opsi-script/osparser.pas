@@ -9434,6 +9434,8 @@ begin
      Begin
        try
          s1 := ExpandFileName(s1);
+         //list.loadfromfile (s1);
+         //list.Text:= reencode(list.Text, 'ucs2le');
          TStringList(list).Assign(stringListLoadUtf8FromFile(s1));
          //wsloadfromfile (s1, TStringList (list));
        except
