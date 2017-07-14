@@ -627,6 +627,8 @@ const
   WordDelimiterSet3 = [' ', #9, '=', '[', ']', '(', ')', '"', '''', ',', '+', ':'];
   WordDelimiterSet2 = [' ', #9, '"', ''''];
   WordDelimiterSet4 = [' ', #9, '=', '[', ']', '('];
+  WordDelimiterSet5 = [' ', #9, '('];
+  WordDelimiterSet6 = [')',','];
   WordDelimiterWhiteSpace = [' ', #9];
 
   ddeTimerInterval = 100;
@@ -663,6 +665,7 @@ uses
   osinteractivegui,
   {$ENDIF GUI}
   osmain,
+  osdefinedfunctions,
   //windatamodul,
   superobject;
 
@@ -5960,6 +5963,7 @@ end;
 
 (* TuibIniScript *)
 
+
 function IsHeaderLine(const s: string): boolean;
 var
   TestS: string = '';
@@ -5973,7 +5977,7 @@ end;
 
 
 function TuibIniScript.FindEndOfSectionIndex(const OffLine: integer): integer;
-  (* Annahme : OffLine gehoert zur Sektion *)
+  // we assume that the section end below the line withe the index = offline
 var
   i: integer = 0;
   s: string = '';
@@ -6018,6 +6022,7 @@ begin
       begin
         weitersuchen := False;
       end
+      else if IsEndOfLocalFunction(s) then weitersuchen := False
       else
       begin
         if (s <> '') and (s[1] <> LineIsCommentChar) then
@@ -6099,8 +6104,11 @@ var
   i: integer = 0;
   j: integer = 0;
   n: integer = 0;
+  searchstartindex : integer = 0;
   s: string = '';
   ersteZeileSuchen: boolean;
+  DefFuncFound : boolean = false;
+  EndoFuncFound : boolean = false;
 
 begin
   Result := False;
@@ -6109,12 +6117,14 @@ begin
     StartlineNo := i + 1
   else
     StartlineNo := i;
-  if (i >= 0)      (* Sektionsheader existiert *) and (i + 1 <= Count - 1)
-  (* es gibt die i+1-te Zeile, also eine Zeile nach dem Sektionsheader *) then
+  if (i >= 0)      // section header existing
+      and (i + 1 <= Count - 1)
+      //the i+1-line exists - the line below the section header
+  then
   begin
     Inc(i);
-    // Zeile nach dem Header
-    // kommt da vielleicht schon der n�chste Header, die Sektion w�re also leer?
+    // the line below the section header
+    // do the next section start - so this section is empty
 
     ersteZeileSuchen := True;
     while (i <= Count - 1) and ersteZeileSuchen do
@@ -6134,7 +6144,10 @@ begin
 
     if Result then
     begin // Sektionsinhalt existiert
-      n := FindEndOfSectionIndex(i);
+      searchstartindex := i;
+      // if we have defFunc section headers before EndFunc should be ignored
+      searchstartindex := getFirstLineAfterEndFunc(self,searchstartindex);
+      n := FindEndOfSectionIndex(searchstartindex);
       for j := i to n do
       begin
         s := KappeBlanks(Strings[j]);

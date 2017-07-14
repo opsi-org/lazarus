@@ -36,16 +36,20 @@ uses
 {$IFDEF LINUX}
   , fileinfo
   //, winpeimagereader {need this for reading exe info}
-  , elfreader {needed for reading ELF executables}
+  , elfreader, // {needed for reading ELF executables}
 {$ENDIF LINUX}
 {$IFDEF WINDOWS}
  , VersionInfoX
   , Windows
-  , registry
-{$ENDIF WINDOWS} ;
+  , registry,
+{$ENDIF WINDOWS}
+  inifiles,
+  lazfileutils;
 
 
 function readConfig: boolean;
+function writeConfig: boolean;
+function readConfigFromService : string;
 
 const
 {$IFDEF WINDOWS}
@@ -136,12 +140,35 @@ opsiservicePORThttps = 4447;
   utilsdrive: string;
   configdrive: string;
   //deprecated stuff end
+  debug_prog : boolean = false;
+  debug_lib: boolean = false;
+  default_loglevel : integer = 5;
+  force_min_loglevel : integer = 4;
 
 
 implementation
 uses
+  oswebservice,
+  osjson,
 {$IFDEF WINDOWS}osfunc {$ENDIF}
 {$IFDEF LINUX}osfunclin {$ENDIF};
+
+function writeConfig: boolean;
+var
+  myconf : TIniFile;
+begin
+  if not FileExists(opsiscriptconf) then
+  begin
+    // prepare to create it
+    ForceDirectory(ExtractFilePath(opsiscriptconf));
+  end;
+  myconf := TIniFile.Create(opsiscriptconf);
+  myconf.WriteString('global','debug_prog',BoolToStr(debug_prog,true));
+  myconf.WriteString('global','debug_lib',BoolToStr(debug_lib,true));
+  myconf.WriteString('global','default_loglevel',IntToStr(default_loglevel));
+  myconf.WriteString('global','force_min_loglevel',IntToStr(force_min_loglevel));
+  myconf.Free;
+end;
 
 function readConfig: boolean;
 
@@ -150,10 +177,21 @@ const
 
 var
   part1, part2: string;
-
-  ///XProperties :   TStringList;
+  myconf : TIniFile;
 
 begin
+  if not FileExists(opsiscriptconf) then
+  begin
+    // prepare to create it
+    ForceDirectory(ExtractFilePath(opsiscriptconf));
+  end;
+  myconf := TIniFile.Create(opsiscriptconf);
+  debug_prog := strToBool(myconf.ReadString('global','debug_prog',boolToStr(debug_prog,true)));
+  debug_lib := strToBool(myconf.ReadString('global','debug_lib',boolToStr(debug_lib,true)));
+  default_loglevel := myconf.ReadInteger('global','default_loglevel',default_loglevel);
+  force_min_loglevel := myconf.ReadInteger('global','force_min_loglevel',force_min_loglevel);
+  myconf.Free;
+
 
 {$IFDEF LINUX} computername := getHostnameLin; {$ENDIF LINUX}
 //{$IFDEF LINUX} computername := ''; {$ENDIF LINUX}//
@@ -212,8 +250,68 @@ begin
     readconfig_done := false;
   end;
 {$ENDIF}
+    readconfig_done := true;
 end;
 
+function readConfigFromService : string;
+var
+  serviceresult : string;
+  configid, values, tmpstr : string;
+  configlist : Tstringlist;
+  i : integer;
+begin
+  // not implemented yet
+  configlist := Tstringlist.Create;
+  serviceresult := opsidata.getOpsiServiceConfigs;
+  result := serviceresult;
+  if jsonIsValid(serviceresult) then
+    if jsonIsArray(serviceresult) then
+      if jsonAsArrayToStringList(serviceresult,configlist) then
+      begin
+        for i := 0 to configlist.Count-1 do
+        begin
+          if jsonIsObject(configlist.Strings[i]) then
+          begin
+            if jsonAsObjectGetValueByKey(configlist.Strings[i],
+               'configId', configid) then
+               if pos('opsi-script.',configid) = 1 then
+               begin
+                 // we got a opsi-script config
+                 if LowerCase(configid) = 'opsi-script.global.debug_prog' then
+                 begin
+                   if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                        'values', values) then
+                        if jsonAsArrayGetElementByIndex(values,0,tmpstr) then
+                          debug_prog := StrToBool(tmpstr);
+                 end;
+                 if LowerCase(configid) = 'opsi-script.global.debug_lib' then
+                 begin
+                   if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                        'values', values) then
+                        if jsonAsArrayGetElementByIndex(values,0,tmpstr) then
+                          debug_lib := StrToBool(tmpstr);
+                 end;
+
+                 if LowerCase(configid) = 'opsi-script.global.default_loglevel' then
+                 begin
+                   if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                        'values', values) then
+                        if jsonAsArrayGetElementByIndex(values,0,tmpstr) then
+                          default_loglevel := StrToint(tmpstr);
+                 end;
+                 if LowerCase(configid) = 'opsi-script.global.force_min_loglevel' then
+                 begin
+                   if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                        'values', values) then
+                        if jsonAsArrayGetElementByIndex(values,0,tmpstr) then
+                          force_min_loglevel := StrToint(tmpstr);
+                 end;
+               end;
+          end;
+        end;
+      end;
+  configlist.free
+end;
 
 
 
