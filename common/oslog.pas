@@ -139,6 +139,7 @@ type
     function getPartLine(var S: string): boolean;
     function log(const S: string; LevelOfLine: integer): boolean;
     function log_prog(const S: string; LevelOfLine: integer): boolean;
+    function log_list(const list: TStrings; LevelOfLine: integer): boolean;
     function DependentAdd(const S: string; LevelOfLine: integer): boolean;
     function DependentAddError(const S: string; LevelOfLine: integer): boolean;
     function DependentAddWarning(const S: string; LevelOfLine: integer): boolean;
@@ -1449,6 +1450,10 @@ begin
   end;
 end;
 
+function TLogInfo.log_list(const list: TStrings; LevelOfLine: integer): boolean;
+begin
+  result := DependentAddStringList(list, levelOfLine);
+end;
 
 function TLogInfo.DependentAddStringList(const list: TStrings;
   LevelOfLine: integer): boolean;
@@ -1493,18 +1498,15 @@ begin
     //supportedEncodings := TStringList.Create;
     try
       Fname := ExpandFileName(Fname);
-      includelogStrList.LoadFromFile(FName);
-      (*
-      if LowerCase(sourceEncoding) = 'unknown' then
-        sourceEncoding := guessEncoding(includelogStrList.Text);
-      GetSupportedEncodings(supportedEncodings);
-      //for i:= 0 to supportedEncodings.Count-1 do writeln(supportedEncodings.Strings[i]);
-      if supportedEncodings.IndexOf(sourceEncoding) = -1 then
-        DependentAdd('Found or given Encoding: '+sourceEncoding+' is not supported.',LLWarning);
-      if LowerCase(sourceEncoding) <> LowerCase(GetDefaultTextEncoding) then
-        includelogStrList.Text := ConvertEncoding(includelogStrList.Text, sourceEncoding, LowerCase(GetDefaultTextEncoding));
-        *)
-      includelogStrList.Text := reencode(includelogStrList.Text, sourceEncoding,sourceEncoding);
+      if lowercase(sourceEncoding) = 'unicode' then
+      begin
+       includelogStrList.Assign(stringListLoadUtf8FromFile(Fname));
+      end
+      else
+      begin
+        includelogStrList.LoadFromFile(FName);
+        includelogStrList.Text := reencode(includelogStrList.Text, sourceEncoding,sourceEncoding);
+      end;
       includelogLinecount := includelogStrList.Count;
       if logtailLinecount > 0 then
       begin

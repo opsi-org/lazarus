@@ -1995,7 +1995,16 @@ begin
           extractTmpPathFromLogdatei(LogDateiName);
           TempPath := GetTempPath;
           extremeErrorLevel := Level_not_initialized;
-          LogDatei.LogProduktId:=false;
+          if batchproductid = '' then
+          begin
+            LogDatei.LogProduktId:=false;
+            LogDatei.AktProduktId:='';
+          end
+          else
+          begin
+            LogDatei.LogProduktId:=true;
+            LogDatei.AktProduktId:=batchproductid;
+          end;
 
           // Are we in batch with /productid (opsi-template-with-admin) ?
           // open service connection if possible

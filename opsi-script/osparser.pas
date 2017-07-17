@@ -10987,11 +10987,10 @@ else if LowerCase (s) = LowerCase ('getSwauditInfoList')
    then
    Begin
      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-     LogDatei.log ('retrieving strings from ' + logstring + ' [switch to loglevel ' + inttostr(LevelDebug) + ' for debugging]',
-     LevelComplete);
+     LogDatei.log ('retrieving strings from ' + logstring , LLNotice);
      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-     LogDatei.DependentAddStringList(list, LevelDebug);
-     LogDatei.log('', LevelDebug);
+     LogDatei.log_list(list, LLDebug2);
+     LogDatei.log('', LLDebug2);
      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 4;
    end;
 
@@ -15565,8 +15564,8 @@ function TuibInstScript.doSetVar (const section: TuibIniScript; const Expression
    funcindex : integer = 0;
 
    function isStringlistVar(varname : string) : boolean;
-begin
-  result := false;
+   begin
+     result := false;
      if isVisibleLocalVar(VarName,funcindex)  then
        if definedFunctionArray[FuncIndex].getLocalVarDatatype(varname) = dfpStringlist then
          result := true;
@@ -15613,6 +15612,14 @@ begin
       except
       end;
       end;
+      if result
+      then
+      Begin
+        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+        LogDatei.log('The value of the variable "'+Varname+'" is now:', LLDebug);
+        LogDatei.log_list(list,LLDebug);
+        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+      End;
     End
     else
     Begin // it must be a string value
@@ -16015,6 +16022,7 @@ function TuibInstScript.doAktionen (const Sektion: TWorkSection; const CallingSe
   dummylist : TStringList;
   //endofDefFuncFound : boolean;
   inDefFunc : integer = 0;
+  inDefFunc2 : integer = 0;
   funcindex : integer;
 
 begin
@@ -16050,7 +16058,7 @@ begin
   begin
    //writeln(actionresult);
     Remaining := trim (Sektion.strings [i-1]);
-    //logdatei.log('Parsingprogress: r: '+Remaining+' exp: '+Expressionstr,LLDebug3);
+    logdatei.log_prog('Script line: '+intToStr(i)+' : '+Remaining,LLDebug2);
     //writeln(remaining);
     //readln;
 
@@ -16065,14 +16073,19 @@ begin
         looplist.delete (0);
       End;
 
+      if pos(lowercase(PStatNames^ [tsDefineFunction]),lowercase(Remaining)) >0 then inc(inDefFunc2);
+      if pos(lowercase(PStatNames^ [tsEndFunction]),lowercase(Remaining)) >0 then dec(inDefFunc2);
+      //if (lowercase(Remaining) = lowercase(PStatNames^ [tsEndFunction])) then dec(inDefFunc2);
+      logdatei.log_prog('Parsingprogress: inDefFunc2: '+IntToStr(inDefFunc2),LLDebug3);
+
       if (Remaining = '') or (Remaining [1] = LineIsCommentChar)
       then
          (* continue *)
-      else if Remaining [1] = '[' then
+      else if (Remaining [1] = '[') and (inDefFunc2 <= 0) then
          // subsection beginning
       begin
          continue := false;
-         LogDatei.log ('Section ending since next line is starting with "["', LevelComplete);
+         LogDatei.log ('Section ending since next line is starting with "["', LLInfo);
       end
       else
       Begin
@@ -19014,29 +19027,6 @@ begin
             End (* case *);
           End;
         End;
-
-       (* LogFile in Memo-Komponente laden, aber nur wenn es Sinn macht
-          und sie genuegend Platz bietet *)
-(* removed by detlef 08.05.2010
-        if not DontUpdateMemo
-        then
-        Begin
-          LogDatei.Close;
-          if Logdatei.logfileexists then
-          begin
-            if SizeOfFile (LogDatei.FileName) > 30000
-            then
-            Begin
-              CentralForm.Memo1.Lines.Add ('');
-              CentralForm.Memo1.Lines.Add (' LogFile too big for memo list, view it by another tool');
-              DontUpdateMemo := true;
-            End
-            else
-              CentralForm.Memo1.Lines.LoadFromFile (LogDatei.FileName);
-            LogDatei.Reopen;
-          end;
-        end;
-              *)
         ProcessMess;
       end;
 

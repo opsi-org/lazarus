@@ -311,6 +311,11 @@ begin
 
   SetBounds(StartLeft, StartTop, InnerWidth, InnerHeight);
 
+  // push to front once and then let other pass
+  FormStyle := fsSystemStayOnTop;
+  BringToFront;
+  FormStyle := fsNormal;
+
   ForceStayOnTop(BatchScreenOnTop);
 
 
@@ -1019,6 +1024,7 @@ begin
     panel.top := standardTopMargin
   else
     panel.top := 0;
+
   panel.Repaint;
 
   ImageOpsiBackground.Left := Width - ImageOpsiBackground.Width;

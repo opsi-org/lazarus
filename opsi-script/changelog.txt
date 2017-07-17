@@ -25,6 +25,7 @@ opsi-winst/opsi-script (4.12.0.0) experimental; urgency=low
      opsi-script.global.debug_lib : boolean ; if true log libraries if > LLWarning
      opsi-script.global.default_loglevel : intstring ; set the default loglevel
      opsi-script.global.force_min_loglevel : intstring ; set the minimal loglevel
+  * osmain: if /productid is set then use it also for the log
 
 -- Detlef Oertel <d.oertel@uib.de>  Mon, 19 Jun 2017:15:00:00 +0200
 

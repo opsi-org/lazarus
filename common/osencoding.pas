@@ -25,6 +25,7 @@ uses
   Classes,
   SysUtils,
   lconvencoding,
+  charencstreams,
   LAZUTF8;
 
 procedure initEncoding;
@@ -37,6 +38,10 @@ function reencode(const sourceText: string; const sourceEncoding: string;
 function searchencoding(const searchText: string): string;
 function LoadFromFileWithEncoding(filename, enc : string): TStringlist;
 procedure logSupportedEncodings;
+
+function stringListLoadUtf8FromFile(filename: string): TStringList;
+function stringListLoadUnicodeFromList(inlist: Tstringlist): TStringList;
+
 
 
 var
@@ -52,6 +57,35 @@ uses
 var
   i, k: integer;
   additionalEncoding: string;
+
+
+  function stringListLoadUtf8FromFile(filename: string): TStringList;
+  var
+    fCES: TCharEncStream;
+  begin
+    Result := TStringList.Create;
+    fCES := TCharEncStream.Create;
+    fCES.Reset;
+    fileName := ExpandFileName(fileName);
+    fCES.LoadFromFile(fileName);
+    fCES.ANSIEnc := GetSystemEncoding;
+    Result.Text := fCES.UTF8Text;
+    fCES.Free;
+  end;
+
+  function stringListLoadUnicodeFromList(inlist: Tstringlist): TStringList;
+  var
+    fCES: TCharEncStream;
+  begin
+    Result := TStringList.Create;
+    fCES := TCharEncStream.Create;
+    fCES.Reset;
+    inlist.SaveToStream(fCES);
+    fCES.ANSIEnc := GetSystemEncoding;
+    Result.Text := fCES.UTF8Text;
+    fCES.Free;
+  end;
+
 
 function isStringInList(const str: string; const list: TStringList): boolean;
   // list.IndexOf(str) > -1 does not work as expected: ucs2be is found if str is 'u c s 2 b e'
@@ -202,6 +236,18 @@ begin
       //end;
     end
     else
+    if (lowercase(usedSourceEncoding) = 'unicode') then
+    begin
+      // which should not happen if destEncoding=utf8
+      logdatei.log_prog('We encode with charencstreams.', LLDebug2);
+      logdatei.log_prog('We encode line by line.', LLDebug2);
+        mylist := TStringList.Create;
+        str := ConvertEncoding(sourceText, usedSourceEncoding, 'utf8');
+        mylist.Text := str;
+        result := stringListLoadUnicodeFromList(mylist).Text;
+        mylist.Free;
+    end
+    else
     begin
       logdatei.log_prog('We encode via utf8.', LLDebug2);
       logdatei.log_prog('Encodings are different so we have to reencode from ' + usedSourceEncoding +
@@ -263,6 +309,7 @@ begin
   supportedEncodings := TStringList.Create;
   GetSupportedEncodings(supportedEncodings);
   supportedEncodings.Add('UTF-16');
+  supportedEncodings.Add('unicode');
 
   // add the aliases (utf8 is alias for UTF-8)
   k := supportedEncodings.Count;
