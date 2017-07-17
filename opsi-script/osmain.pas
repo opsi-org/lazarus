@@ -1934,6 +1934,8 @@ begin
           extractTmpPathFromLogdatei(LogDateiName);
           TempPath := GetTempPath;
 
+          logSupportedEncodings;
+
           {$IFDEF LINUX}
           if not opsidata.linuxAgentActivated then
           begin
