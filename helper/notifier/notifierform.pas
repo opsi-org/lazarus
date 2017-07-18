@@ -24,6 +24,7 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormHide(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { private declarations }
     objlist: TObjectList;
@@ -67,6 +68,16 @@ begin
   //hideNForm;
   // prevents screensaver to start while running: stop
   {$IFDEF WINDOWS} SystemCritical.IsCritical := false; {$ENDIF WINDOWS}
+end;
+
+procedure TNform.FormShow(Sender: TObject);
+var
+  oldFsStyle : TFormstyle;
+begin
+  oldFsStyle := FormStyle;
+  FormStyle := fsSystemStayOnTop;
+  BringToFront;
+  FormStyle := oldFsStyle;
 end;
 
 procedure TNform.choiceClick(Sender: TObject);

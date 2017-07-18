@@ -632,7 +632,12 @@ begin
     //Transparent = true
     // StayOnTop = true
     if strToBool(myini.ReadString(aktsection, 'StayOnTop', 'false')) then
+       nform.FormStyle := fsStayOnTop;
+      //nform.FormStyle := fsSystemStayOnTop;
+
+    if strToBool(myini.ReadString(aktsection, 'SystemStayOnTop', 'false')) then
       nform.FormStyle := fsSystemStayOnTop;
+
 
     //Frame = false
     if not strToBool(myini.ReadString(aktsection, 'Frame', 'false')) then
@@ -736,6 +741,7 @@ begin
       strToBool(myini.ReadString(aktsection, 'Transparent', 'false'));
     LabelArray[labelcounter].Tag := labelcounter;
     LabelArray[labelcounter].Caption := myini.ReadString(aktsection, 'Text', '');
+    LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI, 96, nform.PixelsPerInch, 0, 0);
     // feed labellist: id = index of LabelArray ; id = aktsection striped by 'Label'
     labellist.Add(copy(aktsection, 6, 100) + '=' + IntToStr(labelcounter));
     logdatei.log('labellist add: ' + copy(aktsection, 6, 100) + '=' +
@@ -778,6 +784,7 @@ begin
     //ButtonArray[buttoncounter].TabStop:= false;
     //ButtonArray[buttoncounter].TabOrder:=-1;
     ButtonArray[buttoncounter].Caption := myini.ReadString(aktsection, 'Text', '');
+    ButtonArray[buttoncounter].AutoAdjustLayout(lapAutoAdjustForDPI, 96, nform.PixelsPerInch, 0, 0);
     // feed buttonlist: id = index of ButtonArray ; id = ChoiceIndex'
     buttonlist.Add(IntToStr(choiceindex) + '=' + IntToStr(buttoncounter));
     LogDatei.log('Finished reading: ' + aktsection, LLDebug2);
