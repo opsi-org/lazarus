@@ -119,12 +119,12 @@ begin
   //XMLDocObject.logNodeSets;
   // Nodetext setzen und Attribut setzen :   SetText, SetAttribute
   if XMLDocObject.nodeExists('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add"') then
-    if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add" // ModifyPartitions', false) then
+    if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" language="neutral" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versionScope="nonSxS" publicKeyToken="31bf3856ad364e35" processorArchitecture="amd64" // DiskConfiguration // Disk wcm:action="add" // ModifyPartitions', true) then
     begin
       XMLDocObject.setNodeTextActNode('***ModifyPartitions wurde ersetzt***');
       XMLDocObject.setAttribute('testname','testvalue');
     end;
-
+  {
   // Knoten löschen: DeleteElement
   // muss kein openNode gemacht werden, ist bei delNode implizit. Wenn der Knoten nicht gefunden wird, wird der zuletzt gefundene
   // übergeordnete Knoten gelöscht. Daher zuvor ein nodeExists!!
@@ -161,7 +161,7 @@ begin
         XMLDocObject.setNodeTextActNode('nodeText wurde gesetzt');
 
   // setText '' : löschen des komplette Knotens
-
+   }
   {
     return elements
     fills the selected elements completely (element name and attributes) into the return list.

@@ -1141,16 +1141,20 @@ begin
           begin
             found := False;
             LogDatei.log( 'opennode: node with attributes_strict not found ' + IntToStr(i) + ': nodename: ' +
-              thisnodeName + ', check nodename and attributes', LLwarning
+              thisnodeName + ', check nodename and attributes - exit function', LLwarning
               //+ ' attributeName: ' + attributeName
               //+ ' attributeValue: ' + attributeValue
               );
+            // failed - make all final settings
+            result:=false;
+            attributeList.Free;
+            exit;
           end
           else
           begin
             found := True;
             if actnode<>nil then
-               logdatei.log('Found node ' + IntToStr(i) + ': nodename: ' +
+               logdatei.log('Found node with attributes_strict' + IntToStr(i) + ': nodename: ' +
                  actNode.NodeName, LLinfo)
               // + ' attributeName: ' + attributeName
               //+ ' attributeValue: ' + attributeValue
@@ -1203,6 +1207,8 @@ begin
       LogDatei.log('Could not open ' + nodepath + '; exception: ' + e.Message, LLerror);
     end;
   end;
+  cleanupactnodeset();
+
 end;
 
 
@@ -1213,12 +1219,13 @@ function TuibXMLDocument.getNodeStrict(var newNode: TDOMNode; myparentNode: TDOM
 // if found and unique : actnode = node found - result true
 // if found and not unique : actnode = nil, check actnodeset - result true
 var
-  j, i, al: integer;
+  n, j, i, al: integer;
   attributename, attributevalue : string;
   boolarray : array [0..9] of boolean;
   namefound, attributesfound: boolean;
 begin
   Result := False;
+
   logdatei.log('begin to get node  nodename: ' + mynodename + ' with attributes: ', LLinfo );
   for al:= 0 to attributeList.Count-1 do
     logdatei.log(attributelist.Items[al].key + ' : ' + attributelist.Items[al].value, LLinfo );
@@ -1255,83 +1262,92 @@ begin
     //result:= true;
     if attributeList.Count<10 then  // only 10 attributes
     begin
-      for j:=0 to length(actNodeSet)-1 do  // check attributes for node j
+      j:=0;
+      n:=1;
+      while j<length(actNodeSet) do  // check attributes for node j
       begin
         for al:=0 to 9 do
           boolarray[al]:=false;
-        //attributesfound:=false;
-        logdatei.log('find attributes for node ' +IntToStr(j) + ' ' + actnodeset[j].NodeName, LLinfo );
+        logdatei.log(' ', oslog.LLinfo);
+        logdatei.log(IntToStr(N) + ' -> find attributes for node ' + actnodeset[j].NodeName + ', number of attributes ' + IntToStr(attributeList.Count) , LLinfo );
         if actnodeset[j].HasAttributes then
         begin
           al:=0;
-          while (al<attributeList.Count) do
-          begin
-            attributename:=attributelist.Items[al].key;
-            attributevalue:=attributelist.Items[al].value;
-            // check attributes
-            for i := 0 to actnodeset[j].Attributes.Length - 1 do
+          if attributeList<> nil then
+            while (al<attributeList.Count) do  // proof attributes key/value
             begin
-              if (actnodeset[j].Attributes[i].NodeName = attributeName)
-              and (actnodeset[j].Attributes[i].TextContent = attributeValue) then
+              attributename:=attributelist.Items[al].key;
+              attributevalue:=attributelist.Items[al].value;
+              // check attributes
+              for i := 0 to actnodeset[j].Attributes.Length - 1 do
               begin
-                logdatei.log('attribut found ' + attributename + ' ' + attributevalue, LLinfo );
-                boolarray[al]:=true;
-              end
+                if (actnodeset[j].Attributes[i].NodeName = attributeName)
+                and (actnodeset[j].Attributes[i].TextContent = attributeValue) then
+                begin
+                  logdatei.log('attribut found ' + attributename + ' ' + attributevalue, LLinfo );
+                  boolarray[al]:=true;
+                  attributelist.Items[al].isvalid:=true;
+                end
+                else attributelist.Items[al].isvalid:=false;
+              end;
+              Inc(al);
             end;
-            Inc(al);
-          end;
 
         end; // has attributes
-        logActNodeSet;
+
         logdatei.log('all attributes have to fit, nodename ' + actnodeset[j].NodeName , oslog.LLinfo);
-        if (attributeList.Count=actnodeset[j].Attributes.Length) then
+
+        if (attributeList.Count=actnodeset[j].Attributes.Length) then // check if all attributes fit
           begin
             attributesfound:=true;
             // to max(attributeList.Count-1, myparentNode.ChildNodes.Item[j].Attributes.Length - 1)
             for al:=0 to attributeList.Count-1 do
             begin
-              logdatei.log('boolarray ' + IntToStr(al) , oslog.LLinfo);
-              if boolarray[al] then logdatei.log(attributelist.Items[al].key + ': true' , oslog.LLinfo)
-              else logdatei.log(attributelist.Items[al].key + ': false' , oslog.LLinfo) ;
-              attributesfound:= attributesfound AND boolarray[al];
+              if attributelist.Items[al].isvalid then logdatei.log('key/value found ' + attributelist.Items[al].key + ':' + attributelist.Items[al].value, oslog.LLinfo)
+              else logdatei.log('key/value not found ' + attributelist.Items[al].key + ':' + attributelist.Items[al].value , oslog.LLwarning);
+              attributesfound:= attributesfound AND boolarray[al]; //
             end;
-            result:=attributesfound;
             if not attributesfound then
             begin
               // remove node
               actnodeset[j]:=nil;
+              j:=j-1;
             end
           end
-          else // strict: identical number of attributes!
+        else // strict: identical number of attributes!
+          begin
             actnodeset[j]:=nil;
-
+            j:=j-1;
+          end;
+        cleanupactnodeset();
+        inc(j);
+        inc(n);
       end;  // end traverse actNodeSet
-      cleanupactnodeset();
+      //
+      logdatei.log('actnodeset after retrieving key/value ', oslog.LLinfo);
+      logActNodeSet;
 
-      if result then
-      begin
-        if  length(actnodeset) = 1 then
+      if  length(actnodeset) = 1 then
         begin
           actnode:=actnodeset[0];
           newNode := actnodeset[0];  // ??
-          logdatei.log('result true, actNode is ' + actNode.NodeName, oslog.LLinfo) ;
+          logdatei.log('result true, actNode and newnode is ' + actNode.NodeName, oslog.LLinfo) ;
+          result:=true;
         end
         else
         begin
           actnode:=nil;
           logdatei.log('result true, actnode is nil, lenght of actNodeSet is ' + IntToStr(length(actnodeset)), oslog.LLinfo) ;
         end
-     end
-     else
-       actnode:= myparentnode;
     end
    else
-        logdatei.log('handling of more then 10 attributes not implemented', oslog.LLerror);
-  end
+      logdatei.log('handling of more then 10 attributes not implemented', oslog.LLerror);
+  end // end nodename found
   else
     begin
       result:=false;
       actNode:=myparentnode;
+      logdatei.log('node name not found, actnode is parentnode', oslog.LLerror);
     end
 end;
 
