@@ -417,6 +417,7 @@ var
   arraycounter : integer;
 begin
   result := false;
+  name := lowercase(name);
   if not locaVarExists(name) then
   begin
     result := true;
@@ -455,6 +456,7 @@ var
   arraycounter : integer;
 begin
   result := false;
+  name := lowercase(name);
   if not locaVarExists(name) then
   begin
     result := true;
@@ -478,6 +480,7 @@ var
   varname : string;
 begin
   result := false;
+  name := lowercase(name);
   arrayindex := locaVarIndex(name);
   if arrayindex >= 0 then
   begin
@@ -514,9 +517,9 @@ begin
         DFLocalVarList[arrayindex].varValueString :=  value;
       result := true;
     end
-    else LogDatei.log('Internal Error: Unexpected type mismatch of local variable: '+name,LLCritical );
+    else LogDatei.log('Internal Error: setLocalVarValueString: Unexpected type mismatch of local variable: '+name,LLCritical );
   end
-  else LogDatei.log('Syntax Error: No definition of local variable: '+name,LLCritical );
+  else LogDatei.log('Syntax Error: setLocalVarValueString: No definition of local variable: '+name,LLCritical );
 end;
 
 (*
@@ -548,6 +551,7 @@ var
   varname : string;
 begin
   result := false;
+  name := lowercase(name);
   arrayindex := locaVarIndex(name);
   if arrayindex >= 0 then
   begin
@@ -581,9 +585,9 @@ begin
         DFLocalVarList[arrayindex].VarValueList.Text := value.Text;
       result := true;
     end
-    else LogDatei.log('Internal Error: Unexpected type mismatch of local variable: '+name,LLCritical );
+    else LogDatei.log('Internal Error: setLocalVarValueList: Unexpected type mismatch of local variable: '+name,LLCritical );
   end
-  else LogDatei.log('Syntax Error: No definition of local variable: '+name,LLCritical );
+  else LogDatei.log('Syntax Error: setLocalVarValueList: No definition of local variable: '+name,LLCritical );
 end;
 
 (*
@@ -615,7 +619,8 @@ var
   scopeindex, VarIndex : integer;
   varname : string;
 begin
-  result := '';;
+  result := '';
+  name := lowercase(name);
   arrayindex := locaVarIndex(name);
   if arrayindex >= 0 then
   begin
@@ -651,9 +656,9 @@ begin
       else // call by value
         result := DFLocalVarList[arrayindex].varValueString;
     end
-    else LogDatei.log('Internal Error: Unexpected type mismatch of local variable: '+name,LLCritical );
+    else LogDatei.log('Internal Error: getLocalVarValueString: Unexpected type mismatch of local variable: '+name,LLCritical );
   end
-  else LogDatei.log('Syntax Error: No definition of local variable: '+name,LLCritical );
+  else LogDatei.log('Syntax Error: getLocalVarValueString: No definition of local variable: '+name,LLCritical );
 end;
 
 
@@ -666,6 +671,7 @@ var
   varname : string;
 begin
   result := Tstringlist.Create;
+  name := lowercase(name);
   arrayindex := locaVarIndex(name);
   if arrayindex >= 0 then
   begin
@@ -698,9 +704,9 @@ begin
       else // call by value
         result := DFLocalVarList[arrayindex].VarValueList;
     end
-    else LogDatei.log('Internal Error: Unexpected type mismatch of local variable: '+name,LLCritical );
+    else LogDatei.log('Internal Error: getLocalVarValueList: Unexpected type mismatch of local variable: '+name,LLCritical );
   end
-  else LogDatei.log('Syntax Error: No definition of local variable: '+name,LLCritical );
+  else LogDatei.log('Syntax Error: getLocalVarValueList: No definition of local variable: '+name,LLCritical );
 end;
 
 
@@ -732,6 +738,7 @@ var
   arrayindex : integer;
 begin
   result := dfpString;
+  name := lowercase(name);
   arrayindex := locaVarIndex(name);
   if arrayindex >= 0 then
   begin

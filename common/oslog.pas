@@ -293,6 +293,7 @@ uses
   osbatchgui,
   osinteractivegui,
 {$ENDIF GUI}
+  osparser,
   osmain,
   osfunc;
 {$ENDIF}
@@ -1263,6 +1264,23 @@ begin
 
       usedloglevel := loglevel;
       If usedloglevel < Fforce_min_loglevel then usedloglevel := Fforce_min_loglevel;
+
+      {$IFDEF OPSIWINST}
+       // log libraries ?
+       if Assigned(script) then
+       if Assigned(script.FLibList) then
+         if script.FLibList.Count > script.aktScriptLineNumber then
+         begin
+           // does this log line come from a library ?
+           if StrToBool(script.FLibList.Strings[script.aktScriptLineNumber])
+              // do we want to debug libraries ?
+              and (not debug_lib) then
+                // only Warnings and less
+                usedloglevel :=  LLWarning;
+         end;
+       {$ENDIF}
+
+
       st :=  s;
 
       // now some things we do not want to log:

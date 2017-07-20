@@ -18,7 +18,7 @@ opsi-winst/opsi-script (4.12.0.0) experimental; urgency=low
   * osparser: support for defined functions
   * osparser: moved sync between FExtremeErrorLevel and extremeErrorLevel before final output
   * osparser: new functions: boolToSting(<bool expression>) and stringToBool(< string>)
-  * osparser: new statement: ImportFunc
+  * osparser: new statement: ImportLib
   * oslog: new method log_prog for program debugging
   * osconf: readConfigFromService reads configstates:
      opsi-script.global.debug_prog : boolean ; if true log log_prog if > LLWarning
@@ -26,6 +26,7 @@ opsi-winst/opsi-script (4.12.0.0) experimental; urgency=low
      opsi-script.global.default_loglevel : intstring ; set the default loglevel
      opsi-script.global.force_min_loglevel : intstring ; set the minimal loglevel
   * osmain: if /productid is set then use it also for the log
+  * opsihwbiosInfo: typo Manufacturer ; fixes #2994
 
 -- Detlef Oertel <d.oertel@uib.de>  Mon, 19 Jun 2017:15:00:00 +0200
 

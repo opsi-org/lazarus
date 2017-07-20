@@ -85,11 +85,11 @@ const
   maxvisualmemostrings = 1000;
   {$IFDEF WINDOWS}
   ParamDelim = '/';
-  opsiscriptconf = '';
+  opsiscriptconfinit = 'opsi-script.conf';
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
   ParamDelim = '-';
-  opsiscriptconf = '/etc/opsi-client-agent/opsi-script.conf';
+  opsiscriptconfinit = '/etc/opsi-client-agent/opsi-script.conf';
   {$ENDIF LINUX}
 
   WinstRegHive = 'HKLM';
@@ -144,6 +144,7 @@ var
   debug_lib: boolean = False;
   default_loglevel: integer = 5;
   force_min_loglevel: integer = 4;
+  opsiscriptconf : string;
 
 
 implementation
@@ -165,8 +166,8 @@ begin
     ForceDirectory(ExtractFilePath(opsiscriptconf));
   end;
   myconf := TIniFile.Create(opsiscriptconf);
-  myconf.WriteString('global', 'debug_prog', BoolToStr(debug_prog, True));
-  myconf.WriteString('global', 'debug_lib', BoolToStr(debug_lib, True));
+  myconf.WriteString('global', 'debug_prog', BoolToStr(debug_prog, false));
+  myconf.WriteString('global', 'debug_lib', BoolToStr(debug_lib, false));
   myconf.WriteString('global', 'default_loglevel', IntToStr(default_loglevel));
   myconf.WriteString('global', 'force_min_loglevel', IntToStr(force_min_loglevel));
   myconf.Free;
@@ -358,7 +359,9 @@ end;
 
 
 initialization
+opsiscriptconf := opsiscriptconfinit;
 {$IFDEF WINDOWS}
+  opsiscriptconf := ExtractFileDir(paramstr(0)) + PathDelim+ opsiscriptconfinit;
   vi := TVersionInfo.Create(Application.ExeName);
   WinstVersion := vi.getString('FileVersion');
   vi.Free;

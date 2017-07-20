@@ -125,7 +125,7 @@ type
                 tsSwitch, tsSwitchCaseOpen, tsSwitchCaseClose, tsSwitchDefaultOpen, tsSwitchClose,
                 tsLoopStringList, tsLoopForTo,
                 tsMessage, tsMessageFile, tsShowBitmap,
-                tsImportFunc,
+                tsImportLib,
                 tsIncludeInsert, tsIncludeAppend,
                 tsIncludeLog,
                 tsShrinkFileToMB,  //internal undocumented
@@ -292,6 +292,7 @@ private
   FLastPrivateExitCode : LongInt; // not seen by getLastExitcode
   FFilename : String;
   FLinesOriginList : TStringList;
+  FaktScriptLineNumber : int64;
 
 
   
@@ -299,6 +300,7 @@ protected
   function getVarValues : TStringList; //nicht verwendet
 
 public
+  FLibList : TStringList;
   constructor create;
   destructor destroy; override;
 
@@ -323,6 +325,7 @@ public
   property constValuesList : TStringList read FconstValuesList write FconstValuesList;
   property listOfStringLists : TStringList read FlistOfStringLists write FlistOfStringLists;
   property ContentOfStringLists : TObjectList read FContentOfStringLists write FContentOfStringLists;
+  property aktScriptLineNumber : int64 read FaktScriptLineNumber write FaktScriptLineNumber;
 
 
   (* Infofunktionen *)
@@ -1666,6 +1669,7 @@ Begin
   FConstList := TStringList.create;
   FConstValuesList := TStringList.create;
   FLinesOriginList := TStringList.create;
+  FLibList := TStringList.create;
 End;
 
 destructor TuibInstScript.destroy;
@@ -1675,6 +1679,7 @@ begin
   FlistOfStringLists.free; listOfStringLists := nil;
   FContentOfStringLists.free; ContentOfStringLists := nil;
   FLinesOriginList.free; FLinesOriginList := nil;
+  FLibList.Free; FLibList := nil;
 end;
 
 
@@ -1699,6 +1704,7 @@ begin
       (* if (s<>'') and  (s[1] <> LineIsCommentChar) then *)
         Section.Add (s);
         script.FLinesOriginList.Append(FName+' line: '+inttostr(i));
+        script.FLibList.Append('false');
   End;
   OriginalList.free;
 End;
@@ -14221,7 +14227,7 @@ begin
  list1 := TXStringlist.Create;
  InputBakup := Input;
 
- LogDatei.log ('EvaluateBoolean: Parsing: '+Input+' ', LLDebug3);
+ LogDatei.log_prog ('EvaluateBoolean: Parsing: '+Input+' ', LLDebug);
 
 
  (*
@@ -16024,6 +16030,9 @@ function TuibInstScript.doAktionen (const Sektion: TWorkSection; const CallingSe
   inDefFunc : integer = 0;
   inDefFunc2 : integer = 0;
   funcindex : integer;
+  importFunctionName : String;
+  inSearchedFunc : boolean;
+  alllines, inclines : integer;
 
 begin
   result := tsrPositive;
@@ -16056,9 +16065,11 @@ begin
   and not scriptstopped
   do
   begin
+
    //writeln(actionresult);
     Remaining := trim (Sektion.strings [i-1]);
     logdatei.log_prog('Script line: '+intToStr(i)+' : '+Remaining,LLDebug2);
+    aktScriptLineNumber := i;
     //writeln(remaining);
     //readln;
 
@@ -16107,7 +16118,7 @@ begin
         // endswitch
         if StatKind = tsSwitch then
         Begin
-          LogDatei.log('Entering Switch statement',LLDebug3);
+          LogDatei.log_prog('Entering Switch statement',LLDebug2);
           if inswitch then
           begin
             reportError (Sektion, i, '', 'Nested Switch Statement is not allowed.');
@@ -16131,7 +16142,7 @@ begin
 
         else if StatKind = tsSwitchCaseOpen then
         Begin
-          LogDatei.log('Entering Case statement',LLDebug3);
+          LogDatei.log_prog('Entering Case statement',LLDebug2);
           if not inswitch then
           begin
             reportError (Sektion, i, '', 'Case Statement only allowed inside switch statement.');
@@ -16170,7 +16181,7 @@ begin
 
         else if StatKind = tsSwitchCaseClose then
         Begin
-          LogDatei.log('Entering EndCase statement',LLDebug3);
+          LogDatei.log_prog('Entering EndCase statement',LLDebug2);
           if not inswitch then
           begin
             reportError (Sektion, i, '', 'EndCase Statement only allowed inside switch statement.');
@@ -16194,7 +16205,7 @@ begin
 
         else if StatKind = tsSwitchDefaultOpen then
         Begin
-          LogDatei.log('Entering DefaultCase statement',LLDebug3);
+          LogDatei.log_prog('Entering DefaultCase statement',LLDebug2);
           if not inswitch then
           begin
             reportError (Sektion, i, '', 'DefaultCase Statement only allowed inside switch statement.');
@@ -16222,7 +16233,7 @@ begin
 
         else if (StatKind = tsSwitchClose) then
         Begin
-          LogDatei.log('Entering EndSwitch statement',LLDebug3);
+          LogDatei.log_prog('Entering EndSwitch statement',LLDebug2);
           if not inswitch then
           begin
             reportError (Sektion, i, '', 'EndSwitch Statement only allowed inside switch statement.');
@@ -16753,19 +16764,29 @@ begin
                   ActionResult
                   := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
 
-                tsImportFunc:
+                tsImportLib:
                   begin
                     syntaxCheck := EvaluateString (Remaining, Remaining, FName, InfoSyntaxError);
                     if syntaxCheck then
                     Begin
                       try
+                       importFunctionName := '';
                         fullincfilename := '';
-                        incfilename := FName;
-                        LogDatei.log('Found Include statement for: '+incfilename,LLDebug);
+                        LogDatei.log_prog('Found ImportLib statement for: '+FName,LLInfo);
+                        if pos('::',FName) > 0 then
+                        begin
+                          incfilename:= copy(FName,0,pos('::',FName)-1);
+                          //incfilename:= ExpandFileName(incfilename);
+                          importFunctionName := copy(FName,pos('::',FName)+2,length(FName));
+                        end
+                        else incfilename := FName;
+                        if ExtractFileExt(incfilename) = '' then
+                            incfilename:= incfilename + '.opsiscript';
+                        LogDatei.log('Found ImportLib statement for file: '+incfilename +' and function: '+importFunctionName,LLDebug);
                         found := false;
                         // full file path given ?
                         testincfilename := ExpandFilename(incfilename);
-                        LogDatei.log('Looking for: '+testincfilename,LLDebug2);
+                        LogDatei.log_prog('Looking for: '+testincfilename,LLNotice);
                         if FileExistsUTF8(testincfilename) then
                         begin
                           found := true;
@@ -16775,7 +16796,7 @@ begin
                         begin
                           // search in %ScriptPath%
                           testincfilename := ExtractFileDir(FFilename)+PathDelim+incfilename;
-                          LogDatei.log('Looking for: '+testincfilename,LLDebug2);
+                          LogDatei.log_prog('Looking for: '+testincfilename,LLNotice);
                           if FileExistsUTF8(testincfilename) then
                           begin
                             found := true;
@@ -16788,6 +16809,7 @@ begin
                           // search in %opsiScriptHelperPath%\lib
                           testincfilename := getSpecialFolder(CSIDL_PROGRAM_FILES)+'\opsi.org\opsiScriptHelper'
                                                +PathDelim+incfilename;
+                          LogDatei.log_prog('Looking for: '+testincfilename,LLNotice);
                           if FileExistsUTF8(testincfilename) then
                           begin
                             found := true;
@@ -16801,7 +16823,7 @@ begin
                           testincfilename := ExtractFileDir(FFilename)
                                               +PathDelim+'..'
                                               +PathDelim+'lib'+PathDelim+incfilename;
-                          LogDatei.log('Looking for: '+testincfilename,LLDebug2);
+                          LogDatei.log_prog('Looking for: '+testincfilename,LLNotice);
                           if FileExistsUTF8(testincfilename) then
                           begin
                             found := true;
@@ -16814,7 +16836,7 @@ begin
                           // search in %WinstDir%\lib
                           testincfilename := ExtractFileDir(Paramstr(0))
                                                +PathDelim+'lib'+PathDelim+incfilename;
-                          LogDatei.log('Looking for: '+testincfilename,LLDebug2);
+                          LogDatei.log_prog('Looking for: '+testincfilename,LLNotice);
                           if FileExistsUTF8(testincfilename) then
                           begin
                             found := true;
@@ -16824,6 +16846,7 @@ begin
                         {$ENDIF WINDOWS}
                         if found then
                         begin
+                          inSearchedFunc := false;
                           LogDatei.log('Found File: '+fullincfilename,LLDebug2);
                           inclist := TStringList.Create;
                           inclist.LoadFromFile(ExpandFileName(fullincfilename));
@@ -16831,42 +16854,88 @@ begin
                           //Encoding2use := inclist.Values['encoding'];
                           inclist.Free;
                           if Encoding2use = '' then Encoding2use := 'system';
-                          LogDatei.log('Will Include : '+incfilename+' with encoding: '+Encoding2use,LLDebug2);
+                          LogDatei.log_prog('Will Include : '+incfilename+' with encoding: '+Encoding2use,LLDebug);
                           assignfile(incfile,fullincfilename);
                           reset(incfile);
                           //script.Strings[i] := '';
-                          k := 0;
+                          alllines := 0;
+                          inclines := 0;
+                          inDefFunc2 := 0;
                           while not eof(incfile) do
                           begin
-                            inc(k);
+                            inc(alllines);
                             readln(incfile, incline);
-                            //LogDatei.log('Will Include line (raw): '+incline,LLDebug3);
+                            LogDatei.log_prog('Found line in lib file (raw): '+incline,LLDebug3);
                             incline := reencode(incline, Encoding2use,usedEncoding);
-                            //LogDatei.log('Will Include line (reencoded): '+incline,LLDebug3);
-                            for constcounter := 1 to ConstList.Count   do
-                              if Sektion.replaceInLine(incline, Constlist.Strings [constcounter-1], ConstValuesList.Strings [constcounter-1], false,replacedline)
-                              then incline := replacedline;
-                            LogDatei.log('Will Include line (constants replaced): '+incline,LLDebug3);
-                            Sektion.Insert(i-1+k,incline);
-                            LogDatei.log('Line included at pos: '+inttostr(i-1+k)+' to Sektion with '+inttostr(Sektion.Count)+' lines.',LLDebug3);
-                            //LogDatei.log('Will Include add at pos '+inttostr(Sektion.StartLineNo + i-1+k)+'to FLinesOriginList with count: '+inttostr(script.FLinesOriginList.Count),LLDebug3);
-                            script.FLinesOriginList.Insert(Sektion.StartLineNo + i-1+k,incfilename+ ' Line: '+inttostr(k));
-                            LogDatei.log('Include added to FLinesOriginList.',LLDebug3);
+                            LogDatei.log_prog('Found line in lib file (reencoded): '+incline,LLDebug2);
+                            //for constcounter := 1 to ConstList.Count   do
+                            //  if Sektion.replaceInLine(incline, Constlist.Strings [constcounter-1], ConstValuesList.Strings [constcounter-1], false,replacedline)
+                            //  then incline := replacedline;
+
+
+                            if importFunctionName <> '' then
+                            begin
+                              // we import only one function
+                              GetWord (incline, Expressionstr, Remaining, WordDelimiterSet4);
+                              // does the line starts with deffunc ?
+                              if 'deffunc' = trim(lowercase(Expressionstr)) then
+                              begin
+                                inc(inDefFunc2);
+                                // is it the searched function name ? ?
+                                if (not inSearchedFunc)  and (inDefFunc2 = 1) then
+                                begin
+                                  GetWord (Remaining, Expressionstr, Remaining, WordDelimiterSet4);
+                                  if lowercase(Expressionstr) = LowerCase(importFunctionName) then
+                                    inSearchedFunc := true;
+                                end
+                              end;
+                              if inSearchedFunc  then
+                              begin
+                                inc(inclines);
+                                LogDatei.log_prog('Will Include line : '+incline,LLDebug);
+                                Sektion.Insert(i-1+inclines,incline);
+                                LogDatei.log_prog('Line included at pos: '+inttostr(i-1+inclines)+' to Sektion with '+inttostr(Sektion.Count)+' lines.',LLDebug2);
+                                //LogDatei.log_prog('Will Include add at pos '+inttostr(Sektion.StartLineNo + i-1+k)+'to FLinesOriginList with count: '+inttostr(script.FLinesOriginList.Count),LLDebug2);
+                                script.FLinesOriginList.Insert(Sektion.StartLineNo + i-1+inclines,incfilename+ ' Line: '+inttostr(alllines));
+                                script.FLibList.Insert(Sektion.StartLineNo + i-1+inclines,'true');
+                                LogDatei.log_prog('Include added to FLinesOriginList.',LLDebug2);
+                              end;
+                                // do we have an endfunc ?
+                                //GetWord (incline, Expressionstr, Remaining, WordDelimiterSet4);
+                              if 'endfunc' = trim(lowercase(Expressionstr)) then
+                                  dec(inDefFunc2);
+                              if inSearchedFunc and (inDefFunc2 = 0) then
+                                  inSearchedFunc := false;
+                            end  // import only one func
+                            else
+                            begin  // import all func
+                              inc(inclines);
+                              LogDatei.log_prog('Will Include line : '+incline,LLDebug);
+                              Sektion.Insert(i-1+inclines,incline);
+                              LogDatei.log_prog('Line included at pos: '+inttostr(i-1+inclines)+' to Sektion with '+inttostr(Sektion.Count)+' lines.',LLDebug2);
+                              //LogDatei.log_prog('Will Include add at pos '+inttostr(Sektion.StartLineNo + i-1+k)+'to FLinesOriginList with count: '+inttostr(script.FLinesOriginList.Count),LLDebug2);
+                              script.FLinesOriginList.Insert(Sektion.StartLineNo + i-1+inclines,incfilename+ ' Line: '+inttostr(alllines));
+                              script.FLibList.Insert(Sektion.StartLineNo + i-1+inclines,'true');
+                              LogDatei.log_prog('Include added to FLinesOriginList.',LLDebug2);
+                            end
                           end;
                           closeFile(incfile);
                           linecount := Count;
-                          LogDatei.log('Included (insert) file: '+fullincfilename+' with encoding: '+usedEncoding,LLInfo);
+                          if importFunctionName = '' then
+                            LogDatei.log('Imported all functions from file: '+fullincfilename,LLNotice)
+                          else
+                            LogDatei.log('Imported function : '+importFunctionName+' from file: '+fullincfilename ,LLNotice);
                         end
                         else
                         begin
-                          LogDatei.log('Error: Could not find include file :'+incfilename,LLCritical);
+                          LogDatei.log('Error: Could not find import file :'+incfilename,LLCritical);
                           FExtremeErrorLevel:= levelFatal;
                         end;
                        except
                             on E: exception do
                            Begin
-                              Logdatei.log ('Include_Insert "' + Fname + '"', LLCritical);
-                              Logdatei.log (' Failed to include (insert) file, system message: "' + E.Message +'"',
+                              Logdatei.log ('importLib "' + Fname + '"', LLCritical);
+                              Logdatei.log (' Failed to import (insert) file, system message: "' + E.Message +'"',
                                                      LLCritical);
                               FExtremeErrorLevel:= levelFatal;
                             End
@@ -16875,7 +16944,7 @@ begin
                     else
                       ActionResult
                       := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
-                  end; // tsImportFunc
+                  end; // tsImportLib
 
 
 
@@ -16977,6 +17046,7 @@ begin
                             LogDatei.log('Line included at pos: '+inttostr(i-1+k)+' to Sektion with '+inttostr(Sektion.Count)+' lines.',LLDebug3);
                             //LogDatei.log('Will Include add at pos '+inttostr(Sektion.StartLineNo + i-1+k)+'to FLinesOriginList with count: '+inttostr(script.FLinesOriginList.Count),LLDebug3);
                             script.FLinesOriginList.Insert(Sektion.StartLineNo + i-1+k,incfilename+ ' Line: '+inttostr(k));
+                            script.FLibList.Insert(Sektion.StartLineNo + i-1+inclines,'false');
                             LogDatei.log('Include added to FLinesOriginList.',LLDebug3);
                           end;
                           closeFile(incfile);
@@ -17096,6 +17166,7 @@ begin
                             append(incline);
                             linecount := Count;
                             script.FLinesOriginList.Append(incfilename+ ' Line: '+inttostr(k));
+                            script.FLibList.Append('false');
                           end;
                           closeFile(incfile);
                           //linecount := Count;
@@ -19140,6 +19211,15 @@ begin
       depotdrive := depotdrive_bak;
       depotdir :=  depotdir_bak;
     end;
+    LogDatei.force_min_loglevel:=osconf.force_min_loglevel;
+    LogDatei.debug_prog:=osconf.debug_prog;
+    LogDatei.LogLevel:=osconf.default_loglevel;
+    LogDatei.debug_lib:= osconf.debug_lib;
+    logDatei.log_prog('force_min_loglevel: '+inttostr(osconf.force_min_loglevel),LLessential);
+    logDatei.log_prog('default_loglevel: '+inttostr(osconf.default_loglevel),LLessential);
+    logDatei.log_prog('debug_prog: '+BoolToStr(osconf.debug_prog,true),LLessential);
+    logDatei.log_prog('debug_lib: '+booltostr(osconf.debug_lib,true),LLessential);
+
     LogDatei.log('Using new Depot path:  ' + depotdrive + depotdir, LLinfo);
   end
   else LogDatei.log('Using old Depot path:  ' + depotdrive + depotdir, LLinfo);
@@ -19186,6 +19266,7 @@ begin
     for i := 1 to script.Count do
     begin
       script.FLinesOriginList.Append(script.FFilename+' line: '+inttostr(i+1));
+      script.FLibList.Append('false');
       //writeln('i='+inttostr(i)+' = '+Script.FLinesOriginList.Strings[i-1]);
     end;
   End
@@ -19197,6 +19278,7 @@ begin
     for i := 1 to script.Count do
     begin
       script.FLinesOriginList.Append('Viewlist line: '+inttostr(i));
+      script.FLibList.Append('false');
       //writeln('i='+inttostr(i)+' = '+Script.FLinesOriginList.Strings[i-1]);
       //writeln('i='+inttostr(i));
     end;
@@ -19853,7 +19935,7 @@ begin
   PStatNames^ [tsLogWarning]          := 'LogWarning';
   PStatNames^ [tsSetSkinDir]          := 'SetSkinDirectory';
 
-  PStatNames^ [tsImportFunc]          := 'ImportFunc';
+  PStatNames^ [tsImportLib]           := 'ImportLib';
   PStatNames^ [tsIncludeInsert]       := 'Include_Insert';
   PStatNames^ [tsIncludeAppend]       := 'Include_Append';
   PStatNames^ [tsIncludeLog]          := 'IncludeLog';

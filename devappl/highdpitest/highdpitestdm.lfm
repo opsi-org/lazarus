@@ -1,0 +1,12 @@
+object DataModule1: TDataModule1
+  OldCreateOrder = False
+  Height = 150
+  HorizontalOffset = 670
+  VerticalOffset = 215
+  Width = 150
+  object Timer1: TTimer
+    OnTimer = Timer1Timer
+    left = 60
+    top = 59
+  end
+end

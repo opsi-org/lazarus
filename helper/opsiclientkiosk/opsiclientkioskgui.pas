@@ -290,6 +290,7 @@ begin
     font.Italic := tile_Font_Italic;
     font.Underline := tile_Font_Underline;
     self.OnMouseWheel := scroll;
+    self.AutoAdjustLayout(lapAutoAdjustForDPI, 96, FopsiClientKiosk.PixelsPerInch, 0, 0);
 
     //label Name
     LabelName := TLabel.Create(self);
@@ -306,6 +307,7 @@ begin
     LabelName.BorderSpacing.Around := 3;
     LabelName.OnClick := ProductTileChildClick;
     LabelName.OnMouseWheel := scroll;
+    LabelName.AutoAdjustLayout(lapAutoAdjustForDPI, 96, FopsiClientKiosk.PixelsPerInch, 0, 0);
 
     //label ID
     labelId := TLabel.Create(self);
@@ -318,6 +320,7 @@ begin
     labelId.BorderSpacing.Around := 3;
     labelId.OnClick := ProductTileChildClick;
     labelId.OnMouseWheel := scroll;
+    labelId.AutoAdjustLayout(lapAutoAdjustForDPI, 96, FopsiClientKiosk.PixelsPerInch, 0, 0);
 
     //label LabelState
     LabelState := TLabel.Create(self);
@@ -330,6 +333,7 @@ begin
     LabelState.BorderSpacing.Around := 3;
     LabelState.OnClick := ProductTileChildClick;
     LabelState.OnMouseWheel := scroll;
+    LabelState.AutoAdjustLayout(lapAutoAdjustForDPI, 96, FopsiClientKiosk.PixelsPerInch, 0, 0);
 
     //RadioGroupAction
     //RadioGroupAction := TRadioGroup.Create(self);
@@ -345,6 +349,7 @@ begin
     RadioGroupAction.OnClick := ProductTileChildClick;
     RadioGroupAction.OnMouseWheel := scroll;
     //RadioGroupAction.OnSelectionChanged := TileActionChanged;
+    RadioGroupAction.AutoAdjustLayout(lapAutoAdjustForDPI, 96, FopsiClientKiosk.PixelsPerInch, 0, 0);
 
     // radiobuttons
     // none
@@ -356,6 +361,7 @@ begin
     rbNone.OnChange := TileActionChanged;
     rbNone.Tag := 0;
     rbNone.OnMouseWheel := scroll;
+    rbNone.AutoAdjustLayout(lapAutoAdjustForDPI, 96, FopsiClientKiosk.PixelsPerInch, 0, 0);
     lbnone := TLabel.Create(self);
     lbnone.Left := 20;
     lbnone.Caption := rsActNone;
@@ -366,6 +372,7 @@ begin
     lbnone.Font.Size := tile_radio_font_size;
     lbnone.OnClick := rbnone.OnClick;
     lbnone.OnMouseWheel := scroll;
+    lbnone.AutoAdjustLayout(lapAutoAdjustForDPI, 96, FopsiClientKiosk.PixelsPerInch, 0, 0);
 
     // setup
     rbsetup := TRadioButton.Create(self);
@@ -377,6 +384,7 @@ begin
     rbsetup.Tag := 1;
     rbsetup.Enabled := False;
     rbsetup.OnMouseWheel := scroll;
+    rbsetup.AutoAdjustLayout(lapAutoAdjustForDPI, 96, FopsiClientKiosk.PixelsPerInch, 0, 0);
     lbsetup := TLabel.Create(self);
     lbsetup.Left := 20;
     lbsetup.Caption := rsActSetup;
@@ -388,6 +396,7 @@ begin
     lbsetup.Enabled := False;
     lbsetup.OnClick := rbsetup.OnClick;
     lbsetup.OnMouseWheel := scroll;
+    lbsetup.AutoAdjustLayout(lapAutoAdjustForDPI, 96, FopsiClientKiosk.PixelsPerInch, 0, 0);
     //iconsetup:= Timage.Create(self);
     //iconsetup.Parent := RadioGroupAction;
     //iconsetup.top := rbsetup.top;
@@ -405,6 +414,7 @@ begin
     rbuninstall.Tag := 2;
     rbuninstall.Enabled := False;
     rbuninstall.OnMouseWheel := scroll;
+    rbuninstall.AutoAdjustLayout(lapAutoAdjustForDPI, 96, FopsiClientKiosk.PixelsPerInch, 0, 0);
     lbuninstall := TLabel.Create(self);
     lbuninstall.Left := 20;
     lbuninstall.Caption := rsActUninstall;
@@ -416,6 +426,7 @@ begin
     lbuninstall.Enabled := False;
     lbuninstall.OnClick := rbuninstall.OnClick;
     lbuninstall.OnMouseWheel := scroll;
+    lbuninstall.AutoAdjustLayout(lapAutoAdjustForDPI, 96, FopsiClientKiosk.PixelsPerInch, 0, 0);
 
     RadioGroupAction.Height:= (lbuninstall.Height + 9) * 3;
   except

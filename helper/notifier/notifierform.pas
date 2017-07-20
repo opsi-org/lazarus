@@ -78,6 +78,8 @@ begin
   FormStyle := fsSystemStayOnTop;
   BringToFront;
   FormStyle := oldFsStyle;
+  repaint;
+  Application.ProcessMessages;
 end;
 
 procedure TNform.choiceClick(Sender: TObject);

@@ -767,7 +767,7 @@ var
   var
     Scriptname: string;
   begin
-    Logdatei.log('Start ProcessNonZeroScript', LLdebug2);
+    Logdatei.log_prog('Start ProcessNonZeroScript', LLdebug2);
     if Skriptdateiname = '' then
     begin
       Result := False;
@@ -779,14 +779,14 @@ var
       Scriptname := Skriptdateiname;
       NestingLevel := 0;
       CreateAndProcessScript(Scriptname, NestingLevel, False, extremeErrorLevel);
-      Logdatei.log('After CreateAndProcessScript', LLdebug2);
+      Logdatei.log_prog('After CreateAndProcessScript', LLdebug2);
     end;
-    Logdatei.log('End ProcessNonZeroScript', LLdebug2);
+    Logdatei.log_prog('End ProcessNonZeroScript', LLdebug2);
   end;
 
 begin
   //updateAfterSetup := false;
-  Logdatei.log('Entering ProcessNonZeroScript', LLdebug2);
+  Logdatei.log_prog('Entering ProcessNonZeroScript', LLdebug2);
 
   runUpdate := true;
 
@@ -1927,10 +1927,11 @@ begin
           LogDatei.force_min_loglevel:=osconf.force_min_loglevel;
           LogDatei.debug_prog:=osconf.debug_prog;
           LogDatei.LogLevel:=osconf.default_loglevel;
-          logDatei.log_prog('force_min_loglevel: '+inttostr(osconf.force_min_loglevel),LLessential);
-          logDatei.log_prog('default_loglevel: '+inttostr(osconf.default_loglevel),LLessential);
-          logDatei.log_prog('debug_prog: '+booleantostr(osconf.debug_prog),LLessential);
-          logDatei.log_prog('debug_lib: '+booleantostr(osconf.debug_lib),LLessential);
+          LogDatei.debug_lib:= osconf.debug_lib;
+          logDatei.log('force_min_loglevel: '+inttostr(osconf.force_min_loglevel),LLessential);
+          logDatei.log('default_loglevel: '+inttostr(osconf.default_loglevel),LLessential);
+          logDatei.log('debug_prog: '+booleantostr(osconf.debug_prog),LLessential);
+          logDatei.log('debug_lib: '+booleantostr(osconf.debug_lib),LLessential);
           extractTmpPathFromLogdatei(LogDateiName);
           TempPath := GetTempPath;
 
@@ -1995,6 +1996,15 @@ begin
           extractTmpPathFromLogdatei(LogDateiName);
           TempPath := GetTempPath;
           extremeErrorLevel := Level_not_initialized;
+          LogDatei.force_min_loglevel:=osconf.force_min_loglevel;
+          LogDatei.debug_prog:=osconf.debug_prog;
+          LogDatei.LogLevel:=osconf.default_loglevel;
+          LogDatei.debug_lib:= osconf.debug_lib;
+          logDatei.log_prog('force_min_loglevel: '+inttostr(osconf.force_min_loglevel),LLessential);
+          logDatei.log_prog('default_loglevel: '+inttostr(osconf.default_loglevel),LLessential);
+          logDatei.log_prog('debug_prog: '+booleantostr(osconf.debug_prog),LLessential);
+          logDatei.log_prog('debug_lib: '+booleantostr(osconf.debug_lib),LLessential);
+
           if batchproductid = '' then
           begin
             LogDatei.LogProduktId:=false;

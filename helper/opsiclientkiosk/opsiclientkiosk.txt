@@ -1,4 +1,12 @@
 
+opsiclientkiosk 4.0.7.10
+
+  * highdpi awareness
+  * lazarzs 1.8
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 18 Jul 2017 15:00:00 +0000
+
+
 opsiclientkiosk 4.0.7.8
 
   * fix for font style

@@ -14,7 +14,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '1.6.2.0'
+  LCLVersion = '1.8.0.3'
   object datapanel: TPanel
     Left = 0
     Height = 515
@@ -315,6 +315,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
               Align = alClient
               BevelOuter = bvNone
               ControlList = <>
+              FlowLayout = tlTop
               FlowStyle = fsLeftRightTopBottom
               TabOrder = 0
             end
