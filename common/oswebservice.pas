@@ -1119,7 +1119,7 @@ begin
 
   for i := 0 to high(parameters) do
   begin
-    LogDatei.DependentAdd('Parameters in OpsiMethodCall: ' + parameters[i], LLdebug3);
+    LogDatei.log_prog('Parameters in OpsiMethodCall: ' + parameters[i], LLdebug3);
     Fparameterlist.add(parameters[i]);
   end;
 
@@ -1179,7 +1179,7 @@ begin
         ((parameterlist.Strings[i][length(parameterlist.Strings[i])] = '}')) then
       begin
         testresult := parameterlist.Strings[i];
-        LogDatei.DependentAdd('Creating TSuperObject with: ' +
+        LogDatei.log_prog('Creating TSuperObject with: ' +
           parameterlist.Strings[i], LLdebug3);
         //joParams.put(TSuperObject.create(parameterlist.Strings[i]));
         joParams.AsArray.Add(SO(parameterlist.Strings[i]));
@@ -1230,7 +1230,7 @@ begin
     //result := jO.toString;
     Result := jO.AsJSon(False, False);
     testresult := Result;
-    //LogDatei.DependentAdd ('resulting getJsonUrlString: ' + Result ,LLdebug2);
+    LogDatei.log_prog ('resulting getJsonUrlString: ' + Result ,LLdebug2);
 
     //System.out.println ("a JSONObject  as String>> "  + jO.toString());
     //result = URLEncoder.encode (  jO.toString(), "UTF8");
@@ -1658,10 +1658,12 @@ begin
         end
         else
         begin
+          LogDatei.log_prog(' JSON service request Furl ' + Furl, LLdebug);
+          LogDatei.log_prog(' Raw request str ' + s, LLdebug);
           s := omc.jsonUrlString;
+          LogDatei.log_prog(' JSON request str ' + s, LLdebug);
           utf8str := AnsiToUtf8(s);
-          LogDatei.DependentAdd(' JSON service request Furl ' + Furl, LLdebug2);
-          LogDatei.DependentAdd(' JSON service request str ' + utf8str, LLdebug2);
+          LogDatei.log_prog(' JSON utf8 request str ' + utf8str, LLdebug);
         end;
         try
           sendstream := TMemoryStream.Create;

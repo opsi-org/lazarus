@@ -17,7 +17,7 @@ opsi-winst/opsi-script (4.12.0.0) experimental; urgency=low
   * new unit osdefinedfunctions
   * osparser: support for defined functions
   * osparser: moved sync between FExtremeErrorLevel and extremeErrorLevel before final output
-  * osparser: new functions: boolToSting(<bool expression>) and stringToBool(< string>)
+  * osparser: new functions: boolToString(<bool expression>) and stringToBool(< string>)
   * osparser: new statement: ImportLib
   * oslog: new method log_prog for program debugging
   * osconf: readConfigFromService reads configstates:

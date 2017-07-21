@@ -5768,7 +5768,7 @@ begin
           Begin
             if GetString (r, methodname, r, errorInfo, true)
             then  syntaxcheck := true;
-            logdatei.log('Parsingprogress: r: '+r+' exp: '+Expressionstr,LLDebug3);
+            logdatei.log_prog('Parsingprogress: r: '+r+' exp: '+Expressionstr,LLDebug3);
           end
 
           else if LowerCase (Expressionstr) = LowerCase ('"params"')
@@ -5780,11 +5780,11 @@ begin
              if r = ''
              then
                getNextValidLine (r, i, Sektion);
-             logdatei.log('Parsingprogress: r: '+r+' exp: '+Expressionstr,LLDebug3);
+             logdatei.log_prog('Parsingprogress: r: '+r+' exp: '+Expressionstr,LLDebug3);
              if (i <= Sektion.count) and skip ('[', r, r, errorInfo)
              then
              Begin
-               logdatei.log('Parsingprogress: r: '+r+' exp: '+Expressionstr,LLDebug3);
+               logdatei.log_prog('Parsingprogress: r: '+r+' exp: '+Expressionstr,LLDebug3);
                inParams := true;
                paramsValueListFound := true;
                paramStartI := i;
@@ -5810,7 +5810,7 @@ begin
                do
                Begin
                   getNextValidLine(r, i, Sektion);
-                  logdatei.log('Parsingprogress: r: '+r+' exp: '+Expressionstr,LLDebug3);
+                  logdatei.log_prog('Parsingprogress: r: '+r+' exp: '+Expressionstr,LLDebug3);
                   if i <= Sektion.count
                   then
                   Begin
@@ -5830,7 +5830,7 @@ begin
                           if GetString (r, param, r, errorInfo, true)
                           then
                           begin
-                            LogDatei.log ('Parsing: getparam: ' + param ,LLdebug2);
+                            LogDatei.log_prog ('Parsing: getparam: ' + param ,LLdebug2);
                             paramList.Add(param);
                           end
                           else
@@ -5901,7 +5901,7 @@ begin
     if syntaxCheck then
     Begin
         LogDatei.log('   "method": "' + methodname + '"', LLInfo);
-      //LogDatei.log('   "params" : "' + jsonParams, LLInfo);
+      //LogDatei.log_prog('   "params" : "' + jsonParams, LLInfo);
 
       testresult := 'service not initialized';
       case serviceChoice of
@@ -6117,6 +6117,7 @@ begin
           for j := 0 to paramList.count - 1 do
           begin
             parameters[j] := paramlist.Strings[j]
+            logdatei.log_prog('param['+inttostr(j)+']: '+paramlist.Strings[j],LLDebug2);
           end;
 
           omc := TOpsiMethodCall.create (methodname, parameters);
@@ -16956,7 +16957,7 @@ begin
                       try
                         fullincfilename := '';
                         incfilename := FName;
-                        LogDatei.log('Found Include statement for: '+incfilename,LLDebug);
+                        LogDatei.log('Found Include_insert statement for: '+incfilename,LLDebug);
                         found := false;
                         // full file path given
                         testincfilename := ExpandFilename(incfilename);
@@ -17035,19 +17036,19 @@ begin
                           begin
                             inc(k);
                             readln(incfile, incline);
-                            //LogDatei.log('Will Include line (raw): '+incline,LLDebug3);
+                            LogDatei.log_prog('Will Include line (raw): '+incline,LLDebug3);
                             incline := reencode(incline, Encoding2use,usedEncoding);
-                            //LogDatei.log('Will Include line (reencoded): '+incline,LLDebug3);
+                            LogDatei.log_prog('Will Include line (reencoded): '+incline,LLDebug3);
                             for constcounter := 1 to ConstList.Count   do
                               if Sektion.replaceInLine(incline, Constlist.Strings [constcounter-1], ConstValuesList.Strings [constcounter-1], false,replacedline)
                               then incline := replacedline;
-                            LogDatei.log('Will Include line (constants replaced): '+incline,LLDebug3);
+                            LogDatei.log_prog('Will Include line (constants replaced): '+incline,LLDebug3);
                             Sektion.Insert(i-1+k,incline);
-                            LogDatei.log('Line included at pos: '+inttostr(i-1+k)+' to Sektion with '+inttostr(Sektion.Count)+' lines.',LLDebug3);
+                            LogDatei.log_prog('Line included at pos: '+inttostr(i-1+k)+' to Sektion with '+inttostr(Sektion.Count)+' lines.',LLDebug3);
                             //LogDatei.log('Will Include add at pos '+inttostr(Sektion.StartLineNo + i-1+k)+'to FLinesOriginList with count: '+inttostr(script.FLinesOriginList.Count),LLDebug3);
                             script.FLinesOriginList.Insert(Sektion.StartLineNo + i-1+k,incfilename+ ' Line: '+inttostr(k));
-                            script.FLibList.Insert(Sektion.StartLineNo + i-1+inclines,'false');
-                            LogDatei.log('Include added to FLinesOriginList.',LLDebug3);
+                            script.FLibList.Insert(Sektion.StartLineNo + i-1+k,'false');
+                            LogDatei.log_prog('Include added to FLinesOriginList.',LLDebug3);
                           end;
                           closeFile(incfile);
                           linecount := Count;
@@ -17080,7 +17081,7 @@ begin
                     Begin
                       try
                         incfilename := FName;
-                        LogDatei.log('Found Include statement for: '+incfilename,LLDebug);
+                        LogDatei.log('Found Include_append statement for: '+incfilename,LLDebug);
                         found := false;
                         // full file path given
                         testincfilename := ExpandFilename(incfilename);
@@ -17163,6 +17164,7 @@ begin
                             for constcounter := 1 to ConstList.Count   do
                               if Sektion.replaceInLine(incline, Constlist.Strings [constcounter-1], ConstValuesList.Strings [constcounter-1], false,replacedline)
                               then incline := replacedline;
+                            LogDatei.log_prog('Include_append line: '+incline,LLDebug);
                             append(incline);
                             linecount := Count;
                             script.FLinesOriginList.Append(incfilename+ ' Line: '+inttostr(k));
