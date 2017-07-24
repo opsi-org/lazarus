@@ -6116,7 +6116,7 @@ begin
           setlength(parameters, paramList.count);
           for j := 0 to paramList.count - 1 do
           begin
-            parameters[j] := paramlist.Strings[j]
+            parameters[j] := paramlist.Strings[j];
             logdatei.log_prog('param['+inttostr(j)+']: '+paramlist.Strings[j],LLDebug2);
           end;
 
