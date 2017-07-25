@@ -2023,6 +2023,7 @@ type
 var
   j: Integer;
   intf: IInterface;
+  sIintf : ISuperObject;
 begin
   Result := TSuperObject.Create(stArray);
   for j := 0 to length(Args) - 1 do
@@ -2043,7 +2044,11 @@ begin
         if TVarRec(Args[j]).VInterface = nil then
           Add(nil) else
           if IInterface(TVarRec(Args[j]).VInterface).QueryInterface(ISuperObject, intf) = 0 then
-            Add(ISuperObject(intf)) else
+          begin
+            sIintf := TSuperObject(intf);
+            Add(sIintf);
+          end
+          else
             Add(nil);
       vtPointer :
         if TVarRec(Args[j]).VPointer = nil then
@@ -7602,4 +7607,4 @@ finalization
   Assert(debugcount = 0, 'Memory leak');
 {$ENDIF}
 end.
-
+

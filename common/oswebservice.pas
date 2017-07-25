@@ -19,12 +19,6 @@ unit oswebservice;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 500 $
-// $Author: oertel $
-// $Date: 2016-10-05 18:42:17 +0200 (Mi, 05 Okt 2016) $
-//***************************************************************************
 
 
 interface

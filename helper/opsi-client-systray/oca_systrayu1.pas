@@ -20,7 +20,6 @@ type
     MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
     PopupMenu1: TPopupMenu;
-    TrayIcon1: TTrayIcon;
     procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
