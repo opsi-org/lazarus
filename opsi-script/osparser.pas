@@ -16797,6 +16797,7 @@ begin
                         begin
                           // search in %ScriptPath%
                           testincfilename := ExtractFileDir(FFilename)+PathDelim+incfilename;
+                          testincfilename := ExpandFilename(testincfilename);
                           LogDatei.log_prog('Looking for: '+testincfilename,LLNotice);
                           if FileExistsUTF8(testincfilename) then
                           begin
@@ -16810,6 +16811,7 @@ begin
                           // search in %opsiScriptHelperPath%\lib
                           testincfilename := getSpecialFolder(CSIDL_PROGRAM_FILES)+'\opsi.org\opsiScriptHelper'
                                                +PathDelim+incfilename;
+                          testincfilename := ExpandFilename(testincfilename);
                           LogDatei.log_prog('Looking for: '+testincfilename,LLNotice);
                           if FileExistsUTF8(testincfilename) then
                           begin
@@ -16824,6 +16826,7 @@ begin
                           testincfilename := ExtractFileDir(FFilename)
                                               +PathDelim+'..'
                                               +PathDelim+'lib'+PathDelim+incfilename;
+                          testincfilename := ExpandFilename(testincfilename);
                           LogDatei.log_prog('Looking for: '+testincfilename,LLNotice);
                           if FileExistsUTF8(testincfilename) then
                           begin
@@ -16837,6 +16840,7 @@ begin
                           // search in %WinstDir%\lib
                           testincfilename := ExtractFileDir(Paramstr(0))
                                                +PathDelim+'lib'+PathDelim+incfilename;
+                          testincfilename := ExpandFilename(testincfilename);
                           LogDatei.log_prog('Looking for: '+testincfilename,LLNotice);
                           if FileExistsUTF8(testincfilename) then
                           begin
@@ -16961,7 +16965,7 @@ begin
                         found := false;
                         // full file path given
                         testincfilename := ExpandFilename(incfilename);
-                        LogDatei.log('Looking for: '+testincfilename,LLDebug2);
+                        LogDatei.log_prog('Looking for: '+testincfilename,LLDebug2);
                         if FileExistsUTF8(testincfilename) then
                         begin
                           found := true;
@@ -16971,7 +16975,8 @@ begin
                         begin
                           // search in %ScriptPath%
                           testincfilename := ExtractFileDir(FFilename)+PathDelim+incfilename;
-                          LogDatei.log('Looking for: '+testincfilename,LLDebug2);
+                          testincfilename := ExpandFilename(testincfilename);
+                          LogDatei.log_prog('Looking for: '+testincfilename,LLDebug2);
                           if FileExistsUTF8(testincfilename) then
                           begin
                             found := true;
@@ -16984,6 +16989,8 @@ begin
                           // search in %opsiScriptHelperPath%\lib
                           testincfilename := getSpecialFolder(CSIDL_PROGRAM_FILES)+'\opsi.org\opsiScriptHelper'
                                                +PathDelim+incfilename;
+                          testincfilename := ExpandFilename(testincfilename);
+                          LogDatei.log_prog('Looking for: '+testincfilename,LLDebug2);
                           if FileExistsUTF8(testincfilename) then
                           begin
                             found := true;
@@ -16997,7 +17004,8 @@ begin
                           testincfilename := ExtractFileDir(FFilename)
                                               +PathDelim+'..'
                                               +PathDelim+'lib'+PathDelim+incfilename;
-                          LogDatei.log('Looking for: '+testincfilename,LLDebug2);
+                          testincfilename := ExpandFilename(testincfilename);
+                          LogDatei.log_prog('Looking for: '+testincfilename,LLDebug2);
                           if FileExistsUTF8(testincfilename) then
                           begin
                             found := true;
@@ -17010,7 +17018,8 @@ begin
                           // search in %WinstDir%\lib
                           testincfilename := ExtractFileDir(Paramstr(0))
                                                +PathDelim+'lib'+PathDelim+incfilename;
-                          LogDatei.log('Looking for: '+testincfilename,LLDebug2);
+                          testincfilename := ExpandFilename(testincfilename);
+                          LogDatei.log_prog('Looking for: '+testincfilename,LLDebug2);
                           if FileExistsUTF8(testincfilename) then
                           begin
                             found := true;
@@ -17095,6 +17104,7 @@ begin
                         begin
                           // search in %ScriptPath%
                           testincfilename := ExtractFileDir(FFilename)+PathDelim+incfilename;
+                          testincfilename := ExpandFilename(testincfilename);
                           LogDatei.log('Looking for: '+testincfilename,LLDebug2);
                           if FileExistsUTF8(testincfilename) then
                           begin
@@ -17108,6 +17118,7 @@ begin
                           // search in %opsiScriptHelperPath%\lib
                           testincfilename := getSpecialFolder(CSIDL_PROGRAM_FILES)+'\opsi.org\opsiScriptHelper'
                                                +PathDelim+incfilename;
+                          testincfilename := ExpandFilename(testincfilename);
                           if FileExistsUTF8(testincfilename) then
                           begin
                             found := true;
@@ -17121,6 +17132,7 @@ begin
                           testincfilename := ExtractFileDir(FFilename)
                                               +PathDelim+'..'
                                               +PathDelim+'lib'+PathDelim+incfilename;
+                          testincfilename := ExpandFilename(testincfilename);
                           LogDatei.log('Looking for: '+testincfilename,LLDebug2);
                           if FileExistsUTF8(testincfilename) then
                           begin
@@ -17134,6 +17146,7 @@ begin
                           // search in %WinstDir%\lib
                           testincfilename := ExtractFileDir(Paramstr(0))
                                                +PathDelim+'lib'+PathDelim+incfilename;
+                          testincfilename := ExpandFilename(testincfilename);
                           LogDatei.log('Looking for: '+testincfilename,LLDebug2);
                           if FileExistsUTF8(testincfilename) then
                           begin
