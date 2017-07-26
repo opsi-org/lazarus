@@ -9,15 +9,18 @@ object DataModule1: TDataModule1
     left = 128
     top = 72
     object MI_startevent: TMenuItem
-      Caption = 'Start on demand'
+      Caption = 'Install now'
+      Hint = 'Start now all pending opsi installations'
       OnClick = MI_starteventClick
     end
     object MI_pull_for_action_request: TMenuItem
-      Caption = 'Check for setup'
+      Caption = 'Check for Installations'
+      Hint = 'Check now for pending opsi installations'
       OnClick = MI_pull_for_action_requestClick
     end
     object MI_exit: TMenuItem
-      Caption = 'Exit Systray Program'
+      Caption = 'Abort Program'
+      Hint = 'Terminate this systray program'
       OnClick = MI_exitClick
     end
   end

@@ -42,6 +42,9 @@ var
   checkIntervall : integer;
   myservice_url, myclientid, myVersion : string;
 
+resourcestring
+  rsActionsWaiting = 'opsi: Products are waiting for Installation:.';;
+
 implementation
 
 {$R *.lfm}
@@ -360,7 +363,7 @@ begin
     LogDatei.log('Action requests found: '+actionstring,LLNotice);
     Trayicon1.BalloonFlags:=bfInfo;
     TrayIcon1.BalloonHint:= actionstring;
-    TrayIcon1.BalloonTitle:= 'opsi: Produktaktionen stehen bereit';
+    TrayIcon1.BalloonTitle:= rsActionsWaiting;
     TrayIcon1.ShowBalloonHint;
   end;
 end;
