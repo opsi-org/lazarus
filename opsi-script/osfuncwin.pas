@@ -63,7 +63,7 @@ function RunCommandAndCaptureOut
   showoutput:boolean; logleveloffset : integer): boolean;   overload;
 
 
-function getMyHostEnt: THostEnt;
+function getMyHostEnt(var myHostEnt : THostEnt) :boolean;
 
 function WinIsUefi: boolean;
 function IsDriveReady(Drive: string): Boolean;
@@ -340,25 +340,43 @@ begin
 end;
 
 
-function getMyHostEnt: THostEnt;
+function getMyHostEnt(var myHostEnt : THostEnt) :boolean;
 var
   buffer: PChar;
   len: integer = 0;
   errorcode: integer = 0;
+  WSAData: TWSAData;
 begin
+  result := false;
   try
     try
-      buffer := StrAlloc(301);
-      len := 300;
-      errorcode := winsock.gethostname(buffer, len);
-      if errorcode = 0 then
+      if WSAStartup($0101, WSAData) = 0 then
       begin
-        Result := gethostbyname(buffer)^;
+        Logdatei.log_prog('gethostname: Winsock is not responding.', LLError);
       end
       else
-        Logdatei.DependentAddError('gethostname error ', LLError);
+      begin
+        buffer := StrAlloc(301);
+        len := 300;
+        errorcode := winsock.gethostname(buffer, len);
+        if errorcode = 0 then
+        begin
+          myHostEnt := gethostbyname(buffer)^;
+          result := true;
+        end
+        else
+        begin
+          case WSAGetLastError of
+            WSANOTINITIALISED:Logdatei.log_prog('gethostname error WSANotInitialised', LLError);
+            WSAENETDOWN      :Logdatei.log_prog('gethostname error WSAENetDown', LLError);
+            WSAEINPROGRESS   : Logdatei.log_prog('gethostname error WSAEInProgress', LLError);
+            else Logdatei.log_prog('unknown gethostname error ', LLError);
+           end;
+        end;
+      end;
     finally
       StrDispose(buffer);
+      WSACleanup;
     end
   except
     Logdatei.DependentAddError('gethostname error ' +

@@ -19,12 +19,6 @@ unit oswebservice;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 500 $
-// $Author: oertel $
-// $Date: 2016-10-05 18:42:17 +0200 (Mi, 05 Okt 2016) $
-//***************************************************************************
 
 
 interface
@@ -434,7 +428,6 @@ type
     function setAddDependentProductOnClients(switchon: boolean): boolean;
     function setAddProductPropertyStateDefaults(switchon: boolean): boolean;
     function setAddProductOnClientDefaults(switchon: boolean): boolean;
-    function setAddConfigStateDefaults(switchon: boolean): boolean;
     function getProductPropertyList(myproperty: string;
       defaultlist: TStringList): TStringList;  overload;
     function getProductPropertyList(myproperty: string;
@@ -502,7 +495,6 @@ type
     function getFileFromDepot(filename: string; toStringList: boolean;
       var ListResult: TStringList): boolean;
     function decreaseSslProtocol: boolean;
-    function getOpsiServiceConfigs : string;
   end;
 
 var
@@ -1119,7 +1111,7 @@ begin
 
   for i := 0 to high(parameters) do
   begin
-    LogDatei.log_prog('Parameters in OpsiMethodCall: ' + parameters[i], LLdebug3);
+    LogDatei.DependentAdd('Parameters in OpsiMethodCall: ' + parameters[i], LLdebug3);
     Fparameterlist.add(parameters[i]);
   end;
 
@@ -1179,7 +1171,7 @@ begin
         ((parameterlist.Strings[i][length(parameterlist.Strings[i])] = '}')) then
       begin
         testresult := parameterlist.Strings[i];
-        LogDatei.log_prog('Creating TSuperObject with: ' +
+        LogDatei.DependentAdd('Creating TSuperObject with: ' +
           parameterlist.Strings[i], LLdebug3);
         //joParams.put(TSuperObject.create(parameterlist.Strings[i]));
         joParams.AsArray.Add(SO(parameterlist.Strings[i]));
@@ -1230,7 +1222,7 @@ begin
     //result := jO.toString;
     Result := jO.AsJSon(False, False);
     testresult := Result;
-    LogDatei.log_prog ('resulting getJsonUrlString: ' + Result ,LLdebug2);
+    //LogDatei.DependentAdd ('resulting getJsonUrlString: ' + Result ,LLdebug2);
 
     //System.out.println ("a JSONObject  as String>> "  + jO.toString());
     //result = URLEncoder.encode (  jO.toString(), "UTF8");
@@ -1615,7 +1607,6 @@ begin
   fErrorInfo.Clear;
   compress := False;
   startTime := now;
-  exceptionloglevel : integer = LLDebug2;
 
   try
     FError := '';
@@ -1659,12 +1650,10 @@ begin
         end
         else
         begin
-          LogDatei.log_prog(' JSON service request Furl ' + Furl, LLdebug);
-          LogDatei.log_prog(' Raw request str ' + s, LLdebug);
           s := omc.jsonUrlString;
-          LogDatei.log_prog(' JSON request str ' + s, LLdebug);
           utf8str := AnsiToUtf8(s);
-          LogDatei.log_prog(' JSON utf8 request str ' + utf8str, LLdebug);
+          LogDatei.DependentAdd(' JSON service request Furl ' + Furl, LLdebug2);
+          LogDatei.DependentAdd(' JSON service request str ' + utf8str, LLdebug2);
         end;
         try
           sendstream := TMemoryStream.Create;
@@ -1733,18 +1722,11 @@ begin
         except
           on e: Exception do
           begin
-            if e.message = 'HTTP/1.1 401 Unauthorized' then
-            begin
-              FValidCredentials := False;
-              exceptionloglevel := LLError;
-            end;
-            if e.message = 'Could not load SSL Library.' then
-            begin
-              exceptionloglevel := LLError;
-            end;
-            LogDatei.log('Exception in retrieveJSONObject0: ' +
-              e.message, exceptionloglevel);
+            LogDatei.DependentAdd('Exception in retrieveJSONObject0: ' +
+              e.message, LLdebug2);
             //writeln('ddebug: Exception in retrieveJSONObject0: ' + e.message);
+            if e.message = 'HTTP/1.1 401 Unauthorized' then
+              FValidCredentials := False;
             t := s;
             // retry with other parameters
             if ContentTypeCompress = 'application/json' then
@@ -1830,7 +1812,7 @@ begin
               on e: Exception do
               begin
                 LogDatei.log('Exception in retrieveJSONObject0: ' +
-                  e.message, LLError);
+                  e.message, LLdebug2);
                 //writeln('ddebug: Exception in retrieveJSONObject0: ' + e.message);
                 if e.message = 'HTTP/1.1 401 Unauthorized' then
                   FValidCredentials := False;
@@ -1875,7 +1857,7 @@ begin
         errorOccured := True;
         FError := FError + '->retrieveJSONObject:2 : ' + E.Message;
         LogDatei.log('Exception in retrieveJSONObject:2: ' +
-                  e.message, LLWarning);
+                  e.message, LLdebug2);
       end;
     end;
 
@@ -1923,7 +1905,7 @@ begin
       errorOccured := True;
       FError := FError + '-> retrieveJSONObject:1: ' + E.Message;
       LogDatei.log('Exception in retrieveJSONObject:1: ' +
-                  e.message, LLWarning);
+                  e.message, LLdebug2);
     end;
   end;
 
@@ -2192,7 +2174,7 @@ begin
               on e: Exception do
               begin
                 LogDatei.DependentAdd('Exception in retrieveJSONObject0: ' +
-                  e.message, LLWarning);
+                  e.message, LLdebug2);
                 //writeln('ddebug: Exception in retrieveJSONObject0: ' + e.message);
                 if e.message = 'HTTP/1.1 401 Unauthorized' then
                   FValidCredentials := False;
@@ -3750,27 +3732,6 @@ begin
   end;
 end;
 
-function TOpsi4Data.setAddConfigStateDefaults(switchon: boolean): boolean;
-var
-  omc: TOpsiMethodCall;
-  productEntry: ISuperObject;
-begin
-  Result := False;
-  try
-    if switchon then
-      omc := TOpsiMethodCall.Create('backend_setOptions',
-        ['{"addConfigStateDefaults": true}'])
-    else
-      omc := TOpsiMethodCall.Create('backend_setOptions',
-        ['{"addConfigStateDefaults": false}']);
-    productEntry := FjsonExecutioner.retrieveJSONObject(omc);
-    Result := True;
-  except
-    Result := False;
-  end;
-end;
-
-
 function TOpsi4Data.setAddProductPropertyStateDefaults(switchon: boolean): boolean;
 var
   omc: TOpsiMethodCall;
@@ -4892,24 +4853,6 @@ begin
   Result := FjsonExecutioner.getFileFromDepot(filename, toStringList, ListResult);
 end;
 
-function TOpsi4Data.getOpsiServiceConfigs : string;
-var
-  parastr : string;
-  jO : ISuperObject;
-  errorOccured : boolean = false;
-  omc: TOpsiMethodCall;
-begin
-  result := '';
-  if setAddConfigStateDefaults(true) then
-  begin
-    parastr := '{"objectId": "' + actualClient + '"}';
-    omc := TOpsiMethodCall.Create('configState_getObjects', ['',parastr]);
-    //jO := FjsonExecutioner.retrieveJSONObject(omc);
-    result := checkAndRetrieve(omc,errorOccured);
-    setAddConfigStateDefaults(false);
-  end;
-  omc.Free;
-end;
 
 initialization
   // {$i widatamodul.lrs}

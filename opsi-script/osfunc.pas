@@ -981,20 +981,25 @@ end;
 procedure FindLocalIPData(var ipName: string; var address: string);
 type
   bytearray = array of byte;
+var
+  myHostEnt : THostEnt;
 begin
+  ipName := '';
+  address := '';
   {$IFDEF LINUX}
   ipName := getHostnameLin;
   address := getMyIpByDefaultRoute;
   {$ENDIF LINUX}
   {$IFDEF WINDOWS}
-  with getMyHostEnt do
-  begin
-    ipName := h_name;
-    address := Format('%d.%d.%d.%d',
-      //[Byte((h_addr^)[0]), Byte(h_addr^[1]), Byte(h_addr^[2]), Byte(h_addr^[3])]);
-      [Bytearray(h_addr^)[0], Bytearray(h_addr^)[1], Bytearray(h_addr^)[2],
-      Bytearray(h_addr^)[3]]);
-  end;
+  if getMyHostEnt(myHostEnt) then
+    with myHostEnt do
+    begin
+      ipName := h_name;
+      address := Format('%d.%d.%d.%d',
+        //[Byte((h_addr^)[0]), Byte(h_addr^[1]), Byte(h_addr^[2]), Byte(h_addr^[3])]);
+        [Bytearray(h_addr^)[0], Bytearray(h_addr^)[1], Bytearray(h_addr^)[2],
+        Bytearray(h_addr^)[3]]);
+    end;
   {$ENDIF WINDOWS}
 end;
 //{$RANGECHECKS ON}

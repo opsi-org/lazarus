@@ -14,6 +14,7 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 opsi-winst/opsi-script (4.12.0.1) experimental; urgency=low
 
   * oswebservice: changed loglevels in retrieveJSONObject
+  * osfunc: FindLocalIPData / getMyHostEnt : WSAStartup and better Error handling
 
 -- Detlef Oertel <d.oertel@uib.de>  Thu, 27 Jun 2017:15:00:00 +0200
 
