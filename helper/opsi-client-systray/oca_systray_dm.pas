@@ -43,7 +43,7 @@ var
   myservice_url, myclientid, myVersion : string;
 
 resourcestring
-  rsActionsWaiting = 'opsi: Products are waiting for Installation:.';;
+  rsActionsWaiting = 'opsi: Products are waiting for Installation:.';
 
 implementation
 

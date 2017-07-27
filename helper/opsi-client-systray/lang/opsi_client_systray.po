@@ -1,7 +1,35 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
+#: oca_systray_dm.rsactionswaiting
+msgid "opsi: Products are waiting for Installation:."
+msgstr ""
+
 #: oswebservice.rssendlog
 msgid "Sending log file to server ..."
+msgstr ""
+
+#: tdatamodule1.mi_exit.caption
+msgid "Abort Program"
+msgstr ""
+
+#: tdatamodule1.mi_exit.hint
+msgid "Terminate this systray program"
+msgstr ""
+
+#: tdatamodule1.mi_pull_for_action_request.caption
+msgid "Check for Installations"
+msgstr ""
+
+#: tdatamodule1.mi_pull_for_action_request.hint
+msgid "Check now for pending opsi installations"
+msgstr ""
+
+#: tdatamodule1.mi_startevent.caption
+msgid "Install now"
+msgstr ""
+
+#: tdatamodule1.mi_startevent.hint
+msgid "Start now all pending opsi installations"
 msgstr ""
 
