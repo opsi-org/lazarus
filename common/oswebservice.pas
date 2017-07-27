@@ -1615,6 +1615,7 @@ begin
   fErrorInfo.Clear;
   compress := False;
   startTime := now;
+  exceptionloglevel : integer = LLDebug2;
 
   try
     FError := '';
@@ -1732,11 +1733,18 @@ begin
         except
           on e: Exception do
           begin
-            LogDatei.DependentAdd('Exception in retrieveJSONObject0: ' +
-              e.message, LLdebug2);
-            //writeln('ddebug: Exception in retrieveJSONObject0: ' + e.message);
             if e.message = 'HTTP/1.1 401 Unauthorized' then
+            begin
               FValidCredentials := False;
+              exceptionloglevel := LLError;
+            end;
+            if e.message = 'Could not load SSL Library.' then
+            begin
+              exceptionloglevel := LLError;
+            end;
+            LogDatei.log('Exception in retrieveJSONObject0: ' +
+              e.message, exceptionloglevel);
+            //writeln('ddebug: Exception in retrieveJSONObject0: ' + e.message);
             t := s;
             // retry with other parameters
             if ContentTypeCompress = 'application/json' then
@@ -1822,7 +1830,7 @@ begin
               on e: Exception do
               begin
                 LogDatei.log('Exception in retrieveJSONObject0: ' +
-                  e.message, LLdebug2);
+                  e.message, LLError);
                 //writeln('ddebug: Exception in retrieveJSONObject0: ' + e.message);
                 if e.message = 'HTTP/1.1 401 Unauthorized' then
                   FValidCredentials := False;
@@ -1867,7 +1875,7 @@ begin
         errorOccured := True;
         FError := FError + '->retrieveJSONObject:2 : ' + E.Message;
         LogDatei.log('Exception in retrieveJSONObject:2: ' +
-                  e.message, LLdebug2);
+                  e.message, LLWarning);
       end;
     end;
 
@@ -1915,7 +1923,7 @@ begin
       errorOccured := True;
       FError := FError + '-> retrieveJSONObject:1: ' + E.Message;
       LogDatei.log('Exception in retrieveJSONObject:1: ' +
-                  e.message, LLdebug2);
+                  e.message, LLWarning);
     end;
   end;
 
@@ -2184,7 +2192,7 @@ begin
               on e: Exception do
               begin
                 LogDatei.DependentAdd('Exception in retrieveJSONObject0: ' +
-                  e.message, LLdebug2);
+                  e.message, LLWarning);
                 //writeln('ddebug: Exception in retrieveJSONObject0: ' + e.message);
                 if e.message = 'HTTP/1.1 401 Unauthorized' then
                   FValidCredentials := False;
