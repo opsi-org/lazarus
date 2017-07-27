@@ -7,11 +7,14 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, oca_systray_dm;
+  Forms,
+  oca_systray_dm,
+  lcltranslator;
 
 {$R *.res}
 
 begin
+  Application.Title:='opsi-client-systray';
   RequireDerivedFormResource:=True;
   Application.Initialize;
   Application.CreateForm(TDataModule1, DataModule1);

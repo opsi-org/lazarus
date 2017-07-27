@@ -1,0 +1,9 @@
+
+[changelog]
+
+opsi_client_systray  4.0.7.0
+
+  * initial
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 25 Jul 2017:15:00:00 +0200
+
