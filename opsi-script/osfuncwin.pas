@@ -350,11 +350,13 @@ begin
   result := false;
   try
     try
+      (* was a try - did not work (do 31.7.2017)
       if WSAStartup($0101, WSAData) = 0 then
       begin
         Logdatei.log_prog('gethostname: Winsock is not responding.', LLError);
       end
       else
+      *)
       begin
         buffer := StrAlloc(301);
         len := 300;
@@ -376,7 +378,7 @@ begin
       end;
     finally
       StrDispose(buffer);
-      WSACleanup;
+      //WSACleanup;
     end
   except
     Logdatei.DependentAddError('gethostname error ' +
