@@ -1483,6 +1483,7 @@ begin
       // the root node
       nodesInPath[0] := XML.DocumentElement;
       stringsplit(nodepath, PATHSEPARATOR, pathes);
+      // TODO: don't check attributes, only nodenames
       // walk the path
       // The Path looks like this:
       // nodedescription PATHSEPARATOR nodedescripton (and so on)
@@ -1519,28 +1520,39 @@ begin
         else
           thisnodeName := pathes[i - 1];
         thisnodeName := Trim(thisnodeName);
-        attributeValue := Trim(attributeValue);
-        attributename := Trim(attributename);
+        //attributeValue := Trim(attributeValue);
+        //attributename := Trim(attributename);
+        attributeValue:='';
+        attributeName:='';
         LogDatei.log('node ' + IntToStr(i) + ': nodename ' +
-          thisnodename + ' attributeName: ' + attributeName
+          thisnodename, LLinfo);
+        {
+          + ' attributeName: ' + attributeName
           + ' attributeValue: ' + attributeValue, LLinfo
           );
-
+        }
         if not getNode(nodesInPath[i], nodesInPath[i - 1], thisnodeName,
           attributeName, attributeValue) then
+        // only check nodenames
         begin
           found := False;
           LogDatei.log( 'not found node ' + IntToStr(i) + ': nodename: ' +
-            thisnodename + ' attributeName: ' + attributeName
+            thisnodename, LLinfo);
+          {
+            + ' attributeName: ' + attributeName
             + ' attributeValue: ' + attributeValue, LLinfo
             );
+          }
         end
         else
         begin
           LogDatei.log( 'Found node ' + IntToStr(i) + ': nodename: ' +
-            thisnodename + ' attributeName: ' + attributeName
+            thisnodename, LLinfo);
+          {
+            + ' attributeName: ' + attributeName
             + ' attributeValue: ' + attributeValue, LLinfo
             );
+          }
           found := True;
         end;
 
@@ -1553,9 +1565,11 @@ begin
         nodeExists := False;
     end;
   except
-    LogDatei.log('node not found' + ': nodename: ' + thisnodename
+    LogDatei.log('node not found' + ': nodename: ' + thisnodename, LLinfo);
+    {
       + ' attributeName: ' + attributeName +
       ' attributeValue: ' + attributeValue, LLwarning);
+    }
     nodeExists := False;
   end;
 end;

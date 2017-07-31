@@ -6867,15 +6867,25 @@ begin
           if XMLDocObject.nodeExists(nodepath) then
           begin
             LogDatei.log('successfully found node: '+nodepath,oslog.LLinfo);
-            //if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add" // ModifyPartitions') then
+            //if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add" // ModifyPartitions', openstrict) then
             if XMLDocObject.openNode(nodepath, openstrict) then
             begin
               nodeOpened := true;
               LogDatei.log('successfully opend node: '+nodepath,oslog.LLinfo);
               //XMLDocObject.setNodeText('***ModifyPartitions wurde ersetzt***');
               //XMLDocObject.setAttribute('testname','testvalue');
-            end;
-          end;
+            end
+            else
+            begin
+              nodeOpened := false;
+              LogDatei.log('failed opend node: '+nodepath,oslog.LLwarning);
+            end
+          end
+          else
+          begin
+            nodeOpened := false;
+            LogDatei.log('failed node exists: '+nodepath,oslog.LLwarning);
+          end
         End
         else
           reportError (Sektion, i, Sektion.strings [i-1], ErrorInfo);
