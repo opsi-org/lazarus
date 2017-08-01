@@ -11,12 +11,6 @@ unit oslog;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 499 $
-// $Author: oertel $
-// $Date: 2016-10-04 20:10:23 +0200 (Di, 04 Okt 2016) $
-//***************************************************************************
 
 {$MODE Delphi}
 {$RANGECHECKS ON}
@@ -134,6 +128,7 @@ type
     function getLine(var S: string): boolean;
     function getPartLine(var S: string): boolean;
     function log(const S: string; LevelOfLine: integer): boolean;
+    function log_exception(E: Exception; LevelOfLine: integer): boolean;
     function DependentAdd(const S: string; LevelOfLine: integer): boolean;
     function DependentAddError(const S: string; LevelOfLine: integer): boolean;
     function DependentAddWarning(const S: string; LevelOfLine: integer): boolean;
@@ -1672,6 +1667,25 @@ begin
   {$ENDIF OPSIWINST}
 end;
 {$ENDIF}
+
+function TLogInfo.log_exception(E: Exception; LevelOfLine: integer): boolean;
+var
+  I: Integer;
+  Frames: PPointer;
+  Report: string;
+begin
+  //Report := 'Program exception! ' + LineEnding +'Stacktrace:' + LineEnding + LineEnding;
+  if E <> nil then begin
+    Report := 'Exception class: ' + E.ClassName + LineEnding +
+    'Message: ' + E.Message + LineEnding;
+    log(Report,LevelOfLine);
+  end;
+  Report := BackTraceStrFunc(ExceptAddr);
+  Frames := ExceptFrames;
+  for I := 0 to ExceptFrameCount - 1 do
+    Report := Report + LineEnding + BackTraceStrFunc(Frames[I]);
+  log(Report,LevelOfLine);
+end;
 
 
 

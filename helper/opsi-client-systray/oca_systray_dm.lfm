@@ -2,8 +2,8 @@ object DataModule1: TDataModule1
   OnCreate = DataModuleCreate
   OldCreateOrder = False
   Height = 282
-  HorizontalOffset = 58
-  VerticalOffset = 613
+  HorizontalOffset = 367
+  VerticalOffset = 644
   Width = 409
   object PopupMenu1: TPopupMenu
     left = 128
@@ -25,7 +25,7 @@ object DataModule1: TDataModule1
     end
   end
   object TrayIcon1: TTrayIcon
-    BalloonTimeout = 20000
+    BalloonTimeout = 1
     PopUpMenu = PopupMenu1
     Icon.Data = {
       BE1000000000010001002020000001002000A810000016000000280000002000
