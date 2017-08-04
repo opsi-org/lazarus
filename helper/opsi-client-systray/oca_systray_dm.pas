@@ -32,6 +32,7 @@ type
     procedure MI_starteventClick(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure WriteHelp;
+    procedure startNotify(notifyempty : boolean);
   private
     { private declarations }
   public
@@ -46,6 +47,7 @@ var
 
 resourcestring
   rsActionsWaiting = 'opsi: Pending installations:';
+  rsNoActionsWaiting = 'opsi: No pending installations';
 
 implementation
 
@@ -384,17 +386,7 @@ begin
   Application.Terminate;
 end;
 
-procedure TDataModule1.MI_pull_for_action_requestClick(Sender: TObject);
-begin
-  Timer1Timer(Sender);
-end;
-
-procedure TDataModule1.MI_starteventClick(Sender: TObject);
-begin
-  firePushInstallation;
-end;
-
-procedure TDataModule1.Timer1Timer(Sender: TObject);
+procedure TDataModule1.startNotify(notifyempty : boolean);
 var
   list: TStringList;
   actionstring: string;
@@ -405,7 +397,16 @@ begin
   closeConnection;
   actionstring := '';
   if list.Count = 0 then
-    LogDatei.log('No action requests found.', LLNotice)
+  begin
+    LogDatei.log('No action requests found.', LLNotice);
+    if notifyempty then
+    begin
+      Trayicon1.BalloonFlags := bfInfo;
+      TrayIcon1.BalloonHint := '';
+      TrayIcon1.BalloonTitle := rsNoActionsWaiting;
+      TrayIcon1.ShowBalloonHint;
+    end;
+  end
   else
   begin
     for i := 0 to list.Count - 1 do
@@ -416,6 +417,22 @@ begin
     TrayIcon1.BalloonTitle := rsActionsWaiting;
     TrayIcon1.ShowBalloonHint;
   end;
+end;
+
+
+procedure TDataModule1.MI_pull_for_action_requestClick(Sender: TObject);
+begin
+  startNotify(true);
+end;
+
+procedure TDataModule1.MI_starteventClick(Sender: TObject);
+begin
+  firePushInstallation;
+end;
+
+procedure TDataModule1.Timer1Timer(Sender: TObject);
+begin
+  startNotify(false);
 end;
 
 end.

@@ -5,6 +5,10 @@ msgstr "Content-Type: text/plain; charset=UTF-8"
 msgid "opsi: Pending installations:"
 msgstr ""
 
+#: oca_systray_dm.rsnoactionswaiting
+msgid "opsi: No pending installations"
+msgstr ""
+
 #: oswebservice.rssendlog
 msgid "Sending log file to server ..."
 msgstr ""
