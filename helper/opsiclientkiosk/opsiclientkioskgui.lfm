@@ -1,7 +1,7 @@
 object FopsiClientKiosk: TFopsiClientKiosk
-  Left = 574
+  Left = 359
   Height = 700
-  Top = 340
+  Top = 407
   Width = 953
   Caption = 'opsi-client-kiosk'
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
@@ -14,7 +14,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '1.6.2.0'
+  LCLVersion = '1.6.4.0'
   object datapanel: TPanel
     Left = 0
     Height = 515

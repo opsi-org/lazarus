@@ -3,7 +3,7 @@
   <ProjectOptions>
     <Version Value="10"/>
     <General>
-      <SessionStorage Value="InProjectDir"/>
+      <SessionStorage Value="InIDEConfig"/>
       <MainUnit Value="0"/>
       <Title Value="opsi-client-kiosk"/>
       <UseAppBundle Value="False"/>
@@ -13,7 +13,7 @@
     </General>
     <i18n>
       <EnableI18N Value="True"/>
-      <OutDir Value="languages"/>
+      <OutDir Value="locale"/>
     </i18n>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
@@ -115,7 +115,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <CommandLineParams Value="--fqdn=pcbon4.uib.local"/>
+        <CommandLineParams Value="--fqdn=pcbon4.uib.local  --lang=en"/>
       </local>
     </RunParams>
     <RequiredPackages Count="6">

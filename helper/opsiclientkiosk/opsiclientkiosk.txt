@@ -1,4 +1,13 @@
 
+opsiclientkiosk 4.0.7.9
+
+  * minor fixes
+  * uses locale
+  * laz 1.6.4
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 04 Aug 2017 15:00:00 +0000
+
+
 opsiclientkiosk 4.0.7.8
 
   * fix for font style

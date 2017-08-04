@@ -24,31 +24,31 @@ msgstr "No Product Groups found ..."
 
 #: opsiclientkioskgui.rsactnone
 msgid "None"
-msgstr ""
+msgstr "None"
 
 #: opsiclientkioskgui.rsactrequest
 msgid "Action Request"
-msgstr ""
+msgstr "Action Request"
 
 #: opsiclientkioskgui.rsactsetup
 msgid "Setup"
-msgstr ""
+msgstr "Setup"
 
 #: opsiclientkioskgui.rsactuninstall
 msgid "Uninstall"
-msgstr ""
+msgstr "Uninstall"
 
 #: opsiclientkioskgui.rsinstalled
 msgid "Installed"
-msgstr ""
+msgstr "Installed"
 
 #: opsiclientkioskgui.rsinstallnow
 msgid "Install now"
-msgstr ""
+msgstr "Install now"
 
 #: opsiclientkioskgui.rsinstallnowhint
 msgid "Start the installation (deinstallation) of the selected products"
-msgstr ""
+msgstr "Start the installation (deinstallation) of the selected products"
 
 #: opsiclientkioskgui.rsnoactionsfound
 msgid "No action requests found."
@@ -56,29 +56,28 @@ msgstr "No action requests found."
 
 #: opsiclientkioskgui.rsnotinstalled
 msgid "Not installed"
-msgstr ""
+msgstr "Not installed"
 
 #: opsiclientkioskgui.rsstateunknown
 msgid "Unknown"
 msgstr ""
 
 #: opsiclientkioskgui.rsstoreactions
-#, fuzzy
 msgctxt "opsiclientkioskgui.rsstoreactions"
 msgid "Store Actions"
 msgstr "Store Actions"
 
 #: opsiclientkioskgui.rsstoreactionshint
 msgid "Send the list of action requests in the list to the server, show the results and ask for installation start."
-msgstr ""
+msgstr "Send the list of action requests in the list to the server, show the results and ask for installation start."
 
 #: opsiclientkioskgui.rsviewlist
 msgid "List"
-msgstr ""
+msgstr "List"
 
 #: opsiclientkioskgui.rsviewtiles
 msgid "Tiles"
-msgstr ""
+msgstr "Tiles"
 
 #: oswebservice.rssendlog
 msgid "Sending log file to server ..."
@@ -114,7 +113,6 @@ msgid "Terminate Program (with out any further action)"
 msgstr "Terminate Program (with out any further action)"
 
 #: tfopsiclientkiosk.bitbtninfo.caption
-#, fuzzy
 msgctxt "tfopsiclientkiosk.bitbtninfo.caption"
 msgid "Info"
 msgstr "Info"
@@ -134,7 +132,7 @@ msgstr "Store Actions"
 
 #: tfopsiclientkiosk.btnclearsearchedit.caption
 msgid "X"
-msgstr ""
+msgstr "X"
 
 #: tfopsiclientkiosk.btnupgrade.caption
 msgid "Filter for Upgrade"
@@ -150,7 +148,7 @@ msgstr "opsi-client-kiosk"
 
 #: tfopsiclientkiosk.checkbox1.caption
 msgid "Expert mode"
-msgstr ""
+msgstr "Expert mode"
 
 #: tfopsiclientkiosk.dbgrid1.hint
 msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
@@ -182,7 +180,7 @@ msgstr "Please wait ..."
 
 #: tfopsiclientkiosk.radiogroupview.caption
 msgid "View"
-msgstr ""
+msgstr "View"
 
 #: tfopsiclientkiosk.searchedit.hint
 msgid "Search in Productlist"
@@ -190,7 +188,7 @@ msgstr "Search in Productlist"
 
 #: tfopsiclientkiosk.searchedit.texthint
 msgid "Search"
-msgstr ""
+msgstr "Search"
 
 #: tfopsiclientkiosk.speedbuttonall.caption
 msgid "Show all"

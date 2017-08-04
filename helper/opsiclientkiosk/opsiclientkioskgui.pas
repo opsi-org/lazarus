@@ -672,6 +672,7 @@ begin
     FopsiClientKiosk.LabelDataLoadDetail.Visible := False;
     FopsiClientKiosk.ProgressBar1.Visible := False;
     FopsiClientKiosk.LabelDataLoad.Visible := False;
+    FopsiClientKiosk.CheckBox1Change(FopsiClientKiosk);
   end;
 end;
 
@@ -945,6 +946,9 @@ begin
     BitBtnStoreAction.Caption := rsInstallNow;
     BitBtnStoreAction.Hint:= rsInstallNowHint;
   end;
+  // localize RadioGroupView
+  RadioGroupView.Items[0] := rsViewList;
+  RadioGroupView.Items[1] := rsViewTiles;
   repaint;
   Application.ProcessMessages;
 end;
@@ -1165,7 +1169,9 @@ var
   i: integer;
 begin
   ockdata.fetchProductData_by_getKioskProductInfosForClient;
+  StartupDone:=false;
   RadioGroupViewSelectionChanged(self);
+  StartupDone:=true;
 end;
 
 procedure TFopsiClientKiosk.searchEditChange(Sender: TObject);
