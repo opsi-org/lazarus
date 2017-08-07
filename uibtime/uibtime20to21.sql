@@ -13,6 +13,10 @@ alter table uiballevent ADD acc_per_monthnum	float;
 alter table uiballevent ADD accountingrequired	boolean not null;
 alter table uiballevent ADD KD_STRING Varchar(50);
 alter table UIBALLEVENT DROP BASE_FOR_TIME;
+alter table uiballevent ADD MATERIAL Varchar(50);
+alter table uiballevent ADD MATTYPE Varchar(50);
+alter table uiballevent ADD time_h_is_quota	boolean not null;
+alter table uiballevent ADD UIB3MONTHINVOICE	boolean not null;
 
 /* tabelle nur aktuelle Projekte und sub projekte */
 alter table uibaktevent ADD reportrequired	boolean not null;
@@ -20,10 +24,16 @@ alter table uibaktevent ADD acc_per_monthnum	float;
 alter table uibaktevent ADD accountingrequired	boolean not null;
 alter table uibaktevent ADD KD_STRING Varchar(50);
 alter table UIBAKTEVENT DROP BASE_FOR_TIME;
+alter table uibaktevent ADD MATERIAL Varchar(50);
+alter table uibaktevent ADD MATTYPE Varchar(50);
+alter table uibaktevent ADD time_h_is_quota	boolean not null;
+alter table uibaktevent ADD UIB3MONTHINVOICE	boolean not null;
+
 
 create table caniasimporterror
    (canimp_rep_id       Integer NOT NULL,
     errmesg  varchar (255),
+    created timestamp,
     CONSTRAINT PK_canimperr     PRIMARY KEY (canimp_rep_id));
 
 create table uibeventaccountreport
@@ -135,6 +145,7 @@ RECREATE TRIGGER  TR_caniasimporterror_in  for caniasimporterror
          before insert POSITION 0 as
          begin
            new.canimp_rep_id = NEXT VALUE FOR caniasimporterror_SEQU;
+           new.created = current_timestamp;
          end !!
 set term ; !!
 
@@ -170,7 +181,11 @@ RECREATE TRIGGER  TR_uibaktevent2uiball_up  for uibaktevent
                  projectstart = new.projectstart,
                  reportrequired = new.reportrequired,
                  accountingrequired = new.accountingrequired,
-                 acc_per_monthnum = new.acc_per_monthnum
+                 acc_per_monthnum = new.acc_per_monthnum,
+                 MATERIAL = new.MATERIAL,
+                 MATTYPE = new.MATTYPE,
+                 time_h_is_quota = new.time_h_is_quota,
+                 UIB3MONTHINVOICE = new.UIB3MONTHINVOICE
            where (event = old.event);
          end !!
 set term ; !!
@@ -195,7 +210,11 @@ RECREATE TRIGGER  TR_uibaktevent2uiball_in  for uibaktevent
                  projectstart = new.projectstart,
                  reportrequired = new.reportrequired,
                  accountingrequired = new.accountingrequired,
-                 acc_per_monthnum = new.acc_per_monthnum
+                 acc_per_monthnum = new.acc_per_monthnum,
+                 MATERIAL = new.MATERIAL,
+                 MATTYPE = new.MATTYPE,
+                 time_h_is_quota = new.time_h_is_quota,
+                 UIB3MONTHINVOICE = new.UIB3MONTHINVOICE
             where (event = new.event);
           end
           else
@@ -210,7 +229,11 @@ RECREATE TRIGGER  TR_uibaktevent2uiball_in  for uibaktevent
                 projectstart,
                 reportrequired,
                 accountingrequired,
-                acc_per_monthnum)
+                acc_per_monthnum,
+                MATERIAL,
+                MATTYPE,
+                time_h_is_quota,
+                UIB3MONTHINVOICE)
              values
                (new.event,
                 new.parentevent,
@@ -221,7 +244,11 @@ RECREATE TRIGGER  TR_uibaktevent2uiball_in  for uibaktevent
                 new.projectstart,
                 new.reportrequired,
                 new.accountingrequired,
-                new.acc_per_monthnum);
+                new.acc_per_monthnum,
+                new.MATERIAL,
+                new.MATTYPE,
+                new.time_h_is_quota,
+                new.UIB3MONTHINVOICE);
           end
          end !!
 set term ; !!

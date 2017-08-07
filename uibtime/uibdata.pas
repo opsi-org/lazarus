@@ -118,6 +118,8 @@ type
     procedure SQuibeventBeforeClose(DataSet: TDataSet);
     procedure SQuibeventBeforeDelete(DataSet: TDataSet);
     procedure SQuibeventBeforePost(DataSet: TDataSet);
+    procedure SQuibeventPostError(DataSet: TDataSet; E: EDatabaseError;
+      var DataAction: TDataAction);
     procedure SQuibloggedinAfterDelete(DataSet: TDataSet);
     procedure SQuibloggedinAfterPost(DataSet: TDataSet);
     procedure SQuibsollAfterDelete(DataSet: TDataSet);
@@ -129,6 +131,8 @@ type
     procedure SQwork_descriptionAfterDelete(DataSet: TDataSet);
     procedure SQwork_descriptionAfterInsert(DataSet: TDataSet);
     procedure SQwork_descriptionAfterPost(DataSet: TDataSet);
+    procedure SQwork_descriptionPostError(DataSet: TDataSet; E: EDatabaseError;
+      var DataAction: TDataAction);
     procedure Statistik1Click(Sender: TObject);
     procedure Statistik1Cancel;
     procedure TimerloggedinTimer(Sender: TObject);
@@ -813,6 +817,18 @@ begin
  *)
 end;
 
+procedure TDataModule1.SQuibeventPostError(DataSet: TDataSet;
+  E: EDatabaseError; var DataAction: TDataAction);
+begin
+  ShowMessage('Beim Schreiben des Datensatzes in uibevent ist ein Fehler aufgetreten: '+ LineEnding
+               + E.Message + LineEnding
+               +'Führe jetzt Cancel auf Datensatz aus.'+ LineEnding
+               +'Bitte Datensatz kontrollieren.');
+  DataSet.Cancel;
+  DataAction:=daAbort;
+  debugOut(3,'SQuibeventPostError', E.Message);
+end;
+
 procedure TDataModule1.SQuibloggedinAfterDelete(DataSet: TDataSet);
 begin
   debugOut(5,'SQuibloggedinAfterDelete', 'start  '+ DataSet.Name+' AfterDelete');
@@ -1030,6 +1046,18 @@ begin
   except
     debugOut(2,'SQwork_descriptionAfterPost', 'exception in SQwork_descriptionAfterPost (starttransaction)');
   end;
+end;
+
+procedure TDataModule1.SQwork_descriptionPostError(DataSet: TDataSet;
+  E: EDatabaseError; var DataAction: TDataAction);
+begin
+  ShowMessage('Beim Schreiben des Datensatzes in work_description ist ein Fehler aufgetreten: '+ LineEnding
+               + E.Message + LineEnding
+               +'Führe jetzt Cancel auf Datensatz aus.'+ LineEnding
+               +'Bitte Datensatz kontrollieren.');
+  DataSet.Cancel;
+  DataAction:=daAbort;
+  debugOut(3,'SQwork_descriptionPostError', E.Message);
 end;
 
 

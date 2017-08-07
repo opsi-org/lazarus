@@ -309,6 +309,7 @@ object FResult: TFResult
     TitleFont.Color = clWindowText
     TitleFont.Height = -13
     TitleFont.Name = 'System'
+    OnTitleClick = DBGrid1TitleClick
   end
   object Panel2: TPanel
     Left = 0

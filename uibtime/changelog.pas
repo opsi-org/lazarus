@@ -1,4 +1,58 @@
 (*
+uibtime (4.1.1.13-1) stable; urgency=low
+
+ * uib2erp: StringGrid1DblClick: calculate ex gratia
+ * result: TFResult.DBGrid1TitleClick(Column: TColumn); (sort by header click)
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 24 May 2017 15:00:00 +0000
+
+uibtime (4.1.1.12-1) stable; urgency=low
+
+ * uib2erp: createreport: format freehours as h:mm
+ * dataedit: ButtonRenameEventClick: renamed in UIBEVENTACCOUNTREPORT
+ * dataedit: new ButtonReactivateClick
+ * uibdata: Handler for: SQuibeventPostError,  SQwork_descriptionAfterPost
+
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 26 Apr 2017 15:00:00 +0000
+
+uibtime (4.1.1.11-1) stable; urgency=low
+
+  * uib2erp: fix in calculate lastIntervalStart (calc end first)
+  * uibdata: allevent / aktevent: order by lower(event)
+  * uib2erp: // Alles was kleiner als 0.001 (1,5 Minuten) ist, wird ignoriert
+            if usedtime < 0.001 then usedtime := 0;
+
+-- detlef oertel <d.oertel@uib.de>  Mon, 06 Mar 2017 15:00:00 +0000
+
+uibtime (4.1.1.10-1) stable; urgency=low
+
+ * uib2erp: work on the events that really apeared inth the last 3 Month
+   (not only on uibaktevent)
+ * dataedit: new tab rename event
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 28 Feb 2017 15:00:00 +0000
+
+
+uibtime (4.1.1.9-1) stable; urgency=low
+
+ * statistik: not stoptime <= stop but startime <= stop
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 28 Feb 2017 15:00:00 +0000
+
+
+uibtime (4.1.1.8-1) stable; urgency=low
+
+ * uib2erp: fix in calculate lastIntervalStart
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 10 Feb 2017 15:00:00 +0000
+
+uibtime (4.1.1.7-1) stable; urgency=low
+
+ * uib2erp: fix in calculate lastIntervalEnd
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 08 Feb 2017 15:00:00 +0000
+
 
 uibtime (4.1.1.6-1) stable; urgency=low
 

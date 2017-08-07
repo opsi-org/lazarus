@@ -2,8 +2,8 @@ object DataModule1: TDataModule1
   OnCreate = DataModuleCreate
   OldCreateOrder = False
   Height = 541
-  HorizontalOffset = 248
-  VerticalOffset = 481
+  HorizontalOffset = 401
+  VerticalOffset = 544
   Width = 894
   object IBConnection1: TIBConnection
     Connected = False
@@ -113,7 +113,7 @@ object DataModule1: TDataModule1
     Database = IBConnection1
     Transaction = SQLTransaction1
     SQL.Strings = (
-      'select * from uibaktevent'
+      'select * from uibaktevent order by lower(event)'
     )
     Options = []
     Params = <>
@@ -217,7 +217,7 @@ object DataModule1: TDataModule1
     Database = IBConnection1
     Transaction = SQLTransaction1
     SQL.Strings = (
-      'select * from uiballevent'
+      'select * from uiballevent order by lower(event)'
     )
     Options = []
     Params = <>
@@ -275,6 +275,7 @@ object DataModule1: TDataModule1
     BeforeClose = SQuibeventBeforeClose
     BeforeDelete = SQuibeventBeforeDelete
     BeforePost = SQuibeventBeforePost
+    OnPostError = SQuibeventPostError
     Database = IBConnection1
     Transaction = SQLTransaction1
     SQL.Strings = (
@@ -650,6 +651,7 @@ object DataModule1: TDataModule1
     AfterDelete = SQwork_descriptionAfterDelete
     AfterInsert = SQwork_descriptionAfterInsert
     AfterPost = SQwork_descriptionAfterPost
+    OnPostError = SQwork_descriptionPostError
     Database = IBConnection1
     Transaction = SQLTransaction1
     SQL.Strings = (

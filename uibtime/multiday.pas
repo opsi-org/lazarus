@@ -26,8 +26,8 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
-    MaskEdit1: TMaskEdit;
-    MaskEdit2: TMaskEdit;
+    MaskEditStart: TMaskEdit;
+    MaskEditStunden: TMaskEdit;
     BtnInsertAll: TBitBtn;
     ComboBox1: TComboBox;
     procedure BtnInsertAllClick(Sender: TObject);
@@ -59,8 +59,8 @@ begin
   OKBtn.Enabled:=false;
   firstdate := StrToDate(EditButtonStartDate.text);
   aktdate := firstdate - 1;
-  startzeit := strtotime(maskedit1.Text);
-  hoursperday := strtotime(maskedit2.Text);
+  startzeit := strtotime(MaskEditStart.Text);
+  hoursperday := strtotime(MaskEditStunden.Text);
   Datamodule1.SQuibevent.First;
 
 

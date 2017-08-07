@@ -1,7 +1,7 @@
 object FMultiday: TFMultiday
-  Left = 467
+  Left = 374
   Height = 255
-  Top = 531
+  Top = 498
   Width = 443
   BorderStyle = bsDialog
   Caption = 'Mehrere Tage eintragen'
@@ -60,7 +60,7 @@ object FMultiday: TFMultiday
     ModalResult = 1
     TabOrder = 3
   end
-  object MaskEdit1: TMaskEdit
+  object MaskEditStart: TMaskEdit
     Left = 163
     Height = 23
     Top = 178
@@ -72,7 +72,7 @@ object FMultiday: TFMultiday
     Text = '  :  '
     SpaceChar = '_'
   end
-  object MaskEdit2: TMaskEdit
+  object MaskEditStunden: TMaskEdit
     Left = 163
     Height = 23
     Top = 150

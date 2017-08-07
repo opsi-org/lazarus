@@ -56,6 +56,7 @@ type
     BtnDBexp: TBitBtn;
     SpinEdit1: TSpinEdit;
     //SQLQueryResult: TSQLQuery;
+    procedure DBGrid1TitleClick(Column: TColumn);
     procedure FormCreate(Sender: TObject);
     procedure BtnPreviewClick(Sender: TObject);
     procedure BtnPrintClick(Sender: TObject);
@@ -86,6 +87,12 @@ uses uibdata;
 
 procedure TFResult.FormCreate(Sender: TObject);
 begin
+end;
+
+procedure TFResult.DBGrid1TitleClick(Column: TColumn);
+begin
+  // http://delphiexamples.com/databases/sortgrid.html
+  (Column.Field.DataSet as TSQLQuery).IndexFieldNames:=Column.FieldName;
 end;
 
 procedure TFResult.ShowPreview;
