@@ -1,4 +1,12 @@
 (*
+
+uibtime (4.1.1.14-1) stable; urgency=low
+
+ * uib2erp: more debugging
+ * uib2erp: handle acc_per_monthnum  > 12
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 15 Aug 2017 15:00:00 +0000
+
 uibtime (4.1.1.13-1) stable; urgency=low
 
  * uib2erp: StringGrid1DblClick: calculate ex gratia

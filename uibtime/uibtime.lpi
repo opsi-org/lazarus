@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="9"/>
+    <Version Value="10"/>
     <PathDelim Value="\"/>
     <General>
       <SessionStorage Value="InProjectDir"/>
@@ -19,7 +19,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="13"/>
+      <BuildNr Value="14"/>
       <Language Value="0407"/>
       <StringTable CompanyName="uib gmbh" InternalName="uibtime.exe" LegalCopyright="GPL v3" ProductName="uibtime" ProductVersion="4.0.0"/>
     </VersionInfo>
@@ -132,34 +132,37 @@
         <FormatVersion Value="1"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="9">
+    <RequiredPackages Count="10">
       <Item1>
-        <PackageName Value="DateTimeCtrls"/>
+        <PackageName Value="pack_powerpdf"/>
       </Item1>
       <Item2>
-        <PackageName Value="lazdbexport"/>
+        <PackageName Value="DateTimeCtrls"/>
       </Item2>
       <Item3>
-        <PackageName Value="lazreportpdfexport"/>
+        <PackageName Value="lazdbexport"/>
       </Item3>
       <Item4>
-        <PackageName Value="lrEmailExport"/>
+        <PackageName Value="lazreportpdfexport"/>
       </Item4>
       <Item5>
-        <PackageName Value="lazreport"/>
+        <PackageName Value="lrEmailExport"/>
       </Item5>
       <Item6>
-        <PackageName Value="Printer4Lazarus"/>
+        <PackageName Value="lazreport"/>
       </Item6>
       <Item7>
-        <PackageName Value="FCL"/>
+        <PackageName Value="Printer4Lazarus"/>
       </Item7>
       <Item8>
-        <PackageName Value="SQLDBLaz"/>
+        <PackageName Value="FCL"/>
       </Item8>
       <Item9>
-        <PackageName Value="LCL"/>
+        <PackageName Value="SQLDBLaz"/>
       </Item9>
+      <Item10>
+        <PackageName Value="LCL"/>
+      </Item10>
     </RequiredPackages>
     <Units Count="21">
       <Unit0>
