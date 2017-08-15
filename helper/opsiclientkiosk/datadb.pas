@@ -48,6 +48,8 @@ begin
     begin
       logdatei.log('Exception SQLQuery1AfterPost', LLError);
       logdatei.log('Exception: ' + E.message, LLError);
+      logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+      logdatei.log_exception(E,LLError);
     end;
   end;
 end;

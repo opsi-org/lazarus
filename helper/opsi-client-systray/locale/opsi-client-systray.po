@@ -9,6 +9,10 @@ msgstr ""
 msgid "opsi: No pending installations"
 msgstr ""
 
+#: oca_systray_dm.rsnone
+msgid "None"
+msgstr ""
+
 #: oswebservice.rssendlog
 msgid "Sending log file to server ..."
 msgstr ""

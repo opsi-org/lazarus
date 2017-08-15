@@ -6,10 +6,12 @@ msgid "opsi: Pending installations:"
 msgstr "opsi: Anstehende Installationen:"
 
 #: oca_systray_dm.rsnoactionswaiting
-#, fuzzy
-#| msgid "opsi: No pending installations:"
 msgid "opsi: No pending installations"
 msgstr "opsi: Keine anstehende Installationen"
+
+#: oca_systray_dm.rsnone
+msgid "None"
+msgstr "Keine"
 
 #: oswebservice.rssendlog
 msgid "Sending log file to server ..."

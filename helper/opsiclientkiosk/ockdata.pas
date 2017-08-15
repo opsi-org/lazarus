@@ -269,6 +269,8 @@ begin
           begin
             logdatei.log('Exception CREATE TABLE kioskmaster', LLError);
             logdatei.log('Exception: ' + E.message, LLError);
+            logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+            logdatei.log_exception(E,LLError);
           end;
         end;
 
@@ -287,6 +289,8 @@ begin
           begin
             logdatei.log('Exception CREATE TABLE kioskslave', LLError);
             logdatei.log('Exception: ' + E.message, LLError);
+            logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+            logdatei.log_exception(E,LLError);
           end;
         end;
 
@@ -297,6 +301,8 @@ begin
           begin
             logdatei.log('Exception commit', LLError);
             logdatei.log('Exception: ' + E.message, LLError);
+            logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+            logdatei.log_exception(E,LLError);
           end;
         end;
 
@@ -319,6 +325,8 @@ begin
         begin
           logdatei.log('Exception Unable to Create new Database', LLError);
           logdatei.log('Exception: ' + E.message, LLError);
+          logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+          logdatei.log_exception(E,LLError);
         end;
       end;
     end;
@@ -328,6 +336,8 @@ begin
     begin
       logdatei.log('Exception check if database file exists', LLError);
       logdatei.log('Exception: ' + E.message, LLError);
+      logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+      logdatei.log_exception(E,LLError);
     end;
   end;
 
@@ -452,7 +462,13 @@ begin
     resultstring := opsidata.checkAndRetrieve(omc, errorOccured);
     Result := resultstring;
   except
-    LogDatei.log('Exception calling method: ' + method, LLerror);
+    on e: Exception do
+    begin
+      LogDatei.log('Exception calling method: ' + method, LLerror);
+      logdatei.log('Exception: ' + E.message, LLError);
+      logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+      logdatei.log_exception(E,LLError);
+    end;
   end;
 end;
 
@@ -472,7 +488,13 @@ begin
       Result := resultstringlist[i];
 
   except
-    LogDatei.log('Exception calling method: ' + method, LLerror);
+    on e: Exception do
+    begin
+      LogDatei.log('Exception calling method: ' + method, LLerror);
+      logdatei.log('Exception: ' + E.message, LLError);
+      logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+      logdatei.log_exception(E,LLError);
+    end;
   end;
 end;
 
@@ -482,6 +504,9 @@ begin
   Result := True;
   logdatei := TLogInfo.Create;
   logfilename := opsiclientkiosklog;
+  LogDatei.WritePartLog := False;
+  LogDatei.WriteErrFile:= False;
+  LogDatei.WriteHistFile:= False;
   logdatei.CreateTheLogfile(logfilename, False);
   logdatei.LogLevel := myloglevel;
   logdatei.log('opsi-client-kiosk: version: ' + myVersion, LLessential);
@@ -501,6 +526,8 @@ begin
     begin
       logdatei.log('Exception closeConnection', LLError);
       logdatei.log('Exception: ' + E.message, LLError);
+      logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+      logdatei.log_exception(E,LLError);
     end;
   end;
 end;
@@ -634,6 +661,8 @@ begin
     begin
       logdatei.log('Exception delete from kioskmaster', LLError);
       logdatei.log('Exception: ' + E.message, LLError);
+      logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+      logdatei.log_exception(E,LLError);
     end;
   end;
   ZMQueryDataSet1.Filtered := False;

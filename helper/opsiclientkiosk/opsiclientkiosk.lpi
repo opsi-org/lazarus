@@ -63,7 +63,14 @@
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-dOPSICLIENTKIOSK -dOPSI"/>
+            <CustomOptions Value="-dOPSICLIENTKIOSK
+-dOPSI
+-dOPSI_AS_USER"/>
+            <OtherDefines Count="3">
+              <Define0 Value="OPSICLIENTKIOSK"/>
+              <Define1 Value="OPSI"/>
+              <Define2 Value="OPSI_AS_USER"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item2>
@@ -102,7 +109,14 @@
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-dOPSICLIENTKIOSK -dOPSI"/>
+            <CustomOptions Value="-dOPSICLIENTKIOSK
+-dOPSI
+-dOPSI_AS_USER"/>
+            <OtherDefines Count="3">
+              <Define0 Value="OPSICLIENTKIOSK"/>
+              <Define1 Value="OPSI"/>
+              <Define2 Value="OPSI_AS_USER"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -205,13 +219,19 @@
     </CodeGeneration>
     <Linking>
       <Debugging>
-        <GenerateDebugInfo Value="False"/>
         <StripSymbols Value="True"/>
       </Debugging>
       <LinkSmart Value="True"/>
     </Linking>
     <Other>
-      <CustomOptions Value="-dOPSICLIENTKIOSK -dOPSI"/>
+      <CustomOptions Value="-dOPSICLIENTKIOSK
+-dOPSI
+-dOPSI_AS_USER"/>
+      <OtherDefines Count="3">
+        <Define0 Value="OPSICLIENTKIOSK"/>
+        <Define1 Value="OPSI"/>
+        <Define2 Value="OPSI_AS_USER"/>
+      </OtherDefines>
     </Other>
   </CompilerOptions>
   <Debugging>

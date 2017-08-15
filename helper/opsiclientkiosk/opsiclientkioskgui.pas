@@ -423,6 +423,8 @@ begin
     begin
       logdatei.log('Exception TProductPanel.Create', LLError);
       logdatei.log('Exception: ' + E.message, LLError);
+      logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+      logdatei.log_exception(E,LLError);
     end;
   end;
 end;
@@ -447,6 +449,8 @@ begin
       begin
         logdatei.log('Exception TProductPanel.Destroy', LLError);
         logdatei.log('Exception: ' + E.message, LLError);
+        logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+        logdatei.log_exception(E,LLError);
       end;
     end;
   finally
@@ -589,6 +593,8 @@ begin
         logdatei.log('Exception rebuildProductTiles: ProductTilesArray[i].Free;',
           LLError);
         logdatei.log('Exception: ' + E.message, LLError);
+        logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+        logdatei.log_exception(E,LLError);
       end;
     end;
     // use complete window for tiles
@@ -1455,6 +1461,8 @@ begin
     begin
       logdatei.log('Exception BitBtnCancelClick: ProductTilesArray[i].Free;', LLError);
       logdatei.log('Exception: ' + E.message, LLError);
+      logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+      logdatei.log_exception(E,LLError);
     end;
   end;
 

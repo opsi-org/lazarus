@@ -48,6 +48,7 @@ var
 resourcestring
   rsActionsWaiting = 'opsi: Pending installations:';
   rsNoActionsWaiting = 'opsi: No pending installations';
+  rsNone = 'None';
 
 implementation
 
@@ -249,6 +250,7 @@ begin
   msg := msg + ' --fqdn=<fqdn of the client> -> ; required' + LineEnding;
   msg := msg + ' --lang=<lang of the client>' + LineEnding;
   msg := msg + ' --notifyformat=<notifyformat>' + LineEnding;
+  msg := msg + ' --service_url_port=<service_url_port> (default=4441' + LineEnding;
   ShowMessage(msg);
 end;
 
@@ -263,9 +265,12 @@ var
   i: integer;
   lfilename: string;
   logAndTerminate: boolean = False;
+  service_url_port : string;
 begin
   checkIntervall := 0;
   myNotifyFormat := 'productid : request';
+  myservice_url := 'https://localhost:4441/kiosk';
+  service_url_port := '4441';
   preloglist := TStringList.Create;
   preloglist.Add('PreLog for: ' + Application.exename + ' opend at : ' +
     DateTimeToStr(now));
@@ -285,8 +290,9 @@ begin
   optionlist.Add('help');
   optionlist.Add('lang:');
   optionlist.Add('checkintervall:');
-  optionlist.Add('fqdn:');
+  optionlist.Add('fqdn::');
   optionlist.Add('notifyformat:');
+  optionlist.Add('service_url_port:');
   //optionlist.Add('idevent:');
   ErrorMsg := Application.CheckOptions('hc:f:', optionlist);
   if ErrorMsg <> '' then
@@ -341,7 +347,14 @@ begin
     preloglist.Add('Active lang: ' + GetDefaultLang);
   end;
 
-  myservice_url := 'https://localhost:4441/kiosk';
+  if Application.HasOption('service_url_port') then
+  begin
+    preloglist.Add('Found Parameter service_url_port');
+    service_url_port := Application.GetOptionValue('service_url_port');
+    preloglist.Add('Found Parameter service_url_port: ' + service_url_port);
+  end;
+
+  myservice_url := 'https://localhost:'+service_url_port+'/kiosk';
 
   // Initialize logging
   LogDatei := TLogInfo.Create;
@@ -350,6 +363,8 @@ begin
   LogDatei.StandardLogFileext := '.log';
   LogDatei.StandardLogFilename := lfilename;
   LogDatei.WritePartLog := False;
+  LogDatei.WriteErrFile:= False;
+  LogDatei.WriteHistFile:= False;
   //LogDatei.StandardPartLogFilename := lfilename+ '-part';
   LogDatei.CreateTheLogfile(lfilename + '.log', True);
   // push prelog buffer to logfile
@@ -401,9 +416,10 @@ begin
     LogDatei.log('No action requests found.', LLNotice);
     if notifyempty then
     begin
+      LogDatei.log('Notifying no requests', LLNotice);
       Trayicon1.BalloonFlags := bfInfo;
-      TrayIcon1.BalloonHint := '';
-      TrayIcon1.BalloonTitle := rsNoActionsWaiting;
+      TrayIcon1.BalloonHint := rsNone;
+      TrayIcon1.BalloonTitle := rsActionsWaiting;
       TrayIcon1.ShowBalloonHint;
     end;
   end
@@ -411,7 +427,7 @@ begin
   begin
     for i := 0 to list.Count - 1 do
       actionstring := actionstring + list[i] + LineEnding;
-    LogDatei.log('Action requests found: ' + actionstring, LLNotice);
+    LogDatei.log('Notifying Action requests found: ' + actionstring, LLNotice);
     Trayicon1.BalloonFlags := bfInfo;
     TrayIcon1.BalloonHint := actionstring;
     TrayIcon1.BalloonTitle := rsActionsWaiting;

@@ -4,22 +4,18 @@
     <Version Value="10"/>
     <PathDelim Value="\"/>
     <General>
-      <SessionStorage Value="InIDEConfig"/>
+      <SessionStorage Value="InProjectDir"/>
       <MainUnit Value="0"/>
-      <Title Value="opsi-client-systray"/>
+      <Title Value="exceptiontest"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
       <Icon Value="0"/>
     </General>
     <i18n>
-      <EnableI18N Value="True"/>
-      <OutDir Value="locale"/>
+      <EnableI18N LFM="False"/>
     </i18n>
     <VersionInfo>
-      <UseVersionInfo Value="True"/>
-      <MajorVersionNr Value="4"/>
-      <RevisionNr Value="7"/>
-      <StringTable CompanyName="uib gmbh / opsi.org" InternalName="opsi-client-systray" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-client-systray" ProductName="opsi / opsi.org" ProductVersion="4.0.7"/>
+      <StringTable ProductVersion=""/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -28,11 +24,10 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="opsi-client-systray"/>
+            <Filename Value="exceptiontest"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\indy\Lib;..\..\external_libraries\indy\Lib\System;..\..\external_libraries\indy\Lib\Protocols;..\..\external_libraries\indy\Lib\Core;..\..\external_libraries\synapse40lib;..\..\external_libraries\misc"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -62,14 +57,6 @@
               </Win32>
             </Options>
           </Linking>
-          <Other>
-            <CustomOptions Value="-dOPSI
--dOPSI_AS_USER"/>
-            <OtherDefines Count="2">
-              <Define0 Value="OPSI"/>
-              <Define1 Value="OPSI_AS_USER"/>
-            </OtherDefines>
-          </Other>
         </CompilerOptions>
       </Item2>
       <Item3 Name="Release">
@@ -77,11 +64,10 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="opsi-client-systray"/>
+            <Filename Value="exceptiontest"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\indy\Lib;..\..\external_libraries\indy\Lib\System;..\..\external_libraries\indy\Lib\Protocols;..\..\external_libraries\indy\Lib\Core;..\..\external_libraries\synapse40lib;..\..\external_libraries\misc"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -92,7 +78,6 @@
           </CodeGeneration>
           <Linking>
             <Debugging>
-              <GenerateDebugInfo Value="False"/>
               <StripSymbols Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
@@ -102,14 +87,6 @@
               </Win32>
             </Options>
           </Linking>
-          <Other>
-            <CustomOptions Value="-dOPSI
--dOPSI_AS_USER"/>
-            <OtherDefines Count="2">
-              <Define0 Value="OPSI"/>
-              <Define1 Value="OPSI_AS_USER"/>
-            </OtherDefines>
-          </Other>
         </CompilerOptions>
       </Item3>
     </BuildModes>
@@ -119,7 +96,6 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <CommandLineParams Value="--fqdn=pcbon4.uib.local --checkintervall=1 --lang=de"/>
       </local>
     </RunParams>
     <RequiredPackages Count="1">
@@ -127,41 +103,28 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="5">
+    <Units Count="2">
       <Unit0>
-        <Filename Value="opsi_client_systray.lpr"/>
+        <Filename Value="exceptiontest.lpr"/>
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="oca_systray_dm.pas"/>
+        <Filename Value="unit1.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="DataModule1"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="DataModule"/>
+        <ComponentName Value="Form1"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Unit1"/>
       </Unit1>
-      <Unit2>
-        <Filename Value="..\..\common\oswebservice.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit2>
-      <Unit3>
-        <Filename Value="..\..\common\oslog.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit3>
-      <Unit4>
-        <Filename Value="oca_systray.txt"/>
-        <IsPartOfProject Value="True"/>
-      </Unit4>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="opsi-client-systray"/>
+      <Filename Value="exceptiontest"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\..\common;..\..\external_libraries\indy\Lib;..\..\external_libraries\indy\Lib\System;..\..\external_libraries\indy\Lib\Protocols;..\..\external_libraries\indy\Lib\Core;..\..\external_libraries\synapse40lib;..\..\external_libraries\misc"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
@@ -171,14 +134,6 @@
         </Win32>
       </Options>
     </Linking>
-    <Other>
-      <CustomOptions Value="-dOPSI
--dOPSI_AS_USER"/>
-      <OtherDefines Count="2">
-        <Define0 Value="OPSI"/>
-        <Define1 Value="OPSI_AS_USER"/>
-      </OtherDefines>
-    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="3">
