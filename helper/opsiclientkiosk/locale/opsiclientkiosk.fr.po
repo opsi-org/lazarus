@@ -43,6 +43,14 @@ msgstr "Désinstaller"
 msgid "Installed"
 msgstr "Installé"
 
+#: opsiclientkioskgui.rsinstallnow
+msgid "Install now"
+msgstr ""
+
+#: opsiclientkioskgui.rsinstallnowhint
+msgid "Start the installation (deinstallation) of the selected products"
+msgstr ""
+
 #: opsiclientkioskgui.rsnoactionsfound
 msgid "No action requests found."
 msgstr "Aucune demande d'action trouvée ..."
@@ -61,7 +69,9 @@ msgid "Store Actions"
 msgstr "Sauver les actions"
 
 #: opsiclientkioskgui.rsstoreactionshint
-msgid "Send the list of action requests in the list to the server, show the results and ask for installation start. "
+#, fuzzy
+#| msgid "Send the list of action requests in the list to the server, show the results and ask for installation start. "
+msgid "Send the action requests to the server, show the resulting installations and ask for installation start."
 msgstr "Envoi la liste d'actions au serveur, montre le plan d'action et demande le lancement de l'installation."
 
 #: opsiclientkioskgui.rsviewlist

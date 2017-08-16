@@ -65,7 +65,7 @@ msgid "Store Actions"
 msgstr "Aktionen speichern"
 
 #: opsiclientkioskgui.rsstoreactionshint
-msgid "Send the list of action requests in the list to the server, show the results and ask for installation start."
+msgid "Send the action requests to the server, show the resulting installations and ask for installation start."
 msgstr ""
 
 #: opsiclientkioskgui.rsviewlist
@@ -110,7 +110,6 @@ msgid "Terminate Program (with out any further action)"
 msgstr "Programm ohne weitere Aktionen beenden."
 
 #: tfopsiclientkiosk.bitbtninfo.caption
-#, fuzzy
 msgctxt "tfopsiclientkiosk.bitbtninfo.caption"
 msgid "Info"
 msgstr "Info"
@@ -214,7 +213,7 @@ msgstr "Abhängigkeiten / Prioritäten"
 
 #: tfopsiclientkiosk.titlelabel.caption
 msgid "opsi Client Kiosk"
-msgstr ""
+msgstr "opsi Client Kiosk"
 
 #: tform1.bitbtnlater.caption
 msgctxt "tform1.bitbtnlater.caption"
@@ -229,7 +228,7 @@ msgstr "Installiere jetzt. Alle Anwendungen schlie�en !"
 #: tform1.caption
 msgctxt "tform1.caption"
 msgid "opsi-kiosk-client"
-msgstr ""
+msgstr "opsi-kiosk-client"
 
 #: tform1.label1.caption
 msgctxt "tform1.label1.caption"

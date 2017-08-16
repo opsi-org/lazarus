@@ -359,14 +359,14 @@ begin
   // Initialize logging
   LogDatei := TLogInfo.Create;
   lfilename := ExtractFileNameOnly(Application.ExeName);
-  LogDatei.FileName := lfilename;
+  //LogDatei.FileName := lfilename;
   LogDatei.StandardLogFileext := '.log';
   LogDatei.StandardLogFilename := lfilename;
   LogDatei.WritePartLog := False;
   LogDatei.WriteErrFile:= False;
   LogDatei.WriteHistFile:= False;
   //LogDatei.StandardPartLogFilename := lfilename+ '-part';
-  LogDatei.CreateTheLogfile(lfilename + '.log', True);
+  LogDatei.CreateTheLogfile(lfilename + '.log', False);
   // push prelog buffer to logfile
   if preloglist.Count > 0 then
     for i := 0 to preloglist.Count - 1 do

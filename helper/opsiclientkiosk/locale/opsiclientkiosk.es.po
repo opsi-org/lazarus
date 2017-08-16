@@ -70,7 +70,7 @@ msgid "Store Actions"
 msgstr "Almacenar acciones"
 
 #: opsiclientkioskgui.rsstoreactionshint
-msgid "Send the list of action requests in the list to the server, show the results and ask for installation start."
+msgid "Send the action requests to the server, show the resulting installations and ask for installation start."
 msgstr ""
 
 #: opsiclientkioskgui.rsviewlist

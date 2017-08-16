@@ -219,7 +219,7 @@ resourcestring
   rsInstallNow = 'Install now';
   rsStoreActions = 'Store Actions';
   rsInstallNowHint = 'Start the installation (deinstallation) of the selected products';
-  rsStoreActionsHint = 'Send the list of action requests in the list to the server, show the results and ask for installation start.';
+  rsStoreActionsHint = 'Send the action requests to the server, show the resulting installations and ask for installation start.';
 
 
 implementation
