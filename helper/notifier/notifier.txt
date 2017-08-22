@@ -1,6 +1,6 @@
 [changelog]
 
-opsi-notifier  4.0.7.0-1
+opsi-notifier  4.0.7.1
 
   * initial port from python to lazarus
 

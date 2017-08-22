@@ -14,32 +14,32 @@ object FopsiClientKiosk: TFopsiClientKiosk
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '1.6.4.0'
+  LCLVersion = '1.8.0.4'
   object datapanel: TPanel
     Left = 0
-    Height = 515
+    Height = 510
     Top = 162
     Width = 953
     Align = alClient
     BevelOuter = bvNone
     BorderStyle = bsSingle
-    ClientHeight = 511
+    ClientHeight = 506
     ClientWidth = 949
     TabOrder = 3
     object productlistpanel: TPanel
       Left = 0
-      Height = 511
+      Height = 506
       Top = 0
       Width = 949
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 511
+      ClientHeight = 506
       ClientWidth = 949
       TabOrder = 0
       object productdetailpanel: TPanel
         Left = 0
         Height = 187
-        Top = 324
+        Top = 319
         Width = 949
         Align = alBottom
         BevelOuter = bvNone
@@ -58,16 +58,16 @@ object FopsiClientKiosk: TFopsiClientKiosk
           OnChange = ExtendedNotebook1Change
           object TabSheet1: TTabSheet
             Caption = 'Details'
-            ClientHeight = 159
+            ClientHeight = 154
             ClientWidth = 941
             object PanelDetailsLables: TPanel
               Left = 0
-              Height = 159
+              Height = 154
               Top = 0
               Width = 160
               Align = alLeft
               BevelOuter = bvNone
-              ClientHeight = 159
+              ClientHeight = 154
               ClientWidth = 160
               TabOrder = 0
               object LabelDescription: TLabel
@@ -96,7 +96,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
               end
               object LabelVerstr: TLabel
                 Left = 5
-                Height = 15
+                Height = 20
                 Top = 109
                 Width = 150
                 Align = alTop
@@ -107,8 +107,8 @@ object FopsiClientKiosk: TFopsiClientKiosk
               end
               object LabelClientVerstr: TLabel
                 Left = 5
-                Height = 15
-                Top = 129
+                Height = 20
+                Top = 134
                 Width = 150
                 Align = alTop
                 Alignment = taRightJustify
@@ -119,17 +119,17 @@ object FopsiClientKiosk: TFopsiClientKiosk
             end
             object PanelDetailsDBText: TPanel
               Left = 160
-              Height = 159
+              Height = 154
               Top = 0
               Width = 781
               Align = alClient
               BevelOuter = bvNone
-              ClientHeight = 159
+              ClientHeight = 154
               ClientWidth = 781
               TabOrder = 1
               object DBTextVerStr: TDBText
                 Left = 5
-                Height = 15
+                Height = 20
                 Top = 109
                 Width = 771
                 Align = alTop
@@ -140,8 +140,8 @@ object FopsiClientKiosk: TFopsiClientKiosk
               end
               object DBTextClientVerStr: TDBText
                 Left = 5
-                Height = 15
-                Top = 129
+                Height = 20
+                Top = 134
                 Width = 771
                 Align = alTop
                 BorderSpacing.Around = 5
@@ -240,7 +240,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
       end
       object NotebookProducts: TNotebook
         Left = 10
-        Height = 264
+        Height = 259
         Top = 50
         Width = 929
         PageIndex = 0
@@ -252,7 +252,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
           OnBeforeShow = PageListBeforeShow
           object DBGrid1: TDBGrid
             Left = 0
-            Height = 264
+            Height = 259
             Hint = 'Click to ActionRequest Column, to set action requests (setup/uninstall)'
             Top = 0
             Width = 929
@@ -274,12 +274,12 @@ object FopsiClientKiosk: TFopsiClientKiosk
           end
           object DBComboBox1: TDBComboBox
             Left = 475
-            Height = 23
+            Height = 28
             Top = 71
             Width = 100
             DataField = 'actionrequest'
             DataSource = DataSource1
-            ItemHeight = 15
+            ItemHeight = 20
             Items.Strings = (
               'setup'
               'uninstall'
@@ -624,9 +624,9 @@ object FopsiClientKiosk: TFopsiClientKiosk
         end
         object CheckBox1: TCheckBox
           Left = 96
-          Height = 19
+          Height = 24
           Top = 8
-          Width = 86
+          Width = 109
           Caption = 'Expert mode'
           OnChange = CheckBox1Change
           TabOrder = 1
@@ -763,11 +763,11 @@ object FopsiClientKiosk: TFopsiClientKiosk
       Align = alClient
       TabOrder = 0
       object BitBtnShowAction: TBitBtn
-        Left = 612
+        Left = 571
         Height = 78
         Hint = 'Show the list of action requests in the list. '
         Top = 7
-        Width = 118
+        Width = 135
         Align = alRight
         AutoSize = True
         BorderSpacing.Left = 10
@@ -781,11 +781,11 @@ object FopsiClientKiosk: TFopsiClientKiosk
         TabOrder = 0
       end
       object BitBtnCancel: TBitBtn
-        Left = 876
+        Left = 870
         Height = 78
         Hint = 'Terminate Program (with out any further action)'
         Top = 7
-        Width = 72
+        Width = 78
         Align = alRight
         AutoSize = True
         BorderSpacing.Left = 10
@@ -874,10 +874,10 @@ object FopsiClientKiosk: TFopsiClientKiosk
         TabOrder = 1
       end
       object BitBtnStoreAction: TBitBtn
-        Left = 745
+        Left = 721
         Height = 78
         Top = 7
-        Width = 116
+        Width = 134
         Align = alRight
         AutoSize = True
         BorderSpacing.Left = 10
@@ -891,7 +891,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
         TabOrder = 2
       end
       object LabelWait: TLabel
-        Left = 214
+        Left = 173
         Height = 78
         Top = 7
         Width = 383
@@ -916,7 +916,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
         Left = 1
         Height = 88
         Top = 2
-        Width = 208
+        Width = 167
         Align = alClient
         TabOrder = 3
         object RadioGroupView: TRadioGroup
@@ -935,7 +935,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
           ChildSizing.ShrinkVertical = crsScaleChilds
           ChildSizing.Layout = cclLeftToRightThenTopToBottom
           ChildSizing.ControlsPerLine = 1
-          ClientHeight = 46
+          ClientHeight = 41
           ClientWidth = 136
           ItemIndex = 1
           Items.Strings = (
@@ -951,8 +951,8 @@ object FopsiClientKiosk: TFopsiClientKiosk
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 23
-    Top = 677
+    Height = 28
+    Top = 672
     Width = 953
     Panels = <    
       item
@@ -1790,5 +1790,9 @@ object FopsiClientKiosk: TFopsiClientKiosk
     OnTimer = TimerSearchEditTimer
     left = 206
     top = 8
+  end
+  object ActionList1: TActionList
+    left = 278
+    top = 535
   end
 end

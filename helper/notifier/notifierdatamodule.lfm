@@ -2,8 +2,8 @@ object DataModule1: TDataModule1
   OnCreate = DataModuleCreate
   OnDestroy = DataModuleDestroy
   OldCreateOrder = False
-  Height = 150
-  HorizontalOffset = 258
-  VerticalOffset = 243
-  Width = 150
+  Height = 178
+  HorizontalOffset = 323
+  VerticalOffset = 304
+  Width = 188
 end

@@ -29,7 +29,7 @@ uses
   //ZMQueryDataSet,
   Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
   Buttons, ComCtrls, Grids, DBGrids, DBCtrls, ockdata, CommCtrl,
-  BufDataset, typinfo, installdlg, lcltranslator, oslog, inifiles,
+  BufDataset, typinfo, installdlg, lcltranslator, ActnList, oslog, inifiles,
   Variants,
   Lazfileutils, Types;
 
@@ -74,6 +74,7 @@ type
   { TFopsiClientKiosk }
 
   TFopsiClientKiosk = class(TForm)
+    ActionList1: TActionList;
     BitBtnInfo: TBitBtn;
     BitBtnShowAction: TBitBtn;
     BitBtnCancel: TBitBtn;

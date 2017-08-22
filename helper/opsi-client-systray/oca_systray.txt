@@ -1,7 +1,7 @@
 
 [changelog]
 
-opsi_client_systray  4.0.7.0
+opsi_client_systray  4.0.7.1
 
   * initial
 

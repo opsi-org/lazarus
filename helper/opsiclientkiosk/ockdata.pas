@@ -690,7 +690,7 @@ begin
   initConnection(30);
   FopsiClientKiosk.LabelDataload.Caption := 'Load data from Server';
   resultstring := MyOpsiMethodCall('getKioskProductInfosForClient', [myclientid]);
-  closeConnection;
+  //closeConnection;
   new_obj := SO(resultstring).O['result'];
   str := new_obj.AsString;
   LogDatei.log('Get products done', LLNotice);
@@ -1157,7 +1157,7 @@ begin
   initConnection(30);
   // opsiclientd mode
   resultstring := MyOpsiMethodCall('fireEvent_software_on_demand', []);
-  closeConnection;
+  //closeConnection;
   // switch back to opsiconfd mode
   if not opsiclientdmode then readconf;
   //FreeAndNil(opsidata);
@@ -1228,7 +1228,7 @@ begin
     FopsiClientKiosk.ProcessMess;
     LogDatei.log('start fetchProductData_by_getKioskProductInfosForClient', LLNotice);
     fetchProductData_by_getKioskProductInfosForClient;
-    closeconnection;
+    //closeconnection;
     LogDatei.log('Handle products done', LLNotice);
     FopsiClientKiosk.LabelDataload.Caption := 'Handle Products';
     FopsiClientKiosk.ProgressBar1.Position := 4;

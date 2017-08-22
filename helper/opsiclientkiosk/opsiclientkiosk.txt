@@ -4,6 +4,7 @@ opsiclientkiosk 4.0.7.9
   * minor fixes
   * uses locale
   * laz 1.6.4
+  * remove backend_exit after rebuild
 
 -- detlef oertel <d.oertel@uib.de>  Fri, 04 Aug 2017 15:00:00 +0000
 
