@@ -142,7 +142,7 @@ var
   //deprecated stuff end
   debug_prog: boolean = False;
   debug_lib: boolean = False;
-  default_loglevel: integer = 5;
+  default_loglevel : integer = 6;
   force_min_loglevel: integer = 4;
   opsiscriptconf : string;
 
@@ -390,4 +390,6 @@ opsiscriptconf := opsiscriptconfinit;
 
   WinstVersionName := 'Version ' + winstVersion;
 
+
 end.
+

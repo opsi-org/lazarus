@@ -10,6 +10,7 @@ object FBatchOberflaeche: TFBatchOberflaeche
   Font.Height = 14
   Font.Name = 'System'
   Font.Pitch = fpVariable
+  OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormShow
   OnMouseDown = FormMouseDown
@@ -17,7 +18,6 @@ object FBatchOberflaeche: TFBatchOberflaeche
   OnMouseUp = FormMouseUp
   OnResize = FormResize
   Position = poScreenCenter
-  LCLVersion = '1.8.0.3'
   object PanelFillScreen: TPanel
     Left = 0
     Height = 520
