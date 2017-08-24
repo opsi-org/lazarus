@@ -174,7 +174,7 @@ end;
 
 function fontresize(num: integer): integer;
 begin
-  Result := round(num * 0.6);
+  Result := round(num * 0.5);
   if result < 8 then result := 8;
 end;
 
@@ -632,7 +632,19 @@ begin
     //Transparent = true
     // StayOnTop = true
     if strToBool(myini.ReadString(aktsection, 'StayOnTop', 'false')) then
-      nform.FormStyle := fsSystemStayOnTop;
+    begin
+      if mynotifierkind = 'event' then
+      begin
+        nform.FormStyle := fsStayOnTop;
+        logdatei.log('FormStyle := fsStayOnTop',LLDebug);
+      end
+      else
+      begin
+        nform.FormStyle := fsSystemStayOnTop;
+        logdatei.log('FormStyle := fsSystemStayOnTop',LLDebug);
+      end;
+    end
+    else logdatei.log('FormStyle := fsNormal',LLDebug);
 
     //Frame = false
     if not strToBool(myini.ReadString(aktsection, 'Frame', 'false')) then
