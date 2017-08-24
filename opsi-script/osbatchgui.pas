@@ -75,6 +75,7 @@ type
     //procedure WMEraseB kGnd (var t:tmessage); message WM_ERASEBKGND;
     {$IFDEF WINDOWS}
     procedure EnableFontSmoothing(LabelName: TLabel);
+    procedure FormActivate(Sender: TObject);
     {$ENDIF WINDOWS}
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure ProgressBarActive(YesNo: boolean);
@@ -311,7 +312,7 @@ begin
 
   SetBounds(StartLeft, StartTop, InnerWidth, InnerHeight);
 
-  ForceStayOnTop(BatchScreenOnTop);
+  //ForceStayOnTop(BatchScreenOnTop);
 
 
   Color := clBlue;
@@ -837,6 +838,12 @@ begin
   tagLOGFONT.lfQuality := ANTIALIASED_QUALITY;
   LabelName.Font.Handle := CreateFontIndirect(tagLOGFONT);
 end;
+
+procedure TFBatchOberflaeche.FormActivate(Sender: TObject);
+begin
+  ForceStayOnTop(BatchScreenOnTop);
+end;
+
 {$ENDIF WINDOWS}
 
 procedure TFBatchOberflaeche.ForceStayOnTop(YesNo: boolean);
@@ -844,6 +851,9 @@ begin
   if YesNo then
   begin
     //setWindowState (bwmMaximized);
+    FormStyle := fsSystemStayOnTop;
+    BringToFront;
+    Application.ProcessMessages;
     FormStyle := fsStayOnTop;
     (* FBatchOberflaeche.BorderIcons := []; *)
     BatchScreenOnTop := True;
@@ -852,6 +862,7 @@ begin
   begin
     FormStyle := fsnormal;
     BatchScreenOnTop := False;
+    Application.ProcessMessages;
   end;
 
 end;

@@ -142,7 +142,7 @@ opsiservicePORThttps = 4447;
   //deprecated stuff end
   debug_prog : boolean = false;
   debug_lib: boolean = false;
-  default_loglevel : integer = 5;
+  default_loglevel : integer = 6;
   force_min_loglevel : integer = 4;
 
 
