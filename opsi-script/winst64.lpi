@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="9"/>
+    <Version Value="10"/>
     <PathDelim Value="\"/>
     <General>
       <MainUnit Value="0"/>
@@ -15,15 +15,14 @@
     </General>
     <i18n>
       <EnableI18N Value="True"/>
-      <OutDir Value="languages"/>
+      <OutDir Value="locale"/>
     </i18n>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
-      <MinorVersionNr Value="11"/>
-      <RevisionNr Value="6"/>
-      <BuildNr Value="13"/>
-      <StringTable Comments="Compiled with Lazarus 1.6.2 / FPC 3.0" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst64.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst64.exe" ProductName="opsi-script" ProductVersion="4.0.7"/>
+      <MinorVersionNr Value="12"/>
+      <BuildNr Value="2"/>
+      <StringTable Comments="Compiled with Lazarus 1.6.4 / FPC 3.0.2" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst64.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst64.exe" ProductName="opsi-script" ProductVersion="4.0.7"/>
     </VersionInfo>
     <BuildModes Count="4" Active="Release">
       <Item1 Name="default" Default="True"/>
@@ -456,7 +455,6 @@
       </Unit27>
       <Unit28>
         <Filename Value="changelog.txt"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <CursorPos Y="22"/>
         <UsageCount Value="100"/>
@@ -564,9 +562,10 @@
       <Unit41>
         <Filename Value="osfunc.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
         <TopLine Value="29"/>
-        <CursorPos X="51" Y="41"/>
+        <CursorPos X="36" Y="45"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <TopLine Value="2618"/>
@@ -753,7 +752,6 @@
         <EditorIndex Value="-1"/>
         <CursorPos X="3" Y="29"/>
         <UsageCount Value="10"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit64>
       <Unit65>
         <Filename Value="osxbase64.pas"/>

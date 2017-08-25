@@ -9151,7 +9151,7 @@ begin
   else
     LogS := 'Delete';
   LogS := LogS + ' "' + CompleteName + '"';
-  LogDatei.DependentAdd(LogS, LevelComplete);
+  LogDatei.log_prog(LogS, LLDebug);
 
 
   Filemask := ExtractFileName(CompleteName);
@@ -9162,7 +9162,10 @@ begin
     DeleteDeeperDir := True;
   if Filemask = '' then
     DeleteStartDir := True;
-  if (Filemask = '*.*') or (Filemask = '*') then
+  if (Filemask = '*.*')
+      or (Filemask = '*')
+      or (ExtractFileNameOnly(Filemask) = '*')
+      or (ExtractFileExt(Filemask) = '*') then
     testname := ExtractFilePath(CompleteName)
   else testname := CompleteName;
 

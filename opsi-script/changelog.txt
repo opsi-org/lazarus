@@ -9,6 +9,7 @@ opsi-winst/opsi-script (4.12.0.2) stable; urgency=low
   * osbatchgui: ForceStayOnTop modified
   * osbatchgui: ForceStayOnTop in form.activate
   * osconf: default_loglevel = 6;
+  * osfunc: alldelete: del command: allow also partly wildcards (*.yxz or xyz.*)
 
 -- Detlef Oertel <d.oertel@uib.de>  Thu, 24 Aug 2017:15:00:00 +0200
 
