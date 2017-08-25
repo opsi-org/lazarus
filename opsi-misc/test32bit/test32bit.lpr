@@ -1,4 +1,4 @@
-program dummy;
+program test32bit;
 
 {$mode objfpc}{$H+}
 
@@ -11,4 +11,3 @@ uses
 
 begin
 end.
-
