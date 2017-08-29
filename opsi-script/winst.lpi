@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="9"/>
+    <Version Value="10"/>
     <PathDelim Value="\"/>
     <General>
       <MainUnit Value="0"/>
@@ -21,8 +21,8 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="11"/>
       <RevisionNr Value="6"/>
-      <BuildNr Value="14"/>
-      <StringTable Comments="Compiled with Lazarus 1.6.2 / FPC 3.0" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst32.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst32.exe" ProductName="opsi-script" ProductVersion="4.0.7"/>
+      <BuildNr Value="15"/>
+      <StringTable Comments="Compiled with Lazarus 1.6.4 / FPC 3.0.2" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst32.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst32.exe" ProductName="opsi-script" ProductVersion="4.0.7"/>
     </VersionInfo>
     <BuildModes Count="3" Active="Release">
       <Item1 Name="default" Default="True"/>
@@ -410,7 +410,7 @@
         <Filename Value="changelog.txt"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <CursorPos X="30" Y="22"/>
+        <CursorPos X="81" Y="10"/>
         <UsageCount Value="111"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -501,8 +501,8 @@
         <Filename Value="osfunc.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="9"/>
-        <TopLine Value="8666"/>
-        <CursorPos X="35" Y="8701"/>
+        <TopLine Value="9116"/>
+        <CursorPos X="25" Y="9130"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <IsVisibleTab Value="True"/>
@@ -1017,7 +1017,7 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit93>
     </Units>
-    <JumpHistory Count="26" HistoryIndex="25">
+    <JumpHistory Count="27" HistoryIndex="26">
       <Position1>
         <Filename Value="osparser.pas"/>
         <Caret Line="8" Column="63"/>
@@ -1122,6 +1122,10 @@
         <Filename Value="oscalc.pas"/>
         <Caret Line="111" Column="101" TopLine="103"/>
       </Position26>
+      <Position27>
+        <Filename Value="osfunc.pas"/>
+        <Caret Line="8672" Column="29" TopLine="8666"/>
+      </Position27>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
@@ -1179,7 +1183,7 @@
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="osfunc.pas"/>
-        <Line Value="9897"/>
+        <Line Value="9900"/>
       </Item1>
       <Item2>
         <Kind Value="bpkData"/>

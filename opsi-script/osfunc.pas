@@ -9134,7 +9134,10 @@ begin
     DeleteDeeperDir := True;
   if Filemask = '' then
     DeleteStartDir := True;
-  if (Filemask = '*.*') or (Filemask = '*') then
+  if (Filemask = '*.*')
+      or (Filemask = '*')
+      or (ExtractFileNameOnly(Filemask) = '*')
+      or (ExtractFileExt(Filemask) = '*') then
     testname := ExtractFilePath(CompleteName)
   else testname := CompleteName;
 
