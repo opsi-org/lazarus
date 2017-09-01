@@ -1919,7 +1919,7 @@ begin
     if pos('10054', FError) > 0 //Socket error, connection reset by peer
     then
     begin
-      LogDatei.log('trying to rebuild connection', LLnotice);
+      LogDatei.log('trying to rebuild connection', LLInfo);
       sleep(1000);
       createSocket;
       retrieveJSONObject(omc, logging, False);
@@ -1990,7 +1990,7 @@ begin
       if FSessionId <> '' then
         // not the first call and we log
         if logging then
-          //LogDatei.DependentAdd (DateTimeToStr(now) + ' JSON service request ' + Furl + ' '+ omc.FOpsiMethodName, LLnotice);
+          //LogDatei.DependentAdd (DateTimeToStr(now) + ' JSON service request ' + Furl + ' '+ omc.FOpsiMethodName, LLInfo);
           LogDatei.DependentAdd('JSON service request ' + Furl + ' ' +
             omc.FOpsiMethodName, LLinfo);
 
@@ -2229,7 +2229,7 @@ begin
 
 
         testresult := jO.AsJSon(True, True);
-        //LogDatei.DependentAdd (DateTimeToStr(now) + ' JSON result ' + testresult ,  LLnotice);
+        //LogDatei.DependentAdd (DateTimeToStr(now) + ' JSON result ' + testresult ,  LLInfo);
         //jO := result.geTSuperObject(0);
         testresult := jO.S['error'];
 
@@ -2260,7 +2260,7 @@ begin
     if pos('10054', FError) > 0 //Socket error, connection reset by peer
     then
     begin
-      LogDatei.DependentAdd('trying to rebuild connection', LLnotice);
+      LogDatei.DependentAdd('trying to rebuild connection', LLInfo);
       sleep(1000);
       createSocket;
       retrieveJSONArray(omc, logging, False);
@@ -2302,7 +2302,7 @@ begin
         // not the first call and we log
         if logging then
           LogDatei.DependentAdd(DateTimeToStr(now) + ' JSON service request ' +
-            Furl, LLnotice);
+            Furl, LLInfo);
       //LogDatei.DependentAdd ('JSON service request ' + Furl + ' '+ omc.FOpsiMethodName, LLinfo);
 
 
@@ -2579,7 +2579,7 @@ begin
       begin
         Result := SO(ResultLines.Strings[0]);
         testresult := Result.AsJSon(True, True);
-        //LogDatei.DependentAdd (DateTimeToStr(now) + ' JSON result ' + testresult ,  LLnotice);
+        //LogDatei.DependentAdd (DateTimeToStr(now) + ' JSON result ' + testresult ,  LLInfo);
         testresult := Result.S['error'];
         if not (Result.N['error'].IsType(stNull)) then
         begin
@@ -3556,9 +3556,9 @@ begin
   (*
   if Logdatei.PartbiggerthanMB(5) then
   begin
-    Logdatei.log('Shrinking Logfile to 5 MB....', LLNotice);
+    Logdatei.log('Shrinking Logfile to 5 MB....', LLInfo);
     Logdatei.PartShrinkToMB(5);
-    Logdatei.log('Shrinking Logfile to 5 MB finidhed.', LLNotice);
+    Logdatei.log('Shrinking Logfile to 5 MB finidhed.', LLInfo);
   end;
   *)
   Logdatei.setLogSIndentLevel(0);
@@ -3567,18 +3567,18 @@ begin
     LLNotice);
   Logdatei.PartOpenForReading;
   try
-    //Logdatei.DependentAdd('->3',LLNotice);
+    //Logdatei.DependentAdd('->3',LLInfo);
     logstream := TMemoryStream.Create;
-    //Logdatei.DependentAdd('->4',LLNotice);
+    //Logdatei.DependentAdd('->4',LLInfo);
     logstream.Clear;
-    //Logdatei.DependentAdd('->5',LLNotice);
+    //Logdatei.DependentAdd('->5',LLInfo);
     //s := '{"method":"writeLog","params":["' + logtype + '","';
     s := '{"method":"log_write","params":["' + logtype + '","';
-    //Logdatei.DependentAdd('->6',LLNotice);
+    //Logdatei.DependentAdd('->6',LLInfo);
     logstream.Write(s[1], length(s));
-    //Logdatei.DependentAdd('->7',LLNotice);
+    //Logdatei.DependentAdd('->7',LLInfo);
     s := '\n';
-    Logdatei.DependentAdd('start reading read file ...', LLNotice);
+    Logdatei.DependentAdd('start reading read file ...', LLInfo);
     Found := Logdatei.getPartLine(t);
     while found do
     begin
@@ -3605,7 +3605,7 @@ begin
     begin
       s := '", "' + actualClient + '", "false"], "id": 1}';
     end;
-    Logdatei.log('write line: >' + s + '<  to service...', LLNotice);
+    Logdatei.log('write line: >' + s + '<  to service...', LLInfo);
     logstream.Write(s[1], length(s));
   except
     on E: Exception do
@@ -3614,7 +3614,7 @@ begin
         LLError);
     end
   end;
-  Logdatei.DependentAdd('start sending read file ...', LLNotice);
+  Logdatei.DependentAdd('start sending read file ...', LLInfo);
   try
     Result := (FJsonExecutioner.retrieveJSONObjectByHttpPost(logstream, False) <> nil);
     // we should perhaps not log inside this because of circularity
@@ -4217,7 +4217,7 @@ begin
   //jo := FjsonExecutioner.retrieveJSONObject(omc);
   omc.Free;
   sortlist.Free;
-  //LogDatei.LogLevel := LLnotice;
+  //LogDatei.LogLevel := LLInfo;
 end;
 
 

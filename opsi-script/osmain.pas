@@ -846,7 +846,7 @@ begin
     begin
       scriptname := opsidata.getProductScriptPath(Verfahren);
       Logdatei.log('scriptname: "' + scriptname + '", special path: "' +
-        pfad + '"', LLNotice);
+        pfad + '"', LLInfo);
       absscriptname := makeAbsoluteScriptPath(Pfad, scriptname);
       if Verfahren = tacSetup then
         opsidata.setProductState(tpsInstalling);
@@ -983,7 +983,7 @@ var
   begin
     Result := False;
     LogDatei.LogProduktId:= False;
-    LogDatei.DependentAdd('bootmode ' + bootmode, LLNotice);
+    LogDatei.DependentAdd('bootmode ' + bootmode, LLInfo);
     if Bootmode = 'REINS' then
     begin
       {$IFDEF GUI}

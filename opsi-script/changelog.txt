@@ -4,6 +4,13 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
+
+opsi-winst/opsi-script (4.12.0.3) stable; urgency=low
+
+  * global: rising the level of a lot of loging
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri, 01 Sep 2017:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.0.2) stable; urgency=low
 
   * osbatchgui: ForceStayOnTop modified

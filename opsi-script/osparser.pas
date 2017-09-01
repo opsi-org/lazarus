@@ -2245,7 +2245,7 @@ var
           begin
             NameValueSeparator :=   char(s[1]);
             LogDatei.log('KeyValueSeparator changed from: >'+ PatchListe.NameValueSeparator +
-                         '< to : >'+ NameValueSeparator +'<',LLNotice);
+                         '< to : >'+ NameValueSeparator +'<',LLInfo);
           end
           else
           begin
@@ -2286,7 +2286,7 @@ var
             end;
             if index = -1 then
             begin
-              logdatei.log('Key: '+s1+' not found - creating',LLNotice);
+              logdatei.log('Key: '+s1+' not found - creating',LLInfo);
               if (PatchListe.ItemPointer > -1) and (PatchListe.ItemPointer < PatchListe.count - 1)
               then
               Begin
@@ -2299,7 +2299,7 @@ var
             else
             begin
               logdatei.log('Key: '+s1+' found - Value was: >'+PatchListe.ValueFromIndex[index]+
-                           '< setting to: >'+s2+'<' ,LLnotice);
+                           '< setting to: >'+s2+'<' ,LLInfo);
               PatchListe.ValueFromIndex[index] := s2;
             end;
           end;
@@ -2322,9 +2322,9 @@ var
           if syntaxCheck then
           begin
            if patchliste.GlobalReplace(1,s1,s2,false) then
-             logdatei.log('Replaced all occurrences of  "'+s1+'" by "'+s2+'".',LLNotice)
+             logdatei.log('Replaced all occurrences of  "'+s1+'" by "'+s2+'".',LLInfo)
            else
-             logdatei.log('No occurrences of  "'+s1+'" found - nothing replaced.',LLNotice)
+             logdatei.log('No occurrences of  "'+s1+'" found - nothing replaced.',LLInfo)
           end;
         End
 
@@ -5313,8 +5313,8 @@ begin
      profilepath := ProfileList.Strings[pc];
      profilename := ExtractFileName(profilepath);
 
-     LogDatei.log ('', LLNotice);
-     LogDatei.log ('Branch: ' + profilename, LLNotice);
+     LogDatei.log ('', LLInfo);
+     LogDatei.log ('Branch: ' + profilename, LLInfo);
      UserPath := profilepath + '\NTUser.dat';
      if FileExists (UserPath)
      then
@@ -5396,7 +5396,7 @@ begin
    begin
      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
      LogDatei.log ('', LevelWarnings);
-     LogDatei.log ('And finally: The current user: '+GetUserName_+' : '+GetLocalUserSidStr(GetUserName_), LLNotice);
+     LogDatei.log ('And finally: The current user: '+GetUserName_+' : '+GetLocalUserSidStr(GetUserName_), LLInfo);
      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
      case rfSelected of
@@ -5521,8 +5521,8 @@ begin
      profilepath := ProfileList.Strings[pc];
      profilename := ExtractFileName(profilepath);
 
-     LogDatei.log ('', LLNotice);
-     LogDatei.log ('Branch: ' + profilename, LLNotice);
+     LogDatei.log ('', LLInfo);
+     LogDatei.log ('Branch: ' + profilename, LLInfo);
      UserPath := profilepath + '\NTUser.dat';
      *)
      if FileExists (UserPath)
@@ -7021,7 +7021,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
             if RebootWanted and not( cpSpecify and cpNoExtraReboot = cpNoExtraReboot) then
             Begin
               PerformExitWindows := txrReboot; // txrRegisterForReboot; bis Version 3.03
-              LogDatei.log ('', LLnotice);
+              LogDatei.log ('', LLInfo);
               LogDatei.log ('ExitWindows set to Reboot', LLnotice);
             End;
           End;
@@ -7144,7 +7144,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
           if RebootWanted and not( cpSpecify and cpNoExtraReboot = cpNoExtraReboot) then
           Begin
             PerformExitWindows := txrReboot;
-            LogDatei.log ('', LLnotice);
+            LogDatei.log ('', LLInfo);
             LogDatei.log ('ExitWindows set to Reboot', LLnotice);
           End;
         end
@@ -7440,7 +7440,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
                if RebootWanted and not( cpSpecify and cpNoExtraReboot = cpNoExtraReboot) then
                Begin
                  PerformExitWindows := txrReboot;
-                 LogDatei.log ('', LLnotice);
+                 LogDatei.log ('', LLInfo);
                  LogDatei.log ('ExitWindows set to Reboot', LLnotice);
                End;
              end;
@@ -7540,7 +7540,7 @@ begin
       presetdirectory := ProfileList.Strings[pc]+PathDelim;
       if DirectoryExistsUTF8(presetdirectory) then
       begin
-        logdatei.log(' Make it for user directory: '+presetdirectory, LLNotice);
+        logdatei.log(' Make it for user directory: '+presetdirectory, LLInfo);
         fileActionsMain (Sektion, presetDirectory);
       end;
     end;
@@ -8497,7 +8497,7 @@ begin
     ps := '';
     LogDatei.log (ps, LLNotice);
     ps := Sektion.Name;
-    LogDatei.log (ps, LLNotice);
+    LogDatei.log (ps, LLInfo);
 
     (*
     if pos (uppercase (PStatNames^ [tsDOSInAnIcon]), uppercase (Sektion.Name)) > 0 then
@@ -9353,7 +9353,7 @@ begin
        Begin
          syntaxCheck := true;
          try
-           //LogDatei.log ('Executing0 ' + s1, LLNotice);
+           //LogDatei.log ('Executing0 ' + s1, LLInfo);
            list.Text := execShellCall(s1, 'sysnative',0, true).Text;
          except
            on e: exception do
@@ -10643,7 +10643,7 @@ begin
       Begin
         if Is64BitSystem then
         begin
-           LogDatei.log ('  Starting getFileInfoMap (SysNative 64 Bit mode)...', LLNotice);
+           LogDatei.log ('  Starting getFileInfoMap (SysNative 64 Bit mode)...', LLInfo);
             {$IFDEF WIN32}
             Wow64FsRedirectionDisabled := false;
             if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
@@ -10710,7 +10710,7 @@ begin
         end
         else
         begin
-          LogDatei.log ('  Starting getFileInfoMap (SysNative 32 Bit mode)...', LLNotice);
+          LogDatei.log ('  Starting getFileInfoMap (SysNative 32 Bit mode)...', LLInfo);
           if not fileExists (s1) then
           begin
             LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
@@ -10994,7 +10994,7 @@ else if LowerCase (s) = LowerCase ('getSwauditInfoList')
    then
    Begin
      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-     LogDatei.log ('retrieving strings from ' + logstring , LLNotice);
+     LogDatei.log ('retrieving strings from ' + logstring , LLInfo);
      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
      LogDatei.log_list(list, LLDebug2);
      LogDatei.log('', LLDebug2);
@@ -11967,7 +11967,7 @@ begin
        syntaxCheck := true;
        StringResult := '';
        try
-         //LogDatei.log ('Executing0 ' + s1, LLNotice);
+         //LogDatei.log ('Executing0 ' + s1, LLInfo);
          execShellCall(s1, 'sysnative',0, true);
          StringResult := IntToStr (FLastExitCodeOfExe) ;
        except
@@ -14295,7 +14295,7 @@ begin
    then if Skip (')', r, r, InfoSyntaxError)
    then
    Begin
-      LogDatei.log ('  Starting query if file exist (64 Bit mode)...', LLNotice);
+      LogDatei.log ('  Starting query if file exist (64 Bit mode)...', LLInfo);
       // BooleanResult := CheckFileExists (s1, RunTimeInfo)  or IsDirectory (s1);
 
       s2 := s1;
@@ -14360,9 +14360,9 @@ begin
    then
    Begin
       if Is64BitSystem then
-        LogDatei.log ('  Starting query if file exist (SysNative 64 Bit mode)...', LLNotice)
+        LogDatei.log ('  Starting query if file exist (SysNative 64 Bit mode)...', LLInfo)
       else
-        LogDatei.log ('  Starting query if file exist (SysNative 32 Bit mode)...', LLNotice);
+        LogDatei.log ('  Starting query if file exist (SysNative 32 Bit mode)...', LLInfo);
       s2 := s1;
       if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR)
         then s2 := copy(s1,1,length(s1)-1);
@@ -14440,7 +14440,7 @@ begin
    then if Skip (')', r, r, InfoSyntaxError)
    then
    Begin
-      LogDatei.log ('  Starting query if file exist ...', LLNotice);
+      LogDatei.log ('  Starting query if file exist ...', LLInfo);
       s2 := s1;
       if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR)
        then s2 := copy(s1,1,length(s1)-1);
@@ -14483,7 +14483,7 @@ begin
    then
    Begin
      s1 := ExpandFileName(s1);
-      LogDatei.log ('Starting query if file exist ...', LLNotice);
+      LogDatei.log ('Starting query if file exist ...', LLInfo);
       s2 := s1;
       if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR)
        then s2 := copy(s1,1,length(s1)-1);
@@ -15554,7 +15554,7 @@ end
  else
    RunTimeInfo := RunTimeInfo +   '    <<< syntax error, no result!! - set to false';
 
- LogDatei.log (RunTimeInfo, LevelWarnings);
+ LogDatei.log (RunTimeInfo, LLInfo);
  list1.Free;
 
 End;
@@ -16167,7 +16167,7 @@ begin
               begin
                 ValidCase := true;
                 SwitchResolved := true;
-                LogDatei.log('Case match: '+switchExpressionstr+' = '+switchCondition,LLNotice);
+                LogDatei.log('Case match: '+switchExpressionstr+' = '+switchCondition,LLInfo);
                 LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
               end
               else
@@ -17479,7 +17479,7 @@ begin
                   then syntaxCheck := true;
                   if syntaxCheck
                   then
-                     LogDatei.log ('set ActionProgress to: ' + Parameter, LLnotice);
+                     LogDatei.log ('set ActionProgress to: ' + Parameter, LLInfo);
                      opsidata.setActionProgress(Parameter);
                 End;
 
@@ -17583,7 +17583,7 @@ begin
                      Begin
                        syntaxCheck := true;
                        try
-                         //LogDatei.log ('Executing0 ' + s1, LLNotice);
+                         //LogDatei.log ('Executing0 ' + s1, LLInfo);
                          dummylist := execShellCall(s1, 'sysnative',0, true);
                        except
                          on e: exception do
@@ -17611,7 +17611,7 @@ begin
                     Begin
                       syntaxCheck := true;
                       ActionResult := tsrPositive;
-                      if winBlockInput(true) then LogDatei.log ('Blocking Input', LLNotice)
+                      if winBlockInput(true) then LogDatei.log ('Blocking Input', LLInfo)
                       else LogDatei.log ('Failed Blocking Input ...', LLWarning);
                     End
 
@@ -17620,7 +17620,7 @@ begin
                     Begin
                       syntaxCheck := true;
                       ActionResult := tsrPositive;
-                      if winBlockInput(false) then LogDatei.log ('Unblocking Input', LLNotice)
+                      if winBlockInput(false) then LogDatei.log ('Unblocking Input', LLInfo)
                       else LogDatei.log ('Failed Unblocking Input ...', LLWarning);
                     End;
                   end;
@@ -17640,7 +17640,7 @@ begin
                     ActionResult := tsrPositive;
                     if CreateTemporaryLocalAdmin(traAdmin) then
                     begin
-                      LogDatei.log ('Created temporary local admin ...', LLNotice);
+                      LogDatei.log ('Created temporary local admin ...', LLInfo);
 
                       FConstValuesList.Strings[FConstList.IndexOf('%AppDataDir%')] := GetAppDataPath;
                       FConstValuesList.Strings[FConstList.IndexOf('%CurrentAppDataDir%')] := GetAppDataPath;
@@ -17661,7 +17661,7 @@ begin
                   else if UpperCase (Remaining) = UpperCase ('/Create2')
                   then
                   Begin
-                    LogDatei.log ('Creating temporary local admin ...', LLNotice);
+                    LogDatei.log ('Creating temporary local admin ...', LLInfo);
                     ActionResult := tsrPositive;
                     if CreateTemporaryLocalAdmin(traAdminProfile) then
                     begin
@@ -17686,7 +17686,7 @@ begin
                   else if UpperCase (Remaining) = UpperCase ('/Create3')
                   then
                   Begin
-                    LogDatei.log ('Creating temporary local admin ...', LLNotice);
+                    LogDatei.log ('Creating temporary local admin ...', LLInfo);
                     ActionResult := tsrPositive;
                     if CreateTemporaryLocalAdmin(traAdminProfileImpersonate) then
                     begin
@@ -17711,7 +17711,7 @@ begin
                   else if UpperCase (Remaining) = UpperCase ('/Create4')
                   then
                   Begin
-                    LogDatei.log ('Creating temporary local admin ...', LLNotice);
+                    LogDatei.log ('Creating temporary local admin ...', LLInfo);
                     ActionResult := tsrPositive;
                     if CreateTemporaryLocalAdmin(traAdminProfileImpersonateExplorer) then
                     begin
@@ -17736,7 +17736,7 @@ begin
         else if UpperCase (Remaining) = UpperCase ('/Delete')
         then
         Begin
-          LogDatei.log ('Deleting temporary local admin ...', LLNotice);
+          LogDatei.log ('Deleting temporary local admin ...', LLInfo);
                     ActionResult := tsrPositive;
                     if opsiSetupAdmin_created then
                       if DeleteTemporaryLocalAdmin then
@@ -17845,12 +17845,12 @@ begin
                   Begin
                      if   UpperCase (Remaining) = 'TRUE' then
                      begin
-                       LogDatei.log ('AutoActivityDisplay was '+BoolToStr(AutoActivityDisplay,true)+' is set to true', LLNotice);
+                       LogDatei.log ('AutoActivityDisplay was '+BoolToStr(AutoActivityDisplay,true)+' is set to true', LLInfo);
                        AutoActivityDisplay := true;
                      end
                      else
                      begin
-                       LogDatei.log ('AutoActivityDisplay was '+BoolToStr(AutoActivityDisplay,true)+' is set to false', LLNotice);
+                       LogDatei.log ('AutoActivityDisplay was '+BoolToStr(AutoActivityDisplay,true)+' is set to false', LLInfo);
                        AutoActivityDisplay := false;
                      end;
                   End
@@ -17865,12 +17865,12 @@ begin
               Begin
                  if   UpperCase (Remaining) = 'TRUE' then
                  begin
-                   LogDatei.log ('FatalOnSyntaxError was '+BoolToStr(FatalOnSyntaxError,true)+' is set to true', LLNotice);
+                   LogDatei.log ('FatalOnSyntaxError was '+BoolToStr(FatalOnSyntaxError,true)+' is set to true', LLInfo);
                    FatalOnSyntaxError := true;
                  end
                  else
                  begin
-                   LogDatei.log ('FatalOnSyntaxError was '+BoolToStr(FatalOnSyntaxError,true)+' is set to false', LLNotice);
+                   LogDatei.log ('FatalOnSyntaxError was '+BoolToStr(FatalOnSyntaxError,true)+' is set to false', LLInfo);
                    FatalOnSyntaxError := false;
                    if (FExtremeErrorLevel=LevelFatal) and (LogDatei.ActionProgress='Syntax Error') then
                      FExtremeErrorLevel := Level_not_initialized;
@@ -17886,12 +17886,12 @@ begin
               Begin
                  if   UpperCase (Remaining) = 'TRUE' then
                  begin
-                   LogDatei.log('FatalOnRuntimeError was '+BoolToStr(FatalOnRuntimeError,true)+' is set to true', LLNotice);
+                   LogDatei.log('FatalOnRuntimeError was '+BoolToStr(FatalOnRuntimeError,true)+' is set to true', LLInfo);
                    FatalOnRuntimeError := true;
                  end
                  else
                  begin
-                   LogDatei.log('FatalOnRuntimeError was '+BoolToStr(FatalOnRuntimeError,true)+' is set to false', LLNotice);
+                   LogDatei.log('FatalOnRuntimeError was '+BoolToStr(FatalOnRuntimeError,true)+' is set to false', LLInfo);
                    FatalOnRuntimeError := false;
                  end;
               End
@@ -17905,12 +17905,12 @@ begin
                 Begin
                    if   UpperCase (Remaining) = 'TRUE' then
                    begin
-                    LogDatei.log ('ExitOnError was '+BoolToStr(ExitOnError,true)+' is set to true', LLNotice);
+                    LogDatei.log ('ExitOnError was '+BoolToStr(ExitOnError,true)+' is set to true', LLInfo);
                     ExitOnError := true;
                    end
                    else
                    begin
-                     LogDatei.log ('ExitOnError was '+BoolToStr(ExitOnError,true)+' is set to false', LLNotice);
+                     LogDatei.log ('ExitOnError was '+BoolToStr(ExitOnError,true)+' is set to false', LLInfo);
                      ExitOnError := false;
                    end;
                 End
@@ -19094,7 +19094,7 @@ begin
                Begin
                  //writeln('set');
                  Expressionstr := Remaining;
-                 doLogEntries (PStatNames^ [tsSetVar] + '  '  + Expressionstr, LLnotice);
+                 doLogEntries (PStatNames^ [tsSetVar] + '  '  + Expressionstr, LLInfo);
                  if doSetVar (sektion, Expressionstr, Remaining, InfoSyntaxError)
                  then
                  Begin

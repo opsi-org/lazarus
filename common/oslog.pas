@@ -247,9 +247,9 @@ const
 
 
   LevelFatal = 1; //not yet used;
-  BaseLevel = LLnotice;
+  BaseLevel = LLinfo;
   LevelError = LLerror;
-  LevelWarnings = LLnotice;
+  LevelWarnings = LLinfo;
   LevelInfo = LLinfo;
   LevelComplete = LLinfo;
   LevelDebug = LLdebug;
@@ -1069,7 +1069,7 @@ begin
       end;
     end;
   end;
-  DependentAdd('read file opend', LLNotice);
+  DependentAdd('read file opend', LLInfo);
 end;
 
 procedure TLogInfo.PartCloseFromReading;
@@ -1104,7 +1104,7 @@ begin
   try
     files.alldelete(StandardPartLogPath + FStandardPartLogFilename + '*', False, True, 0);
   except
-    //LogDatei.DependentAdd('not all files "' + TempPath + TempBatchdatei + '*"  could be deleted', LLnotice);
+    //LogDatei.DependentAdd('not all files "' + TempPath + TempBatchdatei + '*"  could be deleted', LLInfo);
   end;
   files.Free;
   {$ENDIF}
@@ -1659,7 +1659,7 @@ begin
     finally
       FileClose(LogPartReadFileF);
       PartReopen;
-      DependentAdd('read file created', LLNotice);
+      DependentAdd('read file created', LLInfo);
     end;
   end;
 end;

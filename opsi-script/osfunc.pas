@@ -8839,7 +8839,7 @@ begin
   if CountModus = tccmCounted then
   begin
     LogS := IntToStr(NumberCounted) + ' File(s) found';
-    LogDatei.log(LogS, LLNotice);
+    LogDatei.log(LogS, LLInfo);
   end;
 
   CopyCount := TCopyCount.Create(CountModus, NumberCounted);
@@ -8857,7 +8857,7 @@ begin
   else
   begin
     LogS := IntToStr(CopyCount.ActCount) + ' File(s) treated';
-    LogDatei.log(LogS, LLNotice);
+    LogDatei.log(LogS, LLInfo);
     if (CountModus = tccmCounted) and (NumberCounted > CopyCount.ActCount) then
     begin
       LogS := 'Error: Some previously found files were not found now';
@@ -9179,7 +9179,7 @@ begin
       //does not exist
       LogS := 'Notice: ' + 'File or Directory ' + CompleteName +
         ' does not exist, nothing deleted';
-      LogDatei.log(LogS, LLnotice);
+      LogDatei.log(LogS, LLInfo);
     end
     else
     begin
@@ -9220,7 +9220,7 @@ begin
           (*
         LogS := 'Notice: ' + 'Directory ' + ExtractFilePath(CompleteName) +
           ' does not exist, nothing deleted';
-        LogDatei.DependentAdd(LogS, LLnotice);
+        LogDatei.DependentAdd(LogS, LLInfo);
         *)
       end;
     end;
@@ -9234,7 +9234,7 @@ begin
     begin
       LogS := 'Notice: ' + 'Directory ' + ExtractFilePath(CompleteName) +
         ' does not exist, nothing deleted';
-      LogDatei.log(LogS, LLnotice);
+      LogDatei.log(LogS, LLInfo);
     end;
   end;
 end;
