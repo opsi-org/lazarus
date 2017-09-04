@@ -19,9 +19,9 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="14"/>
+      <BuildNr Value="15"/>
       <Language Value="0407"/>
-      <StringTable CompanyName="uib gmbh" InternalName="uibtime.exe" LegalCopyright="GPL v3" ProductName="uibtime" ProductVersion="4.0.0"/>
+      <StringTable Comments="lazarus 1.6.4 fpc 3.0.2" CompanyName="uib gmbh" InternalName="uibtime.exe" LegalCopyright="GPL v3" ProductName="uibtime" ProductVersion="4.0.0"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -30,10 +30,11 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="uibtime"/>
+            <Filename Value="uibtime" ApplyConventions="False"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="C:\lazarus\components\lazreport\source\addons\pdfexport\;..\external_libraries\powerpdf"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -64,9 +65,11 @@
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-dUseCThreads"/>
-            <OtherDefines Count="1">
+            <CustomOptions Value="-dUseCThreads
+-dLAZ_POWERPDF"/>
+            <OtherDefines Count="2">
               <Define0 Value="UseCThreads"/>
+              <Define1 Value="LAZ_POWERPDF"/>
             </OtherDefines>
           </Other>
         </CompilerOptions>
@@ -76,10 +79,11 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="uibtime"/>
+            <Filename Value="uibtime.exe" ApplyConventions="False"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="C:\lazarus\components\lazreport\source\addons\pdfexport\;..\external_libraries\powerpdf"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -116,9 +120,11 @@
             <CompilerMessages>
               <IgnoredMessages idx5024="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dUseCThreads"/>
-            <OtherDefines Count="1">
+            <CustomOptions Value="-dUseCThreads
+-dLAZ_POWERPDF"/>
+            <OtherDefines Count="2">
               <Define0 Value="UseCThreads"/>
+              <Define1 Value="LAZ_POWERPDF"/>
             </OtherDefines>
           </Other>
         </CompilerOptions>

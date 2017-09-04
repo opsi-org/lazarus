@@ -21,7 +21,7 @@
         <CustomOptions Value="-dLAZ_POWERPDF"/>
       </Other>
     </CompilerOptions>
-    <Version Minor="9" Release="13"/>
+    <Version Minor="9" Release="15"/>
     <Files Count="12">
       <Item1>
         <Filename Value="PdfTypes.pas"/>

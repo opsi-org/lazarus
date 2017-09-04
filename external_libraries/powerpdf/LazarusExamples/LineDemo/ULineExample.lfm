@@ -1,119 +1,62 @@
 object Form1: TForm1
   Left = 81
-  Height = 585
+  Height = 635
   Top = 46
   Width = 648
-  HelpContext = 0
-  Align = alNone
-  AllowDropFiles = False
+  HorzScrollBar.Page = 614
+  VertScrollBar.Page = 617
   AutoScroll = True
-  AutoSize = False
-  BorderIcons = [biSystemMenu, biMinimize, biMaximize]
-  BorderStyle = bsSizeable
   Caption = 'Form1'
-  ChildSizing.LeftRightSpacing = 0
-  ChildSizing.TopBottomSpacing = 0
-  ChildSizing.HorizontalSpacing = 0
-  ChildSizing.VerticalSpacing = 0
-  ChildSizing.ControlsPerLine = 0
-  ClientHeight = 565
-  ClientWidth = 648
-  DockSite = False
-  DragKind = dkDrag
-  DragMode = dmManual
-  Enabled = True
+  ClientHeight = 617
+  ClientWidth = 633
   Font.CharSet = ANSI_CHARSET
   Font.Height = -12
   Font.Name = 'Arial'
-  Font.Style = []
-  FormStyle = fsNormal
   Menu = MainMenu1
-  ParentBiDiMode = True
-  ParentFont = False
-  Position = poDesigned
-  ShowInTaskBar = stDefault
-  UseDockManager = False
-  LCLVersion = '0.9.27'
-  WindowState = wsNormal
+  LCLVersion = '1.7'
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 23
-    Top = 542
-    Width = 648
-    HelpContext = 0
-    DragCursor = crDrag
-    DragKind = dkDrag
-    DragMode = dmManual
-    Enabled = True
+    Height = 18
+    Top = 711
+    Width = 633
     Panels = <    
       item
-        Alignment = taLeftJustify
         Width = 50
       end>
-    ParentShowHint = True
     SimplePanel = False
   end
   object ScrollBox1: TScrollBox
     Left = 0
-    Height = 542
+    Height = 711
     Top = 0
-    Width = 648
-    HelpContext = 0
+    Width = 633
+    HorzScrollBar.Page = 614
+    VertScrollBar.Page = 711
     Align = alClient
-    AutoSize = False
-    AutoScroll = True
-    BorderSpacing.Left = 0
-    BorderSpacing.Top = 0
-    BorderSpacing.Right = 0
-    BorderSpacing.Bottom = 0
-    BorderSpacing.Around = 0
-    BorderSpacing.CellAlignHorizontal = ccaFill
-    BorderSpacing.CellAlignVertical = ccaFill
     BorderStyle = bsNone
-    ChildSizing.LeftRightSpacing = 0
-    ChildSizing.TopBottomSpacing = 0
-    ChildSizing.HorizontalSpacing = 0
-    ChildSizing.VerticalSpacing = 0
-    ChildSizing.ControlsPerLine = 0
-    DockSite = False
-    DragCursor = crDrag
-    DragKind = dkDrag
-    DragMode = dmManual
-    Enabled = True
-    Ctl3D = False
-    ParentBiDiMode = True
-    ParentColor = True
-    ParentCtl3D = True
-    ParentFont = True
-    ParentShowHint = True
+    ClientHeight = 711
+    ClientWidth = 633
     TabOrder = 0
-    TabStop = False
-    Visible = True
     object PRPage1: TPRPage
       Left = 14
       Height = 700
       Top = 11
       Width = 600
-      HelpContext = 0
       MarginTop = 32
       MarginLeft = 32
       MarginRight = 32
       MarginBottom = 32
-      Visible = True
       object PRLayoutPanel1: TPRLayoutPanel
         Left = 33
         Height = 634
         Top = 33
         Width = 534
-        HelpContext = 0
         Align = alClient
         object PRText1: TPRText
           Left = 132
           Height = 30
           Top = -1
           Width = 281
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 24
           FontBold = True
@@ -129,8 +72,6 @@ object Form1: TForm1
           Height = 14
           Top = 619
           Width = 157
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -142,18 +83,15 @@ object Form1: TForm1
           Height = 1
           Top = 61
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 0
           LineStyle = psSolid
+          Radius = 0
         end
         object PRText3: TPRText
           Left = 23
           Height = 14
           Top = 48
           Width = 165
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -165,8 +103,6 @@ object Form1: TForm1
           Height = 14
           Top = 72
           Width = 165
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -178,18 +114,15 @@ object Form1: TForm1
           Height = 1
           Top = 85
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 0
           LineStyle = psDash
+          Radius = 0
         end
         object PRText5: TPRText
           Left = 23
           Height = 14
           Top = 96
           Width = 165
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -201,28 +134,24 @@ object Form1: TForm1
           Height = 1
           Top = 109
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 0
           LineStyle = psDashDot
+          Radius = 0
         end
         object PRRect4: TPRRect
           Left = 23
           Height = 1
           Top = 132
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 0
           LineStyle = psDashDotDot
+          Radius = 0
         end
         object PRText6: TPRText
           Left = 23
           Height = 14
           Top = 119
           Width = 165
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -234,8 +163,6 @@ object Form1: TForm1
           Height = 14
           Top = 143
           Width = 165
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -247,28 +174,24 @@ object Form1: TForm1
           Height = 1
           Top = 156
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 0
           LineStyle = psDot
+          Radius = 0
         end
         object PRRect6: TPRRect
           Left = 23
           Height = 1
           Top = 180
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 0
           LineStyle = psClear
+          Radius = 0
         end
         object PRText8: TPRText
           Left = 23
           Height = 14
           Top = 167
           Width = 165
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -280,18 +203,15 @@ object Form1: TForm1
           Height = 1
           Top = 61
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 1
           LineStyle = psSolid
+          Radius = 0
         end
         object PRText9: TPRText
           Left = 269
           Height = 14
           Top = 48
           Width = 165
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -303,8 +223,6 @@ object Form1: TForm1
           Height = 14
           Top = 72
           Width = 165
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -316,18 +234,15 @@ object Form1: TForm1
           Height = 1
           Top = 85
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 1
           LineStyle = psDash
+          Radius = 0
         end
         object PRText11: TPRText
           Left = 269
           Height = 14
           Top = 96
           Width = 165
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -339,28 +254,24 @@ object Form1: TForm1
           Height = 1
           Top = 109
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 1
           LineStyle = psDashDot
+          Radius = 0
         end
         object PRRect10: TPRRect
           Left = 269
           Height = 1
           Top = 132
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 1
           LineStyle = psDashDotDot
+          Radius = 0
         end
         object PRText12: TPRText
           Left = 269
           Height = 14
           Top = 119
           Width = 165
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -372,8 +283,6 @@ object Form1: TForm1
           Height = 14
           Top = 143
           Width = 165
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -385,28 +294,24 @@ object Form1: TForm1
           Height = 1
           Top = 156
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 1
           LineStyle = psDot
+          Radius = 0
         end
         object PRRect12: TPRRect
           Left = 269
           Height = 1
           Top = 180
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 1
           LineStyle = psClear
+          Radius = 0
         end
         object PRText14: TPRText
           Left = 269
           Height = 14
           Top = 167
           Width = 165
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -418,19 +323,16 @@ object Form1: TForm1
           Height = 1
           Top = 212
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 1.5
           LineColor = clBlue
           LineStyle = psSolid
+          Radius = 0
         end
         object PRText15: TPRText
           Left = 23
           Height = 14
           Top = 199
           Width = 210
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -442,8 +344,6 @@ object Form1: TForm1
           Height = 14
           Top = 223
           Width = 209
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -455,19 +355,16 @@ object Form1: TForm1
           Height = 1
           Top = 236
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 1.5
           LineColor = clBlue
           LineStyle = psDash
+          Radius = 0
         end
         object PRText17: TPRText
           Left = 23
           Height = 14
           Top = 247
           Width = 209
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -479,30 +376,26 @@ object Form1: TForm1
           Height = 1
           Top = 260
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 1.5
           LineColor = clBlue
           LineStyle = psDashDot
+          Radius = 0
         end
         object PRRect16: TPRRect
           Left = 23
           Height = 1
           Top = 283
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 1.5
           LineColor = clBlue
           LineStyle = psDashDotDot
+          Radius = 0
         end
         object PRText18: TPRText
           Left = 23
           Height = 14
           Top = 270
           Width = 208
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -514,8 +407,6 @@ object Form1: TForm1
           Height = 14
           Top = 294
           Width = 208
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -527,29 +418,25 @@ object Form1: TForm1
           Height = 1
           Top = 307
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 1.5
           LineColor = clBlue
           LineStyle = psDot
+          Radius = 0
         end
         object PRRect19: TPRRect
           Left = 269
           Height = 1
           Top = 212
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 2
           LineStyle = psSolid
+          Radius = 0
         end
         object PRText21: TPRText
           Left = 269
           Height = 14
           Top = 199
           Width = 165
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -561,8 +448,6 @@ object Form1: TForm1
           Height = 14
           Top = 223
           Width = 165
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -574,18 +459,15 @@ object Form1: TForm1
           Height = 1
           Top = 236
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 2
           LineStyle = psDash
+          Radius = 0
         end
         object PRText23: TPRText
           Left = 269
           Height = 14
           Top = 247
           Width = 165
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -597,28 +479,24 @@ object Form1: TForm1
           Height = 1
           Top = 260
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 2
           LineStyle = psDashDot
+          Radius = 0
         end
         object PRRect22: TPRRect
           Left = 269
           Height = 1
           Top = 283
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 2
           LineStyle = psDashDotDot
+          Radius = 0
         end
         object PRText24: TPRText
           Left = 269
           Height = 14
           Top = 270
           Width = 165
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -630,8 +508,6 @@ object Form1: TForm1
           Height = 14
           Top = 294
           Width = 165
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -643,28 +519,24 @@ object Form1: TForm1
           Height = 1
           Top = 307
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 2
           LineStyle = psDot
+          Radius = 0
         end
         object PRRect25: TPRRect
           Left = 23
           Height = 39
           Top = 333
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 1
           LineStyle = psSolid
+          Radius = 0
         end
         object PRText27: TPRText
           Left = 30
           Height = 25
           Top = 340
           Width = 188
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -676,20 +548,17 @@ object Form1: TForm1
           Height = 39
           Top = 383
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 1
           LineColor = clNavy
           LineStyle = psSolid
           FillColor = clYellow
+          Radius = 0
         end
         object PRText28: TPRText
           Left = 29
           Height = 25
           Top = 390
           Width = 188
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -701,19 +570,16 @@ object Form1: TForm1
           Height = 39
           Top = 333
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 1
           LineStyle = psDot
           FillColor = clLime
+          Radius = 0
         end
         object PRText20: TPRText
           Left = 276
           Height = 25
           Top = 340
           Width = 188
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -725,20 +591,17 @@ object Form1: TForm1
           Height = 39
           Top = 383
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 1
           LineColor = clNone
           LineStyle = psSolid
           FillColor = clAqua
+          Radius = 0
         end
         object PRText26: TPRText
           Left = 275
           Height = 25
           Top = 390
           Width = 188
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -750,19 +613,16 @@ object Form1: TForm1
           Height = 39
           Top = 439
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 1.5
           LineColor = clNavy
           LineStyle = psSolid
+          Radius = 0
         end
         object PRText29: TPRText
           Left = 30
           Height = 25
           Top = 446
           Width = 188
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -774,20 +634,17 @@ object Form1: TForm1
           Height = 39
           Top = 489
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 1.5
           LineColor = clRed
           LineStyle = psDashDot
           FillColor = clYellow
+          Radius = 0
         end
         object PRText30: TPRText
           Left = 29
           Height = 25
           Top = 496
           Width = 188
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -799,20 +656,17 @@ object Form1: TForm1
           Height = 39
           Top = 439
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 1.5
           LineColor = clBlue
           LineStyle = psDot
           FillColor = clLime
+          Radius = 0
         end
         object PRText31: TPRText
           Left = 276
           Height = 25
           Top = 446
           Width = 188
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -824,20 +678,17 @@ object Form1: TForm1
           Height = 39
           Top = 489
           Width = 209
-          HelpContext = 0
-          Align = alNone
           LineWidth = 2
           LineColor = clPurple
           LineStyle = psSolid
           FillColor = clAqua
+          Radius = 0
         end
         object PRText32: TPRText
           Left = 275
           Height = 25
           Top = 496
           Width = 188
-          HelpContext = 0
-          Align = alNone
           FontName = fnArial
           FontSize = 9
           CharSpace = 0
@@ -848,38 +699,26 @@ object Form1: TForm1
     end
   end
   object MainMenu1: TMainMenu
-    left = 68
-    top = 10
+    Left = 68
+    Top = 10
     object File1: TMenuItem
       Caption = '&File'
-      RightJustify = False
-      ShowAlwaysCheckable = False
       object CreatePDF1: TMenuItem
         Caption = 'Create PDF'
-        RightJustify = False
-        ShowAlwaysCheckable = False
         OnClick = CreatePDF1Click
       end
       object N1: TMenuItem
         Caption = '-'
-        RightJustify = False
-        ShowAlwaysCheckable = False
       end
       object Exit1: TMenuItem
         Caption = 'Exit'
-        RightJustify = False
-        ShowAlwaysCheckable = False
         OnClick = Exit1Click
       end
     end
     object Help1: TMenuItem
       Caption = '&Help'
-      RightJustify = False
-      ShowAlwaysCheckable = False
       object About1: TMenuItem
         Caption = '&About'
-        RightJustify = False
-        ShowAlwaysCheckable = False
         OnClick = About1Click
       end
     end
@@ -887,18 +726,17 @@ object Form1: TForm1
   object PReport1: TPReport
     FileName = 'default.pdf'
     CreationDate = 37030.8440326967
+    ModDate = 0
     UseOutlines = False
     ViewerPreference = []
-    left = 102
-    top = 10
+    Left = 102
+    Top = 10
   end
   object SaveDialog1: TSaveDialog
-    Width = 0
-    Height = 0
     FileName = 'LineExample.pdf'
     Filter = 'PDF Files|*.pdf|All Files|*.*'
     FilterIndex = 0
-    left = 138
-    top = 10
+    Left = 138
+    Top = 10
   end
 end

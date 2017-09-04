@@ -850,7 +850,9 @@ var
   aktstartyear, aktstartmonth: word;
   helperint: integer;
   suchevent: string;
-  monthsmod: integer;
+  monthsmod, monthdiv, basemonth, acc_per_monthnum_int: integer;
+  acc_per_monthnum: double;
+  lastIntervalStart, lastIntervalEnd: TDateTime;
 begin
   aktstartyear := 2001;
   aktstartmonth := 1;
@@ -868,12 +870,77 @@ begin
   if not QueryProjektzeit.FieldByName('time_h').IsNull then
   begin
     total := QueryProjektzeit.FieldByName('time_h').AsFloat;
-    monthsmod := trunc(QueryProjektzeit.FieldByName('acc_per_monthnum').AsFloat);
+    acc_per_monthnum := QueryProjektzeit.FieldByName('acc_per_monthnum').AsFloat;
+    basemonth := trunc(acc_per_monthnum);
+    acc_per_monthnum_int := trunc(acc_per_monthnum);
+    monthsmod := acc_per_monthnum_int mod 12;
+    monthdiv := acc_per_monthnum_int div 12;
+    //monthsmod := trunc(QueryProjektzeit.FieldByName('acc_per_monthnum').AsFloat);
     projektstart := QueryProjektzeit.FieldByName('projectstart').AsDateTime;
+
+    // look first for start version
+    decodeDate(now, year, month, day);
+    decodeDate(projektstart, startyear, startmonth, startday);
+    helperint := month - ((12 * (year - startyear) + month - startmonth));
+    if  acc_per_monthnum_int > 0 then
+    begin
+      if day >= startday then
+        helperint := month - ((12 * (year - startyear) + month - startmonth) mod
+         acc_per_monthnum_int)
+      else
+        helperint := (month-1) - ((12 * (year - startyear) + (month-1) - startmonth) mod
+          acc_per_monthnum_int);
+    end;
+    if helperint < 1 then
+    begin
+      aktstartyear := year - 1;
+      aktstartmonth := 12 + helperint;
+    end
+    else
+    begin
+      aktstartmonth := helperint;
+      aktstartyear := year;
+    end;
+    if aktstartmonth > 12 then
+    begin
+      aktstartmonth := aktstartmonth - 12;
+      aktstartyear := aktstartyear + 1;
+    end;
+    (*
+    endmonth := month
+    endyear := year
+    if endmonth > 12 then
+    begin
+      endmonth := endmonth - 12;
+      endyear := endyear + 1;
+    end;
+    if endmonth > 12 then
+    begin
+      endmonth := endmonth - 12;
+      endyear := endyear + 1;
+    end;
+    *)
+    // here is the result for the last Interval
+    lastIntervalStart := EncodeDate(aktstartyear, aktstartmonth, startday);
+    DataModule1.debugOut(6, 'getLastIntervalInfo', 'lastIntervalStart :'+DateToStr(lastIntervalStart));
+
     if QueryProjektzeit.Active then
       QueryProjektzeit.Close;
     //QueryProjektzeit.databasename :='uibtime';
     QueryProjektzeit.SQL.Clear;
+    if acc_per_monthnum_int > 0 then
+    begin
+      QueryProjektzeit.sql.Add(' select sum(stunden) as stunden from uibevent');
+      QueryProjektzeit.sql.Add('    where (event = :suchevent)');
+      QueryProjektzeit.sql.Add('    and  (starttime >= :von)');
+      QueryProjektzeit.sql.Add('    and (stoptime < :bis)');
+      QueryProjektzeit.parambyname('suchevent').AsString := suchevent;
+      QueryProjektzeit.parambyname('von').AsString :=
+        datetostr(encodedate(aktstartyear, aktstartmonth, startday));
+      QueryProjektzeit.parambyname('bis').AsString :=
+        datetostr(now+1);
+(*        (
+    end;
     if monthsmod > 0 then
     begin
       //if UpperCase(base) = 'MONTH' then
@@ -895,9 +962,9 @@ begin
         aktstartyear := year;
         aktstartmonth := month;
         QueryProjektzeit.parambyname('von').AsString :=
-          datetostr(encodedate(aktstartyear, aktstartmonth, 1));
+          datetostr(encodedate(aktstartyear, aktstartmonth, startday));
         QueryProjektzeit.parambyname('bis').AsString :=
-          datetostr(encodedate(endyear, endmonth, 1));
+          datetostr(encodedate(endyear, endmonth, startday));
       end
       else
       begin
@@ -933,11 +1000,12 @@ begin
           endyear := year + 1;
         end;
         QueryProjektzeit.parambyname('von').AsString :=
-          datetostr(encodedate(aktstartyear, aktstartmonth, 1));
+          datetostr(encodedate(aktstartyear, aktstartmonth, startday));
         QueryProjektzeit.parambyname('bis').AsString :=
-          datetostr(encodedate(endyear, endmonth, 1));
+          datetostr(encodedate(endyear, endmonth, startday));
         //end
       end;
+      *)
     end
     else
     begin

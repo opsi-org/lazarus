@@ -448,15 +448,20 @@ type
     procedure MoveTextPoint(tx, ty: Single);                     {  Td  }
     procedure SetTextMatrix(a, b, c, d, x, y: Single);           {  Tm  }
     procedure MoveToNextLine;                                    {  T*  }
-    procedure ShowText(const s: string);                               {  Tj  }
-    procedure ShowTextNextLine(const s: string);                       {  '   }
+    procedure ShowText(const s: string);                         {  Tj  }
+    procedure ShowTextNextLine(const s: string);                 {  '   }
 
     {* external objects *}
-    procedure ExecuteXObject(const xObject: string);                   {  Do  }
+    procedure ExecuteXObject(const xObject: string);             {  Do  }
 
     {* Device-dependent color space operators *}
     procedure SetRGBFillColor(Value: TPdfColor);                 {  rg  }
     procedure SetRGBStrokeColor(Value: TPdfColor);               {  RG  }
+
+    (* Basic shading pattern*)
+    procedure SetGradientFill(shadingType:Byte;
+        startColor, endColor: TPdfColor; Coords: array of Double;
+        Extends: boolean = false);
 
     {* utility routines *}
     procedure SetPage(APage: TPdfDictionary);
@@ -1441,7 +1446,7 @@ begin
 end;
 
 // GetColorStr
-function TPDFCanvas.GetColorStr(Color: TPdfColor): string;
+function TPdfCanvas.GetColorStr(Color: TPdfColor): string;
 var
   X: array[0..3] of Byte;
   rgb: integer;
@@ -2130,6 +2135,82 @@ var
 begin
   S := GetColorStr(Value) + ' RG'#10;
   WriteString(S);
+end;
+
+procedure TPdfCanvas.SetGradientFill(shadingType: Byte; startColor,
+  endColor: TPdfColor; Coords: array of Double; Extends: boolean);
+var
+  Resources, patternResource, Shading, Pattern: TPdfDictionary;
+  ObjectMgr: TPdfObjectMgr;
+  Gradient: String;
+
+  function CreateRealArray(arr: array of double): TPdfArray;
+  var
+    i: Integer;
+  begin
+    result := TPdfArray.CreateArray(Resources.ObjectMgr);
+    for i:=0 to high(arr) do
+      result.AddItem(TPdfReal.CreateReal(arr[i]));
+  end;
+  function ColorToArray(Color: TPdfColor): TPdfArray;
+  var
+    clr: record r,g,b,x: byte; end absolute Color;
+  begin
+    result := CreateRealArray([clr.r/255, clr.g/255, clr.b/255]);
+  end;
+  function CreateBoolArray(a,b: boolean): TPdfArray;
+  begin
+    result := TPdfArray.CreateArray(Resources.ObjectMgr);
+    result.AddItem(TPdfBoolean.CreateBoolean(a));
+    result.AddItem(TPdfBoolean.CreateBoolean(b));
+  end;
+  function CreateFunction2: TPdfDictionary;
+  begin
+    result := TPdfDictionary.CreateDictionary(Resources.ObjectMgr);
+    result.AddNumberItem('FunctionType', 2);
+    result.AddNumberItem('N', 1);
+    result.AddItem('Domain', CreateRealArray([0.0,1.0]));
+    result.AddItem('C0', ColorToArray(StartColor));
+    result.AddItem('C1', ColorToArray(EndColor));
+  end;
+begin
+  ObjectMgr := FPage.ObjectMgr;
+
+  // get or create a Pattern resource
+  Resources := FPage.PdfDictionaryByName('Resources');
+  if Resources=nil then begin
+    Resources := TPdfDictionary.CreateDictionary(ObjectMgr);
+    FPage.AddItem('Resources', Resources);
+  end;
+  patternResource := Resources.PdfDictionaryByName('Pattern');
+  if patternResource=nil then begin
+    patternResource := TPdfDictionary.CreateDictionary(ObjectMgr);
+    Resources.AddItem('Pattern', patternResource);
+  end;
+
+  // create a shading dictionary
+  Shading := TPdfDictionary.CreateDictionary(ObjectMgr);
+  Shading.AddNumberItem('ShadingType', shadingType);
+  Shading.AddNameItem('ColorSpace', 'DeviceRGB');
+  Shading.AddItem('Coords', CreateRealArray(Coords));
+  if Extends then
+    Shading.AddItem('Extends', CreateBoolArray(true, true));
+  Shading.AddItem('Function', CreateFunction2);
+  ObjectMgr.AddObject(Shading); // make it a reference
+
+  // create a shading pattern
+  Pattern := TPdfDictionary.CreateDictionary(ObjectMgr);
+  Pattern.AddNameItem('Type', 'Pattern');
+  Pattern.AddNumberItem('PatternType', 2);
+  Pattern.AddItem('Shading', Shading);
+
+  // add it to pattern resource
+  Gradient := 'Grad'+IntToStr(patternResource.ItemCount+1);
+  patternResource.AddItem(Gradient, Pattern);
+
+  // start using it
+  WriteString('/Pattern cs'#10);
+  WriteString('/'+Gradient+' scn'#10);
 end;
 
 { TPdfCanvas common routine }

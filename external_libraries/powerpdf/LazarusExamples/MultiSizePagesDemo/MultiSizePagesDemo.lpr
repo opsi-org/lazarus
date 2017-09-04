@@ -1,13 +1,13 @@
 program MultiSizePagesDemo;
 
-{.$MODE Delphi}
+{$MODE Delphi}
 
 uses
   Interfaces,
   Forms,
   UMultiSizeDocument in 'UMultiSizeDocument.pas' {Form1};
 
-{.$R *.RES}
+{$R *.res}
 
 begin
   Application.Initialize;

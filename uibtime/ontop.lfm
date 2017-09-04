@@ -1,7 +1,7 @@
 object FOnTop: TFOnTop
-  Left = 536
+  Left = 79
   Height = 239
-  Top = 467
+  Top = 485
   Width = 810
   BorderIcons = []
   BorderStyle = bsNone
@@ -17,7 +17,7 @@ object FOnTop: TFOnTop
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poDefault
-  LCLVersion = '1.6.2.0'
+  LCLVersion = '1.6.4.0'
   object ToolBar1: TToolBar
     Left = 0
     Height = 25
