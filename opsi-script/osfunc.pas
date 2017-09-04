@@ -1603,7 +1603,7 @@ begin
     except
       on e: Exception do
       begin
-        LogDatei.DependentAdd('Exception in StartProcess_se: ' +
+        LogDatei.log_prog('Exception in StartProcess_se: ' +
           e.message, LLError);
         exitcode := -1;
       end;

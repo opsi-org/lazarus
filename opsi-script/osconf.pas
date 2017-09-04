@@ -306,7 +306,8 @@ begin
                       if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
                       begin
                         osmain.startupmessages.Add('got debug_prog: ' + tmpstr);
-                        debug_prog := StrToBool(tmpstr);
+                        if not TryStrToBool(tmpstr, debug_prog) then
+                          osmain.startupmessages.Add('Error: Not a Boolean:  debug_prog: ' + tmpstr);
                         result := 'readConfigFromService: ok';
                       end;
                   end;
@@ -317,7 +318,8 @@ begin
                       if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
                       begin
                         osmain.startupmessages.Add('got debug_lib: ' + tmpstr);
-                        debug_lib := StrToBool(tmpstr);
+                        if not TryStrToBool(tmpstr, debug_lib) then
+                          osmain.startupmessages.Add('Error: Not a Boolean:  debug_lib: ' + tmpstr);
                         result := 'readConfigFromService: ok';
                       end;
                   end;
@@ -329,7 +331,8 @@ begin
                       if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
                       begin
                         osmain.startupmessages.Add('got default_loglevel: ' + tmpstr);
-                        default_loglevel := StrToInt(tmpstr);
+                        if not TryStrToInt(tmpstr, default_loglevel) then
+                          osmain.startupmessages.Add('Error: Not an Integer:  default_loglevel: ' + tmpstr);
                         result := 'readConfigFromService: ok';
                       end;
                   end;
@@ -342,8 +345,9 @@ begin
                       if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
                       begin
                         osmain.startupmessages.Add('got force_min_loglevel: ' + tmpstr);
-                        force_min_loglevel := StrToInt(tmpstr);
-                        result := 'readConfigFromService: ok';
+                        if not TryStrToInt(tmpstr, force_min_loglevel) then
+                          osmain.startupmessages.Add('Error: Not an Integer:  force_min_loglevel: ' + tmpstr);
+                        result := 'readConfigFromService: ok'
                       end;
                   end;
                 end;
