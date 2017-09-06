@@ -215,6 +215,8 @@ msgid "Dependencies / Priority"
 msgstr "Dependencies / Priority"
 
 #: tfopsiclientkiosk.titlelabel.caption
+#, fuzzy
+#| msgid "huhu"
 msgid "opsi Client Kiosk"
 msgstr "opsi Client Kiosk"
 

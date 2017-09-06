@@ -8,9 +8,9 @@ FontItalic = true
 FontUnderline = true
 
 [Tile]
-width = 300
-height = 180
-color =  cl3DLight
+Width = 300
+Height = 180
+Color =  cl3DLight
 FontName = Arial
 FontSize = 12
 FontColor = clBlack
@@ -19,8 +19,8 @@ FontItalic = false
 FontUnderline = false
 
 [TileRadio]
-fontsize = 10
-none_color = $00001A
-uninstall_color = $FF00FF
-setup_color = clLime
+Fontsize = 10
+None_color = $00001A
+Uninstall_color = $FF00FF
+Setup_color = clLime
 

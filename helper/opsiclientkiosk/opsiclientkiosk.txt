@@ -1,4 +1,12 @@
 
+opsiclientkiosk 4.0.7.10
+
+  * fixes for reading opsiclientkiosk.ini
+    All Section titles start with capital letter
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 06 Sep 2017 15:00:00 +0000
+
+
 opsiclientkiosk 4.0.7.9
 
   * minor fixes

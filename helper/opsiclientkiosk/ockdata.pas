@@ -500,6 +500,8 @@ end;
 
 
 function initLogging(const clientname: string): boolean;
+var
+  i : integer;
 begin
   Result := True;
   logdatei := TLogInfo.Create;
@@ -509,6 +511,9 @@ begin
   LogDatei.WriteHistFile:= False;
   logdatei.CreateTheLogfile(logfilename, False);
   logdatei.LogLevel := myloglevel;
+  for i := 0 to preLogfileLogList.Count-1 do
+    logdatei.log(preLogfileLogList.Strings[i], LLessential);
+  preLogfileLogList.Free;
   logdatei.log('opsi-client-kiosk: version: ' + myVersion, LLessential);
 end;
 
