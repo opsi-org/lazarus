@@ -981,8 +981,10 @@ end;
 procedure FindLocalIPData(var ipName: string; var address: string);
 type
   bytearray = array of byte;
+{$IFDEF WINDOWS}
 var
   myHostEnt : THostEnt;
+{$ENDIF WINDOWS}
 begin
   ipName := '';
   address := '';
