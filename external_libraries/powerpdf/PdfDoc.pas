@@ -2759,7 +2759,7 @@ begin
   if (FDoc = nil) or (not FDoc.HasDoc) then
     raise EPdfInvalidOperation.Create('TPdfDestination --cannot destination object.');
   FPage := FDoc.Canvas.Page;
-  for i := 0 to 4 do
+  for i := 0 to 3 do
     FValues[i] := 0;
   FZoom := 1;
 end;

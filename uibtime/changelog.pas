@@ -1,5 +1,14 @@
 (*
 
+uibtime (4.1.1.16-1) stable; urgency=low
+
+ * fix in external_libraries/powerpdf/PDFDoc/:
+   constructor TPdfDestination.Create
+   for i := 0 to 3 do
+
+-- detlef oertel <d.oertel@uib.de>  Thu, 06 Sep 2017 15:00:00 +0000
+
+
 uibtime (4.1.1.15-1) stable; urgency=low
 
  * ontop: handle projectStartTime with day <> 1
