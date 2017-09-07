@@ -28,6 +28,8 @@
 {$ENDIF}
 unit PdfImages;
 
+{$mode delphi}{$H+}
+
 interface
 
 {$IFDEF UNIX}

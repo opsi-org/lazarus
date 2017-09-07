@@ -159,7 +159,7 @@ var
 
   helperint: integer;
   suchevent: string;
-  monthsmod: integer;
+  monthsmod, monthdiv, acc_per_monthnum_int: integer;
   acc_per_monthnum: double;
   querystartdt, queryenddt, vondate, bisdate: TDateTime;
 begin
@@ -182,7 +182,7 @@ begin
     // other inits
     aktstartyear := 2001;
     aktstartmonth := 1;
-    DataModule1.debugOut(6, 'enter getLastIntervalInfo');
+    DataModule1.debugOut(6, 'getLastIntervalInfo', 'enter for :'+event);
     suchevent := event;
     querystartdt := StrToDate(querystartdate);
     queryenddt := StrToDate(queryenddate);
@@ -232,19 +232,22 @@ begin
       acc_per_monthnum := QueryProjektzeit.FieldByName('acc_per_monthnum').AsFloat;
       basemonth := trunc(acc_per_monthnum);
       projektstart := QueryProjektzeit.FieldByName('projectstart').AsDateTime;
+      DataModule1.debugOut(6, 'getLastIntervalInfo projektstart :'+DateToStr(projektstart));
       // if projektstart is in future we will not find anything
       if projektstart >= queryenddt then
       begin
         Result := False;
         DataModule1.debugOut(3, 'getLastIntervalInfo',
-          'Projektstart of: ' + suchevent + ' is in future');
+          'Projektstart of: ' + suchevent + ' is in "future": later or equal then end of searchinterval:'+DateToStr(queryenddt));
         Exit;
       end;
       //// startday of projekt end
       //projektstart := projektstart -1;
       // look for accounting boundaries (intervals)
       //todo (or not todo): work with fraktal month
-      monthsmod := trunc(acc_per_monthnum);
+      acc_per_monthnum_int := trunc(acc_per_monthnum);
+      monthsmod := acc_per_monthnum_int mod 12;
+      monthdiv := acc_per_monthnum_int div 12;
       // calculate last interval boundaries
       (*
       // look first for end version
@@ -289,8 +292,10 @@ begin
       // look first for start version
       decodeDate(querystartdt, year, month, day);
       decodeDate(projektstart, startyear, startmonth, startday);
-      helperint := month - ((12 * (year - startyear) + month - startmonth) mod
-        monthsmod);
+      helperint := month - ((12 * (year - startyear) + month - startmonth));
+      if  acc_per_monthnum_int > 0 then
+        helperint := month - ((12 * (year - startyear) + month - startmonth) mod
+        acc_per_monthnum_int);
       if helperint < 1 then
       begin
         aktstartyear := year - 1;
@@ -307,7 +312,7 @@ begin
         aktstartyear := aktstartyear + 1;
       end;
       endmonth := aktstartmonth + monthsmod;
-      endyear := aktstartyear;
+      endyear := aktstartyear + monthdiv;
       if endmonth > 12 then
       begin
         endmonth := endmonth - 12;
@@ -321,7 +326,9 @@ begin
 
       // here is the result for the last Interval
       lastIntervalStart := EncodeDate(aktstartyear, aktstartmonth, startday);
+      DataModule1.debugOut(6, 'getLastIntervalInfo', 'lastIntervalStart :'+DateToStr(lastIntervalStart));
       lastIntervalEnd := EncodeDate(endyear, endmonth, startday);
+      DataModule1.debugOut(6, 'getLastIntervalInfo', 'lastIntervalEnd :'+DateToStr(lastIntervalEnd));
       // are the interval boundaries in search intervall
       if (lastIntervalStart >= querystartdt) and (lastIntervalStart <= queryenddt) then
         intervalStartFound := True
@@ -421,7 +428,7 @@ begin
       used_min) + ' since 1.' + IntToStr(aktstartmonth) + '.' +
       IntToStr(aktstartyear);
     *)
-    DataModule1.debugOut(6, 'ProjektzeitTimer: ' + FloatToStr(total) +
+    DataModule1.debugOut(6, 'getLastIntervalInfo', 'ProjektzeitTimer: ' + FloatToStr(total) +
       '-' + FloatToStr(used) + '=' + floattostr(available));
     (*
     EditProjektzeit.Text := IntToStr(trunc(available)) + minute2str(available_min);
@@ -437,7 +444,7 @@ begin
     if QueryProjektzeit.Active then
       QueryProjektzeit.Close;
 
-    DataModule1.debugOut(6, 'leave getLastIntervalInfo');
+    DataModule1.debugOut(6, 'getLastIntervalInfo', 'leave');
     Result := True;
 
   except

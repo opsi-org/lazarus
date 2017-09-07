@@ -1,4 +1,29 @@
 (*
+
+uibtime (4.1.1.16-1) stable; urgency=low
+
+ * fix in external_libraries/powerpdf/PDFDoc/:
+   constructor TPdfDestination.Create
+   for i := 0 to 3 do
+
+-- detlef oertel <d.oertel@uib.de>  Thu, 06 Sep 2017 15:00:00 +0000
+
+
+uibtime (4.1.1.15-1) stable; urgency=low
+
+ * ontop: handle projectStartTime with day <> 1
+ * ontop: handle acc_per_monthnum  > 12
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 04 Sep 2017 15:00:00 +0000
+
+
+uibtime (4.1.1.14-1) stable; urgency=low
+
+ * uib2erp: more debugging
+ * uib2erp: handle acc_per_monthnum  > 12
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 15 Aug 2017 15:00:00 +0000
+
 uibtime (4.1.1.13-1) stable; urgency=low
 
  * uib2erp: StringGrid1DblClick: calculate ex gratia

@@ -428,18 +428,24 @@ type
   { TPRShape }
   TPRShape = class(TPRItem)
   private
+    FGradientDirection: TGradientDirection;
     FLineWidth: Single;
     FLineColor: TColor;
     FLineStyle: TPenStyle;
     FFillColor: TColor;
+    FGradientColor: TColor;
+    procedure SetGradientDirection(AValue: TGradientDirection);
     procedure SetLineColor(Value: TColor);
     procedure SetFillColor(Value: TColor);
     procedure SetLineWidth(Value: Single);
     procedure SetLineStyle(Value: TPenStyle);
+    procedure SetGradientColor(AValue: TColor);
     procedure StdFillOrStroke(ACanvas: TPdfCanvas);
   protected
     procedure SetDash(ACanvas: TPdfCAnvas; APattern: TPenStyle);
     function  IsFillable: boolean; virtual;
+    property GradientColor: TColor read FGradientColor write SetGradientColor default clNone;
+    property GradientDirection: TGradientDirection read FGradientDirection write SetGradientDirection default gdVertical;
   public
     constructor Create(AOwner: TComponent); override;
   published
@@ -462,6 +468,8 @@ type
     procedure Paint; override;
     procedure Print(ACanvas: TPRCanvas; ARect: TRect); override;
   published
+    property GradientColor;
+    property GradientDirection;
     property Radius: single read GetRadius write SetRadius;
     property SquaredCorners: TPdfCorners read FCorners write SetCorners default [];
   end;
@@ -2123,6 +2131,7 @@ begin
   inherited Create(AOwner);
   FLineColor := clBlack;
   FFillColor := clNone;
+  FGradientColor := clNone;
 end;
 
 // SetLineColor
@@ -2135,6 +2144,13 @@ begin
   end;
 end;
 
+procedure TPRShape.SetGradientDirection(AValue: TGradientDirection);
+begin
+  if FGradientDirection = AValue then Exit;
+  FGradientDirection := AValue;
+  Invalidate;
+end;
+
 // SetLineStyle
 procedure TPRShape.SetLineStyle(Value: TPenStyle);
 begin
@@ -2143,6 +2159,13 @@ begin
     FLineStyle := Value;
     Invalidate;
   end;
+end;
+
+procedure TPRShape.SetGradientColor(AValue: TColor);
+begin
+  if FGradientColor = AValue then Exit;
+  FGradientColor := AValue;
+  Invalidate;
 end;
 
 procedure TPRShape.StdFillOrStroke(ACanvas: TPdfCanvas);
@@ -2275,8 +2298,12 @@ begin
     begin
       Brush.Color := FFillColor;
       Brush.Style := bsSolid;
-      if ARadius=0 then
-        FillRect(ARect);
+      if ARadius=0 then begin
+        if GradientColor <> clNone then
+          GradientFill(ARect, ColorToRGB(FFillColor), ColorToRGB(GradientColor), GradientDirection)
+        else
+          FillRect(ARect);
+      end;
     end
     else
       Brush.Style := bsClear;
@@ -2287,7 +2314,7 @@ begin
       Pen.Width := Round(FLineWidth);
       Pen.Color := FLineColor;
       if ARadius=0 then
-        Polygon([Point(Left,Top), Point(Right,Top),
+        Polyline([Point(Left,Top), Point(Right,Top),
           Point(Right,Bottom), Point(Left,Bottom)]);
     end;
 
@@ -2325,6 +2352,15 @@ begin
 
     with ACanvas.PdfCanvas do
     begin
+
+      if self.GradientColor<>clNone then
+        case Self.GradientDirection of
+          gdVertical:
+            SetGradientFill(2, ColorToRGB(FillColor), ColorToRGB(GradientColor), [0,Top,0,Bottom]);
+          gdHorizontal:
+            SetGradientFill(2, ColorToRGB(FillColor), ColorToRGB(GradientColor), [Left,0,Right,0]);
+        end;
+
       if ARadius<>0.0 then
         RoundRect(Left, Bottom, Right-Left, Top-Bottom, ARadius, ARadius,
           SquaredCorners)
@@ -2343,7 +2379,10 @@ begin
       end;
     end;
 
-    StdFillOrStroke(ACanvas.PDFCanvas);
+    if self.GradientColor<>clNone then
+      ACanvas.PdfCanvas.ClosepathFillStroke
+    else
+      StdFillOrStroke(ACanvas.PDFCanvas);
   end;
 end;
 
