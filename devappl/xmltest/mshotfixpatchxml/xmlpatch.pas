@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, Buttons,
-  StdCtrls, ExtCtrls, osxmltdom,oslog, winpatchcollection, Dom, Inifiles;
+  StdCtrls, ExtCtrls, osxmltdom,myoslog, winpatchcollection, Dom, Inifiles;
 
 type
 
@@ -129,7 +129,7 @@ begin
     end;
     if patchItemList.Count>0 then result:=true;
   finally
-    logdatei.log('getFileLocationIds finished ',oslog.LLinfo);
+    logdatei.log('getFileLocationIds finished ',myoslog.LLinfo);
   end;
 end;
 
@@ -171,7 +171,7 @@ begin
     end;
   finally
     i:=  patchItemList.Count;
-    logdatei.log('getRevisionId finished ',oslog.LLinfo);
+    logdatei.log('getRevisionId finished ',myoslog.LLinfo);
   end;
 end;
 procedure TForm1.BitBtn1Click(Sender: TObject);
@@ -195,7 +195,7 @@ begin
         inifileName:=OpenDialog1.FileName;
         if inifilename <> '' then
           begin
-            logdatei.log('opening file: '+inifilename,oslog.LLinfo);
+            logdatei.log('opening file: '+inifilename,myoslog.LLinfo);
             // get sysVersion
             if (pos('_x64_', inifilename) > 0)
                then xVersion:='x64'
@@ -207,11 +207,11 @@ begin
         else
           begin
             Memo1.Append('no file ' + inifilename);
-            logdatei.log('no inifile', oslog.LLerror);
+            logdatei.log('no inifile', myoslog.LLerror);
             exit;
           end;
         for i:=0 to (cablist.Count-1) do
-          logdatei.log('cablist item ' + inttostr(i) + ' : ' + cablist[i],oslog.LLinfo);
+          logdatei.log('cablist item ' + inttostr(i) + ' : ' + cablist[i],myoslog.LLinfo);
         // open package.xml
         OpenDialog1.Filter:='xml-file | *.xml';
         OpenDialog1.Title:='Vorhandene package.xml öffnen';
@@ -229,24 +229,24 @@ begin
                Memo1.Append('Anzahl ChildNodes FileLocations:' + inttostr(childNode1.ChildNodes.Count));
                if getFileLocationIds(childnode1,Liste) then
                   begin
-                    logdatei.log('file location Ids found : ' + inttostr(Liste.Count) ,oslog.LLinfo)
+                    logdatei.log('file location Ids found : ' + inttostr(Liste.Count) ,myoslog.LLinfo)
                   end
                else
-                 logdatei.log('getFileLocationIds failed',oslog.LLwarning)
+                 logdatei.log('getFileLocationIds failed',myoslog.LLwarning)
             end
           else
-            logdatei.log('getUniqueChildNodeByName FileLocations failed',oslog.LLwarning);
+            logdatei.log('getUniqueChildNodeByName FileLocations failed',myoslog.LLwarning);
           //**********************************
           if getUniqueChildNodeByName(docelem,'Updates', childnode1) then
             if getRevisionId(childnode1,Liste) then
               begin
                 Memo1.Append('Collection, Items found : ' + inttostr(Liste.Count));
-                logdatei.log('Collection, Items found : ' + inttostr(Liste.Count), oslog.LLinfo);
+                logdatei.log('Collection, Items found : ' + inttostr(Liste.Count), myoslog.LLinfo);
                end
             else
-              logdatei.log('getRevisionId failed',oslog.LLwarning)
+              logdatei.log('getRevisionId failed',myoslog.LLwarning)
           else
-            logdatei.log('getUniqueChildNodeByName Updates failed',oslog.LLwarning);
+            logdatei.log('getUniqueChildNodeByName Updates failed',myoslog.LLwarning);
           memo1.Repaint;
           Application.ProcessMessages;
           osxmltdom.freeXmlDoc();
@@ -259,7 +259,7 @@ begin
             AssignFile(tfIn, langfilename);
             try
               reset(tfIn);
-              logdatei.log('opening file: '+ langfilename,oslog.LLinfo);
+              logdatei.log('opening file: '+ langfilename,myoslog.LLinfo);
               // read xml language file
               createXmlDocFromFile(langfilename);
               docelem:=getDocumentElement();
@@ -268,11 +268,11 @@ begin
                  if childnode1 <> NIL then
                   begin
                    Liste.Items[i].a_title := childnode1.TextContent;
-                   logdatei.log('Title : ' + Liste.Items[i].a_title,oslog.LLinfo);
+                   logdatei.log('Title : ' + Liste.Items[i].a_title,myoslog.LLinfo);
                    if (pos(xversion, Liste.Items[i].a_title) = 0) then // not found
-                     logdatei.log(xversion + ' not in title : ' + Liste.Items[i].a_title,oslog.LLwarning);
+                     logdatei.log(xversion + ' not in title : ' + Liste.Items[i].a_title,myoslog.LLwarning);
                    if (pos('Windows 10', Liste.Items[i].a_title) = 0) then // not found
-                     logdatei.log('Windows 10 not in title : ' + Liste.Items[i].a_title,oslog.LLwarning);
+                     logdatei.log('Windows 10 not in title : ' + Liste.Items[i].a_title,myoslog.LLwarning);
                    // get releaseid
                    if (pos('Version', Liste.Items[i].a_title) > 0) then
                      begin
@@ -295,25 +295,25 @@ begin
                  else
                    begin
                      Liste.Items[i].a_title := '';
-                     logdatei.log('Title not found',oslog.LLwarning);
+                     logdatei.log('Title not found',myoslog.LLwarning);
                    end;
                childnode1.Free;
                if getUniqueChildNodeByName(docelem,'Description', childnode1) then
                  if childnode1 <> NIL then
                   begin
                    Liste.Items[i].a_description := childnode1.TextContent;
-                   logdatei.log('Description : ' + Liste.Items[i].a_description,oslog.LLinfo);
+                   logdatei.log('Description : ' + Liste.Items[i].a_description,myoslog.LLinfo);
                   end
                  else
                    begin
                      Liste.Items[i].a_title := '';
-                     logdatei.log('Description not found',oslog.LLwarning);
+                     logdatei.log('Description not found',myoslog.LLwarning);
                    end;
               CloseFile(tfIn);
               osxmltdom.freeXmlDoc();
             except
                 on E: EInOutError do
-                 logdatei.log('File handling error occurred. Details: ' + E.Message, oslog.LLerror);
+                 logdatei.log('File handling error occurred. Details: ' + E.Message, myoslog.LLerror);
             end;
           end;
           for i:=0 to Liste.Count-1 do
@@ -326,21 +326,21 @@ begin
                       Liste.Items[i].a_description + ' : ' +
                       Liste.Items[i].a_releaseid  + ' : ' +
                       Liste.Items[i].a_installationtype
-                      , oslog.LLinfo);
+                      , myoslog.LLinfo);
           // patch ini-Datei
           if writePatchedInifile(inifileName, Liste) then
            begin
-             logdatei.log('success: patch inifile ' + inifilename, oslog.LLinfo);
+             logdatei.log('success: patch inifile ' + inifilename, myoslog.LLinfo);
              Memo1.Append('success: patch inifile ' + inifilename)
            end
           else
-            logdatei.log('patch inifile failed ' + sysutils.ExtractFilePath(inifilename) + sysutils.ExtractFileName(inifilename) +'_patched.ini', oslog.LLerror);
+            logdatei.log('patch inifile failed ' + sysutils.ExtractFilePath(inifilename) + sysutils.ExtractFileName(inifilename) +'_patched.ini', myoslog.LLerror);
         end
         else
-          logdatei.log('open packagefile, no filename ', oslog.LLwarning);
+          logdatei.log('open packagefile, no filename ', myoslog.LLwarning);
         inifile.Free;
      end
-   else logdatei.log('open inifile, no filename ', oslog.LLwarning);
+   else logdatei.log('open inifile, no filename ', myoslog.LLwarning);
   end
   finally
     Liste.Free;
@@ -349,7 +349,7 @@ end;
 
 procedure TForm1.closeBtnClick(Sender: TObject);
 begin
-  logdatei.log('end of logging ', oslog.LLinfo);
+  logdatei.log('end of logging ', myoslog.LLinfo);
   LogDatei.Close;
   Application.Terminate;
 end;
@@ -362,6 +362,6 @@ begin
   logfilename := 'xmlpatch.log';
   CreateTheLogfile(logfilename);
   logdatei.AktProduktId:='xmlpatch';
-  LogDatei.log('start logging',oslog.LLinfo);
+  LogDatei.log('start logging',myoslog.LLinfo);
 end.
 

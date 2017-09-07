@@ -130,11 +130,11 @@
         <IsPartOfProject Value="True"/>
       </Unit3>
       <Unit4>
-        <Filename Value="../common/oslog.pas"/>
+        <Filename Value="../common/osxml.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
       <Unit5>
-        <Filename Value="../common/osxml.pas"/>
+        <Filename Value="../common/myoslog.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit5>
     </Units>

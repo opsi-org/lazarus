@@ -7,7 +7,7 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, xmlpatch, winpatchCollection;
+  Forms, xmlpatch, winpatchCollection, myoslog;
 
 {$R *.res}
 
