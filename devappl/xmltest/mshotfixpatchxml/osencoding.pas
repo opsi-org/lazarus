@@ -45,7 +45,7 @@ var
 implementation
 
 uses
-  oslog;
+  myoslog;
 
 var
   i, k: integer;
