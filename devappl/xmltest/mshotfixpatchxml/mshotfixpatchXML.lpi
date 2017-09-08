@@ -101,6 +101,8 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
+        <CommandLineParams Value="-i //home/martina/Kunden_Projekte/uib/lazarus_beispiel/beispiele_xml/patchloader-data/w100_x64_glb.ini -p //home/martina/Kunden_Projekte/uib/lazarus_beispiel/beispiele_xml/patchloader-data/package.xml -l  //home/martina/Kunden_Projekte/uib/lazarus_beispiel/beispiele_xml"/>
+        <LaunchingApplication Use="True"/>
       </local>
     </RunParams>
     <RequiredPackages Count="1">
@@ -108,7 +110,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="6">
+    <Units Count="7">
       <Unit0>
         <Filename Value="mshotfixpatchXML.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -137,6 +139,10 @@
         <Filename Value="../common/myoslog.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit5>
+      <Unit6>
+        <Filename Value="cliapp.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit6>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

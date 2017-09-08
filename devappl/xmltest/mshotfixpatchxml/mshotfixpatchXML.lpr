@@ -6,15 +6,13 @@ uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
-  Interfaces, // this includes the LCL widgetset
-  Forms, xmlpatch, winpatchCollection, myoslog;
-
-{$R *.res}
+  Classes, SysUtils, CustApp,
+  xmlpatch, winpatchCollection, myoslog, cliapp;
 
 begin
-  RequireDerivedFormResource:=True;
-  Application.Initialize;
-  Application.CreateForm(TForm1, Form1);
+  Application:=TMyApplication.Create(nil);
   Application.Run;
+  writeln('logfile: ' + xmlpatch.logfilename);
+  Application.Free;
 end.
 

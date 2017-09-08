@@ -5,46 +5,27 @@ unit xmlpatch;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, Buttons,
-  StdCtrls, ExtCtrls, osxmltdom,myoslog, winpatchcollection, Dom, Inifiles;
+  Classes, SysUtils, FileUtil, CustApp,
+  osxmltdom,myoslog, winpatchcollection, Dom, Inifiles;
 
-type
 
-  { TForm1 }
 
-  TForm1 = class(TForm)
-    BitBtn1: TBitBtn;
-    closeBtn: TButton;
-    Memo1: TMemo;
-    OpenDialog1: TOpenDialog;
-    Panel1: TPanel;
-    procedure BitBtn1Click(Sender: TObject);
-    procedure closeBtnClick(Sender: TObject);
-  private
-    { private declarations }
-
-  public
-    { public declarations }
-  end;
+procedure openAndPatch(ininame,packagename :string);
+procedure initlog(logpath : string);
 
 var
-  Form1: TForm1;
   inifilename, packagefileName, logfilename: String;
   valuesTStringlist : TStringlist;
   inifile : TIniFile;
   cabList: TStringList;
 
+
 implementation
+uses
+  cliapp;
+
 
 {$R *.lfm}
-
-{ TForm1 }
-
-function memoToTStringlist (mymemo: TMemo) : TStringlist;
-begin
-  Result := TStringList.Create;
-  Result.Assign(mymemo.Lines);
-end;
 
 function createCablist(const inifilename: String) : TStringList ;
 var mycabList: TStringList;
@@ -58,7 +39,7 @@ begin
   try
     iniFile.ReadSections(sl);
   except
-    // TODO
+    logdatei.log('error in createCablist - ' + inifilename, myoslog.LLError);
   end;
   for i:=0 to (sl.Count-1) do
   begin
@@ -89,7 +70,7 @@ begin
                           patchItemList.Items[i].a_installationtype);
       result:=true;
     except
-      //TODO
+      logdatei.log('error in writePatchedInifile - ' + inifilename, myoslog.LLError);
     end;
   end;
 end;
@@ -174,7 +155,9 @@ begin
     logdatei.log('getRevisionId finished ',myoslog.LLinfo);
   end;
 end;
-procedure TForm1.BitBtn1Click(Sender: TObject);
+
+
+procedure openAndPatch(ininame,packagename :string);
 var childnode1, docelem: TDOMNode;
     Liste: TListe;
     i : integer;
@@ -184,49 +167,42 @@ var childnode1, docelem: TDOMNode;
 begin
   try
   begin
-    Memo1.Clear;
     Liste := TListe.Create;
-    // open inifile
-    OpenDialog1.Filter:='ini-file | *.ini';
-    OpenDialog1.Title:='Vorhandene ini-Datei öffnen';
-    if OpenDialog1.Execute then
-      begin
-        inifilename:='';
-        inifileName:=OpenDialog1.FileName;
+    inifileName:=ininame;
+    if FileExists(inifileName) then
+    begin
         if inifilename <> '' then
           begin
             logdatei.log('opening file: '+inifilename,myoslog.LLinfo);
+            writeln('opening file: '+inifilename);
             // get sysVersion
             if (pos('_x64_', inifilename) > 0)
                then xVersion:='x64'
             else if (pos('_x86_', inifilename) > 0)
                then xVersion:='x86';
             cabList:=createCablist(inifilename);
-            Memo1.Append('ini file ' + inifilename);
           end
         else
           begin
-            Memo1.Append('no file ' + inifilename);
             logdatei.log('no inifile', myoslog.LLerror);
             exit;
           end;
         for i:=0 to (cablist.Count-1) do
-          logdatei.log('cablist item ' + inttostr(i) + ' : ' + cablist[i],myoslog.LLinfo);
-        // open package.xml
-        OpenDialog1.Filter:='xml-file | *.xml';
-        OpenDialog1.Title:='Vorhandene package.xml öffnen';
-        if OpenDialog1.Execute then
         begin
-          packagefileName:=OpenDialog1.FileName;
-          logdatei.log('opening file: '+packagefileName,5);
+          logdatei.log('cablist item ' + inttostr(i) + ' : ' + cablist[i],myoslog.LLinfo);
+          writeln('cablist item ' + inttostr(i) + ' : ' + cablist[i]);
+        end;
+        // open package.xml
+        packagefileName:=packagename;
+        if FileExists(packagefileName) then
+        begin
+          logdatei.log('opening file: '+packagefileName,myoslog.LLinfo);
+          writeln('opening file: '+packagefileName);
           createXmlDocFromFile(packagefileName);
-          Memo1.Append('read file ' + packagefileName);
           docelem:=getDocumentElement();
-          Memo1.Append('DocNodeName ' + getDocNodeName);
           if getUniqueChildNodeByName(docelem,'FileLocations', childnode1) then
             begin
               if childnode1<>NIL then
-               Memo1.Append('Anzahl ChildNodes FileLocations:' + inttostr(childNode1.ChildNodes.Count));
                if getFileLocationIds(childnode1,Liste) then
                   begin
                     logdatei.log('file location Ids found : ' + inttostr(Liste.Count) ,myoslog.LLinfo)
@@ -240,22 +216,18 @@ begin
           if getUniqueChildNodeByName(docelem,'Updates', childnode1) then
             if getRevisionId(childnode1,Liste) then
               begin
-                Memo1.Append('Collection, Items found : ' + inttostr(Liste.Count));
                 logdatei.log('Collection, Items found : ' + inttostr(Liste.Count), myoslog.LLinfo);
                end
             else
               logdatei.log('getRevisionId failed',myoslog.LLwarning)
           else
             logdatei.log('getUniqueChildNodeByName Updates failed',myoslog.LLwarning);
-          memo1.Repaint;
-          Application.ProcessMessages;
           osxmltdom.freeXmlDoc();
-          //Memo1.Clear;
+
           for i:=0 to Liste.Count-1 do
           begin
             filepath:=ExtractFilePath(packagefileName);
             langfilename:=filepath + 'l' +PathDelim + Liste.Items[i].a_defaultlang + PathDelim +  Liste.Items[i].a_filename;
-            Memo1.Append('languagefile : ' + langfilename);
             AssignFile(tfIn, langfilename);
             try
               reset(tfIn);
@@ -328,40 +300,79 @@ begin
                       Liste.Items[i].a_installationtype
                       , myoslog.LLinfo);
           // patch ini-Datei
+          inifileName:= sysutils.ExtractFilePath(inifilename) +
+              copy(sysutils.ExtractFileName(inifilename),1,pos('.',sysutils.ExtractFileName(inifilename))-1) +'_patched.ini';
           if writePatchedInifile(inifileName, Liste) then
            begin
              logdatei.log('success: patch inifile ' + inifilename, myoslog.LLinfo);
-             Memo1.Append('success: patch inifile ' + inifilename)
+             writeln('success: patch inifile ' + inifilename);
            end
           else
-            logdatei.log('patch inifile failed ' + sysutils.ExtractFilePath(inifilename) + sysutils.ExtractFileName(inifilename) +'_patched.ini', myoslog.LLerror);
+          begin
+            logdatei.log('patch inifile failed ' + inifilename, myoslog.LLerror);
+            writeln('failed: patch inifile ' + inifilename);
+          end
         end
         else
-          logdatei.log('open packagefile, no filename ', myoslog.LLwarning);
+        begin
+          logdatei.log('open packagefile: no valid filename or file does not exist - ' + packagefilename, myoslog.LLError);
+          Application.WriteHelp;
+          Application.Terminate;
+          Exit;
+        end;
         inifile.Free;
      end
-   else logdatei.log('open inifile, no filename ', myoslog.LLwarning);
+   else
+   begin
+     logdatei.log('open inifile: no valid filename or file does not exist - ' + inifilename, myoslog.LLError);
+     Application.WriteHelp;
+     Application.Terminate;
+     Exit;
+   end
   end
   finally
     Liste.Free;
   end;
 end;
 
-procedure TForm1.closeBtnClick(Sender: TObject);
-begin
-  logdatei.log('end of logging ', myoslog.LLinfo);
-  LogDatei.Close;
-  Application.Terminate;
-end;
 
+procedure initlog(logpath : string);
 begin
+  //default
   logdatei := Tloginfo.Create;
   StandardMainLogPath:='/tmp';
-  StandardPartLogPath := '/tmp';
+  StandardPartLogPath :='/tmp';
   StandardPartLogFilename := 'xmlpatch';
+  if logpath<>'' then
+  begin
+    if directoryExists(logpath) then
+    begin
+      StandardMainLogPath:=logpath;
+      StandardPartLogPath :=logpath;
+    end
+    else
+      if not(createDir(logpath)) then
+      begin
+        writeln('can not create directory ' + logpath);
+        Application.WriteHelp;
+        Application.Terminate;
+        Exit;
+      end
+      else
+      begin
+       StandardMainLogPath:=logpath;
+       StandardPartLogPath :=logpath;
+      end;
+  end;
+  writeln ('logpath: ' + StandardMainLogPath);
+
   logfilename := 'xmlpatch.log';
   CreateTheLogfile(logfilename);
   logdatei.AktProduktId:='xmlpatch';
-  LogDatei.log('start logging',myoslog.LLinfo);
+  LogDatei.log('start mshotfixpatchxml',myoslog.LLinfo);
+end;
+
+begin
 end.
+end;
 
