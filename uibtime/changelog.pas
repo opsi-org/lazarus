@@ -1,5 +1,12 @@
 (*
 
+uibtime (4.1.1.18-1) stable; urgency=low
+
+ * add trayicon
+
+-- detlef oertel <d.oertel@uib.de>  Son, 10 Sep 2017 15:00:00 +0000
+
+
 uibtime (4.1.1.17-1) stable; urgency=low
 
  * mov lazreport dir to  git project lazarus:

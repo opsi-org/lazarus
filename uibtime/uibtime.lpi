@@ -19,7 +19,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="16"/>
+      <BuildNr Value="18"/>
       <Language Value="0407"/>
       <StringTable Comments="lazarus 1.6.4 fpc 3.0.2" CompanyName="uib gmbh" InternalName="uibtime.exe" LegalCopyright="GPL v3" ProductName="uibtime" ProductVersion="4.0.0"/>
     </VersionInfo>
@@ -34,7 +34,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="C:\lazarus\components\lazreport\source\addons\pdfexport\;..\external_libraries\powerpdf"/>
+            <OtherUnitFiles Value="C:\lazarus\components\lazreport\source\addons\pdfexport;..\external_libraries\powerpdf"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -79,11 +79,11 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="uibtime.exe" ApplyConventions="False"/>
+            <Filename Value="uibtime"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="C:\lazarus\components\lazreport\source\addons\pdfexport\;..\external_libraries\powerpdf"/>
+            <OtherUnitFiles Value="..\external_libraries\powerpdf;..\lazlib\lazreport\source\addons\pdfexport"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -138,7 +138,7 @@
         <FormatVersion Value="1"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="10">
+    <RequiredPackages Count="9">
       <Item1>
         <PackageName Value="pack_powerpdf"/>
       </Item1>
@@ -152,23 +152,20 @@
         <PackageName Value="lazreportpdfexport"/>
       </Item4>
       <Item5>
-        <PackageName Value="lrEmailExport"/>
+        <PackageName Value="lazreport"/>
       </Item5>
       <Item6>
-        <PackageName Value="lazreport"/>
+        <PackageName Value="Printer4Lazarus"/>
       </Item6>
       <Item7>
-        <PackageName Value="Printer4Lazarus"/>
+        <PackageName Value="FCL"/>
       </Item7>
       <Item8>
-        <PackageName Value="FCL"/>
+        <PackageName Value="SQLDBLaz"/>
       </Item8>
       <Item9>
-        <PackageName Value="SQLDBLaz"/>
-      </Item9>
-      <Item10>
         <PackageName Value="LCL"/>
-      </Item10>
+      </Item9>
     </RequiredPackages>
     <Units Count="21">
       <Unit0>
@@ -316,7 +313,7 @@
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="uibtime"/>
+      <Filename Value="uibtime" ApplyConventions="False"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>

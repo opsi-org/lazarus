@@ -25,7 +25,8 @@ uses
   runprocess,
   httpservice,
   uibtWorkRepChooser,
-  uib2erp;
+  uib2erp,
+  Variants;
 
 type
 
@@ -52,9 +53,13 @@ type
     Arbeitsberichte: TMenuItem;
     Query_day_report: TSQLQuery;
     Query4Result: TSQLQuery;
+    TrayQuery2: TSQLQuery;
+    TrayQuery1: TSQLQuery;
     SQLTransaction2: TSQLTransaction;
     SQqueryloggedin: TSQLQuery;
     SQwork_description: TSQLQuery;
+    TimerTrayIcon: TTimer;
+    TrayIcon1: TTrayIcon;
     ZeigenurmeineProjekte1: TMenuItem;
     schmaleLeiste: TMenuItem;
     LeisteNeuAufbauen1: TMenuItem;
@@ -139,6 +144,7 @@ type
     procedure TimerLogoffOnTopTimer(Sender: TObject);
     procedure TimerOnTopTimer(Sender: TObject);
     procedure TimerQueryLoggedInTimer(Sender: TObject);
+    procedure TimerTrayIconTimer(Sender: TObject);
     procedure uibtime2erpClick(Sender: TObject);
     procedure Weristda1Click(Sender: TObject);
     procedure ZeigenurmeineProjekte1Click(Sender: TObject);
@@ -1115,6 +1121,104 @@ procedure TDataModule1.TimerQueryLoggedInTimer(Sender: TObject);
 begin
   debugOut(8,'TimerQueryLoggedInTimer', 'start ');
   getLoggedInList(Floggedin.ListBox1.Items, False);
+end;
+
+function reportmissing(startt, stopt : TDateTime; missinglist : Tstringlist; addNotMissing: boolean) : boolean;
+var
+ laststartt, laststopt : TDateTime;
+ //startt, stopt : TDateTime;
+ sumtime, firststartt : TDatetime;
+ uname, event  : String;
+ //starttime, stoptime : String;
+ year, month, day: word;
+
+begin
+  result := false;
+  missinglist := Tstringlist.create;
+  // start looking for missing reports
+  sumtime := 0;
+  //starttime :=
+  //startt := now;
+  //stoptime := now+1;
+  //stopt := now+1;
+  if Datamodule1.SQQueryuibevent.Active then Datamodule1.SQQueryuibevent.Close;
+  Datamodule1.SQQueryuibevent.sql.Clear;
+  Datamodule1.SQQueryuibevent.sql.Add('select * from uibevent ');
+  Datamodule1.SQQueryuibevent.sql.Add('where ');
+  Datamodule1.SQQueryuibevent.sql.Add('(userid = :uid) and ');
+  Datamodule1.SQQueryuibevent.sql.Add('(starttime >= :start) and ');
+  Datamodule1.SQQueryuibevent.sql.Add('(starttime < :stop) ');
+  Datamodule1.SQQueryuibevent.sql.Add('order by starttime ');
+  Datamodule1.SQQueryuibevent.ParamByName('uid').AsString := uid;
+  Datamodule1.SQQueryuibevent.ParamByName('start').AsDateTime := startt;
+  Datamodule1.SQQueryuibevent.ParamByName('stop').AsDateTime := stopt;
+  Datamodule1.SQQueryuibevent.open;
+  Datamodule1.SQQueryuibevent.first;
+  laststartt := Datamodule1.SQQueryuibevent.fieldbyname('starttime').asdatetime;
+  firststartt := laststartt;
+  laststopt := Datamodule1.SQQueryuibevent.fieldbyname('stoptime').asdatetime;
+  //if not (combobox1.Text = 'Summe Alle') then
+  //  Datamodule1.SQuibevent.Locate('starttime;stoptime', VarArrayOf([laststartt,laststopt]), [loCaseInsensitive,loPartialKey])
+  //else
+    Datamodule1.SQuibevent.Locate('userid;starttime;stoptime', VarArrayOf([uid,laststartt,laststopt]), [loCaseInsensitive,loPartialKey]);
+  //Datamodule1.SQQueryuibevent.close;
+  sumtime := laststopt - laststartt;
+  //Datamodule1.SQuibevent.next;
+  // query for event that need a report
+  Datamodule1.TrayQuery1.sql.Clear;
+  Datamodule1.TrayQuery1.sql.Add('select event from uibaktevent where');
+  Datamodule1.TrayQuery1.sql.Add(' reportrequired = 1');
+  Datamodule1.TrayQuery1.open;
+  decodeDate(laststartt, year, month, day);
+  Datamodule1.TrayQuery2.sql.Clear;
+  Datamodule1.TrayQuery2.sql.Add('select * from UIB_WORK_DESCRIPTION where ');
+  Datamodule1.TrayQuery2.sql.Add('(jahr >= :year) and ');
+  Datamodule1.TrayQuery2.sql.Add('(monat >= :month) and ');
+  Datamodule1.TrayQuery2.sql.Add('(tag >= :day) and ');
+  Datamodule1.TrayQuery2.sql.Add('(userid = :uid) and ');
+  Datamodule1.TrayQuery2.sql.Add('(not (description = ""))  ');
+  Datamodule1.TrayQuery2.ParamByName('year').AsInteger := year;
+  Datamodule1.TrayQuery2.ParamByName('month').AsInteger := month;
+  Datamodule1.TrayQuery2.ParamByName('day').AsInteger := day;
+  Datamodule1.TrayQuery2.ParamByName('uid').AsString := uid;
+  Datamodule1.TrayQuery2.open;
+
+  while not Datamodule1.SQQueryuibevent.eof do
+  begin
+   uname := Datamodule1.SQQueryuibevent.fieldbyname('userid').asString;
+   startt := Datamodule1.SQQueryuibevent.fieldbyname('starttime').asdatetime;
+   event := Datamodule1.SQQueryuibevent.fieldbyname('event').asString;
+   decodeDate(startt, year, month, day);
+   if  Datamodule1.TrayQuery1.Locate('event',event,[loCaseInsensitive]) then
+   begin
+     if missinglist.IndexOf(event) < 0 then
+     begin
+       if not Datamodule1.TrayQuery2.Locate('userid;jahr;monat;tag;event',
+                          VarArrayOf([uname, year, month, day, event]),[loCaseInsensitive]) then
+       begin
+          missinglist.Add(event);
+          result := true;
+       end;
+     end;
+   end;
+   Datamodule1.SQQueryuibevent.next;
+  end;
+  Datamodule1.TrayQuery1.close;
+  Datamodule1.TrayQuery2.close;
+  Datamodule1.SQQueryuibevent.close;
+  // end looking for missing reports
+end;
+
+procedure TDataModule1.TimerTrayIconTimer(Sender: TObject);
+var missinglist : Tstringlist;
+begin
+  missinglist := Tstringlist.Create;
+  if reportmissing(now, now+1,missinglist,false) then
+  begin
+    TrayIcon1.BalloonHint:='Report missing: '+ missinglist.Text;
+    TrayIcon1.ShowBalloonHint;
+  end;
+  missinglist.Free;
 end;
 
 procedure TDataModule1.uibtime2erpClick(Sender: TObject);
