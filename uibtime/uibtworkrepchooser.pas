@@ -8,7 +8,8 @@ uses
   Classes, SysUtils, FileUtil, LR_Class, LR_DBSet,
   //LR_View,
   LR_E_CSV, LR_Desgn,
-  lrEmailExportFilter, lr_e_pdf, Forms, Controls, Graphics, Dialogs, StdCtrls,
+  //lrEmailExportFilter,
+  lr_e_pdf, Forms, Controls, Graphics, Dialogs, StdCtrls,
   ExtCtrls,
   //Spin,
   Buttons, EditBtn, db, sqldb, Variants, DateUtils;

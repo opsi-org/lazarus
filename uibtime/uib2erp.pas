@@ -7,7 +7,9 @@ interface
 uses
   Classes, SysUtils, sqldb, FileUtil, Forms, Controls, Graphics, Dialogs,
   ExtCtrls, StdCtrls, PairSplitter, DBGrids, Grids, Buttons, LR_Class, LR_DBSet,
-  {LR_View, LR_E_CSV,} lrEmailExportFilter, lr_e_pdf, {Spin,} EditBtn, ExtDlgs,
+  {LR_View, LR_E_CSV,}
+  //lrEmailExportFilter,
+  lr_e_pdf, {Spin,} EditBtn, ExtDlgs,
   DBCtrls, MaskEdit, ComCtrls, DB, Variants, DateUtils, {Math, debug,} Result;
 
 type
@@ -41,9 +43,9 @@ type
     Edit2: TDateEdit;
     DBGrid1: TDBGrid;
     EditButtonExportDir: TEditButton;
-    frDBDataSet1: TfrDBDataSet;
-    frReport1: TfrReport;
-    frTNPDFExport1: TfrTNPDFExport;
+    //frDBDataSet1: TfrDBDataSet;
+    //frReport1: TfrReport;
+    //frTNPDFExport1: TfrTNPDFExport;
     Label1: TLabel;
     Label2: TLabel;
     Label4: TLabel;
@@ -124,6 +126,9 @@ type
 
 var
   Fuibtime2erp: TFuibtime2erp;
+  frDBDataSet1: TfrDBDataSet;
+  frReport1: TfrReport;
+  frTNPDFExport1: TfrTNPDFExport;
 
 implementation
 
@@ -1552,4 +1557,8 @@ end;
 begin
   for rowcounter := 0 to 1024 do
     rowcolor[rowcounter] := clWindow;
+
+  frDBDataSet1:= TfrDBDataSet.Create(Fuibtime2erp);
+  frReport1:= TfrReport.Create(Fuibtime2erp);
+  frTNPDFExport1:= TfrTNPDFExport.Create(Fuibtime2erp);
 end.

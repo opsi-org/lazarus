@@ -1,5 +1,17 @@
 (*
 
+uibtime (4.1.1.17-1) stable; urgency=low
+
+ * mov lazreport dir to  git project lazarus:
+   lazarus/lazlib/lazreport/
+   fix in lr_e_pdf.pas
+   add path to project
+ * may now compiled without any installations to lazarus
+
+
+-- detlef oertel <d.oertel@uib.de>  Son, 10 Sep 2017 15:00:00 +0000
+
+
 uibtime (4.1.1.16-1) stable; urgency=low
 
  * fix in external_libraries/powerpdf/PDFDoc/:
