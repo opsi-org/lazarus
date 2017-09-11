@@ -1123,7 +1123,7 @@ begin
   getLoggedInList(Floggedin.ListBox1.Items, False);
 end;
 
-function reportmissing(startt, stopt : TDateTime; missinglist : Tstringlist; addNotMissing: boolean) : boolean;
+function reportmissing(startt, stopt : TDateTime; var missinglist : Tstringlist; addNotMissing: boolean) : boolean;
 var
  laststartt, laststopt : TDateTime;
  //startt, stopt : TDateTime;
@@ -1134,7 +1134,7 @@ var
 
 begin
   result := false;
-  missinglist := Tstringlist.create;
+  //missinglist := Tstringlist.create;
   // start looking for missing reports
   sumtime := 0;
   //starttime :=
@@ -1212,13 +1212,16 @@ end;
 procedure TDataModule1.TimerTrayIconTimer(Sender: TObject);
 var missinglist : Tstringlist;
 begin
+  debugOut(6,'trayicon', 'start trytimer ');
   missinglist := Tstringlist.Create;
-  if reportmissing(now, now+1,missinglist,false) then
+  if reportmissing(date, now,missinglist,false) then
   begin
-    TrayIcon1.BalloonHint:='Report missing: '+ missinglist.Text;
+    debugOut(6,'trayicon', 'Report missing: '+ missinglist.Text);
+    TrayIcon1.BalloonHint:='Report missing: '+LineEnding + missinglist.Text;
     TrayIcon1.ShowBalloonHint;
   end;
   missinglist.Free;
+  debugOut(6,'trayicon', 'stop trytimer ');
 end;
 
 procedure TDataModule1.uibtime2erpClick(Sender: TObject);
@@ -1612,7 +1615,7 @@ begin
   writeVerinfoToLog(logfeil);
   writeln(logfeil,Fdebug.Memo1.Lines.Text);
   closeFile(logfeil);
-
+  TimerTrayIcon.Enabled:=true;
 end;
 
 procedure TDataModule1.TerminateApplication;

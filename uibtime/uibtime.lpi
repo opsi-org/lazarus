@@ -34,7 +34,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="C:\lazarus\components\lazreport\source\addons\pdfexport\;..\external_libraries\powerpdf"/>
+            <OtherUnitFiles Value="..\external_libraries\powerpdf;..\lazlib\lazreport\source\addons\pdfexport"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -138,34 +138,31 @@
         <FormatVersion Value="1"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="9">
+    <RequiredPackages Count="8">
       <Item1>
-        <PackageName Value="pack_powerpdf"/>
+        <PackageName Value="lazreportpdfexport"/>
       </Item1>
       <Item2>
-        <PackageName Value="DateTimeCtrls"/>
+        <PackageName Value="lazreport"/>
       </Item2>
       <Item3>
-        <PackageName Value="lazdbexport"/>
+        <PackageName Value="pack_powerpdf"/>
       </Item3>
       <Item4>
-        <PackageName Value="lazreportpdfexport"/>
+        <PackageName Value="DateTimeCtrls"/>
       </Item4>
       <Item5>
-        <PackageName Value="lazreport"/>
+        <PackageName Value="Printer4Lazarus"/>
       </Item5>
       <Item6>
-        <PackageName Value="Printer4Lazarus"/>
+        <PackageName Value="FCL"/>
       </Item6>
       <Item7>
-        <PackageName Value="FCL"/>
+        <PackageName Value="SQLDBLaz"/>
       </Item7>
       <Item8>
-        <PackageName Value="SQLDBLaz"/>
-      </Item8>
-      <Item9>
         <PackageName Value="LCL"/>
-      </Item9>
+      </Item8>
     </RequiredPackages>
     <Units Count="21">
       <Unit0>
@@ -317,6 +314,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
+      <OtherUnitFiles Value="..\external_libraries\powerpdf;..\lazlib\lazreport\source\addons\pdfexport"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>

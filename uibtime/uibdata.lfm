@@ -2,8 +2,8 @@ object DataModule1: TDataModule1
   OnCreate = DataModuleCreate
   OldCreateOrder = False
   Height = 541
-  HorizontalOffset = 232
-  VerticalOffset = 399
+  HorizontalOffset = 484
+  VerticalOffset = 412
   Width = 894
   object IBConnection1: TIBConnection
     Connected = False
@@ -1128,7 +1128,8 @@ object DataModule1: TDataModule1
     top = 24
   end
   object TimerTrayIcon: TTimer
-    Interval = 600000
+    Enabled = False
+    Interval = 60000
     OnTimer = TimerTrayIconTimer
     left = 706
     top = 82
