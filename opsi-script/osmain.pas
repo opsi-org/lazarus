@@ -222,6 +222,7 @@ var
   scriptlist: TXStringList;
   usercontext: string;
   batchproductid: string = '';  //id of product we are running in batch mode
+  logproductid: string = '';  //id of product used for logging in batch mode without service
   usercontextSID: string;
   usercontextUser: string;
   usercontextDomain: string;
@@ -1789,6 +1790,7 @@ begin
         '	 [<Scriptfile>  ['
              + ParamDelim + 'logfile <LogFile>] ['
              + ParamDelim + 'productid <productid> ] ['
+             + ParamDelim + 'logproductid <productid> ] ['
              + ParamDelim + '[batch|silent] |histolist Inifilepath ] ['
              + ParamDelim + 'parameter ParameterString]' + LineEnding +
         '	 Scriptfile[;Scriptfile]*  ['
@@ -1796,6 +1798,7 @@ begin
              + ParamDelim + 'lang langcode] ['
              + ParamDelim + '[batch|silent]] ['
              + ParamDelim + 'productid] ['
+             + ParamDelim + 'productid <productid> ] ['
              + ParamDelim + 'parameter ParameterString]',
         [mrOk],
         650, 250);
@@ -1819,12 +1822,14 @@ begin
         ' Scriptfile  ['
              + ParamDelim + 'logfile <LogFile>] ['
              + ParamDelim + 'productid <productid> ] ['
+             + ParamDelim + 'productid <productid> ] ['
              + ParamDelim + '[batch|silent] | histolist Inifilepath ] ['
              + ParamDelim + 'parameter ParameterString]' + LineEnding +
         ' Scriptfile[;Scriptfile]*  ['
              + ParamDelim + 'logfile LogFile] ['
              + ParamDelim + '[batch|silent]] ['
              + ParamDelim + 'productid] ['
+             + ParamDelim + 'productid <productid> ] ['
              + ParamDelim + 'parameter ParameterString]');
       {$ENDIF GUI}
 
@@ -2014,6 +2019,17 @@ begin
           begin
             LogDatei.LogProduktId:=true;
             LogDatei.AktProduktId:=batchproductid;
+          end;
+
+          if logproductid = '' then
+          begin
+            LogDatei.LogProduktId:=false;
+            LogDatei.AktProduktId:='';
+          end
+          else
+          begin
+            LogDatei.LogProduktId:=true;
+            LogDatei.AktProduktId:=logproductid;
           end;
 
           // Are we in batch with /productid (opsi-template-with-admin) ?
@@ -2789,6 +2805,28 @@ begin
             exit;
           end;
         end
+
+        else if Lowercase(Parameter) = 'logproductid' then
+        begin
+          Inc(i);
+          if i <= ParamListe.Count then
+          begin
+            r := ParamListe.Strings[i - 1];
+            if r[1] = ParamDelim then
+            begin
+              ProgramMode := pmInfo;
+              exit;
+            end;
+            logproductid := r;
+            Inc(i);
+          end
+          else
+          begin
+            ProgramMode := pmInfo;
+            exit;
+          end;
+        end
+
 
         else if Lowercase(Parameter) = 'batch' then
         begin
