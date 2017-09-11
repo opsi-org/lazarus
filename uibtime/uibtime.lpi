@@ -34,7 +34,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="C:\lazarus\components\lazreport\source\addons\pdfexport;..\external_libraries\powerpdf"/>
+            <OtherUnitFiles Value="C:\lazarus\components\lazreport\source\addons\pdfexport\;..\external_libraries\powerpdf"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
