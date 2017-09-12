@@ -1,4 +1,11 @@
 
+opsiclientkiosk 4.0.7.11
+
+  * opsiclientkioskgui: fixes initializing title
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 12 Sep 2017 15:00:00 +0000
+
+
 opsiclientkiosk 4.0.7.10
 
   * fixes for reading opsiclientkiosk.ini

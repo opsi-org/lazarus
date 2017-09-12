@@ -13,7 +13,8 @@ uses
   fileinfo,
   winpeimagereader,
   superobject,
-  lcltranslator;
+  lcltranslator,
+  windows;
 
 type
 
@@ -53,6 +54,23 @@ resourcestring
 implementation
 
 {$R *.lfm}
+
+function GetSystemDefaultLocale(const typeOfValue: DWord): string;
+  // possible values: cf. "Locale Types" in windows.pas
+var
+  buffer: PChar;
+  size: word = 0;
+  usedsize: word = 0;
+
+begin
+  Result := '';
+  size := 101;
+  Buffer := StrAlloc(101);
+  usedsize := GetLocaleInfo(LOCALE_SYSTEM_DEFAULT, typeOfValue, buffer, size);
+  if usedsize <> 0 then
+    Result := StrPas(Buffer);
+end;
+
 
 function MyOpsiMethodCall(const method: string; parameters: array of string): string;
 var
@@ -266,6 +284,7 @@ var
   lfilename: string;
   logAndTerminate: boolean = False;
   service_url_port : string;
+  mylang : string;
 begin
   checkIntervall := 0;
   myNotifyFormat := 'productid : request';
@@ -337,8 +356,13 @@ begin
   end;
 
 
-  GetDefaultLang;
+  mylang := GetDefaultLang;
+  if Mylang = '' then
+    mylang := LowerCase(copy (GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
+  SetDefaultLang(mylang);
+  preloglist.Add('Detected default lang: ' + mylang);
   preloglist.Add('Detected default lang: ' + GetDefaultLang);
+
   if Application.HasOption('lang') then
   begin
     preloglist.Add('Found Parameter lang');
