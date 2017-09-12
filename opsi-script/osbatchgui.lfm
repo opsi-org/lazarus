@@ -18,6 +18,7 @@ object FBatchOberflaeche: TFBatchOberflaeche
   OnMouseUp = FormMouseUp
   OnResize = FormResize
   Position = poScreenCenter
+  LCLVersion = '1.6.4.0'
   object PanelFillScreen: TPanel
     Left = 0
     Height = 520

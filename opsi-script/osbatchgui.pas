@@ -838,12 +838,14 @@ begin
   LabelName.Font.Handle := CreateFontIndirect(tagLOGFONT);
 end;
 
+{$ENDIF WINDOWS}
+
 procedure TFBatchOberflaeche.FormActivate(Sender: TObject);
 begin
   ForceStayOnTop(BatchScreenOnTop);
 end;
 
-{$ENDIF WINDOWS}
+
 
 procedure TFBatchOberflaeche.ForceStayOnTop(YesNo: boolean);
 begin

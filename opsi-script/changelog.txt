@@ -9,6 +9,7 @@ opsi-winst/opsi-script (4.12.0.5) stable; urgency=low
 
   * osmain / osinteractivegui: new cli argument /logproductid
     just used for logging, do not try to get data from service
+  * osbatchGUI: TFBatchOberflaeche.FormActivate also for Linux
 
 -- Detlef Oertel <d.oertel@uib.de>  Mon, 11 Sep 2017:15:00:00 +0200
 
