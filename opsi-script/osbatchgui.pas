@@ -75,8 +75,8 @@ type
     //procedure WMEraseB kGnd (var t:tmessage); message WM_ERASEBKGND;
     {$IFDEF WINDOWS}
     procedure EnableFontSmoothing(LabelName: TLabel);
-    procedure FormActivate(Sender: TObject);
     {$ENDIF WINDOWS}
+    procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure ProgressBarActive(YesNo: boolean);
     procedure ShowProgress(Prozente: integer);
