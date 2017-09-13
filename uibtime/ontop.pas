@@ -54,6 +54,7 @@ type
     ToolBar1: TToolBar;
     procedure DBLCB_topten_eventChange(Sender: TObject);
     procedure Edit1Change(Sender: TObject);
+    procedure FormDeactivate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     function isSpecialButton(event: string): boolean;
     procedure BtnByeClick(Sender: TObject);
@@ -152,6 +153,11 @@ end;
 procedure TFOnTop.Edit1Change(Sender: TObject);
 begin
   oldselstr := Edit1.Text;
+end;
+
+procedure TFOnTop.FormDeactivate(Sender: TObject);
+begin
+  datamodule1.debugOut(5, 'start TFOnTop.FormDeactivate');
 end;
 
 procedure TFOnTop.FormDestroy(Sender: TObject);

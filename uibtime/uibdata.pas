@@ -53,6 +53,8 @@ type
     Arbeitsberichte: TMenuItem;
     Query_day_report: TSQLQuery;
     Query4Result: TSQLQuery;
+    TrayQuery4: TSQLQuery;
+    TrayQuery3: TSQLQuery;
     TrayQuery2: TSQLQuery;
     TrayQuery1: TSQLQuery;
     SQLTransaction2: TSQLTransaction;
@@ -1127,7 +1129,8 @@ function reportmissing(startt, stopt : TDateTime; var missinglist : Tstringlist;
 var
  laststartt, laststopt : TDateTime;
  //startt, stopt : TDateTime;
- sumtime, firststartt : TDatetime;
+// sumtime,
+//firststartt : TDatetime;
  uname, event  : String;
  //starttime, stoptime : String;
  year, month, day: word;
@@ -1136,33 +1139,34 @@ begin
   result := false;
   //missinglist := Tstringlist.create;
   // start looking for missing reports
-  sumtime := 0;
+  //sumtime := 0;
   //starttime :=
   //startt := now;
   //stoptime := now+1;
   //stopt := now+1;
-  if Datamodule1.SQQueryuibevent.Active then Datamodule1.SQQueryuibevent.Close;
-  Datamodule1.SQQueryuibevent.sql.Clear;
-  Datamodule1.SQQueryuibevent.sql.Add('select * from uibevent ');
-  Datamodule1.SQQueryuibevent.sql.Add('where ');
-  Datamodule1.SQQueryuibevent.sql.Add('(userid = :uid) and ');
-  Datamodule1.SQQueryuibevent.sql.Add('(starttime >= :start) and ');
-  Datamodule1.SQQueryuibevent.sql.Add('(starttime < :stop) ');
-  Datamodule1.SQQueryuibevent.sql.Add('order by starttime ');
-  Datamodule1.SQQueryuibevent.ParamByName('uid').AsString := uid;
-  Datamodule1.SQQueryuibevent.ParamByName('start').AsDateTime := startt;
-  Datamodule1.SQQueryuibevent.ParamByName('stop').AsDateTime := stopt;
-  Datamodule1.SQQueryuibevent.open;
-  Datamodule1.SQQueryuibevent.first;
-  laststartt := Datamodule1.SQQueryuibevent.fieldbyname('starttime').asdatetime;
-  firststartt := laststartt;
-  laststopt := Datamodule1.SQQueryuibevent.fieldbyname('stoptime').asdatetime;
+  if Datamodule1.TrayQuery3.Active then Datamodule1.TrayQuery3.Close;
+  Datamodule1.TrayQuery3.sql.Clear;
+  Datamodule1.TrayQuery3.sql.Add('select * from uibevent ');
+  Datamodule1.TrayQuery3.sql.Add('where ');
+  Datamodule1.TrayQuery3.sql.Add('(userid = :uid) and ');
+  Datamodule1.TrayQuery3.sql.Add('(starttime >= :start) and ');
+  Datamodule1.TrayQuery3.sql.Add('(starttime < :stop) ');
+  Datamodule1.TrayQuery3.sql.Add('order by starttime ');
+  Datamodule1.TrayQuery3.ParamByName('uid').AsString := uid;
+  Datamodule1.TrayQuery3.ParamByName('start').AsDateTime := startt;
+  Datamodule1.TrayQuery3.ParamByName('stop').AsDateTime := stopt;
+  Datamodule1.TrayQuery3.open;
+  Datamodule1.TrayQuery3.first;
+  laststartt := Datamodule1.TrayQuery3.fieldbyname('starttime').asdatetime;
+  //firststartt := laststartt;
+  //laststopt := Datamodule1.TrayQuery3.fieldbyname('stoptime').asdatetime;
   //if not (combobox1.Text = 'Summe Alle') then
   //  Datamodule1.SQuibevent.Locate('starttime;stoptime', VarArrayOf([laststartt,laststopt]), [loCaseInsensitive,loPartialKey])
   //else
-    Datamodule1.SQuibevent.Locate('userid;starttime;stoptime', VarArrayOf([uid,laststartt,laststopt]), [loCaseInsensitive,loPartialKey]);
-  //Datamodule1.SQQueryuibevent.close;
-  sumtime := laststopt - laststartt;
+  //if not Datamodule1.TrayQuery4.Active then Datamodule1.TrayQuery4.Open;
+  //  Datamodule1.TrayQuery4.Locate('userid;starttime;stoptime', VarArrayOf([uid,laststartt,laststopt]), [loCaseInsensitive,loPartialKey]);
+  //Datamodule1.TrayQuery3.close;
+  //sumtime := laststopt - laststartt;
   //Datamodule1.SQuibevent.next;
   // query for event that need a report
   Datamodule1.TrayQuery1.sql.Clear;
@@ -1183,11 +1187,11 @@ begin
   Datamodule1.TrayQuery2.ParamByName('uid').AsString := uid;
   Datamodule1.TrayQuery2.open;
 
-  while not Datamodule1.SQQueryuibevent.eof do
+  while not Datamodule1.TrayQuery3.eof do
   begin
-   uname := Datamodule1.SQQueryuibevent.fieldbyname('userid').asString;
-   startt := Datamodule1.SQQueryuibevent.fieldbyname('starttime').asdatetime;
-   event := Datamodule1.SQQueryuibevent.fieldbyname('event').asString;
+   uname := Datamodule1.TrayQuery3.fieldbyname('userid').asString;
+   startt := Datamodule1.TrayQuery3.fieldbyname('starttime').asdatetime;
+   event := Datamodule1.TrayQuery3.fieldbyname('event').asString;
    decodeDate(startt, year, month, day);
    if  Datamodule1.TrayQuery1.Locate('event',event,[loCaseInsensitive]) then
    begin
@@ -1201,11 +1205,11 @@ begin
        end;
      end;
    end;
-   Datamodule1.SQQueryuibevent.next;
+   Datamodule1.TrayQuery3.next;
   end;
   Datamodule1.TrayQuery1.close;
   Datamodule1.TrayQuery2.close;
-  Datamodule1.SQQueryuibevent.close;
+  Datamodule1.TrayQuery3.close;
   // end looking for missing reports
 end;
 

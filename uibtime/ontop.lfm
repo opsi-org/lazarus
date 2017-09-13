@@ -14,6 +14,7 @@ object FOnTop: TFOnTop
   Font.Name = 'MS Sans Serif'
   FormStyle = fsStayOnTop
   OnCreate = FormCreate
+  OnDeactivate = FormDeactivate
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poDefault
