@@ -10,7 +10,8 @@ uses
   Forms, lazreportpdfexport, printer4lazarus, datetimectrls,
   uibdata, login, ontop, debug, changelog, treescrolldown, logoff,
   work_description, dataedit, loggedin_, nachf, statistik, result, sqltext,
-  multiday, runprocess, uibtWorkRepChooser, uib2erp, pack_powerpdf;
+  multiday, runprocess, uibtWorkRepChooser, uib2erp, pack_powerpdf,
+notificationdlg;
 
 {$R *.res}
 
@@ -26,6 +27,7 @@ begin
   Application.CreateForm(TFNachfrage, FNachfrage);
   Application.CreateForm(TFMultiday, FMultiday);
   Application.ProcessMessages;
+  Application.CreateForm(TFnotificationdlg, Fnotificationdlg);
   //Application.CreateForm(TFuibtWorkRepChooser, FuibtWorkRepChooser);
   //Application.CreateForm(TFuibtime2erp, Fuibtime2erp);
   //Application.CreateForm(TFreport, Freport);

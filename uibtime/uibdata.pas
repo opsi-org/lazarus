@@ -51,6 +51,7 @@ type
     Dateneditieren1: TMenuItem;
     IBConnection2: TIBConnection;
     Arbeitsberichte: TMenuItem;
+    trayconfig: TMenuItem;
     Query_day_report: TSQLQuery;
     Query4Result: TSQLQuery;
     TrayQuery4: TSQLQuery;
@@ -147,6 +148,7 @@ type
     procedure TimerOnTopTimer(Sender: TObject);
     procedure TimerQueryLoggedInTimer(Sender: TObject);
     procedure TimerTrayIconTimer(Sender: TObject);
+    procedure trayconfigClick(Sender: TObject);
     procedure uibtime2erpClick(Sender: TObject);
     procedure Weristda1Click(Sender: TObject);
     procedure ZeigenurmeineProjekte1Click(Sender: TObject);
@@ -204,6 +206,8 @@ var
   debuglevel: integer;
   FileVerInfo: TFileVersionInfo;
   verDatum : string;
+  Trayshow : boolean;
+  TrayInterval : cardinal;
 
 
 implementation
@@ -211,7 +215,10 @@ implementation
 {$R *.lfm}
 
 
-uses ontop, login, debug, logoff, dataedit, loggedin_, statistik,work_description, nachf, treescrolldown;
+uses ontop, login, debug, logoff, dataedit,
+  loggedin_, statistik,work_description, nachf,
+  treescrolldown,
+  notificationdlg;
 
 ///uses (*expo, impo, *)(*, *){,} , , , { mexpo, shell_func,}
 ///  , ; ///, versioninfo;
@@ -1228,6 +1235,11 @@ begin
   debugOut(6,'trayicon', 'stop trytimer ');
 end;
 
+procedure TDataModule1.trayconfigClick(Sender: TObject);
+begin
+  Fnotificationdlg.Show;
+end;
+
 procedure TDataModule1.uibtime2erpClick(Sender: TObject);
 begin
   //Fuibtime2erp.Visible:=true;
@@ -1610,6 +1622,11 @@ begin
 
   debuglevel := myini.ReadInteger('general', 'debuglevel', 5);
   Fdebug.Memo1.Append('debuglevel: '+IntToStr(debuglevel));
+  TrayInterval := myini.ReadInteger('general', 'TrayInterval', 5);
+  TimerTrayIcon.Interval:=TrayInterval* 60 * 1000;
+  Trayshow := myini.ReadBool('general', 'showTray', True);
+  TrayIcon1.Visible:=Trayshow;
+  TimerTrayIcon.Enabled:=Trayshow;
   myini.UpdateFile;
   myini.Destroy;
   logfeilname := ExpandFileNameUTF8(logdir + '\uibtime.log');
@@ -1619,7 +1636,6 @@ begin
   writeVerinfoToLog(logfeil);
   writeln(logfeil,Fdebug.Memo1.Lines.Text);
   closeFile(logfeil);
-  TimerTrayIcon.Enabled:=true;
 end;
 
 procedure TDataModule1.TerminateApplication;

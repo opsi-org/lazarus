@@ -3,6 +3,8 @@
 uibtime (4.1.1.18-1) stable; urgency=low
 
  * add trayicon
+ * context menu item 'Tray Konfiguration'
+ * add unit notificationdlg
 
 -- detlef oertel <d.oertel@uib.de>  Son, 10 Sep 2017 15:00:00 +0000
 

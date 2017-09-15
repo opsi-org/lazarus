@@ -502,6 +502,10 @@ object DataModule1: TDataModule1
       Caption = 'Leiste neu aufbauen'
       OnClick = LeisteNeuAufbauen1Click
     end
+    object trayconfig: TMenuItem
+      Caption = 'Tray Konfiguration'
+      OnClick = trayconfigClick
+    end
     object MenuItem13: TMenuItem
     end
     object Hilfe1: TMenuItem
