@@ -1235,8 +1235,8 @@ begin
     {$ENDIF WINDOWS}
     {$IFDEF LINUX}
     try
-    ProcessTrayNotify.Parameters.AddStrings(missinglist);
-    ProcessTrayNotify.Execute;
+      ProcessTrayNotify.Parameters.AddStrings(missinglist);
+      ProcessTrayNotify.Execute;
     except
       debugOut(3,'trayicon', 'Exception starting notify-send ');
     end;

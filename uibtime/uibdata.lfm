@@ -3,7 +3,7 @@ object DataModule1: TDataModule1
   OldCreateOrder = False
   Height = 541
   HorizontalOffset = 410
-  VerticalOffset = 463
+  VerticalOffset = 158
   Width = 894
   object IBConnection1: TIBConnection
     Connected = False
@@ -12338,7 +12338,7 @@ object DataModule1: TDataModule1
     Active = False
     Executable = 'notify-send'
     Parameters.Strings = (
-      '"uibtime Missing Reports:"'
+      'uibtime Missing Reports:'
     )
     Options = []
     Priority = ppNormal
