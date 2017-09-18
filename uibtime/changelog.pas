@@ -1,5 +1,12 @@
 (*
 
+uibtime (4.1.1.19-1) stable; urgency=low
+
+ * add notification for Linus
+ * notificationdlg larger (for Linux)
+
+-- detlef oertel <d.oertel@uib.de>  Mon, 18 Sep 2017 15:00:00 +0000
+
 uibtime (4.1.1.18-1) stable; urgency=low
 
  * add trayicon

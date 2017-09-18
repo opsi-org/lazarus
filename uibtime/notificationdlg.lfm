@@ -2,11 +2,11 @@ object Fnotificationdlg: TFnotificationdlg
   Left = 606
   Height = 36
   Top = 188
-  Width = 413
+  Width = 532
   BorderStyle = bsDialog
   Caption = 'uibtime Notification Interval'
   ClientHeight = 36
-  ClientWidth = 413
+  ClientWidth = 532
   OnClose = FormClose
   OnShow = FormShow
   LCLVersion = '1.6.4.0'
@@ -14,7 +14,7 @@ object Fnotificationdlg: TFnotificationdlg
     Left = 0
     Height = 26
     Top = 0
-    Width = 413
+    Width = 532
     Caption = 'ToolBar1'
     TabOrder = 0
     object CheckBoxTray: TCheckBox

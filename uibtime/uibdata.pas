@@ -21,7 +21,7 @@ uses
   LazFileUtils,
   Menus, ExtCtrls,
   ///registry,
-  Forms, Controls, Dialogs, IniFiles, DateUtils,
+  Forms, Controls, Dialogs, IniFiles, process, DateUtils,
   runprocess,
   httpservice,
   uibtWorkRepChooser,
@@ -51,6 +51,7 @@ type
     Dateneditieren1: TMenuItem;
     IBConnection2: TIBConnection;
     Arbeitsberichte: TMenuItem;
+    ProcessTrayNotify: TProcess;
     trayconfig: TMenuItem;
     Query_day_report: TSQLQuery;
     Query4Result: TSQLQuery;
@@ -1228,8 +1229,18 @@ begin
   if reportmissing(date, now,missinglist,false) then
   begin
     debugOut(6,'trayicon', 'Report missing: '+ missinglist.Text);
+    {$IFDEF WINDOWS}
     TrayIcon1.BalloonHint:='Report missing: '+LineEnding + missinglist.Text;
     TrayIcon1.ShowBalloonHint;
+    {$ENDIF WINDOWS}
+    {$IFDEF LINUX}
+    try
+    ProcessTrayNotify.Parameters.AddStrings(missinglist);
+    ProcessTrayNotify.Execute;
+    except
+      debugOut(3,'trayicon', 'Exception starting notify-send ');
+    end;
+    {$ENDIF LINUX}
   end;
   missinglist.Free;
   debugOut(6,'trayicon', 'stop trytimer ');

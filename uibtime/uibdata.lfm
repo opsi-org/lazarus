@@ -12334,4 +12334,24 @@ object DataModule1: TDataModule1
     left = 784
     top = 220
   end
+  object ProcessTrayNotify: TProcess
+    Active = False
+    Executable = 'notify-send'
+    Parameters.Strings = (
+      '"uibtime Missing Reports:"'
+    )
+    Options = []
+    Priority = ppNormal
+    StartupOptions = []
+    ShowWindow = swoNone
+    WindowColumns = 0
+    WindowHeight = 0
+    WindowLeft = 0
+    WindowRows = 0
+    WindowTop = 0
+    WindowWidth = 0
+    FillAttribute = 0
+    left = 785
+    top = 82
+  end
 end
