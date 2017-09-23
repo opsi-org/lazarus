@@ -19,12 +19,6 @@ unit oswebservice;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 500 $
-// $Author: oertel $
-// $Date: 2016-10-05 18:42:17 +0200 (Mi, 05 Okt 2016) $
-//***************************************************************************
 
 
 interface
@@ -276,10 +270,10 @@ type
     constructor Create(const serviceURL, username, password: string); overload;
     constructor Create(const serviceURL, username, password, sessionid: string);
       overload;
-    //constructor Create(const serviceURL, username, password, sessionid: string;
-    //port: integer); overload;
     constructor Create(const serviceURL, username, password, sessionid,
       ip, port: string); overload;
+        constructor Create(const serviceURL, username, password, sessionid,
+      ip, port, agent: string); overload;
     destructor Destroy; override;
     function retrieveJSONObject(const omc: TOpsiMethodCall;
       logging: boolean; retry: boolean; readOmcMap: boolean): ISuperObject; overload;
@@ -370,6 +364,8 @@ type
     procedure initOpsiConf(serviceURL, username, password, sessionid: string); overload;
     procedure initOpsiConf(serviceURL, username, password, sessionid, ip, port: string);
       overload;
+    procedure initOpsiConf(serviceURL, username, password, sessionid, ip, port, agentstring: string);
+      overload;
 
     property sslProtocol: TIdSSLVersion read FSslProtocol write FSslProtocol;
     property serviceUrl: string read FServiceURL;
@@ -432,6 +428,7 @@ type
     function setAddDependentProductOnClients(switchon: boolean): boolean;
     function setAddProductPropertyStateDefaults(switchon: boolean): boolean;
     function setAddProductOnClientDefaults(switchon: boolean): boolean;
+    function setAddConfigStateDefaults(switchon: boolean): boolean;
     function getProductPropertyList(myproperty: string;
       defaultlist: TStringList): TStringList;  overload;
     function getProductPropertyList(myproperty: string;
@@ -499,6 +496,7 @@ type
     function getFileFromDepot(filename: string; toStringList: boolean;
       var ListResult: TStringList): boolean;
     function decreaseSslProtocol: boolean;
+    function getOpsiServiceConfigs : string;
   end;
 
 var
@@ -1419,6 +1417,12 @@ end;
 constructor TJsonThroughHTTPS.Create(
   const serviceURL, username, password, sessionid, ip, port: string);
 begin
+  Create(serviceUrl, username, password, sessionid, ip, port, ExtractFileName(ParamStr(0)));
+end;
+
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid, ip, port, agent: string);
+begin
   //portHTTPS := port;
   //portHTTP := 4444;
   FserviceURL := serviceURL;
@@ -1434,7 +1438,7 @@ begin
     {$IFDEF OCASIMP}
   createSocket('ocasimp ', ip, port);
     {$ELSE OCASIMP}
-  createSocket(ExtractFileName(ParamStr(0)), '', '');
+  createSocket(agent, '', '');
     {$ENDIF OCASIMP}
   {$ENDIF OPSIWINST}
   //nullO := Null.create;
@@ -1915,7 +1919,7 @@ begin
     if pos('10054', FError) > 0 //Socket error, connection reset by peer
     then
     begin
-      LogDatei.log('trying to rebuild connection', LLnotice);
+      LogDatei.log('trying to rebuild connection', LLInfo);
       sleep(1000);
       createSocket;
       retrieveJSONObject(omc, logging, False);
@@ -1986,7 +1990,7 @@ begin
       if FSessionId <> '' then
         // not the first call and we log
         if logging then
-          //LogDatei.DependentAdd (DateTimeToStr(now) + ' JSON service request ' + Furl + ' '+ omc.FOpsiMethodName, LLnotice);
+          //LogDatei.DependentAdd (DateTimeToStr(now) + ' JSON service request ' + Furl + ' '+ omc.FOpsiMethodName, LLInfo);
           LogDatei.DependentAdd('JSON service request ' + Furl + ' ' +
             omc.FOpsiMethodName, LLinfo);
 
@@ -2225,7 +2229,7 @@ begin
 
 
         testresult := jO.AsJSon(True, True);
-        //LogDatei.DependentAdd (DateTimeToStr(now) + ' JSON result ' + testresult ,  LLnotice);
+        //LogDatei.DependentAdd (DateTimeToStr(now) + ' JSON result ' + testresult ,  LLInfo);
         //jO := result.geTSuperObject(0);
         testresult := jO.S['error'];
 
@@ -2256,7 +2260,7 @@ begin
     if pos('10054', FError) > 0 //Socket error, connection reset by peer
     then
     begin
-      LogDatei.DependentAdd('trying to rebuild connection', LLnotice);
+      LogDatei.DependentAdd('trying to rebuild connection', LLInfo);
       sleep(1000);
       createSocket;
       retrieveJSONArray(omc, logging, False);
@@ -2298,7 +2302,7 @@ begin
         // not the first call and we log
         if logging then
           LogDatei.DependentAdd(DateTimeToStr(now) + ' JSON service request ' +
-            Furl, LLnotice);
+            Furl, LLInfo);
       //LogDatei.DependentAdd ('JSON service request ' + Furl + ' '+ omc.FOpsiMethodName, LLinfo);
 
 
@@ -2575,7 +2579,7 @@ begin
       begin
         Result := SO(ResultLines.Strings[0]);
         testresult := Result.AsJSon(True, True);
-        //LogDatei.DependentAdd (DateTimeToStr(now) + ' JSON result ' + testresult ,  LLnotice);
+        //LogDatei.DependentAdd (DateTimeToStr(now) + ' JSON result ' + testresult ,  LLInfo);
         testresult := Result.S['error'];
         if not (Result.N['error'].IsType(stNull)) then
         begin
@@ -2856,49 +2860,29 @@ end;
 
 procedure TOpsi4Data.initOpsiConf(serviceURL, username, password: string);
 begin
-  initOpsiConf(serviceURL, username, password, '', '', '');
-  (*
-  if FJsonExecutioner <> nil then
-    FJsonExecutioner.Free;
-  FjsonExecutioner := TJsonThroughHTTPS.Create(serviceUrl, username, password);
-  ProfildateiChange := False;
-  FServiceUrl := serviceURL;
-  FDepotId := '';
-  FOpsiServiceVersion := '4';
-  FOpsiModules := nil;
-  FOpsiInformation := nil;
-  FProductOnClientIndex := TStringList.Create;
-  FProductStates := TStringList.Create;
-  *)
+  initOpsiConf(serviceURL, username, password, '', '', '','');
 end;
 
 procedure TOpsi4Data.initOpsiConf(serviceURL, username, password, sessionid: string);
 begin
-  initOpsiConf(serviceURL, username, password, sessionid, '', '');
-  (*
-  if FJsonExecutioner <> nil then
-    FJsonExecutioner.Free;
-  FjsonExecutioner := TJsonThroughHTTPS.Create(serviceUrl, username,
-    password, sessionid);
-  ProfildateiChange := False;
-  FServiceUrl := serviceURL;
-  FDepotId := '';
-  FOpsiServiceVersion := '4';
-  FOpsiModules := nil;
-  FOpsiInformation := nil;
-  FProductOnClientIndex := TStringList.Create;
-  FProductStates := TStringList.Create;
-  *)
+  initOpsiConf(serviceURL, username, password, sessionid, '', '','');
 end;
 
 procedure TOpsi4Data.initOpsiConf(serviceURL, username, password,
   sessionid, ip, port: string);
 begin
+  initOpsiConf(serviceURL, username, password, sessionid, ip, port,'');
+end;
+
+
+procedure TOpsi4Data.initOpsiConf(serviceURL, username, password,
+  sessionid, ip, port, agentstring: string);
+begin
   try
     if FJsonExecutioner <> nil then
       FJsonExecutioner.Free;
     FjsonExecutioner := TJsonThroughHTTPS.Create(serviceUrl, username,
-      password, sessionid, ip, port);
+      password, sessionid, ip, port,agentstring);
     ProfildateiChange := False;
     FServiceUrl := serviceURL;
     FDepotId := '';
@@ -3572,9 +3556,9 @@ begin
   (*
   if Logdatei.PartbiggerthanMB(5) then
   begin
-    Logdatei.log('Shrinking Logfile to 5 MB....', LLNotice);
+    Logdatei.log('Shrinking Logfile to 5 MB....', LLInfo);
     Logdatei.PartShrinkToMB(5);
-    Logdatei.log('Shrinking Logfile to 5 MB finidhed.', LLNotice);
+    Logdatei.log('Shrinking Logfile to 5 MB finidhed.', LLInfo);
   end;
   *)
   Logdatei.setLogSIndentLevel(0);
@@ -3583,18 +3567,18 @@ begin
     LLNotice);
   Logdatei.PartOpenForReading;
   try
-    //Logdatei.DependentAdd('->3',LLNotice);
+    //Logdatei.DependentAdd('->3',LLInfo);
     logstream := TMemoryStream.Create;
-    //Logdatei.DependentAdd('->4',LLNotice);
+    //Logdatei.DependentAdd('->4',LLInfo);
     logstream.Clear;
-    //Logdatei.DependentAdd('->5',LLNotice);
+    //Logdatei.DependentAdd('->5',LLInfo);
     //s := '{"method":"writeLog","params":["' + logtype + '","';
     s := '{"method":"log_write","params":["' + logtype + '","';
-    //Logdatei.DependentAdd('->6',LLNotice);
+    //Logdatei.DependentAdd('->6',LLInfo);
     logstream.Write(s[1], length(s));
-    //Logdatei.DependentAdd('->7',LLNotice);
+    //Logdatei.DependentAdd('->7',LLInfo);
     s := '\n';
-    Logdatei.DependentAdd('start reading read file ...', LLNotice);
+    Logdatei.DependentAdd('start reading read file ...', LLInfo);
     Found := Logdatei.getPartLine(t);
     while found do
     begin
@@ -3621,7 +3605,7 @@ begin
     begin
       s := '", "' + actualClient + '", "false"], "id": 1}';
     end;
-    Logdatei.log('write line: >' + s + '<  to service...', LLNotice);
+    Logdatei.log('write line: >' + s + '<  to service...', LLInfo);
     logstream.Write(s[1], length(s));
   except
     on E: Exception do
@@ -3630,7 +3614,7 @@ begin
         LLError);
     end
   end;
-  Logdatei.DependentAdd('start sending read file ...', LLNotice);
+  Logdatei.DependentAdd('start sending read file ...', LLInfo);
   try
     Result := (FJsonExecutioner.retrieveJSONObjectByHttpPost(logstream, False) <> nil);
     // we should perhaps not log inside this because of circularity
@@ -3749,6 +3733,27 @@ begin
     end;
   end;
 end;
+
+function TOpsi4Data.setAddConfigStateDefaults(switchon: boolean): boolean;
+var
+  omc: TOpsiMethodCall;
+  productEntry: ISuperObject;
+begin
+  Result := False;
+  try
+    if switchon then
+      omc := TOpsiMethodCall.Create('backend_setOptions',
+        ['{"addConfigStateDefaults": true}'])
+    else
+      omc := TOpsiMethodCall.Create('backend_setOptions',
+        ['{"addConfigStateDefaults": false}']);
+    productEntry := FjsonExecutioner.retrieveJSONObject(omc);
+    Result := True;
+  except
+    Result := False;
+  end;
+end;
+
 
 function TOpsi4Data.setAddProductPropertyStateDefaults(switchon: boolean): boolean;
 var
@@ -4136,7 +4141,7 @@ begin
             FProductStates.Add(productEntry.S['productId'] + '=' +
               productEntry.S['installationStatus']);
             LogDatei.DependentAdd(productEntry.S['productId'] +
-              '= lastcation: ' + productEntry.S['lastAction'], LLessential);
+              '= lastAction: ' + productEntry.S['lastAction'], LLessential);
           end;
         end;
       end;
@@ -4212,7 +4217,7 @@ begin
   //jo := FjsonExecutioner.retrieveJSONObject(omc);
   omc.Free;
   sortlist.Free;
-  //LogDatei.LogLevel := LLnotice;
+  //LogDatei.LogLevel := LLInfo;
 end;
 
 
@@ -4871,6 +4876,24 @@ begin
   Result := FjsonExecutioner.getFileFromDepot(filename, toStringList, ListResult);
 end;
 
+function TOpsi4Data.getOpsiServiceConfigs : string;
+var
+  parastr : string;
+  jO : ISuperObject;
+  errorOccured : boolean = false;
+  omc: TOpsiMethodCall;
+begin
+  result := '';
+  if setAddConfigStateDefaults(true) then
+  begin
+    parastr := '{"objectId": "' + actualClient + '"}';
+    omc := TOpsiMethodCall.Create('configState_getObjects', ['',parastr]);
+    //jO := FjsonExecutioner.retrieveJSONObject(omc);
+    result := checkAndRetrieve(omc,errorOccured);
+    setAddConfigStateDefaults(false);
+  end;
+  omc.Free;
+end;
 
 initialization
   // {$i widatamodul.lrs}

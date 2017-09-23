@@ -47,9 +47,9 @@ uses
   VersionInfoX,
   //unitImpersonator,
   osregistry,
+osfuncwin2,
+osfuncwin3,
 {$IFDEF WIN32}
-  osfuncwin2,
-  osfuncwin3,
   DSiWin32,
 oslocaladmin,
 packdefs,
@@ -484,9 +484,11 @@ procedure MakeBakFile(const FName: string); overload;
 procedure MakeBakFile(const FName: string; maxbaks : integer);  overload;
 function FileCopy
   (const sourcefilename, targetfilename: string; var problem: string;
-  DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean): boolean;
-     (* RebootWanted wird ggfs. nur auf true, sonst unveraendert gelassen;
-        wird nicht bedient unter 16 Bit *)
+  DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean): boolean;  overload;
+function FileCopy
+  (const sourcefilename, targetfilename: string; var problem: string;
+  DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean;
+  followSymlink : boolean): boolean;   overload;
 function Is64BitSystem: boolean;
 function runningAsAdmin: boolean;
 function isUefi: boolean;
@@ -557,7 +559,8 @@ procedure ChangeDirectory(newdir: string);
 function strContains(const str: string; const substr: string): boolean;
 function createNewOpsiHostKey: string;
 function getProfilesDirList: TStringList;
-function stringListLoadUtf8FromFile(filename: string): TStringList;
+//function stringListLoadUtf8FromFile(filename: string): TStringList;
+//function stringListLoadUnicodeFromList(inlist: Tstringlist): TStringList;
 function opsiunquotestr(s1,s2 : string): string;
 function opsiunquotestr2(s1,s2 : string): string;
 function cmdLineInputDialog(var inputstr : string; const message, default : string; confidential : boolean) : boolean;
@@ -573,24 +576,17 @@ const
   LineIsCommentChar = ';';
   MultiszVisualDelimiter = '|';
 
-  (* additive Konstanten fuer den Typ TcpSpecify *)
-  cpFlat = 0;  (* keine Rekursion und keine Subdirectories,
-                                      unbegrenztes OverWrite *)
+  // additive (mask) sonstanst for TcpSpecify
+  cpFlat = 0;  // ro recursion, no subdirectories, over write
   cpCreateEmptySubdirectories = 1;
   cpRecursive = 2;
-  cpVersionControl = 4;  (* Overwrite bei Dateien mit Extension in ExtensionsForVersionsControl
-                                      nur nach vorheriger Versionskontrolle *)
-  cpDateControl = 8;
-  (* kein Overwrite bei Dateien mit Extension EXE wenn Zieldatei juengeren Datums *)
-  cpUpdate = 16;
-  (* kein Overwrite, wenn Zieldatei juenger oder gleich alt *)
-
-  cpDontForceOverwrite = 32; (* kein Overwrite bei schreibgeschuetzten Dateien *)
-  cpNoOverwrite = 64; (* kein Overwrite *)
-
-  cpExtract = 128; (* beim Kopieren komprimierte Dateien dekomprimieren *)
-
-  cpLeaveReadonly = 256; (* Readonly-Attribute kopierter Dateien belassen *)
+  cpVersionControl = 4;  // overwrite controled by internal version (Windows)
+  cpDateControl = 8;  // no overwrite of younger exe files
+  cpUpdate = 16; // no overwrite if target younger or equal old
+  cpDontForceOverwrite = 32; // overwrite if write protected
+  cpNoOverwrite = 64; // no overwrite
+  cpExtract = 128; // extract on copy
+  cpLeaveReadonly = 256; //
 
   cpNoExtraReboot = 512; (* if on copying a file being in use cannot be overwritten, then
                             the overwrite process is postponed after the next reboot. By default, in this case
@@ -600,6 +596,8 @@ const
                                   (* Overwrite bei Dateien mit Extension in ExtensionsForVersionsControl
                                     nur nach vorheriger Versionskontrolle, beschraenkt auf
                                     Dateien im gleichen Verzeichnis wie die Zieldatai *)
+
+  cpFollowSymlinks = 2048; // resolve symlinks while copy
 
 
   ExtensionsForVersionControl: array [1..13] of Str20 =
@@ -630,6 +628,8 @@ const
   WordDelimiterSet3 = [' ', #9, '=', '[', ']', '(', ')', '"', '''', ',', '+', ':'];
   WordDelimiterSet2 = [' ', #9, '"', ''''];
   WordDelimiterSet4 = [' ', #9, '=', '[', ']', '('];
+  WordDelimiterSet5 = [' ', #9, '('];
+  WordDelimiterSet6 = [')',','];
   WordDelimiterWhiteSpace = [' ', #9];
 
   ddeTimerInterval = 100;
@@ -666,6 +666,7 @@ uses
   osinteractivegui,
   {$ENDIF GUI}
   osmain,
+  osdefinedfunctions,
   //windatamodul,
   superobject;
 
@@ -750,6 +751,8 @@ begin
   if (inputstr = '') then  inputstr := default;
 end;
 
+(*
+
 function stringListLoadUtf8FromFile(filename: string): TStringList;
 var
   fCES: TCharEncStream;
@@ -764,6 +767,19 @@ begin
   fCES.Free;
 end;
 
+function stringListLoadUnicodeFromList(inlist: Tstringlist): TStringList;
+var
+  fCES: TCharEncStream;
+begin
+  Result := TStringList.Create;
+  fCES := TCharEncStream.Create;
+  fCES.Reset;
+  inlist.SaveToStream(fCES);
+  fCES.ANSIEnc := GetSystemEncoding;
+  Result.Text := fCES.UTF8Text;
+  fCES.Free;
+end;
+*)
 
 function getProfilesDirList: TStringList;
 Var
@@ -965,20 +981,27 @@ end;
 procedure FindLocalIPData(var ipName: string; var address: string);
 type
   bytearray = array of byte;
+{$IFDEF WINDOWS}
+var
+  myHostEnt : THostEnt;
+{$ENDIF WINDOWS}
 begin
+  ipName := '';
+  address := '';
   {$IFDEF LINUX}
   ipName := getHostnameLin;
   address := getMyIpByDefaultRoute;
   {$ENDIF LINUX}
   {$IFDEF WINDOWS}
-  with getMyHostEnt do
-  begin
-    ipName := h_name;
-    address := Format('%d.%d.%d.%d',
-      //[Byte((h_addr^)[0]), Byte(h_addr^[1]), Byte(h_addr^[2]), Byte(h_addr^[3])]);
-      [Bytearray(h_addr^)[0], Bytearray(h_addr^)[1], Bytearray(h_addr^)[2],
-      Bytearray(h_addr^)[3]]);
-  end;
+  if getMyHostEnt(myHostEnt) then
+    with myHostEnt do
+    begin
+      ipName := h_name;
+      address := Format('%d.%d.%d.%d',
+        //[Byte((h_addr^)[0]), Byte(h_addr^[1]), Byte(h_addr^[2]), Byte(h_addr^[3])]);
+        [Bytearray(h_addr^)[0], Bytearray(h_addr^)[1], Bytearray(h_addr^)[2],
+        Bytearray(h_addr^)[3]]);
+    end;
   {$ENDIF WINDOWS}
 end;
 //{$RANGECHECKS ON}
@@ -1582,7 +1605,7 @@ begin
     except
       on e: Exception do
       begin
-        LogDatei.DependentAdd('Exception in StartProcess_se: ' +
+        LogDatei.log_prog('Exception in StartProcess_se: ' +
           e.message, LLError);
         exitcode := -1;
       end;
@@ -4747,8 +4770,18 @@ end;
 function FileCopy
   (const sourcefilename, targetfilename: string; var problem: string;
   DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean): boolean;
+begin
+  result := FileCopy(sourcefilename,targetfilename,problem,
+                     DelayUntilRebootIfNeeded,RebootWanted,false);
+end;
+
+function FileCopy
+  (const sourcefilename, targetfilename: string; var problem: string;
+  DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean;
+  followSymlink : boolean): boolean;
 var
   myerrorcode : integer;
+  linktarget : string;
 begin
   {$IFDEF WINDOWS}
   Result := FileCopyWin(sourcefilename, targetfilename, problem,
@@ -4759,15 +4792,26 @@ begin
   try
     // remove existing files to avoid problems like: Error: 26 : Text (code segment) file busy
     if FileExistsUTF8(targetfilename) then FileUtil.DeleteFileUTF8(targetfilename);
-    if not copyFile(PChar(sourcefilename), PChar(targetfilename), True) then
+    if (not FileIsSymlink(sourcefilename)) or followSymlink then
     begin
-      myerrorcode := fpgeterrno;
-      problem := 'Could not copy. Error: ' + IntToStr(myerrorcode)
-      + ' : '+SysErrorMessageUTF8(myerrorcode);
-      Result := False;
+      if not copyFile(PChar(sourcefilename), PChar(targetfilename), True) then
+      begin
+        myerrorcode := fpgeterrno;
+        problem := 'Could not copy. Error: ' + IntToStr(myerrorcode)
+        + ' : '+SysErrorMessageUTF8(myerrorcode);
+        Result := False;
+      end
+      else
+        Result := True;
     end
-    else
-      Result := True;
+    else // symlink and (not followSymlink)
+    begin
+      linktarget := fpReadLink(sourcefilename);
+      linktarget := CreateRelativePath(linktarget,ExtractFileDir(linktarget));
+      if 0 <> fpsymlink(Pchar(linktarget),Pchar(targetfilename)) then
+        problem := 'Could not create symlink: from '
+          +targetfilename+' to '+linktarget;
+    end;
   except
     myerrorcode := fpgeterrno;
     Result := False;
@@ -5942,6 +5986,7 @@ end;
 
 (* TuibIniScript *)
 
+
 function IsHeaderLine(const s: string): boolean;
 var
   TestS: string = '';
@@ -5955,7 +6000,7 @@ end;
 
 
 function TuibIniScript.FindEndOfSectionIndex(const OffLine: integer): integer;
-  (* Annahme : OffLine gehoert zur Sektion *)
+  // we assume that the section end below the line withe the index = offline
 var
   i: integer = 0;
   s: string = '';
@@ -6000,6 +6045,7 @@ begin
       begin
         weitersuchen := False;
       end
+      else if IsEndOfLocalFunction(s) then weitersuchen := False
       else
       begin
         if (s <> '') and (s[1] <> LineIsCommentChar) then
@@ -6081,8 +6127,11 @@ var
   i: integer = 0;
   j: integer = 0;
   n: integer = 0;
+  searchstartindex : integer = 0;
   s: string = '';
   ersteZeileSuchen: boolean;
+  DefFuncFound : boolean = false;
+  EndoFuncFound : boolean = false;
 
 begin
   Result := False;
@@ -6091,12 +6140,14 @@ begin
     StartlineNo := i + 1
   else
     StartlineNo := i;
-  if (i >= 0)      (* Sektionsheader existiert *) and (i + 1 <= Count - 1)
-  (* es gibt die i+1-te Zeile, also eine Zeile nach dem Sektionsheader *) then
+  if (i >= 0)      // section header existing
+      and (i + 1 <= Count - 1)
+      //the i+1-line exists - the line below the section header
+  then
   begin
     Inc(i);
-    // Zeile nach dem Header
-    // kommt da vielleicht schon der n�chste Header, die Sektion w�re also leer?
+    // the line below the section header
+    // do the next section start - so this section is empty
 
     ersteZeileSuchen := True;
     while (i <= Count - 1) and ersteZeileSuchen do
@@ -6116,7 +6167,10 @@ begin
 
     if Result then
     begin // Sektionsinhalt existiert
-      n := FindEndOfSectionIndex(i);
+      searchstartindex := i;
+      // if we have defFunc section headers before EndFunc should be ignored
+      searchstartindex := getFirstLineAfterEndFunc(self,searchstartindex);
+      n := FindEndOfSectionIndex(searchstartindex);
       for j := i to n do
       begin
         s := KappeBlanks(Strings[j]);
@@ -8269,6 +8323,7 @@ var
     DecompressedSource: string = '';
     FName: string = '';
     SaveLogLevel: integer = 0;
+    followsymlinks : boolean = false;
 
     procedure ToCopyOrNotToCopy(const SourceName, TargetName: string);
     var
@@ -8318,6 +8373,10 @@ var
           begin
             CopyShallTakePlace := FileCheckDate(SourceName, TargetName, False);
           end
+          else if cpSpecify and cpFollowSymlinks = cpFollowSymlinks then
+          begin
+            followsymlinks := true;
+          end
           else if cpSpecify and cpDateControl = cpDateControl then
           begin
             Extension := UpperCase(ExtractFileExt(TargetName));
@@ -8351,7 +8410,8 @@ var
 
         if CopyShallTakePlace then
         begin
-          if FileCopy(SourceName, TargetName, problem, True, rebootWanted) then
+          if FileCopy(SourceName, TargetName, problem,
+                      True, rebootWanted,followsymlinks) then
           begin
             LogS := SourceName + ' copied to ' + TargetPath;
             LogDatei.DependentAdd(LogS, LevelComplete);
@@ -8538,6 +8598,9 @@ var
   begin
     Recursion_Level := Recursion_Level + 1;
     FileFoundOnThisLevel := False;
+    if cpSpecify and cpFollowSymlinks = cpFollowSymlinks then
+            followsymlinks := true
+    else  followsymlinks := false;
 
     // bring Source Mask to standard form
     //CompleteName := UTF8ToWinCP(SourceMask);
@@ -8581,8 +8644,19 @@ var
     LogDatei.DependentAdd('Search: '+SourcePath + SourceFilemask, LLDebug2);
     //FindResultcode := SysUtils.FindFirst(SourcePath + SourceFilemask,
     //  faAnyfile - faDirectory - faVolumeId, SearchResult);
+    {$IFDEF WINDOWS}
     FindResultcode := SysUtils.FindFirst(SourcePath + SourceFilemask,
       (faSymlink or faAnyfile) - faDirectory, SearchResult);
+    {$ELSE}
+      // at Linux we have to search here also for directories because
+      // we need to find symlinks to directories (bug in returned attr)
+      if followsymlinks then
+      FindResultcode := SysUtils.FindFirst(SourcePath + SourceFilemask,
+      (faSymlink or faAnyfile) - faDirectory, SearchResult)
+      else
+      FindResultcode := SysUtils.FindFirst(SourcePath + SourceFilemask,
+      (faSymlink or faAnyfile), SearchResult);
+    {$ENDIF WINDOWS}
 
     if FindResultcode = 0 then
       FileFoundOnThisLevel := True
@@ -8600,11 +8674,14 @@ var
     begin
       SourceName := SourcePath + SearchResult.Name;
       TargetName := TargetPath + SearchResult.Name;
-      LogDatei.DependentAdd('Found: '+SourceName, LLDebug2);
-      LogDatei.log('Found: '+SearchResult.Name + ' with attr:'+inttostr(SearchResult.Attr), LLDebug3);
+      LogDatei.log('Found: '+SourceName, LLDebug2);
+      LogDatei.log_prog('Found: '+SearchResult.Name + ' with attr:'+inttostr(SearchResult.Attr), LLDebug2);
 
-      if not (SearchResult.Attr and faDirectory = faDirectory) and
-          (SearchResult.Name <> '.') and (SearchResult.Name <> '..') then
+      if (SearchResult.Attr and faDirectory <> faDirectory)
+          // and (SearchResult.Name <> '.') and (SearchResult.Name <> '..'))
+          // copy symlinks (even dirs) allways here
+          //or (SearchResult.Attr and faSymlink <> faSymlink)  //seems to to work
+          or FileIsSymlink(SourcePath+SearchResult.Name) then         // work only in Linux
         if CopyCount.Ready then
         begin
           {$IFDEF GUI}
@@ -8634,6 +8711,7 @@ var
           end
           else
           {$ENDIF WIN32}
+            LogDatei.log_prog('copy candidate: '+SourceName + ' to: '+TargetName, LLDebug2);
             ToCopyOrNotToCopy(SourceName, TargetName);
 
           LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
@@ -8645,7 +8723,7 @@ var
     end;
 
     SysUtils.findclose(SearchResult);
-    LogDatei.DependentAdd('Finished Search: '+SourcePath + SourceFilemask, LLDebug2);
+    LogDatei.log_prog('Finished Search: '+SourcePath + SourceFilemask, LLDebug);
 
     if (cpSpecify and cpRecursive = cpRecursive) or
       (cpSpecify and cpCreateEmptySubdirectories = cpCreateEmptySubdirectories) then
@@ -8660,8 +8738,20 @@ var
 
       while FindResultcode = 0 do
       begin
-        LogDatei.log('Found: '+SearchResult.Name + ' with attr:'+inttostr(SearchResult.Attr), LLDebug3);
+        LogDatei.log_prog('Found: '+SearchResult.Name + ' with attr:'+inttostr(SearchResult.Attr), LLDebug);
+        LogDatei.log_prog('Found: '+SearchResult.Name + ' is SymLink by Attr: '+BoolToStr((SearchResult.Attr and faSymlink = faSymlink),true), LLDebug);
+        LogDatei.log_prog('Found: '+SearchResult.Name + ' is SymLink by func: '+BoolToStr(FileIsSymlink(SourcePath+SearchResult.Name),true), LLDebug);
+        {$IFDEF LINUX}
+        LogDatei.log_prog('Found: '+SearchResult.Name + ' is SymLink by fpReadLink: '+BoolToStr((fpReadLink(SourcePath+SearchResult.Name) <> ''),true), LLDebug);
+        {$ENDIF LINUX}
+
         if (SearchResult.Attr and faDirectory = faDirectory) and
+           // do not follow symlinks to directories
+          //(SearchResult.Attr and faSymlink <> faSymlink) and // seems not work
+           (not(FileIsSymlink(SourcePath+SearchResult.Name)) or followsymlinks) and         // work only in Linux
+           //{$IFDEF LINUX}
+           //(fpReadLink(SourcePath+SearchResult.Name) = '') and
+           //{$ENDIF LINUX}
           (SearchResult.Name <> '.') and (SearchResult.Name <> '..') then
         begin
           DirectoryError := 0;
@@ -8693,13 +8783,12 @@ var
             try
               mkdir(TargetName);
               FileSetAttr(TargetName, SearchResult.Attr and (not faReadOnly));
-              LogDatei.log('Created: '+TargetName + ' with attr:'+inttostr(SearchResult.Attr and (not faReadOnly)), LLDebug3);
+              LogDatei.log_prog('Created: '+TargetName + ' with attr:'+inttostr(SearchResult.Attr and (not faReadOnly)), LLDebug);
             except
               LogS :=
                 'Error: ' + 'missing directory ' + TargetName +
                 ' cannot be created';
-              LogDatei.log(LogS, LLError);
-
+              LogDatei.log_prog(LogS, LLError);
               DirectoryError := 2;
             end;
 
@@ -8725,16 +8814,11 @@ var
             (DirectoryError = 0) then
             // angelegtes directory wieder entfernen
             rmdir(TargetName);
-
         end;
-
         FindResultcode := FindNext(SearchResult);
       end;
-
       SysUtils.findclose(SearchResult);
-
     end;
-
     FileFound := FileFoundOnThisLevel; // resp. on a deeper level
     Recursion_Level := Recursion_Level - 1;
   end;
@@ -8745,7 +8829,7 @@ begin
   if CountModus <> tccmCounting then
   begin
     LogS := 'Copying  ' + SourceMask + ' -----> ' + Target;
-    LogDatei.DependentAdd(LogS, LevelComplete);
+    LogDatei.log(LogS, LLInfo);
     {$IFDEF GUI}
     FBatchOberflaeche.setCommandLabel(LogS);
     ProcessMess;
@@ -8757,7 +8841,7 @@ begin
   if CountModus = tccmCounted then
   begin
     LogS := IntToStr(NumberCounted) + ' File(s) found';
-    LogDatei.DependentAdd(LogS, LevelWarnings);
+    LogDatei.log(LogS, LLInfo);
   end;
 
   CopyCount := TCopyCount.Create(CountModus, NumberCounted);
@@ -8775,11 +8859,11 @@ begin
   else
   begin
     LogS := IntToStr(CopyCount.ActCount) + ' File(s) treated';
-    LogDatei.DependentAdd(LogS, LevelWarnings);
+    LogDatei.log(LogS, LLInfo);
     if (CountModus = tccmCounted) and (NumberCounted > CopyCount.ActCount) then
     begin
       LogS := 'Error: Some previously found files were not found now';
-      LogDatei.log(LogS, LLError);
+      LogDatei.log_prog(LogS, LLError);
     end;
   end;
 
@@ -8890,7 +8974,7 @@ var
     Filemask := ExtractFileName(CompleteName);
 
     LogS := 'Search "' + OrigPath + '"';
-    LogDatei.DependentAdd(LogS, LLInfo);
+    LogDatei.log(LogS, LLInfo);
 
       // start with the sub directories, and go with the recursion deeper and delete the lowest level first
     if recursive then
@@ -8902,7 +8986,7 @@ var
       {$ENDIF WINDOWS}
       while FindResultcode = 0 do
       begin
-        LogDatei.log('Found: '+SearchResult.Name + ' with attr: '+inttostr(SearchResult.Attr), LLDebug3);
+        LogDatei.log_prog('Found: '+SearchResult.Name + ' with attr: '+inttostr(SearchResult.Attr), LLDebug2);
         if (SearchResult.Attr and faDirectory = faDirectory) and
           (SearchResult.Name <> '.') and (SearchResult.Name <> '..') then
           ExecDelete
@@ -8924,7 +9008,7 @@ var
     if (Filemask = '') or (Filemask = '*.*') then Filemask := '*';
     {$ENDIF WINDOWS}
     LogS := 'Search "' + OrigPath + Filemask+'"';
-    LogDatei.DependentAdd(LogS, LLInfo);
+    LogDatei.log(LogS, LLInfo);
 
     FindResultcode := FindFirst(OrigPath + Filemask, faAnyFile - faDirectory, SearchResult);
 
@@ -8953,7 +9037,7 @@ var
           FileIsReadonly := True;
           Result := False;
           LogS := 'No deletion, file is readonly';
-          LogDatei.DependentAdd(LogS, LevelWarnings);
+          LogDatei.log(LogS, LLNotice);
         end;
       end;
 
@@ -8970,7 +9054,7 @@ var
         LogS := 'The file is ' + IntToStr(ddiff) + ' day(s) old';
         if not shallDelete then
           LogS := LogS + ', no deletion';
-        LogDatei.LOG(LogS, LLInfo);
+        LogDatei.log(LogS, LLInfo);
       end;
 
       if shallDelete then
@@ -9018,7 +9102,7 @@ var
       if removedir(OrigPath) then
       begin
         LogS := 'Directory "' + OrigPath + '" deleted';
-        LogDatei.DependentAdd(LogS, LevelComplete);
+        LogDatei.log(LogS, LLInfo);
       end
       else
       begin
@@ -9032,7 +9116,7 @@ var
           '" cannot be deleted, error ' + IntToStr(errorNo) + ' ("' +
           RemoveLineBreaks(SysErrorMessage(GetLastError)) + '")';
         {$ENDIF WINDOWS}
-        LogDatei.DependentAddWarning(LogS, LevelWarnings);
+        LogDatei.log(LogS, LLWarning);
         Result := False;
       end;
     end;
@@ -9069,7 +9153,7 @@ begin
   else
     LogS := 'Delete';
   LogS := LogS + ' "' + CompleteName + '"';
-  LogDatei.DependentAdd(LogS, LevelComplete);
+  LogDatei.log_prog(LogS, LLDebug);
 
 
   Filemask := ExtractFileName(CompleteName);
@@ -9080,7 +9164,10 @@ begin
     DeleteDeeperDir := True;
   if Filemask = '' then
     DeleteStartDir := True;
-  if (Filemask = '*.*') or (Filemask = '*') then
+  if (Filemask = '*.*')
+      or (Filemask = '*')
+      or (ExtractFileNameOnly(Filemask) = '*')
+      or (ExtractFileExt(Filemask) = '*') then
     testname := ExtractFilePath(CompleteName)
   else testname := CompleteName;
 
@@ -9094,7 +9181,7 @@ begin
       //does not exist
       LogS := 'Notice: ' + 'File or Directory ' + CompleteName +
         ' does not exist, nothing deleted';
-      LogDatei.DependentAdd(LogS, LLnotice);
+      LogDatei.log(LogS, LLInfo);
     end
     else
     begin
@@ -9135,7 +9222,7 @@ begin
           (*
         LogS := 'Notice: ' + 'Directory ' + ExtractFilePath(CompleteName) +
           ' does not exist, nothing deleted';
-        LogDatei.DependentAdd(LogS, LLnotice);
+        LogDatei.DependentAdd(LogS, LLInfo);
         *)
       end;
     end;
@@ -9149,7 +9236,7 @@ begin
     begin
       LogS := 'Notice: ' + 'Directory ' + ExtractFilePath(CompleteName) +
         ' does not exist, nothing deleted';
-      LogDatei.DependentAdd(LogS, LLnotice);
+      LogDatei.log(LogS, LLInfo);
     end;
   end;
 end;

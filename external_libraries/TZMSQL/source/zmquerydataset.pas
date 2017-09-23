@@ -36,6 +36,7 @@
 
  **********************************************************************}
 
+(*
 {-----------------------------------------------------------------------------
 
 The original developer of the code is Zlatko Matić
@@ -102,6 +103,8 @@ ZMSQL version 0.1.19, 08.02.2015: by Zlatko Matić
       *Added procedure TZMConnection.GetTableNames(FileList: TStrings);
       *Added procedure TZMQueryDataSet.LoadTableSchema;
 -----------------------------------------------------------------------------}
+*)
+
 unit ZMQueryDataSet;
 
 {$mode objfpc}{$H+}
@@ -1306,7 +1309,7 @@ begin
      FromCurrent:=False;
      FormatSettings.FieldDelimiter:=';';
      FormatSettings.HeaderRow:=True;
-     FormatSettings.QuoteStrings:=[qsAlways];
+     //FormatSettings.QuoteStrings:=[qsAlways];
      FormatSettings.BooleanFalse:='False';
      FormatSettings.BooleanTrue:='True';
      FormatSettings.DateFormat:='yyyy-mm-dd';
@@ -1360,7 +1363,7 @@ begin
      FromCurrent:=False;
      FormatSettings.FieldDelimiter:=';';
      FormatSettings.HeaderRow:=True;
-     FormatSettings.QuoteStrings:=[qsAlways];
+     //FormatSettings.QuoteStrings:=[qsAlways];
      FormatSettings.BooleanFalse:='False';
      FormatSettings.BooleanTrue:='True';
      FormatSettings.DateFormat:='yyyy-mm-dd';

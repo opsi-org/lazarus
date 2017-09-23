@@ -21,6 +21,7 @@ type
     ToolBar1: TToolBar;
     procedure BitBtnLaterClick(Sender: TObject);
     procedure BitBtnNowClick(Sender: TObject);
+    procedure Memo1Change(Sender: TObject);
   private
     { private declarations }
   public
@@ -48,6 +49,11 @@ begin
     screen.Cursor := crDefault;
   end;
   visible := false;
+end;
+
+procedure TFInstalldlg.Memo1Change(Sender: TObject);
+begin
+
 end;
 
 procedure TFInstalldlg.BitBtnLaterClick(Sender: TObject);

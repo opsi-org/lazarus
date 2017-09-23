@@ -1,0 +1,26 @@
+[TitleLabel]
+Text= Opsi Client Kiosk
+FontName = Arial
+FontSize = 15
+FontColor = $00f60000
+FontBold = true
+FontItalic = true
+FontUnderline = true
+
+[Tile]
+width = 300
+height = 180
+color =  cl3DLight
+FontName = Arial
+FontSize = 12
+FontColor = clBlack
+FontBold = true
+FontItalic = false
+FontUnderline = false
+
+[TileRadio]
+fontsize = 10
+none_color = $00001A
+uninstall_color = $FF00FF
+setup_color = clLime
+

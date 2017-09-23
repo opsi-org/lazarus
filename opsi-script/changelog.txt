@@ -1,21 +1,94 @@
-﻿#***************************************************************************
-# Subversion:
-# $Revision: 515 $
-# $Author: oertel $
-# $Date: 2016-11-09 15:06:33 +0100 (Mi, 09 Nov 2016) $
-#***************************************************************************
-
+﻿
 todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 
 
 ##################################################################
 
+opsi-winst/opsi-script (4.12.0.5) stable; urgency=low
+
+  * osmain / osinteractivegui: new cli argument /logproductid
+    just used for logging, do not try to get data from service
+  * osbatchGUI: TFBatchOberflaeche.FormActivate also for Linux
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 11 Sep 2017:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.12.0.4) stable; urgency=low
+
+  * osconf: readConfigFromService: protect from wrong data types from service
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 04 Sep 2017:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.12.0.3) stable; urgency=low
+
+  * global: rising the level of a lot of loging
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri, 01 Sep 2017:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.0.2) stable; urgency=low
+
+  * osbatchgui: ForceStayOnTop modified
+  * osbatchgui: ForceStayOnTop in form.activate
+  * osconf: default_loglevel = 6;
+  * osfunc: alldelete: del command: allow also partly wildcards (*.yxz or xyz.*)
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 24 Aug 2017:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.0.1) experimental; urgency=low
+
+  * oswebservice: changed loglevels in retrieveJSONObject
+  * osfunc: FindLocalIPData / getMyHostEnt : better Error handling
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 27 Jun 2017:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.0.0) experimental; urgency=low
+
+  * new unit osdefinedfunctions
+  * osparser: support for defined functions
+  * osparser: moved sync between FExtremeErrorLevel and extremeErrorLevel before final output
+  * osparser: new functions: boolToString(<bool expression>) and stringToBool(< string>)
+  * osparser: new statement: ImportLib
+  * oslog: new method log_prog for program debugging
+  * osconf: readConfigFromService reads configstates:
+     opsi-script.global.debug_prog : boolean ; if true log log_prog if > LLWarning
+     opsi-script.global.debug_lib : boolean ; if true log libraries if > LLWarning
+     opsi-script.global.default_loglevel : intstring ; set the default loglevel
+     opsi-script.global.force_min_loglevel : intstring ; set the minimal loglevel
+  * osmain: if /productid is set then use it also for the log
+  * opsihwbiosInfo: typo Manufacturer ; fixes #2994
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 19 Jun 2017:15:00:00 +0200
+
+
+
+opsi-winst/opsi-script (4.11.6.14) stable; urgency=low
+
+  * osparser: isNumber: now check against int64
+  * osparser: new file section copy option -h (follow symlinks; default=false)
+  * osfunc: support for followsymlinks:
+    FileInstall.AllCopy: AllCopy Recursive: ToCopyOrNotCopy
+    filecopy  : fixes #2537
+    Files section copy: -s : does not follow symlinks but copy the symlink files
+    copy -h : follow symlinks
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 29 Jun 2017:15:00:00 +0200
+
+opsi-winst/opsi-script (4.11.6.13) stable; urgency=low
+
+  * oswebservice: typo: lastcation
+  * osbatchgui: use myStringToTColor to interpret rgb colors from ini file
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 29 May 2017:15:00:00 +0200
+
+
 opsi-winst/opsi-script (4.11.6.12) stable; urgency=low
 
   * osjson: escape chars in jsonAsArrayToStringList
   * osparser: Logging at errorsOccurredSinceMark
   * osparser: move/rename/symlink/hardlink: no Syntax error on wrong parameters ; fixes #2036
+  * some changes for 64 Bit Version
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 03 Jan 2017:15:00:00 +0200
 

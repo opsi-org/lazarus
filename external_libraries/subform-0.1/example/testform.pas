@@ -7,7 +7,9 @@ interface
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   subform, Buttons, StdCtrls, MaskEdit, CheckLst, Grids, PairSplitter, ColorBox,
-  ComCtrls, Spin, Arrow, Calendar, EditBtn, FileCtrl, Chart, ButtonPanel,
+  ComCtrls, Spin, Arrow, Calendar, EditBtn, FileCtrl,
+  //Chart,
+  ButtonPanel,
   DbCtrls, DBGrids, Dbf, DB;
 
 type

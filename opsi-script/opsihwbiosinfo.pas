@@ -604,7 +604,7 @@ begin
       if SMBios.HasProcessorInfo then
       for LProcessorInfo in SMBios.ProcessorInfo do
       begin
-        WriteLn('Manufacter         '+LProcessorInfo.ProcessorManufacturerStr);
+        WriteLn('Manufacturer         '+LProcessorInfo.ProcessorManufacturerStr);
         WriteLn('Socket Designation '+LProcessorInfo.SocketDesignationStr);
         WriteLn('Type               '+LProcessorInfo.ProcessorTypeStr);
         WriteLn('Familiy            '+LProcessorInfo.ProcessorFamilyStr);
@@ -708,7 +708,7 @@ begin
       if SMBios.HasEnclosureInfo then
       for LEnclosure in SMBios.EnclosureInfo do
       begin
-        outlist.Append('enclosure.Manufacter='+LEnclosure.ManufacturerStr);
+        outlist.Append('enclosure.Manufacturer='+LEnclosure.ManufacturerStr);
         outlist.Append('enclosure.Version='+LEnclosure.VersionStr);
         outlist.Append('enclosure.Serial Number='+LEnclosure.SerialNumberStr);
         outlist.Append('enclosure.Asset Tag Number='+LEnclosure.AssetTagNumberStr);
@@ -736,8 +736,8 @@ begin
       if SMBios.HasBaseBoardInfo then
       for LBaseBoard in SMBios.BaseBoardInfo do
       begin
-        //WriteLn('Manufacter          '+SMBios.GetSMBiosString(BBI.LocalIndex  + BBI.Header.Length, BBI.Manufacturer));
-        outlist.Append('board.Manufacter='+LBaseBoard.ManufacturerStr);
+        //WriteLn('Manufacturer          '+SMBios.GetSMBiosString(BBI.LocalIndex  + BBI.Header.Length, BBI.Manufacturer));
+        outlist.Append('board.Manufacturer='+LBaseBoard.ManufacturerStr);
         outlist.Append('board.Product='+LBaseBoard.ProductStr);
         outlist.Append('board.Version='+LBaseBoard.VersionStr);
         outlist.Append('board.Serial Number='+LBaseBoard.SerialNumberStr);
@@ -768,7 +768,7 @@ begin
   try
     LSystem:=SMBios.SysInfo;
     //WriteLn('System Information');
-    outlist.Append('sysinfo.Manufacter='+LSystem.ManufacturerStr);
+    outlist.Append('sysinfo.Manufacturer='+LSystem.ManufacturerStr);
     outlist.Append('sysinfo.Product Name='+LSystem.ProductNameStr);
     outlist.Append('sysinfo.Version='+LSystem.VersionStr);
     outlist.Append('sysinfo.Serial Number='+LSystem.SerialNumberStr);

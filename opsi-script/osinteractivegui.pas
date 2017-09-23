@@ -210,6 +210,7 @@ var
   scriptlist: TXStringList;
   usercontext: string;
   batchproductid: string = '';  //id of product we are running in batch mode
+  logproductid: string = '';  //id of product used for logging in batch mode without service
   usercontextSID: string;
   usercontextUser: string;
   usercontextDomain: string;
@@ -861,12 +862,14 @@ begin
   ProductvarsForPC.Clear;
 
   {$IFDEF WINDOWS}
+  (*
   if FileExists(GetWinSystemDirectory + 'w32hupsi.dll') then
     // very old version
   begin
     WinstRegKey := veryOldWinstRegKey;
   end
   else
+  *)
   begin
     regist := TRegistry.Create;
     regist.RootKey := HKEY_LOCAL_MACHINE;

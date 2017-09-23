@@ -27,65 +27,69 @@ unit osconf;
 
 
 interface
+
 uses
-  Classes
-  , SysUtils
+  Classes,
+  SysUtils,
 {$IFDEF GUI}
-  , Forms
+  Forms,
 {$ENDIF GUI}
 {$IFDEF LINUX}
-  , fileinfo
+  fileinfo,
   //, winpeimagereader {need this for reading exe info}
-  , elfreader {needed for reading ELF executables}
+  elfreader, // {needed for reading ELF executables}
 {$ENDIF LINUX}
 {$IFDEF WINDOWS}
- , VersionInfoX
-  , Windows
-  , registry
-{$ENDIF WINDOWS} ;
-
+  VersionInfoX,
+  Windows,
+  registry,
+{$ENDIF WINDOWS}
+  inifiles,
+  lazfileutils;
 
 function readConfig: boolean;
+function writeConfig: boolean;
+function readConfigFromService: string;
 
 const
 {$IFDEF WINDOWS}
-selfProductName = 'opsi-script';
+  selfProductName = 'opsi-script';
 {$ELSE}
-selfProductName = 'opsi-script';
+  selfProductName = 'opsi-script';
 {$ENDIF WINDOWS}
-ParamFilename = 'winst_p.ini';
+  ParamFilename = 'winst_p.ini';
 
-valueEnvVarNotFound = '/-!!- not found -!!-/';
-
-
-opsiorgKey = '\SOFTWARE\opsi.org';
-opsiorgShareInfoKey = opsiorgKey + '\shareinfo';
-opsiorgGeneralKey = opsiorgKey + '\general';
+  valueEnvVarNotFound = '/-!!- not found -!!-/';
 
 
-//deprecated stuff start:
-opsiorgSyslogDKey = opsiorgKey + '\syslogd';
-Profildateienverzeichnis: string = 'p:\pcpatch';
-PathNamsInfoFilename: string = 'p:\pcpatch\pathnams.ini';
-ProdukteInfoFilename: string = 'p:\utils\produkte.txt';
-SaveddeWithProgmanFilename = 'ProgGrps.ins';
-veryOldWinstRegKey = 'SOFTWARE\Hupsi\winst';
-
-//deprecated stuff end
+  opsiorgKey = '\SOFTWARE\opsi.org';
+  opsiorgShareInfoKey = opsiorgKey + '\shareinfo';
+  opsiorgGeneralKey = opsiorgKey + '\general';
 
 
-opsiservicePORThttps = 4447;
+  //deprecated stuff start:
+  opsiorgSyslogDKey = opsiorgKey + '\syslogd';
+  Profildateienverzeichnis: string = 'p:\pcpatch';
+  PathNamsInfoFilename: string = 'p:\pcpatch\pathnams.ini';
+  ProdukteInfoFilename: string = 'p:\utils\produkte.txt';
+  SaveddeWithProgmanFilename = 'ProgGrps.ins';
+  veryOldWinstRegKey = 'SOFTWARE\Hupsi\winst';
+
+  //deprecated stuff end
+
+
+  opsiservicePORThttps = 4447;
 
 
   debug: boolean = False;
   maxvisualmemostrings = 1000;
   {$IFDEF WINDOWS}
   ParamDelim = '/';
-  opsiscriptconf = '';
+  opsiscriptconfinit = 'opsi-script.conf';
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
   ParamDelim = '-';
-  opsiscriptconf = '/etc/opsi-client-agent/opsi-script.conf';
+  opsiscriptconfinit = '/etc/opsi-client-agent/opsi-script.conf';
   {$ENDIF LINUX}
 
   WinstRegHive = 'HKLM';
@@ -105,7 +109,7 @@ opsiservicePORThttps = 4447;
   RegNoCallShutdown = 0;
   RegCallShutdown = 1;
 
-  var
+var
   computername: string;
   opsiserviceURL: string;
   opsiserviceUser: string;
@@ -119,14 +123,14 @@ opsiservicePORThttps = 4447;
   TmpPathFromLogdatei: string;
   {$IFDEF WINDOWS}
   vi: TVersionInfo;
-  regist : TRegistry;
+  regist: TRegistry;
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
   FileVerInfo: TFileVersionInfo;
   {$ENDIF LINUX}
   WinstVersion: string;
   WinstVersionName: string;
-  readconfig_done : boolean = false;
+  readconfig_done: boolean = False;
 
   //deprecated stuff start:
   configurl: string;
@@ -136,12 +140,38 @@ opsiservicePORThttps = 4447;
   utilsdrive: string;
   configdrive: string;
   //deprecated stuff end
+  debug_prog: boolean = False;
+  debug_lib: boolean = False;
+  default_loglevel : integer = 6;
+  force_min_loglevel: integer = 4;
+  opsiscriptconf : string;
 
 
 implementation
+
 uses
-{$IFDEF WINDOWS}osfunc {$ENDIF}
-{$IFDEF LINUX}osfunclin {$ENDIF};
+  {$IFDEF WINDOWS}osfunc,{$ENDIF}
+  {$IFDEF LINUX}osfunclin,{$ENDIF}
+  oswebservice,
+  osjson,
+  osmain;
+
+function writeConfig: boolean;
+var
+  myconf: TIniFile;
+begin
+  if not FileExists(opsiscriptconf) then
+  begin
+    // prepare to create it
+    ForceDirectory(ExtractFilePath(opsiscriptconf));
+  end;
+  myconf := TIniFile.Create(opsiscriptconf);
+  myconf.WriteString('global', 'debug_prog', BoolToStr(debug_prog, false));
+  myconf.WriteString('global', 'debug_lib', BoolToStr(debug_lib, false));
+  myconf.WriteString('global', 'default_loglevel', IntToStr(default_loglevel));
+  myconf.WriteString('global', 'force_min_loglevel', IntToStr(force_min_loglevel));
+  myconf.Free;
+end;
 
 function readConfig: boolean;
 
@@ -150,13 +180,29 @@ const
 
 var
   part1, part2: string;
-
-  ///XProperties :   TStringList;
+  myconf: TIniFile;
 
 begin
+  if not FileExists(opsiscriptconf) then
+  begin
+    // prepare to create it
+    ForceDirectory(ExtractFilePath(opsiscriptconf));
+  end;
+  myconf := TIniFile.Create(opsiscriptconf);
+  debug_prog := strToBool(myconf.ReadString('global', 'debug_prog',
+    boolToStr(debug_prog, True)));
+  debug_lib := strToBool(myconf.ReadString('global', 'debug_lib',
+    boolToStr(debug_lib, True)));
+  default_loglevel := myconf.ReadInteger('global', 'default_loglevel', default_loglevel);
+  force_min_loglevel := myconf.ReadInteger('global', 'force_min_loglevel',
+    force_min_loglevel);
+  myconf.Free;
 
-{$IFDEF LINUX} computername := getHostnameLin; {$ENDIF LINUX}
-//{$IFDEF LINUX} computername := ''; {$ENDIF LINUX}//
+
+{$IFDEF LINUX}
+  computername := getHostnameLin;
+{$ENDIF LINUX}
+  //{$IFDEF LINUX} computername := ''; {$ENDIF LINUX}//
   Result := True;
   depoturl := '';
   //configurl := '';
@@ -174,9 +220,15 @@ begin
   //utilsdrive := 'p:';
   //configdrive := 'p:';
 
-  {$IFDEF WINDOWS} depotdrive := 'p:'; {$ENDIF WINDOWS}
-  {$IFDEF LINUX} depotdrive_old := '/mnt'; {$ENDIF LINUX}
-  {$IFDEF LINUX} depotdrive := '/media/opsi_depot'; {$ENDIF LINUX}
+  {$IFDEF WINDOWS}
+  depotdrive := 'p:';
+{$ENDIF WINDOWS}
+  {$IFDEF LINUX}
+  depotdrive_old := '/mnt';
+{$ENDIF LINUX}
+  {$IFDEF LINUX}
+  depotdrive := '/media/opsi_depot';
+{$ENDIF LINUX}
 
 {$IFDEF WINDOWS}
   try
@@ -200,7 +252,7 @@ begin
         DivideAtFirst('\', part2, part1, part2);
         depotshare := depotshare + '\' + part1;
         depotdir := '\' + part2;
-        readconfig_done := true;
+        readconfig_done := True;
       end;
     end;
 
@@ -209,26 +261,121 @@ begin
 
   except
     Result := False;
-    readconfig_done := false;
+    readconfig_done := False;
   end;
 {$ENDIF}
+  readconfig_done := True;
+end;
+
+function readConfigFromService: string;
+var
+  serviceresult: string;
+  configid, values, tmpstr: string;
+  configlist: TStringList;
+  i: integer;
+begin
+  // not implemented yet
+  configlist := TStringList.Create;
+  serviceresult := opsidata.getOpsiServiceConfigs;
+  Result := serviceresult;
+  if jsonIsValid(serviceresult) then
+  begin
+    //osmain.startupmessages.Add('got valid json object from getOpsiServiceConfigs');
+    if jsonAsObjectGetValueByKey(serviceresult, 'result',
+      serviceresult) then
+      if jsonIsArray(serviceresult) then
+      begin
+        //osmain.startupmessages.Add('got jason Array from result');
+        if jsonAsArrayToStringList(serviceresult, configlist) then
+        begin
+          for i := 0 to configlist.Count - 1 do
+          begin
+            if jsonIsObject(configlist.Strings[i]) then
+            begin
+              if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                'configId', configid) then
+              begin
+                //osmain.startupmessages.Add('got configid: ' + configid);
+                if pos('opsi-script.', configid) = 1 then
+                begin
+                  // we got a opsi-script config
+                  if LowerCase(configid) = 'opsi-script.global.debug_prog' then
+                  begin
+                    if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                      'values', values) then
+                      if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                      begin
+                        osmain.startupmessages.Add('got debug_prog: ' + tmpstr);
+                        if not TryStrToBool(tmpstr, debug_prog) then
+                          osmain.startupmessages.Add('Error: Not a Boolean:  debug_prog: ' + tmpstr);
+                        result := 'readConfigFromService: ok';
+                      end;
+                  end;
+                  if LowerCase(configid) = 'opsi-script.global.debug_lib' then
+                  begin
+                    if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                      'values', values) then
+                      if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                      begin
+                        osmain.startupmessages.Add('got debug_lib: ' + tmpstr);
+                        if not TryStrToBool(tmpstr, debug_lib) then
+                          osmain.startupmessages.Add('Error: Not a Boolean:  debug_lib: ' + tmpstr);
+                        result := 'readConfigFromService: ok';
+                      end;
+                  end;
+
+                  if LowerCase(configid) = 'opsi-script.global.default_loglevel' then
+                  begin
+                    if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                      'values', values) then
+                      if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                      begin
+                        osmain.startupmessages.Add('got default_loglevel: ' + tmpstr);
+                        if not TryStrToInt(tmpstr, default_loglevel) then
+                          osmain.startupmessages.Add('Error: Not an Integer:  default_loglevel: ' + tmpstr);
+                        result := 'readConfigFromService: ok';
+                      end;
+                  end;
+                  if LowerCase(configid) = 'opsi-script.global.force_min_loglevel' then
+                  begin
+                    osmain.startupmessages.Add(
+                      'got config: opsi-script.global.force_min_loglevel');
+                    if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                      'values', values) then
+                      if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                      begin
+                        osmain.startupmessages.Add('got force_min_loglevel: ' + tmpstr);
+                        if not TryStrToInt(tmpstr, force_min_loglevel) then
+                          osmain.startupmessages.Add('Error: Not an Integer:  force_min_loglevel: ' + tmpstr);
+                        result := 'readConfigFromService: ok'
+                      end;
+                  end;
+                end;
+              end;
+            end;
+          end;
+        end;
+      end;
+  end;
+  configlist.Free;
 end;
 
 
 
-
 initialization
+opsiscriptconf := opsiscriptconfinit;
 {$IFDEF WINDOWS}
-vi := TVersionInfo.Create(Application.ExeName);
-WinstVersion := vi.getString('FileVersion');
-vi.Free;
+  opsiscriptconf := ExtractFileDir(paramstr(0)) + PathDelim+ opsiscriptconfinit;
+  vi := TVersionInfo.Create(Application.ExeName);
+  WinstVersion := vi.getString('FileVersion');
+  vi.Free;
 {$ELSE}
-//from http://wiki.freepascal.org/Show_Application_Title,_Version,_and_Company
-FileVerInfo:=TFileVersionInfo.Create(nil);
-try
-  FileVerInfo.FileName:=paramstr(0);
-  FileVerInfo.ReadFileInfo;
-  WinstVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
+  //from http://wiki.freepascal.org/Show_Application_Title,_Version,_and_Company
+  FileVerInfo := TFileVersionInfo.Create(nil);
+  try
+    FileVerInfo.FileName := ParamStr(0);
+    FileVerInfo.ReadFileInfo;
+    WinstVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
   (*
   writeln('Company: ',FileVerInfo.VersionStrings.Values['CompanyName']);
   writeln('File description: ',FileVerInfo.VersionStrings.Values['FileDescription']);
@@ -239,16 +386,14 @@ try
   writeln('Product name: ',FileVerInfo.VersionStrings.Values['ProductName']);
   writeln('Product version: ',FileVerInfo.VersionStrings.Values['ProductVersion']);
   *)
-finally
-  FileVerInfo.Free;
-end;
-//WinstVersion := '4.11.6.1';
+  finally
+    FileVerInfo.Free;
+  end;
+  //WinstVersion := '4.11.6.1';
 {$ENDIF WINDOWS}
 
-WinstVersionName := 'Version ' + winstVersion ;
-
+  WinstVersionName := 'Version ' + winstVersion;
 
 
 end.
-
 

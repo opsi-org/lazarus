@@ -22,9 +22,63 @@ msgstr "All groups"
 msgid "No Product Groups found ..."
 msgstr "No Product Groups found ..."
 
+#: opsiclientkioskgui.rsactnone
+msgid "None"
+msgstr ""
+
+#: opsiclientkioskgui.rsactrequest
+msgid "Action Request"
+msgstr ""
+
+#: opsiclientkioskgui.rsactsetup
+msgid "Setup"
+msgstr ""
+
+#: opsiclientkioskgui.rsactuninstall
+msgid "Uninstall"
+msgstr ""
+
+#: opsiclientkioskgui.rsinstalled
+msgid "Installed"
+msgstr ""
+
+#: opsiclientkioskgui.rsinstallnow
+msgid "Install now"
+msgstr ""
+
+#: opsiclientkioskgui.rsinstallnowhint
+msgid "Start the installation (deinstallation) of the selected products"
+msgstr ""
+
 #: opsiclientkioskgui.rsnoactionsfound
 msgid "No action requests found."
 msgstr "No action requests found."
+
+#: opsiclientkioskgui.rsnotinstalled
+msgid "Not installed"
+msgstr ""
+
+#: opsiclientkioskgui.rsstateunknown
+msgid "Unknown"
+msgstr ""
+
+#: opsiclientkioskgui.rsstoreactions
+#, fuzzy
+msgctxt "opsiclientkioskgui.rsstoreactions"
+msgid "Store Actions"
+msgstr "Store Actions"
+
+#: opsiclientkioskgui.rsstoreactionshint
+msgid "Send the list of action requests in the list to the server, show the results and ask for installation start."
+msgstr ""
+
+#: opsiclientkioskgui.rsviewlist
+msgid "List"
+msgstr ""
+
+#: opsiclientkioskgui.rsviewtiles
+msgid "Tiles"
+msgstr ""
 
 #: oswebservice.rssendlog
 msgid "Sending log file to server ..."
@@ -50,11 +104,6 @@ msgctxt "TFINSTALLDLG.LABEL1.CAPTION"
 msgid "The following Actions will be done:"
 msgstr "The following Actions will be done:"
 
-#: tfinstalldlg.toolbar1.caption
-msgctxt "TFINSTALLDLG.TOOLBAR1.CAPTION"
-msgid "ToolBar1"
-msgstr "do not translate"
-
 #: tfopsiclientkiosk.bitbtncancel.caption
 msgid "Exit"
 msgstr "Exit"
@@ -65,6 +114,8 @@ msgid "Terminate Program (with out any further action)"
 msgstr "Terminate Program (with out any further action)"
 
 #: tfopsiclientkiosk.bitbtninfo.caption
+#, fuzzy
+msgctxt "tfopsiclientkiosk.bitbtninfo.caption"
 msgid "Info"
 msgstr "Info"
 
@@ -77,12 +128,13 @@ msgid "Show the list of action requests in the list. "
 msgstr "Show the list of action requests in the list. "
 
 #: tfopsiclientkiosk.bitbtnstoreaction.caption
+msgctxt "tfopsiclientkiosk.bitbtnstoreaction.caption"
 msgid "Store Actions"
 msgstr "Store Actions"
 
-#: tfopsiclientkiosk.bitbtnstoreaction.hint
-msgid "Send the list of action requests in the list to the server, show the results and ask for installation start. "
-msgstr "Send the list of action requests in the list to the server, show the results and ask for installation start. "
+#: tfopsiclientkiosk.btnclearsearchedit.caption
+msgid "X"
+msgstr ""
 
 #: tfopsiclientkiosk.btnupgrade.caption
 msgid "Filter for Upgrade"
@@ -96,21 +148,13 @@ msgstr "Filter for Products where an upgrade is possible"
 msgid "opsi-client-kiosk"
 msgstr "opsi-client-kiosk"
 
-#: tfopsiclientkiosk.datapanel.caption
-msgid "datapanel"
-msgstr "do not translate"
+#: tfopsiclientkiosk.checkbox1.caption
+msgid "Expert mode"
+msgstr ""
 
 #: tfopsiclientkiosk.dbgrid1.hint
 msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
 msgstr "Click to ActionRequest Column, to set action requests (setup/uninstall)"
-
-#: tfopsiclientkiosk.grouplist.hint
-msgid "List of possible groups"
-msgstr "List of possible groups"
-
-#: tfopsiclientkiosk.grouppanel.caption
-msgid "grouppanel"
-msgstr "do not translate"
 
 #: tfopsiclientkiosk.labeladvice.caption
 msgid "Advice:  "
@@ -119,14 +163,6 @@ msgstr "Advice:  "
 #: tfopsiclientkiosk.labelclientverstr.caption
 msgid "Version at Client"
 msgstr "Version at Client"
-
-#: tfopsiclientkiosk.labeldataload.caption
-msgid "LabelDataload"
-msgstr "do not translate"
-
-#: tfopsiclientkiosk.labeldataloaddetail.caption
-msgid "LabelDataLoadDetail"
-msgstr "do not translate"
 
 #: tfopsiclientkiosk.labeldescription.caption
 msgid "Description:  "
@@ -144,37 +180,17 @@ msgstr "Version at Server"
 msgid "Please wait ..."
 msgstr "Please wait ..."
 
-#: tfopsiclientkiosk.paneldependencies.caption
-msgid "PanelDependencies"
-msgstr "do not translate"
-
-#: tfopsiclientkiosk.panelprogess.caption
-msgid "PanelProgess"
-msgstr "do not translate"
-
-#: tfopsiclientkiosk.paneltoolbar.caption
-msgid "PanelToolbar"
-msgstr "do not translate"
-
-#: tfopsiclientkiosk.productdetailpanel.caption
-msgid "productdetailpanel"
-msgstr "do not translate"
-
-#: tfopsiclientkiosk.productlistpanel.caption
-msgid "productlistpanel"
-msgstr "do not translate"
+#: tfopsiclientkiosk.radiogroupview.caption
+msgid "View"
+msgstr ""
 
 #: tfopsiclientkiosk.searchedit.hint
 msgid "Search in Productlist"
 msgstr "Search in Productlist"
 
-#: tfopsiclientkiosk.speedbutton1.caption
-msgid "Filter"
-msgstr "Filter"
-
-#: tfopsiclientkiosk.speedbutton1.hint
-msgid "Set Filter"
-msgstr "Set Filter"
+#: tfopsiclientkiosk.searchedit.texthint
+msgid "Search"
+msgstr ""
 
 #: tfopsiclientkiosk.speedbuttonall.caption
 msgid "Show all"
@@ -204,11 +220,6 @@ msgstr "Dependencies / Priority"
 msgid "opsi Client Kiosk"
 msgstr "opsi Client Kiosk"
 
-#: tfopsiclientkiosk.toolbar1.caption
-msgctxt "tfopsiclientkiosk.toolbar1.caption"
-msgid "ToolBar1"
-msgstr "do not translate"
-
 #: tform1.bitbtnlater.caption
 msgctxt "tform1.bitbtnlater.caption"
 msgid "Install at next Standard Event (e.g. Reboot)"
@@ -228,9 +239,4 @@ msgstr "opsi-kiosk-client"
 msgctxt "tform1.label1.caption"
 msgid "The following Actions will be done:"
 msgstr "The following Actions will be done:"
-
-#: tform1.toolbar1.caption
-msgctxt "TFORM1.TOOLBAR1.CAPTION"
-msgid "ToolBar1"
-msgstr "do not translate"
 

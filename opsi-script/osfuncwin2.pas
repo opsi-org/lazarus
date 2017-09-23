@@ -33,9 +33,9 @@ uses
   Classes, SysUtils,
   Windows,
   osregistry,
+  osfuncwin3,
 {$IFNDEF WIN64}
   DSiWin32,
-  osfuncwin3,
   uCpuUsage,
 {$ENDIF WIN64}
   registry,
@@ -86,16 +86,18 @@ function getWinProcessList: TStringList;
 function getloggedonDomUser: string;
 function GetUserName_: string;
 function GetUserNameEx_: string;
+{$IFDEF WIN32}
 function GetProcessActivityByPid(pid: DWORD): real;
 function GetProcessActivityByName(const exename: string; var found: boolean): real;
-
+function DeleteTemporaryLocalAdmin: boolean;
+function getWinlogonHandleForUser(const myuser: string; var myhandle: THandle): boolean;
+{$ENDIF WIN32}
 
 
 
 function getProfileImagePathfromSid(sid: string): string;
 function StrSIDToName(const StrSID: string): string;
 function CreateWinUser(const wServer, wUsername, wPassword, wGroup: WideString): boolean;
-function DeleteTemporaryLocalAdmin: boolean;
 function CreateProcessElevated(lpApplicationName: PChar; lpCommandLine: string;
   lpCurrentDirectory: PChar; Counter: integer;
   var ProcessInfo: jwawinbase.TProcessInformation): boolean;
@@ -112,7 +114,7 @@ function mountSmbShare(drive: string; uncPath: string; Username: string;
   Password: string; RestoreAtLogon: boolean): DWORD;
 function unmountSmbShare(driveOrPath: string; force: boolean): DWORD;
 function getProfilesDirListWin: TStringList;
-function getWinlogonHandleForUser(const myuser: string; var myhandle: THandle): boolean;
+
 
 function winCreateHardLink(lpFileName: PChar; lpExistingFileName: PChar;
   lpSecurityAttributes: pointer): winbool;
@@ -1287,6 +1289,8 @@ begin
   end;
 end;
 
+{$IFDEF WIN32}
+
 function DeleteTemporaryLocalAdmin: boolean;
 var
   wServer, wUser: WideString;
@@ -1397,7 +1401,7 @@ begin
   end;
   LogDatei.DependentAdd('current appdata is now: ' + GetAppDataPath, LLDebug2);
 end;
-
+{$ENDIF WIN32}
 
 function OpenShellProcessInSessionToken(ProcessName: string;
   Sessionid: DWORD; Username: ansistring; horgToken: THandle;
@@ -2124,6 +2128,7 @@ begin
 end;
 *)
 
+{$IFDEF WIN32}
 function getWinlogonHandleForUser(const myuser: string; var myhandle: THandle): boolean;
 var
   myorgtoken: cardinal = 0;
@@ -2186,6 +2191,8 @@ begin
   end;
 end;
 
+{$ENDIF WIN32}
+
 
 function CreateHardLinkA(lpFileName: PChar; lpExistingFileName: PChar;
   lpSecurityAttributes: pointer): winbool; stdcall;
@@ -2239,11 +2246,13 @@ begin
   try
     // try api
     // get needed privilege
+    {$IFDEF WIN32}
     if not DSiEnablePrivilege('SeCreateSymbolicLinkPrivilege') then
     begin
       LogDatei.log('EnablePrivilege Error: ' + IntToStr(GetLastError) +
         ' (' + SysErrorMessage(GetLastError) + ')', LLError);
     end;
+    {$ENDIF WIN32}
     //next try
     if not SetProcessPrivilege('SeCreateSymbolicLinkPrivilege')then
     begin
@@ -2267,14 +2276,18 @@ begin
     if not Result then
     begin
       // plan B: try elevated process
+      {$IFDEF WIN32}
       opsiSetupAdmin_runElevated := True;
+      {$ENDIF WIN32}
       CmdLinePasStr := 'cmd.exe /c mklink "' + lpSymlinkFileName +
         '" "' + lpExistingFileName + '"';
       LogDatei.log('Missing Priviliges for API Call - start process elevated: ' +
         CmdLinePasStr, LLInfo);
       Result := StartProcess(CmdLinePasStr, SW_HIDE, False, False,
         False, False, True, traInvoker, '', 10, Report, ExitCode);
+      {$IFDEF WIN32}
       opsiSetupAdmin_runElevated := False;
+      {$ENDIF WIN32}
       (*
       LogDatei.log('Reading symlink via dir to reread the cache', LLInfo);
       Result := StartProcess('cmd.exe /c dir "' + lpSymlinkFileName+'"', SW_HIDE, False, False,

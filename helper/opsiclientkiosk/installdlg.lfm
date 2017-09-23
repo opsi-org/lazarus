@@ -1,21 +1,20 @@
 object FInstalldlg: TFInstalldlg
-  Left = 524
+  Left = 677
   Height = 289
-  Top = 396
+  Top = 394
   Width = 559
   Caption = 'opsi-kiosk-client'
   ClientHeight = 289
   ClientWidth = 559
-  FormStyle = fsStayOnTop
+  FormStyle = fsSystemStayOnTop
   Position = poMainFormCenter
-  LCLVersion = '1.6.0.4'
+  LCLVersion = '1.6.2.0'
   object ToolBar1: TToolBar
     Left = 0
     Height = 65
     Top = 224
     Width = 559
     Align = alBottom
-    Caption = 'ToolBar1'
     TabOrder = 0
     object BitBtnNow: TBitBtn
       Left = 6
@@ -86,6 +85,7 @@ object FInstalldlg: TFInstalldlg
     Top = 32
     Width = 559
     Align = alClient
+    OnChange = Memo1Change
     ReadOnly = True
     TabOrder = 2
   end

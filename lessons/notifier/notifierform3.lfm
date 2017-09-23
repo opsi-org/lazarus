@@ -1,0 +1,161 @@
+object Form1: TForm1
+  Left = 332
+  Height = 390
+  Top = 135
+  Width = 494
+  Caption = 'Form1'
+  ClientHeight = 390
+  ClientWidth = 494
+  LCLVersion = '1.6.2.0'
+  object ButtonLoad: TButton
+    Left = 40
+    Height = 25
+    Top = 8
+    Width = 75
+    Caption = 'Load Image'
+    OnClick = ButtonLoadClick
+    TabOrder = 0
+  end
+  object ButtonBorder: TButton
+    Left = 40
+    Height = 25
+    Top = 40
+    Width = 163
+    Caption = 'noborder'
+    OnClick = ButtonBorderClick
+    TabOrder = 1
+  end
+  object ButtonShow: TButton
+    Left = 35
+    Height = 25
+    Top = 352
+    Width = 139
+    Caption = 'ButtonShow'
+    OnClick = ButtonShowClick
+    TabOrder = 2
+  end
+  object BitBtn1: TBitBtn
+    Left = 392
+    Height = 30
+    Top = 347
+    Width = 75
+    DefaultCaption = True
+    Kind = bkClose
+    ModalResult = 11
+    OnClick = BitBtn1Click
+    TabOrder = 3
+  end
+  object ButtonCenter1: TButton
+    Left = 216
+    Height = 25
+    Top = 40
+    Width = 75
+    Caption = 'Center'
+    OnClick = ButtonCenter1Click
+    TabOrder = 4
+  end
+  object ButtonRightBottom: TButton
+    Left = 40
+    Height = 25
+    Top = 72
+    Width = 75
+    Caption = 'rechts unten'
+    OnClick = ButtonRightBottomClick
+    TabOrder = 5
+  end
+  object ButtonCenter2: TButton
+    Left = 304
+    Height = 25
+    Top = 40
+    Width = 75
+    Caption = 'Center2'
+    OnClick = ButtonCenter2Click
+    TabOrder = 6
+  end
+  object ButtonRightTop: TButton
+    Left = 128
+    Height = 25
+    Top = 72
+    Width = 75
+    Caption = 'rechts oben'
+    OnClick = ButtonRightTopClick
+    TabOrder = 7
+  end
+  object ButtonMoveInRB: TButton
+    Left = 40
+    Height = 25
+    Top = 104
+    Width = 147
+    Caption = 'ButtonMoveInRB'
+    OnClick = ButtonMoveInRBClick
+    TabOrder = 8
+  end
+  object ButtonMoveInRB2: TButton
+    Left = 230
+    Height = 25
+    Top = 104
+    Width = 128
+    Caption = 'ButtonMoveInRB2'
+    OnClick = ButtonMoveInRB2Click
+    TabOrder = 9
+  end
+  object ButtonFadeIn: TButton
+    Left = 224
+    Height = 25
+    Top = 72
+    Width = 134
+    Caption = 'ButtonFadeIn'
+    OnClick = ButtonFadeInClick
+    TabOrder = 10
+  end
+  object ButtonTransparent: TButton
+    Left = 40
+    Height = 25
+    Top = 136
+    Width = 134
+    Caption = 'ButtonTransparent'
+    OnClick = ButtonTransparentClick
+    TabOrder = 11
+  end
+  object SpinEdit1: TSpinEdit
+    Left = 376
+    Height = 23
+    Top = 138
+    Width = 59
+    MaxValue = 255
+    OnChange = SpinEdit1Change
+    TabOrder = 12
+  end
+  object ButtonTransparent2: TButton
+    Left = 224
+    Height = 25
+    Top = 136
+    Width = 130
+    Caption = 'ButtonTransparent2'
+    OnClick = ButtonTransparent2Click
+    TabOrder = 13
+  end
+  object ButtonTransparent3: TButton
+    Left = 40
+    Height = 25
+    Top = 176
+    Width = 134
+    Caption = 'ButtonTransparent3'
+    OnClick = ButtonTransparent3Click
+    TabOrder = 14
+  end
+  object ButtonTransparent4: TButton
+    Left = 225
+    Height = 25
+    Top = 171
+    Width = 129
+    Caption = 'ButtonTransparent4'
+    Enabled = False
+    OnClick = ButtonTransparent4Click
+    TabOrder = 15
+  end
+  object OpenPictureDialog1: TOpenPictureDialog
+    left = 456
+    top = 8
+  end
+end

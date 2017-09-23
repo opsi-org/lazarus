@@ -98,6 +98,11 @@ type
     FStandardPartLogFilename: string;
     FStandardLogFilename: string;
     FStandardLogFileext: string;
+    FWritePartLog : boolean;
+    Fdebug_prog : boolean;
+    Fdebug_lib : boolean;
+    Fforce_min_loglevel : integer;
+    Fdefault_loglevel : integer;
 
 
   protected
@@ -133,6 +138,8 @@ type
     function getLine(var S: string): boolean;
     function getPartLine(var S: string): boolean;
     function log(const S: string; LevelOfLine: integer): boolean;
+    function log_prog(const S: string; LevelOfLine: integer): boolean;
+    function log_list(const list: TStrings; LevelOfLine: integer): boolean;
     function DependentAdd(const S: string; LevelOfLine: integer): boolean;
     function DependentAddError(const S: string; LevelOfLine: integer): boolean;
     function DependentAddWarning(const S: string; LevelOfLine: integer): boolean;
@@ -165,6 +172,7 @@ type
     property RemoteFileLogging: string read FRemoteFileLogging;
     property LogFileExists: boolean read FLogFileExists write FLogFileExists;
     property PartLogFileExists: boolean read FPartLogFileExists write FPartLogFileExists;
+    property StandardLogFileext: string read FStandardLogFileext write FStandardLogFileext;
 
 
     property LogSIndentLevel: integer read FLogSIndentLevel write setLogSIndentLevel;
@@ -179,7 +187,11 @@ type
     property LogProduktId: boolean read FLogProduktId write FLogProduktId;
     property StandardPartLogFilename: string read FStandardPartLogFilename write FStandardPartLogFilename;
     property StandardLogFilename: string read FStandardLogFilename write FStandardLogFilename;
-    property StandardLogFileext: string read FStandardLogFileext write FStandardLogFileext;
+    property WritePartLog: boolean read FWritePartLog write FWritePartLog;
+    property debug_prog: boolean read Fdebug_prog write Fdebug_prog;
+    property debug_lib: boolean read Fdebug_lib write Fdebug_lib;
+    property force_min_loglevel: integer read Fforce_min_loglevel write Fforce_min_loglevel;
+    property default_loglevel: integer read Fdefault_loglevel write Fdefault_loglevel;
 
     //function copyPartLogToFullLog: boolean;
   end;
@@ -235,9 +247,9 @@ const
 
 
   LevelFatal = 1; //not yet used;
-  BaseLevel = LLnotice;
+  BaseLevel = LLinfo;
   LevelError = LLerror;
-  LevelWarnings = LLnotice;
+  LevelWarnings = LLinfo;
   LevelInfo = LLinfo;
   LevelComplete = LLinfo;
   LevelDebug = LLdebug;
@@ -281,6 +293,7 @@ uses
   osbatchgui,
   osinteractivegui,
 {$ENDIF GUI}
+  osparser,
   osmain,
   osfunc;
 {$ENDIF}
@@ -575,6 +588,7 @@ begin
   FConfidentialStrings := TStringlist.Create;
   FLogProduktId := False;
   FStandardLogFileext := '.log';
+  FWritePartLog := true;
   {$IFDEF OPSIWINST}
   FStandardPartLogFilename := 'opsi-script-part-';
   FStandardLogFilename := 'opsi-script';
@@ -907,36 +921,38 @@ begin
   end;
 
   FReportErrorsToUser := False;
-  PartLogFileExists := False;
-  ForceDirectories(StandardPartLogPath);
-  Randomize;
-  PartFileName := StandardPartLogPath +PathDelim +FStandardPartLogFilename +
-  {$IFDEF OPSIWINST}
-  randomstr(False)
-  {$ELSE}
-  //inttostr(Random(MAXLONGINT))+ExtractFileNameWithoutExt(ExtractFileName(FFilename))
-  inttostr(Random(MAXLONGINT))
-  {$ENDIF}
-  + StandardPartLogFileext;
-  //assignfile(LogPartFile, PartFileName);
-  //writeln(PartFileName);
-  try
-    //rewrite(LogPartFile);
-    LogPartFileF := FileCreate(PartFileName);
-    FileClose(LogPartFileF);
-    LogPartFileF := FileOpen(PartFileName, fmOpenReadWrite or fmShareDenyNone);
-    PartLogFileExists := True;
-  except
-    on E: Exception do
-      ps := '"' + PartFileName +
-        '" could not be created as logfile. Exception "' +
-        E.Message + '"';
+  if FWritePartLog then
+  begin
+    PartLogFileExists := False;
+    ForceDirectories(StandardPartLogPath);
+    Randomize;
+    PartFileName := StandardPartLogPath +PathDelim +FStandardPartLogFilename +
+    {$IFDEF OPSIWINST}
+    randomstr(False)
+    {$ELSE}
+    //inttostr(Random(MAXLONGINT))+ExtractFileNameWithoutExt(ExtractFileName(FFilename))
+    inttostr(Random(MAXLONGINT))
+    {$ENDIF}
+    + StandardPartLogFileext;
+    //assignfile(LogPartFile, PartFileName);
+    //writeln(PartFileName);
+    try
+      //rewrite(LogPartFile);
+      LogPartFileF := FileCreate(PartFileName);
+      FileClose(LogPartFileF);
+      LogPartFileF := FileOpen(PartFileName, fmOpenReadWrite or fmShareDenyNone);
+      PartLogFileExists := True;
+    except
+      on E: Exception do
+        ps := '"' + PartFileName +
+          '" could not be created as logfile. Exception "' +
+          E.Message + '"';
+    end;
+
+    DependentAdd('--', LLessential);
+    DependentAdd('--', LLessential);
+    DependentAdd(PartFileName, LLessential);
   end;
-
-  DependentAdd('--', LLessential);
-  DependentAdd('--', LLessential);
-  DependentAdd(PartFileName, LLessential);
-
 end;
 
 destructor TLogInfo.Destroy;
@@ -999,6 +1015,8 @@ end;
 
 procedure TLogInfo.PartReopen;
 begin
+  if FWritePartLog then
+  begin
   if PartLogFileExists then
     try
       LogPartFileF := FileOpen(PartFileName, fmOpenReadWrite or fmShareDenyNone);
@@ -1006,6 +1024,7 @@ begin
     except
       PartLogFileExists := False;
     end;
+  end;
 end;
 
 
@@ -1050,7 +1069,7 @@ begin
       end;
     end;
   end;
-  DependentAdd('read file opend', LLNotice);
+  DependentAdd('read file opend', LLInfo);
 end;
 
 procedure TLogInfo.PartCloseFromReading;
@@ -1085,7 +1104,7 @@ begin
   try
     files.alldelete(StandardPartLogPath + FStandardPartLogFilename + '*', False, True, 0);
   except
-    //LogDatei.DependentAdd('not all files "' + TempPath + TempBatchdatei + '*"  could be deleted', LLnotice);
+    //LogDatei.DependentAdd('not all files "' + TempPath + TempBatchdatei + '*"  could be deleted', LLInfo);
   end;
   files.Free;
   {$ENDIF}
@@ -1209,6 +1228,14 @@ begin
     Result := False;
 end;
 
+function TLogInfo.log_prog(const S: string; LevelOfLine: integer): boolean;
+begin
+  result := false;
+  if (LevelOfLine <= LLwarning) or Fdebug_prog then
+    result := log('Prog: '+S, LevelOfLine);
+end;
+
+
 function TLogInfo.log(const S: string; LevelOfLine: integer): boolean;
 begin
   result := DependentAdd(S, LevelOfLine);
@@ -1236,6 +1263,24 @@ begin
       if LevelOfLine  = LLCritical then NumberOfErrors := NumberOfErrors + 1;
 
       usedloglevel := loglevel;
+      If usedloglevel < Fforce_min_loglevel then usedloglevel := Fforce_min_loglevel;
+
+      {$IFDEF OPSIWINST}
+       // log libraries ?
+       if Assigned(script) then
+       if Assigned(script.FLibList) then
+         if script.FLibList.Count > script.aktScriptLineNumber then
+         begin
+           // does this log line come from a library ?
+           if StrToBool(script.FLibList.Strings[script.aktScriptLineNumber])
+              // do we want to debug libraries ?
+              and (not debug_lib) then
+                // only Warnings and less
+                usedloglevel :=  LLWarning;
+         end;
+       {$ENDIF}
+
+
       st :=  s;
 
       // now some things we do not want to log:
@@ -1357,6 +1402,7 @@ begin
           end;
         end;
 
+        if FWritePartLog then
         if PartLogFileExists then
         begin
           try
@@ -1422,6 +1468,10 @@ begin
   end;
 end;
 
+function TLogInfo.log_list(const list: TStrings; LevelOfLine: integer): boolean;
+begin
+  result := DependentAddStringList(list, levelOfLine);
+end;
 
 function TLogInfo.DependentAddStringList(const list: TStrings;
   LevelOfLine: integer): boolean;
@@ -1466,18 +1516,15 @@ begin
     //supportedEncodings := TStringList.Create;
     try
       Fname := ExpandFileName(Fname);
-      includelogStrList.LoadFromFile(FName);
-      (*
-      if LowerCase(sourceEncoding) = 'unknown' then
-        sourceEncoding := guessEncoding(includelogStrList.Text);
-      GetSupportedEncodings(supportedEncodings);
-      //for i:= 0 to supportedEncodings.Count-1 do writeln(supportedEncodings.Strings[i]);
-      if supportedEncodings.IndexOf(sourceEncoding) = -1 then
-        DependentAdd('Found or given Encoding: '+sourceEncoding+' is not supported.',LLWarning);
-      if LowerCase(sourceEncoding) <> LowerCase(GetDefaultTextEncoding) then
-        includelogStrList.Text := ConvertEncoding(includelogStrList.Text, sourceEncoding, LowerCase(GetDefaultTextEncoding));
-        *)
-      includelogStrList.Text := reencode(includelogStrList.Text, sourceEncoding,sourceEncoding);
+      if lowercase(sourceEncoding) = 'unicode' then
+      begin
+       includelogStrList.Assign(stringListLoadUtf8FromFile(Fname));
+      end
+      else
+      begin
+        includelogStrList.LoadFromFile(FName);
+        includelogStrList.Text := reencode(includelogStrList.Text, sourceEncoding,sourceEncoding);
+      end;
       includelogLinecount := includelogStrList.Count;
       if logtailLinecount > 0 then
       begin
@@ -1612,7 +1659,7 @@ begin
     finally
       FileClose(LogPartReadFileF);
       PartReopen;
-      DependentAdd('read file created', LLNotice);
+      DependentAdd('read file created', LLInfo);
     end;
   end;
 end;

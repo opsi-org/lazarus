@@ -76,6 +76,7 @@ type
     {$IFDEF WINDOWS}
     procedure EnableFontSmoothing(LabelName: TLabel);
     {$ENDIF WINDOWS}
+    procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure ProgressBarActive(YesNo: boolean);
     procedure ShowProgress(Prozente: integer);
@@ -311,7 +312,6 @@ begin
 
   SetBounds(StartLeft, StartTop, InnerWidth, InnerHeight);
 
-  ForceStayOnTop(BatchScreenOnTop);
 
 
   Color := clBlue;
@@ -352,6 +352,57 @@ begin
   //Refresh;
   //ProcessMess;
 end;
+
+function rgbStringToColor(str: string): TColor;
+var
+  red, green, blue: byte;
+  start, Count: integer;
+  remaining, tempstr: string;
+  tmpcol: TCOLOR;
+begin
+  //try
+  start := 1;
+  Count := pos(',', str) - start;
+  red := StrToInt(copy(str, 1, Count));
+  start := start + Count + 1;
+  remaining := copy(str, start, 500);
+  Count := pos(',', remaining) - 1;
+  green := StrToInt(copy(remaining, 1, Count));
+  start := start + Count + 1;
+  remaining := copy(str, start, 500);
+  blue := StrToInt(copy(remaining, 1, 3));
+  //Result := RGBToColor(red, green, blue);
+  tempstr := '$';
+  tempstr := tempstr + inttohex(blue, 2) + inttohex(green, 2) + inttohex(red, 2);
+  tmpcol := StringToColor(tempstr);
+  Result := tmpcol;
+  (*
+  except
+      on E: Exception do
+      begin
+        LogDatei.log('Error: Could not convert to Color: ' + str, LLError);
+        LogDatei.log('Error: Message: ' + E.message, LLError);
+      end;
+    end;
+    *)
+end;
+
+
+function myStringToTColor(str: string): TColor;
+var
+  message: string;
+begin
+  try
+    Result := rgbStringToColor(str);
+  except
+    try
+
+      Result := StringToColor(str);
+    except
+    end;
+  end;
+end;
+
 
 procedure TFBatchOberflaeche.LoadSkin(const skindirectory: string);
 var
@@ -403,9 +454,9 @@ begin
     LabelInfo.Caption := rsLoadingSkin;
     try
       skinIni := TIniFile.Create(skinFile);
-      Color := StringToColor(skinIni.ReadString('Form', 'Color', 'clBlack'));
+      Color := myStringToTColor(skinIni.ReadString('Form', 'Color', 'clBlack'));
       try
-        Panel.Color := StringToColor(skinIni.ReadString('Form', 'Color', 'clBlack'));
+        Panel.Color := myStringToTColor(skinIni.ReadString('Form', 'Color', 'clBlack'));
 
       except
       end;
@@ -420,7 +471,7 @@ begin
           skinIni.ReadString('LabelVersion', 'FontName', 'Arial');
         LabelVersion.Font.Size := skinIni.ReadInteger('LabelVersion', 'FontSize', 8);
         LabelVersion.Font.Color :=
-          StringToColor(skinIni.ReadString('LabelVersion', 'FontColor', 'clBlack'));
+          myStringToTColor(skinIni.ReadString('LabelVersion', 'FontColor', 'clBlack'));
         LabelVersion.Font.Style := [];
         if ('true' = skinIni.ReadString('LabelVersion', 'FontBold', 'false'))
         then
@@ -444,7 +495,7 @@ begin
           skinIni.ReadString('LabelProduct', 'FontName', 'Arial');
         LabelProduct.Font.Size := skinIni.ReadInteger('LabelProduct', 'FontSize', 32);
         LabelProduct.Font.Color :=
-          StringToColor(skinIni.ReadString('LabelProduct', 'FontColor', 'clBlack'));
+          myStringToTColor(skinIni.ReadString('LabelProduct', 'FontColor', 'clBlack'));
         LabelProduct.Font.Style := [];
         if ('true' = skinIni.ReadString('LabelProduct', 'FontBold', 'false'))
         then
@@ -470,7 +521,7 @@ begin
           skinIni.ReadString('LabelCommand', 'FontName', 'Arial');
         LabelCommand.Font.Size := skinIni.ReadInteger('LabelCommand', 'FontSize', 8);
         LabelCommand.Font.Color :=
-          StringToColor(skinIni.ReadString('LabelCommand', 'FontColor', 'clBlack'));
+          myStringToTColor(skinIni.ReadString('LabelCommand', 'FontColor', 'clBlack'));
         LabelCommand.Font.Style := [];
         if ('true' = skinIni.ReadString('LabelCommand', 'FontBold', 'false'))
         then
@@ -494,7 +545,7 @@ begin
         LableInfoDefaultFontSize := skinIni.ReadInteger('LabelInfo', 'FontSize', 11);
         LabelInfo.Font.Size :=  LableInfoDefaultFontSize;
         LabelInfo.Font.Color :=
-          StringToColor(skinIni.ReadString('LabelInfo', 'FontColor', 'clBlack'));
+          myStringToTColor(skinIni.ReadString('LabelInfo', 'FontColor', 'clBlack'));
         LabelInfo.Font.Style := [];
         if ('true' = skinIni.ReadString('LabelInfo', 'FontBold', 'false'))
         then
@@ -518,7 +569,7 @@ begin
           skinIni.ReadString('LabelDetail', 'FontName', 'Arial');
         LabelDetail.Font.Size := skinIni.ReadInteger('LabelDetail', 'FontSize', 8);
         LabelDetail.Font.Color :=
-          StringToColor(skinIni.ReadString('LabelDetail', 'FontColor', 'clBlack'));
+          myStringToTColor(skinIni.ReadString('LabelDetail', 'FontColor', 'clBlack'));
         LabelDetail.Font.Style := [];
         if ('true' = skinIni.ReadString('LabelDetail', 'FontBold', 'false'))
         then
@@ -544,7 +595,7 @@ begin
         LabelProgress.Font.Size :=
           (*2; *) skinIni.ReadInteger('LabelProgress', 'FontSize', 8);
         LabelProgress.Font.Color :=
-          StringToColor(skinIni.ReadString('LabelProgress', 'FontColor', 'clBlack'));
+          myStringToTColor(skinIni.ReadString('LabelProgress', 'FontColor', 'clBlack'));
         LabelProgress.Font.Style := [];
         if ('true' = skinIni.ReadString('LabelProgress', 'FontBold', 'false'))
         then
@@ -662,16 +713,16 @@ begin
         ProgressBar.Top := skinIni.ReadInteger('ProgressBar', 'Top', 235);
         ProgressBar.Width := skinIni.ReadInteger('ProgressBar', 'Width', 401);
         ProgressBar.Height := skinIni.ReadInteger('ProgressBar', 'Height', 17);
-        ProgressBar.BarColor := StringToColor(
+        ProgressBar.BarColor := myStringToTColor(
           skinIni.ReadString('ProgressBar', 'BarColor', 'clBlack'));
         ProgressBar.StartColor :=
-          StringToColor(skinIni.ReadString('ProgressBar', 'StartColor', 'clBlack'));
+          myStringToTColor(skinIni.ReadString('ProgressBar', 'StartColor', 'clBlack'));
         ProgressBar.FinalColor :=
-          StringToColor(skinIni.ReadString('ProgressBar', 'FinalColor', 'clBlack'));
+          myStringToTColor(skinIni.ReadString('ProgressBar', 'FinalColor', 'clBlack'));
         ProgressBar.ShapeColor :=
-          StringToColor(skinIni.ReadString('ProgressBar', 'ShapeColor', 'clBlack'));
+          myStringToTColor(skinIni.ReadString('ProgressBar', 'ShapeColor', 'clBlack'));
         ProgressBar.backgroundColor :=
-          StringToColor(skinIni.ReadString('ProgressBar', 'BackgroundColor', 'clWhite'));
+          myStringToTColor(skinIni.ReadString('ProgressBar', 'BackgroundColor', 'clWhite'));
         if ('true' = skinIni.ReadString('ProgressBar', 'Shaped', 'false')) then
           ProgressBar.Shaped := True
         else
@@ -704,7 +755,7 @@ begin
         ActivityBar.Height := skinIni.ReadInteger('ActivityBar', 'Height', 10);
         {$IFDEF WINDOWS}
         SendMessage(ActivityBar.Handle, PBM_SETBARCOLOR, 0,
-          StringToColor(skinIni.ReadString('ActivityBar', 'BarColor', 'clBlue')));
+          myStringToTColor(skinIni.ReadString('ActivityBar', 'BarColor', 'clBlue')));
         //ActivityBar.Perform(PBM_SETBARCOLOR, 0,
         //  StringToColor(skinIni.ReadString('ActivityBar', 'BarColor', 'clBlue')));
         //ProgressBarActivity.Brush.Color:= clNone; // Set Background colour
@@ -786,13 +837,24 @@ begin
   tagLOGFONT.lfQuality := ANTIALIASED_QUALITY;
   LabelName.Font.Handle := CreateFontIndirect(tagLOGFONT);
 end;
+
 {$ENDIF WINDOWS}
+
+procedure TFBatchOberflaeche.FormActivate(Sender: TObject);
+begin
+  ForceStayOnTop(BatchScreenOnTop);
+end;
+
+
 
 procedure TFBatchOberflaeche.ForceStayOnTop(YesNo: boolean);
 begin
   if YesNo then
   begin
     //setWindowState (bwmMaximized);
+    FormStyle := fsSystemStayOnTop;
+    BringToFront;
+    Application.ProcessMessages;
     FormStyle := fsStayOnTop;
     (* FBatchOberflaeche.BorderIcons := []; *)
     BatchScreenOnTop := True;
@@ -801,6 +863,7 @@ begin
   begin
     FormStyle := fsnormal;
     BatchScreenOnTop := False;
+    Application.ProcessMessages;
   end;
 
 end;
@@ -968,6 +1031,7 @@ begin
     panel.top := standardTopMargin
   else
     panel.top := 0;
+
   panel.Repaint;
 
   ImageOpsiBackground.Left := Width - ImageOpsiBackground.Width;

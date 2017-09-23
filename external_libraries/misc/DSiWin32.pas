@@ -330,9 +330,9 @@ uses
 {$else}
   Consts,
 {$endif}
-  {$IFDEF NeedVariants}
+  //{$IFDEF NeedVariants}
   Variants,
-  {$ENDIF}
+  //{$ENDIF}
   Windows,
   SysUtils,
   ShellAPI,
