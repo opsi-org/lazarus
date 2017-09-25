@@ -1,98 +1,20 @@
 opsi-winst / opsi-script build howto
 
-//***************************************************************************
-// Subversion:
-// $Revision: 383 $
-// $Author: oertel $
-// $Date: 2015-10-30 14:34:26 +0100 (Fr, 30 Okt 2015) $
-//***************************************************************************
-
+25.09.2017 detlef oertel
 
 The opsi-winst / opsi-script has to be compiled by Lazarus/Freepascal
-using the Libraries indy, dcpcrypt, lzrichedit.
 
-The best way to start ist using the opsi lazarus product and the opsi lazarus-components product in the contribute directory:
-http://download.uib.de/opsi4.0/products/contribute/full-package/
-for example:
-http://download.uib.de/opsi4.0/products/contribute/full-package/lazarus_1.4.4-1.opsi
-or for Linux
-http://download.uib.de/opsi4.0/products/contribute/full-package/l-lazarus_1.4.4-1.opsi
+Checkout the complete lazarus repository from git.
 
+You need a plain Lazarus 1.6.4 like:
+http://download.uib.de/opsi4.0/products/contribute/full-package/lazarus_1.6.4-1.opsi
 
-start your lazarus
+For Standard opsi-winst / opsi-script for Windows use the 32 Bit Version.
 
-Install the needed packages (windows example):
+The project files are lazarus/opsi-script/*.lpi
 
-Click "Package > Open package file (.lpk)" and navigate to
-C:\lazarus\components\indy\lib\indylaz.lpk
-Click the Compile icon
-You may add "C:\lazarus\components\indy\Lib" to the include path,
-and ignore warnings about this .....
-Click the Use>> Icon / Install / Rebuild Lazarus ? / Yes
-
-Install the needed packages:
-Click "Package > Open package file (.lpk)" and navigate to
-C:\lazarus\components\thtml\htmlcomp.lpk
-Click the Compile icon
-Click the Use>> Icon / Install / Rebuild Lazarus ? / Yes
-
-Install the needed packages:
-Click "Package > Open package file (.lpk)" and navigate to
-C:\lazarus\components\dcpcrypt\dcpcrypt_laz.lpk
-Click the Compile icon
-Click the Use>> Icon / Install / Rebuild Lazarus ? / Yes
-
-Install the needed packages:
-Click "Package > Open package file (.lpk)" and navigate to
-C:\lazarus\components\lzRichEdit\lazrichedit.lpk
-Click the Compile icon
-Click the Use>> Icon / Install / Rebuild Lazarus ? / Yes
-
-Your build environment is ready.
-
-Lazarus opsi-winst / opsi-script
-
-opsi-script souce code checkout
-The SVN is here
-https://svn.opsi.org/opsi-winst
-For stable versions look in
-https://svn.opsi.org/opsi-winst/tags/
-For development versions look in
-https://svn.opsi.org/opsi-winst/branches/
-
-project file under Windows is winst.lpi     (not (!) winst64.lpi
+project file for Windows is winst.lpi     (not (!) winst64.lpi
 project files under Linux are
 opsiscript.lpi
 opsiscriptnogui.lpi
 which may be compiled with 32bit or 64 bit
-
-
-##########################################################################
-
-Alternativ way from:
-https://forum.opsi.org/viewtopic.php?f=8&t=7182&p=30763#p30785
-
-Beitragvon realflash » 29 Jan 2015, 12:08
-Thanks for the information. I did (separately) manage to get it compiled in the end, by following the steps below. Could we have the readme.txt in the source code updated with some instructions, please?
-
-I added more debugging to print the HTTP response of the config server to opsi-winst, and was able to confirm that the "wrong" information was coming from the config server. More on that in the other thread.
-
-1. Install Lazarus from http://www.lazarus.freepascal.org
-2. svn checkout http://lazarus-br.googlecode.com/svn/trunk/ lazarus-br-read-only
-3. svn checkout https://svn.opsi.org/opsi-winst
-4. Download Indy10_xxxx.zip from http://indy.fulgan.com/ZIP/
-5. Run Lazarus
-6. Click Project > Open project and navigate to tags/<version>. Double click on winst.lpi
-7. You should be prompted that LazRichEdit and indylaz packages failed to load. Click OK.
-
-8. Click "Package > Open package file (.lpk)" and navigate to the lazarus-br-read-only repository you just checked out
-9. Go into package/lzrichedit and double-click on lazrichedit.lpk
-10. Click the Compile icon
-11. Close the package window
-
-12. Unzip the Indy10_xxxx.zip file you downloaded
-13. Click "Package > Open package file (.lpk)" and navigate to Indy. Go into lib and open indylaz.lpk
-14. Close the package window
-
-15. Ctrl+F9 to build
-
