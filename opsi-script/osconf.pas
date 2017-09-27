@@ -145,6 +145,8 @@ var
   default_loglevel : integer = 6;
   force_min_loglevel: integer = 4;
   opsiscriptconf : string;
+  ScriptErrorMessages: boolean = False;
+  AutoActivityDisplay: boolean = False;
 
 
 implementation
@@ -170,6 +172,8 @@ begin
   myconf.WriteString('global', 'debug_lib', BoolToStr(debug_lib, false));
   myconf.WriteString('global', 'default_loglevel', IntToStr(default_loglevel));
   myconf.WriteString('global', 'force_min_loglevel', IntToStr(force_min_loglevel));
+  myconf.WriteString('global', 'ScriptErrorMessages', BoolToStr(ScriptErrorMessages, true));
+  myconf.WriteString('global', 'AutoActivityDisplay', BoolToStr(AutoActivityDisplay, false));
   myconf.Free;
 end;
 
@@ -196,6 +200,10 @@ begin
   default_loglevel := myconf.ReadInteger('global', 'default_loglevel', default_loglevel);
   force_min_loglevel := myconf.ReadInteger('global', 'force_min_loglevel',
     force_min_loglevel);
+  ScriptErrorMessages := strToBool(myconf.ReadString('global', 'ScriptErrorMessages',
+    boolToStr(ScriptErrorMessages, True)));
+  AutoActivityDisplay := strToBool(myconf.ReadString('global', 'AutoActivityDisplay',
+    boolToStr(AutoActivityDisplay, False)));
   myconf.Free;
 
 
@@ -299,6 +307,7 @@ begin
                 if pos('opsi-script.', configid) = 1 then
                 begin
                   // we got a opsi-script config
+
                   if LowerCase(configid) = 'opsi-script.global.debug_prog' then
                   begin
                     if jsonAsObjectGetValueByKey(configlist.Strings[i],
@@ -311,6 +320,8 @@ begin
                         result := 'readConfigFromService: ok';
                       end;
                   end;
+
+
                   if LowerCase(configid) = 'opsi-script.global.debug_lib' then
                   begin
                     if jsonAsObjectGetValueByKey(configlist.Strings[i],
@@ -336,6 +347,7 @@ begin
                         result := 'readConfigFromService: ok';
                       end;
                   end;
+
                   if LowerCase(configid) = 'opsi-script.global.force_min_loglevel' then
                   begin
                     osmain.startupmessages.Add(
@@ -350,6 +362,33 @@ begin
                         result := 'readConfigFromService: ok'
                       end;
                   end;
+
+                  if LowerCase(configid) = 'opsi-script.global.ScriptErrorMessages' then
+                  begin
+                    if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                      'values', values) then
+                      if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                      begin
+                        osmain.startupmessages.Add('got ScriptErrorMessages: ' + tmpstr);
+                        if not TryStrToBool(tmpstr, ScriptErrorMessages) then
+                          osmain.startupmessages.Add('Error: Not a Boolean:  ScriptErrorMessages: ' + tmpstr);
+                        result := 'readConfigFromService: ok';
+                      end;
+                  end;
+
+                  if LowerCase(configid) = 'opsi-script.global.AutoActivityDisplay' then
+                  begin
+                    if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                      'values', values) then
+                      if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                      begin
+                        osmain.startupmessages.Add('got AutoActivityDisplay: ' + tmpstr);
+                        if not TryStrToBool(tmpstr, AutoActivityDisplay) then
+                          osmain.startupmessages.Add('Error: Not a Boolean:  AutoActivityDisplay: ' + tmpstr);
+                        result := 'readConfigFromService: ok';
+                      end;
+                  end;
+
                 end;
               end;
             end;

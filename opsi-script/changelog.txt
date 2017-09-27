@@ -5,6 +5,16 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 ##################################################################
 
+opsi-winst/opsi-script (4.12.0.6) stable; urgency=low
+
+  * osconf: readConfigFromService reads configstates:
+     opsi-script.global. ScriptErrorMessages : boolean ; default=true (created as false)
+     opsi-script.global.AutoActivityDisplay : boolean ; default=true  (created as true)
+  * general: adjusting log levels
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 27 Sep 2017:15:00:00 +0200
+
+
 opsi-winst/opsi-script (4.12.0.5) stable; urgency=low
 
   * osmain / osinteractivegui: new cli argument /logproductid

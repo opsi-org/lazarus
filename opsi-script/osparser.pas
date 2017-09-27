@@ -1651,12 +1651,14 @@ Begin
 
   FLogLevel := LLinfo;
   FExitOnError := false;
-  FReportMessages := true;
+  //FReportMessages := true;
+  FReportMessages := osconf.ScriptErrorMessages;
   FTraceMode := false;
   FFatalOnSyntaxError := true;
   FFatalOnRuntimeError := false;
   FSuspended := false;
-  FAutoActivityDisplay := false;
+  //FAutoActivityDisplay := false;
+  FAutoActivityDisplay := osconf.AutoActivityDisplay;
   scriptstopped := false;
 
   FVarList := TStringList.create;
@@ -19211,10 +19213,10 @@ begin
     //local_opsidata := nil;
     local_opsidata := opsidata;
   end;
-  Script := TuibInstScript.Create;
-  // Backup existing depotdrive, depotdir
-  depotdrive_bak := depotdrive;
-  depotdir_bak :=  depotdir;
+  //Script := TuibInstScript.Create;
+  //// Backup existing depotdrive, depotdir
+  //depotdrive_bak := depotdrive;
+  //depotdir_bak :=  depotdir;
   if not readconfig_done then
   begin
     if not readconfig then
@@ -19234,11 +19236,17 @@ begin
     logDatei.log_prog('default_loglevel: '+inttostr(osconf.default_loglevel),LLessential);
     logDatei.log_prog('debug_prog: '+BoolToStr(osconf.debug_prog,true),LLessential);
     logDatei.log_prog('debug_lib: '+booltostr(osconf.debug_lib,true),LLessential);
+    logDatei.log_prog('ScriptErrorMessages: '+BoolToStr(osconf.ScriptErrorMessages,true),LLessential);
+    logDatei.log_prog('AutoActivityDisplay: '+booltostr(osconf.AutoActivityDisplay,true),LLessential);
 
     LogDatei.log('Using new Depot path:  ' + depotdrive + depotdir, LLinfo);
   end
   else LogDatei.log('Using old Depot path:  ' + depotdrive + depotdir, LLinfo);
 
+  Script := TuibInstScript.Create;
+  // Backup existing depotdrive, depotdir
+  depotdrive_bak := depotdrive;
+  depotdir_bak :=  depotdir;
   {$IFDEF LINUX} computername := getHostnameLin; {$ENDIF LINUX}
   {$IFDEF GUI}
   CentralForm.Label1.Caption := '';
