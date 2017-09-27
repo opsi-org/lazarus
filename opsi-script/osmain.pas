@@ -414,7 +414,7 @@ begin
     begin
       problem := 'exception while working in registry key ' +
         opsiorggeneralkey + ' error ' + e.message;
-      LogDatei.DependentAdd(problem, LLError);
+      LogDatei.log(problem, LLError);
       Result := False;
     end;
   end;
@@ -467,12 +467,12 @@ begin
 
   if fromRegistry then
   begin
-    LogDatei.DependentAdd('bootmode from registry: ' + bootmode, LLDebug);
+    LogDatei.log('bootmode from registry: ' + bootmode, LLDebug);
   end
   else
   begin
     bootmode := ValueOfEnvVar('BOOTMODE');
-    LogDatei.DependentAdd('bootmode from environment: ' + bootmode, LLDebug);
+    LogDatei.log('bootmode from environment: ' + bootmode, LLDebug);
   end;
 {$ENDIF}
 {$IFDEF LINUX}
@@ -483,7 +483,7 @@ begin
   except
     on E: Exception do
     begin
-      LogDatei.DependentAdd('exception while reading ' +
+      LogDatei.log('exception while reading ' +
         opsiscriptconf + ' error ' + e.message, LLERROR);
     end;
   end;
@@ -805,13 +805,13 @@ begin
   ProductvarsForPC := opsidata.getProductproperties;
   if runproductlist then
     if not opsidata.setAddProductOnClientDefaults(true) then
-      LogDatei.DependentAdd('failed telling server to look for productOnClient defaults', LLerror);
+      LogDatei.log('failed telling server to look for productOnClient defaults', LLerror);
   if not opsidata.initProduct then extremeErrorLevel := levelFatal;
   if runproductlist then
     if not opsidata.setAddProductOnClientDefaults(false) then
-          LogDatei.DependentAdd('failed telling server to stop looking for productOnClient defaults',
+          LogDatei.log('failed telling server to stop looking for productOnClient defaults',
             LLerror);
-  Logdatei.DependentAdd('ProcessNonZeroScript opsidata initialized', LLdebug2);
+  LogDatei.log('ProcessNonZeroScript opsidata initialized', LLdebug2);
   Pfad := opsidata.getSpecialScriptPath;
   //only for backward compatibility and for special circumstances
 {$IFDEF LINUX}
@@ -858,12 +858,12 @@ begin
         then
         begin
           extremeErrorLevel := LevelFatal;
-          Logdatei.DependentAdd('Error level set to fatal, action type ' +
+          LogDatei.log('Error level set to fatal, action type ' +
             sayActionType(Verfahren), LLCritical);
         end;
     end;
-    Logdatei.DependentAdd('First ProcessNonZeroScript finished', LLDebug2);
-    //Logdatei.DependentAdd('Setup script name: '+opsidata.getProductScriptPath(tacSetup), LLessential);
+    LogDatei.log('First ProcessNonZeroScript finished', LLDebug2);
+    //LogDatei.log('Setup script name: '+opsidata.getProductScriptPath(tacSetup), LLessential);
 
 
       if (Verfahren = tacUpdate) or ((Verfahren = tacSetup) and
@@ -871,21 +871,21 @@ begin
           //the setup script does not require a direct Reboot or Logout, and seems to be finished right now
       if extremeErrorLevel = LevelFatal then
       begin
-        Logdatei.DependentAdd('We do not look for a update script, because the setup script is failed', LLnotice);
+        LogDatei.log('We do not look for a update script, because the setup script is failed', LLnotice);
       end
       else
       if not runUpdate then
-        Logdatei.DependentAdd('We do not look for a update script, because noUpdateScript is set', LLnotice)
+        LogDatei.log('We do not look for a update script, because noUpdateScript is set', LLnotice)
       else
       begin
         opsidata.setProductActionRequest(tapUpdate);
-        LogDatei.DependentAdd('product ' + Produkt + ' set to update', LLessential);
-        Logdatei.DependentAdd('get Update script name ...', LLdebug2);
+        LogDatei.log('product ' + Produkt + ' set to update', LLessential);
+        LogDatei.log('get Update script name ...', LLdebug2);
         scriptname := opsidata.getProductScriptPath(tacUpdate);
-        Logdatei.DependentAdd('Update script name: ' + opsidata.getProductScriptPath(
+        LogDatei.log('Update script name: ' + opsidata.getProductScriptPath(
           tacUpdate), LLdebug2);
         absscriptname := makeAbsoluteScriptPath(Pfad, scriptname);
-        Logdatei.DependentAdd('Update script name: ' + absscriptname, LLessential);
+        LogDatei.log('Update script name: ' + absscriptname, LLessential);
 
         if absscriptname <> '' then
         begin
@@ -942,14 +942,14 @@ var
   begin
     LogDatei.LogProduktId:=False;
     SaveProductname := Topsi4data(opsidata).getActualProductId;
-    LogDatei.DependentAdd('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
+    LogDatei.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
       BaseLevel);
     if errorfound then
-      LogDatei.DependentAdd('Error in the conditions for the sequence of products, '
+      LogDatei.log('Error in the conditions for the sequence of products, '
         + ' the sorted list of maximum length is:',
         BaseLevel)
     else
-      LogDatei.DependentAdd('Resolved sequence of products (' +
+      LogDatei.log('Resolved sequence of products (' +
         DateTimeToStr(Now) + '): ',
         BaseLevel);
 
@@ -965,12 +965,12 @@ var
       begin
         Zeile := 'Product ' + IntToStr(i) + ' ' + #9 + Produkte.Strings[i] +
           ' : ' + opsidata.actionToString(requestedAction);
-        LogDatei.DependentAdd(Zeile, BaseLevel);
+        LogDatei.log(Zeile, BaseLevel);
       end;
 
       Inc(i);
     end;
-    LogDatei.DependentAdd('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', BaseLevel);
+    LogDatei.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', BaseLevel);
 
     opsidata.setActualProductName(SaveProductname);
   end;
@@ -984,7 +984,7 @@ var
   begin
     Result := False;
     LogDatei.LogProduktId:= False;
-    LogDatei.DependentAdd('bootmode ' + bootmode, LLInfo);
+    LogDatei.log('bootmode ' + bootmode, LLInfo);
     if Bootmode = 'REINS' then
     begin
       {$IFDEF GUI}
@@ -992,24 +992,24 @@ var
       {$ENDIF GUI}
       if opsidata.getOpsiServiceVersion = '4' then
       begin
-        LogDatei.DependentAdd('telling server to look for dependent products',
+        LogDatei.log('telling server to look for dependent products',
           LLessential);
         if not TOpsi4Data(opsidata).setAddDependentProductOnClients(True) then
-          LogDatei.DependentAdd('failed telling server to look for dependent products',
+          LogDatei.log('failed telling server to look for dependent products',
             LLerror);
       end;
-      LogDatei.DependentAdd('setting all on-products to setup', LLessential);
+      LogDatei.log('setting all on-products to setup', LLessential);
       for i := 1 to Produkte.Count do
       begin
         Produkt := Produkte.Strings[i - 1];
-        LogDatei.DependentAdd('inspecting product "' + Produkt, LLessential);
+        LogDatei.log('inspecting product "' + Produkt, LLessential);
 
         opsidata.setActualProductName(Produkt);
 
         productState := opsidata.getProductState;
         productActionRequest := opsidata.getProductActionRequest;
 
-        LogDatei.DependentAdd('product "' + Produkt + '" has state ' +
+        LogDatei.log('product "' + Produkt + '" has state ' +
           opsidata.stateToString(productState) + ', action request is ' +
           opsidata.actionRequestToString(productActionRequest)
           , LLessential);
@@ -1022,7 +1022,7 @@ var
             if productActionRequest in [tapNull, tapUpdate] then
             begin
               opsidata.setProductActionRequest(tapSetup);
-              LogDatei.DependentAdd('product "' + Produkt + '" set to setup',
+              LogDatei.log('product "' + Produkt + '" set to setup',
                 LLessential);
             end;
           end;
@@ -1030,7 +1030,7 @@ var
       end;
       if opsidata.getOpsiServiceVersion = '4' then
         if not TOpsi4Data(opsidata).setAddDependentProductOnClients(False) then
-          LogDatei.DependentAdd(
+          LogDatei.log(
             'failed telling server to look not for dependent products',
             LLerror);
 
@@ -1071,15 +1071,15 @@ begin
       Produkte.Free;
     Produkte := OpsiData.getListOfProducts;
 
-    LogDatei.DependentAdd('Computername:' + computername, baselevel);
+    LogDatei.log('Computername:' + computername, baselevel);
 
     if computername <> ValueOfEnvVar('computername') then
-      LogDatei.DependentAdd('Computername according to Environment Variable :' +
+      LogDatei.log('Computername according to Environment Variable :' +
         ValueOfEnvVar('computername'),
         baseLevel);
 
     if opsiserviceURL <> '' then
-      LogDatei.DependentAdd('opsi service URL ' + opsiserviceurl,
+      LogDatei.log('opsi service URL ' + opsiserviceurl,
         baseLevel);
 
     LogDatei.log('Depot path:  ' + depotdrive + depotdir, LLinfo);
@@ -1094,7 +1094,7 @@ begin
   except
     on e: exception do
     Begin
-      LogDatei.DependentAddError ('exception in BuildPC: starting ' + e.message, LLError);
+      LogDatei.log ('exception in BuildPC: starting ' + e.message, LLError);
       {$IFDEF WINDOWS} SystemCritical.IsCritical := false; {$ENDIF WINDOWS}
     end;
   end;
@@ -1118,7 +1118,7 @@ begin
         then
           if not setBootmode('BKSTD', Fehler) then
           begin
-            LogDatei.DependentAdd('Bootmode could not be set, ' + Fehler, LLError);
+            LogDatei.log('Bootmode could not be set, ' + Fehler, LLError);
           end;
       end;
 
@@ -1133,7 +1133,7 @@ begin
         end
         else
         begin
-          LogDatei.DependentAddError('Got no product sorting by server.',LLError);
+          LogDatei.log('Got no product sorting by server.',LLError);
         end;
       end;
 
@@ -1150,7 +1150,7 @@ begin
         begin
 
           if trim(Produkt) = '' then
-            LogDatei.DependentAdd('product ' + IntToStr(i - 1) + ' is "" ', LLWarning);
+            LogDatei.log('product ' + IntToStr(i - 1) + ' is "" ', LLWarning);
 
           if opsidata.initProduct then ;
 
@@ -1167,7 +1167,7 @@ begin
         end;
         if processProduct then
         begin
-          LogDatei.DependentAdd ('BuildPC: process product .....', LLDebug3);
+          LogDatei.log ('BuildPC: process product .....', LLDebug3);
           extremeErrorLevel := Level_not_initialized;
           logdatei.ActionProgress := '';
           {$IFDEF GUI}
@@ -1183,20 +1183,20 @@ begin
           ProcessProdukt(extremeErrorLevel);
 
           //FBatchOberflaeche.setWindowState(bwmNormalWindow);
-          LogDatei.DependentAdd ('BuildPC: update switches .....', LLDebug);
+          LogDatei.log ('BuildPC: update switches .....', LLDebug);
           if (PerformExitWindows < txrImmediateLogout) and (not scriptsuspendstate) then
           begin
-            LogDatei.DependentAdd ('BuildPC: update switches 2.....', LLDebug3);
+            LogDatei.log ('BuildPC: update switches 2.....', LLDebug3);
             opsidata.UpdateSwitches(extremeErrorLevel, logdatei.actionprogress);
           end;
-          LogDatei.DependentAdd ('BuildPC: finishProduct .....', LLDebug3);
+          LogDatei.log ('BuildPC: finishProduct .....', LLDebug3);
           opsidata.finishProduct;
           LogDatei.LogProduktId:=false;
         end;
 
         Inc(i);
       end;
-      LogDatei.DependentAdd ('BuildPC: saveOpsiConf .....', LLDebug3);
+      LogDatei.log ('BuildPC: saveOpsiConf .....', LLDebug3);
       opsidata.saveOpsiConf;
 
       Produkte.Free;
@@ -1206,14 +1206,14 @@ begin
   except
     on e: exception do
     Begin
-      LogDatei.DependentAddError ('exception in BuildPC: walk through all products  ' + e.message, LLError);
+      LogDatei.log('exception in BuildPC: walk through all products  ' + e.message, LLError);
       {$IFDEF WINDOWS} SystemCritical.IsCritical := false; {$ENDIF WINDOWS}
     end;
   end;
 
   try
 
-    LogDatei.DependentAdd ('BuildPC: saveOpsiConf .....', LLDebug3);
+    LogDatei.log ('BuildPC: saveOpsiConf .....', LLDebug3);
     opsidata.saveOpsiConf;
     //SaveProfildatei;
 
@@ -1221,7 +1221,7 @@ begin
 
   // LINUX see below
   {$IFDEF WINDOWS}
-    LogDatei.DependentAdd ('BuildPC: handle reboot options: write to registry .....', LLDebug3);
+    LogDatei.log ('BuildPC: handle reboot options: write to registry .....', LLDebug3);
     RegLogOutOptions := TuibRegistry.Create;
     with RegLogOutOptions do
     begin
@@ -1244,7 +1244,7 @@ begin
       if PerformShutdown = tsrRegisterForShutdown then
       begin
         WriteEntry(WinstRegFinalShutdownVar, trdInteger, IntToStr(RegCallShutdown));
-        //LogDatei.DependentAdd('Written RegCallShutdown', BaseLevel)
+        //LogDatei.log('Written RegCallShutdown', BaseLevel)
       end
       else
       begin
@@ -1253,15 +1253,15 @@ begin
         // but it seems not to work
         //try
         //  val := ReadInteger (WinstRegFinalShutdownVar);
-        //  LogDatei.DependentAdd('Read RegCallShutdown: ' + Inttostr(val), BaseLevel)
+        //  LogDatei.log('Read RegCallShutdown: ' + Inttostr(val), BaseLevel)
         //except
-        // LogDatei.DependentAdd('Not read RegCallShutdown', BaseLevel);
+        // LogDatei.log('Not read RegCallShutdown', BaseLevel);
 
         // WriteEntry(WinstRegFinalShutdownVar, trdInteger, IntToStr (RegNoCallShutdown));
         //end
       end;
 
-      LogDatei.DependentAdd ('BuildPC: handle reboot options: registry log continue .....', LLDebug3);
+      LogDatei.log ('BuildPC: handle reboot options: registry log continue .....', LLDebug3);
       WriteEntry(WinstRegLastLogfile, trdString, LogDatei.FileName);
 
       if PerformExitWindows >= txrRegisterForReboot then
@@ -1317,7 +1317,7 @@ begin
     end;
 
 
-    LogDatei.DependentAdd ('BuildPC: finishOpsiconf .....', LLDebug3);
+    LogDatei.log ('BuildPC: finishOpsiconf .....', LLDebug3);
     OpsiData.finishOpsiconf;
 
 
@@ -1430,9 +1430,9 @@ begin
   {$IFDEF WIN32}
   initializeFoldersForUser(dom, user);
   sid := GetLocalUserSidStr(user);
-  //LogDatei.DependentAdd('sidStr :'+sid,LLDebug);
+  //LogDatei.log('sidStr :'+sid,LLDebug);
   sid := copy(sid, 2, length(sid) - 2);
-  LogDatei.DependentAdd('sidStr :' + sid, LLDebug);
+  LogDatei.log('sidStr :' + sid, LLDebug);
   (*
   sid := GetDomainUserSidS(s2, s3, s4);
 
@@ -1456,19 +1456,19 @@ begin
   Produkte := TOpsi4data(OpsiData).getMapOfLoginscripts2Run(allLoginScripts);
 
 
-  LogDatei.DependentAdd('Computername:' + computername, baselevel);
+  LogDatei.log('Computername:' + computername, baselevel);
 
   if computername <> ValueOfEnvVar('computername') then
-    LogDatei.DependentAdd('Computername according to Environment Variable :' +
+    LogDatei.log('Computername according to Environment Variable :' +
       ValueOfEnvVar('computername'),
       baseLevel);
 
   if opsiserviceURL <> '' then
-    LogDatei.DependentAdd('opsi service URL ' + opsiserviceurl,
+    LogDatei.log('opsi service URL ' + opsiserviceurl,
       baseLevel);
 
   LogDatei.log('Depot path:  ' + depotdrive + depotdir, LLinfo);
-  LogDatei.DependentAdd('', BaseLevel);
+  LogDatei.log('', BaseLevel);
   {$IFDEF GUI}
   FBatchOberflaeche.setInfoLabel(rsProductCheck);
   ProcessMess;
@@ -1486,7 +1486,7 @@ begin
 
       opsidata.setActualProductName(Produkt);
       if trim(Produkt) = '' then
-        LogDatei.DependentAdd('product ' + IntToStr(i - 1) + ' is "" ', BaseLevel);
+        LogDatei.log('product ' + IntToStr(i - 1) + ' is "" ', BaseLevel);
 
       extremeErrorLevel := Level_not_initialized;
 
@@ -1555,19 +1555,19 @@ begin
   Produkte := scriptlist;
 
 
-  LogDatei.DependentAdd('Computername:' + computername, baselevel);
+  LogDatei.log('Computername:' + computername, baselevel);
 
   if computername <> ValueOfEnvVar('computername') then
-    LogDatei.DependentAdd('Computername according to Environment Variable :' +
+    LogDatei.log('Computername according to Environment Variable :' +
       ValueOfEnvVar('computername'),
       baseLevel);
 
   if opsiserviceURL <> '' then
-    LogDatei.DependentAdd('opsi service URL ' + opsiserviceurl,
+    LogDatei.log('opsi service URL ' + opsiserviceurl,
       baseLevel);
 
   LogDatei.log('Depot path:  ' + depotdrive + depotdir, LLinfo);
-  LogDatei.DependentAdd('', BaseLevel);
+  LogDatei.log('', BaseLevel);
   {$IFDEF GUI}
   FBatchOberflaeche.setInfoLabel(rsProductCheck);
   ProcessMess;
@@ -1585,7 +1585,7 @@ begin
 
       opsidata.setActualProductName(Produkt);
       if trim(Produkt) = '' then
-        LogDatei.DependentAdd('product ' + IntToStr(i - 1) + ' is "" ', BaseLevel);
+        LogDatei.log('product ' + IntToStr(i - 1) + ' is "" ', BaseLevel);
 
       extremeErrorLevel := Level_not_initialized;
 
@@ -1863,7 +1863,7 @@ begin
           opsiServiceVersion := '4';
           if opsiServiceVersion = '4' then
           begin
-            //LogDatei.DependentAdd ('Initializing opsi service version: '+opsiServiceVersion, LLessential);
+            //LogDatei.log ('Initializing opsi service version: '+opsiServiceVersion, LLessential);
             opsidata := TOpsi4Data.Create;
             opsidata.initOpsiConf(opsiserviceurl,
               opsiserviceUser,
@@ -1960,7 +1960,7 @@ begin
               {$IFDEF GUI}
               MyMessageDlg.WiMessage('Use of opsi Linux Client Agent Extension is not activated ' + LineEnding + 'Terminating Program', [mrOk]);
               {$ENDIF GUI}
-              LogDatei.DependentAdd('Terminating Program', LLerror);
+              LogDatei.log('Terminating Program', LLerror);
               TerminateApp;
             end;
           end;
@@ -2065,7 +2065,7 @@ begin
                       startTime := now;
                       omc := TOpsiMethodCall.Create('backend_info', []);
                       testresult := opsidata.CheckAndRetrieve(omc, errorOccured);
-                      LogDatei.DependentAdd('JSON Bench for ' + omc.OpsiMethodName +
+                      LogDatei.log_prog('JSON Bench for ' + omc.OpsiMethodName +
                         ' ' + copy(omc.getJsonUrlString, pos(',', omc.getJsonUrlString) + 1,
                         50) + ' Start: ' + FormatDateTime('hh:nn:ss:zzz', startTime) +
                         ' Time: ' + FormatDateTime('hh:nn:ss:zzz', now - startTime), LLinfo);
@@ -2101,7 +2101,7 @@ begin
               end
               else
               begin
-                LogDatei.DependentAdd('No opsiclientd.conf found: No Service connection', LLCritical);
+                LogDatei.log('No opsiclientd.conf found: No Service connection', LLCritical);
                 extremeErrorLevel := levelFatal;
               end;
             except
@@ -2136,7 +2136,7 @@ begin
           begin
             try
               // write isFatal (or not) to registry
-              //LogDatei.DependentAdd('extremeErrorLevel is : '+IntToStr(extremeErrorLevel), LLDebug2);
+              //LogDatei.log('extremeErrorLevel is : '+IntToStr(extremeErrorLevel), LLDebug2);
               //##LINUX
               {$IFDEF WINDOWS}
               reg := TRegistry.Create;
@@ -2157,7 +2157,7 @@ begin
             except
               on e: exception do
               Begin
-                LogDatei.DependentAddError ('exception in StartProgramModes: [pmBatch, pmSilent]: reg.Write: with-admin-fatal ' + e.message, LLError);
+                LogDatei.log('exception in StartProgramModes: [pmBatch, pmSilent]: reg.Write: with-admin-fatal ' + e.message, LLError);
                 {$IFDEF WINDOWS} SystemCritical.IsCritical := false; {$ENDIF WINDOWS}
               End;
             end;
@@ -2189,7 +2189,7 @@ begin
         except
           on e: exception do
           Begin
-            LogDatei.DependentAddError ('exception in StartProgramModes: [pmBatch, pmSilent]: ' + e.message, LLError);
+            LogDatei.log ('exception in StartProgramModes: [pmBatch, pmSilent]: ' + e.message, LLError);
             {$IFDEF WINDOWS} SystemCritical.IsCritical := false; {$ENDIF WINDOWS}
           end;
         end;

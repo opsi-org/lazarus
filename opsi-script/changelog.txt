@@ -11,6 +11,12 @@ opsi-winst/opsi-script (4.12.0.6) stable; urgency=low
      opsi-script.global. ScriptErrorMessages : boolean ; default=true (created as false)
      opsi-script.global.AutoActivityDisplay : boolean ; default=true  (created as true)
   * general: adjusting log levels
+    5:LLNotice: comments,messages, Execution of sections
+    6:LLInfo; Statements, New values for stringvars , complete boolean expression
+    7: new values for stringlist vars, Output from sections,
+       shellcall if the output is not written to a stringlist, parts of a boolean expression
+    8: other stringlist output
+    9: content of saved teporary files
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 27 Sep 2017:15:00:00 +0200
 

@@ -5592,7 +5592,7 @@ begin
     myfilename := ExpandFileName(FileName);
     SaveToFile(myfilename,encodingtype);
     LogS := myfilename + ' saved back with encoding: '+encodingtype;
-    LogDatei.log(LogS, LLinfo);
+    LogDatei.log(LogS, LLDebug);
     Result := True;
   except
     on e: Exception do
@@ -5603,9 +5603,9 @@ begin
       LogDatei.log(LogS, LLWarning);
       try
         Sleep(100);
-         SaveToFile(myfilename,encodingtype);
-        LogS := FileName + ' saved back';
-        LogDatei.log(LogS, LLinfo);
+        SaveToFile(myfilename,encodingtype);
+        LogS := myfilename + ' saved back with encoding: '+encodingtype;
+        LogDatei.log(LogS, LLDebug);
         Result := True;
       except
         on e: Exception do
@@ -5618,7 +5618,7 @@ begin
             Sleep(100);
             SaveToFile(myfilename,encodingtype);
             LogS := myfilename + ' saved back with encoding: '+encodingtype;
-            LogDatei.log(LogS, LLinfo);
+            LogDatei.log(LogS, LLDebug);
             Result := True;
           except
             on e: Exception do
@@ -5631,7 +5631,7 @@ begin
                 Sleep(100);
                  SaveToFile(myfilename,encodingtype);
                 LogS := myfilename + ' saved back with encoding: '+encodingtype;
-                LogDatei.log(LogS, LLinfo);
+                LogDatei.log(LogS, LLDebug);
                 Result := True;
               except
                 on e: Exception do
@@ -5645,7 +5645,7 @@ begin
                     Sleep(100);
                      SaveToFile(myfilename,encodingtype);
                     LogS := myfilename + ' saved back with encoding: '+encodingtype;
-                    LogDatei.log(LogS, LLinfo);
+                    LogDatei.log(LogS, LLDebug);
                     Result := True;
                   except
                     on e: Exception do

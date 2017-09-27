@@ -293,6 +293,7 @@ private
   FFilename : String;
   FLinesOriginList : TStringList;
   FaktScriptLineNumber : int64;
+  FEvalBoolBaseNestLevel : int64;
 
 
   
@@ -349,6 +350,9 @@ public
      var StringResult : String; var InfoSyntaxError : String ) : Boolean;
 
   function EvaluateBoolean (Input : String; var Remaining : String;
+     var BooleanResult : Boolean; NestingLevel : Integer; var InfoSyntaxError : String) : Boolean;
+
+  function EvaluateBoolean_ (Input : String; var Remaining : String;
      var BooleanResult : Boolean; NestingLevel : Integer; var InfoSyntaxError : String) : Boolean;
 
   procedure GetWordOrStringExpressionstr (const s: String;
@@ -455,20 +459,20 @@ public
                  WaitConditions : TSetWaitConditions; ident : String; WaitSecs : Word;
                  runAs : TRunAs;flag_force64:boolean) : TSectionResult;
   function execDOSBatch (const Sektion: TWorkSection; BatchParameter : String;
-                 ShowCmd : Integer; catchOut: Boolean;
+                 ShowCmd : Integer; catchOut: Boolean; logleveloffset : integer;
                  WaitConditions : TSetWaitConditions;
                  var output: TXStringList)                       : TSectionResult;
 
 
   function execPython (
         const Sektion: TWorkSection; PythonParameter : String;
-        catchOut : Boolean; WaitConditions : TSetWaitConditions;
+        catchOut : Boolean; logleveloffset : integer;WaitConditions : TSetWaitConditions;
         var output: TXStringList)                       : TSectionResult;
 
 
   function executeWith (
       const Sektion: TWorkSection; ExecParameter : String;
-      catchOut : Boolean; 
+      catchOut : Boolean; logleveloffset : integer;
       var output: TXStringList)                       : TSectionResult;
 
   function execShellCall (command : String; archparam:string;
@@ -1851,11 +1855,11 @@ begin
 
   (* LogDatei.LogSIndentLevel := Sektion.NestingLevel; *)
   ps := '';
-  LogDatei.log (ps, LevelWarnings);
+  LogDatei.log (ps, LLNotice);
   if Sektion.count > 0 then
   begin
     ps := 'Execution of ' + Sektion.Name;
-    LogDatei.log (ps, LevelWarnings);
+    LogDatei.log (ps, LLNotice);
   end
   else
   // this case should be captured beforehand
@@ -3822,7 +3826,7 @@ begin
     ps := ps + '  (OutputOption: ' + tlorToStr(outputRequest) + ')';
 
 
-  LogDatei.log (ps, LevelWarnings);
+  LogDatei.log (ps, LLNotice);
 
   if pos (uppercase (PStatNames^ [tsLDAPsearch]), uppercase (Sektion.Name)) > 0 then
     //ps := (* 'Ausfuehrung von ' +  *) copy (Sektion.Name, length (PStatNames^ [tsLDAPsearch]) + 1, length (Sektion.Name));
@@ -4262,12 +4266,12 @@ begin
 
       LogDatei.LogSIndentLevel  := startindentlevel + 1;
 
-      LogDatei.log('key ' + key, LLinfo);
+      LogDatei.log('key ' + key, LLDebug);
 
       key_completepath := key;
-      LogDatei.log('Key is: '+key, LLdebug);
+      LogDatei.log('Key is: '+key, LLdebug2);
       GetWord (key, key0, key, ['\']);
-      LogDatei.log('Key0 is: '+key0, LLdebug);
+      LogDatei.log('Key0 is: '+key0, LLdebug2);
       if Is64BitSystem and ('software' = lowerCase(key0)) then
       begin
         LogDatei.log('key starting with software on 64 bit. Key is: '+key, LLdebug);
@@ -4628,7 +4632,7 @@ begin
             key_completepath := key;
             LogDatei.log('Key is: '+key, LLdebug);
             GetWord (key, key0, key, ['\']);
-            LogDatei.log('Key0 is: '+key0, LLdebug);
+            LogDatei.log('Key0 is: '+key0, LLdebug2);
             if Is64BitSystem and ('software' = lowerCase(key0)) then
             begin
               LogDatei.log('key starting with software on 64 bit. Key is: '+key, LLdebug);
@@ -5919,7 +5923,7 @@ begin
              try
               if opsidata.getOpsiServiceVersion = '4' then
                 local_opsidata := TOpsi4Data(opsidata);
-                 LogDatei.log('Calling opsi service at ' + local_opsidata.serviceUrl, LLinfo);
+                 LogDatei.log_prog('Calling opsi service at ' + local_opsidata.serviceUrl, LLDebug);
              except
                errorOccured := true;
                testresult := 'not in service mode';
@@ -5937,7 +5941,7 @@ begin
             End
             else
             Begin
-              LogDatei.log('Calling opsi service at ' + local_opsidata.serviceUrl, LLinfo);
+              LogDatei.log_prog('Calling opsi service at ' + local_opsidata.serviceUrl, LLDebug);
             End
           end;
 
@@ -6727,7 +6731,7 @@ function TuibInstScript.doXMLPatch (const Sektion: TWorkSection; Const XMLFilena
 {$IFDEF WINDOWS}
 begin
   //DataModuleLogServer.IdTCPServer1.Active:=true;
-  result := executeWith (Sektion,  '"'+ ExtractFileDir(paramstr(0))+PathDelim+'opsiwinstxmlplugin.exe" --xmlfile="'+trim(XMLFilename)+'" --scriptfile=' , true, output);
+  result := executeWith (Sektion,  '"'+ ExtractFileDir(paramstr(0))+PathDelim+'opsiwinstxmlplugin.exe" --xmlfile="'+trim(XMLFilename)+'" --scriptfile=' , true, 0, output);
   LogDatei.includelogtail(StandardLogPath+'opsiwinstxmlplugin.log',1000,'auto');
   DeleteFile(StandardLogPath+'opsiwinstxmlplugin.log');
     //DataModuleLogServer.IdTCPServer1.Active:=false;
@@ -8441,14 +8445,14 @@ begin
   begin
     if FetchExitCodePublic then FLastExitCodeOfExe := localExitCode
     else FLastPrivateExitCode := localExitcode;
-    LogDatei.log ('output:', LLDebug2+logleveloffset);
-    LogDatei.log ('--------------', LLDebug2+logleveloffset);
+    LogDatei.log ('output:', LLDebug+logleveloffset);
+    LogDatei.log ('--------------', LLDebug+logleveloffset);
     for i := 0 to output.count-1 do
     begin
-     LogDatei.log (output.strings[i], LLDebug2+logleveloffset);
+     LogDatei.log (output.strings[i], LLDebug+logleveloffset);
     end;
     //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-    LogDatei.log ('', LLDebug2+logleveloffset);
+    LogDatei.log ('', LLDebug+logleveloffset);
     result.Text := output.text;
   end;
  output.Free;
@@ -8457,7 +8461,7 @@ end;
 
 function TuibInstScript.execDOSBatch (
       const Sektion: TWorkSection; BatchParameter : String;
-      ShowCmd : Integer; catchOut: Boolean;
+      ShowCmd : Integer; catchOut: Boolean; logleveloffset : integer;
       WaitConditions : TSetWaitConditions;
       var output: TXStringList)                       : TSectionResult;
 
@@ -8498,8 +8502,8 @@ begin
 
     ps := '';
     LogDatei.log (ps, LLNotice);
-    ps := Sektion.Name;
-    LogDatei.log (ps, LLInfo);
+    ps := 'Execution of: '+Sektion.Name + ' ' +BatchParameter;
+    LogDatei.log (ps, LLNotice);
 
     (*
     if pos (uppercase (PStatNames^ [tsDOSInAnIcon]), uppercase (Sektion.Name)) > 0 then
@@ -8660,7 +8664,7 @@ begin
 
      begin
       output := TXStringlist.create;
-      LogDatei.log ('Executing ' + commandline, LLInfo);
+      LogDatei.log ('Executing ' + commandline, LLDebug+logleveloffset);
       if not RunCommandAndCaptureOut
          (commandline,
           catchout,
@@ -8705,16 +8709,16 @@ begin
           sysutils.DeleteFile('/tmp/opsi-script-out.txt');
         end;
         //xoutput.AddStrings(output);
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-        LogDatei.log ('', LLinfo);
-        LogDatei.log ('output:', LLinfo);
-        LogDatei.log ('--------------', LLinfo);
+        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 4;
+        LogDatei.log ('', LLDebug+logleveloffset);
+        LogDatei.log ('output:', LLDebug+logleveloffset);
+        LogDatei.log ('--------------', LLDebug+logleveloffset);
         for i := 0 to output.count-1 do
         begin
-         LogDatei.log (output.strings[i], LLinfo);
+         LogDatei.log (output.strings[i], LLDebug+logleveloffset);
         end;
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-        LogDatei.log ('', LLinfo);
+        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 4;
+        LogDatei.log ('', LLDebug+logleveloffset);
       End
      End;
     end;
@@ -8739,7 +8743,7 @@ end;
 
 function TuibInstScript.execPython (
       const Sektion: TWorkSection; PythonParameter : String;
-      catchOut : Boolean; WaitConditions : TSetWaitConditions;
+      catchOut : Boolean; logleveloffset : integer; WaitConditions : TSetWaitConditions;
       var output: TXStringList)                       : TSectionResult;
 
 
@@ -8761,7 +8765,7 @@ Var
 
  begin
     result := true;
-    LogDatei.log ('python ' + parameters, levelcomplete);
+    LogDatei.log ('python ' + parameters, LLInfo+logleveloffset);
 
     if not RunCommandAndCaptureOut
        ('python ' + parameters,
@@ -8791,9 +8795,9 @@ begin
   OldNumberOfWarnings := LogDatei.NumberOfWarnings;
 
   ps := '';
-  LogDatei.log (ps, LevelWarnings);
-  ps := 'Execution of ' + Sektion.Name;
-  LogDatei.log (ps, LevelWarnings);
+  LogDatei.log (ps, LLNotice);
+  ps := 'Execution of ' + Sektion.Name + ' ' + PythonParameter;
+  LogDatei.log (ps, LLNotice);
 
   if pos (uppercase (PStatNames^ [tsExecutePython]), uppercase (Sektion.Name)) > 0 then
      ps := Sektion.Name;
@@ -8825,7 +8829,7 @@ begin
     end;
 
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-    LogDatei.log ('', LevelComplete);
+    LogDatei.log ('', LLInfo);
   End;
 
   outlines.Clear;
@@ -8862,18 +8866,18 @@ begin
          + pythonparameter, output, showcmd)
        then
        Begin
-          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-          LogDatei.log ('', LLinfo);
-          LogDatei.log ('output:', LLinfo);
-          LogDatei.log ('--------------', LLinfo);
+          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 4;
+          LogDatei.log ('', LLDebug+logleveloffset);
+          LogDatei.log ('output:', LLDebug+logleveloffset);
+          LogDatei.log ('--------------', LLDebug+logleveloffset);
 
           for i := 0 to output.count-1 do
           begin
-           LogDatei.log (output.strings[i], LLinfo);
+           LogDatei.log (output.strings[i], LLDebug+logleveloffset);
           end;
 
-          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-          LogDatei.log ('', LLinfo);
+          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 4;
+          LogDatei.log ('', LLDebug+logleveloffset);
         End;
      end;
 
@@ -9016,7 +9020,7 @@ end;
 
 function TuibInstScript.executeWith (
       const Sektion: TWorkSection; ExecParameter : String;
-      catchOut : Boolean;
+      catchOut : Boolean; logleveloffset : integer;
       var output: TXStringList)                       : TSectionResult;
 
 
@@ -9062,9 +9066,9 @@ begin
   OldNumberOfWarnings := LogDatei.NumberOfWarnings;
 
   ps := '';
-  LogDatei.log (ps, LevelWarnings);
-  ps := 'Execution of ' + Sektion.Name;
-  LogDatei.log (ps, LevelWarnings);
+  LogDatei.log (ps, LLNotice+logleveloffset);
+  ps := 'Execution of ' + Sektion.Name + ' ' +ExecParameter;
+  LogDatei.log (ps, LLNotice+logleveloffset);
 
   if pos (uppercase (PStatNames^ [tsExecuteWith]), uppercase (Sektion.Name)) > 0 then
      ps := Sektion.Name;
@@ -9168,7 +9172,7 @@ begin
     end
     else
     begin
-      LogDatei.log ('Executing ' + commandline, LLInfo);
+      LogDatei.log ('Executing ' + commandline, LLDebug);
       if not RunCommandAndCaptureOut
          (commandline,
           true,
@@ -9182,18 +9186,18 @@ begin
       End
       else
       Begin
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-        LogDatei.log ('', LLinfo);
-        LogDatei.log ('output:', LLinfo);
-        LogDatei.log ('--------------', LLinfo);
+        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 4;
+        LogDatei.log ('', LLDebug+logleveloffset);
+        LogDatei.log ('output:', LLDebug+logleveloffset);
+        LogDatei.log ('--------------', LLDebug+logleveloffset);
 
         for i := 0 to output.count-1 do
         begin
-         LogDatei.log (output.strings[i], LLinfo);
+         LogDatei.log (output.strings[i], LLDebug+logleveloffset);
         end;
 
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-        LogDatei.log ('', LLinfo);
+        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 4;
+        LogDatei.log ('', LLDebug+logleveloffset);
       End;
     end;
 
@@ -9356,7 +9360,7 @@ begin
          syntaxCheck := true;
          try
            //LogDatei.log ('Executing0 ' + s1, LLInfo);
-           list.Text := execShellCall(s1, 'sysnative',0, true).Text;
+           list.Text := execShellCall(s1, 'sysnative',1, true).Text;
          except
            on e: exception do
            begin
@@ -9568,16 +9572,16 @@ begin
 
             tsExecutePython :
                   execPython(localSection, r1,
-                      true {catchout},
+                      true {catchout}, 1,
                       [ttpWaitOnTerminate], list);
 
             tsExecuteWith_escapingStrings, tsExecuteWith:
                   executeWith(localSection, r1,
-                      true {catchout}, list);
+                      true {catchout}, 1, list);
 
             tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon:
                   execDOSBatch (localSection, r1,
-                      SW_HIDE, true {catchout},
+                      SW_HIDE, true {catchout}, 1,
                       [ttpWaitOnTerminate], list);
 
            end;
@@ -10996,7 +11000,7 @@ else if LowerCase (s) = LowerCase ('getSwauditInfoList')
    then
    Begin
      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-     LogDatei.log ('retrieving strings from ' + logstring , LLInfo);
+     LogDatei.log ('retrieving strings from ' + logstring , LLDebug2);
      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
      LogDatei.log_list(list, LLDebug2);
      LogDatei.log('', LLDebug2);
@@ -13917,7 +13921,7 @@ begin
          try
             local_opsidata := opsidata;
 
-           LogDatei.log('Calling opsi service at ' + local_opsidata.serviceUrl, LevelComplete);
+           LogDatei.log_prog('Calling opsi service at ' + local_opsidata.serviceUrl, LLDebug);
          except
            errorOccured := true;
            testresult := '!!! not in service mode !!!';
@@ -14004,7 +14008,7 @@ begin
          try
             local_opsidata := opsidata;
 
-           LogDatei.log('Calling opsi service at ' + local_opsidata.serviceUrl, LevelComplete);
+           LogDatei.log_prog('Calling opsi service at ' + local_opsidata.serviceUrl, LLDebug);
          except
            errorOccured := true;
            testresult := '!!! not in service mode !!!';
@@ -14174,9 +14178,14 @@ function TuibInstScript.doXMLAddNamespace(filename:string;
   end;
  end;
 
+function TuibInstScript.EvaluateBoolean (Input : String; var Remaining : String;
+     var BooleanResult : Boolean; NestingLevel : Integer; var InfoSyntaxError : String) : Boolean;
+begin
+  script.FEvalBoolBaseNestLevel:=NestingLevel;
+  result := EvaluateBoolean_ (Input, Remaining, BooleanResult, NestingLevel, InfoSyntaxError);
+end;
 
-
-function TuibInstScript.EvaluateBoolean
+function TuibInstScript.EvaluateBoolean_
      (Input : String;
      var Remaining : String;
      var BooleanResult : Boolean;
@@ -14268,7 +14277,7 @@ begin
  if Skip ('(', Input, r, sx)
  then
  begin
-   if EvaluateBoolean (r, r, BooleanResult, NestingLevel+1, InfoSyntaxError)
+   if EvaluateBoolean_ (r, r, BooleanResult, NestingLevel+1, InfoSyntaxError)
    then if Skip (')', r, r, InfoSyntaxError)
    then
       syntaxCheck := true;
@@ -14279,7 +14288,7 @@ begin
  then
  begin
    if Skip ('(', r, r, InfoSyntaxError)
-   then if EvaluateBoolean (r, r, BooleanResult, NestingLevel+1, InfoSyntaxError)
+   then if EvaluateBoolean_ (r, r, BooleanResult, NestingLevel+1, InfoSyntaxError)
    then if Skip (')', r, r, InfoSyntaxError)
    then
    Begin
@@ -15521,7 +15530,7 @@ end
    if Skip ('and', r, r, sx)
    then
    Begin
-     if EvaluateBoolean (r, r, BooleanResult0, NestingLevel+1, InfoSyntaxError)
+     if EvaluateBoolean_ (r, r, BooleanResult0, NestingLevel+1, InfoSyntaxError)
      then
        BooleanResult := BooleanResult and BooleanResult0
      else
@@ -15531,7 +15540,7 @@ end
    if Skip ('or', r, r, sx)
    then
    Begin
-     if EvaluateBoolean (r, r, BooleanResult0, NestingLevel+1, InfoSyntaxError)
+     if EvaluateBoolean_ (r, r, BooleanResult0, NestingLevel+1, InfoSyntaxError)
      then
        BooleanResult := BooleanResult or BooleanResult0
      else
@@ -15555,8 +15564,15 @@ end
  End
  else
    RunTimeInfo := RunTimeInfo +   '    <<< syntax error, no result!! - set to false';
-
- LogDatei.log (RunTimeInfo, LLInfo);
+ //LogDatei.log ('NestingLevel: '+IntToStr(NestingLevel), LLInfo);
+ //LogDatei.log ('script.FEvalBoolBaseNestLevel: '+IntToStr(script.FEvalBoolBaseNestLevel), LLInfo);
+ if NestingLevel = script.FEvalBoolBaseNestLevel then
+ begin
+   // This is the complete boolean expression
+   LogDatei.log (RunTimeInfo, LLInfo);
+ end
+ else // These are the parts in the recursion
+   LogDatei.log (RunTimeInfo, LLDebug);
  list1.Free;
 
 End;
@@ -18341,6 +18357,7 @@ begin
 
               tsPatchAnyTextFile:
                 begin
+                   logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
                    flag_all_ntuser := false;
                    // if this is a 'ProfileActions' which is called as sub in Machine mode
                    // so run patches sections implicit as /Allntuserprofiles
@@ -18363,6 +18380,7 @@ begin
 
               tsPatchIniFile:
                 begin
+                  logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
                   flag_all_ntuser := false;
                   // if this is a 'ProfileActions' which is called as sub in Machine mode
                   // so run patches sections implicit as /Allntuserprofiles
@@ -18381,6 +18399,7 @@ begin
 
               tsHostsPatch:
                 Begin
+                  logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
                    GetWordOrStringExpressionstr (Remaining, Filename, Remaining, ErrorInfo);
                    ActionResult := doHostsPatch (ArbeitsSektion, Filename);
                 End;
@@ -18390,6 +18409,7 @@ begin
               tsRegistryHack:
                  begin
                    {$IFDEF WINDOWS}
+                   logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
                    syntaxcheck := true;
 
                    registryformat := trfWinst;
@@ -18547,6 +18567,7 @@ begin
               tsXMLPatch:
                 begin
                   {$IFDEF WINDOWS}
+                   logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
                    EvaluateString (Remaining, Remaining, Parameter, InfoSyntaxError);
                    if Remaining = ''
                    then
@@ -18561,12 +18582,13 @@ begin
 
               tsOpsiServiceCall, tsOpsiServiceCallStat:
                 begin
+                   logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
                    Parameter := Remaining;
                    if (uppercase(PStatNames^ [tsOpsiServiceCall]) = uppercase(Expressionstr))
                       and skip ('/preloginservice', Remaining, Remaining, errorInfo)
                      then
                    begin
-                     logdatei.log('Execution of OpsiServiceCall /preloginservce',LLInfo);
+                     logdatei.log('Execution of OpsiServiceCall /preloginservce',LLNotice);
                      if (local_opsidata <> nil) and (local_opsidata <> opsidata) then
                      begin
                        local_opsidata.Free;
@@ -18578,6 +18600,7 @@ begin
 
                 tsOpsiServiceHashList:
                 begin
+                   logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
                    Parameter := Remaining;
                    ActionResult := doOpsiServiceHashList (ArbeitsSektion, Parameter, output)
                 end;
@@ -18593,6 +18616,7 @@ begin
 
               tsLDAPsearch:
                 begin
+                 logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
                   EvaluateString (Remaining, Remaining, Parameter, InfoSyntaxError);
                   if produceLDAPsearchParameters(Remaining, cacheRequest, outputRequest, InfoSyntaxError)
                   then
@@ -18603,6 +18627,7 @@ begin
 
               tsFileActions:
                 begin
+                 logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
                  flag_all_ntuser := false;
                  // if this is a 'ProfileActions' which is called as sub in Machine mode
                  // so run registry sections implicit as /Allntuserdats
@@ -18614,6 +18639,7 @@ begin
               tsLinkFolder:
                 begin
                   //{$IFDEF WIN32}
+                 logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
                   if Remaining = ''
                   then
                       doLinkFolderActions (ArbeitsSektion, true)
@@ -18636,6 +18662,7 @@ begin
               tsWinBatch:
                begin
                 //{$IFDEF WINDOWS}
+                logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
                  runAs := traInvoker;
                  {$IFDEF WIN32}
                  opsiSetupAdmin_runElevated := false;
@@ -18899,40 +18926,58 @@ begin
                {$ENDIF WIN32}
 
               tsDosBatchFile:
+                begin
+                  logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
                   ActionResult := execDOSBatch (ArbeitsSektion, Remaining,
-                           SW_ShowNormal, false {dont catch out},
+                           SW_ShowNormal, false {dont catch out}, 0,
                            [ttpWaitOnTerminate], output);
+                end;
 
               tsDosInAnIcon:
-                 ActionResult := execDOSBatch (ArbeitsSektion, Remaining,
-                           SW_HIDE, true {catch out},
+                begin
+                  logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
+                   ActionResult := execDOSBatch (ArbeitsSektion, Remaining,
+                           SW_HIDE, true {catch out}, 0,
                            [ttpWaitOnTerminate], output);
+                 end;
 
               tsShellBatchFile:
-                 ActionResult := execDOSBatch (ArbeitsSektion, Remaining,
-                           SW_ShowNormal, false {dont catch out},
+                begin
+                  logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
+                  ActionResult := execDOSBatch (ArbeitsSektion, Remaining,
+                           SW_ShowNormal, false {dont catch out}, 0,
                            [ttpWaitOnTerminate], output);
+                end;
 
               tsShellInAnIcon:
-                 ActionResult := execDOSBatch (ArbeitsSektion, Remaining,
-                           SW_HIDE, true {catch out},
+                begin
+                  logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
+                  ActionResult := execDOSBatch (ArbeitsSektion, Remaining,
+                           SW_HIDE, true {catch out},  0,
                            [ttpWaitOnTerminate], output);
+                end;
 
               tsExecutePython :
-                ActionResult := execPython (ArbeitsSektion, Remaining,
-                           true {catch out},
+                begin
+                  logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
+                  ActionResult := execPython (ArbeitsSektion, Remaining,
+                           true {catch out},  0,
                            [ttpWaitOnTerminate], output);
+                end;
 
               tsExecuteWith, tsExecuteWith_escapingStrings:
-                if
-                  produceExecLine(remaining, p1, p2, p3, p4,
-                    InfoSyntaxError)
-                then
-                  ActionResult := executeWith (ArbeitsSektion, Remaining,
-                           true {catch out},
-                           output)
-                else
-                  ActionResult := reportError (Sektion, i, Expressionstr, InfoSyntaxError);
+                begin
+                  logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
+                  if
+                    produceExecLine(remaining, p1, p2, p3, p4,
+                      InfoSyntaxError)
+                  then
+                    ActionResult := executeWith (ArbeitsSektion, Remaining,
+                             true {catch out}, 0,
+                             output)
+                  else
+                    ActionResult := reportError (Sektion, i, Expressionstr, InfoSyntaxError);
+                end;
 
               tsWorkOnStringList:
                  Begin
