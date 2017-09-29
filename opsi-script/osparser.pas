@@ -1858,8 +1858,8 @@ begin
   LogDatei.log (ps, LLNotice);
   if Sektion.count > 0 then
   begin
-    ps := 'Execution of ' + Sektion.Name;
-    LogDatei.log (ps, LLNotice);
+    //ps := 'Execution of ' + Sektion.Name;
+    //LogDatei.log (ps, LLNotice);
   end
   else
   // this case should be captured beforehand
@@ -3814,7 +3814,7 @@ begin
   OldNumberOfWarnings := LogDatei.NumberOfWarnings;
 
   ps := '';
-  LogDatei.log (ps, LevelWarnings);
+  LogDatei.log (ps, LLNotice);
   ps := 'Execution of ' + Sektion.Name;
 
   if  cacheRequest <> tlcrNone
@@ -4779,7 +4779,7 @@ begin
          //errorcode := RegDeleteKeyEx(mykey, PChar(keytoopen), KeyOpenMode,0);
           output := TXStringList.create;
           commandline := 'cmd64.exe /c "reg delete ""'+key_completepath+'"" /f"';
-          LogDatei.log ('Executing ' + commandline, LLinfo);
+          LogDatei.log ('Executing ' + commandline, LLDebug);
           if not RunCommandAndCaptureOut(commandline,true,output, report, SW_SHOWMINIMIZED, FLastExitCodeOfExe) then
           Begin
             ps := 'Error: ' + Report;
@@ -4790,15 +4790,15 @@ begin
           else
           Begin
             LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-            LogDatei.log ('', LLinfo);
-            LogDatei.log ('output:', LLinfo);
-            LogDatei.log ('--------------', LLinfo);
+            LogDatei.log ('', LLDebug);
+            LogDatei.log ('output:', LLDebug);
+            LogDatei.log ('--------------', LLDebug);
             for outputlines := 0 to output.count-1 do
             begin
-              LogDatei.log (output.strings[outputlines], LLinfo);
+              LogDatei.log (output.strings[outputlines], LLDebug);
             end;
             LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-            LogDatei.log ('', LLinfo);
+            LogDatei.log ('', LLDebug);
             output.Free;
           end
         end
@@ -8420,7 +8420,7 @@ begin
 
   commandline := FileName + ' ' +trim(Parameters);
 
-  LogDatei.log ('Executing ' + commandline, LLNotice+logleveloffset);
+  LogDatei.log ('ShellCall Executing: ' + commandline, LLNotice+logleveloffset);
   if not RunCommandAndCaptureOut
      (commandline,
       true,
@@ -8499,11 +8499,12 @@ begin
     OldNumberOfErrors := LogDatei.NumberOfErrors;
     OldNumberOfWarnings := LogDatei.NumberOfWarnings;
 
-
+    (*
     ps := '';
     LogDatei.log (ps, LLNotice);
     ps := 'Execution of: '+Sektion.Name + ' ' +BatchParameter;
     LogDatei.log (ps, LLNotice);
+    *)
 
     (*
     if pos (uppercase (PStatNames^ [tsDOSInAnIcon]), uppercase (Sektion.Name)) > 0 then
@@ -9172,7 +9173,7 @@ begin
     end
     else
     begin
-      LogDatei.log ('Executing ' + commandline, LLDebug);
+      LogDatei.log_prog ('Executing ' + commandline, LLDebug);
       if not RunCommandAndCaptureOut
          (commandline,
           true,

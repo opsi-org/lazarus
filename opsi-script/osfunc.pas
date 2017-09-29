@@ -5592,7 +5592,7 @@ begin
     myfilename := ExpandFileName(FileName);
     SaveToFile(myfilename,encodingtype);
     LogS := myfilename + ' saved back with encoding: '+encodingtype;
-    LogDatei.log(LogS, LLDebug);
+    LogDatei.log_prog(LogS, LLDebug);
     Result := True;
   except
     on e: Exception do
@@ -5600,12 +5600,12 @@ begin
       LogS := e.message;
       LogS := 'Warning: ' + myfilename +
         ' could not be saved back - will retry, error message: "' + LogS + '"';
-      LogDatei.log(LogS, LLWarning);
+      LogDatei.log_prog(LogS, LLWarning);
       try
         Sleep(100);
         SaveToFile(myfilename,encodingtype);
         LogS := myfilename + ' saved back with encoding: '+encodingtype;
-        LogDatei.log(LogS, LLDebug);
+        LogDatei.log_prog(LogS, LLDebug);
         Result := True;
       except
         on e: Exception do
@@ -5613,12 +5613,12 @@ begin
           LogS := e.message;
           LogS := 'Warning: ' + myfilename +
             ' could not be saved back - will retry, error message: "' + LogS + '"';
-          LogDatei.log(LogS, LLWarning);
+          LogDatei.log_prog(LogS, LLWarning);
           try
             Sleep(100);
             SaveToFile(myfilename,encodingtype);
             LogS := myfilename + ' saved back with encoding: '+encodingtype;
-            LogDatei.log(LogS, LLDebug);
+            LogDatei.log_prog(LogS, LLDebug);
             Result := True;
           except
             on e: Exception do
@@ -5626,12 +5626,12 @@ begin
               LogS := e.message;
               LogS := 'Warning: ' + myfilename +
                 ' could not be saved back - will retry, error message: "' + LogS + '"';
-              LogDatei.log(LogS, LLWarning);
+              LogDatei.log_prog(LogS, LLWarning);
               try
                 Sleep(100);
                  SaveToFile(myfilename,encodingtype);
                 LogS := myfilename + ' saved back with encoding: '+encodingtype;
-                LogDatei.log(LogS, LLDebug);
+                LogDatei.log_prog(LogS, LLDebug);
                 Result := True;
               except
                 on e: Exception do
@@ -5640,12 +5640,12 @@ begin
                   LogS := 'Warning: ' + myfilename +
                     ' could not be saved back - will retry, error message: "' +
                     LogS + '"';
-                  LogDatei.log(LogS, LLWarning);
+                  LogDatei.log_prog(LogS, LLWarning);
                   try
                     Sleep(100);
                      SaveToFile(myfilename,encodingtype);
                     LogS := myfilename + ' saved back with encoding: '+encodingtype;
-                    LogDatei.log(LogS, LLDebug);
+                    LogDatei.log_prog(LogS, LLDebug);
                     Result := True;
                   except
                     on e: Exception do
@@ -5654,7 +5654,7 @@ begin
                       LogS := 'Error: ' + myfilename +
                         ' could not be saved back - will not retry, error message: "' +
                         LogS + '"';
-                      LogDatei.log(LogS, LLError);
+                      LogDatei.log_prog(LogS, LLError);
                     end;
                   end;
                 end;

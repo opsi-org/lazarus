@@ -164,7 +164,7 @@ begin
 
   commandline := FileName + ' ' +trim(Parameters);
 
-  LogDatei.DependentAdd ('Executing ' + commandline, LLDebug2);
+  LogDatei.log ('Executing ' + commandline, LLDebug2);
 
   if not RunCommandAndCaptureOut
      (commandline,
@@ -200,7 +200,7 @@ begin
 
   commandline := FileName + ' ' +trim(Parameters);
 
-  LogDatei.DependentAdd ('Executing ' + commandline, LLNotice);
+  LogDatei.log ('Executing ' + commandline, LLDebug2);
 
   if not RunCommandAndCaptureOut
      (commandline,
