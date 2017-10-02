@@ -265,8 +265,13 @@
         <ComponentName Value="SystemInfo"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <CursorPos X="45" Y="25"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="15"/>
+        <TopLine Value="60"/>
+        <CursorPos X="5" Y="90"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit6>
       <Unit7>
@@ -421,8 +426,12 @@
         <ComponentName Value="MyMessageDlg"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <EditorIndex Value="13"/>
+        <TopLine Value="19"/>
         <CursorPos X="52" Y="9"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit23>
       <Unit24>
@@ -594,9 +603,9 @@
       <Unit44>
         <Filename Value="osparser.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="13"/>
-        <TopLine Value="11867"/>
-        <CursorPos X="16" Y="11892"/>
+        <EditorIndex Value="14"/>
+        <TopLine Value="16748"/>
+        <CursorPos X="36" Y="16767"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="-1"/>
@@ -624,7 +633,7 @@
       <Unit47>
         <Filename Value="osfuncwin.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="14"/>
+        <EditorIndex Value="16"/>
         <TopLine Value="6"/>
         <CursorPos Y="29"/>
         <UsageCount Value="204"/>
@@ -651,7 +660,6 @@
       <Unit51>
         <Filename Value="osconf.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="12"/>
         <TopLine Value="372"/>
         <CursorPos Y="59"/>
@@ -740,7 +748,7 @@
       </Unit62>
       <Unit63>
         <Filename Value="wispecfolder.pas"/>
-        <EditorIndex Value="15"/>
+        <EditorIndex Value="17"/>
         <TopLine Value="15"/>
         <CursorPos X="12" Y="39"/>
         <UsageCount Value="24"/>
@@ -882,7 +890,7 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit77>
     </Units>
-    <JumpHistory Count="28" HistoryIndex="27">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="osparser.pas"/>
         <Caret Line="40" Column="12" TopLine="10"/>
@@ -995,6 +1003,10 @@
         <Filename Value="osfunc.pas"/>
         <Caret Line="420" Column="10" TopLine="394"/>
       </Position28>
+      <Position29>
+        <Filename Value="osparser.pas"/>
+        <Caret Line="11892" Column="16" TopLine="11867"/>
+      </Position29>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

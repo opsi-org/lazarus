@@ -75,8 +75,8 @@ begin
   //  Top  := (Screen.Height - Height) div 2;
   //Left := screen.MonitorFromWindow(Handle).Width - width;
   //Top := screen.MonitorFromWindow(Handle).Height - Height;
-  Left := FBatchOberflaeche.Left + FBatchOberflaeche.Width;
-  Top := FBatchOberflaeche.Top + FBatchOberflaeche.Height;
+  //Left := FBatchOberflaeche.Left + FBatchOberflaeche.Width;
+  //Top := FBatchOberflaeche.Top + FBatchOberflaeche.Height;
 end;
 
 procedure TSystemInfo.ButtonGesehenClick(Sender: TObject);
@@ -86,8 +86,8 @@ end;
 
 procedure TSystemInfo.FormShow(Sender: TObject);
 begin
-  Left := FBatchOberflaeche.Left + FBatchOberflaeche.Width;
-  Top := FBatchOberflaeche.Top + FBatchOberflaeche.Height;
+  //Left := FBatchOberflaeche.Left + FBatchOberflaeche.Width;
+  //Top := FBatchOberflaeche.Top + FBatchOberflaeche.Height;
 end;
 
 initialization
