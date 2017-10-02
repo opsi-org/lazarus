@@ -11,12 +11,6 @@ unit oslog;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 499 $
-// $Author: oertel $
-// $Date: 2016-10-04 20:10:23 +0200 (Di, 04 Okt 2016) $
-//***************************************************************************
 
 {$MODE Delphi}
 {$RANGECHECKS ON}
@@ -47,6 +41,7 @@ uses
 {$ENDIF OPSIWINST}
 {$IFDEF WINDOWS}
   registry,
+  shlobj,
 {$ENDIF WINDOWS}
 {$IFDEF LINUX}
   baseUnix,
@@ -99,10 +94,13 @@ type
     FStandardLogFilename: string;
     FStandardLogFileext: string;
     FWritePartLog : boolean;
+    FWriteHistFile : boolean;
+    FWriteErrFile : boolean;
     Fdebug_prog : boolean;
     Fdebug_lib : boolean;
     Fforce_min_loglevel : integer;
     Fdefault_loglevel : integer;
+
 
 
   protected
@@ -140,6 +138,7 @@ type
     function log(const S: string; LevelOfLine: integer): boolean;
     function log_prog(const S: string; LevelOfLine: integer): boolean;
     function log_list(const list: TStrings; LevelOfLine: integer): boolean;
+    function log_exception(E: Exception; LevelOfLine: integer): boolean;
     function DependentAdd(const S: string; LevelOfLine: integer): boolean;
     function DependentAddError(const S: string; LevelOfLine: integer): boolean;
     function DependentAddWarning(const S: string; LevelOfLine: integer): boolean;
@@ -188,6 +187,8 @@ type
     property StandardPartLogFilename: string read FStandardPartLogFilename write FStandardPartLogFilename;
     property StandardLogFilename: string read FStandardLogFilename write FStandardLogFilename;
     property WritePartLog: boolean read FWritePartLog write FWritePartLog;
+    property WriteHistFile: boolean read FWriteHistFile write FWriteHistFile;
+    property WriteErrFile: boolean read FWriteErrFile write FWriteErrFile;
     property debug_prog: boolean read Fdebug_prog write Fdebug_prog;
     property debug_lib: boolean read Fdebug_lib write Fdebug_lib;
     property force_min_loglevel: integer read Fforce_min_loglevel write Fforce_min_loglevel;
@@ -268,6 +269,7 @@ var
   StandardLogPath : string;
   StandardMainLogPath : string;
   StandardPartLogPath : string;
+  AppDataPath: Array[0..MaxPathLen] of Char; //Allocate memory
 
 
 //const
@@ -278,6 +280,7 @@ function getComputerName: string;
 //procedure CreateTheLogfile(var LogDateiname: string); overload;
 //procedure CreateTheLogfile(var LogDateiname: string; check4append: boolean); overload;
 function GetContinueLogFile(var LogFilename: string): boolean;
+function getCallAddrStr : string;
 
 implementation
 
@@ -685,54 +688,60 @@ begin
   begin
     //assignfile(LogMainFile, FileName);
     //if not FErrorsFileExists then
-    if isopen(ErrorfileF) then
+    if FWriteErrFile then
     begin
-      try
-        //append(Errorfile);
-        //Closefile(Errorfile);
-        FileClose(ErrorfileF);
-      except
-        //assignfile(Errorfile, FErrorsFilename);
-      end;
-    end
-    else
-    begin
-      if not isOpen(ErrorfileF) then
+      if isopen(ErrorfileF) then
       begin
-        if not fileexists(FErrorsFilename) then
-        begin
-          ErrorfileF := FileCreate(FErrorsFilename);
+        try
+          //append(Errorfile);
+          //Closefile(Errorfile);
           FileClose(ErrorfileF);
+        except
+          //assignfile(Errorfile, FErrorsFilename);
         end;
-        //ErrorfileF := FileOpen(FErrorsFilename, fmOpenReadWrite or fmShareDenyNone);
-        //FileSeek(FileVariable,0,fsFromEnd);
-      end;
-      (*
-      {$I-}
-      append(Errorfile);
-      {$I+}
-      if IOResult <> 0 then
-        assignfile(Errorfile, FErrorsFilename)
+      end
       else
-        Closefile(Errorfile);
-        *)
+      begin
+        if not isOpen(ErrorfileF) then
+        begin
+          if not fileexists(FErrorsFilename) then
+          begin
+            ErrorfileF := FileCreate(FErrorsFilename);
+            FileClose(ErrorfileF);
+          end;
+          //ErrorfileF := FileOpen(FErrorsFilename, fmOpenReadWrite or fmShareDenyNone);
+          //FileSeek(FileVariable,0,fsFromEnd);
+        end;
+        (*
+        {$I-}
+        append(Errorfile);
+        {$I+}
+        if IOResult <> 0 then
+          assignfile(Errorfile, FErrorsFilename)
+        else
+          Closefile(Errorfile);
+          *)
+      end;
     end;
 
-    if isopen(HistroryFileF) then
+    if FWriteHistFile then
     begin
-      try
-        FileClose(HistroryFileF);
-      except
-      end;
-    end
-    else
-    begin
-      if not isOpen(HistroryFileF) then
+      if isopen(HistroryFileF) then
       begin
-        if not fileexists(FHistoryFilename) then
-        begin
-          HistroryFileF := FileCreate(FHistoryFilename);
+        try
           FileClose(HistroryFileF);
+        except
+        end;
+      end
+      else
+      begin
+        if not isOpen(HistroryFileF) then
+        begin
+          if not fileexists(FHistoryFilename) then
+          begin
+            HistroryFileF := FileCreate(FHistoryFilename);
+            FileClose(HistroryFileF);
+          end;
         end;
       end;
     end;
@@ -745,30 +754,7 @@ begin
         LogMainFileF := FileCreate(FFilename);
         FileClose(LogMainFileF);
       end;
-      //ErrorfileF := FileOpen(FErrorsFilename, fmOpenReadWrite or fmShareDenyNone);
-      //FileSeek(FileVariable,0,fsFromEnd);
     end;
-    (*
-    if not isopen(LogMainFile) then
-    begin
-      {$I-}
-      append(LogMainFile);
-      {$I+}
-      if IOResult <> 0 then
-        assignfile(LogMainFile, FileName)
-      else
-        Closefile(LogMainFile);
-        *)
-(*
-      try
-        append(LogMainFile);
-        Closefile(LogMainFile);
-      except
-        assignfile(LogMainFile, FileName);
-      end;
-    end;
-    *)
-
 
     ps := '';
     if fileExists(FFilename) then
@@ -800,86 +786,87 @@ begin
         end;
     end;
 
-//    if FErrorsFileExists then
-//    begin
-//      ps := '';
-//      LogMainFileF := FileCreate(FileName);
-//      FileClose(LogMainFileF);
-      ps := '';
-      // error file
-      if fileExists(FErrorsFileName) then
-        try
-          //append(ErrorFile);
-          ErrorFileF := FileOpen(FErrorsFileName, fmOpenReadWrite or fmShareDenyNone);
-          FileSeek(ErrorFileF, 0, fsFromEnd);
-          FErrorsFileExists := False;
-        except
-          on E: Exception do
+      if FWriteErrFile then
+      begin
+        ps := '';
+        // error file
+        if fileExists(FErrorsFileName) then
+          try
+            //append(ErrorFile);
+            ErrorFileF := FileOpen(FErrorsFileName, fmOpenReadWrite or fmShareDenyNone);
+            FileSeek(ErrorFileF, 0, fsFromEnd);
+            FErrorsFileExists := False;
+          except
+            on E: Exception do
+            begin
+              ps := 'Existing file "' + FErrorsFilename +
+                '" could not be opened as error-logfile. Exception "' +
+                E.Message + '"';
+              FErrorsFileExists := False;
+            end
+          end
+        else
+        begin
+          if FErrorsFileName = '' then
           begin
-            ps := 'Existing file "' + FErrorsFilename +
-              '" could not be opened as error-logfile. Exception "' +
-              E.Message + '"';
+            ps := 'An empty string does not work as logfilename.';
             FErrorsFileExists := False;
           end
-        end
-      else
+          else
+            try
+              ErrorFileF := FileCreate(FErrorsFileName);
+              FileClose(ErrorFileF);
+              ErrorFileF := FileOpen(FErrorsFileName, fmOpenReadWrite or fmShareDenyNone);
+            except
+              on E: Exception do
+              begin
+                ps := '"' + Filename +
+                  '" could not be created as logfile. Exception "' + E.Message + '"';
+                FErrorsFileExists := False;
+              end;
+            end;
+        end;
+      end;
+
+     // History file
+      if FWriteHistFile then
       begin
-        if FErrorsFileName = '' then
-        begin
-          ps := 'An empty string does not work as logfilename.';
-          FErrorsFileExists := False;
-        end
-        else
+        if fileExists(FHistoryFilename) then
           try
-            ErrorFileF := FileCreate(FErrorsFileName);
-            FileClose(ErrorFileF);
-            ErrorFileF := FileOpen(FErrorsFileName, fmOpenReadWrite or fmShareDenyNone);
+            //append(ErrorFile);
+            HistroryFileF := FileOpen(FHistoryFilename, fmOpenReadWrite or fmShareDenyNone);
+            FileSeek(HistroryFileF, 0, fsFromEnd);
+            FHistoryFileExists := False;
           except
             on E: Exception do
             begin
-              ps := '"' + Filename +
-                '" could not be created as logfile. Exception "' + E.Message + '"';
-              FErrorsFileExists := False;
-            end;
-          end;
-      end;
-//    end;
-    // History file
-      if fileExists(FHistoryFilename) then
-        try
-          //append(ErrorFile);
-          HistroryFileF := FileOpen(FHistoryFilename, fmOpenReadWrite or fmShareDenyNone);
-          FileSeek(HistroryFileF, 0, fsFromEnd);
-          FHistoryFileExists := False;
-        except
-          on E: Exception do
+              ps := 'Existing file "' + FHistoryFilename +
+                '" could not be opened as error-logfile. Exception "' +
+                E.Message + '"';
+              FHistoryFileExists := False;
+            end
+          end
+        else
+        begin
+          if FHistoryFilename = '' then
           begin
-            ps := 'Existing file "' + FHistoryFilename +
-              '" could not be opened as error-logfile. Exception "' +
-              E.Message + '"';
+            ps := 'An empty string does not work as logfilename.';
             FHistoryFileExists := False;
           end
-        end
-      else
-      begin
-        if FHistoryFilename = '' then
-        begin
-          ps := 'An empty string does not work as logfilename.';
-          FHistoryFileExists := False;
-        end
-        else
-          try
-            HistroryFileF := FileCreate(FHistoryFilename);
-            FileClose(HistroryFileF);
-            HistroryFileF := FileOpen(FHistoryFilename, fmOpenReadWrite or fmShareDenyNone);
-          except
-            on E: Exception do
-            begin
-              ps := '"' + Filename +
-                '" could not be created as logfile. Exception "' + E.Message + '"';
-              FHistoryFileExists := False;
+          else
+            try
+              HistroryFileF := FileCreate(FHistoryFilename);
+              FileClose(HistroryFileF);
+              HistroryFileF := FileOpen(FHistoryFilename, fmOpenReadWrite or fmShareDenyNone);
+            except
+              on E: Exception do
+              begin
+                ps := '"' + Filename +
+                  '" could not be created as logfile. Exception "' + E.Message + '"';
+                FHistoryFileExists := False;
+              end;
             end;
-          end;
+        end;
       end;
 
     if LogFileExists then
@@ -1428,6 +1415,7 @@ begin
         end;
 
 
+        if FWriteErrFile then
         if FErrorsFileExists and (LevelOfLine <= LLwarning) then
           try
             WriteLogLine(ErrorFileF, PasS);
@@ -1522,8 +1510,8 @@ begin
       end
       else
       begin
-        includelogStrList.LoadFromFile(FName);
-        includelogStrList.Text := reencode(includelogStrList.Text, sourceEncoding,sourceEncoding);
+      includelogStrList.LoadFromFile(FName);
+      includelogStrList.Text := reencode(includelogStrList.Text, sourceEncoding,sourceEncoding);
       end;
       includelogLinecount := includelogStrList.Count;
       if logtailLinecount > 0 then
@@ -1666,14 +1654,17 @@ end;
 
 procedure TLogInfo.log2history(line: string);
 begin
-  line := FormatDateTime('yyyy mmm dd hh:nn', Now) + '  '+ line;
-  try
-    WriteLogLine(HistroryFileF, line);
-  except
+  if FWriteHistFile then
+  begin
+    line := FormatDateTime('yyyy mmm dd hh:nn', Now) + '  '+ line;
     try
-      LogDatei.Reopen;
       WriteLogLine(HistroryFileF, line);
     except
+      try
+        LogDatei.Reopen;
+        WriteLogLine(HistroryFileF, line);
+      except
+      end;
     end;
   end;
 end;
@@ -1711,6 +1702,44 @@ begin
 end;
 {$ENDIF}
 
+function TLogInfo.log_exception(E: Exception; LevelOfLine: integer): boolean;
+var
+  I: Integer;
+  Frames: PPointer;
+  Report: string;
+begin
+  //Report := 'Program exception! ' + LineEnding +'Stacktrace:' + LineEnding + LineEnding;
+  if E <> nil then begin
+    Report := 'Exception class: ' + E.ClassName + LineEnding +
+    'Message: ' + E.Message + LineEnding;
+    log(Report,LevelOfLine);
+  end;
+  Report := BackTraceStrFunc(ExceptAddr);
+  Frames := ExceptFrames;
+  for I := 0 to ExceptFrameCount - 1 do
+    Report := Report + LineEnding + BackTraceStrFunc(Frames[I]);
+  log(Report,LevelOfLine);
+end;
+
+function getCallAddrStr : string;
+// derivated from DumpCallStack
+// http://wiki.freepascal.org/Logging_exceptions
+var
+  CallerAddress,
+  bp: Pointer;
+begin
+  result := '';
+  bp := get_frame;
+  // This trick skip SendCallstack item
+  // bp:= get_caller_frame(get_frame);
+  try
+       CallerAddress := get_caller_addr(bp);
+       if (CallerAddress <> nil) then
+         result := BackTraceStrFunc(CallerAddress) + LineEnding;
+   except
+     { prevent endless dump if an exception occured }
+   end;
+end;
 
 
 begin
@@ -1724,6 +1753,17 @@ begin
   StandardLogPath := 'c:\opsi.org\log\';
   StandardMainLogPath := StandardLogPath;
   StandardPartLogPath := 'c:\opsi.org\log\';
+  {$IFDEF OPSI_AS_USER}
+  AppDataPath:='';
+  SHGetFolderPath(0,CSIDL_APPDATA,0,SHGFP_TYPE_CURRENT,AppDataPath);
+  //SHGetSpecialFolderPath(0,AppDataPath,CSIDL_LOCAL_APPDATA,false)
+  if ForceDirectories(AppDataPath+'\opsi.org\log\') then
+  begin
+    StandardLogPath := AppDataPath+'\opsi.org\log\';
+    StandardMainLogPath := StandardLogPath;
+    StandardPartLogPath := StandardLogPath;
+  end;
+  {$ENDIF OPSI_AS_USER}
   {$ELSE OPSI}
   StandardLogPath := GetTempDir(false);
   StandardMainLogPath := GetTempDir(false);

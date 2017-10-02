@@ -1,7 +1,7 @@
 object FopsiClientKiosk: TFopsiClientKiosk
-  Left = 574
+  Left = 617
   Height = 700
-  Top = 340
+  Top = 381
   Width = 953
   Caption = 'opsi-client-kiosk'
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
@@ -14,7 +14,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '1.8.0.3'
+  LCLVersion = '1.6.4.0'
   object datapanel: TPanel
     Left = 0
     Height = 515
@@ -315,7 +315,6 @@ object FopsiClientKiosk: TFopsiClientKiosk
               Align = alClient
               BevelOuter = bvNone
               ControlList = <>
-              FlowLayout = tlTop
               FlowStyle = fsLeftRightTopBottom
               TabOrder = 0
             end
@@ -1791,5 +1790,9 @@ object FopsiClientKiosk: TFopsiClientKiosk
     OnTimer = TimerSearchEditTimer
     left = 206
     top = 8
+  end
+  object ActionList1: TActionList
+    left = 278
+    top = 535
   end
 end

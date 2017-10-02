@@ -1,0 +1,55 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: opsi.org\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2017-08-16 12:41+0100\n"
+"Last-Translator: detlef oertel <d.oertel@uib.de>\n"
+"Language-Team: German (http://www.transifex.com/opsi-org/opsiorg/language/de/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: de\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-Language: German\n"
+"X-Poedit-Country: GERMANY\n"
+
+#: oca_systray_dm.rsactionswaiting
+msgid "opsi: Pending installations:"
+msgstr "opsi: Anstehende Installationen:"
+
+#: oca_systray_dm.rsnoactionswaiting
+msgid "opsi: No pending installations"
+msgstr "opsi: Keine anstehende Installationen"
+
+#: oca_systray_dm.rsnone
+msgid "None"
+msgstr "Keine"
+
+#: oswebservice.rssendlog
+msgid "Sending log file to server ..."
+msgstr "Sende Logdatei zum Server ..."
+
+#: tdatamodule1.mi_exit.caption
+msgid "Abort Program"
+msgstr "Programm beenden"
+
+#: tdatamodule1.mi_exit.hint
+msgid "Terminate this systray program"
+msgstr "Beenden des systray Programms"
+
+#: tdatamodule1.mi_pull_for_action_request.caption
+msgid "Check for Installations"
+msgstr "Prüfe auf Installationen"
+
+#: tdatamodule1.mi_pull_for_action_request.hint
+msgid "Check now for pending opsi installations"
+msgstr "Prüfe jetzt nach anstehenden Installationen"
+
+#: tdatamodule1.mi_startevent.caption
+msgid "Install now"
+msgstr "Jetzt installieren"
+
+#: tdatamodule1.mi_startevent.hint
+msgid "Start now all pending opsi installations"
+msgstr "Jetzt alle anstehenden Installationen starten"
+

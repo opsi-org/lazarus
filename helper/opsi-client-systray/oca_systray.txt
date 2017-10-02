@@ -1,7 +1,14 @@
 
 [changelog]
 
-opsi_client_systray  4.0.7.0
+opsi_client_systray  4.0.7.2
+
+  * enhanced language detection
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 12 Sep 2017:15:00:00 +0200
+
+
+opsi_client_systray  4.0.7.1
 
   * initial
 

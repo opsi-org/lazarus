@@ -29,7 +29,7 @@ uses
   //ZMQueryDataSet,
   Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
   Buttons, ComCtrls, Grids, DBGrids, DBCtrls, ockdata, CommCtrl,
-  BufDataset, typinfo, installdlg, lcltranslator, oslog, inifiles,
+  BufDataset, typinfo, installdlg, lcltranslator, ActnList, oslog, inifiles,
   Variants,
   Lazfileutils, Types;
 
@@ -50,7 +50,7 @@ type
     //iconsetup: Timage;
     //Button1: TButton;
 
-//    procedure Button1Click(Sender: TObject);
+    //    procedure Button1Click(Sender: TObject);
     procedure TileActionChanged(Sender: TObject);
     procedure ProductTileClick(Sender: TObject);
     procedure ProductTileChildClick(Sender: TObject);
@@ -74,6 +74,7 @@ type
   { TFopsiClientKiosk }
 
   TFopsiClientKiosk = class(TForm)
+    ActionList1: TActionList;
     BitBtnInfo: TBitBtn;
     BitBtnShowAction: TBitBtn;
     BitBtnCancel: TBitBtn;
@@ -203,6 +204,7 @@ var
   lastOrderCol: string;
   detail_visible: boolean = False;
   skinpath: string;
+  preLogfileLogList: TStringList;
 
 
 resourcestring
@@ -219,7 +221,8 @@ resourcestring
   rsInstallNow = 'Install now';
   rsStoreActions = 'Store Actions';
   rsInstallNowHint = 'Start the installation (deinstallation) of the selected products';
-  rsStoreActionsHint = 'Send the list of action requests in the list to the server, show the results and ask for installation start.';
+  rsStoreActionsHint =
+    'Send the action requests to the server, show the resulting installations and ask for installation start.';
 
 
 implementation
@@ -228,6 +231,15 @@ implementation
 
 var
   mythread: Tmythread2;
+  //title
+  title_color: string;
+  title_Font_Name: string;
+  title_Font_Size: integer;
+  title_Font_Color: string;
+  title_Font_Bold: boolean;
+  title_Font_Italic: boolean;
+  title_Font_Underline: boolean;
+  title_Text: string;
   //tile
   tile_color: string;
   tile_Font_Name: string;
@@ -290,7 +302,6 @@ begin
     font.Italic := tile_Font_Italic;
     font.Underline := tile_Font_Underline;
     self.OnMouseWheel := scroll;
-    self.AutoAdjustLayout(lapAutoAdjustForDPI, 96, FopsiClientKiosk.PixelsPerInch, 0, 0);
 
     //label Name
     LabelName := TLabel.Create(self);
@@ -307,7 +318,6 @@ begin
     LabelName.BorderSpacing.Around := 3;
     LabelName.OnClick := ProductTileChildClick;
     LabelName.OnMouseWheel := scroll;
-    LabelName.AutoAdjustLayout(lapAutoAdjustForDPI, 96, FopsiClientKiosk.PixelsPerInch, 0, 0);
 
     //label ID
     labelId := TLabel.Create(self);
@@ -320,7 +330,6 @@ begin
     labelId.BorderSpacing.Around := 3;
     labelId.OnClick := ProductTileChildClick;
     labelId.OnMouseWheel := scroll;
-    labelId.AutoAdjustLayout(lapAutoAdjustForDPI, 96, FopsiClientKiosk.PixelsPerInch, 0, 0);
 
     //label LabelState
     LabelState := TLabel.Create(self);
@@ -333,7 +342,6 @@ begin
     LabelState.BorderSpacing.Around := 3;
     LabelState.OnClick := ProductTileChildClick;
     LabelState.OnMouseWheel := scroll;
-    LabelState.AutoAdjustLayout(lapAutoAdjustForDPI, 96, FopsiClientKiosk.PixelsPerInch, 0, 0);
 
     //RadioGroupAction
     //RadioGroupAction := TRadioGroup.Create(self);
@@ -349,11 +357,10 @@ begin
     RadioGroupAction.OnClick := ProductTileChildClick;
     RadioGroupAction.OnMouseWheel := scroll;
     //RadioGroupAction.OnSelectionChanged := TileActionChanged;
-    RadioGroupAction.AutoAdjustLayout(lapAutoAdjustForDPI, 96, FopsiClientKiosk.PixelsPerInch, 0, 0);
 
     // radiobuttons
     // none
-    rbNone := TRadioButton.Create(self);
+    rbNone := TRadioButton.Create(RadioGroupAction);
     rbNone.Caption := '';
     rbNone.Top := 50;
     rbNone.Align := alTop;
@@ -361,21 +368,19 @@ begin
     rbNone.OnChange := TileActionChanged;
     rbNone.Tag := 0;
     rbNone.OnMouseWheel := scroll;
-    rbNone.AutoAdjustLayout(lapAutoAdjustForDPI, 96, FopsiClientKiosk.PixelsPerInch, 0, 0);
-    lbnone := TLabel.Create(self);
-    lbnone.Left := 20;
+    lbnone := TLabel.Create(RadioGroupAction);
     lbnone.Caption := rsActNone;
     lbnone.Font.Color := StringToColor(tile_radio_none_color);
     lbnone.Parent := RadioGroupAction;
     lbnone.top := rbNone.top;
-    lbnone.Left := 20;
+    lbnone.Left := 30;
     lbnone.Font.Size := tile_radio_font_size;
     lbnone.OnClick := rbnone.OnClick;
     lbnone.OnMouseWheel := scroll;
-    lbnone.AutoAdjustLayout(lapAutoAdjustForDPI, 96, FopsiClientKiosk.PixelsPerInch, 0, 0);
+    lbnone.BringToFront;
 
     // setup
-    rbsetup := TRadioButton.Create(self);
+    rbsetup := TRadioButton.Create(RadioGroupAction);
     rbsetup.Caption := '';
     rbsetup.Top := 50;
     rbsetup.Align := alTop;
@@ -384,19 +389,17 @@ begin
     rbsetup.Tag := 1;
     rbsetup.Enabled := False;
     rbsetup.OnMouseWheel := scroll;
-    rbsetup.AutoAdjustLayout(lapAutoAdjustForDPI, 96, FopsiClientKiosk.PixelsPerInch, 0, 0);
-    lbsetup := TLabel.Create(self);
-    lbsetup.Left := 20;
+    lbsetup := TLabel.Create(RadioGroupAction);
     lbsetup.Caption := rsActSetup;
     lbsetup.Font.Color := StringToColor(tile_radio_setup_color);
     lbsetup.Parent := RadioGroupAction;
     lbsetup.top := rbsetup.top;
-    lbsetup.Left := 20;
+    lbsetup.Left := 30;
     lbsetup.Font.Size := tile_radio_font_size;
     lbsetup.Enabled := False;
     lbsetup.OnClick := rbsetup.OnClick;
     lbsetup.OnMouseWheel := scroll;
-    lbsetup.AutoAdjustLayout(lapAutoAdjustForDPI, 96, FopsiClientKiosk.PixelsPerInch, 0, 0);
+    lbsetup.BringToFront;
     //iconsetup:= Timage.Create(self);
     //iconsetup.Parent := RadioGroupAction;
     //iconsetup.top := rbsetup.top;
@@ -405,7 +408,7 @@ begin
     //iconsetup.Picture.LoadFromFile(skinpath+Pathdelim+'setup.png');
 
     // uninstall
-    rbuninstall := TRadioButton.Create(self);
+    rbuninstall := TRadioButton.Create(RadioGroupAction);
     rbuninstall.Caption := '';
     rbuninstall.Top := 50;
     rbuninstall.Align := alTop;
@@ -414,26 +417,26 @@ begin
     rbuninstall.Tag := 2;
     rbuninstall.Enabled := False;
     rbuninstall.OnMouseWheel := scroll;
-    rbuninstall.AutoAdjustLayout(lapAutoAdjustForDPI, 96, FopsiClientKiosk.PixelsPerInch, 0, 0);
-    lbuninstall := TLabel.Create(self);
-    lbuninstall.Left := 20;
+    lbuninstall := TLabel.Create(RadioGroupAction);
     lbuninstall.Caption := rsActUninstall;
     lbuninstall.Font.Color := StringToColor(tile_radio_uninstall_color);
     lbuninstall.Parent := RadioGroupAction;
     lbuninstall.top := rbuninstall.top;
-    lbuninstall.Left := 20;
+    lbuninstall.Left := 30;
     lbuninstall.Font.Size := tile_radio_font_size;
     lbuninstall.Enabled := False;
     lbuninstall.OnClick := rbuninstall.OnClick;
     lbuninstall.OnMouseWheel := scroll;
-    lbuninstall.AutoAdjustLayout(lapAutoAdjustForDPI, 96, FopsiClientKiosk.PixelsPerInch, 0, 0);
+    lbuninstall.BringToFront;
 
-    RadioGroupAction.Height:= (lbuninstall.Height + 9) * 3;
+    RadioGroupAction.Height := (lbuninstall.Height + 9) * 3;
   except
     on e: Exception do
     begin
       logdatei.log('Exception TProductPanel.Create', LLError);
       logdatei.log('Exception: ' + E.message, LLError);
+      logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+      logdatei.log_exception(E, LLError);
     end;
   end;
 end;
@@ -458,6 +461,8 @@ begin
       begin
         logdatei.log('Exception TProductPanel.Destroy', LLError);
         logdatei.log('Exception: ' + E.message, LLError);
+        logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+        logdatei.log_exception(E, LLError);
       end;
     end;
   finally
@@ -474,7 +479,8 @@ var
   oldpos: integer;
 begin
   oldpos := FopsiClientKiosk.ScrollBox1.VertScrollBar.Position;
-  FopsiClientKiosk.ScrollBox1.VertScrollBar.Position := oldpos + ((WheelDelta * -1)  div 10);
+  FopsiClientKiosk.ScrollBox1.VertScrollBar.Position :=
+    oldpos + ((WheelDelta * -1) div 10);
   logdatei.log('Scroll WheelDelta: ' + IntToStr(WheelDelta div 10), LLDebug2);
 end;
 
@@ -551,7 +557,7 @@ begin
     if ZMQueryDataSet1.Locate('ProductId', VarArrayOf([pid]),
       [loCaseInsensitive]) then
     begin
-       if detail_visible then
+      if detail_visible then
       begin
         FopsiClientKiosk.productdetailpanel.Height := 0;
         detail_visible := False;
@@ -600,6 +606,8 @@ begin
         logdatei.log('Exception rebuildProductTiles: ProductTilesArray[i].Free;',
           LLError);
         logdatei.log('Exception: ' + E.message, LLError);
+        logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+        logdatei.log_exception(E, LLError);
       end;
     end;
     // use complete window for tiles
@@ -683,6 +691,7 @@ begin
     FopsiClientKiosk.LabelDataLoadDetail.Visible := False;
     FopsiClientKiosk.ProgressBar1.Visible := False;
     FopsiClientKiosk.LabelDataLoad.Visible := False;
+    FopsiClientKiosk.CheckBox1Change(FopsiClientKiosk);
   end;
 end;
 
@@ -942,7 +951,7 @@ begin
     SpeedButtonAll.Visible := True;
     BitBtnShowAction.Visible := True;
     BitBtnStoreAction.Caption := rsStoreActions;
-    BitBtnStoreAction.Hint:= rsStoreActionsHint;
+    BitBtnStoreAction.Hint := rsStoreActionsHint;
   end
   else
   begin
@@ -954,8 +963,11 @@ begin
     SpeedButtonAll.Visible := False;
     BitBtnShowAction.Visible := False;
     BitBtnStoreAction.Caption := rsInstallNow;
-    BitBtnStoreAction.Hint:= rsInstallNowHint;
+    BitBtnStoreAction.Hint := rsInstallNowHint;
   end;
+  // localize RadioGroupView
+  RadioGroupView.Items[0] := rsViewList;
+  RadioGroupView.Items[1] := rsViewTiles;
   repaint;
   Application.ProcessMessages;
 end;
@@ -1112,8 +1124,10 @@ var
   optionlist: TStringList;
 
 begin
+
   if not StartupDone then
   begin
+
     RadioGroupViewSelectionChanged(self);
     CheckBox1Change(self);
     StartupDone := True;
@@ -1153,7 +1167,9 @@ begin
     RadioGroupViewSelectionChanged(self);
 
     // log
-  LogDatei.log('rsActSetup is: '+rsActSetup+' with color: '+tile_radio_setup_color+' and font size: '+intTostr(tile_radio_font_size),LLDebug2);
+    LogDatei.log('rsActSetup is: ' + rsActSetup + ' with color: ' +
+      tile_radio_setup_color + ' and font size: ' + IntToStr(tile_radio_font_size), LLDebug2);
+    LogDatei.log('TitleLabel.Caption: ' + TitleLabel.Caption, LLDebug2);
 
   end;
 end;
@@ -1162,6 +1178,15 @@ procedure TFopsiClientKiosk.FormShow(Sender: TObject);
 begin
   LabelDataload.Caption := 'Init';
   StartupDone := False;
+  TitleLabel.Caption := title_Text;
+  TitleLabel.Font.Name := title_Font_Name;
+  TitleLabel.Font.Size := title_Font_Size;
+  TitleLabel.Font.Color := StringToColor(title_Font_Color);
+  TitleLabel.Font.Bold := title_Font_Bold;
+  TitleLabel.Font.Italic := title_Font_Italic;
+  TitleLabel.Font.Underline := title_Font_Underline;
+  FopsiClientKiosk.Repaint;
+  Application.ProcessMessages;
 end;
 
 (*
@@ -1176,7 +1201,9 @@ var
   i: integer;
 begin
   ockdata.fetchProductData_by_getKioskProductInfosForClient;
+  StartupDone := False;
   RadioGroupViewSelectionChanged(self);
+  StartupDone := True;
 end;
 
 procedure TFopsiClientKiosk.searchEditChange(Sender: TObject);
@@ -1196,12 +1223,60 @@ begin
 end;
 
 procedure TFopsiClientKiosk.FormCreate(Sender: TObject);
-var
-  myini: TInifile;
+
+  procedure loadskin(skinpath: string);
+  var
+    myini: TInifile;
+  begin
+    if FileExists(skinpath + 'opsiclientkiosk.ini') then
+    begin
+      preLogfileLogList.Add('loading from: ' + skinpath + 'opsiclientkiosk.ini');
+      myini := TIniFile.Create(skinpath + 'opsiclientkiosk.ini');
+      //title
+      title_Text :=
+        myini.ReadString('TitleLabel', 'Text', title_Text);
+      preLogfileLogList.Add('title_Text: ' + title_Text);
+      title_Font_Name := myini.ReadString('TitleLabel', 'FontName', title_Font_Name);
+      title_Font_Size := myini.ReadInteger('TitleLabel', 'FontSize', title_Font_Size);
+      title_Font_Color := myini.ReadString('TitleLabel', 'FontColor', title_Font_Color);
+      title_Font_Bold := strToBool(myini.ReadString('TitleLabel',
+        'FontBold', boolToStr(title_Font_Bold)));
+      title_Font_Italic :=
+        strToBool(myini.ReadString('TitleLabel', 'FontItalic',boolToStr(title_Font_Italic)));
+      title_Font_Underline :=
+        strToBool(myini.ReadString('TitleLabel', 'FontUnderline', boolToStr(title_Font_Underline)));
+      //tile
+      tile_color := myini.ReadString('Tile', 'Color', tile_color);
+      tile_Font_Name := myini.ReadString('Tile', 'FontName', tile_Font_Name);
+      tile_Font_Size := myini.ReadInteger('Tile', 'FontSize', tile_Font_Size);
+      tile_Font_Color := myini.ReadString('Tile', 'FontColor', tile_Font_Color);
+      tile_Font_Bold := strToBool(myini.ReadString('Tile', 'FontBold',
+        boolToStr(tile_Font_Bold)));
+      tile_Font_Italic := strToBool(myini.ReadString('Tile', 'FontItalic',
+        boolToStr(tile_Font_Italic)));
+      tile_Font_Underline := strToBool(myini.ReadString('Tile',
+        'FontUnderline', boolToStr(tile_Font_Underline)));
+      tile_width := myini.ReadInteger('Tile', 'Width', tile_width);
+      tile_height := myini.ReadInteger('Tile', 'Height', tile_height);
+      //TileRadio
+      tile_radio_setup_color := myini.ReadString('TileRadio', 'Setup_color',
+        tile_radio_setup_color);
+      tile_radio_uninstall_color :=
+        myini.ReadString('TileRadio', 'Uninstall_color', tile_radio_uninstall_color);
+      tile_radio_none_color := myini.ReadString('TileRadio', 'None_color',
+        tile_radio_none_color);
+      tile_radio_font_size := myini.ReadInteger('TileRadio', 'Fontsize',
+        tile_radio_font_size);
+      myini.Free;
+    end;
+  end;
+
 begin
   NotebookProducts.PageIndex := 1;  //tiles
   FopsiClientKiosk.productdetailpanel.Height := 0;
   detail_visible := False;
+  preLogfileLogList := TStringList.Create;
+  preLogfileLogList.Add(Application.Name + ' starting at ' + DateTimeToStr(now));
 
   // Load custom skin
   skinpath := Application.Location + PathDelim + 'opsiclientkioskskin' + PathDelim;
@@ -1209,6 +1284,14 @@ begin
   begin
     ImageHeader.Picture.LoadFromFile(skinpath + 'opsiclientkiosk.png');
   end;
+  //title
+  title_Text := 'opsi client Kiosk';
+  title_Font_Name := 'Arial';
+  title_Font_Size := 12;
+  title_Font_Color := 'clBlack';
+  title_Font_Bold := true;
+  title_Font_Italic := false;
+  title_Font_Underline := false;
   //tile
   tile_color := 'clCream';
   tile_Font_Name := 'Arial';
@@ -1226,43 +1309,7 @@ begin
   tile_radio_font_size := 10;
   if FileExists(skinpath + 'opsiclientkiosk.ini') then
   begin
-    myini := TIniFile.Create(skinpath + 'opsiclientkiosk.ini');
-    TitleLabel.Caption :=
-      myini.ReadString('TitleLabel', 'text', 'opsi Client Kiosk');
-    TitleLabel.Font.Name := myini.ReadString('TitleLabel', 'FontName', 'Arial');
-    TitleLabel.Font.Size := myini.ReadInteger('TitleLabel', 'FontSize', 12);
-    TitleLabel.Font.Color := StringToColor(myini.ReadString('TitleLabel',
-      'FontColor', 'clBlack'));
-    TitleLabel.Font.Bold := strToBool(myini.ReadString('TitleLabel',
-      'FontBold', 'True'));
-    TitleLabel.Font.Italic :=
-      strToBool(myini.ReadString('TitleLabel', 'FontItalic', 'False'));
-    TitleLabel.Font.Underline :=
-      strToBool(myini.ReadString('TitleLabel', 'FontUnderline', 'False'));
-    //tile
-    tile_color := myini.ReadString('Tile', 'color', tile_color);
-    tile_Font_Name := myini.ReadString('Tile', 'FontName', tile_Font_Name);
-    tile_Font_Size := myini.ReadInteger('Tile', 'FontSize', tile_Font_Size);
-    tile_Font_Color := myini.ReadString('Tile', 'FontColor', tile_Font_Color);
-    tile_Font_Bold := strToBool(myini.ReadString('Tile', 'FontBold',
-      boolToStr(tile_Font_Bold)));
-    tile_Font_Italic := strToBool(myini.ReadString('Tile', 'FontItalic',
-      boolToStr(tile_Font_Italic)));
-    tile_Font_Underline := strToBool(myini.ReadString('Tile',
-      'FontUnderline', boolToStr(tile_Font_Underline)));
-    tile_width := myini.ReadInteger('Tile', 'Width', tile_width);
-    tile_height := myini.ReadInteger('Tile', 'Height', tile_height);
-    //TileRadio
-    tile_radio_setup_color := myini.ReadString('TileRadio', 'setup_color',
-      tile_radio_setup_color);
-    tile_radio_uninstall_color :=
-      myini.ReadString('TileRadio', 'uninstall_color', tile_radio_uninstall_color);
-    tile_radio_none_color := myini.ReadString('TileRadio', 'none_color',
-      tile_radio_none_color);
-    tile_radio_font_size := myini.ReadInteger('TileRadio', 'fontsize',
-      tile_radio_font_size);
-
-    myini.Free;
+    loadskin(skinpath);
   end;
 
   // skinpath in opsiclientagent custom dir
@@ -1274,21 +1321,10 @@ begin
   end;
   if FileExistsUTF8(skinpath + 'opsiclientkiosk.ini') then
   begin
-    myini := TIniFile.Create(skinpath + 'opsiclientkiosk.ini');
-    TitleLabel.Caption :=
-      myini.ReadString('TitleLabel', 'text', 'opsi Client Kiosk');
-    TitleLabel.Font.Name := myini.ReadString('TitleLabel', 'FontName', 'Arial');
-    TitleLabel.Font.Size := myini.ReadInteger('TitleLabel', 'FontSize', 20);
-    TitleLabel.Font.Color := myini.ReadInteger('TitleLabel', 'FontColor', $00000000);
-    TitleLabel.Font.Bold := strToBool(myini.ReadString('TitleLabel',
-      'FontBold', 'True'));
-    TitleLabel.Font.Italic :=
-      strToBool(myini.ReadString('TitleLabel', 'FontItalic', 'False'));
-    TitleLabel.Font.Underline :=
-      strToBool(myini.ReadString('TitleLabel', 'FontUnderline', 'False'));
-    myini.Free;
+    loadskin(skinpath);
   end;
   GetDefaultLang;
+  preLogfileLogList.Add('GetDefaultLang: ' + GetDefaultLang);
   //grouplist.Clear;
   DBGrid1.Columns.Add.FieldName := 'ProductId';
   DBGrid1.Columns.Items[0].Title.Caption := 'ProductId';
@@ -1322,39 +1358,7 @@ begin
   // localize RadioGroupView
   RadioGroupView.Items[0] := rsViewList;
   RadioGroupView.Items[1] := rsViewTiles;
-
-
-  //ockdata.initdb;
-  (*
-  //DataSource1.DataSet:= ockdata.ZMQUerydataset2;
-  DataSource1.DataSet := ZMQUerydataset1;
-  DBGrid1.DataSource := DataSource1;
-  DataSource2.DataSet := ockdata.ZMQUerydataset2;
-  DBGrid2.DataSource := DataSource2;
-  //ZMQUerydataset2.MasterSource := DataSource1;
-  ZMQUerydataset2.DataSource := DataSource1;
-  LabelDataload.Caption := '';
-  LabelDataLoadDetail.Caption := '';
-  Progressbar1.Position := 0;
-  ProgressBar1.Max := 8;
-  ProgressbarDetail.Position := 0;
-  //ProgressBar1.Brush.Color:=clBlue;
-  //ProgressbarDetail.Brush.Color:=clBlue;
-  //progressbar1.Perform(PBM_SETBARCOLOR, 0, clBlue);
-  //SendMessage(ProgressBar1.Handle, PBM_SETBARCOLOR, 0, clBlue);
-  productdetailpanel.Height := 0;
-  //ZMReferentialKey1.MasterDataSet := ZMQUerydataset1;
-  //ZMReferentialKey1.SlaveDataSet := ZMQUerydataset2;
-  //ZMReferentialKey1.JoinedFields.Add('ProductId=ProductId');
-  *)
 end;
-
-(*
-procedure TFopsiClientKiosk.RadioGroup1Click(Sender: TObject);
-begin
-  NotebookProducts.PageIndex := RadioGroupView.ItemIndex;
-end;
-*)
 
 procedure TFopsiClientKiosk.searchEditEnter(Sender: TObject);
 begin
@@ -1460,6 +1464,8 @@ begin
     begin
       logdatei.log('Exception BitBtnCancelClick: ProductTilesArray[i].Free;', LLError);
       logdatei.log('Exception: ' + E.message, LLError);
+      logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+      logdatei.log_exception(E, LLError);
     end;
   end;
 

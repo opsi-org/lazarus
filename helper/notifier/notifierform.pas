@@ -20,6 +20,7 @@ type
   TNform = class(TForm)
     Image1: TImage;
     //objlist : TObjectList;
+    procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
@@ -61,6 +62,12 @@ procedure TNform.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   //prevents closing notifier via ALT-F4
   CloseAction := caNone;
+end;
+
+procedure TNform.FormActivate(Sender: TObject);
+begin
+  Application.BringToFront;
+  Application.ProcessMessages;
 end;
 
 procedure TNform.FormHide(Sender: TObject);

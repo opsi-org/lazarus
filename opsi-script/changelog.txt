@@ -4,12 +4,11 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
-
 opsi-winst/opsi-script (4.12.0.6) stable; urgency=low
 
   * osconf: readConfigFromService reads configstates:
-     opsi-script.global. ScriptErrorMessages : boolean ; default=true (created as false)
-     opsi-script.global.AutoActivityDisplay : boolean ; default=true  (created as true)
+     opsi-script.global.ScriptErrorMessages : boolean ; default=true (created as false)
+     opsi-script.global.AutoActivityDisplay : boolean ; default=false  (created as true)
   * general: adjusting log levels
     5:LLNotice: comments,messages, Execution of sections
     6:LLInfo; Statements, New values for stringvars , complete boolean expression
@@ -78,6 +77,14 @@ opsi-winst/opsi-script (4.12.0.0) experimental; urgency=low
 -- Detlef Oertel <d.oertel@uib.de>  Mon, 19 Jun 2017:15:00:00 +0200
 
 
+opsi-winst/opsi-script (4.11.6.15) stable; urgency=low
+
+  * osfunc: alldelete: del command: allow also partly wildcards (*.yxz or xyz.*)
+    (backport from 4.12.0.2)
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri, 25 Aug 2017:15:00:00 +0200
+
+
 
 opsi-winst/opsi-script (4.11.6.14) stable; urgency=low
 
@@ -90,6 +97,7 @@ opsi-winst/opsi-script (4.11.6.14) stable; urgency=low
     copy -h : follow symlinks
 
 -- Detlef Oertel <d.oertel@uib.de>  Thu, 29 Jun 2017:15:00:00 +0200
+
 
 opsi-winst/opsi-script (4.11.6.13) stable; urgency=low
 

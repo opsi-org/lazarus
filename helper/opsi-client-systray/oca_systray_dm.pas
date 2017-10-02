@@ -7,13 +7,14 @@ interface
 uses
   Classes, SysUtils, LazFileUtils, Menus, ExtCtrls,
   Forms,
-  dialogs,
+  Dialogs,
   oslog,
   oswebservice,
   fileinfo,
   winpeimagereader,
   superobject,
-  lcltranslator;
+  lcltranslator,
+  windows;
 
 type
 
@@ -32,6 +33,7 @@ type
     procedure MI_starteventClick(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure WriteHelp;
+    procedure startNotify(notifyempty : boolean);
   private
     { private declarations }
   public
@@ -40,15 +42,35 @@ type
 
 var
   DataModule1: TDataModule1;
-  checkIntervall : integer;
-  myservice_url, myclientid, myVersion : string;
+  checkIntervall: integer;
+  myservice_url, myclientid, myVersion: string;
+  myDepotId, myNotifyFormat: string;
 
 resourcestring
   rsActionsWaiting = 'opsi: Pending installations:';
+  rsNoActionsWaiting = 'opsi: No pending installations';
+  rsNone = 'None';
 
 implementation
 
 {$R *.lfm}
+
+function GetSystemDefaultLocale(const typeOfValue: DWord): string;
+  // possible values: cf. "Locale Types" in windows.pas
+var
+  buffer: PChar;
+  size: word = 0;
+  usedsize: word = 0;
+
+begin
+  Result := '';
+  size := 101;
+  Buffer := StrAlloc(101);
+  usedsize := GetLocaleInfo(LOCALE_SYSTEM_DEFAULT, typeOfValue, buffer, size);
+  if usedsize <> 0 then
+    Result := StrPas(Buffer);
+end;
+
 
 function MyOpsiMethodCall(const method: string; parameters: array of string): string;
 var
@@ -68,19 +90,72 @@ end;
 
 function getActionrequests: TStringList;
 var
-  resultstring, str: string;
-  new_obj, detail_obj: ISuperObject;
-  i: integer;
+  resultstring: string;
+  new_obj, detail_obj, pod_obj, prod_obj: ISuperObject;
+  i : integer;
+  //execp : double;
+  productid, prodver, packver, prodname, request: string;
 begin
-  Result := TStringList.Create;
-  resultstring := MyOpsiMethodCall('productOnClient_getObjects',
-    ['[]', '{"clientId":"' + myclientid + '","actionRequest":["setup","uninstall"]}']);
-  new_obj := SO(resultstring).O['result'];
-  str := new_obj.AsString;
-  for i := 0 to new_obj.AsArray.Length - 1 do
-  begin
-    detail_obj := new_obj.AsArray.O[i];
-    Result.Add(detail_obj.S['productId'] + ' : ' + detail_obj.S['actionRequest"']);
+  try
+    Result := TStringList.Create;
+    // det poc for all action requests
+    resultstring := MyOpsiMethodCall('productOnClient_getObjects',
+      ['[]', '{"clientId":"' + myclientid +
+      '","actionRequest":["setup","uninstall", "update"]}']);
+    LogDatei.log('resultstring: ' + resultstring, LLDebug2);
+    new_obj := SO(resultstring).O['result'];
+
+    for i := 0 to new_obj.AsArray.Length - 1 do
+    begin
+      try
+        detail_obj := new_obj.AsArray.O[i];
+        productid := detail_obj.S['productId'];
+        request := detail_obj.S['actionRequest'];
+        if myNotifyFormat <> 'productid : request' then
+        begin
+          // get product and package version from productOnDepot
+          resultstring := MyOpsiMethodCall('productOnDepot_getObjects',
+            ['[]', '{"depotId":"' + mydepotid + '","productId":"' + productid + '"}']);
+          LogDatei.log('resultstring: ' + resultstring, LLDebug2);
+          pod_obj := SO(resultstring).O['result'];
+
+          prodver := pod_obj.AsArray.O[0].S['productVersion'];
+          packver := pod_obj.AsArray.O[0].S['packageVersion'];
+          // get productName from product
+          resultstring := MyOpsiMethodCall('product_getObjects',
+            ['[]', '{"id":"' + productid + '","productVersion":"' + prodver +
+            '","packageVersion":"' + packver + '"}']);
+          LogDatei.log('resultstring: ' + resultstring, LLDebug2);
+          prod_obj := SO(resultstring).O['result'];
+          prodname := prod_obj.AsArray.O[0].S['name'];
+          LogDatei.log('productid: ' + productid + ' prodver: ' + prodver
+            + ' packver: ' + packver + ' prodname: ' + prodname + ' request: ' + request, LLInfo);
+          //Result.Add(detail_obj.S['productId'] + ' : ' + detail_obj.S['actionRequest"']);
+        end
+        else LogDatei.log('productid: ' + productid +  ' request: ' + request, LLInfo);
+        if myNotifyFormat = 'productname productversion : request' then
+          Result.Add(prodname + ' '+prodver+' : ' + request);
+        if myNotifyFormat = 'productname : request' then
+          Result.Add(prodname +' : ' + request);
+        if myNotifyFormat = 'productid : request' then
+          Result.Add(productid + ' : ' + request);
+      except
+        on e: Exception do
+        begin
+          logdatei.log('Exception in oca_systray_dm: getActionrequests:inner loop.',
+            LLError);
+          logdatei.log('Exception: ' + E.message, LLError);
+          logdatei.log_exception(e, LLError);
+        end;
+      end;
+    end;
+  except
+    on e: Exception do
+    begin
+      logdatei.log('Exception in oca_systray_dm: getActionrequests:inner loop.',
+        LLError);
+      logdatei.log('Exception: ' + E.message, LLError);
+    end;
   end;
 end;
 
@@ -108,6 +183,7 @@ var
   networkup, timeout: boolean;
   myseconds: integer;
   resultstring: string;
+  new_obj: ISuperObject;
 begin
   //FopsiClientKiosk.Cursor := crHourGlass;
   Result := False;
@@ -127,6 +203,8 @@ begin
       if myseconds > 0 then
       begin
         resultstring := MyOpsiMethodCall('getDepotId', [myclientid]);
+        new_obj := SO(resultstring).O['result'];
+        myDepotId := new_obj.AsString;
         networkup := True;
       end
       else
@@ -183,8 +261,14 @@ begin
   msg := msg + 'Options:' + LineEnding;
   msg := msg + ' --help -> write this help and exit' + LineEnding;
   msg := msg + ' -h -> write this help and exit' + LineEnding;
-  msg := msg + ' --checkintervall=<interval minutes> -> minutes between check for action request; required'+ LineEnding;
-  msg := msg + ' --fqdn=<fqdn of the client> -> ; required'+ LineEnding;
+  msg := msg +
+    ' --checkintervall=<interval minutes> -> minutes between check for action request; required'
+    +
+    LineEnding;
+  msg := msg + ' --fqdn=<fqdn of the client> -> ; required' + LineEnding;
+  msg := msg + ' --lang=<lang of the client>' + LineEnding;
+  msg := msg + ' --notifyformat=<notifyformat>' + LineEnding;
+  msg := msg + ' --service_url_port=<service_url_port> (default=4441' + LineEnding;
   ShowMessage(msg);
 end;
 
@@ -199,8 +283,13 @@ var
   i: integer;
   lfilename: string;
   logAndTerminate: boolean = False;
+  service_url_port : string;
+  mylang : string;
 begin
   checkIntervall := 0;
+  myNotifyFormat := 'productid : request';
+  myservice_url := 'https://localhost:4441/kiosk';
+  service_url_port := '4441';
   preloglist := TStringList.Create;
   preloglist.Add('PreLog for: ' + Application.exename + ' opend at : ' +
     DateTimeToStr(now));
@@ -218,8 +307,11 @@ begin
   // quick check parameters
   optionlist := TStringList.Create;
   optionlist.Add('help');
+  optionlist.Add('lang:');
   optionlist.Add('checkintervall:');
-  optionlist.Add('fqdn:');
+  optionlist.Add('fqdn::');
+  optionlist.Add('notifyformat:');
+  optionlist.Add('service_url_port:');
   //optionlist.Add('idevent:');
   ErrorMsg := Application.CheckOptions('hc:f:', optionlist);
   if ErrorMsg <> '' then
@@ -252,56 +344,53 @@ begin
   if Application.HasOption('f', 'fqdn') then
   begin
     preloglist.Add('Found Parameter fqdn');
-    myclientid := Application.GetOptionValue('c', 'fqdn');
+    myclientid := Application.GetOptionValue('f', 'fqdn');
     preloglist.Add('Found Parameter fqdn: ' + myclientid);
   end;
 
-  myservice_url := 'https://localhost:4441/kiosk';
-
-  (*
-  if Application.HasOption('s', 'skinconfigfile') then
+  if Application.HasOption('notifyformat') then
   begin
-    preloglist.Add('Found Parameter skinconfigfile');
-    myconfigpath := Application.GetOptionValue('s', 'skinconfigfile');
-    preloglist.Add('Found Parameter skinconfigfile: ' + myconfigpath);
-    myconfigfile := myexepath + myconfigpath;
-    if not FileExists(myconfigfile) then
-    begin
-      preloglist.Add('Error: Given skinconfig file not found: ' + myconfigfile);
-      logAndTerminate := True;
-      //logdatei.Close;
-      //Application.Terminate;
-      //Exit;
-    end;
-  end
-  else
-  begin
-    preloglist.Add('Error: No skin config file given. I s required ');
-    logAndTerminate := True;
-    //logdatei.Close;
-    //Application.Terminate;
-    //Exit;
+    preloglist.Add('Found Parameter notifyformat');
+    myNotifyFormat := Application.GetOptionValue('notifyformat');
+    preloglist.Add('Found Parameter notifyformat: ' + myNotifyFormat);
   end;
 
-  if Application.HasOption('i', 'idevent') then
+
+  mylang := GetDefaultLang;
+  if Mylang = '' then
+    mylang := LowerCase(copy (GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
+  SetDefaultLang(mylang);
+  preloglist.Add('Detected default lang: ' + mylang);
+  preloglist.Add('Detected default lang: ' + GetDefaultLang);
+
+  if Application.HasOption('lang') then
   begin
-    preloglist.Add('Found Parameter idevent');
-    mynotifierkind := Application.GetOptionValue('i', 'idevent');
-    // opsiclientd bug: pupup comes with %id%
-    if mynotifierkind = '%id%' then mynotifierkind := 'popup';
-    preloglist.Add('Found Parameter idevent: ' + mynotifierkind);
+    preloglist.Add('Found Parameter lang');
+    SetDefaultLang(Application.GetOptionValue('lang'));
+    preloglist.Add('Found Parameter lang: ' + Application.GetOptionValue('lang'));
+    preloglist.Add('Active lang: ' + GetDefaultLang);
   end;
-  *)
+
+  if Application.HasOption('service_url_port') then
+  begin
+    preloglist.Add('Found Parameter service_url_port');
+    service_url_port := Application.GetOptionValue('service_url_port');
+    preloglist.Add('Found Parameter service_url_port: ' + service_url_port);
+  end;
+
+  myservice_url := 'https://localhost:'+service_url_port+'/kiosk';
 
   // Initialize logging
   LogDatei := TLogInfo.Create;
   lfilename := ExtractFileNameOnly(Application.ExeName);
-  LogDatei.FileName := lfilename;
+  //LogDatei.FileName := lfilename;
   LogDatei.StandardLogFileext := '.log';
   LogDatei.StandardLogFilename := lfilename;
   LogDatei.WritePartLog := False;
+  LogDatei.WriteErrFile:= False;
+  LogDatei.WriteHistFile:= False;
   //LogDatei.StandardPartLogFilename := lfilename+ '-part';
-  LogDatei.CreateTheLogfile(lfilename + '.log', True);
+  LogDatei.CreateTheLogfile(lfilename + '.log', False);
   // push prelog buffer to logfile
   if preloglist.Count > 0 then
     for i := 0 to preloglist.Count - 1 do
@@ -321,12 +410,12 @@ begin
   TrayIcon1.PopUpMenu := PopupMenu1;
   trayIcon1.Show;
   if checkIntervall = 0 then
-    Timer1.Enabled:= false
+    Timer1.Enabled := False
   else
   begin
     // checkIntervall is minutes ; intervall is millis
-    Timer1.Interval:=checkIntervall * 60 * 1000;
-    Timer1.Enabled:= true;
+    Timer1.Interval := checkIntervall * 60 * 1000;
+    Timer1.Enabled := True;
   end;
 end;
 
@@ -336,9 +425,44 @@ begin
   Application.Terminate;
 end;
 
+procedure TDataModule1.startNotify(notifyempty : boolean);
+var
+  list: TStringList;
+  actionstring: string;
+  i: integer;
+begin
+  initConnection(30);
+  list := getActionrequests;
+  closeConnection;
+  actionstring := '';
+  if list.Count = 0 then
+  begin
+    LogDatei.log('No action requests found.', LLNotice);
+    if notifyempty then
+    begin
+      LogDatei.log('Notifying no requests', LLNotice);
+      Trayicon1.BalloonFlags := bfInfo;
+      TrayIcon1.BalloonHint := rsNone;
+      TrayIcon1.BalloonTitle := rsActionsWaiting;
+      TrayIcon1.ShowBalloonHint;
+    end;
+  end
+  else
+  begin
+    for i := 0 to list.Count - 1 do
+      actionstring := actionstring + list[i] + LineEnding;
+    LogDatei.log('Notifying Action requests found: ' + actionstring, LLNotice);
+    Trayicon1.BalloonFlags := bfInfo;
+    TrayIcon1.BalloonHint := actionstring;
+    TrayIcon1.BalloonTitle := rsActionsWaiting;
+    TrayIcon1.ShowBalloonHint;
+  end;
+end;
+
+
 procedure TDataModule1.MI_pull_for_action_requestClick(Sender: TObject);
 begin
-  Timer1Timer(sender);
+  startNotify(true);
 end;
 
 procedure TDataModule1.MI_starteventClick(Sender: TObject);
@@ -347,27 +471,8 @@ begin
 end;
 
 procedure TDataModule1.Timer1Timer(Sender: TObject);
-var
-  list : Tstringlist;
-  actionstring : string;
-  i : integer;
 begin
-  initConnection(30);
-  list := getActionrequests;
-  closeConnection;
-  actionstring := '';
-  if list.Count = 0 then
-    LogDatei.log('No action requests found.',LLNotice)
-  else
-  begin
-    for i := 0 to list.Count -1 do actionstring := actionstring + list[i] + LineEnding;
-    LogDatei.log('Action requests found: '+actionstring,LLNotice);
-    Trayicon1.BalloonFlags:=bfInfo;
-    TrayIcon1.BalloonHint:= actionstring;
-    TrayIcon1.BalloonTitle:= rsActionsWaiting;
-    TrayIcon1.ShowBalloonHint;
-  end;
+  startNotify(false);
 end;
 
 end.
-

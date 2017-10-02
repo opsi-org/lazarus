@@ -4,12 +4,17 @@
     <PathDelim Value="\"/>
     <Version Value="10"/>
     <BuildModes Active="Release"/>
-    <Units Count="18">
+    <Units Count="19">
       <Unit0>
         <Filename Value="notifier.lpr"/>
         <IsPartOfProject Value="True"/>
+<<<<<<< .mine
+        <CursorPos X="5" Y="16"/>
+        <UsageCount Value="119"/>
+=======
         <CursorPos X="24" Y="13"/>
         <UsageCount Value="119"/>
+>>>>>>> .theirs
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -18,30 +23,48 @@
         <ComponentName Value="Nform"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+<<<<<<< .mine
+        <EditorIndex Value="4"/>
+        <TopLine Value="46"/>
+        <CursorPos X="31" Y="69"/>
+        <UsageCount Value="119"/>
+
+=======
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <TopLine Value="47"/>
         <CursorPos X="30" Y="82"/>
         <UsageCount Value="119"/>
+>>>>>>> .theirs
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="notifier_base.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="-1"/>
         <CursorPos X="52" Y="96"/>
+<<<<<<< .mine
+        <UsageCount Value="119"/>
+
+=======
         <UsageCount Value="119"/>
         <Loaded Value="True"/>
+>>>>>>> .theirs
       </Unit2>
       <Unit3>
         <Filename Value="..\..\common\oslog.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="13"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="85"/>
         <CursorPos X="36" Y="103"/>
+<<<<<<< .mine
+        <UsageCount Value="119"/>
+
+=======
         <UsageCount Value="119"/>
         <Loaded Value="True"/>
+>>>>>>> .theirs
       </Unit3>
       <Unit4>
         <Filename Value="notifierdatamodule.pas"/>
@@ -50,24 +73,35 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
         <EditorIndex Value="2"/>
+<<<<<<< .mine
+        <TopLine Value="205"/>
+        <CursorPos X="24" Y="210"/>
+        <UsageCount Value="119"/>
+=======
         <TopLine Value="123"/>
         <CursorPos X="36" Y="133"/>
         <UsageCount Value="119"/>
+>>>>>>> .theirs
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit4>
       <Unit5>
         <Filename Value="notifierguicontrol.pas"/>
         <IsPartOfProject Value="True"/>
+<<<<<<< .mine
+        <EditorIndex Value="3"/>
+        <TopLine Value="621"/>
+        <CursorPos X="45" Y="647"/>
+=======
         <EditorIndex Value="7"/>
         <TopLine Value="619"/>
         <CursorPos X="79" Y="787"/>
+>>>>>>> .theirs
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="-1"/>
-          <WindowIndex Value="-1"/>
-          <TopLine Value="166"/>
-          <CursorPos X="24" Y="184"/>
+          <TopLine Value="157"/>
+          <CursorPos X="30" Y="178"/>
         </ExtraEditor1>
         <UsageCount Value="117"/>
         <Loaded Value="True"/>
@@ -75,20 +109,30 @@
       <Unit6>
         <Filename Value="notifier_json.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="175"/>
         <CursorPos X="37" Y="202"/>
+<<<<<<< .mine
+        <UsageCount Value="81"/>
+
+=======
         <UsageCount Value="81"/>
         <Loaded Value="True"/>
+>>>>>>> .theirs
       </Unit6>
       <Unit7>
         <Filename Value="..\..\common\osjson.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="40"/>
         <CursorPos X="57" Y="54"/>
+<<<<<<< .mine
+        <UsageCount Value="81"/>
+
+=======
         <UsageCount Value="81"/>
         <Loaded Value="True"/>
+>>>>>>> .theirs
       </Unit7>
       <Unit8>
         <Filename Value="..\..\common\superobject.pas"/>
@@ -102,9 +146,15 @@
       <Unit9>
         <Filename Value="notifier.txt"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
+<<<<<<< .mine
+        <CursorPos X="42" Y="7"/>
+        <UsageCount Value="42"/>
+=======
         <CursorPos X="48" Y="8"/>
         <UsageCount Value="42"/>
+>>>>>>> .theirs
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit9>
@@ -125,41 +175,36 @@
       </Unit11>
       <Unit12>
         <Filename Value="notifier\event.ini"/>
-        <EditorIndex Value="12"/>
-        <TopLine Value="21"/>
-        <CursorPos X="53" Y="14"/>
+        <EditorIndex Value="5"/>
+        <CursorPos X="10" Y="4"/>
         <UsageCount Value="19"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Ini"/>
       </Unit12>
       <Unit13>
         <Filename Value="notifier\popup.ini"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="-1"/>
         <UsageCount Value="19"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Ini"/>
       </Unit13>
       <Unit14>
         <Filename Value="notifier\shutdown.ini"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="-1"/>
         <UsageCount Value="11"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Ini"/>
       </Unit14>
       <Unit15>
         <Filename Value="notifier\action.ini"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="-1"/>
         <CursorPos X="4" Y="4"/>
         <UsageCount Value="11"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Ini"/>
       </Unit15>
       <Unit16>
         <Filename Value="notifier\userlogin.ini"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="14"/>
         <UsageCount Value="11"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Ini"/>
       </Unit16>
       <Unit17>
@@ -169,52 +214,189 @@
         <CursorPos X="16" Y="2004"/>
         <UsageCount Value="10"/>
       </Unit17>
+      <Unit18>
+        <Filename Value="notifierdatamodule.lfm"/>
+        <EditorIndex Value="3"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="LFM"/>
+      </Unit18>
     </Units>
+<<<<<<< .mine
+    <JumpHistory Count="11" HistoryIndex="10">
+=======
     <JumpHistory Count="29" HistoryIndex="28">
+>>>>>>> .theirs
       <Position1>
-        <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="706" Column="55" TopLine="695"/>
-      </Position1>
-      <Position2>
-        <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="579" Column="27" TopLine="557"/>
-      </Position2>
-      <Position3>
+<<<<<<< .mine
         <Filename Value="notifierdatamodule.pas"/>
         <Caret Line="33" Column="26" TopLine="12"/>
+=======
+        <Filename Value="notifierguicontrol.pas"/>
+        <Caret Line="706" Column="55" TopLine="695"/>
+>>>>>>> .theirs
+      </Position1>
+      <Position2>
+<<<<<<< .mine
+        <Filename Value="notifierdatamodule.pas"/>
+        <Caret Line="232" Column="22" TopLine="206"/>
+=======
+        <Filename Value="notifierguicontrol.pas"/>
+        <Caret Line="579" Column="27" TopLine="557"/>
+>>>>>>> .theirs
+      </Position2>
+      <Position3>
+<<<<<<< .mine
+        <Filename Value="notifier.lpr"/>
+        <Caret Line="13" Column="24"/>
+=======
+        <Filename Value="notifierdatamodule.pas"/>
+        <Caret Line="33" Column="26" TopLine="12"/>
+>>>>>>> .theirs
       </Position3>
       <Position4>
+<<<<<<< .mine
+        <Filename Value="notifierguicontrol.pas"/>
+        <Caret Line="184" Column="24" TopLine="166"/>
+=======
         <Filename Value="notifier_json.pas"/>
         <Caret Line="118" Column="23" TopLine="96"/>
+>>>>>>> .theirs
       </Position4>
       <Position5>
         <Filename Value="notifierguicontrol.pas"/>
+<<<<<<< .mine
+        <Caret Line="634" Column="48" TopLine="614"/>
+=======
         <Caret Line="579" Column="27" TopLine="539"/>
+>>>>>>> .theirs
       </Position5>
       <Position6>
         <Filename Value="notifierguicontrol.pas"/>
+<<<<<<< .mine
+        <Caret Line="14" Column="44" TopLine="55"/>
+=======
         <Caret Line="78" Column="22" TopLine="56"/>
+>>>>>>> .theirs
       </Position6>
       <Position7>
+<<<<<<< .mine
+        <Filename Value="notifierguicontrol.pas"/>
+        <Caret Line="175" Column="20" TopLine="155"/>
+=======
         <Filename Value="notifier_json.pas"/>
         <Caret Line="150" Column="18" TopLine="126"/>
+>>>>>>> .theirs
       </Position7>
       <Position8>
+<<<<<<< .mine
+        <Filename Value="notifierguicontrol.pas"/>
+        <Caret Line="744" Column="27" TopLine="630"/>
+=======
         <Filename Value="notifierguicontrol.pas"/>
         <Caret Line="169" Column="24" TopLine="133"/>
+>>>>>>> .theirs
       </Position8>
       <Position9>
+<<<<<<< .mine
+        <Filename Value="notifierdatamodule.pas"/>
+        <Caret Line="192" Column="47" TopLine="116"/>
+=======
         <Filename Value="notifierguicontrol.pas"/>
         <Caret Line="81" Column="3" TopLine="60"/>
+>>>>>>> .theirs
       </Position9>
       <Position10>
+<<<<<<< .mine
+        <Filename Value="notifierguicontrol.pas"/>
+        <Caret Line="628" Column="39" TopLine="694"/>
+=======
         <Filename Value="notifier_json.pas"/>
         <Caret Line="188" Column="40"/>
+>>>>>>> .theirs
       </Position10>
       <Position11>
+<<<<<<< .mine
+        <Filename Value="notifierform.pas"/>
+        <Caret Line="55" Column="27" TopLine="33"/>
+=======
         <Filename Value="notifier_json.pas"/>
         <Caret Line="91" Column="41" TopLine="71"/>
+>>>>>>> .theirs
       </Position11>
+<<<<<<< .mine
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=======
       <Position12>
         <Filename Value="notifier_json.pas"/>
         <Caret Line="107" Column="43" TopLine="73"/>
@@ -287,6 +469,7 @@
         <Filename Value="notifierform.pas"/>
         <Caret Line="80" Column="27" TopLine="42"/>
       </Position29>
+>>>>>>> .theirs
     </JumpHistory>
   </ProjectSession>
 </CONFIG>

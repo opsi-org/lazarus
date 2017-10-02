@@ -111,7 +111,7 @@ var
   productIdsList: TStringList;
   FileVerInfo: TfileVersionInfo;
   myVersion: string;
-  opsiclientdmode : boolean = false;
+  opsiclientdmode : boolean = true;
 
 
 procedure initdb;
@@ -269,6 +269,8 @@ begin
           begin
             logdatei.log('Exception CREATE TABLE kioskmaster', LLError);
             logdatei.log('Exception: ' + E.message, LLError);
+            logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+            logdatei.log_exception(E,LLError);
           end;
         end;
 
@@ -287,6 +289,8 @@ begin
           begin
             logdatei.log('Exception CREATE TABLE kioskslave', LLError);
             logdatei.log('Exception: ' + E.message, LLError);
+            logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+            logdatei.log_exception(E,LLError);
           end;
         end;
 
@@ -297,6 +301,8 @@ begin
           begin
             logdatei.log('Exception commit', LLError);
             logdatei.log('Exception: ' + E.message, LLError);
+            logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+            logdatei.log_exception(E,LLError);
           end;
         end;
 
@@ -319,6 +325,8 @@ begin
         begin
           logdatei.log('Exception Unable to Create new Database', LLError);
           logdatei.log('Exception: ' + E.message, LLError);
+          logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+          logdatei.log_exception(E,LLError);
         end;
       end;
     end;
@@ -328,6 +336,8 @@ begin
     begin
       logdatei.log('Exception check if database file exists', LLError);
       logdatei.log('Exception: ' + E.message, LLError);
+      logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+      logdatei.log_exception(E,LLError);
     end;
   end;
 
@@ -452,7 +462,13 @@ begin
     resultstring := opsidata.checkAndRetrieve(omc, errorOccured);
     Result := resultstring;
   except
-    LogDatei.log('Exception calling method: ' + method, LLerror);
+    on e: Exception do
+    begin
+      LogDatei.log('Exception calling method: ' + method, LLerror);
+      logdatei.log('Exception: ' + E.message, LLError);
+      logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+      logdatei.log_exception(E,LLError);
+    end;
   end;
 end;
 
@@ -472,18 +488,32 @@ begin
       Result := resultstringlist[i];
 
   except
-    LogDatei.log('Exception calling method: ' + method, LLerror);
+    on e: Exception do
+    begin
+      LogDatei.log('Exception calling method: ' + method, LLerror);
+      logdatei.log('Exception: ' + E.message, LLError);
+      logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+      logdatei.log_exception(E,LLError);
+    end;
   end;
 end;
 
 
 function initLogging(const clientname: string): boolean;
+var
+  i : integer;
 begin
   Result := True;
   logdatei := TLogInfo.Create;
   logfilename := opsiclientkiosklog;
+  LogDatei.WritePartLog := False;
+  LogDatei.WriteErrFile:= False;
+  LogDatei.WriteHistFile:= False;
   logdatei.CreateTheLogfile(logfilename, False);
   logdatei.LogLevel := myloglevel;
+  for i := 0 to preLogfileLogList.Count-1 do
+    logdatei.log(preLogfileLogList.Strings[i], LLessential);
+  preLogfileLogList.Free;
   logdatei.log('opsi-client-kiosk: version: ' + myVersion, LLessential);
 end;
 
@@ -501,6 +531,8 @@ begin
     begin
       logdatei.log('Exception closeConnection', LLError);
       logdatei.log('Exception: ' + E.message, LLError);
+      logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+      logdatei.log_exception(E,LLError);
     end;
   end;
 end;
@@ -634,6 +666,8 @@ begin
     begin
       logdatei.log('Exception delete from kioskmaster', LLError);
       logdatei.log('Exception: ' + E.message, LLError);
+      logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+      logdatei.log_exception(E,LLError);
     end;
   end;
   ZMQueryDataSet1.Filtered := False;
@@ -661,7 +695,7 @@ begin
   initConnection(30);
   FopsiClientKiosk.LabelDataload.Caption := 'Load data from Server';
   resultstring := MyOpsiMethodCall('getKioskProductInfosForClient', [myclientid]);
-  closeConnection;
+  //closeConnection;
   new_obj := SO(resultstring).O['result'];
   str := new_obj.AsString;
   LogDatei.log('Get products done', LLNotice);
@@ -1128,7 +1162,7 @@ begin
   initConnection(30);
   // opsiclientd mode
   resultstring := MyOpsiMethodCall('fireEvent_software_on_demand', []);
-  closeConnection;
+  //closeConnection;
   // switch back to opsiconfd mode
   if not opsiclientdmode then readconf;
   //FreeAndNil(opsidata);
@@ -1199,7 +1233,7 @@ begin
     FopsiClientKiosk.ProcessMess;
     LogDatei.log('start fetchProductData_by_getKioskProductInfosForClient', LLNotice);
     fetchProductData_by_getKioskProductInfosForClient;
-    closeconnection;
+    //closeconnection;
     LogDatei.log('Handle products done', LLNotice);
     FopsiClientKiosk.LabelDataload.Caption := 'Handle Products';
     FopsiClientKiosk.ProgressBar1.Position := 4;

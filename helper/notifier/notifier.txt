@@ -1,5 +1,15 @@
 [changelog]
 
+<<<<<<< .mine
+opsi-notifier  4.0.7.2
+
+
+
+
+
+
+
+=======
 opsi-notifier  4.0.7.1-1
 
   * hihg DPI support
@@ -8,6 +18,15 @@ opsi-notifier  4.0.7.1-1
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 18 Jul 2017:15:00:00 +0200
 
 opsi-notifier  4.0.7.0-1
+>>>>>>> .theirs
+
+  * notifierguicontrol: objectByIndex: no fsSystemStayOnTop for event notify
+  * notifierguicontrol: fontresize: now by 0.5
+  * notifierform: activate: bringToFront;
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 24 Aug 2017:15:00:00 +0200
+
+opsi-notifier  4.0.7.1
 
   * initial port from python to lazarus
 

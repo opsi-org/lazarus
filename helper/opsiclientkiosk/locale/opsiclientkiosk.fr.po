@@ -1,43 +1,47 @@
+# 
+# Translators:
+# Daniel Debeus, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: opsi.org\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2016-06-08 09:26+0000\n"
-"Last-Translator: detlef oertel\n"
-"Language-Team: German (http://www.transifex.com/opsi-org/opsiorg/language/de/)\n"
+"Last-Translator: Daniel Debeus\n"
+"Language-Team: French (http://www.transifex.com/opsi-org/opsiorg/language/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: de\n"
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
 #: ockdata.rsallgroups
 msgid "All groups"
-msgstr ""
+msgstr "Tous les groupes"
 
 #: ockdata.rsnogroups
 msgid "No Product Groups found ..."
-msgstr ""
+msgstr "Aucun groupe de produit trouvé ..."
 
 #: opsiclientkioskgui.rsactnone
 msgid "None"
-msgstr ""
+msgstr "Ne rien faire"
 
 #: opsiclientkioskgui.rsactrequest
 msgid "Action Request"
-msgstr ""
+msgstr "Demande d'action"
 
 #: opsiclientkioskgui.rsactsetup
 msgid "Setup"
-msgstr ""
+msgstr "Installer"
 
 #: opsiclientkioskgui.rsactuninstall
 msgid "Uninstall"
-msgstr ""
+msgstr "Désinstaller"
 
 #: opsiclientkioskgui.rsinstalled
 msgid "Installed"
-msgstr ""
+msgstr "Installé"
 
 #: opsiclientkioskgui.rsinstallnow
 msgid "Install now"
@@ -49,83 +53,85 @@ msgstr ""
 
 #: opsiclientkioskgui.rsnoactionsfound
 msgid "No action requests found."
-msgstr ""
+msgstr "Aucune demande d'action trouvée ..."
 
 #: opsiclientkioskgui.rsnotinstalled
 msgid "Not installed"
-msgstr ""
+msgstr "Non installé"
 
 #: opsiclientkioskgui.rsstateunknown
 msgid "Unknown"
-msgstr ""
+msgstr "Inconnu"
 
 #: opsiclientkioskgui.rsstoreactions
 msgctxt "opsiclientkioskgui.rsstoreactions"
 msgid "Store Actions"
-msgstr ""
+msgstr "Sauver les actions"
 
 #: opsiclientkioskgui.rsstoreactionshint
-msgid "Send the list of action requests in the list to the server, show the results and ask for installation start."
-msgstr ""
+#, fuzzy
+#| msgid "Send the list of action requests in the list to the server, show the results and ask for installation start. "
+msgid "Send the action requests to the server, show the resulting installations and ask for installation start."
+msgstr "Envoi la liste d'actions au serveur, montre le plan d'action et demande le lancement de l'installation."
 
 #: opsiclientkioskgui.rsviewlist
 msgid "List"
-msgstr ""
+msgstr "Liste"
 
 #: opsiclientkioskgui.rsviewtiles
 msgid "Tiles"
-msgstr ""
+msgstr "Tuiles"
 
 #: oswebservice.rssendlog
 msgid "Sending log file to server ..."
-msgstr ""
+msgstr "Envoi du fichier journal au serveur ..."
 
 #: tfinstalldlg.bitbtnlater.caption
 msgctxt "TFINSTALLDLG.BITBTNLATER.CAPTION"
 msgid "Install at next Standard Event (e.g. Reboot)"
-msgstr ""
+msgstr "Installer à la prochaine occasion (ex. : Redémarrage)"
 
 #: tfinstalldlg.bitbtnnow.caption
 msgctxt "TFINSTALLDLG.BITBTNNOW.CAPTION"
 msgid "Install now (Close all Applications)"
-msgstr ""
+msgstr "Installe maintenant (Ferme toutes les applications)"
 
 #: tfinstalldlg.caption
 msgctxt "TFINSTALLDLG.CAPTION"
 msgid "opsi-kiosk-client"
-msgstr ""
+msgstr "Kiosque d'applications OPSI"
 
 #: tfinstalldlg.label1.caption
 msgctxt "TFINSTALLDLG.LABEL1.CAPTION"
 msgid "The following Actions will be done:"
-msgstr ""
+msgstr "Les actions suivantes seront réalisées :"
 
 #: tfopsiclientkiosk.bitbtncancel.caption
 msgid "Exit"
-msgstr ""
+msgstr "Sortie"
 
 #: tfopsiclientkiosk.bitbtncancel.hint
 msgctxt "TFOPSICLIENTKIOSK.BITBTNCANCEL.HINT"
 msgid "Terminate Program (with out any further action)"
-msgstr ""
+msgstr "Interrompt le programme."
 
 #: tfopsiclientkiosk.bitbtninfo.caption
-msgctxt "TFOPSICLIENTKIOSK.BITBTNINFO.CAPTION"
+msgctxt "tfopsiclientkiosk.bitbtninfo.caption"
 msgid "Info"
-msgstr ""
+msgstr "Aide"
 
 #: tfopsiclientkiosk.bitbtnshowaction.caption
 msgid "Show Actions"
-msgstr ""
+msgstr "Montrer les actions"
 
 #: tfopsiclientkiosk.bitbtnshowaction.hint
 msgid "Show the list of action requests in the list. "
-msgstr ""
+msgstr "Montre la liste de produits avec une action demandée."
 
 #: tfopsiclientkiosk.bitbtnstoreaction.caption
 msgctxt "tfopsiclientkiosk.bitbtnstoreaction.caption"
 msgid "Store Actions"
-msgstr ""
+msgstr "Sauver les actions"
 
 #: tfopsiclientkiosk.btnclearsearchedit.caption
 msgid "X"
@@ -133,15 +139,15 @@ msgstr ""
 
 #: tfopsiclientkiosk.btnupgrade.caption
 msgid "Filter for Upgrade"
-msgstr ""
+msgstr "Filtre pour la mise à jour"
 
 #: tfopsiclientkiosk.btnupgrade.hint
 msgid "Filter for Products where an upgrade is possible"
-msgstr ""
+msgstr "Filtrer les produits dont une mise à jour est possible."
 
 #: tfopsiclientkiosk.caption
 msgid "opsi-client-kiosk"
-msgstr ""
+msgstr "Kiosque d'application OPSI"
 
 #: tfopsiclientkiosk.checkbox1.caption
 msgid "Expert mode"
@@ -149,39 +155,39 @@ msgstr ""
 
 #: tfopsiclientkiosk.dbgrid1.hint
 msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
-msgstr ""
+msgstr "Cliquer dans la colonne ActionRequest pour activer l'option (setup/uninstall)"
 
 #: tfopsiclientkiosk.labeladvice.caption
 msgid "Advice:  "
-msgstr ""
+msgstr "Conseil:"
 
 #: tfopsiclientkiosk.labelclientverstr.caption
 msgid "Version at Client"
-msgstr ""
+msgstr "Version sur le client"
 
 #: tfopsiclientkiosk.labeldescription.caption
 msgid "Description:  "
-msgstr ""
+msgstr "Description:"
 
 #: tfopsiclientkiosk.labelpriority.caption
 msgid "Priority: "
-msgstr ""
+msgstr "Priorité:"
 
 #: tfopsiclientkiosk.labelverstr.caption
 msgid "Version at Server"
-msgstr ""
+msgstr "Version sur le serveur"
 
 #: tfopsiclientkiosk.labelwait.caption
 msgid "Please wait ..."
-msgstr ""
+msgstr "Veuillez patienter ..."
 
 #: tfopsiclientkiosk.radiogroupview.caption
 msgid "View"
-msgstr ""
+msgstr "Vue"
 
 #: tfopsiclientkiosk.searchedit.hint
 msgid "Search in Productlist"
-msgstr ""
+msgstr "Rechercher dans la liste des produits"
 
 #: tfopsiclientkiosk.searchedit.texthint
 msgid "Search"
@@ -189,49 +195,51 @@ msgstr ""
 
 #: tfopsiclientkiosk.speedbuttonall.caption
 msgid "Show all"
-msgstr ""
+msgstr "Afficher tous"
 
 #: tfopsiclientkiosk.speedbuttonall.hint
 msgid "Show all List entries (No Filter)"
-msgstr ""
+msgstr "Montrer tout (sans filtre)"
 
 #: tfopsiclientkiosk.speedbuttonreload.caption
 msgid "Reload"
-msgstr ""
+msgstr "Recharger"
 
 #: tfopsiclientkiosk.statusbar1.panels[0].text
 msgid "Not Connected to opsi server"
-msgstr ""
+msgstr "Aucune connexion au serveur Opsi"
 
 #: tfopsiclientkiosk.tabsheet1.caption
 msgid "Details"
-msgstr ""
+msgstr "Détails"
 
 #: tfopsiclientkiosk.tabsheet2.caption
 msgid "Dependencies / Priority"
-msgstr ""
+msgstr "Dépendances / Priorités"
 
 #: tfopsiclientkiosk.titlelabel.caption
+#, fuzzy
+#| msgid "huhu"
 msgid "opsi Client Kiosk"
-msgstr ""
+msgstr "Kiosque d'application OPSI"
 
 #: tform1.bitbtnlater.caption
 msgctxt "tform1.bitbtnlater.caption"
 msgid "Install at next Standard Event (e.g. Reboot)"
-msgstr ""
+msgstr "Installer à la prochaine occasion (ex. : Redémarrage)"
 
 #: tform1.bitbtnnow.caption
 msgctxt "tform1.bitbtnnow.caption"
 msgid "Install now (Close all Applications)"
-msgstr ""
+msgstr "Installe maintenant (Ferme toutes les applications)"
 
 #: tform1.caption
 msgctxt "tform1.caption"
 msgid "opsi-kiosk-client"
-msgstr ""
+msgstr "Kiosque OPSI"
 
 #: tform1.label1.caption
 msgctxt "tform1.label1.caption"
 msgid "The following Actions will be done:"
-msgstr ""
+msgstr "Les actions suivantes seront réalisées :"
 
