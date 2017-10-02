@@ -78,7 +78,10 @@ trademarks mentioned herein are the property of their respective owners.
 interface
 
 uses
-  Classes, SysUtils, LCLVersion;
+  Classes,
+  SysUtils,
+  LCLVersion,
+  lazutf8;
 
 type
   TUniStreamTypes = (ufUtf8, ufANSI, ufUtf16be, ufUtf16le, ufUtf32be, ufUtf32le);
@@ -275,7 +278,7 @@ begin
         PWC := Memory;
         if fUniStreamType = ufUtf16be then WideSwapEndian(PWC);
         if fHasBom then
-          Result := UTF16ToUTF8(Copy(PWC, 2, (Size - 1) div 2)) else
+          Result := lazutf8.UTF16ToUTF8(Copy(PWC, 2, (Size - 1) div 2)) else
           Result := UTF16ToUTF8(Copy(PWC, 1, (Size) div 2))
       end;
     ufUtf32be, ufUtf32le:

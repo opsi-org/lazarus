@@ -7,11 +7,22 @@
       <SessionStorage Value="InProjectDir"/>
       <MainUnit Value="0"/>
       <Title Value="notifier"/>
+      <Scaled Value="True"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
+<<<<<<< .mine
       <XPManifest>
         <DpiAware Value="Per-monitor"/>
       </XPManifest>
+
+
+=======
+      <XPManifest>
+        <DpiAware Value="True"/>
+        <TextName Value="uib gmbh, opsi.org, opsi-notifier, (c) AGPLv3 "/>
+        <TextDesc Value="opsi-notofier"/>
+      </XPManifest>
+>>>>>>> .theirs
       <Icon Value="0"/>
     </General>
     <i18n>
@@ -21,7 +32,11 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <RevisionNr Value="7"/>
+<<<<<<< .mine
       <BuildNr Value="2"/>
+=======
+      <BuildNr Value="1"/>
+>>>>>>> .theirs
       <StringTable CompanyName="uib gmbh / opsi.org" FileDescription="opsi-client-agent GUI notifier" InternalName="notifier.exe" LegalCopyright="AGPLv3" LegalTrademarks="opsi,opsi.org.open pc server integration" OriginalFilename="notifier.exe" ProductName="opsi / opsi.org" ProductVersion="4.0.7"/>
     </VersionInfo>
     <BuildModes Count="3">

@@ -210,6 +210,7 @@ var
   scriptlist: TXStringList;
   usercontext: string;
   batchproductid: string = '';  //id of product we are running in batch mode
+  logproductid: string = '';  //id of product used for logging in batch mode without service
   usercontextSID: string;
   usercontextUser: string;
   usercontextDomain: string;

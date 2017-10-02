@@ -559,7 +559,8 @@ procedure ChangeDirectory(newdir: string);
 function strContains(const str: string; const substr: string): boolean;
 function createNewOpsiHostKey: string;
 function getProfilesDirList: TStringList;
-function stringListLoadUtf8FromFile(filename: string): TStringList;
+//function stringListLoadUtf8FromFile(filename: string): TStringList;
+//function stringListLoadUnicodeFromList(inlist: Tstringlist): TStringList;
 function opsiunquotestr(s1,s2 : string): string;
 function opsiunquotestr2(s1,s2 : string): string;
 function cmdLineInputDialog(var inputstr : string; const message, default : string; confidential : boolean) : boolean;
@@ -627,6 +628,8 @@ const
   WordDelimiterSet3 = [' ', #9, '=', '[', ']', '(', ')', '"', '''', ',', '+', ':'];
   WordDelimiterSet2 = [' ', #9, '"', ''''];
   WordDelimiterSet4 = [' ', #9, '=', '[', ']', '('];
+  WordDelimiterSet5 = [' ', #9, '('];
+  WordDelimiterSet6 = [')',','];
   WordDelimiterWhiteSpace = [' ', #9];
 
   ddeTimerInterval = 100;
@@ -663,6 +666,7 @@ uses
   osinteractivegui,
   {$ENDIF GUI}
   osmain,
+  osdefinedfunctions,
   //windatamodul,
   superobject;
 
@@ -747,6 +751,8 @@ begin
   if (inputstr = '') then  inputstr := default;
 end;
 
+(*
+
 function stringListLoadUtf8FromFile(filename: string): TStringList;
 var
   fCES: TCharEncStream;
@@ -761,6 +767,19 @@ begin
   fCES.Free;
 end;
 
+function stringListLoadUnicodeFromList(inlist: Tstringlist): TStringList;
+var
+  fCES: TCharEncStream;
+begin
+  Result := TStringList.Create;
+  fCES := TCharEncStream.Create;
+  fCES.Reset;
+  inlist.SaveToStream(fCES);
+  fCES.ANSIEnc := GetSystemEncoding;
+  Result.Text := fCES.UTF8Text;
+  fCES.Free;
+end;
+*)
 
 function getProfilesDirList: TStringList;
 Var
@@ -962,20 +981,27 @@ end;
 procedure FindLocalIPData(var ipName: string; var address: string);
 type
   bytearray = array of byte;
+{$IFDEF WINDOWS}
+var
+  myHostEnt : THostEnt;
+{$ENDIF WINDOWS}
 begin
+  ipName := '';
+  address := '';
   {$IFDEF LINUX}
   ipName := getHostnameLin;
   address := getMyIpByDefaultRoute;
   {$ENDIF LINUX}
   {$IFDEF WINDOWS}
-  with getMyHostEnt do
-  begin
-    ipName := h_name;
-    address := Format('%d.%d.%d.%d',
-      //[Byte((h_addr^)[0]), Byte(h_addr^[1]), Byte(h_addr^[2]), Byte(h_addr^[3])]);
-      [Bytearray(h_addr^)[0], Bytearray(h_addr^)[1], Bytearray(h_addr^)[2],
-      Bytearray(h_addr^)[3]]);
-  end;
+  if getMyHostEnt(myHostEnt) then
+    with myHostEnt do
+    begin
+      ipName := h_name;
+      address := Format('%d.%d.%d.%d',
+        //[Byte((h_addr^)[0]), Byte(h_addr^[1]), Byte(h_addr^[2]), Byte(h_addr^[3])]);
+        [Bytearray(h_addr^)[0], Bytearray(h_addr^)[1], Bytearray(h_addr^)[2],
+        Bytearray(h_addr^)[3]]);
+    end;
   {$ENDIF WINDOWS}
 end;
 //{$RANGECHECKS ON}
@@ -1579,7 +1605,7 @@ begin
     except
       on e: Exception do
       begin
-        LogDatei.DependentAdd('Exception in StartProcess_se: ' +
+        LogDatei.log_prog('Exception in StartProcess_se: ' +
           e.message, LLError);
         exitcode := -1;
       end;
@@ -5960,6 +5986,7 @@ end;
 
 (* TuibIniScript *)
 
+
 function IsHeaderLine(const s: string): boolean;
 var
   TestS: string = '';
@@ -5973,7 +6000,7 @@ end;
 
 
 function TuibIniScript.FindEndOfSectionIndex(const OffLine: integer): integer;
-  (* Annahme : OffLine gehoert zur Sektion *)
+  // we assume that the section end below the line withe the index = offline
 var
   i: integer = 0;
   s: string = '';
@@ -6018,6 +6045,7 @@ begin
       begin
         weitersuchen := False;
       end
+      else if IsEndOfLocalFunction(s) then weitersuchen := False
       else
       begin
         if (s <> '') and (s[1] <> LineIsCommentChar) then
@@ -6099,8 +6127,11 @@ var
   i: integer = 0;
   j: integer = 0;
   n: integer = 0;
+  searchstartindex : integer = 0;
   s: string = '';
   ersteZeileSuchen: boolean;
+  DefFuncFound : boolean = false;
+  EndoFuncFound : boolean = false;
 
 begin
   Result := False;
@@ -6109,12 +6140,14 @@ begin
     StartlineNo := i + 1
   else
     StartlineNo := i;
-  if (i >= 0)      (* Sektionsheader existiert *) and (i + 1 <= Count - 1)
-  (* es gibt die i+1-te Zeile, also eine Zeile nach dem Sektionsheader *) then
+  if (i >= 0)      // section header existing
+      and (i + 1 <= Count - 1)
+      //the i+1-line exists - the line below the section header
+  then
   begin
     Inc(i);
-    // Zeile nach dem Header
-    // kommt da vielleicht schon der n�chste Header, die Sektion w�re also leer?
+    // the line below the section header
+    // do the next section start - so this section is empty
 
     ersteZeileSuchen := True;
     while (i <= Count - 1) and ersteZeileSuchen do
@@ -6134,7 +6167,10 @@ begin
 
     if Result then
     begin // Sektionsinhalt existiert
-      n := FindEndOfSectionIndex(i);
+      searchstartindex := i;
+      // if we have defFunc section headers before EndFunc should be ignored
+      searchstartindex := getFirstLineAfterEndFunc(self,searchstartindex);
+      n := FindEndOfSectionIndex(searchstartindex);
       for j := i to n do
       begin
         s := KappeBlanks(Strings[j]);
@@ -8638,8 +8674,8 @@ var
     begin
       SourceName := SourcePath + SearchResult.Name;
       TargetName := TargetPath + SearchResult.Name;
-      LogDatei.DependentAdd('Found: '+SourceName, LLDebug2);
-      LogDatei.log('Found: '+SearchResult.Name + ' with attr:'+inttostr(SearchResult.Attr), LLDebug3);
+      LogDatei.log('Found: '+SourceName, LLDebug2);
+      LogDatei.log_prog('Found: '+SearchResult.Name + ' with attr:'+inttostr(SearchResult.Attr), LLDebug2);
 
       if (SearchResult.Attr and faDirectory <> faDirectory)
           // and (SearchResult.Name <> '.') and (SearchResult.Name <> '..'))
@@ -8675,7 +8711,7 @@ var
           end
           else
           {$ENDIF WIN32}
-            LogDatei.log('copy candidate: '+SourceName + ' to: '+TargetName, LLDebug3);
+            LogDatei.log_prog('copy candidate: '+SourceName + ' to: '+TargetName, LLDebug2);
             ToCopyOrNotToCopy(SourceName, TargetName);
 
           LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
@@ -8687,7 +8723,7 @@ var
     end;
 
     SysUtils.findclose(SearchResult);
-    LogDatei.DependentAdd('Finished Search: '+SourcePath + SourceFilemask, LLDebug2);
+    LogDatei.log_prog('Finished Search: '+SourcePath + SourceFilemask, LLDebug);
 
     if (cpSpecify and cpRecursive = cpRecursive) or
       (cpSpecify and cpCreateEmptySubdirectories = cpCreateEmptySubdirectories) then
@@ -8702,11 +8738,11 @@ var
 
       while FindResultcode = 0 do
       begin
-        LogDatei.log('Found: '+SearchResult.Name + ' with attr:'+inttostr(SearchResult.Attr), LLDebug3);
-        LogDatei.log('Found: '+SearchResult.Name + ' is SymLink by Attr: '+BoolToStr((SearchResult.Attr and faSymlink = faSymlink),true), LLDebug3);
-        LogDatei.log('Found: '+SearchResult.Name + ' is SymLink by func: '+BoolToStr(FileIsSymlink(SourcePath+SearchResult.Name),true), LLDebug3);
+        LogDatei.log_prog('Found: '+SearchResult.Name + ' with attr:'+inttostr(SearchResult.Attr), LLDebug);
+        LogDatei.log_prog('Found: '+SearchResult.Name + ' is SymLink by Attr: '+BoolToStr((SearchResult.Attr and faSymlink = faSymlink),true), LLDebug);
+        LogDatei.log_prog('Found: '+SearchResult.Name + ' is SymLink by func: '+BoolToStr(FileIsSymlink(SourcePath+SearchResult.Name),true), LLDebug);
         {$IFDEF LINUX}
-        LogDatei.log('Found: '+SearchResult.Name + ' is SymLink by fpReadLink: '+BoolToStr((fpReadLink(SourcePath+SearchResult.Name) <> ''),true), LLDebug3);
+        LogDatei.log_prog('Found: '+SearchResult.Name + ' is SymLink by fpReadLink: '+BoolToStr((fpReadLink(SourcePath+SearchResult.Name) <> ''),true), LLDebug);
         {$ENDIF LINUX}
 
         if (SearchResult.Attr and faDirectory = faDirectory) and
@@ -8747,13 +8783,12 @@ var
             try
               mkdir(TargetName);
               FileSetAttr(TargetName, SearchResult.Attr and (not faReadOnly));
-              LogDatei.log('Created: '+TargetName + ' with attr:'+inttostr(SearchResult.Attr and (not faReadOnly)), LLDebug3);
+              LogDatei.log_prog('Created: '+TargetName + ' with attr:'+inttostr(SearchResult.Attr and (not faReadOnly)), LLDebug);
             except
               LogS :=
                 'Error: ' + 'missing directory ' + TargetName +
                 ' cannot be created';
-              LogDatei.log(LogS, LLError);
-
+              LogDatei.log_prog(LogS, LLError);
               DirectoryError := 2;
             end;
 
@@ -8779,16 +8814,11 @@ var
             (DirectoryError = 0) then
             // angelegtes directory wieder entfernen
             rmdir(TargetName);
-
         end;
-
         FindResultcode := FindNext(SearchResult);
       end;
-
       SysUtils.findclose(SearchResult);
-
     end;
-
     FileFound := FileFoundOnThisLevel; // resp. on a deeper level
     Recursion_Level := Recursion_Level - 1;
   end;
@@ -8799,7 +8829,7 @@ begin
   if CountModus <> tccmCounting then
   begin
     LogS := 'Copying  ' + SourceMask + ' -----> ' + Target;
-    LogDatei.DependentAdd(LogS, LevelComplete);
+    LogDatei.log(LogS, LLInfo);
     {$IFDEF GUI}
     FBatchOberflaeche.setCommandLabel(LogS);
     ProcessMess;
@@ -8811,7 +8841,7 @@ begin
   if CountModus = tccmCounted then
   begin
     LogS := IntToStr(NumberCounted) + ' File(s) found';
-    LogDatei.DependentAdd(LogS, LevelWarnings);
+    LogDatei.log(LogS, LLInfo);
   end;
 
   CopyCount := TCopyCount.Create(CountModus, NumberCounted);
@@ -8829,11 +8859,11 @@ begin
   else
   begin
     LogS := IntToStr(CopyCount.ActCount) + ' File(s) treated';
-    LogDatei.DependentAdd(LogS, LevelWarnings);
+    LogDatei.log(LogS, LLInfo);
     if (CountModus = tccmCounted) and (NumberCounted > CopyCount.ActCount) then
     begin
       LogS := 'Error: Some previously found files were not found now';
-      LogDatei.log(LogS, LLError);
+      LogDatei.log_prog(LogS, LLError);
     end;
   end;
 
@@ -8944,7 +8974,7 @@ var
     Filemask := ExtractFileName(CompleteName);
 
     LogS := 'Search "' + OrigPath + '"';
-    LogDatei.DependentAdd(LogS, LLInfo);
+    LogDatei.log(LogS, LLInfo);
 
       // start with the sub directories, and go with the recursion deeper and delete the lowest level first
     if recursive then
@@ -8956,7 +8986,7 @@ var
       {$ENDIF WINDOWS}
       while FindResultcode = 0 do
       begin
-        LogDatei.log('Found: '+SearchResult.Name + ' with attr: '+inttostr(SearchResult.Attr), LLDebug3);
+        LogDatei.log_prog('Found: '+SearchResult.Name + ' with attr: '+inttostr(SearchResult.Attr), LLDebug2);
         if (SearchResult.Attr and faDirectory = faDirectory) and
           (SearchResult.Name <> '.') and (SearchResult.Name <> '..') then
           ExecDelete
@@ -8978,7 +9008,7 @@ var
     if (Filemask = '') or (Filemask = '*.*') then Filemask := '*';
     {$ENDIF WINDOWS}
     LogS := 'Search "' + OrigPath + Filemask+'"';
-    LogDatei.DependentAdd(LogS, LLInfo);
+    LogDatei.log(LogS, LLInfo);
 
     FindResultcode := FindFirst(OrigPath + Filemask, faAnyFile - faDirectory, SearchResult);
 
@@ -9007,7 +9037,7 @@ var
           FileIsReadonly := True;
           Result := False;
           LogS := 'No deletion, file is readonly';
-          LogDatei.DependentAdd(LogS, LevelWarnings);
+          LogDatei.log(LogS, LLNotice);
         end;
       end;
 
@@ -9024,7 +9054,7 @@ var
         LogS := 'The file is ' + IntToStr(ddiff) + ' day(s) old';
         if not shallDelete then
           LogS := LogS + ', no deletion';
-        LogDatei.LOG(LogS, LLInfo);
+        LogDatei.log(LogS, LLInfo);
       end;
 
       if shallDelete then
@@ -9072,7 +9102,7 @@ var
       if removedir(OrigPath) then
       begin
         LogS := 'Directory "' + OrigPath + '" deleted';
-        LogDatei.DependentAdd(LogS, LevelComplete);
+        LogDatei.log(LogS, LLInfo);
       end
       else
       begin
@@ -9086,7 +9116,7 @@ var
           '" cannot be deleted, error ' + IntToStr(errorNo) + ' ("' +
           RemoveLineBreaks(SysErrorMessage(GetLastError)) + '")';
         {$ENDIF WINDOWS}
-        LogDatei.DependentAddWarning(LogS, LevelWarnings);
+        LogDatei.log(LogS, LLWarning);
         Result := False;
       end;
     end;
@@ -9123,7 +9153,7 @@ begin
   else
     LogS := 'Delete';
   LogS := LogS + ' "' + CompleteName + '"';
-  LogDatei.DependentAdd(LogS, LevelComplete);
+  LogDatei.log_prog(LogS, LLDebug);
 
 
   Filemask := ExtractFileName(CompleteName);
@@ -9151,7 +9181,7 @@ begin
       //does not exist
       LogS := 'Notice: ' + 'File or Directory ' + CompleteName +
         ' does not exist, nothing deleted';
-      LogDatei.DependentAdd(LogS, LLnotice);
+      LogDatei.log(LogS, LLInfo);
     end
     else
     begin
@@ -9192,7 +9222,7 @@ begin
           (*
         LogS := 'Notice: ' + 'Directory ' + ExtractFilePath(CompleteName) +
           ' does not exist, nothing deleted';
-        LogDatei.DependentAdd(LogS, LLnotice);
+        LogDatei.DependentAdd(LogS, LLInfo);
         *)
       end;
     end;
@@ -9206,7 +9236,7 @@ begin
     begin
       LogS := 'Notice: ' + 'Directory ' + ExtractFilePath(CompleteName) +
         ' does not exist, nothing deleted';
-      LogDatei.DependentAdd(LogS, LLnotice);
+      LogDatei.log(LogS, LLInfo);
     end;
   end;
 end;

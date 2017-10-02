@@ -19,6 +19,10 @@ msgctxt "osmain.rsproductcheck"
 msgid "product check"
 msgstr ""
 
+#: osparser.rsabortprogram
+msgid "Abort program ?"
+msgstr ""
+
 #: osparser.rsgetpassword
 msgid "Please enter opsi service user password:"
 msgstr ""
@@ -29,6 +33,10 @@ msgstr ""
 
 #: osparser.rsgetusername
 msgid "Please enter opsi service user name:"
+msgstr ""
+
+#: osparser.rsreadytocontinue
+msgid "Ready to continue ?"
 msgstr ""
 
 #: oswebservice.rssendlog

@@ -983,7 +983,7 @@ begin
   //startindentlevel := LogDatei.LogSIndentLevel;
 
   loglevel := Logdatei.LogLevel;
-  LogDatei.LogLevel := LLNotice; //don't log the opening of a key
+  LogDatei.LogLevel := LLInfo; //don't log the opening of a key
   if not OpenExistingKey(Key0, key) then
   begin
     LogDatei.Loglevel := loglevel;
@@ -1039,7 +1039,7 @@ begin
   if subkeys.Count = 0 then
   begin
     Result := False;
-    LogDatei.log('No registry deleting on the upper level', LLNotice);
+    LogDatei.log('No registry deleting on the upper level', LLInfo);
   end
   else
   if subkeys.Count = 1 then
@@ -1198,7 +1198,7 @@ begin
   begin
     Result := False;
     LogDatei.log('Variable "' + Name + '"  not found. Code: ' + IntToStr(regresult)
-      , LLWarning);
+      , LLInfo);
   end;
 
   if not Result then

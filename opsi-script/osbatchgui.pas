@@ -76,6 +76,7 @@ type
     {$IFDEF WINDOWS}
     procedure EnableFontSmoothing(LabelName: TLabel);
     {$ENDIF WINDOWS}
+    procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure ProgressBarActive(YesNo: boolean);
     procedure ShowProgress(Prozente: integer);
@@ -311,7 +312,6 @@ begin
 
   SetBounds(StartLeft, StartTop, InnerWidth, InnerHeight);
 
-  ForceStayOnTop(BatchScreenOnTop);
 
 
   Color := clBlue;
@@ -837,13 +837,24 @@ begin
   tagLOGFONT.lfQuality := ANTIALIASED_QUALITY;
   LabelName.Font.Handle := CreateFontIndirect(tagLOGFONT);
 end;
+
 {$ENDIF WINDOWS}
+
+procedure TFBatchOberflaeche.FormActivate(Sender: TObject);
+begin
+  ForceStayOnTop(BatchScreenOnTop);
+end;
+
+
 
 procedure TFBatchOberflaeche.ForceStayOnTop(YesNo: boolean);
 begin
   if YesNo then
   begin
     //setWindowState (bwmMaximized);
+    FormStyle := fsSystemStayOnTop;
+    BringToFront;
+    Application.ProcessMessages;
     FormStyle := fsStayOnTop;
     (* FBatchOberflaeche.BorderIcons := []; *)
     BatchScreenOnTop := True;
@@ -852,6 +863,7 @@ begin
   begin
     FormStyle := fsnormal;
     BatchScreenOnTop := False;
+    Application.ProcessMessages;
   end;
 
 end;
@@ -1019,6 +1031,7 @@ begin
     panel.top := standardTopMargin
   else
     panel.top := 0;
+
   panel.Repaint;
 
   ImageOpsiBackground.Left := Width - ImageOpsiBackground.Width;

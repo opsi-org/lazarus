@@ -222,6 +222,7 @@ var
   scriptlist: TXStringList;
   usercontext: string;
   batchproductid: string = '';  //id of product we are running in batch mode
+  logproductid: string = '';  //id of product used for logging in batch mode without service
   usercontextSID: string;
   usercontextUser: string;
   usercontextDomain: string;
@@ -767,7 +768,7 @@ var
   var
     Scriptname: string;
   begin
-    Logdatei.log('Start ProcessNonZeroScript', LLdebug2);
+    Logdatei.log_prog('Start ProcessNonZeroScript', LLdebug2);
     if Skriptdateiname = '' then
     begin
       Result := False;
@@ -779,14 +780,14 @@ var
       Scriptname := Skriptdateiname;
       NestingLevel := 0;
       CreateAndProcessScript(Scriptname, NestingLevel, False, extremeErrorLevel);
-      Logdatei.log('After CreateAndProcessScript', LLdebug2);
+      Logdatei.log_prog('After CreateAndProcessScript', LLdebug2);
     end;
-    Logdatei.log('End ProcessNonZeroScript', LLdebug2);
+    Logdatei.log_prog('End ProcessNonZeroScript', LLdebug2);
   end;
 
 begin
   //updateAfterSetup := false;
-  Logdatei.log('Entering ProcessNonZeroScript', LLdebug2);
+  Logdatei.log_prog('Entering ProcessNonZeroScript', LLdebug2);
 
   runUpdate := true;
 
@@ -846,7 +847,7 @@ begin
     begin
       scriptname := opsidata.getProductScriptPath(Verfahren);
       Logdatei.log('scriptname: "' + scriptname + '", special path: "' +
-        pfad + '"', LLNotice);
+        pfad + '"', LLInfo);
       absscriptname := makeAbsoluteScriptPath(Pfad, scriptname);
       if Verfahren = tacSetup then
         opsidata.setProductState(tpsInstalling);
@@ -983,7 +984,7 @@ var
   begin
     Result := False;
     LogDatei.LogProduktId:= False;
-    LogDatei.DependentAdd('bootmode ' + bootmode, LLNotice);
+    LogDatei.DependentAdd('bootmode ' + bootmode, LLInfo);
     if Bootmode = 'REINS' then
     begin
       {$IFDEF GUI}
@@ -1789,6 +1790,7 @@ begin
         '	 [<Scriptfile>  ['
              + ParamDelim + 'logfile <LogFile>] ['
              + ParamDelim + 'productid <productid> ] ['
+             + ParamDelim + 'logproductid <productid> ] ['
              + ParamDelim + '[batch|silent] |histolist Inifilepath ] ['
              + ParamDelim + 'parameter ParameterString]' + LineEnding +
         '	 Scriptfile[;Scriptfile]*  ['
@@ -1796,6 +1798,7 @@ begin
              + ParamDelim + 'lang langcode] ['
              + ParamDelim + '[batch|silent]] ['
              + ParamDelim + 'productid] ['
+             + ParamDelim + 'productid <productid> ] ['
              + ParamDelim + 'parameter ParameterString]',
         [mrOk],
         650, 250);
@@ -1819,12 +1822,14 @@ begin
         ' Scriptfile  ['
              + ParamDelim + 'logfile <LogFile>] ['
              + ParamDelim + 'productid <productid> ] ['
+             + ParamDelim + 'productid <productid> ] ['
              + ParamDelim + '[batch|silent] | histolist Inifilepath ] ['
              + ParamDelim + 'parameter ParameterString]' + LineEnding +
         ' Scriptfile[;Scriptfile]*  ['
              + ParamDelim + 'logfile LogFile] ['
              + ParamDelim + '[batch|silent]] ['
              + ParamDelim + 'productid] ['
+             + ParamDelim + 'productid <productid> ] ['
              + ParamDelim + 'parameter ParameterString]');
       {$ENDIF GUI}
 
@@ -1866,6 +1871,9 @@ begin
               opsiserviceSessionId);
             startupmessages.Append('startmessage: opsidata initialized: ' + DateTimeToStr(Now));
             //OpsiData.setOptions (opsiclientd_serviceoptions);
+            opsidata.setActualClient(computername);
+            startupmessages.Append(computername);
+            startupmessages.Append(readConfigFromService);
             startTime := now;
             (*
             omc := TOpsiMethodCall.Create('backend_info', []);
@@ -1921,8 +1929,18 @@ begin
             startupmessages.Append('startmessage create log: ' + DateTimeToStr(Now));
             LogDatei.CreateTheLogfile(LogDateiName);
           end;
+          LogDatei.force_min_loglevel:=osconf.force_min_loglevel;
+          LogDatei.debug_prog:=osconf.debug_prog;
+          LogDatei.LogLevel:=osconf.default_loglevel;
+          LogDatei.debug_lib:= osconf.debug_lib;
+          logDatei.log('force_min_loglevel: '+inttostr(osconf.force_min_loglevel),LLessential);
+          logDatei.log('default_loglevel: '+inttostr(osconf.default_loglevel),LLessential);
+          logDatei.log('debug_prog: '+booleantostr(osconf.debug_prog),LLessential);
+          logDatei.log('debug_lib: '+booleantostr(osconf.debug_lib),LLessential);
           extractTmpPathFromLogdatei(LogDateiName);
           TempPath := GetTempPath;
+
+          logSupportedEncodings;
 
           {$IFDEF LINUX}
           if not opsidata.linuxAgentActivated then
@@ -1983,7 +2001,36 @@ begin
           extractTmpPathFromLogdatei(LogDateiName);
           TempPath := GetTempPath;
           extremeErrorLevel := Level_not_initialized;
-          LogDatei.LogProduktId:=false;
+          LogDatei.force_min_loglevel:=osconf.force_min_loglevel;
+          LogDatei.debug_prog:=osconf.debug_prog;
+          LogDatei.LogLevel:=osconf.default_loglevel;
+          LogDatei.debug_lib:= osconf.debug_lib;
+          logDatei.log_prog('force_min_loglevel: '+inttostr(osconf.force_min_loglevel),LLessential);
+          logDatei.log_prog('default_loglevel: '+inttostr(osconf.default_loglevel),LLessential);
+          logDatei.log_prog('debug_prog: '+booleantostr(osconf.debug_prog),LLessential);
+          logDatei.log_prog('debug_lib: '+booleantostr(osconf.debug_lib),LLessential);
+
+          if batchproductid = '' then
+          begin
+            LogDatei.LogProduktId:=false;
+            LogDatei.AktProduktId:='';
+          end
+          else
+          begin
+            LogDatei.LogProduktId:=true;
+            LogDatei.AktProduktId:=batchproductid;
+          end;
+
+          if logproductid = '' then
+          begin
+            LogDatei.LogProduktId:=false;
+            LogDatei.AktProduktId:='';
+          end
+          else
+          begin
+            LogDatei.LogProduktId:=true;
+            LogDatei.AktProduktId:=logproductid;
+          end;
 
           // Are we in batch with /productid (opsi-template-with-admin) ?
           // open service connection if possible
@@ -2758,6 +2805,28 @@ begin
             exit;
           end;
         end
+
+        else if Lowercase(Parameter) = 'logproductid' then
+        begin
+          Inc(i);
+          if i <= ParamListe.Count then
+          begin
+            r := ParamListe.Strings[i - 1];
+            if r[1] = ParamDelim then
+            begin
+              ProgramMode := pmInfo;
+              exit;
+            end;
+            logproductid := r;
+            Inc(i);
+          end
+          else
+          begin
+            ProgramMode := pmInfo;
+            exit;
+          end;
+        end
+
 
         else if Lowercase(Parameter) = 'batch' then
         begin

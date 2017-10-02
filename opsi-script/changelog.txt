@@ -4,6 +4,62 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.0.5) stable; urgency=low
+
+  * osmain / osinteractivegui: new cli argument /logproductid
+    just used for logging, do not try to get data from service
+  * osbatchGUI: TFBatchOberflaeche.FormActivate also for Linux
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 11 Sep 2017:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.12.0.4) stable; urgency=low
+
+  * osconf: readConfigFromService: protect from wrong data types from service
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 04 Sep 2017:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.12.0.3) stable; urgency=low
+
+  * global: rising the level of a lot of loging
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri, 01 Sep 2017:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.0.2) stable; urgency=low
+
+  * osbatchgui: ForceStayOnTop modified
+  * osbatchgui: ForceStayOnTop in form.activate
+  * osconf: default_loglevel = 6;
+  * osfunc: alldelete: del command: allow also partly wildcards (*.yxz or xyz.*)
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 24 Aug 2017:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.0.1) experimental; urgency=low
+
+  * oswebservice: changed loglevels in retrieveJSONObject
+  * osfunc: FindLocalIPData / getMyHostEnt : better Error handling
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 27 Jun 2017:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.0.0) experimental; urgency=low
+
+  * new unit osdefinedfunctions
+  * osparser: support for defined functions
+  * osparser: moved sync between FExtremeErrorLevel and extremeErrorLevel before final output
+  * osparser: new functions: boolToString(<bool expression>) and stringToBool(< string>)
+  * osparser: new statement: ImportLib
+  * oslog: new method log_prog for program debugging
+  * osconf: readConfigFromService reads configstates:
+     opsi-script.global.debug_prog : boolean ; if true log log_prog if > LLWarning
+     opsi-script.global.debug_lib : boolean ; if true log libraries if > LLWarning
+     opsi-script.global.default_loglevel : intstring ; set the default loglevel
+     opsi-script.global.force_min_loglevel : intstring ; set the minimal loglevel
+  * osmain: if /productid is set then use it also for the log
+  * opsihwbiosInfo: typo Manufacturer ; fixes #2994
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 19 Jun 2017:15:00:00 +0200
+
 
 opsi-winst/opsi-script (4.11.6.15) stable; urgency=low
 
