@@ -1,4 +1,4 @@
-msgid ""
+msgid "following Paramenters:"
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
 #: osbatchgui.rsgetlistofproducts
@@ -210,6 +210,14 @@ msgstr ""
 
 #: tfbatchoberflaeche.labelversion.caption
 msgid "LabelVersion"
+msgstr ""
+
+#: tflistedit.caption
+msgid "opsi-script Parameter Editor"
+msgstr ""
+
+#: tflistedit.label1.caption
+msgid "Please Check and Correct the "
 msgstr ""
 
 #: tmymessagedlg.abortbtn.caption

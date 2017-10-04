@@ -1,4 +1,4 @@
-msgid ""
+msgid "following Paramenters:"
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Project-Id-Version: \n"
@@ -37,6 +37,10 @@ msgctxt "osmain.rsproductcheck"
 msgid "product check"
 msgstr "Lade auszührende Aktionen ..."
 
+#: osparser.rsabortprogram
+msgid "Abort program ?"
+msgstr ""
+
 #: osparser.rsgetpassword
 msgid "Please enter opsi service user password:"
 msgstr ""
@@ -47,6 +51,10 @@ msgstr ""
 
 #: osparser.rsgetusername
 msgid "Please enter opsi service user name:"
+msgstr ""
+
+#: osparser.rsreadytocontinue
+msgid "Ready to continue ?"
 msgstr ""
 
 #: oswebservice.rssendlog
@@ -227,6 +235,14 @@ msgstr ""
 msgid "LabelVersion"
 msgstr ""
 
+#: tflistedit.caption
+msgid "opsi-script Parameter Editor"
+msgstr ""
+
+#: tflistedit.label1.caption
+msgid "Please Check and Correct the "
+msgstr ""
+
 #: tmymessagedlg.abortbtn.caption
 msgid "&Exit"
 msgstr ""
@@ -236,7 +252,7 @@ msgid "&Cancel"
 msgstr ""
 
 #: tmymessagedlg.caption
-msgid "opsi-winst Message"
+msgid "opsi-script Message"
 msgstr ""
 
 #: tmymessagedlg.nobtn.caption
@@ -251,22 +267,6 @@ msgstr ""
 msgid "&Yes"
 msgstr ""
 
-#: tshowtextfile.bitbtn1.caption
-msgid "Search"
-msgstr ""
-
-#: tshowtextfile.caption
-msgid "opsi-script Logfile"
-msgstr ""
-
-#: tshowtextfile.label1.caption
-msgid "Fontsize"
-msgstr ""
-
-#: tshowtextfile.label2.caption
-msgid "Filter Loglevel"
-msgstr ""
-
 #: tsysteminfo.caption
 msgid "SystemInfo"
 msgstr ""
@@ -275,32 +275,4 @@ msgstr ""
 msgctxt "tsysteminfo.label1.caption"
 msgid "Label1"
 msgstr ""
-
-#: wibtch.rsgetlistofproducts
-#, fuzzy
-#| msgid "Lijst met producten"
-msgctxt "wibtch.rsgetlistofproducts"
-msgid "get list of products"
-msgstr "Lade Produktliste ..."
-
-#: wibtch.rsloadingskin
-#, fuzzy
-#| msgid "Uiterlijk laden..."
-msgctxt "wibtch.rsloadingskin"
-msgid "Loading skin..."
-msgstr "Lade Oberfläche ..."
-
-#: widatamodul.rssendlog
-#, fuzzy
-#| msgid "Log bestand naar de server sturen..."
-msgctxt "widatamodul.rssendlog"
-msgid "Sending log file to server ..."
-msgstr "Sende Logdatei zum Server ...."
-
-#: wimain.rsproductcheck
-#, fuzzy
-#| msgid "Product controleren"
-msgctxt "wimain.rsproductcheck"
-msgid "product check"
-msgstr "Lade auszührende Aktionen ..."
 

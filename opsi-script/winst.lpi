@@ -325,8 +325,9 @@
         <IsPartOfProject Value="True"/>
       </Unit40>
       <Unit41>
-        <Filename Value="opsi-script.conf.txt"/>
+        <Filename Value="oslistedit.pas"/>
         <IsPartOfProject Value="True"/>
+        <HasResources Value="True"/>
       </Unit41>
     </Units>
   </ProjectOptions>

@@ -1,6 +1,9 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
+msgid "following Paramenters:"
+msgstr ""
+
 #: osbatchgui.rsgetlistofproducts
 msgid "get list of products"
 msgstr ""
@@ -69,6 +72,14 @@ msgstr ""
 
 #: tfbatchoberflaeche.labelversion.caption
 msgid "LabelVersion"
+msgstr ""
+
+#: tflistedit.caption
+msgid "opsi-script Parameter Editor"
+msgstr ""
+
+#: tflistedit.label1.caption
+msgid "Please Check and Correct the "
 msgstr ""
 
 #: tsysteminfo.caption

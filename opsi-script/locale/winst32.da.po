@@ -1,7 +1,7 @@
 # 
 # Translators:
 # Lars Juul <lju@eucl.dk>, 2015
-msgid ""
+msgid "following Paramenters:"
 msgstr ""
 "Project-Id-Version: opsi.org\n"
 "POT-Creation-Date: \n"
@@ -225,6 +225,14 @@ msgstr "Aktivitet"
 msgid "LabelVersion"
 msgstr "Label Version"
 
+#: tflistedit.caption
+msgid "opsi-script Parameter Editor"
+msgstr ""
+
+#: tflistedit.label1.caption
+msgid "Please Check and Correct the "
+msgstr ""
+
 #: tmymessagedlg.abortbtn.caption
 msgid "&Exit"
 msgstr "&Afslut"
@@ -257,3 +265,4 @@ msgstr "Systeminfomation"
 msgctxt "TSYSTEMINFO.LABEL1.CAPTION"
 msgid "Label1"
 msgstr "Mærkat1"
+
