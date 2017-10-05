@@ -42,6 +42,7 @@ uses
   osshowsysinfo,
   osinteractivegui,
   osservicepassdlg,
+  oslistedit,
   {$ELSE GUI}
   custapp,
   {$ENDIF GUI}
@@ -119,6 +120,7 @@ begin
   {$ENDIF GUI}
   Application.CreateForm(TCentralForm, CentralForm);
   Application.CreateForm(TDialogServicePassword, DialogServicePassword);
+  Application.CreateForm(TFListedit, FListedit);
   Application.run;
   {$IFNDEF GUI}
   Application.Free;

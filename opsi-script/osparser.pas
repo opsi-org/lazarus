@@ -10387,7 +10387,7 @@ begin
         for i:= 0 to list1.Count do
         begin
           s1 := list1.Strings[i];
-          s2 := Copy(s1,1,pos('=',s1));
+          s2 := Copy(s1,1,pos('=',s1)-1);
           s3 := Copy(s1,pos('=',s1)+1,length(s1));
           if not cmdLineInputDialog(s3, s2, s3, false) then
             Logdatei.log('Error editMap (noGUI) for: '+s1,LLError);
