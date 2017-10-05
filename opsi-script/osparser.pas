@@ -10384,7 +10384,7 @@ begin
         {$IFDEF GUI}
         list.AddStrings(checkMapGUI(list1));
         {$ELSE GUI}
-        for i:= 0 to list1.Count do
+        for i:= 0 to list1.Count-1 do
         begin
           s1 := list1.Strings[i];
           s2 := Copy(s1,1,pos('=',s1)-1);
