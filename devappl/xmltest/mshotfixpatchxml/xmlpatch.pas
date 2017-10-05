@@ -300,8 +300,8 @@ begin
                       Liste.Items[i].a_installationtype
                       , myoslog.LLinfo);
           // patch ini-Datei
-          inifileName:= sysutils.ExtractFilePath(inifilename) +
-              copy(sysutils.ExtractFileName(inifilename),1,pos('.',sysutils.ExtractFileName(inifilename))-1) +'_patched.ini';
+          //inifileName:= sysutils.ExtractFilePath(inifilename) +
+          //    copy(sysutils.ExtractFileName(inifilename),1,pos('.',sysutils.ExtractFileName(inifilename))-1) +'_patched.ini';
           if writePatchedInifile(inifileName, Liste) then
            begin
              logdatei.log('success: patch inifile ' + inifilename, myoslog.LLinfo);
