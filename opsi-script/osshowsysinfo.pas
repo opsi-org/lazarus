@@ -44,6 +44,7 @@ type
 
   TSystemInfo = class(TForm)
     Label1: TLabel;
+    LabelWindowId: TLabel;
     Panel1: TPanel;
     Memo1: TMemo;
     Panel2: TPanel;

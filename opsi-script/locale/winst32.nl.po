@@ -276,3 +276,7 @@ msgctxt "tsysteminfo.label1.caption"
 msgid "Label1"
 msgstr ""
 
+#: tsysteminfo.labelwindowid.caption
+msgid "Do not localize: Window SystemInfo"
+msgstr ""
+

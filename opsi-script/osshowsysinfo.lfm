@@ -77,5 +77,14 @@ object SystemInfo: TSystemInfo
       OnClick = ButtonGesehenClick
       TabOrder = 0
     end
+    object LabelWindowId: TLabel
+      Left = 14
+      Height = 13
+      Top = 6
+      Width = 170
+      Caption = 'Do not localize: Window SystemInfo'
+      ParentColor = False
+      Visible = False
+    end
   end
 end

@@ -1,8 +1,5 @@
-msgid ""
-msgstr "Content-Type: text/plain; charset=UTF-8"
-
 msgid "following Paramenters:"
-msgstr ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
 
 #: osbatchgui.rsgetlistofproducts
 msgid "get list of products"
@@ -88,5 +85,9 @@ msgstr ""
 
 #: tsysteminfo.label1.caption
 msgid "Label1"
+msgstr ""
+
+#: tsysteminfo.labelwindowid.caption
+msgid "Do not localize: Window SystemInfo"
 msgstr ""
 
