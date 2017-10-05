@@ -10384,13 +10384,13 @@ begin
         {$IFDEF GUI}
         list.AddStrings(checkMapGUI(list1));
         {$ELSE GUI}
-        for i:= 0 to count(list1) do
+        for i:= 0 to list1.Count do
         begin
           s1 := list1.Strings[i];
           s2 := Copy(s1,1,pos('=',s1));
           s3 := Copy(s1,pos('=',s1)+1,length(s1));
           if not cmdLineInputDialog(s3, s2, s3, false) then
-            Logdatei.log('Error editMap (noGUI) for: '+s1);
+            Logdatei.log('Error editMap (noGUI) for: '+s1,LLError);
           list.Add(s2+'='+s3);
         end;
         {$ENDIF GUI}
