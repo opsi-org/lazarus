@@ -1,5 +1,11 @@
 (*
 
+uibtime (4.1.1.20-1) stable; urgency=low
+
+ * uib2erp: fix reports without installed components
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 10 Oct 2017 15:00:00 +0000
+
 uibtime (4.1.1.19-1) stable; urgency=low
 
  * add notification for Linus

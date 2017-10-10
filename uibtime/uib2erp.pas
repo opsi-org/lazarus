@@ -45,6 +45,8 @@ type
     EditButtonExportDir: TEditButton;
     //frDBDataSet1: TfrDBDataSet;
     //frReport1: TfrReport;
+    //frDBDataSet1: TfrDBDataSet;
+    //frReport1: TfrReport;
     //frTNPDFExport1: TfrTNPDFExport;
     Label1: TLabel;
     Label2: TLabel;
@@ -967,6 +969,7 @@ begin
   {$ELSE}
   mypath := ExtractFilePath(ParamStr(0));
   {$ENDIF Linux}
+  frDBDataSet1.DataSet := QueryUibeventaccountreport;
   frReport1.Clear;
   frReport1.LoadFromFile(mypath + 'uib2erp_workrep.lrf');
   //frReport1.Dataset := QueryUibeventaccountreport;
@@ -1557,8 +1560,12 @@ end;
 begin
   for rowcounter := 0 to 1024 do
     rowcolor[rowcounter] := clWindow;
-
+  //(*
   frDBDataSet1:= TfrDBDataSet.Create(Fuibtime2erp);
   frReport1:= TfrReport.Create(Fuibtime2erp);
+  frReport1.Dataset:=frDBDataSet1;
+  //*)
   frTNPDFExport1:= TfrTNPDFExport.Create(Fuibtime2erp);
+
+
 end.
