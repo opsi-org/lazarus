@@ -142,7 +142,7 @@ var
   //deprecated stuff end
   debug_prog: boolean = False;
   debug_lib: boolean = False;
-  default_loglevel : integer = 6;
+  default_loglevel : integer = 7;
   force_min_loglevel: integer = 4;
   opsiscriptconf : string;
   ScriptErrorMessages: boolean = False;
