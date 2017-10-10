@@ -282,7 +282,9 @@
       <Unit32>
         <Filename Value="oslistedit.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="FListedit"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
       </Unit32>
     </Units>
   </ProjectOptions>
