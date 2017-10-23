@@ -2,7 +2,7 @@
 # Translators:
 # Benoit Mortier <benoit.mortier@opensides.be>, 2015-2016
 # Daniel Debeus, 2016
-msgid ""
+msgid "following Paramenters:"
 msgstr ""
 "Project-Id-Version: opsi.org\n"
 "POT-Creation-Date: \n"
@@ -226,6 +226,14 @@ msgstr "Activité"
 msgid "LabelVersion"
 msgstr "Étiquette version"
 
+#: tflistedit.caption
+msgid "opsi-script Parameter Editor"
+msgstr ""
+
+#: tflistedit.label1.caption
+msgid "Please Check and Correct the "
+msgstr ""
+
 #: tmymessagedlg.abortbtn.caption
 msgid "&Exit"
 msgstr "&Quitter"
@@ -258,3 +266,8 @@ msgstr "Informations système"
 msgctxt "TSYSTEMINFO.LABEL1.CAPTION"
 msgid "Label1"
 msgstr "étiquette1"
+
+#: tsysteminfo.labelwindowid.caption
+msgid "Do not localize: Window SystemInfo"
+msgstr ""
+

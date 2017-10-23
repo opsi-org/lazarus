@@ -68,6 +68,7 @@ osshowsysinfo,
 //osbatchgui,
 Controls,
 LCLIntf,
+oslistedit,
 {$ENDIF GUI}
 osencoding,
 osconf,
@@ -10367,6 +10368,39 @@ begin
       list1.free;
     end;
    end
+
+   else if LowerCase (s) = LowerCase ('editMap')
+   then
+   begin
+    if Skip ('(', r, r, InfoSyntaxError)
+    then
+    begin
+      // we do not need it - but for syntax check reasons it has to be done
+      list1 := TXStringList.create;
+      if produceStringList (section,r, r, list1, InfoSyntaxError) //Recursion
+      then
+      Begin
+        list.Clear;
+        {$IFDEF GUI}
+        list.AddStrings(checkMapGUI(list1));
+        {$ELSE GUI}
+        for i:= 0 to list1.Count-1 do
+        begin
+          s1 := list1.Strings[i];
+          s2 := Copy(s1,1,pos('=',s1)-1);
+          s3 := Copy(s1,pos('=',s1)+1,length(s1));
+          if not cmdLineInputDialog(s3, s2, s3, false) then
+            Logdatei.log('Error editMap (noGUI) for: '+s1,LLError);
+          list.Add(s2+'='+s3);
+        end;
+        {$ENDIF GUI}
+        if Skip (')', r, r, InfoSyntaxError) then
+          syntaxCheck := true;
+      end;
+      list1.free;
+    end;
+   end
+
 
    else if LowerCase(s) = LowerCase ('getProductMap')
    then

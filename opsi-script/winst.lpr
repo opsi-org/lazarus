@@ -48,7 +48,9 @@ uses
   osservicepassdlg {DialogServicePassword},
   //osshowlog {ShowTextFile},
   osbatchgui,
-  osinteractivegui {CentralForm}, {$ENDIF}
+  osinteractivegui {CentralForm},
+  oslistedit,
+  {$ENDIF GUI}
   {$IFDEF LINUX}osfunclin {$ENDIF}
   {$IFDEF WINDOWS}jclexcerpt, osfuncwin2, oslocaladmin, osfuncwin,
   opsihwbiosinfo, uCpuUsage, SystemCriticalU,
@@ -67,6 +69,7 @@ begin
 
   Application.CreateForm(TCentralForm, CentralForm);
   Application.CreateForm(TSystemInfo, SystemInfo);
+  Application.CreateForm(TFListedit, FListedit);
   //Application.CreateForm(TShowTextFile, ShowTextFile);
   Application.ShowMainForm := False;
   Application.Run;

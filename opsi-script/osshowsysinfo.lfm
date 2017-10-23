@@ -1,7 +1,7 @@
 object SystemInfo: TSystemInfo
-  Left = 169
+  Left = 498
   Height = 449
-  Top = 418
+  Top = 426
   Width = 628
   HorzScrollBar.Range = 256
   HorzScrollBar.Visible = False
@@ -17,7 +17,7 @@ object SystemInfo: TSystemInfo
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '1.6.0.4'
+  LCLVersion = '1.6.4.0'
   object Panel1: TPanel
     Left = 0
     Height = 24
@@ -76,6 +76,15 @@ object SystemInfo: TSystemInfo
       ModalResult = 1
       OnClick = ButtonGesehenClick
       TabOrder = 0
+    end
+    object LabelWindowId: TLabel
+      Left = 14
+      Height = 13
+      Top = 6
+      Width = 170
+      Caption = 'Do not localize: Window SystemInfo'
+      ParentColor = False
+      Visible = False
     end
   end
 end

@@ -935,7 +935,7 @@ begin
   call := false;
   // we enter a defined function
   DFActive:=true;
-  inc(inDefinedFuncNestCounter);
+  //inc(inDefinedFuncNestCounter);
   definedFunctionsCallStack.Append(InttoStr(DFIndex));
   //parse parameter
   if not parseCallParameter(paramline, remaining, errorstr) then
@@ -946,6 +946,7 @@ begin
   else
   begin
     // run the body of the function
+    inc(inDefinedFuncNestCounter);
     section := TWorkSection.create(0);
     callingsection := TWorkSection.create(0);
     section.Assign(DFcontent);

@@ -4,6 +4,15 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
+
+opsi-winst/opsi-script (4.12.0.7) stable; urgency=low
+
+  * default loglevel is now 7 (was 6) (osconf)
+  * new config: opsi-script.global.ScriptErrorMessages : boolean ; default=true (created as false)
+  * config: opsi-script.global.default_loglevel will be created as 7
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 10 Oct 2017:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.0.6) stable; urgency=low
 
   * osconf: readConfigFromService reads configstates:
@@ -15,7 +24,10 @@ opsi-winst/opsi-script (4.12.0.6) stable; urgency=low
     7: new values for stringlist vars, Output from sections,
        shellcall if the output is not written to a stringlist, parts of a boolean expression
     8: other stringlist output
-    9: content of saved teporary files
+    9: content of saved temporary files
+  * osdefinedfunctions: TOsDefinedFunction.call: move inc(inDefinedFuncNestCounter)
+    below parseCallParameter
+  * new stringlistfunction editMap(list) : list; gets a key=value list and allows the user to modify the values
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 27 Sep 2017:15:00:00 +0200
 

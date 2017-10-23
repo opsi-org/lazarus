@@ -41,7 +41,7 @@ uses
   {$IFDEF LINUX}osfunclin {$ENDIF}
   {$IFDEF WIN64}{$ENDIF}
   {$IFDEF WINDOWS} osfuncwin,{$ENDIF}
-  opsihwbiosinfo, osfuncwin2;
+  opsihwbiosinfo, osfuncwin2, oslistedit;
 
 
 
@@ -60,6 +60,7 @@ begin
   Application.CreateForm(TSystemInfo, SystemInfo);
   //Application.CreateForm(TShowTextFile, ShowTextFile);
   Application.ShowMainForm := False;
+  Application.CreateForm(TFListedit, FListedit);
   Application.Run;
 end.
 

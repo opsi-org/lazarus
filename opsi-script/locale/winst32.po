@@ -1,4 +1,4 @@
-msgid ""
+msgid "following Paramenters:"
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
 #: osbatchgui.rsgetlistofproducts
@@ -212,6 +212,14 @@ msgstr ""
 msgid "LabelVersion"
 msgstr ""
 
+#: tflistedit.caption
+msgid "opsi-script Parameter Editor"
+msgstr ""
+
+#: tflistedit.label1.caption
+msgid "Please Check and Correct the "
+msgstr ""
+
 #: tmymessagedlg.abortbtn.caption
 msgid "&Exit"
 msgstr ""
@@ -243,5 +251,9 @@ msgstr ""
 #: tsysteminfo.label1.caption
 msgctxt "TSYSTEMINFO.LABEL1.CAPTION"
 msgid "Label1"
+msgstr ""
+
+#: tsysteminfo.labelwindowid.caption
+msgid "Do not localize: Window SystemInfo"
 msgstr ""
 

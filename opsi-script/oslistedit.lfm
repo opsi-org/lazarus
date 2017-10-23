@@ -1,0 +1,70 @@
+object FListedit: TFListedit
+  Left = 593
+  Height = 572
+  Top = 466
+  Width = 320
+  Caption = 'opsi-script Parameter Editor'
+  ClientHeight = 572
+  ClientWidth = 320
+  LCLVersion = '1.6.4.0'
+  object ValueListEditor1: TValueListEditor
+    Left = 0
+    Height = 448
+    Top = 74
+    Width = 320
+    Align = alClient
+    DefaultColWidth = 150
+    FixedCols = 0
+    Flat = True
+    RowCount = 2
+    TabOrder = 0
+    Strings.Strings = (
+      ''
+    )
+    ColWidths = (
+      150
+      169
+    )
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 74
+    Top = 0
+    Width = 320
+    Align = alTop
+    ClientHeight = 74
+    ClientWidth = 320
+    TabOrder = 1
+    object Label1: TLabel
+      Left = 28
+      Height = 42
+      Top = 15
+      Width = 205
+      Caption = 'Please Check and Correct the '#13#10'following Paramenters:'
+      Font.Height = -16
+      ParentColor = False
+      ParentFont = False
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 50
+    Top = 522
+    Width = 320
+    Align = alBottom
+    ClientHeight = 50
+    ClientWidth = 320
+    TabOrder = 2
+    object BitBtn1: TBitBtn
+      Left = 113
+      Height = 30
+      Top = 6
+      Width = 75
+      Default = True
+      DefaultCaption = True
+      Kind = bkOK
+      ModalResult = 1
+      TabOrder = 0
+    end
+  end
+end
