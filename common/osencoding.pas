@@ -41,6 +41,7 @@ procedure logSupportedEncodings;
 
 function stringListLoadUtf8FromFile(filename: string): TStringList;
 function stringListLoadUnicodeFromList(inlist: Tstringlist): TStringList;
+function isSupportedEncoding(testEncoding : string) : boolean;
 
 
 
@@ -57,6 +58,15 @@ uses
 var
   i, k: integer;
   additionalEncoding: string;
+
+
+function isSupportedEncoding(testEncoding : string) : boolean;
+begin
+  result := false;
+  if supportedEncodings.IndexOf(testEncoding) > -1 then result := true;
+   // logdatei.log_prog('Found or given Encoding: ' + testEncoding +
+   //   ' is not supported.', LLWarning);
+end;
 
 
   function stringListLoadUtf8FromFile(filename: string): TStringList;

@@ -5,6 +5,13 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 ##################################################################
 
+opsi-winst/opsi-script (4.12.0.8) stable; urgency=low
+
+  * new modifier '/encoding <encoding>' for patches sections
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 23 Oct 2017:15:00:00 +0200
+
+
 opsi-winst/opsi-script (4.12.0.7) stable; urgency=low
 
   * default loglevel is now 7 (was 6) (osconf)

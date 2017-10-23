@@ -581,6 +581,7 @@ const
 var
   PStatNames : TPStatementNames;
   flag_all_ntuser, flag_ntuser : boolean;
+  flag_encoding : string = 'system';
   runLoginScripts: boolean;
   allLoginScripts : boolean;
   inUsercontext: boolean;
@@ -2955,6 +2956,8 @@ var
   procedure doInifilePatchesMain;
   var
   i: Integer=0;
+  dummy : string;
+  mytxtfile : Tstringlist;
   begin
     //ps := LogDatei.LogSIndentPlus (+3) + 'FILE ' +  PatchdateiName;
     //LogDatei.log (ps, LevelWarnings);
@@ -2995,12 +2998,17 @@ var
     (* jetzt Arbeitsstruktur erzeugen *)
 
     Patchdatei := TuibPatchIniFile.Create;
+    //mytxtfile := TStringlist.Create;
+
 
     Patchdatei.clear;
     if FileExists (PatchdateiName)
     then
-      Patchdatei.LoadFromFile (ExpandFileName(PatchdateiName));
-      Patchdatei.Text:= reencode(Patchdatei.Text, 'system');
+      mytxtfile := LoadFromFileWithEncoding(ExpandFileName(PatchdateiName),flag_encoding);
+      //Patchdatei.LoadFromFile  (ExpandFileName(PatchdateiName));
+      Patchdatei.text :=  mytxtfile.Text;
+    //Patchdatei.text := reencode(Patchdatei.Text, flag_encoding,dummy,'system');
+      //Patchdatei.text := reencode(Patchdatei.Text, flag_encoding,dummy,system);
 
     for i:=1 to Sektion.count
     do
@@ -3059,7 +3067,10 @@ var
       End;
     End;
     Logdatei.log('--- ', LLInfo);
-    Patchdatei.SaveToFile (PatchdateiName);
+    //Patchdatei.Text:= reencode(Patchdatei.Text, 'system',dummy,flag_encoding);
+    mytxtfile.Text := reencode(Patchdatei.Text, 'system',dummy,flag_encoding);
+    mytxtfile.SaveToFile(PatchdateiName);
+    //Patchdatei.SaveToFile (PatchdateiName);
     Patchdatei.free; Patchdatei := nil;
   end;
 
@@ -3069,9 +3080,7 @@ begin
 
   if not initSection (Sektion, OldNumberOfErrors, OldNumberOfWarnings) then exit;
 
-  if (lowercase (PatchParameter) = lowercase (Parameter_AllNTUserProfiles))
-  or flag_all_ntuser
-  then
+  if flag_all_ntuser then
   Begin
     flag_all_ntuser := false;
     ProfileList := getProfilesDirList;
@@ -18417,6 +18426,7 @@ begin
                 begin
                   logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
                   flag_all_ntuser := false;
+                  flag_encoding := 'system';
                   // if this is a 'ProfileActions' which is called as sub in Machine mode
                   // so run patches sections implicit as /Allntuserprofiles
                   if runProfileActions then flag_all_ntuser := true;
@@ -18426,10 +18436,48 @@ begin
                   else
                   Begin
                     GetWordOrStringExpressionstr (Remaining, Filename, Remaining, ErrorInfo);
-                    if Remaining = '' then
-                        ActionResult := doInifilePatches (ArbeitsSektion, Filename,'')
-                    else ActionResult := doInifilePatches (ArbeitsSektion, Filename, Remaining);
                   End;
+                  remaining := CutRightBlanks (Remaining);
+
+                   if length (remaining) > 0 then goon := true;
+                   while goon
+                   do
+                   begin
+
+                      if skip(Parameter_AllNTUserProfiles, Remaining, Remaining, ErrorInfo)
+                      then
+                        flag_all_ntuser := true
+
+                      else
+                      if skip('/encoding', Remaining, Remaining, ErrorInfo)
+                      then
+                      begin
+                        if not EvaluateString (Remaining, Remaining, flag_encoding, ErrorInfo) then
+                        begin
+                         syntaxcheck := false;
+                          //ActionResult := reportError (ErrorInfo);
+                        end;
+                        flag_encoding := LowerCase(flag_encoding);
+                        if not isSupportedEncoding(flag_encoding) then
+                        begin
+                          logdatei.log('Given Encoding: ' + flag_encoding +
+                             ' is not supported - fall back to system encoding.', LLWarning);
+                          flag_encoding := 'system';
+                        end
+                      end
+                      else
+                      Begin
+                        goon := false;
+                        if length (remaining) > 0
+                        then
+                        begin
+                          syntaxcheck := false;
+                          ActionResult := reportError (Sektion, i, Sektion.strings [i-1],
+                                                   '"' + remaining + '" is no valid parameter ');
+                        end;
+                      end;
+                   end;
+                   ActionResult := doInifilePatches (ArbeitsSektion, Filename,'')
                 end;
 
               tsHostsPatch:
