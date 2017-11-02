@@ -18089,12 +18089,12 @@ begin
                       or (UpperCase (Remaining) = 'FALSE')
                    then
                    begin
-                     LogDatei.log ('ReportMessages was '+BoolToStr(ReportMessages,true)+' is set to true', LLNotice);
+                     LogDatei.log ('ScriptErrorMessages was '+BoolToStr(ReportMessages,true)+' is set to false', LLNotice);
                      ReportMessages := false;
                    end
                    else
                    begin
-                     LogDatei.log ('ReportMessages was '+BoolToStr(ReportMessages,true)+' is set to false', LLNotice);
+                     LogDatei.log ('ScriptErrorMessages was '+BoolToStr(ReportMessages,true)+' is set to true', LLNotice);
                      ReportMessages := true;
                    end;
                 End
