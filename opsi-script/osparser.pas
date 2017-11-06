@@ -16935,9 +16935,9 @@ begin
                             LogDatei.log_prog('Found line in lib file (raw): '+incline,LLDebug3);
                             incline := reencode(incline, Encoding2use,usedEncoding);
                             LogDatei.log_prog('Found line in lib file (reencoded): '+incline,LLDebug2);
-                            //for constcounter := 1 to ConstList.Count   do
-                            //  if Sektion.replaceInLine(incline, Constlist.Strings [constcounter-1], ConstValuesList.Strings [constcounter-1], false,replacedline)
-                            //  then incline := replacedline;
+                            for constcounter := 1 to ConstList.Count   do
+                              if Sektion.replaceInLine(incline, Constlist.Strings [constcounter-1], ConstValuesList.Strings [constcounter-1], false,replacedline)
+                              then incline := replacedline;
 
 
                             if importFunctionName <> '' then
