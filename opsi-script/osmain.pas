@@ -2010,27 +2010,19 @@ begin
           logDatei.log_prog('debug_prog: '+booleantostr(osconf.debug_prog),LLessential);
           logDatei.log_prog('debug_lib: '+booleantostr(osconf.debug_lib),LLessential);
 
-          if batchproductid = '' then
-          begin
-            LogDatei.LogProduktId:=false;
-            LogDatei.AktProduktId:='';
-          end
-          else
+          if not(batchproductid = '') then
           begin
             LogDatei.LogProduktId:=true;
             LogDatei.AktProduktId:=batchproductid;
           end;
 
-          if logproductid = '' then
-          begin
-            LogDatei.LogProduktId:=false;
-            LogDatei.AktProduktId:='';
-          end
-          else
+          if not (logproductid = '') then
           begin
             LogDatei.LogProduktId:=true;
             LogDatei.AktProduktId:=logproductid;
           end;
+
+          logDatei.log_prog('AktProduktId: '+LogDatei.AktProduktId+' = '+booleantostr(LogDatei.LogProduktId),LLessential);
 
           // Are we in batch with /productid (opsi-template-with-admin) ?
           // open service connection if possible
@@ -2341,27 +2333,16 @@ begin
     ParamListe := TStringList.Create;
     ParamListe.Clear;
 
-  (*
-   r := CutLeftBlanks (CmdLine);
-   while r <> ''
-   do
-   Begin
-     GetWord (r, Parameter, r, [' ']);
-     ParamListe.Add (Parameter);
-   End;
-   *)
-
-
     for i := 1 to ParamCount do
     begin
       teststr := ParamStr(i);
       ParamListe.Add(ParamStr(i));
     end;
 
-    (* if paramcount > 0  *)
+    // if paramcount > 0
     if ParamListe.Count > 0 then
     begin
-      (* Parameter := ParamStr (1); *)
+      startupmessages.Append('Called with parameter: '+ParamListe.Text);
       Parameter := ParamListe.Strings[0];
       if Parameter[1] = '?' then
       begin

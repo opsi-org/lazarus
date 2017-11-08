@@ -5,9 +5,19 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 ##################################################################
 
+opsi-winst/opsi-script (4.12.0.9) stable; urgency=low
+
+  * osmain: log command line parameter of opsi-script call
+  * osmain: startprogrammodes: fix for /productid (bug created with /logproductid)
+  * osmain: 'Wait for ending' while running now log level 8
+  * product sorting logging moved to log_prog
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 06 Nov 2017:15:00:00 +0200
+
+
 opsi-winst/opsi-script (4.12.0.8) stable; urgency=low
 
-  * start to wor on new modifier '/encoding <encoding>' for patches sections
+  * start to work on new modifier '/encoding <encoding>' for patches sections
   * osparser: fix Message 'ReportMessages' changed to 'ScriptErrorMessages'
   * osparser: fix Message 'ScriptErrorMessages' 'is set to' true/false was wrong
   * osparser:  tsImportLib: replace constants

@@ -1538,9 +1538,9 @@ begin
                   ((nowtime - starttime) >= waitSecs / secsPerDay) then
                 begin
                   running := False;
-                  logdatei.DependentAdd('Waiting for ending of "' +
+                  logdatei.log('Waiting for ending of "' +
                     ident + '" stopped - time out ' + IntToStr(waitSecs) +
-                    ' sec', LevelInfo);
+                    ' sec', LLinfo);
                 end;
 
               end;
@@ -1901,9 +1901,9 @@ begin
                   ((nowtime - starttime) >= waitSecs / secsPerDay) then
                 begin
                   running := False;
-                  logdatei.DependentAdd('Waiting for ending of "' +
+                  logdatei.log('Waiting for ending of "' +
                     ident + '" stopped - time out ' + IntToStr(waitSecs) +
-                    ' sec', LevelInfo);
+                    ' sec', LLinfo);
                 end;
 
               end;
@@ -2360,7 +2360,7 @@ begin
               {$ENDIF GUI}
               ProcessMess;
               logdatei.DependentAdd('Waiting for ending at ' +
-                DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug);
+                DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
               ProcessMess;
             end;
           end;
@@ -2691,7 +2691,7 @@ begin
                   running := False;
                   logdatei.DependentAdd('Waiting for ending of "' +
                     ident + '" stopped - waitSecs out ' + IntToStr(waitSecs) +
-                    ' sec', LevelInfo);
+                    ' sec', LLinfo);
                 end;
 
               end;
@@ -2759,7 +2759,7 @@ begin
               GetExitCodeProcess(ProcessInfo.hProcess, lpExitCode);
               ProcessMess;
               logdatei.DependentAdd('Waiting for ending at ' +
-                DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug);
+                DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
               ProcessMess;
             end;
           end;
@@ -3065,9 +3065,9 @@ begin
                   ((nowtime - starttime) >= waitSecs / secsPerDay) then
                 begin
                   running := False;
-                  logdatei.DependentAdd('Waiting for ending of "' +
+                  logdatei.log('Waiting for ending of "' +
                     ident + '" stopped - waitSecs out ' + IntToStr(waitSecs) +
-                    ' sec', LevelInfo);
+                    ' sec', LLinfo);
                 end;
 
               end;
@@ -3134,8 +3134,8 @@ begin
               //GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode);
               GetExitCodeProcess(ProcessInfo.hProcess, lpExitCode);
               ProcessMess;
-              logdatei.DependentAdd('Waiting for ending at ' +
-                DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug);
+              logdatei.log('Waiting for ending at ' +
+                DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
               ProcessMess;
             end;
           end;
@@ -3581,9 +3581,9 @@ begin
                   ((nowtime - starttime) >= waitSecs / secsPerDay) then
                 begin
                   running := False;
-                  logdatei.DependentAdd('Waiting for ending of "' +
+                  logdatei.log('Waiting for ending of "' +
                     ident + '" stopped - waitSecs out ' +
-                    IntToStr(waitSecs) + ' sec', LevelInfo);
+                    IntToStr(waitSecs) + ' sec', LLinfo);
                 end;
 
               end;
@@ -3644,8 +3644,8 @@ begin
               sleep(1000);
               GetExitCodeProcess(processInfo.hProcess, lpExitCode);
               ProcessMess;
-              logdatei.DependentAdd('Waiting for ending at ' +
-                DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug);
+              logdatei.log('Waiting for ending at ' +
+                DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
               ProcessMess;
             end;
           end;
