@@ -96,7 +96,8 @@ begin
   if (lowercase(aktMethod) = lowerCase('messageChanged')) or
     (lowercase(aktMethod) = lowerCase('subjectsChanged')) or
     (lowercase(aktMethod) = lowerCase('endConnection')) or
-    (lowercase(aktMethod) = lowerCase('selectedIndexesChanged')) then
+    (lowercase(aktMethod) = lowerCase('selectedIndexesChanged')) or
+    (lowercase(aktMethod) = lowerCase('choicesChanged')) then
   begin
     // wellknown methods
     logdatei.log('Is well known method: ' + aktMethod, LLDebug2);
@@ -185,7 +186,7 @@ begin
                 logdatei.log('Error: could not get choicearray for id: ' + aktId, LLError);
            // end
            // else
-           //   logdatei.log('Warning: Button caption not written because no known labe in the message.',
+           //   logdatei.log('Warning: Button caption not written because no known label in the message.',
            //     LLWarning);
           end
           else
