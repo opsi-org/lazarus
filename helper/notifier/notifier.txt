@@ -3,6 +3,7 @@
 opsi-notifier  4.0.7.3
 
   * notifier_json: method choicesChanged ; fixes #3196
+  * notifierguicontrol: objectByIndex: do not crash on wrong ini content ; fixes #3156
 
 -- Detlef Oertel <d.oertel@uib.de>  Mon, 04 Aug 2017:15:00:00 +0200
 

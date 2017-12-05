@@ -3,14 +3,14 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="10"/>
-    <BuildModes Active="Default"/>
+    <BuildModes Active="Release"/>
     <Units Count="10">
       <Unit0>
         <Filename Value="notifier.lpr"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="2"/>
         <CursorPos X="35" Y="9"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="26"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -21,19 +21,19 @@
         <ResourceBaseClass Value="Form"/>
         <TopLine Value="60"/>
         <CursorPos X="37" Y="71"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="26"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="notifier_base.pas"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="26"/>
       </Unit2>
       <Unit3>
         <Filename Value="..\..\common\oslog.pas"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="26"/>
       </Unit3>
       <Unit4>
         <Filename Value="notifierdatamodule.pas"/>
@@ -41,12 +41,17 @@
         <ComponentName Value="DataModule1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="26"/>
       </Unit4>
       <Unit5>
         <Filename Value="notifierguicontrol.pas"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="22"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="712"/>
+        <CursorPos X="25" Y="664"/>
+        <UsageCount Value="26"/>
+        <Loaded Value="True"/>
       </Unit5>
       <Unit6>
         <Filename Value="notifier_json.pas"/>
@@ -54,31 +59,30 @@
         <EditorIndex Value="1"/>
         <TopLine Value="81"/>
         <CursorPos X="65" Y="99"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="26"/>
         <Loaded Value="True"/>
       </Unit6>
       <Unit7>
         <Filename Value="..\..\common\osjson.pas"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="26"/>
       </Unit7>
       <Unit8>
         <Filename Value="..\..\common\superobject.pas"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="26"/>
       </Unit8>
       <Unit9>
         <Filename Value="notifier.txt"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
-        <CursorPos X="55" Y="5"/>
-        <UsageCount Value="22"/>
+        <CursorPos X="87" Y="6"/>
+        <UsageCount Value="26"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit9>
     </Units>
-    <JumpHistory Count="2" HistoryIndex="1">
+    <JumpHistory Count="3" HistoryIndex="2">
       <Position1>
         <Filename Value="notifier_json.pas"/>
         <Caret Line="196" Column="31" TopLine="179"/>
@@ -86,6 +90,9 @@
       <Position2>
         <Filename Value="notifier.lpr"/>
       </Position2>
+      <Position3>
+        <Filename Value="notifierguicontrol.pas"/>
+      </Position3>
     </JumpHistory>
   </ProjectSession>
 </CONFIG>
