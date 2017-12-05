@@ -435,7 +435,7 @@ begin
   myclientid := myini.ReadString('global', 'host_id', '');
   myhostkey := myini.ReadString('global', 'opsi_host_key', '');
   //myloglevel := myini.ReadInteger('global', 'log_level', 5);
-  myloglevel := 8;
+  myloglevel := 7;
   myini.Free;
 end;
 
@@ -446,7 +446,7 @@ begin
   //myclientid := 'localhost';
   //myclientid := oslog.getComputerName;
   myhostkey := '';
-  myloglevel := 8;
+  myloglevel := 7;
 end;
 
 
