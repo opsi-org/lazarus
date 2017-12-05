@@ -2,7 +2,10 @@
 opsiclientkiosk  4.0.7.12
 
   * oslog: changed logging to c:\opsi.org\applog
+  * ockdata: initlogging: logfilename := 'kiosk-' + GetUserName_ +'.log';
   * ockdata: readconf: setlogvel to 7
+  * code cleanup
+  * ockdata: main: check for opsiclientd ; fixes #3225
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 05 Dec 2017:15:00:00 +0200
 

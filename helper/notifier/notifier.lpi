@@ -10,7 +10,7 @@
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
       <XPManifest>
-        <DpiAware Value="True"/>
+        <DpiAware Value="Per-monitor"/>
       </XPManifest>
       <Icon Value="0"/>
     </General>
