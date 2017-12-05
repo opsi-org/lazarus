@@ -1,6 +1,14 @@
 
 [changelog]
 
+opsi_client_systray  4.0.7.3
+
+  * oslog: changed logging to c:\opsi.org\applog
+  * DataModuleCreate: setlogvel to 7
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 05 Dec 2017:15:00:00 +0200
+
+
 opsi_client_systray  4.0.7.2
 
   * enhanced language detection

@@ -405,7 +405,7 @@ begin
   LogDatei.log('Log for: ' + Application.exename + ' opend at : ' +
     DateTimeToStr(now), LLinfo);
 
-  LogDatei.LogLevel := 8;
+  LogDatei.LogLevel := 7;
 
   TrayIcon1.PopUpMenu := PopupMenu1;
   trayIcon1.Show;
