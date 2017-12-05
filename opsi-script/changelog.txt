@@ -5,6 +5,12 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 ##################################################################
 
+opsi-winst/opsi-script (4.12.0.10) stable; urgency=low
+
+  * osdefinedfunctions: TOsDefinedFunction.call: free local Vars on leaving the function; fixes #3230
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 06 Dec 2017:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.0.9) stable; urgency=low
 
   * osmain: log command line parameter of opsi-script call
