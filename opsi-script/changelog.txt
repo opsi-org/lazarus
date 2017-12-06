@@ -13,6 +13,9 @@ opsi-winst/opsi-script (4.12.0.10) stable; urgency=low
     * osparser: evaluatestring: new param Nestlevel  (to use while call defined function)
     * osparser: producestringlist: new param Nestlevel  (to use while call defined function)
     * osparser: doSetVar: new param Nestlevel  (to use while call evaluatestring/producestringlist)
+  * Support brackets '[]' in Registry keys ; fixes #2825
+    * osparser: doRegistryHack: openkey, deletekey in Registry sections
+    * osparser: evaluatestring: GetRegistryStringValue*
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 06 Dec 2017:15:00:00 +0200
 

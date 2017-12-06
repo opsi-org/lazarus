@@ -4635,13 +4635,29 @@ begin
       if LowerCase (Expressionstr) = LowerCase ('OpenKey')
       then
       Begin
-        if keyOpenCommandExists (* i.e., existed already *)
+        if keyOpenCommandExists // i.e., existed already
         then
            //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1
         else
            keyOpenCommandExists := true;
 
         SyntaxCheck := false;
+        GetWord (r, key, r, WordDelimiterWhiteSpace);
+        if not((pos('[',key) = 1) and (pos(']',key) = length(key)-1)) then
+        begin
+          SyntaxCheck := false;
+          ErrorInfo := 'Wrong Key Format: Key must be given inside [] - but we got: '+key
+        end
+        else
+        begin
+          key := opsiUnquotestr2(trim(key),'[]');
+          if (pos('[',key) = 1) and (pos(']',key) = length(key)-1) then
+          begin
+            SyntaxCheck := false;
+            ErrorInfo := 'Wrong Key Format: Have still brackets after removing them: '+key
+          end
+          else
+        (*
         if Skip ('[', r, r, ErrorInfo)
         then
         Begin
@@ -4650,7 +4666,9 @@ begin
           then
           Begin
             if r = '' then SyntaxCheck := true else ErrorInfo := ErrorRemaining;
-
+        *)
+          begin
+            SyntaxCheck := true;
             key_completepath := key;
             LogDatei.log('Key is: '+key, LLdebug);
             GetWord (key, key0, key, ['\']);
@@ -4734,7 +4752,8 @@ begin
       then
       Begin
         SyntaxCheck := false;
-        SyntaxCheck := true;
+        //SyntaxCheck := true;
+        (*
         if Skip ('[', r, r, ErrorInfo)
         then
         Begin
@@ -4744,55 +4763,73 @@ begin
           Begin
             if r = '' then SyntaxCheck := true else ErrorInfo := ErrorRemaining;
           End;
-
-          key_completepath := key;
-          // extract HKEY
-          GetWord (key_completepath, key0, key, ['\']);
-          system.delete(key,1,1);
-
-          if (flag_all_ntuser or flag_ntuser or runLoginScripts) and (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
+          *)
+        GetWord (r, key, r, WordDelimiterWhiteSpace);
+        if not((pos('[',key) = 1) and (pos(']',key) = length(key)-1)) then
+        begin
+          SyntaxCheck := false;
+          ErrorInfo := 'Wrong Key Format: Key must be given inside [] - but we got: '+key
+        end
+        else
+        begin
+          key := opsiUnquotestr2(trim(key),'[]');
+          if (pos('[',key) = 1) and (pos(']',key) = length(key)-1) then
           begin
-            // remove HKCU from the beginning
-            key := key;
-            LogDatei.log ('Running loginscripts: ignoring key0 : '+key0 + ', using only key : '+key, LLdebug2);
-          end
-          else  key := key_completepath;
-          GetWord (key, key0, key, ['\']);
-          if GetHKEY(key0, outkey) then
-          begin
-             LogDatei.log ('key0 : '+key0+' is a valid base key and we will use it',LLDebug2);
-             key := key_completepath;
+            SyntaxCheck := false;
+            ErrorInfo := 'Wrong Key Format: Have still brackets after removing them: '+key
           end
           else
           begin
-            LogDatei.log('Key0 is: '+key0+ ' Key is: '+key, LLdebug2);
-            LogDatei.log ('key0 : '+key0+' is not a valid base key and we will praefix it with: '+basekey,LLDebug2);
-            // insert RegParameter before key
-            if basekey <> '' then
-            Begin
-              if basekey [length (basekey)] = '\' then basekey := copy(basekey,1,length(basekey)-1);
-              key_completepath := basekey;
-              LogDatei.log('key_completepath1 : '+key_completepath, LLdebug3);
-              if (trim(key0) <> '') then
-              begin
-                if key0[1] = '\' then key0 := copy(key0,2,length(key0));
-                if key0 [length (key0)] = '\' then key0 := copy(key0,1,length(key0)-1);
-                key_completepath := key_completepath + '\' + key0;
-                LogDatei.log('key_completepath2 : '+key_completepath, LLdebug3);
-              end;
-              if (trim(key) <> '') then
-              begin
-                if key[1] = '\' then key := copy(key,2,length(key));
-                key_completepath := key_completepath + '\' + key;
-                LogDatei.log('key_completepath3 : '+key_completepath, LLdebug3);
-              end;
-            End;
-          end;
+            SyntaxCheck := true;
+            key_completepath := key;
+            // extract HKEY
+            GetWord (key_completepath, key0, key, ['\']);
+            system.delete(key,1,1);
 
-          // extract HKEY
-          GetWord (key_completepath, key0, key, ['\']);
-          system.delete(key,1,1);
-          LogDatei.log('We will open Key : '+key_completepath, LLdebug2);
+            if (flag_all_ntuser or flag_ntuser or runLoginScripts) and (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
+            begin
+              // remove HKCU from the beginning
+              key := key;
+              LogDatei.log ('Running loginscripts: ignoring key0 : '+key0 + ', using only key : '+key, LLdebug2);
+            end
+            else  key := key_completepath;
+            GetWord (key, key0, key, ['\']);
+            if GetHKEY(key0, outkey) then
+            begin
+               LogDatei.log ('key0 : '+key0+' is a valid base key and we will use it',LLDebug2);
+               key := key_completepath;
+            end
+            else
+            begin
+              LogDatei.log('Key0 is: '+key0+ ' Key is: '+key, LLdebug2);
+              LogDatei.log ('key0 : '+key0+' is not a valid base key and we will praefix it with: '+basekey,LLDebug2);
+              // insert RegParameter before key
+              if basekey <> '' then
+              Begin
+                if basekey [length (basekey)] = '\' then basekey := copy(basekey,1,length(basekey)-1);
+                key_completepath := basekey;
+                LogDatei.log('key_completepath1 : '+key_completepath, LLdebug3);
+                if (trim(key0) <> '') then
+                begin
+                  if key0[1] = '\' then key0 := copy(key0,2,length(key0));
+                  if key0 [length (key0)] = '\' then key0 := copy(key0,1,length(key0)-1);
+                  key_completepath := key_completepath + '\' + key0;
+                  LogDatei.log('key_completepath2 : '+key_completepath, LLdebug3);
+                end;
+                if (trim(key) <> '') then
+                begin
+                  if key[1] = '\' then key := copy(key,2,length(key));
+                  key_completepath := key_completepath + '\' + key;
+                  LogDatei.log('key_completepath3 : '+key_completepath, LLdebug3);
+                end;
+              End;
+            end;
+
+            // extract HKEY
+            GetWord (key_completepath, key0, key, ['\']);
+            system.delete(key,1,1);
+            LogDatei.log('We will open Key : '+key_completepath, LLdebug2);
+          end;
         end;
 
         if Is64BitSystem and (GetNTVersionMajor < 6) and regist.myforce64 then
@@ -13637,60 +13674,52 @@ begin
         or (LowerCase (s) = LowerCase ('GetRegistryStringValue32'))
   then
   begin
+    LogDatei.log_prog ('GetRegistryStringValue from: '+r, LLdebug3);
     if Skip ('(', r, r, InfoSyntaxError)
-    then if EvaluateString (r, r, s1, InfoSyntaxError)
-    then if Skip (')', r, r, InfoSyntaxError)
-    then if Skip ('[', s1, r1, InfoSyntaxError)
-    then
-    Begin
-      GetWord (r1, key, r1, [']']);
-      GetWord (key, key0, key, ['\']);
-      System.delete (key, 1, 1);
-
-      if Skip (']', r1, r1, InfoSyntaxError)
-      then
+    then if EvaluateString (r, r, s1, InfoSyntaxError) then
+    begin
+      LogDatei.log_prog ('GetRegistryStringValue from: '+s1+' Remaining: '+r, LLdebug3);
+      if Skip (')', r, r, InfoSyntaxError) then
       Begin
-        SyntaxCheck := true;
-        ValueName := CutRightBlanks (r1);
-
-        StringResult := '';
-        LogDatei.log ('key0 = '+key0, LLdebug2);
-        if runLoginScripts and (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
+        //GetWord (r1, key, r1, [']']);
+        LogDatei.log_prog ('GetRegistryStringValue from: '+s1+' Remaining: '+r, LLdebug2);
+        GetWord (s1, key, r, WordDelimiterWhiteSpace);
+        if not((pos('[',key) = 1) and (pos(']',key) = length(key)-1)) then
         begin
-          // remove HKCU from the beginning
-          // switch to HKEY_USERS
-          key0 := 'HKEY_USERS';
-          key := usercontextSID+'\'+key;
-          LogDatei.log ('Running loginscripts: key0 is now: '+key0 + ', key is now: '+key, LLdebug);
-        end;
-        StringResult := GetRegistrystringvalue(key0+'\'+key,ValueName,false);
-          (*
-          // noredirect=false / readonly=true
-          Regist := Tuibregistry.Create(false,true);
-          //StartIndentLevel := LogDatei.LogSIndentLevel;
-          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-          if Regist.OpenExistingKey (key0, key)
-          then
-          Begin
-            try
-               StringResult := Regist.ReadString (ValueName);
-            except
-               try
-                  Regist.ReadEntry (Valuename, RegType, StringResult);
-                  { in ReadString abgehandelt:
-                  if RegType = trdmultistring
-                  then
-                    StringResult := StringReplace (StringResult, #13#10, MultiszVisualDelimiter);
-                  }
-               except
-               end;
+          SyntaxCheck := false;
+          ErrorInfo := 'Wrong Key Format: Key must be given inside [] - but we got: '+key
+        end
+        else
+        begin
+          key := opsiUnquotestr2(trim(key),'[]');
+          if (pos('[',key) = 1) and (pos(']',key) = length(key)-1) then
+          begin
+            SyntaxCheck := false;
+            ErrorInfo := 'Wrong Key Format: Have still brackets after removing them: '+key
+          end
+          else
+          begin
+            SyntaxCheck := true;
+            GetWord (key, key0, key, ['\']);
+            System.delete (key, 1, 1);
+            ValueName := trim(r);
+            // del r for syntaxcheck = true
+            r:='';
+            LogDatei.log_prog ('GetRegistryStringValue from: '+key0+'\'+key+' ValueName: '+ValueName, LLdebug);
+            StringResult := '';
+            LogDatei.log ('key0 = '+key0, LLdebug2);
+            if runLoginScripts and (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
+            begin
+              // remove HKCU from the beginning
+              // switch to HKEY_USERS
+              key0 := 'HKEY_USERS';
+              key := usercontextSID+'\'+key;
+              LogDatei.log ('Running loginscripts: key0 is now: '+key0 + ', key is now: '+key, LLdebug);
             end;
-            Regist.CloseKey;
-          End;
-          //LogDatei.LogSIndentLevel := StartIndentLevel;
-          Regist.free; Regist := nil;
-          *)
-        End
+            StringResult := GetRegistrystringvalue(key0+'\'+key,ValueName,false);
+          End
+        end;
+      end;
     End;
   end
 
@@ -13698,80 +13727,54 @@ begin
         or (LowerCase (s) = LowerCase ('GetRegistryStringValueSysNative'))
   then
   begin
+    LogDatei.log_prog ('GetRegistryStringValue from: '+r, LLdebug3);
     if Skip ('(', r, r, InfoSyntaxError)
-    then if EvaluateString (r, r, s1, InfoSyntaxError)
-    then if Skip (')', r, r, InfoSyntaxError)
-    then if Skip ('[', s1, r1, InfoSyntaxError)
-    then
-    Begin
-      GetWord (r1, key, r1, [']']);
-      GetWord (key, key0, key, ['\']);
-      System.delete (key, 1, 1);
-
-      if Skip (']', r1, r1, InfoSyntaxError)
-      then
+    then if EvaluateString (r, r, s1, InfoSyntaxError) then
+    begin
+      LogDatei.log_prog ('GetRegistryStringValue from: '+s1+' Remaining: '+r, LLdebug3);
+      if Skip (')', r, r, InfoSyntaxError) then
       Begin
-        SyntaxCheck := true;
-        ValueName := CutRightBlanks (r1);
-
-        StringResult := '';
-        if runLoginScripts and (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
+        //GetWord (r1, key, r1, [']']);
+        LogDatei.log_prog ('GetRegistryStringValue from: '+s1+' Remaining: '+r, LLdebug2);
+        GetWord (s1, key, r, WordDelimiterWhiteSpace);
+        if not((pos('[',key) = 1) and (pos(']',key) = length(key)-1)) then
         begin
-          // remove HKCU from the beginning
-          // switch to HKEY_USERS
-          key0 := 'HKEY_USERS';
-          key := usercontextSID+'\'+key;
-          LogDatei.log ('Running loginscripts: key0 is now: '+key0 + ', key is now: '+key, LLdebug);
-        end;
-        if (GetNTVersionMajor = 5) and (GetNTVersionMinor = 0) then
-          StringResult := GetRegistrystringvalue(key0+'\'+key,ValueName,false)
-        else
-          StringResult := GetRegistrystringvalue(key0+'\'+key,ValueName,true);
-        (*
-        if (GetNTVersionMajor = 5) and (GetNTVersionMinor = 0) then
-        begin
-          // we are on win 2000 which can't handle redirections flags
-          Regist := Tuibregistry.Create;
+          SyntaxCheck := false;
+          ErrorInfo := 'Wrong Key Format: Key must be given inside [] - but we got: '+key
         end
-        else // we are on xp or higher
+        else
         begin
-          // noredirect=true / readonly=true
-          Regist := Tuibregistry.Create(true,true);
+          key := opsiUnquotestr2(trim(key),'[]');
+          if (pos('[',key) = 1) and (pos(']',key) = length(key)-1) then
+          begin
+            SyntaxCheck := false;
+            ErrorInfo := 'Wrong Key Format: Have still brackets after removing them: '+key
+          end
+          else
+          begin
+            SyntaxCheck := true;
+            GetWord (key, key0, key, ['\']);
+            System.delete (key, 1, 1);
+            ValueName := trim(r);
+            // del r for syntaxcheck = true
+            r:='';
+            LogDatei.log_prog ('GetRegistryStringValue from: '+key0+'\'+key+' ValueName: '+ValueName, LLdebug);
+            StringResult := '';
+            if runLoginScripts and (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
+            begin
+              // remove HKCU from the beginning
+              // switch to HKEY_USERS
+              key0 := 'HKEY_USERS';
+              key := usercontextSID+'\'+key;
+              LogDatei.log ('Running loginscripts: key0 is now: '+key0 + ', key is now: '+key, LLdebug);
+            end;
+            if (GetNTVersionMajor = 5) and (GetNTVersionMinor = 0) then
+              StringResult := GetRegistrystringvalue(key0+'\'+key,ValueName,false)
+            else
+              StringResult := GetRegistrystringvalue(key0+'\'+key,ValueName,true);
+          End
         end;
-        LogDatei.log ('key0 = '+key0, LLdebug2);
-        if runLoginScripts and (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
-        begin
-          // remove HKCU from the beginning
-          // switch to HKEY_USERS
-          key0 := 'HKEY_USERS';
-          key := usercontextSID+'\'+key;
-          LogDatei.log ('Running loginscripts: key0 is now: '+key0 + ', key is now: '+key, LLdebug);
-        end;
-
-        //StartIndentLevel := LogDatei.LogSIndentLevel;
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-        if Regist.OpenExistingKey (key0, key)
-        then
-        Begin
-          try
-             StringResult := Regist.ReadString (ValueName);
-          except
-             try
-                Regist.ReadEntry (Valuename, RegType, StringResult);
-                { in ReadString abgehandelt:
-                if RegType = trdmultistring
-                then
-                  StringResult := StringReplace (StringResult, #13#10, MultiszVisualDelimiter);
-                }
-             except
-             end;
-          end;
-          Regist.CloseKey;
-        End;
-        //LogDatei.LogSIndentLevel := StartIndentLevel;
-        Regist.free; Regist := nil;
-        *)
-      End
+      end;
     End;
   end
 
