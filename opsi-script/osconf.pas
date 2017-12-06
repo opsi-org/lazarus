@@ -140,7 +140,12 @@ var
   utilsdrive: string;
   configdrive: string;
   //deprecated stuff end
+  {$IFDEF OSDEBUG}
+  debug_prog: boolean = True;
+  {$ELSE}
   debug_prog: boolean = False;
+  {$ENDIF}
+  //debug_prog: boolean = True;
   debug_lib: boolean = False;
   default_loglevel : integer = 7;
   force_min_loglevel: integer = 4;

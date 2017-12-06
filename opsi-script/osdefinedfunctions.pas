@@ -75,7 +75,8 @@ type
     //function getLocalVarReference(name : string) : pointer;
 
     function parseCallParameter(paramline : string; var remaining : string;  var errorstr : string) : boolean;
-    function call(paramline : string; var remaining : string) : boolean;
+    //function call(paramline : string; var remaining : string) : boolean;
+    function call(paramline : string; var remaining : string; var NestLevel : integer) : boolean;
 
     property Name : String read DFName;
     property datatype : TosdfDataTypes read DFResultType;
@@ -925,7 +926,7 @@ end;
 
 
 // run the function
-function  TOsDefinedFunction.call(paramline : string; var remaining : string) : boolean;
+function  TOsDefinedFunction.call(paramline : string; var remaining : string; var NestLevel : integer) : boolean;
 var
   errorstr : string;
   section : TWorkSection;
@@ -933,7 +934,8 @@ var
   sectionresult : TSectionResult;
 begin
   call := false;
-  // we enter a defined function
+  LogDatei.log('We enter a defined function',LLDebug2);
+  LogDatei.log_prog('paramline: '+paramline+' remaining: '+remaining+' Nestlevel: '+inttostr(NestLevel),LLDebug2);
   DFActive:=true;
   //inc(inDefinedFuncNestCounter);
   definedFunctionsCallStack.Append(InttoStr(DFIndex));
@@ -947,10 +949,11 @@ begin
   begin
     // run the body of the function
     inc(inDefinedFuncNestCounter);
-    section := TWorkSection.create(0);
+    section := TWorkSection.create(Nestlevel);
     callingsection := TWorkSection.create(0);
     section.Assign(DFcontent);
     sectionresult := script.doAktionen(section,callingsection);
+    Nestlevel := section.NestingLevel;
     call := true;
     case DFResultType of
        dfpString :     begin
@@ -970,6 +973,7 @@ begin
   dec(inDefinedFuncNestCounter);
   definedFunctionsCallStack.Delete(definedFunctionsCallStack.Count-1);
   DFActive:=false;
+  LogDatei.log('We leave a defined function',LLDebug2);
 end;
 
 (*

@@ -8,6 +8,11 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 opsi-winst/opsi-script (4.12.0.10) stable; urgency=low
 
   * osdefinedfunctions: TOsDefinedFunction.call: free local Vars on leaving the function; fixes #3230
+  * Fix call of defined functions inside if statement ; fixes #3232
+    * osdefinedfunctions: call: new param Nestlevel
+    * osparser: evaluatestring: new param Nestlevel  (to use while call defined function)
+    * osparser: producestringlist: new param Nestlevel  (to use while call defined function)
+    * osparser: doSetVar: new param Nestlevel  (to use while call evaluatestring/producestringlist)
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 06 Dec 2017:15:00:00 +0200
 

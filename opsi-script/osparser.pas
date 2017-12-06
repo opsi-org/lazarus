@@ -340,15 +340,27 @@ public
 
   (* Skriptvariable setzen, Ausdruecke analysieren und auswerten *)
   function doSetVar (const section: TuibIniScript; const Expressionstr : String;
-                     var Remaining : String; var InfoSyntaxError : String) : Boolean;
+                     var Remaining : String; var InfoSyntaxError : String) : Boolean; overload;
+
+  function doSetVar (const section: TuibIniScript; const Expressionstr : String;
+                   var Remaining : String; var InfoSyntaxError : String;
+                   var NestLevel : integer) : Boolean; overload;
 
   function produceStringList
     (const section: TuibIniScript; const s0 : String; var Remaining: String;
-     var list : TXStringlist; var InfoSyntaxError : String ) : Boolean;
+     var list : TXStringlist; var InfoSyntaxError : String ) : Boolean; overload;
+
+  function produceStringList
+    (const section: TuibIniScript; const s0 : String; var Remaining: String;
+     var list : TXStringlist; var InfoSyntaxError : String; var NestLevel : integer) : Boolean; overload;
 
   function EvaluateString
     (const s0 : String; var Remaining: String;
-     var StringResult : String; var InfoSyntaxError : String ) : Boolean;
+     var StringResult : String; var InfoSyntaxError : String ) : Boolean; overload;
+
+  function EvaluateString
+    (const s0 : String; var Remaining: String;
+     var StringResult : String; var InfoSyntaxError : String; var NestLevel : integer ) : Boolean; overload;
 
   function EvaluateBoolean (Input : String; var Remaining : String;
      var BooleanResult : Boolean; NestingLevel : Integer; var InfoSyntaxError : String) : Boolean;
@@ -9232,13 +9244,25 @@ begin
     if not threaded then deleteTempBatFiles(tempfilename);
 end;
 
-
 function TuibInstScript.produceStringList
    (const section: TuibIniScript;
    const s0 : String;
    var Remaining: String;
    var list : TXStringList;
    var InfoSyntaxError : String ) : Boolean;
+var
+ NestLevel : integer;
+begin
+  result := produceStringList(section,s0,Remaining,list,InfoSyntaxError,Nestlevel);
+end;
+
+function TuibInstScript.produceStringList
+   (const section: TuibIniScript;
+   const s0 : String;
+   var Remaining: String;
+   var list : TXStringList;
+   var InfoSyntaxError : String;
+   var NestLevel : integer) : Boolean;
 
 var
   VarIndex : integer=0;
@@ -9343,7 +9367,7 @@ begin
      end
      else
      begin
-       if definedFunctionArray[FuncIndex].call(r,r) then
+       if definedFunctionArray[FuncIndex].call(r,r,NestLevel) then
        begin
          r := '';
          list.Text := definedFunctionArray[FuncIndex].ResultList.Text;
@@ -11069,6 +11093,18 @@ function TuibInstScript.EvaluateString
    var Remaining: String;
    var StringResult : String;
    var InfoSyntaxError : String ) : Boolean;
+var
+ NestLevel : integer;
+begin
+  result := EvaluateString(s0,Remaining,StringResult,InfoSyntaxError,Nestlevel);
+end;
+
+function TuibInstScript.EvaluateString
+   (const s0 : String;
+   var Remaining: String;
+   var StringResult : String;
+   var InfoSyntaxError : String;
+   var NestLevel : integer) : Boolean;
 
 
 var
@@ -11164,7 +11200,7 @@ begin
    end
    else
    begin
-     if definedFunctionArray[FuncIndex].call(r,r) then
+     if definedFunctionArray[FuncIndex].call(r,r,NestLevel) then
      begin
        StringResult := definedFunctionArray[FuncIndex].Resultstring;
        syntaxCheck := true;
@@ -15621,9 +15657,17 @@ end
 
 End;
 
-
 function TuibInstScript.doSetVar (const section: TuibIniScript; const Expressionstr : String;
                    var Remaining : String; var InfoSyntaxError : String) : Boolean;
+ var
+  NestLevel : integer = 0;
+begin
+  result := doSetVar(section,Expressionstr, Remaining, InfoSyntaxError, NestLevel);
+end;
+
+function TuibInstScript.doSetVar (const section: TuibIniScript; const Expressionstr : String;
+                   var Remaining : String; var InfoSyntaxError : String;
+                   var NestLevel : integer) : Boolean;
  var
    VarName : String='';
    VarValue : String='';
@@ -15665,7 +15709,7 @@ begin
     then
     Begin
       if    Skip ('=', r, r, InfoSyntaxError)
-        and produceStringList (section, r, Remaining, list,  InfoSyntaxError)
+        and produceStringList (section, r, Remaining, list,  InfoSyntaxError, Nestlevel)
       then
       if isVisibleLocalVar(VarName,funcindex)  then
       begin
@@ -15698,7 +15742,7 @@ begin
       else
       Begin
         if    Skip ('=', r, r, InfoSyntaxError)
-          and EvaluateString (r, Remaining, VarValue, InfoSyntaxError)
+          and EvaluateString (r, Remaining, VarValue, InfoSyntaxError, Nestlevel)
         then
         Begin
           if isVisibleLocalVar(VarName,funcindex)  then
@@ -16128,10 +16172,10 @@ begin
   and not scriptstopped
   do
   begin
-
    //writeln(actionresult);
     Remaining := trim (Sektion.strings [i-1]);
     logdatei.log_prog('Script line: '+intToStr(i)+' : '+Remaining,LLDebug2);
+    //logdatei.log_prog('Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' Sektion.NestingLevel: '+IntToStr(Sektion.NestingLevel)+' condition: '+BoolToStr(conditions [ActLevel],true),LLDebug3);
     aktScriptLineNumber := i;
     //writeln(remaining);
     //readln;
@@ -16147,14 +16191,16 @@ begin
         looplist.delete (0);
       End;
 
-      if pos(lowercase(PStatNames^ [tsDefineFunction]),lowercase(Remaining)) >0 then inc(inDefFunc2);
-      if pos(lowercase(PStatNames^ [tsEndFunction]),lowercase(Remaining)) >0 then dec(inDefFunc2);
+      if pos(lowercase(PStatNames^ [tsDefineFunction]),lowercase(Remaining)) >0 then
+        inc(inDefFunc2);
+      //if pos(lowercase(PStatNames^ [tsEndFunction]),lowercase(Remaining)) >0 then dec(inDefFunc2);
       //if (lowercase(Remaining) = lowercase(PStatNames^ [tsEndFunction])) then dec(inDefFunc2);
+      logdatei.log_prog('Parsingprogress: inDefFunc: '+IntToStr(inDefFunc),LLDebug3);
       logdatei.log_prog('Parsingprogress: inDefFunc2: '+IntToStr(inDefFunc2),LLDebug3);
 
       if (Remaining = '') or (Remaining [1] = LineIsCommentChar)
       then
-         (* continue *)
+         // continue
       else if (Remaining [1] = '[') and (inDefFunc2 <= 0) then
          // subsection beginning
       begin
@@ -16170,6 +16216,8 @@ begin
         StatKind := FindKindOfStatement (Expressionstr, SectionSpecifier, call);
         ArbeitsSektion.Name := Expressionstr;
         ArbeitsSektion.SectionKind := StatKind;
+        ArbeitsSektion.NestingLevel:=Nestlevel;
+        logdatei.log_prog('Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' ArbeitsSektion.NestingLevel: '+IntToStr(ArbeitsSektion.NestingLevel)+' condition: '+BoolToStr(conditions [ActLevel],true),LLDebug3);
 
 
         // start switch statement
@@ -19209,6 +19257,7 @@ begin
                      SetLength(definedFunctionArray, definedFunctioncounter);
                      definedFunctionArray[definedFunctioncounter-1] := newDefinedfunction;
                      definedFunctionNames.Append(newDefinedfunction.Name);
+                     dec(inDefFunc2);
                      LogDatei.log('Added defined function:: '+newDefinedfunction.Name+' to the known functions',LLInfo);
                    end
                  end;
