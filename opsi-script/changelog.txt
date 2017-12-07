@@ -16,6 +16,12 @@ opsi-winst/opsi-script (4.12.0.10) stable; urgency=low
   * Support brackets '[]' in Registry keys ; fixes #2825
     * osparser: doRegistryHack: openkey, deletekey in Registry sections
     * osparser: evaluatestring: GetRegistryStringValue*
+  * Encoding Parameter for sections which modify files (patches,Patchtext,...); references #3140
+    * osencoding: LoadFromFileWithEncoding
+    * osparser: doIniFilesPatchesMain: shortcut for utf8
+  * other encoding Problems:
+    * osencoding: reencode: encode by Default to utf8 which is the internal encoding
+    * osencoding: LoadFromFileWithEncoding (more changes)
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 06 Dec 2017:15:00:00 +0200
 

@@ -2998,7 +2998,7 @@ var
       Begin
          ps := LogDatei.LogSIndentPlus (+3) + 'Error: ' + ErrorInfo;
          LogDatei.log (ps, LLError);
-         exit; (* ------------------------------  exit *)
+         exit; // ------------------------------  exit
        End;
     End;
 
@@ -3007,7 +3007,7 @@ var
 
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
-    (* jetzt Arbeitsstruktur erzeugen *)
+    // jetzt Arbeitsstruktur erzeugen
 
     Patchdatei := TuibPatchIniFile.Create;
     //mytxtfile := TStringlist.Create;
@@ -3021,6 +3021,8 @@ var
       Patchdatei.text :=  mytxtfile.Text;
     //Patchdatei.text := reencode(Patchdatei.Text, flag_encoding,dummy,'system');
       //Patchdatei.text := reencode(Patchdatei.Text, flag_encoding,dummy,system);
+      for i:= 0 to Patchdatei.Count -1 do
+        logdatei.log_prog('Loaded: '+Patchdatei.Strings[i],LLDebug);
 
     for i:=1 to Sektion.count
     do
@@ -3080,9 +3082,19 @@ var
     End;
     Logdatei.log('--- ', LLInfo);
     //Patchdatei.Text:= reencode(Patchdatei.Text, 'system',dummy,flag_encoding);
-    mytxtfile.Text := reencode(Patchdatei.Text, 'system',dummy,flag_encoding);
-    mytxtfile.SaveToFile(PatchdateiName);
-    //Patchdatei.SaveToFile (PatchdateiName);
+    if not ((flag_encoding = 'utf8')  or (flag_encoding = 'UTF-8')) then
+    begin
+      //mytxtfile.Text := reencode(Patchdatei.Text, 'utf8',dummy,flag_encoding);
+      //mytxtfile.SaveToFile(PatchdateiName);
+      Patchdatei.SaveToFile (PatchdateiName,flag_encoding);
+    end
+    else
+    begin
+      Patchdatei.SaveToFile (PatchdateiName,'utf8');
+
+    end;
+    for i:= 0 to Patchdatei.Count -1 do
+        logdatei.log_prog('Saved: '+Patchdatei.Strings[i],LLDebug);
     Patchdatei.free; Patchdatei := nil;
   end;
 
@@ -4497,6 +4509,7 @@ var
   output: TXStringList;
   outputlines : integer=0;
   outkey: HKEY;
+  p1,p2,p3,p4 : integer;
 
 
 
@@ -4642,8 +4655,9 @@ begin
            keyOpenCommandExists := true;
 
         SyntaxCheck := false;
-        GetWord (r, key, r, WordDelimiterWhiteSpace);
-        if not((pos('[',key) = 1) and (pos(']',key) = length(key)-1)) then
+        GetWord (r, key, r, [']'], true);
+        key := trim(key)+']';
+        if not((pos('[',key) = 1) and (pos(']',key) = length(key))) then
         begin
           SyntaxCheck := false;
           ErrorInfo := 'Wrong Key Format: Key must be given inside [] - but we got: '+key
@@ -4651,7 +4665,7 @@ begin
         else
         begin
           key := opsiUnquotestr2(trim(key),'[]');
-          if (pos('[',key) = 1) and (pos(']',key) = length(key)-1) then
+          if (pos('[',key) = 1) and (pos(']',key) = length(key)) then
           begin
             SyntaxCheck := false;
             ErrorInfo := 'Wrong Key Format: Have still brackets after removing them: '+key
@@ -4764,8 +4778,14 @@ begin
             if r = '' then SyntaxCheck := true else ErrorInfo := ErrorRemaining;
           End;
           *)
-        GetWord (r, key, r, WordDelimiterWhiteSpace);
-        if not((pos('[',key) = 1) and (pos(']',key) = length(key)-1)) then
+        GetWord (r, key, r, [']'], true);
+        key := trim(key)+']';
+        p1 := pos('[',key);
+        p2 := pos(']',key);
+        p3 := length(key);
+        p4 := length(trim(key));
+
+        if not((pos('[',key) = 1) and (pos(']',key) = length(key))) then
         begin
           SyntaxCheck := false;
           ErrorInfo := 'Wrong Key Format: Key must be given inside [] - but we got: '+key
@@ -4773,7 +4793,7 @@ begin
         else
         begin
           key := opsiUnquotestr2(trim(key),'[]');
-          if (pos('[',key) = 1) and (pos(']',key) = length(key)-1) then
+          if (pos('[',key) = 1) and (pos(']',key) = length(key)) then
           begin
             SyntaxCheck := false;
             ErrorInfo := 'Wrong Key Format: Have still brackets after removing them: '+key
@@ -13683,28 +13703,31 @@ begin
       Begin
         //GetWord (r1, key, r1, [']']);
         LogDatei.log_prog ('GetRegistryStringValue from: '+s1+' Remaining: '+r, LLdebug2);
-        GetWord (s1, key, r, WordDelimiterWhiteSpace);
-        if not((pos('[',key) = 1) and (pos(']',key) = length(key)-1)) then
+        GetWord (s1, key, r1, [']'], true);
+        key := trim(key)+']';
+        if not((pos('[',key) = 1) and (pos(']',key) = length(key))) then
         begin
           SyntaxCheck := false;
-          ErrorInfo := 'Wrong Key Format: Key must be given inside [] - but we got: '+key
+          ErrorInfo := 'Wrong Key Format: Key must be given inside [] - but we got: '+key;
+          LogDatei.log(ErrorInfo,LLError);
         end
         else
         begin
           key := opsiUnquotestr2(trim(key),'[]');
-          if (pos('[',key) = 1) and (pos(']',key) = length(key)-1) then
+          if (pos('[',key) = 1) and (pos(']',key) = length(key)) then
           begin
             SyntaxCheck := false;
-            ErrorInfo := 'Wrong Key Format: Have still brackets after removing them: '+key
+            ErrorInfo := 'Wrong Key Format: Have still brackets after removing them: '+key;
+            LogDatei.log(ErrorInfo,LLError);
           end
           else
           begin
             SyntaxCheck := true;
             GetWord (key, key0, key, ['\']);
             System.delete (key, 1, 1);
-            ValueName := trim(r);
-            // del r for syntaxcheck = true
-            r:='';
+            if Skip (']', r1, r1, InfoSyntaxError) then
+              GetWord (r1, ValueName, r1, WordDelimiterSet1);
+            ValueName := trim(ValueName);
             LogDatei.log_prog ('GetRegistryStringValue from: '+key0+'\'+key+' ValueName: '+ValueName, LLdebug);
             StringResult := '';
             LogDatei.log ('key0 = '+key0, LLdebug2);
@@ -13736,8 +13759,9 @@ begin
       Begin
         //GetWord (r1, key, r1, [']']);
         LogDatei.log_prog ('GetRegistryStringValue from: '+s1+' Remaining: '+r, LLdebug2);
-        GetWord (s1, key, r, WordDelimiterWhiteSpace);
-        if not((pos('[',key) = 1) and (pos(']',key) = length(key)-1)) then
+        GetWord (s1, key, r1, [']'], true);
+        key := trim(key)+']';
+        if not((pos('[',key) = 1) and (pos(']',key) = length(key))) then
         begin
           SyntaxCheck := false;
           ErrorInfo := 'Wrong Key Format: Key must be given inside [] - but we got: '+key
@@ -13745,7 +13769,7 @@ begin
         else
         begin
           key := opsiUnquotestr2(trim(key),'[]');
-          if (pos('[',key) = 1) and (pos(']',key) = length(key)-1) then
+          if (pos('[',key) = 1) and (pos(']',key) = length(key)) then
           begin
             SyntaxCheck := false;
             ErrorInfo := 'Wrong Key Format: Have still brackets after removing them: '+key
@@ -13755,9 +13779,9 @@ begin
             SyntaxCheck := true;
             GetWord (key, key0, key, ['\']);
             System.delete (key, 1, 1);
-            ValueName := trim(r);
-            // del r for syntaxcheck = true
-            r:='';
+            if Skip (']', r1, r1, InfoSyntaxError) then
+              GetWord (r1, ValueName, r1, WordDelimiterSet1);
+            ValueName := trim(ValueName);
             LogDatei.log_prog ('GetRegistryStringValue from: '+key0+'\'+key+' ValueName: '+ValueName, LLdebug);
             StringResult := '';
             if runLoginScripts and (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
