@@ -895,6 +895,7 @@ var
   sign: string;
   filename, uibname, dirname: string;
   len, posi: integer;
+  reversestr : string;
 begin
   // query edit buffer
   if QueryUibeventaccountreport.Active then
@@ -1019,10 +1020,12 @@ begin
   if output = 'pdf' then
   begin
     try
+      // we create the filename by cutting the 'extension' eg. .suport , .psusp , ...
       len := length(suchevent);
-      posi := Pos('.support', suchevent);
+      reversestr := ReverseString(suchevent);
+      posi := Pos('.', reversestr);
       if posi > 0 then
-        len := posi - 1;
+        len := len - posi;
       uibname := Copy(suchevent, 1, len);
       filename := uibname + '_' + repfilevonstr + '_' + repfilebisstr + '.pdf';
       dirname := EditButtonExportDir.Text + PathDelim + uibname;

@@ -1,5 +1,12 @@
 (*
 
+uibtime (4.1.1.21-1) stable; urgency=low
+
+ * uib2erp: createReport: create uibname for filename with reverse search for first dot in event
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 08 Dec 2017 15:00:00 +0000
+
+
 uibtime (4.1.1.20-1) stable; urgency=low
 
  * uib2erp: fix reports without installed components
