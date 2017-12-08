@@ -16,6 +16,7 @@ program winst64;
 {$IFDEF WINDOWS} {$DEFINE GUI} {$ENDIF}
 
 uses
+  lazutf8,
   defaulttranslator, {$IFDEF UNIX} {$IFDEF UseCThreads}
   cthreads, {$ENDIF} {$ENDIF}
   Interfaces, // this includes the LCL widgetset

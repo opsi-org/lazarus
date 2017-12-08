@@ -198,9 +198,10 @@
       <Unit0>
         <Filename Value="winst64.lpr"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="21"/>
-        <CursorPos X="16" Y="29"/>
+        <TopLine Value="9"/>
+        <CursorPos X="11" Y="19"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -676,7 +677,6 @@
       <Unit53>
         <Filename Value="osmain.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <TopLine Value="2006"/>
         <CursorPos X="84" Y="2025"/>
