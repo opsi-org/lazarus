@@ -5,12 +5,37 @@ unit uib2erp;
 interface
 
 uses
-  Classes, SysUtils, sqldb, FileUtil, Forms, Controls, Graphics, Dialogs,
-  ExtCtrls, StdCtrls, PairSplitter, DBGrids, Grids, Buttons, LR_Class, LR_DBSet,
-  {LR_View, LR_E_CSV,}
+  Classes,
+  SysUtils,
+  sqldb,
+  FileUtil,
+  Forms,
+  Controls,
+  Graphics,
+  Dialogs,
+  ExtCtrls,
+  StdCtrls,
+  PairSplitter,
+  DBGrids,
+  Grids,
+  Buttons,
+  LR_Class,
+  LR_DBSet,
+  //LR_View, LR_E_CSV,
   //lrEmailExportFilter,
-  lr_e_pdf, {Spin,} EditBtn, ExtDlgs,
-  DBCtrls, MaskEdit, ComCtrls, DB, Variants, DateUtils, {Math, debug,} Result;
+  lr_e_pdf,
+  //Spin,
+  EditBtn,
+  ExtDlgs,
+  DBCtrls,
+  MaskEdit,
+  ComCtrls,
+  DB,
+  Variants,
+  DateUtils,
+  //Math, debug,
+  strutils,
+  Result;
 
 type
 
