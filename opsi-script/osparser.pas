@@ -4657,6 +4657,10 @@ begin
         SyntaxCheck := false;
         GetWord (r, key, r, [']'], true);
         key := trim(key)+']';
+        p1 := pos('[',key);
+        p2 := pos(']',key);
+        p3 := length(key);
+        p4 := length(trim(key));
         if not((pos('[',key) = 1) and (pos(']',key) = length(key))) then
         begin
           SyntaxCheck := false;

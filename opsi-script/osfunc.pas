@@ -567,6 +567,7 @@ function opsiunquotestr2(s1,s2 : string): string;
 function cmdLineInputDialog(var inputstr : string; const message, default : string; confidential : boolean) : boolean;
 function isValidUtf8String(str:string) : boolean;
 function getFixedUtf8String(str:string) : string;
+function posFromEnd(const partstr : string; const targetstr : string) : integer;
 
 
 
@@ -721,6 +722,13 @@ const
 //recursionlevel: integer = 0;
 
 //function RegDeleteKeyEx; external advapi32 name 'RegDeleteKeyEx';
+
+function posFromEnd(const partstr : string; const targetstr : string) : integer;
+var
+  revstr : string;
+begin
+  revstr : targetstr;
+end;
 
 function isValidUtf8String(str:string) : boolean;
 begin
