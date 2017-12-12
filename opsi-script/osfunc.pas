@@ -20,12 +20,6 @@ unit osfunc;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 510 $
-// $Author: oertel $
-// $Date: 2016-10-21 18:22:41 +0200 (Fr, 21 Okt 2016) $
-//***************************************************************************
 
 interface
 
@@ -567,7 +561,7 @@ function opsiunquotestr2(s1,s2 : string): string;
 function cmdLineInputDialog(var inputstr : string; const message, default : string; confidential : boolean) : boolean;
 function isValidUtf8String(str:string) : boolean;
 function getFixedUtf8String(str:string) : string;
-function posFromEnd(const partstr : string; const targetstr : string) : integer;
+function posFromEnd(const substr : string; const s : string) : integer;
 
 
 
@@ -723,11 +717,17 @@ const
 
 //function RegDeleteKeyEx; external advapi32 name 'RegDeleteKeyEx';
 
-function posFromEnd(const partstr : string; const targetstr : string) : integer;
+function posFromEnd(const substr : string; const s : string) : integer;
 var
   revstr : string;
+  len,posi : integer;
 begin
-  revstr : targetstr;
+  result := 0;
+  revstr := ReverseString(s);
+  len := length(s);
+  posi := Pos(ReverseString(substr), revstr);
+  if posi > 0 then
+    result := len - (posi-1);
 end;
 
 function isValidUtf8String(str:string) : boolean;
@@ -5367,7 +5367,7 @@ begin
       while (i >=0) and not (t[i] in WordDelimiterSet) do
         dec(i);
       // if nothing found get complete string
-      if i = 0 then i:= length(t);
+      if i = -1 then i:= length(t);
     end
     else
     begin

@@ -20,12 +20,6 @@ unit osparser;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 515 $
-// $Author: oertel $
-// $Date: 2016-11-09 15:06:33 +0100 (Mi, 09 Nov 2016) $
-//***************************************************************************
 
 
 interface
@@ -4658,10 +4652,10 @@ begin
         GetWord (r, key, r, [']'], true);
         key := trim(key)+']';
         p1 := pos('[',key);
-        p2 := pos(']',key);
+        p2 := posFromEnd(']',key);
         p3 := length(key);
         p4 := length(trim(key));
-        if not((pos('[',key) = 1) and (pos(']',key) = length(key))) then
+        if not((pos('[',key) = 1) and (posFromEnd(']',key) = length(key))) then
         begin
           SyntaxCheck := false;
           ErrorInfo := 'Wrong Key Format: Key must be given inside [] - but we got: '+key
@@ -4669,7 +4663,7 @@ begin
         else
         begin
           key := opsiUnquotestr2(trim(key),'[]');
-          if (pos('[',key) = 1) and (pos(']',key) = length(key)) then
+          if (pos('[',key) = 1) and (posFromEnd(']',key) = length(key)) then
           begin
             SyntaxCheck := false;
             ErrorInfo := 'Wrong Key Format: Have still brackets after removing them: '+key
@@ -4785,11 +4779,10 @@ begin
         GetWord (r, key, r, [']'], true);
         key := trim(key)+']';
         p1 := pos('[',key);
-        p2 := pos(']',key);
+        p2 := posFromEnd(']',key);
         p3 := length(key);
         p4 := length(trim(key));
-
-        if not((pos('[',key) = 1) and (pos(']',key) = length(key))) then
+        if not((pos('[',key) = 1) and (posFromEnd(']',key) = length(key))) then
         begin
           SyntaxCheck := false;
           ErrorInfo := 'Wrong Key Format: Key must be given inside [] - but we got: '+key
@@ -4797,7 +4790,7 @@ begin
         else
         begin
           key := opsiUnquotestr2(trim(key),'[]');
-          if (pos('[',key) = 1) and (pos(']',key) = length(key)) then
+          if (pos('[',key) = 1) and (posFromEnd(']',key) = length(key)) then
           begin
             SyntaxCheck := false;
             ErrorInfo := 'Wrong Key Format: Have still brackets after removing them: '+key
@@ -11230,6 +11223,7 @@ var
    funcindex : integer = 0;
    funcname : string;
    boolresult : boolean;
+   p1,p2,p3,p4 : integer;
 
 
 
@@ -13709,20 +13703,22 @@ begin
         LogDatei.log_prog ('GetRegistryStringValue from: '+s1+' Remaining: '+r, LLdebug2);
         GetWord (s1, key, r1, [']'], true);
         key := trim(key)+']';
-        if not((pos('[',key) = 1) and (pos(']',key) = length(key))) then
+        p1 := pos('[',key);
+        p2 := posFromEnd(']',key);
+        p3 := length(key);
+        p4 := length(trim(key));
+        if not((pos('[',key) = 1) and (posFromEnd(']',key) = length(key))) then
         begin
           SyntaxCheck := false;
-          ErrorInfo := 'Wrong Key Format: Key must be given inside [] - but we got: '+key;
-          LogDatei.log(ErrorInfo,LLError);
+          ErrorInfo := 'Wrong Key Format: Key must be given inside [] - but we got: '+key
         end
         else
         begin
           key := opsiUnquotestr2(trim(key),'[]');
-          if (pos('[',key) = 1) and (pos(']',key) = length(key)) then
+          if (pos('[',key) = 1) and (posFromEnd(']',key) = length(key)) then
           begin
             SyntaxCheck := false;
-            ErrorInfo := 'Wrong Key Format: Have still brackets after removing them: '+key;
-            LogDatei.log(ErrorInfo,LLError);
+            ErrorInfo := 'Wrong Key Format: Have still brackets after removing them: '+key
           end
           else
           begin
@@ -13730,7 +13726,9 @@ begin
             GetWord (key, key0, key, ['\']);
             System.delete (key, 1, 1);
             if Skip (']', r1, r1, InfoSyntaxError) then
-              GetWord (r1, ValueName, r1, WordDelimiterSet1);
+              ValueName := r1;
+              //GetWord (r1, ValueName, r1, [''], true);
+              //GetWord (r1, ValueName, r1, WordDelimiterSet1);
             ValueName := trim(ValueName);
             LogDatei.log_prog ('GetRegistryStringValue from: '+key0+'\'+key+' ValueName: '+ValueName, LLdebug);
             StringResult := '';
@@ -13765,7 +13763,11 @@ begin
         LogDatei.log_prog ('GetRegistryStringValue from: '+s1+' Remaining: '+r, LLdebug2);
         GetWord (s1, key, r1, [']'], true);
         key := trim(key)+']';
-        if not((pos('[',key) = 1) and (pos(']',key) = length(key))) then
+        p1 := pos('[',key);
+        p2 := posFromEnd(']',key);
+        p3 := length(key);
+        p4 := length(trim(key));
+        if not((pos('[',key) = 1) and (posFromEnd(']',key) = length(key))) then
         begin
           SyntaxCheck := false;
           ErrorInfo := 'Wrong Key Format: Key must be given inside [] - but we got: '+key
@@ -13773,7 +13775,7 @@ begin
         else
         begin
           key := opsiUnquotestr2(trim(key),'[]');
-          if (pos('[',key) = 1) and (pos(']',key) = length(key)) then
+          if (pos('[',key) = 1) and (posFromEnd(']',key) = length(key)) then
           begin
             SyntaxCheck := false;
             ErrorInfo := 'Wrong Key Format: Have still brackets after removing them: '+key
@@ -13784,7 +13786,9 @@ begin
             GetWord (key, key0, key, ['\']);
             System.delete (key, 1, 1);
             if Skip (']', r1, r1, InfoSyntaxError) then
-              GetWord (r1, ValueName, r1, WordDelimiterSet1);
+              ValueName := r1;
+              //GetWord (r1, ValueName, r1, [''], true);
+              //GetWord (r1, ValueName, r1, WordDelimiterSet1);
             ValueName := trim(ValueName);
             LogDatei.log_prog ('GetRegistryStringValue from: '+key0+'\'+key+' ValueName: '+ValueName, LLdebug);
             StringResult := '';
