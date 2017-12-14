@@ -599,6 +599,7 @@ var
   Script : TuibInstScript;
   scriptsuspendstate : boolean;
   scriptstopped : boolean;
+  inDefFuncLevel : integer = 0;
 
 
 
@@ -5723,6 +5724,7 @@ function TuibInstScript.doOpsiServiceCall
       then
         line := trim(lines [lineno - 1]);
     end;
+    logdatei.log_prog('Script line: '+intToStr(lineno)+' : '+line,LLDebug2);
    end;
 
 
@@ -6557,7 +6559,7 @@ begin
                         if GetString (r, param, r, errorInfo, true)
                         then
                         begin
-                          LogDatei.log ('Parsing: getparam: ' + param ,LLdebug2);
+                          LogDatei.log_prog ('Parsing: getparam: ' + param ,LLdebug2);
                           paramList.Add(param);
                         end
                         else
@@ -16236,7 +16238,8 @@ begin
       if (Remaining = '') or (Remaining [1] = LineIsCommentChar)
       then
          // continue
-      else if (Remaining [1] = '[') and (inDefFunc2 <= 0) then
+      //else if (Remaining [1] = '[') and (inDefFunc2 <= 0) then
+      else if (Remaining [1] = '[')  then
          // subsection beginning
       begin
          continue := false;
@@ -16522,6 +16525,15 @@ begin
                                          StartlineOfSection, true, true, false);
               End;
               *)
+
+              if (ArbeitsSektion.count = 0) and (inDefFuncLevel > 0)
+              then
+              begin
+                // local function
+                Logdatei.log('Looking for section: '+ Expressionstr +' in local function .',LLDebug3);
+                Sektion.GetSectionLines (Expressionstr, TXStringList (ArbeitsSektion),
+                                  StartlineOfSection, true, true, false);
+              end;
 
               if ArbeitsSektion.count = 0
               then
@@ -19263,7 +19275,12 @@ begin
                        StatKind := FindKindOfStatement (Expressionstr, SectionSpecifier, call);
                        if StatKind = tsDefineFunction then inc(inDefFunc);
                        if StatKind = tsEndFunction then dec(inDefFunc);
-                       newDefinedfunction.addContent(myline);
+                       // Line with tsEndFunction should not be part of the content
+                       if inDefFunc > 0 then
+                       begin
+                         newDefinedfunction.addContent(myline);
+                         LogDatei.log_prog('inDefFunc: '+inttostr(inDefFunc)+' add line: '+myline,LLDebug3);
+                       end;
                        (*
                        begin
                          endofDefFuncFound := true;
@@ -19292,7 +19309,7 @@ begin
                      SetLength(definedFunctionArray, definedFunctioncounter);
                      definedFunctionArray[definedFunctioncounter-1] := newDefinedfunction;
                      definedFunctionNames.Append(newDefinedfunction.Name);
-                     dec(inDefFunc2);
+                     //dec(inDefFunc2);
                      LogDatei.log('Added defined function:: '+newDefinedfunction.Name+' to the known functions',LLInfo);
                    end
                  end;
@@ -19798,6 +19815,14 @@ begin
     FConstList.add ('%opsiLogDir%');
     {$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\log' ); {$ENDIF WINDOWS}
     {$IFDEF LINUX}FConstValuesList.add ( '/var/log/opsi-client-agent/opsi-script' ); {$ENDIF LINUX}
+
+    FConstList.add ('%opsiapplog%');
+    {$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\applog' ); {$ENDIF WINDOWS}
+    {$IFDEF LINUX}FConstValuesList.add ( '~/opsi.org/applog' ); {$ENDIF LINUX}
+
+    FConstList.add ('%opsidata%');
+    {$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\data' ); {$ENDIF WINDOWS}
+    {$IFDEF LINUX}FConstValuesList.add ( '/var/lib/opsi-client-agent' ); {$ENDIF LINUX}
 
     {$IFDEF WINDOWS}
     FConstList.add('%opsiScriptHelperPath%');

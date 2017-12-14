@@ -5,6 +5,14 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 ##################################################################
 
+opsi-winst/opsi-script (4.12.0.12) stable; urgency=low
+
+  * fix sections in local functions: osparser: doAktionen:
+  * New constant %opsidata%, %opsiapplog%
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 13 Dec 2017:15:00:00 +0200
+
+
 opsi-winst/opsi-script (4.12.0.11) stable; urgency=low
 
   * Additional fix for Support brackets '[]' in Registry keys
