@@ -41,6 +41,7 @@ procedure logSupportedEncodings;
 
 function stringListLoadUtf8FromFile(filename: string): TStringList;
 function stringListLoadUnicodeFromList(inlist: Tstringlist): TStringList;
+function isSupportedEncoding(testEncoding : string) : boolean;
 
 
 
@@ -59,6 +60,15 @@ var
   additionalEncoding: string;
 
 
+function isSupportedEncoding(testEncoding : string) : boolean;
+begin
+  result := false;
+  if supportedEncodings.IndexOf(testEncoding) > -1 then result := true;
+   // logdatei.log_prog('Found or given Encoding: ' + testEncoding +
+   //   ' is not supported.', LLWarning);
+end;
+
+
   function stringListLoadUtf8FromFile(filename: string): TStringList;
   var
     fCES: TCharEncStream;
@@ -72,6 +82,22 @@ var
     Result.Text := fCES.UTF8Text;
     fCES.Free;
   end;
+
+  function stringListLoadUtf16leFromFile(filename: string): TStringList;
+  var
+    fCES: TCharEncStream;
+  begin
+    Result := TStringList.Create;
+    fCES := TCharEncStream.Create;
+    fCES.Reset;
+    fCES.UniStreamType:=ufUtf16le;
+    fileName := ExpandFileName(fileName);
+    fCES.LoadFromFile(fileName);
+    fCES.ANSIEnc := GetSystemEncoding;
+    Result.Text := fCES.UTF8Text;
+    fCES.Free;
+  end;
+
 
   function stringListLoadUnicodeFromList(inlist: Tstringlist): TStringList;
   var
@@ -187,7 +213,7 @@ end;
 function reencode(const sourceText: string; const sourceEncoding: string;
   var usedSourceEncoding: string): string;
 begin
-  Result := reencode(sourceText, sourceEncoding, usedSourceEncoding,DefaultEncoding);
+  Result := reencode(sourceText, sourceEncoding, usedSourceEncoding,'utf8');
 end;
 
 function reencode(const sourceText: string; const sourceEncoding: string;
@@ -275,7 +301,9 @@ begin
     end;
     logdatei.log_prog('Reencoding from ' + usedSourceEncoding +
       ' to ' + destEncoding, LLDebug2);
-  end;
+  end
+  else logdatei.log_prog('Nothing to do: Reencoding from ' + usedSourceEncoding +
+      ' to ' + destEncoding, LLDebug2);
 end;
 
 function LoadFromFileWithEncoding(filename, enc : string): TStringlist;
@@ -285,15 +313,30 @@ var
   encline : String;
 begin
   Result := Tstringlist.Create;
-  AssignFile(txtfile,filename);
-  Reset(txtfile);
-  while not eof(txtfile) do
+  if (enc = 'ucs2be') or (enc = 'UCS-2BE')
+     or (enc = 'ucs2le') or (enc = 'UCS-2LE')
+     or (enc = 'unicode')
+  then result.AddStrings(stringListLoadUtf8FromFile(filename))
+  else if (enc = 'utf16le')
+  then result.AddStrings(stringListLoadUtf16leFromFile(filename))
+  else if ((enc = 'utf8') or (enc = 'UTF-8'))
+  then
   begin
-    ReadLn(txtfile,rawline);
-    encline := reencode(rawline, enc);
-    result.Append(encline);
+    // utf8 is our internal code - nothing to do
+    result.LoadFromFile(filename);
+  end
+  else
+  begin
+    AssignFile(txtfile,filename);
+    Reset(txtfile);
+    while not eof(txtfile) do
+    begin
+      ReadLn(txtfile,rawline);
+      encline := reencode(rawline, enc);
+      result.Append(encline);
+    end;
+    CloseFile(txtfile);
   end;
-  CloseFile(txtfile);
 end;
 
 procedure initEncoding;

@@ -5,6 +5,64 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 ##################################################################
 
+opsi-winst/opsi-script (4.12.0.12) stable; urgency=low
+
+  * fix sections in local functions: osparser: doAktionen:
+  * New constant %opsidata%, %opsiapplog%
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 13 Dec 2017:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.12.0.11) stable; urgency=low
+
+  * Additional fix for Support brackets '[]' in Registry keys
+    * osfunc: function posFromEnd(const substr : string; const s : string) : integer;
+    * osparser: doRegistryHack: openkey, deletekey in Registry sections
+    * osparser: evaluatestring: GetRegistryStringValue*
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 12 Dec 2017:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.12.0.10) stable; urgency=low
+
+  * osdefinedfunctions: TOsDefinedFunction.call: free local Vars on leaving the function; fixes #3230
+  * Fix call of defined functions inside if statement ; fixes #3232
+    * osdefinedfunctions: call: new param Nestlevel
+    * osparser: evaluatestring: new param Nestlevel  (to use while call defined function)
+    * osparser: producestringlist: new param Nestlevel  (to use while call defined function)
+    * osparser: doSetVar: new param Nestlevel  (to use while call evaluatestring/producestringlist)
+  * Support brackets '[]' in Registry keys ; fixes #2825
+    * osparser: doRegistryHack: openkey, deletekey in Registry sections
+    * osparser: evaluatestring: GetRegistryStringValue*
+  * Encoding Parameter for sections which modify files (patches,Patchtext,...); references #3140
+    * osencoding: LoadFromFileWithEncoding
+    * osparser: doIniFilesPatchesMain: shortcut for utf8
+  * other encoding Problems:
+    * osencoding: reencode: encode by Default to utf8 which is the internal encoding
+    * osencoding: LoadFromFileWithEncoding (more changes)
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 06 Dec 2017:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.0.9) stable; urgency=low
+
+  * osmain: log command line parameter of opsi-script call
+  * osmain: startprogrammodes: fix for /productid (bug created with /logproductid)
+  * osmain: 'Wait for ending' while running now log level 8
+  * product sorting logging moved to log_prog
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 06 Nov 2017:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.12.0.8) stable; urgency=low
+
+  * start to work on new modifier '/encoding <encoding>' for patches sections
+  * osparser: fix Message 'ReportMessages' changed to 'ScriptErrorMessages'
+  * osparser: fix Message 'ScriptErrorMessages' 'is set to' true/false was wrong
+  * osparser:  tsImportLib: replace constants
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 06 Nov 2017:15:00:00 +0200
+
+
 opsi-winst/opsi-script (4.12.0.7) stable; urgency=low
 
   * default loglevel is now 7 (was 6) (osconf)

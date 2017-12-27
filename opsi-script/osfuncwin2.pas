@@ -2341,4 +2341,7 @@ begin
     end;
 end;
 
+//https://support.microsoft.com/en-us/help/157234/how-to-deal-with-localized-and-renamed-user-and-group-names
+//https://social.technet.microsoft.com/wiki/contents/articles/13813.localized-names-for-administrator-account-in-windows.aspx
+
 end.

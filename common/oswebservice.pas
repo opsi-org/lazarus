@@ -1842,7 +1842,7 @@ begin
 
       testResult := IdHTTP.ResponseText;
       cookieVal := IdHTTP.Response.RawHeaders.Values['Set-Cookie'];
-      //LogDatei.log('JSON retrieveJSONObject: after IdHTTP', LLDebug2);
+      LogDatei.log_prog('JSON retrieveJSONObject: after IdHTTP', LLDebug2);
       posColon := -1;
       if cookieVal <> '' then
         posColon := pos(';', cookieVal);
@@ -1852,7 +1852,7 @@ begin
       else
         FSessionId := '';
 
-      //LogDatei.log('JSON retrieveJSONObject: after cookie', LLDebug2);
+      LogDatei.log_prog('JSON retrieveJSONObject: after cookie', LLDebug2);
     except
       on E: Exception do
       begin
@@ -1866,10 +1866,10 @@ begin
     if not ErrorOccured then
     begin
       mymemorystream.Position := 0;
-      //LogDatei.log('JSON retrieveJSONObject: memorystream reseted', LLDebug2);
+      LogDatei.log_prog('JSON retrieveJSONObject: memorystream reseted', LLDebug2);
       resultLines.Clear;
       ResultLines.LoadFromStream(mymemorystream);
-      //LogDatei.log('JSON retrieveJSONObject: resultlines loaded', LLDebug2);
+      LogDatei.log_prog('JSON retrieveJSONObject: resultlines loaded', LLDebug2);
       // should be one line
 
       if ResultLines.Count < 1 then
@@ -1883,7 +1883,7 @@ begin
       else
       begin
         Result := SO(ResultLines.Strings[0]);
-        //LogDatei.log('JSON retrieveJSONObject: result loaded', LLDebug2);
+        LogDatei.log_prog('JSON retrieveJSONObject: result loaded', LLDebug2);
         if Result = nil then
           LogDatei.log('JSON retrieveJSONObject: result nil', LLError)
         else
@@ -3694,11 +3694,11 @@ begin
       for i := 0 to productmaps.Count - 1 do
       begin
         Result.add(productmaps.Names[i]);
-        LogDatei.log('Product : ' + productmaps.Names[i], LLDebug);
+        LogDatei.log('Product : ' + productmaps.Names[i], LLDebug2);
         testresult := Result.Text;
       end;
       FSortByServer := True;
-      LogDatei.log('Product sequence calculated by opsi-server', LLDebug);
+      LogDatei.log('Product sequence calculated by opsi-server', LLDebug2);
     end
   except
     FSortByServer := False;
@@ -3935,7 +3935,7 @@ begin
   //productEntry := FjsonExecutioner.retrieveJSONObject(omc);
   //omc := TOpsiMethodCall.create ('productOnClient_getObjects', ['','{"actionRequest": ["setup", "uninstall", "custom", "always", "update"], "clientId": "'+actualClient+'", "productType": "LocalbootProduct"}']);
   try
-    logdatei.log('Starting sorting POC ', LLinfo);
+    logdatei.log_prog('Starting sorting POC ', LLinfo);
     // get sorted productId list
     omc := TOpsiMethodCall.Create('getProductOrdering', [FDepotId]);
     jo := FjsonExecutioner.retrieveJSONObject(omc);
@@ -3947,7 +3947,7 @@ begin
     for i := 0 to sort_array.Length - 1 do
     begin
       sortlist.Append(sort_array.S[i]);
-      logdatei.log('Sorted productId: ' + sortlist.Strings[i] + ' at pos: ' +
+      logdatei.log_prog('Sorted productId: ' + sortlist.Strings[i] + ' at pos: ' +
         IntToStr(i), LLDebug2);
     end;
     // get unsorted poc list
@@ -3980,17 +3980,17 @@ begin
           //result.Values[productEntry.get('productId').toString] :=productEntry.get('actionRequest').toString;
           FProductStates.Add(productEntry.S['productId'] + '=' +
             productEntry.S['installationStatus']);
-          LogDatei.log('action entry : ' + productEntry.S['productId'] +
+          LogDatei.log_prog('action entry : ' + productEntry.S['productId'] +
             '=' + productEntry.S['actionRequest'], LLDebug2);
-          LogDatei.log('state entry : ' + productEntry.S['productId'] +
+          LogDatei.log_prog('state entry : ' + productEntry.S['productId'] +
             '=' + productEntry.S['installationStatus'], LLDebug2);
-          logdatei.log('found POC entry with productId: ' + sortlist.Strings[i] +
+          logdatei.log_prog('found POC entry with productId: ' + sortlist.Strings[i] +
             ' with pos: ' + IntToStr(i) + ' / ' + IntToStr(k - 1), LLDebug2);
         end
         else
-          logdatei.log('No POC entry with productId: ' + sortlist.Strings[i], LLDebug2);
+          logdatei.log_prog('No POC entry with productId: ' + sortlist.Strings[i], LLDebug2);
       end;
-      logdatei.log('Finished sorting POC  ', LLinfo);
+      logdatei.log_prog('Finished sorting POC  ', LLinfo);
     (*
       for i := 0 to resultList.Count - 1 do
       begin
@@ -4031,9 +4031,9 @@ begin
         //result.Values[productEntry.get('productId').toString] :=productEntry.get('actionRequest').toString;
         FProductStates.Add(productEntry.S['productId'] + '=' +
           productEntry.S['installationStatus']);
-        LogDatei.log('action entry : ' + productEntry.S['productId'] +
+        LogDatei.log_prog('action entry : ' + productEntry.S['productId'] +
           '=' + productEntry.S['actionRequest'], LLDebug);
-        LogDatei.log('state entry : ' + productEntry.S['productId'] +
+        LogDatei.log_prog('state entry : ' + productEntry.S['productId'] +
           '=' + productEntry.S['installationStatus'], LLDebug);
       end;
       testresult := Result.Text;
@@ -4042,7 +4042,7 @@ begin
     omc := TOpsiMethodCall.Create('backend_setOptions',
       ['{"processProductOnClientSequence": false}']);
     productEntry := FjsonExecutioner.retrieveJSONObject(omc);
-    logdatei.log('Finished fetching unsorted POC list', LLinfo);
+    logdatei.log_prog('Finished fetching unsorted POC list', LLinfo);
   end;
   omc.Free;
 end;
@@ -4168,7 +4168,7 @@ begin
   // 4.11.6.1 24.5.2016: sorting by server broken
   //omc := TOpsiMethodCall.Create('backend_setOptions',
   //  ['{"processProductOnClientSequence": true}']);
-  logdatei.log('Starting sorting POC : productOnClient_getobject_actualclient', LLinfo);
+  logdatei.log_prog('Starting sorting POC : productOnClient_getobject_actualclient', LLinfo);
   // getting sorted productIdList
   omc := TOpsiMethodCall.Create('getProductOrdering', [FDepotId]);
   jo := FjsonExecutioner.retrieveJSONObject(omc);
@@ -4180,7 +4180,7 @@ begin
   for i := 0 to sort_array.Length - 1 do
   begin
     sortlist.Append(sort_array.S[i]);
-    logdatei.log('Sorted productId: ' + sortlist.Strings[i] + ' at pos: ' +
+    logdatei.log_prog('Sorted productId: ' + sortlist.Strings[i] + ' at pos: ' +
       IntToStr(i), LLDebug2);
   end;
   //end;
@@ -4203,13 +4203,13 @@ begin
     if found then
     begin
       sort_array.Add(poc_array.O[k - 1]);
-      logdatei.log('found POC entry with productId: ' + sortlist.Strings[i] +
+      logdatei.log_prog('found POC entry with productId: ' + sortlist.Strings[i] +
         ' with pos: ' + IntToStr(i) + ' / ' + IntToStr(k - 1), LLDebug2);
     end
     else
       logdatei.log('No POC entry with productId: ' + sortlist.Strings[i], LLDebug2);
   end;
-  logdatei.log('Finished sorting POC ', LLinfo);
+  logdatei.log_prog('Finished sorting POC ', LLinfo);
   FProductOnClient_objects := sort_array;
   // switch off product sorting again
   //omc := TOpsiMethodCall.Create('backend_setOptions',

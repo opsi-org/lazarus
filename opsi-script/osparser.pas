@@ -20,12 +20,6 @@ unit osparser;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 515 $
-// $Author: oertel $
-// $Date: 2016-11-09 15:06:33 +0100 (Mi, 09 Nov 2016) $
-//***************************************************************************
 
 
 interface
@@ -340,15 +334,27 @@ public
 
   (* Skriptvariable setzen, Ausdruecke analysieren und auswerten *)
   function doSetVar (const section: TuibIniScript; const Expressionstr : String;
-                     var Remaining : String; var InfoSyntaxError : String) : Boolean;
+                     var Remaining : String; var InfoSyntaxError : String) : Boolean; overload;
+
+  function doSetVar (const section: TuibIniScript; const Expressionstr : String;
+                   var Remaining : String; var InfoSyntaxError : String;
+                   var NestLevel : integer) : Boolean; overload;
 
   function produceStringList
     (const section: TuibIniScript; const s0 : String; var Remaining: String;
-     var list : TXStringlist; var InfoSyntaxError : String ) : Boolean;
+     var list : TXStringlist; var InfoSyntaxError : String ) : Boolean; overload;
+
+  function produceStringList
+    (const section: TuibIniScript; const s0 : String; var Remaining: String;
+     var list : TXStringlist; var InfoSyntaxError : String; var NestLevel : integer) : Boolean; overload;
 
   function EvaluateString
     (const s0 : String; var Remaining: String;
-     var StringResult : String; var InfoSyntaxError : String ) : Boolean;
+     var StringResult : String; var InfoSyntaxError : String ) : Boolean; overload;
+
+  function EvaluateString
+    (const s0 : String; var Remaining: String;
+     var StringResult : String; var InfoSyntaxError : String; var NestLevel : integer ) : Boolean; overload;
 
   function EvaluateBoolean (Input : String; var Remaining : String;
      var BooleanResult : Boolean; NestingLevel : Integer; var InfoSyntaxError : String) : Boolean;
@@ -581,6 +587,7 @@ const
 var
   PStatNames : TPStatementNames;
   flag_all_ntuser, flag_ntuser : boolean;
+  flag_encoding : string = 'system';
   runLoginScripts: boolean;
   allLoginScripts : boolean;
   inUsercontext: boolean;
@@ -592,6 +599,7 @@ var
   Script : TuibInstScript;
   scriptsuspendstate : boolean;
   scriptstopped : boolean;
+  inDefFuncLevel : integer = 0;
 
 
 
@@ -2955,6 +2963,8 @@ var
   procedure doInifilePatchesMain;
   var
   i: Integer=0;
+  dummy : string;
+  mytxtfile : Tstringlist;
   begin
     //ps := LogDatei.LogSIndentPlus (+3) + 'FILE ' +  PatchdateiName;
     //LogDatei.log (ps, LevelWarnings);
@@ -2983,7 +2993,7 @@ var
       Begin
          ps := LogDatei.LogSIndentPlus (+3) + 'Error: ' + ErrorInfo;
          LogDatei.log (ps, LLError);
-         exit; (* ------------------------------  exit *)
+         exit; // ------------------------------  exit
        End;
     End;
 
@@ -2992,15 +3002,22 @@ var
 
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
-    (* jetzt Arbeitsstruktur erzeugen *)
+    // jetzt Arbeitsstruktur erzeugen
 
     Patchdatei := TuibPatchIniFile.Create;
+    //mytxtfile := TStringlist.Create;
+
 
     Patchdatei.clear;
     if FileExists (PatchdateiName)
     then
-      Patchdatei.LoadFromFile (ExpandFileName(PatchdateiName));
-      Patchdatei.Text:= reencode(Patchdatei.Text, 'system');
+      mytxtfile := LoadFromFileWithEncoding(ExpandFileName(PatchdateiName),flag_encoding);
+      //Patchdatei.LoadFromFile  (ExpandFileName(PatchdateiName));
+      Patchdatei.text :=  mytxtfile.Text;
+    //Patchdatei.text := reencode(Patchdatei.Text, flag_encoding,dummy,'system');
+      //Patchdatei.text := reencode(Patchdatei.Text, flag_encoding,dummy,system);
+      for i:= 0 to Patchdatei.Count -1 do
+        logdatei.log_prog('Loaded: '+Patchdatei.Strings[i],LLDebug);
 
     for i:=1 to Sektion.count
     do
@@ -3059,7 +3076,20 @@ var
       End;
     End;
     Logdatei.log('--- ', LLInfo);
-    Patchdatei.SaveToFile (PatchdateiName);
+    //Patchdatei.Text:= reencode(Patchdatei.Text, 'system',dummy,flag_encoding);
+    if not ((flag_encoding = 'utf8')  or (flag_encoding = 'UTF-8')) then
+    begin
+      //mytxtfile.Text := reencode(Patchdatei.Text, 'utf8',dummy,flag_encoding);
+      //mytxtfile.SaveToFile(PatchdateiName);
+      Patchdatei.SaveToFile (PatchdateiName,flag_encoding);
+    end
+    else
+    begin
+      Patchdatei.SaveToFile (PatchdateiName,'utf8');
+
+    end;
+    for i:= 0 to Patchdatei.Count -1 do
+        logdatei.log_prog('Saved: '+Patchdatei.Strings[i],LLDebug);
     Patchdatei.free; Patchdatei := nil;
   end;
 
@@ -3069,9 +3099,7 @@ begin
 
   if not initSection (Sektion, OldNumberOfErrors, OldNumberOfWarnings) then exit;
 
-  if (lowercase (PatchParameter) = lowercase (Parameter_AllNTUserProfiles))
-  or flag_all_ntuser
-  then
+  if flag_all_ntuser then
   Begin
     flag_all_ntuser := false;
     ProfileList := getProfilesDirList;
@@ -4476,6 +4504,7 @@ var
   output: TXStringList;
   outputlines : integer=0;
   outkey: HKEY;
+  p1,p2,p3,p4 : integer;
 
 
 
@@ -4614,13 +4643,34 @@ begin
       if LowerCase (Expressionstr) = LowerCase ('OpenKey')
       then
       Begin
-        if keyOpenCommandExists (* i.e., existed already *)
+        if keyOpenCommandExists // i.e., existed already
         then
            //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1
         else
            keyOpenCommandExists := true;
 
         SyntaxCheck := false;
+        GetWord (r, key, r, [']'], true);
+        key := trim(key)+']';
+        p1 := pos('[',key);
+        p2 := posFromEnd(']',key);
+        p3 := length(key);
+        p4 := length(trim(key));
+        if not((pos('[',key) = 1) and (posFromEnd(']',key) = length(key))) then
+        begin
+          SyntaxCheck := false;
+          ErrorInfo := 'Wrong Key Format: Key must be given inside [] - but we got: '+key
+        end
+        else
+        begin
+          key := opsiUnquotestr2(trim(key),'[]');
+          if (pos('[',key) = 1) and (posFromEnd(']',key) = length(key)) then
+          begin
+            SyntaxCheck := false;
+            ErrorInfo := 'Wrong Key Format: Have still brackets after removing them: '+key
+          end
+          else
+        (*
         if Skip ('[', r, r, ErrorInfo)
         then
         Begin
@@ -4629,7 +4679,9 @@ begin
           then
           Begin
             if r = '' then SyntaxCheck := true else ErrorInfo := ErrorRemaining;
-
+        *)
+          begin
+            SyntaxCheck := true;
             key_completepath := key;
             LogDatei.log('Key is: '+key, LLdebug);
             GetWord (key, key0, key, ['\']);
@@ -4713,7 +4765,8 @@ begin
       then
       Begin
         SyntaxCheck := false;
-        SyntaxCheck := true;
+        //SyntaxCheck := true;
+        (*
         if Skip ('[', r, r, ErrorInfo)
         then
         Begin
@@ -4723,55 +4776,78 @@ begin
           Begin
             if r = '' then SyntaxCheck := true else ErrorInfo := ErrorRemaining;
           End;
-
-          key_completepath := key;
-          // extract HKEY
-          GetWord (key_completepath, key0, key, ['\']);
-          system.delete(key,1,1);
-
-          if (flag_all_ntuser or flag_ntuser or runLoginScripts) and (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
+          *)
+        GetWord (r, key, r, [']'], true);
+        key := trim(key)+']';
+        p1 := pos('[',key);
+        p2 := posFromEnd(']',key);
+        p3 := length(key);
+        p4 := length(trim(key));
+        if not((pos('[',key) = 1) and (posFromEnd(']',key) = length(key))) then
+        begin
+          SyntaxCheck := false;
+          ErrorInfo := 'Wrong Key Format: Key must be given inside [] - but we got: '+key
+        end
+        else
+        begin
+          key := opsiUnquotestr2(trim(key),'[]');
+          if (pos('[',key) = 1) and (posFromEnd(']',key) = length(key)) then
           begin
-            // remove HKCU from the beginning
-            key := key;
-            LogDatei.log ('Running loginscripts: ignoring key0 : '+key0 + ', using only key : '+key, LLdebug2);
-          end
-          else  key := key_completepath;
-          GetWord (key, key0, key, ['\']);
-          if GetHKEY(key0, outkey) then
-          begin
-             LogDatei.log ('key0 : '+key0+' is a valid base key and we will use it',LLDebug2);
-             key := key_completepath;
+            SyntaxCheck := false;
+            ErrorInfo := 'Wrong Key Format: Have still brackets after removing them: '+key
           end
           else
           begin
-            LogDatei.log('Key0 is: '+key0+ ' Key is: '+key, LLdebug2);
-            LogDatei.log ('key0 : '+key0+' is not a valid base key and we will praefix it with: '+basekey,LLDebug2);
-            // insert RegParameter before key
-            if basekey <> '' then
-            Begin
-              if basekey [length (basekey)] = '\' then basekey := copy(basekey,1,length(basekey)-1);
-              key_completepath := basekey;
-              LogDatei.log('key_completepath1 : '+key_completepath, LLdebug3);
-              if (trim(key0) <> '') then
-              begin
-                if key0[1] = '\' then key0 := copy(key0,2,length(key0));
-                if key0 [length (key0)] = '\' then key0 := copy(key0,1,length(key0)-1);
-                key_completepath := key_completepath + '\' + key0;
-                LogDatei.log('key_completepath2 : '+key_completepath, LLdebug3);
-              end;
-              if (trim(key) <> '') then
-              begin
-                if key[1] = '\' then key := copy(key,2,length(key));
-                key_completepath := key_completepath + '\' + key;
-                LogDatei.log('key_completepath3 : '+key_completepath, LLdebug3);
-              end;
-            End;
-          end;
+            SyntaxCheck := true;
+            key_completepath := key;
+            // extract HKEY
+            GetWord (key_completepath, key0, key, ['\']);
+            system.delete(key,1,1);
 
-          // extract HKEY
-          GetWord (key_completepath, key0, key, ['\']);
-          system.delete(key,1,1);
-          LogDatei.log('We will open Key : '+key_completepath, LLdebug2);
+            if (flag_all_ntuser or flag_ntuser or runLoginScripts) and (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
+            begin
+              // remove HKCU from the beginning
+              key := key;
+              LogDatei.log ('Running loginscripts: ignoring key0 : '+key0 + ', using only key : '+key, LLdebug2);
+            end
+            else  key := key_completepath;
+            GetWord (key, key0, key, ['\']);
+            if GetHKEY(key0, outkey) then
+            begin
+               LogDatei.log ('key0 : '+key0+' is a valid base key and we will use it',LLDebug2);
+               key := key_completepath;
+            end
+            else
+            begin
+              LogDatei.log('Key0 is: '+key0+ ' Key is: '+key, LLdebug2);
+              LogDatei.log ('key0 : '+key0+' is not a valid base key and we will praefix it with: '+basekey,LLDebug2);
+              // insert RegParameter before key
+              if basekey <> '' then
+              Begin
+                if basekey [length (basekey)] = '\' then basekey := copy(basekey,1,length(basekey)-1);
+                key_completepath := basekey;
+                LogDatei.log('key_completepath1 : '+key_completepath, LLdebug3);
+                if (trim(key0) <> '') then
+                begin
+                  if key0[1] = '\' then key0 := copy(key0,2,length(key0));
+                  if key0 [length (key0)] = '\' then key0 := copy(key0,1,length(key0)-1);
+                  key_completepath := key_completepath + '\' + key0;
+                  LogDatei.log('key_completepath2 : '+key_completepath, LLdebug3);
+                end;
+                if (trim(key) <> '') then
+                begin
+                  if key[1] = '\' then key := copy(key,2,length(key));
+                  key_completepath := key_completepath + '\' + key;
+                  LogDatei.log('key_completepath3 : '+key_completepath, LLdebug3);
+                end;
+              End;
+            end;
+
+            // extract HKEY
+            GetWord (key_completepath, key0, key, ['\']);
+            system.delete(key,1,1);
+            LogDatei.log('We will open Key : '+key_completepath, LLdebug2);
+          end;
         end;
 
         if Is64BitSystem and (GetNTVersionMajor < 6) and regist.myforce64 then
@@ -5648,6 +5724,7 @@ function TuibInstScript.doOpsiServiceCall
       then
         line := trim(lines [lineno - 1]);
     end;
+    logdatei.log_prog('Script line: '+intToStr(lineno)+' : '+line,LLDebug2);
    end;
 
 
@@ -6482,7 +6559,7 @@ begin
                         if GetString (r, param, r, errorInfo, true)
                         then
                         begin
-                          LogDatei.log ('Parsing: getparam: ' + param ,LLdebug2);
+                          LogDatei.log_prog ('Parsing: getparam: ' + param ,LLdebug2);
                           paramList.Add(param);
                         end
                         else
@@ -9223,13 +9300,25 @@ begin
     if not threaded then deleteTempBatFiles(tempfilename);
 end;
 
-
 function TuibInstScript.produceStringList
    (const section: TuibIniScript;
    const s0 : String;
    var Remaining: String;
    var list : TXStringList;
    var InfoSyntaxError : String ) : Boolean;
+var
+ NestLevel : integer;
+begin
+  result := produceStringList(section,s0,Remaining,list,InfoSyntaxError,Nestlevel);
+end;
+
+function TuibInstScript.produceStringList
+   (const section: TuibIniScript;
+   const s0 : String;
+   var Remaining: String;
+   var list : TXStringList;
+   var InfoSyntaxError : String;
+   var NestLevel : integer) : Boolean;
 
 var
   VarIndex : integer=0;
@@ -9334,7 +9423,7 @@ begin
      end
      else
      begin
-       if definedFunctionArray[FuncIndex].call(r,r) then
+       if definedFunctionArray[FuncIndex].call(r,r,NestLevel) then
        begin
          r := '';
          list.Text := definedFunctionArray[FuncIndex].ResultList.Text;
@@ -11060,6 +11149,18 @@ function TuibInstScript.EvaluateString
    var Remaining: String;
    var StringResult : String;
    var InfoSyntaxError : String ) : Boolean;
+var
+ NestLevel : integer;
+begin
+  result := EvaluateString(s0,Remaining,StringResult,InfoSyntaxError,Nestlevel);
+end;
+
+function TuibInstScript.EvaluateString
+   (const s0 : String;
+   var Remaining: String;
+   var StringResult : String;
+   var InfoSyntaxError : String;
+   var NestLevel : integer) : Boolean;
 
 
 var
@@ -11124,6 +11225,7 @@ var
    funcindex : integer = 0;
    funcname : string;
    boolresult : boolean;
+   p1,p2,p3,p4 : integer;
 
 
 
@@ -11155,7 +11257,7 @@ begin
    end
    else
    begin
-     if definedFunctionArray[FuncIndex].call(r,r) then
+     if definedFunctionArray[FuncIndex].call(r,r,NestLevel) then
      begin
        StringResult := definedFunctionArray[FuncIndex].Resultstring;
        syntaxCheck := true;
@@ -13592,60 +13694,59 @@ begin
         or (LowerCase (s) = LowerCase ('GetRegistryStringValue32'))
   then
   begin
+    LogDatei.log_prog ('GetRegistryStringValue from: '+r, LLdebug3);
     if Skip ('(', r, r, InfoSyntaxError)
-    then if EvaluateString (r, r, s1, InfoSyntaxError)
-    then if Skip (')', r, r, InfoSyntaxError)
-    then if Skip ('[', s1, r1, InfoSyntaxError)
-    then
-    Begin
-      GetWord (r1, key, r1, [']']);
-      GetWord (key, key0, key, ['\']);
-      System.delete (key, 1, 1);
-
-      if Skip (']', r1, r1, InfoSyntaxError)
-      then
+    then if EvaluateString (r, r, s1, InfoSyntaxError) then
+    begin
+      LogDatei.log_prog ('GetRegistryStringValue from: '+s1+' Remaining: '+r, LLdebug3);
+      if Skip (')', r, r, InfoSyntaxError) then
       Begin
-        SyntaxCheck := true;
-        ValueName := CutRightBlanks (r1);
-
-        StringResult := '';
-        LogDatei.log ('key0 = '+key0, LLdebug2);
-        if runLoginScripts and (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
+        //GetWord (r1, key, r1, [']']);
+        LogDatei.log_prog ('GetRegistryStringValue from: '+s1+' Remaining: '+r, LLdebug2);
+        GetWord (s1, key, r1, [']'], true);
+        key := trim(key)+']';
+        p1 := pos('[',key);
+        p2 := posFromEnd(']',key);
+        p3 := length(key);
+        p4 := length(trim(key));
+        if not((pos('[',key) = 1) and (posFromEnd(']',key) = length(key))) then
         begin
-          // remove HKCU from the beginning
-          // switch to HKEY_USERS
-          key0 := 'HKEY_USERS';
-          key := usercontextSID+'\'+key;
-          LogDatei.log ('Running loginscripts: key0 is now: '+key0 + ', key is now: '+key, LLdebug);
-        end;
-        StringResult := GetRegistrystringvalue(key0+'\'+key,ValueName,false);
-          (*
-          // noredirect=false / readonly=true
-          Regist := Tuibregistry.Create(false,true);
-          //StartIndentLevel := LogDatei.LogSIndentLevel;
-          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-          if Regist.OpenExistingKey (key0, key)
-          then
-          Begin
-            try
-               StringResult := Regist.ReadString (ValueName);
-            except
-               try
-                  Regist.ReadEntry (Valuename, RegType, StringResult);
-                  { in ReadString abgehandelt:
-                  if RegType = trdmultistring
-                  then
-                    StringResult := StringReplace (StringResult, #13#10, MultiszVisualDelimiter);
-                  }
-               except
-               end;
+          SyntaxCheck := false;
+          ErrorInfo := 'Wrong Key Format: Key must be given inside [] - but we got: '+key
+        end
+        else
+        begin
+          key := opsiUnquotestr2(trim(key),'[]');
+          if (pos('[',key) = 1) and (posFromEnd(']',key) = length(key)) then
+          begin
+            SyntaxCheck := false;
+            ErrorInfo := 'Wrong Key Format: Have still brackets after removing them: '+key
+          end
+          else
+          begin
+            SyntaxCheck := true;
+            GetWord (key, key0, key, ['\']);
+            System.delete (key, 1, 1);
+            if Skip (']', r1, r1, InfoSyntaxError) then
+              ValueName := r1;
+              //GetWord (r1, ValueName, r1, [''], true);
+              //GetWord (r1, ValueName, r1, WordDelimiterSet1);
+            ValueName := trim(ValueName);
+            LogDatei.log_prog ('GetRegistryStringValue from: '+key0+'\'+key+' ValueName: '+ValueName, LLdebug);
+            StringResult := '';
+            LogDatei.log ('key0 = '+key0, LLdebug2);
+            if runLoginScripts and (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
+            begin
+              // remove HKCU from the beginning
+              // switch to HKEY_USERS
+              key0 := 'HKEY_USERS';
+              key := usercontextSID+'\'+key;
+              LogDatei.log ('Running loginscripts: key0 is now: '+key0 + ', key is now: '+key, LLdebug);
             end;
-            Regist.CloseKey;
-          End;
-          //LogDatei.LogSIndentLevel := StartIndentLevel;
-          Regist.free; Regist := nil;
-          *)
-        End
+            StringResult := GetRegistrystringvalue(key0+'\'+key,ValueName,false);
+          End
+        end;
+      end;
     End;
   end
 
@@ -13653,80 +13754,61 @@ begin
         or (LowerCase (s) = LowerCase ('GetRegistryStringValueSysNative'))
   then
   begin
+    LogDatei.log_prog ('GetRegistryStringValue from: '+r, LLdebug3);
     if Skip ('(', r, r, InfoSyntaxError)
-    then if EvaluateString (r, r, s1, InfoSyntaxError)
-    then if Skip (')', r, r, InfoSyntaxError)
-    then if Skip ('[', s1, r1, InfoSyntaxError)
-    then
-    Begin
-      GetWord (r1, key, r1, [']']);
-      GetWord (key, key0, key, ['\']);
-      System.delete (key, 1, 1);
-
-      if Skip (']', r1, r1, InfoSyntaxError)
-      then
+    then if EvaluateString (r, r, s1, InfoSyntaxError) then
+    begin
+      LogDatei.log_prog ('GetRegistryStringValue from: '+s1+' Remaining: '+r, LLdebug3);
+      if Skip (')', r, r, InfoSyntaxError) then
       Begin
-        SyntaxCheck := true;
-        ValueName := CutRightBlanks (r1);
-
-        StringResult := '';
-        if runLoginScripts and (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
+        //GetWord (r1, key, r1, [']']);
+        LogDatei.log_prog ('GetRegistryStringValue from: '+s1+' Remaining: '+r, LLdebug2);
+        GetWord (s1, key, r1, [']'], true);
+        key := trim(key)+']';
+        p1 := pos('[',key);
+        p2 := posFromEnd(']',key);
+        p3 := length(key);
+        p4 := length(trim(key));
+        if not((pos('[',key) = 1) and (posFromEnd(']',key) = length(key))) then
         begin
-          // remove HKCU from the beginning
-          // switch to HKEY_USERS
-          key0 := 'HKEY_USERS';
-          key := usercontextSID+'\'+key;
-          LogDatei.log ('Running loginscripts: key0 is now: '+key0 + ', key is now: '+key, LLdebug);
-        end;
-        if (GetNTVersionMajor = 5) and (GetNTVersionMinor = 0) then
-          StringResult := GetRegistrystringvalue(key0+'\'+key,ValueName,false)
-        else
-          StringResult := GetRegistrystringvalue(key0+'\'+key,ValueName,true);
-        (*
-        if (GetNTVersionMajor = 5) and (GetNTVersionMinor = 0) then
-        begin
-          // we are on win 2000 which can't handle redirections flags
-          Regist := Tuibregistry.Create;
+          SyntaxCheck := false;
+          ErrorInfo := 'Wrong Key Format: Key must be given inside [] - but we got: '+key
         end
-        else // we are on xp or higher
+        else
         begin
-          // noredirect=true / readonly=true
-          Regist := Tuibregistry.Create(true,true);
+          key := opsiUnquotestr2(trim(key),'[]');
+          if (pos('[',key) = 1) and (posFromEnd(']',key) = length(key)) then
+          begin
+            SyntaxCheck := false;
+            ErrorInfo := 'Wrong Key Format: Have still brackets after removing them: '+key
+          end
+          else
+          begin
+            SyntaxCheck := true;
+            GetWord (key, key0, key, ['\']);
+            System.delete (key, 1, 1);
+            if Skip (']', r1, r1, InfoSyntaxError) then
+              ValueName := r1;
+              //GetWord (r1, ValueName, r1, [''], true);
+              //GetWord (r1, ValueName, r1, WordDelimiterSet1);
+            ValueName := trim(ValueName);
+            LogDatei.log_prog ('GetRegistryStringValue from: '+key0+'\'+key+' ValueName: '+ValueName, LLdebug);
+            StringResult := '';
+            if runLoginScripts and (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
+            begin
+              // remove HKCU from the beginning
+              // switch to HKEY_USERS
+              key0 := 'HKEY_USERS';
+              key := usercontextSID+'\'+key;
+              LogDatei.log ('Running loginscripts: key0 is now: '+key0 + ', key is now: '+key, LLdebug);
+            end;
+            if (GetNTVersionMajor = 5) and (GetNTVersionMinor = 0) then
+              StringResult := GetRegistrystringvalue(key0+'\'+key,ValueName,false)
+            else
+              StringResult := GetRegistrystringvalue(key0+'\'+key,ValueName,true);
+          End
         end;
-        LogDatei.log ('key0 = '+key0, LLdebug2);
-        if runLoginScripts and (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
-        begin
-          // remove HKCU from the beginning
-          // switch to HKEY_USERS
-          key0 := 'HKEY_USERS';
-          key := usercontextSID+'\'+key;
-          LogDatei.log ('Running loginscripts: key0 is now: '+key0 + ', key is now: '+key, LLdebug);
-        end;
-
-        //StartIndentLevel := LogDatei.LogSIndentLevel;
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
-        if Regist.OpenExistingKey (key0, key)
-        then
-        Begin
-          try
-             StringResult := Regist.ReadString (ValueName);
-          except
-             try
-                Regist.ReadEntry (Valuename, RegType, StringResult);
-                { in ReadString abgehandelt:
-                if RegType = trdmultistring
-                then
-                  StringResult := StringReplace (StringResult, #13#10, MultiszVisualDelimiter);
-                }
-             except
-             end;
-          end;
-          Regist.CloseKey;
-        End;
-        //LogDatei.LogSIndentLevel := StartIndentLevel;
-        Regist.free; Regist := nil;
-        *)
-      End
+      end;
     End;
   end
 
@@ -15612,9 +15694,17 @@ end
 
 End;
 
-
 function TuibInstScript.doSetVar (const section: TuibIniScript; const Expressionstr : String;
                    var Remaining : String; var InfoSyntaxError : String) : Boolean;
+ var
+  NestLevel : integer = 0;
+begin
+  result := doSetVar(section,Expressionstr, Remaining, InfoSyntaxError, NestLevel);
+end;
+
+function TuibInstScript.doSetVar (const section: TuibIniScript; const Expressionstr : String;
+                   var Remaining : String; var InfoSyntaxError : String;
+                   var NestLevel : integer) : Boolean;
  var
    VarName : String='';
    VarValue : String='';
@@ -15656,7 +15746,7 @@ begin
     then
     Begin
       if    Skip ('=', r, r, InfoSyntaxError)
-        and produceStringList (section, r, Remaining, list,  InfoSyntaxError)
+        and produceStringList (section, r, Remaining, list,  InfoSyntaxError, Nestlevel)
       then
       if isVisibleLocalVar(VarName,funcindex)  then
       begin
@@ -15689,7 +15779,7 @@ begin
       else
       Begin
         if    Skip ('=', r, r, InfoSyntaxError)
-          and EvaluateString (r, Remaining, VarValue, InfoSyntaxError)
+          and EvaluateString (r, Remaining, VarValue, InfoSyntaxError, Nestlevel)
         then
         Begin
           if isVisibleLocalVar(VarName,funcindex)  then
@@ -16119,10 +16209,10 @@ begin
   and not scriptstopped
   do
   begin
-
    //writeln(actionresult);
     Remaining := trim (Sektion.strings [i-1]);
     logdatei.log_prog('Script line: '+intToStr(i)+' : '+Remaining,LLDebug2);
+    //logdatei.log_prog('Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' Sektion.NestingLevel: '+IntToStr(Sektion.NestingLevel)+' condition: '+BoolToStr(conditions [ActLevel],true),LLDebug3);
     aktScriptLineNumber := i;
     //writeln(remaining);
     //readln;
@@ -16138,15 +16228,18 @@ begin
         looplist.delete (0);
       End;
 
-      if pos(lowercase(PStatNames^ [tsDefineFunction]),lowercase(Remaining)) >0 then inc(inDefFunc2);
-      if pos(lowercase(PStatNames^ [tsEndFunction]),lowercase(Remaining)) >0 then dec(inDefFunc2);
+      if pos(lowercase(PStatNames^ [tsDefineFunction]),lowercase(Remaining)) >0 then
+        inc(inDefFunc2);
+      //if pos(lowercase(PStatNames^ [tsEndFunction]),lowercase(Remaining)) >0 then dec(inDefFunc2);
       //if (lowercase(Remaining) = lowercase(PStatNames^ [tsEndFunction])) then dec(inDefFunc2);
+      logdatei.log_prog('Parsingprogress: inDefFunc: '+IntToStr(inDefFunc),LLDebug3);
       logdatei.log_prog('Parsingprogress: inDefFunc2: '+IntToStr(inDefFunc2),LLDebug3);
 
       if (Remaining = '') or (Remaining [1] = LineIsCommentChar)
       then
-         (* continue *)
-      else if (Remaining [1] = '[') and (inDefFunc2 <= 0) then
+         // continue
+      //else if (Remaining [1] = '[') and (inDefFunc2 <= 0) then
+      else if (Remaining [1] = '[')  then
          // subsection beginning
       begin
          continue := false;
@@ -16161,6 +16254,8 @@ begin
         StatKind := FindKindOfStatement (Expressionstr, SectionSpecifier, call);
         ArbeitsSektion.Name := Expressionstr;
         ArbeitsSektion.SectionKind := StatKind;
+        ArbeitsSektion.NestingLevel:=Nestlevel;
+        logdatei.log_prog('Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' ArbeitsSektion.NestingLevel: '+IntToStr(ArbeitsSektion.NestingLevel)+' condition: '+BoolToStr(conditions [ActLevel],true),LLDebug3);
 
 
         // start switch statement
@@ -16430,6 +16525,15 @@ begin
                                          StartlineOfSection, true, true, false);
               End;
               *)
+
+              if (ArbeitsSektion.count = 0) and (inDefFuncLevel > 0)
+              then
+              begin
+                // local function
+                Logdatei.log('Looking for section: '+ Expressionstr +' in local function .',LLDebug3);
+                Sektion.GetSectionLines (Expressionstr, TXStringList (ArbeitsSektion),
+                                  StartlineOfSection, true, true, false);
+              end;
 
               if ArbeitsSektion.count = 0
               then
@@ -16926,9 +17030,9 @@ begin
                             LogDatei.log_prog('Found line in lib file (raw): '+incline,LLDebug3);
                             incline := reencode(incline, Encoding2use,usedEncoding);
                             LogDatei.log_prog('Found line in lib file (reencoded): '+incline,LLDebug2);
-                            //for constcounter := 1 to ConstList.Count   do
-                            //  if Sektion.replaceInLine(incline, Constlist.Strings [constcounter-1], ConstValuesList.Strings [constcounter-1], false,replacedline)
-                            //  then incline := replacedline;
+                            for constcounter := 1 to ConstList.Count   do
+                              if Sektion.replaceInLine(incline, Constlist.Strings [constcounter-1], ConstValuesList.Strings [constcounter-1], false,replacedline)
+                              then incline := replacedline;
 
 
                             if importFunctionName <> '' then
@@ -18080,12 +18184,12 @@ begin
                       or (UpperCase (Remaining) = 'FALSE')
                    then
                    begin
-                     LogDatei.log ('ReportMessages was '+BoolToStr(ReportMessages,true)+' is set to true', LLNotice);
+                     LogDatei.log ('ScriptErrorMessages was '+BoolToStr(ReportMessages,true)+' is set to false', LLNotice);
                      ReportMessages := false;
                    end
                    else
                    begin
-                     LogDatei.log ('ReportMessages was '+BoolToStr(ReportMessages,true)+' is set to false', LLNotice);
+                     LogDatei.log ('ScriptErrorMessages was '+BoolToStr(ReportMessages,true)+' is set to true', LLNotice);
                      ReportMessages := true;
                    end;
                 End
@@ -18417,6 +18521,7 @@ begin
                 begin
                   logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
                   flag_all_ntuser := false;
+                  flag_encoding := 'system';
                   // if this is a 'ProfileActions' which is called as sub in Machine mode
                   // so run patches sections implicit as /Allntuserprofiles
                   if runProfileActions then flag_all_ntuser := true;
@@ -18426,10 +18531,48 @@ begin
                   else
                   Begin
                     GetWordOrStringExpressionstr (Remaining, Filename, Remaining, ErrorInfo);
-                    if Remaining = '' then
-                        ActionResult := doInifilePatches (ArbeitsSektion, Filename,'')
-                    else ActionResult := doInifilePatches (ArbeitsSektion, Filename, Remaining);
                   End;
+                  remaining := CutRightBlanks (Remaining);
+
+                   if length (remaining) > 0 then goon := true;
+                   while goon
+                   do
+                   begin
+
+                      if skip(Parameter_AllNTUserProfiles, Remaining, Remaining, ErrorInfo)
+                      then
+                        flag_all_ntuser := true
+
+                      else
+                      if skip('/encoding', Remaining, Remaining, ErrorInfo)
+                      then
+                      begin
+                        if not EvaluateString (Remaining, Remaining, flag_encoding, ErrorInfo) then
+                        begin
+                         syntaxcheck := false;
+                          //ActionResult := reportError (ErrorInfo);
+                        end;
+                        flag_encoding := LowerCase(flag_encoding);
+                        if not isSupportedEncoding(flag_encoding) then
+                        begin
+                          logdatei.log('Given Encoding: ' + flag_encoding +
+                             ' is not supported - fall back to system encoding.', LLWarning);
+                          flag_encoding := 'system';
+                        end
+                      end
+                      else
+                      Begin
+                        goon := false;
+                        if length (remaining) > 0
+                        then
+                        begin
+                          syntaxcheck := false;
+                          ActionResult := reportError (Sektion, i, Sektion.strings [i-1],
+                                                   '"' + remaining + '" is no valid parameter ');
+                        end;
+                      end;
+                   end;
+                   ActionResult := doInifilePatches (ArbeitsSektion, Filename,'')
                 end;
 
               tsHostsPatch:
@@ -19132,7 +19275,12 @@ begin
                        StatKind := FindKindOfStatement (Expressionstr, SectionSpecifier, call);
                        if StatKind = tsDefineFunction then inc(inDefFunc);
                        if StatKind = tsEndFunction then dec(inDefFunc);
-                       newDefinedfunction.addContent(myline);
+                       // Line with tsEndFunction should not be part of the content
+                       if inDefFunc > 0 then
+                       begin
+                         newDefinedfunction.addContent(myline);
+                         LogDatei.log_prog('inDefFunc: '+inttostr(inDefFunc)+' add line: '+myline,LLDebug3);
+                       end;
                        (*
                        begin
                          endofDefFuncFound := true;
@@ -19161,6 +19309,7 @@ begin
                      SetLength(definedFunctionArray, definedFunctioncounter);
                      definedFunctionArray[definedFunctioncounter-1] := newDefinedfunction;
                      definedFunctionNames.Append(newDefinedfunction.Name);
+                     //dec(inDefFunc2);
                      LogDatei.log('Added defined function:: '+newDefinedfunction.Name+' to the known functions',LLInfo);
                    end
                  end;
@@ -19666,6 +19815,14 @@ begin
     FConstList.add ('%opsiLogDir%');
     {$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\log' ); {$ENDIF WINDOWS}
     {$IFDEF LINUX}FConstValuesList.add ( '/var/log/opsi-client-agent/opsi-script' ); {$ENDIF LINUX}
+
+    FConstList.add ('%opsiapplog%');
+    {$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\applog' ); {$ENDIF WINDOWS}
+    {$IFDEF LINUX}FConstValuesList.add ( '~/opsi.org/applog' ); {$ENDIF LINUX}
+
+    FConstList.add ('%opsidata%');
+    {$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\data' ); {$ENDIF WINDOWS}
+    {$IFDEF LINUX}FConstValuesList.add ( '/var/lib/opsi-client-agent' ); {$ENDIF LINUX}
 
     {$IFDEF WINDOWS}
     FConstList.add('%opsiScriptHelperPath%');

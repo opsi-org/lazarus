@@ -20,12 +20,6 @@ unit osfunc;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 510 $
-// $Author: oertel $
-// $Date: 2016-10-21 18:22:41 +0200 (Fr, 21 Okt 2016) $
-//***************************************************************************
 
 interface
 
@@ -543,8 +537,9 @@ function CEscaping(const s: string): string;
 
 procedure GetWord
   (const s: string; var Expression, Remaining: string;
-  const WordDelimiterSet: TCharset);
-
+  const WordDelimiterSet: TCharset; searchbackward :boolean = false); overload;
+procedure GetWord(const s: string; var Expression, Remaining: string;
+  const WordDelimiterString: String; searchbackward :boolean = false);  overload;
 
 procedure WortAbspalten(const s: string; var Wortlinks, Rest: string);
 procedure IdentAbspalten(const s: string; var Ident, Value: string);
@@ -566,6 +561,7 @@ function opsiunquotestr2(s1,s2 : string): string;
 function cmdLineInputDialog(var inputstr : string; const message, default : string; confidential : boolean) : boolean;
 function isValidUtf8String(str:string) : boolean;
 function getFixedUtf8String(str:string) : string;
+function posFromEnd(const substr : string; const s : string) : integer;
 
 
 
@@ -720,6 +716,19 @@ const
 //recursionlevel: integer = 0;
 
 //function RegDeleteKeyEx; external advapi32 name 'RegDeleteKeyEx';
+
+function posFromEnd(const substr : string; const s : string) : integer;
+var
+  revstr : string;
+  len,posi : integer;
+begin
+  result := 0;
+  revstr := ReverseString(s);
+  len := length(s);
+  posi := Pos(ReverseString(substr), revstr);
+  if posi > 0 then
+    result := len - (posi-1);
+end;
 
 function isValidUtf8String(str:string) : boolean;
 begin
@@ -1538,9 +1547,9 @@ begin
                   ((nowtime - starttime) >= waitSecs / secsPerDay) then
                 begin
                   running := False;
-                  logdatei.DependentAdd('Waiting for ending of "' +
+                  logdatei.log('Waiting for ending of "' +
                     ident + '" stopped - time out ' + IntToStr(waitSecs) +
-                    ' sec', LevelInfo);
+                    ' sec', LLinfo);
                 end;
 
               end;
@@ -1901,9 +1910,9 @@ begin
                   ((nowtime - starttime) >= waitSecs / secsPerDay) then
                 begin
                   running := False;
-                  logdatei.DependentAdd('Waiting for ending of "' +
+                  logdatei.log('Waiting for ending of "' +
                     ident + '" stopped - time out ' + IntToStr(waitSecs) +
-                    ' sec', LevelInfo);
+                    ' sec', LLinfo);
                 end;
 
               end;
@@ -2360,7 +2369,7 @@ begin
               {$ENDIF GUI}
               ProcessMess;
               logdatei.DependentAdd('Waiting for ending at ' +
-                DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug);
+                DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
               ProcessMess;
             end;
           end;
@@ -2691,7 +2700,7 @@ begin
                   running := False;
                   logdatei.DependentAdd('Waiting for ending of "' +
                     ident + '" stopped - waitSecs out ' + IntToStr(waitSecs) +
-                    ' sec', LevelInfo);
+                    ' sec', LLinfo);
                 end;
 
               end;
@@ -2759,7 +2768,7 @@ begin
               GetExitCodeProcess(ProcessInfo.hProcess, lpExitCode);
               ProcessMess;
               logdatei.DependentAdd('Waiting for ending at ' +
-                DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug);
+                DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
               ProcessMess;
             end;
           end;
@@ -3065,9 +3074,9 @@ begin
                   ((nowtime - starttime) >= waitSecs / secsPerDay) then
                 begin
                   running := False;
-                  logdatei.DependentAdd('Waiting for ending of "' +
+                  logdatei.log('Waiting for ending of "' +
                     ident + '" stopped - waitSecs out ' + IntToStr(waitSecs) +
-                    ' sec', LevelInfo);
+                    ' sec', LLinfo);
                 end;
 
               end;
@@ -3134,8 +3143,8 @@ begin
               //GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode);
               GetExitCodeProcess(ProcessInfo.hProcess, lpExitCode);
               ProcessMess;
-              logdatei.DependentAdd('Waiting for ending at ' +
-                DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug);
+              logdatei.log('Waiting for ending at ' +
+                DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
               ProcessMess;
             end;
           end;
@@ -3581,9 +3590,9 @@ begin
                   ((nowtime - starttime) >= waitSecs / secsPerDay) then
                 begin
                   running := False;
-                  logdatei.DependentAdd('Waiting for ending of "' +
+                  logdatei.log('Waiting for ending of "' +
                     ident + '" stopped - waitSecs out ' +
-                    IntToStr(waitSecs) + ' sec', LevelInfo);
+                    IntToStr(waitSecs) + ' sec', LLinfo);
                 end;
 
               end;
@@ -3644,8 +3653,8 @@ begin
               sleep(1000);
               GetExitCodeProcess(processInfo.hProcess, lpExitCode);
               ProcessMess;
-              logdatei.DependentAdd('Waiting for ending at ' +
-                DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug);
+              logdatei.log('Waiting for ending at ' +
+                DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
               ProcessMess;
             end;
           end;
@@ -5324,23 +5333,86 @@ begin
   Result := p1;
 end;
 
+(*
 procedure GetWord(const s: string; var Expression, Remaining: string;
   const WordDelimiterSet: TCharset);
-    (* Expression ist Teilstring von s bis zu einem Zeichen von WordDelimiterSet (ausschliesslich),
-       Remaining beginnt mit dem auf dieses Zeichen folgenden Zeichen, wobei fuehrender Whitespace
-       eliminiert wird  *)
+begin
+  GetWord(s, Expression, Remaining, WordDelimiterSet, false);
+end;
+*)
+
+procedure GetWord(const s: string; var Expression, Remaining: string;
+  const WordDelimiterSet: TCharset; searchbackward :boolean = false);
+     // Expression ist Teilstring von s bis zu einem Zeichen von WordDelimiterSet (ausschliesslich),
+     // Remaining beginnt mit dem auf dieses Zeichen folgenden Zeichen, wobei fuehrender Whitespace
+     // eliminiert wird
 
 var
   i: integer = 0;
   t: string = '';
 
 begin
+  if s = '' then
+  begin
+    Expression := '';
+    Remaining := '';
+  end
+  else
+  begin
+    t := s;
+    setLength(t, length(t));
+    if searchbackward then
+    begin
+      i := length(t)+1;
+      while (i >=0) and not (t[i] in WordDelimiterSet) do
+        dec(i);
+      // if nothing found get complete string
+      if i = -1 then i:= length(t);
+    end
+    else
+    begin
+      i := 1;
+      while (i <= length(t)) and not (t[i] in WordDelimiterSet) do
+        Inc(i);
+    end;
+
+    Expression := copy(t, 1, i - 1);
+    Remaining := copy(t, i, length(t) - i + 1);
+    Remaining := CutLeftBlanks(Remaining);
+  end;
+end;
+
+
+procedure GetWord(const s: string; var Expression, Remaining: string;
+  const WordDelimiterString: String; searchbackward :boolean = false);
+      // Expression ist Teilstring von s bis zu einem Zeichen von WordDelimiterSet (ausschliesslich),
+      // Remaining beginnt mit dem auf dieses Zeichen folgenden Zeichen, wobei fuehrender Whitespace
+      // eliminiert wird
+
+var
+  i: integer = 0;
+  t: string = '';
+  tr : string;
+
+begin   // experimental
   t := s;
   setLength(t, length(t));
-  i := 1;
-
-  while (i <= length(t)) and not (t[i] in WordDelimiterSet) do
-    Inc(i);
+  if searchbackward then
+  begin
+    tr := ReverseString(s);
+    setLength(tr, length(tr));
+    i := pos(ReverseString(WordDelimiterString),tr);
+    if i > 0 then
+    begin
+      i := length(tr) - i;
+      i := i + length(WordDelimiterString);
+    end;
+  end
+  else
+  begin
+    i := pos(WordDelimiterString,t);
+    i := i + length(WordDelimiterString);
+  end;
 
   Expression := copy(t, 1, i - 1);
   Remaining := copy(t, i, length(t) - i + 1);
@@ -6232,7 +6304,7 @@ begin
       LogDatei.log(LogS, LevelInfo);
       LogDatei.NumberOfHints := LogDatei.NumberOfHints + 1;
     end;
-    inherited SaveToFile(myfilename);
+    inherited SaveToFile(myfilename,'utf8');
   end
   else
   begin

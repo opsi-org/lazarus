@@ -75,7 +75,8 @@ type
     //function getLocalVarReference(name : string) : pointer;
 
     function parseCallParameter(paramline : string; var remaining : string;  var errorstr : string) : boolean;
-    function call(paramline : string; var remaining : string) : boolean;
+    //function call(paramline : string; var remaining : string) : boolean;
+    function call(paramline : string; var remaining : string; var NestLevel : integer) : boolean;
 
     property Name : String read DFName;
     property datatype : TosdfDataTypes read DFResultType;
@@ -925,7 +926,7 @@ end;
 
 
 // run the function
-function  TOsDefinedFunction.call(paramline : string; var remaining : string) : boolean;
+function  TOsDefinedFunction.call(paramline : string; var remaining : string; var NestLevel : integer) : boolean;
 var
   errorstr : string;
   section : TWorkSection;
@@ -933,7 +934,9 @@ var
   sectionresult : TSectionResult;
 begin
   call := false;
-  // we enter a defined function
+  inc(inDefFuncLevel);
+  LogDatei.log('We enter the defined function: '+DFName+' with '+IntToStr(DFcontent.Count)+' lines. inDefFuncLevel: '+inttostr(inDefFuncLevel),LLDebug2);
+  LogDatei.log_prog('paramline: '+paramline+' remaining: '+remaining+' Nestlevel: '+inttostr(NestLevel),LLDebug2);
   DFActive:=true;
   //inc(inDefinedFuncNestCounter);
   definedFunctionsCallStack.Append(InttoStr(DFIndex));
@@ -947,10 +950,11 @@ begin
   begin
     // run the body of the function
     inc(inDefinedFuncNestCounter);
-    section := TWorkSection.create(0);
+    section := TWorkSection.create(Nestlevel);
     callingsection := TWorkSection.create(0);
     section.Assign(DFcontent);
     sectionresult := script.doAktionen(section,callingsection);
+    Nestlevel := section.NestingLevel;
     call := true;
     case DFResultType of
        dfpString :     begin
@@ -964,11 +968,14 @@ begin
        //                end;
     end;
   end;
-  //DFResultString := 'huhu';
   // we leave a defined function
+  // free the local Vars - leave params + $result$
+  SetLength(DFLocalVarList,DFparamCount+1);
   dec(inDefinedFuncNestCounter);
   definedFunctionsCallStack.Delete(definedFunctionsCallStack.Count-1);
   DFActive:=false;
+  inc(inDefFuncLevel);
+  LogDatei.log('We leave the defined function: '+DFName+' ; inDefFuncLevel: '+inttostr(inDefFuncLevel),LLDebug2);
 end;
 
 (*
