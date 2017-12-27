@@ -16817,7 +16817,7 @@ begin
                    end;
                    if syntaxCheck then
                    begin
-                      if loopstart = loopstop then
+                      if loopstart > loopstop then
                       begin
                          LogDatei.log('Warning: list to loop through is empty - no loop ...', LLWarning);
                          // clearing the loop variable from the list of variables, first the value
