@@ -1842,7 +1842,7 @@ begin
 
       testResult := IdHTTP.ResponseText;
       cookieVal := IdHTTP.Response.RawHeaders.Values['Set-Cookie'];
-      //LogDatei.log('JSON retrieveJSONObject: after IdHTTP', LLDebug2);
+      LogDatei.log_prog('JSON retrieveJSONObject: after IdHTTP', LLDebug2);
       posColon := -1;
       if cookieVal <> '' then
         posColon := pos(';', cookieVal);
@@ -1852,7 +1852,7 @@ begin
       else
         FSessionId := '';
 
-      //LogDatei.log('JSON retrieveJSONObject: after cookie', LLDebug2);
+      LogDatei.log_prog('JSON retrieveJSONObject: after cookie', LLDebug2);
     except
       on E: Exception do
       begin
@@ -1866,10 +1866,10 @@ begin
     if not ErrorOccured then
     begin
       mymemorystream.Position := 0;
-      //LogDatei.log('JSON retrieveJSONObject: memorystream reseted', LLDebug2);
+      LogDatei.log_prog('JSON retrieveJSONObject: memorystream reseted', LLDebug2);
       resultLines.Clear;
       ResultLines.LoadFromStream(mymemorystream);
-      //LogDatei.log('JSON retrieveJSONObject: resultlines loaded', LLDebug2);
+      LogDatei.log_prog('JSON retrieveJSONObject: resultlines loaded', LLDebug2);
       // should be one line
 
       if ResultLines.Count < 1 then
@@ -1883,7 +1883,7 @@ begin
       else
       begin
         Result := SO(ResultLines.Strings[0]);
-        //LogDatei.log('JSON retrieveJSONObject: result loaded', LLDebug2);
+        LogDatei.log_prog('JSON retrieveJSONObject: result loaded', LLDebug2);
         if Result = nil then
           LogDatei.log('JSON retrieveJSONObject: result nil', LLError)
         else

@@ -9,6 +9,12 @@ unit osencoding;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
+//***************************************************************************
+// Subversion:
+// $Revision: 503 $
+// $Author: oertel $
+// $Date: 2016-10-11 21:15:42 +0200 (Di, 11 Okt 2016) $
+//***************************************************************************
 
 
 {$mode delphi}
@@ -347,7 +353,6 @@ begin
   GetSupportedEncodings(supportedEncodings);
   supportedEncodings.Add('UTF-16');
   supportedEncodings.Add('unicode');
-  supportedEncodings.Add('UTF-16LE');
 
   // add the aliases (utf8 is alias for UTF-8)
   k := supportedEncodings.Count;

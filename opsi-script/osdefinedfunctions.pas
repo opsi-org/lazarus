@@ -934,7 +934,8 @@ var
   sectionresult : TSectionResult;
 begin
   call := false;
-  LogDatei.log('We enter a defined function',LLDebug2);
+  inc(inDefFuncLevel);
+  LogDatei.log('We enter the defined function: '+DFName+' with '+IntToStr(DFcontent.Count)+' lines. inDefFuncLevel: '+inttostr(inDefFuncLevel),LLDebug2);
   LogDatei.log_prog('paramline: '+paramline+' remaining: '+remaining+' Nestlevel: '+inttostr(NestLevel),LLDebug2);
   DFActive:=true;
   //inc(inDefinedFuncNestCounter);
@@ -973,7 +974,8 @@ begin
   dec(inDefinedFuncNestCounter);
   definedFunctionsCallStack.Delete(definedFunctionsCallStack.Count-1);
   DFActive:=false;
-  LogDatei.log('We leave a defined function',LLDebug2);
+  inc(inDefFuncLevel);
+  LogDatei.log('We leave the defined function: '+DFName+' ; inDefFuncLevel: '+inttostr(inDefFuncLevel),LLDebug2);
 end;
 
 (*

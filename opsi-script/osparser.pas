@@ -20,12 +20,6 @@ unit osparser;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 515 $
-// $Author: oertel $
-// $Date: 2016-11-09 15:06:33 +0100 (Mi, 09 Nov 2016) $
-//***************************************************************************
 
 
 interface
@@ -605,6 +599,7 @@ var
   Script : TuibInstScript;
   scriptsuspendstate : boolean;
   scriptstopped : boolean;
+  inDefFuncLevel : integer = 0;
 
 
 
@@ -4657,7 +4652,11 @@ begin
         SyntaxCheck := false;
         GetWord (r, key, r, [']'], true);
         key := trim(key)+']';
-        if not((pos('[',key) = 1) and (pos(']',key) = length(key))) then
+        p1 := pos('[',key);
+        p2 := posFromEnd(']',key);
+        p3 := length(key);
+        p4 := length(trim(key));
+        if not((pos('[',key) = 1) and (posFromEnd(']',key) = length(key))) then
         begin
           SyntaxCheck := false;
           ErrorInfo := 'Wrong Key Format: Key must be given inside [] - but we got: '+key
@@ -4665,7 +4664,7 @@ begin
         else
         begin
           key := opsiUnquotestr2(trim(key),'[]');
-          if (pos('[',key) = 1) and (pos(']',key) = length(key)) then
+          if (pos('[',key) = 1) and (posFromEnd(']',key) = length(key)) then
           begin
             SyntaxCheck := false;
             ErrorInfo := 'Wrong Key Format: Have still brackets after removing them: '+key
@@ -4781,11 +4780,10 @@ begin
         GetWord (r, key, r, [']'], true);
         key := trim(key)+']';
         p1 := pos('[',key);
-        p2 := pos(']',key);
+        p2 := posFromEnd(']',key);
         p3 := length(key);
         p4 := length(trim(key));
-
-        if not((pos('[',key) = 1) and (pos(']',key) = length(key))) then
+        if not((pos('[',key) = 1) and (posFromEnd(']',key) = length(key))) then
         begin
           SyntaxCheck := false;
           ErrorInfo := 'Wrong Key Format: Key must be given inside [] - but we got: '+key
@@ -4793,7 +4791,7 @@ begin
         else
         begin
           key := opsiUnquotestr2(trim(key),'[]');
-          if (pos('[',key) = 1) and (pos(']',key) = length(key)) then
+          if (pos('[',key) = 1) and (posFromEnd(']',key) = length(key)) then
           begin
             SyntaxCheck := false;
             ErrorInfo := 'Wrong Key Format: Have still brackets after removing them: '+key
@@ -5726,6 +5724,7 @@ function TuibInstScript.doOpsiServiceCall
       then
         line := trim(lines [lineno - 1]);
     end;
+    logdatei.log_prog('Script line: '+intToStr(lineno)+' : '+line,LLDebug2);
    end;
 
 
@@ -6560,7 +6559,7 @@ begin
                         if GetString (r, param, r, errorInfo, true)
                         then
                         begin
-                          LogDatei.log ('Parsing: getparam: ' + param ,LLdebug2);
+                          LogDatei.log_prog ('Parsing: getparam: ' + param ,LLdebug2);
                           paramList.Add(param);
                         end
                         else
@@ -11226,6 +11225,7 @@ var
    funcindex : integer = 0;
    funcname : string;
    boolresult : boolean;
+   p1,p2,p3,p4 : integer;
 
 
 
@@ -13705,20 +13705,22 @@ begin
         LogDatei.log_prog ('GetRegistryStringValue from: '+s1+' Remaining: '+r, LLdebug2);
         GetWord (s1, key, r1, [']'], true);
         key := trim(key)+']';
-        if not((pos('[',key) = 1) and (pos(']',key) = length(key))) then
+        p1 := pos('[',key);
+        p2 := posFromEnd(']',key);
+        p3 := length(key);
+        p4 := length(trim(key));
+        if not((pos('[',key) = 1) and (posFromEnd(']',key) = length(key))) then
         begin
           SyntaxCheck := false;
-          ErrorInfo := 'Wrong Key Format: Key must be given inside [] - but we got: '+key;
-          LogDatei.log(ErrorInfo,LLError);
+          ErrorInfo := 'Wrong Key Format: Key must be given inside [] - but we got: '+key
         end
         else
         begin
           key := opsiUnquotestr2(trim(key),'[]');
-          if (pos('[',key) = 1) and (pos(']',key) = length(key)) then
+          if (pos('[',key) = 1) and (posFromEnd(']',key) = length(key)) then
           begin
             SyntaxCheck := false;
-            ErrorInfo := 'Wrong Key Format: Have still brackets after removing them: '+key;
-            LogDatei.log(ErrorInfo,LLError);
+            ErrorInfo := 'Wrong Key Format: Have still brackets after removing them: '+key
           end
           else
           begin
@@ -13726,7 +13728,9 @@ begin
             GetWord (key, key0, key, ['\']);
             System.delete (key, 1, 1);
             if Skip (']', r1, r1, InfoSyntaxError) then
-              GetWord (r1, ValueName, r1, WordDelimiterSet1);
+              ValueName := r1;
+              //GetWord (r1, ValueName, r1, [''], true);
+              //GetWord (r1, ValueName, r1, WordDelimiterSet1);
             ValueName := trim(ValueName);
             LogDatei.log_prog ('GetRegistryStringValue from: '+key0+'\'+key+' ValueName: '+ValueName, LLdebug);
             StringResult := '';
@@ -13761,7 +13765,11 @@ begin
         LogDatei.log_prog ('GetRegistryStringValue from: '+s1+' Remaining: '+r, LLdebug2);
         GetWord (s1, key, r1, [']'], true);
         key := trim(key)+']';
-        if not((pos('[',key) = 1) and (pos(']',key) = length(key))) then
+        p1 := pos('[',key);
+        p2 := posFromEnd(']',key);
+        p3 := length(key);
+        p4 := length(trim(key));
+        if not((pos('[',key) = 1) and (posFromEnd(']',key) = length(key))) then
         begin
           SyntaxCheck := false;
           ErrorInfo := 'Wrong Key Format: Key must be given inside [] - but we got: '+key
@@ -13769,7 +13777,7 @@ begin
         else
         begin
           key := opsiUnquotestr2(trim(key),'[]');
-          if (pos('[',key) = 1) and (pos(']',key) = length(key)) then
+          if (pos('[',key) = 1) and (posFromEnd(']',key) = length(key)) then
           begin
             SyntaxCheck := false;
             ErrorInfo := 'Wrong Key Format: Have still brackets after removing them: '+key
@@ -13780,7 +13788,9 @@ begin
             GetWord (key, key0, key, ['\']);
             System.delete (key, 1, 1);
             if Skip (']', r1, r1, InfoSyntaxError) then
-              GetWord (r1, ValueName, r1, WordDelimiterSet1);
+              ValueName := r1;
+              //GetWord (r1, ValueName, r1, [''], true);
+              //GetWord (r1, ValueName, r1, WordDelimiterSet1);
             ValueName := trim(ValueName);
             LogDatei.log_prog ('GetRegistryStringValue from: '+key0+'\'+key+' ValueName: '+ValueName, LLdebug);
             StringResult := '';
@@ -16228,7 +16238,8 @@ begin
       if (Remaining = '') or (Remaining [1] = LineIsCommentChar)
       then
          // continue
-      else if (Remaining [1] = '[') and (inDefFunc2 <= 0) then
+      //else if (Remaining [1] = '[') and (inDefFunc2 <= 0) then
+      else if (Remaining [1] = '[')  then
          // subsection beginning
       begin
          continue := false;
@@ -16514,6 +16525,15 @@ begin
                                          StartlineOfSection, true, true, false);
               End;
               *)
+
+              if (ArbeitsSektion.count = 0) and (inDefFuncLevel > 0)
+              then
+              begin
+                // local function
+                Logdatei.log('Looking for section: '+ Expressionstr +' in local function .',LLDebug3);
+                Sektion.GetSectionLines (Expressionstr, TXStringList (ArbeitsSektion),
+                                  StartlineOfSection, true, true, false);
+              end;
 
               if ArbeitsSektion.count = 0
               then
@@ -19255,7 +19275,12 @@ begin
                        StatKind := FindKindOfStatement (Expressionstr, SectionSpecifier, call);
                        if StatKind = tsDefineFunction then inc(inDefFunc);
                        if StatKind = tsEndFunction then dec(inDefFunc);
-                       newDefinedfunction.addContent(myline);
+                       // Line with tsEndFunction should not be part of the content
+                       if inDefFunc > 0 then
+                       begin
+                         newDefinedfunction.addContent(myline);
+                         LogDatei.log_prog('inDefFunc: '+inttostr(inDefFunc)+' add line: '+myline,LLDebug3);
+                       end;
                        (*
                        begin
                          endofDefFuncFound := true;
@@ -19284,7 +19309,7 @@ begin
                      SetLength(definedFunctionArray, definedFunctioncounter);
                      definedFunctionArray[definedFunctioncounter-1] := newDefinedfunction;
                      definedFunctionNames.Append(newDefinedfunction.Name);
-                     dec(inDefFunc2);
+                     //dec(inDefFunc2);
                      LogDatei.log('Added defined function:: '+newDefinedfunction.Name+' to the known functions',LLInfo);
                    end
                  end;
@@ -19790,6 +19815,14 @@ begin
     FConstList.add ('%opsiLogDir%');
     {$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\log' ); {$ENDIF WINDOWS}
     {$IFDEF LINUX}FConstValuesList.add ( '/var/log/opsi-client-agent/opsi-script' ); {$ENDIF LINUX}
+
+    FConstList.add ('%opsiapplog%');
+    {$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\applog' ); {$ENDIF WINDOWS}
+    {$IFDEF LINUX}FConstValuesList.add ( '~/opsi.org/applog' ); {$ENDIF LINUX}
+
+    FConstList.add ('%opsidata%');
+    {$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\data' ); {$ENDIF WINDOWS}
+    {$IFDEF LINUX}FConstValuesList.add ( '/var/lib/opsi-client-agent' ); {$ENDIF LINUX}
 
     {$IFDEF WINDOWS}
     FConstList.add('%opsiScriptHelperPath%');
