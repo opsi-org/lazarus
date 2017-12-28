@@ -1223,6 +1223,7 @@ var
   attributename, attributevalue : string;
   boolarray : array [0..9] of boolean;
   namefound, attributesfound: boolean;
+  attributecount1,attributecount2 : integer;
 begin
   Result := False;
 
@@ -1268,6 +1269,8 @@ begin
       begin
         for al:=0 to 9 do
           boolarray[al]:=false;
+        for al:=0 to attributelist.Count-1 do
+          attributelist.Items[al].isvalid:=false;
         logdatei.log(' ', oslog.LLinfo);
         logdatei.log(IntToStr(N) + ' -> find attributes for node ' + actnodeset[j].NodeName + ', number of attributes ' + IntToStr(attributeList.Count) , LLinfo );
         if actnodeset[j].HasAttributes then
@@ -1288,7 +1291,7 @@ begin
                   boolarray[al]:=true;
                   attributelist.Items[al].isvalid:=true;
                 end
-                else attributelist.Items[al].isvalid:=false;
+                //else attributelist.Items[al].isvalid:=false;
               end;
               Inc(al);
             end;
@@ -1297,7 +1300,9 @@ begin
 
         logdatei.log('all attributes have to fit, nodename ' + actnodeset[j].NodeName , oslog.LLinfo);
 
-        if (attributeList.Count=actnodeset[j].Attributes.Length) then // check if all attributes fit
+        attributecount1 := attributeList.Count;
+        attributecount2 := actnodeset[j].Attributes.Length;
+        if (attributecount1=attributecount2) then // check if all attributes fit
           begin
             attributesfound:=true;
             // to max(attributeList.Count-1, myparentNode.ChildNodes.Item[j].Attributes.Length - 1)
@@ -1316,6 +1321,7 @@ begin
           end
         else // strict: identical number of attributes!
           begin
+            logdatei.log('Attribute count mismatch: given by path: '+inttostr(attributecount1)+' but node has: '+inttostr(attributecount2), oslog.LLwarning);
             actnodeset[j]:=nil;
             j:=j-1;
           end;
@@ -1337,7 +1343,7 @@ begin
         else
         begin
           actnode:=nil;
-          logdatei.log('result true, actnode is nil, lenght of actNodeSet is ' + IntToStr(length(actnodeset)), oslog.LLinfo) ;
+          logdatei.log('result false, actnode is nil, lenght of actNodeSet is ' + IntToStr(length(actnodeset)), oslog.LLinfo) ;
         end
     end
    else

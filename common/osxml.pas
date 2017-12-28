@@ -22,6 +22,9 @@ unit osxml;
 interface
 
 uses
+  {$IFDEF OPSISCRIPT}
+  oslog,
+  {$ENDIF OPSISCRIPT}
   Classes, SysUtils, DOM, osxmltdom, XMLRead, XMLWrite;
 
 (*
@@ -472,23 +475,32 @@ var
   end;
 
 begin
-  Result := False;
-  mynode := createXMLNodeFromString(nodestrlist);
-  if mynode.NodeName = Name then
-    newnode := mynode
-  else
-  begin
-    newnode := mynode.FindNode(Name);
-    if newnode = nil then
-      newnode := findnodeInList(mynode.ChildNodes, Name);
-  end;
-  if newnode <> nil then
-    if createStringListFromXMLNode(newnode, childnodeSL) then
+  try
+    Result := False;
+    mynode := createXMLNodeFromString(nodestrlist);
+    if mynode.NodeName = Name then
+      newnode := mynode
+    else
     begin
-      Result := True;
-      newnode.Free;
+      newnode := mynode.FindNode(Name);
+      if newnode = nil then
+        newnode := findnodeInList(mynode.ChildNodes, Name);
     end;
-  mynode.Free;
+    if newnode <> nil then
+      if createStringListFromXMLNode(newnode, childnodeSL) then
+      begin
+        Result := True;
+        newnode.Free;
+      end;
+    mynode.Free;
+    Result := True;
+  except
+    on e: exception do
+    Begin
+      Result := False;
+      LogDatei.log('Exception in xml2GetFirstChildNodeByName: ' + e.message, LLError);
+    End;
+  end;
 end;
 
 
@@ -533,11 +545,20 @@ function getXml2AttributeValueByKey(nodeAsStringlist: TStringList;
 var
   mynode, newnode: TDOMNode;
 begin
+  try
   Result := False;
   mynode := createXMLNodeFromString(nodeAsStringlist);
   if getNodeattributeByKey(mynode,attributekey,attributevalue) then
         Result := True;
   mynode.Free;
+  Result := True;
+  except
+    on e: exception do
+    Begin
+      Result := False;
+      LogDatei.log('Exception in getXml2AttributeValueByKey: ' + e.message, LLError);
+    End;
+  end;
 end;
 
 function xmlAsStringlistGetAttributesValueList(nodeAsStringlist: TStringList;

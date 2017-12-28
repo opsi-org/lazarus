@@ -1,16 +1,10 @@
-﻿#***************************************************************************
-# Subversion:
-# $Revision: 515 $
-# $Author: oertel $
-# $Date: 2016-11-09 15:06:33 +0100 (Mi, 09 Nov 2016) $
-#***************************************************************************
-
+﻿
 todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
 
 
 ##################################################################
-opsi-winst/opsi-script (4.11.7.0) experimental; urgency=low
+opsi-winst/opsi-script (4.12.1.0) experimental; urgency=low
 
   * integration of new xml functions:
     * new units in common: osxml, osxmltdom, osxmlsections
@@ -22,12 +16,12 @@ opsi-winst/opsi-script (4.11.7.0) experimental; urgency=low
       * setAttribute
       * addAttribute
       * delAttribute
-    * getXml2AttributeValueByKey
-    * getXml2Text
-    * getXml2DocumentFromFile
-    * getXml2Document
+    * getXml2AttributeValueByKey(<xml node:stringlist>,<key:string>): string
+    * getXml2Text(<xml node:stringlist>) : string
+    * getXml2DocumentFromFile(<filename:string>) : <xml-doc:stringlist>
+    * getXml2Document(<pure xml :stringlist>) : <xml-doc:stringlist>
     * getXml2UniqueChildnodeByName
-    * xml2GetFirstChildNodeByName
+    * xml2GetFirstChildNodeByName(<xml-doc:stringlist>,<node name:string>) : <xml node:stringlist>
 
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 04 May 2017:15:00:00 +0200
