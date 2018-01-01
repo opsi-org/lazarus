@@ -6832,25 +6832,26 @@ begin
         else
            nodeOpenCommandExists := true;
 
-        SyntaxCheck := false;
-        if Skip ('[', r, r, ErrorInfo)
-        then
-        Begin
-          GetWord (r, nodepath, r, [']']);
-          if Skip (']', r, r, ErrorInfo)
-          then
-          Begin
-            if r = '' then SyntaxCheck := true
-            //else ErrorInfo := ErrorRemaining;
-            else SyntaxCheck := true ;
-            LogDatei.log('nodepath is: '+nodepath, LLdebug);
-           LogDatei.log('We will open Key : '+nodepath, LLdebug);
-          End;
-        End;
 
+        SyntaxCheck := false;
+        if GetStringA (trim(r), nodepath, r, errorinfo, true) then
+        begin
+          LogDatei.log('We will OpenNode : '+nodepath, LLdebug);
+          syntaxCheck := true;
+        end
+        else  syntaxCheck := false;
+        if r = '' then SyntaxCheck := true
+        else ErrorInfo := ErrorRemaining;
+        //else SyntaxCheck := true ;
+        (*
+        nodepath := trim(r)
+        if nodepath <> '' then SyntaxCheck := true;
+        *)
         if SyntaxCheck
         then
         Begin
+          //LogDatei.log('nodepath is: '+nodepath, LLdebug);
+          //LogDatei.log('We will open Key : '+nodepath, LLdebug);
          (*
           XMLDocObject.setlengthActNodeSet  (1);
           XMLDocObject.actnodeset[0] := XMLDocObject.getDocumentElement;
@@ -6895,6 +6896,17 @@ begin
       then
       Begin
         SyntaxCheck := false;
+        if GetStringA (trim(r), nodepath, r, errorinfo, true) then
+        begin
+          LogDatei.log('We will DeleteNode : '+nodepath, LLdebug);
+          syntaxCheck := true;
+        end
+        else  syntaxCheck := false;
+        if r = '' then SyntaxCheck := true
+        else ErrorInfo := ErrorRemaining;
+
+        (*
+        SyntaxCheck := false;
         if Skip ('[', r, r, ErrorInfo)
         then
         Begin
@@ -6908,7 +6920,7 @@ begin
            LogDatei.log('We will delete Key : '+nodepath, LLdebug);
           End;
         End;
-
+        *)
         if SyntaxCheck
         then
         Begin
@@ -6971,6 +6983,45 @@ begin
             reportError (Sektion, i, Sektion.strings [i-1], ErrorInfo);
         end;
       End;   // setNodeText
+
+      if LowerCase (Expressionstr) = LowerCase ('addNewNode')
+      then
+      Begin
+        syntaxCheck := true;
+        if not (nodeOpened and nodeOpenCommandExists) then
+        begin
+          //SyntaxCheck := false;
+          logdatei.log('Error: No open Node. Use OpenNode before '+Expressionstr,LLError);
+        end
+        else
+        begin
+          if SyntaxCheck then
+          begin
+            if GetStringA (trim(r), newtext, r, errorinfo, true) then
+            begin
+              LogDatei.log('We will addNewNode : '+newtext, LLdebug);
+              syntaxCheck := true;
+            end
+            else  syntaxCheck := false
+          End;
+
+          if SyntaxCheck
+          then
+          Begin
+            try
+              XMLDocObject.makeNode(newtext,'','');
+              LogDatei.log('successfully addNewNode: '+newtext,oslog.LLinfo);
+            except
+              on e: Exception do
+              begin
+                LogDatei.log('Exception in xml2:addNewNode: ' + e.message, LLError);
+              end;
+            end;
+          End
+          else
+            reportError (Sektion, i, Sektion.strings [i-1], ErrorInfo);
+        end;
+      End;   // addNewNode
 
 
       if LowerCase (Expressionstr) = LowerCase ('setAttribute')

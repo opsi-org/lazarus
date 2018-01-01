@@ -132,17 +132,17 @@ type
     // The main idea for the following syntax:
 
     // The nodePath looks like this:
-    // nodedescription PATHSEPARATOR nodedescripton (and so on)
+    // nodedescription XML2PATHSEPARATOR nodedescripton (and so on)
     // nodedescription looks like this:
     // nodename attributeName="attributeValue"
     // (!) attributeValue should be surrounded with ""
-    // (!) attributeValue may contain a PATHSEPARATOR string
+    // (!) attributeValue may contain a XML2PATHSEPARATOR string
     // nodeName may include a namespace prefix - no more
     // attributeName may include a namespace prefix -no more
     // (!) namespace prefix are case sensitiv - no more
     // a node without attributes looks like this:
     // nodename =""
-    // PATHSEPARATOR string is ' // '
+    // XML2PATHSEPARATOR string is ' // '
 
     // eg:
     // foo bar="bar1" // childfoo ="" // RDF:foo NC:bar=nonesense
@@ -207,7 +207,7 @@ type
 implementation
 
 const
-  PATHSEPARATOR: string = ' // ';
+  XML2PATHSEPARATOR: string = ' // ';
   extraindent = '   ';
 
 
@@ -1060,15 +1060,15 @@ begin
   try
     // the root node
     nodesInPath[0] := XML.DocumentElement;
-    stringsplit(nodepath, PATHSEPARATOR, pathes);
+    stringsplit(nodepath, XML2PATHSEPARATOR, pathes);
     // walk the path
     // The Path looks like this:
-    // nodedescription PATHSEPARATOR nodedescripton (and so on)
+    // nodedescription XML2PATHSEPARATOR nodedescripton (and so on)
     // nodedescription looks like this
     // nodename attributeName="attributeValue"  or
     // nodename                          (node without attributes)
-    // (!) attributeValue may contain a PATHSEPARATOR string
-    // PATHSEPARATOR = ' // '
+    // (!) attributeValue may contain a XML2PATHSEPARATOR string
+    // XML2PATHSEPARATOR = ' // '
     i := 1;
 
     found := True;
@@ -1110,8 +1110,8 @@ begin
           // ????
           (*
           leavingPath := copy(leavingPath, pos(' ', leavingPath) + 1, length(leavingPath));
-          if pos('"' + PATHSEPARATOR, leavingPath) > 0 then
-            attributeList.Items[attributeList.Count-1].value := copy(leavingPath, 1, pos('"' + PATHSEPARATOR, leavingPath))
+          if pos('"' + XML2PATHSEPARATOR, leavingPath) > 0 then
+            attributeList.Items[attributeList.Count-1].value := copy(leavingPath, 1, pos('"' + XML2PATHSEPARATOR, leavingPath))
           else
             attributeList.Items[attributeList.Count-1].value := leavingPath;
           *)
@@ -1221,6 +1221,7 @@ function TuibXMLDocument.getNodeStrict(var newNode: TDOMNode; myparentNode: TDOM
 var
   n, j, i, al: integer;
   attributename, attributevalue : string;
+  actattributename, actattributevalue : string;
   boolarray : array [0..9] of boolean;
   namefound, attributesfound: boolean;
   attributecount1,attributecount2 : integer;
@@ -1284,8 +1285,10 @@ begin
               // check attributes
               for i := 0 to actnodeset[j].Attributes.Length - 1 do
               begin
-                if (actnodeset[j].Attributes[i].NodeName = attributeName)
-                and (actnodeset[j].Attributes[i].TextContent = attributeValue) then
+                actattributename:=actnodeset[j].Attributes[i].NodeName;
+                actattributevalue:=actnodeset[j].Attributes[i].TextContent;
+                if (actattributename = attributeName)
+                and (actattributevalue = attributeValue) then
                 begin
                   logdatei.log('attribut found ' + attributename + ' ' + attributevalue, LLinfo );
                   boolarray[al]:=true;
@@ -1309,11 +1312,12 @@ begin
             for al:=0 to attributeList.Count-1 do
             begin
               if attributelist.Items[al].isvalid then logdatei.log('key/value found ' + attributelist.Items[al].key + ':' + attributelist.Items[al].value, oslog.LLinfo)
-              else logdatei.log('key/value not found ' + attributelist.Items[al].key + ':' + attributelist.Items[al].value , oslog.LLwarning);
+              else logdatei.log('key/value not found ' + attributelist.Items[al].key + ':' + attributelist.Items[al].value , oslog.LLDebug2);
               attributesfound:= attributesfound AND boolarray[al]; //
             end;
             if not attributesfound then
             begin
+              logdatei.log('one or more attributes does not match, nodename ' + actnodeset[j].NodeName, oslog.LLDebug2);
               // remove node
               actnodeset[j]:=nil;
               j:=j-1;
@@ -1332,7 +1336,12 @@ begin
       //
       logdatei.log('actnodeset after retrieving key/value ', oslog.LLinfo);
       logActNodeSet;
-
+      if  length(actnodeset) > 1 then
+      begin
+        logdatei.log('There is more than one mathing node here - just taking the first', oslog.LLWarning);
+        for j := 1 to length(actnodeset) - 1 do actnodeset[j]:=nil;
+        cleanupactnodeset();
+      end;
       if  length(actnodeset) = 1 then
         begin
           actnode:=actnodeset[0];
@@ -1471,6 +1480,15 @@ begin
     LogDatei.log('actNode is nil, can not get nodeName: ', LLwarning);
 end;
 
+(*
+function TuibXMLDocument.nodeExists(nodePath: string): boolean;
+var
+  expectedtext : string ='';
+begin
+  result := nodeExists(nodePath, expectedtext);
+end;
+*)
+
 function TuibXMLDocument.nodeExists(nodePath: string): boolean;
 // tells if a node exists without changing anything
 // TODO : selection if text
@@ -1488,16 +1506,16 @@ begin
     begin
       // the root node
       nodesInPath[0] := XML.DocumentElement;
-      stringsplit(nodepath, PATHSEPARATOR, pathes);
+      stringsplit(nodepath, XML2PATHSEPARATOR, pathes);
       // TODO: don't check attributes, only nodenames
       // walk the path
       // The Path looks like this:
-      // nodedescription PATHSEPARATOR nodedescripton (and so on)
+      // nodedescription XML2PATHSEPARATOR nodedescripton (and so on)
       // nodedescription looks like this
       // nodename attributeName="attributeValue"  or
       // nodename (node without attributes)
-      // (!) attributeValue may contain a PATHSEPARATOR string
-      // PATHSEPARATOR = ' // '
+      // (!) attributeValue may contain a XML2PATHSEPARATOR string
+      // XML2PATHSEPARATOR = ' // '
       i := 1;
       endOfPath := False;
       found := True;
@@ -1514,8 +1532,8 @@ begin
           leavingPath := copy(pathes[i - 1], pos(' ', pathes[i - 1]) + 1, length(pathes[i - 1]));
           attributeName := copy(leavingPath, 1, pos('=', leavingPath) - 1);
           leavingPath := copy(leavingPath, pos('=', leavingPath) + 1, length(leavingPath));
-          if pos('"' + PATHSEPARATOR, leavingPath) > 0 then
-            attributeValue := copy(leavingPath, 1, pos('"' + PATHSEPARATOR, leavingPath))
+          if pos('"' + XML2PATHSEPARATOR, leavingPath) > 0 then
+            attributeValue := copy(leavingPath, 1, pos('"' + XML2PATHSEPARATOR, leavingPath))
           else
             attributeValue := leavingPath;
           if AnsiStartsStr('"', attributeValue) then

@@ -627,9 +627,10 @@ const
   WordDelimiterSetHosts = [' ', '#', #9];
   WordDelimiterSetDBAlias = [':', '='];
   WordDelimiterSet1 = [' ', #9, '=', '[', ']', '(', ')', '"', '''', ',', '+'];
-  WordDelimiterSet3 = [' ', #9, '=', '[', ']', '(', ')', '"', '''', ',', '+', ':'];
   WordDelimiterSet2 = [' ', #9, '"', ''''];
+  WordDelimiterSet3 = [' ', #9, '=', '[', ']', '(', ')', '"', '''', ',', '+', ':'];
   WordDelimiterSet4 = [' ', #9, '=', '[', ']', '('];
+  WordDelimiterSet5 = ['"', ''''];
   WordDelimiterWhiteSpace = [' ', #9];
 
   ddeTimerInterval = 100;

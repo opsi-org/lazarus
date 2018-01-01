@@ -10,12 +10,13 @@ opsi-winst/opsi-script (4.12.1.0) experimental; urgency=low
     * new units in common: osxml, osxmltdom, osxmlsections
     * new section type xml2
     * osparser: Tuibinstscript: new method doxml2patch:
-      * OpenNode
-      * DeleteNode
-      * setNodeText
-      * setAttribute
-      * addAttribute
-      * delAttribute
+      * OpenNode <node path : string>
+      * DeleteNode <node path : string>
+      * setNodeText <text : string>
+      * setAttribute <name : string>, <value:string>
+      * addAttribute <name : string>, <value:string>
+      * delAttribute <name : string>
+      * adNewNode <name : string>
     * getXml2AttributeValueByKey(<xml node:stringlist>,<key:string>): string
     * getXml2Text(<xml node:stringlist>) : string
     * getXml2DocumentFromFile(<filename:string>) : <xml-doc:stringlist>
