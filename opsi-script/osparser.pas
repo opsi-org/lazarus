@@ -13580,6 +13580,40 @@ begin
    End;
  End
 
+ else if LowerCase (s) = LowerCase ('getIndexFromListByContaining')
+ then
+ begin
+   if Skip ('(', r, r, InfoSyntaxError)
+   then
+   Begin
+
+     list1 := TXStringList.create;
+
+     if produceStringList (script, r, r, list1, InfoSyntaxError)
+        and skip (',', r, r, InfoSyntaxError)
+     then
+     Begin
+       if EvaluateString (r, r, s1, InfoSyntaxError)
+       and
+       skip (')', r, r, InfoSyntaxError)
+       then
+       Begin
+         SyntaxCheck := true;
+         stringResult := '';
+         i := 0;
+         while (stringResult = '') and (i < list1.Count) do
+         begin
+           if AnsiContainsText(list1[i], s1) then
+            stringResult := intToStr(i)
+           else
+             inc(i);
+         end;
+       End
+     End
+   End;
+ End
+
+
  else if LowerCase (s) = LowerCase ('composeString')
  then
  begin
