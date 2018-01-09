@@ -1052,7 +1052,9 @@ begin
       if posi > 0 then
         len := len - posi;
       uibname := Copy(suchevent, 1, len);
-      filename := uibname + '_' + repfilevonstr + '_' + repfilebisstr + '.pdf';
+      // use uibtime name as filename (for multiple events at one uibname)
+      //filename := uibname+'_'+Copy(suchevent, len+2, Length(suchevent));
+      filename := suchevent + '_' + repfilevonstr + '_' + repfilebisstr + '.pdf';
       dirname := EditButtonExportDir.Text + PathDelim + uibname;
       if not DirectoryExists(dirname) then
         dirname := EditButtonExportDir.Text + PathDelim + 'report';

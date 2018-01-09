@@ -1,5 +1,12 @@
 (*
 
+uibtime (4.1.1.22-1) stable; urgency=low
+
+ * uib2erp: createReport: use uibtimename (event) for multiple reports for one uibname
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 09 Jan 2018 15:00:00 +0000
+
+
 uibtime (4.1.1.21-1) stable; urgency=low
 
  * uib2erp: createReport: create uibname for filename with reverse search for first dot in event
