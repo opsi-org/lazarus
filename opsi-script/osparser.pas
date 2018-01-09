@@ -5723,8 +5723,9 @@ function TuibInstScript.doOpsiServiceCall
       if lineno <= lines.count
       then
         line := trim(lines [lineno - 1]);
+      logdatei.log_prog('Script line(gNVL): '+intToStr(lineno)+' : '+line,LLDebug3);
     end;
-    logdatei.log_prog('Script line: '+intToStr(lineno)+' : '+line,LLDebug2);
+    logdatei.log_prog('Script line(gNVL): '+intToStr(lineno)+' : '+line,LLDebug2);
    end;
 
 
@@ -16282,9 +16283,9 @@ begin
       else
       Begin
         call := remaining;
-        //logdatei.log('Parsingprogress: r: '+Remaining+' exp: '+Expressionstr,LLDebug3);
+        logdatei.log('Parsingprogress: r: '+Remaining+' exp: '+Expressionstr,LLDebug3);
         GetWord (Remaining, Expressionstr, Remaining, WordDelimiterSet4);
-        //logdatei.log('Parsingprogress: r: '+Remaining+' exp: '+Expressionstr,LLDebug3);
+        logdatei.log('Parsingprogress: r: '+Remaining+' exp: '+Expressionstr,LLDebug3);
         StatKind := FindKindOfStatement (Expressionstr, SectionSpecifier, call);
         ArbeitsSektion.Name := Expressionstr;
         ArbeitsSektion.SectionKind := StatKind;
@@ -18218,12 +18219,12 @@ begin
                       or (UpperCase (Remaining) = 'FALSE')
                    then
                    begin
-                     LogDatei.log ('ScriptErrorMessages was '+BoolToStr(ReportMessages,true)+' is set to false', LLNotice);
+                     LogDatei.log ('ScriptErrorMessages was '+BoolToStr(ReportMessages,true)+' is set to false', LLinfo);
                      ReportMessages := false;
                    end
                    else
                    begin
-                     LogDatei.log ('ScriptErrorMessages was '+BoolToStr(ReportMessages,true)+' is set to true', LLNotice);
+                     LogDatei.log ('ScriptErrorMessages was '+BoolToStr(ReportMessages,true)+' is set to true', LLinfo);
                      ReportMessages := true;
                    end;
                 End
@@ -19347,6 +19348,7 @@ begin
                      LogDatei.log('Added defined function:: '+newDefinedfunction.Name+' to the known functions',LLInfo);
                    end
                  end;
+                 LogDatei.log_prog('After reading '+newDefinedfunction.Name+' we are on line: '+inttostr(i-1)+' -> '+trim (Sektion.strings [i-1]),LLInfo);
                End;
 
                tsEndFunction:
@@ -19401,7 +19403,7 @@ begin
       end;
 
     until not inloop;
-
+    LogDatei.log_prog ('Finished wit linenr: '+inttostr(i)+' -> '+trim (Sektion.strings [i-1]), LLinfo);
     inc (i);
   end;
 
