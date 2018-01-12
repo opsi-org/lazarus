@@ -148,7 +148,8 @@ var
   default_loglevel : integer = 7;
   {$ENDIF}
   //debug_prog: boolean = True;
-  debug_lib: boolean = False;
+  //debug_lib: boolean = False;
+  debug_lib: boolean = True;
   force_min_loglevel: integer = 4;
   opsiscriptconf : string;
   ScriptErrorMessages: boolean = False;
@@ -175,7 +176,7 @@ begin
   end;
   myconf := TIniFile.Create(opsiscriptconf);
   myconf.WriteString('global', 'debug_prog', BoolToStr(debug_prog, false));
-  myconf.WriteString('global', 'debug_lib', BoolToStr(debug_lib, false));
+  //myconf.WriteString('global', 'debug_lib', BoolToStr(debug_lib, false));
   myconf.WriteString('global', 'default_loglevel', IntToStr(default_loglevel));
   myconf.WriteString('global', 'force_min_loglevel', IntToStr(force_min_loglevel));
   myconf.WriteString('global', 'ScriptErrorMessages', BoolToStr(ScriptErrorMessages, true));
@@ -201,8 +202,8 @@ begin
   myconf := TIniFile.Create(opsiscriptconf);
   debug_prog := strToBool(myconf.ReadString('global', 'debug_prog',
     boolToStr(debug_prog, True)));
-  debug_lib := strToBool(myconf.ReadString('global', 'debug_lib',
-    boolToStr(debug_lib, True)));
+  //debug_lib := strToBool(myconf.ReadString('global', 'debug_lib',
+  //  boolToStr(debug_lib, True)));
   default_loglevel := myconf.ReadInteger('global', 'default_loglevel', default_loglevel);
   force_min_loglevel := myconf.ReadInteger('global', 'force_min_loglevel',
     force_min_loglevel);
@@ -327,7 +328,7 @@ begin
                       end;
                   end;
 
-
+                  (*
                   if LowerCase(configid) = 'opsi-script.global.debug_lib' then
                   begin
                     if jsonAsObjectGetValueByKey(configlist.Strings[i],
@@ -340,6 +341,7 @@ begin
                         result := 'readConfigFromService: ok';
                       end;
                   end;
+                  *)
 
                   if LowerCase(configid) = 'opsi-script.global.default_loglevel' then
                   begin

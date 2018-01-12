@@ -1,0 +1,7 @@
+; opsi include file
+
+DefVar $LicenseRequired$
+DefVar $LicenseKey$
+DefVar $LicensePool$
+
+include_append "section_sub_get_licensekey.opsiinc"

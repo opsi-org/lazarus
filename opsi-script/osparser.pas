@@ -346,7 +346,8 @@ public
 
   function produceStringList
     (const section: TuibIniScript; const s0 : String; var Remaining: String;
-     var list : TXStringlist; var InfoSyntaxError : String; var NestLevel : integer) : Boolean; overload;
+     var list : TXStringlist; var InfoSyntaxError : String;
+     var NestLevel : integer; const inDefFuncIndex : integer) : Boolean; overload;
 
   function EvaluateString
     (const s0 : String; var Remaining: String;
@@ -354,7 +355,8 @@ public
 
   function EvaluateString
     (const s0 : String; var Remaining: String;
-     var StringResult : String; var InfoSyntaxError : String; var NestLevel : integer ) : Boolean; overload;
+     var StringResult : String; var InfoSyntaxError : String;
+     var NestLevel : integer; const inDefFuncIndex : integer ) : Boolean; overload;
 
   function EvaluateBoolean (Input : String; var Remaining : String;
      var BooleanResult : Boolean; NestingLevel : Integer; var InfoSyntaxError : String) : Boolean;
@@ -600,6 +602,7 @@ var
   scriptsuspendstate : boolean;
   scriptstopped : boolean;
   inDefFuncLevel : integer = 0;
+  inDefFuncIndex : integer = -1; // index of the active defined function
 
 
 
@@ -9310,7 +9313,7 @@ function TuibInstScript.produceStringList
 var
  NestLevel : integer;
 begin
-  result := produceStringList(section,s0,Remaining,list,InfoSyntaxError,Nestlevel);
+  result := produceStringList(section,s0,Remaining,list,InfoSyntaxError,Nestlevel,inDefFuncIndex);
 end;
 
 function TuibInstScript.produceStringList
@@ -9319,7 +9322,8 @@ function TuibInstScript.produceStringList
    var Remaining: String;
    var list : TXStringList;
    var InfoSyntaxError : String;
-   var NestLevel : integer) : Boolean;
+   var NestLevel : integer;
+   const inDefFuncIndex : integer) : Boolean;
 
 var
   VarIndex : integer=0;
@@ -11153,7 +11157,7 @@ function TuibInstScript.EvaluateString
 var
  NestLevel : integer;
 begin
-  result := EvaluateString(s0,Remaining,StringResult,InfoSyntaxError,Nestlevel);
+  result := EvaluateString(s0,Remaining,StringResult,InfoSyntaxError,Nestlevel,inDefFuncIndex);
 end;
 
 function TuibInstScript.EvaluateString
@@ -11161,7 +11165,8 @@ function TuibInstScript.EvaluateString
    var Remaining: String;
    var StringResult : String;
    var InfoSyntaxError : String;
-   var NestLevel : integer) : Boolean;
+   var NestLevel : integer;
+   const inDefFuncIndex : integer) : Boolean;
 
 
 var
@@ -11273,7 +11278,7 @@ begin
  end
 
  // local variable
- else if isVisibleLocalVar(s,funcindex)  then
+ else if isVisibleLocalVar(s,FuncIndex)  then
  begin
    if not (definedFunctionArray[FuncIndex].getLocalVarDatatype(s) = dfpString) then
    begin
@@ -15781,7 +15786,7 @@ begin
     then
     Begin
       if    Skip ('=', r, r, InfoSyntaxError)
-        and produceStringList (section, r, Remaining, list,  InfoSyntaxError, Nestlevel)
+        and produceStringList (section, r, Remaining, list,  InfoSyntaxError, Nestlevel,inDefFuncIndex)
       then
       if isVisibleLocalVar(VarName,funcindex)  then
       begin
@@ -15814,7 +15819,7 @@ begin
       else
       Begin
         if    Skip ('=', r, r, InfoSyntaxError)
-          and EvaluateString (r, Remaining, VarValue, InfoSyntaxError, Nestlevel)
+          and EvaluateString (r, Remaining, VarValue, InfoSyntaxError, Nestlevel,inDefFuncIndex)
         then
         Begin
           if isVisibleLocalVar(VarName,funcindex)  then

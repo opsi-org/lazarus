@@ -10,6 +10,9 @@ opsi-winst/opsi-script (4.12.0.13) stable; urgency=low
   * osparser: for-to loop: fix failure at for x to x loop
   * oslog: includelogtail: now log includelog at log level 7
   * new function getIndexFromListByContaining(<list> : stringlist,<search string> : string) : <number> : string
+  * temporary set debug_lib always to true
+  * osparser / osdefinedfunctions: call from a local function an other local function
+      using a local variable as call by value parameter
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 27 Dec 2017:15:00:00 +0200
 
