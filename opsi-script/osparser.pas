@@ -9310,10 +9310,10 @@ function TuibInstScript.produceStringList
    var Remaining: String;
    var list : TXStringList;
    var InfoSyntaxError : String ) : Boolean;
-var
- NestLevel : integer;
+//var
+// NestLevel : integer;
 begin
-  result := produceStringList(section,s0,Remaining,list,InfoSyntaxError,Nestlevel,inDefFuncIndex);
+  result := produceStringList(section,s0,Remaining,list,InfoSyntaxError,Nestinglevel,inDefFuncIndex);
 end;
 
 function TuibInstScript.produceStringList
@@ -11154,10 +11154,11 @@ function TuibInstScript.EvaluateString
    var Remaining: String;
    var StringResult : String;
    var InfoSyntaxError : String ) : Boolean;
-var
- NestLevel : integer;
+//var
+// NestLevel : integer;
 begin
-  result := EvaluateString(s0,Remaining,StringResult,InfoSyntaxError,Nestlevel,inDefFuncIndex);
+  // nesting level from TuibInstScript
+  result := EvaluateString(s0,Remaining,StringResult,InfoSyntaxError,NestingLevel,inDefFuncIndex);
 end;
 
 function TuibInstScript.EvaluateString
@@ -15736,10 +15737,10 @@ End;
 
 function TuibInstScript.doSetVar (const section: TuibIniScript; const Expressionstr : String;
                    var Remaining : String; var InfoSyntaxError : String) : Boolean;
- var
-  NestLevel : integer = 0;
+ //var
+ // NestLevel : integer = 0;
 begin
-  result := doSetVar(section,Expressionstr, Remaining, InfoSyntaxError, NestLevel);
+  result := doSetVar(section,Expressionstr, Remaining, InfoSyntaxError, NestingLevel);
 end;
 
 function TuibInstScript.doSetVar (const section: TuibIniScript; const Expressionstr : String;
@@ -16273,12 +16274,12 @@ begin
       //if pos(lowercase(PStatNames^ [tsEndFunction]),lowercase(Remaining)) >0 then dec(inDefFunc2);
       //if (lowercase(Remaining) = lowercase(PStatNames^ [tsEndFunction])) then dec(inDefFunc2);
       logdatei.log_prog('Parsingprogress: inDefFunc: '+IntToStr(inDefFunc),LLDebug3);
-      logdatei.log_prog('Parsingprogress: inDefFunc2: '+IntToStr(inDefFunc2),LLDebug3);
+      logdatei.log_prog('Parsingprogress: inDefFuncIndex: '+IntToStr(inDefFuncIndex),LLDebug3);
 
       if (Remaining = '') or (Remaining [1] = LineIsCommentChar)
       then
          // continue
-      //else if (Remaining [1] = '[') and (inDefFunc2 <= 0) then
+      //else if (Remaining [1] = '[') and (inDefFuncIndex < 0) then
       else if (Remaining [1] = '[')  then
          // subsection beginning
       begin
@@ -16295,7 +16296,7 @@ begin
         ArbeitsSektion.Name := Expressionstr;
         ArbeitsSektion.SectionKind := StatKind;
         ArbeitsSektion.NestingLevel:=Nestlevel;
-        logdatei.log_prog('Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' ArbeitsSektion.NestingLevel: '+IntToStr(ArbeitsSektion.NestingLevel)+' condition: '+BoolToStr(conditions [ActLevel],true),LLDebug3);
+        logdatei.log_prog('Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' ArbeitsSektion.NestingLevel: '+IntToStr(ArbeitsSektion.NestingLevel)+' condition: '+BoolToStr(conditions [ActLevel],true),LLDebug2);
 
 
         // start switch statement
@@ -16486,6 +16487,8 @@ begin
             doLogEntries (PStatNames^ [tsCondThen], LLInfo);
             LogDatei.LogSIndentLevel := NestLevel;
           end;
+          //ArbeitsSektion.NestingLevel:=Nestlevel;
+          //Sektion.NestingLevel:=Nestlevel;
         End
 
         else if (StatKind = tsCondElse) and (not(InSwitch) or ValidCase) then
@@ -16523,6 +16526,8 @@ begin
 
             if NestLevel = ActLevel then dec (ActLevel);
             dec (NestLevel);
+            //ArbeitsSektion.NestingLevel:=Nestlevel;
+            //Sektion.NestingLevel:=Nestlevel;
 
             LogDatei.LogSIndentLevel := NestLevel ;
             doLogEntries (PStatNames^ [tsCondClose] , LLinfo);
@@ -19367,7 +19372,7 @@ begin
                  //writeln('set');
                  Expressionstr := Remaining;
                  doLogEntries (PStatNames^ [tsSetVar] + '  '  + Expressionstr, LLInfo);
-                 if doSetVar (sektion, Expressionstr, Remaining, InfoSyntaxError)
+                 if doSetVar (sektion, Expressionstr, Remaining, InfoSyntaxError,NestLevel)
                  then
                  Begin
                    if Remaining <> ''
@@ -19408,7 +19413,8 @@ begin
       end;
 
     until not inloop;
-    LogDatei.log_prog ('Finished wit linenr: '+inttostr(i)+' -> '+trim (Sektion.strings [i-1]), LLinfo);
+    LogDatei.log_prog ('Finished with linenr: '+inttostr(i)+' -> '+trim (Sektion.strings [i-1]), LLinfo);
+    logdatei.log_prog('Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' ArbeitsSektion.NestingLevel: '+IntToStr(ArbeitsSektion.NestingLevel)+' Sektion.NestingLevel: '+IntToStr(Sektion.NestingLevel),LLDebug2);
     inc (i);
   end;
 

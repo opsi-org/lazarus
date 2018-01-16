@@ -13,6 +13,7 @@ opsi-winst/opsi-script (4.12.0.13) stable; urgency=low
   * temporary set debug_lib always to true
   * osparser / osdefinedfunctions: call from a local function an other local function
       using a local variable as call by value parameter
+  * osparser: more fixes for nestinglevel (if then else through localfunctions and sub)
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 27 Dec 2017:15:00:00 +0200
 
