@@ -14,6 +14,10 @@ opsi-winst/opsi-script (4.12.0.13) stable; urgency=low
   * osparser / osdefinedfunctions: call from a local function an other local function
       using a local variable as call by value parameter
   * osparser: more fixes for nestinglevel (if then else through localfunctions and sub)
+  * new booealn function: runningInPE (osparser,osfunc,osfuncwin) (at linux always false)
+  * osdefinedfunctions: fixes on parsing paramtype
+  * osparser: Ifelseendiflevel : longint = 0; // global nestlevel store
+     used to pass nestlevel to evaluatestring and producestringlist  --> local functions
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 27 Dec 2017:15:00:00 +0200
 

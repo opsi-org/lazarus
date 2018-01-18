@@ -603,6 +603,7 @@ var
   scriptstopped : boolean;
   inDefFuncLevel : integer = 0;
   inDefFuncIndex : integer = -1; // index of the active defined function
+  Ifelseendiflevel : longint = 0; // global nestlevel store (do 18.1.2018)
 
 
 
@@ -9313,7 +9314,7 @@ function TuibInstScript.produceStringList
 //var
 // NestLevel : integer;
 begin
-  result := produceStringList(section,s0,Remaining,list,InfoSyntaxError,Nestinglevel,inDefFuncIndex);
+  result := produceStringList(section,s0,Remaining,list,InfoSyntaxError,Ifelseendiflevel,inDefFuncIndex);
 end;
 
 function TuibInstScript.produceStringList
@@ -11158,7 +11159,7 @@ function TuibInstScript.EvaluateString
 // NestLevel : integer;
 begin
   // nesting level from TuibInstScript
-  result := EvaluateString(s0,Remaining,StringResult,InfoSyntaxError,NestingLevel,inDefFuncIndex);
+  result := EvaluateString(s0,Remaining,StringResult,InfoSyntaxError,Ifelseendiflevel,inDefFuncIndex);
 end;
 
 function TuibInstScript.EvaluateString
@@ -15510,6 +15511,15 @@ end
     booleanresult := isUefi;
  end
 
+  else if Skip ('runningInPE', Input, r, InfoSyntaxError)
+ then
+ begin
+    Syntaxcheck := true;
+    errorOccured := false;
+    booleanresult := isWinPE;
+ end
+
+
  else if Skip ('scriptWasExecutedBefore', Input, r, InfoSyntaxError)
  then
  begin
@@ -16452,8 +16462,9 @@ begin
           //if FExtremeErrorLevel > levelfatal then
           begin
             inc (NestLevel);
+            Ifelseendiflevel:=Nestlevel;
             ThenBranch [NestLevel] := true;
-
+            logdatei.log('IF: Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' sektion.NestingLevel: '+IntToStr(sektion.NestingLevel)+' ThenBranch: '+BoolToStr(ThenBranch [NestLevel],true),LLWarning);
             doLogEntries (PStatNames^ [tsCondOpen], LLinfo);
             if NestLevel > High (TConditions)
             then
@@ -16495,6 +16506,7 @@ begin
         Begin
           //if FExtremeErrorLevel > levelfatal then
           begin
+            logdatei.log('ELSE: Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' sektion.NestingLevel: '+IntToStr(sektion.NestingLevel)+' ThenBranch: '+BoolToStr(ThenBranch [NestLevel],true),LLWarning);
             if NestLevel <= Sektion.NestingLevel
             then
               reportError (Sektion, i, '',PStatNames^ [tsCondElse] + '  without  ' + PStatNames^ [tsCondOpen])
@@ -16502,7 +16514,10 @@ begin
             Begin
               if not ThenBranch [NestLevel]
               then
-                reportError (Sektion, i, '', 'double ' + PStatNames^ [tsCondElse])
+              begin
+                logdatei.log('ELSE: Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' sektion.NestingLevel: '+IntToStr(sektion.NestingLevel)+' ThenBranch: '+BoolToStr(ThenBranch [NestLevel],true),LLWarning);
+                reportError (Sektion, i, '', 'double ' + PStatNames^ [tsCondElse]);
+              end
               else
               Begin
                 ThenBranch [NestLevel] := false;
@@ -16526,6 +16541,8 @@ begin
 
             if NestLevel = ActLevel then dec (ActLevel);
             dec (NestLevel);
+            Ifelseendiflevel:=Nestlevel;
+            logdatei.log('ENDIF: Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' sektion.NestingLevel: '+IntToStr(sektion.NestingLevel)+' ThenBranch: '+BoolToStr(ThenBranch [NestLevel],true),LLWarning);
             //ArbeitsSektion.NestingLevel:=Nestlevel;
             //Sektion.NestingLevel:=Nestlevel;
 
@@ -16535,7 +16552,7 @@ begin
 
             if NestLevel < Sektion.NestingLevel
             then
-              reportError (Sektion, i, '', PStatNames^ [tsCondClose] + '  ohne  ' + PStatNames^ [tsCondOpen]);
+              reportError (Sektion, i, '', PStatNames^ [tsCondClose] + '  without  ' + PStatNames^ [tsCondOpen]);
           end;
         End
 

@@ -256,6 +256,7 @@ begin
               else
               begin
                 GetWord(remaining, paramtype, remaining,[',',')']);
+                paramtype := trim(paramtype);
                 if remaining = '' then
                 begin
                   errorstr := errorstr + ', or ) expected after Parameter Type';
