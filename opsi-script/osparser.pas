@@ -16464,7 +16464,7 @@ begin
             inc (NestLevel);
             Ifelseendiflevel:=Nestlevel;
             ThenBranch [NestLevel] := true;
-            logdatei.log('IF: Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' sektion.NestingLevel: '+IntToStr(sektion.NestingLevel)+' ThenBranch: '+BoolToStr(ThenBranch [NestLevel],true),LLWarning);
+            logdatei.log_prog('IF: Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' sektion.NestingLevel: '+IntToStr(sektion.NestingLevel)+' ThenBranch: '+BoolToStr(ThenBranch [NestLevel],true),LLDebug);
             doLogEntries (PStatNames^ [tsCondOpen], LLinfo);
             if NestLevel > High (TConditions)
             then
@@ -16506,7 +16506,7 @@ begin
         Begin
           //if FExtremeErrorLevel > levelfatal then
           begin
-            logdatei.log('ELSE: Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' sektion.NestingLevel: '+IntToStr(sektion.NestingLevel)+' ThenBranch: '+BoolToStr(ThenBranch [NestLevel],true),LLWarning);
+            logdatei.log_prog('ELSE: Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' sektion.NestingLevel: '+IntToStr(sektion.NestingLevel)+' ThenBranch: '+BoolToStr(ThenBranch [NestLevel],true),LLDebug);
             if NestLevel <= Sektion.NestingLevel
             then
               reportError (Sektion, i, '',PStatNames^ [tsCondElse] + '  without  ' + PStatNames^ [tsCondOpen])
@@ -16515,7 +16515,7 @@ begin
               if not ThenBranch [NestLevel]
               then
               begin
-                logdatei.log('ELSE: Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' sektion.NestingLevel: '+IntToStr(sektion.NestingLevel)+' ThenBranch: '+BoolToStr(ThenBranch [NestLevel],true),LLWarning);
+                logdatei.log_prog('ELSE: Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' sektion.NestingLevel: '+IntToStr(sektion.NestingLevel)+' ThenBranch: '+BoolToStr(ThenBranch [NestLevel],true),LLWarning);
                 reportError (Sektion, i, '', 'double ' + PStatNames^ [tsCondElse]);
               end
               else
@@ -16542,7 +16542,7 @@ begin
             if NestLevel = ActLevel then dec (ActLevel);
             dec (NestLevel);
             Ifelseendiflevel:=Nestlevel;
-            logdatei.log('ENDIF: Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' sektion.NestingLevel: '+IntToStr(sektion.NestingLevel)+' ThenBranch: '+BoolToStr(ThenBranch [NestLevel],true),LLWarning);
+            logdatei.log_prog('ENDIF: Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' sektion.NestingLevel: '+IntToStr(sektion.NestingLevel)+' ThenBranch: '+BoolToStr(ThenBranch [NestLevel],true),LLDebug);
             //ArbeitsSektion.NestingLevel:=Nestlevel;
             //Sektion.NestingLevel:=Nestlevel;
 

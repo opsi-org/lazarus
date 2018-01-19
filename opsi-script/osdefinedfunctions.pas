@@ -1044,24 +1044,44 @@ begin
   result := false;
   found := false;
   searchfinished := false;
-  if inDefinedFuncNestCounter > 0 then
+  LogDatei.log_prog('Search local var: '+varname+' with inDefFuncIndex: '+inttostr(inDefFuncIndex)+' and inDefinedFuncNestCounter: '+inttostr(inDefinedFuncNestCounter), LLDebug2);
+  if inDefFuncIndex > 0 then
   begin
     // we are in a local function
-    parentlist := TStringlist.Create;
-    parentlist.Text := createListOfVisibleParents.Text;
-    searchfinished := false;
-    searchindex := definedFunctionsCallStack.Count-1;
-    repeat
-      index := strToInt(definedFunctionsCallStack.Strings[searchindex]);
-      if parentlist.IndexOf(definedFunctionArray[index].Name) >= 0 then
-      begin
-        // local variable of this function are visible (global to this function)
-        if (definedFunctionArray[index].Active
-           and definedFunctionArray[index].locaVarExists(varname)) then found := true;
-      end;
-      dec(searchindex);
-      if searchindex < 0 then searchfinished:=true;
-    until found or searchfinished;
+    // first guess: it is local to the active local function
+    LogDatei.log_prog('Search local var: '+varname+' with inDefFuncIndex: '+inttostr(inDefFuncIndex)+' and Name: '+definedFunctionArray[inDefFuncIndex].name, LLDebug2);
+    if definedFunctionArray[inDefFuncIndex].locaVarExists(varname) then found := true;
+  end;
+  if found then
+  begin
+    index := inDefFuncIndex;
+    LogDatei.log_prog('Found var: '+varname+' as local (1) in function '+definedFunctionArray[index].Name+' with index: '+inttostr(index), LLDebug2);
+  end
+  else
+  begin
+    if inDefinedFuncNestCounter > 0 then
+    begin
+      // we are in a local function
+      // second guess: it is local to parents to the active local function
+      parentlist := TStringlist.Create;
+      parentlist.Text := createListOfVisibleParents.Text;
+      searchfinished := false;
+      searchindex := definedFunctionsCallStack.Count-1;
+      repeat
+        index := strToInt(definedFunctionsCallStack.Strings[searchindex]);
+        if parentlist.IndexOf(definedFunctionArray[index].Name) >= 0 then
+        begin
+          // local variable of this function are visible (global to this function)
+          LogDatei.log_prog('Search local var: '+varname+' with Index: '+inttostr(index)+' and Name: '+definedFunctionArray[index].name, LLDebug2);
+          if (definedFunctionArray[index].Active
+             and definedFunctionArray[index].locaVarExists(varname)) then found := true;
+        end;
+        dec(searchindex);
+        if searchindex < 0 then searchfinished:=true;
+      until found or searchfinished;
+      if found then
+        LogDatei.log_prog('Found var: '+varname+' as local (2) in function '+definedFunctionArray[index].Name+' with index: '+inttostr(index), LLDebug2);
+    end;
   end;
   result := found;
 end;
