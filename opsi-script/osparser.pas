@@ -16224,10 +16224,12 @@ function TuibInstScript.doAktionen (const Sektion: TWorkSection; const CallingSe
   //endofDefFuncFound : boolean;
   inDefFunc : integer = 0;
   inDefFunc2 : integer = 0;
+  inDefFunc3 : integer = 0;  // we are between deffunc and endfunc line (even in a not active code)
   funcindex : integer;
   importFunctionName : String;
   inSearchedFunc : boolean;
   alllines, inclines : integer;
+  processline : boolean = true; // are we on a active code branch (needed handling of section ends '['
 
 begin
   result := tsrPositive;
@@ -16280,8 +16282,8 @@ begin
       End;
 
       if pos(lowercase(PStatNames^ [tsDefineFunction]),lowercase(Remaining)) >0 then
-        inc(inDefFunc2);
-      //if pos(lowercase(PStatNames^ [tsEndFunction]),lowercase(Remaining)) >0 then dec(inDefFunc2);
+        inc(inDefFunc3);
+      if pos(lowercase(PStatNames^ [tsEndFunction]),lowercase(Remaining)) >0 then dec(inDefFunc3);
       //if (lowercase(Remaining) = lowercase(PStatNames^ [tsEndFunction])) then dec(inDefFunc2);
       logdatei.log_prog('Parsingprogress: inDefFunc: '+IntToStr(inDefFunc),LLDebug3);
       logdatei.log_prog('Parsingprogress: inDefFuncIndex: '+IntToStr(inDefFuncIndex),LLDebug3);
@@ -16289,12 +16291,21 @@ begin
       if (Remaining = '') or (Remaining [1] = LineIsCommentChar)
       then
          // continue
-      //else if (Remaining [1] = '[') and (inDefFuncIndex < 0) then
-      else if (Remaining [1] = '[')  then
-         // subsection beginning
+      else if (Remaining [1] = '[') then
       begin
-         continue := false;
-         LogDatei.log ('Section ending since next line is starting with "["', LLInfo);
+        // subsection beginning
+        logdatei.log('line is starting with "[": inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
+
+      //else if (Remaining [1] = '[')  then
+         // subsection beginning
+        //if (inDefFunc3 = 0) and (inDefFuncIndex = -1) then
+        if (inDefFunc3 = 0) or processline then
+        begin
+          // (inDefFunc3 = 0) : we are not between deffunc and enfunc
+          // ((inDefFuncIndex = -1)) : we are on base level (no local functions active)
+           continue := false;
+           LogDatei.log ('Section ending since next line is starting with "["', LLInfo);
+        end
       end
       else
       Begin
@@ -16570,6 +16581,7 @@ begin
             and (ActionResult > 0)
         then
         Begin
+          processline := true;
           case SectionSpecifier of
            tsecIncluded:
             Begin
@@ -19406,7 +19418,8 @@ begin
 
             End (* case *);
           End;
-        End;
+        End
+        else processline := false;
         ProcessMess;
       end;
 
