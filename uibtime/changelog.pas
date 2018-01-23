@@ -1,5 +1,13 @@
 (*
 
+uibtime (4.1.1.23-1) stable; urgency=low
+
+ * new unit uibdatetime for calendar calculations
+ * ontop: TimerProjektzeitTimer: use getLastIntervalStart from uibdatetime
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 23 Jan 2018 15:00:00 +0000
+
+
 uibtime (4.1.1.22-1) stable; urgency=low
 
  * uib2erp: createReport: use uibtimename (event) for multiple reports for one uibname

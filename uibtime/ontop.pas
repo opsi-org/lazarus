@@ -23,7 +23,8 @@ uses
   strutils,
   //Grids,
   DBGrids, treescrolldown,
-  httpservice, runprocess;
+  httpservice, runprocess,
+  uibdatetime;
 
 type
 
@@ -853,12 +854,12 @@ var
   //base: string;
   projektstart: TDatetime;
   endmonth, year, endyear, month, day, startyear, startmonth, startday,
-  aktstartyear, aktstartmonth: word;
+  aktstartyear, aktstartmonth, aktstartday: word;
   helperint: integer;
   suchevent: string;
   monthsmod, monthdiv, basemonth, acc_per_monthnum_int: integer;
   acc_per_monthnum: double;
-  lastIntervalStart, lastIntervalEnd: TDateTime;
+  lastIntervalStart : TDateTime;
 begin
   aktstartyear := 2001;
   aktstartmonth := 1;
@@ -884,6 +885,7 @@ begin
     //monthsmod := trunc(QueryProjektzeit.FieldByName('acc_per_monthnum').AsFloat);
     projektstart := QueryProjektzeit.FieldByName('projectstart').AsDateTime;
 
+    (*
     // look first for start version
     decodeDate(now, year, month, day);
     decodeDate(projektstart, startyear, startmonth, startday);
@@ -912,6 +914,7 @@ begin
       aktstartmonth := aktstartmonth - 12;
       aktstartyear := aktstartyear + 1;
     end;
+    *)
     (*
     endmonth := month
     endyear := year
@@ -927,7 +930,9 @@ begin
     end;
     *)
     // here is the result for the last Interval
-    lastIntervalStart := EncodeDate(aktstartyear, aktstartmonth, startday);
+    //lastIntervalStart := EncodeDate(aktstartyear, aktstartmonth, startday);
+    lastIntervalStart := getLastIntervalStart(projektstart,acc_per_monthnum_int);
+    decodeDate(lastIntervalStart, aktstartyear, aktstartmonth, aktstartday);
     DataModule1.debugOut(6, 'getLastIntervalInfo', 'lastIntervalStart :'+DateToStr(lastIntervalStart));
 
     if QueryProjektzeit.Active then
@@ -942,7 +947,7 @@ begin
       QueryProjektzeit.sql.Add('    and (stoptime < :bis)');
       QueryProjektzeit.parambyname('suchevent').AsString := suchevent;
       QueryProjektzeit.parambyname('von').AsString :=
-        datetostr(encodedate(aktstartyear, aktstartmonth, startday));
+        datetostr(encodedate(aktstartyear, aktstartmonth, aktstartday));
       QueryProjektzeit.parambyname('bis').AsString :=
         datetostr(now+1);
 (*        (
@@ -1027,11 +1032,13 @@ begin
     available_min := round(abs((available - trunc(available)) * 60));
     used_min := round(abs((used - trunc(used)) * 60));
     total_min := round(abs((total - trunc(total)) * 60));
-
+    (*
     EditProjektzeit.Hint := IntToStr(total_min) + '-' + IntToStr(
       used_min) + ' since 1.' + IntToStr(aktstartmonth) + '.' +
       IntToStr(aktstartyear);
-
+    *)
+    EditProjektzeit.Hint := IntToStr(total_min) + '-' + IntToStr(
+      used_min) + ' since ' + DatetoStr(lastIntervalStart);
     DataModule1.debugOut(6, 'ProjektzeitTimer: ' + FloatToStr(total) +
       '-' + FloatToStr(used) + '=' + floattostr(available));
     EditProjektzeit.Text := IntToStr(trunc(available)) + minute2str(available_min);

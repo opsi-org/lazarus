@@ -19,7 +19,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="22"/>
+      <BuildNr Value="23"/>
       <Language Value="0407"/>
       <StringTable Comments="lazarus 1.6.4 fpc 3.0.2" CompanyName="uib gmbh" InternalName="uibtime.exe" LegalCopyright="GPL v3" ProductName="uibtime" ProductVersion="4.0.0"/>
     </VersionInfo>
@@ -163,7 +163,7 @@
         <PackageName Value="LCL"/>
       </Item8>
     </RequiredPackages>
-    <Units Count="22">
+    <Units Count="23">
       <Unit0>
         <Filename Value="uibtime.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -310,6 +310,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit21>
+      <Unit22>
+        <Filename Value="uibdatetime.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit22>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
