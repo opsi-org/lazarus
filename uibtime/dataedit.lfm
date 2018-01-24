@@ -14,7 +14,7 @@ object FDataedit: TFDataedit
   OnClose = FormClose
   OnHide = FormHide
   Position = poScreenCenter
-  LCLVersion = '1.6.2.0'
+  LCLVersion = '1.6.4.0'
   object PageControl1: TPageControl
     Left = 0
     Height = 375

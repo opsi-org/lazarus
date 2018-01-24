@@ -272,6 +272,7 @@ procedure TFDataedit.ButtonReactivateClick(Sender: TObject);
 var
   oldname: string;
   oldfound: boolean;
+  reavtivate : boolean = false;
 begin
   try
     screen.Cursor := crHourGlass;
@@ -294,15 +295,31 @@ begin
     SQLQueryRenameEvent.ParamByName('oldname').AsString := oldname;
     SQLQueryRenameEvent.Open;
     if SQLQueryRenameEvent.FieldByName('zahl').AsInteger > 0 then
+    begin
       oldfound := True;
+      reavtivate := false;
+    end;
 
     if oldfound then
     begin
-      ShowMessage('Altes Event kann nicht reaktiviert werden, da noch abhängige Datensätze existieren.');
       DataModule1.debugOut(5,
-        'dataedit: ButtonReactivateClick: abort: existing datasets.');
-    end
-    else
+        'dataedit: ButtonReactivateClick: Warning: existing datasets.');
+      if MessageDlg('Warnung', 'Altes Event hat noch abhängige Datensätze in uibevent.'
+                     + sLineBreak + 'Trotzdem reaktivieren ?', mtConfirmation,
+                     [mbYes, mbNo],0) = mrYes then
+      begin
+        reavtivate := true;
+        DataModule1.debugOut(5,
+        'dataedit: ButtonReactivateClick: Problem: existing datasets. : override by user');
+      end
+      else
+      begin
+        DataModule1.debugOut(5,
+        'dataedit: ButtonReactivateClick: Problem: existing datasets. : cancled by user');
+      end;
+    end;
+
+    if reavtivate then
     begin
       // disable trigger
       SQLQueryRenameEvent.SQL.Clear;

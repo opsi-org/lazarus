@@ -26,7 +26,7 @@ begin
   result := 0;
   mymonthspan := monthspan(startdate,now);
   mymonthbetween := monthsbetween(startdate,now);
-  if mymonthspan < myMonthInterval then
+  if (myMonthInterval = 0) or (mymonthspan < myMonthInterval) then
   begin
     //no interval finished
     result := startdate;

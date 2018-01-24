@@ -1,5 +1,13 @@
 (*
 
+uibtime (4.1.1.24-1) stable; urgency=low
+
+ * dataedit: ButtonReactivateClick: Ask via messagebox for override olfound warning
+ * uibdatetime: getLastIntervalStart: prevent division by zero if myMonthInterval=0
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 24 Jan 2018 15:00:00 +0000
+
+
 uibtime (4.1.1.23-1) stable; urgency=low
 
  * new unit uibdatetime for calendar calculations
