@@ -336,9 +336,6 @@
     </Linking>
     <Other>
       <CustomOptions Value="-dLAZ_POWERPDF"/>
-      <OtherDefines Count="1">
-        <Define0 Value="LAZ_POWERPDF"/>
-      </OtherDefines>
     </Other>
   </CompilerOptions>
   <Debugging>
