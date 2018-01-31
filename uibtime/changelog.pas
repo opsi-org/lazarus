@@ -1,4 +1,11 @@
 (*
+uibtime (4.1.1.25-1) stable; urgency=low
+
+ * dataedit: new getLastIntervalEnd
+ * uib2erp: getLastIntervalInfo: use getLastIntervalEnd
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 31 Jan 2018 15:00:00 +0000
+
 
 uibtime (4.1.1.24-1) stable; urgency=low
 

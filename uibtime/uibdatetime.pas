@@ -13,6 +13,7 @@ uses
   Classes, SysUtils,dateutils;
 
 function getLastIntervalStart(startdate : TdateTime; myMonthInterval : cardinal) : TdateTime;
+function getLastIntervalEnd(startdate : TdateTime; myMonthInterval : cardinal) : TdateTime;
 
 
 implementation
@@ -37,6 +38,16 @@ begin
     result := IncMonth(startdate,(numberofintervals * myMonthInterval));
   end;
 end;
+
+function getLastIntervalEnd(startdate : TdateTime; myMonthInterval : cardinal) : TdateTime;
+var
+  lastIntervalStart : Tdatetime;
+begin
+  result := 0;
+  lastIntervalStart := getLastIntervalStart(startdate,myMonthInterval);
+  result := IncMonth(lastIntervalStart, myMonthInterval);
+end;
+
 
 end.
 

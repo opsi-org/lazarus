@@ -35,7 +35,8 @@ uses
   DateUtils,
   //Math, debug,
   strutils,
-  Result;
+  Result,
+  uibdatetime;
 
 type
 
@@ -321,6 +322,7 @@ begin
       endyear := endyeari;
       *)
 
+      (*
       // look first for start version
       decodeDate(querystartdt, year, month, day);
       decodeDate(projektstart, startyear, startmonth, startday);
@@ -355,11 +357,14 @@ begin
         endmonth := endmonth - 12;
         endyear := endyear + 1;
       end;
-
+      *)
       // here is the result for the last Interval
-      lastIntervalStart := EncodeDate(aktstartyear, aktstartmonth, startday);
+      //lastIntervalStart := EncodeDate(aktstartyear, aktstartmonth, startday);
+      lastIntervalStart := getLastIntervalStart(projektstart,acc_per_monthnum_int);
+      //decodeDate(lastIntervalStart, aktstartyear, aktstartmonth, aktstartday);
       DataModule1.debugOut(6, 'getLastIntervalInfo', 'lastIntervalStart :'+DateToStr(lastIntervalStart));
-      lastIntervalEnd := EncodeDate(endyear, endmonth, startday);
+      //lastIntervalEnd := EncodeDate(endyear, endmonth, startday);
+      lastIntervalEnd := getLastIntervalEnd(projektstart,acc_per_monthnum_int);
       DataModule1.debugOut(6, 'getLastIntervalInfo', 'lastIntervalEnd :'+DateToStr(lastIntervalEnd));
       // are the interval boundaries in search intervall
       if (lastIntervalStart >= querystartdt) and (lastIntervalStart <= queryenddt) then
@@ -450,6 +455,7 @@ begin
       hours := hours + 1;
     end;
     availabletime := available / 24;
+
 
 
     //availabletime := EncodeTimeInterval(hours, minutes, 0, 0);
