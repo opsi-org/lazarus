@@ -14990,11 +14990,12 @@ begin
      syntaxCheck := true;
      if local_opsidata <> nil then
      begin
-     local_opsidata.setActualClient(s1);
-     if 'true' = LowerCase(s3) then
-       BooleanResult := local_opsidata.sendLog(s2,true)
-     else
-       BooleanResult := local_opsidata.sendlog(s2,false);
+       logdatei.Appendmode := True; // switch append mode on in order to avoid that a final log removes this one
+       local_opsidata.setActualClient(s1);
+       if 'true' = LowerCase(s3) then
+         BooleanResult := local_opsidata.sendLog(s2,true)
+       else
+         BooleanResult := local_opsidata.sendlog(s2,false);
      end
      else
      begin

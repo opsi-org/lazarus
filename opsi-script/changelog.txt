@@ -5,6 +5,15 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 ##################################################################
 
+opsi-winst/opsi-script (4.12.0.14) stable; urgency=low
+
+  * osparser: evaluateBoolean: sendlog: switch log append mode on
+      in order to avoid that a final log removes this one
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 13 Feb 2018:15:00:00 +0200
+
+
+
 opsi-winst/opsi-script (4.12.0.13) stable; urgency=low
 
   * osparser: for-to loop: fix failure at for x to x loop
