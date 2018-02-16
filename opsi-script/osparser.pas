@@ -10178,8 +10178,8 @@ begin
             // fill list
            for i := 0 to list1.count - 1 do
              for k := 0 to list2.count - 1 do
-               if AnsiStartsText(list2[k]+'=', list1[i]) then
-                 list.Add(list1.Strings[i]);
+               if AnsiStartsText(list1.Strings[i]+'=', list2.Strings[k]) then
+                 list.Add(list2.Strings[k]);
           except
             on e: exception do
             begin
