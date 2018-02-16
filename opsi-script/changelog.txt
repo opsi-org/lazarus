@@ -9,9 +9,15 @@ opsi-winst/opsi-script (4.12.0.14) stable; urgency=low
 
   * osparser: evaluateBoolean: sendlog: switch log append mode on
       in order to avoid that a final log removes this one
+  * new function : getSubListByMatch(<search string>, <target list>) :stringlist
+  * new function : getSubListByMatch(<search list>, <target list>) :stringlist
+  * new function : getSubListByContaining(<search string>, <target list>) :stringlist
+  * new function : getSubListByContaining(<search list>, <target list>) :stringlist
+  * new function : getSubListByKey(<search string>, <target list>) :stringlist
+  * new function : getSubListByKey(<search list>, <target list>) :stringlist
+  * new function : getKeyList(<list>) :stringlist
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 13 Feb 2018:15:00:00 +0200
-
 
 
 opsi-winst/opsi-script (4.12.0.13) stable; urgency=low
