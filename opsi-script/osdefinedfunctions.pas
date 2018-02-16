@@ -74,9 +74,12 @@ type
     function addLocalVar(name : string; datatype : TosdfDataTypes; callByReference :boolean) : boolean;
     //function getLocalVarReference(name : string) : pointer;
 
-    function parseCallParameter(paramline : string; var remaining : string;  var errorstr : string) : boolean;
+    function parseCallParameter(paramline : string; var remaining : string;
+               var errorstr : string; NestLevel : integer;
+               inDefFuncIndex : integer) : boolean;
     //function call(paramline : string; var remaining : string) : boolean;
-    function call(paramline : string; var remaining : string; var NestLevel : integer) : boolean;
+    function call(paramline : string; var remaining : string;
+               var NestLevel : integer) : boolean;
 
     property Name : String read DFName;
     property datatype : TosdfDataTypes read DFResultType;
@@ -253,6 +256,7 @@ begin
               else
               begin
                 GetWord(remaining, paramtype, remaining,[',',')']);
+                paramtype := trim(paramtype);
                 if remaining = '' then
                 begin
                   errorstr := errorstr + ', or ) expected after Parameter Type';
@@ -750,7 +754,9 @@ end;
 
 
 
-function TOsDefinedFunction.parseCallParameter(paramline : string; var remaining : string; var errorstr : string) : boolean;
+function TOsDefinedFunction.parseCallParameter(paramline : string;
+           var remaining : string; var errorstr : string; NestLevel : integer;
+           inDefFuncIndex : integer) : boolean;
 var
   paramname : string;
     paramstr : string;
@@ -864,7 +870,7 @@ begin
           // call by value
           case DFparamList[paramcounter].paramDataType of
             dfpString :     begin
-                              if not Script.EvaluateString(paramstr,r,paramstrvalue,errorstr) then
+                              if not Script.EvaluateString(paramstr,r,paramstrvalue,errorstr,NestLevel,inDefFuncIndex) then
                               begin
                                 // parameter type mismatch
                                 syntax_ok := false;
@@ -878,7 +884,7 @@ begin
                               end;
                             end;
             dfpStringlist : begin
-                              if not Script.produceStringList(section,paramstr,r,paramlistvalue,errorstr) then
+                              if not Script.produceStringList(section,paramstr,r,paramlistvalue,errorstr,NestLevel,inDefFuncIndex) then
                               begin
                                 // parameter type mismatch
                                 syntax_ok := false;
@@ -926,28 +932,35 @@ end;
 
 
 // run the function
-function  TOsDefinedFunction.call(paramline : string; var remaining : string; var NestLevel : integer) : boolean;
+function  TOsDefinedFunction.call(paramline : string; var remaining : string;
+            var NestLevel : integer) : boolean;
 var
   errorstr : string;
   section : TWorkSection;
   callingsection : TWorkSection;
   sectionresult : TSectionResult;
+  funcindex : integer;
+  searchindex : integer;
 begin
   call := false;
   inc(inDefFuncLevel);
+  FuncIndex := definedFunctionNames.IndexOf (LowerCase (DFName));
+  LogDatei.log('We are coming from function with index: '+inttostr(inDefFuncIndex)+' (-1 = base)',LLDebug2);
   LogDatei.log('We enter the defined function: '+DFName+' with '+IntToStr(DFcontent.Count)+' lines. inDefFuncLevel: '+inttostr(inDefFuncLevel),LLDebug2);
   LogDatei.log_prog('paramline: '+paramline+' remaining: '+remaining+' Nestlevel: '+inttostr(NestLevel),LLDebug2);
   DFActive:=true;
   //inc(inDefinedFuncNestCounter);
-  definedFunctionsCallStack.Append(InttoStr(DFIndex));
+  //definedFunctionsCallStack.Append(InttoStr(DFIndex));
   //parse parameter
-  if not parseCallParameter(paramline, remaining, errorstr) then
+  if not parseCallParameter(paramline, remaining, errorstr,NestLevel, inDefFuncIndex) then
   begin
     // parse parameter failed
     LogDatei.log('Syntax Error: Parameter parsing failed: '+errorstr,LLCritical);
   end
   else
   begin
+    definedFunctionsCallStack.Append(InttoStr(DFIndex));
+    inDefFuncIndex := FuncIndex;
     // run the body of the function
     inc(inDefinedFuncNestCounter);
     section := TWorkSection.create(Nestlevel);
@@ -974,7 +987,11 @@ begin
   dec(inDefinedFuncNestCounter);
   definedFunctionsCallStack.Delete(definedFunctionsCallStack.Count-1);
   DFActive:=false;
-  inc(inDefFuncLevel);
+  dec(inDefFuncLevel);
+  searchindex := definedFunctionsCallStack.Count-1;
+  if searchindex > -1 then
+    inDefFuncIndex := definedFunctionNames.IndexOf (definedFunctionsCallStack.Strings[searchindex])
+  else inDefFuncIndex := -1;
   LogDatei.log('We leave the defined function: '+DFName+' ; inDefFuncLevel: '+inttostr(inDefFuncLevel),LLDebug2);
 end;
 
@@ -1027,24 +1044,44 @@ begin
   result := false;
   found := false;
   searchfinished := false;
-  if inDefinedFuncNestCounter > 0 then
+  LogDatei.log_prog('Search local var: '+varname+' with inDefFuncIndex: '+inttostr(inDefFuncIndex)+' and inDefinedFuncNestCounter: '+inttostr(inDefinedFuncNestCounter), LLDebug2);
+  if inDefFuncIndex > 0 then
   begin
     // we are in a local function
-    parentlist := TStringlist.Create;
-    parentlist.Text := createListOfVisibleParents.Text;
-    searchfinished := false;
-    searchindex := definedFunctionsCallStack.Count-1;
-    repeat
-      index := strToInt(definedFunctionsCallStack.Strings[searchindex]);
-      if parentlist.IndexOf(definedFunctionArray[index].Name) >= 0 then
-      begin
-        // local variable of this function are visible (global to this function)
-        if (definedFunctionArray[index].Active
-           and definedFunctionArray[index].locaVarExists(varname)) then found := true;
-      end;
-      dec(searchindex);
-      if searchindex < 0 then searchfinished:=true;
-    until found or searchfinished;
+    // first guess: it is local to the active local function
+    LogDatei.log_prog('Search local var: '+varname+' with inDefFuncIndex: '+inttostr(inDefFuncIndex)+' and Name: '+definedFunctionArray[inDefFuncIndex].name, LLDebug2);
+    if definedFunctionArray[inDefFuncIndex].locaVarExists(varname) then found := true;
+  end;
+  if found then
+  begin
+    index := inDefFuncIndex;
+    LogDatei.log_prog('Found var: '+varname+' as local (1) in function '+definedFunctionArray[index].Name+' with index: '+inttostr(index), LLDebug2);
+  end
+  else
+  begin
+    if inDefinedFuncNestCounter > 0 then
+    begin
+      // we are in a local function
+      // second guess: it is local to parents to the active local function
+      parentlist := TStringlist.Create;
+      parentlist.Text := createListOfVisibleParents.Text;
+      searchfinished := false;
+      searchindex := definedFunctionsCallStack.Count-1;
+      repeat
+        index := strToInt(definedFunctionsCallStack.Strings[searchindex]);
+        if parentlist.IndexOf(definedFunctionArray[index].Name) >= 0 then
+        begin
+          // local variable of this function are visible (global to this function)
+          LogDatei.log_prog('Search local var: '+varname+' with Index: '+inttostr(index)+' and Name: '+definedFunctionArray[index].name, LLDebug2);
+          if (definedFunctionArray[index].Active
+             and definedFunctionArray[index].locaVarExists(varname)) then found := true;
+        end;
+        dec(searchindex);
+        if searchindex < 0 then searchfinished:=true;
+      until found or searchfinished;
+      if found then
+        LogDatei.log_prog('Found var: '+varname+' as local (2) in function '+definedFunctionArray[index].Name+' with index: '+inttostr(index), LLDebug2);
+    end;
   end;
   result := found;
 end;

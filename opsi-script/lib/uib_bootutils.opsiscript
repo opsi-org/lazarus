@@ -1,0 +1,174 @@
+encoding=utf8
+
+; ###################################################################################################
+
+DefFunc delFromWindowsBootmanager($bootlabel$ : string) : string
+
+	DefVar $lastLine$
+	DefVar $bootGUID$
+	DefVar $bootGUIDLine$
+	DefVar $exitcode$
+	DefVar $labelindex$
+	DefVar $guidindex$
+	DefVar $indexoffset$
+	
+	DefStringlist $resultlist$
+
+	set $result$ = "false"
+	Message "Del "+$bootlabel$+" entry from Windows boot manager ...."
+	setloglevel = 7
+	comment "we want delete the vhd entry from the windows boot manager (not from the uefi boot manager)"
+	set $resultlist$ = shellCall("bcdedit /v")
+	set $labelindex$ = getIndexFromListByContaining($resultlist$,$bootlabel$)
+	set $indexoffset$ = "1"
+	set $guidindex$ = calculate($labelindex$+" - "+$indexoffset$)
+	set $bootGUIDLine$ = takestring($guidindex$,$resultlist$)
+	set $bootGUID$ = ""
+	;set $lastLine$ = ""
+	;set $bootGUIDLine$ = ""
+	;for %aktstring% in $resultlist$ do sub_find_boot_guid
+	if not ($bootGUIDLine$ = "")
+		set $bootGUID$ = takeString(1,splitStringOnWhitespace($bootGUIDLine$))
+		if not ($bootGUID$ = "")
+			setloglevel = 7
+			set $ExitCode$ = shellCall("bcdedit /delete "+$bootGUID$)
+			if not("0" = $ExitCode$)
+				LogError "failed bcd_delete"
+				;setloglevel = 6
+				;set $errorList$ = addtolist($errorList$, " failed bcd_delete")
+			else
+				set $result$ = "true"
+			endif
+			setloglevel = 7
+			; seems to fail always
+			;set $ExitCode$ = shellCall("bcdedit /deletevalue {bootmgr} resumeobject "+$bootGUID$)
+			;if not("0" = $ExitCode$)
+			;	comment "failed bcd_resumeobject"
+			;	;setloglevel = 6
+			;	;set $errorList$ = addtolist($errorList$, " failed bcd_resumeobject")
+			;endif
+			setloglevel = 7
+		else
+			LogWarning "Found no boot GUID for label: "+$bootlabel$
+		endif
+	endif
+	setloglevel = 7
+	shellCall("bcdedit /v")
+	shellCall("bcdedit /enum")
+	if runningonuefi
+		shellCall("bcdedit /enum firmware")
+	endif
+	
+	;[sub_find_boot_guid]
+	;if contains("%aktstring%", $bootLabel$)
+	;	if $bootGUIDLine$ = ""
+	;		set $bootGUIDLine$ = $lastLine$
+	;	endif
+	;endif
+	;set $lastLine$ = "%aktstring%"
+
+EndFunc
+
+
+DefFunc bootNextToLabel($bootlabel$ : string) : string
+
+	DefVar $lastLine$
+	DefVar $bootGUID$
+	DefVar $bootGUIDLine$
+	DefVar $exitcode$
+	DefVar $labelindex$
+	DefVar $guidindex$
+	DefVar $indexoffset$
+	
+	DefStringlist $resultlist$
+
+	
+	set $result$ = "false"
+	comment "we want activate the PE entry in the windows boot manager or in the uefi boot manager"
+	if runningonuefi
+		set $resultlist$ = shellCall("bcdedit /enum firmware")
+		set $indexoffset$ = "3"
+		Message "Enable boot enty :"+$bootlabel$+" in UEFI boot manager."
+	else
+		set $resultlist$ = shellCall("bcdedit /v")
+		set $indexoffset$ = "1"
+		Message "Enable boot enty :"+$bootlabel$+" in Windows boot manager."
+	endif
+	set $labelindex$ = getIndexFromListByContaining($resultlist$,$bootlabel$)
+	set $guidindex$ = calculate($labelindex$+" - "+$indexoffset$)
+	set $bootGUIDLine$ = takestring($guidindex$,$resultlist$)
+	set $bootGUID$ = ""
+	;set $lastLine$ = ""
+	;set $bootGUIDLine$ = ""
+	;for %aktstring% in $resultlist$ do sub_find_boot_guid
+	if not ($bootGUIDLine$ = "")
+		set $bootGUID$ = takeString(1,splitStringOnWhitespace($bootGUIDLine$))
+		if not ($bootGUID$ = "")
+			;setloglevel = 7
+			set $resultlist$ = shellCall("bcdedit /bootsequence "+$bootGUID$)
+			if not("0" = getLastExitCode)
+				LogError "failed bcd_bootsequence"
+				;setloglevel = 6
+				;set $errorList$ = addtolist($errorList$, " failed bcd_bootsequence")
+			else
+				set $result$ = "true"
+			endif
+			;setloglevel = 7
+			if runningOnUefi
+				set $resultlist$ = shellCall("bcdedit /set {fwbootmgr} bootsequence "+$bootGUID$)
+				if not("0" = getLastExitCode)
+					LogError "failed bcd_bootsequence2"
+				else
+					set $result$ = "true"
+					;setloglevel = 6
+					;set $errorList$ = addtolist($errorList$, " failed bcd_bootsequence2")
+				endif
+			endif
+			;setloglevel = 7
+			set $resultlist$ = shellCall("bcdedit /default "+$bootGUID$)
+			if not("0" = getLastExitCode)
+				LogError "failed bcd_default"
+				;setloglevel = 6
+				;set $errorList$ = addtolist($errorList$, " failed bcd_default")
+			endif
+			;setloglevel = 7
+			set $resultlist$ = shellCall("bcdedit /displayorder "+$bootGUID$)
+			if not("0" = getLastExitCode)
+				LogError "failed bcd_displayorder"
+				;setloglevel = 6
+				;set $errorList$ = addtolist($errorList$, " failed bcd_displayorder")
+			endif
+			;setloglevel = 7
+			set $ExitCode$ = shellCall("bcdedit /set {bootmgr} resumeobject "+$bootGUID$)
+			if not("0" = $ExitCode$)
+				LogError "failed bcd_delete"
+				;setloglevel = 6
+				;set $errorList$ = addtolist($errorList$, " failed bcd_resumeobject")
+			endif
+			;setloglevel = 7
+			;set $resultlist$ = shellCall("bcdedit /timeout "+$boot_manager_timeout$)
+			;if not("0" = getLastExitCode)
+			;	LogError "failed bcd_timeout"
+			;	setloglevel = 6
+			;	set $errorList$ = addtolist($errorList$, " failed bcd_timeout")
+			;endif
+		endif
+	endif
+	;setloglevel = 7
+	set $resultlist$ = shellCall("bcdedit /v")
+	set $resultlist$ = shellCall("bcdedit /enum")
+	if runningonuefi
+		set $resultlist$ = shellCall("bcdedit /enum firmware")
+	endif
+
+	;[sub_find_boot_guid]
+	;if contains("%aktstring%", $bootLabel$)
+	;	if $bootGUIDLine$ = ""
+	;		set $bootGUIDLine$ = $lastLine$
+	;	endif
+	;endif
+	;set $lastLine$ = "%aktstring%"
+
+EndFunc
+
+; ###################################################################################################
