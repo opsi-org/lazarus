@@ -21,12 +21,26 @@ implementation
 function getLastIntervalStart(startdate : TdateTime; myMonthInterval : cardinal) : TdateTime;
 var
   mymonthspan : double;
+  mynow : double;
+  mydayofmonth1, mydayofmonth2 : word;
   mymonthbetween : integer;
   numberofintervals : integer;
 begin
+  // warning for monthspan and monthsbetween:
+  // This number is an approximation,
+  // based on an average number of days of 30.4375 per month (average over 4 years).
+  // https://www.freepascal.org/docs-html/rtl/dateutils/monthspan.html
   result := 0;
-  mymonthspan := monthspan(startdate,now);
-  mymonthbetween := monthsbetween(startdate,now);
+  mynow := today;
+  mydayofmonth1 := dayof(mynow);
+  mydayofmonth2 := dayof(startdate);
+  If mydayofmonth1 = mydayofmonth2 then
+  begin
+    mynow := IncDay(mynow,1);
+    // we add a day because the approximation may fail on same day of month
+  end;
+  mymonthspan := monthspan(startdate,mynow);
+  mymonthbetween := monthsbetween(startdate,mynow);
   if (myMonthInterval = 0) or (mymonthspan < myMonthInterval) then
   begin
     //no interval finished
