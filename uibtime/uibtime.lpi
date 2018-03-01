@@ -139,13 +139,13 @@
     </RunParams>
     <RequiredPackages Count="8">
       <Item1>
-        <PackageName Value="lazreportpdfexport"/>
+        <PackageName Value="pack_powerpdf"/>
       </Item1>
       <Item2>
-        <PackageName Value="lazreport"/>
+        <PackageName Value="lazreportpdfexport"/>
       </Item2>
       <Item3>
-        <PackageName Value="pack_powerpdf"/>
+        <PackageName Value="lazreport"/>
       </Item3>
       <Item4>
         <PackageName Value="DateTimeCtrls"/>
