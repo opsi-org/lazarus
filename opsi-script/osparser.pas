@@ -17273,12 +17273,18 @@ begin
                             fullincfilename := testincfilename;
                           end;
                         end;
-                        {$IFDEF WINDOWS}
                         if (not found) then
                         begin
+                          {$IFDEF WINDOWS}
                           // search in %WinstDir%\lib
                           testincfilename := ExtractFileDir(Paramstr(0))
                                                +PathDelim+'lib'+PathDelim+incfilename;
+                          {$ENDIF WINDOWS}
+                          {$IFDEF LINUX}
+                          // search in /usr/share/opsi-client-agent/opsi-script/lib
+                          testincfilename := '/usr/share/opsi-client-agent/opsi-script'
+                                               +PathDelim+'lib'+PathDelim+incfilename;
+                          {$ENDIF LINUX}
                           testincfilename := ExpandFilename(testincfilename);
                           LogDatei.log_prog('Looking for: '+testincfilename,LLNotice);
                           if FileExistsUTF8(testincfilename) then
@@ -17287,7 +17293,6 @@ begin
                             fullincfilename := testincfilename;
                           end;
                         end;
-                        {$ENDIF WINDOWS}
                         if found then
                         begin
                           inSearchedFunc := false;
