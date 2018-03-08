@@ -7,7 +7,7 @@ defFunc isMsiExitcodeFatal($exitcode$ : string, $allowRebootRequest$ : string, r
 	set $result$ = 'false'
 	if not (isNumber ($ExitCode$))
 		;** exitcode is not a number
-		set $ErrorString$ = "ExitCode = "+$ExitCode$+" - Invalid Exitcode (not a number)"
+		logError $ErrorString$ = "ExitCode = "+$ExitCode$+" - Invalid Exitcode (not a number)"
 		set $result$ = 'true'
 	endif
 	Switch $ExitCode$

@@ -346,7 +346,8 @@ public
 
   function produceStringList
     (const section: TuibIniScript; const s0 : String; var Remaining: String;
-     var list : TXStringlist; var InfoSyntaxError : String; var NestLevel : integer) : Boolean; overload;
+     var list : TXStringlist; var InfoSyntaxError : String;
+     var NestLevel : integer; const inDefFuncIndex : integer) : Boolean; overload;
 
   function EvaluateString
     (const s0 : String; var Remaining: String;
@@ -354,7 +355,8 @@ public
 
   function EvaluateString
     (const s0 : String; var Remaining: String;
-     var StringResult : String; var InfoSyntaxError : String; var NestLevel : integer ) : Boolean; overload;
+     var StringResult : String; var InfoSyntaxError : String;
+     var NestLevel : integer; const inDefFuncIndex : integer ) : Boolean; overload;
 
   function EvaluateBoolean (Input : String; var Remaining : String;
      var BooleanResult : Boolean; NestingLevel : Integer; var InfoSyntaxError : String) : Boolean;
@@ -600,6 +602,8 @@ var
   scriptsuspendstate : boolean;
   scriptstopped : boolean;
   inDefFuncLevel : integer = 0;
+  inDefFuncIndex : integer = -1; // index of the active defined function
+  Ifelseendiflevel : longint = 0; // global nestlevel store (do 18.1.2018)
 
 
 
@@ -5723,8 +5727,9 @@ function TuibInstScript.doOpsiServiceCall
       if lineno <= lines.count
       then
         line := trim(lines [lineno - 1]);
+      logdatei.log_prog('Script line(gNVL): '+intToStr(lineno)+' : '+line,LLDebug3);
     end;
-    logdatei.log_prog('Script line: '+intToStr(lineno)+' : '+line,LLDebug2);
+    logdatei.log_prog('Script line(gNVL): '+intToStr(lineno)+' : '+line,LLDebug2);
    end;
 
 
@@ -9306,10 +9311,10 @@ function TuibInstScript.produceStringList
    var Remaining: String;
    var list : TXStringList;
    var InfoSyntaxError : String ) : Boolean;
-var
- NestLevel : integer;
+//var
+// NestLevel : integer;
 begin
-  result := produceStringList(section,s0,Remaining,list,InfoSyntaxError,Nestlevel);
+  result := produceStringList(section,s0,Remaining,list,InfoSyntaxError,Ifelseendiflevel,inDefFuncIndex);
 end;
 
 function TuibInstScript.produceStringList
@@ -9318,7 +9323,8 @@ function TuibInstScript.produceStringList
    var Remaining: String;
    var list : TXStringList;
    var InfoSyntaxError : String;
-   var NestLevel : integer) : Boolean;
+   var NestLevel : integer;
+   const inDefFuncIndex : integer) : Boolean;
 
 var
   VarIndex : integer=0;
@@ -11149,10 +11155,11 @@ function TuibInstScript.EvaluateString
    var Remaining: String;
    var StringResult : String;
    var InfoSyntaxError : String ) : Boolean;
-var
- NestLevel : integer;
+//var
+// NestLevel : integer;
 begin
-  result := EvaluateString(s0,Remaining,StringResult,InfoSyntaxError,Nestlevel);
+  // nesting level from TuibInstScript
+  result := EvaluateString(s0,Remaining,StringResult,InfoSyntaxError,Ifelseendiflevel,inDefFuncIndex);
 end;
 
 function TuibInstScript.EvaluateString
@@ -11160,7 +11167,8 @@ function TuibInstScript.EvaluateString
    var Remaining: String;
    var StringResult : String;
    var InfoSyntaxError : String;
-   var NestLevel : integer) : Boolean;
+   var NestLevel : integer;
+   const inDefFuncIndex : integer) : Boolean;
 
 
 var
@@ -11272,7 +11280,7 @@ begin
  end
 
  // local variable
- else if isVisibleLocalVar(s,funcindex)  then
+ else if isVisibleLocalVar(s,FuncIndex)  then
  begin
    if not (definedFunctionArray[FuncIndex].getLocalVarDatatype(s) = dfpString) then
    begin
@@ -13580,6 +13588,40 @@ begin
    End;
  End
 
+ else if LowerCase (s) = LowerCase ('getIndexFromListByContaining')
+ then
+ begin
+   if Skip ('(', r, r, InfoSyntaxError)
+   then
+   Begin
+
+     list1 := TXStringList.create;
+
+     if produceStringList (script, r, r, list1, InfoSyntaxError)
+        and skip (',', r, r, InfoSyntaxError)
+     then
+     Begin
+       if EvaluateString (r, r, s1, InfoSyntaxError)
+       and
+       skip (')', r, r, InfoSyntaxError)
+       then
+       Begin
+         SyntaxCheck := true;
+         stringResult := '';
+         i := 0;
+         while (stringResult = '') and (i < list1.Count) do
+         begin
+           if AnsiContainsText(list1[i], s1) then
+            stringResult := intToStr(i)
+           else
+             inc(i);
+         end;
+       End
+     End
+   End;
+ End
+
+
  else if LowerCase (s) = LowerCase ('composeString')
  then
  begin
@@ -15469,6 +15511,15 @@ end
     booleanresult := isUefi;
  end
 
+  else if Skip ('runningInPE', Input, r, InfoSyntaxError)
+ then
+ begin
+    Syntaxcheck := true;
+    errorOccured := false;
+    booleanresult := isWinPE;
+ end
+
+
  else if Skip ('scriptWasExecutedBefore', Input, r, InfoSyntaxError)
  then
  begin
@@ -15696,10 +15747,10 @@ End;
 
 function TuibInstScript.doSetVar (const section: TuibIniScript; const Expressionstr : String;
                    var Remaining : String; var InfoSyntaxError : String) : Boolean;
- var
-  NestLevel : integer = 0;
+ //var
+ // NestLevel : integer = 0;
 begin
-  result := doSetVar(section,Expressionstr, Remaining, InfoSyntaxError, NestLevel);
+  result := doSetVar(section,Expressionstr, Remaining, InfoSyntaxError, NestingLevel);
 end;
 
 function TuibInstScript.doSetVar (const section: TuibIniScript; const Expressionstr : String;
@@ -15746,7 +15797,7 @@ begin
     then
     Begin
       if    Skip ('=', r, r, InfoSyntaxError)
-        and produceStringList (section, r, Remaining, list,  InfoSyntaxError, Nestlevel)
+        and produceStringList (section, r, Remaining, list,  InfoSyntaxError, Nestlevel,inDefFuncIndex)
       then
       if isVisibleLocalVar(VarName,funcindex)  then
       begin
@@ -15779,7 +15830,7 @@ begin
       else
       Begin
         if    Skip ('=', r, r, InfoSyntaxError)
-          and EvaluateString (r, Remaining, VarValue, InfoSyntaxError, Nestlevel)
+          and EvaluateString (r, Remaining, VarValue, InfoSyntaxError, Nestlevel,inDefFuncIndex)
         then
         Begin
           if isVisibleLocalVar(VarName,funcindex)  then
@@ -16173,10 +16224,12 @@ function TuibInstScript.doAktionen (const Sektion: TWorkSection; const CallingSe
   //endofDefFuncFound : boolean;
   inDefFunc : integer = 0;
   inDefFunc2 : integer = 0;
+  inDefFunc3 : integer = 0;  // we are between deffunc and endfunc line (even in a not active code)
   funcindex : integer;
   importFunctionName : String;
   inSearchedFunc : boolean;
   alllines, inclines : integer;
+  processline : boolean = true; // are we on a active code branch (needed handling of section ends '['
 
 begin
   result := tsrPositive;
@@ -16229,33 +16282,42 @@ begin
       End;
 
       if pos(lowercase(PStatNames^ [tsDefineFunction]),lowercase(Remaining)) >0 then
-        inc(inDefFunc2);
-      //if pos(lowercase(PStatNames^ [tsEndFunction]),lowercase(Remaining)) >0 then dec(inDefFunc2);
+        inc(inDefFunc3);
+      if pos(lowercase(PStatNames^ [tsEndFunction]),lowercase(Remaining)) >0 then dec(inDefFunc3);
       //if (lowercase(Remaining) = lowercase(PStatNames^ [tsEndFunction])) then dec(inDefFunc2);
       logdatei.log_prog('Parsingprogress: inDefFunc: '+IntToStr(inDefFunc),LLDebug3);
-      logdatei.log_prog('Parsingprogress: inDefFunc2: '+IntToStr(inDefFunc2),LLDebug3);
+      logdatei.log_prog('Parsingprogress: inDefFuncIndex: '+IntToStr(inDefFuncIndex),LLDebug3);
 
       if (Remaining = '') or (Remaining [1] = LineIsCommentChar)
       then
          // continue
-      //else if (Remaining [1] = '[') and (inDefFunc2 <= 0) then
-      else if (Remaining [1] = '[')  then
-         // subsection beginning
+      else if (Remaining [1] = '[') then
       begin
-         continue := false;
-         LogDatei.log ('Section ending since next line is starting with "["', LLInfo);
+        // subsection beginning
+        logdatei.log('line is starting with "[": inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
+
+      //else if (Remaining [1] = '[')  then
+         // subsection beginning
+        //if (inDefFunc3 = 0) and (inDefFuncIndex = -1) then
+        if (inDefFunc3 = 0) or processline then
+        begin
+          // (inDefFunc3 = 0) : we are not between deffunc and enfunc
+          // ((inDefFuncIndex = -1)) : we are on base level (no local functions active)
+           continue := false;
+           LogDatei.log ('Section ending since next line is starting with "["', LLInfo);
+        end
       end
       else
       Begin
         call := remaining;
-        //logdatei.log('Parsingprogress: r: '+Remaining+' exp: '+Expressionstr,LLDebug3);
+        logdatei.log('Parsingprogress: r: '+Remaining+' exp: '+Expressionstr,LLDebug3);
         GetWord (Remaining, Expressionstr, Remaining, WordDelimiterSet4);
-        //logdatei.log('Parsingprogress: r: '+Remaining+' exp: '+Expressionstr,LLDebug3);
+        logdatei.log('Parsingprogress: r: '+Remaining+' exp: '+Expressionstr,LLDebug3);
         StatKind := FindKindOfStatement (Expressionstr, SectionSpecifier, call);
         ArbeitsSektion.Name := Expressionstr;
         ArbeitsSektion.SectionKind := StatKind;
         ArbeitsSektion.NestingLevel:=Nestlevel;
-        logdatei.log_prog('Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' ArbeitsSektion.NestingLevel: '+IntToStr(ArbeitsSektion.NestingLevel)+' condition: '+BoolToStr(conditions [ActLevel],true),LLDebug3);
+        logdatei.log_prog('Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' ArbeitsSektion.NestingLevel: '+IntToStr(ArbeitsSektion.NestingLevel)+' condition: '+BoolToStr(conditions [ActLevel],true),LLDebug2);
 
 
         // start switch statement
@@ -16411,8 +16473,9 @@ begin
           //if FExtremeErrorLevel > levelfatal then
           begin
             inc (NestLevel);
+            Ifelseendiflevel:=Nestlevel;
             ThenBranch [NestLevel] := true;
-
+            logdatei.log_prog('IF: Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' sektion.NestingLevel: '+IntToStr(sektion.NestingLevel)+' ThenBranch: '+BoolToStr(ThenBranch [NestLevel],true),LLDebug);
             doLogEntries (PStatNames^ [tsCondOpen], LLinfo);
             if NestLevel > High (TConditions)
             then
@@ -16446,12 +16509,15 @@ begin
             doLogEntries (PStatNames^ [tsCondThen], LLInfo);
             LogDatei.LogSIndentLevel := NestLevel;
           end;
+          //ArbeitsSektion.NestingLevel:=Nestlevel;
+          //Sektion.NestingLevel:=Nestlevel;
         End
 
         else if (StatKind = tsCondElse) and (not(InSwitch) or ValidCase) then
         Begin
           //if FExtremeErrorLevel > levelfatal then
           begin
+            logdatei.log_prog('ELSE: Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' sektion.NestingLevel: '+IntToStr(sektion.NestingLevel)+' ThenBranch: '+BoolToStr(ThenBranch [NestLevel],true),LLDebug);
             if NestLevel <= Sektion.NestingLevel
             then
               reportError (Sektion, i, '',PStatNames^ [tsCondElse] + '  without  ' + PStatNames^ [tsCondOpen])
@@ -16459,7 +16525,10 @@ begin
             Begin
               if not ThenBranch [NestLevel]
               then
-                reportError (Sektion, i, '', 'double ' + PStatNames^ [tsCondElse])
+              begin
+                logdatei.log_prog('ELSE: Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' sektion.NestingLevel: '+IntToStr(sektion.NestingLevel)+' ThenBranch: '+BoolToStr(ThenBranch [NestLevel],true),LLWarning);
+                reportError (Sektion, i, '', 'double ' + PStatNames^ [tsCondElse]);
+              end
               else
               Begin
                 ThenBranch [NestLevel] := false;
@@ -16483,6 +16552,10 @@ begin
 
             if NestLevel = ActLevel then dec (ActLevel);
             dec (NestLevel);
+            Ifelseendiflevel:=Nestlevel;
+            logdatei.log_prog('ENDIF: Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' sektion.NestingLevel: '+IntToStr(sektion.NestingLevel)+' ThenBranch: '+BoolToStr(ThenBranch [NestLevel],true),LLDebug);
+            //ArbeitsSektion.NestingLevel:=Nestlevel;
+            //Sektion.NestingLevel:=Nestlevel;
 
             LogDatei.LogSIndentLevel := NestLevel ;
             doLogEntries (PStatNames^ [tsCondClose] , LLinfo);
@@ -16490,7 +16563,7 @@ begin
 
             if NestLevel < Sektion.NestingLevel
             then
-              reportError (Sektion, i, '', PStatNames^ [tsCondClose] + '  ohne  ' + PStatNames^ [tsCondOpen]);
+              reportError (Sektion, i, '', PStatNames^ [tsCondClose] + '  without  ' + PStatNames^ [tsCondOpen]);
           end;
         End
 
@@ -16508,6 +16581,7 @@ begin
             and (ActionResult > 0)
         then
         Begin
+          processline := true;
           case SectionSpecifier of
            tsecIncluded:
             Begin
@@ -16817,7 +16891,7 @@ begin
                    end;
                    if syntaxCheck then
                    begin
-                      if loopstart = loopstop then
+                      if loopstart > loopstop then
                       begin
                          LogDatei.log('Warning: list to loop through is empty - no loop ...', LLWarning);
                          // clearing the loop variable from the list of variables, first the value
@@ -18184,12 +18258,12 @@ begin
                       or (UpperCase (Remaining) = 'FALSE')
                    then
                    begin
-                     LogDatei.log ('ScriptErrorMessages was '+BoolToStr(ReportMessages,true)+' is set to false', LLNotice);
+                     LogDatei.log ('ScriptErrorMessages was '+BoolToStr(ReportMessages,true)+' is set to false', LLinfo);
                      ReportMessages := false;
                    end
                    else
                    begin
-                     LogDatei.log ('ScriptErrorMessages was '+BoolToStr(ReportMessages,true)+' is set to true', LLNotice);
+                     LogDatei.log ('ScriptErrorMessages was '+BoolToStr(ReportMessages,true)+' is set to true', LLinfo);
                      ReportMessages := true;
                    end;
                 End
@@ -19313,6 +19387,7 @@ begin
                      LogDatei.log('Added defined function:: '+newDefinedfunction.Name+' to the known functions',LLInfo);
                    end
                  end;
+                 LogDatei.log_prog('After reading '+newDefinedfunction.Name+' we are on line: '+inttostr(i-1)+' -> '+trim (Sektion.strings [i-1]),LLInfo);
                End;
 
                tsEndFunction:
@@ -19326,7 +19401,7 @@ begin
                  //writeln('set');
                  Expressionstr := Remaining;
                  doLogEntries (PStatNames^ [tsSetVar] + '  '  + Expressionstr, LLInfo);
-                 if doSetVar (sektion, Expressionstr, Remaining, InfoSyntaxError)
+                 if doSetVar (sektion, Expressionstr, Remaining, InfoSyntaxError,NestLevel)
                  then
                  Begin
                    if Remaining <> ''
@@ -19343,7 +19418,8 @@ begin
 
             End (* case *);
           End;
-        End;
+        End
+        else processline := false;
         ProcessMess;
       end;
 
@@ -19367,7 +19443,8 @@ begin
       end;
 
     until not inloop;
-
+    LogDatei.log_prog ('Finished with linenr: '+inttostr(i)+' -> '+trim (Sektion.strings [i-1]), LLinfo);
+    logdatei.log_prog('Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' ArbeitsSektion.NestingLevel: '+IntToStr(ArbeitsSektion.NestingLevel)+' Sektion.NestingLevel: '+IntToStr(Sektion.NestingLevel),LLDebug2);
     inc (i);
   end;
 

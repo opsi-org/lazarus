@@ -486,6 +486,7 @@ function FileCopy
 function Is64BitSystem: boolean;
 function runningAsAdmin: boolean;
 function isUefi: boolean;
+function isWinPE: boolean;
 
 
 function CheckFileExists(const FName: string; var ErrorInfo: string): boolean;
@@ -814,6 +815,16 @@ begin
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
   Result := linIsUefi;
+  {$ENDIF LINUX}
+end;
+
+function isWinPE: boolean;
+begin
+  {$IFDEF WINDOWS}
+  Result := WinIsPE;
+  {$ENDIF WINDOWS}
+  {$IFDEF LINUX}
+  Result := false;
   {$ENDIF LINUX}
 end;
 

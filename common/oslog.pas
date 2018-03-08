@@ -1521,11 +1521,11 @@ begin
           includeLogLineStart := includelogLinecount - logtailLinecount - 1
         else
           includeLogLineStart := 0;
-        DependentAdd('Start including tail of LogFile "' + Fname + ' with encoding: '+sourceEncoding+'"', LLnotice);
+        DependentAdd('Start including tail of LogFile "' + Fname + ' with encoding: '+sourceEncoding+'"', LLDebug);
         DependentAdd('################################################################',
-          LLnotice);
+          LLDebug);
         for aktline := includeLogLineStart to includelogLinecount - 1 do
-          DependentAdd('-->: ' + includelogStrList.Strings[aktline], LLnotice);
+          DependentAdd('-->: ' + includelogStrList.Strings[aktline], LLDebug);
       end
       else
       begin
@@ -1536,15 +1536,15 @@ begin
         if includelogLinecount < logtailLinecount then
           logtailLinecount := includelogLinecount;
         includeLogLineStart := 0;
-        DependentAdd('Start including head of LogFile "' + Fname + ' with encoding: '+sourceEncoding+'"', LLnotice);
+        DependentAdd('Start including head of LogFile "' + Fname + ' with encoding: '+sourceEncoding+'"', LLDebug);
         DependentAdd('################################################################',
-          LLnotice);
+          LLDebug);
         for aktline := includeLogLineStart to logtailLinecount - 1 do
-          DependentAdd('-->: ' + includelogStrList.Strings[aktline], LLnotice);
+          DependentAdd('-->: ' + includelogStrList.Strings[aktline], LLDebug);
       end;
       DependentAdd('################################################################',
-        LLnotice);
-      DependentAdd('End including LogFile "' + Fname + '"', LLnotice);
+        LLDebug);
+      DependentAdd('End including LogFile "' + Fname + '"', LLDebug);
     except
       on E: Exception do
       begin

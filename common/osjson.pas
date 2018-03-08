@@ -63,6 +63,7 @@ function jsonAsArrayDeleteObjectByIndex(var arraystr: string;
   index: cardinal): boolean;///
 
 function jsonIsObject(str: string): boolean;
+function jsonIsString(str: string): boolean;
 function jsonAsObjectCountElements(str: string): integer; ///
 function jsonAsObjectGetKeyList(str: string;
   var strListResult: TStringList): boolean; ///
@@ -394,7 +395,7 @@ begin
         objstr := new_obj.AsArray.S[i];
         //objstr := escapeControlChars(objstr);
         objstr := stringreplace(objstr, #10, '\n', [rfReplaceAll, rfIgnoreCase]);
-        if jsonIsObject(objstr) then
+        if jsonIsObject(objstr) or jsonIsString(objstr) then
           strListResult.Append(objstr);
       end;
 end;
@@ -408,6 +409,17 @@ begin
   if new_obj <> nil then
     Result := new_obj.IsType(stObject);
 end;
+
+function jsonIsString(str: string): boolean;
+var
+  new_obj: ISuperObject;
+begin
+  Result := False;
+  new_obj := SO(str);
+  if new_obj <> nil then
+    Result := new_obj.IsType(stString);
+end;
+
 
 function jsonAsObjectCountElements(str: string): integer;
 var

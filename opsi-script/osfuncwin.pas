@@ -66,6 +66,8 @@ function RunCommandAndCaptureOut
 function getMyHostEnt(var myHostEnt : THostEnt) :boolean;
 
 function WinIsUefi: boolean;
+function WinIsPE: boolean;
+
 function IsDriveReady(Drive: string): Boolean;
 function GetIPFromHost(var HostName, IPaddr, WSAErr: string): Boolean;
 
@@ -405,6 +407,36 @@ begin
       Logdatei.log('Exception in WinIsUefi: '+E.ClassName+ ': '+ E.Message,LLError);
   end;
 end;
+
+function WinIsPE: boolean;
+var
+  myreg: Tregistry;
+begin
+  Result := false;
+  try
+    if Is64BitSystem then
+    begin
+      myreg := TRegistry.Create(KEY_ALL_ACCESS or KEY_WOW64_64KEY);
+      LogDatei.log_prog('Registry started without redirection (64 Bit)', LLdebug3);
+    end
+    else
+    begin
+      myreg := TRegistry.Create(KEY_ALL_ACCESS or KEY_WOW64_32KEY);
+      LogDatei.log_prog('Registry started with redirection (32 Bit)', LLdebug3);
+    end;
+    myreg.RootKey := HKEY_LOCAL_MACHINE;
+    if myreg.KeyExists('SYSTEM\ControlSet001\Control\MiniNT') then
+      //'PE Indicator');
+      // http://techgenix.com/howtodetectwhetheryouareinwindowspe/
+      // https://groups.google.com/forum/#!topic/microsoft.public.win32.programmer.kernel/jam056kRtBA
+      Result := true;
+    myreg.Free;
+  except
+    on E: Exception do
+      Logdatei.log('Exception in WinIsPE: '+E.ClassName+ ': '+ E.Message,LLError);
+  end;
+end;
+
 
 //http://www.swissdelphicenter.ch/torry/showcode.php?id=109
 //http://stackoverflow.com/questions/738856/test-if-disk-has-write-access
