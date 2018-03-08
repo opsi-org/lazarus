@@ -10080,6 +10080,186 @@ begin
     End
    End
 
+   else if LowerCase (s) = LowerCase ('getSubListByContaining')
+   then
+   begin
+    if Skip ('(', r, r1, InfoSyntaxError)
+    then
+    Begin
+      list1 := TXStringList.create;
+      // is the first argument a valid string list ?
+      if not produceStringList (section,r1, r, list1, InfoSyntaxError) then
+      begin
+        // if not is it a string Expressionstr
+        if not EvaluateString (r1, r, s1, InfoSyntaxError) then
+        begin
+          LogDatei.log('Error: String Expressionstr or Stringlist expected ', LLerror);
+          syntaxcheck := false;
+        end
+        else
+        begin
+          // if it is a string: make a string list with one element
+          list1.Clear;
+          list1.Add(s1);
+          syntaxcheck := true;
+        end;
+      end
+      else syntaxcheck := true;   // it was a string list
+      if skip (',', r, r, InfoSyntaxError) and syntaxcheck
+      then
+      Begin
+        list2 := TXStringList.create;
+        if produceStringList (section,r, r, list2, InfoSyntaxError) //Recursion
+          and skip (')', r, r, InfoSyntaxError)
+        then
+        Begin
+          syntaxcheck := true;
+          list.clear;
+          try
+            // fill list
+           for i := 0 to list1.count - 1 do
+             for k := 0 to list2.count - 1 do
+               if AnsiContainsText(list2[k], list1[i]) then
+                 list.Add(list1.Strings[i]);
+          except
+            on e: exception do
+            begin
+              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+              LogDatei.log('Error on producing sublist: ' + e.message, LLerror);
+              FNumberOfErrors := FNumberOfErrors + 1;
+              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+            end
+          end;
+          list1.Free;
+          list1 := nil;
+          list2.Free;
+          list2 := nil;
+         End
+       End
+    End
+   End
+
+   else if LowerCase (s) = LowerCase ('getSubListByKey')
+   then
+   begin
+    if Skip ('(', r, r1, InfoSyntaxError)
+    then
+    Begin
+      list1 := TXStringList.create;
+      // is the first argument a valid string list ?
+      if not produceStringList (section,r1, r, list1, InfoSyntaxError) then
+      begin
+        // if not is it a string Expressionstr
+        if not EvaluateString (r1, r, s1, InfoSyntaxError) then
+        begin
+          LogDatei.log('Error: String Expressionstr or Stringlist expected ', LLerror);
+          syntaxcheck := false;
+        end
+        else
+        begin
+          // if it is a string: make a string list with one element
+          list1.Clear;
+          list1.Add(s1);
+          syntaxcheck := true;
+        end;
+      end
+      else syntaxcheck := true;   // it was a string list
+      if skip (',', r, r, InfoSyntaxError) and syntaxcheck
+      then
+      Begin
+        list2 := TXStringList.create;
+        if produceStringList (section,r, r, list2, InfoSyntaxError) //Recursion
+          and skip (')', r, r, InfoSyntaxError)
+        then
+        Begin
+          syntaxcheck := true;
+          list.clear;
+          try
+            // fill list
+           for i := 0 to list1.count - 1 do
+             for k := 0 to list2.count - 1 do
+               if AnsiStartsText(list1.Strings[i]+'=', list2.Strings[k]) then
+                 list.Add(list2.Strings[k]);
+          except
+            on e: exception do
+            begin
+              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+              LogDatei.log('Error on producing sublist: ' + e.message, LLerror);
+              FNumberOfErrors := FNumberOfErrors + 1;
+              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+            end
+          end;
+          list1.Free;
+          list1 := nil;
+          list2.Free;
+          list2 := nil;
+         End
+       End
+    End
+   End
+
+
+   else if LowerCase (s) = LowerCase ('getSubListByMatch')
+   then
+   begin
+    if Skip ('(', r, r1, InfoSyntaxError)
+    then
+    Begin
+      list1 := TXStringList.create;
+      // is the first argument a valid string list ?
+      if not produceStringList (section,r1, r, list1, InfoSyntaxError) then
+      begin
+        // if not is it a string Expressionstr
+        if not EvaluateString (r1, r, s1, InfoSyntaxError) then
+        begin
+          LogDatei.log('Error: String Expressionstr or Stringlist expected ', LLerror);
+          syntaxcheck := false;
+        end
+        else
+        begin
+          // if it is a string: make a string list with one element
+          list1.Clear;
+          list1.Add(s1);
+          syntaxcheck := true;
+        end;
+      end
+      else syntaxcheck := true;   // it was a string list
+      if skip (',', r, r, InfoSyntaxError) and syntaxcheck
+      then
+      Begin
+        list2 := TXStringList.create;
+        if produceStringList (section,r, r, list2, InfoSyntaxError) //Recursion
+          and skip (')', r, r, InfoSyntaxError)
+        then
+        Begin
+          syntaxcheck := true;
+          list.clear;
+          try
+            // fill list
+           for i := 0 to list1.count - 1 do
+             for k := 0 to list2.count - 1 do
+               if lowercase(list1.Strings[i]) = lowercase(list2.Strings[k]) then
+                 list.Add(list1.Strings[i]);
+          except
+            on e: exception do
+            begin
+              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+              LogDatei.log('Error on producing sublist: ' + e.message, LLerror);
+              FNumberOfErrors := FNumberOfErrors + 1;
+              LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+            end
+          end;
+          list1.Free;
+          list1 := nil;
+          list2.Free;
+          list2 := nil;
+         End
+       End
+    End
+   End
+
+
+
    else if LowerCase (s) = LowerCase ('reencodestrlist')
    then
    begin
@@ -10250,7 +10430,7 @@ begin
     End
    End
 
-   else if LowerCase (s) = LowerCase ('getListContainingList')
+   else if LowerCase (s) = LowerCase('getListContainingList')
    then
    begin
     if Skip ('(', r, r, InfoSyntaxError)
@@ -10445,6 +10625,32 @@ begin
     end;
    end
 
+   else if LowerCase (s) = LowerCase ('getKeyList')
+   then
+   begin
+    if Skip ('(', r, r, InfoSyntaxError)
+    then
+    begin
+      list1 := TXStringList.create;
+      if produceStringList (section,r, r, list1, InfoSyntaxError) //Recursion
+      then
+      Begin
+        if Skip (')', r, r, InfoSyntaxError) then
+        begin
+          syntaxCheck := true;
+          list.clear;
+          for i := 0 to list1.count - 1 do
+          begin
+           k := pos('=',list1[i]);
+           if k = 0 then k:= length(list1[i]);
+           list.add (copy(list1[i],1,k-1));
+          end;
+        end;
+      end;
+      list1.free;
+    end;
+   end
+
    else if LowerCase (s) = LowerCase ('emptyList')
    then
    begin
@@ -10463,6 +10669,7 @@ begin
       list1.free;
     end;
    end
+
 
    else if LowerCase (s) = LowerCase ('editMap')
    then
@@ -14990,11 +15197,12 @@ begin
      syntaxCheck := true;
      if local_opsidata <> nil then
      begin
-     local_opsidata.setActualClient(s1);
-     if 'true' = LowerCase(s3) then
-       BooleanResult := local_opsidata.sendLog(s2,true)
-     else
-       BooleanResult := local_opsidata.sendlog(s2,false);
+       logdatei.Appendmode := True; // switch append mode on in order to avoid that a final log removes this one
+       local_opsidata.setActualClient(s1);
+       if 'true' = LowerCase(s3) then
+         BooleanResult := local_opsidata.sendLog(s2,true)
+       else
+         BooleanResult := local_opsidata.sendlog(s2,false);
      end
      else
      begin
@@ -17065,12 +17273,18 @@ begin
                             fullincfilename := testincfilename;
                           end;
                         end;
-                        {$IFDEF WINDOWS}
                         if (not found) then
                         begin
+                          {$IFDEF WINDOWS}
                           // search in %WinstDir%\lib
                           testincfilename := ExtractFileDir(Paramstr(0))
                                                +PathDelim+'lib'+PathDelim+incfilename;
+                          {$ENDIF WINDOWS}
+                          {$IFDEF LINUX}
+                          // search in /usr/share/opsi-client-agent/opsi-script/lib
+                          testincfilename := '/usr/share/opsi-client-agent/opsi-script'
+                                               +PathDelim+'lib'+PathDelim+incfilename;
+                          {$ENDIF LINUX}
                           testincfilename := ExpandFilename(testincfilename);
                           LogDatei.log_prog('Looking for: '+testincfilename,LLNotice);
                           if FileExistsUTF8(testincfilename) then
@@ -17079,7 +17293,6 @@ begin
                             fullincfilename := testincfilename;
                           end;
                         end;
-                        {$ENDIF WINDOWS}
                         if found then
                         begin
                           inSearchedFunc := false;
