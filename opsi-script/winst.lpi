@@ -21,7 +21,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
-      <BuildNr Value="14"/>
+      <BuildNr Value="15"/>
       <StringTable Comments="Compiled with Lazarus 1.6.4 / FPC 3.0.2" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst32.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst32.exe" ProductName="opsi-script" ProductVersion="4.0.7 / 4.1"/>
     </VersionInfo>
     <BuildModes Count="3">
