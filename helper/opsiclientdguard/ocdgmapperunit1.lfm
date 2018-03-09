@@ -16,6 +16,8 @@ object DaemonMapper1: TDaemonMapper1
       OnCreateInstance = DaemonMapper1DaemonDefs0CreateInstance
       LogStatusReport = False
     end>
+  OnCreate = DaemonMapper1Create
+  OnDestroy = DaemonMapper1Destroy
   OnRun = DaemonMapper1Run
   OnInstall = DaemonMapper1Install
   OnUnInstall = DaemonMapper1UnInstall

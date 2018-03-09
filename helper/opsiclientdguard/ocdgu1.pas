@@ -1,10 +1,11 @@
 unit ocdgu1;
 
 {$mode objfpc}{$H+}
-
+{$DEFINE svcdebug}
 interface
 
 uses
+
   Classes,
   SysUtils,
   FileUtil,
@@ -23,26 +24,40 @@ const
   ServiceToTest = 'opsiclientd';
 
 type
-  TTheThread = class(TThread)
+  TTheThread = class(TDaemonThread)
     procedure Execute; override;
     destructor Destroy; override;
   end;
   { TTheDaemon }
 
   TTheDaemon = class(TDaemon)
+    procedure DataModuleContinue(Sender: TCustomDaemon; var OK: Boolean);
+    procedure DataModuleControlCode(Sender: TCustomDaemon; ACode: DWord;
+      var Handled: Boolean);
+    procedure DataModuleCreate(Sender: TObject);
+    procedure DataModuleDestroy(Sender: TObject);
+    procedure DataModuleExecute(Sender: TCustomDaemon);
+    procedure DataModulePause(Sender: TCustomDaemon; var OK: Boolean);
+    procedure DataModuleShutDown(Sender: TCustomDaemon);
+    procedure DataModuleStart(Sender: TCustomDaemon; var OK: Boolean);
+    procedure DataModuleStop(Sender: TCustomDaemon; var OK: Boolean);
   private
     FThread: TTheThread;
   public
     function Install: boolean; override;
     function UnInstall: boolean; override;
+    (*
     function Start: boolean; override;
     function Stop: boolean; override;
     function Pause: boolean; override;
     function Continue: boolean; override;
     function Execute: boolean; override;
     function ShutDown: boolean; override;
+    *)
   end;
 
+
+  (*
   TTheDaemonMapper = class(TCustomDaemonMapper)
   public
     constructor Create(AOwner: TComponent); override;
@@ -51,11 +66,11 @@ type
     procedure ToDoOnUninstall(Sender: TObject);
     procedure ToDoOnDestroy(Sender: TObject);
   end;
+*)
 
-(*
 var
   TheDaemon: TTheDaemon;
-*)
+
 implementation
 
 procedure RegisterDaemon;
@@ -94,6 +109,72 @@ begin
 end;
 
 {$REGION ' - Daemon - '}
+
+procedure TTheDaemon.DataModuleContinue(Sender: TCustomDaemon; var OK: Boolean);
+begin
+  OK := inherited Continue;
+  Application.Log(etDebug, 'Daemon.Continue: ' + BoolToStr(OK));
+  FThread.Resume;
+end;
+
+procedure TTheDaemon.DataModuleControlCode(Sender: TCustomDaemon; ACode: DWord;
+  var Handled: Boolean);
+begin
+  Application.Log(etDebug, 'Daemon.ControlCode: ');
+  Handled := true;
+end;
+
+procedure TTheDaemon.DataModuleCreate(Sender: TObject);
+begin
+  Application.Log(etDebug, 'Daemon.Create: ');
+end;
+
+procedure TTheDaemon.DataModuleDestroy(Sender: TObject);
+begin
+  Application.Log(etDebug, 'Daemon.Destroy: ');
+end;
+
+procedure TTheDaemon.DataModuleExecute(Sender: TCustomDaemon);
+var
+  ok : boolean;
+begin
+  ok := inherited Execute;
+  Application.Log(etDebug, 'Daemon.Execute: ' + BoolToStr(ok));
+end;
+
+procedure TTheDaemon.DataModulePause(Sender: TCustomDaemon; var OK: Boolean);
+begin
+  ok := inherited Pause;
+  Application.Log(etDebug, 'Daemon.Pause: ' + BoolToStr(ok));
+  FThread.Suspend;
+end;
+
+procedure TTheDaemon.DataModuleShutDown(Sender: TCustomDaemon);
+var
+  ok : boolean;
+begin
+  ok := inherited ShutDown;
+  Application.Log(etDebug, 'Daemon.ShutDown: ' + BoolToStr(ok));
+end;
+
+procedure TTheDaemon.DataModuleStart(Sender: TCustomDaemon; var OK: Boolean);
+begin
+  ok := inherited Start;
+  Application.Log(etDebug, 'Daemon.Start: ' + BoolToStr(ok));
+  FThread := TTheThread.Create(Sender);
+  FThread.FreeOnTerminate := true;
+  FThread.Resume;
+end;
+
+procedure TTheDaemon.DataModuleStop(Sender: TCustomDaemon; var OK: Boolean);
+begin
+  ok := inherited Stop;
+  Application.Log(etDebug, 'Daemon.Stop: ' + BoolToStr(ok));
+  FThread.Terminate;
+  FThread.WaitFor;
+  FThread := nil;
+end;
+
 function TTheDaemon.Install: boolean;
 begin
   result := inherited Install;
@@ -106,50 +187,31 @@ begin
   Application.Log(etDebug, 'Daemon.Uninstall: ' + BoolToStr(result));
 end;
 
+(*
 function TTheDaemon.Start: boolean;
 begin
-  result := inherited Start;
-  Application.Log(etDebug, 'Daemon.Start: ' + BoolToStr(result));
-  FThread := TTheThread.Create(true);
-  FThread.FreeOnTerminate := true;
-  FThread.Resume;
 end;
 
 function TTheDaemon.Stop: boolean;
 begin
-  result := inherited Stop;
-  Application.Log(etDebug, 'Daemon.Stop: ' + BoolToStr(result));
-  FThread.Terminate;
-  FThread.WaitFor;
-  FThread := nil;
 end;
 
 function TTheDaemon.Pause: boolean;
 begin
-  result := inherited Pause;
-  Application.Log(etDebug, 'Daemon.Pause: ' + BoolToStr(result));
-  FThread.Suspend;
 end;
 
 function TTheDaemon.Continue: boolean;
 begin
-  result := inherited Continue;
-  Application.Log(etDebug, 'Daemon.Continue: ' + BoolToStr(result));
-  FThread.Resume;
 end;
 
 function TTheDaemon.Execute: boolean;
 begin
-  result := inherited Execute;
-  Application.Log(etDebug, 'Daemon.Execute: ' + BoolToStr(result));
 end;
 
 function TTheDaemon.ShutDown: boolean;
 begin
-  result := inherited ShutDown;
-  Application.Log(etDebug, 'Daemon.ShutDown: ' + BoolToStr(result));
 end;
-
+ *)
 
 { TTheDaemon }
 function IsServiceRunning(ServiceName: string): boolean;
@@ -194,7 +256,7 @@ end;
 
 
 
-
+(*
 constructor TTheDaemonMapper.Create(AOwner: TComponent);
 begin
   Application.Log(etDebug, 'DaemonMapper.Create');
@@ -246,7 +308,7 @@ begin
   //doesn't comes here
   Application.Log(etDebug, 'DaemonMapper.Destroy');
 end;
-
+ *)
 
 initialization
   RegisterDaemon;

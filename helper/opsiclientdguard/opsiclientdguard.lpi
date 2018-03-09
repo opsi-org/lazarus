@@ -30,7 +30,8 @@
             <Filename Value="opsiclientdguard"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir)"/>
+            <IncludeFiles Value="$(ProjOutDir);..\..\fpc_lib\fcl-extra\src\win"/>
+            <OtherUnitFiles Value="..\..\fpc_lib\fcl-extra\src;..\..\fpc_lib\daemon\lib\i386-win32\win32;..\..\fpc_lib\daemon"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -104,16 +105,13 @@
         <CommandLineParams Value="--run"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="3">
+    <RequiredPackages Count="2">
       <Item1>
-        <PackageName Value="LazDaemon"/>
+        <PackageName Value="LCL"/>
       </Item1>
       <Item2>
-        <PackageName Value="LCL"/>
-      </Item2>
-      <Item3>
         <PackageName Value="FCL"/>
-      </Item3>
+      </Item2>
     </RequiredPackages>
     <Units Count="3">
       <Unit0>

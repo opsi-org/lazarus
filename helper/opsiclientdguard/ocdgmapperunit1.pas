@@ -1,6 +1,7 @@
 unit ocdgmapperunit1;
 
 {$mode objfpc}{$H+}
+{$DEFINE svcdebug}
 
 interface
 
@@ -12,7 +13,9 @@ type
   { TDaemonMapper1 }
 
   TDaemonMapper1 = class(TDaemonMapper)
+    procedure DaemonMapper1Create(Sender: TObject);
     procedure DaemonMapper1DaemonDefs0CreateInstance(Sender: TObject);
+    procedure DaemonMapper1Destroy(Sender: TObject);
     procedure DaemonMapper1Install(Sender: TObject);
     procedure DaemonMapper1Run(Sender: TObject);
     procedure DaemonMapper1UnInstall(Sender: TObject);
@@ -36,10 +39,20 @@ end;
 
 { TDaemonMapper1 }
 
+procedure TDaemonMapper1.DaemonMapper1Create(Sender: TObject);
+begin
+  Application.Log(etDebug, 'DaemonMapper.Create');
+end;
+
 procedure TDaemonMapper1.DaemonMapper1DaemonDefs0CreateInstance(Sender: TObject
   );
 begin
-  Application.Log(etDebug, 'DaemonMapper.Create');
+  Application.Log(etDebug, 'DaemonMapper.CreateInstance');
+end;
+
+procedure TDaemonMapper1.DaemonMapper1Destroy(Sender: TObject);
+begin
+  Application.Log(etDebug, 'DaemonMapper.Destroy');
 end;
 
 procedure TDaemonMapper1.DaemonMapper1Install(Sender: TObject);

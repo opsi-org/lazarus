@@ -1,7 +1,7 @@
 Program opsiclientdguard;
 
 Uses
-{$define svcdebug}
+{$DEFINE svcdebug}
 {$IFDEF UNIX}{$IFDEF UseCThreads}
   CThreads,
 {$ENDIF}{$ENDIF}
@@ -9,7 +9,7 @@ Uses
   SysUtils,
   FileUtil,
   ExtCtrls,
-  DaemonApp,
+  daemonapp,
   lazdaemonapp,
   ocdgu1, ocdgmapperunit1,
   ServiceManager,

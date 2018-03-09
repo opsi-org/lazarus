@@ -1,5 +1,14 @@
 object TheDaemon: TTheDaemon
+  OnCreate = DataModuleCreate
+  OnDestroy = DataModuleDestroy
   OldCreateOrder = False
+  OnStart = DataModuleStart
+  OnStop = DataModuleStop
+  OnPause = DataModulePause
+  OnContinue = DataModuleContinue
+  OnShutDown = DataModuleShutDown
+  OnExecute = DataModuleExecute
+  OnControlCode = DataModuleControlCode
   Height = 150
   HorizontalOffset = 0
   VerticalOffset = 0
