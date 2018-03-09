@@ -1,6 +1,7 @@
 Program opsiclientdguard;
 
 Uses
+{$define svcdebug}
 {$IFDEF UNIX}{$IFDEF UseCThreads}
   CThreads,
 {$ENDIF}{$ENDIF}
@@ -10,13 +11,21 @@ Uses
   ExtCtrls,
   DaemonApp,
   lazdaemonapp,
-  ocdgmapperunit1,
-  ocdgu1,
+  ocdgu1, ocdgmapperunit1,
   ServiceManager,
   JwaWinSvc,
+//HeapTrc,
 eventlog;
 
+
+{$R *.res}
+
 begin
+  Application.Title:='Daemon application';
+  //RegisterDaemonClass(TTheDaemon);
+  //RegisterDaemonMapper(TTheDaemonMapper);
+  //RegisterDaemonApplicationClass(TCustomDaemonApplication);
+ // heaptrc.SetHeapTraceOutput(ChangeFileExt(ParamStr(0), '.heap'));
   with Application do
   begin
     Title := 'Daemon Application';

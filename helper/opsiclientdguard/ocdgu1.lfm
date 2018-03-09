@@ -1,7 +1,7 @@
-object Daemon1: TDaemon1
+object TheDaemon: TTheDaemon
   OldCreateOrder = False
   Height = 150
-  HorizontalOffset = 561
-  VerticalOffset = 193
+  HorizontalOffset = 0
+  VerticalOffset = 0
   Width = 150
 end

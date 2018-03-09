@@ -13,7 +13,7 @@ uses
   ServiceManager,
   JwaWinSvc,
   interfaces,
-    HeapTrc,
+ //   HeapTrc,
 {$IFDEF UNIX}{$IFDEF UseCThreads}
   CThreads,
 {$ENDIF} Cmem,{$ENDIF}
@@ -27,7 +27,7 @@ type
     procedure Execute; override;
     destructor Destroy; override;
   end;
-  { TDaemon1 }
+  { TTheDaemon }
 
   TTheDaemon = class(TDaemon)
   private
@@ -52,10 +52,10 @@ type
     procedure ToDoOnDestroy(Sender: TObject);
   end;
 
-
+(*
 var
   TheDaemon: TTheDaemon;
-
+*)
 implementation
 
 procedure RegisterDaemon;
@@ -151,7 +151,7 @@ begin
 end;
 
 
-{ TDaemon1 }
+{ TTheDaemon }
 function IsServiceRunning(ServiceName: string): boolean;
   {description Checks if a Windows service is running}
 var

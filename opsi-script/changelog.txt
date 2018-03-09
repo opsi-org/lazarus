@@ -5,6 +5,14 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 ##################################################################
 
+opsi-winst/opsi-script (4.12.0.15) stable; urgency=low
+
+  * oswebservice: getMapOfLoginscripts2Run: fix: check not only for productId but also for productVersion and PackageVersion
+  * oswebservice: getMapOfLoginscripts2Run: change logging to log_prog
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri, 09 Mar 2018:15:00:00 +0200
+
+
 opsi-winst/opsi-script (4.12.0.14) stable; urgency=low
 
   * osparser: evaluateBoolean: sendlog: switch log append mode on

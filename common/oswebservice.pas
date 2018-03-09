@@ -4102,14 +4102,20 @@ begin
       //LogDatei.log ('productEntry : '+productEntry.AsString, LLessential);
       //LogDatei.log ('product : '+productEntry.S['id']+'='+productEntry.S['userLoginScript'], LLessential);
       if (productEntry.O['id'] <> nil) and
+        // do we have a login script
         (productEntry.S['userLoginScript'] <> '') and
-        (productondepotmap.Values[productEntry.S['id']] <> '') and
+        //(productondepotmap.Values[productEntry.S['id']] <> '') and
+        // do we have the same productId,productVersion, packageVersion  as on the depot
+        (productondepotmap.Values[productEntry.S['id']] =
+          productEntry.S['productVersion']+ '-' +
+          productEntry.S['packageVersion']) and
+        // do we have still an entry here ?
         (loginscriptmap.Values[productEntry.S['id']] = '') then
       begin
         loginscriptmap.add(productEntry.S['id'] + '=' +
           productEntry.S['userLoginScript']);
-        LogDatei.log('product : ' + productEntry.S['id'] +
-          '=' + productEntry.S['userLoginScript'], LLessential);
+        LogDatei.log_prog('product : ' + productEntry.S['id'] +
+          '=' + productEntry.S['userLoginScript'], LLInfo);
         if allscripts then
         begin
           Result.add(productEntry.S['id']);
@@ -4140,8 +4146,8 @@ begin
             Result.add(productEntry.S['productId']);
             FProductStates.Add(productEntry.S['productId'] + '=' +
               productEntry.S['installationStatus']);
-            LogDatei.log(productEntry.S['productId'] +
-              '= lastAction: ' + productEntry.S['lastAction'], LLessential);
+            LogDatei.log_prog(productEntry.S['productId'] +
+              '= lastAction: ' + productEntry.S['lastAction'], LLNotice);
           end;
         end;
       end;

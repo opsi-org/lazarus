@@ -1,5 +1,24 @@
 object DaemonMapper1: TDaemonMapper1
-  DaemonDefs = <>
-  left = 561
-  top = 193
+  DaemonDefs = <  
+    item
+      DaemonClassName = 'TTheDaemon'
+      Name = 'opsiclientdguard'
+      Description = 'opsiclientdguard'
+      DisplayName = 'opsiclientdguard'
+      RunArguments = '--run'
+      Options = [doAllowStop, doAllowPause]
+      WinBindings.Dependencies = <>
+      WinBindings.StartType = stManual
+      WinBindings.WaitHint = 0
+      WinBindings.IDTag = 0
+      WinBindings.ServiceType = stWin32
+      WinBindings.ErrorSeverity = esIgnore
+      OnCreateInstance = DaemonMapper1DaemonDefs0CreateInstance
+      LogStatusReport = False
+    end>
+  OnRun = DaemonMapper1Run
+  OnInstall = DaemonMapper1Install
+  OnUnInstall = DaemonMapper1UnInstall
+  left = 342
+  top = 218
 end
