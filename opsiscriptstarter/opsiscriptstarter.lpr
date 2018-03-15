@@ -576,6 +576,8 @@ var
   foundActionRequest : boolean;
   i : integer;
   FileVerInfo:TFileVersionInfo;
+  mounttry : integer;
+  mountoption : string;
 begin
   myexitcode := 0;
   myerror := '';
@@ -677,6 +679,22 @@ begin
       writeln('myshare=',myshare);
       umount(mymountpoint);
       logdatei.AddToConfidentials(mypass);
+      mounttry := 0;
+      repeat
+        if (mounttry div 3) = 0 then mountoption := ' vers=3.0,';
+        if (mounttry div 3) = 1 then mountoption := ' vers=2.0,';
+        if (mounttry div 6) = 1 then mountoption := ' vers=1.0,';
+        if (mounttry div 9) = 1 then mountoption := '';
+        errorcode := mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass,mountoption);
+        if errorcode <> 0 then
+        begin
+          inc(mounttry);
+          LogDatei.log('Failed to mount '+myshare+' with option: '+mountoption+' to '+mymountpoint+' Error code: '+inttostr(errorcode)+' - retry ...',LLWarning);
+          sleep(2000);
+        end;
+      until (errorcode = 0) or (mounttry > 12);
+      LogDatei.log('Failed to mount '+myshare+' to '+mymountpoint+' - abort!',LLCritical);
+      (*
       errorcode := mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass,'');
       if errorcode <> 0 then
       begin
@@ -700,6 +718,7 @@ begin
           end;
         end;
       end;
+      *)
       if errorcode = 0 then
       begin
         writeln('share mounted - starting action processor...');

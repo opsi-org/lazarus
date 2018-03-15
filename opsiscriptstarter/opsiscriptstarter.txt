@@ -1,5 +1,12 @@
 [changelog]
 
+opsiscriptstarter 4.1.0.1
+
+* mount.cifs: step down 3* ver3 / 3* ver2 / 3*ver1 /3* default
+
+-- d.oertel <d.oertel@uib.de> Tue, 15 Mar 2018 15:00
+
+
  opsiscriptstarter 4.1.0.0
 
 * fallback to smb1 if mount cifs fails
