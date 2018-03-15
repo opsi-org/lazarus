@@ -5819,7 +5819,7 @@ begin
       errorInfo := 'Connection parameters must not be specified if existing connection shall be used.'
     end;
     if (serviceChoice in [tscLogin, tscInteractiveLogin]) and (local_opsidata <> nil) then
-      Logdatei.log('Warning: Existing service connection will be reopend. This may cause critical errors. Do not do this, if you are not really shure what you doing.', LLwarning );
+      Logdatei.log('Warning: Existing service connection will be reopend. This may cause critical errors. Do not do this, if you are not really sure what you doing.', LLwarning );
 
     // lets do something
 
