@@ -1,0 +1,20 @@
+object ServiceMapper: TServiceMapper
+  DaemonDefs = <  
+    item
+      DaemonClassName = 'TServiceDaemon'
+      Name = 'opsiclientdguard'
+      Description = 'opsiclientdguard'
+      DisplayName = 'opsiclientdguard'
+      Options = [doAllowStop]
+      WinBindings.Dependencies = <>
+      WinBindings.StartType = stManual
+      WinBindings.WaitHint = 0
+      WinBindings.IDTag = 0
+      WinBindings.ServiceType = stWin32
+      WinBindings.ErrorSeverity = esIgnore
+      OnCreateInstance = ServiceMapperDaemonDefs0CreateInstance
+      LogStatusReport = False
+    end>
+  left = 462
+  top = 243
+end

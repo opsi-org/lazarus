@@ -1,0 +1,7 @@
+
+opsiclientdguard (4.1.0.0) stable; urgency=low
+
+  * initial
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri,  16 Dec 2018:15:00:00 +0200
+
