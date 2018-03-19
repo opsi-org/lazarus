@@ -1,15 +1,13 @@
 [changelog]
 
-<<<<<<< .mine
-opsi-notifier  4.0.7.2
+opsi-notifier  4.1.0.0
+
+  * change to Lazarus 1.8.2
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 19 Mar 2018:15:00:00 +0200
 
 
 
-
-
-
-
-=======
 opsi-notifier  4.0.7.1-1
 
   * hihg DPI support
@@ -18,7 +16,6 @@ opsi-notifier  4.0.7.1-1
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 18 Jul 2017:15:00:00 +0200
 
 opsi-notifier  4.0.7.0-1
->>>>>>> .theirs
 
   * notifierguicontrol: objectByIndex: no fsSystemStayOnTop for event notify
   * notifierguicontrol: fontresize: now by 0.5
