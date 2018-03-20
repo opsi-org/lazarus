@@ -4811,7 +4811,7 @@ begin
   problem := '';
   try
     // remove existing files to avoid problems like: Error: 26 : Text (code segment) file busy
-    if FileExistsUTF8(targetfilename) then FileUtil.DeleteFileUTF8(targetfilename);
+    if FileExistsUTF8(targetfilename) then DeleteFileUTF8(targetfilename);
     if (not FileIsSymlink(sourcefilename)) or followSymlink then
     begin
       if not copyFile(PChar(sourcefilename), PChar(targetfilename), True) then
