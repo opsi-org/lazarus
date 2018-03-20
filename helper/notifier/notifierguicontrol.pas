@@ -63,16 +63,18 @@ var
   ButtonArray: TButtons;
   labelcounter, buttoncounter: integer;
 
-  {$IFDEF WINDOWS}
+
 // from
 // http://stackoverflow.com/questions/41068387/how-to-make-transparent-form-in-lazarus
 procedure WindowTransparent(const f: THandle; const tpcolor: integer);
 begin
+  {$IFDEF WINDOWS}
   SetWindowLongPtr(f, GWL_EXSTYLE, GetWindowLongPtr(f, GWL_EXSTYLE) or WS_EX_LAYERED);
   SetLayeredWindowAttributes(f, tpcolor, 0, LWA_COLORKEY);
+  {$ENDIF WINDOWS}
 end;
 
-  {$ENDIF WINDOWS}
+
 
 procedure shutdownNotifier;
 begin
@@ -691,7 +693,7 @@ begin
     //Systray = true
     //Icon = opsi.ico
     mytmpstr := ExtractFilePath(myini.FileName);
-    mytmpstr := mytmpstr + myini.ReadString(aktsection, 'Icon', '');
+    mytmpstr := mytmpstr + myini.ReadString(aktsection, 'Icon', 'not_existing');
     if FileExists(mytmpstr) then
       nform.Icon.LoadFromFile(mytmpstr);
     //Transparent = true

@@ -5,6 +5,9 @@ opsi-notifier  4.1.0.0
   * change to Lazarus 1.8.2
   * code clean up
   * AutoAdjustLayout for HighDPI
+  * changes for linux
+  * re export of some bmp
+  * dir notifier moved to notifier.d
 
 -- Detlef Oertel <d.oertel@uib.de>  Mon, 19 Mar 2018:15:00:00 +0200
 
