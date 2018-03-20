@@ -79,9 +79,9 @@ begin
 end;
 
 procedure Tmythread.Execute;
-var
-  receiveline: string;
-  i: integer;
+//var
+//  receiveline: string;
+//  i: integer;
 
 begin
   logdatei.log('Starting TCP-Thread: ' +TimeToStr(now), LLDebug2);
@@ -97,7 +97,7 @@ begin
       except
       end;
     until myTCPClient.Connected;
-    i := 1;
+    //i := 1;
     myMessage2 := '';
     logdatei.log('TCP-Thread connected, starting .loop: ' +TimeToStr(now), LLDebug2);
     while (not Terminated) and myTCPClient.Connected do

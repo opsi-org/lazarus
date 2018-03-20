@@ -71,7 +71,7 @@ var
   messagearray, aktId, aktMessage, aktMethod: string;
   messagelist: TStringList;
   i, choicecounter: integer;
-  indexarray, indexstr: string;
+//  indexarray, indexstr: string;
   choicearray, choicestr: string;
   nkind: string = '';
   labelMatch: boolean;
