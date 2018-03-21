@@ -60,7 +60,7 @@ procedure TMyThread.messageToMainThread;
 begin
   // pass recieved message to notifier gui control
   newMessageFromService(myMessage);
-  //logdatei.log('From hm: '+myMessage, LLInfo);
+  logdatei.log('From hm: '+myMessage, LLInfo);
 end;
 
 procedure TMyThread.messageFromMainThread;
@@ -108,6 +108,8 @@ begin
       begin
         logdatei.log('Received: ' + mymessage, LLDebug2);
         Synchronize(@messageToMainThread);
+        //DataModule1.ProcessMess;
+        logdatei.log('After Received: ' + mymessage, LLDebug2);
         myMessage := '';
       end;
       Synchronize(@messageFromMainThread);

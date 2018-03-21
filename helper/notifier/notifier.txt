@@ -8,6 +8,9 @@ opsi-notifier  4.1.0.0
   * changes for linux
   * re export of some bmp
   * dir notifier moved to notifier.d
+  * notifierguicontrol: more use of WorkAreaHeight
+  * notifierguicontrol: more use of bringToFront
+  * notifier_json: check if message is an object
 
 -- Detlef Oertel <d.oertel@uib.de>  Mon, 19 Mar 2018:15:00:00 +0200
 

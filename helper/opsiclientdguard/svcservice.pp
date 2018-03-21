@@ -98,7 +98,7 @@ begin
   try
     //Result := True;
     logdatei := TLogInfo.Create;
-    logfilename := 'opsiclientdguard';
+    logfilename := 'opsiclientdguard.log';
     LogDatei.WritePartLog := False;
     LogDatei.WriteErrFile:= False;
     LogDatei.WriteHistFile:= False;
@@ -126,6 +126,7 @@ end;
 procedure TServiceDaemon.ServiceDaemonCreate(Sender: TObject);
 begin
   Application.Log(etInfo, 'ServiceDaemonCreate');
+
 end;
 
 function TServiceDaemon.Start: Boolean;
@@ -250,7 +251,7 @@ begin
       //the servicemanager is trying to get all access
       Services.Connect; //Now connect with requested access level
       Services.StartService(ServiceName,nil);
-      Result := False;
+      Result := True;
       //Services.GetServiceStatus(ServiceName, ServiceStatus);
       //Result := (ServiceStatus.dwCurrentState = SERVICE_RUNNING);
       Services.Disconnect;
@@ -311,7 +312,7 @@ begin
       else
       begin
         Application.Log(etDebug, 'opsiclientd is not running');
-        LogDatei.log('opsiclientd is running',LLWarning);
+        LogDatei.log('opsiclientd is not running',LLWarning);
         if startService('opsiclientd') then
         begin
           Application.Log(etDebug, 'opsiclientd is started');

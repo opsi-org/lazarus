@@ -154,53 +154,63 @@ begin
     else  // other methods
     begin
       // iterate over messages
+      logdatei.log('Number of messages is: ' + intToStr(messagelist.Count), LLDebug2);
       for i := 0 to messagelist.Count - 1 do
       begin
-
-        if not jsonAsObjectGetValueByKey(messagelist.Strings[i], 'id', aktId) then
-        begin
-          logdatei.log('Error: could not get id', LLError);
-        end
-        else
-        begin
-          if lowercase(aktId) = 'choice' then
+        try
+          logdatei.log('Index of message is: ' + intToStr(i), LLDebug2);
+          if not (jsonIsObject(messagelist.Strings[i]) and
+                  jsonAsObjectGetValueByKey(messagelist.Strings[i], 'id', aktId)) then
           begin
-            //if labelMatch then
-            //begin
-              //button
-              if jsonAsObjectGetValueByKey(messagelist.Strings[i],
-                'choices', choicearray) then
-              begin
-                globalchoicearray := choicearray;
-                for choicecounter := 0 to jsonAsArrayCountElements(choicearray) - 1 do
-                begin
-                  if not jsonAsArrayGetElementByIndex(choicearray,
-                    choicecounter, choicestr) then
-                    logdatei.log('Error: choicearray not found', LLError)
-                  else
-                    setButtonCaptionById(choicecounter, choicestr);
-                end;
-              end
-              else
-                logdatei.log('Error: could not get choicearray for id: ' + aktId, LLError);
-           // end
-           // else
-           //   logdatei.log('Warning: Button caption not written because no known labe in the message.',
-           //     LLWarning);
+            logdatei.log('Error: could not get id from :'+messagelist.Strings[i], LLError);
           end
           else
           begin
-            //label
-            if jsonAsObjectGetValueByKey(messagelist.Strings[i],
-              'message', aktMessage) then
+            if lowercase(aktId) = 'choice' then
             begin
-              if setLabelCaptionById(aktId, aktMessage) then
-                labelMatch := True;
+              //if labelMatch then
+              //begin
+                //button
+                if jsonAsObjectGetValueByKey(messagelist.Strings[i],
+                  'choices', choicearray) then
+                begin
+                  globalchoicearray := choicearray;
+                  for choicecounter := 0 to jsonAsArrayCountElements(choicearray) - 1 do
+                  begin
+                    if not jsonAsArrayGetElementByIndex(choicearray,
+                      choicecounter, choicestr) then
+                      logdatei.log('Error: choicearray not found', LLError)
+                    else
+                      setButtonCaptionById(choicecounter, choicestr);
+                  end;
+                end
+                else
+                  logdatei.log('Error: could not get choicearray for id: ' + aktId, LLError);
+             // end
+             // else
+             //   logdatei.log('Warning: Button caption not written because no known labe in the message.',
+             //     LLWarning);
             end
             else
-              logdatei.log('Error: could not get message for id: ' + aktId, LLError);
-          end; //button or label
-        end;  // id found
+            begin
+              //label
+              if jsonAsObjectGetValueByKey(messagelist.Strings[i],
+                'message', aktMessage) then
+              begin
+                if setLabelCaptionById(aktId, aktMessage) then
+                begin
+                  labelMatch := True;
+                end;
+                logdatei.log('after setLabelCaptionById.', LLDebug2);
+              end
+              else
+                logdatei.log('Error: could not get message for id: ' + aktId, LLError);
+            end; //button or label
+          end;  // id found
+        except
+          logdatei.log('Exception in parsing :'+messagelist.Strings[i], LLError)
+        end;
+        logdatei.log('Finished with index of message: ' + intToStr(i), LLDebug2);
       end; // iterate over messages
     end;  // endConnection or other methods
     logdatei.log('finished newMessageFromService.', LLDebug2);
@@ -210,7 +220,7 @@ begin
     logdatei.log('Error: unkonwn method: ' + aktMethod, LLCritical);
     DataModule1.DataModuleDestroy(nil);
   end;
-
+  if Assigned(messagelist) then messagelist.Free;
 end;
 
 end.

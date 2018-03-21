@@ -376,7 +376,8 @@ begin
     fpBottomRight:
     begin
       x := screen.Width;
-      y := screen.Height;
+      //y := screen.Height;
+      y := screen.WorkAreaHeight;
       starty := y - nform.Height;
       startx := x - nform.Width;
       LogDatei.log('Form position: fpBottomRight', LLInfo);
@@ -425,6 +426,7 @@ begin
       begin
         sleep(1);
         nform.AlphaBlendValue := i;
+        nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
       end;
@@ -444,8 +446,10 @@ begin
       begin
         Sleep(1);
         nform.AlphaBlendValue := i;
+        y := screen.WorkAreaHeight;
         nform.Top := y - i;
         nform.Height := nform.Height + 1;
+        nform.BringToFront;
         nform.Repaint;
         //DataModule1.ProcessMess;
       end;
@@ -453,6 +457,7 @@ begin
       begin
         sleep(1);
         nform.AlphaBlendValue := i;
+        nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
       end;
@@ -473,6 +478,7 @@ begin
         Sleep(1);
         nform.AlphaBlendValue := i;
         nform.Height := nform.Height + 1;
+        nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
       end;
@@ -480,6 +486,7 @@ begin
       begin
         sleep(1);
         nform.AlphaBlendValue := i;
+        nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
       end;
@@ -496,8 +503,10 @@ begin
       for i := 1 to stopy do
       begin
         Sleep(1);
+        y := screen.WorkAreaHeight;
         nform.Top := y - i;
         nform.Height := nform.Height + 1;
+        nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
       end;
@@ -515,6 +524,7 @@ begin
       begin
         Sleep(1);
         nform.Height := nform.Height + 1;
+        nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
       end;
