@@ -5,6 +5,7 @@ object DataModule1: TDataModule1
   HorizontalOffset = 596
   VerticalOffset = 281
   Width = 894
+  PPI = 96
   object IBConnection1: TIBConnection
     Connected = False
     LoginPrompt = False
@@ -14,7 +15,6 @@ object DataModule1: TDataModule1
     UserName = 'uibtime'
     CharSet = 'utf-8'
     LogEvents = []
-    Options = []
     CheckTransactionParams = False
     left = 42
     top = 16
@@ -45,7 +45,6 @@ object DataModule1: TDataModule1
     SQL.Strings = (
       'select * from uibaktuser'
     )
-    Options = []
     Params = <>
     UpdateMode = upWhereAll
     left = 42
@@ -55,7 +54,6 @@ object DataModule1: TDataModule1
     Active = False
     Action = caNone
     Database = IBConnection1
-    Options = []
     left = 147
     top = 16
   end
@@ -116,7 +114,6 @@ object DataModule1: TDataModule1
     SQL.Strings = (
       'select * from uibaktevent order by lower(event)'
     )
-    Options = []
     Params = <>
     UpdateMode = upWhereAll
     left = 42
@@ -220,7 +217,6 @@ object DataModule1: TDataModule1
     SQL.Strings = (
       'select * from uiballevent order by lower(event)'
     )
-    Options = []
     Params = <>
     UpdateMode = upWhereAll
     left = 42
@@ -282,7 +278,6 @@ object DataModule1: TDataModule1
     SQL.Strings = (
       'select * from uibevent'
     )
-    Options = []
     Params = <>
     left = 42
     top = 304
@@ -313,7 +308,6 @@ object DataModule1: TDataModule1
     SQL.Strings = (
       'select * from uibuserevent'
     )
-    Options = []
     Params = <>
     UpdateMode = upWhereAll
     left = 42
@@ -339,7 +333,6 @@ object DataModule1: TDataModule1
     SQL.Strings = (
       'select userid, loggedin from uibloggedin'
     )
-    Options = []
     Params = <>
     UpdateMode = upWhereAll
     left = 42
@@ -371,7 +364,6 @@ object DataModule1: TDataModule1
     SQL.Strings = (
       'select * from uibtimeout'
     )
-    Options = []
     Params = <>
     UpdateMode = upWhereAll
     left = 266
@@ -384,7 +376,6 @@ object DataModule1: TDataModule1
     SQL.Strings = (
       ''
     )
-    Options = []
     Params = <>
     UpdateMode = upWhereAll
     left = 266
@@ -399,7 +390,6 @@ object DataModule1: TDataModule1
     SQL.Strings = (
       'select * from uibsoll'
     )
-    Options = []
     Params = <>
     UpdateMode = upWhereAll
     left = 266
@@ -414,7 +404,6 @@ object DataModule1: TDataModule1
       'where (userid = :userid) and'
       '(event = :event)'
     )
-    Options = []
     Params = <    
       item
         DataType = ftUnknown
@@ -439,7 +428,6 @@ object DataModule1: TDataModule1
     SQL.Strings = (
       'select * from uibdefproj'
     )
-    Options = []
     Params = <>
     UpdateMode = upWhereAll
     left = 266
@@ -577,7 +565,6 @@ object DataModule1: TDataModule1
       'ORDER BY'
       '2'
     )
-    Options = []
     Params = <>
     UpdateMode = upWhereAll
     left = 266
@@ -591,7 +578,6 @@ object DataModule1: TDataModule1
     SQL.Strings = (
       ''
     )
-    Options = []
     Params = <>
     UpdateMode = upWhereChanged
     left = 496
@@ -620,7 +606,6 @@ object DataModule1: TDataModule1
       'ORDER BY'
       'UIBEVENTTIMESPLIT.EVENT'
     )
-    Options = []
     Params = <    
       item
         DataType = ftUnknown
@@ -664,7 +649,6 @@ object DataModule1: TDataModule1
       'where userid = :userid'
       'order by jahr, monat, tag'
     )
-    Options = []
     Params = <    
       item
         DataType = ftUnknown
@@ -689,7 +673,6 @@ object DataModule1: TDataModule1
     UserName = 'uibtime'
     CharSet = 'utf-8'
     LogEvents = []
-    Options = []
     CheckTransactionParams = False
     left = 584
     top = 16
@@ -697,7 +680,6 @@ object DataModule1: TDataModule1
   object SQLTransaction2: TSQLTransaction
     Active = False
     Database = IBConnection2
-    Options = []
     left = 598
     top = 108
   end
@@ -707,7 +689,6 @@ object DataModule1: TDataModule1
     AfterPost = Query4ResultAfterPost
     Database = IBConnection1
     Transaction = SQLTransaction1
-    Options = []
     Params = <>
     left = 609
     top = 456
@@ -12297,7 +12278,6 @@ object DataModule1: TDataModule1
     FieldDefs = <>
     Database = IBConnection1
     Transaction = SQLTransaction1
-    Options = []
     Params = <>
     left = 703
     top = 152
@@ -12306,7 +12286,6 @@ object DataModule1: TDataModule1
     FieldDefs = <>
     Database = IBConnection1
     Transaction = SQLTransaction1
-    Options = []
     Params = <>
     left = 701
     top = 216
@@ -12316,7 +12295,6 @@ object DataModule1: TDataModule1
     AutoCalcFields = False
     Database = IBConnection1
     Transaction = SQLTransaction1
-    Options = []
     Params = <>
     left = 784
     top = 160
@@ -12329,7 +12307,6 @@ object DataModule1: TDataModule1
     SQL.Strings = (
       'select * from uibevent'
     )
-    Options = []
     Params = <>
     left = 784
     top = 220
@@ -12351,7 +12328,7 @@ object DataModule1: TDataModule1
     WindowTop = 0
     WindowWidth = 0
     FillAttribute = 0
-    left = 785
-    top = 82
+    left = 792
+    top = 72
   end
 end

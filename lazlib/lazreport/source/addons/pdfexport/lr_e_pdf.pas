@@ -15,7 +15,6 @@
 unit lr_e_pdf;
 
 {$mode objfpc}{$H+}
-//{$mode delphi} {$H+}
 
 interface
 
@@ -33,6 +32,9 @@ type
       FrameColor: TColor;
       Radius: Single;
       Corners: TCornerSet;
+      //Corners: TPDFCorners;
+      GradientColor: TColor;
+      GradientDirection: TGradientDirection;
     end;
 
     TfrTNPDFExport = class(TComponent) // fake component
@@ -65,7 +67,7 @@ type
         procedure ShowRoundRect(View: TfrRoundRectView; x, y, h, w: integer);
         procedure ShowShape(View: TfrShapeView; x, y, h, w: integer);
         procedure OnText(X, Y: Integer; const Text: string; View: TfrView);
-            override;
+        //    override;
         procedure OnData(x, y: Integer; View: TfrView); override;
     end;
 
@@ -82,9 +84,6 @@ const
     PDFEscy = 0.785447761;
 
 procedure TfrTNPDFExportFilter.AddShape(Data: TShapeData; x, y, h, w: integer);
-// http://www.lazarusforum.de/viewtopic.php?f=2&t=8515
-const n = sizeof (TCornerSet);
-var p: array[0..n-1] of byte; pc:TPdfCorners;
 
   function CreateShape(ShapeClass: TPRShapeClass): TPRShape;
   begin
@@ -111,8 +110,9 @@ begin
     frstRoundRect:
       with TPRRect(CreateShape(TPRRect)) do begin
         Radius := Data.Radius;
-        //SquaredCorners := TPdfCorners(Data.Corners);
-        move(Data.Corners, pc, n);  SquaredCorners := pc;
+        SquaredCorners := TPdfCorners(Data.Corners);
+        GradientColor := Data.GradientColor;
+        GradientDirection := Data.GradientDirection;
       end;
 
     frstTriangle:
@@ -380,7 +380,7 @@ var
   SWidth: Integer;
 begin
 
-  if view.ShowGradian then
+  if view.ShowGradian and (View.GradianStyle in [gsElliptic, gsHorizCenter, gsVertCenter, gsRectangle]) then
     // not supported yet
     DefaultShowView(View, x, y, h, w)
 
@@ -392,17 +392,27 @@ begin
       Data.Radius := SWidth
     else
       Data.Radius := 0.0;
-    Data.Corners:=View.SquaredCorners;
+    Data.Corners:= View.SquaredCorners;
 
     // draw shadow
-    Data.ShapeType := frstRoundRect;
-    Data.FillColor := ColorToRGB(View.ShadowColor);
-    Data.FrameColor := Data.FillColor; //ColorToRGB(View.FrameColor);
-    Data.FrameWidth := 0;
-    Data.FrameStyle := frsSolid;
-    SWidth := trunc(View.ShadowWidth * PDFEscx + 0.5);
-    if View.ShadowWidth>0 then
-      AddShape(Data, x + SWidth, y + SWidth, h - SWidth, w - SWidth);
+    if View.ShowGradian then
+    begin
+      Data.GradientColor := View.ShadowColor;
+      case View.GradianStyle of
+        gsVertical:   Data.GradientDirection := gdVertical;
+        gsHorizontal: Data.GradientDirection := gdHorizontal;
+      end;
+    end else
+    begin
+      Data.ShapeType := frstRoundRect;
+      Data.FillColor := ColorToRGB(View.ShadowColor);
+      Data.FrameColor := Data.FillColor; //ColorToRGB(View.FrameColor);
+      Data.FrameWidth := 0;
+      Data.FrameStyle := frsSolid;
+      SWidth := trunc(View.ShadowWidth * PDFEscx + 0.5);
+      if View.ShadowWidth>0 then
+        AddShape(Data, x + SWidth, y + SWidth, h - SWidth, w - SWidth);
+    end;
 
     // draw roundrect
     Data.ShapeType := frstRoundRect;
@@ -493,7 +503,7 @@ begin
         PRTLabel.FontSize := memo.Font.Size;
         PRTLabel.FontBold := fsBold in memo.Font.Style;
         PRTLabel.FontItalic := fsItalic in memo.Font.Style;
-        PRTLabel.FontColor := memo.Font.Color;
+        PRTLabel.FontColor := ColorToRGB(memo.Font.Color);
         PRTLabel.FontUnderline := fsUnderline in memo.Font.Style;
         PRTLabel.Angle:= memo.Angle;
         PRTLabel.AlignJustified :=  memo.Justify and not memo.LastLine;

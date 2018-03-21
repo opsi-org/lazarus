@@ -25,7 +25,7 @@
 
   You should have received a copy of the GNU Library General Public License
   along with this library; if not, write to the Free Software Foundation,
-  Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+  Inc., 51 Franklin Street - Fifth Floor, Boston, MA 02110-1335, USA.
 }
 
 unit lr_CrossArray;
@@ -70,6 +70,7 @@ type
     FBookmark:TBookMark;
   public
     procedure SaveBookmark(Ds: TDataset);
+    procedure GotoBookmark;
     function IsBookmarkValid: boolean;
     destructor destroy; override;
   end;
@@ -235,6 +236,11 @@ begin
     FDataset.FreeBookmark(FBookmark);
   FDataset := Ds;
   FBookmark := FDataset.GetBookmark;
+end;
+
+procedure TExItem.GotoBookmark;
+begin
+  FDataset.GotoBookmark(FBookmark);
 end;
 
 function TExItem.IsBookmarkValid: boolean;

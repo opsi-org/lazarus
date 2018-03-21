@@ -918,7 +918,7 @@ var
   title: string;
   mypath: string;
   summe_h: double;
-  summe_htd, free_htd: TDateTime;
+  presumme_htd, summe_htd, free_htd: TDateTime;
   months: integer;
   //base: string;
   total, freed: double;
@@ -927,7 +927,50 @@ var
   filename, uibname, dirname: string;
   len, posi: integer;
   reversestr : string;
+  isQuotaReport : boolean;
+  projectstart: TDateTime;
+  presumme_h: double;
 begin
+  isQuotaReport := false;
+  // query isQuotaReport
+  QueryUEARhelper.Close;
+  if QueryUEARhelper.Active then
+    QueryUEARhelper.Close;
+  QueryUEARhelper.SQL.Clear;
+  QueryUEARhelper.sql.Add(' select projectstart, time_h_is_quota ');
+  QueryUEARhelper.sql.Add('    from uiballevent');
+  QueryUEARhelper.sql.Add('    where (event = :suchevent)');
+  QueryUEARhelper.parambyname('suchevent').AsString := suchevent;
+  QueryUEARhelper.Open;
+  if not QueryUEARhelper.FieldByName('time_h_is_quota').IsNull then
+  begin
+    if QueryUEARhelper.FieldByName('time_h_is_quota').AsInteger = 1 then
+      isQuotaReport := True;
+    projectstart := QueryUEARhelper.FieldByName('projectstart').AsDateTime;
+  end;
+  QueryUEARhelper.Close;
+
+  if isQuotaReport then
+  begin
+    if QueryUEARhelper.Active then
+      QueryUEARhelper.Close;
+    QueryUEARhelper.SQL.Clear;
+    QueryUEARhelper.sql.Add('select ');
+    QueryUEARhelper.sql.Add('event, sum(stunden) as summe ');
+    QueryUEARhelper.sql.Add('FROM uibeventaccountreport a ');
+    QueryUEARhelper.sql.Add('where ');
+    QueryUEARhelper.sql.Add('(a.event = :event) ');
+    QueryUEARhelper.sql.Add('and(a.dateday >= :start) ');
+    QueryUEARhelper.sql.Add('and (a.dateday <= :stop) ');
+    QueryUEARhelper.sql.Add('group by 1  ');
+    QueryUEARhelper.ParamByName('event').AsString := suchevent;
+    QueryUEARhelper.parambyname('start').AsDateTime:=projectstart;
+    QueryUEARhelper.parambyname('stop').AsString := vonstr;
+    QueryUEARhelper.Open;
+    presumme_h := QueryUEARhelper.FieldByName('summe').AsFloat;
+    QueryUEARhelper.Close;
+  end;
+
   // query edit buffer
   if QueryUibeventaccountreport.Active then
     QueryUibeventaccountreport.Close;
@@ -1003,7 +1046,15 @@ begin
   {$ENDIF Linux}
   frDBDataSet1.DataSet := QueryUibeventaccountreport;
   frReport1.Clear;
-  frReport1.LoadFromFile(mypath + 'uib2erp_workrep.lrf');
+  if isQuotaReport then
+  begin
+    frReport1.LoadFromFile(mypath + 'uib2erp_quota_workrep.lrf');
+    frReport1.FindObject('memoQuota').Memo.Text :=
+      'Projektstart : '+DateToStr(projectstart)+' mit Stunden : '
+      +IntToStr(trunc(Total)) + ':' + Format('%.*d', [2, round(frac(Total) * 60)]);
+  end
+  else
+    frReport1.LoadFromFile(mypath + 'uib2erp_workrep.lrf');
   //frReport1.Dataset := QueryUibeventaccountreport;
   title := 'opsi Tätigkeitsbericht für: ' + suchevent + ' ';
   //if not (combobox1.Text = 'Summe Alle') then
@@ -1017,27 +1068,42 @@ begin
   //FormatDateTime('hh:nn', summe_htd);
   //frReport1.FindObject('memofreistunden').Memo.Text :=
   //  IntToStr(round(Total)) + ' pro ' + IntToStr(months) + ' Monat(e)';
-  frReport1.FindObject('memofreistunden').Memo.Text :=
-    IntToStr(trunc(Total)) + ':' + Format('%.*d', [2, round(frac(Total) * 60)]) +
-    ' pro ' + IntToStr(months) + ' Monat(e)';
-  (*
-  hours := trunc(Total);
-  minutes := Round(frac(Total) * 60);
-  if minutes >= 60 then
+  if isQuotaReport then
   begin
-    minutes := minutes - 60;
-    hours := hours + 1;
-  end;
-  free_htd := EncodeTimeInterval(hours, minutes, 0, 0);
-  *)
-  // we need freed without sign
-  freed := abs(total - summe_h);
-  sign := '+ ';
-  if summe_h > total then
-    sign := ' -';
+    frReport1.FindObject('memo_hfromstart').Memo.Text :=
+      IntToStr(trunc(presumme_h)) + ':'
+            + Format('%.*d', [2, round(frac(presumme_h) * 60)]);
 
-  frReport1.FindObject('memoDiff').Memo.Text :=
-    sign + IntToStr(trunc(freed)) + ':' + Format('%.*d', [2, round(frac(freed) * 60)]);
+    frReport1.FindObject('memo_GS').Memo.Text :=
+      IntToStr(trunc(presumme_h+summe_h)) + ':'
+            + Format('%.*d', [2, round(frac(presumme_h+summe_h) * 60)]);
+
+    frReport1.FindObject('memofreistunden').Memo.Text :=
+      IntToStr(trunc(Total)) + ':' + Format('%.*d', [2, round(frac(Total) * 60)]);
+
+    // we need freed without sign
+    freed := abs(total - (presumme_h+summe_h));
+    sign := '+ ';
+    if (presumme_h+summe_h) > total then
+      sign := ' -';
+
+    frReport1.FindObject('memoDiff').Memo.Text :=
+      sign + IntToStr(trunc(freed)) + ':' + Format('%.*d', [2, round(frac(freed) * 60)]);
+  end
+  else
+  begin
+    frReport1.FindObject('memofreistunden').Memo.Text :=
+      IntToStr(trunc(Total)) + ':' + Format('%.*d', [2, round(frac(Total) * 60)]) +
+      ' pro ' + IntToStr(months) + ' Monat(e)';
+    // we need freed without sign
+    freed := abs(total - summe_h);
+    sign := '+ ';
+    if summe_h > total then
+      sign := ' -';
+
+    frReport1.FindObject('memoDiff').Memo.Text :=
+      sign + IntToStr(trunc(freed)) + ':' + Format('%.*d', [2, round(frac(freed) * 60)]);
+  end;
   //sign + FormatDateTime('hh:nn', free_htd - summe_htd);
   frReport1.DefExportFileName := suchevent + '_' + vonstr + '_' + bisstr + '.pdf';
   //SelectDirectoryDialog1.FileName:=suchevent+'_'+vonstr+'_'+bisstr+ '.pdf';

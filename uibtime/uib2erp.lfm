@@ -8,7 +8,7 @@ object Fuibtime2erp: TFuibtime2erp
   ClientWidth = 1107
   OnCreate = FormCreate
   OnShow = FormShow
-  LCLVersion = '1.6.4.0'
+  LCLVersion = '1.8.2.0'
   object Panel1: TPanel
     Left = 0
     Height = 50
@@ -564,7 +564,6 @@ object Fuibtime2erp: TFuibtime2erp
     AfterPost = query1AfterPost
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
-    Options = []
     Params = <>
     left = 672
     top = 8
@@ -573,7 +572,6 @@ object Fuibtime2erp: TFuibtime2erp
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
-    Options = []
     Params = <>
     left = 728
     top = 8
@@ -582,7 +580,6 @@ object Fuibtime2erp: TFuibtime2erp
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
-    Options = []
     Params = <>
     left = 1016
     top = 8
@@ -603,7 +600,6 @@ object Fuibtime2erp: TFuibtime2erp
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
-    Options = []
     Params = <>
     left = 784
     top = 8
@@ -617,7 +613,6 @@ object Fuibtime2erp: TFuibtime2erp
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
-    Options = []
     Params = <>
     left = 344
     top = 640
@@ -626,7 +621,6 @@ object Fuibtime2erp: TFuibtime2erp
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
-    Options = []
     Params = <>
     left = 480
     top = 608
@@ -635,7 +629,6 @@ object Fuibtime2erp: TFuibtime2erp
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
-    Options = []
     Params = <>
     left = 857
     top = 8
@@ -644,7 +637,6 @@ object Fuibtime2erp: TFuibtime2erp
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
-    Options = []
     Params = <>
     left = 920
     top = 8

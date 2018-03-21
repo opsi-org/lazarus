@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.8.7.1\n"
 
 #: lr_const.saboutformcapt
 msgid "About FastReport"
@@ -632,6 +632,54 @@ msgstr "&Változó"
 #: lr_const.seditorformword
 msgid "&Word wrap"
 msgstr "Szótördelés"
+
+#: lr_const.serrexpectedassign
+msgid "Expected \":=\""
+msgstr "\":=\" szükséges"
+
+#: lr_const.serrexpectedclosingbracket1
+msgid "Expected \")\""
+msgstr "\")\" szükséges"
+
+#: lr_const.serrexpectedclosingbracket2
+msgid "Expected \"]\""
+msgstr "\"]\" szükséges"
+
+#: lr_const.serrexpectedcomma
+msgid "Expected \",\" or \")\""
+msgstr "\",\" vagy \")\" szükséges"
+
+#: lr_const.serrexpecteddo
+msgid "Expected \"do\""
+msgstr "\"do\" szükséges"
+
+#: lr_const.serrexpectedend
+msgid "Expected \";\" or \"end\""
+msgstr "\";\" vagy \"end\" szükséges"
+
+#: lr_const.serrexpectedthen
+msgid "Expected \"then\""
+msgstr "\"then\" szükséges"
+
+#: lr_const.serrexpecteduntil
+msgid "Expected \";\" or \"until\""
+msgstr "\";\" vagy \"until\" szükséges"
+
+#: lr_const.serrlabelgoto
+msgid "Label in goto must be a number"
+msgstr "A goto címkéjének egy számot kell megadni"
+
+#: lr_const.serrline
+msgid "Line"
+msgstr "Sor"
+
+#: lr_const.serrneeddo
+msgid "Need \"do\" here"
+msgstr "Ide \"do\" kell"
+
+#: lr_const.serrneedto
+msgid "Need \"to\" here"
+msgstr "Ide \"to\" kell"
 
 #: lr_const.serror
 msgid "Error"
@@ -1515,6 +1563,10 @@ msgstr "A(z) \"%s\" nem érvényes változónév."
 msgid "Keep aspect ratio"
 msgstr "Méretarány megtartása"
 
+#: lr_const.skeepchild
+msgid "Keep child together with parent"
+msgstr "A gyermek legyen együtt tartva a szülővel"
+
 #: lr_const.slazformfile
 msgid "LazReport form"
 msgstr "LazReport űrlap"
@@ -1547,6 +1599,14 @@ msgstr "Nem"
 msgctxt "lr_const.snotassigned"
 msgid "[None]"
 msgstr "[Nincs]"
+
+#: lr_const.snovalidexportfilenamewassupplied
+msgid "No valid export filename was supplied"
+msgstr "Nincs megadva érvényes exportálási fájlnév"
+
+#: lr_const.snovalidfilterclasswassupplied
+msgid "No valid filterclass was supplied"
+msgstr "Nincs megadva érvényes szűrőosztály"
 
 #: lr_const.sobjectinspector
 msgid "Object inspector"
@@ -2294,6 +2354,14 @@ msgstr "Megjelenítés minden oldalon"
 msgid "Report file"
 msgstr "Jelentés &fájl"
 
+#: lr_const.sreportcorruptoldknowversion
+msgid "This report is corrupt, it probably needs \"LRE_OLDV%d_FRF_READ\"=true"
+msgstr "Ez a jelentés sérült. Valószínűleg szüksége van erre: \"LRE_OLDV%d_FRF_READ\"=true"
+
+#: lr_const.sreportcorruptunknownversion
+msgid "This report is corrupt, frVersion=%d"
+msgstr "Ez a jelentés sérült. frVersion=%d"
+
 #: lr_const.sreportcreatedate
 msgid "Report creation date"
 msgstr "Jelentés létrehozásának dátuma"
@@ -2552,6 +2620,7 @@ msgid "Variable format ..."
 msgstr "Változó formátuma ..."
 
 #: lr_const.svarformcapt
+msgctxt "lr_const.svarformcapt"
 msgid "Variables"
 msgstr "Változók"
 

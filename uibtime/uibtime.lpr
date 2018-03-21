@@ -16,6 +16,7 @@ notificationdlg, uibdatetime, pack_powerpdf;
 {$R *.res}
 
 begin
+  Application.Scaled:=True;
   RequireDerivedFormResource := True;
   Application.Initialize;
   Application.CreateForm(TFDebug, FDebug);

@@ -28,6 +28,7 @@
 {$IFDEF LAZ_POWERPDF}
 {$MODE OBJFPC}{$H+}
 {$ENDIF}
+
 unit PdfTypes;
 
 interface
@@ -79,6 +80,7 @@ type
   end;
 
   TPdfCorners = set of (pcTopLeft, pcBottomLeft, pcBottomRight, pcTopRight);
+
 
   TPdfObjectType = (otDirectObject, otIndirectObject, otVirtualObject);
   TPdfAlignment = (paLeftJustify, paRightJustify, paCenter);

@@ -1,16 +1,17 @@
+# Olexandr Pylypchuk <pilipchukap@rambler.ru>, 2017.
+# Олександр Пилипчук <lxlalexlxl@ukr.net>, 2017, 2018.
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: 2012-04-23 10:24+0300\n"
-"Last-Translator: Igor Paliychuk <mansonigor@gmail.com>\n"
-"Language-Team: \n"
-"Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Last-Translator: Olexandr Pylypchuk <lxlalexlxl@ukr.net>\n"
+"PO-Revision-Date: 2018-01-01 16:21+0200\n"
+"Project-Id-Version: \n"
+"Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
+"Language: uk\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Virtaal 0.7.1\n"
+"X-Generator: Lokalize 2.0\n"
 
 #: lr_const.saboutformcapt
 msgid "About FastReport"
@@ -26,19 +27,19 @@ msgstr "Всі файли"
 
 #: lr_const.sargument1
 msgid "Argument 1"
-msgstr ""
+msgstr "Аргумент 1"
 
 #: lr_const.sargument2
 msgid "Argument 2"
-msgstr ""
+msgstr "Аргумент 2"
 
 #: lr_const.sargument3
 msgid "Argument 3"
-msgstr ""
+msgstr "Аргумент 3"
 
 #: lr_const.sarguments
 msgid "Arguments"
-msgstr ""
+msgstr "Аргументи"
 
 #: lr_const.sautosize
 msgid "Auto size"
@@ -105,15 +106,11 @@ msgid "Cross footer"
 msgstr "Перехресний нижній колонтитул"
 
 #: lr_const.sband22
-#, fuzzy
-#| msgid "None"
 msgctxt "lr_const.sband22"
 msgid "Child"
-msgstr "Немає"
+msgstr "Нащадок"
 
 #: lr_const.sband23
-#, fuzzy
-#| msgid "None"
 msgctxt "lr_const.sband23"
 msgid "None"
 msgstr "Немає"
@@ -255,7 +252,7 @@ msgstr "0"
 
 #: lr_const.sclassobjectnotfound
 msgid "Class Object \"%s\" not found"
-msgstr "Об'єкт \"%s\" класу не знайдений"
+msgstr "Об'єкт \"%s\" класу не знайдено"
 
 #: lr_const.sconfirm
 msgid "Confirm"
@@ -267,23 +264,23 @@ msgstr "Файл CSV"
 
 #: lr_const.scurmemo
 msgid "Memo:"
-msgstr ""
+msgstr "Замітка:"
 
 #: lr_const.sdateformat1
 msgid "mm.dd.yy"
-msgstr ""
+msgstr "мм.дд.рр"
 
 #: lr_const.sdateformat2
 msgid "mm.dd.yyyy"
-msgstr ""
+msgstr "мм.дд.рррр"
 
 #: lr_const.sdateformat3
 msgid "d mmm yyyy"
-msgstr ""
+msgstr "д ммм рррр"
 
 #: lr_const.sdateformat4
 msgid "d mmmm yyyy"
-msgstr ""
+msgstr "д мммм рррр"
 
 #: lr_const.sdatetimecategory
 msgid "Date and time"
@@ -291,7 +288,7 @@ msgstr "Дата та час"
 
 #: lr_const.sdbfield
 msgid "DB field"
-msgstr ""
+msgstr "Поле БД"
 
 #: lr_const.sdefaultprinter
 msgid "Default printer"
@@ -306,8 +303,6 @@ msgid "COPY(<String>, <Position>, <Length>)/Returns <Length> characters from <St
 msgstr "COPY(<String>, <Position>, <Length>)/Повертає <Length> символів з рядка <String>, починаючи з <Position>."
 
 #: lr_const.sdescriptioncount
-#, fuzzy
-#| msgid "COUNT(<BandName>)/Returns count of data-rows given in the <BandName>. "
 msgid "COUNT(<BandName>)/Returns count of data rows given in the <BandName>. "
 msgstr "COUNT(<BandName>)/Повертає кількість рядків даних у <BandName>."
 
@@ -317,7 +312,7 @@ msgstr "DAYOF(<Date>)/Повертає номер дня (1..31) для зада
 
 #: lr_const.sdescriptiondec
 msgid "DEC(<Value>)/Decrement <Value>."
-msgstr ""
+msgstr "DEC(<Значення>)/Зменшити <Значення>."
 
 #: lr_const.sdescriptionformatdatetime
 msgid "FORMATDATETIME(<Fmt>, <DateTime>)/Converts a <DateTime> value to a string using mask in <Fmt>."
@@ -337,13 +332,11 @@ msgstr "FRAC(<Value>)/Повертає дробову частину дійсн�
 
 #: lr_const.sdescriptioninc
 msgid "INC(<Value>)/Increment <Value>."
-msgstr ""
+msgstr "INC(<Значення>)/Збільшити <Значення>."
 
 #: lr_const.sdescriptioninput
-#, fuzzy
-#| msgid "INPUT(<Caption> [,Default])/Shows dialog window with headstring <Caption> and edit box. If [Default] parameter is set, puts this string in edit box. After user clicks OK, returns input string."
 msgid "INPUT(<Caption> [,Default])/Shows dialog window with title <Caption> and edit box. If [Default] parameter is set, puts this string in edit box. After user clicks OK, returns input string."
-msgstr "INPUT(<Caption> [,Default])/Виводить діалогове вікно з заголовком <Caption> і полем введення. Якщо задано параметр [Default], поміщає цей рядок у полі введення. Після натискання користувачем кнопки OK повертає введений рядок."
+msgstr "INPUT(<Caption> [,Default])/Виводить діалогове вікно з заголовком <Caption> і полем введення. Якщо задано параметр [Default], поміщає цей рядок у поле введення. Після натискання користувачем кнопки Гаразд повертає введений рядок."
 
 #: lr_const.sdescriptionint
 msgid "INT(<Value>)/Returns the integer part of floating point <Value>."
@@ -387,11 +380,11 @@ msgstr "NAMECASE(<String>)/Перетворює символи рядка <Strin
 
 #: lr_const.sdescriptionnewcolumn
 msgid "NEWCOLUMN/Create new column on page for current report."
-msgstr ""
+msgstr "NEWCOLUMN/Створити для поточного звіту новий стовпчик на сторінці."
 
 #: lr_const.sdescriptionnewpage
 msgid "NEWPAGE/Create new page for current report."
-msgstr ""
+msgstr "NEWPAGE/Створити для поточного звіту нову сторінку."
 
 #: lr_const.sdescriptionpos
 msgid "POS(<SubString>, <String>)/Returns position of substring in given string."
@@ -403,11 +396,11 @@ msgstr "ROUND(<Value>)/Округлює дійсне значення <Value> д
 
 #: lr_const.sdescriptionshowband
 msgid "SHOWBAND(<BandName>)/Show <BandName> in report."
-msgstr ""
+msgstr "SHOWBAND(<BandName>)/Показати у звіті <BandName>."
 
 #: lr_const.sdescriptionstopreport
 msgid "STOPREPORT/Terminate report creation."
-msgstr ""
+msgstr "STOPREPORT/Перервати створення звіту."
 
 #: lr_const.sdescriptionstr
 msgid "STR(<Value>)/Converts the given (numeric) <Value> in string."
@@ -530,8 +523,6 @@ msgid "Report:"
 msgstr "Звіт:"
 
 #: lr_const.sdocautor
-#, fuzzy
-#| msgid "Autor"
 msgid "Author"
 msgstr "Автор"
 
@@ -556,8 +547,6 @@ msgid "Comments"
 msgstr "Коментарі"
 
 #: lr_const.sdocoptformkeywords
-#, fuzzy
-#| msgid "Keys words"
 msgid "Keywords"
 msgstr "Ключові слова"
 
@@ -601,7 +590,7 @@ msgstr "Об'єкт з іменем \"%s\" вже існує"
 
 #: lr_const.seditor
 msgid "Editor"
-msgstr ""
+msgstr "Редактор"
 
 #: lr_const.seditorformbig
 msgid "&Big font"
@@ -646,13 +635,59 @@ msgstr "&Змінна"
 msgid "&Word wrap"
 msgstr "&Перенесення слів"
 
+#: lr_const.serrexpectedassign
+msgid "Expected \":=\""
+msgstr "Очікується \":=\""
+
+#: lr_const.serrexpectedclosingbracket1
+msgid "Expected \")\""
+msgstr "Очікується \")\""
+
+#: lr_const.serrexpectedclosingbracket2
+msgid "Expected \"]\""
+msgstr "Очікується \"]\""
+
+#: lr_const.serrexpectedcomma
+msgid "Expected \",\" or \")\""
+msgstr "Очікується \",\" або \")\""
+
+#: lr_const.serrexpecteddo
+msgid "Expected \"do\""
+msgstr "Очікується \"do\""
+
+#: lr_const.serrexpectedend
+msgid "Expected \";\" or \"end\""
+msgstr "Очікується \";\" або \"end\""
+
+#: lr_const.serrexpectedthen
+msgid "Expected \"then\""
+msgstr "Очікується \"then\""
+
+#: lr_const.serrexpecteduntil
+msgid "Expected \";\" or \"until\""
+msgstr "Очікується \";\" або \"until\""
+
+#: lr_const.serrlabelgoto
+msgid "Label in goto must be a number"
+msgstr "Мітка в goto має бути числом"
+
+#: lr_const.serrline
+msgid "Line"
+msgstr "Рядок"
+
+#: lr_const.serrneeddo
+msgid "Need \"do\" here"
+msgstr "Тут потрібне \"do\""
+
+#: lr_const.serrneedto
+msgid "Need \"to\" here"
+msgstr "Тут потрібне \"to\""
+
 #: lr_const.serror
 msgid "Error"
 msgstr "Помилка"
 
 #: lr_const.serroroccured
-#, fuzzy
-#| msgid "An error occured during calculating"
 msgid "An error occurred during calculation"
 msgstr "Під час обчислення сталася помилка"
 
@@ -691,7 +726,7 @@ msgstr "Індекс фільтру експорту має неприпусти
 
 #: lr_const.sfieldsformaviabledb
 msgid "&Available DB's"
-msgstr "&Доступні Бази Даних"
+msgstr "&Доступні бази даних"
 
 #: lr_const.sfieldsforminsert
 msgctxt "lr_const.sfieldsforminsert"
@@ -700,7 +735,7 @@ msgstr "Вставити поле БД"
 
 #: lr_const.sfilenotfound
 msgid "File not found"
-msgstr ""
+msgstr "Файл не знайдено"
 
 #: lr_const.sfilter
 msgid "Filter properties"
@@ -730,7 +765,7 @@ msgstr "&1-ша сторінка"
 
 #: lr_const.sfindtextnotfound
 msgid "Search text not found."
-msgstr ""
+msgstr "Шуканий текст не знайдено."
 
 #: lr_const.sfindtextoptions
 msgctxt "lr_const.sfindtextoptions"
@@ -873,11 +908,11 @@ msgstr "З нової сторінки"
 
 #: lr_const.sfrdesignerdatainsp
 msgid "Data inspector"
-msgstr ""
+msgstr "Інспектор даних"
 
 #: lr_const.sfrdesignerexists
 msgid "You already have one TfrDesigner component"
-msgstr ""
+msgstr "Ви вже маєте один компонент TfrDesigner"
 
 #: lr_const.sfrdesignerformaddpg
 msgctxt "lr_const.sfrdesignerformaddpg"
@@ -1147,7 +1182,7 @@ msgstr "Верхня лінія фрейму"
 
 #: lr_const.sfrdesignerformunabletocreatetemplatedir
 msgid "Unable to create template directory"
-msgstr ""
+msgstr "Неможливо створити теку шаблона"
 
 #: lr_const.sfrdesignerformunderline
 msgid "Underline"
@@ -1183,7 +1218,7 @@ msgstr "Відіслати &назад"
 
 #: lr_const.sfrdesignerform_beforeprintscript
 msgid "&Before print script ..."
-msgstr ""
+msgstr "С&ценарий, що виконується перед друком ..."
 
 #: lr_const.sfrdesignerform_bring
 msgid "Bring to &front"
@@ -1199,7 +1234,7 @@ msgstr "Ви&різати"
 
 #: lr_const.sfrdesignerform_datainsp
 msgid "&Data inspector"
-msgstr ""
+msgstr "&Інспектор даних"
 
 #: lr_const.sfrdesignerform_delete
 msgid "&Delete"
@@ -1229,7 +1264,7 @@ msgstr "&Файл"
 
 #: lr_const.sfrdesignerform_help1
 msgid "&Help contents"
-msgstr "&Вміст Довідки"
+msgstr "&Вміст довідки"
 
 #: lr_const.sfrdesignerform_help2
 msgid "Help &tool"
@@ -1237,7 +1272,7 @@ msgstr "Інструмент &допомоги"
 
 #: lr_const.sfrdesignerform_insp
 msgid "Object &Inspector"
-msgstr "&Інспектор Об'єктів"
+msgstr "&Інспектор об'єктів"
 
 #: lr_const.sfrdesignerform_line
 msgid "Line style"
@@ -1245,7 +1280,7 @@ msgstr "Стиль лінії"
 
 #: lr_const.sfrdesignerform_modified
 msgid "Modified"
-msgstr ""
+msgstr "Змінено"
 
 #: lr_const.sfrdesignerform_new
 msgid "&New ..."
@@ -1273,7 +1308,7 @@ msgstr "Параметри с&торінки ..."
 
 #: lr_const.sfrdesignerform_preview
 msgid "Pre&view"
-msgstr "П&опередній Перегляд"
+msgstr "П&опередній перегляд"
 
 #: lr_const.sfrdesignerform_rect
 msgid "&Rectangle"
@@ -1347,11 +1382,11 @@ msgstr "Змінні FR"
 
 #: lr_const.sfunctioneditor
 msgid "Function editor"
-msgstr ""
+msgstr "Редактор функцій"
 
 #: lr_const.sfunctions
 msgid "Functions"
-msgstr ""
+msgstr "Функції"
 
 #: lr_const.sgeditorformcapt
 msgid "Picture"
@@ -1390,7 +1425,7 @@ msgstr "Умова"
 
 #: lr_const.shidezerovalues
 msgid "Hide zero values"
-msgstr ""
+msgstr "Приховати нульові значення"
 
 #: lr_const.shilightformback
 msgid "Background"
@@ -1460,11 +1495,11 @@ msgstr "Вставити об'єкт CheckBox"
 
 #: lr_const.sinsert
 msgid "Insert"
-msgstr ""
+msgstr "Вставити"
 
 #: lr_const.sinsertexpression
 msgid "Insert Expression"
-msgstr ""
+msgstr "Вставити вираз"
 
 #: lr_const.sinsertfields
 msgid "Insert DB fields"
@@ -1499,8 +1534,6 @@ msgid "&Vertical"
 msgstr "&Вертикально"
 
 #: lr_const.sinsroundrect
-#, fuzzy
-#| msgid "Insert an RoundRect with shadow area"
 msgid "Insert a RoundRect with shadow area"
 msgstr "Вставити заокруглений прямокутних з областю тіні"
 
@@ -1510,27 +1543,31 @@ msgstr "Вставити об'єкт-фігуру"
 
 #: lr_const.sinterpretator
 msgid "Interpretator"
-msgstr ""
+msgstr "Інтерпретатор"
 
 #: lr_const.sinvalidfrfreport
 msgid "Invalid binary report"
-msgstr ""
+msgstr "Неправильний двійковий звіт"
 
 #: lr_const.sinvalidfrfversion
 msgid "Invalid report version"
-msgstr ""
+msgstr "Неправильна версія звіту"
 
 #: lr_const.sinvalidlrfreport
 msgid "Invalid report format"
-msgstr ""
+msgstr "Неправильний формат звіту"
 
 #: lr_const.sinvalidvariablename
 msgid "\"%s\" is not a valid variable name."
-msgstr ""
+msgstr "\"%s\" не є правильною назвою змінної."
 
 #: lr_const.skeepaspectratio
 msgid "Keep aspect ratio"
 msgstr "Зберегти пропорції"
+
+#: lr_const.skeepchild
+msgid "Keep child together with parent"
+msgstr "Тримати нащадків разом з предками"
 
 #: lr_const.slazformfile
 msgid "LazReport form"
@@ -1538,7 +1575,7 @@ msgstr "Форма LazReport"
 
 #: lr_const.slaztemplatefile
 msgid "LazReport template"
-msgstr ""
+msgstr "Шаблон LazReport"
 
 #: lr_const.smathcategory
 msgid "Math"
@@ -1546,7 +1583,7 @@ msgstr "Математичні"
 
 #: lr_const.smemoeditor
 msgid "Memo editor"
-msgstr ""
+msgstr "Редактор замітки"
 
 #: lr_const.smm
 msgid "MM"
@@ -1565,9 +1602,17 @@ msgctxt "lr_const.snotassigned"
 msgid "[None]"
 msgstr "[Немає]"
 
+#: lr_const.snovalidexportfilenamewassupplied
+msgid "No valid export filename was supplied"
+msgstr "Не задана коректна назва файлу для експорту"
+
+#: lr_const.snovalidfilterclasswassupplied
+msgid "No valid filterclass was supplied"
+msgstr "Не заданий коректний клас фільтра"
+
 #: lr_const.sobjectinspector
 msgid "Object inspector"
-msgstr "Інспектор Об'єктів"
+msgstr "Інспектор об'єктів"
 
 #: lr_const.sobjectnotfound
 msgid "Object \"%s\" not found"
@@ -1704,7 +1749,7 @@ msgstr "Folio, 8 1/2 x 13\""
 
 #: lr_const.spaper15
 msgid "Quarto Sheet, 215 x 275 mm"
-msgstr "Чверть Аркуша, 215 x 275 мм"
+msgstr "Чверть аркуша, 215 x 275 мм"
 
 #: lr_const.spaper16
 msgid "10 x 14\""
@@ -1728,27 +1773,27 @@ msgstr "Letter малий, 8 1/2 x 11\""
 
 #: lr_const.spaper20
 msgid "#10 Envelope, 4 1/8  x 9 1/2\""
-msgstr "#10 Конверт, 4 1/8  x 9 1/2\""
+msgstr "Конверт #10, 4 1/8  x 9 1/2\""
 
 #: lr_const.spaper21
 msgid "#11 Envelope, 4 1/2 x 10 3/8\""
-msgstr "#11 Конверт, 4 1/2 x 10 3/8\""
+msgstr "Конверт #11, 4 1/2 x 10 3/8\""
 
 #: lr_const.spaper22
 msgid "#12 Envelope, 4 3/4 x 11\""
-msgstr "#12 Конверт, 4 3/4 x 11\""
+msgstr "Конверт #12, 4 3/4 x 11\""
 
 #: lr_const.spaper23
 msgid "#14 Envelope, 5 x 11 1/2\""
-msgstr "#14 Конверт, 5 x 11 1/2\""
+msgstr "Конверт #14, 5 x 11 1/2\""
 
 #: lr_const.spaper24
 msgid "C Sheet, 17 x 22\""
-msgstr "C Аркуш, 17 x 22\""
+msgstr "Аркуш C, 17 x 22\""
 
 #: lr_const.spaper25
 msgid "D Sheet, 22 x 34\""
-msgstr "D Аркуш, 22 x 34\""
+msgstr "Аркуш D, 22 x 34\""
 
 #: lr_const.spaper256
 msgctxt "lr_const.spaper256"
@@ -1757,19 +1802,19 @@ msgstr "Користувацький"
 
 #: lr_const.spaper26
 msgid "E Sheet, 34 x 44\""
-msgstr "E Аркуш, 34 x 44\""
+msgstr "Аркуш E, 34 x 44\""
 
 #: lr_const.spaper27
 msgid "DL Envelope, 110 x 220 mm"
-msgstr "DL Конверт, 110 x 220 мм"
+msgstr "Конверт DL, 110 x 220 мм"
 
 #: lr_const.spaper28
 msgid "C5 Envelope, 162 x 229 mm"
-msgstr "C5 Конверт, 162 x 229 мм"
+msgstr "Конверт C5, 162 x 229 мм"
 
 #: lr_const.spaper29
 msgid "C3 Envelope,  324 x 458 mm"
-msgstr "C3 Конверт,  324 x 458 мм"
+msgstr "Конверт C3,  324 x 458 мм"
 
 #: lr_const.spaper3
 msgid "Tabloid, 11 x 17\""
@@ -1777,39 +1822,39 @@ msgstr "Tabloid, 11 x 17\""
 
 #: lr_const.spaper30
 msgid "C4 Envelope,  229 x 324 mm"
-msgstr "C4 Конверт,  229 x 324 мм"
+msgstr "Конверт C4,  229 x 324 мм"
 
 #: lr_const.spaper31
 msgid "C6 Envelope,  114 x 162 mm"
-msgstr "C6 Конверт,  114 x 162 мм"
+msgstr "Конверт C6,  114 x 162 мм"
 
 #: lr_const.spaper32
 msgid "C65 Envelope, 114 x 229 mm"
-msgstr "C65 Конверт, 114 x 229 мм"
+msgstr "Конверт C65, 114 x 229 мм"
 
 #: lr_const.spaper33
 msgid "B4 Envelope,  250 x 353 mm"
-msgstr "B4 Конверт,  250 x 353 мм"
+msgstr "Конверт B4,  250 x 353 мм"
 
 #: lr_const.spaper34
 msgid "B5 Envelope,  176 x 250 mm"
-msgstr "B5 Конверт,  176 x 250 мм"
+msgstr "Конверт B5,  176 x 250 мм"
 
 #: lr_const.spaper35
 msgid "B6 Envelope,  176 x 125 mm"
-msgstr "B6 Конверт,  176 x 125 мм"
+msgstr "Конверт B6,  176 x 125 мм"
 
 #: lr_const.spaper36
 msgid "Italy Envelope, 110 x 230 mm"
-msgstr "Італійський Конверт, 110 x 230 мм"
+msgstr "Італійський конверт, 110 x 230 мм"
 
 #: lr_const.spaper37
 msgid "Monarch Envelope, 3 7/8 x 7 1/2\""
-msgstr "Monarch Конверт, 3 7/8 x 7 1/2\""
+msgstr "Конверт Monarch, 3 7/8 x 7 1/2\""
 
 #: lr_const.spaper38
 msgid "6 3/4 Envelope, 3 5/8 x 6 1/2\""
-msgstr "6 3/4 Конверт, 3 5/8 x 6 1/2\""
+msgstr "Конверт 6 3/4, 3 5/8 x 6 1/2\""
 
 #: lr_const.spaper39
 msgid "US Std Fanfold, 14 7/8 x 11\""
@@ -1833,7 +1878,7 @@ msgstr "B4 (ISO) 250 x 353 мм"
 
 #: lr_const.spaper43
 msgid "Japanese Postcard 100 x 148 mm"
-msgstr "Японська Листівка 100 x 148 мм"
+msgstr "Японська листівка 100 x 148 мм"
 
 #: lr_const.spaper44
 msgid "9 x 11\""
@@ -1849,7 +1894,7 @@ msgstr "15 x 11\""
 
 #: lr_const.spaper47
 msgid "Envelope Invite 220 x 220 mm"
-msgstr "Конверт Запрошення 220 x 220 мм"
+msgstr "Конверт запрошення 220 x 220 мм"
 
 #: lr_const.spaper5
 msgid "Legal, 8 1/2 x 14\""
@@ -1873,15 +1918,15 @@ msgstr "A4 Екстра 9.27 x 12.69\""
 
 #: lr_const.spaper54
 msgid "Letter Transverse 8/275 x 11\""
-msgstr "Letter Поперечний 8/275 x 11\""
+msgstr "Letter поперечний 8/275 x 11\""
 
 #: lr_const.spaper55
 msgid "A4 Transverse 210 x 297 mm"
-msgstr "A4 Поперечний 210 x 297 мм"
+msgstr "A4 поперечний 210 x 297 мм"
 
 #: lr_const.spaper56
 msgid "Letter Extra Transverse 9/275 x 12\""
-msgstr "Letter Екстра Поперечний 9/275 x 12\""
+msgstr "Letter Екстра поперечний 9/275 x 12\""
 
 #: lr_const.spaper57
 msgid "SuperASuperAA4 227 x 356 mm"
@@ -1905,11 +1950,11 @@ msgstr "A4 Плюс 210 x 330 мм"
 
 #: lr_const.spaper61
 msgid "A5 Transverse 148 x 210 mm"
-msgstr "A5 Поперечний 148 x 210 мм"
+msgstr "A5 поперечний 148 x 210 мм"
 
 #: lr_const.spaper62
 msgid "B5 (JIS) Transverse 182 x 257 mm"
-msgstr "B5 (JIS) Поперечний 182 x 257 мм"
+msgstr "B5 (JIS) поперечний 182 x 257 мм"
 
 #: lr_const.spaper63
 msgid "A3 Extra 322 x 445 mm"
@@ -1929,15 +1974,15 @@ msgstr "A2 420 x 594 мм"
 
 #: lr_const.spaper67
 msgid "A3 Transverse 297 x 420 mm"
-msgstr "A3 Поперечний 297 x 420 мм"
+msgstr "A3 поперечний 297 x 420 мм"
 
 #: lr_const.spaper68
 msgid "A3 Extra Transverse 322 x 445 mm"
-msgstr "A3 Екстра Поперечний 322 x 445 мм"
+msgstr "A3 Екстра поперечний 322 x 445 мм"
 
 #: lr_const.spaper69
 msgid "Double Japanese Postcard 200 x 148 mm"
-msgstr "Подвійна Японська Листівка 200 x 148 мм"
+msgstr "Подвійна японська листівка 200 x 148 мм"
 
 #: lr_const.spaper7
 msgid "Executive, 7 1/4 x 10 1/2\""
@@ -2081,11 +2126,11 @@ msgstr "&Нижнє, мм"
 
 #: lr_const.spgoptformbycolumns
 msgid "By Colum&ns"
-msgstr "По С&товпцях"
+msgstr "За с&товпцями"
 
 #: lr_const.spgoptformbyrows
 msgid "By Row&s"
-msgstr "По &Рядках"
+msgstr "За &рядками"
 
 #: lr_const.spgoptformcapt
 msgctxt "lr_const.spgoptformcapt"
@@ -2247,13 +2292,11 @@ msgstr "Сторінка &повністю"
 
 #: lr_const.sprintchildifnotvisible
 msgid "Print child if not visible"
-msgstr ""
+msgstr "Друкувати дочірній в разі невидимості"
 
 #: lr_const.sprintererror
-#, fuzzy
-#| msgid "Printer selected is not valid"
 msgid "Selected printer is not valid"
-msgstr "Вибраний невірний принтер"
+msgstr "Вибрано неправильний принтер"
 
 #: lr_const.sprintformall
 msgid "&All"
@@ -2261,7 +2304,7 @@ msgstr "&Всі"
 
 #: lr_const.sprintformcollate
 msgid "Collate"
-msgstr ""
+msgstr "Розібрати за копіями"
 
 #: lr_const.sprintformcopy
 msgid "&Copies:"
@@ -2313,21 +2356,27 @@ msgstr "Показувати на всіх сторінках"
 msgid "Report file"
 msgstr "Файл звіту"
 
+#: lr_const.sreportcorruptoldknowversion
+msgid "This report is corrupt, it probably needs \"LRE_OLDV%d_FRF_READ\"=true"
+msgstr "Цей звіт пошкоджено, можливо він потребує \"LRE_OLDV%d_FRF_READ\"=true"
+
+#: lr_const.sreportcorruptunknownversion
+msgid "This report is corrupt, frVersion=%d"
+msgstr "Цей звіт пошкоджено, frVersion=%d"
+
 #: lr_const.sreportcreatedate
 msgid "Report creation date"
-msgstr ""
+msgstr "Дата створення звіту"
 
 #: lr_const.sreportlastmodifydate
 msgid "Report last modification date"
-msgstr ""
+msgstr "Дата останньої зміни звіту"
 
 #: lr_const.sreportloadingerror
 msgid "Error while loading report"
-msgstr ""
+msgstr "Помилка при завантаженні звіту"
 
 #: lr_const.sreportpreparing
-#, fuzzy
-#| msgid "Report preparing"
 msgid "Preparing report"
 msgstr "Підготовка звіту"
 
@@ -2361,13 +2410,11 @@ msgstr "Зона фрейма"
 
 #: lr_const.sroundrectformgradient
 msgid "Gradient"
-msgstr ""
+msgstr "Градієнт"
 
 #: lr_const.sroundrectformhint
-#, fuzzy
-#| msgid "Click here to define the shadow color or gradian colors"
 msgid "Click here to define the shadow color or gradient colors"
-msgstr "Клацніть тут щоб задати колір тіні або кольори градієнта"
+msgstr "Клацніть тут, щоб задати колір тіні або кольори градієнта"
 
 #: lr_const.sroundrectformsample
 msgid "Sample :"
@@ -2403,7 +2450,7 @@ msgstr "Зберегти зміни"
 
 #: lr_const.sscripteditor
 msgid "Script editor"
-msgstr ""
+msgstr "Редактор сценаріїв"
 
 #: lr_const.sshape1
 msgctxt "lr_const.sshape1"
@@ -2457,11 +2504,11 @@ msgstr "ПідЗвіт на сторінці"
 
 #: lr_const.stemplemptydesc
 msgid "New report based on empty template"
-msgstr ""
+msgstr "Новий звіт на основі порожнього шаблона"
 
 #: lr_const.stemplemtpyrp
 msgid "Empty template"
-msgstr ""
+msgstr "Порожній шаблон"
 
 #: lr_const.stemplfile
 msgid "FastReport template"
@@ -2482,19 +2529,19 @@ msgstr "Текстовий файл ASCII"
 
 #: lr_const.stimeformat1
 msgid "hh:nn:ss"
-msgstr ""
+msgstr "гг:хх:сс"
 
 #: lr_const.stimeformat2
 msgid "h:nn:ss"
-msgstr ""
+msgstr "г:хх:сс"
 
 #: lr_const.stimeformat3
 msgid "hh:nn"
-msgstr ""
+msgstr "гг:хх"
 
 #: lr_const.stimeformat4
 msgid "h:nn"
-msgstr ""
+msgstr "г:хх"
 
 #: lr_const.sto
 msgid "to"
@@ -2506,7 +2553,7 @@ msgstr "Прозорий"
 
 #: lr_const.sunabletoreadversion
 msgid "Unable to read report version"
-msgstr ""
+msgstr "Неможливо прочитати версію звіту"
 
 #: lr_const.suntitled
 msgid "Untitled"
@@ -2514,15 +2561,15 @@ msgstr "Без_назви"
 
 #: lr_const.susefixedfontsettings
 msgid "Use fixed font settings"
-msgstr ""
+msgstr "Використати фіксовані параметри шрифту"
 
 #: lr_const.susememofontsettings
 msgid "Use Memo font settings"
-msgstr ""
+msgstr "Використати параметри шрифту замітки"
 
 #: lr_const.susesyntaxhighlight
 msgid "Use syntax highlight"
-msgstr ""
+msgstr "Використати підсвічування синтаксису"
 
 #: lr_const.svar1
 msgid "Page#"
@@ -2575,6 +2622,7 @@ msgid "Variable format ..."
 msgstr "Формат змінної ..."
 
 #: lr_const.svarformcapt
+msgctxt "lr_const.svarformcapt"
 msgid "Variables"
 msgstr "Змінні"
 
@@ -2584,7 +2632,7 @@ msgstr "&Категорія:"
 
 #: lr_const.svariable
 msgid "Variable"
-msgstr ""
+msgstr "Змінна"
 
 #: lr_const.svbandeditorformbnd
 msgid "Bands"
