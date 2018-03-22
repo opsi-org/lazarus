@@ -14,7 +14,7 @@ uses
 
 function getLastIntervalStart(startdate : TdateTime; myMonthInterval : cardinal) : TdateTime;
 function getLastIntervalEnd(startdate : TdateTime; myMonthInterval : cardinal) : TdateTime;
-
+function timeFloatTohourminutesStr(mytime : double) : string;
 
 implementation
 
@@ -62,6 +62,11 @@ begin
   result := IncMonth(lastIntervalStart, myMonthInterval);
 end;
 
+function timeFloatTohourminutesStr(mytime : double) : string;
+begin
+  result := Format('%.*d', [2,trunc(mytime)])
+    + ':' + Format('%.*d', [2, round(frac(mytime) * 60)]);
+end;
 
 end.
 

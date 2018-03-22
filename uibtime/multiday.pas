@@ -11,7 +11,9 @@ uses
   SysUtils, Classes, Graphics, Forms, Controls, StdCtrls, Buttons,
 //  ExtCtrls, Grids, Calendar, ComCtrls, DBCtrls, maskedit, ExtDlgs, EditBtn,
   ExtCtrls, Calendar, DBCtrls, maskedit, ExtDlgs, EditBtn,
-  dateutils;
+  dateutils,
+  uibdatetime,
+  strutils;
 
 type
 
@@ -31,6 +33,7 @@ type
     BtnInsertAll: TBitBtn;
     ComboBox1: TComboBox;
     procedure BtnInsertAllClick(Sender: TObject);
+    procedure ComboBox1Select(Sender: TObject);
     procedure EditButtonEndDateButtonClick(Sender: TObject);
     procedure EditButtonStartDateButtonClick(Sender: TObject);
     procedure EditButtonStartDateChange(Sender: TObject);
@@ -77,6 +80,26 @@ begin
 
   until (StrToDate(EditButtonEndDate.text) = aktdate);
   OKBtn.Enabled:=true;
+end;
+
+procedure TFMultiday.ComboBox1Select(Sender: TObject);
+var
+  event,str : string;
+  i : integer;
+begin
+  i := ComboBox1.ItemIndex;
+  event := ComboBox1.Items[i];
+  if MatchStr(event,['Krank','Feiertag','Urlaub']) then
+  begin
+    MaskEditStart.EditText:='10:00';
+    str := timeFloatTohourminutesStr(user_h_per_day);
+    MaskEditStunden.EditText:= str;
+  end;
+  if lowerCase(event) =  lowerCase('Gleittag') then
+  begin
+    MaskEditStart.EditText:='10:00';
+    MaskEditStunden.EditText:='00:00';
+  end;
 end;
 
 procedure TFMultiday.EditButtonEndDateButtonClick(Sender: TObject);

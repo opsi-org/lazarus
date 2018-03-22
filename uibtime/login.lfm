@@ -1,7 +1,7 @@
 object Flogin: TFlogin
-  Left = 359
+  Left = 536
   Height = 216
-  Top = 529
+  Top = 543
   Width = 510
   Caption = 'uibtime-login'
   ClientHeight = 216
@@ -15,7 +15,7 @@ object Flogin: TFlogin
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poDesktopCenter
-  LCLVersion = '1.4.4.0'
+  LCLVersion = '1.8.2.0'
   Visible = True
   object Label2: TLabel
     Left = 124

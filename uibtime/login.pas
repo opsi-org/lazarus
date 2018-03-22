@@ -79,7 +79,7 @@ begin
    Datamodule1.IBConnection1.DatabaseName :=  Combobox1.Text;
    if Datamodule1.IBConnection2.Connected then Datamodule1.IBConnection2.Close;
    Datamodule1.IBConnection2.DatabaseName :=  Combobox1.Text;
-   gaugefak := (100 div 12) +1;
+   gaugefak := (100 div 13) +1;
    Label4.caption := 'Connecting..';
    application.processmessages;
    ProgressBar1.visible := true;
@@ -119,6 +119,7 @@ begin
    begin
     if edit1.text = 'admin' then uid := 'admin'
     else uid := Datamodule1.SQuibaktuser.fieldbyname('userid').asstring;
+    user_h_per_day := Datamodule1.SQuibaktuser.fieldbyname('h_per_day').AsFloat;
     DataModule1.debugOut(8,'Login: uid = '+uid);
     ProgressBar1.Position := gaugefak * 3;
     //with Datamodule1.SQuibevent.Params.CreateParam(ftString, 'uid', ptInput) do
@@ -162,6 +163,10 @@ begin
     application.processmessages;
     DataModule1.SQQueryAktEvents.Active := true;
     DataModule1.debugOut(8,'Login: opend 12');
+    ProgressBar1.Position := gaugefak * 13;
+    application.processmessages;
+    DataModule1.SQholydays.Active := true;
+    DataModule1.debugOut(8,'Login: opend 13');
     Application.CreateForm(TFOnTop, FOnTop);
     DataModule1.debugOut(8,'Login: FonTop created');
     application.processmessages;

@@ -12,7 +12,7 @@ object FMultiday: TFMultiday
   OnShow = FormShow
   ParentFont = True
   Position = poScreenCenter
-  LCLVersion = '1.6.2.0'
+  LCLVersion = '1.8.2.0'
   object Label1: TLabel
     Left = 8
     Height = 64
@@ -99,6 +99,7 @@ object FMultiday: TFMultiday
     Top = 208
     Width = 145
     ItemHeight = 15
+    OnSelect = ComboBox1Select
     TabOrder = 2
   end
   object EditButtonEndDate: TEditButton

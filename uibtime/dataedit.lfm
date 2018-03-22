@@ -1,7 +1,7 @@
 object FDataedit: TFDataedit
-  Left = 554
+  Left = 530
   Height = 375
-  Top = 514
+  Top = 437
   Width = 814
   Caption = 'FDataedit'
   ClientHeight = 375
@@ -14,7 +14,7 @@ object FDataedit: TFDataedit
   OnClose = FormClose
   OnHide = FormHide
   Position = poScreenCenter
-  LCLVersion = '1.6.4.0'
+  LCLVersion = '1.8.2.0'
   object PageControl1: TPageControl
     Left = 0
     Height = 375
@@ -163,14 +163,14 @@ object FDataedit: TFDataedit
     object TabSheet2: TTabSheet
       Caption = 'user'
       ClientHeight = 349
-      ClientWidth = 692
+      ClientWidth = 806
       ImageIndex = 1
       OnShow = TabSheet2Show
       object ToolBar2: TToolBar
         Left = 0
         Height = 29
         Top = 0
-        Width = 692
+        Width = 806
         Caption = 'ToolBar1'
         TabOrder = 0
         object DBNavigator2: TDBNavigator
@@ -206,7 +206,7 @@ object FDataedit: TFDataedit
         Left = 0
         Height = 320
         Top = 29
-        Width = 692
+        Width = 806
         Align = alClient
         Color = clWindow
         Columns = <>
@@ -343,6 +343,7 @@ object FDataedit: TFDataedit
         Top = 0
         Width = 806
         ButtonHeight = 24
+        ButtonWidth = 23
         Caption = 'ToolBar1'
         TabOrder = 0
         object DBNavigator4: TDBNavigator
@@ -487,14 +488,14 @@ object FDataedit: TFDataedit
     object TabSheet6: TTabSheet
       Caption = 'Timeouts'
       ClientHeight = 349
-      ClientWidth = 692
+      ClientWidth = 806
       ImageIndex = 5
       OnShow = TabSheet6Show
       object ToolBar6: TToolBar
         Left = 0
         Height = 29
         Top = 0
-        Width = 692
+        Width = 806
         Caption = 'ToolBar1'
         TabOrder = 0
         object DBNavigator6: TDBNavigator
@@ -530,7 +531,7 @@ object FDataedit: TFDataedit
         Left = 0
         Height = 320
         Top = 29
-        Width = 692
+        Width = 806
         Align = alClient
         Color = clWindow
         Columns = <>
@@ -564,14 +565,14 @@ object FDataedit: TFDataedit
     object TabSheet8: TTabSheet
       Caption = 'Soll-Stunden'
       ClientHeight = 349
-      ClientWidth = 692
+      ClientWidth = 806
       ImageIndex = 7
       OnShow = TabSheet8Show
       object ToolBar8: TToolBar
         Left = 0
         Height = 29
         Top = 0
-        Width = 692
+        Width = 806
         Caption = 'ToolBar1'
         TabOrder = 0
         object DBNavigator8: TDBNavigator
@@ -631,7 +632,7 @@ object FDataedit: TFDataedit
         Left = 0
         Height = 320
         Top = 29
-        Width = 692
+        Width = 806
         Align = alClient
         Color = clWindow
         Columns = <>
@@ -903,12 +904,67 @@ object FDataedit: TFDataedit
         TabOrder = 7
       end
     end
+    object TabSheet10: TTabSheet
+      Caption = 'Feiertage'
+      ClientHeight = 349
+      ClientWidth = 806
+      object ToolBar10: TToolBar
+        Left = 0
+        Height = 29
+        Top = 0
+        Width = 806
+        Caption = 'ToolBar1'
+        TabOrder = 0
+        object DBNavigator10: TDBNavigator
+          Left = 1
+          Height = 22
+          Top = 2
+          Width = 240
+          BevelOuter = bvNone
+          ChildSizing.EnlargeHorizontal = crsScaleChilds
+          ChildSizing.EnlargeVertical = crsScaleChilds
+          ChildSizing.ShrinkHorizontal = crsScaleChilds
+          ChildSizing.ShrinkVertical = crsScaleChilds
+          ChildSizing.Layout = cclLeftToRightThenTopToBottom
+          ChildSizing.ControlsPerLine = 100
+          ClientHeight = 22
+          ClientWidth = 240
+          DataSource = DataModule1.DS_holydays
+          Options = []
+          TabOrder = 0
+        end
+        object BitBtn11: TBitBtn
+          Left = 241
+          Height = 22
+          Top = 2
+          Width = 113
+          Caption = 'Verlassen'
+          Kind = bkCancel
+          OnClick = BitBtn2Click
+          TabOrder = 1
+        end
+      end
+      object DBGrid10: TDBGrid
+        Left = 0
+        Height = 320
+        Top = 29
+        Width = 376
+        Align = alLeft
+        Color = clWindow
+        Columns = <>
+        DataSource = DataModule1.DS_holydays
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgAutoSizeColumns]
+        TabOrder = 1
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+      end
+    end
   end
   object SQLQueryRenameEvent: TSQLQuery
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
-    Options = []
     Params = <>
     left = 704
     top = 256

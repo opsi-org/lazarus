@@ -4,6 +4,8 @@ uibtime (4.1.1.27-1) stable; urgency=low
  * switch to lazarus 1.8.2
  * switch HighDPI on
  * uib2erp: new report (uib2erp_quota_workrep.lrf) for contingent hours (Time_h_is_quota)
+ * new data structure uibtime22.sql
+ * uibdata: pause TimerOnTop while popup
 
 -- detlef oertel <d.oertel@uib.de>  Wed, 21 Mar 2018 15:00:00 +0000
 

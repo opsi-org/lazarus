@@ -928,8 +928,9 @@ var
   len, posi: integer;
   reversestr : string;
   isQuotaReport : boolean;
-  projectstart: TDateTime;
+  projectstart, projectend: TDateTime;
   presumme_h: double;
+  quota_lifetime_month: integer;
 begin
   isQuotaReport := false;
   // query isQuotaReport
@@ -937,14 +938,15 @@ begin
   if QueryUEARhelper.Active then
     QueryUEARhelper.Close;
   QueryUEARhelper.SQL.Clear;
-  QueryUEARhelper.sql.Add(' select projectstart, time_h_is_quota ');
+  QueryUEARhelper.sql.Add(' select projectstart, quota_lifetime_month ');
   QueryUEARhelper.sql.Add('    from uiballevent');
   QueryUEARhelper.sql.Add('    where (event = :suchevent)');
   QueryUEARhelper.parambyname('suchevent').AsString := suchevent;
   QueryUEARhelper.Open;
-  if not QueryUEARhelper.FieldByName('time_h_is_quota').IsNull then
+  if not QueryUEARhelper.FieldByName('quota_lifetime_month').IsNull then
   begin
-    if QueryUEARhelper.FieldByName('time_h_is_quota').AsInteger = 1 then
+    quota_lifetime_month := round(QueryUEARhelper.FieldByName('quota_lifetime_month').AsFloat);
+    if quota_lifetime_month > 0 then
       isQuotaReport := True;
     projectstart := QueryUEARhelper.FieldByName('projectstart').AsDateTime;
   end;
@@ -1049,9 +1051,11 @@ begin
   if isQuotaReport then
   begin
     frReport1.LoadFromFile(mypath + 'uib2erp_quota_workrep.lrf');
+    projectend := IncMonth(projectstart,quota_lifetime_month);
     frReport1.FindObject('memoQuota').Memo.Text :=
-      'Projektstart : '+DateToStr(projectstart)+' mit Stunden : '
-      +IntToStr(trunc(Total)) + ':' + Format('%.*d', [2, round(frac(Total) * 60)]);
+      'Projektstart: '+DateToStr(projectstart)+' bis: '+DateToStr(projectend)
+      + ' mit Stunden: ' + timeFloatTohourminutesStr(total);
+      //+IntToStr(trunc(Total)) + ':' + Format('%.*d', [2, round(frac(Total) * 60)]);
   end
   else
     frReport1.LoadFromFile(mypath + 'uib2erp_workrep.lrf');

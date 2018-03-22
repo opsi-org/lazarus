@@ -1,7 +1,7 @@
 object DataModule1: TDataModule1
   OnCreate = DataModuleCreate
   OldCreateOrder = False
-  Height = 541
+  Height = 625
   HorizontalOffset = 596
   VerticalOffset = 281
   Width = 894
@@ -434,6 +434,8 @@ object DataModule1: TDataModule1
     top = 384
   end
   object PopupMenu1: TPopupMenu
+    OnPopup = PopupMenu1Popup
+    OnClose = PopupMenu1Close
     left = 496
     top = 16
     object Dateneditieren1: TMenuItem
@@ -12330,5 +12332,27 @@ object DataModule1: TDataModule1
     FillAttribute = 0
     left = 792
     top = 72
+  end
+  object DS_holydays: TDataSource
+    DataSet = SQholydays
+    left = 147
+    top = 536
+  end
+  object SQholydays: TSQLQuery
+    FieldDefs = <>
+    AfterDelete = SQholydaysAfterDelete
+    AfterInsert = SQholydaysAfterInsert
+    AfterPost = SQholydaysAfterPost
+    OnPostError = SQwork_descriptionPostError
+    Database = IBConnection1
+    Transaction = SQLTransaction1
+    SQL.Strings = (
+      'select * from public_holidays'
+      'order by holydate'
+    )
+    Params = <>
+    UpdateMode = upWhereAll
+    left = 42
+    top = 536
   end
 end

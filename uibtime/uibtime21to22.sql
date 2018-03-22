@@ -1,26 +1,29 @@
 
 /* tabelle nur alle user */
 alter table uiballuser ADD h_per_day float DEFAULT 0;
-alter table uiballuser ADD mo_is_work boolean not null DEFAULT 0;
-alter table uiballuser ADD di_is_work boolean not null DEFAULT 0;
-alter table uiballuser ADD mi_is_work boolean not null DEFAULT 0;
-alter table uiballuser ADD do_is_work boolean not null DEFAULT 0;
-alter table uiballuser ADD fr_is_work boolean not null DEFAULT 0;
+alter table uiballuser ADD mo_is_work boolean DEFAULT 0 not null;
+alter table uiballuser ADD di_is_work boolean DEFAULT 0 not null;
+alter table uiballuser ADD mi_is_work boolean DEFAULT 0 not null;
+alter table uiballuser ADD do_is_work boolean DEFAULT 0 not null;
+alter table uiballuser ADD fr_is_work boolean DEFAULT 0 not null;
 
 /* tabelle nur aktuelle user */
 alter table uibaktuser ADD h_per_day float  DEFAULT 0;
-alter table uibaktuser ADD mo_is_work boolean not null DEFAULT 0;
-alter table uibaktuser ADD di_is_work boolean not null DEFAULT 0;
-alter table uibaktuser ADD mi_is_work boolean not null DEFAULT 0;
-alter table uibaktuser ADD do_is_work boolean not null DEFAULT 0;
-alter table uibaktuser ADD fr_is_work boolean not null DEFAULT 0;
+alter table uibaktuser ADD mo_is_work boolean DEFAULT 0 not null;
+alter table uibaktuser ADD di_is_work boolean DEFAULT 0 not null;
+alter table uibaktuser ADD mi_is_work boolean DEFAULT 0 not null;
+alter table uibaktuser ADD do_is_work boolean DEFAULT 0 not null;
+alter table uibaktuser ADD fr_is_work boolean DEFAULT 0 not null;
 
 /*   Hintergrundtabelle alle Projekte und sub projekte */
-alter table uiballevent ADD quota_lifetime_month	float not null DEFAULT 0;
+alter table uiballevent ADD quota_lifetime_month	float DEFAULT 0 not null;
 
 /* tabelle nur aktuelle Projekte und sub projekte */
-alter table uibaktevent ADD quota_lifetime_month	float not null DEFAULT 0;
+alter table uibaktevent ADD quota_lifetime_month	float DEFAULT 0 not null;
 
+create table public_holidays
+   (holydate  timestamp,  
+    CONSTRAINT PK_holyday     PRIMARY KEY (holydate));
 
 
 /* Trigger */
@@ -163,7 +166,7 @@ RECREATE TRIGGER  TR_uibaktuser2uiball_in  for uibaktuser
                     new.email,
                     new.mypassword,
                     new.h_per_day,
-                    new.mo_is_work 
+                    new.mo_is_work, 
                     new.di_is_work,
                     new.mi_is_work,
                     new.do_is_work,

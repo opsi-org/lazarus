@@ -47,11 +47,13 @@ type
     DSuibaktevent: TDataSource;
     DS_day_report: TDataSource;
     DS_work_description: TDataSource;
+    DS_holydays: TDataSource;
     IBConnection1: TIBConnection;
     Dateneditieren1: TMenuItem;
     IBConnection2: TIBConnection;
     Arbeitsberichte: TMenuItem;
     ProcessTrayNotify: TProcess;
+    SQholydays: TSQLQuery;
     trayconfig: TMenuItem;
     Query_day_report: TSQLQuery;
     Query4Result: TSQLQuery;
@@ -108,11 +110,16 @@ type
     procedure Import1Click(Sender: TObject);
     procedure Info1Click(Sender: TObject);
     procedure LeisteNeuAufbauen1Click(Sender: TObject);
+    procedure PopupMenu1Close(Sender: TObject);
+    procedure PopupMenu1Popup(Sender: TObject);
     procedure queryAfterHelper(myevent:string; myquery : TSQLQuery; DataSet: TDataSet);
     procedure Query4ResultAfterDelete(DataSet: TDataSet);
     procedure Query4ResultAfterPost(DataSet: TDataSet);
     procedure schmaleLeisteClick(Sender: TObject);
     procedure ShowDebugWindow1Click(Sender: TObject);
+    procedure SQholydaysAfterDelete(DataSet: TDataSet);
+    procedure SQholydaysAfterInsert(DataSet: TDataSet);
+    procedure SQholydaysAfterPost(DataSet: TDataSet);
     procedure SQuibakteventAfterDelete(DataSet: TDataSet);
     procedure SQuibakteventAfterInsert(DataSet: TDataSet);
     procedure SQuibakteventAfterPost(DataSet: TDataSet);
@@ -193,6 +200,8 @@ const
 var
   DataModule1: TDataModule1;
   uid: string;
+  user_h_per_day : double;
+  user_work_days : set of byte;
   leftint: integer;
   screenx, screeny: integer;
   ontopwidth: integer;
@@ -460,6 +469,16 @@ begin
   FOnTop.ReBuildForm;
 end;
 
+procedure TDataModule1.PopupMenu1Close(Sender: TObject);
+begin
+  TimerOnTop.Enabled:=true;
+end;
+
+procedure TDataModule1.PopupMenu1Popup(Sender: TObject);
+begin
+  TimerOnTop.Enabled:=false;
+end;
+
 procedure TDataModule1.queryAfterHelper(myevent:string; myquery : TSQLQuery; DataSet: TDataSet);
 begin
   try
@@ -572,6 +591,64 @@ begin
   debugOut(6, 'ShowDebugWindow: '+BoolToStr(ShowDebugWindow1.Checked,true));
   myini.UpdateFile;
   myini.Destroy;
+end;
+
+procedure TDataModule1.SQholydaysAfterDelete(DataSet: TDataSet);
+begin
+    debugOut(5, 'start  '+ DataSet.Name+' AfterDelete');
+  try
+    // after delete the state is not edit or insert but we have to apply
+    //if DataModule1.SQuibevent.State in [dsInsert, dsEdit] then
+      DataModule1.SQuibaktevent.ApplyUpdates;
+      debugOut(5, 'start  '+ DataSet.Name+' AfterDelete (apply)');
+    if SQLTransaction1.Active then
+    begin
+      SQLTransaction1.CommitRetaining;
+      debugOut(5, 'start  '+ DataSet.Name+' AfterDelete (commit/start)');
+    end
+    else debugOut(3,'SQholydaysAfterDelete', 'Error: Missing Transaction '+ DataSet.Name+' AfterDelete');
+  except
+    debugOut(2,'SQholydaysAfterDelete', 'exception in '+ DataSet.Name+' AfterDelete (commit)');
+  end;
+end;
+
+procedure TDataModule1.SQholydaysAfterInsert(DataSet: TDataSet);
+begin
+   try
+    //DataModule1.SQuibaktevent.ApplyUpdates;
+    if SQLTransaction1.Active then
+    begin
+      SQLTransaction1.CommitRetaining;
+      //SQLTransaction1.Commit;
+      //SQLTransaction1.StartTransaction;
+    end
+    else debugOut(3,'SQholydaysAfterInsert', 'Error: Missing Transaction SQuibakteventAfterInsert');
+    debugOut(5, 'Commit in SQholydaysAfterInsert');
+  except
+    debugOut(2,'SQholydaysAfterInsert', 'exception in SQuibakteventAfterInsert (commit)');
+  end;
+end;
+
+procedure TDataModule1.SQholydaysAfterPost(DataSet: TDataSet);
+begin
+  try
+    //if DataModule1.SQuibaktevent.State in [dsInsert, dsEdit] then
+    if DataSet.UpdateStatus in [usModified,usInserted,usDeleted] then
+    begin
+      DataModule1.SQholydays.ApplyUpdates;
+      debugOut(5,'SQholydaysAfterPost', 'start  SQholydaysAfterPost (apply)');
+    end;
+    if SQLTransaction1.Active then
+    begin
+      SQLTransaction1.CommitRetaining;
+      //SQLTransaction1.Commit;
+      //SQLTransaction1.StartTransaction;
+    end
+    else debugOut(3,'SQholydaysAfterPost', 'Error: Missing Transaction SQuibakteventAfterPost');
+    debugOut(5, 'Commit in SQholydaysAfterPost');
+  except
+    debugOut(2,'SQholydaysAfterPost', 'exception in SQholydaysAfterPost (commit)');
+  end;
 end;
 
 procedure TDataModule1.SQuibakteventAfterDelete(DataSet: TDataSet);
