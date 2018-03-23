@@ -18,15 +18,16 @@ object FOnTop: TFOnTop
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poDefault
-  LCLVersion = '1.6.4.0'
+  LCLVersion = '1.8.2.0'
   object ToolBar1: TToolBar
     Left = 0
     Height = 25
     Top = 0
-    Width = 688
+    Width = 681
     Align = alNone
     AutoSize = True
     ButtonHeight = 21
+    ButtonWidth = 23
     Caption = 'ToolBar1'
     EdgeBorders = [ebLeft, ebTop, ebRight, ebBottom]
     EdgeOuter = esRaised
@@ -249,7 +250,6 @@ object FOnTop: TFOnTop
       'select event from uibdefproj '
       'where userid = :uid'
     )
-    Options = []
     Params = <    
       item
         DataType = ftUnknown
@@ -283,7 +283,6 @@ object FOnTop: TFOnTop
       'ORDER BY'
       '2'
     )
-    Options = []
     Params = <    
       item
         DataType = ftUnknown
@@ -298,7 +297,6 @@ object FOnTop: TFOnTop
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
-    Options = []
     Params = <>
     left = 276
     top = 124
@@ -318,7 +316,6 @@ object FOnTop: TFOnTop
       'order by'
       '2 desc'
     )
-    Options = []
     Params = <    
       item
         DataType = ftUnknown
@@ -342,7 +339,6 @@ object FOnTop: TFOnTop
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
-    Options = []
     Params = <>
     left = 524
     top = 124

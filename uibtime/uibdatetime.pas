@@ -15,6 +15,8 @@ uses
 function getLastIntervalStart(startdate : TdateTime; myMonthInterval : cardinal) : TdateTime;
 function getLastIntervalEnd(startdate : TdateTime; myMonthInterval : cardinal) : TdateTime;
 function timeFloatTohourminutesStr(mytime : double) : string;
+function dayOfWeekGerStrToLazDayofWeekbyte(daystr : string) : byte;
+function lazDayofWeekbyteToDayOfWeekGerStr(daybyte : word) : string;
 
 implementation
 
@@ -67,6 +69,36 @@ begin
   result := Format('%.*d', [2,trunc(mytime)])
     + ':' + Format('%.*d', [2, round(frac(mytime) * 60)]);
 end;
+
+function dayOfWeekGerStrToLazDayofWeekbyte(daystr : string) : byte;
+begin
+  result := 0;
+  if lowercase(daystr) = 'mo' then result := 1;
+  if lowercase(daystr) = 'di' then result := 2;
+  if lowercase(daystr) = 'mi' then result := 3;
+  if lowercase(daystr) = 'do' then result := 4;
+  if lowercase(daystr) = 'fr' then result := 5;
+  if lowercase(daystr) = 'sa' then result := 6;
+  if lowercase(daystr) = 'so' then result := 7;
+end;
+
+function lazDayofWeekbyteToDayOfWeekGerStr(daybyte : word) : string;
+begin
+  result := '';
+  case daybyte of
+    1 : result := 'Mo';
+    2 : result := 'Di';
+    3 : result := 'Mi';
+    4 : result := 'Do';
+    5 : result := 'Fr';
+    6 : result := 'Sa';
+    7 : result := 'So';
+    else
+    result := '';
+  end;
+end;
+
+
 
 end.
 

@@ -7,7 +7,9 @@ interface
 uses
   //LCLIntf, LCLType, LMessages, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, Buttons, DBCtrls, EditBtn, ExtDlgs, Db, sqldb, Variants{, IBQuery};
+  StdCtrls, Buttons, DBCtrls, EditBtn, ExtDlgs, Db, sqldb, Variants{, IBQuery},
+  dateutils,
+  uibdatetime;
 
 type
 
@@ -55,10 +57,16 @@ procedure TFlogoff.checkDB (begintime : TDateTime);
 var
  //laststartt, laststopt, startt, stopt : TDateTime;
   laststartt, laststopt, startt : TDateTime;
- sumtime, firststartt : TDatetime;
+ sumtime, firststartt, aktdate : TDatetime;
  uname, event : String;
  year, month, day: word;
+ filterstr, filterdatestr : string;
+ rcount : integer;
+ datefound : boolean;
+ foundstarttime  : TDatetime;
+ weekday : byte;
 begin
+ try
  FOnTop.ineditmode:=true;
   // start looking for gaps
  memo1.lines.add('Suche ab: '+ DateTimeToStr(begintime));
@@ -212,7 +220,54 @@ begin
  query2.close;
 
  // end looking for missing reports
+ // start looking for missing workdays or holydays
+ memo1.lines.add('-------------------------------');
+ memo1.lines.add('Der Missing Days-Report:.....');
+ if Datamodule1.SQQueryuibevent.Active then Datamodule1.SQQueryuibevent.Close;
+ Datamodule1.SQQueryuibevent.sql.Clear;
+ Datamodule1.SQQueryuibevent.sql.Add('select * from uibevent ');
+ Datamodule1.SQQueryuibevent.sql.Add('where userid = :uid ');
+ Datamodule1.SQQueryuibevent.sql.Add('and starttime >= :start');
+ Datamodule1.SQQueryuibevent.sql.Add('order by starttime ');
+ Datamodule1.SQQueryuibevent.ParamByName('uid').AsString := uid;
+ Datamodule1.SQQueryuibevent.ParamByName('start').AsDateTime := begintime;
+ Datamodule1.SQQueryuibevent.open;
+ Datamodule1.SQQueryuibevent.first;
+ aktdate := begintime;
+ repeat
+   // is it a work day
+   weekday := DayOfTheWeek(aktdate);
+   if weekday in user_work_days then
+   begin
+     // is a entry missing
+     datefound := false;
+     foundstarttime := Datamodule1.SQQueryuibevent.FieldByName('starttime').AsDateTime;
+     while (foundstarttime < aktdate) and (not Datamodule1.SQQueryuibevent.EOF) do
+     begin
+       Datamodule1.SQQueryuibevent.Next;
+       foundstarttime := Datamodule1.SQQueryuibevent.FieldByName('starttime').AsDateTime;
+     end;
+     if (foundstarttime < aktdate+1) then datefound := true;
+     if not datefound then
+     begin
+       if Datamodule1.dateIsHolyday(aktdate) then
+         memo1.lines.add('Kein Eintrag für Feiertag :   ' +lazDayofWeekbyteToDayOfWeekGerStr(weekday) + ' - '+DateTimeToStr(aktdate))
+       else
+         memo1.lines.add('Kein Eintrag für Arbeitstag : ' +lazDayofWeekbyteToDayOfWeekGerStr(weekday) + ' - '+DateTimeToStr(aktdate));
+     end;
+   end;
+   aktdate := IncDay(aktdate);
+ until aktdate > now;
+ memo1.lines.add('Finished Missing Days-Report.');
+ // end looking for missing workdays or holydays
  FOnTop.ineditmode:=false;
+
+ except
+  Formstyle := fsNormal;
+  Datamodule1.TimerLogoffOnTop.Enabled := false;
+  WindowState := wsNormal;
+  application.processmessages;
+ end;
 end;
 
 procedure TFlogoff.BitBtn2Click(Sender: TObject);
@@ -263,15 +318,15 @@ procedure TFlogoff.FormShow(Sender: TObject);
 begin
  memo1.lines.clear;
  datamodule1.debugOut(5,'Show FLogoff');
- Formstyle := fsSystemStayOnTop;
- WindowState := wsMaximized;
+ //Formstyle := fsSystemStayOnTop;
+ //WindowState := wsMaximized;
  application.processmessages;
- Datamodule1.TimerLogoffOnTop.Enabled := true;
- if EditButton1.text = DateToStr(date) then
+ //Datamodule1.TimerLogoffOnTop.Enabled := true;
+ if EditButton1.text = DateToStr(date-21) then
  begin
-   if FOnTop.visible then checkDB(date);
+   if FOnTop.visible then checkDB(date-21);
  end
- else EditButton1.text := DateToStr(date);
+ else EditButton1.text := DateToStr(date-21);
  //if FOnTop.visible then checkDB(date);
 end;
 

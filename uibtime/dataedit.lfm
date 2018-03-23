@@ -1,7 +1,7 @@
 object FDataedit: TFDataedit
-  Left = 530
+  Left = 863
   Height = 375
-  Top = 437
+  Top = 454
   Width = 814
   Caption = 'FDataedit'
   ClientHeight = 375

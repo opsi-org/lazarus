@@ -21,6 +21,8 @@ type
 
   TFMultiday = class(TForm)
     CalendarDialog1: TCalendarDialog;
+    CheckBoxHolydays: TCheckBox;
+    CheckBoxOnlyWorkdays: TCheckBox;
     EditButtonEndDate: TEditButton;
     EditButtonStartDate: TEditButton;
     OKBtn: TButton;
@@ -58,26 +60,42 @@ procedure TFMultiday.BtnInsertAllClick(Sender: TObject);
 var
   firstdate, aktdate: tdate;
   startzeit, hoursperday: TTime;
+  doinsert : boolean;
 begin
   OKBtn.Enabled:=false;
   firstdate := StrToDate(EditButtonStartDate.text);
   aktdate := firstdate - 1;
-  startzeit := strtotime(MaskEditStart.Text);
+  if MaskEditStart.Text = '' then
+    startzeit := strtotime('10:00')
+  else
+      startzeit := strtotime(MaskEditStart.Text);
   hoursperday := strtotime(MaskEditStunden.Text);
   Datamodule1.SQuibevent.First;
 
-
   repeat
+    doinsert := true;
     aktdate := aktdate + 1;
-    Datamodule1.SQuibevent.insert;
-    Datamodule1.SQuibevent.FieldByName('event').AsString := combobox1.Text;
-    Datamodule1.SQuibevent.FieldByName('starttime').AsDateTime := aktdate + startzeit;
-    Datamodule1.SQuibevent.FieldByName('stoptime').AsDateTime :=
-      aktdate + startzeit + hoursperday;
-    Datamodule1.SQuibevent.Post;
-    //DataModule1.SQuibevent.ApplyUpdates;
-    sleep(1000);
-
+    if CheckBoxOnlyWorkdays.Checked and not(DayOfTheWeek(aktdate) in user_work_days) then doinsert := false;
+    if doinsert then
+    begin
+      Datamodule1.SQuibevent.insert;
+      if CheckBoxHolydays.Checked and Datamodule1.dateIsHolyday(aktdate) then
+      begin
+        Datamodule1.SQuibevent.FieldByName('event').AsString := 'Feiertag';
+        Datamodule1.SQuibevent.FieldByName('stoptime').AsDateTime :=
+        aktdate + startzeit + strtotime(timeFloatTohourminutesStr(user_h_per_day));
+      end
+      else
+      begin
+        Datamodule1.SQuibevent.FieldByName('event').AsString := combobox1.Text;
+        Datamodule1.SQuibevent.FieldByName('stoptime').AsDateTime :=
+        aktdate + startzeit + hoursperday;
+      end;
+      Datamodule1.SQuibevent.FieldByName('starttime').AsDateTime := aktdate + startzeit;
+      Datamodule1.SQuibevent.Post;
+      //DataModule1.SQuibevent.ApplyUpdates;
+      sleep(1000);
+    end;
   until (StrToDate(EditButtonEndDate.text) = aktdate);
   OKBtn.Enabled:=true;
 end;
@@ -104,16 +122,27 @@ end;
 
 procedure TFMultiday.EditButtonEndDateButtonClick(Sender: TObject);
 begin
-  CalendarDialog1.Date:=now;
+  CalendarDialog1.Date:=strtodate(EditButtonEndDate.text);
   CalendarDialog1.Execute;
   EditButtonEndDate.text := DateToStr(CalendarDialog1.Date);
 end;
 
 procedure TFMultiday.EditButtonStartDateButtonClick(Sender: TObject);
+var
+  str : string;
 begin
-  CalendarDialog1.Date:=now;
+  CalendarDialog1.Date:=strtodate(EditButtonEndDate.text);
   CalendarDialog1.Execute;
   EditButtonStartDate.text := DateToStr(CalendarDialog1.Date);
+  EditButtonEndDate.text := EditButtonStartDate.text;
+  if Datamodule1.dateIsHolyday(CalendarDialog1.Date) then
+  begin
+    MaskEditStart.EditText:='10:00';
+    str := timeFloatTohourminutesStr(user_h_per_day);
+    MaskEditStunden.EditText:= str;
+    ComboBox1.ItemIndex:=-1;
+    ComboBox1.SelText:='Feiertag';
+  end;
 end;
 
 procedure TFMultiday.EditButtonStartDateChange(Sender: TObject);

@@ -1,7 +1,7 @@
 object FMultiday: TFMultiday
-  Left = 374
+  Left = 367
   Height = 255
-  Top = 498
+  Top = 455
   Width = 443
   BorderStyle = bsDialog
   Caption = 'Mehrere Tage eintragen'
@@ -130,6 +130,26 @@ object FMultiday: TFMultiday
     PasswordChar = #0
     TabOrder = 6
     Text = 'startdatum'
+  end
+  object CheckBoxOnlyWorkdays: TCheckBox
+    Left = 16
+    Height = 19
+    Top = 97
+    Width = 103
+    Caption = 'Nur Arbeitstage'
+    Checked = True
+    State = cbChecked
+    TabOrder = 7
+  end
+  object CheckBoxHolydays: TCheckBox
+    Left = 17
+    Height = 19
+    Top = 123
+    Width = 130
+    Caption = 'Feiertage als Feiertag'
+    Checked = True
+    State = cbChecked
+    TabOrder = 8
   end
   object CalendarDialog1: TCalendarDialog
     Date = 42201

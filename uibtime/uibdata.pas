@@ -184,7 +184,7 @@ type
     procedure writeVerinfoToLog(var feil: Textfile);
     procedure TerminateApplication;
     function isValidEvent(event:string): boolean;
-
+    function dateIsHolyday(mydate : TdateTime) : boolean;
   private
     { private declarations }
   public
@@ -218,6 +218,7 @@ var
   verDatum : string;
   Trayshow : boolean;
   TrayInterval : cardinal;
+
 
 
 implementation
@@ -1229,6 +1230,8 @@ begin
   //startt := now;
   //stoptime := now+1;
   //stopt := now+1;
+  missinglist.Clear;
+  missinglist.Add('uibtime Missing Reports:');
   if Datamodule1.TrayQuery3.Active then Datamodule1.TrayQuery3.Close;
   Datamodule1.TrayQuery3.sql.Clear;
   Datamodule1.TrayQuery3.sql.Add('select * from uibevent ');
@@ -1778,6 +1781,23 @@ function TDataModule1.isValidEvent(event:string): boolean;
 begin
    result:= SQuibaktevent.Locate('event',event,[loCaseInsensitive]);
 end;
+
+function TDataModule1.dateIsHolyday(mydate : TdateTime) : boolean;
+var
+  rcount : integer;
+  myeof : boolean;
+  filterstr : string;
+begin
+  result := false;
+  filterstr := 'DTOS(holydate) = "'+formatdatetime('yyyymmdd', mydate)+'"';
+  SQholydays.Filtered := false;
+  SQholydays.Filter := filterstr;
+  SQholydays.Filtered := true;
+  rcount := SQholydays.RecordCount;
+  myeof := SQholydays.EOF;
+  if not myeof then result := true;
+end;
+
 
 initialization
   { initialization-Abschnitt }

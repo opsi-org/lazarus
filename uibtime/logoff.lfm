@@ -1,10 +1,10 @@
 object Flogoff: TFlogoff
   Left = 330
-  Height = 565
+  Height = 611
   Top = 233
   Width = 994
   Caption = 'uibtime - logged off'
-  ClientHeight = 565
+  ClientHeight = 611
   ClientWidth = 994
   Color = clBtnFace
   Font.Color = clWindowText
@@ -13,7 +13,7 @@ object Flogoff: TFlogoff
   OnHide = FormHide
   OnShow = FormShow
   Position = poDefault
-  LCLVersion = '1.6.2.0'
+  LCLVersion = '1.8.2.0'
   object Label1: TLabel
     Left = 18
     Height = 37
@@ -203,7 +203,6 @@ object Flogoff: TFlogoff
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
-    Options = []
     Params = <>
     left = 544
     top = 120
@@ -212,7 +211,6 @@ object Flogoff: TFlogoff
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
-    Options = []
     Params = <>
     left = 592
     top = 120

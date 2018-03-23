@@ -860,6 +860,8 @@ var
   monthsmod, monthdiv, basemonth, acc_per_monthnum_int: integer;
   acc_per_monthnum: double;
   lastIntervalStart : TDateTime;
+  quota_lifetime_month : integer;
+  messagelist : TStringlist;
 begin
   aktstartyear := 2001;
   aktstartmonth := 1;
@@ -869,7 +871,7 @@ begin
     QueryProjektzeit.Close;
   //QueryProjektzeit.databasename :='uibtime';
   QueryProjektzeit.SQL.Clear;
-  QueryProjektzeit.sql.Add(' select time_h, acc_per_monthnum, projectstart ');
+  QueryProjektzeit.sql.Add(' select time_h, acc_per_monthnum, projectstart, quota_lifetime_month ');
   QueryProjektzeit.sql.Add('    from uibaktevent');
   QueryProjektzeit.sql.Add('    where (event = :suchevent)');
   QueryProjektzeit.parambyname('suchevent').AsString := suchevent;
@@ -882,148 +884,52 @@ begin
     acc_per_monthnum_int := trunc(acc_per_monthnum);
     monthsmod := acc_per_monthnum_int mod 12;
     monthdiv := acc_per_monthnum_int div 12;
-    //monthsmod := trunc(QueryProjektzeit.FieldByName('acc_per_monthnum').AsFloat);
     projektstart := QueryProjektzeit.FieldByName('projectstart').AsDateTime;
-
-    (*
-    // look first for start version
-    decodeDate(now, year, month, day);
-    decodeDate(projektstart, startyear, startmonth, startday);
-    helperint := month - ((12 * (year - startyear) + month - startmonth));
-    if  acc_per_monthnum_int > 0 then
+    quota_lifetime_month := round(QueryProjektzeit.FieldByName('quota_lifetime_month').AsFloat);
+    if quota_lifetime_month > 0 then
     begin
-      if day >= startday then
-        helperint := month - ((12 * (year - startyear) + month - startmonth) mod
-         acc_per_monthnum_int)
-      else
-        helperint := (month-1) - ((12 * (year - startyear) + (month-1) - startmonth) mod
-          acc_per_monthnum_int);
-    end;
-    if helperint < 1 then
-    begin
-      aktstartyear := year - 1;
-      aktstartmonth := 12 + helperint;
-    end
-    else
-    begin
-      aktstartmonth := helperint;
-      aktstartyear := year;
-    end;
-    if aktstartmonth > 12 then
-    begin
-      aktstartmonth := aktstartmonth - 12;
-      aktstartyear := aktstartyear + 1;
-    end;
-    *)
-    (*
-    endmonth := month
-    endyear := year
-    if endmonth > 12 then
-    begin
-      endmonth := endmonth - 12;
-      endyear := endyear + 1;
-    end;
-    if endmonth > 12 then
-    begin
-      endmonth := endmonth - 12;
-      endyear := endyear + 1;
-    end;
-    *)
-    // here is the result for the last Interval
-    //lastIntervalStart := EncodeDate(aktstartyear, aktstartmonth, startday);
-    lastIntervalStart := getLastIntervalStart(projektstart,acc_per_monthnum_int);
-    decodeDate(lastIntervalStart, aktstartyear, aktstartmonth, aktstartday);
-    DataModule1.debugOut(6, 'getLastIntervalInfo', 'lastIntervalStart :'+DateToStr(lastIntervalStart));
-
-    if QueryProjektzeit.Active then
+      // Stundenkontingent
+      if QueryProjektzeit.Active then
       QueryProjektzeit.Close;
-    //QueryProjektzeit.databasename :='uibtime';
-    QueryProjektzeit.SQL.Clear;
-    if acc_per_monthnum_int > 0 then
-    begin
+      QueryProjektzeit.SQL.Clear;
       QueryProjektzeit.sql.Add(' select sum(stunden) as stunden from uibevent');
       QueryProjektzeit.sql.Add('    where (event = :suchevent)');
       QueryProjektzeit.sql.Add('    and  (starttime >= :von)');
       QueryProjektzeit.sql.Add('    and (stoptime < :bis)');
       QueryProjektzeit.parambyname('suchevent').AsString := suchevent;
-      QueryProjektzeit.parambyname('von').AsString :=
-        datetostr(encodedate(aktstartyear, aktstartmonth, aktstartday));
-      QueryProjektzeit.parambyname('bis').AsString :=
-        datetostr(now+1);
-(*        (
-    end;
-    if monthsmod > 0 then
-    begin
-      //if UpperCase(base) = 'MONTH' then
-      if monthsmod = 1 then
-      begin
-        QueryProjektzeit.sql.Add(' select sum(stunden) as stunden from uibevent');
-        QueryProjektzeit.sql.Add('    where (event = :suchevent)');
-        QueryProjektzeit.sql.Add('    and  (starttime >= :von)');
-        QueryProjektzeit.sql.Add('    and (stoptime < :bis)');
-        QueryProjektzeit.parambyname('suchevent').AsString := suchevent;
-        decodeDate(now, year, month, day);
-        endmonth := month + 1;
-        endyear := year;
-        if endmonth = 13 then
-        begin
-          endmonth := 1;
-          endyear := year + 1;
-        end;
-        aktstartyear := year;
-        aktstartmonth := month;
-        QueryProjektzeit.parambyname('von').AsString :=
-          datetostr(encodedate(aktstartyear, aktstartmonth, startday));
-        QueryProjektzeit.parambyname('bis').AsString :=
-          datetostr(encodedate(endyear, endmonth, startday));
-      end
-      else
-      begin
-        //if (UpperCase(base) = '3MONTH') or (UpperCase(base) = '6MONTH') then
-        //if (UpperCase(base) = '3MONTH') or (UpperCase(base) = '6MONTH') then
-        //begin
-        //if UpperCase(base) = '3MONTH' then monthsmod := 3;
-        //if UpperCase(base) = '6MONTH' then monthsmod := 6;
-        QueryProjektzeit.sql.Add(' select sum(stunden) as stunden from uibevent');
-        QueryProjektzeit.sql.Add('    where (event = :suchevent)');
-        QueryProjektzeit.sql.Add('    and  (starttime >= :von)');
-        QueryProjektzeit.sql.Add('    and (stoptime < :bis)');
-        QueryProjektzeit.parambyname('suchevent').AsString := suchevent;
-        decodeDate(now, year, month, day);
-        decodeDate(projektstart, startyear, startmonth, startday);
-        helperint := month - ((12 * (year - startyear) + month - startmonth) mod
-          monthsmod);
-        if helperint < 1 then
-        begin
-          aktstartyear := year - 1;
-          aktstartmonth := 12 + helperint;
-        end
-        else
-        begin
-          aktstartmonth := helperint;
-          aktstartyear := year;
-        end;
-        endmonth := month + 1;
-        endyear := year;
-        if endmonth = 13 then
-        begin
-          endmonth := 1;
-          endyear := year + 1;
-        end;
-        QueryProjektzeit.parambyname('von').AsString :=
-          datetostr(encodedate(aktstartyear, aktstartmonth, startday));
-        QueryProjektzeit.parambyname('bis').AsString :=
-          datetostr(encodedate(endyear, endmonth, startday));
-        //end
-      end;
-      *)
+      QueryProjektzeit.parambyname('von').AsDateTime:=projektstart;
+      QueryProjektzeit.parambyname('bis').AsString := datetostr(now+1);
     end
     else
     begin
-      // monthsmod (acc_per_monthnum) is 0
-      QueryProjektzeit.sql.Add(' select sum(stunden) as stunden from uibevent');
-      QueryProjektzeit.sql.Add('    where event = :suchevent;');
-      QueryProjektzeit.parambyname('suchevent').AsString := edit1.Text;
+      // here is the result for the last Interval
+      lastIntervalStart := getLastIntervalStart(projektstart,acc_per_monthnum_int);
+      decodeDate(lastIntervalStart, aktstartyear, aktstartmonth, aktstartday);
+      DataModule1.debugOut(6, 'getLastIntervalInfo', 'lastIntervalStart :'+DateToStr(lastIntervalStart));
+
+      if QueryProjektzeit.Active then
+        QueryProjektzeit.Close;
+      //QueryProjektzeit.databasename :='uibtime';
+      QueryProjektzeit.SQL.Clear;
+      if acc_per_monthnum_int > 0 then
+      begin
+        QueryProjektzeit.sql.Add(' select sum(stunden) as stunden from uibevent');
+        QueryProjektzeit.sql.Add('    where (event = :suchevent)');
+        QueryProjektzeit.sql.Add('    and  (starttime >= :von)');
+        QueryProjektzeit.sql.Add('    and (stoptime < :bis)');
+        QueryProjektzeit.parambyname('suchevent').AsString := suchevent;
+        QueryProjektzeit.parambyname('von').AsString :=
+          datetostr(encodedate(aktstartyear, aktstartmonth, aktstartday));
+        QueryProjektzeit.parambyname('bis').AsString :=
+          datetostr(now+1);
+      end
+      else
+      begin
+        // monthsmod (acc_per_monthnum) is 0
+        QueryProjektzeit.sql.Add(' select sum(stunden) as stunden from uibevent');
+        QueryProjektzeit.sql.Add('    where event = :suchevent;');
+        QueryProjektzeit.parambyname('suchevent').AsString := edit1.Text;
+      end;
     end;
     QueryProjektzeit.Open;
     used := QueryProjektzeit.FieldByName('stunden').AsFloat;
@@ -1032,11 +938,6 @@ begin
     available_min := round(abs((available - trunc(available)) * 60));
     used_min := round(abs((used - trunc(used)) * 60));
     total_min := round(abs((total - trunc(total)) * 60));
-    (*
-    EditProjektzeit.Hint := IntToStr(total_min) + '-' + IntToStr(
-      used_min) + ' since 1.' + IntToStr(aktstartmonth) + '.' +
-      IntToStr(aktstartyear);
-    *)
     EditProjektzeit.Hint := IntToStr(total_min) + '-' + IntToStr(
       used_min) + ' since ' + DatetoStr(lastIntervalStart);
     DataModule1.debugOut(6, 'ProjektzeitTimer: ' + FloatToStr(total) +
@@ -1049,7 +950,24 @@ begin
       EditProjektzeit.Font.Color := clRed
     else
       EditProjektzeit.Font.Color := clBlack;
-
+    if available_min < 5 then
+    begin
+      {$IFDEF WINDOWS}
+      DataModule1.TrayIcon1.BalloonHint:='Warnung: übrige Zeit: '+inttostr(available_min)+' Minuten';
+      DataModule1.TrayIcon1.ShowBalloonHint;
+      {$ENDIF WINDOWS}
+      {$IFDEF LINUX}
+      try
+        messagelist :: TStringlist.create;
+        messagelist.Add('Warnung: übrige Zeit: '+inttostr(available_min)+' Minuten');
+        DataModule1.ProcessTrayNotify.Parameters.AddStrings(messagelist);
+        DataModule1.ProcessTrayNotify.Execute;
+        messagelist.Free;
+      except
+        debugOut(3,'trayicon', 'Exception starting notify-send ');
+      end;
+      {$ENDIF LINUX}
+    end;
   end
   else
     EditProjektzeit.Text := '';

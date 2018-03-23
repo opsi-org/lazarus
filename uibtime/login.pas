@@ -11,7 +11,8 @@ uses
   lazfileutils,
   fileutil,
   DB,
-  runprocess;
+  runprocess,
+  uibdatetime;
 
 type
 
@@ -120,6 +121,16 @@ begin
     if edit1.text = 'admin' then uid := 'admin'
     else uid := Datamodule1.SQuibaktuser.fieldbyname('userid').asstring;
     user_h_per_day := Datamodule1.SQuibaktuser.fieldbyname('h_per_day').AsFloat;
+    if Datamodule1.SQuibaktuser.fieldbyname('mo_is_work').AsBoolean then
+      include(user_work_days,dayOfWeekGerStrToLazDayofWeekbyte('mo'));
+    if Datamodule1.SQuibaktuser.fieldbyname('mo_is_work').AsBoolean then
+      include(user_work_days,dayOfWeekGerStrToLazDayofWeekbyte('di'));
+    if Datamodule1.SQuibaktuser.fieldbyname('mo_is_work').AsBoolean then
+      include(user_work_days,dayOfWeekGerStrToLazDayofWeekbyte('mi'));
+    if Datamodule1.SQuibaktuser.fieldbyname('mo_is_work').AsBoolean then
+      include(user_work_days,dayOfWeekGerStrToLazDayofWeekbyte('do'));
+    if Datamodule1.SQuibaktuser.fieldbyname('mo_is_work').AsBoolean then
+      include(user_work_days,dayOfWeekGerStrToLazDayofWeekbyte('fr'));
     DataModule1.debugOut(8,'Login: uid = '+uid);
     ProgressBar1.Position := gaugefak * 3;
     //with Datamodule1.SQuibevent.Params.CreateParam(ftString, 'uid', ptInput) do
@@ -165,7 +176,7 @@ begin
     DataModule1.debugOut(8,'Login: opend 12');
     ProgressBar1.Position := gaugefak * 13;
     application.processmessages;
-    DataModule1.SQholydays.Active := true;
+    DataModule1.SQholydays.Open;
     DataModule1.debugOut(8,'Login: opend 13');
     Application.CreateForm(TFOnTop, FOnTop);
     DataModule1.debugOut(8,'Login: FonTop created');

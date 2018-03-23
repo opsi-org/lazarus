@@ -37,6 +37,10 @@ object DataModule1: TDataModule1
         Name = 'UIBMEMBER'
         DataType = ftSmallint
         Precision = -1
+      end    
+      item
+        Name = 'h_per_day'
+        DataType = ftUnknown
       end>
     AfterDelete = SQuibaktuserAfterDelete
     AfterPost = SQuibaktuserAfterPost
@@ -12317,7 +12321,7 @@ object DataModule1: TDataModule1
     Active = False
     Executable = 'notify-send'
     Parameters.Strings = (
-      'uibtime Missing Reports:'
+      ''
     )
     Options = []
     Priority = ppNormal
@@ -12339,7 +12343,12 @@ object DataModule1: TDataModule1
     top = 536
   end
   object SQholydays: TSQLQuery
-    FieldDefs = <>
+    FieldDefs = <    
+      item
+        Name = 'holydate'
+        DataType = ftDate
+        Precision = -1
+      end>
     AfterDelete = SQholydaysAfterDelete
     AfterInsert = SQholydaysAfterInsert
     AfterPost = SQholydaysAfterPost

@@ -3,9 +3,11 @@ uibtime (4.1.1.27-1) stable; urgency=low
 
  * switch to lazarus 1.8.2
  * switch HighDPI on
- * uib2erp: new report (uib2erp_quota_workrep.lrf) for contingent hours (Time_h_is_quota)
- * new data structure uibtime22.sql
+ * uib2erp: new report (uib2erp_quota_workrep.lrf) for contingent hours (quota_lifetime_month)
+ * new data structure uibtime22.sql (quota_lifetime_month, holydays, work days)
  * uibdata: pause TimerOnTop while popup
+ * multidays: easier edit of Urlaub, Karnk, Feiertag, ...
+ * logoff: check for missing entries
 
 -- detlef oertel <d.oertel@uib.de>  Wed, 21 Mar 2018 15:00:00 +0000
 
