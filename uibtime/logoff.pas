@@ -318,10 +318,10 @@ procedure TFlogoff.FormShow(Sender: TObject);
 begin
  memo1.lines.clear;
  datamodule1.debugOut(5,'Show FLogoff');
- //Formstyle := fsSystemStayOnTop;
- //WindowState := wsMaximized;
+ Formstyle := fsSystemStayOnTop;
+ WindowState := wsMaximized;
  application.processmessages;
- //Datamodule1.TimerLogoffOnTop.Enabled := true;
+ Datamodule1.TimerLogoffOnTop.Enabled := true;
  if EditButton1.text = DateToStr(date-21) then
  begin
    if FOnTop.visible then checkDB(date-21);

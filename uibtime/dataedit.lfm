@@ -1,5 +1,5 @@
 object FDataedit: TFDataedit
-  Left = 863
+  Left = 782
   Height = 375
   Top = 454
   Width = 814
@@ -28,14 +28,14 @@ object FDataedit: TFDataedit
     OnEnter = PageControl1Enter
     object TabSheet1: TTabSheet
       Caption = 'Events'
-      ClientHeight = 349
-      ClientWidth = 806
+      ClientHeight = 354
+      ClientWidth = 812
       OnShow = TabSheet1Show
       object ToolBar1: TToolBar
         Left = 0
         Height = 29
         Top = 0
-        Width = 806
+        Width = 812
         Caption = 'ToolBar1'
         TabOrder = 0
         object DBNavigator1: TDBNavigator
@@ -93,9 +93,9 @@ object FDataedit: TFDataedit
       end
       object DBGrid1: TDBGrid
         Left = 0
-        Height = 320
+        Height = 325
         Top = 29
-        Width = 806
+        Width = 812
         Align = alClient
         Color = clWindow
         Columns = <        
@@ -162,8 +162,8 @@ object FDataedit: TFDataedit
     end
     object TabSheet2: TTabSheet
       Caption = 'user'
-      ClientHeight = 349
-      ClientWidth = 806
+      ClientHeight = 354
+      ClientWidth = 812
       ImageIndex = 1
       OnShow = TabSheet2Show
       object ToolBar2: TToolBar
@@ -220,15 +220,15 @@ object FDataedit: TFDataedit
     end
     object TabSheet3: TTabSheet
       Caption = 'Aktuelle Events'
-      ClientHeight = 349
-      ClientWidth = 806
+      ClientHeight = 354
+      ClientWidth = 812
       ImageIndex = 2
       OnShow = TabSheet3Show
       object ToolBar3: TToolBar
         Left = 0
         Height = 29
         Top = 0
-        Width = 806
+        Width = 812
         Caption = 'ToolBar1'
         TabOrder = 0
         object DBNavigator3: TDBNavigator
@@ -262,9 +262,9 @@ object FDataedit: TFDataedit
       end
       object DBGrid3: TDBGrid
         Left = 0
-        Height = 284
+        Height = 289
         Top = 65
-        Width = 806
+        Width = 812
         Align = alClient
         Color = clWindow
         Columns = <>
@@ -304,11 +304,11 @@ object FDataedit: TFDataedit
         Left = 0
         Height = 36
         Top = 29
-        Width = 806
+        Width = 812
         Align = alTop
         Caption = 'Panel1'
         ClientHeight = 36
-        ClientWidth = 806
+        ClientWidth = 812
         TabOrder = 3
         object Panel2: TPanel
           Left = 1
@@ -321,9 +321,9 @@ object FDataedit: TFDataedit
         end
         object DBMemo1: TDBMemo
           Left = 67
-          Height = 34
+          Height = 40
           Top = 1
-          Width = 738
+          Width = 744
           Align = alClient
           DataField = 'COMMENT'
           DataSource = DataModule1.DSuibaktevent
@@ -333,8 +333,8 @@ object FDataedit: TFDataedit
     end
     object TabSheet4: TTabSheet
       Caption = 'Alle Events'
-      ClientHeight = 349
-      ClientWidth = 806
+      ClientHeight = 354
+      ClientWidth = 812
       ImageIndex = 3
       OnShow = TabSheet4Show
       object ToolBar4: TToolBar
@@ -393,8 +393,8 @@ object FDataedit: TFDataedit
     end
     object TabSheet5: TTabSheet
       Caption = 'Meine Event-Arten'
-      ClientHeight = 349
-      ClientWidth = 692
+      ClientHeight = 354
+      ClientWidth = 812
       ImageIndex = 4
       OnShow = TabSheet5Show
       object ToolBar5: TToolBar
@@ -474,7 +474,7 @@ object FDataedit: TFDataedit
         Width = 145
         DataField = 'BUTTON'
         DataSource = DataModule1.DSuibuserevent
-        ItemHeight = 13
+        ItemHeight = 0
         Items.Strings = (
           '0'
           '1'
@@ -487,8 +487,8 @@ object FDataedit: TFDataedit
     end
     object TabSheet6: TTabSheet
       Caption = 'Timeouts'
-      ClientHeight = 349
-      ClientWidth = 806
+      ClientHeight = 354
+      ClientWidth = 812
       ImageIndex = 5
       OnShow = TabSheet6Show
       object ToolBar6: TToolBar
@@ -564,15 +564,15 @@ object FDataedit: TFDataedit
     end
     object TabSheet8: TTabSheet
       Caption = 'Soll-Stunden'
-      ClientHeight = 349
-      ClientWidth = 806
+      ClientHeight = 354
+      ClientWidth = 812
       ImageIndex = 7
       OnShow = TabSheet8Show
       object ToolBar8: TToolBar
         Left = 0
         Height = 29
         Top = 0
-        Width = 806
+        Width = 812
         Caption = 'ToolBar1'
         TabOrder = 0
         object DBNavigator8: TDBNavigator
@@ -630,9 +630,9 @@ object FDataedit: TFDataedit
       end
       object DBGrid8: TDBGrid
         Left = 0
-        Height = 320
+        Height = 325
         Top = 29
-        Width = 806
+        Width = 812
         Align = alClient
         Color = clWindow
         Columns = <>
@@ -646,8 +646,8 @@ object FDataedit: TFDataedit
     end
     object TabSheet9: TTabSheet
       Caption = 'Defaultprojekt'
-      ClientHeight = 349
-      ClientWidth = 806
+      ClientHeight = 354
+      ClientWidth = 812
       ImageIndex = 8
       OnShow = TabSheet9Show
       object ToolBar9: TToolBar
@@ -723,8 +723,8 @@ object FDataedit: TFDataedit
     end
     object TabSheet7: TTabSheet
       Caption = 'Rename Event'
-      ClientHeight = 349
-      ClientWidth = 806
+      ClientHeight = 354
+      ClientWidth = 812
       object Bevel2: TBevel
         Left = 16
         Height = 114
@@ -815,7 +815,7 @@ object FDataedit: TFDataedit
         Height = 21
         Top = 152
         Width = 170
-        ItemHeight = 13
+        ItemHeight = 0
         OnEnter = ComboBoxOldEventEnter
         TabOrder = 3
       end
@@ -882,7 +882,7 @@ object FDataedit: TFDataedit
         Height = 21
         Top = 288
         Width = 170
-        ItemHeight = 13
+        ItemHeight = 0
         OnEnter = ComboBoxOldAllEventEnter
         TabOrder = 6
       end
@@ -906,8 +906,8 @@ object FDataedit: TFDataedit
     end
     object TabSheet10: TTabSheet
       Caption = 'Feiertage'
-      ClientHeight = 349
-      ClientWidth = 806
+      ClientHeight = 354
+      ClientWidth = 812
       object ToolBar10: TToolBar
         Left = 0
         Height = 29

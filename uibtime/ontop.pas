@@ -958,13 +958,13 @@ begin
       {$ENDIF WINDOWS}
       {$IFDEF LINUX}
       try
-        messagelist :: TStringlist.create;
+        messagelist := TStringlist.create;
         messagelist.Add('Warnung: übrige Zeit: '+inttostr(available_min)+' Minuten');
         DataModule1.ProcessTrayNotify.Parameters.AddStrings(messagelist);
         DataModule1.ProcessTrayNotify.Execute;
         messagelist.Free;
       except
-        debugOut(3,'trayicon', 'Exception starting notify-send ');
+        DataModule1.debugOut(3,'trayicon', 'Exception starting notify-send ');
       end;
       {$ENDIF LINUX}
     end;

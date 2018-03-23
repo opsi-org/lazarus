@@ -172,7 +172,7 @@ begin
     DataModule1.debugOut(8,'Login: opend 11');
     ProgressBar1.Position := gaugefak * 12;
     application.processmessages;
-    DataModule1.SQQueryAktEvents.Active := true;
+    DataModule1.SQQueryAktEvents.open;
     DataModule1.debugOut(8,'Login: opend 12');
     ProgressBar1.Position := gaugefak * 13;
     application.processmessages;

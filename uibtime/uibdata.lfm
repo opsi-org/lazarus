@@ -3,7 +3,7 @@ object DataModule1: TDataModule1
   OldCreateOrder = False
   Height = 625
   HorizontalOffset = 596
-  VerticalOffset = 281
+  VerticalOffset = 280
   Width = 894
   PPI = 96
   object IBConnection1: TIBConnection
@@ -40,7 +40,9 @@ object DataModule1: TDataModule1
       end    
       item
         Name = 'h_per_day'
-        DataType = ftUnknown
+        DataType = ftFloat
+        Precision = 2
+        Size = 10
       end>
     AfterDelete = SQuibaktuserAfterDelete
     AfterPost = SQuibaktuserAfterPost
@@ -69,47 +71,7 @@ object DataModule1: TDataModule1
   object SQuibaktevent: TSQLQuery
     PacketRecords = -1
     IndexFieldNames = 'EVENT'
-    FieldDefs = <    
-      item
-        Name = 'EVENT'
-        DataType = ftString
-        Precision = -1
-        Size = 50
-      end    
-      item
-        Name = 'PARENTEVENT'
-        DataType = ftString
-        Precision = -1
-        Size = 50
-      end    
-      item
-        Name = 'COMMENT'
-        DataType = ftString
-        Precision = -1
-        Size = 500
-      end    
-      item
-        Name = 'ID_STRING'
-        DataType = ftString
-        Precision = -1
-        Size = 50
-      end    
-      item
-        Name = 'BASE_FOR_TIME'
-        DataType = ftString
-        Precision = -1
-        Size = 50
-      end    
-      item
-        Name = 'TIME_H'
-        DataType = ftFloat
-        Precision = -1
-      end    
-      item
-        Name = 'PROJECTSTART'
-        DataType = ftDateTime
-        Precision = -1
-      end>
+    FieldDefs = <>
     AfterDelete = SQuibakteventAfterDelete
     AfterInsert = SQuibakteventAfterInsert
     AfterPost = SQuibakteventAfterPost
