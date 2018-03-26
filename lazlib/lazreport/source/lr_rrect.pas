@@ -28,7 +28,6 @@ interface
 {$Packset 1}
 {$endif}
 
-
 uses
   Classes, SysUtils, LResources, GraphMath,
   Graphics, Controls, Forms, Dialogs,Buttons,
@@ -101,7 +100,6 @@ type
     property RoundRect   : boolean read GetRoundRect write SetRoundRect;
     property RoundRectCurve : Integer read GetRoundRectCurve write SetRoundRectCurve;
     property SquaredCorners: TCornerSet read GetCorners write SetCorners;
-    //property SquaredCorners: TPDFCorners read GetCorners write SetCorners;
   end;
 
   // Editeur de propriétés

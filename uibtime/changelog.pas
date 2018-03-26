@@ -2,6 +2,7 @@
 uibtime (4.1.1.29-1) stable; urgency=low
 
  * uibdata: dateIsHolyday: switch filter off
+ * fix: pdf export
 
 -- detlef oertel <d.oertel@uib.de>  Wed, 26 Mar 2018 15:00:00 +0000
 

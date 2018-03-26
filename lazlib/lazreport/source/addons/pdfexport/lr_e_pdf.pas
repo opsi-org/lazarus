@@ -32,7 +32,6 @@ type
       FrameColor: TColor;
       Radius: Single;
       Corners: TCornerSet;
-      //Corners: TPDFCorners;
       GradientColor: TColor;
       GradientDirection: TGradientDirection;
     end;
@@ -67,7 +66,7 @@ type
         procedure ShowRoundRect(View: TfrRoundRectView; x, y, h, w: integer);
         procedure ShowShape(View: TfrShapeView; x, y, h, w: integer);
         procedure OnText(X, Y: Integer; const Text: string; View: TfrView);
-        //    override;
+            override;
         procedure OnData(x, y: Integer; View: TfrView); override;
     end;
 
@@ -392,7 +391,7 @@ begin
       Data.Radius := SWidth
     else
       Data.Radius := 0.0;
-    Data.Corners:= View.SquaredCorners;
+    Data.Corners:=View.SquaredCorners;
 
     // draw shadow
     if View.ShowGradian then
