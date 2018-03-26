@@ -97,6 +97,9 @@ type
     procedure CheckBoxUseDateChange(Sender: TObject);
     procedure ComboBoxOldAllEventEnter(Sender: TObject);
     procedure ComboBoxOldEventEnter(Sender: TObject);
+    procedure DBGrid1EditingDone(Sender: TObject);
+    procedure DBGrid1FieldEditMask(Sender: TObject; const Field: TField;
+      var Value: string);
     procedure DBGrid3DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: integer; Column: TColumn; State: TGridDrawState);
     procedure DBGrid5DrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -389,6 +392,17 @@ begin
     TComboBox(Sender).Items.Add(DataModule1.SQuibaktevent.FieldByName('event').AsString);
     DataModule1.SQuibaktevent.Next;
   end;
+end;
+
+procedure TFDataedit.DBGrid1EditingDone(Sender: TObject);
+begin
+  DataModule1.debugOut(5, 'start  '+ Sender.ClassName+' DBGrid1EditingDone');
+end;
+
+procedure TFDataedit.DBGrid1FieldEditMask(Sender: TObject; const Field: TField;
+  var Value: string);
+begin
+
 end;
 
 procedure TFDataedit.DBGrid5DrawColumnCell(Sender: TObject; const Rect: TRect;

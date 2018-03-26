@@ -121,8 +121,10 @@ type
     procedure SQholydaysAfterInsert(DataSet: TDataSet);
     procedure SQholydaysAfterPost(DataSet: TDataSet);
     procedure SQuibakteventAfterDelete(DataSet: TDataSet);
+    procedure SQuibakteventAfterEdit(DataSet: TDataSet);
     procedure SQuibakteventAfterInsert(DataSet: TDataSet);
     procedure SQuibakteventAfterPost(DataSet: TDataSet);
+    procedure SQuibakteventBeforePost(DataSet: TDataSet);
     procedure SQuibaktuserAfterDelete(DataSet: TDataSet);
     procedure SQuibaktuserAfterPost(DataSet: TDataSet);
     procedure SQuiballeventAfterPost(DataSet: TDataSet);
@@ -671,6 +673,11 @@ begin
   end;
 end;
 
+procedure TDataModule1.SQuibakteventAfterEdit(DataSet: TDataSet);
+begin
+  debugOut(5, 'start  '+ DataSet.Name+' BeforePost');
+end;
+
 procedure TDataModule1.SQuibakteventAfterInsert(DataSet: TDataSet);
 begin
   try
@@ -708,6 +715,12 @@ begin
   except
     debugOut(2,'SQuibakteventAfterPost', 'exception in SQuibakteventAfterPost (commit)');
   end;
+end;
+
+procedure TDataModule1.SQuibakteventBeforePost(DataSet: TDataSet);
+begin
+  debugOut(5, 'start  '+ DataSet.Name+' BeforePost');
+  debugOut(5, 'end  '+ DataSet.Name+' BeforePost');
 end;
 
 procedure TDataModule1.SQuibaktuserAfterDelete(DataSet: TDataSet);
@@ -1796,6 +1809,7 @@ begin
   rcount := SQholydays.RecordCount;
   myeof := SQholydays.EOF;
   if not myeof then result := true;
+  SQholydays.Filtered := false;
 end;
 
 

@@ -1,4 +1,10 @@
 (*
+uibtime (4.1.1.29-1) stable; urgency=low
+
+ * uibdata: dateIsHolyday: switch filter off
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 26 Mar 2018 15:00:00 +0000
+
 uibtime (4.1.1.28-1) stable; urgency=low
 
  * removed UI access from application Tab

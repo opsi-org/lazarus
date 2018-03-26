@@ -73,8 +73,10 @@ object DataModule1: TDataModule1
     IndexFieldNames = 'EVENT'
     FieldDefs = <>
     AfterDelete = SQuibakteventAfterDelete
+    AfterEdit = SQuibakteventAfterEdit
     AfterInsert = SQuibakteventAfterInsert
     AfterPost = SQuibakteventAfterPost
+    BeforePost = SQuibakteventBeforePost
     Database = IBConnection1
     Transaction = SQLTransaction1
     SQL.Strings = (

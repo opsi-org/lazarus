@@ -28,14 +28,14 @@ object FDataedit: TFDataedit
     OnEnter = PageControl1Enter
     object TabSheet1: TTabSheet
       Caption = 'Events'
-      ClientHeight = 354
-      ClientWidth = 812
+      ClientHeight = 349
+      ClientWidth = 806
       OnShow = TabSheet1Show
       object ToolBar1: TToolBar
         Left = 0
         Height = 29
         Top = 0
-        Width = 812
+        Width = 806
         Caption = 'ToolBar1'
         TabOrder = 0
         object DBNavigator1: TDBNavigator
@@ -93,9 +93,9 @@ object FDataedit: TFDataedit
       end
       object DBGrid1: TDBGrid
         Left = 0
-        Height = 325
+        Height = 320
         Top = 29
-        Width = 812
+        Width = 806
         Align = alClient
         Color = clWindow
         Columns = <        
@@ -112,6 +112,7 @@ object FDataedit: TFDataedit
             Title.Caption = 'STARTTIME'
             Width = 120
             FieldName = 'STARTTIME'
+            DisplayFormat = 'dd.mm.yyyy hh:mm:ss'
           end        
           item
             MinSize = 160
@@ -126,12 +127,14 @@ object FDataedit: TFDataedit
             Title.Caption = 'STOPTIME'
             Width = 120
             FieldName = 'STOPTIME'
+            DisplayFormat = 'dd.mm.yyyy hh:mm:ss'
           end        
           item
             MinSize = 64
             MaxSize = 64
             Title.Caption = 'STUNDEN'
             FieldName = 'STUNDEN'
+            DisplayFormat = '0.00'
           end>
         DataSource = DataModule1.DSuibevent
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete]
@@ -141,7 +144,9 @@ object FDataedit: TFDataedit
         TitleFont.Name = 'MS Sans Serif'
         OnColExit = DBGrid1ColExit
         OnDrawColumnCell = DBGrid1DrawColumnCell
+        OnEditingDone = DBGrid1EditingDone
         OnEnter = DBGrid1Enter
+        OnFieldEditMask = DBGrid1FieldEditMask
       end
       object DBLookupComboBox1: TDBLookupComboBox
         Left = 184
@@ -474,7 +479,7 @@ object FDataedit: TFDataedit
         Width = 145
         DataField = 'BUTTON'
         DataSource = DataModule1.DSuibuserevent
-        ItemHeight = 0
+        ItemHeight = 13
         Items.Strings = (
           '0'
           '1'
@@ -815,7 +820,7 @@ object FDataedit: TFDataedit
         Height = 21
         Top = 152
         Width = 170
-        ItemHeight = 0
+        ItemHeight = 13
         OnEnter = ComboBoxOldEventEnter
         TabOrder = 3
       end
@@ -882,7 +887,7 @@ object FDataedit: TFDataedit
         Height = 21
         Top = 288
         Width = 170
-        ItemHeight = 0
+        ItemHeight = 13
         OnEnter = ComboBoxOldAllEventEnter
         TabOrder = 6
       end
