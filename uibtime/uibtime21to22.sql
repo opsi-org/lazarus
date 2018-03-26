@@ -1,6 +1,6 @@
 
 /* tabelle nur alle user */
-alter table uiballuser ADD h_per_day float DEFAULT 0;
+alter table uiballuser ADD h_per_day D_FLOAT DEFAULT 0;
 alter table uiballuser ADD mo_is_work boolean DEFAULT 0 not null;
 alter table uiballuser ADD di_is_work boolean DEFAULT 0 not null;
 alter table uiballuser ADD mi_is_work boolean DEFAULT 0 not null;
@@ -8,7 +8,7 @@ alter table uiballuser ADD do_is_work boolean DEFAULT 0 not null;
 alter table uiballuser ADD fr_is_work boolean DEFAULT 0 not null;
 
 /* tabelle nur aktuelle user */
-alter table uibaktuser ADD h_per_day float  DEFAULT 0;
+alter table uibaktuser ADD h_per_day D_FLOAT  DEFAULT 0;
 alter table uibaktuser ADD mo_is_work boolean DEFAULT 0 not null;
 alter table uibaktuser ADD di_is_work boolean DEFAULT 0 not null;
 alter table uibaktuser ADD mi_is_work boolean DEFAULT 0 not null;
