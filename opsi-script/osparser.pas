@@ -1731,12 +1731,33 @@ End;
 
 function TuibInstScript.reportError (const Sektion: TWorkSection; LineNo : Integer;
              Const Content : String; Comment: String) : TSectionResult;
-
+var
+  funcname, funcfile, funcmesseage : string;
+  funcline : integer;
+  i : integer;
 begin
   result := tsrPositive;
+  if inDefFuncIndex >= 0 then
+  begin
+    funcname := definedFunctionArray[inDefFuncIndex].Name;
+    funcfile := definedFunctionArray[inDefFuncIndex].OriginFile;
+    funcline := definedFunctionArray[inDefFuncIndex].OriginFileStartLineNumber;
+    funcmesseage := ' in defined function: '+funcname+' from file: '+funcfile
+                    +' start at line: '+inttostr(funcline);
+  end
+  else
+  begin
+    funcmesseage := '';
+  end;
+  for i:= 0 to FLinesOriginList.Count -1 do
+    logdatei.log_prog('FLinesOriginList: '+FLinesOriginList.Strings[i],LLDebug);
   ps := 'Syntax Error in Section: ' + Sektion.Name +
     ' (Command in line ' + IntToStr (Sektion.StartLineNo + LineNo)
+      + ' Command in line ' + IntToStr (script.aktScriptLineNumber)
+
+      + funcmesseage
       + ' origin: '+FLinesOriginList.Strings[Sektion.StartLineNo + LineNo-1]+'): '
+      + ' origin: '+FLinesOriginList.Strings[script.aktScriptLineNumber]+'): '
       + Content+' -> '+Comment;
   LogDatei.log(ps,LLCritical);
   if FatalOnSyntaxError then
@@ -16438,6 +16459,7 @@ function TuibInstScript.doAktionen (const Sektion: TWorkSection; const CallingSe
   inSearchedFunc : boolean;
   alllines, inclines : integer;
   processline : boolean = true; // are we on a active code branch (needed handling of section ends '['
+  tmplist : TXStringlist;
 
 begin
   result := tsrPositive;
@@ -16474,7 +16496,7 @@ begin
     Remaining := trim (Sektion.strings [i-1]);
     logdatei.log_prog('Script line: '+intToStr(i)+' : '+Remaining,LLDebug2);
     //logdatei.log_prog('Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' Sektion.NestingLevel: '+IntToStr(Sektion.NestingLevel)+' condition: '+BoolToStr(conditions [ActLevel],true),LLDebug3);
-    aktScriptLineNumber := i;
+    if inDefFuncLevel = 0 then inc(FAktScriptLineNumber); // count only lines on base level
     //writeln(remaining);
     //readln;
 
@@ -19548,6 +19570,14 @@ begin
                  end
                  else
                  begin
+                   tmplist := TXStringlist.Create;
+                   s1 := FLinesOriginList.Strings[script.aktScriptLineNumber];
+                   stringsplitByWhiteSpace(s1,tmplist);
+                   newDefinedfunction.OriginFile := tmplist[0];
+                   try
+                     newDefinedfunction.OriginFileStartLineNumber:=strtoint(tmplist[2]);
+                   except
+                   end;
                    // get all lines until 'endfunction'
                    //endofDefFuncFound := false;
                    inDefFunc := 1;
@@ -19763,6 +19793,7 @@ begin
   else LogDatei.log('Using old Depot path:  ' + depotdrive + depotdir, LLinfo);
 
   Script := TuibInstScript.Create;
+  script.aktScriptLineNumber:=0;
   // Backup existing depotdrive, depotdir
   depotdrive_bak := depotdrive;
   depotdir_bak :=  depotdir;

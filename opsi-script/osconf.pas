@@ -142,7 +142,7 @@ var
   //deprecated stuff end
   {$IFDEF OSDEBUG}
   debug_prog: boolean = True;
-  default_loglevel : integer = 8;
+  default_loglevel : integer = 9;
   {$ELSE}
   debug_prog: boolean = False;
   default_loglevel : integer = 7;

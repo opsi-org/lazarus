@@ -10,6 +10,7 @@ opsi-winst/opsi-script (4.12.0.16) stable; urgency=low
   * typo of log messages
   * change to Lazarus 1.8.2
   * switch HighDPI awareness on (8.1+, per monitor)
+  * osparser: reportError: more info on defined functions at syntax error
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 14 Mar 2018:15:00:00 +0200
 

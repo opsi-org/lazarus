@@ -48,6 +48,8 @@ type
     DFindex : integer;
     DFParentFunc : string;
     DFActive : boolean;
+    DFOriginFile : string;
+    DFOriginFileStartLineNumber : integer;
 
   public
     constructor create;
@@ -89,6 +91,8 @@ type
     property Index : integer read DFindex write DFindex;
     property ParentFunc : String read DFParentFunc;
     property Active : boolean read DFActive write DFActive;
+    property OriginFile : String read DFOriginFile write DFOriginFile;
+    property OriginFileStartLineNumber : integer read DFOriginFileStartLineNumber write DFOriginFileStartLineNumber;
   end;
 
     TDefinedFunctionsArray = Array of TOsDefinedFunction;
