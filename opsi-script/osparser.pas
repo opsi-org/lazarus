@@ -1733,6 +1733,7 @@ function TuibInstScript.reportError (const Sektion: TWorkSection; LineNo : Integ
              Const Content : String; Comment: String) : TSectionResult;
 var
   funcname, funcfile, funcmesseage : string;
+  originmessage : string;
   funcline : integer;
   i : integer;
 begin
@@ -1742,22 +1743,23 @@ begin
     funcname := definedFunctionArray[inDefFuncIndex].Name;
     funcfile := definedFunctionArray[inDefFuncIndex].OriginFile;
     funcline := definedFunctionArray[inDefFuncIndex].OriginFileStartLineNumber;
-    funcmesseage := ' in defined function: '+funcname+' from file: '+funcfile
-                    +' start at line: '+inttostr(funcline);
+    funcmesseage := ' in defined function: '+funcname+' file: '+ExtractFileName(funcfile)
+                    +' function start at line: '+inttostr(funcline);
+    originmessage := '; origin: '+funcfile+' line: '+inttostr(funcline+LineNo)+'): ';
   end
   else
   begin
     funcmesseage := '';
+    originmessage := '; origin: '+FLinesOriginList.Strings[Sektion.StartLineNo + LineNo-1]+'): ';
   end;
-  for i:= 0 to FLinesOriginList.Count -1 do
-    logdatei.log_prog('FLinesOriginList: '+FLinesOriginList.Strings[i],LLDebug);
+  //for i:= 0 to FLinesOriginList.Count -1 do
+  //  logdatei.log_prog('FLinesOriginList: '+FLinesOriginList.Strings[i],LLDebug);
   ps := 'Syntax Error in Section: ' + Sektion.Name +
     ' (Command in line ' + IntToStr (Sektion.StartLineNo + LineNo)
-      + ' Command in line ' + IntToStr (script.aktScriptLineNumber)
-
-      + funcmesseage
-      + ' origin: '+FLinesOriginList.Strings[Sektion.StartLineNo + LineNo-1]+'): '
-      + ' origin: '+FLinesOriginList.Strings[script.aktScriptLineNumber]+'): '
+   //   + ' Command in line ' + IntToStr (script.aktScriptLineNumber)
+      + funcmesseage + originmessage
+    //  + ' origin: '+FLinesOriginList.Strings[Sektion.StartLineNo + LineNo-1]+'): '
+    //  + ' origin: '+FLinesOriginList.Strings[script.aktScriptLineNumber]+'): '
       + Content+' -> '+Comment;
   LogDatei.log(ps,LLCritical);
   if FatalOnSyntaxError then
@@ -16494,9 +16496,9 @@ begin
   begin
    //writeln(actionresult);
     Remaining := trim (Sektion.strings [i-1]);
-    logdatei.log_prog('Script line: '+intToStr(i)+' : '+Remaining,LLDebug2);
     //logdatei.log_prog('Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' Sektion.NestingLevel: '+IntToStr(Sektion.NestingLevel)+' condition: '+BoolToStr(conditions [ActLevel],true),LLDebug3);
     if inDefFuncLevel = 0 then inc(FAktScriptLineNumber); // count only lines on base level
+    logdatei.log_prog('Script line: '+intToStr(i)+' / '+intToStr(FAktScriptLineNumber)+' : '+Remaining,LLDebug2);
     //writeln(remaining);
     //readln;
 
@@ -17367,8 +17369,8 @@ begin
                                 Sektion.Insert(i-1+inclines,incline);
                                 LogDatei.log_prog('Line included at pos: '+inttostr(i-1+inclines)+' to Sektion with '+inttostr(Sektion.Count)+' lines.',LLDebug2);
                                 //LogDatei.log_prog('Will Include add at pos '+inttostr(Sektion.StartLineNo + i-1+k)+'to FLinesOriginList with count: '+inttostr(script.FLinesOriginList.Count),LLDebug2);
-                                script.FLinesOriginList.Insert(Sektion.StartLineNo + i-1+inclines,incfilename+ ' Line: '+inttostr(alllines));
-                                script.FLibList.Insert(Sektion.StartLineNo + i-1+inclines,'true');
+                                script.FLinesOriginList.Insert( i-1+inclines,incfilename+ ' Line: '+inttostr(alllines));
+                                script.FLibList.Insert( i-1+inclines,'true');
                                 LogDatei.log_prog('Include added to FLinesOriginList.',LLDebug2);
                               end;
                                 // do we have an endfunc ?
@@ -17385,8 +17387,8 @@ begin
                               Sektion.Insert(i-1+inclines,incline);
                               LogDatei.log_prog('Line included at pos: '+inttostr(i-1+inclines)+' to Sektion with '+inttostr(Sektion.Count)+' lines.',LLDebug2);
                               //LogDatei.log_prog('Will Include add at pos '+inttostr(Sektion.StartLineNo + i-1+k)+'to FLinesOriginList with count: '+inttostr(script.FLinesOriginList.Count),LLDebug2);
-                              script.FLinesOriginList.Insert(Sektion.StartLineNo + i-1+inclines,incfilename+ ' Line: '+inttostr(alllines));
-                              script.FLibList.Insert(Sektion.StartLineNo + i-1+inclines,'true');
+                              script.FLinesOriginList.Insert(i-1+inclines,incfilename+ ' Line: '+inttostr(alllines));
+                              script.FLibList.Insert(i-1+inclines,'true');
                               LogDatei.log_prog('Include added to FLinesOriginList.',LLDebug2);
                             end
                           end;
@@ -17396,6 +17398,8 @@ begin
                             LogDatei.log('Imported all functions from file: '+fullincfilename,LLNotice)
                           else
                             LogDatei.log('Imported function : '+importFunctionName+' from file: '+fullincfilename ,LLNotice);
+                          //for j:= 0 to sektion.Count -1 do
+                          //  logdatei.log_prog('script: '+sektion.Strings[j],LLDebug);
                         end
                         else
                         begin
@@ -19571,11 +19575,17 @@ begin
                  else
                  begin
                    tmplist := TXStringlist.Create;
-                   s1 := FLinesOriginList.Strings[script.aktScriptLineNumber];
+                   s1 := FLinesOriginList.Strings[script.aktScriptLineNumber-1];
                    stringsplitByWhiteSpace(s1,tmplist);
+                   //newDefinedfunction.OriginFile := ExtractFileName(tmplist[0]);
                    newDefinedfunction.OriginFile := tmplist[0];
                    try
-                     newDefinedfunction.OriginFileStartLineNumber:=strtoint(tmplist[2]);
+                     if tmplist[0] = script.FFilename then
+                       // not imported : add section header
+                       newDefinedfunction.OriginFileStartLineNumber:=strtoint(tmplist[2])+sektion.StartLineNo-1
+                     else
+                       // imported : no section header
+                       newDefinedfunction.OriginFileStartLineNumber:=strtoint(tmplist[2]);
                    except
                    end;
                    // get all lines until 'endfunction'
@@ -19583,7 +19593,8 @@ begin
                    inDefFunc := 1;
                    repeat
                      // get next line of section
-                     inc(i);
+                     inc(i); // inc line counter
+                     inc(FaktScriptLineNumber); // inc line counter that ignores the execution of defined functions
                      if (i <= Sektion.Count) then
                      begin
                        Remaining := trim (Sektion.strings [i-1]);

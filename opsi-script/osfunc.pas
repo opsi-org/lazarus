@@ -6250,11 +6250,11 @@ begin
 
     if Result then
     begin // Sektionsinhalt existiert
-      searchstartindex := i;
+      searchstartindex := StartlineNo;
       // if we have defFunc section headers before EndFunc should be ignored
       searchstartindex := getFirstLineAfterEndFunc(self,searchstartindex);
       n := FindEndOfSectionIndex(searchstartindex);
-      for j := i to n do
+      for j := StartlineNo to n do
       begin
         s := KappeBlanks(Strings[j]);
         if s = '' then
