@@ -35,6 +35,7 @@ uses
 {$ENDIF GUI}
 {$IFDEF OPSIWINST}
   osconf,
+  //osdefinedfunctions,
 {$IFDEF WINDOWS}
   osregistry,
 {$ENDIF WINDOWS}
@@ -298,6 +299,7 @@ uses
 {$ENDIF GUI}
   osparser,
   osmain,
+  osdefinedfunctions,
   osfunc;
 {$ENDIF}
 
@@ -1253,7 +1255,16 @@ begin
       If usedloglevel < Fforce_min_loglevel then usedloglevel := Fforce_min_loglevel;
 
       {$IFDEF OPSIWINST}
-       // log libraries ?
+       // running defined function ?
+       if inDefFuncLevel > 0 then
+         if definedFunctionArray[inDefFuncIndex].OriginFile <> script.Filename then
+            // defined function imported from lib
+            // do we want to debug libraries ?
+            if (not debug_lib) then
+                // only Warnings and less
+                usedloglevel :=  LLWarning;
+
+       (*
        if Assigned(script) then
        if Assigned(script.FLibList) then
          if script.FLibList.Count > script.aktScriptLineNumber then
@@ -1265,6 +1276,7 @@ begin
                 // only Warnings and less
                 usedloglevel :=  LLWarning;
          end;
+         *)
        {$ENDIF}
 
 
