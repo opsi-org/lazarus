@@ -17,3 +17,4 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 lazbuild -B opsi-script/opsiscript.lpi
+lazbuild -B opsi-script/opsiscriptnogui.lpi
