@@ -27,7 +27,7 @@ cp rpm/${packagename}.spec $destdir/
 test -e $tmpdir && rm -rf $tmpdir
 mkdir $tmpdir
 
-cp opsi-script/opsi-script opsi-script/opsi-script-nogui gettext debian ${tmpdir}/
+cp -r opsi-script/opsi-script opsi-script/opsi-script-nogui gettext debian ${tmpdir}/
 if [ $? -eq 0 ]; then
 	echo "all files existing"
 else
