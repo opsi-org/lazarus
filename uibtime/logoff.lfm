@@ -146,13 +146,14 @@ object Flogoff: TFlogoff
     ParentFont = False
     TabOrder = 2
   end
-  object Memo1: TMemo
-    Left = 16
+  object orgMemo1: TMemo
+    Left = 552
     Height = 304
-    Top = 216
-    Width = 784
+    Top = 24
+    Width = 392
     ScrollBars = ssVertical
     TabOrder = 3
+    Visible = False
   end
   object Btn_work_description: TBitBtn
     Left = 240
@@ -198,6 +199,37 @@ object Flogoff: TFlogoff
     Font.Quality = fqDraft
     ParentColor = False
     ParentFont = False
+  end
+  object RichMemo1: TRichMemo
+    Left = 16
+    Height = 295
+    Top = 224
+    Width = 928
+    HideSelection = False
+    Lines.Strings = (
+      'RichMemo1'
+    )
+    ScrollBars = ssVertical
+    TabOrder = 6
+    ZoomFactor = 1
+  end
+  object ButtonLastWeek: TButton
+    Left = 352
+    Height = 21
+    Top = 528
+    Width = 104
+    Caption = 'letzte Woche'
+    OnClick = ButtonLastWeekClick
+    TabOrder = 7
+  end
+  object ButtonLastMonth: TButton
+    Left = 472
+    Height = 21
+    Top = 528
+    Width = 104
+    Caption = 'letzter Monat'
+    OnClick = ButtonLastMonthClick
+    TabOrder = 8
   end
   object Query1: TSQLQuery
     FieldDefs = <>

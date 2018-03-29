@@ -1,4 +1,12 @@
 (*
+uibtime (4.1.1.30-1) stable; urgency=low
+
+ * ontop: call rebuildform from the end of formshow
+ * logoff: Buttons for lastweek, lastmonth, standard this day again
+ * log off richmemo
+
+-- detlef oertel <d.oertel@uib.de>  Thu, 29 Mar 2018 15:00:00 +0000
+
 uibtime (4.1.1.29-1) stable; urgency=low
 
  * uibdata: dateIsHolyday: switch filter off

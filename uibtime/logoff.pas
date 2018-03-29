@@ -9,13 +9,15 @@ uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, Buttons, DBCtrls, EditBtn, ExtDlgs, Db, sqldb, Variants{, IBQuery},
   dateutils,
-  uibdatetime;
+  uibdatetime, RichMemo;
 
 type
 
   { TFlogoff }
 
   TFlogoff = class(TForm)
+    ButtonLastWeek: TButton;
+    ButtonLastMonth: TButton;
     CalendarDialog1: TCalendarDialog;
     EditButton1: TEditButton;
     Label1: TLabel;
@@ -24,13 +26,16 @@ type
     BitBtn2: TBitBtn;
     BitBtn3: TBitBtn;
     Label3: TLabel;
-    Memo1: TMemo;
+    orgMemo1: TMemo;
     Label2: TLabel;
     Query1: TSQLQuery;
     Btn_work_description: TBitBtn;
     Query2: TSQLQuery;
+    RichMemo1: TRichMemo;
     procedure BitBtn2Click(Sender: TObject);
     procedure BitBtn3Click(Sender: TObject);
+    procedure ButtonLastMonthClick(Sender: TObject);
+    procedure ButtonLastWeekClick(Sender: TObject);
     procedure checkDB(begintime : TDateTime);
     procedure EditButton1ButtonClick(Sender: TObject);
     procedure EditButton1Change(Sender: TObject);
@@ -69,7 +74,7 @@ begin
  try
  FOnTop.ineditmode:=true;
   // start looking for gaps
- memo1.lines.add('Suche ab: '+ DateTimeToStr(begintime));
+ richmemo1.lines.add('Suche ab: '+ DateTimeToStr(begintime));
  datamodule1.debugOut(5,'logoff.checkDB','Suche ab: '+ DateTimeToStr(begintime));
  sumtime := 0;
  if Datamodule1.SQQueryuibevent.Active then Datamodule1.SQQueryuibevent.Close;
@@ -83,14 +88,14 @@ begin
  Datamodule1.SQQueryuibevent.open;
  Datamodule1.SQQueryuibevent.first;
  laststartt := Datamodule1.SQQueryuibevent.fieldbyname('starttime').asdatetime;
- memo1.lines.add('Start ab: '+ DateTimeToStr(laststartt));
+ richmemo1.lines.add('Start ab: '+ DateTimeToStr(laststartt));
  datamodule1.debugOut(5,'logoff.checkDB','Start ab: '+ DateTimeToStr(laststartt));
  firststartt := laststartt;
  laststopt := Datamodule1.SQQueryuibevent.fieldbyname('stoptime').asdatetime;
  if not Datamodule1.SQuibevent.Locate('userid;starttime;stoptime',
           VarArrayOf([uid, laststartt,laststopt]), [loCaseInsensitive,loPartialKey]) then
  begin
-    memo1.lines.add('Record not found ');
+    richmemo1.lines.add('Record not found ');
      datamodule1.debugOut(5,'logoff.checkDB','Record not found ');
  end;
  Datamodule1.SQQueryuibevent.close;
@@ -107,7 +112,7 @@ begin
     // Überlappung   > 1 min
     if ((laststopt - startt) >  (1/(24*60))) then
     begin
-     memo1.lines.add('Achtung Überlappung zw. : '
+     richmemo1.lines.add('Achtung Überlappung zw. : '
        +DateTimeToStr(laststartt)+' und '+DateTimeToStr(startt)+' bei '+uname);
      datamodule1.debugOut(5,'logoff.checkDB','Achtung Überlappung zw. : '
        +DateTimeToStr(laststartt)+' und '+DateTimeToStr(startt)+' bei '+uname);
@@ -119,7 +124,7 @@ begin
     if ((startt - laststopt) >  (1/(24*60)))
         and (trunc(startt) = trunc(laststopt)) then
     begin
-     memo1.lines.add('Loch zw. : '
+     richmemo1.lines.add('Loch zw. : '
       +DateTimeToStr(laststopt)+' und '+DateTimeToStr(startt)
       +' Dauer: '+TimeToStr(startt - laststopt)+' bei '+uname);
      datamodule1.debugOut(5,'logoff.checkDB','Loch zw. : '
@@ -133,8 +138,8 @@ begin
   sumtime := sumtime + (laststopt - laststartt);
   Datamodule1.SQuibevent.next;
  end;   // eof
- memo1.lines.add('Zeit von: '+DateTimeToStr(firststartt)+' bis '+DateTimeToStr(laststopt));
- memo1.lines.add('Stunden in diesem Zeitraum (Anwesenheit ohne Löcher): '+TimeToStr(sumtime)+
+ richmemo1.lines.add('Zeit von: '+DateTimeToStr(firststartt)+' bis '+DateTimeToStr(laststopt));
+ richmemo1.lines.add('Stunden in diesem Zeitraum (Anwesenheit ohne Löcher): '+TimeToStr(sumtime)+
                  ' ('+floattostrF(sumtime*24,ffFixed,5,2)+')');
  query1.sql.Clear;
  query1.sql.Add('select sum(stunden) as summe_h from uibevent where');
@@ -147,14 +152,14 @@ begin
  query1.parambyname('stop').asDateTime := laststopt;
  query1.parambyname('pause').asString := 'Pause';
  query1.open;
- memo1.lines.add('davon Arbeitszeit (ohne Pausen): '
+ richmemo1.lines.add('davon Arbeitszeit (ohne Pausen): '
                   +TimeToStr(query1.fieldbyname('summe_h').asfloat/24)+
                   ' ('+floattostrF(query1.fieldbyname('summe_h').asfloat,ffFixed,5,2)+')');
  query1.close;
  // end looking for gaps
  // start looking for missing reports
- memo1.lines.add('-------------------------------');
- memo1.lines.add('Der Report-Report:.....');
+ richmemo1.lines.add('-------------------------------');
+ richmemo1.lines.add('Der Report-Report:.....');
  sumtime := 0;
  if Datamodule1.SQQueryuibevent.Active then Datamodule1.SQQueryuibevent.Close;
  Datamodule1.SQQueryuibevent.sql.Clear;
@@ -206,12 +211,22 @@ begin
                          VarArrayOf([uid, year, month, day, event]),[loCaseInsensitive]) then
     begin
       // report found
-      memo1.lines.add('..............Report gefunden : ' + uname + ' -> '+DateTimeToStr(startt)+' : '+event);
+      with RichMemo1 do
+      begin
+        lines.add('..............Report gefunden : ' + uname + ' -> '+DateTimeToStr(startt)+' : '+event);
+        SetRangeColor(Length(Lines.Text) - Length(Lines[Lines.Count - 1])
+                         - Lines.Count - 1, Length(Lines[Lines.Count - 1]), clGreen);
+      end;
     end
     else
     begin
       // no report found
-      memo1.lines.add('#*#*#*#*#  -> Report fehlt : ' + uname + ' -> '+DateTimeToStr(startt)+' : '+event);
+      with RichMemo1 do
+      begin
+        lines.add('#*#*#*#*#  -> Report fehlt : ' + uname + ' -> '+DateTimeToStr(startt)+' : '+event);
+        SetRangeColor(Length(Lines.Text) - Length(Lines[Lines.Count - 1])
+                         - Lines.Count - 1, Length(Lines[Lines.Count - 1]), clRed);
+      end;
     end;
   end;
   Datamodule1.SQuibevent.next;
@@ -221,8 +236,8 @@ begin
 
  // end looking for missing reports
  // start looking for missing workdays or holydays
- memo1.lines.add('-------------------------------');
- memo1.lines.add('Der Missing Days-Report:.....');
+ richmemo1.lines.add('-------------------------------');
+ richmemo1.lines.add('Der Missing Days-Report:.....');
  if Datamodule1.SQQueryuibevent.Active then Datamodule1.SQQueryuibevent.Close;
  Datamodule1.SQQueryuibevent.sql.Clear;
  Datamodule1.SQQueryuibevent.sql.Add('select * from uibevent ');
@@ -250,15 +265,20 @@ begin
      if (foundstarttime < aktdate+1) then datefound := true;
      if not datefound then
      begin
-       if Datamodule1.dateIsHolyday(aktdate) then
-         memo1.lines.add('Kein Eintrag für Feiertag :   ' +lazDayofWeekbyteToDayOfWeekGerStr(weekday) + ' - '+DateTimeToStr(aktdate))
-       else
-         memo1.lines.add('Kein Eintrag für Arbeitstag : ' +lazDayofWeekbyteToDayOfWeekGerStr(weekday) + ' - '+DateTimeToStr(aktdate));
+       with RichMemo1 do
+       begin
+         if Datamodule1.dateIsHolyday(aktdate) then
+          lines.add('Kein Eintrag für Feiertag :   ' +lazDayofWeekbyteToDayOfWeekGerStr(weekday) + ' - '+DateTimeToStr(aktdate))
+         else
+           lines.add('Kein Eintrag für Arbeitstag : ' +lazDayofWeekbyteToDayOfWeekGerStr(weekday) + ' - '+DateTimeToStr(aktdate));
+         SetRangeColor(Length(Lines.Text) - Length(Lines[Lines.Count - 1])
+                         - Lines.Count - 1, Length(Lines[Lines.Count - 1]), clRed);
+       end;
      end;
    end;
    aktdate := IncDay(aktdate);
  until aktdate > now;
- memo1.lines.add('Finished Missing Days-Report.');
+ richmemo1.lines.add('Finished Missing Days-Report.');
  // end looking for missing workdays or holydays
  FOnTop.ineditmode:=false;
 
@@ -281,6 +301,18 @@ begin
 
 end;
 
+procedure TFlogoff.ButtonLastMonthClick(Sender: TObject);
+begin
+  richmemo1.lines.clear;
+  EditButton1.text := DateToStr(incmonth(date,-1));
+end;
+
+procedure TFlogoff.ButtonLastWeekClick(Sender: TObject);
+begin
+  richmemo1.lines.clear;
+  EditButton1.text := DateToStr(incweek(date,-1));
+end;
+
 
 
 procedure TFlogoff.EditButton1ButtonClick(Sender: TObject);
@@ -299,13 +331,13 @@ begin
   Datamodule1.TimerLogoffOnTop.Enabled := true;
   application.processmessages;
   EditButton1.text := DateToStr(CalendarDialog1.Date);
-  //memo1.lines.clear;
+  //richmemo1.lines.clear;
   //checkDB(StrToDate(EditButton1.text));
 end;
 
 procedure TFlogoff.EditButton1Change(Sender: TObject);
 begin
-  memo1.lines.clear;
+  richmemo1.lines.clear;
   checkDB(StrToDate(EditButton1.text));
 end;
 
@@ -316,17 +348,17 @@ end;
 
 procedure TFlogoff.FormShow(Sender: TObject);
 begin
- memo1.lines.clear;
+ richmemo1.lines.clear;
  datamodule1.debugOut(5,'Show FLogoff');
  Formstyle := fsSystemStayOnTop;
  WindowState := wsMaximized;
  application.processmessages;
  Datamodule1.TimerLogoffOnTop.Enabled := true;
- if EditButton1.text = DateToStr(date-21) then
+ if EditButton1.text = DateToStr(date) then
  begin
-   if FOnTop.visible then checkDB(date-21);
+   if FOnTop.visible then checkDB(date);
  end
- else EditButton1.text := DateToStr(date-21);
+ else EditButton1.text := DateToStr(date);
  //if FOnTop.visible then checkDB(date);
 end;
 

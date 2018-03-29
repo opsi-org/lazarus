@@ -442,6 +442,7 @@ begin
     datamodule1.debugOut(3, '', 'exception in ontopactivate');
     raise;
   end;
+  ReBuildForm;
 end;
 
 
