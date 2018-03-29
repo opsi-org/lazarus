@@ -130,6 +130,8 @@ type
     procedure EliminateLinesStartingWith(const startS: string; MatchCase: boolean);
     procedure SaveToFile(const FileName: string; encodingtype: string); overload;
     procedure SaveToFile(const FileName: string); override; overload;
+    procedure SaveToFile(const FileName: string;
+                         encodingtype: string; raise_on_error :boolean);  overload;
     function FuncSaveToFile(const FileName: string; encodingtype: string): boolean; overload;
     function FuncSaveToFile(const FileName: string): boolean; overload;
     procedure loadFromUnicodeFile(const Filename: string; codepage: word);
@@ -5608,6 +5610,12 @@ begin
 end;
 
 procedure TXStringList.SaveToFile(const FileName: string; encodingtype: string);
+begin
+  SaveToFile(Filename, encodingtype,false);
+end;
+
+procedure TXStringList.SaveToFile(const FileName: string;
+                                  encodingtype: string; raise_on_error :boolean);
 var
   myfile: system.TextFile;
   i: integer;
@@ -5649,11 +5657,15 @@ begin
   except
     on e: Exception do
     begin
-      LogS := e.message;
-      LogS := 'Error: ' + myfilename +
-              ' could not be saved back - will not retry, error message: "' +
-               LogS + '"';
-      LogDatei.log(LogS, LLError);
+      if not raise_on_error then
+      begin
+        LogS := e.message;
+        LogS := 'Error: ' + myfilename +
+                ' could not be saved back - will not retry, error message: "' +
+                 LogS + '"';
+        LogDatei.log(LogS, LLError);
+      end;
+      if raise_on_error then raise;
     end;
   end;
 end;
@@ -5673,7 +5685,7 @@ begin
   Result := False;
   try
     myfilename := ExpandFileName(FileName);
-    SaveToFile(myfilename,encodingtype);
+    SaveToFile(myfilename,encodingtype,true);
     LogS := myfilename + ' saved back with encoding: '+encodingtype;
     LogDatei.log_prog(LogS, LLDebug);
     Result := True;
@@ -5686,7 +5698,7 @@ begin
       LogDatei.log_prog(LogS, LLWarning);
       try
         Sleep(100);
-        SaveToFile(myfilename,encodingtype);
+        SaveToFile(myfilename,encodingtype,true);
         LogS := myfilename + ' saved back with encoding: '+encodingtype;
         LogDatei.log_prog(LogS, LLDebug);
         Result := True;
@@ -5699,7 +5711,7 @@ begin
           LogDatei.log_prog(LogS, LLWarning);
           try
             Sleep(100);
-            SaveToFile(myfilename,encodingtype);
+            SaveToFile(myfilename,encodingtype,true);
             LogS := myfilename + ' saved back with encoding: '+encodingtype;
             LogDatei.log_prog(LogS, LLDebug);
             Result := True;
@@ -5712,7 +5724,7 @@ begin
               LogDatei.log_prog(LogS, LLWarning);
               try
                 Sleep(100);
-                 SaveToFile(myfilename,encodingtype);
+                 SaveToFile(myfilename,encodingtype,true);
                 LogS := myfilename + ' saved back with encoding: '+encodingtype;
                 LogDatei.log_prog(LogS, LLDebug);
                 Result := True;
@@ -5726,7 +5738,7 @@ begin
                   LogDatei.log_prog(LogS, LLWarning);
                   try
                     Sleep(100);
-                     SaveToFile(myfilename,encodingtype);
+                     SaveToFile(myfilename,encodingtype,true);
                     LogS := myfilename + ' saved back with encoding: '+encodingtype;
                     LogDatei.log_prog(LogS, LLDebug);
                     Result := True;

@@ -149,6 +149,7 @@ type
     function PartbiggerthanMB(maxsize: integer): boolean;
     procedure PartShrinkToMB(newsize: integer);
     procedure AddToConfidentials(newsecret: string);
+    function isConfidential(teststring : string) : boolean;
     procedure log2history(line: string);
     procedure CreateTheLogfile(LogDateiname: string); overload;
     procedure CreateTheLogfile(LogDateiname: string; check4append: boolean); overload;
@@ -1256,7 +1257,7 @@ begin
 
       {$IFDEF OPSIWINST}
        // running defined function ?
-       if inDefFuncLevel > 0 then
+       if inDefFuncIndex > -1 then
          if definedFunctionArray[inDefFuncIndex].OriginFile <> script.Filename then
             // defined function imported from lib
             // do we want to debug libraries ?
@@ -1586,6 +1587,12 @@ end;
 procedure TLogInfo.AddToConfidentials(newsecret: string);
 begin
   FConfidentialStrings.Append(newsecret);
+end;
+
+function TLogInfo.isConfidential(teststring : string) : boolean;
+begin
+  result := false;
+  if FConfidentialStrings.IndexOf(teststring) > -1 then result := true;
 end;
 
 procedure TLogInfo.PartShrinkToMB(newsize: integer);

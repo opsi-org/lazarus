@@ -9818,13 +9818,22 @@ begin
     then
      if EvaluateString (r, r, s1, InfoSyntaxError)
      then
-             if Skip (')', r,r, InfoSyntaxError)
-             then
-             Begin
-               syntaxCheck := true;
-
-               stringsplitByWhiteSpace (s1, list);
-             End
+       if Skip (')', r,r, InfoSyntaxError)
+       then
+       Begin
+          syntaxCheck := true;
+          stringsplitByWhiteSpace (s1, list);
+          // if s1 is confidential all parts are confidential as well
+           if logdatei.isConfidential(s1) then
+           begin
+             for i := 0 to list.Count -1 do
+             begin
+               tmpstr := list.Strings[i];
+               if tmpstr <> '' then
+                 logdatei.AddToConfidentials(tmpstr);
+             end;
+           end;
+       End;
    End
 
    else if LowerCase (s) = LowerCase ('jsonAsArrayToStringList')
@@ -9893,6 +9902,16 @@ begin
                syntaxCheck := true;
 
                stringsplit (s1, s2, list);
+               // if s1 is confidential all parts are confidential as well
+               if logdatei.isConfidential(s1) then
+               begin
+                 for i := 0 to list.Count -1 do
+                 begin
+                   tmpstr := list.Strings[i];
+                   if tmpstr <> '' then
+                     logdatei.AddToConfidentials(tmpstr);
+                 end;
+               end;
              End
    End
 
@@ -10859,7 +10878,9 @@ begin
       else
       begin
         if  GetNTVersionMajor >= 10 then
-          list.add ('ReleaseID=' + GetRegistrystringvalue('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion','ReleaseID',true))
+          if RegVarExists('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion','ReleaseID',true) then
+            list.add ('ReleaseID=' + GetRegistrystringvalue('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion','ReleaseID',true))
+          else list.add ('ReleaseID=1507')
         else list.add ('ReleaseID=');
         tmpint := OSGetProductInfoNum;
         list.add ('prodInfoNumber=' + IntToStr(tmpInt));
@@ -12067,22 +12088,38 @@ begin
      End;
  end
 
- else if LowerCase (s) = LowerCase ('Trim') then
+ else if LowerCase (s) = LowerCase ('asConfidential') then
  begin
+  // backup and set loglevel to warning
+  // get the input
+  // make it confidential
+  // give it to output
+  // restore loglevel
   if Skip ('(', r, r, InfoSyntaxError)
   then
-   if EvaluateString (r, r, s1, InfoSyntaxError)
-   then
-     if Skip (')', r,r, InfoSyntaxError)
+  begin
+   p1 := logdatei.LogLevel;
+   try
+     logdatei.LogLevel:= LLWarning;
+     if EvaluateString (r, r, s1, InfoSyntaxError)
      then
-     Begin
-         syntaxCheck := true;
-         StringResult := getFixedUtf8String(s1);
-     End;
+     begin
+       if Skip (')', r,r, InfoSyntaxError)
+       then
+       Begin
+           syntaxCheck := true;
+           logdatei.AddToConfidentials(s1);
+           StringResult := s1;
+       End;
+     end;
+   finally
+     logdatei.LogLevel:= p1;
+   end;
+  end;
  end
 
 
-  else if LowerCase (s) = LowerCase ('calculate') then
+ else if LowerCase (s) = LowerCase ('calculate') then
  begin
   syntaxCheck := false;
   if Skip ('(', r, r, InfoSyntaxError)
@@ -14627,6 +14664,7 @@ var
   i : integer;
   tmpint : integer;
   tmpbool : boolean;
+  tmpstr : string;
   FindResultcode: integer = 0;
   flushhandle : Thandle;
   int64result : Int64;
@@ -15268,9 +15306,7 @@ begin
        syntaxCheck := true;
        try
           s1 := ExpandFileName(s1);
-          //list1.SaveToFile(s1, 'system');
           BooleanResult := list1.FuncSaveToFile(s1,s2);
-          //BooleanResult := true;
        except
          logdatei.log('Error: Could not write list to filename: '+s1,LLError);
        end;
@@ -15299,9 +15335,7 @@ begin
        syntaxCheck := true;
        try
           s1 := ExpandFileName(s1);
-          //list1.SaveToFile(s1, 'system');
           BooleanResult := list1.FuncSaveToFile(s1);
-          //BooleanResult := true;
        except
          logdatei.log('Error: Could not write list to filename: '+s1,LLError);
        end;
@@ -15679,6 +15713,48 @@ end
       end
     end;
  end
+
+ else if Skip ('RegKeyExists', Input, r, InfoSyntaxError)
+ then
+ begin
+    if Skip ('(', r, r, InfoSyntaxError)
+    then if EvaluateString (r, tmpstr, s1, InfoSyntaxError)
+    // next after , or )
+    then GetWord(r,s2,r,WordDelimiterSet6);
+    if s2 = '' then
+    begin
+      // only one parameter
+      if Skip (')', tmpstr, r, InfoSyntaxError) then
+      Begin
+        syntaxCheck := true;
+        try
+          BooleanResult := RegKeyExists(s1,true);
+        except
+          BooleanResult := false;
+        end
+      end;
+    end
+    else
+    begin
+      if Skip (')', r, r, InfoSyntaxError) then
+      Begin
+        syntaxCheck := true;
+        try
+          tmpbool := true;
+          if lowercase(s2) = '32bit' then tmpbool := false
+          else if lowercase(s2) = '64bit' then tmpbool := true
+          else if lowercase(s2) = 'sysnative' then tmpbool := true
+          else Logdatei.log('Error: unknown modifier: '+s2+' expected one of 32bit,64bit,sysnative - fall back to sysnative',LLError);
+          BooleanResult := RegKeyExists(s1,tmpbool);
+        except
+          BooleanResult := false;
+        end
+      end;
+    end;
+ end
+
+
+
  {$ENDIF WINDOWS}
 
  else if (Skip ('ErrorsOccuredSinceMark ', Input, r, sx) or Skip ('ErrorsOccurredSinceMark ', Input, r, sx))
@@ -19639,7 +19715,7 @@ begin
                      except
                         on e: Exception do
                         begin
-                          LogDatei.log('Exception in doAktionen: tsDefineFunction: endfunction: ' +
+                          LogDatei.log('Exception in doAktionen: tsDefineFunction: tmplist: ' +
                             e.message, LLError);
                           //raise e;
                         end;
@@ -19652,7 +19728,7 @@ begin
                          // get next line of section
                          inc(i); // inc line counter
                          inc(FaktScriptLineNumber); // inc line counter that ignores the execution of defined functions
-                         if (i <= Sektion.Count) then
+                         if (i <= Sektion.Count-1) then
                          begin
                            Remaining := trim (Sektion.strings [i-1]);
                            myline := remaining;
@@ -19667,7 +19743,7 @@ begin
                              LogDatei.log_prog('inDefFunc: '+inttostr(inDefFunc)+' add line: '+myline,LLDebug3);
                            end;
                          end;
-                       until (inDefFunc <= 0) or (i >= Sektion.Count - 1);
+                       until (inDefFunc <= 0) or (i >= Sektion.Count - 2);
                      except
                         on e: Exception do
                         begin
@@ -19858,20 +19934,20 @@ begin
       depotdrive := depotdrive_bak;
       depotdir :=  depotdir_bak;
     end;
-    LogDatei.force_min_loglevel:=osconf.force_min_loglevel;
-    LogDatei.debug_prog:=osconf.debug_prog;
-    LogDatei.LogLevel:=osconf.default_loglevel;
-    LogDatei.debug_lib:= osconf.debug_lib;
-    logDatei.log_prog('force_min_loglevel: '+inttostr(osconf.force_min_loglevel),LLessential);
-    logDatei.log_prog('default_loglevel: '+inttostr(osconf.default_loglevel),LLessential);
-    logDatei.log_prog('debug_prog: '+BoolToStr(osconf.debug_prog,true),LLessential);
-    logDatei.log_prog('debug_lib: '+booltostr(osconf.debug_lib,true),LLessential);
-    logDatei.log_prog('ScriptErrorMessages: '+BoolToStr(osconf.ScriptErrorMessages,true),LLessential);
-    logDatei.log_prog('AutoActivityDisplay: '+booltostr(osconf.AutoActivityDisplay,true),LLessential);
-
-    LogDatei.log('Using new Depot path:  ' + depotdrive + depotdir, LLinfo);
-  end
-  else LogDatei.log('Using old Depot path:  ' + depotdrive + depotdir, LLinfo);
+  end;
+  LogDatei.force_min_loglevel:=osconf.force_min_loglevel;
+  LogDatei.debug_prog:=osconf.debug_prog;
+  LogDatei.LogLevel:=osconf.default_loglevel;
+  LogDatei.debug_lib:= osconf.debug_lib;
+  logDatei.log_prog('force_min_loglevel: '+inttostr(osconf.force_min_loglevel),LLessential);
+  logDatei.log_prog('default_loglevel: '+inttostr(osconf.default_loglevel),LLessential);
+  logDatei.log_prog('debug_prog: '+BoolToStr(osconf.debug_prog,true),LLessential);
+  logDatei.log_prog('debug_lib: '+booltostr(osconf.debug_lib,true),LLessential);
+  logDatei.log_prog('ScriptErrorMessages: '+BoolToStr(osconf.ScriptErrorMessages,true),LLessential);
+  logDatei.log_prog('AutoActivityDisplay: '+booltostr(osconf.AutoActivityDisplay,true),LLessential);
+  LogDatei.log('Using new Depot path:  ' + depotdrive + depotdir, LLinfo);
+//  end
+//  else LogDatei.log('Using old Depot path:  ' + depotdrive + depotdir, LLinfo);
 
   Script := TuibInstScript.Create;
   script.aktScriptLineNumber:=0;
@@ -20015,7 +20091,8 @@ begin
     tmpstr :=  tmpstr+' 64 Bit'
   else tmpstr :=  tmpstr+' 32 Bit';
   // we have no ReleaseId before Win10
-  if StrToInt(GetSystemOSVersionInfoEx('major_version')) >= 10 then
+  if (StrToInt(GetSystemOSVersionInfoEx('major_version')) >= 10)
+    and RegVarExists('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion','ReleaseID',true) then
   begin
     tmpstr :=  tmpstr+', Release: '+GetRegistrystringvalue('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion','ReleaseID',true);
   end;

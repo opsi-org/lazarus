@@ -12,11 +12,22 @@ opsi-winst/opsi-script (4.12.0.16) stable; urgency=low
   * switch HighDPI awareness on (8.1+, per monitor)
   * osparser: reportError: more info on defined functions at syntax error
   * osfunc: getsectionlines: include leading comments and empty lines
-  * osdefinedfunctions, osparser: allow defined functions with no parameters
+  * osdefinedfunctions, osparser: allow defined functions with no parameters; fixes #3182
   * osdefinedfunctions, osparser: allow defined functions with data  type void
   * oslog: fixed check for library logging
   * activate normal debug_lib again (see 4.12.0.13 temporary always true)
   * osparser: doAktionen: tsDefineFunction: try-excepts
+  * osparser: reread opsi.conf parameters for every script; fixes #3337
+  * osparser: splitstring: if string is confidential all parts are confidential as well; fixes #3186
+  * osparser: splitStringOnWhiteSpace: if string is confidential all parts are confidential as well; fixes #3186
+  * osfunc: FSaveToFile new param raise_on_error ; fixes #3253
+  * new string function asConfidential:
+     1. backup and set loglevel to warning |2 get the input | 3 make it confidential
+      | 4 give it to output |5 restore loglevel           #3441
+  * found undocumented string function lower(<str>); fixes #3283
+  * new boolean function RegKeyExists   ; fixes #3078
+  * new boolean function RegVarExists
+  * no warning for not existing releaseid  ; fixes #2595
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 14 Mar 2018:15:00:00 +0200
 
