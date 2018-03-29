@@ -40,8 +40,8 @@ The opsi script binaries to execute opsiscript files
 # ===[ install ]==================================== 
 %install
 
-cp opsi-script/opsi-script		$RPM_BUILD_ROOT/usr/bin/opsi-script
-cp opsi-script/opsi-script-nogui	$RPM_BUILD_ROOT/usr/bin/opsi-script-nogui
+cp opsi-script		$RPM_BUILD_ROOT/usr/bin/opsi-script
+cp opsi-script-nogui	$RPM_BUILD_ROOT/usr/bin/opsi-script-nogui
 
 # ===[ clean ]======================================
 %clean
