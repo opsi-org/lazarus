@@ -1,5 +1,11 @@
+opsi-script (4.12.0.14-2) experimental; urgency=medium
+
+  * corrected spec file 
+
+ -- Mathias Radtke <m.radtke@uib.de>  Thu, 29 Mar 2018 16:04:50 +0200
+
 opsi-script (4.12.0.14-1) experimental; urgency=low
 
   * Initial release
 
- -- Mathias Radtke <m.radtke@uib.de> Wed 28 Mar 2018 14:17:30 +0200
+ -- Mathias Radtke <m.radtke@uib.de>  Wed, 28 Mar 2018 14:17:30 +0200

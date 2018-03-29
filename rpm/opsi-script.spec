@@ -6,7 +6,6 @@
 #
 
 Name:           opsi-script
-Requires:       
 Url:            http://www.opsi.org
 License:        AGPLv3+
 Group:          Productivity/Networking/Opsi
