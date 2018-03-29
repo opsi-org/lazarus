@@ -1,5 +1,12 @@
 [changelog]
 
+ opsiscriptstarter 4.1.0.0
+
+* fallback to smb1 if mount cifs fails
+
+-- d.oertel <d.oertel@uib.de> Mon, 05 Mar 2018 15:00
+
+
 opsiscriptstarter 4.0.7.2
 
 * fixes for new git directory structure

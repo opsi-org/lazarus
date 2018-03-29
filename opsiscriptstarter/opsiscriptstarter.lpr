@@ -210,7 +210,7 @@ begin
   end;
 end;
 
-function mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass: string) : integer;
+function mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass, myoption: string) : integer;
 var
   cmd, report: string;
   outlines: TStringlist;
@@ -226,9 +226,9 @@ begin
     LogDatei.log('Error: could not create moutpoint: '+mymountpoint, LLError);
   end;
   if mydomain = '' then
-    cmd := '/bin/bash -c "/sbin/mount.cifs ' + myshare+' '+mymountpoint+' -o ro,noperm,user='+myuser+',pass='+mypass+'"'
+    cmd := '/bin/bash -c "/sbin/mount.cifs ' + myshare+' '+mymountpoint+' -o '+myoption+'ro,noperm,user='+myuser+',pass='+mypass+'"'
   else
-    cmd := '/bin/bash -c "/sbin/mount.cifs ' + myshare+' '+mymountpoint+' -o ro,noperm,user='+myuser+',dom='+mydomain+',pass='+mypass+'"';
+    cmd := '/bin/bash -c "/sbin/mount.cifs ' + myshare+' '+mymountpoint+' -o '+myoption+'ro,noperm,user='+myuser+',dom='+mydomain+',pass='+mypass+'"';
   LogDatei.DependentAdd('calling: '+cmd,LLNotice);
   if not RunCommandAndCaptureOut(cmd, True, outlines, report,
     SW_HIDE, ExitCode) then
@@ -677,22 +677,22 @@ begin
       writeln('myshare=',myshare);
       umount(mymountpoint);
       logdatei.AddToConfidentials(mypass);
-      errorcode := mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass);
+      errorcode := mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass,'');
       if errorcode <> 0 then
       begin
         LogDatei.log('Failed to mount '+myshare+' to '+mymountpoint+' Error code: '+inttostr(errorcode)+' - retry ...',LLWarning);
         sleep(2000);
-        errorcode := mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass);
+        errorcode := mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass,'');
         if errorcode <> 0 then
         begin
           LogDatei.log('Failed to mount '+myshare+' to '+mymountpoint+' Error code: '+inttostr(errorcode)+' - retry ...',LLWarning);
           sleep(2000);
-          errorcode := mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass);
+          errorcode := mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass,' vers=1.0,');
           if errorcode <> 0 then
           begin
             LogDatei.log('Failed to mount '+myshare+' to '+mymountpoint+' Error code: '+inttostr(errorcode)+' - retry ...',LLWarning);
             sleep(2000);
-            errorcode := mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass);
+            errorcode := mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass,' vers=1.0,');
             if errorcode <> 0 then
             begin
               LogDatei.log('Failed to mount '+myshare+' to '+mymountpoint+' Error code: '+inttostr(errorcode)+' - abort!',LLCritical);
