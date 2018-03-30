@@ -243,7 +243,7 @@ begin
       //    iconlength := 20;
       BtnArray[i].Width :=
         round(length(QueryUserButtons.FieldByName('event').AsString) *
-        4.8 + 14 + iconlength);
+        5.3 + 14 + iconlength);
       buttonwidth := buttonwidth + BtnArray[i].Width;
       BtnArray[i].OnClick := BtnArrayClick;
       BtnArray[i].GroupIndex := 1;

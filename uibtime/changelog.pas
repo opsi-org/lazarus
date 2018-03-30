@@ -1,4 +1,12 @@
 (*
+uibtime (4.1.1.31-1) stable; urgency=low
+
+ * ontop: rebuilForm: button wide factor increased from 4.8. to 5.2
+ * ontop: timertryicon Linux: use of libnotify
+
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 30 Mar 2018 15:00:00 +0000
+
 uibtime (4.1.1.30-1) stable; urgency=low
 
  * ontop: call rebuildform from the end of formshow

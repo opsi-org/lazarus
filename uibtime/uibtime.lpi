@@ -25,7 +25,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="30"/>
+      <BuildNr Value="31"/>
       <Language Value="0407"/>
       <StringTable Comments="lazarus 1.8.2 fpc 3.0.4" CompanyName="uib gmbh" InternalName="uibtime.exe" LegalCopyright="GPL v3" ProductName="uibtime" ProductVersion="4.0.0"/>
     </VersionInfo>
@@ -89,7 +89,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\external_libraries\powerpdf;..\lazlib\lazreport\source\addons\pdfexport"/>
+            <OtherUnitFiles Value="..\external_libraries\powerpdf;..\lazlib\lazreport\source\addons\pdfexport;..\common"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
