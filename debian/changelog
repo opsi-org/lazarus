@@ -1,6 +1,7 @@
 opsi-script (4.12.0.14-6) experimental; urgency=medium
 
   * spec: corrected lintian error on summary
+  * spec. removed debug_package flag
 
  -- Mathias Radtke <m.radtke@uib.de>  Tue, 03 Apr 2018 10:43:34 +0200
 
