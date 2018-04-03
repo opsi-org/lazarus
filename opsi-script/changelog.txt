@@ -24,10 +24,13 @@ opsi-winst/opsi-script (4.12.0.16) stable; urgency=low
   * new string function asConfidential:
      1. backup and set loglevel to warning |2 get the input | 3 make it confidential
       | 4 give it to output |5 restore loglevel           #3441
-  * found undocumented string function lower(<str>); fixes #3283
-  * new boolean function RegKeyExists   ; fixes #3078
-  * new boolean function RegVarExists
+  * found undocumented string function upper(<str>); fixes #3283
+  * new boolean function RegKeyExists(<keystr> [,<access str>])
+      <access str> = one of 32bit, 64bit, sysnative ; default sysnative   ; fixes #3078
+  * new boolean function RegVarExists(<keystr> [,<access str>])
   * no warning for not existing releaseid  ; fixes #2595
+  * new boolean function isConfidential(<str>)  for testing
+  * initvars in CreateAndProcessScript ; hopefully fixes errors on restart modified scripts
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 14 Mar 2018:15:00:00 +0200
 
@@ -63,7 +66,7 @@ opsi-winst/opsi-script (4.12.0.13) stable; urgency=low
   * osparser / osdefinedfunctions: call from a local function an other local function
       using a local variable as call by value parameter
   * osparser: more fixes for nestinglevel (if then else through localfunctions and sub)
-  * new booealn function: runningInPE (osparser,osfunc,osfuncwin) (at linux always false)
+  * new boolean function: runningInPE (osparser,osfunc,osfuncwin) (at linux always false)
   * osdefinedfunctions: fixes on parsing paramtype
   * osparser: Ifelseendiflevel : longint = 0; // global nestlevel store
      used to pass nestlevel to evaluatestring and producestringlist  --> local functions

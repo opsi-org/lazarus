@@ -21,7 +21,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
-      <BuildNr Value="15"/>
+      <BuildNr Value="16"/>
       <StringTable Comments="Compiled with Lazarus 1.6.4 / FPC 3.0.2" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst64.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst64.exe" ProductName="opsi-script" ProductVersion="4.0.7"/>
     </VersionInfo>
     <BuildModes Count="4" Active="Release">
@@ -194,7 +194,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="79">
+    <Units Count="80">
       <Unit0>
         <Filename Value="winst64.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -464,7 +464,7 @@
         <Filename Value="changelog.txt"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <CursorPos X="71" Y="13"/>
+        <CursorPos X="26" Y="16"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -600,15 +600,15 @@
       <Unit44>
         <Filename Value="osparser.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="10"/>
-        <TopLine Value="10157"/>
-        <CursorPos X="26" Y="10164"/>
+        <IsVisibleTab Value="True"/>
+        <WindowIndex Value="1"/>
+        <TopLine Value="10373"/>
+        <CursorPos X="59" Y="10394"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <IsVisibleTab Value="True"/>
-          <WindowIndex Value="1"/>
-          <TopLine Value="10373"/>
-          <CursorPos X="59" Y="10394"/>
+          <EditorIndex Value="10"/>
+          <TopLine Value="10157"/>
+          <CursorPos X="26" Y="10164"/>
         </ExtraEditor1>
         <UsageCount Value="209"/>
         <Loaded Value="True"/>
@@ -895,6 +895,16 @@
         <UsageCount Value="68"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit78>
+      <Unit79>
+        <Filename Value="osswaudit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="20"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit79>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>

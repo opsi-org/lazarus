@@ -14664,7 +14664,7 @@ var
   i : integer;
   tmpint : integer;
   tmpbool : boolean;
-  tmpstr : string;
+  tmpstr,tmpstr1,tmpstr2,tmpstr3 : string;
   FindResultcode: integer = 0;
   flushhandle : Thandle;
   int64result : Int64;
@@ -15364,6 +15364,24 @@ begin
     end;
  end
 
+ else if Skip ('isConfidential', Input, r, InfoSyntaxError)
+ then
+ begin
+    if Skip ('(', r, r, InfoSyntaxError)
+    then if EvaluateString (r, r, s1, InfoSyntaxError)
+    then if Skip (')', r, r, InfoSyntaxError)
+    then
+    Begin
+      syntaxCheck := true;
+      try
+        BooleanResult := logdatei.isConfidential(s1);
+      except
+        BooleanResult := false;
+      end
+    end;
+ end
+
+
  else if Skip ('isValidUtf8String', Input, r, InfoSyntaxError)
  then
  begin
@@ -15717,10 +15735,14 @@ end
  else if Skip ('RegKeyExists', Input, r, InfoSyntaxError)
  then
  begin
+    s2 := '';
+    tmpstr2 := '';
     if Skip ('(', r, r, InfoSyntaxError)
     then if EvaluateString (r, tmpstr, s1, InfoSyntaxError)
     // next after , or )
-    then GetWord(r,s2,r,WordDelimiterSet6);
+    //then GetWord(tmpstr,s2,r,WordDelimiterSet6);
+    then if Skip (',', tmpstr, tmpstr1, tmpstr3) then
+      if EvaluateString (tmpstr1, tmpstr2, s2, tmpstr3) then;
     if s2 = '' then
     begin
       // only one parameter
@@ -15736,7 +15758,7 @@ end
     end
     else
     begin
-      if Skip (')', r, r, InfoSyntaxError) then
+      if Skip (')', tmpstr2, r, InfoSyntaxError) then
       Begin
         syntaxCheck := true;
         try
@@ -15753,6 +15775,50 @@ end
     end;
  end
 
+ else if Skip ('RegVarExists', Input, r, InfoSyntaxError)
+ then
+ begin
+    s2 := '';
+    tmpstr2 := '';
+    if Skip ('(', r, r, InfoSyntaxError)
+    then if EvaluateString (r, r, s1, InfoSyntaxError)
+    then if Skip (',', r, r, InfoSyntaxError)
+    then if EvaluateString (r, tmpstr, s2, InfoSyntaxError)
+    // next after , or )
+    //then GetWord(tmpstr,s2,r,WordDelimiterSet6);
+    then if Skip (',', tmpstr, tmpstr1, tmpstr3) then
+      if EvaluateString (tmpstr1, tmpstr2, s3, tmpstr3) then;
+    if s3 = '' then
+    begin
+      // only one parameter
+      if Skip (')', tmpstr, r, InfoSyntaxError) then
+      Begin
+        syntaxCheck := true;
+        try
+          BooleanResult := RegVarExists(s1,s2,true);
+        except
+          BooleanResult := false;
+        end
+      end;
+    end
+    else
+    begin
+      if Skip (')', tmpstr2, r, InfoSyntaxError) then
+      Begin
+        syntaxCheck := true;
+        try
+          tmpbool := true;
+          if lowercase(s3) = '32bit' then tmpbool := false
+          else if lowercase(s3) = '64bit' then tmpbool := true
+          else if lowercase(s3) = 'sysnative' then tmpbool := true
+          else Logdatei.log('Error: unknown modifier: '+s3+' expected one of 32bit,64bit,sysnative - fall back to sysnative',LLError);
+          BooleanResult := RegVarExists(s1,s2,tmpbool);
+        except
+          BooleanResult := false;
+        end
+      end;
+    end;
+ end
 
 
  {$ENDIF WINDOWS}
@@ -19946,8 +20012,13 @@ begin
   logDatei.log_prog('ScriptErrorMessages: '+BoolToStr(osconf.ScriptErrorMessages,true),LLessential);
   logDatei.log_prog('AutoActivityDisplay: '+booltostr(osconf.AutoActivityDisplay,true),LLessential);
   LogDatei.log('Using new Depot path:  ' + depotdrive + depotdir, LLinfo);
-//  end
-//  else LogDatei.log('Using old Depot path:  ' + depotdrive + depotdir, LLinfo);
+  // init vars
+  inDefFuncLevel := 0;
+  inDefFuncIndex := -1;
+  Ifelseendiflevel := 0;
+  inDefinedFuncNestCounter := 0;
+  definedFunctioncounter := 0;
+
 
   Script := TuibInstScript.Create;
   script.aktScriptLineNumber:=0;
