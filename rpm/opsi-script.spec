@@ -11,10 +11,10 @@ License:        AGPLv3+
 Group:          Productivity/Networking/Opsi
 AutoReqProv:    on
 Version:        4.12.0.14
-Release:        1
+Release:        2
 Summary:        opsi script
 %define tarname opsi-script
-Source:         opsi-script_4.12.0.14-1.tar.gz
+Source:         opsi-script_4.12.0.14-2.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildArch:      noarch
 

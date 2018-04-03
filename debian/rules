@@ -16,12 +16,6 @@
 # This has to be exported to make some magic below work.
 export DH_OPTIONS
 
-override_dh_install:
-	install -m 0644 opsi-script ${DESTDIR}/usr/bin/opsi-script
-	install -m 0644 opsi-script-nogui ${DESTDIR}/usr/bin/opsi-script-nogui
-	dh_install
-
-
 %:
 	dh $@
 
