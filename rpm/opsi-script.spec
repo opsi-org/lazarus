@@ -39,8 +39,8 @@ The opsi script binaries to execute opsiscript files
 # ===[ install ]==================================== 
 %install
 
-cp opsi-script		$RPM_BUILD_ROOT/usr/bin/opsi-script
-cp opsi-script-nogui	$RPM_BUILD_ROOT/usr/bin/opsi-script-nogui
+cp -a opsi-script	$RPM_BUILD_ROOT/usr/bin/opsi-script
+cp -a opsi-script-nogui	$RPM_BUILD_ROOT/usr/bin/opsi-script-nogui
 
 # ===[ clean ]======================================
 %clean
@@ -54,9 +54,12 @@ rm -rf $RPM_BUILD_ROOT
 
 # ===[ files ]======================================
 %files
-# default attributes
-%defattr(-,opsiconfd,root)
 
+# default attributes
+%defattr(-,root,root)
+
+/usr/bin/opsi-script
+/usr/bin/opsi-script-nogui
 # documentation
 #%doc LICENSE README RELNOTES doc
 
