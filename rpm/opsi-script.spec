@@ -12,7 +12,7 @@ Group:          Productivity/Networking/Opsi
 AutoReqProv:    on
 Version:        4.12.0.14
 Release:        2
-Summary:        opsi script
+Summary:        Opsi script
 %define tarname opsi-script
 Source:         opsi-script_4.12.0.14-2.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
