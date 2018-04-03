@@ -24,9 +24,6 @@ BuildArch:      x86_64
 %description
 The opsi script binaries to execute opsiscript files
 
-# ===[ debug_package ]==============================
-%debug_package
-
 # ===[ prep ]=======================================
 %prep
 
