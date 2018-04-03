@@ -39,6 +39,7 @@ The opsi script binaries to execute opsiscript files
 # ===[ install ]==================================== 
 %install
 
+mkdir -p $RPM_BUILD_ROOT/usr/bin
 cp -a opsi-script	$RPM_BUILD_ROOT/usr/bin/opsi-script
 cp -a opsi-script-nogui	$RPM_BUILD_ROOT/usr/bin/opsi-script-nogui
 

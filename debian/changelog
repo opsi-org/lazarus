@@ -1,3 +1,9 @@
+opsi-script (4.12.0.14-4) experimental; urgency=medium
+
+  * spec: creating /usr/bin
+
+ -- Mathias Radtke <m.radtke@uib.de>  Tue, 03 Apr 2018 10:20:04 +0200
+
 opsi-script (4.12.0.14-3) experimental; urgency=medium
 
   * corrected file installation
