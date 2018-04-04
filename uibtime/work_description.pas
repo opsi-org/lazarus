@@ -40,6 +40,7 @@ type
     procedure EditButtonDateButtonClick(Sender: TObject);
     procedure EditButtonDateChange(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure FormHide(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure SQwork_descriptionAfterInsert(DataSet: TDataSet);
     procedure BitBtn1Click(Sender: TObject);
@@ -118,6 +119,11 @@ begin
     Loadresults4date;
   end;
   //FormStyle:=fsNormal;
+end;
+
+procedure Tfwork_description.FormHide(Sender: TObject);
+begin
+  Datamodule1.TimerOnTop.Enabled := true;
 end;
 
 

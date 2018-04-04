@@ -70,6 +70,7 @@ var
  datefound : boolean;
  foundstarttime  : TDatetime;
  weekday : byte;
+ mynewline : string;
 begin
  try
  FOnTop.ineditmode:=true;
@@ -112,8 +113,10 @@ begin
     // Überlappung   > 1 min
     if ((laststopt - startt) >  (1/(24*60))) then
     begin
-     richmemo1.lines.add('Achtung Überlappung zw. : '
-       +DateTimeToStr(laststartt)+' und '+DateTimeToStr(startt)+' bei '+uname);
+     mynewline := 'Achtung Überlappung zw. : '
+       +DateTimeToStr(laststartt)+' und '+DateTimeToStr(startt)+' bei '+uname;
+     richmemo1.lines.add(mynewline);
+     richmemo1.SetRangeColor(Length(richmemo1.Lines.Text) - Length(mynewline)-2,Length(mynewline)+1,  clRed);
      datamodule1.debugOut(5,'logoff.checkDB','Achtung Überlappung zw. : '
        +DateTimeToStr(laststartt)+' und '+DateTimeToStr(startt)+' bei '+uname);
     end;
@@ -124,9 +127,11 @@ begin
     if ((startt - laststopt) >  (1/(24*60)))
         and (trunc(startt) = trunc(laststopt)) then
     begin
-     richmemo1.lines.add('Loch zw. : '
+     mynewline := 'Loch zw. : '
       +DateTimeToStr(laststopt)+' und '+DateTimeToStr(startt)
-      +' Dauer: '+TimeToStr(startt - laststopt)+' bei '+uname);
+      +' Dauer: '+TimeToStr(startt - laststopt)+' bei '+uname;
+     richmemo1.lines.add(mynewline);
+     richmemo1.SetRangeColor(Length(richmemo1.Lines.Text) - Length(mynewline)-2,Length(mynewline)+1,  clRed);
      datamodule1.debugOut(5,'logoff.checkDB','Loch zw. : '
       +DateTimeToStr(laststopt)+' und '+DateTimeToStr(startt)
       +' Dauer: '+TimeToStr(startt - laststopt)+' bei '+uname);
@@ -184,7 +189,7 @@ begin
  query1.sql.Add(' (reportrequired = 1)');
  //query1.sql.Add(' (not (time_h = null))');
  query1.open;
- decodeDate(laststartt, year, month, day);
+ //decodeDate(begintime, year, month, day);
  query2.sql.Clear;
  query2.sql.Add('select * from UIB_WORK_DESCRIPTION where ');
  query2.sql.Add('(jahr >= :year) and ');
@@ -192,11 +197,13 @@ begin
  query2.sql.Add('(tag >= :day) and ');
  query2.sql.Add('(userid = :uid) and ');
  query2.sql.Add('(not (description = ""))  ');
+ (*
  query2.ParamByName('year').AsInteger := year;
  query2.ParamByName('month').AsInteger := month;
  query2.ParamByName('day').AsInteger := day;
  query2.ParamByName('uid').AsString := uid;
  query2.open;
+ *)
 
  while not Datamodule1.SQuibevent.eof do
  begin
@@ -204,6 +211,12 @@ begin
   startt := Datamodule1.SQuibevent.fieldbyname('starttime').asdatetime;
   event := Datamodule1.SQuibevent.fieldbyname('event').asString;
   decodeDate(startt, year, month, day);
+  if query2.Active then query2.Close;
+   query2.ParamByName('year').AsInteger := year;
+   query2.ParamByName('month').AsInteger := month;
+   query2.ParamByName('day').AsInteger := day;
+   query2.ParamByName('uid').AsString := uid;
+   query2.open;
   if  query1.Locate('event',event,[loCaseInsensitive]) then
   begin
    // needs report
@@ -213,9 +226,11 @@ begin
       // report found
       with RichMemo1 do
       begin
-        lines.add('..............Report gefunden : ' + uname + ' -> '+DateTimeToStr(startt)+' : '+event);
-        SetRangeColor(Length(Lines.Text) - Length(Lines[Lines.Count - 1])
-                         - Lines.Count - 1, Length(Lines[Lines.Count - 1]), clGreen);
+        mynewline := '..............Report gefunden : ' + uname + ' -> '+DateTimeToStr(startt)+' : '+event;
+        lines.add(mynewline);
+        SetRangeColor(Length(Lines.Text) - Length(mynewline)-2,Length(mynewline)+1,  clGreen);
+        //SetRangeColor(Length(Lines.Text) - Length(Lines[Lines.Count - 1])
+        //                 - Lines.Count - 1, Length(Lines[Lines.Count - 1]), clGreen);
       end;
     end
     else
@@ -223,9 +238,14 @@ begin
       // no report found
       with RichMemo1 do
       begin
-        lines.add('#*#*#*#*#  -> Report fehlt : ' + uname + ' -> '+DateTimeToStr(startt)+' : '+event);
+        mynewline := '#*#*#*#*#  -> Report fehlt : ' + uname + ' -> '+DateTimeToStr(startt)+' : '+event;
+        lines.add(mynewline);
+        SetRangeColor(Length(Lines.Text) - Length(mynewline)-2,Length(mynewline)+1,  clRed);
+        (*
+        lines.add();
         SetRangeColor(Length(Lines.Text) - Length(Lines[Lines.Count - 1])
                          - Lines.Count - 1, Length(Lines[Lines.Count - 1]), clRed);
+        *)
       end;
     end;
   end;
@@ -268,11 +288,14 @@ begin
        with RichMemo1 do
        begin
          if Datamodule1.dateIsHolyday(aktdate) then
-          lines.add('Kein Eintrag für Feiertag :   ' +lazDayofWeekbyteToDayOfWeekGerStr(weekday) + ' - '+DateTimeToStr(aktdate))
+          mynewline := 'Kein Eintrag für Feiertag :   ' +lazDayofWeekbyteToDayOfWeekGerStr(weekday) + ' - '+DateTimeToStr(aktdate)
          else
-           lines.add('Kein Eintrag für Arbeitstag : ' +lazDayofWeekbyteToDayOfWeekGerStr(weekday) + ' - '+DateTimeToStr(aktdate));
-         SetRangeColor(Length(Lines.Text) - Length(Lines[Lines.Count - 1])
-                         - Lines.Count - 1, Length(Lines[Lines.Count - 1]), clRed);
+           mynewline := 'Kein Eintrag für Arbeitstag : ' +lazDayofWeekbyteToDayOfWeekGerStr(weekday) + ' - '+DateTimeToStr(aktdate);
+         lines.add(mynewline);
+         SetRangeColor(Length(Lines.Text) - Length(mynewline),Length(mynewline)+1,  clRed);
+
+         //SetRangeColor(Length(Lines.Text) - Length(Lines[Lines.Count - 1])
+         //                - Lines.Count - 1, Length(Lines[Lines.Count - 1]), clRed);
        end;
      end;
    end;

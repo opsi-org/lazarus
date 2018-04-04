@@ -28,14 +28,14 @@ object FDataedit: TFDataedit
     OnEnter = PageControl1Enter
     object TabSheet1: TTabSheet
       Caption = 'Events'
-      ClientHeight = 349
-      ClientWidth = 806
+      ClientHeight = 354
+      ClientWidth = 812
       OnShow = TabSheet1Show
       object ToolBar1: TToolBar
         Left = 0
         Height = 29
         Top = 0
-        Width = 806
+        Width = 812
         Caption = 'ToolBar1'
         TabOrder = 0
         object DBNavigator1: TDBNavigator
@@ -60,7 +60,7 @@ object FDataedit: TFDataedit
           Left = 241
           Height = 22
           Top = 2
-          Width = 145
+          Width = 199
           Caption = 'Mehre Tage eintragen'
           Glyph.Data = {
             76010000424D7601000000000000760000002800000020000000100000000100
@@ -81,10 +81,10 @@ object FDataedit: TFDataedit
           TabOrder = 2
         end
         object BitBtn2: TBitBtn
-          Left = 386
+          Left = 440
           Height = 22
           Top = 2
-          Width = 113
+          Width = 146
           Caption = 'Verlassen'
           Kind = bkCancel
           OnClick = BitBtn2Click
@@ -93,9 +93,9 @@ object FDataedit: TFDataedit
       end
       object DBGrid1: TDBGrid
         Left = 0
-        Height = 320
+        Height = 325
         Top = 29
-        Width = 806
+        Width = 812
         Align = alClient
         Color = clWindow
         Columns = <        
@@ -479,7 +479,7 @@ object FDataedit: TFDataedit
         Width = 145
         DataField = 'BUTTON'
         DataSource = DataModule1.DSuibuserevent
-        ItemHeight = 13
+        ItemHeight = 0
         Items.Strings = (
           '0'
           '1'
@@ -820,7 +820,7 @@ object FDataedit: TFDataedit
         Height = 21
         Top = 152
         Width = 170
-        ItemHeight = 13
+        ItemHeight = 0
         OnEnter = ComboBoxOldEventEnter
         TabOrder = 3
       end
@@ -887,7 +887,7 @@ object FDataedit: TFDataedit
         Height = 21
         Top = 288
         Width = 170
-        ItemHeight = 13
+        ItemHeight = 0
         OnEnter = ComboBoxOldAllEventEnter
         TabOrder = 6
       end

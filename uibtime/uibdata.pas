@@ -1322,7 +1322,7 @@ begin
   //stoptime := now+1;
   //stopt := now+1;
   missinglist.Clear;
-  missinglist.Add('uibtime Missing Reports:');
+  //missinglist.Add('uibtime Missing Reports:');
   if Datamodule1.TrayQuery3.Active then
     Datamodule1.TrayQuery3.Close;
   Datamodule1.TrayQuery3.sql.Clear;
@@ -1398,6 +1398,7 @@ procedure TDataModule1.TimerTrayIconTimer(Sender: TObject);
 var
   missinglist: TStringList;
   hello : PNotifyNotification;
+  exitcode : integer;
 begin
   debugOut(6, 'trayicon', 'start trytimer ');
   missinglist := TStringList.Create;
@@ -1405,14 +1406,15 @@ begin
   begin
     debugOut(6, 'trayicon', 'Report missing: ' + missinglist.Text);
     {$IFDEF WINDOWS}
-    TrayIcon1.BalloonHint := 'Report missing: ' + LineEnding + missinglist.Text;
+    TrayIcon1.BalloonHint := 'missing reports: ' + LineEnding + missinglist.Text;
     TrayIcon1.ShowBalloonHint;
     {$ENDIF WINDOWS}
     {$IFDEF LINUX}
+
     notify_init(argv[0]);
     hello := notify_notification_new(
       // Title
-      pchar('uibtime:'),
+      pchar('uibtime missing reports'),
       // Content
       pchar(missinglist.Text),
       // Icon
@@ -1421,10 +1423,15 @@ begin
     notify_notification_show(hello, nil);
     // That's all folks :)
     notify_uninit;
-  (*
+
+    (*
     try
-      ProcessTrayNotify.Parameters.AddStrings(missinglist);
+      ProcessTrayNotify.Parameters.Add('--icon="dialog-information"  "uibtime report missing:" '
+                                             + missinglist.Text);
       ProcessTrayNotify.Execute;
+      exitcode := ProcessTrayNotify.ExitCode;
+      if exitcode <> 0 then
+        debugOut(3,'trayicon', 'Exitcode starting notify-send: '+inttostr(exitcode));
     except
       debugOut(3,'trayicon', 'Exception starting notify-send ');
     end;
