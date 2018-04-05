@@ -11,6 +11,7 @@ uses
 {$IFDEF LINUX}
   //, winpeimagereader {need this for reading exe info}
   elfreader, {needed for reading ELF executables}
+  libnotify,
 {$ENDIF LINUX}
   {$IFDEF WINDOWS}
   winpeimagereader, {need this for reading exe info}
@@ -26,7 +27,6 @@ uses
   httpservice,
   uibtWorkRepChooser,
   uib2erp,
-  libnotify,
   Variants;
 
 type
@@ -1397,7 +1397,9 @@ end;
 procedure TDataModule1.TimerTrayIconTimer(Sender: TObject);
 var
   missinglist: TStringList;
+  {$IFDEF LINUX}
   hello : PNotifyNotification;
+  {$ENDIF LINUX}
   exitcode : integer;
 begin
   debugOut(6, 'trayicon', 'start trytimer ');
