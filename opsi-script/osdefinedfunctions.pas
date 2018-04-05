@@ -1014,12 +1014,14 @@ begin
        //                  DFResultBool := StrToBool(getLocalVarValueString('$result$'));
        //                end;
     end;
+    dec(inDefinedFuncNestCounter);
+    definedFunctionsCallStack.Delete(definedFunctionsCallStack.Count-1);
   end;
   // we leave a defined function
   // free the local Vars - leave params + $result$
   SetLength(DFLocalVarList,DFparamCount+1);
-  dec(inDefinedFuncNestCounter);
-  definedFunctionsCallStack.Delete(definedFunctionsCallStack.Count-1);
+
+
   DFActive:=false;
   dec(inDefFuncLevel);
   searchindex := definedFunctionsCallStack.Count-1;

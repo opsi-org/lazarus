@@ -211,6 +211,13 @@ Const
 
 type
 
+TSectionInfo = record
+    Sectionkind : TStatement;
+    StartLineNo    : Integer;
+    SectionName    : String;
+    SectionFile    : String;
+end;
+
 
 TWorkSection = class (TuibIniScript) // class (TXStringList)
   private
@@ -290,6 +297,8 @@ private
   FLinesOriginList : TStringList;
   FaktScriptLineNumber : int64;
   FEvalBoolBaseNestLevel : int64;
+  FSectionNameList : Tstringlist;   // hold section and function names with index of FSectionInfoArray
+  FSectionInfoArray : array of TSectionInfo; // holds for each section file and startline infos
 
 
   
@@ -606,6 +615,7 @@ var
   inDefFuncLevel : integer = 0;
   inDefFuncIndex : integer = -1; // index of the active defined function
   Ifelseendiflevel : longint = 0; // global nestlevel store (do 18.1.2018)
+
 
 
 
@@ -1253,8 +1263,8 @@ begin
   deffuncFound := false;
   GetWord (CompleteCall, funcname, r, WordDelimiterSet5);
   FuncIndex := definedFunctionNames.IndexOf (LowerCase (funcname));
-  if FuncIndex > 0 then
-    if definedFunctionArray[i1].datatype = dfpVoid then
+  if FuncIndex >= 0 then
+    if definedFunctionArray[FuncIndex].datatype = dfpVoid then
        deffuncFound := true;
  if deffuncFound then
   Begin
@@ -1705,9 +1715,13 @@ Begin
   FConstValuesList := TStringList.create;
   FLinesOriginList := TStringList.create;
   FLibList := TStringList.create;
+  FsectionNameList := TStringList.create;
+  FSectionInfoArray := Length(0);
 End;
 
 destructor TuibInstScript.destroy;
+var
+  counter : integer;
 begin
   FVarList.free; VarList := nil;
   FValuesList.free; ValuesList := nil;
@@ -1715,6 +1729,15 @@ begin
   FContentOfStringLists.free; ContentOfStringLists := nil;
   FLinesOriginList.free; FLinesOriginList := nil;
   FLibList.Free; FLibList := nil;
+  FsectionNameList.Free; FsectionNameList := nil;
+  counter := length(FSectionInfoArray);
+  if counter > 0 then
+    for i := 0 to counter - 1 do
+    begin
+      FSectionInfoArray[i] := nil;
+      FSectionInfoArray[i].Free;
+    end;
+  SetLength(FSectionInfoArray, 0);
 end;
 
 
@@ -1725,6 +1748,9 @@ procedure TuibInstScript.LoadValidLinesFromFile (FName : String; var Section : T
   s : String;
   i : Integer;
   Encoding2use,usedEncoding : string;
+  statkind : TStatement;
+  secname, remaining : string;
+  secindex : integer;
 begin
   Section.Clear;
   OriginalList := TXStringList.create;
@@ -1735,11 +1761,37 @@ begin
   logdatei.log('Loaded sub from: '+FName+' with encoding: '+usedEncoding,LLDebug);
   for i := 1 to OriginalList.count do
   Begin
-      s := cutLeftBlanks (OriginalList.Strings [i-1]);
+      s := trim(OriginalList.Strings [i-1]);
       (* if (s<>'') and  (s[1] <> LineIsCommentChar) then *)
         Section.Add (s);
         script.FLinesOriginList.Append(FName+' line: '+inttostr(i));
         script.FLibList.Append('false');
+        secname := opsiunquotestr2(s,'[]');
+        //if (pos('[',trim(s)) =1) and (pos(']',trim(s)) =length(trim(s))) then
+        if secname <> s then
+        begin
+          // we have a new section
+          secindex := Script.FSectionNameList.Add(secname);
+          if secindex <> length(script.FSectionInfoArray) then
+            LogDatei.log('Error: internal: secindex <> length(script.FSectionInfoArray)',LLCritical);
+          setlength(script.FSectionInfoArray, secindex+1);
+          script.FSectionInfoArray[secindex].SectionName:=secname;
+          script.FSectionInfoArray[secindex].SectionFile:=ExtractFileName(FName);
+          script.FSectionInfoArray[secindex].StartLineNo:=i;
+        end;
+        if pos('definefunc',lowercase(s)) = 1  then
+        begin
+          // we have a new function
+          secname := copy (s,pos('definefunc',lowercase(s)),
+          GetWord(secname, secname, remaining,WordDelimiterSet5);
+          secindex := Script.FSectionNameList.Add(secname);
+          if secindex <> length(script.FSectionInfoArray) then
+            LogDatei.log('Error: internal: secindex <> length(script.FSectionInfoArray)',LLCritical);
+          setlength(script.FSectionInfoArray, secindex+1);
+          script.FSectionInfoArray[secindex].SectionName:=secname;
+          script.FSectionInfoArray[secindex].SectionFile:=ExtractFileName(FName);
+          script.FSectionInfoArray[secindex].StartLineNo:=i;
+        end;
   End;
   OriginalList.free;
 End;
@@ -16655,7 +16707,9 @@ begin
    //writeln(actionresult);
     Remaining := trim (Sektion.strings [i-1]);
     //logdatei.log_prog('Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' Sektion.NestingLevel: '+IntToStr(Sektion.NestingLevel)+' condition: '+BoolToStr(conditions [ActLevel],true),LLDebug3);
-    if inDefFuncLevel = 0 then inc(FAktScriptLineNumber); // count only lines on base level
+    if inDefFuncLevel = 0          // count only lines on base level
+      and (lowercase(Sektion.Name) = 'actions')   // count only lines in actions
+      then inc(FAktScriptLineNumber);
     logdatei.log_prog('Script line: '+intToStr(i)+' / '+intToStr(FAktScriptLineNumber)+' : '+Remaining,LLDebug2);
     //writeln(remaining);
     //readln;
@@ -17401,7 +17455,7 @@ begin
                        end
                        else
                        begin
-                         if definedFunctionArray[FuncIndex].call(p1,p2,NestLevel) then
+                         if definedFunctionArray[FuncIndex].call(p2,p2,NestLevel) then
                          begin
                            syntaxCheck := true;
                          end
@@ -17712,8 +17766,10 @@ begin
                             Sektion.Insert(i-1+k,incline);
                             LogDatei.log_prog('Line included at pos: '+inttostr(i-1+k)+' to Sektion with '+inttostr(Sektion.Count)+' lines.',LLDebug3);
                             //LogDatei.log('Will Include add at pos '+inttostr(Sektion.StartLineNo + i-1+k)+'to FLinesOriginList with count: '+inttostr(script.FLinesOriginList.Count),LLDebug3);
-                            script.FLinesOriginList.Insert(Sektion.StartLineNo + i-1+k,incfilename+ ' Line: '+inttostr(k));
-                            script.FLibList.Insert(Sektion.StartLineNo + i-1+k,'false');
+                            //script.FLinesOriginList.Insert(Sektion.StartLineNo + i-1+k,incfilename+ ' Line: '+inttostr(k));
+                            //script.FLibList.Insert(Sektion.StartLineNo + i-1+k,'false');
+                            script.FLinesOriginList.Insert(i-1+k,incfilename+ ' Line: '+inttostr(k));
+                            script.FLibList.Insert(i-1+k,'false');
                             LogDatei.log_prog('Include added to FLinesOriginList.',LLDebug3);
                           end;
                           closeFile(incfile);
@@ -19764,7 +19820,15 @@ begin
                    begin
                      try
                        tmplist := TXStringlist.Create;
-                       s1 := FLinesOriginList.Strings[script.aktScriptLineNumber-1];
+                       if FLinesOriginList.Count < script.aktScriptLineNumber then
+                       begin
+                         s1 := FLinesOriginList.Strings[FLinesOriginList.Count-1];
+                         LogDatei.log('Error in doAktionen: tsDefineFunction: ' +
+                            ' OriginList: '+inttostr(FLinesOriginList.Count)+
+                            ' aktScriptLineNumber: '+inttostr(script.aktScriptLineNumber), LLError);
+                       end
+                       else
+                         s1 := FLinesOriginList.Strings[script.aktScriptLineNumber-1];
                        stringsplitByWhiteSpace(s1,tmplist);
                        //newDefinedfunction.OriginFile := ExtractFileName(tmplist[0]);
                        newDefinedfunction.OriginFile := tmplist[0];
@@ -20497,6 +20561,7 @@ begin
   //Script.ApplyTextConstants (TXStringList (Aktionsliste));
 
   try
+    // inital section
     if Aktionsliste.count > 0
     then
        weiter := Script.doAktionen (Aktionsliste, Aktionsliste)
@@ -20523,7 +20588,7 @@ begin
          weiter := tsrPositive;
     end;
 
-
+    // actions section
     if weiter > 0 then
     Begin
       Aktionsliste.clear;
