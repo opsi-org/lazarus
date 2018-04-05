@@ -12,10 +12,11 @@ object fwork_description: Tfwork_description
   Font.Name = 'MS Sans Serif'
   KeyPreview = True
   OnActivate = FormActivate
+  OnHide = FormHide
   OnShow = FormShow
   PopupMode = pmAuto
   Position = poScreenCenter
-  LCLVersion = '1.6.2.0'
+  LCLVersion = '1.8.2.0'
   object Splitter1: TSplitter
     Left = 369
     Height = 347
@@ -33,9 +34,9 @@ object fwork_description: Tfwork_description
     TabOrder = 0
     object Label1: TLabel
       Left = 96
-      Height = 15
+      Height = 16
       Top = 0
-      Width = 404
+      Width = 367
       Caption = 'Arbeitsbeschreibung zur Abrechnung mit dem Kunden'
       Font.Color = clWindowText
       Font.Height = -13
@@ -46,9 +47,9 @@ object fwork_description: Tfwork_description
     end
     object Label2: TLabel
       Left = 8
-      Height = 15
+      Height = 16
       Top = 24
-      Width = 49
+      Width = 45
       Caption = 'Datum'
       Font.Color = clWindowText
       Font.Height = -13
@@ -59,9 +60,9 @@ object fwork_description: Tfwork_description
     end
     object Label3: TLabel
       Left = 88
-      Height = 15
+      Height = 16
       Top = 56
-      Width = 290
+      Width = 270
       Caption = 'Zusammengefasste Events für den Tag'
       Font.Color = clWindowText
       Font.Height = -13
@@ -72,9 +73,9 @@ object fwork_description: Tfwork_description
     end
     object Label4: TLabel
       Left = 608
-      Height = 15
+      Height = 16
       Top = 56
-      Width = 300
+      Width = 278
       Caption = 'Arbeitsbeschreibung für einzelne Events'
       Font.Color = clWindowText
       Font.Height = -13
@@ -117,7 +118,7 @@ object fwork_description: Tfwork_description
     end
     object EditButtonDate: TEditButton
       Left = 58
-      Height = 21
+      Height = 24
       Top = 24
       Width = 300
       ButtonCaption = 'Datum wählen und laden'

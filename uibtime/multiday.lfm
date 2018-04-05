@@ -52,19 +52,19 @@ object FMultiday: TFMultiday
     ParentFont = False
   end
   object OKBtn: TButton
-    Left = 295
+    Left = 349
     Height = 25
-    Top = 212
+    Top = 208
     Width = 75
     Caption = 'Fertig'
     ModalResult = 1
     TabOrder = 3
   end
   object MaskEditStart: TMaskEdit
-    Left = 163
+    Left = 184
     Height = 23
-    Top = 178
-    Width = 44
+    Top = 176
+    Width = 60
     CharCase = ecNormal
     MaxLength = 5
     TabOrder = 1
@@ -73,10 +73,10 @@ object FMultiday: TFMultiday
     SpaceChar = '_'
   end
   object MaskEditStunden: TMaskEdit
-    Left = 163
+    Left = 184
     Height = 23
     Top = 150
-    Width = 44
+    Width = 60
     CharCase = ecNormal
     MaxLength = 5
     TabOrder = 0
@@ -85,7 +85,7 @@ object FMultiday: TFMultiday
     SpaceChar = '_'
   end
   object BtnInsertAll: TBitBtn
-    Left = 296
+    Left = 349
     Height = 25
     Top = 176
     Width = 75
@@ -94,7 +94,7 @@ object FMultiday: TFMultiday
     TabOrder = 4
   end
   object ComboBox1: TComboBox
-    Left = 64
+    Left = 184
     Height = 23
     Top = 208
     Width = 145
@@ -103,12 +103,12 @@ object FMultiday: TFMultiday
     TabOrder = 2
   end
   object EditButtonEndDate: TEditButton
-    Left = 163
+    Left = 184
     Height = 23
     Top = 120
-    Width = 200
+    Width = 240
     ButtonCaption = 'Enddatum wählen'
-    ButtonWidth = 120
+    ButtonWidth = 140
     MaxLength = 0
     NumGlyphs = 1
     OnButtonClick = EditButtonEndDateButtonClick
@@ -117,12 +117,12 @@ object FMultiday: TFMultiday
     Text = 'enddatum'
   end
   object EditButtonStartDate: TEditButton
-    Left = 163
+    Left = 184
     Height = 23
     Top = 94
-    Width = 200
+    Width = 240
     ButtonCaption = 'Startdatum wählen'
-    ButtonWidth = 120
+    ButtonWidth = 140
     MaxLength = 0
     NumGlyphs = 1
     OnButtonClick = EditButtonStartDateButtonClick
