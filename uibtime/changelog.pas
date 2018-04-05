@@ -2,10 +2,15 @@
 uibtime (4.1.1.31-1) stable; urgency=low
 
  * ontop: rebuilForm: button wide factor increased from 4.8. to 5.2
- * ontop: timertryicon Linux: use of libnotify
+ * uibdata: timertryicon Linux: use of libnotify
  * ontop: fix calculating warning time in TFOnTop.TimerProjektzeitTimer
  * multiday: more space for text ; fixes #3445
-
+ * login: more space for text
+ * setup.opsiscript: Linux: create libnotify.so
+ * logoff: more color
+ * login: also user environment var UIBTIMEUSER
+ * ontop: fix calculating warning time in TFOnTop.TimerProjektzeitTimer
+ * multiday: more space for text ; fixes #3445
 
 -- detlef oertel <d.oertel@uib.de>  Fri, 30 Mar 2018 15:00:00 +0000
 

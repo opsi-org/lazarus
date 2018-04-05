@@ -12283,7 +12283,7 @@ object DataModule1: TDataModule1
   end
   object ProcessTrayNotify: TProcess
     Active = False
-    Executable = 'notify-send'
+    Executable = '/usr/bin/notify-send'
     Parameters.Strings = (
       ''
     )

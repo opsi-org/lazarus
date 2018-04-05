@@ -80,7 +80,7 @@ begin
    Datamodule1.IBConnection1.DatabaseName :=  Combobox1.Text;
    if Datamodule1.IBConnection2.Connected then Datamodule1.IBConnection2.Close;
    Datamodule1.IBConnection2.DatabaseName :=  Combobox1.Text;
-   gaugefak := (100 div 13) +1;
+   gaugefak := (100 div 19) +1;
    Label4.caption := 'Connecting..';
    application.processmessages;
    ProgressBar1.visible := true;
@@ -120,61 +120,67 @@ begin
    begin
     if edit1.text = 'admin' then uid := 'admin'
     else uid := Datamodule1.SQuibaktuser.fieldbyname('userid').asstring;
+    ProgressBar1.Position := gaugefak * 3;
     user_h_per_day := Datamodule1.SQuibaktuser.fieldbyname('h_per_day').AsFloat;
+    ProgressBar1.Position := gaugefak * 4;
     if Datamodule1.SQuibaktuser.fieldbyname('mo_is_work').AsBoolean then
       include(user_work_days,dayOfWeekGerStrToLazDayofWeekbyte('mo'));
+    ProgressBar1.Position := gaugefak * 5;
     if Datamodule1.SQuibaktuser.fieldbyname('mo_is_work').AsBoolean then
       include(user_work_days,dayOfWeekGerStrToLazDayofWeekbyte('di'));
+    ProgressBar1.Position := gaugefak * 6;
     if Datamodule1.SQuibaktuser.fieldbyname('mo_is_work').AsBoolean then
       include(user_work_days,dayOfWeekGerStrToLazDayofWeekbyte('mi'));
+    ProgressBar1.Position := gaugefak * 7;
     if Datamodule1.SQuibaktuser.fieldbyname('mo_is_work').AsBoolean then
       include(user_work_days,dayOfWeekGerStrToLazDayofWeekbyte('do'));
+    ProgressBar1.Position := gaugefak * 8;
     if Datamodule1.SQuibaktuser.fieldbyname('mo_is_work').AsBoolean then
       include(user_work_days,dayOfWeekGerStrToLazDayofWeekbyte('fr'));
     DataModule1.debugOut(8,'Login: uid = '+uid);
-    ProgressBar1.Position := gaugefak * 3;
+    ProgressBar1.Position := gaugefak * 9;
     //with Datamodule1.SQuibevent.Params.CreateParam(ftString, 'uid', ptInput) do
     //   AsString := uid;
     //Datamodule1.SQuibevent.ParamByName('uid').AsString := uid;
     Datamodule1.SQuibevent.open;
     DataModule1.debugOut(8,'Login: opend 3');
-    ProgressBar1.Position := gaugefak * 4;
+    ProgressBar1.Position := gaugefak * 10;
     application.processmessages;
     Datamodule1.SQuibaktevent.open;
     DataModule1.debugOut(8,'Login: opend 4');
-    ProgressBar1.Position := gaugefak * 5;
+    ProgressBar1.Position := gaugefak * 11;
     application.processmessages;
     Datamodule1.SQuiballevent.open;
     DataModule1.debugOut(8,'Login: opend 5');
-    ProgressBar1.Position := gaugefak * 6;
+    ProgressBar1.Position := gaugefak * 12;
     application.processmessages;
     Datamodule1.SQuibuserEvent.open;
     DataModule1.debugOut(8,'Login: opend 6');
-    ProgressBar1.Position := gaugefak * 7;
+    ProgressBar1.Position := gaugefak * 13;
     application.processmessages;
     Datamodule1.SQuibtimeout.open;
     DataModule1.debugOut(8,'Login: opend 7');
-    ProgressBar1.Position := gaugefak * 8;
+    ProgressBar1.Position := gaugefak * 14;
     ///application.processmessages;
     ///Datamodule1.SQuibcalls.open;
     DataModule1.debugOut(8,'Login: opend 8');
-    ProgressBar1.Position := gaugefak * 9;
+    ProgressBar1.Position := gaugefak * 15;
     application.processmessages;
     Datamodule1.SQuibsoll.open;
     DataModule1.debugOut(8,'Login: opend 9');
-    ProgressBar1.Position := gaugefak * 10;
+    ProgressBar1.Position := gaugefak * 16;
     application.processmessages;
     Datamodule1.SQuibdefproj.open;
     DataModule1.debugOut(8,'Login: opend 10');
-    ProgressBar1.Position := gaugefak * 11;
+    ProgressBar1.Position := gaugefak * 17;
     application.processmessages;
     Datamodule1.SQuibloggedin.open;
     DataModule1.debugOut(8,'Login: opend 11');
-    ProgressBar1.Position := gaugefak * 12;
+    ProgressBar1.Position := gaugefak * 18;
     application.processmessages;
     DataModule1.SQQueryAktEvents.open;
     DataModule1.debugOut(8,'Login: opend 12');
-    ProgressBar1.Position := gaugefak * 13;
+    ProgressBar1.Position := gaugefak * 19;
     application.processmessages;
     DataModule1.SQholydays.Open;
     DataModule1.debugOut(8,'Login: opend 13');
@@ -253,6 +259,7 @@ var
  mypath : string;
  i : integer;
  lserver : String;
+ uname : string;
  //PNAME : array[0..30] of Char;
 
 begin
@@ -291,7 +298,9 @@ begin
  automatic := true;
  //CheckBoxEditOnly.Checked := false;
  DataModule1.seteditonly(false);
- Edit1.text :=  GetEnvironmentVariable('UNAME');
+ Uname := GetEnvironmentVariable('UNAME');
+ if uname = '' then GetEnvironmentVariable('UIBTIMEUSER');
+ Edit1.text :=  uname;
 end;
 
 procedure TFlogin.CheckBoxEditOnlyClick(Sender: TObject);
