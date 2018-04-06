@@ -35,6 +35,8 @@ opsi-winst/opsi-script (4.12.0.16) stable; urgency=low
   * osfuncwin2: reimplementation of getProfileImagePathfromSid
          https://forum.opsi.org/viewtopic.php?f=7&t=9941
   * osfuncwin2: reimplementation of  delUserProfile
+  * osfunclin: getpackagelock: look also for UCS ; fixes #3189
+  * oslindesktopfile:  DeleteShellLink: del hard in /usr/share/applications/ ; fixes #3402
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 14 Mar 2018:15:00:00 +0200
 
