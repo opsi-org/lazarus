@@ -384,6 +384,7 @@ begin
     Regist.CloseKey;
     Result := StringResult;
   end;
+  Regist.Free;
 end;
 
 

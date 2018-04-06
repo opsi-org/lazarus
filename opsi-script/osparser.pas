@@ -405,6 +405,9 @@ public
   procedure ApplyTextConstants (var Sektion : TXStringList; CStringEscaping : Boolean);
   procedure ApplyTextVariablesToString (var mystr : String; CStringEscaping : Boolean);
 
+  // handle file and line origins
+  procedure registerSectionOrigins(mylist : Tstringlist;filename : string);
+
   (* Sektionsbearbeitungsmethoden *)
   (* Hilfsmethoden *)
   function initSection (const Sektion: TWorkSection; var SaveErrorNumber, SaveWarningNumber: Integer) : Boolean;
@@ -1716,12 +1719,12 @@ Begin
   FLinesOriginList := TStringList.create;
   FLibList := TStringList.create;
   FsectionNameList := TStringList.create;
-  FSectionInfoArray := Length(0);
+  //FSectionInfoArray := Length(0);
 End;
 
 destructor TuibInstScript.destroy;
 var
-  counter : integer;
+  counter,i : integer;
 begin
   FVarList.free; VarList := nil;
   FValuesList.free; ValuesList := nil;
@@ -1730,6 +1733,7 @@ begin
   FLinesOriginList.free; FLinesOriginList := nil;
   FLibList.Free; FLibList := nil;
   FsectionNameList.Free; FsectionNameList := nil;
+  (*
   counter := length(FSectionInfoArray);
   if counter > 0 then
     for i := 0 to counter - 1 do
@@ -1737,6 +1741,7 @@ begin
       FSectionInfoArray[i] := nil;
       FSectionInfoArray[i].Free;
     end;
+    *)
   SetLength(FSectionInfoArray, 0);
 end;
 
@@ -1761,38 +1766,39 @@ begin
   logdatei.log('Loaded sub from: '+FName+' with encoding: '+usedEncoding,LLDebug);
   for i := 1 to OriginalList.count do
   Begin
-      s := trim(OriginalList.Strings [i-1]);
-      (* if (s<>'') and  (s[1] <> LineIsCommentChar) then *)
-        Section.Add (s);
-        script.FLinesOriginList.Append(FName+' line: '+inttostr(i));
-        script.FLibList.Append('false');
-        secname := opsiunquotestr2(s,'[]');
-        //if (pos('[',trim(s)) =1) and (pos(']',trim(s)) =length(trim(s))) then
-        if secname <> s then
-        begin
-          // we have a new section
-          secindex := Script.FSectionNameList.Add(secname);
-          if secindex <> length(script.FSectionInfoArray) then
-            LogDatei.log('Error: internal: secindex <> length(script.FSectionInfoArray)',LLCritical);
-          setlength(script.FSectionInfoArray, secindex+1);
-          script.FSectionInfoArray[secindex].SectionName:=secname;
-          script.FSectionInfoArray[secindex].SectionFile:=ExtractFileName(FName);
-          script.FSectionInfoArray[secindex].StartLineNo:=i;
-        end;
-        if pos('definefunc',lowercase(s)) = 1  then
-        begin
-          // we have a new function
-          secname := copy (s,pos('definefunc',lowercase(s)),
-          GetWord(secname, secname, remaining,WordDelimiterSet5);
-          secindex := Script.FSectionNameList.Add(secname);
-          if secindex <> length(script.FSectionInfoArray) then
-            LogDatei.log('Error: internal: secindex <> length(script.FSectionInfoArray)',LLCritical);
-          setlength(script.FSectionInfoArray, secindex+1);
-          script.FSectionInfoArray[secindex].SectionName:=secname;
-          script.FSectionInfoArray[secindex].SectionFile:=ExtractFileName(FName);
-          script.FSectionInfoArray[secindex].StartLineNo:=i;
-        end;
+    s := trim(OriginalList.Strings [i-1]);
+    Section.Add (s);
+    script.FLinesOriginList.Append(FName+' line: '+inttostr(i));
+    script.FLibList.Append('false');
+    (*
+    secname := opsiunquotestr2(s,'[]');
+    if secname <> s then
+    begin
+      // we have a new section
+      secindex := Script.FSectionNameList.Add(secname);
+      if secindex <> length(script.FSectionInfoArray) then
+        LogDatei.log('Error: internal: secindex <> length(script.FSectionInfoArray)',LLCritical);
+      setlength(script.FSectionInfoArray, secindex+1);
+      script.FSectionInfoArray[secindex].SectionName:=secname;
+      script.FSectionInfoArray[secindex].SectionFile:=ExtractFileName(FName);
+      script.FSectionInfoArray[secindex].StartLineNo:=i;
+    end;
+    if pos('deffunc',lowercase(s)) = 1  then
+    begin
+      // we have a new function
+      secname := copy (s,pos('deffunc',lowercase(s)));
+      GetWord(secname, secname, remaining,WordDelimiterSet5);
+      secindex := Script.FSectionNameList.Add(secname);
+      if secindex <> length(script.FSectionInfoArray) then
+        LogDatei.log('Error: internal: secindex <> length(script.FSectionInfoArray)',LLCritical);
+      setlength(script.FSectionInfoArray, secindex+1);
+      script.FSectionInfoArray[secindex].SectionName:=secname;
+      script.FSectionInfoArray[secindex].SectionFile:=ExtractFileName(FName);
+      script.FSectionInfoArray[secindex].StartLineNo:=i;
+    end;
+    *)
   End;
+  registerSectionOrigins(OriginalList,FName);
   OriginalList.free;
 End;
 
@@ -1803,7 +1809,7 @@ var
   funcname, funcfile, funcmesseage : string;
   originmessage : string;
   funcline : integer;
-  i : integer;
+  i,index : integer;
 begin
   result := tsrPositive;
   if inDefFuncIndex >= 0 then
@@ -1812,13 +1818,19 @@ begin
     funcfile := definedFunctionArray[inDefFuncIndex].OriginFile;
     funcline := definedFunctionArray[inDefFuncIndex].OriginFileStartLineNumber;
     funcmesseage := ' in defined function: '+funcname+' file: '+ExtractFileName(funcfile)
-                    +' function start at line: '+inttostr(funcline);
-    originmessage := '; origin: '+funcfile+' line: '+inttostr(funcline+LineNo)+'): ';
+                    +' function start at line: '+inttostr(funcline+1);
+    originmessage := '; origin: '+funcfile+' line: '+inttostr(funcline+LineNo+1)+'): ';
   end
   else
   begin
-    funcmesseage := '';
-    originmessage := '; origin: '+FLinesOriginList.Strings[Sektion.StartLineNo + LineNo-1]+'): ';
+    funcname := Sektion.Name;
+    index := script.FSectionNameList.IndexOf(funcname);
+    funcfile := Script.FSectionInfoArray[index].SectionFile;
+    funcline := Script.FSectionInfoArray[index].StartLineNo;
+    funcmesseage := ' in section: '+funcname+' file: '+ExtractFileName(funcfile)
+                    +' section start at line: '+inttostr(funcline+1);
+    //originmessage := '; origin: '+FLinesOriginList.Strings[Sektion.StartLineNo + LineNo]+'): ';
+    originmessage := '; origin: '+funcfile+' line: '+inttostr(funcline+LineNo+1)+'): ';
   end;
   //for i:= 0 to FLinesOriginList.Count -1 do
   //  logdatei.log_prog('FLinesOriginList: '+FLinesOriginList.Strings[i],LLDebug);
@@ -5469,22 +5481,6 @@ begin
    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
    // mount the NTUser.dat in the users profile path , patch them and write them back
-
-
-   (*
-   SearchPath  := GetProfilesPath; // GetWinDirectory + 'Profiles';
-   findresult := findfirst (SearchPath + '\*.*',
-                 faDirectory or faAnyFile, SearchRec);
-
-   while findresult = 0
-   do
-   Begin
-     if (SearchRec.Attr and faDirectory = faDirectory) and
-         (SearchRec.Name <> '.') and
-         (SearchRec.Name <> '..')
-     then
-     Begin
-     *)
    ProfileList := getProfilesDirList;
    for pc:= 0 to ProfileList.Count -1 do
    begin
@@ -10230,7 +10226,7 @@ begin
            for i := 0 to list1.count - 1 do
              for k := 0 to list2.count - 1 do
                if AnsiContainsText(list2[k], list1[i]) then
-                 list.Add(list1.Strings[i]);
+                 list.Add(list2.Strings[k]);
           except
             on e: exception do
             begin
@@ -16666,12 +16662,14 @@ function TuibInstScript.doAktionen (const Sektion: TWorkSection; const CallingSe
   inDefFunc : integer = 0;
   inDefFunc2 : integer = 0;
   inDefFunc3 : integer = 0;  // we are between deffunc and endfunc line (even in a not active code)
-  funcindex : integer;
+  funcindex,secindex : integer;
   importFunctionName : String;
   inSearchedFunc : boolean;
   alllines, inclines : integer;
   processline : boolean = true; // are we on a active code branch (needed handling of section ends '['
   tmplist : TXStringlist;
+  secname : string;
+  tmpint : integer;
 
 begin
   result := tsrPositive;
@@ -16707,7 +16705,7 @@ begin
    //writeln(actionresult);
     Remaining := trim (Sektion.strings [i-1]);
     //logdatei.log_prog('Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' Sektion.NestingLevel: '+IntToStr(Sektion.NestingLevel)+' condition: '+BoolToStr(conditions [ActLevel],true),LLDebug3);
-    if inDefFuncLevel = 0          // count only lines on base level
+    if (inDefFuncLevel = 0)          // count only lines on base level
       and (lowercase(Sektion.Name) = 'actions')   // count only lines in actions
       then inc(FAktScriptLineNumber);
     logdatei.log_prog('Script line: '+intToStr(i)+' / '+intToStr(FAktScriptLineNumber)+' : '+Remaining,LLDebug2);
@@ -17034,15 +17032,6 @@ begin
 
               // look if we are in a subprogram
               // that may have its own sections in it
-              (*
-              if Sektion.SectionKind = tsActions
-              then
-              Begin
-
-                CallingSektion.GetSectionLines (Expressionstr, TXStringList (ArbeitsSektion),
-                                         StartlineOfSection, true, true, false);
-              End;
-              *)
 
               if (ArbeitsSektion.count = 0) and (inDefFuncLevel > 0)
               then
@@ -17600,7 +17589,17 @@ begin
                                 begin
                                   GetWord (Remaining, Expressionstr, Remaining, WordDelimiterSet4);
                                   if lowercase(Expressionstr) = LowerCase(importFunctionName) then
+                                  begin
                                     inSearchedFunc := true;
+                                    script.FSectionNameList.Add(importFunctionName);
+                                    secindex := Script.FSectionNameList.Add(importFunctionName);
+                                    if secindex <> length(script.FSectionInfoArray) then
+                                      LogDatei.log('Error: internal: secindex <> length(script.FSectionInfoArray)',LLCritical);
+                                    setlength(script.FSectionInfoArray, secindex+1);
+                                    script.FSectionInfoArray[secindex].SectionName:=importFunctionName;
+                                    script.FSectionInfoArray[secindex].SectionFile:=ExtractFileName(fullincfilename);
+                                    script.FSectionInfoArray[secindex].StartLineNo:=alllines;
+                                  end;
                                 end
                               end;
                               if inSearchedFunc  then
@@ -17636,7 +17635,13 @@ begin
                           closeFile(incfile);
                           linecount := Count;
                           if importFunctionName = '' then
-                            LogDatei.log('Imported all functions from file: '+fullincfilename,LLNotice)
+                          begin
+                            LogDatei.log('Imported all functions from file: '+fullincfilename,LLNotice);
+                            tmplist := TXstringlist.Create;
+                            tmplist.LoadFromFile(fullincfilename);
+                            script.registerSectionOrigins(tmplist,fullincfilename);
+                            tmplist.free;
+                          end
                           else
                             LogDatei.log('Imported function : '+importFunctionName+' from file: '+fullincfilename ,LLNotice);
                           //for j:= 0 to sektion.Count -1 do
@@ -17745,6 +17750,7 @@ begin
                           inclist.LoadFromFile(ExpandFileName(fullincfilename));
                           Encoding2use := searchencoding(inclist.Text);
                           //Encoding2use := inclist.Values['encoding'];
+                          Script.registerSectionOrigins(inclist,fullincfilename);
                           inclist.Free;
                           if Encoding2use = '' then Encoding2use := 'system';
                           LogDatei.log('Will Include : '+incfilename+' with encoding: '+Encoding2use,LLDebug2);
@@ -17875,6 +17881,7 @@ begin
                           inclist.LoadFromFile(ExpandFileName(fullincfilename));
                           Encoding2use := searchencoding(inclist.Text);
                           //Encoding2use := inclist.Values['encoding'];
+                          Script.registerSectionOrigins(inclist,fullincfilename);
                           inclist.Free;
                           if Encoding2use = '' then Encoding2use := 'system';
                           linecount := count;
@@ -19819,6 +19826,15 @@ begin
                    else
                    begin
                      try
+                       s1 := newDefinedfunction.Name;
+                       tmpint := script.FSectionNameList.IndexOf(s1);
+                       if (tmpint >= 0) and (tmpint <= length(Script.FSectionInfoArray)) then
+                       begin
+                         newDefinedfunction.OriginFile:=Script.FSectionInfoArray[tmpint].SectionFile;
+                         newDefinedfunction.OriginFileStartLineNumber:=Script.FSectionInfoArray[tmpint].StartLineNo;
+                       end
+                       else logdatei.log('Warning: Origin of function: '+s1+' not found.',LLwarning);
+                       (*
                        tmplist := TXStringlist.Create;
                        if FLinesOriginList.Count < script.aktScriptLineNumber then
                        begin
@@ -19842,6 +19858,7 @@ begin
                        finally
                          tmplist.Free;
                        end;
+                       *)
                      except
                         on e: Exception do
                         begin
@@ -20008,6 +20025,43 @@ end;
 
 
 
+procedure TuibInstScript.registerSectionOrigins(mylist : Tstringlist;filename : string);
+var
+  i,secindex : integer;
+  str,secname : string;
+begin
+  for i := 0 to mylist.count-1 do
+  Begin
+    str := trim(mylist.Strings [i]);
+    secname := opsiunquotestr2(str,'[]');
+    if secname <> str then
+    begin
+      // we have a new section
+      secindex := Script.FSectionNameList.Add(secname);
+      if secindex <> length(script.FSectionInfoArray) then
+        LogDatei.log('Error: internal: secindex <> length(script.FSectionInfoArray)',LLCritical);
+      setlength(script.FSectionInfoArray, secindex+1);
+      script.FSectionInfoArray[secindex].SectionName:=secname;
+      script.FSectionInfoArray[secindex].SectionFile:=ExtractFileName(filename);
+      script.FSectionInfoArray[secindex].StartLineNo:=i;
+    end;
+    if pos('deffunc',lowercase(str)) = 1  then
+    begin
+      // we have a new function
+      secname := trim(Copy(str,length('deffunc')+1,length(str)));
+      GetWord(secname, secname, remaining,WordDelimiterSet5);
+      secindex := Script.FSectionNameList.Add(secname);
+      if secindex <> length(script.FSectionInfoArray) then
+        LogDatei.log('Error: internal: secindex <> length(script.FSectionInfoArray)',LLCritical);
+      setlength(script.FSectionInfoArray, secindex+1);
+      script.FSectionInfoArray[secindex].SectionName:=secname;
+      script.FSectionInfoArray[secindex].SectionFile:=ExtractFileName(filename);
+      script.FSectionInfoArray[secindex].StartLineNo:=i;
+    end;
+  End;
+end;
+
+
 procedure CreateAndProcessScript (Const Scriptdatei : String;
                          NestingLevel : Integer; SaveddeWithProgman : Boolean;
                          var extremeErrorLevel : TErrorLevel);
@@ -20034,6 +20088,7 @@ procedure CreateAndProcessScript (Const Scriptdatei : String;
   usedEncoding : String='';
   Encoding2use : String='';
   tmpstr : string='';
+  str : string;
   depotdrive_bak, depotdir_bak : string;
   {$IFDEF WINDOWS}
   Regist : TuibRegistry;
@@ -20128,12 +20183,14 @@ begin
     if Encoding2use = '' then Encoding2use := 'system';
     Script.Text:= reencode(Script.Text, Encoding2use,usedEncoding);
     Script.FFilename:=Scriptdatei;
-    for i := 1 to script.Count do
+    for i := 0 to script.Count-1 do
     begin
+      str := Script.Strings[i];
       script.FLinesOriginList.Append(script.FFilename+' line: '+inttostr(i+1));
       script.FLibList.Append('false');
       //writeln('i='+inttostr(i)+' = '+Script.FLinesOriginList.Strings[i-1]);
     end;
+    Script.registerSectionOrigins(Tstringlist(Script),Scriptdatei);
   End
   else
   Begin

@@ -143,7 +143,7 @@ var
 
 
 
-
+(*
 function getProfileImagePathfromSid(sid: string): string;
 var
   myreg: Tregistry;
@@ -182,8 +182,38 @@ begin
   end;
   myreg.Free;
 end;
+*)
+
+function getProfileImagePathfromSid(sid: string): string;
+var
+  StringResult: string = '';
+  profilepath: string;
+  files: TuibFileInstall;
+  noredirect: boolean;
+  aktkey: string;
+begin
+  Result := '';
+  aktkey := 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\'+sid;
+  if Is64BitSystem then
+  begin
+    noredirect := true;
+    LogDatei.DependentAdd('Registry started without redirection (64 Bit)', LLdebug3);
+  end
+  else
+  begin
+    noredirect := false;
+    LogDatei.DependentAdd('Registry started with redirection (32 Bit)', LLdebug3);
+  end;
+  StringResult := GetRegistrystringvalue(aktkey,'ProfileImagePath',noredirect);
+  profilepath := StringReplace(StringResult, '%SystemDrive%',
+     extractfiledrive(GetWinDirectory));
+    LogDatei.log('found profile reg entry for sid: ' + sid +
+      ' and path: ' + profilepath, LLdebug3);
+  Result := profilepath;
+end;
 
 
+(*
 function delUserProfile(sid: string): boolean;
 var
   //sid : string;
@@ -243,11 +273,8 @@ begin
       begin
         LogDatei.DependentAdd('profilepath exists: ' + profilepath, LLdebug);
         output := TXStringlist.Create;
-        //commandline := 'cmd.exe /c  rmdir /S /Q "'+profilepath+'"';
-        //FOR /D %A IN (C:\cygwin\tmp\test\*) DO rmdir /s /q %A
         commandline := 'cmd.exe /c  FOR /D %A IN ("' + GetProfilesPath +
           '\opsiSetupAdmin.*") DO rmdir /s /q "%A"';
-        //cmd.exe /c  rmdir /S /Q "C:\Users\opsiSetupAdmin.PCBON4.027"
         LogDatei.DependentAdd('Executing ' + commandline, levelcomplete);
         if not RunCommandAndCaptureOut(commandline, True, output,
           report, SW_HIDE, longintdummy) then
@@ -268,17 +295,6 @@ begin
           LogDatei.DependentAdd('', LevelInfo);
         end;
         output.Free;
-        (*
-        //DSiDeleteTree(profilepath,false);
-        files := TuibFileInstall.create;
-        try
-          files.alldelete(profilepath + '\', true, true, 0);
-        except
-          LogDatei.DependentAdd('not all files "' + profilepath + ' could be deleted', BaseLevel);
-        end;
-        files.Free;
-        //rmdir /S /Q "%ProfileDir%\opsiSetupAdmin"
-        *)
         if not DirectoryExists(profilepath) then
         begin
           Result := True;
@@ -288,6 +304,70 @@ begin
     end;
   end;
 end;
+*)
+
+function delUserProfile(sid: string): boolean;
+var
+  //sid : string;
+  myreg: Tregistry;
+  profilepath: string;
+  files: TuibFileInstall;
+  output: TXStringlist;
+  commandline: string;
+  report: string = '';
+  errorinfo: string = '';
+  i: integer;
+  longintdummy: longint;
+
+begin
+  Result := False;
+  if DeleteProfile(PChar(sid), nil, nil) then
+  begin
+    LogDatei.log('Deleted profile of: '+sid,
+      LLDebug);
+    Result := True;
+  end
+  else
+  begin
+    logdatei.log('Could not delete profile for sid : ' +
+      sid + ' - ' + IntToStr(GetLastError) + ' (' +
+      SysErrorMessage(GetLastError) + ')', LLNotice);
+    profilepath := getProfileImagePathfromSid(sid);
+    if DirectoryExists(profilepath) then
+    begin
+      LogDatei.DependentAdd('profilepath exists: ' + profilepath, LLdebug);
+      output := TXStringlist.Create;
+      commandline := 'cmd.exe /c  FOR /D %A IN ("' + GetProfilesPath +
+        '\opsiSetupAdmin.*") DO rmdir /s /q "%A"';
+      LogDatei.DependentAdd('Executing ' + commandline, levelcomplete);
+      if not RunCommandAndCaptureOut(commandline, True, output,
+        report, SW_HIDE, longintdummy) then
+      begin
+        LogDatei.DependentAdd('Error: ' + Report, LLError);
+      end
+      else
+      begin
+        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+        LogDatei.DependentAdd('', LevelInfo);
+        LogDatei.DependentAdd('output:', LevelInfo);
+        LogDatei.DependentAdd('--------------', LevelInfo);
+        for i := 0 to output.Count - 1 do
+        begin
+          LogDatei.DependentAdd(output.strings[i], LevelInfo);
+        end;
+        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+        LogDatei.DependentAdd('', LevelInfo);
+      end;
+      output.Free;
+      if not DirectoryExists(profilepath) then
+      begin
+        Result := True;
+        LogDatei.DependentAdd('deleted profile: ' + profilepath, LLdebug);
+      end;
+    end;
+  end;
+end;
+
 
 {:Returns user name of the current thread.
   @author  Miha-R, Lee_Nover
