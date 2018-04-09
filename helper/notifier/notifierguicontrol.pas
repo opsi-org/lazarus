@@ -530,6 +530,13 @@ begin
       end;
     end;
   end;
+ if mynotifierkind = 'event' then
+  begin
+    nform.FormStyle := fsNormal;
+    logdatei.log('FormStyle := fsNormal',LLDebug);
+    nform.Repaint;
+    DataModule1.ProcessMess;
+  end;
 end;
 
 procedure hideNForm;
@@ -648,8 +655,8 @@ begin
     begin
       if mynotifierkind = 'event' then
       begin
-        nform.FormStyle := fsStayOnTop;
-        logdatei.log('FormStyle := fsStayOnTop',LLDebug);
+        nform.FormStyle := fsSystemStayOnTop;
+        logdatei.log('FormStyle := fsSystemStayOnTop',LLDebug);
       end
       else
       begin

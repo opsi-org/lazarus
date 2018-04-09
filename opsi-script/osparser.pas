@@ -157,6 +157,7 @@ type
                 tsDefineFunction,
                 tsEndFunction,
                 tsShellcall,
+                tsPowershellcall,
                 // tsSetVar should be the last here for loop in FindKindOfStatement
                 tsSetVar);
 
@@ -503,7 +504,11 @@ public
   function execShellCall (command : String; archparam:string;
           logleveloffset : integer;
           FetchExitCodePublic, FatalOnFail : boolean): TStringlist;  overload;
-
+{$IFDEF WINDOWS}
+  function execPowershellCall (command : String; archparam:string;
+          logleveloffset : integer;
+          FetchExitCodePublic, FatalOnFail : boolean; handle_policy : boolean): TStringlist;
+ {$ENDIF WINDOWS}
 end;
 
 
@@ -8495,6 +8500,88 @@ from defines.inc
   end;
 end;
 
+{$IFDEF WINDOWS}
+function TuibInstScript.execPowershellCall (command : String; archparam:string;
+          logleveloffset : integer;
+          FetchExitCodePublic, FatalOnFail : boolean; handle_policy : boolean): TStringlist;
+Var
+ commandline : String='';
+ fullps : string;
+ runas : TRunAs;
+ force64: boolean;
+ oldDisableWow64FsRedirectionStatus: pointer=nil;
+ output: TXStringList;
+ tmplist : TStringlist;
+ dummybool : boolean;
+ filename : String='';
+ parameters : String='';
+ report : String='';
+ errorinfo : String='';
+ i : integer=0;
+ localExitCode : LongInt = 0;
+ org_execution_policy :string;
+ mySektion: TWorkSection;
+ ActionResult : TSectionResult;
+begin
+  Result := TStringList.Create;
+  output := TXStringList.Create;
+  runAs := traInvoker;
+  OldNumberOfErrors := LogDatei.NumberOfErrors;
+  OldNumberOfWarnings := LogDatei.NumberOfWarnings;
+  force64 := false;
+
+  If (lowercase(archparam) = '64bit') and Is64BitSystem then
+     force64 := true;
+
+  If (lowercase(archparam) = 'sysnative') and Is64BitSystem then
+       force64 := true;
+
+  If (lowercase(archparam) = '32bit') then
+       force64 := false;
+
+
+  if handle_policy then // backup and set execution policy
+  begin
+    // backup
+    commandline := 'powershell.exe get-executionpolicy';
+    tmplist := execShellCall(commandline, archparam, 1, false, true);
+    org_execution_policy := trim(tmplist[0]);
+    // set (open)
+    commandline := 'powershell.exe set-executionpolicy RemoteSigned';
+    tmplist := execShellCall(commandline, archparam, 1, false, true);
+  end;
+
+  mySektion := TWorkSection.create(NestingLevel);
+  mySektion.Add('trap { write-output $_ ; exit 1 }');
+  mySektion.Add(command);
+  mySektion.Add('exit $LASTEXITCODE');
+  mySektion.Name:='tmp-internal';
+  parameters := 'powershell.exe winst /'+archparam;
+
+  ActionResult := executeWith(mySektion,parameters,true,0,output);
+  if FetchExitCodePublic then FLastExitCodeOfExe := localExitCode
+    else FLastPrivateExitCode := localExitcode;
+  LogDatei.log ('output:', LLDebug+logleveloffset);
+  LogDatei.log ('--------------', LLDebug+logleveloffset);
+  for i := 0 to output.count-1 do
+  begin
+   LogDatei.log (output.strings[i], LLDebug+logleveloffset);
+  end;
+  //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+  LogDatei.log ('', LLDebug+logleveloffset);
+  result.Text := output.text;
+  output.Free;
+
+  if handle_policy then // restore execution policy
+  begin
+    // set (close)
+    commandline := 'powershell.exe set-executionpolicy '+org_execution_policy;
+    tmplist := execShellCall(commandline, archparam, 1, false, true);
+  end;
+
+end;
+{$ENDIF WINDOWS}
+
 function TuibInstScript.execShellCall (command : String; archparam:string;
           logleveloffset : integer; FetchExitCodePublic : boolean): TStringlist;
 begin
@@ -9430,8 +9517,9 @@ var
   s4 : String='';
   r1 : String='';
   ///sx,
-  tmpstr : String='';
+  tmpstr, tmpstr1, tmpstr2, tmpstr3 : String;
   tmpint : integer;
+  tmpbool, tmpbool1 : boolean;
   a1 : integer=0;
   a2 : Integer=0;
   list1 : TXStringList;
@@ -9557,6 +9645,80 @@ begin
          end;
        End
    end
+
+    else if LowerCase (s) = LowerCase ('shellcall')
+    then
+    begin
+       s2 := '';
+       s3 := '';
+       tmpstr2 := '';
+       tmpbool := true; // sysnative
+       tmpbool1 := true; // handle execution policy
+       syntaxCheck := false;
+      if Skip ('(', r, r, InfoSyntaxError)
+      then if EvaluateString (r, tmpstr, s1, InfoSyntaxError)
+      // next after ',' or ')'
+      then if Skip (',', tmpstr, tmpstr1, tmpstr3) then
+       if EvaluateString (tmpstr1, tmpstr2, s2, tmpstr3) then;
+      if s2 = '' then
+      begin
+       // only one parameter
+       if Skip (')', tmpstr, r, InfoSyntaxError) then
+       Begin
+         syntaxCheck := true;
+         s2 := 'sysnative';
+       end;
+      end
+      else
+      begin
+       // got second parameter
+        tmpbool := true;
+       if lowercase(s2) = '32bit' then tmpbool := false
+       else if lowercase(s2) = '64bit' then tmpbool := true
+       else if lowercase(s2) = 'sysnative' then tmpbool := true
+       else
+       begin
+         InfoSyntaxError := 'Error: unknown parameter: '+s2+' expected one of 32bit,64bit,sysnative - fall back to sysnative';
+         syntaxCheck := false;
+       end;
+       // three parameter ?
+       if Skip (',', tmpstr2, tmpstr1, tmpstr3) then
+       begin
+         if EvaluateString (tmpstr1, tmpstr2, s3, tmpstr3) then
+         begin
+          // got third parameter
+           if Skip (')', tmpstr2, r, InfoSyntaxError) then
+           Begin
+             if TryStrToBool(s3,tmpbool1) then
+               syntaxCheck := true
+             else
+             begin
+               syntaxCheck := false;
+               InfoSyntaxError := 'Error: boolean string (true/false) expected but got: '+s3;
+             end;
+           end;
+         end;
+       end
+       else
+       if Skip (')', tmpstr, r, InfoSyntaxError) then
+       Begin
+        // two parameter
+         syntaxCheck := true;
+       end;
+      end;
+      if syntaxCheck then
+       begin
+         try
+           list.Text := execPowershellCall(s1, s2,0, true,false,tmpbool1).Text;
+         except
+           on e: exception do
+           begin
+             LogDatei.log('Error executing :'+s1+' : with powershell: '+ e.message,
+               LLError);
+           end
+         end;
+       end;
+     end
 
 
    else if LowerCase (s) = LowerCase ('LoadTextFile')
@@ -11549,6 +11711,8 @@ var
    funcname : string;
    boolresult : boolean;
    p1,p2,p3,p4 : integer;
+   tmpstr, tmpstr1, tmpstr2, tmpstr3: string;
+   tmpbool, tmpbool1 : boolean;
 
 
 
@@ -12464,6 +12628,84 @@ begin
        end;
      End
  end
+
+ else if LowerCase (s) = LowerCase ('powershellcall')
+ then
+ begin
+   s2 := '';
+   s3 := '';
+   tmpstr2 := '';
+   tmpbool := true; // sysnative
+   tmpbool1 := true; // handle execution policy
+   syntaxCheck := false;
+   StringResult := '';
+  if Skip ('(', r, r, InfoSyntaxError)
+  then if EvaluateString (r, tmpstr, s1, InfoSyntaxError)
+  // next after ',' or ')'
+  then if Skip (',', tmpstr, tmpstr1, tmpstr3) then
+   if EvaluateString (tmpstr1, tmpstr2, s2, tmpstr3) then;
+  if s2 = '' then
+  begin
+   // only one parameter
+   if Skip (')', tmpstr, r, InfoSyntaxError) then
+   Begin
+     syntaxCheck := true;
+     s2 := 'sysnative';
+   end;
+  end
+  else
+  begin
+   // got second parameter
+    tmpbool := true;
+   if lowercase(s2) = '32bit' then tmpbool := false
+   else if lowercase(s2) = '64bit' then tmpbool := true
+   else if lowercase(s2) = 'sysnative' then tmpbool := true
+   else
+   begin
+     InfoSyntaxError := 'Error: unknown parameter: '+s2+' expected one of 32bit,64bit,sysnative - fall back to sysnative';
+     syntaxCheck := false;
+   end;
+   // three parameter ?
+   if Skip (',', tmpstr2, tmpstr1, tmpstr3) then
+   begin
+     if EvaluateString (tmpstr1, tmpstr2, s3, tmpstr3) then
+     begin
+      // got third parameter
+       if Skip (')', tmpstr2, r, InfoSyntaxError) then
+       Begin
+         if TryStrToBool(s3,tmpbool1) then
+           syntaxCheck := true
+         else
+         begin
+           syntaxCheck := false;
+           InfoSyntaxError := 'Error: boolean string (true/false) expected but got: '+s3;
+         end;
+       end;
+     end;
+   end
+   else
+   if Skip (')', tmpstr, r, InfoSyntaxError) then
+   Begin
+    // two parameter
+     syntaxCheck := true;
+   end;
+  end;
+  if syntaxCheck then
+   begin
+   try
+         execPowershellCall(s1, s2,0, true,false,tmpbool1);
+         StringResult := IntToStr (FLastExitCodeOfExe) ;
+       except
+         on e: exception do
+         begin
+           LogDatei.log('Error executing :'+s1+' : with powershell: '+ e.message,
+             LLError);
+         end
+       end;
+   end;
+ end
+
+
 
  else if LowerCase (s) = LowerCase ('processCall')
  then
@@ -14063,6 +14305,70 @@ begin
 {$ENDIF WIN32}
 
 
+else if (LowerCase (s) = LowerCase ('GetRegistryValue')) then
+  begin
+   s3 := '';
+   tmpstr2 := '';
+   tmpbool := true;
+   syntaxCheck := false;
+   StringResult := '';
+   LogDatei.log_prog ('GetRegistryValue from: '+r, LLdebug3);
+   if Skip ('(', r, r, InfoSyntaxError)
+   then if EvaluateString (r, r, s1, InfoSyntaxError)
+   then if Skip (',', r, r, InfoSyntaxError)
+   then if EvaluateString (r, tmpstr, s2, InfoSyntaxError) then
+   // next after ',' or ')'
+   if Skip (',', tmpstr, tmpstr1, tmpstr3) then
+     if EvaluateString (tmpstr1, tmpstr2, s3, tmpstr3) then;
+   if s3 = '' then
+   begin
+     // only two parameter
+     if Skip (')', tmpstr, r, InfoSyntaxError) then
+     Begin
+       syntaxCheck := true;
+     end;
+   end
+   else
+   begin
+     // three parameter
+     if Skip (')', tmpstr2, r, InfoSyntaxError) then
+     Begin
+       syntaxCheck := true;
+       try
+         tmpbool := true;
+         if lowercase(s3) = '32bit' then tmpbool := false
+         else if lowercase(s3) = '64bit' then tmpbool := true
+         else if lowercase(s3) = 'sysnative' then tmpbool := true
+         else
+         begin
+           InfoSyntaxError := 'Error: unknown parameter: '+s3+' expected one of 32bit,64bit,sysnative - fall back to sysnative';
+           syntaxCheck := false;
+         end;
+       except
+         Logdatei.log('Error: Exception in GetRegistryValue: ',LLError);
+       end
+     end;
+   end;
+   if syntaxCheck then
+   begin
+     GetWord (s1, key0, key, ['\']);
+     LogDatei.log_prog ('GetRegistryValue from: '+key0+key+' ValueName: '+s2, LLdebug);
+     StringResult := '';
+     LogDatei.log ('key0 = '+key0, LLdebug2);
+     if runLoginScripts and (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
+     begin
+       // remove HKCU from the beginning
+       // switch to HKEY_USERS
+       key0 := 'HKEY_USERS';
+       key := '\'+usercontextSID+key;
+       LogDatei.log ('Running loginscripts: key0 is now: '+key0 + ', key is now: '+key, LLdebug);
+     end;
+     StringResult := GetRegistrystringvalue(key0+key,s2,tmpbool);
+   end;
+  end
+
+
+
  else if (LowerCase (s) = LowerCase ('GetRegistryStringValue'))
         or (LowerCase (s) = LowerCase ('GetRegistryStringValue32'))
   then
@@ -14711,7 +15017,7 @@ var
   InputBakup : string;
   i : integer;
   tmpint : integer;
-  tmpbool : boolean;
+  tmpbool, tmpbool1, tmpbool2 : boolean;
   tmpstr,tmpstr1,tmpstr2,tmpstr3 : string;
   FindResultcode: integer = 0;
   flushhandle : Thandle;
@@ -16600,7 +16906,6 @@ function TuibInstScript.doAktionen (const Sektion: TWorkSection; const CallingSe
   password : String='';
   trytime : String='';
   timeout : Integer=0;
-  s1 : String='';
   Fehlertext : String='';
   output : TXStringlist;
   inputlist : TXStringList;
@@ -16637,6 +16942,10 @@ function TuibInstScript.doAktionen (const Sektion: TWorkSection; const CallingSe
   p2 : String='';
   p3 : String='';
   p4 : String='';
+  s1 : String='';
+  s2 : String='';
+  s3 : String='';
+  s4 : String='';
   seconds : String='';
   runAs : TRunAs;
   linecount ,k, constcounter : integer;
@@ -16670,6 +16979,8 @@ function TuibInstScript.doAktionen (const Sektion: TWorkSection; const CallingSe
   tmplist : TXStringlist;
   secname : string;
   tmpint : integer;
+  tmpstr, tmpstr1, tmpstr2, tmpstr3 : string;
+  tmpbool, tmpbool1 : boolean;
 
 begin
   result := tsrPositive;
@@ -18317,6 +18628,81 @@ begin
                        end;
                      End;
                  end;
+
+               {$IFDEF WINDOWS}
+               tsPowershellcall:
+               begin
+                 s2 := '';
+                 s3 := '';
+                 tmpstr2 := '';
+                 tmpbool := true; // sysnative
+                 tmpbool1 := true; // handle execution policy
+                 syntaxCheck := false;
+                if Skip ('(', Remaining, Remaining, InfoSyntaxError)
+                then if EvaluateString (Remaining, tmpstr, s1, InfoSyntaxError)
+                // next after ',' or ')'
+                then if Skip (',', tmpstr, tmpstr1, tmpstr3) then
+                 if EvaluateString (tmpstr1, tmpstr2, s2, tmpstr3) then;
+                if s2 = '' then
+                begin
+                 // only one parameter
+                 if Skip (')', tmpstr, Remaining, InfoSyntaxError) then
+                 Begin
+                   syntaxCheck := true;
+                   s2 := 'sysnative';
+                 end;
+                end
+                else
+                begin
+                 // got second parameter
+                  tmpbool := true;
+                 if lowercase(s2) = '32bit' then tmpbool := false
+                 else if lowercase(s2) = '64bit' then tmpbool := true
+                 else if lowercase(s2) = 'sysnative' then tmpbool := true
+                 else
+                 begin
+                   InfoSyntaxError := 'Error: unknown parameter: '+s2+' expected one of 32bit,64bit,sysnative - fall back to sysnative';
+                   syntaxCheck := false;
+                 end;
+                 // three parameter ?
+                 if Skip (',', tmpstr2, tmpstr1, tmpstr3) then
+                 begin
+                   if EvaluateString (tmpstr1, tmpstr2, s3, tmpstr3) then
+                   begin
+                    // got third parameter
+                     if Skip (')', tmpstr2, Remaining, InfoSyntaxError) then
+                     Begin
+                       if TryStrToBool(s3,tmpbool1) then
+                         syntaxCheck := true
+                       else
+                       begin
+                         syntaxCheck := false;
+                         InfoSyntaxError := 'Error: boolean string (true/false) expected but got: '+s3;
+                       end;
+                     end;
+                   end;
+                 end
+                 else
+                 if Skip (')', tmpstr, Remaining, InfoSyntaxError) then
+                 Begin
+                  // two parameter
+                   syntaxCheck := true;
+                 end;
+                end;
+                if syntaxCheck then
+                 begin
+                   try
+                     execPowershellCall(s1, s2,0, true,false,tmpbool1);
+                   except
+                     on e: exception do
+                     begin
+                       LogDatei.log('Error executing :'+s1+' : with powershell: '+ e.message,
+                         LLError);
+                     end
+                   end;
+                 end;
+               end;
+              {$ENDIF WINDOWS}
 
 
 
@@ -20921,6 +21307,7 @@ begin
   PStatNames^ [tsDefineStringList]    := 'DefStringList';
   PStatNames^ [tsSetVar]              := 'Set';
   PStatNames^ [tsShellCall]           := 'shellCall';
+  PStatNames^ [tsPowershellCall]      := 'powershellCall';
   PStatNames^ [tsDefineFunction]      := 'DefFunc';
   PStatNames^ [tsEndFunction]         := 'EndFunc';
 

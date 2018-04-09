@@ -84,7 +84,8 @@ begin
   oldFsStyle := FormStyle;
   FormStyle := fsSystemStayOnTop;
   BringToFront;
-  FormStyle := oldFsStyle;
+  Application.ProcessMessages;
+  //FormStyle := oldFsStyle;
   repaint;
   Application.ProcessMessages;
 end;
