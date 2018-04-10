@@ -22,7 +22,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
       <BuildNr Value="16"/>
-      <StringTable Comments="Compiled with Lazarus 1.6.4 / FPC 3.0.2" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst64.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst64.exe" ProductName="opsi-script" ProductVersion="4.0.7"/>
+      <StringTable Comments="Compiled with Lazarus 1.8.2 / FPC 3.0.4" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst64.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst64.exe" ProductName="opsi-script" ProductVersion="4.1.0.0"/>
     </VersionInfo>
     <BuildModes Count="4" Active="Release">
       <Item1 Name="default" Default="True"/>
@@ -464,7 +464,7 @@
         <Filename Value="changelog.txt"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <CursorPos X="26" Y="16"/>
+        <CursorPos X="32" Y="21"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>

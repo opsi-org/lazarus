@@ -8506,13 +8506,13 @@ function TuibInstScript.execPowershellCall (command : String; archparam:string;
           FetchExitCodePublic, FatalOnFail : boolean; handle_policy : boolean): TStringlist;
 Var
  commandline : String='';
- fullps : string;
+ //fullps : string;
  runas : TRunAs;
- force64: boolean;
+ //force64: boolean;
  oldDisableWow64FsRedirectionStatus: pointer=nil;
  output: TXStringList;
  tmplist : TStringlist;
- dummybool : boolean;
+ //dummybool : boolean;
  filename : String='';
  parameters : String='';
  report : String='';
@@ -8522,33 +8522,35 @@ Var
  org_execution_policy :string;
  mySektion: TWorkSection;
  ActionResult : TSectionResult;
+ shortarch : string;  // for execShellCall
 begin
   Result := TStringList.Create;
   output := TXStringList.Create;
   runAs := traInvoker;
   OldNumberOfErrors := LogDatei.NumberOfErrors;
   OldNumberOfWarnings := LogDatei.NumberOfWarnings;
-  force64 := false;
+  //force64 := false;
+  shortarch := 'sysnative';
 
   If (lowercase(archparam) = '64bit') and Is64BitSystem then
-     force64 := true;
+     shortarch := '64';
 
   If (lowercase(archparam) = 'sysnative') and Is64BitSystem then
-       force64 := true;
+       shortarch := 'sysnative';
 
   If (lowercase(archparam) = '32bit') then
-       force64 := false;
+       shortarch := '32';
 
 
   if handle_policy then // backup and set execution policy
   begin
     // backup
     commandline := 'powershell.exe get-executionpolicy';
-    tmplist := execShellCall(commandline, archparam, 1, false, true);
+    tmplist := execShellCall(commandline, shortarch, 1, false, true);
     org_execution_policy := trim(tmplist[0]);
     // set (open)
     commandline := 'powershell.exe set-executionpolicy RemoteSigned';
-    tmplist := execShellCall(commandline, archparam, 1, false, true);
+    tmplist := execShellCall(commandline, shortarch, 1, false, true);
   end;
 
   mySektion := TWorkSection.create(NestingLevel);
@@ -8557,10 +8559,14 @@ begin
   mySektion.Add('exit $LASTEXITCODE');
   mySektion.Name:='tmp-internal';
   parameters := 'powershell.exe winst /'+archparam;
-
-  ActionResult := executeWith(mySektion,parameters,true,0,output);
-  if FetchExitCodePublic then FLastExitCodeOfExe := localExitCode
-    else FLastPrivateExitCode := localExitcode;
+  if not FetchExitCodePublic then // backup last extcode
+    localExitCode := FLastExitCodeOfExe;
+  ActionResult := executeWith(mySektion,parameters,true,logleveloffset+1,output);
+  if not FetchExitCodePublic then  // restore last extcode
+  begin
+    FLastPrivateExitCode := FLastExitCodeOfExe;
+    FLastExitCodeOfExe := localExitCode;
+  end;
   LogDatei.log ('output:', LLDebug+logleveloffset);
   LogDatei.log ('--------------', LLDebug+logleveloffset);
   for i := 0 to output.count-1 do
@@ -8576,7 +8582,7 @@ begin
   begin
     // set (close)
     commandline := 'powershell.exe set-executionpolicy '+org_execution_policy;
-    tmplist := execShellCall(commandline, archparam, 1, false, true);
+    tmplist := execShellCall(commandline, shortarch, 1, false, true);
   end;
 
 end;
@@ -9646,7 +9652,7 @@ begin
        End
    end
 
-    else if LowerCase (s) = LowerCase ('shellcall')
+    else if LowerCase (s) = LowerCase ('powershellcall')
     then
     begin
        s2 := '';
@@ -9700,7 +9706,7 @@ begin
          end;
        end
        else
-       if Skip (')', tmpstr, r, InfoSyntaxError) then
+       if Skip (')', tmpstr2, r, InfoSyntaxError) then
        Begin
         // two parameter
          syntaxCheck := true;
@@ -9709,7 +9715,7 @@ begin
       if syntaxCheck then
        begin
          try
-           list.Text := execPowershellCall(s1, s2,0, true,false,tmpbool1).Text;
+           list.Text := execPowershellCall(s1, s2,1, true,false,tmpbool1).Text;
          except
            on e: exception do
            begin
@@ -12684,7 +12690,7 @@ begin
      end;
    end
    else
-   if Skip (')', tmpstr, r, InfoSyntaxError) then
+   if Skip (')', tmpstr2, r, InfoSyntaxError) then
    Begin
     // two parameter
      syntaxCheck := true;
@@ -18683,7 +18689,7 @@ begin
                    end;
                  end
                  else
-                 if Skip (')', tmpstr, Remaining, InfoSyntaxError) then
+                 if Skip (')', tmpstr2, Remaining, InfoSyntaxError) then
                  Begin
                   // two parameter
                    syntaxCheck := true;
