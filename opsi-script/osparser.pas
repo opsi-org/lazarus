@@ -228,9 +228,10 @@ TWorkSection = class (TuibIniScript) // class (TXStringList)
     FNestingLevel   : Integer;
     FInSwitch       : boolean;
     FInCase         : boolean;
+    FParentSection  : TWorkSection;
 
   public
-    constructor create (const NestLevel : Integer);
+    constructor create (const NestLevel : Integer; const ParentSection : TWorkSection);
     destructor destroy; override;
 
     property StartLineNo : Integer read FStartLineNo write FStartLineNo;
@@ -239,6 +240,7 @@ TWorkSection = class (TuibIniScript) // class (TXStringList)
     property SectionKind : TStatement read FSectionKind write FSectionKind;
     property InSwitch : boolean read FInSwitch write FInSwitch;
     property InCase : boolean read FInCase write FInCase;
+    property ParentSection : TWorkSection read FParentSection write FParentSection;
 
   end;
 
@@ -300,6 +302,8 @@ private
   FEvalBoolBaseNestLevel : int64;
   FSectionNameList : Tstringlist;   // hold section and function names with index of FSectionInfoArray
   FSectionInfoArray : array of TSectionInfo; // holds for each section file and startline infos
+  FActiveSection  : TWorkSection;
+  FLastSection  : TWorkSection;
 
 
   
@@ -334,6 +338,8 @@ public
   property ContentOfStringLists : TObjectList read FContentOfStringLists write FContentOfStringLists;
   property aktScriptLineNumber : int64 read FaktScriptLineNumber write FaktScriptLineNumber;
   property Filename : string read FFilename write FFilename;
+  property ActiveSection  : TWorkSection read FActiveSection write FActiveSection;
+  property LastSection  : TWorkSection read FLastSection write FLastSection;
 
 
   (* Infofunktionen *)
@@ -1586,7 +1592,7 @@ begin
 end;
 {$ENDIF WINDOWS}
 
-constructor TWorkSection.create (const NestLevel : Integer);
+constructor TWorkSection.create (const NestLevel : Integer; const ParentSection : TWorkSection);
 begin
   inherited create;
   FStartLineNo  := 0;
@@ -1594,6 +1600,7 @@ begin
   FNestingLevel := NestLevel;
   FInSwitch := false;
   FInCase := false;
+  FParentSection:= ParentSection;
 end;
 
 destructor TWorkSection.destroy;
@@ -1725,6 +1732,8 @@ Begin
   FLibList := TStringList.create;
   FsectionNameList := TStringList.create;
   //FSectionInfoArray := Length(0);
+  FActiveSection := nil;
+  FLastSection := nil;
 End;
 
 destructor TuibInstScript.destroy;
@@ -8553,7 +8562,7 @@ begin
     tmplist := execShellCall(commandline, shortarch, 1, false, true);
   end;
 
-  mySektion := TWorkSection.create(NestingLevel);
+  mySektion := TWorkSection.create(NestingLevel,ActiveSection);
   mySektion.Add('trap { write-output $_ ; exit 1 }');
   mySektion.Add(command);
   mySektion.Add('exit $LASTEXITCODE');
@@ -9883,7 +9892,7 @@ begin
      then
      Begin
        savelogsindentlevel := LogDatei.LogSIndentLevel;
-       localSection := TWorkSection.create(LogDatei.LogSIndentLevel  + 1);
+       localSection := TWorkSection.create(LogDatei.LogSIndentLevel  + 1,ActiveSection);
        GetWord (s1, s2, r1, WordDelimiterSet1);
        localSection.Name := s2;
 
@@ -9962,7 +9971,7 @@ begin
      then
      Begin
        savelogsindentlevel := LogDatei.LogSIndentLevel;
-       localSection := TWorkSection.create(LogDatei.LogSIndentLevel  + 1);
+       localSection := TWorkSection.create(LogDatei.LogSIndentLevel  + 1,ActiveSection);
        GetWord (s1, s2, r1, WordDelimiterSet1);
        localKindOfStatement := findKindOfStatement (s2, SecSpec, s1);
        if
@@ -12725,7 +12734,7 @@ begin
      Begin
        syntaxCheck := true;
        StringResult := '';
-       ArbeitsSektion := TWorkSection.create(0);
+       ArbeitsSektion := TWorkSection.create(0,Nil);
        ArbeitsSektion.Text:= s1;
 //////////////////
 begin
@@ -16989,6 +16998,8 @@ function TuibInstScript.doAktionen (const Sektion: TWorkSection; const CallingSe
   tmpbool, tmpbool1 : boolean;
 
 begin
+  Script.FLastSection := Script.FActiveSection;
+  Script.ActiveSection := sektion;
   result := tsrPositive;
   ActionResult := tsrPositive;
 
@@ -17001,7 +17012,7 @@ begin
 
   //FBatchOberflaeche.setPicture (3, '', '');
 
-  ArbeitsSektion := TWorkSection.create (NestLevel);
+  ArbeitsSektion := TWorkSection.create (NestLevel,Sektion);
   output := TXStringList.Create;
   {$IFDEF GUI}
   FBatchOberflaeche.setWindowState(batchWindowMode);
@@ -17372,10 +17383,14 @@ begin
               then
               begin
                 // subsub case
-                Logdatei.log('Looking for section: '+ Expressionstr +' in calling section.',LLDebug3);
-                CallingSektion.GetSectionLines (Expressionstr, TXStringList (ArbeitsSektion),
-                                  StartlineOfSection, true, true, false);
+                if Assigned(CallingSektion) and (CallingSektion <> nil) then
+                begin
+                  Logdatei.log('Looking for section: '+ Expressionstr +' in calling section.',LLDebug3);
+                  CallingSektion.GetSectionLines (Expressionstr, TXStringList (ArbeitsSektion),
+                                    StartlineOfSection, true, true, false);
+                end;
               end;
+
 
               if ArbeitsSektion.count = 0
               then
@@ -17384,6 +17399,32 @@ begin
                 Logdatei.log('Looking for section: '+ Expressionstr +' in global section.',LLDebug3);
                 Sektion.GetSectionLines (Expressionstr, TXStringList (ArbeitsSektion),
                                   StartlineOfSection, true, true, false);
+              end;
+
+              if ArbeitsSektion.count = 0
+              then
+              begin
+                // subsubsub case
+                if Assigned(CallingSektion.ParentSection) and (CallingSektion.ParentSection <> nil) then
+                begin
+                  Logdatei.log('Looking for section: '+ Expressionstr +' in CallingSektion.ParentSection section.',LLDebug3);
+                  CallingSektion.ParentSection.GetSectionLines(Expressionstr, TXStringList (ArbeitsSektion),
+                                  StartlineOfSection, true, true, false);
+                end;
+              end;
+
+              if ArbeitsSektion.count = 0
+              then
+              begin
+                // subsubsubsub case
+                if Assigned(CallingSektion.ParentSection) and (CallingSektion.ParentSection <> nil)
+                   and Assigned(CallingSektion.ParentSection.ParentSection)
+                   and (CallingSektion.ParentSection.ParentSection <> nil) then
+                begin
+                  Logdatei.log('Looking for section: '+ Expressionstr +' in CallingSektion.FParentSection.FParentSectio section.',LLDebug3);
+                  CallingSektion.FParentSection.FParentSection.GetSectionLines(Expressionstr, TXStringList (ArbeitsSektion),
+                                  StartlineOfSection, true, true, false);
+                end;
               end;
 
 
@@ -20412,7 +20453,8 @@ begin
 
   result := ActionResult;
   output.Free;
-
+  // restore last section
+  Script.ActiveSection := Script.FLastSection;
 end;
 
 
@@ -20998,7 +21040,7 @@ begin
 
 
 
-  Aktionsliste := TWorkSection.Create (NestingLevel);
+  Aktionsliste := TWorkSection.Create (NestingLevel,nil);
   {$IFDEF GUI}
   FBatchOberflaeche.LoadSkin('');
   FBatchOberflaeche.setPicture ('', '');

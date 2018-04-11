@@ -997,8 +997,8 @@ begin
     inDefFuncIndex := FuncIndex;
     // run the body of the function
     inc(inDefinedFuncNestCounter);
-    section := TWorkSection.create(Nestlevel);
-    callingsection := TWorkSection.create(0);
+    section := TWorkSection.create(Nestlevel,Nil);
+    callingsection := TWorkSection.create(0,nil);
     section.Assign(DFcontent);
     sectionresult := script.doAktionen(section,callingsection);
     Nestlevel := section.NestingLevel;

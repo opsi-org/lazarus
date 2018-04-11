@@ -39,6 +39,7 @@ opsi-winst/opsi-script (4.12.0.16) stable; urgency=low
   * oslindesktopfile:  DeleteShellLink: del hard in /usr/share/applications/ ; fixes #3402
   * osparser: getregistryvalue(<keystr>, <varstr> [, <access str>]) : string ; fixes #3279
   * osparser: powershellcall(<commandstr> [,<access str>='sysnative' [,<policy bool str>='true']]) : [void,str,stringlist] ; fixes #3442
+  * osparser: more subsub search
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 14 Mar 2018:15:00:00 +0200
 
