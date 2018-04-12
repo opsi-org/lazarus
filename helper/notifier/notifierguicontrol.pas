@@ -63,16 +63,18 @@ var
   ButtonArray: TButtons;
   labelcounter, buttoncounter: integer;
 
-  {$IFDEF WINDOWS}
+
 // from
 // http://stackoverflow.com/questions/41068387/how-to-make-transparent-form-in-lazarus
 procedure WindowTransparent(const f: THandle; const tpcolor: integer);
 begin
+  {$IFDEF WINDOWS}
   SetWindowLongPtr(f, GWL_EXSTYLE, GetWindowLongPtr(f, GWL_EXSTYLE) or WS_EX_LAYERED);
   SetLayeredWindowAttributes(f, tpcolor, 0, LWA_COLORKEY);
+  {$ENDIF WINDOWS}
 end;
 
-  {$ENDIF WINDOWS}
+
 
 procedure shutdownNotifier;
 begin
@@ -240,8 +242,8 @@ end;
 
 
 function myStringToTColor(str: string): TColor;
-var
-  message: string;
+//var
+//  message: string;
 begin
   try
     Result := rgbStringToColor(str);
@@ -359,7 +361,7 @@ end;
 
 procedure showNForm;
 var
-  startx, starty, stopx, stopy, x, y, i: integer;
+  startx, starty, stopy, x, y, i: integer;
 begin
   // position
 
@@ -374,7 +376,8 @@ begin
     fpBottomRight:
     begin
       x := screen.Width;
-      y := screen.Height;
+      //y := screen.Height;
+      y := screen.WorkAreaHeight;
       starty := y - nform.Height;
       startx := x - nform.Width;
       LogDatei.log('Form position: fpBottomRight', LLInfo);
@@ -423,6 +426,7 @@ begin
       begin
         sleep(1);
         nform.AlphaBlendValue := i;
+        nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
       end;
@@ -442,8 +446,10 @@ begin
       begin
         Sleep(1);
         nform.AlphaBlendValue := i;
+        y := screen.WorkAreaHeight;
         nform.Top := y - i;
         nform.Height := nform.Height + 1;
+        nform.BringToFront;
         nform.Repaint;
         //DataModule1.ProcessMess;
       end;
@@ -451,6 +457,7 @@ begin
       begin
         sleep(1);
         nform.AlphaBlendValue := i;
+        nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
       end;
@@ -471,6 +478,7 @@ begin
         Sleep(1);
         nform.AlphaBlendValue := i;
         nform.Height := nform.Height + 1;
+        nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
       end;
@@ -478,6 +486,7 @@ begin
       begin
         sleep(1);
         nform.AlphaBlendValue := i;
+        nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
       end;
@@ -494,8 +503,10 @@ begin
       for i := 1 to stopy do
       begin
         Sleep(1);
+        y := screen.WorkAreaHeight;
         nform.Top := y - i;
         nform.Height := nform.Height + 1;
+        nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
       end;
@@ -513,16 +524,25 @@ begin
       begin
         Sleep(1);
         nform.Height := nform.Height + 1;
+        nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
       end;
     end;
   end;
+ if mynotifierkind = 'event' then
+  begin
+    nform.FormStyle := fsNormal;
+    logdatei.log('FormStyle := fsNormal',LLDebug);
+    nform.Repaint;
+    DataModule1.ProcessMess;
+  end;
 end;
 
 procedure hideNForm;
 var
-  startx, starty, stopx, stopy, x, y, i: integer;
+  //startx, starty, stopx,
+  stopy,y, i: integer;
 begin
   try
     inHideNForm := True;
@@ -618,10 +638,10 @@ begin
 end;
 
 
-function objectByIndex(myIni: TIniFile; aktsection: string): TObject;
+procedure objectByIndex(myIni: TIniFile; aktsection: string);
 var
-  myLabel: TLabel;
-  myButton: TButton;
+  //myLabel: TLabel;
+  //myButton: TButton;
   mytmpstr: string;
   mytmpint1, mytmpint2: integer;
   choiceindex: integer;
@@ -635,8 +655,8 @@ begin
     begin
       if mynotifierkind = 'event' then
       begin
-        nform.FormStyle := fsStayOnTop;
-        logdatei.log('FormStyle := fsStayOnTop',LLDebug);
+        nform.FormStyle := fsSystemStayOnTop;
+        logdatei.log('FormStyle := fsSystemStayOnTop',LLDebug);
       end
       else
       begin
@@ -690,7 +710,7 @@ begin
     //Systray = true
     //Icon = opsi.ico
     mytmpstr := ExtractFilePath(myini.FileName);
-    mytmpstr := mytmpstr + myini.ReadString(aktsection, 'Icon', '');
+    mytmpstr := mytmpstr + myini.ReadString(aktsection, 'Icon', 'not_existing');
     if FileExists(mytmpstr) then
       nform.Icon.LoadFromFile(mytmpstr);
     //Transparent = true
@@ -710,6 +730,7 @@ begin
     mytmpstr := ExtractFilePath(myini.FileName);
     mytmpstr := mytmpstr + myini.ReadString(aktsection, 'File', '');
     nform.Image1.Picture.LoadFromFile(mytmpstr);
+    nform.Image1.AutoAdjustLayout(lapAutoAdjustForDPI, 96, nform.PixelsPerInch, 0, 0);
     nform.Image1.Repaint;
     DataModule1.ProcessMess;
   end
@@ -748,6 +769,9 @@ begin
       strToBool(myini.ReadString(aktsection, 'Transparent', 'false'));
     LabelArray[labelcounter].Tag := labelcounter;
     LabelArray[labelcounter].Caption := myini.ReadString(aktsection, 'Text', '');
+    // scale new Label:
+    LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI, 96, nform.PixelsPerInch, 0, 0);
+
     // feed labellist: id = index of LabelArray ; id = aktsection striped by 'Label'
     labellist.Add(copy(aktsection, 6, 100) + '=' + IntToStr(labelcounter));
     logdatei.log('labellist add: ' + copy(aktsection, 6, 100) + '=' +
@@ -790,6 +814,9 @@ begin
     //ButtonArray[buttoncounter].TabStop:= false;
     //ButtonArray[buttoncounter].TabOrder:=-1;
     ButtonArray[buttoncounter].Caption := myini.ReadString(aktsection, 'Text', '');
+    // scale new Button:
+    ButtonArray[buttoncounter].AutoAdjustLayout(lapAutoAdjustForDPI, 96, nform.PixelsPerInch, 0, 0);
+
     // feed buttonlist: id = index of ButtonArray ; id = ChoiceIndex'
     buttonlist.Add(IntToStr(choiceindex) + '=' + IntToStr(buttoncounter));
     LogDatei.log('Finished reading: ' + aktsection, LLDebug2);

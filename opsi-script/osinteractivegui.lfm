@@ -8,7 +8,7 @@ object CentralForm: TCentralForm
   VertScrollBar.Range = 360
   VertScrollBar.Visible = False
   Caption = '  opsi - script'
-  ClientHeight = 513
+  ClientHeight = 521
   ClientWidth = 966
   Font.CharSet = ANSI_CHARSET
   Font.Color = clBlack
@@ -20,12 +20,12 @@ object CentralForm: TCentralForm
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '1.6.4.0'
+  LCLVersion = '1.8.2.0'
   object LabelWinstVersion: TLabel
     Left = 177
-    Height = 10
+    Height = 9
     Top = 2
-    Width = 77
+    Width = 62
     Alignment = taCenter
     Caption = 'LabelWinstVersion'
     Font.Color = clBlack
@@ -37,9 +37,9 @@ object CentralForm: TCentralForm
   end
   object Label6: TLabel
     Left = 185
-    Height = 10
+    Height = 9
     Top = 10
-    Width = 77
+    Width = 62
     Alignment = taCenter
     Caption = 'LabelWinstVersion'
     Font.Color = clBlack
@@ -51,7 +51,7 @@ object CentralForm: TCentralForm
   end
   object Memo1: TMemo
     Left = 0
-    Height = 260
+    Height = 268
     Top = 253
     Width = 966
     Align = alClient
@@ -128,12 +128,12 @@ object CentralForm: TCentralForm
     BorderWidth = 1
     BorderStyle = bsSingle
     Caption = 'Log-View:'
-    ClientHeight = 40
-    ClientWidth = 964
+    ClientHeight = 38
+    ClientWidth = 962
     TabOrder = 2
     object LabelActivity: TLabel
       Left = 752
-      Height = 17
+      Height = 18
       Top = 16
       Width = 5
       Caption = '-'
@@ -147,7 +147,6 @@ object CentralForm: TCentralForm
       ItemHeight = 0
       ScrollWidth = 84
       TabOrder = 0
-      TopIndex = -1
       Visible = False
     end
   end
@@ -158,6 +157,7 @@ object CentralForm: TCentralForm
     Width = 966
     BorderWidth = 1
     ButtonHeight = 31
+    ButtonWidth = 23
     Caption = 'ToolBar1'
     EdgeBorders = [ebTop, ebBottom]
     TabOrder = 3
@@ -322,7 +322,7 @@ object CentralForm: TCentralForm
     end
     object Edit1: TEdit
       Left = 92
-      Height = 23
+      Height = 26
       Top = 22
       Width = 503
       TabOrder = 0
@@ -358,12 +358,12 @@ object CentralForm: TCentralForm
     end
     object ComboBox1: TComboBox
       Left = 92
-      Height = 23
+      Height = 26
       Top = 23
       Width = 577
       Color = clNone
       Enabled = False
-      ItemHeight = 0
+      ItemHeight = 18
       TabOrder = 3
       Text = 'ComboBox1'
       Visible = False
@@ -389,7 +389,7 @@ object CentralForm: TCentralForm
     end
     object Edit2: TEdit
       Left = 93
-      Height = 23
+      Height = 26
       Top = 7
       Width = 571
       TabOrder = 0
@@ -409,8 +409,8 @@ object CentralForm: TCentralForm
       ChildSizing.ShrinkVertical = crsScaleChilds
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 2
-      ClientHeight = 31
-      ClientWidth = 262
+      ClientHeight = 13
+      ClientWidth = 260
       Color = clMedGray
       Columns = 2
       Font.Color = clBlack
@@ -422,7 +422,7 @@ object CentralForm: TCentralForm
       TabOrder = 1
       object RadioButtonNewLogfile: TRadioButton
         Left = 6
-        Height = 19
+        Height = 1
         Top = 6
         Width = 115
         Caption = 'New'
@@ -439,9 +439,9 @@ object CentralForm: TCentralForm
       end
       object RadioButtonAppendLogfile: TRadioButton
         Left = 121
-        Height = 19
+        Height = 1
         Top = 6
-        Width = 135
+        Width = 133
         Caption = 'Append'
         Enabled = False
         Font.Color = clBlack

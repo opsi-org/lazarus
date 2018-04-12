@@ -65,6 +65,7 @@ osfuncwin3, osregistry{$ENDIF} ;
 
 
 begin
+  Application.Scaled:=True;
   Application.Title:='opsi-winst';
   Application.Initialize;
 

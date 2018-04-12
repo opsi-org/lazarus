@@ -13,11 +13,7 @@ uses
 {$R *.res}
 
 begin
-<<<<<<< .mine
-  //Application.Scaled:=True;
-=======
   Application.Scaled:=True;
->>>>>>> .theirs
   RequireDerivedFormResource:=True;
   Application.Initialize;
   Application.CreateForm(TDataModule1, DataModule1);

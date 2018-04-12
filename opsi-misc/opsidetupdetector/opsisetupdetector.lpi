@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="9"/>
+    <Version Value="10"/>
     <PathDelim Value="\"/>
     <General>
       <MainUnit Value="0"/>
       <Title Value="opsi setup detector"/>
       <UseXPManifest Value="True"/>
       <Icon Value="0"/>
-      <ActiveWindowIndexAtStart Value="0"/>
     </General>
     <i18n>
       <EnableI18N Value="True"/>
@@ -50,10 +49,8 @@
       <Unit0>
         <Filename Value="opsisetupdetector.lpr"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="opsisetupdetector"/>
-        <EditorIndex Value="0"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
         <CursorPos X="5" Y="29"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -61,16 +58,11 @@
       </Unit0>
       <Unit1>
         <Filename Value="C:\opsi-winst-test\trunk\opsi-winst-test-helper\helperchild.lpr"/>
-        <UnitName Value="helperchild"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="67" Y="13"/>
         <UsageCount Value="7"/>
       </Unit1>
       <Unit2>
         <Filename Value="C:\opsi-winst-test\trunk\opsi-winst-test-helper\helperwin.pas"/>
-        <UnitName Value="helperwin"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="13"/>
         <CursorPos X="2" Y="308"/>
         <UsageCount Value="7"/>
@@ -81,10 +73,7 @@
         <ComponentName Value="resultForm1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="resultform"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
-        <WindowIndex Value="0"/>
+        <EditorIndex Value="2"/>
         <TopLine Value="1898"/>
         <CursorPos X="21" Y="1912"/>
         <UsageCount Value="200"/>
@@ -94,117 +83,90 @@
       </Unit3>
       <Unit4>
         <Filename Value="lib\i386-win32\resultform.lrs"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="17" Y="3"/>
         <UsageCount Value="9"/>
       </Unit4>
       <Unit5>
         <Filename Value="manifest.xml"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="48" Y="10"/>
         <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="XML"/>
       </Unit5>
       <Unit6>
         <Filename Value="manifest.rc"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
         <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit6>
       <Unit7>
         <Filename Value="VersionInfoX.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="VersionInfoX"/>
-        <EditorIndex Value="4"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="30" Y="1"/>
+        <EditorIndex Value="3"/>
+        <CursorPos X="30"/>
         <UsageCount Value="203"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit7>
       <Unit8>
         <Filename Value="changelog.txt"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="32" Y="11"/>
         <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit8>
       <Unit9>
         <Filename Value="msi2opsi.lpr"/>
-        <UnitName Value="msi2opsi"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="32" Y="6"/>
         <UsageCount Value="52"/>
       </Unit9>
       <Unit10>
         <Filename Value="msi2opsi-files\CLIENT_DATA\setup32.opsiscript"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
         <CursorPos X="60" Y="15"/>
         <UsageCount Value="52"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit10>
       <Unit11>
         <Filename Value="msi2opsi-files\CLIENT_DATA\check_msi_exitcode.opsiscript"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
         <UsageCount Value="52"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit11>
       <Unit12>
         <Filename Value="C:\lazarus\lcl\include\control.inc"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="3225"/>
-        <CursorPos X="1" Y="3243"/>
+        <CursorPos Y="3243"/>
         <UsageCount Value="20"/>
       </Unit12>
       <Unit13>
         <Filename Value="C:\lazarus\lcl\include\customedit.inc"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="513"/>
-        <CursorPos X="1" Y="531"/>
+        <CursorPos Y="531"/>
         <UsageCount Value="20"/>
       </Unit13>
       <Unit14>
         <Filename Value="C:\lazarus\lcl\include\customform.inc"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="1802"/>
-        <CursorPos X="1" Y="1820"/>
+        <CursorPos Y="1820"/>
         <UsageCount Value="4"/>
       </Unit14>
       <Unit15>
         <Filename Value="E:\lazarus\lcl\include\control.inc"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="888"/>
         <CursorPos X="22" Y="913"/>
         <UsageCount Value="7"/>
       </Unit15>
       <Unit16>
         <Filename Value="C:\lazarus\lcl\include\pagecontrol.inc"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="26"/>
-        <CursorPos X="1" Y="33"/>
+        <CursorPos Y="33"/>
         <UsageCount Value="40"/>
       </Unit16>
       <Unit17>
         <Filename Value="inno2opsi-files\CLIENT_DATA\setup64.opsiscript"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="34"/>
-        <CursorPos X="1" Y="34"/>
+        <CursorPos Y="34"/>
         <UsageCount Value="1"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit17>
       <Unit18>
         <Filename Value="inno2opsi-files\CLIENT_DATA\setup32.opsiscript"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="42"/>
         <CursorPos X="89" Y="72"/>
         <UsageCount Value="1"/>
@@ -212,14 +174,12 @@
       </Unit18>
       <Unit19>
         <Filename Value="C:\lazarus\lcl\include\customnotebook.inc"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="458"/>
-        <CursorPos X="1" Y="476"/>
+        <CursorPos Y="476"/>
         <UsageCount Value="38"/>
       </Unit19>
       <Unit20>
         <Filename Value="resultform.lfm"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="52"/>
         <CursorPos X="47" Y="56"/>
         <UsageCount Value="77"/>
@@ -228,7 +188,6 @@
       <Unit21>
         <Filename Value="C:\lazarus\added\THtmlPort\package\framview.pas"/>
         <UnitName Value="FramView"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="78"/>
         <CursorPos X="69" Y="176"/>
         <UsageCount Value="3"/>
@@ -240,7 +199,6 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ObjectInspector"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="29"/>
         <CursorPos X="94" Y="41"/>
         <UsageCount Value="3"/>
@@ -252,43 +210,34 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Help"/>
-        <WindowIndex Value="0"/>
         <TopLine Value="27"/>
         <CursorPos X="17" Y="61"/>
-        <UsageCount Value="127"/>
+        <UsageCount Value="129"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit23>
       <Unit24>
         <Filename Value="languages\opsisetupdetector.de.po"/>
-        <EditorIndex Value="5"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
-        <UsageCount Value="43"/>
+        <EditorIndex Value="4"/>
+        <UsageCount Value="44"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="PO"/>
       </Unit24>
       <Unit25>
         <Filename Value="C:\lazarus\components\thtml\styleun.pas"/>
         <UnitName Value="StyleUn"/>
-        <EditorIndex Value="2"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
+        <EditorIndex Value="-1"/>
         <CursorPos X="124" Y="9"/>
         <UsageCount Value="17"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit25>
       <Unit26>
         <Filename Value="C:\lazarus\fpc\2.6.2\source\packages\fcl-image\src\fpcanvas.pp"/>
         <UnitName Value="FPCanvas"/>
-        <EditorIndex Value="3"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
+        <EditorIndex Value="-1"/>
         <CursorPos X="110" Y="16"/>
         <UsageCount Value="17"/>
-        <Loaded Value="True"/>
       </Unit26>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
@@ -302,7 +251,7 @@
       </Position2>
       <Position3>
         <Filename Value="resultform.pas"/>
-        <Caret Line="1922" Column="1" TopLine="1880"/>
+        <Caret Line="1922" TopLine="1880"/>
       </Position3>
       <Position4>
         <Filename Value="resultform.pas"/>
@@ -322,11 +271,11 @@
       </Position7>
       <Position8>
         <Filename Value="resultform.pas"/>
-        <Caret Line="6" Column="31" TopLine="1"/>
+        <Caret Line="6" Column="31"/>
       </Position8>
       <Position9>
         <Filename Value="resultform.pas"/>
-        <Caret Line="15" Column="68" TopLine="1"/>
+        <Caret Line="15" Column="68"/>
       </Position9>
       <Position10>
         <Filename Value="resultform.pas"/>
@@ -346,7 +295,7 @@
       </Position13>
       <Position14>
         <Filename Value="resultform.pas"/>
-        <Caret Line="15" Column="87" TopLine="1"/>
+        <Caret Line="15" Column="87"/>
       </Position14>
       <Position15>
         <Filename Value="resultform.pas"/>
@@ -354,7 +303,6 @@
       </Position15>
       <Position16>
         <Filename Value="resultform.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
       </Position16>
       <Position17>
         <Filename Value="resultform.pas"/>
@@ -374,11 +322,11 @@
       </Position20>
       <Position21>
         <Filename Value="resultform.pas"/>
-        <Caret Line="270" Column="1" TopLine="244"/>
+        <Caret Line="270" TopLine="244"/>
       </Position21>
       <Position22>
         <Filename Value="resultform.pas"/>
-        <Caret Line="1961" Column="1" TopLine="1923"/>
+        <Caret Line="1961" TopLine="1923"/>
       </Position22>
       <Position23>
         <Filename Value="resultform.pas"/>
@@ -406,7 +354,7 @@
       </Position28>
       <Position29>
         <Filename Value="resultform.pas"/>
-        <Caret Line="19" Column="41" TopLine="1"/>
+        <Caret Line="19" Column="41"/>
       </Position29>
       <Position30>
         <Filename Value="resultform.pas"/>
@@ -446,12 +394,6 @@
         </Win32>
       </Options>
     </Linking>
-    <Other>
-      <CompilerMessages>
-        <UseMsgFile Value="True"/>
-      </CompilerMessages>
-      <CompilerPath Value="$(CompPath)"/>
-    </Other>
   </CompilerOptions>
   <Debugging>
     <Watches Count="5">
@@ -483,5 +425,4 @@
       </Item3>
     </Exceptions>
   </Debugging>
-  <EditorMacros Count="0"/>
 </CONFIG>

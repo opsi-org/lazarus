@@ -48,8 +48,8 @@ var
 
 implementation
 
-uses
-  notifierguicontrol;
+//uses
+//  notifierguicontrol;
 
 {$R *.lfm}
 

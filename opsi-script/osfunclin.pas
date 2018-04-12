@@ -962,7 +962,8 @@ end;
 function getPackageLock(timeoutsec : integer; kill : boolean) : Boolean;
 var
   disttype : string;
-  lockfile : string;
+  distname : string;
+  lockfile,lockfile1 : string;
   pid : string;
   pidnum : integer;
   pcmd : string;
@@ -975,7 +976,7 @@ var
   {$ENDIF OPSISCRIPT}
   lineparts: TXStringlist;
 
-  function getPackageLockPid : string;
+  function getPackageLockPid(lockfile : string) : string;
   var
     mylockfile : Text;
     cmd, report: string;
@@ -1038,64 +1039,83 @@ var
     end
   end;
 
+  function getPackageLockbyFile(lockfile:string; timeoutsec : integer; kill : boolean) : Boolean;
+  begin
+    try
+      timeoutreached := false;
+      timeoutstep :=  5;
+      timeoutcounter := 0;
+      pid :=  getPackageLockPid(lockfile);
+      if not tryStrToInt(pid,pidnum) then pcmd := ''
+      else pcmd := getProcessByPid(pidnum);
+      while (pid <> '')
+             and (not timeoutreached)
+             and (pcmd <> '') do
+      begin
+        LogDatei.log('Waiting to get package lock from pid: '+pid+' : '+pcmd, LLDEBUG);
+        timeoutcounter :=  timeoutcounter +  timeoutstep;
+        if timeoutcounter >=  timeoutsec then timeoutreached := true
+        else
+        begin
+          sleep(timeoutstep * 1000);
+          pid :=  getPackageLockPid(lockfile);
+          if not tryStrToInt(pid,pidnum) then pcmd := ''
+          else pcmd := getProcessByPid(pidnum);
+        end;
+      end;
+      if timeoutreached then
+      begin
+        result := false;
+        LogDatei.log('Timeout waiting to get package lock from pid: '+pid+' : '+pcmd, LLNotice);
+        if kill then
+        begin
+          LogDatei.log('Killing to get Package lock from pid: '+pid+' : '+pcmd, LLInfo);
+          killProcessByPid(pidnum);
+          pid :=  getPackageLockPid(lockfile);
+          if not tryStrToInt(pid,pidnum) then pcmd := ''
+          else pcmd := getProcessByPid(pidnum);
+          if (pid <> '') and (pcmd <> '') then result := false
+          else result := true;
+        end;
+      end
+      else result := true;
+    except
+       on ex: Exception
+       do
+       Begin
+         LogDatei.log('Exception in osfunclin at getPackageLockbyFile: Error: ' + ex.message, LLError);
+       end;
+    end;
+  end;
 
 begin
   try
     result := false;
+    lockfile1 := '';
+    lockfile :='';
     disttype := getLinuxDistroType;
+    distname := getLinuxVersionMap.Values['Distributor ID'];
     if disttype = 'suse' then lockfile :=  '/run/zypp.pid'
     else if disttype = 'redhat' then lockfile :=  '/var/run/yum.pid'
-    else if disttype = 'debian' then lockfile :=  '/var/lib/dpkg/lock'
+    else if disttype = 'debian' then
+    begin
+      lockfile :=  '/var/lib/dpkg/lock';
+      if distname = 'Univention' then lockfile1 := '/var/lib/apt/lists/lock';
+    end
     else
     begin
       // unsupported distrotype
       LogDatei.log('unsupported distrotype in getPackageLock', LLERROR);
       result := false;
     end;
-    timeoutreached := false;
-    timeoutstep :=  5;
-    timeoutcounter := 0;
-    pid :=  getPackageLockPid;
-    if not tryStrToInt(pid,pidnum) then pcmd := ''
-    else pcmd := getProcessByPid(pidnum);
-    while (pid <> '')
-           and (not timeoutreached)
-           and (pcmd <> '') do
-    begin
-      LogDatei.log('Waiting to get package lock from pid: '+pid+' : '+pcmd, LLDEBUG);
-      timeoutcounter :=  timeoutcounter +  timeoutstep;
-      if timeoutcounter >=  timeoutsec then timeoutreached := true
-      else
-      begin
-        sleep(timeoutstep * 1000);
-        pid :=  getPackageLockPid;
-        if not tryStrToInt(pid,pidnum) then pcmd := ''
-        else pcmd := getProcessByPid(pidnum);
-      end;
-    end;
-    if timeoutreached then
-    begin
-      result := false;
-      LogDatei.log('Timeout waiting to get package lock from pid: '+pid+' : '+pcmd, LLNotice);
-      if kill then
-      begin
-        LogDatei.log('Killing to get Package lock from pid: '+pid+' : '+pcmd, LLInfo);
-        killProcessByPid(pidnum);
-        pid :=  getPackageLockPid;
-        if not tryStrToInt(pid,pidnum) then pcmd := ''
-        else pcmd := getProcessByPid(pidnum);
-        if (pid <> '') and (pcmd <> '') then result := false
-        else result := true;
-      end;
-    end
-    else result := true;
+    if lockfile1 <> '' then result := getPackageLockbyFile(lockfile1, timeoutsec, kill);
+    if lockfile <> '' then result := getPackageLockbyFile(lockfile1, timeoutsec, kill);
   except
      on ex: Exception
      do
      Begin
        LogDatei.log('Exception in osfunclin at getPackageLock: Error: ' + ex.message, LLError);
      end;
-
   end;
 end;
 

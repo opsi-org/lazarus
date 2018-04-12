@@ -66,6 +66,7 @@ uses
 {$IFDEF WIN32}
   osfuncwin2,
   osfuncwin3,
+//osshowlog {ShowTextFile},
 {$ENDIF WIN32}
   shellapi,
   wispecfolder,

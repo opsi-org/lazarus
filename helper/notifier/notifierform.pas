@@ -28,7 +28,7 @@ type
     procedure FormShow(Sender: TObject);
   private
     { private declarations }
-    objlist: TObjectList;
+    //objlist: TObjectList;
   public
     { public declarations }
     procedure choiceClick(Sender: TObject);
@@ -48,7 +48,7 @@ uses
 
 procedure TNform.FormCreate(Sender: TObject);
 begin
-  objlist := TObjectList.Create;
+  //objlist := TObjectList.Create;
   // prevents screensaver to start while running: start
   {$IFDEF WINDOWS} SystemCritical.IsCritical := true; {$ENDIF WINDOWS}
 end;
@@ -81,12 +81,15 @@ procedure TNform.FormShow(Sender: TObject);
 var
   oldFsStyle : TFormstyle;
 begin
+  (*
   oldFsStyle := FormStyle;
   FormStyle := fsSystemStayOnTop;
   BringToFront;
-  FormStyle := oldFsStyle;
+  Application.ProcessMessages;
+  //FormStyle := oldFsStyle;
   repaint;
   Application.ProcessMessages;
+  *)
 end;
 
 procedure TNform.choiceClick(Sender: TObject);

@@ -257,3 +257,4 @@ msgstr "Info de Sistema"
 msgctxt "TSYSTEMINFO.LABEL1.CAPTION"
 msgid "Label1"
 msgstr "Etiqueta1"
+

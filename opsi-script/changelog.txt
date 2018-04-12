@@ -5,6 +5,44 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 ##################################################################
 
+opsi-winst/opsi-script (4.12.0.16) stable; urgency=low
+
+  * typo of log messages
+  * change to Lazarus 1.8.2
+  * switch HighDPI awareness on (8.1+, per monitor)
+  * osparser: reportError: more info on defined functions at syntax error
+  * osfunc: getsectionlines: include leading comments and empty lines
+  * osdefinedfunctions, osparser: allow defined functions with no parameters; fixes #3182
+  * osdefinedfunctions, osparser: allow defined functions with data  type void
+  * oslog: fixed check for library logging
+  * activate normal debug_lib again (see 4.12.0.13 temporary always true)
+  * osparser: doAktionen: tsDefineFunction: try-excepts
+  * osparser: reread opsi.conf parameters for every script; fixes #3337
+  * osparser: splitstring: if string is confidential all parts are confidential as well; fixes #3186
+  * osparser: splitStringOnWhiteSpace: if string is confidential all parts are confidential as well; fixes #3186
+  * osfunc: FSaveToFile new param raise_on_error ; fixes #3253
+  * new string function asConfidential:
+     1. backup and set loglevel to warning |2 get the input | 3 make it confidential
+      | 4 give it to output |5 restore loglevel           #3441
+  * found undocumented string function upper(<str>); fixes #3283
+  * new boolean function RegKeyExists(<keystr> [,<access str>])
+      <access str> = one of 32bit, 64bit, sysnative ; default sysnative   ; fixes #3078
+  * new boolean function RegVarExists(<keystr>, <var str> [,<access str>])
+  * no warning for not existing releaseid  ; fixes #2595
+  * new boolean function isConfidential(<str>)  for testing
+  * initvars in CreateAndProcessScript ; hopefully fixes errors on restart modified scripts
+  * redesign of origin detection
+  * osfuncwin2: reimplementation of getProfileImagePathfromSid
+         https://forum.opsi.org/viewtopic.php?f=7&t=9941
+  * osfuncwin2: reimplementation of  delUserProfile
+  * osfunclin: getpackagelock: look also for UCS ; fixes #3189
+  * oslindesktopfile:  DeleteShellLink: del hard in /usr/share/applications/ ; fixes #3402
+  * osparser: getregistryvalue(<keystr>, <varstr> [, <access str>]) : string ; fixes #3279
+  * osparser: powershellcall(<commandstr> [,<access str>='sysnative' [,<policy bool str>='true']]) : [void,str,stringlist] ; fixes #3442
+  * osparser: more subsub search
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 14 Mar 2018:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.0.15) stable; urgency=low
 
   * oswebservice: getMapOfLoginscripts2Run: fix: check not only for productId but also for productVersion and PackageVersion
@@ -37,7 +75,7 @@ opsi-winst/opsi-script (4.12.0.13) stable; urgency=low
   * osparser / osdefinedfunctions: call from a local function an other local function
       using a local variable as call by value parameter
   * osparser: more fixes for nestinglevel (if then else through localfunctions and sub)
-  * new booealn function: runningInPE (osparser,osfunc,osfuncwin) (at linux always false)
+  * new boolean function: runningInPE (osparser,osfunc,osfuncwin) (at linux always false)
   * osdefinedfunctions: fixes on parsing paramtype
   * osparser: Ifelseendiflevel : longint = 0; // global nestlevel store
      used to pass nestlevel to evaluatestring and producestringlist  --> local functions

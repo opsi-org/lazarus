@@ -33,7 +33,7 @@ uses
 {$IFDEF WINDOWS}
 {$ENDIF}
   LResources,
-  //RichMemo,
+  RichMemo,
 {$IFDEF WIN32}
   //RichBox,
 {$ENDIF WIN32}
