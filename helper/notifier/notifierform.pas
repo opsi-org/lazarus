@@ -81,6 +81,7 @@ procedure TNform.FormShow(Sender: TObject);
 var
   oldFsStyle : TFormstyle;
 begin
+  (*
   oldFsStyle := FormStyle;
   FormStyle := fsSystemStayOnTop;
   BringToFront;
@@ -88,6 +89,7 @@ begin
   //FormStyle := oldFsStyle;
   repaint;
   Application.ProcessMessages;
+  *)
 end;
 
 procedure TNform.choiceClick(Sender: TObject);

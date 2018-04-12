@@ -1,4 +1,11 @@
 
+opsiclientkiosk 4.1.0.0
+
+  * lazarus 1.8.2
+  * HighDPI awareness
+
+-- detlef oertel <d.oertel@uib.de>  Thu, 12 Apr 2018 15:00:00 +0000
+
 opsiclientkiosk 4.0.7.11
 
   * opsiclientkioskgui: fixes initializing title
