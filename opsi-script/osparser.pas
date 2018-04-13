@@ -12736,6 +12736,7 @@ begin
        StringResult := '';
        ArbeitsSektion := TWorkSection.create(0,Nil);
        ArbeitsSektion.Text:= s1;
+       tmpstr := r;
 //////////////////
 begin
               //{$IFDEF WINDOWS}
@@ -12974,6 +12975,7 @@ begin
                if SyntaxCheck
                then
                begin
+                 LogDatei.log ('Executing: ' + s +'('+ s1+') '+tmpstr, LLNotice);
                  ActionResult := execWinBatch (ArbeitsSektion, r, WaitConditions, Ident, WaitSecs, runAs,flag_force64);
                  StringResult := IntToStr (FLastExitCodeOfExe) ;
                end
