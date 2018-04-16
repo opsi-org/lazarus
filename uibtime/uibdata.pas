@@ -27,7 +27,8 @@ uses
   httpservice,
   uibtWorkRepChooser,
   uib2erp,
-  Variants;
+  Variants,
+  pingsend;
 
 type
 
@@ -55,6 +56,7 @@ type
     Arbeitsberichte: TMenuItem;
     ProcessTrayNotify: TProcess;
     SQholydays: TSQLQuery;
+    TimerCheckNet: TTimer;
     trayconfig: TMenuItem;
     Query_day_report: TSQLQuery;
     Query4Result: TSQLQuery;
@@ -154,6 +156,7 @@ type
       E: EDatabaseError; var DataAction: TDataAction);
     procedure Statistik1Click(Sender: TObject);
     procedure Statistik1Cancel;
+    procedure TimerCheckNetTimer(Sender: TObject);
     procedure TimerloggedinTimer(Sender: TObject);
     procedure TimerLogoffOnTopTimer(Sender: TObject);
     procedure TimerOnTopTimer(Sender: TObject);
@@ -1258,6 +1261,22 @@ end;
 procedure TDataModule1.Statistik1Cancel;
 begin
   TimerOntop.Enabled := True;
+end;
+
+procedure TDataModule1.TimerCheckNetTimer(Sender: TObject);
+var
+  cinfo : TConnInfoType;
+begin
+  (*
+  if pinghost('192.168.1.12') = -1 then
+  begin
+    debugOut(3, 'CheckNetTimer', 'Could not reach groupware');
+  end;
+  *)
+  if not IBConnection1.Connected  then
+  begin
+    debugOut(3, 'CheckNetTimer', 'connection error');
+  end;
 end;
 
 

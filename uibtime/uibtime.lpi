@@ -40,7 +40,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\external_libraries\powerpdf;..\lazlib\lazreport\source\addons\pdfexport"/>
+            <OtherUnitFiles Value="..\external_libraries\powerpdf;..\lazlib\lazreport\source\addons\pdfexport;..\common;..\external_libraries\synapse40lib"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -142,6 +142,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
+        <CommandLineParams Value="export UNAME=oertel"/>
       </local>
     </RunParams>
     <RequiredPackages Count="9">
@@ -337,6 +338,11 @@
       <OtherUnitFiles Value="..\external_libraries\powerpdf;..\lazlib\lazreport\source\addons\pdfexport"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <SyntaxMode Value="Delphi"/>
+      </SyntaxOptions>
+    </Parsing>
     <Linking>
       <Options>
         <Win32>

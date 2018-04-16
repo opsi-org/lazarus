@@ -215,7 +215,7 @@ begin
     // other inits
     aktstartyear := 2001;
     aktstartmonth := 1;
-    DataModule1.debugOut(6, 'getLastIntervalInfo', 'enter for :'+event);
+    DataModule1.debugOut(6, 'getLastIntervalInfo', 'enter for :' + event);
     suchevent := event;
     querystartdt := StrToDate(querystartdate);
     queryenddt := StrToDate(queryenddate);
@@ -265,13 +265,15 @@ begin
       acc_per_monthnum := QueryProjektzeit.FieldByName('acc_per_monthnum').AsFloat;
       basemonth := trunc(acc_per_monthnum);
       projektstart := QueryProjektzeit.FieldByName('projectstart').AsDateTime;
-      DataModule1.debugOut(6, 'getLastIntervalInfo projektstart :'+DateToStr(projektstart));
+      DataModule1.debugOut(6, 'getLastIntervalInfo projektstart :' +
+        DateToStr(projektstart));
       // if projektstart is in future we will not find anything
       if projektstart >= queryenddt then
       begin
         Result := False;
         DataModule1.debugOut(3, 'getLastIntervalInfo',
-          'Projektstart of: ' + suchevent + ' is in "future": later or equal then end of searchinterval:'+DateToStr(queryenddt));
+          'Projektstart of: ' + suchevent +
+          ' is in "future": later or equal then end of searchinterval:' + DateToStr(queryenddt));
         Exit;
       end;
       //// startday of projekt end
@@ -360,12 +362,16 @@ begin
       *)
       // here is the result for the last Interval
       //lastIntervalStart := EncodeDate(aktstartyear, aktstartmonth, startday);
-      lastIntervalStart := getLastIntervalStart(projektstart,acc_per_monthnum_int);
+      lastIntervalStart := getLastIntervalStart(
+        projektstart, queryenddt, acc_per_monthnum_int);
       //decodeDate(lastIntervalStart, aktstartyear, aktstartmonth, aktstartday);
-      DataModule1.debugOut(6, 'getLastIntervalInfo', 'lastIntervalStart :'+DateToStr(lastIntervalStart));
+      DataModule1.debugOut(6, 'getLastIntervalInfo',
+        'lastIntervalStart :' + DateToStr(lastIntervalStart));
       //lastIntervalEnd := EncodeDate(endyear, endmonth, startday);
-      lastIntervalEnd := getLastIntervalEnd(projektstart,acc_per_monthnum_int);
-      DataModule1.debugOut(6, 'getLastIntervalInfo', 'lastIntervalEnd :'+DateToStr(lastIntervalEnd));
+      lastIntervalEnd := getLastIntervalEnd(projektstart, queryenddt,
+        acc_per_monthnum_int);
+      DataModule1.debugOut(6, 'getLastIntervalInfo',
+        'lastIntervalEnd :' + DateToStr(lastIntervalEnd));
       // are the interval boundaries in search intervall
       if (lastIntervalStart >= querystartdt) and (lastIntervalStart <= queryenddt) then
         intervalStartFound := True
@@ -466,8 +472,8 @@ begin
       used_min) + ' since 1.' + IntToStr(aktstartmonth) + '.' +
       IntToStr(aktstartyear);
     *)
-    DataModule1.debugOut(6, 'getLastIntervalInfo', 'ProjektzeitTimer: ' + FloatToStr(total) +
-      '-' + FloatToStr(used) + '=' + floattostr(available));
+    DataModule1.debugOut(6, 'getLastIntervalInfo', 'ProjektzeitTimer: ' +
+      FloatToStr(total) + '-' + FloatToStr(used) + '=' + floattostr(available));
     (*
     EditProjektzeit.Text := IntToStr(trunc(available)) + minute2str(available_min);
     EditProjektzeit.Hint := IntToStr(trunc(total)) + minute2str(
@@ -842,35 +848,44 @@ var
   fromday, untilday: Tdate;
   stunden: double;
 begin
-  query1.First;
-  while not query1.EOF do
-  begin
-    query1.Edit;
-    query1.FieldByName('locked').AsInteger := 1;
-    query1.Next;
-  end;
-  if query1.State in [dsEdit, dsInsert] then
-    query1.Post;
+  try
+    query1.First;
+    while not query1.EOF do
+    begin
+      query1.Edit;
+      query1.FieldByName('locked').AsInteger := 1;
+      query1.Next;
+    end;
+    if query1.State in [dsEdit, dsInsert] then
+      query1.Post;
 
-  createReport('show', 'Final');
-  createReport('pdf', 'Final');
-  if QueryUEARhelper.Active then
-    QueryUEARhelper.Close;
-  QueryUEARhelper.SQL.Clear;
-  QueryUEARhelper.sql.Add('insert into uibaccountexport ');
-  QueryUEARhelper.sql.Add(
-    '(event, fromday, untilday, stunden, inerp, erperror, erp_errorstr) ');
-  QueryUEARhelper.sql.Add('values(:event, :fromday, :untilday, :stunden, 0, 0, "") ');
-  QueryUEARhelper.ParamByName('event').AsString := suchevent;
-  fromday := StrToDate(repvonstr);
-  untilday := StrToDate(repbisstr);
-  stunden := query3.FieldByName('summe').AsFloat;
-  QueryUEARhelper.ParamByName('fromday').AsDate := fromday;
-  QueryUEARhelper.ParamByName('untilday').AsDate := untilday;
-  QueryUEARhelper.ParamByName('stunden').AsFloat := stunden;
-  QueryUEARhelper.ExecSQL;
-  checkbox1.Checked := False;
-  stringgrid1.DeleteRow(StringGrid1.Row);
+    createReport('show', 'Final');
+    createReport('pdf', 'Final');
+    if QueryUEARhelper.Active then
+      QueryUEARhelper.Close;
+    QueryUEARhelper.SQL.Clear;
+    QueryUEARhelper.sql.Add('insert into uibaccountexport ');
+    QueryUEARhelper.sql.Add(
+      '(event, fromday, untilday, stunden, inerp, erperror, erp_errorstr) ');
+    QueryUEARhelper.sql.Add('values(:event, :fromday, :untilday, :stunden, 0, 0, "") ');
+    QueryUEARhelper.ParamByName('event').AsString := suchevent;
+    fromday := StrToDate(repvonstr);
+    untilday := StrToDate(repbisstr);
+    stunden := query3.FieldByName('summe').AsFloat;
+    QueryUEARhelper.ParamByName('fromday').AsDate := fromday;
+    QueryUEARhelper.ParamByName('untilday').AsDate := untilday;
+    QueryUEARhelper.ParamByName('stunden').AsFloat := stunden;
+    QueryUEARhelper.ExecSQL;
+    checkbox1.Checked := False;
+    stringgrid1.DeleteRow(StringGrid1.Row);
+  except
+    on e: Exception do
+    begin
+      DataModule1.debugOut(3, '', 'exception in uib2erp.BtnExp2Erp');
+      DataModule1.debugOut(3, e.Message);
+      raise;
+    end;
+  end;
 end;
 
 procedure TFuibtime2erp.BitBtnShowexportTableClick(Sender: TObject);
@@ -926,34 +941,76 @@ var
   sign: string;
   filename, uibname, dirname: string;
   len, posi: integer;
-  reversestr : string;
-  isQuotaReport : boolean;
+  reversestr: string;
+  isQuotaReport: boolean;
   projectstart, projectend: TDateTime;
   presumme_h: double;
   quota_lifetime_month: integer;
 begin
-  isQuotaReport := false;
-  // query isQuotaReport
-  QueryUEARhelper.Close;
-  if QueryUEARhelper.Active then
+  try
+    isQuotaReport := False;
+    // query isQuotaReport
     QueryUEARhelper.Close;
-  QueryUEARhelper.SQL.Clear;
-  QueryUEARhelper.sql.Add(' select projectstart, quota_lifetime_month ');
-  QueryUEARhelper.sql.Add('    from uiballevent');
-  QueryUEARhelper.sql.Add('    where (event = :suchevent)');
-  QueryUEARhelper.parambyname('suchevent').AsString := suchevent;
-  QueryUEARhelper.Open;
-  if not QueryUEARhelper.FieldByName('quota_lifetime_month').IsNull then
-  begin
-    quota_lifetime_month := round(QueryUEARhelper.FieldByName('quota_lifetime_month').AsFloat);
-    if quota_lifetime_month > 0 then
-      isQuotaReport := True;
-    projectstart := QueryUEARhelper.FieldByName('projectstart').AsDateTime;
-  end;
-  QueryUEARhelper.Close;
+    if QueryUEARhelper.Active then
+      QueryUEARhelper.Close;
+    QueryUEARhelper.SQL.Clear;
+    QueryUEARhelper.sql.Add(' select projectstart, quota_lifetime_month ');
+    QueryUEARhelper.sql.Add('    from uiballevent');
+    QueryUEARhelper.sql.Add('    where (event = :suchevent)');
+    QueryUEARhelper.parambyname('suchevent').AsString := suchevent;
+    QueryUEARhelper.Open;
+    if not QueryUEARhelper.FieldByName('quota_lifetime_month').IsNull then
+    begin
+      quota_lifetime_month := round(QueryUEARhelper.FieldByName(
+        'quota_lifetime_month').AsFloat);
+      if quota_lifetime_month > 0 then
+        isQuotaReport := True;
+      projectstart := QueryUEARhelper.FieldByName('projectstart').AsDateTime;
+    end;
+    QueryUEARhelper.Close;
 
-  if isQuotaReport then
-  begin
+    if isQuotaReport then
+    begin
+      if QueryUEARhelper.Active then
+        QueryUEARhelper.Close;
+      QueryUEARhelper.SQL.Clear;
+      QueryUEARhelper.sql.Add('select ');
+      QueryUEARhelper.sql.Add('event, sum(stunden) as summe ');
+      QueryUEARhelper.sql.Add('FROM uibeventaccountreport a ');
+      QueryUEARhelper.sql.Add('where ');
+      QueryUEARhelper.sql.Add('(a.event = :event) ');
+      QueryUEARhelper.sql.Add('and(a.dateday >= :start) ');
+      QueryUEARhelper.sql.Add('and (a.dateday <= :stop) ');
+      QueryUEARhelper.sql.Add('group by 1  ');
+      QueryUEARhelper.ParamByName('event').AsString := suchevent;
+      QueryUEARhelper.parambyname('start').AsDateTime := projectstart;
+      QueryUEARhelper.parambyname('stop').AsString := vonstr;
+      QueryUEARhelper.Open;
+      presumme_h := QueryUEARhelper.FieldByName('summe').AsFloat;
+      QueryUEARhelper.Close;
+    end;
+
+    // query edit buffer
+    if QueryUibeventaccountreport.Active then
+      QueryUibeventaccountreport.Close;
+    QueryUibeventaccountreport.SQL.Clear;
+    QueryUibeventaccountreport.sql.Add('select ');
+    QueryUibeventaccountreport.sql.Add(
+      'userid, dateday as datum , stunden, description, ');
+    QueryUibeventaccountreport.sql.Add('((round(a.STUNDEN*60) /60) / 24)  as sumtime ');
+    QueryUibeventaccountreport.sql.Add('FROM uibeventaccountreport a ');
+    QueryUibeventaccountreport.sql.Add('where ');
+    QueryUibeventaccountreport.sql.Add('(a.event = :event) ');
+    QueryUibeventaccountreport.sql.Add('and(a.dateday >= :start) ');
+    QueryUibeventaccountreport.sql.Add('and (a.dateday <= :stop) ');
+    QueryUibeventaccountreport.sql.Add('order by datum ');
+    QueryUibeventaccountreport.ParamByName('event').AsString := suchevent;
+    QueryUibeventaccountreport.parambyname('start').AsString := vonstr;
+    QueryUibeventaccountreport.parambyname('stop').AsString := bisstr;
+    QueryUibeventaccountreport.Open;
+    //DataSource1.Enabled := True;
+
+    // query summe
     if QueryUEARhelper.Active then
       QueryUEARhelper.Close;
     QueryUEARhelper.SQL.Clear;
@@ -966,50 +1023,10 @@ begin
     QueryUEARhelper.sql.Add('and (a.dateday <= :stop) ');
     QueryUEARhelper.sql.Add('group by 1  ');
     QueryUEARhelper.ParamByName('event').AsString := suchevent;
-    QueryUEARhelper.parambyname('start').AsDateTime:=projectstart;
-    QueryUEARhelper.parambyname('stop').AsString := vonstr;
+    QueryUEARhelper.parambyname('start').AsString := vonstr;
+    QueryUEARhelper.parambyname('stop').AsString := bisstr;
     QueryUEARhelper.Open;
-    presumme_h := QueryUEARhelper.FieldByName('summe').AsFloat;
-    QueryUEARhelper.Close;
-  end;
-
-  // query edit buffer
-  if QueryUibeventaccountreport.Active then
-    QueryUibeventaccountreport.Close;
-  QueryUibeventaccountreport.SQL.Clear;
-  QueryUibeventaccountreport.sql.Add('select ');
-  QueryUibeventaccountreport.sql.Add(
-    'userid, dateday as datum , stunden, description, ');
-  QueryUibeventaccountreport.sql.Add('((round(a.STUNDEN*60) /60) / 24)  as sumtime ');
-  QueryUibeventaccountreport.sql.Add('FROM uibeventaccountreport a ');
-  QueryUibeventaccountreport.sql.Add('where ');
-  QueryUibeventaccountreport.sql.Add('(a.event = :event) ');
-  QueryUibeventaccountreport.sql.Add('and(a.dateday >= :start) ');
-  QueryUibeventaccountreport.sql.Add('and (a.dateday <= :stop) ');
-  QueryUibeventaccountreport.sql.Add('order by datum ');
-  QueryUibeventaccountreport.ParamByName('event').AsString := suchevent;
-  QueryUibeventaccountreport.parambyname('start').AsString := vonstr;
-  QueryUibeventaccountreport.parambyname('stop').AsString := bisstr;
-  QueryUibeventaccountreport.Open;
-  //DataSource1.Enabled := True;
-
-  // query summe
-  if QueryUEARhelper.Active then
-    QueryUEARhelper.Close;
-  QueryUEARhelper.SQL.Clear;
-  QueryUEARhelper.sql.Add('select ');
-  QueryUEARhelper.sql.Add('event, sum(stunden) as summe ');
-  QueryUEARhelper.sql.Add('FROM uibeventaccountreport a ');
-  QueryUEARhelper.sql.Add('where ');
-  QueryUEARhelper.sql.Add('(a.event = :event) ');
-  QueryUEARhelper.sql.Add('and(a.dateday >= :start) ');
-  QueryUEARhelper.sql.Add('and (a.dateday <= :stop) ');
-  QueryUEARhelper.sql.Add('group by 1  ');
-  QueryUEARhelper.ParamByName('event').AsString := suchevent;
-  QueryUEARhelper.parambyname('start').AsString := vonstr;
-  QueryUEARhelper.parambyname('stop').AsString := bisstr;
-  QueryUEARhelper.Open;
-  summe_h := QueryUEARhelper.FieldByName('summe').AsFloat;
+    summe_h := QueryUEARhelper.FieldByName('summe').AsFloat;
   (*
   hours := trunc(summe_h);
   minutes := Round(frac(summe_h) * 60);
@@ -1020,127 +1037,135 @@ begin
   end;
   summe_htd := EncodeTimeInterval(hours, minutes, 0, 0);
   *)
-  QueryUEARhelper.Close;
-
-  if QueryUEARhelper.Active then
     QueryUEARhelper.Close;
-  QueryUEARhelper.SQL.Clear;
-  QueryUEARhelper.sql.Add(' select time_h, acc_per_monthnum ');
-  QueryUEARhelper.sql.Add('    from uiballevent');
-  QueryUEARhelper.sql.Add('    where (event = :suchevent)');
-  QueryUEARhelper.parambyname('suchevent').AsString := suchevent;
-  QueryUEARhelper.Open;
-  months := 0;
-  total := 0;
-  if not QueryUEARhelper.FieldByName('time_h').IsNull then
-  begin
-    total := QueryUEARhelper.FieldByName('time_h').AsFloat;
-    months := round(QueryUEARhelper.FieldByName('acc_per_monthnum').AsFloat);
-  end;
-  QueryUEARhelper.Close;
+
+    if QueryUEARhelper.Active then
+      QueryUEARhelper.Close;
+    QueryUEARhelper.SQL.Clear;
+    QueryUEARhelper.sql.Add(' select time_h, acc_per_monthnum ');
+    QueryUEARhelper.sql.Add('    from uiballevent');
+    QueryUEARhelper.sql.Add('    where (event = :suchevent)');
+    QueryUEARhelper.parambyname('suchevent').AsString := suchevent;
+    QueryUEARhelper.Open;
+    months := 0;
+    total := 0;
+    if not QueryUEARhelper.FieldByName('time_h').IsNull then
+    begin
+      total := QueryUEARhelper.FieldByName('time_h').AsFloat;
+      months := round(QueryUEARhelper.FieldByName('acc_per_monthnum').AsFloat);
+    end;
+    QueryUEARhelper.Close;
   {$IFDEF Linux}
-  mypath := '/usr/share/uibtime/';
-  if not FileExists(mypath + 'workrep.lrf') then
-    // path for development:
-    mypath := ExtractFilePath(ParamStr(0));
+    mypath := '/usr/share/uibtime/';
+    if not FileExists(mypath + 'workrep.lrf') then
+      // path for development:
+      mypath := ExtractFilePath(ParamStr(0));
   {$ELSE}
-  mypath := ExtractFilePath(ParamStr(0));
+    mypath := ExtractFilePath(ParamStr(0));
   {$ENDIF Linux}
-  frDBDataSet1.DataSet := QueryUibeventaccountreport;
-  frReport1.Clear;
-  if isQuotaReport then
-  begin
-    frReport1.LoadFromFile(mypath + 'uib2erp_quota_workrep.lrf');
-    projectend := IncMonth(projectstart,quota_lifetime_month);
-    frReport1.FindObject('memoQuota').Memo.Text :=
-      'Projektstart: '+DateToStr(projectstart)+' bis: '+DateToStr(projectend)
-      + ' mit Stunden: ' + timeFloatTohourminutesStr(total);
+    frDBDataSet1.DataSet := QueryUibeventaccountreport;
+    frReport1.Clear;
+    if isQuotaReport then
+    begin
+      frReport1.LoadFromFile(mypath + 'uib2erp_quota_workrep.lrf');
+      projectend := IncMonth(projectstart, quota_lifetime_month);
+      frReport1.FindObject('memoQuota').Memo.Text :=
+        'Projektstart: ' + DateToStr(projectstart) + ' bis: ' + DateToStr(projectend) +
+        ' mit Stunden: ' + timeFloatTohourminutesStr(total);
       //+IntToStr(trunc(Total)) + ':' + Format('%.*d', [2, round(frac(Total) * 60)]);
-  end
-  else
-    frReport1.LoadFromFile(mypath + 'uib2erp_workrep.lrf');
-  //frReport1.Dataset := QueryUibeventaccountreport;
-  title := 'opsi Tätigkeitsbericht für: ' + suchevent + ' ';
-  //if not (combobox1.Text = 'Summe Alle') then
-  //  title := title + 'und user: ' + uid;
-  title := title + ' ' + comment;
-  frReport1.FindObject('memoTitle').Memo.Text := title;
-  frReport1.FindObject('memoStartEnd').Memo.Text :=
-    'Von ' + vonstr + ' bis (incl.) ' + repbisstr;
-  frReport1.FindObject('memosumhm').Memo.Text :=
-    IntToStr(trunc(summe_h)) + ':' + Format('%.*d', [2, round(frac(summe_h) * 60)]);
-  //FormatDateTime('hh:nn', summe_htd);
-  //frReport1.FindObject('memofreistunden').Memo.Text :=
-  //  IntToStr(round(Total)) + ' pro ' + IntToStr(months) + ' Monat(e)';
-  if isQuotaReport then
-  begin
-    frReport1.FindObject('memo_hfromstart').Memo.Text :=
-      IntToStr(trunc(presumme_h)) + ':'
-            + Format('%.*d', [2, round(frac(presumme_h) * 60)]);
+    end
+    else
+      frReport1.LoadFromFile(mypath + 'uib2erp_workrep.lrf');
+    //frReport1.Dataset := QueryUibeventaccountreport;
+    title := 'opsi Tätigkeitsbericht für: ' + suchevent + ' ';
+    //if not (combobox1.Text = 'Summe Alle') then
+    //  title := title + 'und user: ' + uid;
+    title := title + ' ' + comment;
+    frReport1.FindObject('memoTitle').Memo.Text := title;
+    frReport1.FindObject('memoStartEnd').Memo.Text :=
+      'Von ' + vonstr + ' bis (incl.) ' + repbisstr;
+    frReport1.FindObject('memosumhm').Memo.Text :=
+      IntToStr(trunc(summe_h)) + ':' + Format('%.*d', [2, round(frac(summe_h) * 60)]);
+    //FormatDateTime('hh:nn', summe_htd);
+    //frReport1.FindObject('memofreistunden').Memo.Text :=
+    //  IntToStr(round(Total)) + ' pro ' + IntToStr(months) + ' Monat(e)';
+    if isQuotaReport then
+    begin
+      frReport1.FindObject('memo_hfromstart').Memo.Text :=
+        IntToStr(trunc(presumme_h)) + ':' +
+        Format('%.*d', [2, round(frac(presumme_h) * 60)]);
 
-    frReport1.FindObject('memo_GS').Memo.Text :=
-      IntToStr(trunc(presumme_h+summe_h)) + ':'
-            + Format('%.*d', [2, round(frac(presumme_h+summe_h) * 60)]);
+      frReport1.FindObject('memo_GS').Memo.Text :=
+        IntToStr(trunc(presumme_h + summe_h)) + ':' +
+        Format('%.*d', [2, round(frac(presumme_h + summe_h) * 60)]);
 
-    frReport1.FindObject('memofreistunden').Memo.Text :=
-      IntToStr(trunc(Total)) + ':' + Format('%.*d', [2, round(frac(Total) * 60)]);
+      frReport1.FindObject('memofreistunden').Memo.Text :=
+        IntToStr(trunc(Total)) + ':' + Format('%.*d', [2, round(frac(Total) * 60)]);
 
-    // we need freed without sign
-    freed := abs(total - (presumme_h+summe_h));
-    sign := '+ ';
-    if (presumme_h+summe_h) > total then
-      sign := ' -';
+      // we need freed without sign
+      freed := abs(total - (presumme_h + summe_h));
+      sign := '+ ';
+      if (presumme_h + summe_h) > total then
+        sign := ' -';
 
-    frReport1.FindObject('memoDiff').Memo.Text :=
-      sign + IntToStr(trunc(freed)) + ':' + Format('%.*d', [2, round(frac(freed) * 60)]);
-  end
-  else
-  begin
-    frReport1.FindObject('memofreistunden').Memo.Text :=
-      IntToStr(trunc(Total)) + ':' + Format('%.*d', [2, round(frac(Total) * 60)]) +
-      ' pro ' + IntToStr(months) + ' Monat(e)';
-    // we need freed without sign
-    freed := abs(total - summe_h);
-    sign := '+ ';
-    if summe_h > total then
-      sign := ' -';
+      frReport1.FindObject('memoDiff').Memo.Text :=
+        sign + IntToStr(trunc(freed)) + ':' + Format('%.*d', [2, round(frac(freed) * 60)]);
+    end
+    else
+    begin
+      frReport1.FindObject('memofreistunden').Memo.Text :=
+        IntToStr(trunc(Total)) + ':' + Format('%.*d', [2, round(frac(Total) * 60)]) +
+        ' pro ' + IntToStr(months) + ' Monat(e)';
+      // we need freed without sign
+      freed := abs(total - summe_h);
+      sign := '+ ';
+      if summe_h > total then
+        sign := ' -';
 
-    frReport1.FindObject('memoDiff').Memo.Text :=
-      sign + IntToStr(trunc(freed)) + ':' + Format('%.*d', [2, round(frac(freed) * 60)]);
-  end;
-  //sign + FormatDateTime('hh:nn', free_htd - summe_htd);
-  frReport1.DefExportFileName := suchevent + '_' + vonstr + '_' + bisstr + '.pdf';
-  //SelectDirectoryDialog1.FileName:=suchevent+'_'+vonstr+'_'+bisstr+ '.pdf';
-  if output = 'show' then
-  begin
-    try
-      frReport1.ShowReport;
-    except
+      frReport1.FindObject('memoDiff').Memo.Text :=
+        sign + IntToStr(trunc(freed)) + ':' + Format('%.*d', [2, round(frac(freed) * 60)]);
+    end;
+    //sign + FormatDateTime('hh:nn', free_htd - summe_htd);
+    frReport1.DefExportFileName := suchevent + '_' + vonstr + '_' + bisstr + '.pdf';
+    //SelectDirectoryDialog1.FileName:=suchevent+'_'+vonstr+'_'+bisstr+ '.pdf';
+    if output = 'show' then
+    begin
+      try
+        frReport1.ShowReport;
+      except
+      end;
+    end;
+    if output = 'pdf' then
+    begin
+      try
+        // we create the filename by cutting the 'extension' eg. .suport , .psusp , ...
+        len := length(suchevent);
+        reversestr := ReverseString(suchevent);
+        posi := Pos('.', reversestr);
+        if posi > 0 then
+          len := len - posi;
+        uibname := Copy(suchevent, 1, len);
+        // use uibtime name as filename (for multiple events at one uibname)
+        //filename := uibname+'_'+Copy(suchevent, len+2, Length(suchevent));
+        filename := suchevent + '_' + repfilevonstr + '_' + repfilebisstr + '.pdf';
+        dirname := EditButtonExportDir.Text + PathDelim + uibname;
+        if not DirectoryExists(dirname) then
+          dirname := EditButtonExportDir.Text + PathDelim + 'report';
+        if frReport1.PrepareReport then
+          frReport1.ExportTo(TFrTNPDFExportFilter, dirname + PathDelim + filename);
+        //EditButtonExportDir.Text + PathDelim + suchevent+'_'+vonstr+'_'+bisstr+ '.pdf');
+      except
+      end;
+    end;
+    QueryUibeventaccountreport.Close;
+  except
+    on e: Exception do
+    begin
+      DataModule1.debugOut(3, '', 'exception in uib2erp.createreport');
+      DataModule1.debugOut(3, e.Message);
+      raise;
     end;
   end;
-  if output = 'pdf' then
-  begin
-    try
-      // we create the filename by cutting the 'extension' eg. .suport , .psusp , ...
-      len := length(suchevent);
-      reversestr := ReverseString(suchevent);
-      posi := Pos('.', reversestr);
-      if posi > 0 then
-        len := len - posi;
-      uibname := Copy(suchevent, 1, len);
-      // use uibtime name as filename (for multiple events at one uibname)
-      //filename := uibname+'_'+Copy(suchevent, len+2, Length(suchevent));
-      filename := suchevent + '_' + repfilevonstr + '_' + repfilebisstr + '.pdf';
-      dirname := EditButtonExportDir.Text + PathDelim + uibname;
-      if not DirectoryExists(dirname) then
-        dirname := EditButtonExportDir.Text + PathDelim + 'report';
-      if frReport1.PrepareReport then
-        frReport1.ExportTo(TFrTNPDFExportFilter, dirname + PathDelim + filename);
-      //EditButtonExportDir.Text + PathDelim + suchevent+'_'+vonstr+'_'+bisstr+ '.pdf');
-    except
-    end;
-  end;
-  QueryUibeventaccountreport.Close;
 end;
 
 procedure TFuibtime2erp.StringGrid1GetCellHint(Sender: TObject;
@@ -1667,11 +1692,10 @@ begin
   for rowcounter := 0 to 1024 do
     rowcolor[rowcounter] := clWindow;
   //(*
-  frDBDataSet1:= TfrDBDataSet.Create(Fuibtime2erp);
-  frReport1:= TfrReport.Create(Fuibtime2erp);
-  frReport1.Dataset:=frDBDataSet1;
+  frDBDataSet1 := TfrDBDataSet.Create(Fuibtime2erp);
+  frReport1 := TfrReport.Create(Fuibtime2erp);
+  frReport1.Dataset := frDBDataSet1;
   //*)
-  frTNPDFExport1:= TfrTNPDFExport.Create(Fuibtime2erp);
-
+  frTNPDFExport1 := TfrTNPDFExport.Create(Fuibtime2erp);
 
 end.

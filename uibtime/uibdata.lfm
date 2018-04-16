@@ -3,7 +3,7 @@ object DataModule1: TDataModule1
   OldCreateOrder = False
   Height = 625
   HorizontalOffset = 596
-  VerticalOffset = 280
+  VerticalOffset = 265
   Width = 894
   PPI = 96
   object IBConnection1: TIBConnection
@@ -12327,5 +12327,12 @@ object DataModule1: TDataModule1
     UpdateMode = upWhereAll
     left = 42
     top = 536
+  end
+  object TimerCheckNet: TTimer
+    Enabled = False
+    Interval = 500
+    OnTimer = TimerCheckNetTimer
+    left = 698
+    top = 312
   end
 end

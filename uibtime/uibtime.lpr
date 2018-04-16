@@ -27,8 +27,8 @@ begin
   Application.CreateForm(TFLogoff, FLogoff);
   Application.CreateForm(TFNachfrage, FNachfrage);
   Application.CreateForm(TFMultiday, FMultiday);
-  Application.ProcessMessages;
   Application.CreateForm(TFnotificationdlg, Fnotificationdlg);
+  Application.ProcessMessages;
   //Application.CreateForm(TFuibtWorkRepChooser, FuibtWorkRepChooser);
   //Application.CreateForm(TFuibtime2erp, Fuibtime2erp);
   //Application.CreateForm(TFreport, Freport);

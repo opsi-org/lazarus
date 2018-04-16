@@ -12,15 +12,15 @@ interface
 uses
   Classes, SysUtils,dateutils;
 
-function getLastIntervalStart(startdate : TdateTime; myMonthInterval : cardinal) : TdateTime;
-function getLastIntervalEnd(startdate : TdateTime; myMonthInterval : cardinal) : TdateTime;
+function getLastIntervalStart(startdate : TdateTime;  enddate : TdateTime; myMonthInterval : cardinal) : TdateTime;
+function getLastIntervalEnd(startdate : TdateTime; enddate : TdateTime; myMonthInterval : cardinal) : TdateTime;
 function timeFloatTohourminutesStr(mytime : double) : string;
 function dayOfWeekGerStrToLazDayofWeekbyte(daystr : string) : byte;
 function lazDayofWeekbyteToDayOfWeekGerStr(daybyte : word) : string;
 
 implementation
 
-function getLastIntervalStart(startdate : TdateTime; myMonthInterval : cardinal) : TdateTime;
+function getLastIntervalStart(startdate : TdateTime; enddate : TdateTime; myMonthInterval : cardinal) : TdateTime;
 var
   mymonthspan : double;
   mynow : double;
@@ -33,7 +33,7 @@ begin
   // based on an average number of days of 30.4375 per month (average over 4 years).
   // https://www.freepascal.org/docs-html/rtl/dateutils/monthspan.html
   result := 0;
-  mynow := today;
+  mynow := enddate;
   mydayofmonth1 := dayof(mynow);
   mydayofmonth2 := dayof(startdate);
   If mydayofmonth1 = mydayofmonth2 then
@@ -55,12 +55,12 @@ begin
   end;
 end;
 
-function getLastIntervalEnd(startdate : TdateTime; myMonthInterval : cardinal) : TdateTime;
+function getLastIntervalEnd(startdate : TdateTime; enddate : TdateTime; myMonthInterval : cardinal) : TdateTime;
 var
   lastIntervalStart : Tdatetime;
 begin
   result := 0;
-  lastIntervalStart := getLastIntervalStart(startdate,myMonthInterval);
+  lastIntervalStart := getLastIntervalStart(startdate,enddate,myMonthInterval);
   result := IncMonth(lastIntervalStart, myMonthInterval);
 end;
 

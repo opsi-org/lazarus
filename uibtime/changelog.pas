@@ -1,7 +1,9 @@
 (*
 uibtime (4.1.1.31-1) stable; urgency=low
 
- * ontop: rebuilForm: button wide factor increased from 4.8. to 5.2
+ * uibdata: checknettimer
+ * debugout : close button
+ * uibt2erp, uibdatetime: fic on getlastIntervalstart / getlastintervalend
 
 -- detlef oertel <d.oertel@uib.de>  Mon, 16 Apr 2018 15:00:00 +0000
 

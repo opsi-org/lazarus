@@ -8,17 +8,19 @@ uses
   LCLIntf, LCLType,
   //LMessages, Messages,
   SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, Spin, ExtCtrls;
+  StdCtrls, Spin, ExtCtrls, Buttons;
 
 type
 
   { TFDebug }
 
   TFDebug = class(TForm)
+    ButtonClose: TButton;
     Memo1: TMemo;
     Panel1: TPanel;
     SpinEdit1: TSpinEdit;
     Label1: TLabel;
+    procedure BitBtnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -45,6 +47,11 @@ begin
  Visible:=false;
  FDebug.Hide;
  memo1.Append('create: hide');
+end;
+
+procedure TFDebug.BitBtnCloseClick(Sender: TObject);
+begin
+  DataModule1.ShowDebugWindow1Click(sender);
 end;
 
 procedure TFDebug.FormActivate(Sender: TObject);

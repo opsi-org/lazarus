@@ -87,6 +87,7 @@ begin
    ProgressBar1.Position := gaugefak * 1;
    Datamodule1.IBConnection1.open;
    Datamodule1.IBConnection2.open;
+   DataModule1.TimerCheckNet.Enabled := true;
    application.processmessages;
    Datamodule1.SQLTransaction1.StartTransaction;
    ProgressBar1.Position := gaugefak * 2;

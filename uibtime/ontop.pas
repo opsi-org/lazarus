@@ -565,8 +565,12 @@ begin
     end;
 
   except
-    datamodule1.debugOut(2, 'BtnByeClick', 'exception');
-    raise;
+    on e: Exception do
+    begin
+      Datamodule1.debugOut(3, '', 'exception in logoff:BtnByeClick');
+      Datamodule1.debugOut(3, e.Message);
+      raise;
+    end;
   end;
   datamodule1.debugOut(5, 'BtnByeClick', 'end');
 end;
@@ -904,7 +908,7 @@ begin
     else
     begin
       // here is the result for the last Interval
-      lastIntervalStart := getLastIntervalStart(projektstart,acc_per_monthnum_int);
+      lastIntervalStart := getLastIntervalStart(projektstart,now,acc_per_monthnum_int);
       decodeDate(lastIntervalStart, aktstartyear, aktstartmonth, aktstartday);
       DataModule1.debugOut(6, 'getLastIntervalInfo', 'lastIntervalStart :'+DateToStr(lastIntervalStart));
 
