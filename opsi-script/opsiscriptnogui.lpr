@@ -20,6 +20,7 @@ program opsiscriptnogui;
 
 
 uses
+  lazutf8,
   //defaulttranslator,
   {$IFDEF UNIX} {$IFDEF UseCThreads}
   cthreads, {$ENDIF} {$ENDIF}

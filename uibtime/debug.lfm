@@ -1,0 +1,63 @@
+object FDebug: TFDebug
+  Left = 597
+  Height = 247
+  Top = 652
+  Width = 435
+  BorderIcons = [biMaximize]
+  Caption = 'FDebug'
+  ClientHeight = 247
+  ClientWidth = 435
+  Color = clBtnFace
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  FormStyle = fsStayOnTop
+  OnActivate = FormActivate
+  OnCreate = FormCreate
+  OnShow = FormShow
+  Position = poDefaultPosOnly
+  LCLVersion = '1.4.4.0'
+  object Memo1: TMemo
+    Left = 0
+    Height = 394
+    Top = 48
+    Width = 399
+    Lines.Strings = (
+      'Memo1'
+    )
+    ScrollBars = ssBoth
+    TabOrder = 0
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 25
+    Top = 0
+    Width = 435
+    Align = alTop
+    ClientHeight = 25
+    ClientWidth = 435
+    TabOrder = 1
+    object Label1: TLabel
+      Left = 14
+      Height = 16
+      Top = 0
+      Width = 81
+      Caption = 'Debuglevel'
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+    object SpinEdit1: TSpinEdit
+      Left = 110
+      Height = 21
+      Top = 0
+      Width = 49
+      MaxValue = 9
+      OnChange = SpinEdit1Change
+      TabOrder = 0
+    end
+  end
+end

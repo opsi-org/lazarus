@@ -1,0 +1,259 @@
+object Flogoff: TFlogoff
+  Left = 330
+  Height = 611
+  Top = 233
+  Width = 994
+  Caption = 'uibtime - logged off'
+  ClientHeight = 611
+  ClientWidth = 994
+  Color = clBtnFace
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  OnHide = FormHide
+  OnShow = FormShow
+  Position = poDefault
+  LCLVersion = '1.8.2.0'
+  object Label1: TLabel
+    Left = 18
+    Height = 38
+    Top = 48
+    Width = 754
+    Caption = 'Für uibtime bist Du nicht mehr da !! seit: '
+    Font.Color = clWindowText
+    Font.Height = -32
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
+  end
+  object DBText1: TDBText
+    Left = 20
+    Height = 38
+    Top = 80
+    Width = 149
+    DataField = 'STOPTIME'
+    DataSource = DataModule1.DSuibevent
+    Font.Color = clWindowText
+    Font.Height = -32
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
+  end
+  object Label2: TLabel
+    Left = 16
+    Height = 13
+    Top = 200
+    Width = 182
+    Caption = 'Ergebnis des Datenbankchecks:'
+    ParentColor = False
+  end
+  object BitBtn1: TBitBtn
+    Left = 240
+    Height = 34
+    Top = 125
+    Width = 281
+    Caption = 'Ich bin wieder da !'
+    Font.Color = clRed
+    Font.Height = -24
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    Glyph.Data = {
+      DE010000424DDE01000000000000760000002800000024000000120000000100
+      0400000000006801000000000000000000001000000000000000000000000000
+      80000080000000808000800000008000800080800000C0C0C000808080000000
+      FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+      3333333333333333333333330000333333333333333333333333F33333333333
+      00003333344333333333333333388F3333333333000033334224333333333333
+      338338F3333333330000333422224333333333333833338F3333333300003342
+      222224333333333383333338F3333333000034222A22224333333338F338F333
+      8F33333300003222A3A2224333333338F3838F338F33333300003A2A333A2224
+      33333338F83338F338F33333000033A33333A222433333338333338F338F3333
+      0000333333333A222433333333333338F338F33300003333333333A222433333
+      333333338F338F33000033333333333A222433333333333338F338F300003333
+      33333333A222433333333333338F338F00003333333333333A22433333333333
+      3338F38F000033333333333333A223333333333333338F830000333333333333
+      333A333333333333333338330000333333333333333333333333333333333333
+      0000
+    }
+    ModalResult = 1
+    NumGlyphs = 2
+    ParentFont = False
+    TabOrder = 0
+  end
+  object BitBtn2: TBitBtn
+    Left = 20
+    Height = 32
+    Top = 160
+    Width = 220
+    Cancel = True
+    Caption = 'uibtime - Beenden'
+    Glyph.Data = {
+      DE010000424DDE01000000000000760000002800000024000000120000000100
+      0400000000006801000000000000000000001000000010000000000000000000
+      80000080000000808000800000008000800080800000C0C0C000808080000000
+      FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+      333333333333333333333333000033338833333333333333333F333333333333
+      0000333911833333983333333388F333333F3333000033391118333911833333
+      38F38F333F88F33300003339111183911118333338F338F3F8338F3300003333
+      911118111118333338F3338F833338F3000033333911111111833333338F3338
+      3333F8330000333333911111183333333338F333333F83330000333333311111
+      8333333333338F3333383333000033333339111183333333333338F333833333
+      00003333339111118333333333333833338F3333000033333911181118333333
+      33338333338F333300003333911183911183333333383338F338F33300003333
+      9118333911183333338F33838F338F33000033333913333391113333338FF833
+      38F338F300003333333333333919333333388333338FFF830000333333333333
+      3333333333333333333888330000333333333333333333333333333333333333
+      0000
+    }
+    ModalResult = 3
+    NumGlyphs = 2
+    OnClick = BitBtn2Click
+    TabOrder = 1
+  end
+  object BitBtn3: TBitBtn
+    Left = 19
+    Height = 33
+    Top = 126
+    Width = 221
+    Caption = 'Ich war nie weg !!!!'
+    Font.Color = clGreen
+    Font.Height = -16
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    Glyph.Data = {
+      DE010000424DDE01000000000000760000002800000024000000120000000100
+      0400000000006801000000000000000000001000000010000000000000000000
+      80000080000000808000800000008000800080800000C0C0C000808080000000
+      FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333444444
+      33333333333F8888883F33330000324334222222443333388F3833333388F333
+      000032244222222222433338F8833FFFFF338F3300003222222AAAAA22243338
+      F333F88888F338F30000322222A33333A2224338F33F8333338F338F00003222
+      223333333A224338F33833333338F38F00003222222333333A444338FFFF8F33
+      3338888300003AAAAAAA33333333333888888833333333330000333333333333
+      333333333333333333FFFFFF000033333333333344444433FFFF333333888888
+      00003A444333333A22222438888F333338F3333800003A2243333333A2222438
+      F38F333333833338000033A224333334422224338338FFFFF8833338000033A2
+      22444442222224338F3388888333FF380000333A2222222222AA243338FF3333
+      33FF88F800003333AA222222AA33A3333388FFFFFF8833830000333333AAAAAA
+      3333333333338888883333330000333333333333333333333333333333333333
+      0000
+    }
+    ModalResult = 2
+    NumGlyphs = 2
+    OnClick = BitBtn3Click
+    ParentFont = False
+    TabOrder = 2
+  end
+  object orgMemo1: TMemo
+    Left = 552
+    Height = 304
+    Top = 24
+    Width = 392
+    ScrollBars = ssVertical
+    TabOrder = 3
+    Visible = False
+  end
+  object Btn_work_description: TBitBtn
+    Left = 240
+    Height = 32
+    Top = 161
+    Width = 281
+    Caption = 'Arbeitsbericht'
+    Font.Color = clWindowText
+    Font.Height = -19
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ModalResult = 6
+    OnClick = Btn_work_descriptionClick
+    ParentFont = False
+    TabOrder = 4
+  end
+  object EditButton1: TEditButton
+    Left = 136
+    Height = 19
+    Top = 528
+    Width = 200
+    ButtonCaption = 'Startdatum wählen'
+    ButtonWidth = 120
+    MaxLength = 0
+    NumGlyphs = 1
+    OnButtonClick = EditButton1ButtonClick
+    OnChange = EditButton1Change
+    PasswordChar = #0
+    TabOrder = 5
+    Text = 'datum'
+  end
+  object Label3: TLabel
+    Left = 18
+    Height = 15
+    Top = 531
+    Width = 108
+    Caption = 'Durchsuchen ab:'
+    Font.CharSet = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'MS Sans Serif'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    ParentColor = False
+    ParentFont = False
+  end
+  object RichMemo1: TRichMemo
+    Left = 16
+    Height = 295
+    Top = 224
+    Width = 928
+    HideSelection = False
+    Lines.Strings = (
+      'RichMemo1'
+    )
+    ScrollBars = ssVertical
+    TabOrder = 6
+    ZoomFactor = 1
+  end
+  object ButtonLastWeek: TButton
+    Left = 352
+    Height = 21
+    Top = 528
+    Width = 104
+    Caption = 'letzte Woche'
+    OnClick = ButtonLastWeekClick
+    TabOrder = 7
+  end
+  object ButtonLastMonth: TButton
+    Left = 472
+    Height = 21
+    Top = 528
+    Width = 104
+    Caption = 'letzter Monat'
+    OnClick = ButtonLastMonthClick
+    TabOrder = 8
+  end
+  object Query1: TSQLQuery
+    FieldDefs = <>
+    Database = DataModule1.IBConnection1
+    Transaction = DataModule1.SQLTransaction1
+    Params = <>
+    left = 544
+    top = 120
+  end
+  object Query2: TSQLQuery
+    FieldDefs = <>
+    Database = DataModule1.IBConnection1
+    Transaction = DataModule1.SQLTransaction1
+    Params = <>
+    left = 592
+    top = 120
+  end
+  object CalendarDialog1: TCalendarDialog
+    Width = 176
+    Height = 192
+    Date = 42293
+    OKCaption = '&OK'
+    CancelCaption = 'Cancel'
+    left = 703
+    top = 119
+  end
+end

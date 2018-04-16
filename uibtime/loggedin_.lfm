@@ -1,0 +1,80 @@
+object FLoggedin: TFLoggedin
+  Left = 459
+  Height = 330
+  Top = 241
+  Width = 124
+  Caption = 'Presenz'
+  ClientHeight = 330
+  ClientWidth = 124
+  Color = clBtnFace
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  FormStyle = fsStayOnTop
+  OnCreate = FormCreate
+  OnHide = FormHide
+  OnShow = FormShow
+  Position = poDefaultPosOnly
+  LCLVersion = '1.6.0.4'
+  Visible = True
+  object Splitter1: TSplitter
+    Cursor = crVSplit
+    Left = 0
+    Height = 9
+    Top = 73
+    Width = 124
+    Align = alTop
+    Beveled = True
+    Color = clBlack
+    ParentColor = False
+    ResizeAnchor = akTop
+  end
+  object ListBox1: TListBox
+    Left = 0
+    Height = 248
+    Top = 82
+    Width = 124
+    Align = alClient
+    ItemHeight = 0
+    ScrollWidth = 120
+    Sorted = True
+    TabOrder = 0
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 73
+    Top = 0
+    Width = 124
+    Align = alTop
+    ClientHeight = 73
+    ClientWidth = 124
+    TabOrder = 1
+    object BtnAktualisieren: TSpeedButton
+      Left = 0
+      Height = 22
+      Top = 0
+      Width = 73
+      Caption = 'Aktualisieren'
+      OnClick = BtnAktualisierenClick
+    end
+    object StaticText1: TStaticText
+      Left = 2
+      Height = 17
+      Top = 24
+      Width = 69
+      Caption = 'Intervall (min):'
+      TabOrder = 0
+    end
+    object SpinEdit1: TSpinEdit
+      Left = 2
+      Height = 21
+      Top = 40
+      Width = 60
+      MaxValue = 1000
+      MinValue = 1
+      OnChange = SpinEditAktualisierungsIntervallChange
+      TabOrder = 1
+      Value = 11
+    end
+  end
+end

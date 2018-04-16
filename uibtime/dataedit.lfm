@@ -1,0 +1,977 @@
+object FDataedit: TFDataedit
+  Left = 782
+  Height = 375
+  Top = 454
+  Width = 814
+  Caption = 'FDataedit'
+  ClientHeight = 375
+  ClientWidth = 814
+  Color = clBtnFace
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  OnActivate = FormActivate
+  OnClose = FormClose
+  OnHide = FormHide
+  Position = poScreenCenter
+  LCLVersion = '1.8.2.0'
+  object PageControl1: TPageControl
+    Left = 0
+    Height = 375
+    Top = 0
+    Width = 814
+    ActivePage = TabSheet1
+    Align = alClient
+    TabIndex = 0
+    TabOrder = 0
+    TabPosition = tpBottom
+    OnEnter = PageControl1Enter
+    object TabSheet1: TTabSheet
+      Caption = 'Events'
+      ClientHeight = 354
+      ClientWidth = 812
+      OnShow = TabSheet1Show
+      object ToolBar1: TToolBar
+        Left = 0
+        Height = 29
+        Top = 0
+        Width = 812
+        Caption = 'ToolBar1'
+        TabOrder = 0
+        object DBNavigator1: TDBNavigator
+          Left = 1
+          Height = 22
+          Top = 2
+          Width = 240
+          BevelOuter = bvNone
+          ChildSizing.EnlargeHorizontal = crsScaleChilds
+          ChildSizing.EnlargeVertical = crsScaleChilds
+          ChildSizing.ShrinkHorizontal = crsScaleChilds
+          ChildSizing.ShrinkVertical = crsScaleChilds
+          ChildSizing.Layout = cclLeftToRightThenTopToBottom
+          ChildSizing.ControlsPerLine = 100
+          ClientHeight = 22
+          ClientWidth = 240
+          DataSource = DataModule1.DSuibevent
+          Options = []
+          TabOrder = 0
+        end
+        object BtnMultiDay: TBitBtn
+          Left = 241
+          Height = 22
+          Top = 2
+          Width = 199
+          Caption = 'Mehre Tage eintragen'
+          Glyph.Data = {
+            76010000424D7601000000000000760000002800000020000000100000000100
+            0400000000000001000000000000000000001000000010000000000000000000
+            800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+            FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+            33333FFFFFFFFFFFFFFF000000000000000077777777777777770FF7FF7FF7FF
+            7FF07FF7FF7FF7F37F3709F79F79F7FF7FF077F77F77F7FF7FF7077777777777
+            777077777777777777770FF7FF7FF7FF7FF07FF7FF7FF7FF7FF709F79F79F79F
+            79F077F77F77F77F77F7077777777777777077777777777777770FF7FF7FF7FF
+            7FF07FF7FF7FF7FF7FF709F79F79F79F79F077F77F77F77F77F7077777777777
+            777077777777777777770FFFFF7FF7FF7FF07F33337FF7FF7FF70FFFFF79F79F
+            79F07FFFFF77F77F77F700000000000000007777777777777777CCCCCC8888CC
+            CCCC777777FFFF777777CCCCCCCCCCCCCCCC7777777777777777
+          }
+          NumGlyphs = 2
+          OnClick = BtnMultiDayClick
+          TabOrder = 2
+        end
+        object BitBtn2: TBitBtn
+          Left = 440
+          Height = 22
+          Top = 2
+          Width = 146
+          Caption = 'Verlassen'
+          Kind = bkCancel
+          OnClick = BitBtn2Click
+          TabOrder = 1
+        end
+      end
+      object DBGrid1: TDBGrid
+        Left = 0
+        Height = 325
+        Top = 29
+        Width = 812
+        Align = alClient
+        Color = clWindow
+        Columns = <        
+          item
+            MinSize = 100
+            MaxSize = 100
+            Title.Caption = 'USERID'
+            Width = 100
+            FieldName = 'USERID'
+          end        
+          item
+            MinSize = 120
+            MaxSize = 120
+            Title.Caption = 'STARTTIME'
+            Width = 120
+            FieldName = 'STARTTIME'
+            DisplayFormat = 'dd.mm.yyyy hh:mm:ss'
+          end        
+          item
+            MinSize = 160
+            MaxSize = 160
+            Title.Caption = 'EVENT'
+            Width = 200
+            FieldName = 'EVENT'
+          end        
+          item
+            MinSize = 120
+            MaxSize = 120
+            Title.Caption = 'STOPTIME'
+            Width = 120
+            FieldName = 'STOPTIME'
+            DisplayFormat = 'dd.mm.yyyy hh:mm:ss'
+          end        
+          item
+            MinSize = 64
+            MaxSize = 64
+            Title.Caption = 'STUNDEN'
+            FieldName = 'STUNDEN'
+            DisplayFormat = '0.00'
+          end>
+        DataSource = DataModule1.DSuibevent
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete]
+        TabOrder = 1
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        OnColExit = DBGrid1ColExit
+        OnDrawColumnCell = DBGrid1DrawColumnCell
+        OnEditingDone = DBGrid1EditingDone
+        OnEnter = DBGrid1Enter
+        OnFieldEditMask = DBGrid1FieldEditMask
+      end
+      object DBLookupComboBox1: TDBLookupComboBox
+        Left = 184
+        Height = 21
+        Top = 88
+        Width = 145
+        DataField = 'EVENT'
+        DataSource = DataModule1.DSuibevent
+        KeyField = 'EVENT'
+        ListField = 'EVENT'
+        ListFieldIndex = 0
+        ListSource = DataModule1.DSuibaktevent
+        LookupCache = False
+        OnExit = DBLookupComboBox1Exit
+        TabOrder = 2
+        Visible = False
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'user'
+      ClientHeight = 354
+      ClientWidth = 812
+      ImageIndex = 1
+      OnShow = TabSheet2Show
+      object ToolBar2: TToolBar
+        Left = 0
+        Height = 29
+        Top = 0
+        Width = 806
+        Caption = 'ToolBar1'
+        TabOrder = 0
+        object DBNavigator2: TDBNavigator
+          Left = 1
+          Height = 22
+          Top = 2
+          Width = 240
+          BevelOuter = bvNone
+          ChildSizing.EnlargeHorizontal = crsScaleChilds
+          ChildSizing.EnlargeVertical = crsScaleChilds
+          ChildSizing.ShrinkHorizontal = crsScaleChilds
+          ChildSizing.ShrinkVertical = crsScaleChilds
+          ChildSizing.Layout = cclLeftToRightThenTopToBottom
+          ChildSizing.ControlsPerLine = 100
+          ClientHeight = 22
+          ClientWidth = 240
+          DataSource = DataModule1.DSuibaktuser
+          Options = []
+          TabOrder = 0
+        end
+        object BitBtn3: TBitBtn
+          Left = 241
+          Height = 22
+          Top = 2
+          Width = 113
+          Caption = 'Verlassen'
+          Kind = bkCancel
+          OnClick = BitBtn2Click
+          TabOrder = 1
+        end
+      end
+      object DBGrid2: TDBGrid
+        Left = 0
+        Height = 320
+        Top = 29
+        Width = 806
+        Align = alClient
+        Color = clWindow
+        Columns = <>
+        DataSource = DataModule1.DSuibaktuser
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgAutoSizeColumns]
+        TabOrder = 1
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+      end
+    end
+    object TabSheet3: TTabSheet
+      Caption = 'Aktuelle Events'
+      ClientHeight = 354
+      ClientWidth = 812
+      ImageIndex = 2
+      OnShow = TabSheet3Show
+      object ToolBar3: TToolBar
+        Left = 0
+        Height = 29
+        Top = 0
+        Width = 812
+        Caption = 'ToolBar1'
+        TabOrder = 0
+        object DBNavigator3: TDBNavigator
+          Left = 1
+          Height = 22
+          Top = 2
+          Width = 240
+          BevelOuter = bvNone
+          ChildSizing.EnlargeHorizontal = crsScaleChilds
+          ChildSizing.EnlargeVertical = crsScaleChilds
+          ChildSizing.ShrinkHorizontal = crsScaleChilds
+          ChildSizing.ShrinkVertical = crsScaleChilds
+          ChildSizing.Layout = cclLeftToRightThenTopToBottom
+          ChildSizing.ControlsPerLine = 100
+          ClientHeight = 22
+          ClientWidth = 240
+          DataSource = DataModule1.DSqueryaktevents
+          Options = []
+          TabOrder = 0
+        end
+        object BitBtn4: TBitBtn
+          Left = 241
+          Height = 22
+          Top = 2
+          Width = 113
+          Caption = 'Verlassen'
+          Kind = bkCancel
+          OnClick = BitBtn2Click
+          TabOrder = 1
+        end
+      end
+      object DBGrid3: TDBGrid
+        Left = 0
+        Height = 289
+        Top = 65
+        Width = 812
+        Align = alClient
+        Color = clWindow
+        Columns = <>
+        DataSource = DataModule1.DSuibaktevent
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgAutoSizeColumns]
+        TabOrder = 1
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        OnColExit = DBGrid3ColExit
+        OnDrawColumnCell = DBGrid3DrawColumnCell
+        OnEnter = DBGrid3Enter
+      end
+      object DBLookupComboBox3: TDBLookupComboBox
+        Tag = 1
+        Left = 176
+        Height = 21
+        Top = 144
+        Width = 145
+        DataField = 'PARENTEVENT'
+        DataSource = DataModule1.DSqueryaktevents
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        KeyField = 'EVENT'
+        ListField = 'EVENT'
+        ListFieldIndex = 0
+        ListSource = DataModule1.DSqueryaktevents
+        LookupCache = False
+        OnEnter = DBLookupComboBox3Enter
+        OnExit = DBLookupComboBox3Exit
+        ParentFont = False
+        TabOrder = 2
+        Visible = False
+      end
+      object Panel1: TPanel
+        Left = 0
+        Height = 36
+        Top = 29
+        Width = 812
+        Align = alTop
+        Caption = 'Panel1'
+        ClientHeight = 36
+        ClientWidth = 812
+        TabOrder = 3
+        object Panel2: TPanel
+          Left = 1
+          Height = 34
+          Top = 1
+          Width = 66
+          Align = alLeft
+          Caption = 'Kommentar:'
+          TabOrder = 0
+        end
+        object DBMemo1: TDBMemo
+          Left = 67
+          Height = 40
+          Top = 1
+          Width = 744
+          Align = alClient
+          DataField = 'COMMENT'
+          DataSource = DataModule1.DSuibaktevent
+          TabOrder = 1
+        end
+      end
+    end
+    object TabSheet4: TTabSheet
+      Caption = 'Alle Events'
+      ClientHeight = 354
+      ClientWidth = 812
+      ImageIndex = 3
+      OnShow = TabSheet4Show
+      object ToolBar4: TToolBar
+        Left = 0
+        Height = 29
+        Top = 0
+        Width = 806
+        ButtonHeight = 24
+        ButtonWidth = 23
+        Caption = 'ToolBar1'
+        TabOrder = 0
+        object DBNavigator4: TDBNavigator
+          Left = 1
+          Height = 24
+          Top = 2
+          Width = 240
+          BevelOuter = bvNone
+          ChildSizing.EnlargeHorizontal = crsScaleChilds
+          ChildSizing.EnlargeVertical = crsScaleChilds
+          ChildSizing.ShrinkHorizontal = crsScaleChilds
+          ChildSizing.ShrinkVertical = crsScaleChilds
+          ChildSizing.Layout = cclLeftToRightThenTopToBottom
+          ChildSizing.ControlsPerLine = 100
+          ClientHeight = 24
+          ClientWidth = 240
+          DataSource = DataModule1.DSuiballevent
+          Options = []
+          TabOrder = 0
+        end
+        object BitBtn5: TBitBtn
+          Left = 241
+          Height = 24
+          Top = 2
+          Width = 113
+          Caption = 'Verlassen'
+          Kind = bkCancel
+          OnClick = BitBtn2Click
+          TabOrder = 1
+        end
+      end
+      object DBGrid4: TDBGrid
+        Left = 0
+        Height = 320
+        Top = 29
+        Width = 806
+        Align = alClient
+        Color = clWindow
+        Columns = <>
+        DataSource = DataModule1.DSuiballevent
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgAutoSizeColumns]
+        TabOrder = 1
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+      end
+    end
+    object TabSheet5: TTabSheet
+      Caption = 'Meine Event-Arten'
+      ClientHeight = 354
+      ClientWidth = 812
+      ImageIndex = 4
+      OnShow = TabSheet5Show
+      object ToolBar5: TToolBar
+        Left = 0
+        Height = 29
+        Top = 0
+        Width = 692
+        Caption = 'ToolBar1'
+        TabOrder = 0
+        object DBNavigator5: TDBNavigator
+          Left = 1
+          Height = 22
+          Top = 2
+          Width = 240
+          BevelOuter = bvNone
+          ChildSizing.EnlargeHorizontal = crsScaleChilds
+          ChildSizing.EnlargeVertical = crsScaleChilds
+          ChildSizing.ShrinkHorizontal = crsScaleChilds
+          ChildSizing.ShrinkVertical = crsScaleChilds
+          ChildSizing.Layout = cclLeftToRightThenTopToBottom
+          ChildSizing.ControlsPerLine = 100
+          ClientHeight = 22
+          ClientWidth = 240
+          DataSource = DataModule1.DSuibuserevent
+          Options = []
+          TabOrder = 0
+        end
+        object BitBtn6: TBitBtn
+          Left = 241
+          Height = 22
+          Top = 2
+          Width = 113
+          Caption = 'Verlassen'
+          Kind = bkCancel
+          OnClick = BitBtn2Click
+          TabOrder = 1
+        end
+      end
+      object DBGrid5: TDBGrid
+        Left = 0
+        Height = 320
+        Top = 29
+        Width = 692
+        Align = alClient
+        Color = clWindow
+        Columns = <>
+        DataSource = DataModule1.DSuibuserevent
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgAutoSizeColumns]
+        TabOrder = 1
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        OnColExit = DBGrid5ColExit
+        OnDrawColumnCell = DBGrid5DrawColumnCell
+        OnEnter = DBGrid5Enter
+      end
+      object DBLookupComboBox2: TDBLookupComboBox
+        Left = 272
+        Height = 21
+        Top = 160
+        Width = 145
+        DataField = 'EVENT'
+        DataSource = DataModule1.DSuibuserevent
+        KeyField = 'EVENT'
+        ListField = 'EVENT'
+        ListFieldIndex = 0
+        ListSource = DataModule1.DSqueryaktevents
+        LookupCache = False
+        OnExit = DBLookupComboBox2Exit
+        TabOrder = 2
+        Visible = False
+      end
+      object DBComboBoxBool: TDBComboBox
+        Left = 280
+        Height = 21
+        Top = 200
+        Width = 145
+        DataField = 'BUTTON'
+        DataSource = DataModule1.DSuibuserevent
+        ItemHeight = 0
+        Items.Strings = (
+          '0'
+          '1'
+        )
+        MaxLength = 0
+        OnExit = DBComboBoxBoolExit
+        TabOrder = 3
+        Visible = False
+      end
+    end
+    object TabSheet6: TTabSheet
+      Caption = 'Timeouts'
+      ClientHeight = 354
+      ClientWidth = 812
+      ImageIndex = 5
+      OnShow = TabSheet6Show
+      object ToolBar6: TToolBar
+        Left = 0
+        Height = 29
+        Top = 0
+        Width = 806
+        Caption = 'ToolBar1'
+        TabOrder = 0
+        object DBNavigator6: TDBNavigator
+          Left = 1
+          Height = 22
+          Top = 2
+          Width = 240
+          BevelOuter = bvNone
+          ChildSizing.EnlargeHorizontal = crsScaleChilds
+          ChildSizing.EnlargeVertical = crsScaleChilds
+          ChildSizing.ShrinkHorizontal = crsScaleChilds
+          ChildSizing.ShrinkVertical = crsScaleChilds
+          ChildSizing.Layout = cclLeftToRightThenTopToBottom
+          ChildSizing.ControlsPerLine = 100
+          ClientHeight = 22
+          ClientWidth = 240
+          DataSource = DataModule1.DSuibtimeout
+          Options = []
+          TabOrder = 0
+        end
+        object BitBtn7: TBitBtn
+          Left = 241
+          Height = 22
+          Top = 2
+          Width = 113
+          Caption = 'Verlassen'
+          Kind = bkCancel
+          OnClick = BitBtn2Click
+          TabOrder = 1
+        end
+      end
+      object DBGrid6: TDBGrid
+        Left = 0
+        Height = 320
+        Top = 29
+        Width = 806
+        Align = alClient
+        Color = clWindow
+        Columns = <>
+        DataSource = DataModule1.DSuibtimeout
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgAutoSizeColumns]
+        TabOrder = 1
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        OnColExit = DBGrid6ColExit
+        OnDrawColumnCell = DBGrid6DrawColumnCell
+        OnEnter = DBGrid6Enter
+      end
+      object DBLookupComboBox5: TDBLookupComboBox
+        Left = 232
+        Height = 21
+        Top = 152
+        Width = 145
+        DataField = 'EVENT'
+        DataSource = DataModule1.DSuibtimeout
+        KeyField = 'EVENT'
+        ListField = 'EVENT'
+        ListFieldIndex = 0
+        ListSource = DataModule1.DSqueryaktevents
+        LookupCache = False
+        OnExit = DBLookupComboBox5Exit
+        TabOrder = 2
+        Visible = False
+      end
+    end
+    object TabSheet8: TTabSheet
+      Caption = 'Soll-Stunden'
+      ClientHeight = 354
+      ClientWidth = 812
+      ImageIndex = 7
+      OnShow = TabSheet8Show
+      object ToolBar8: TToolBar
+        Left = 0
+        Height = 29
+        Top = 0
+        Width = 812
+        Caption = 'ToolBar1'
+        TabOrder = 0
+        object DBNavigator8: TDBNavigator
+          Left = 1
+          Height = 22
+          Top = 2
+          Width = 240
+          BevelOuter = bvNone
+          ChildSizing.EnlargeHorizontal = crsScaleChilds
+          ChildSizing.EnlargeVertical = crsScaleChilds
+          ChildSizing.ShrinkHorizontal = crsScaleChilds
+          ChildSizing.ShrinkVertical = crsScaleChilds
+          ChildSizing.Layout = cclLeftToRightThenTopToBottom
+          ChildSizing.ControlsPerLine = 100
+          ClientHeight = 22
+          ClientWidth = 240
+          DataSource = DataModule1.DSuibsoll
+          Options = []
+          TabOrder = 0
+        end
+        object BitBtn8: TBitBtn
+          Left = 241
+          Height = 22
+          Top = 2
+          Width = 113
+          Caption = 'Verlassen'
+          Kind = bkCancel
+          OnClick = BitBtn2Click
+          TabOrder = 1
+        end
+        object BtnDuplicate: TBitBtn
+          Left = 354
+          Height = 22
+          Top = 2
+          Width = 232
+          Caption = 'Letzten Datensatz kopieren und anhängen'
+          Glyph.Data = {
+            76010000424D7601000000000000760000002800000020000000100000000100
+            04000000000000010000130B0000130B00001000000000000000000000000000
+            800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+            FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+            3333333333FFFFF3333333333999993333333333F77777FFF333333999999999
+            3333333777333777FF33339993707399933333773337F3777FF3399933000339
+            9933377333777F3377F3399333707333993337733337333337FF993333333333
+            399377F33333F333377F993333303333399377F33337FF333373993333707333
+            333377F333777F333333993333101333333377F333777F3FFFFF993333000399
+            999377FF33777F77777F3993330003399993373FF3777F37777F399933000333
+            99933773FF777F3F777F339993707399999333773F373F77777F333999999999
+            3393333777333777337333333999993333333333377777333333
+          }
+          NumGlyphs = 2
+          OnClick = BtnDuplicateClick
+          TabOrder = 2
+        end
+      end
+      object DBGrid8: TDBGrid
+        Left = 0
+        Height = 325
+        Top = 29
+        Width = 812
+        Align = alClient
+        Color = clWindow
+        Columns = <>
+        DataSource = DataModule1.DSuibsoll
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgAutoSizeColumns]
+        TabOrder = 1
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+      end
+    end
+    object TabSheet9: TTabSheet
+      Caption = 'Defaultprojekt'
+      ClientHeight = 354
+      ClientWidth = 812
+      ImageIndex = 8
+      OnShow = TabSheet9Show
+      object ToolBar9: TToolBar
+        Left = 0
+        Height = 29
+        Top = 0
+        Width = 806
+        Caption = 'ToolBar1'
+        TabOrder = 0
+        object DBNavigator9: TDBNavigator
+          Left = 1
+          Height = 22
+          Top = 2
+          Width = 240
+          BevelOuter = bvNone
+          ChildSizing.EnlargeHorizontal = crsScaleChilds
+          ChildSizing.EnlargeVertical = crsScaleChilds
+          ChildSizing.ShrinkHorizontal = crsScaleChilds
+          ChildSizing.ShrinkVertical = crsScaleChilds
+          ChildSizing.Layout = cclLeftToRightThenTopToBottom
+          ChildSizing.ControlsPerLine = 100
+          ClientHeight = 22
+          ClientWidth = 240
+          DataSource = DataModule1.DSuibdefproj
+          Options = []
+          TabOrder = 0
+        end
+        object BitBtn9: TBitBtn
+          Left = 241
+          Height = 22
+          Top = 2
+          Width = 113
+          Caption = 'Verlassen'
+          Kind = bkCancel
+          OnClick = BitBtn2Click
+          TabOrder = 1
+        end
+      end
+      object DBGrid9: TDBGrid
+        Left = 0
+        Height = 320
+        Top = 29
+        Width = 806
+        Align = alClient
+        Color = clWindow
+        Columns = <>
+        DataSource = DataModule1.DSuibdefproj
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgAutoSizeColumns]
+        TabOrder = 1
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        OnColExit = DBGrid9ColExit
+        OnDrawColumnCell = DBGrid9DrawColumnCell
+        OnEnter = DBGrid9Enter
+      end
+      object DBLookupComboBox4: TDBLookupComboBox
+        Left = 280
+        Height = 21
+        Top = 128
+        Width = 145
+        DataField = 'EVENT'
+        DataSource = DataModule1.DSuibdefproj
+        KeyField = 'EVENT'
+        ListField = 'EVENT'
+        ListFieldIndex = 0
+        ListSource = DataModule1.DSqueryaktevents
+        LookupCache = False
+        OnExit = DBLookupComboBox4Exit
+        TabOrder = 2
+        Visible = False
+      end
+    end
+    object TabSheet7: TTabSheet
+      Caption = 'Rename Event'
+      ClientHeight = 354
+      ClientWidth = 812
+      object Bevel2: TBevel
+        Left = 16
+        Height = 114
+        Top = 215
+        Width = 619
+      end
+      object Bevel1: TBevel
+        Left = 16
+        Height = 160
+        Top = 40
+        Width = 771
+      end
+      object Label1: TLabel
+        Left = 54
+        Height = 13
+        Top = 128
+        Width = 78
+        Caption = 'Alter Eventname'
+        ParentColor = False
+      end
+      object Edit2: TEdit
+        Left = 248
+        Height = 21
+        Top = 152
+        Width = 153
+        TabOrder = 0
+      end
+      object Label2: TLabel
+        Left = 248
+        Height = 13
+        Top = 128
+        Width = 86
+        Caption = 'Neuer Eventname'
+        ParentColor = False
+      end
+      object ButtonRenameEvent: TButton
+        Left = 568
+        Height = 28
+        Top = 148
+        Width = 75
+        Caption = 'Umbennen'
+        OnClick = ButtonRenameEventClick
+        TabOrder = 1
+      end
+      object BitBtn10: TBitBtn
+        Left = 672
+        Height = 22
+        Top = 312
+        Width = 113
+        Caption = 'Verlassen'
+        Kind = bkCancel
+        OnClick = BitBtn2Click
+        TabOrder = 2
+      end
+      object Label3: TLabel
+        Left = 112
+        Height = 46
+        Top = 0
+        Width = 494
+        Caption = 'Vorsicht ! Nur für Admins !'
+        Font.Color = clRed
+        Font.Height = -40
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+      end
+      object Label4: TLabel
+        Left = 54
+        Height = 61
+        Top = 67
+        Width = 674
+        AutoSize = False
+        Caption = 'Erstellt aus dem alten Eventnamen in der Tabelle uibaktevent ein neues Event mit den selben Daten aber unter dem neuen Namen.'#13#10'Das alte Event wird aus der Tabelle uibaktevent gelöscht.'#13#10'Alle Einträge in uibevent und UIB_WORK_DESCRIPTION welche auf das alte Event gebucht waren, werden auf das neue Event geändert.'
+        ParentColor = False
+        WordWrap = True
+      end
+      object LabelProgress: TLabel
+        Left = 656
+        Height = 13
+        Top = 160
+        Width = 120
+        Caption = 'Fortschritt: Keine Aktivität'
+        ParentColor = False
+      end
+      object ComboBoxOldEvent: TComboBox
+        Left = 54
+        Height = 21
+        Top = 152
+        Width = 170
+        ItemHeight = 0
+        OnEnter = ComboBoxOldEventEnter
+        TabOrder = 3
+      end
+      object DateTimePickerFromDate: TDateTimePicker
+        Left = 418
+        Height = 21
+        Top = 153
+        Width = 79
+        CenturyFrom = 1941
+        MaxDate = 2958465
+        MinDate = -53780
+        TabOrder = 4
+        Enabled = False
+        TrailingSeparator = False
+        TextForNullDate = 'NULL'
+        LeadingZeros = True
+        Kind = dtkDate
+        TimeFormat = tf24
+        TimeDisplay = tdHMS
+        DateMode = dmComboBox
+        Date = 42852
+        Time = 0.561060821761203
+        UseDefaultSeparators = True
+        HideDateTimeParts = []
+        MonthNames = 'Long'
+      end
+      object CheckBoxUseDate: TCheckBox
+        Left = 418
+        Height = 19
+        Top = 122
+        Width = 67
+        Caption = 'Ab Datum'
+        OnChange = CheckBoxUseDateChange
+        TabOrder = 5
+      end
+      object Label5: TLabel
+        Left = 48
+        Height = 24
+        Top = 40
+        Width = 211
+        Caption = '1. Rename Altes Event'
+        Font.Color = clWindowText
+        Font.Height = -20
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+      end
+      object Label6: TLabel
+        Left = 56
+        Height = 24
+        Top = 224
+        Width = 307
+        Caption = '2. Gelöschtes Event reaktivieren'
+        Font.Color = clWindowText
+        Font.Height = -20
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+      end
+      object ComboBoxOldAllEvent: TComboBox
+        Left = 64
+        Height = 21
+        Top = 288
+        Width = 170
+        ItemHeight = 0
+        OnEnter = ComboBoxOldAllEventEnter
+        TabOrder = 6
+      end
+      object Label7: TLabel
+        Left = 64
+        Height = 13
+        Top = 264
+        Width = 78
+        Caption = 'Alter Eventname'
+        ParentColor = False
+      end
+      object ButtonReactivate: TButton
+        Left = 268
+        Height = 25
+        Top = 284
+        Width = 148
+        Caption = 'Reaktivieren'
+        OnClick = ButtonReactivateClick
+        TabOrder = 7
+      end
+    end
+    object TabSheet10: TTabSheet
+      Caption = 'Feiertage'
+      ClientHeight = 354
+      ClientWidth = 812
+      object ToolBar10: TToolBar
+        Left = 0
+        Height = 29
+        Top = 0
+        Width = 806
+        Caption = 'ToolBar1'
+        TabOrder = 0
+        object DBNavigator10: TDBNavigator
+          Left = 1
+          Height = 22
+          Top = 2
+          Width = 240
+          BevelOuter = bvNone
+          ChildSizing.EnlargeHorizontal = crsScaleChilds
+          ChildSizing.EnlargeVertical = crsScaleChilds
+          ChildSizing.ShrinkHorizontal = crsScaleChilds
+          ChildSizing.ShrinkVertical = crsScaleChilds
+          ChildSizing.Layout = cclLeftToRightThenTopToBottom
+          ChildSizing.ControlsPerLine = 100
+          ClientHeight = 22
+          ClientWidth = 240
+          DataSource = DataModule1.DS_holydays
+          Options = []
+          TabOrder = 0
+        end
+        object BitBtn11: TBitBtn
+          Left = 241
+          Height = 22
+          Top = 2
+          Width = 113
+          Caption = 'Verlassen'
+          Kind = bkCancel
+          OnClick = BitBtn2Click
+          TabOrder = 1
+        end
+      end
+      object DBGrid10: TDBGrid
+        Left = 0
+        Height = 320
+        Top = 29
+        Width = 376
+        Align = alLeft
+        Color = clWindow
+        Columns = <>
+        DataSource = DataModule1.DS_holydays
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgAutoSizeColumns]
+        TabOrder = 1
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+      end
+    end
+  end
+  object SQLQueryRenameEvent: TSQLQuery
+    FieldDefs = <>
+    Database = DataModule1.IBConnection1
+    Transaction = DataModule1.SQLTransaction1
+    Params = <>
+    left = 704
+    top = 256
+  end
+end
