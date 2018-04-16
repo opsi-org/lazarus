@@ -188,6 +188,8 @@ type
     procedure TerminateApplication;
     function isValidEvent(event: string): boolean;
     function dateIsHolyday(mydate: TdateTime): boolean;
+    procedure CustomExceptionHandler(Sender: TObject; E: Exception);
+    procedure DumpExceptionCallStack(E: Exception);
   private
     { private declarations }
   public
@@ -1850,6 +1852,7 @@ begin
   writeVerinfoToLog(logfeil);
   writeln(logfeil, Fdebug.Memo1.Lines.Text);
   closeFile(logfeil);
+  Application.OnException:= CustomExceptionHandler;
 end;
 
 procedure TDataModule1.TerminateApplication;
@@ -1929,6 +1932,57 @@ begin
   if not myeof then
     Result := True;
   SQholydays.Filtered := False;
+end;
+
+procedure CatchUnhandledException(Obj: TObject; Addr: Pointer; FrameCount: Longint; Frames: PPointer);
+var
+  Message: string;
+  i: LongInt;
+  hstdout: ^Text;
+begin
+  hstdout := @stdout;
+  Writeln(hstdout^, 'An unhandled exception occurred at $', HexStr(PtrUInt(Addr), SizeOf(PtrUInt) * 2), ' :');
+  if Obj is exception then
+   begin
+     Message := Exception(Obj).ClassName + ' : ' + Exception(Obj).Message;
+     Writeln(hstdout^, Message);
+   end
+  else
+    Writeln(hstdout^, 'Exception object ', Obj.ClassName, ' is not of class Exception.');
+  Writeln(hstdout^, BackTraceStrFunc(Addr));
+  if (FrameCount > 0) then
+    begin
+      for i := 0 to FrameCount - 1 do
+        Writeln(hstdout^, BackTraceStrFunc(Frames[i]));
+    end;
+  Writeln(hstdout^,'');
+end;
+
+procedure TDataModule1.DumpExceptionCallStack(E: Exception);
+var
+  I: Integer;
+  Frames: PPointer;
+  Report: string;
+begin
+  Report := 'Program exception! ' + LineEnding +
+    'Stacktrace:' + LineEnding + LineEnding;
+  if E <> nil then begin
+    Report := Report + 'Exception class: ' + E.ClassName + LineEnding +
+    'Message: ' + E.Message + LineEnding;
+  end;
+  Report := Report + BackTraceStrFunc(ExceptAddr);
+  Frames := ExceptFrames;
+  for I := 0 to ExceptFrameCount - 1 do
+    Report := Report + LineEnding + BackTraceStrFunc(Frames[I]);
+  ShowMessage(Report);
+  debugOut(2,'', Report);
+  Halt; // End of program execution
+end;
+
+procedure TDataModule1.CustomExceptionHandler(Sender: TObject; E: Exception);
+begin
+  DumpExceptionCallStack(E);
+  Halt; // End of program execution
 end;
 
 

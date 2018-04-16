@@ -233,7 +233,7 @@ begin
    end;
 
   except
-    datamodule1.debugOut(3,'', 'exception in setDefaultEvent');
+    datamodule1.debugOut(3,'', 'exception in login: BtnOK');
     raise;
   end;
 end;
