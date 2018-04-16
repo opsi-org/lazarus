@@ -108,6 +108,8 @@ type
       DataCol: integer; Column: TColumn; State: TGridDrawState);
     procedure DBGrid9DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: integer; Column: TColumn; State: TGridDrawState);
+    procedure DBLookupComboBoxMouseWheel(Sender: TObject; Shift: TShiftState;
+      WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
     procedure PageControl1Enter(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure DBGrid1Enter(Sender: TObject);
@@ -456,6 +458,14 @@ begin
       DBLookupComboBox4.Visible := True;
     end;
   end;
+end;
+
+procedure TFDataedit.DBLookupComboBoxMouseWheel(Sender: TObject;
+  Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint;
+  var Handled: Boolean);
+begin
+  Handled:= true;
+  if PtInRect(TDBLookupCombobox(sender).ReadBounds,mousepos) then Handled:= false;
 end;
 
 procedure TFDataedit.FormActivate(Sender: TObject);

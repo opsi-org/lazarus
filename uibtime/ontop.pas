@@ -955,7 +955,7 @@ begin
       EditProjektzeit.Font.Color := clRed
     else
       EditProjektzeit.Font.Color := clBlack;
-    if (trunc(available) = 0) and (available_min < 5) then
+    if (trunc(available) = 0) and (available_min < 5) and (available < 0) then
     begin
       {$IFDEF WINDOWS}
       DataModule1.TrayIcon1.BalloonHint:='Warnung: übrige Zeit: '+inttostr(available_min)+' Minuten';

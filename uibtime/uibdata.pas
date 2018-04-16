@@ -16,6 +16,7 @@ uses
   {$IFDEF WINDOWS}
   winpeimagereader, {need this for reading exe info}
   Windows,
+  pingsend,
   {$ENDIF WINDOWS}
   Classes, SysUtils, IBConnection, sqldb, DB,
   //FileUtil,
@@ -27,8 +28,7 @@ uses
   httpservice,
   uibtWorkRepChooser,
   uib2erp,
-  Variants,
-  pingsend;
+  Variants;
 
 type
 
@@ -1266,13 +1266,21 @@ end;
 procedure TDataModule1.TimerCheckNetTimer(Sender: TObject);
 var
   cinfo : TConnInfoType;
+  servername : string;
 begin
-  (*
-  if pinghost('192.168.1.12') = -1 then
+  servername := 'groupware';
+  {$IFDEF WIN32}
+  if pinghost(servername) = -1 then
   begin
-    debugOut(3, 'CheckNetTimer', 'Could not reach groupware');
+    debugOut(3, 'CheckNetTimer', 'Could not reach '+servername);
+    if mrAbort = MessageDlg('uibtime: Warnung','Die Netzwerkverbindung zum DB-Server '+servername,mtError,[mbAbort,mbIgnore],0)
+    then
+    begin
+      Application.Terminate;
+      halt;
+    end;
   end;
-  *)
+  {$ENDIF WIN32}
   if not IBConnection1.Connected  then
   begin
     debugOut(3, 'CheckNetTimer', 'connection error');

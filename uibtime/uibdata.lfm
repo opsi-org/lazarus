@@ -12332,7 +12332,7 @@ object DataModule1: TDataModule1
     Enabled = False
     Interval = 500
     OnTimer = TimerCheckNetTimer
-    left = 698
+    left = 701
     top = 312
   end
 end

@@ -1,9 +1,11 @@
 (*
-uibtime (4.1.1.31-1) stable; urgency=low
+uibtime (4.1.1.32-1) stable; urgency=low
 
  * uibdata: checknettimer
  * debugout : close button
  * uibt2erp, uibdatetime: fic on getlastIntervalstart / getlastintervalend
+ * ontop: projektzeittimer: keine negativen warnungen ; fixes #3463
+ * dataedit: DBLookupComboBoxMouseWheel ; fixes #3462
 
 -- detlef oertel <d.oertel@uib.de>  Mon, 16 Apr 2018 15:00:00 +0000
 
