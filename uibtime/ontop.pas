@@ -516,7 +516,16 @@ begin
     end;
     TimerNachfrage.Enabled := False;
     inLogoff := True;
-    Result := Flogoff.showmodal;
+    if Assigned(Flogoff) then  datamodule1.debugOut(5, 'in btnbye: Flogoff exists');
+    if Flogoff.Visible then Flogoff.Visible:=false;
+    datamodule1.debugOut(5, 'in btnbye: Flogoff.showmodal');
+    Application.ProcessMessages;
+    try
+      Result := Flogoff.showmodal;
+    finally
+      datamodule1.debugOut(5, 'in btnbye: after Flogoff.showmodal');
+    end;
+    datamodule1.debugOut(5, 'in btnbye: logoff result: '+ModalResultStr[result]);
     //Result := Flogoff.show;
     inLogoff := False;
     if loggedin_visible and (Result <> mrAbort) then

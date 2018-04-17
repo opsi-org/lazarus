@@ -1,4 +1,10 @@
 (*
+uibtime (4.1.1.33-1) stable; urgency=low
+
+ *
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 17 Apr 2018 15:00:00 +0000
+
 uibtime (4.1.1.32-1) stable; urgency=low
 
  * uibdata: checknettimer

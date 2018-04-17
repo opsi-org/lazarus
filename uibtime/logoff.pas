@@ -371,8 +371,8 @@ end;
 
 procedure TFlogoff.FormShow(Sender: TObject);
 begin
- richmemo1.lines.clear;
  datamodule1.debugOut(5,'Show FLogoff');
+ richmemo1.lines.clear;
  Formstyle := fsSystemStayOnTop;
  WindowState := wsMaximized;
  application.processmessages;
