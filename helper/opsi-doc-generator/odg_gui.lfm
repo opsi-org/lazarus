@@ -23,6 +23,7 @@ object Form1: TForm1
       Top = 13
       Width = 75
       Caption = 'ButtonOpen'
+      OnClick = ButtonOpenClick
       TabOrder = 0
     end
     object ButtonSave: TButton
@@ -39,6 +40,7 @@ object Form1: TForm1
       Top = 13
       Width = 120
       Caption = 'ButtonConvert'
+      OnClick = ButtonConvertClick
       TabOrder = 2
     end
   end

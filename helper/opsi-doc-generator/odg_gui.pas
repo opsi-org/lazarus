@@ -6,6 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  odg_main,
   StdCtrls;
 
 type
@@ -24,6 +25,8 @@ type
     Panel3: TPanel;
     SaveDialog1: TSaveDialog;
     Splitter1: TSplitter;
+    procedure ButtonConvertClick(Sender: TObject);
+    procedure ButtonOpenClick(Sender: TObject);
   private
 
   public
@@ -32,10 +35,30 @@ type
 
 var
   Form1: TForm1;
+  infilename : string;
+
+
 
 implementation
 
 {$R *.lfm}
+
+{ TForm1 }
+
+procedure TForm1.ButtonOpenClick(Sender: TObject);
+begin
+  if OpenDialog1.Execute then
+  begin
+    infilename := OpenDialog1.FileName;
+    sourcelist.LoadFromFile(infilename);
+    memo1.Lines.Assign(sourcelist);
+  end;
+end;
+
+procedure TForm1.ButtonConvertClick(Sender: TObject);
+begin
+  convertOslibToAsciidoc(infilename);
+end;
 
 end.
 

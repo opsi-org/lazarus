@@ -1,0 +1,334 @@
+encoding=utf8
+
+; ###################################################################################################
+
+DefFunc delFromWindowsBootmanager($bootlabel$ : string) : string
+
+	DefVar $lastLine$
+	DefVar $bootGUID$
+	DefVar $bootGUIDLine$
+	DefVar $exitcode$
+	DefVar $labelindex$
+	DefVar $guidindex$
+	DefVar $indexoffset$
+	
+	DefStringlist $resultlist$
+
+	set $result$ = "false"
+	Message "Del "+$bootlabel$+" entry from Windows boot manager ...."
+	setloglevel = 7
+	comment "we want delete the vhd entry from the windows boot manager (not from the uefi boot manager)"
+	set $resultlist$ = shellCall("bcdedit /v")
+	set $labelindex$ = getIndexFromListByContaining($resultlist$,$bootlabel$)
+	set $indexoffset$ = "1"
+	set $guidindex$ = calculate($labelindex$+" - "+$indexoffset$)
+	set $bootGUIDLine$ = takestring($guidindex$,$resultlist$)
+	set $bootGUID$ = ""
+	if not ($bootGUIDLine$ = "")
+		set $bootGUID$ = takeString(1,splitStringOnWhitespace($bootGUIDLine$))
+		if not ($bootGUID$ = "")
+			setloglevel = 7
+			set $ExitCode$ = shellCall("bcdedit /delete "+$bootGUID$+" /cleanup")
+			if not("0" = $ExitCode$)
+				LogError "failed bcd_delete"
+			else
+				set $result$ = "true"
+			endif
+			setloglevel = 7
+			setloglevel = 7
+		else
+			LogWarning "Found no boot GUID for label: "+$bootlabel$
+		endif
+	endif
+	setloglevel = 7
+	shellCall("bcdedit /v")
+	shellCall("bcdedit /enum")
+	if runningonuefi
+		shellCall("bcdedit /enum firmware")
+	endif
+EndFunc
+
+DefFunc getWinBcdbootGuid($bootlabel$ : string) : string
+
+	DefVar $bootGUID$
+	DefVar $bootGUIDLine$
+	DefVar $labelindex$
+	DefVar $guidindex$
+	DefVar $indexoffset$
+	DefVar $priorline$
+	
+	DefStringlist $resultlist$
+
+	
+	set $result$ = ""
+	Message "Find boot entry :"+$bootlabel$+" in Windows boot manager."
+	set $resultlist$ = shellCall("bcdedit /v")
+	set $indexoffset$ = "5"
+	
+	set $labelindex$ = getIndexFromListByContaining($resultlist$,$bootlabel$)
+	if $labelindex$ = "0"
+		LogError "failed to get boot entry for label: "+$bootlabel$
+	else
+		set $bootGUID$ = ""
+		for %line% = "1" to $indexoffset$ do sub_fetch_guid
+		if $bootGUID$ = ""
+			LogError "failed to get boot entry for label: "+$bootlabel$
+		else
+			set $result$ = $bootGUID$
+		endif
+	endif
+	
+	[sub_fetch_guid]
+	if $bootGUID$ = ""
+		set $guidindex$ = calculate($labelindex$+" - %line%")
+		set $priorline$ = takestring(calculate($guidindex$+" - 1"),$resultlist$)
+		if contains($priorline$ ,"-----------")
+			set $bootGUIDLine$ = takestring($guidindex$,$resultlist$)
+			if not ($bootGUIDLine$ = "")
+				set $bootGUIDLine$ = takeString(1,splitStringOnWhitespace($bootGUIDLine$))
+				if strLength($bootGUIDLine$) = "38"
+					if "1" = strPos($bootGUIDLine$,"{")
+						if strLength($bootGUIDLine$) = strPos($bootGUIDLine$,"}")
+							set $bootGUID$ = $bootGUIDLine$
+						endif
+					endif
+				endif
+			endif
+		endif
+	endif
+EndFunc
+
+DefFunc getUefiBcdbootGuid($bootlabel$ : string) : string
+
+	DefVar $bootGUID$
+	DefVar $bootGUIDLine$
+	DefVar $labelindex$
+	DefVar $guidindex$
+	DefVar $indexoffset$
+	DefVar $priorline$
+	
+	DefStringlist $resultlist$
+
+	
+	set $result$ = ""
+	Message "Find boot entry :"+$bootlabel$+" in UEFI boot manager."
+	set $resultlist$ = shellCall("bcdedit  /enum firmware")
+	set $indexoffset$ = "3"
+	
+	set $labelindex$ = getIndexFromListByContaining($resultlist$,$bootlabel$)
+	if $labelindex$ = "0"
+		LogError "failed to get boot entry for label: "+$bootlabel$
+	else
+		set $bootGUID$ = ""
+		for %line% = "1" to $indexoffset$ do sub_fetch_guid
+		if $bootGUID$ = ""
+			LogError "failed to get boot entry for label: "+$bootlabel$
+		else
+			set $result$ = $bootGUID$
+		endif
+	endif
+	
+	[sub_fetch_guid]
+	if $bootGUID$ = ""
+		set $guidindex$ = calculate($labelindex$+" - %line%")
+		set $priorline$ = takestring(calculate($guidindex$+" - 1"),$resultlist$)
+		if contains($priorline$ ,"-----------")
+			set $bootGUIDLine$ = takestring($guidindex$,$resultlist$)
+			if not ($bootGUIDLine$ = "")
+				set $bootGUIDLine$ = takeString(1,splitStringOnWhitespace($bootGUIDLine$))
+				if strLength($bootGUIDLine$) = "38"
+					if "1" = strPos($bootGUIDLine$,"{")
+						if strLength($bootGUIDLine$) = strPos($bootGUIDLine$,"}")
+							set $bootGUID$ = $bootGUIDLine$
+						endif
+					endif
+				endif
+			endif
+		endif
+	endif
+EndFunc
+
+
+
+DefFunc bootNextToWinLabel($bootlabel$ : string) : string
+
+	DefVar $bootGUID$
+	DefStringlist $resultlist$
+
+	
+	set $result$ = "false"
+	comment "we want activate the entry in the windows boot manager"
+	set $bootGUID$ = getWinBcdbootGuid($bootlabel$)
+	Message "Enable boot entry :"+$bootlabel$+" in Windows boot manager."
+	if $bootGUID$ = ""
+		LogError "failed to get boot entry for label: "+$bootlabel$
+	else
+		set $resultlist$ = shellCall("bcdedit /bootsequence "+$bootGUID$)
+		if not("0" = getLastExitCode)
+			LogError "failed bcd_bootsequence"
+		else
+			set $result$ = "true"
+		endif
+		set $resultlist$ = shellCall("bcdedit /default "+$bootGUID$)
+		if not("0" = getLastExitCode)
+			LogError "failed bcd_default"
+		endif
+		set $resultlist$ = shellCall("bcdedit /displayorder "+$bootGUID$)
+		if not("0" = getLastExitCode)
+			LogError "failed bcd_displayorder"
+		endif
+		;set $ExitCode$ = shellCall("bcdedit /set {bootmgr} resumeobject "+$bootGUID$)
+		;if not("0" = $ExitCode$)
+		;	LogError "failed resumeobject"
+		;endif
+		set $resultlist$ = shellCall("bcdedit /v")
+		set $resultlist$ = shellCall("bcdedit /enum")
+	endif
+EndFunc
+
+DefFunc bootNextToUefiLabel($bootlabel$ : string) : string
+
+	DefVar $bootGUID$	
+	DefStringlist $resultlist$
+
+	
+	set $result$ = "false"
+	comment "we want activate the entry in the uefi boot manager"
+	if runningonuefi
+		set $bootGUID$ = getUefiBcdbootGuid($bootlabel$)
+		Message "Enable boot entry :"+$bootlabel$+" in UEFI boot manager."
+		if $bootGUID$ = ""
+			LogError "failed to get boot entry for label: "+$bootlabel$
+		else
+			set $resultlist$ = shellCall("bcdedit /set {fwbootmgr} bootsequence "+$bootGUID$)
+			if not("0" = getLastExitCode)
+				LogError "failed bcd_bootsequence2"
+			else
+				set $result$ = "true"
+			endif
+			set $resultlist$ = shellCall("bcdedit /enum firmware")
+		endif
+	else
+		logerror "We are not on uefi in calling bootNextToUefiLabel - ignoring"
+	endif
+EndFunc
+
+
+DefFunc getDiskUuid($disknumber$ : string , $tmpdir$ : string ) : string
+	DefStringlist $list$
+	DefVar $tmpstr$
+
+	set $result$ = ""
+	set $list$ = createStringList("select disk "+$disknumber$,"uniqueid disk")
+	if not (saveTextFile($list$, $tmpdir$+"\diskuuid.txt"))
+		LogError "Could not save diskpart command file ..."
+	endif
+	Message "Run diskuuid ...."
+	set $resultlist$ = shellCall("diskpart /s "+$tmpdir$+"\diskuuid.txt")
+	; we expect something like this:
+	; (string   0)
+	; (string   1)Microsoft DiskPart version 10.0.10240
+	; (string   2)
+	; (string   3)Copyright (C) 1999-2013 Microsoft Corporation.
+	; (string   4)On computer: MININT-90CK531
+	; (string   5)
+	; (string   6)Disk 0 is now the selected disk.
+	; (string   7)
+	; (string   8)Disk ID: 4E77DC27
+	;
+	; or something like this:
+	; (string   0)
+	; (string   1)Microsoft DiskPart-Version 6.1.7600
+	; (string   2)Copyright (C) 1999-2008 Microsoft Corporation.
+	; (string   3)Auf Computer: MININT-UV2F3OC
+	; (string   4)
+	; (string   5)Datenträger 0 ist jetzt der gewählte Datenträger.
+	; (string   6)
+	; (string   7)Datenträger-ID: E5F9EE4D
+	if not("0" = getlastexitcode)
+		logerror "diskuuid failed"
+	else
+		set $tmpstr$ = TakeFirstStringContaining($resultlist$,"ID: ")
+		set $result$ = trim(Takestring(1,splitstring($tmpstr$,':')))
+	endif
+EndFunc
+
+DefFunc enablePEPartition($disknumber$ : string , $partitionNumber$ : string, $pepartletter$ : string, $useGpt$ : string) : string
+	DefVar $tmpdir$
+	DefVar $tmpstr$
+	DefVar $exitcode$
+	DefVar $diskpartscript$
+	Defstringlist $diskpartlist$
+
+	set $result$ = "false"
+	if $pePartLetter$ = ""
+		set $pePartLetter$ = "X"
+	endif
+	if runningInPe
+		set $tmpdir$ = $pePartLetter$+":"
+	else
+		set $tmpdir$ = "%opsiTmpDir%"
+	endif
+	if runningInPe or compareDotSeparatedNumbers(GetMsVersionInfo,"<=","6.2" ) or not(runningOnUefi)
+		; using diskpart
+		set $diskpartscript$ = $tmpdir$+"\enable_winpe.txt"
+		setLogLevel = 6
+		set $diskpartlist$ = emptylist($diskpartlist$)
+		set $diskpartlist$ = addtolist($diskpartlist$,"list disk")
+		set $diskpartlist$ = addtolist($diskpartlist$,"select disk "+$diskNumber$)
+		set $diskpartlist$ = addtolist($diskpartlist$,"list volume")
+		set $diskpartlist$ = addtolist($diskpartlist$,"list partition")
+		set $diskpartlist$ = addtolist($diskpartlist$,"select partition "+$partitionNumber$)
+		set $diskpartlist$ = addtolist($diskpartlist$,"detail partition")
+		if $useGpt$ = "true"
+			set $diskpartlist$ = addtolist($diskpartlist$,"gpt attributes=0x0000000000000000")
+		else
+			set $diskpartlist$ = addtolist($diskpartlist$,"set ID=07 OVERRIDE NOERR")
+			set $diskpartlist$ = addtolist($diskpartlist$,"active")
+		endif
+		set $diskpartlist$ = addtolist($diskpartlist$,"list volume")
+		set $diskpartlist$ = addtolist($diskpartlist$,"remove all NOERR")
+		set $diskpartlist$ = addtolist($diskpartlist$,"assign letter="+$pePartLetter$+" NOERR")
+		set $diskpartlist$ = addtolist($diskpartlist$,"detail partition")
+		set $diskpartlist$ = addtolist($diskpartlist$,"list volume")
+		set $diskpartlist$ = addtolist($diskpartlist$,"list vdisk")
+		setLogLevel = 7
+		set $diskpartlist$ = addtolist($diskpartlist$,"exit")
+		if not (saveTextFile($diskpartlist$, $diskpartscript$))
+			LogError "Could not save diskpart command file ..."
+			set $result$ = "false"
+		endif
+		set $exitcode$ = shellCall('diskpart /s "'+$diskpartscript$+'"')
+		if not ($exitcode$ = "0")
+			logerror "failed run_enable_winpe"
+			set $result$ = "false"
+		endif
+	else ; powershell
+		; using powershell
+		shellCall('powershell.exe -Command "trap { write-output $_ ; exit 1 } ; get-partition | select disknumber, partitionnumber, driveletter, size,type ; exit $LASTEXITCODE"')
+		if $useGpt$ = "true"
+			set $exitcode$ = shellCall('powershell.exe -Command "trap { write-output $_ ; exit 1 } ; Set-partition -disknumber '+$diskNumber$+' -partitionnumber '+$partitionNumber$+' -IsHidden $false -NoDefaultDriveLetter $false ; exit $LASTEXITCODE"')
+		else
+			set $exitcode$ = shellCall('powershell.exe -Command "trap { write-output $_ ; exit 1 } ; Set-partition -disknumber '+$diskNumber$+' -partitionnumber '+$partitionNumber$+' -IsHidden $false -NoDefaultDriveLetter $false -MbrType 7 -IsActive $true ; exit $LASTEXITCODE"')
+		endif
+		if not ($exitcode$ = "0")
+			logerror "failed run_enable_winpe partition"
+			set $result$ = "false"
+		endif
+		shellCall('powershell.exe -Command "trap { write-output $_ ; exit 1 } ; get-partition | select disknumber, partitionnumber, driveletter, size,type ; exit $LASTEXITCODE"')
+		set $resultlist$ = shellCall('powershell.exe -Command "trap { write-output $_ ; exit 1 } ; get-partition -disknumber '+$diskNumber$+' -partitionnumber '+$partitionNumber$+' | select -expand driveletter ; exit $LASTEXITCODE"')
+		if ($exitcode$ = "0") and (count($resultlist$) INT> "0")
+			set $tmpstr$ = takeString(0,$resultlist$)
+			set $exitcode$ = shellCall('powershell.exe -Command "trap { write-output $_ ; exit 1 } ; Remove-PartitionAccessPath -disknumber '+$diskNumber$+' -partitionnumber '+$partitionNumber$+' -accesspath '+$tmpstr$+': ; exit $LASTEXITCODE"')
+		endif
+		shellCall('powershell.exe -Command "trap { write-output $_ ; exit 1 } ; get-partition -disknumber '+$diskNumber$+' -partitionnumber '+$partitionNumber$+' | set-partition -newdriveletter '+$pePartLetter$+' ; exit $LASTEXITCODE"')
+	endif
+	if not (isDriveReady($pePartLetter$))
+		logerror "PE drive "+$pePartLetter$+": not ready"
+		set $result$ = "false"
+	else
+		set $result$ = "true"
+	endif
+EndFunc
+
+; ###################################################################################################
