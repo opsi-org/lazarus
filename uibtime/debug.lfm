@@ -1,12 +1,12 @@
 object FDebug: TFDebug
-  Left = -55
-  Height = 247
+  Left = 37
+  Height = 248
   Top = 414
   Width = 482
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'FDebug'
-  ClientHeight = 247
+  ClientHeight = 248
   ClientWidth = 482
   Color = clBtnFace
   Font.Color = clWindowText
@@ -20,7 +20,7 @@ object FDebug: TFDebug
   LCLVersion = '1.8.2.0'
   object Memo1: TMemo
     Left = 0
-    Height = 222
+    Height = 223
     Top = 25
     Width = 482
     Align = alClient
