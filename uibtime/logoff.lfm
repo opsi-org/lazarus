@@ -11,7 +11,9 @@ object Flogoff: TFlogoff
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   OnHide = FormHide
+  OnPaint = FormPaint
   OnShow = FormShow
+  OnWindowStateChange = FormWindowStateChange
   Position = poDefault
   LCLVersion = '1.8.2.0'
   object Label1: TLabel
