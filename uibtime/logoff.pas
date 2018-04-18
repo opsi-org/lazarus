@@ -40,8 +40,10 @@ type
     procedure EditButton1ButtonClick(Sender: TObject);
     procedure EditButton1Change(Sender: TObject);
     procedure FormHide(Sender: TObject);
+    procedure FormPaint(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure Btn_work_descriptionClick(Sender: TObject);
+    procedure FormWindowStateChange(Sender: TObject);
   private
     { Private-Deklarationen}
   public
@@ -369,6 +371,11 @@ begin
  Datamodule1.TimerLogoffOnTop.Enabled := false;
 end;
 
+procedure TFlogoff.FormPaint(Sender: TObject);
+begin
+  datamodule1.debugOut(5,'Paint FLogoff');
+end;
+
 procedure TFlogoff.FormShow(Sender: TObject);
 begin
  datamodule1.debugOut(5,'Show FLogoff');
@@ -396,6 +403,11 @@ begin
   //Fwork_description.Free;
  //Flogoff.Show;
  *)
+end;
+
+procedure TFlogoff.FormWindowStateChange(Sender: TObject);
+begin
+  datamodule1.debugOut(5,'StateChange FLogoff');
 end;
 
 end.
