@@ -92,6 +92,7 @@ LazFileUtils,
   opsihwbiosinfo,
   osjson,
   oscrypt,
+  osparserhelper,
   LAZUTF8;
 
 

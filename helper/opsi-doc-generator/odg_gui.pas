@@ -7,6 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   odg_main,
+  odg_asciidoc,
   StdCtrls;
 
 type
@@ -58,6 +59,7 @@ end;
 procedure TForm1.ButtonConvertClick(Sender: TObject);
 begin
   convertOslibToAsciidoc(infilename);
+  memo2.Lines.Assign(targetlist);
 end;
 
 end.

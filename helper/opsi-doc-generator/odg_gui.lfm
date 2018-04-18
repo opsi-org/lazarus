@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 299
+  Left = 213
   Height = 628
-  Top = 309
+  Top = 358
   Width = 695
   Caption = 'Form1'
   ClientHeight = 628
@@ -63,6 +63,7 @@ object Form1: TForm1
       Lines.Strings = (
         'Memo1'
       )
+      ScrollBars = ssAutoBoth
       TabOrder = 0
     end
   end
@@ -92,6 +93,7 @@ object Form1: TForm1
       Lines.Strings = (
         'Memo2'
       )
+      ScrollBars = ssAutoBoth
       TabOrder = 0
     end
   end

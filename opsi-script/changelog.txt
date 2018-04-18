@@ -8,6 +8,7 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 opsi-winst/opsi-script (4.12.0.17) stable; urgency=low
 
   * osparser: processcall: log Executing ol LLNotice
+  * new unit osparserhelper in common (Skip / getword /  ...)
 
 -- Detlef Oertel <d.oertel@uib.de>  Fri, 13 Apr 2018:15:00:00 +0200
 

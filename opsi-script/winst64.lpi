@@ -194,7 +194,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="80">
+    <Units Count="81">
       <Unit0>
         <Filename Value="winst64.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -603,7 +603,7 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="10"/>
         <TopLine Value="218"/>
-        <CursorPos X="48" Y="226"/>
+        <CursorPos X="18" Y="233"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <IsVisibleTab Value="True"/>
@@ -906,6 +906,16 @@
         <UsageCount Value="27"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit79>
+      <Unit80>
+        <Filename Value="..\common\osparserhelper.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="20"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit80>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>

@@ -53,9 +53,16 @@ uses
   oslistedit,
   {$ENDIF GUI}
   {$IFDEF LINUX}osfunclin {$ENDIF}
-  {$IFDEF WINDOWS}jclexcerpt, osfuncwin2, oslocaladmin, osfuncwin,
-  opsihwbiosinfo, uCpuUsage, SystemCriticalU,
-osfuncwin3, osregistry{$ENDIF} ;
+  {$IFDEF WINDOWS}
+  jclexcerpt,
+  osfuncwin2,
+  oslocaladmin,
+  osfuncwin,
+  opsihwbiosinfo,
+  uCpuUsage,
+  SystemCriticalU,
+  osfuncwin3,
+  osregistry{$ENDIF WINDOWS};
 
 
 

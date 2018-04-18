@@ -5,7 +5,10 @@ unit odg_os_deffunc;
 interface
 
 uses
-  Classes, SysUtils;
+  Classes,
+  osparserhelper,
+  oslog,
+  SysUtils;
 
 (*
 
@@ -129,6 +132,8 @@ Type
 
 TosdfDataTypes = (dftString,dftStringlist,dftVoid);
 TParamDataTypes = (dptString,dptStringlist);
+TfuncTypesNames = Array [TosdfDataTypes] of String [50];
+TParamTypesNames = Array [TParamDataTypes] of String [50];
 
 TParamDoc = class
   private
@@ -140,6 +145,12 @@ TParamDoc = class
   public
     constructor Create;
     destructor Destroy;
+    function getParamTypestring : string;
+    property ParamName : string  read FParamName;
+    property callByReference : boolean  read FcallByReference;
+    property ParamType : string  read getParamTypestring;
+    property ParamDesc : string  read FParamDesc;
+    property ParamAdvice : string  read FParamAdvice;
 end;
 
 TFuncDoc =  class
@@ -152,27 +163,47 @@ TFuncDoc =  class
     FCopyright : string;
     FDescription : string;
     FReturns :string;
-    Fparams : array of TParamDoc;
-    FParamNumber : integer;
+    //Fparams : array of TParamDoc;
+    FParamCounter : integer;
     FOnError : string;
     FSpecialCase : string;
     FReferences : string;
     FLinks : string;
     FRequires : string;
   public
+    Fparams : array of TParamDoc;
     constructor Create;
     destructor Destroy;
+    property Definitionline : string  read FDefinitionline write FDefinitionline;
+    property Name : string  read Fname write Fname;
+    property ResultType : TosdfDataTypes  read FResultType write FResultType;
+    property Author : string  read FAuthor write FAuthor;
+    property Date : String  read FDate write FDate;
+    property Copyright : string  read FCopyright write FCopyright;
+    property Description : string  read FDescription write FDescription;
+    property Returns :string  read FReturns write FReturns;
+    property ParamCounter : integer  read FParamCounter write FParamCounter;
+    property OnError : string  read FOnError write FOnError;
+    property SpecialCase : string  read FSpecialCase write FSpecialCase;
+    property References : string  read FReferences write FReferences;
+    property Links : string  read FLinks write FLinks;
+    property Requires : string  read FRequires write FRequires;
   end;
 
 TFileDoc =  class
   private
     Fname : string;
     Ffiledesc : string;
-    Ffunctions : array of TFuncDoc;
-    FfunctionNumber : integer;
+    //Ffunctions : array of TFuncDoc;
+    FfunctionCounter : integer;
   public
+    Ffunctions : array of TFuncDoc;
     constructor Create;
     destructor Destroy;
+    property name : string  read Fname write Fname;
+    property filedesc : string  read Ffiledesc write Ffiledesc;
+    //property functions : array of TFuncDoc   read Ffunctions write Ffunctions;
+    property functionCounter : integer  read FfunctionCounter write FfunctionCounter;
   end;
 
 const
@@ -192,6 +223,7 @@ const
   CRequires = '@Requires';
   CParamDesc = '@ParamDesc_';
   CParamAdvice = '@ParamAdvice_';
+  CParam = '@Param';
 
 function parseInput_opsiscriptlibrary(filename : string) : boolean;
 
@@ -203,9 +235,16 @@ implementation
 uses
   odg_main;
 
+var
+  ParamTypesNames : TParamTypesNames;
+  funcTypesNames  : TfuncTypesNames;
+
 
 constructor TFileDoc.create;
 begin
+  FName := '';
+  Ffiledesc := '';
+  FfunctionCounter := 0;
   Inherited;
 end;
 
@@ -217,6 +256,21 @@ end;
 
 constructor TFuncDoc.create;
 begin
+  FDefinitionline := '';
+  FName := '';
+  FResultType :=  dftVoid;
+  FAuthor := '';
+  FDate := '';
+  FCopyright := '';
+  FDescription := '';
+  FReturns := '';
+  //Fparams : array of TParamDoc;
+  FParamCounter := 0;
+  FOnError := '';
+  FSpecialCase := '';
+  FReferences := '';
+  FLinks := '';
+  FRequires := '';
   Inherited;
 end;
 
@@ -228,6 +282,11 @@ end;
 
 constructor TParamDoc.create;
 begin
+  FParamName := '';
+  FcallByReference := false;
+  FParamType := dptString;
+  FParamDesc := '';
+  FParamAdvice := '';
   Inherited;
 end;
 
@@ -236,48 +295,168 @@ begin
   inherited;
 end;
 
-procedure parseDefFunc(line : string);
+function TParamDoc.getParamTypestring : string;
 begin
-
+  result := ParamTypesNames[FParamType];
 end;
 
-procedure onMarkerAddDocStringTo(marker : string;docstring : string;var target :string);
+function  stringTofunctiontype(const str : string; var ftype : TosdfDataTypes) : boolean;
+begin
+  result := false;
+  if LowerCase(str) = LowerCase(funcTypesNames[dftString]) then
+  begin
+    result := true;
+    ftype := dftString;
+  end
+  else if LowerCase(str) = LowerCase(funcTypesNames[dftStringlist]) then
+  begin
+    result := true;
+    ftype := dftStringlist;
+  end
+  else if LowerCase(str) = LowerCase(funcTypesNames[dftVoid]) then
+  begin
+    result := true;
+    ftype := dftVoid;
+  end
+end;
+
+
+procedure parseDefFunc(definitionStr : string; myfunc : TFuncDoc);
+var
+  paramnamestr, paramtypestr, calltype : string;
+  paramcounter : integer;
+  endOfParamlist,mycallByReference : boolean;
+  tmpstr : string;
+  remaining,errorstr : string;
+begin
+  //parseDefFunc := false;
+  //syntax_ok := true;
+  endOfParamlist := false;
+  paramcounter := -1;
+  myfunc.FDefinitionline:=definitionStr;
+  // get function name
+  GetWord(trim(definitionStr), myfunc.FName, remaining,WordDelimiterSet5);
+
+  LogDatei.log('Found new defined function name: '+myfunc.FName,LLDebug2);
+  if  skip('(',remaining,remaining,errorstr) then
+  begin
+    // test on no parameters
+    tmpstr := remaining;
+    if skip(')',remaining,remaining,errorstr) then
+    begin
+      endOfParamlist := true;
+      myfunc.FParamCounter := 0;
+    end
+    else
+      remaining := tmpstr;
+
+    while  not endOfParamlist do
+    begin
+      // check call type
+      calltype := 'val';
+      if skip('val',LowerCase(remaining),remaining,errorstr) then calltype := 'val';
+      if skip('ref',LowerCase(remaining),remaining,errorstr) then calltype := 'ref';
+      if lowercase(calltype) = 'ref' then mycallByReference := true
+      else mycallByReference := false;
+      // check paramname
+      GetWord(remaining, paramnamestr, remaining,[':']);
+      paramnamestr := trim(paramnamestr);
+
+      LogDatei.log('Found defined function parametername: '+paramnamestr,LLDebug2);
+      inc(paramcounter);
+
+      myfunc.FParamCounter := paramcounter +1;
+      setlength(myfunc.Fparams,myfunc.FParamCounter);
+      myfunc.Fparams[paramcounter] := TParamDoc.Create;
+      with myfunc.Fparams[paramcounter] do
+      begin
+        if mycallByReference then FcallByReference:= true
+        else  FcallByReference:= false;
+        LogDatei.log('Parameter has call type: '+calltype,LLDebug2);
+        // is a new param
+        FparamName:= paramnamestr;
+        //DFLocalVarList.Add(paramname);
+        if  skip(':',remaining,remaining,errorstr) then
+        begin
+          GetWord(remaining, paramtypestr, remaining,[',',')']);
+          paramtypestr := trim(paramtypestr);
+          if lowercase(paramtypestr) = lowercase(ParamTypesNames[dptString]) then
+          begin
+            // String type
+            FParamType:=dptString;
+          end
+          else if lowercase(paramtypestr) = lowercase(ParamTypesNames[dptStringlist]) then
+          begin
+            // Stringlist type
+            FParamType := dptStringlist;
+          end;
+        end; // skip :
+        // check for endOfParamlist
+        tmpstr := remaining;
+        if skip(')',remaining,remaining,errorstr) then
+        begin
+          endOfParamlist := true;
+        end
+        else
+        begin
+          remaining := tmpstr;
+          if skip(',',remaining,remaining,errorstr) then
+        end
+      end; // with
+    end; // while
+    // get function type
+    if skip(':',remaining,remaining,errorstr) then
+    begin
+      if stringTofunctiontype(remaining, myfunc.FResultType) then
+      begin
+        LogDatei.log('Function has valid data type: '+funcTypesNames[myfunc.FResultType],LLDebug2);
+      end;
+    end
+  end;
+  //parseDefinition := true;
+end;
+
+function onMarkerAddDocStringTo(marker : string;docstring : string;var target :string) : boolean;
 var
   tmpstr1 : string;
 begin
-  if pos(marker,docstring) = 1 then
+  result := false;
+  if pos(lowercase(marker),lowercase(docstring)) = 1 then
   begin
-    tmpstr1 := copy(docstring,length(marker)+1,length(docstring));
-      if target = '' then target := tmpstr1
+    tmpstr1 := trim(copy(docstring,length(marker)+1,length(docstring)));
+    if target = '' then target := tmpstr1
     else target := target+LineEnding+tmpstr1;
-  end
+    result := true;
+  end;
 end;
 
 function parseInput_opsiscriptlibrary(filename : string) : boolean;
 var
-  linecounter, funccounter : integer;
+  linecounter, funccounter,prun : integer;
   indeffunc : integer;
-  aktline, expr, remaining, tmpstr1, tmpstr2, tmpstr3 : string;
+  aktline, expr, remaining, pname, tmpstr1, tmpstr2, tmpstr3 : string;
   incomment : boolean;
 begin
+  result := true;
   indeffunc := 0;
   if Assigned(docobject) and (docobject <> nil) then docobject.Destroy;
   docobject := TFileDoc.Create;
-  docobject.Fname:=filename;
+  docobject.Fname:=ExtractFileName(filename);
   for linecounter := 0 to sourcelist.Count-1 do
   begin
     incomment := false;
-    aktline := trim(lowercase(sourcelist.Strings[linecounter]));
+    aktline := trim(sourcelist.Strings[linecounter]);
     if indeffunc = 0 then
     begin  // not in defined function
-      if pos(cdeffunc,aktline) = 1 then
+      if pos(lowercase(cdeffunc),lowercase(aktline)) = 1 then
       begin // function definition line
         inc(indeffunc);
-        funccounter := docobject.FfunctionNumber;
+        funccounter := docobject.Ffunctioncounter;
         inc(funccounter);
+        docobject.Ffunctioncounter := funccounter;
         setlength(docobject.Ffunctions,funccounter);
         docobject.Ffunctions[funccounter-1] := TFuncDoc.Create;
-        parseDefFunc(copy(aktline,length(cdeffunc)+1,length(aktline)));
+        parseDefFunc(copy(aktline,length(cdeffunc)+1,length(aktline)),docobject.Ffunctions[funccounter-1]);
       end
       else
       if pos(ccomment,aktline) = 1 then
@@ -292,7 +471,7 @@ begin
     end
     else
     begin  // in defined function
-      if pos(cendfunc,aktline) = 1 then
+      if pos(lowercase(cendfunc),lowercase(aktline)) = 1 then
       begin // function end line
         dec(indeffunc);
       end
@@ -304,22 +483,36 @@ begin
       end;
       if incomment then
       begin
-        onMarkerAddDocStringTo(cauthor,aktline,docobject.Ffunctions[funccounter-1].FAuthor);
-        onMarkerAddDocStringTo(cdate,aktline,docobject.Ffunctions[funccounter-1].FDate);
-        onMarkerAddDocStringTo(ccopyright,aktline,docobject.Ffunctions[funccounter-1].FCopyright);
-        onMarkerAddDocStringTo(CDescription,aktline,docobject.Ffunctions[funccounter-1].FDescription);
-        onMarkerAddDocStringTo(COnError,aktline,docobject.Ffunctions[funccounter-1].FOnError);
-        onMarkerAddDocStringTo(CReturns,aktline,docobject.Ffunctions[funccounter-1].FReturns);
-        onMarkerAddDocStringTo(CSpecialCase,aktline,docobject.Ffunctions[funccounter-1].FSpecialCase);
-        onMarkerAddDocStringTo(CReferences,aktline,docobject.Ffunctions[funccounter-1].FReferences);
-        onMarkerAddDocStringTo(CLinks,aktline,docobject.Ffunctions[funccounter-1].FLinks);
+        if not onMarkerAddDocStringTo(cauthor,aktline,docobject.Ffunctions[funccounter-1].FAuthor) then
+        if not onMarkerAddDocStringTo(cdate,aktline,docobject.Ffunctions[funccounter-1].FDate) then
+        if not onMarkerAddDocStringTo(ccopyright,aktline,docobject.Ffunctions[funccounter-1].FCopyright) then
+        if not onMarkerAddDocStringTo(CDescription,aktline,docobject.Ffunctions[funccounter-1].FDescription) then
+        if not onMarkerAddDocStringTo(COnError,aktline,docobject.Ffunctions[funccounter-1].FOnError) then
+        if not onMarkerAddDocStringTo(CReturns,aktline,docobject.Ffunctions[funccounter-1].FReturns) then
+        if not onMarkerAddDocStringTo(CSpecialCase,aktline,docobject.Ffunctions[funccounter-1].FSpecialCase) then
+        if not onMarkerAddDocStringTo(CReferences,aktline,docobject.Ffunctions[funccounter-1].FReferences)then
+            onMarkerAddDocStringTo(CLinks,aktline,docobject.Ffunctions[funccounter-1].FLinks);
+        // parameter ?
+        if pos(lowercase(CParam),lowercase(aktline)) = 1 then
+        begin
+          for prun := 0 to docobject.Ffunctions[funccounter-1].ParamCounter-1 do
+          begin
+            pname := docobject.Ffunctions[funccounter-1].Fparams[prun].FParamName;
+            if not onMarkerAddDocStringTo(lowercase(CParamDesc+pname),aktline,docobject.Ffunctions[funccounter-1].Fparams[prun].FParamDesc)
+            then onMarkerAddDocStringTo(lowercase(CParamAdvice+pname),aktline,docobject.Ffunctions[funccounter-1].Fparams[prun].FParamAdvice);
+          end;
+        end;
       end;
     end;
   end;
-
-
 end;
 
+begin
+  ParamTypesNames[dptString] :=  'String';
+  ParamTypesNames[dptStringlist] :=  'Stringlist';
+  funcTypesNames[dftString] :=  'String';
+  funcTypesNames[dftStringlist] :=  'Stringlist';
+  funcTypesNames[dftVoid] :=  'Void';
 
 
 end.
