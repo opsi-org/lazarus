@@ -521,7 +521,22 @@ begin
     datamodule1.debugOut(5, 'in btnbye: Flogoff.showmodal');
     Application.ProcessMessages;
     try
+      {$IFDEF WINDOWS}
       Result := Flogoff.showmodal;
+      {$ENDIF WINDOWS}
+      {$IFDEF LINUX}
+      Flogoff.show;
+      Flogoff.WindowState:=wsMaximized;
+      Flogoff.FormStyle:=fsSystemStayOnTop;
+      while Flogoff.Visible do
+      begin
+        Application.ProcessMessages;
+        Sleep(100);
+      end;
+      Result := Flogoff.mymodresult;
+      Flogoff.WindowState:=wsNormal;
+      Flogoff.FormStyle:=fsNormal;
+      {$ENDIF LINUX}
     finally
       datamodule1.debugOut(5, 'in btnbye: after Flogoff.showmodal');
     end;

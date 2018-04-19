@@ -32,6 +32,7 @@ type
     Btn_work_description: TBitBtn;
     Query2: TSQLQuery;
     RichMemo1: TRichMemo;
+    procedure BitBtn1Click(Sender: TObject);
     procedure BitBtn2Click(Sender: TObject);
     procedure BitBtn3Click(Sender: TObject);
     procedure ButtonLastMonthClick(Sender: TObject);
@@ -46,8 +47,10 @@ type
     procedure FormWindowStateChange(Sender: TObject);
   private
     { Private-Deklarationen}
+    Fmymodresult: TModalResult;
   public
     { Public-Deklarationen}
+    property mymodresult: TModalResult read Fmymodresult;
   end;
 
 var
@@ -317,13 +320,29 @@ end;
 
 procedure TFlogoff.BitBtn2Click(Sender: TObject);
 begin
-  //DataModule1.TerminateApplication;
+  {$IFDEF LINUX}
+  Fmymodresult:=mrAbort;
+  Visible:=false;
+  {$ENDIF LINUX}
+
+  //DataModule1.TerminateApplication;mrAbort
   //Application.terminate;
+end;
+
+procedure TFlogoff.BitBtn1Click(Sender: TObject);
+begin
+  {$IFDEF LINUX}
+  Fmymodresult:=mrCancel;
+  Visible:=false;
+  {$ENDIF LINUX}
 end;
 
 procedure TFlogoff.BitBtn3Click(Sender: TObject);
 begin
-
+  {$IFDEF LINUX}
+  Fmymodresult:=mrOk;
+  Visible:=false;
+  {$ENDIF LINUX}
 end;
 
 procedure TFlogoff.ButtonLastMonthClick(Sender: TObject);
@@ -394,6 +413,10 @@ end;
 
 procedure TFlogoff.Btn_work_descriptionClick(Sender: TObject);
 begin
+  {$IFDEF LINUX}
+  Fmymodresult:=mrYes;
+  Visible:=false;
+  {$ENDIF LINUX}
  (*
  Flogoff.Hide;
  if Fwork_description = nil then

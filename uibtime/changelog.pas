@@ -1,7 +1,8 @@
 (*
 uibtime (4.1.1.33-1) stable; urgency=low
 
- *
+ * workaround for Linux Flogoff.showmodal crash in flogoff and ontop
+ * login: new checkbox remeberme
 
 -- detlef oertel <d.oertel@uib.de>  Tue, 17 Apr 2018 15:00:00 +0000
 

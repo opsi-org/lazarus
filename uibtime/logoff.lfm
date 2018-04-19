@@ -81,6 +81,7 @@ object Flogoff: TFlogoff
     }
     ModalResult = 1
     NumGlyphs = 2
+    OnClick = BitBtn1Click
     ParentFont = False
     TabOrder = 0
   end
