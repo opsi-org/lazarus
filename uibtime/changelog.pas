@@ -2,6 +2,7 @@
 uibtime (4.1.1.34-1) stable; urgency=low
 
  * fix in showmodal workaround for Linux: mrOK and mrCancel interchanged
+ * cosmetic fix in login.lfm
 
 -- detlef oertel <d.oertel@uib.de>  Mon, 23 Apr 2018 15:00:00 +0000
 
