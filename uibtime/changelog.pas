@@ -1,4 +1,11 @@
 (*
+uibtime (4.1.1.34-1) stable; urgency=low
+
+ * fix in showmodal workaround for Linux: mrOK and mrCancel interchanged
+
+-- detlef oertel <d.oertel@uib.de>  Mon, 23 Apr 2018 15:00:00 +0000
+
+
 uibtime (4.1.1.33-1) stable; urgency=low
 
  * workaround for Linux Flogoff.showmodal crash in flogoff and ontop

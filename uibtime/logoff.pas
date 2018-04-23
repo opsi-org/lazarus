@@ -332,7 +332,7 @@ end;
 procedure TFlogoff.BitBtn1Click(Sender: TObject);
 begin
   {$IFDEF LINUX}
-  Fmymodresult:=mrCancel;
+  Fmymodresult:=mrOk;
   Visible:=false;
   {$ENDIF LINUX}
 end;
@@ -340,7 +340,7 @@ end;
 procedure TFlogoff.BitBtn3Click(Sender: TObject);
 begin
   {$IFDEF LINUX}
-  Fmymodresult:=mrOk;
+  Fmymodresult:= mrCancel;
   Visible:=false;
   {$ENDIF LINUX}
 end;

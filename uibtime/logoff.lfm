@@ -18,9 +18,9 @@ object Flogoff: TFlogoff
   LCLVersion = '1.8.2.0'
   object Label1: TLabel
     Left = 18
-    Height = 38
+    Height = 37
     Top = 48
-    Width = 754
+    Width = 621
     Caption = 'Für uibtime bist Du nicht mehr da !! seit: '
     Font.Color = clWindowText
     Font.Height = -32
@@ -31,9 +31,9 @@ object Flogoff: TFlogoff
   end
   object DBText1: TDBText
     Left = 20
-    Height = 38
+    Height = 37
     Top = 80
-    Width = 149
+    Width = 129
     DataField = 'STOPTIME'
     DataSource = DataModule1.DSuibevent
     Font.Color = clWindowText
@@ -47,7 +47,7 @@ object Flogoff: TFlogoff
     Left = 16
     Height = 13
     Top = 200
-    Width = 182
+    Width = 155
     Caption = 'Ergebnis des Datenbankchecks:'
     ParentColor = False
   end
@@ -175,7 +175,7 @@ object Flogoff: TFlogoff
   end
   object EditButton1: TEditButton
     Left = 136
-    Height = 19
+    Height = 21
     Top = 528
     Width = 200
     ButtonCaption = 'Startdatum wählen'
@@ -190,9 +190,9 @@ object Flogoff: TFlogoff
   end
   object Label3: TLabel
     Left = 18
-    Height = 15
+    Height = 16
     Top = 531
-    Width = 108
+    Width = 100
     Caption = 'Durchsuchen ab:'
     Font.CharSet = ANSI_CHARSET
     Font.Color = clWindowText
