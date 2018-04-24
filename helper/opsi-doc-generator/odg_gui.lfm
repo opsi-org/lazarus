@@ -1,0 +1,108 @@
+object Form1: TForm1
+  Left = 213
+  Height = 628
+  Top = 358
+  Width = 695
+  Caption = 'Form1'
+  ClientHeight = 628
+  ClientWidth = 695
+  LCLVersion = '1.8.2.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 50
+    Top = 0
+    Width = 695
+    Align = alTop
+    Caption = 'Panel1'
+    ClientHeight = 50
+    ClientWidth = 695
+    TabOrder = 0
+    object ButtonOpen: TButton
+      Left = 16
+      Height = 25
+      Top = 13
+      Width = 75
+      Caption = 'ButtonOpen'
+      OnClick = ButtonOpenClick
+      TabOrder = 0
+    end
+    object ButtonSave: TButton
+      Left = 536
+      Height = 25
+      Top = 13
+      Width = 75
+      Caption = 'ButtonSave'
+      TabOrder = 1
+    end
+    object ButtonConvert: TButton
+      Left = 272
+      Height = 25
+      Top = 13
+      Width = 120
+      Caption = 'ButtonConvert'
+      OnClick = ButtonConvertClick
+      TabOrder = 2
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 578
+    Top = 50
+    Width = 320
+    Align = alLeft
+    Caption = 'Panel2'
+    ClientHeight = 578
+    ClientWidth = 320
+    TabOrder = 1
+    object Memo1: TMemo
+      Left = 1
+      Height = 576
+      Top = 1
+      Width = 318
+      Align = alClient
+      Lines.Strings = (
+        'Memo1'
+      )
+      ScrollBars = ssAutoBoth
+      TabOrder = 0
+    end
+  end
+  object Splitter1: TSplitter
+    Left = 320
+    Height = 578
+    Top = 50
+    Width = 5
+    Beveled = True
+  end
+  object Panel3: TPanel
+    Left = 325
+    Height = 578
+    Top = 50
+    Width = 370
+    Align = alClient
+    Caption = 'Panel3'
+    ClientHeight = 578
+    ClientWidth = 370
+    TabOrder = 3
+    object Memo2: TMemo
+      Left = 1
+      Height = 576
+      Top = 1
+      Width = 368
+      Align = alClient
+      Lines.Strings = (
+        'Memo2'
+      )
+      ScrollBars = ssAutoBoth
+      TabOrder = 0
+    end
+  end
+  object OpenDialog1: TOpenDialog
+    left = 112
+    top = 8
+  end
+  object SaveDialog1: TSaveDialog
+    left = 648
+    top = 8
+  end
+end

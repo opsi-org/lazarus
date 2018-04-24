@@ -1,5 +1,11 @@
 
 [changelog]
+opsi_client_systray  4.1.0.0
+
+  * switch to lazarus 1.8.2
+  * HighDPI aware
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 28 Mar 2018:15:00:00 +0200
 
 opsi_client_systray  4.0.7.2
 

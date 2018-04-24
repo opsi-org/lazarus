@@ -11,6 +11,7 @@ uses
   Windows,
   strings,
   LConvEncoding,
+  osparserhelper,
   LAZUTF8;
 
 const
@@ -84,6 +85,9 @@ function GetRegistrystringvalue(aktkey: string; ValueName: string;
 function GetRegistryKeyList(aktkey: string; noredirect: boolean): TStringList;
 function GetRegistryVarList(aktkey: string; noredirect: boolean): TStringList;
 function GetRegistryVarMap(aktkey: string; noredirect: boolean): TStringList;
+function RegKeyExists(const regkey : string; noredirect: boolean): boolean;
+function RegVarExists(const regkey : string; ValueName: string;
+                       noredirect: boolean) : boolean;
 {$ENDIF}
 
 
@@ -381,6 +385,7 @@ begin
     Regist.CloseKey;
     Result := StringResult;
   end;
+  Regist.Free;
 end;
 
 
@@ -578,6 +583,105 @@ begin
     //LogDatei.log('finished6', LLdebug);
   end;
 end;
+
+function RegKeyExists(const regkey : string; noredirect: boolean) : boolean;
+var
+  basekey, relkey, winencodekey: string;
+  Regist: Tregistry;
+  KeyOpenMode: longword;
+  rkey: HKey;
+  i: integer;
+  dataType: TRegDataType;
+begin
+  winencodekey := UTF8ToWinCP(regkey);
+  Result := false;
+  basekey := copy(winencodekey, 0, Pos('\', winencodekey) - 1);
+  LogDatei.log_prog('basekey : ' + basekey, LLdebug3);
+  relkey := copy(winencodekey, Pos('\', winencodekey) + 1, length(winencodekey));
+  LogDatei.log_prog('relkey : ' + relkey, LLdebug3);
+  if noredirect then
+  begin
+    KeyOpenMode := KEY_ALL_ACCESS or KEY_WOW64_64KEY;
+    LogDatei.log('Registry started without redirection (64 Bit)', LLdebug);
+  end
+  else
+  begin
+    KeyOpenMode := KEY_ALL_ACCESS or KEY_WOW64_32KEY;
+    LogDatei.log('Registry started with redirection (32 Bit)', LLdebug);
+  end;
+  try
+    try
+      Regist := Tregistry.Create(KeyOpenMode);
+      if GetHKey(basekey, rkey) then
+      begin
+        regist.RootKey := rkey;
+        if regist.KeyExists(relkey) then result := true;
+      end
+      else
+        LogDatei.log('Could not get root key from : ' + basekey, LLError);
+    except
+      on e: Exception do
+      begin
+        LogDatei.log('Error: ' + e.message, LLError);
+      end;
+    end
+  finally
+    regist.Free;
+  end;
+end;
+
+function RegVarExists(const regkey : string; ValueName: string;
+                       noredirect: boolean) : boolean;
+var
+  basekey, relkey, winencodekey: string;
+  Regist: Tregistry;
+  KeyOpenMode: longword;
+  rkey: HKey;
+  i: integer;
+  dataType: TRegDataType;
+begin
+  winencodekey := UTF8ToWinCP(regkey);
+  Result := false;
+  basekey := copy(winencodekey, 0, Pos('\', winencodekey) - 1);
+  LogDatei.log_prog('basekey : ' + basekey, LLdebug3);
+  relkey := copy(winencodekey, Pos('\', winencodekey) + 1, length(winencodekey));
+  LogDatei.log_prog('relkey : ' + relkey, LLdebug3);
+  if noredirect then
+  begin
+    KeyOpenMode := KEY_ALL_ACCESS or KEY_WOW64_64KEY;
+    LogDatei.log('Registry started without redirection (64 Bit)', LLdebug);
+  end
+  else
+  begin
+    KeyOpenMode := KEY_ALL_ACCESS or KEY_WOW64_32KEY;
+    LogDatei.log('Registry started with redirection (32 Bit)', LLdebug);
+  end;
+  try
+    try
+      Regist := Tregistry.Create(KeyOpenMode);
+      if GetHKey(basekey, rkey) then
+      begin
+        regist.RootKey := rkey;
+        if regist.KeyExists(relkey) then
+        begin
+          regist.OpenKey(relkey, False);
+          result := regist.ValueExists(ValueName);
+          regist.CloseKey;
+        end;
+      end
+      else
+        LogDatei.log('Could not get root key from : ' + basekey, LLError);
+    except
+      on e: Exception do
+      begin
+        LogDatei.log('Error: ' + e.message, LLError);
+      end;
+    end
+  finally
+    regist.Free;
+  end;
+end;
+
 
 {$ENDIF WINDOWS}
 

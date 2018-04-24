@@ -1,0 +1,21 @@
+object Freport: TFreport
+  Left = 888
+  Height = 240
+  Top = 580
+  Width = 320
+  Caption = 'uibtime - report'
+  LCLVersion = '1.6.0.4'
+  object frReport1: TfrReport
+    Dataset = frDBDataSet1
+    InitialZoom = pzDefault
+    Options = []
+    PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit]
+    DataType = dtDataSet
+    left = 104
+    top = 24
+  end
+  object frDBDataSet1: TfrDBDataSet
+    left = 240
+    top = 16
+  end
+end

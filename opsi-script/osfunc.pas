@@ -83,6 +83,7 @@ LCLProc,
   charencstreams,
   osconf,
   oslog,
+  osparserhelper,
   crt,
   strutils,
   lconvencoding,
@@ -97,7 +98,7 @@ const
 
 
 type
-  TCharset = set of char;
+//  TCharset = set of char;
   TcpSpecify = integer;
   TcpCountModus = (tccmNoCounter, tccmCounting, tccmCounted);
   TExitMode = (txmNoExit, txmLogout, txmReboot);
@@ -130,6 +131,8 @@ type
     procedure EliminateLinesStartingWith(const startS: string; MatchCase: boolean);
     procedure SaveToFile(const FileName: string; encodingtype: string); overload;
     procedure SaveToFile(const FileName: string); override; overload;
+    procedure SaveToFile(const FileName: string;
+                         encodingtype: string; raise_on_error :boolean);  overload;
     function FuncSaveToFile(const FileName: string; encodingtype: string): boolean; overload;
     function FuncSaveToFile(const FileName: string): boolean; overload;
     procedure loadFromUnicodeFile(const Filename: string; codepage: word);
@@ -502,8 +505,10 @@ function StrIsIn(const s: string; const A: array of Str20): integer;
 function isAbsoluteFileName(const s: string): boolean;
 function GetFileInfo(const CompleteName: string; var fRec: TSearchRec;
   var ErrorInfo: string): boolean;
+(*
 function CutLeftBlanks(const s: string): string;
 function CutRightBlanks(const s: string): string;
+*)
 function divideAtFirst(const partialS, S: string; var part1, part2: string): boolean;
  (* teilt den String S beim ersten Vorkommen des Teilstrings partialS;
      liefert true, wenn partialS vorkommt,
@@ -515,15 +520,15 @@ procedure stringsplitByWhiteSpace(const s: string; var Result: TXStringList);
 
 procedure stringsplit(const s, delimiter: string; var Result: TXStringList);
 (* produziert eine Stringliste aus den Teilstrings, die zwischen den Delimiter-Strings stehen *)
-
+(*
 function SkipA(const partialS, S: string; var Remaining: string;
   var Error: string): boolean;
-  (* versucht partialS am Anfang von S zu eliminieren, loescht NICHT die fuehrenden Leerzeichen vom Rest;
-     wird partialS nicht gefunden, ist Remaining = S *)
+  // versucht partialS am Anfang von S zu eliminieren, loescht NICHT die fuehrenden Leerzeichen vom Rest;
+  //   wird partialS nicht gefunden, ist Remaining = S
 function Skip(const partialS, S: string; var Remaining: string;
   var Error: string): boolean;
-(* versucht partialS am Anfang von S zu eliminieren, loescht fuehrende Leerzeichen vom Rest  *)
-
+  // versucht partialS am Anfang von S zu eliminieren, loescht fuehrende Leerzeichen vom Rest
+*)
 
 function concatPathParts(const part1, part2: string): string;
 (* concatenates parts of a path, e.g. the main path part and the file name, observing that just path separator is set *)
@@ -535,13 +540,13 @@ function StringReplace1(const S, OldPattern, NewPattern: string): string;
 (* replaces every occurence of OldPattern by NewPattern ; not CaseSensitive *)
 
 function CEscaping(const s: string): string;
-
+(*
 procedure GetWord
   (const s: string; var Expression, Remaining: string;
   const WordDelimiterSet: TCharset; searchbackward :boolean = false); overload;
 procedure GetWord(const s: string; var Expression, Remaining: string;
   const WordDelimiterString: String; searchbackward :boolean = false);  overload;
-
+*)
 procedure WortAbspalten(const s: string; var Wortlinks, Rest: string);
 procedure IdentAbspalten(const s: string; var Ident, Value: string);
 procedure SectionnameAbspalten(const s: string; var Sektion, Rest: string);
@@ -618,6 +623,7 @@ const
   emptyregfileName = 'winst_emptyregkey.dat';
 
   CitMark = '"';
+  (*
   WordDelimiterSet0 = [' ', #9, '=', '[', ']'];
   WordDelimiterSetHosts = [' ', '#', #9];
   WordDelimiterSetDBAlias = [':', '='];
@@ -628,12 +634,13 @@ const
   WordDelimiterSet5 = [' ', #9, '('];
   WordDelimiterSet6 = [')',','];
   WordDelimiterWhiteSpace = [' ', #9];
-
+  *)
+  (*
   ddeTimerInterval = 100;
   ddeTimerWaitIntervals = 20;
-    (* give DDE with Program 2 seconds, since DDE response seems not to be
-       correctly transferred by Delphi *)
-
+    // give DDE with Program 2 seconds, since DDE response seems not to be
+    //   correctly transferred by Delphi
+  *)
   CharsForRandomStrings = ['A'..'Z', 'a'..'z', '0'..'9'];
 
   //CharsSpecialForRandomStrings = ['!','$','(',')','*','+','/',';','=','?','[',']','{','}','ß','~','§','°'];
@@ -5084,22 +5091,23 @@ begin
   end;
 end;
 
-
+(*
 function CutLeftBlanks(const s: string): string;
 begin
   Result := sysutils.trimleft(s);
-  (* while (length(Result) > 0) and ((Result[1] = ' ') or (Result[1] = #9)) do
-    system.Delete(Result, 1, 1); *)
+    // while (length(Result) > 0) and ((Result[1] = ' ') or (Result[1] = #9)) do
+    //system.Delete(Result, 1, 1);
 end;
 
 
 function CutRightBlanks(const s: string): string;
 begin
   Result := sysutils.trimright(s);
- (*  while (length(Result) > 0) and ((Result[length(Result)] = ' ') or
-      (Result[length(Result)] = #9)) do
-    system.Delete(Result, length(Result), 1); *)
+   //  while (length(Result) > 0) and ((Result[length(Result)] = ' ') or
+   //   (Result[length(Result)] = #9)) do
+   // system.Delete(Result, length(Result), 1);
 end;
+*)
 
 function divideAtFirst(const partialS, S: string; var part1, part2: string): boolean;
   // teilt den String S beim ersten Vorkommen des Teilstrings partialS;
@@ -5163,11 +5171,11 @@ begin
 end;
 
 
-
+(*
 function SkipA(const partialS, S: string; var Remaining: string;
   var Error: string): boolean;
-  (* versucht partialS am Anfang von S zu eliminieren, loescht NICHT die fuehrenden Leerzeichen vom Rest;
-     wird partialS nicht gefunden, ist Remaining = S *)
+  // versucht partialS am Anfang von S zu eliminieren, loescht NICHT die fuehrenden Leerzeichen vom Rest;
+  //   wird partialS nicht gefunden, ist Remaining = S
 var
   p2: string = '';
 begin
@@ -5190,7 +5198,7 @@ begin
   else
     Error := '"' + partialS + '" expected ';
 end;
-
+*)
  (*
   function Skip (const partialS, S : String; var Remaining : String; var Error : String) : Boolean;
   // versucht partialS am Anfang von S zu eliminieren, loescht fuehrende Leerzeichen vom Rest;
@@ -5206,7 +5214,7 @@ end;
   end;
  *)
 
-
+(*
 function Skip(const partialS, S: string; var Remaining: string;
   var Error: string): boolean;
   // versucht partialS am Anfang von S zu eliminieren, loescht fuehrende Leerzeichen vom Rest;
@@ -5234,7 +5242,7 @@ begin
   else
     Error := '"' + partialS + '" expected ';
 end;
-
+*)
 
 function concatPathParts(const part1, part2: string): string;
   (* concatenates parts of a path, e.g. the main path part and the file name, observing that just path separator is set *)
@@ -5351,7 +5359,7 @@ begin
   GetWord(s, Expression, Remaining, WordDelimiterSet, false);
 end;
 *)
-
+(*
 procedure GetWord(const s: string; var Expression, Remaining: string;
   const WordDelimiterSet: TCharset; searchbackward :boolean = false);
      // Expression ist Teilstring von s bis zu einem Zeichen von WordDelimiterSet (ausschliesslich),
@@ -5429,7 +5437,7 @@ begin   // experimental
   Remaining := copy(t, i, length(t) - i + 1);
   Remaining := CutLeftBlanks(Remaining);
 end;
-
+*)
 
 
 function GetIdentComponent(const s: string; var Remaining: string): string;
@@ -5608,6 +5616,12 @@ begin
 end;
 
 procedure TXStringList.SaveToFile(const FileName: string; encodingtype: string);
+begin
+  SaveToFile(Filename, encodingtype,false);
+end;
+
+procedure TXStringList.SaveToFile(const FileName: string;
+                                  encodingtype: string; raise_on_error :boolean);
 var
   myfile: system.TextFile;
   i: integer;
@@ -5649,11 +5663,15 @@ begin
   except
     on e: Exception do
     begin
-      LogS := e.message;
-      LogS := 'Error: ' + myfilename +
-              ' could not be saved back - will not retry, error message: "' +
-               LogS + '"';
-      LogDatei.log(LogS, LLError);
+      if not raise_on_error then
+      begin
+        LogS := e.message;
+        LogS := 'Error: ' + myfilename +
+                ' could not be saved back - will not retry, error message: "' +
+                 LogS + '"';
+        LogDatei.log(LogS, LLError);
+      end;
+      if raise_on_error then raise;
     end;
   end;
 end;
@@ -5673,7 +5691,7 @@ begin
   Result := False;
   try
     myfilename := ExpandFileName(FileName);
-    SaveToFile(myfilename,encodingtype);
+    SaveToFile(myfilename,encodingtype,true);
     LogS := myfilename + ' saved back with encoding: '+encodingtype;
     LogDatei.log_prog(LogS, LLDebug);
     Result := True;
@@ -5686,7 +5704,7 @@ begin
       LogDatei.log_prog(LogS, LLWarning);
       try
         Sleep(100);
-        SaveToFile(myfilename,encodingtype);
+        SaveToFile(myfilename,encodingtype,true);
         LogS := myfilename + ' saved back with encoding: '+encodingtype;
         LogDatei.log_prog(LogS, LLDebug);
         Result := True;
@@ -5699,7 +5717,7 @@ begin
           LogDatei.log_prog(LogS, LLWarning);
           try
             Sleep(100);
-            SaveToFile(myfilename,encodingtype);
+            SaveToFile(myfilename,encodingtype,true);
             LogS := myfilename + ' saved back with encoding: '+encodingtype;
             LogDatei.log_prog(LogS, LLDebug);
             Result := True;
@@ -5712,7 +5730,7 @@ begin
               LogDatei.log_prog(LogS, LLWarning);
               try
                 Sleep(100);
-                 SaveToFile(myfilename,encodingtype);
+                 SaveToFile(myfilename,encodingtype,true);
                 LogS := myfilename + ' saved back with encoding: '+encodingtype;
                 LogDatei.log_prog(LogS, LLDebug);
                 Result := True;
@@ -5726,7 +5744,7 @@ begin
                   LogDatei.log_prog(LogS, LLWarning);
                   try
                     Sleep(100);
-                     SaveToFile(myfilename,encodingtype);
+                     SaveToFile(myfilename,encodingtype,true);
                     LogS := myfilename + ' saved back with encoding: '+encodingtype;
                     LogDatei.log_prog(LogS, LLDebug);
                     Result := True;
@@ -6250,11 +6268,11 @@ begin
 
     if Result then
     begin // Sektionsinhalt existiert
-      searchstartindex := i;
+      searchstartindex := StartlineNo;
       // if we have defFunc section headers before EndFunc should be ignored
       searchstartindex := getFirstLineAfterEndFunc(self,searchstartindex);
       n := FindEndOfSectionIndex(searchstartindex);
-      for j := i to n do
+      for j := StartlineNo to n do
       begin
         s := KappeBlanks(Strings[j]);
         if s = '' then

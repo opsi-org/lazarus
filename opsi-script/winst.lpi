@@ -23,7 +23,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
-      <BuildNr Value="16"/>
+      <BuildNr Value="17"/>
       <StringTable Comments="Compiled with Lazarus 1.6.4 / FPC 3.0.2" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst32.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst32.exe" ProductName="opsi-script" ProductVersion="4.0.7 / 4.1"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -143,7 +143,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="42">
+    <Units Count="43">
       <Unit0>
         <Filename Value="winst.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -243,7 +243,7 @@
         <IsPartOfProject Value="True"/>
       </Unit19>
       <Unit20>
-        <Filename Value="oscalc.pas"/>
+        <Filename Value="osnetutil.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit20>
       <Unit21>
@@ -329,8 +329,14 @@
       <Unit41>
         <Filename Value="oslistedit.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="FListedit"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
       </Unit41>
+      <Unit42>
+        <Filename Value="..\common\osparserhelper.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit42>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

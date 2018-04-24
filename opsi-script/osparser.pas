@@ -92,11 +92,13 @@ LazFileUtils,
   opsihwbiosinfo,
   osjson,
   oscrypt,
+  osparserhelper,
   LAZUTF8;
 
 
 type
   TStatement = (tsNotDefined,
+                tsDefinedVoidFunction,
                 // start of sectionnames
                 tsActions,
                 tsProfileActions,
@@ -156,6 +158,7 @@ type
                 tsDefineFunction,
                 tsEndFunction,
                 tsShellcall,
+                tsPowershellcall,
                 // tsSetVar should be the last here for loop in FindKindOfStatement
                 tsSetVar);
 
@@ -210,6 +213,13 @@ Const
 
 type
 
+TSectionInfo = record
+    Sectionkind : TStatement;
+    StartLineNo    : Integer;
+    SectionName    : String;
+    SectionFile    : String;
+end;
+
 
 TWorkSection = class (TuibIniScript) // class (TXStringList)
   private
@@ -219,9 +229,10 @@ TWorkSection = class (TuibIniScript) // class (TXStringList)
     FNestingLevel   : Integer;
     FInSwitch       : boolean;
     FInCase         : boolean;
+    FParentSection  : TWorkSection;
 
   public
-    constructor create (const NestLevel : Integer);
+    constructor create (const NestLevel : Integer; const ParentSection : TWorkSection);
     destructor destroy; override;
 
     property StartLineNo : Integer read FStartLineNo write FStartLineNo;
@@ -230,6 +241,7 @@ TWorkSection = class (TuibIniScript) // class (TXStringList)
     property SectionKind : TStatement read FSectionKind write FSectionKind;
     property InSwitch : boolean read FInSwitch write FInSwitch;
     property InCase : boolean read FInCase write FInCase;
+    property ParentSection : TWorkSection read FParentSection write FParentSection;
 
   end;
 
@@ -289,6 +301,10 @@ private
   FLinesOriginList : TStringList;
   FaktScriptLineNumber : int64;
   FEvalBoolBaseNestLevel : int64;
+  FSectionNameList : Tstringlist;   // hold section and function names with index of FSectionInfoArray
+  FSectionInfoArray : array of TSectionInfo; // holds for each section file and startline infos
+  FActiveSection  : TWorkSection;
+  FLastSection  : TWorkSection;
 
 
   
@@ -322,6 +338,9 @@ public
   property listOfStringLists : TStringList read FlistOfStringLists write FlistOfStringLists;
   property ContentOfStringLists : TObjectList read FContentOfStringLists write FContentOfStringLists;
   property aktScriptLineNumber : int64 read FaktScriptLineNumber write FaktScriptLineNumber;
+  property Filename : string read FFilename write FFilename;
+  property ActiveSection  : TWorkSection read FActiveSection write FActiveSection;
+  property LastSection  : TWorkSection read FLastSection write FLastSection;
 
 
   (* Infofunktionen *)
@@ -393,6 +412,9 @@ public
   procedure ApplyTextVariables (var Sektion : TXStringList; CStringEscaping : Boolean);
   procedure ApplyTextConstants (var Sektion : TXStringList; CStringEscaping : Boolean);
   procedure ApplyTextVariablesToString (var mystr : String; CStringEscaping : Boolean);
+
+  // handle file and line origins
+  procedure registerSectionOrigins(mylist : Tstringlist;filename : string);
 
   (* Sektionsbearbeitungsmethoden *)
   (* Hilfsmethoden *)
@@ -489,7 +511,11 @@ public
   function execShellCall (command : String; archparam:string;
           logleveloffset : integer;
           FetchExitCodePublic, FatalOnFail : boolean): TStringlist;  overload;
-
+{$IFDEF WINDOWS}
+  function execPowershellCall (command : String; archparam:string;
+          logleveloffset : integer;
+          FetchExitCodePublic, FatalOnFail : boolean; handle_policy : boolean): TStringlist;
+ {$ENDIF WINDOWS}
 end;
 
 
@@ -604,6 +630,7 @@ var
   inDefFuncLevel : integer = 0;
   inDefFuncIndex : integer = -1; // index of the active defined function
   Ifelseendiflevel : longint = 0; // global nestlevel store (do 18.1.2018)
+
 
 
 
@@ -1202,7 +1229,9 @@ function FindKindOfStatement (const Statement: String;
   var
    s : TStatement;
    test : String;
-   i1, i2 : Integer;
+   i1, i2, FuncIndex : Integer;
+   funcname, r : string;
+   deffuncFound : boolean;
 begin
   result := tsNotDefined;
   SectionSpecifier := tsecNoSection;
@@ -1244,6 +1273,18 @@ begin
       end;
       exit;
     End;
+  End;
+  // look if we have defined function with result type void
+  deffuncFound := false;
+  GetWord (CompleteCall, funcname, r, WordDelimiterSet5);
+  FuncIndex := definedFunctionNames.IndexOf (LowerCase (funcname));
+  if FuncIndex >= 0 then
+    if definedFunctionArray[FuncIndex].datatype = dfpVoid then
+       deffuncFound := true;
+ if deffuncFound then
+  Begin
+    result := tsDefinedVoidFunction;
+    exit;
   End;
 end;
 
@@ -1552,7 +1593,7 @@ begin
 end;
 {$ENDIF WINDOWS}
 
-constructor TWorkSection.create (const NestLevel : Integer);
+constructor TWorkSection.create (const NestLevel : Integer; const ParentSection : TWorkSection);
 begin
   inherited create;
   FStartLineNo  := 0;
@@ -1560,6 +1601,7 @@ begin
   FNestingLevel := NestLevel;
   FInSwitch := false;
   FInCase := false;
+  FParentSection:= ParentSection;
 end;
 
 destructor TWorkSection.destroy;
@@ -1689,9 +1731,15 @@ Begin
   FConstValuesList := TStringList.create;
   FLinesOriginList := TStringList.create;
   FLibList := TStringList.create;
+  FsectionNameList := TStringList.create;
+  //FSectionInfoArray := Length(0);
+  FActiveSection := nil;
+  FLastSection := nil;
 End;
 
 destructor TuibInstScript.destroy;
+var
+  counter,i : integer;
 begin
   FVarList.free; VarList := nil;
   FValuesList.free; ValuesList := nil;
@@ -1699,6 +1747,17 @@ begin
   FContentOfStringLists.free; ContentOfStringLists := nil;
   FLinesOriginList.free; FLinesOriginList := nil;
   FLibList.Free; FLibList := nil;
+  FsectionNameList.Free; FsectionNameList := nil;
+  (*
+  counter := length(FSectionInfoArray);
+  if counter > 0 then
+    for i := 0 to counter - 1 do
+    begin
+      FSectionInfoArray[i] := nil;
+      FSectionInfoArray[i].Free;
+    end;
+    *)
+  SetLength(FSectionInfoArray, 0);
 end;
 
 
@@ -1709,6 +1768,9 @@ procedure TuibInstScript.LoadValidLinesFromFile (FName : String; var Section : T
   s : String;
   i : Integer;
   Encoding2use,usedEncoding : string;
+  statkind : TStatement;
+  secname, remaining : string;
+  secindex : integer;
 begin
   Section.Clear;
   OriginalList := TXStringList.create;
@@ -1719,24 +1781,80 @@ begin
   logdatei.log('Loaded sub from: '+FName+' with encoding: '+usedEncoding,LLDebug);
   for i := 1 to OriginalList.count do
   Begin
-      s := cutLeftBlanks (OriginalList.Strings [i-1]);
-      (* if (s<>'') and  (s[1] <> LineIsCommentChar) then *)
-        Section.Add (s);
-        script.FLinesOriginList.Append(FName+' line: '+inttostr(i));
-        script.FLibList.Append('false');
+    s := trim(OriginalList.Strings [i-1]);
+    Section.Add (s);
+    script.FLinesOriginList.Append(FName+' line: '+inttostr(i));
+    script.FLibList.Append('false');
+    (*
+    secname := opsiunquotestr2(s,'[]');
+    if secname <> s then
+    begin
+      // we have a new section
+      secindex := Script.FSectionNameList.Add(secname);
+      if secindex <> length(script.FSectionInfoArray) then
+        LogDatei.log('Error: internal: secindex <> length(script.FSectionInfoArray)',LLCritical);
+      setlength(script.FSectionInfoArray, secindex+1);
+      script.FSectionInfoArray[secindex].SectionName:=secname;
+      script.FSectionInfoArray[secindex].SectionFile:=ExtractFileName(FName);
+      script.FSectionInfoArray[secindex].StartLineNo:=i;
+    end;
+    if pos('deffunc',lowercase(s)) = 1  then
+    begin
+      // we have a new function
+      secname := copy (s,pos('deffunc',lowercase(s)));
+      GetWord(secname, secname, remaining,WordDelimiterSet5);
+      secindex := Script.FSectionNameList.Add(secname);
+      if secindex <> length(script.FSectionInfoArray) then
+        LogDatei.log('Error: internal: secindex <> length(script.FSectionInfoArray)',LLCritical);
+      setlength(script.FSectionInfoArray, secindex+1);
+      script.FSectionInfoArray[secindex].SectionName:=secname;
+      script.FSectionInfoArray[secindex].SectionFile:=ExtractFileName(FName);
+      script.FSectionInfoArray[secindex].StartLineNo:=i;
+    end;
+    *)
   End;
+  registerSectionOrigins(OriginalList,FName);
   OriginalList.free;
 End;
 
 
 function TuibInstScript.reportError (const Sektion: TWorkSection; LineNo : Integer;
              Const Content : String; Comment: String) : TSectionResult;
-
+var
+  funcname, funcfile, funcmesseage : string;
+  originmessage : string;
+  funcline : integer;
+  i,index : integer;
 begin
   result := tsrPositive;
+  if inDefFuncIndex >= 0 then
+  begin
+    funcname := definedFunctionArray[inDefFuncIndex].Name;
+    funcfile := definedFunctionArray[inDefFuncIndex].OriginFile;
+    funcline := definedFunctionArray[inDefFuncIndex].OriginFileStartLineNumber;
+    funcmesseage := ' in defined function: '+funcname+' file: '+ExtractFileName(funcfile)
+                    +' function start at line: '+inttostr(funcline+1);
+    originmessage := '; origin: '+funcfile+' line: '+inttostr(funcline+LineNo+1)+'): ';
+  end
+  else
+  begin
+    funcname := Sektion.Name;
+    index := script.FSectionNameList.IndexOf(funcname);
+    funcfile := Script.FSectionInfoArray[index].SectionFile;
+    funcline := Script.FSectionInfoArray[index].StartLineNo;
+    funcmesseage := ' in section: '+funcname+' file: '+ExtractFileName(funcfile)
+                    +' section start at line: '+inttostr(funcline+1);
+    //originmessage := '; origin: '+FLinesOriginList.Strings[Sektion.StartLineNo + LineNo]+'): ';
+    originmessage := '; origin: '+funcfile+' line: '+inttostr(funcline+LineNo+1)+'): ';
+  end;
+  //for i:= 0 to FLinesOriginList.Count -1 do
+  //  logdatei.log_prog('FLinesOriginList: '+FLinesOriginList.Strings[i],LLDebug);
   ps := 'Syntax Error in Section: ' + Sektion.Name +
     ' (Command in line ' + IntToStr (Sektion.StartLineNo + LineNo)
-      + ' origin: '+FLinesOriginList.Strings[Sektion.StartLineNo + LineNo-1]+'): '
+   //   + ' Command in line ' + IntToStr (script.aktScriptLineNumber)
+      + funcmesseage + originmessage
+    //  + ' origin: '+FLinesOriginList.Strings[Sektion.StartLineNo + LineNo-1]+'): '
+    //  + ' origin: '+FLinesOriginList.Strings[script.aktScriptLineNumber]+'): '
       + Content+' -> '+Comment;
   LogDatei.log(ps,LLCritical);
   if FatalOnSyntaxError then
@@ -5378,22 +5496,6 @@ begin
    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
    // mount the NTUser.dat in the users profile path , patch them and write them back
-
-
-   (*
-   SearchPath  := GetProfilesPath; // GetWinDirectory + 'Profiles';
-   findresult := findfirst (SearchPath + '\*.*',
-                 faDirectory or faAnyFile, SearchRec);
-
-   while findresult = 0
-   do
-   Begin
-     if (SearchRec.Attr and faDirectory = faDirectory) and
-         (SearchRec.Name <> '.') and
-         (SearchRec.Name <> '..')
-     then
-     Begin
-     *)
    ProfileList := getProfilesDirList;
    for pc:= 0 to ProfileList.Count -1 do
    begin
@@ -8408,6 +8510,94 @@ from defines.inc
   end;
 end;
 
+{$IFDEF WINDOWS}
+function TuibInstScript.execPowershellCall (command : String; archparam:string;
+          logleveloffset : integer;
+          FetchExitCodePublic, FatalOnFail : boolean; handle_policy : boolean): TStringlist;
+Var
+ commandline : String='';
+ //fullps : string;
+ runas : TRunAs;
+ //force64: boolean;
+ oldDisableWow64FsRedirectionStatus: pointer=nil;
+ output: TXStringList;
+ tmplist : TStringlist;
+ //dummybool : boolean;
+ filename : String='';
+ parameters : String='';
+ report : String='';
+ errorinfo : String='';
+ i : integer=0;
+ localExitCode : LongInt = 0;
+ org_execution_policy :string;
+ mySektion: TWorkSection;
+ ActionResult : TSectionResult;
+ shortarch : string;  // for execShellCall
+begin
+  Result := TStringList.Create;
+  output := TXStringList.Create;
+  runAs := traInvoker;
+  OldNumberOfErrors := LogDatei.NumberOfErrors;
+  OldNumberOfWarnings := LogDatei.NumberOfWarnings;
+  //force64 := false;
+  shortarch := 'sysnative';
+
+  If (lowercase(archparam) = '64bit') and Is64BitSystem then
+     shortarch := '64';
+
+  If (lowercase(archparam) = 'sysnative') and Is64BitSystem then
+       shortarch := 'sysnative';
+
+  If (lowercase(archparam) = '32bit') then
+       shortarch := '32';
+
+
+  if handle_policy then // backup and set execution policy
+  begin
+    // backup
+    commandline := 'powershell.exe get-executionpolicy';
+    tmplist := execShellCall(commandline, shortarch, 1, false, true);
+    org_execution_policy := trim(tmplist[0]);
+    // set (open)
+    commandline := 'powershell.exe set-executionpolicy RemoteSigned';
+    tmplist := execShellCall(commandline, shortarch, 1, false, true);
+  end;
+
+  mySektion := TWorkSection.create(NestingLevel,ActiveSection);
+  mySektion.Add('trap { write-output $_ ; exit 1 }');
+  mySektion.Add(command);
+  mySektion.Add('exit $LASTEXITCODE');
+  mySektion.Name:='tmp-internal';
+  parameters := 'powershell.exe winst /'+archparam;
+  if not FetchExitCodePublic then // backup last extcode
+    localExitCode := FLastExitCodeOfExe;
+  ActionResult := executeWith(mySektion,parameters,true,logleveloffset+1,output);
+  if not FetchExitCodePublic then  // restore last extcode
+  begin
+    FLastPrivateExitCode := FLastExitCodeOfExe;
+    FLastExitCodeOfExe := localExitCode;
+  end;
+  LogDatei.log ('output:', LLDebug+logleveloffset);
+  LogDatei.log ('--------------', LLDebug+logleveloffset);
+  for i := 0 to output.count-1 do
+  begin
+   LogDatei.log (output.strings[i], LLDebug+logleveloffset);
+  end;
+  //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+  LogDatei.log ('', LLDebug+logleveloffset);
+  result.Text := output.text;
+  output.Free;
+
+  if handle_policy then // restore execution policy
+  begin
+    // set (close)
+    commandline := 'powershell.exe set-executionpolicy '+org_execution_policy;
+    tmplist := execShellCall(commandline, shortarch, 1, false, true);
+  end;
+
+end;
+{$ENDIF WINDOWS}
+
 function TuibInstScript.execShellCall (command : String; archparam:string;
           logleveloffset : integer; FetchExitCodePublic : boolean): TStringlist;
 begin
@@ -9343,8 +9533,9 @@ var
   s4 : String='';
   r1 : String='';
   ///sx,
-  tmpstr : String='';
+  tmpstr, tmpstr1, tmpstr2, tmpstr3 : String;
   tmpint : integer;
+  tmpbool, tmpbool1 : boolean;
   a1 : integer=0;
   a2 : Integer=0;
   list1 : TXStringList;
@@ -9470,6 +9661,80 @@ begin
          end;
        End
    end
+
+    else if LowerCase (s) = LowerCase ('powershellcall')
+    then
+    begin
+       s2 := '';
+       s3 := '';
+       tmpstr2 := '';
+       tmpbool := true; // sysnative
+       tmpbool1 := true; // handle execution policy
+       syntaxCheck := false;
+      if Skip ('(', r, r, InfoSyntaxError)
+      then if EvaluateString (r, tmpstr, s1, InfoSyntaxError)
+      // next after ',' or ')'
+      then if Skip (',', tmpstr, tmpstr1, tmpstr3) then
+       if EvaluateString (tmpstr1, tmpstr2, s2, tmpstr3) then;
+      if s2 = '' then
+      begin
+       // only one parameter
+       if Skip (')', tmpstr, r, InfoSyntaxError) then
+       Begin
+         syntaxCheck := true;
+         s2 := 'sysnative';
+       end;
+      end
+      else
+      begin
+       // got second parameter
+        tmpbool := true;
+       if lowercase(s2) = '32bit' then tmpbool := false
+       else if lowercase(s2) = '64bit' then tmpbool := true
+       else if lowercase(s2) = 'sysnative' then tmpbool := true
+       else
+       begin
+         InfoSyntaxError := 'Error: unknown parameter: '+s2+' expected one of 32bit,64bit,sysnative - fall back to sysnative';
+         syntaxCheck := false;
+       end;
+       // three parameter ?
+       if Skip (',', tmpstr2, tmpstr1, tmpstr3) then
+       begin
+         if EvaluateString (tmpstr1, tmpstr2, s3, tmpstr3) then
+         begin
+          // got third parameter
+           if Skip (')', tmpstr2, r, InfoSyntaxError) then
+           Begin
+             if TryStrToBool(s3,tmpbool1) then
+               syntaxCheck := true
+             else
+             begin
+               syntaxCheck := false;
+               InfoSyntaxError := 'Error: boolean string (true/false) expected but got: '+s3;
+             end;
+           end;
+         end;
+       end
+       else
+       if Skip (')', tmpstr2, r, InfoSyntaxError) then
+       Begin
+        // two parameter
+         syntaxCheck := true;
+       end;
+      end;
+      if syntaxCheck then
+       begin
+         try
+           list.Text := execPowershellCall(s1, s2,1, true,false,tmpbool1).Text;
+         except
+           on e: exception do
+           begin
+             LogDatei.log('Error executing :'+s1+' : with powershell: '+ e.message,
+               LLError);
+           end
+         end;
+       end;
+     end
 
 
    else if LowerCase (s) = LowerCase ('LoadTextFile')
@@ -9628,7 +9893,7 @@ begin
      then
      Begin
        savelogsindentlevel := LogDatei.LogSIndentLevel;
-       localSection := TWorkSection.create(LogDatei.LogSIndentLevel  + 1);
+       localSection := TWorkSection.create(LogDatei.LogSIndentLevel  + 1,ActiveSection);
        GetWord (s1, s2, r1, WordDelimiterSet1);
        localSection.Name := s2;
 
@@ -9707,7 +9972,7 @@ begin
      then
      Begin
        savelogsindentlevel := LogDatei.LogSIndentLevel;
-       localSection := TWorkSection.create(LogDatei.LogSIndentLevel  + 1);
+       localSection := TWorkSection.create(LogDatei.LogSIndentLevel  + 1,ActiveSection);
        GetWord (s1, s2, r1, WordDelimiterSet1);
        localKindOfStatement := findKindOfStatement (s2, SecSpec, s1);
        if
@@ -9779,13 +10044,22 @@ begin
     then
      if EvaluateString (r, r, s1, InfoSyntaxError)
      then
-             if Skip (')', r,r, InfoSyntaxError)
-             then
-             Begin
-               syntaxCheck := true;
-
-               stringsplitByWhiteSpace (s1, list);
-             End
+       if Skip (')', r,r, InfoSyntaxError)
+       then
+       Begin
+          syntaxCheck := true;
+          stringsplitByWhiteSpace (s1, list);
+          // if s1 is confidential all parts are confidential as well
+           if logdatei.isConfidential(s1) then
+           begin
+             for i := 0 to list.Count -1 do
+             begin
+               tmpstr := list.Strings[i];
+               if tmpstr <> '' then
+                 logdatei.AddToConfidentials(tmpstr);
+             end;
+           end;
+       End;
    End
 
    else if LowerCase (s) = LowerCase ('jsonAsArrayToStringList')
@@ -9854,6 +10128,16 @@ begin
                syntaxCheck := true;
 
                stringsplit (s1, s2, list);
+               // if s1 is confidential all parts are confidential as well
+               if logdatei.isConfidential(s1) then
+               begin
+                 for i := 0 to list.Count -1 do
+                 begin
+                   tmpstr := list.Strings[i];
+                   if tmpstr <> '' then
+                     logdatei.AddToConfidentials(tmpstr);
+                 end;
+               end;
              End
    End
 
@@ -10120,7 +10404,7 @@ begin
            for i := 0 to list1.count - 1 do
              for k := 0 to list2.count - 1 do
                if AnsiContainsText(list2[k], list1[i]) then
-                 list.Add(list1.Strings[i]);
+                 list.Add(list2.Strings[k]);
           except
             on e: exception do
             begin
@@ -10820,7 +11104,9 @@ begin
       else
       begin
         if  GetNTVersionMajor >= 10 then
-          list.add ('ReleaseID=' + GetRegistrystringvalue('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion','ReleaseID',true))
+          if RegVarExists('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion','ReleaseID',true) then
+            list.add ('ReleaseID=' + GetRegistrystringvalue('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion','ReleaseID',true))
+          else list.add ('ReleaseID=1507')
         else list.add ('ReleaseID=');
         tmpint := OSGetProductInfoNum;
         list.add ('prodInfoNumber=' + IntToStr(tmpInt));
@@ -11441,6 +11727,8 @@ var
    funcname : string;
    boolresult : boolean;
    p1,p2,p3,p4 : integer;
+   tmpstr, tmpstr1, tmpstr2, tmpstr3: string;
+   tmpbool, tmpbool1 : boolean;
 
 
 
@@ -12028,22 +12316,38 @@ begin
      End;
  end
 
- else if LowerCase (s) = LowerCase ('Trim') then
+ else if LowerCase (s) = LowerCase ('asConfidential') then
  begin
+  // backup and set loglevel to warning
+  // get the input
+  // make it confidential
+  // give it to output
+  // restore loglevel
   if Skip ('(', r, r, InfoSyntaxError)
   then
-   if EvaluateString (r, r, s1, InfoSyntaxError)
-   then
-     if Skip (')', r,r, InfoSyntaxError)
+  begin
+   p1 := logdatei.LogLevel;
+   try
+     logdatei.LogLevel:= LLWarning;
+     if EvaluateString (r, r, s1, InfoSyntaxError)
      then
-     Begin
-         syntaxCheck := true;
-         StringResult := getFixedUtf8String(s1);
-     End;
+     begin
+       if Skip (')', r,r, InfoSyntaxError)
+       then
+       Begin
+           syntaxCheck := true;
+           logdatei.AddToConfidentials(s1);
+           StringResult := s1;
+       End;
+     end;
+   finally
+     logdatei.LogLevel:= p1;
+   end;
+  end;
  end
 
 
-  else if LowerCase (s) = LowerCase ('calculate') then
+ else if LowerCase (s) = LowerCase ('calculate') then
  begin
   syntaxCheck := false;
   if Skip ('(', r, r, InfoSyntaxError)
@@ -12341,6 +12645,84 @@ begin
      End
  end
 
+ else if LowerCase (s) = LowerCase ('powershellcall')
+ then
+ begin
+   s2 := '';
+   s3 := '';
+   tmpstr2 := '';
+   tmpbool := true; // sysnative
+   tmpbool1 := true; // handle execution policy
+   syntaxCheck := false;
+   StringResult := '';
+  if Skip ('(', r, r, InfoSyntaxError)
+  then if EvaluateString (r, tmpstr, s1, InfoSyntaxError)
+  // next after ',' or ')'
+  then if Skip (',', tmpstr, tmpstr1, tmpstr3) then
+   if EvaluateString (tmpstr1, tmpstr2, s2, tmpstr3) then;
+  if s2 = '' then
+  begin
+   // only one parameter
+   if Skip (')', tmpstr, r, InfoSyntaxError) then
+   Begin
+     syntaxCheck := true;
+     s2 := 'sysnative';
+   end;
+  end
+  else
+  begin
+   // got second parameter
+    tmpbool := true;
+   if lowercase(s2) = '32bit' then tmpbool := false
+   else if lowercase(s2) = '64bit' then tmpbool := true
+   else if lowercase(s2) = 'sysnative' then tmpbool := true
+   else
+   begin
+     InfoSyntaxError := 'Error: unknown parameter: '+s2+' expected one of 32bit,64bit,sysnative - fall back to sysnative';
+     syntaxCheck := false;
+   end;
+   // three parameter ?
+   if Skip (',', tmpstr2, tmpstr1, tmpstr3) then
+   begin
+     if EvaluateString (tmpstr1, tmpstr2, s3, tmpstr3) then
+     begin
+      // got third parameter
+       if Skip (')', tmpstr2, r, InfoSyntaxError) then
+       Begin
+         if TryStrToBool(s3,tmpbool1) then
+           syntaxCheck := true
+         else
+         begin
+           syntaxCheck := false;
+           InfoSyntaxError := 'Error: boolean string (true/false) expected but got: '+s3;
+         end;
+       end;
+     end;
+   end
+   else
+   if Skip (')', tmpstr2, r, InfoSyntaxError) then
+   Begin
+    // two parameter
+     syntaxCheck := true;
+   end;
+  end;
+  if syntaxCheck then
+   begin
+   try
+         execPowershellCall(s1, s2,0, true,false,tmpbool1);
+         StringResult := IntToStr (FLastExitCodeOfExe) ;
+       except
+         on e: exception do
+         begin
+           LogDatei.log('Error executing :'+s1+' : with powershell: '+ e.message,
+             LLError);
+         end
+       end;
+   end;
+ end
+
+
+
  else if LowerCase (s) = LowerCase ('processCall')
  then
  begin
@@ -12353,8 +12735,9 @@ begin
      Begin
        syntaxCheck := true;
        StringResult := '';
-       ArbeitsSektion := TWorkSection.create(0);
+       ArbeitsSektion := TWorkSection.create(0,Nil);
        ArbeitsSektion.Text:= s1;
+       tmpstr := r;
 //////////////////
 begin
               //{$IFDEF WINDOWS}
@@ -12593,6 +12976,7 @@ begin
                if SyntaxCheck
                then
                begin
+                 LogDatei.log ('Executing: ' + s +'('+ s1+') '+tmpstr, LLNotice);
                  ActionResult := execWinBatch (ArbeitsSektion, r, WaitConditions, Ident, WaitSecs, runAs,flag_force64);
                  StringResult := IntToStr (FLastExitCodeOfExe) ;
                end
@@ -13939,6 +14323,70 @@ begin
 {$ENDIF WIN32}
 
 
+else if (LowerCase (s) = LowerCase ('GetRegistryValue')) then
+  begin
+   s3 := '';
+   tmpstr2 := '';
+   tmpbool := true;
+   syntaxCheck := false;
+   StringResult := '';
+   LogDatei.log_prog ('GetRegistryValue from: '+r, LLdebug3);
+   if Skip ('(', r, r, InfoSyntaxError)
+   then if EvaluateString (r, r, s1, InfoSyntaxError)
+   then if Skip (',', r, r, InfoSyntaxError)
+   then if EvaluateString (r, tmpstr, s2, InfoSyntaxError) then
+   // next after ',' or ')'
+   if Skip (',', tmpstr, tmpstr1, tmpstr3) then
+     if EvaluateString (tmpstr1, tmpstr2, s3, tmpstr3) then;
+   if s3 = '' then
+   begin
+     // only two parameter
+     if Skip (')', tmpstr, r, InfoSyntaxError) then
+     Begin
+       syntaxCheck := true;
+     end;
+   end
+   else
+   begin
+     // three parameter
+     if Skip (')', tmpstr2, r, InfoSyntaxError) then
+     Begin
+       syntaxCheck := true;
+       try
+         tmpbool := true;
+         if lowercase(s3) = '32bit' then tmpbool := false
+         else if lowercase(s3) = '64bit' then tmpbool := true
+         else if lowercase(s3) = 'sysnative' then tmpbool := true
+         else
+         begin
+           InfoSyntaxError := 'Error: unknown parameter: '+s3+' expected one of 32bit,64bit,sysnative - fall back to sysnative';
+           syntaxCheck := false;
+         end;
+       except
+         Logdatei.log('Error: Exception in GetRegistryValue: ',LLError);
+       end
+     end;
+   end;
+   if syntaxCheck then
+   begin
+     GetWord (s1, key0, key, ['\']);
+     LogDatei.log_prog ('GetRegistryValue from: '+key0+key+' ValueName: '+s2, LLdebug);
+     StringResult := '';
+     LogDatei.log ('key0 = '+key0, LLdebug2);
+     if runLoginScripts and (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
+     begin
+       // remove HKCU from the beginning
+       // switch to HKEY_USERS
+       key0 := 'HKEY_USERS';
+       key := '\'+usercontextSID+key;
+       LogDatei.log ('Running loginscripts: key0 is now: '+key0 + ', key is now: '+key, LLdebug);
+     end;
+     StringResult := GetRegistrystringvalue(key0+key,s2,tmpbool);
+   end;
+  end
+
+
+
  else if (LowerCase (s) = LowerCase ('GetRegistryStringValue'))
         or (LowerCase (s) = LowerCase ('GetRegistryStringValue32'))
   then
@@ -14587,7 +15035,8 @@ var
   InputBakup : string;
   i : integer;
   tmpint : integer;
-  tmpbool : boolean;
+  tmpbool, tmpbool1, tmpbool2 : boolean;
+  tmpstr,tmpstr1,tmpstr2,tmpstr3 : string;
   FindResultcode: integer = 0;
   flushhandle : Thandle;
   int64result : Int64;
@@ -15229,9 +15678,7 @@ begin
        syntaxCheck := true;
        try
           s1 := ExpandFileName(s1);
-          //list1.SaveToFile(s1, 'system');
           BooleanResult := list1.FuncSaveToFile(s1,s2);
-          //BooleanResult := true;
        except
          logdatei.log('Error: Could not write list to filename: '+s1,LLError);
        end;
@@ -15260,9 +15707,7 @@ begin
        syntaxCheck := true;
        try
           s1 := ExpandFileName(s1);
-          //list1.SaveToFile(s1, 'system');
           BooleanResult := list1.FuncSaveToFile(s1);
-          //BooleanResult := true;
        except
          logdatei.log('Error: Could not write list to filename: '+s1,LLError);
        end;
@@ -15290,6 +15735,24 @@ begin
       end
     end;
  end
+
+ else if Skip ('isConfidential', Input, r, InfoSyntaxError)
+ then
+ begin
+    if Skip ('(', r, r, InfoSyntaxError)
+    then if EvaluateString (r, r, s1, InfoSyntaxError)
+    then if Skip (')', r, r, InfoSyntaxError)
+    then
+    Begin
+      syntaxCheck := true;
+      try
+        BooleanResult := logdatei.isConfidential(s1);
+      except
+        BooleanResult := false;
+      end
+    end;
+ end
+
 
  else if Skip ('isValidUtf8String', Input, r, InfoSyntaxError)
  then
@@ -15640,6 +16103,96 @@ end
       end
     end;
  end
+
+ else if Skip ('RegKeyExists', Input, r, InfoSyntaxError)
+ then
+ begin
+    s2 := '';
+    tmpstr2 := '';
+    if Skip ('(', r, r, InfoSyntaxError)
+    then if EvaluateString (r, tmpstr, s1, InfoSyntaxError)
+    // next after , or )
+    //then GetWord(tmpstr,s2,r,WordDelimiterSet6);
+    then if Skip (',', tmpstr, tmpstr1, tmpstr3) then
+      if EvaluateString (tmpstr1, tmpstr2, s2, tmpstr3) then;
+    if s2 = '' then
+    begin
+      // only one parameter
+      if Skip (')', tmpstr, r, InfoSyntaxError) then
+      Begin
+        syntaxCheck := true;
+        try
+          BooleanResult := RegKeyExists(s1,true);
+        except
+          BooleanResult := false;
+        end
+      end;
+    end
+    else
+    begin
+      if Skip (')', tmpstr2, r, InfoSyntaxError) then
+      Begin
+        syntaxCheck := true;
+        try
+          tmpbool := true;
+          if lowercase(s2) = '32bit' then tmpbool := false
+          else if lowercase(s2) = '64bit' then tmpbool := true
+          else if lowercase(s2) = 'sysnative' then tmpbool := true
+          else Logdatei.log('Error: unknown modifier: '+s2+' expected one of 32bit,64bit,sysnative - fall back to sysnative',LLError);
+          BooleanResult := RegKeyExists(s1,tmpbool);
+        except
+          BooleanResult := false;
+        end
+      end;
+    end;
+ end
+
+ else if Skip ('RegVarExists', Input, r, InfoSyntaxError)
+ then
+ begin
+    s2 := '';
+    tmpstr2 := '';
+    if Skip ('(', r, r, InfoSyntaxError)
+    then if EvaluateString (r, r, s1, InfoSyntaxError)
+    then if Skip (',', r, r, InfoSyntaxError)
+    then if EvaluateString (r, tmpstr, s2, InfoSyntaxError)
+    // next after , or )
+    //then GetWord(tmpstr,s2,r,WordDelimiterSet6);
+    then if Skip (',', tmpstr, tmpstr1, tmpstr3) then
+      if EvaluateString (tmpstr1, tmpstr2, s3, tmpstr3) then;
+    if s3 = '' then
+    begin
+      // only one parameter
+      if Skip (')', tmpstr, r, InfoSyntaxError) then
+      Begin
+        syntaxCheck := true;
+        try
+          BooleanResult := RegVarExists(s1,s2,true);
+        except
+          BooleanResult := false;
+        end
+      end;
+    end
+    else
+    begin
+      if Skip (')', tmpstr2, r, InfoSyntaxError) then
+      Begin
+        syntaxCheck := true;
+        try
+          tmpbool := true;
+          if lowercase(s3) = '32bit' then tmpbool := false
+          else if lowercase(s3) = '64bit' then tmpbool := true
+          else if lowercase(s3) = 'sysnative' then tmpbool := true
+          else Logdatei.log('Error: unknown modifier: '+s3+' expected one of 32bit,64bit,sysnative - fall back to sysnative',LLError);
+          BooleanResult := RegVarExists(s1,s2,tmpbool);
+        except
+          BooleanResult := false;
+        end
+      end;
+    end;
+ end
+
+
  {$ENDIF WINDOWS}
 
  else if (Skip ('ErrorsOccuredSinceMark ', Input, r, sx) or Skip ('ErrorsOccurredSinceMark ', Input, r, sx))
@@ -16371,7 +16924,6 @@ function TuibInstScript.doAktionen (const Sektion: TWorkSection; const CallingSe
   password : String='';
   trytime : String='';
   timeout : Integer=0;
-  s1 : String='';
   Fehlertext : String='';
   output : TXStringlist;
   inputlist : TXStringList;
@@ -16408,6 +16960,10 @@ function TuibInstScript.doAktionen (const Sektion: TWorkSection; const CallingSe
   p2 : String='';
   p3 : String='';
   p4 : String='';
+  s1 : String='';
+  s2 : String='';
+  s3 : String='';
+  s4 : String='';
   seconds : String='';
   runAs : TRunAs;
   linecount ,k, constcounter : integer;
@@ -16433,13 +16989,20 @@ function TuibInstScript.doAktionen (const Sektion: TWorkSection; const CallingSe
   inDefFunc : integer = 0;
   inDefFunc2 : integer = 0;
   inDefFunc3 : integer = 0;  // we are between deffunc and endfunc line (even in a not active code)
-  funcindex : integer;
+  funcindex,secindex : integer;
   importFunctionName : String;
   inSearchedFunc : boolean;
   alllines, inclines : integer;
   processline : boolean = true; // are we on a active code branch (needed handling of section ends '['
+  tmplist : TXStringlist;
+  secname : string;
+  tmpint : integer;
+  tmpstr, tmpstr1, tmpstr2, tmpstr3 : string;
+  tmpbool, tmpbool1 : boolean;
 
 begin
+  Script.FLastSection := Script.FActiveSection;
+  Script.ActiveSection := sektion;
   result := tsrPositive;
   ActionResult := tsrPositive;
 
@@ -16452,7 +17015,7 @@ begin
 
   //FBatchOberflaeche.setPicture (3, '', '');
 
-  ArbeitsSektion := TWorkSection.create (NestLevel);
+  ArbeitsSektion := TWorkSection.create (NestLevel,Sektion);
   output := TXStringList.Create;
   {$IFDEF GUI}
   FBatchOberflaeche.setWindowState(batchWindowMode);
@@ -16472,9 +17035,11 @@ begin
   begin
    //writeln(actionresult);
     Remaining := trim (Sektion.strings [i-1]);
-    logdatei.log_prog('Script line: '+intToStr(i)+' : '+Remaining,LLDebug2);
     //logdatei.log_prog('Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' Sektion.NestingLevel: '+IntToStr(Sektion.NestingLevel)+' condition: '+BoolToStr(conditions [ActLevel],true),LLDebug3);
-    aktScriptLineNumber := i;
+    if (inDefFuncLevel = 0)          // count only lines on base level
+      and (lowercase(Sektion.Name) = 'actions')   // count only lines in actions
+      then inc(FAktScriptLineNumber);
+    logdatei.log_prog('Script line: '+intToStr(i)+' / '+intToStr(FAktScriptLineNumber)+' : '+Remaining,LLDebug2);
     //writeln(remaining);
     //readln;
 
@@ -16798,15 +17363,6 @@ begin
 
               // look if we are in a subprogram
               // that may have its own sections in it
-              (*
-              if Sektion.SectionKind = tsActions
-              then
-              Begin
-
-                CallingSektion.GetSectionLines (Expressionstr, TXStringList (ArbeitsSektion),
-                                         StartlineOfSection, true, true, false);
-              End;
-              *)
 
               if (ArbeitsSektion.count = 0) and (inDefFuncLevel > 0)
               then
@@ -16830,10 +17386,14 @@ begin
               then
               begin
                 // subsub case
-                Logdatei.log('Looking for section: '+ Expressionstr +' in calling section.',LLDebug3);
-                CallingSektion.GetSectionLines (Expressionstr, TXStringList (ArbeitsSektion),
-                                  StartlineOfSection, true, true, false);
+                if Assigned(CallingSektion) and (CallingSektion <> nil) then
+                begin
+                  Logdatei.log('Looking for section: '+ Expressionstr +' in calling section.',LLDebug3);
+                  CallingSektion.GetSectionLines (Expressionstr, TXStringList (ArbeitsSektion),
+                                    StartlineOfSection, true, true, false);
+                end;
               end;
+
 
               if ArbeitsSektion.count = 0
               then
@@ -16842,6 +17402,32 @@ begin
                 Logdatei.log('Looking for section: '+ Expressionstr +' in global section.',LLDebug3);
                 Sektion.GetSectionLines (Expressionstr, TXStringList (ArbeitsSektion),
                                   StartlineOfSection, true, true, false);
+              end;
+
+              if ArbeitsSektion.count = 0
+              then
+              begin
+                // subsubsub case
+                if Assigned(CallingSektion.ParentSection) and (CallingSektion.ParentSection <> nil) then
+                begin
+                  Logdatei.log('Looking for section: '+ Expressionstr +' in CallingSektion.ParentSection section.',LLDebug3);
+                  CallingSektion.ParentSection.GetSectionLines(Expressionstr, TXStringList (ArbeitsSektion),
+                                  StartlineOfSection, true, true, false);
+                end;
+              end;
+
+              if ArbeitsSektion.count = 0
+              then
+              begin
+                // subsubsubsub case
+                if Assigned(CallingSektion.ParentSection) and (CallingSektion.ParentSection <> nil)
+                   and Assigned(CallingSektion.ParentSection.ParentSection)
+                   and (CallingSektion.ParentSection.ParentSection <> nil) then
+                begin
+                  Logdatei.log('Looking for section: '+ Expressionstr +' in CallingSektion.FParentSection.FParentSectio section.',LLDebug3);
+                  CallingSektion.FParentSection.FParentSection.GetSectionLines(Expressionstr, TXStringList (ArbeitsSektion),
+                                  StartlineOfSection, true, true, false);
+                end;
               end;
 
 
@@ -17204,6 +17790,35 @@ begin
                   ActionResult
                   := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
 
+                tsDefinedVoidFunction:
+                  begin
+                     // defined local function ?
+                     GetWord (call, p1, p2, WordDelimiterSet5);
+                     FuncIndex := definedFunctionNames.IndexOf (LowerCase (p1));
+                     if FuncIndex >= 0 then
+                     begin
+                       if not (definedFunctionArray[FuncIndex].datatype = dfpVoid) then
+                       begin
+                         // error
+                         syntaxCheck := false;
+                         LogDatei.log('Syntax Error: defined function: '+p1+' is not from type string.',LLError);
+                       end
+                       else
+                       begin
+                         if definedFunctionArray[FuncIndex].call(p2,p2,NestLevel) then
+                         begin
+                           syntaxCheck := true;
+                         end
+                         else
+                         begin
+                           // defined function call failed
+                           LogDatei.log('Call of defined function: '+p1+' failed',LLError);
+                           syntaxCheck := false;
+                         end;
+                       end;
+                     end
+                  end;
+
                 tsImportLib:
                   begin
                     syntaxCheck := EvaluateString (Remaining, Remaining, FName, InfoSyntaxError);
@@ -17335,7 +17950,17 @@ begin
                                 begin
                                   GetWord (Remaining, Expressionstr, Remaining, WordDelimiterSet4);
                                   if lowercase(Expressionstr) = LowerCase(importFunctionName) then
+                                  begin
                                     inSearchedFunc := true;
+                                    script.FSectionNameList.Add(importFunctionName);
+                                    secindex := Script.FSectionNameList.Add(importFunctionName);
+                                    if secindex <> length(script.FSectionInfoArray) then
+                                      LogDatei.log('Error: internal: secindex <> length(script.FSectionInfoArray)',LLCritical);
+                                    setlength(script.FSectionInfoArray, secindex+1);
+                                    script.FSectionInfoArray[secindex].SectionName:=importFunctionName;
+                                    script.FSectionInfoArray[secindex].SectionFile:=ExtractFileName(fullincfilename);
+                                    script.FSectionInfoArray[secindex].StartLineNo:=alllines;
+                                  end;
                                 end
                               end;
                               if inSearchedFunc  then
@@ -17345,8 +17970,8 @@ begin
                                 Sektion.Insert(i-1+inclines,incline);
                                 LogDatei.log_prog('Line included at pos: '+inttostr(i-1+inclines)+' to Sektion with '+inttostr(Sektion.Count)+' lines.',LLDebug2);
                                 //LogDatei.log_prog('Will Include add at pos '+inttostr(Sektion.StartLineNo + i-1+k)+'to FLinesOriginList with count: '+inttostr(script.FLinesOriginList.Count),LLDebug2);
-                                script.FLinesOriginList.Insert(Sektion.StartLineNo + i-1+inclines,incfilename+ ' Line: '+inttostr(alllines));
-                                script.FLibList.Insert(Sektion.StartLineNo + i-1+inclines,'true');
+                                script.FLinesOriginList.Insert( i-1+inclines,incfilename+ ' Line: '+inttostr(alllines));
+                                script.FLibList.Insert( i-1+inclines,'true');
                                 LogDatei.log_prog('Include added to FLinesOriginList.',LLDebug2);
                               end;
                                 // do we have an endfunc ?
@@ -17363,17 +17988,25 @@ begin
                               Sektion.Insert(i-1+inclines,incline);
                               LogDatei.log_prog('Line included at pos: '+inttostr(i-1+inclines)+' to Sektion with '+inttostr(Sektion.Count)+' lines.',LLDebug2);
                               //LogDatei.log_prog('Will Include add at pos '+inttostr(Sektion.StartLineNo + i-1+k)+'to FLinesOriginList with count: '+inttostr(script.FLinesOriginList.Count),LLDebug2);
-                              script.FLinesOriginList.Insert(Sektion.StartLineNo + i-1+inclines,incfilename+ ' Line: '+inttostr(alllines));
-                              script.FLibList.Insert(Sektion.StartLineNo + i-1+inclines,'true');
+                              script.FLinesOriginList.Insert(i-1+inclines,incfilename+ ' Line: '+inttostr(alllines));
+                              script.FLibList.Insert(i-1+inclines,'true');
                               LogDatei.log_prog('Include added to FLinesOriginList.',LLDebug2);
                             end
                           end;
                           closeFile(incfile);
                           linecount := Count;
                           if importFunctionName = '' then
-                            LogDatei.log('Imported all functions from file: '+fullincfilename,LLNotice)
+                          begin
+                            LogDatei.log('Imported all functions from file: '+fullincfilename,LLNotice);
+                            tmplist := TXstringlist.Create;
+                            tmplist.LoadFromFile(fullincfilename);
+                            script.registerSectionOrigins(tmplist,fullincfilename);
+                            tmplist.free;
+                          end
                           else
                             LogDatei.log('Imported function : '+importFunctionName+' from file: '+fullincfilename ,LLNotice);
+                          //for j:= 0 to sektion.Count -1 do
+                          //  logdatei.log_prog('script: '+sektion.Strings[j],LLDebug);
                         end
                         else
                         begin
@@ -17478,6 +18111,7 @@ begin
                           inclist.LoadFromFile(ExpandFileName(fullincfilename));
                           Encoding2use := searchencoding(inclist.Text);
                           //Encoding2use := inclist.Values['encoding'];
+                          Script.registerSectionOrigins(inclist,fullincfilename);
                           inclist.Free;
                           if Encoding2use = '' then Encoding2use := 'system';
                           LogDatei.log('Will Include : '+incfilename+' with encoding: '+Encoding2use,LLDebug2);
@@ -17499,8 +18133,10 @@ begin
                             Sektion.Insert(i-1+k,incline);
                             LogDatei.log_prog('Line included at pos: '+inttostr(i-1+k)+' to Sektion with '+inttostr(Sektion.Count)+' lines.',LLDebug3);
                             //LogDatei.log('Will Include add at pos '+inttostr(Sektion.StartLineNo + i-1+k)+'to FLinesOriginList with count: '+inttostr(script.FLinesOriginList.Count),LLDebug3);
-                            script.FLinesOriginList.Insert(Sektion.StartLineNo + i-1+k,incfilename+ ' Line: '+inttostr(k));
-                            script.FLibList.Insert(Sektion.StartLineNo + i-1+k,'false');
+                            //script.FLinesOriginList.Insert(Sektion.StartLineNo + i-1+k,incfilename+ ' Line: '+inttostr(k));
+                            //script.FLibList.Insert(Sektion.StartLineNo + i-1+k,'false');
+                            script.FLinesOriginList.Insert(i-1+k,incfilename+ ' Line: '+inttostr(k));
+                            script.FLibList.Insert(i-1+k,'false');
                             LogDatei.log_prog('Include added to FLinesOriginList.',LLDebug3);
                           end;
                           closeFile(incfile);
@@ -17606,6 +18242,7 @@ begin
                           inclist.LoadFromFile(ExpandFileName(fullincfilename));
                           Encoding2use := searchencoding(inclist.Text);
                           //Encoding2use := inclist.Values['encoding'];
+                          Script.registerSectionOrigins(inclist,fullincfilename);
                           inclist.Free;
                           if Encoding2use = '' then Encoding2use := 'system';
                           linecount := count;
@@ -18041,6 +18678,81 @@ begin
                        end;
                      End;
                  end;
+
+               {$IFDEF WINDOWS}
+               tsPowershellcall:
+               begin
+                 s2 := '';
+                 s3 := '';
+                 tmpstr2 := '';
+                 tmpbool := true; // sysnative
+                 tmpbool1 := true; // handle execution policy
+                 syntaxCheck := false;
+                if Skip ('(', Remaining, Remaining, InfoSyntaxError)
+                then if EvaluateString (Remaining, tmpstr, s1, InfoSyntaxError)
+                // next after ',' or ')'
+                then if Skip (',', tmpstr, tmpstr1, tmpstr3) then
+                 if EvaluateString (tmpstr1, tmpstr2, s2, tmpstr3) then;
+                if s2 = '' then
+                begin
+                 // only one parameter
+                 if Skip (')', tmpstr, Remaining, InfoSyntaxError) then
+                 Begin
+                   syntaxCheck := true;
+                   s2 := 'sysnative';
+                 end;
+                end
+                else
+                begin
+                 // got second parameter
+                  tmpbool := true;
+                 if lowercase(s2) = '32bit' then tmpbool := false
+                 else if lowercase(s2) = '64bit' then tmpbool := true
+                 else if lowercase(s2) = 'sysnative' then tmpbool := true
+                 else
+                 begin
+                   InfoSyntaxError := 'Error: unknown parameter: '+s2+' expected one of 32bit,64bit,sysnative - fall back to sysnative';
+                   syntaxCheck := false;
+                 end;
+                 // three parameter ?
+                 if Skip (',', tmpstr2, tmpstr1, tmpstr3) then
+                 begin
+                   if EvaluateString (tmpstr1, tmpstr2, s3, tmpstr3) then
+                   begin
+                    // got third parameter
+                     if Skip (')', tmpstr2, Remaining, InfoSyntaxError) then
+                     Begin
+                       if TryStrToBool(s3,tmpbool1) then
+                         syntaxCheck := true
+                       else
+                       begin
+                         syntaxCheck := false;
+                         InfoSyntaxError := 'Error: boolean string (true/false) expected but got: '+s3;
+                       end;
+                     end;
+                   end;
+                 end
+                 else
+                 if Skip (')', tmpstr2, Remaining, InfoSyntaxError) then
+                 Begin
+                  // two parameter
+                   syntaxCheck := true;
+                 end;
+                end;
+                if syntaxCheck then
+                 begin
+                   try
+                     execPowershellCall(s1, s2,0, true,false,tmpbool1);
+                   except
+                     on e: exception do
+                     begin
+                       LogDatei.log('Error executing :'+s1+' : with powershell: '+ e.message,
+                         LLError);
+                     end
+                   end;
+                 end;
+               end;
+              {$ENDIF WINDOWS}
 
 
 
@@ -19541,66 +20253,124 @@ begin
 
                tsDefineFunction:
                Begin
-                 newDefinedfunction := TOsDefinedFunction.create;
-                 if not newDefinedfunction.parseDefinition(Remaining,ErrorInfo) then
-                 begin
-                   reportError (Sektion, i, Expressionstr, ErrorInfo);
-                 end
-                 else
-                 begin
-                   // get all lines until 'endfunction'
-                   //endofDefFuncFound := false;
-                   inDefFunc := 1;
-                   repeat
-                     // get next line of section
-                     inc(i);
-                     if (i <= Sektion.Count) then
-                     begin
-                       Remaining := trim (Sektion.strings [i-1]);
-                       myline := remaining;
-                       GetWord (Remaining, Expressionstr, Remaining, WordDelimiterSet4);
-                       StatKind := FindKindOfStatement (Expressionstr, SectionSpecifier, call);
-                       if StatKind = tsDefineFunction then inc(inDefFunc);
-                       if StatKind = tsEndFunction then dec(inDefFunc);
-                       // Line with tsEndFunction should not be part of the content
-                       if inDefFunc > 0 then
-                       begin
-                         newDefinedfunction.addContent(myline);
-                         LogDatei.log_prog('inDefFunc: '+inttostr(inDefFunc)+' add line: '+myline,LLDebug3);
-                       end;
-                       (*
-                       begin
-                         endofDefFuncFound := true;
-                         // this line is the end and also part of the defined function
-                         newDefinedfunction.addContent(myline);
-                       end
-                       else
-                       begin
-                         // this line is part of the defined function
-                         newDefinedfunction.addContent(myline);
-                 end;
-                       *)
-                     end;
-                   until (inDefFunc <= 0) or (i >= Sektion.Count - 1);
-                   if inDefFunc > 0 then
+                 try
+                   newDefinedfunction := TOsDefinedFunction.create;
+                   if not newDefinedfunction.parseDefinition(Remaining,ErrorInfo) then
                    begin
-                     LogDatei.log('Found DefFunc without EndFunc',LLCritical);
-                     reportError (Sektion, i, Expressionstr, 'Found DefFunc without EndFunc');
+                     reportError (Sektion, i, Expressionstr, ErrorInfo);
                    end
                    else
                    begin
-                     // endfunction found
-                     // append new defined function to the stored (known) functions
-                     inc(definedFunctioncounter);
-                     newDefinedfunction.Index:= definedFunctioncounter-1;
-                     SetLength(definedFunctionArray, definedFunctioncounter);
-                     definedFunctionArray[definedFunctioncounter-1] := newDefinedfunction;
-                     definedFunctionNames.Append(newDefinedfunction.Name);
-                     //dec(inDefFunc2);
-                     LogDatei.log('Added defined function:: '+newDefinedfunction.Name+' to the known functions',LLInfo);
-                   end
+                     try
+                       s1 := newDefinedfunction.Name;
+                       tmpint := script.FSectionNameList.IndexOf(s1);
+                       if (tmpint >= 0) and (tmpint <= length(Script.FSectionInfoArray)) then
+                       begin
+                         newDefinedfunction.OriginFile:=Script.FSectionInfoArray[tmpint].SectionFile;
+                         newDefinedfunction.OriginFileStartLineNumber:=Script.FSectionInfoArray[tmpint].StartLineNo;
+                       end
+                       else logdatei.log('Warning: Origin of function: '+s1+' not found.',LLwarning);
+                       (*
+                       tmplist := TXStringlist.Create;
+                       if FLinesOriginList.Count < script.aktScriptLineNumber then
+                       begin
+                         s1 := FLinesOriginList.Strings[FLinesOriginList.Count-1];
+                         LogDatei.log('Error in doAktionen: tsDefineFunction: ' +
+                            ' OriginList: '+inttostr(FLinesOriginList.Count)+
+                            ' aktScriptLineNumber: '+inttostr(script.aktScriptLineNumber), LLError);
+                       end
+                       else
+                         s1 := FLinesOriginList.Strings[script.aktScriptLineNumber-1];
+                       stringsplitByWhiteSpace(s1,tmplist);
+                       //newDefinedfunction.OriginFile := ExtractFileName(tmplist[0]);
+                       newDefinedfunction.OriginFile := tmplist[0];
+                       try
+                         if tmplist[0] = script.FFilename then
+                           // not imported : add section header
+                           newDefinedfunction.OriginFileStartLineNumber:=strtoint(tmplist[2])+sektion.StartLineNo-1
+                         else
+                           // imported : no section header
+                           newDefinedfunction.OriginFileStartLineNumber:=strtoint(tmplist[2]);
+                       finally
+                         tmplist.Free;
+                       end;
+                       *)
+                     except
+                        on e: Exception do
+                        begin
+                          LogDatei.log('Exception in doAktionen: tsDefineFunction: tmplist: ' +
+                            e.message, LLError);
+                          //raise e;
+                        end;
+                     end;
+                     try
+                       // get all lines until 'endfunction'
+                       //endofDefFuncFound := false;
+                       inDefFunc := 1;
+                       repeat
+                         // get next line of section
+                         inc(i); // inc line counter
+                         inc(FaktScriptLineNumber); // inc line counter that ignores the execution of defined functions
+                         if (i <= Sektion.Count-1) then
+                         begin
+                           Remaining := trim (Sektion.strings [i-1]);
+                           myline := remaining;
+                           GetWord (Remaining, Expressionstr, Remaining, WordDelimiterSet4);
+                           StatKind := FindKindOfStatement (Expressionstr, SectionSpecifier, call);
+                           if StatKind = tsDefineFunction then inc(inDefFunc);
+                           if StatKind = tsEndFunction then dec(inDefFunc);
+                           // Line with tsEndFunction should not be part of the content
+                           if inDefFunc > 0 then
+                           begin
+                             newDefinedfunction.addContent(myline);
+                             LogDatei.log_prog('inDefFunc: '+inttostr(inDefFunc)+' add line: '+myline,LLDebug3);
+                           end;
+                         end;
+                       until (inDefFunc <= 0) or (i >= Sektion.Count - 2);
+                     except
+                        on e: Exception do
+                        begin
+                          LogDatei.log('Exception in doAktionen: tsDefineFunction: endfunction: ' +
+                            e.message, LLError);
+                          //raise e;
+                        end;
+                     end;
+                     try
+                       if inDefFunc > 0 then
+                       begin
+                         LogDatei.log('Found DefFunc without EndFunc',LLCritical);
+                         reportError (Sektion, i, Expressionstr, 'Found DefFunc without EndFunc');
+                       end
+                       else
+                       begin
+                         // endfunction found
+                         // append new defined function to the stored (known) functions
+                         inc(definedFunctioncounter);
+                         newDefinedfunction.Index:= definedFunctioncounter-1;
+                         SetLength(definedFunctionArray, definedFunctioncounter);
+                         definedFunctionArray[definedFunctioncounter-1] := newDefinedfunction;
+                         definedFunctionNames.Append(newDefinedfunction.Name);
+                         //dec(inDefFunc2);
+                         LogDatei.log('Added defined function:: '+newDefinedfunction.Name+' to the known functions',LLInfo);
+                       end;
+                     except
+                        on e: Exception do
+                        begin
+                          LogDatei.log('Exception in doAktionen: tsDefineFunction: append: ' +
+                            e.message, LLError);
+                          //raise e;
+                        end;
+                     end;
+                   end;
+                   LogDatei.log_prog('After reading '+newDefinedfunction.Name+' we are on line: '+inttostr(i-1)+' -> '+trim (Sektion.strings [i-1]),LLInfo);
+                 except
+                    on e: Exception do
+                    begin
+                      LogDatei.log('Exception in doAktionen: tsDefineFunction: ' +
+                        e.message, LLError);
+                      //raise e;
+                    end;
                  end;
-                 LogDatei.log_prog('After reading '+newDefinedfunction.Name+' we are on line: '+inttostr(i-1)+' -> '+trim (Sektion.strings [i-1]),LLInfo);
                End;
 
                tsEndFunction:
@@ -19686,9 +20456,47 @@ begin
 
   result := ActionResult;
   output.Free;
-
+  // restore last section
+  Script.ActiveSection := Script.FLastSection;
 end;
 
+
+
+procedure TuibInstScript.registerSectionOrigins(mylist : Tstringlist;filename : string);
+var
+  i,secindex : integer;
+  str,secname : string;
+begin
+  for i := 0 to mylist.count-1 do
+  Begin
+    str := trim(mylist.Strings [i]);
+    secname := opsiunquotestr2(str,'[]');
+    if secname <> str then
+    begin
+      // we have a new section
+      secindex := Script.FSectionNameList.Add(secname);
+      if secindex <> length(script.FSectionInfoArray) then
+        LogDatei.log('Error: internal: secindex <> length(script.FSectionInfoArray)',LLCritical);
+      setlength(script.FSectionInfoArray, secindex+1);
+      script.FSectionInfoArray[secindex].SectionName:=secname;
+      script.FSectionInfoArray[secindex].SectionFile:=ExtractFileName(filename);
+      script.FSectionInfoArray[secindex].StartLineNo:=i;
+    end;
+    if pos('deffunc',lowercase(str)) = 1  then
+    begin
+      // we have a new function
+      secname := trim(Copy(str,length('deffunc')+1,length(str)));
+      GetWord(secname, secname, remaining,WordDelimiterSet5);
+      secindex := Script.FSectionNameList.Add(secname);
+      if secindex <> length(script.FSectionInfoArray) then
+        LogDatei.log('Error: internal: secindex <> length(script.FSectionInfoArray)',LLCritical);
+      setlength(script.FSectionInfoArray, secindex+1);
+      script.FSectionInfoArray[secindex].SectionName:=secname;
+      script.FSectionInfoArray[secindex].SectionFile:=ExtractFileName(filename);
+      script.FSectionInfoArray[secindex].StartLineNo:=i;
+    end;
+  End;
+end;
 
 
 procedure CreateAndProcessScript (Const Scriptdatei : String;
@@ -19717,6 +20525,7 @@ procedure CreateAndProcessScript (Const Scriptdatei : String;
   usedEncoding : String='';
   Encoding2use : String='';
   tmpstr : string='';
+  str : string;
   depotdrive_bak, depotdir_bak : string;
   {$IFDEF WINDOWS}
   Regist : TuibRegistry;
@@ -19747,22 +20556,28 @@ begin
       depotdrive := depotdrive_bak;
       depotdir :=  depotdir_bak;
     end;
-    LogDatei.force_min_loglevel:=osconf.force_min_loglevel;
-    LogDatei.debug_prog:=osconf.debug_prog;
-    LogDatei.LogLevel:=osconf.default_loglevel;
-    LogDatei.debug_lib:= osconf.debug_lib;
-    logDatei.log_prog('force_min_loglevel: '+inttostr(osconf.force_min_loglevel),LLessential);
-    logDatei.log_prog('default_loglevel: '+inttostr(osconf.default_loglevel),LLessential);
-    logDatei.log_prog('debug_prog: '+BoolToStr(osconf.debug_prog,true),LLessential);
-    logDatei.log_prog('debug_lib: '+booltostr(osconf.debug_lib,true),LLessential);
-    logDatei.log_prog('ScriptErrorMessages: '+BoolToStr(osconf.ScriptErrorMessages,true),LLessential);
-    logDatei.log_prog('AutoActivityDisplay: '+booltostr(osconf.AutoActivityDisplay,true),LLessential);
+  end;
+  LogDatei.force_min_loglevel:=osconf.force_min_loglevel;
+  LogDatei.debug_prog:=osconf.debug_prog;
+  LogDatei.LogLevel:=osconf.default_loglevel;
+  LogDatei.debug_lib:= osconf.debug_lib;
+  logDatei.log_prog('force_min_loglevel: '+inttostr(osconf.force_min_loglevel),LLessential);
+  logDatei.log_prog('default_loglevel: '+inttostr(osconf.default_loglevel),LLessential);
+  logDatei.log_prog('debug_prog: '+BoolToStr(osconf.debug_prog,true),LLessential);
+  logDatei.log_prog('debug_lib: '+booltostr(osconf.debug_lib,true),LLessential);
+  logDatei.log_prog('ScriptErrorMessages: '+BoolToStr(osconf.ScriptErrorMessages,true),LLessential);
+  logDatei.log_prog('AutoActivityDisplay: '+booltostr(osconf.AutoActivityDisplay,true),LLessential);
+  LogDatei.log('Using new Depot path:  ' + depotdrive + depotdir, LLinfo);
+  // init vars
+  inDefFuncLevel := 0;
+  inDefFuncIndex := -1;
+  Ifelseendiflevel := 0;
+  inDefinedFuncNestCounter := 0;
+  definedFunctioncounter := 0;
 
-    LogDatei.log('Using new Depot path:  ' + depotdrive + depotdir, LLinfo);
-  end
-  else LogDatei.log('Using old Depot path:  ' + depotdrive + depotdir, LLinfo);
 
   Script := TuibInstScript.Create;
+  script.aktScriptLineNumber:=0;
   // Backup existing depotdrive, depotdir
   depotdrive_bak := depotdrive;
   depotdir_bak :=  depotdir;
@@ -19805,12 +20620,14 @@ begin
     if Encoding2use = '' then Encoding2use := 'system';
     Script.Text:= reencode(Script.Text, Encoding2use,usedEncoding);
     Script.FFilename:=Scriptdatei;
-    for i := 1 to script.Count do
+    for i := 0 to script.Count-1 do
     begin
+      str := Script.Strings[i];
       script.FLinesOriginList.Append(script.FFilename+' line: '+inttostr(i+1));
       script.FLibList.Append('false');
       //writeln('i='+inttostr(i)+' = '+Script.FLinesOriginList.Strings[i-1]);
     end;
+    Script.registerSectionOrigins(Tstringlist(Script),Scriptdatei);
   End
   else
   Begin
@@ -19903,7 +20720,8 @@ begin
     tmpstr :=  tmpstr+' 64 Bit'
   else tmpstr :=  tmpstr+' 32 Bit';
   // we have no ReleaseId before Win10
-  if StrToInt(GetSystemOSVersionInfoEx('major_version')) >= 10 then
+  if (StrToInt(GetSystemOSVersionInfoEx('major_version')) >= 10)
+    and RegVarExists('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion','ReleaseID',true) then
   begin
     tmpstr :=  tmpstr+', Release: '+GetRegistrystringvalue('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion','ReleaseID',true);
   end;
@@ -20225,7 +21043,7 @@ begin
 
 
 
-  Aktionsliste := TWorkSection.Create (NestingLevel);
+  Aktionsliste := TWorkSection.Create (NestingLevel,nil);
   {$IFDEF GUI}
   FBatchOberflaeche.LoadSkin('');
   FBatchOberflaeche.setPicture ('', '');
@@ -20237,6 +21055,7 @@ begin
   //Script.ApplyTextConstants (TXStringList (Aktionsliste));
 
   try
+    // inital section
     if Aktionsliste.count > 0
     then
        weiter := Script.doAktionen (Aktionsliste, Aktionsliste)
@@ -20263,7 +21082,7 @@ begin
          weiter := tsrPositive;
     end;
 
-
+    // actions section
     if weiter > 0 then
     Begin
       Aktionsliste.clear;
@@ -20539,6 +21358,7 @@ begin
   PStatNames^ [tsDefineStringList]    := 'DefStringList';
   PStatNames^ [tsSetVar]              := 'Set';
   PStatNames^ [tsShellCall]           := 'shellCall';
+  PStatNames^ [tsPowershellCall]      := 'powershellCall';
   PStatNames^ [tsDefineFunction]      := 'DefFunc';
   PStatNames^ [tsEndFunction]         := 'EndFunc';
 
