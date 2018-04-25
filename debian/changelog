@@ -1,3 +1,9 @@
+opsi-script (4.12.0.17-1) experimental; urgency=medium
+
+  * opsi-script 4.12.0.17
+
+ -- Mathias Radtke <m.radtke@uib.de>  Wed, 25 Apr 2018 07:51:51 +0200
+
 opsi-script (4.12.0.14-6) experimental; urgency=medium
 
   * spec: corrected lintian error on summary
