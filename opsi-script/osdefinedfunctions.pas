@@ -1031,6 +1031,7 @@ begin
   if searchindex > -1 then
     inDefFuncIndex := definedFunctionNames.IndexOf (definedFunctionsCallStack.Strings[searchindex])
   else inDefFuncIndex := -1;
+  //logdatei.log('We leave the defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
   LogDatei.log('We leave the defined function: '+DFName+' ; inDefFuncLevel: '+inttostr(inDefFuncLevel),LLDebug2);
 end;
 

@@ -630,7 +630,7 @@ var
   inDefFuncLevel : integer = 0;
   inDefFuncIndex : integer = -1; // index of the active defined function
   Ifelseendiflevel : longint = 0; // global nestlevel store (do 18.1.2018)
-
+  inDefFunc3 : integer = 0;  // we are between deffunc and endfunc line (even in a not active code)
 
 
 
@@ -9625,6 +9625,7 @@ begin
          r := '';
          list.Text := definedFunctionArray[FuncIndex].ResultList.Text;
          syntaxCheck := true;
+         //logdatei.log('We leave the defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
        end
        else
        begin
@@ -11769,6 +11770,7 @@ begin
      begin
        StringResult := definedFunctionArray[FuncIndex].Resultstring;
        syntaxCheck := true;
+       //logdatei.log('We leave the defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
      end
      else
      begin
@@ -16998,7 +17000,7 @@ function TuibInstScript.doAktionen (const Sektion: TWorkSection; const CallingSe
   //endofDefFuncFound : boolean;
   inDefFunc : integer = 0;
   inDefFunc2 : integer = 0;
-  inDefFunc3 : integer = 0;  // we are between deffunc and endfunc line (even in a not active code)
+  //inDefFunc3 : integer = 0;  // we are between deffunc and endfunc line (even in a not active code)
   funcindex,secindex : integer;
   importFunctionName : String;
   inSearchedFunc : boolean;
@@ -17082,6 +17084,7 @@ begin
       //else if (Remaining [1] = '[')  then
          // subsection beginning
         //if (inDefFunc3 = 0) and (inDefFuncIndex = -1) then
+        //if (inDefFunc3 = 0) or processline then
         if (inDefFunc3 = 0) or processline then
         begin
           // (inDefFunc3 = 0) : we are not between deffunc and enfunc
@@ -17093,6 +17096,7 @@ begin
       else
       Begin
         call := remaining;
+        Expressionstr := '';
         logdatei.log('Parsingprogress: r: '+Remaining+' exp: '+Expressionstr,LLDebug3);
         GetWord (Remaining, Expressionstr, Remaining, WordDelimiterSet4);
         logdatei.log('Parsingprogress: r: '+Remaining+' exp: '+Expressionstr,LLDebug3);
@@ -17818,6 +17822,7 @@ begin
                          if definedFunctionArray[FuncIndex].call(p2,p2,NestLevel) then
                          begin
                            syntaxCheck := true;
+                           //logdatei.log('We leave the defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
                          end
                          else
                          begin
@@ -20365,8 +20370,9 @@ begin
                          SetLength(definedFunctionArray, definedFunctioncounter);
                          definedFunctionArray[definedFunctioncounter-1] := newDefinedfunction;
                          definedFunctionNames.Append(newDefinedfunction.Name);
-                         //dec(inDefFunc2);
-                         LogDatei.log('Added defined function:: '+newDefinedfunction.Name+' to the known functions',LLInfo);
+                         dec(inDefFunc3);
+                         LogDatei.log('Added defined function: '+newDefinedfunction.Name+' to the known functions',LLInfo);
+                         logdatei.log_prog('After adding a defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLDebug3);
                        end;
                      except
                         on e: Exception do

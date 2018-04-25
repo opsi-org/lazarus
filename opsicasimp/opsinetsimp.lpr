@@ -11,12 +11,15 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   CustApp,
   oswebservice,
   oslog,
-  superobject, {$IFDEF LINUX}
+  superobject,
+ // {$IFDEF LINUX}
   fileinfo,
-  //, winpeimagereader {need this for reading exe info}
+  winpeimagereader, // {need this for reading exe info}
   elfreader, // {needed for reading ELF executables}
- {$ENDIF LINUX}
-  inifiles, onsnetboot { you can add units after this };
+// {$ENDIF LINUX}
+  inifiles,
+  ocsnetboot,
+  ocsglobal;
 
 type
 
@@ -37,14 +40,8 @@ type
 
 var
   optionlist: TStringList;
-  myexitcode, mydebug_level: integer;
-  myip, myport, myconffile, myclientid, myerror: string;
-  myservice_url, myservice_user, myservice_pass: string;
   INI: TINIFile;
-  //opsidata : TOpsi4Data;
   logfilename: string;
-  mywebdav: boolean;
-  myversion : string;
 
   procedure downloadWithWebdav;
   var
@@ -335,26 +332,10 @@ var
   var
     ErrorMsg: string;
     parameters: array of string;
-    //parameterlist : TStringlist;
-    myDepotId, resultstring: string;
+    resultstring: string;
     FileVerInfo : TFileVersionInfo;
-    mymac : string;
-    mymode : string;
   begin
-    myIp := '';
-    myPort := '';
-    myexitcode := 0;
-    myerror := '';
-    myDepotId := '';
-    mydebug_level := 0;
-    mywebdav := False;
 
-   {$IFDEF WINDOWS}
-    opsiscriptconf := ExtractFileDir(ParamStr(0)) + PathDelim + opsiscriptconfinit;
-    vi := TVersionInfo.Create(Application.ExeName);
-    WinstVersion := vi.getString('FileVersion');
-    vi.Free;
-    {$ELSE}
     //from http://wiki.freepascal.org/Show_Application_Title,_Version,_and_Company
     FileVerInfo := TFileVersionInfo.Create(nil);
     try
@@ -364,7 +345,6 @@ var
     finally
       FileVerInfo.Free;
     end;
-    {$ENDIF WINDOWS}
 
 
     optionlist := TStringList.Create;
@@ -399,6 +379,17 @@ var
       Terminate;
       Exit;
     end;
+
+    if HasOption('mode') then
+    begin
+      mymode := trim(GetOptionValue('mode'));
+    end
+    else
+    begin
+      mymode := 'netboot';
+      myerror := 'Notice: No mode given - using default (netboot)';
+    end;
+    writeln('mode=' + mymode);
 
     if HasOption('debug_level') then
     begin
@@ -515,16 +506,7 @@ var
     end;
     writeln('ip=' + myip);
 
-    if HasOption('mode') then
-    begin
-      mymode := trim(GetOptionValue('mode'));
-    end
-    else
-    begin
-      mymode := 'netboot';
-      myerror := 'Notice: No mode given - using default (netboot)';
-    end;
-    writeln('mode=' + mymode);
+
 
     if HasOption('mac') then
     begin
@@ -544,8 +526,45 @@ var
     writeln('webdav=' + BoolToStr(mywebdav, True));
 
 
-    doNetboot(mymac,'192.168.1.14');
+    doNetboot(mymac,mynetbootserver);
+    (* opsiconfd bootimage log
+    (193)     [5] [Apr 25 12:36:13] Authorization request from host pctry4detlef.uib.local@192.168.2.109 (application: opsi linux bootimage 20180208) (workers.py|215)
+    (240)     [5] [Apr 25 12:36:13] -----> Executing: backend_getInterface() (JsonRpc.py|128)
+    (250)     [5] [Apr 25 12:36:13] -----> Executing: configState_getClientToDepotserver([], u'pctry4detlef.uib.local', True, []) (JsonRpc.py|128)
+    (319)     [5] [Apr 25 12:36:14] -----> Executing: licenseOnClient_getOrCreateObject(u'pctry4detlef.uib.local', None, u'win10-x64-1709', None) (JsonRpc.py|128)
+    (330)     [5] [Apr 25 12:36:14] -----> Executing: user_getCredentials(u'pcpatch', u'pctry4detlef.uib.local') (JsonRpc.py|128)
+    (351)     [5] [Apr 25 12:36:14] -----> Executing: productOnClient_updateObjects(<ProductOnClient(clientId=u'pctry4detlef.uib.local', productId=u'win10-x64-1709', installationStatus=u'unknown', actionRequest=None)>) (JsonRpc.py|128)
+    (362)     [5] [Apr 25 12:36:14] -----> Executing: backend_info() (JsonRpc.py|128)
+    (372)     [5] [Apr 25 12:36:14] -----> Executing: backend_info() (JsonRpc.py|128)
+    (392)     [5] [Apr 25 12:36:15] -----> Executing: auditHardware_getConfig(None) (JsonRpc.py|128)
+    (398)     [5] [Apr 25 12:36:17] Creating unix socket u'/var/run/opsipxeconfd/opsipxeconfd.socket' (OpsiPXEConfd.py|74)
+    (404)     [5] [Apr 25 12:36:18] -----> Executing: auditHardwareOnHost_setObsolete(u'pctry4detlef.uib.local') (JsonRpc.py|128)
+    (415)     [5] [Apr 25 12:36:20] -----> Executing: auditHardwareOnHost_createObjects([<AuditHardwareOnHost(hostId=u'pctry4detlef.uib.local', hardwareClass=u'AUDIO_CONTROLLER', name=u'6 Series/C200 Series Chipset Family High Definition Audio Controller')>, <AuditHardwareOnHost(hostId=u...) (JsonRpc.py|128)
+    (555)     [5] [Apr 25 12:36:30] -----> Executing: productOnClient_deleteObjects([]) (JsonRpc.py|128)
+    (565)     [5] [Apr 25 12:40:36] Application 'opsi linux bootimage 20180208' on client '192.168.2.109' did not send cookie (workers.py|185)
+    (568)     [5] [Apr 25 12:40:36] New session created (session.py|77)
+    (579)     [5] [Apr 25 12:40:36] Authorization request from host pctry4detlef.uib.local@192.168.2.109 (application: opsi linux bootimage 20180208) (workers.py|215)
+    (598)     [5] [Apr 25 12:40:37] -----> Executing: backend_getInterface() (JsonRpc.py|128)
+    (608)     [5] [Apr 25 12:40:37] -----> Executing: configState_getClientToDepotserver([], u'pctry4detlef.uib.local', True, []) (JsonRpc.py|128)
+    (672)     [5] [Apr 25 12:40:37] -----> Executing: licenseOnClient_getOrCreateObject(u'pctry4detlef.uib.local', None, u'win7-x64', None) (JsonRpc.py|128)
+    (682)     [5] [Apr 25 12:40:38] -----> Executing: user_getCredentials(u'pcpatch', u'pctry4detlef.uib.local') (JsonRpc.py|128)
+    (701)     [5] [Apr 25 12:40:38] -----> Executing: productOnClient_updateObjects(<ProductOnClient(clientId=u'pctry4detlef.uib.local', productId=u'win7-x64', installationStatus=u'unknown', actionRequest=None)>) (JsonRpc.py|128)
+    (711)     [5] [Apr 25 12:40:38] -----> Executing: backend_info() (JsonRpc.py|128)
+    (721)     [5] [Apr 25 12:40:38] -----> Executing: backend_info() (JsonRpc.py|128)
+    (740)     [5] [Apr 25 12:40:38] -----> Executing: auditHardware_getConfig(None) (JsonRpc.py|128)
+    (752)     [5] [Apr 25 12:40:42] -----> Executing: auditHardwareOnHost_setObsolete(u'pctry4detlef.uib.local') (JsonRpc.py|128)
+    (762)     [5] [Apr 25 12:40:43] -----> Executing: auditHardwareOnHost_createObjects([<AuditHardwareOnHost(hostId=u'pctry4detlef.uib.local', hardwareClass=u'AUDIO_CONTROLLER', name=u'6 Series/C200 Series Chipset Family High Definition Audio Controller')>, <AuditHardwareOnHost(hostId=u...) (JsonRpc.py|128)
+    (790)     [5] [Apr 25 12:40:53] -----> Executing: productOnClient_deleteObjects([<ProductOnClient(clientId=u'pctry4detlef.uib.local', productId=u'win10-x64-1709', installationStatus=u'unknown', actionRequest=u'setup')>]) (JsonRpc.py|128)
+    (800)     [5] [Apr 25 12:43:31] New session created (session.py|77)
+    (801)     [5] [Apr 25 12:43:31] Application 'opsi linux bootimage 20180208' on client '192.168.2.109' supplied non existing session id: ZGALX74IQwh7LTB72rzpI5HRzAeb73Av (Worker.py|398)
+    (812)     [5] [Apr 25 12:43:31] Authorization request from host pctry4detlef.uib.local@192.168.2.109 (application: opsi linux bootimage 20180208) (workers.py|215)
+    (832)     [5] [Apr 25 12:43:32] -----> Executing: getPcpatchPassword(u'pctry4detlef.uib.local') (JsonRpc.py|128)
+    (842)     [5] [Apr 25 12:43:33] -----> Executing: productOnClient_updateObjects(<ProductOnClient(clientId=u'pctry4detlef.uib.local', productId=u'win7-x64', installationStatus=u'unknown', actionRequest=u'none')>) (JsonRpc.py|128)
+    (852)     [5] [Apr 25 12:43:33] -----> Executing: log_write(u'bootimage', u'Apr 25 12:39:54 [opsiinit] opsi init script started\nApr 25 12:39:54 [opsiinit] opsi linux bootimage version: 20180208 (4.1)\nApr 25 12:39:54 [opsiinit] getBootParam(pwh): cmdline: ini...) (JsonRpc.py|128)
+
+    *)
    (*
+    // here come the local boot part
     if initConnection then
     begin
       writeln('init done');
