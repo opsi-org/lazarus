@@ -10,10 +10,15 @@ uses
   //Interfaces, // this includes the LCL widgetset
   Classes,
   SysUtils,
-  superobject,
-  synacode,
-  oslog, oswebservice,
   CustApp ,
+  oswebservice,
+  oslog,
+  superobject,
+  {$IFDEF LINUX}
+  fileinfo,
+  //, winpeimagereader {need this for reading exe info}
+  elfreader, // {needed for reading ELF executables}
+{$ENDIF LINUX}
   inifiles
   { you can add units after this };
 
@@ -307,7 +312,7 @@ function MyOpsiMethodCall2(const method: string; parameters: array of string) : 
     result := true;
     logdatei := TLogInfo.Create;
     logfilename := ExtractFilePath(paramstr(0))+PathDelim+clientname+'.log';
-    oslog.CreateTheLogfile(logfilename,false);
+    logdatei.CreateTheLogfile(logfilename,false);
     logdatei.LogLevel:=mydebug_level;
   end;
 

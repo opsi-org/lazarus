@@ -9665,6 +9665,10 @@ begin
     else if LowerCase (s) = LowerCase ('powershellcall')
     then
     begin
+      {$IFDEF Linux}
+      LogDatei.log('Error powershellcall not implemented on Linux ', LLError);
+      {$ENDIF Linux}
+      {$IFDEF WINDOWS}
        s2 := '';
        s3 := '';
        tmpstr2 := '';
@@ -9734,6 +9738,7 @@ begin
            end
          end;
        end;
+      {$ENDIF WINDOWS}
      end
 
 
@@ -12648,6 +12653,10 @@ begin
  else if LowerCase (s) = LowerCase ('powershellcall')
  then
  begin
+  {$IFDEF Linux}
+  LogDatei.log('Error powershellcall not implemented on Linux ', LLError);
+  {$ENDIF Linux}
+  {$IFDEF WINDOWS}
    s2 := '';
    s3 := '';
    tmpstr2 := '';
@@ -12719,6 +12728,7 @@ begin
          end
        end;
    end;
+   {$ENDIF WINDOWS}
  end
 
 
@@ -18679,9 +18689,13 @@ begin
                      End;
                  end;
 
-               {$IFDEF WINDOWS}
+
                tsPowershellcall:
                begin
+                 {$IFDEF Linux}
+                  LogDatei.log('Error powershellcall not implemented on Linux ', LLError);
+                  {$ENDIF Linux}
+                  {$IFDEF WINDOWS}
                  s2 := '';
                  s3 := '';
                  tmpstr2 := '';
@@ -18751,8 +18765,9 @@ begin
                      end
                    end;
                  end;
+                {$ENDIF WINDOWS}
                end;
-              {$ENDIF WINDOWS}
+
 
 
 
