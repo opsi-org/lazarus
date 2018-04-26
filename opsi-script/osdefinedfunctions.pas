@@ -829,8 +829,12 @@ begin
         end
         else
         begin
-          GetWord(remaining, paramstr, remaining,WordDelimiterSet6);
           inc(paramcounter);
+          // check if this should be the last parameter and we expect a ')' at the end
+          if paramcounter = DFparamCount-1 then
+            GetWordOrStringConstant(remaining, paramstr, remaining,[')'],true)
+          else // this should be not the last parameter and we expect a ','
+            GetWordOrStringConstant(remaining, paramstr, remaining,[',']);
           LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is : '+paramstr,LLDebug2);
           if DFparamList[paramcounter].callByReference then
           begin

@@ -11822,7 +11822,7 @@ begin
 
  End
 
- (* string constant delimited by "'" ?  *)
+ // string constant delimited by "'" ?
  else if (length (s0) > 0) and (s0[1] = '''') then
  Begin
    r := copy (s0, 2, length (s0)-1);
@@ -11831,7 +11831,7 @@ begin
    then syntaxCheck := true;
  End
 
- (* checking our pseudo function name for retrieving a string avoiding any escape problems of citations marks *)
+ // checking our pseudo function name for retrieving a string avoiding any escape problems of citations marks
  else if LowerCase (s) = LowerCase ('EscapeString') then
  Begin
    if Skip (':', r, s1, InfoSyntaxError)
@@ -11843,7 +11843,7 @@ begin
    End
  End
 
-  (* string functions ? *)
+ // string functions ?
 
  else if (LowerCase (s) = LowerCase ('LogLevel')) or ( LowerCase (s) = LowerCase('getLogLevel') ) then
  Begin
