@@ -11,6 +11,7 @@ uses
   Windows,
   strings,
   LConvEncoding,
+  osparserhelper,
   LAZUTF8;
 
 const

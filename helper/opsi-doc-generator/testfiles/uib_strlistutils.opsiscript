@@ -1,0 +1,24 @@
+encoding=utf8
+
+; ###################################################################################################
+DefFunc compareLists($list1$ : stringlist, $list2$ : stringlist) : string
+	Defvar $count1$
+	Defvar $count2$
+
+	markErrorNumber
+	set $result$ = "false"
+	if count($list1$) = count($list2$)
+		set $result$ = "true"
+		for %s% = "0" to calculate(count($list1$)+"-1") do sub_check_identic
+	endif
+	
+	if errorsOccurredSinceMark > 0
+		set $result$ = "false"
+	endif
+	
+	[sub_check_identic]
+	if not(takeString(%s%,$list1$) = takeString(%s%,$list2$))
+		set $result$ = "false"
+	endif
+EndFunc
+; ###################################################################################################

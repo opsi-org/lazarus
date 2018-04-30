@@ -7,6 +7,7 @@ interface
 uses
   Classes,
   SysUtils,
+  osparserhelper,
   osfunc;
 
 type
@@ -432,6 +433,8 @@ begin
     DFLocalVarList[arraycounter-1].varDataType :=datatype;
     if datatype = dfpStringlist then
       DFLocalVarList[arraycounter-1].VarValueList := TStringlist.Create;
+    if datatype = dfpString then
+      DFLocalVarList[arraycounter-1].varValueString:='';
     DFLocalVarList[arraycounter-1].callByReference := callByReference;
   end
   else LogDatei.log('Syntax Error: Double definition of local variable: '+name,LLCritical );
@@ -826,8 +829,12 @@ begin
         end
         else
         begin
-          GetWord(remaining, paramstr, remaining,WordDelimiterSet6);
           inc(paramcounter);
+          // check if this should be the last parameter and we expect a ')' at the end
+          if paramcounter = DFparamCount-1 then
+            GetWordOrStringConstant(remaining, paramstr, remaining,[')'],true)
+          else // this should be not the last parameter and we expect a ','
+            GetWordOrStringConstant(remaining, paramstr, remaining,[',']);
           LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is : '+paramstr,LLDebug2);
           if DFparamList[paramcounter].callByReference then
           begin
@@ -1028,6 +1035,7 @@ begin
   if searchindex > -1 then
     inDefFuncIndex := definedFunctionNames.IndexOf (definedFunctionsCallStack.Strings[searchindex])
   else inDefFuncIndex := -1;
+  //logdatei.log('We leave the defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
   LogDatei.log('We leave the defined function: '+DFName+' ; inDefFuncLevel: '+inttostr(inDefFuncLevel),LLDebug2);
 end;
 
@@ -1080,46 +1088,49 @@ begin
   result := false;
   found := false;
   searchfinished := false;
-  LogDatei.log_prog('Search local var: '+varname+' with inDefFuncIndex: '+inttostr(inDefFuncIndex)+' and inDefinedFuncNestCounter: '+inttostr(inDefinedFuncNestCounter), LLDebug2);
-  if inDefFuncIndex > 0 then
+  if varname <> '' then
   begin
-    // we are in a local function
-    // first guess: it is local to the active local function
-    LogDatei.log_prog('Search local var: '+varname+' with inDefFuncIndex: '+inttostr(inDefFuncIndex)+' and Name: '+definedFunctionArray[inDefFuncIndex].name, LLDebug2);
-    if definedFunctionArray[inDefFuncIndex].locaVarExists(varname) then found := true;
-  end;
-  if found then
-  begin
-    index := inDefFuncIndex;
-    LogDatei.log_prog('Found var: '+varname+' as local (1) in function '+definedFunctionArray[index].Name+' with index: '+inttostr(index), LLDebug2);
-  end
-  else
-  begin
-    if inDefinedFuncNestCounter > 0 then
+    LogDatei.log_prog('Search local var: '+varname+' with inDefFuncIndex: '+inttostr(inDefFuncIndex)+' and inDefinedFuncNestCounter: '+inttostr(inDefinedFuncNestCounter), LLDebug2);
+    if inDefFuncIndex > 0 then
     begin
       // we are in a local function
-      // second guess: it is local to parents to the active local function
-      parentlist := TStringlist.Create;
-      parentlist.Text := createListOfVisibleParents.Text;
-      searchfinished := false;
-      searchindex := definedFunctionsCallStack.Count-1;
-      repeat
-        index := strToInt(definedFunctionsCallStack.Strings[searchindex]);
-        if parentlist.IndexOf(definedFunctionArray[index].Name) >= 0 then
-        begin
-          // local variable of this function are visible (global to this function)
-          LogDatei.log_prog('Search local var: '+varname+' with Index: '+inttostr(index)+' and Name: '+definedFunctionArray[index].name, LLDebug2);
-          if (definedFunctionArray[index].Active
-             and definedFunctionArray[index].locaVarExists(varname)) then found := true;
-        end;
-        dec(searchindex);
-        if searchindex < 0 then searchfinished:=true;
-      until found or searchfinished;
-      if found then
-        LogDatei.log_prog('Found var: '+varname+' as local (2) in function '+definedFunctionArray[index].Name+' with index: '+inttostr(index), LLDebug2);
+      // first guess: it is local to the active local function
+      LogDatei.log_prog('Search local var: '+varname+' with inDefFuncIndex: '+inttostr(inDefFuncIndex)+' and Name: '+definedFunctionArray[inDefFuncIndex].name, LLDebug2);
+      if definedFunctionArray[inDefFuncIndex].locaVarExists(varname) then found := true;
     end;
+    if found then
+    begin
+      index := inDefFuncIndex;
+      LogDatei.log_prog('Found var: '+varname+' as local (1) in function '+definedFunctionArray[index].Name+' with index: '+inttostr(index), LLDebug2);
+    end
+    else
+    begin
+      if inDefinedFuncNestCounter > 0 then
+      begin
+        // we are in a local function
+        // second guess: it is local to parents to the active local function
+        parentlist := TStringlist.Create;
+        parentlist.Text := createListOfVisibleParents.Text;
+        searchfinished := false;
+        searchindex := definedFunctionsCallStack.Count-1;
+        repeat
+          index := strToInt(definedFunctionsCallStack.Strings[searchindex]);
+          if parentlist.IndexOf(definedFunctionArray[index].Name) >= 0 then
+          begin
+            // local variable of this function are visible (global to this function)
+            LogDatei.log_prog('Search local var: '+varname+' with Index: '+inttostr(index)+' and Name: '+definedFunctionArray[index].name, LLDebug2);
+            if (definedFunctionArray[index].Active
+               and definedFunctionArray[index].locaVarExists(varname)) then found := true;
+          end;
+          dec(searchindex);
+          if searchindex < 0 then searchfinished:=true;
+        until found or searchfinished;
+        if found then
+          LogDatei.log_prog('Found var: '+varname+' as local (2) in function '+definedFunctionArray[index].Name+' with index: '+inttostr(index), LLDebug2);
+      end;
+    end;
+    result := found;
   end;
-  result := found;
 end;
 
 function getVisibleLocalStringVarNameValueList : TStringlist;

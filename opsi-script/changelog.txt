@@ -5,6 +5,18 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 ##################################################################
 
+opsi-winst/opsi-script (4.12.0.17) stable; urgency=low
+
+  * osparser: processcall: log Executing on LLNotice
+  * new unit osparserhelper in common (Skip / getword /  ...)
+  * osdefinedfunctions: int new local string vars
+  * osdefinedfunctions: isVisibleLocalVar check for empty varname
+  * osparser: catch powershellCall at Linux
+  * OsDefinedFunction.parseCallParameter: fix handling parameters with ')'
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri, 13 Apr 2018:15:00:00 +0200
+
+
 opsi-winst/opsi-script (4.12.0.16) stable; urgency=low
 
   * typo of log messages

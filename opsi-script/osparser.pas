@@ -92,6 +92,7 @@ LazFileUtils,
   opsihwbiosinfo,
   osjson,
   oscrypt,
+  osparserhelper,
   LAZUTF8;
 
 
@@ -629,7 +630,7 @@ var
   inDefFuncLevel : integer = 0;
   inDefFuncIndex : integer = -1; // index of the active defined function
   Ifelseendiflevel : longint = 0; // global nestlevel store (do 18.1.2018)
-
+  inDefFunc3 : integer = 0;  // we are between deffunc and endfunc line (even in a not active code)
 
 
 
@@ -9624,6 +9625,7 @@ begin
          r := '';
          list.Text := definedFunctionArray[FuncIndex].ResultList.Text;
          syntaxCheck := true;
+         //logdatei.log('We leave the defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
        end
        else
        begin
@@ -9664,6 +9666,10 @@ begin
     else if LowerCase (s) = LowerCase ('powershellcall')
     then
     begin
+      {$IFDEF Linux}
+      LogDatei.log('Error powershellcall not implemented on Linux ', LLError);
+      {$ENDIF Linux}
+      {$IFDEF WINDOWS}
        s2 := '';
        s3 := '';
        tmpstr2 := '';
@@ -9733,6 +9739,7 @@ begin
            end
          end;
        end;
+      {$ENDIF WINDOWS}
      end
 
 
@@ -11763,6 +11770,7 @@ begin
      begin
        StringResult := definedFunctionArray[FuncIndex].Resultstring;
        syntaxCheck := true;
+       //logdatei.log('We leave the defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
      end
      else
      begin
@@ -11814,7 +11822,7 @@ begin
 
  End
 
- (* string constant delimited by "'" ?  *)
+ // string constant delimited by "'" ?
  else if (length (s0) > 0) and (s0[1] = '''') then
  Begin
    r := copy (s0, 2, length (s0)-1);
@@ -11823,7 +11831,7 @@ begin
    then syntaxCheck := true;
  End
 
- (* checking our pseudo function name for retrieving a string avoiding any escape problems of citations marks *)
+ // checking our pseudo function name for retrieving a string avoiding any escape problems of citations marks
  else if LowerCase (s) = LowerCase ('EscapeString') then
  Begin
    if Skip (':', r, s1, InfoSyntaxError)
@@ -11835,7 +11843,7 @@ begin
    End
  End
 
-  (* string functions ? *)
+ // string functions ?
 
  else if (LowerCase (s) = LowerCase ('LogLevel')) or ( LowerCase (s) = LowerCase('getLogLevel') ) then
  Begin
@@ -12647,6 +12655,10 @@ begin
  else if LowerCase (s) = LowerCase ('powershellcall')
  then
  begin
+  {$IFDEF Linux}
+  LogDatei.log('Error powershellcall not implemented on Linux ', LLError);
+  {$ENDIF Linux}
+  {$IFDEF WINDOWS}
    s2 := '';
    s3 := '';
    tmpstr2 := '';
@@ -12718,6 +12730,7 @@ begin
          end
        end;
    end;
+   {$ENDIF WINDOWS}
  end
 
 
@@ -12736,6 +12749,7 @@ begin
        StringResult := '';
        ArbeitsSektion := TWorkSection.create(0,Nil);
        ArbeitsSektion.Text:= s1;
+       tmpstr := r;
 //////////////////
 begin
               //{$IFDEF WINDOWS}
@@ -12974,6 +12988,7 @@ begin
                if SyntaxCheck
                then
                begin
+                 LogDatei.log ('Executing: ' + s +'('+ s1+') '+tmpstr, LLNotice);
                  ActionResult := execWinBatch (ArbeitsSektion, r, WaitConditions, Ident, WaitSecs, runAs,flag_force64);
                  StringResult := IntToStr (FLastExitCodeOfExe) ;
                end
@@ -16985,7 +17000,7 @@ function TuibInstScript.doAktionen (const Sektion: TWorkSection; const CallingSe
   //endofDefFuncFound : boolean;
   inDefFunc : integer = 0;
   inDefFunc2 : integer = 0;
-  inDefFunc3 : integer = 0;  // we are between deffunc and endfunc line (even in a not active code)
+  //inDefFunc3 : integer = 0;  // we are between deffunc and endfunc line (even in a not active code)
   funcindex,secindex : integer;
   importFunctionName : String;
   inSearchedFunc : boolean;
@@ -17069,6 +17084,7 @@ begin
       //else if (Remaining [1] = '[')  then
          // subsection beginning
         //if (inDefFunc3 = 0) and (inDefFuncIndex = -1) then
+        //if (inDefFunc3 = 0) or processline then
         if (inDefFunc3 = 0) or processline then
         begin
           // (inDefFunc3 = 0) : we are not between deffunc and enfunc
@@ -17080,6 +17096,7 @@ begin
       else
       Begin
         call := remaining;
+        Expressionstr := '';
         logdatei.log('Parsingprogress: r: '+Remaining+' exp: '+Expressionstr,LLDebug3);
         GetWord (Remaining, Expressionstr, Remaining, WordDelimiterSet4);
         logdatei.log('Parsingprogress: r: '+Remaining+' exp: '+Expressionstr,LLDebug3);
@@ -17805,6 +17822,7 @@ begin
                          if definedFunctionArray[FuncIndex].call(p2,p2,NestLevel) then
                          begin
                            syntaxCheck := true;
+                           //logdatei.log('We leave the defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
                          end
                          else
                          begin
@@ -18676,9 +18694,13 @@ begin
                      End;
                  end;
 
-               {$IFDEF WINDOWS}
+
                tsPowershellcall:
                begin
+                 {$IFDEF Linux}
+                  LogDatei.log('Error powershellcall not implemented on Linux ', LLError);
+                  {$ENDIF Linux}
+                  {$IFDEF WINDOWS}
                  s2 := '';
                  s3 := '';
                  tmpstr2 := '';
@@ -18748,8 +18770,9 @@ begin
                      end
                    end;
                  end;
+                {$ENDIF WINDOWS}
                end;
-              {$ENDIF WINDOWS}
+
 
 
 
@@ -20347,8 +20370,9 @@ begin
                          SetLength(definedFunctionArray, definedFunctioncounter);
                          definedFunctionArray[definedFunctioncounter-1] := newDefinedfunction;
                          definedFunctionNames.Append(newDefinedfunction.Name);
-                         //dec(inDefFunc2);
-                         LogDatei.log('Added defined function:: '+newDefinedfunction.Name+' to the known functions',LLInfo);
+                         dec(inDefFunc3);
+                         LogDatei.log('Added defined function: '+newDefinedfunction.Name+' to the known functions',LLInfo);
+                         logdatei.log_prog('After adding a defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLDebug3);
                        end;
                      except
                         on e: Exception do

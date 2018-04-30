@@ -1,0 +1,124 @@
+object Form1: TForm1
+  Left = 658
+  Height = 527
+  Top = 462
+  Width = 598
+  Caption = 'Form1'
+  ClientHeight = 527
+  ClientWidth = 598
+  LCLVersion = '1.4.4.0'
+  object Button1: TButton
+    Left = 104
+    Height = 25
+    Top = 16
+    Width = 75
+    Caption = 'Button1'
+    OnClick = Button1Click
+    TabOrder = 0
+  end
+  object Button2: TButton
+    Left = 298
+    Height = 25
+    Top = 29
+    Width = 75
+    Caption = 'Button2'
+    OnClick = Button2Click
+    TabOrder = 1
+  end
+  object DBGrid1: TDBGrid
+    Left = 83
+    Height = 207
+    Top = 279
+    Width = 436
+    Color = clWindow
+    Columns = <>
+    DataSource = DataSource1
+    TabOrder = 2
+  end
+  object Button3: TButton
+    Left = 456
+    Height = 25
+    Top = 29
+    Width = 75
+    Caption = 'Button3'
+    OnClick = Button3Click
+    TabOrder = 3
+  end
+  object SQLTransaction1: TSQLTransaction
+    Active = True
+    Action = caNone
+    Database = IBConnection1
+    left = 175
+    top = 44
+  end
+  object frDBDataSet1: TfrDBDataSet
+    DataSet = SQuibaktuser
+    left = 23
+    top = 172
+  end
+  object IBConnection1: TIBConnection
+    Connected = True
+    LoginPrompt = False
+    DatabaseName = 'groupware:/var/lib/firebird/uibtime/uibtime3.fdb'
+    KeepConnection = True
+    Password = 'uibtime'
+    Transaction = SQLTransaction1
+    UserName = 'uibtime'
+    CharSet = 'utf-8'
+    LogEvents = []
+    left = 184
+    top = 120
+  end
+  object SQuibaktuser: TSQLQuery
+    IndexName = 'DEFAULT_ORDER'
+    FieldDefs = <    
+      item
+        Name = 'USERID'
+        DataType = ftString
+        Precision = -1
+        Size = 80
+      end    
+      item
+        Name = 'NAME'
+        DataType = ftString
+        Precision = -1
+        Size = 200
+      end    
+      item
+        Name = 'UIBMEMBER'
+        DataType = ftSmallint
+        Precision = -1
+        Size = 0
+      end>
+    Active = True
+    Database = IBConnection1
+    Transaction = SQLTransaction1
+    SQL.Strings = (
+      'select * from uibaktuser'
+    )
+    Params = <>
+    UpdateMode = upWhereAll
+    left = 70
+    top = 108
+  end
+  object frReport1: TfrReport
+    InitialZoom = pzDefault
+    Options = []
+    PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit]
+    DataType = dtDataSet
+    left = 43
+    top = 34
+  end
+  object DataSource1: TDataSource
+    DataSet = SQuibaktuser
+    left = 319
+    top = 95
+  end
+  object FrPrintGrid1: TFrPrintGrid
+    DBGrid = DBGrid1
+    Caption = 'Grid'
+    ShowCaption = True
+    left = 434
+    top = 124
+  end
+end

@@ -1,0 +1,261 @@
+# 
+# Translators:
+# Alexander Savchenko, 2014
+# Вячеслав Сухарников, 2016
+msgid ""
+msgstr ""
+"Project-Id-Version: opsi.org\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2016-12-20 14:59+0000\n"
+"Last-Translator: d.oertel <d.oertel@uib.de>\n"
+"Language-Team: Russian (http://www.transifex.com/opsi-org/opsiorg/language/ru/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ru\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: osbatchgui.rsgetlistofproducts
+msgid "get list of products"
+msgstr "Получить список продуктов"
+
+#: osbatchgui.rsloadingskin
+msgid "Loading skin..."
+msgstr "Загрузка скина..."
+
+#: osinteractivegui.rsproductcheck
+msgctxt "osinteractivegui.rsproductcheck"
+msgid "product check"
+msgstr "Проверка продукта"
+
+#: osmain.rsproductcheck
+msgctxt "osmain.rsproductcheck"
+msgid "product check"
+msgstr "Проверка продукта"
+
+#: osparser.rsabortprogram
+msgid "Abort program ?"
+msgstr ""
+
+#: osparser.rsgetpassword
+msgid "Please enter opsi service user password:"
+msgstr "Пожалуйста, введите пароль пользователя OPSI-сервиса:"
+
+#: osparser.rsgetserviceurl
+msgid "Please enter opsi service URL:"
+msgstr "Пожалуйста, введите URL OPSI-сервиса:"
+
+#: osparser.rsgetusername
+msgid "Please enter opsi service user name:"
+msgstr "Пожалуйста, введите имя пользователя OPSI-сервиса:"
+
+#: osparser.rsreadytocontinue
+msgid "Ready to continue ?"
+msgstr ""
+
+#: oswebservice.rssendlog
+msgid "Sending log file to server ..."
+msgstr "Отправка log-файла на сервер ..."
+
+#: tcentralform.beenden1.caption
+msgctxt "TCENTRALFORM.BEENDEN1.CAPTION"
+msgid "Exit"
+msgstr "Выход"
+
+#: tcentralform.buttongetclipboardtext.caption
+msgid "Clipboard --> Viewlist"
+msgstr "Буфер обмена --> Список просмотра"
+
+#: tcentralform.buttonprocessmemo.caption
+msgid "Execute viewlist as script"
+msgstr "Выполнить список просмотра как скрипт"
+
+#: tcentralform.button_show_gui.caption
+msgid "Show GUI"
+msgstr "Показать GUI"
+
+#: tcentralform.caption
+msgid "  opsi - script"
+msgstr "OPSI - скрипт"
+
+#: tcentralform.combobox1.text
+msgid "ComboBox1"
+msgstr "ComboBox1"
+
+#: tcentralform.datei1.caption
+msgid "File"
+msgstr "Файл"
+
+#: tcentralform.edit1.text
+msgid "Edit1"
+msgstr "Edit1"
+
+#: tcentralform.edit2.text
+msgid "Edit2"
+msgstr "Edit2"
+
+#: tcentralform.hilfe1.caption
+msgid "Help"
+msgstr "Помощь"
+
+#: tcentralform.info1.caption
+msgid "Info .."
+msgstr "Инфо ..."
+
+#: tcentralform.label1.caption
+msgctxt "tcentralform.label1.caption"
+msgid "Label1"
+msgstr "Label1"
+
+#: tcentralform.label2.caption
+msgid "Label2"
+msgstr "Label2"
+
+#: tcentralform.label4.caption
+msgid "Logfile:"
+msgstr "Log-файл:"
+
+#: tcentralform.label5.caption
+msgid "Script:"
+msgstr "Скрипт:"
+
+#: tcentralform.label6.caption
+msgctxt "TCENTRALFORM.LABEL6.CAPTION"
+msgid "LabelWinstVersion"
+msgstr "LabelWinstVersion"
+
+#: tcentralform.labelactivity.caption
+msgid "-"
+msgstr "-"
+
+#: tcentralform.labelwinstversion.caption
+msgctxt "tcentralform.labelwinstversion.caption"
+msgid "LabelWinstVersion"
+msgstr "LabelWinstVersion"
+
+#: tcentralform.panel2.caption
+msgid "Log-View:"
+msgstr "Просмотр лога:"
+
+#: tcentralform.radiobuttonappendlogfile.caption
+msgid "Append"
+msgstr "Добавить"
+
+#: tcentralform.radiobuttonnewlogfile.caption
+msgid "New"
+msgstr "Новый"
+
+#: tcentralform.skript1.caption
+msgid "Open Script"
+msgstr "Открыть скрипт"
+
+#: tcentralform.speedbutton1.caption
+msgid "Select Script"
+msgstr "Выбрать скрипт"
+
+#: tcentralform.speedbutton2.caption
+msgid "Start"
+msgstr "Старт"
+
+#: tcentralform.speedbutton3.caption
+msgid "View Log"
+msgstr "Просмотреть лог"
+
+#: tcentralform.speedbutton4.caption
+msgid "Hide GUI"
+msgstr "Скрыть GUI"
+
+#: tcentralform.speedbutton5.caption
+msgctxt "tcentralform.speedbutton5.caption"
+msgid "Exit"
+msgstr "Выход"
+
+#: tcentralform.toolbar1.caption
+msgid "ToolBar1"
+msgstr "ToolBar1"
+
+#: tdialogservicepassword.cancelbutton.caption
+msgid "Cancel"
+msgstr "Отменить"
+
+#: tdialogservicepassword.caption
+msgid " DialogServicePassword"
+msgstr "Авторизация"
+
+#: tdialogservicepassword.labelpassword.caption
+msgid "Password"
+msgstr "Пароль"
+
+#: tdialogservicepassword.labelserviceurl.caption
+msgid "Opsi Service URL"
+msgstr "URL OPSI-сервиса"
+
+#: tdialogservicepassword.labelusername.caption
+msgid "Username"
+msgstr "Имя пользователя"
+
+#: tdialogservicepassword.okbutton.caption
+msgid "o.k."
+msgstr "o.k."
+
+#: tfbatchoberflaeche.caption
+msgid "opsi-script"
+msgstr "opsi-script"
+
+#: tfbatchoberflaeche.labelcommand.caption
+msgid "Command"
+msgstr "Команда"
+
+#: tfbatchoberflaeche.labeldetail.caption
+msgid "Detail"
+msgstr "Детали"
+
+#: tfbatchoberflaeche.labelinfo.caption
+msgid "Info"
+msgstr "Инфо"
+
+#: tfbatchoberflaeche.labelproduct.caption
+msgid "LabelProductImage"
+msgstr "LabelProductImage"
+
+#: tfbatchoberflaeche.labelprogress.caption
+msgid "Activity"
+msgstr "Активность"
+
+#: tfbatchoberflaeche.labelversion.caption
+msgid "LabelVersion"
+msgstr "LabelVersion"
+
+#: tmymessagedlg.abortbtn.caption
+msgid "&Exit"
+msgstr "Выход"
+
+#: tmymessagedlg.cancelbtn.caption
+msgid "&Cancel"
+msgstr ""
+
+#: tmymessagedlg.caption
+msgid "opsi-script Message"
+msgstr ""
+
+#: tmymessagedlg.nobtn.caption
+msgid "&No"
+msgstr ""
+
+#: tmymessagedlg.okbtn.caption
+msgid "&OK"
+msgstr ""
+
+#: tmymessagedlg.yesbtn.caption
+msgid "&Yes"
+msgstr ""
+
+#: tsysteminfo.caption
+msgid "SystemInfo"
+msgstr "Информация о системе"
+
+#: tsysteminfo.label1.caption
+msgctxt "TSYSTEMINFO.LABEL1.CAPTION"
+msgid "Label1"
+msgstr "Label1"
+

@@ -1,0 +1,351 @@
+encoding=utf8
+
+;@filedesc Collection of functions that manipulate the opsi backend via opsi service call
+
+; ###################################################################################################
+DefFunc setProductsToSetup($productlist$ : stringlist) : string
+  ;@author          detlef oertel
+  ;@date            17.4.2018
+  ;@copyright       AGPLv3
+  ;@Description     Sets for the given list of opsi productIds the action request
+  ;@Description     to 'setup' (also resolving the dependencies)
+  ;@Returns         Returns string "true" if all is ok
+  ;@OnError         Returns string "false"
+  ;@SpecialCase     Works only in opsi service mode (not in interactive or batch mode)
+  ;@References
+  ;@Links
+  ;@ParamDesc_$productlist$     List of opsi product Ids
+  ;@ParamAdvice_$productlist$
+	markErrorNumber
+	set $result$ = "false"
+	for %aktproduct% in $productlist$ do opsiservicecall_set_product_to_setup
+	if errorsOccurredSinceMark = 0
+	set $result$ = "true"
+	endif
+	[opsiservicecall_set_product_to_setup]
+	"method": "setProductActionRequestWithDependencies"
+	"params": [
+						"%aktproduct%",
+						"%opsiserviceUser%",
+						"setup"
+						]
+EndFunc
+
+; ###################################################################################################
+
+DefFunc getInstalledLocalbootProducts(ref $productlist$ : stringlist) : string
+  ;@author          detlef oertel
+  ;@date            17.4.2018
+  ;@copyright       AGPLv3
+  ;@Description     Sets for the given list of opsi productIds the action request
+  ;@Description     to 'setup' (also resolving the dependencies)
+  ;@Returns         Returns string "true" if all is ok
+  ;@OnError         Returns string "false"
+  ;@SpecialCase     Works only in opsi service mode (not in interactive or batch mode)
+  ;@References
+  ;@Links
+  ;@ParamDesc_$productlist$     Output list of opsi product Ids that were be found
+  ;@ParamAdvice_$productlist$   May be empty
+
+	DefVar $ArrayStr$
+	DefStringList $errorList$
+	DefStringList $resultlist$
+	DefStringList $pocList$
+	
+	markErrorNumber
+	set $result$ = "false"
+	comment "load data from web service (localboot) to $productlist$..."
+	markErrorNumber
+	comment "load data from web service (localboot)..."
+	set $resultlist$ = getReturnListFromSection("opsiServiceCall_get_productOnClient_localboot_objects")
+	Set $ArrayStr$ = takestring(0, $resultlist$)
+	if not(jsonIsValid($ArrayStr$))
+		LogError "got no valid json from Service"
+		;isFatalError
+		set $errorList$ = addtolist($errorList$, " Error in sub_restore_productOnClient, switch_installed_products_to_setup=true: got no valid json from Service" )
+	endif
+	if not(jsonIsArray($ArrayStr$))
+		LogError "got no json Array from Service"
+		;isFatalError
+		set $errorList$ = addtolist($errorList$, " Error in sub_restore_productOnClient, switch_installed_products_to_setup=true: got no json Array from Service" )
+	endif
+	comment "extract productIds ..."
+	comment "clean target list"
+	set $productlist$ = emptylist($productlist$)
+	set $pocList$ = emptylist($pocList$)
+	comment "get stringlist "
+	if jsonAsArrayCountElements($ArrayStr$) > "0"
+		set $pocList$ = jsonAsArrayToStringList($ArrayStr$)
+		for %aktpoc% in $pocList$ do set $productlist$ = addToList($productlist$,jsonAsObjectGetValueByKey('%aktpoc%', "productId" ))
+	endif
+	
+	if errorsOccurredSinceMark = 0
+		set $result$ = "true"
+	endif
+	[opsiServiceCall_get_productOnClient_localboot_objects]
+	"method": "productOnClient_getObjects"
+	"params": [
+						"[]",
+						'{"clientId":"%opsiserviceUser%","productType":"LocalbootProduct"}',
+						]
+EndFunc
+
+; ###################################################################################################
+DefFunc delOpsiPoc($donotdelList$ : stringlist) : string
+  ;@author          detlef oertel
+  ;@date            17.4.2018
+  ;@copyright       AGPLv3
+  ;@Description     Delete all productOnClientObjects for this client and
+  ;@Description     only for localboot products and
+  ;@Description     not for products that are included in the $donotdelList$ parameter
+  ;@Returns         Returns string "true" if all is ok
+  ;@OnError         Returns string "false"
+  ;@SpecialCase     Works only in opsi service mode (not in interactive or batch mode)
+  ;@References
+  ;@Links
+  ;@ParamDesc_$productlist$     List of opsi product Ids that should not be delted
+  ;@ParamAdvice_$productlist$
+
+	DefVar $ArrayStr$
+	DefStringList $INST_ErrorList$
+	DefStringList $resultlist$
+	DefStringList $productIdInstalledList$
+	DefStringList $pocList$
+	
+	set $result$ = "false"
+	comment "load data from web service (localboot) to $productIdInstalledList$..."
+	markErrorNumber
+	comment "load data from web service (localboot)..."
+	set $resultlist$ = getReturnListFromSection("opsiServiceCall_get_productOnClient_localboot_objects")
+	Set $ArrayStr$ = takestring(0, $resultlist$)
+	if not(jsonIsValid($ArrayStr$))
+		LogError "got no valid json from Service"
+		;isFatalError
+		set $INST_ErrorList$ = addtolist($INST_ErrorList$, " Error in sub_restore_productOnClient, switch_installed_products_to_setup=true: got no valid json from Service" )
+	endif
+	if not(jsonIsArray($ArrayStr$))
+		LogError "got no json Array from Service"
+		;isFatalError
+		set $INST_ErrorList$ = addtolist($INST_ErrorList$, " Error in sub_restore_productOnClient, switch_installed_products_to_setup=true: got no json Array from Service" )
+	endif
+	comment "extract productIds ..."
+	comment "clean target list"
+	set $productIdInstalledList$ = emptylist($productIdInstalledList$)
+	set $pocList$ = emptylist($pocList$)
+	comment "get stringlist "
+	if jsonAsArrayCountElements($ArrayStr$) > "0"
+		set $pocList$ = jsonAsArrayToStringList($ArrayStr$)
+		for %aktpoc% in $pocList$ do set $productIdInstalledList$ = addToList($productIdInstalledList$,jsonAsObjectGetValueByKey('%aktpoc%', "productId" ))
+		comment "remove products that should not be deleted"
+		for %productid% in $donotdelList$ do set $productIdInstalledList$ = removeFromListByMatch("%productid%",$productIdInstalledList$)
+		comment "These produtIds will be deleted"
+	endif
+	comment "now delete ..."
+	for %aktProductId% in $productIdInstalledList$ do opsiServiceCall_del_productOnClient
+	
+	if errorsOccuredSinceMark = 0
+		set $result$ = "true"
+	endif
+	
+	
+	; if running not in service context use %HostID% instead of %opsiserviceUser%
+	[opsiServiceCall_get_productOnClient_localboot_objects]
+	"method": "productOnClient_getObjects"
+	"params": [
+						"[]",
+						'{"clientId":"%opsiserviceUser%","productType":"LocalbootProduct"}',
+						]
+	
+	[opsiServiceCall_del_productOnClient]
+	"method": "productOnClient_delete"
+	"params": [
+						'%aktProductId%',
+						'%opsiserviceUser%',
+						]
+EndFunc 
+
+; ###################################################################################################
+
+DefFunc backupOpsiPoc($filename$ : string) : string
+DefVar $ArrayStr$
+DefStringList $INST_ErrorList$
+DefStringList $resultlist$
+DefStringList $productIdInstalledList$
+DefStringList $pocList$
+
+set $result$ = "false"
+comment "load data from web service (localboot) to $ArrayStr$..."
+markErrorNumber
+comment "load data from web service (localboot)..."
+set $resultlist$ = getReturnListFromSection("opsiServiceCall_get_productOnClient_localboot_objects")
+Set $ArrayStr$ = takestring(0, $resultlist$)
+if not(jsonIsValid($ArrayStr$))
+	LogError "got no valid json from Service"
+	;isFatalError
+	set $INST_ErrorList$ = addtolist($INST_ErrorList$, "Error in DefFunc backupOpsiPoc: got no valid json from Service" )
+endif
+if not(jsonIsArray($ArrayStr$))
+	LogError "got no json Array from Service"
+	;isFatalError
+	set $INST_ErrorList$ = addtolist($INST_ErrorList$, "Error in DefFunc backupOpsiPoc: got no json Array from Service" )
+endif
+if not(saveTextFileWithEncoding(createStringList($ArrayStr$), $filename$, "utf8"))
+	LogError "Could not save opsi meta data to file: "+$filename$
+	;isFatalError
+	set $INST_ErrorList$ = addtolist($INST_ErrorList$, "Error in DefFunc backupOpsiPoc: Could not save opsi meta data to file: "+$filename$)
+endif
+
+if errorsOccuredSinceMark = 0
+	set $result$ = "true"
+endif
+
+
+[opsiServiceCall_get_productOnClient_localboot_objects]
+"method": "productOnClient_getObjects"
+"params": [
+					"[]",
+					'{"clientId":"%opsiserviceUser%","productType":"LocalbootProduct"}',
+					]
+EndFunc 
+
+; ###################################################################################################
+
+DefFunc restoreOpsiPoc($filename$ : string) : string
+
+	DefVar $ArrayStr$
+	DefStringList $INST_ErrorList$
+	;DefStringList $resultlist$
+	;DefStringList $productIdInstalledList$
+	;DefStringList $pocList$
+	
+	Message "Restore productOnClient from file ..."
+	set $result$ = "false"
+	if fileExists($filename$)
+		comment " get Restore data from file ..."
+		Set $ArrayStr$ = strLoadTextFile($filename$)
+		if not(jsonIsValid($ArrayStr$))
+			LogError "got no valid json from file"
+			set $INST_ErrorList$ = addtolist($INST_ErrorList$, "Error in DefFunc restoreOpsiPoc: got no valid json from file" )
+		endif
+		if not(jsonIsArray($ArrayStr$))
+			LogError "got no json Array from file"
+			set $INST_ErrorList$ = addtolist($INST_ErrorList$, "Error in DefFunc restoreOpsiPoc: got no json Array from file" )
+		endif
+		if errorsOccuredSinceMark = 0
+			markErrorNumber
+			comment "write back " + jsonAsArrayCountElements($ArrayStr$)+ " objects"
+			opsiServiceCall_updatePOC
+		endif
+		
+	endif ; file exists
+	
+	if errorsOccuredSinceMark = 0
+		set $result$ = "true"
+	endif
+	
+	[opsiServiceCall_updatePOC]
+	"method": "productOnClient_updateObjects"
+	"params": [
+						'$ArrayStr$'
+						]
+
+EndFunc 
+; ###################################################################################################
+
+DefFunc getInstalledLocalbootProductsWithVersion(ref $productlist$ : stringlist) : string
+	DefVar $ArrayStr$
+	DefStringList $errorList$
+	DefStringList $resultlist$
+	DefStringList $pocList$
+	
+	markErrorNumber
+	set $result$ = "false"
+	comment "load data from web service (localboot) to $productlist$..."
+	markErrorNumber
+	comment "load data from web service (localboot)..."
+	set $resultlist$ = getReturnListFromSection("opsiServiceCall_get_productOnClient_localboot_objects")
+	Set $ArrayStr$ = takestring(0, $resultlist$)
+	if not(jsonIsValid($ArrayStr$))
+		LogError "got no valid json from Service"
+		;isFatalError
+		set $errorList$ = addtolist($errorList$, " Error in sub_restore_productOnClient, switch_installed_products_to_setup=true: got no valid json from Service" )
+	endif
+	if not(jsonIsArray($ArrayStr$))
+		LogError "got no json Array from Service"
+		;isFatalError
+		set $errorList$ = addtolist($errorList$, " Error in sub_restore_productOnClient, switch_installed_products_to_setup=true: got no json Array from Service" )
+	endif
+	comment "extract productIds ..."
+	comment "clean target list"
+	set $productlist$ = emptylist($productlist$)
+	set $pocList$ = emptylist($pocList$)
+	comment "get stringlist "
+	if jsonAsArrayCountElements($ArrayStr$) > "0"
+		set $pocList$ = jsonAsArrayToStringList($ArrayStr$)
+		for %aktpoc% in $pocList$ do set $productlist$ = addToList($productlist$,jsonAsObjectGetValueByKey('%aktpoc%', "productId" )+"="+jsonAsObjectGetValueByKey('%aktpoc%', "productVersion" )+"-"+jsonAsObjectGetValueByKey('%aktpoc%', "packageVersion"))
+	endif
+	
+	if errorsOccurredSinceMark = 0
+		set $result$ = "true"
+	endif
+	[opsiServiceCall_get_productOnClient_localboot_objects]
+	"method": "productOnClient_getObjects"
+	"params": [
+						"[]",
+						'{"clientId":"%opsiserviceUser%","productType":"LocalbootProduct","installationStatus":"installed"}',
+						]
+EndFunc
+
+; ###################################################################################################
+
+DefFunc getInstallableLocalbootProductsWithVersion(ref $productlist$ : stringlist) : string
+	DefVar $ArrayStr$
+	DefVar $depotId$
+	DefStringList $errorList$
+	DefStringList $resultlist$
+	DefStringList $pocList$
+	
+	markErrorNumber
+	set $result$ = "false"
+	comment "load my depot from web service"
+	set $resultlist$ = getReturnListFromSection("opsiServiceCall_get_depotId")
+	set $depotId$ = takestring(0, $resultlist$)
+	markErrorNumber
+	comment "load data from web service (localboot)..."
+	set $resultlist$ = getReturnListFromSection("opsiServiceCall_get_productOnDepot_localboot_objects")
+	Set $ArrayStr$ = takestring(0, $resultlist$)
+	if not(jsonIsValid($ArrayStr$))
+		LogError "got no valid json from Service"
+		;isFatalError
+		set $errorList$ = addtolist($errorList$, " Error in opsiServiceCall_get_productOnDepot_localboot_objects: got no valid json from Service" )
+	endif
+	if not(jsonIsArray($ArrayStr$))
+		LogError "got no json Array from Service"
+		;isFatalError
+		set $errorList$ = addtolist($errorList$, " Error in opsiServiceCall_get_productOnDepot_localboot_objects: got no json Array from Service" )
+	endif
+	comment "extract productIds ..."
+	comment "clean target list"
+	set $productlist$ = emptylist($productlist$)
+	set $pocList$ = emptylist($pocList$)
+	comment "get stringlist "
+	if jsonAsArrayCountElements($ArrayStr$) > "0"
+		set $pocList$ = jsonAsArrayToStringList($ArrayStr$)
+		for %aktpoc% in $pocList$ do set $productlist$ = addToList($productlist$,jsonAsObjectGetValueByKey('%aktpoc%', "productId" )+"="+jsonAsObjectGetValueByKey('%aktpoc%', "productVersion" )+"-"+jsonAsObjectGetValueByKey('%aktpoc%', "packageVersion"))
+	endif
+	
+	if errorsOccurredSinceMark = 0
+		set $result$ = "true"
+	endif
+	[opsiServiceCall_get_depotId]
+	"method": "getDepotId"
+	"params": [
+						"%opsiserviceUser%"
+						]
+	[opsiServiceCall_get_productOnDepot_localboot_objects]
+	"method": "productOnDepot_getObjects"
+	"params": [
+						"[]",
+						'{"depotId":"$depotId$","productType":"LocalbootProduct"}',
+						]
+EndFunc
