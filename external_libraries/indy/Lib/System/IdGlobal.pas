@@ -1886,8 +1886,7 @@ var
   {$IFDEF UNIX}
 
   // For linux the user needs to set this variable to be accurate where used (mail, etc)
-  //GOffsetFromUTC: TDateTime = 0{$IFDEF HAS_DEPRECATED}{$IFDEF USE_SEMICOLON_BEFORE_DEPRECATED};{$ENDIF} deprecated{$ENDIF};
-  GOffsetFromUTC: TDateTime = 0;
+  GOffsetFromUTC: TDateTime = 0{$IFDEF HAS_DEPRECATED}{$IFDEF USE_SEMICOLON_BEFORE_DEPRECATED};{$ENDIF} deprecated{$ENDIF};
 
     {$IFDEF DARWIN}
   GMachTimeBaseInfo: TTimebaseInfoData;
@@ -1929,6 +1928,9 @@ implementation
   {$IFDEF FREEBSD}
     {$DEFINE USE_clock_gettime}
   {$ENDIF}
+{$ENDIF}
+{$IFDEF ANDROID}
+  {$DEFINE USE_clock_gettime}
 {$ENDIF}
 
 uses
@@ -2058,7 +2060,21 @@ end;
 constructor TIdDotNetEncoding.Create(const ACharset: String);
 begin
   inherited Create;
-  FEncoding := System.Text.Encoding.GetEncoding(ACharset);
+  // RLebeau 5/2/2017: have seen some malformed emails that use 'utf8'
+  // instead of 'utf-8', so let's check for that...
+
+  // RLebeau 9/27/2017: updating to handle a few more UTFs without hyphens...
+
+  case PosInStrArray(ACharset, ['UTF7', 'UTF8', 'UTF16', 'UTF16LE', 'UTF16BE', 'UTF32', 'UTF32LE', 'UTF32BE'], False) of {Do not Localize}
+    0:   FEncoding := System.Text.Encoding.UTF7;
+    1:   FEncoding := System.Text.Encoding.UTF8;
+    2,3: FEncoding := System.Text.Encoding.Unicode;
+    4:   FEncoding := System.Text.Encoding.BigEndianUnicode;
+    5,6: FEncoding := System.Text.Encoding.UTF32;
+    7:   FEncoding := System.Text.Encoding.GetEncoding(12001);
+  else
+    FEncoding := System.Text.Encoding.GetEncoding(ACharset);
+  end;
 end;
 
 constructor TIdDotNetEncoding.Create(const ACodepage: UInt16);
@@ -2724,7 +2740,23 @@ const
   //cValue: array[0..1] of UInt16 = ($DBFF, $DFFF);
 begin
   inherited Create;
-  FCharSet := CharSet;
+
+  // RLebeau 5/2/2017: have seen some malformed emails that use 'utf8'
+  // instead of 'utf-8', so let's check for that...
+
+  // RLebeau 9/27/2017: updating to handle a few more UTFs without hyphens...
+
+  case PosInStrArray(CharSet, ['UTF7', 'UTF8', 'UTF16', 'UTF16LE', 'UTF16BE', 'UTF32', 'UTF32LE', 'UTF32BE'], False) of {Do not Localize}
+    0:   FCharSet := 'UTF-7';    {Do not Localize}
+    1:   FCharSet := 'UTF-8';    {Do not Localize}
+    2,3: FCharSet := 'UTF-16LE'; {Do not Localize}
+    4:   FCharSet := 'UTF-16BE'; {Do not Localize}
+    5,6: FCharSet := 'UTF-32LE'; {Do not Localize}
+    7:   FCharSet := 'UTF-32BE'; {Do not Localize}
+  else
+    FCharSet := CharSet;
+  end;
+
   FMaxCharSize := GetByteCount(PIdWideChar(@cValue[0]), 2);
 
   // Not all charsets support all codepoints.  For example, ISO-8859-1 does
@@ -2834,10 +2866,10 @@ begin
   end;
 
   if AToUTF16 then begin
-    LToCharSet := cUTF16CharSet + LFlags; // explicit convert to Ansi
-    LFromCharSet := ACharSet; // explicit convert to Ansi
+    LToCharSet := cUTF16CharSet + LFlags;
+    LFromCharSet := ACharSet;
   end else begin
-    LToCharSet := ACharSet + LFlags; // explicit convert to Ansi
+    LToCharSet := ACharSet + LFlags;
     LFromCharSet := cUTF16CharSet;
   end;
 
@@ -3196,22 +3228,41 @@ end;
 function TIdMBCSEncoding.GetPreamble: TIdBytes;
 begin
   {$IFDEF USE_ICONV}
-  case PosInStrArray(FCharSet, ['utf-8', 'utf-16', 'utf-16le', 'utf-16be'], False) of {do not localize}
-    0: begin
+  // RLebeau 5/2/2017: have seen some malformed emails that use 'utf8'
+  // instead of 'utf-8', so let's check for that...
+
+  // RLebeau 9/27/2017: updating to handle a few more UTFs without hyphens...
+
+  case PosInStrArray(FCharSet, ['UTF-8', 'UTF8', 'UTF-16', 'UTF16', 'UTF-16LE', 'UTF16LE', 'UTF-16BE', 'UTF16BE', 'UTF-32', 'UTF32', 'UTF-32LE', 'UTF32LE', 'UTF-32BE', 'UTF32BE'], False) of {do not localize}
+    0, 1: begin
       SetLength(Result, 3);
       Result[0] := $EF;
       Result[1] := $BB;
       Result[2] := $BF;
     end;
-    1, 2: begin
+    2..5: begin
       SetLength(Result, 2);
       Result[0] := $FF;
       Result[1] := $FE;
     end;
-    3: begin
+    6, 7: begin
       SetLength(Result, 2);
       Result[0] := $FE;
       Result[1] := $FF;
+    end;
+    8..11: begin
+      SetLength(Result, 4);
+      Result[0] := $FF;
+      Result[1] := $FE;
+      Result[2] := $00;
+      Result[3] := $00;
+    end;
+    12, 13: begin
+      SetLength(Result, 4);
+      Result[0] := $00;
+      Result[1] := $00;
+      Result[2] := $FE;
+      Result[3] := $FF;
     end;
   else
     SetLength(Result, 0);
@@ -3234,6 +3285,20 @@ begin
       SetLength(Result, 2);
       Result[0] := $FE;
       Result[1] := $FF;
+    end;
+    12000: begin
+      SetLength(Result, 4);
+      Result[0] := $FF;
+      Result[1] := $FE;
+      Result[2] := $00;
+      Result[3] := $00;
+    end;
+    12001: begin
+      SetLength(Result, 4);
+      Result[0] := $00;
+      Result[1] := $00;
+      Result[2] := $FE;
+      Result[3] := $FF;
     end;
   else
     SetLength(Result, 0);
@@ -3685,8 +3750,26 @@ end;
 
 {$IFDEF HAS_TEncoding_GetEncoding_ByEncodingName}
 constructor TIdVCLEncoding.Create(const ACharset: String);
+var
+  LCharset: string;
 begin
-  Create(TEncoding.GetEncoding(ACharset), True);
+  // RLebeau 5/2/2017: have seen some malformed emails that use 'utf8'
+  // instead of 'utf-8', so let's check for that...
+
+  // RLebeau 9/27/2017: updating to handle a few more UTFs without hyphens...
+
+  case PosInStrArray(ACharset, ['UTF7', 'UTF8', 'UTF16', 'UTF16LE', 'UTF16BE', 'UTF32', 'UTF32LE', 'UTF32BE'], False) of {Do not Localize}
+    0:   LCharset := 'UTF-7';    {Do not Localize}
+    1:   LCharset := 'UTF-8';    {Do not Localize}
+    2,3: LCharset := 'UTF-16LE'; {Do not Localize}
+    4:   LCharset := 'UTF-16BE'; {Do not Localize}
+    5,6: LCharset := 'UTF-32LE'; {Do not Localize}
+    7:   LCharset := 'UTF-32BE'; {Do not Localize}
+  else
+    LCharset := ACharset;
+  end;
+
+  Create(TEncoding.GetEncoding(LCharset), True);
 end;
 {$ENDIF}
 
@@ -3771,6 +3854,7 @@ begin
       Result := IndyTextEncoding_UTF7;
     65001:
       Result := IndyTextEncoding_UTF8;
+    // TODO: add support for UTF-32...
   else
     {$IFDEF SUPPORTS_CODEPAGE_ENCODING}
     Result := TIdMBCSEncoding.Create(ACodepage);
@@ -3797,11 +3881,18 @@ begin
   if IsCharsetASCII(ACharSet) then begin
     Result := IndyTextEncoding_ASCII;
   end else begin
-    case PosInStrArray(ACharSet, ['utf-16be', 'utf-16le', 'utf-16', 'utf-7', 'utf-8'], False) of {do not localize}
-      0:    Result := IndyTextEncoding_UTF16BE;
-      1, 2: Result := IndyTextEncoding_UTF16LE;
-      3:    Result := IndyTextEncoding_UTF7;
-      4:    Result := IndyTextEncoding_UTF8;
+    // RLebeau 5/2/2017: have seen some malformed emails that use 'utf8'
+    // instead of 'utf-8', so let's check for that...
+
+    // RLebeau 9/27/2017: updating to handle a few more UTFs without hyphens...
+
+    // TODO: add support for UTF-32...
+    case PosInStrArray(ACharset, ['UTF-7', 'UTF7', 'UTF-8', 'UTF8', 'UTF-16', 'UTF16', 'UTF-16LE', 'UTF16LE', 'UTF-16BE', 'UTF16BE'], False) of {Do not Localize}
+      0, 1: Result := IndyTextEncoding_UTF7;
+      2, 3: Result := IndyTextEncoding_UTF8;
+      4..7: Result := IndyTextEncoding_UTF16LE;
+      8, 9: Result := IndyTextEncoding_UTF16BE;
+      // TODO: add support for UTF-32...
     else
       {$IFDEF USE_ICONV}
       Result := TIdMBCSEncoding.Create(ACharSet);
@@ -4229,10 +4320,7 @@ end;
 // 64bit and mobile compilers have System.ReturnAddress available...
 
       // disable stack frames to reduce instructions
-      {$IFOPT W+} // detect stack frames
-        {$DEFINE _WPlusWasEnabled}
-        {$W-} // turn off stack frames
-      {$ENDIF}
+      {$I IdStackFramesOff.inc}
 procedure IndyRaiseOuterException(AOuterException: Exception);
   procedure RaiseE(E: Exception; ReturnAddr: Pointer);
   begin
@@ -4244,10 +4332,7 @@ asm
   MOV EDX, [ESP]
   JMP RaiseE
 end;
-      {$IFDEF _WPlusWasEnabled}
-        {$UNDEF _WPlusWasEnabled}
-        {$W+}
-      {$ENDIF}
+      {$I IdStackFramesOn.inc}
 
     {$ENDIF}
   {$ELSE}
@@ -5195,24 +5280,34 @@ begin
 {$ENDIF}
 end;
 
+{$UNDEF KYLIXCOMPAT_OR_VCL_POSIX}
+{$IFDEF KYLIXCOMPAT}
+  {$DEFINE KYLIXCOMPAT_OR_VCL_POSIX}
+{$ENDIF}
+{$IFDEF USE_VCL_POSIX}
+  {$DEFINE KYLIXCOMPAT_OR_VCL_POSIX}
+{$ENDIF}
+
 function CurrentProcessId: TIdPID;
 {$IFDEF USE_INLINE}inline;{$ENDIF}
 begin
-  {$IFDEF KYLIXCOMPAT}
-  Result := getpid;
-  {$ENDIF}
-  {$IFDEF USE_VCL_POSIX}
-   Result := getpid;
-  {$ENDIF}
-  {$IFDEF USE_BASEUNIX}
-  Result := fpgetpid;
-  {$ENDIF}
-
-  {$IFDEF WINDOWS}
-  Result := GetCurrentProcessID;
-  {$ENDIF}
   {$IFDEF DOTNET}
   Result := System.Diagnostics.Process.GetCurrentProcess.ID;
+  {$ELSE}
+    {$IFDEF WINDOWS}
+  Result := GetCurrentProcessID;
+    {$ELSE}
+      {$IFDEF KYLIXCOMPAT_OR_VCL_POSIX}
+  Result := getpid;
+      {$ELSE}
+        {$IFDEF USE_BASEUNIX}
+  Result := fpgetpid;
+        {$ELSE}
+  {$message error CurrentProcessId is not implemented on this platform!}
+  Result := 0;
+        {$ENDIF}
+      {$ENDIF}
+    {$ENDIF}
   {$ENDIF}
 end;
 
@@ -5291,7 +5386,45 @@ begin
   {$ENDIF}
 end;
 
-{$IFDEF WINDOWS}
+{$I IdDeprecatedImplBugOff.inc}
+function Ticks: UInt32;
+{$I IdDeprecatedImplBugOn.inc}
+{$IFDEF USE_INLINE}inline;{$ENDIF}
+begin
+  // TODO: maybe throw an exception if Ticks64() exceeds the 49.7 day limit of UInt32?
+  Result := UInt32(Ticks64() mod High(UInt32));
+end;
+
+// RLebeau: breaking up the Ticks64() implementation into separate platform blocks,
+// instead of trying to do it all in one implementation.  This way, the code is
+// cleaner, and if I miss a platform then the compiler should complain about Ticks64()
+// being unresolved...
+
+// TODO: move these to platform-specific units instead, maybe even to the TIdStack classes?
+
+{$IFDEF DOTNET}
+function Ticks64: TIdTicks;
+  {$IFDEF USE_INLINE}inline;{$ENDIF}
+begin
+  // Must cast to a cardinal
+  //
+  // http://lists.ximian.com/archives/public/mono-bugs/2003-November/009293.html
+  // Other references in Google.
+  // Bug in .NET. It acts like Win32, not as per .NET docs but goes negative after 25 days.
+  //
+  // There may be a problem in the future if .NET changes this to work as docced with 25 days.
+  // Will need to check our routines then and somehow counteract / detect this.
+  // One possibility is that we could just wrap it ourselves in this routine.
+
+  // TODO: use DateTime.Ticks instead?
+  //Result := DateTime.Now.Ticks div 10000;
+
+  Result := TIdTicks(Environment.TickCount);
+end;
+
+{$ELSE}
+  {$IFDEF WINDOWS}
+
 type
   TGetTickCount64Func = function: UInt64; stdcall;
 
@@ -5320,67 +5453,102 @@ begin
   @GetTickCount64 := GetImpl();
   Result := GetTickCount64();
 end;
-{$ENDIF}
 
-{$I IdDeprecatedImplBugOff.inc}
-function Ticks: UInt32;
-{$I IdDeprecatedImplBugOn.inc}
-{$IFDEF USE_INLINE}inline;{$ENDIF}
+function Ticks64: TIdTicks;
+  {$IFDEF USE_HI_PERF_COUNTER_FOR_TICKS}
+var
+  nTime, freq: {$IFDEF WINCE}LARGE_INTEGER{$ELSE}Int64{$ENDIF};
+{$ENDIF}
 begin
-  // TODO: maybe throw an exception if Ticks64() exceeds the 49.7 day limit of UInt32?
-  Result := UInt32(Ticks64() mod High(UInt32));
+  // S.G. 27/11/2002: Changed to use high-performance counters as per suggested
+  // S.G. 27/11/2002: by David B. Ferguson (david.mcs@ns.sympatico.ca)
+
+  // RLebeau 11/12/2009: removed the high-performance counters again.  They
+  // are not reliable on multi-core systems, and are now starting to cause
+  // problems with TIdIOHandler.ReadLn() timeouts under Windows XP SP3, both
+  // 32-bit and 64-bit.  Refer to these discussions:
+  //
+  // http://www.virtualdub.org/blog/pivot/entry.php?id=106
+  // http://blogs.msdn.com/oldnewthing/archive/2008/09/08/8931563.aspx
+
+  {$IFDEF USE_HI_PERF_COUNTER_FOR_TICKS}
+    {$IFDEF WINCE}
+  if Windows.QueryPerformanceCounter(@nTime) then begin
+    if Windows.QueryPerformanceFrequency(@freq) then begin
+      Result := Trunc((nTime.QuadPart / Freq.QuadPart) * 1000) and High(TIdTicks);
+      Exit;
+    end;
+  end;
+    {$ELSE}
+  if Windows.QueryPerformanceCounter(nTime) then begin
+    if Windows.QueryPerformanceFrequency(freq) then begin
+      Result := Trunc((nTime / Freq) * 1000) and High(TIdTicks);
+      Exit;
+    end;
+  end;
+    {$ENDIF}
+  {$ENDIF}
+
+  Result := TIdTicks(GetTickCount64());
 end;
 
-//RLebeau: FPC does not provide mach_timebase_info() and mach_absolute_time() yet...
-{$IFDEF UNIX}
+  {$ELSE}
+    {$IFDEF USE_clock_gettime}
+
+  {$IFDEF LINUX}
+// according to Linux's /usr/include/linux/time.h
+const
+  CLOCK_MONOTONIC = 1;
+  {$ENDIF}
+  {$IFDEF FREEBSD}
+// according to FreeBSD's /usr/include/time.h
+const
+  CLOCK_MONOTONIC = 4;
+  {$ENDIF}
+  {$IFDEF ANDROID}
+// according to Android NDK's /include/time.h
+const
+  CLOCK_MONOTONIC = 1;
+  {$ENDIF}
+
+function clock_gettime(clockid: Integer; var pts: timespec): Integer; cdecl; external 'libc';
+
+function Ticks64: TIdTicks;
+var
+  ts: timespec;
+begin
+  // TODO: use CLOCK_BOOTTIME on platforms that support it?  It takes system
+  // suspension into account, whereas CLOCK_MONOTONIC does not...
+  clock_gettime(CLOCK_MONOTONIC, ts);
+
+  {$I IdRangeCheckingOff.inc}
+  {$I IdOverflowCheckingOff.inc}
+  Result := (Int64(ts.tv_sec) * 1000) + (ts.tv_nsec div 1000000);
+  {$I IdOverflowCheckingOn.inc}
+  {$I IdRangeCheckingOn.inc}
+end;
+
+    {$ELSE}
+      {$IFDEF UNIX}
+
   {$IFDEF DARWIN}
     {$IFDEF FPC}
+//RLebeau: FPC does not provide mach_timebase_info() and mach_absolute_time() yet...
 function mach_timebase_info(var TimebaseInfoData: TTimebaseInfoData): Integer; cdecl; external 'libc';
 function mach_absolute_time: QWORD; cdecl; external 'libc';
     {$ENDIF}
-  {$ELSE}
-    {$IFDEF USE_clock_gettime}
-      {$IFDEF LINUX}
-// accordingly Linux's /usr/include/linux/time.h
-const
-  CLOCK_MONOTONIC = 1;
-      {$ENDIF}
-      {$IFDEF FREEBSD}
-// accordingly FreeBSD's /usr/include/time.h
-const
-  CLOCK_MONOTONIC = 4;
-      {$ENDIF}
-
-function clock_gettime(clockid: Integer; var pts: timespec): Integer; cdecl; external 'libc';
-    {$ENDIF}
   {$ENDIF}
-{$ENDIF}
 
 function Ticks64: TIdTicks;
-{$IFDEF DOTNET}
-  {$IFDEF USE_INLINE}inline;{$ENDIF}
-{$ENDIF}
-{$IFDEF UNIX}
   {$IFDEF DARWIN}
     {$IFDEF USE_INLINE} inline;{$ENDIF}
   {$ELSE}
 var
-    {$IFDEF USE_clock_gettime}
-  ts: timespec;
-    {$ELSE}
   tv: timeval;
-    {$ENDIF}
   {$ENDIF}
-{$ENDIF}
-{$IFDEF WINDOWS}
-  {$IFDEF USE_HI_PERF_COUNTER_FOR_TICKS}
-var
-  nTime, freq: {$IFDEF WINCE}LARGE_INTEGER{$ELSE}Int64{$ENDIF};
-  {$ENDIF}
-{$ENDIF}
 begin
-  {$IFDEF UNIX}
-    {$IFDEF DARWIN}
+  {$IFDEF DARWIN}
+
   // TODO: mach_absolute_time() does NOT count ticks while the system is
   // sleeping! We can use time() to account for that:
   //
@@ -5410,113 +5578,51 @@ begin
   // mach_absolute_time() returns billionth of seconds, so divide by one million to get milliseconds
   Result := (mach_absolute_time() * GMachTimeBaseInfo.numer) div (1000000 * GMachTimeBaseInfo.denom);
 
-    {$ELSE}
+  {$ELSE}
 
-      {$IFDEF USE_clock_gettime}
-
-  // TODO: use CLOCK_BOOTTIME on platforms that support it?  It takes system
-  // suspension into account, whereas CLOCK_MONOTONIC does not...
-  clock_gettime(CLOCK_MONOTONIC, ts);
-        {$IFOPT R+} // detect range checking
-          {$R-}
-          {$DEFINE _RPlusWasEnabled}
-        {$ENDIF}
-        {$IFOPT Q+} // detect overflow checking
-          {$Q-}
-          {$DEFINE _QPlusWasEnabled}
-        {$ENDIF}
-  Result := (Int64(ts.tv_sec) * 1000) + (ts.tv_nsec div 1000000);
-        {$IFDEF _QPlusWasEnabled}
-          {$Q+}
-          {$UNDEF _QPlusWasEnabled}
-        {$ENDIF}
-        {$IFDEF _RPlusWasEnabled}
-          {$R+}
-          {$UNDEF _RPlusWasEnabled}
-        {$ENDIF}
-
-      {$ELSE}
-
-        {$IFDEF USE_BASEUNIX}
-  fpgettimeofday(@tv,nil);
-        {$ENDIF}
-        {$IFDEF KYLIXCOMPAT}
+    {$IFDEF KYLIXCOMPAT_OR_VCL_POSIX}
   gettimeofday(tv, nil);
-        {$ENDIF}
-        {$IFOPT R+} // detect range checking
-          {$R-}
-          {$DEFINE _RPlusWasEnabled}
-        {$ENDIF}
-  Result := (Int64(tv.tv_sec) * 1000) + (tv.tv_usec div 1000);
-        {$IFDEF _RPlusWasEnabled}
-          {$R+}
-          {$UNDEF _RPlusWasEnabled}
-        {$ENDIF}
-    {
-    I've implemented this correctly for now. I'll argue for using
-    an int64 internally, since apparently quite some functionality
-    (throttle, etc etc) depends on it, and this value may wrap
-    at any point in time.
-    For Windows: Uptime > 72 hours isn't really that rare any more,
-    For Linux: no control over when this wraps.
-
-    IdEcho has code to circumvent the wrap, but its not very good
-    to have code for that at all spots where it might be relevant.
-    }
-
-      {$ENDIF}
-    {$ENDIF}
-  {$ENDIF}
-
-  {$IFDEF WINDOWS}
-    // S.G. 27/11/2002: Changed to use high-performance counters as per suggested
-    // S.G. 27/11/2002: by David B. Ferguson (david.mcs@ns.sympatico.ca)
-
-    // RLebeau 11/12/2009: removed the high-performance counters again.  They
-    // are not reliable on multi-core systems, and are now starting to cause
-    // problems with TIdIOHandler.ReadLn() timeouts under Windows XP SP3, both
-    // 32-bit and 64-bit.  Refer to these discussions:
-    //
-    // http://www.virtualdub.org/blog/pivot/entry.php?id=106
-    // http://blogs.msdn.com/oldnewthing/archive/2008/09/08/8931563.aspx
-
-    {$IFDEF USE_HI_PERF_COUNTER_FOR_TICKS}
-      {$IFDEF WINCE}
-  if Windows.QueryPerformanceCounter(@nTime) then begin
-    if Windows.QueryPerformanceFrequency(@freq) then begin
-      Result := Trunc((nTime.QuadPart / Freq.QuadPart) * 1000) and High(TIdTicks);
-      Exit;
-    end;
-  end;
+    {$ELSE}
+      {$IFDEF USE_BASEUNIX}
+  fpgettimeofday(@tv,nil);
       {$ELSE}
-  if Windows.QueryPerformanceCounter(nTime) then begin
-    if Windows.QueryPerformanceFrequency(freq) then begin
-      Result := Trunc((nTime / Freq) * 1000) and High(TIdTicks);
-      Exit;
-    end;
-  end;
+  {$message error gettimeofday is not called on this platform!}
+  FillChar(tv, sizeof(tv), 0);
       {$ENDIF}
     {$ENDIF}
-  Result := TIdTicks(GetTickCount64());
+
+  {
+  I've implemented this correctly for now. I'll argue for using
+  an int64 internally, since apparently quite some functionality
+  (throttle, etc etc) depends on it, and this value may wrap
+  at any point in time.
+  For Windows: Uptime > 72 hours isn't really that rare any more,
+  For Linux: no control over when this wraps.
+
+  IdEcho has code to circumvent the wrap, but its not very good
+  to have code for that at all spots where it might be relevant.
+  }
+
+  {$I IdRangeCheckingOff.inc}
+  Result := (Int64(tv.tv_sec) * 1000) + (tv.tv_usec div 1000);
+  {$I IdRangeCheckingOn.inc}
+
   {$ENDIF}
 
-  {$IFDEF DOTNET}
-  // Must cast to a cardinal
-  //
-  // http://lists.ximian.com/archives/public/mono-bugs/2003-November/009293.html
-  // Other references in Google.
-  // Bug in .NET. It acts like Win32, not as per .NET docs but goes negative after 25 days.
-  //
-  // There may be a problem in the future if .NET changes this to work as docced with 25 days.
-  // Will need to check our routines then and somehow counteract / detect this.
-  // One possibility is that we could just wrap it ourselves in this routine.
-
-  // TODO: use DateTime.Ticks instead?
-  //Result := DateTime.Now.Ticks div 10000;
-
-  Result := TIdTicks(Environment.TickCount);
-  {$ENDIF}
 end;
+
+      {$ELSE}
+
+function Ticks64: TIdTicks;
+begin
+  {$message error Ticks64 is not implemented on this platform!}
+  Result := 0;
+end;
+
+      {$ENDIF}
+    {$ENDIF}
+  {$ENDIF}
+{$ENDIF}
 
 {$I IdDeprecatedImplBugOff.inc}
 function GetTickDiff(const AOldTickCount, ANewTickCount: UInt32): UInt32;
@@ -5959,10 +6065,7 @@ begin
 {$ELSE}
   // S.G. 11/8/2003: Added overflow checking disabling and change multiplys by SHLs.
   // Locally disable overflow checking so we can safely use SHL and SHR
-  {$IFOPT Q+} // detect overflow checking
-    {$DEFINE _QPlusWasEnabled}
-    {$Q-}
-  {$ENDIF}
+  {$I IdOverflowCheckingOff.inc}
   L256Power := 4;
   LBuf2 := AIPAddress;
   repeat
@@ -6003,10 +6106,7 @@ begin
   until False;
   VErr := False;
   // Restore overflow checking
-  {$IFDEF _QPlusWasEnabled} // detect previous setting
-    {$UNDEF _QPlusWasEnabled}
-    {$Q+}
-  {$ENDIF}
+  {$I IdOverflowCheckingOn.inc}
 {$ENDIF}
 end;
 
@@ -6417,39 +6517,49 @@ begin
 end;
 {$ENDIF}
 
+{$UNDEF USE_TTHREAD_PRIORITY_PROP}
+{$IFDEF DOTNET}
+  {$DEFINE USE_TTHREAD_PRIORITY_PROP}
+{$ENDIF}
+{$IFDEF WINDOWS}
+  {$DEFINE USE_TTHREAD_PRIORITY_PROP}
+{$ENDIF}
+{$IFDEF UNIX}
+  {$IFDEF USE_VCL_POSIX}
+    // TODO: does this apply?
+    {.$DEFINE USE_TTHREAD_PRIORITY_PROP}
+  {$ENDIF}
+  {$IFDEF KYLIXCOMPAT} // TODO: use KYLIXCOMPAT_OR_VCL_POSIX instead?
+    {$IFNDEF INT_THREAD_PRIORITY}
+      {$DEFINE USE_TTHREAD_PRIORITY_PROP}
+    {$ENDIF}
+  {$ENDIF}
+{$ENDIF}
+
 procedure IndySetThreadPriority(AThread: TThread; const APriority: TIdThreadPriority;
   const APolicy: Integer = -MaxInt);
 {$IFDEF USE_INLINE}inline;{$ENDIF}
 begin
-  {$IFDEF UNIX}
-    {$IFDEF KYLIXCOMPAT}
-      {$IFDEF INT_THREAD_PRIORITY}
-        // Linux only allows root to adjust thread priorities, so we just ignore this call in Linux?
-        // actually, why not allow it if root
-        // and also allow setting *down* threadpriority (anyone can do that)
-        // note that priority is called "niceness" and positive is lower priority
+  {$IFDEF USE_TTHREAD_PRIORITY_PROP}
+  AThread.Priority := APriority;
+  {$ELSE}
+    {$IFDEF UNIX}
+      // Linux only allows root to adjust thread priorities, so we just ignore this call in Linux?
+      // actually, why not allow it if root
+      // and also allow setting *down* threadpriority (anyone can do that)
+      // note that priority is called "niceness" and positive is lower priority
+      {$IFDEF KYLIXCOMPAT} // TODO: use KYLIXCOMPAT_OR_VCL_POSIX instead?
    if (getpriority(PRIO_PROCESS, 0) < APriority) or (geteuid = 0) then begin
      setpriority(PRIO_PROCESS, 0, APriority);
    end;
       {$ELSE}
-   AThread.Priority := APriority;
-      {$ENDIF}
-    {$ENDIF}
-    {$IFDEF USE_BASEUNIX}
-      // Linux only allows root to adjust thread priorities, so we just ingnore this call in Linux?
-      // actually, why not allow it if root
-      // and also allow setting *down* threadpriority (anyone can do that)
-      // note that priority is called "niceness" and positive is lower priority
+        {$IFDEF USE_BASEUNIX}
   if (fpgetpriority(PRIO_PROCESS, 0) < cint(APriority)) or (fpgeteuid = 0) then begin
     fpsetpriority(PRIO_PROCESS, 0, cint(APriority));
   end;
+        {$ENDIF}
+      {$ENDIF}
     {$ENDIF}
-  {$ENDIF}
-  {$IFDEF WINDOWS}
-  AThread.Priority := APriority;
-  {$ENDIF}
-  {$IFDEF DOTNET}
-  AThread.Priority := APriority;
   {$ENDIF}
 end;
 
@@ -6459,37 +6569,52 @@ procedure IndySleep(ATime: UInt32);
 var
   LTime: TimeVal;
 {$ELSE}
-  {$IFNDEF UNIX}
-    {$IFDEF USE_INLINE}inline;{$ENDIF}
-  {$ELSE}
+  {$IFDEF UNIX}
 var
   LTime: TTimeVal;
+  {$ELSE}
+    {$IFDEF USE_INLINE}inline;{$ENDIF}
   {$ENDIF}
 {$ENDIF}
 begin
-  {$IFDEF UNIX}
-    // *nix: Is there are reason for not using nanosleep?
+  {$IFDEF DOTNET}
+
+  Thread.Sleep(ATime);
+
+  {$ELSE}
+    {$IFDEF WINDOWS}
+
+  Windows.Sleep(ATime);
+
+    {$ELSE}
+      {$IFDEF UNIX}
+
+    // *nix: Is there any reason for not using nanosleep() instead?
 
     // what if the user just calls sleep? without doing anything...
     // cannot use GStack.WSSelectRead(nil, ATime)
     // since no readsocketlist exists to get the fdset
   LTime.tv_sec := ATime div 1000;
   LTime.tv_usec := (ATime mod 1000) * 1000;
-    {$IFDEF USE_VCL_POSIX}
-  select( 0, nil, nil, nil, @LTime);
-    {$ENDIF}
-    {$IFDEF KYLIXCOMPAT}
+        {$IFDEF USE_VCL_POSIX}
+  select(0, nil, nil, nil, @LTime);
+        {$ELSE}
+          {$IFDEF KYLIXCOMPAT}
   Libc.Select(0, nil, nil, nil, @LTime);
-    {$ENDIF}
-    {$IFDEF USE_BASEUNIX}
+          {$ELSE}
+            {$IFDEF USE_BASEUNIX}
   fpSelect(0, nil, nil, nil, @LTime);
+            {$ELSE}
+              {$message error select is not called on this platform!}
+            {$ENDIF}
+          {$ENDIF}
+        {$ENDIF}
+
+      {$ELSE}
+        {$message error IndySleep is not implemented on this platform!}
+      {$ENDIF}
+
     {$ENDIF}
-  {$ENDIF}
-  {$IFDEF WINDOWS}
-  Windows.Sleep(ATime);
-  {$ENDIF}
-  {$IFDEF DOTNET}
-  Thread.Sleep(ATime);
   {$ENDIF}
 end;
 
@@ -7133,60 +7258,35 @@ function OffsetFromUTC: TDateTime;
 var
   iBias: Integer;
   tmez: TTimeZoneInformation;
-  {$ENDIF}
-  {$IFDEF UNIX}
-    {$IFDEF USE_VCL_POSIX}
+  {$ELSE}
+    {$IFDEF UNIX}
+      {$IFDEF USE_VCL_POSIX}
 var
   T : Time_t;
   TV : TimeVal;
   UT : tm;
-    {$ENDIF}
-    {$IFDEF USE_BASEUNIX}
+      {$ELSE}
+        {$IFDEF KYLIXCOMPAT}
+var
+  T : Time_T;
+  TV : TTimeVal;
+  UT : TUnixTime;
+        {$ELSE}
+          {$IFDEF USE_BASEUNIX}
  var
    timeval: TTimeVal;
    timezone: TTimeZone;
-    {$ENDIF}
-    {$IFDEF KYLIXCOMPAT}
-var
-  T: Time_T;
-  TV: TTimeVal;
-  UT: TUnixTime;
+          {$ENDIF}
+        {$ENDIF}
+      {$ENDIF}
     {$ENDIF}
   {$ENDIF}
 {$ENDIF}
 begin
-  {$IFDEF UNIX}
-
-    {$IFDEF USE_VCL_POSIX}
-  {from http://edn.embarcadero.com/article/27890 but without multiplying the Result by -1}
-
-  gettimeofday(TV, nil);
-  T := TV.tv_sec;
-  localtime_r(T, UT);
-  Result := UT.tm_gmtoff / 60 / 60 / 24;
-    {$ELSE}
-      {$IFDEF USE_BASEUNIX}
-  fpGetTimeOfDay (@TimeVal, @TimeZone);
-  Result := -1 * (timezone.tz_minuteswest / 60 / 24)
-      {$ELSE}
-        {$IFDEF KYLIXCOMPAT}
-  {from http://edn.embarcadero.com/article/27890 but without multiplying the Result by -1}
-
-  gettimeofday(TV, nil);
-  T := TV.tv_sec;
-  localtime_r(@T, UT);
-  Result := UT.__tm_gmtoff / 60 / 60 / 24;
-        {$ELSE}
-  Result := GOffsetFromUTC;
-        {$ENDIF}
-      {$ENDIF}
-    {$ENDIF}
-
-  {$ELSE}
-    {$IFDEF DOTNET}
+  {$IFDEF DOTNET}
   Result := System.Timezone.CurrentTimezone.GetUTCOffset(DateTime.FromOADate(Now)).TotalDays;
-    {$ELSE}
-      {$IFDEF WINDOWS}
+  {$ELSE}
+    {$IFDEF WINDOWS}
   case GetTimeZoneInformation({$IFDEF WINCE}@{$ENDIF}tmez) of
     TIME_ZONE_ID_INVALID  :
       raise EIdFailedToRetreiveTimeZoneInfo.Create(RSFailedTimeZoneInfo);
@@ -7218,6 +7318,26 @@ begin
   if iBias > 0 then begin
     Result := 0.0 - Result;
   end;
+    {$ELSE}
+      {$IFDEF UNIX}
+
+        {$IFDEF KYLIXCOMPAT_OR_VCL_POSIX}
+  {from http://edn.embarcadero.com/article/27890 but without multiplying the Result by -1}
+
+  gettimeofday(TV, nil);
+  T := TV.tv_sec;
+  localtime_r({$IFDEF KYLIXCOMPAT}@{$ENDIF}T, UT);
+  Result := UT.{$IFDEF KYLIXCOMPAT}__tm_gmtoff{$ELSE}tm_gmtoff{$ENDIF} / 60 / 60 / 24;
+        {$ELSE}
+          {$IFDEF USE_BASEUNIX}
+  fpGetTimeOfDay (@TimeVal, @TimeZone);
+  Result := -1 * (timezone.tz_minuteswest / 60 / 24);
+          {$ELSE}
+  {$message error gettimeofday is not called on this platform!}
+  Result := GOffsetFromUTC;
+          {$ENDIF}
+        {$ENDIF}
+
       {$ELSE}
   Result := GOffsetFromUTC;
       {$ENDIF}
@@ -7469,7 +7589,7 @@ begin
   {$ELSE}
   // RLebeau 2/16/2006: Removed dependency on the FileCtrl unit
     {$IFDEF STRING_UNICODE_MISMATCH}
-   := TIdPlatformString(ADirectory); // explicit convert to Ansi/Unicode
+  LStr := TIdPlatformString(ADirectory); // explicit convert to Ansi/Unicode
   Code := GetFileAttributes(PIdPlatformChar(LStr));
     {$ELSE}
   Code := GetFileAttributes(PChar(ADirectory));
@@ -8442,17 +8562,32 @@ begin
   SetPointer(APtr, ASize);
 end;
 
+{$UNDEF USE_PBYTE_ARITHMETIC}
+{$IFDEF FPC}
+  {$DEFINE USE_PBYTE_ARITHMETIC}
+{$ELSE}
+  {$IFDEF VCL_XE2_OR_ABOVE}
+    {$DEFINE USE_PBYTE_ARITHMETIC}
+  {$ENDIF}
+{$ENDIF}
+
 function TIdMemoryBufferStream.Write(const Buffer; Count: Longint): Longint;
 var
+  LAvailable: TIdStreamSize;
   LNumToCopy: Longint;
 begin
   Result := 0;
-  if (Position >= 0) and (Size > 0) and (Count > 0) then
+  LAvailable := Size - Position;
+  if LAvailable > 0 then
   begin
-    LNumToCopy := IndyMin(Size - Position, Count);
+    {$IFDEF STREAM_SIZE_64}
+    LNumToCopy := Longint(IndyMin(LAvailable, TIdStreamSize(Count)));
+    {$ELSE}
+    LNumToCopy := IndyMin(LAvailable, Count);
+    {$ENDIF}
     if LNumToCopy > 0 then
     begin
-      System.Move(Buffer, Pointer(PtrUInt(Memory) + Position)^, LNumToCopy);
+      System.Move(Buffer, ({$IFDEF USE_PBYTE_ARITHMETIC}PByte{$ELSE}PIdAnsiChar{$ENDIF}(Memory) + Position)^, LNumToCopy);
       TIdStreamHelper.Seek(Self, LNumToCopy, soCurrent);
       Result := LNumToCopy;
     end;

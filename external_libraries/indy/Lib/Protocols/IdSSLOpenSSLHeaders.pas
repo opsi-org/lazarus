@@ -815,9 +815,6 @@ my $default_depflags = " -DOPENSSL_NO_CAMELLIA -DOPENSSL_NO_CAPIENG -DOPENSSL_NO
 uses
   IdException,
   IdGlobal,
-  {$IFDEF KYLIXCOMPAT}
-  libc,
-  {$ENDIF}
   {$IFDEF WINDOWS}
   Windows,
   IdWinsock2,
@@ -826,6 +823,9 @@ uses
   Posix.SysSocket,
   Posix.SysTime,
   Posix.SysTypes,
+  {$ENDIF}
+  {$IFDEF KYLIXCOMPAT}
+  libc,
   {$ENDIF}
   {$IFDEF USE_BASEUNIX}
   baseunix,
@@ -15803,7 +15803,7 @@ _des_cblock = DES_cblock
 	//* For a client, this contains a callback function that selects the
 	// * next protocol from the list provided by the server. */
     next_proto_select_cb : function(s : PSSL; out _out : PIdAnsiChar;
-      out outlen : PIdAnsiChar;
+      outlen : PIdAnsiChar;
       _in : PIdAnsiChar;
       inlen : TIdC_UINT;
       arg : Pointer) : TIdC_INT cdecl;
@@ -16774,11 +16774,11 @@ var
 		key : PIdAnsiChar; iv : PIdAnsiChar) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_DecryptUpdate}
   EVP_DecryptUpdate : function(ctx : PEVP_CIPHER_CTX; _out : PIdAnsiChar;
-		outl : TIdC_INT; _in : PIdAnsiChar; inl : TIdC_INT) : TIdC_INT cdecl = nil;
+		outl : PIdC_INT; _in : PIdAnsiChar; inl : TIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_DecryptFinal}
-  EVP_DecryptFinal : function(ctx : PEVP_CIPHER_CTX; outm : PIdAnsiChar; outl : TIdC_INT) : TIdC_INT cdecl = nil;
+  EVP_DecryptFinal : function(ctx : PEVP_CIPHER_CTX; outm : PIdAnsiChar; outl : PIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_DecryptFinal_ex}
-  EVP_DecryptFinal_ex : function(ctx : PEVP_CIPHER_CTX; outm: PIdAnsiChar; outl : TIdC_INT) : TIdC_INT cdecl = nil;
+  EVP_DecryptFinal_ex : function(ctx : PEVP_CIPHER_CTX; outm: PIdAnsiChar; outl : PIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_CipherInit}
   EVP_CipherInit : function(ctx : PEVP_CIPHER_CTX; cipher : PEVP_CIPHER;
 	  key : PIdAnsiChar; iv : PIdAnsiChar;
@@ -16789,11 +16789,11 @@ var
 		enc : TIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_CipherUpdate}
   EVP_CipherUpdate : function(ctx : PEVP_CIPHER_CTX; _out : PIdAnsiChar;
-		outl : TIdC_INT; _in : PIdAnsiChar; inl : TIdC_INT) : TIdC_INT cdecl = nil;
+		outl : PIdC_INT; _in : PIdAnsiChar; inl : TIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_CipherFinal}
   EVP_CipherFinal : function(ctx : PEVP_CIPHER_CTX; outm : PIdAnsiChar; outl : PIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_CipherFinal_ex}
-  EVP_CipherFinal_ex: function(ctx : PEVP_CIPHER_CTX; outm : PIdAnsiChar; outl : PIdC_INT) : TIdC_INT;
+  EVP_CipherFinal_ex: function(ctx : PEVP_CIPHER_CTX; outm : PIdAnsiChar; outl : PIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_SignFinal}
   EVP_SignFinal : function(ctx : PEVP_MD_CTX; md : PIdAnsiChar; s : PIdC_INT;
 		pkey : PEVP_PKEY) : TIdC_INT cdecl = nil;
@@ -16817,7 +16817,7 @@ var
 		ek : PIdAnsiChar; ekl : TIdC_INT; iv : PIdAnsiChar;
 		priv : PEVP_PKEY) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_OpenFinal}
-	EVP_OpenFinal : function (ctx : PEVP_CIPHER_CTX; _out : PIdAnsiChar; outl : TIdC_INT) : TIdC_INT cdecl = nil;
+	EVP_OpenFinal : function (ctx : PEVP_CIPHER_CTX; _out : PIdAnsiChar; outl : PIdC_INT) : TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_SealInit}
   EVP_SealInit : function(ctx : PEVP_CIPHER_CTX; _type : PEVP_CIPHER;
 	  ek : PPIdAnsiChar; ekl : PIdC_INT; iv : PIdAnsiChar;
@@ -16887,7 +16887,7 @@ var
   {$EXTERNALSYM EVP_PKEY_assign}
   EVP_PKEY_assign : function(pkey: PEVP_PKEY; _type: TIdC_INT; key: PIdAnsiChar): TIdC_INT cdecl = nil;
   {$EXTERNALSYM EVP_get_cipherbyname}
-  EVP_get_cipherbyname : function(const name : PIdAnsiChar): EVP_CIPHER cdecl = nil;
+  EVP_get_cipherbyname : function(const name : PIdAnsiChar): PEVP_CIPHER cdecl = nil;
   {$EXTERNALSYM EVP_get_digestbyname}
   EVP_get_digestbyname : function(const name: PIdAnsiChar): PEVP_MD cdecl = nil;
   {$EXTERNALSYM EVP_MD_type}
@@ -17010,7 +17010,7 @@ var
   {$ENDIF}
 
   {$EXTERNALSYM X509_new}
-  X509_new : function: PPX509 cdecl = nil;
+  X509_new : function: PX509 cdecl = nil;
   {$EXTERNALSYM X509_free}
   X509_free : procedure(x: PX509) cdecl = nil;
   {$EXTERNALSYM X509_NAME_new}
@@ -17985,6 +17985,8 @@ var
   CRYPTO_cleanup_all_ex_data : procedure cdecl = nil;
  {$EXTERNALSYM SSL_COMP_get_compression_methods}
   SSL_COMP_get_compression_methods : function: PSTACK_OF_SSL_COMP cdecl = nil;
+ {$EXTERNALSYM SSL_COMP_free_compression_methods}
+  SSL_COMP_free_compression_methods : procedure; cdecl = nil;
  {$EXTERNALSYM sk_pop_free}
   sk_pop_free : procedure(st: PSTACK; func: Tsk_pop_free_func) cdecl = nil;
  {$EXTERNALSYM sk_dup}
@@ -18404,17 +18406,17 @@ function BIO_set_proxy_header(b : PBIO; sk : PIdAnsiChar) : TIdC_LONG;
  {$EXTERNALSYM BIO_set_no_connect_return}
 function BIO_set_no_connect_return(b : PBIO; b2 : TIdC_LONG) : TIdC_LONG;
  {$EXTERNALSYM BIO_get_proxy_header}
-function BIO_get_proxy_header(b : PBIO; skp : PIdAnsiChar) : TIdC_LONG;
+function BIO_get_proxy_header(b : PBIO; var skp : PIdAnsiChar) : TIdC_LONG;
  {$EXTERNALSYM BIO_get_proxies}
-function BIO_get_proxies(b : PBIO; pxy_p : PIdAnsiChar) : TIdC_LONG;
+function BIO_get_proxies(b : PBIO; var pxy_p : PIdAnsiChar) : TIdC_LONG;
  {$EXTERNALSYM BIO_get_url}
-function BIO_get_url(b : PBIO; url : PIdAnsiChar) : TIdC_LONG;
+function BIO_get_url(b : PBIO; var url : PIdAnsiChar) : TIdC_LONG;
  {$EXTERNALSYM BIO_get_no_connect_return}
 function BIO_get_no_connect_return(b : PBIO) : TIdC_LONG;
  {$EXTERNALSYM BIO_set_fd}
 function BIO_set_fd(b : PBIO; fd,c : TIdC_INT) : TIdC_LONG;
  {$EXTERNALSYM BIO_get_fd}
-function BIO_get_fd(b : PBIO; c : TIdC_INT) : TIdC_LONG;
+function BIO_get_fd(b : PBIO; c : PIdC_INT) : TIdC_LONG;
  {$EXTERNALSYM BIO_seek}
 function BIO_seek(b : PBIO; ofs : TIdC_LONG) : TIdC_INT;
  {$EXTERNALSYM BIO_tell}
@@ -18425,15 +18427,15 @@ function BIO_tell(b : PBIO) : TIdC_INT;
 function BIO_read_filename(b : PBIO; name : PIdAnsiChar) : TIdC_LONG;
 {$ENDIF}
  {$EXTERNALSYM BIO_get_md}
-function BIO_get_md(b : PBIO;mdp : Pointer) : TIdC_LONG;
+function BIO_get_md(b : PBIO; var mdp : PEVP_MD) : TIdC_LONG;
  {$EXTERNALSYM BIO_get_md_ctx}
-function BIO_get_md_ctx(b : PBIO;mdcp : Pointer) : TIdC_LONG;
+function BIO_get_md_ctx(b : PBIO; var mdcp : PEVP_MD_CTX) : TIdC_LONG;
  {$EXTERNALSYM BIO_set_md_ctx}
-function BIO_set_md_ctx(b : PBIO;mdcp : Pointer) : TIdC_LONG;
+function BIO_set_md_ctx(b : PBIO; mdcp : PEVP_MD_CTX) : TIdC_LONG;
  {$EXTERNALSYM BIO_get_cipher_status}
 function BIO_get_cipher_status(b : PBIO) : TIdC_LONG;
  {$EXTERNALSYM BIO_get_cipher_ctx}
-function BIO_get_cipher_ctx(b : PBIO; c_pp : Pointer): TIdC_LONG;
+function BIO_get_cipher_ctx(b : PBIO; var c_pp : PEVP_CIPHER_CTX): TIdC_LONG;
 
  {$EXTERNALSYM BIO_write_filename}
 function BIO_write_filename(b : PBIO; name : PIdAnsiChar) : TIdC_LONG;
@@ -18444,7 +18446,7 @@ function BIO_rw_filename(b : PBIO; name : PIdAnsiChar) : TIdC_LONG;
  {$EXTERNALSYM BIO_set_ssl}
 function BIO_set_ssl(b : PBIO; ssl : PSSL; c : TIdC_LONG) : TIdC_LONG;
  {$EXTERNALSYM BIO_get_ssl}
-function BIO_get_ssl(b : PBIO; sslp : PSSL) : TIdC_LONG;
+function BIO_get_ssl(b : PBIO; var sslp : PSSL) : TIdC_LONG;
  {$EXTERNALSYM BIO_set_ssl_mode}
 function BIO_set_ssl_mode(b : PBIO; client : TIdC_LONG) : TIdC_LONG;
  {$EXTERNALSYM BIO_set_ssl_renegotiate_bytes}
@@ -18454,11 +18456,11 @@ function BIO_get_num_renegotiates(b : PBIO) : TIdC_LONG;
  {$EXTERNALSYM BIO_set_ssl_renegotiate_timeout}
 function BIO_set_ssl_renegotiate_timeout(b : PBIO; seconds : TIdC_LONG) : TIdC_LONG;
  {$EXTERNALSYM BIO_get_mem_data}
-function BIO_get_mem_data(b : PBIO; out pp : Pointer) : TIdC_INT;
+function BIO_get_mem_data(b : PBIO; var pp : PIdAnsiChar) : TIdC_INT;
  {$EXTERNALSYM BIO_set_mem_buf}
-function BIO_set_mem_buf(b : PBIO; bm : PIdAnsiChar; c : TIdC_INT) : TIdC_INT;
+function BIO_set_mem_buf(b : PBIO; bm : PBUF_MEM; c : TIdC_INT) : TIdC_INT;
  {$EXTERNALSYM BIO_get_mem_ptr}
-function BIO_get_mem_ptr(b: PBIO; out pp: Pointer) : TIdC_INT;
+function BIO_get_mem_ptr(b: PBIO; var pp: PBUF_MEM) : TIdC_INT;
  {$EXTERNALSYM BIO_set_mem_eof_return}
 procedure BIO_set_mem_eof_return(b : PBIO; const v : TIdC_INT);
 //* For the BIO_f_buffer() type */
@@ -18515,9 +18517,9 @@ function BIO_dgram_recv_timedout(b : PBIO) : TIdC_INT;
  {$EXTERNALSYM BIO_dgram_send_timedout}
 function BIO_dgram_send_timedout(b : PBIO) : TIdC_INT;
  {$EXTERNALSYM BIO_dgram_get_peer}
-function BIO_dgram_get_peer(b : PBIO; var peer : SockAddr) : TIdC_INT;
+function BIO_dgram_get_peer(b : PBIO; peer : PSockAddr) : TIdC_INT;
  {$EXTERNALSYM BIO_dgram_set_peer}
-function BIO_dgram_set_peer(b : PBIO; peer : SockAddr) : TIdC_INT;
+function BIO_dgram_set_peer(b : PBIO; peer : PSockAddr) : TIdC_INT;
 
  {$EXTERNALSYM PEM_read_bio_X509}
 function PEM_read_bio_X509(bp: PBIO; x: PPX509; cb: ppem_password_cb; u: Pointer): PX509;
@@ -18600,9 +18602,9 @@ function EVP_get_digestbynid(a : TIdC_INT) : PEVP_MD;
  {$EXTERNALSYM EVP_get_digestbyobj}
 function EVP_get_digestbyobj(a : PASN1_OBJECT) : PEVP_MD;
  {$EXTERNALSYM EVP_get_cipherbynid}
-function EVP_get_cipherbynid(a : TIdC_INT) : EVP_CIPHER;
+function EVP_get_cipherbynid(a : TIdC_INT) : PEVP_CIPHER;
  {$EXTERNALSYM EVP_get_cipherbyobj}
-function EVP_get_cipherbyobj(a : PASN1_OBJECT) : EVP_CIPHER;
+function EVP_get_cipherbyobj(a : PASN1_OBJECT) : PEVP_CIPHER;
  {$EXTERNALSYM EVP_MD_nid}
 function EVP_MD_nid(e : PEVP_MD) : TIdC_INT;
  {$EXTERNALSYM EVP_MD_name}
@@ -18636,10 +18638,10 @@ function EVP_VerifyInit_ex(a: PEVP_MD_CTX; b: PEVP_MD; c: PENGINE) : TIdC_INT;
  {$EXTERNALSYM EVP_VerifyInit}
 function EVP_VerifyInit(a: PEVP_MD_CTX; b: PEVP_MD) : TIdC_INT;
  {$EXTERNALSYM EVP_VerifyUpdate}
-function EVP_VerifyUpdate(a: PEVP_MD_CTX;b: Pointer; c : size_t) : TIdC_INT;
+function EVP_VerifyUpdate(a: PEVP_MD_CTX; b: Pointer; c : size_t) : TIdC_INT;
  {$EXTERNALSYM EVP_OpenUpdate}
-function EVP_OpenUpdate(a:PEVP_CIPHER_CTX; b : PIdAnsiChar; c : TIdC_INT;
-  d: PIdAnsiChar; e : TIdC_INT) : TIdC_INT;
+function EVP_OpenUpdate(a: PEVP_CIPHER_CTX; _out : PIdAnsiChar; outl : PIdC_INT;
+  _in : PIdAnsiChar; inl : TIdC_INT) : TIdC_INT;
  {$EXTERNALSYM EVP_SealUpdate}
 function EVP_SealUpdate(a : PEVP_CIPHER_CTX; b: PIdAnsiChar; c : PIdC_INT;
   d: PIdAnsiChar; e : TIdC_INT) : TIdC_INT;
@@ -22140,6 +22142,7 @@ them in case we use them later.}
   {CH fn_SSL_get_current_expansion = 'SSL_get_current_expansion'; } {Do not localize}
   {CH fn_SSL_COMP_get_name = 'SSL_COMP_get_name'; } {Do not localize}
   fn_SSL_COMP_get_compression_methods = 'SSL_COMP_get_compression_methods'; {Do not localize}
+  fn_SSL_COMP_free_compression_methods = 'SSL_COMP_free_compression_methods'; {Do not localize}
   // GREGOR
   //fn_SSLeay_add_ssl_algorithms = 'mi_SSLeay_add_ssl_algorithms';  {Do not localize}
   //why does the function name not match?
@@ -22541,14 +22544,14 @@ end;
 
 function LoadSSLCryptoLibrary: HMODULE;
 begin
-  {$IFDEF KYLIXCOMPAT}
-  // Workaround that is required under Linux (changed RTLD_GLOBAL with RTLD_LAZY Note: also work with LoadLibrary())
-  Result := HackLoad(GIdOpenSSLPath + SSLCLIB_DLL_name, SSLDLLVers);
-  {$ELSE}
-    {$IFDEF WINDOWS}
+  {$IFDEF WINDOWS}
   //On Windows, you should use SafeLoadLibrary because
   //the LoadLibrary API call messes with the FPU control word.
   Result := SafeLoadLibrary(GIdOpenSSLPath + SSLCLIB_DLL_name);
+  {$ELSE}
+    {$IFDEF KYLIXCOMPAT}
+  // Workaround that is required under Linux (changed RTLD_GLOBAL with RTLD_LAZY Note: also work with LoadLibrary())
+  Result := HackLoad(GIdOpenSSLPath + SSLCLIB_DLL_name, SSLDLLVers);
     {$ELSE}
       {$IFDEF USE_BASEUNIX_OR_VCL_POSIX}
   Result := HMODULE(HackLoad(GIdOpenSSLPath + SSLCLIB_DLL_name, SSLDLLVers));
@@ -22561,11 +22564,7 @@ end;
 
 function LoadSSLLibrary: HMODULE;
 begin
-  {$IFDEF KYLIXCOMPAT}
-  // Workaround that is required under Linux (changed RTLD_GLOBAL with RTLD_LAZY Note: also work with LoadLibrary())
-  Result := HackLoad(GIdOpenSSLPath + SSL_DLL_name, SSLDLLVers);
-  {$ELSE}
-    {$IFDEF WINDOWS}
+  {$IFDEF WINDOWS}
   //On Windows, you should use SafeLoadLibrary because
   //the LoadLibrary API call messes with the FPU control word.
   Result := SafeLoadLibrary(GIdOpenSSLPath + SSL_DLL_name);
@@ -22574,6 +22573,10 @@ begin
   if Result = 0 then begin
     Result := SafeLoadLibrary(GIdOpenSSLPath + SSL_DLL_name_alt);
   end;
+  {$ELSE}
+    {$IFDEF KYLIXCOMPAT}
+  // Workaround that is required under Linux (changed RTLD_GLOBAL with RTLD_LAZY Note: also work with LoadLibrary())
+  Result := HackLoad(GIdOpenSSLPath + SSL_DLL_name, SSLDLLVers);
     {$ELSE}
       {$IFDEF USE_BASEUNIX_OR_VCL_POSIX}
   Result := HMODULE(HackLoad(GIdOpenSSLPath + SSL_DLL_name, SSLDLLVers));
@@ -22867,6 +22870,7 @@ we have to handle both cases.
   end;
   @CRYPTO_cleanup_all_ex_data := LoadFunctionCLib(fn_CRYPTO_cleanup_all_ex_data,False); //Used by Indy
   @SSL_COMP_get_compression_methods := LoadFunction(fn_SSL_COMP_get_compression_methods,False);
+  @SSL_COMP_free_compression_methods := LoadFunction(fn_SSL_COMP_free_compression_methods,False);
   @sk_pop_free := LoadFunctionCLib(fn_sk_pop_free,False);
   //RSA
   @RSA_free := LoadFunctionCLib(fn_RSA_free,False);
@@ -23044,14 +23048,14 @@ we have to handle both cases.
  // @EVP_des_ede_cfb8 := LoadFunctionCLib(fn_EVP_des_ede_cfb8,False);
   //#endif
   @EVP_des_ede3_cfb64 := LoadFunctionCLib(fn_EVP_des_cfb64);
-  @EVP_des_ede3_cfb1 := LoadFunctionCLib(fn_EVP_des_cfb64,False);
-  @EVP_des_ede3_cfb8 := LoadFunctionCLib(fn_EVP_des_cfb64,False);
-  @EVP_des_ofb := LoadFunctionCLib(fn_EVP_des_cfb64,False);
-  @EVP_des_ede_ofb := LoadFunctionCLib(fn_EVP_des_cfb64,False);
-  @EVP_des_ede3_ofb := LoadFunctionCLib(fn_EVP_des_cfb64,False);
-  @EVP_des_cbc := LoadFunctionCLib(fn_EVP_des_cfb64,False);
-  @EVP_des_ede_cbc := LoadFunctionCLib(fn_EVP_des_cfb64,False);
-  @EVP_desx_cbc := LoadFunctionCLib(fn_EVP_des_cfb64,False);
+  @EVP_des_ede3_cfb1 := LoadFunctionCLib(fn_EVP_des_ede3_cfb1,False);
+  @EVP_des_ede3_cfb8 := LoadFunctionCLib(fn_EVP_des_ede3_cfb8,False);
+  @EVP_des_ofb := LoadFunctionCLib(fn_EVP_des_ofb,False);
+  @EVP_des_ede_ofb := LoadFunctionCLib(fn_EVP_des_ede_ofb,False);
+  @EVP_des_ede3_ofb := LoadFunctionCLib(fn_EVP_des_ede3_ofb,False);
+  @EVP_des_cbc := LoadFunctionCLib(fn_EVP_des_cbc,False);
+  @EVP_des_ede_cbc := LoadFunctionCLib(fn_EVP_des_ede_cbc,False);
+  @EVP_desx_cbc := LoadFunctionCLib(fn_EVP_desx_cbc,False);
 //* This should now be supported through the dev_crypto ENGINE. But also, why are
 // * rc4 and md5 declarations made here inside a "NO_DES" precompiler branch? */
 //#if 0
@@ -23618,6 +23622,7 @@ begin
   @ERR_remove_state := nil;
   @CRYPTO_cleanup_all_ex_data := nil;
   @SSL_COMP_get_compression_methods := nil;
+  @SSL_COMP_free_compression_methods := nil;
   @sk_pop_free := nil;
   //RSA
   @RSA_new := nil;
@@ -23925,10 +23930,10 @@ begin
   @EVP_EncryptInit := nil;
   @EVP_EncryptInit_ex := nil;
   @EVP_EncryptUpdate := nil;
-	@EVP_EncryptFinal_ex := nil;
-	@EVP_EncryptFinal := nil;
+  @EVP_EncryptFinal_ex := nil;
+  @EVP_EncryptFinal := nil;
 
-	@EVP_DecryptInit := nil;
+  @EVP_DecryptInit := nil;
   @EVP_DecryptInit_ex := nil;
   @EVP_DecryptUpdate := nil;
   @EVP_DecryptFinal := nil;
@@ -23943,9 +23948,9 @@ begin
   @EVP_DigestSignInit := nil;
   @EVP_DigestSignFinal := nil;
   @EVP_DigestVerifyInit := nil;
-	@EVP_DigestVerifyFinal := nil;
+  @EVP_DigestVerifyFinal := nil;
   @EVP_OpenInit := nil;
-	@EVP_OpenFinal := nil;
+  @EVP_OpenFinal := nil;
   @EVP_SealInit := nil;
   @EVP_SealFinal := nil;
   @EVP_EncodeInit := nil;
@@ -23953,7 +23958,7 @@ begin
   @EVP_EncodeUpdate := nil;
   @EVP_EncodeFinal := nil;
   @EVP_EncodeBlock := nil;
-	@EVP_DecodeInit := nil;
+  @EVP_DecodeInit := nil;
   @EVP_DecodeUpdate := nil;
   @EVP_DecodeFinal := nil;
   @EVP_DecodeBlock := nil;
@@ -24196,9 +24201,12 @@ var
   LStack: Pointer;
 begin
   if {$IFDEF STATICLOAD_OPENSSL}bIsLoaded{$ELSE}hIdSSL <> 0{$ENDIF} then begin
+    if Assigned(SSL_COMP_free_compression_methods) then begin
+      SSL_COMP_free_compression_methods;
+    end
     //this is a workaround for a known leak in the openssl library
     //present in 0.9.8a
-    if Assigned(SSLeay) then begin
+    else if Assigned(SSLeay) then begin
       if SSLeay = $0090801f then begin
         if Assigned(SSL_COMP_get_compression_methods) and
            Assigned(sk_pop_free) and
@@ -24933,7 +24941,7 @@ end;
 function SSL_CTX_add_extra_chain_cert(ctx : PSSL_CTX; x509 : PX509) : TIdC_LONG;
  {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-	Result := SSL_CTX_ctrl(ctx,SSL_CTRL_EXTRA_CHAIN_CERT,0,x509);
+  Result := SSL_CTX_ctrl(ctx,SSL_CTRL_EXTRA_CHAIN_CERT,0,x509);
 end;
 
 function SSL_CTX_get_extra_chain_certs(ctx : PSSL_CTX; var px509 : px509) : TIdC_LONG;
@@ -25190,22 +25198,22 @@ begin
   Result := BIO_int_ctrl(b,BIO_C_SET_PROXY_PARAM,5,b2);
 end;
 
-function BIO_get_proxy_header(b : PBIO; skp : PIdAnsiChar) : TIdC_LONG;
+function BIO_get_proxy_header(b : PBIO; var skp : PIdAnsiChar) : TIdC_LONG;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-  Result := BIO_ctrl(b,BIO_C_GET_PROXY_PARAM,0,skp);
+  Result := BIO_ctrl(b,BIO_C_GET_PROXY_PARAM,0,@skp);
 end;
 
-function BIO_get_proxies(b : PBIO; pxy_p : PIdAnsiChar) : TIdC_LONG;
+function BIO_get_proxies(b : PBIO; var pxy_p : PIdAnsiChar) : TIdC_LONG;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-  Result := BIO_ctrl(b,BIO_C_GET_PROXY_PARAM,1,pxy_p);
+  Result := BIO_ctrl(b,BIO_C_GET_PROXY_PARAM,1,@pxy_p);
 end;
 
-function BIO_get_url(b : PBIO; url : PIdAnsiChar) : TIdC_LONG;
+function BIO_get_url(b : PBIO; var url : PIdAnsiChar) : TIdC_LONG;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-  Result := BIO_ctrl(b,BIO_C_GET_PROXY_PARAM,2,url);
+  Result := BIO_ctrl(b,BIO_C_GET_PROXY_PARAM,2,@url);
 end;
 
 function BIO_get_no_connect_return(b : PBIO) : TIdC_LONG;
@@ -25220,22 +25228,22 @@ begin
   Result := BIO_int_ctrl(b,BIO_C_SET_FD,c,fd);
 end;
 
-function BIO_get_fd(b : PBIO; c : TIdC_INT) : TIdC_LONG;
+function BIO_get_fd(b : PBIO; c : PIdC_INT) : TIdC_LONG;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-  Result := BIO_ctrl(b,BIO_C_GET_FD,0,@c);
+  Result := BIO_ctrl(b,BIO_C_GET_FD,0,c);
 end;
 
-//function BIO_set_fp(b : PBIO; fp : PIdAnsiChar; c : TIdC_LONG) : TIdC_LONG;
+//function BIO_set_fp(b : PBIO; fp : Pointer; c : TIdC_LONG) : TIdC_LONG;
 //{$IFDEF USE_INLINE} inline; {$ENDIF}
 //begin
 //  Result := BIO_ctrl(b,BIO_C_SET_FILE_PTR,c,fp);
 //end;
 
-//function BIO_get_fp(b : PBIO; fpp : PIdAnsiChar) : TIdC_LONG;
+//function BIO_get_fp(b : PBIO; out fpp : Pointer) : TIdC_LONG;
 //{$IFDEF USE_INLINE} inline; {$ENDIF}
 //begin
-//  Result := BIO_ctrl(b,BIO_C_GET_FILE_PTR,0,fpp);
+//  Result := BIO_ctrl(b,BIO_C_GET_FILE_PTR,0,@fpp);
 //end;
 
 function BIO_seek(b : PBIO; ofs : TIdC_LONG) : TIdC_INT;
@@ -25293,10 +25301,10 @@ begin
   Result :=  BIO_ctrl(b,BIO_C_SET_SSL,c,ssl);
 end;
 
-function BIO_get_ssl(b : PBIO; sslp : PSSL) : TIdC_LONG;
+function BIO_get_ssl(b : PBIO; var sslp : PSSL) : TIdC_LONG;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-  Result := BIO_ctrl(b,BIO_C_GET_SSL,0,sslp);
+  Result := BIO_ctrl(b,BIO_C_GET_SSL,0,@sslp);
 end;
 
 function BIO_set_ssl_mode(b : PBIO; client : TIdC_LONG) : TIdC_LONG;
@@ -25323,22 +25331,22 @@ begin
   Result := BIO_ctrl(b,BIO_C_SET_SSL_RENEGOTIATE_TIMEOUT,seconds,nil);
 end;
 
-function BIO_get_mem_data(b : PBIO; out pp : Pointer) : TIdC_INT;
+function BIO_get_mem_data(b : PBIO; var pp : PIdAnsiChar) : TIdC_INT;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-  Result := BIO_ctrl(b,BIO_CTRL_INFO,0,pp);
+  Result := BIO_ctrl(b,BIO_CTRL_INFO,0,@pp);
 end;
 
-function BIO_set_mem_buf(b : PBIO; bm : PIdAnsiChar; c : TIdC_INT) : TIdC_INT;
+function BIO_set_mem_buf(b : PBIO; bm : PBUF_MEM; c : TIdC_INT) : TIdC_INT;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
   Result := BIO_ctrl(b, BIO_C_SET_BUF_MEM, c, bm);
 end;
 
-function BIO_get_mem_ptr(b: PBIO; out pp: Pointer) : TIdC_INT;
+function BIO_get_mem_ptr(b: PBIO; var pp: PBUF_MEM) : TIdC_INT;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-  Result := BIO_ctrl(b, BIO_C_GET_BUF_MEM_PTR, 0, pp);
+  Result := BIO_ctrl(b, BIO_C_GET_BUF_MEM_PTR, 0, @pp);
 end;
 
 procedure BIO_set_mem_eof_return(b : PBIO; const v : TIdC_INT);
@@ -25419,7 +25427,7 @@ end;
 function BIO_get_info_callback(b : PBIO; var cbp : Pbio_info_cb) : TIdC_INT;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-  Result := BIO_ctrl(b,BIO_CTRL_GET_CALLBACK,0, Pointer(@cbp));
+  Result := BIO_ctrl(b,BIO_CTRL_GET_CALLBACK,0, @cbp);
 end;
 
 function BIO_set_info_callback(b : PBIO; cb : Pbio_info_cb) : TIdC_INT;
@@ -25503,16 +25511,16 @@ begin
   Result := BIO_ctrl(b, BIO_CTRL_DGRAM_GET_SEND_TIMER_EXP, 0, nil);
 end;
 
-function BIO_dgram_get_peer(b : PBIO; var peer : SockAddr) : TIdC_INT;
+function BIO_dgram_get_peer(b : PBIO; peer : PSockAddr) : TIdC_INT;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-  Result := BIO_ctrl(b, BIO_CTRL_DGRAM_GET_PEER, 0, @peer)
+  Result := BIO_ctrl(b, BIO_CTRL_DGRAM_GET_PEER, 0, peer);
 end;
 
-function BIO_dgram_set_peer(b : PBIO; peer : SockAddr) : TIdC_INT;
+function BIO_dgram_set_peer(b : PBIO; peer : PSockAddr) : TIdC_INT;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-  Result := BIO_ctrl(b, BIO_CTRL_DGRAM_SET_PEER, 0, @peer);
+  Result := BIO_ctrl(b, BIO_CTRL_DGRAM_SET_PEER, 0, peer);
 end;
 
 {$IFDEF SSLEAY_MACROS}
@@ -25891,13 +25899,13 @@ begin
   Result := EVP_get_digestbynid(OBJ_obj2nid(a));
 end;
 
-function EVP_get_cipherbynid(a : TIdC_INT) : EVP_CIPHER;
+function EVP_get_cipherbynid(a : TIdC_INT) : PEVP_CIPHER;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
   Result := EVP_get_cipherbyname(OBJ_nid2sn(a));
 end;
 
-function EVP_get_cipherbyobj(a : PASN1_OBJECT) : EVP_CIPHER;
+function EVP_get_cipherbyobj(a : PASN1_OBJECT) : PEVP_CIPHER;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
   Result := EVP_get_cipherbynid(OBJ_obj2nid(a))
@@ -25999,17 +26007,17 @@ begin
   Result := EVP_DigestInit(a,b);
 end;
 
-function EVP_VerifyUpdate(a: PEVP_MD_CTX;b: Pointer; c : size_t) : TIdC_INT;
+function EVP_VerifyUpdate(a: PEVP_MD_CTX; b: Pointer; c : size_t) : TIdC_INT;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-  Result :=	EVP_DigestUpdate(a,b,c);
+  Result := EVP_DigestUpdate(a,b,c);
 end;
 
-function EVP_OpenUpdate(a:PEVP_CIPHER_CTX; b : PIdAnsiChar; c : TIdC_INT;
-  d: PIdAnsiChar; e : TIdC_INT) : TIdC_INT;
+function EVP_OpenUpdate(a: PEVP_CIPHER_CTX; _out : PIdAnsiChar; outl : PIdC_INT;
+  _in : PIdAnsiChar; inl : TIdC_INT) : TIdC_INT;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-	Result := EVP_DecryptUpdate(a,b,c,d,e)
+  Result := EVP_DecryptUpdate(a,_out,outl,_in,inl);
 end;
 
 function EVP_SealUpdate(a : PEVP_CIPHER_CTX; b: PIdAnsiChar; c : PIdC_INT;
@@ -26018,7 +26026,6 @@ function EVP_SealUpdate(a : PEVP_CIPHER_CTX; b: PIdAnsiChar; c : PIdC_INT;
 begin
   Result := EVP_EncryptUpdate(a,b,c,d,e)
 end;
-
 
 function EVP_DigestSignUpdate(a : PEVP_MD_CTX; b : Pointer; c : size_t) : TIdC_Int;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
@@ -26032,22 +26039,22 @@ begin
   Result := EVP_DigestUpdate(a,b,size_t(c));
 end;
 
-function BIO_get_md(b : PBIO;mdp : Pointer) : TIdC_LONG;
+function BIO_get_md(b : PBIO; var mdp : PEVP_MD) : TIdC_LONG;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-  Result := BIO_ctrl(b,BIO_C_GET_MD,0, PIdAnsiChar(mdp));
+  Result := BIO_ctrl(b,BIO_C_GET_MD,0,@mdp);
 end;
 
-function BIO_get_md_ctx(b : PBIO;mdcp : Pointer) : TIdC_LONG;
+function BIO_get_md_ctx(b : PBIO; var mdcp : PEVP_MD_CTX) : TIdC_LONG;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-  Result := BIO_ctrl(b,BIO_C_GET_MD_CTX,0,PIdAnsiChar(mdcp));
+  Result := BIO_ctrl(b,BIO_C_GET_MD_CTX,0,@mdcp);
 end;
 
-function BIO_set_md_ctx(b : PBIO;mdcp : Pointer) : TIdC_LONG;
+function BIO_set_md_ctx(b : PBIO; mdcp : PEVP_MD_CTX) : TIdC_LONG;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-  Result := BIO_ctrl(b,BIO_C_SET_MD_CTX,0,PIdAnsiChar(mdcp));
+  Result := BIO_ctrl(b,BIO_C_SET_MD_CTX,0,mdcp);
 end;
 
 function BIO_get_cipher_status(b : PBIO) : TIdC_LONG;
@@ -26056,10 +26063,10 @@ begin
   Result := BIO_ctrl(b,BIO_C_GET_CIPHER_STATUS,0,nil);
 end;
 
-function BIO_get_cipher_ctx(b : PBIO; c_pp : Pointer): TIdC_LONG;
+function BIO_get_cipher_ctx(b : PBIO; var c_pp : PEVP_CIPHER_CTX): TIdC_LONG;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-	Result := BIO_ctrl(b,BIO_C_GET_CIPHER_CTX,0,PIdAnsiChar(c_pp));
+  Result := BIO_ctrl(b,BIO_C_GET_CIPHER_CTX,0,@c_pp);
 end;
 
 {$ifndef OPENSSL_NO_DES}
