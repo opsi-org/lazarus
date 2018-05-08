@@ -528,6 +528,7 @@ begin
       Flogoff.show;
       Flogoff.WindowState:=wsMaximized;
       Flogoff.FormStyle:=fsSystemStayOnTop;
+      Flogoff.FLogofftimer.Enabled:=true;
       while Flogoff.Visible do
       begin
         Application.ProcessMessages;
@@ -536,6 +537,7 @@ begin
       Result := Flogoff.mymodresult;
       Flogoff.WindowState:=wsNormal;
       Flogoff.FormStyle:=fsNormal;
+      Flogoff.FLogofftimer.Enabled:=false;
       {$ENDIF LINUX}
     finally
       datamodule1.debugOut(5, 'in btnbye: after Flogoff.showmodal');

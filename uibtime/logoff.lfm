@@ -1,7 +1,7 @@
 object Flogoff: TFlogoff
-  Left = 330
+  Left = 261
   Height = 611
-  Top = 233
+  Top = 347
   Width = 994
   Caption = 'uibtime - logged off'
   ClientHeight = 611
@@ -258,5 +258,12 @@ object Flogoff: TFlogoff
     CancelCaption = 'Cancel'
     left = 703
     top = 119
+  end
+  object FlogOffTimer: TTimer
+    Enabled = False
+    Interval = 60000
+    OnTimer = FlogOffTimerTimer
+    left = 823
+    top = 132
   end
 end

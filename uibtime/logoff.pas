@@ -7,7 +7,7 @@ interface
 uses
   //LCLIntf, LCLType, LMessages, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, Buttons, DBCtrls, EditBtn, ExtDlgs, Db, sqldb, Variants{, IBQuery},
+  StdCtrls, Buttons, DBCtrls, EditBtn, ExtDlgs, ExtCtrls, Db, sqldb, Variants{, IBQuery},
   dateutils,
   uibdatetime, RichMemo;
 
@@ -32,6 +32,7 @@ type
     Btn_work_description: TBitBtn;
     Query2: TSQLQuery;
     RichMemo1: TRichMemo;
+    FlogOffTimer: TTimer;
     procedure BitBtn1Click(Sender: TObject);
     procedure BitBtn2Click(Sender: TObject);
     procedure BitBtn3Click(Sender: TObject);
@@ -40,6 +41,7 @@ type
     procedure checkDB(begintime : TDateTime);
     procedure EditButton1ButtonClick(Sender: TObject);
     procedure EditButton1Change(Sender: TObject);
+    procedure FlogOffTimerTimer(Sender: TObject);
     procedure FormHide(Sender: TObject);
     procedure FormPaint(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -383,6 +385,31 @@ procedure TFlogoff.EditButton1Change(Sender: TObject);
 begin
   richmemo1.lines.clear;
   checkDB(StrToDate(EditButton1.text));
+end;
+
+procedure TFlogoff.FlogOffTimerTimer(Sender: TObject);
+var
+  {$IFDEF LINUX}
+  hello : PNotifyNotification;
+  {$ENDIF LINUX}
+  exitcode : integer;
+begin
+  Datamodule1.debugOut(6, 'trayicon', 'start FlogOffTimer ');
+  {$IFDEF LINUX}
+  notify_init(argv[0]);
+  hello := notify_notification_new(
+    // Title
+    pchar('uibtime logoff notify'),
+    // Content
+    pchar("You logged off from uibtime"),
+    // Icon
+    'dialog-information');
+  // Lets display it, but we will not handle any errors ...
+  notify_notification_show(hello, nil);
+  // That's all folks :)
+  notify_uninit;
+  {$ENDIF LINUX}
+  Datamodule1.debugOut(6, 'trayicon', 'stop trytimer ');
 end;
 
 procedure TFlogoff.FormHide(Sender: TObject);

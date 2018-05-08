@@ -1,4 +1,11 @@
 (*
+uibtime (4.1.1.35-1) stable; urgency=low
+
+ * uib2erp: check 4 all since project start
+ * ontop / logoff: linux logoff notify
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 08 May 2018 15:00:00 +0000
+
 uibtime (4.1.1.34-1) stable; urgency=low
 
  * fix in showmodal workaround for Linux: mrOK and mrCancel interchanged
