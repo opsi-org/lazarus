@@ -9,6 +9,9 @@ uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, Buttons, DBCtrls, EditBtn, ExtDlgs, ExtCtrls, Db, sqldb, Variants{, IBQuery},
   dateutils,
+  {$IFDEF LINUX}
+    libnotify,
+  {$ENDIF LINUX}
   uibdatetime, RichMemo;
 
 type
@@ -401,7 +404,7 @@ begin
     // Title
     pchar('uibtime logoff notify'),
     // Content
-    pchar("You logged off from uibtime"),
+    pchar('You logged off from uibtime'),
     // Icon
     'dialog-information');
   // Lets display it, but we will not handle any errors ...
