@@ -94,6 +94,7 @@ type
     property Active : boolean read DFActive write DFActive;
     property OriginFile : String read DFOriginFile write DFOriginFile;
     property OriginFileStartLineNumber : integer read DFOriginFileStartLineNumber write DFOriginFileStartLineNumber;
+    property Content : TStringlist read DFContent;
   end;
 
     TDefinedFunctionsArray = Array of TOsDefinedFunction;

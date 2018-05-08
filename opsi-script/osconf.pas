@@ -143,12 +143,14 @@ var
   {$IFDEF OSDEBUG}
   debug_prog: boolean = True;
   default_loglevel : integer = 9;
+  debug_lib: boolean = True;
   {$ELSE}
   debug_prog: boolean = False;
   default_loglevel : integer = 7;
+  debug_lib: boolean = False;
   {$ENDIF}
   //debug_prog: boolean = True;
-  debug_lib: boolean = False;
+  //debug_lib: boolean = False;
   //debug_lib: boolean = True;
   force_min_loglevel: integer = 4;
   opsiscriptconf : string;

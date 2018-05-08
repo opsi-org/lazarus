@@ -542,6 +542,10 @@ function getDecimalCompareSign
     var InfoSyntaxError : String;
     stringcomparison: boolean) : Boolean;
 
+function SearchForSectionLines
+  (const selfsection : TUIBInstScript; localsection, callingsection : TWorkSection; const Sectionname: string; var Resultlist: TXStringList;
+  var StartlineNo: integer; takeCommentLines, takeEmptyLines, trimmed:
+  boolean): boolean;
 
 const
   NameInitSektion                   = 'Initial';
@@ -686,6 +690,8 @@ var
 //const
  //zaehler  : Integer = 0;
 
+
+
 function GetString
   (const s : String; var ResultString, Remaining, errorinfo : String;
    StringInStringAllowed : Boolean) : Boolean;   overload;  forward;
@@ -693,6 +699,127 @@ function GetString
   (const s : String; var ResultString, Remaining, errorinfo : String;
    StringInStringAllowed, requote : boolean) : Boolean;   overload;  forward;
 
+function SearchForSectionLines
+  (const selfsection : TUIBInstScript; localsection, callingsection : TWorkSection; const Sectionname: string; var Resultlist: TXStringList;
+  var StartlineNo: integer; takeCommentLines, takeEmptyLines, trimmed:
+  boolean): boolean;
+var
+  myworksection : TWorkSection;
+begin
+  result := false;
+  Resultlist.clear;
+
+  // look if we are in a subprogram
+  // that may have its own sections in it
+
+  if (Resultlist.count = 0) and (inDefFuncLevel > 0)
+  then
+  begin
+    // local function
+    Logdatei.log('Looking for section: '+ Sectionname +' in local function .',LLDebug3);
+    localsection.GetSectionLines (Sectionname, Resultlist,
+                      StartlineNo, true, true, false);
+  end;
+
+  if (Resultlist.count = 0) and (inDefFuncLevel > 0)
+  then
+  begin
+    // local function2
+    Logdatei.log('Looking for section: '+ Sectionname +' in local function: '+definedFunctionArray[inDefFuncIndex].Name,LLDebug3);
+    myworksection := TWorkSection.create(NestingLevel,nil);
+    myworksection.AddText(definedFunctionArray[inDefFuncIndex].Content.Text);
+    myworksection.GetSectionLines (Sectionname,
+         Resultlist,StartlineNo, true, true, false);
+    myworksection.Free;
+  end;
+
+  if Resultlist.count = 0
+  then
+  begin
+    // normal case
+    Logdatei.log('Looking for section: '+ Sectionname +' in standard section.',LLDebug3);
+    selfsection.GetSectionLines (Sectionname, Resultlist,
+                      StartlineNo, true, true, false);
+  end;(*
+  else
+  begin
+    if 0 <= selfsection.FindSectionheaderIndex(Sectionname) then
+      Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in standard section.',LLWarning);
+  end;*)
+
+
+  if Assigned(callingsection) and (callingsection <> nil) then
+  begin
+    // subsub case
+    if Resultlist.count = 0 then
+    begin
+      Logdatei.log('Looking for section: '+ Sectionname +' in calling section.',LLDebug3);
+      callingsection.GetSectionLines (Sectionname, Resultlist,
+                        StartlineNo, true, true, false);
+    end;(*
+    else
+    begin
+      if 0 <= callingsection.FindSectionheaderIndex(Sectionname) then
+        Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in calling section.',LLWarning);
+    end;*)
+  end;
+
+
+
+  if Resultlist.count = 0
+  then
+  begin
+    // subsub case
+    Logdatei.log('Looking for section: '+ Sectionname +' in global section.',LLDebug3);
+    localsection.GetSectionLines (Sectionname, Resultlist,
+                      StartlineNo, true, true, false);
+  end;(*
+  else
+  begin
+    if 0 <= localsection.FindSectionheaderIndex(Sectionname) then
+      Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in global section.',LLWarning);
+  end;*)
+
+  if Assigned(callingsection) and (callingsection <> nil)
+    and Assigned(callingsection.ParentSection)
+    and (callingsection.ParentSection <> nil) then
+  begin
+    // subsubsub case
+    if Resultlist.count = 0  then
+    begin
+      Logdatei.log('Looking for section: '+ Sectionname +' in callingsection.ParentSection section.',LLDebug3);
+      callingsection.ParentSection.GetSectionLines(Sectionname, Resultlist,
+                      StartlineNo, true, true, false);
+    end;(*
+    else
+    begin
+      if 0 <= callingsection.ParentSection.FindSectionheaderIndex(Sectionname) then
+        Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in callingsection.ParentSection section.',LLWarning);
+    end;*)
+  end;
+
+  if Assigned(callingsection) and (callingsection <> nil)
+       and Assigned(callingsection.ParentSection)
+       and (callingsection.ParentSection <> nil)
+       and Assigned(callingsection.ParentSection.ParentSection)
+       and (callingsection.ParentSection.ParentSection <> nil) then
+  begin
+    // subsubsubsub case
+    if Resultlist.count = 0 then
+    begin
+      Logdatei.log('Looking for section: '+ Sectionname +' in callingsection.FParentSection.FParentSectio section.',LLDebug3);
+      callingsection.FParentSection.FParentSection.GetSectionLines(Sectionname, Resultlist,
+                      StartlineNo, true, true, false);
+    end;(*
+    else
+    begin
+      if 0 <= callingsection.FParentSection.FParentSection.FindSectionheaderIndex(Sectionname) then
+        Logdatei.log('Multiple sections with same name: '+ Sectionname +'also found in callingsection.FParentSection.FParentSection section.',LLWarning);
+    end;*)
+  end;
+
+  if Resultlist.count > 0 then result := true;
+end;
 
 function getCompareSignStrings (s1 : String; s2 : String) : Integer;
  var s1A, s2A : String;
@@ -9918,8 +10045,10 @@ begin
          InfoSyntaxError := 'not implemented for this kind of section'
        else
        Begin
-         if not (section.GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, false)
-           or GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, false))
+         //if not (section.GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, false)
+         //  or GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, false))
+         if not SearchForSectionLines(self,TWorkSection(section),nil,s2,
+                 TXStringList (localSection),startlineofsection, true, true, false)
          then
              InfoSyntaxError := 'Section "' + s2 + '" not found'
          else
@@ -9989,8 +10118,10 @@ begin
          InfoSyntaxError := 'not implemented for this kind of section'
        else
        Begin
-         if not (section.GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, true)
-           or GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, true))
+         //if not (section.GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, true)
+         //  or GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, true))
+         if not SearchForSectionLines(self,TWorkSection(section),nil,s2,
+                 TXStringList (localSection),startlineofsection, true, true, false)
          then
            InfoSyntaxError := 'Section "' + s2 + '" not found'
          else
@@ -17374,6 +17505,11 @@ begin
             Begin
 
               ArbeitsSektion.clear;
+              SearchForSectionLines(self,Sektion,CallingSektion,Expressionstr,
+                 TXStringList (ArbeitsSektion),StartlineOfSection, true, true, false);
+
+              (*
+              ArbeitsSektion.clear;
 
               // look if we are in a subprogram
               // that may have its own sections in it
@@ -17443,6 +17579,7 @@ begin
                                   StartlineOfSection, true, true, false);
                 end;
               end;
+              *)
 
 
               if inLoop then ArbeitsSektion.GlobalReplace(1, loopvar, loopvalue, false);
