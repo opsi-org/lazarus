@@ -159,11 +159,12 @@ TFuncDoc =  class
     FName : string;
     FResultType : TosdfDataTypes;
     FAuthor : string;
+    FEmail : string;
+    FVersion : string;
     FDate : String;
     FCopyright : string;
     FDescription : string;
     FReturns :string;
-    //Fparams : array of TParamDoc;
     FParamCounter : integer;
     FOnError : string;
     FSpecialCase : string;
@@ -193,6 +194,11 @@ TFuncDoc =  class
 TFileDoc =  class
   private
     Fname : string;
+    FAuthor : string;
+    FEmail : string;
+    FVersion : string;
+    FDate : String;
+    FCopyright : string;
     Ffiledesc : string;
     //Ffunctions : array of TFuncDoc;
     FfunctionCounter : integer;
@@ -213,6 +219,8 @@ const
   cfiledesc = '@filedesc';
   cauthor = '@author';
   cdate = '@date';
+  cemail = '@email';
+  cversion = '@version';
   ccopyright = '@copyright';
   CDescription = '@Description';
   COnError = '@OnError';
@@ -244,6 +252,11 @@ constructor TFileDoc.create;
 begin
   FName := '';
   Ffiledesc := '';
+  FAuthor := '';
+  FEmail := '';
+  FVersion := '';
+  FDate := '';
+  FCopyright := '';
   FfunctionCounter := 0;
   Inherited;
 end;

@@ -1258,7 +1258,7 @@ begin
       {$IFDEF OPSIWINST}
        // running defined function ?
        if inDefFuncIndex > -1 then
-         if definedFunctionArray[inDefFuncIndex].OriginFile <> script.Filename then
+         if definedFunctionArray[inDefFuncIndex].OriginFile <> ExtractFileName(script.Filename) then
             // defined function imported from lib
             // do we want to debug libraries ?
             if (not debug_lib) then

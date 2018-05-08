@@ -5,6 +5,13 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 ##################################################################
 
+opsi-winst/opsi-script (4.12.0.18) stable; urgency=low
+
+  * oslog: fix logging defined function that are included
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 3 May 2018:15:00:00 +0200
+
+
 opsi-winst/opsi-script (4.12.0.17) stable; urgency=low
 
   * osparser: processcall: log Executing on LLNotice
