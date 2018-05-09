@@ -425,6 +425,7 @@ var
     optionlist.Append('debug_level::');
     optionlist.Append('mode::');
     optionlist.Append('mac::');
+    optionlist.Append('bootserver::');
     optionlist.Append('webdav::');
     //optionlist.Append('port::');
     // quick check parameters
