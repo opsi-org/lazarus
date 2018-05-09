@@ -1027,7 +1027,11 @@ begin
   end;
   // we leave a defined function
   // free the local Vars - leave params + $result$
-  SetLength(DFLocalVarList,DFparamCount+1);
+  case DFResultType of
+    dfpString :     SetLength(DFLocalVarList,DFparamCount+1);
+    dfpStringlist : SetLength(DFLocalVarList,DFparamCount+1);
+    dfpVoid :       SetLength(DFLocalVarList,DFparamCount); // no $result$ here
+  end;
 
 
   DFActive:=false;
