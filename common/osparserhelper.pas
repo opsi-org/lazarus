@@ -72,7 +72,7 @@ procedure GetWord(const s: string; var Expression, Remaining: string;
 var
   i: integer = 0;
   t: string = '';
-
+  found : boolean;
 begin
   if s = '' then
   begin
@@ -85,9 +85,22 @@ begin
     setLength(t, length(t));
     if searchbackward then
     begin
-      i := length(t) + 1;
-      while (i >= 0) and not (t[i] in WordDelimiterSet) do
-        Dec(i);
+      // get from "hu)hu)))" as expr "hu)hu)" with remaining "))"
+      found := false;
+      //i := length(t) + 1;
+      i := length(t);
+      while (i >= 0) and not found do
+      begin
+        // is it the char we search ?
+        if (t[i] in WordDelimiterSet) then
+        begin
+          // is the leading char the same ?
+          if ((i-1 >= 0)) and (t[i] = t[i-1]) then
+          dec(i) // we take the next one
+          else found := true;
+        end
+        else Dec(i);
+      end;
       // if nothing found get complete string
       if i = -1 then
         i := length(t);
@@ -200,7 +213,7 @@ end;
 procedure GetWordOrStringConstant(const s: string; var Expression, Remaining: string;
   const WordDelimiterSet: TCharset; searchbackward: boolean = False);
 // checks if we have a quoted string constant
-// if yes it returns the quoted string konstant
+// if yes it returns the quoted string constant
 // if no it calls getword
 var
   s0: string = '';

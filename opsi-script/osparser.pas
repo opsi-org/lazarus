@@ -9749,7 +9749,7 @@ begin
      begin
        if definedFunctionArray[FuncIndex].call(r,r,NestLevel) then
        begin
-         r := '';
+         //r := ''; we may have closing brackets here
          list.Text := definedFunctionArray[FuncIndex].ResultList.Text;
          syntaxCheck := true;
          //logdatei.log('We leave the defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);

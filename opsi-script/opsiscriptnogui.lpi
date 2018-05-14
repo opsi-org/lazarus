@@ -22,7 +22,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
-      <BuildNr Value="17"/>
+      <BuildNr Value="20"/>
       <StringTable Comments="Compiled with Lazarus 1.8.2" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script-nogui" InternalName="opsiscriptnogui" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org" ProductName="opsi-script" ProductVersion="4.1.0"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -143,7 +143,7 @@
         <PackageName Value="FCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="23">
+    <Units Count="24">
       <Unit0>
         <Filename Value="opsiscriptnogui.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -240,6 +240,10 @@
         <IsPartOfProject Value="True"/>
         <HasResources Value="True"/>
       </Unit22>
+      <Unit23>
+        <Filename Value="../common/osparserhelper.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit23>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
