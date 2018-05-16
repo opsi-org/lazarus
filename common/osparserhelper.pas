@@ -112,7 +112,7 @@ begin
         Inc(i);
     end;
 
-    Expression := copy(t, 1, i - 1);
+    Expression := trim(copy(t, 1, i - 1));
     Remaining := copy(t, i, length(t) - i + 1);
     Remaining := CutLeftBlanks(Remaining);
   end;
@@ -150,7 +150,7 @@ begin   // experimental
     i := i + length(WordDelimiterString);
   end;
 
-  Expression := copy(t, 1, i - 1);
+  Expression := trim(copy(t, 1, i - 1));
   Remaining := copy(t, i, length(t) - i + 1);
   Remaining := CutLeftBlanks(Remaining);
 end;
