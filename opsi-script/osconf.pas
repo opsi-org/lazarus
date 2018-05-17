@@ -147,7 +147,7 @@ var
   {$ELSE}
   debug_prog: boolean = False;
   default_loglevel : integer = 7;
-  debug_lib: boolean = False;
+  debug_lib: boolean = true;
   {$ENDIF}
   //debug_prog: boolean = True;
   //debug_lib: boolean = False;

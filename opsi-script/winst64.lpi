@@ -21,7 +21,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
-      <BuildNr Value="20"/>
+      <BuildNr Value="21"/>
       <StringTable Comments="Compiled with Lazarus 1.8.2 / FPC 3.0.4" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst64.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst64.exe" ProductName="opsi-script" ProductVersion="4.1.0.0"/>
     </VersionInfo>
     <BuildModes Count="4" Active="Release">
@@ -462,8 +462,9 @@
       </Unit27>
       <Unit28>
         <Filename Value="changelog.txt"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <CursorPos X="13" Y="13"/>
+        <CursorPos X="76" Y="11"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -655,10 +656,9 @@
       <Unit51>
         <Filename Value="osconf.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="9"/>
         <TopLine Value="73"/>
-        <CursorPos X="41" Y="88"/>
+        <CursorPos X="23" Y="86"/>
         <UsageCount Value="205"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -924,7 +924,7 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit81>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="osparser.pas"/>
         <Caret Line="19546" Column="21" TopLine="19514"/>
@@ -1041,10 +1041,6 @@
         <Filename Value="osmain.pas"/>
         <Caret Line="2429" Column="24" TopLine="2413"/>
       </Position29>
-      <Position30>
-        <Filename Value="osmain.pas"/>
-        <Caret Line="2410" Column="11" TopLine="2430"/>
-      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
