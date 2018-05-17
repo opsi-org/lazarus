@@ -6,11 +6,16 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 ##################################################################
 opsi-winst/opsi-script (4.12.0.20) stable; urgency=low
 
-  * osparserhelper: GetWord: search backwards : / get from "hu)hu)))" as expr "hu)hu)" with remaining "))"
+  * osparserhelper: GetWord: search backwards=true;backwardfirst=true : / get from "hu)hu)))" as expr "hu)hu" with remaining ")))"
+  * osparserhelper: GetWord: search backwards=true;backwardfirst=false : / get from "hu)hu)))" as expr "hu)hu))" with remaining ")"
+  * osparserhelper: GetWordOrStringConstant: new params search backwards=true;backwardfirst=false
   * osparser: producestringlist: do not delete remaining after call of defined function
   * osdefinedfunctions: parseCallParameter: better error messages
-  * osparserhelper: GetWord: trim expression ; fixes #3526
+  * osdefinedfunctions: parseCallParameter: trim paramstr ; fixes #3526
   * osdefinedfunctions: call: set inDefFuncIndex on leaving function ; fixes #3528
+  * osparser: executeWith: use autoactivitydisplay
+  * osparser: execShellCall: use autoactivitydisplay
+  * osparser: execPowerShellCall: use autoactivitydisplay
 
 -- Detlef Oertel <d.oertel@uib.de>  Mon, 14 May 2018:15:00:00 +0200
 

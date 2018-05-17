@@ -28,9 +28,16 @@ type
 function CutLeftBlanks(const s: string): string;
 function CutRightBlanks(const s: string): string;
 
+(*
 procedure GetWord
   (const s: string; var Expression, Remaining: string;
   const WordDelimiterSet: TCharset; searchbackward: boolean = False); overload;
+*)
+procedure GetWord
+  (const s: string; var Expression, Remaining: string;
+  const WordDelimiterSet: TCharset; searchbackward: boolean = False;
+  backwardfirst: boolean = True); overload;
+
 
 procedure GetWord(const s: string; var Expression, Remaining: string;
   const WordDelimiterString: string; searchbackward: boolean = False); overload;
@@ -45,7 +52,8 @@ function Skip(const partialS, S: string; var Remaining: string;
 // versucht partialS am Anfang von S zu eliminieren, loescht fuehrende Leerzeichen vom Rest
 
 procedure GetWordOrStringConstant(const s: string; var Expression, Remaining: string;
-  const WordDelimiterSet: TCharset; searchbackward: boolean = False);
+  const WordDelimiterSet: TCharset; searchbackward: boolean = False;
+    backwardfirst: boolean = True);
 // checks if we have a quoted string constant
 // if yes it returns the quoted string konstant
 // if no it calls getword
@@ -63,11 +71,16 @@ begin
   Result := SysUtils.trimright(s);
 end;
 
-procedure GetWord(const s: string; var Expression, Remaining: string;
-  const WordDelimiterSet: TCharset; searchbackward: boolean = False);
+
 // Expression ist Teilstring von s bis zu einem Zeichen von WordDelimiterSet (ausschliesslich),
 // Remaining beginnt mit dem auf dieses Zeichen folgenden Zeichen, wobei fuehrender Whitespace
 // eliminiert wird
+
+
+procedure GetWord
+    (const s: string; var Expression, Remaining: string;
+    const WordDelimiterSet: TCharset; searchbackward: boolean = False;
+    backwardfirst: boolean = True);
 
 var
   i: integer = 0;
@@ -85,23 +98,36 @@ begin
     setLength(t, length(t));
     if searchbackward then
     begin
-      // get from "hu)hu)))" as expr "hu)hu)" with remaining "))"
-      found := false;
-      //i := length(t) + 1;
-      i := length(t);
-      while (i >= 0) and not found do
+      if not backwardfirst then
       begin
-        // is it the char we search ?
-        if (t[i] in WordDelimiterSet) then
+        // get from "hu)hu)))" as expr "hu)hu" with remaining ")))"
+        found := false;
+        //i := length(t) + 1;
+        i := length(t);
+        while (i >= 0) and not found do
         begin
-          // is the leading char the same ?
-          if ((i-1 >= 0)) and (t[i] = t[i-1]) then
+          // is it the char we search ?
+          if (t[i] in WordDelimiterSet) then
+          begin
+            // is the leading char the same ?
+            if ((i-1 >= 0)) and (t[i] = t[i-1]) then
+            dec(i) // we take the next one
+            else found := true;
+          end
+          else Dec(i);
+        end;
+      end
+      else
+      begin
+         // get from "hu)hu)))" as expr "hu)hu))" with remaining ")"
+        //i := length(t) + 1;
+        i := length(t);
+        while (i >= 0) and not (t[i] in WordDelimiterSet) do
+        begin
           dec(i) // we take the next one
-          else found := true;
-        end
-        else Dec(i);
+        end;
       end;
-      // if nothing found get complete string
+     // if nothing found get complete string
       if i = -1 then
         i := length(t);
     end
@@ -112,7 +138,7 @@ begin
         Inc(i);
     end;
 
-    Expression := trim(copy(t, 1, i - 1));
+    Expression := copy(t, 1, i - 1);
     Remaining := copy(t, i, length(t) - i + 1);
     Remaining := CutLeftBlanks(Remaining);
   end;
@@ -150,7 +176,7 @@ begin   // experimental
     i := i + length(WordDelimiterString);
   end;
 
-  Expression := trim(copy(t, 1, i - 1));
+  Expression := copy(t, 1, i - 1);
   Remaining := copy(t, i, length(t) - i + 1);
   Remaining := CutLeftBlanks(Remaining);
 end;
@@ -211,7 +237,8 @@ begin
 end;
 
 procedure GetWordOrStringConstant(const s: string; var Expression, Remaining: string;
-  const WordDelimiterSet: TCharset; searchbackward: boolean = False);
+  const WordDelimiterSet: TCharset; searchbackward: boolean = False;
+    backwardfirst: boolean = True);
 // checks if we have a quoted string constant
 // if yes it returns the quoted string constant
 // if no it calls getword
@@ -248,7 +275,7 @@ begin
     end;
   end
   else
-    GetWord(s, Expression, Remaining, WordDelimiterSet, searchbackward);
+    GetWord(s, Expression, Remaining, WordDelimiterSet, searchbackward,backwardfirst);
 end;
 
 

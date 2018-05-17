@@ -8661,67 +8661,75 @@ Var
  ActionResult : TSectionResult;
  shortarch : string;  // for execShellCall
 begin
-  Result := TStringList.Create;
-  output := TXStringList.Create;
-  runAs := traInvoker;
-  OldNumberOfErrors := LogDatei.NumberOfErrors;
-  OldNumberOfWarnings := LogDatei.NumberOfWarnings;
-  //force64 := false;
-  shortarch := 'sysnative';
+  try
+    Result := TStringList.Create;
+    output := TXStringList.Create;
+    runAs := traInvoker;
+    OldNumberOfErrors := LogDatei.NumberOfErrors;
+    OldNumberOfWarnings := LogDatei.NumberOfWarnings;
+    //force64 := false;
+    shortarch := 'sysnative';
+    {$IFDEF GUI}
+    if AutoActivityDisplay then FBatchOberflaeche.showAcitvityBar(true);
+    {$ENDIF GUI}
 
-  If (lowercase(archparam) = '64bit') and Is64BitSystem then
-     shortarch := '64';
+    If (lowercase(archparam) = '64bit') and Is64BitSystem then
+       shortarch := '64';
 
-  If (lowercase(archparam) = 'sysnative') and Is64BitSystem then
-       shortarch := 'sysnative';
+    If (lowercase(archparam) = 'sysnative') and Is64BitSystem then
+         shortarch := 'sysnative';
 
-  If (lowercase(archparam) = '32bit') then
-       shortarch := '32';
+    If (lowercase(archparam) = '32bit') then
+         shortarch := '32';
 
 
-  if handle_policy then // backup and set execution policy
-  begin
-    // backup
-    commandline := 'powershell.exe get-executionpolicy';
-    tmplist := execShellCall(commandline, shortarch, 1, false, true);
-    org_execution_policy := trim(tmplist[0]);
-    // set (open)
-    commandline := 'powershell.exe set-executionpolicy RemoteSigned';
-    tmplist := execShellCall(commandline, shortarch, 1, false, true);
+    if handle_policy then // backup and set execution policy
+    begin
+      // backup
+      commandline := 'powershell.exe get-executionpolicy';
+      tmplist := execShellCall(commandline, shortarch, 1, false, true);
+      org_execution_policy := trim(tmplist[0]);
+      // set (open)
+      commandline := 'powershell.exe set-executionpolicy RemoteSigned';
+      tmplist := execShellCall(commandline, shortarch, 1, false, true);
+    end;
+
+    mySektion := TWorkSection.create(NestingLevel,ActiveSection);
+    mySektion.Add('trap { write-output $_ ; exit 1 }');
+    mySektion.Add(command);
+    mySektion.Add('exit $LASTEXITCODE');
+    mySektion.Name:='tmp-internal';
+    parameters := 'powershell.exe winst /'+archparam;
+    if not FetchExitCodePublic then // backup last extcode
+      localExitCode := FLastExitCodeOfExe;
+    ActionResult := executeWith(mySektion,parameters,true,logleveloffset+1,output);
+    if not FetchExitCodePublic then  // restore last extcode
+    begin
+      FLastPrivateExitCode := FLastExitCodeOfExe;
+      FLastExitCodeOfExe := localExitCode;
+    end;
+    LogDatei.log ('output:', LLDebug+logleveloffset);
+    LogDatei.log ('--------------', LLDebug+logleveloffset);
+    for i := 0 to output.count-1 do
+    begin
+     LogDatei.log (output.strings[i], LLDebug+logleveloffset);
+    end;
+    //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+    LogDatei.log ('', LLDebug+logleveloffset);
+    result.Text := output.text;
+    output.Free;
+
+    if handle_policy then // restore execution policy
+    begin
+      // set (close)
+      commandline := 'powershell.exe set-executionpolicy '+org_execution_policy;
+      tmplist := execShellCall(commandline, shortarch, 1, false, true);
+    end;
+  finally
+    {$IFDEF GUI}
+    FBatchOberflaeche.showAcitvityBar(false);
+    {$ENDIF GUI}
   end;
-
-  mySektion := TWorkSection.create(NestingLevel,ActiveSection);
-  mySektion.Add('trap { write-output $_ ; exit 1 }');
-  mySektion.Add(command);
-  mySektion.Add('exit $LASTEXITCODE');
-  mySektion.Name:='tmp-internal';
-  parameters := 'powershell.exe winst /'+archparam;
-  if not FetchExitCodePublic then // backup last extcode
-    localExitCode := FLastExitCodeOfExe;
-  ActionResult := executeWith(mySektion,parameters,true,logleveloffset+1,output);
-  if not FetchExitCodePublic then  // restore last extcode
-  begin
-    FLastPrivateExitCode := FLastExitCodeOfExe;
-    FLastExitCodeOfExe := localExitCode;
-  end;
-  LogDatei.log ('output:', LLDebug+logleveloffset);
-  LogDatei.log ('--------------', LLDebug+logleveloffset);
-  for i := 0 to output.count-1 do
-  begin
-   LogDatei.log (output.strings[i], LLDebug+logleveloffset);
-  end;
-  //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-  LogDatei.log ('', LLDebug+logleveloffset);
-  result.Text := output.text;
-  output.Free;
-
-  if handle_policy then // restore execution policy
-  begin
-    // set (close)
-    commandline := 'powershell.exe set-executionpolicy '+org_execution_policy;
-    tmplist := execShellCall(commandline, shortarch, 1, false, true);
-  end;
-
 end;
 {$ENDIF WINDOWS}
 
@@ -8747,115 +8755,124 @@ Var
  i : integer=0;
  localExitCode : LongInt = 0;
 begin
-  Result := TStringList.Create;
-  output := TXStringList.Create;
-  runAs := traInvoker;
-  OldNumberOfErrors := LogDatei.NumberOfErrors;
-  OldNumberOfWarnings := LogDatei.NumberOfWarnings;
-  force64 := false;
+  try
+    Result := TStringList.Create;
+    output := TXStringList.Create;
+    runAs := traInvoker;
+    OldNumberOfErrors := LogDatei.NumberOfErrors;
+    OldNumberOfWarnings := LogDatei.NumberOfWarnings;
+    force64 := false;
 
-  If (lowercase(archparam) = '64') and Is64BitSystem then
-     force64 := true;
-
-  If (lowercase(archparam) = 'sysnative') and Is64BitSystem then
+    If (lowercase(archparam) = '64') and Is64BitSystem then
        force64 := true;
 
-  If (lowercase(archparam) = '32') then
-       force64 := false;
+    If (lowercase(archparam) = 'sysnative') and Is64BitSystem then
+         force64 := true;
 
-  {$IFDEF WIN32}
-  if force64 then
-  begin
-    if not FileExists(GetWinDirectory+'\cmd64.exe') then
+    If (lowercase(archparam) = '32') then
+         force64 := false;
+
+    {$IFDEF WIN32}
+    if force64 then
     begin
-      Logdatei.log(GetWinDirectory+'\cmd64.exe not found - try to get it', LLDebug2+logleveloffset);
-      try
-        if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
-        begin
-          LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo+logleveloffset);
-          if FileExists(GetWinSystemDirectory+'\cmd.exe') then
+      if not FileExists(GetWinDirectory+'\cmd64.exe') then
+      begin
+        Logdatei.log(GetWinDirectory+'\cmd64.exe not found - try to get it', LLDebug2+logleveloffset);
+        try
+          if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
           begin
-           if fileutil.CopyFile(GetWinSystemDirectory+'\cmd.exe',GetWinDirectory+'\cmd64.exe') then
-             LogDatei.log('cmd64.exe created in '+GetWinDirectory, LLinfo+logleveloffset)
-           else
-             LogDatei.log('could not get cmd64.exe', LLError);
+            LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo+logleveloffset);
+            if FileExists(GetWinSystemDirectory+'\cmd.exe') then
+            begin
+             if fileutil.CopyFile(GetWinSystemDirectory+'\cmd.exe',GetWinDirectory+'\cmd64.exe') then
+               LogDatei.log('cmd64.exe created in '+GetWinDirectory, LLinfo+logleveloffset)
+             else
+               LogDatei.log('could not get cmd64.exe', LLError);
+            end
+            else
+              LogDatei.log('could see: '+GetWinSystemDirectory+'\cmd.exe', LLError);
+            dummybool := DSiRevertWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
+            LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo+logleveloffset);
           end
           else
-            LogDatei.log('could see: '+GetWinSystemDirectory+'\cmd.exe', LLError);
-          dummybool := DSiRevertWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
-          LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo+logleveloffset);
-        end
-        else
-        begin
-          LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
+          begin
+            LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
+          end;
+        except
+          on ex: Exception
+          do
+          Begin
+            LogDatei.log ('Error: ' + ex.message, LLError);
+          End;
         end;
-      except
-        on ex: Exception
-        do
-        Begin
-          LogDatei.log ('Error: ' + ex.message, LLError);
-        End;
       end;
+      if not FileExists(GetWinDirectory+'\cmd64.exe') then
+        LogDatei.log('no cmd64.exe - will use cmd.exe instead', LLError);
     end;
-    if not FileExists(GetWinDirectory+'\cmd64.exe') then
-      LogDatei.log('no cmd64.exe - will use cmd.exe instead', LLError);
-  end;
-  {$ENDIF WIN32}
+    {$ENDIF WIN32}
 
-  if GetUibOsType (errorinfo) = tovLinux then
-  begin
-    FileName := '/bin/bash';
-    Parameters := Parameters+' -c "' + command + ' || exit $?"';
-  end
-  else
-  begin
-   {$IFDEF WINDOWS}
-     If force64 and FileExists(GetWinDirectory+'\cmd64.exe') then
-       FileName := '"'+GetWinDirectory+'\cmd64.exe"'
-     else
-       FileName := '"cmd.exe"';
-     Parameters := ' /C "' + command + '" ';
-   {$ENDIF WINDOWS}
-  end;
-
-  commandline := FileName + ' ' +trim(Parameters);
-
-  LogDatei.log ('ShellCall Executing: ' + commandline, LLNotice+logleveloffset);
-  if not RunCommandAndCaptureOut
-     (commandline,
-      true,
-      output, report, SW_HIDE, localExitCode, false, logleveloffset)
-  then
-  Begin
-    if FetchExitCodePublic then FLastExitCodeOfExe := localExitCode
-    else FLastPrivateExitCode := localExitcode;
-    ps := 'Error: ' + Report;
-    if FatalOnFail then
+    if GetUibOsType (errorinfo) = tovLinux then
     begin
-      LogDatei.log(ps, LLcritical);
-      FExtremeErrorLevel := LevelFatal;
-      scriptstopped := true;
+      FileName := '/bin/bash';
+      Parameters := Parameters+' -c "' + command + ' || exit $?"';
     end
     else
     begin
-      LogDatei.log(ps, LLError);
+     {$IFDEF WINDOWS}
+       If force64 and FileExists(GetWinDirectory+'\cmd64.exe') then
+         FileName := '"'+GetWinDirectory+'\cmd64.exe"'
+       else
+         FileName := '"cmd.exe"';
+       Parameters := ' /C "' + command + '" ';
+     {$ENDIF WINDOWS}
     end;
-  End
-  else
-  begin
-    if FetchExitCodePublic then FLastExitCodeOfExe := localExitCode
-    else FLastPrivateExitCode := localExitcode;
-    LogDatei.log ('output:', LLDebug+logleveloffset);
-    LogDatei.log ('--------------', LLDebug+logleveloffset);
-    for i := 0 to output.count-1 do
+    {$IFDEF GUI}
+    if AutoActivityDisplay then FBatchOberflaeche.showAcitvityBar(true);
+    {$ENDIF GUI}
+
+    commandline := FileName + ' ' +trim(Parameters);
+
+    LogDatei.log ('ShellCall Executing: ' + commandline, LLNotice+logleveloffset);
+    if not RunCommandAndCaptureOut
+       (commandline,
+        true,
+        output, report, SW_HIDE, localExitCode, false, logleveloffset)
+    then
+    Begin
+      if FetchExitCodePublic then FLastExitCodeOfExe := localExitCode
+      else FLastPrivateExitCode := localExitcode;
+      ps := 'Error: ' + Report;
+      if FatalOnFail then
+      begin
+        LogDatei.log(ps, LLcritical);
+        FExtremeErrorLevel := LevelFatal;
+        scriptstopped := true;
+      end
+      else
+      begin
+        LogDatei.log(ps, LLError);
+      end;
+    End
+    else
     begin
-     LogDatei.log (output.strings[i], LLDebug+logleveloffset);
+      if FetchExitCodePublic then FLastExitCodeOfExe := localExitCode
+      else FLastPrivateExitCode := localExitcode;
+      LogDatei.log ('output:', LLDebug+logleveloffset);
+      LogDatei.log ('--------------', LLDebug+logleveloffset);
+      for i := 0 to output.count-1 do
+      begin
+       LogDatei.log (output.strings[i], LLDebug+logleveloffset);
+      end;
+      //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+      LogDatei.log ('', LLDebug+logleveloffset);
+      result.Text := output.text;
     end;
-    //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-    LogDatei.log ('', LLDebug+logleveloffset);
-    result.Text := output.text;
+   output.Free;
+  finally
+    {$IFDEF GUI}
+    FBatchOberflaeche.showAcitvityBar(false);
+    {$ENDIF GUI}
   end;
- output.Free;
 end;
 
 
@@ -9447,179 +9464,188 @@ Var
 
 
 begin
-  (*
-  if  GetNTVersionMajor < 6 then
-    runAs := traInvoker
-  else
-    runAs := traInvoker;
-  *)
-  runAs := traInvoker;
-  result := tsrPositive;
-  showcmd := SW_SHOWMINIMIZED; // SW_SHOWNORMAL;
-  waitSecs := 0;
-
-  if Sektion.count = 0 then exit;
-
-  LogDatei.LogSIndentLevel := Sektion.NestingLevel;
-  savelogsindentlevel := LogDatei.LogSIndentLevel;
-
-  OldNumberOfErrors := LogDatei.NumberOfErrors;
-  OldNumberOfWarnings := LogDatei.NumberOfWarnings;
-
-  ps := '';
-  LogDatei.log (ps, LLNotice+logleveloffset);
-  ps := 'Execution of ' + Sektion.Name + ' ' +ExecParameter;
-  LogDatei.log (ps, LLNotice+logleveloffset);
-
-  if pos (uppercase (PStatNames^ [tsExecuteWith]), uppercase (Sektion.Name)) > 0 then
-     ps := Sektion.Name;
-    //ps := (* 'Ausfuehrung von ' +  *) copy (Sektion.Name, length (PStatNames^ [tsExecuteWith]) + 1, length (Sektion.Name));
-
-  {$IFDEF GUI}
-  CentralForm.Label2.caption := ps;
-  FBatchOberflaeche.setDetailLabel(ps);
-  ProcessMess;
-  {$ENDIF GUI}
-
-  LogDatei.LogSIndentLevel := Sektion.NestingLevel + 1;
-
-  Sektion.eliminateLinesStartingWith (';', false);
-
-  output := TXStringList.create;
-
-  //inc(TempBatchDatei_UniqueCount);
-  //tempfilename := TempPath + TempBatchfilename + inttoStr(TempBatchDatei_UniqueCount) + '.bat';
-  //Sektion.SaveToFile (tempfilename);
-
-  if ExecParameter <> '' then
-  begin
-    ApplyTextVariablesToString(ExecParameter,false);
-  end;
-  // syntax should been checked
-  if not produceExecLine(
-    ExecParameter,
-    programfilename, programparas, passparas, winstoption,
-    errorInfo)
-  then
-  begin
-    LogDatei.log ('Error: Illegal Parameter Syntax  - so we switch to failed', LLcritical);
-    FExtremeErrorLevel:=LevelFatal;
-    exit;
-  end;
-
-  useext := '.cmd';
-  if pos('powershell.exe',LowerCase(programfilename)) > 0  then useext := '.ps1';
-  if LowerCase(programfilename) = 'powershell' then useext := '.ps1';
-  tempfilename := winstGetTempFileNameWithExt(useext);
-
-  if not Sektion.FuncSaveToFile (tempfilename) then
-  begin
-    LogDatei.log ('Error: Sektion could not be saved - so we switch to failed', LLcritical);
-    FExtremeErrorLevel:=LevelFatal;
-  end
-  else
-  begin
-    {$IFDEF LINUX}
-    fpchmod(tempfilename, &700);
-    {$ENDIF LINUX}
-    // if parameters end with '=' we concat tempfile without space
-    if copy(programparas,length(programparas),1) = '=' then
-        commandline :=
-           '"' + programfilename +  '" ' + programparas
-        + '"' + tempfilename + '"  '
-        + passparas
+  try
+    (*
+    if  GetNTVersionMajor < 6 then
+      runAs := traInvoker
     else
-      commandline :=
-           '"' + programfilename +  '" ' + programparas
-        + ' "' + tempfilename + '"  '
-        + passparas;
+      runAs := traInvoker;
+    *)
+    runAs := traInvoker;
+    result := tsrPositive;
+    showcmd := SW_SHOWMINIMIZED; // SW_SHOWNORMAL;
+    waitSecs := 0;
 
-    force64 := false;
-    If (pos (lowercase('/64bit'), lowercase (winstoption)) > 0) and Is64BitSystem then
-       force64 := true;
+    if Sektion.count = 0 then exit;
 
-    If (pos (lowercase('/sysnative'), lowercase (winstoption)) > 0) and Is64BitSystem then
-       force64 := true;
+    LogDatei.LogSIndentLevel := Sektion.NestingLevel;
+    savelogsindentlevel := LogDatei.LogSIndentLevel;
 
-    If (pos (lowercase('/32bit'), lowercase (winstoption)) > 0) then
-       force64 := false;
+    OldNumberOfErrors := LogDatei.NumberOfErrors;
+    OldNumberOfWarnings := LogDatei.NumberOfWarnings;
 
-    {$IFDEF WIN32}
-    Wow64FsRedirectionDisabled := false;
-    if force64 then
-    Begin
-      boolresult := DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
-      Wow64FsRedirectionDisabled := true;
-    End
-    else Wow64FsRedirectionDisabled := false;
-    {$ENDIF WIN32}
+    ps := '';
+    LogDatei.log (ps, LLNotice+logleveloffset);
+    ps := 'Execution of ' + Sektion.Name + ' ' +ExecParameter;
+    LogDatei.log (ps, LLNotice+logleveloffset);
 
+    if pos (uppercase (PStatNames^ [tsExecuteWith]), uppercase (Sektion.Name)) > 0 then
+       ps := Sektion.Name;
+      //ps := (* 'Ausfuehrung von ' +  *) copy (Sektion.Name, length (PStatNames^ [tsExecuteWith]) + 1, length (Sektion.Name));
 
-    threaded :=
-      (pos (lowercase(ParameterDontWait), lowercase (winstoption)) > 0);
+    {$IFDEF GUI}
+    CentralForm.Label2.caption := ps;
+    FBatchOberflaeche.setDetailLabel(ps);
+    ProcessMess;
+    {$ENDIF GUI}
 
-    if threaded
+    LogDatei.LogSIndentLevel := Sektion.NestingLevel + 1;
+
+    Sektion.eliminateLinesStartingWith (';', false);
+
+    output := TXStringList.create;
+
+    //inc(TempBatchDatei_UniqueCount);
+    //tempfilename := TempPath + TempBatchfilename + inttoStr(TempBatchDatei_UniqueCount) + '.bat';
+    //Sektion.SaveToFile (tempfilename);
+
+    if ExecParameter <> '' then
+    begin
+      ApplyTextVariablesToString(ExecParameter,false);
+    end;
+    // syntax should been checked
+    if not produceExecLine(
+      ExecParameter,
+      programfilename, programparas, passparas, winstoption,
+      errorInfo)
     then
     begin
-      if not StartProcess (Commandline, sw_hide, false, false, false, false, runas, '', WaitSecs, Report, FLastExitCodeOfExe)
-      then
-      Begin
-          ps := 'Error: ' + Report;
-          LogDatei.log(ps, LLcritical);
-          FExtremeErrorLevel := LevelFatal;
-      End
-      else
-          LogDatei.log (Report, LevelComplete);
+      LogDatei.log ('Error: Illegal Parameter Syntax  - so we switch to failed', LLcritical);
+      FExtremeErrorLevel:=LevelFatal;
+      exit;
+    end;
+
+    useext := '.cmd';
+    if pos('powershell.exe',LowerCase(programfilename)) > 0  then useext := '.ps1';
+    if LowerCase(programfilename) = 'powershell' then useext := '.ps1';
+    tempfilename := winstGetTempFileNameWithExt(useext);
+
+    if not Sektion.FuncSaveToFile (tempfilename) then
+    begin
+      LogDatei.log ('Error: Sektion could not be saved - so we switch to failed', LLcritical);
+      FExtremeErrorLevel:=LevelFatal;
     end
     else
     begin
-      LogDatei.log_prog ('Executing ' + commandline, LLDebug);
-      if not RunCommandAndCaptureOut
-         (commandline,
-          true,
-          output, report, showcmd, FLastExitCodeOfExe)
-      then
-      Begin
-        ps := 'Error: ' + Report;
-        LogDatei.log(ps, LLcritical);
-        FExtremeErrorLevel := LevelFatal;
-        scriptstopped := true;
-      End
+      {$IFDEF LINUX}
+      fpchmod(tempfilename, &700);
+      {$ENDIF LINUX}
+      // if parameters end with '=' we concat tempfile without space
+      if copy(programparas,length(programparas),1) = '=' then
+          commandline :=
+             '"' + programfilename +  '" ' + programparas
+          + '"' + tempfilename + '"  '
+          + passparas
       else
-      Begin
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 4;
-        LogDatei.log ('', LLDebug+logleveloffset);
-        LogDatei.log ('output:', LLDebug+logleveloffset);
-        LogDatei.log ('--------------', LLDebug+logleveloffset);
+        commandline :=
+             '"' + programfilename +  '" ' + programparas
+          + ' "' + tempfilename + '"  '
+          + passparas;
 
-        for i := 0 to output.count-1 do
-        begin
-         LogDatei.log (output.strings[i], LLDebug+logleveloffset);
-        end;
+      force64 := false;
+      If (pos (lowercase('/64bit'), lowercase (winstoption)) > 0) and Is64BitSystem then
+         force64 := true;
 
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 4;
-        LogDatei.log ('', LLDebug+logleveloffset);
-      End;
-    end;
+      If (pos (lowercase('/sysnative'), lowercase (winstoption)) > 0) and Is64BitSystem then
+         force64 := true;
 
-    {$IFDEF WIN32}
-    if Wow64FsRedirectionDisabled then
-    Begin
-      boolresult := DSiRevertWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
+      If (pos (lowercase('/32bit'), lowercase (winstoption)) > 0) then
+         force64 := false;
+
+      {$IFDEF WIN32}
       Wow64FsRedirectionDisabled := false;
-    End;
-    {$ENDIF WIN32}
+      if force64 then
+      Begin
+        boolresult := DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
+        Wow64FsRedirectionDisabled := true;
+      End
+      else Wow64FsRedirectionDisabled := false;
+      {$ENDIF WIN32}
+      {$IFDEF GUI}
+      if AutoActivityDisplay then FBatchOberflaeche.showAcitvityBar(true);
+      {$ENDIF GUI}
+
+
+      threaded :=
+        (pos (lowercase(ParameterDontWait), lowercase (winstoption)) > 0);
+
+      if threaded
+      then
+      begin
+        if not StartProcess (Commandline, sw_hide, false, false, false, false, runas, '', WaitSecs, Report, FLastExitCodeOfExe)
+        then
+        Begin
+            ps := 'Error: ' + Report;
+            LogDatei.log(ps, LLcritical);
+            FExtremeErrorLevel := LevelFatal;
+        End
+        else
+            LogDatei.log (Report, LevelComplete);
+      end
+      else
+      begin
+        LogDatei.log_prog ('Executing ' + commandline, LLDebug);
+        if not RunCommandAndCaptureOut
+           (commandline,
+            true,
+            output, report, showcmd, FLastExitCodeOfExe)
+        then
+        Begin
+          ps := 'Error: ' + Report;
+          LogDatei.log(ps, LLcritical);
+          FExtremeErrorLevel := LevelFatal;
+          scriptstopped := true;
+        End
+        else
+        Begin
+          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 4;
+          LogDatei.log ('', LLDebug+logleveloffset);
+          LogDatei.log ('output:', LLDebug+logleveloffset);
+          LogDatei.log ('--------------', LLDebug+logleveloffset);
+
+          for i := 0 to output.count-1 do
+          begin
+           LogDatei.log (output.strings[i], LLDebug+logleveloffset);
+          end;
+
+          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 4;
+          LogDatei.log ('', LLDebug+logleveloffset);
+        End;
+      end;
+
+      {$IFDEF WIN32}
+      if Wow64FsRedirectionDisabled then
+      Begin
+        boolresult := DSiRevertWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
+        Wow64FsRedirectionDisabled := false;
+      End;
+      {$ENDIF WIN32}
+    end;
+    finishSection (Sektion, OldNumberOfErrors, OldNumberOfWarnings,
+                   DiffNumberOfErrors, DiffNumberOfWarnings);
+
+
+    LogDatei.LogSIndentLevel := savelogsindentlevel;
+
+    if ExitOnError and (DiffNumberOfErrors > 0)
+    then result := tsrExitProcess;
+    if Logdatei.LogLevel < LLconfidential then
+      if not threaded then deleteTempBatFiles(tempfilename);
+  finally
+    {$IFDEF GUI}
+    FBatchOberflaeche.showAcitvityBar(false);
+    {$ENDIF GUI}
   end;
-  finishSection (Sektion, OldNumberOfErrors, OldNumberOfWarnings,
-                 DiffNumberOfErrors, DiffNumberOfWarnings);
-
-
-  LogDatei.LogSIndentLevel := savelogsindentlevel;
-
-  if ExitOnError and (DiffNumberOfErrors > 0)
-  then result := tsrExitProcess;
-  if Logdatei.LogLevel < LLconfidential then
-    if not threaded then deleteTempBatFiles(tempfilename);
 end;
 
 function TuibInstScript.produceStringList
