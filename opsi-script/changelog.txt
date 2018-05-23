@@ -7,6 +7,8 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 opsi-winst/opsi-script (4.12.0.21) stable; urgency=low
 
   * osconf: default for debuglib = true
+  * osparser: doAktionen: additional log for indefFunc3
+  * osparser: doAktionen: inc/dec indefFunc3 only if keyword is at begining of line
 
 -- Detlef Oertel <d.oertel@uib.de>  Thu, 17 May 2018:15:00:00 +0200
 

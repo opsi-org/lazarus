@@ -17223,12 +17223,15 @@ begin
         looplist.delete (0);
       End;
 
-      if pos(lowercase(PStatNames^ [tsDefineFunction]),lowercase(Remaining)) >0 then
+      // if remaining starts with DefFunc
+      if pos(lowercase(PStatNames^ [tsDefineFunction]),lowercase(trim(Remaining))) = 1 then
         inc(inDefFunc3);
-      if pos(lowercase(PStatNames^ [tsEndFunction]),lowercase(Remaining)) >0 then dec(inDefFunc3);
+      // if remaining starts with EndFunc
+      if pos(lowercase(PStatNames^ [tsEndFunction]),lowercase(trim(Remaining))) = 1 then dec(inDefFunc3);
       //if (lowercase(Remaining) = lowercase(PStatNames^ [tsEndFunction])) then dec(inDefFunc2);
       logdatei.log_prog('Parsingprogress: inDefFunc: '+IntToStr(inDefFunc),LLDebug3);
       logdatei.log_prog('Parsingprogress: inDefFuncIndex: '+IntToStr(inDefFuncIndex),LLDebug3);
+      logdatei.log_prog('Parsingprogress: inDefFunc3: '+IntToStr(inDefFunc3),LLDebug);
 
       if (Remaining = '') or (Remaining [1] = LineIsCommentChar)
       then
@@ -20758,6 +20761,7 @@ begin
   Ifelseendiflevel := 0;
   inDefinedFuncNestCounter := 0;
   definedFunctioncounter := 0;
+  inDefFunc3 := 0;
 
 
   Script := TuibInstScript.Create;
