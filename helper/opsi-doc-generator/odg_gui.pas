@@ -6,6 +6,8 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  LCLIntf,
+  Process,
   odg_main,
   odg_asciidoc,
   StdCtrls;
@@ -15,6 +17,7 @@ type
   { TForm1 }
 
   TForm1 = class(TForm)
+    Bsave_ascii_show: TButton;
     ButtonConvert: TButton;
     ButtonSave: TButton;
     ButtonOpen: TButton;
@@ -26,8 +29,10 @@ type
     Panel3: TPanel;
     SaveDialog1: TSaveDialog;
     Splitter1: TSplitter;
+    procedure Bsave_ascii_showClick(Sender: TObject);
     procedure ButtonConvertClick(Sender: TObject);
     procedure ButtonOpenClick(Sender: TObject);
+    procedure ButtonSaveClick(Sender: TObject);
   private
 
   public
@@ -56,10 +61,26 @@ begin
   end;
 end;
 
+procedure TForm1.ButtonSaveClick(Sender: TObject);
+var
+  savefilename : string;
+begin
+  if SaveDialog1.Execute then
+  begin
+    savefilename := SaveDialog1.FileName;
+    targetlist.SaveToFile(savefilename);
+  end;
+end;
+
 procedure TForm1.ButtonConvertClick(Sender: TObject);
 begin
   convertOslibToAsciidoc(infilename);
   memo2.Lines.Assign(targetlist);
+end;
+
+procedure TForm1.Bsave_ascii_showClick(Sender: TObject);
+begin
+  save_compile_show(infilename);
 end;
 
 end.

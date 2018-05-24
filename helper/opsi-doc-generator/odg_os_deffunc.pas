@@ -189,6 +189,8 @@ TFuncDoc =  class
     property References : string  read FReferences write FReferences;
     property Links : string  read FLinks write FLinks;
     property Requires : string  read FRequires write FRequires;
+    property Email : string  read FEmail write FEmail;
+    property Version : string  read FVersion write FVersion;
   end;
 
 TFileDoc =  class
@@ -208,6 +210,11 @@ TFileDoc =  class
     destructor Destroy;
     property name : string  read Fname write Fname;
     property filedesc : string  read Ffiledesc write Ffiledesc;
+    property Email : string  read FEmail write FEmail;
+    property Author : string  read FAuthor write FAuthor;
+    property Version : string  read FVersion write FVersion;
+    property Date : String  read FDate write FDate;
+    property Copyright : string  read FCopyright write FCopyright;
     //property functions : array of TFuncDoc   read Ffunctions write Ffunctions;
     property functionCounter : integer  read FfunctionCounter write FfunctionCounter;
   end;
@@ -346,7 +353,7 @@ begin
   //syntax_ok := true;
   endOfParamlist := false;
   paramcounter := -1;
-  myfunc.FDefinitionline:=definitionStr;
+  myfunc.FDefinitionline:=trim(definitionStr);
   // get function name
   GetWord(trim(definitionStr), myfunc.FName, remaining,WordDelimiterSet5);
 
@@ -478,8 +485,13 @@ begin
         aktline := trim(copy(aktline,length(ccomment)+1,length(aktline)));
       end;
       if incomment then
-      begin
-        onMarkerAddDocStringTo(cfiledesc,aktline,docobject.Ffiledesc);
+      begin    // document related ?
+        if not onMarkerAddDocStringTo(cauthor,aktline,docobject.FAuthor) then
+        if not onMarkerAddDocStringTo(cdate,aktline,docobject.FDate) then
+        if not onMarkerAddDocStringTo(ccopyright,aktline,docobject.FCopyright) then
+        if not onMarkerAddDocStringTo(cemail,aktline,docobject.FEmail) then
+        if not onMarkerAddDocStringTo(cversion,aktline,docobject.FVersion) then
+        onMarkerAddDocStringTo(cfiledesc,aktline,docobject.Ffiledesc)
       end;
     end
     else
@@ -498,6 +510,8 @@ begin
       begin
         if not onMarkerAddDocStringTo(cauthor,aktline,docobject.Ffunctions[funccounter-1].FAuthor) then
         if not onMarkerAddDocStringTo(cdate,aktline,docobject.Ffunctions[funccounter-1].FDate) then
+        if not onMarkerAddDocStringTo(cemail,aktline,docobject.Ffunctions[funccounter-1].FEmail) then
+        if not onMarkerAddDocStringTo(cversion,aktline,docobject.Ffunctions[funccounter-1].FVersion) then
         if not onMarkerAddDocStringTo(ccopyright,aktline,docobject.Ffunctions[funccounter-1].FCopyright) then
         if not onMarkerAddDocStringTo(CDescription,aktline,docobject.Ffunctions[funccounter-1].FDescription) then
         if not onMarkerAddDocStringTo(COnError,aktline,docobject.Ffunctions[funccounter-1].FOnError) then

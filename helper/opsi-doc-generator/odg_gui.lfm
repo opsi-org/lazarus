@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 213
+  Left = 105
   Height = 628
-  Top = 358
+  Top = 350
   Width = 695
   Caption = 'Form1'
   ClientHeight = 628
@@ -27,11 +27,12 @@ object Form1: TForm1
       TabOrder = 0
     end
     object ButtonSave: TButton
-      Left = 536
+      Left = 400
       Height = 25
       Top = 13
       Width = 75
       Caption = 'ButtonSave'
+      OnClick = ButtonSaveClick
       TabOrder = 1
     end
     object ButtonConvert: TButton
@@ -42,6 +43,15 @@ object Form1: TForm1
       Caption = 'ButtonConvert'
       OnClick = ButtonConvertClick
       TabOrder = 2
+    end
+    object Bsave_ascii_show: TButton
+      Left = 506
+      Height = 25
+      Top = 14
+      Width = 110
+      Caption = 'Bsave_ascii_show'
+      OnClick = Bsave_ascii_showClick
+      TabOrder = 3
     end
   end
   object Panel2: TPanel
