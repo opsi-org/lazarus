@@ -30,6 +30,7 @@ begin
       asciidoc_header.Add(':Author:    '+docobject.Author);
     if not (docobject.Email = '') then
       asciidoc_header.Add(':Email:    '+docobject.Email);
+    asciidoc_header.Add(':toc:');
     asciidoc_header.Add('   ');
     asciidoc_header.Add('   ');
     asciidoc_header.Add('   ');
@@ -45,6 +46,10 @@ begin
        targetlist.Add('* Version:  '+docobject.Version);
     if not (docobject.Copyright = '') then
        targetlist.Add('* Copyright:  '+docobject.Copyright);
+    targetlist.Add('');
+    targetlist.Add('');
+    //targetlist.Add(':toc:');
+    //targetlist.Add(':toc-title: Table of Functions');
     targetlist.Add('');
     targetlist.Add('');
 
@@ -126,6 +131,17 @@ begin
       if tmpstr1 = '' then tmpstr1 :=  docobject.Copyright;
       if tmpstr1 <> '' then targetlist.Add('* Copyright:     '+tmpstr1);
 
+      tmpstr1 := docobject.Ffunctions[frun].Example;
+      if not(tmpstr1 = '') then
+      begin
+        targetlist.Add('');
+        targetlist.Add('');
+        targetlist.Add('Example:');
+        targetlist.Add('[source,winst]');
+        targetlist.Add('----');
+        targetlist.Add(tmpstr1);
+        targetlist.Add('----');
+      end;
       targetlist.Add('');
       targetlist.Add('');
     end;

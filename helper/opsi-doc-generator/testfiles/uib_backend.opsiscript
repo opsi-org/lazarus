@@ -20,6 +20,13 @@ DefFunc setProductsToSetup($productlist$ : stringlist) : string
   ;@Links
   ;@ParamDesc_$productlist$     List of opsi product Ids
   ;@ParamAdvice_$productlist$
+  ;@Example     [actions]
+  ;@Example     DefStringlist $productlist$
+  ;@Example
+  ;@Example     set $productlist$ = CreateStringList("opsi-logviewer","opsi-configed")
+  ;@Example     if not(stringtobool(setProductsToSetup($productlist$)))
+  ;@Example       comment "call of setProductsToSetup failed"
+  ;@Example     endif
 	markErrorNumber
 	set $result$ = "false"
 	for %aktproduct% in $productlist$ do opsiservicecall_set_product_to_setup

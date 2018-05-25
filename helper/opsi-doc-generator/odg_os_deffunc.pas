@@ -171,6 +171,7 @@ TFuncDoc =  class
     FReferences : string;
     FLinks : string;
     FRequires : string;
+    FExample : string;
   public
     Fparams : array of TParamDoc;
     constructor Create;
@@ -191,6 +192,7 @@ TFuncDoc =  class
     property Requires : string  read FRequires write FRequires;
     property Email : string  read FEmail write FEmail;
     property Version : string  read FVersion write FVersion;
+    property Example : string  read FExample write FExample;
   end;
 
 TFileDoc =  class
@@ -239,6 +241,7 @@ const
   CParamDesc = '@ParamDesc_';
   CParamAdvice = '@ParamAdvice_';
   CParam = '@Param';
+  CExample = '@Example';
 
 function parseInput_opsiscriptlibrary(filename : string) : boolean;
 
@@ -253,6 +256,7 @@ uses
 var
   ParamTypesNames : TParamTypesNames;
   funcTypesNames  : TfuncTypesNames;
+  exampleident : integer;
 
 
 constructor TFileDoc.create;
@@ -443,9 +447,25 @@ begin
   result := false;
   if pos(lowercase(marker),lowercase(docstring)) = 1 then
   begin
-    tmpstr1 := trim(copy(docstring,length(marker)+1,length(docstring)));
-    if target = '' then target := tmpstr1
-    else target := target+LineEnding+tmpstr1;
+    if lowercase(marker) = lowercase(CExample) then
+    begin
+      // is this the first line of example
+      if target = '' then
+      begin
+        // get ident of first line
+        tmpstr1 := copy(docstring,length(marker)+1,length(docstring));
+        exampleident := length(tmpstr1) - length(trimleft(tmpstr1));
+      end;
+      tmpstr1 := trimRight(copy(docstring,length(marker)+1+exampleident,length(docstring)));
+      if target = '' then target := tmpstr1
+      else target := target+LineEnding+tmpstr1;
+    end
+    else
+    begin
+      tmpstr1 := trim(copy(docstring,length(marker)+1,length(docstring)));
+      if target = '' then target := tmpstr1
+      else target := target+LineEnding+tmpstr1;
+    end;
     result := true;
   end;
 end;
@@ -518,6 +538,7 @@ begin
         if not onMarkerAddDocStringTo(CReturns,aktline,docobject.Ffunctions[funccounter-1].FReturns) then
         if not onMarkerAddDocStringTo(CSpecialCase,aktline,docobject.Ffunctions[funccounter-1].FSpecialCase) then
         if not onMarkerAddDocStringTo(CReferences,aktline,docobject.Ffunctions[funccounter-1].FReferences)then
+        if not onMarkerAddDocStringTo(CExample,aktline,docobject.Ffunctions[funccounter-1].FExample)then
             onMarkerAddDocStringTo(CLinks,aktline,docobject.Ffunctions[funccounter-1].FLinks);
         // parameter ?
         if pos(lowercase(CParam),lowercase(aktline)) = 1 then

@@ -6,11 +6,14 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  fileinfo,
+  winpeimagereader, // {need this for reading exe info}
+  elfreader, // {needed for reading ELF executables}
   LCLIntf,
   Process,
   odg_main,
   odg_asciidoc,
-  StdCtrls;
+  StdCtrls, EditBtn;
 
 type
 
@@ -33,6 +36,7 @@ type
     procedure ButtonConvertClick(Sender: TObject);
     procedure ButtonOpenClick(Sender: TObject);
     procedure ButtonSaveClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
 
   public
@@ -42,6 +46,8 @@ type
 var
   Form1: TForm1;
   infilename : string;
+  FileVerInfo : TFileVersionInfo;
+  myversion : string;
 
 
 
@@ -72,6 +78,11 @@ begin
   end;
 end;
 
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  caption := 'opsi doc generator Version: '+myversion;
+end;
+
 procedure TForm1.ButtonConvertClick(Sender: TObject);
 begin
   convertOslibToAsciidoc(infilename);
@@ -80,8 +91,22 @@ end;
 
 procedure TForm1.Bsave_ascii_showClick(Sender: TObject);
 begin
+  convertOslibToAsciidoc(infilename);
+  memo2.Lines.Assign(targetlist);
   save_compile_show(infilename);
 end;
+
+
+initialization
+ //from http://wiki.freepascal.org/Show_Application_Title,_Version,_and_Company
+ FileVerInfo := TFileVersionInfo.Create(nil);
+ try
+   FileVerInfo.FileName := ParamStr(0);
+   FileVerInfo.ReadFileInfo;
+   myversion := FileVerInfo.VersionStrings.Values['FileVersion'];
+ finally
+   FileVerInfo.Free;
+ end;
 
 end.
 

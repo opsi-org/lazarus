@@ -1,72 +1,72 @@
 object Form1: TForm1
-  Left = 105
-  Height = 628
-  Top = 350
+  Left = 117
+  Height = 650
+  Top = 386
   Width = 695
-  Caption = 'Form1'
-  ClientHeight = 628
+  Caption = 'opsi-doc-generator'
+  ClientHeight = 650
   ClientWidth = 695
+  OnCreate = FormCreate
   LCLVersion = '1.8.2.0'
   object Panel1: TPanel
     Left = 0
-    Height = 50
+    Height = 120
     Top = 0
     Width = 695
     Align = alTop
-    Caption = 'Panel1'
-    ClientHeight = 50
+    ClientHeight = 120
     ClientWidth = 695
     TabOrder = 0
     object ButtonOpen: TButton
-      Left = 16
+      Left = 24
       Height = 25
-      Top = 13
-      Width = 75
-      Caption = 'ButtonOpen'
+      Top = 8
+      Width = 120
+      Caption = 'Open source file'
       OnClick = ButtonOpenClick
       TabOrder = 0
     end
     object ButtonSave: TButton
-      Left = 400
+      Left = 488
       Height = 25
-      Top = 13
-      Width = 75
-      Caption = 'ButtonSave'
+      Top = 72
+      Width = 99
+      Caption = 'Save Asciidoc'
       OnClick = ButtonSaveClick
       TabOrder = 1
     end
     object ButtonConvert: TButton
-      Left = 272
+      Left = 248
       Height = 25
-      Top = 13
+      Top = 72
       Width = 120
-      Caption = 'ButtonConvert'
+      Caption = 'Convert to asciidoc'
       OnClick = ButtonConvertClick
       TabOrder = 2
     end
     object Bsave_ascii_show: TButton
-      Left = 506
+      Left = 168
       Height = 25
-      Top = 14
-      Width = 110
-      Caption = 'Bsave_ascii_show'
+      Top = 8
+      Width = 272
+      Caption = 'Convert to asciidoc - save - to html -show '
       OnClick = Bsave_ascii_showClick
       TabOrder = 3
     end
   end
   object Panel2: TPanel
     Left = 0
-    Height = 578
-    Top = 50
+    Height = 530
+    Top = 120
     Width = 320
     Align = alLeft
     Caption = 'Panel2'
-    ClientHeight = 578
+    ClientHeight = 530
     ClientWidth = 320
     TabOrder = 1
     object Memo1: TMemo
       Left = 1
-      Height = 576
+      Height = 528
       Top = 1
       Width = 318
       Align = alClient
@@ -79,24 +79,24 @@ object Form1: TForm1
   end
   object Splitter1: TSplitter
     Left = 320
-    Height = 578
-    Top = 50
+    Height = 530
+    Top = 120
     Width = 5
     Beveled = True
   end
   object Panel3: TPanel
     Left = 325
-    Height = 578
-    Top = 50
+    Height = 530
+    Top = 120
     Width = 370
     Align = alClient
     Caption = 'Panel3'
-    ClientHeight = 578
+    ClientHeight = 530
     ClientWidth = 370
     TabOrder = 3
     object Memo2: TMemo
       Left = 1
-      Height = 576
+      Height = 528
       Top = 1
       Width = 368
       Align = alClient
@@ -108,11 +108,11 @@ object Form1: TForm1
     end
   end
   object OpenDialog1: TOpenDialog
-    left = 112
+    left = 568
     top = 8
   end
   object SaveDialog1: TSaveDialog
-    left = 648
+    left = 640
     top = 8
   end
 end
