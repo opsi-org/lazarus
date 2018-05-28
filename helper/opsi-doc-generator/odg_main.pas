@@ -64,21 +64,26 @@ begin
     myasciidoc := myasciidoc.Replace('''','');
     shell := 'cmd.exe';
     shelloption := '/c';
+
   end;
+  if not RunCommand(shell,[shelloption+' '+myasciidoc+' --backend xhtml5 '+filename],output) then
   {$endif WINDOWS}
   {$ifdef LINUX}
   shell := '/bin/bash';
-  shelloption := '';
-  if not RunCommand(shell,['which asciidoctor'],output) then
+  shelloption := '-c ';
+  if not RunCommand('/usr/bin/which',['asciidoctor'],output) then
    writeln('Could not find asciidoctor binary')
   else
   begin
     myasciidoc := output;
-    //myasciidoc := myasciidoc.Replace(#13#10,'');
-    //myasciidoc := myasciidoc.Replace('''','');
+    myasciidoc := myasciidoc.Replace(#10,'');
+    myasciidoc := myasciidoc.Replace('''','');
+
   end;
+  if not RunCommand(myasciidoc,['--backend xhtml5 '+filename],output) then
+  //if not RunCommand(shell,[shelloption+''''+myasciidoc+' --backend xhtml5 '+filename+''''],output) then
   {$endif LINUX}
-  if not RunCommand(shell,[shelloption+' '+myasciidoc+' --backend xhtml5 '+filename],output) then
+  //if not RunCommand(shell,[shelloption+' '+myasciidoc+' --backend xhtml5 '+filename],output) then
   begin
    writeln('Call asciidoctor failed');
    writeln(output);
