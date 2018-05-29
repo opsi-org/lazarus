@@ -51,7 +51,7 @@ function callasciidoctor(filename : string): boolean;
 var
   output : string;
   myasciidoc : string;
-  shell, shelloption : string;
+  shell, shelloption, optionstr : string;
 begin
   result := false;
   {$ifdef WINDOWS}
@@ -80,7 +80,12 @@ begin
     myasciidoc := myasciidoc.Replace('''','');
 
   end;
-  if not RunCommand(myasciidoc,['--backend xhtml5 '+filename],output) then
+  optionstr := '--backend xhtml5 '+ExtractFileName(filename);
+  writeln('calling: indir: '+ ExtractFileDir(filename));
+  writeln('calling: : '+ myasciidoc+' '+optionstr);
+  if not RunCommand(myasciidoc,['--backend','xhtml5',filename],output) then
+  //if not RunCommandIndir(ExtractFileDir(filename),myasciidoc,[optionstr],output) then
+  //if not RunCommand(myasciidoc,['--backend xhtml5 ','"'+filename+'"'],output) then
   //if not RunCommand(shell,[shelloption+''''+myasciidoc+' --backend xhtml5 '+filename+''''],output) then
   {$endif LINUX}
   //if not RunCommand(shell,[shelloption+' '+myasciidoc+' --backend xhtml5 '+filename],output) then

@@ -20,12 +20,6 @@
    
    
    
-:Author:    detlef oertel
-:Email:    d.oertel@uib.de
-:toc:
-   
-   
-   
 [Doc_fileuib_backend.opsiscript]
 = Documentation of opsi library: `uib_backend.opsiscript`
 
