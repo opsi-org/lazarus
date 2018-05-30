@@ -1477,8 +1477,10 @@ begin
     IdHTTP.Request.Password := Fpassword;
     IdHTTP.Request.UserAgent := agent;
     // added exp 9.5.2018 do
+    {$ifdef WINDOWS}
     IdHTTP.ConnectTimeout:=20000;
     IdHTTP.IOHandler.ConnectTimeout:=20000;
+    {$endif WINDOWS}
     //LogDatei.log('createSocket--->6', LLdebug2);
     try
       if ip <> '' then
