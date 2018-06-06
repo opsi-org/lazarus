@@ -17,7 +17,7 @@ unit oswebservice;
 // and published under the Terms of the GNU Affero General Public License.
 // Text of the AGPL: http://www.gnu.org/licenses/agpl-3.0-standalone.html
 // author: Rupert Roeder, detlef oertel
-// credits: http://www.opsi.org/credits/
+
 
 
 
@@ -1476,6 +1476,11 @@ begin
     IdHTTP.Request.Username := Fusername;
     IdHTTP.Request.Password := Fpassword;
     IdHTTP.Request.UserAgent := agent;
+    // added exp 9.5.2018 do
+    {$ifdef WINDOWS}
+    IdHTTP.ConnectTimeout:=20000;
+    IdHTTP.IOHandler.ConnectTimeout:=20000;
+    {$endif WINDOWS}
     //LogDatei.log('createSocket--->6', LLdebug2);
     try
       if ip <> '' then

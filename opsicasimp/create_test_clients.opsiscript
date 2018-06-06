@@ -1,0 +1,83 @@
+[actions]
+
+
+
+defVar $clientprefix$
+defVar $clientip$
+defVar $clientmac$
+defVar $clientkey$
+defVar $clientfqdn$
+defVar $clientstartippart$
+defVar $clientipprefix$
+defVar $clientstartmacpart_dec$
+defVar $clientmacprefix$
+defvar $domain$
+defVar $numberofclients$
+defVar $serv_authenticated$
+defVar $serv_url$
+defVar $tmpstr$
+
+
+deffunc opsiservice_authenticated($user$ : string, $pass$ : string, $url$ : string, $interactive$ : string) : string
+	markErrorNumber
+	if ($interactive$ = "true") and not($url$ = "")
+		comment "we try interactive"
+		opsiservicecall_check_authenticated /interactive /serviceurl $url$
+	else
+		if not($user$ = "") and not($pass$ = "") and not($url$ = "")
+			comment "we try new credentials"
+			opsiservicecall_check_authenticated /username $user$ /password $pass$ /serviceurl $url$
+			
+		else
+			comment "we try existing connection"
+			opsiservicecall_check_authenticated
+		endif
+	endif
+	set $result$ = "true"
+	if errorsOccuredSinceMark > 0
+		set $result$ = "false"
+	endif
+	;---------------------------
+	[opsiservicecall_check_authenticated]
+	"method": "authenticated"
+	"params": [
+						]
+endfunc
+
+set $clientprefix$ = "ocasimp-"
+set $clientipprefix$ = "172.16.166."
+set $clientstartippart$ = "150"
+set $clientmacprefix$ = "00:11:22:33:44:"
+set $clientstartmacpart_dec$ = "0"
+set $domain$ = "vmnat.local"
+set $numberofclients$ = "100"
+set $serv_url$ = "https://172.16.166.1:4447"
+
+set $serv_authenticated$ = opsiservice_authenticated("uib","vjc9991",$serv_url$,"false")
+
+if $serv_authenticated$ = "true"
+	for %clientnumber% = "1" to $numberofclients$ do sub_prepare_and_create
+endif
+
+[sub_prepare_and_create]
+set $clientfqdn$ = $clientprefix$+"%clientnumber%"+"."+$domain$
+set $clientip$ = $clientipprefix$+calculate($clientstartippart$+" + %clientnumber%")
+set $tmpstr$ = DecStrToHexStr(calculate($clientstartmacpart_dec$+" + %clientnumber%"),"2")
+set $clientmac$ = $clientmacprefix$+$tmpstr$
+;set $clientkey$ = createNewOpsiHostKey
+; "10b1151c59ffa7b335fa1a7b75365006"
+set $clientkey$ = "07affeaffeaffeaffeaffeaffeaffe"+$tmpstr$
+
+; method createClient clientName domain *description *notes *ipAddress *hardwareAddress
+opsiservicecall_create_client
+
+[opsiservicecall_create_client]
+"method": "host_createOpsiClient"
+"params": [
+					"$clientfqdn$",
+					"$clientkey$",
+					"generatedtest client",
+					"",
+					"$clientmac$"
+					"$clientip$",
+					]

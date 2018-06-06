@@ -1,0 +1,36 @@
+object FTreeview: TFTreeview
+  Left = 465
+  Height = 643
+  Top = 384
+  Width = 246
+  BorderIcons = []
+  BorderStyle = bsNone
+  Caption = 'FTreeview'
+  ClientHeight = 643
+  ClientWidth = 246
+  Color = clBtnFace
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  OnActivate = FormActivate
+  OnShow = FormShow
+  Position = poDefault
+  LCLVersion = '1.4.4.0'
+  object TreeView1: TTreeView
+    Left = 0
+    Height = 643
+    Top = 0
+    Width = 246
+    Align = alClient
+    DefaultItemHeight = 16
+    ParentShowHint = False
+    ReadOnly = True
+    ShowHint = True
+    TabOrder = 0
+    OnChange = TreeView1Change
+    OnClick = TreeView1Click
+    OnMouseDown = TreeView1MouseDown
+    OnMouseMove = TreeView1MouseMove
+    Options = [tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips, tvoThemedDraw]
+  end
+end

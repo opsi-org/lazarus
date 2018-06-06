@@ -275,24 +275,26 @@ end;
 
 procedure TIdSocketHandle.CloseSocket;
 begin
-  if HandleAllocated then begin
-    FConnectionHandle.Enter; try
+  FConnectionHandle.Enter;
+  try
+    if HandleAllocated then begin
       // Must be first, closing socket will trigger some errors, and they
       // may then call (in other threads) Connected, which in turn looks at
       // FHandleAllocated.
       FHandleAllocated := False;
       Disconnect;
       SetHandle(Id_INVALID_SOCKET);
-    finally
-      FConnectionHandle.Leave;
     end;
+  finally
+    FConnectionHandle.Leave;
   end;
 end;
 
 procedure TIdSocketHandle.Connect;
 begin
   GStack.Connect(Handle, PeerIP, PeerPort, FIPVersion);
-  FConnectionHandle.Enter; try
+  FConnectionHandle.Enter;
+  try
     if HandleAllocated then begin
       // UpdateBindingLocal needs to be called even though Bind calls it. After
       // Bind is may be 0.0.0.0 (INADDR_ANY). After connect it will be a real IP.
@@ -376,6 +378,7 @@ begin
     Id_SO_False
   );
   SetSockOpt(Id_SOL_SOCKET, Id_SO_REUSEADDR, LValue);
+
   {$IFDEF DCC}
     {$IFDEF LINUX64}
   // RLebeau 1/18/2016: Embarcadero's PAServer on Linux64 fails quickly with
@@ -384,9 +387,24 @@ begin
   // so let's limit this fix to just Delphi for now. Should we add a
   // HAS_SO_REUSEPORT define so FPC can use this too?  What about adding a
   // new ReusePort property to configure this separately from ReuseSocket?
-  SetSockOpt(Id_SOL_SOCKET, Id_SO_REUSEPORT, LValue);
+
+  // RLebeau 3/7/2017: Windows 10 has a Developer Mode that includes a Linux
+  // Bash shell for running Linux executables directly in Windows. However,
+  // PAServer fails to open a listening socket in this Shell with an
+  // "Error #22 invalid argument" error.  Since SO_REUSEPORT does not exist
+  // on Windows, could that be why?  Let's just ignore any socket errors here
+  // for now...
+
+  try
+    SetSockOpt(Id_SOL_SOCKET, Id_SO_REUSEPORT, LValue);
+  except
+    on E: EIdSocketError do begin
+      //if E.LastError <> EINVAL then raise;
+    end;
+  end;
     {$ENDIF}
   {$ENDIF}
+
   if (Port = 0) and (FClientPortMin <> 0) and (FClientPortMax <> 0) then begin
     if (FClientPortMin > FClientPortMax) then begin
       raise EIdInvalidPortRange.CreateFmt(RSInvalidPortRange, [FClientPortMin, FClientPortMax]);

@@ -35,6 +35,7 @@ uses
 {$ENDIF GUI}
 {$IFDEF OPSIWINST}
   osconf,
+  //osdefinedfunctions,
 {$IFDEF WINDOWS}
   osregistry,
 {$ENDIF WINDOWS}
@@ -148,6 +149,7 @@ type
     function PartbiggerthanMB(maxsize: integer): boolean;
     procedure PartShrinkToMB(newsize: integer);
     procedure AddToConfidentials(newsecret: string);
+    function isConfidential(teststring : string) : boolean;
     procedure log2history(line: string);
     procedure CreateTheLogfile(LogDateiname: string); overload;
     procedure CreateTheLogfile(LogDateiname: string; check4append: boolean); overload;
@@ -298,6 +300,7 @@ uses
 {$ENDIF GUI}
   osparser,
   osmain,
+  osdefinedfunctions,
   osfunc;
 {$ENDIF}
 
@@ -1253,7 +1256,16 @@ begin
       If usedloglevel < Fforce_min_loglevel then usedloglevel := Fforce_min_loglevel;
 
       {$IFDEF OPSIWINST}
-       // log libraries ?
+       // running defined function ?
+       if inDefFuncIndex > -1 then
+         if definedFunctionArray[inDefFuncIndex].OriginFile <> ExtractFileName(script.Filename) then
+            // defined function imported from lib
+            // do we want to debug libraries ?
+            if (not debug_lib) then
+                // only Warnings and less
+                usedloglevel :=  LLWarning;
+
+       (*
        if Assigned(script) then
        if Assigned(script.FLibList) then
          if script.FLibList.Count > script.aktScriptLineNumber then
@@ -1265,6 +1277,7 @@ begin
                 // only Warnings and less
                 usedloglevel :=  LLWarning;
          end;
+         *)
        {$ENDIF}
 
 
@@ -1574,6 +1587,12 @@ end;
 procedure TLogInfo.AddToConfidentials(newsecret: string);
 begin
   FConfidentialStrings.Append(newsecret);
+end;
+
+function TLogInfo.isConfidential(teststring : string) : boolean;
+begin
+  result := false;
+  if FConfidentialStrings.IndexOf(teststring) > -1 then result := true;
 end;
 
 procedure TLogInfo.PartShrinkToMB(newsize: integer);

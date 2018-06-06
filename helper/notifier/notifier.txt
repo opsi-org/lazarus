@@ -1,21 +1,21 @@
 [changelog]
 
-opsi-notifier  4.0.7.3
+opsi-notifier  4.1.0.0
 
-  * notifier_json: method choicesChanged ; fixes #3196
-  * notifierguicontrol: objectByIndex: do not crash on wrong ini content ; fixes #3156
-  * dpi awareness: Vista-8:off; 8.1+:per Monitor
+  * change to Lazarus 1.8.2
+  * code clean up
+  * AutoAdjustLayout for HighDPI
+  * changes for linux
+  * re export of some bmp
+  * dir notifier moved to notifier.d
+  * notifierguicontrol: more use of WorkAreaHeight
+  * notifierguicontrol: more use of bringToFront
+  * notifier_json: check if message is an object
+  * notifierform: FormShow: no actions
 
--- Detlef Oertel <d.oertel@uib.de>  Mon, 04 Aug 2017:15:00:00 +0200
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 19 Mar 2018:15:00:00 +0200
 
 
-opsi-notifier  4.0.7.2
-
-  * notifierguicontrol: objectByIndex: no fsSystemStayOnTop for event notify
-  * notifierguicontrol: fontresize: now by 0.5
-  * notifierform: activate: bringToFront;
-
--- Detlef Oertel <d.oertel@uib.de>  Thu, 24 Aug 2017:15:00:00 +0200
 
 opsi-notifier  4.0.7.1-1
 

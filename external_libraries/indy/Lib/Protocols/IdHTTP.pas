@@ -1765,6 +1765,7 @@ end;
 
 const
   Requires_HTTP_1_1: array[0..4] of String = (Id_HTTPMethodTrace, Id_HTTPMethodPut, Id_HTTPMethodOptions, Id_HTTPMethodDelete, Id_HTTPMethodPatch);
+  Requires_Content_Length: array[0..1] of String = (Id_HTTPMethodPost, Id_HTTPMethodPut);
 
 procedure TIdCustomHTTP.PrepareRequest(ARequest: TIdHTTPRequest);
 var
@@ -1837,6 +1838,9 @@ begin
 
     if Assigned(ARequest.Source) then begin
       ARequest.ContentLength := ARequest.Source.Size;
+    end
+    else if PosInStrArray(ARequest.Method, Requires_Content_Length, False) > -1 then begin
+      ARequest.ContentLength := 0;
     end else begin
       ARequest.ContentLength := -1;
     end;
@@ -1896,8 +1900,8 @@ begin
           if IOHandler = nil then begin
             raise EIdIOHandlerPropInvalid.Create(RSIOHandlerPropInvalid);
           end;
-          IOHandler.OnStatus := OnStatus;
           ManagedIOHandler := True;
+          IOHandler.OnStatus := OnStatus;
         end
         else if not (IOHandler is TIdSSLIOHandlerSocketBase) then begin
           raise EIdIOHandlerPropInvalid.Create(RSIOHandlerPropInvalid);
@@ -1946,22 +1950,19 @@ begin
   LUseConnectVerb := False;
 
   case ARequest.UseProxy of
-    ctNormal:
+    ctNormal, ctSSL:
       begin
         if (ProtocolVersion = pv1_0) and (Length(ARequest.Connection) = 0) then
         begin
           ARequest.Connection := 'keep-alive';      {do not localize}
         end;
       end;
-    ctSSL, ctSSLProxy:
+    ctSSLProxy:
       begin
-        ARequest.Connection := '';
-        if ARequest.UseProxy = ctSSLProxy then begin
-          // if already connected to an SSL proxy, DO NOT send another
-          // CONNECT request, as it will be sent directly to the target
-          // HTTP server and not to the proxy!
-          LUseConnectVerb := not Connected;
-        end;
+        // if already connected to an SSL proxy, DO NOT send another
+        // CONNECT request, as it will be sent directly to the target
+        // HTTP server and not to the proxy!
+        LUseConnectVerb := not Connected;
       end;
     ctProxy:
       begin
@@ -2551,30 +2552,43 @@ begin
     FHTTP.IOHandler.CheckForDisconnect(False);
   end;
 
+  // has the connection already been closed?
   FKeepAlive := FHTTP.Connected;
 
   if FKeepAlive then
   begin
+    // did the client request the connection to be closed?
+    FKeepAlive := not TextIsSame(Trim(FHTTP.Request.Connection), 'CLOSE');   {do not localize}
+    if FKeepAlive and (FHTTP.Request.UseProxy in [ctProxy, ctSSLProxy]) then begin
+      FKeepAlive := not TextIsSame(Trim(FHTTP.Request.ProxyConnection), 'CLOSE');   {do not localize}
+    end;
+  end;
+
+  if FKeepAlive then
+  begin
+    // did the server/proxy say the connection will be closed?
     case FHTTP.ProtocolVersion of // TODO: use ResponseVersion instead?
       pv1_1:
-        { By default we assume that keep-alive is by default and will close
-          the connection only there is "close" }
+        { By default we assume that keep-alive is used and will close
+          the connection only if there is "close" }
         begin
-          FKeepAlive := not (
-            TextIsSame(Trim(Connection), 'CLOSE') or   {do not localize}
-            TextIsSame(Trim(ProxyConnection), 'CLOSE') {do not localize}
-          );
+          FKeepAlive := not TextIsSame(Trim(Connection), 'CLOSE'); {do not localize}
+          if FKeepAlive and (FHTTP.Request.UseProxy in [ctProxy, ctSSLProxy]) then begin
+            FKeepAlive := not TextIsSame(Trim(ProxyConnection), 'CLOSE'); {do not localize}
+          end;
         end;
       pv1_0:
-        { By default we assume that keep-alive is not by default and will keep
+        { By default we assume that keep-alive is not used and will keep
           the connection only if there is "keep-alive" }
         begin
-          FKeepAlive :=
-            TextIsSame(Trim(Connection), 'KEEP-ALIVE') or   {do not localize}
-            TextIsSame(Trim(ProxyConnection), 'KEEP-ALIVE') {do not localize}
-             { or ((ResponseVersion = pv1_1) and
-              (Length(Trim(Connection)) = 0) and
-              (Length(Trim(ProxyConnection)) = 0)) };
+          FKeepAlive := TextIsSame(Trim(Connection), 'KEEP-ALIVE') {do not localize}
+            { or ((ResponseVersion = pv1_1) and (Trim(Connection) = '')) }
+            ;
+          if FKeepAlive and (FHTTP.Request.UseProxy in [ctProxy, ctSSLProxy]) then begin
+            FKeepAlive := TextIsSame(Trim(ProxyConnection), 'KEEP-ALIVE') {do not localize}
+              { or ((ResponseVersion = pv1_1) and (Trim(ProxyConnection) = '')) }
+              ;
+          end;
         end;
     end;
   end;
@@ -2828,7 +2842,9 @@ begin
   // provide the user with the headers and let the user decide
   // whether the response processing should continue...
   if not HeadersCanContinue then begin
-    Response.KeepAlive := False; // TODO: provide the user an option whether to force DoRequest() to disconnect the connection or not
+    // TODO: provide the user an option whether to force DoRequest() to disconnect the connection or not
+    Response.KeepAlive := False;
+    Response.Connection := 'close'; {do not localize}
     Result := wnJustExit;
     Exit;
   end;
@@ -2897,6 +2913,8 @@ begin
       begin
         Request.Source := nil;
         Request.Method := Id_HTTPMethodGet;
+        // TODO: if the previous request was a POST with an 'application/x-www-webform-urlencoded'
+        // body, move the body data into the URL query string this time...
       end else begin
         Request.Method := LMethod;
       end;

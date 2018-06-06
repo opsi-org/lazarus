@@ -5,13 +5,14 @@ unit osdefinedfunctions;
 interface
 
 uses
-  Classes, SysUtils,
-  oslog,
+  Classes,
+  SysUtils,
+  osparserhelper,
   osfunc;
 
 type
   //TosdfDataTypes = (dfpString,dfpStringlist,dfpBoolean);
-  TosdfDataTypes = (dfpString,dfpStringlist);
+  TosdfDataTypes = (dfpString,dfpStringlist,dfpVoid);
   TosdfDataTypesNames = Array [TosdfDataTypes] of String [50];
 //  TPosdfParameterTypesNames = TosdfParameterTypesNames^;
 
@@ -48,6 +49,8 @@ type
     DFindex : integer;
     DFParentFunc : string;
     DFActive : boolean;
+    DFOriginFile : string;
+    DFOriginFileStartLineNumber : integer;
 
   public
     constructor create;
@@ -89,6 +92,9 @@ type
     property Index : integer read DFindex write DFindex;
     property ParentFunc : String read DFParentFunc;
     property Active : boolean read DFActive write DFActive;
+    property OriginFile : String read DFOriginFile write DFOriginFile;
+    property OriginFileStartLineNumber : integer read DFOriginFileStartLineNumber write DFOriginFileStartLineNumber;
+    property Content : TStringlist read DFContent;
   end;
 
     TDefinedFunctionsArray = Array of TOsDefinedFunction;
@@ -115,7 +121,8 @@ var
 
 implementation
 uses
-  osparser;
+  osparser,
+  oslog;
 
 constructor TOsDefinedFunction.create;
 begin
@@ -145,6 +152,11 @@ begin
   begin
     result := true;
     ftype := dfpStringlist;
+  end
+  else if LowerCase(str) = LowerCase(osdfParameterTypesNames[dfpVoid]) then
+  begin
+    result := true;
+    ftype := dfpVoid;
   end
   //else if LowerCase(str) = LowerCase(osdfParameterTypesNames[dfpBoolean]) then
   //begin
@@ -177,6 +189,7 @@ var
   paramcounter : integer;
   syntax_ok, endOfParamlist,callByReference : boolean;
   searchindex, index : integer;
+  tmpstr : string;
 begin
   parseDefinition := false;
   syntax_ok := true;
@@ -203,6 +216,16 @@ begin
     end
     else
     begin
+      // test on no parameters
+      tmpstr := remaining;
+      if skip(')',remaining,remaining,errorstr) then
+      begin
+        endOfParamlist := true;
+        DFparamCount := 0;
+      end
+      else
+        remaining := tmpstr;
+
       while syntax_ok and not endOfParamlist do
       begin
         // check call type
@@ -314,7 +337,7 @@ begin
           if not stringTofunctiontype(remaining, DFResultType) then
           begin
             // syntax error : wrong data type
-            errorstr := errorstr + ' missing or illegal function data type: '+remaining+' - only string, stringlist and boolean allowed.';
+            errorstr := errorstr + ' missing or illegal function data type: '+remaining+' - only string, stringlist and void allowed.';
             syntax_ok := false;
           end
           else
@@ -411,6 +434,8 @@ begin
     DFLocalVarList[arraycounter-1].varDataType :=datatype;
     if datatype = dfpStringlist then
       DFLocalVarList[arraycounter-1].VarValueList := TStringlist.Create;
+    if datatype = dfpString then
+      DFLocalVarList[arraycounter-1].varValueString:='';
     DFLocalVarList[arraycounter-1].callByReference := callByReference;
   end
   else LogDatei.log('Syntax Error: Double definition of local variable: '+name,LLCritical );
@@ -785,147 +810,166 @@ begin
   end
   else
   begin
-    while syntax_ok and not endOfParamlist do
+    if DFparamCount = 0 then
     begin
-      if remaining = '' then
+      if not skip(')',remaining,remaining,errorstr) then
       begin
-        errorstr := errorstr + ': <paramtype> expected after Parameter Name';
+        // ( expected
+        errorstr := errorstr + ' ) expected';
         syntax_ok := false;
-      end
-      else
+      end;
+    end
+    else
+    begin
+      while syntax_ok and not endOfParamlist do
       begin
-        GetWord(remaining, paramstr, remaining,WordDelimiterSet6);
-        inc(paramcounter);
-        LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is : '+paramstr,LLDebug2);
-        if DFparamList[paramcounter].callByReference then
+        if remaining = '' then
         begin
-          // call by reference
-          case DFparamList[paramcounter].paramDataType of
-            dfpString :     begin
-                              if not isVisibleStringVar(paramstr) then
-                              begin
-                                // parameter type mismatch
-                                syntax_ok := false;
-                                errorstr := errorstr + 'Error: String variable expected, but: '+paramstr+' is not a visible string variable';
-                              end
-                              else
-                              begin
-                                // we got a string variable- make it to a local var
-                                //DFLocalVarList[paramcounter].referencevar:= getReferenceToVar(paramstr);
-                                DFLocalVarList[paramcounter].referencevarname:= paramstr;
-                                if isVisibleLocalVar(paramstr, varindex) then
-                                begin
-                                  // is local var
-                                  DFLocalVarList[paramcounter].referencevarscopeindex := varindex;
-                                  LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is a reference to local: '+paramstr,LLDebug2);
-                                end
-                                else if isVisibleGlobalStringVar(paramstr, varindex) then
-                                begin
-                                  // is global var : -1
-                                  DFLocalVarList[paramcounter].referencevarscopeindex := -1;
-                                  LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is a reference to global: '+paramstr,LLDebug2);
-                                end
-                                else
-                                begin
-                                  // failed
-                                  LogDatei.log('Error: Did not found the reference to: '+paramstr,LLError);
-                                end;
-                              end;
-                            end;
-            dfpStringlist : begin
-                              //if not Script.produceStringList(section,paramstr,r,paramlistvalue,errorstr) then
-                              if not isVisibleStringlistVar(paramstr) then
-                              begin
-                                // parameter type mismatch
-                                syntax_ok := false;
-                                errorstr := errorstr + 'Error: StringList expression expected, but: '+paramstr+' gives no stringlist';
-                              end
-                              else
-                              begin
-                                // we got a stringlist - make it to a local var
-                                DFLocalVarList[paramcounter].referencevarname:= paramstr;
-                                if isVisibleLocalVar(paramstr, varindex) then
-                                begin
-                                  // is local var
-                                  DFLocalVarList[paramcounter].referencevarscopeindex := varindex;
-                                  LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is a reference to local stringlist: '+paramstr,LLDebug2);
-                                end
-                                else if isVisibleGlobalStringlistVar(paramstr, varindex) then
-                                begin
-                                  // is global var : -1
-                                  DFLocalVarList[paramcounter].referencevarscopeindex := -1;
-                                  LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is a reference to global stringlist: '+paramstr,LLDebug2);
-                                end
-                                else
-                                begin
-                                  // failed
-                                  LogDatei.log('Error: Did not found the reference to: '+paramstr,LLError);
-                                end
-                              end;
-                            end;
-          end; // end case
+          errorstr := errorstr + ': <paramtype> expected after Parameter Name';
+          syntax_ok := false;
         end
         else
         begin
-          // call by value
-          case DFparamList[paramcounter].paramDataType of
-            dfpString :     begin
-                              if not Script.EvaluateString(paramstr,r,paramstrvalue,errorstr,NestLevel,inDefFuncIndex) then
-                              begin
-                                // parameter type mismatch
-                                syntax_ok := false;
-                                errorstr := errorstr + 'Error: String expression expected, but: '+paramstr+' gives no string';
-                              end
-                              else
-                              begin
-                                // we got a string - make it to a local var
-                                DFLocalVarList[paramcounter].varValueString:=paramstrvalue;
-                                LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is the string: '+paramstrvalue,LLDebug2);
+          inc(paramcounter);
+          // check if this should be the last parameter and we expect a ')' at the end
+          if paramcounter = DFparamCount-1 then
+            GetWordOrStringConstant(remaining, paramstr, remaining,[')'],true,false)
+          else // this should be not the last parameter and we expect a ','
+            GetWordOrStringConstant(remaining, paramstr, remaining,[',']);
+          paramstr := trim(paramstr);
+          LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is : '+paramstr,LLDebug2);
+          if DFparamList[paramcounter].callByReference then
+          begin
+            // call by reference
+            case DFparamList[paramcounter].paramDataType of
+              dfpString :     begin
+                                if not isVisibleStringVar(paramstr) then
+                                begin
+                                  // parameter type mismatch
+                                  syntax_ok := false;
+                                  errorstr := errorstr + 'Error: String variable expected, but: '+paramstr+' is not a visible string variable';
+                                end
+                                else
+                                begin
+                                  // we got a string variable- make it to a local var
+                                  //DFLocalVarList[paramcounter].referencevar:= getReferenceToVar(paramstr);
+                                  DFLocalVarList[paramcounter].referencevarname:= paramstr;
+                                  if isVisibleLocalVar(paramstr, varindex) then
+                                  begin
+                                    // is local var
+                                    DFLocalVarList[paramcounter].referencevarscopeindex := varindex;
+                                    LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is a reference to local: '+paramstr,LLDebug2);
+                                  end
+                                  else if isVisibleGlobalStringVar(paramstr, varindex) then
+                                  begin
+                                    // is global var : -1
+                                    DFLocalVarList[paramcounter].referencevarscopeindex := -1;
+                                    LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is a reference to global: '+paramstr,LLDebug2);
+                                  end
+                                  else
+                                  begin
+                                    // failed
+                                    LogDatei.log('Error: Did not found the reference to: '+paramstr,LLError);
+                                  end;
+                                end;
                               end;
-                            end;
-            dfpStringlist : begin
-                              if not Script.produceStringList(section,paramstr,r,paramlistvalue,errorstr,NestLevel,inDefFuncIndex) then
-                              begin
-                                // parameter type mismatch
-                                syntax_ok := false;
-                                errorstr := errorstr + 'Error: StringList expression expected, but: '+paramstr+' gives no stringlist';
-                              end
-                              else
-                              begin
-                                // we got a stringlist - make it to a local var
-                                DFLocalVarList[paramcounter].VarValueList.text := paramlistvalue.Text;
-                                LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is a stringlist',LLDebug2);
+              dfpStringlist : begin
+                                //if not Script.produceStringList(section,paramstr,r,paramlistvalue,errorstr) then
+                                if not isVisibleStringlistVar(paramstr) then
+                                begin
+                                  // parameter type mismatch
+                                  syntax_ok := false;
+                                  errorstr := errorstr + 'Error: StringList expression expected, but: '+paramstr+' gives no stringlist';
+                                end
+                                else
+                                begin
+                                  // we got a stringlist - make it to a local var
+                                  DFLocalVarList[paramcounter].referencevarname:= paramstr;
+                                  if isVisibleLocalVar(paramstr, varindex) then
+                                  begin
+                                    // is local var
+                                    DFLocalVarList[paramcounter].referencevarscopeindex := varindex;
+                                    LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is a reference to local stringlist: '+paramstr,LLDebug2);
+                                  end
+                                  else if isVisibleGlobalStringlistVar(paramstr, varindex) then
+                                  begin
+                                    // is global var : -1
+                                    DFLocalVarList[paramcounter].referencevarscopeindex := -1;
+                                    LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is a reference to global stringlist: '+paramstr,LLDebug2);
+                                  end
+                                  else
+                                  begin
+                                    // failed
+                                    LogDatei.log('Error: Did not found the reference to: '+paramstr,LLError);
+                                  end
+                                end;
                               end;
-                            end;
-            (*
-            dfpBoolean :    begin
-                              if not Script.EvaluateBoolean(paramstr,r,paramboolvalue,NestingLevel,errorstr) then
-                              begin
-                                // parameter type mismatch
-                                syntax_ok := false;
-                                errorstr := errorstr + 'Error: boolean expression expected, but: '+paramstr+' gives no boolean';
-                              end
-                              else
-                              begin
-                                // we got a bool - make it to a local var
-                                DFLocalVarList[paramcounter].varValueBool:=paramboolvalue;
-                                LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is boolean: '+BoolToStr(paramboolvalue),LLDebug2);
-                              end;
-                            end;
-                            *)
-          end; // end case
-        end; // reference or value
-
-        if not skip(',',remaining,remaining,errorstr) then
-          if skip(')',remaining,remaining,errorstr) then endOfParamlist := true
+            end; // end case
+          end
           else
           begin
-            // syntax error
-            errorstr := errorstr + ' , or ) expected.';
-            syntax_ok := false;
-          end;
-      end; // remaining <> ''
-    end; // while next paramstr
+            // call by value
+            case DFparamList[paramcounter].paramDataType of
+              dfpString :     begin
+                                if not Script.EvaluateString(paramstr,r,paramstrvalue,errorstr,NestLevel,inDefFuncIndex) then
+                                begin
+                                  // parameter type mismatch
+                                  syntax_ok := false;
+                                  errorstr := errorstr + 'Error: String expression expected, but: '+paramstr+' gives no string';
+                                end
+                                else
+                                begin
+                                  // we got a string - make it to a local var
+                                  DFLocalVarList[paramcounter].varValueString:=paramstrvalue;
+                                  LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is the string: '+paramstrvalue,LLDebug2);
+                                end;
+                              end;
+              dfpStringlist : begin
+                                if not Script.produceStringList(section,paramstr,r,paramlistvalue,errorstr,NestLevel,inDefFuncIndex) then
+                                begin
+                                  // parameter type mismatch
+                                  syntax_ok := false;
+                                  errorstr := errorstr + 'Error: StringList expression expected, but: '+paramstr+' gives no stringlist';
+                                end
+                                else
+                                begin
+                                  // we got a stringlist - make it to a local var
+                                  DFLocalVarList[paramcounter].VarValueList.text := paramlistvalue.Text;
+                                  LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is a stringlist',LLDebug2);
+                                end;
+                              end;
+              (*
+              dfpBoolean :    begin
+                                if not Script.EvaluateBoolean(paramstr,r,paramboolvalue,NestingLevel,errorstr) then
+                                begin
+                                  // parameter type mismatch
+                                  syntax_ok := false;
+                                  errorstr := errorstr + 'Error: boolean expression expected, but: '+paramstr+' gives no boolean';
+                                end
+                                else
+                                begin
+                                  // we got a bool - make it to a local var
+                                  DFLocalVarList[paramcounter].varValueBool:=paramboolvalue;
+                                  LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is boolean: '+BoolToStr(paramboolvalue),LLDebug2);
+                                end;
+                              end;
+                              *)
+            end; // end case
+          end; // reference or value
+          if syntax_ok then
+          begin
+            if not skip(',',remaining,remaining,errorstr) then
+              if skip(')',remaining,remaining,errorstr) then endOfParamlist := true
+              else
+              begin
+                // syntax error
+                errorstr := errorstr + ' , or ) expected.';
+                syntax_ok := false;
+              end;
+          end; //syntax ok
+        end; // remaining <> ''
+      end; // while next paramstr
+    end; // DFparamCount > 0;
   end; // start with '('
   if syntax_ok then parseCallParameter := true;
 end;
@@ -941,6 +985,7 @@ var
   sectionresult : TSectionResult;
   funcindex : integer;
   searchindex : integer;
+  searchDFName : string;
 begin
   call := false;
   inc(inDefFuncLevel);
@@ -952,6 +997,7 @@ begin
   //inc(inDefinedFuncNestCounter);
   //definedFunctionsCallStack.Append(InttoStr(DFIndex));
   //parse parameter
+
   if not parseCallParameter(paramline, remaining, errorstr,NestLevel, inDefFuncIndex) then
   begin
     // parse parameter failed
@@ -963,8 +1009,8 @@ begin
     inDefFuncIndex := FuncIndex;
     // run the body of the function
     inc(inDefinedFuncNestCounter);
-    section := TWorkSection.create(Nestlevel);
-    callingsection := TWorkSection.create(0);
+    section := TWorkSection.create(Nestlevel,Nil);
+    callingsection := TWorkSection.create(0,nil);
     section.Assign(DFcontent);
     sectionresult := script.doAktionen(section,callingsection);
     Nestlevel := section.NestingLevel;
@@ -980,18 +1026,29 @@ begin
        //                  DFResultBool := StrToBool(getLocalVarValueString('$result$'));
        //                end;
     end;
+    dec(inDefinedFuncNestCounter);
+    definedFunctionsCallStack.Delete(definedFunctionsCallStack.Count-1);
   end;
   // we leave a defined function
   // free the local Vars - leave params + $result$
-  SetLength(DFLocalVarList,DFparamCount+1);
-  dec(inDefinedFuncNestCounter);
-  definedFunctionsCallStack.Delete(definedFunctionsCallStack.Count-1);
+  case DFResultType of
+    dfpString :     SetLength(DFLocalVarList,DFparamCount+1);
+    dfpStringlist : SetLength(DFLocalVarList,DFparamCount+1);
+    dfpVoid :       SetLength(DFLocalVarList,DFparamCount); // no $result$ here
+  end;
+
+
   DFActive:=false;
   dec(inDefFuncLevel);
   searchindex := definedFunctionsCallStack.Count-1;
   if searchindex > -1 then
-    inDefFuncIndex := definedFunctionNames.IndexOf (definedFunctionsCallStack.Strings[searchindex])
+  begin
+    //searchDFName :=  definedFunctionsCallStack.Strings[searchindex];
+    //inDefFuncIndex := definedFunctionNames.IndexOf(searchDFName)
+    inDefFuncIndex := strtoint(definedFunctionsCallStack.Strings[searchindex]);
+  end
   else inDefFuncIndex := -1;
+  //logdatei.log('We leave the defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
   LogDatei.log('We leave the defined function: '+DFName+' ; inDefFuncLevel: '+inttostr(inDefFuncLevel),LLDebug2);
 end;
 
@@ -1044,46 +1101,49 @@ begin
   result := false;
   found := false;
   searchfinished := false;
-  LogDatei.log_prog('Search local var: '+varname+' with inDefFuncIndex: '+inttostr(inDefFuncIndex)+' and inDefinedFuncNestCounter: '+inttostr(inDefinedFuncNestCounter), LLDebug2);
-  if inDefFuncIndex > 0 then
+  if varname <> '' then
   begin
-    // we are in a local function
-    // first guess: it is local to the active local function
-    LogDatei.log_prog('Search local var: '+varname+' with inDefFuncIndex: '+inttostr(inDefFuncIndex)+' and Name: '+definedFunctionArray[inDefFuncIndex].name, LLDebug2);
-    if definedFunctionArray[inDefFuncIndex].locaVarExists(varname) then found := true;
-  end;
-  if found then
-  begin
-    index := inDefFuncIndex;
-    LogDatei.log_prog('Found var: '+varname+' as local (1) in function '+definedFunctionArray[index].Name+' with index: '+inttostr(index), LLDebug2);
-  end
-  else
-  begin
-    if inDefinedFuncNestCounter > 0 then
+    LogDatei.log_prog('Search local var: '+varname+' with inDefFuncIndex: '+inttostr(inDefFuncIndex)+' and inDefinedFuncNestCounter: '+inttostr(inDefinedFuncNestCounter), LLDebug2);
+    if inDefFuncIndex > 0 then
     begin
       // we are in a local function
-      // second guess: it is local to parents to the active local function
-      parentlist := TStringlist.Create;
-      parentlist.Text := createListOfVisibleParents.Text;
-      searchfinished := false;
-      searchindex := definedFunctionsCallStack.Count-1;
-      repeat
-        index := strToInt(definedFunctionsCallStack.Strings[searchindex]);
-        if parentlist.IndexOf(definedFunctionArray[index].Name) >= 0 then
-        begin
-          // local variable of this function are visible (global to this function)
-          LogDatei.log_prog('Search local var: '+varname+' with Index: '+inttostr(index)+' and Name: '+definedFunctionArray[index].name, LLDebug2);
-          if (definedFunctionArray[index].Active
-             and definedFunctionArray[index].locaVarExists(varname)) then found := true;
-        end;
-        dec(searchindex);
-        if searchindex < 0 then searchfinished:=true;
-      until found or searchfinished;
-      if found then
-        LogDatei.log_prog('Found var: '+varname+' as local (2) in function '+definedFunctionArray[index].Name+' with index: '+inttostr(index), LLDebug2);
+      // first guess: it is local to the active local function
+      LogDatei.log_prog('Search local var: '+varname+' with inDefFuncIndex: '+inttostr(inDefFuncIndex)+' and Name: '+definedFunctionArray[inDefFuncIndex].name, LLDebug2);
+      if definedFunctionArray[inDefFuncIndex].locaVarExists(varname) then found := true;
     end;
+    if found then
+    begin
+      index := inDefFuncIndex;
+      LogDatei.log_prog('Found var: '+varname+' as local (1) in function '+definedFunctionArray[index].Name+' with index: '+inttostr(index), LLDebug2);
+    end
+    else
+    begin
+      if inDefinedFuncNestCounter > 0 then
+      begin
+        // we are in a local function
+        // second guess: it is local to parents to the active local function
+        parentlist := TStringlist.Create;
+        parentlist.Text := createListOfVisibleParents.Text;
+        searchfinished := false;
+        searchindex := definedFunctionsCallStack.Count-1;
+        repeat
+          index := strToInt(definedFunctionsCallStack.Strings[searchindex]);
+          if parentlist.IndexOf(definedFunctionArray[index].Name) >= 0 then
+          begin
+            // local variable of this function are visible (global to this function)
+            LogDatei.log_prog('Search local var: '+varname+' with Index: '+inttostr(index)+' and Name: '+definedFunctionArray[index].name, LLDebug2);
+            if (definedFunctionArray[index].Active
+               and definedFunctionArray[index].locaVarExists(varname)) then found := true;
+          end;
+          dec(searchindex);
+          if searchindex < 0 then searchfinished:=true;
+        until found or searchfinished;
+        if found then
+          LogDatei.log_prog('Found var: '+varname+' as local (2) in function '+definedFunctionArray[index].Name+' with index: '+inttostr(index), LLDebug2);
+      end;
+    end;
+    result := found;
   end;
-  result := found;
 end;
 
 function getVisibleLocalStringVarNameValueList : TStringlist;
@@ -1243,7 +1303,7 @@ end;
 begin
   osdfParameterTypesNames[dfpString] :=  'String';
   osdfParameterTypesNames[dfpStringlist] :=  'Stringlist';
-  //osdfParameterTypesNames[dfpBoolean] :=  'Boolean';
+  osdfParameterTypesNames[dfpVoid] :=  'Void';
   definedFunctionNames := TStringList.Create;
   definedFunctionsCallStack := TStringList.Create;
 end.

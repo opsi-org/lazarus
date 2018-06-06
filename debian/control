@@ -1,0 +1,12 @@
+Source: opsi-script
+Section: opsi
+Priority: optional
+Maintainer: Detlef Oertel <d.oertel@uib.de>
+Build-Depends: debhelper (>= 7.0.50~)
+Standards-Version: 3.9.4
+
+Package: opsi-script
+Section: opsi
+Architecture: all
+Depends: ${misc:Depends}
+Description: opsi-script for running opsiscript files.

@@ -6,4 +6,5 @@ object DataModule1: TDataModule1
   HorizontalOffset = 323
   VerticalOffset = 304
   Width = 188
+  PPI = 96
 end

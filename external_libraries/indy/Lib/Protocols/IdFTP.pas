@@ -1016,6 +1016,7 @@ type
     property UsingNATFastTrack : Boolean read FUsingNATFastTrack;
     property UsingSFTP : Boolean read FUsingSFTP;
     property CurrentTransferMode : TIdFTPTransferMode read FCurrentTransferMode write TransferMode;
+    property DefStringEncoding : IIdTextEncoding read FDefStringEncoding write SetDefStringEncoding;
 
   published
     {$IFDEF DOTNET}
@@ -1039,7 +1040,6 @@ type
     property DataPort: TIdPort read FDataPort write FDataPort default 0;
     property DataPortMin: TIdPort read FDataPortMin write FDataPortMin default 0;
     property DataPortMax: TIdPort read FDataPortMax write FDataPortMax default 0;
-    property DefStringEncoding : IIdTextEncoding read FDefStringEncoding write SetDefStringEncoding;
     property ExternalIP : String read FExternalIP write FExternalIP;
     property Password;
     property TransferType: TIdFTPTransferType read FTransferType write SetTransferType default Id_TIdFTP_TransferType;
@@ -1458,7 +1458,7 @@ begin
     LHost := FHost;
   end;
   if Socket <> nil then begin
-    if LHost = Socket.Binding.PeerIP then begin
+    if (IPVersion = Id_IPv6) and (MakeCanonicalIPv6Address(LHost) <> '') then begin
       LHost := '[' + LHost + ']'; {do not localize}
     end;
   end;
@@ -1640,9 +1640,6 @@ var
 begin
   DoOnDataChannelDestroy;
   if FDataChannel <> nil then begin
-    {$IFNDEF USE_OBJECT_ARC}
-    FDataChannel.IOHandler.Free;
-    {$ENDIF}
     FDataChannel.IOHandler := nil;
     FreeAndNil(FDataChannel);
   end;
@@ -2192,20 +2189,33 @@ end;
 
 procedure TIdFTP.InitDataChannel;
 var
-  LSSL : TIdSSLIOHandlerSocketBase;
+  LIOHandler : TIdIOHandler;
 begin
   if FDataChannel = nil then begin
     Exit;
   end;
   if FDataPortProtection = ftpdpsPrivate then begin
-    LSSL := TIdSSLIOHandlerSocketBase(IOHandler);
-    FDataChannel.IOHandler := LSSL.Clone;
+    LIOHandler := TIdSSLIOHandlerSocketBase(IOHandler).Clone;
+    {$IFDEF USE_OBJECT_ARC}
+    // under ARC, the TIdTCPConnection.IOHandler property is a weak reference.
+    // TIdSSLIOHandlerSocketBase.Clone() returns an IOHandler with no Owner
+    // assigned, so lets make FDataChannel become the Owner in order to keep
+    // the IOHandler alive when this method exits.
+    //
+    // TODO: should we assign Ownership unconditionally on all platforms?
+    //
+    // TODO: add an AOwner parameter to Clone()
+    //
+    FDataChannel.InsertComponent(LIOHandler);
+    {$ENDIF}
     //we have to delay the actual negotiation until we get the reply and
-    //and just before the readString
-    TIdSSLIOHandlerSocketBase(FDataChannel.IOHandler).Passthrough := True;
+    //just before the readString
+    TIdSSLIOHandlerSocketBase(LIOHandler).PassThrough := True;
   end else begin
-    FDataChannel.IOHandler := TIdIOHandler.MakeDefaultIOHandler(Self);
+    LIOHandler := TIdIOHandler.MakeDefaultIOHandler(FDataChannel);
   end;
+  FDataChannel.IOHandler := LIOHandler;
+  FDataChannel.ManagedIOHandler := True;
   if FDataChannel is TIdTCPClient then
   begin
     TIdTCPClient(FDataChannel).IPVersion := IPVersion;

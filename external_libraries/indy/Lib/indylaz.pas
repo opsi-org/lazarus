@@ -7,9 +7,8 @@ unit indylaz;
 interface
 
 uses
-  IdAboutVCL, IdAntiFreeze, IdCoreDsnRegister, IdDsnCoreResourceStrings, 
-  IdDsnPropEdBindingVCL, IdDsnRegister, IdDsnResourceStrings, 
-  IdDsnSASLListEditorFormVCL, IdRegister, IdRegisterCore, IdStreamVCL, 
+  IdAboutVCL, IdAntiFreeze, IdCoreDsnRegister, IdDsnCoreResourceStrings, IdDsnPropEdBindingVCL, 
+  IdDsnRegister, IdDsnResourceStrings, IdDsnSASLListEditorFormVCL, IdRegister, IdRegisterCore, IdStreamVCL, 
   IdStream, LazarusPackageIntf;
 
 implementation

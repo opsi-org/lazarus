@@ -11,7 +11,7 @@ object Nform: TNform
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnHide = FormHide
-  LCLVersion = '1.6.4.0'
+  LCLVersion = '1.8.2.0'
   object Image1: TImage
     Left = 0
     Height = 240

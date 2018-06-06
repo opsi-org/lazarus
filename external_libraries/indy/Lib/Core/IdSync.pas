@@ -67,17 +67,21 @@ interface
 
 {$i IdCompilerDefines.inc}
 
-{$UNDEF NotifyThreadNeeded}
-{$UNDEF TNotify_InternalDoNotify_Needed}
+{$IFDEF HAS_STATIC_TThread_ForceQueue}
+  {$IFDEF BROKEN_TThread_ForceQueue}
+    {$UNDEF HAS_STATIC_TThread_ForceQueue}
+  {$ENDIF}
+{$ENDIF}
 
+{$UNDEF NotifyThreadNeeded}
 {$IFNDEF HAS_STATIC_TThread_Synchronize}
   {$DEFINE NotifyThreadNeeded}
 {$ENDIF}
 {$IFNDEF HAS_STATIC_TThread_Queue}
   {$DEFINE NotifyThreadNeeded}
 {$ELSE}
-  {$IFNDEF USE_OBJECT_ARC}
-    {$DEFINE TNotify_InternalDoNotify_Needed}
+  {$IFNDEF HAS_STATIC_TThread_ForceQueue}
+    {$DEFINE NotifyThreadNeeded}
   {$ENDIF}
 {$ENDIF}
 
@@ -110,14 +114,23 @@ type
     {$IFNDEF HAS_STATIC_TThread_Synchronize}
     property Thread: TIdThread read FThread;
     {$ENDIF}
-  end {$IFDEF HAS_STATIC_TThread_Synchronize}{$IFDEF HAS_DEPRECATED}deprecated{$IFDEF HAS_DEPRECATED_MSG} 'Use static TThread.Synchronize()'{$ENDIF}{$ENDIF}{$ENDIF};
+  end
+  {$IFDEF HAS_STATIC_TThread_Synchronize}
+    // TODO: deprecate TIdSync only if anonymous procedures are supported?
+    // Delphi's TThread.Synchronize() supports them, but FreePascal's does not...
+    {.$IFDEF HAS_STATIC_TThread_Synchronize_AnonProc}
+      //{$IFDEF HAS_DEPRECATED}deprecated{$IFDEF HAS_DEPRECATED_MSG} 'Use static TThread.Synchronize() with an anonymous procedure'{$ENDIF}{$ENDIF}
+      {$IFDEF HAS_DEPRECATED}deprecated{$IFDEF HAS_DEPRECATED_MSG} 'Use static TThread.Synchronize()'{$ENDIF}{$ENDIF}
+    {.$ENDIF}
+  {$ENDIF}
+  ;
 
   TIdNotify = class(TObject)
   protected
     FMainThreadUsesNotify: Boolean;
     //
     procedure DoNotify; virtual; abstract;
-    {$IFDEF TNotify_InternalDoNotify_Needed}
+    {$IFNDEF USE_OBJECT_ARC}
     procedure InternalDoNotify;
     {$ENDIF}
   public
@@ -126,10 +139,21 @@ type
     {$IFNDEF HAS_STATIC_TThread_Queue}
     procedure WaitFor; {$IFDEF HAS_DEPRECATED}deprecated;{$ENDIF}
     {$ENDIF}
-    class procedure NotifyMethod(AMethod: TThreadMethod);
+    class procedure NotifyMethod(AMethod: TThreadMethod; AForceQueue: Boolean = False);
     //
-    property MainThreadUsesNotify: Boolean read FMainThreadUsesNotify write FMainThreadUsesNotify; // deprecated
-  end {$IFDEF HAS_STATIC_TThread_Queue}{$IFDEF HAS_DEPRECATED}deprecated{$IFDEF HAS_DEPRECATED_MSG} 'Use static TThread.Queue()'{$ENDIF}{$ENDIF}{$ENDIF};
+    property MainThreadUsesNotify: Boolean read FMainThreadUsesNotify write FMainThreadUsesNotify;
+  end
+  {$IFDEF HAS_STATIC_TThread_Queue}
+    {$IFDEF HAS_STATIC_TThread_ForceQueue}
+      // TODO: deprecate TIdNotify only if anonymous procedures are available?
+      // Delphi's TThread.(Force)Queue() supports them, but FreePascal's does not...
+      {.$IFDEF HAS_STATIC_TThread_Queue_AnonProc}
+        //{$IFDEF HAS_DEPRECATED}deprecated{$IFDEF HAS_DEPRECATED_MSG} 'Use static TThread.Queue() or TThread.ForceQueue() with an anonymous procedure'{$ENDIF}{$ENDIF}
+        {$IFDEF HAS_DEPRECATED}deprecated{$IFDEF HAS_DEPRECATED_MSG} 'Use static TThread.Queue() or TThread.ForceQueue()'{$ENDIF}{$ENDIF}
+      {.$ENDIF}
+    {$ENDIF}
+  {$ENDIF}
+  ;
 
   {$I IdSymbolDeprecatedOff.inc}
   TIdNotifyMethod = class(TIdNotify)
@@ -139,7 +163,7 @@ type
     procedure DoNotify; override;
   public
     constructor Create(AMethod: TThreadMethod); reintroduce; virtual;
-  end {$IFDEF HAS_DEPRECATED}deprecated{$IFDEF HAS_DEPRECATED_MSG} {$IFDEF HAS_STATIC_TThread_Queue}'Use static TThread.Queue()'{$ELSE}'Use TIdNotify.NotifyMethod()'{$ENDIF}{$ENDIF}{$ENDIF};
+  end {$IFDEF HAS_DEPRECATED}deprecated{$IFDEF HAS_DEPRECATED_MSG} {$IFDEF HAS_STATIC_TThread_Queue}{$IFDEF HAS_STATIC_TThread_ForceQueue}'Use static TThread.Queue() or TThread.ForceQueue()'{$ELSE}'Use static TThread.Queue()'{$ENDIF}{$ELSE}'Use TIdNotify.NotifyMethod()'{$ENDIF}{$ENDIF}{$ENDIF};
   {$I IdSymbolDeprecatedOn.inc}
 
 implementation
@@ -285,7 +309,7 @@ begin
   }
     // RLebeau 6/7/2016: there are race conditions if multiple threads call
     // TThread.Synchronize() on the same TThread object at the same time
-    // (such as this unit's GNotifyThread object)... 
+    // (such as this unit's GNotifyThread object)...
     {$IFDEF HAS_STATIC_TThread_Synchronize}
     // Fortunately, the static versions of TThread.Synchronize() can skip the
     // race conditions when the AThread parameter is nil, so we are safe here...
@@ -320,33 +344,6 @@ begin
   // end;
 end;
 
-{$IFDEF HAS_STATIC_TThread_Queue}
-procedure DoThreadQueue(QueueProc: TThreadMethod);
-begin
-  {
-  if not Assigned(Classes.WakeMainThread) then
-  begin
-    // TODO: if WakeMainThread is not assigned, need to force a message into
-    // the main message queue so TApplication.Idle() will be called so it can
-    // call CheckSynchronize():
-    //
-    // on Windows, call PostMessage() to post a WM_NULL message to the TApplication window...
-    //
-    // on OSX (and iOS?), call NSApp.sendEvent(???), but with what kind of event?
-    //
-    // on Android, what to do???
-
-    // We can't put the message in the queue before calling TThread.Queue(),
-    // as it might get processed before Queue() can queue the procedure.
-    // Might have to wait on a manual TEvent...
-  end else
-  begin
-  }
-    TThread.Queue(nil, QueueProc);
-  // end;
-end;
-{$ENDIF}
-
 procedure TIdSync.Synchronize;
 begin
   DoThreadSync(
@@ -372,35 +369,157 @@ begin
   inherited Create;
 end;
 
+{$UNDEF USE_DoThreadQueue}
+{$IFDEF HAS_STATIC_TThread_Queue}
+  {$DEFINE USE_DoThreadQueue}
+{$ENDIF}
+{$IFDEF HAS_STATIC_TThread_ForceQueue}
+  {$DEFINE USE_DoThreadQueue}
+{$ENDIF}
+
+{$IFDEF USE_DoThreadQueue}
+procedure DoThreadQueue(QueueProc: TThreadMethod
+  {$IFDEF HAS_STATIC_TThread_ForceQueue}
+  ; AForceQueue: Boolean = False
+  {$ENDIF}
+);
+begin
+  {
+  if not Assigned(Classes.WakeMainThread) then
+  begin
+    // TODO: if WakeMainThread is not assigned, need to force a message into
+    // the main message queue so TApplication.Idle() will be called so it can
+    // call CheckSynchronize():
+    //
+    // on Windows, call PostMessage() to post a WM_NULL message to the TApplication window...
+    //
+    // on OSX (and iOS?), call NSApp.sendEvent(???), but with what kind of event?
+    //
+    // on Android, what to do???
+
+    // We can't put the message in the queue before calling TThread.Queue(),
+    // as it might get processed before Queue() can queue the procedure.
+    // Might have to wait on a manual TEvent...
+  end else
+  begin
+  }
+    {$IFDEF HAS_STATIC_TThread_ForceQueue}
+    if AForceQueue then begin
+      TThread.ForceQueue(nil, QueueProc);
+    end else begin
+      TThread.Queue(nil, QueueProc);
+    end;
+    {$ELSE}
+
+    // TODO: FreePascal/Lazarus has Application.QueueAsyncCall(), but it is in the Forms unit!
+    {
+    if AForceQueue then begin
+      Application.QueueAsyncCall(NotifyAsync, @QueueProc);
+    else
+      TThread.Queue(nil, QueueProc);
+    }
+
+    TThread.Queue(nil, QueueProc);
+    {$ENDIF}
+  // end;
+end;
+{$ENDIF}
+
 procedure TIdNotify.Notify;
 begin
-  // Note: MainThreadUsesNotify only has meaning now when TThread.Queue() is
-  // not available, as it calls the specified method immediately if invoked
-  // in the main thread!  To go back to the old behavior, we would have to
-  // re-enable use of TIdNotifyThread, which is another interface change...
-  if InMainThread and (not MainThreadUsesNotify) then begin
+  {$IFDEF HAS_STATIC_TThread_ForceQueue}
+  DoThreadQueue(
     {$IFNDEF USE_OBJECT_ARC}
-    try
+    InternalDoNotify
+    {$ELSE}
+    DoNotify
     {$ENDIF}
+    , MainThreadUsesNotify
+  );
+  {$ELSE}
+  if InMainThread then
+  begin
+    // RLebeau 9/4/2010: MainThreadUsesNotify only has meaning now when
+    // TThread.Queue() is not available, as it calls the specified method
+    // immediately if invoked in the main thread!  To go back to the old
+    // behavior, we would have to re-enable use of TIdNotifyThread, which is
+    // another interface change...
+
+    // RLebeau 6/21/2017: Delphi 10.2 Tokyo added TThread.ForceQueue() to let
+    // the specified method be queued even if invoked by the main thread!  So
+    // lets re-enable use of TIdNotifyThread in earlier versions, to maintain
+    // consistent notification behavior...
+
+    if not MainThreadUsesNotify then
+    begin
+      {$IFNDEF USE_OBJECT_ARC}
+      InternalDoNotify;
+      {$ELSE}
       DoNotify;
-    {$IFNDEF USE_OBJECT_ARC}
-    finally
-      Free;
+      {$ENDIF}
+    end else
+    begin
+      // TODO: if available, use TThread.CreateAnonymousThread() to call TThread.Queue()?
+      //TThread.CreateAnonymousThread(Notify).Start;
+
+      // TODO: FreePascal/Lazarus has Application.QueueAsyncCall(), but it is in the Forms unit!
+      {
+      uses Forms;
+
+      procedure TIdNotify.NotifyAsync(Data: PtrInt);
+      begin
+        ($IFNDEF USE_OBJECT_ARC)
+        InternalDoNotify;
+        ($ELSE)
+        DoNotify;
+        ($ENDIF)
+      end;
+
+      Application.QueueAsyncCall(@NotifyAsync, 0);
+      }
+
+      {$IFNDEF USE_OBJECT_ARC}
+      try
+      {$ENDIF}
+        CreateNotifyThread;
+        GNotifyThread.AddNotification(Self);
+      {$IFNDEF USE_OBJECT_ARC}
+      except
+        Free;
+        raise;
+      end;
+      {$ENDIF}
     end;
-    {$ENDIF}
   end else begin
     {$IFNDEF USE_OBJECT_ARC}
     try
     {$ENDIF}
       {$IFDEF HAS_STATIC_TThread_Queue}
       DoThreadQueue(
-        {$IFDEF TNotify_InternalDoNotify_Needed}
+        {$IFNDEF USE_OBJECT_ARC}
         InternalDoNotify
         {$ELSE}
         DoNotify
         {$ENDIF}
       );
       {$ELSE}
+
+      // TODO: FreePascal/Lazarus has Application.QueueAsyncCall(), but it is in the Forms unit!
+      {
+      uses Forms;
+
+      procedure TIdNotify.NotifyAsync(Data: PtrInt);
+      begin
+        ($IFNDEF USE_OBJECT_ARC)
+        InternalDoNotify;
+        ($ELSE)
+        DoNotify;
+        ($ENDIF)
+      end;
+
+      Application.QueueAsyncCall(@NotifyAsync, 0);
+      }
+
       CreateNotifyThread;
       GNotifyThread.AddNotification(Self);
       {$ENDIF}
@@ -411,9 +530,10 @@ begin
     end;
     {$ENDIF}
   end;
+  {$ENDIF}
 end;
 
-{$IFDEF TNotify_InternalDoNotify_Needed}
+{$IFNDEF USE_OBJECT_ARC}
 procedure TIdNotify.InternalDoNotify;
 begin
   try
@@ -424,14 +544,31 @@ begin
 end;
 {$ENDIF}
 
-class procedure TIdNotify.NotifyMethod(AMethod: TThreadMethod);
+class procedure TIdNotify.NotifyMethod(AMethod: TThreadMethod; AForceQueue: Boolean = False);
 begin
-  {$IFDEF HAS_STATIC_TThread_Queue}
-  DoThreadQueue(AMethod);
+  {$IFDEF HAS_STATIC_TThread_ForceQueue}
+  DoThreadQueue(AMethod, AForceQueue);
   {$ELSE}
+  if InMainThread then begin
+    if not AForceQueue then begin
+      AMethod;
+    end else begin
+      {$I IdSymbolDeprecatedOff.inc}
+      with TIdNotifyMethod.Create(AMethod) do begin
+        MainThreadUsesNotify := True;
+        Notify;
+      end;
+      {$I IdSymbolDeprecatedOn.inc}
+    end;
+  end else begin
+    {$IFDEF HAS_STATIC_TThread_Queue}
+    DoThreadQueue(AMethod);
+    {$ELSE}
     {$I IdSymbolDeprecatedOff.inc}
-  TIdNotifyMethod.Create(AMethod).Notify;
+    TIdNotifyMethod.Create(AMethod).Notify;
     {$I IdSymbolDeprecatedOn.inc}
+    {$ENDIF}
+  end;
   {$ENDIF}
 end;
 
@@ -479,7 +616,7 @@ begin
   FEvent := TIdLocalEvent.Create;
   FNotifications := TIdNotifyThreadList.Create;
   // Must be before - Thread starts running when we call inherited
-  inherited Create(False, False, 'IdNotify');
+  inherited Create(False, False, 'IdNotify'); {do not localize}
 end;
 
 destructor TIdNotifyThread.Destroy;
@@ -489,7 +626,7 @@ var
   {$ENDIF}
   LList: TIdNotifyList;
 begin
-  // Free remaining Notifications if there is somthing that is still in
+  // Free remaining Notifications if there is something that is still in
   // the queue after thread was terminated
   LList := FNotifications.LockList;
   try
@@ -498,8 +635,8 @@ begin
     {$ELSE}
     while LList.Count > 0 do begin
       LNotify := {$IFDEF HAS_GENERICS_TList}LList.Items[0]{$ELSE}TIdNotify(LList.Items[0]){$ENDIF};
-      LNotify.Free;
       LList.Delete(0);
+      LNotify.Free;
     end;
     {$ENDIF}
   finally
@@ -529,6 +666,50 @@ var
   LNotify: TIdNotify;
 begin
   FEvent.WaitForEver;
+
+  // TODO: If TThread.Queue() is available, just queue the entire
+  // FNotifications list to the main thread and exit. No sense in
+  // locking and unlocking the list on every notification since we
+  // will not be waiting on them here.
+  //
+  // Unlocking and relocking the list should only be needed if we
+  // have to resort to using TThread.Synchronize(), so we don't block
+  // other threads from queuing new notifications while a notification
+  // is running...
+  {
+  ($IFDEF Use_DoThreadQueue)
+  if not Stopped then begin
+    try
+      LNotifications := FNotifications.LockList;
+      try
+        while (LNotifications.Count > 0) and (not Stopped) do
+        begin
+          LNotify := ($IFDEF HAS_GENERICS_TList)LNotifications.Items[0]($ELSE)TIdNotify(LNotifications.Items[0])($ENDIF);
+          LNotifications.Delete(0);
+          ($IFNDEF USE_OBJECT_ARC)
+          try
+            DoThreadQueue(LNotify.InternalDoNotify);
+          except
+            FreeAndNil(LNotify);
+            raise;
+          end;
+          ($ELSE)
+          try
+            DoThreadQueue(LNotify.DoNotify);
+          finally
+            LNotify := nil;
+          end;
+          ($ENDIF)
+        end;
+      finally
+        FNotifications.UnlockList;
+      end;
+    except // Catch all exceptions especially these which are raised during the application close
+    end;
+  end;
+  ($ENDIF)
+  }
+
   // If terminated while waiting on the event or during the loop
   while not Stopped do begin
     try
@@ -542,6 +723,22 @@ begin
       finally
         FNotifications.UnlockList;
       end;
+      {$IFDEF USE_DoThreadQueue}
+        {$IFNDEF USE_OBJECT_ARC}
+      try
+        DoThreadQueue(LNotify.InternalDoNotify);
+      except
+        FreeAndNil(LNotify);
+        raise;
+      end;
+        {$ELSE}
+      try
+        DoThreadQueue(LNotify.DoNotify);
+      finally
+        LNotify := nil;
+      end;
+        {$ENDIF}
+      {$ELSE}
       try
         DoThreadSync(
           {$IFNDEF HAS_STATIC_TThread_Synchronize}Self,{$ENDIF}
@@ -549,6 +746,7 @@ begin
       finally
         FreeAndNil(LNotify);
       end;
+      {$ENDIF}
     except // Catch all exceptions especially these which are raised during the application close
     end;
   end;
@@ -575,6 +773,7 @@ end;
 
 {$IFDEF NotifyThreadNeeded}
 initialization
+  //CreateNotifyThread; // created on demand
 finalization
   TIdNotifyThread.FreeThread;
 {$ENDIF}

@@ -1,0 +1,42 @@
+opsi-script (4.12.0.17-1) experimental; urgency=medium
+
+  * opsi-script 4.12.0.17
+
+ -- Mathias Radtke <m.radtke@uib.de>  Wed, 25 Apr 2018 07:51:51 +0200
+
+opsi-script (4.12.0.14-6) experimental; urgency=medium
+
+  * spec: corrected lintian error on summary
+  * spec. removed debug_package flag
+
+ -- Mathias Radtke <m.radtke@uib.de>  Tue, 03 Apr 2018 10:43:34 +0200
+
+opsi-script (4.12.0.14-5) experimental; urgency=medium
+
+  * spec. using BuildArch x86_64
+
+ -- Mathias Radtke <m.radtke@uib.de>  Tue, 03 Apr 2018 10:36:13 +0200
+
+opsi-script (4.12.0.14-4) experimental; urgency=medium
+
+  * spec: creating /usr/bin
+
+ -- Mathias Radtke <m.radtke@uib.de>  Tue, 03 Apr 2018 10:20:04 +0200
+
+opsi-script (4.12.0.14-3) experimental; urgency=medium
+
+  * corrected file installation
+
+ -- Mathias Radtke <m.radtke@uib.de>  Tue, 03 Apr 2018 09:55:07 +0200
+
+opsi-script (4.12.0.14-2) experimental; urgency=medium
+
+  * corrected spec file 
+
+ -- Mathias Radtke <m.radtke@uib.de>  Thu, 29 Mar 2018 16:04:50 +0200
+
+opsi-script (4.12.0.14-1) experimental; urgency=low
+
+  * Initial release
+
+ -- Mathias Radtke <m.radtke@uib.de>  Wed, 28 Mar 2018 14:17:30 +0200
