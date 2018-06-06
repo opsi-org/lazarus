@@ -1896,8 +1896,8 @@ procedure TuibInstScript.LoadValidLinesFromFile (FName : String; var Section : T
   i : Integer;
   Encoding2use,usedEncoding : string;
   statkind : TStatement;
-  secname, remaining : string;
-  secindex : integer;
+  //secname, remaining : string;
+  //secindex : integer;
 begin
   Section.Clear;
   OriginalList := TXStringList.create;
@@ -18133,9 +18133,9 @@ begin
                                   if lowercase(Expressionstr) = LowerCase(importFunctionName) then
                                   begin
                                     inSearchedFunc := true;
-                                    script.FSectionNameList.Add(importFunctionName);
                                     secindex := Script.FSectionNameList.Add(importFunctionName);
-                                    if secindex <> length(script.FSectionInfoArray) then
+                                    tmpint := length(script.FSectionInfoArray);
+                                    if secindex <> tmpint then
                                       LogDatei.log('Error: internal: secindex <> length(script.FSectionInfoArray)',LLCritical);
                                     setlength(script.FSectionInfoArray, secindex+1);
                                     script.FSectionInfoArray[secindex].SectionName:=importFunctionName;
@@ -20651,7 +20651,7 @@ end;
 
 procedure TuibInstScript.registerSectionOrigins(mylist : Tstringlist;filename : string);
 var
-  i,secindex : integer;
+  i,secindex, tmpint : integer;
   str,secname : string;
 begin
   for i := 0 to mylist.count-1 do
@@ -20662,7 +20662,8 @@ begin
     begin
       // we have a new section
       secindex := Script.FSectionNameList.Add(secname);
-      if secindex <> length(script.FSectionInfoArray) then
+      tmpint := length(script.FSectionInfoArray);
+      if secindex <> tmpint then
         LogDatei.log('Error: internal: secindex <> length(script.FSectionInfoArray)',LLCritical);
       setlength(script.FSectionInfoArray, secindex+1);
       script.FSectionInfoArray[secindex].SectionName:=secname;
@@ -20675,7 +20676,8 @@ begin
       secname := trim(Copy(str,length('deffunc')+1,length(str)));
       GetWord(secname, secname, remaining,WordDelimiterSet5);
       secindex := Script.FSectionNameList.Add(secname);
-      if secindex <> length(script.FSectionInfoArray) then
+      tmpint := length(script.FSectionInfoArray);
+      if secindex <> tmpint then
         LogDatei.log('Error: internal: secindex <> length(script.FSectionInfoArray)',LLCritical);
       setlength(script.FSectionInfoArray, secindex+1);
       script.FSectionInfoArray[secindex].SectionName:=secname;

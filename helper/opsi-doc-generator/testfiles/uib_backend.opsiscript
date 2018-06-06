@@ -27,6 +27,8 @@ DefFunc setProductsToSetup($productlist$ : stringlist) : string
   ;@Example     if not(stringtobool(setProductsToSetup($productlist$)))
   ;@Example       comment "call of setProductsToSetup failed"
   ;@Example     endif
+  
+  
 	markErrorNumber
 	set $result$ = "false"
 	for %aktproduct% in $productlist$ do opsiservicecall_set_product_to_setup
@@ -47,7 +49,9 @@ EndFunc
 DefFunc getInstalledLocalbootProducts(ref $productlist$ : stringlist) : string
   ;@date            20.4.2018
   ;@version         1.1
-  ;@Description     Sets for the given list of opsi productIds the action request
+  ;@Description     Gets a list of productIds which are
+  ;@Description     * known to the client (productOnClient object exists)
+  ;@Description     * and localboot products.
   ;@Description     to 'setup' (also resolving the dependencies)
   ;@Returns         Returns string "true" if all is ok
   ;@OnError         Returns string "false"
@@ -56,6 +60,24 @@ DefFunc getInstalledLocalbootProducts(ref $productlist$ : stringlist) : string
   ;@Links
   ;@ParamDesc_$productlist$     Output list of opsi product Ids that were be found
   ;@ParamAdvice_$productlist$   May be empty
+  
+  ;@Example     if stringToBool(getInstalledLocalbootProducts($resultlist$))
+  ;@Example     	comment "getInstalledLocalbootProducts successful finished"
+  ;@Example     else
+  ;@Example     	LogError "getInstalledLocalbootProducts failed"
+  ;@Example     endif
+  ;@Example     set $tmplist$ = getListContainingList($baseproducts$,$resultlist$)
+  ;@Example     if stringToBool(compareLists($tmplist$,$baseproducts$))
+  ;@Example     	comment "check installed products successful finished"
+  ;@Example     else
+  ;@Example     	LogError "check installed products failed"
+  ;@Example     endif
+  ;@Example     comment " now install and rest products ...."
+  ;@Example     if stringToBool(setProductsToSetup($resetproducts$))
+  ;@Example     	comment "setProductsToSetup successful finished"
+  ;@Example     else
+  ;@Example     	LogError "setProductsToSetup failed"
+  ;@Example     endif
 
 	DefVar $ArrayStr$
 	DefStringList $errorList$
@@ -110,8 +132,32 @@ DefFunc delOpsiPoc($donotdelList$ : stringlist) : string
   ;@SpecialCase     Works only in opsi service mode (not in interactive or batch mode)
   ;@References
   ;@Links
-  ;@ParamDesc_$productlist$     List of opsi product Ids that should not be delted
-  ;@ParamAdvice_$productlist$
+  ;@ParamDesc_$productlist$     List of opsi product Ids that should not be deleted
+  ;@ParamAdvice_$productlist$   May be empty
+  
+  ;@Example     set $opsiMetaDataFile$ = $targetDir$+"\poc.json"
+  ;@Example     if Fileexists($opsiMetaDataFile$)
+  ;@Example     	comment "Delete existing meta data ...."
+  ;@Example     	set $tmplist$ = createStringList ("opsi-vhd-tester","opsi-vhd-control","opsi-vhd-auto-upgrade")
+  ;@Example     	if stringToBool(delOpsiPoc($tmplist$))
+  ;@Example     		comment "Delete existing meta data successful finished"
+  ;@Example     	else
+  ;@Example     		LogError "Delete existing meta data failed"
+  ;@Example     	endif
+  ;@Example     	comment "Restore existing meta data ...."
+  ;@Example     	if stringToBool(restoreOpsiPoc($opsiMetaDataFile$))
+  ;@Example     		comment "Restore existing meta data successful finished"
+  ;@Example     	else
+  ;@Example     		LogError "Restore existing meta data failed"
+  ;@Example     	endif
+  ;@Example     else
+  ;@Example     	comment "No meta data existing - creating it...."
+  ;@Example     	if stringToBool(backupOpsiPoc($opsiMetaDataFile$))
+  ;@Example     		comment "Backup meta data successful finished"
+  ;@Example     	else
+  ;@Example     		LogError "Backup meta data failed"
+  ;@Example     	endif
+  ;@Example     endif
 
 	DefVar $ArrayStr$
 	DefStringList $INST_ErrorList$
@@ -174,6 +220,18 @@ EndFunc
 ; ###################################################################################################
 
 DefFunc backupOpsiPoc($filename$ : string) : string
+  ;@Description     Get all localboot productOnClient objects for this client
+  ;@Description     and write it to the json file $filename$
+  ;@Returns         Returns string "true" if all is ok
+  ;@OnError         Returns string "false"
+  ;@SpecialCase     Works only in opsi service mode (not in interactive or batch mode)
+  ;@References
+  ;@Links
+  ;@ParamDesc_$filename$     Complete name of the file to create
+  ;@ParamAdvice_$filename$
+
+  ;@Example     see delOpsiPoc
+
 DefVar $ArrayStr$
 DefStringList $INST_ErrorList$
 DefStringList $resultlist$
@@ -218,6 +276,19 @@ EndFunc
 ; ###################################################################################################
 
 DefFunc restoreOpsiPoc($filename$ : string) : string
+  ;@Description     Load productOnClient objects from $filename$
+  ;@Description     and write it to to the server
+  ;@Returns         Returns string "true" if all is ok
+  ;@OnError         Returns string "false"
+  ;@SpecialCase     Works only in opsi service mode (not in interactive or batch mode)
+  ;@References
+  ;@Links
+  ;@ParamDesc_$filename$     Complete name of the file to read
+  ;@ParamAdvice_$filename$
+
+  ;@Example     see delOpsiPoc
+
+
 
 	DefVar $ArrayStr$
 	DefStringList $INST_ErrorList$
@@ -260,6 +331,36 @@ EndFunc
 ; ###################################################################################################
 
 DefFunc getInstalledLocalbootProductsWithVersion(ref $productlist$ : stringlist) : string
+
+  ;@Description     Get all localboot productOnClient objects for this client
+  ;@Description     and create a key/value list in the format <productId>=<productVersion>-<packageVersion>
+  ;@Description     This list is be written to $productlist$
+  ;@Returns         Returns string "true" if all is ok
+  ;@OnError         Returns string "false"
+  ;@SpecialCase     Works only in opsi service mode (not in interactive or batch mode)
+  ;@References
+  ;@Links
+  ;@ParamDesc_$productlist$     The key/value list with all <productId>=<productVersion>-<packageVersion> of the client
+  ;@ParamAdvice_$productlist$
+
+
+  ;@Example     comment "check for installed products ...."
+  ;@Example     if stringToBool(getInstalledLocalbootProductsWithVersion($installedproducts$))
+  ;@Example     	comment "getInstalledLocalbootProducts successful finished"
+  ;@Example     else
+  ;@Example     	LogError "getInstalledLocalbootProducts failed"
+  ;@Example     endif
+  ;@Example     comment "check for installable products ...."
+  ;@Example     if stringToBool(getInstallableLocalbootProductsWithVersion($possibleproducts$))
+  ;@Example     	comment "getInstallableLocalbootProductsWithVersion successful finished"
+  ;@Example     else
+  ;@Example     	LogError "getInstallableLocalbootProductsWithVersion failed"
+  ;@Example     endif
+  ;@Example     comment "fill $upgradeproducts$ .."
+  ;@Example     set $tmplist$ = getKeyList($installedproducts$)
+  ;@Example     set $possibleproducts$ = getSubListByKey($tmplist$,$possibleproducts$) 
+  ;@Example     for %aktprod% in $installedproducts$ do sub_find_updatable_products
+
 	DefVar $ArrayStr$
 	DefStringList $errorList$
 	DefStringList $resultlist$
@@ -306,6 +407,24 @@ EndFunc
 ; ###################################################################################################
 
 DefFunc getInstallableLocalbootProductsWithVersion(ref $productlist$ : stringlist) : string
+
+  ;@Description     Get all localboot productOnDepot objects for the depot of this client
+  ;@Description     and create a key/value list in the format <productId>=<productVersion>-<packageVersion>
+  ;@Description     This list is be written to $productlist$
+  ;@Returns         Returns string "true" if all is ok
+  ;@OnError         Returns string "false"
+  ;@SpecialCase     Works only in opsi service mode (not in interactive or batch mode)
+  ;@References
+  ;@Links
+  ;@ParamDesc_$productlist$     The key/value list with all 
+  ;@ParamDesc_$productlist$     <productId>=<productVersion>-<packageVersion> of the depot of this client
+  ;@ParamAdvice_$productlist$
+
+
+  ;@Example     see getInstalledLocalbootProductsWithVersion
+
+
+
 	DefVar $ArrayStr$
 	DefVar $depotId$
 	DefStringList $errorList$

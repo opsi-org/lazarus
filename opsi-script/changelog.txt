@@ -4,6 +4,13 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.0.22) stable; urgency=low
+
+  * osparser: doAktionen: importlib; remove double call of
+    Script.FSectionNameList.Add(importFunctionName) fixes #3560
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 06 Jun 2018:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.0.21) stable; urgency=low
 
   * osconf: default for debuglib = true
