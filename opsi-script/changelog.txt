@@ -4,6 +4,38 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.0.21) stable; urgency=low
+
+  * osconf: default for debuglib = true
+  * osparser: doAktionen: additional log for indefFunc3
+  * osparser: doAktionen: inc/dec indefFunc3 only if keyword is at begining of line
+  * oswebservice connection timeout 20 sec not at linux
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 17 May 2018:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.0.20) stable; urgency=low
+
+  * osparserhelper: GetWord: search backwards=true;backwardfirst=true : / get from "hu)hu)))" as expr "hu)hu" with remaining ")))"
+  * osparserhelper: GetWord: search backwards=true;backwardfirst=false : / get from "hu)hu)))" as expr "hu)hu))" with remaining ")"
+  * osparserhelper: GetWordOrStringConstant: new params search backwards=true;backwardfirst=false
+  * osparser: producestringlist: do not delete remaining after call of defined function
+  * osdefinedfunctions: parseCallParameter: better error messages
+  * osdefinedfunctions: parseCallParameter: trim paramstr ; fixes #3526
+  * osdefinedfunctions: call: set inDefFuncIndex on leaving function ; fixes #3528
+  * osparser: executeWith: use autoactivitydisplay
+  * osparser: execShellCall: use autoactivitydisplay
+  * osparser: execPowerShellCall: use autoactivitydisplay
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 14 May 2018:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.0.19) stable; urgency=low
+
+  * osparser: new SearchForSectionLines
+  * osparser: SearchForSectionLines used in produceStringlist and doAktionen
+  * oswebservice connection timeout 20 sec
+  * osdefinedfunctions: fix at free the local Vars (no $result$ if dfpVoid
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 8 May 2018:15:00:00 +0200
 
 opsi-winst/opsi-script (4.12.0.18) stable; urgency=low
 

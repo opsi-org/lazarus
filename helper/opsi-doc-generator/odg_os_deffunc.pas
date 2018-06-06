@@ -171,6 +171,7 @@ TFuncDoc =  class
     FReferences : string;
     FLinks : string;
     FRequires : string;
+    FExample : string;
   public
     Fparams : array of TParamDoc;
     constructor Create;
@@ -189,6 +190,9 @@ TFuncDoc =  class
     property References : string  read FReferences write FReferences;
     property Links : string  read FLinks write FLinks;
     property Requires : string  read FRequires write FRequires;
+    property Email : string  read FEmail write FEmail;
+    property Version : string  read FVersion write FVersion;
+    property Example : string  read FExample write FExample;
   end;
 
 TFileDoc =  class
@@ -208,6 +212,11 @@ TFileDoc =  class
     destructor Destroy;
     property name : string  read Fname write Fname;
     property filedesc : string  read Ffiledesc write Ffiledesc;
+    property Email : string  read FEmail write FEmail;
+    property Author : string  read FAuthor write FAuthor;
+    property Version : string  read FVersion write FVersion;
+    property Date : String  read FDate write FDate;
+    property Copyright : string  read FCopyright write FCopyright;
     //property functions : array of TFuncDoc   read Ffunctions write Ffunctions;
     property functionCounter : integer  read FfunctionCounter write FfunctionCounter;
   end;
@@ -232,6 +241,7 @@ const
   CParamDesc = '@ParamDesc_';
   CParamAdvice = '@ParamAdvice_';
   CParam = '@Param';
+  CExample = '@Example';
 
 function parseInput_opsiscriptlibrary(filename : string) : boolean;
 
@@ -246,6 +256,7 @@ uses
 var
   ParamTypesNames : TParamTypesNames;
   funcTypesNames  : TfuncTypesNames;
+  exampleident : integer;
 
 
 constructor TFileDoc.create;
@@ -346,7 +357,7 @@ begin
   //syntax_ok := true;
   endOfParamlist := false;
   paramcounter := -1;
-  myfunc.FDefinitionline:=definitionStr;
+  myfunc.FDefinitionline:=trim(definitionStr);
   // get function name
   GetWord(trim(definitionStr), myfunc.FName, remaining,WordDelimiterSet5);
 
@@ -436,9 +447,25 @@ begin
   result := false;
   if pos(lowercase(marker),lowercase(docstring)) = 1 then
   begin
-    tmpstr1 := trim(copy(docstring,length(marker)+1,length(docstring)));
-    if target = '' then target := tmpstr1
-    else target := target+LineEnding+tmpstr1;
+    if lowercase(marker) = lowercase(CExample) then
+    begin
+      // is this the first line of example
+      if target = '' then
+      begin
+        // get ident of first line
+        tmpstr1 := copy(docstring,length(marker)+1,length(docstring));
+        exampleident := length(tmpstr1) - length(trimleft(tmpstr1));
+      end;
+      tmpstr1 := trimRight(copy(docstring,length(marker)+1+exampleident,length(docstring)));
+      if target = '' then target := tmpstr1
+      else target := target+LineEnding+tmpstr1;
+    end
+    else
+    begin
+      tmpstr1 := trim(copy(docstring,length(marker)+1,length(docstring)));
+      if target = '' then target := tmpstr1
+      else target := target+LineEnding+tmpstr1;
+    end;
     result := true;
   end;
 end;
@@ -478,8 +505,13 @@ begin
         aktline := trim(copy(aktline,length(ccomment)+1,length(aktline)));
       end;
       if incomment then
-      begin
-        onMarkerAddDocStringTo(cfiledesc,aktline,docobject.Ffiledesc);
+      begin    // document related ?
+        if not onMarkerAddDocStringTo(cauthor,aktline,docobject.FAuthor) then
+        if not onMarkerAddDocStringTo(cdate,aktline,docobject.FDate) then
+        if not onMarkerAddDocStringTo(ccopyright,aktline,docobject.FCopyright) then
+        if not onMarkerAddDocStringTo(cemail,aktline,docobject.FEmail) then
+        if not onMarkerAddDocStringTo(cversion,aktline,docobject.FVersion) then
+        onMarkerAddDocStringTo(cfiledesc,aktline,docobject.Ffiledesc)
       end;
     end
     else
@@ -498,12 +530,15 @@ begin
       begin
         if not onMarkerAddDocStringTo(cauthor,aktline,docobject.Ffunctions[funccounter-1].FAuthor) then
         if not onMarkerAddDocStringTo(cdate,aktline,docobject.Ffunctions[funccounter-1].FDate) then
+        if not onMarkerAddDocStringTo(cemail,aktline,docobject.Ffunctions[funccounter-1].FEmail) then
+        if not onMarkerAddDocStringTo(cversion,aktline,docobject.Ffunctions[funccounter-1].FVersion) then
         if not onMarkerAddDocStringTo(ccopyright,aktline,docobject.Ffunctions[funccounter-1].FCopyright) then
         if not onMarkerAddDocStringTo(CDescription,aktline,docobject.Ffunctions[funccounter-1].FDescription) then
         if not onMarkerAddDocStringTo(COnError,aktline,docobject.Ffunctions[funccounter-1].FOnError) then
         if not onMarkerAddDocStringTo(CReturns,aktline,docobject.Ffunctions[funccounter-1].FReturns) then
         if not onMarkerAddDocStringTo(CSpecialCase,aktline,docobject.Ffunctions[funccounter-1].FSpecialCase) then
         if not onMarkerAddDocStringTo(CReferences,aktline,docobject.Ffunctions[funccounter-1].FReferences)then
+        if not onMarkerAddDocStringTo(CExample,aktline,docobject.Ffunctions[funccounter-1].FExample)then
             onMarkerAddDocStringTo(CLinks,aktline,docobject.Ffunctions[funccounter-1].FLinks);
         // parameter ?
         if pos(lowercase(CParam),lowercase(aktline)) = 1 then

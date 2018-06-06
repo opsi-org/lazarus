@@ -94,6 +94,7 @@ type
     property Active : boolean read DFActive write DFActive;
     property OriginFile : String read DFOriginFile write DFOriginFile;
     property OriginFileStartLineNumber : integer read DFOriginFileStartLineNumber write DFOriginFileStartLineNumber;
+    property Content : TStringlist read DFContent;
   end;
 
     TDefinedFunctionsArray = Array of TOsDefinedFunction;
@@ -832,9 +833,10 @@ begin
           inc(paramcounter);
           // check if this should be the last parameter and we expect a ')' at the end
           if paramcounter = DFparamCount-1 then
-            GetWordOrStringConstant(remaining, paramstr, remaining,[')'],true)
+            GetWordOrStringConstant(remaining, paramstr, remaining,[')'],true,false)
           else // this should be not the last parameter and we expect a ','
             GetWordOrStringConstant(remaining, paramstr, remaining,[',']);
+          paramstr := trim(paramstr);
           LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is : '+paramstr,LLDebug2);
           if DFparamList[paramcounter].callByReference then
           begin
@@ -954,15 +956,17 @@ begin
                               *)
             end; // end case
           end; // reference or value
-
-          if not skip(',',remaining,remaining,errorstr) then
-            if skip(')',remaining,remaining,errorstr) then endOfParamlist := true
-            else
-            begin
-              // syntax error
-              errorstr := errorstr + ' , or ) expected.';
-              syntax_ok := false;
-            end;
+          if syntax_ok then
+          begin
+            if not skip(',',remaining,remaining,errorstr) then
+              if skip(')',remaining,remaining,errorstr) then endOfParamlist := true
+              else
+              begin
+                // syntax error
+                errorstr := errorstr + ' , or ) expected.';
+                syntax_ok := false;
+              end;
+          end; //syntax ok
         end; // remaining <> ''
       end; // while next paramstr
     end; // DFparamCount > 0;
@@ -981,6 +985,7 @@ var
   sectionresult : TSectionResult;
   funcindex : integer;
   searchindex : integer;
+  searchDFName : string;
 begin
   call := false;
   inc(inDefFuncLevel);
@@ -1026,14 +1031,22 @@ begin
   end;
   // we leave a defined function
   // free the local Vars - leave params + $result$
-  SetLength(DFLocalVarList,DFparamCount+1);
+  case DFResultType of
+    dfpString :     SetLength(DFLocalVarList,DFparamCount+1);
+    dfpStringlist : SetLength(DFLocalVarList,DFparamCount+1);
+    dfpVoid :       SetLength(DFLocalVarList,DFparamCount); // no $result$ here
+  end;
 
 
   DFActive:=false;
   dec(inDefFuncLevel);
   searchindex := definedFunctionsCallStack.Count-1;
   if searchindex > -1 then
-    inDefFuncIndex := definedFunctionNames.IndexOf (definedFunctionsCallStack.Strings[searchindex])
+  begin
+    //searchDFName :=  definedFunctionsCallStack.Strings[searchindex];
+    //inDefFuncIndex := definedFunctionNames.IndexOf(searchDFName)
+    inDefFuncIndex := strtoint(definedFunctionsCallStack.Strings[searchindex]);
+  end
   else inDefFuncIndex := -1;
   //logdatei.log('We leave the defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
   LogDatei.log('We leave the defined function: '+DFName+' ; inDefFuncLevel: '+inttostr(inDefFuncLevel),LLDebug2);

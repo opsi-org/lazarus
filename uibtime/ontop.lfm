@@ -104,7 +104,7 @@ object FOnTop: TFOnTop
     end
     object Edit1: TEdit
       Left = 144
-      Height = 19
+      Height = 21
       Top = 2
       Width = 154
       Color = clWhite
@@ -155,7 +155,7 @@ object FOnTop: TFOnTop
     end
     object EditProjektzeit: TEdit
       Left = 466
-      Height = 19
+      Height = 21
       Top = 2
       Width = 80
       ParentShowHint = False

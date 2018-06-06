@@ -58,6 +58,7 @@ type
     BtnThisWeek: TButton;
     CalendarDialog1: TCalendarDialog;
     CheckBox1: TCheckBox;
+    CheckBoxAllSincePStart: TCheckBox;
     CheckBoxAccountexport: TCheckBox;
     CheckGroup1: TCheckGroup;
     DataSource1: TDataSource;
@@ -550,12 +551,17 @@ var
   tmpdate: TDate;
   year, month, day: word;
   summe_h, freed, monthnum, total: double;
+  isQuotaReport, hasProjectstart: boolean;
+  projectstart, projectend: TDateTime;
+  quota_lifetime_month: integer;
 begin
   DataModule1.debugOut(6, 'start StringGrid1DblClick');
   //Cursor:=crHourGlass;
   //StringGrid1.Cursor:=crHourGlass;
   try
     screen.Cursor := crHourGlass;
+    isQuotaReport := false;
+    hasProjectstart := false;
     Application.ProcessMessages;
     selindex := stringgrid1.Row;
     suchevent := stringgrid1.Rows[selindex][0];
@@ -576,6 +582,39 @@ begin
     else
       PanelExport.Enabled := False;
 
+    isQuotaReport := False;
+    // query isQuotaReport
+    QueryUEARhelper.Close;
+    if QueryUEARhelper.Active then
+      QueryUEARhelper.Close;
+    QueryUEARhelper.SQL.Clear;
+    QueryUEARhelper.sql.Add(' select projectstart, quota_lifetime_month ');
+    QueryUEARhelper.sql.Add('    from uiballevent');
+    QueryUEARhelper.sql.Add('    where (event = :suchevent)');
+    QueryUEARhelper.parambyname('suchevent').AsString := suchevent;
+    QueryUEARhelper.Open;
+    if not QueryUEARhelper.FieldByName('quota_lifetime_month').IsNull then
+    begin
+      quota_lifetime_month := round(QueryUEARhelper.FieldByName(
+        'quota_lifetime_month').AsFloat);
+      if quota_lifetime_month > 0 then
+        isQuotaReport := True;
+    end;
+    if not QueryUEARhelper.FieldByName('projectstart').IsNull then
+    begin
+       projectstart := QueryUEARhelper.FieldByName('projectstart').AsDateTime;
+       hasProjectstart := true;
+    end;
+    QueryUEARhelper.Close;
+
+    if CheckBoxAllSincePStart.Checked and hasProjectstart then
+    begin
+      vonstr := DateToStr(projectstart);
+      DecodeDate(projectstart, year, month, day);
+      repfilevonstr := IntToStr(month) + '-' + IntToStr(year);
+      repvonstr := vonstr;
+    end;
+
     // clear buffer
 
     if DataSource1.Enabled then
@@ -595,7 +634,7 @@ begin
     query1.parambyname('stop').AsString := bisstr;
     query1.ExecSQL;
 
-    // crear temp buffer
+    // clear temp buffer
     if query1.Active then
       query1.Close;
     query1.SQL.Clear;
