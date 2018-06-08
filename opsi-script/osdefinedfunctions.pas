@@ -796,6 +796,7 @@ var
   section : TuibIniScript;
   NestingLevel : Integer = 0;
   varindex : integer;
+  inputstr : string;
 
 begin
   parseCallParameter := false;
@@ -831,11 +832,16 @@ begin
         else
         begin
           inc(paramcounter);
+          inputstr := remaining;
           // check if this should be the last parameter and we expect a ')' at the end
           if paramcounter = DFparamCount-1 then
-            GetWordOrStringConstant(remaining, paramstr, remaining,[')'],true,false)
+          begin
+            GetWordOrStringConstant(inputstr, paramstr, remaining,[')'],true,false);
+            if pos(')',paramstr) > 0 then
+              GetWordOrStringConstant(inputstr, paramstr, remaining,[')'],false,false);
+          end
           else // this should be not the last parameter and we expect a ','
-            GetWordOrStringConstant(remaining, paramstr, remaining,[',']);
+            GetWordOrStringConstant(inputstr, paramstr, remaining,[',']);
           paramstr := trim(paramstr);
           LogDatei.log('Paramnr: '+inttostr(paramcounter)+' is : '+paramstr,LLDebug2);
           if DFparamList[paramcounter].callByReference then

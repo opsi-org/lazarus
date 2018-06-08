@@ -11897,7 +11897,7 @@ var
 
 
 begin
-
+ LogDatei.log_prog ('EvaluateBoolean: Parsing: '+s0+' ', LLDebug);
  syntaxCheck := false;
  InfoSyntaxError := '';
  StringResult := '';
