@@ -225,7 +225,8 @@ DefFunc backupOpsiPoc($filename$ : string) : string
   ;@Returns         Returns string "true" if all is ok
   ;@OnError         Returns string "false"
   ;@SpecialCase     Works only in opsi service mode (not in interactive or batch mode)
-  ;@References
+  ;@References      restoreOpsiPoc
+  ;@References      delOpsiPoc
   ;@Links
   ;@ParamDesc_$filename$     Complete name of the file to create
   ;@ParamAdvice_$filename$

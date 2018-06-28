@@ -7,6 +7,7 @@ interface
 uses
   Classes,
   odg_os_deffunc,
+  oslog,
   SysUtils;
 
 procedure writeDocToList;
@@ -23,9 +24,11 @@ var
   frun, prun : integer;
   tmpstr1, pname : string;
 begin
+  LogDatei.log('Writing collected data as asciidoc to stringlist',LLnotice);
   if Assigned(docobject) and (docobject <> nil) then
   begin
     targetlist.Clear;
+    LogDatei.log('Writing file information for: '+docobject.name,LLinfo);
     if not (docobject.Author = '') then
       asciidoc_header.Add(':Author:    '+docobject.Author);
     if not (docobject.Email = '') then
@@ -55,6 +58,7 @@ begin
 
     for frun := 0 to docobject.functionCounter -1 do
     begin
+      LogDatei.log('Writing function information for: '+docobject.Ffunctions[frun].Name,LLinfo);
       //targetlist.Add('--------------------------------');
       targetlist.Add('');
       targetlist.Add('anchor:'+docobject.Ffunctions[frun].Name+'[]');
@@ -71,6 +75,7 @@ begin
       for prun := 0 to docobject.Ffunctions[frun].ParamCounter -1 do
       begin
         pname := docobject.Ffunctions[frun].Fparams[prun].ParamName;
+        LogDatei.log('Writing parameter information for: '+pname,LLinfo);
         targetlist.add('* Parameter: `' +pname+'`');
         //targetlist.add('** Type: `' +docobject.Ffunctions[frun].Fparams[prun].getParamTypestring)+'`';
         if docobject.Ffunctions[frun].Fparams[prun].callByReference then
@@ -146,6 +151,7 @@ begin
       targetlist.Add('');
     end;
   end;
+  LogDatei.log('Finished writing collected data as asciidoc to stringlist',LLinfo);
 end;
 
 initialization

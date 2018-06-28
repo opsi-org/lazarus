@@ -19,7 +19,6 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="5"/>
-        <TopLine Value="60"/>
         <CursorPos X="26" Y="80"/>
         <UsageCount Value="135"/>
         <Loaded Value="True"/>
@@ -29,7 +28,6 @@
         <Filename Value="notifier_base.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="26"/>
         <CursorPos X="63" Y="45"/>
         <UsageCount Value="135"/>
         <Loaded Value="True"/>
@@ -49,9 +47,9 @@
         <ComponentName Value="DataModule1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="172"/>
-        <CursorPos Y="196"/>
+        <CursorPos X="21" Y="15"/>
         <UsageCount Value="135"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -60,7 +58,6 @@
         <Filename Value="notifierguicontrol.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="6"/>
-        <TopLine Value="501"/>
         <CursorPos X="11" Y="362"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
@@ -75,7 +72,6 @@
         <Filename Value="notifier_json.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="4"/>
-        <TopLine Value="154"/>
         <CursorPos Y="211"/>
         <UsageCount Value="97"/>
         <Loaded Value="True"/>
@@ -83,7 +79,6 @@
       <Unit7>
         <Filename Value="..\..\common\osjson.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
         <TopLine Value="106"/>
         <CursorPos X="3" Y="113"/>
