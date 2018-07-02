@@ -5,17 +5,20 @@ unit Help;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  ExtCtrls, htmlview;
+  Classes, SysUtils, FileUtil, LResources, Forms,
+  Controls, Graphics, Dialogs, ExtCtrls, LazHelpHTML, HtmlView;
+//, htmlview;
 
 type
 
   { TFormHelp }
 
   TFormHelp = class(TForm)
-    HTMLViewerHelp: THTMLViewer;
+    HtmlViewerHelp: THtmlViewer;
+    //HTMLViewerHelp: THTMLViewer;
     Panel1: TPanel;
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure SetHelpFile(myHelpFile: String);
     procedure FormResize(Sender: TObject);
   private
@@ -28,6 +31,7 @@ var
   FormHelp: TFormHelp;
   FormHelpWidth:  Integer = 800;
   FormHelpHeight: Integer = 600;
+  //HTMLViewerHelp: THTMLViewer;
 
 
 implementation
@@ -37,9 +41,17 @@ implementation
 procedure TFormHelp.FormCreate(Sender: TObject);
 begin
    // HTMLViewerHelp.LoadFromFile('languages\Help.en.html');
+   //HTMLViewerHelp:= THTMLViewer.Create(panel1);
+   //HTMLViewerHelp.Parent := panel1;
+   //HTMLViewerHelp.Align:=alClient;
    FormHelp.Width  := FormHelpWidth;
    FormHelp.Height := FormHelpHeight;
    FormHelp.FormResize(FormHelp);
+end;
+
+procedure TFormHelp.FormDestroy(Sender: TObject);
+begin
+  //HTMLViewerHelp.Free;
 end;
 
 

@@ -11,11 +11,34 @@ unit resultform;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, SynEdit, SynMemo, Forms, Controls, Graphics,
-  Dialogs, ExtCtrls, StdCtrls, Buttons, ComCtrls, Menus, Registry, Strings, StrUtils, VersionInfoX,
-  Process, Windows, CustApp, ShlObj, htmlview, help;
+  Classes, SysUtils, FileUtil, RTTICtrls, RTTIGrids,
+  //SynEdit, SynMemo,
+  Forms, Controls, Graphics,
+  Dialogs, ExtCtrls,
+  StdCtrls,
+  Buttons,
+  ComCtrls,
+  Menus,
+  Registry,
+  Strings,
+  StrUtils,
+  //VersionInfoX,
+  Process,
+  Windows,
+  CustApp,
+  ShlObj,
+  //htmlview,
+  //help,
+  fileinfo,
+  osdhelper,
+  osdanalyze,
+  winpeimagereader,
+  lcltranslator, EditBtn, Spin,
+  oslog,
+  osdbasedata;
 
-resourcestring
+
+const
   sMBoxHeader = 'opsi setup detector';
   sHelpHeader = 'opsi setup detector Help';
 
@@ -59,6 +82,9 @@ type
     CheckBox_InstallShieldMSI_License: TCheckBox;
     CheckBox_Default_License: TCheckBox;
     CheckBox_Nsis_License: TCheckBox;
+    ComboBoxArchMode: TComboBox;
+    Edit_installer_type: TEdit;
+    InstallDirEdit: TDirectoryEdit;
     EditAdvancedMSIFilename: TEdit;
     EditAdvancedMSIFileSize: TEdit;
     EditAdvancedMSIProductCode: TEdit;
@@ -66,17 +92,22 @@ type
     EditAdvancedMSIProductName: TEdit;
     EditAdvancedMSIProductVersion: TEdit;
     EditAdvancedMSIRequiredSpace: TEdit;
-    EditDefault_file: TEdit;
-    EditDefault_FileSize: TEdit;
-    EditDefault_MSTfile: TEdit;
-    EditDefault_opsiProductID: TEdit;
-    EditDefault_ProductCode: TEdit;
-    EditDefault_ProductName: TEdit;
-    EditDefault_ProductVersion: TEdit;
-    EditDefault_RequiredSpace: TEdit;
+    Edit_FileSize: TEdit;
+    Edit_opsiProductID: TEdit;
+    Edit_MsiId: TEdit;
+    Edit_ProductName: TEdit;
+    Edit_ProductVersion: TEdit;
+    Edit_RequiredSpace: TEdit;
     FileHelp: TMenuItem;
+    Label58: TLabel;
+    Label59: TLabel;
+    Label60: TLabel;
+    Label61: TLabel;
+    Label62: TLabel;
+    Label63: TLabel;
+    Label64: TLabel;
+    setup32NameEdit: TFileNameEdit;
     Image7: TImage;
-    Image8: TImage;
     Label42: TLabel;
     Label43: TLabel;
     Label44: TLabel;
@@ -98,7 +129,13 @@ type
     Panel17: TPanel;
     Panel18: TPanel;
     PanelDefault: TPanel;
-    Panel20: TPanel;
+    SBtnOpen: TSpeedButton;
+    SBtnExit: TSpeedButton;
+    setup64NameEdit: TFileNameEdit;
+    mst32NameEdit: TFileNameEdit;
+    mst64NameEdit: TFileNameEdit;
+    SpinEditPackageVersion: TSpinEdit;
+    StatusBar1: TStatusBar;
     TabSheetDefault: TTabSheet;
     TabSheetAdvancedMSI: TTabSheet;
     BitBtnAdvancedMSISetup: TBitBtn;
@@ -201,7 +238,7 @@ type
     MemoNsisDescription: TMemo;
     MemoInstallShieldDescription: TMemo;
     FileExit: TMenuItem;
-    FileCreateLogfile: TMenuItem;
+    //FileCreateLogfile: TMenuItem;
     MenuItemAbout: TMenuItem;
     MenuItemFile: TMenuItem;
     Panel10: TPanel;
@@ -243,6 +280,7 @@ type
     TabSheetInstallShield: TTabSheet;
     TabSheetInnoSetup: TTabSheet;
     TabSheetNsis: TTabSheet;
+    ToolBar1: TToolBar;
 
     procedure BitBtn_PacketBasedirClick(Sender: TObject);
     procedure BitBtnClose1Click(Sender: TObject);
@@ -255,12 +293,18 @@ type
     procedure BitBtnInstallShieldClick(Sender: TObject);
     procedure ButtonCreatePacketClick(Sender: TObject);
     procedure CheckBox1Change(Sender: TObject);
+    procedure CheckBox3Change(Sender: TObject);
+    procedure ComboBoxArchModeChange(Sender: TObject);
     procedure FileCreateLogfileClick(Sender: TObject);
+    //procedure FileCreateLogfileClick(Sender: TObject);
     procedure FileHelpClick(Sender: TObject);
+    procedure mst32NameEditChange(Sender: TObject);
+    procedure setup32NameEditChange(Sender: TObject);
     procedure FileOpenSetupFileClick(Sender: TObject);
     procedure FileExitClick(Sender: TObject);
     procedure MenuItemAboutClick(Sender: TObject);
     procedure PageControl1Change(Sender: TObject);
+    procedure Panel1Click(Sender: TObject);
     procedure ProductIDChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure RadioButtonBuildModeChange(Sender: TObject);
@@ -273,6 +317,7 @@ type
     function createProductInstallShield : Boolean;
     function createProductInstallShieldMSI : Boolean;
     function createProductAdvancedMSI : Boolean;
+    function checkFormParameters(installerId : TKnownInstaller) : Boolean;
     function checkFormParametersMSI : Boolean;
     function checkFormParametersInno : Boolean;
     function checkFormParametersNsis : Boolean;
@@ -282,9 +327,12 @@ type
     function getPacketIDfromFilename(str: string) : string;
     function getPacketIDShort(str: string) : string;
     function ExtractVersion(str: string) : string;
+    procedure SBtnOpenClick(Sender: TObject);
+    procedure SBtnExitClick(Sender: TObject);
     procedure TabSheetAdvancedMSIEnter(Sender: TObject);
     procedure TabSheetInstallShieldMSIEnter(Sender: TObject);
     procedure TabSheetMSIEnter(Sender: TObject);
+    procedure clearAllTabs;
   private
     { private declarations }
   public
@@ -293,6 +341,8 @@ type
   end;
 
 procedure main;
+procedure mywrite(line: string); overload;
+procedure mywrite(line: string; loglevel : integer); overload;
 
 var
   resultForm1: TresultForm1;
@@ -301,6 +351,7 @@ var
   result: Integer;
   myExeDir : string;
   myfilename, myerror: string;
+  myVersion : string;
   MSIfilename, MSTfilename, SetupFilename: string;
   showgui: boolean;
   configDir: string;
@@ -309,15 +360,15 @@ var
   productid: string;
   patchlist: TStringList;
   fConfig: Text;
-  setupType: string;
+  setupTypestr: string;
   markerEmbeddedMSI: boolean = false;
   markerInstallShield: boolean = false;
   ArchitecturesInstallIn64BitMode: string; // INNO: {pf}={pf64}/{pf32}?
-  Revision: string = '$Rev: 126 $';   // set manually in Project-Settings-Version
-  RevDate: string = '$Date: 2014-09-23 17:46:39 +0200 (Di, 23 Sep 2014) $';
+  //Revision: string = '$Rev: 126 $';   // set manually in Project-Settings-Version
+  //RevDate: string = '$Date: 2014-09-23 17:46:39 +0200 (Di, 23 Sep 2014) $';
   opsidir: string;   // opsi.org (set in main)
   opsitmp: string;   // %TEMP%/opsitmp  (set in main)
-  Logfile: string;   // name of logfile (set in main)
+  //Logfile: string;   // name of logfile (set in main)
 
   //*****************************************
   test: boolean = false;
@@ -330,21 +381,13 @@ var
   showAdvancedMSI: boolean = true;
   //*****************************************
 
-const
-
-  SetupType_AdvancedMSI      = 'AdvancedMSI';
-  SetupType_Inno             = 'Inno';
-  SetupType_InstallShield    = 'InstallShield';
-  SetupType_InstallShieldMSI = 'InstallShieldMSI';
-  SetupType_MSI              = 'MSI';
-  SetupType_NSIS             = 'NSIS';
 
 implementation
 
 {$R *.lfm}
 //{$R manifest.rc}
 
-
+(*
 procedure registerForExplorer;
 var
   myreg: Tregistry;
@@ -432,6 +475,7 @@ begin
        mywrite(instring);
 end;
 
+
 procedure grepmarker(instring: string);
 var lowerstring: string;
 begin
@@ -479,6 +523,7 @@ begin
     (0 < pos('productcode{', lowercase(instring))) then
     mywrite(instring);
 end;
+
 
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TStringList;
@@ -578,10 +623,28 @@ begin
     M.Free;
   end;
 end;
+*)
 
-procedure clearAllTabs;
+procedure mywrite(line: string);
 begin
-  setupType := '';
+  mywrite(line, LLNotice);
+end;
+
+procedure mywrite(line: string; loglevel : integer);
+begin
+  if showgui then
+  begin
+    resultform1.memoadd(line);
+  end
+  else
+    writeln(line);
+  LogDatei.log(line,loglevel);
+end;
+
+
+procedure TresultForm1.clearAllTabs;
+begin
+  setupTypestr := '';
 
   resultForm1.Memo1.Clear;
 
@@ -648,6 +711,8 @@ begin
   resultForm1.MemoAdvancedMSIDescription.Clear;
 
 end;
+
+(*
 
 procedure get_msi_info(myfilename: string);
 var
@@ -1313,18 +1378,16 @@ begin
   end
 end;
 
-
+*)
 
 procedure WriteHelp;
 var
   progname: string;
-  verinfo: TVersioninfo;
 begin
-  verinfo := TVersioninfo.Create(ParamStr(0));
   progname := ExtractFileName(ParamStr(0));
   writeln(ParamStr(0));
   writeln(progname);
-  writeln('Version ' + verinfo.getString('FileVersion'));
+  writeln('Version ' + myVersion);
   writeln(myerror);
   writeln('Usage:');
   writeln(progname + '[Options]');
@@ -1332,23 +1395,20 @@ begin
   writeln(' --help -> write this help and exit');
   writeln(' --filename=<path\filename> -> file to analyze)');
   writeln(' --nogui -> do not show interactive output window)');
-  verinfo.Free;
   Application.Terminate;
   halt(-1);
   Exit;
 end;
 
-
+(*
 procedure WriteLogfile;
 var
   FileVar: TextFile;
   progname: string;
-  verinfo: TVersioninfo;
   msg: string;
 begin
   progname := ExtractFileName(ParamStr(0));
-  verinfo := TVersioninfo.Create(ParamStr(0));
-  msg := 'Version: ' + verinfo.getString('FileVersion') + '  -  '+Revision + '  -  '+ RevDate;
+  msg := 'Version: ' + myVersion + '  -  '+Revision + '  -  '+ RevDate;
   msg := StringReplace (msg, '$', '', [rfReplaceAll,rfIgnoreCase]);
   mywrite('Write Logfile: '+Logfile);
   if not DirectoryExists(opsitmp) then createdir(opsitmp);
@@ -1371,15 +1431,49 @@ begin
       end;
     end;
   end;
-
-  verinfo.Free;
 end;
-
+*)
 
 procedure main;
 var
   ErrorMsg: string;
+  FileVerInfo: TFileVersionInfo;
+  lfilename : string;
 begin
+  FileVerInfo := TFileVersionInfo.Create(nil);
+  try
+    FileVerInfo.FileName := ParamStr(0);
+    FileVerInfo.ReadFileInfo;
+    myVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
+  finally
+    FileVerInfo.Free;
+  end;
+  // Initialize logging
+  LogDatei := TLogInfo.Create;
+  lfilename := ExtractFileNameWithoutExt(Application.ExeName);
+  LogDatei.FileName := lfilename;
+  LogDatei.StandardLogFileext := '.log';
+  LogDatei.StandardLogFilename := lfilename;
+  LogDatei.WritePartLog := False;
+  LogDatei.CreateTheLogfile(lfilename + '.log', True);
+  (*
+  // push prelog buffer to logfile
+  if preloglist.Count > 0 then
+    for i := 0 to preloglist.Count - 1 do
+      LogDatei.log(preloglist.Strings[i], LLEssential);
+  if logAndTerminate then
+  begin
+    LogDatei.log('Closing log and terminating due to previous errors.', LLCritical);
+    logdatei.Close;
+    Application.Terminate;
+    Exit;
+  end;
+  *)
+  LogDatei.log('Log for: ' + Application.exename + ' opend at : ' +
+    DateTimeToStr(now), LLinfo);
+
+  LogDatei.LogLevel := 8;
+  resultform1.LabelVersion.Caption := 'Version: ' +   myVersion;
   myExeDir := ExtractFileDir(ParamStr(0));
   registerForExplorer;
   myexitcode := 0;
@@ -1390,6 +1484,7 @@ begin
   optionlist.Append('filename::');
   optionlist.Append('nogui');
 
+  (*
   opsitmp := SysUtils.GetEnvironmentVariable('TEMP')+'\opsitmp\';  // global var, extractMSI.cmd must use same path
   opsidir := 'C:\opsi.org';  // global var
 
@@ -1401,11 +1496,11 @@ begin
   end
   else
       Logfile := opsitmp+'opsiSetupDetector.log';
-
+  *)
   // if resultForm1.TabSheetAnalyze.Visible = true then
   //   resultForm1.PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
   // get global ConfigDir
-  configDir := GetAppConfigDirUTF8(true);   // configDir = "All Users\Appdata\opsi setup detector"
+  configDir := GetAppConfigDir(true);   // configDir = "All Users\Appdata\opsi setup detector"
   if not DirectoryExists(configDir) then
      CreateDir(configDir);
 
@@ -1472,7 +1567,7 @@ begin
       Analyze(myfilename)
     end
     else
-       stringsgrep(myfilename,false,false);
+       analyze_binary(myfilename,false,false);
   end
   else
   begin
@@ -1596,21 +1691,24 @@ begin
 
   // set default opsiProductID from ProductName
   opsiProductID := '';
-  fullName := EditMSI_ProductName.text;
+  fullName := Edit_ProductName.text;
   opsiProductID := getPacketIDfromFilename (fullName);
   opsiProductID := getPacketIDShort(opsiProductID);
-  EditMSI_opsiProductID.Text := opsiProductID;
+  Edit_opsiProductID.Text := opsiProductID;
+  aktProduct.productId:=opsiProductID;
 
   // check for MST-file
-  EditMSI_MSTfile.Text := '';
+  mst32nameedit.Text := '';
   Checkbox2.Checked := false;
   If SysUtils.FindFirst (OpenDialog1.InitialDir +'*.mst',faAnyFile,FileInfo)=0 then
   begin
-    EditMSI_MSTfile.Text := FileInfo.Name;
+    mst32nameedit.Text := FileInfo.Name;
+    aktProduct.mst32FileName:=ExtractFileName(FileInfo.Name);
+    aktProduct.mst32FileNamePath:=ExtractFileDir(FileInfo.Name);
     Checkbox2.Checked := true;
   end;
-  MemoMSI.Clear;
-  MemoMSI.Append(EditMSI_ProductName.Text);
+  //MemoMSI.Clear;
+  //MemoMSI.Append(EditMSI_ProductName.Text);
 end;
 
 
@@ -1623,15 +1721,18 @@ var
 begin
 
   // set default opsiProductID from ProductName
-  opsiProductID := EditInnoProductId.Text;
-  fileName := ExtractFileName(EditInnoFilename.text);
+  opsiProductID := Edit_opsiProductID.Text;
+  //fileName := ExtractFileName(EditInnoFilename.text);
+  filename := aktProduct.setup32FileName;
   product := StringReplace(fileName, '.exe', '',[rfReplaceAll, rfIgnoreCase]);
   product := StringReplace(product, 'setup', '',[rfReplaceAll, rfIgnoreCase]);
   product := StringReplace(product, 'install', '',[rfReplaceAll, rfIgnoreCase]);
-  if (opsiProductID = '') then begin
+  if (opsiProductID = '') then
+  begin
     opsiProductID := getPacketIDfromFilename (product);
     opsiProductID := getPacketIDShort(opsiProductID);
-    EditInnoProductId.Text := opsiProductID;
+    Edit_opsiProductID.Text := opsiProductID;
+    aktProduct.productId:=opsiProductID;
   end;
   if EditInnoProductName.Text = '' then
     EditInnoProductName.Text := product;
@@ -1641,6 +1742,71 @@ end;
 
 
 
+function TResultform1.checkFormParameters(installerId : TKnownInstaller) : Boolean;
+var
+  str : string;
+  i : integer;
+begin
+   checkFormParameters := false;
+   if showMSI then
+     PageControl1.ActivePage := resultForm1.TabSheetDefault;
+
+   if not FileExists(setup32NameEdit.text) then begin
+     Application.MessageBox(pchar(sErrMSINotFound), pchar(sMBoxHeader), MB_ICONERROR);
+     setup32NameEdit.setfocus;
+     Exit;
+   end;
+   if Edit_opsiProductID.Text = '' then begin
+     Application.MessageBox(pchar(sErrFldOpsiProductIdEmpty), pchar(sMBoxHeader), MB_ICONERROR);
+     Edit_opsiProductID.SetFocus;
+     Exit;
+   end;
+   if installerId = stMsi then
+   begin
+     if Edit_msiid.Text = '' then begin
+       Application.MessageBox(pchar(sErrFldMsiProductCodeEmpty), pchar(sMBoxHeader), MB_ICONERROR);
+       Edit_msiid.SetFocus;
+       Exit;
+     end;
+     if Checkbox2.checked and not FileExists(ExtractFilePath(setup32NameEdit.text)+mst32NameEdit.text) then begin
+       Application.MessageBox(pchar(sErrMSTNotFound), pchar(sMBoxHeader), MB_ICONERROR);
+       mst32NameEdit.setfocus;
+       Exit;
+     end;
+   end  // end msi
+   else
+   begin // start setup
+     if InstallDirEdit.Text = '' then
+     begin
+       Application.MessageBox(pchar(sErrFldInstDirEmpty), pchar(sMBoxHeader), MB_ICONERROR);
+       InstallDirEdit.SetFocus;
+       // no Exit: packing without deinstall available
+     end;
+     str := Edit_ProductVersion.Text;
+   if str = '' then begin
+     Application.MessageBox(pchar(sErrFldOpsiProductVersionEmpty), pchar(sMBoxHeader), MB_ICONERROR);
+     Edit_ProductVersion.SetFocus;
+     Exit;
+   end;
+   for i := 1 to Length(str) do
+   begin
+      if not (str[i] in ['0'..'9','.']) then begin
+        Application.MessageBox(pchar(sErrProductVersionInvalid), pchar(sMBoxHeader), MB_ICONERROR);
+        Edit_ProductVersion.SetFocus;
+        Exit;
+      end;
+   end;
+   end; // end setup
+
+   if not DirectoryExists(Edit_PacketbaseDir.text) then begin
+     Application.MessageBox(pchar(sErrPacketBaseDirNotFound), pchar(sMBoxHeader), MB_ICONERROR);
+     Edit_PacketbaseDir.setfocus;
+     Exit;
+   end;
+
+   checkFormParameters := true;
+end;
+
 
 
 function TResultform1.checkFormParametersMSI : Boolean;
@@ -1648,7 +1814,10 @@ function TResultform1.checkFormParametersMSI : Boolean;
 begin
    checkFormParametersMSI := false;
    if showMSI then
-     PageControl1.ActivePage := resultForm1.TabSheetMSI;
+     PageControl1.ActivePage := resultForm1.TabSheetDefault;
+     //PageControl1.ActivePage := resultForm1.TabSheetMSI;
+
+     (*
 
    if EditMSI_file.text = '' then begin
      Application.MessageBox(pchar(sErrFldSetupEmpty), pchar(sMBoxHeader), MB_ICONERROR);
@@ -1656,25 +1825,26 @@ begin
         EditMSI_file.setfocus;
      Exit;
    end;
+   *)
 
-   if not FileExists(EditMSI_file.text) then begin
+   if not FileExists(setup32NameEdit.text) then begin
      Application.MessageBox(pchar(sErrMSINotFound), pchar(sMBoxHeader), MB_ICONERROR);
-     EditMSI_file.setfocus;
+     setup32NameEdit.setfocus;
      Exit;
    end;
-   if EditMSI_opsiProductID.Text = '' then begin
+   if Edit_opsiProductID.Text = '' then begin
      Application.MessageBox(pchar(sErrFldOpsiProductIdEmpty), pchar(sMBoxHeader), MB_ICONERROR);
-     EditMSI_opsiProductID.SetFocus;
+     Edit_opsiProductID.SetFocus;
      Exit;
    end;
-   if EditMSI_ProductCode.Text = '' then begin
+   if Edit_msiid.Text = '' then begin
      Application.MessageBox(pchar(sErrFldMsiProductCodeEmpty), pchar(sMBoxHeader), MB_ICONERROR);
-     EditMSI_ProductCode.SetFocus;
+     Edit_msiid.SetFocus;
      Exit;
    end;
-   if Checkbox2.checked and not FileExists(ExtractFilePath(EditMSI_file.text)+EditMSI_MSTfile.text) then begin
+   if Checkbox2.checked and not FileExists(ExtractFilePath(setup32NameEdit.text)+mst32NameEdit.text) then begin
      Application.MessageBox(pchar(sErrMSTNotFound), pchar(sMBoxHeader), MB_ICONERROR);
-     EditMSI_MSTfile.setfocus;
+     mst32NameEdit.setfocus;
      Exit;
    end;
    if not DirectoryExists(Edit_PacketbaseDir.text) then begin
@@ -1691,8 +1861,11 @@ function TResultform1.checkFormParametersInno : Boolean;
 
 begin
    checkFormParametersInno := false;
+
+   (*
    if showInnoSetup then
      PageControl1.ActivePage := TabSheetInnoSetup;
+     *)
 
    if EditInnoFilename.Text = '' then begin
      Application.MessageBox(pchar(sErrFldSetupEmpty), pchar(sMBoxHeader), MB_ICONERROR);
@@ -1977,6 +2150,7 @@ begin
        patchlist.Clear;
     myExeDir := ExtractFileDir(ParamStr(0));
 
+(*
     if PageControl1.ActivePage = TabSheetAnalyze then begin
       if (setupType = SetupType_MSI) and showMSI then
          PageControl1.ActivePage := TabSheetMSI
@@ -2003,6 +2177,8 @@ begin
         exit
       end
     end;
+    *)
+    (*
 
     if PageControl1.ActivePage = TabSheetMSI then begin
       setupType := SetupType_MSI;
@@ -2057,13 +2233,13 @@ begin
       else
          exit
     end;
-
+    *)
 
     if Application.MessageBox(pchar(msg1), pchar(sMBoxHeader), MB_ICONQUESTION or MB_YESNO) = IDNO then
        exit
     else
        packit := true;
-
+    (*
     if packit then
     begin
 
@@ -2277,7 +2453,7 @@ begin
         end
       end;
       //****************************************************************************
-
+      *)
 
       Panel9.Visible := False;
       // execute opsiPacketBuilder
@@ -2337,7 +2513,7 @@ begin
           end
         end
       end   // execute OPSIPackageBuilder
-    end
+  //  end;
 end;
 
 procedure TResultform1.CheckBox1Change(Sender: TObject);
@@ -2364,6 +2540,52 @@ begin
   myreg.Free;
 end;
 
+procedure TResultform1.CheckBox3Change(Sender: TObject);
+begin
+  if checkbox3.Checked then
+  begin
+    mst32NameEdit.Enabled:=setup32NameEdit.Enabled;
+    mst64NameEdit.Enabled:=setup64NameEdit.Enabled;
+  end
+  else
+  begin
+    mst32NameEdit.Enabled:=false;
+    mst64NameEdit.Enabled:=false;
+  end;
+end;
+
+procedure TResultform1.ComboBoxArchModeChange(Sender: TObject);
+var
+  modestr : string;
+  mode :  TArchitectureMode;
+begin
+  modestr := TComboBox(sender).Text;
+  mode := archModeStrToArchmode(modestr);
+  case mode of
+    am32only_fix:
+      begin
+        setup32NameEdit.Enabled := true;
+        setup64NameEdit.Enabled := false;
+      end;
+    am64only_fix:
+          begin
+        setup32NameEdit.Enabled := false;
+        setup64NameEdit.Enabled := true;
+      end;
+    amBoth_fix, amSystemSpecific_fix, amSelectable:
+          begin
+        setup32NameEdit.Enabled := true;
+        setup64NameEdit.Enabled := true;
+      end;
+  end;
+end;
+
+procedure TResultform1.FileCreateLogfileClick(Sender: TObject);
+begin
+
+end;
+
+(*
 procedure TResultform1.FileCreateLogfileClick(Sender: TObject);
 var
   msg: string;
@@ -2372,12 +2594,36 @@ begin
   msg := format(sLogfileInfo, [Logfile]);
   Application.MessageBox(pchar(msg), pchar(sMBoxHeader), MB_OK);
 end;
+*)
 
 procedure TResultform1.FileHelpClick(Sender: TObject);
 begin
+  (*
    FormHelp.Caption:=sHelpHeader;
    FormHelp.SetHelpFile(myExeDir + DirectorySeparator + sHelpFile);
    FormHelp.Show;
+   *)
+end;
+
+procedure TResultform1.mst32NameEditChange(Sender: TObject);
+begin
+    OpenDialog1.FilterIndex := 3;  // MST
+  if OpenDialog1.Execute then
+  begin
+     TFileNameEdit(sender).Text := ExtractFileName(OpenDialog1.FileName);
+     TFileNameEdit(sender).Hint:=OpenDialog1.FileName;
+     aktProduct.mst32FileNamePath:=OpenDialog1.FileName;
+     aktProduct.mst32FileName:= ExtractFileName(OpenDialog1.FileName);
+  end;
+end;
+
+procedure TResultform1.setup32NameEditChange(Sender: TObject);
+begin
+   OpenDialog1.FilterIndex := 2;   // MSI
+  if OpenDialog1.Execute then
+  begin
+    Analyze(OpenDialog1.FileName);
+  end;
 end;
 
 procedure TResultform1.FileOpenSetupFileClick(Sender: TObject);
@@ -2394,21 +2640,22 @@ end;
 procedure TResultform1.MenuItemAboutClick(Sender: TObject);
 var
   progname: string;
-  verinfo: TVersioninfo;
   msg: string;
 begin
-  verinfo := TVersioninfo.Create(ParamStr(0));
   progname := ExtractFileName(ParamStr(0));
-
-
-  msg := 'Version: ' + verinfo.getString('FileVersion') + '  -  '+Revision + '  -  '+ RevDate;
-  msg := StringReplace (msg, '$', '', [rfReplaceAll,rfIgnoreCase]);
+  //msg := 'Version: ' +   myVersion  + '  -  '+Revision + '  -  '+ RevDate;
+  msg := 'Version: ' +   myVersion;
+  //msg := StringReplace (msg, '$', '', [rfReplaceAll,rfIgnoreCase]);
 
   Application.MessageBox(pchar(msg), pchar(sMBoxHeader), MB_OK);
-  verinfo.Free;
 end;
 
 procedure TResultform1.PageControl1Change(Sender: TObject);
+begin
+
+end;
+
+procedure TResultform1.Panel1Click(Sender: TObject);
 begin
 
 end;
@@ -2430,12 +2677,7 @@ end;
 
 
 procedure TResultform1.FormCreate(Sender: TObject);
-var
-  verinfo: TVersioninfo;
 begin
-  verinfo := TVersioninfo.Create(ParamStr(0));
-  LabelVersion.Caption := 'Version: ' + verinfo.getString('FileVersion');
-  verinfo.Free;
   main;
 end;
 
@@ -2482,6 +2724,7 @@ var
   productpath, datapath, opsipath, mydatapath, myopsipath : string;
 begin
   createProductMSI := false;
+  (*
   for i := 0 to patchlist.Count - 1 do
     mywrite(patchlist.Strings[i]);
   productpath := packetBaseDir+DirectorySeparator+productid;
@@ -2525,6 +2768,7 @@ begin
 
     createProductMSI := true;
   end;
+  *)
 end;
 
 
@@ -2534,6 +2778,7 @@ var
   productpath, datapath, opsipath, mydatapath, myopsipath : string;
 begin
   createProductInno := false;
+  (*
   for i := 0 to patchlist.Count - 1 do
     mywrite(patchlist.Strings[i]);
   productpath := packetBaseDir+DirectorySeparator+productid;
@@ -2574,6 +2819,7 @@ begin
     copyFile(pchar(SetupFilename), pchar(datapath+DirectorySeparator+ExtractFileName(SetupFilename)), False);
   end;
   createProductInno := true;
+  *)
 end;
 
 
@@ -2583,6 +2829,7 @@ var
   productpath, datapath, opsipath, mydatapath, myopsipath : string;
 begin
   createProductNsis := false;
+  (*
   for i := 0 to patchlist.Count - 1 do
     mywrite(patchlist.Strings[i]);
   productpath := packetBaseDir+DirectorySeparator+productid;
@@ -2624,6 +2871,7 @@ begin
     copyFile(pchar(SetupFilename), pchar(datapath+DirectorySeparator+ExtractFileName(SetupFilename)), False);
   end;
   createProductNsis := true;
+  *)
 end;
 
 
@@ -2633,6 +2881,7 @@ var
   productpath, datapath, opsipath, mydatapath, myopsipath : string;
 begin
   createProductInstallShield := false;
+  (*
   for i := 0 to patchlist.Count - 1 do
     mywrite(patchlist.Strings[i]);
   productpath := packetBaseDir+DirectorySeparator+productid;
@@ -2672,6 +2921,7 @@ begin
     copyFile(pchar(SetupFilename), pchar(datapath+DirectorySeparator+ExtractFileName(SetupFilename)), False);
   end;
   createProductInstallShield := true;
+  *)
 end;
 
 
@@ -2681,6 +2931,7 @@ var
   productpath, datapath, opsipath, mydatapath, myopsipath : string;
 begin
   createProductInstallShieldMSI := false;
+  (*
   for i := 0 to patchlist.Count - 1 do
     mywrite(patchlist.Strings[i]);
   productpath := packetBaseDir+DirectorySeparator+productid;
@@ -2720,6 +2971,7 @@ begin
     copyFile(pchar(SetupFilename), pchar(datapath+DirectorySeparator+ExtractFileName(SetupFilename)), False);
   end;
   createProductInstallShieldMSI := true;
+  *)
 end;
 
 
@@ -2730,6 +2982,7 @@ var
   productpath, datapath, opsipath, mydatapath, myopsipath : string;
 begin
   createProductAdvancedMSI := false;
+  (*
   for i := 0 to patchlist.Count - 1 do
     mywrite(patchlist.Strings[i]);
   productpath := packetBaseDir+DirectorySeparator+productid;
@@ -2769,6 +3022,7 @@ begin
     copyFile(pchar(SetupFilename), pchar(datapath+DirectorySeparator+ExtractFileName(SetupFilename)), False);
   end;
   createProductAdvancedMSI := true;
+  *)
 end;
 
 
@@ -2863,6 +3117,27 @@ begin
       else
    end;
    ExtractVersion := outstr;
+end;
+
+procedure TResultform1.SBtnOpenClick(Sender: TObject);
+begin
+    OpenDialog1.FilterIndex := 1;   // EXE
+  if OpenDialog1.Execute then
+  begin
+    Analyze(OpenDialog1.FileName);
+  end;
+end;
+
+procedure TResultform1.SBtnExitClick(Sender: TObject);
+begin
+    packetBaseDir := Edit_PacketbaseDir.text;
+  if (packetBaseDir <> '') and DirectoryExists(packetBaseDir) then
+  begin
+    Rewrite(fConfig);
+    WriteLn(fConfig,packetBaseDir);
+    CloseFile(fConfig);
+  end;
+  Application.Terminate;
 end;
 
 

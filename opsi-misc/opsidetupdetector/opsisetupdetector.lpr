@@ -12,8 +12,11 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   Interfaces,
   Forms,
   resultform,
-  VersionInfoX,
-  defaultTranslator, Help;
+  //VersionInfoX,
+  //help,
+  printers, fileinfo, winpeimagereader, lcltranslator, runtimetypeinfocontrols,
+  osdanalyze, osdhelper, osdbasedata;
+
 
 {$R *.res}
 //{$R manifest.rc}
@@ -23,7 +26,7 @@ begin
   Application.Initialize;
   Application.Title:='opsi setup detector';
   Application.CreateForm(TresultForm1, resultForm1);
-  Application.CreateForm(TFormHelp, FormHelp);
+  //Application.CreateForm(TFormHelp, FormHelp);
   Application.Run;
   //main;
 end.

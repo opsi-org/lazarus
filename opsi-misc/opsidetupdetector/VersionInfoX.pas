@@ -118,8 +118,8 @@ type
     property FileDate: int64 read GetFileDate;
     property LanguageID[Index: integer]: WORD read GetLanguage;
     property CharsetID[Index: integer]: WORD read GetCharset;
-    property LanguageID[Index: integer]: WORD read GetLanguage;
-    property CharsetID[Index: integer]: WORD read GetCharset;
+    //property LanguageID[Index: integer]: WORD read GetLanguage;
+    //property CharsetID[Index: integer]: WORD read GetCharset;
     property LanguageNames[Index: integer]: string read GetLanguageName;
     property TranslationCount: integer read FTranslationCount;
   end;

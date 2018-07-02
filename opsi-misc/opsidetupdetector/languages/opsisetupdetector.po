@@ -294,6 +294,10 @@ msgctxt "TRESULTFORM1.CHECKBOX_NSIS_LICENSE.CAPTION"
 msgid "License required"
 msgstr ""
 
+#: tresultform1.comboboxarchmode.text
+msgid "32BitOnly - fix"
+msgstr ""
+
 #: tresultform1.editadvancedmsifilename.hint
 msgctxt "TRESULTFORM1.EDITADVANCEDMSIFILENAME.HINT"
 msgid "Setup file to build opsi packet from"
@@ -326,36 +330,6 @@ msgstr ""
 
 #: tresultform1.editadvancedmsirequiredspace.hint
 msgctxt "TRESULTFORM1.EDITADVANCEDMSIREQUIREDSPACE.HINT"
-msgid "Estimated disk space required for this installation"
-msgstr ""
-
-#: tresultform1.editdefault_file.hint
-msgctxt "TRESULTFORM1.EDITDEFAULT_FILE.HINT"
-msgid "Copy product files from this directory"
-msgstr ""
-
-#: tresultform1.editdefault_mstfile.hint
-msgctxt "TRESULTFORM1.EDITDEFAULT_MSTFILE.HINT"
-msgid "Select MST File to be used if applicable"
-msgstr ""
-
-#: tresultform1.editdefault_opsiproductid.hint
-msgctxt "TRESULTFORM1.EDITDEFAULT_OPSIPRODUCTID.HINT"
-msgid "Set opsi packet product ID (A-Z, 0-9,-_ no blanks)"
-msgstr ""
-
-#: tresultform1.editdefault_productname.hint
-msgctxt "TRESULTFORM1.EDITDEFAULT_PRODUCTNAME.HINT"
-msgid "opsi product name (name of package file)"
-msgstr ""
-
-#: tresultform1.editdefault_productversion.hint
-msgctxt "TRESULTFORM1.EDITDEFAULT_PRODUCTVERSION.HINT"
-msgid "Product version"
-msgstr ""
-
-#: tresultform1.editdefault_requiredspace.hint
-msgctxt "TRESULTFORM1.EDITDEFAULT_REQUIREDSPACE.HINT"
 msgid "Estimated disk space required for this installation"
 msgstr ""
 
@@ -539,13 +513,33 @@ msgctxt "TRESULTFORM1.EDITNSISREQUIREDSPACE.HINT"
 msgid "Estimated disk space required for this installation"
 msgstr ""
 
+#: tresultform1.edit_installer_type.text
+msgid "Edit_installer_type"
+msgstr ""
+
+#: tresultform1.edit_opsiproductid.hint
+msgctxt "TRESULTFORM1.EDIT_OPSIPRODUCTID.HINT"
+msgid "Set opsi packet product ID (A-Z, 0-9,-_ no blanks)"
+msgstr ""
+
 #: tresultform1.edit_packetbasedir.hint
 msgctxt "TRESULTFORM1.EDIT_PACKETBASEDIR.HINT"
 msgid "Base Directory to build opsi packets"
 msgstr ""
 
-#: tresultform1.filecreatelogfile.caption
-msgid "Create Logfile"
+#: tresultform1.edit_productname.hint
+msgctxt "TRESULTFORM1.EDIT_PRODUCTNAME.HINT"
+msgid "opsi product name (name of package file)"
+msgstr ""
+
+#: tresultform1.edit_productversion.hint
+msgctxt "TRESULTFORM1.EDIT_PRODUCTVERSION.HINT"
+msgid "Product version"
+msgstr ""
+
+#: tresultform1.edit_requiredspace.hint
+msgctxt "TRESULTFORM1.EDIT_REQUIREDSPACE.HINT"
+msgid "Estimated disk space required for this installation"
 msgstr ""
 
 #: tresultform1.fileexit.caption
@@ -792,12 +786,13 @@ msgid "MSI Product Code"
 msgstr ""
 
 #: tresultform1.label50.caption
-msgid "Product Files"
+msgctxt "tresultform1.label50.caption"
+msgid "Setup File (32Bit)"
 msgstr ""
 
 #: tresultform1.label51.caption
 msgctxt "TRESULTFORM1.LABEL51.CAPTION"
-msgid "Product Name"
+msgid "opsi Product Name"
 msgstr ""
 
 #: tresultform1.label52.caption
@@ -807,7 +802,7 @@ msgstr ""
 
 #: tresultform1.label53.caption
 msgctxt "tresultform1.label53.caption"
-msgid "not used"
+msgid "MsiId"
 msgstr ""
 
 #: tresultform1.label54.caption
@@ -817,7 +812,7 @@ msgstr ""
 
 #: tresultform1.label55.caption
 msgctxt "TRESULTFORM1.LABEL55.CAPTION"
-msgid "not used"
+msgid "InstallDir"
 msgstr ""
 
 #: tresultform1.label56.caption
@@ -830,9 +825,40 @@ msgctxt "TRESULTFORM1.LABEL57.CAPTION"
 msgid "Description"
 msgstr ""
 
+#: tresultform1.label58.caption
+msgctxt "tresultform1.label58.caption"
+msgid "Setup File (64Bit)"
+msgstr ""
+
+#: tresultform1.label59.caption
+msgid "Package Version"
+msgstr ""
+
 #: tresultform1.label6.caption
 msgctxt "tresultform1.label6.caption"
 msgid "Product Name"
+msgstr ""
+
+#: tresultform1.label60.caption
+msgctxt "tresultform1.label60.caption"
+msgid "Setup File (32Bit)"
+msgstr ""
+
+#: tresultform1.label61.caption
+msgctxt "TRESULTFORM1.LABEL61.CAPTION"
+msgid "Setup File (64Bit)"
+msgstr ""
+
+#: tresultform1.label62.caption
+msgid "Detected Setup type"
+msgstr ""
+
+#: tresultform1.label63.caption
+msgid "Architecture Mode"
+msgstr ""
+
+#: tresultform1.label64.caption
+msgid "Setup file size"
 msgstr ""
 
 #: tresultform1.label7.caption
@@ -887,11 +913,6 @@ msgctxt "TRESULTFORM1.PANEL18.CAPTION"
 msgid "Panel8"
 msgstr ""
 
-#: tresultform1.panel20.caption
-msgctxt "TRESULTFORM1.PANEL20.CAPTION"
-msgid "Panel8"
-msgstr ""
-
 #: tresultform1.panel3.caption
 msgid "Panel3"
 msgstr ""
@@ -932,9 +953,12 @@ msgctxt "TRESULTFORM1.RADIOBUTTONINTERACTIVE.CAPTION"
 msgid "create opsi packet and start interactive PacketBuilder"
 msgstr ""
 
-#: tresultform1.selectpacketbasedir.title
-msgctxt "TRESULTFORM1.SELECTPACKETBASEDIR.TITLE"
-msgid "Select Directory"
+#: tresultform1.sbtnexit.caption
+msgid "Exit"
+msgstr ""
+
+#: tresultform1.sbtnopen.caption
+msgid "open"
 msgstr ""
 
 #: tresultform1.tabsheetadvancedmsi.caption
@@ -973,5 +997,9 @@ msgstr ""
 #: tresultform1.tabsheetnsis.caption
 msgctxt "TRESULTFORM1.TABSHEETNSIS.CAPTION"
 msgid "NSIS"
+msgstr ""
+
+#: tresultform1.toolbar1.caption
+msgid "ToolBar1"
 msgstr ""
 
