@@ -13,7 +13,7 @@ TKnownInstaller = (stAdvancedMSI,stInno,stInstallShield,stInstallShieldMSI,
                    stMsi,stNsis,st7zip,stUnknown);
 
 
- TdetectInstaller = function(markerlist: Tstringlist) : boolean;
+ TdetectInstaller = function(parent : TClass; markerlist: Tstringlist) : boolean;
 
 
   TInstallerData = class
@@ -75,6 +75,7 @@ TKnownInstaller = (stAdvancedMSI,stInno,stInstallShield,stInstallShieldMSI,
   function archModeStrToArchmode(modestr : string) : TArchitectureMode;
   function installerToInstallerstr(installerId: TKnownInstaller) : string;
   function instIdToint(installerId: TKnownInstaller) : integer;
+  procedure initaktproduct;
 
 var
   aktProduct : TProductData;
@@ -112,15 +113,43 @@ begin
   result := integer(installerId);
 end;
 
-function detectedinno(markerlist: Tstringlist) : boolean;
+function detecteddummy(parent : TClass; markerlist: Tstringlist) : boolean;
 var
   i1,i2,i3,i4,i5,i6 : integer;
 begin
   result := false;
-  if markerlist.Find('inno1',i1) or markerlist.Find('inno2',i2) then
+end;
+
+
+function detectedinno(parent : TClass; markerlist: Tstringlist) : boolean;
+var
+  i1,i2,i3,i4,i5,i6 : integer;
+begin
+  result := false;
+  markerlist.Sort;
+  if markerlist.Find(TInstallerData(parent).patterns[0],i1) or markerlist.Find(TInstallerData(parent).patterns[1],i2) then
     result := true;
 end;
 
+function detectedbypatternwithor(parent : TClass; markerlist: Tstringlist) : boolean;
+var
+  tmpint : integer;
+  patternindex : integer;
+  pattern : string;
+begin
+  result := false;
+  //markerlist.Sort;
+  for patternindex := 0 to TInstallerData(parent).patterns.Count-1 do
+  begin
+    pattern := TInstallerData(parent).patterns[patternindex];
+    if markerlist.IndexOf(LowerCase(pattern)) >= 0  then
+      result := true;
+  end;
+end;
+
+procedure initaktproduct;
+begin
+end;
 
 begin
     knownInstallerList := Tstringlist.Create;
@@ -150,7 +179,7 @@ begin
   installerArray[integer(stInno)].patterns.Add('jr.inno.setup');
   installerArray[integer(stInno)].link := 'http://www.jrsoftware.org/ishelp/topic_setupcmdline.htm';
   installerArray[integer(stInno)].comment :='';
-  installerArray[integer(stInno)].detected:=@detectedinno;
+  installerArray[integer(stInno)].detected:=@detectedbypatternwithor;
   // NSIS
   installerArray[integer(stNsis)].description := 'Nullsoft Install System';
   installerArray[integer(stNsis)].silentsetup:='/S';
@@ -162,6 +191,7 @@ begin
   installerArray[integer(stNsis)].patterns.Add('nullsoft install system');
   installerArray[integer(stNsis)].link := 'http://nsis.sourceforge.net/Docs/Chapter3.html#installerusage';
   installerArray[integer(stNsis)].comment :='';
+  installerArray[integer(stNsis)].detected:=@detectedbypatternwithor;
   // InstallShieldMSI
   installerArray[integer(stInstallShieldMSI)].description := 'InstallShield+MSI Setup (InstallShield with embedded MSI)';
   installerArray[integer(stInstallShieldMSI)].silentsetup:='/s /v" /qn ALLUSERS=1 REBOOT=ReallySuppress"';
@@ -173,6 +203,7 @@ begin
   installerArray[integer(stInstallShieldMSI)].patterns.Add('installer,msi,database');
   installerArray[integer(stInstallShieldMSI)].link := 'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
   installerArray[integer(stInstallShieldMSI)].comment :='';
+  installerArray[integer(stInstallShieldMSI)].detected:=@detectedbypatternwithor;
    // InstallShield
   installerArray[integer(stInstallShield)].description := 'InstallShield Setup (classic)';
   installerArray[integer(stInstallShield)].silentsetup:='/s /sms';
@@ -184,6 +215,7 @@ begin
   installerArray[integer(stInstallShield)].patterns.Add('<description>InstallShield.Setup</description>');
   installerArray[integer(stInstallShield)].link := 'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
   installerArray[integer(stInstallShield)].comment :='';
+  installerArray[integer(stInstallShield)].detected:=@detectedbypatternwithor;
 
   architectureModeList := Tstringlist.Create;
   architectureModeList.Add('32BitOnly - fix');

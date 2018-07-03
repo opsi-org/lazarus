@@ -11,9 +11,14 @@ unit resultform;
 interface
 
 uses
+  {$IFDEF WINDOWS}
+  Windows,
+  ShlObj,
+  {$ENDIF WINDOWS}
   Classes, SysUtils, FileUtil, RTTICtrls, RTTIGrids,
   //SynEdit, SynMemo,
   Forms, Controls, Graphics,
+  LCLType,
   Dialogs, ExtCtrls,
   StdCtrls,
   Buttons,
@@ -24,9 +29,9 @@ uses
   StrUtils,
   //VersionInfoX,
   Process,
-  Windows,
+
   CustApp,
-  ShlObj,
+
   //htmlview,
   //help,
   fileinfo,
@@ -1450,7 +1455,8 @@ begin
   end;
   // Initialize logging
   LogDatei := TLogInfo.Create;
-  lfilename := ExtractFileNameWithoutExt(Application.ExeName);
+  lfilename := ExtractFileName(Application.ExeName);
+  lfilename := ExtractFileNameWithoutExt(lfilename);
   LogDatei.FileName := lfilename;
   LogDatei.StandardLogFileext := '.log';
   LogDatei.StandardLogFilename := lfilename;
@@ -1475,7 +1481,9 @@ begin
   LogDatei.LogLevel := 8;
   resultform1.LabelVersion.Caption := 'Version: ' +   myVersion;
   myExeDir := ExtractFileDir(ParamStr(0));
+  {$IFDEF WINDOWS}
   registerForExplorer;
+  {$ENDIF WINDOWS}
   myexitcode := 0;
   myerror := '';
   showgui := True;
@@ -1499,6 +1507,8 @@ begin
   *)
   // if resultForm1.TabSheetAnalyze.Visible = true then
   //   resultForm1.PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
+
+
   // get global ConfigDir
   configDir := GetAppConfigDir(true);   // configDir = "All Users\Appdata\opsi setup detector"
   if not DirectoryExists(configDir) then
@@ -2456,6 +2466,7 @@ begin
       *)
 
       Panel9.Visible := False;
+      {$IFDEF WINDOWS}
       // execute opsiPacketBuilder
 
       if RadioButtonCreateOnly.Checked = true then begin
@@ -2513,6 +2524,8 @@ begin
           end
         end
       end   // execute OPSIPackageBuilder
+      {$ENDIF WINDOWS}
+
   //  end;
 end;
 

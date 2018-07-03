@@ -5,15 +5,19 @@ unit osdhelper;
 interface
 
 uses
-  Classes,
+  {$IFDEF WINDOWS}
   Windows,
-  Registry,
-  Process,
   ShlObj,
+  Registry,
+  {$ENDIF WINDOWS}
+  Classes,
+  Process,
   SysUtils;
 
+{$IFDEF WINDOWS}
 procedure registerForExplorer;
 function getSpecialFolder(csidlValue: integer): string;
+{$ENDIF WINDOWS}
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TStringList;
   var report: string; showcmd: integer; var ExitCode: longint): boolean;
@@ -23,7 +27,7 @@ implementation
 uses
   resultform;
 
-
+{$IFDEF WINDOWS}
 procedure registerForExplorer;
 var
   myreg: Tregistry;
@@ -77,7 +81,7 @@ begin
   //if Assigned(LogDatei) then
   //LogDatei.DependentAdd('getSpecialFolder: '+inttostr(csidlValue)+' -> ' + result, LLDebug2);
 end;
-
+{$ENDIF WINDOWS}
 
 
 

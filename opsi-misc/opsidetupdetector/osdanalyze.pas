@@ -5,10 +5,15 @@ unit osdanalyze;
 interface
 
 uses
+  {$IFDEF WINDOWS}
+  Windows,
+  ShlObj,
+  Registry,
+  {$ENDIF WINDOWS}
+  LCLType,
   Classes,
   osdhelper,
   Process,
-  Windows,
   fileutil,
   SysUtils,
   oslog,
@@ -16,16 +21,16 @@ uses
 
 const
 
-  SetupType_AdvancedMSI      = 'AdvancedMSI';
-  SetupType_Inno             = 'Inno';
-  SetupType_InstallShield    = 'InstallShield';
+  SetupType_AdvancedMSI = 'AdvancedMSI';
+  SetupType_Inno = 'Inno';
+  SetupType_InstallShield = 'InstallShield';
   SetupType_InstallShieldMSI = 'InstallShieldMSI';
-  SetupType_MSI              = 'MSI';
-  SetupType_NSIS             = 'NSIS';
-  SetupType_7zip             = '7zip';
+  SetupType_MSI = 'MSI';
+  SetupType_NSIS = 'NSIS';
+  SetupType_7zip = '7zip';
 
 
-procedure get_aktProduct_info(installerId : TKnownInstaller;myfilename: string);
+procedure get_aktProduct_info(installerId: TKnownInstaller; myfilename: string);
 procedure get_msi_info(myfilename: string);
 procedure get_inno_info(myfilename: string);
 procedure get_installshield_info(myfilename: string);
@@ -33,52 +38,56 @@ procedure get_installshieldmsi_info(myfilename: string);
 procedure get_advancedmsi_info(myfilename: string);
 procedure get_nsis_info(myfilename: string);
 //procedure stringsgrep(myfilename: string; verbose,skipzero: boolean);
-procedure Analyze(FileName:string);
+procedure Analyze(FileName: string);
 procedure grepmsi(instring: string);
 //procedure grepmarker(instring: string);
-function analyze_binary(myfilename: string; verbose,skipzero: boolean) : TKnownInstaller;
+function analyze_binary(myfilename: string; verbose, skipzero: boolean): TKnownInstaller;
 
 implementation
+
 uses
   resultform;
 
-function grepexe(instring: string) : string;
-var lowerstring: string;
+function grepexe(instring: string): string;
+var
+  lowerstring: string;
 begin
-  result := '';
+  Result := '';
   lowerstring := lowercase(instring);
-  if
-    (0 < pos('installshield', lowerstring)) or
-    (0 < pos('inno', lowerstring)) or
-    (0 < pos('wise', lowerstring)) or
-    (0 < pos('nullsoft', lowerstring)) or
+  if (0 < pos('installshield', lowerstring)) or (0 < pos('inno', lowerstring)) or
+    (0 < pos('wise', lowerstring)) or (0 < pos('nullsoft', lowerstring)) or
     (0 < pos('wixquery', lowerstring)) or
     (0 < pos('product_build_number{', lowerstring)) or
-    (0 < pos('productcode{', lowerstring)) or
-    (0 < pos('msiexec', lowerstring)) or
+    (0 < pos('productcode{', lowerstring)) or (0 < pos('msiexec', lowerstring)) or
     (0 < pos('extract', lowerstring)) or
     // (0 < pos('setup', lowerstring)) or
-    (0 < pos('installer', lowerstring))
-    then
-       result :=instring;
+    (0 < pos('installer', lowerstring)) then
+    Result := instring;
 end;
 
 procedure analyze_binstr(instring: string);
 var
   lowerstring: string;
-  counter : integer;
-  aktId, foundId : TKnownInstaller;
+  counter: integer;
+  aktId, foundId: TKnownInstaller;
 
 
-  procedure check_line_for_installer(line : string; instId : TKnownInstaller);
+  procedure check_line_for_installer(line: string; instId: TKnownInstaller);
   var
-    i : integer;
+    i: integer;
   begin
-    for i := 0 to installerArray[integer(instId)].patterns.Count -1 do
+    for i := 0 to installerArray[integer(instId)].patterns.Count - 1 do
     begin
-      if 0 <> pos(LowerCase(installerArray[integer(instId)].patterns[i]),line) then
-         aktProduct.markerlist.add(installerArray[integer(instId)].Name+inttostr(i));
-    end
+      LogDatei.log('check: ' + line + ' for: ' +
+        installerToInstallerstr(instId), LLDebug2);
+      if 0 <> pos(LowerCase(installerArray[integer(instId)].patterns[i]), line) then
+      begin
+        //aktProduct.markerlist.add(installerArray[integer(instId)].Name + IntToStr(i));
+        aktProduct.markerlist.add(installerArray[integer(instId)].patterns[i]);
+        LogDatei.log('For: ' + installerToInstallerstr(instId) +
+          ' found: ' + LowerCase(installerArray[integer(instId)].patterns[i]), LLinfo);
+      end;
+    end;
   end;
 
 begin
@@ -86,9 +95,9 @@ begin
   for counter := 0 to knownInstallerList.Count - 1 do
   begin
     aktId := installerArray[counter].installerId;
-    if  aktId <> stUnknown then
+    if aktId <> stUnknown then
     begin
-      check_line_for_installer(lowerstring,aktId);
+      check_line_for_installer(lowerstring, aktId);
     end;
   end;
 end;
@@ -142,45 +151,46 @@ begin
     mywrite(instring);
 end;
 
-procedure get_aktProduct_info(installerId : TKnownInstaller;myfilename: string);
+procedure get_aktProduct_info(installerId: TKnownInstaller; myfilename: string);
 var
   myoutlines: TStringList;
-  myreport : string;
-  myexitcode : integer;
+  myreport: string;
+  myexitcode: integer;
   i: integer;
-  fsize : int64;
-//  fsizemb,
-  sFileSize : string;
-  sReqSize : string;
-  sSearch : string;
-  iPos : integer;
-  destDir : string;
+  fsize: int64;
+  //  fsizemb,
+  sFileSize: string;
+  sReqSize: string;
+  sSearch: string;
+  iPos: integer;
+  destDir: string;
   myBatch: string;
   product: string;
-  FileInfo : TSearchRec;
+  FileInfo: TSearchRec;
   exefile: string;
   smask: string;
-  installerstr : string;
+  installerstr: string;
 
 begin
   installerstr := installerToInstallerstr(installerId);
-  Mywrite('Analyzing '+installerstr+' Setup: ' + myfilename);
+  Mywrite('Analyzing ' + installerstr + ' Setup: ' + myfilename);
 
-  aktProduct.istallerId:=installerId;
-  aktProduct.setup32FileName:=ExtractFileName(myfilename);
-  aktProduct.setup32FileNamePath:=ExtractFileDir(myfilename);
+  aktProduct.istallerId := installerId;
+  aktProduct.setup32FileName := ExtractFileName(myfilename);
+  aktProduct.setup32FileNamePath := ExtractFileDir(myfilename);
 
-  if installerId in [stMsi,stInstallShieldMSI, stAdvancedMSI]  then
+  if installerId in [stMsi, stInstallShieldMSI, stAdvancedMSI] then
   begin
-   // installerId in [stMsi,stInstallShieldMSI, stAdvancedMSI] then
+    // installerId in [stMsi,stInstallShieldMSI, stAdvancedMSI] then
     //begin
-     // extract  MSI from setup for analyze
-     // check extract dir
+    // extract  MSI from setup for analyze
+    // check extract dir
     if DirectoryExists(opsitmp) then
-       DeleteDirectory(opsitmp, true);
-    if not DirectoryExists(opsitmp) then createdir(opsitmp);
+      DeleteDirectory(opsitmp, True);
     if not DirectoryExists(opsitmp) then
-       mywrite('Error: could not create directory: '+opsitmp);
+      createdir(opsitmp);
+    if not DirectoryExists(opsitmp) then
+      mywrite('Error: could not create directory: ' + opsitmp);
 
     // prepare extract
 
@@ -188,7 +198,9 @@ begin
 
     myoutlines := TStringList.Create;
     // myBatch := 'cmd.exe /C '+ExtractFilePath(paramstr(0))+'extractMSI.cmd "'+myfilename+'"'; // (does not work with spaces in EXE path)
-    myBatch := '"'+ExtractFilePath(paramstr(0))+'extractMSI.cmd" "'+myfilename+'"'; // dropped cmd.exe
+    myBatch := '"' + ExtractFilePath(ParamStr(0)) + 'extractMSI.cmd" "' +
+      myfilename + '"';
+    // dropped cmd.exe
     Mywrite(myBatch);
     Mywrite('!! PLEASE WAIT !!');
     Mywrite('!! PLEASE WAIT !! Extracting and analyzing MSI ...');
@@ -197,60 +209,64 @@ begin
 
     product := ExtractFileNameWithoutExt(myfilename);
     // run extract
-    if not RunCommandAndCaptureOut(myBatch, true,myoutlines,myreport, SW_SHOWMINIMIZED, myexitcode) then
+    if not RunCommandAndCaptureOut(myBatch, True, myoutlines, myreport,
+      SW_SHOWMINIMIZED, myexitcode) then
     begin
-       mywrite('Failed to to run "' + myBatch +'": '+myreport);
+      mywrite('Failed to to run "' + myBatch + '": ' + myreport);
     end
     else
     begin
-       smask := opsitmp + '*.msi';
-       Mywrite(smask);
-       if SysUtils.FindFirst (smask,faAnyFile,FileInfo)=0 then
-       begin
-         //resultform1.EditMSI_file.Text := opsitmp + FileInfo.Name;
-         aktProduct.msi32FullFileName:=opsitmp + FileInfo.Name;;
-       end;
-     end;
-     get_msi_info(aktProduct.msi32FullFileName);
+      smask := opsitmp + '*.msi';
+      Mywrite(smask);
+      if SysUtils.FindFirst(smask, faAnyFile, FileInfo) = 0 then
+      begin
+        //resultform1.EditMSI_file.Text := opsitmp + FileInfo.Name;
+        aktProduct.msi32FullFileName := opsitmp + FileInfo.Name;
+        ;
+      end;
     end;
+    get_msi_info(aktProduct.msi32FullFileName);
+  end;
 end; //get_aktProduct_info
 
 
 
 procedure get_msi_info(myfilename: string);
 var
-  mycommand : string;
-  myoutlines : TStringList;
-  myreport : string;
-  myexitcode : integer;
+  mycommand: string;
+  myoutlines: TStringList;
+  myreport: string;
+  myexitcode: integer;
   i: integer;
-  fsize : int64;
-  fsizemb, rsizemb : double;
-  sMsiSize : string;
-  sReqSize : string;
-  sSearch : string;
-  iPos : integer;
+  fsize: int64;
+  fsizemb, rsizemb: double;
+  sMsiSize: string;
+  sReqSize: string;
+  sSearch: string;
+  iPos: integer;
 
 begin
   Mywrite('Analyzing MSI: ' + myfilename);
 
-  mycommand := 'cmd.exe /C cscript.exe "'+ExtractFilePath(paramstr(0))+'msiinfo.js" "'+myfilename+'"';
-  mywrite (mycommand);
+  mycommand := 'cmd.exe /C cscript.exe "' + ExtractFilePath(ParamStr(0)) +
+    'msiinfo.js" "' + myfilename + '"';
+  mywrite(mycommand);
   myoutlines := TStringList.Create;
-  if not RunCommandAndCaptureOut (mycommand, true, myoutlines, myreport, SW_SHOWMINIMIZED, myexitcode) then
+  if not RunCommandAndCaptureOut(mycommand, True, myoutlines, myreport,
+    SW_SHOWMINIMIZED, myexitcode) then
   begin
-    mywrite('Failed to analyze: '+myreport);
+    mywrite('Failed to analyze: ' + myreport);
   end
   else
   begin
-    aktProduct.istallerId:=stMsi;
+    aktProduct.istallerId := stMsi;
     resultForm1.Edit_installer_type.Text := installerToInstallerstr(stMsi);
     //resultForm1.EditMSI_file.Text := myfilename;
     mywrite('........');
-    aktProduct.setup32FileName:=ExtractFileName(myfilename);
-    aktProduct.setup32FileNamePath:=ExtractFileDir(myfilename);
+    aktProduct.setup32FileName := ExtractFileName(myfilename);
+    aktProduct.setup32FileNamePath := ExtractFileDir(myfilename);
     resultForm1.setup32NameEdit.Text := myfilename;
-    resultForm1.setup32NameEdit.Hint:= myfilename;
+    resultForm1.setup32NameEdit.Hint := myfilename;
     resultForm1.Edit_ProductName.Text := '';
     resultForm1.Edit_ProductVersion.Text := '';
     resultForm1.Edit_msiid.Text := '';
@@ -259,7 +275,7 @@ begin
     resultForm1.EditMSI_ProductVersion.Text := '';
     resultForm1.EditMSI_ProductCode.Text := '';
     *)
-    for i := 0 to myoutlines.Count-1 do
+    for i := 0 to myoutlines.Count - 1 do
     begin
       mywrite(myoutlines.Strings[i]);
 
@@ -269,41 +285,47 @@ begin
       //   resultForm1.Edit2.Text := Copy(myoutlines.Strings[i], Length(sSearch)+1, Length(myoutlines.Strings[i])-Length(sSearch));
 
       sSearch := 'ProductName: ';
-      iPos := Pos (sSearch, myoutlines.Strings[i]);
+      iPos := Pos(sSearch, myoutlines.Strings[i]);
       if (iPos <> 0) then
-        resultForm1.Edit_ProductName.Text := Copy(myoutlines.Strings[i], Length(sSearch)+1, Length(myoutlines.Strings[i])-Length(sSearch));
+        resultForm1.Edit_ProductName.Text :=
+          Copy(myoutlines.Strings[i], Length(sSearch) + 1,
+          Length(myoutlines.Strings[i]) - Length(sSearch));
 
       sSearch := 'ProductVersion: ';
-      iPos := Pos (sSearch, myoutlines.Strings[i]);
+      iPos := Pos(sSearch, myoutlines.Strings[i]);
       if (iPos <> 0) then
-        resultForm1.Edit_ProductVersion.Text := Copy(myoutlines.Strings[i], Length(sSearch)+1, Length(myoutlines.Strings[i])-Length(sSearch));
+        resultForm1.Edit_ProductVersion.Text :=
+          Copy(myoutlines.Strings[i], Length(sSearch) + 1,
+          Length(myoutlines.Strings[i]) - Length(sSearch));
 
       sSearch := 'ProductCode: ';
-      iPos := Pos (sSearch, myoutlines.Strings[i]);
+      iPos := Pos(sSearch, myoutlines.Strings[i]);
       if (iPos <> 0) then
-        resultForm1.Edit_msiid.Text := Copy(myoutlines.Strings[i], Length(sSearch)+1, Length(myoutlines.Strings[i])-Length(sSearch));
+        resultForm1.Edit_msiid.Text :=
+          Copy(myoutlines.Strings[i], Length(sSearch) + 1,
+          Length(myoutlines.Strings[i]) - Length(sSearch));
 
     end;
     fsize := fileutil.FileSize(myfilename);
-    fsizemb :=  fsize /(1024*1024);
-    rsizemb := fsizemb*6;
-    sMsiSize := FormatFloat('##0.0',fsizemb)+' MB';
-    sReqSize := FormatFloat('###0',rsizemb)+' MB';
+    fsizemb := fsize / (1024 * 1024);
+    rsizemb := fsizemb * 6;
+    sMsiSize := FormatFloat('##0.0', fsizemb) + ' MB';
+    sReqSize := FormatFloat('###0', rsizemb) + ' MB';
 
     mywrite('MSI file size is: ' + sMsiSize);
     mywrite('Estimated required space is: ' + sReqSize);
     mywrite('........');
 
     if fsizemb < 1 then
-       fsizemb := 1;
+      fsizemb := 1;
 
-    sMsiSize := FormatFloat('#',fsizemb)+' MB';
-    sReqSize := FormatFloat('#',rsizemb)+' MB';
+    sMsiSize := FormatFloat('#', fsizemb) + ' MB';
+    sReqSize := FormatFloat('#', rsizemb) + ' MB';
 
     resultForm1.Edit_RequiredSpace.Text := sReqSize;
     resultForm1.Edit_FileSize.Text := sMsiSize;
-    aktProduct.requiredSpace:= round(rsizemb);
-    aktProduct.setup32FileSize:= round(fsizemb);
+    aktProduct.requiredSpace := round(rsizemb);
+    aktProduct.setup32FileSize := round(fsizemb);
 
     resultForm1.setDefaultParametersMSI;
 
@@ -314,55 +336,63 @@ begin
   resultForm1.PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
   if showMSI then
     resultForm1.PageControl1.ActivePage := resultForm1.TabSheetDefault;
-    //resultForm1.PageControl1.ActivePage := resultForm1.TabSheetMSI;
+  //resultForm1.PageControl1.ActivePage := resultForm1.TabSheetMSI;
 end;
 
 
 procedure get_inno_info(myfilename: string);
 var
   myoutlines: TStringList;
-  myreport : string;
-  myexitcode : integer;
+  myreport: string;
+  myexitcode: integer;
   i: integer;
-  fsize : int64;
-  fsizemb : double;
-  rsizemb : double;
-  sFileSize : string;
-  sReqSize : string;
-  sSearch : string;
-  iPos : integer;
-  destDir : string;
-  myCommand : string;
-  installScriptISS : string;
+  fsize: int64;
+  fsizemb: double;
+  rsizemb: double;
+  sFileSize: string;
+  sReqSize: string;
+  sSearch: string;
+  iPos: integer;
+  destDir: string;
+  destfile: string;
+  myCommand: string;
+  installScriptISS: string;
   issLine: string = '';
   fISS: Text;
   // components from install_script.iss[setup]
-  AppName: string ='';
-  AppVersion: string ='';
-  AppVerName: string ='';
-  DefaultDirName: string ='';
+  AppName: string = '';
+  AppVersion: string = '';
+  AppVerName: string = '';
+  DefaultDirName: string = '';
 
 begin
   Mywrite('Analyzing Inno-Setup:');
-  Mywrite('extract install_script.iss from ' + myfilename + ' to');
+  {$IFDEF WINDOWS}
 
   myoutlines := TStringList.Create;
-  destDir := StringReplace (ExtractFileName(myfilename), ExtractFileExt(myfilename), '', [rfReplaceAll,rfIgnoreCase]); // delete Extension
-  destDir := configDir + 'INNO' +DirectorySeparator+ StringReplace (destDir, '.', '-', [rfReplaceAll,rfIgnoreCase]);
-  installScriptISS := destDir+DirectorySeparator+'install_script.iss';
+  destDir := GetTempDir(False);
+  destDir := destDir + DirectorySeparator + 'INNO';
+  if not DirectoryExists(destDir) then
+    CreateDir(destDir);
+  destfile := ExtractFileName(myfilename);
+  destfile := ExtractFileName(destfile);
+  installScriptISS := destDir + DirectorySeparator + 'install_script.iss';
 
+  Mywrite('extract install_script.iss from ' + myfilename + ' to');
   Mywrite(installScriptISS);
   // myCommand := 'cmd.exe /C "'+ExtractFilePath(paramstr(0))+'innounp.exe" -x -a -y -d"'+destDir+'" ' +myfilename+ ' install_script.iss';
-  myCommand := '"'+ExtractFilePath(paramstr(0))+'innounp.exe" -x -a -y -d"'+destDir+'" ' +myfilename+ ' install_script.iss';
+  myCommand := '"' + ExtractFilePath(ParamStr(0)) + 'innounp.exe" -x -a -y -d"' +
+    destDir + '" ' + myfilename + ' install_script.iss';
   Mywrite(myCommand);
 
-  if not RunCommandAndCaptureOut(myCommand, true,myoutlines,myreport, SW_SHOWMINIMIZED, myexitcode) then
+  if not RunCommandAndCaptureOut(myCommand, True, myoutlines, myreport,
+    SW_SHOWMINIMIZED, myexitcode) then
   begin
-    mywrite('Failed to extract install_script.iss: '+myreport);
+    mywrite('Failed to extract install_script.iss: ' + myreport);
   end
   else
   begin
-    for i := 0 to myoutlines.Count-1 do
+    for i := 0 to myoutlines.Count - 1 do
       mywrite(myoutlines.Strings[i]);
     myoutlines.Free;
 
@@ -373,8 +403,9 @@ begin
       AssignFile(fISS, installScriptISS);
       Reset(fISS);
       // search [Setup] section
-      while (not EOF(fISS)) and (not(0 < pos('[setup]', lowercase(issLine)))) do begin
-        ReadLn(fISS,issLine);
+      while (not EOF(fISS)) and (not (0 < pos('[setup]', lowercase(issLine)))) do
+      begin
+        ReadLn(fISS, issLine);
       end;
 
       AppName := '';
@@ -385,117 +416,128 @@ begin
 
       mywrite('........');
       mywrite('[Setup]');
-      ReadLn(fISS,issLine);
+      ReadLn(fISS, issLine);
 
       // read until next section (usually [Files])
-      while (not EOF(fISS)) and (Length(issLine)>0) and (issLine[1] <>'[') do begin
+      while (not EOF(fISS)) and (Length(issLine) > 0) and (issLine[1] <> '[') do
+      begin
         mywrite(issLine);
         if (0 < pos('appname=', lowercase(issLine))) then
-          AppName := Copy(issLine, pos('=',issLine)+1, 100);
+          AppName := Copy(issLine, pos('=', issLine) + 1, 100);
         if (0 < pos('appversion=', lowercase(issLine))) then
-          AppVersion := Copy(issLine, pos('=',issLine)+1, 100);
+          AppVersion := Copy(issLine, pos('=', issLine) + 1, 100);
         if (0 < pos('appvername=', lowercase(issLine))) then
-          AppVerName := Copy(issLine, pos('=',issLine)+1, 100);
+          AppVerName := Copy(issLine, pos('=', issLine) + 1, 100);
         if (0 < pos('defaultdirname=', lowercase(issLine))) then
-          DefaultDirName := Copy(issLine, pos('=',issLine)+1, 100);
+          DefaultDirName := Copy(issLine, pos('=', issLine) + 1, 100);
         if (0 < pos('architecturesinstallin64bitmode=', lowercase(issLine))) then
-          ArchitecturesInstallIn64BitMode := Copy(issLine, pos('=',issLine)+1, 100);
-        ReadLn(fISS,issLine);
+          ArchitecturesInstallIn64BitMode := Copy(issLine, pos('=', issLine) + 1, 100);
+        ReadLn(fISS, issLine);
       end;
 
       // get AppVersion from AppVerName (AppVerName = AppName + AppVersion ?)
-      if (AppVersion = '') and (AppVerName <> '') then begin
-         AppVersion := StringReplace (AppVerName, AppName, '', []);
-         AppVersion := StringReplace (AppVersion, ' ', '', [rfReplaceAll,rfIgnoreCase]);
+      if (AppVersion = '') and (AppVerName <> '') then
+      begin
+        AppVersion := StringReplace(AppVerName, AppName, '', []);
+        AppVersion := StringReplace(AppVersion, ' ', '', [rfReplaceAll, rfIgnoreCase]);
       end;
 
       CloseFile(fISS);
     end;
-
-    aktProduct.setup32FileName:=ExtractFileName(myfilename);
-    aktProduct.setup32FileNamePath:=ExtractFileDir(myfilename);
-    resultForm1.EditInnoFilename.Text := myfilename;
-    mywrite('........');
-    resultForm1.Edit_opsiProductID.Text := resultForm1.getPacketIDShort(AppName);
-    resultForm1.Edit_ProductName.Text := AppName;
-    resultForm1.Edit_ProductVersion.Text := AppVersion;
-    if AppVerName = '' then  begin
-       if ((AppName <> '') and (AppVersion <> '')) then
-          AppVerName := AppName + ' ' +AppVersion
-       else
-          AppVerName := AppName + AppVersion
-    end;
-    if (0 < pos('x64', lowercase(ArchitecturesInstallIn64BitMode))) then
-       DefaultDirName := StringReplace (DefaultDirName, '{pf}', '%ProgramFilesSysnativeDir%', [rfReplaceAll,rfIgnoreCase])
-    else
-       DefaultDirName := StringReplace (DefaultDirName, '{pf}', '%ProgramFiles32Dir%', [rfReplaceAll,rfIgnoreCase]);
-    DefaultDirName := StringReplace (DefaultDirName, '{sd}', '%Systemdrive%', [rfReplaceAll,rfIgnoreCase]);
-    resultForm1.InstallDirEdit.Text := DefaultDirName;  //+'\unins000.exe'
-
-    resultForm1.MemoDefault.Clear;
-    resultForm1.MemoDefault.Append(AppVerName);
-
-    fsize := fileutil.FileSize(myfilename);
-    fsizemb :=  fsize /(1024*1024);
-    rsizemb := fsizemb*6;
-    sFileSize := FormatFloat('##0.0',fsizemb)+' MB';
-    sReqSize := FormatFloat('###0',rsizemb)+' MB';
-
-    mywrite('Setup file size is: ' + sFileSize);
-    mywrite('Estimated required space is: ' + sReqSize);
-    mywrite('........');
-
-    if fsizemb < 1 then
-       fsizemb := 1;
-
-    sFileSize := FormatFloat('#',fsizemb)+' MB';
-    sReqSize := FormatFloat('#',rsizemb)+' MB';
-
-    resultForm1.EditInnoRequiredSpace.Text := sReqSize;
-    resultForm1.EditInnoFileSize.Text := sFileSize;
-
-    resultForm1.setDefaultParametersInno;
-
-    aktProduct.requiredSpace:= round(rsizemb);
-    aktProduct.setup32FileSize:= round(fsizemb);
-
-    mywrite('get_inno_info finished');
-    mywrite('Inno Setup detected');
-
   end;
+    {$ENDIF WINDOWS}
+
+  aktProduct.setup32FileName := ExtractFileName(myfilename);
+  aktProduct.setup32FileNamePath := ExtractFileDir(myfilename);
+  resultForm1.EditInnoFilename.Text := myfilename;
+  mywrite('........');
+  resultForm1.Edit_opsiProductID.Text := resultForm1.getPacketIDShort(AppName);
+  resultForm1.Edit_ProductName.Text := AppName;
+  resultForm1.Edit_ProductVersion.Text := AppVersion;
+  if AppVerName = '' then
+  begin
+    if ((AppName <> '') and (AppVersion <> '')) then
+      AppVerName := AppName + ' ' + AppVersion
+    else
+      AppVerName := AppName + AppVersion;
+  end;
+  if (0 < pos('x64', lowercase(ArchitecturesInstallIn64BitMode))) then
+    DefaultDirName := StringReplace(DefaultDirName, '{pf}',
+      '%ProgramFilesSysnativeDir%', [rfReplaceAll, rfIgnoreCase])
+  else
+    DefaultDirName := StringReplace(DefaultDirName, '{pf}',
+      '%ProgramFiles32Dir%', [rfReplaceAll, rfIgnoreCase]);
+  DefaultDirName := StringReplace(DefaultDirName, '{sd}', '%Systemdrive%',
+    [rfReplaceAll, rfIgnoreCase]);
+  resultForm1.InstallDirEdit.Text := DefaultDirName;  //+'\unins000.exe'
+
+  resultForm1.MemoDefault.Clear;
+  resultForm1.MemoDefault.Append(AppVerName);
+
+  fsize := fileutil.FileSize(myfilename);
+  fsizemb := fsize / (1024 * 1024);
+  rsizemb := fsizemb * 6;
+  sFileSize := FormatFloat('##0.0', fsizemb) + ' MB';
+  sReqSize := FormatFloat('###0', rsizemb) + ' MB';
+
+  mywrite('Setup file size is: ' + sFileSize);
+  mywrite('Estimated required space is: ' + sReqSize);
+  mywrite('........');
+
+  if fsizemb < 1 then
+    fsizemb := 1;
+
+  sFileSize := FormatFloat('#', fsizemb) + ' MB';
+  sReqSize := FormatFloat('#', rsizemb) + ' MB';
+
+  resultForm1.EditInnoRequiredSpace.Text := sReqSize;
+  resultForm1.EditInnoFileSize.Text := sFileSize;
+
+  resultForm1.setDefaultParametersInno;
+
+  aktProduct.requiredSpace := round(rsizemb);
+  aktProduct.setup32FileSize := round(fsizemb);
+
+  mywrite('get_inno_info finished');
+  mywrite('Inno Setup detected');
+
+
+
+  Mywrite('Finished analyzing Inno-Setup');
+  showInnoSetup := True;
   if showInnoSetup then
     resultForm1.PageControl1.ActivePage := resultForm1.TabSheetDefault;
-    //resultForm1.PageControl1.ActivePage := resultForm1.TabSheetInnoSetup;
+  //resultForm1.PageControl1.ActivePage := resultForm1.TabSheetInnoSetup;
 end;
 
 
 procedure get_installshield_info(myfilename: string);
 var
   myoutlines: TStringList;
-  myreport : string;
-  myexitcode : integer;
+  myreport: string;
+  myexitcode: integer;
   i: integer;
-  fsize : int64;
-  fsizemb, rsizemb : double;
-  sFileSize : string;
-  sReqSize : string;
-  sSearch : string;
-  iPos : integer;
-  destDir : string;
+  fsize: int64;
+  fsizemb, rsizemb: double;
+  sFileSize: string;
+  sReqSize: string;
+  sSearch: string;
+  iPos: integer;
+  destDir: string;
   myBatch: string;
   product: string;
 
 begin
   Mywrite('Analyzing InstallShield-Setup:');
-    aktProduct.istallerId:=stInstallShield;
+  aktProduct.istallerId := stInstallShield;
   resultForm1.Edit_installer_type.Text := installerToInstallerstr(stInstallShield);
   resultForm1.setup32NameEdit.Text := myfilename;
-  aktProduct.setup32FileName:=ExtractFileName(myfilename);
-  aktProduct.setup32FileNamePath:=ExtractFileDir(myfilename);
+  aktProduct.setup32FileName := ExtractFileName(myfilename);
+  aktProduct.setup32FileNamePath := ExtractFileDir(myfilename);
 
 
-  aktProduct.setup32FileName:=ExtractFileName(myfilename);
-  aktProduct.setup32FileNamePath:=ExtractFileDir(myfilename);
+  aktProduct.setup32FileName := ExtractFileName(myfilename);
+  aktProduct.setup32FileNamePath := ExtractFileDir(myfilename);
   resultForm1.setup32NameEdit.Text := myfilename;
 
   product := ExtractFileNameWithoutExt(myfilename);
@@ -503,21 +545,22 @@ begin
   resultForm1.Edit_ProductName.Text := product;
   resultForm1.Edit_ProductVersion.Text := product;
 
-  aktProduct.productId:=  resultForm1.getPacketIDShort(product);
-  aktProduct.productName:=product;
-  aktProduct.productversion:=product;
+  aktProduct.productId := resultForm1.getPacketIDShort(product);
+  aktProduct.productName := product;
+  aktProduct.productversion := product;
   if (test) then
-    resultForm1.InstallDirEdit.Text := '%ProgramFilesSysnativeDir%' +DirectorySeparator+ product;
+    resultForm1.InstallDirEdit.Text :=
+      '%ProgramFilesSysnativeDir%' + DirectorySeparator + product;
   resultForm1.MemoDefault.Append(product);
 
   fsize := fileutil.FileSize(myfilename);
-  fsizemb :=  fsize /(1024*1024);
-  rsizemb := fsizemb*6;
-  sFileSize := FormatFloat('##0.0',fsizemb)+' MB';
-  sReqSize  := FormatFloat('###0',rsizemb)+' MB';
+  fsizemb := fsize / (1024 * 1024);
+  rsizemb := fsizemb * 6;
+  sFileSize := FormatFloat('##0.0', fsizemb) + ' MB';
+  sReqSize := FormatFloat('###0', rsizemb) + ' MB';
 
   if fsizemb < 1 then
-     fsizemb := 1;
+    fsizemb := 1;
 
   mywrite('Setup file size is: ' + sFileSize);
   mywrite('Estimated required space is: ' + sReqSize);
@@ -525,8 +568,8 @@ begin
 
   resultForm1.Edit_RequiredSpace.Text := sReqSize;
   resultForm1.Edit_FileSize.Text := sFileSize;
-  aktProduct.requiredSpace:= round(rsizemb);
-  aktProduct.setup32FileSize:= round(fsizemb);
+  aktProduct.requiredSpace := round(rsizemb);
+  aktProduct.setup32FileSize := round(fsizemb);
 
   mywrite('get_InstallShield_info finished');
   mywrite('InstallShield Setup detected');
@@ -540,44 +583,46 @@ end;
 procedure get_installshieldmsi_info(myfilename: string);
 var
   myoutlines: TStringList;
-  myreport : string;
-  myexitcode : integer;
+  myreport: string;
+  myexitcode: integer;
   i: integer;
-  fsize : int64;
-  fsizemb, rsizemb : double;
-  sMsiSize : string;
-  sFileSize : string;
-  sReqSize : string;
-  sSearch : string;
-  iPos : integer;
-  destDir : string;
+  fsize: int64;
+  fsizemb, rsizemb: double;
+  sMsiSize: string;
+  sFileSize: string;
+  sReqSize: string;
+  sSearch: string;
+  iPos: integer;
+  destDir: string;
   myBatch: string;
   product: string;
-  FileInfo : TSearchRec;
+  FileInfo: TSearchRec;
   exefile: string;
   smask: string;
 
 begin
   Mywrite('Analyzing InstallShield+MSI Setup: ' + myfilename);
-  aktProduct.istallerId:=stInstallShieldMSI;
+  aktProduct.istallerId := stInstallShieldMSI;
   resultForm1.Edit_installer_type.Text := installerToInstallerstr(stInstallShieldMSI);
   resultForm1.setup32NameEdit.Text := myfilename;
-  aktProduct.setup32FileName:=ExtractFileName(myfilename);
-  aktProduct.setup32FileNamePath:=ExtractFileDir(myfilename);
+  aktProduct.setup32FileName := ExtractFileName(myfilename);
+  aktProduct.setup32FileNamePath := ExtractFileDir(myfilename);
 
   if DirectoryExists(opsitmp) then
-     DeleteDirectory(opsitmp, true);
-  if not DirectoryExists(opsitmp) then createdir(opsitmp);
+    DeleteDirectory(opsitmp, True);
   if not DirectoryExists(opsitmp) then
-     mywrite('Error: could not create directory: '+opsitmp);
+    createdir(opsitmp);
+  if not DirectoryExists(opsitmp) then
+    mywrite('Error: could not create directory: ' + opsitmp);
 
   // extract and analyze MSI from setup
 
-  Mywrite('Analyzing MSI from InstallShield Setup '+myfilename);
+  Mywrite('Analyzing MSI from InstallShield Setup ' + myfilename);
 
   myoutlines := TStringList.Create;
   // myBatch := 'cmd.exe /C '+ExtractFilePath(paramstr(0))+'extractMSI.cmd "'+myfilename+'"'; // (does not work with spaces in EXE path)
-  myBatch := '"'+ExtractFilePath(paramstr(0))+'extractMSI.cmd" "'+myfilename+'"'; // dropped cmd.exe
+  myBatch := '"' + ExtractFilePath(ParamStr(0)) + 'extractMSI.cmd" "' + myfilename + '"';
+  // dropped cmd.exe
   Mywrite(myBatch);
   Mywrite('!! PLEASE WAIT !!');
   Mywrite('!! PLEASE WAIT !! Extracting and analyzing MSI ...');
@@ -590,23 +635,25 @@ begin
   resultForm1.EditInstallShieldMSIProductVersion.Text := product;
   resultForm1.EditInstallShieldMSIProductCode.Text := 'XXX';
 
-  if not RunCommandAndCaptureOut(myBatch, true,myoutlines,myreport, SW_SHOWMINIMIZED, myexitcode) then
+  if not RunCommandAndCaptureOut(myBatch, True, myoutlines, myreport,
+    SW_SHOWMINIMIZED, myexitcode) then
   begin
-     mywrite('Failed to to run "' + myBatch +'": '+myreport);
+    mywrite('Failed to to run "' + myBatch + '": ' + myreport);
   end
   else
   begin
-     smask := opsitmp + '*.msi';
-     Mywrite(smask);
-     if SysUtils.FindFirst (smask,faAnyFile,FileInfo)=0 then
-     begin
-       //resultform1.EditMSI_file.Text := opsitmp + FileInfo.Name;
-       aktProduct.msi32FullFileName:=opsitmp + FileInfo.Name;;
+    smask := opsitmp + '*.msi';
+    Mywrite(smask);
+    if SysUtils.FindFirst(smask, faAnyFile, FileInfo) = 0 then
+    begin
+      //resultform1.EditMSI_file.Text := opsitmp + FileInfo.Name;
+      aktProduct.msi32FullFileName := opsitmp + FileInfo.Name;
+      ;
 
-       // analyze the extracted MSI
-       resultform1.OpenDialog1.InitialDir := opsitmp;
-       resultform1.OpenDialog1.FileName := FileInfo.Name;
-       get_msi_info(aktProduct.msi32FullFileName);
+      // analyze the extracted MSI
+      resultform1.OpenDialog1.InitialDir := opsitmp;
+      resultform1.OpenDialog1.FileName := FileInfo.Name;
+      get_msi_info(aktProduct.msi32FullFileName);
 
        (*
        // and use the parameters from get_msi_info (MSI analyze)
@@ -618,27 +665,27 @@ begin
        resultForm1.MemoInstallShieldMSIDescription.Append(resultForm1.EditMSI_ProductName.Text);
        *)
 
-       // reset OpenDialog parameters
-       resultform1.OpenDialog1.InitialDir := myfilename;
-       resultform1.OpenDialog1.FileName := ExtractFileNameWithoutExt(myfilename);
+      // reset OpenDialog parameters
+      resultform1.OpenDialog1.InitialDir := myfilename;
+      resultform1.OpenDialog1.FileName := ExtractFileNameWithoutExt(myfilename);
 
-       // resultform1.setDefaultParametersMSI;
-     end
-     else
-     begin
+      // resultform1.setDefaultParametersMSI;
+    end
+    else
+    begin
       //todo call Dialog here
-        //Application.MessageBox(pchar(format(sErrExtractMSIfailed, [myfilename])), pchar(sMBoxHeader), MB_OK);
-     end
+      //Application.MessageBox(pchar(format(sErrExtractMSIfailed, [myfilename])), pchar(sMBoxHeader), MB_OK);
+    end;
   end;
 
   fsize := fileutil.FileSize(myfilename);
-  fsizemb :=  fsize /(1024*1024);
-  rsizemb := fsizemb*6;
-  sMsiSize := FormatFloat('##0.0',fsizemb)+' MB';
-  sReqSize := FormatFloat('###0',rsizemb)+' MB';
+  fsizemb := fsize / (1024 * 1024);
+  rsizemb := fsizemb * 6;
+  sMsiSize := FormatFloat('##0.0', fsizemb) + ' MB';
+  sReqSize := FormatFloat('###0', rsizemb) + ' MB';
 
   if fsizemb < 1 then
-     fsizemb := 1;
+    fsizemb := 1;
 
   mywrite('Setup file size is: ' + sFileSize);
   mywrite('Estimated required space is: ' + sReqSize);
@@ -646,8 +693,8 @@ begin
 
   resultForm1.Edit_RequiredSpace.Text := sReqSize;
   resultForm1.Edit_FileSize.Text := sFileSize;
-      aktProduct.requiredSpace:= round(rsizemb);
-    aktProduct.setup32FileSize:= round(fsizemb);
+  aktProduct.requiredSpace := round(rsizemb);
+  aktProduct.setup32FileSize := round(fsizemb);
 
 
   mywrite('get_InstallShield_info finished');
@@ -657,7 +704,6 @@ begin
     //resultForm1.PageControl1.ActivePage := resultForm1.TabSheetInstallShieldMSI;
     resultForm1.PageControl1.ActivePage := resultForm1.TabSheetDefault;
 
-
 end;
 
 
@@ -665,19 +711,19 @@ end;
 procedure get_advancedmsi_info(myfilename: string);
 var
   myoutlines: TStringList;
-  myreport : string;
-  myexitcode : integer;
+  myreport: string;
+  myexitcode: integer;
   i: integer;
-  fsize : int64;
-  fsizemb, rsizemb : double;
-  sFileSize : string;
-  sReqSize : string;
-  sSearch : string;
-  iPos : integer;
-  destDir : string;
+  fsize: int64;
+  fsizemb, rsizemb: double;
+  sFileSize: string;
+  sReqSize: string;
+  sSearch: string;
+  iPos: integer;
+  destDir: string;
   myBatch: string;
   product: string;
-  FileInfo : TSearchRec;
+  FileInfo: TSearchRec;
   exefile: string;
   smask: string;
 
@@ -687,10 +733,10 @@ begin
 
   // extract and analyze MSI from setup
 
-  Mywrite('Analyzing MSI from Setup '+myfilename);
+  Mywrite('Analyzing MSI from Setup ' + myfilename);
 
   myoutlines := TStringList.Create;
-  myBatch := 'cmd.exe /C "'+myfilename+'" /extract:'+opsitmp;
+  myBatch := 'cmd.exe /C "' + myfilename + '" /extract:' + opsitmp;
   Mywrite(myBatch);
   Mywrite('!! PLEASE WAIT !!');
   Mywrite('!! PLEASE WAIT !! Extracting and analyzing MSI ...');
@@ -704,51 +750,57 @@ begin
   resultForm1.EditAdvancedMSIProductCode.Text := 'XXX';
 
   if DirectoryExists(opsitmp) then
-     DeleteDirectory(opsitmp, true);
-  if not DirectoryExists(opsitmp) then createdir(opsitmp);
+    DeleteDirectory(opsitmp, True);
   if not DirectoryExists(opsitmp) then
-    mywrite('Error: could not create directory: '+opsitmp);
+    createdir(opsitmp);
+  if not DirectoryExists(opsitmp) then
+    mywrite('Error: could not create directory: ' + opsitmp);
 
-  if not RunCommandAndCaptureOut(myBatch, true,myoutlines,myreport, SW_SHOWMINIMIZED, myexitcode) then
+  if not RunCommandAndCaptureOut(myBatch, True, myoutlines, myreport,
+    SW_SHOWMINIMIZED, myexitcode) then
   begin
-    mywrite('Failed to extract MSI: '+myreport);
+    mywrite('Failed to extract MSI: ' + myreport);
   end
   else
   begin
-    smask := opsitmp+'*.msi';
+    smask := opsitmp + '*.msi';
     Mywrite(smask);
-     if SysUtils.FindFirst (smask,faAnyFile,FileInfo)=0 then
-     begin
-       resultform1.EditMSI_file.Text := opsitmp+FileInfo.Name;
+    if SysUtils.FindFirst(smask, faAnyFile, FileInfo) = 0 then
+    begin
+      resultform1.EditMSI_file.Text := opsitmp + FileInfo.Name;
 
-       // analyze the extracted MSI
-       resultform1.OpenDialog1.InitialDir := opsitmp;
-       resultform1.OpenDialog1.FileName := FileInfo.Name;
-       get_msi_info(resultform1.EditMSI_file.Text);
+      // analyze the extracted MSI
+      resultform1.OpenDialog1.InitialDir := opsitmp;
+      resultform1.OpenDialog1.FileName := FileInfo.Name;
+      get_msi_info(resultform1.EditMSI_file.Text);
 
-       // and use the parameters from get_msi_info (MSI analyze)
-       product := resultForm1.EditMSI_opsiProductID.Text;
-       resultForm1.EditAdvancedMSIProductID.Text := product;
-       resultForm1.EditAdvancedMSIProductName.Text := resultForm1.EditMSI_ProductName.Text;
-       resultForm1.EditAdvancedMSIProductVersion.Text := resultForm1.EditMSI_ProductVersion.Text;
-       resultForm1.EditAdvancedMSIProductCode.Text := resultForm1.EditMSI_ProductCode.Text;
-       resultForm1.MemoAdvancedMSIDescription.Append(resultForm1.EditMSI_ProductName.Text);
+      // and use the parameters from get_msi_info (MSI analyze)
+      product := resultForm1.EditMSI_opsiProductID.Text;
+      resultForm1.EditAdvancedMSIProductID.Text := product;
+      resultForm1.EditAdvancedMSIProductName.Text :=
+        resultForm1.EditMSI_ProductName.Text;
+      resultForm1.EditAdvancedMSIProductVersion.Text :=
+        resultForm1.EditMSI_ProductVersion.Text;
+      resultForm1.EditAdvancedMSIProductCode.Text :=
+        resultForm1.EditMSI_ProductCode.Text;
+      resultForm1.MemoAdvancedMSIDescription.Append(
+        resultForm1.EditMSI_ProductName.Text);
 
-       // reset OpenDialog parameters
-       resultform1.OpenDialog1.InitialDir := myfilename;
-       resultform1.OpenDialog1.FileName := ExtractFileNameWithoutExt(myfilename);
+      // reset OpenDialog parameters
+      resultform1.OpenDialog1.InitialDir := myfilename;
+      resultform1.OpenDialog1.FileName := ExtractFileNameWithoutExt(myfilename);
 
-       // resultform1.setDefaultParametersMSI;
-     end;
+      // resultform1.setDefaultParametersMSI;
+    end;
   end;
 
   fsize := fileutil.FileSize(myfilename);
-  fsizemb :=  fsize /(1024*1024);
-  sFileSize := FormatFloat('##0.0',fsizemb)+' MB';
-  sReqSize  := FormatFloat('###0',fsizemb*6)+' MB';
+  fsizemb := fsize / (1024 * 1024);
+  sFileSize := FormatFloat('##0.0', fsizemb) + ' MB';
+  sReqSize := FormatFloat('###0', fsizemb * 6) + ' MB';
 
   if fsizemb < 1 then
-     fsizemb := 1;
+    fsizemb := 1;
 
   mywrite('Setup file size is: ' + sFileSize);
   mywrite('Estimated required space is: ' + sReqSize);
@@ -772,16 +824,16 @@ end;
 procedure get_nsis_info(myfilename: string);
 var
   myoutlines: TStringList;
-  myreport : string;
-  myexitcode : integer;
+  myreport: string;
+  myexitcode: integer;
   i: integer;
-  fsize : int64;
-  fsizemb : double;
-  sFileSize : string;
-  sReqSize : string;
-  sSearch : string;
-  iPos : integer;
-  destDir : string;
+  fsize: int64;
+  fsizemb: double;
+  sFileSize: string;
+  sReqSize: string;
+  sSearch: string;
+  iPos: integer;
+  destDir: string;
   myBatch: string;
   product: string;
 
@@ -795,16 +847,17 @@ begin
   resultForm1.EditNsisProductName.Text := product;
   resultForm1.EditNsisProductVersion.Text := resultForm1.ExtractVersion(product);
   if (test) then
-    resultForm1.EditNsisInstallDir.Text := '%ProgramFilesSysnativeDir%' +DirectorySeparator+ product;
+    resultForm1.EditNsisInstallDir.Text :=
+      '%ProgramFilesSysnativeDir%' + DirectorySeparator + product;
   resultForm1.MemoNsisDescription.Append(product);
 
   fsize := fileutil.FileSize(myfilename);
-  fsizemb :=  fsize /(1024*1024);
-  sFileSize := FormatFloat('##0.0',fsizemb)+' MB';
-  sReqSize  := FormatFloat('###0',fsizemb*6)+' MB';
+  fsizemb := fsize / (1024 * 1024);
+  sFileSize := FormatFloat('##0.0', fsizemb) + ' MB';
+  sReqSize := FormatFloat('###0', fsizemb * 6) + ' MB';
 
   if fsizemb < 1 then
-     fsizemb := 1;
+    fsizemb := 1;
 
   mywrite('Setup file size is: ' + sFileSize);
   mywrite('Estimated required space is: ' + sReqSize);
@@ -915,20 +968,43 @@ begin
 end;
 *)
 
-function analyze_markerlist : TKnownInstaller;
+function analyze_markerlist: TKnownInstaller;
 var
-  i : integer;
+  i: integer;
 
 begin
-  result := stUnknown;
-  for i := 0 to  integer(stUnknown) do
-  begin
-    if installerArray[i].detected(aktProduct.markerlist) then
-      result := TKnownInstaller(i);
+  try
+    Result := stUnknown;
+    for i := 0 to aktProduct.markerlist.Count - 1 do
+      LogDatei.log('marker: ' + aktProduct.markerlist[i], LLdebug);
+    for i := 0 to integer(stUnknown) - 1 do
+    begin
+      if not Assigned(installerArray[i].detected) then
+        LogDatei.log('No check implemented for: ' +
+          installerToInstallerstr(TKnownInstaller(i)), LLWarning)
+      else
+      begin
+        LogDatei.log('Check markerlist for: ' + installerToInstallerstr(
+          TKnownInstaller(i)), LLdebug);
+        if installerArray[i].detected(TClass(installerArray[i]),
+          aktProduct.markerlist) then
+        begin
+          Result := TKnownInstaller(i);
+          LogDatei.log('Detected: ' + installerToInstallerstr(Result), LLnotice);
+        end;
+      end;
+    end;
+
+  except
+    on E: Exception do
+    begin
+      LogDatei.log('Exception in analyze_markerlist', LLcritical);
+      LogDatei.log('Error: Message: ' + E.message, LLcritical);
+    end;
   end;
 end;
 
-function analyze_binary(myfilename: string; verbose,skipzero: boolean) : TKnownInstaller;
+function analyze_binary(myfilename: string; verbose, skipzero: boolean): TKnownInstaller;
 var
   FileStream: TFileStream;
   CharIn: char;
@@ -939,29 +1015,35 @@ var
   buffer: array [0 .. 2047] of char;
   charsread: longint;
   msg: string;
-  setuptype : TKnownInstaller;
+  setuptype: TKnownInstaller;
 
 begin
   MinLen := 5;
   MaxLen := 512;
   CurrValue := '';
   setupType := stUnknown;
-  result := stUnknown;
+  Result := stUnknown;
 
   mywrite('------------------------------------');
   Mywrite('Analyzing: ' + myfilename);
   msg := 'stringsgrep started (verbose:';
-  if verbose=true then msg := msg+'true' else msg:=msg+'false';
+  if verbose = True then
+    msg := msg + 'true'
+  else
+    msg := msg + 'false';
   msg := msg + ', skipzero:';
-  if skipzero=true then msg := msg+'true' else msg:=msg+'false';
-  msg := msg+')';
+  if skipzero = True then
+    msg := msg + 'true'
+  else
+    msg := msg + 'false';
+  msg := msg + ')';
   mywrite(msg);
   FileStream := TFileStream.Create(myfilename, fmOpenRead);
   //markerEmbeddedMSI := false;
   //markerInstallShield := false;
   try
     size := FileStream.Size;
-    while (size > 0)  and (setupType = stUnknown) do
+    while (size > 0) and (setupType = stUnknown) do
     begin
       charsread := FileStream.Read(buffer, sizeof(buffer));
       size := size - charsread;
@@ -972,14 +1054,14 @@ begin
 
         // skipzero: handling of wide strings by ignoring zero byte
         if skipzero and (CharIn = #0) then
-           continue;
+          continue;
 
         // if (CharIn in [' ','A'..'Z','a'..'z','0'..'9','<','>','.','/','_','-']) and (Length(CurrValue) < MaxLen) then
         if (CharIn in [#32..#126]) and (Length(CurrValue) < MaxLen) then
           CurrValue := CurrValue + CharIn;
 
-        if (Length(CurrValue) < MaxLen) and (i < charsread-1) then
-           continue;
+        if (Length(CurrValue) < MaxLen) and (i < charsread - 1) then
+          continue;
 
         if (Length(CurrValue) >= MinLen) then
         begin
@@ -987,24 +1069,24 @@ begin
           begin
             if verbose then
             begin
-               //grepexe(CurrValue);
+              //grepexe(CurrValue);
               analyze_binstr(CurrValue);
-               logdatei.log(CurrValue,LLDebug);
+              logdatei.log(CurrValue, LLDebug);
             end
             else
-               analyze_binstr(CurrValue);
+              analyze_binstr(CurrValue);
           end
           else if '.msi' = lowercase(ExtractFileExt(myfilename)) then
           begin
             setupType := stMsi;
             if verbose then
-               grepmsi(CurrValue);
+              grepmsi(CurrValue);
           end
           else
           begin
             grepexe(CurrValue);
             grepmsi(CurrValue);
-            logdatei.log(CurrValue,LLDebug);
+            logdatei.log(CurrValue, LLDebug);
           end;
           CurrValue := '';
         end;
@@ -1012,10 +1094,16 @@ begin
 
     end;
     msg := 'stringsgrep completed (verbose:';
-    if verbose=true then msg := msg+'true' else msg:=msg+'false';
+    if verbose = True then
+      msg := msg + 'true'
+    else
+      msg := msg + 'false';
     msg := msg + ', skipzero:';
-    if skipzero=true then msg := msg+'true' else msg:=msg+'false';
-    msg := msg+')';
+    if skipzero = True then
+      msg := msg + 'true'
+    else
+      msg := msg + 'false';
+    msg := msg + ')';
     mywrite(msg);
     mywrite('------------------------------------');
   finally
@@ -1025,18 +1113,20 @@ begin
 end;
 
 
-procedure Analyze(FileName:string);
+procedure Analyze(FileName: string);
 var
-  setupType : TKnownInstaller;
+  setupType: TKnownInstaller;
+  verbose: boolean = True;
 begin
   aktProduct.setup32FileNamePath := FileName;
   resultform1.clearAllTabs;
   setupType := stUnknown;
   if '.msi' = lowercase(ExtractFileExt(FileName)) then
     get_msi_info(FileName)
-  else begin
+  else
+  begin
     //stringsgrep(FileName, false, false); // filename, verbose, skipzero
-    setupType := analyze_binary(FileName, false, false); // filename, verbose, skipzero
+    setupType := analyze_binary(FileName, verbose, False); // filename, verbose, skipzero
 
     if (setupType = stInno) then
       get_inno_info(FileName)
@@ -1044,22 +1134,21 @@ begin
       get_nsis_info(FileName)
     else if (setupType = stInstallShield) then
       get_installshield_info(FileName)
-    else if (setupType =  stInstallShieldMSI) then
+    else if (setupType = stInstallShieldMSI) then
       get_installshieldmsi_info(FileName)
     else if (setupType = stAdvancedMSI) then
       get_advancedmsi_info(FileName)
-    else begin
+    else
+    begin
       resultForm1.PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
-      analyze_binary(FileName, true, false); // filename, verbose, skipzero
-      analyze_binary(FileName, true, true); // filename, verbose, skipzero
+      analyze_binary(FileName, True, False); // filename, verbose, skipzero
+      analyze_binary(FileName, True, True); // filename, verbose, skipzero
       mywrite('unknown Setup Type.');   /// XXX Probe-Installation anbieten
-    end
-  end
+    end;
+  end;
 end;
 
 
 
 
-
 end.
-

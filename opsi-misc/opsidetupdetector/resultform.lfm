@@ -1,11 +1,12 @@
 object resultForm1: TresultForm1
-  Left = 387
+  Left = 111
   Height = 717
-  Top = 255
+  Top = 148
   Width = 1006
   Caption = 'opsi Setup Detector'
-  ClientHeight = 697
+  ClientHeight = 681
   ClientWidth = 1006
+  DesignTimePPI = 140
   Menu = MainMenu1
   OnCreate = FormCreate
   Position = poScreenCenter
@@ -18,20 +19,20 @@ object resultForm1: TresultForm1
     Align = alTop
     Alignment = taLeftJustify
     BorderStyle = bsSingle
-    ClientHeight = 36
-    ClientWidth = 1002
+    ClientHeight = 38
+    ClientWidth = 1004
     TabOrder = 0
     OnClick = Panel1Click
     object ToolBar1: TToolBar
       Left = 1
       Height = 26
       Top = 1
-      Width = 1000
+      Width = 1002
       Caption = 'ToolBar1'
       TabOrder = 0
       object SBtnOpen: TSpeedButton
         Left = 1
-        Height = 22
+        Height = 32
         Top = 2
         Width = 88
         Caption = 'open'
@@ -75,7 +76,7 @@ object resultForm1: TresultForm1
       end
       object SBtnExit: TSpeedButton
         Left = 89
-        Height = 22
+        Height = 32
         Top = 2
         Width = 95
         Caption = 'Exit'
@@ -121,18 +122,18 @@ object resultForm1: TresultForm1
   end
   object Panel3: TPanel
     Left = 0
-    Height = 634
+    Height = 613
     Top = 40
     Width = 1006
     Align = alClient
     Caption = 'Panel3'
-    ClientHeight = 634
+    ClientHeight = 613
     ClientWidth = 1006
     TabOrder = 1
     object Panel4: TPanel
       Left = 1
       Height = 118
-      Top = 515
+      Top = 494
       Width = 1004
       Align = alBottom
       Caption = 'Panel4'
@@ -155,14 +156,14 @@ object resultForm1: TresultForm1
         Height = 64
         Top = 48
         Width = 496
-        ClientHeight = 44
-        ClientWidth = 492
+        ClientHeight = 62
+        ClientWidth = 494
         TabOrder = 1
         object RadioButtonCreateOnly: TRadioButton
           Left = 22
-          Height = 19
+          Height = 28
           Top = -7
-          Width = 115
+          Width = 189
           Caption = 'create opsi packet'
           Checked = True
           OnChange = RadioButtonBuildModeChange
@@ -171,27 +172,27 @@ object resultForm1: TresultForm1
         end
         object RadioButtonInteractive: TRadioButton
           Left = 22
-          Height = 19
+          Height = 28
           Top = 9
-          Width = 297
+          Width = 507
           Caption = 'create opsi packet and start interactive PacketBuilder'
           OnChange = RadioButtonBuildModeChange
           TabOrder = 0
         end
         object RadioButtonAuto: TRadioButton
           Left = 22
-          Height = 19
+          Height = 28
           Top = 25
-          Width = 132
+          Width = 219
           Caption = 'create and auto build'
           OnChange = RadioButtonBuildModeChange
           TabOrder = 1
         end
         object CheckBoxBuild: TCheckBox
           Left = 158
-          Height = 19
+          Height = 28
           Top = 25
-          Width = 47
+          Width = 70
           Caption = 'build'
           Checked = True
           Enabled = False
@@ -200,9 +201,9 @@ object resultForm1: TresultForm1
         end
         object CheckBoxInstall: TCheckBox
           Left = 214
-          Height = 19
+          Height = 28
           Top = 25
-          Width = 51
+          Width = 78
           Caption = 'install'
           Checked = True
           Enabled = False
@@ -211,9 +212,9 @@ object resultForm1: TresultForm1
         end
         object CheckBoxQuiet: TCheckBox
           Left = 270
-          Height = 19
+          Height = 28
           Top = 25
-          Width = 47
+          Width = 71
           Caption = 'quiet'
           Enabled = False
           TabOrder = 4
@@ -233,7 +234,7 @@ object resultForm1: TresultForm1
       end
       object Edit_PacketbaseDir: TEdit
         Left = 120
-        Height = 23
+        Height = 32
         Hint = 'Base Directory to build opsi packets'
         Top = 16
         Width = 480
@@ -243,9 +244,9 @@ object resultForm1: TresultForm1
       end
       object Label9: TLabel
         Left = 32
-        Height = 15
+        Height = 26
         Top = 23
-        Width = 77
+        Width = 135
         Caption = 'Packet BaseDir'
         ParentColor = False
       end
@@ -301,7 +302,7 @@ object resultForm1: TresultForm1
     end
     object PageControl1: TPageControl
       Left = 1
-      Height = 514
+      Height = 493
       Top = 1
       Width = 1004
       ActivePage = TabSheetDefault
@@ -311,8 +312,8 @@ object resultForm1: TresultForm1
       OnChange = PageControl1Change
       object TabSheetAnalyze: TTabSheet
         Caption = 'Analyze'
-        ClientHeight = 486
-        ClientWidth = 996
+        ClientHeight = 459
+        ClientWidth = 1002
         object Memo1: TMemo
           Left = 0
           Height = 436
@@ -329,8 +330,8 @@ object resultForm1: TresultForm1
           Width = 996
           Align = alBottom
           BorderStyle = bsSingle
-          ClientHeight = 46
-          ClientWidth = 992
+          ClientHeight = 48
+          ClientWidth = 994
           TabOrder = 1
           object BitBtnAnalyze: TBitBtn
             Left = 594
@@ -402,22 +403,22 @@ object resultForm1: TresultForm1
       end
       object TabSheetDefault: TTabSheet
         Caption = 'Default'
-        ClientHeight = 486
-        ClientWidth = 996
+        ClientHeight = 459
+        ClientWidth = 1002
         TabVisible = False
         object PanelDefault: TPanel
           Left = 0
-          Height = 486
+          Height = 459
           Hint = 'copy product files from here '
           Top = 0
-          Width = 996
+          Width = 1002
           Align = alClient
-          ClientHeight = 486
-          ClientWidth = 996
+          ClientHeight = 459
+          ClientWidth = 1002
           TabOrder = 0
           object Edit_ProductName: TEdit
             Left = 518
-            Height = 23
+            Height = 32
             Hint = 'opsi product name (name of package file)'
             Top = 184
             Width = 234
@@ -427,7 +428,7 @@ object resultForm1: TresultForm1
           end
           object Edit_ProductVersion: TEdit
             Left = 120
-            Height = 23
+            Height = 32
             Hint = 'Product version'
             Top = 224
             Width = 232
@@ -437,7 +438,7 @@ object resultForm1: TresultForm1
           end
           object Edit_MsiId: TEdit
             Left = 120
-            Height = 23
+            Height = 32
             Top = 264
             Width = 478
             ParentShowHint = False
@@ -446,39 +447,39 @@ object resultForm1: TresultForm1
           end
           object Label50: TLabel
             Left = 20
-            Height = 15
+            Height = 26
             Top = 48
-            Width = 88
+            Width = 151
             Caption = 'Setup File (32Bit)'
             ParentColor = False
           end
           object Label51: TLabel
             Left = 392
-            Height = 15
+            Height = 26
             Top = 184
-            Width = 102
+            Width = 174
             Caption = 'opsi Product Name'
             ParentColor = False
           end
           object Label52: TLabel
             Left = 32
-            Height = 15
+            Height = 26
             Top = 231
-            Width = 83
+            Width = 145
             Caption = 'Product Version'
             ParentColor = False
           end
           object Label53: TLabel
             Left = 32
-            Height = 15
+            Height = 26
             Top = 271
-            Width = 29
+            Width = 49
             Caption = 'MsiId'
             ParentColor = False
           end
           object Edit_RequiredSpace: TEdit
             Left = 120
-            Height = 23
+            Height = 32
             Hint = 'Estimated disk space required for this installation'
             Top = 306
             Width = 168
@@ -488,15 +489,15 @@ object resultForm1: TresultForm1
           end
           object Label54: TLabel
             Left = 32
-            Height = 15
+            Height = 26
             Top = 311
-            Width = 81
+            Width = 141
             Caption = 'Required Space'
             ParentColor = False
           end
           object Edit_FileSize: TEdit
             Left = 120
-            Height = 23
+            Height = 32
             Top = 344
             Width = 208
             ParentShowHint = False
@@ -505,17 +506,17 @@ object resultForm1: TresultForm1
           end
           object Label55: TLabel
             Left = 360
-            Height = 15
+            Height = 26
             Top = 311
-            Width = 46
+            Width = 82
             Caption = 'InstallDir'
             ParentColor = False
           end
           object CheckBox3: TCheckBox
             Left = 20
-            Height = 19
+            Height = 28
             Top = 80
-            Width = 86
+            Width = 135
             Caption = 'use MST File'
             OnChange = CheckBox3Change
             TabOrder = 5
@@ -620,7 +621,7 @@ object resultForm1: TresultForm1
           end
           object Edit_opsiProductID: TEdit
             Left = 120
-            Height = 23
+            Height = 32
             Hint = 'Set opsi packet product ID (A-Z, 0-9,-_ no blanks)'
             Top = 184
             Width = 234
@@ -631,17 +632,17 @@ object resultForm1: TresultForm1
           end
           object Label56: TLabel
             Left = 24
-            Height = 15
+            Height = 26
             Top = 184
-            Width = 81
+            Width = 140
             Caption = 'opsi Product ID'
             ParentColor = False
           end
           object Label57: TLabel
             Left = 32
-            Height = 15
+            Height = 26
             Top = 392
-            Width = 60
+            Width = 104
             Caption = 'Description'
             ParentColor = False
           end
@@ -655,15 +656,15 @@ object resultForm1: TresultForm1
           end
           object CheckBox_Default_License: TCheckBox
             Left = 656
-            Height = 19
+            Height = 28
             Top = 8
-            Width = 106
+            Width = 175
             Caption = 'License required'
             TabOrder = 10
           end
           object setup32NameEdit: TFileNameEdit
             Left = 120
-            Height = 23
+            Height = 32
             Top = 48
             Width = 264
             FilterIndex = 0
@@ -676,7 +677,7 @@ object resultForm1: TresultForm1
           end
           object setup64NameEdit: TFileNameEdit
             Left = 520
-            Height = 23
+            Height = 32
             Top = 48
             Width = 272
             FilterIndex = 0
@@ -689,15 +690,15 @@ object resultForm1: TresultForm1
           end
           object Label58: TLabel
             Left = 424
-            Height = 15
+            Height = 26
             Top = 56
-            Width = 88
+            Width = 151
             Caption = 'Setup File (64Bit)'
             ParentColor = False
           end
           object SpinEditPackageVersion: TSpinEdit
             Left = 523
-            Height = 23
+            Height = 32
             Top = 227
             Width = 205
             MinValue = 1
@@ -706,23 +707,23 @@ object resultForm1: TresultForm1
           end
           object Label59: TLabel
             Left = 411
-            Height = 15
+            Height = 26
             Top = 231
-            Width = 85
+            Width = 149
             Caption = 'Package Version'
             ParentColor = False
           end
           object Label60: TLabel
             Left = 29
-            Height = 15
+            Height = 26
             Top = 116
-            Width = 88
+            Width = 151
             Caption = 'Setup File (32Bit)'
             ParentColor = False
           end
           object mst32NameEdit: TFileNameEdit
             Left = 120
-            Height = 23
+            Height = 32
             Top = 112
             Width = 272
             FilterIndex = 0
@@ -736,15 +737,15 @@ object resultForm1: TresultForm1
           end
           object Label61: TLabel
             Left = 413
-            Height = 15
+            Height = 26
             Top = 112
-            Width = 88
+            Width = 151
             Caption = 'Setup File (64Bit)'
             ParentColor = False
           end
           object mst64NameEdit: TFileNameEdit
             Left = 520
-            Height = 23
+            Height = 32
             Top = 112
             Width = 272
             FilterIndex = 0
@@ -758,10 +759,10 @@ object resultForm1: TresultForm1
           end
           object ComboBoxArchMode: TComboBox
             Left = 496
-            Height = 23
+            Height = 30
             Top = 8
             Width = 152
-            ItemHeight = 15
+            ItemHeight = 0
             ItemIndex = 0
             Items.Strings = (
               '32BitOnly - fix'
@@ -777,23 +778,23 @@ object resultForm1: TresultForm1
           end
           object Label62: TLabel
             Left = 8
-            Height = 15
+            Height = 26
             Top = 16
-            Width = 106
+            Width = 184
             Caption = 'Detected Setup type'
             ParentColor = False
           end
           object Label63: TLabel
             Left = 368
-            Height = 15
+            Height = 26
             Top = 16
-            Width = 99
+            Width = 168
             Caption = 'Architecture Mode'
             ParentColor = False
           end
           object InstallDirEdit: TDirectoryEdit
             Left = 444
-            Height = 23
+            Height = 32
             Top = 306
             Width = 343
             ShowHidden = False
@@ -804,15 +805,15 @@ object resultForm1: TresultForm1
           end
           object Label64: TLabel
             Left = 29
-            Height = 15
+            Height = 26
             Top = 344
-            Width = 71
+            Width = 123
             Caption = 'Setup file size'
             ParentColor = False
           end
           object Edit_installer_type: TEdit
             Left = 121
-            Height = 23
+            Height = 32
             Top = 14
             Width = 191
             TabOrder = 18
@@ -822,8 +823,8 @@ object resultForm1: TresultForm1
       end
       object TabSheetMSI: TTabSheet
         Caption = 'MSI'
-        ClientHeight = 486
-        ClientWidth = 996
+        ClientHeight = 459
+        ClientWidth = 1002
         OnEnter = TabSheetMSIEnter
         object Panel6: TPanel
           Left = -12
@@ -1409,8 +1410,8 @@ object resultForm1: TresultForm1
       end
       object TabSheetAdvancedMSI: TTabSheet
         Caption = 'Advanced+MSI'
-        ClientHeight = 402
-        ClientWidth = 744
+        ClientHeight = 459
+        ClientWidth = 1002
         OnEnter = TabSheetAdvancedMSIEnter
         object Panel17: TPanel
           Left = -12
@@ -1929,8 +1930,8 @@ object resultForm1: TresultForm1
       end
       object TabSheetInnoSetup: TTabSheet
         Caption = 'Inno Setup'
-        ClientHeight = 402
-        ClientWidth = 744
+        ClientHeight = 459
+        ClientWidth = 1002
         object Panel7: TPanel
           Left = -12
           Height = 592
@@ -2448,8 +2449,8 @@ object resultForm1: TresultForm1
       end
       object TabSheetInstallShield: TTabSheet
         Caption = 'InstallShield'
-        ClientHeight = 402
-        ClientWidth = 744
+        ClientHeight = 459
+        ClientWidth = 1002
         object Panel13: TPanel
           Left = -12
           Height = 592
@@ -2967,8 +2968,8 @@ object resultForm1: TresultForm1
       end
       object TabSheetInstallShieldMSI: TTabSheet
         Caption = 'InstallShield+MSI'
-        ClientHeight = 402
-        ClientWidth = 744
+        ClientHeight = 459
+        ClientWidth = 1002
         OnEnter = TabSheetInstallShieldMSIEnter
         object Panel15: TPanel
           Left = -12
@@ -3487,8 +3488,8 @@ object resultForm1: TresultForm1
       end
       object TabSheetNsis: TTabSheet
         Caption = 'NSIS'
-        ClientHeight = 486
-        ClientWidth = 996
+        ClientHeight = 459
+        ClientWidth = 1002
         object Panel11: TPanel
           Left = -12
           Height = 592
@@ -4020,7 +4021,7 @@ object resultForm1: TresultForm1
     Visible = False
     object processing: TLabel
       Left = 24
-      Height = 22
+      Height = 21
       Top = 8
       Width = 109
       Caption = 'processing...'
@@ -4035,17 +4036,17 @@ object resultForm1: TresultForm1
     end
     object processStatement: TLabel
       Left = 24
-      Height = 15
+      Height = 26
       Top = 40
-      Width = 58
+      Width = 102
       Caption = 'please wait'
       ParentColor = False
     end
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 23
-    Top = 674
+    Height = 28
+    Top = 653
     Width = 1006
     Panels = <>
   end
