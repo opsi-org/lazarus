@@ -98,16 +98,6 @@ msgstr ""
 msgid "Panel1"
 msgstr ""
 
-#: tresultform1.bitbtnadvancedmsisetup.caption
-msgctxt "TRESULTFORM1.BITBTNADVANCEDMSISETUP.CAPTION"
-msgid "&Open Setup File"
-msgstr ""
-
-#: tresultform1.bitbtnadvancedmsisetup.hint
-msgctxt "TRESULTFORM1.BITBTNADVANCEDMSISETUP.HINT"
-msgid "select setup file to analyze"
-msgstr ""
-
 #: tresultform1.bitbtnanalyze.caption
 msgctxt "TRESULTFORM1.BITBTNANALYZE.CAPTION"
 msgid "Open Setup File"
@@ -125,86 +115,6 @@ msgstr ""
 
 #: tresultform1.bitbtnclose2.hint
 msgid "Close application"
-msgstr ""
-
-#: tresultform1.bitbtndefault.caption
-msgctxt "TRESULTFORM1.BITBTNDEFAULT.CAPTION"
-msgid "Select"
-msgstr ""
-
-#: tresultform1.bitbtndefault.hint
-msgctxt "TRESULTFORM1.BITBTNDEFAULT.HINT"
-msgid "Select MSI File to analyze"
-msgstr ""
-
-#: tresultform1.bitbtninno.caption
-msgctxt "TRESULTFORM1.BITBTNINNO.CAPTION"
-msgid "Open Setup File"
-msgstr ""
-
-#: tresultform1.bitbtninno.hint
-msgctxt "TRESULTFORM1.BITBTNINNO.HINT"
-msgid "select setup file to analyze"
-msgstr ""
-
-#: tresultform1.bitbtninstallshieldmsisetup.caption
-msgctxt "TRESULTFORM1.BITBTNINSTALLSHIELDMSISETUP.CAPTION"
-msgid "&Open Setup File"
-msgstr ""
-
-#: tresultform1.bitbtninstallshieldmsisetup.hint
-msgctxt "TRESULTFORM1.BITBTNINSTALLSHIELDMSISETUP.HINT"
-msgid "select setup file to analyze"
-msgstr ""
-
-#: tresultform1.bitbtninstallshieldsetup.caption
-msgctxt "TRESULTFORM1.BITBTNINSTALLSHIELDSETUP.CAPTION"
-msgid "Open Setup File"
-msgstr ""
-
-#: tresultform1.bitbtninstallshieldsetup.hint
-msgctxt "TRESULTFORM1.BITBTNINSTALLSHIELDSETUP.HINT"
-msgid "select setup file to analyze"
-msgstr ""
-
-#: tresultform1.bitbtnmsi.caption
-msgctxt "TRESULTFORM1.BITBTNMSI.CAPTION"
-msgid "Open Setup File"
-msgstr ""
-
-#: tresultform1.bitbtnmsi.hint
-msgctxt "tresultform1.bitbtnmsi.hint"
-msgid "Select MSI File to analyze"
-msgstr ""
-
-#: tresultform1.bitbtnmst.caption
-msgctxt "TRESULTFORM1.BITBTNMST.CAPTION"
-msgid "Select"
-msgstr ""
-
-#: tresultform1.bitbtnmst.hint
-msgctxt "tresultform1.bitbtnmst.hint"
-msgid "Select MST File"
-msgstr ""
-
-#: tresultform1.bitbtnmst1.caption
-msgctxt "TRESULTFORM1.BITBTNMST1.CAPTION"
-msgid "Select"
-msgstr ""
-
-#: tresultform1.bitbtnmst1.hint
-msgctxt "TRESULTFORM1.BITBTNMST1.HINT"
-msgid "Select MST File"
-msgstr ""
-
-#: tresultform1.bitbtnnsissetup.caption
-msgctxt "TRESULTFORM1.BITBTNNSISSETUP.CAPTION"
-msgid "Open Setup File"
-msgstr ""
-
-#: tresultform1.bitbtnnsissetup.hint
-msgctxt "TRESULTFORM1.BITBTNNSISSETUP.HINT"
-msgid "select setup file to analyze"
 msgstr ""
 
 #: tresultform1.bitbtn_packetbasedir.caption
@@ -235,11 +145,6 @@ msgstr ""
 msgid "Register as Explorer Context Menue"
 msgstr ""
 
-#: tresultform1.checkbox2.caption
-msgctxt "tresultform1.checkbox2.caption"
-msgid "use MST File"
-msgstr ""
-
 #: tresultform1.checkbox3.caption
 msgctxt "TRESULTFORM1.CHECKBOX3.CAPTION"
 msgid "use MST File"
@@ -259,258 +164,13 @@ msgstr ""
 msgid "quiet"
 msgstr ""
 
-#: tresultform1.checkbox_advancedmsi_license.caption
-msgctxt "TRESULTFORM1.CHECKBOX_ADVANCEDMSI_LICENSE.CAPTION"
-msgid "License required"
-msgstr ""
-
 #: tresultform1.checkbox_default_license.caption
 msgctxt "TRESULTFORM1.CHECKBOX_DEFAULT_LICENSE.CAPTION"
 msgid "License required"
 msgstr ""
 
-#: tresultform1.checkbox_inno_license.caption
-msgctxt "TRESULTFORM1.CHECKBOX_INNO_LICENSE.CAPTION"
-msgid "License required"
-msgstr ""
-
-#: tresultform1.checkbox_installshieldmsi_license.caption
-msgctxt "TRESULTFORM1.CHECKBOX_INSTALLSHIELDMSI_LICENSE.CAPTION"
-msgid "License required"
-msgstr ""
-
-#: tresultform1.checkbox_installshield_license.caption
-msgctxt "TRESULTFORM1.CHECKBOX_INSTALLSHIELD_LICENSE.CAPTION"
-msgid "License required"
-msgstr ""
-
-#: tresultform1.checkbox_msi_license.caption
-msgctxt "tresultform1.checkbox_msi_license.caption"
-msgid "License required"
-msgstr ""
-
-#: tresultform1.checkbox_nsis_license.caption
-msgctxt "TRESULTFORM1.CHECKBOX_NSIS_LICENSE.CAPTION"
-msgid "License required"
-msgstr ""
-
 #: tresultform1.comboboxarchmode.text
 msgid "32BitOnly - fix"
-msgstr ""
-
-#: tresultform1.editadvancedmsifilename.hint
-msgctxt "TRESULTFORM1.EDITADVANCEDMSIFILENAME.HINT"
-msgid "Setup file to build opsi packet from"
-msgstr ""
-
-#: tresultform1.editadvancedmsifilesize.hint
-msgctxt "TRESULTFORM1.EDITADVANCEDMSIFILESIZE.HINT"
-msgid "Setup File Size as detected"
-msgstr ""
-
-#: tresultform1.editadvancedmsiproductcode.hint
-msgctxt "TRESULTFORM1.EDITADVANCEDMSIPRODUCTCODE.HINT"
-msgid "Application directory to be used for deinstallation"
-msgstr ""
-
-#: tresultform1.editadvancedmsiproductid.hint
-msgctxt "TRESULTFORM1.EDITADVANCEDMSIPRODUCTID.HINT"
-msgid "Set opsi packet product ID (A-Z, 0-9,-_ no blanks)"
-msgstr ""
-
-#: tresultform1.editadvancedmsiproductname.hint
-msgctxt "TRESULTFORM1.EDITADVANCEDMSIPRODUCTNAME.HINT"
-msgid "Product Name as detected from Setup file name"
-msgstr ""
-
-#: tresultform1.editadvancedmsiproductversion.hint
-msgctxt "TRESULTFORM1.EDITADVANCEDMSIPRODUCTVERSION.HINT"
-msgid "Product version as detected from Setup file name"
-msgstr ""
-
-#: tresultform1.editadvancedmsirequiredspace.hint
-msgctxt "TRESULTFORM1.EDITADVANCEDMSIREQUIREDSPACE.HINT"
-msgid "Estimated disk space required for this installation"
-msgstr ""
-
-#: tresultform1.editinnofilename.hint
-msgctxt "TRESULTFORM1.EDITINNOFILENAME.HINT"
-msgid "Setup file to build opsi packet from"
-msgstr ""
-
-#: tresultform1.editinnofilesize.hint
-msgctxt "TRESULTFORM1.EDITINNOFILESIZE.HINT"
-msgid "Setup File Size as detected"
-msgstr ""
-
-#: tresultform1.editinnoinstalldir.hint
-msgctxt "TRESULTFORM1.EDITINNOINSTALLDIR.HINT"
-msgid "Installation directory as detected from install_script.iss"
-msgstr ""
-
-#: tresultform1.editinnoproductid.hint
-msgctxt "TRESULTFORM1.EDITINNOPRODUCTID.HINT"
-msgid "Set opsi packet product ID (A-Z, 0-9,-_ no blanks)"
-msgstr ""
-
-#: tresultform1.editinnoproductname.hint
-msgctxt "TRESULTFORM1.EDITINNOPRODUCTNAME.HINT"
-msgid "Product Name as detected from install_script.iss (AppName)"
-msgstr ""
-
-#: tresultform1.editinnoproductversion.hint
-msgctxt "TRESULTFORM1.EDITINNOPRODUCTVERSION.HINT"
-msgid "Product version as detected from install_script.iss (AppVersion or AppVerName)"
-msgstr ""
-
-#: tresultform1.editinnorequiredspace.hint
-msgctxt "TRESULTFORM1.EDITINNOREQUIREDSPACE.HINT"
-msgid "Estimated disk space required for this installation"
-msgstr ""
-
-#: tresultform1.editinstallshieldfilename.hint
-msgctxt "TRESULTFORM1.EDITINSTALLSHIELDFILENAME.HINT"
-msgid "Setup file to build opsi packet from"
-msgstr ""
-
-#: tresultform1.editinstallshieldfilesize.hint
-msgctxt "TRESULTFORM1.EDITINSTALLSHIELDFILESIZE.HINT"
-msgid "Setup File Size as detected"
-msgstr ""
-
-#: tresultform1.editinstallshieldinstalldir.hint
-msgctxt "TRESULTFORM1.EDITINSTALLSHIELDINSTALLDIR.HINT"
-msgid "Application directory to be used for deinstallation"
-msgstr ""
-
-#: tresultform1.editinstallshieldmsifilename.hint
-msgctxt "TRESULTFORM1.EDITINSTALLSHIELDMSIFILENAME.HINT"
-msgid "Setup file to build opsi packet from"
-msgstr ""
-
-#: tresultform1.editinstallshieldmsifilesize.hint
-msgctxt "TRESULTFORM1.EDITINSTALLSHIELDMSIFILESIZE.HINT"
-msgid "Setup File Size as detected"
-msgstr ""
-
-#: tresultform1.editinstallshieldmsiproductcode.hint
-msgctxt "TRESULTFORM1.EDITINSTALLSHIELDMSIPRODUCTCODE.HINT"
-msgid "Application directory to be used for deinstallation"
-msgstr ""
-
-#: tresultform1.editinstallshieldmsiproductid.hint
-msgctxt "TRESULTFORM1.EDITINSTALLSHIELDMSIPRODUCTID.HINT"
-msgid "Set opsi packet product ID (A-Z, 0-9,-_ no blanks)"
-msgstr ""
-
-#: tresultform1.editinstallshieldmsiproductname.hint
-msgctxt "TRESULTFORM1.EDITINSTALLSHIELDMSIPRODUCTNAME.HINT"
-msgid "Product Name as detected from Setup file name"
-msgstr ""
-
-#: tresultform1.editinstallshieldmsiproductversion.hint
-msgctxt "TRESULTFORM1.EDITINSTALLSHIELDMSIPRODUCTVERSION.HINT"
-msgid "Product version as detected from Setup file name"
-msgstr ""
-
-#: tresultform1.editinstallshieldmsirequiredspace.hint
-msgctxt "TRESULTFORM1.EDITINSTALLSHIELDMSIREQUIREDSPACE.HINT"
-msgid "Estimated disk space required for this installation"
-msgstr ""
-
-#: tresultform1.editinstallshieldproductid.hint
-msgctxt "TRESULTFORM1.EDITINSTALLSHIELDPRODUCTID.HINT"
-msgid "Set opsi packet product ID (A-Z, 0-9,-_ no blanks)"
-msgstr ""
-
-#: tresultform1.editinstallshieldproductname.hint
-msgctxt "TRESULTFORM1.EDITINSTALLSHIELDPRODUCTNAME.HINT"
-msgid "Product Name as detected from Setup file name"
-msgstr ""
-
-#: tresultform1.editinstallshieldproductversion.hint
-msgctxt "TRESULTFORM1.EDITINSTALLSHIELDPRODUCTVERSION.HINT"
-msgid "Product version as detected from Setup file name"
-msgstr ""
-
-#: tresultform1.editinstallshieldrequiredspace.hint
-msgctxt "TRESULTFORM1.EDITINSTALLSHIELDREQUIREDSPACE.HINT"
-msgid "Estimated disk space required for this installation"
-msgstr ""
-
-#: tresultform1.editmsi_file.hint
-msgctxt "TRESULTFORM1.EDITMSI_FILE.HINT"
-msgid "MSI file to build opsi packet from"
-msgstr ""
-
-#: tresultform1.editmsi_filesize.hint
-msgctxt "TRESULTFORM1.EDITMSI_FILESIZE.HINT"
-msgid "MSI File Size as detected"
-msgstr ""
-
-#: tresultform1.editmsi_mstfile.hint
-msgctxt "TRESULTFORM1.EDITMSI_MSTFILE.HINT"
-msgid "Select MST File to be used if applicable"
-msgstr ""
-
-#: tresultform1.editmsi_opsiproductid.hint
-msgctxt "TRESULTFORM1.EDITMSI_OPSIPRODUCTID.HINT"
-msgid "Set opsi packet product ID (A-Z, 0-9,-_ no blanks)"
-msgstr ""
-
-#: tresultform1.editmsi_productcode.hint
-msgctxt "TRESULTFORM1.EDITMSI_PRODUCTCODE.HINT"
-msgid "Product Code as detected from MSI file"
-msgstr ""
-
-#: tresultform1.editmsi_productname.hint
-msgctxt "TRESULTFORM1.EDITMSI_PRODUCTNAME.HINT"
-msgid "Product Name as detected from MSI file"
-msgstr ""
-
-#: tresultform1.editmsi_productversion.hint
-msgctxt "TRESULTFORM1.EDITMSI_PRODUCTVERSION.HINT"
-msgid "Product version as detected from MSI file"
-msgstr ""
-
-#: tresultform1.editmsi_requiredspace.hint
-msgctxt "TRESULTFORM1.EDITMSI_REQUIREDSPACE.HINT"
-msgid "Estimated disk space required for this installation"
-msgstr ""
-
-#: tresultform1.editnsisfilename.hint
-msgctxt "TRESULTFORM1.EDITNSISFILENAME.HINT"
-msgid "Setup file to build opsi packet from"
-msgstr ""
-
-#: tresultform1.editnsisfilesize.hint
-msgctxt "TRESULTFORM1.EDITNSISFILESIZE.HINT"
-msgid "Setup File Size as detected"
-msgstr ""
-
-#: tresultform1.editnsisinstalldir.hint
-msgctxt "TRESULTFORM1.EDITNSISINSTALLDIR.HINT"
-msgid "Application directory to be used for deinstallation"
-msgstr ""
-
-#: tresultform1.editnsisproductid.hint
-msgctxt "TRESULTFORM1.EDITNSISPRODUCTID.HINT"
-msgid "Set opsi packet product ID (A-Z, 0-9,-_ no blanks)"
-msgstr ""
-
-#: tresultform1.editnsisproductname.hint
-msgctxt "TRESULTFORM1.EDITNSISPRODUCTNAME.HINT"
-msgid "Product Name as detected from Setup file name"
-msgstr ""
-
-#: tresultform1.editnsisproductversion.hint
-msgctxt "TRESULTFORM1.EDITNSISPRODUCTVERSION.HINT"
-msgid "Product version as detected from Setup file name"
-msgstr ""
-
-#: tresultform1.editnsisrequiredspace.hint
-msgctxt "TRESULTFORM1.EDITNSISREQUIREDSPACE.HINT"
-msgid "Estimated disk space required for this installation"
 msgstr ""
 
 #: tresultform1.edit_installer_type.text
@@ -561,230 +221,6 @@ msgctxt "TRESULTFORM1.FILEOPENSETUPFILE.HINT"
 msgid "select setup file to analyze"
 msgstr ""
 
-#: tresultform1.label1.caption
-msgid "MSI file"
-msgstr ""
-
-#: tresultform1.label10.caption
-msgctxt "tresultform1.label10.caption"
-msgid "opsi Product ID"
-msgstr ""
-
-#: tresultform1.label11.caption
-msgctxt "tresultform1.label11.caption"
-msgid "Description"
-msgstr ""
-
-#: tresultform1.label12.caption
-msgctxt "TRESULTFORM1.LABEL12.CAPTION"
-msgid "Product Version"
-msgstr ""
-
-#: tresultform1.label13.caption
-msgctxt "TRESULTFORM1.LABEL13.CAPTION"
-msgid "Setup file"
-msgstr ""
-
-#: tresultform1.label14.caption
-msgctxt "TRESULTFORM1.LABEL14.CAPTION"
-msgid "Required Space"
-msgstr ""
-
-#: tresultform1.label15.caption
-msgctxt "TRESULTFORM1.LABEL15.CAPTION"
-msgid "Setup File Size"
-msgstr ""
-
-#: tresultform1.label16.caption
-msgctxt "TRESULTFORM1.LABEL16.CAPTION"
-msgid "opsi Product ID"
-msgstr ""
-
-#: tresultform1.label17.caption
-msgctxt "TRESULTFORM1.LABEL17.CAPTION"
-msgid "Description"
-msgstr ""
-
-#: tresultform1.label18.caption
-msgctxt "tresultform1.label18.caption"
-msgid "Install Directory"
-msgstr ""
-
-#: tresultform1.label19.caption
-msgctxt "TRESULTFORM1.LABEL19.CAPTION"
-msgid "Product Name"
-msgstr ""
-
-#: tresultform1.label2.caption
-msgctxt "TRESULTFORM1.LABEL2.CAPTION"
-msgid "Setup file"
-msgstr ""
-
-#: tresultform1.label20.caption
-msgctxt "TRESULTFORM1.LABEL20.CAPTION"
-msgid "Product Version"
-msgstr ""
-
-#: tresultform1.label21.caption
-msgctxt "TRESULTFORM1.LABEL21.CAPTION"
-msgid "Required Space"
-msgstr ""
-
-#: tresultform1.label22.caption
-msgctxt "TRESULTFORM1.LABEL22.CAPTION"
-msgid "Setup File Size"
-msgstr ""
-
-#: tresultform1.label23.caption
-msgctxt "TRESULTFORM1.LABEL23.CAPTION"
-msgid "opsi Product ID"
-msgstr ""
-
-#: tresultform1.label24.caption
-msgctxt "TRESULTFORM1.LABEL24.CAPTION"
-msgid "Description"
-msgstr ""
-
-#: tresultform1.label25.caption
-msgctxt "TRESULTFORM1.LABEL25.CAPTION"
-msgid "Install Directory"
-msgstr ""
-
-#: tresultform1.label26.caption
-msgctxt "TRESULTFORM1.LABEL26.CAPTION"
-msgid "Setup file"
-msgstr ""
-
-#: tresultform1.label27.caption
-msgctxt "TRESULTFORM1.LABEL27.CAPTION"
-msgid "Product Name"
-msgstr ""
-
-#: tresultform1.label28.caption
-msgctxt "TRESULTFORM1.LABEL28.CAPTION"
-msgid "Product Version"
-msgstr ""
-
-#: tresultform1.label29.caption
-msgctxt "TRESULTFORM1.LABEL29.CAPTION"
-msgid "Required Space"
-msgstr ""
-
-#: tresultform1.label3.caption
-msgctxt "tresultform1.label3.caption"
-msgid "Product Name"
-msgstr ""
-
-#: tresultform1.label30.caption
-msgctxt "TRESULTFORM1.LABEL30.CAPTION"
-msgid "Setup File Size"
-msgstr ""
-
-#: tresultform1.label31.caption
-msgctxt "TRESULTFORM1.LABEL31.CAPTION"
-msgid "opsi Product ID"
-msgstr ""
-
-#: tresultform1.label32.caption
-msgctxt "TRESULTFORM1.LABEL32.CAPTION"
-msgid "Description"
-msgstr ""
-
-#: tresultform1.label33.caption
-msgctxt "TRESULTFORM1.LABEL33.CAPTION"
-msgid "Install Directory"
-msgstr ""
-
-#: tresultform1.label34.caption
-msgctxt "TRESULTFORM1.LABEL34.CAPTION"
-msgid "Setup file"
-msgstr ""
-
-#: tresultform1.label35.caption
-msgctxt "TRESULTFORM1.LABEL35.CAPTION"
-msgid "Product Name"
-msgstr ""
-
-#: tresultform1.label36.caption
-msgctxt "TRESULTFORM1.LABEL36.CAPTION"
-msgid "Product Version"
-msgstr ""
-
-#: tresultform1.label37.caption
-msgctxt "TRESULTFORM1.LABEL37.CAPTION"
-msgid "Required Space"
-msgstr ""
-
-#: tresultform1.label38.caption
-msgctxt "TRESULTFORM1.LABEL38.CAPTION"
-msgid "Setup File Size"
-msgstr ""
-
-#: tresultform1.label39.caption
-msgctxt "TRESULTFORM1.LABEL39.CAPTION"
-msgid "opsi Product ID"
-msgstr ""
-
-#: tresultform1.label4.caption
-msgctxt "tresultform1.label4.caption"
-msgid "Product Version"
-msgstr ""
-
-#: tresultform1.label40.caption
-msgctxt "TRESULTFORM1.LABEL40.CAPTION"
-msgid "Description"
-msgstr ""
-
-#: tresultform1.label41.caption
-msgctxt "TRESULTFORM1.LABEL41.CAPTION"
-msgid "MSI Product Code"
-msgstr ""
-
-#: tresultform1.label42.caption
-msgctxt "TRESULTFORM1.LABEL42.CAPTION"
-msgid "Setup file"
-msgstr ""
-
-#: tresultform1.label43.caption
-msgctxt "TRESULTFORM1.LABEL43.CAPTION"
-msgid "Product Name"
-msgstr ""
-
-#: tresultform1.label44.caption
-msgctxt "TRESULTFORM1.LABEL44.CAPTION"
-msgid "Product Version"
-msgstr ""
-
-#: tresultform1.label45.caption
-msgctxt "TRESULTFORM1.LABEL45.CAPTION"
-msgid "Required Space"
-msgstr ""
-
-#: tresultform1.label46.caption
-msgctxt "TRESULTFORM1.LABEL46.CAPTION"
-msgid "Setup File Size"
-msgstr ""
-
-#: tresultform1.label47.caption
-msgctxt "TRESULTFORM1.LABEL47.CAPTION"
-msgid "opsi Product ID"
-msgstr ""
-
-#: tresultform1.label48.caption
-msgctxt "TRESULTFORM1.LABEL48.CAPTION"
-msgid "Description"
-msgstr ""
-
-#: tresultform1.label49.caption
-msgctxt "TRESULTFORM1.LABEL49.CAPTION"
-msgid "MSI Product Code"
-msgstr ""
-
-#: tresultform1.label5.caption
-msgctxt "tresultform1.label5.caption"
-msgid "MSI Product Code"
-msgstr ""
-
 #: tresultform1.label50.caption
 msgctxt "tresultform1.label50.caption"
 msgid "Setup File (32Bit)"
@@ -825,32 +261,22 @@ msgctxt "TRESULTFORM1.LABEL57.CAPTION"
 msgid "Description"
 msgstr ""
 
-#: tresultform1.label58.caption
-msgctxt "tresultform1.label58.caption"
-msgid "Setup File (64Bit)"
-msgstr ""
-
 #: tresultform1.label59.caption
 msgid "Package Version"
 msgstr ""
 
-#: tresultform1.label6.caption
-msgctxt "tresultform1.label6.caption"
-msgid "Product Name"
-msgstr ""
-
 #: tresultform1.label60.caption
 msgctxt "tresultform1.label60.caption"
-msgid "Setup File (32Bit)"
+msgid "MST File (32Bit)"
 msgstr ""
 
 #: tresultform1.label61.caption
 msgctxt "TRESULTFORM1.LABEL61.CAPTION"
-msgid "Setup File (64Bit)"
+msgid "MST File (64Bit)"
 msgstr ""
 
 #: tresultform1.label62.caption
-msgid "Detected Setup type"
+msgid "Detected Setup type:"
 msgstr ""
 
 #: tresultform1.label63.caption
@@ -861,14 +287,13 @@ msgstr ""
 msgid "Setup file size"
 msgstr ""
 
-#: tresultform1.label7.caption
-msgctxt "tresultform1.label7.caption"
-msgid "Required Space"
+#: tresultform1.label65.caption
+msgid "Advice"
 msgstr ""
 
-#: tresultform1.label8.caption
-msgctxt "tresultform1.label8.caption"
-msgid "MSI File Size"
+#: tresultform1.label67.caption
+msgctxt "tresultform1.label67.caption"
+msgid "Setup File (64Bit)"
 msgstr ""
 
 #: tresultform1.label9.caption
@@ -888,46 +313,12 @@ msgstr ""
 msgid "&File"
 msgstr ""
 
-#: tresultform1.panel10.caption
-msgctxt "TRESULTFORM1.PANEL10.CAPTION"
-msgid "Panel8"
-msgstr ""
-
-#: tresultform1.panel12.caption
-msgctxt "TRESULTFORM1.PANEL12.CAPTION"
-msgid "Panel8"
-msgstr ""
-
-#: tresultform1.panel14.caption
-msgctxt "TRESULTFORM1.PANEL14.CAPTION"
-msgid "Panel8"
-msgstr ""
-
-#: tresultform1.panel16.caption
-msgctxt "TRESULTFORM1.PANEL16.CAPTION"
-msgid "Panel8"
-msgstr ""
-
-#: tresultform1.panel18.caption
-msgctxt "TRESULTFORM1.PANEL18.CAPTION"
-msgid "Panel8"
-msgstr ""
-
 #: tresultform1.panel3.caption
 msgid "Panel3"
 msgstr ""
 
 #: tresultform1.panel4.caption
 msgid "Panel4"
-msgstr ""
-
-#: tresultform1.panel8.caption
-msgctxt "tresultform1.panel8.caption"
-msgid "Panel8"
-msgstr ""
-
-#: tresultform1.paneldefault.hint
-msgid "copy product files from here "
 msgstr ""
 
 #: tresultform1.processing.caption
@@ -961,10 +352,6 @@ msgstr ""
 msgid "open"
 msgstr ""
 
-#: tresultform1.tabsheetadvancedmsi.caption
-msgid "Advanced+MSI"
-msgstr ""
-
 #: tresultform1.tabsheetanalyze.caption
 msgctxt "TRESULTFORM1.TABSHEETANALYZE.CAPTION"
 msgid "Analyze"
@@ -972,31 +359,6 @@ msgstr ""
 
 #: tresultform1.tabsheetdefault.caption
 msgid "Default"
-msgstr ""
-
-#: tresultform1.tabsheetinnosetup.caption
-msgctxt "TRESULTFORM1.TABSHEETINNOSETUP.CAPTION"
-msgid "Inno Setup"
-msgstr ""
-
-#: tresultform1.tabsheetinstallshield.caption
-msgctxt "TRESULTFORM1.TABSHEETINSTALLSHIELD.CAPTION"
-msgid "InstallShield"
-msgstr ""
-
-#: tresultform1.tabsheetinstallshieldmsi.caption
-msgctxt "TRESULTFORM1.TABSHEETINSTALLSHIELDMSI.CAPTION"
-msgid "InstallShield+MSI"
-msgstr ""
-
-#: tresultform1.tabsheetmsi.caption
-msgctxt "TRESULTFORM1.TABSHEETMSI.CAPTION"
-msgid "MSI"
-msgstr ""
-
-#: tresultform1.tabsheetnsis.caption
-msgctxt "TRESULTFORM1.TABSHEETNSIS.CAPTION"
-msgid "NSIS"
 msgstr ""
 
 #: tresultform1.toolbar1.caption

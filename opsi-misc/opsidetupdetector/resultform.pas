@@ -29,7 +29,7 @@ uses
   StrUtils,
   //VersionInfoX,
   Process,
-
+  typinfo,
   CustApp,
 
   //htmlview,
@@ -80,23 +80,20 @@ type
     BitBtnDefault: TBitBtn;
     BitBtnMST1: TBitBtn;
     CheckBox3: TCheckBox;
-    CheckBox_MSI_License: TCheckBox;
-    CheckBox_AdvancedMSI_License: TCheckBox;
-    CheckBox_Inno_License: TCheckBox;
-    CheckBox_InstallShield_License: TCheckBox;
-    CheckBox_InstallShieldMSI_License: TCheckBox;
     CheckBox_Default_License: TCheckBox;
-    CheckBox_Nsis_License: TCheckBox;
     ComboBoxArchMode: TComboBox;
     Edit_installer_type: TEdit;
+    FlowPanel1: TFlowPanel;
+    FlowPanelSetup32: TFlowPanel;
+    FlowPanelMST: TFlowPanel;
+    FlowPanel4: TFlowPanel;
+    FlowPanel5: TFlowPanel;
+    FlowPanelMsiId: TFlowPanel;
+    FlowPanel7: TFlowPanel;
+    FlowPanel8: TFlowPanel;
+    FlowPanel9: TFlowPanel;
+    FlowPanelSetup64: TFlowPanel;
     InstallDirEdit: TDirectoryEdit;
-    EditAdvancedMSIFilename: TEdit;
-    EditAdvancedMSIFileSize: TEdit;
-    EditAdvancedMSIProductCode: TEdit;
-    EditAdvancedMSIProductID: TEdit;
-    EditAdvancedMSIProductName: TEdit;
-    EditAdvancedMSIProductVersion: TEdit;
-    EditAdvancedMSIRequiredSpace: TEdit;
     Edit_FileSize: TEdit;
     Edit_opsiProductID: TEdit;
     Edit_MsiId: TEdit;
@@ -104,23 +101,17 @@ type
     Edit_ProductVersion: TEdit;
     Edit_RequiredSpace: TEdit;
     FileHelp: TMenuItem;
-    Label58: TLabel;
     Label59: TLabel;
     Label60: TLabel;
     Label61: TLabel;
     Label62: TLabel;
     Label63: TLabel;
     Label64: TLabel;
+    Label65: TLabel;
+    Label67: TLabel;
+    MemoAdvice: TMemo;
+    MemoDescription: TMemo;
     setup32NameEdit: TFileNameEdit;
-    Image7: TImage;
-    Label42: TLabel;
-    Label43: TLabel;
-    Label44: TLabel;
-    Label45: TLabel;
-    Label46: TLabel;
-    Label47: TLabel;
-    Label48: TLabel;
-    Label49: TLabel;
     Label50: TLabel;
     Label51: TLabel;
     Label52: TLabel;
@@ -129,162 +120,49 @@ type
     Label55: TLabel;
     Label56: TLabel;
     Label57: TLabel;
-    MemoAdvancedMSIDescription: TMemo;
     MemoDefault: TMemo;
-    Panel17: TPanel;
-    Panel18: TPanel;
     PanelDefault: TPanel;
     SBtnOpen: TSpeedButton;
     SBtnExit: TSpeedButton;
-    setup64NameEdit: TFileNameEdit;
     mst32NameEdit: TFileNameEdit;
     mst64NameEdit: TFileNameEdit;
+    setup64NameEdit: TFileNameEdit;
     SpinEditPackageVersion: TSpinEdit;
     StatusBar1: TStatusBar;
     TabSheetDefault: TTabSheet;
-    TabSheetAdvancedMSI: TTabSheet;
-    BitBtnAdvancedMSISetup: TBitBtn;
-    BitBtnInstallShieldMSISetup: TBitBtn;
-    BitBtnNsisSetup: TBitBtn;
-    BitBtnInstallShieldSetup: TBitBtn;
     BitBtn_PacketBasedir: TBitBtn;
     BitBtnClose2: TBitBtn;
-    BitBtnMSI: TBitBtn;
-    BitBtnInno: TBitBtn;
-    BitBtnMST: TBitBtn;
     BitBtnAnalyze: TBitBtn;
     ButtonCreatePacket: TButton;
     CheckBox1: TCheckBox;
-    CheckBox2: TCheckBox;
     CheckBoxBuild: TCheckBox;
     CheckBoxInstall: TCheckBox;
     CheckBoxQuiet: TCheckBox;
-    EditInstallShieldMSIFilename: TEdit;
-    EditInstallShieldMSIFileSize: TEdit;
-    EditInstallShieldMSIProductCode: TEdit;
-    EditInstallShieldMSIProductID: TEdit;
-    EditInstallShieldMSIProductName: TEdit;
-    EditInstallShieldMSIProductVersion: TEdit;
-    EditInstallShieldMSIRequiredSpace: TEdit;
-    EditNsisFilename: TEdit;
-    EditInstallShieldFilename: TEdit;
-    EditNsisFileSize: TEdit;
-    EditInstallShieldFileSize: TEdit;
-    EditNsisInstallDir: TEdit;
-    EditInstallShieldInstallDir: TEdit;
-    EditNsisProductID: TEdit;
-    EditInstallShieldProductID: TEdit;
-    EditNsisProductName: TEdit;
-    EditInstallShieldProductName: TEdit;
-    EditNsisProductVersion: TEdit;
-    EditInstallShieldProductVersion: TEdit;
-    EditNsisRequiredSpace: TEdit;
-    EditMSI_file: TEdit;
-    EditInnoInstallDir: TEdit;
-    EditInstallShieldRequiredSpace: TEdit;
     Edit_PacketbaseDir: TEdit;
-    EditMSI_opsiProductID: TEdit;
-    EditInnoProductVersion: TEdit;
-    EditInnoRequiredSpace: TEdit;
-    EditInnoFileSize: TEdit;
-    EditInnoProductID: TEdit;
-    EditInnoFilename: TEdit;
-    EditMSI_ProductName: TEdit;
-    EditMSI_ProductVersion: TEdit;
-    EditMSI_ProductCode: TEdit;
-    EditInnoProductName: TEdit;
-    EditMSI_RequiredSpace: TEdit;
-    EditMSI_FileSize: TEdit;
-    EditMSI_MSTfile: TEdit;
     GroupBox2: TGroupBox;
-    Image2: TImage;
-    Image3: TImage;
-    Image4: TImage;
-    Image5: TImage;
-    Image6: TImage;
-    Label1: TLabel;
-    Label10: TLabel;
-    Label11: TLabel;
-    Label12: TLabel;
-    Label13: TLabel;
-    Label14: TLabel;
-    Label15: TLabel;
-    Label16: TLabel;
-    Label17: TLabel;
-    Label18: TLabel;
-    Label19: TLabel;
-    Label2: TLabel;
-    Label20: TLabel;
-    Label21: TLabel;
-    Label22: TLabel;
-    Label23: TLabel;
-    Label24: TLabel;
-    Label25: TLabel;
-    Label26: TLabel;
-    Label27: TLabel;
-    Label28: TLabel;
-    Label29: TLabel;
-    Label30: TLabel;
-    Label31: TLabel;
-    Label32: TLabel;
-    Label33: TLabel;
-    Label34: TLabel;
-    Label35: TLabel;
-    Label36: TLabel;
-    Label37: TLabel;
-    Label38: TLabel;
-    Label39: TLabel;
-    Label40: TLabel;
-    Label41: TLabel;
-    Label6: TLabel;
-    MemoInnoDescription: TMemo;
     FileOpenSetupFile: TMenuItem;
-    MemoInstallShieldMSIDescription: TMemo;
-    MemoNsisDescription: TMemo;
-    MemoInstallShieldDescription: TMemo;
     FileExit: TMenuItem;
     //FileCreateLogfile: TMenuItem;
     MenuItemAbout: TMenuItem;
     MenuItemFile: TMenuItem;
-    Panel10: TPanel;
-    Panel11: TPanel;
-    Panel12: TPanel;
-    Panel13: TPanel;
-    Panel14: TPanel;
-    Panel15: TPanel;
-    Panel16: TPanel;
-    Panel7: TPanel;
     processStatement: TLabel;
     processing: TLabel;
-    Label3: TLabel;
-    Label4: TLabel;
-    Label5: TLabel;
-    Label7: TLabel;
-    Label8: TLabel;
     Label9: TLabel;
     LabelVersion: TLabel;
     MainMenu1: TMainMenu;
     Memo1: TMemo;
-    MemoMSI: TMemo;
     OpenDialog1: TOpenDialog;
     PageControl1: TPageControl;
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
     Panel4: TPanel;
-    Panel6: TPanel;
-    Panel8: TPanel;
     Panel9: TPanel;
     RadioButtonAuto: TRadioButton;
     RadioButtonCreateOnly: TRadioButton;
     RadioButtonInteractive: TRadioButton;
     SelectPacketBaseDir: TSelectDirectoryDialog;
-    TabSheetInstallShieldMSI: TTabSheet;
     TabSheetAnalyze: TTabSheet;
-    TabSheetMSI: TTabSheet;
-    TabSheetInstallShield: TTabSheet;
-    TabSheetInnoSetup: TTabSheet;
-    TabSheetNsis: TTabSheet;
     ToolBar1: TToolBar;
 
     procedure BitBtn_PacketBasedirClick(Sender: TObject);
@@ -294,7 +172,7 @@ type
     procedure BitBtnInnoClick(Sender: TObject);
     procedure BitBtnNsisClick(Sender: TObject);
     procedure BitBtnMSIClick(Sender: TObject);
-    procedure BitBtnMSTClick(Sender: TObject);
+    //procedure BitBtnMSTClick(Sender: TObject);
     procedure BitBtnInstallShieldClick(Sender: TObject);
     procedure ButtonCreatePacketClick(Sender: TObject);
     procedure CheckBox1Change(Sender: TObject);
@@ -304,17 +182,18 @@ type
     //procedure FileCreateLogfileClick(Sender: TObject);
     procedure FileHelpClick(Sender: TObject);
     procedure mst32NameEditChange(Sender: TObject);
+    procedure PanelDefaultClick(Sender: TObject);
     procedure setup32NameEditChange(Sender: TObject);
     procedure FileOpenSetupFileClick(Sender: TObject);
     procedure FileExitClick(Sender: TObject);
     procedure MenuItemAboutClick(Sender: TObject);
-    procedure PageControl1Change(Sender: TObject);
+    //procedure PageControl1Change(Sender: TObject);
     procedure Panel1Click(Sender: TObject);
     procedure ProductIDChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure RadioButtonBuildModeChange(Sender: TObject);
-    procedure setDefaultParametersMSI;
-    procedure setDefaultParametersInno;
+    //procedure setDefaultParametersMSI;
+    //procedure setDefaultParametersInno;
     procedure removeOtherTypeSpecificSections (setupType, setupFile: string);
     function createProductMSI : Boolean;
     function createProductInno : Boolean;
@@ -322,6 +201,7 @@ type
     function createProductInstallShield : Boolean;
     function createProductInstallShieldMSI : Boolean;
     function createProductAdvancedMSI : Boolean;
+    (*
     function checkFormParameters(installerId : TKnownInstaller) : Boolean;
     function checkFormParametersMSI : Boolean;
     function checkFormParametersInno : Boolean;
@@ -329,25 +209,33 @@ type
     function checkFormParametersInstallShield : Boolean;
     function checkFormParametersInstallShieldMSI : Boolean;
     function checkFormParametersAdvancedMSI : Boolean;
+    *)
+    (*
     function getPacketIDfromFilename(str: string) : string;
     function getPacketIDShort(str: string) : string;
     function ExtractVersion(str: string) : string;
+    *)
     procedure SBtnOpenClick(Sender: TObject);
     procedure SBtnExitClick(Sender: TObject);
+    //procedure setup32NameEditClick(Sender: TObject);
+    (*
     procedure TabSheetAdvancedMSIEnter(Sender: TObject);
     procedure TabSheetInstallShieldMSIEnter(Sender: TObject);
     procedure TabSheetMSIEnter(Sender: TObject);
     procedure clearAllTabs;
+    *)
   private
     { private declarations }
   public
     { public declarations }
     procedure memoadd(line: string);
+    procedure write_data_to_tabdefault;
   end;
 
 procedure main;
 procedure mywrite(line: string); overload;
 procedure mywrite(line: string; loglevel : integer); overload;
+
 
 var
   resultForm1: TresultForm1;
@@ -647,6 +535,7 @@ begin
 end;
 
 
+(*
 procedure TresultForm1.clearAllTabs;
 begin
   setupTypestr := '';
@@ -716,6 +605,7 @@ begin
   resultForm1.MemoAdvancedMSIDescription.Clear;
 
 end;
+*)
 
 (*
 
@@ -1558,8 +1448,8 @@ begin
 
   if showgui then
   begin
-     resultform1.Edit_PacketbaseDir.text := packetBaseDir;
-     resultForm1.PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
+     //resultform1.Edit_PacketbaseDir.text := packetBaseDir;
+     //resultForm1.PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
   end;
 
   if Application.HasOption('filename') then
@@ -1614,6 +1504,36 @@ begin
   Application.Terminate;
 end;
 
+procedure TResultform1.BitBtnAnalyzeClick(Sender: TObject);
+begin
+
+end;
+
+procedure TResultform1.BitBtnAdvancedMSISetupClick(Sender: TObject);
+begin
+
+end;
+
+procedure TResultform1.BitBtnInnoClick(Sender: TObject);
+begin
+
+end;
+
+procedure TResultform1.BitBtnNsisClick(Sender: TObject);
+begin
+
+end;
+
+procedure TResultform1.BitBtnMSIClick(Sender: TObject);
+begin
+
+end;
+
+procedure TResultform1.BitBtnInstallShieldClick(Sender: TObject);
+begin
+
+end;
+
 procedure TResultform1.BitBtn_PacketBasedirClick(Sender: TObject);
 begin
   SelectPacketBaseDir.InitialDir:= packetBaseDir;
@@ -1627,6 +1547,7 @@ begin
   end;
 end;
 
+(*
 procedure TResultform1.BitBtnAnalyzeClick(Sender: TObject);
 begin
   OpenDialog1.FilterIndex := 4;   // Any File
@@ -1636,6 +1557,7 @@ begin
   end;
 end;
 
+
 procedure TResultform1.BitBtnMSIClick(Sender: TObject);
 begin
   OpenDialog1.FilterIndex := 2;   // MSI
@@ -1644,6 +1566,7 @@ begin
     Analyze(OpenDialog1.FileName);
   end;
 end;
+
 
 procedure TResultform1.BitBtnMSTClick(Sender: TObject);
 begin
@@ -1690,8 +1613,8 @@ begin
     Analyze(OpenDialog1.FileName);
   end;
 end;
-
-
+*)
+(*
 procedure TResultform1.setDefaultParametersMSI;
 var
   fullName : string;
@@ -1749,9 +1672,9 @@ begin
   if EditInnoProductVersion.Text = '' then
     EditInnoProductVersion.Text := product;
 end;
+ *)
 
-
-
+(*
 function TResultform1.checkFormParameters(installerId : TKnownInstaller) : Boolean;
 var
   str : string;
@@ -1827,15 +1750,7 @@ begin
      PageControl1.ActivePage := resultForm1.TabSheetDefault;
      //PageControl1.ActivePage := resultForm1.TabSheetMSI;
 
-     (*
 
-   if EditMSI_file.text = '' then begin
-     Application.MessageBox(pchar(sErrFldSetupEmpty), pchar(sMBoxHeader), MB_ICONERROR);
-     if PageControl1.ActivePage = TabSheetMSI then
-        EditMSI_file.setfocus;
-     Exit;
-   end;
-   *)
 
    if not FileExists(setup32NameEdit.text) then begin
      Application.MessageBox(pchar(sErrMSINotFound), pchar(sMBoxHeader), MB_ICONERROR);
@@ -1872,10 +1787,7 @@ function TResultform1.checkFormParametersInno : Boolean;
 begin
    checkFormParametersInno := false;
 
-   (*
-   if showInnoSetup then
-     PageControl1.ActivePage := TabSheetInnoSetup;
-     *)
+
 
    if EditInnoFilename.Text = '' then begin
      Application.MessageBox(pchar(sErrFldSetupEmpty), pchar(sMBoxHeader), MB_ICONERROR);
@@ -2066,7 +1978,7 @@ begin
    end;
    checkFormParametersAdvancedMSI := true;
 end;
-
+*)
 
 function ExtractBetween(const Value, A, B: string): string;
 var
@@ -2577,18 +2489,18 @@ begin
   case mode of
     am32only_fix:
       begin
-        setup32NameEdit.Enabled := true;
-        setup64NameEdit.Enabled := false;
+        FlowPanelSetup32.Enabled := true;
+        FlowPanelSetup64.Enabled := false;
       end;
     am64only_fix:
           begin
-        setup32NameEdit.Enabled := false;
-        setup64NameEdit.Enabled := true;
+        FlowPanelSetup32.Enabled := false;
+        FlowPanelSetup64.Enabled := true;
       end;
     amBoth_fix, amSystemSpecific_fix, amSelectable:
           begin
-        setup32NameEdit.Enabled := true;
-        setup64NameEdit.Enabled := true;
+        FlowPanelSetup32.Enabled := true;
+        FlowPanelSetup64.Enabled := true;
       end;
   end;
 end;
@@ -2630,13 +2542,14 @@ begin
   end;
 end;
 
+procedure TResultform1.PanelDefaultClick(Sender: TObject);
+begin
+
+end;
+
 procedure TResultform1.setup32NameEditChange(Sender: TObject);
 begin
-   OpenDialog1.FilterIndex := 2;   // MSI
-  if OpenDialog1.Execute then
-  begin
-    Analyze(OpenDialog1.FileName);
-  end;
+
 end;
 
 procedure TResultform1.FileOpenSetupFileClick(Sender: TObject);
@@ -2663,10 +2576,7 @@ begin
   Application.MessageBox(pchar(msg), pchar(sMBoxHeader), MB_OK);
 end;
 
-procedure TResultform1.PageControl1Change(Sender: TObject);
-begin
 
-end;
 
 procedure TResultform1.Panel1Click(Sender: TObject);
 begin
@@ -3061,83 +2971,15 @@ begin
   end;
 end;
 
-function TResultform1.getPacketIDfromFilename(str: string) : string;
-var strnew: string;
-    i: integer;
-    myChar : char;
-begin
-  strnew := '';
-  for i:=1 to Length(str) do
-  begin
-    myChar := str[i];
-    if myChar in ['A'..'Z', 'a'..'z', '0'..'9','_','-'] then
-       strnew := strnew + myChar
-    else
-       if (myChar <> #195) then
-          strnew := strnew + '-'
-  end;
-  getPacketIDfromFilename := strnew;
-end;
 
-
-function TResultform1.getPacketIDShort(str: string) : string;
-var strnew: string;
-    i: integer;
-    myChar : char;
-    preChar: char = ' ';
-begin
-  strnew := '';
-  str := lowercase(str);
-  for i:=1 to Length(str) do
-  begin
-    myChar := str[i];
-    if myChar in ['a'..'z', '0'..'9','_','-'] then begin
-       strnew := strnew + myChar;
-       preChar := myChar;
-    end
-    else begin
-       if ((myChar <> #195)
-         and (i>1)
-         and (strnew[Length(strnew)-1] <> '_')
-         and (strnew[Length(strnew)-1] <> '-')
-         and (i < Length(str))
-         ) then
-            if (preChar <> '-') then begin
-               strnew := strnew + '-';
-               preChar := '-';
-            end
-    end
-  end;
-  getPacketIDShort := strnew;
-end;
-
-
-function TResultform1.ExtractVersion(str: string) : string;
-var i: integer;
-    outstr: string = '';
-begin
-   str := StringReplace (str, 'w32', '', [rfReplaceAll,rfIgnoreCase]);
-   str := StringReplace (str, 'w64', '', [rfReplaceAll,rfIgnoreCase]);
-   str := StringReplace (str, 'win32', '', [rfReplaceAll,rfIgnoreCase]);
-   str := StringReplace (str, 'win64', '', [rfReplaceAll,rfIgnoreCase]);
-   for i:=1 to Length(str) do
-   begin
-      if str[i] in ['0'..'9','.'] then begin
-         if (Length(outstr)>0) and (not (str[i-1] in ['0'..'9','.'])) then
-           outstr := '';
-         outstr := outstr + str[i]
-      end
-      else
-   end;
-   ExtractVersion := outstr;
-end;
 
 procedure TResultform1.SBtnOpenClick(Sender: TObject);
 begin
-    OpenDialog1.FilterIndex := 1;   // EXE
+    OpenDialog1.FilterIndex := 1;   // setup
   if OpenDialog1.Execute then
   begin
     Analyze(OpenDialog1.FileName);
+    write_data_to_tabdefault;
   end;
 end;
 
@@ -3154,6 +2996,7 @@ begin
 end;
 
 
+(*
 procedure TResultform1.TabSheetMSIEnter(Sender: TObject);
 begin
   if EditMSI_file.text <> '' then begin
@@ -3178,6 +3021,44 @@ begin
     // set default path
     resultform1.OpenDialog1.InitialDir := ExtractFilePath(EditAdvancedMSIFilename.text);
     resultform1.OpenDialog1.FileName := ExtractFileName(EditAdvancedMSIFilename.text);
+  end;
+end;
+*)
+
+procedure Tresultform1.write_data_to_tabdefault;
+begin
+  with aktProduct do
+  begin
+    setup32NameEdit.Caption := setup32FileNamePath + setup32FileName;
+    Edit_FileSize.Caption := IntToStr(setup32FileSize);
+    setup64NameEdit.Caption := setup64FileNamePath + setup64FileName;
+    //setup64FileSize;
+    ComboBoxArchMode.ItemIndex := ord(architectureMode);
+    Edit_MsiId.Caption:= msiId;
+    if istallerId in [stMsi,stAdvancedMSI, stInstallShieldMSI] then
+      FlowPanelMsiId.Enabled:= true
+    else FlowPanelMsiId.Enabled:= false;
+    mst32NameEdit.Caption :=  mst32FileNamePath + mst32FileName;
+    mst64NameEdit.Caption :=  mst64FileNamePath + mst64FileName;
+    //msi32FullFileName;
+    //msi64FullFileName;
+    Edit_installer_type.Caption := installerToInstallerstr(istallerId);
+    Edit_RequiredSpace.Caption := inttostr(requiredSpace);
+    //installDirectory;
+    //comment;
+    MemoDescription.Lines.Text := description;
+    MemoAdvice.Lines.Text := advice;
+    Edit_opsiProductID.Caption := productId;
+    Edit_ProductName.Caption := productName;
+    Edit_ProductVersion.Caption := productversion;
+    SpinEditPackageVersion.Value := packageversion;
+    //versionstr;
+    //priority := 0;
+    //producttype;
+    //setupscript;
+    //uninstallscript;
+    CheckBox_Default_License.Checked:= licenserequired;
+    ComboBoxArchModeChange(ComboBoxArchMode);
   end;
 end;
 
