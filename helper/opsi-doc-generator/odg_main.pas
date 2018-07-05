@@ -65,7 +65,7 @@ begin
   begin
     writeln('Could not find asciidoctor binary');
     LogDatei.log('Could not find asciidoctor binary',LLcritical);
-  end;
+  end
   else
   begin
     myasciidoc := output;
