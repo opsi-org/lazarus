@@ -1,4 +1,4 @@
-opsi-dec-generatotr (4.1.0.0-1) stable; urgency=medium
+opsi-doc-generator (4.1.0.0-1) stable; urgency=medium
 
   * fix for @References
   * logging via oslog
@@ -6,7 +6,7 @@ opsi-dec-generatotr (4.1.0.0-1) stable; urgency=medium
 
 -- d.oertel <d.oertel@uib.de> Wed, 27 Jun 2018 15:00:00 + 0100
 
-opsi-dec-generatotr 1.0
+opsi-doc-generator 1.0
 
 * initial
 
