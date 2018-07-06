@@ -162,7 +162,7 @@
         <ResourceBaseClass Value="Form"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="3042"/>
+        <TopLine Value="3027"/>
         <CursorPos X="44" Y="3061"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -310,6 +310,7 @@
       </Unit24>
       <Unit25>
         <Filename Value="opsisetupdetector-changelog.txt"/>
+        <IsPartOfProject Value="True"/>
         <EditorIndex Value="1"/>
         <CursorPos X="28" Y="7"/>
         <UsageCount Value="24"/>
@@ -397,7 +398,7 @@
       <Unit35>
         <Filename Value="osdbasedata.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="4"/>
         <TopLine Value="171"/>
         <CursorPos X="44" Y="185"/>
         <ExtraEditorCount Value="1"/>
@@ -427,43 +428,42 @@
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit37>
       <Unit38>
-        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\1.8.2\lcl\include\pagecontrol.inc"/>
-        <EditorIndex Value="4"/>
+        <Filename Value="N:\usr\share\lazarus\1.8.2\lcl\include\pagecontrol.inc"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="30"/>
         <CursorPos Y="44"/>
         <UsageCount Value="13"/>
-        <Loaded Value="True"/>
       </Unit38>
       <Unit39>
-        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\1.8.2\lcl\include\customnotebook.inc"/>
+        <Filename Value="N:\usr\share\lazarus\1.8.2\lcl\include\customnotebook.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="536"/>
         <CursorPos Y="548"/>
         <UsageCount Value="10"/>
       </Unit39>
       <Unit40>
-        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\1.8.2\lcl\include\control.inc"/>
+        <Filename Value="N:\usr\share\lazarus\1.8.2\lcl\include\control.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="3488"/>
         <CursorPos Y="3501"/>
         <UsageCount Value="10"/>
       </Unit40>
       <Unit41>
-        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\1.8.2\lcl\include\speedbutton.inc"/>
+        <Filename Value="N:\usr\share\lazarus\1.8.2\lcl\include\speedbutton.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="906"/>
         <CursorPos Y="920"/>
         <UsageCount Value="10"/>
       </Unit41>
       <Unit42>
-        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\1.8.2\lcl\include\wincontrol.inc"/>
+        <Filename Value="N:\usr\share\lazarus\1.8.2\lcl\include\wincontrol.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="5386"/>
         <CursorPos Y="5398"/>
         <UsageCount Value="10"/>
       </Unit42>
       <Unit43>
-        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\1.8.2\lcl\lclmessageglue.pas"/>
+        <Filename Value="N:\usr\share\lazarus\1.8.2\lcl\lclmessageglue.pas"/>
         <UnitName Value="LCLMessageGlue"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="107"/>
@@ -471,14 +471,14 @@
         <UsageCount Value="10"/>
       </Unit43>
       <Unit44>
-        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\1.8.2\lcl\interfaces\gtk2\gtk2proc.inc"/>
+        <Filename Value="N:\usr\share\lazarus\1.8.2\lcl\interfaces\gtk2\gtk2proc.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="3691"/>
         <CursorPos Y="3705"/>
         <UsageCount Value="10"/>
       </Unit44>
       <Unit45>
-        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\1.8.2\lcl\interfaces\gtk2\gtk2callback.inc"/>
+        <Filename Value="N:\usr\share\lazarus\1.8.2\lcl\interfaces\gtk2\gtk2callback.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="2408"/>
         <CursorPos X="66" Y="2414"/>
@@ -619,7 +619,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="C:\lazarus\components\thtml;..\..\common"/>
+      <OtherUnitFiles Value="C:\lazarus\components\thtml\;..\..\common"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
