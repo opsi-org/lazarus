@@ -38,7 +38,8 @@ begin
     asciidoc_header.Add('   ');
     asciidoc_header.Add('   ');
     targetlist.Text:= asciidoc_header.Text;
-    targetlist.add('[Doc_file'+docobject.name+']');
+    targetlist.Add('');
+    targetlist.add('[[Doc_file'+docobject.name+']]');
     targetlist.add('= Documentation of opsi library: `'+docobject.name+'`');
     targetlist.Add('');
     targetlist.Add('');
@@ -62,7 +63,8 @@ begin
       //targetlist.Add('--------------------------------');
       targetlist.Add('');
       targetlist.Add('anchor:'+docobject.Ffunctions[frun].Name+'[]');
-      targetlist.Add('[Doc_func_'+docobject.Ffunctions[frun].Name+']');
+      targetlist.Add('');
+      targetlist.Add('[[Doc_func_'+docobject.Ffunctions[frun].Name+']]');
       targetlist.add('== Documentation of local function `'+docobject.Ffunctions[frun].Name+'`');
       targetlist.Add('');
       targetlist.Add('');
