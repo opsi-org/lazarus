@@ -2,53 +2,54 @@ object Form1: TForm1
   Left = 52
   Height = 650
   Top = 256
-  Width = 695
+  Width = 842
   Caption = 'opsi-doc-generator'
   ClientHeight = 650
-  ClientWidth = 695
+  ClientWidth = 842
+  DesignTimePPI = 140
   OnCreate = FormCreate
   LCLVersion = '1.8.2.0'
   object Panel1: TPanel
     Left = 0
     Height = 120
     Top = 0
-    Width = 695
+    Width = 842
     Align = alTop
     ClientHeight = 120
-    ClientWidth = 695
+    ClientWidth = 842
     TabOrder = 0
     object ButtonOpen: TButton
       Left = 24
-      Height = 25
+      Height = 48
       Top = 8
-      Width = 120
+      Width = 192
       Caption = 'Open source file'
       OnClick = ButtonOpenClick
       TabOrder = 0
     end
     object ButtonSave: TButton
       Left = 488
-      Height = 25
+      Height = 33
       Top = 72
-      Width = 99
+      Width = 163
       Caption = 'Save Asciidoc'
       OnClick = ButtonSaveClick
       TabOrder = 1
     end
     object ButtonConvert: TButton
       Left = 248
-      Height = 25
+      Height = 33
       Top = 72
-      Width = 120
+      Width = 200
       Caption = 'Convert to asciidoc'
       OnClick = ButtonConvertClick
       TabOrder = 2
     end
     object Bsave_ascii_show: TButton
-      Left = 168
-      Height = 25
+      Left = 288
+      Height = 48
       Top = 8
-      Width = 272
+      Width = 480
       Caption = 'Convert to asciidoc - save - to html -show '
       OnClick = Bsave_ascii_showClick
       TabOrder = 3
@@ -88,17 +89,17 @@ object Form1: TForm1
     Left = 325
     Height = 530
     Top = 120
-    Width = 370
+    Width = 517
     Align = alClient
     Caption = 'Panel3'
     ClientHeight = 530
-    ClientWidth = 370
+    ClientWidth = 517
     TabOrder = 3
     object Memo2: TMemo
       Left = 1
       Height = 528
       Top = 1
-      Width = 368
+      Width = 515
       Align = alClient
       Lines.Strings = (
         'Memo2'
