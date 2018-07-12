@@ -8,7 +8,7 @@
       <Unit0>
         <Filename Value="notifier.lpr"/>
         <IsPartOfProject Value="True"/>
-        <CursorPos X="17" Y="20"/>
+        <CursorPos X="17" Y="19"/>
         <UsageCount Value="140"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -57,7 +57,6 @@
       <Unit5>
         <Filename Value="notifierguicontrol.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
         <TopLine Value="795"/>
         <CursorPos X="19" Y="829"/>
@@ -99,8 +98,9 @@
       <Unit9>
         <Filename Value="notifier.txt"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <CursorPos X="39" Y="14"/>
+        <CursorPos X="31" Y="4"/>
         <UsageCount Value="63"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
