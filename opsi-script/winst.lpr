@@ -72,7 +72,6 @@ uses
 
 
 begin
-  Application.Scaled:=True;
   Application.Title:='opsi-winst';
   Application.Initialize;
 
