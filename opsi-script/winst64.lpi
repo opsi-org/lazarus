@@ -13,6 +13,7 @@
         <DpiAware Value="Per-monitor"/>
       </XPManifest>
       <Icon Value="0"/>
+      <ActiveWindowIndexAtStart Value="1"/>
     </General>
     <i18n>
       <EnableI18N Value="True"/>
@@ -22,7 +23,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
-      <BuildNr Value="23"/>
+      <BuildNr Value="25"/>
       <StringTable Comments="Compiled with Lazarus 1.8.2 / FPC 3.0.4" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst64.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst64.exe" ProductName="opsi-script" ProductVersion="4.1.0.0"/>
     </VersionInfo>
     <BuildModes Count="4" Active="Release">
@@ -574,7 +575,7 @@
         <CursorPos Y="1029"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <TopLine Value="2618"/>
+          <TopLine Value="2651"/>
           <CursorPos X="26" Y="2655"/>
         </ExtraEditor1>
         <UsageCount Value="209"/>
@@ -603,7 +604,7 @@
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="16858"/>
+        <TopLine Value="16872"/>
         <CursorPos X="25" Y="16876"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>

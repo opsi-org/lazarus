@@ -293,125 +293,138 @@ var
 begin
   try
     configlist := TStringList.Create;
-    serviceresult := opsidata.getOpsiServiceConfigs;
-    osmain.startupmessages.Add('OpsiServiceConfigs: ' + serviceresult);
-    Result := serviceresult;
-    if jsonIsValid(serviceresult) then
+    if  opsidata.isConnected2(startupmessages) then
     begin
-      //osmain.startupmessages.Add('got valid json object from getOpsiServiceConfigs');
-      if jsonAsObjectGetValueByKey(serviceresult, 'result',
-        serviceresult) then
-        if jsonIsArray(serviceresult) then
-        begin
-          //osmain.startupmessages.Add('got jason Array from result');
-          if jsonAsArrayToStringList(serviceresult, configlist) then
+      try
+        serviceresult := opsidata.getOpsiServiceConfigs;
+      except
+        on e: exception do
+        Begin
+          startupmessages.Append('Exception in readConfigFromService: '
+                         + 'opsidata.getOpsiServiceConfigs: '
+                         + e.message +' '+ DateTimeToStr(Now));
+          serviceresult := '';
+        End;
+      end;
+      osmain.startupmessages.Add('OpsiServiceConfigs: ' + serviceresult);
+      Result := serviceresult;
+      if jsonIsValid(serviceresult) then
+      begin
+        //osmain.startupmessages.Add('got valid json object from getOpsiServiceConfigs');
+        if jsonAsObjectGetValueByKey(serviceresult, 'result',
+          serviceresult) then
+          if jsonIsArray(serviceresult) then
           begin
-            for i := 0 to configlist.Count - 1 do
+            //osmain.startupmessages.Add('got jason Array from result');
+            if jsonAsArrayToStringList(serviceresult, configlist) then
             begin
-              if jsonIsObject(configlist.Strings[i]) then
+              for i := 0 to configlist.Count - 1 do
               begin
-                if jsonAsObjectGetValueByKey(configlist.Strings[i],
-                  'configId', configid) then
+                if jsonIsObject(configlist.Strings[i]) then
                 begin
-                  //osmain.startupmessages.Add('got configid: ' + configid);
-                  if pos('opsi-script.', configid) = 1 then
+                  if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                    'configId', configid) then
                   begin
-                    // we got a opsi-script config
-
-                    if LowerCase(configid) = 'opsi-script.global.debug_prog' then
+                    //osmain.startupmessages.Add('got configid: ' + configid);
+                    if pos('opsi-script.', configid) = 1 then
                     begin
-                      if jsonAsObjectGetValueByKey(configlist.Strings[i],
-                        'values', values) then
-                        if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
-                        begin
-                          osmain.startupmessages.Add('got debug_prog: ' + tmpstr);
-                          if not TryStrToBool(tmpstr, debug_prog) then
-                            osmain.startupmessages.Add('Error: Not a Boolean:  debug_prog: ' + tmpstr);
-                          result := 'readConfigFromService: ok';
-                        end;
+                      // we got a opsi-script config
+
+                      if LowerCase(configid) = 'opsi-script.global.debug_prog' then
+                      begin
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add('got debug_prog: ' + tmpstr);
+                            if not TryStrToBool(tmpstr, debug_prog) then
+                              osmain.startupmessages.Add('Error: Not a Boolean:  debug_prog: ' + tmpstr);
+                            result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
+
+                      if LowerCase(configid) = 'opsi-script.global.debug_lib' then
+                      begin
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add('got debug_lib: ' + tmpstr);
+                            if not TryStrToBool(tmpstr, debug_lib) then
+                              osmain.startupmessages.Add('Error: Not a Boolean:  debug_lib: ' + tmpstr);
+                            result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
+
+                      if LowerCase(configid) = 'opsi-script.global.default_loglevel' then
+                      begin
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add('got default_loglevel: ' + tmpstr);
+                            if not TryStrToInt(tmpstr, default_loglevel) then
+                              osmain.startupmessages.Add('Error: Not an Integer:  default_loglevel: ' + tmpstr);
+                            result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
+                      if LowerCase(configid) = 'opsi-script.global.force_min_loglevel' then
+                      begin
+                        osmain.startupmessages.Add(
+                          'got config: opsi-script.global.force_min_loglevel');
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add('got force_min_loglevel: ' + tmpstr);
+                            if not TryStrToInt(tmpstr, force_min_loglevel) then
+                              osmain.startupmessages.Add('Error: Not an Integer:  force_min_loglevel: ' + tmpstr);
+                            result := 'readConfigFromService: ok'
+                          end;
+                      end;
+
+                      if LowerCase(configid) = 'opsi-script.global.ScriptErrorMessages' then
+                      begin
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add('got ScriptErrorMessages: ' + tmpstr);
+                            if not TryStrToBool(tmpstr, ScriptErrorMessages) then
+                              osmain.startupmessages.Add('Error: Not a Boolean:  ScriptErrorMessages: ' + tmpstr);
+                            result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
+                      if LowerCase(configid) = 'opsi-script.global.AutoActivityDisplay' then
+                      begin
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add('got AutoActivityDisplay: ' + tmpstr);
+                            if not TryStrToBool(tmpstr, AutoActivityDisplay) then
+                              osmain.startupmessages.Add('Error: Not a Boolean:  AutoActivityDisplay: ' + tmpstr);
+                            result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
                     end;
-
-
-                    if LowerCase(configid) = 'opsi-script.global.debug_lib' then
-                    begin
-                      if jsonAsObjectGetValueByKey(configlist.Strings[i],
-                        'values', values) then
-                        if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
-                        begin
-                          osmain.startupmessages.Add('got debug_lib: ' + tmpstr);
-                          if not TryStrToBool(tmpstr, debug_lib) then
-                            osmain.startupmessages.Add('Error: Not a Boolean:  debug_lib: ' + tmpstr);
-                          result := 'readConfigFromService: ok';
-                        end;
-                    end;
-
-
-                    if LowerCase(configid) = 'opsi-script.global.default_loglevel' then
-                    begin
-                      if jsonAsObjectGetValueByKey(configlist.Strings[i],
-                        'values', values) then
-                        if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
-                        begin
-                          osmain.startupmessages.Add('got default_loglevel: ' + tmpstr);
-                          if not TryStrToInt(tmpstr, default_loglevel) then
-                            osmain.startupmessages.Add('Error: Not an Integer:  default_loglevel: ' + tmpstr);
-                          result := 'readConfigFromService: ok';
-                        end;
-                    end;
-
-                    if LowerCase(configid) = 'opsi-script.global.force_min_loglevel' then
-                    begin
-                      osmain.startupmessages.Add(
-                        'got config: opsi-script.global.force_min_loglevel');
-                      if jsonAsObjectGetValueByKey(configlist.Strings[i],
-                        'values', values) then
-                        if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
-                        begin
-                          osmain.startupmessages.Add('got force_min_loglevel: ' + tmpstr);
-                          if not TryStrToInt(tmpstr, force_min_loglevel) then
-                            osmain.startupmessages.Add('Error: Not an Integer:  force_min_loglevel: ' + tmpstr);
-                          result := 'readConfigFromService: ok'
-                        end;
-                    end;
-
-                    if LowerCase(configid) = 'opsi-script.global.ScriptErrorMessages' then
-                    begin
-                      if jsonAsObjectGetValueByKey(configlist.Strings[i],
-                        'values', values) then
-                        if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
-                        begin
-                          osmain.startupmessages.Add('got ScriptErrorMessages: ' + tmpstr);
-                          if not TryStrToBool(tmpstr, ScriptErrorMessages) then
-                            osmain.startupmessages.Add('Error: Not a Boolean:  ScriptErrorMessages: ' + tmpstr);
-                          result := 'readConfigFromService: ok';
-                        end;
-                    end;
-
-                    if LowerCase(configid) = 'opsi-script.global.AutoActivityDisplay' then
-                    begin
-                      if jsonAsObjectGetValueByKey(configlist.Strings[i],
-                        'values', values) then
-                        if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
-                        begin
-                          osmain.startupmessages.Add('got AutoActivityDisplay: ' + tmpstr);
-                          if not TryStrToBool(tmpstr, AutoActivityDisplay) then
-                            osmain.startupmessages.Add('Error: Not a Boolean:  AutoActivityDisplay: ' + tmpstr);
-                          result := 'readConfigFromService: ok';
-                        end;
-                    end;
-
                   end;
                 end;
               end;
             end;
           end;
-        end;
+      end;
     end;
     configlist.Free;
   except
     on e: exception do
     Begin
-      startupmessages.Append('Exception in readConfigFromService'
+      startupmessages.Append('Exception in readConfigFromService: '
                      + e.message +' '+ DateTimeToStr(Now));
     End;
   end;
