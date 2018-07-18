@@ -5,9 +5,11 @@ unit osdbasedata;
 interface
 
 uses
-  Classes, SysUtils;
+  Classes, SysUtils, LCLProc, LResources, TypInfo, Forms, Controls, Graphics,
+  Dialogs, RTTICtrls, StdCtrls;
 
 type
+  TArchitecture = (a32, a64, aUnknown);
   TArchitectureMode = (am32only_fix, am64only_fix, amBoth_fix, amSystemSpecific_fix,
     amSelectable);
   TKnownInstaller = (stAdvancedMSI, stInno, stInstallShield, stInstallShieldMSI,
@@ -40,24 +42,24 @@ type
 
   TInstallers = array of TInstallerData;
 
-  TProductData = record
-    setup32FileNamePath: string;
-    setup32FileName: string;
-    setup32FileSize: cardinal;
-    setup64FileNamePath: string;
-    setup64FileName: string;
-    setup64FileSize: cardinal;
-    architectureMode: TArchitectureMode;
+  TSetupFile =  = class(TPersistent)
+    setupFileNamePath: string;
+    setupFileName: string;
+    setupFileSize: cardinal;     // MB
+    architecture: TArchitecture;
     msiId: string;
-    mst32FileNamePath: string;
-    mst32FileName: string;
-    mst64FileNamePath: string;
-    mst64FileName: string;
-    msi32FullFileName: string;
-    msi64FullFileName: string;
+    mstFileNamePath: string;
+    mstFileName: string;
+    msiFullFileName: string;
     istallerId: TKnownInstaller;
-    requiredSpace: cardinal;
+    requiredSpace: cardinal;      // MB
     installDirectory: string;
+    markerlist: TStringList;
+  end;
+
+  TProductData = record
+    SetupFiles : array[0..1] of TSetupFile;
+    architectureMode: TArchitectureMode;
     comment: string;
     description: string;
     advice: string;
@@ -71,7 +73,6 @@ type
     setupscript: string;
     uninstallscript: string;
     licenserequired: boolean;
-    markerlist: TStringList;
   end;
 
 function archModeStrToArchmode(modestr: string): TArchitectureMode;
@@ -81,6 +82,7 @@ procedure initaktproduct;
 
 var
   aktProduct: TProductData;
+  aktSetupFile : TSetupFile;
   knownInstallerList: TStringList;
   architectureModeList: TStringList;
   installerArray: TInstallers;
@@ -150,27 +152,31 @@ begin
   end;
 end;
 
-procedure initaktproduct;
+procedure initSetupFile(var mysetupfile : TSetupFile);
 begin
+  with mysetupfile do
+  begin
+    setupFileNamePath := '';
+    setupFileName := '';
+    setupFileSize := 0;
+    msiId := '';
+    mstFileNamePath := '';
+    mstFileName := '';
+    msiFullFileName := '';
+    istallerId := stUnknown;
+    markerlist.Clear;
+    architecture:=aUnknown;
+  end;
+end;
+
+procedure initaktproduct;
+var
+  i : integer;
+begin
+  for i := 0 to 1 do
+    initSetupFile(aktProduct.SetupFiles[i]);
   with aktProduct do
   begin
-    setup32FileNamePath := '';
-    setup32FileName := '';
-    setup32FileSize := 0;
-    setup64FileNamePath := '';
-    setup64FileName := '';
-    setup64FileSize := 0;
-    architectureMode := am32only_fix;
-    msiId := '';
-    mst32FileNamePath := '';
-    mst32FileName := '';
-    mst64FileNamePath := '';
-    mst64FileName := '';
-    msi32FullFileName := '';
-    msi64FullFileName := '';
-    istallerId := stUnknown;
-    requiredSpace := 0;
-    installDirectory := '';
     comment := '';
     description := '';
     advice := '';
@@ -184,7 +190,6 @@ begin
     setupscript := 'setup.opsiscript';
     uninstallscript := 'uninstall.psiscript';
     licenserequired := False;
-    markerlist.Clear;
   end;
 end;
 
@@ -277,7 +282,9 @@ begin
   architectureModeList.Add('selectable');
 
 
-
-  aktProduct.markerlist := TStringList.Create;
+  //initialize Setup files
+  aktProduct.SetupFiles[0].markerlist := TStringList.Create;
+  aktProduct.SetupFiles[0].markerlist := TStringList.Create;
+  aktSetupFile.markerlist := TStringList.Create;
 
 end.

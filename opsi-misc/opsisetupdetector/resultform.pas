@@ -79,7 +79,7 @@ type
   TResultform1 = class(TForm)
     BitBtnDefault: TBitBtn;
     BitBtnMST1: TBitBtn;
-    CheckBox3: TCheckBox;
+    CheckBoxUseMst: TCheckBox;
     CheckBox_Default_License: TCheckBox;
     ComboBoxArchMode: TComboBox;
     Edit_installer_type: TEdit;
@@ -129,6 +129,7 @@ type
     setup64NameEdit: TFileNameEdit;
     SpinEditPackageVersion: TSpinEdit;
     StatusBar1: TStatusBar;
+    TabSheet1: TTabSheet;
     TabSheetDefault: TTabSheet;
     BitBtn_PacketBasedir: TBitBtn;
     BitBtnClose2: TBitBtn;
@@ -163,6 +164,7 @@ type
     RadioButtonInteractive: TRadioButton;
     SelectPacketBaseDir: TSelectDirectoryDialog;
     TabSheetAnalyze: TTabSheet;
+    TIPropertyGrid1: TTIPropertyGrid;
     ToolBar1: TToolBar;
 
     procedure BitBtn_PacketBasedirClick(Sender: TObject);
@@ -176,12 +178,13 @@ type
     procedure BitBtnInstallShieldClick(Sender: TObject);
     procedure ButtonCreatePacketClick(Sender: TObject);
     procedure CheckBox1Change(Sender: TObject);
-    procedure CheckBox3Change(Sender: TObject);
+    procedure CheckBoxUseMstChange(Sender: TObject);
     procedure ComboBoxArchModeChange(Sender: TObject);
     procedure FileCreateLogfileClick(Sender: TObject);
     //procedure FileCreateLogfileClick(Sender: TObject);
     procedure FileHelpClick(Sender: TObject);
     procedure mst32NameEditChange(Sender: TObject);
+    procedure PageControl1Change(Sender: TObject);
     procedure PanelDefaultClick(Sender: TObject);
     procedure setup32NameEditChange(Sender: TObject);
     procedure FileOpenSetupFileClick(Sender: TObject);
@@ -2465,17 +2468,19 @@ begin
   myreg.Free;
 end;
 
-procedure TResultform1.CheckBox3Change(Sender: TObject);
+procedure TResultform1.CheckBoxUseMstChange(Sender: TObject);
 begin
-  if checkbox3.Checked then
+  if CheckBoxUseMst.Checked then
   begin
     mst32NameEdit.Enabled:=setup32NameEdit.Enabled;
     mst64NameEdit.Enabled:=setup64NameEdit.Enabled;
+    FlowPanelMST.Enabled:=true;
   end
   else
   begin
     mst32NameEdit.Enabled:=false;
     mst64NameEdit.Enabled:=false;
+    FlowPanelMST.Enabled:=true;
   end;
 end;
 
@@ -2540,6 +2545,11 @@ begin
      aktProduct.mst32FileNamePath:=OpenDialog1.FileName;
      aktProduct.mst32FileName:= ExtractFileName(OpenDialog1.FileName);
   end;
+end;
+
+procedure TResultform1.PageControl1Change(Sender: TObject);
+begin
+
 end;
 
 procedure TResultform1.PanelDefaultClick(Sender: TObject);
@@ -3038,6 +3048,12 @@ begin
     if istallerId in [stMsi,stAdvancedMSI, stInstallShieldMSI] then
       FlowPanelMsiId.Enabled:= true
     else FlowPanelMsiId.Enabled:= false;
+    if istallerId in [stMsi] then
+      CheckBoxUseMst.enabled:=true
+    else CheckBoxUseMst.enabled:=false;
+    if  CheckBoxUseMst.enabled and CheckBoxUseMst.Checked then
+      FlowPanelMST.Enabled:=true
+    else FlowPanelMST.Enabled:=false;
     mst32NameEdit.Caption :=  mst32FileNamePath + mst32FileName;
     mst64NameEdit.Caption :=  mst64FileNamePath + mst64FileName;
     //msi32FullFileName;

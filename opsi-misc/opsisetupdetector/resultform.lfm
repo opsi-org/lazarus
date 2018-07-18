@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 449
+  Left = 534
   Height = 828
-  Top = 89
+  Top = 261
   Width = 1353
   Caption = 'opsi Setup Detector'
   ClientHeight = 792
@@ -305,10 +305,11 @@ object resultForm1: TresultForm1
       Height = 604
       Top = 1
       Width = 1351
-      ActivePage = TabSheetDefault
+      ActivePage = TabSheet1
       Align = alClient
-      TabIndex = 1
+      TabIndex = 2
       TabOrder = 1
+      OnChange = PageControl1Change
       object TabSheetAnalyze: TTabSheet
         Caption = 'Analyze'
         ClientHeight = 570
@@ -448,7 +449,7 @@ object resultForm1: TresultForm1
                 Index = 4
               end            
               item
-                Control = CheckBox3
+                Control = CheckBoxUseMst
                 WrapAfter = waAuto
                 Index = 5
               end>
@@ -520,7 +521,7 @@ object resultForm1: TresultForm1
               Caption = 'License required'
               TabOrder = 2
             end
-            object CheckBox3: TCheckBox
+            object CheckBoxUseMst: TCheckBox
               Left = 1043
               Height = 28
               Top = 7
@@ -529,7 +530,7 @@ object resultForm1: TresultForm1
               BorderSpacing.Left = 30
               BorderSpacing.Around = 3
               Caption = 'use MST File'
-              OnChange = CheckBox3Change
+              OnChange = CheckBoxUseMstChange
               TabOrder = 3
             end
           end
@@ -1124,6 +1125,25 @@ object resultForm1: TresultForm1
               OnChange = setup32NameEditChange
             end
           end
+        end
+      end
+      object TabSheet1: TTabSheet
+        Caption = 'Setupfile1'
+        ClientHeight = 570
+        ClientWidth = 1349
+        object TIPropertyGrid1: TTIPropertyGrid
+          Left = 0
+          Height = 570
+          Top = 0
+          Width = 292
+          Align = alLeft
+          CheckboxForBoolean = False
+          DefaultValueFont.Color = clWindowText
+          Filter = [tkInteger, tkChar, tkEnumeration, tkFloat, tkSet, tkMethod, tkSString, tkLString, tkAString, tkWString, tkVariant, tkArray, tkRecord, tkInterface, tkClass, tkObject, tkWChar, tkBool, tkInt64, tkQWord, tkDynArray, tkInterfaceRaw, tkProcVar, tkUString, tkUChar, tkHelper, tkFile, tkClassRef, tkPointer]
+          Indent = 12
+          NameFont.Color = clWindowText
+          TIObject = FlowPanel1
+          ValueFont.Color = clMaroon
         end
       end
     end
