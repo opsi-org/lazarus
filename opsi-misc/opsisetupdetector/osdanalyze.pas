@@ -30,18 +30,18 @@ const
   SetupType_7zip = '7zip';
 
 
-procedure get_aktProduct_general_info(installerId: TKnownInstaller; myfilename: string);
-procedure get_msi_info(myfilename: string);
-procedure get_inno_info(myfilename: string);
-procedure get_installshield_info(myfilename: string);
-procedure get_installshieldmsi_info(myfilename: string);
-procedure get_advancedmsi_info(myfilename: string);
-procedure get_nsis_info(myfilename: string);
+procedure get_aktProduct_general_info(installerId: TKnownInstaller; myfilename: string; mysetup : TSetupFile);
+procedure get_msi_info(myfilename: string; mysetup : TSetupFile);
+procedure get_inno_info(myfilename: string; mysetup : TSetupFile);
+procedure get_installshield_info(myfilename: string; mysetup : TSetupFile);
+procedure get_installshieldmsi_info(myfilename: string; mysetup : TSetupFile);
+procedure get_advancedmsi_info(myfilename: string; mysetup : TSetupFile);
+procedure get_nsis_info(myfilename: string; mysetup : TSetupFile);
 //procedure stringsgrep(myfilename: string; verbose,skipzero: boolean);
-procedure Analyze(FileName: string);
+procedure Analyze(FileName: string; mysetup : TSetupFile);
 procedure grepmsi(instring: string);
 //procedure grepmarker(instring: string);
-function analyze_binary(myfilename: string; verbose, skipzero: boolean): TKnownInstaller;
+function analyze_binary(myfilename: string; verbose, skipzero: boolean; mysetup : TSetupFile): TKnownInstaller;
 function getPacketIDfromFilename(str: string): string;
 function getPacketIDShort(str: string): string;
 function ExtractVersion(str: string): string;
@@ -142,14 +142,14 @@ begin
     Result := instring;
 end;
 
-procedure analyze_binstr(instring: string);
+procedure analyze_binstr(instring: string; mysetup : TSetupFile);
 var
   lowerstring: string;
   counter: integer;
   aktId, foundId: TKnownInstaller;
 
 
-  procedure check_line_for_installer(line: string; instId: TKnownInstaller);
+  procedure check_line_for_installer(line: string; instId: TKnownInstaller; mysetup : TSetupFile);
   var
     i: integer;
   begin
@@ -160,7 +160,7 @@ var
       if 0 <> pos(LowerCase(installerArray[integer(instId)].patterns[i]), line) then
       begin
         //aktProduct.markerlist.add(installerArray[integer(instId)].Name + IntToStr(i));
-        aktProduct.markerlist.add(installerArray[integer(instId)].patterns[i]);
+        mysetup.markerlist.add(installerArray[integer(instId)].patterns[i]);
         LogDatei.log('For: ' + installerToInstallerstr(instId) +
           ' found: ' + LowerCase(installerArray[integer(instId)].patterns[i]), LLinfo);
       end;
@@ -174,7 +174,7 @@ begin
     aktId := installerArray[counter].installerId;
     if aktId <> stUnknown then
     begin
-      check_line_for_installer(lowerstring, aktId);
+      check_line_for_installer(lowerstring, aktId, mysetup);
     end;
   end;
 end;
@@ -228,7 +228,7 @@ begin
     mywrite(instring);
 end;
 
-procedure get_aktProduct_general_info(installerId: TKnownInstaller; myfilename: string);
+procedure get_aktProduct_general_info(installerId: TKnownInstaller; myfilename: string; mysetup : TSetupFile);
 var
   myoutlines: TStringList;
   myreport: string;
@@ -250,11 +250,11 @@ begin
   installerstr := installerToInstallerstr(installerId);
   Mywrite('Analyzing ' + installerstr + ' Setup: ' + myfilename);
 
-  aktProduct.istallerId := installerId;
-  aktProduct.setup32FileName := ExtractFileName(myfilename);
-  aktProduct.setup32FileNamePath := ExtractFileDir(myfilename);
+  mysetup.istallerId := installerId;
+  mysetup.setupFileName := ExtractFileName(myfilename);
+  mysetup.setupFileNamePath := ExtractFileDir(myfilename);
 
-  product := ExtractFileNameWithoutExt(aktProduct.setup32FileName);
+  product := ExtractFileNameWithoutExt(mysetup.setupFileName);
   aktProduct.productId := getPacketIDShort(product);
   aktProduct.productName := product;
 
@@ -273,14 +273,14 @@ begin
 
   sFileSize := FormatFloat('#', fsizemb) + ' MB';
   sReqSize := FormatFloat('#', rsizemb) + ' MB';
-  aktProduct.requiredSpace := round(rsizemb);
-  aktProduct.setup32FileSize := round(fsizemb);
+  mysetup.requiredSpace := round(rsizemb);
+  mysetup.setupFileSize := round(fsizemb);
 
 end; //get_aktProduct_general_info
 
 
 
-procedure get_msi_info(myfilename: string);
+procedure get_msi_info(myfilename: string; mysetup : TSetupFile);
 var
   mycommand: string;
   myoutlines: TStringList;
@@ -305,12 +305,12 @@ begin
   end
   else
   begin
-    aktProduct.istallerId := stMsi;
+    mysetup.istallerId := stMsi;
     resultForm1.Edit_installer_type.Text := installerToInstallerstr(stMsi);
     //resultForm1.EditMSI_file.Text := myfilename;
     mywrite('........');
-    aktProduct.setup32FileName := ExtractFileName(myfilename);
-    aktProduct.setup32FileNamePath := ExtractFileDir(myfilename);
+    mysetup.setupFileName := ExtractFileName(myfilename);
+    mysetup.setupFileNamePath := ExtractFileDir(myfilename);
     (*
     resultForm1.EditMSI_ProductName.Text := '';
     resultForm1.EditMSI_ProductVersion.Text := '';
@@ -335,18 +335,20 @@ begin
       sSearch := 'ProductVersion: ';
       iPos := Pos(sSearch, myoutlines.Strings[i]);
       if (iPos <> 0) then
-        aktProduct.productversion :=
+        mysetup.softwareversion :=
           Copy(myoutlines.Strings[i], Length(sSearch) + 1,
           Length(myoutlines.Strings[i]) - Length(sSearch));
 
       sSearch := 'ProductCode: ';
       iPos := Pos(sSearch, myoutlines.Strings[i]);
       if (iPos <> 0) then
-        aktProduct.msiId :=
+        mysetup.msiId :=
           Copy(myoutlines.Strings[i], Length(sSearch) + 1,
           Length(myoutlines.Strings[i]) - Length(sSearch));
 
     end;
+    if aktproduct.productversion = '' then
+      aktproduct.productversion :=mysetup.softwareversion;
   end;
   myoutlines.Free;
     {$ENDIF WINDOWS}
@@ -360,7 +362,7 @@ begin
 end;
 
 
-procedure get_inno_info(myfilename: string);
+procedure get_inno_info(myfilename: string; mysetup : TSetupFile);
 var
   myoutlines: TStringList;
   myreport: string;
@@ -475,6 +477,7 @@ begin
     aktProduct.productName := AppName;
   end;
   aktProduct.productversion := AppVersion;
+  mysetup.SoftwareVersion:=AppVersion;
   if AppVerName = '' then
   begin
     if ((AppName <> '') and (AppVersion <> '')) then
@@ -490,7 +493,7 @@ begin
       '%ProgramFiles32Dir%', [rfReplaceAll, rfIgnoreCase]);
   DefaultDirName := StringReplace(DefaultDirName, '{sd}', '%Systemdrive%',
     [rfReplaceAll, rfIgnoreCase]);
-  aktProduct.installDirectory := DefaultDirName;
+  mysetup.installDirectory := DefaultDirName;
   aktProduct.comment := AppVerName;
 
 
@@ -509,7 +512,7 @@ begin
 end;
 
 
-procedure get_installshield_info(myfilename: string);
+procedure get_installshield_info(myfilename: string; mysetup : TSetupFile);
 var
   product: string;
 
@@ -524,7 +527,7 @@ begin
 end;
 
 
-procedure get_installshieldmsi_info(myfilename: string);
+procedure get_installshieldmsi_info(myfilename: string; mysetup : TSetupFile);
 var
   myoutlines: TStringList;
   myreport: string;
@@ -546,9 +549,9 @@ var
 
 begin
   Mywrite('Analyzing InstallShield+MSI Setup: ' + myfilename);
-  aktProduct.istallerId := stInstallShieldMSI;
-  aktProduct.setup32FileName := ExtractFileName(myfilename);
-  aktProduct.setup32FileNamePath := ExtractFileDir(myfilename);
+  mysetup.istallerId := stInstallShieldMSI;
+  mysetup.setupFileName := ExtractFileName(myfilename);
+  mysetup.setupFileNamePath := ExtractFileDir(myfilename);
 
   if DirectoryExists(opsitmp) then
     DeleteDirectory(opsitmp, True);
@@ -586,13 +589,13 @@ begin
     if SysUtils.FindFirst(smask, faAnyFile, FileInfo) = 0 then
     begin
       //resultform1.EditMSI_file.Text := opsitmp + FileInfo.Name;
-      aktProduct.msi32FullFileName := opsitmp + FileInfo.Name;
+      mysetup.msiFullFileName := opsitmp + FileInfo.Name;
       ;
 
       // analyze the extracted MSI
       resultform1.OpenDialog1.InitialDir := opsitmp;
       resultform1.OpenDialog1.FileName := FileInfo.Name;
-      get_msi_info(aktProduct.msi32FullFileName);
+      get_msi_info(mysetup.msiFullFileName,mysetup);
 
        (*
        // and use the parameters from get_msi_info (MSI analyze)
@@ -628,7 +631,7 @@ end;
 
 
 
-procedure get_advancedmsi_info(myfilename: string);
+procedure get_advancedmsi_info(myfilename: string; mysetup : TSetupFile);
 var
   myoutlines: TStringList;
   myreport: string;
@@ -649,9 +652,9 @@ var
 
 begin
   Mywrite('Analyzing AdvancedMSI Setup: ' + myfilename);
-  aktProduct.istallerId := stAdvancedMSI;
-  aktProduct.setup32FileName := ExtractFileName(myfilename);
-  aktProduct.setup32FileNamePath := ExtractFileDir(myfilename);
+  mysetup.istallerId := stAdvancedMSI;
+  mysetup.setupFileName := ExtractFileName(myfilename);
+  mysetup.setupFileNamePath := ExtractFileDir(myfilename);
 
   {$IFDEF WINDOWS}
   // extract and analyze MSI from setup
@@ -686,17 +689,17 @@ begin
     Mywrite(smask);
     if SysUtils.FindFirst(smask, faAnyFile, FileInfo) = 0 then
     begin
-      aktProduct.msi32FullFileName := opsitmp + FileInfo.Name;
+      mysetup.msiFullFileName := opsitmp + FileInfo.Name;
       ;
       //resultform1.EditMSI_file.Text := opsitmp + FileInfo.Name;
 
       // analyze the extracted MSI
       //resultform1.OpenDialog1.InitialDir := opsitmp;
       //resultform1.OpenDialog1.FileName := FileInfo.Name;
-      get_msi_info(aktProduct.msi32FullFileName);
+      get_msi_info(mysetup.msiFullFileName, mysetup);
 
       // and use the parameters from get_msi_info (MSI analyze)
-      product := resultForm1.EditMSI_opsiProductID.Text;
+      //product := resultForm1.EditMSI_opsiProductID.Text;
 
       // reset OpenDialog parameters
       //resultform1.OpenDialog1.InitialDir := myfilename;
@@ -719,7 +722,7 @@ end;
 
 
 
-procedure get_nsis_info(myfilename: string);
+procedure get_nsis_info(myfilename: string; mysetup : TSetupFile);
 var
   myoutlines: TStringList;
   myreport: string;
@@ -738,7 +741,7 @@ var
 begin
   Mywrite('Analyzing NSIS-Setup:');
 
-
+  (*
   fsize := fileutil.FileSize(myfilename);
   fsizemb := fsize / (1024 * 1024);
   sFileSize := FormatFloat('##0.0', fsizemb) + ' MB';
@@ -751,7 +754,7 @@ begin
   mywrite('Estimated required space is: ' + sReqSize);
   mywrite('........');
 
-
+  *)
   mywrite('get_nsis_info finished');
   mywrite('NSIS (Nullsoft Install System) detected');
 
@@ -861,15 +864,15 @@ begin
 end;
 *)
 
-function analyze_markerlist: TKnownInstaller;
+function analyze_markerlist(mysetup : TSetupFile): TKnownInstaller;
 var
   i: integer;
 
 begin
   try
     Result := stUnknown;
-    for i := 0 to aktProduct.markerlist.Count - 1 do
-      LogDatei.log('marker: ' + aktProduct.markerlist[i], LLdebug);
+    for i := 0 to mysetup.markerlist.Count - 1 do
+      LogDatei.log('marker: ' + mysetup.markerlist[i], LLdebug);
     for i := 0 to integer(stUnknown) - 1 do
     begin
       if not Assigned(installerArray[i].detected) then
@@ -880,7 +883,7 @@ begin
         LogDatei.log('Check markerlist for: ' + installerToInstallerstr(
           TKnownInstaller(i)), LLdebug);
         if installerArray[i].detected(TClass(installerArray[i]),
-          aktProduct.markerlist) then
+          mysetup.markerlist) then
         begin
           Result := TKnownInstaller(i);
           LogDatei.log('Detected: ' + installerToInstallerstr(Result), LLnotice);
@@ -897,7 +900,7 @@ begin
   end;
 end;
 
-function analyze_binary(myfilename: string; verbose, skipzero: boolean): TKnownInstaller;
+function analyze_binary(myfilename: string; verbose, skipzero: boolean; mysetup : TSetupFile): TKnownInstaller;
 var
   FileStream: TFileStream;
   CharIn: char;
@@ -963,11 +966,11 @@ begin
             if verbose then
             begin
               //grepexe(CurrValue);
-              analyze_binstr(CurrValue);
+              analyze_binstr(CurrValue,mysetup);
               logdatei.log(CurrValue, LLDebug);
             end
             else
-              analyze_binstr(CurrValue);
+              analyze_binstr(CurrValue, mysetup);
           end
           else if '.msi' = lowercase(ExtractFileExt(myfilename)) then
           begin
@@ -1002,11 +1005,11 @@ begin
   finally
     FileStream.Free;
   end;
-  Result := analyze_markerlist;
+  Result := analyze_markerlist(mysetup);
 end;
 
 
-procedure Analyze(FileName: string);
+procedure Analyze(FileName: string; mysetup : TSetupFile);
 var
   setupType: TKnownInstaller;
   verbose: boolean = True;
@@ -1016,22 +1019,22 @@ begin
   setupType := stUnknown;
   if '.msi' = lowercase(ExtractFileExt(FileName)) then
   begin
-    get_aktProduct_general_info(stMsi, Filename);
-    get_msi_info(FileName);
+    get_aktProduct_general_info(stMsi, Filename,mysetup);
+    get_msi_info(FileName,mysetup);
   end
   else
   begin
     //stringsgrep(FileName, false, false); // filename, verbose, skipzero
-    setupType := analyze_binary(FileName, verbose, False); // filename, verbose, skipzero
+    setupType := analyze_binary(FileName, verbose, False,mysetup); // filename, verbose, skipzero
 
-    get_aktProduct_general_info(setupType, Filename);
+    get_aktProduct_general_info(setupType, Filename,mysetup);
 
     case setupType of
-      stInno: get_inno_info(FileName);
-      stNsis: get_nsis_info(FileName);
-      stInstallShield: get_installshield_info(FileName);
-      stInstallShieldMSI: get_installshieldmsi_info(FileName);
-      stAdvancedMSI: get_advancedmsi_info(FileName);
+      stInno: get_inno_info(FileName,mysetup);
+      stNsis: get_nsis_info(FileName,mysetup);
+      stInstallShield: get_installshield_info(FileName,mysetup);
+      stInstallShieldMSI: get_installshieldmsi_info(FileName,mysetup);
+      stAdvancedMSI: get_advancedmsi_info(FileName,mysetup);
       st7zip: get_7zip_info(FileName);
       stMsi: ;
       stUnknown: LogDatei.log(

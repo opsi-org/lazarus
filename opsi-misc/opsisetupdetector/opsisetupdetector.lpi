@@ -132,10 +132,11 @@
         <MinVersion Major="1" Valid="True"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="46">
+    <Units Count="50">
       <Unit0>
         <Filename Value="opsisetupdetector.lpr"/>
         <IsPartOfProject Value="True"/>
+        <TopLine Value="9"/>
         <CursorPos X="18" Y="13"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -161,8 +162,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="7"/>
-        <CursorPos X="3" Y="2552"/>
+        <TopLine Value="1464"/>
+        <CursorPos X="7" Y="1483"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -312,7 +313,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="1"/>
         <CursorPos X="28" Y="7"/>
-        <UsageCount Value="27"/>
+        <UsageCount Value="33"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit25>
       <Unit26>
@@ -368,9 +369,9 @@
         <Filename Value="osdanalyze.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="258"/>
-        <CursorPos X="4" Y="241"/>
-        <UsageCount Value="53"/>
+        <TopLine Value="32"/>
+        <CursorPos X="51" Y="156"/>
+        <UsageCount Value="59"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit32>
@@ -380,7 +381,7 @@
         <EditorIndex Value="2"/>
         <TopLine Value="67"/>
         <CursorPos X="75" Y="96"/>
-        <UsageCount Value="81"/>
+        <UsageCount Value="87"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit33>
@@ -391,7 +392,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="511"/>
         <CursorPos Y="523"/>
-        <UsageCount Value="76"/>
+        <UsageCount Value="82"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit34>
       <Unit35>
@@ -399,15 +400,15 @@
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
-        <TopLine Value="31"/>
-        <CursorPos X="37" Y="45"/>
+        <TopLine Value="245"/>
+        <CursorPos X="56" Y="282"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="-1"/>
           <WindowIndex Value="1"/>
           <CursorPos X="56" Y="12"/>
         </ExtraEditor1>
-        <UsageCount Value="67"/>
+        <UsageCount Value="73"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit35>
@@ -484,127 +485,149 @@
         <CursorPos X="66" Y="2414"/>
         <UsageCount Value="10"/>
       </Unit45>
+      <Unit46>
+        <Filename Value="..\..\..\..\..\..\usr\share\fpcsrc\3.0.4\rtl\objpas\typinfo.pp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1068"/>
+        <CursorPos X="16" Y="107"/>
+        <UsageCount Value="10"/>
+      </Unit46>
+      <Unit47>
+        <Filename Value="..\..\..\..\..\..\usr\share\fpcsrc\3.0.4\packages\fcl-db\src\dbase\dbf.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="139"/>
+        <CursorPos X="23" Y="152"/>
+        <UsageCount Value="10"/>
+      </Unit47>
+      <Unit48>
+        <Filename Value="..\..\..\..\..\..\usr\share\fpcsrc\3.0.4\packages\fcl-db\src\dbase\dbf_dbffile.pas"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="3" Y="46"/>
+        <UsageCount Value="10"/>
+      </Unit48>
+      <Unit49>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\1.8.2\components\tdbf\registerdbf.pas"/>
+        <UnitName Value="RegisterDBF"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+      </Unit49>
     </Units>
     <OtherDefines Count="1">
       <Define0 Value="OPSI"/>
     </OtherDefines>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="28" HistoryIndex="27">
       <Position1>
-        <Filename Value="resultform.pas"/>
-        <Caret Line="2555" Column="16" TopLine="2550"/>
+        <Filename Value="osdanalyze.pas"/>
+        <Caret Line="60" Column="30" TopLine="52"/>
       </Position1>
       <Position2>
         <Filename Value="resultform.pas"/>
-        <Caret Line="2554" Column="16" TopLine="2549"/>
+        <Caret Line="1470" Column="26" TopLine="1453"/>
       </Position2>
       <Position3>
-        <Filename Value="resultform.pas"/>
-        <Caret Line="2553" Column="16" TopLine="2548"/>
+        <Filename Value="osdanalyze.pas"/>
+        <Caret Line="41" Column="11" TopLine="29"/>
       </Position3>
       <Position4>
         <Filename Value="resultform.pas"/>
-        <Caret Line="2552" Column="16" TopLine="2547"/>
+        <Caret Line="1473" Column="46" TopLine="1458"/>
       </Position4>
       <Position5>
         <Filename Value="resultform.pas"/>
-        <Caret Line="2551" Column="16" TopLine="2546"/>
+        <Caret Line="2993" Column="58" TopLine="2981"/>
       </Position5>
       <Position6>
-        <Filename Value="resultform.pas"/>
-        <Caret Line="2550" Column="15" TopLine="2545"/>
+        <Filename Value="osdanalyze.pas"/>
+        <Caret Line="1041" Column="41" TopLine="1034"/>
       </Position6>
       <Position7>
-        <Filename Value="resultform.pas"/>
-        <Caret Line="2470" Column="14" TopLine="2461"/>
+        <Filename Value="osdanalyze.pas"/>
+        <Caret Line="272" Column="52" TopLine="261"/>
       </Position7>
       <Position8>
         <Filename Value="resultform.pas"/>
-        <Caret Line="2469" Column="14" TopLine="2460"/>
+        <Caret Line="2995" Column="44" TopLine="2981"/>
       </Position8>
       <Position9>
         <Filename Value="resultform.pas"/>
-        <Caret Line="2470" Column="14" TopLine="2461"/>
+        <Caret Line="2616" Column="7" TopLine="2605"/>
       </Position9>
       <Position10>
         <Filename Value="resultform.pas"/>
-        <Caret Line="3061" TopLine="3041"/>
+        <Caret Line="1473" Column="43" TopLine="1469"/>
       </Position10>
       <Position11>
-        <Filename Value="resultform.pas"/>
-        <Caret Line="2470" TopLine="2457"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="142" Column="41" TopLine="138"/>
       </Position11>
       <Position12>
-        <Filename Value="resultform.pas"/>
-        <Caret Line="2477" TopLine="2457"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="89" Column="7" TopLine="82"/>
       </Position12>
       <Position13>
-        <Filename Value="resultform.pas"/>
-        <Caret Line="2478" TopLine="2458"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="27" Column="5" TopLine="19"/>
       </Position13>
       <Position14>
-        <Filename Value="resultform.pas"/>
-        <Caret Line="2480" TopLine="2460"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="61" Column="59" TopLine="53"/>
       </Position14>
       <Position15>
-        <Filename Value="resultform.pas"/>
-        <Caret Line="3061" TopLine="3042"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="60" Column="24" TopLine="43"/>
       </Position15>
       <Position16>
         <Filename Value="resultform.pas"/>
-        <Caret Line="2486" TopLine="2473"/>
+        <Caret Line="1473" Column="43" TopLine="1469"/>
       </Position16>
       <Position17>
         <Filename Value="resultform.pas"/>
-        <Caret Line="3046" Column="38" TopLine="3024"/>
+        <Caret Line="2622" Column="7" TopLine="2620"/>
       </Position17>
       <Position18>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="279" Column="14" TopLine="257"/>
+        <Filename Value="resultform.pas"/>
+        <Caret Line="279" Column="13" TopLine="262"/>
       </Position18>
       <Position19>
-        <Filename Value="resultform.pas"/>
-        <Caret Line="870" Column="21" TopLine="858"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="211" Column="5" TopLine="197"/>
       </Position19>
       <Position20>
-        <Filename Value="resultform.pas"/>
-        <Caret Line="872" Column="4" TopLine="858"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="267" Column="23" TopLine="255"/>
       </Position20>
       <Position21>
-        <Filename Value="osdanalyze.pas"/>
-        <Caret Line="255" TopLine="250"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="32" Column="16" TopLine="21"/>
       </Position21>
       <Position22>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="286" Column="14" TopLine="264"/>
+        <Caret Line="65" Column="16" TopLine="55"/>
       </Position22>
       <Position23>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="280" Column="22" TopLine="264"/>
+        <Caret Line="121" Column="26" TopLine="101"/>
       </Position23>
       <Position24>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="154" Column="53" TopLine="144"/>
+        <Filename Value="resultform.pas"/>
+        <Caret Line="1484" Column="7" TopLine="1464"/>
       </Position24>
       <Position25>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="156" Column="33" TopLine="145"/>
+        <Filename Value="resultform.pas"/>
+        <Caret Line="1483" Column="7" TopLine="1464"/>
       </Position25>
       <Position26>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="178" Column="30" TopLine="170"/>
+        <Filename Value="resultform.pas"/>
+        <Caret Line="1484" Column="7" TopLine="1465"/>
       </Position26>
       <Position27>
         <Filename Value="resultform.pas"/>
-        <Caret Line="3041" Column="10" TopLine="3029"/>
+        <Caret Line="1483" Column="7" TopLine="1464"/>
       </Position27>
       <Position28>
-        <Filename Value="resultform.pas"/>
-        <Caret Line="2550" Column="3" TopLine="2548"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="15" Column="9"/>
       </Position28>
-      <Position29>
-        <Filename Value="resultform.pas"/>
-        <Caret Line="2551" Column="3" TopLine="2549"/>
-      </Position29>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

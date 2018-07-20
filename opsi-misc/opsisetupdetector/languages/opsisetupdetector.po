@@ -145,11 +145,6 @@ msgstr ""
 msgid "Register as Explorer Context Menue"
 msgstr ""
 
-#: tresultform1.checkbox3.caption
-msgctxt "TRESULTFORM1.CHECKBOX3.CAPTION"
-msgid "use MST File"
-msgstr ""
-
 #: tresultform1.checkboxbuild.caption
 msgctxt "TRESULTFORM1.CHECKBOXBUILD.CAPTION"
 msgid "build"
@@ -162,6 +157,11 @@ msgstr ""
 
 #: tresultform1.checkboxquiet.caption
 msgid "quiet"
+msgstr ""
+
+#: tresultform1.checkboxusemst.caption
+msgctxt "tresultform1.checkboxusemst.caption"
+msgid "use MST File"
 msgstr ""
 
 #: tresultform1.checkbox_default_license.caption
@@ -350,6 +350,10 @@ msgstr ""
 
 #: tresultform1.sbtnopen.caption
 msgid "open"
+msgstr ""
+
+#: tresultform1.tabsheet1.caption
+msgid "Setupfile1"
 msgstr ""
 
 #: tresultform1.tabsheetanalyze.caption

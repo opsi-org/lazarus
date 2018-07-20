@@ -9,6 +9,36 @@ uses
   Dialogs, RTTICtrls, StdCtrls;
 
 type
+
+  TMyEnum = (MyEnum1,MyEnum2,MyEnum3);
+  TMyRange = 3..7;
+
+
+  TMyClass = class(TPersistent)
+  private
+    FMyEnum: TMyEnum;
+    FMyRange: TMyRange;
+    FMyString: string;
+    FMyList: TStringlist;
+    //procedure SetMyEnum(const AValue: TMyEnum);
+    //procedure SetMyRange(const AValue: TMyRange);
+    //procedure SetMyString(const AValue: string);
+  published
+    (*
+    property MyString: string read FMyString write SetMyString;
+    property MyEnum: TMyEnum read FMyEnum write SetMyEnum;
+    property MyRange: TMyRange read FMyRange write SetMyRange;
+    *)
+    property MyString: string read FMyString write FMyString;
+    property MyEnum: TMyEnum read FMyEnum write FMyEnum;
+    property MyRange: TMyRange read FMyRange write FMyRange;
+    property MyList: TStringlist read FMyList write FMyList;
+  public
+    constructor Create;
+    destructor Destroy;
+  end;
+
+  (***********************************)
   TArchitecture = (a32, a64, aUnknown);
   TArchitectureMode = (am32only_fix, am64only_fix, amBoth_fix, amSystemSpecific_fix,
     amSelectable);
@@ -20,6 +50,9 @@ type
 
 
   TInstallerData = class
+  private
+    public
+
     installerId: TKnownInstaller;
     Name: string;
     description: string;
@@ -31,8 +64,7 @@ type
     uninstall_waitforprocess: string;
     comment: string;
     Link: string;
-  private
-  public
+
     detected: TdetectInstaller;
     { public declarations }
     constructor Create;
@@ -42,37 +74,101 @@ type
 
   TInstallers = array of TInstallerData;
 
-  TSetupFile =  = class(TPersistent)
-    setupFileNamePath: string;
-    setupFileName: string;
-    setupFileSize: cardinal;     // MB
-    architecture: TArchitecture;
-    msiId: string;
-    mstFileNamePath: string;
-    mstFileName: string;
-    msiFullFileName: string;
-    istallerId: TKnownInstaller;
-    requiredSpace: cardinal;      // MB
-    installDirectory: string;
-    markerlist: TStringList;
+  TSetupFile =  class(TPersistent)
+  private
+    FsetupFileNamePath: string;
+    FsetupFileName: string;
+    FsetupFileSize: cardinal;     // MB
+    Farchitecture: TArchitecture;
+    FmsiId: string;
+    FmstFileNamePath: string;
+    FmstFileName: string;
+    FmsiFullFileName: string;
+    FistallerId: TKnownInstaller;
+    FrequiredSpace: cardinal;      // MB
+    FinstallDirectory: string;
+    Fmarkerlist: TStringList;
+    FSoftwareVersion: string;
+  published
+    // proc
+    (*
+    procedure SetSetupFileNamePath(const AValue: string);
+    procedure SetSetupFileNamePath(const AValue: string);
+    procedure SetSetupFileNamePath(const AValue: cardinal);
+    *)
+    procedure SetArchitecture(const AValue: TArchitecture);
+    procedure SetSetupFileNamePath(const AValue: string);
+    (*
+    procedure SetSetupFileNamePath(const AValue: string);
+    procedure SetSetupFileNamePath(const AValue: string);
+    procedure SetSetupFileNamePath(const AValue: TKnownInstaller);
+    procedure SetSetupFileNamePath(const AValue: cardinal)
+    procedure SetSetupFileNamePath(const AValue: string);;
+    procedure SetSetupFileNamePath(const AValue: TStringList);
+    procedure SetSetupFileNamePath(const AValue: string);
+    *)
+        property setupFileNamePath: string read FsetupFileNamePath write FsetupFileNamePath;
+    property setupFileName: string read FsetupFileName write FsetupFileName;
+    property setupFileSize: cardinal  read FsetupFileSize write FsetupFileSize;
+    property architecture: TArchitecture  read Farchitecture write Farchitecture;
+    property msiId: string  read FmsiId write FmsiId;
+    property mstFileNamePath:  string read FmstFileNamePath write FmstFileNamePath;
+    property mstFileName: string  read FmstFileName write FmstFileName;
+    property msiFullFileName:  string read FmsiFullFileName write FmsiFullFileName;
+    property istallerId: TKnownInstaller  read FistallerId write FistallerId;
+    property requiredSpace: cardinal  read FrequiredSpace write FrequiredSpace;
+    property installDirectory: string  read FinstallDirectory write FinstallDirectory;
+    property markerlist: TStringList  read Fmarkerlist write Fmarkerlist;
+    property SoftwareVersion: string  read FSoftwareVersion write FSoftwareVersion;
+    procedure initValues;
+
+  public
+    { public declarations }
+
+    constructor Create;
+    destructor Destroy;
+  end;
+
+  TProductProperies  =  class(TPersistent)
+  private
+    FarchitectureMode: TArchitectureMode;
+    Fcomment: string;
+    Fdescription: string;
+    Fadvice: string;
+    FproductId: string;
+    FproductName: string;
+    Fproductversion: string;
+    Fpackageversion: cardinal;
+    Fversionstr: string;
+    Fpriority: integer;
+    Fproducttype: string;
+    Fsetupscript: string;
+    Funinstallscript: string;
+    Flicenserequired: boolean;
+  published
+    property architectureMode: TArchitectureMode read FarchitectureMode write FarchitectureMode;
+    property comment: string read Fcomment write Fcomment;
+    property description: string read Fdescription write Fdescription;
+    property advice: string read Fadvice write Fadvice;
+    property productId: string read FproductId write FproductId;
+    property productName: string read FproductName write FproductName;
+    property productversion: string read Fproductversion write Fproductversion;
+    property packageversion: cardinal read Fpackageversion write Fpackageversion;
+    property versionstr: string read Fversionstr write Fversionstr;
+    property priority: integer read Fpriority write Fpriority;
+    property producttype: string read Fproducttype write Fproducttype;
+    property setupscript: string read Fsetupscript write Fsetupscript;
+    property uninstallscript: string read Funinstallscript write Funinstallscript;
+    property licenserequired: boolean read Flicenserequired write Flicenserequired;
+  public
+    { public declarations }
+    constructor Create;
+    destructor Destroy;
   end;
 
   TProductData = record
     SetupFiles : array[0..1] of TSetupFile;
-    architectureMode: TArchitectureMode;
-    comment: string;
-    description: string;
-    advice: string;
-    productId: string;
-    productName: string;
-    productversion: string;
-    packageversion: cardinal;
-    versionstr: string;
-    priority: integer;
-    producttype: string;
-    setupscript: string;
-    uninstallscript: string;
-    licenserequired: boolean;
+    produktpropties : TProductProperies;
   end;
 
 function archModeStrToArchmode(modestr: string): TArchitectureMode;
@@ -87,8 +183,46 @@ var
   architectureModeList: TStringList;
   installerArray: TInstallers;
   counter: integer;
+  myobject : TMyClass;
 
 implementation
+{ TMyClass }
+
+constructor TMyClass.Create;
+begin
+  FMyList := TStringList.Create;
+  inherited;
+end;
+
+destructor TMyClass.Destroy;
+begin
+  FMyList.Free;
+  inherited;
+end;
+
+(*
+procedure TMyClass.SetMyEnum(const AValue: TMyEnum);
+begin
+  if AValue=MyEnum then exit;
+  FMyEnum:=AValue;
+  //Log('TMyClass.SetMyEnum '+GetEnumProp(Self,'MyEnum'));
+end;
+
+procedure TMyClass.SetMyRange(const AValue: TMyRange);
+begin
+  if AValue=MyRange then exit;
+  FMyRange:=AValue;
+  //Log('TMyClass.SetMyRange '+IntToStr(MyRange));
+end;
+
+procedure TMyClass.SetMyString(const AValue: string);
+begin
+  if AValue=MyString then exit;
+  FMyString:=AValue;
+  //Log('TMyClass.SetMyString '+MyString);
+end;
+ *)
+// TInstallerData ************************************
 
 constructor TInstallerData.Create;
 begin
@@ -101,6 +235,53 @@ begin
   patterns.Free;
   inherited;
 end;
+
+// TSetupFile ************************************
+
+constructor TSetupFile.Create;
+begin
+  markerlist := TStringList.Create;
+  inherited;
+  //initValues;
+end;
+
+destructor TSetupFile.Destroy;
+begin
+  markerlist.Free;
+  inherited;
+end;
+
+procedure TSetupFile.SetArchitecture(const AValue: TArchitecture);
+begin
+  if AValue=Architecture then exit;
+  FArchitecture:=AValue;
+  //Log('SetArchitecture '+GetEnumProp(Self,'Architecture'));
+end;
+
+procedure TSetupFile.SetSetupFileNamePath(const AValue: string);
+begin
+  if AValue=SetupFileNamePath then exit;
+  FSetupFileNamePath:=AValue;
+  //Log('SetSetupFileNamePath '+MyString);
+end;
+
+procedure TSetupFile.initValues;
+begin
+  FsetupFileNamePath := '';
+  FsetupFileName := '';
+  FsetupFileSize := 0;
+  FmsiId := '';
+  FmstFileNamePath := '';
+  FmstFileName := '';
+  FmsiFullFileName := '';
+  FistallerId := stUnknown;
+  Fmarkerlist.Clear;
+  Farchitecture:=aUnknown;
+end;
+
+// TProductProperies **********************************
+
+// Installer related ************************************
 
 function archModeStrToArchmode(modestr: string): TArchitectureMode;
 begin
@@ -282,9 +463,6 @@ begin
   architectureModeList.Add('selectable');
 
 
-  //initialize Setup files
-  aktProduct.SetupFiles[0].markerlist := TStringList.Create;
-  aktProduct.SetupFiles[0].markerlist := TStringList.Create;
-  aktSetupFile.markerlist := TStringList.Create;
+  aktSetupFile := TSetupFile.Create;
 
 end.

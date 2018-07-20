@@ -276,6 +276,7 @@ var
   showInstallShieldMSI: boolean = true;
   showAdvancedMSI: boolean = true;
   //*****************************************
+  //myobject : TMyClass;
 
 
 implementation
@@ -1467,14 +1468,20 @@ begin
     begin
       resultform1.Visible := True;
       Application.ProcessMessages;
-      Analyze(myfilename)
+      Analyze(myfilename,aktProduct.SetupFiles[0])
     end
     else
-       analyze_binary(myfilename,false,false);
+       analyze_binary(myfilename,false,false,aktProduct.SetupFiles[0]);
   end
   else
   begin
-    if showgui then begin
+    if showgui then
+    begin
+      //if not Assigned(osdbasedata.aktSetupFile) then aktSetupFile := TSetupFile.Create;
+      aktSetupFile := TSetupFile.Create;
+      myobject := TMyClass.Create;
+      resultForm1.TIPropertyGrid1.TIObject := aktSetupFile;
+      //resultForm1.TIPropertyGrid1.TIObject := myobject;
       resultForm1.Visible := True;
     end
     else
@@ -2537,6 +2544,7 @@ end;
 
 procedure TResultform1.mst32NameEditChange(Sender: TObject);
 begin
+  (*
     OpenDialog1.FilterIndex := 3;  // MST
   if OpenDialog1.Execute then
   begin
@@ -2545,6 +2553,7 @@ begin
      aktProduct.mst32FileNamePath:=OpenDialog1.FileName;
      aktProduct.mst32FileName:= ExtractFileName(OpenDialog1.FileName);
   end;
+  *)
 end;
 
 procedure TResultform1.PageControl1Change(Sender: TObject);
@@ -2988,8 +2997,8 @@ begin
     OpenDialog1.FilterIndex := 1;   // setup
   if OpenDialog1.Execute then
   begin
-    Analyze(OpenDialog1.FileName);
-    write_data_to_tabdefault;
+    Analyze(OpenDialog1.FileName,aktProduct.SetupFiles[0]);
+    //write_data_to_tabdefault;
   end;
 end;
 
@@ -3037,6 +3046,7 @@ end;
 
 procedure Tresultform1.write_data_to_tabdefault;
 begin
+  (*
   with aktProduct do
   begin
     setup32NameEdit.Caption := setup32FileNamePath + setup32FileName;
@@ -3076,6 +3086,7 @@ begin
     CheckBox_Default_License.Checked:= licenserequired;
     ComboBoxArchModeChange(ComboBoxArchMode);
   end;
+  *)
 end;
 
 end.

@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 534
+  Left = 523
   Height = 828
-  Top = 261
+  Top = 199
   Width = 1353
   Caption = 'opsi Setup Detector'
   ClientHeight = 792
@@ -1139,7 +1139,7 @@ object resultForm1: TresultForm1
           Align = alLeft
           CheckboxForBoolean = False
           DefaultValueFont.Color = clWindowText
-          Filter = [tkInteger, tkChar, tkEnumeration, tkFloat, tkSet, tkMethod, tkSString, tkLString, tkAString, tkWString, tkVariant, tkArray, tkRecord, tkInterface, tkClass, tkObject, tkWChar, tkBool, tkInt64, tkQWord, tkDynArray, tkInterfaceRaw, tkProcVar, tkUString, tkUChar, tkHelper, tkFile, tkClassRef, tkPointer]
+          Filter = [tkInteger, tkChar, tkEnumeration, tkFloat, tkSet, tkSString, tkLString, tkAString, tkWString, tkVariant, tkArray, tkRecord, tkWChar, tkBool, tkInt64, tkQWord, tkUString, tkUChar, tkHelper, tkFile]
           Indent = 12
           NameFont.Color = clWindowText
           TIObject = FlowPanel1
