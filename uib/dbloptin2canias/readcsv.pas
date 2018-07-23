@@ -18,7 +18,7 @@ var
   infilename : string;
 begin
    inlist := TStringlist.Create;
-   infilename := apppath + PathDelim + 'newsletter.csv';
+   infilename := apppath + PathDelim + 'custom' + PathDelim + 'newsletter.csv';
    inlist.LoadFromFile(infilename);
    inlist.Delimiter:=';';
 end;

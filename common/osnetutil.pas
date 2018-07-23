@@ -44,7 +44,11 @@ function IsValidEmail(const Value: string): Boolean;
                          '0'..'9',
                          '_',
                          '-',
-                         '.']) then Exit;
+                         '.']) then
+         begin
+             LogDatei.log('Warning: Not allowed chars in part: '+s+' in eMail: '+Value,LLwarning);
+             Exit;
+         end;
       Result:= true;
     end;
 
@@ -54,12 +58,36 @@ var
 begin
   Result:= False;
   i:=Pos('@', Value);
-  if i=0 then Exit;
+  if i=0 then
+  begin
+    LogDatei.log('Warning: No "@" in eMail: '+Value,LLwarning);
+    Exit;
+  end;
   NamePart:=Copy(Value, 1, i-1);
+  LogDatei.log('Debug: namePart: '+NamePart+' in  eMail: '+Value,LLdebug2);
   ServerPart:=Copy(Value, i+1, Length(Value));
-  if (Length(NamePart)=0) or ((Length(ServerPart)<5)) then Exit;
+  LogDatei.log('Debug: ServerPart: '+ServerPart+' in  eMail: '+Value,LLdebug2);
+  if (Length(NamePart)=0) then
+  begin
+    LogDatei.log('Warning: Empty namePart: '+NamePart+' in  eMail: '+Value,LLwarning);
+    Exit;
+  end;
+  if  ((Length(ServerPart)<5)) then
+  begin
+    LogDatei.log('Warning: ServerPart < 5 chars: '+ServerPart+' in  eMail: '+Value,LLwarning);
+    Exit;
+  end;
   i:=Pos('.', ServerPart);
-  if (i=0) or (i>(Length(serverPart)-2)) then Exit;
+  if (i=0) then
+  begin
+    LogDatei.log('Warning: ServerPart has no dot: '+ServerPart+' in  eMail: '+Value,LLwarning);
+    Exit;
+  end;
+  if (i>(Length(serverPart)-2)) then
+  begin
+    LogDatei.log('Warning: ServerPart has not a 2 char top level domain: '+ServerPart+' in  eMail: '+Value,LLwarning);
+    Exit;
+  end;
   Result:= CheckAllowed(NamePart) and CheckAllowed(ServerPart);
 end;
 

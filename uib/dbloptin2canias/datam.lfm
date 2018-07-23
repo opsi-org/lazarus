@@ -2,8 +2,8 @@ object DataModule1: TDataModule1
   OnCreate = DataModuleCreate
   OldCreateOrder = False
   Height = 254
-  HorizontalOffset = 321
-  VerticalOffset = 523
+  HorizontalOffset = 324
+  VerticalOffset = 554
   Width = 305
   PPI = 96
   object MySQL55Connection1: TMySQL55Connection
