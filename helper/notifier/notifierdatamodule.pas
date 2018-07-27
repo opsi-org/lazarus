@@ -197,11 +197,12 @@ begin
   lfilename := ExtractFileNameOnly(Application.ExeName);
   // use different filenames for different instances
 
-  if mynotifierkind <> '' then
-    lfilename := lfilename + '_' + mynotifierkind
+  if myconfigpath <> '' then
+      lfilename := lfilename + '_' + ExtractFileNameWithoutExt(ExtractFileName(myconfigpath))
   else
-    if myconfigpath <> '' then
-      lfilename := lfilename + '_' + ExtractFileNameWithoutExt(myconfigpath);
+    if mynotifierkind <> '' then
+      lfilename := lfilename + '_' + mynotifierkind;
+
   LogDatei.FileName := lfilename;
   LogDatei.StandardLogFileext := '.log';
   LogDatei.StandardLogFilename := lfilename;
