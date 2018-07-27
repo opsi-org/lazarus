@@ -30,6 +30,7 @@ type
   TLabels = array of TLabel;
   //TButtons = array of TButton;
   TButtons = array of TSpeedButton;
+  TMemos = array of TMemo;
 
 procedure openSkinIni(ininame: string);
 procedure myChoiceClick(Sender: TObject);
@@ -53,6 +54,7 @@ var
   navlist: TStringList;
   labellist: TStringList;
   buttonlist: TStringList;
+  memolist: TStringList;
   sectionlist: TStringList;
   nformpos: TNFormPos;
   appearmode: TNFormAppear;
@@ -61,7 +63,8 @@ var
   slidein, slideout: string;
   LabelArray: TLabels;
   ButtonArray: TButtons;
-  labelcounter, buttoncounter: integer;
+  MemoArray: TMemos;
+  labelcounter, buttoncounter, memocounter: integer;
 
 
 // from
@@ -109,10 +112,26 @@ begin
     end
     else
       LogDatei.log('No index found for id: ' + aktId, LLDebug2);
+    indexstr := memolist.Values[aktId];
+    if indexstr <> '' then
+    begin
+      index := StrToInt(indexstr);
+      logdatei.log('Found memoindex: ' + IntToStr(index) + ' for id: "' + aktId, LLDebug2);
+      logdatei.log('memo name by index: Found index: ' +
+        MemoArray[index].Name, LLDebug2);
+      MemoArray[index].Text := aktMessage;
+      MemoArray[index].Repaint;
+      Application.ProcessMessages;
+      logdatei.log('Finished: Set for id: "' + aktId + '" the message: "' +
+        aktMessage + '"', LLInfo);
+      result := true;
+    end
+    else
+      LogDatei.log('No index found for id: ' + aktId, LLDebug2);
   except
     on E: Exception do
     begin
-      LogDatei.log('Error: Label not found by index: ' + IntToStr(index) +
+      LogDatei.log('Error: Label / Memo not found by index: ' + IntToStr(index) +
         ' id: ' + aktId, LLError);
       LogDatei.log('Error: Message: ' + E.Message, LLError);
       result := false;
@@ -735,6 +754,52 @@ begin
     DataModule1.ProcessMess;
   end
   else
+  if aktsection = 'LabelMessage' then
+  begin
+    LogDatei.log('Start reading: ' + aktsection, LLDebug);
+    Inc(memocounter);
+    SetLength(MemoArray, memocounter + 1);
+    MemoArray[memocounter] := TMemo.Create(nform);
+    MemoArray[memocounter].Parent := nform;
+    //MemoArray[memocounter].AutoSize := True;
+    MemoArray[memocounter].Name := aktsection;
+    MemoArray[memocounter].WordWrap:=true;
+    MemoArray[memocounter].Left := myini.ReadInteger(aktsection, 'Left', 10);
+    MemoArray[memocounter].Top := myini.ReadInteger(aktsection, 'Top', 10);
+    MemoArray[memocounter].Width := myini.ReadInteger(aktsection, 'Width', 10);
+    MemoArray[memocounter].Height := myini.ReadInteger(aktsection, 'Height', 10);
+    //MemoArray[labelcounter].Anchors := [akTop,akLeft,akRight,akBottom];
+    MemoArray[memocounter].Anchors := [akTop,akLeft,akRight];
+    MemoArray[memocounter].Font.Name :=
+      myini.ReadString(aktsection, 'FontName', 'Arial');
+    MemoArray[memocounter].Font.Size :=
+      fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
+    MemoArray[memocounter].Font.Color :=
+      myStringToTColor(myini.ReadString(aktsection, 'FontColor', 'clBlack'));
+    MemoArray[memocounter].Font.Bold :=
+      strToBool(myini.ReadString(aktsection, 'FontBold', 'false'));
+    MemoArray[memocounter].Font.Italic :=
+      strToBool(myini.ReadString(aktsection, 'FontItalic', 'false'));
+    MemoArray[memocounter].Font.Underline :=
+      strToBool(myini.ReadString(aktsection, 'FontUnderline', 'false'));
+    MemoArray[memocounter].Alignment :=
+      StringToAlignment(myini.ReadString(aktsection, 'Alignment', 'left'));
+    //MemoArray[memocounter].Transparent :=
+    //  strToBool(myini.ReadString(aktsection, 'Transparent', 'false'));
+    MemoArray[memocounter].Tag := memocounter;
+    MemoArray[memocounter].Lines.Text := myini.ReadString(aktsection, 'Text', '');
+    MemoArray[memocounter].ReadOnly:=true;
+    MemoArray[memocounter].ScrollBars:=ssAutoVertical;
+    // scale new Memo:
+    MemoArray[memocounter].AutoAdjustLayout(lapAutoAdjustForDPI, 96, nform.PixelsPerInch, 0, 0);
+
+    // feed memolist: id = index of MemoArray ; id = aktsection striped by 'Label'
+    memolist.Add(copy(aktsection, 6, 100) + '=' + IntToStr(memocounter));
+    logdatei.log('memolist add: ' + copy(aktsection, 6, 100) + '=' +
+      IntToStr(memocounter), LLDebug2);
+    LogDatei.log('Finished reading: ' + aktsection, LLDebug2);
+  end
+  else
   if pos('Label', aktsection) > 0 then
   begin
     LogDatei.log('Start reading: ' + aktsection, LLDebug);
@@ -879,8 +944,10 @@ end;
 begin
   labelcounter := 0;
   buttoncounter := 0;
+  memocounter := 0;
   navlist := TStringList.Create;
   labellist := TStringList.Create;
   buttonlist := TStringList.Create;
   sectionlist := TStringList.Create;
+  memolist := TStringList.Create;
 end.
