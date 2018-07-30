@@ -1050,7 +1050,7 @@ begin
     ErrorInfo := 'String marker expected'
   else
   Begin
-    logdatei.log('r:'+r,llDebug3);
+    logdatei.log_prog('r:'+r,llDebug3);
     TheMark := r[1];
     if (TheMark <> '''') and (TheMark <> '"')
     then
@@ -1062,15 +1062,15 @@ begin
       begin
         if pos(DoubleMark,r) = 1 then
         begin
-          logdatei.log('may be double quotet: r:'+r,llDebug2);
+          logdatei.log_prog('may be double quotet: r:'+r,llDebug2);
           rorg := r;
           //GetWord (rorg, rnew, rorg, WordDelimiterWhiteSpace);
           rnew := r;
-          logdatei.log('rnew:'+rnew,llDebug2);
+          logdatei.log_prog('rnew:'+rnew,llDebug2);
 
           if AnsiEndsStr(DoubleMark, rnew) then
           begin
-            logdatei.log('rnew is doublequoted:'+rnew,llDebug2);
+            logdatei.log_prog('rnew is doublequoted:'+rnew,llDebug2);
             //unquote the wrong mark
             rnew := opsiunquotestr2(rnew,TheMark);
             // quote with the alternative mark
@@ -1088,9 +1088,9 @@ begin
         end;
       end;
       //skipA(TheMark, r, r, errorinfo);
-      logdatei.log('r:'+r,llDebug3);
+      logdatei.log_prog('r:'+r,llDebug3);
       skipA(TheMark, r, r, errorinfo);
-      logdatei.log('r:'+r,llDebug3);
+      logdatei.log_prog('r:'+r,llDebug3);
       Continue := true;
       while Continue do
       begin
@@ -1121,10 +1121,10 @@ begin
            End;
         End;
         *)
-        logdatei.log('r:'+r,llDebug3);
+        logdatei.log_prog('r:'+r,llDebug3);
         GetWord (r, PartValue, r, [TheMark]);
         ResultString := ResultString + PartValue;
-        logdatei.log('r:'+r+' ResultString:'+ResultString,llDebug3);
+        logdatei.log_prog('r:'+r+' ResultString:'+ResultString,llDebug3);
 
         if StringInStringAllowed then
         Begin
@@ -1136,7 +1136,7 @@ begin
         End
         else
           Continue := false;
-        logdatei.log('r:'+r+' ResultString:'+ResultString,llDebug3);
+        logdatei.log_prog('r:'+r+' ResultString:'+ResultString,llDebug3);
       End;
       if SkipA (TheMark, r, r, ErrorInfo)//SkipA (TheMark, r, r, ErrorInfo)
       then result := true;
@@ -8185,6 +8185,7 @@ function TuibInstScript.doLinkFolderActions (const Sektion: TWorkSection; common
                    link_name  := Remaining;
                    Remaining := '';
                 End;
+                LogDatei.log_prog('Link_name: '+link_name,LLDebug);
               End
 
               else if LowerCase (Expressionstr) = 'target'
@@ -8196,6 +8197,7 @@ function TuibInstScript.doLinkFolderActions (const Sektion: TWorkSection; common
                  link_target  := Remaining;
                  Remaining := '';
                 End;
+                LogDatei.log_prog('link_target: '+link_target,LLDebug);
               End
 
               else if LowerCase (Expressionstr) = 'parameters'
@@ -8207,6 +8209,7 @@ function TuibInstScript.doLinkFolderActions (const Sektion: TWorkSection; common
                  link_paramstr  := Remaining;
                  Remaining := '';
                 End;
+                LogDatei.log_prog('link_paramstr: '+link_paramstr,LLDebug);
               End
 
               else if LowerCase (Expressionstr) = 'working_dir'
@@ -8218,6 +8221,7 @@ function TuibInstScript.doLinkFolderActions (const Sektion: TWorkSection; common
                  link_working_dir  := Remaining;
                  Remaining := '';
                 End;
+                LogDatei.log_prog('link_working_dir: '+link_working_dir,LLDebug);
               End
 
 
@@ -8230,6 +8234,7 @@ function TuibInstScript.doLinkFolderActions (const Sektion: TWorkSection; common
                  link_working_dir  := Remaining;
                  Remaining := '';
                 End;
+                LogDatei.log_prog('link_working_dir: '+link_working_dir,LLDebug);
               End
 
               else if LowerCase (Expressionstr) = 'icon_file'
@@ -8241,6 +8246,7 @@ function TuibInstScript.doLinkFolderActions (const Sektion: TWorkSection; common
                  link_icon_file  := Remaining;
                  Remaining := '';
                 End;
+                LogDatei.log_prog('link_icon_file: '+link_icon_file,LLDebug);
               End
 
 
@@ -8265,6 +8271,7 @@ function TuibInstScript.doLinkFolderActions (const Sektion: TWorkSection; common
                    reportError (Sektion, i, Sektion.Strings [i-1],
                      '"' + s + '" could not converted to an integer.');
                  end;
+                LogDatei.log_prog('link_icon_index: '+s,LLDebug);
                 {$ENDIF WIN32}
               End
 
@@ -8289,6 +8296,7 @@ function TuibInstScript.doLinkFolderActions (const Sektion: TWorkSection; common
                    reportError (Sektion, i, Sektion.Strings [i-1],
                      '"' + s + '" could not converted to a shortcut key.');
                  end;
+                LogDatei.log_prog('link_shortcut: '+s,LLDebug);
                 {$ENDIF WIN32}
               End
 
