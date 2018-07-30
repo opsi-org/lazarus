@@ -1,12 +1,11 @@
 object resultForm1: TresultForm1
-  Left = 523
+  Left = 540
   Height = 828
-  Top = 199
+  Top = 254
   Width = 1353
   Caption = 'opsi Setup Detector'
-  ClientHeight = 792
+  ClientHeight = 808
   ClientWidth = 1353
-  DesignTimePPI = 140
   Menu = MainMenu1
   OnCreate = FormCreate
   Position = poScreenCenter
@@ -19,20 +18,20 @@ object resultForm1: TresultForm1
     Align = alTop
     Alignment = taLeftJustify
     BorderStyle = bsSingle
-    ClientHeight = 38
-    ClientWidth = 1351
+    ClientHeight = 36
+    ClientWidth = 1349
     TabOrder = 0
     OnClick = Panel1Click
     object ToolBar1: TToolBar
       Left = 1
       Height = 26
       Top = 1
-      Width = 1349
+      Width = 1347
       Caption = 'ToolBar1'
       TabOrder = 0
       object SBtnOpen: TSpeedButton
         Left = 1
-        Height = 32
+        Height = 22
         Top = 2
         Width = 88
         Caption = 'open'
@@ -76,7 +75,7 @@ object resultForm1: TresultForm1
       end
       object SBtnExit: TSpeedButton
         Left = 89
-        Height = 32
+        Height = 22
         Top = 2
         Width = 95
         Caption = 'Exit'
@@ -122,18 +121,18 @@ object resultForm1: TresultForm1
   end
   object Panel3: TPanel
     Left = 0
-    Height = 724
+    Height = 745
     Top = 40
     Width = 1353
     Align = alClient
     Caption = 'Panel3'
-    ClientHeight = 724
+    ClientHeight = 745
     ClientWidth = 1353
     TabOrder = 1
     object Panel4: TPanel
       Left = 1
       Height = 118
-      Top = 605
+      Top = 626
       Width = 1351
       Align = alBottom
       Caption = 'Panel4'
@@ -156,14 +155,14 @@ object resultForm1: TresultForm1
         Height = 64
         Top = 48
         Width = 496
-        ClientHeight = 62
-        ClientWidth = 494
+        ClientHeight = 44
+        ClientWidth = 492
         TabOrder = 1
         object RadioButtonCreateOnly: TRadioButton
           Left = 22
-          Height = 28
+          Height = 19
           Top = -7
-          Width = 189
+          Width = 115
           Caption = 'create opsi packet'
           Checked = True
           OnChange = RadioButtonBuildModeChange
@@ -172,27 +171,27 @@ object resultForm1: TresultForm1
         end
         object RadioButtonInteractive: TRadioButton
           Left = 22
-          Height = 28
+          Height = 19
           Top = 9
-          Width = 507
+          Width = 297
           Caption = 'create opsi packet and start interactive PacketBuilder'
           OnChange = RadioButtonBuildModeChange
           TabOrder = 0
         end
         object RadioButtonAuto: TRadioButton
           Left = 22
-          Height = 28
+          Height = 19
           Top = 25
-          Width = 219
+          Width = 132
           Caption = 'create and auto build'
           OnChange = RadioButtonBuildModeChange
           TabOrder = 1
         end
         object CheckBoxBuild: TCheckBox
           Left = 158
-          Height = 28
+          Height = 19
           Top = 25
-          Width = 70
+          Width = 47
           Caption = 'build'
           Checked = True
           Enabled = False
@@ -201,9 +200,9 @@ object resultForm1: TresultForm1
         end
         object CheckBoxInstall: TCheckBox
           Left = 214
-          Height = 28
+          Height = 19
           Top = 25
-          Width = 78
+          Width = 51
           Caption = 'install'
           Checked = True
           Enabled = False
@@ -212,9 +211,9 @@ object resultForm1: TresultForm1
         end
         object CheckBoxQuiet: TCheckBox
           Left = 270
-          Height = 28
+          Height = 19
           Top = 25
-          Width = 71
+          Width = 47
           Caption = 'quiet'
           Enabled = False
           TabOrder = 4
@@ -234,7 +233,7 @@ object resultForm1: TresultForm1
       end
       object Edit_PacketbaseDir: TEdit
         Left = 120
-        Height = 32
+        Height = 23
         Hint = 'Base Directory to build opsi packets'
         Top = 16
         Width = 480
@@ -244,9 +243,9 @@ object resultForm1: TresultForm1
       end
       object Label9: TLabel
         Left = 32
-        Height = 26
+        Height = 15
         Top = 23
-        Width = 135
+        Width = 77
         Caption = 'Packet BaseDir'
         ParentColor = False
       end
@@ -302,12 +301,12 @@ object resultForm1: TresultForm1
     end
     object PageControl1: TPageControl
       Left = 1
-      Height = 604
+      Height = 625
       Top = 1
       Width = 1351
-      ActivePage = TabSheet1
+      ActivePage = TabSheetDefault
       Align = alClient
-      TabIndex = 2
+      TabIndex = 1
       TabOrder = 1
       OnChange = PageControl1Change
       object TabSheetAnalyze: TTabSheet
@@ -330,8 +329,8 @@ object resultForm1: TresultForm1
           Width = 1349
           Align = alBottom
           BorderStyle = bsSingle
-          ClientHeight = 48
-          ClientWidth = 1347
+          ClientHeight = 46
+          ClientWidth = 1345
           TabOrder = 1
           object BitBtnAnalyze: TBitBtn
             Left = 594
@@ -403,22 +402,22 @@ object resultForm1: TresultForm1
       end
       object TabSheetDefault: TTabSheet
         Caption = 'Default'
-        ClientHeight = 570
-        ClientWidth = 1349
+        ClientHeight = 597
+        ClientWidth = 1343
         object PanelDefault: TPanel
           Left = 0
-          Height = 570
+          Height = 597
           Top = 0
-          Width = 1349
+          Width = 1343
           Align = alClient
-          ClientHeight = 570
-          ClientWidth = 1349
+          ClientHeight = 597
+          ClientWidth = 1343
           TabOrder = 0
           object FlowPanel1: TFlowPanel
             Left = 1
             Height = 49
             Top = 1
-            Width = 1347
+            Width = 1341
             Align = alTop
             AutoWrap = False
             BorderWidth = 3
@@ -429,59 +428,44 @@ object resultForm1: TresultForm1
                 Index = 0
               end            
               item
-                Control = Edit_installer_type
+                Control = Label63
                 WrapAfter = waAuto
                 Index = 1
               end            
               item
-                Control = Label63
+                Control = ComboBoxArchMode
                 WrapAfter = waAuto
                 Index = 2
               end            
               item
-                Control = ComboBoxArchMode
+                Control = CheckBox_Default_License
                 WrapAfter = waAuto
                 Index = 3
               end            
               item
-                Control = CheckBox_Default_License
+                Control = TIRadioGroup1
                 WrapAfter = waAuto
                 Index = 4
-              end            
-              item
-                Control = CheckBoxUseMst
-                WrapAfter = waAuto
-                Index = 5
               end>
             FlowLayout = tlTop
             FlowStyle = fsLeftRightTopBottom
             TabOrder = 0
             object Label62: TLabel
               Left = 17
-              Height = 26
+              Height = 15
               Top = 7
-              Width = 189
+              Width = 109
               Anchors = []
               BorderSpacing.Left = 10
               BorderSpacing.Around = 3
               Caption = 'Detected Setup type:'
               ParentColor = False
             end
-            object Edit_installer_type: TEdit
-              Left = 219
-              Height = 32
-              Top = 4
-              Width = 191
-              Anchors = []
-              BorderSpacing.Left = 10
-              TabOrder = 0
-              Text = 'Edit_installer_type'
-            end
             object Label63: TLabel
-              Left = 433
-              Height = 26
+              Left = 152
+              Height = 15
               Top = 7
-              Width = 168
+              Width = 99
               Anchors = []
               BorderSpacing.Left = 20
               BorderSpacing.Around = 3
@@ -489,14 +473,14 @@ object resultForm1: TresultForm1
               ParentColor = False
             end
             object ComboBoxArchMode: TComboBox
-              Left = 614
-              Height = 40
+              Left = 264
+              Height = 23
               Top = 4
               Width = 195
               Anchors = []
               BorderSpacing.Left = 10
               BorderSpacing.InnerBorder = 5
-              ItemHeight = 0
+              ItemHeight = 15
               ItemIndex = 0
               Items.Strings = (
                 '32BitOnly - fix'
@@ -507,38 +491,41 @@ object resultForm1: TresultForm1
               )
               OnChange = ComboBoxArchModeChange
               Style = csDropDownList
-              TabOrder = 1
+              TabOrder = 0
               Text = '32BitOnly - fix'
             end
             object CheckBox_Default_License: TCheckBox
-              Left = 832
-              Height = 28
+              Left = 482
+              Height = 19
               Top = 7
-              Width = 175
+              Width = 106
               Anchors = []
               BorderSpacing.Left = 20
               BorderSpacing.Around = 3
               Caption = 'License required'
-              TabOrder = 2
+              TabOrder = 1
             end
-            object CheckBoxUseMst: TCheckBox
-              Left = 1043
-              Height = 28
-              Top = 7
-              Width = 135
+            object TIRadioGroup1: TTIRadioGroup
+              Left = 591
+              Height = 44
+              Top = 4
+              Width = 599
               Anchors = []
-              BorderSpacing.Left = 30
-              BorderSpacing.Around = 3
-              Caption = 'use MST File'
-              OnChange = CheckBoxUseMstChange
-              TabOrder = 3
+              Caption = 'TIRadioGroup1'
+              ChildSizing.LeftRightSpacing = 6
+              ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+              ChildSizing.EnlargeVertical = crsHomogenousChildResize
+              ChildSizing.ShrinkHorizontal = crsScaleChilds
+              ChildSizing.ShrinkVertical = crsScaleChilds
+              ChildSizing.Layout = cclLeftToRightThenTopToBottom
+              ChildSizing.ControlsPerLine = 1
             end
           end
           object FlowPanelSetup32: TFlowPanel
             Left = 1
             Height = 41
             Top = 50
-            Width = 1347
+            Width = 1341
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -550,45 +537,93 @@ object resultForm1: TresultForm1
                 Index = 0
               end            
               item
-                Control = setup32NameEdit
+                Control = TIEdit1
                 WrapAfter = waAuto
                 Index = 1
+              end            
+              item
+                Control = BitBtnOpenFile
+                WrapAfter = waAuto
+                Index = 2
               end>
             FlowLayout = tlTop
             FlowStyle = fsLeftRightTopBottom
             TabOrder = 1
             object Label50: TLabel
-              Left = 14
-              Height = 26
-              Top = 4
-              Width = 151
+              Left = 17
+              Height = 15
+              Top = 7
+              Width = 51
               Anchors = []
               BorderSpacing.Left = 10
-              Caption = 'Setup File (32Bit)'
+              BorderSpacing.Around = 3
+              Caption = 'Setup File'
               ParentColor = False
             end
-            object setup32NameEdit: TFileNameEdit
-              Left = 175
-              Height = 32
+            object TIEdit1: TTIEdit
+              Left = 81
+              Height = 27
               Top = 4
-              Width = 985
-              FilterIndex = 0
-              HideDirectories = False
-              ButtonWidth = 23
-              NumGlyphs = 1
-              Align = alClient
+              Width = 80
               Anchors = []
               BorderSpacing.Left = 10
-              MaxLength = 0
+              BorderSpacing.InnerBorder = 2
               TabOrder = 0
-              OnClick = SBtnOpenClick
+            end
+            object BitBtnOpenFile: TBitBtn
+              Left = 164
+              Height = 30
+              Top = 4
+              Width = 133
+              Anchors = []
+              AutoSize = True
+              BorderSpacing.Left = 3
+              BorderSpacing.InnerBorder = 2
+              Caption = 'Open Setup File'
+              Glyph.Data = {
+                36040000424D3604000000000000360000002800000010000000100000000100
+                2000000000000004000064000000640000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                00000000000000000000000000000000000000000000000000004C92DEE95698
+                DEFF5B9BDEFF5B9BDEFF5B9BDEFF5A9BDEFF5A9BDEFF5A9BDEFF5A9BDEFF5A9A
+                DEFF599ADDFF5999DDFF4E93DEF54C92DE0E00000000000000005195DEFF96BE
+                E1FFADCEE4FFABCEE5FFA9CDE5FFA7CCE6FFA7CCE6FFA6CBE5FFA5CAE4FFA3C8
+                E1FFA0C5DDFF9DC1D9FF78AAD9FF4C92DE6A0000000000000000599ADFFF7BB1
+                E5FFB6D8EFFFB4D8F0FFB2D7F1FFB0D7F1FFAFD6F1FFAFD6F1FFADD5EFFFABD2
+                ECFFA7CCE6FFA2C7DFFF95BCDAFF598DC4FF7C807EFF7C807EFF5E9FE2FF62A1
+                E3FFBDE1F8FFBCE1F9FFBAE0FBFFB9E0FBFFB8E0FBFFB7DFFAFFB6DEF8FFB3DA
+                F5FFAFD4EFFFA8CDE6FFA2C6DDFF5E9CDDFFE5E7E9FF7B807EFF5FA0E3FF6CA9
+                E7FFB5DDFAFFC2E7FFFFC1E6FFFFC0E6FFFFC0E6FFFFBFE5FFFFBDE4FEFFBAE0
+                FBFFB5DAF4FFAED3EBFFA8CAE1FF73A8DCFFBED2E7FF7C807EFF60A0E3FF93C4
+                F1FF8FC2F0FFC6E8FFFFC6E8FFFFC5E8FFFFC4E8FFFFC4E7FFFFC1E6FFFFBEE3
+                FCFFBADEF6FFB3D6EEFFACCDE3FF90B9DBFF8EB7E3FF7C807FFF60A0E4FFBEE2
+                FCFF61A0E3FF60A0E4FF60A0E4FF60A0E4FF60A0E4FF60A0E4FF60A0E3FF5FA0
+                E3FF5F9FE2FF5E9DE1FF5C9CDFFF5698DEFF74A9E2FF7C817FFF60A0E4FFC8E9
+                FFFFCAE9FFFFC9EAFFFFC7E9FFFFC6E9FFFF8A8E8DFFF7F7F7FFF7F7F7FFF7F7
+                F7FFF5F5F5FFF3F3F3FFF1F1F1FFEFEFEFFFEDEDEDFF7D8180FF5397E0F8BCE1
+                FCFFC7E9FFFFC6E8FFFFC4E7FFFFB9E0FCFF8B908EFFF9F9F9FFF9F9F9FFF8F8
+                F8FFF7F7F7FFF4F4F4FFF2F2F2FFF0F0F0FFEDEDEDFF7E8280FF4C92DE6A5397
+                E0F860A0E4FF60A0E3FF60A0E3FF5397E0F88C908FFFFAFAFAFFFAFAFAFFFAFA
+                FAFFF8F8F8FFF6F6F6FFF3F3F3FFF0F0F0FFEEEEEEFF7F8381FF000000000000
+                0000000000000000000000000000000000008D918FFFFBFBFBFFFBFBFBFFFAFA
+                FAFFF9F9F9FFF6F6F6FFF4F4F4FFF1F1F1FFEEEEEEFF808482FF000000000000
+                0000000000000000000000000000000000008D9190FFFBFBFBFFFBFBFBFFFAFA
+                FAFFF9F9F9FFF6F6F6FFF3F3F3FFF1F1F1FFEEEEEEFF818584FF000000000000
+                0000000000000000000000000000000000008D9290FFFBFBFBFFFBFBFBFFFAFA
+                FAFFF9F9F9FFF6F6F6FFF4F4F4FFF0F0F0FFEDEDEDFF828685FF000000000000
+                0000000000000000000000000000000000008D9290FFFAFAFAFFFAFAFAFFF9F9
+                F9FFF8F8F8FFF6F6F6FFF3F3F3FFF0F0F0FFEDEDEDFF838786FF000000000000
+                0000000000000000000000000000000000008D9190FF8D918FFF8D918FFF8C90
+                8FFF8B8F8DFF898E8CFF888C8AFF878B89FF858988FF848887FF
+              }
+              TabOrder = 1
             end
           end
           object FlowPanelMST: TFlowPanel
             Left = 1
             Height = 41
             Top = 132
-            Width = 1347
+            Width = 1341
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -603,16 +638,6 @@ object resultForm1: TresultForm1
                 Control = mst32NameEdit
                 WrapAfter = waAuto
                 Index = 1
-              end            
-              item
-                Control = Label61
-                WrapAfter = waAuto
-                Index = 2
-              end            
-              item
-                Control = mst64NameEdit
-                WrapAfter = waAuto
-                Index = 3
               end>
             Enabled = False
             FlowLayout = tlTop
@@ -620,17 +645,17 @@ object resultForm1: TresultForm1
             TabOrder = 2
             object Label60: TLabel
               Left = 14
-              Height = 26
+              Height = 15
               Top = 4
-              Width = 137
+              Width = 48
               Anchors = []
               BorderSpacing.Left = 10
-              Caption = 'MST File (32Bit)'
+              Caption = 'MST File '
               ParentColor = False
             end
             object mst32NameEdit: TFileNameEdit
-              Left = 161
-              Height = 32
+              Left = 72
+              Height = 23
               Top = 4
               Width = 272
               FilterIndex = 0
@@ -644,38 +669,12 @@ object resultForm1: TresultForm1
               TabOrder = 0
               OnChange = mst32NameEditChange
             end
-            object Label61: TLabel
-              Left = 463
-              Height = 26
-              Top = 4
-              Width = 137
-              Anchors = []
-              BorderSpacing.Left = 30
-              Caption = 'MST File (64Bit)'
-              ParentColor = False
-            end
-            object mst64NameEdit: TFileNameEdit
-              Left = 610
-              Height = 32
-              Top = 4
-              Width = 272
-              FilterIndex = 0
-              HideDirectories = False
-              ButtonWidth = 23
-              NumGlyphs = 1
-              Anchors = []
-              BorderSpacing.Left = 10
-              Enabled = False
-              MaxLength = 0
-              TabOrder = 1
-              OnChange = setup32NameEditChange
-            end
           end
           object FlowPanel4: TFlowPanel
             Left = 1
             Height = 41
             Top = 296
-            Width = 1347
+            Width = 1341
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -706,17 +705,17 @@ object resultForm1: TresultForm1
             TabOrder = 3
             object Label56: TLabel
               Left = 14
-              Height = 26
+              Height = 15
               Top = 4
-              Width = 140
+              Width = 81
               Anchors = []
               BorderSpacing.Left = 10
               Caption = 'opsi Product ID'
               ParentColor = False
             end
             object Edit_opsiProductID: TEdit
-              Left = 164
-              Height = 32
+              Left = 105
+              Height = 23
               Hint = 'Set opsi packet product ID (A-Z, 0-9,-_ no blanks)'
               Top = 4
               Width = 234
@@ -728,18 +727,18 @@ object resultForm1: TresultForm1
               TabOrder = 0
             end
             object Label51: TLabel
-              Left = 428
-              Height = 26
+              Left = 369
+              Height = 15
               Top = 4
-              Width = 174
+              Width = 102
               Anchors = []
               BorderSpacing.Left = 30
               Caption = 'opsi Product Name'
               ParentColor = False
             end
             object Edit_ProductName: TEdit
-              Left = 612
-              Height = 32
+              Left = 481
+              Height = 23
               Hint = 'opsi product name (name of package file)'
               Top = 4
               Width = 234
@@ -754,7 +753,7 @@ object resultForm1: TresultForm1
             Left = 1
             Height = 41
             Top = 214
-            Width = 1347
+            Width = 1341
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -785,17 +784,17 @@ object resultForm1: TresultForm1
             TabOrder = 4
             object Label52: TLabel
               Left = 14
-              Height = 26
+              Height = 15
               Top = 4
-              Width = 145
+              Width = 83
               Anchors = []
               BorderSpacing.Left = 10
               Caption = 'Product Version'
               ParentColor = False
             end
             object Edit_ProductVersion: TEdit
-              Left = 169
-              Height = 32
+              Left = 107
+              Height = 23
               Hint = 'Product version'
               Top = 4
               Width = 232
@@ -806,18 +805,18 @@ object resultForm1: TresultForm1
               TabOrder = 0
             end
             object Label59: TLabel
-              Left = 431
-              Height = 26
+              Left = 369
+              Height = 15
               Top = 4
-              Width = 149
+              Width = 85
               Anchors = []
               BorderSpacing.Left = 30
               Caption = 'Package Version'
               ParentColor = False
             end
             object SpinEditPackageVersion: TSpinEdit
-              Left = 590
-              Height = 32
+              Left = 464
+              Height = 23
               Top = 4
               Width = 205
               Anchors = []
@@ -831,7 +830,7 @@ object resultForm1: TresultForm1
             Left = 1
             Height = 41
             Top = 173
-            Width = 1347
+            Width = 1341
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -846,6 +845,11 @@ object resultForm1: TresultForm1
                 Control = Edit_MsiId
                 WrapAfter = waAuto
                 Index = 1
+              end            
+              item
+                Control = CheckBoxUseMst
+                WrapAfter = waAuto
+                Index = 2
               end>
             Enabled = False
             FlowLayout = tlTop
@@ -853,17 +857,17 @@ object resultForm1: TresultForm1
             TabOrder = 5
             object Label53: TLabel
               Left = 14
-              Height = 26
+              Height = 15
               Top = 4
-              Width = 49
+              Width = 29
               Anchors = []
               BorderSpacing.Left = 10
               Caption = 'MsiId'
               ParentColor = False
             end
             object Edit_MsiId: TEdit
-              Left = 73
-              Height = 32
+              Left = 53
+              Height = 23
               Top = 4
               Width = 478
               Anchors = []
@@ -872,12 +876,24 @@ object resultForm1: TresultForm1
               ShowHint = True
               TabOrder = 0
             end
+            object CheckBoxUseMst: TCheckBox
+              Left = 564
+              Height = 19
+              Top = 7
+              Width = 86
+              Anchors = []
+              BorderSpacing.Left = 30
+              BorderSpacing.Around = 3
+              Caption = 'use MST File'
+              OnChange = CheckBoxUseMstChange
+              TabOrder = 1
+            end
           end
           object FlowPanel7: TFlowPanel
             Left = 1
             Height = 41
             Top = 255
-            Width = 1347
+            Width = 1341
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -917,18 +933,18 @@ object resultForm1: TresultForm1
             FlowStyle = fsLeftRightTopBottom
             TabOrder = 6
             object Label54: TLabel
-              Left = 385
-              Height = 26
+              Left = 333
+              Height = 15
               Top = 4
-              Width = 141
+              Width = 81
               Anchors = []
               BorderSpacing.Left = 30
               Caption = 'Required Space'
               ParentColor = False
             end
             object Edit_RequiredSpace: TEdit
-              Left = 536
-              Height = 32
+              Left = 424
+              Height = 23
               Hint = 'Estimated disk space required for this installation'
               Top = 4
               Width = 168
@@ -939,18 +955,18 @@ object resultForm1: TresultForm1
               TabOrder = 0
             end
             object Label55: TLabel
-              Left = 734
-              Height = 26
+              Left = 622
+              Height = 15
               Top = 4
-              Width = 82
+              Width = 46
               Anchors = []
               BorderSpacing.Left = 30
               Caption = 'InstallDir'
               ParentColor = False
             end
             object InstallDirEdit: TDirectoryEdit
-              Left = 826
-              Height = 32
+              Left = 678
+              Height = 23
               Top = 4
               Width = 343
               ShowHidden = False
@@ -963,17 +979,17 @@ object resultForm1: TresultForm1
             end
             object Label64: TLabel
               Left = 14
-              Height = 26
+              Height = 15
               Top = 4
-              Width = 123
+              Width = 71
               Anchors = []
               BorderSpacing.Left = 10
               Caption = 'Setup file size'
               ParentColor = False
             end
             object Edit_FileSize: TEdit
-              Left = 147
-              Height = 32
+              Left = 95
+              Height = 23
               Top = 4
               Width = 208
               Anchors = []
@@ -987,7 +1003,7 @@ object resultForm1: TresultForm1
             Left = 1
             Height = 70
             Top = 415
-            Width = 1347
+            Width = 1341
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -1008,16 +1024,16 @@ object resultForm1: TresultForm1
             TabOrder = 7
             object Label57: TLabel
               Left = 14
-              Height = 26
+              Height = 15
               Top = 4
-              Width = 104
+              Width = 60
               Anchors = []
               BorderSpacing.Left = 10
               Caption = 'Description'
               ParentColor = False
             end
             object MemoDescription: TMemo
-              Left = 133
+              Left = 89
               Height = 61
               Top = 9
               Width = 948
@@ -1033,7 +1049,7 @@ object resultForm1: TresultForm1
             Left = 1
             Height = 78
             Top = 337
-            Width = 1347
+            Width = 1341
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -1054,16 +1070,16 @@ object resultForm1: TresultForm1
             TabOrder = 8
             object Label65: TLabel
               Left = 14
-              Height = 26
+              Height = 15
               Top = 4
-              Width = 59
+              Width = 36
               Anchors = []
               BorderSpacing.Left = 10
               Caption = 'Advice'
               ParentColor = False
             end
             object MemoAdvice: TMemo
-              Left = 88
+              Left = 65
               Height = 55
               Top = 9
               Width = 948
@@ -1079,61 +1095,25 @@ object resultForm1: TresultForm1
             Left = 1
             Height = 41
             Top = 91
-            Width = 1347
+            Width = 1341
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
             BorderWidth = 3
-            ControlList = <            
-              item
-                Control = Label67
-                WrapAfter = waAuto
-                Index = 0
-              end            
-              item
-                Control = setup64NameEdit
-                WrapAfter = waAuto
-                Index = 1
-              end>
+            ControlList = <>
             FlowLayout = tlTop
             FlowStyle = fsLeftRightTopBottom
             TabOrder = 9
-            object Label67: TLabel
-              Left = 14
-              Height = 26
-              Top = 4
-              Width = 151
-              Anchors = []
-              BorderSpacing.Left = 10
-              Caption = 'Setup File (64Bit)'
-              ParentColor = False
-            end
-            object setup64NameEdit: TFileNameEdit
-              Left = 175
-              Height = 32
-              Top = 4
-              Width = 981
-              FilterIndex = 0
-              HideDirectories = False
-              ButtonWidth = 23
-              NumGlyphs = 1
-              Align = alClient
-              Anchors = []
-              BorderSpacing.Left = 10
-              MaxLength = 0
-              TabOrder = 0
-              OnChange = setup32NameEditChange
-            end
           end
         end
       end
       object TabSheet1: TTabSheet
         Caption = 'Setupfile1'
-        ClientHeight = 570
-        ClientWidth = 1349
+        ClientHeight = 597
+        ClientWidth = 1343
         object TIPropertyGrid1: TTIPropertyGrid
           Left = 0
-          Height = 570
+          Height = 597
           Top = 0
           Width = 292
           Align = alLeft
@@ -1162,7 +1142,7 @@ object resultForm1: TresultForm1
     Visible = False
     object processing: TLabel
       Left = 24
-      Height = 21
+      Height = 22
       Top = 8
       Width = 109
       Caption = 'processing...'
@@ -1177,17 +1157,17 @@ object resultForm1: TresultForm1
     end
     object processStatement: TLabel
       Left = 24
-      Height = 26
+      Height = 15
       Top = 40
-      Width = 102
+      Width = 58
       Caption = 'please wait'
       ParentColor = False
     end
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 28
-    Top = 764
+    Height = 23
+    Top = 785
     Width = 1353
     Panels = <>
   end
@@ -1225,5 +1205,10 @@ object resultForm1: TresultForm1
       Caption = '&About'
       OnClick = MenuItemAboutClick
     end
+  end
+  object OpenDialogSetupfile: TOpenDialog
+    Filter = 'all setup|*.msi|*.exe|all|*.*|*.*'
+    left = 945
+    top = 120
   end
 end

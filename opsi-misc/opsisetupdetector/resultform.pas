@@ -77,12 +77,12 @@ type
   { TResultform1 }
 
   TResultform1 = class(TForm)
+    BitBtnOpenFile: TBitBtn;
     BitBtnDefault: TBitBtn;
     BitBtnMST1: TBitBtn;
     CheckBoxUseMst: TCheckBox;
     CheckBox_Default_License: TCheckBox;
     ComboBoxArchMode: TComboBox;
-    Edit_installer_type: TEdit;
     FlowPanel1: TFlowPanel;
     FlowPanelSetup32: TFlowPanel;
     FlowPanelMST: TFlowPanel;
@@ -103,15 +103,12 @@ type
     FileHelp: TMenuItem;
     Label59: TLabel;
     Label60: TLabel;
-    Label61: TLabel;
     Label62: TLabel;
     Label63: TLabel;
     Label64: TLabel;
     Label65: TLabel;
-    Label67: TLabel;
     MemoAdvice: TMemo;
     MemoDescription: TMemo;
-    setup32NameEdit: TFileNameEdit;
     Label50: TLabel;
     Label51: TLabel;
     Label52: TLabel;
@@ -121,12 +118,11 @@ type
     Label56: TLabel;
     Label57: TLabel;
     MemoDefault: TMemo;
+    OpenDialogSetupfile: TOpenDialog;
     PanelDefault: TPanel;
     SBtnOpen: TSpeedButton;
     SBtnExit: TSpeedButton;
     mst32NameEdit: TFileNameEdit;
-    mst64NameEdit: TFileNameEdit;
-    setup64NameEdit: TFileNameEdit;
     SpinEditPackageVersion: TSpinEdit;
     StatusBar1: TStatusBar;
     TabSheet1: TTabSheet;
@@ -164,8 +160,11 @@ type
     RadioButtonInteractive: TRadioButton;
     SelectPacketBaseDir: TSelectDirectoryDialog;
     TabSheetAnalyze: TTabSheet;
+    TIEdit1: TTIEdit;
     TIPropertyGrid1: TTIPropertyGrid;
+    TIRadioGroup1: TTIRadioGroup;
     ToolBar1: TToolBar;
+    mysetup1: TSetupFile;
 
     procedure BitBtn_PacketBasedirClick(Sender: TObject);
     procedure BitBtnClose1Click(Sender: TObject);
@@ -1480,8 +1479,11 @@ begin
       //if not Assigned(osdbasedata.aktSetupFile) then aktSetupFile := TSetupFile.Create;
       aktSetupFile := TSetupFile.Create;
       myobject := TMyClass.Create;
-      resultForm1.TIPropertyGrid1.TIObject := aktSetupFile;
+      //resultForm1.TIPropertyGrid1.TIObject := aktSetupFile;
       //resultForm1.TIPropertyGrid1.TIObject := myobject;
+      resultForm1.TIRadioGroup1.Link.SetObjectAndProperty(aktSetupFile,'installerid');
+      //resultForm1.TIComboBox1.Link.TIObject := aktSetupFile;
+      //resultForm1.TIComboBox1.Link.TIPropertyName:= aktSetupFile.istallerId;
       resultForm1.Visible := True;
     end
     else

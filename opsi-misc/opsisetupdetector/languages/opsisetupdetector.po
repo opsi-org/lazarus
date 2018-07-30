@@ -173,10 +173,6 @@ msgstr ""
 msgid "32BitOnly - fix"
 msgstr ""
 
-#: tresultform1.edit_installer_type.text
-msgid "Edit_installer_type"
-msgstr ""
-
 #: tresultform1.edit_opsiproductid.hint
 msgctxt "TRESULTFORM1.EDIT_OPSIPRODUCTID.HINT"
 msgid "Set opsi packet product ID (A-Z, 0-9,-_ no blanks)"
@@ -363,6 +359,10 @@ msgstr ""
 
 #: tresultform1.tabsheetdefault.caption
 msgid "Default"
+msgstr ""
+
+#: tresultform1.tiradiogroup1.caption
+msgid "TIRadioGroup1"
 msgstr ""
 
 #: tresultform1.toolbar1.caption

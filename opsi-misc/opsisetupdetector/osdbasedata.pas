@@ -97,7 +97,7 @@ type
     procedure SetSetupFileNamePath(const AValue: cardinal);
     *)
     procedure SetArchitecture(const AValue: TArchitecture);
-    procedure SetSetupFileNamePath(const AValue: string);
+    procedure SetSetupFullFileName(const AValue: string);
     (*
     procedure SetSetupFileNamePath(const AValue: string);
     procedure SetSetupFileNamePath(const AValue: string);
@@ -107,8 +107,8 @@ type
     procedure SetSetupFileNamePath(const AValue: TStringList);
     procedure SetSetupFileNamePath(const AValue: string);
     *)
-        property setupFileNamePath: string read FsetupFileNamePath write FsetupFileNamePath;
-    property setupFileName: string read FsetupFileName write FsetupFileName;
+    property setupFileNamePath: string read FsetupFileNamePath;
+    property setupFileName: string read FsetupFileName write SetSetupFullFileName;
     property setupFileSize: cardinal  read FsetupFileSize write FsetupFileSize;
     property architecture: TArchitecture  read Farchitecture write Farchitecture;
     property msiId: string  read FmsiId write FmsiId;
@@ -162,8 +162,8 @@ type
     property licenserequired: boolean read Flicenserequired write Flicenserequired;
   public
     { public declarations }
-    constructor Create;
-    destructor Destroy;
+    //constructor Create;
+    //destructor Destroy;
   end;
 
   TProductData = record
@@ -258,10 +258,11 @@ begin
   //Log('SetArchitecture '+GetEnumProp(Self,'Architecture'));
 end;
 
-procedure TSetupFile.SetSetupFileNamePath(const AValue: string);
+procedure TSetupFile.SetSetupFullFileName(const AValue: string);
 begin
-  if AValue=SetupFileNamePath then exit;
-  FSetupFileNamePath:=AValue;
+  if AValue=SetupFileNamePath+PathDelim+setupFileName then exit;
+  FSetupFileNamePath:=ExtractFileDir(AValue);
+  FsetupFileName:= ExtractFileName(AValue);
   //Log('SetSetupFileNamePath '+MyString);
 end;
 
@@ -273,7 +274,7 @@ begin
   FmsiId := '';
   FmstFileNamePath := '';
   FmstFileName := '';
-  FmsiFullFileName := '';
+  //FmsiFullFileName := '';
   FistallerId := stUnknown;
   Fmarkerlist.Clear;
   Farchitecture:=aUnknown;
@@ -337,13 +338,13 @@ procedure initSetupFile(var mysetupfile : TSetupFile);
 begin
   with mysetupfile do
   begin
-    setupFileNamePath := '';
+    //setupFileNamePath := '';
     setupFileName := '';
     setupFileSize := 0;
     msiId := '';
     mstFileNamePath := '';
     mstFileName := '';
-    msiFullFileName := '';
+    //msiFullFileName := '';
     istallerId := stUnknown;
     markerlist.Clear;
     architecture:=aUnknown;
@@ -356,7 +357,7 @@ var
 begin
   for i := 0 to 1 do
     initSetupFile(aktProduct.SetupFiles[i]);
-  with aktProduct do
+  with aktProduct.produktpropties do
   begin
     comment := '';
     description := '';

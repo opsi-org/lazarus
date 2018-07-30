@@ -252,11 +252,11 @@ begin
 
   mysetup.istallerId := installerId;
   mysetup.setupFileName := ExtractFileName(myfilename);
-  mysetup.setupFileNamePath := ExtractFileDir(myfilename);
+  //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
 
   product := ExtractFileNameWithoutExt(mysetup.setupFileName);
-  aktProduct.productId := getPacketIDShort(product);
-  aktProduct.productName := product;
+  aktProduct.produktpropties.productId := getPacketIDShort(product);
+  aktProduct.produktpropties.productName := product;
 
   fsize := fileutil.FileSize(myfilename);
   fsizemb := fsize / (1024 * 1024);
@@ -306,11 +306,11 @@ begin
   else
   begin
     mysetup.istallerId := stMsi;
-    resultForm1.Edit_installer_type.Text := installerToInstallerstr(stMsi);
+    //resultForm1.Edit_installer_type.Text := installerToInstallerstr(stMsi);
     //resultForm1.EditMSI_file.Text := myfilename;
     mywrite('........');
     mysetup.setupFileName := ExtractFileName(myfilename);
-    mysetup.setupFileNamePath := ExtractFileDir(myfilename);
+    //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
     (*
     resultForm1.EditMSI_ProductName.Text := '';
     resultForm1.EditMSI_ProductVersion.Text := '';
@@ -328,7 +328,7 @@ begin
       sSearch := 'ProductName: ';
       iPos := Pos(sSearch, myoutlines.Strings[i]);
       if (iPos <> 0) then
-        aktProduct.productName :=
+        aktProduct.produktpropties.productName :=
           Copy(myoutlines.Strings[i], Length(sSearch) + 1,
           Length(myoutlines.Strings[i]) - Length(sSearch));
 
@@ -347,8 +347,8 @@ begin
           Length(myoutlines.Strings[i]) - Length(sSearch));
 
     end;
-    if aktproduct.productversion = '' then
-      aktproduct.productversion :=mysetup.softwareversion;
+    if aktproduct.produktpropties.productversion = '' then
+      aktproduct.produktpropties.productversion :=mysetup.softwareversion;
   end;
   myoutlines.Free;
     {$ENDIF WINDOWS}
@@ -473,10 +473,10 @@ begin
   mywrite('........');
   if AppVerName <> '' then
   begin
-    aktProduct.productId := getPacketIDShort(AppName);
-    aktProduct.productName := AppName;
+    aktProduct.produktpropties.productId := getPacketIDShort(AppName);
+    aktProduct.produktpropties.productName := AppName;
   end;
-  aktProduct.productversion := AppVersion;
+  aktProduct.produktpropties.productversion := AppVersion;
   mysetup.SoftwareVersion:=AppVersion;
   if AppVerName = '' then
   begin
@@ -494,7 +494,7 @@ begin
   DefaultDirName := StringReplace(DefaultDirName, '{sd}', '%Systemdrive%',
     [rfReplaceAll, rfIgnoreCase]);
   mysetup.installDirectory := DefaultDirName;
-  aktProduct.comment := AppVerName;
+  aktProduct.produktpropties.comment := AppVerName;
 
 
   mywrite('get_inno_info finished');
@@ -551,7 +551,7 @@ begin
   Mywrite('Analyzing InstallShield+MSI Setup: ' + myfilename);
   mysetup.istallerId := stInstallShieldMSI;
   mysetup.setupFileName := ExtractFileName(myfilename);
-  mysetup.setupFileNamePath := ExtractFileDir(myfilename);
+  //&mysetup.setupFileNamePath := ExtractFileDir(myfilename);
 
   if DirectoryExists(opsitmp) then
     DeleteDirectory(opsitmp, True);
@@ -654,7 +654,7 @@ begin
   Mywrite('Analyzing AdvancedMSI Setup: ' + myfilename);
   mysetup.istallerId := stAdvancedMSI;
   mysetup.setupFileName := ExtractFileName(myfilename);
-  mysetup.setupFileNamePath := ExtractFileDir(myfilename);
+  //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
 
   {$IFDEF WINDOWS}
   // extract and analyze MSI from setup

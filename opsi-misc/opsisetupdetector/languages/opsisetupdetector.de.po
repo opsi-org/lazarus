@@ -174,10 +174,6 @@ msgstr "Lizenz pflichtig"
 msgid "32BitOnly - fix"
 msgstr ""
 
-#: tresultform1.edit_installer_type.text
-msgid "Edit_installer_type"
-msgstr ""
-
 #: tresultform1.edit_opsiproductid.hint
 #, fuzzy
 msgctxt "tresultform1.edit_opsiproductid.hint"
@@ -374,6 +370,10 @@ msgstr "Analysiere"
 
 #: tresultform1.tabsheetdefault.caption
 msgid "Default"
+msgstr ""
+
+#: tresultform1.tiradiogroup1.caption
+msgid "TIRadioGroup1"
 msgstr ""
 
 #: tresultform1.toolbar1.caption
