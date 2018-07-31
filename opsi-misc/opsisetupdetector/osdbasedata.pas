@@ -78,13 +78,15 @@ type
   private
     FsetupFileNamePath: string;
     FsetupFileName: string;
+    FsetupFullFileName: string;
     FsetupFileSize: cardinal;     // MB
     Farchitecture: TArchitecture;
     FmsiId: string;
+    FMstFullFileName: string;
     FmstFileNamePath: string;
     FmstFileName: string;
     FmsiFullFileName: string;
-    FistallerId: TKnownInstaller;
+    FinstallerId: TKnownInstaller;
     FrequiredSpace: cardinal;      // MB
     FinstallDirectory: string;
     Fmarkerlist: TStringList;
@@ -98,6 +100,7 @@ type
     *)
     procedure SetArchitecture(const AValue: TArchitecture);
     procedure SetSetupFullFileName(const AValue: string);
+    procedure SetMstFullFileName(const AValue: string);
     (*
     procedure SetSetupFileNamePath(const AValue: string);
     procedure SetSetupFileNamePath(const AValue: string);
@@ -108,14 +111,16 @@ type
     procedure SetSetupFileNamePath(const AValue: string);
     *)
     property setupFileNamePath: string read FsetupFileNamePath;
-    property setupFileName: string read FsetupFileName write SetSetupFullFileName;
+    property setupFileName: string read FsetupFileName write FsetupFileName;
+    property setupFullFileName: string read FsetupFullFileName write SetSetupFullFileName;
     property setupFileSize: cardinal  read FsetupFileSize write FsetupFileSize;
     property architecture: TArchitecture  read Farchitecture write Farchitecture;
     property msiId: string  read FmsiId write FmsiId;
+    property mstFullFileName: string read FMstFullFileName write SetMstFullFileName;
     property mstFileNamePath:  string read FmstFileNamePath write FmstFileNamePath;
     property mstFileName: string  read FmstFileName write FmstFileName;
     property msiFullFileName:  string read FmsiFullFileName write FmsiFullFileName;
-    property istallerId: TKnownInstaller  read FistallerId write FistallerId;
+    property installerId: TKnownInstaller  read FinstallerId write FinstallerId;
     property requiredSpace: cardinal  read FrequiredSpace write FrequiredSpace;
     property installDirectory: string  read FinstallDirectory write FinstallDirectory;
     property markerlist: TStringList  read Fmarkerlist write Fmarkerlist;
@@ -260,11 +265,22 @@ end;
 
 procedure TSetupFile.SetSetupFullFileName(const AValue: string);
 begin
-  if AValue=SetupFileNamePath+PathDelim+setupFileName then exit;
+  if AValue=SetupFullFileName then exit;
+  FsetupFullFileName:= AValue;
   FSetupFileNamePath:=ExtractFileDir(AValue);
   FsetupFileName:= ExtractFileName(AValue);
   //Log('SetSetupFileNamePath '+MyString);
 end;
+
+procedure TSetupFile.SetMstFullFileName(const AValue: string);
+begin
+  if AValue=mstFullFileName then exit;
+  FmstFullFileName:= AValue;
+  FmstFileNamePath:=ExtractFileDir(AValue);
+  FmstFileName:= ExtractFileName(AValue);
+  //Log('SetSetupFileNamePath '+MyString);
+end;
+
 
 procedure TSetupFile.initValues;
 begin
@@ -272,10 +288,11 @@ begin
   FsetupFileName := '';
   FsetupFileSize := 0;
   FmsiId := '';
+  FmstFullFileName := '';
   FmstFileNamePath := '';
   FmstFileName := '';
   //FmsiFullFileName := '';
-  FistallerId := stUnknown;
+  FinstallerId := stUnknown;
   Fmarkerlist.Clear;
   Farchitecture:=aUnknown;
 end;
@@ -345,7 +362,7 @@ begin
     mstFileNamePath := '';
     mstFileName := '';
     //msiFullFileName := '';
-    istallerId := stUnknown;
+    installerId := stUnknown;
     markerlist.Clear;
     architecture:=aUnknown;
   end;
@@ -356,7 +373,11 @@ var
   i : integer;
 begin
   for i := 0 to 1 do
+  begin
+    aktProduct.SetupFiles[i] := TSetupFile.Create;
     initSetupFile(aktProduct.SetupFiles[i]);
+  end;
+  aktProduct.produktpropties := TProductProperies.Create;
   with aktProduct.produktpropties do
   begin
     comment := '';
@@ -464,6 +485,6 @@ begin
   architectureModeList.Add('selectable');
 
 
-  aktSetupFile := TSetupFile.Create;
+  //aktSetupFile := TSetupFile.Create;
 
 end.

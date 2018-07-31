@@ -30,18 +30,18 @@ const
   SetupType_7zip = '7zip';
 
 
-procedure get_aktProduct_general_info(installerId: TKnownInstaller; myfilename: string; mysetup : TSetupFile);
-procedure get_msi_info(myfilename: string; mysetup : TSetupFile);
-procedure get_inno_info(myfilename: string; mysetup : TSetupFile);
-procedure get_installshield_info(myfilename: string; mysetup : TSetupFile);
-procedure get_installshieldmsi_info(myfilename: string; mysetup : TSetupFile);
-procedure get_advancedmsi_info(myfilename: string; mysetup : TSetupFile);
-procedure get_nsis_info(myfilename: string; mysetup : TSetupFile);
+procedure get_aktProduct_general_info(installerId: TKnownInstaller; myfilename: string; var mysetup : TSetupFile);
+procedure get_msi_info(myfilename: string; var mysetup : TSetupFile);
+procedure get_inno_info(myfilename: string; var mysetup : TSetupFile);
+procedure get_installshield_info(myfilename: string; var mysetup : TSetupFile);
+procedure get_installshieldmsi_info(myfilename: string; var mysetup : TSetupFile);
+procedure get_advancedmsi_info(myfilename: string; var mysetup : TSetupFile);
+procedure get_nsis_info(myfilename: string; var mysetup : TSetupFile);
 //procedure stringsgrep(myfilename: string; verbose,skipzero: boolean);
-procedure Analyze(FileName: string; mysetup : TSetupFile);
+procedure Analyze(FileName: string; var mysetup : TSetupFile);
 procedure grepmsi(instring: string);
 //procedure grepmarker(instring: string);
-function analyze_binary(myfilename: string; verbose, skipzero: boolean; mysetup : TSetupFile): TKnownInstaller;
+function analyze_binary(myfilename: string; verbose, skipzero: boolean; var mysetup : TSetupFile): TKnownInstaller;
 function getPacketIDfromFilename(str: string): string;
 function getPacketIDShort(str: string): string;
 function ExtractVersion(str: string): string;
@@ -142,14 +142,14 @@ begin
     Result := instring;
 end;
 
-procedure analyze_binstr(instring: string; mysetup : TSetupFile);
+procedure analyze_binstr(instring: string; var mysetup : TSetupFile);
 var
   lowerstring: string;
   counter: integer;
-  aktId, foundId: TKnownInstaller;
+  aktId: TKnownInstaller;
 
 
-  procedure check_line_for_installer(line: string; instId: TKnownInstaller; mysetup : TSetupFile);
+  procedure check_line_for_installer(line: string; instId: TKnownInstaller; var mysetup : TSetupFile);
   var
     i: integer;
   begin
@@ -228,7 +228,7 @@ begin
     mywrite(instring);
 end;
 
-procedure get_aktProduct_general_info(installerId: TKnownInstaller; myfilename: string; mysetup : TSetupFile);
+procedure get_aktProduct_general_info(installerId: TKnownInstaller; myfilename: string; var mysetup : TSetupFile);
 var
   myoutlines: TStringList;
   myreport: string;
@@ -250,8 +250,8 @@ begin
   installerstr := installerToInstallerstr(installerId);
   Mywrite('Analyzing ' + installerstr + ' Setup: ' + myfilename);
 
-  mysetup.istallerId := installerId;
-  mysetup.setupFileName := ExtractFileName(myfilename);
+  mysetup.installerId := installerId;
+  mysetup.setupFullFileName := myfilename;
   //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
 
   product := ExtractFileNameWithoutExt(mysetup.setupFileName);
@@ -280,7 +280,7 @@ end; //get_aktProduct_general_info
 
 
 
-procedure get_msi_info(myfilename: string; mysetup : TSetupFile);
+procedure get_msi_info(myfilename: string; var mysetup : TSetupFile);
 var
   mycommand: string;
   myoutlines: TStringList;
@@ -305,11 +305,11 @@ begin
   end
   else
   begin
-    mysetup.istallerId := stMsi;
+    mysetup.installerId := stMsi;
     //resultForm1.Edit_installer_type.Text := installerToInstallerstr(stMsi);
     //resultForm1.EditMSI_file.Text := myfilename;
     mywrite('........');
-    mysetup.setupFileName := ExtractFileName(myfilename);
+    mysetup.setupFullFileName := myfilename;
     //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
     (*
     resultForm1.EditMSI_ProductName.Text := '';
@@ -357,12 +357,12 @@ begin
   Mywrite('Finished Analyzing MSI: ' + myfilename);
   resultForm1.PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
   if showMSI then
-    resultForm1.PageControl1.ActivePage := resultForm1.TabSheetDefault;
+    resultForm1.PageControl1.ActivePage := resultForm1.TabSheetSetup1;
   //resultForm1.PageControl1.ActivePage := resultForm1.TabSheetMSI;
 end;
 
 
-procedure get_inno_info(myfilename: string; mysetup : TSetupFile);
+procedure get_inno_info(myfilename: string; var mysetup : TSetupFile);
 var
   myoutlines: TStringList;
   myreport: string;
@@ -505,14 +505,14 @@ begin
   Mywrite('Finished analyzing Inno-Setup');
   showInnoSetup := True;
   tmpint := resultForm1.PageControl1.ActivePageIndex;
-  tmpint := resultForm1.TabSheetDefault.PageIndex;
+  tmpint := resultForm1.TabSheetSetup1.PageIndex;
   if showInnoSetup then
-    resultForm1.PageControl1.ActivePage := resultForm1.TabSheetDefault;
+    resultForm1.PageControl1.ActivePage := resultForm1.TabSheetSetup1;
   //resultForm1.PageControl1.ActivePage := resultForm1.TabSheetInnoSetup;
 end;
 
 
-procedure get_installshield_info(myfilename: string; mysetup : TSetupFile);
+procedure get_installshield_info(myfilename: string; var mysetup : TSetupFile);
 var
   product: string;
 
@@ -523,33 +523,24 @@ begin
 
   if showInstallShield then
     //resultForm1.PageControl1.ActivePage := resultForm1.TabSheetInstallShield;
-    resultForm1.PageControl1.ActivePage := resultForm1.TabSheetDefault;
+    resultForm1.PageControl1.ActivePage := resultForm1.TabSheetSetup1;
 end;
 
 
-procedure get_installshieldmsi_info(myfilename: string; mysetup : TSetupFile);
+procedure get_installshieldmsi_info(myfilename: string; var mysetup : TSetupFile);
 var
   myoutlines: TStringList;
   myreport: string;
   myexitcode: integer;
-  i: integer;
-  fsize: int64;
-  fsizemb, rsizemb: double;
-  sMsiSize: string;
-  sFileSize: string;
-  sReqSize: string;
-  sSearch: string;
-  iPos: integer;
-  destDir: string;
   myBatch: string;
   product: string;
   FileInfo: TSearchRec;
-  exefile: string;
+  //exefile: string;
   smask: string;
 
 begin
   Mywrite('Analyzing InstallShield+MSI Setup: ' + myfilename);
-  mysetup.istallerId := stInstallShieldMSI;
+  mysetup.installerId := stInstallShieldMSI;
   mysetup.setupFileName := ExtractFileName(myfilename);
   //&mysetup.setupFileNamePath := ExtractFileDir(myfilename);
 
@@ -625,34 +616,26 @@ begin
 
   if showInstallShieldMSI then
     //resultForm1.PageControl1.ActivePage := resultForm1.TabSheetInstallShieldMSI;
-    resultForm1.PageControl1.ActivePage := resultForm1.TabSheetDefault;
+    resultForm1.PageControl1.ActivePage := resultForm1.TabSheetSetup1;
 
 end;
 
 
 
-procedure get_advancedmsi_info(myfilename: string; mysetup : TSetupFile);
+procedure get_advancedmsi_info(myfilename: string; var mysetup : TSetupFile);
 var
   myoutlines: TStringList;
   myreport: string;
   myexitcode: integer;
-  i: integer;
-  fsize: int64;
-  fsizemb, rsizemb: double;
-  sFileSize: string;
-  sReqSize: string;
-  sSearch: string;
-  iPos: integer;
-  destDir: string;
   myBatch: string;
   product: string;
   FileInfo: TSearchRec;
-  exefile: string;
+  //exefile: string;
   smask: string;
 
 begin
   Mywrite('Analyzing AdvancedMSI Setup: ' + myfilename);
-  mysetup.istallerId := stAdvancedMSI;
+  mysetup.installerId := stAdvancedMSI;
   mysetup.setupFileName := ExtractFileName(myfilename);
   //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
 
@@ -715,14 +698,14 @@ begin
 
   if showAdvancedMSI then
     //resultForm1.PageControl1.ActivePage := resultForm1.TabSheetAdvancedMSI;
-    resultForm1.PageControl1.ActivePage := resultForm1.TabSheetDefault;
+    resultForm1.PageControl1.ActivePage := resultForm1.TabSheetSetup1;
 
 end;
 
 
 
 
-procedure get_nsis_info(myfilename: string; mysetup : TSetupFile);
+procedure get_nsis_info(myfilename: string; var mysetup : TSetupFile);
 var
   myoutlines: TStringList;
   myreport: string;
@@ -740,27 +723,12 @@ var
 
 begin
   Mywrite('Analyzing NSIS-Setup:');
-
-  (*
-  fsize := fileutil.FileSize(myfilename);
-  fsizemb := fsize / (1024 * 1024);
-  sFileSize := FormatFloat('##0.0', fsizemb) + ' MB';
-  sReqSize := FormatFloat('###0', fsizemb * 6) + ' MB';
-
-  if fsizemb < 1 then
-    fsizemb := 1;
-
-  mywrite('Setup file size is: ' + sFileSize);
-  mywrite('Estimated required space is: ' + sReqSize);
-  mywrite('........');
-
-  *)
   mywrite('get_nsis_info finished');
   mywrite('NSIS (Nullsoft Install System) detected');
 
   if showNsis then
     //resultForm1.PageControl1.ActivePage := resultForm1.TabSheetNsis;
-    resultForm1.PageControl1.ActivePage := resultForm1.TabSheetDefault;
+    resultForm1.PageControl1.ActivePage := resultForm1.TabSheetSetup1;
 end;
 
 procedure get_7zip_info(myfilename: string);
@@ -770,101 +738,8 @@ begin
   Mywrite('Analyzing 7zip-Setup:');
 end;
 
-(*
-procedure stringsgrep(myfilename: string; verbose,skipzero: boolean);
-var
-  FileStream: TFileStream;
-  CharIn: char;
-  MinLen, MaxLen: integer;
-  CurrValue: string;
-  i: integer;
-  size: longint;
-  buffer: array [0 .. 2047] of char;
-  charsread: longint;
-  msg: string;
 
-begin
-  MinLen := 5;
-  MaxLen := 512;
-  CurrValue := '';
-  setupType := '';
-
-  mywrite('------------------------------------');
-  Mywrite('Analyzing: ' + myfilename);
-  msg := 'stringsgrep started (verbose:';
-  if verbose=true then msg := msg+'true' else msg:=msg+'false';
-  msg := msg + ', skipzero:';
-  if skipzero=true then msg := msg+'true' else msg:=msg+'false';
-  msg := msg+')';
-  mywrite(msg);
-  FileStream := TFileStream.Create(myfilename, fmOpenRead);
-  markerEmbeddedMSI := false;
-  markerInstallShield := false;
-  try
-    size := FileStream.Size;
-    while (size > 0)  and (setupType = '') do
-    begin
-      charsread := FileStream.Read(buffer, sizeof(buffer));
-      size := size - charsread;
-
-      for i := 0 to charsread - 1 do
-      begin
-        charIn := buffer[i];
-
-        // skipzero: handling of wide strings by ignoring zero byte
-        if skipzero and (CharIn = #0) then
-           continue;
-
-        // if (CharIn in [' ','A'..'Z','a'..'z','0'..'9','<','>','.','/','_','-']) and (Length(CurrValue) < MaxLen) then
-        if (CharIn in [#32..#126]) and (Length(CurrValue) < MaxLen) then
-          CurrValue := CurrValue + CharIn;
-
-        if (Length(CurrValue) < MaxLen) and (i < charsread-1) then
-           continue;
-
-        if (Length(CurrValue) >= MinLen) then
-        begin
-          if '.exe' = lowercase(ExtractFileExt(myfilename)) then
-          begin
-            if verbose then
-            begin
-               grepexe(CurrValue);
-               logdatei.log(CurrValue,LLDebug);
-            end
-            else
-               grepmarker(CurrValue);
-          end
-          else if '.msi' = lowercase(ExtractFileExt(myfilename)) then
-          begin
-            setupType := setupType_MSI;
-            if verbose then
-               grepmsi(CurrValue);
-          end
-          else
-          begin
-            grepexe(CurrValue);
-            grepmsi(CurrValue);
-            logdatei.log(CurrValue,LLDebug);
-          end;
-          CurrValue := '';
-        end;
-      end;
-
-    end;
-    msg := 'stringsgrep completed (verbose:';
-    if verbose=true then msg := msg+'true' else msg:=msg+'false';
-    msg := msg + ', skipzero:';
-    if skipzero=true then msg := msg+'true' else msg:=msg+'false';
-    msg := msg+')';
-    mywrite(msg);
-    mywrite('------------------------------------');
-  finally
-    FileStream.Free;
-  end;
-end;
-*)
-
-function analyze_markerlist(mysetup : TSetupFile): TKnownInstaller;
+function analyze_markerlist(var mysetup : TSetupFile): TKnownInstaller;
 var
   i: integer;
 
@@ -900,7 +775,7 @@ begin
   end;
 end;
 
-function analyze_binary(myfilename: string; verbose, skipzero: boolean; mysetup : TSetupFile): TKnownInstaller;
+function analyze_binary(myfilename: string; verbose, skipzero: boolean; var mysetup : TSetupFile): TKnownInstaller;
 var
   FileStream: TFileStream;
   CharIn: char;
@@ -1009,7 +884,7 @@ begin
 end;
 
 
-procedure Analyze(FileName: string; mysetup : TSetupFile);
+procedure Analyze(FileName: string; var mysetup : TSetupFile);
 var
   setupType: TKnownInstaller;
   verbose: boolean = True;

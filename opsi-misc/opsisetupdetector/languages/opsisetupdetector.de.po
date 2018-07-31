@@ -117,6 +117,28 @@ msgstr "&Ende"
 msgid "Close application"
 msgstr "Anwendung schliessen"
 
+#: tresultform1.bitbtnopenfile.caption
+#, fuzzy
+msgctxt "tresultform1.bitbtnopenfile.caption"
+msgid "Open Setup File"
+msgstr "&Datei öffnen"
+
+#: tresultform1.bitbtnopenfile1.caption
+#, fuzzy
+msgctxt "tresultform1.bitbtnopenfile1.caption"
+msgid "Open Setup File"
+msgstr "&Datei öffnen"
+
+#: tresultform1.bitbtnopenmst1.caption
+msgctxt "tresultform1.bitbtnopenmst1.caption"
+msgid "Open MST File"
+msgstr ""
+
+#: tresultform1.bitbtnopenmst2.caption
+msgctxt "tresultform1.bitbtnopenmst2.caption"
+msgid "Open MST File"
+msgstr ""
+
 #: tresultform1.bitbtn_packetbasedir.caption
 msgctxt "TRESULTFORM1.BITBTN_PACKETBASEDIR.CAPTION"
 msgid "Select"
@@ -165,18 +187,20 @@ msgctxt "tresultform1.checkboxusemst.caption"
 msgid "use MST File"
 msgstr "MST Datei"
 
+#: tresultform1.checkboxusemst1.caption
+#, fuzzy
+msgctxt "tresultform1.checkboxusemst1.caption"
+msgid "use MST File"
+msgstr "MST Datei"
+
 #: tresultform1.checkbox_default_license.caption
 msgctxt "tresultform1.checkbox_default_license.caption"
 msgid "License required"
 msgstr "Lizenz pflichtig"
 
-#: tresultform1.comboboxarchmode.text
-msgid "32BitOnly - fix"
-msgstr ""
-
-#: tresultform1.edit_opsiproductid.hint
+#: tresultform1.edit_opsiproductid1.hint
 #, fuzzy
-msgctxt "tresultform1.edit_opsiproductid.hint"
+msgctxt "tresultform1.edit_opsiproductid1.hint"
 msgid "Set opsi packet product ID (A-Z, 0-9,-_ no blanks)"
 msgstr "opsi packet product ID (A-Z, 0-9,-_ keine Leerzeichen)"
 
@@ -185,25 +209,19 @@ msgctxt "TRESULTFORM1.EDIT_PACKETBASEDIR.HINT"
 msgid "Base Directory to build opsi packets"
 msgstr "opsi Basis-Verzeichnis, in dem das neue Paket gebaut werden soll"
 
-#: tresultform1.edit_productname.hint
+#: tresultform1.edit_productname1.hint
 #, fuzzy
 #| msgid "Product Name as detected from MSI file"
-msgctxt "tresultform1.edit_productname.hint"
+msgctxt "tresultform1.edit_productname1.hint"
 msgid "opsi product name (name of package file)"
 msgstr "Produkt Name (ermittelt aus der MSI-Datei)"
 
-#: tresultform1.edit_productversion.hint
+#: tresultform1.edit_productversion1.hint
 #, fuzzy
 #| msgid "Product version as detected from MSI file"
-msgctxt "tresultform1.edit_productversion.hint"
+msgctxt "tresultform1.edit_productversion1.hint"
 msgid "Product version"
 msgstr "Produkt Version (ermittelt aus der MSI-Datei)"
-
-#: tresultform1.edit_requiredspace.hint
-#, fuzzy
-msgctxt "tresultform1.edit_requiredspace.hint"
-msgid "Estimated disk space required for this installation"
-msgstr "geschätzter erforderlicher Plattenplatz für die Installation"
 
 #: tresultform1.fileexit.caption
 msgctxt "tresultform1.fileexit.caption"
@@ -226,7 +244,7 @@ msgstr "Die zu analysierende Setup-Datei auswählen"
 
 #: tresultform1.label50.caption
 msgctxt "tresultform1.label50.caption"
-msgid "Setup File (32Bit)"
+msgid "Setup File"
 msgstr ""
 
 #: tresultform1.label51.caption
@@ -268,29 +286,39 @@ msgctxt "tresultform1.label57.caption"
 msgid "Description"
 msgstr "Beschreibung"
 
+#: tresultform1.label58.caption
+#, fuzzy
+msgctxt "tresultform1.label58.caption"
+msgid "Product Version"
+msgstr "Produkt Version"
+
 #: tresultform1.label59.caption
-msgid "Package Version"
+msgctxt "tresultform1.label59.caption"
+msgid "MsiId"
 msgstr ""
 
 #: tresultform1.label60.caption
 msgctxt "tresultform1.label60.caption"
-msgid "MST File (32Bit)"
+msgid "MST File "
 msgstr ""
 
 #: tresultform1.label61.caption
 msgctxt "tresultform1.label61.caption"
-msgid "MST File (64Bit)"
+msgid "Package Version"
 msgstr ""
 
 #: tresultform1.label62.caption
+msgctxt "tresultform1.label62.caption"
 msgid "Detected Setup type:"
 msgstr ""
 
 #: tresultform1.label63.caption
+msgctxt "tresultform1.label63.caption"
 msgid "Architecture Mode"
 msgstr ""
 
 #: tresultform1.label64.caption
+msgctxt "tresultform1.label64.caption"
 msgid "Setup file size"
 msgstr ""
 
@@ -298,10 +326,75 @@ msgstr ""
 msgid "Advice"
 msgstr ""
 
+#: tresultform1.label66.caption
+#, fuzzy
+msgctxt "tresultform1.label66.caption"
+msgid "opsi Product ID"
+msgstr "opsi Product ID"
+
 #: tresultform1.label67.caption
+#, fuzzy
+#| msgid "Product Name"
 msgctxt "tresultform1.label67.caption"
-msgid "Setup File (64Bit)"
+msgid "opsi Product Name"
+msgstr "Produkt Name"
+
+#: tresultform1.label68.caption
+msgctxt "tresultform1.label68.caption"
+msgid "Detected Setup type:"
 msgstr ""
+
+#: tresultform1.label69.caption
+msgctxt "tresultform1.label69.caption"
+msgid "Architecture Mode"
+msgstr ""
+
+#: tresultform1.label70.caption
+msgctxt "tresultform1.label70.caption"
+msgid "MST File "
+msgstr ""
+
+#: tresultform1.label71.caption
+msgctxt "tresultform1.label71.caption"
+msgid "Product Version"
+msgstr ""
+
+#: tresultform1.label72.caption
+#, fuzzy
+msgctxt "tresultform1.label72.caption"
+msgid "Required Space"
+msgstr "erforderlich"
+
+#: tresultform1.label73.caption
+#, fuzzy
+#| msgid "not used"
+msgctxt "tresultform1.label73.caption"
+msgid "InstallDir"
+msgstr "Größe MSI"
+
+#: tresultform1.label74.caption
+msgctxt "tresultform1.label74.caption"
+msgid "Setup file size"
+msgstr ""
+
+#: tresultform1.label75.caption
+#, fuzzy
+#| msgid "Product Version"
+msgctxt "tresultform1.label75.caption"
+msgid "opsi Product ID"
+msgstr "Produkt Version"
+
+#: tresultform1.label76.caption
+msgctxt "tresultform1.label76.caption"
+msgid "opsi Product Name"
+msgstr ""
+
+#: tresultform1.label77.caption
+#, fuzzy
+#| msgid "Product Version"
+msgctxt "tresultform1.label77.caption"
+msgid "Setup File"
+msgstr "Produkt Version"
 
 #: tresultform1.label9.caption
 msgctxt "tresultform1.label9.caption"
@@ -360,7 +453,7 @@ msgid "open"
 msgstr ""
 
 #: tresultform1.tabsheet1.caption
-msgid "Setupfile1"
+msgid "proped"
 msgstr ""
 
 #: tresultform1.tabsheetanalyze.caption
@@ -368,12 +461,16 @@ msgctxt "TRESULTFORM1.TABSHEETANALYZE.CAPTION"
 msgid "Analyze"
 msgstr "Analysiere"
 
-#: tresultform1.tabsheetdefault.caption
-msgid "Default"
+#: tresultform1.tabsheetproduct.caption
+msgid "Product"
 msgstr ""
 
-#: tresultform1.tiradiogroup1.caption
-msgid "TIRadioGroup1"
+#: tresultform1.tabsheetsetup1.caption
+msgid "Setup1"
+msgstr ""
+
+#: tresultform1.tabsheetsetup2.caption
+msgid "Setup2"
 msgstr ""
 
 #: tresultform1.toolbar1.caption
