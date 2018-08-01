@@ -10,40 +10,11 @@ uses
 
 type
 
-  TMyEnum = (MyEnum1,MyEnum2,MyEnum3);
-  TMyRange = 3..7;
-
-
-  TMyClass = class(TPersistent)
-  private
-    FMyEnum: TMyEnum;
-    FMyRange: TMyRange;
-    FMyString: string;
-    FMyList: TStringlist;
-    //procedure SetMyEnum(const AValue: TMyEnum);
-    //procedure SetMyRange(const AValue: TMyRange);
-    //procedure SetMyString(const AValue: string);
-  published
-    (*
-    property MyString: string read FMyString write SetMyString;
-    property MyEnum: TMyEnum read FMyEnum write SetMyEnum;
-    property MyRange: TMyRange read FMyRange write SetMyRange;
-    *)
-    property MyString: string read FMyString write FMyString;
-    property MyEnum: TMyEnum read FMyEnum write FMyEnum;
-    property MyRange: TMyRange read FMyRange write FMyRange;
-    property MyList: TStringlist read FMyList write FMyList;
-  public
-    constructor Create;
-    destructor Destroy;
-  end;
-
-  (***********************************)
   TArchitecture = (a32, a64, aUnknown);
   TArchitectureMode = (am32only_fix, am64only_fix, amBoth_fix, amSystemSpecific_fix,
     amSelectable);
   TKnownInstaller = (stAdvancedMSI, stInno, stInstallShield, stInstallShieldMSI,
-    stMsi, stNsis, st7zip, stUnknown);
+    stMsi, stNsis, st7zip, st7zipsfx, stUnknown);
 
 
   TdetectInstaller = function(parent: TClass; markerlist: TStringList): boolean;
@@ -188,9 +159,10 @@ var
   architectureModeList: TStringList;
   installerArray: TInstallers;
   counter: integer;
-  myobject : TMyClass;
+  //myobject : TMyClass;
 
 implementation
+(*
 { TMyClass }
 
 constructor TMyClass.Create;
@@ -204,7 +176,7 @@ begin
   FMyList.Free;
   inherited;
 end;
-
+*)
 (*
 procedure TMyClass.SetMyEnum(const AValue: TMyEnum);
 begin
@@ -286,15 +258,19 @@ procedure TSetupFile.initValues;
 begin
   FsetupFileNamePath := '';
   FsetupFileName := '';
+  FsetupFullFileName := '';
   FsetupFileSize := 0;
+  Farchitecture:=aUnknown;
   FmsiId := '';
   FmstFullFileName := '';
   FmstFileNamePath := '';
   FmstFileName := '';
-  //FmsiFullFileName := '';
+  FmsiFullFileName := '';
   FinstallerId := stUnknown;
+  FrequiredSpace:=0;
+  FinstallDirectory :='';
   Fmarkerlist.Clear;
-  Farchitecture:=aUnknown;
+  FSoftwareVersion:='';
 end;
 
 // TProductProperies **********************************
@@ -350,34 +326,40 @@ begin
       Result := True;
   end;
 end;
-
+(*
 procedure initSetupFile(var mysetupfile : TSetupFile);
 begin
   with mysetupfile do
   begin
-    //setupFileNamePath := '';
+    setupFullFileName := '';
+    setupFileNamePath := '';
     setupFileName := '';
     setupFileSize := 0;
     msiId := '';
     mstFileNamePath := '';
     mstFileName := '';
-    //msiFullFileName := '';
+    msiFullFileName := '';
     installerId := stUnknown;
     markerlist.Clear;
     architecture:=aUnknown;
+    requiredSpace := 0;
+    installDirectory:='';
+    SoftwareVersion :='';
   end;
 end;
-
+*)
 procedure initaktproduct;
 var
   i : integer;
 begin
   for i := 0 to 1 do
   begin
-    aktProduct.SetupFiles[i] := TSetupFile.Create;
-    initSetupFile(aktProduct.SetupFiles[i]);
+    if not Assigned(aktProduct.SetupFiles[i]) then
+      aktProduct.SetupFiles[i] := TSetupFile.Create;
+    aktProduct.SetupFiles[i].initValues;
   end;
-  aktProduct.produktpropties := TProductProperies.Create;
+  if not Assigned(aktProduct.produktpropties) then
+    aktProduct.produktpropties := TProductProperies.Create;
   with aktProduct.produktpropties do
   begin
     comment := '';
@@ -405,6 +387,9 @@ begin
   knownInstallerList.Add('MSI');
   knownInstallerList.Add('NSIS');
   knownInstallerList.Add('7zip');
+  knownInstallerList.Add('7zipsfx');
+  knownInstallerList.Add('Unknown');
+
 
   for counter := 0 to knownInstallerList.Count - 1 do
   begin
@@ -439,6 +424,7 @@ begin
   installerArray[integer(stNsis)].uninstall_waitforprocess := 'Au_.exe';
   installerArray[integer(stNsis)].patterns.Add('Nullsoft.NSIS.exehead');
   installerArray[integer(stNsis)].patterns.Add('nullsoft install system');
+  installerArray[integer(stNsis)].patterns.Add('http://nsis.sf.net/');
   installerArray[integer(stNsis)].link :=
     'http://nsis.sourceforge.net/Docs/Chapter3.html#installerusage';
   installerArray[integer(stNsis)].comment := '';
@@ -476,6 +462,36 @@ begin
     'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
   installerArray[integer(stInstallShield)].comment := '';
   installerArray[integer(stInstallShield)].detected := @detectedbypatternwithor;
+  // 7zip
+  with installerArray[integer(st7zip)] do
+  begin
+    description := '7zip installer';
+    silentsetup := '/S';
+    unattendedsetup := '/S';
+    silentuninstall := '/S';
+    unattendeduninstall := '/S';
+    uninstall_waitforprocess := '';
+    patterns.Add('7-Zip Installer');
+    link :=     'https://www.7-zip.org/faq.html';
+    comment := '';
+    detected := @detectedbypatternwithor;
+  end;
+  // st7zipsfx
+  with installerArray[integer(st7zipsfx)] do
+  begin
+    description := '7zipsfx installer';
+    silentsetup := '-y';
+    unattendedsetup := '-y';
+    silentuninstall := '-y';
+    unattendeduninstall := '-y';
+    uninstall_waitforprocess := '';
+    patterns.Add('7zipsfx');
+    link :=  'https://sourceforge.net/p/s-zipsfxbuilder/code/ci/master/tree/7zSD_EN.chm';
+    comment := '';
+    detected := @detectedbypatternwithor;
+  end;
+
+
 
   architectureModeList := TStringList.Create;
   architectureModeList.Add('32BitOnly - fix');

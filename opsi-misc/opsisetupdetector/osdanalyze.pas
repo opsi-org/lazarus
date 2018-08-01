@@ -155,8 +155,7 @@ var
   begin
     for i := 0 to installerArray[integer(instId)].patterns.Count - 1 do
     begin
-      LogDatei.log('check: ' + line + ' for: ' +
-        installerToInstallerstr(instId), LLDebug2);
+      //LogDatei.log('check: ' + line + ' for: ' + installerToInstallerstr(instId), LLDebug2);
       if 0 <> pos(LowerCase(installerArray[integer(instId)].patterns[i]), line) then
       begin
         //aktProduct.markerlist.add(installerArray[integer(instId)].Name + IntToStr(i));
@@ -406,17 +405,17 @@ begin
   destfile := ExtractFileName(destfile);
   installScriptISS := destDir + DirectorySeparator + 'install_script.iss';
 
-  Mywrite('extract install_script.iss from ' + myfilename + ' to');
-  Mywrite(installScriptISS);
+  LogDatei.log('extract install_script.iss from ' + myfilename + ' to',LLInfo);
+  LogDatei.log(installScriptISS,LLInfo);
   // myCommand := 'cmd.exe /C "'+ExtractFilePath(paramstr(0))+'innounp.exe" -x -a -y -d"'+destDir+'" ' +myfilename+ ' install_script.iss';
-  myCommand := '"' + ExtractFilePath(ParamStr(0)) + 'innounp.exe" -x -a -y -d"' +
+  myCommand := '"' + ExtractFilePath(ParamStr(0)) +'utils'+PathDelim+ 'innounp.exe" -x -a -y -d"' +
     destDir + '" ' + myfilename + ' install_script.iss';
   Mywrite(myCommand);
 
   if not RunCommandAndCaptureOut(myCommand, True, myoutlines, myreport,
     SW_SHOWMINIMIZED, myexitcode) then
   begin
-    mywrite('Failed to extract install_script.iss: ' + myreport);
+    LogDatei.log('Failed to extract install_script.iss: ' + myreport,LLerror);
   end
   else
   begin
@@ -438,14 +437,14 @@ begin
 
 
 
-      mywrite('........');
-      mywrite('[Setup]');
+      LogDatei.log('Here comes the iss file: '+installScriptISS,LLInfo);
+      LogDatei.log('[Setup]',LLDebug);
       ReadLn(fISS, issLine);
 
       // read until next section (usually [Files])
       while (not EOF(fISS)) and (Length(issLine) > 0) and (issLine[1] <> '[') do
       begin
-        mywrite(issLine);
+        LogDatei.log(issLine,LLDebug);
         if (0 < pos('appname=', lowercase(issLine))) then
           AppName := Copy(issLine, pos('=', issLine) + 1, 100);
         if (0 < pos('appversion=', lowercase(issLine))) then
@@ -470,7 +469,7 @@ begin
     end;
   end;
     {$ENDIF WINDOWS}
-  mywrite('........');
+  LogDatei.log('........',LLDebug);
   if AppVerName <> '' then
   begin
     aktProduct.produktpropties.productId := getPacketIDShort(AppName);
@@ -486,15 +485,48 @@ begin
       AppVerName := AppName + AppVersion;
   end;
   if (0 < pos('x64', lowercase(ArchitecturesInstallIn64BitMode))) then
-    DefaultDirName := StringReplace(DefaultDirName, '{pf}',
-      '%ProgramFilesSysnativeDir%', [rfReplaceAll, rfIgnoreCase])
+  begin
+    if pos('{pf}',DefaultDirName) > 0 then
+    begin
+      DefaultDirName := StringReplace(DefaultDirName, '{pf}',
+        '%ProgramFilesSysnativeDir%', [rfReplaceAll, rfIgnoreCase])
+    end;
+    if pos('{code:DefDirRoot}',DefaultDirName) > 0 then
+    begin
+      DefaultDirName := StringReplace(DefaultDirName, '{code:DefDirRoot}',
+        '%ProgramFilesSysnativeDir%', [rfReplaceAll, rfIgnoreCase])
+    end;
+  end
   else
-    DefaultDirName := StringReplace(DefaultDirName, '{pf}',
-      '%ProgramFiles32Dir%', [rfReplaceAll, rfIgnoreCase]);
+  begin
+    if pos('{pf}',DefaultDirName) > 0 then
+    begin
+      DefaultDirName := StringReplace(DefaultDirName, '{pf}',
+        '%ProgramFiles32Dir%', [rfReplaceAll, rfIgnoreCase])
+    end;
+    if pos('{code:DefDirRoot}',DefaultDirName) > 0 then
+    begin
+      DefaultDirName := StringReplace(DefaultDirName, '{code:DefDirRoot}',
+        '%ProgramFiles32Dir%', [rfReplaceAll, rfIgnoreCase])
+    end;
+  end;
   DefaultDirName := StringReplace(DefaultDirName, '{sd}', '%Systemdrive%',
     [rfReplaceAll, rfIgnoreCase]);
   mysetup.installDirectory := DefaultDirName;
   aktProduct.produktpropties.comment := AppVerName;
+
+  with mysetup do
+  begin
+    LogDatei.log('installDirectory: '+installDirectory,LLDebug);
+    LogDatei.log('SoftwareVersion: '+SoftwareVersion,LLDebug);
+  end;
+  with aktProduct.produktpropties do
+  begin
+    LogDatei.log('comment: '+comment,LLDebug);
+    LogDatei.log('productId: '+productId,LLDebug);
+    LogDatei.log('productName: '+productName,LLDebug);
+    LogDatei.log('productversion: '+productversion,LLDebug);
+  end;
 
 
   mywrite('get_inno_info finished');
@@ -503,12 +535,8 @@ begin
 
 
   Mywrite('Finished analyzing Inno-Setup');
-  showInnoSetup := True;
-  tmpint := resultForm1.PageControl1.ActivePageIndex;
-  tmpint := resultForm1.TabSheetSetup1.PageIndex;
-  if showInnoSetup then
+  if showgui then
     resultForm1.PageControl1.ActivePage := resultForm1.TabSheetSetup1;
-  //resultForm1.PageControl1.ActivePage := resultForm1.TabSheetInnoSetup;
 end;
 
 
@@ -541,7 +569,7 @@ var
 begin
   Mywrite('Analyzing InstallShield+MSI Setup: ' + myfilename);
   mysetup.installerId := stInstallShieldMSI;
-  mysetup.setupFileName := ExtractFileName(myfilename);
+  mysetup.setupFullFileName := myfilename;
   //&mysetup.setupFileNamePath := ExtractFileDir(myfilename);
 
   if DirectoryExists(opsitmp) then
@@ -557,7 +585,7 @@ begin
 
   myoutlines := TStringList.Create;
   // myBatch := 'cmd.exe /C '+ExtractFilePath(paramstr(0))+'extractMSI.cmd "'+myfilename+'"'; // (does not work with spaces in EXE path)
-  myBatch := '"' + ExtractFilePath(ParamStr(0)) + 'extractMSI.cmd" "' + myfilename + '"';
+  myBatch := '"' + ExtractFilePath(ParamStr(0)) +'utils'+PathDelim+  'extractMSI.cmd" "' + myfilename + '"';
   // dropped cmd.exe
   Mywrite(myBatch);
   Mywrite('!! PLEASE WAIT !!');
@@ -584,8 +612,8 @@ begin
       ;
 
       // analyze the extracted MSI
-      resultform1.OpenDialog1.InitialDir := opsitmp;
-      resultform1.OpenDialog1.FileName := FileInfo.Name;
+      //resultform1.OpenDialog1.InitialDir := opsitmp;
+      //resultform1.OpenDialog1.FileName := FileInfo.Name;
       get_msi_info(mysetup.msiFullFileName,mysetup);
 
        (*
@@ -599,8 +627,8 @@ begin
        *)
 
       // reset OpenDialog parameters
-      resultform1.OpenDialog1.InitialDir := myfilename;
-      resultform1.OpenDialog1.FileName := ExtractFileNameWithoutExt(myfilename);
+      //resultform1.OpenDialog1.InitialDir := myfilename;
+      //resultform1.OpenDialog1.FileName := ExtractFileNameWithoutExt(myfilename);
 
       // resultform1.setDefaultParametersMSI;
     end
@@ -756,7 +784,7 @@ begin
       else
       begin
         LogDatei.log('Check markerlist for: ' + installerToInstallerstr(
-          TKnownInstaller(i)), LLdebug);
+          TKnownInstaller(i)), LLInfo);
         if installerArray[i].detected(TClass(installerArray[i]),
           mysetup.markerlist) then
         begin
@@ -842,7 +870,7 @@ begin
             begin
               //grepexe(CurrValue);
               analyze_binstr(CurrValue,mysetup);
-              logdatei.log(CurrValue, LLDebug);
+              logdatei.log(CurrValue, LLDebug2);
             end
             else
               analyze_binstr(CurrValue, mysetup);
@@ -851,13 +879,16 @@ begin
           begin
             setupType := stMsi;
             if verbose then
+            begin
               grepmsi(CurrValue);
+              logdatei.log(CurrValue, LLDebug2);
+            end;
           end
           else
           begin
             grepexe(CurrValue);
             grepmsi(CurrValue);
-            logdatei.log(CurrValue, LLDebug);
+            logdatei.log(CurrValue, LLDebug2);
           end;
           CurrValue := '';
         end;
@@ -911,7 +942,8 @@ begin
       stInstallShieldMSI: get_installshieldmsi_info(FileName,mysetup);
       stAdvancedMSI: get_advancedmsi_info(FileName,mysetup);
       st7zip: get_7zip_info(FileName);
-      stMsi: ;
+      stMsi: ;// nothing to do here - see above;
+      st7zipsfx: logdatei.log('no getinfo implemeted for: '+installerToInstallerstr(setupType), LLWarning);
       stUnknown: LogDatei.log(
           'Unknown Installer after Analyze.', LLcritical);
       else

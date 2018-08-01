@@ -305,11 +305,14 @@ object resultForm1: TresultForm1
       Height = 625
       Top = 1
       Width = 1351
-      ActivePage = TabSheetSetup2
+      ActivePage = TabSheetStart
       Align = alClient
-      TabIndex = 2
+      TabIndex = 0
       TabOrder = 1
       OnChange = PageControl1Change
+      object TabSheetStart: TTabSheet
+        Caption = 'Start'
+      end
       object TabSheetAnalyze: TTabSheet
         Caption = 'Analyze'
         ClientHeight = 597
@@ -446,29 +449,33 @@ object resultForm1: TresultForm1
             FlowStyle = fsLeftRightTopBottom
             TabOrder = 0
             object Label62: TLabel
-              Left = 17
-              Height = 15
-              Top = 7
-              Width = 109
+              Left = 18
+              Height = 21
+              Top = 8
+              Width = 142
               Anchors = []
               BorderSpacing.Left = 10
-              BorderSpacing.Around = 3
+              BorderSpacing.Around = 4
               Caption = 'Detected Setup type:'
+              Font.Height = -16
               ParentColor = False
+              ParentFont = False
             end
             object Label63: TLabel
-              Left = 266
-              Height = 15
-              Top = 7
-              Width = 99
+              Left = 302
+              Height = 21
+              Top = 8
+              Width = 128
               Anchors = []
               BorderSpacing.Left = 20
-              BorderSpacing.Around = 3
+              BorderSpacing.Around = 4
               Caption = 'Architecture Mode'
+              Font.Height = -16
               ParentColor = False
+              ParentFont = False
             end
             object TIComboBoxInstaller1: TTIComboBox
-              Left = 141
+              Left = 176
               Height = 23
               Top = 6
               Width = 100
@@ -481,7 +488,7 @@ object resultForm1: TresultForm1
               TabOrder = 0
             end
             object TIComboBoxArch1: TTIComboBox
-              Left = 380
+              Left = 446
               Height = 23
               Top = 6
               Width = 100
@@ -523,18 +530,20 @@ object resultForm1: TresultForm1
             FlowStyle = fsLeftRightTopBottom
             TabOrder = 1
             object Label50: TLabel
-              Left = 17
-              Height = 15
-              Top = 7
-              Width = 51
+              Left = 18
+              Height = 21
+              Top = 8
+              Width = 68
               Anchors = []
               BorderSpacing.Left = 10
-              BorderSpacing.Around = 3
+              BorderSpacing.Around = 4
               Caption = 'Setup File'
+              Font.Height = -16
               ParentColor = False
+              ParentFont = False
             end
             object TIEditSetupfile1: TTIEdit
-              Left = 83
+              Left = 102
               Height = 27
               Top = 6
               Width = 800
@@ -546,7 +555,7 @@ object resultForm1: TresultForm1
               TabOrder = 0
             end
             object BitBtnOpenFile: TBitBtn
-              Left = 888
+              Left = 907
               Height = 30
               Top = 4
               Width = 133
@@ -598,7 +607,7 @@ object resultForm1: TresultForm1
           object FlowPanelMST: TFlowPanel
             Left = 1
             Height = 41
-            Top = 208
+            Top = 91
             Width = 1341
             Align = alTop
             Alignment = taLeftJustify
@@ -630,17 +639,20 @@ object resultForm1: TresultForm1
             FlowStyle = fsLeftRightTopBottom
             TabOrder = 2
             object Label60: TLabel
-              Left = 14
-              Height = 15
-              Top = 4
-              Width = 48
+              Left = 18
+              Height = 21
+              Top = 8
+              Width = 67
               Anchors = []
               BorderSpacing.Left = 10
-              Caption = 'MST File '
+              BorderSpacing.Around = 4
+              Caption = 'MST File  '
+              Font.Height = -16
               ParentColor = False
+              ParentFont = False
             end
             object CheckBoxUseMst: TCheckBox
-              Left = 1039
+              Left = 1066
               Height = 19
               Top = 7
               Width = 86
@@ -652,7 +664,7 @@ object resultForm1: TresultForm1
               TabOrder = 0
             end
             object BitBtnOpenMst1: TBitBtn
-              Left = 879
+              Left = 906
               Height = 30
               Top = 4
               Width = 127
@@ -701,7 +713,7 @@ object resultForm1: TresultForm1
               TabOrder = 1
             end
             object TIEditMstFile1: TTIEdit
-              Left = 74
+              Left = 101
               Height = 27
               Top = 6
               Width = 800
@@ -716,7 +728,7 @@ object resultForm1: TresultForm1
           object FlowPanel4: TFlowPanel
             Left = 1
             Height = 41
-            Top = 372
+            Top = 255
             Width = 1341
             Align = alTop
             Alignment = taLeftJustify
@@ -747,27 +759,33 @@ object resultForm1: TresultForm1
             FlowStyle = fsLeftRightTopBottom
             TabOrder = 3
             object Label56: TLabel
-              Left = 14
-              Height = 15
-              Top = 4
-              Width = 81
+              Left = 18
+              Height = 21
+              Top = 8
+              Width = 106
               Anchors = []
               BorderSpacing.Left = 10
+              BorderSpacing.Around = 4
               Caption = 'opsi Product ID'
+              Font.Height = -16
               ParentColor = False
+              ParentFont = False
             end
             object Label51: TLabel
-              Left = 339
-              Height = 15
-              Top = 4
-              Width = 102
+              Left = 376
+              Height = 21
+              Top = 8
+              Width = 133
               Anchors = []
               BorderSpacing.Left = 30
+              BorderSpacing.Around = 4
               Caption = 'opsi Product Name'
+              Font.Height = -16
               ParentColor = False
+              ParentFont = False
             end
             object TIEditProductIdS1: TTIEdit
-              Left = 107
+              Left = 140
               Height = 27
               Top = 6
               Width = 200
@@ -779,7 +797,7 @@ object resultForm1: TresultForm1
               TabOrder = 0
             end
             object TIEditProductNameS1: TTIEdit
-              Left = 453
+              Left = 525
               Height = 27
               Top = 6
               Width = 400
@@ -794,7 +812,7 @@ object resultForm1: TresultForm1
           object FlowPanel5: TFlowPanel
             Left = 1
             Height = 41
-            Top = 290
+            Top = 173
             Width = 1341
             Align = alTop
             Alignment = taLeftJustify
@@ -815,17 +833,20 @@ object resultForm1: TresultForm1
             FlowStyle = fsLeftRightTopBottom
             TabOrder = 4
             object Label52: TLabel
-              Left = 14
-              Height = 15
-              Top = 4
-              Width = 83
+              Left = 18
+              Height = 21
+              Top = 8
+              Width = 110
               Anchors = []
               BorderSpacing.Left = 10
+              BorderSpacing.Around = 4
               Caption = 'Product Version'
+              Font.Height = -16
               ParentColor = False
+              ParentFont = False
             end
             object TIEditProdVersion1: TTIEdit
-              Left = 109
+              Left = 144
               Height = 27
               Top = 6
               Width = 200
@@ -840,7 +861,7 @@ object resultForm1: TresultForm1
           object FlowPanelMsiId: TFlowPanel
             Left = 1
             Height = 41
-            Top = 249
+            Top = 132
             Width = 1341
             Align = alTop
             Alignment = taLeftJustify
@@ -862,17 +883,20 @@ object resultForm1: TresultForm1
             FlowStyle = fsLeftRightTopBottom
             TabOrder = 5
             object Label53: TLabel
-              Left = 14
-              Height = 15
-              Top = 4
-              Width = 29
+              Left = 18
+              Height = 21
+              Top = 8
+              Width = 66
               Anchors = []
               BorderSpacing.Left = 10
-              Caption = 'MsiId'
+              BorderSpacing.Around = 4
+              Caption = 'MsiId       '
+              Font.Height = -16
               ParentColor = False
+              ParentFont = False
             end
             object TIEditMsiId1: TTIEdit
-              Left = 55
+              Left = 100
               Height = 27
               Top = 6
               Width = 400
@@ -887,7 +911,7 @@ object resultForm1: TresultForm1
           object FlowPanel7: TFlowPanel
             Left = 1
             Height = 41
-            Top = 331
+            Top = 214
             Width = 1341
             Align = alTop
             Alignment = taLeftJustify
@@ -928,49 +952,58 @@ object resultForm1: TresultForm1
             FlowStyle = fsLeftRightTopBottom
             TabOrder = 6
             object Label54: TLabel
-              Left = 329
-              Height = 15
-              Top = 4
-              Width = 81
+              Left = 292
+              Height = 21
+              Top = 8
+              Width = 135
               Anchors = []
               BorderSpacing.Left = 30
-              Caption = 'Required Space'
+              BorderSpacing.Around = 4
+              Caption = 'Required Space MB'
+              Font.Height = -16
               ParentColor = False
+              ParentFont = False
             end
             object Label55: TLabel
-              Left = 654
-              Height = 15
-              Top = 4
-              Width = 46
+              Left = 679
+              Height = 21
+              Top = 8
+              Width = 62
               Anchors = []
               BorderSpacing.Left = 30
+              BorderSpacing.Around = 4
               Caption = 'InstallDir'
+              Font.Height = -16
               ParentColor = False
+              ParentFont = False
             end
             object Label64: TLabel
-              Left = 14
-              Height = 15
-              Top = 4
-              Width = 71
+              Left = 18
+              Height = 21
+              Top = 8
+              Width = 122
               Anchors = []
               BorderSpacing.Left = 10
-              Caption = 'Setup file size'
+              BorderSpacing.Around = 4
+              Caption = 'Setup file size MB'
+              Font.Height = -16
               ParentColor = False
+              ParentFont = False
             end
             object TIEditSetupFileSizeMB1: TTIEdit
-              Left = 97
+              Left = 156
               Height = 27
               Top = 6
-              Width = 200
+              Width = 100
               Anchors = []
               BorderSpacing.Left = 10
               BorderSpacing.Around = 2
               BorderSpacing.InnerBorder = 2
-              Constraints.MinWidth = 200
+              Constraints.MinWidth = 100
               TabOrder = 0
             end
             object TIEditRequiredSizeMB1: TTIEdit
-              Left = 422
+              Left = 443
               Height = 27
               Top = 6
               Width = 200
@@ -978,35 +1011,21 @@ object resultForm1: TresultForm1
               BorderSpacing.Left = 10
               BorderSpacing.Around = 2
               BorderSpacing.InnerBorder = 2
-              Constraints.MinWidth = 200
+              Constraints.MinWidth = 100
               TabOrder = 1
             end
             object TIEditInstallDir1: TTIEdit
-              Left = 712
+              Left = 757
               Height = 27
               Top = 6
-              Width = 200
+              Width = 400
               Anchors = []
               BorderSpacing.Left = 10
               BorderSpacing.Around = 2
               BorderSpacing.InnerBorder = 2
-              Constraints.MinWidth = 200
+              Constraints.MinWidth = 400
               TabOrder = 2
             end
-          end
-          object FlowPanelSetup64: TFlowPanel
-            Left = 1
-            Height = 117
-            Top = 91
-            Width = 1341
-            Align = alTop
-            Alignment = taLeftJustify
-            AutoWrap = False
-            BorderWidth = 3
-            ControlList = <>
-            FlowLayout = tlTop
-            FlowStyle = fsLeftRightTopBottom
-            TabOrder = 7
           end
         end
       end
@@ -1047,29 +1066,33 @@ object resultForm1: TresultForm1
           FlowStyle = fsLeftRightTopBottom
           TabOrder = 0
           object Label68: TLabel
-            Left = 17
-            Height = 15
-            Top = 7
-            Width = 109
+            Left = 18
+            Height = 21
+            Top = 8
+            Width = 142
             Anchors = []
             BorderSpacing.Left = 10
-            BorderSpacing.Around = 3
+            BorderSpacing.Around = 4
             Caption = 'Detected Setup type:'
+            Font.Height = -16
             ParentColor = False
+            ParentFont = False
           end
           object Label69: TLabel
-            Left = 266
-            Height = 15
-            Top = 7
-            Width = 99
+            Left = 302
+            Height = 21
+            Top = 8
+            Width = 128
             Anchors = []
             BorderSpacing.Left = 20
-            BorderSpacing.Around = 3
+            BorderSpacing.Around = 4
             Caption = 'Architecture Mode'
+            Font.Height = -16
             ParentColor = False
+            ParentFont = False
           end
           object TIComboBoxInstaller2: TTIComboBox
-            Left = 141
+            Left = 176
             Height = 23
             Top = 6
             Width = 100
@@ -1082,7 +1105,7 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object TIComboBoxArch2: TTIComboBox
-            Left = 380
+            Left = 446
             Height = 23
             Top = 6
             Width = 100
@@ -1130,17 +1153,20 @@ object resultForm1: TresultForm1
           FlowStyle = fsLeftRightTopBottom
           TabOrder = 1
           object Label70: TLabel
-            Left = 14
-            Height = 15
-            Top = 4
-            Width = 48
+            Left = 18
+            Height = 21
+            Top = 8
+            Width = 63
             Anchors = []
             BorderSpacing.Left = 10
+            BorderSpacing.Around = 4
             Caption = 'MST File '
+            Font.Height = -16
             ParentColor = False
+            ParentFont = False
           end
           object CheckBoxUseMst1: TCheckBox
-            Left = 1039
+            Left = 1062
             Height = 19
             Top = 7
             Width = 86
@@ -1152,7 +1178,7 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object BitBtnOpenMst2: TBitBtn
-            Left = 879
+            Left = 902
             Height = 30
             Top = 4
             Width = 127
@@ -1201,7 +1227,7 @@ object resultForm1: TresultForm1
             TabOrder = 1
           end
           object TIEditMstFile2: TTIEdit
-            Left = 74
+            Left = 97
             Height = 27
             Top = 6
             Width = 800
@@ -1238,17 +1264,20 @@ object resultForm1: TresultForm1
           FlowStyle = fsLeftRightTopBottom
           TabOrder = 2
           object Label59: TLabel
-            Left = 14
-            Height = 15
-            Top = 4
-            Width = 29
+            Left = 18
+            Height = 21
+            Top = 8
+            Width = 38
             Anchors = []
             BorderSpacing.Left = 10
+            BorderSpacing.Around = 4
             Caption = 'MsiId'
+            Font.Height = -16
             ParentColor = False
+            ParentFont = False
           end
           object TIEditMsiId2: TTIEdit
-            Left = 55
+            Left = 72
             Height = 27
             Top = 6
             Width = 400
@@ -1284,17 +1313,20 @@ object resultForm1: TresultForm1
           FlowStyle = fsLeftRightTopBottom
           TabOrder = 3
           object Label71: TLabel
-            Left = 14
-            Height = 15
-            Top = 4
-            Width = 83
+            Left = 18
+            Height = 21
+            Top = 8
+            Width = 110
             Anchors = []
             BorderSpacing.Left = 10
+            BorderSpacing.Around = 4
             Caption = 'Product Version'
+            Font.Height = -16
             ParentColor = False
+            ParentFont = False
           end
           object TIEditProdVersion2: TTIEdit
-            Left = 109
+            Left = 144
             Height = 27
             Top = 6
             Width = 200
@@ -1350,69 +1382,78 @@ object resultForm1: TresultForm1
           FlowStyle = fsLeftRightTopBottom
           TabOrder = 4
           object Label72: TLabel
-            Left = 329
-            Height = 15
-            Top = 4
-            Width = 81
+            Left = 292
+            Height = 21
+            Top = 8
+            Width = 108
             Anchors = []
             BorderSpacing.Left = 30
+            BorderSpacing.Around = 4
             Caption = 'Required Space'
+            Font.Height = -16
             ParentColor = False
+            ParentFont = False
           end
           object Label73: TLabel
-            Left = 654
-            Height = 15
-            Top = 4
-            Width = 46
+            Left = 552
+            Height = 21
+            Top = 8
+            Width = 62
             Anchors = []
             BorderSpacing.Left = 30
+            BorderSpacing.Around = 4
             Caption = 'InstallDir'
+            Font.Height = -16
             ParentColor = False
+            ParentFont = False
           end
           object Label74: TLabel
-            Left = 14
-            Height = 15
-            Top = 4
-            Width = 71
+            Left = 18
+            Height = 21
+            Top = 8
+            Width = 122
             Anchors = []
             BorderSpacing.Left = 10
-            Caption = 'Setup file size'
+            BorderSpacing.Around = 4
+            Caption = 'Setup file size MB'
+            Font.Height = -16
             ParentColor = False
+            ParentFont = False
           end
           object TIEditSetupFileSizeMB2: TTIEdit
-            Left = 97
+            Left = 156
             Height = 27
             Top = 6
-            Width = 200
+            Width = 100
             Anchors = []
             BorderSpacing.Left = 10
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
-            Constraints.MinWidth = 200
+            Constraints.MinWidth = 100
             TabOrder = 0
           end
           object TIEditRequiredSizeMB2: TTIEdit
-            Left = 422
+            Left = 416
             Height = 27
             Top = 6
-            Width = 200
+            Width = 100
             Anchors = []
             BorderSpacing.Left = 10
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
-            Constraints.MinWidth = 200
+            Constraints.MinWidth = 100
             TabOrder = 1
           end
           object TIEditInstallDir2: TTIEdit
-            Left = 712
+            Left = 630
             Height = 27
             Top = 6
-            Width = 200
+            Width = 400
             Anchors = []
             BorderSpacing.Left = 10
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
-            Constraints.MinWidth = 200
+            Constraints.MinWidth = 400
             TabOrder = 2
           end
         end
@@ -1450,27 +1491,33 @@ object resultForm1: TresultForm1
           FlowStyle = fsLeftRightTopBottom
           TabOrder = 5
           object Label75: TLabel
-            Left = 14
-            Height = 15
-            Top = 4
-            Width = 81
+            Left = 18
+            Height = 21
+            Top = 8
+            Width = 106
             Anchors = []
             BorderSpacing.Left = 10
+            BorderSpacing.Around = 4
             Caption = 'opsi Product ID'
+            Font.Height = -16
             ParentColor = False
+            ParentFont = False
           end
           object Label76: TLabel
-            Left = 339
-            Height = 15
-            Top = 4
-            Width = 102
+            Left = 376
+            Height = 21
+            Top = 8
+            Width = 133
             Anchors = []
             BorderSpacing.Left = 30
+            BorderSpacing.Around = 4
             Caption = 'opsi Product Name'
+            Font.Height = -16
             ParentColor = False
+            ParentFont = False
           end
           object TIEditProductIdS2: TTIEdit
-            Left = 107
+            Left = 140
             Height = 27
             Top = 6
             Width = 200
@@ -1482,7 +1529,7 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object TIEditProductNameS2: TTIEdit
-            Left = 453
+            Left = 525
             Height = 27
             Top = 6
             Width = 400
@@ -1523,18 +1570,20 @@ object resultForm1: TresultForm1
           FlowStyle = fsLeftRightTopBottom
           TabOrder = 6
           object Label77: TLabel
-            Left = 17
-            Height = 15
-            Top = 7
-            Width = 51
+            Left = 18
+            Height = 21
+            Top = 8
+            Width = 68
             Anchors = []
             BorderSpacing.Left = 10
-            BorderSpacing.Around = 3
+            BorderSpacing.Around = 4
             Caption = 'Setup File'
+            Font.Height = -16
             ParentColor = False
+            ParentFont = False
           end
           object TIEditSetupfile2: TTIEdit
-            Left = 83
+            Left = 102
             Height = 27
             Top = 6
             Width = 800
@@ -1546,7 +1595,7 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object BitBtnOpenFile1: TBitBtn
-            Left = 888
+            Left = 907
             Height = 30
             Top = 4
             Width = 133
@@ -1594,25 +1643,6 @@ object resultForm1: TresultForm1
             OnClick = BitBtnOpenFileClick
             TabOrder = 1
           end
-        end
-      end
-      object TabSheet1: TTabSheet
-        Caption = 'proped'
-        ClientHeight = 597
-        ClientWidth = 1343
-        object TIPropertyGrid1: TTIPropertyGrid
-          Left = 0
-          Height = 597
-          Top = 0
-          Width = 292
-          Align = alLeft
-          CheckboxForBoolean = False
-          DefaultValueFont.Color = clWindowText
-          Filter = [tkInteger, tkChar, tkEnumeration, tkFloat, tkSet, tkSString, tkLString, tkAString, tkWString, tkVariant, tkArray, tkRecord, tkWChar, tkBool, tkInt64, tkQWord, tkUString, tkUChar, tkHelper, tkFile]
-          Indent = 12
-          NameFont.Color = clWindowText
-          TIObject = FlowPanel1
-          ValueFont.Color = clMaroon
         end
       end
       object TabSheetProduct: TTabSheet
@@ -1962,6 +1992,9 @@ object resultForm1: TresultForm1
     object MenuItemAbout: TMenuItem
       Caption = '&About'
       OnClick = MenuItemAboutClick
+    end
+    object MenuItemConfig: TMenuItem
+      Caption = 'Configuration'
     end
   end
   object OpenDialogSetupfile: TOpenDialog

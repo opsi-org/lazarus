@@ -250,12 +250,12 @@ msgstr ""
 
 #: tresultform1.label53.caption
 msgctxt "tresultform1.label53.caption"
-msgid "MsiId"
+msgid "MsiId       "
 msgstr ""
 
 #: tresultform1.label54.caption
 msgctxt "TRESULTFORM1.LABEL54.CAPTION"
-msgid "Required Space"
+msgid "Required Space MB"
 msgstr ""
 
 #: tresultform1.label55.caption
@@ -285,7 +285,7 @@ msgstr ""
 
 #: tresultform1.label60.caption
 msgctxt "tresultform1.label60.caption"
-msgid "MST File "
+msgid "MST File  "
 msgstr ""
 
 #: tresultform1.label61.caption
@@ -305,7 +305,7 @@ msgstr ""
 
 #: tresultform1.label64.caption
 msgctxt "tresultform1.label64.caption"
-msgid "Setup file size"
+msgid "Setup file size MB"
 msgstr ""
 
 #: tresultform1.label65.caption
@@ -354,7 +354,7 @@ msgstr ""
 
 #: tresultform1.label74.caption
 msgctxt "tresultform1.label74.caption"
-msgid "Setup file size"
+msgid "Setup file size MB"
 msgstr ""
 
 #: tresultform1.label75.caption
@@ -383,6 +383,10 @@ msgstr ""
 
 #: tresultform1.menuitemabout.caption
 msgid "&About"
+msgstr ""
+
+#: tresultform1.menuitemconfig.caption
+msgid "Configuration"
 msgstr ""
 
 #: tresultform1.menuitemfile.caption
@@ -428,10 +432,6 @@ msgstr ""
 msgid "open"
 msgstr ""
 
-#: tresultform1.tabsheet1.caption
-msgid "proped"
-msgstr ""
-
 #: tresultform1.tabsheetanalyze.caption
 msgctxt "TRESULTFORM1.TABSHEETANALYZE.CAPTION"
 msgid "Analyze"
@@ -447,6 +447,10 @@ msgstr ""
 
 #: tresultform1.tabsheetsetup2.caption
 msgid "Setup2"
+msgstr ""
+
+#: tresultform1.tabsheetstart.caption
+msgid "Start"
 msgstr ""
 
 #: tresultform1.toolbar1.caption

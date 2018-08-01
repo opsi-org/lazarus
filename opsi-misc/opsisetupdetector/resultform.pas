@@ -110,7 +110,6 @@ type
     FlowPanelMsiId: TFlowPanel;
     FlowPanel7: TFlowPanel;
     FlowPanelSetup33: TFlowPanel;
-    FlowPanelSetup64: TFlowPanel;
     FileHelp: TMenuItem;
     Label57: TLabel;
     Label58: TLabel;
@@ -143,13 +142,14 @@ type
     Label56: TLabel;
     MemoDefault: TMemo;
     MemoDescription: TMemo;
+    MenuItemConfig: TMenuItem;
     OpenDialogSetupfile: TOpenDialog;
     PanelDefault: TPanel;
     SBtnOpen: TSpeedButton;
     SBtnExit: TSpeedButton;
     SpinEditPackageVersion1: TSpinEdit;
     StatusBar1: TStatusBar;
-    TabSheet1: TTabSheet;
+    TabSheetStart: TTabSheet;
     TabSheetSetup2: TTabSheet;
     TabSheetProduct: TTabSheet;
     TabSheetSetup1: TTabSheet;
@@ -208,7 +208,6 @@ type
     TIEditSetupfile1: TTIEdit;
     TIEditMstFile1: TTIEdit;
     TIEditSetupFileSizeMB2: TTIEdit;
-    TIPropertyGrid1: TTIPropertyGrid;
     ToolBar1: TToolBar;
     mysetup1: TSetupFile;
 
@@ -412,7 +411,7 @@ begin
       TIEditRequiredSizeMB1.Link.SetObjectAndProperty(SetupFiles[0], 'requiredSpace');
       TIEditRequiredSizeMB2.Link.SetObjectAndProperty(SetupFiles[1], 'requiredSpace');
       TIEditInstallDir1.Link.SetObjectAndProperty(SetupFiles[0], 'installDirectory');
-      TIEditInstallDir1.Link.SetObjectAndProperty(SetupFiles[1], 'installDirectory');
+      TIEditInstallDir2.Link.SetObjectAndProperty(SetupFiles[1], 'installDirectory');
       TIEditProductIdS1.Link.SetObjectAndProperty(produktpropties, 'productId');
       TIEditProductIdS2.Link.SetObjectAndProperty(produktpropties, 'productId');
       TIEditProductNameS1.Link.SetObjectAndProperty(produktpropties, 'productName');
@@ -904,17 +903,14 @@ begin
     am32only_fix:
     begin
       FlowPanelSetup32.Enabled := True;
-      FlowPanelSetup64.Enabled := False;
     end;
     am64only_fix:
     begin
       FlowPanelSetup32.Enabled := False;
-      FlowPanelSetup64.Enabled := True;
     end;
     amBoth_fix, amSystemSpecific_fix, amSelectable:
     begin
       FlowPanelSetup32.Enabled := True;
-      FlowPanelSetup64.Enabled := True;
     end;
   end;
 end;
@@ -1095,8 +1091,9 @@ begin
   OpenDialog1.FilterIndex := 1;   // setup
   if OpenDialog1.Execute then
   begin
+    initaktproduct;
+    PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0]);
-    //write_data_to_tabdefault;
   end;
 end;
 
