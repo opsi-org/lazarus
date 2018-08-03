@@ -1,5 +1,11 @@
 [changelog]
 
+opsi-notifier  4.1.0.3
+
+  * try to make memo transparent
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri, 03 Aug 2018:15:00:00 +0200
+
 opsi-notifier  4.1.0.2
 
   * try to handle method choicesChanged
