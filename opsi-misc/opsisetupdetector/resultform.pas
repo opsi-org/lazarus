@@ -88,10 +88,6 @@ type
     BitBtnOpenMst2: TBitBtn;
     CheckBoxUseMst: TCheckBox;
     CheckBoxUseMst1: TCheckBox;
-    CheckBox_Default_License: TCheckBox;
-    Edit_opsiProductID1: TEdit;
-    Edit_ProductName1: TEdit;
-    Edit_ProductVersion1: TEdit;
     FlowPanel1: TFlowPanel;
     FlowPanel10: TFlowPanel;
     FlowPanel11: TFlowPanel;
@@ -132,7 +128,6 @@ type
     Label75: TLabel;
     Label76: TLabel;
     Label77: TLabel;
-    MemoAdvice: TMemo;
     Label50: TLabel;
     Label51: TLabel;
     Label52: TLabel;
@@ -141,13 +136,11 @@ type
     Label55: TLabel;
     Label56: TLabel;
     MemoDefault: TMemo;
-    MemoDescription: TMemo;
     MenuItemConfig: TMenuItem;
     OpenDialogSetupfile: TOpenDialog;
     PanelDefault: TPanel;
     SBtnOpen: TSpeedButton;
     SBtnExit: TSpeedButton;
-    SpinEditPackageVersion1: TSpinEdit;
     StatusBar1: TStatusBar;
     TabSheetStart: TTabSheet;
     TabSheetSetup2: TTabSheet;
@@ -186,6 +179,7 @@ type
     RadioButtonInteractive: TRadioButton;
     SelectPacketBaseDir: TSelectDirectoryDialog;
     TabSheetAnalyze: TTabSheet;
+    TICheckBoxlicenseRequired: TTICheckBox;
     TIComboBoxArch1: TTIComboBox;
     TIComboBoxArch2: TTIComboBox;
     TIComboBoxInstaller1: TTIComboBox;
@@ -200,6 +194,9 @@ type
     TIEditProdVersion1: TTIEdit;
     TIEditMsiId1: TTIEdit;
     TIEditProdVersion2: TTIEdit;
+    TIEditProdVersion3: TTIEdit;
+    TIEditProdID: TTIEdit;
+    TIEditProdName: TTIEdit;
     TIEditRequiredSizeMB2: TTIEdit;
     TIEditSetupfile2: TTIEdit;
     TIEditSetupFileSizeMB1: TTIEdit;
@@ -208,6 +205,9 @@ type
     TIEditSetupfile1: TTIEdit;
     TIEditMstFile1: TTIEdit;
     TIEditSetupFileSizeMB2: TTIEdit;
+    TIMemoDesc: TTIMemo;
+    TIMemoAdvice: TTIMemo;
+    TISpinEditPackageVers: TTISpinEdit;
     ToolBar1: TToolBar;
     mysetup1: TSetupFile;
 
@@ -416,6 +416,14 @@ begin
       TIEditProductIdS2.Link.SetObjectAndProperty(produktpropties, 'productId');
       TIEditProductNameS1.Link.SetObjectAndProperty(produktpropties, 'productName');
       TIEditProductNameS2.Link.SetObjectAndProperty(produktpropties, 'productName');
+      // product
+      TIEditProdVersion3.Link.SetObjectAndProperty(produktpropties, 'productVersion');
+      TISpinEditPackageVers.Link.SetObjectAndProperty(produktpropties, 'packageVersion');
+      TIEditProdID.Link.SetObjectAndProperty(produktpropties, 'productId');
+      TIEditProdName.Link.SetObjectAndProperty(produktpropties, 'productName');
+      TIMemoAdvice.Link.SetObjectAndProperty(produktpropties, 'advice');
+      TIMemoDesc.Link.SetObjectAndProperty(produktpropties, 'description');
+      TICheckBoxlicenseRequired.Link.SetObjectAndProperty(produktpropties, 'licenserequired');
     end;
     Visible := True;
   end;

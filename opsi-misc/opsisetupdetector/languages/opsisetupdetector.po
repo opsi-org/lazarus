@@ -189,29 +189,9 @@ msgctxt "tresultform1.checkboxusemst1.caption"
 msgid "use MST File"
 msgstr ""
 
-#: tresultform1.checkbox_default_license.caption
-msgctxt "TRESULTFORM1.CHECKBOX_DEFAULT_LICENSE.CAPTION"
-msgid "License required"
-msgstr ""
-
-#: tresultform1.edit_opsiproductid1.hint
-msgctxt "tresultform1.edit_opsiproductid1.hint"
-msgid "Set opsi packet product ID (A-Z, 0-9,-_ no blanks)"
-msgstr ""
-
 #: tresultform1.edit_packetbasedir.hint
 msgctxt "TRESULTFORM1.EDIT_PACKETBASEDIR.HINT"
 msgid "Base Directory to build opsi packets"
-msgstr ""
-
-#: tresultform1.edit_productname1.hint
-msgctxt "tresultform1.edit_productname1.hint"
-msgid "opsi product name (name of package file)"
-msgstr ""
-
-#: tresultform1.edit_productversion1.hint
-msgctxt "tresultform1.edit_productversion1.hint"
-msgid "Product version"
 msgstr ""
 
 #: tresultform1.fileexit.caption
@@ -451,6 +431,11 @@ msgstr ""
 
 #: tresultform1.tabsheetstart.caption
 msgid "Start"
+msgstr ""
+
+#: tresultform1.ticheckboxlicenserequired.caption
+msgctxt "tresultform1.ticheckboxlicenserequired.caption"
+msgid "License required"
 msgstr ""
 
 #: tresultform1.toolbar1.caption

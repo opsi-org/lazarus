@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 540
+  Left = 520
   Height = 828
-  Top = 254
+  Top = 256
   Width = 1353
   Caption = 'opsi Setup Detector'
   ClientHeight = 808
@@ -305,9 +305,9 @@ object resultForm1: TresultForm1
       Height = 625
       Top = 1
       Width = 1351
-      ActivePage = TabSheetStart
+      ActivePage = TabSheetProduct
       Align = alClient
-      TabIndex = 0
+      TabIndex = 4
       TabOrder = 1
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
@@ -1665,7 +1665,7 @@ object resultForm1: TresultForm1
               Index = 0
             end          
             item
-              Control = Edit_ProductVersion1
+              Control = TIEditProdVersion3
               WrapAfter = waAuto
               Index = 1
             end          
@@ -1675,12 +1675,12 @@ object resultForm1: TresultForm1
               Index = 2
             end          
             item
-              Control = SpinEditPackageVersion1
+              Control = TISpinEditPackageVers
               WrapAfter = waAuto
               Index = 3
             end          
             item
-              Control = CheckBox_Default_License
+              Control = TICheckBoxlicenseRequired
               WrapAfter = waAuto
               Index = 4
             end>
@@ -1688,57 +1688,65 @@ object resultForm1: TresultForm1
           FlowStyle = fsLeftRightTopBottom
           TabOrder = 0
           object Label58: TLabel
-            Left = 14
-            Height = 15
-            Top = 4
-            Width = 83
+            Left = 18
+            Height = 21
+            Top = 8
+            Width = 110
             Anchors = []
             BorderSpacing.Left = 10
+            BorderSpacing.Around = 4
             Caption = 'Product Version'
+            Font.Height = -16
             ParentColor = False
-          end
-          object Edit_ProductVersion1: TEdit
-            Left = 107
-            Height = 23
-            Hint = 'Product version'
-            Top = 4
-            Width = 232
-            Anchors = []
-            BorderSpacing.Left = 10
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 0
+            ParentFont = False
           end
           object Label61: TLabel
-            Left = 369
-            Height = 15
-            Top = 4
-            Width = 85
+            Left = 380
+            Height = 21
+            Top = 8
+            Width = 112
             Anchors = []
             BorderSpacing.Left = 30
+            BorderSpacing.Around = 4
             Caption = 'Package Version'
+            Font.Height = -16
             ParentColor = False
+            ParentFont = False
           end
-          object SpinEditPackageVersion1: TSpinEdit
-            Left = 464
-            Height = 23
-            Top = 4
-            Width = 205
+          object TIEditProdVersion3: TTIEdit
+            Left = 144
+            Height = 27
+            Top = 6
+            Width = 200
             Anchors = []
             BorderSpacing.Left = 10
+            BorderSpacing.Around = 2
+            BorderSpacing.InnerBorder = 2
+            Constraints.MinWidth = 200
+            TabOrder = 0
+          end
+          object TISpinEditPackageVers: TTISpinEdit
+            Left = 510
+            Height = 23
+            Top = 8
+            Width = 84
+            Anchors = []
+            BorderSpacing.Left = 10
+            BorderSpacing.Around = 4
             MinValue = 1
             TabOrder = 1
-            Value = 1
           end
-          object CheckBox_Default_License: TCheckBox
-            Left = 692
-            Height = 19
-            Top = 7
-            Width = 106
+          object TICheckBoxlicenseRequired: TTICheckBox
+            Left = 612
+            Height = 23
+            Top = 8
+            Width = 140
             Anchors = []
-            BorderSpacing.Left = 20
-            BorderSpacing.Around = 3
+            BorderSpacing.Left = 10
+            BorderSpacing.Around = 4
+            BorderSpacing.InnerBorder = 2
             Caption = 'License required'
+            PropertyNameAsCaption = False
             TabOrder = 2
           end
         end
@@ -1758,7 +1766,7 @@ object resultForm1: TresultForm1
               Index = 0
             end          
             item
-              Control = Edit_opsiProductID1
+              Control = TIEditProdID
               WrapAfter = waAuto
               Index = 1
             end          
@@ -1768,7 +1776,7 @@ object resultForm1: TresultForm1
               Index = 2
             end          
             item
-              Control = Edit_ProductName1
+              Control = TIEditProdName
               WrapAfter = waAuto
               Index = 3
             end>
@@ -1776,48 +1784,53 @@ object resultForm1: TresultForm1
           FlowStyle = fsLeftRightTopBottom
           TabOrder = 1
           object Label66: TLabel
-            Left = 14
-            Height = 15
-            Top = 4
-            Width = 81
+            Left = 18
+            Height = 21
+            Top = 8
+            Width = 106
             Anchors = []
             BorderSpacing.Left = 10
+            BorderSpacing.Around = 4
             Caption = 'opsi Product ID'
+            Font.Height = -16
             ParentColor = False
-          end
-          object Edit_opsiProductID1: TEdit
-            Left = 105
-            Height = 23
-            Hint = 'Set opsi packet product ID (A-Z, 0-9,-_ no blanks)'
-            Top = 4
-            Width = 234
-            Anchors = []
-            BorderSpacing.Left = 10
-            OnChange = ProductIDChange
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 0
+            ParentFont = False
           end
           object Label67: TLabel
-            Left = 369
-            Height = 15
-            Top = 4
-            Width = 102
+            Left = 376
+            Height = 21
+            Top = 8
+            Width = 133
             Anchors = []
             BorderSpacing.Left = 30
+            BorderSpacing.Around = 4
             Caption = 'opsi Product Name'
+            Font.Height = -16
             ParentColor = False
+            ParentFont = False
           end
-          object Edit_ProductName1: TEdit
-            Left = 481
-            Height = 23
-            Hint = 'opsi product name (name of package file)'
-            Top = 4
-            Width = 234
+          object TIEditProdID: TTIEdit
+            Left = 140
+            Height = 27
+            Top = 6
+            Width = 200
             Anchors = []
             BorderSpacing.Left = 10
-            ParentShowHint = False
-            ShowHint = True
+            BorderSpacing.Around = 2
+            BorderSpacing.InnerBorder = 2
+            Constraints.MinWidth = 200
+            TabOrder = 0
+          end
+          object TIEditProdName: TTIEdit
+            Left = 525
+            Height = 27
+            Top = 6
+            Width = 200
+            Anchors = []
+            BorderSpacing.Left = 10
+            BorderSpacing.Around = 2
+            BorderSpacing.InnerBorder = 2
+            Constraints.MinWidth = 200
             TabOrder = 1
           end
         end
@@ -1837,7 +1850,7 @@ object resultForm1: TresultForm1
               Index = 0
             end          
             item
-              Control = MemoAdvice
+              Control = TIMemoAdvice
               WrapAfter = waAuto
               Index = 1
             end>
@@ -1845,26 +1858,27 @@ object resultForm1: TresultForm1
           FlowStyle = fsLeftRightTopBottom
           TabOrder = 2
           object Label65: TLabel
-            Left = 14
-            Height = 15
-            Top = 4
-            Width = 36
+            Left = 18
+            Height = 21
+            Top = 8
+            Width = 46
             Anchors = []
             BorderSpacing.Left = 10
+            BorderSpacing.Around = 4
             Caption = 'Advice'
+            Font.Height = -16
             ParentColor = False
+            ParentFont = False
           end
-          object MemoAdvice: TMemo
-            Left = 65
-            Height = 55
-            Top = 9
-            Width = 948
-            Align = alClient
+          object TIMemoAdvice: TTIMemo
+            Left = 82
+            Height = 52
+            Top = 8
+            Width = 902
             Anchors = []
             BorderSpacing.Left = 10
-            BorderSpacing.Around = 5
-            ScrollBars = ssAutoBoth
-            TabOrder = 0
+            BorderSpacing.Around = 4
+            ScrollBars = ssAutoVertical
           end
         end
         object FlowPanel8: TFlowPanel
@@ -1883,7 +1897,7 @@ object resultForm1: TresultForm1
               Index = 0
             end          
             item
-              Control = MemoDescription
+              Control = TIMemoDesc
               WrapAfter = waAuto
               Index = 1
             end>
@@ -1891,26 +1905,27 @@ object resultForm1: TresultForm1
           FlowStyle = fsLeftRightTopBottom
           TabOrder = 3
           object Label57: TLabel
-            Left = 14
-            Height = 15
-            Top = 4
-            Width = 60
+            Left = 18
+            Height = 21
+            Top = 8
+            Width = 79
             Anchors = []
             BorderSpacing.Left = 10
+            BorderSpacing.Around = 4
             Caption = 'Description'
+            Font.Height = -16
             ParentColor = False
+            ParentFont = False
           end
-          object MemoDescription: TMemo
-            Left = 89
-            Height = 61
-            Top = 9
-            Width = 948
-            Align = alClient
+          object TIMemoDesc: TTIMemo
+            Left = 115
+            Height = 52
+            Top = 8
+            Width = 902
             Anchors = []
             BorderSpacing.Left = 10
-            BorderSpacing.Around = 5
-            ScrollBars = ssAutoBoth
-            TabOrder = 0
+            BorderSpacing.Around = 4
+            ScrollBars = ssAutoVertical
           end
         end
       end
