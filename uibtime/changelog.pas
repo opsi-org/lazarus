@@ -1,4 +1,10 @@
 (*
+uibtime (4.1.1.36-1) stable; urgency=low
+
+ * uibdatetime: fix in getLastIntervalStart
+
+-- detlef oertel <d.oertel@uib.de>  Mon, 27 Aug 2018 15:00:00 +0000
+
 uibtime (4.1.1.35-1) stable; urgency=low
 
  * uib2erp: check 4 all since project start

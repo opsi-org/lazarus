@@ -27,6 +27,7 @@ var
   mydayofmonth1, mydayofmonth2 : word;
   mymonthbetween : integer;
   numberofintervals : integer;
+  modofintervals : integer;
 begin
   // warning for monthspan and monthsbetween:
   // This number is an approximation,
@@ -51,6 +52,10 @@ begin
   else
   begin
     numberofintervals := mymonthbetween div myMonthInterval;
+    modofintervals := mymonthbetween mod myMonthInterval;
+    // if numberofintervals = 1 and modofintervals=0 then we have finished the first interval
+    // the interval start is still:  startdate
+    if modofintervals = 0 then dec(numberofintervals);
     result := IncMonth(startdate,(numberofintervals * myMonthInterval));
   end;
 end;
