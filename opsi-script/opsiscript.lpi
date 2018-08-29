@@ -337,7 +337,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="6">
+    <Exceptions Count="7">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -356,6 +356,9 @@
       <Item6>
         <Name Value="EReadError"/>
       </Item6>
+      <Item7>
+        <Name Value="EInvalidGraphic"/>
+      </Item7>
     </Exceptions>
   </Debugging>
 </CONFIG>

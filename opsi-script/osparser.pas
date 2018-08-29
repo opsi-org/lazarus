@@ -1953,26 +1953,39 @@ var
   funcline : integer;
   i,index : integer;
 begin
-  result := tsrPositive;
-  if inDefFuncIndex >= 0 then
-  begin
-    funcname := definedFunctionArray[inDefFuncIndex].Name;
-    funcfile := definedFunctionArray[inDefFuncIndex].OriginFile;
-    funcline := definedFunctionArray[inDefFuncIndex].OriginFileStartLineNumber;
-    funcmesseage := ' in defined function: '+funcname+' file: '+ExtractFileName(funcfile)
-                    +' function start at line: '+inttostr(funcline+1);
-    originmessage := '; origin: '+funcfile+' line: '+inttostr(funcline+LineNo+1)+'): ';
-  end
-  else
-  begin
-    funcname := Sektion.Name;
-    index := script.FSectionNameList.IndexOf(funcname);
-    funcfile := Script.FSectionInfoArray[index].SectionFile;
-    funcline := Script.FSectionInfoArray[index].StartLineNo;
-    funcmesseage := ' in section: '+funcname+' file: '+ExtractFileName(funcfile)
-                    +' section start at line: '+inttostr(funcline+1);
-    //originmessage := '; origin: '+FLinesOriginList.Strings[Sektion.StartLineNo + LineNo]+'): ';
-    originmessage := '; origin: '+funcfile+' line: '+inttostr(funcline+LineNo+1)+'): ';
+  try
+    result := tsrPositive;
+    if inDefFuncIndex >= 0 then
+    begin
+      funcname := definedFunctionArray[inDefFuncIndex].Name;
+      funcfile := definedFunctionArray[inDefFuncIndex].OriginFile;
+      funcline := definedFunctionArray[inDefFuncIndex].OriginFileStartLineNumber;
+      funcmesseage := ' in defined function: '+funcname+' file: '+ExtractFileName(funcfile)
+                      +' function start at line: '+inttostr(funcline+1);
+      originmessage := '; origin: '+funcfile+' line: '+inttostr(funcline+LineNo+1)+'): ';
+    end
+    else
+    begin
+      funcname := Sektion.Name;
+      index := script.FSectionNameList.IndexOf(funcname);
+      if index = -1 then
+      begin
+        funcmesseage := ' in section: '+Sektion.Name+'; file: unknown';
+        originmessage := '; origin: not found'+'): ';
+      end
+      else
+      begin
+        funcfile := Script.FSectionInfoArray[index].SectionFile;
+        funcline := Script.FSectionInfoArray[index].StartLineNo;
+        funcmesseage := ' in section: '+funcname+'; file: '+ExtractFileName(funcfile)
+                        +'; section start at line: '+inttostr(funcline+1);
+        //originmessage := '; origin: '+FLinesOriginList.Strings[Sektion.StartLineNo + LineNo]+'): ';
+        originmessage := '; origin: '+funcfile+'; line: '+inttostr(funcline+LineNo+1)+'): ';
+      end;
+    end;
+  except
+    originmessage := '; origin: not found'+'): ';
+    funcmesseage := '; section or function not found';
   end;
   //for i:= 0 to FLinesOriginList.Count -1 do
   //  logdatei.log_prog('FLinesOriginList: '+FLinesOriginList.Strings[i],LLDebug);
@@ -8690,6 +8703,8 @@ begin
     If (lowercase(archparam) = '32bit') then
          shortarch := '32';
 
+    LogDatei.log ('PowerhellCall Executing: ' + command+ ' ; mode: ' +shortarch, LLNotice+logleveloffset);
+
 
     if handle_policy then // backup and set execution policy
     begin
@@ -8967,6 +8982,11 @@ begin
     {$IFDEF LINUX}
     fpchmod(tempfilename, &700);
     {$ENDIF LINUX}
+    LogDatei.log('Content of saved file: '+tempfilename,LLDebug2);
+    LogDatei.log('-----------------------',LLDebug2);
+    for i := 0 to Sektion.Count-1 do
+      LogDatei.log(Sektion.Strings[i],LLDebug2);
+    LogDatei.log('-----------------------',LLDebug2);
     if pos('winst ', lowercase(BatchParameter)) > 0 then
     begin
       winstparam := trim(copy(BatchParameter,pos('winst ', lowercase(BatchParameter))+5,length(BatchParameter)));
@@ -9548,6 +9568,11 @@ begin
       {$IFDEF LINUX}
       fpchmod(tempfilename, &700);
       {$ENDIF LINUX}
+      LogDatei.log('Content of saved file: '+tempfilename,LLDebug2);
+      LogDatei.log('-----------------------',LLDebug2);
+      for i := 0 to Sektion.Count-1 do
+        LogDatei.log(Sektion.Strings[i],LLDebug);
+      LogDatei.log('-----------------------',LLDebug2);
       // if parameters end with '=' we concat tempfile without space
       if copy(programparas,length(programparas),1) = '=' then
           commandline :=
@@ -17504,11 +17529,16 @@ begin
          // if FExtremeErrorLevel > levelfatal then
           begin
             //Herabstufen einer formalen Ebene, innerhalb einer aktiven Ebene Beenden von dieser
+            // End active level and go down one level
 
             if NestLevel = ActLevel then dec (ActLevel);
             dec (NestLevel);
             Ifelseendiflevel:=Nestlevel;
-            logdatei.log_prog('ENDIF: Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' sektion.NestingLevel: '+IntToStr(sektion.NestingLevel)+' ThenBranch: '+BoolToStr(ThenBranch [NestLevel],true),LLDebug);
+            try
+              logdatei.log_prog('ENDIF: Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' sektion.NestingLevel: '+IntToStr(sektion.NestingLevel)+' ThenBranch: '+BoolToStr(ThenBranch [NestLevel],true),LLDebug);
+            except
+              logdatei.log_prog('ENDIF: Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' sektion.NestingLevel: '+IntToStr(sektion.NestingLevel)+' ThenBranch: unknown',LLDebug);
+            end;
             //ArbeitsSektion.NestingLevel:=Nestlevel;
             //Sektion.NestingLevel:=Nestlevel;
 
