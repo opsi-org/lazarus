@@ -36,7 +36,8 @@ uses
   synaip,
   netdb,
   baseunix,
-  process;
+  process,
+  IniFiles;
 
 const
   { ShowWindow  }
@@ -729,11 +730,25 @@ begin
 end;
 
 function getLinuxDistroType : String;
+var
+  mycfg : TStringlist;
+  likestr : string;
 begin
-  result := 'no_linux';
+  result := 'unknown_linux';
   if FileExists('/etc/debian_version') then result := 'debian';
   if FileExists('/etc/redhat-release') then result := 'redhat';
   if FileExists('/etc/SuSE-release') then result := 'suse';
+  // freedesktop org standard :
+  if FileExists('/etc/os-release') then
+  begin
+    mycfg := TStringlist.Create;
+    mycfg.LoadFromFile('/etc/os-release');
+    likestr := mycfg.Values['ID_LIKE'];
+    mycfg.Free;
+    if pos('suse',likestr) > 0 then result := 'suse';
+    if pos('debian',likestr) > 0 then result := 'debian';
+    if pos('rhel',likestr) > 0 then result := 'redhat';
+  end;
 end;
 
 function getLinuxVersionMap: TStringList;
