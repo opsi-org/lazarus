@@ -13,7 +13,6 @@
         <DpiAware Value="Per-monitor"/>
       </XPManifest>
       <Icon Value="0"/>
-      <ActiveWindowIndexAtStart Value="1"/>
     </General>
     <i18n>
       <EnableI18N Value="True"/>
@@ -23,7 +22,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
-      <BuildNr Value="25"/>
+      <BuildNr Value="26"/>
       <StringTable Comments="Compiled with Lazarus 1.8.2 / FPC 3.0.4" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst64.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst64.exe" ProductName="opsi-script" ProductVersion="4.1.0.0"/>
     </VersionInfo>
     <BuildModes Count="4" Active="Release">
@@ -463,7 +462,6 @@
       </Unit27>
       <Unit28>
         <Filename Value="changelog.txt"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <CursorPos X="31" Y="10"/>
         <UsageCount Value="100"/>
@@ -575,7 +573,7 @@
         <CursorPos Y="1029"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <TopLine Value="2651"/>
+          <TopLine Value="2652"/>
           <CursorPos X="26" Y="2655"/>
         </ExtraEditor1>
         <UsageCount Value="209"/>
@@ -604,7 +602,7 @@
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="16872"/>
+        <TopLine Value="16874"/>
         <CursorPos X="25" Y="16876"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
@@ -821,9 +819,10 @@
       <Unit71>
         <Filename Value="..\common\oswebservice.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
-        <TopLine Value="2815"/>
-        <CursorPos Y="2835"/>
+        <TopLine Value="2816"/>
+        <CursorPos X="30" Y="2823"/>
         <UsageCount Value="91"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>

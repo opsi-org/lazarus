@@ -1461,7 +1461,7 @@ begin
     begin
       SSLOptions.VerifyMode := [];
       SSLOptions.VerifyDepth := 0;
-      LogDatei.log('Working with ssl protocol: sslvSSLv23 - auto negotation', LLInfo);
+      LogDatei.log('Working with ssl protocol: sslvSSLv23 - auto negotation', LLDebug);
       // sslvSSLv23 means: try all possible Versions
       SSLOptions.Method := sslvSSLv23;
       SSLOptions.Mode := sslmUnassigned;
@@ -1498,6 +1498,7 @@ begin
     end;
     //LogDatei.log('createSocket-BoundIp: '+IdSSLIOHandlerSocket.BoundIP, LLdebug2);
     LogDatei.log('createSocket-BoundIp: ' + IdHTTP.BoundIP, LLdebug2);
+    LogDatei.log('Using OpenSSL Version:: ' + OpenSSLVersion, LLdebug);
   except
     on ex: Exception do
     begin

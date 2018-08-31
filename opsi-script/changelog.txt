@@ -12,8 +12,9 @@ opsi-winst/opsi-script (4.12.0.26) stable; urgency=low
   * osparser: execDosBatch: log8 temp file content
   * osparser: executeWith: log8 temp file content
   * osparser: execPowershellCall: log executing
-  * osparser: doAktionen: registry: Ignoring parameter /32bit for /AllNTUserdats. ; references #3643
-  * jsonAsArrayToStringList($tmp$)
+  * osparser: doAktionen: registry: Ignoring parameter /32bit for /AllNTUserdats. ; fixes #3643
+  * osjson: jsonAsArrayToStringList: "[true]" now results to "true" ; fixes #3627
+  * oswebservice: createSocket: log openssl version
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 28 Aug 2018:15:00:00 +0200
 
