@@ -462,8 +462,9 @@
       </Unit27>
       <Unit28>
         <Filename Value="changelog.txt"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <CursorPos X="62" Y="14"/>
+        <CursorPos X="89" Y="19"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -573,7 +574,7 @@
         <CursorPos Y="1029"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <TopLine Value="2653"/>
+          <TopLine Value="2654"/>
           <CursorPos X="26" Y="2655"/>
         </ExtraEditor1>
         <UsageCount Value="209"/>
@@ -779,10 +780,9 @@
       <Unit67>
         <Filename Value="..\common\osencoding.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <TopLine Value="8"/>
-        <CursorPos X="27" Y="23"/>
+        <CursorPos X="14" Y="16"/>
         <UsageCount Value="91"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
