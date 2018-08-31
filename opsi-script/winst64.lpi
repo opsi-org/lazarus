@@ -463,7 +463,7 @@
       <Unit28>
         <Filename Value="changelog.txt"/>
         <EditorIndex Value="1"/>
-        <CursorPos X="31" Y="10"/>
+        <CursorPos X="62" Y="14"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -573,7 +573,7 @@
         <CursorPos Y="1029"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <TopLine Value="2652"/>
+          <TopLine Value="2653"/>
           <CursorPos X="26" Y="2655"/>
         </ExtraEditor1>
         <UsageCount Value="209"/>
@@ -602,7 +602,7 @@
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="16874"/>
+        <TopLine Value="16876"/>
         <CursorPos X="25" Y="16876"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
@@ -779,9 +779,10 @@
       <Unit67>
         <Filename Value="..\common\osencoding.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <TopLine Value="8"/>
-        <CursorPos X="27" Y="20"/>
+        <CursorPos X="27" Y="23"/>
         <UsageCount Value="91"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -819,7 +820,6 @@
       <Unit71>
         <Filename Value="..\common\oswebservice.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
         <TopLine Value="2816"/>
         <CursorPos X="30" Y="2823"/>

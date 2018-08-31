@@ -11,11 +11,12 @@ opsi-winst/opsi-script (4.12.0.26) stable; urgency=low
   * osparser: doAktionen: endif: catch exception in log message ; references #3655
   * osparser: execDosBatch: log8 temp file content
   * osparser: executeWith: log8 temp file content
-  * osparser: execPowershellCall: log executing
+  * osparser: execPowershellCall: log executing ; fixes #3621
   * osparser: doAktionen: registry: Ignoring parameter /32bit for /AllNTUserdats. ; fixes #3643
   * osjson: jsonAsArrayToStringList: "[true]" now results to "true" ; fixes #3627
   * oswebservice: createSocket: log openssl version
-  * osfunclin: getLinuxDistroType: read /etc/os-release
+  * osfunclin: getLinuxDistroType: read /etc/os-release  ; fixes #3651
+  * OsDefinedFunction.parseCallParameter: handle functions as parameter ; fixes #3623
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 28 Aug 2018:15:00:00 +0200
 

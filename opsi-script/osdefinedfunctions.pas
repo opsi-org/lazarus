@@ -836,8 +836,12 @@ begin
           // check if this should be the last parameter and we expect a ')' at the end
           if paramcounter = DFparamCount-1 then
           begin
-            GetWordOrStringConstant(inputstr, paramstr, remaining,[')'],true,false);
-            if pos(')',paramstr) > 0 then
+            // remove the trailing ) - if there is any
+            //GetWordOrStringConstant(inputstr, paramstr, remaining,[')'],true,false);
+            GetWordOrStringConstant(inputstr, paramstr, remaining,[')'],true,true);
+            // paramstr may now be: var, string or function
+            // if the last is ) and there is no ( : so that is not a function
+            if (pos(')',paramstr) = length(paramstr)) and (pos('(',paramstr)=0) then
               GetWordOrStringConstant(inputstr, paramstr, remaining,[')'],false,false);
           end
           else // this should be not the last parameter and we expect a ','
