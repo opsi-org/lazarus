@@ -19862,7 +19862,16 @@ begin
 
                       else if skip(Parameter_Registry32Bit, Remaining, Remaining, ErrorInfo)
                       then
-                        flag_force64 := false
+                      begin
+                        if flag_all_ntuser then
+                        begin
+                          // no redirection in user profile registry
+                          // so always we are on sysnative
+                          LogDatei.log('Ignoring parameter /32bit for /AllNTUserdats. This is always /sysnative',LLInfo);
+                          flag_force64 := true;
+                        end
+                        else flag_force64 := false;
+                      end
 
                       else if skip(Parameter_RegistrySysNative, Remaining, Remaining, ErrorInfo)
                       then

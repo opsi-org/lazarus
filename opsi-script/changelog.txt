@@ -7,11 +7,13 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 opsi-winst/opsi-script (4.12.0.26) stable; urgency=low
 
   * osparser: more log_prog in folderlink and getstring
-  * osparser: reporterror: catch unknown origin and exceptions
-  * osparser: doAktionen: endif: catch exception in log message
+  * osparser: reporterror: catch unknown origin and exceptions ; references #3655
+  * osparser: doAktionen: endif: catch exception in log message ; references #3655
   * osparser: execDosBatch: log8 temp file content
   * osparser: executeWith: log8 temp file content
   * osparser: execPowershellCall: log executing
+  * osparser: doAktionen: registry: Ignoring parameter /32bit for /AllNTUserdats. ; references #3643
+  * jsonAsArrayToStringList($tmp$)
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 28 Aug 2018:15:00:00 +0200
 
