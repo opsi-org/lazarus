@@ -1,4 +1,10 @@
 (*
+uibtime (4.1.1.37-1) stable; urgency=low
+
+ * uibdatetime: fix in getLastIntervalStart (mymonthbetween := round(mymonthspan);)
+
+-- detlef oertel <d.oertel@uib.de>  Mon, 03 Sep 2018 15:00:00 +0000
+
 uibtime (4.1.1.36-1) stable; urgency=low
 
  * uibdatetime: fix in getLastIntervalStart

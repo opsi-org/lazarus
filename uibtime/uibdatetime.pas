@@ -44,6 +44,7 @@ begin
   end;
   mymonthspan := monthspan(startdate,mynow);
   mymonthbetween := monthsbetween(startdate,mynow);
+  mymonthbetween := round(mymonthspan);
   if (myMonthInterval = 0) or (mymonthspan < myMonthInterval) then
   begin
     //no interval finished

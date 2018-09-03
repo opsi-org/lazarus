@@ -1532,9 +1532,10 @@ begin
         event := queryAccEv.FieldByName('event').AsString;
         //if event = 'leibniz-fh.systemberatung-kuhnert.eplsup' then
         //if event = 'bad.dass-it.support' then
-        //begin
-        //  DataModule1.debugOut(6, 'BtnLoadRequiredReportsClick','found: '+event);
-        //end;
+        if event = 'stadt-krefeld.eplsup' then
+        begin
+          DataModule1.debugOut(6, 'BtnLoadRequiredReportsClick','found: '+event);
+        end;
         if event <> '' then
         begin
           if getLastIntervalInfo(event, starttime, stoptime,
