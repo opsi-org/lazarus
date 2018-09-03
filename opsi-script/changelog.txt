@@ -18,6 +18,7 @@ opsi-winst/opsi-script (4.12.0.26) stable; urgency=low
   * osfunclin: getLinuxDistroType: read /etc/os-release  ; fixes #3651
   * osparserhelper: GetOuterFunctionOrExp
   * OsDefinedFunction.parseCallParameter: handle functions as parameter ; fixes #3623
+  * osparser: registerSectionOrigins: fix origin for external sub sections
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 28 Aug 2018:15:00:00 +0200
 

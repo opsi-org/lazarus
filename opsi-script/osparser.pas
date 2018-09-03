@@ -414,7 +414,8 @@ public
   procedure ApplyTextVariablesToString (var mystr : String; CStringEscaping : Boolean);
 
   // handle file and line origins
-  procedure registerSectionOrigins(mylist : Tstringlist;filename : string);
+  procedure registerSectionOrigins(mylist : Tstringlist;filename : string);  overload;
+  procedure registerSectionOrigins(mylist : Tstringlist;filename : string; secname : string); overload;
 
   (* Sektionsbearbeitungsmethoden *)
   (* Hilfsmethoden *)
@@ -1940,7 +1941,7 @@ begin
     end;
     *)
   End;
-  registerSectionOrigins(OriginalList,FName);
+  registerSectionOrigins(OriginalList,FName, Section.Name);
   OriginalList.free;
 End;
 
@@ -20695,19 +20696,22 @@ begin
 end;
 
 
-
 procedure TuibInstScript.registerSectionOrigins(mylist : Tstringlist;filename : string);
+begin
+  registerSectionOrigins(mylist, filename, '');
+end;
+
+procedure TuibInstScript.registerSectionOrigins(mylist : Tstringlist;filename : string; secname : string);
 var
   i,secindex, tmpint : integer;
-  str,secname : string;
+  str : string;
 begin
   for i := 0 to mylist.count-1 do
   Begin
     str := trim(mylist.Strings [i]);
-    secname := opsiunquotestr2(str,'[]');
-    if secname <> str then
+    if pos('sub "', secname) = 1 then
     begin
-      // we have a new section
+      // we have a new external sub section
       secindex := Script.FSectionNameList.Add(secname);
       tmpint := length(script.FSectionInfoArray);
       if secindex <> tmpint then
@@ -20716,6 +20720,22 @@ begin
       script.FSectionInfoArray[secindex].SectionName:=secname;
       script.FSectionInfoArray[secindex].SectionFile:=ExtractFileName(filename);
       script.FSectionInfoArray[secindex].StartLineNo:=i;
+    end
+    else
+    begin
+      secname := opsiunquotestr2(str,'[]');
+      if secname <> str then
+      begin
+        // we have a new real section
+        secindex := Script.FSectionNameList.Add(secname);
+        tmpint := length(script.FSectionInfoArray);
+        if secindex <> tmpint then
+          LogDatei.log('Error: internal: secindex <> length(script.FSectionInfoArray)',LLCritical);
+        setlength(script.FSectionInfoArray, secindex+1);
+        script.FSectionInfoArray[secindex].SectionName:=secname;
+        script.FSectionInfoArray[secindex].SectionFile:=ExtractFileName(filename);
+        script.FSectionInfoArray[secindex].StartLineNo:=i;
+      end;
     end;
     if pos('deffunc',lowercase(str)) = 1  then
     begin
