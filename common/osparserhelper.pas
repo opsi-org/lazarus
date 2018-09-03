@@ -58,6 +58,8 @@ procedure GetWordOrStringConstant(const s: string; var Expression, Remaining: st
 // if yes it returns the quoted string konstant
 // if no it calls getword
 
+procedure GetOuterFunctionOrExp(const s: string; var Expression, Remaining: string);
+
 implementation
 
 function CutLeftBlanks(const s: string): string;
@@ -278,6 +280,60 @@ begin
     GetWord(s, Expression, Remaining, WordDelimiterSet, searchbackward,backwardfirst);
 end;
 
+//https://stackoverflow.com/questions/15294501/how-to-count-number-of-occurrences-of-a-certain-char-in-string
+function OccurrencesOfChar(const S: string; const C: char): integer;
+var
+  i: Integer;
+begin
+  result := 0;
+  for i := 1 to Length(S) do
+    if S[i] = C then
+      inc(result);
+end;
+
+procedure GetOuterFunctionOrExp(const s: string; var Expression, Remaining: string);
+var
+  openBracketsNum, closeBracketsNum : integer;
+  cutpos : integer;
+begin
+  Expression := '';
+  //Remaining := '';
+  openBracketsNum := OccurrencesOfChar(s,'(');
+  closeBracketsNum := OccurrencesOfChar(s,')');
+  if openBracketsNum > 0 then
+  begin
+    // we have a function here
+    if closeBracketsNum > openBracketsNum then
+    begin
+      // we should cut at the matching close brackets
+      cutpos := NPos(')',s,openBracketsNum);
+      Expression := copy(s,1,cutpos-1);
+      Remaining := Remaining + copy(s,cutpos,length(s));;
+    end
+    else
+    begin
+      // every thing seems ok
+      Expression := s;
+      //Remaining := '';
+    end;
+  end
+  else
+  begin
+    if closeBracketsNum > 0 then
+    begin
+      // we should cut at the first close brackets
+      cutpos := NPos(')',s,1);
+      Expression := copy(s,1,cutpos-1);
+      Remaining := Remaining + copy(s,cutpos,length(s));;
+    end
+    else
+    begin
+      // every thing seems ok
+      Expression := s;
+      //Remaining := '';
+    end;
+  end;
+end;
 
 end.
 
