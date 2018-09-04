@@ -1773,6 +1773,10 @@ begin
   StandardMainLogPath := StandardLogPath;
   StandardPartLogPath := 'c:\opsi.org\log\';
   {$IFDEF OPSI_AS_USER}
+  StandardLogPath := 'c:\opsi.org\applog\';
+  StandardMainLogPath := StandardLogPath;
+  StandardPartLogPath := StandardLogPath;
+  (*
   AppDataPath:='';
   SHGetFolderPath(0,CSIDL_APPDATA,0,SHGFP_TYPE_CURRENT,AppDataPath);
   //SHGetSpecialFolderPath(0,AppDataPath,CSIDL_LOCAL_APPDATA,false)
@@ -1782,6 +1786,7 @@ begin
     StandardMainLogPath := StandardLogPath;
     StandardPartLogPath := StandardLogPath;
   end;
+  *)
   {$ENDIF OPSI_AS_USER}
   {$ELSE OPSI}
   StandardLogPath := GetTempDir(false);
