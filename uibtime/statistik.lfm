@@ -1,7 +1,7 @@
 object FStatistik: TFStatistik
-  Left = 303
+  Left = 204
   Height = 637
-  Top = 286
+  Top = 230
   Width = 426
   Caption = 'uibtime-Statistik'
   ClientHeight = 637
@@ -14,7 +14,7 @@ object FStatistik: TFStatistik
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poDefaultPosOnly
-  LCLVersion = '1.6.2.0'
+  LCLVersion = '1.8.2.0'
   object Panel1: TPanel
     Left = 0
     Height = 113
@@ -450,7 +450,6 @@ object FStatistik: TFStatistik
       'select event, projekt, userid, sum(stunden) as summe_h from'
       'uibevent group by event, projekt, userid'
     )
-    Options = []
     Params = <>
     left = 115
     top = 328
@@ -459,7 +458,6 @@ object FStatistik: TFStatistik
     FieldDefs = <>
     Database = DataModule1.IBConnection1
     Transaction = DataModule1.SQLTransaction1
-    Options = []
     Params = <>
     left = 10
     top = 328
@@ -473,7 +471,6 @@ object FStatistik: TFStatistik
       '(year = 2000)'
       'and (month = 1)'
     )
-    Options = []
     Params = <>
     left = 48
     top = 329

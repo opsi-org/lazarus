@@ -1,4 +1,11 @@
 (*
+uibtime (4.1.1.38-1) stable; urgency=low
+
+ * Date format changes to handle differen default date format in varous units (much in statistik)
+ * in uib2erp is no datetime issue fixed
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 04 Sep 2018 15:00:00 +0000
+
 uibtime (4.1.1.37-1) stable; urgency=low
 
  * uibdatetime: fix in getLastIntervalStart (mymonthbetween := round(mymonthspan);)

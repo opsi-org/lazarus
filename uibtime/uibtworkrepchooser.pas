@@ -90,9 +90,9 @@ begin
   // start looking for all reports
   sumtime := 0;
   starttime := edit1.Text;
-  startt := StrToDate(starttime);
+  startt := ScanDateTime('dd.mm.yyyy',starttime);
   stoptime := edit2.Text;
-  stopt := StrToDate(stoptime);
+  stopt := ScanDateTime('dd.mm.yyyy',stoptime);
   if Datamodule1.SQQueryuibevent.Active then Datamodule1.SQQueryuibevent.Close;
   Datamodule1.SQQueryuibevent.sql.Clear;
   Datamodule1.SQQueryuibevent.sql.Add('select * from uibevent ');
@@ -186,9 +186,9 @@ begin
   // start looking for missing reports
   sumtime := 0;
   starttime := edit1.Text;
-  startt := StrToDate(starttime);
+  startt := ScanDateTime('dd.mm.yyyy',starttime);
   stoptime := edit2.Text;
-  stopt := StrToDate(stoptime);
+  stopt := ScanDateTime('dd.mm.yyyy',stoptime);
   if Datamodule1.SQQueryuibevent.Active then Datamodule1.SQQueryuibevent.Close;
   Datamodule1.SQQueryuibevent.sql.Clear;
   Datamodule1.SQQueryuibevent.sql.Add('select * from uibevent ');
