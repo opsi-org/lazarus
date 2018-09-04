@@ -458,6 +458,8 @@ public
                                                                : TSectionResult;
   function doRegistryAllNTUserDats (const Sektion: TWorkSection;  rfSelected: TRegistryFormat; const flag_force64 : boolean)
                                                                : TSectionResult;
+  function doRegistryAllUsrClassDats (const Sektion: TWorkSection;  rfSelected: TRegistryFormat; const flag_force64 : boolean)
+                                                               : TSectionResult;
   function doRegistryNTUserDat (const Sektion: TWorkSection;
          rfSelected: TRegistryFormat; const flag_force64 : boolean; const UserPath : string): TSectionResult;
 
@@ -557,6 +559,7 @@ const
   Parameter_SysDiffAddReg           = '/AddReg';
   Parameter_RegeditFormat           = '/Regedit';
   Parameter_AllNTUserDats           = '/AllNTUserDats';
+  Parameter_AllUsrClassDats         = '/AllUsrClassDats';
   Parameter_RegistryBaseKey         = '/BaseKey';
   Parameter_RegistryUsercontext     = '/UserContext';
   Parameter_Registry64Bit           = '/64Bit';
@@ -5738,6 +5741,256 @@ begin
 end;
 
 {$ENDIF WIN32}
+
+function TuibInstScript.doRegistryAllUsrClassDats (const Sektion: TWorkSection;
+         rfSelected: TRegistryFormat; const flag_force64 : boolean): TSectionResult;
+
+ var
+   //SearchPath : String='';
+   //SearchRec  : TSearchRec;
+   //findresult : Integer=0;
+
+   profilename, profilepath : string;
+   ProfileList : TStringList;
+   hkulist  : TStringList;
+   i : integer;
+   pc : integer;
+   domain : string = '';
+   UserPath : String='';
+   aktsidStr : String = '';
+
+   Errorcode  : Integer=0;
+   Info : String='';
+
+   StartWithErrorNumbers : integer=0;
+   StartWithWarningsNumber: Integer=0;
+{$IFDEF WIN32}
+
+ function LoadUsrClassDat (const path : String) : Boolean;
+  var
+   Errorcode                                     : Integer;
+ begin
+   if not SetProcessPrivilege ('SeSecurityPrivilege') then
+     logdatei.log('Error: Could not set process privilege SeSecurityPrivilege in LoadUsrClassDat',LLError);
+   if not SetProcessPrivilege ('SeRestorePrivilege') then
+     logdatei.log('Error: Could not set process privilege SeRestorePrivilege in LoadUsrClassDat',LLError);
+   if not SetProcessPrivilege ('SeBackupPrivilege') then
+     logdatei.log('Error: Could not set process privilege SeBackupPrivilege in LoadUsrClassDat',LLError);
+
+   {load the selected UsrClass.dat in HKEY_USERS, subkey TempUserRegKey}
+
+   Errorcode:= RegLoadKeyW (HKEY_USERS, PWChar(UnicodeString(TempUserRegKey)), PWChar (UnicodeString(path)));
+   if Errorcode = Error_success
+   then
+   Begin
+     LogDatei.log ('"' + path + '" loaded.', LevelComplete);
+     result := true;
+   End
+   else
+   Begin
+        (* check if UsrClass.dat is in use, since the specific user is logged in *)
+     LogDatei.log ('Warning: UsrClass.dat could not be loaded from path "' + path + '". '
+        + 'Code ' + IntToStr(Errorcode) + ': ' +  RemoveLineBreaks(SysErrorMessage(Errorcode)), LLWarning);
+     result := false;
+   End;
+ end;
+
+ procedure workOnUsrClassDat;
+ begin
+     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
+
+     case rfSelected of
+       trfRegedit: doRegistryHackRegeditFormat (Sektion, 'HKEY_USERS\' + TempUserRegKey, flag_force64);
+       trfWinst  : doRegistryHack (Sektion, 'HKEY_USERS\' + TempUserRegKey, flag_force64);
+     end;
+
+     LogDatei.log ('', LevelDebug);
+     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
+     ErrorCode := RegFlushKey(HKEY_Users);
+
+     if Errorcode = Error_success
+     then
+       LogDatei.log ('Flushed', LevelDebug)
+     else
+     Begin
+       LogDatei.log ('Warning: Could not be flushed. Code '
+                              + IntToStr(Errorcode) +': ' + RemoveLineBreaks(SysErrorMessage(Errorcode)), LLWarning);
+     End;
+
+     Errorcode := RegUnloadKey (HKEY_Users, PChar(TempUserRegKey));
+     if Errorcode = Error_success
+     then
+       LogDatei.log ('Unloaded', LevelDebug)
+     else
+     Begin
+       LogDatei.log ('Warning: Could not be unloaded. Code '
+                              + IntToStr(Errorcode) +': ' + RemoveLineBreaks(SysErrorMessage(Errorcode)), LLWarning);
+     End;
+ end;
+
+ procedure workOnHkuserSid (const name : String);
+ var
+  sidStr : String='';
+ begin
+  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
+  //sidStr := GetLocalUserSidStr(GetUserNameEx_);
+  //LogDatei.log('sidStr :'+sidStr,LLDebug);
+  sidStr := GetLocalUserSidStr(name);
+  LogDatei.log('sidStr :'+sidStr,LLDebug2);
+  sidStr := copy(sidStr,2,length(sidStr)-2);
+  LogDatei.log('sidStr :'+sidStr,LLDebug);
+
+
+   case rfSelected of
+     trfRegedit: doRegistryHackRegeditFormat (Sektion, 'HKEY_USERS\' + sidStr, flag_force64);
+     trfWinst  : doRegistryHack (Sektion, 'HKEY_USERS\' + sidStr, flag_force64);
+   end;
+
+   LogDatei.log ('', LLDebug);
+   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
+   ErrorCode := RegFlushKey(HKEY_Users);
+
+   if Errorcode = Error_success
+   then
+     LogDatei.log ('Flushed', LevelDebug)
+   else
+   Begin
+     LogDatei.log ('Warning: Could not be flushed. Code '
+                            + IntToStr(Errorcode) +': ' + RemoveLineBreaks(SysErrorMessage(Errorcode)), LLWarning);
+   End;
+ end;
+
+begin
+   result := tsrPositive;
+
+   if not initSection (Sektion, StartWithErrorNumbers, StartWithWarningsNumber) then exit;
+   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
+   // mount the UsrClass.dat in the users profile path , patch them and write them back
+   ProfileList := getProfilesDirList;
+   for pc:= 0 to ProfileList.Count -1 do
+   begin
+     profilepath := ProfileList.Strings[pc];
+     profilename := ExtractFileName(profilepath);
+
+     LogDatei.log ('', LLInfo);
+     LogDatei.log ('Branch: ' + profilename, LLInfo);
+     UserPath := profilepath + '\AppData\Local\Microsoft\Windows\UsrClass.dat';
+     if GetSystemOSVersionInfoEx('major_version') = '5' then
+     begin
+         UserPath := profilepath + '\Local Settings\Microsoft\Windows\UsrClass.dat';
+     end;
+     if FileExists (UserPath)
+     then
+     Begin
+       if not FileGetWriteAccess (UserPath, Info)
+       then
+       Begin
+         LogDatei.log ('Error: ' + Info, LLError);
+       End
+       else
+       Begin
+         if Info <> ''
+         then
+         Begin
+           LogDatei.log ('Warning: ' + Info, LLWarning);
+         End;
+          if LoadUsrClassDat (UserPath) then
+          begin
+              workOnUsrClassDat;
+          end
+          else
+          begin
+            if (GetUserNameEx_ <> '') then
+            begin
+              hkulist := Tstringlist.Create;
+              hkulist.AddStrings(GetRegistryKeyList('HKU\',false));
+              for i := 0 to hkulist.Count-1 do
+                LogDatei.log('found in hku  '+ hkulist.Strings[i],LLDebug2);
+              hkulist.Free;
+              aktsidStr := GetDomainUserSidS('',GetUserNameEx_,domain);
+              aktsidStr := copy(aktsidStr,2,length(aktsidStr)-2);
+              LogDatei.log('sid is: '+aktsidStr,LLDebug2);
+              LogDatei.log('index is: '+inttostr(GetRegistryKeyList('HKU\',false).IndexOf(aktsidStr)),LLDebug2);
+              if (profilename = GetUserNameEx_)
+                 or (profilepath = getProfileImagePathfromSid(GetLocalUserSidStr(GetUserNameEx_)))
+                 or (GetRegistryKeyList('HKU\',false).IndexOf(aktsidStr) > -1)
+                 then
+              begin
+                LogDatei.log('The Branch for :'+profilename+' seems to be the logged in user,',LLDebug);
+                LogDatei.log('so let us try to patch it via HKUsers\SID',LLDebug);
+                workOnHkuserSid (GetUserNameEx_);
+              end;
+            end
+            else
+            begin
+              // at XP we have problems to get the username while pcpatch is logged in
+              if GetSystemOSVersionInfoEx('major_version') = '5' then
+              begin
+                LogDatei.log('The Branch for :'+profilename+' may be the logged in user,',LLDebug);
+                LogDatei.log('so let us try to patch it via HKUsers\SID',LLDebug);
+                workOnHkuserSid (profilename);
+              end;
+            end;
+          end;
+       End;
+     End;
+   End;
+
+   (*
+     findresult := findnext (SearchRec);
+   End;
+
+   sysutils.findclose (SearchRec);
+   *)
+
+
+   // Patch HKEY_Current_User
+
+   LogDatei.log ('', LevelWarnings);
+   LogDatei.log ('Make it for user .DEFAULT', LevelWarnings);
+   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+   case rfSelected of
+     trfRegedit: doRegistryHackRegeditFormat (Sektion, 'HKEY_USERS\.DEFAULT', flag_force64);
+     trfWinst  : doRegistryHack (Sektion, 'HKEY_USERS\.DEFAULT', flag_force64);
+   end;
+
+   // do not to try the temporary pcpatch account or SYSTEM - sense less and may fail
+   if not ((GetUserName_ = 'pcpatch') or (GetUserName_ = 'SYSTEM')) then
+   begin
+     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+     LogDatei.log ('', LevelWarnings);
+     LogDatei.log ('And finally: The current user: '+GetUserName_+' : '+GetLocalUserSidStr(GetUserName_), LLInfo);
+     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+
+     case rfSelected of
+       trfRegedit: doRegistryHackRegeditFormat (Sektion, 'HKEY_CURRENT_USER', flag_force64);
+       trfWinst  : doRegistryHack (Sektion, 'HKEY_CURRENT_USER', flag_force64);
+     end;
+   end;
+
+   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
+   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
+
+   finishSection (Sektion, OldNumberOfErrors, OldNumberOfWarnings,
+                 DiffNumberOfErrors, DiffNumberOfWarnings);
+
+   if ExitOnError and (DiffNumberOfErrors > 0)
+   then result := tsrExitProcess;
+end;
+{$ELSE WIN32}
+begin
+  // not implemented
+  result := tsrExitProcess;
+end;
+
+{$ENDIF WIN32}
+
 
 function TuibInstScript.doRegistryNTUserDat (const Sektion: TWorkSection;
          rfSelected: TRegistryFormat; const flag_force64 : boolean; const UserPath : string): TSectionResult;
@@ -15095,7 +15348,7 @@ function TuibInstScript.doXMLAddNamespace(filename:string;
         if p2=0 then //sonst schon vorhanden
         begin
           s3:=copy(s3,1,Length(s3)-1); //'>' abschneiden
-          s3:=s3+' '+namespace+'>'; //und wieder anfï¿½gen
+          s3:=s3+' '+namespace+'>'; //und wieder anfÃ¯Â¿Â½gen
 
           list[i]:=s1+s3+s4;
           bChanged:=True;
@@ -15144,7 +15397,7 @@ function TuibInstScript.doXMLAddNamespace(filename:string;
           if p2>0 then //sonst nicht vorhanden
           begin
             System.delete(s3,p2,Length(namespace));
-          if s3[p2-1]=' ' then //wir haben bei Add ein Leerzeichen hinzugefï¿½gt
+          if s3[p2-1]=' ' then //wir haben bei Add ein Leerzeichen hinzugefÃ¯Â¿Â½gt
           System.delete(s3,p2-1,1);
 
           list[i]:=s1+s3+s4;
@@ -15581,7 +15834,7 @@ begin
  {$IFDEF WINDOWS}
 
  (* XMLAddNamespace(Datei:string,ElementName:string,Namespace:string):Boolean
-  True, wenn Namespace noch nicht da war und eingefï¿½gt werden muï¿½te *)
+  True, wenn Namespace noch nicht da war und eingefÃ¯Â¿Â½gt werden muÃ¯Â¿Â½te *)
  else if Skip ('XMLAddNamespace', Input, r, sx)
  then
  begin
