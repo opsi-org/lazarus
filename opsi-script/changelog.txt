@@ -19,6 +19,8 @@ opsi-winst/opsi-script (4.12.0.26) stable; urgency=low
   * osparserhelper: GetOuterFunctionOrExp
   * OsDefinedFunction.parseCallParameter: handle functions as parameter ; fixes #3623
   * osparser: registerSectionOrigins: fix origin for external sub sections
+  * osparser: registry: new parameter /AllUsrClassDats
+       new function doRegistryAllUsrClassDats ; fix from Terry Strooband (thank you)
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 28 Aug 2018:15:00:00 +0200
 
