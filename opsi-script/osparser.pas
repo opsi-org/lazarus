@@ -20089,6 +20089,10 @@ begin
                       then
                         flag_all_ntuser := true
 
+                      if skip(Parameter_AllUsrClassDats, Remaining, Remaining, ErrorInfo)
+                      then
+                        flag_all_ntuser := true
+
                       else if skip(Parameter_RegistryNTUserDat, Remaining, Remaining, ErrorInfo)
                       then
                       begin
