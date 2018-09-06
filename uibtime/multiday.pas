@@ -25,6 +25,7 @@ type
     CheckBoxOnlyWorkdays: TCheckBox;
     EditButtonEndDate: TEditButton;
     EditButtonStartDate: TEditButton;
+    Label4: TLabel;
     OKBtn: TButton;
     cal: TCalendar;
     Label1: TLabel;

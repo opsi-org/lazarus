@@ -25,9 +25,87 @@ var
   mymonthspan : double;
   mynow : double;
   mydayofmonth1, mydayofmonth2 : word;
+  mymonth1, mymonth2 : word;
+  myyear1, myyear2 : word;
   mymonthbetween : integer;
   numberofintervals : integer;
   modofintervals : integer;
+  mycalcmonthgap : integer;
+begin
+  result := 0;
+  mydayofmonth1 := dayof(startdate);
+  mydayofmonth2 := dayof(enddate);
+  mymonth1 := MonthOf(startdate);
+  mymonth2 := MonthOf(enddate);
+  myyear1 := YearOf(startdate);
+  myyear2 := YearOf(enddate);
+  mymonthspan := monthspan(startdate,enddate);
+  mymonthbetween := monthsbetween(startdate,enddate);
+  mycalcmonthgap := 0;
+  if myyear1 = myyear2 then
+  begin  // same year
+    mycalcmonthgap := mymonth2 - mymonth1;
+  end
+  else
+  begin // not same year
+    if myyear1 +1 = myyear2 then
+    begin  // next year
+      // missing month in the old year
+      mycalcmonthgap := 12 - mymonth1;
+      // add month in the new year
+      mycalcmonthgap := mycalcmonthgap + mymonth2;
+    end
+    else
+    begin // not same year
+      // get the full years
+      mycalcmonthgap := (myyear2 - myyear1 -1) *12;
+      // missing month in the old year
+      mycalcmonthgap := 12 - mymonth1;
+      // add month in the new year
+      mycalcmonthgap := mycalcmonthgap + mymonth2;
+    end;
+  end;
+
+  if myMonthInterval = 1 then
+  begin
+    if (mydayofmonth1 > mydayofmonth2) then
+    begin
+      dec(mycalcmonthgap);
+    end;
+  end
+  else
+  begin
+    // myMonthInterval > 1
+  end;
+
+  if (myMonthInterval = 0) or (mycalcmonthgap < myMonthInterval) then
+  begin
+    //no interval finished
+    result := startdate;
+  end
+  else
+  begin
+    numberofintervals := mycalcmonthgap div myMonthInterval;
+    modofintervals := mycalcmonthgap mod myMonthInterval;
+    // if numberofintervals = 1 and modofintervals=0 then we have finished the first interval
+    // the interval start is still:  startdate
+    //if (myMonthInterval > 1) and (modofintervals = 0) then dec(numberofintervals);
+    result := IncMonth(startdate,(numberofintervals * myMonthInterval));
+  end;
+end;
+
+(*
+function getLastIntervalStart(startdate : TdateTime; enddate : TdateTime; myMonthInterval : cardinal) : TdateTime;
+var
+  mymonthspan : double;
+  mynow : double;
+  mydayofmonth1, mydayofmonth2 : word;
+  mymonth1, mymonth2 : word;
+  myyear1, myyear2 : word;
+  mymonthbetween : integer;
+  numberofintervals : integer;
+  modofintervals : integer;
+  mycalcmonthgap : integer;
 begin
   // warning for monthspan and monthsbetween:
   // This number is an approximation,
@@ -35,16 +113,24 @@ begin
   // https://www.freepascal.org/docs-html/rtl/dateutils/monthspan.html
   result := 0;
   mynow := enddate;
-  mydayofmonth1 := dayof(mynow);
-  mydayofmonth2 := dayof(startdate);
-  If mydayofmonth1 = mydayofmonth2 then
-  begin
-    mynow := IncDay(mynow,1);
-    // we add a day because the approximation may fail on same day of month
-  end;
+  mydayofmonth1 := dayof(startdate);
+  mydayofmonth2 := dayof(enddate);
+  mymonth1 := MonthOf(startdate);
+  mymonth2 := MonthOf(enddate);
+  myyear1 := YearOf(startdate);
+  myyear2 := YearOf(enddate);
+  if myyear2 > myyear1 then mycalcmonthgap := (myyear2 - myyear1) * 12;
+  if mymonth2 > mymonth1 then mycalcmonthgap := mycalcmonthgap + (mymonth2 - mymonth1)
+  else mycalcmonthgap := mycalcmonthgap + mymonth2;
   mymonthspan := monthspan(startdate,mynow);
   mymonthbetween := monthsbetween(startdate,mynow);
   mymonthbetween := round(mymonthspan);
+  If (mydayofmonth1 < mydayofmonth2) and
+     ((mymonth1 = mymonth2) and (myMonthInterval = 1)) then
+        mymonthbetween := trunc(mymonthspan);
+  If (mydayofmonth1 < mydayofmonth2) and
+     ((mycalcmonthgap mod myMonthInterval) = 0)  then
+        mymonthbetween := trunc(mymonthspan);
   if (myMonthInterval = 0) or (mymonthspan < myMonthInterval) then
   begin
     //no interval finished
@@ -56,10 +142,12 @@ begin
     modofintervals := mymonthbetween mod myMonthInterval;
     // if numberofintervals = 1 and modofintervals=0 then we have finished the first interval
     // the interval start is still:  startdate
-    if modofintervals = 0 then dec(numberofintervals);
+    if (myMonthInterval > 1) and (modofintervals = 0) then dec(numberofintervals);
     result := IncMonth(startdate,(numberofintervals * myMonthInterval));
   end;
 end;
+
+*)
 
 function getLastIntervalEnd(startdate : TdateTime; enddate : TdateTime; myMonthInterval : cardinal) : TdateTime;
 var

@@ -373,6 +373,12 @@ begin
         acc_per_monthnum_int);
       DataModule1.debugOut(6, 'getLastIntervalInfo',
         'lastIntervalEnd :' + DateToStr(lastIntervalEnd));
+      (*
+      If lastIntervalEnd >= queryenddt then
+      begin
+        // go back one interval because
+      end;
+      *)
       // are the interval boundaries in search intervall
       if (lastIntervalStart >= querystartdt) and (lastIntervalStart <= queryenddt) then
         intervalStartFound := True
@@ -383,7 +389,7 @@ begin
         intervalEndFound := True
       else
         intervalEndFound := False;
-      // finding end is mor impotant then start
+      // finding end is more impotant then start
       if intervalStartFound and (lastIntervalStart > querystartdt) and
         not intervalEndFound then
       begin

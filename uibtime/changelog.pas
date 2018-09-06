@@ -1,4 +1,14 @@
 (*
+uibtime (4.1.1.39-1) stable; urgency=low
+
+ * uibdatetime: redesign from getLastIntervalStart
+     (if (myMonthInterval > 1) and (modofintervals = 0) then dec(numberofintervals); )
+ * multiday: more space for buttons and edits ; refernces #3608
+ * change multiple window titles; fixes #3604
+ * created unittest for getLastIntervalStart: uibtimeunittest.lpi
+
+-- detlef oertel <d.oertel@uib.de>  Thu, 09 Sep 2018 15:00:00 +0000
+
 uibtime (4.1.1.38-1) stable; urgency=low
 
  * Date format changes to handle differen default date format in varous units (much in statistik)
