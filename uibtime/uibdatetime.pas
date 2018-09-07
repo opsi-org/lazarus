@@ -12,15 +12,15 @@ interface
 uses
   Classes, SysUtils,dateutils;
 
-function getLastIntervalStart(startdate : TdateTime;  enddate : TdateTime; myMonthInterval : cardinal) : TdateTime;
-function getLastIntervalEnd(startdate : TdateTime; enddate : TdateTime; myMonthInterval : cardinal) : TdateTime;
+function getLastIntervalStart(startdate : TdateTime;  enddate : TdateTime; myMonthInterval : cardinal; endexcl : boolean) : TdateTime;
+function getLastIntervalEnd(startdate : TdateTime; enddate : TdateTime; myMonthInterval : cardinal; endexcl : boolean) : TdateTime;
 function timeFloatTohourminutesStr(mytime : double) : string;
 function dayOfWeekGerStrToLazDayofWeekbyte(daystr : string) : byte;
 function lazDayofWeekbyteToDayOfWeekGerStr(daybyte : word) : string;
 
 implementation
 
-function getLastIntervalStart(startdate : TdateTime; enddate : TdateTime; myMonthInterval : cardinal) : TdateTime;
+function getLastIntervalStart(startdate : TdateTime; enddate : TdateTime; myMonthInterval : cardinal; endexcl : boolean) : TdateTime;
 var
   mymonthspan : double;
   mynow : double;
@@ -33,14 +33,23 @@ var
   mycalcmonthgap : integer;
 begin
   result := 0;
+  // if endexcl eg. it is 1.9. so the real (incl) end is 31.8.
+  // we nee here (if (mydayofmonth1 > mydayofmonth2)) the incl. end day
+  if endexcl then IncDay(enddate,-1);
   mydayofmonth1 := dayof(startdate);
   mydayofmonth2 := dayof(enddate);
   mymonth1 := MonthOf(startdate);
   mymonth2 := MonthOf(enddate);
   myyear1 := YearOf(startdate);
   myyear2 := YearOf(enddate);
+  // warning for monthspan and monthsbetween:
+  // This number is an approximation,
+  // based on an average number of days of 30.4375 per month (average over 4 years).
+  // https://www.freepascal.org/docs-html/rtl/dateutils/monthspan.html
+  // so we use it here only for comparsion while debugging
   mymonthspan := monthspan(startdate,enddate);
   mymonthbetween := monthsbetween(startdate,enddate);
+  // here we start the used calculation
   mycalcmonthgap := 0;
   if myyear1 = myyear2 then
   begin  // same year
@@ -60,7 +69,7 @@ begin
       // get the full years
       mycalcmonthgap := (myyear2 - myyear1 -1) *12;
       // missing month in the old year
-      mycalcmonthgap := 12 - mymonth1;
+      mycalcmonthgap := mycalcmonthgap + (12 - mymonth1);
       // add month in the new year
       mycalcmonthgap := mycalcmonthgap + mymonth2;
     end;
@@ -149,13 +158,14 @@ end;
 
 *)
 
-function getLastIntervalEnd(startdate : TdateTime; enddate : TdateTime; myMonthInterval : cardinal) : TdateTime;
+function getLastIntervalEnd(startdate : TdateTime; enddate : TdateTime; myMonthInterval : cardinal; endexcl : boolean) : TdateTime;
 var
   lastIntervalStart : Tdatetime;
 begin
   result := 0;
-  lastIntervalStart := getLastIntervalStart(startdate,enddate,myMonthInterval);
+  lastIntervalStart := getLastIntervalStart(startdate,enddate,myMonthInterval,endexcl);
   result := IncMonth(lastIntervalStart, myMonthInterval);
+  if not endexcl then result := IncDay(result,-1); // make intervalend incl: eg. it is not 1.9. but 31.8. : incday -1
 end;
 
 function timeFloatTohourminutesStr(mytime : double) : string;

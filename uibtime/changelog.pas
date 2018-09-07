@@ -3,6 +3,7 @@ uibtime (4.1.1.39-1) stable; urgency=low
 
  * uibdatetime: redesign from getLastIntervalStart
      (if (myMonthInterval > 1) and (modofintervals = 0) then dec(numberofintervals); )
+     new boolean param endexcl to flag if end is incl or excl
  * multiday: more space for buttons and edits ; refernces #3608
  * change multiple window titles; fixes #3604
  * created unittest for getLastIntervalStart: uibtimeunittest.lpi

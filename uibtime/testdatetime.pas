@@ -49,7 +49,7 @@ begin
   startdt := StrToDate(startstr);
   stopdt := StrToDate(stopstr);
   expectdt := StrToDate(expectstr);
-  result := getLastIntervalStart(startdt,stopdt,interval);
+  result := getLastIntervalStart(startdt,stopdt,interval,false);
   CheckEquals(result, expectdt,'interval: '+inttostr(interval)+ 'start: '+startstr+' stop: '+stopstr+' we got: '+DateToStr(result)+' we expected: '+expectstr);
   //AssertEquals(result, StrToDate('1.8.2018'));
 end;

@@ -220,6 +220,10 @@ begin
     suchevent := event;
     querystartdt := StrToDate(querystartdate);
     queryenddt := StrToDate(queryenddate);
+    (*
+    // set queryenddt from excl. to incl.
+    queryenddt := IncDay(queryenddt,-1);
+    *)
     // get project info for event....
     if QueryProjektzeit.Active then
       QueryProjektzeit.Close;
@@ -364,13 +368,13 @@ begin
       // here is the result for the last Interval
       //lastIntervalStart := EncodeDate(aktstartyear, aktstartmonth, startday);
       lastIntervalStart := getLastIntervalStart(
-        projektstart, queryenddt, acc_per_monthnum_int);
+        projektstart, queryenddt, acc_per_monthnum_int,true);
       //decodeDate(lastIntervalStart, aktstartyear, aktstartmonth, aktstartday);
       DataModule1.debugOut(6, 'getLastIntervalInfo',
         'lastIntervalStart :' + DateToStr(lastIntervalStart));
       //lastIntervalEnd := EncodeDate(endyear, endmonth, startday);
       lastIntervalEnd := getLastIntervalEnd(projektstart, queryenddt,
-        acc_per_monthnum_int);
+        acc_per_monthnum_int,true);
       DataModule1.debugOut(6, 'getLastIntervalInfo',
         'lastIntervalEnd :' + DateToStr(lastIntervalEnd));
       (*
@@ -1538,10 +1542,12 @@ begin
         event := queryAccEv.FieldByName('event').AsString;
         //if event = 'leibniz-fh.systemberatung-kuhnert.eplsup' then
         //if event = 'bad.dass-it.support' then
-        if event = 'stadt-krefeld.eplsup' then
+        //  *** debug breakpoint start
+        if event = 'adp-gauselmann.psup' then
         begin
           DataModule1.debugOut(6, 'BtnLoadRequiredReportsClick','found: '+event);
         end;
+        //  *** debug breakpoint stop
         if event <> '' then
         begin
           if getLastIntervalInfo(event, starttime, stoptime,
