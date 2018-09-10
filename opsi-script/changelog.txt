@@ -4,6 +4,15 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.0.27) stable; urgency=low
+
+  * osparser: (fix) registry: new parameter /AllUsrClassDats
+       new function doRegistryAllUsrClassDats ; fix from Terry Strooband (thank you)
+       flag_all_usrclass
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 10 Sep 2018:15:00:00 +0200
+
+
 opsi-winst/opsi-script (4.12.0.26) stable; urgency=low
 
   * osparser: more log_prog in folderlink and getstring

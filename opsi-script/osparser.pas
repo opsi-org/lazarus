@@ -622,7 +622,7 @@ const
 
 var
   PStatNames : TPStatementNames;
-  flag_all_ntuser, flag_ntuser : boolean;
+  flag_all_ntuser, flag_ntuser, flag_all_usrclass : boolean;
   flag_encoding : string = 'system';
   runLoginScripts: boolean;
   allLoginScripts : boolean;
@@ -20072,6 +20072,7 @@ begin
                    flag_ntuser := false;
                    reg_specified_basekey := '';
                    flag_force64 := false;
+                   flag_all_usrclass := false;
 
                    // if this is a 'ProfileActions' which is called as sub in Machine mode
                    // so run registry sections implicit as /Allntuserdats
@@ -20088,6 +20089,10 @@ begin
                       if skip(Parameter_AllNTUserDats, Remaining, Remaining, ErrorInfo)
                       then
                         flag_all_ntuser := true
+
+                      else if skip(Parameter_AllUsrClassDats, Remaining, Remaining, ErrorInfo)
+                      then
+                        flag_all_usrclass := true
 
                       else if skip(Parameter_RegistryNTUserDat, Remaining, Remaining, ErrorInfo)
                       then
@@ -20176,7 +20181,7 @@ begin
                    end;
 
 
-                   if flag_all_ntuser and (reg_specified_basekey <> '')
+                   if (flag_all_ntuser or flag_all_usrclass)and (reg_specified_basekey <> '')
                    then
                    begin
                      syntaxcheck := false;
@@ -20209,6 +20214,16 @@ begin
                        else
                           ActionResult := doRegistryNTUserDat (ArbeitsSektion, registryformat, flag_force64,ntuserpath);
                      end
+                     else if flag_all_usrclass
+                     then
+                     begin
+                       if registryformat = trfSysdiff
+                       then
+                           ActionResult := reportError (Sektion, i, Sektion.strings [i-1],
+                                       '"' + Remaining + '": sysdiff format not possible with option "for all usr classes"')
+                       else
+                          ActionResult := doRegistryAllUsrClassDats (ArbeitsSektion, registryformat, flag_force64);
+                     end
                      else
                        case registryformat of
                         trfWinst   :
@@ -20221,6 +20236,8 @@ begin
                            ActionResult := doRegistryHackRegeditFormat (ArbeitsSektion, reg_specified_basekey, flag_force64);
 
                        end;
+
+
                    end;
                    {$ELSE WINDOWS}
                   logdatei.log('Registry sections are not implemented for Linux.', LLWarning);

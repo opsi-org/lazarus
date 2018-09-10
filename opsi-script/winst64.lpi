@@ -13,7 +13,6 @@
         <DpiAware Value="Per-monitor"/>
       </XPManifest>
       <Icon Value="0"/>
-      <ActiveWindowIndexAtStart Value="1"/>
     </General>
     <i18n>
       <EnableI18N Value="True"/>
@@ -23,7 +22,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
-      <BuildNr Value="26"/>
+      <BuildNr Value="27"/>
       <StringTable Comments="Compiled with Lazarus 1.8.2 / FPC 3.0.4" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst64.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst64.exe" ProductName="opsi-script" ProductVersion="4.1.0.0"/>
     </VersionInfo>
     <BuildModes Count="4" Active="Release">
@@ -464,7 +463,7 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <TopLine Value="13"/>
-        <CursorPos X="51" Y="21"/>
+        <CursorPos X="43" Y="29"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -603,7 +602,7 @@
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="20693"/>
+        <TopLine Value="20710"/>
         <CursorPos X="33" Y="20714"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
@@ -934,7 +933,7 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit82>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="25" HistoryIndex="24">
       <Position1>
         <Filename Value="osmain.pas"/>
         <Caret Line="1856" Column="53" TopLine="1848"/>
@@ -1009,52 +1008,32 @@
       </Position18>
       <Position19>
         <Filename Value="osparser.pas"/>
-        <Caret Line="17670" Column="12" TopLine="17748"/>
+        <Caret Line="17794" Column="68" TopLine="17778"/>
       </Position19>
       <Position20>
         <Filename Value="osparser.pas"/>
-        <Caret Line="18252" Column="19" TopLine="18343"/>
+        <Caret Line="1902" Column="10" TopLine="1890"/>
       </Position20>
       <Position21>
         <Filename Value="osparser.pas"/>
-        <Caret Line="1927" Column="25" TopLine="1971"/>
+        <Caret Line="17765" Column="23" TopLine="17744"/>
       </Position21>
       <Position22>
         <Filename Value="osparser.pas"/>
-        <Caret Line="17794" Column="68" TopLine="17778"/>
+        <Caret Line="1943" Column="25" TopLine="1926"/>
       </Position22>
       <Position23>
         <Filename Value="osparser.pas"/>
-        <Caret Line="17692" Column="28" TopLine="17736"/>
+        <Caret Line="417" Column="13" TopLine="401"/>
       </Position23>
       <Position24>
         <Filename Value="osparser.pas"/>
-        <Caret Line="1902" Column="10" TopLine="1890"/>
+        <Caret Line="20703" Column="107" TopLine="120"/>
       </Position24>
       <Position25>
         <Filename Value="osparser.pas"/>
-        <Caret Line="17670" Column="12" TopLine="17743"/>
-      </Position25>
-      <Position26>
-        <Filename Value="osparser.pas"/>
-        <Caret Line="17765" Column="23" TopLine="17744"/>
-      </Position26>
-      <Position27>
-        <Filename Value="osparser.pas"/>
-        <Caret Line="1943" Column="25" TopLine="1926"/>
-      </Position27>
-      <Position28>
-        <Filename Value="osparser.pas"/>
-        <Caret Line="417" Column="13" TopLine="401"/>
-      </Position28>
-      <Position29>
-        <Filename Value="osparser.pas"/>
-        <Caret Line="20703" Column="107" TopLine="120"/>
-      </Position29>
-      <Position30>
-        <Filename Value="osparser.pas"/>
         <Caret Line="418" Column="104" TopLine="402"/>
-      </Position30>
+      </Position25>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
