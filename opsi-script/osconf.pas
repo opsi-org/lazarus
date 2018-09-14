@@ -386,7 +386,7 @@ begin
                           end;
                       end;
 
-                      if LowerCase(configid) = 'opsi-script.global.ScriptErrorMessages' then
+                      if LowerCase(configid) = LowerCase('opsi-script.global.ScriptErrorMessages') then
                       begin
                         if jsonAsObjectGetValueByKey(configlist.Strings[i],
                           'values', values) then
@@ -399,7 +399,7 @@ begin
                           end;
                       end;
 
-                      if LowerCase(configid) = 'opsi-script.global.AutoActivityDisplay' then
+                      if LowerCase(configid) = LowerCase('opsi-script.global.AutoActivityDisplay') then
                       begin
                         if jsonAsObjectGetValueByKey(configlist.Strings[i],
                           'values', values) then
