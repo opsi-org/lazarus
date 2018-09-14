@@ -17526,7 +17526,7 @@ begin
       else if (Remaining [1] = '[') then
       begin
         // subsection beginning
-        logdatei.log('line is starting with "[": inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
+        logdatei.log_prog('line is starting with "[": inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
 
       //else if (Remaining [1] = '[')  then
          // subsection beginning
