@@ -1,4 +1,10 @@
 (*
+uibtime (4.1.1.40-1) stable; urgency=low
+
+ * uibdatetime: fix in  getLastIntervalStart 12 Month
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 19 Sep 2018 15:00:00 +0000
+
 uibtime (4.1.1.39-1) stable; urgency=low
 
  * uibdatetime: redesign from getLastIntervalStart

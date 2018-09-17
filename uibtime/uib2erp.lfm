@@ -8,7 +8,7 @@ object Fuibtime2erp: TFuibtime2erp
   ClientWidth = 1107
   OnCreate = FormCreate
   OnShow = FormShow
-  LCLVersion = '1.8.2.0'
+  LCLVersion = '1.8.4.0'
   object Panel1: TPanel
     Left = 0
     Height = 50

@@ -1543,7 +1543,7 @@ begin
         //if event = 'leibniz-fh.systemberatung-kuhnert.eplsup' then
         //if event = 'bad.dass-it.support' then
         //  *** debug breakpoint start
-        if event = 'adp-gauselmann.psup' then
+        if event = 'senbjw-it-intern.serverpflege' then
         begin
           DataModule1.debugOut(6, 'BtnLoadRequiredReportsClick','found: '+event);
         end;
