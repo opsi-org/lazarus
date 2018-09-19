@@ -158,7 +158,7 @@ end;
 
 procedure TFStatistik.Edit2Exit(Sender: TObject);
 begin
-  edit2.Text := datetostr(ScanDateTime('dd.mm.yyyy',edit1.Text));
+  edit2.Text := datetostr(ScanDateTime('dd.mm.yyyy',edit2.Text));
 end;
 
 procedure TFStatistik.BtnSollStundenClick(Sender: TObject);

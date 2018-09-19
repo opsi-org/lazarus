@@ -1,7 +1,8 @@
 (*
 uibtime (4.1.1.40-1) stable; urgency=low
 
- * uibdatetime: fix in  getLastIntervalStart 12 Month
+ * uibdatetime: fix in  getLastIntervalStart at IncDay(enddate,-1)
+ * statistik.pas fix at Edit2Exit ; bug created with 4.1.1.38
 
 -- detlef oertel <d.oertel@uib.de>  Wed, 19 Sep 2018 15:00:00 +0000
 

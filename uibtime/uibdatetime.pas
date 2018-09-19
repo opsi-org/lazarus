@@ -34,8 +34,8 @@ var
 begin
   result := 0;
   // if endexcl eg. it is 1.9. so the real (incl) end is 31.8.
-  // we nee here (if (mydayofmonth1 > mydayofmonth2)) the incl. end day
-  if endexcl then IncDay(enddate,-1);
+  // we need here (if (mydayofmonth1 > mydayofmonth2)) the incl. end day
+  if endexcl then enddate := IncDay(enddate,-1);
   mydayofmonth1 := dayof(startdate);
   mydayofmonth2 := dayof(enddate);
   mymonth1 := MonthOf(startdate);
