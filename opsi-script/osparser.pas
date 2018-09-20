@@ -21752,10 +21752,12 @@ begin
    {$ENDIF GUI}
   end;
     LogDatei.log ('End of CreateAndProcessScript', LLDebug2);
+    LogDatei.Close;
   except
     on e: exception do
     Begin
       LogDatei.log('Exception in CreateAndProcessScript: General' + e.message, LLError);
+      LogDatei.Close;
     End;
   end;
 end;
