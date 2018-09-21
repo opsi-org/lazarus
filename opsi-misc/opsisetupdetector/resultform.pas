@@ -38,7 +38,7 @@ uses
   osdhelper,
   osdanalyze,
   winpeimagereader,
-  lcltranslator, EditBtn, Spin,
+  lcltranslator, EditBtn, Spin, JSONPropStorage,
   oslog,
   osdbasedata;
 
@@ -77,23 +77,40 @@ const
 
 type
 
+  TGuiMode = (analyzeOnly,singleAnalyzeCreate,twoAnalyzeCreate, createTemplate, gmUnknown);
+
   { TResultform1 }
 
   TResultform1 = class(TForm)
+    BitBtn_PacketBasedir: TBitBtn;
+    BtAnalyzeNextStep: TBitBtn;
+    BtSetup1NextStep: TBitBtn;
+    BtSetup2NextStep: TBitBtn;
+    BtProductNextStep: TBitBtn;
+    BtSingleAnalyzeAndCreate: TBitBtn;
     BitBtnOpenFile: TBitBtn;
     BitBtnDefault: TBitBtn;
     BitBtnMST1: TBitBtn;
     BitBtnOpenFile1: TBitBtn;
     BitBtnOpenMst1: TBitBtn;
     BitBtnOpenMst2: TBitBtn;
+    BtATwonalyzeAndCreate: TBitBtn;
+    BtCreateEmptyTemplate: TBitBtn;
+    BtAnalyzeOnly: TBitBtn;
+    ButtonCreatePacket: TButton;
+    CheckBoxBuild: TCheckBox;
+    CheckBoxInstall: TCheckBox;
+    CheckBoxQuiet: TCheckBox;
     CheckBoxUseMst: TCheckBox;
     CheckBoxUseMst1: TCheckBox;
+    Edit_PacketbaseDir: TEdit;
     FlowPanel1: TFlowPanel;
     FlowPanel10: TFlowPanel;
     FlowPanel11: TFlowPanel;
     FlowPanel12: TFlowPanel;
     FlowPanel13: TFlowPanel;
     FlowPanel2: TFlowPanel;
+    FlowPanel3: TFlowPanel;
     FlowPanel6: TFlowPanel;
     FlowPanel8: TFlowPanel;
     FlowPanel9: TFlowPanel;
@@ -107,6 +124,7 @@ type
     FlowPanel7: TFlowPanel;
     FlowPanelSetup33: TFlowPanel;
     FileHelp: TMenuItem;
+    GroupBox2: TGroupBox;
     Label57: TLabel;
     Label58: TLabel;
     Label59: TLabel;
@@ -135,35 +153,31 @@ type
     Label54: TLabel;
     Label55: TLabel;
     Label56: TLabel;
+    Label9: TLabel;
     MemoDefault: TMemo;
     MenuItemConfig: TMenuItem;
     OpenDialogSetupfile: TOpenDialog;
+    Panel9: TPanel;
     PanelDefault: TPanel;
+    processing: TLabel;
+    processStatement: TLabel;
+    RadioButtonAuto: TRadioButton;
+    RadioButtonCreateOnly: TRadioButton;
+    RadioButtonInteractive: TRadioButton;
     SBtnOpen: TSpeedButton;
     SBtnExit: TSpeedButton;
     StatusBar1: TStatusBar;
+    TabSheetCreate: TTabSheet;
     TabSheetStart: TTabSheet;
     TabSheetSetup2: TTabSheet;
     TabSheetProduct: TTabSheet;
     TabSheetSetup1: TTabSheet;
-    BitBtn_PacketBasedir: TBitBtn;
-    BitBtnClose2: TBitBtn;
-    BitBtnAnalyze: TBitBtn;
-    ButtonCreatePacket: TButton;
     CheckBox1: TCheckBox;
-    CheckBoxBuild: TCheckBox;
-    CheckBoxInstall: TCheckBox;
-    CheckBoxQuiet: TCheckBox;
-    Edit_PacketbaseDir: TEdit;
-    GroupBox2: TGroupBox;
     FileOpenSetupFile: TMenuItem;
     FileExit: TMenuItem;
     //FileCreateLogfile: TMenuItem;
     MenuItemAbout: TMenuItem;
     MenuItemFile: TMenuItem;
-    processStatement: TLabel;
-    processing: TLabel;
-    Label9: TLabel;
     LabelVersion: TLabel;
     MainMenu1: TMainMenu;
     Memo1: TMemo;
@@ -172,11 +186,6 @@ type
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
-    Panel4: TPanel;
-    Panel9: TPanel;
-    RadioButtonAuto: TRadioButton;
-    RadioButtonCreateOnly: TRadioButton;
-    RadioButtonInteractive: TRadioButton;
     SelectPacketBaseDir: TSelectDirectoryDialog;
     TabSheetAnalyze: TTabSheet;
     TICheckBoxlicenseRequired: TTICheckBox;
@@ -211,9 +220,15 @@ type
     ToolBar1: TToolBar;
     mysetup1: TSetupFile;
 
+    procedure BtATwonalyzeAndCreateClick(Sender: TObject);
+    procedure BtCreateEmptyTemplateClick(Sender: TObject);
+    procedure BtSingleAnalyzeAndCreateClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure setGuiMode;
     procedure BitBtnOpenFileClick(Sender: TObject);
     procedure BitBtn_PacketBasedirClick(Sender: TObject);
     procedure BitBtnClose1Click(Sender: TObject);
+    procedure BtAnalyzeOnlyClick(Sender: TObject);
     procedure ButtonCreatePacketClick(Sender: TObject);
     procedure CheckBox1Change(Sender: TObject);
     procedure CheckBoxUseMstChange(Sender: TObject);
@@ -237,11 +252,14 @@ type
     procedure SBtnExitClick(Sender: TObject);
   private
     { private declarations }
+    useGuiMode :  TGuiMode;
   public
     { public declarations }
     procedure memoadd(line: string);
 
   end;
+
+
 
 procedure main;
 procedure mywrite(line: string); overload;
@@ -285,6 +303,7 @@ var
   showAdvancedMSI: boolean = True;
 //*****************************************
 //myobject : TMyClass;
+
 
 
 implementation
@@ -530,6 +549,7 @@ begin
   myexitcode := 0;
   myerror := '';
   showgui := True;
+  resultForm1.useGuiMode := gmUnknown;
   optionlist := TStringList.Create;
   optionlist.Append('help');
   optionlist.Append('filename::');
@@ -655,18 +675,127 @@ begin
 end;
 
 
+
 { TResultform1 }
 
-procedure TResultform1.BitBtnClose1Click(Sender: TObject);
+procedure TResultform1.setGuiMode;
 begin
-  packetBaseDir := Edit_PacketbaseDir.Text;
+  case useGuiMode of
+    analyzeOnly        : begin
+                              TabSheetStart.Enabled:=true;
+                              TabSheetAnalyze.Enabled:=true;
+                              TabSheetSetup1.Enabled:=true;
+                              TabSheetSetup2.Enabled:=false;
+                              TabSheetProduct.Enabled:=false;
+                              //BtAnalyzeNextStep.Caption:='Next Step';
+                              //BtAnalyzeNextStep.Glyph.LoadFromResourceName();
+                              BtSetup1NextStep.Enabled:=false;
+                         end;
+    singleAnalyzeCreate: begin
+                              TabSheetStart.Enabled:=true;
+                              TabSheetAnalyze.Enabled:=true;
+                              TabSheetSetup1.Enabled:=true;
+                              TabSheetSetup2.Enabled:=false;
+                              TabSheetProduct.Enabled:=true;
+                              //BtAnalyzeNextStep.Caption:='Next Step';
+                              //BtAnalyzeNextStep.Glyph.LoadFromResourceName();
+                              BtSetup1NextStep.Enabled:=true;
+                         end;
+    twoAnalyzeCreate:    begin
+                              TabSheetStart.Enabled:=true;
+                              TabSheetAnalyze.Enabled:=true;
+                              TabSheetSetup1.Enabled:=true;
+                              TabSheetSetup2.Enabled:=false;
+                              TabSheetProduct.Enabled:=true;
+                              BtSetup1NextStep.Enabled:=true;
+                         end;
+    createTemplate:      begin
+                              TabSheetStart.Enabled:=true;
+                              TabSheetAnalyze.Enabled:=false;
+                              TabSheetSetup1.Enabled:=false;
+                              TabSheetSetup2.Enabled:=false;
+                              TabSheetProduct.Enabled:=true;
+                         end;
+    gmUnknown:           begin
+                            TabSheetStart.Enabled:=true;
+                            TabSheetAnalyze.Enabled:=true;
+                            TabSheetSetup1.Enabled:=true;
+                            TabSheetSetup2.Enabled:=true;
+                            TabSheetProduct.Enabled:=true;
+                            BtSetup1NextStep.Enabled:=true;
+                         end;
+  end;
+end;
+
+procedure TResultform1.FormClose(Sender: TObject; var CloseAction: TCloseAction
+  );
+begin
+    packetBaseDir := Edit_PacketbaseDir.Text;
   if (packetBaseDir <> '') and DirectoryExists(packetBaseDir) then
   begin
     Rewrite(fConfig);
     WriteLn(fConfig, packetBaseDir);
     CloseFile(fConfig);
   end;
+
+end;
+
+procedure TResultform1.BtSingleAnalyzeAndCreateClick(Sender: TObject);
+begin
+   OpenDialog1.FilterIndex := 1;   // setup
+  if OpenDialog1.Execute then
+  begin
+    useGuiMode := singleAnalyzeCreate;
+    setGuiMode;
+    PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
+    Application.ProcessMessages;
+    initaktproduct;
+    Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0]);
+  end;
+end;
+
+procedure TResultform1.BtATwonalyzeAndCreateClick(Sender: TObject);
+begin
+  OpenDialog1.FilterIndex := 1;   // setup
+ if OpenDialog1.Execute then
+ begin
+   useGuiMode := twoAnalyzeCreate;
+   setGuiMode;
+   PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
+   Application.ProcessMessages;
+   initaktproduct;
+   Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0]);
+ end;
+end;
+
+procedure TResultform1.BtCreateEmptyTemplateClick(Sender: TObject);
+begin
+ begin
+   useGuiMode := createTemplate;
+   setGuiMode;
+   PageControl1.ActivePage := resultForm1.TabSheetProduct;
+   Application.ProcessMessages;
+   initaktproduct;
+ end;
+end;
+
+procedure TResultform1.BitBtnClose1Click(Sender: TObject);
+begin
   Application.Terminate;
+end;
+
+procedure TResultform1.BtAnalyzeOnlyClick(Sender: TObject);
+begin
+  OpenDialog1.FilterIndex := 1;   // setup
+  if OpenDialog1.Execute then
+  begin
+    useGuiMode := analyzeOnly;
+    setGuiMode;
+    PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
+    Application.ProcessMessages;
+    initaktproduct;
+    Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0]);
+  end;
 end;
 
 
@@ -981,12 +1110,12 @@ end;
 procedure TResultform1.FileOpenSetupFileClick(Sender: TObject);
 begin
   PageControl1.ActivePage := TabSheetAnalyze;
-  BitBtnAnalyze.Click;
+  BtAnalyzeOnly.Click;
 end;
 
 procedure TResultform1.FileExitClick(Sender: TObject);
 begin
-  BitBtnClose2.Click;
+  Application.Terminate;
 end;
 
 procedure TResultform1.MenuItemAboutClick(Sender: TObject);
@@ -1026,8 +1155,30 @@ end;
 
 
 procedure TResultform1.FormCreate(Sender: TObject);
+var
+  myimage : TBitmap;
 begin
   main;
+  (*
+  PageControl1.Images.AddLazarusResource('HOME-2X');
+  PageControl1.Images.AddLazarusResource('MAGNIFYING-GLASS-2X');
+  PageControl1.Images.AddLazarusResource('COG-2X');
+  PageControl1.Images.AddLazarusResource('FLASH-2X');
+  *)
+  //myimage.LoadFromFile(ExpandFileName(ExtractFilePath(Application.ExeName)+PathDelim+ 'home-2x.png'));
+  //PageControl1.Images.add(myimage,nil);
+  (*
+  PageControl1.Images.AddLazarusResource('MAGNIFYING-GLASS-2X');
+  PageControl1.Images.AddLazarusResource('COG-2X');
+  PageControl1.Images.AddLazarusResource('FLASH-2X');
+  *)
+  (*
+  TabSheetStart.ImageIndex:=0;
+  TabSheetAnalyze.ImageIndex:=1;
+  TabSheetSetup1.ImageIndex:=2;
+  TabSheetSetup1.ImageIndex:=2;
+  TabSheetProduct.ImageIndex:=3;
+  *)
 end;
 
 procedure TResultform1.memoadd(line: string);
@@ -1107,13 +1258,6 @@ end;
 
 procedure TResultform1.SBtnExitClick(Sender: TObject);
 begin
-  packetBaseDir := Edit_PacketbaseDir.Text;
-  if (packetBaseDir <> '') and DirectoryExists(packetBaseDir) then
-  begin
-    Rewrite(fConfig);
-    WriteLn(fConfig, packetBaseDir);
-    CloseFile(fConfig);
-  end;
   Application.Terminate;
 end;
 

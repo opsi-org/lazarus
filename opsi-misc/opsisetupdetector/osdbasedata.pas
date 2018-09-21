@@ -147,6 +147,26 @@ type
     produktpropties : TProductProperies;
   end;
 
+  TConfiguration  =  class(TPersistent)
+  private
+    Fworkbench_share: string;
+    Fworkbench_Path: string;
+    Fworkbench_mounted: boolean;
+    Fconfig_filled: boolean;
+  published
+    property workbench_share: string read Fworkbench_share write Fworkbench_share;
+    property workbench_Path: string read Fworkbench_Path write Fworkbench_Path;
+    property workbench_mounted: boolean read Fworkbench_mounted write Fworkbench_mounted;
+    property config_filled: boolean read Fconfig_filled write Fconfig_filled;
+    procedure writeconfig;
+    procedure readconfig;
+  public
+    { public declarations }
+    constructor Create;
+    destructor Destroy;
+  end;
+
+
 function archModeStrToArchmode(modestr: string): TArchitectureMode;
 function installerToInstallerstr(installerId: TKnownInstaller): string;
 function instIdToint(installerId: TKnownInstaller): integer;
@@ -274,6 +294,53 @@ begin
 end;
 
 // TProductProperies **********************************
+
+// TConfiguration ************************************
+
+constructor TConfiguration.Create;
+begin
+  inherited;
+  readconfig;
+end;
+
+destructor TConfiguration.Destroy;
+begin
+  writeconfig;
+  inherited;
+end;
+
+procedure TConfiguration.writeconfig;
+begin
+
+end;
+
+procedure TConfiguration.readconfig;
+var
+  myfilename : string;
+  myconfig : Tstringlist;
+begin
+   // read persomal configuration
+  myfilename:=GetAppConfigFile(False);
+  if FileExists(myfilename) then
+  begin
+    myconfig := TStringlist.Create;
+    myconfig.LoadFromFile(myfilename);
+    Fworkbench_share := myconfig.Values[workbench_share];
+    Fworkbench_Path := myconfig.Values[workbench_path];
+    Fworkbench_mounted := false;
+    Fconfig_filled := BoolToStr(myconfig.Values[config_filled],true);
+    myconfig.Free;
+  end
+  else
+  begin
+    // init empty
+    Fworkbench_share := '';
+    Fworkbench_Path := '';
+    Fworkbench_mounted := false;
+    Fconfig_filled := false;
+  end;
+  Fworkbench_mounted := false;
+end;
 
 // Installer related ************************************
 

@@ -98,25 +98,6 @@ msgstr "-"
 msgid "Panel1"
 msgstr "-"
 
-#: tresultform1.bitbtnanalyze.caption
-msgctxt "TRESULTFORM1.BITBTNANALYZE.CAPTION"
-msgid "Open Setup File"
-msgstr "&Datei öffnen"
-
-#: tresultform1.bitbtnanalyze.hint
-msgctxt "TRESULTFORM1.BITBTNANALYZE.HINT"
-msgid "select setup file to analyze"
-msgstr "Die zu analysierende Setup-Datei wählen"
-
-#: tresultform1.bitbtnclose2.caption
-msgctxt "TRESULTFORM1.BITBTNCLOSE2.CAPTION"
-msgid "&Exit"
-msgstr "&Ende"
-
-#: tresultform1.bitbtnclose2.hint
-msgid "Close application"
-msgstr "Anwendung schliessen"
-
 #: tresultform1.bitbtnopenfile.caption
 #, fuzzy
 msgctxt "tresultform1.bitbtnopenfile.caption"
@@ -148,6 +129,88 @@ msgstr "Auswahl"
 msgctxt "TRESULTFORM1.BITBTN_PACKETBASEDIR.HINT"
 msgid "Select BaseDir to build opsi packets"
 msgstr "Basisverzeichnis wählen, in dem die opsi Pakete erzeugt werden."
+
+#: tresultform1.btanalyzenextstep.caption
+msgctxt "tresultform1.btanalyzenextstep.caption"
+msgid "Next Step"
+msgstr ""
+
+#: tresultform1.btanalyzenextstep.hint
+msgctxt "tresultform1.btanalyzenextstep.hint"
+msgid "Go to the next Step"
+msgstr ""
+
+#: tresultform1.btanalyzeonly.caption
+msgctxt "tresultform1.btanalyzeonly.caption"
+msgid "Only analyze single File "
+msgstr ""
+
+#: tresultform1.btanalyzeonly.hint
+msgctxt "tresultform1.btanalyzeonly.hint"
+msgid "Analyze a single existing Setupfile "
+msgstr ""
+
+#: tresultform1.btatwonalyzeandcreate.caption
+msgid "Analyze two Files and Create Opsi Product"
+msgstr ""
+
+#: tresultform1.btatwonalyzeandcreate.hint
+msgctxt "tresultform1.btatwonalyzeandcreate.hint"
+msgid ""
+"Analyze a single existing Setupfile \n"
+"and create an opsi Product\n"
+msgstr ""
+
+#: tresultform1.btcreateemptytemplate.caption
+msgid "Create an empty opsi product"
+msgstr ""
+
+#: tresultform1.btcreateemptytemplate.hint
+msgid ""
+"Create a empty \n"
+"opsi Product Directory Structure\n"
+msgstr ""
+
+#: tresultform1.btproductnextstep.caption
+msgctxt "tresultform1.btproductnextstep.caption"
+msgid "Next Step"
+msgstr ""
+
+#: tresultform1.btproductnextstep.hint
+msgctxt "tresultform1.btproductnextstep.hint"
+msgid "Go to the next Step"
+msgstr ""
+
+#: tresultform1.btsetup1nextstep.caption
+msgctxt "tresultform1.btsetup1nextstep.caption"
+msgid "Next Step"
+msgstr ""
+
+#: tresultform1.btsetup1nextstep.hint
+msgctxt "tresultform1.btsetup1nextstep.hint"
+msgid "Go to the next Step"
+msgstr ""
+
+#: tresultform1.btsetup2nextstep.caption
+msgctxt "tresultform1.btsetup2nextstep.caption"
+msgid "Next Step"
+msgstr ""
+
+#: tresultform1.btsetup2nextstep.hint
+msgctxt "tresultform1.btsetup2nextstep.hint"
+msgid "Go to the next Step"
+msgstr ""
+
+#: tresultform1.btsingleanalyzeandcreate.caption
+msgid "Analyze single File and Create Opsi Product"
+msgstr ""
+
+#: tresultform1.btsingleanalyzeandcreate.hint
+msgctxt "tresultform1.btsingleanalyzeandcreate.hint"
+msgid ""
+"Analyze a single existing Setupfile \n"
+"and create an opsi Product\n"
+msgstr ""
 
 #: tresultform1.buttoncreatepacket.caption
 msgctxt "tresultform1.buttoncreatepacket.caption"
@@ -401,10 +464,6 @@ msgstr "&Datei"
 msgid "Panel3"
 msgstr "-"
 
-#: tresultform1.panel4.caption
-msgid "Panel4"
-msgstr "-"
-
 #: tresultform1.processing.caption
 msgid "processing..."
 msgstr "Bearbeitung läuft ..."
@@ -440,6 +499,10 @@ msgstr ""
 msgctxt "TRESULTFORM1.TABSHEETANALYZE.CAPTION"
 msgid "Analyze"
 msgstr "Analysiere"
+
+#: tresultform1.tabsheetcreate.caption
+msgid "Create"
+msgstr ""
 
 #: tresultform1.tabsheetproduct.caption
 msgid "Product"

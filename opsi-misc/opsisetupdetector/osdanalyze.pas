@@ -19,6 +19,7 @@ uses
   oslog,
   osdbasedata;
 
+
 const
 
   SetupType_AdvancedMSI = 'AdvancedMSI';
@@ -45,6 +46,8 @@ function analyze_binary(myfilename: string; verbose, skipzero: boolean; var myse
 function getPacketIDfromFilename(str: string): string;
 function getPacketIDShort(str: string): string;
 function ExtractVersion(str: string): string;
+
+
 
 implementation
 
