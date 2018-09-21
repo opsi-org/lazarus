@@ -99,7 +99,7 @@ var XMLDocObject: TuibXMLDocument;
     k:integer;
 begin
   Memo3.Clear;
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+  //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
   XMLDocObject:= TuibXMLDocument.Create;
   // createXMLDoc
   if XMLDocObject.createXmlDocFromStringlist(memoToTStringlist(memo1)) then
@@ -206,9 +206,15 @@ end;
 procedure TForm1.addPackagesClick(Sender: TObject);
 var XMLDocObject: TuibXMLDocument;
     k: integer;
+    textArray: TStringList;
+
+// Testdatei opensuse_software_final_test.xml
+// 1) Suche Knoten software, subknoten packages, hänge subsubknoten package 1,2,3
+// 2) Suche Knoten software, hänge substuktur  <patterns config:type="list">
+//      <pattern>yast2_basis</pattern> ... ein
 begin
   Memo3.Clear;
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+  //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
   XMLDocObject:= TuibXMLDocument.Create;
   // createXMLDoc
   if XMLDocObject.createXmlDocFromStringlist(memoToTStringlist(memo1)) then
@@ -226,36 +232,79 @@ begin
   XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
 
-  LogDatei.log('vor filter byChildElement, kein filtern ',oslog.LLinfo);
-  XMLDocObject.filterByChildElement(true, 'packages');
+  LogDatei.log('vor filterByChildElement, kein filtern ',oslog.LLinfo);
+  XMLDocObject.filterByChildElement(true, 'software');
   XMLDocObject.getNextGenerationActNodeSet;
-  // add node
-  LogDatei.log('nach filter byChildElement ',oslog.LLinfo);
-  if XMLDocObject.setActNodeUniqueFromActnodeSet() then
-    LogDatei.log('actnode is set - do anything with actnode ',oslog.LLinfo)
-  else
-    LogDatei.log('actnode can not be set - no change with actnode ',oslog.LLinfo);
+  LogDatei.log('nach filterByChildElement software',oslog.LLinfo);
   LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
                           XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
+  XMLDocObject.logNodeSets;
+
+  XMLDocObject.filterByChildElement(true, 'packages');
+  XMLDocObject.getNextGenerationActNodeSet;
+  LogDatei.log('nach filter byChildElement packages',oslog.LLinfo);
+  LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
+                          XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
+  XMLDocObject.logNodeSets;
+
+
+  //if XMLDocObject.setActNodeUniqueFromActnodeSet() then
+  //  LogDatei.log('actnode is set - do anything with actnode ',oslog.LLinfo)
+  //else
+  //  LogDatei.log('actnode can not be set - no change with actnode ',oslog.LLinfo);
+
+  // add node
   XMLDocObject.makeNode('package','','');
   XMLDocObject.setNodeTextActNode('thunderbird');
   XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
-
-
-  // nach dem Anhängen des neuen Knotens ist actnode der neue Knoten
-  // nochmal den Knoten aus actNodeSet holen
-  if XMLDocObject.setActNodeUniqueFromActnodeSet() then
-    LogDatei.log('actnode is set - do anything with actnode ',oslog.LLinfo)
-  else
-    LogDatei.log('actnode can not be set - no change with actnode ',oslog.LLinfo);
   LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
                           XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
 
+  // nach dem Anhängen des neuen Knotens ist actnode der neue Knoten (package thunderbird)
+
+  // nochmal den Parent-Knoten aus actNodeSet holen
+  XMLDocObject.setParentNode();
+  LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
+                          XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
+  // Knoten pillepalle anhängen
   XMLDocObject.makeNode('package','','');
   XMLDocObject.setNodeTextActNode('pillepalle');
   XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
+  LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
+                          XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
+
+  // wieder im Knoten Packages einen Knotenanlegen, Knoten packages als actnode beibehalten
+  // diesmal gleich mit allen Parametern
+  XMLDocObject.setParentNode();
+  XMLDocObject.makeNodeAndKeepActNode('package','name1','attribut1','palimpalim');
+  XMLDocObject.makeNewDerivedNodeSet;
+  XMLDocObject.logNodeSets;
+  LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
+                          XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
+
+  //  eine Liste von Knoten anlegen, Knoten packages als actNode beibehalten
+  textArray := TStringList.Create;
+  textArray.Add('alpha');
+  textArray.Add('beta');
+  textArray.Add('gamma');
+  textArray.Add('delta');
+  textArray.Add('epsilon');
+  if XMLDocObject.makeNodes('package',textArray) then
+  begin
+    LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
+                          XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
+  end
+  else
+    LogDatei.log('irgendwas ist falsch gelaufen ' ,oslog.LLerror);
+
+  //if XMLDocObject.setActNodeUniqueFromActnodeSet() then
+  //  LogDatei.log('actnode is set - do anything with actnode ',oslog.LLinfo)
+  //else
+  //  LogDatei.log('actnode can not be set - no change with actnode ',oslog.LLinfo);
+
+  {
 
   // Löschen des Elements mit TextContent snapper
   // nach dem Anhängen des neuen Knotens ist actnode der neue Knoten
@@ -283,7 +332,7 @@ begin
       LogDatei.log('actNodeSet = nil',oslog.LLinfo);
   XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
-
+  }
   {
   // Löschen des Elements mit TextContent snapper
   // filterByText arbeitet auf actNodeSet
@@ -371,7 +420,7 @@ var XMLDocObject: TuibXMLDocument;
     k: integer;
 begin
   Memo3.Clear;
-  LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+  //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
   XMLDocObject:= TuibXMLDocument.Create;
   // createXMLDoc
   if XMLDocObject.createXmlDocFromStringlist(memoToTStringlist(memo1)) then
@@ -486,6 +535,6 @@ begin
   logfilename:= 'xmlsectiontest.log';
   logdatei.CreateTheLogfile(logfilename);
   logdatei.AktProduktId:='xmlsectiontest';
-  LogDatei.log('start logging',oslog.LLinfo);
+  LogDatei.log('start logging',oslog.LLinfo)  ;
 end.
 
