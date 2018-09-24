@@ -139,10 +139,11 @@
         <MinVersion Major="1" Valid="True"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="51">
+    <Units Count="52">
       <Unit0>
         <Filename Value="opsisetupdetector.lpr"/>
         <IsPartOfProject Value="True"/>
+        <TopLine Value="4"/>
         <CursorPos X="9" Y="9"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -424,14 +425,14 @@
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
-        <TopLine Value="303"/>
-        <CursorPos X="27" Y="333"/>
+        <TopLine Value="308"/>
+        <CursorPos X="48" Y="334"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <IsVisibleTab Value="True"/>
           <WindowIndex Value="1"/>
-          <TopLine Value="140"/>
-          <CursorPos X="20" Y="153"/>
+          <TopLine Value="139"/>
+          <CursorPos X="21" Y="13"/>
         </ExtraEditor1>
         <UsageCount Value="103"/>
         <Loaded Value="True"/>
@@ -549,13 +550,21 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit49>
       <Unit50>
-        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\1.8.4\lcl\lresources.pp"/>
+        <Filename Value="N:\usr\share\lazarus\1.8.4\lcl\lresources.pp"/>
         <UnitName Value="LResources"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="5337"/>
         <CursorPos Y="5359"/>
         <UsageCount Value="10"/>
       </Unit50>
+      <Unit51>
+        <Filename Value="C:\lazarus\fpc\3.0.4\source\rtl\objpas\sysutils\sysstrh.inc"/>
+        <EditorIndex Value="6"/>
+        <TopLine Value="197"/>
+        <CursorPos X="10" Y="217"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit51>
     </Units>
     <OtherDefines Count="1">
       <Define0 Value="OPSI"/>
@@ -571,15 +580,15 @@
       </Position2>
       <Position3>
         <Filename Value="resultform.pas"/>
-        <Caret Line="1050" Column="3" TopLine="1048"/>
+        <Caret Line="1048" Column="3" TopLine="1046"/>
       </Position3>
       <Position4>
         <Filename Value="resultform.pas"/>
-        <Caret Line="1049" Column="3" TopLine="1047"/>
+        <Caret Line="1047" Column="3" TopLine="1045"/>
       </Position4>
       <Position5>
         <Filename Value="resultform.pas"/>
-        <Caret Line="1050" Column="3" TopLine="1048"/>
+        <Caret Line="1046" Column="3" TopLine="1044"/>
       </Position5>
       <Position6>
         <Filename Value="resultform.pas"/>
@@ -595,91 +604,90 @@
       </Position8>
       <Position9>
         <Filename Value="resultform.pas"/>
-        <Caret Line="1046" Column="3" TopLine="1044"/>
+        <Caret Line="750" Column="33" TopLine="738"/>
       </Position9>
       <Position10>
         <Filename Value="resultform.pas"/>
-        <Caret Line="1049" Column="3" TopLine="1047"/>
+        <Caret Line="1063" Column="3" TopLine="1042"/>
       </Position10>
       <Position11>
         <Filename Value="resultform.pas"/>
-        <Caret Line="1048" Column="3" TopLine="1046"/>
+        <Caret Line="1200" Column="3" TopLine="1180"/>
       </Position11>
       <Position12>
         <Filename Value="resultform.pas"/>
-        <Caret Line="1047" Column="3" TopLine="1045"/>
+        <Caret Line="1061" Column="25" TopLine="1042"/>
       </Position12>
       <Position13>
         <Filename Value="resultform.pas"/>
-        <Caret Line="750" Column="33" TopLine="738"/>
+        <Caret Line="740" Column="3" TopLine="738"/>
       </Position13>
       <Position14>
         <Filename Value="resultform.pas"/>
-        <Caret Line="1063" Column="3" TopLine="1042"/>
+        <Caret Line="1063" Column="22" TopLine="1042"/>
       </Position14>
       <Position15>
         <Filename Value="resultform.pas"/>
-        <Caret Line="1200" Column="3" TopLine="1180"/>
+        <Caret Line="1218" Column="3" TopLine="1187"/>
       </Position15>
       <Position16>
         <Filename Value="resultform.pas"/>
-        <Caret Line="1061" Column="25" TopLine="1042"/>
+        <Caret Line="1218" TopLine="1180"/>
       </Position16>
       <Position17>
         <Filename Value="resultform.pas"/>
-        <Caret Line="740" Column="3" TopLine="738"/>
+        <Caret Line="737" TopLine="727"/>
       </Position17>
       <Position18>
         <Filename Value="resultform.pas"/>
-        <Caret Line="1063" Column="22" TopLine="1042"/>
+        <Caret Line="1072" Column="26" TopLine="1056"/>
       </Position18>
       <Position19>
         <Filename Value="resultform.pas"/>
-        <Caret Line="1218" Column="3" TopLine="1187"/>
+        <Caret Line="766" Column="32" TopLine="758"/>
       </Position19>
       <Position20>
         <Filename Value="resultform.pas"/>
-        <Caret Line="730" Column="3" TopLine="1048"/>
+        <Caret Line="744" Column="3" TopLine="742"/>
       </Position20>
       <Position21>
         <Filename Value="resultform.pas"/>
-        <Caret Line="1218" TopLine="1180"/>
+        <Caret Line="750" Column="3" TopLine="739"/>
       </Position21>
       <Position22>
         <Filename Value="resultform.pas"/>
-        <Caret Line="737" TopLine="727"/>
+        <Caret Line="754" Column="7" TopLine="713"/>
       </Position22>
       <Position23>
         <Filename Value="resultform.pas"/>
-        <Caret Line="1072" Column="26" TopLine="1056"/>
+        <Caret Line="780" Column="19" TopLine="749"/>
       </Position23>
       <Position24>
         <Filename Value="resultform.pas"/>
-        <Caret Line="766" Column="32" TopLine="758"/>
+        <Caret Line="781" Column="19" TopLine="750"/>
       </Position24>
       <Position25>
         <Filename Value="resultform.pas"/>
-        <Caret Line="744" Column="3" TopLine="742"/>
+        <Caret Line="780" Column="19" TopLine="749"/>
       </Position25>
       <Position26>
-        <Filename Value="resultform.pas"/>
-        <Caret Line="750" Column="3" TopLine="739"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="153" Column="20" TopLine="148"/>
       </Position26>
       <Position27>
-        <Filename Value="resultform.pas"/>
-        <Caret Line="754" Column="7" TopLine="713"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="331" Column="62" TopLine="314"/>
       </Position27>
       <Position28>
-        <Filename Value="resultform.pas"/>
-        <Caret Line="780" Column="19" TopLine="749"/>
+        <Filename Value="C:\lazarus\fpc\3.0.4\source\rtl\objpas\sysutils\sysstrh.inc"/>
       </Position28>
       <Position29>
-        <Filename Value="resultform.pas"/>
-        <Caret Line="781" Column="19" TopLine="750"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="315" Column="18" TopLine="303"/>
       </Position29>
       <Position30>
-        <Filename Value="resultform.pas"/>
-        <Caret Line="780" Column="19" TopLine="749"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="331" Column="63" TopLine="311"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
@@ -691,7 +699,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="C:\lazarus\components\thtml;..\..\common"/>
+      <OtherUnitFiles Value="C:\lazarus\components\thtml\;..\..\common"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>

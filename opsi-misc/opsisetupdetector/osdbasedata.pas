@@ -325,10 +325,10 @@ begin
   begin
     myconfig := TStringlist.Create;
     myconfig.LoadFromFile(myfilename);
-    Fworkbench_share := myconfig.Values[workbench_share];
-    Fworkbench_Path := myconfig.Values[workbench_path];
+    Fworkbench_share := myconfig.Values['workbench_share'];
+    Fworkbench_Path := myconfig.Values['workbench_path'];
     Fworkbench_mounted := false;
-    Fconfig_filled := BoolToStr(myconfig.Values[config_filled],true);
+    Fconfig_filled := strToBool(myconfig.Values['config_filled']);
     myconfig.Free;
   end
   else
