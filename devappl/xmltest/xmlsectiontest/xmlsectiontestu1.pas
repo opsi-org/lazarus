@@ -206,7 +206,7 @@ end;
 procedure TForm1.addPackagesClick(Sender: TObject);
 var XMLDocObject: TuibXMLDocument;
     k: integer;
-    textArray: TStringList;
+//    textArray: TStringList;
 
 // Testdatei opensuse_software_final_test.xml
 // 1) Suche Knoten software, subknoten packages, hänge subsubknoten package 1,2,3
@@ -232,6 +232,8 @@ begin
   XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
 
+  {
+  // Anlegen von Knoten
   LogDatei.log('vor filterByChildElement, kein filtern ',oslog.LLinfo);
   XMLDocObject.filterByChildElement(true, 'software');
   XMLDocObject.getNextGenerationActNodeSet;
@@ -292,37 +294,38 @@ begin
   textArray.Add('delta');
   textArray.Add('epsilon');
   if XMLDocObject.makeNodes('package',textArray) then
+  // makeNodes: Namen der Knoten (identisch), im Array die Texte der Knoten
   begin
     LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
                           XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
   end
   else
     LogDatei.log('irgendwas ist falsch gelaufen ' ,oslog.LLerror);
+  }
 
-  //if XMLDocObject.setActNodeUniqueFromActnodeSet() then
-  //  LogDatei.log('actnode is set - do anything with actnode ',oslog.LLinfo)
-  //else
-  //  LogDatei.log('actnode can not be set - no change with actnode ',oslog.LLinfo);
+  // anderer Weg für das Anlegen von Knoten
+  // über den nodeExisits und openNode mit dem nodePath,
+  // danach an actNode makeNode und setzen des Textes
+  if XMLDocObject.nodeExists('software // packages config:type="list"') then
+    if XMLDocObject.openNode('software // packages config:type="list"', false) then
+    begin
+      XMLDocObject.makeNode('package','','');
+      XMLDocObject.setNodeTextActNode('thunderbird');
+    end;
+  if XMLDocObject.nodeExists('software // packages config:type="list"') then
+    if XMLDocObject.openNode('software // packages config:type="list"', false) then
+    begin
+      XMLDocObject.makeNode('package','','');
+      XMLDocObject.setNodeTextActNode('firefox');
+    end;
+  if XMLDocObject.nodeExists('software // packages config:type="list"') then
+    if XMLDocObject.openNode('software // packages config:type="list"', false) then
+    begin
+      XMLDocObject.makeNode('package','','');
+      XMLDocObject.setNodeTextActNode('flowerpower');
+    end;
 
-  {
-
-  // Löschen des Elements mit TextContent snapper
-  // nach dem Anhängen des neuen Knotens ist actnode der neue Knoten
-  // nochmal den Knoten aus actNodeSet holen
-  if XMLDocObject.setActNodeUniqueFromActnodeSet() then
-    LogDatei.log('actnode is set - do anything with actnode ',oslog.LLinfo)
-  else
-    LogDatei.log('actnode can not be set - no change with actnode ',oslog.LLinfo);
-  LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
-                          XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
-  if XMLDocObject.setActnodeIfText('snapper') then
-      begin
-        LogDatei.log('found: package snapper',oslog.LLinfo);
-        XMLDocObject.delNode;
-      end
-      else
-        LogDatei.log('not found: package snapper',oslog.LLinfo);
-  // nochmal neu aufbauen und schauen, ob alles richtig aussieht
+  // nochmal auf Anfang und die Knoten auslesen
   XMLDocObject.setlengthActNodeSet  (1);
   XMLDocObject.actnodeset[0] := XMLDocObject.getDocumentElement;
   for k:= 0 to length(XMLDocObject.actNodeSet)-1 do
@@ -332,69 +335,43 @@ begin
       LogDatei.log('actNodeSet = nil',oslog.LLinfo);
   XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
-  }
-  {
-  // Löschen des Elements mit TextContent snapper
-  // filterByText arbeitet auf actNodeSet
-  // das klappt irgendwie nicht richtig, das derived Nodest sieht merkwürdig aus
-  // und der Knoten kann zwar geholt werden, es wird aber das schließende Tag nicht gelöscht
-  // daher vorherige Lösung
+
+  XMLDocObject.filterByChildElement(true, 'software');
   XMLDocObject.getNextGenerationActNodeSet;
-  if XMLDocObject.filterByText(true, 'snapper') then
-    begin
-      LogDatei.log('found: package snapper',oslog.LLwarning);
-      //
-    end
-  else
-    begin
-      LogDatei.log('not found: package snapper',oslog.LLwarning);
-    end;
+  XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
-  if XMLDocObject.setActNodeUniqueFromActnodeSet() then
-    LogDatei.log('actnode is set - do anything with actnode ',oslog.LLinfo)
-  else
-    LogDatei.log('actnode can not be set - no change with actnode ',oslog.LLinfo);
-  LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
-                          XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
-  XMLDocObject.delNode;
-  }
+
+  XMLDocObject.filterByChildElement(true, 'packages');
+  XMLDocObject.getNextGenerationActNodeSet;
+  XMLDocObject.makeNewDerivedNodeSet;
+  XMLDocObject.logNodeSets;
 
 
 
-  { anderer Weg über den nodePath und actNode
-  // add nodes
-  if XMLDocObject.nodeExists('packages config:type="list"') then
-    if XMLDocObject.openNode('packages config:type="list"', false) then
-    begin
-      XMLDocObject.makeNode('package','','');
-      XMLDocObject.setNodeText('thunderbird');
-    end;
-  if XMLDocObject.nodeExists('packages config:type="list"') then
-    if XMLDocObject.openNode('packages config:type="list"', false) then
-    begin
-      XMLDocObject.makeNode('package','','');
-      XMLDocObject.setNodeText('firefox');
-    end;
-  if XMLDocObject.nodeExists('packages config:type="list"') then
-    if XMLDocObject.openNode('packages config:type="list"', false) then
-    begin
-      XMLDocObject.makeNode('package','','');
-      XMLDocObject.setNodeText('flowerpower');
-    end;
-
+  // Löschen des Elements package mit TextContent snapper
+  // filterByText arbeitet auf actNodeSet
   // delete node if text is
   // select node name=package, text=snapper
-  if XMLDocObject.nodeExists('packages config:type="list"') then
-    if XMLDocObject.openNode('packages config:type="list"', false) then
+  if XMLDocObject.nodeExists('software // packages config:type="list"') then
+    if XMLDocObject.openNode('software // packages config:type="list"', false) then
     begin
-      if XMLDocObject.setActnodeIfText('snapper') then
+       LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
+                          XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
+      if XMLDocObject.filterByText(true, 'snapper') then
       begin
+         LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
+                          XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
         LogDatei.log('found: package snapper',oslog.LLinfo);
+        XMLDocObject.getNextGenerationActNodeSet;
+        XMLDocObject.makeNewDerivedNodeSet;
+        XMLDocObject.logNodeSets;
+
         XMLDocObject.delNode;
       end
       else
         LogDatei.log('not found: package snapper',oslog.LLinfo);
     end;
+  {
   // select node name=package, text=glibc
   if XMLDocObject.nodeExists('packages config:type="list"') then
     if XMLDocObject.openNode('packages config:type="list"', false) then
