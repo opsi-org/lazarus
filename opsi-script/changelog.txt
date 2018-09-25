@@ -4,6 +4,12 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.0.29) stable; urgency=low
+
+  * osparser: doRegitryHack*: remove HKCU on flag_all_usrclass
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 25 Sep 2018:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.0.28) stable; urgency=low
 
   * osconf: (fix): get ScriptErrorMessages, AutoActivityDisplay

@@ -4582,7 +4582,7 @@ begin
         end
       end
       else
-      if (flag_all_ntuser or flag_ntuser or runLoginScripts) and (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
+      if (flag_all_ntuser or flag_ntuser or flag_all_usrclass or runLoginScripts) and (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
       begin
         // remove HKCU from the beginning
         key := key;
@@ -4967,7 +4967,7 @@ begin
               end
             end
             else
-            if (flag_all_ntuser or flag_ntuser or runLoginScripts) and (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
+            if (flag_all_ntuser or flag_ntuser or flag_all_usrclass or runLoginScripts) and (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
             begin
               // remove HKCU from the beginning
               key := key;
@@ -5070,7 +5070,7 @@ begin
             GetWord (key_completepath, key0, key, ['\']);
             system.delete(key,1,1);
 
-            if (flag_all_ntuser or flag_ntuser or runLoginScripts) and (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
+            if (flag_all_ntuser or flag_ntuser or flag_all_usrclass or runLoginScripts) and (('HKEY_CURRENT_USER' = UpperCase(key0)) or ('HKCU' = UpperCase(key0))) then
             begin
               // remove HKCU from the beginning
               key := key;
