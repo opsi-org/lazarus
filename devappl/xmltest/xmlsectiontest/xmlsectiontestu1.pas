@@ -95,6 +95,7 @@ begin
 end;
 
 procedure TForm1.unatt_win10Click(Sender: TObject);
+// getestet mit unattend_win10_x64.xml
 var XMLDocObject: TuibXMLDocument;
     k:integer;
 begin
@@ -355,36 +356,22 @@ begin
   if XMLDocObject.nodeExists('software // packages config:type="list"') then
     if XMLDocObject.openNode('software // packages config:type="list"', false) then
     begin
-       LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
+       LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text_content is: ' +
                           XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
-      if XMLDocObject.filterByText(true, 'snapper') then
+      if XMLDocObject.setActNodeIfText('snapper') then
       begin
-         LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
+        LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ', text_content is:' +
                           XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
-        LogDatei.log('found: package snapper',oslog.LLinfo);
-        XMLDocObject.getNextGenerationActNodeSet;
-        XMLDocObject.makeNewDerivedNodeSet;
-        XMLDocObject.logNodeSets;
-
         XMLDocObject.delNode;
+        LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode,oslog.LLinfo);
       end
       else
         LogDatei.log('not found: package snapper',oslog.LLinfo);
     end;
-  {
-  // select node name=package, text=glibc
-  if XMLDocObject.nodeExists('packages config:type="list"') then
-    if XMLDocObject.openNode('packages config:type="list"', false) then
-    begin
-      if XMLDocObject.setActnodeIfText('glibc') then
-      begin
-        LogDatei.log('found: package glibc',oslog.LLinfo);
-        XMLDocObject.delNode;
-      end
-      else
-        LogDatei.log('not found: package glibc',oslog.LLinfo);
-    end;
-  }
+
+  // andere Variante des Löschens ohne Angabe des Text_Content, löscht das erste Element
+  XMLDocObject.delNode('software // packages config:type="list" // package');
+
   memo3.Append(XMLDocObject.getXmlStrings().Text);
   memo3.Repaint;
   Application.ProcessMessages;
