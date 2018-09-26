@@ -15,7 +15,7 @@ uses
   SysUtils;
 
 {$IFDEF WINDOWS}
-procedure registerForExplorer;
+procedure registerForExplorer(doregister : boolean);
 function getSpecialFolder(csidlValue: integer): string;
 {$ENDIF WINDOWS}
 function RunCommandAndCaptureOut
@@ -28,11 +28,11 @@ uses
   resultform;
 
 {$IFDEF WINDOWS}
-procedure registerForExplorer;
+procedure registerForExplorer(doregister: boolean);
 var
   myreg: Tregistry;
-  doregister: boolean;
 begin
+  (*
   doregister := True;
   myreg := TRegistry.Create(KEY_ALL_ACCESS);
   myreg.RootKey := HKEY_CURRENT_USER;
@@ -43,12 +43,20 @@ begin
     myreg.WriteBool('regsterAtExplorer', doregister);
   myreg.CloseKey;
   resultform1.CheckBox1.Checked := doregister;
+  *)
+  myreg := TRegistry.Create(KEY_ALL_ACCESS);
   myreg.RootKey := HKEY_CURRENT_USER;
   myreg.OpenKey('Software\Classes\*\shell\opsi setup detector\Command', True);
   if doregister then
-    myreg.WriteString('', '"' + ParamStr(0) + '" --filename=%1')
+  begin
+    myreg.OpenKey('Software\Classes\*\shell\opsi setup detector\Command', True);
+    myreg.WriteString('', '"' + ParamStr(0) + '" --filename=%1');
+  end
   else
-    myreg.WriteString('', '');
+  begin
+    myreg.DeleteKey('Software\Classes\*\shell\opsi setup detector\Command');
+    myreg.DeleteKey('Software\Classes\*\shell\opsi setup detector');
+  end;
   myreg.CloseKey;
   myreg.Free;
 end;

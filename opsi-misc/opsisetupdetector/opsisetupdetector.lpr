@@ -16,7 +16,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   //VersionInfoX,
   //help,
   printers, fileinfo, winpeimagereader, lcltranslator, runtimetypeinfocontrols,
-  osdanalyze, osdhelper, osdbasedata;
+  osdanalyze, osdhelper, osdbasedata, osdconfigdlg, osdcreate;
 
 
 {$R *.res}
@@ -36,6 +36,7 @@ begin
   Application.Initialize;
   Application.Title:='opsi setup detector';
   Application.CreateForm(TresultForm1, resultForm1);
+  Application.CreateForm(TFOSDConfigdlg, FOSDConfigdlg);
   //Application.CreateForm(TFormHelp, FormHelp);
   Application.Run;
   //main;

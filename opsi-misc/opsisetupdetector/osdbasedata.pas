@@ -6,7 +6,12 @@ interface
 
 uses
   Classes, SysUtils, LCLProc, LResources, TypInfo, Forms, Controls, Graphics,
-  Dialogs, RTTICtrls, StdCtrls;
+  Dialogs, StdCtrls,
+  {$IFDEF WINDOWS}
+  osdhelper,
+  shlobj,
+  {$ENDIF WINDOWS}
+  RTTICtrls;
 
 type
 
@@ -153,11 +158,13 @@ type
     Fworkbench_Path: string;
     Fworkbench_mounted: boolean;
     Fconfig_filled: boolean;
+    FregisterInFilemanager: boolean;
   published
     property workbench_share: string read Fworkbench_share write Fworkbench_share;
     property workbench_Path: string read Fworkbench_Path write Fworkbench_Path;
     property workbench_mounted: boolean read Fworkbench_mounted write Fworkbench_mounted;
     property config_filled: boolean read Fconfig_filled write Fconfig_filled;
+    property registerInFilemanager: boolean read FregisterInFilemanager write FregisterInFilemanager;
     procedure writeconfig;
     procedure readconfig;
   public
@@ -171,6 +178,7 @@ function archModeStrToArchmode(modestr: string): TArchitectureMode;
 function installerToInstallerstr(installerId: TKnownInstaller): string;
 function instIdToint(installerId: TKnownInstaller): integer;
 procedure initaktproduct;
+procedure freebasedata;
 
 var
   aktProduct: TProductData;
@@ -179,6 +187,7 @@ var
   architectureModeList: TStringList;
   installerArray: TInstallers;
   counter: integer;
+  myconfiguration : TConfiguration;
   //myobject : TMyClass;
 
 implementation
@@ -310,17 +319,50 @@ begin
 end;
 
 procedure TConfiguration.writeconfig;
-begin
 
+  var
+  myfilename : string;
+  myconfig : Tstringlist;
+  configDir :  Array[0..MaxPathLen] of Char; //Allocate memory
+  fConfig : text;
+begin
+   // read persomal configuration
+  configDir:='';
+  {$IFDEF Windows}
+  SHGetFolderPath(0,CSIDL_APPDATA,0,SHGFP_TYPE_CURRENT,configDir);
+  {$ELSE}
+  configDir := GetAppConfigDir(False);
+  {$ENDIF WINDOWS}
+  myfilename := configDir+PathDelim+'opsi.org'+PathDelim+'opsisetupdetector.cfg';
+  if not DirectoryExists(configDir+PathDelim+'opsi.org') then
+    CreateDir(configDir);
+
+    myconfig := TStringlist.Create;
+    myconfig.Add('workbench_share='+Fworkbench_share);
+    myconfig.Add('workbench_path='+Fworkbench_Path);
+    myconfig.Add('workbench_mounted='+booltostr(Fworkbench_mounted,true));
+    myconfig.Add('config_filled='+booltostr(Fconfig_filled,true));
+    myconfig.Add('registerInFilemanager='+booltostr(FregisterInFilemanager,true));
+    myconfig.SaveToFile(myfilename);
+    myconfig.Free;
 end;
 
 procedure TConfiguration.readconfig;
 var
   myfilename : string;
   myconfig : Tstringlist;
+  oldconfigDir,oldconfigFileName, tmpstr : string;
+  configdir :  Array[0..MaxPathLen] of Char; //Allocate memory
+  fConfig : text;
 begin
    // read persomal configuration
-  myfilename:=GetAppConfigFile(False);
+   configDir:='';
+  {$IFDEF Windows}
+  SHGetFolderPath(0,CSIDL_APPDATA,0,SHGFP_TYPE_CURRENT,configDir);
+  {$ELSE}
+  configDir := GetAppConfigDir(False);
+  {$ENDIF WINDOWS}
+  myfilename := configDir+PathDelim+'opsi.og'+PathDelim+'opsisetupdetector.cfg';
   if FileExists(myfilename) then
   begin
     myconfig := TStringlist.Create;
@@ -329,17 +371,36 @@ begin
     Fworkbench_Path := myconfig.Values['workbench_path'];
     Fworkbench_mounted := false;
     Fconfig_filled := strToBool(myconfig.Values['config_filled']);
+    FregisterInFilemanager := strToBool(myconfig.Values['registerInFilemanager']);
     myconfig.Free;
   end
   else
   begin
+    tmpstr := '';
+    // check for old config
+    // get global ConfigDir
+  oldconfigDir := GetAppConfigDir(True);
+  oldconfigFileName := oldconfigDir + 'config.txt';
+  if FileExists(oldconfigFileName) then
+  begin
+    AssignFile(fConfig, oldconfigFileName);
+    Reset(fConfig);
+    if not EOF(fConfig) then
+      ReadLn(fConfig, tmpstr);
+    CloseFile(fConfig);
+  end;
     // init empty
     Fworkbench_share := '';
-    Fworkbench_Path := '';
+    Fworkbench_Path := tmpstr;
     Fworkbench_mounted := false;
-    Fconfig_filled := false;
+    if tmpstr = '' then Fconfig_filled := false
+    else  Fconfig_filled := true;
   end;
   Fworkbench_mounted := false;
+  {$IFDEF WINDOWS}
+  registerForExplorer(FregisterInFilemanager);
+  {$ELSE}
+  {$ENDIF WINDOWS}
 end;
 
 // Installer related ************************************
@@ -444,6 +505,25 @@ begin
     licenserequired := False;
   end;
 end;
+
+procedure freebasedata;
+var
+  i : integer;
+begin
+  for i := 0 to 1 do
+  begin
+    if Assigned(aktProduct.SetupFiles[i]) then
+      aktProduct.SetupFiles[i].Destroy;
+  end;
+  if Assigned(aktProduct.produktpropties) then
+    aktProduct.produktpropties.Destroy;
+  if Assigned(myconfiguration) then
+  begin
+    myconfiguration.writeconfig;
+     myconfiguration.Destroy;
+  end;
+end;
+
 
 begin
   knownInstallerList := TStringList.Create;
@@ -567,6 +647,8 @@ begin
   architectureModeList.Add('systemSpecific - fix');
   architectureModeList.Add('selectable');
 
+  myconfiguration := TConfiguration.Create;
+  myconfiguration.readconfig;
 
   //aktSetupFile := TSetupFile.Create;
 

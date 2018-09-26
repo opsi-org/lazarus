@@ -40,7 +40,9 @@ uses
   winpeimagereader,
   lcltranslator, EditBtn, Spin, JSONPropStorage,
   oslog,
-  osdbasedata;
+  osdbasedata,
+  osdconfigdlg,
+  osdcreate;
 
 const
   sMBoxHeader = 'opsi setup detector';
@@ -77,12 +79,14 @@ const
 
 type
 
-  TGuiMode = (analyzeOnly,singleAnalyzeCreate,twoAnalyzeCreate, createTemplate, gmUnknown);
+  TGuiMode = (analyzeOnly, singleAnalyzeCreate, twoAnalyzeCreate,
+    createTemplate, gmUnknown);
 
   { TResultform1 }
 
   TResultform1 = class(TForm)
-    BitBtn_PacketBasedir: TBitBtn;
+    BitBtnWorkBenchPath: TBitBtn;
+    BitBtnRecheckWorkbench: TBitBtn;
     BtAnalyzeNextStep: TBitBtn;
     BtSetup1NextStep: TBitBtn;
     BtSetup2NextStep: TBitBtn;
@@ -97,18 +101,21 @@ type
     BtATwonalyzeAndCreate: TBitBtn;
     BtCreateEmptyTemplate: TBitBtn;
     BtAnalyzeOnly: TBitBtn;
+    BtCreateProduct: TBitBtn;
     ButtonCreatePacket: TButton;
     CheckBoxBuild: TCheckBox;
     CheckBoxInstall: TCheckBox;
     CheckBoxQuiet: TCheckBox;
     CheckBoxUseMst: TCheckBox;
     CheckBoxUseMst1: TCheckBox;
-    Edit_PacketbaseDir: TEdit;
     FlowPanel1: TFlowPanel;
     FlowPanel10: TFlowPanel;
     FlowPanel11: TFlowPanel;
     FlowPanel12: TFlowPanel;
     FlowPanel13: TFlowPanel;
+    FlowPanel14: TFlowPanel;
+    FlowPanel15: TFlowPanel;
+    FlowPanel16: TFlowPanel;
     FlowPanel2: TFlowPanel;
     FlowPanel3: TFlowPanel;
     FlowPanel6: TFlowPanel;
@@ -153,7 +160,9 @@ type
     Label54: TLabel;
     Label55: TLabel;
     Label56: TLabel;
-    Label9: TLabel;
+    Label78: TLabel;
+    LabelWorkbenchOK: TLabel;
+    LabelWorkbenchNotOK: TLabel;
     MemoDefault: TMemo;
     MenuItemConfig: TMenuItem;
     OpenDialogSetupfile: TOpenDialog;
@@ -166,6 +175,7 @@ type
     RadioButtonInteractive: TRadioButton;
     SBtnOpen: TSpeedButton;
     SBtnExit: TSpeedButton;
+    SelectDirectoryDialog1: TSelectDirectoryDialog;
     StatusBar1: TStatusBar;
     TabSheetCreate: TTabSheet;
     TabSheetStart: TTabSheet;
@@ -178,7 +188,6 @@ type
     //FileCreateLogfile: TMenuItem;
     MenuItemAbout: TMenuItem;
     MenuItemFile: TMenuItem;
-    LabelVersion: TLabel;
     MainMenu1: TMainMenu;
     Memo1: TMemo;
     OpenDialog1: TOpenDialog;
@@ -186,7 +195,6 @@ type
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
-    SelectPacketBaseDir: TSelectDirectoryDialog;
     TabSheetAnalyze: TTabSheet;
     TICheckBoxlicenseRequired: TTICheckBox;
     TIComboBoxArch1: TTIComboBox;
@@ -208,6 +216,7 @@ type
     TIEditProdName: TTIEdit;
     TIEditRequiredSizeMB2: TTIEdit;
     TIEditSetupfile2: TTIEdit;
+    TIEditworkbenchpath: TTIEdit;
     TIEditSetupFileSizeMB1: TTIEdit;
     TIEditRequiredSizeMB1: TTIEdit;
     TIEditInstallDir1: TTIEdit;
@@ -220,13 +229,21 @@ type
     ToolBar1: TToolBar;
     mysetup1: TSetupFile;
 
+    procedure BitBtnRecheckWorkbenchClick(Sender: TObject);
+    procedure BitBtnWorkBenchPathClick(Sender: TObject);
+    procedure BtAnalyzeNextStepClick(Sender: TObject);
     procedure BtATwonalyzeAndCreateClick(Sender: TObject);
     procedure BtCreateEmptyTemplateClick(Sender: TObject);
+    procedure BtCreateProductClick(Sender: TObject);
+    procedure BtProductNextStepClick(Sender: TObject);
+    procedure BtSetup1NextStepClick(Sender: TObject);
+    procedure BtSetup2NextStepClick(Sender: TObject);
     procedure BtSingleAnalyzeAndCreateClick(Sender: TObject);
+    procedure FlowPanel14Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure MenuItemConfigClick(Sender: TObject);
     procedure setGuiMode;
     procedure BitBtnOpenFileClick(Sender: TObject);
-    procedure BitBtn_PacketBasedirClick(Sender: TObject);
     procedure BitBtnClose1Click(Sender: TObject);
     procedure BtAnalyzeOnlyClick(Sender: TObject);
     procedure ButtonCreatePacketClick(Sender: TObject);
@@ -250,9 +267,10 @@ type
     procedure removeOtherTypeSpecificSections(setupType, setupFile: string);
     procedure SBtnOpenClick(Sender: TObject);
     procedure SBtnExitClick(Sender: TObject);
+    procedure TabSheetCreateShow(Sender: TObject);
   private
     { private declarations }
-    useGuiMode :  TGuiMode;
+    useGuiMode: TGuiMode;
   public
     { public declarations }
     procedure memoadd(line: string);
@@ -264,6 +282,7 @@ type
 procedure main;
 procedure mywrite(line: string); overload;
 procedure mywrite(line: string; loglevel: integer); overload;
+procedure checkWorkbench;
 
 
 var
@@ -311,61 +330,6 @@ implementation
 {$R *.lfm}
 //{$R manifest.rc}
 
-(*
-procedure registerForExplorer;
-var
-  myreg: Tregistry;
-  doregister: boolean;
-begin
-  doregister := True;
-  myreg := TRegistry.Create(KEY_ALL_ACCESS);
-  myreg.RootKey := HKEY_CURRENT_USER;
-  myreg.OpenKey('SOFTWARE\opsi.org\opsisetupdetector', True);
-  if myreg.ValueExists('regsterAtExplorer') then
-    doregister := myreg.ReadBool('regsterAtExplorer')
-  else
-    myreg.WriteBool('regsterAtExplorer', doregister);
-  myreg.CloseKey;
-  resultform1.CheckBox1.Checked := doregister;
-  myreg.RootKey := HKEY_CURRENT_USER;
-  myreg.OpenKey('Software\Classes\*\shell\opsi setup detector\Command', True);
-  if doregister then
-    myreg.WriteString('', '"' + ParamStr(0) + '" --filename=%1')
-  else
-    myreg.WriteString('', '');
-  myreg.CloseKey;
-  myreg.Free;
-end;
-
-
-function getSpecialFolder(csidlValue: integer): string;
-var
-  csidl: pItemIDList;
-  nameBuf: array [0..MAX_PATH] of char;
-begin
-  Result := '';
-  if SUCCEEDED(SHGetSpecialFolderLocation(0, csidlValue, csidl)) then
-  begin
-    if csidl <> nil then
-    begin
-      if SHGetPathFromIDList(csidl, namebuf) then
-        Result := StrPas(namebuf);
-      // Freecsidl(csidl);
-    end;
-  end
-  else
-    //Fix:
-    // if assigned(SHGetFolderPath) and ((csidlvalue = CSIDL_APPDATA) or
-    //   (csidlvalue = CSIDL_PERSONAL)) then
-    begin
-      if SUCCEEDED(SHGetFolderPath(0, csidlValue, 0, 0, namebuf)) then
-        Result := StrPas(namebuf);
-    end;
-  //debugmessages.Add('getSpecialFolder: '+inttostr(csidlValue)+' -> ' + result);
-  //if Assigned(LogDatei) then
-  //LogDatei.DependentAdd('getSpecialFolder: '+inttostr(csidlValue)+' -> ' + result, LLDebug2);
-end;
-*)
 
 
 procedure mywrite(line: string);
@@ -442,8 +406,10 @@ begin
       TIEditProdName.Link.SetObjectAndProperty(produktpropties, 'productName');
       TIMemoAdvice.Link.SetObjectAndProperty(produktpropties, 'advice');
       TIMemoDesc.Link.SetObjectAndProperty(produktpropties, 'description');
-      TICheckBoxlicenseRequired.Link.SetObjectAndProperty(produktpropties, 'licenserequired');
+      TICheckBoxlicenseRequired.Link.SetObjectAndProperty(produktpropties,
+        'licenserequired');
     end;
+    TIEditworkbenchpath.Link.SetObjectAndProperty(myconfiguration, 'workbench_path');;
     Visible := True;
   end;
 
@@ -473,6 +439,7 @@ begin
   TIEditProductIdS2.Link.TIObject := nil;
   TIEditProductNameS1.Link.TIObject := nil;
   TIEditProductNameS2.Link.TIObject := nil;
+  TIEditworkbenchpath.Link.TIObject := nil;
 end;
 
 
@@ -541,11 +508,7 @@ begin
     DateTimeToStr(now), LLinfo);
 
   LogDatei.LogLevel := 8;
-  resultform1.LabelVersion.Caption := 'Version: ' + myVersion;
   myExeDir := ExtractFileDir(ParamStr(0));
-  {$IFDEF WINDOWS}
-  registerForExplorer;
-  {$ENDIF WINDOWS}
   myexitcode := 0;
   myerror := '';
   showgui := True;
@@ -567,7 +530,7 @@ begin
   end
   else
       Logfile := opsitmp+'opsiSetupDetector.log';
-  *)
+
   // if resultForm1.TabSheetAnalyze.Visible = true then
   //   resultForm1.PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
 
@@ -601,6 +564,7 @@ begin
     else
       packetBaseDir := '';
   end;
+  *)
 
   // quick check parameters
   ErrorMsg := Application.CheckOptions('', optionlist);
@@ -670,6 +634,7 @@ begin
   if not showgui then
   begin
     resultForm1.Destroy;
+    freebasedata;
     Application.Terminate;
   end;
 end;
@@ -681,68 +646,70 @@ end;
 procedure TResultform1.setGuiMode;
 begin
   case useGuiMode of
-    analyzeOnly        : begin
-                              TabSheetStart.Enabled:=true;
-                              TabSheetAnalyze.Enabled:=true;
-                              TabSheetSetup1.Enabled:=true;
-                              TabSheetSetup2.Enabled:=false;
-                              TabSheetProduct.Enabled:=false;
-                              //BtAnalyzeNextStep.Caption:='Next Step';
-                              //BtAnalyzeNextStep.Glyph.LoadFromResourceName();
-                              BtSetup1NextStep.Enabled:=false;
-                         end;
-    singleAnalyzeCreate: begin
-                              TabSheetStart.Enabled:=true;
-                              TabSheetAnalyze.Enabled:=true;
-                              TabSheetSetup1.Enabled:=true;
-                              TabSheetSetup2.Enabled:=false;
-                              TabSheetProduct.Enabled:=true;
-                              //BtAnalyzeNextStep.Caption:='Next Step';
-                              //BtAnalyzeNextStep.Glyph.LoadFromResourceName();
-                              BtSetup1NextStep.Enabled:=true;
-                         end;
-    twoAnalyzeCreate:    begin
-                              TabSheetStart.Enabled:=true;
-                              TabSheetAnalyze.Enabled:=true;
-                              TabSheetSetup1.Enabled:=true;
-                              TabSheetSetup2.Enabled:=false;
-                              TabSheetProduct.Enabled:=true;
-                              BtSetup1NextStep.Enabled:=true;
-                         end;
-    createTemplate:      begin
-                              TabSheetStart.Enabled:=true;
-                              TabSheetAnalyze.Enabled:=false;
-                              TabSheetSetup1.Enabled:=false;
-                              TabSheetSetup2.Enabled:=false;
-                              TabSheetProduct.Enabled:=true;
-                         end;
-    gmUnknown:           begin
-                            TabSheetStart.Enabled:=true;
-                            TabSheetAnalyze.Enabled:=true;
-                            TabSheetSetup1.Enabled:=true;
-                            TabSheetSetup2.Enabled:=true;
-                            TabSheetProduct.Enabled:=true;
-                            BtSetup1NextStep.Enabled:=true;
-                         end;
+    analyzeOnly:
+    begin
+      TabSheetStart.Enabled := True;
+      TabSheetAnalyze.Enabled := True;
+      TabSheetSetup1.Enabled := True;
+      TabSheetSetup2.Enabled := False;
+      TabSheetProduct.Enabled := False;
+      //BtAnalyzeNextStep.Caption:='Next Step';
+      //BtAnalyzeNextStep.Glyph.LoadFromResourceName();
+      BtSetup1NextStep.Enabled := False;
+    end;
+    singleAnalyzeCreate:
+    begin
+      TabSheetStart.Enabled := True;
+      TabSheetAnalyze.Enabled := True;
+      TabSheetSetup1.Enabled := True;
+      TabSheetSetup2.Enabled := False;
+      TabSheetProduct.Enabled := True;
+      //BtAnalyzeNextStep.Caption:='Next Step';
+      //BtAnalyzeNextStep.Glyph.LoadFromResourceName();
+      BtSetup1NextStep.Enabled := True;
+    end;
+    twoAnalyzeCreate:
+    begin
+      TabSheetStart.Enabled := True;
+      TabSheetAnalyze.Enabled := True;
+      TabSheetSetup1.Enabled := True;
+      TabSheetSetup2.Enabled := False;
+      TabSheetProduct.Enabled := True;
+      BtSetup1NextStep.Enabled := True;
+    end;
+    createTemplate:
+    begin
+      TabSheetStart.Enabled := True;
+      TabSheetAnalyze.Enabled := False;
+      TabSheetSetup1.Enabled := False;
+      TabSheetSetup2.Enabled := False;
+      TabSheetProduct.Enabled := True;
+    end;
+    gmUnknown:
+    begin
+      TabSheetStart.Enabled := True;
+      TabSheetAnalyze.Enabled := True;
+      TabSheetSetup1.Enabled := True;
+      TabSheetSetup2.Enabled := True;
+      TabSheetProduct.Enabled := True;
+      BtSetup1NextStep.Enabled := True;
+    end;
   end;
 end;
 
-procedure TResultform1.FormClose(Sender: TObject; var CloseAction: TCloseAction
-  );
+procedure TResultform1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-    packetBaseDir := Edit_PacketbaseDir.Text;
-  if (packetBaseDir <> '') and DirectoryExists(packetBaseDir) then
-  begin
-    Rewrite(fConfig);
-    WriteLn(fConfig, packetBaseDir);
-    CloseFile(fConfig);
-  end;
 
+end;
+
+procedure TResultform1.MenuItemConfigClick(Sender: TObject);
+begin
+  FOSDConfigdlg.ShowModal;
 end;
 
 procedure TResultform1.BtSingleAnalyzeAndCreateClick(Sender: TObject);
 begin
-   OpenDialog1.FilterIndex := 1;   // setup
+  OpenDialog1.FilterIndex := 1;   // setup
   if OpenDialog1.Execute then
   begin
     useGuiMode := singleAnalyzeCreate;
@@ -754,29 +721,178 @@ begin
   end;
 end;
 
+procedure TResultform1.FlowPanel14Click(Sender: TObject);
+begin
+
+end;
+
 procedure TResultform1.BtATwonalyzeAndCreateClick(Sender: TObject);
 begin
   OpenDialog1.FilterIndex := 1;   // setup
- if OpenDialog1.Execute then
- begin
-   useGuiMode := twoAnalyzeCreate;
-   setGuiMode;
-   PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
-   Application.ProcessMessages;
-   initaktproduct;
-   Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0]);
- end;
+  if OpenDialog1.Execute then
+  begin
+    useGuiMode := twoAnalyzeCreate;
+    setGuiMode;
+    PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
+    Application.ProcessMessages;
+    initaktproduct;
+    Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0]);
+  end;
+end;
+
+procedure TResultform1.BtAnalyzeNextStepClick(Sender: TObject);
+begin
+  case useGuiMode of
+    analyzeOnly:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetSetup1;
+      Application.ProcessMessages;
+    end;
+    singleAnalyzeCreate:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetSetup1;
+      Application.ProcessMessages;
+    end;
+    twoAnalyzeCreate:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetSetup1;
+      Application.ProcessMessages;
+    end;
+    createTemplate:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetSetup1;
+      Application.ProcessMessages;
+    end;
+    gmUnknown:
+    begin
+      // we should never be here
+      logdatei.log('Error: in BtSetup1NextStepClick guimode: gmUnknown',LLError);
+    end;
+  end;
+end;
+
+procedure TResultform1.BitBtnWorkBenchPathClick(Sender: TObject);
+begin
+  if SelectDirectoryDialog1.Execute then
+    myconfiguration.workbench_Path := SelectDirectoryDialog1.FileName;
+  checkWorkbench;
+end;
+
+procedure TResultform1.BitBtnRecheckWorkbenchClick(Sender: TObject);
+begin
+  checkWorkbench;
 end;
 
 procedure TResultform1.BtCreateEmptyTemplateClick(Sender: TObject);
 begin
- begin
-   useGuiMode := createTemplate;
-   setGuiMode;
-   PageControl1.ActivePage := resultForm1.TabSheetProduct;
-   Application.ProcessMessages;
-   initaktproduct;
- end;
+  begin
+    useGuiMode := createTemplate;
+    setGuiMode;
+    PageControl1.ActivePage := resultForm1.TabSheetProduct;
+    Application.ProcessMessages;
+    initaktproduct;
+  end;
+end;
+
+procedure TResultform1.BtCreateProductClick(Sender: TObject);
+begin
+  createProductStructure;
+end;
+
+procedure TResultform1.BtProductNextStepClick(Sender: TObject);
+begin
+  case useGuiMode of
+    analyzeOnly:
+    begin
+      // we should never be here
+      logdatei.log('Error: in BtProductNextStepClick guimode: analyzeOnly',LLError);
+    end;
+    singleAnalyzeCreate:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetCreate;
+      Application.ProcessMessages;
+    end;
+    twoAnalyzeCreate:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetCreate;
+      Application.ProcessMessages;
+    end;
+    createTemplate:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetCreate;
+      Application.ProcessMessages;
+    end;
+    gmUnknown:
+    begin
+      // we should never be here
+      logdatei.log('Error: in BtProductNextStepClick guimode: gmUnknown',LLError);
+    end;
+  end;
+end;
+
+procedure TResultform1.BtSetup1NextStepClick(Sender: TObject);
+begin
+  case useGuiMode of
+    analyzeOnly:
+    begin
+      Application.Terminate;
+    end;
+    singleAnalyzeCreate:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetProduct;
+      Application.ProcessMessages;
+    end;
+    twoAnalyzeCreate:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetSetup2;
+      Application.ProcessMessages;
+    end;
+    createTemplate:
+    begin
+      // we should never be here
+      logdatei.log('Error: in BtSetup1NextStepClick guimode: createTemplate',LLError);
+      //PageControl1.ActivePage := resultForm1.TabSheetSetup1;
+      //Application.ProcessMessages;
+    end;
+    gmUnknown:
+    begin
+      // we should never be here
+      logdatei.log('Error: in BtSetup1NextStepClick guimode: gmUnknown',LLError);
+    end;
+  end;
+end;
+
+procedure TResultform1.BtSetup2NextStepClick(Sender: TObject);
+begin
+  case useGuiMode of
+    analyzeOnly:
+    begin
+      // we should never be here
+      logdatei.log('Error: in BtSetup2NextStepClick guimode: analyzeOnly',LLError);
+    end;
+    singleAnalyzeCreate:
+    begin
+      // we should never be here
+      logdatei.log('Error: in BtSetup2NextStepClick guimode: singleAnalyzeCreate',LLError);
+    end;
+    twoAnalyzeCreate:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetProduct;
+      Application.ProcessMessages;
+    end;
+    createTemplate:
+    begin
+      // we should never be here
+      logdatei.log('Error: in BtSetup1NextStepClick guimode: createTemplate',LLError);
+      //PageControl1.ActivePage := resultForm1.TabSheetSetup1;
+      //Application.ProcessMessages;
+    end;
+    gmUnknown:
+    begin
+      // we should never be here
+      logdatei.log('Error: in BtSetup2NextStepClick guimode: gmUnknown',LLError);
+    end;
+  end;
 end;
 
 procedure TResultform1.BitBtnClose1Click(Sender: TObject);
@@ -799,235 +915,11 @@ begin
 end;
 
 
-procedure TResultform1.BitBtn_PacketBasedirClick(Sender: TObject);
-begin
-  SelectPacketBaseDir.InitialDir := packetBaseDir;
-  if SelectPacketBaseDir.Execute then
-  begin
-    packetBaseDir := SelectPacketBaseDir.FileName;
-    Resultform1.Edit_PacketbaseDir.Text := packetBaseDir; // MSI
-    Rewrite(fConfig);
-    WriteLn(fConfig, packetBaseDir);
-    CloseFile(fConfig);
-  end;
-end;
-
-procedure TResultform1.BitBtnOpenFileClick(Sender: TObject);
-begin
-  if OpenDialog1.Execute then
-    aktSetupFile.setupFullFileName := OpenDialog1.FileName;
-end;
-
-function ExtractBetween(const Value, A, B: string): string;
-var
-  aPos, bPos: integer;
-begin
-  Result := '';
-  aPos := pos(A, Value);
-  if aPos > 0 then
-  begin
-    aPos := aPos + Length(A);
-    bPos := PosEx(B, Value, aPos);
-    if bPos > 0 then
-    begin
-      Result := Copy(Value, aPos, bPos - aPos);
-    end;
-  end;
-end;
-
-procedure TResultform1.removeOtherTypeSpecificSections(setupType, setupFile: string);
-var
-  infileHandle, outfileHandle: Text;
-  Patchmarker: string = '**--** PATCH_';
-  filterType: string = '';
-  thisType: string = '';
-  aktline: string = '';
-  tmpfile: string;
-  isMarkerLine: boolean;
-begin
-  mywrite('removing all other type specific sections from: ' + setupfile);
-  tmpfile := setupfile + '.tmp';
-
-  {$I+}//use exceptions
-  try
-    AssignFile(infileHandle, setupfile);
-    AssignFile(outfileHandle, tmpfile);
-    reset(infileHandle);
-    rewrite(outfileHandle);
-
-    filterType := lowercase(setupType);
-
-    // find and handle type specific patch sections
-    while (not EOF(infileHandle)) do
-    begin
-      // find next type specific marker
-      repeat
-        ReadLn(infileHandle, aktline);
-        isMarkerLine := (0 < pos(Patchmarker, aktline));
-        if not isMarkerLine then
-          writeln(outfileHandle, aktline);
-      until isMarkerLine or EOF(infileHandle);
-      if not EOF(infileHandle) then
-      begin
-        thisType := lowercase(ExtractBetween(aktline, Patchmarker, ' '));
-        // write lines (or skip lines if other type)
-        repeat
-          ReadLn(infileHandle, aktline);
-          isMarkerLine := (0 < pos(Patchmarker, aktline));
-          if (thisType = filterType) and not isMarkerLine then
-            writeln(outfileHandle, aktline);
-        until isMarkerLine or EOF(infileHandle);
-      end;
-    end;
-
-    CloseFile(infileHandle);
-    CloseFile(outfileHandle);
-
-    // delete setupfile and rename tmpfile to setupfile
-    DeleteFile(PChar(setupfile));
-    RenameFile(PChar(tmpfile), PChar(setupfile));
-
-  except
-    on E: EInOutError do
-      mywrite('removeOtherTypeSpecificSections error: ' + E.ClassName + '/' + E.Message);
-  end;
-end;
 
 
-procedure TResultform1.ButtonCreatePacketClick(Sender: TObject);
-var
-  msg1: string;
-  description: string;
-  buildCall: string = '';
-  OpsiBuilderProcess: TProcess;
-  packit: boolean = False;
-  errorstate: boolean = False;
-  notused: string = '(not used)';
-
-begin
-
-  if patchlist = nil then
-    patchlist := TStringList.Create
-  else
-    patchlist.Clear;
-  myExeDir := ExtractFileDir(ParamStr(0));
 
 
-  Panel9.Visible := False;
-      {$IFDEF WINDOWS}
-  // execute opsiPacketBuilder
-
-  if RadioButtonCreateOnly.Checked = True then
-  begin
-    Application.MessageBox(PChar(sInfoFinished), PChar(sMBoxHeader), MB_OK);
-  end
-  else
-  begin  // execute OPSIPackageBuilder
-    OpsiBuilderProcess := process.TProcess.Create(nil);
-    buildCall := getSpecialFolder(CSIDL_PROGRAM_FILES) + DirectorySeparator +
-      'OPSI PackageBuilder' + DirectorySeparator +
-      'OPSIPackageBuilder.exe' + ' -p=' + packetBaseDir;
-    if AnsiLastChar(packetBaseDir) <> DirectorySeparator then
-      buildCall := buildCall + DirectorySeparator;
-    buildCall := buildCall + productId;
-    if RadioButtonInteractive.Checked = True then
-    begin
-      OpsiBuilderProcess.ShowWindow := swoMinimize;
-    end
-    else  // auto
-    if RadioButtonAuto.Checked = True then
-    begin
-      if CheckboxBuild.Checked = True then
-        buildCall := buildCall + ' --build=rebuild';
-      if CheckboxInstall.Checked = True then
-        buildCall := buildCall + ' --install';
-      if CheckboxQuiet.Checked = True then
-        buildCall := buildCall + ' --quiet';
-      OpsiBuilderProcess.ShowWindow := swoMinimize;
-    end;
-
-    mywrite('invoke opsi package builder');
-    mywrite(buildcall);
-
-    try
-      OpsiBuilderProcess.CommandLine := buildCall;
-      OpsiBuilderProcess.Execute;
-      if CheckboxQuiet.Checked = True then
-      begin
-        Panel9.Visible := True;
-        processStatement.Caption := 'invoke opsi package builder ...';
-        Application.ProcessMessages;
-        while OpsiBuilderProcess.Running do
-        begin
-          Application.ProcessMessages;
-        end;
-      end;
-    except
-      errorstate := True;
-      Application.MessageBox(PChar(sErrOpsiPackageBuilderStart),
-        PChar(sMBoxHeader), MB_OK);
-    end;
-
-    Panel9.Visible := False;
-    if (CheckboxQuiet.Checked = True) then
-    begin
-      if (errorstate = False) then
-      begin
-        if (OpsiBuilderProcess.ExitStatus = 0) then
-          Application.MessageBox(PChar(sInfoFinished), PChar(sMBoxHeader), MB_OK)
-        else
-          Application.MessageBox(
-            PChar(format(sErrOpsiPackageBuilderErrCode, [IntToStr(OpsiBuilderProcess.ExitStatus)])),
-            PChar(sMBoxHeader), MB_OK);
-      end;
-    end;
-  end;   // execute OPSIPackageBuilder
-      {$ENDIF WINDOWS}
-
-  //  end;
-end;
-
-procedure TResultform1.CheckBox1Change(Sender: TObject);
-var
-  myreg: Tregistry;
-begin
-  myreg := TRegistry.Create(KEY_ALL_ACCESS);
-  myreg.RootKey := HKEY_CURRENT_USER;
-  myreg.OpenKey('SOFTWARE\opsi.org\opsisetupdetector', True);
-  myreg.WriteBool('regsterAtExplorer', checkbox1.Checked);
-  myreg.CloseKey;
-  myreg.RootKey := HKEY_CURRENT_USER;
-  if checkbox1.Checked then
-  begin
-    myreg.OpenKey('Software\Classes\*\shell\opsi setup detector\Command', True);
-    myreg.WriteString('', '"' + ParamStr(0) + '" --filename=%1');
-  end
-  else
-  begin
-    myreg.DeleteKey('Software\Classes\*\shell\opsi setup detector\Command');
-    myreg.DeleteKey('Software\Classes\*\shell\opsi setup detector');
-  end;
-  myreg.CloseKey;
-  myreg.Free;
-end;
-
-procedure TResultform1.CheckBoxUseMstChange(Sender: TObject);
-begin
-  (*
-  if CheckBoxUseMst.Checked then
-  begin
-    mst32NameEdit.Enabled:=setup32NameEdit.Enabled;
-    mst64NameEdit.Enabled:=setup64NameEdit.Enabled;
-    FlowPanelMST.Enabled:=true;
-  end
-  else
-  begin
-    mst32NameEdit.Enabled:=false;
-    mst64NameEdit.Enabled:=false;
-    FlowPanelMST.Enabled:=true;
-  end;
-  *)
-end;
+(*
 
 procedure TResultform1.ComboBoxArchModeChange(Sender: TObject);
 var
@@ -1056,6 +948,7 @@ procedure TResultform1.FileCreateLogfileClick(Sender: TObject);
 begin
 
 end;
+*)
 
 (*
 procedure TResultform1.FileCreateLogfileClick(Sender: TObject);
@@ -1125,7 +1018,7 @@ var
 begin
   progname := ExtractFileName(ParamStr(0));
   //msg := 'Version: ' +   myVersion  + '  -  '+Revision + '  -  '+ RevDate;
-  msg := 'Version: ' + myVersion;
+  msg := progname + ' Version: ' + myVersion;
   //msg := StringReplace (msg, '$', '', [rfReplaceAll,rfIgnoreCase]);
 
   Application.MessageBox(PChar(msg), PChar(sMBoxHeader), MB_OK);
@@ -1156,7 +1049,7 @@ end;
 
 procedure TResultform1.FormCreate(Sender: TObject);
 var
-  myimage : TBitmap;
+  myimage: TBitmap;
 begin
   main;
   (*
@@ -1258,7 +1151,29 @@ end;
 
 procedure TResultform1.SBtnExitClick(Sender: TObject);
 begin
+  resultForm1.Close;
+  resultForm1.Destroy;
+  freebasedata;
   Application.Terminate;
+end;
+
+procedure checkWorkbench;
+begin
+  if DirectoryExists(myconfiguration.workbench_Path) then
+  begin
+    resultForm1.LabelWorkbenchOK.Visible:=true;
+    resultForm1.LabelWorkbenchNotOK.Visible:=false;
+  end
+  else
+  begin
+    resultForm1.LabelWorkbenchOK.Visible:=false;
+    resultForm1.LabelWorkbenchNotOK.Visible:=true;
+  end;
+end;
+
+procedure TResultform1.TabSheetCreateShow(Sender: TObject);
+begin
+  checkWorkbench;
 end;
 
 

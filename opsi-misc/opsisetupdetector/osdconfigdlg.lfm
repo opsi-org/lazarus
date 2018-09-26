@@ -1,0 +1,24 @@
+object FOSDConfigdlg: TFOSDConfigdlg
+  Left = 611
+  Height = 483
+  Top = 419
+  Width = 533
+  Caption = 'opsi-setup-detector Configuration'
+  ClientHeight = 483
+  ClientWidth = 533
+  OnActivate = FormActivate
+  LCLVersion = '1.8.4.0'
+  object TIPropertyGrid1: TTIPropertyGrid
+    Left = 0
+    Height = 483
+    Top = 0
+    Width = 533
+    Align = alClient
+    CheckboxForBoolean = False
+    DefaultValueFont.Color = clWindowText
+    Filter = [tkInteger, tkChar, tkEnumeration, tkFloat, tkSet, tkMethod, tkSString, tkLString, tkAString, tkWString, tkVariant, tkArray, tkRecord, tkInterface, tkClass, tkObject, tkWChar, tkBool, tkInt64, tkQWord, tkDynArray, tkInterfaceRaw, tkProcVar, tkUString, tkUChar, tkHelper, tkFile, tkClassRef, tkPointer]
+    Indent = 16
+    NameFont.Color = clWindowText
+    ValueFont.Color = clMaroon
+  end
+end
