@@ -39,6 +39,7 @@ type
 var
   Form1: TForm1;
   logfilename: String;
+  writexmlfilename: String;
 
 implementation
 {$R *.lfm}
@@ -66,7 +67,10 @@ begin
    if OpenDialog1.Execute then
    begin
       if XMLDocObject.openXmlFile(OpenDialog1.FileName) then
-        Memo1.Append(XMLDocObject.getXmlStrings().Text)
+      begin
+        Memo1.Append(XMLDocObject.getXmlStrings().Text);
+        writexmlfilename:=OpenDialog1.FileName;
+      end
       else
         Memo1.Append('can not read file');
    end
@@ -207,7 +211,8 @@ end;
 procedure TForm1.addPackagesClick(Sender: TObject);
 var XMLDocObject: TuibXMLDocument;
     k: integer;
-//    textArray: TStringList;
+    textArray: TStringList;
+    cdataString : String;
 
 // Testdatei opensuse_software_final_test.xml
 // 1) Suche Knoten software, subknoten packages, hänge subsubknoten package 1,2,3
@@ -233,17 +238,17 @@ begin
   XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
 
-  {
+
   // Anlegen von Knoten
   LogDatei.log('vor filterByChildElement, kein filtern ',oslog.LLinfo);
-  XMLDocObject.filterByChildElement(true, 'software');
+  XMLDocObject.filterByChildElement('software');
   XMLDocObject.getNextGenerationActNodeSet;
   LogDatei.log('nach filterByChildElement software',oslog.LLinfo);
   LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
                           XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
   XMLDocObject.logNodeSets;
 
-  XMLDocObject.filterByChildElement(true, 'packages');
+  XMLDocObject.filterByChildElement('packages');
   XMLDocObject.getNextGenerationActNodeSet;
   LogDatei.log('nach filter byChildElement packages',oslog.LLinfo);
   LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
@@ -302,7 +307,7 @@ begin
   end
   else
     LogDatei.log('irgendwas ist falsch gelaufen ' ,oslog.LLerror);
-  }
+
 
   // anderer Weg für das Anlegen von Knoten
   // über den nodeExisits und openNode mit dem nodePath,
@@ -337,12 +342,12 @@ begin
   XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
 
-  XMLDocObject.filterByChildElement(true, 'software');
+  XMLDocObject.filterByChildElement('software');
   XMLDocObject.getNextGenerationActNodeSet;
   XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
 
-  XMLDocObject.filterByChildElement(true, 'packages');
+  XMLDocObject.filterByChildElement('packages');
   XMLDocObject.getNextGenerationActNodeSet;
   XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
@@ -369,13 +374,28 @@ begin
         LogDatei.log('not found: package snapper',oslog.LLinfo);
     end;
 
+
   // andere Variante des Löschens ohne Angabe des Text_Content, löscht das erste Element
   XMLDocObject.delNode('software // packages config:type="list" // package');
+  LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode,oslog.LLinfo);
+
+  // Wie sieht der Zweipg packages jetzt aus?
+  XMLDocObject.makeNewDerivedNodeSet;
+  XMLDocObject.logNodeSets;
+
+  // einsetzen eines CDATA-Strings
+  cdatastring := #$3C + '![CDATA['#13#10'#! /bin/sh'#13#10'set -x\nexport PATH=/sbin:/usr/sbin:/usr/local/sbin:/root/bin:/usr/local/bin:/usr/bin:/bin:/usr/games'#13#10'/usr/bin/zypper lr'#13#10'rm /etc/zypp/repos.d/SLES*.repo'#13#10'/usr/bin/zypper lr'#13#10'/usr/bin/zypper rr 1'#13#10']]'#$3e;
+  if XMLDocObject.nodeExists('deploy_image') then
+    if XMLDocObject.openNode('deploy_image', false) then
+    begin
+      XMLDocObject.makeNode('source','','');
+      XMLDocObject.setNodeTextActNode(cdatastring);
+    end;
 
   memo3.Append(XMLDocObject.getXmlStrings().Text);
   memo3.Repaint;
   Application.ProcessMessages;
-  //XMLDocObject.writeXmlFile('newpackagesfile.xml',memoToTStringlist(memo3));
+  XMLDocObject.writeXMLAndCloseFile(writexmlfilename + '.new');
   XMLDocObject.destroy;
 end;
 
