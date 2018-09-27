@@ -1,6 +1,6 @@
 unit oslog;
 
-(* Defines global objects, especially those for event logging *)
+// Defines global logging
 
 // This code is part of the opsi.org project
 
@@ -9,7 +9,6 @@ unit oslog;
 // and published under the Terms of the GNU Affero General Public License.
 // Text of the AGPL: http://www.gnu.org/licenses/agpl-3.0-standalone.html
 // author: Rupert Roeder, detlef oertel
-// credits: http://www.opsi.org/credits/
 
 
 {$MODE Delphi}
@@ -534,15 +533,9 @@ begin
     // normally called at login scripts
     // do not look for appends in registry from machine runs
     // just create the log
+    // create new Log File
+    LogDatei.Appendmode := False;
     MakeBakFile(LogDateiName,8);
-    (*
-    {$IFDEF OPSIWINST}
-    MakeBakFile(LogDateiName,8);
-    {$ENDIF}
-    {$IFDEF OPSISCRIPTSTARTER}
-    MakeBakFile(LogDateiName,8);
-    {$ENDIF}
-    *)
     LogDatei.initiate(LogDateiName, False);
     LogDatei.Empty;
   end
@@ -562,14 +555,6 @@ begin
       // create new Log File
       LogDatei.Appendmode := False;
       MakeBakFile(LogDateiName,8);
-      (*
-      {$IFDEF OPSIWINST}
-      MakeBakFile(LogDateiName,8);
-      {$ENDIF}
-      {$IFDEF OPSISCRIPTSTARTER}
-      MakeBakFile(LogDateiName,8);
-      {$ENDIF}
-      *)
       LogDatei.initiate(LogDateiName, False);
       LogDatei.Empty;
     end;
@@ -1140,6 +1125,7 @@ begin
   begin
     if isOpen(LogMainFileF) then
       FileClose(LogMainFileF);
+    //DeleteFileUTF8(FFileName);
     LogMainFileF := FileCreate(FFileName);
     FileClose(LogMainFileF);
     LogMainFileF := FileOpen(FFileName, fmOpenReadWrite or fmShareDenyNone);
@@ -1773,6 +1759,10 @@ begin
   StandardMainLogPath := StandardLogPath;
   StandardPartLogPath := 'c:\opsi.org\log\';
   {$IFDEF OPSI_AS_USER}
+  StandardLogPath := 'c:\opsi.org\applog\';
+  StandardMainLogPath := StandardLogPath;
+  StandardPartLogPath := StandardLogPath;
+  (*
   AppDataPath:='';
   SHGetFolderPath(0,CSIDL_APPDATA,0,SHGFP_TYPE_CURRENT,AppDataPath);
   //SHGetSpecialFolderPath(0,AppDataPath,CSIDL_LOCAL_APPDATA,false)
@@ -1782,6 +1772,7 @@ begin
     StandardMainLogPath := StandardLogPath;
     StandardPartLogPath := StandardLogPath;
   end;
+  *)
   {$ENDIF OPSI_AS_USER}
   {$ELSE OPSI}
   StandardLogPath := GetTempDir(false);

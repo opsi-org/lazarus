@@ -220,6 +220,10 @@ begin
     suchevent := event;
     querystartdt := StrToDate(querystartdate);
     queryenddt := StrToDate(queryenddate);
+    (*
+    // set queryenddt from excl. to incl.
+    queryenddt := IncDay(queryenddt,-1);
+    *)
     // get project info for event....
     if QueryProjektzeit.Active then
       QueryProjektzeit.Close;
@@ -364,15 +368,21 @@ begin
       // here is the result for the last Interval
       //lastIntervalStart := EncodeDate(aktstartyear, aktstartmonth, startday);
       lastIntervalStart := getLastIntervalStart(
-        projektstart, queryenddt, acc_per_monthnum_int);
+        projektstart, queryenddt, acc_per_monthnum_int,true);
       //decodeDate(lastIntervalStart, aktstartyear, aktstartmonth, aktstartday);
       DataModule1.debugOut(6, 'getLastIntervalInfo',
         'lastIntervalStart :' + DateToStr(lastIntervalStart));
       //lastIntervalEnd := EncodeDate(endyear, endmonth, startday);
       lastIntervalEnd := getLastIntervalEnd(projektstart, queryenddt,
-        acc_per_monthnum_int);
+        acc_per_monthnum_int,true);
       DataModule1.debugOut(6, 'getLastIntervalInfo',
         'lastIntervalEnd :' + DateToStr(lastIntervalEnd));
+      (*
+      If lastIntervalEnd >= queryenddt then
+      begin
+        // go back one interval because
+      end;
+      *)
       // are the interval boundaries in search intervall
       if (lastIntervalStart >= querystartdt) and (lastIntervalStart <= queryenddt) then
         intervalStartFound := True
@@ -383,7 +393,7 @@ begin
         intervalEndFound := True
       else
         intervalEndFound := False;
-      // finding end is mor impotant then start
+      // finding end is more impotant then start
       if intervalStartFound and (lastIntervalStart > querystartdt) and
         not intervalEndFound then
       begin
@@ -1530,6 +1540,14 @@ begin
       while not queryAccEv.EOF do
       begin
         event := queryAccEv.FieldByName('event').AsString;
+        //if event = 'leibniz-fh.systemberatung-kuhnert.eplsup' then
+        //if event = 'bad.dass-it.support' then
+        //  *** debug breakpoint start
+        if event = 'senbjw-it-intern.serverpflege' then
+        begin
+          DataModule1.debugOut(6, 'BtnLoadRequiredReportsClick','found: '+event);
+        end;
+        //  *** debug breakpoint stop
         if event <> '' then
         begin
           if getLastIntervalInfo(event, starttime, stoptime,

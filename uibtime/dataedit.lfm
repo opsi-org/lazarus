@@ -3,7 +3,7 @@ object FDataedit: TFDataedit
   Height = 375
   Top = 465
   Width = 814
-  Caption = 'FDataedit'
+  Caption = 'uibtime - data edit'
   ClientHeight = 375
   ClientWidth = 814
   Color = clBtnFace

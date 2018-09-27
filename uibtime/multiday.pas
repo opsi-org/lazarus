@@ -25,6 +25,7 @@ type
     CheckBoxOnlyWorkdays: TCheckBox;
     EditButtonEndDate: TEditButton;
     EditButtonStartDate: TEditButton;
+    Label4: TLabel;
     OKBtn: TButton;
     cal: TCalendar;
     Label1: TLabel;
@@ -63,7 +64,7 @@ var
   doinsert : boolean;
 begin
   OKBtn.Enabled:=false;
-  firstdate := StrToDate(EditButtonStartDate.text);
+  firstdate := ScanDateTime('dd.mm.yyyy',EditButtonStartDate.text);
   aktdate := firstdate - 1;
   if MaskEditStart.Text = '' then
     startzeit := strtotime('10:00')
@@ -96,7 +97,7 @@ begin
       //DataModule1.SQuibevent.ApplyUpdates;
       sleep(1000);
     end;
-  until (StrToDate(EditButtonEndDate.text) = aktdate);
+  until (ScanDateTime('dd.mm.yyyy',EditButtonEndDate.text) = aktdate);
   OKBtn.Enabled:=true;
 end;
 
@@ -122,7 +123,7 @@ end;
 
 procedure TFMultiday.EditButtonEndDateButtonClick(Sender: TObject);
 begin
-  CalendarDialog1.Date:=strtodate(EditButtonEndDate.text);
+  CalendarDialog1.Date:=ScanDateTime('dd.mm.yyyy',EditButtonEndDate.text);
   CalendarDialog1.Execute;
   EditButtonEndDate.text := DateToStr(CalendarDialog1.Date);
 end;
@@ -131,7 +132,7 @@ procedure TFMultiday.EditButtonStartDateButtonClick(Sender: TObject);
 var
   str : string;
 begin
-  CalendarDialog1.Date:=strtodate(EditButtonEndDate.text);
+  CalendarDialog1.Date:=ScanDateTime('dd.mm.yyyy',EditButtonEndDate.text);
   CalendarDialog1.Execute;
   EditButtonStartDate.text := DateToStr(CalendarDialog1.Date);
   EditButtonEndDate.text := EditButtonStartDate.text;

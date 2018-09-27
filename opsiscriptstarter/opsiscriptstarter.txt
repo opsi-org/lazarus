@@ -1,5 +1,11 @@
 [changelog]
 
+opsiscriptstarter 4.1.0.2
+
+* update indy 5455 to 5464
+
+-- d.oertel <d.oertel@uib.de> Fri, 31 Aug 2018 15:00
+
 opsiscriptstarter 4.1.0.1
 
 * mount.cifs: step down 3* ver3 / 3* ver2 / 3*ver1 /3* default

@@ -764,18 +764,14 @@ begin
   oslog.StandardPartLogPath:= ExtractFileDir(Logdateiname);
   if RadioButtonNewLogFile.Checked then
   begin
-    MakeBakFile(LogDateiName,8);
+    //MakeBakFile(LogDateiName,8);
     //if Logdatei <> nil then
     //Logdatei.Free;
     if Logdatei = nil then
       Logdatei := TLogInfo.Create;
     if LogDateiName = '' then
       LogDateiName := LogPath + logdatei.StandardLogFilename + logdatei.StandardLogFileext;
-    LogDatei.initiate(LogDateiName, False);
-    LogDatei.Empty;
-    Logdatei.DependentAdd('opsi-script ' + winstversion + ' started at ' + starttimestr,
-      LLessential);
-    Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
+    LogDatei.CreateTheLogfile(LogDateiName, False);
   end
   else
   begin
@@ -804,12 +800,7 @@ begin
   oslog.StandardPartLogPath:= ExtractFileDir(Logdateiname);
   if RadioButtonNewLogFile.Checked then
   begin
-    MakeBakFile(LogDateiName,8);
-    LogDatei.initiate(LogDateiName, False);
-    LogDatei.Empty;
-    Logdatei.DependentAdd('opsi-script ' + winstversion + ' started at ' + starttimestr,
-      LLessential);
-    Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
+    LogDatei.CreateTheLogfile(LogDateiName, False);
   end
   else
     LogDatei.initiate(LogDateiName, False);

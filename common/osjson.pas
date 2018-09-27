@@ -383,6 +383,7 @@ var
   new_obj : ISuperObject;
   i: integer;
   objstr : string;
+  testbool : boolean;
 begin
   Result := False;
   strListResult := TStringList.Create;
@@ -395,7 +396,7 @@ begin
         objstr := new_obj.AsArray.S[i];
         //objstr := escapeControlChars(objstr);
         objstr := stringreplace(objstr, #10, '\n', [rfReplaceAll, rfIgnoreCase]);
-        if jsonIsObject(objstr) or jsonIsString(objstr) then
+        if jsonIsObject(objstr) or jsonIsString(objstr) or TryStrToBool(objstr,testbool) then
           strListResult.Append(objstr);
       end;
 end;

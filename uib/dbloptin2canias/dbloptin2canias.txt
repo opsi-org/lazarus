@@ -1,0 +1,29 @@
+
+dbloptin2canias (1.0.0.0-1) stable; urgency=medium
+
+  * initial
+
+-- d.oertel <d.oertel@uib.de> Mon, 23 Jul 2018 15:00:00 + 0100
+
+# Rechte für `dbloptin-writer`@`localhost`
+
+GRANT SELECT, INSERT, UPDATE ON `uibprod`.`iascustperverifed` TO 'dbloptin-writer'@'localhost';
+GRANT SELECT ON `uibprod`.`iasadrbookcontact` TO 'dbloptin-writer'@'localhost';
+GRANT SELECT, UPDATE (CHANGEDBY, MAILING, CHANGEDAT) ON `uibprod`.`iascustper` TO 'dbloptin-writer'@'localhost';
+
+
+IASCUSTPER_MAILING
+IASCUSTPER_PERSNUM
+TMPCUSTPERVER_ISMAILVERIFED
+TMPCUSTPERVER_MAILVERIFEDBY
+TMPCUSTPERVER_MAILVERIFEDDATE
+
+SELECT * FROM IASCUSTPERVERIFED WHERE COMPANY = 'UIB' AND CUSTOMER = '905243' AND PERNUM = 1
+UPDATE  IASCUSTPERVERIFED SET MAILVERIFEDDATE = '2018-06-23 14:34:03', MAILVERIFEDBY = 'Hanspeter Mustermüller', ISMAILVERIFED = 1   WHERE COMPANY = 'UIB' AND CUSTOMER = '905243' AND PERNUM = 1
+
+Mit ihrem Programm müssen sie nachfolgende Felder beschreiben:
+
+IASCUSTPERVERIFED.MAILVERIFEDDATE
+IASCUSTPERVERIFED.MAILVERIFEDBY
+IASCUSTPERVERIFED.ISMAILVERIFED
+IASCUSTPER.MAILING

@@ -353,6 +353,7 @@ var
   tmpstr : string;
   remaining,errorstr : string;
 begin
+  LogDatei.log('Parsing: '+definitionStr,LLdebug);
   //parseDefFunc := false;
   //syntax_ok := true;
   endOfParamlist := false;
@@ -447,6 +448,7 @@ begin
   result := false;
   if pos(lowercase(marker),lowercase(docstring)) = 1 then
   begin
+    LogDatei.log('Parsing: '+docstring,LLdebug);
     if lowercase(marker) = lowercase(CExample) then
     begin
       // is this the first line of example
@@ -457,6 +459,13 @@ begin
         exampleident := length(tmpstr1) - length(trimleft(tmpstr1));
       end;
       tmpstr1 := trimRight(copy(docstring,length(marker)+1+exampleident,length(docstring)));
+      if target = '' then target := tmpstr1
+      else target := target+LineEnding+tmpstr1;
+    end
+    else if lowercase(marker) = lowercase(CReferences) then
+    begin
+      tmpstr1 := trim(copy(docstring,length(marker)+1,length(docstring)));
+      if tmpstr1 <> '' then tmpstr1 := '<<'+ tmpstr1 + '>> ';
       if target = '' then target := tmpstr1
       else target := target+LineEnding+tmpstr1;
     end
@@ -477,6 +486,7 @@ var
   aktline, expr, remaining, pname, tmpstr1, tmpstr2, tmpstr3 : string;
   incomment : boolean;
 begin
+  LogDatei.log('Start parseInput_opsiscriptlibrary',LLnotice);
   result := true;
   indeffunc := 0;
   if Assigned(docobject) and (docobject <> nil) then docobject.Destroy;
@@ -553,6 +563,7 @@ begin
       end;
     end;
   end;
+  LogDatei.log('Finished parseInput_opsiscriptlibrary',LLinfo);
 end;
 
 begin

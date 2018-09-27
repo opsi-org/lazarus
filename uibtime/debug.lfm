@@ -5,7 +5,7 @@ object FDebug: TFDebug
   Width = 482
   BorderIcons = []
   BorderStyle = bsToolWindow
-  Caption = 'FDebug'
+  Caption = 'uibtime - debug'
   ClientHeight = 248
   ClientWidth = 482
   Color = clBtnFace
@@ -41,9 +41,9 @@ object FDebug: TFDebug
     TabOrder = 1
     object Label1: TLabel
       Left = 14
-      Height = 15
+      Height = 16
       Top = 0
-      Width = 83
+      Width = 81
       Caption = 'Debuglevel'
       Font.Color = clWindowText
       Font.Height = -13
@@ -54,7 +54,7 @@ object FDebug: TFDebug
     end
     object SpinEdit1: TSpinEdit
       Left = 110
-      Height = 19
+      Height = 21
       Top = 0
       Width = 49
       MaxValue = 9

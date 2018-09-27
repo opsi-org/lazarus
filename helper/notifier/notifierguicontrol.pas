@@ -31,6 +31,21 @@ type
   //TButtons = array of TButton;
   TButtons = array of TSpeedButton;
 
+  TTransparentMemo = class(TScrollBox)
+  private
+    scrolllabel : TLabel;
+    repainttimer : TTimer;
+    { private declarations }
+    //objlist: TObjectList;
+  public
+    procedure onrepainttimer(Sender: Tobject);
+    { public declarations }
+    constructor create(Aowner: TComponent);
+    destructor destroy;
+  end;
+
+  TMemos = array of TTransparentMemo;
+
 procedure openSkinIni(ininame: string);
 procedure myChoiceClick(Sender: TObject);
 procedure hideNForm;
@@ -53,6 +68,7 @@ var
   navlist: TStringList;
   labellist: TStringList;
   buttonlist: TStringList;
+  memolist: TStringList;
   sectionlist: TStringList;
   nformpos: TNFormPos;
   appearmode: TNFormAppear;
@@ -61,7 +77,9 @@ var
   slidein, slideout: string;
   LabelArray: TLabels;
   ButtonArray: TButtons;
-  labelcounter, buttoncounter: integer;
+  MemoArray: Tmemos;
+  labelcounter, buttoncounter, memocounter: integer;
+
 
 
 // from
@@ -74,13 +92,57 @@ begin
   {$ENDIF WINDOWS}
 end;
 
+procedure TTransparentMemo.onrepainttimer(Sender: Tobject);
+begin
+  Nform.Image1.repaint;
+end;
 
+constructor TTransparentMemo.create(Aowner: TComponent);
+begin
+  inherited;
+  scrolllabel := TLabel.Create(self);
+  scrolllabel.Parent := self;
+  scrolllabel.Align:=alClient;
+  self.HorzScrollBar.Visible:=false;
+  self.VertScrollBar.Visible:=true;
+  self.BorderStyle:=bsNone;
+  repainttimer := TTimer.Create(self);
+  repainttimer.Interval:=100;
+  repainttimer.OnTimer:=@onrepainttimer;
+  repainttimer.Enabled:=true;
+end;
+
+destructor TTransparentMemo.destroy;
+begin
+  scrolllabel.Free;
+  repainttimer.Free;
+  inherited;
+end;
+
+procedure free_runtime_objects;
+var
+  i : integer;
+begin
+  try
+    for i := 0 to memocounter -1 do
+     if Assigned(memoarray[i]) then memoarray[i].Free;
+    for i := 0 to labelcounter -1 do
+     if Assigned(LabelArray[i]) then LabelArray[i].Free;
+    for i := 0 to buttoncounter -1 do
+     if Assigned(ButtonArray[i]) then ButtonArray[i].Free;
+    if Assigned(mythread) then mythread.Free;
+    LogDatei.Close;
+    LogDatei.free;
+  finally
+  end;
+end;
 
 procedure shutdownNotifier;
 begin
   mythread.Terminate;
   hideNForm;
   sleep(1000);
+  free_runtime_objects;
   DataModule1.DataModuleDestroy(nil);
 end;
 
@@ -109,10 +171,26 @@ begin
     end
     else
       LogDatei.log('No index found for id: ' + aktId, LLDebug2);
+    indexstr := memolist.Values[aktId];
+    if indexstr <> '' then
+    begin
+      index := StrToInt(indexstr);
+      logdatei.log('Found memoindex: ' + IntToStr(index) + ' for id: "' + aktId, LLDebug2);
+      logdatei.log('scrollbox name by index: Found index: ' +
+        memoarray[index].Name, LLDebug2);
+      memoarray[index].scrolllabel.Caption := aktMessage;
+      memoarray[index].Repaint;
+      Application.ProcessMessages;
+      logdatei.log('Finished: Set for id: "' + aktId + '" the message: "' +
+        aktMessage + '"', LLInfo);
+      result := true;
+    end
+    else
+      LogDatei.log('No index found for id: ' + aktId, LLDebug2);
   except
     on E: Exception do
     begin
-      LogDatei.log('Error: Label not found by index: ' + IntToStr(index) +
+      LogDatei.log('Error: Label / scrollbox not found by index: ' + IntToStr(index) +
         ' id: ' + aktId, LLError);
       LogDatei.log('Error: Message: ' + E.Message, LLError);
       result := false;
@@ -735,6 +813,58 @@ begin
     DataModule1.ProcessMess;
   end
   else
+  if aktsection = 'LabelMessage' then
+  begin
+    LogDatei.log('Start reading: ' + aktsection, LLDebug);
+    Inc(memocounter);
+    SetLength(memoarray, memocounter + 1);
+    memoarray[memocounter] := TTransparentMemo.Create(nform);
+    memoarray[memocounter].Parent := nform;
+    //memoarray[memocounter].AutoSize := True;
+    memoarray[memocounter].Name := aktsection;
+    memoarray[memocounter].scrolllabel.WordWrap:=true;
+    memoarray[memocounter].Left := myini.ReadInteger(aktsection, 'Left', 10);
+    memoarray[memocounter].Top := myini.ReadInteger(aktsection, 'Top', 10);
+    memoarray[memocounter].Width := myini.ReadInteger(aktsection, 'Width', 10);
+    memoarray[memocounter].Height := myini.ReadInteger(aktsection, 'Height', 10);
+    //memoarray[labelcounter].Anchors := [akTop,akLeft,akRight,akBottom];
+    memoarray[memocounter].Anchors := [akTop,akLeft,akRight];
+    memoarray[memocounter].scrolllabel.Font.Name :=
+      myini.ReadString(aktsection, 'FontName', 'Arial');
+    memoarray[memocounter].scrolllabel.Font.Size :=
+      fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
+    memoarray[memocounter].scrolllabel.Font.Color :=
+      myStringToTColor(myini.ReadString(aktsection, 'FontColor', 'clBlack'));
+    memoarray[memocounter].scrolllabel.Font.Bold :=
+      strToBool(myini.ReadString(aktsection, 'FontBold', 'false'));
+    memoarray[memocounter].scrolllabel.Font.Italic :=
+      strToBool(myini.ReadString(aktsection, 'FontItalic', 'false'));
+    memoarray[memocounter].scrolllabel.Font.Underline :=
+      strToBool(myini.ReadString(aktsection, 'FontUnderline', 'false'));
+    memoarray[memocounter].scrolllabel.Alignment :=
+      StringToAlignment(myini.ReadString(aktsection, 'Alignment', 'left'));
+    //memoarray[memocounter].Transparent :=
+    //  strToBool(myini.ReadString(aktsection, 'Transparent', 'false'));
+    memoarray[memocounter].Tag := memocounter;
+    memoarray[memocounter].scrolllabel.Caption := myini.ReadString(aktsection, 'Text', '');
+    //memoarray[memocounter].scrolllabel.Caption := 'test'+#10+#13+
+    //  'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+
+    //  'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13;
+    //memoarray[memocounter].ReadOnly:=true;
+    //memoarray[memocounter].ScrollBars:=ssAutoVertical;
+    // scale new scrollbox:
+    memoarray[memocounter].AutoAdjustLayout(lapAutoAdjustForDPI, 96, nform.PixelsPerInch, 0, 0);
+    // make transparent
+    memoarray[memocounter].ControlStyle:= memoarray[memocounter].ControlStyle - [csOpaque] + [csParentBackground];
+    memoarray[memocounter].Visible:=true;
+
+    // feed memolist: id = index of memoarray ; id = aktsection striped by 'Label'
+    memolist.Add(copy(aktsection, 6, 100) + '=' + IntToStr(memocounter));
+    logdatei.log('memolist add: ' + copy(aktsection, 6, 100) + '=' +
+      IntToStr(memocounter), LLDebug2);
+    LogDatei.log('Finished reading: ' + aktsection, LLDebug2);
+  end
+  else
   if pos('Label', aktsection) > 0 then
   begin
     LogDatei.log('Start reading: ' + aktsection, LLDebug);
@@ -879,8 +1009,10 @@ end;
 begin
   labelcounter := 0;
   buttoncounter := 0;
+  memocounter := 0;
   navlist := TStringList.Create;
   labellist := TStringList.Create;
   buttonlist := TStringList.Create;
   sectionlist := TStringList.Create;
+  memolist := TStringList.Create;
 end.

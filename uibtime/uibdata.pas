@@ -1202,11 +1202,11 @@ procedure TDataModule1.SQwork_descriptionAfterInsert(DataSet: TDataSet);
 begin
   SQwork_description.FieldByName('userid').AsString := uid;
   SQwork_description.FieldByName('jahr').AsInteger :=
-    YearOf(StrToDate(fwork_description.EditButtonDate.Text));
+    YearOf(ScanDateTime('dd.mm.yyyy',fwork_description.EditButtonDate.Text));
   SQwork_description.FieldByName('monat').AsInteger :=
-    MonthOf(StrToDate(fwork_description.EditButtonDate.Text));
+    MonthOf(ScanDateTime('dd.mm.yyyy',fwork_description.EditButtonDate.Text));
   SQwork_description.FieldByName('tag').AsInteger :=
-    DayOf(StrToDate(fwork_description.EditButtonDate.Text));
+    DayOf(ScanDateTime('dd.mm.yyyy',fwork_description.EditButtonDate.Text));
   SQwork_description.FieldByName('event').AsString :=
     Query_day_report.FieldByName('event').AsString;
 end;
@@ -2015,6 +2015,7 @@ end;
 
 initialization
   { initialization-Abschnitt }
+  DefaultFormatSettings.ShortDateFormat := 'dd.mm.yyyy';
   ontopwidth := 850;//730;
   ontopheight := 25;
   screenx := Screen.Width;

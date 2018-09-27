@@ -1,0 +1,548 @@
+﻿msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: resultform.saskcreatepacket
+msgid "Create packet %0:s?"
+msgstr "Paket %0:s erzeugen?"
+
+#: resultform.serrextractmsifailed
+msgid "Error: extracting MSI from %s failed!"
+msgstr "Fehler: MSI konnte nicht extrahiert werden aus %s!"
+
+#: resultform.serrfldinstdirempty
+msgid "Error: Field Install Directory is empty!"
+msgstr "Fehler: Feld Installationsverzeichnis ist leer!"
+
+#: resultform.serrfldmsiproductcodeempty
+msgid "Error: Field MSI Product Code is empty!"
+msgstr "Fehler: Feld MSI Produkt Code ist leer!"
+
+#: resultform.serrfldopsiproductidempty
+msgctxt "resultform.serrfldopsiproductidempty"
+msgid "Error: Field opsi Packet ID is empty!"
+msgstr "Fehler: Feld opsi Packet ID ist leer!"
+
+#: resultform.serrfldopsiproductversionempty
+msgid "Error: Field Product Version is empty!"
+msgstr "Fehler: Feld Produkt Version ist leer!"
+
+#: resultform.serrfldsetupempty
+msgid "Error: No setup file selected!"
+msgstr "Fehler: keine Setup-Datei ausgewählt"
+
+#: resultform.serrmsinotfound
+msgid "Error: MSI file does not exist!"
+msgstr "Fehler: MSI-Datei nicht gefunden!"
+
+#: resultform.serrmstnotfound
+msgid "Error: MST file does not exist in the MSI-directory!"
+msgstr "Fehler: MST-Datei nicht im MSI-Verzeichnis gefunden"
+
+#: resultform.serropsipackagebuildererrcode
+msgid "Error invoking OPSI Package Builder (error code=%0:d). Please remove quiet option to check for further information."
+msgstr "Fehler beim Ausführen des Package Builders (Fehler Code=%0:d). Bitte die quiet option entfernen für weitere Hinweise."
+
+#: resultform.serropsipackagebuilderstart
+msgid "Error invoking opsi package builder"
+msgstr "Fehler beim Starten des opsi Package Builders"
+
+#: resultform.serrpacketbasedirnotfound
+msgid "Error: Packet BaseDir does not exist!"
+msgstr "Fehler: das angegebene Produkt Basis-Verzeichnis existiert nicht"
+
+#: resultform.serrpacketdirexists
+msgid "Error: opsi packet folder %s already exists!"
+msgstr "Fehler: das opsi Paket-Verzeichnis %s existiert bereits"
+
+#: resultform.serrproductversioninvalid
+msgid "Error: for Product Version only numbers allowed !"
+msgstr "Fehler: bei der Produkt-Version sind nur Zahlen erlaubt."
+
+#: resultform.serrselectinstalltype
+msgid "First select setup type tab (MSI, Inno Setup ...) and fill out form"
+msgstr "Zuerst einen Setup Typ auswählen (MSI, Inno Setup ...) und das Formular ausfüllen"
+
+#: resultform.serrsetupfilenotfound
+msgid "Error: Setup file does not exist!"
+msgstr "Fehler: die angegebene Setup-Datei existiert nicht"
+
+#: resultform.shelpfile
+msgid "languages\\Help.de.html"
+msgstr "languages\\Help.de.html"
+
+#: resultform.shelpheader
+msgid "opsi setup detector Help"
+msgstr "opsi Setup Detektor Hilfe"
+
+#: resultform.sinfofinished
+msgid "finished."
+msgstr "fertig."
+
+#: resultform.slogfileinfo
+msgid "Logfile created: %s"
+msgstr "Logfile erzeugt: %s"
+
+#: resultform.smboxheader
+msgid "opsi setup detector"
+msgstr "opsi Setup Detektor"
+
+#: resultform.swarninstdiremptynodeinstall
+msgid "Warning: Install Directory is empty, deinstall script cannot be patched!"
+msgstr "Warnung: kein Installationsverzeichnis angegeben, das deinstall-Script kann nicht gepatcht werden."
+
+#: tformhelp.caption
+msgid "FormHelp"
+msgstr "-"
+
+#: tformhelp.panel1.caption
+msgid "Panel1"
+msgstr "-"
+
+#: tfosdconfigdlg.caption
+msgid "opsi-setup-detector Configuration"
+msgstr ""
+
+#: tresultform1.bitbtnopenfile.caption
+#, fuzzy
+msgctxt "tresultform1.bitbtnopenfile.caption"
+msgid "Open Setup File"
+msgstr "&Datei öffnen"
+
+#: tresultform1.bitbtnopenfile1.caption
+#, fuzzy
+msgctxt "tresultform1.bitbtnopenfile1.caption"
+msgid "Open Setup File"
+msgstr "&Datei öffnen"
+
+#: tresultform1.bitbtnopenmst1.caption
+msgctxt "tresultform1.bitbtnopenmst1.caption"
+msgid "Open MST File"
+msgstr ""
+
+#: tresultform1.bitbtnopenmst2.caption
+msgctxt "tresultform1.bitbtnopenmst2.caption"
+msgid "Open MST File"
+msgstr ""
+
+#: tresultform1.bitbtnrecheckworkbench.caption
+msgid "Recheck workbench path"
+msgstr ""
+
+#: tresultform1.bitbtnworkbenchpath.caption
+msgid "Select workbench path"
+msgstr ""
+
+#: tresultform1.btanalyzenextstep.caption
+msgctxt "tresultform1.btanalyzenextstep.caption"
+msgid "Next Step"
+msgstr ""
+
+#: tresultform1.btanalyzenextstep.hint
+msgctxt "tresultform1.btanalyzenextstep.hint"
+msgid "Go to the next Step"
+msgstr ""
+
+#: tresultform1.btanalyzeonly.caption
+msgctxt "tresultform1.btanalyzeonly.caption"
+msgid "Only analyze single File "
+msgstr ""
+
+#: tresultform1.btanalyzeonly.hint
+msgctxt "tresultform1.btanalyzeonly.hint"
+msgid "Analyze a single existing Setupfile "
+msgstr ""
+
+#: tresultform1.btatwonalyzeandcreate.caption
+msgid "Analyze two Files and Create Opsi Product"
+msgstr ""
+
+#: tresultform1.btatwonalyzeandcreate.hint
+msgctxt "tresultform1.btatwonalyzeandcreate.hint"
+msgid ""
+"Analyze a single existing Setupfile \n"
+"and create an opsi Product\n"
+msgstr ""
+
+#: tresultform1.btcreateemptytemplate.caption
+msgid "Create an empty opsi product"
+msgstr ""
+
+#: tresultform1.btcreateemptytemplate.hint
+msgid ""
+"Create a empty \n"
+"opsi Product Directory Structure\n"
+msgstr ""
+
+#: tresultform1.btcreateproduct.caption
+msgid "Create Opsi Product"
+msgstr ""
+
+#: tresultform1.btcreateproduct.hint
+msgid "Create a opsi Product"
+msgstr ""
+
+#: tresultform1.btproductnextstep.caption
+msgctxt "tresultform1.btproductnextstep.caption"
+msgid "Next Step"
+msgstr ""
+
+#: tresultform1.btproductnextstep.hint
+msgctxt "tresultform1.btproductnextstep.hint"
+msgid "Go to the next Step"
+msgstr ""
+
+#: tresultform1.btsetup1nextstep.caption
+msgctxt "tresultform1.btsetup1nextstep.caption"
+msgid "Next Step"
+msgstr ""
+
+#: tresultform1.btsetup1nextstep.hint
+msgctxt "tresultform1.btsetup1nextstep.hint"
+msgid "Go to the next Step"
+msgstr ""
+
+#: tresultform1.btsetup2nextstep.caption
+msgctxt "tresultform1.btsetup2nextstep.caption"
+msgid "Next Step"
+msgstr ""
+
+#: tresultform1.btsetup2nextstep.hint
+msgctxt "tresultform1.btsetup2nextstep.hint"
+msgid "Go to the next Step"
+msgstr ""
+
+#: tresultform1.btsingleanalyzeandcreate.caption
+msgid "Analyze single File and Create Opsi Product"
+msgstr ""
+
+#: tresultform1.btsingleanalyzeandcreate.hint
+msgctxt "tresultform1.btsingleanalyzeandcreate.hint"
+msgid ""
+"Analyze a single existing Setupfile \n"
+"and create an opsi Product\n"
+msgstr ""
+
+#: tresultform1.buttoncreatepacket.caption
+msgctxt "tresultform1.buttoncreatepacket.caption"
+msgid "&Create opsi Packet"
+msgstr "&Erzeuge opsi Paket"
+
+#: tresultform1.buttoncreatepacket.hint
+msgctxt "tresultform1.buttoncreatepacket.hint"
+msgid "Create opsi Packet according to the form"
+msgstr "Erzeuge das opsi Paket entsprechend dem Formular"
+
+#: tresultform1.caption
+msgid "opsi Setup Detector"
+msgstr "opsi Setup Detektor"
+
+#: tresultform1.checkbox1.caption
+msgid "Register as Explorer Context Menue"
+msgstr "im Explorer Kontext Menü registrieren"
+
+#: tresultform1.checkboxbuild.caption
+msgctxt "TRESULTFORM1.CHECKBOXBUILD.CAPTION"
+msgid "build"
+msgstr "build"
+
+#: tresultform1.checkboxinstall.caption
+msgctxt "TRESULTFORM1.CHECKBOXINSTALL.CAPTION"
+msgid "install"
+msgstr "install"
+
+#: tresultform1.checkboxquiet.caption
+msgid "quiet"
+msgstr "quiet"
+
+#: tresultform1.checkboxusemst.caption
+#, fuzzy
+msgctxt "tresultform1.checkboxusemst.caption"
+msgid "use MST File"
+msgstr "MST Datei"
+
+#: tresultform1.checkboxusemst1.caption
+#, fuzzy
+msgctxt "tresultform1.checkboxusemst1.caption"
+msgid "use MST File"
+msgstr "MST Datei"
+
+#: tresultform1.fileexit.caption
+msgctxt "tresultform1.fileexit.caption"
+msgid "&Exit"
+msgstr "B&eenden"
+
+#: tresultform1.filehelp.caption
+msgid "&Help"
+msgstr "&Hilfe"
+
+#: tresultform1.fileopensetupfile.caption
+msgctxt "TRESULTFORM1.FILEOPENSETUPFILE.CAPTION"
+msgid "&Open Setup File and Analyze"
+msgstr "&Datei öffnen und analysieren"
+
+#: tresultform1.fileopensetupfile.hint
+msgctxt "TRESULTFORM1.FILEOPENSETUPFILE.HINT"
+msgid "select setup file to analyze"
+msgstr "Die zu analysierende Setup-Datei auswählen"
+
+#: tresultform1.flowpanel14.caption
+msgid "FlowPanel14"
+msgstr ""
+
+#: tresultform1.flowpanel16.caption
+msgid "FlowPanel16"
+msgstr ""
+
+#: tresultform1.label50.caption
+msgctxt "tresultform1.label50.caption"
+msgid "Setup File"
+msgstr ""
+
+#: tresultform1.label51.caption
+#, fuzzy
+#| msgid "Product Name"
+msgctxt "tresultform1.label51.caption"
+msgid "opsi Product Name"
+msgstr "Produkt Name"
+
+#: tresultform1.label52.caption
+msgctxt "tresultform1.label52.caption"
+msgid "Product Version"
+msgstr "Produkt Version"
+
+#: tresultform1.label53.caption
+msgctxt "tresultform1.label53.caption"
+msgid "MsiId       "
+msgstr ""
+
+#: tresultform1.label54.caption
+#, fuzzy
+#| msgid "Required Space"
+msgctxt "tresultform1.label54.caption"
+msgid "Required Space MB"
+msgstr "erforderlich"
+
+#: tresultform1.label55.caption
+#, fuzzy
+#| msgid "not used"
+msgctxt "tresultform1.label55.caption"
+msgid "InstallDir"
+msgstr "Größe MSI"
+
+#: tresultform1.label56.caption
+msgctxt "tresultform1.label56.caption"
+msgid "opsi Product ID"
+msgstr "opsi Product ID"
+
+#: tresultform1.label57.caption
+msgctxt "tresultform1.label57.caption"
+msgid "Description"
+msgstr "Beschreibung"
+
+#: tresultform1.label58.caption
+#, fuzzy
+msgctxt "tresultform1.label58.caption"
+msgid "Product Version"
+msgstr "Produkt Version"
+
+#: tresultform1.label59.caption
+msgctxt "tresultform1.label59.caption"
+msgid "MsiId"
+msgstr ""
+
+#: tresultform1.label60.caption
+msgctxt "tresultform1.label60.caption"
+msgid "MST File  "
+msgstr ""
+
+#: tresultform1.label61.caption
+msgctxt "tresultform1.label61.caption"
+msgid "Package Version"
+msgstr ""
+
+#: tresultform1.label62.caption
+msgctxt "tresultform1.label62.caption"
+msgid "Detected Setup type:"
+msgstr ""
+
+#: tresultform1.label63.caption
+msgctxt "tresultform1.label63.caption"
+msgid "Architecture Mode"
+msgstr ""
+
+#: tresultform1.label64.caption
+msgctxt "tresultform1.label64.caption"
+msgid "Setup file size MB"
+msgstr ""
+
+#: tresultform1.label65.caption
+msgid "Advice"
+msgstr ""
+
+#: tresultform1.label66.caption
+#, fuzzy
+msgctxt "tresultform1.label66.caption"
+msgid "opsi Product ID"
+msgstr "opsi Product ID"
+
+#: tresultform1.label67.caption
+#, fuzzy
+#| msgid "Product Name"
+msgctxt "tresultform1.label67.caption"
+msgid "opsi Product Name"
+msgstr "Produkt Name"
+
+#: tresultform1.label68.caption
+msgctxt "tresultform1.label68.caption"
+msgid "Detected Setup type:"
+msgstr ""
+
+#: tresultform1.label69.caption
+msgctxt "tresultform1.label69.caption"
+msgid "Architecture Mode"
+msgstr ""
+
+#: tresultform1.label70.caption
+msgctxt "tresultform1.label70.caption"
+msgid "MST File "
+msgstr ""
+
+#: tresultform1.label71.caption
+#, fuzzy
+msgctxt "tresultform1.label71.caption"
+msgid "Product Version"
+msgstr "Produkt Version"
+
+#: tresultform1.label72.caption
+#, fuzzy
+msgctxt "tresultform1.label72.caption"
+msgid "Required Space"
+msgstr "erforderlich"
+
+#: tresultform1.label73.caption
+#, fuzzy
+#| msgid "not used"
+msgctxt "tresultform1.label73.caption"
+msgid "InstallDir"
+msgstr "Größe MSI"
+
+#: tresultform1.label74.caption
+msgctxt "tresultform1.label74.caption"
+msgid "Setup file size MB"
+msgstr ""
+
+#: tresultform1.label75.caption
+#, fuzzy
+#| msgid "Product Version"
+msgctxt "tresultform1.label75.caption"
+msgid "opsi Product ID"
+msgstr "Produkt Version"
+
+#: tresultform1.label76.caption
+#, fuzzy
+#| msgid "Product Name"
+msgctxt "tresultform1.label76.caption"
+msgid "opsi Product Name"
+msgstr "Produkt Name"
+
+#: tresultform1.label77.caption
+#, fuzzy
+#| msgid "Product Version"
+msgctxt "tresultform1.label77.caption"
+msgid "Setup File"
+msgstr "Produkt Version"
+
+#: tresultform1.label78.caption
+msgid "Path to opsi-work-bench"
+msgstr ""
+
+#: tresultform1.labelworkbenchnotok.caption
+msgid "Path to opsi-work-bench not is reachable - Check Network Mounts or Path"
+msgstr ""
+
+#: tresultform1.labelworkbenchok.caption
+msgid "Path to opsi-work-bench is reachable"
+msgstr ""
+
+#: tresultform1.menuitemabout.caption
+msgid "&About"
+msgstr "&Info"
+
+#: tresultform1.menuitemconfig.caption
+msgid "Configuration"
+msgstr ""
+
+#: tresultform1.menuitemfile.caption
+msgid "&File"
+msgstr "&Datei"
+
+#: tresultform1.panel3.caption
+msgid "Panel3"
+msgstr "-"
+
+#: tresultform1.processing.caption
+msgid "processing..."
+msgstr "Bearbeitung läuft ..."
+
+#: tresultform1.processstatement.caption
+msgid "please wait"
+msgstr "bitte warten"
+
+#: tresultform1.radiobuttonauto.caption
+msgctxt "TRESULTFORM1.RADIOBUTTONAUTO.CAPTION"
+msgid "create and auto build"
+msgstr "erzeugen und auto build"
+
+#: tresultform1.radiobuttoncreateonly.caption
+msgctxt "TRESULTFORM1.RADIOBUTTONCREATEONLY.CAPTION"
+msgid "create opsi packet"
+msgstr "opsi Paket erzeugen"
+
+#: tresultform1.radiobuttoninteractive.caption
+msgctxt "TRESULTFORM1.RADIOBUTTONINTERACTIVE.CAPTION"
+msgid "create opsi packet and start interactive PacketBuilder"
+msgstr "opsi Paket erzeugen und opsi Packet Builder starten"
+
+#: tresultform1.sbtnexit.caption
+msgid "Exit"
+msgstr ""
+
+#: tresultform1.sbtnopen.caption
+msgid "open"
+msgstr ""
+
+#: tresultform1.tabsheetanalyze.caption
+msgctxt "TRESULTFORM1.TABSHEETANALYZE.CAPTION"
+msgid "Analyze"
+msgstr "Analysiere"
+
+#: tresultform1.tabsheetcreate.caption
+msgid "Create"
+msgstr ""
+
+#: tresultform1.tabsheetproduct.caption
+msgid "Product"
+msgstr ""
+
+#: tresultform1.tabsheetsetup1.caption
+msgid "Setup1"
+msgstr ""
+
+#: tresultform1.tabsheetsetup2.caption
+msgid "Setup2"
+msgstr ""
+
+#: tresultform1.tabsheetstart.caption
+msgid "Start"
+msgstr ""
+
+#: tresultform1.ticheckboxlicenserequired.caption
+#, fuzzy
+msgctxt "tresultform1.ticheckboxlicenserequired.caption"
+msgid "License required"
+msgstr "Lizenz pflichtig"
+
+#: tresultform1.toolbar1.caption
+msgid "ToolBar1"
+msgstr ""
+
