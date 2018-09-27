@@ -28,7 +28,7 @@
 ;****************************************
 
 [Actions]
-requiredWinstVersion >= "4.11.3.3"
+requiredWinstVersion >= "4.12.0.28"
 ScriptErrorMessages = false
 
 DefVar $SetupType$
@@ -44,10 +44,11 @@ DefVar $LicensePool$
 DefVar $MsiId$
 DefVar $NsisInstallBatch$
 DefVar $LogDir$
+DefVar $OS$
 
-Set $LogDir$ = "%SystemDrive%\tmp"
+Set $LogDir$ = "%opsiLogDir%"
 
-include_append "%ScriptPath%\check_#@#-SETUPTYPE-#@#_exitcode.opsiscript"
+"#@#-IMPORTLIB-#@#"
 
 ; ----------------------------------------------------------------
 Set $SetupType$       = "#@#-SETUPTYPE-#@#"
@@ -65,43 +66,55 @@ Set $MinimumSpace$    = "#@#-PRODUCTSIZE-#@#"
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 
+set $OS$ = GetOS
+
 if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
    LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% needed for " + $ProductId$
    isFatalError "No Space"
    ; Stop process and set installation status to failed
-else
-   comment "Show product picture"
-   ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
-
-   if FileExists("%ScriptPath%\delsub.opsiscript")
-      comment "Start uninstall sub section"
-      Sub "%ScriptPath%\delsub.opsiscript"
-   endif
-   
-   Message "Installing " + $ProductId$ + " ..."
-   
-   if $LicenseRequired$ = "true"
-      comment "Licensing required, reserve license and get license key"
-      Sub_get_licensekey
-   endif
-
-   ; **--** PATCH_NSIS **--** --begin-- (do not change this line)
-   if ($SetupType$ = "nsis")
-      Set $NsisInstallBatch$ = "%ScriptPath%\#@#-SETUPFILE-#@# /S"
-      if not ($InstallDir$ = '')
-         Set $NsisInstallBatch$ = $NsisInstallBatch$ + ' /D="' + $InstallDir$ + '"'
-      endif
-   endif
-   ; **--** PATCH_NSIS **--** --end-- (do not change this line)
-   
-   comment "Start setup program"
-   ChangeDirectory "%SCRIPTPATH%"
-   ;----------------------------------------------
-   Winbatch_install_#@#-SETUPTYPE-#@#
-   ;----------------------------------------------
-   Sub_check_exitcode	
 endif
 
+
+comment "Show product picture"
+ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
+
+if FileExists("%ScriptPath%\delsub.opsiscript")
+   comment "Start uninstall sub section"
+   Sub "%ScriptPath%\delsub.opsiscript"
+endif
+
+Message "Installing " + $ProductId$ + " ..."
+
+if $LicenseRequired$ = "true"
+   comment "Licensing required, reserve license and get license key"
+   Sub_get_licensekey
+endif
+
+; **--** PATCH_NSIS **--** --begin-- (do not change this line)
+if ($SetupType$ = "nsis")
+   Set $NsisInstallBatch$ = "%ScriptPath%\#@#-SETUPFILE-#@# /S"
+   if not ($InstallDir$ = '')
+      Set $NsisInstallBatch$ = $NsisInstallBatch$ + ' /D="' + $InstallDir$ + '"'
+   endif
+endif
+; **--** PATCH_NSIS **--** --end-- (do not change this line)
+
+#@#-PREINSTALL-LINE-#@#
+#@#-PREINSTALL-INCLUDE-#@#
+
+comment "Start setup program"
+ChangeDirectory "%SCRIPTPATH%"
+;----------------------------------------------
+Winbatch_install #@#-WINBATCH-ARGUMENT-#@#
+;----------------------------------------------
+Sub_check_exitcode	
+
+#@#-POSTINSTALL-LINE-#@#
+#@#-POSTINSTALL-INCLUDE-#@#
+
+
+[[Winbatch_install]
+#@#-INSTALL-LINE-#@#
 
 ; ----------------------------------------------------------------
 ; install section

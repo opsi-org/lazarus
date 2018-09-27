@@ -132,6 +132,7 @@ type
     FlowPanelSetup33: TFlowPanel;
     FileHelp: TMenuItem;
     GroupBox2: TGroupBox;
+    ImageList1: TImageList;
     Label57: TLabel;
     Label58: TLabel;
     Label59: TLabel;
@@ -243,14 +244,14 @@ type
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure MenuItemConfigClick(Sender: TObject);
     procedure setGuiMode;
-    procedure BitBtnOpenFileClick(Sender: TObject);
     procedure BitBtnClose1Click(Sender: TObject);
     procedure BtAnalyzeOnlyClick(Sender: TObject);
-    procedure ButtonCreatePacketClick(Sender: TObject);
+    (*
     procedure CheckBox1Change(Sender: TObject);
     procedure CheckBoxUseMstChange(Sender: TObject);
     procedure ComboBoxArchModeChange(Sender: TObject);
     procedure FileCreateLogfileClick(Sender: TObject);
+    *)
     procedure FileHelpClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure mst32NameEditChange(Sender: TObject);
@@ -264,7 +265,7 @@ type
     procedure ProductIDChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure RadioButtonBuildModeChange(Sender: TObject);
-    procedure removeOtherTypeSpecificSections(setupType, setupFile: string);
+
     procedure SBtnOpenClick(Sender: TObject);
     procedure SBtnExitClick(Sender: TObject);
     procedure TabSheetCreateShow(Sender: TObject);
@@ -299,7 +300,7 @@ var
   configFileName: string;
   packetBaseDir: string;
   productid: string;
-  patchlist: TStringList;
+  //patchlist: TStringList;
   fConfig: Text;
   setupTypestr: string;
   markerEmbeddedMSI: boolean = False;
@@ -1049,29 +1050,36 @@ end;
 
 procedure TResultform1.FormCreate(Sender: TObject);
 var
-  myimage: TBitmap;
+  myimage: TImage;
+  str : string;
 begin
   main;
-  (*
-  PageControl1.Images.AddLazarusResource('HOME-2X');
-  PageControl1.Images.AddLazarusResource('MAGNIFYING-GLASS-2X');
-  PageControl1.Images.AddLazarusResource('COG-2X');
-  PageControl1.Images.AddLazarusResource('FLASH-2X');
-  *)
-  //myimage.LoadFromFile(ExpandFileName(ExtractFilePath(Application.ExeName)+PathDelim+ 'home-2x.png'));
-  //PageControl1.Images.add(myimage,nil);
+  //(*
+  //PageControl1.Images.AddLazarusResource('HOME2XA');
   (*
   PageControl1.Images.AddLazarusResource('MAGNIFYING-GLASS-2X');
   PageControl1.Images.AddLazarusResource('COG-2X');
   PageControl1.Images.AddLazarusResource('FLASH-2X');
   *)
   (*
+  str :=ExpandFileName(ExtractFilePath(Application.ExeName)+ 'home-2xb.png');
+  myimage := TImage.Create(nil);
+  myimage.Picture.LoadFromFile(str);
+  PageControl1.Images.add(myimage.Picture.Bitmap,nil);
+  *)
+  (*
+  PageControl1.Images.AddLazarusResource('MAGNIFYING-GLASS-2X');
+  PageControl1.Images.AddLazarusResource('COG-2X');
+  PageControl1.Images.AddLazarusResource('FLASH-2X');
+  *)
+  //(*
   TabSheetStart.ImageIndex:=0;
+  //(*
   TabSheetAnalyze.ImageIndex:=1;
   TabSheetSetup1.ImageIndex:=2;
   TabSheetSetup1.ImageIndex:=2;
   TabSheetProduct.ImageIndex:=3;
-  *)
+  //*)
 end;
 
 procedure TResultform1.memoadd(line: string);
@@ -1080,36 +1088,6 @@ begin
 end;
 
 
-procedure patchScript(infile, outfile: string);
-var
-  infileHandle, outfileHandle: Text;
-  aktline: string;
-  i: integer;
-begin
-  mywrite('creating: ' + outfile + ' from: ' + infile);
-
-  {$I+}//use exceptions
-  try
-    AssignFile(infileHandle, infile);
-    AssignFile(outfileHandle, outfile);
-    reset(infileHandle);
-    rewrite(outfileHandle);
-
-    while not EOF(infileHandle) do
-    begin
-      ReadLn(infileHandle, aktline);
-      for i := 0 to patchlist.Count - 1 do
-        aktline := StringReplace(aktline, patchlist.Names[i],
-          patchlist.ValueFromIndex[i], [rfReplaceAll, rfIgnoreCase]);
-      writeln(outfileHandle, aktline);
-    end;
-    CloseFile(infileHandle);
-    CloseFile(outfileHandle)
-  except
-    on E: EInOutError do
-      mywrite('patchScript file error: ' + E.ClassName + '/' + E.Message);
-  end;
-end;
 
 
 

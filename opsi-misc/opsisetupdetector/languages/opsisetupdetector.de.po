@@ -102,6 +102,14 @@ msgstr "-"
 msgid "opsi-setup-detector Configuration"
 msgstr ""
 
+#: tfosdconfigdlg.flowpanel1.caption
+msgid "FlowPanel1"
+msgstr ""
+
+#: tfosdconfigdlg.flowpanel2.caption
+msgid "FlowPanel2"
+msgstr ""
+
 #: tresultform1.bitbtnopenfile.caption
 #, fuzzy
 msgctxt "tresultform1.bitbtnopenfile.caption"

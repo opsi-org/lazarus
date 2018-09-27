@@ -12,11 +12,8 @@
         <DpiAware Value="True"/>
       </XPManifest>
       <Icon Value="0"/>
-      <Resources Count="4">
-        <Resource_0 FileName="magnifying-glass-2x.png" Type="BITMAP" ResourceName="MAGNIFYING-GLASS-2X"/>
-        <Resource_1 FileName="home-2x.png" Type="BITMAP" ResourceName="HOME-2X"/>
-        <Resource_2 FileName="cog-2x.png" Type="BITMAP" ResourceName="COG-2X"/>
-        <Resource_3 FileName="flash-2x.png" Type="BITMAP" ResourceName="FLASH-2X"/>
+      <Resources Count="1">
+        <Resource_0 FileName="home2xa.png" Type="BITMAP" ResourceName="HOME2XA"/>
       </Resources>
     </General>
     <i18n>
@@ -168,16 +165,14 @@
         <ComponentName Value="resultForm1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="295"/>
-        <CursorPos Y="333"/>
+        <CursorPos X="18" Y="20"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <EditorIndex Value="1"/>
+          <EditorIndex Value="2"/>
           <WindowIndex Value="1"/>
-          <TopLine Value="920"/>
-          <CursorPos X="3" Y="922"/>
+          <TopLine Value="921"/>
+          <CursorPos X="3" Y="923"/>
         </ExtraEditor1>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -188,7 +183,6 @@
         <Filename Value="lib\i386-win32\resultform.lrs"/>
         <CursorPos X="17" Y="3"/>
         <UsageCount Value="2"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit4>
       <Unit5>
         <Filename Value="manifest.xml"/>
@@ -237,21 +231,18 @@
         <TopLine Value="3225"/>
         <CursorPos Y="3243"/>
         <UsageCount Value="16"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit12>
       <Unit13>
         <Filename Value="C:\lazarus\lcl\include\customedit.inc"/>
         <TopLine Value="513"/>
         <CursorPos Y="531"/>
         <UsageCount Value="16"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit13>
       <Unit14>
         <Filename Value="C:\lazarus\lcl\include\customform.inc"/>
         <TopLine Value="1802"/>
         <CursorPos Y="1820"/>
         <UsageCount Value="10"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit14>
       <Unit15>
         <Filename Value="E:\lazarus\lcl\include\control.inc"/>
@@ -265,7 +256,6 @@
         <TopLine Value="26"/>
         <CursorPos Y="33"/>
         <UsageCount Value="36"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit16>
       <Unit17>
         <Filename Value="inno2opsi-files\CLIENT_DATA\setup64.opsiscript"/>
@@ -286,7 +276,6 @@
         <TopLine Value="458"/>
         <CursorPos Y="476"/>
         <UsageCount Value="34"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit19>
       <Unit20>
         <Filename Value="resultform.lfm"/>
@@ -302,7 +291,6 @@
         <TopLine Value="78"/>
         <CursorPos X="69" Y="176"/>
         <UsageCount Value="9"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit21>
       <Unit22>
         <Filename Value="C:\lazarus\ideintf\objectinspector.pp"/>
@@ -313,7 +301,6 @@
         <TopLine Value="29"/>
         <CursorPos X="94" Y="41"/>
         <UsageCount Value="9"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit22>
       <Unit23>
         <Filename Value="help.pas"/>
@@ -330,9 +317,9 @@
         <Filename Value="trash.txt"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="4"/>
-        <TopLine Value="2011"/>
-        <CursorPos Y="2053"/>
-        <UsageCount Value="51"/>
+        <TopLine Value="1346"/>
+        <CursorPos X="5" Y="1381"/>
+        <UsageCount Value="57"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit24>
@@ -341,7 +328,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="1"/>
         <CursorPos X="28" Y="7"/>
-        <UsageCount Value="72"/>
+        <UsageCount Value="78"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit25>
       <Unit26>
@@ -399,7 +386,7 @@
         <EditorIndex Value="6"/>
         <TopLine Value="64"/>
         <CursorPos Y="22"/>
-        <UsageCount Value="98"/>
+        <UsageCount Value="104"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit32>
@@ -407,9 +394,9 @@
         <Filename Value="osdhelper.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="5"/>
-        <TopLine Value="28"/>
+        <TopLine Value="31"/>
         <CursorPos Y="51"/>
-        <UsageCount Value="126"/>
+        <UsageCount Value="132"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit33>
@@ -420,23 +407,22 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="511"/>
         <CursorPos Y="523"/>
-        <UsageCount Value="121"/>
+        <UsageCount Value="127"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit34>
       <Unit35>
         <Filename Value="osdbasedata.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="7"/>
-        <TopLine Value="332"/>
-        <CursorPos X="56" Y="347"/>
+        <TopLine Value="342"/>
+        <CursorPos Y="369"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <IsVisibleTab Value="True"/>
           <WindowIndex Value="1"/>
-          <TopLine Value="147"/>
+          <TopLine Value="161"/>
           <CursorPos X="27" Y="161"/>
         </ExtraEditor1>
-        <UsageCount Value="112"/>
+        <UsageCount Value="118"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit35>
@@ -558,13 +544,14 @@
         <TopLine Value="5337"/>
         <CursorPos Y="5359"/>
         <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit50>
       <Unit51>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\rtl\objpas\sysutils\sysstrh.inc"/>
         <EditorIndex Value="8"/>
         <TopLine Value="197"/>
         <CursorPos X="10" Y="217"/>
-        <UsageCount Value="14"/>
+        <UsageCount Value="17"/>
         <Loaded Value="True"/>
       </Unit51>
       <Unit52>
@@ -574,8 +561,9 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="3"/>
-        <CursorPos X="37" Y="16"/>
-        <UsageCount Value="28"/>
+        <TopLine Value="6"/>
+        <CursorPos X="71" Y="44"/>
+        <UsageCount Value="34"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -583,10 +571,19 @@
       <Unit53>
         <Filename Value="osdcreate.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="2"/>
-        <CursorPos Y="41"/>
-        <UsageCount Value="26"/>
+        <TopLine Value="49"/>
+        <CursorPos X="93" Y="68"/>
+        <ExtraEditorCount Value="1"/>
+        <ExtraEditor1>
+          <IsVisibleTab Value="True"/>
+          <EditorIndex Value="1"/>
+          <WindowIndex Value="1"/>
+          <TopLine Value="274"/>
+          <CursorPos Y="306"/>
+        </ExtraEditor1>
+        <UsageCount Value="32"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit53>
@@ -596,124 +593,124 @@
     </OtherDefines>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="352" TopLine="319"/>
+        <Filename Value="resultform.pas"/>
+        <Caret Line="1064" TopLine="1046"/>
       </Position1>
       <Position2>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="354" TopLine="322"/>
+        <Filename Value="resultform.pas"/>
+        <Caret Line="1065" TopLine="1046"/>
       </Position2>
       <Position3>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="358" TopLine="326"/>
+        <Filename Value="resultform.pas"/>
+        <Caret Line="1063" TopLine="1048"/>
       </Position3>
       <Position4>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="359" TopLine="327"/>
+        <Filename Value="resultform.pas"/>
+        <Caret Line="1064" TopLine="1048"/>
       </Position4>
       <Position5>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="371" TopLine="352"/>
+        <Filename Value="resultform.pas"/>
+        <Caret Line="1065" TopLine="1048"/>
       </Position5>
       <Position6>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="374" TopLine="352"/>
+        <Filename Value="resultform.pas"/>
+        <Caret Line="1052" Column="40" TopLine="1048"/>
       </Position6>
       <Position7>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="375" TopLine="352"/>
+        <Filename Value="resultform.pas"/>
+        <Caret Line="1082" Column="5" TopLine="1049"/>
       </Position7>
       <Position8>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="376" TopLine="352"/>
+        <Filename Value="resultform.pas"/>
+        <Caret Line="1076" TopLine="1049"/>
       </Position8>
       <Position9>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="385" TopLine="353"/>
+        <Filename Value="resultform.pas"/>
+        <Caret Line="1078" TopLine="1049"/>
       </Position9>
       <Position10>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="352" TopLine="332"/>
+        <Filename Value="resultform.pas"/>
+        <Caret Line="1079" TopLine="1049"/>
       </Position10>
       <Position11>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="359" TopLine="332"/>
+        <Filename Value="resultform.pas"/>
+        <Caret Line="1080" TopLine="1049"/>
       </Position11>
       <Position12>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="324" TopLine="304"/>
+        <Filename Value="resultform.pas"/>
+        <Caret Line="1081" TopLine="1049"/>
       </Position12>
       <Position13>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="326" TopLine="304"/>
+        <Caret Line="358" Column="14" TopLine="343"/>
       </Position13>
       <Position14>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="330" TopLine="304"/>
+        <Caret Line="368" Column="26" TopLine="343"/>
       </Position14>
       <Position15>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="331" TopLine="304"/>
+        <Caret Line="366" TopLine="343"/>
       </Position15>
       <Position16>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="334" TopLine="304"/>
+        <Caret Line="367" TopLine="343"/>
       </Position16>
       <Position17>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="335" TopLine="304"/>
+        <Caret Line="379" Column="36" TopLine="367"/>
       </Position17>
       <Position18>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="336" TopLine="304"/>
+        <Caret Line="362" TopLine="342"/>
       </Position18>
       <Position19>
-        <Filename Value="resultform.pas"/>
-        <Caret Line="831" Column="16" TopLine="797"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="366" TopLine="342"/>
       </Position19>
       <Position20>
-        <Filename Value="resultform.pas"/>
-        <Caret Line="830" Column="16" TopLine="796"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="367" TopLine="342"/>
       </Position20>
       <Position21>
-        <Filename Value="resultform.pas"/>
-        <Caret Line="250" Column="15" TopLine="234"/>
+        <Filename Value="osdcreate.pas"/>
+        <Caret Line="42" Column="18" TopLine="10"/>
       </Position21>
       <Position22>
-        <Filename Value="resultform.pas"/>
-        <Caret Line="348" Column="15" TopLine="330"/>
+        <Filename Value="osdcreate.pas"/>
+        <Caret Line="67" Column="19" TopLine="61"/>
       </Position22>
       <Position23>
-        <Filename Value="osdhelper.pas"/>
-        <Caret Line="136"/>
+        <Filename Value="osdcreate.pas"/>
+        <Caret Line="33" Column="23" TopLine="24"/>
       </Position23>
       <Position24>
-        <Filename Value="resultform.pas"/>
-        <Caret Line="8" Column="77"/>
+        <Filename Value="osdcreate.pas"/>
+        <Caret Line="53" Column="41" TopLine="34"/>
       </Position24>
       <Position25>
-        <Filename Value="resultform.pas"/>
-        <Caret Line="1329" TopLine="1309"/>
+        <Filename Value="osdcreate.pas"/>
+        <Caret Line="15" Column="11"/>
       </Position25>
       <Position26>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="12" Column="10"/>
+        <Filename Value="osdcreate.pas"/>
+        <Caret Line="55" Column="28" TopLine="35"/>
       </Position26>
       <Position27>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="167" Column="14" TopLine="147"/>
+        <Filename Value="osdcreate.pas"/>
+        <Caret Line="16" Column="14"/>
       </Position27>
       <Position28>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="399" Column="3" TopLine="379"/>
+        <Filename Value="osdcreate.pas"/>
+        <Caret Line="74" Column="103" TopLine="43"/>
       </Position28>
       <Position29>
-        <Filename Value="osdhelper.pas"/>
-        <Caret Line="18" Column="52" TopLine="10"/>
+        <Filename Value="osdcreate.pas"/>
+        <Caret Line="62" Column="97" TopLine="42"/>
       </Position29>
       <Position30>
-        <Filename Value="osdhelper.pas"/>
-        <Caret Line="47" Column="45" TopLine="22"/>
+        <Filename Value="osdcreate.pas"/>
+        <Caret Line="74" Column="105" TopLine="43"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>

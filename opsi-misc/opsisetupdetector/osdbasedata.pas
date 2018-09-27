@@ -344,7 +344,8 @@ begin
     myconfig.Add('config_filled='+booltostr(Fconfig_filled,true));
     myconfig.Add('registerInFilemanager='+booltostr(FregisterInFilemanager,true));
     myconfig.SaveToFile(myfilename);
-    myconfig.Free;
+    Application.ProcessMessages;
+    FreeAndNil(myconfig);
 end;
 
 procedure TConfiguration.readconfig;
@@ -362,7 +363,7 @@ begin
   {$ELSE}
   configDir := GetAppConfigDir(False);
   {$ENDIF WINDOWS}
-  myfilename := configDir+PathDelim+'opsi.og'+PathDelim+'opsisetupdetector.cfg';
+  myfilename := configDir+PathDelim+'opsi.org'+PathDelim+'opsisetupdetector.cfg';
   if FileExists(myfilename) then
   begin
     myconfig := TStringlist.Create;
