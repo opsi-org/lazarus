@@ -52,7 +52,7 @@ function ExtractVersion(str: string): string;
 implementation
 
 uses
-  resultform;
+  osdform;
 
 function getPacketIDfromFilename(str: string): string;
 var
@@ -517,6 +517,9 @@ begin
     [rfReplaceAll, rfIgnoreCase]);
   mysetup.installDirectory := DefaultDirName;
   aktProduct.produktpropties.comment := AppVerName;
+  mysetup.installCommandLine:= '"%scriptpath%\'+mysetup.setupFileName+'"'
+     + installerArray[integer(mysetup.installerId)].unattendedsetup;
+  mysetup.isExitcodeFatalFunction:=installerArray[integer(mysetup.installerId)].uib_exitcode_function;
 
   with mysetup do
   begin

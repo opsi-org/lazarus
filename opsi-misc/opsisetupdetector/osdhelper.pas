@@ -25,7 +25,7 @@ function grepexe(instring: string) : string;
 
 implementation
 uses
-  resultform;
+  osdform;
 
 {$IFDEF WINDOWS}
 procedure registerForExplorer(doregister: boolean);

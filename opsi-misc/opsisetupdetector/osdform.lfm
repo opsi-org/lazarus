@@ -136,10 +136,10 @@ object resultForm1: TresultForm1
       Height = 566
       Top = 1
       Width = 1056
-      ActivePage = TabSheetCreate
+      ActivePage = TabSheetStart
       Align = alClient
       Images = ImageList1
-      TabIndex = 5
+      TabIndex = 0
       TabOrder = 0
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
@@ -2140,7 +2140,7 @@ object resultForm1: TresultForm1
             FlowStyle = fsLeftRightTopBottom
             TabOrder = 6
             object Label54: TLabel
-              Left = 292
+              Left = 232
               Height = 21
               Top = 8
               Width = 135
@@ -2153,7 +2153,7 @@ object resultForm1: TresultForm1
               ParentFont = False
             end
             object Label55: TLabel
-              Left = 679
+              Left = 459
               Height = 21
               Top = 8
               Width = 62
@@ -2182,28 +2182,28 @@ object resultForm1: TresultForm1
               Left = 156
               Height = 27
               Top = 6
-              Width = 100
+              Width = 40
               Anchors = []
               BorderSpacing.Left = 10
               BorderSpacing.Around = 2
               BorderSpacing.InnerBorder = 2
-              Constraints.MinWidth = 100
+              Constraints.MinWidth = 40
               TabOrder = 0
             end
             object TIEditRequiredSizeMB1: TTIEdit
-              Left = 443
+              Left = 383
               Height = 27
               Top = 6
-              Width = 200
+              Width = 40
               Anchors = []
               BorderSpacing.Left = 10
               BorderSpacing.Around = 2
               BorderSpacing.InnerBorder = 2
-              Constraints.MinWidth = 100
+              Constraints.MinWidth = 40
               TabOrder = 1
             end
             object TIEditInstallDir1: TTIEdit
-              Left = 757
+              Left = 537
               Height = 27
               Top = 6
               Width = 400
@@ -2363,6 +2363,55 @@ object resultForm1: TresultForm1
             OnClick = BtSetup1NextStepClick
             ParentFont = False
             TabOrder = 7
+          end
+          object FlowPanelSetup34: TFlowPanel
+            Left = 1
+            Height = 41
+            Top = 296
+            Width = 1046
+            Align = alTop
+            Alignment = taLeftJustify
+            AutoWrap = False
+            BorderWidth = 3
+            ControlList = <            
+              item
+                Control = Label79
+                WrapAfter = waAuto
+                Index = 0
+              end            
+              item
+                Control = TIEditSetup1Command
+                WrapAfter = waAuto
+                Index = 1
+              end>
+            FlowLayout = tlTop
+            FlowStyle = fsLeftRightTopBottom
+            TabOrder = 8
+            object Label79: TLabel
+              Left = 18
+              Height = 21
+              Top = 8
+              Width = 149
+              Anchors = []
+              BorderSpacing.Left = 10
+              BorderSpacing.Around = 4
+              Caption = 'Uattended Command'
+              Font.Height = -16
+              ParentColor = False
+              ParentFont = False
+            end
+            object TIEditSetup1Command: TTIEdit
+              Left = 183
+              Height = 27
+              Top = 6
+              Width = 800
+              Anchors = []
+              BorderSpacing.Left = 10
+              BorderSpacing.Around = 2
+              BorderSpacing.InnerBorder = 2
+              Constraints.MinWidth = 800
+              TabOrder = 0
+            end
           end
         end
       end

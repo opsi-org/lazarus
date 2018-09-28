@@ -12,7 +12,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   CustApp,
   Interfaces,
   Forms,
-  resultform,
+  osdform,
   //VersionInfoX,
   //help,
   printers, fileinfo, winpeimagereader, lcltranslator, runtimetypeinfocontrols,

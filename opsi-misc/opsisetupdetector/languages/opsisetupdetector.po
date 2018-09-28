@@ -440,6 +440,10 @@ msgstr ""
 msgid "Path to opsi-work-bench"
 msgstr ""
 
+#: tresultform1.label79.caption
+msgid "Uattended Command"
+msgstr ""
+
 #: tresultform1.labelworkbenchnotok.caption
 msgid "Path to opsi-work-bench not is reachable - Check Network Mounts or Path"
 msgstr ""

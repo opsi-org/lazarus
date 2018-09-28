@@ -14,6 +14,7 @@ uses
   strutils,
     Forms,
     Controls,
+    FileUtil,
   Process,
   osdhelper,
   oslog,
@@ -26,80 +27,12 @@ procedure removeOtherTypeSpecificSections(setupType, setupFile: string);
 implementation
 
 uses
-  resultform;
+  osdform;
 
 var
   patchlist: TStringList;
   myExeDir: string;
-
-  function createClientFiles : boolean;
-  begin
-
-  end;
-
-  function createOpsiFiles : boolean;
-  begin
-
-  end;
-
-function createProductdirectory : boolean;
-var
-  prodpath, clientpath, opsipath: string;
-  goon: boolean;
-begin
-  prodpath := myconfiguration.workbench_Path + aktProduct.produktpropties.productId;
-  clientpath := prodpath + PathDelim + 'CLIENT_DATA';
-  opsipath := prodpath + PathDelim + 'OPSI';
-  goon := True;
-  if DirectoryExists(prodpath) then
-    if MessageDlg('opsi-setup-detector','Directory ' + prodpath + ' still exits. Overwrite ?', mtWarning, mbOKCancel,'') = mrOk then
-      goon := False;
-  if goon then
-  begin
-    if not ForceDirectories(prodpath) then
-    begin
-      Logdatei.log('Could not create directory: ' + prodpath, LLCritical);
-      MessageDlg('opsi-setup-detector','Could not create directory: ' + prodpath, mtError, [mbOK],'');
-      goon := False;
-    end;
-    if not ForceDirectories(clientpath) then
-    begin
-      Logdatei.log('Could not create directory: ' + clientpath, LLCritical);
-      MessageDlg('opsi-setup-detector','Could not create directory: ' + clientpath, mtError,[mbOK],'');
-      goon := False;
-    end;
-    if not ForceDirectories(opsipath) then
-    begin
-      Logdatei.log('Could not create directory: ' + opsipath, LLCritical);
-      MessageDlg('opsi-setup-detector','Could not create directory: ' + opsipath, mtError,[mbOK],'');
-      goon := False;
-    end;
-  end;
-end;
-
-
-procedure createProductStructure;
-var
-  prodpath, clientpath, opsipath: string;
-  goon: boolean;
-begin
-  goon := True;
-  if not createProductdirectory  then
-    begin
-      Logdatei.log('createProductdirectory failed' , LLCritical);
-      goon := False;
-    end;
-  if not (goon and createOpsiFiles) then
-    begin
-      Logdatei.log('createOpsiFiles failed' , LLCritical);
-      goon := False;
-    end;
-  if not (goon and createClientFiles) then
-    begin
-      Logdatei.log('createClientFiles failed' , LLCritical);
-      goon := False;
-    end;
-end;
+    prodpath, clientpath, opsipath: string;
 
 procedure patchScript(infile, outfile: string);
 var
@@ -128,9 +61,164 @@ begin
     CloseFile(outfileHandle)
   except
     on E: EInOutError do
-      mywrite('patchScript file error: ' + E.ClassName + '/' + E.Message);
+      logdatei.log('patchScript file error: ' + E.ClassName + '/' + E.Message,LLError);
   end;
 end;
+
+
+  procedure fillPatchList;
+  var
+      i : integer;
+      str : string;
+  begin
+    patchlist.Clear;
+    str := '';
+    for i := 0 to myconfiguration.import_libraries.Count-1 do
+      str := str + 'importlib '+myconfiguration.import_libraries[i]+LineEnding;
+    patchlist.add('#@importLibs*#='+str);
+    patchlist.add('#@InstallDir*#='+aktProduct.SetupFiles[0].installDirectory);
+    patchlist.add('#@LicenseRequired*#='+ boolToStr(aktProduct.produktpropties.licenserequired,true));
+    patchlist.add('#@MsiId*#='+aktProduct.SetupFiles[0].msiId);
+    patchlist.add('#@MinimumSpace*#='+inttostr(aktProduct.SetupFiles[0].requiredSpace)+' MB');
+    str :=myconfiguration.preInstallLines.Text;
+    patchlist.add('#@preInstallLines*#='+str);
+    patchlist.add('#@installCommandLine*#='+aktProduct.SetupFiles[0].installCommandLine);
+    patchlist.add('#@postInstallLines*#='+myconfiguration.postInstallLines.Text);
+    patchlist.add('#@isExitcodeFatalFunction*#='+aktProduct.SetupFiles[0].isExitcodeFatalFunction);
+
+  end;
+
+  function createClientFiles : boolean;
+  var
+      infilename, outfilename : string;
+  begin
+    result := false;
+    try
+      patchlist:= TStringList.Create;
+      fillPatchList;
+      // setup script
+      infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+'setupsingle.opsiscript';
+      outfilename := clientpath+PathDelim+aktProduct.produktpropties.setupscript;
+      patchScript(infilename,outfilename);
+      // delsub script
+      infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+'delsubsingle.opsiscript';
+      outfilename := clientpath+PathDelim+aktProduct.produktpropties.delsubscript;
+      patchScript(infilename,outfilename);
+      // uninstall script
+      infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+'uninstallsingle.opsiscript';
+      outfilename := clientpath+PathDelim+aktProduct.produktpropties.uninstallscript;
+      patchScript(infilename,outfilename);
+      // setup file
+      copyfile(aktProduct.SetupFiles[0].setupFullFileName,
+                clientpath+PathDelim+aktProduct.SetupFiles[0].setupFileName,
+                [cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime], true);
+
+      FreeAndNil(patchlist);
+      result := true;;
+    except
+      on E: exception do
+      begin
+        logdatei.log('createClientFiles file error: ' + E.ClassName + '/' + E.Message,LLError);
+      end;
+    end;
+  end;
+
+  function createOpsiFiles : boolean;
+  var
+    textlist : Tstringlist;
+  begin
+    result := false;
+    try
+    textlist := Tstringlist.Create;
+    textlist.Add('[Package]');
+    textlist.Add('version: '+ intToStr(aktProduct.produktpropties.packageversion));
+    textlist.Add('depends:');
+    textlist.Add('');
+    textlist.Add('[Product]');
+    textlist.Add('type: '+aktProduct.produktpropties.producttype);
+    textlist.Add('id: '+aktProduct.produktpropties.productId);
+    textlist.Add('name: '+aktProduct.produktpropties.productName);
+    textlist.Add('description: '+aktProduct.produktpropties.description);
+    textlist.Add('advice: '+aktProduct.produktpropties.advice);
+    textlist.Add('version:'+ aktProduct.produktpropties.productversion);
+    textlist.Add('priority:'+ intToStr(aktProduct.produktpropties.priority));
+    textlist.Add('licenseRequired: ');
+    textlist.Add('productClasses:');
+    textlist.Add('setupScript: '+ aktProduct.produktpropties.setupscript);
+    textlist.Add('uninstallScript: '+ aktProduct.produktpropties.uninstallscript);
+    textlist.Add('updateScript:');
+    textlist.Add('alwaysScript:');
+    textlist.Add('onceScript:');
+    textlist.Add('customScript:');
+    textlist.Add('userLoginScript:');
+    textlist.SaveToFile(opsipath+pathdelim+'control');
+    FreeAndNil(textlist);
+    result := true;
+    except
+      LogDatei.log('Error in createOpsiFiles',LLError);
+     FreeAndNil(textlist);
+    end;
+  end;
+
+function createProductdirectory : boolean;
+var
+  goon: boolean;
+begin
+  prodpath := myconfiguration.workbench_Path + aktProduct.produktpropties.productId;
+  clientpath := prodpath + PathDelim + 'CLIENT_DATA';
+  opsipath := prodpath + PathDelim + 'OPSI';
+  goon := True;
+  if DirectoryExists(prodpath) then
+    if not MessageDlg('opsi-setup-detector','Directory ' + prodpath + ' still exits. Overwrite ?', mtWarning, mbOKCancel,'') = mrOk then
+      goon := False;
+  if goon then
+  begin
+    if not ForceDirectories(prodpath) then
+    begin
+      Logdatei.log('Could not create directory: ' + prodpath, LLCritical);
+      MessageDlg('opsi-setup-detector','Could not create directory: ' + prodpath, mtError, [mbOK],'');
+      goon := False;
+    end;
+    if not ForceDirectories(clientpath) then
+    begin
+      Logdatei.log('Could not create directory: ' + clientpath, LLCritical);
+      MessageDlg('opsi-setup-detector','Could not create directory: ' + clientpath, mtError,[mbOK],'');
+      goon := False;
+    end;
+    if not ForceDirectories(opsipath) then
+    begin
+      Logdatei.log('Could not create directory: ' + opsipath, LLCritical);
+      MessageDlg('opsi-setup-detector','Could not create directory: ' + opsipath, mtError,[mbOK],'');
+      goon := False;
+    end;
+  end;
+  result := goon;
+end;
+
+
+procedure createProductStructure;
+var
+  prodpath, clientpath, opsipath: string;
+  goon: boolean;
+begin
+  goon := True;
+  if not createProductdirectory  then
+    begin
+      Logdatei.log('createProductdirectory failed' , LLCritical);
+      goon := False;
+    end;
+  if not (goon and createOpsiFiles) then
+    begin
+      Logdatei.log('createOpsiFiles failed' , LLCritical);
+      goon := False;
+    end;
+  if not (goon and createClientFiles) then
+    begin
+      Logdatei.log('createClientFiles failed' , LLCritical);
+      goon := False;
+    end;
+end;
+
 
 
 

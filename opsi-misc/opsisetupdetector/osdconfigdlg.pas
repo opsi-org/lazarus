@@ -42,6 +42,9 @@ end;
 initialization
 
 RegisterPropertyEditor(TypeInfo(string),TConfiguration,'workbench_path',TDirectoryPropertyEditor);
+RegisterPropertyEditor(TypeInfo(TStrings),TConfiguration,'import_libraries',TStringsPropertyEditor);
+RegisterPropertyEditor(TypeInfo(TStrings),TConfiguration,'preInstallLines',TStringsPropertyEditor);
+RegisterPropertyEditor(TypeInfo(TStrings),TConfiguration,'postInstallLines',TStringsPropertyEditor);
 
 end.
 

@@ -82,7 +82,7 @@ Winbatch_install
 ;----------------------------------------------
 Sub_check_exitcode
 
-#@posInstallLines*#
+#@postInstallLines*#
 
 
 [[Winbatch_install]
