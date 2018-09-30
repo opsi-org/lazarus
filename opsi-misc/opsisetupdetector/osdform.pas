@@ -31,7 +31,6 @@ uses
   Process,
   typinfo,
   CustApp,
-
   //htmlview,
   //help,
   fileinfo,
@@ -42,7 +41,8 @@ uses
   oslog,
   osdbasedata,
   osdconfigdlg,
-  osdcreate;
+  osdcreate,
+  fpjsonrtti;
 
 const
   sMBoxHeader = 'opsi setup detector';
@@ -709,8 +709,19 @@ begin
 end;
 
 procedure TResultform1.MenuItemConfigClick(Sender: TObject);
+var
+   Streamer: TJSONStreamer;
+  JSONString: string;
 begin
   FOSDConfigdlg.ShowModal;
+  Streamer := TJSONStreamer.Create(nil);
+  try
+    Streamer.Options := Streamer.Options + [jsoTStringsAsArray];
+    JSONString := Streamer.ObjectToJSONString(myconfiguration);
+    logdatei.log('After configdialog: '+JSONString, LLDebug);
+  finally
+    Streamer.Destroy;
+  end;
 end;
 
 procedure TResultform1.BtSingleAnalyzeAndCreateClick(Sender: TObject);

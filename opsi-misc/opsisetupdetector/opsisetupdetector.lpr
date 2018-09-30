@@ -24,6 +24,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
 
 
 begin
+  Application.Scaled:=True;
   {$IFDEF DEBUG}
   // Assuming your build mode sets -dDEBUG in Project Options/Other when defining -gh
   // This avoids interference when running a production/default build without -gh
@@ -34,7 +35,7 @@ begin
   SetHeapTraceOutput('heap.trc');
   {$ENDIF DEBUG}
   Application.Initialize;
-  Application.Title:='opsi setup detector';
+  Application.Title:='opsi-setup-detector';
   Application.CreateForm(TresultForm1, resultForm1);
   Application.CreateForm(TFOSDConfigdlg, FOSDConfigdlg);
   //Application.CreateForm(TFormHelp, FormHelp);

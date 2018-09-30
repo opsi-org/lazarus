@@ -176,6 +176,9 @@ type
     Fimport_libraries: TStrings;
     FpreInstallLines: TStrings;
     FpostInstallLines: TStrings;
+    procedure SetLibraryLines(const AValue: TStrings);
+    procedure SetPreInstallLines(const AValue: TStrings);
+    procedure SetPostInstallLines(const AValue: TStrings);
   published
     property workbench_share: string read Fworkbench_share write Fworkbench_share;
     property workbench_Path: string read Fworkbench_Path write Fworkbench_Path;
@@ -184,9 +187,9 @@ type
     property registerInFilemanager: boolean
       read FregisterInFilemanager write FregisterInFilemanager;
     property email_address: string read Femail_address write Femail_address;
-    property import_libraries: TStrings read Fimport_libraries write Fimport_libraries;
-    property preInstallLines: TStrings read FpreInstallLines write FpreInstallLines;
-    property postInstallLines: TStrings read FpostInstallLines write FpostInstallLines;
+    property import_libraries: TStrings read Fimport_libraries write SetLibraryLines;
+    property preInstallLines: TStrings read FpreInstallLines write SetPreInstallLines;
+    property postInstallLines: TStrings read FpostInstallLines write SetPostInstallLines;
     procedure writeconfig;
     procedure readconfig;
   public
@@ -346,11 +349,26 @@ end;
 
 destructor TConfiguration.Destroy;
 begin
-  writeconfig;
+  //writeconfig;
   FreeandNil(Fimport_libraries);
   FreeandNil(FpreInstallLines);
   FreeandNil(FpostInstallLines);
   inherited;
+end;
+
+procedure TConfiguration.SetLibraryLines(const AValue: TStrings);
+begin
+  Fimport_libraries.Assign(AValue);
+end;
+
+procedure TConfiguration.SetPreInstallLines(const AValue: TStrings);
+begin
+  FpreInstallLines.Assign(AValue);
+end;
+
+procedure TConfiguration.SetPostInstallLines(const AValue: TStrings);
+begin
+  FpostInstallLines.Assign(AValue);
 end;
 
 (*
@@ -448,17 +466,51 @@ var
   JSONString: string;
   myfilename: string;
   configDir: array[0..MaxPathLen] of char; //Allocate memory
-  myfile: Text;
+  configDirUtf8 : UTF8String;
+  myfile: TextFile;
+
+  // http://wiki.freepascal.org/File_Handling_In_Pascal
+  // SaveStringToFile: function to store a string of text into a diskfile.
+  //   If the function result equals true, the string was written ok.
+  //   If not then there was some kind of error.
+  function SaveStringToFile(theString, filePath: AnsiString): boolean;
+  var
+    fsOut: TFileStream;
+  begin
+    // By default assume the writing will fail.
+    result := false;
+
+    // Write the given string to a file, catching potential errors in the process.
+    try
+      fsOut := TFileStream.Create(filePath, fmCreate);
+      fsOut.Write(theString[1], length(theString));
+      fsOut.Free;
+
+      // At his point it is known that the writing went ok.
+      result := true
+
+    except
+      on E:Exception do
+        LogDatei.log('String could not be written. Details: '+ E.ClassName+ ': '+ E.Message,LLError);
+    end
+  end;
+
 begin
   configDir := '';
   {$IFDEF Windows}
   SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, configDir);
+  configDir := configDir + PathDelim;
   {$ELSE}
   configDir := GetAppConfigDir(False);
   {$ENDIF WINDOWS}
-  myfilename := configDir + PathDelim + 'opsi.org' + PathDelim + 'opsisetupdetector.cfg';
-  if not DirectoryExists(configDir + PathDelim + 'opsi.org') then
-    CreateDir(configDir);
+  configDirUtf8 := configDir;
+  configDirUtf8 := StringReplace(configDirUtf8, 'opsi-setup-detector', 'opsi.org', [rfReplaceAll]);
+  configDirUtf8 := StringReplace(configDirUtf8, 'opsisetupdetector', 'opsi.org', [rfReplaceAll]);
+  myfilename := configDirUtf8 + PathDelim + 'opsisetupdetector.cfg';
+  myfilename := ExpandFileName(myfilename);
+  if not DirectoryExists(configDirUtf8) then
+    if not ForceDirectories(configDirUtf8) then
+       LogDatei.log('failed to create configuration directory: '+configDirUtf8,LLError);
 
   // http://wiki.freepascal.org/Streaming_JSON
   Streamer := TJSONStreamer.Create(nil);
@@ -468,11 +520,13 @@ begin
     // JSON convert and output
     JSONString := Streamer.ObjectToJSONString(myconfiguration);
     logdatei.log(JSONString, LLDebug);
-    AssignFile(myfile, myfilename);
-    Rewrite(myfile);
-    Write(myfile, JSONString);
+    if not  SaveStringToFile(JSONString, myfilename) then
+      LogDatei.log('failed save configuration',LLError);
+    //AssignFile(myfile, myfilename);
+    //Rewrite(myfile);
+    //Write(myfile, JSONString);
   finally
-    CloseFile(myfile);
+    //CloseFile(myfile);
     Streamer.Destroy;
   end;
 end;
@@ -481,20 +535,55 @@ end;
 procedure TConfiguration.readconfig;
 var
   DeStreamer: TJSONDeStreamer;
+  Streamer: TJSONStreamer;
   JSONString: string;
   myfilename: string;
   configDir: array[0..MaxPathLen] of char; //Allocate memory
+  configDirUtf8 : UTF8String;
+  configDirstr : String;
   myfile: Text;
   oldconfigDir, oldconfigFileName, tmpstr: string;
   fConfig: Text;
+
+  // http://wiki.freepascal.org/File_Handling_In_Pascal
+  // LoadStringFromFile: function to load a string of text from a diskfile.
+  //   If the function result equals true, the string was load ok.
+  //   If not then there was some kind of error.
+  function LoadStringFromFile(theString, filePath: AnsiString): boolean;
+  var
+    fsOut: TFileStream;
+  begin
+    // By default assume the writing will fail.
+    result := false;
+
+    // Write the given string to a file, catching potential errors in the process.
+    try
+      fsOut := TFileStream.Create(filePath, fmOpenRead);
+      fsOut.read(theString[1], length(theString));
+      fsOut.Free;
+
+      // At his point it is known that the writing went ok.
+      result := true
+
+    except
+      on E:Exception do
+        LogDatei.log('String could not be written. Details: '+ E.ClassName+ ': '+ E.Message,LLError);
+    end
+  end;
 begin
   configDir := '';
-{$IFDEF Windows}
+  {$IFDEF Windows}
   SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, configDir);
-{$ELSE}
+  configDir := configDir + PathDelim;
+  {$ELSE}
   configDir := GetAppConfigDir(False);
-{$ENDIF WINDOWS}
-  myfilename := configDir + PathDelim + 'opsi.org' + PathDelim + 'opsisetupdetector.cfg';
+  {$ENDIF WINDOWS}
+  configDirstr := configDir;
+  configDirUtf8 := configDirstr;
+  configDirUtf8 := StringReplace(configDirUtf8, 'opsi-setup-detector', 'opsi.org', [rfReplaceAll]);
+  configDirUtf8 := StringReplace(configDirUtf8, 'opsisetupdetector', 'opsi.org', [rfReplaceAll]);
+  myfilename := configDirUtf8 + PathDelim + 'opsisetupdetector.cfg';
+  myfilename := ExpandFileName(myfilename);
   if FileExists(myfilename) then
   begin
     AssignFile(myfile, myfilename);
@@ -511,6 +600,16 @@ begin
       DeStreamer.Destroy;
       CloseFile(myfile);
     end;
+    (*
+    Streamer := TJSONStreamer.Create(nil);
+    try
+      Streamer.Options := Streamer.Options + [jsoTStringsAsArray];
+      JSONString := Streamer.ObjectToJSONString(myconfiguration);
+//      logdatei.log('After readconfig: '+JSONString, LLDebug);
+    finally
+      Streamer.Destroy;
+    end;
+    *)
   end
   else
   begin
