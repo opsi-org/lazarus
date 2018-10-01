@@ -74,17 +74,34 @@ end;
     patchlist.Clear;
     str := '';
     for i := 0 to myconfiguration.import_libraries.Count-1 do
-      str := str + 'importlib '+myconfiguration.import_libraries[i]+LineEnding;
+      str := str + 'importlib "'+myconfiguration.import_libraries[i]+'"'+LineEnding;
     patchlist.add('#@importLibs*#='+str);
-    patchlist.add('#@InstallDir*#='+aktProduct.SetupFiles[0].installDirectory);
     patchlist.add('#@LicenseRequired*#='+ boolToStr(aktProduct.produktpropties.licenserequired,true));
-    patchlist.add('#@MsiId*#='+aktProduct.SetupFiles[0].msiId);
     patchlist.add('#@MinimumSpace*#='+inttostr(aktProduct.SetupFiles[0].requiredSpace)+' MB');
+    //setup 1
+    patchlist.add('#@InstallDir1*#='+aktProduct.SetupFiles[0].installDirectory);
+    patchlist.add('#@MsiId1*#='+aktProduct.SetupFiles[0].msiId);
     str :=myconfiguration.preInstallLines.Text;
-    patchlist.add('#@preInstallLines*#='+str);
-    patchlist.add('#@installCommandLine*#='+aktProduct.SetupFiles[0].installCommandLine);
-    patchlist.add('#@postInstallLines*#='+myconfiguration.postInstallLines.Text);
-    patchlist.add('#@isExitcodeFatalFunction*#='+aktProduct.SetupFiles[0].isExitcodeFatalFunction);
+    patchlist.add('#@preInstallLines1*#='+str);
+    patchlist.add('#@installCommandLine1*#='+aktProduct.SetupFiles[0].installCommandLine);
+    patchlist.add('#@postInstallLines1*#='+myconfiguration.postInstallLines.Text);
+    patchlist.add('#@isExitcodeFatalFunction1*#='+aktProduct.SetupFiles[0].isExitcodeFatalFunction);
+    str :=myconfiguration.preUninstallLines.Text;
+    patchlist.add('#@preUninstallLines1*#='+str);
+    patchlist.add('#@uninstallCommandLine1*#='+aktProduct.SetupFiles[0].uninstallCommandLine);
+    patchlist.add('#@postUninstallLines1*#='+myconfiguration.postUninstallLines.Text);
+    //setup 2
+    patchlist.add('#@InstallDir2*#='+aktProduct.SetupFiles[0].installDirectory);
+    patchlist.add('#@MsiId2*#='+aktProduct.SetupFiles[0].msiId);
+    str :=myconfiguration.preInstallLines.Text;
+    patchlist.add('#@preInstallLines2*#='+str);
+    patchlist.add('#@installCommandLine2*#='+aktProduct.SetupFiles[0].installCommandLine);
+    patchlist.add('#@postInstallLines2*#='+myconfiguration.postInstallLines.Text);
+    patchlist.add('#@isExitcodeFatalFunction2*#='+aktProduct.SetupFiles[0].isExitcodeFatalFunction);
+    str :=myconfiguration.preUninstallLines.Text;
+    patchlist.add('#@preUninstallLines2*#='+str);
+    patchlist.add('#@uninstallCommandLine2*#='+aktProduct.SetupFiles[0].uninstallCommandLine);
+    patchlist.add('#@postUninstallLines2*#='+myconfiguration.postUninstallLines.Text);
 
   end;
 
@@ -300,7 +317,7 @@ begin
       OpsiBuilderProcess.Execute;
       if resultForm1.CheckboxQuiet.Checked = True then
       begin
-        resultForm1.Panel9.Visible := True;
+        resultForm1.PanelProcess.Visible := True;
         resultForm1.processStatement.Caption := 'invoke opsi package builder ...';
         //Application.ProcessMessages;
         while OpsiBuilderProcess.Running do
@@ -314,7 +331,7 @@ begin
       //        PChar(sMBoxHeader), MB_OK);
     end;
 
-    resultForm1.Panel9.Visible := False;
+    resultForm1.PanelProcess.Visible := False;
     if (resultForm1.CheckboxQuiet.Checked = True) then
     begin
       if (errorstate = False) then

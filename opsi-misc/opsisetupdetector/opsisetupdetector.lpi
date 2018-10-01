@@ -137,10 +137,11 @@
         <MinVersion Major="1" Valid="True"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="63">
+    <Units Count="65">
       <Unit0>
         <Filename Value="opsisetupdetector.lpr"/>
         <IsPartOfProject Value="True"/>
+        <TopLine Value="4"/>
         <CursorPos X="9" Y="9"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -149,14 +150,14 @@
       <Unit1>
         <Filename Value="C:\opsi-winst-test\trunk\opsi-winst-test-helper\helperchild.lpr"/>
         <CursorPos X="67" Y="13"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
         <Filename Value="C:\opsi-winst-test\trunk\opsi-winst-test-helper\helperwin.pas"/>
         <TopLine Value="13"/>
         <CursorPos X="2" Y="308"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit2>
       <Unit3>
@@ -166,14 +167,14 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="700"/>
-        <CursorPos X="9" Y="724"/>
+        <TopLine Value="816"/>
+        <CursorPos X="32" Y="822"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="2"/>
           <WindowIndex Value="1"/>
-          <TopLine Value="937"/>
-          <CursorPos X="3" Y="939"/>
+          <TopLine Value="944"/>
+          <CursorPos X="3" Y="946"/>
         </ExtraEditor1>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -183,18 +184,18 @@
       <Unit4>
         <Filename Value="lib\i386-win32\resultform.lrs"/>
         <CursorPos X="17" Y="3"/>
-        <UsageCount Value="1"/>
+        <UsageCount Value="9"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit4>
       <Unit5>
         <Filename Value="manifest.xml"/>
         <CursorPos X="48" Y="10"/>
-        <UsageCount Value="85"/>
+        <UsageCount Value="83"/>
         <DefaultSyntaxHighlighter Value="XML"/>
       </Unit5>
       <Unit6>
         <Filename Value="manifest.rc"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="0"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit6>
       <Unit7>
@@ -208,80 +209,80 @@
       <Unit8>
         <Filename Value="changelog.txt"/>
         <CursorPos X="32" Y="11"/>
-        <UsageCount Value="85"/>
+        <UsageCount Value="83"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit8>
       <Unit9>
         <Filename Value="msi2opsi.lpr"/>
         <CursorPos X="32" Y="6"/>
-        <UsageCount Value="44"/>
+        <UsageCount Value="42"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
       <Unit10>
         <Filename Value="msi2opsi-files\CLIENT_DATA\setup32.opsiscript"/>
         <CursorPos X="60" Y="15"/>
-        <UsageCount Value="44"/>
+        <UsageCount Value="42"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit10>
       <Unit11>
         <Filename Value="msi2opsi-files\CLIENT_DATA\check_msi_exitcode.opsiscript"/>
-        <UsageCount Value="47"/>
+        <UsageCount Value="45"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit11>
       <Unit12>
         <Filename Value="C:\lazarus\lcl\include\control.inc"/>
         <TopLine Value="3225"/>
         <CursorPos Y="3243"/>
-        <UsageCount Value="15"/>
+        <UsageCount Value="13"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit12>
       <Unit13>
         <Filename Value="C:\lazarus\lcl\include\customedit.inc"/>
         <TopLine Value="513"/>
         <CursorPos Y="531"/>
-        <UsageCount Value="15"/>
+        <UsageCount Value="13"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit13>
       <Unit14>
         <Filename Value="C:\lazarus\lcl\include\customform.inc"/>
         <TopLine Value="1802"/>
         <CursorPos Y="1820"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit14>
       <Unit15>
         <Filename Value="E:\lazarus\lcl\include\control.inc"/>
         <TopLine Value="888"/>
         <CursorPos X="22" Y="913"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit15>
       <Unit16>
         <Filename Value="C:\lazarus\lcl\include\pagecontrol.inc"/>
         <TopLine Value="26"/>
         <CursorPos Y="33"/>
-        <UsageCount Value="35"/>
+        <UsageCount Value="33"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit16>
       <Unit17>
         <Filename Value="inno2opsi-files\CLIENT_DATA\setup64.opsiscript"/>
         <TopLine Value="34"/>
         <CursorPos Y="34"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit17>
       <Unit18>
         <Filename Value="inno2opsi-files\CLIENT_DATA\setup32.opsiscript"/>
         <TopLine Value="42"/>
         <CursorPos X="89" Y="72"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="1"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit18>
       <Unit19>
         <Filename Value="C:\lazarus\lcl\include\customnotebook.inc"/>
         <TopLine Value="458"/>
         <CursorPos Y="476"/>
-        <UsageCount Value="33"/>
+        <UsageCount Value="31"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit19>
       <Unit20>
@@ -289,7 +290,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="541"/>
         <CursorPos X="23" Y="549"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="67"/>
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit20>
       <Unit21>
@@ -297,7 +298,7 @@
         <UnitName Value="FramView"/>
         <TopLine Value="78"/>
         <CursorPos X="69" Y="176"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit21>
       <Unit22>
@@ -308,7 +309,7 @@
         <UnitName Value="ObjectInspector"/>
         <TopLine Value="29"/>
         <CursorPos X="94" Y="41"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit22>
       <Unit23>
@@ -319,16 +320,17 @@
         <UnitName Value="Help"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="17" Y="61"/>
-        <UsageCount Value="124"/>
+        <UsageCount Value="122"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit23>
       <Unit24>
         <Filename Value="trash.txt"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="1360"/>
-        <CursorPos X="48" Y="1383"/>
-        <UsageCount Value="75"/>
+        <EditorIndex Value="8"/>
+        <TopLine Value="1258"/>
+        <CursorPos X="17" Y="1263"/>
+        <UsageCount Value="88"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit24>
       <Unit25>
@@ -336,7 +338,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="1"/>
         <CursorPos X="28" Y="7"/>
-        <UsageCount Value="96"/>
+        <UsageCount Value="109"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit25>
       <Unit26>
@@ -344,7 +346,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="20"/>
         <CursorPos X="10" Y="26"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="0"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit26>
       <Unit27>
@@ -352,14 +354,14 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="4145"/>
         <CursorPos Y="4170"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="0"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit27>
       <Unit28>
         <Filename Value="..\..\external_libraries\HtmlViewer\package\FrameViewer09.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="15" Y="10"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="0"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit28>
       <Unit29>
@@ -367,7 +369,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="317"/>
         <CursorPos X="6" Y="493"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="0"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit29>
       <Unit30>
@@ -376,7 +378,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="5"/>
         <CursorPos X="3" Y="26"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="0"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit30>
       <Unit31>
@@ -385,25 +387,26 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="2464"/>
         <CursorPos Y="2540"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="0"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit31>
       <Unit32>
         <Filename Value="osdanalyze.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="502"/>
-        <CursorPos X="102" Y="522"/>
-        <UsageCount Value="122"/>
+        <EditorIndex Value="10"/>
+        <TopLine Value="475"/>
+        <CursorPos X="23" Y="288"/>
+        <UsageCount Value="135"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit32>
       <Unit33>
         <Filename Value="osdhelper.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="5"/>
-        <TopLine Value="19"/>
-        <CursorPos Y="51"/>
-        <UsageCount Value="150"/>
+        <EditorIndex Value="6"/>
+        <TopLine Value="3"/>
+        <CursorPos X="7" Y="23"/>
+        <UsageCount Value="163"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit33>
@@ -414,24 +417,24 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="511"/>
         <CursorPos Y="523"/>
-        <UsageCount Value="145"/>
+        <UsageCount Value="158"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit34>
       <Unit35>
         <Filename Value="osdbasedata.pas"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <EditorIndex Value="6"/>
-        <TopLine Value="561"/>
-        <CursorPos X="28" Y="579"/>
+        <EditorIndex Value="7"/>
+        <TopLine Value="205"/>
+        <CursorPos X="13" Y="182"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <IsVisibleTab Value="True"/>
           <WindowIndex Value="1"/>
-          <TopLine Value="166"/>
-          <CursorPos X="22" Y="178"/>
+          <TopLine Value="179"/>
+          <CursorPos X="22" Y="180"/>
         </ExtraEditor1>
-        <UsageCount Value="136"/>
+        <UsageCount Value="149"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit35>
@@ -440,7 +443,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="8"/>
         <CursorPos X="30" Y="24"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="3"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit36>
       <Unit37>
@@ -448,7 +451,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="73"/>
         <CursorPos X="79" Y="97"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="18"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit37>
       <Unit38>
@@ -456,7 +459,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="30"/>
         <CursorPos Y="44"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit38>
       <Unit39>
@@ -464,7 +467,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="536"/>
         <CursorPos Y="548"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit39>
       <Unit40>
@@ -472,7 +475,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="3488"/>
         <CursorPos Y="3501"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit40>
       <Unit41>
@@ -480,7 +483,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="906"/>
         <CursorPos Y="920"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit41>
       <Unit42>
@@ -488,7 +491,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="5386"/>
         <CursorPos Y="5398"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit42>
       <Unit43>
@@ -497,7 +500,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="107"/>
         <CursorPos Y="123"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit43>
       <Unit44>
@@ -505,7 +508,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="3691"/>
         <CursorPos Y="3705"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit44>
       <Unit45>
@@ -513,7 +516,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="2408"/>
         <CursorPos X="66" Y="2414"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit45>
       <Unit46>
@@ -521,7 +524,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="1068"/>
         <CursorPos X="16" Y="107"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit46>
       <Unit47>
@@ -529,21 +532,21 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="139"/>
         <CursorPos X="23" Y="152"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit47>
       <Unit48>
         <Filename Value="N:\usr\share\fpcsrc\3.0.4\packages\fcl-db\src\dbase\dbf_dbffile.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="3" Y="46"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit48>
       <Unit49>
         <Filename Value="N:\usr\share\lazarus\1.8.2\components\tdbf\registerdbf.pas"/>
         <UnitName Value="RegisterDBF"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit49>
       <Unit50>
@@ -552,7 +555,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="5337"/>
         <CursorPos Y="5359"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit50>
       <Unit51>
@@ -560,7 +563,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="197"/>
         <CursorPos X="10" Y="217"/>
-        <UsageCount Value="16"/>
+        <UsageCount Value="14"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit51>
       <Unit52>
@@ -569,10 +572,10 @@
         <ComponentName Value="FOSDConfigdlg"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <TopLine Value="8"/>
         <CursorPos X="23" Y="44"/>
-        <UsageCount Value="52"/>
+        <UsageCount Value="65"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -581,16 +584,16 @@
         <Filename Value="osdcreate.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="76"/>
-        <CursorPos X="24" Y="80"/>
+        <TopLine Value="65"/>
+        <CursorPos X="41" Y="104"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="1"/>
           <WindowIndex Value="1"/>
-          <TopLine Value="140"/>
-          <CursorPos X="10" Y="156"/>
+          <TopLine Value="157"/>
+          <CursorPos X="10" Y="173"/>
         </ExtraEditor1>
-        <UsageCount Value="50"/>
+        <UsageCount Value="63"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit53>
@@ -606,15 +609,14 @@
           <TopLine Value="28"/>
           <CursorPos X="42" Y="41"/>
         </ExtraEditor1>
-        <UsageCount Value="12"/>
+        <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit54>
       <Unit55>
         <Filename Value="template-files\setupsingle.opsiscript"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="58"/>
-        <CursorPos X="7" Y="85"/>
-        <UsageCount Value="13"/>
+        <CursorPos X="20" Y="85"/>
+        <UsageCount Value="20"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit55>
@@ -623,54 +625,69 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="78"/>
         <CursorPos X="5" Y="100"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit56>
       <Unit57>
-        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\1.8.4\lcl\lclrescache.pas"/>
+        <Filename Value="N:\usr\share\lazarus\1.8.4\lcl\lclrescache.pas"/>
         <UnitName Value="LCLResCache"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="225"/>
         <CursorPos Y="247"/>
-        <UsageCount Value="12"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="10"/>
       </Unit57>
       <Unit58>
-        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\1.8.4\components\ideintf\propedits.pp"/>
+        <Filename Value="N:\usr\share\lazarus\1.8.4\components\ideintf\propedits.pp"/>
         <UnitName Value="PropEdits"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="5764"/>
         <CursorPos X="28" Y="5777"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
       </Unit58>
       <Unit59>
-        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\1.8.4\lcl\include\application.inc"/>
+        <Filename Value="N:\usr\share\lazarus\1.8.4\lcl\include\application.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1586"/>
         <CursorPos Y="1610"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
       </Unit59>
       <Unit60>
-        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\1.8.4\lcl\interfaces\gtk2\gtk2widgetset.inc"/>
+        <Filename Value="N:\usr\share\lazarus\1.8.4\lcl\interfaces\gtk2\gtk2widgetset.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="2490"/>
         <CursorPos Y="2518"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
       </Unit60>
       <Unit61>
-        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\1.8.4\lcl\include\control.inc"/>
+        <Filename Value="N:\usr\share\lazarus\1.8.4\lcl\include\control.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="2844"/>
         <CursorPos Y="2868"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
       </Unit61>
       <Unit62>
-        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\1.8.4\lcl\include\speedbutton.inc"/>
+        <Filename Value="N:\usr\share\lazarus\1.8.4\lcl\include\speedbutton.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="897"/>
         <CursorPos Y="920"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
       </Unit62>
+      <Unit63>
+        <Filename Value="template-files\delsubsingle.opsiscript"/>
+        <EditorIndex Value="4"/>
+        <CursorPos X="21" Y="6"/>
+        <UsageCount Value="13"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit63>
+      <Unit64>
+        <Filename Value="files2opsi\CLIENT_DATA\delsub.opsiscript"/>
+        <EditorIndex Value="9"/>
+        <TopLine Value="40"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit64>
     </Units>
     <OtherDefines Count="1">
       <Define0 Value="OPSI"/>
@@ -678,123 +695,123 @@
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="589" TopLine="561"/>
+        <Caret Line="831" Column="94" TopLine="801"/>
       </Position1>
       <Position2>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="590" TopLine="561"/>
+        <Caret Line="813" Column="68" TopLine="781"/>
       </Position2>
       <Position3>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="591" TopLine="561"/>
+        <Caret Line="797" Column="76" TopLine="763"/>
       </Position3>
       <Position4>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="594" TopLine="561"/>
+        <Caret Line="798" Column="83" TopLine="763"/>
       </Position4>
       <Position5>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="595" TopLine="561"/>
+        <Caret Line="801" Column="62" TopLine="780"/>
       </Position5>
       <Position6>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="597" TopLine="563"/>
+        <Filename Value="osdcreate.pas"/>
+        <Caret Line="288" Column="17" TopLine="284"/>
       </Position6>
       <Position7>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="600" TopLine="566"/>
+        <Filename Value="template-files\setupsingle.opsiscript"/>
+        <Caret Line="18" Column="14" TopLine="4"/>
       </Position7>
       <Position8>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="601" TopLine="567"/>
+        <Filename Value="template-files\setupsingle.opsiscript"/>
+        <Caret Line="48" Column="12" TopLine="16"/>
       </Position8>
       <Position9>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="603" TopLine="569"/>
+        <Filename Value="template-files\setupsingle.opsiscript"/>
+        <Caret Line="49" Column="16" TopLine="17"/>
       </Position9>
       <Position10>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="604" TopLine="570"/>
+        <Filename Value="template-files\setupsingle.opsiscript"/>
+        <Caret Line="54" Column="12" TopLine="22"/>
       </Position10>
       <Position11>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="605" TopLine="571"/>
+        <Filename Value="template-files\setupsingle.opsiscript"/>
+        <Caret Line="55" Column="16" TopLine="23"/>
       </Position11>
       <Position12>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="612" Column="7" TopLine="587"/>
+        <Filename Value="template-files\setupsingle.opsiscript"/>
+        <Caret Line="94" Column="71" TopLine="62"/>
       </Position12>
       <Position13>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="582" TopLine="561"/>
+        <Filename Value="template-files\setupsingle.opsiscript"/>
+        <Caret Line="95" Column="19" TopLine="63"/>
       </Position13>
       <Position14>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="583" TopLine="561"/>
+        <Filename Value="template-files\setupsingle.opsiscript"/>
+        <Caret Line="96" Column="23" TopLine="64"/>
       </Position14>
       <Position15>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="584" TopLine="561"/>
+        <Filename Value="template-files\setupsingle.opsiscript"/>
+        <Caret Line="98" Column="18" TopLine="66"/>
       </Position15>
       <Position16>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="585" TopLine="561"/>
+        <Filename Value="template-files\setupsingle.opsiscript"/>
+        <Caret Line="116" Column="24" TopLine="84"/>
       </Position16>
       <Position17>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="586" TopLine="561"/>
+        <Filename Value="template-files\setupsingle.opsiscript"/>
+        <Caret Line="117" Column="49" TopLine="85"/>
       </Position17>
       <Position18>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="587" TopLine="561"/>
+        <Filename Value="template-files\setupsingle.opsiscript"/>
+        <Caret Line="118" Column="43" TopLine="86"/>
       </Position18>
       <Position19>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="589" TopLine="561"/>
+        <Filename Value="template-files\setupsingle.opsiscript"/>
+        <Caret Line="120" Column="20" TopLine="88"/>
       </Position19>
       <Position20>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="590" TopLine="561"/>
+        <Filename Value="template-files\setupsingle.opsiscript"/>
+        <Caret Line="123" Column="58" TopLine="91"/>
       </Position20>
       <Position21>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="591" TopLine="561"/>
+        <Filename Value="template-files\setupsingle.opsiscript"/>
+        <Caret Line="124" Column="18" TopLine="92"/>
       </Position21>
       <Position22>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="594" TopLine="561"/>
+        <Filename Value="template-files\setupsingle.opsiscript"/>
+        <Caret Line="125" Column="38" TopLine="93"/>
       </Position22>
       <Position23>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="582" TopLine="561"/>
+        <Filename Value="template-files\setupsingle.opsiscript"/>
+        <Caret Line="126" Column="22" TopLine="94"/>
       </Position23>
       <Position24>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="589" TopLine="561"/>
+        <Filename Value="template-files\setupsingle.opsiscript"/>
+        <Caret Line="128" Column="55" TopLine="96"/>
       </Position24>
       <Position25>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="507" Column="10" TopLine="486"/>
+        <Filename Value="template-files\setupsingle.opsiscript"/>
+        <Caret Line="129" Column="21" TopLine="97"/>
       </Position25>
       <Position26>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="508" TopLine="486"/>
+        <Filename Value="template-files\setupsingle.opsiscript"/>
+        <Caret Line="130" Column="25" TopLine="98"/>
       </Position26>
       <Position27>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="509" TopLine="486"/>
+        <Filename Value="template-files\setupsingle.opsiscript"/>
+        <Caret Line="135" Column="12" TopLine="102"/>
       </Position27>
       <Position28>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="510" TopLine="486"/>
+        <Filename Value="template-files\setupsingle.opsiscript"/>
+        <Caret Line="136" Column="16" TopLine="102"/>
       </Position28>
       <Position29>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="511" TopLine="486"/>
+        <Filename Value="osdanalyze.pas"/>
+        <Caret Line="35" Column="23" TopLine="16"/>
       </Position29>
       <Position30>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="507" Column="14" TopLine="486"/>
+        <Caret Line="801" Column="41" TopLine="776"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
@@ -806,7 +823,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="C:\lazarus\components\thtml;..\..\common"/>
+      <OtherUnitFiles Value="C:\lazarus\components\thtml\;..\..\common"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>

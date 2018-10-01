@@ -15,7 +15,7 @@ DefVar $Setupfile$
 DefVar $InstallDir$
 DefVar $MinimumSpace$
 DefVar $ExitCode$
-DefVar $ErrorMsg$
+DefVar $ErrorString$
 DefVar $LicenseRequired$
 DefVar $LicenseKey$
 DefVar $LicensePool$
@@ -27,7 +27,7 @@ DefVar $OS$
 Set $LogDir$ = "%opsiLogDir%"
 
 ; import complete file !
-importlib uib_exitcode.opsiscript
+importlib "uib_exitcode.opsiscript"
 #@importLibs*#
 
 
@@ -72,7 +72,7 @@ if $LicenseRequired$ = "true"
    Sub_get_licensekey
 endif
 
-
+comment "Start Pre Install hook (may be empty):"
 #@preInstallLines*#
 
 comment "Start setup program"
@@ -82,10 +82,11 @@ Winbatch_install
 ;----------------------------------------------
 Sub_check_exitcode
 
+comment "Start Post Install hook (may be empty):"
 #@postInstallLines*#
 
 
-[[Winbatch_install]
+[Winbatch_install]
 #@installCommandLine*#
 
 

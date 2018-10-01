@@ -1,15 +1,44 @@
 ; Copyright (c) uib gmbh (www.uib.de)
 ; This sourcecode is owned by uib gmbh
 ; and published under the Terms of the General Public License.
-; credits: http://www.opsi.org/en/credits/
 
-include_append "%ScriptPath%\check_#@#-SETUPTYPE-#@#_exitcode.opsiscript"
 
+Message "Uninstalling " + $ProductId$ + " ..."
+
+comment "Start Pre Uninstall hook (may be empty):"
+#@preInstallLines*#
+
+comment "Start uninstall program"
+ChangeDirectory "%SCRIPTPATH%"
+;----------------------------------------------
+Winbatch_uninstall
+;----------------------------------------------
+Sub_check_exitcode
+
+comment "Start Post Uninstall hook (may be empty):"
+#@postInstallLines*#
+
+
+[Winbatch_install]
+#@installCommandLine*#
+
+
+[sub_check_exitcode]
+set $ExitCode$ = getlastexitcode
+if stringtobool(#@isExitcodeFatalFunction*#($exitcode$, "true", $ErrorString$ ))
+   LogError $ErrorString$
+   isfatalerror $ErrorString$
+else
+   Comment $ErrorString$
+endif
+
+
+;--------------------------------
 DefVar $found$
 DefVar $UninstallProgram$
 
+set $UninstallProgram$ = $InstallDir$+"\#@uninstallProg*#"
 Set $found$     = "false"
-Set $MsiId$     = '#@#-MSIID-#@#'
 
 Message "Uninstalling " + $ProductId$ + " ..."
 

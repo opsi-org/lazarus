@@ -88,6 +88,7 @@ type
     BitBtnWorkBenchPath: TBitBtn;
     BitBtnRecheckWorkbench: TBitBtn;
     BtAnalyzeNextStep: TBitBtn;
+    BtCreateProduct: TBitBtn;
     BtSetup1NextStep: TBitBtn;
     BtSetup2NextStep: TBitBtn;
     BtProductNextStep: TBitBtn;
@@ -101,7 +102,6 @@ type
     BtATwonalyzeAndCreate: TBitBtn;
     BtCreateEmptyTemplate: TBitBtn;
     BtAnalyzeOnly: TBitBtn;
-    BtCreateProduct: TBitBtn;
     ButtonCreatePacket: TButton;
     CheckBoxBuild: TCheckBox;
     CheckBoxInstall: TCheckBox;
@@ -169,10 +169,11 @@ type
     MemoDefault: TMemo;
     MenuItemConfig: TMenuItem;
     OpenDialogSetupfile: TOpenDialog;
-    Panel9: TPanel;
+    PanelProcess: TPanel;
     PanelDefault: TPanel;
     processing: TLabel;
     processStatement: TLabel;
+    ProgressBar1: TProgressBar;
     RadioButtonAuto: TRadioButton;
     RadioButtonCreateOnly: TRadioButton;
     RadioButtonInteractive: TRadioButton;
@@ -738,6 +739,7 @@ begin
   end;
 end;
 
+
 procedure TResultform1.FlowPanel14Click(Sender: TObject);
 begin
 
@@ -813,7 +815,12 @@ end;
 
 procedure TResultform1.BtCreateProductClick(Sender: TObject);
 begin
-  createProductStructure;
+  try
+    PanelProcess.Visible:=true;
+    createProductStructure;
+  finally
+    PanelProcess.Visible:=false;
+  end;
 end;
 
 procedure TResultform1.BtProductNextStepClick(Sender: TObject);

@@ -40,10 +40,10 @@ type
     silentuninstall: string;
     unattendeduninstall: string;
     uninstall_waitforprocess: string;
+    uninstallProg: string;
     comment: string;
     Link: string;
     uib_exitcode_function: string;
-
     detected: TdetectInstaller;
     { public declarations }
     constructor Create;
@@ -72,6 +72,7 @@ type
     FSoftwareVersion: string;
     Fwinbatch_del_argument: string;
     FinstallCommandLine: string;
+    FuninstallCommandLine: string;
     FisExitcodeFatalFunction : string;
   published
     // proc
@@ -111,6 +112,7 @@ type
     property winbatch_del_argument: string read Fwinbatch_del_argument write Fwinbatch_del_argument;
     property installCommandLine: string read FinstallCommandLine write FinstallCommandLine;
     property isExitcodeFatalFunction: string read FisExitcodeFatalFunction write FisExitcodeFatalFunction;
+    property uninstallCommandLine: string read FuninstallCommandLine write FuninstallCommandLine;
     procedure initValues;
 
   public
@@ -176,9 +178,13 @@ type
     Fimport_libraries: TStrings;
     FpreInstallLines: TStrings;
     FpostInstallLines: TStrings;
+    FpreUninstallLines: TStrings;
+    FpostUninstallLines: TStrings;
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
     procedure SetPostInstallLines(const AValue: TStrings);
+    procedure SetPreUninstallLines(const AValue: TStrings);
+    procedure SetPostUninstallLines(const AValue: TStrings);
   published
     property workbench_share: string read Fworkbench_share write Fworkbench_share;
     property workbench_Path: string read Fworkbench_Path write Fworkbench_Path;
@@ -190,6 +196,8 @@ type
     property import_libraries: TStrings read Fimport_libraries write SetLibraryLines;
     property preInstallLines: TStrings read FpreInstallLines write SetPreInstallLines;
     property postInstallLines: TStrings read FpostInstallLines write SetPostInstallLines;
+    property preUninstallLines: TStrings read FpreUninstallLines write SetPreUninstallLines;
+    property postUninstallLines: TStrings read FpostUninstallLines write SetPostUninstallLines;
     procedure writeconfig;
     procedure readconfig;
   public
@@ -499,7 +507,7 @@ begin
   configDir := '';
   {$IFDEF Windows}
   SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, configDir);
-  configDir := configDir + PathDelim;
+  configDir := configDir + PathDelim+'opsi.org'+ PathDelim;
   {$ELSE}
   configDir := GetAppConfigDir(False);
   {$ENDIF WINDOWS}
@@ -574,7 +582,7 @@ begin
   configDir := '';
   {$IFDEF Windows}
   SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, configDir);
-  configDir := configDir + PathDelim;
+  configDir := configDir + PathDelim+'opsi.org'+ PathDelim;
   {$ELSE}
   configDir := GetAppConfigDir(False);
   {$ENDIF WINDOWS}
@@ -775,74 +783,118 @@ begin
     installerArray[counter].installerId := TKnownInstaller(counter);
     installerArray[counter].Name := knownInstallerList.Strings[counter];
   end;
+
+
   // inno
-  installerArray[integer(stInno)].description := 'Inno Setup';
-  installerArray[integer(stInno)].silentsetup :=
-    '/sp- /verysilent /norestart /nocancel /SUPPRESSMSGBOXES';
-  installerArray[integer(stInno)].unattendedsetup :=
-    '/sp- /silent /norestart /nocancel /SUPPRESSMSGBOXES';
-  installerArray[integer(stInno)].silentuninstall :=
-    '/verysilent /norestart /nocancel /SUPPRESSMSGBOXES';
-  installerArray[integer(stInno)].unattendeduninstall :=
-    '/silent /norestart /nocancel /SUPPRESSMSGBOXES';
-  installerArray[integer(stInno)].uninstall_waitforprocess := '';
-  installerArray[integer(stInno)].patterns.Add('<description>inno setup</description>');
-  installerArray[integer(stInno)].patterns.Add('jr.inno.setup');
-  installerArray[integer(stInno)].link :=
-    'http://www.jrsoftware.org/ishelp/topic_setupcmdline.htm';
-  installerArray[integer(stInno)].comment := '';
-  installerArray[integer(stInno)].uib_exitcode_function := 'isInnoExitcodeFatal';
-  installerArray[integer(stInno)].detected := @detectedbypatternwithor;
+   with installerArray[integer(stInno)] do
+  begin
+    description := 'Inno Setup';
+    silentsetup :=
+      '/sp- /verysilent /norestart /nocancel /SUPPRESSMSGBOXES';
+    unattendedsetup :=
+      '/sp- /silent /norestart /nocancel /SUPPRESSMSGBOXES';
+    silentuninstall :=
+      '/verysilent /norestart /nocancel /SUPPRESSMSGBOXES';
+    unattendeduninstall :=
+      '/silent /norestart /nocancel /SUPPRESSMSGBOXES';
+    uninstall_waitforprocess := '';
+    uninstallProg := 'unins000.exe';
+    patterns.Add('<description>inno setup</description>');
+    patterns.Add('jr.inno.setup');
+    link :=
+      'http://www.jrsoftware.org/ishelp/topic_setupcmdline.htm';
+    comment := '';
+    uib_exitcode_function := 'isInnoExitcodeFatal';
+    detected := @detectedbypatternwithor;
+  end;
+
   // NSIS
-  installerArray[integer(stNsis)].description := 'Nullsoft Install System';
-  installerArray[integer(stNsis)].silentsetup := '/S';
-  installerArray[integer(stNsis)].unattendedsetup := '/S';
-  installerArray[integer(stNsis)].silentuninstall := '/S';
-  installerArray[integer(stNsis)].unattendeduninstall := '/S';
-  installerArray[integer(stNsis)].uninstall_waitforprocess := 'Au_.exe';
-  installerArray[integer(stNsis)].patterns.Add('Nullsoft.NSIS.exehead');
-  installerArray[integer(stNsis)].patterns.Add('nullsoft install system');
-  installerArray[integer(stNsis)].patterns.Add('http://nsis.sf.net/');
-  installerArray[integer(stNsis)].link :=
-    'http://nsis.sourceforge.net/Docs/Chapter3.html#installerusage';
-  installerArray[integer(stNsis)].comment := '';
-  installerArray[integer(stNsis)].uib_exitcode_function := 'isNsisExitcodeFatal';
-  installerArray[integer(stNsis)].detected := @detectedbypatternwithor;
-  // InstallShieldMSI
-  installerArray[integer(stInstallShieldMSI)].description :=
-    'InstallShield+MSI Setup (InstallShield with embedded MSI)';
-  installerArray[integer(stInstallShieldMSI)].silentsetup :=
-    '/s /v" /qn ALLUSERS=1 REBOOT=ReallySuppress"';
-  installerArray[integer(stInstallShieldMSI)].unattendedsetup :=
-    '/s /v" /qb-! ALLUSERS=1 REBOOT=ReallySuppress"';
-  installerArray[integer(stInstallShieldMSI)].silentuninstall :=
-    '/s /v" /qn ALLUSERS=1 REBOOT=ReallySuppress"';
-  installerArray[integer(stInstallShieldMSI)].unattendeduninstall :=
-    '/s /v" /qb-! ALLUSERS=1 REBOOT=ReallySuppress"';
-  installerArray[integer(stInstallShieldMSI)].uninstall_waitforprocess := '';
-  installerArray[integer(stInstallShieldMSI)].patterns.Add('nstallshield');
-  installerArray[integer(stInstallShieldMSI)].patterns.Add('installer,msi,database');
-  installerArray[integer(stInstallShieldMSI)].link :=
-    'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
-  installerArray[integer(stInstallShieldMSI)].comment := '';
-  installerArray[integer(stInstallShieldMSI)].uib_exitcode_function := 'isInstallshieldExitcodeFatal';
-  installerArray[integer(stInstallShieldMSI)].detected := @detectedbypatternwithor;
+  with installerArray[integer(stNsis)] do
+  begin
+    description := 'Nullsoft Install System';
+    silentsetup := '/S';
+    unattendedsetup := '/S';
+    silentuninstall := '/S';
+    unattendeduninstall := '/S';
+    uninstall_waitforprocess := 'Au_.exe';
+    uninstallProg := 'uninstall.exe';
+    patterns.Add('Nullsoft.NSIS.exehead');
+    patterns.Add('nullsoft install system');
+    patterns.Add('http://nsis.sf.net/');
+    link :=
+      'http://nsis.sourceforge.net/Docs/Chapter3.html#installerusage';
+    comment := '';
+    uib_exitcode_function := 'isNsisExitcodeFatal';
+    detected := @detectedbypatternwithor;
+
+  end;
   // InstallShield
-  installerArray[integer(stInstallShield)].description :=
-    'InstallShield Setup (classic)';
-  installerArray[integer(stInstallShield)].silentsetup := '/s /sms';
-  installerArray[integer(stInstallShield)].unattendedsetup := '/s /sms';
-  installerArray[integer(stInstallShield)].silentuninstall := '/s /sms';
-  installerArray[integer(stInstallShield)].unattendeduninstall := '/s /sms';
-  installerArray[integer(stInstallShield)].uninstall_waitforprocess := '';
-  installerArray[integer(stInstallShield)].patterns.Add('InstallShield');
-  installerArray[integer(stInstallShield)].patterns.Add(
-    '<description>InstallShield.Setup</description>');
-  installerArray[integer(stInstallShield)].link :=
-    'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
-  installerArray[integer(stInstallShield)].comment := '';
-  installerArray[integer(stInstallShield)].uib_exitcode_function := 'isInstallshieldExitcodeFatal';
-  installerArray[integer(stInstallShield)].detected := @detectedbypatternwithor;
+  with installerArray[integer(stInstallShield)] do
+  begin
+    description :=
+      'InstallShield Setup (classic)';
+    silentsetup := '/s /sms';
+    unattendedsetup := '/s /sms';
+    silentuninstall := '/s /sms';
+    unattendeduninstall := '/s /sms';
+    uninstall_waitforprocess := '';
+    uninstallProg := 'uninstall.exe';
+    patterns.Add('InstallShield');
+    patterns.Add(
+      '<description>InstallShield.Setup</description>');
+    link :=
+      'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
+    comment := '';
+    uib_exitcode_function := 'isInstallshieldExitcodeFatal';
+    detected := @detectedbypatternwithor;
+  end;
+    // InstallShieldMSI
+  with installerArray[integer(stInstallShieldMSI)] do
+  begin
+    description :=
+      'InstallShield+MSI Setup (InstallShield with embedded MSI)';
+    silentsetup :=
+      '/s /v" /qn ALLUSERS=1 REBOOT=ReallySuppress"';
+    unattendedsetup :=
+      '/s /v" /qb-! ALLUSERS=1 REBOOT=ReallySuppress"';
+    silentuninstall :=
+      '/s /v" /qn ALLUSERS=1 REBOOT=ReallySuppress"';
+    unattendeduninstall :=
+      '/s /v" /qb-! ALLUSERS=1 REBOOT=ReallySuppress"';
+    uninstall_waitforprocess := '';
+    uninstallProg := 'uninstall.exe';
+    patterns.Add('nstallshield');
+    patterns.Add('installer,msi,database');
+    link :=
+      'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
+    comment := '';
+    uib_exitcode_function := 'isInstallshieldExitcodeFatal';
+    detected := @detectedbypatternwithor;
+  end;
+  // MSI
+  with installerArray[integer(stMSI)] do
+  begin
+    description :=
+      'MSI Setup';
+    silentsetup :=
+      '/l* "$LogDir$\$ProductId$.install_log.txt" /qn ALLUSERS=1 REBOOT=ReallySuppress';
+    unattendedsetup :=
+      '/l* "$LogDir$\$ProductId$.install_log.txt" /qb-! ALLUSERS=1 REBOOT=ReallySuppress';
+    silentuninstall :=
+      ' /qn REBOOT=ReallySuppress';
+    unattendeduninstall :=
+      ' /qb-! REBOOT=ReallySuppress';
+    uninstall_waitforprocess := '';
+    uninstallProg := '';
+    patterns.Add('nstallshield');
+    patterns.Add('installer,msi,database');
+    link :=
+      'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
+    comment := '';
+    uib_exitcode_function := 'isInstallshieldExitcodeFatal';
+    detected := @detectedbypatternwithor;
+  end;
+
   // 7zip
   with installerArray[integer(st7zip)] do
   begin
@@ -852,6 +904,7 @@ begin
     silentuninstall := '/S';
     unattendeduninstall := '/S';
     uninstall_waitforprocess := '';
+    uninstallProg := 'uninstall.exe';
     patterns.Add('7-Zip Installer');
     link := 'https://www.7-zip.org/faq.html';
     comment := '';
@@ -867,6 +920,7 @@ begin
     silentuninstall := '-y';
     unattendeduninstall := '-y';
     uninstall_waitforprocess := '';
+    uninstallProg := '';
     patterns.Add('7zipsfx');
     link := 'https://sourceforge.net/p/s-zipsfxbuilder/code/ci/master/tree/7zSD_EN.chm';
     comment := '';

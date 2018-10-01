@@ -255,6 +255,9 @@ begin
   mysetup.installerId := installerId;
   mysetup.setupFullFileName := myfilename;
   //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
+  mysetup.installCommandLine:= '"%scriptpath%\'+mysetup.setupFileName+'"'
+     + installerArray[integer(mysetup.installerId)].unattendedsetup;
+  mysetup.isExitcodeFatalFunction:=installerArray[integer(mysetup.installerId)].uib_exitcode_function;
 
   product := ExtractFileNameWithoutExt(mysetup.setupFileName);
   aktProduct.produktpropties.productId := getPacketIDShort(product);
@@ -354,6 +357,8 @@ begin
   end;
   myoutlines.Free;
     {$ENDIF WINDOWS}
+  mysetup.installCommandLine:= 'msiexec /i "%scriptpath%\'+mysetup.setupFileName+'"'
+     + installerArray[integer(mysetup.installerId)].unattendedsetup;
   mywrite('get_MSI_info finished');
 
   Mywrite('Finished Analyzing MSI: ' + myfilename);
@@ -517,10 +522,11 @@ begin
     [rfReplaceAll, rfIgnoreCase]);
   mysetup.installDirectory := DefaultDirName;
   aktProduct.produktpropties.comment := AppVerName;
+  (*
   mysetup.installCommandLine:= '"%scriptpath%\'+mysetup.setupFileName+'"'
      + installerArray[integer(mysetup.installerId)].unattendedsetup;
   mysetup.isExitcodeFatalFunction:=installerArray[integer(mysetup.installerId)].uib_exitcode_function;
-
+ *)
   with mysetup do
   begin
     LogDatei.log('installDirectory: '+installDirectory,LLDebug);
@@ -740,25 +746,12 @@ end;
 
 
 procedure get_nsis_info(myfilename: string; var mysetup : TSetupFile);
-var
-  myoutlines: TStringList;
-  myreport: string;
-  myexitcode: integer;
-  i: integer;
-  fsize: int64;
-  fsizemb: double;
-  sFileSize: string;
-  sReqSize: string;
-  sSearch: string;
-  iPos: integer;
-  destDir: string;
-  myBatch: string;
-  product: string;
 
 begin
   Mywrite('Analyzing NSIS-Setup:');
   mywrite('get_nsis_info finished');
   mywrite('NSIS (Nullsoft Install System) detected');
+
 
   if showNsis then
     //resultForm1.PageControl1.ActivePage := resultForm1.TabSheetNsis;
