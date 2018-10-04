@@ -73,6 +73,7 @@ end;
   begin
     patchlist.Clear;
     str := '';
+    patchlist.add('#@productId*#='+inttostr(aktProduct.produktpropties.productId);
     for i := 0 to myconfiguration.import_libraries.Count-1 do
       str := str + 'importlib "'+myconfiguration.import_libraries[i]+'"'+LineEnding;
     patchlist.add('#@importLibs*#='+str);
@@ -89,18 +90,20 @@ end;
     str :=myconfiguration.preUninstallLines.Text;
     patchlist.add('#@preUninstallLines1*#='+str);
     patchlist.add('#@uninstallCommandLine1*#='+aktProduct.SetupFiles[0].uninstallCommandLine);
+    patchlist.add('#@uninstallProg1*#='+aktProduct.SetupFiles[0].uninstallProg);
     patchlist.add('#@postUninstallLines1*#='+myconfiguration.postUninstallLines.Text);
     //setup 2
-    patchlist.add('#@InstallDir2*#='+aktProduct.SetupFiles[0].installDirectory);
-    patchlist.add('#@MsiId2*#='+aktProduct.SetupFiles[0].msiId);
+    patchlist.add('#@InstallDir2*#='+aktProduct.SetupFiles[1].installDirectory);
+    patchlist.add('#@MsiId2*#='+aktProduct.SetupFiles[1].msiId);
     str :=myconfiguration.preInstallLines.Text;
     patchlist.add('#@preInstallLines2*#='+str);
-    patchlist.add('#@installCommandLine2*#='+aktProduct.SetupFiles[0].installCommandLine);
+    patchlist.add('#@installCommandLine2*#='+aktProduct.SetupFiles[1].installCommandLine);
     patchlist.add('#@postInstallLines2*#='+myconfiguration.postInstallLines.Text);
-    patchlist.add('#@isExitcodeFatalFunction2*#='+aktProduct.SetupFiles[0].isExitcodeFatalFunction);
+    patchlist.add('#@isExitcodeFatalFunction2*#='+aktProduct.SetupFiles[1].isExitcodeFatalFunction);
     str :=myconfiguration.preUninstallLines.Text;
     patchlist.add('#@preUninstallLines2*#='+str);
-    patchlist.add('#@uninstallCommandLine2*#='+aktProduct.SetupFiles[0].uninstallCommandLine);
+    patchlist.add('#@uninstallCommandLine2*#='+aktProduct.SetupFiles[1].uninstallCommandLine);
+    patchlist.add('#@uninstallProg2*#='+aktProduct.SetupFiles[1].uninstallProg);
     patchlist.add('#@postUninstallLines2*#='+myconfiguration.postUninstallLines.Text);
 
   end;

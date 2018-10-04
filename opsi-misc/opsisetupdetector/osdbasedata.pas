@@ -73,6 +73,7 @@ type
     Fwinbatch_del_argument: string;
     FinstallCommandLine: string;
     FuninstallCommandLine: string;
+    FuninstallProg: string;
     FisExitcodeFatalFunction : string;
   published
     // proc
@@ -113,6 +114,7 @@ type
     property installCommandLine: string read FinstallCommandLine write FinstallCommandLine;
     property isExitcodeFatalFunction: string read FisExitcodeFatalFunction write FisExitcodeFatalFunction;
     property uninstallCommandLine: string read FuninstallCommandLine write FuninstallCommandLine;
+    property uninstallProg: string read FuninstallProg write FuninstallProg;
     procedure initValues;
 
   public
@@ -352,6 +354,8 @@ begin
   Fimport_libraries := TStringList.Create;
   FpreInstallLines := TStringList.Create;
   FpostInstallLines := TStringList.Create;
+  FpreUninstallLines := TStringList.Create;
+  FpostUninstallLines := TStringList.Create;
   readconfig;
 end;
 
@@ -361,6 +365,8 @@ begin
   FreeandNil(Fimport_libraries);
   FreeandNil(FpreInstallLines);
   FreeandNil(FpostInstallLines);
+  FreeandNil(FpreUninstallLines);
+  FreeandNil(FpostUninstallLines);
   inherited;
 end;
 
@@ -377,6 +383,16 @@ end;
 procedure TConfiguration.SetPostInstallLines(const AValue: TStrings);
 begin
   FpostInstallLines.Assign(AValue);
+end;
+
+procedure TConfiguration.SetPreUninstallLines(const AValue: TStrings);
+begin
+  FpreUninstallLines.Assign(AValue);
+end;
+
+procedure TConfiguration.SetPostUninstallLines(const AValue: TStrings);
+begin
+  FpostUninstallLines.Assign(AValue);
 end;
 
 (*

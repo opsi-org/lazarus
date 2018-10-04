@@ -12,7 +12,7 @@ ScriptErrorMessages = false
 DefVar $SetupType$
 DefVar $ProductId$ 
 DefVar $Setupfile$ 
-DefVar $InstallDir$
+DefVar $InstallDir1$
 DefVar $MinimumSpace$
 DefVar $ExitCode$
 DefVar $ErrorString$
@@ -34,10 +34,10 @@ importlib "uib_exitcode.opsiscript"
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
 Set $ProductId$       = "#@productId*#"
 ; the path where we find the product after the installation
-Set $InstallDir$      = "#@InstallDir*#"
+Set $InstallDir1$      = "#@InstallDir1*#"
 Set $LicenseRequired$ = "#@LicenseRequired*#"
 Set $LicensePool$     = "p_" + $ProductId$
-Set $MsiId$           = "#@MsiId*#"
+Set $MsiId$           = "#@MsiId1*#"
 Set $MinimumSpace$    = "#@MinimumSpace*#"
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
@@ -73,26 +73,26 @@ if $LicenseRequired$ = "true"
 endif
 
 comment "Start Pre Install hook (may be empty):"
-#@preInstallLines*#
+#@preInstallLines1*#
 
 comment "Start setup program"
 ChangeDirectory "%SCRIPTPATH%"
 ;----------------------------------------------
-Winbatch_install
+Winbatch_install_1
 ;----------------------------------------------
 Sub_check_exitcode
 
 comment "Start Post Install hook (may be empty):"
-#@postInstallLines*#
+#@postInstallLines1*#
 
 
-[Winbatch_install]
-#@installCommandLine*#
+[Winbatch_install_1]
+#@installCommandLine1*#
 
 
 [sub_check_exitcode]
 set $ExitCode$ = getlastexitcode
-if stringtobool(#@isExitcodeFatalFunction*#($exitcode$, "true", $ErrorString$ ))
+if stringtobool(#@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ ))
    LogError $ErrorString$
    isfatalerror $ErrorString$
 else

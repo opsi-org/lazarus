@@ -6,7 +6,7 @@
 Message "Uninstalling " + $ProductId$ + " ..."
 
 comment "Start Pre Uninstall hook (may be empty):"
-#@preInstallLines*#
+#@preUninstallLines1*#
 
 comment "Start uninstall program"
 ChangeDirectory "%SCRIPTPATH%"
@@ -16,95 +16,28 @@ Winbatch_uninstall
 Sub_check_exitcode
 
 comment "Start Post Uninstall hook (may be empty):"
-#@postInstallLines*#
+#@postUninstallLines1*#
+
+if (not($InstallDir$ = '')) and (not($InstallDir$ = "not used"))
+   Files_uninstall
+endif
+
 
 
 [Winbatch_install]
-#@installCommandLine*#
+#@uninstallCommandLine1*#
 
 
 [sub_check_exitcode]
 set $ExitCode$ = getlastexitcode
-if stringtobool(#@isExitcodeFatalFunction*#($exitcode$, "true", $ErrorString$ ))
+if stringtobool(#@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ ))
    LogError $ErrorString$
    isfatalerror $ErrorString$
 else
    Comment $ErrorString$
 endif
 
-
-;--------------------------------
-DefVar $found$
-DefVar $UninstallProgram$
-
-set $UninstallProgram$ = $InstallDir$+"\#@uninstallProg*#"
-Set $found$     = "false"
-
-Message "Uninstalling " + $ProductId$ + " ..."
-
-if ($SetupType$ = "msi" or $SetupType$ = "installshieldmsi" or $SetupType$ = "advancedmsi")   
-   if (GetSystemtype = "64 Bit System")
-      if not (GetRegistryStringValue64("[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + $MsiId$ + "] DisplayName") = "")
-         comment "MSI id " + $MsiId$ + " found in registry, starting msiexec to uninstall"
-         Set $found$ = "true"
-         Winbatch_uninstall_msi
-         sub_check_exitcode
-      endif
-   endif
-   if ($found$ = "false")
-      if not (GetRegistryStringValue32("[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + $MsiId$ + "] DisplayName") = "")
-         comment "MSI id " + $MsiId$ + " found in registry, starting msiexec to uninstall"
-         Winbatch_uninstall_msi
-         sub_check_exitcode
-      endif
-   endif
-endif
-
-if ($SetupType$ = "inno")
-   Set $UninstallProgram$ = $InstallDir$ + "\unins000.exe"
-   if (not($InstallDir$ = '')) and FileExists($UninstallProgram$)
-      comment "Uninstall program found, starting uninstall"
-      Winbatch_uninstall_inno
-      sub_check_exitcode
-   endif
-endif
-
-if ($SetupType$ = "installshield")
-   Set $UninstallProgram$ = $InstallDir$ + "\uninstall.exe"
-   if (not($InstallDir$ = '')) and FileExists($UninstallProgram$)
-      comment "Uninstall program found, starting uninstall"
-      Winbatch_uninstall_installshield
-      sub_check_exitcode
-   endif
-endif
-
-if ($SetupType$ = "nsis")
-   Set $UninstallProgram$ = $InstallDir$ + "\uninstall.exe"
-   if (not($InstallDir$ = '')) and FileExists($UninstallProgram$)
-      comment "Uninstall program found, starting uninstall"
-      Winbatch_uninstall_nsis /WaitforProcessending "Au_.exe" /Timeoutseconds 10
-      sub_check_exitcode
-   endif
-endif
-
-if (not($InstallDir$ = '')) and (not($InstallDir$ = "not used"))
-   Files_uninstall
-endif
-
-;-----------------------------------------------------
-[Winbatch_uninstall_msi]
-msiexec /x $MsiId$ /qb! REBOOT=ReallySuppress
-
-[Winbatch_uninstall_inno]
-"$UninstallProgram$" /SILENT /NORESTART
-
-[Winbatch_uninstall_installshield]
-"$UninstallProgram$" /s
-
-[Winbatch_uninstall_nsis]
-"$UninstallProgram$" /S
-;-----------------------------------------------------
-
 [Files_uninstall]
-del -sf "$InstallDir$\"
+del -sf "$InstallDir1$\"
+
 ;-----------------------------------------------------
