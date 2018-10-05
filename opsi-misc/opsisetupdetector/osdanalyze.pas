@@ -255,9 +255,12 @@ begin
   mysetup.installerId := installerId;
   mysetup.setupFullFileName := myfilename;
   //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
-  mysetup.installCommandLine:= '"%scriptpath%\'+mysetup.setupFileName+'"'
+  mysetup.installCommandLine:= '"%scriptpath%\'+mysetup.setupFileName+'" '
      + installerArray[integer(mysetup.installerId)].unattendedsetup;
   mysetup.isExitcodeFatalFunction:=installerArray[integer(mysetup.installerId)].uib_exitcode_function;
+  mysetup.uninstallProg:= installerArray[integer(mysetup.installerId)].uninstallProg;
+  mysetup.uninstall_waitforprocess:= installerArray[integer(mysetup.installerId)].uninstall_waitforprocess;
+
 
   product := ExtractFileNameWithoutExt(mysetup.setupFileName);
   aktProduct.produktpropties.productId := getPacketIDShort(product);
@@ -280,6 +283,16 @@ begin
   sReqSize := FormatFloat('#', rsizemb) + ' MB';
   mysetup.requiredSpace := round(rsizemb);
   mysetup.setupFileSize := round(fsizemb);
+
+  // uninstallcheck
+  if installerId = stMsi then
+  begin
+    // will be done in  get_msi_info
+  end
+  else
+  begin
+   // will be done in analyze after get_*_info
+  end;
 
 end; //get_aktProduct_general_info
 
@@ -357,8 +370,15 @@ begin
   end;
   myoutlines.Free;
     {$ENDIF WINDOWS}
-  mysetup.installCommandLine:= 'msiexec /i "%scriptpath%\'+mysetup.setupFileName+'"'
+  mysetup.installCommandLine:= 'msiexec /i "%scriptpath%\'+mysetup.setupFileName+'" '
      + installerArray[integer(mysetup.installerId)].unattendedsetup;
+  mysetup.uninstallCheck.Add('if stringtobool(checkForMsiProduct("'+mysetup.msiId+'"))');
+  mysetup.uninstallCheck.Add('   set $oldProgFound$ = "true"');
+  mysetup.uninstallCheck.Add('endif');
+
+  mysetup.uninstallCommandLine:= 'msiexec /x '+mysetup.msiId+' '
+          +installerArray[integer(mysetup.installerId)].unattendeduninstall;
+
   mywrite('get_MSI_info finished');
 
   Mywrite('Finished Analyzing MSI: ' + myfilename);
@@ -948,6 +968,20 @@ begin
       else
         LogDatei.log('Unknown Setuptype in Analyze: ' + IntToStr(
           instIdToint(setupType)), LLcritical);
+    end;
+
+    if installerArray[integer(mysetup.installerId)].uninstallProg <> '' then
+    begin
+      mysetup.uninstallCheck.Add('if fileexists($installdir$+"\'+mysetup.uninstallProg+'")');
+      mysetup.uninstallCheck.Add('   set $oldProgFound$ = "true"');
+      mysetup.uninstallCheck.Add('endif');
+      mysetup.uninstallCommandLine:= '"$Installdir$\'+mysetup.uninstallProg+'" '
+          +installerArray[integer(mysetup.installerId)].unattendeduninstall;
+    end
+    else
+    begin
+      // no known uninstall program
+      mysetup.uninstallCheck.Add('set $oldProgFound$ = "false"');
     end;
 
  (*

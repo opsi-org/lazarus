@@ -24,7 +24,7 @@ type
     stMsi, stNsis, st7zip, st7zipsfx, stUnknown);
 
 
-  TdetectInstaller = function(parent: TClass; markerlist: TStringList): boolean;
+  TdetectInstaller = function(parent: TClass; markerlist: TStrings): boolean;
 
 
   TInstallerData = class
@@ -68,13 +68,17 @@ type
     FinstallerId: TKnownInstaller;
     FrequiredSpace: cardinal;      // MB
     FinstallDirectory: string;
-    Fmarkerlist: TStringList;
+    Fmarkerlist: TStrings;
     FSoftwareVersion: string;
     Fwinbatch_del_argument: string;
     FinstallCommandLine: string;
     FuninstallCommandLine: string;
     FuninstallProg: string;
-    FisExitcodeFatalFunction : string;
+    FuninstallCheck: TStrings;
+    FisExitcodeFatalFunction: string;
+    Funinstall_waitforprocess: string;
+    procedure SetMarkerlist(const AValue: TStrings);
+    procedure SetUninstallCheck(const AValue: TStrings);
   published
     // proc
     (*
@@ -108,13 +112,21 @@ type
     property installerId: TKnownInstaller read FinstallerId write FinstallerId;
     property requiredSpace: cardinal read FrequiredSpace write FrequiredSpace;
     property installDirectory: string read FinstallDirectory write FinstallDirectory;
-    property markerlist: TStringList read Fmarkerlist write Fmarkerlist;
+    property markerlist: TStrings read Fmarkerlist write SetMarkerlist;
     property SoftwareVersion: string read FSoftwareVersion write FSoftwareVersion;
-    property winbatch_del_argument: string read Fwinbatch_del_argument write Fwinbatch_del_argument;
-    property installCommandLine: string read FinstallCommandLine write FinstallCommandLine;
-    property isExitcodeFatalFunction: string read FisExitcodeFatalFunction write FisExitcodeFatalFunction;
-    property uninstallCommandLine: string read FuninstallCommandLine write FuninstallCommandLine;
+    property winbatch_del_argument: string read Fwinbatch_del_argument
+      write Fwinbatch_del_argument;
+    property installCommandLine: string read FinstallCommandLine
+      write FinstallCommandLine;
+    property isExitcodeFatalFunction: string
+      read FisExitcodeFatalFunction write FisExitcodeFatalFunction;
+    property uninstallCommandLine: string read FuninstallCommandLine
+      write FuninstallCommandLine;
     property uninstallProg: string read FuninstallProg write FuninstallProg;
+    property uninstallCheck: TStrings read FuninstallCheck write SetUninstallCheck;
+    property uninstall_waitforprocess: string
+      read Funinstall_waitforprocess write Funinstall_waitforprocess;
+
     procedure initValues;
 
   public
@@ -198,8 +210,10 @@ type
     property import_libraries: TStrings read Fimport_libraries write SetLibraryLines;
     property preInstallLines: TStrings read FpreInstallLines write SetPreInstallLines;
     property postInstallLines: TStrings read FpostInstallLines write SetPostInstallLines;
-    property preUninstallLines: TStrings read FpreUninstallLines write SetPreUninstallLines;
-    property postUninstallLines: TStrings read FpostUninstallLines write SetPostUninstallLines;
+    property preUninstallLines: TStrings read FpreUninstallLines
+      write SetPreUninstallLines;
+    property postUninstallLines: TStrings read FpostUninstallLines
+      write SetPostUninstallLines;
     procedure writeconfig;
     procedure readconfig;
   public
@@ -282,14 +296,16 @@ end;
 
 constructor TSetupFile.Create;
 begin
-  markerlist := TStringList.Create;
+  Fmarkerlist := TStringList.Create;
+  FuninstallCheck := TStringList.Create;
   inherited;
   //initValues;
 end;
 
 destructor TSetupFile.Destroy;
 begin
-  markerlist.Free;
+  FreeAndNil(Fmarkerlist);
+  FreeAndNil(FuninstallCheck);
   inherited;
 end;
 
@@ -321,6 +337,15 @@ begin
   //Log('SetSetupFileNamePath '+MyString);
 end;
 
+procedure TSetupFile.SetUninstallCheck(const AValue: TStrings);
+begin
+  FuninstallCheck.Assign(AValue);
+end;
+
+procedure TSetupFile.SetMarkerlist(const AValue: TStrings);
+begin
+  Fmarkerlist.Assign(AValue);
+end;
 
 procedure TSetupFile.initValues;
 begin
@@ -336,12 +361,17 @@ begin
   FmsiFullFileName := '';
   FinstallerId := stUnknown;
   FrequiredSpace := 0;
-  FinstallDirectory := '';
+  FinstallDirectory := '# SET THE INSTALL DIRECTORY #';
   Fmarkerlist.Clear;
-  FSoftwareVersion := '';
+  FSoftwareVersion := '0.0';
   Fwinbatch_del_argument := '';
   FinstallCommandLine := '';
+  FuninstallCommandLine := '';
+  FuninstallProg := '';
+  FuninstallCheck.Clear;
+  ;
   FisExitcodeFatalFunction := 'isMsExitcodeFatal_short';
+  Funinstall_waitforprocess := '';
 end;
 
 // TProductProperies **********************************
@@ -362,11 +392,11 @@ end;
 destructor TConfiguration.Destroy;
 begin
   //writeconfig;
-  FreeandNil(Fimport_libraries);
-  FreeandNil(FpreInstallLines);
-  FreeandNil(FpostInstallLines);
-  FreeandNil(FpreUninstallLines);
-  FreeandNil(FpostUninstallLines);
+  FreeAndNil(Fimport_libraries);
+  FreeAndNil(FpreInstallLines);
+  FreeAndNil(FpostInstallLines);
+  FreeAndNil(FpreUninstallLines);
+  FreeAndNil(FpostUninstallLines);
   inherited;
 end;
 
@@ -490,19 +520,19 @@ var
   JSONString: string;
   myfilename: string;
   configDir: array[0..MaxPathLen] of char; //Allocate memory
-  configDirUtf8 : UTF8String;
+  configDirUtf8: UTF8String;
   myfile: TextFile;
 
   // http://wiki.freepascal.org/File_Handling_In_Pascal
   // SaveStringToFile: function to store a string of text into a diskfile.
   //   If the function result equals true, the string was written ok.
   //   If not then there was some kind of error.
-  function SaveStringToFile(theString, filePath: AnsiString): boolean;
+  function SaveStringToFile(theString, filePath: ansistring): boolean;
   var
     fsOut: TFileStream;
   begin
     // By default assume the writing will fail.
-    result := false;
+    Result := False;
 
     // Write the given string to a file, catching potential errors in the process.
     try
@@ -511,30 +541,33 @@ var
       fsOut.Free;
 
       // At his point it is known that the writing went ok.
-      result := true
+      Result := True
 
     except
-      on E:Exception do
-        LogDatei.log('String could not be written. Details: '+ E.ClassName+ ': '+ E.Message,LLError);
-    end
+      on E: Exception do
+        LogDatei.log('String could not be written. Details: ' + E.ClassName +
+          ': ' + E.Message, LLError);
+    end;
   end;
 
 begin
   configDir := '';
   {$IFDEF Windows}
   SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, configDir);
-  configDir := configDir + PathDelim+'opsi.org'+ PathDelim;
+  configDir := configDir + PathDelim + 'opsi.org' + PathDelim;
   {$ELSE}
   configDir := GetAppConfigDir(False);
   {$ENDIF WINDOWS}
   configDirUtf8 := configDir;
-  configDirUtf8 := StringReplace(configDirUtf8, 'opsi-setup-detector', 'opsi.org', [rfReplaceAll]);
-  configDirUtf8 := StringReplace(configDirUtf8, 'opsisetupdetector', 'opsi.org', [rfReplaceAll]);
+  configDirUtf8 := StringReplace(configDirUtf8, 'opsi-setup-detector',
+    'opsi.org', [rfReplaceAll]);
+  configDirUtf8 := StringReplace(configDirUtf8, 'opsisetupdetector',
+    'opsi.org', [rfReplaceAll]);
   myfilename := configDirUtf8 + PathDelim + 'opsisetupdetector.cfg';
   myfilename := ExpandFileName(myfilename);
   if not DirectoryExists(configDirUtf8) then
     if not ForceDirectories(configDirUtf8) then
-       LogDatei.log('failed to create configuration directory: '+configDirUtf8,LLError);
+      LogDatei.log('failed to create configuration directory: ' + configDirUtf8, LLError);
 
   // http://wiki.freepascal.org/Streaming_JSON
   Streamer := TJSONStreamer.Create(nil);
@@ -544,8 +577,8 @@ begin
     // JSON convert and output
     JSONString := Streamer.ObjectToJSONString(myconfiguration);
     logdatei.log(JSONString, LLDebug);
-    if not  SaveStringToFile(JSONString, myfilename) then
-      LogDatei.log('failed save configuration',LLError);
+    if not SaveStringToFile(JSONString, myfilename) then
+      LogDatei.log('failed save configuration', LLError);
     //AssignFile(myfile, myfilename);
     //Rewrite(myfile);
     //Write(myfile, JSONString);
@@ -563,8 +596,8 @@ var
   JSONString: string;
   myfilename: string;
   configDir: array[0..MaxPathLen] of char; //Allocate memory
-  configDirUtf8 : UTF8String;
-  configDirstr : String;
+  configDirUtf8: UTF8String;
+  configDirstr: string;
   myfile: Text;
   oldconfigDir, oldconfigFileName, tmpstr: string;
   fConfig: Text;
@@ -573,39 +606,43 @@ var
   // LoadStringFromFile: function to load a string of text from a diskfile.
   //   If the function result equals true, the string was load ok.
   //   If not then there was some kind of error.
-  function LoadStringFromFile(theString, filePath: AnsiString): boolean;
+  function LoadStringFromFile(theString, filePath: ansistring): boolean;
   var
     fsOut: TFileStream;
   begin
     // By default assume the writing will fail.
-    result := false;
+    Result := False;
 
     // Write the given string to a file, catching potential errors in the process.
     try
       fsOut := TFileStream.Create(filePath, fmOpenRead);
-      fsOut.read(theString[1], length(theString));
+      fsOut.Read(theString[1], length(theString));
       fsOut.Free;
 
       // At his point it is known that the writing went ok.
-      result := true
+      Result := True
 
     except
-      on E:Exception do
-        LogDatei.log('String could not be written. Details: '+ E.ClassName+ ': '+ E.Message,LLError);
-    end
+      on E: Exception do
+        LogDatei.log('String could not be written. Details: ' + E.ClassName +
+          ': ' + E.Message, LLError);
+    end;
   end;
+
 begin
   configDir := '';
   {$IFDEF Windows}
   SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, configDir);
-  configDir := configDir + PathDelim+'opsi.org'+ PathDelim;
+  configDir := configDir + PathDelim + 'opsi.org' + PathDelim;
   {$ELSE}
   configDir := GetAppConfigDir(False);
   {$ENDIF WINDOWS}
   configDirstr := configDir;
   configDirUtf8 := configDirstr;
-  configDirUtf8 := StringReplace(configDirUtf8, 'opsi-setup-detector', 'opsi.org', [rfReplaceAll]);
-  configDirUtf8 := StringReplace(configDirUtf8, 'opsisetupdetector', 'opsi.org', [rfReplaceAll]);
+  configDirUtf8 := StringReplace(configDirUtf8, 'opsi-setup-detector',
+    'opsi.org', [rfReplaceAll]);
+  configDirUtf8 := StringReplace(configDirUtf8, 'opsisetupdetector',
+    'opsi.org', [rfReplaceAll]);
   myfilename := configDirUtf8 + PathDelim + 'opsisetupdetector.cfg';
   myfilename := ExpandFileName(myfilename);
   if FileExists(myfilename) then
@@ -802,7 +839,7 @@ begin
 
 
   // inno
-   with installerArray[integer(stInno)] do
+  with installerArray[integer(stInno)] do
   begin
     description := 'Inno Setup';
     silentsetup :=
@@ -832,7 +869,7 @@ begin
     unattendedsetup := '/S';
     silentuninstall := '/S';
     unattendeduninstall := '/S';
-    uninstall_waitforprocess := 'Au_.exe';
+    uninstall_waitforprocess := '/WaitForProcessEnding "Au_.exe" /TimeOutSeconds 20';
     uninstallProg := 'uninstall.exe';
     patterns.Add('Nullsoft.NSIS.exehead');
     patterns.Add('nullsoft install system');
@@ -864,7 +901,7 @@ begin
     uib_exitcode_function := 'isInstallshieldExitcodeFatal';
     detected := @detectedbypatternwithor;
   end;
-    // InstallShieldMSI
+  // InstallShieldMSI
   with installerArray[integer(stInstallShieldMSI)] do
   begin
     description :=
@@ -907,7 +944,7 @@ begin
     link :=
       'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
     comment := '';
-    uib_exitcode_function := 'isInstallshieldExitcodeFatal';
+    uib_exitcode_function := 'isMsiExitcodeFatal';
     detected := @detectedbypatternwithor;
   end;
 
@@ -924,7 +961,7 @@ begin
     patterns.Add('7-Zip Installer');
     link := 'https://www.7-zip.org/faq.html';
     comment := '';
-    //uib_exitcode_function := 'isInstallshieldExitcodeFatal';
+    uib_exitcode_function := 'isMsExitcodeFatal_short';
     detected := @detectedbypatternwithor;
   end;
   // st7zipsfx
@@ -940,7 +977,7 @@ begin
     patterns.Add('7zipsfx');
     link := 'https://sourceforge.net/p/s-zipsfxbuilder/code/ci/master/tree/7zSD_EN.chm';
     comment := '';
-    //uib_exitcode_function := 'isInstallshieldExitcodeFatal';
+    uib_exitcode_function := 'isMsExitcodeFatal_short';
     detected := @detectedbypatternwithor;
   end;
 

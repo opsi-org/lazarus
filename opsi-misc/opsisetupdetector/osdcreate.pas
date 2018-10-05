@@ -73,7 +73,7 @@ end;
   begin
     patchlist.Clear;
     str := '';
-    patchlist.add('#@productId*#='+inttostr(aktProduct.produktpropties.productId);
+    patchlist.add('#@productId*#='+aktProduct.produktpropties.productId);
     for i := 0 to myconfiguration.import_libraries.Count-1 do
       str := str + 'importlib "'+myconfiguration.import_libraries[i]+'"'+LineEnding;
     patchlist.add('#@importLibs*#='+str);
@@ -87,10 +87,13 @@ end;
     patchlist.add('#@installCommandLine1*#='+aktProduct.SetupFiles[0].installCommandLine);
     patchlist.add('#@postInstallLines1*#='+myconfiguration.postInstallLines.Text);
     patchlist.add('#@isExitcodeFatalFunction1*#='+aktProduct.SetupFiles[0].isExitcodeFatalFunction);
+    str := aktProduct.SetupFiles[0].uninstallCheck.Text;
+    patchlist.add('#@uninstallCheckLines1*#='+str);
     str :=myconfiguration.preUninstallLines.Text;
     patchlist.add('#@preUninstallLines1*#='+str);
     patchlist.add('#@uninstallCommandLine1*#='+aktProduct.SetupFiles[0].uninstallCommandLine);
     patchlist.add('#@uninstallProg1*#='+aktProduct.SetupFiles[0].uninstallProg);
+    patchlist.add('#@uninstallWaitForProc1*#='+aktProduct.SetupFiles[0].uninstall_waitforprocess);
     patchlist.add('#@postUninstallLines1*#='+myconfiguration.postUninstallLines.Text);
     //setup 2
     patchlist.add('#@InstallDir2*#='+aktProduct.SetupFiles[1].installDirectory);
@@ -100,12 +103,14 @@ end;
     patchlist.add('#@installCommandLine2*#='+aktProduct.SetupFiles[1].installCommandLine);
     patchlist.add('#@postInstallLines2*#='+myconfiguration.postInstallLines.Text);
     patchlist.add('#@isExitcodeFatalFunction2*#='+aktProduct.SetupFiles[1].isExitcodeFatalFunction);
+    str := aktProduct.SetupFiles[1].uninstallCheck.Text;
+    patchlist.add('#@uninstallCheckLines2*#='+str);
     str :=myconfiguration.preUninstallLines.Text;
     patchlist.add('#@preUninstallLines2*#='+str);
     patchlist.add('#@uninstallCommandLine2*#='+aktProduct.SetupFiles[1].uninstallCommandLine);
     patchlist.add('#@uninstallProg2*#='+aktProduct.SetupFiles[1].uninstallProg);
+    patchlist.add('#@uninstallWaitForProc2*#='+aktProduct.SetupFiles[1].uninstall_waitforprocess);
     patchlist.add('#@postUninstallLines2*#='+myconfiguration.postUninstallLines.Text);
-
   end;
 
   function createClientFiles : boolean;
@@ -132,6 +137,14 @@ end;
       copyfile(aktProduct.SetupFiles[0].setupFullFileName,
                 clientpath+PathDelim+aktProduct.SetupFiles[0].setupFileName,
                 [cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime], true);
+      //osd-lib.opsiscript
+      infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+'osd-lib.opsiscript';
+      outfilename := clientpath+PathDelim+'osd-lib.opsiscript';
+      copyfile(infilename,outfilename,[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime], true);
+      //product png
+      infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+'template.png';
+      outfilename := clientpath+PathDelim+aktProduct.produktpropties.productId+'.png';
+      copyfile(infilename,outfilename,[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime], true);
 
       FreeAndNil(patchlist);
       result := true;;

@@ -11,17 +11,23 @@ ScriptErrorMessages = false
 DefVar $ProductId$
 DefVar $InstallDir$
 DefVar $InstallDir1$
+DefVar $InstallDir2$
 DefVar $MinimumSpace$
 DefVar $ExitCode$
 DefVar $ErrorString$
 DefVar $LicenseRequired$
 DefVar $LicenseKey$
 DefVar $LicensePool$
-DefVar $MsiId$
+DefVar $MsiId1$
+DefVar $MsiId2$
 DefVar $LogDir$
 DefVar $OS$
 DefVar $oldProgFound$
+DefVar $arch$
+DefVar $mode$
 
+Set $arch$ = GetSystemType
+set $mode$ = GetProductProperty("install_architecture","system specific")
 Set $LogDir$ = "%opsiLogDir%"
 
 ; import complete file !
@@ -34,6 +40,7 @@ importlib "%scriptpath%\osd-lib.opsiscript"
 Set $ProductId$       = "#@productId*#"
 ; the path where we find the product after the installation
 Set $InstallDir1$      = "#@InstallDir1*#"
+Set $InstallDir2$      = "#@InstallDir2*#"
 Set $LicenseRequired$ = "#@LicenseRequired*#"
 Set $LicensePool$     = "p_" + $ProductId$
 Set $MsiId$           = "#@MsiId1*#"
@@ -68,25 +75,55 @@ if $LicenseRequired$ = "true"
    set $LicenseKey$ = get_licensekey_byPool($LicensePool$)
 endif
 
-comment "Start Pre Install hook (may be empty):"
-#@preInstallLines1*#
+if (($arch$ = "x86 System") and ($mode$ = "system specific")) or ($arch$ = "both") or ($arch$ = "32 only")
+   comment "Start Pre Install hook (may be empty):"
+   #@preInstallLines1*#
+   
+   comment "Start setup program"
+   ChangeDirectory "%SCRIPTPATH%"
+   ;----------------------------------------------
+   Winbatch_install_1
+   ;----------------------------------------------
+   sub_check_exitcode_1
+   
+   comment "Start Post Install hook (may be empty):"
+   #@postInstallLines1*#
+endif
 
-comment "Start setup program"
-ChangeDirectory "%SCRIPTPATH%"
-;----------------------------------------------
-Winbatch_install_1
-;----------------------------------------------
-Sub_check_exitcode
-
-comment "Start Post Install hook (may be empty):"
-#@postInstallLines1*#
+if ($arch$ = "64 Bit System") and (($mode$ = "system specific") or ($mode$ = "both") or ($mode$ = "64 only"))
+   comment "Start Pre Install hook (may be empty):"
+   #@preInstallLines2*#
+   
+   comment "Start setup program"
+   ChangeDirectory "%SCRIPTPATH%"
+   ;----------------------------------------------
+   Winbatch_install_2
+   ;----------------------------------------------
+   sub_check_exitcode_2
+   
+   comment "Start Post Install hook (may be empty):"
+   #@postInstallLines2*#
+endif
 
 [Winbatch_install_1]
 #@installCommandLine1*#
 
-[sub_check_exitcode]
+[Winbatch_install_2]
+#@installCommandLine2*#
+
+
+[sub_check_exitcode_1]
 set $ExitCode$ = getlastexitcode
 if stringtobool(#@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ ))
+   LogError $ErrorString$
+   isfatalerror $ErrorString$
+else
+   Comment $ErrorString$
+endif
+
+[sub_check_exitcode_2]
+set $ExitCode$ = getlastexitcode
+if stringtobool(#@isExitcodeFatalFunction2*#($exitcode$, "true", $ErrorString$ ))
    LogError $ErrorString$
    isfatalerror $ErrorString$
 else

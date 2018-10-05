@@ -12,17 +12,23 @@ ScriptErrorMessages = false
 DefVar $ProductId$
 DefVar $InstallDir$
 DefVar $InstallDir1$
+DefVar $InstallDir2$
 DefVar $MinimumSpace$
 DefVar $ExitCode$
 DefVar $ErrorString$
 DefVar $LicenseRequired$
 DefVar $LicenseKey$
 DefVar $LicensePool$
-DefVar $MsiId$
+DefVar $MsiId1$
+DefVar $MsiId2$
 DefVar $LogDir$
 DefVar $OS$
 DefVar $oldProgFound$
+DefVar $arch$
+DefVar $mode$
 
+Set $arch$ = GetSystemType
+set $mode$ = GetProductProperty("install_architecture","system specific")
 Set $LogDir$ = "%opsiLogDir%"
 
 ; import complete file !

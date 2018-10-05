@@ -1109,8 +1109,9 @@ begin
   //(*
   TabSheetAnalyze.ImageIndex:=1;
   TabSheetSetup1.ImageIndex:=2;
-  TabSheetSetup1.ImageIndex:=2;
+  TabSheetSetup2.ImageIndex:=2;
   TabSheetProduct.ImageIndex:=3;
+  TabSheetCreate.ImageIndex:=4;
   //*)
 end;
 
