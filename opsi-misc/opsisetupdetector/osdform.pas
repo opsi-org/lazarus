@@ -44,38 +44,8 @@ uses
   osdcreate,
   fpjsonrtti;
 
-const
-  sMBoxHeader = 'opsi setup detector';
-  sHelpHeader = 'opsi setup detector Help';
 
-  sAskCreatePacket = 'Create packet %0:s?';
 
-  sErrFldInstDirEmpty = 'Error: Field Install Directory is empty!';
-  sErrFldMsiProductCodeEmpty = 'Error: Field MSI Product Code is empty!';
-  sErrFldOpsiProductIdEmpty = 'Error: Field opsi Packet ID is empty!';
-  sErrFldOpsiProductVersionEmpty = 'Error: Field Product Version is empty!';
-  sErrFldSetupEmpty = 'Error: No setup file selected!';
-  sErrMSINotFound = 'Error: MSI file does not exist!';
-  sErrMSTNotFound =
-    'Error: MST file does not exist in the MSI-directory!';
-  sErrOpsiPackageBuilderStart = 'Error invoking opsi package builder';
-  sErrOpsiPackageBuilderErrCode =
-    'Error invoking OPSI Package Builder (error code=%0:d). Please remove quiet option to check for further information.';
-  sErrPacketBaseDirNotFound = 'Error: Packet BaseDir does not exist!';
-  sErrProductVersionInvalid = 'Error: for Product Version only numbers allowed !';
-  sErrSelectInstallType =
-    'First select setup type tab (MSI, Inno Setup ...) and fill out form';
-  sErrSetupFileNotFound = 'Error: Setup file does not exist!';
-  sErrPacketDirExists = 'Error: opsi packet folder %s already exists!';
-  sErrExtractMSIfailed = 'Error: extracting MSI from %s failed!';
-  sInfoFinished = 'finished.';
-
-  sWarnInstDirEmptyNoDeinstall =
-    'Warning: Install Directory is empty, deinstall script cannot be patched!';
-
-  sHelpFile = 'languages\Help.de.html';
-
-  sLogfileInfo = 'Logfile created: %s';
 
 type
 
@@ -89,9 +59,9 @@ type
     BitBtnRecheckWorkbench: TBitBtn;
     BtAnalyzeNextStep: TBitBtn;
     BtCreateProduct: TBitBtn;
+    BtProductNextStep: TBitBtn;
     BtSetup1NextStep: TBitBtn;
     BtSetup2NextStep: TBitBtn;
-    BtProductNextStep: TBitBtn;
     BtSingleAnalyzeAndCreate: TBitBtn;
     BitBtnOpenFile: TBitBtn;
     BitBtnDefault: TBitBtn;
@@ -116,8 +86,12 @@ type
     FlowPanel14: TFlowPanel;
     FlowPanel15: TFlowPanel;
     FlowPanel16: TFlowPanel;
+    FlowPanel17: TFlowPanel;
+    FlowPanel18: TFlowPanel;
+    FlowPanel19: TFlowPanel;
     FlowPanel2: TFlowPanel;
     FlowPanel3: TFlowPanel;
+    FlowPanel4: TFlowPanel;
     FlowPanel6: TFlowPanel;
     FlowPanel8: TFlowPanel;
     FlowPanel9: TFlowPanel;
@@ -125,13 +99,17 @@ type
     FlowPanelMST1: TFlowPanel;
     FlowPanelSetup32: TFlowPanel;
     FlowPanelMST: TFlowPanel;
-    FlowPanel4: TFlowPanel;
     FlowPanel5: TFlowPanel;
     FlowPanelMsiId: TFlowPanel;
     FlowPanel7: TFlowPanel;
     FlowPanelSetup33: TFlowPanel;
     FileHelp: TMenuItem;
     FlowPanelSetup34: TFlowPanel;
+    FlowPanelSetup35: TFlowPanel;
+    FlowPanelSetup36: TFlowPanel;
+    FlowPanelSetup37: TFlowPanel;
+    FlowPanelSetup38: TFlowPanel;
+    FlowPanelSetup39: TFlowPanel;
     GroupBox2: TGroupBox;
     ImageList1: TImageList;
     Label57: TLabel;
@@ -153,17 +131,19 @@ type
     Label73: TLabel;
     Label74: TLabel;
     Label75: TLabel;
-    Label76: TLabel;
     Label77: TLabel;
     Label50: TLabel;
-    Label51: TLabel;
     Label52: TLabel;
     Label53: TLabel;
     Label54: TLabel;
     Label55: TLabel;
-    Label56: TLabel;
     Label78: TLabel;
     Label79: TLabel;
+    Label80: TLabel;
+    Label81: TLabel;
+    Label82: TLabel;
+    Label83: TLabel;
+    Label84: TLabel;
     LabelWorkbenchOK: TLabel;
     LabelWorkbenchNotOK: TLabel;
     MemoDefault: TMemo;
@@ -208,10 +188,6 @@ type
     TIEditInstallDir2: TTIEdit;
     TIEditMsiId2: TTIEdit;
     TIEditMstFile2: TTIEdit;
-    TIEditProductIdS1: TTIEdit;
-    TIEditProductIdS2: TTIEdit;
-    TIEditProductNameS1: TTIEdit;
-    TIEditProductNameS2: TTIEdit;
     TIEditProdVersion1: TTIEdit;
     TIEditMsiId1: TTIEdit;
     TIEditProdVersion2: TTIEdit;
@@ -219,6 +195,11 @@ type
     TIEditProdID: TTIEdit;
     TIEditProdName: TTIEdit;
     TIEditRequiredSizeMB2: TTIEdit;
+    TIEditSetup2Command: TTIEdit;
+    TIEditSetup1UnCommand: TTIEdit;
+    TIEditSetup2UnCommand: TTIEdit;
+    TIEditSetup1UnProgram: TTIEdit;
+    TIEditSetup2UnProgram: TTIEdit;
     TIEditSetupfile2: TTIEdit;
     TIEditSetup1Command: TTIEdit;
     TIEditworkbenchpath: TTIEdit;
@@ -329,6 +310,37 @@ var
 //myobject : TMyClass;
 
 
+resourcestring
+  sMBoxHeader = 'opsi setup detector';
+  sHelpHeader = 'opsi setup detector Help';
+// dialogs
+  sAskCreatePacket = 'Create packet %0:s?';
+  sHelpFile = 'languages\Help.de.html';
+  sLogfileInfo = 'Logfile created: %s';
+
+ // Error messages
+  sErrFldInstDirEmpty = 'Error: Field Install Directory is empty!';
+  sErrFldMsiProductCodeEmpty = 'Error: Field MSI Product Code is empty!';
+  sErrFldOpsiProductIdEmpty = 'Error: Field opsi Packet ID is empty!';
+  sErrFldOpsiProductVersionEmpty = 'Error: Field Product Version is empty!';
+  sErrFldSetupEmpty = 'Error: No setup file selected!';
+  sErrMSINotFound = 'Error: MSI file does not exist!';
+  sErrMSTNotFound =
+    'Error: MST file does not exist in the MSI-directory!';
+  sErrOpsiPackageBuilderStart = 'Error invoking opsi package builder';
+  sErrOpsiPackageBuilderErrCode =
+    'Error invoking OPSI Package Builder (error code=%0:d). Please remove quiet option to check for further information.';
+  sErrPacketBaseDirNotFound = 'Error: Packet BaseDir does not exist!';
+  sErrProductVersionInvalid = 'Error: for Product Version only numbers allowed !';
+  sErrSelectInstallType =
+    'First select setup type tab (MSI, Inno Setup ...) and fill out form';
+  sErrSetupFileNotFound = 'Error: Setup file does not exist!';
+  sErrPacketDirExists = 'Error: opsi packet folder %s already exists!';
+  sErrExtractMSIfailed = 'Error: extracting MSI from %s failed!';
+  sInfoFinished = 'finished.';
+  sWarnInstDirEmptyNoDeinstall =
+    'Warning: Install Directory is empty, deinstall script cannot be patched!';
+
 
 implementation
 
@@ -401,10 +413,14 @@ begin
       TIEditInstallDir1.Link.SetObjectAndProperty(SetupFiles[0], 'installDirectory');
       TIEditInstallDir2.Link.SetObjectAndProperty(SetupFiles[1], 'installDirectory');
       TIEditSetup1Command.Link.SetObjectAndProperty(SetupFiles[0], 'installCommandLine');
+      TIEditSetup1UnCommand.Link.SetObjectAndProperty(SetupFiles[0], 'uninstallCommandLine');
+      TIEditSetup1UnProgram.Link.SetObjectAndProperty(SetupFiles[0], 'uninstallProg');
+      (*
       TIEditProductIdS1.Link.SetObjectAndProperty(produktpropties, 'productId');
       TIEditProductIdS2.Link.SetObjectAndProperty(produktpropties, 'productId');
       TIEditProductNameS1.Link.SetObjectAndProperty(produktpropties, 'productName');
       TIEditProductNameS2.Link.SetObjectAndProperty(produktpropties, 'productName');
+      *)
       // product
       TIEditProdVersion3.Link.SetObjectAndProperty(produktpropties, 'productVersion');
       TISpinEditPackageVers.Link.SetObjectAndProperty(produktpropties, 'packageVersion');

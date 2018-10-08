@@ -136,7 +136,92 @@ type
     destructor Destroy;
   end;
 
-  TProductProperies = class(TPersistent)
+(*
+Dependency for Action
+Für welche Aktion des Produktes, welches Sie gerade erstellen, soll die Abhängigkeit gelten (setup, deinstall . . . ).
+Required product id
+Productid (Bezeichner) des Produkts zu dem eine Abhängigkeit besteht.
+Required action
+Sie können entweder eine Aktion anfordern oder (siehe unten) einen Status. Aktionen können z.B. sein : setup,
+uninstall, update . . .
+Required installation status
+Status den das Produkt, zu dem eine Abhängigkeit besteht, haben soll (typischerweise installed). Liegt ein
+anderer Status vor, so wird das Produkt auf setup gestellt.
+Requirement type
+Installationsreihenfolge. Wenn das Produkt, zu dem eine Abhängigkeit besteht, installiert sein muss bevor mit
+der Installation des aktuellen Produkts begonnen werden kann, dann ist dies before. Muss es nach dem aktuellen
+Produkt installiert werden so ist dies after. Ist die Reihenfolge egal so muss hier nichts eingetragen werden.
+
+*)
+
+TPDtype = ('before','after','');
+
+TPDependencies = class(TPersistent)
+  private
+    FAction: String;
+    FRequProductId: string;
+    FRequAction: string;
+    FRequState: string;
+    FRequType: TPDtype;
+  published
+    property FRequType: TPDtype read FRequType write FRequType;
+    property action: string read FAction;
+    property requProductId: string read FRequProductId write FRequProductId;
+    property requState: string read FRequState write FRequState;
+  public
+    { public declarations }
+    constructor Create;
+    //destructor Destroy;
+  end;
+
+(*
+  [ProductProperty]
+type: bool
+name: force_newest_ubuntu
+description: Update even to not published versions
+default: False
+
+[ProductProperty]
+type: unicode
+name: update_from_to
+multivalue: False
+editable: False
+description: Which method to use
+values: ["jessie_stretch", "trusty_xenial", "wheezy_jessie", "xenial_bionic"]
+default: ["xenial_bionic"]
+*)
+
+TPPtype = (bool, unicode);
+
+TPProperties = class(TPersistent)
+  private
+    Ftype: TPPtype;
+    Fname: string;
+    Fmultivalue: boolean;
+    Feditable: boolean;
+    Fdescription: string;
+    FStrvalues: Tstrings;
+    FStrvalues: Tstrings;
+    FBoolDefault: boolean;
+    procedure SetValueLines(const AValue: TStrings);
+    procedure SetDefaultLines(const AValue: TStrings);
+  published
+    property ptype: TPPtype read Ftype write Ftype;
+    property name: string read Fname write Fname;
+    property description: string read Fdescription write Fdescription;
+    property multivalue: boolean read Fmultivalue write Fmultivalue;
+    property editable: boolean read Feditable write Feditable;
+    property Strdefault: TStrings read Fdefault write SetValueLines;
+    property Strvalues: TStrings read FStrvalues write FStrvalues;
+    property boolDefault: boolean read FBoolDefault write FBoolDefault;
+  public
+    { public declarations }
+    constructor Create;
+    destructor Destroy;
+  end;
+
+
+  TProductData = class(TPersistent)
   private
     FarchitectureMode: TArchitectureMode;
     Fcomment: string;
@@ -176,9 +261,9 @@ type
     //destructor Destroy;
   end;
 
-  TProductData = record
+  TopsiProduct = record
     SetupFiles: array[0..1] of TSetupFile;
-    produktpropties: TProductProperies;
+    productdata: TProductData;
   end;
 
   TConfiguration = class(TPersistent)
@@ -374,7 +459,47 @@ begin
   Funinstall_waitforprocess := '';
 end;
 
-// TProductProperies **********************************
+// TPProperties **********************************
+
+constructor TPProperties.Create;
+begin
+  inherited;
+  FStrvalues := TStringList.Create;
+  FStrvalues := TStringList.Create;
+  Ftype := bool;
+  Fmultivalue := false;
+  Feditable := false;
+  FBoolDefault := false;
+end;
+
+destructor TPProperties.Destroy;
+begin
+  FreeAndNil(FStrvalues);
+  FreeAndNil(FStrdefault);
+  inherited;
+end;
+
+procedure TPProperties.SetLibraryLines(const AValue: TStrings);
+begin
+  Fimport_libraries.Assign(AValue);
+end;
+
+procedure TPProperties.SetPreInstallLines(const AValue: TStrings);
+begin
+  FpreInstallLines.Assign(AValue);
+end;
+
+
+// TPDependencies **********************************
+constructor TPProperties.Create;
+begin
+  inherited;
+  FAction := 'setup';
+  FRequType := '';
+end;
+
+// TProductData **********************************
+// TopsiProduct **********************************
 
 // TConfiguration ************************************
 

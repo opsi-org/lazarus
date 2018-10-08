@@ -1,11 +1,12 @@
 object resultForm1: TresultForm1
-  Left = 535
-  Height = 651
-  Top = 191
-  Width = 1058
+  Left = 308
+  Height = 734
+  Top = 255
+  Width = 1521
   Caption = 'opsi Setup Detector'
-  ClientHeight = 631
-  ClientWidth = 1058
+  ClientHeight = 696
+  ClientWidth = 1521
+  DesignTimePPI = 144
   Menu = MainMenu1
   OnClose = FormClose
   OnCreate = FormCreate
@@ -14,28 +15,30 @@ object resultForm1: TresultForm1
   LCLVersion = '1.8.4.0'
   object Panel1: TPanel
     Left = 0
-    Height = 40
+    Height = 60
     Top = 0
-    Width = 1058
+    Width = 1521
     Align = alTop
     Alignment = taLeftJustify
     BorderStyle = bsSingle
-    ClientHeight = 36
-    ClientWidth = 1054
+    ClientHeight = 58
+    ClientWidth = 1519
+    ParentFont = False
     TabOrder = 0
     OnClick = Panel1Click
     object ToolBar1: TToolBar
       Left = 1
-      Height = 26
+      Height = 39
       Top = 1
-      Width = 1052
+      Width = 1517
       Caption = 'ToolBar1'
+      ParentFont = False
       TabOrder = 0
       object SBtnOpen: TSpeedButton
         Left = 1
-        Height = 22
+        Height = 33
         Top = 2
-        Width = 88
+        Width = 132
         Caption = 'open'
         Glyph.Data = {
           36040000424D3604000000000000360000002800000010000000100000000100
@@ -74,12 +77,13 @@ object resultForm1: TresultForm1
           8000800080008000800080008000800080008000800080008000
         }
         OnClick = SBtnOpenClick
+        ParentFont = False
       end
       object SBtnExit: TSpeedButton
-        Left = 89
-        Height = 22
+        Left = 133
+        Height = 33
         Top = 2
-        Width = 95
+        Width = 142
         Caption = 'Exit'
         Glyph.Data = {
           36040000424D3604000000000000360000002800000010000000100000000100
@@ -118,39 +122,43 @@ object resultForm1: TresultForm1
           5CFF626564FF666968FF676A68FF636765FF6B6E6D8CFFFFFF04
         }
         OnClick = SBtnExitClick
+        ParentFont = False
       end
     end
   end
   object Panel3: TPanel
     Left = 0
-    Height = 568
-    Top = 40
-    Width = 1058
+    Height = 606
+    Top = 60
+    Width = 1521
     Align = alClient
     Caption = 'Panel3'
-    ClientHeight = 568
-    ClientWidth = 1058
+    ClientHeight = 606
+    ClientWidth = 1521
+    ParentFont = False
     TabOrder = 1
     object PageControl1: TPageControl
       Left = 1
-      Height = 566
+      Height = 604
       Top = 1
-      Width = 1056
-      ActivePage = TabSheetAnalyze
+      Width = 1519
+      ActivePage = TabSheetProduct
       Align = alClient
       Images = ImageList1
-      TabIndex = 1
+      ParentFont = False
+      TabIndex = 4
       TabOrder = 0
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
         Caption = 'Start'
-        ClientHeight = 538
-        ClientWidth = 1048
+        ClientHeight = 564
+        ClientWidth = 1509
+        ParentFont = False
         object FlowPanel3: TFlowPanel
           Left = 0
-          Height = 538
+          Height = 850
           Top = 0
-          Width = 1048
+          Width = 1509
           Align = alClient
           ControlList = <          
             item
@@ -175,19 +183,20 @@ object resultForm1: TresultForm1
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
+          ParentFont = False
           TabOrder = 0
           object BtSingleAnalyzeAndCreate: TBitBtn
-            Left = 31
-            Height = 68
+            Left = 46
+            Height = 78
             Hint = 'Analyze a single existing Setupfile '#10'and create an opsi Product'
-            Top = 31
-            Width = 419
+            Top = 46
+            Width = 610
             Anchors = []
             AutoSize = True
-            BorderSpacing.Around = 30
-            BorderSpacing.InnerBorder = 5
+            BorderSpacing.Around = 45
+            BorderSpacing.InnerBorder = 8
             Caption = 'Analyze single File and Create Opsi Product'
-            Font.Height = -17
+            Font.Height = -26
             Glyph.Data = {
               36240000424D3624000000000000360000002800000030000000300000000100
               2000000000000024000064000000640000000000000000000000000000000000
@@ -485,17 +494,17 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object BtATwonalyzeAndCreate: TBitBtn
-            Left = 510
-            Height = 68
+            Left = 46
+            Height = 78
             Hint = 'Analyze a single existing Setupfile '#10'and create an opsi Product'
-            Top = 31
-            Width = 410
+            Top = 214
+            Width = 778
             Anchors = []
             AutoSize = True
-            BorderSpacing.Around = 30
-            BorderSpacing.InnerBorder = 5
-            Caption = 'Analyze two Files and Create Opsi Product'
-            Font.Height = -17
+            BorderSpacing.Around = 45
+            BorderSpacing.InnerBorder = 8
+            Caption = 'Analyze two Files (32 and 64 Bit) and Create Opsi Product'
+            Font.Height = -26
             Glyph.Data = {
               36240000424D3624000000000000360000002800000030000000300000000100
               2000000000000024000064000000640000000000000000000000000000000000
@@ -793,17 +802,17 @@ object resultForm1: TresultForm1
             TabOrder = 1
           end
           object BtAnalyzeOnly: TBitBtn
-            Left = 31
-            Height = 68
+            Left = 914
+            Height = 78
             Hint = 'Analyze a single existing Setupfile '
-            Top = 159
-            Width = 269
+            Top = 214
+            Width = 373
             Anchors = []
             AutoSize = True
-            BorderSpacing.Around = 30
-            BorderSpacing.InnerBorder = 5
+            BorderSpacing.Around = 45
+            BorderSpacing.InnerBorder = 8
             Caption = 'Only analyze single File '
-            Font.Height = -17
+            Font.Height = -26
             Glyph.Data = {
               36240000424D3624000000000000360000002800000030000000300000000100
               2000000000000024000064000000640000000000000000000000000000000000
@@ -1101,17 +1110,17 @@ object resultForm1: TresultForm1
             TabOrder = 2
           end
           object BtCreateEmptyTemplate: TBitBtn
-            Left = 360
-            Height = 68
+            Left = 46
+            Height = 78
             Hint = 'Create a empty '#10'opsi Product Directory Structure'
-            Top = 159
-            Width = 316
+            Top = 382
+            Width = 442
             Anchors = []
             AutoSize = True
-            BorderSpacing.Around = 30
-            BorderSpacing.InnerBorder = 5
+            BorderSpacing.Around = 45
+            BorderSpacing.InnerBorder = 8
             Caption = 'Create an empty opsi product'
-            Font.Height = -17
+            Font.Height = -26
             Glyph.Data = {
               36240000424D3624000000000000360000002800000030000000300000000100
               2000000000000024000064000000640000000000000000000000000000000000
@@ -1412,49 +1421,53 @@ object resultForm1: TresultForm1
       end
       object TabSheetAnalyze: TTabSheet
         Caption = 'Analyze'
-        ClientHeight = 538
-        ClientWidth = 1048
+        ClientHeight = 564
+        ClientWidth = 1509
+        ParentFont = False
         object Memo1: TMemo
           Left = 0
-          Height = 424
+          Height = 635
           Top = 0
-          Width = 1048
+          Width = 1575
           Align = alClient
+          ParentFont = False
           ScrollBars = ssAutoBoth
           TabOrder = 0
         end
         object Panel2: TPanel
           Left = 0
-          Height = 114
-          Top = 424
-          Width = 1048
+          Height = 171
+          Top = 635
+          Width = 1575
           Align = alBottom
           BorderStyle = bsSingle
-          ClientHeight = 110
-          ClientWidth = 1044
+          ClientHeight = 169
+          ClientWidth = 1573
+          ParentFont = False
           TabOrder = 1
           object CheckBox1: TCheckBox
-            Left = 15
-            Height = 19
-            Top = 23
-            Width = 205
+            Left = 22
+            Height = 30
+            Top = 34
+            Width = 356
             Caption = 'Register as Explorer Context Menue'
             Checked = True
+            ParentFont = False
             State = cbChecked
             TabOrder = 0
           end
           object BtAnalyzeNextStep: TBitBtn
-            Left = 828
-            Height = 52
+            Left = 1267
+            Height = 66
             Hint = 'Go to the next Step'
-            Top = 25
-            Width = 147
+            Top = 45
+            Width = 182
             Anchors = []
             AutoSize = True
-            BorderSpacing.Around = 30
-            BorderSpacing.InnerBorder = 5
+            BorderSpacing.Around = 45
+            BorderSpacing.InnerBorder = 8
             Caption = 'Next Step'
-            Font.Height = -17
+            Font.Height = -26
             Glyph.Data = {
               36100000424D3610000000000000360000002800000020000000200000000100
               2000000000000010000064000000640000000000000000000000000000000000
@@ -1596,22 +1609,24 @@ object resultForm1: TresultForm1
       end
       object TabSheetSetup1: TTabSheet
         Caption = 'Setup1'
-        ClientHeight = 538
-        ClientWidth = 1048
+        ClientHeight = 564
+        ClientWidth = 1509
+        ParentFont = False
         object PanelDefault: TPanel
           Left = 0
-          Height = 538
+          Height = 729
           Top = 0
-          Width = 1048
+          Width = 1509
           Align = alClient
-          ClientHeight = 538
-          ClientWidth = 1048
+          ClientHeight = 729
+          ClientWidth = 1509
+          ParentFont = False
           TabOrder = 0
           object FlowPanel1: TFlowPanel
             Left = 1
-            Height = 49
+            Height = 74
             Top = 1
-            Width = 1046
+            Width = 1507
             Align = alTop
             AutoWrap = False
             BorderWidth = 3
@@ -1638,65 +1653,68 @@ object resultForm1: TresultForm1
               end>
             FlowLayout = tlTop
             FlowStyle = fsLeftRightTopBottom
+            ParentFont = False
             TabOrder = 0
             object Label62: TLabel
-              Left = 18
-              Height = 21
-              Top = 8
-              Width = 142
+              Left = 25
+              Height = 34
+              Top = 10
+              Width = 239
               Anchors = []
-              BorderSpacing.Left = 10
-              BorderSpacing.Around = 4
+              BorderSpacing.Left = 15
+              BorderSpacing.Around = 6
               Caption = 'Detected Setup type:'
-              Font.Height = -16
+              Font.Height = -24
               ParentColor = False
               ParentFont = False
             end
             object Label63: TLabel
-              Left = 302
-              Height = 21
-              Top = 8
-              Width = 128
+              Left = 477
+              Height = 34
+              Top = 10
+              Width = 213
               Anchors = []
-              BorderSpacing.Left = 20
-              BorderSpacing.Around = 4
+              BorderSpacing.Left = 30
+              BorderSpacing.Around = 6
               Caption = 'Architecture Mode'
-              Font.Height = -16
+              Font.Height = -24
               ParentColor = False
               ParentFont = False
             end
             object TIComboBoxInstaller1: TTIComboBox
-              Left = 176
-              Height = 23
-              Top = 6
-              Width = 100
+              Left = 288
+              Height = 46
+              Top = 7
+              Width = 150
               Anchors = []
-              BorderSpacing.Left = 10
-              BorderSpacing.Around = 2
-              BorderSpacing.InnerBorder = 2
+              BorderSpacing.Left = 15
+              BorderSpacing.Around = 3
+              BorderSpacing.InnerBorder = 3
               HistoryCaseSensitive = False
               MaxHistoryCount = 0
+              ParentFont = False
               TabOrder = 0
             end
             object TIComboBoxArch1: TTIComboBox
-              Left = 446
-              Height = 23
-              Top = 6
-              Width = 100
+              Left = 714
+              Height = 46
+              Top = 7
+              Width = 150
               Anchors = []
-              BorderSpacing.Left = 10
-              BorderSpacing.Around = 2
-              BorderSpacing.InnerBorder = 2
+              BorderSpacing.Left = 15
+              BorderSpacing.Around = 3
+              BorderSpacing.InnerBorder = 3
               HistoryCaseSensitive = False
               MaxHistoryCount = 0
+              ParentFont = False
               TabOrder = 1
             end
           end
           object FlowPanelSetup32: TFlowPanel
             Left = 1
-            Height = 41
-            Top = 50
-            Width = 1046
+            Height = 62
+            Top = 75
+            Width = 1507
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -1719,41 +1737,43 @@ object resultForm1: TresultForm1
               end>
             FlowLayout = tlTop
             FlowStyle = fsLeftRightTopBottom
+            ParentFont = False
             TabOrder = 1
             object Label50: TLabel
-              Left = 18
-              Height = 21
-              Top = 8
-              Width = 68
+              Left = 25
+              Height = 34
+              Top = 10
+              Width = 110
               Anchors = []
-              BorderSpacing.Left = 10
-              BorderSpacing.Around = 4
+              BorderSpacing.Left = 15
+              BorderSpacing.Around = 6
               Caption = 'Setup File'
-              Font.Height = -16
+              Font.Height = -24
               ParentColor = False
               ParentFont = False
             end
             object TIEditSetupfile1: TTIEdit
-              Left = 102
-              Height = 27
-              Top = 6
-              Width = 800
+              Left = 159
+              Height = 46
+              Top = 7
+              Width = 1200
               Anchors = []
-              BorderSpacing.Left = 10
-              BorderSpacing.Around = 2
-              BorderSpacing.InnerBorder = 2
-              Constraints.MinWidth = 800
+              BorderSpacing.Left = 15
+              BorderSpacing.Around = 3
+              BorderSpacing.InnerBorder = 3
+              Constraints.MinWidth = 1200
+              ParentFont = False
               TabOrder = 0
             end
             object BitBtnOpenFile: TBitBtn
-              Left = 907
-              Height = 30
+              Left = 1366
+              Height = 48
               Top = 4
-              Width = 133
+              Width = 183
               Anchors = []
               AutoSize = True
-              BorderSpacing.Left = 3
-              BorderSpacing.InnerBorder = 2
+              BorderSpacing.Left = 4
+              BorderSpacing.InnerBorder = 3
               Caption = 'Open Setup File'
               Glyph.Data = {
                 36040000424D3604000000000000360000002800000010000000100000000100
@@ -1791,14 +1811,15 @@ object resultForm1: TresultForm1
                 0000000000000000000000000000000000008D9190FF8D918FFF8D918FFF8C90
                 8FFF8B8F8DFF898E8CFF888C8AFF878B89FF858988FF848887FF
               }
+              ParentFont = False
               TabOrder = 1
             end
           end
           object FlowPanelMST: TFlowPanel
             Left = 1
-            Height = 41
-            Top = 91
-            Width = 1046
+            Height = 62
+            Top = 137
+            Width = 1507
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -1827,40 +1848,42 @@ object resultForm1: TresultForm1
             Enabled = False
             FlowLayout = tlTop
             FlowStyle = fsLeftRightTopBottom
+            ParentFont = False
             TabOrder = 2
             object Label60: TLabel
-              Left = 18
-              Height = 21
-              Top = 8
-              Width = 67
+              Left = 25
+              Height = 34
+              Top = 10
+              Width = 104
               Anchors = []
-              BorderSpacing.Left = 10
-              BorderSpacing.Around = 4
+              BorderSpacing.Left = 15
+              BorderSpacing.Around = 6
               Caption = 'MST File  '
-              Font.Height = -16
+              Font.Height = -24
               ParentColor = False
               ParentFont = False
             end
             object CheckBoxUseMst: TCheckBox
-              Left = 1066
-              Height = 19
-              Top = 7
-              Width = 86
+              Left = 1579
+              Height = 30
+              Top = 8
+              Width = 138
               Anchors = []
-              BorderSpacing.Left = 30
-              BorderSpacing.Around = 3
+              BorderSpacing.Left = 45
+              BorderSpacing.Around = 4
               Caption = 'use MST File'
+              ParentFont = False
               TabOrder = 0
             end
             object BitBtnOpenMst1: TBitBtn
-              Left = 906
-              Height = 30
+              Left = 1360
+              Height = 48
               Top = 4
-              Width = 127
+              Width = 170
               Anchors = []
               AutoSize = True
-              BorderSpacing.Left = 3
-              BorderSpacing.InnerBorder = 2
+              BorderSpacing.Left = 4
+              BorderSpacing.InnerBorder = 3
               Caption = 'Open MST File'
               Glyph.Data = {
                 36040000424D3604000000000000360000002800000010000000100000000100
@@ -1898,110 +1921,28 @@ object resultForm1: TresultForm1
                 0000000000000000000000000000000000008D9190FF8D918FFF8D918FFF8C90
                 8FFF8B8F8DFF898E8CFF888C8AFF878B89FF858988FF848887FF
               }
+              ParentFont = False
               TabOrder = 1
             end
             object TIEditMstFile1: TTIEdit
-              Left = 101
-              Height = 27
-              Top = 6
-              Width = 800
+              Left = 153
+              Height = 46
+              Top = 7
+              Width = 1200
               Anchors = []
-              BorderSpacing.Left = 10
-              BorderSpacing.Around = 2
-              BorderSpacing.InnerBorder = 2
-              Constraints.MinWidth = 800
+              BorderSpacing.Left = 15
+              BorderSpacing.Around = 3
+              BorderSpacing.InnerBorder = 3
+              Constraints.MinWidth = 1200
+              ParentFont = False
               TabOrder = 2
-            end
-          end
-          object FlowPanel4: TFlowPanel
-            Left = 1
-            Height = 41
-            Top = 255
-            Width = 1046
-            Align = alTop
-            Alignment = taLeftJustify
-            AutoWrap = False
-            BorderWidth = 3
-            ControlList = <            
-              item
-                Control = Label56
-                WrapAfter = waAuto
-                Index = 0
-              end            
-              item
-                Control = TIEditProductIdS1
-                WrapAfter = waAuto
-                Index = 1
-              end            
-              item
-                Control = Label51
-                WrapAfter = waAuto
-                Index = 2
-              end            
-              item
-                Control = TIEditProductNameS1
-                WrapAfter = waAuto
-                Index = 3
-              end>
-            FlowLayout = tlTop
-            FlowStyle = fsLeftRightTopBottom
-            TabOrder = 3
-            object Label56: TLabel
-              Left = 18
-              Height = 21
-              Top = 8
-              Width = 106
-              Anchors = []
-              BorderSpacing.Left = 10
-              BorderSpacing.Around = 4
-              Caption = 'opsi Product ID'
-              Font.Height = -16
-              ParentColor = False
-              ParentFont = False
-            end
-            object Label51: TLabel
-              Left = 376
-              Height = 21
-              Top = 8
-              Width = 133
-              Anchors = []
-              BorderSpacing.Left = 30
-              BorderSpacing.Around = 4
-              Caption = 'opsi Product Name'
-              Font.Height = -16
-              ParentColor = False
-              ParentFont = False
-            end
-            object TIEditProductIdS1: TTIEdit
-              Left = 140
-              Height = 27
-              Top = 6
-              Width = 200
-              Anchors = []
-              BorderSpacing.Left = 10
-              BorderSpacing.Around = 2
-              BorderSpacing.InnerBorder = 2
-              Constraints.MinWidth = 200
-              TabOrder = 0
-            end
-            object TIEditProductNameS1: TTIEdit
-              Left = 525
-              Height = 27
-              Top = 6
-              Width = 400
-              Anchors = []
-              BorderSpacing.Left = 10
-              BorderSpacing.Around = 2
-              BorderSpacing.InnerBorder = 2
-              Constraints.MinWidth = 400
-              TabOrder = 1
             end
           end
           object FlowPanel5: TFlowPanel
             Left = 1
-            Height = 41
-            Top = 173
-            Width = 1046
+            Height = 62
+            Top = 261
+            Width = 1507
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -2019,38 +1960,40 @@ object resultForm1: TresultForm1
               end>
             FlowLayout = tlTop
             FlowStyle = fsLeftRightTopBottom
-            TabOrder = 4
+            ParentFont = False
+            TabOrder = 3
             object Label52: TLabel
-              Left = 18
-              Height = 21
-              Top = 8
-              Width = 110
+              Left = 25
+              Height = 34
+              Top = 10
+              Width = 193
               Anchors = []
-              BorderSpacing.Left = 10
-              BorderSpacing.Around = 4
-              Caption = 'Product Version'
-              Font.Height = -16
+              BorderSpacing.Left = 15
+              BorderSpacing.Around = 6
+              Caption = 'Software Version'
+              Font.Height = -24
               ParentColor = False
               ParentFont = False
             end
             object TIEditProdVersion1: TTIEdit
-              Left = 144
-              Height = 27
-              Top = 6
-              Width = 200
+              Left = 242
+              Height = 46
+              Top = 7
+              Width = 300
               Anchors = []
-              BorderSpacing.Left = 10
-              BorderSpacing.Around = 2
-              BorderSpacing.InnerBorder = 2
-              Constraints.MinWidth = 200
+              BorderSpacing.Left = 15
+              BorderSpacing.Around = 3
+              BorderSpacing.InnerBorder = 3
+              Constraints.MinWidth = 300
+              ParentFont = False
               TabOrder = 0
             end
           end
           object FlowPanelMsiId: TFlowPanel
             Left = 1
-            Height = 41
-            Top = 132
-            Width = 1046
+            Height = 62
+            Top = 199
+            Width = 1507
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -2069,38 +2012,40 @@ object resultForm1: TresultForm1
             Enabled = False
             FlowLayout = tlTop
             FlowStyle = fsLeftRightTopBottom
-            TabOrder = 5
+            ParentFont = False
+            TabOrder = 4
             object Label53: TLabel
-              Left = 18
-              Height = 21
-              Top = 8
-              Width = 66
+              Left = 25
+              Height = 34
+              Top = 10
+              Width = 105
               Anchors = []
-              BorderSpacing.Left = 10
-              BorderSpacing.Around = 4
+              BorderSpacing.Left = 15
+              BorderSpacing.Around = 6
               Caption = 'MsiId       '
-              Font.Height = -16
+              Font.Height = -24
               ParentColor = False
               ParentFont = False
             end
             object TIEditMsiId1: TTIEdit
-              Left = 100
-              Height = 27
-              Top = 6
-              Width = 400
+              Left = 154
+              Height = 46
+              Top = 7
+              Width = 600
               Anchors = []
-              BorderSpacing.Left = 10
-              BorderSpacing.Around = 2
-              BorderSpacing.InnerBorder = 2
-              Constraints.MinWidth = 400
+              BorderSpacing.Left = 15
+              BorderSpacing.Around = 3
+              BorderSpacing.InnerBorder = 3
+              Constraints.MinWidth = 600
+              ParentFont = False
               TabOrder = 0
             end
           end
           object FlowPanel7: TFlowPanel
             Left = 1
-            Height = 41
-            Top = 214
-            Width = 1046
+            Height = 62
+            Top = 323
+            Width = 1507
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -2138,95 +2083,1135 @@ object resultForm1: TresultForm1
               end>
             FlowLayout = tlTop
             FlowStyle = fsLeftRightTopBottom
-            TabOrder = 6
+            ParentFont = False
+            TabOrder = 5
             object Label54: TLabel
-              Left = 232
-              Height = 21
-              Top = 8
-              Width = 135
+              Left = 362
+              Height = 34
+              Top = 10
+              Width = 221
               Anchors = []
-              BorderSpacing.Left = 30
-              BorderSpacing.Around = 4
+              BorderSpacing.Left = 45
+              BorderSpacing.Around = 6
               Caption = 'Required Space MB'
-              Font.Height = -16
+              Font.Height = -24
               ParentColor = False
               ParentFont = False
             end
             object Label55: TLabel
-              Left = 459
-              Height = 21
-              Top = 8
-              Width = 62
+              Left = 721
+              Height = 34
+              Top = 10
+              Width = 103
               Anchors = []
-              BorderSpacing.Left = 30
-              BorderSpacing.Around = 4
+              BorderSpacing.Left = 45
+              BorderSpacing.Around = 6
               Caption = 'InstallDir'
-              Font.Height = -16
+              Font.Height = -24
               ParentColor = False
               ParentFont = False
             end
             object Label64: TLabel
-              Left = 18
-              Height = 21
-              Top = 8
-              Width = 122
+              Left = 25
+              Height = 34
+              Top = 10
+              Width = 199
               Anchors = []
-              BorderSpacing.Left = 10
-              BorderSpacing.Around = 4
+              BorderSpacing.Left = 15
+              BorderSpacing.Around = 6
               Caption = 'Setup file size MB'
-              Font.Height = -16
+              Font.Height = -24
               ParentColor = False
               ParentFont = False
             end
             object TIEditSetupFileSizeMB1: TTIEdit
-              Left = 156
-              Height = 27
-              Top = 6
-              Width = 40
+              Left = 248
+              Height = 46
+              Top = 7
+              Width = 60
               Anchors = []
-              BorderSpacing.Left = 10
-              BorderSpacing.Around = 2
-              BorderSpacing.InnerBorder = 2
-              Constraints.MinWidth = 40
+              BorderSpacing.Left = 15
+              BorderSpacing.Around = 3
+              BorderSpacing.InnerBorder = 3
+              Constraints.MinWidth = 60
+              ParentFont = False
               TabOrder = 0
             end
             object TIEditRequiredSizeMB1: TTIEdit
-              Left = 383
-              Height = 27
-              Top = 6
-              Width = 40
+              Left = 607
+              Height = 46
+              Top = 7
+              Width = 60
               Anchors = []
-              BorderSpacing.Left = 10
-              BorderSpacing.Around = 2
-              BorderSpacing.InnerBorder = 2
-              Constraints.MinWidth = 40
+              BorderSpacing.Left = 15
+              BorderSpacing.Around = 3
+              BorderSpacing.InnerBorder = 3
+              Constraints.MinWidth = 60
+              ParentFont = False
               TabOrder = 1
             end
             object TIEditInstallDir1: TTIEdit
-              Left = 537
-              Height = 27
-              Top = 6
-              Width = 400
+              Left = 848
+              Height = 46
+              Top = 7
+              Width = 600
               Anchors = []
-              BorderSpacing.Left = 10
-              BorderSpacing.Around = 2
-              BorderSpacing.InnerBorder = 2
-              Constraints.MinWidth = 400
+              BorderSpacing.Left = 15
+              BorderSpacing.Around = 3
+              BorderSpacing.InnerBorder = 3
+              Constraints.MinWidth = 600
+              ParentFont = False
               TabOrder = 2
             end
           end
-          object BtSetup1NextStep: TBitBtn
-            Left = 899
-            Height = 52
-            Hint = 'Go to the next Step'
-            Top = 469
-            Width = 147
+          object FlowPanelSetup34: TFlowPanel
+            Left = 1
+            Height = 62
+            Top = 385
+            Width = 1507
+            Align = alTop
+            Alignment = taLeftJustify
+            AutoWrap = False
+            BorderWidth = 3
+            ControlList = <            
+              item
+                Control = Label79
+                WrapAfter = waAuto
+                Index = 0
+              end            
+              item
+                Control = TIEditSetup1Command
+                WrapAfter = waAuto
+                Index = 1
+              end>
+            FlowLayout = tlTop
+            FlowStyle = fsLeftRightTopBottom
+            ParentFont = False
+            TabOrder = 6
+            object Label79: TLabel
+              Left = 25
+              Height = 34
+              Top = 10
+              Width = 335
+              Anchors = []
+              BorderSpacing.Left = 15
+              BorderSpacing.Around = 6
+              Caption = 'Unattended Install Command'
+              Font.Height = -24
+              ParentColor = False
+              ParentFont = False
+            end
+            object TIEditSetup1Command: TTIEdit
+              Left = 384
+              Height = 46
+              Top = 7
+              Width = 1000
+              Anchors = []
+              BorderSpacing.Left = 15
+              BorderSpacing.Around = 3
+              BorderSpacing.InnerBorder = 3
+              Constraints.MinWidth = 1000
+              ParentFont = False
+              TabOrder = 0
+            end
+          end
+          object FlowPanel17: TFlowPanel
+            Left = 1
+            Height = 105
+            Top = 623
+            Width = 1507
+            Align = alBottom
+            ControlList = <            
+              item
+                Control = BtSetup1NextStep
+                WrapAfter = waAuto
+                Index = 0
+              end>
+            FlowLayout = tlTop
+            FlowStyle = fsRightLeftTopBottom
+            TabOrder = 7
+            object BtSetup1NextStep: TBitBtn
+              Left = 1309
+              Height = 66
+              Hint = 'Go to the next Step'
+              Top = 16
+              Width = 182
+              Align = alRight
+              Anchors = [akRight]
+              AutoSize = True
+              BorderSpacing.Around = 15
+              BorderSpacing.InnerBorder = 8
+              Caption = 'Next Step'
+              Font.Height = -26
+              Glyph.Data = {
+                36100000424D3610000000000000360000002800000020000000200000000100
+                2000000000000010000064000000640000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                000000000000000000000000007E000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                00000000000000000000000000FF0000007B0000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                00000000000000000000000000FF000000FF0000007800000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                00000000000000000000000000FF000000FF000000FF00000076000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                00000000000000000000000000FF000000FF000000FF000000FF000000730000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
+                0070000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
+                00FF0000006E0000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF0000006B00000000000000000000000000000000000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF000000FF00000069000000000000000000000000000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF000000FF000000FE000000670000000000000000000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF000000FF000000FF000000FE0000006400000000000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FE00000062000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF0000009A000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF000000FF000000FF000000FF0000009A00000001000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF000000FF000000FF000000970000000100000000000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF000000FF00000095000000010000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000FF0000009200000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
+                00FF000000900000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
+                008E000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                00000000000000000000000000FF000000FF000000FF000000FF0000008B0000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                00000000000000000000000000FF000000FF000000FF00000088000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                00000000000000000000000000FF000000FF0000008600000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                00000000000000000000000000FF000000830000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000081000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000
+              }
+              Layout = blGlyphRight
+              OnClick = BtSetup1NextStepClick
+              ParentFont = False
+              TabOrder = 0
+            end
+          end
+          object FlowPanelSetup35: TFlowPanel
+            Left = 1
+            Height = 62
+            Top = 447
+            Width = 1507
+            Align = alTop
+            Alignment = taLeftJustify
+            AutoWrap = False
+            BorderWidth = 3
+            ControlList = <            
+              item
+                Control = Label80
+                WrapAfter = waAuto
+                Index = 0
+              end            
+              item
+                Control = TIEditSetup1UnCommand
+                WrapAfter = waAuto
+                Index = 1
+              end>
+            FlowLayout = tlTop
+            FlowStyle = fsLeftRightTopBottom
+            ParentFont = False
+            TabOrder = 8
+            object Label80: TLabel
+              Left = 25
+              Height = 34
+              Top = 10
+              Width = 366
+              Anchors = []
+              BorderSpacing.Left = 15
+              BorderSpacing.Around = 6
+              Caption = 'Unattended Uninstall Command'
+              Font.Height = -24
+              ParentColor = False
+              ParentFont = False
+            end
+            object TIEditSetup1UnCommand: TTIEdit
+              Left = 415
+              Height = 46
+              Top = 7
+              Width = 1000
+              Anchors = []
+              BorderSpacing.Left = 15
+              BorderSpacing.Around = 3
+              BorderSpacing.InnerBorder = 3
+              Constraints.MinWidth = 1000
+              ParentFont = False
+              TabOrder = 0
+            end
+          end
+          object FlowPanelSetup36: TFlowPanel
+            Left = 1
+            Height = 62
+            Top = 509
+            Width = 1507
+            Align = alTop
+            Alignment = taLeftJustify
+            AutoWrap = False
+            BorderWidth = 3
+            ControlList = <            
+              item
+                Control = Label81
+                WrapAfter = waAuto
+                Index = 0
+              end            
+              item
+                Control = TIEditSetup1UnProgram
+                WrapAfter = waAuto
+                Index = 1
+              end>
+            FlowLayout = tlTop
+            FlowStyle = fsLeftRightTopBottom
+            ParentFont = False
+            TabOrder = 9
+            object Label81: TLabel
+              Left = 25
+              Height = 34
+              Top = 10
+              Width = 206
+              Anchors = []
+              BorderSpacing.Left = 15
+              BorderSpacing.Around = 6
+              Caption = 'Uninstall Program'
+              Font.Height = -24
+              ParentColor = False
+              ParentFont = False
+            end
+            object TIEditSetup1UnProgram: TTIEdit
+              Left = 255
+              Height = 46
+              Top = 7
+              Width = 400
+              Anchors = []
+              BorderSpacing.Left = 15
+              BorderSpacing.Around = 3
+              BorderSpacing.InnerBorder = 3
+              Constraints.MinWidth = 400
+              ParentFont = False
+              TabOrder = 0
+            end
+          end
+        end
+      end
+      object TabSheetSetup2: TTabSheet
+        Caption = 'Setup2'
+        ClientHeight = 564
+        ClientWidth = 1509
+        ParentFont = False
+        object FlowPanel2: TFlowPanel
+          Left = 0
+          Height = 74
+          Top = 0
+          Width = 1509
+          Align = alTop
+          AutoWrap = False
+          BorderWidth = 3
+          ControlList = <          
+            item
+              Control = Label68
+              WrapAfter = waAuto
+              Index = 0
+            end          
+            item
+              Control = TIComboBoxInstaller2
+              WrapAfter = waAuto
+              Index = 1
+            end          
+            item
+              Control = Label69
+              WrapAfter = waAuto
+              Index = 2
+            end          
+            item
+              Control = TIComboBoxArch2
+              WrapAfter = waAuto
+              Index = 3
+            end>
+          FlowLayout = tlTop
+          FlowStyle = fsLeftRightTopBottom
+          ParentFont = False
+          TabOrder = 0
+          object Label68: TLabel
+            Left = 25
+            Height = 34
+            Top = 10
+            Width = 239
+            Anchors = []
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 6
+            Caption = 'Detected Setup type:'
+            Font.Height = -24
+            ParentColor = False
+            ParentFont = False
+          end
+          object Label69: TLabel
+            Left = 477
+            Height = 34
+            Top = 10
+            Width = 213
+            Anchors = []
+            BorderSpacing.Left = 30
+            BorderSpacing.Around = 6
+            Caption = 'Architecture Mode'
+            Font.Height = -24
+            ParentColor = False
+            ParentFont = False
+          end
+          object TIComboBoxInstaller2: TTIComboBox
+            Left = 288
+            Height = 46
+            Top = 7
+            Width = 150
+            Anchors = []
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 3
+            BorderSpacing.InnerBorder = 3
+            HistoryCaseSensitive = False
+            MaxHistoryCount = 0
+            ParentFont = False
+            TabOrder = 0
+          end
+          object TIComboBoxArch2: TTIComboBox
+            Left = 714
+            Height = 46
+            Top = 7
+            Width = 150
+            Anchors = []
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 3
+            BorderSpacing.InnerBorder = 3
+            HistoryCaseSensitive = False
+            MaxHistoryCount = 0
+            ParentFont = False
+            TabOrder = 1
+          end
+        end
+        object FlowPanelMST1: TFlowPanel
+          Left = 0
+          Height = 62
+          Top = 136
+          Width = 1509
+          Align = alTop
+          Alignment = taLeftJustify
+          AutoWrap = False
+          BorderWidth = 3
+          ControlList = <          
+            item
+              Control = Label70
+              WrapAfter = waAuto
+              Index = 0
+            end          
+            item
+              Control = TIEditMstFile2
+              WrapAfter = waAuto
+              Index = 1
+            end          
+            item
+              Control = BitBtnOpenMst2
+              WrapAfter = waAuto
+              Index = 2
+            end          
+            item
+              Control = CheckBoxUseMst1
+              WrapAfter = waAuto
+              Index = 3
+            end>
+          Enabled = False
+          FlowLayout = tlTop
+          FlowStyle = fsLeftRightTopBottom
+          ParentFont = False
+          TabOrder = 1
+          object Label70: TLabel
+            Left = 25
+            Height = 34
+            Top = 10
+            Width = 98
+            Anchors = []
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 6
+            Caption = 'MST File '
+            Font.Height = -24
+            ParentColor = False
+            ParentFont = False
+          end
+          object CheckBoxUseMst1: TCheckBox
+            Left = 1573
+            Height = 30
+            Top = 8
+            Width = 138
+            Anchors = []
+            BorderSpacing.Left = 45
+            BorderSpacing.Around = 4
+            Caption = 'use MST File'
+            ParentFont = False
+            TabOrder = 0
+          end
+          object BitBtnOpenMst2: TBitBtn
+            Left = 1354
+            Height = 48
+            Top = 4
+            Width = 170
             Anchors = []
             AutoSize = True
-            BorderSpacing.Around = 30
-            BorderSpacing.InnerBorder = 5
+            BorderSpacing.Left = 4
+            BorderSpacing.InnerBorder = 3
+            Caption = 'Open MST File'
+            Glyph.Data = {
+              36040000424D3604000000000000360000002800000010000000100000000100
+              2000000000000004000064000000640000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000000000000000000000000000004C92DEE95698
+              DEFF5B9BDEFF5B9BDEFF5B9BDEFF5A9BDEFF5A9BDEFF5A9BDEFF5A9BDEFF5A9A
+              DEFF599ADDFF5999DDFF4E93DEF54C92DE0E00000000000000005195DEFF96BE
+              E1FFADCEE4FFABCEE5FFA9CDE5FFA7CCE6FFA7CCE6FFA6CBE5FFA5CAE4FFA3C8
+              E1FFA0C5DDFF9DC1D9FF78AAD9FF4C92DE6A0000000000000000599ADFFF7BB1
+              E5FFB6D8EFFFB4D8F0FFB2D7F1FFB0D7F1FFAFD6F1FFAFD6F1FFADD5EFFFABD2
+              ECFFA7CCE6FFA2C7DFFF95BCDAFF598DC4FF7C807EFF7C807EFF5E9FE2FF62A1
+              E3FFBDE1F8FFBCE1F9FFBAE0FBFFB9E0FBFFB8E0FBFFB7DFFAFFB6DEF8FFB3DA
+              F5FFAFD4EFFFA8CDE6FFA2C6DDFF5E9CDDFFE5E7E9FF7B807EFF5FA0E3FF6CA9
+              E7FFB5DDFAFFC2E7FFFFC1E6FFFFC0E6FFFFC0E6FFFFBFE5FFFFBDE4FEFFBAE0
+              FBFFB5DAF4FFAED3EBFFA8CAE1FF73A8DCFFBED2E7FF7C807EFF60A0E3FF93C4
+              F1FF8FC2F0FFC6E8FFFFC6E8FFFFC5E8FFFFC4E8FFFFC4E7FFFFC1E6FFFFBEE3
+              FCFFBADEF6FFB3D6EEFFACCDE3FF90B9DBFF8EB7E3FF7C807FFF60A0E4FFBEE2
+              FCFF61A0E3FF60A0E4FF60A0E4FF60A0E4FF60A0E4FF60A0E4FF60A0E3FF5FA0
+              E3FF5F9FE2FF5E9DE1FF5C9CDFFF5698DEFF74A9E2FF7C817FFF60A0E4FFC8E9
+              FFFFCAE9FFFFC9EAFFFFC7E9FFFFC6E9FFFF8A8E8DFFF7F7F7FFF7F7F7FFF7F7
+              F7FFF5F5F5FFF3F3F3FFF1F1F1FFEFEFEFFFEDEDEDFF7D8180FF5397E0F8BCE1
+              FCFFC7E9FFFFC6E8FFFFC4E7FFFFB9E0FCFF8B908EFFF9F9F9FFF9F9F9FFF8F8
+              F8FFF7F7F7FFF4F4F4FFF2F2F2FFF0F0F0FFEDEDEDFF7E8280FF4C92DE6A5397
+              E0F860A0E4FF60A0E3FF60A0E3FF5397E0F88C908FFFFAFAFAFFFAFAFAFFFAFA
+              FAFFF8F8F8FFF6F6F6FFF3F3F3FFF0F0F0FFEEEEEEFF7F8381FF000000000000
+              0000000000000000000000000000000000008D918FFFFBFBFBFFFBFBFBFFFAFA
+              FAFFF9F9F9FFF6F6F6FFF4F4F4FFF1F1F1FFEEEEEEFF808482FF000000000000
+              0000000000000000000000000000000000008D9190FFFBFBFBFFFBFBFBFFFAFA
+              FAFFF9F9F9FFF6F6F6FFF3F3F3FFF1F1F1FFEEEEEEFF818584FF000000000000
+              0000000000000000000000000000000000008D9290FFFBFBFBFFFBFBFBFFFAFA
+              FAFFF9F9F9FFF6F6F6FFF4F4F4FFF0F0F0FFEDEDEDFF828685FF000000000000
+              0000000000000000000000000000000000008D9290FFFAFAFAFFFAFAFAFFF9F9
+              F9FFF8F8F8FFF6F6F6FFF3F3F3FFF0F0F0FFEDEDEDFF838786FF000000000000
+              0000000000000000000000000000000000008D9190FF8D918FFF8D918FFF8C90
+              8FFF8B8F8DFF898E8CFF888C8AFF878B89FF858988FF848887FF
+            }
+            ParentFont = False
+            TabOrder = 1
+          end
+          object TIEditMstFile2: TTIEdit
+            Left = 147
+            Height = 46
+            Top = 7
+            Width = 1200
+            Anchors = []
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 3
+            BorderSpacing.InnerBorder = 3
+            Constraints.MinWidth = 1200
+            ParentFont = False
+            TabOrder = 2
+          end
+        end
+        object FlowPanelMsiId1: TFlowPanel
+          Left = 0
+          Height = 62
+          Top = 198
+          Width = 1509
+          Align = alTop
+          Alignment = taLeftJustify
+          AutoWrap = False
+          BorderWidth = 3
+          ControlList = <          
+            item
+              Control = Label59
+              WrapAfter = waAuto
+              Index = 0
+            end          
+            item
+              Control = TIEditMsiId2
+              WrapAfter = waAuto
+              Index = 1
+            end>
+          Enabled = False
+          FlowLayout = tlTop
+          FlowStyle = fsLeftRightTopBottom
+          ParentFont = False
+          TabOrder = 2
+          object Label59: TLabel
+            Left = 25
+            Height = 34
+            Top = 10
+            Width = 63
+            Anchors = []
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 6
+            Caption = 'MsiId'
+            Font.Height = -24
+            ParentColor = False
+            ParentFont = False
+          end
+          object TIEditMsiId2: TTIEdit
+            Left = 112
+            Height = 46
+            Top = 7
+            Width = 600
+            Anchors = []
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 3
+            BorderSpacing.InnerBorder = 3
+            Constraints.MinWidth = 600
+            ParentFont = False
+            TabOrder = 0
+          end
+        end
+        object FlowPanel11: TFlowPanel
+          Left = 0
+          Height = 62
+          Top = 260
+          Width = 1509
+          Align = alTop
+          Alignment = taLeftJustify
+          AutoWrap = False
+          BorderWidth = 3
+          ControlList = <          
+            item
+              Control = Label71
+              WrapAfter = waAuto
+              Index = 0
+            end          
+            item
+              Control = TIEditProdVersion2
+              WrapAfter = waAuto
+              Index = 1
+            end>
+          FlowLayout = tlTop
+          FlowStyle = fsLeftRightTopBottom
+          ParentFont = False
+          TabOrder = 3
+          object Label71: TLabel
+            Left = 25
+            Height = 34
+            Top = 10
+            Width = 193
+            Anchors = []
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 6
+            Caption = 'Software Version'
+            Font.Height = -24
+            ParentColor = False
+            ParentFont = False
+          end
+          object TIEditProdVersion2: TTIEdit
+            Left = 242
+            Height = 46
+            Top = 7
+            Width = 300
+            Anchors = []
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 3
+            BorderSpacing.InnerBorder = 3
+            Constraints.MinWidth = 300
+            ParentFont = False
+            TabOrder = 0
+          end
+        end
+        object FlowPanel12: TFlowPanel
+          Left = 0
+          Height = 62
+          Top = 322
+          Width = 1509
+          Align = alTop
+          Alignment = taLeftJustify
+          AutoWrap = False
+          BorderWidth = 3
+          ControlList = <          
+            item
+              Control = Label74
+              WrapAfter = waAuto
+              Index = 0
+            end          
+            item
+              Control = TIEditSetupFileSizeMB2
+              WrapAfter = waAuto
+              Index = 1
+            end          
+            item
+              Control = Label72
+              WrapAfter = waAuto
+              Index = 2
+            end          
+            item
+              Control = TIEditRequiredSizeMB2
+              WrapAfter = waAuto
+              Index = 3
+            end          
+            item
+              Control = Label73
+              WrapAfter = waAuto
+              Index = 4
+            end          
+            item
+              Control = TIEditInstallDir2
+              WrapAfter = waAuto
+              Index = 5
+            end>
+          FlowLayout = tlTop
+          FlowStyle = fsLeftRightTopBottom
+          ParentFont = False
+          TabOrder = 4
+          object Label72: TLabel
+            Left = 362
+            Height = 34
+            Top = 10
+            Width = 177
+            Anchors = []
+            BorderSpacing.Left = 45
+            BorderSpacing.Around = 6
+            Caption = 'Required Space'
+            Font.Height = -24
+            ParentColor = False
+            ParentFont = False
+          end
+          object Label73: TLabel
+            Left = 677
+            Height = 34
+            Top = 10
+            Width = 103
+            Anchors = []
+            BorderSpacing.Left = 45
+            BorderSpacing.Around = 6
+            Caption = 'InstallDir'
+            Font.Height = -24
+            ParentColor = False
+            ParentFont = False
+          end
+          object Label74: TLabel
+            Left = 25
+            Height = 34
+            Top = 10
+            Width = 199
+            Anchors = []
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 6
+            Caption = 'Setup file size MB'
+            Font.Height = -24
+            ParentColor = False
+            ParentFont = False
+          end
+          object TIEditSetupFileSizeMB2: TTIEdit
+            Left = 248
+            Height = 46
+            Top = 7
+            Width = 60
+            Anchors = []
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 3
+            BorderSpacing.InnerBorder = 3
+            Constraints.MinWidth = 60
+            ParentFont = False
+            TabOrder = 0
+          end
+          object TIEditRequiredSizeMB2: TTIEdit
+            Left = 563
+            Height = 46
+            Top = 7
+            Width = 60
+            Anchors = []
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 3
+            BorderSpacing.InnerBorder = 3
+            Constraints.MinWidth = 60
+            ParentFont = False
+            TabOrder = 1
+          end
+          object TIEditInstallDir2: TTIEdit
+            Left = 804
+            Height = 46
+            Top = 7
+            Width = 600
+            Anchors = []
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 3
+            BorderSpacing.InnerBorder = 3
+            Constraints.MinWidth = 600
+            ParentFont = False
+            TabOrder = 2
+          end
+        end
+        object FlowPanelSetup33: TFlowPanel
+          Left = 0
+          Height = 62
+          Top = 74
+          Width = 1509
+          Align = alTop
+          Alignment = taLeftJustify
+          AutoWrap = False
+          BorderWidth = 3
+          ControlList = <          
+            item
+              Control = Label77
+              WrapAfter = waAuto
+              Index = 0
+            end          
+            item
+              Control = TIEditSetupfile2
+              WrapAfter = waAuto
+              Index = 1
+            end          
+            item
+              Control = BitBtnOpenFile1
+              WrapAfter = waAuto
+              Index = 2
+            end>
+          FlowLayout = tlTop
+          FlowStyle = fsLeftRightTopBottom
+          ParentFont = False
+          TabOrder = 5
+          object Label77: TLabel
+            Left = 25
+            Height = 34
+            Top = 10
+            Width = 110
+            Anchors = []
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 6
+            Caption = 'Setup File'
+            Font.Height = -24
+            ParentColor = False
+            ParentFont = False
+          end
+          object TIEditSetupfile2: TTIEdit
+            Left = 159
+            Height = 46
+            Top = 7
+            Width = 1200
+            Anchors = []
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 3
+            BorderSpacing.InnerBorder = 3
+            Constraints.MinWidth = 1200
+            ParentFont = False
+            TabOrder = 0
+          end
+          object BitBtnOpenFile1: TBitBtn
+            Left = 1366
+            Height = 48
+            Top = 4
+            Width = 183
+            Anchors = []
+            AutoSize = True
+            BorderSpacing.Left = 4
+            BorderSpacing.InnerBorder = 3
+            Caption = 'Open Setup File'
+            Glyph.Data = {
+              36040000424D3604000000000000360000002800000010000000100000000100
+              2000000000000004000064000000640000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000000000000000000000000000004C92DEE95698
+              DEFF5B9BDEFF5B9BDEFF5B9BDEFF5A9BDEFF5A9BDEFF5A9BDEFF5A9BDEFF5A9A
+              DEFF599ADDFF5999DDFF4E93DEF54C92DE0E00000000000000005195DEFF96BE
+              E1FFADCEE4FFABCEE5FFA9CDE5FFA7CCE6FFA7CCE6FFA6CBE5FFA5CAE4FFA3C8
+              E1FFA0C5DDFF9DC1D9FF78AAD9FF4C92DE6A0000000000000000599ADFFF7BB1
+              E5FFB6D8EFFFB4D8F0FFB2D7F1FFB0D7F1FFAFD6F1FFAFD6F1FFADD5EFFFABD2
+              ECFFA7CCE6FFA2C7DFFF95BCDAFF598DC4FF7C807EFF7C807EFF5E9FE2FF62A1
+              E3FFBDE1F8FFBCE1F9FFBAE0FBFFB9E0FBFFB8E0FBFFB7DFFAFFB6DEF8FFB3DA
+              F5FFAFD4EFFFA8CDE6FFA2C6DDFF5E9CDDFFE5E7E9FF7B807EFF5FA0E3FF6CA9
+              E7FFB5DDFAFFC2E7FFFFC1E6FFFFC0E6FFFFC0E6FFFFBFE5FFFFBDE4FEFFBAE0
+              FBFFB5DAF4FFAED3EBFFA8CAE1FF73A8DCFFBED2E7FF7C807EFF60A0E3FF93C4
+              F1FF8FC2F0FFC6E8FFFFC6E8FFFFC5E8FFFFC4E8FFFFC4E7FFFFC1E6FFFFBEE3
+              FCFFBADEF6FFB3D6EEFFACCDE3FF90B9DBFF8EB7E3FF7C807FFF60A0E4FFBEE2
+              FCFF61A0E3FF60A0E4FF60A0E4FF60A0E4FF60A0E4FF60A0E4FF60A0E3FF5FA0
+              E3FF5F9FE2FF5E9DE1FF5C9CDFFF5698DEFF74A9E2FF7C817FFF60A0E4FFC8E9
+              FFFFCAE9FFFFC9EAFFFFC7E9FFFFC6E9FFFF8A8E8DFFF7F7F7FFF7F7F7FFF7F7
+              F7FFF5F5F5FFF3F3F3FFF1F1F1FFEFEFEFFFEDEDEDFF7D8180FF5397E0F8BCE1
+              FCFFC7E9FFFFC6E8FFFFC4E7FFFFB9E0FCFF8B908EFFF9F9F9FFF9F9F9FFF8F8
+              F8FFF7F7F7FFF4F4F4FFF2F2F2FFF0F0F0FFEDEDEDFF7E8280FF4C92DE6A5397
+              E0F860A0E4FF60A0E3FF60A0E3FF5397E0F88C908FFFFAFAFAFFFAFAFAFFFAFA
+              FAFFF8F8F8FFF6F6F6FFF3F3F3FFF0F0F0FFEEEEEEFF7F8381FF000000000000
+              0000000000000000000000000000000000008D918FFFFBFBFBFFFBFBFBFFFAFA
+              FAFFF9F9F9FFF6F6F6FFF4F4F4FFF1F1F1FFEEEEEEFF808482FF000000000000
+              0000000000000000000000000000000000008D9190FFFBFBFBFFFBFBFBFFFAFA
+              FAFFF9F9F9FFF6F6F6FFF3F3F3FFF1F1F1FFEEEEEEFF818584FF000000000000
+              0000000000000000000000000000000000008D9290FFFBFBFBFFFBFBFBFFFAFA
+              FAFFF9F9F9FFF6F6F6FFF4F4F4FFF0F0F0FFEDEDEDFF828685FF000000000000
+              0000000000000000000000000000000000008D9290FFFAFAFAFFFAFAFAFFF9F9
+              F9FFF8F8F8FFF6F6F6FFF3F3F3FFF0F0F0FFEDEDEDFF838786FF000000000000
+              0000000000000000000000000000000000008D9190FF8D918FFF8D918FFF8C90
+              8FFF8B8F8DFF898E8CFF888C8AFF878B89FF858988FF848887FF
+            }
+            ParentFont = False
+            TabOrder = 1
+          end
+        end
+        object FlowPanelSetup37: TFlowPanel
+          Left = 0
+          Height = 62
+          Top = 384
+          Width = 1509
+          Align = alTop
+          Alignment = taLeftJustify
+          AutoWrap = False
+          BorderWidth = 3
+          ControlList = <          
+            item
+              Control = Label82
+              WrapAfter = waAuto
+              Index = 0
+            end          
+            item
+              Control = TIEditSetup2Command
+              WrapAfter = waAuto
+              Index = 1
+            end>
+          FlowLayout = tlTop
+          FlowStyle = fsLeftRightTopBottom
+          ParentFont = False
+          TabOrder = 6
+          object Label82: TLabel
+            Left = 25
+            Height = 34
+            Top = 10
+            Width = 335
+            Anchors = []
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 6
+            Caption = 'Unattended Install Command'
+            Font.Height = -24
+            ParentColor = False
+            ParentFont = False
+          end
+          object TIEditSetup2Command: TTIEdit
+            Left = 384
+            Height = 46
+            Top = 7
+            Width = 1000
+            Anchors = []
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 3
+            BorderSpacing.InnerBorder = 3
+            Constraints.MinWidth = 1000
+            ParentFont = False
+            TabOrder = 0
+          end
+        end
+        object FlowPanelSetup38: TFlowPanel
+          Left = 0
+          Height = 62
+          Top = 446
+          Width = 1509
+          Align = alTop
+          Alignment = taLeftJustify
+          AutoWrap = False
+          BorderWidth = 3
+          ControlList = <          
+            item
+              Control = Label83
+              WrapAfter = waAuto
+              Index = 0
+            end          
+            item
+              Control = TIEditSetup2UnCommand
+              WrapAfter = waAuto
+              Index = 1
+            end>
+          FlowLayout = tlTop
+          FlowStyle = fsLeftRightTopBottom
+          ParentFont = False
+          TabOrder = 7
+          object Label83: TLabel
+            Left = 25
+            Height = 34
+            Top = 10
+            Width = 366
+            Anchors = []
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 6
+            Caption = 'Unattended Uninstall Command'
+            Font.Height = -24
+            ParentColor = False
+            ParentFont = False
+          end
+          object TIEditSetup2UnCommand: TTIEdit
+            Left = 415
+            Height = 46
+            Top = 7
+            Width = 1000
+            Anchors = []
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 3
+            BorderSpacing.InnerBorder = 3
+            Constraints.MinWidth = 1000
+            ParentFont = False
+            TabOrder = 0
+          end
+        end
+        object FlowPanelSetup39: TFlowPanel
+          Left = 0
+          Height = 62
+          Top = 508
+          Width = 1509
+          Align = alTop
+          Alignment = taLeftJustify
+          AutoWrap = False
+          BorderWidth = 3
+          ControlList = <          
+            item
+              Control = Label84
+              WrapAfter = waAuto
+              Index = 0
+            end          
+            item
+              Control = TIEditSetup2UnProgram
+              WrapAfter = waAuto
+              Index = 1
+            end>
+          FlowLayout = tlTop
+          FlowStyle = fsLeftRightTopBottom
+          ParentFont = False
+          TabOrder = 8
+          object Label84: TLabel
+            Left = 25
+            Height = 34
+            Top = 10
+            Width = 206
+            Anchors = []
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 6
+            Caption = 'Uninstall Program'
+            Font.Height = -24
+            ParentColor = False
+            ParentFont = False
+          end
+          object TIEditSetup2UnProgram: TTIEdit
+            Left = 255
+            Height = 46
+            Top = 7
+            Width = 400
+            Anchors = []
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 3
+            BorderSpacing.InnerBorder = 3
+            Constraints.MinWidth = 400
+            ParentFont = False
+            TabOrder = 0
+          end
+        end
+        object FlowPanel13: TFlowPanel
+          Left = 0
+          Height = 95
+          Top = 712
+          Width = 1509
+          Align = alBottom
+          ControlList = <          
+            item
+              Control = BtSetup2NextStep
+              WrapAfter = waAuto
+              Index = 0
+            end>
+          FlowLayout = tlTop
+          FlowStyle = fsRightLeftTopBottom
+          TabOrder = 9
+          object BtSetup2NextStep: TBitBtn
+            Left = 1316
+            Height = 66
+            Hint = 'Go to the next Step'
+            Top = 11
+            Width = 182
+            Anchors = []
+            AutoSize = True
+            BorderSpacing.Around = 10
+            BorderSpacing.InnerBorder = 8
             Caption = 'Next Step'
-            Font.Height = -17
+            Font.Height = -26
             Glyph.Data = {
               36100000424D3610000000000000360000002800000020000000200000000100
               2000000000000010000064000000640000000000000000000000000000000000
@@ -2360,844 +3345,34 @@ object resultForm1: TresultForm1
               0000000000000000000000000000000000000000000000000000
             }
             Layout = blGlyphRight
-            OnClick = BtSetup1NextStepClick
+            OnClick = BtSetup2NextStepClick
             ParentFont = False
-            TabOrder = 7
-          end
-          object FlowPanelSetup34: TFlowPanel
-            Left = 1
-            Height = 41
-            Top = 296
-            Width = 1046
-            Align = alTop
-            Alignment = taLeftJustify
-            AutoWrap = False
-            BorderWidth = 3
-            ControlList = <            
-              item
-                Control = Label79
-                WrapAfter = waAuto
-                Index = 0
-              end            
-              item
-                Control = TIEditSetup1Command
-                WrapAfter = waAuto
-                Index = 1
-              end>
-            FlowLayout = tlTop
-            FlowStyle = fsLeftRightTopBottom
-            TabOrder = 8
-            object Label79: TLabel
-              Left = 18
-              Height = 21
-              Top = 8
-              Width = 149
-              Anchors = []
-              BorderSpacing.Left = 10
-              BorderSpacing.Around = 4
-              Caption = 'Uattended Command'
-              Font.Height = -16
-              ParentColor = False
-              ParentFont = False
-            end
-            object TIEditSetup1Command: TTIEdit
-              Left = 183
-              Height = 27
-              Top = 6
-              Width = 800
-              Anchors = []
-              BorderSpacing.Left = 10
-              BorderSpacing.Around = 2
-              BorderSpacing.InnerBorder = 2
-              Constraints.MinWidth = 800
-              TabOrder = 0
-            end
-          end
-        end
-      end
-      object TabSheetSetup2: TTabSheet
-        Caption = 'Setup2'
-        ClientHeight = 538
-        ClientWidth = 1048
-        object FlowPanel2: TFlowPanel
-          Left = 0
-          Height = 49
-          Top = 0
-          Width = 1048
-          Align = alTop
-          AutoWrap = False
-          BorderWidth = 3
-          ControlList = <          
-            item
-              Control = Label68
-              WrapAfter = waAuto
-              Index = 0
-            end          
-            item
-              Control = TIComboBoxInstaller2
-              WrapAfter = waAuto
-              Index = 1
-            end          
-            item
-              Control = Label69
-              WrapAfter = waAuto
-              Index = 2
-            end          
-            item
-              Control = TIComboBoxArch2
-              WrapAfter = waAuto
-              Index = 3
-            end>
-          FlowLayout = tlTop
-          FlowStyle = fsLeftRightTopBottom
-          TabOrder = 0
-          object Label68: TLabel
-            Left = 18
-            Height = 21
-            Top = 8
-            Width = 142
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 4
-            Caption = 'Detected Setup type:'
-            Font.Height = -16
-            ParentColor = False
-            ParentFont = False
-          end
-          object Label69: TLabel
-            Left = 302
-            Height = 21
-            Top = 8
-            Width = 128
-            Anchors = []
-            BorderSpacing.Left = 20
-            BorderSpacing.Around = 4
-            Caption = 'Architecture Mode'
-            Font.Height = -16
-            ParentColor = False
-            ParentFont = False
-          end
-          object TIComboBoxInstaller2: TTIComboBox
-            Left = 176
-            Height = 23
-            Top = 6
-            Width = 100
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 2
-            BorderSpacing.InnerBorder = 2
-            HistoryCaseSensitive = False
-            MaxHistoryCount = 0
             TabOrder = 0
           end
-          object TIComboBoxArch2: TTIComboBox
-            Left = 446
-            Height = 23
-            Top = 6
-            Width = 100
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 2
-            BorderSpacing.InnerBorder = 2
-            HistoryCaseSensitive = False
-            MaxHistoryCount = 0
-            TabOrder = 1
-          end
-        end
-        object FlowPanelMST1: TFlowPanel
-          Left = 0
-          Height = 41
-          Top = 90
-          Width = 1048
-          Align = alTop
-          Alignment = taLeftJustify
-          AutoWrap = False
-          BorderWidth = 3
-          ControlList = <          
-            item
-              Control = Label70
-              WrapAfter = waAuto
-              Index = 0
-            end          
-            item
-              Control = TIEditMstFile2
-              WrapAfter = waAuto
-              Index = 1
-            end          
-            item
-              Control = BitBtnOpenMst2
-              WrapAfter = waAuto
-              Index = 2
-            end          
-            item
-              Control = CheckBoxUseMst1
-              WrapAfter = waAuto
-              Index = 3
-            end>
-          Enabled = False
-          FlowLayout = tlTop
-          FlowStyle = fsLeftRightTopBottom
-          TabOrder = 1
-          object Label70: TLabel
-            Left = 18
-            Height = 21
-            Top = 8
-            Width = 63
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 4
-            Caption = 'MST File '
-            Font.Height = -16
-            ParentColor = False
-            ParentFont = False
-          end
-          object CheckBoxUseMst1: TCheckBox
-            Left = 1062
-            Height = 19
-            Top = 7
-            Width = 86
-            Anchors = []
-            BorderSpacing.Left = 30
-            BorderSpacing.Around = 3
-            Caption = 'use MST File'
-            TabOrder = 0
-          end
-          object BitBtnOpenMst2: TBitBtn
-            Left = 902
-            Height = 30
-            Top = 4
-            Width = 127
-            Anchors = []
-            AutoSize = True
-            BorderSpacing.Left = 3
-            BorderSpacing.InnerBorder = 2
-            Caption = 'Open MST File'
-            Glyph.Data = {
-              36040000424D3604000000000000360000002800000010000000100000000100
-              2000000000000004000064000000640000000000000000000000000000000000
-              0000000000000000000000000000000000000000000000000000000000000000
-              00000000000000000000000000000000000000000000000000004C92DEE95698
-              DEFF5B9BDEFF5B9BDEFF5B9BDEFF5A9BDEFF5A9BDEFF5A9BDEFF5A9BDEFF5A9A
-              DEFF599ADDFF5999DDFF4E93DEF54C92DE0E00000000000000005195DEFF96BE
-              E1FFADCEE4FFABCEE5FFA9CDE5FFA7CCE6FFA7CCE6FFA6CBE5FFA5CAE4FFA3C8
-              E1FFA0C5DDFF9DC1D9FF78AAD9FF4C92DE6A0000000000000000599ADFFF7BB1
-              E5FFB6D8EFFFB4D8F0FFB2D7F1FFB0D7F1FFAFD6F1FFAFD6F1FFADD5EFFFABD2
-              ECFFA7CCE6FFA2C7DFFF95BCDAFF598DC4FF7C807EFF7C807EFF5E9FE2FF62A1
-              E3FFBDE1F8FFBCE1F9FFBAE0FBFFB9E0FBFFB8E0FBFFB7DFFAFFB6DEF8FFB3DA
-              F5FFAFD4EFFFA8CDE6FFA2C6DDFF5E9CDDFFE5E7E9FF7B807EFF5FA0E3FF6CA9
-              E7FFB5DDFAFFC2E7FFFFC1E6FFFFC0E6FFFFC0E6FFFFBFE5FFFFBDE4FEFFBAE0
-              FBFFB5DAF4FFAED3EBFFA8CAE1FF73A8DCFFBED2E7FF7C807EFF60A0E3FF93C4
-              F1FF8FC2F0FFC6E8FFFFC6E8FFFFC5E8FFFFC4E8FFFFC4E7FFFFC1E6FFFFBEE3
-              FCFFBADEF6FFB3D6EEFFACCDE3FF90B9DBFF8EB7E3FF7C807FFF60A0E4FFBEE2
-              FCFF61A0E3FF60A0E4FF60A0E4FF60A0E4FF60A0E4FF60A0E4FF60A0E3FF5FA0
-              E3FF5F9FE2FF5E9DE1FF5C9CDFFF5698DEFF74A9E2FF7C817FFF60A0E4FFC8E9
-              FFFFCAE9FFFFC9EAFFFFC7E9FFFFC6E9FFFF8A8E8DFFF7F7F7FFF7F7F7FFF7F7
-              F7FFF5F5F5FFF3F3F3FFF1F1F1FFEFEFEFFFEDEDEDFF7D8180FF5397E0F8BCE1
-              FCFFC7E9FFFFC6E8FFFFC4E7FFFFB9E0FCFF8B908EFFF9F9F9FFF9F9F9FFF8F8
-              F8FFF7F7F7FFF4F4F4FFF2F2F2FFF0F0F0FFEDEDEDFF7E8280FF4C92DE6A5397
-              E0F860A0E4FF60A0E3FF60A0E3FF5397E0F88C908FFFFAFAFAFFFAFAFAFFFAFA
-              FAFFF8F8F8FFF6F6F6FFF3F3F3FFF0F0F0FFEEEEEEFF7F8381FF000000000000
-              0000000000000000000000000000000000008D918FFFFBFBFBFFFBFBFBFFFAFA
-              FAFFF9F9F9FFF6F6F6FFF4F4F4FFF1F1F1FFEEEEEEFF808482FF000000000000
-              0000000000000000000000000000000000008D9190FFFBFBFBFFFBFBFBFFFAFA
-              FAFFF9F9F9FFF6F6F6FFF3F3F3FFF1F1F1FFEEEEEEFF818584FF000000000000
-              0000000000000000000000000000000000008D9290FFFBFBFBFFFBFBFBFFFAFA
-              FAFFF9F9F9FFF6F6F6FFF4F4F4FFF0F0F0FFEDEDEDFF828685FF000000000000
-              0000000000000000000000000000000000008D9290FFFAFAFAFFFAFAFAFFF9F9
-              F9FFF8F8F8FFF6F6F6FFF3F3F3FFF0F0F0FFEDEDEDFF838786FF000000000000
-              0000000000000000000000000000000000008D9190FF8D918FFF8D918FFF8C90
-              8FFF8B8F8DFF898E8CFF888C8AFF878B89FF858988FF848887FF
-            }
-            TabOrder = 1
-          end
-          object TIEditMstFile2: TTIEdit
-            Left = 97
-            Height = 27
-            Top = 6
-            Width = 800
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 2
-            BorderSpacing.InnerBorder = 2
-            Constraints.MinWidth = 800
-            TabOrder = 2
-          end
-        end
-        object FlowPanelMsiId1: TFlowPanel
-          Left = 0
-          Height = 41
-          Top = 131
-          Width = 1048
-          Align = alTop
-          Alignment = taLeftJustify
-          AutoWrap = False
-          BorderWidth = 3
-          ControlList = <          
-            item
-              Control = Label59
-              WrapAfter = waAuto
-              Index = 0
-            end          
-            item
-              Control = TIEditMsiId2
-              WrapAfter = waAuto
-              Index = 1
-            end>
-          Enabled = False
-          FlowLayout = tlTop
-          FlowStyle = fsLeftRightTopBottom
-          TabOrder = 2
-          object Label59: TLabel
-            Left = 18
-            Height = 21
-            Top = 8
-            Width = 38
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 4
-            Caption = 'MsiId'
-            Font.Height = -16
-            ParentColor = False
-            ParentFont = False
-          end
-          object TIEditMsiId2: TTIEdit
-            Left = 72
-            Height = 27
-            Top = 6
-            Width = 400
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 2
-            BorderSpacing.InnerBorder = 2
-            Constraints.MinWidth = 400
-            TabOrder = 0
-          end
-        end
-        object FlowPanel11: TFlowPanel
-          Left = 0
-          Height = 41
-          Top = 172
-          Width = 1048
-          Align = alTop
-          Alignment = taLeftJustify
-          AutoWrap = False
-          BorderWidth = 3
-          ControlList = <          
-            item
-              Control = Label71
-              WrapAfter = waAuto
-              Index = 0
-            end          
-            item
-              Control = TIEditProdVersion2
-              WrapAfter = waAuto
-              Index = 1
-            end>
-          FlowLayout = tlTop
-          FlowStyle = fsLeftRightTopBottom
-          TabOrder = 3
-          object Label71: TLabel
-            Left = 18
-            Height = 21
-            Top = 8
-            Width = 110
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 4
-            Caption = 'Product Version'
-            Font.Height = -16
-            ParentColor = False
-            ParentFont = False
-          end
-          object TIEditProdVersion2: TTIEdit
-            Left = 144
-            Height = 27
-            Top = 6
-            Width = 200
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 2
-            BorderSpacing.InnerBorder = 2
-            Constraints.MinWidth = 200
-            TabOrder = 0
-          end
-        end
-        object FlowPanel12: TFlowPanel
-          Left = 0
-          Height = 41
-          Top = 213
-          Width = 1048
-          Align = alTop
-          Alignment = taLeftJustify
-          AutoWrap = False
-          BorderWidth = 3
-          ControlList = <          
-            item
-              Control = Label74
-              WrapAfter = waAuto
-              Index = 0
-            end          
-            item
-              Control = TIEditSetupFileSizeMB2
-              WrapAfter = waAuto
-              Index = 1
-            end          
-            item
-              Control = Label72
-              WrapAfter = waAuto
-              Index = 2
-            end          
-            item
-              Control = TIEditRequiredSizeMB2
-              WrapAfter = waAuto
-              Index = 3
-            end          
-            item
-              Control = Label73
-              WrapAfter = waAuto
-              Index = 4
-            end          
-            item
-              Control = TIEditInstallDir2
-              WrapAfter = waAuto
-              Index = 5
-            end>
-          FlowLayout = tlTop
-          FlowStyle = fsLeftRightTopBottom
-          TabOrder = 4
-          object Label72: TLabel
-            Left = 292
-            Height = 21
-            Top = 8
-            Width = 108
-            Anchors = []
-            BorderSpacing.Left = 30
-            BorderSpacing.Around = 4
-            Caption = 'Required Space'
-            Font.Height = -16
-            ParentColor = False
-            ParentFont = False
-          end
-          object Label73: TLabel
-            Left = 552
-            Height = 21
-            Top = 8
-            Width = 62
-            Anchors = []
-            BorderSpacing.Left = 30
-            BorderSpacing.Around = 4
-            Caption = 'InstallDir'
-            Font.Height = -16
-            ParentColor = False
-            ParentFont = False
-          end
-          object Label74: TLabel
-            Left = 18
-            Height = 21
-            Top = 8
-            Width = 122
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 4
-            Caption = 'Setup file size MB'
-            Font.Height = -16
-            ParentColor = False
-            ParentFont = False
-          end
-          object TIEditSetupFileSizeMB2: TTIEdit
-            Left = 156
-            Height = 27
-            Top = 6
-            Width = 100
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 2
-            BorderSpacing.InnerBorder = 2
-            Constraints.MinWidth = 100
-            TabOrder = 0
-          end
-          object TIEditRequiredSizeMB2: TTIEdit
-            Left = 416
-            Height = 27
-            Top = 6
-            Width = 100
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 2
-            BorderSpacing.InnerBorder = 2
-            Constraints.MinWidth = 100
-            TabOrder = 1
-          end
-          object TIEditInstallDir2: TTIEdit
-            Left = 630
-            Height = 27
-            Top = 6
-            Width = 400
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 2
-            BorderSpacing.InnerBorder = 2
-            Constraints.MinWidth = 400
-            TabOrder = 2
-          end
-        end
-        object FlowPanel13: TFlowPanel
-          Left = 0
-          Height = 41
-          Top = 254
-          Width = 1048
-          Align = alTop
-          Alignment = taLeftJustify
-          AutoWrap = False
-          BorderWidth = 3
-          ControlList = <          
-            item
-              Control = Label75
-              WrapAfter = waAuto
-              Index = 0
-            end          
-            item
-              Control = TIEditProductIdS2
-              WrapAfter = waAuto
-              Index = 1
-            end          
-            item
-              Control = Label76
-              WrapAfter = waAuto
-              Index = 2
-            end          
-            item
-              Control = TIEditProductNameS2
-              WrapAfter = waAuto
-              Index = 3
-            end>
-          FlowLayout = tlTop
-          FlowStyle = fsLeftRightTopBottom
-          TabOrder = 5
-          object Label75: TLabel
-            Left = 18
-            Height = 21
-            Top = 8
-            Width = 106
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 4
-            Caption = 'opsi Product ID'
-            Font.Height = -16
-            ParentColor = False
-            ParentFont = False
-          end
-          object Label76: TLabel
-            Left = 376
-            Height = 21
-            Top = 8
-            Width = 133
-            Anchors = []
-            BorderSpacing.Left = 30
-            BorderSpacing.Around = 4
-            Caption = 'opsi Product Name'
-            Font.Height = -16
-            ParentColor = False
-            ParentFont = False
-          end
-          object TIEditProductIdS2: TTIEdit
-            Left = 140
-            Height = 27
-            Top = 6
-            Width = 200
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 2
-            BorderSpacing.InnerBorder = 2
-            Constraints.MinWidth = 200
-            TabOrder = 0
-          end
-          object TIEditProductNameS2: TTIEdit
-            Left = 525
-            Height = 27
-            Top = 6
-            Width = 400
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 2
-            BorderSpacing.InnerBorder = 2
-            Constraints.MinWidth = 400
-            TabOrder = 1
-          end
-        end
-        object FlowPanelSetup33: TFlowPanel
-          Left = 0
-          Height = 41
-          Top = 49
-          Width = 1048
-          Align = alTop
-          Alignment = taLeftJustify
-          AutoWrap = False
-          BorderWidth = 3
-          ControlList = <          
-            item
-              Control = Label77
-              WrapAfter = waAuto
-              Index = 0
-            end          
-            item
-              Control = TIEditSetupfile2
-              WrapAfter = waAuto
-              Index = 1
-            end          
-            item
-              Control = BitBtnOpenFile1
-              WrapAfter = waAuto
-              Index = 2
-            end>
-          FlowLayout = tlTop
-          FlowStyle = fsLeftRightTopBottom
-          TabOrder = 6
-          object Label77: TLabel
-            Left = 18
-            Height = 21
-            Top = 8
-            Width = 68
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 4
-            Caption = 'Setup File'
-            Font.Height = -16
-            ParentColor = False
-            ParentFont = False
-          end
-          object TIEditSetupfile2: TTIEdit
-            Left = 102
-            Height = 27
-            Top = 6
-            Width = 800
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 2
-            BorderSpacing.InnerBorder = 2
-            Constraints.MinWidth = 800
-            TabOrder = 0
-          end
-          object BitBtnOpenFile1: TBitBtn
-            Left = 907
-            Height = 30
-            Top = 4
-            Width = 133
-            Anchors = []
-            AutoSize = True
-            BorderSpacing.Left = 3
-            BorderSpacing.InnerBorder = 2
-            Caption = 'Open Setup File'
-            Glyph.Data = {
-              36040000424D3604000000000000360000002800000010000000100000000100
-              2000000000000004000064000000640000000000000000000000000000000000
-              0000000000000000000000000000000000000000000000000000000000000000
-              00000000000000000000000000000000000000000000000000004C92DEE95698
-              DEFF5B9BDEFF5B9BDEFF5B9BDEFF5A9BDEFF5A9BDEFF5A9BDEFF5A9BDEFF5A9A
-              DEFF599ADDFF5999DDFF4E93DEF54C92DE0E00000000000000005195DEFF96BE
-              E1FFADCEE4FFABCEE5FFA9CDE5FFA7CCE6FFA7CCE6FFA6CBE5FFA5CAE4FFA3C8
-              E1FFA0C5DDFF9DC1D9FF78AAD9FF4C92DE6A0000000000000000599ADFFF7BB1
-              E5FFB6D8EFFFB4D8F0FFB2D7F1FFB0D7F1FFAFD6F1FFAFD6F1FFADD5EFFFABD2
-              ECFFA7CCE6FFA2C7DFFF95BCDAFF598DC4FF7C807EFF7C807EFF5E9FE2FF62A1
-              E3FFBDE1F8FFBCE1F9FFBAE0FBFFB9E0FBFFB8E0FBFFB7DFFAFFB6DEF8FFB3DA
-              F5FFAFD4EFFFA8CDE6FFA2C6DDFF5E9CDDFFE5E7E9FF7B807EFF5FA0E3FF6CA9
-              E7FFB5DDFAFFC2E7FFFFC1E6FFFFC0E6FFFFC0E6FFFFBFE5FFFFBDE4FEFFBAE0
-              FBFFB5DAF4FFAED3EBFFA8CAE1FF73A8DCFFBED2E7FF7C807EFF60A0E3FF93C4
-              F1FF8FC2F0FFC6E8FFFFC6E8FFFFC5E8FFFFC4E8FFFFC4E7FFFFC1E6FFFFBEE3
-              FCFFBADEF6FFB3D6EEFFACCDE3FF90B9DBFF8EB7E3FF7C807FFF60A0E4FFBEE2
-              FCFF61A0E3FF60A0E4FF60A0E4FF60A0E4FF60A0E4FF60A0E4FF60A0E3FF5FA0
-              E3FF5F9FE2FF5E9DE1FF5C9CDFFF5698DEFF74A9E2FF7C817FFF60A0E4FFC8E9
-              FFFFCAE9FFFFC9EAFFFFC7E9FFFFC6E9FFFF8A8E8DFFF7F7F7FFF7F7F7FFF7F7
-              F7FFF5F5F5FFF3F3F3FFF1F1F1FFEFEFEFFFEDEDEDFF7D8180FF5397E0F8BCE1
-              FCFFC7E9FFFFC6E8FFFFC4E7FFFFB9E0FCFF8B908EFFF9F9F9FFF9F9F9FFF8F8
-              F8FFF7F7F7FFF4F4F4FFF2F2F2FFF0F0F0FFEDEDEDFF7E8280FF4C92DE6A5397
-              E0F860A0E4FF60A0E3FF60A0E3FF5397E0F88C908FFFFAFAFAFFFAFAFAFFFAFA
-              FAFFF8F8F8FFF6F6F6FFF3F3F3FFF0F0F0FFEEEEEEFF7F8381FF000000000000
-              0000000000000000000000000000000000008D918FFFFBFBFBFFFBFBFBFFFAFA
-              FAFFF9F9F9FFF6F6F6FFF4F4F4FFF1F1F1FFEEEEEEFF808482FF000000000000
-              0000000000000000000000000000000000008D9190FFFBFBFBFFFBFBFBFFFAFA
-              FAFFF9F9F9FFF6F6F6FFF3F3F3FFF1F1F1FFEEEEEEFF818584FF000000000000
-              0000000000000000000000000000000000008D9290FFFBFBFBFFFBFBFBFFFAFA
-              FAFFF9F9F9FFF6F6F6FFF4F4F4FFF0F0F0FFEDEDEDFF828685FF000000000000
-              0000000000000000000000000000000000008D9290FFFAFAFAFFFAFAFAFFF9F9
-              F9FFF8F8F8FFF6F6F6FFF3F3F3FFF0F0F0FFEDEDEDFF838786FF000000000000
-              0000000000000000000000000000000000008D9190FF8D918FFF8D918FFF8C90
-              8FFF8B8F8DFF898E8CFF888C8AFF878B89FF858988FF848887FF
-            }
-            TabOrder = 1
-          end
-        end
-        object BtSetup2NextStep: TBitBtn
-          Left = 899
-          Height = 52
-          Hint = 'Go to the next Step'
-          Top = 469
-          Width = 147
-          Anchors = []
-          AutoSize = True
-          BorderSpacing.Around = 30
-          BorderSpacing.InnerBorder = 5
-          Caption = 'Next Step'
-          Font.Height = -17
-          Glyph.Data = {
-            36100000424D3610000000000000360000002800000020000000200000000100
-            2000000000000010000064000000640000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            000000000000000000000000007E000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF0000007B0000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000FF0000007800000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000FF000000FF00000076000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000FF000000FF000000FF000000730000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
-            0070000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
-            00FF0000006E0000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF0000006B00000000000000000000000000000000000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF00000069000000000000000000000000000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FE000000670000000000000000000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FE0000006400000000000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FE00000062000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF0000009A000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF0000009A00000001000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000970000000100000000000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF00000095000000010000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF0000009200000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000900000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
-            008E000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000FF000000FF000000FF0000008B0000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000FF000000FF00000088000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000FF0000008600000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000830000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000081000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000
-          }
-          Layout = blGlyphRight
-          OnClick = BtSetup2NextStepClick
-          ParentFont = False
-          TabOrder = 7
         end
       end
       object TabSheetProduct: TTabSheet
         Caption = 'Product'
-        ClientHeight = 538
-        ClientWidth = 1048
+        ClientHeight = 564
+        ClientWidth = 1509
+        ParentFont = False
         object FlowPanel6: TFlowPanel
           Left = 0
-          Height = 41
-          Top = 0
-          Width = 1048
+          Height = 62
+          Top = 62
+          Width = 1509
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
           BorderWidth = 3
           ControlList = <          
             item
-              Control = Label58
+              Control = TIEditProdVersion3
               WrapAfter = waAuto
               Index = 0
             end          
             item
-              Control = TIEditProdVersion3
+              Control = Label58
               WrapAfter = waAuto
               Index = 1
             end          
@@ -3218,65 +3393,67 @@ object resultForm1: TresultForm1
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
+          ParentFont = False
           TabOrder = 0
           object Label58: TLabel
-            Left = 18
-            Height = 21
-            Top = 8
-            Width = 110
+            Left = 346
+            Height = 34
+            Top = 10
+            Width = 183
             Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 4
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 6
             Caption = 'Product Version'
-            Font.Height = -16
+            Font.Height = -24
             ParentColor = False
             ParentFont = False
           end
           object Label61: TLabel
-            Left = 380
-            Height = 21
-            Top = 8
-            Width = 112
+            Left = 586
+            Height = 34
+            Top = 10
+            Width = 187
             Anchors = []
-            BorderSpacing.Left = 30
-            BorderSpacing.Around = 4
+            BorderSpacing.Left = 45
+            BorderSpacing.Around = 6
             Caption = 'Package Version'
-            Font.Height = -16
+            Font.Height = -24
             ParentColor = False
             ParentFont = False
           end
           object TIEditProdVersion3: TTIEdit
-            Left = 144
-            Height = 27
-            Top = 6
-            Width = 200
+            Left = 22
+            Height = 46
+            Top = 7
+            Width = 300
             Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 2
-            BorderSpacing.InnerBorder = 2
-            Constraints.MinWidth = 200
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 3
+            BorderSpacing.InnerBorder = 3
+            Constraints.MinWidth = 300
+            ParentFont = False
             TabOrder = 0
           end
           object TISpinEditPackageVers: TTISpinEdit
-            Left = 510
-            Height = 23
-            Top = 8
-            Width = 84
+            Left = 800
+            Height = 38
+            Top = 10
+            Width = 126
             Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 4
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 6
             MinValue = 1
             TabOrder = 1
           end
           object TICheckBoxlicenseRequired: TTICheckBox
-            Left = 612
-            Height = 23
-            Top = 8
-            Width = 140
+            Left = 953
+            Height = 34
+            Top = 10
+            Width = 210
             Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 4
-            BorderSpacing.InnerBorder = 2
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 6
+            BorderSpacing.InnerBorder = 3
             Caption = 'License required'
             PropertyNameAsCaption = False
             TabOrder = 2
@@ -3284,9 +3461,9 @@ object resultForm1: TresultForm1
         end
         object FlowPanel10: TFlowPanel
           Left = 0
-          Height = 41
-          Top = 41
-          Width = 1048
+          Height = 62
+          Top = 0
+          Width = 1509
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -3314,63 +3491,66 @@ object resultForm1: TresultForm1
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
+          ParentFont = False
           TabOrder = 1
           object Label66: TLabel
-            Left = 18
-            Height = 21
-            Top = 8
-            Width = 106
+            Left = 25
+            Height = 34
+            Top = 10
+            Width = 177
             Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 4
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 6
             Caption = 'opsi Product ID'
-            Font.Height = -16
+            Font.Height = -24
             ParentColor = False
             ParentFont = False
           end
           object Label67: TLabel
-            Left = 376
-            Height = 21
-            Top = 8
-            Width = 133
+            Left = 580
+            Height = 34
+            Top = 10
+            Width = 218
             Anchors = []
-            BorderSpacing.Left = 30
-            BorderSpacing.Around = 4
+            BorderSpacing.Left = 45
+            BorderSpacing.Around = 6
             Caption = 'opsi Product Name'
-            Font.Height = -16
+            Font.Height = -24
             ParentColor = False
             ParentFont = False
           end
           object TIEditProdID: TTIEdit
-            Left = 140
-            Height = 27
-            Top = 6
-            Width = 200
+            Left = 226
+            Height = 46
+            Top = 7
+            Width = 300
             Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 2
-            BorderSpacing.InnerBorder = 2
-            Constraints.MinWidth = 200
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 3
+            BorderSpacing.InnerBorder = 3
+            Constraints.MinWidth = 300
+            ParentFont = False
             TabOrder = 0
           end
           object TIEditProdName: TTIEdit
-            Left = 525
-            Height = 27
-            Top = 6
-            Width = 200
+            Left = 822
+            Height = 46
+            Top = 7
+            Width = 300
             Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 2
-            BorderSpacing.InnerBorder = 2
-            Constraints.MinWidth = 200
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 3
+            BorderSpacing.InnerBorder = 3
+            Constraints.MinWidth = 300
+            ParentFont = False
             TabOrder = 1
           end
         end
         object FlowPanel9: TFlowPanel
           Left = 0
-          Height = 78
-          Top = 82
-          Width = 1048
+          Height = 117
+          Top = 124
+          Width = 1509
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -3388,36 +3568,38 @@ object resultForm1: TresultForm1
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
+          ParentFont = False
           TabOrder = 2
           object Label65: TLabel
-            Left = 18
-            Height = 21
-            Top = 8
-            Width = 46
+            Left = 25
+            Height = 34
+            Top = 10
+            Width = 74
             Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 4
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 6
             Caption = 'Advice'
-            Font.Height = -16
+            Font.Height = -24
             ParentColor = False
             ParentFont = False
           end
           object TIMemoAdvice: TTIMemo
-            Left = 82
-            Height = 52
-            Top = 8
-            Width = 902
+            Left = 126
+            Height = 78
+            Top = 10
+            Width = 1353
             Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 4
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 6
+            ParentFont = False
             ScrollBars = ssAutoVertical
           end
         end
         object FlowPanel8: TFlowPanel
           Left = 0
-          Height = 70
-          Top = 160
-          Width = 1048
+          Height = 105
+          Top = 241
+          Width = 1509
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -3435,208 +3617,257 @@ object resultForm1: TresultForm1
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
+          ParentFont = False
           TabOrder = 3
           object Label57: TLabel
-            Left = 18
-            Height = 21
-            Top = 8
-            Width = 79
+            Left = 25
+            Height = 34
+            Top = 10
+            Width = 132
             Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 4
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 6
             Caption = 'Description'
-            Font.Height = -16
+            Font.Height = -24
             ParentColor = False
             ParentFont = False
           end
           object TIMemoDesc: TTIMemo
-            Left = 115
-            Height = 52
-            Top = 8
-            Width = 902
+            Left = 184
+            Height = 78
+            Top = 10
+            Width = 1353
             Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 4
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 6
+            ParentFont = False
             ScrollBars = ssAutoVertical
           end
         end
-        object BtProductNextStep: TBitBtn
-          Left = 871
-          Height = 52
-          Hint = 'Go to the next Step'
-          Top = 458
-          Width = 147
-          Align = alCustom
-          Anchors = [akRight, akBottom]
-          AutoSize = True
-          BorderSpacing.Around = 30
-          BorderSpacing.InnerBorder = 5
-          Caption = 'Next Step'
-          Font.Height = -17
-          Glyph.Data = {
-            36100000424D3610000000000000360000002800000020000000200000000100
-            2000000000000010000064000000640000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            000000000000000000000000007E000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF0000007B0000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000FF0000007800000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000FF000000FF00000076000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000FF000000FF000000FF000000730000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
-            0070000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
-            00FF0000006E0000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF0000006B00000000000000000000000000000000000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF00000069000000000000000000000000000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FE000000670000000000000000000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FE0000006400000000000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FE00000062000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF0000009A000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF0000009A00000001000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000970000000100000000000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF000000FF00000095000000010000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000FF0000009200000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
-            00FF000000900000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
-            008E000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000FF000000FF000000FF0000008B0000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000FF000000FF00000088000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000FF0000008600000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000FF000000830000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000081000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000
-          }
-          Layout = blGlyphRight
-          OnClick = BtProductNextStepClick
-          ParentFont = False
+        object FlowPanel4: TFlowPanel
+          Left = 0
+          Height = 179
+          Top = 346
+          Width = 1509
+          Align = alTop
+          ControlList = <          
+            item
+              Control = Label75
+              WrapAfter = waAuto
+              Index = 0
+            end>
+          FlowLayout = tlTop
+          FlowStyle = fsLeftRightTopBottom
           TabOrder = 4
+          object Label75: TLabel
+            Left = 22
+            Height = 34
+            Top = 7
+            Width = 164
+            Anchors = []
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 6
+            Caption = 'Dependencies'
+            Font.Height = -24
+            ParentColor = False
+            ParentFont = False
+          end
+        end
+        object FlowPanel18: TFlowPanel
+          Left = 0
+          Height = 103
+          Top = 461
+          Width = 1509
+          Align = alBottom
+          ControlList = <          
+            item
+              Control = BtProductNextStep
+              WrapAfter = waAuto
+              Index = 0
+            end>
+          FlowLayout = tlTop
+          FlowStyle = fsRightLeftTopBottom
+          TabOrder = 5
+          object BtProductNextStep: TBitBtn
+            Left = 1311
+            Height = 66
+            Hint = 'Go to the next Step'
+            Top = 16
+            Width = 182
+            Align = alCustom
+            Anchors = [akRight, akBottom]
+            AutoSize = True
+            BorderSpacing.Around = 15
+            BorderSpacing.InnerBorder = 8
+            Caption = 'Next Step'
+            Font.Height = -26
+            Glyph.Data = {
+              36100000424D3610000000000000360000002800000020000000200000000100
+              2000000000000010000064000000640000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              000000000000000000000000007E000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF0000007B0000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF0000007800000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF00000076000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF000000FF000000730000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
+              0070000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
+              00FF0000006E0000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF0000006B00000000000000000000000000000000000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF00000069000000000000000000000000000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FE000000670000000000000000000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FE0000006400000000000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FE00000062000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF0000009A000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF0000009A00000001000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000970000000100000000000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF00000095000000010000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF0000009200000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000900000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
+              008E000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF000000FF0000008B0000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF00000088000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF0000008600000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000830000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000081000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000
+            }
+            Layout = blGlyphRight
+            OnClick = BtProductNextStepClick
+            ParentFont = False
+            TabOrder = 0
+          end
         end
       end
       object TabSheetCreate: TTabSheet
         Caption = 'Create'
-        ClientHeight = 538
-        ClientWidth = 1048
+        ClientHeight = 564
+        ClientWidth = 1509
         OnShow = TabSheetCreateShow
+        ParentFont = False
         object PanelProcess: TPanel
-          Left = 144
-          Height = 64
-          Top = 432
-          Width = 520
+          Left = 88
+          Height = 96
+          Top = 400
+          Width = 780
           BevelOuter = bvNone
-          ClientHeight = 64
-          ClientWidth = 520
+          ClientHeight = 96
+          ClientWidth = 780
           Color = clGradientActiveCaption
           ParentColor = False
+          ParentFont = False
           TabOrder = 0
           Visible = False
           object processing: TLabel
-            Left = 24
-            Height = 22
-            Top = 8
-            Width = 109
+            Left = 36
+            Height = 34
+            Top = 12
+            Width = 165
             Caption = 'processing...'
             Font.CharSet = ANSI_CHARSET
             Font.Color = clBlack
-            Font.Height = -19
+            Font.Height = -29
             Font.Name = 'Arial'
             Font.Pitch = fpVariable
             Font.Quality = fqDraft
@@ -3644,27 +3875,29 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object processStatement: TLabel
-            Left = 24
-            Height = 15
-            Top = 40
-            Width = 58
+            Left = 36
+            Height = 28
+            Top = 60
+            Width = 104
             Caption = 'please wait'
             ParentColor = False
+            ParentFont = False
           end
           object ProgressBar1: TProgressBar
-            Left = 190
-            Height = 20
-            Top = 11
-            Width = 300
+            Left = 285
+            Height = 30
+            Top = 16
+            Width = 450
+            ParentFont = False
             Style = pbstMarquee
             TabOrder = 0
           end
         end
         object FlowPanel14: TFlowPanel
           Left = 0
-          Height = 66
+          Height = 99
           Top = 0
-          Width = 1048
+          Width = 1509
           Align = alTop
           Caption = 'FlowPanel14'
           ControlList = <          
@@ -3685,43 +3918,45 @@ object resultForm1: TresultForm1
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
+          ParentFont = False
           TabOrder = 1
           OnClick = FlowPanel14Click
           object TIEditworkbenchpath: TTIEdit
-            Left = 221
-            Height = 27
-            Top = 11
-            Width = 600
+            Left = 356
+            Height = 46
+            Top = 16
+            Width = 900
             Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 10
-            BorderSpacing.InnerBorder = 2
-            Constraints.MinWidth = 600
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 15
+            BorderSpacing.InnerBorder = 3
+            Constraints.MinWidth = 900
+            ParentFont = False
             TabOrder = 0
           end
           object Label78: TLabel
-            Left = 21
-            Height = 21
-            Top = 11
-            Width = 170
+            Left = 31
+            Height = 34
+            Top = 16
+            Width = 280
             Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 10
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 15
             Caption = 'Path to opsi-work-bench'
-            Font.Height = -16
+            Font.Height = -24
             ParentColor = False
             ParentFont = False
           end
           object BitBtnWorkBenchPath: TBitBtn
-            Left = 844
-            Height = 30
-            Top = 11
-            Width = 170
+            Left = 20
+            Height = 48
+            Top = 92
+            Width = 249
             Anchors = []
             AutoSize = True
-            BorderSpacing.Left = 3
-            BorderSpacing.Around = 10
-            BorderSpacing.InnerBorder = 2
+            BorderSpacing.Left = 4
+            BorderSpacing.Around = 15
+            BorderSpacing.InnerBorder = 3
             Caption = 'Select workbench path'
             Glyph.Data = {
               36040000424D3604000000000000360000002800000010000000100000000100
@@ -3760,14 +3995,15 @@ object resultForm1: TresultForm1
               8FFF8B8F8DFF898E8CFF888C8AFF878B89FF858988FF848887FF
             }
             OnClick = BitBtnWorkBenchPathClick
+            ParentFont = False
             TabOrder = 1
           end
         end
         object FlowPanel15: TFlowPanel
           Left = 0
-          Height = 50
-          Top = 66
-          Width = 1048
+          Height = 75
+          Top = 99
+          Width = 1509
           Align = alTop
           ControlList = <          
             item
@@ -3787,46 +4023,47 @@ object resultForm1: TresultForm1
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
+          ParentFont = False
           TabOrder = 2
           object LabelWorkbenchOK: TLabel
-            Left = 21
-            Height = 21
-            Top = 11
-            Width = 256
+            Left = 31
+            Height = 34
+            Top = 16
+            Width = 422
             Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 10
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 15
             Caption = 'Path to opsi-work-bench is reachable'
-            Font.Height = -16
+            Font.Height = -24
             ParentColor = False
             ParentFont = False
             Visible = False
           end
           object LabelWorkbenchNotOK: TLabel
-            Left = 307
-            Height = 21
-            Top = 11
-            Width = 513
+            Left = 498
+            Height = 34
+            Top = 16
+            Width = 843
             Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 10
+            BorderSpacing.Left = 15
+            BorderSpacing.Around = 15
             Caption = 'Path to opsi-work-bench not is reachable - Check Network Mounts or Path'
             Font.Color = clRed
-            Font.Height = -16
+            Font.Height = -24
             ParentColor = False
             ParentFont = False
             Visible = False
           end
           object BitBtnRecheckWorkbench: TBitBtn
-            Left = 843
-            Height = 30
-            Top = 11
-            Width = 183
+            Left = 20
+            Height = 48
+            Top = 80
+            Width = 271
             Anchors = []
             AutoSize = True
-            BorderSpacing.Left = 3
-            BorderSpacing.Around = 10
-            BorderSpacing.InnerBorder = 2
+            BorderSpacing.Left = 4
+            BorderSpacing.Around = 15
+            BorderSpacing.InnerBorder = 3
             Caption = 'Recheck workbench path'
             Glyph.Data = {
               36040000424D3604000000000000360000002800000010000000100000000100
@@ -3865,14 +4102,15 @@ object resultForm1: TresultForm1
               0000000000000000000000000000000000000000000000000000
             }
             OnClick = BitBtnRecheckWorkbenchClick
+            ParentFont = False
             TabOrder = 0
           end
         end
         object FlowPanel16: TFlowPanel
           Left = 0
-          Height = 132
-          Top = 116
-          Width = 1048
+          Height = 198
+          Top = 174
+          Width = 1509
           Align = alTop
           Caption = 'FlowPanel16'
           ControlList = <          
@@ -3883,417 +4121,443 @@ object resultForm1: TresultForm1
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
+          ParentFont = False
           TabOrder = 3
           object GroupBox2: TGroupBox
             Left = 1
-            Height = 127
+            Height = 190
             Top = 1
-            Width = 608
+            Width = 912
             Anchors = []
-            ClientHeight = 107
-            ClientWidth = 604
+            ClientHeight = 188
+            ClientWidth = 910
+            ParentFont = False
             TabOrder = 0
             object RadioButtonCreateOnly: TRadioButton
-              Left = 22
-              Height = 19
-              Top = -7
-              Width = 115
+              Left = 33
+              Height = 30
+              Top = -10
+              Width = 193
               Caption = 'create opsi packet'
               Checked = True
               OnChange = RadioButtonBuildModeChange
+              ParentFont = False
               TabOrder = 5
               TabStop = True
             end
             object RadioButtonInteractive: TRadioButton
-              Left = 24
-              Height = 19
-              Top = 8
-              Width = 297
+              Left = 36
+              Height = 30
+              Top = 12
+              Width = 516
               Caption = 'create opsi packet and start interactive PacketBuilder'
               OnChange = RadioButtonBuildModeChange
+              ParentFont = False
               TabOrder = 0
             end
             object RadioButtonAuto: TRadioButton
-              Left = 22
-              Height = 19
-              Top = 25
-              Width = 132
+              Left = 33
+              Height = 30
+              Top = 38
+              Width = 220
               Caption = 'create and auto build'
               OnChange = RadioButtonBuildModeChange
+              ParentFont = False
               TabOrder = 1
             end
             object CheckBoxBuild: TCheckBox
-              Left = 125
-              Height = 19
-              Top = 48
-              Width = 47
+              Left = 188
+              Height = 30
+              Top = 72
+              Width = 70
               Caption = 'build'
               Checked = True
               Enabled = False
+              ParentFont = False
               State = cbChecked
               TabOrder = 2
             end
             object CheckBoxInstall: TCheckBox
-              Left = 208
-              Height = 19
-              Top = 48
-              Width = 51
+              Left = 312
+              Height = 30
+              Top = 72
+              Width = 79
               Caption = 'install'
               Checked = True
               Enabled = False
+              ParentFont = False
               State = cbChecked
               TabOrder = 3
             end
             object CheckBoxQuiet: TCheckBox
-              Left = 296
-              Height = 19
-              Top = 56
-              Width = 47
+              Left = 444
+              Height = 30
+              Top = 84
+              Width = 71
               Caption = 'quiet'
               Enabled = False
+              ParentFont = False
               TabOrder = 4
             end
             object ButtonCreatePacket: TButton
-              Left = 408
-              Height = 31
+              Left = 612
+              Height = 46
               Hint = 'Create opsi Packet according to the form'
-              Top = 32
-              Width = 139
+              Top = 48
+              Width = 208
               Caption = '&Create opsi Packet'
+              ParentFont = False
               ParentShowHint = False
               ShowHint = True
               TabOrder = 6
             end
           end
         end
-        object BtCreateProduct: TBitBtn
-          Left = 760
-          Height = 68
-          Hint = 'Create a opsi Product'
-          Top = 432
-          Width = 242
-          Anchors = []
-          AutoSize = True
-          BorderSpacing.Around = 30
-          BorderSpacing.InnerBorder = 5
-          Caption = 'Create Opsi Product'
-          Font.Height = -17
-          Glyph.Data = {
-            36240000424D3624000000000000360000002800000030000000300000000100
-            2000000000000024000064000000640000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000AE806905AD7F6A1AAD80692AAD7F6935AD7F6A3DAE806942AD806A41AD7F
-            693BAD7F6932AD7F6925AD7F6914000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000AE806A38AE80
-            697FAE8069B0AD7F6AD0AE806AEAAD7F69FCAE806AFFAD7F6AFFAE7F6AFFAD80
-            69FFAE806AF7AD7F69E2AE806AC6AD7F69A2AD7F6969AD7F691A000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            000000000000000000000000000000000000AD7F6950AE806AD4AE806AF3AD7F
-            6AFDAD7F6AFFAD7F69FFAE806AFFAE806AFFAE806AFFAD7F69FEAE806AFFAE80
-            6AFFAE806AFFAD7F69FFAE806AFFAD7F69FFAE806AFAAD7F69F3AD7F69B1AD80
-            6A28000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            000000000000AE806A03AE806A37AE806AD2AE806AFFAE806AFFAD7F69FFAD7F
-            69FFAD7F69FFAD7F69FEAF816CFEB0836EFEB18570FEB18571FEB18571FEB185
-            70FEB0846FFEAF826CFEAD7F69FEAD7F69FFAD7F69FFAD7F69FEAE806AFFAE80
-            69FFAE7F699CAD806A1900000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000AE806A19AE806A9AAE806AFFAE806AFFAE806AFEAD7F69FFAB7C66FFB083
-            6EFCBB9483FCC4A193FDCCADA2FBD2B7AEFBD7BDB5FBD8C0B9FBD9C0BAFBD7BD
-            B6FCD3B7AEFBCDAEA3FBC5A294FBBC9584FBB18571FCAC7D66FEAD7F69FFAE80
-            6AFFAD7F69FFAD7F69EBAE806A6CAE806A050000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            000000000000000000000000000000000000000000000000000000000000AE7F
-            6941AE806AE2AD7F69FFAE806AFFAD7F69FFAC7D66FFB28671FBC9A99CFAD7BE
-            B7FEDBC4BEFDDFC9C4FEDEC9C4FFDEC8C4FFDEC8C3FFDEC8C3FFDEC8C3FFDEC8
-            C3FFDEC8C3FFDEC9C4FFDFC9C4FEDCC5BFFDD8BEB7FDCBACA0FAB28672F9AB7C
-            65FFAD7F69FEAE806AFFAE806AFEAE7F6AB3AE816A0300000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000AE7F6951AD7F
-            6AF7AE806AFEAD7F69FFAD7F69FEAF816BFEC3A092F8DCC6C1FDDEC8C3FFDDC7
-            C2FEDEC8C3FFDEC8C3FFDDC7C2FFDEC8C3FFDEC8C3FFDEC8C3FFDEC8C3FFDEC8
-            C3FFDEC8C3FFDEC8C3FFDEC8C3FFDDC7C2FEDDC7C2FFDEC8C3FFDEC9C4FFC7A7
-            9AF8AF826DFDAD7F69FEAD7F69FEAE806AFFAE7F6AE1AD80690D000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000000000000000000000AE806A4EAD7F6AF9AE7F
-            69FFAD7F69FFAD7F68FEB78F7DFBD4BAB1FAE0CCC8FFDEC8C3FFDEC8C3FFDEC8
-            C3FFDEC8C3FFDFC9C4FFDFCAC5FFDEC9C4FFDBC5BFFFDAC2BBFFD9C0BAFFD9C0
-            BAFFDAC2BCFFDCC6C0FFDFCAC5FFDFCAC5FFDFC9C4FFDEC8C3FFDEC8C3FFE0CB
-            C6FFD7BDB5FBB99280FCAD7E68FEAD7F69FEAE806AFFAD7F69DEAE7F69200000
-            0000000000000000000000000000000000000000000000000000000000000000
-            000000000000000000000000000000000000AE806A4CAD7F69F8AE806AFFAE80
-            6AFEAD7E68FFC19D8EFADBC4BEFDDEC9C4FFDDC7C2FEDEC8C3FFDFCAC6FFE0CB
-            C7FFD7BFB8FFCDAEA3FFC4A192FFBD9786FFBA9281FFB88F7CFFB68D7AFFB78D
-            7AFFB88F7DFFBB9382FFBF9888FFC4A294FFCDAEA4FFD8BFB7FFE1CCC8FFDFC9
-            C5FFDEC9C4FFDCC6C1FCC5A496FBAD7F68FDAD7F69FEAD7F69FFAD806ACAAE80
-            6A09000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000AE806A25AD7F69ECAE806AFFAE806AFEAC7D
-            66FFC39F91F8DFC9C5FFDEC8C3FEDEC8C3FEDFCAC5FFD8C0B9FFC6A496FFB589
-            76FFAF826CFFAE816BFFAE806AFFAD7F69FFAD7F69FFAD7F69FFAD7F69FFAD7F
-            69FFAD7F69FFAD7F69FFAD7F69FFAE806AFFAE816BFFAF826CFFB58B78FFCEB1
-            A7FFDEC9C4FEDEC8C3FFDEC8C3FEC7A599FAAE806AFEAE806AFFAD7F69FFAE7F
-            69B3000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000AE806A08AE806ABAAD7F69FFAD7F69FFAD7E68FEC19C
-            8DF9E0CCC8FFDEC8C3FEDBC3BDFFD2B5ACFFBA9281FFAC7D66FFAC7D67FFAD7F
-            69FFAE806AFFAE806AFFAE806AFFAE806AFFAE806AFFAE806AFFAE806AFFAE80
-            6AFFAE806AFFAE806AFFAE806AFFAE806AFFAE806AFFAE806AFFAD7F69FFAC7D
-            66FFC29D8FFFDCC7C1FFDFCAC6FFE2CECBFEC39F90FAAD7F68FEAD7F69FEAE80
-            6AFFAE806A690000000000000000000000000000000000000000000000000000
-            00000000000000000000AE806A59AD7F69FFAD7F69FFAD7F69FEBC9583FBDDC7
-            C2FEDEC9C4FECCAEA3FFB8907DFFAB7C65FFAC7E67FFAD7F69FFAE806AFFAE80
-            6AFFAE806AFFAE806AFFAE806AFFAE806AFFAE806AFFAE806AFFAE806AFFAE80
-            6AFFAE806AFFAE806AFFAE806AFFAE806AFFAE806AFFAE806AFFAE806AFFAD7F
-            69FFAB7C64FFBE9887FFDCC6C0FEE1CECAFFE2CFCAFDC09D8DFAAB7C65FEAE80
-            6AFEAD7F69F8AE806A2C00000000000000000000000000000000000000000000
-            00000000000000000000AD7F69F8AD7F69FFAE806AFEB0846FFED7BFB7FCDFCA
-            C6FEC29E8FFFAE806AFFAD7F69FFAD7F69FFAE806AFFAE806AFFAD7F69FFAD7F
-            69FFAC7E67FFAC7D66FFAB7C65FFAB7C65FFAB7B64FFAA7B64FFAA7B64FFAA7B
-            64FFAA7B64FFAA7B64FFAB7B64FFAB7C65FFAB7C66FFAC7D66FFAC7E67FFAD7F
-            68FFAD7F69FFAD7F68FFB68D79FFD7BEB6FEE2CFCAFFDDC7C2FDB88F7CFBAD7F
-            69FFAE806AFFAD7F69A3AD7F6905000000000000000000000000000000000000
-            000000000000AE80698AAE806AFFAD7F69FEAD7E68FFC8A79BF8DFCAC6FFDFCA
-            C6FEBE9888FFAD7E68FFAD7F69FFAE806AFFAF816BFFAF826DFFB0836EFFB88F
-            7CFFC19D8FFFCAAA9EFFD1B4AAFFD6BDB5FFDBC3BDFFDEC8C2FFDFCBC6FFE0CB
-            C8FFDFCBC6FFDEC8C2FFDAC3BDFFD6BCB5FFD1B4ABFFCAAB9EFFC39F90FFBA91
-            7FFFB18671FFB0836DFFAE806AFFC3A092FFE2CECAFFE3D1CDFFD0B5AAFCAF82
-            6CFEAE806AFFAD7F69F5AD7F692B000000000000000000000000000000000000
-            0000AE806A0AAE8069FCAE806AFEAD7F68FFB48975FAE0CCC8FDDDC7C2FFDDC7
-            C2FFDEC8C3FFC4A193FFBD9887FFC5A395FFCEB1A6FFD7BDB6FFE0CAC5FFE1CC
-            C8FFE0CBC7FFDFCAC5FFDFC9C5FFDEC9C4FFDFCAC5FFDFCBC6FFE0CBC7FFE0CD
-            C8FFE1CEC9FFE2CFCBFFE3D0CCFFE3D1CDFFE4D3CFFFE5D4D1FFE5D5D2FFE7D7
-            D4FFE6D6D3FFDFCBC5FFD6BEB5FFDAC4BCFFE4D2CEFFE4D2CEFFE3D2CEFDB991
-            7EFCAD7F69FFAD7F69FFAE806A8F000000000000000000000000000000000000
-            0000AD7F6A76AD7F69FDAE806AFFAA7A63FDD3B8AFFBDEC8C3FFDDC7C2FEDDC7
-            C2FFDEC8C3FFDEC9C4FFDFC9C5FFDFCAC5FFDEC9C4FFDEC8C3FFDEC8C3FFDDC7
-            C2FFDEC8C3FFDDC7C2FFDEC8C3FFDFCAC5FFDFCBC7FFE0CCC8FFE1CDC9FFE1CE
-            CAFFE2CFCBFFE3D0CCFFE3D1CDFFE3D2CEFFE4D2CEFFE4D3CFFFE4D4D0FFE4D4
-            D0FFE5D4D1FFE6D5D2FFE6D5D3FFE6D5D2FFE5D4D0FFE4D4D0FEE5D5D2FFD7BF
-            B7F9AB7C65FFAE806AFFAE806AFF00000000000000000000000000000000AD7F
-            6901AE806AB3AE806AFFAD7F69FFB78E7BFCDBC4BEFEDEC7C3FFDEC8C3FFDEC8
-            C3FFDDC7C2FFDEC8C3FFDEC8C3FFDDC7C2FFDEC8C3FFDEC8C3FFDEC8C3FFDEC7
-            C2FFDDC7C2FFDEC8C4FFDFCBC6FFE0CCC7FFE0CDC8FFE2CECAFFE2CFCBFFE2D0
-            CCFFE4D1CDFFE3D2CEFFE4D3CFFFE4D3D0FFE6D4D1FFE5D5D1FFE5D5D1FFE7D7
-            D2FFE6D6D2FFE6D6D2FFE6D6D3FFE6D6D2FFE6D6D2FFE6D6D2FFE5D5D2FFE8D8
-            D6FFB68C78F8AD7E68FFAD7F69FFAE806A68000000000000000000000000AD7F
-            6923AE806ADFAD7F69FFAD7E68FEC5A395FADDC7C2FEDEC8C3FFDEC8C3FFDEC8
-            C3FFDEC8C3FFDEC8C3FFDEC8C3FFDEC8C3FFDEC8C3FFDEC8C3FFDDC7C2FFDEC8
-            C3FFDFCAC5FFE0CCC7FFE0CCC7FFDDC8C2FFDCC6BFFFDCC5BFFFDCC6BFFFDCC7
-            C0FFDFCAC4FFE1CFCAFFE6D5D2FFE7D8D4FFE7D7D3FFE7D7D4FFE7D8D4FFE7D8
-            D5FFE8D8D5FFE8D9D5FFE8D9D5FFE8D9D5FFE8D8D5FFE7D8D5FFE7D8D4FFE8D9
-            D6FFD0B3A7FBAB7B65FFAE806AFFAD7F69BF000000000000000000000000AE80
-            6A3DAE806AFFAD7F69FFAF826DFDD0B3A9FDDEC8C3FFDEC8C3FFDEC8C3FFDEC8
-            C3FFDEC8C3FFDEC8C3FFDEC8C3FFDEC8C3FFDDC7C2FFDEC8C3FFE0CBC7FFE0CC
-            C7FFD6BCB4FFCBACA0FFC19D8EFFBA9280FFB58B78FFB38773FFB28672FFB388
-            74FFB68D7AFFBC9684FFC4A293FFD1B7ACFFE4D4CFFFE9DBD8FFE8DAD7FFE8DA
-            D7FFE9DBD8FFE9DBD8FFE9DBD8FFE9DBD8FFE9DBD8FFE8DAD6FFE8DAD7FFE8D9
-            D6FFE3D2CDFDAB7C66FBAD7F69FEAD7F69FA000000000000000000000000AE80
-            6A4DAE806AFFAE806AFEB28672FDD5BBB3FCDEC8C3FFDEC8C3FFDEC8C3FFDEC8
-            C3FFDEC8C3FFDEC8C3FFDEC8C3FFDDC7C2FFDEC8C3FFDEC9C4FFC4A294FFB78E
-            7BFFB0846FFFAE816BFFAD7F68FFAD7F69FFAD7F69FFAD7F69FFAD7F69FFAD7F
-            69FFAD7F69FFAD7F69FFAD7E68FFAF826CFFBA9280FFE3D1CCFFE9DCD9FFEADC
-            D9FFEADDDAFFEADDDAFFEADDDAFFEADDDAFFEADCD9FFEADCD9FFE9DCD9FFE9DB
-            D8FEE6D6D2FEBA9381FDAD7F68FFAE806AFAAE806A430000000000000000AD7F
-            69B0AE806AFFAE806AFFB68C79FDDEC9C4FBDEC8C3FFDEC8C3FFDEC8C3FFDEC8
-            C3FFDEC8C3FFDEC8C3FFDEC8C3FFDEC8C3FFDDC7C2FFBD9786FFAD7E68FFAD7F
-            69FFAE806AFFAE806AFFAD7F69FFAD7F69FFAD7F69FFAD7F69FFAD7F69FFAD7F
-            69FFAD7F69FFAD7F69FFAE806AFFAE806AFFAC7D67FFBC9685FFEBDEDBFFEBDF
-            DCFFECDFDCFFECDFDDFFECDFDDFFECDFDDFFECDFDCFFEBDFDCFFEBDEDBFFEBDD
-            DAFFE8DAD6FEBF9A8AFAAD7E68FFAD7F69FDAD7F697D0000000000000000AD7F
-            69C1AE806AFFAE806AFEB78E7CFFE0CCC8FFDDC7C2FEDEC8C3FFDEC8C3FFDEC8
-            C3FFDEC8C3FFDEC8C3FFDEC8C3FFDDC7C2FFCEB0A6FFAE806AFFAE806AFFAD7F
-            69FFAD7E68FFAC7D66FFAB7C65FFAF826DFFB48975FFB68D7AFFB78E7AFFB48A
-            76FFAF826DFFAB7B64FFAC7D66FFAD7F69FFAE806AFFA97961FFE4D3CEFFEDE1
-            DFFFEDE1DEFFEDE1DEFFEDE1DEFFEDE1DEFFEDE1DEFFECE0DEFFECE0DDFFECE0
-            DDFFEBDEDCFECDB0A3FAAC7E67FFAE806AFEAD7F69A00000000000000000AE80
-            6ABDAE806AFFAD7F69FFB8907DF7E0CBC7FFDEC8C3FFDEC8C3FFDEC8C3FFDEC8
-            C3FFDEC8C3FFDEC8C3FFDEC8C3FFDDC6C1FFBD9685FFAD7E68FFAC7E68FFAB7C
-            65FFB68C7AFFC6A698FFD4BAB1FFDBC5BEFFDECAC3FFE1CEC7FFE1CFCAFFE1CE
-            C8FFDECAC3FFD7BFB5FFC6A697FFB0836DFFAD7F69FFAB7C66FFC9AA9CFFF0E7
-            E5FFEEE3E1FFEEE3E1FFEEE4E1FFEEE3E1FFEEE3E1FFEDE3E0FFEDE2E0FFEDE1
-            DFFFEDE1DFFFD2B8ADFFAC7D67FEAD7F69FEAE806A9D0000000000000000AE80
-            6AD4AD7F69FFAD7F69FFBB9483F1E0CBC7FFDEC8C3FFDEC8C3FFDEC8C3FFDEC8
-            C3FFDEC8C3FFDEC8C3FFDDC7C2FFDDC6C0FFAB7B64FFAC7E68FFBC9584FFDDC7
-            C0FFE4D3CFFFE4D3CFFFE6D5D2FFE6D7D3FFE7D8D5FFE9DAD7FFE9DCD8FFEADD
-            DAFFEBDEDCFFECE0DDFFEFE4E3FFC9AB9EFFAB7C65FFAD7F69FFAE806AFFF4EC
-            EBFFF0E6E3FFEFE5E4FFEFE5E3FFEFE5E4FFF0E6E3FFEEE4E3FFEEE4E2FFEFE4
-            E1FFEEE3E1FFD2B8AEFFAC7D67FFAD7F69FEAE806A960000000000000000AD7F
-            69BDAE806AFFAD7F69FFBA9280F3E0CBC7FFDEC8C3FFDEC8C3FFDEC8C3FFDEC8
-            C3FFDEC8C3FFDDC7C2FFDFCAC6FFCBAC9FFFAB7C65FFAB7C65FFCDAFA3FFE5D5
-            D1FFE4D3CFFFE5D5D2FFE7D7D3FFE7D8D4FFE8DAD7FFE9DBD8FFEADDDAFFEBDF
-            DCFFECE0DDFFEDE1DEFFF0E6E4FFCDB2A5FFAB7C65FFAE806AFFAE806AFFE0CD
-            C6FFF2E9E7FFF1E8E6FFF1E8E6FFF1E8E5FFF1E7E5FFF0E7E5FFF0E6E4FFEFE5
-            E3FFEFE5E3FFD3BAAFFFAC7D67FEAE806AFFAE806AA40000000000000000AE80
-            6AADAE806AFFAD7F69FFB88E7CFCE0CBC7FFDEC8C3FFDEC8C3FFDEC8C3FFDEC8
-            C3FFDEC7C2FFDDC8C3FFE1CCC9FFBC9786FFAC7E67FFAA7A63FFDDC8C1FFE4D3
-            D0FFE5D5D1FFE6D6D3FFE7D8D4FFE8DAD7FFE9DBD8FFEADDDAFFEBDFDCFFECE0
-            DDFFEDE1DFFFEDE3E1FFF0E6E3FFE1D0C9FFAA7962FFAE806AFFAE806AFFCEB2
-            A5FFF4EDECFFF2EAE8FFF2EAE8FFF2EAE8FFF2EAE8FFF1E9E7FFF1E8E6FFF0E7
-            E5FFF0E7E5FED3BAAFFDAC7D67FFAE806AFFAE806AA10000000000000000AD7F
-            699BAD7F69FFAE806AFEB78E7CFFE0CCC8FFDDC7C2FEDEC8C3FFDEC8C3FFDEC8
-            C3FFDDC7C2FFDEC8C3FFE3CFCCFFAD7F69FFAD7F69FFAA7962FFE3D1CDFFE5D4
-            D0FFE6D6D2FFE6D7D4FFE8DAD6FFE9DBD8FFEADDDAFFEBDFDCFFECE0DDFFEDE2
-            DFFFEEE3E0FFEFE5E2FFEFE6E4FFEEE3E0FFA87860FFAE806AFFAE806AFFC19E
-            8DFFF6F0F0FFF3ECEAFFF3ECEAFFF3ECEAFFF3EBEAFFF2EBE9FFF2EAE8FFF2E9
-            E7FFF0E7E5FECAAB9EF7AC7E67FFAE806AFBAD7F695F0000000000000000AE80
-            6975AD7F6AFFAD7F69FEB48A76FCDAC3BDF9DEC8C3FFDEC8C3FFDEC8C3FFDEC8
-            C3FFDEC8C3FFDEC9C4FFE2CFCAFFAC7D67FFAD7F69FFAA7A62FFE5D3CFFFE5D5
-            D1FFE6D7D3FFE8D9D6FFE9DAD7FFEADCD9FFEBDEDBFFECE0DDFFEDE1DFFFEEE3
-            E0FFEFE5E2FFF0E6E4FFF0E7E6FFEFE5E3FFAD8069FFAD7F69FFAE806AFFBA93
-            80FFEFE5E1FFF5EEEDFFF5EEEDFFF5EEEDFFF4EEECFFF4EDECFFF3ECEAFFF3EB
-            EAFFF0E7E4FEBF9A89FDAD7E68FFAE806AFAAD7F69480000000000000000AE80
-            6944AD7F6AFFAD7F69FFB18570FDD4B9B0FCDEC8C3FFDEC8C3FFDEC8C3FFDEC8
-            C3FFDEC8C3FFDFCBC6FFD9C2BBFFAC7E68FFAD7F69FFAD7F68FFE4D4D0FFE6D6
-            D2FFE7D8D4FFE9DAD6FFE9DBD8FFEBDEDBFFEBDFDDFFEDE1DEFFEDE3E1FFEFE5
-            E2FFF0E6E4FFF0E7E6FFF2E9E8FFF1E9E6FFBE9989FFAC7E68FFAE806AFFB68C
-            79FFEBDEDAFFF6F1EFFFF6F0EFFFF6F0EFFFF5EFEEFFF5EFEDFFF4EEEDFFF4ED
-            ECFEEFE6E4FEB48A77FBAD7F69FFAE806AF9AE806A190000000000000000AD7F
-            6A2AAE8069E8AD7F69FFAD7F69FECCADA1FDDEC8C3FFDEC8C3FFDEC8C3FFDEC7
-            C2FFDEC8C3FFE0CCC7FFD7BDB5FFAD7E68FFAD7F69FFB0836DFFE5D4D1FFE7D7
-            D3FFE8D9D6FFE8DAD7FFEADDDAFFEBDEDCFFECE0DEFFEDE2E0FFEFE4E2FFEFE6
-            E4FFF0E7E5FFF2E9E8FFF2EBE9FFF2EAE9FFC2A08FFFAC7E67FFAE806AFFB387
-            73FFE7D9D3FFF7F2F1FFF7F2F1FFF7F2F1FFF6F2F1FFF6F1F0FFF6F0EFFFF5EF
-            EEFFEADEDAFAA97961FEAD7F69FFAE806AED000000000000000000000000AD80
-            6A14AE806ACCAE7F69FFAD7E68FFBF9989F9DCC6C0FEDDC7C2FEDEC8C3FFDDC7
-            C2FFDFC9C4FFDFCCC8FFDBC4BDFFAC7E67FFAD7F69FFAD7F69FFE6D6D2FFE7D7
-            D4FFE8DAD6FFE9DBD8FFEBDEDBFFECE0DDFFECE1DFFFEEE4E1FFEFE5E3FFF0E7
-            E5FFF2E9E7FFF3EBE9FFF3ECEBFFF4EDECFFCFB4A7FFAC7D66FFAE806AFFAC7E
-            67FFE0CFC7FFF9F5F4FFF9F5F4FFF9F5F4FFF8F4F3FFF7F3F2FFF7F2F1FEF8F4
-            F4FFCCAEA1FCAB7C65FFAE806AFFAD7F697E0000000000000000000000000000
-            0000AD806A92AE7F69FEAD7F69FFB1846FFBDAC2BCFDDEC8C3FFDEC8C3FFDDC7
-            C2FFDFCAC5FFE0CCC7FFE4D1CDFFAC7D67FFAE806AFFA97961FFE7D7D3FFE7D8
-            D5FFE8DAD7FFEADCD9FFEBDEDBFFECE0DEFFEDE3E0FFEFE4E2FFF0E6E4FFF1E9
-            E7FFF2EAE8FFF3ECEAFFF4EEECFFF5EFEEFFDDC9C1FFAB7C65FFAE806AFFAB7B
-            65FFDFCDC4FFFAF7F6FFFAF7F6FFFAF6F6FFF9F6F5FFF9F5F4FFF8F4F3FFF6F1
-            F0FDAC7E67FAAD7F69FFAE806AFFAE806A210000000000000000000000000000
-            0000AE7F6932AD806AFDAE806AFEAB7C65FFC7A598F8DFCAC6FFDDC7C2FEDDC8
-            C3FFDFCAC5FFE0CCC7FFE5D4D1FFAD7F68FFAD7F69FFA97962FFE4D4CFFFE8D9
-            D5FFE9DBD8FFEADDDAFFECDFDDFFEDE1DEFFEEE3E1FFEFE5E3FFF0E7E5FFF1E9
-            E7FFF3EBE9FFF4EDECFFF5EFEEFFF6F2EFFFE0CFC7FFAD7F68FFAE806AFFAB7B
-            65FFE0CEC7FFFBF9F8FFFBF9F9FFFBF8F8FFFAF8F7FFFAF7F6FEFCFBFCFFD2B8
-            ACF9AC7D67FFAE806AFFAD7F6AC6000000000000000000000000000000000000
-            000000000000AD7F69C8AD7F69FFAD7F69FFAC7E67FEDBC4BEFADEC8C3FFDDC8
-            C3FFDFCBC6FFE0CCC8FFE3D3CEFFC19C8CFFAC7D67FFAB7C65FFCEB2A6FFEADC
-            D9FFEADDD9FFECDFDDFFEDE2DFFFEEE3E2FFEFE6E3FFF0E7E5FFF2E9E8FFF3EC
-            EAFFF5EEEDFFF6F1F0FFF7F3F3FFF9F5F5FFE6D7D2FFB38874FFAE806AFFAB7B
-            65FFE0D0C8FFFDFBFBFFFCFBFAFFFCFAFAFFFBFAF9FFFBF9F9FFF3ECE8FCB58C
-            78FEAD7F69FFAD7F6AFFAE806941000000000000000000000000000000000000
-            000000000000AE806A2EAD7F69FFAE806AFFAD7F69FFBB9484FBDFC9C5FEDEC8
-            C3FFE0CBC6FFE0CCC8FFE4D1CEFFCDB0A5FFAB7B64FFAC7E67FFBE9887FFEADD
-            DAFFCFB3A8FFBF9B8BFFC3A090FFC9AA9CFFCFB2A7FFD1B7ABFFD1B7ABFFCFB2
-            A6FFC9AA9DFFC29F8FFFB8917EFFAE8069FFAA7962FFAD7F69FFAE806AFFAC7D
-            66FFE2D2CBFFFEFDFDFFFEFDFDFFFDFDFCFFFDFBFBFEFCFAFAFED2B8ACFAAD7F
-            69FEAD7F6AFFAE8069C6AD7F6A11000000000000000000000000000000000000
-            00000000000000000000AD7F6999AD7F69FFAE806AFEAE816BFECDAEA3FBDFC9
-            C5FEE0CBC6FEE1CDC8FFE2CFCBFFE2CFCAFFAF826DFFAD7F69FFAC7E67FFDAC3
-            BCFFB0836EFFAB7C65FFAC7D66FFAB7C65FFAB7C65FFAB7B64FFAB7B64FFAB7C
-            65FFAB7C65FFAC7D66FFAC7E67FFAD7F69FFAE806AFFAE806AFFAD7F69FFB084
-            6FFFECE1DCFFFFFFFFFFFFFFFFFFFEFEFEFEFEFFFFFFEBE0DBFBAF826DFDAD7F
-            69FEAE806AFDAE80695B00000000000000000000000000000000000000000000
-            00000000000000000000AD7F6920AD7F69DEAE806AFFAD7F69FFB18470FCD8C0
-            BAFBE0CBC7FFE1CDC8FEE2CFCBFFE3D1CDFFC8A79AFFAC7C66FFAE806AFFCFB3
-            A9FFDBC6BFFFB38773FFAA7B64FFAC7D67FFAD7F69FFAE806AFFAE806AFFAE80
-            6AFFAE806AFFAE806AFFAE806AFFAD7F69FFAD7E68FFAA7A64FFAD7F69FFD8C2
-            B7FFFCFBFAFFFFFFFFFFFEFEFEFEFFFFFFFFF9F6F5FBB28773FCAD7E68FFAE80
-            6AFFAD7F69BE0000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000AE806A64AD7F69F9AE806AFFAD7F68FFB186
-            72FBDEC8C3FCE1CEC9FFE2CFCBFFE4D2CEFFE1CEC9FFBA9382FFAF826CFFBD98
-            87FFEDE1DEFFEDE1E0FFDAC3BAFFC4A393FFB58A76FFB0846FFFB0836EFFB083
-            6EFFB0836EFFB0836EFFB0846FFFB18671FFC09D8CFFDDC9C0FFFCFCFAFFFFFF
-            FFFFFFFFFFFFFEFEFEFEFFFFFFFFFAF8F6FCB78F7CFBAD7F69FFAE806AFFAD7F
-            69F4AE806A050000000000000000000000000000000000000000000000000000
-            000000000000000000000000000000000000AD7F6996AD7F69FFAE806AFEAD7E
-            68FFB48875FCD8C1BAFCE3D1CDFFE4D2CEFEE5D5D1FFE7D7D4FFD7C0B7FFD5BC
-            B2FFE8DAD6FFEBDEDCFFEEE4E1FFF1E8E7FFF4ECECFFEFE6E3FFEADDD8FFE7D8
-            D3FFE6D8D3FFE9DDD8FFF0E7E4FFFBF8F7FFFFFEFFFFFEFDFDFFFCFBFBFFFDFD
-            FDFFFEFEFEFEFFFFFFFFF5F0EEFCC09C8BFBAD7E68FEAE806AFFAD7F69F4AE80
-            6A36000000000000000000000000000000000000000000000000000000000000
-            000000000000000000000000000000000000AD7F6901AE806A94AD7F69FFAE80
-            6AFEAD7F69FFB38873FCD3B8AEF9E6D6D3FFE5D4D0FFE6D6D2FEE9D9D6FFEADC
-            D9FFEADCD9FFECDEDBFFEDE1DEFFEEE3E1FFEFE5E3FFF1E8E5FFF2EBE9FFF4ED
-            ECFFF5EFEEFFF6F1F0FFF7F3F2FFF8F4F3FFF9F6F6FFFBF8F7FFFCFAFAFFFDFC
-            FCFFFFFFFFFFEADFD8F9B8917EFDAC7D67FEAD7F69FEAD7F69FEAD7F695A0000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000000000000000000000AD7F6907AE806AA0AE80
-            6AFFAD7F69FEAD7F69FEAD7E68FFC3A193F8E4D3D0FDE6D6D2FFE8D8D5FFE8DA
-            D6FFEADCD9FFEADEDBFFECE0DEFFEDE3E0FFEEE4E2FFF0E7E5FFF1E9E7FFF2EB
-            E9FFF4EDECFFF5EFEEFFF6F1F0FFF8F4F3FFF9F5F4FFFAF7F6FEFBF9F9FFFBFA
-            F9FED3BCB0F9AF826CFEAD7F69FEAE806AFEAE806AFFAE806A5E000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            000000000000000000000000000000000000000000000000000000000000AE80
-            6A9CAD7F69FAAD7F69FFAE806AFEAC7D67FFB38875FBD3BAB0FAE1CFC9FDE8DA
-            D7FEEADDDAFFEBDEDCFFECE0DDFFEDE2DFFEEEE4E2FFF0E6E4FFF1E8E6FFF2EA
-            E8FFF4ECEBFEF5EEEDFFF6F1F0FFF8F4F3FFF8F5F4FEF3EDEAFDE5D7D0FBBA94
-            82FBAA7A63FEAD7F69FEAE806AFFAE806AEEAD7F694A00000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000AE806A5DAE806AE2AE806AFFAD7F69FEAD7E68FFAB7C65FEB88F7CFCC7A7
-            9AFCD7C0B7FBE5D6D2FCEFE5E4FDF0E6E5FFF1E8E6FFF1E9E8FFF3EBEAFFF4EE
-            EDFFF6F0F0FFF8F4F3FEF1E9E7FBE3D3CBFBD0B6AAFCBD9786FCAB7B64FDAC7E
-            67FFAE806AFFAD806AFFAE806ABBAE806A2D0000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            000000000000AE806A19AE806AA2AD7F69FFAE806AFFAD7F69FEAD7F69FFAD7F
-            69FEB0836EFEB38873FEB78F7BFAC4A292FACCAFA2FBD1B6ABF8D2B8ADF9CFB3
-            A6FAC7A698FABA9381FBB48975FEB18570FEAD7F69FEAD7F69FFAD7F69FFAE80
-            6AFFAD7F69FAAD7F695FAE806A08000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000AE806A30AD7F69C5AE8069F6AD7F6AFEAE80
-            69FFAD7F69FFAE806AFFAD7F69FFAD7E68FFAC7E67FFAC7D67FFAC7D67FFAC7E
-            67FFAD7E68FFAD7F69FFAE806AFFAD7F69FFAD7F69FFAE806AFBAD7F69EFAE80
-            6A9FAD7F690D0000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000000000000000000000AD7F6A38AE80698CAD7F
-            6AC0AE8069E8AD7F6AFFAE806AFFAD7F69FFAD7F69FFAD7F69FFAD7F69FFAD7F
-            69FFAE806AFFAE7F6AFFAD7F69FEAD7F69DCAD7F69B1AE806A72AE806A1B0000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            000000000000000000000000000000000000000000000000000000000000AD7F
-            6A0FAD7F6929AE806A3EAD7F694BAD7F6985AD7F69B4AD7F69C3AE806AC5AE80
-            6AB4AE7F6A6BAD806944AE806A37AD7F6921AE806A0700000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000
-          }
-          OnClick = BtCreateProductClick
-          ParentFont = False
+        object FlowPanel19: TFlowPanel
+          Left = 0
+          Height = 111
+          Top = 696
+          Width = 1509
+          Align = alBottom
+          ControlList = <          
+            item
+              Control = BtCreateProduct
+              WrapAfter = waAuto
+              Index = 0
+            end>
+          FlowLayout = tlTop
+          FlowStyle = fsRightLeftTopBottom
           TabOrder = 4
+          object BtCreateProduct: TBitBtn
+            Left = 1169
+            Height = 78
+            Hint = 'Create a opsi Product'
+            Top = 16
+            Width = 324
+            Anchors = []
+            AutoSize = True
+            BorderSpacing.Around = 15
+            BorderSpacing.InnerBorder = 8
+            Caption = 'Create Opsi Product'
+            Font.Height = -26
+            Glyph.Data = {
+              36240000424D3624000000000000360000002800000030000000300000000100
+              2000000000000024000064000000640000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000AE806905AD7F6A1AAD80692AAD7F6935AD7F6A3DAE806942AD806A41AD7F
+              693BAD7F6932AD7F6925AD7F6914000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000AE806A38AE80
+              697FAE8069B0AD7F6AD0AE806AEAAD7F69FCAE806AFFAD7F6AFFAE7F6AFFAD80
+              69FFAE806AF7AD7F69E2AE806AC6AD7F69A2AD7F6969AD7F691A000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              000000000000000000000000000000000000AD7F6950AE806AD4AE806AF3AD7F
+              6AFDAD7F6AFFAD7F69FFAE806AFFAE806AFFAE806AFFAD7F69FEAE806AFFAE80
+              6AFFAE806AFFAD7F69FFAE806AFFAD7F69FFAE806AFAAD7F69F3AD7F69B1AD80
+              6A28000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              000000000000AE806A03AE806A37AE806AD2AE806AFFAE806AFFAD7F69FFAD7F
+              69FFAD7F69FFAD7F69FEAF816CFEB0836EFEB18570FEB18571FEB18571FEB185
+              70FEB0846FFEAF826CFEAD7F69FEAD7F69FFAD7F69FFAD7F69FEAE806AFFAE80
+              69FFAE7F699CAD806A1900000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000AE806A19AE806A9AAE806AFFAE806AFFAE806AFEAD7F69FFAB7C66FFB083
+              6EFCBB9483FCC4A193FDCCADA2FBD2B7AEFBD7BDB5FBD8C0B9FBD9C0BAFBD7BD
+              B6FCD3B7AEFBCDAEA3FBC5A294FBBC9584FBB18571FCAC7D66FEAD7F69FFAE80
+              6AFFAD7F69FFAD7F69EBAE806A6CAE806A050000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              000000000000000000000000000000000000000000000000000000000000AE7F
+              6941AE806AE2AD7F69FFAE806AFFAD7F69FFAC7D66FFB28671FBC9A99CFAD7BE
+              B7FEDBC4BEFDDFC9C4FEDEC9C4FFDEC8C4FFDEC8C3FFDEC8C3FFDEC8C3FFDEC8
+              C3FFDEC8C3FFDEC9C4FFDFC9C4FEDCC5BFFDD8BEB7FDCBACA0FAB28672F9AB7C
+              65FFAD7F69FEAE806AFFAE806AFEAE7F6AB3AE816A0300000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000AE7F6951AD7F
+              6AF7AE806AFEAD7F69FFAD7F69FEAF816BFEC3A092F8DCC6C1FDDEC8C3FFDDC7
+              C2FEDEC8C3FFDEC8C3FFDDC7C2FFDEC8C3FFDEC8C3FFDEC8C3FFDEC8C3FFDEC8
+              C3FFDEC8C3FFDEC8C3FFDEC8C3FFDDC7C2FEDDC7C2FFDEC8C3FFDEC9C4FFC7A7
+              9AF8AF826DFDAD7F69FEAD7F69FEAE806AFFAE7F6AE1AD80690D000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000000000000000000000AE806A4EAD7F6AF9AE7F
+              69FFAD7F69FFAD7F68FEB78F7DFBD4BAB1FAE0CCC8FFDEC8C3FFDEC8C3FFDEC8
+              C3FFDEC8C3FFDFC9C4FFDFCAC5FFDEC9C4FFDBC5BFFFDAC2BBFFD9C0BAFFD9C0
+              BAFFDAC2BCFFDCC6C0FFDFCAC5FFDFCAC5FFDFC9C4FFDEC8C3FFDEC8C3FFE0CB
+              C6FFD7BDB5FBB99280FCAD7E68FEAD7F69FEAE806AFFAD7F69DEAE7F69200000
+              0000000000000000000000000000000000000000000000000000000000000000
+              000000000000000000000000000000000000AE806A4CAD7F69F8AE806AFFAE80
+              6AFEAD7E68FFC19D8EFADBC4BEFDDEC9C4FFDDC7C2FEDEC8C3FFDFCAC6FFE0CB
+              C7FFD7BFB8FFCDAEA3FFC4A192FFBD9786FFBA9281FFB88F7CFFB68D7AFFB78D
+              7AFFB88F7DFFBB9382FFBF9888FFC4A294FFCDAEA4FFD8BFB7FFE1CCC8FFDFC9
+              C5FFDEC9C4FFDCC6C1FCC5A496FBAD7F68FDAD7F69FEAD7F69FFAD806ACAAE80
+              6A09000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000AE806A25AD7F69ECAE806AFFAE806AFEAC7D
+              66FFC39F91F8DFC9C5FFDEC8C3FEDEC8C3FEDFCAC5FFD8C0B9FFC6A496FFB589
+              76FFAF826CFFAE816BFFAE806AFFAD7F69FFAD7F69FFAD7F69FFAD7F69FFAD7F
+              69FFAD7F69FFAD7F69FFAD7F69FFAE806AFFAE816BFFAF826CFFB58B78FFCEB1
+              A7FFDEC9C4FEDEC8C3FFDEC8C3FEC7A599FAAE806AFEAE806AFFAD7F69FFAE7F
+              69B3000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000AE806A08AE806ABAAD7F69FFAD7F69FFAD7E68FEC19C
+              8DF9E0CCC8FFDEC8C3FEDBC3BDFFD2B5ACFFBA9281FFAC7D66FFAC7D67FFAD7F
+              69FFAE806AFFAE806AFFAE806AFFAE806AFFAE806AFFAE806AFFAE806AFFAE80
+              6AFFAE806AFFAE806AFFAE806AFFAE806AFFAE806AFFAE806AFFAD7F69FFAC7D
+              66FFC29D8FFFDCC7C1FFDFCAC6FFE2CECBFEC39F90FAAD7F68FEAD7F69FEAE80
+              6AFFAE806A690000000000000000000000000000000000000000000000000000
+              00000000000000000000AE806A59AD7F69FFAD7F69FFAD7F69FEBC9583FBDDC7
+              C2FEDEC9C4FECCAEA3FFB8907DFFAB7C65FFAC7E67FFAD7F69FFAE806AFFAE80
+              6AFFAE806AFFAE806AFFAE806AFFAE806AFFAE806AFFAE806AFFAE806AFFAE80
+              6AFFAE806AFFAE806AFFAE806AFFAE806AFFAE806AFFAE806AFFAE806AFFAD7F
+              69FFAB7C64FFBE9887FFDCC6C0FEE1CECAFFE2CFCAFDC09D8DFAAB7C65FEAE80
+              6AFEAD7F69F8AE806A2C00000000000000000000000000000000000000000000
+              00000000000000000000AD7F69F8AD7F69FFAE806AFEB0846FFED7BFB7FCDFCA
+              C6FEC29E8FFFAE806AFFAD7F69FFAD7F69FFAE806AFFAE806AFFAD7F69FFAD7F
+              69FFAC7E67FFAC7D66FFAB7C65FFAB7C65FFAB7B64FFAA7B64FFAA7B64FFAA7B
+              64FFAA7B64FFAA7B64FFAB7B64FFAB7C65FFAB7C66FFAC7D66FFAC7E67FFAD7F
+              68FFAD7F69FFAD7F68FFB68D79FFD7BEB6FEE2CFCAFFDDC7C2FDB88F7CFBAD7F
+              69FFAE806AFFAD7F69A3AD7F6905000000000000000000000000000000000000
+              000000000000AE80698AAE806AFFAD7F69FEAD7E68FFC8A79BF8DFCAC6FFDFCA
+              C6FEBE9888FFAD7E68FFAD7F69FFAE806AFFAF816BFFAF826DFFB0836EFFB88F
+              7CFFC19D8FFFCAAA9EFFD1B4AAFFD6BDB5FFDBC3BDFFDEC8C2FFDFCBC6FFE0CB
+              C8FFDFCBC6FFDEC8C2FFDAC3BDFFD6BCB5FFD1B4ABFFCAAB9EFFC39F90FFBA91
+              7FFFB18671FFB0836DFFAE806AFFC3A092FFE2CECAFFE3D1CDFFD0B5AAFCAF82
+              6CFEAE806AFFAD7F69F5AD7F692B000000000000000000000000000000000000
+              0000AE806A0AAE8069FCAE806AFEAD7F68FFB48975FAE0CCC8FDDDC7C2FFDDC7
+              C2FFDEC8C3FFC4A193FFBD9887FFC5A395FFCEB1A6FFD7BDB6FFE0CAC5FFE1CC
+              C8FFE0CBC7FFDFCAC5FFDFC9C5FFDEC9C4FFDFCAC5FFDFCBC6FFE0CBC7FFE0CD
+              C8FFE1CEC9FFE2CFCBFFE3D0CCFFE3D1CDFFE4D3CFFFE5D4D1FFE5D5D2FFE7D7
+              D4FFE6D6D3FFDFCBC5FFD6BEB5FFDAC4BCFFE4D2CEFFE4D2CEFFE3D2CEFDB991
+              7EFCAD7F69FFAD7F69FFAE806A8F000000000000000000000000000000000000
+              0000AD7F6A76AD7F69FDAE806AFFAA7A63FDD3B8AFFBDEC8C3FFDDC7C2FEDDC7
+              C2FFDEC8C3FFDEC9C4FFDFC9C5FFDFCAC5FFDEC9C4FFDEC8C3FFDEC8C3FFDDC7
+              C2FFDEC8C3FFDDC7C2FFDEC8C3FFDFCAC5FFDFCBC7FFE0CCC8FFE1CDC9FFE1CE
+              CAFFE2CFCBFFE3D0CCFFE3D1CDFFE3D2CEFFE4D2CEFFE4D3CFFFE4D4D0FFE4D4
+              D0FFE5D4D1FFE6D5D2FFE6D5D3FFE6D5D2FFE5D4D0FFE4D4D0FEE5D5D2FFD7BF
+              B7F9AB7C65FFAE806AFFAE806AFF00000000000000000000000000000000AD7F
+              6901AE806AB3AE806AFFAD7F69FFB78E7BFCDBC4BEFEDEC7C3FFDEC8C3FFDEC8
+              C3FFDDC7C2FFDEC8C3FFDEC8C3FFDDC7C2FFDEC8C3FFDEC8C3FFDEC8C3FFDEC7
+              C2FFDDC7C2FFDEC8C4FFDFCBC6FFE0CCC7FFE0CDC8FFE2CECAFFE2CFCBFFE2D0
+              CCFFE4D1CDFFE3D2CEFFE4D3CFFFE4D3D0FFE6D4D1FFE5D5D1FFE5D5D1FFE7D7
+              D2FFE6D6D2FFE6D6D2FFE6D6D3FFE6D6D2FFE6D6D2FFE6D6D2FFE5D5D2FFE8D8
+              D6FFB68C78F8AD7E68FFAD7F69FFAE806A68000000000000000000000000AD7F
+              6923AE806ADFAD7F69FFAD7E68FEC5A395FADDC7C2FEDEC8C3FFDEC8C3FFDEC8
+              C3FFDEC8C3FFDEC8C3FFDEC8C3FFDEC8C3FFDEC8C3FFDEC8C3FFDDC7C2FFDEC8
+              C3FFDFCAC5FFE0CCC7FFE0CCC7FFDDC8C2FFDCC6BFFFDCC5BFFFDCC6BFFFDCC7
+              C0FFDFCAC4FFE1CFCAFFE6D5D2FFE7D8D4FFE7D7D3FFE7D7D4FFE7D8D4FFE7D8
+              D5FFE8D8D5FFE8D9D5FFE8D9D5FFE8D9D5FFE8D8D5FFE7D8D5FFE7D8D4FFE8D9
+              D6FFD0B3A7FBAB7B65FFAE806AFFAD7F69BF000000000000000000000000AE80
+              6A3DAE806AFFAD7F69FFAF826DFDD0B3A9FDDEC8C3FFDEC8C3FFDEC8C3FFDEC8
+              C3FFDEC8C3FFDEC8C3FFDEC8C3FFDEC8C3FFDDC7C2FFDEC8C3FFE0CBC7FFE0CC
+              C7FFD6BCB4FFCBACA0FFC19D8EFFBA9280FFB58B78FFB38773FFB28672FFB388
+              74FFB68D7AFFBC9684FFC4A293FFD1B7ACFFE4D4CFFFE9DBD8FFE8DAD7FFE8DA
+              D7FFE9DBD8FFE9DBD8FFE9DBD8FFE9DBD8FFE9DBD8FFE8DAD6FFE8DAD7FFE8D9
+              D6FFE3D2CDFDAB7C66FBAD7F69FEAD7F69FA000000000000000000000000AE80
+              6A4DAE806AFFAE806AFEB28672FDD5BBB3FCDEC8C3FFDEC8C3FFDEC8C3FFDEC8
+              C3FFDEC8C3FFDEC8C3FFDEC8C3FFDDC7C2FFDEC8C3FFDEC9C4FFC4A294FFB78E
+              7BFFB0846FFFAE816BFFAD7F68FFAD7F69FFAD7F69FFAD7F69FFAD7F69FFAD7F
+              69FFAD7F69FFAD7F69FFAD7E68FFAF826CFFBA9280FFE3D1CCFFE9DCD9FFEADC
+              D9FFEADDDAFFEADDDAFFEADDDAFFEADDDAFFEADCD9FFEADCD9FFE9DCD9FFE9DB
+              D8FEE6D6D2FEBA9381FDAD7F68FFAE806AFAAE806A430000000000000000AD7F
+              69B0AE806AFFAE806AFFB68C79FDDEC9C4FBDEC8C3FFDEC8C3FFDEC8C3FFDEC8
+              C3FFDEC8C3FFDEC8C3FFDEC8C3FFDEC8C3FFDDC7C2FFBD9786FFAD7E68FFAD7F
+              69FFAE806AFFAE806AFFAD7F69FFAD7F69FFAD7F69FFAD7F69FFAD7F69FFAD7F
+              69FFAD7F69FFAD7F69FFAE806AFFAE806AFFAC7D67FFBC9685FFEBDEDBFFEBDF
+              DCFFECDFDCFFECDFDDFFECDFDDFFECDFDDFFECDFDCFFEBDFDCFFEBDEDBFFEBDD
+              DAFFE8DAD6FEBF9A8AFAAD7E68FFAD7F69FDAD7F697D0000000000000000AD7F
+              69C1AE806AFFAE806AFEB78E7CFFE0CCC8FFDDC7C2FEDEC8C3FFDEC8C3FFDEC8
+              C3FFDEC8C3FFDEC8C3FFDEC8C3FFDDC7C2FFCEB0A6FFAE806AFFAE806AFFAD7F
+              69FFAD7E68FFAC7D66FFAB7C65FFAF826DFFB48975FFB68D7AFFB78E7AFFB48A
+              76FFAF826DFFAB7B64FFAC7D66FFAD7F69FFAE806AFFA97961FFE4D3CEFFEDE1
+              DFFFEDE1DEFFEDE1DEFFEDE1DEFFEDE1DEFFEDE1DEFFECE0DEFFECE0DDFFECE0
+              DDFFEBDEDCFECDB0A3FAAC7E67FFAE806AFEAD7F69A00000000000000000AE80
+              6ABDAE806AFFAD7F69FFB8907DF7E0CBC7FFDEC8C3FFDEC8C3FFDEC8C3FFDEC8
+              C3FFDEC8C3FFDEC8C3FFDEC8C3FFDDC6C1FFBD9685FFAD7E68FFAC7E68FFAB7C
+              65FFB68C7AFFC6A698FFD4BAB1FFDBC5BEFFDECAC3FFE1CEC7FFE1CFCAFFE1CE
+              C8FFDECAC3FFD7BFB5FFC6A697FFB0836DFFAD7F69FFAB7C66FFC9AA9CFFF0E7
+              E5FFEEE3E1FFEEE3E1FFEEE4E1FFEEE3E1FFEEE3E1FFEDE3E0FFEDE2E0FFEDE1
+              DFFFEDE1DFFFD2B8ADFFAC7D67FEAD7F69FEAE806A9D0000000000000000AE80
+              6AD4AD7F69FFAD7F69FFBB9483F1E0CBC7FFDEC8C3FFDEC8C3FFDEC8C3FFDEC8
+              C3FFDEC8C3FFDEC8C3FFDDC7C2FFDDC6C0FFAB7B64FFAC7E68FFBC9584FFDDC7
+              C0FFE4D3CFFFE4D3CFFFE6D5D2FFE6D7D3FFE7D8D5FFE9DAD7FFE9DCD8FFEADD
+              DAFFEBDEDCFFECE0DDFFEFE4E3FFC9AB9EFFAB7C65FFAD7F69FFAE806AFFF4EC
+              EBFFF0E6E3FFEFE5E4FFEFE5E3FFEFE5E4FFF0E6E3FFEEE4E3FFEEE4E2FFEFE4
+              E1FFEEE3E1FFD2B8AEFFAC7D67FFAD7F69FEAE806A960000000000000000AD7F
+              69BDAE806AFFAD7F69FFBA9280F3E0CBC7FFDEC8C3FFDEC8C3FFDEC8C3FFDEC8
+              C3FFDEC8C3FFDDC7C2FFDFCAC6FFCBAC9FFFAB7C65FFAB7C65FFCDAFA3FFE5D5
+              D1FFE4D3CFFFE5D5D2FFE7D7D3FFE7D8D4FFE8DAD7FFE9DBD8FFEADDDAFFEBDF
+              DCFFECE0DDFFEDE1DEFFF0E6E4FFCDB2A5FFAB7C65FFAE806AFFAE806AFFE0CD
+              C6FFF2E9E7FFF1E8E6FFF1E8E6FFF1E8E5FFF1E7E5FFF0E7E5FFF0E6E4FFEFE5
+              E3FFEFE5E3FFD3BAAFFFAC7D67FEAE806AFFAE806AA40000000000000000AE80
+              6AADAE806AFFAD7F69FFB88E7CFCE0CBC7FFDEC8C3FFDEC8C3FFDEC8C3FFDEC8
+              C3FFDEC7C2FFDDC8C3FFE1CCC9FFBC9786FFAC7E67FFAA7A63FFDDC8C1FFE4D3
+              D0FFE5D5D1FFE6D6D3FFE7D8D4FFE8DAD7FFE9DBD8FFEADDDAFFEBDFDCFFECE0
+              DDFFEDE1DFFFEDE3E1FFF0E6E3FFE1D0C9FFAA7962FFAE806AFFAE806AFFCEB2
+              A5FFF4EDECFFF2EAE8FFF2EAE8FFF2EAE8FFF2EAE8FFF1E9E7FFF1E8E6FFF0E7
+              E5FFF0E7E5FED3BAAFFDAC7D67FFAE806AFFAE806AA10000000000000000AD7F
+              699BAD7F69FFAE806AFEB78E7CFFE0CCC8FFDDC7C2FEDEC8C3FFDEC8C3FFDEC8
+              C3FFDDC7C2FFDEC8C3FFE3CFCCFFAD7F69FFAD7F69FFAA7962FFE3D1CDFFE5D4
+              D0FFE6D6D2FFE6D7D4FFE8DAD6FFE9DBD8FFEADDDAFFEBDFDCFFECE0DDFFEDE2
+              DFFFEEE3E0FFEFE5E2FFEFE6E4FFEEE3E0FFA87860FFAE806AFFAE806AFFC19E
+              8DFFF6F0F0FFF3ECEAFFF3ECEAFFF3ECEAFFF3EBEAFFF2EBE9FFF2EAE8FFF2E9
+              E7FFF0E7E5FECAAB9EF7AC7E67FFAE806AFBAD7F695F0000000000000000AE80
+              6975AD7F6AFFAD7F69FEB48A76FCDAC3BDF9DEC8C3FFDEC8C3FFDEC8C3FFDEC8
+              C3FFDEC8C3FFDEC9C4FFE2CFCAFFAC7D67FFAD7F69FFAA7A62FFE5D3CFFFE5D5
+              D1FFE6D7D3FFE8D9D6FFE9DAD7FFEADCD9FFEBDEDBFFECE0DDFFEDE1DFFFEEE3
+              E0FFEFE5E2FFF0E6E4FFF0E7E6FFEFE5E3FFAD8069FFAD7F69FFAE806AFFBA93
+              80FFEFE5E1FFF5EEEDFFF5EEEDFFF5EEEDFFF4EEECFFF4EDECFFF3ECEAFFF3EB
+              EAFFF0E7E4FEBF9A89FDAD7E68FFAE806AFAAD7F69480000000000000000AE80
+              6944AD7F6AFFAD7F69FFB18570FDD4B9B0FCDEC8C3FFDEC8C3FFDEC8C3FFDEC8
+              C3FFDEC8C3FFDFCBC6FFD9C2BBFFAC7E68FFAD7F69FFAD7F68FFE4D4D0FFE6D6
+              D2FFE7D8D4FFE9DAD6FFE9DBD8FFEBDEDBFFEBDFDDFFEDE1DEFFEDE3E1FFEFE5
+              E2FFF0E6E4FFF0E7E6FFF2E9E8FFF1E9E6FFBE9989FFAC7E68FFAE806AFFB68C
+              79FFEBDEDAFFF6F1EFFFF6F0EFFFF6F0EFFFF5EFEEFFF5EFEDFFF4EEEDFFF4ED
+              ECFEEFE6E4FEB48A77FBAD7F69FFAE806AF9AE806A190000000000000000AD7F
+              6A2AAE8069E8AD7F69FFAD7F69FECCADA1FDDEC8C3FFDEC8C3FFDEC8C3FFDEC7
+              C2FFDEC8C3FFE0CCC7FFD7BDB5FFAD7E68FFAD7F69FFB0836DFFE5D4D1FFE7D7
+              D3FFE8D9D6FFE8DAD7FFEADDDAFFEBDEDCFFECE0DEFFEDE2E0FFEFE4E2FFEFE6
+              E4FFF0E7E5FFF2E9E8FFF2EBE9FFF2EAE9FFC2A08FFFAC7E67FFAE806AFFB387
+              73FFE7D9D3FFF7F2F1FFF7F2F1FFF7F2F1FFF6F2F1FFF6F1F0FFF6F0EFFFF5EF
+              EEFFEADEDAFAA97961FEAD7F69FFAE806AED000000000000000000000000AD80
+              6A14AE806ACCAE7F69FFAD7E68FFBF9989F9DCC6C0FEDDC7C2FEDEC8C3FFDDC7
+              C2FFDFC9C4FFDFCCC8FFDBC4BDFFAC7E67FFAD7F69FFAD7F69FFE6D6D2FFE7D7
+              D4FFE8DAD6FFE9DBD8FFEBDEDBFFECE0DDFFECE1DFFFEEE4E1FFEFE5E3FFF0E7
+              E5FFF2E9E7FFF3EBE9FFF3ECEBFFF4EDECFFCFB4A7FFAC7D66FFAE806AFFAC7E
+              67FFE0CFC7FFF9F5F4FFF9F5F4FFF9F5F4FFF8F4F3FFF7F3F2FFF7F2F1FEF8F4
+              F4FFCCAEA1FCAB7C65FFAE806AFFAD7F697E0000000000000000000000000000
+              0000AD806A92AE7F69FEAD7F69FFB1846FFBDAC2BCFDDEC8C3FFDEC8C3FFDDC7
+              C2FFDFCAC5FFE0CCC7FFE4D1CDFFAC7D67FFAE806AFFA97961FFE7D7D3FFE7D8
+              D5FFE8DAD7FFEADCD9FFEBDEDBFFECE0DEFFEDE3E0FFEFE4E2FFF0E6E4FFF1E9
+              E7FFF2EAE8FFF3ECEAFFF4EEECFFF5EFEEFFDDC9C1FFAB7C65FFAE806AFFAB7B
+              65FFDFCDC4FFFAF7F6FFFAF7F6FFFAF6F6FFF9F6F5FFF9F5F4FFF8F4F3FFF6F1
+              F0FDAC7E67FAAD7F69FFAE806AFFAE806A210000000000000000000000000000
+              0000AE7F6932AD806AFDAE806AFEAB7C65FFC7A598F8DFCAC6FFDDC7C2FEDDC8
+              C3FFDFCAC5FFE0CCC7FFE5D4D1FFAD7F68FFAD7F69FFA97962FFE4D4CFFFE8D9
+              D5FFE9DBD8FFEADDDAFFECDFDDFFEDE1DEFFEEE3E1FFEFE5E3FFF0E7E5FFF1E9
+              E7FFF3EBE9FFF4EDECFFF5EFEEFFF6F2EFFFE0CFC7FFAD7F68FFAE806AFFAB7B
+              65FFE0CEC7FFFBF9F8FFFBF9F9FFFBF8F8FFFAF8F7FFFAF7F6FEFCFBFCFFD2B8
+              ACF9AC7D67FFAE806AFFAD7F6AC6000000000000000000000000000000000000
+              000000000000AD7F69C8AD7F69FFAD7F69FFAC7E67FEDBC4BEFADEC8C3FFDDC8
+              C3FFDFCBC6FFE0CCC8FFE3D3CEFFC19C8CFFAC7D67FFAB7C65FFCEB2A6FFEADC
+              D9FFEADDD9FFECDFDDFFEDE2DFFFEEE3E2FFEFE6E3FFF0E7E5FFF2E9E8FFF3EC
+              EAFFF5EEEDFFF6F1F0FFF7F3F3FFF9F5F5FFE6D7D2FFB38874FFAE806AFFAB7B
+              65FFE0D0C8FFFDFBFBFFFCFBFAFFFCFAFAFFFBFAF9FFFBF9F9FFF3ECE8FCB58C
+              78FEAD7F69FFAD7F6AFFAE806941000000000000000000000000000000000000
+              000000000000AE806A2EAD7F69FFAE806AFFAD7F69FFBB9484FBDFC9C5FEDEC8
+              C3FFE0CBC6FFE0CCC8FFE4D1CEFFCDB0A5FFAB7B64FFAC7E67FFBE9887FFEADD
+              DAFFCFB3A8FFBF9B8BFFC3A090FFC9AA9CFFCFB2A7FFD1B7ABFFD1B7ABFFCFB2
+              A6FFC9AA9DFFC29F8FFFB8917EFFAE8069FFAA7962FFAD7F69FFAE806AFFAC7D
+              66FFE2D2CBFFFEFDFDFFFEFDFDFFFDFDFCFFFDFBFBFEFCFAFAFED2B8ACFAAD7F
+              69FEAD7F6AFFAE8069C6AD7F6A11000000000000000000000000000000000000
+              00000000000000000000AD7F6999AD7F69FFAE806AFEAE816BFECDAEA3FBDFC9
+              C5FEE0CBC6FEE1CDC8FFE2CFCBFFE2CFCAFFAF826DFFAD7F69FFAC7E67FFDAC3
+              BCFFB0836EFFAB7C65FFAC7D66FFAB7C65FFAB7C65FFAB7B64FFAB7B64FFAB7C
+              65FFAB7C65FFAC7D66FFAC7E67FFAD7F69FFAE806AFFAE806AFFAD7F69FFB084
+              6FFFECE1DCFFFFFFFFFFFFFFFFFFFEFEFEFEFEFFFFFFEBE0DBFBAF826DFDAD7F
+              69FEAE806AFDAE80695B00000000000000000000000000000000000000000000
+              00000000000000000000AD7F6920AD7F69DEAE806AFFAD7F69FFB18470FCD8C0
+              BAFBE0CBC7FFE1CDC8FEE2CFCBFFE3D1CDFFC8A79AFFAC7C66FFAE806AFFCFB3
+              A9FFDBC6BFFFB38773FFAA7B64FFAC7D67FFAD7F69FFAE806AFFAE806AFFAE80
+              6AFFAE806AFFAE806AFFAE806AFFAD7F69FFAD7E68FFAA7A64FFAD7F69FFD8C2
+              B7FFFCFBFAFFFFFFFFFFFEFEFEFEFFFFFFFFF9F6F5FBB28773FCAD7E68FFAE80
+              6AFFAD7F69BE0000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000AE806A64AD7F69F9AE806AFFAD7F68FFB186
+              72FBDEC8C3FCE1CEC9FFE2CFCBFFE4D2CEFFE1CEC9FFBA9382FFAF826CFFBD98
+              87FFEDE1DEFFEDE1E0FFDAC3BAFFC4A393FFB58A76FFB0846FFFB0836EFFB083
+              6EFFB0836EFFB0836EFFB0846FFFB18671FFC09D8CFFDDC9C0FFFCFCFAFFFFFF
+              FFFFFFFFFFFFFEFEFEFEFFFFFFFFFAF8F6FCB78F7CFBAD7F69FFAE806AFFAD7F
+              69F4AE806A050000000000000000000000000000000000000000000000000000
+              000000000000000000000000000000000000AD7F6996AD7F69FFAE806AFEAD7E
+              68FFB48875FCD8C1BAFCE3D1CDFFE4D2CEFEE5D5D1FFE7D7D4FFD7C0B7FFD5BC
+              B2FFE8DAD6FFEBDEDCFFEEE4E1FFF1E8E7FFF4ECECFFEFE6E3FFEADDD8FFE7D8
+              D3FFE6D8D3FFE9DDD8FFF0E7E4FFFBF8F7FFFFFEFFFFFEFDFDFFFCFBFBFFFDFD
+              FDFFFEFEFEFEFFFFFFFFF5F0EEFCC09C8BFBAD7E68FEAE806AFFAD7F69F4AE80
+              6A36000000000000000000000000000000000000000000000000000000000000
+              000000000000000000000000000000000000AD7F6901AE806A94AD7F69FFAE80
+              6AFEAD7F69FFB38873FCD3B8AEF9E6D6D3FFE5D4D0FFE6D6D2FEE9D9D6FFEADC
+              D9FFEADCD9FFECDEDBFFEDE1DEFFEEE3E1FFEFE5E3FFF1E8E5FFF2EBE9FFF4ED
+              ECFFF5EFEEFFF6F1F0FFF7F3F2FFF8F4F3FFF9F6F6FFFBF8F7FFFCFAFAFFFDFC
+              FCFFFFFFFFFFEADFD8F9B8917EFDAC7D67FEAD7F69FEAD7F69FEAD7F695A0000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000000000000000000000AD7F6907AE806AA0AE80
+              6AFFAD7F69FEAD7F69FEAD7E68FFC3A193F8E4D3D0FDE6D6D2FFE8D8D5FFE8DA
+              D6FFEADCD9FFEADEDBFFECE0DEFFEDE3E0FFEEE4E2FFF0E7E5FFF1E9E7FFF2EB
+              E9FFF4EDECFFF5EFEEFFF6F1F0FFF8F4F3FFF9F5F4FFFAF7F6FEFBF9F9FFFBFA
+              F9FED3BCB0F9AF826CFEAD7F69FEAE806AFEAE806AFFAE806A5E000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              000000000000000000000000000000000000000000000000000000000000AE80
+              6A9CAD7F69FAAD7F69FFAE806AFEAC7D67FFB38875FBD3BAB0FAE1CFC9FDE8DA
+              D7FEEADDDAFFEBDEDCFFECE0DDFFEDE2DFFEEEE4E2FFF0E6E4FFF1E8E6FFF2EA
+              E8FFF4ECEBFEF5EEEDFFF6F1F0FFF8F4F3FFF8F5F4FEF3EDEAFDE5D7D0FBBA94
+              82FBAA7A63FEAD7F69FEAE806AFFAE806AEEAD7F694A00000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000AE806A5DAE806AE2AE806AFFAD7F69FEAD7E68FFAB7C65FEB88F7CFCC7A7
+              9AFCD7C0B7FBE5D6D2FCEFE5E4FDF0E6E5FFF1E8E6FFF1E9E8FFF3EBEAFFF4EE
+              EDFFF6F0F0FFF8F4F3FEF1E9E7FBE3D3CBFBD0B6AAFCBD9786FCAB7B64FDAC7E
+              67FFAE806AFFAD806AFFAE806ABBAE806A2D0000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              000000000000AE806A19AE806AA2AD7F69FFAE806AFFAD7F69FEAD7F69FFAD7F
+              69FEB0836EFEB38873FEB78F7BFAC4A292FACCAFA2FBD1B6ABF8D2B8ADF9CFB3
+              A6FAC7A698FABA9381FBB48975FEB18570FEAD7F69FEAD7F69FFAD7F69FFAE80
+              6AFFAD7F69FAAD7F695FAE806A08000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000AE806A30AD7F69C5AE8069F6AD7F6AFEAE80
+              69FFAD7F69FFAE806AFFAD7F69FFAD7E68FFAC7E67FFAC7D67FFAC7D67FFAC7E
+              67FFAD7E68FFAD7F69FFAE806AFFAD7F69FFAD7F69FFAE806AFBAD7F69EFAE80
+              6A9FAD7F690D0000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000000000000000000000AD7F6A38AE80698CAD7F
+              6AC0AE8069E8AD7F6AFFAE806AFFAD7F69FFAD7F69FFAD7F69FFAD7F69FFAD7F
+              69FFAE806AFFAE7F6AFFAD7F69FEAD7F69DCAD7F69B1AE806A72AE806A1B0000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              000000000000000000000000000000000000000000000000000000000000AD7F
+              6A0FAD7F6929AE806A3EAD7F694BAD7F6985AD7F69B4AD7F69C3AE806AC5AE80
+              6AB4AE7F6A6BAD806944AE806A37AD7F6921AE806A0700000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000
+            }
+            OnClick = BtCreateProductClick
+            ParentFont = False
+            TabOrder = 0
+          end
         end
       end
     end
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 23
-    Top = 608
-    Width = 1058
+    Height = 30
+    Top = 666
+    Width = 1521
     Panels = <>
+    ParentFont = False
   end
   object OpenDialog1: TOpenDialog
     DefaultExt = '.*.msi'
     Filter = 'Setup|*.exe;*.msi;*.mst|EXE|*.exe|MSI|*.msi|MST|*.mst|Any File|*.*'
     FilterIndex = 2
-    left = 248
-    top = 656
+    left = 372
+    top = 984
   end
   object MainMenu1: TMainMenu
-    left = 32
-    top = 640
+    left = 48
+    top = 960
     object MenuItemFile: TMenuItem
       Caption = '&File'
       object FileOpenSetupFile: TMenuItem
@@ -4321,15 +4585,15 @@ object resultForm1: TresultForm1
   end
   object OpenDialogSetupfile: TOpenDialog
     Filter = 'all setup|*.msi|*.exe|all|*.*|*.*'
-    left = 1096
+    left = 1644
   end
   object SelectDirectoryDialog1: TSelectDirectoryDialog
-    left = 216
-    top = 72
+    left = 808
+    top = 8
   end
   object ImageList1: TImageList
-    left = 422
-    top = 8
+    left = 633
+    top = 12
     Bitmap = {
       4C69050000001000000010000000000000000000000000000000000000000000
       0000000000000000000A000000A0000000A00000000A00000000000000000000
