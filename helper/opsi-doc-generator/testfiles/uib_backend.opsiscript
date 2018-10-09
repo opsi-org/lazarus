@@ -8,6 +8,48 @@ encoding=utf8
 ;@filedesc Collection of functions that manipulate the opsi backend via opsi service call
 
 ; ###################################################################################################
+
+
+DefFunc getDiskUuid($disknumber$ : string , $tmpdir$ : string ) : string
+	DefStringlist $list$
+	DefVar $tmpstr$
+
+	set $result$ = ""
+	set $list$ = createStringList("select disk "+$disknumber$,"uniqueid disk")
+	if not (saveTextFile($list$, $tmpdir$+"\diskuuid.txt"))
+		LogError "Could not save diskpart command file ..."
+	endif
+	Message "Run diskuuid ...."
+	set $resultlist$ = shellCall("diskpart /s "+$tmpdir$+"\diskuuid.txt")
+	; we expect something like this:
+	; (string   0)
+	; (string   1)Microsoft DiskPart version 10.0.10240
+	; (string   2)
+	; (string   3)Copyright (C) 1999-2013 Microsoft Corporation.
+	; (string   4)On computer: MININT-90CK531
+	; (string   5)
+	; (string   6)Disk 0 is now the selected disk.
+	; (string   7)
+	; (string   8)Disk ID: 4E77DC27
+	;
+	; or something like this:
+	; (string   0)
+	; (string   1)Microsoft DiskPart-Version 6.1.7600
+	; (string   2)Copyright (C) 1999-2008 Microsoft Corporation.
+	; (string   3)Auf Computer: MININT-UV2F3OC
+	; (string   4)
+	; (string   5)Datenträger 0 ist jetzt der gewählte Datenträger.
+	; (string   6)
+	; (string   7)Datenträger-ID: E5F9EE4D
+	if not("0" = getlastexitcode)
+		logerror "diskuuid failed"
+	else
+		set $tmpstr$ = TakeFirstStringContaining($resultlist$,"ID: ")
+		set $result$ = trim(Takestring(1,splitstring($tmpstr$,':')))
+	endif
+EndFunc
+
+
 DefFunc setProductsToSetup($productlist$ : stringlist) : string
   ;@author          detlef oertel
   ;@date            17.5.2018

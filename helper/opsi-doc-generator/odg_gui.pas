@@ -13,6 +13,7 @@ uses
   Process,
   odg_main,
   odg_asciidoc,
+  odg_pyasciidoc,
   StdCtrls, EditBtn;
 
 type
@@ -21,6 +22,7 @@ type
 
   TForm1 = class(TForm)
     Bsave_ascii_show: TButton;
+    ButtonPythonConvert: TButton;
     ButtonConvert: TButton;
     ButtonSave: TButton;
     ButtonOpen: TButton;
@@ -35,6 +37,7 @@ type
     procedure Bsave_ascii_showClick(Sender: TObject);
     procedure ButtonConvertClick(Sender: TObject);
     procedure ButtonOpenClick(Sender: TObject);
+    procedure ButtonPythonConvertClick(Sender: TObject);
     procedure ButtonSaveClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
@@ -67,6 +70,7 @@ begin
   end;
 end;
 
+
 procedure TForm1.ButtonSaveClick(Sender: TObject);
 var
   savefilename : string;
@@ -86,6 +90,12 @@ end;
 procedure TForm1.ButtonConvertClick(Sender: TObject);
 begin
   convertOslibToAsciidoc(infilename);
+  memo2.Lines.Assign(targetlist);
+end;
+
+procedure TForm1.ButtonPythonConvertClick(Sender: TObject);
+begin
+  convertPylibToAsciidoc(infilename);
   memo2.Lines.Assign(targetlist);
 end;
 

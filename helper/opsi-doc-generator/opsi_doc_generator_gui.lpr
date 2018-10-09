@@ -7,7 +7,7 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, odg_gui, odg_main, odg_asciidoc, odg_os_deffunc
+  Forms, odg_gui, odg_main, odg_asciidoc, odg_pyasciidoc, odg_os_deffunc, odg_py_deffunc
   { you can add units after this };
 
 {$R *.res}

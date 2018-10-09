@@ -1,4 +1,4 @@
-unit odg_asciidoc;
+unit odg_pyasciidoc;
 
 {$mode objfpc}{$H+}
 
@@ -6,10 +6,10 @@ interface
 
 uses
   Classes,
-  odg_os_deffunc,
+  odg_py_deffunc,
   SysUtils;
 
-procedure writeDocToList;
+procedure writePyDocToList;
 
 implementation
 uses
@@ -18,7 +18,7 @@ uses
 var
   asciidoc_header : TStringlist;
 
-procedure writeDocToList;
+procedure writePyDocToList;
 var
   frun, prun : integer;
   tmpstr1, pname : string;
@@ -36,7 +36,7 @@ begin
     asciidoc_header.Add('   ');
     targetlist.Text:= asciidoc_header.Text;
     targetlist.add('[Doc_file'+docobject.name+']');
-    targetlist.add('= Documentation of opsi library: `'+docobject.name+'`');
+    targetlist.add('= Documentation of Python library: `'+docobject.name+'`');
     targetlist.Add('');
     targetlist.Add('');
     targetlist.Add('');
@@ -48,8 +48,6 @@ begin
        targetlist.Add('* Copyright:  '+docobject.Copyright);
     targetlist.Add('');
     targetlist.Add('');
-    //targetlist.Add(':toc:');
-    //targetlist.Add(':toc-title: Table of Functions');
     targetlist.Add('');
     targetlist.Add('');
 
@@ -72,12 +70,13 @@ begin
       begin
         pname := docobject.Ffunctions[frun].Fparams[prun].ParamName;
         targetlist.add('* Parameter: `' +pname+'`');
-        //targetlist.add('** Type: `' +docobject.Ffunctions[frun].Fparams[prun].getParamTypestring)+'`';
+        (*
         if docobject.Ffunctions[frun].Fparams[prun].callByReference then
            tmpstr1 := 'Calltype: `CallByReference`'
         else tmpstr1 := 'Calltype: `CallByValue`';
         targetlist.add('** Type: `' +docobject.Ffunctions[frun].Fparams[prun].getParamTypestring
                        + '`  -  '+tmpstr1);
+                       *)
         tmpstr1 := docobject.Ffunctions[frun].Fparams[prun].ParamDesc;
         if tmpstr1 <> '' then
         begin
@@ -137,7 +136,7 @@ begin
         targetlist.Add('');
         targetlist.Add('');
         targetlist.Add('Example:');
-        targetlist.Add('[source,winst]');
+        targetlist.Add('[source,python]');
         targetlist.Add('----');
         targetlist.Add(tmpstr1);
         targetlist.Add('----');
@@ -147,7 +146,6 @@ begin
     end;
   end;
 end;
-
 
 
 initialization

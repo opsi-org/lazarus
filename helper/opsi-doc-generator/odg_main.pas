@@ -9,14 +9,17 @@ interface
 uses
   FileUtil,
   odg_os_deffunc,
+  odg_py_deffunc,
   oslog,
   odg_asciidoc,
+  odg_pyasciidoc,
   process,
   LCLIntf,
   Classes,
   SysUtils;
 
 function convertOslibToAsciidoc(filename : string): boolean;
+function convertPylibToAsciidoc(filename : string): boolean;
 function save_compile_show(filename : string) : boolean;
 
 
@@ -31,6 +34,12 @@ function convertOslibToAsciidoc(filename : string): boolean;
 begin
   result := parseInput_opsiscriptlibrary(filename);
   writeDocToList;
+end;
+
+function convertPylibToAsciidoc(filename : string): boolean;
+begin
+  result := parseInput_pythonlibrary(filename);
+  writePyDocToList;
 end;
 
 function writeToAsciidocFile(infilename : string) : string;

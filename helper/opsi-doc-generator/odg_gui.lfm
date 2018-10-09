@@ -1,13 +1,15 @@
 object Form1: TForm1
-  Left = 117
+  Left = 2648
   Height = 650
-  Top = 386
+  Top = 275
   Width = 695
   Caption = 'opsi-doc-generator'
   ClientHeight = 650
   ClientWidth = 695
+  DesignTimePPI = 144
   OnCreate = FormCreate
-  LCLVersion = '1.8.2.0'
+  Position = poDefault
+  LCLVersion = '1.8.4.0'
   object Panel1: TPanel
     Left = 0
     Height = 120
@@ -52,6 +54,15 @@ object Form1: TForm1
       Caption = 'Convert to asciidoc - save - to html -show '
       OnClick = Bsave_ascii_showClick
       TabOrder = 3
+    end
+    object ButtonPythonConvert: TButton
+      Left = 34
+      Height = 38
+      Top = 64
+      Width = 166
+      Caption = 'Python to Asciidoc'
+      OnClick = ButtonPythonConvertClick
+      TabOrder = 4
     end
   end
   object Panel2: TPanel
