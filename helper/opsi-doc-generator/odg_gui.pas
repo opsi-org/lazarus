@@ -22,8 +22,8 @@ type
 
   TForm1 = class(TForm)
     Bsave_ascii_show: TButton;
-    ButtonPythonConvert: TButton;
     ButtonConvert: TButton;
+    ButtonPythonConvert: TButton;
     ButtonSave: TButton;
     ButtonOpen: TButton;
     Memo1: TMemo;
@@ -62,14 +62,25 @@ implementation
 
 procedure TForm1.ButtonOpenClick(Sender: TObject);
 begin
+  Memo1.Lines.Clear;
+  Memo2.Lines.Clear;
   if OpenDialog1.Execute then
   begin
     infilename := OpenDialog1.FileName;
     sourcelist.LoadFromFile(infilename);
     memo1.Lines.Assign(sourcelist);
+    if ExtractFileExt(infilename) = '.opsiscript' then
+    begin
+      ButtonPythonConvert.enabled:=false;
+      ButtonConvert.enabled:=true;
+    end
+    else
+    begin
+      ButtonConvert.enabled:=false;
+      ButtonPythonConvert.enabled:=true;
+    end
   end;
 end;
-
 
 procedure TForm1.ButtonSaveClick(Sender: TObject);
 var

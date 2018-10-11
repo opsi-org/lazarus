@@ -74,9 +74,12 @@ begin
         if docobject.Ffunctions[frun].Fparams[prun].callByReference then
            tmpstr1 := 'Calltype: `CallByReference`'
         else tmpstr1 := 'Calltype: `CallByValue`';
+
+
         targetlist.add('** Type: `' +docobject.Ffunctions[frun].Fparams[prun].getParamTypestring
                        + '`  -  '+tmpstr1);
-                       *)
+        *)
+
         tmpstr1 := docobject.Ffunctions[frun].Fparams[prun].ParamDesc;
         if tmpstr1 <> '' then
         begin

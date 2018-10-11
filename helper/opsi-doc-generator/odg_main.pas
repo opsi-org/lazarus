@@ -123,9 +123,6 @@ begin
     OpenDocument(ExtractFileNameWithoutExt(asciidocfile)+'.html');
 end;
 
-
-
-
 initialization
   sourcelist := TStringlist.create;
   targetlist := TStringlist.create;

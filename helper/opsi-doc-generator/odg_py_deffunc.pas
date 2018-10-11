@@ -187,45 +187,33 @@ var
   paramnamestr : string;
   paramcounter : integer;
   endOfParamlist : boolean;
-  tmpstr : string;
   remaining,errorstr : string;
-
 begin
   endOfParamlist := false;
   paramcounter := -1;
-
   myfunc.FDefinitionline:=trim(definitionStr);
-
   // get function name
-  GetWord(trim(definitionStr), myfunc.FName, remaining,WordDelimiterSet5);  //myfunc.FName is a substring of trim(definitionStr)
-  //upto one charachter of WordDelimiterSet5,Remaining begins with the character following this character,
-  //with leading whitespace is eliminated
+  GetWord(trim(definitionStr), myfunc.FName, remaining,WordDelimiterSet5);
 
   LogDatei.log('Found new defined function name: '+myfunc.FName,LLDebug2);
-
-  if  skip('(',remaining,remaining,errorstr) then  // eliminate '(' at the beginning of remaining with no leading spaces,....
-  // if '(' not found, 3rd remaining= 2nd remaining
+  if  skip('(',remaining,remaining,errorstr) then
   begin
+    skip('self',remaining,remaining,errorstr);
     // test on no parameters
-    tmpstr := remaining;
-
-    if skip('self',remaining,remaining,errorstr) then tmpstr := remaining;
-    if skip(',',remaining,remaining,errorstr) then tmpstr := remaining;
-
     if skip('):',remaining,remaining,errorstr) then
     begin
       endOfParamlist := true;
       myfunc.FParamCounter := 0;
     end
-
     else
-      remaining := tmpstr;
+    begin
+      skip(',',remaining,remaining,errorstr);
+    end;
+
     while  not endOfParamlist do
     begin
-      GetWord(remaining, paramnamestr, remaining, [',',')']);
-      // paramnamestr is a substring of  1stremaining upto ','
-      // 3rdremaining follows with ',' with no leading whitespaces
-
+      // check paramname
+      GetWord(remaining, paramnamestr, remaining,[',',')']);
       paramnamestr := trim(paramnamestr);
 
       LogDatei.log('Found defined function parametername: '+paramnamestr,LLDebug2);
@@ -236,24 +224,21 @@ begin
       myfunc.Fparams[paramcounter] := TParamDoc.Create;
       with myfunc.Fparams[paramcounter] do
       begin
-        tmpstr := remaining;
-        if skip(')',remaining,remaining,errorstr) then  // eliminate ')' at the beginning of remaining with no leadingspaces,....
-        // if '):' not found, 3rd remaining= 2nd remaining
+        // is a new param
+        FparamName:= paramnamestr;
+        // check for endOfParamlist
+        if skip('):',remaining,remaining,errorstr) then
         begin
           endOfParamlist := true;
         end
-
         else
         begin
-          remaining := tmpstr;
           if skip(',',remaining,remaining,errorstr) then
         end
       end; // with
     end; // while
   end;
 end;
-
-
 
 function onMarkerAddDocStringTo(marker : string;docstring : string;var target :string) : boolean;
 var
@@ -290,14 +275,17 @@ function parseInput_pythonlibrary(filename : string) : boolean;
 var
   linecounter, funccounter,prun : integer;
   indeffunc : integer;
-  aktline, expr, remaining, pname, tmpstr1, tmpstr2, tmpstr3 : string;
+  aktline, pname : string;
   incomment : boolean;
+
+
 begin
   result := true;
   indeffunc := 0;
   if Assigned(docobject) and (docobject <> nil) then docobject.Destroy;
   docobject := TFileDoc.Create;
   docobject.Fname:=ExtractFileName(filename);
+
   for linecounter := 0 to sourcelist.Count-1 do
   begin
     incomment := false;
@@ -320,6 +308,7 @@ begin
         incomment := true;
         aktline := trim(copy(aktline,length(cpycomment)+1,length(aktline)));
       end;
+
       if incomment then
       begin    // document related ?
         if not onMarkerAddDocStringTo(cauthor,aktline,docobject.FAuthor) then
@@ -356,7 +345,7 @@ begin
         if not onMarkerAddDocStringTo(CReferences,aktline,docobject.Ffunctions[funccounter-1].FReferences)then
         if not onMarkerAddDocStringTo(CExample,aktline,docobject.Ffunctions[funccounter-1].FExample)then
             onMarkerAddDocStringTo(CLinks,aktline,docobject.Ffunctions[funccounter-1].FLinks);
-        // parameter ?
+        // parameter
         if pos(lowercase(CParam),lowercase(aktline)) = 1 then
         begin
           for prun := 0 to docobject.Ffunctions[funccounter-1].ParamCounter-1 do
@@ -370,7 +359,6 @@ begin
     end;
   end;
 end;
-
 
 begin
 
