@@ -225,11 +225,43 @@ msgstr ""
 msgid "opsi-setup-detector: Dependency Editor"
 msgstr ""
 
+#: tfnewdepdlg.comboboxactstate.text
+msgid "ComboBoxActState"
+msgstr ""
+
+#: tfnewdepdlg.editproductid.text
+msgid "productId"
+msgstr ""
+
+#: tfnewdepdlg.groupbox1.caption
+msgid "Require Mode"
+msgstr ""
+
 #: tfnewdepdlg.label1.caption
 msgid ""
 "Please edit the dependency.\n"
 "Please note:\n"
 "You may may neither give a requested installation state or a requested action. A combination is not allowed.\n"
+msgstr ""
+
+#: tfnewdepdlg.label2.caption
+msgid "productid"
+msgstr ""
+
+#: tfnewdepdlg.label3.caption
+msgid "Action or State"
+msgstr ""
+
+#: tfnewdepdlg.label4.caption
+msgid "Requirement Type"
+msgstr ""
+
+#: tfnewdepdlg.radiobuttonaction.caption
+msgid "Action"
+msgstr ""
+
+#: tfnewdepdlg.radiobuttonstate.caption
+msgid "State"
 msgstr ""
 
 #: tformhelp.caption
@@ -660,6 +692,22 @@ msgstr ""
 
 #: tresultform1.sbtnopen.caption
 msgid "open"
+msgstr ""
+
+#: tresultform1.stringgriddep.columns[0].title.caption
+msgid "Required ProductId"
+msgstr ""
+
+#: tresultform1.stringgriddep.columns[1].title.caption
+msgid "Required State"
+msgstr ""
+
+#: tresultform1.stringgriddep.columns[2].title.caption
+msgid "Required Action"
+msgstr ""
+
+#: tresultform1.stringgriddep.columns[3].title.caption
+msgid "Required Mode"
 msgstr ""
 
 #: tresultform1.tabsheetanalyze.caption

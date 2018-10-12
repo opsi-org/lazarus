@@ -37,7 +37,7 @@ uses
   osdhelper,
   osdanalyze,
   winpeimagereader,
-  lcltranslator, EditBtn, Spin, JSONPropStorage,
+  lcltranslator, EditBtn, Spin, JSONPropStorage, Grids,
   oslog,
   osdbasedata,
   osdconfigdlg,
@@ -162,9 +162,9 @@ type
     RadioButtonInteractive: TRadioButton;
     SBtnOpen: TSpeedButton;
     SBtnExit: TSpeedButton;
-    ScrollBox1: TScrollBox;
     SelectDirectoryDialog1: TSelectDirectoryDialog;
     StatusBar1: TStatusBar;
+    StringGridDep: TStringGrid;
     TabSheetCreate: TTabSheet;
     TabSheetStart: TTabSheet;
     TabSheetSetup2: TTabSheet;
@@ -213,7 +213,6 @@ type
     TIEditSetupfile1: TTIEdit;
     TIEditMstFile1: TTIEdit;
     TIEditSetupFileSizeMB2: TTIEdit;
-    TIGridDep: TTIGrid;
     TIMemoDesc: TTIMemo;
     TIMemoAdvice: TTIMemo;
     TISpinEditPackageVers: TTISpinEdit;
@@ -438,7 +437,7 @@ begin
       TIMemoDesc.Link.SetObjectAndProperty(productdata, 'description');
       TICheckBoxlicenseRequired.Link.SetObjectAndProperty(productdata,
         'licenserequired');
-      TIGridDep.ListObject := dependencies;
+      //TIGridDep.ListObject := dependencies;
     end;
     TIEditworkbenchpath.Link.SetObjectAndProperty(myconfiguration, 'workbench_path');
     Visible := True;
@@ -472,7 +471,7 @@ begin
   //TIEditProductNameS2.Link.TIObject := nil;
   TIEditworkbenchpath.Link.TIObject := nil;
   TIEditSetup1Command.Link.TIObject := nil;
-  TIGridDep.ListObject := nil;
+  //TIGridDep.ListObject := nil;
 end;
 
 
@@ -834,27 +833,55 @@ begin
 end;
 
 procedure TResultform1.BitBtnAddDepClick(Sender: TObject);
+var
+  mydep : Tstringlist;
+  index : integer;
 begin
   if FNewDepDlg.ShowModal = mrOK then
   begin
-    // add finished
+    // add
+    index := StringGridDep.RowCount;
+    inc(index);
+    StringGridDep.RowCount:= index;
+    mydep := Tstringlist.Create;
+    mydep.Add(inttostr(index-1));
+    mydep.Add(FNewDepDlg.Editproductid.Text);
+    if FNewDepDlg.RadioButtonAction.Checked then
+    begin
+      mydep.Add('');
+      mydep.Add(FNewDepDlg.ComboBoxActState.Text);
+    end
+    else
+    begin
+      mydep.Add(FNewDepDlg.ComboBoxActState.Text);
+      mydep.Add('');
+    end;
+    mydep.Add(FNewDepDlg.ComboBoxReqType.Text);
+    StringGridDep.Rows[index-1].AddStrings(mydep);
   end
   else
   begin
     // cancel add
-    aktProduct.dependencies.Delete(aktProduct.dependencies.Count-1);
+
   end;
-  TIGridDep.ReloadTIList;
+  //TIGridDep.ReloadTIList;
 end;
 
 procedure TResultform1.BitBtnDelDepClick(Sender: TObject);
+var
+  range : integer;
+  str : string;
 begin
+  (*
+  range := TIGridDep.SelectedRangeCount;
   if TIGridDep.SelectedRangeCount = 0 then
    ShowMessage('No Dependency was selected')
   else
   begin
     //TIGridDep.;
+    str := TIGridDep.GetTIObject(0).GetNamePath;
   end;
+  *)
 end;
 
 procedure TResultform1.BtCreateEmptyTemplateClick(Sender: TObject);
