@@ -42,7 +42,8 @@ uses
   osdbasedata,
   osdconfigdlg,
   osdcreate,
-  fpjsonrtti;
+  fpjsonrtti,
+  osddlgnewdependency;
 
 
 
@@ -55,6 +56,8 @@ type
   { TResultform1 }
 
   TResultform1 = class(TForm)
+    BitBtnAddDep: TBitBtn;
+    BitBtnDelDep: TBitBtn;
     BitBtnWorkBenchPath: TBitBtn;
     BitBtnRecheckWorkbench: TBitBtn;
     BtAnalyzeNextStep: TBitBtn;
@@ -159,6 +162,7 @@ type
     RadioButtonInteractive: TRadioButton;
     SBtnOpen: TSpeedButton;
     SBtnExit: TSpeedButton;
+    ScrollBox1: TScrollBox;
     SelectDirectoryDialog1: TSelectDirectoryDialog;
     StatusBar1: TStatusBar;
     TabSheetCreate: TTabSheet;
@@ -209,12 +213,15 @@ type
     TIEditSetupfile1: TTIEdit;
     TIEditMstFile1: TTIEdit;
     TIEditSetupFileSizeMB2: TTIEdit;
+    TIGridDep: TTIGrid;
     TIMemoDesc: TTIMemo;
     TIMemoAdvice: TTIMemo;
     TISpinEditPackageVers: TTISpinEdit;
     ToolBar1: TToolBar;
     mysetup1: TSetupFile;
 
+    procedure BitBtnAddDepClick(Sender: TObject);
+    procedure BitBtnDelDepClick(Sender: TObject);
     procedure BitBtnRecheckWorkbenchClick(Sender: TObject);
     procedure BitBtnWorkBenchPathClick(Sender: TObject);
     procedure BtAnalyzeNextStepClick(Sender: TObject);
@@ -226,6 +233,7 @@ type
     procedure BtSetup2NextStepClick(Sender: TObject);
     procedure BtSingleAnalyzeAndCreateClick(Sender: TObject);
     procedure FlowPanel14Click(Sender: TObject);
+    procedure FlowPanel18Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure MenuItemConfigClick(Sender: TObject);
     procedure setGuiMode;
@@ -416,22 +424,23 @@ begin
       TIEditSetup1UnCommand.Link.SetObjectAndProperty(SetupFiles[0], 'uninstallCommandLine');
       TIEditSetup1UnProgram.Link.SetObjectAndProperty(SetupFiles[0], 'uninstallProg');
       (*
-      TIEditProductIdS1.Link.SetObjectAndProperty(produktpropties, 'productId');
-      TIEditProductIdS2.Link.SetObjectAndProperty(produktpropties, 'productId');
-      TIEditProductNameS1.Link.SetObjectAndProperty(produktpropties, 'productName');
-      TIEditProductNameS2.Link.SetObjectAndProperty(produktpropties, 'productName');
+      TIEditProductIdS1.Link.SetObjectAndProperty(productdata, 'productId');
+      TIEditProductIdS2.Link.SetObjectAndProperty(productdata, 'productId');
+      TIEditProductNameS1.Link.SetObjectAndProperty(productdata, 'productName');
+      TIEditProductNameS2.Link.SetObjectAndProperty(productdata, 'productName');
       *)
       // product
-      TIEditProdVersion3.Link.SetObjectAndProperty(produktpropties, 'productVersion');
-      TISpinEditPackageVers.Link.SetObjectAndProperty(produktpropties, 'packageVersion');
-      TIEditProdID.Link.SetObjectAndProperty(produktpropties, 'productId');
-      TIEditProdName.Link.SetObjectAndProperty(produktpropties, 'productName');
-      TIMemoAdvice.Link.SetObjectAndProperty(produktpropties, 'advice');
-      TIMemoDesc.Link.SetObjectAndProperty(produktpropties, 'description');
-      TICheckBoxlicenseRequired.Link.SetObjectAndProperty(produktpropties,
+      TIEditProdVersion3.Link.SetObjectAndProperty(productdata, 'productVersion');
+      TISpinEditPackageVers.Link.SetObjectAndProperty(productdata, 'packageVersion');
+      TIEditProdID.Link.SetObjectAndProperty(productdata, 'productId');
+      TIEditProdName.Link.SetObjectAndProperty(productdata, 'productName');
+      TIMemoAdvice.Link.SetObjectAndProperty(productdata, 'advice');
+      TIMemoDesc.Link.SetObjectAndProperty(productdata, 'description');
+      TICheckBoxlicenseRequired.Link.SetObjectAndProperty(productdata,
         'licenserequired');
+      TIGridDep.ListObject := dependencies;
     end;
-    TIEditworkbenchpath.Link.SetObjectAndProperty(myconfiguration, 'workbench_path');;
+    TIEditworkbenchpath.Link.SetObjectAndProperty(myconfiguration, 'workbench_path');
     Visible := True;
   end;
 
@@ -457,12 +466,13 @@ begin
   TIEditRequiredSizeMB2.Link.TIObject := nil;
   TIEditInstallDir1.Link.TIObject := nil;
   TIEditInstallDir1.Link.TIObject := nil;
-  TIEditProductIdS1.Link.TIObject := nil;
-  TIEditProductIdS2.Link.TIObject := nil;
-  TIEditProductNameS1.Link.TIObject := nil;
-  TIEditProductNameS2.Link.TIObject := nil;
+  //TIEditProductIdS1.Link.TIObject := nil;
+  //TIEditProductIdS2.Link.TIObject := nil;
+  //TIEditProductNameS1.Link.TIObject := nil;
+  //TIEditProductNameS2.Link.TIObject := nil;
   TIEditworkbenchpath.Link.TIObject := nil;
   TIEditSetup1Command.Link.TIObject := nil;
+  TIGridDep.ListObject := nil;
 end;
 
 
@@ -479,9 +489,9 @@ begin
     LogDatei.log('Error: setupfile2 not initalized', LLCritical);
     Result := False;
   end;
-  if not Assigned(osdbasedata.aktProduct.produktpropties) then
+  if not Assigned(osdbasedata.aktProduct.productdata) then
   begin
-    LogDatei.log('Error: produktpropties not initalized', LLCritical);
+    LogDatei.log('Error: productdata not initalized', LLCritical);
     Result := False;
   end;
   if Result = False then
@@ -761,6 +771,11 @@ begin
 
 end;
 
+procedure TResultform1.FlowPanel18Click(Sender: TObject);
+begin
+
+end;
+
 procedure TResultform1.BtATwonalyzeAndCreateClick(Sender: TObject);
 begin
   OpenDialog1.FilterIndex := 1;   // setup
@@ -816,6 +831,30 @@ end;
 procedure TResultform1.BitBtnRecheckWorkbenchClick(Sender: TObject);
 begin
   checkWorkbench;
+end;
+
+procedure TResultform1.BitBtnAddDepClick(Sender: TObject);
+begin
+  if FNewDepDlg.ShowModal = mrOK then
+  begin
+    // add finished
+  end
+  else
+  begin
+    // cancel add
+    aktProduct.dependencies.Delete(aktProduct.dependencies.Count-1);
+  end;
+  TIGridDep.ReloadTIList;
+end;
+
+procedure TResultform1.BitBtnDelDepClick(Sender: TObject);
+begin
+  if TIGridDep.SelectedRangeCount = 0 then
+   ShowMessage('No Dependency was selected')
+  else
+  begin
+    //TIGridDep.;
+  end;
 end;
 
 procedure TResultform1.BtCreateEmptyTemplateClick(Sender: TObject);

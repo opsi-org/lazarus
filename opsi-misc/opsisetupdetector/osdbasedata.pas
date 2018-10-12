@@ -153,26 +153,59 @@ der Installation des aktuellen Produkts begonnen werden kann, dann ist dies befo
 Produkt installiert werden so ist dies after. Ist die Reihenfolge egal so muss hier nichts eingetragen werden.
 
 *)
+(*
+{ TMyCollectionItem }
 
-TPDtype = ('before','after','');
+ TMyCollectionItem = class(TCollectionItem)
+ private
+   FInt: integer;
+   FStr: string;
+   FColor: TColor;
+ published
+   property Color: TColor read FColor write FColor;
+   property Str: string read FStr write FStr;
+   property Int: integer read FInt write FInt;
+ end;
+*)
 
-TPDependencies = class(TPersistent)
+TPDtype = (before,after,doNotMatter);
+//['before','after',''];
+TPActionRequest = (setup,uninstall,update,noRequest);
+TPInstallationState = (installed,not_installed,unknown, noState);
+
+TPDependency = class(TCollectionItem)
   private
     FAction: String;
     FRequProductId: string;
-    FRequAction: string;
-    FRequState: string;
+    FRequAction: TPActionRequest;
+    FRequState: TPInstallationState;
     FRequType: TPDtype;
   published
-    property FRequType: TPDtype read FRequType write FRequType;
+    property RequType: TPDtype read FRequType write FRequType;
     property action: string read FAction;
     property requProductId: string read FRequProductId write FRequProductId;
-    property requState: string read FRequState write FRequState;
+    property requState: TPInstallationState read FRequState write FRequState;
+    property requAction: TPActionRequest read FRequAction write FRequAction;
+    procedure init;
+  public
+    { public declarations }
+    //constructor Create;
+    //destructor Destroy;
+  end;
+
+(*
+
+TPDependencies = class(TCollection)
+  private
+
+  published
+
   public
     { public declarations }
     constructor Create;
     //destructor Destroy;
   end;
+ *)
 
 (*
   [ProductProperty]
@@ -201,7 +234,7 @@ TPProperties = class(TPersistent)
     Feditable: boolean;
     Fdescription: string;
     FStrvalues: Tstrings;
-    FStrvalues: Tstrings;
+    FStrDefault: Tstrings;
     FBoolDefault: boolean;
     procedure SetValueLines(const AValue: TStrings);
     procedure SetDefaultLines(const AValue: TStrings);
@@ -211,7 +244,7 @@ TPProperties = class(TPersistent)
     property description: string read Fdescription write Fdescription;
     property multivalue: boolean read Fmultivalue write Fmultivalue;
     property editable: boolean read Feditable write Feditable;
-    property Strdefault: TStrings read Fdefault write SetValueLines;
+    property StrDefault: TStrings read FStrDefault write SetDefaultLines;
     property Strvalues: TStrings read FStrvalues write FStrvalues;
     property boolDefault: boolean read FBoolDefault write FBoolDefault;
   public
@@ -261,9 +294,18 @@ TPProperties = class(TPersistent)
     //destructor Destroy;
   end;
 
-  TopsiProduct = record
+  TopsiProduct = class(TPersistent)
+    private
+          published
+                public
     SetupFiles: array[0..1] of TSetupFile;
     productdata: TProductData;
+    //dependeciesCount : integer;
+    dependencies: TCollection;
+
+
+    { public declarations }
+    constructor Create;
   end;
 
   TConfiguration = class(TPersistent)
@@ -315,7 +357,7 @@ procedure initaktproduct;
 procedure freebasedata;
 
 var
-  aktProduct: TProductData;
+  aktProduct: TopsiProduct;
   aktSetupFile: TSetupFile;
   knownInstallerList: TStringList;
   architectureModeList: TStringList;
@@ -479,23 +521,32 @@ begin
   inherited;
 end;
 
-procedure TPProperties.SetLibraryLines(const AValue: TStrings);
+procedure TPProperties.SetValueLines(const AValue: TStrings);
 begin
-  Fimport_libraries.Assign(AValue);
+  FStrvalues.Assign(AValue);
 end;
 
-procedure TPProperties.SetPreInstallLines(const AValue: TStrings);
+procedure TPProperties.SetDefaultLines(const AValue: TStrings);
 begin
-  FpreInstallLines.Assign(AValue);
+  FStrDefault.Assign(AValue);
 end;
 
 
-// TPDependencies **********************************
-constructor TPProperties.Create;
+// TPDependency **********************************
+procedure TPDependency.init;
+begin
+  FAction := 'setup';
+  FRequType := doNotMatter;
+  FRequAction:=noRequest;
+  FRequState:=noState;
+  FRequProductId:='';
+end;
+
+// TopsiProduct **********************************
+constructor TopsiProduct.Create;
 begin
   inherited;
-  FAction := 'setup';
-  FRequType := '';
+  //initaktproduct;
 end;
 
 // TProductData **********************************
@@ -894,6 +945,7 @@ end;
 procedure initaktproduct;
 var
   i: integer;
+  newdep : TPDependency;
 begin
   for i := 0 to 1 do
   begin
@@ -901,9 +953,9 @@ begin
       aktProduct.SetupFiles[i] := TSetupFile.Create;
     aktProduct.SetupFiles[i].initValues;
   end;
-  if not Assigned(aktProduct.produktpropties) then
-    aktProduct.produktpropties := TProductProperies.Create;
-  with aktProduct.produktpropties do
+  if not Assigned(aktProduct.productdata) then
+    aktProduct.productdata := TProductData.Create;
+  with aktProduct.productdata do
   begin
     comment := '';
     description := '';
@@ -920,6 +972,10 @@ begin
     delsubscript := 'delsub.opsiscript';
     licenserequired := False;
   end;
+  // Create Dependencies
+  aktProduct.dependencies := TCollection.Create(TPDependency);
+  newdep := TPDependency(aktProduct.dependencies.add);
+  newdep.init;
 end;
 
 procedure freebasedata;
@@ -931,8 +987,10 @@ begin
     if Assigned(aktProduct.SetupFiles[i]) then
       aktProduct.SetupFiles[i].Destroy;
   end;
-  if Assigned(aktProduct.produktpropties) then
-    aktProduct.produktpropties.Destroy;
+  if Assigned(aktProduct.productdata) then
+    aktProduct.productdata.Destroy;
+  if Assigned(aktProduct.dependencies) then
+    FreeAndNil(aktProduct.dependencies);
   if Assigned(myconfiguration) then
   begin
     myconfiguration.writeconfig;
@@ -1119,5 +1177,6 @@ begin
   myconfiguration.readconfig;
 
   //aktSetupFile := TSetupFile.Create;
+  aktProduct := TopsiProduct.Create;
 
 end.

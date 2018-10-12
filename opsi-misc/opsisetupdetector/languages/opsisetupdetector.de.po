@@ -1,11 +1,6 @@
 ﻿msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
-#: osdform.rscaptionsingleanalyzecreate
-msgctxt "osdform.rscaptionsingleanalyzecreate"
-msgid "Analyze single File and Create Opsi Product"
-msgstr ""
-
 #: osdform.saskcreatepacket
 #, fuzzy
 msgctxt "osdform.saskcreatepacket"
@@ -248,11 +243,23 @@ msgctxt "resultform.swarninstdiremptynodeinstall"
 msgid "Warning: Install Directory is empty, deinstall script cannot be patched!"
 msgstr "Warnung: kein Installationsverzeichnis angegeben, das deinstall-Script kann nicht gepatcht werden."
 
+#: tfnewdepdlg.caption
+msgid "opsi-setup-detector: Dependency Editor"
+msgstr ""
+
+#: tfnewdepdlg.label1.caption
+msgid ""
+"Please edit the dependency.\n"
+"Please note:\n"
+"You may may neither give a requested installation state or a requested action. A combination is not allowed.\n"
+msgstr ""
+
 #: tformhelp.caption
 msgid "FormHelp"
 msgstr "-"
 
 #: tformhelp.panel1.caption
+msgctxt "tformhelp.panel1.caption"
 msgid "Panel1"
 msgstr "-"
 
@@ -266,6 +273,14 @@ msgstr ""
 
 #: tfosdconfigdlg.flowpanel2.caption
 msgid "FlowPanel2"
+msgstr ""
+
+#: tresultform1.bitbtnadddep.caption
+msgid "BitBtnAddDep"
+msgstr ""
+
+#: tresultform1.bitbtndeldep.caption
+msgid "BitBtnDelDep"
 msgstr ""
 
 #: tresultform1.bitbtnopenfile.caption
@@ -379,7 +394,7 @@ msgstr ""
 
 #: tresultform1.btsingleanalyzeandcreate.caption
 msgctxt "tresultform1.btsingleanalyzeandcreate.caption"
-msgid "rsCaptionSingleAnalyzeCreate"
+msgid "Analyze single File and Create Opsi Product"
 msgstr ""
 
 #: tresultform1.btsingleanalyzeandcreate.hint
@@ -465,16 +480,11 @@ msgctxt "tresultform1.label50.caption"
 msgid "Setup File"
 msgstr ""
 
-#: tresultform1.label51.caption
-#, fuzzy
-#| msgid "Product Name"
-msgctxt "tresultform1.label51.caption"
-msgid "opsi Product Name"
-msgstr "Produkt Name"
-
 #: tresultform1.label52.caption
+#, fuzzy
+#| msgid "Product Version"
 msgctxt "tresultform1.label52.caption"
-msgid "Product Version"
+msgid "Software Version"
 msgstr "Produkt Version"
 
 #: tresultform1.label53.caption
@@ -495,11 +505,6 @@ msgstr "erforderlich"
 msgctxt "tresultform1.label55.caption"
 msgid "InstallDir"
 msgstr "Größe MSI"
-
-#: tresultform1.label56.caption
-msgctxt "tresultform1.label56.caption"
-msgid "opsi Product ID"
-msgstr "opsi Product ID"
 
 #: tresultform1.label57.caption
 msgctxt "tresultform1.label57.caption"
@@ -576,8 +581,9 @@ msgstr ""
 
 #: tresultform1.label71.caption
 #, fuzzy
+#| msgid "Product Version"
 msgctxt "tresultform1.label71.caption"
-msgid "Product Version"
+msgid "Software Version"
 msgstr "Produkt Version"
 
 #: tresultform1.label72.caption
@@ -600,17 +606,10 @@ msgstr ""
 
 #: tresultform1.label75.caption
 #, fuzzy
-#| msgid "Product Version"
+#| msgid "opsi Product ID"
 msgctxt "tresultform1.label75.caption"
-msgid "opsi Product ID"
+msgid "Dependencies"
 msgstr "Produkt Version"
-
-#: tresultform1.label76.caption
-#, fuzzy
-#| msgid "Product Name"
-msgctxt "tresultform1.label76.caption"
-msgid "opsi Product Name"
-msgstr "Produkt Name"
 
 #: tresultform1.label77.caption
 #, fuzzy
@@ -624,7 +623,33 @@ msgid "Path to opsi-work-bench"
 msgstr ""
 
 #: tresultform1.label79.caption
-msgid "Uattended Command"
+msgctxt "tresultform1.label79.caption"
+msgid "Unattended Install Command"
+msgstr ""
+
+#: tresultform1.label80.caption
+msgctxt "tresultform1.label80.caption"
+msgid "Unattended Uninstall Command"
+msgstr ""
+
+#: tresultform1.label81.caption
+msgctxt "tresultform1.label81.caption"
+msgid "Uninstall Program"
+msgstr ""
+
+#: tresultform1.label82.caption
+msgctxt "tresultform1.label82.caption"
+msgid "Unattended Install Command"
+msgstr ""
+
+#: tresultform1.label83.caption
+msgctxt "tresultform1.label83.caption"
+msgid "Unattended Uninstall Command"
+msgstr ""
+
+#: tresultform1.label84.caption
+msgctxt "tresultform1.label84.caption"
+msgid "Uninstall Program"
 msgstr ""
 
 #: tresultform1.labelworkbenchnotok.caption

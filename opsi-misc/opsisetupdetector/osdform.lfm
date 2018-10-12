@@ -1,5 +1,5 @@
 object resultForm1: TresultForm1
-  Left = 308
+  Left = 307
   Height = 734
   Top = 255
   Width = 1521
@@ -3655,6 +3655,21 @@ object resultForm1: TresultForm1
               Control = Label75
               WrapAfter = waAuto
               Index = 0
+            end          
+            item
+              Control = ScrollBox1
+              WrapAfter = waAuto
+              Index = 1
+            end          
+            item
+              Control = BitBtnAddDep
+              WrapAfter = waAuto
+              Index = 2
+            end          
+            item
+              Control = BitBtnDelDep
+              WrapAfter = waAuto
+              Index = 3
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
@@ -3672,6 +3687,69 @@ object resultForm1: TresultForm1
             ParentColor = False
             ParentFont = False
           end
+          object BitBtnAddDep: TBitBtn
+            Left = 865
+            Height = 62
+            Top = 1
+            Width = 164
+            Anchors = []
+            AutoSize = True
+            BorderSpacing.InnerBorder = 10
+            Caption = 'BitBtnAddDep'
+            OnClick = BitBtnAddDepClick
+            TabOrder = 0
+          end
+          object BitBtnDelDep: TBitBtn
+            Left = 1029
+            Height = 62
+            Top = 1
+            Width = 158
+            Anchors = []
+            AutoSize = True
+            BorderSpacing.InnerBorder = 10
+            Caption = 'BitBtnDelDep'
+            OnClick = BitBtnDelDepClick
+            TabOrder = 1
+          end
+          object ScrollBox1: TScrollBox
+            Left = 192
+            Height = 225
+            Top = 1
+            Width = 673
+            HorzScrollBar.Page = 75
+            VertScrollBar.Page = 50
+            Anchors = []
+            ClientHeight = 223
+            ClientWidth = 671
+            TabOrder = 2
+            object TIGridDep: TTIGrid
+              Left = 0
+              Height = 223
+              Top = 0
+              Width = 671
+              Align = alClient
+              Color = clWindow
+              Filter = [tkInteger, tkChar, tkEnumeration, tkFloat, tkSString, tkLString, tkAString, tkWString, tkVariant, tkWChar, tkBool, tkInt64, tkQWord]
+              Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRowSelect, goSmoothScroll, goSelectionActive]
+              ParentColor = False
+              ShowOnlyProperties.Strings = (
+                'action'
+                'requAction'
+                'requState'
+                'requProductId'
+                'requType'
+              )
+              TabOrder = 0
+              TIOptions = [tgoShowOnlyProperties]
+              ColWidths = (
+                96
+                143
+                143
+                143
+                144
+              )
+            end
+          end
         end
         object FlowPanel18: TFlowPanel
           Left = 0
@@ -3688,6 +3766,7 @@ object resultForm1: TresultForm1
           FlowLayout = tlTop
           FlowStyle = fsRightLeftTopBottom
           TabOrder = 5
+          OnClick = FlowPanel18Click
           object BtProductNextStep: TBitBtn
             Left = 1311
             Height = 66
@@ -4129,7 +4208,7 @@ object resultForm1: TresultForm1
             Top = 1
             Width = 912
             Anchors = []
-            ClientHeight = 188
+            ClientHeight = 161
             ClientWidth = 910
             ParentFont = False
             TabOrder = 0

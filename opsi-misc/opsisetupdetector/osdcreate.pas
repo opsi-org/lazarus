@@ -73,11 +73,11 @@ end;
   begin
     patchlist.Clear;
     str := '';
-    patchlist.add('#@productId*#='+aktProduct.produktpropties.productId);
+    patchlist.add('#@productId*#='+aktProduct.productdata.productId);
     for i := 0 to myconfiguration.import_libraries.Count-1 do
       str := str + 'importlib "'+myconfiguration.import_libraries[i]+'"'+LineEnding;
     patchlist.add('#@importLibs*#='+str);
-    patchlist.add('#@LicenseRequired*#='+ boolToStr(aktProduct.produktpropties.licenserequired,true));
+    patchlist.add('#@LicenseRequired*#='+ boolToStr(aktProduct.productdata.licenserequired,true));
     patchlist.add('#@MinimumSpace*#='+inttostr(aktProduct.SetupFiles[0].requiredSpace)+' MB');
     //setup 1
     patchlist.add('#@InstallDir1*#='+aktProduct.SetupFiles[0].installDirectory);
@@ -123,15 +123,15 @@ end;
       fillPatchList;
       // setup script
       infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+'setupsingle.opsiscript';
-      outfilename := clientpath+PathDelim+aktProduct.produktpropties.setupscript;
+      outfilename := clientpath+PathDelim+aktProduct.productdata.setupscript;
       patchScript(infilename,outfilename);
       // delsub script
       infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+'delsubsingle.opsiscript';
-      outfilename := clientpath+PathDelim+aktProduct.produktpropties.delsubscript;
+      outfilename := clientpath+PathDelim+aktProduct.productdata.delsubscript;
       patchScript(infilename,outfilename);
       // uninstall script
       infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+'uninstallsingle.opsiscript';
-      outfilename := clientpath+PathDelim+aktProduct.produktpropties.uninstallscript;
+      outfilename := clientpath+PathDelim+aktProduct.productdata.uninstallscript;
       patchScript(infilename,outfilename);
       // setup file
       copyfile(aktProduct.SetupFiles[0].setupFullFileName,
@@ -143,7 +143,7 @@ end;
       copyfile(infilename,outfilename,[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime], true);
       //product png
       infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+'template.png';
-      outfilename := clientpath+PathDelim+aktProduct.produktpropties.productId+'.png';
+      outfilename := clientpath+PathDelim+aktProduct.productdata.productId+'.png';
       copyfile(infilename,outfilename,[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime], true);
 
       FreeAndNil(patchlist);
@@ -164,21 +164,21 @@ end;
     try
     textlist := Tstringlist.Create;
     textlist.Add('[Package]');
-    textlist.Add('version: '+ intToStr(aktProduct.produktpropties.packageversion));
+    textlist.Add('version: '+ intToStr(aktProduct.productdata.packageversion));
     textlist.Add('depends:');
     textlist.Add('');
     textlist.Add('[Product]');
-    textlist.Add('type: '+aktProduct.produktpropties.producttype);
-    textlist.Add('id: '+aktProduct.produktpropties.productId);
-    textlist.Add('name: '+aktProduct.produktpropties.productName);
-    textlist.Add('description: '+aktProduct.produktpropties.description);
-    textlist.Add('advice: '+aktProduct.produktpropties.advice);
-    textlist.Add('version:'+ aktProduct.produktpropties.productversion);
-    textlist.Add('priority:'+ intToStr(aktProduct.produktpropties.priority));
+    textlist.Add('type: '+aktProduct.productdata.producttype);
+    textlist.Add('id: '+aktProduct.productdata.productId);
+    textlist.Add('name: '+aktProduct.productdata.productName);
+    textlist.Add('description: '+aktProduct.productdata.description);
+    textlist.Add('advice: '+aktProduct.productdata.advice);
+    textlist.Add('version:'+ aktProduct.productdata.productversion);
+    textlist.Add('priority:'+ intToStr(aktProduct.productdata.priority));
     textlist.Add('licenseRequired: ');
     textlist.Add('productClasses:');
-    textlist.Add('setupScript: '+ aktProduct.produktpropties.setupscript);
-    textlist.Add('uninstallScript: '+ aktProduct.produktpropties.uninstallscript);
+    textlist.Add('setupScript: '+ aktProduct.productdata.setupscript);
+    textlist.Add('uninstallScript: '+ aktProduct.productdata.uninstallscript);
     textlist.Add('updateScript:');
     textlist.Add('alwaysScript:');
     textlist.Add('onceScript:');
@@ -197,7 +197,7 @@ function createProductdirectory : boolean;
 var
   goon: boolean;
 begin
-  prodpath := myconfiguration.workbench_Path + aktProduct.produktpropties.productId;
+  prodpath := myconfiguration.workbench_Path + aktProduct.productdata.productId;
   clientpath := prodpath + PathDelim + 'CLIENT_DATA';
   opsipath := prodpath + PathDelim + 'OPSI';
   goon := True;

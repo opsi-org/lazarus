@@ -263,8 +263,8 @@ begin
 
 
   product := ExtractFileNameWithoutExt(mysetup.setupFileName);
-  aktProduct.produktpropties.productId := getPacketIDShort(product);
-  aktProduct.produktpropties.productName := product;
+  aktProduct.productdata.productId := getPacketIDShort(product);
+  aktProduct.productdata.productName := product;
 
   fsize := fileutil.FileSize(myfilename);
   fsizemb := fsize / (1024 * 1024);
@@ -346,7 +346,7 @@ begin
       sSearch := 'ProductName: ';
       iPos := Pos(sSearch, myoutlines.Strings[i]);
       if (iPos <> 0) then
-        aktProduct.produktpropties.productName :=
+        aktProduct.productdata.productName :=
           Copy(myoutlines.Strings[i], Length(sSearch) + 1,
           Length(myoutlines.Strings[i]) - Length(sSearch));
 
@@ -365,8 +365,8 @@ begin
           Length(myoutlines.Strings[i]) - Length(sSearch));
 
     end;
-    if aktproduct.produktpropties.productversion = '' then
-      aktproduct.produktpropties.productversion :=mysetup.softwareversion;
+    if aktproduct.productdata.productversion = '' then
+      aktproduct.productdata.productversion :=mysetup.softwareversion;
   end;
   myoutlines.Free;
     {$ENDIF WINDOWS}
@@ -500,10 +500,10 @@ begin
   LogDatei.log('........',LLDebug);
   if AppVerName <> '' then
   begin
-    aktProduct.produktpropties.productId := getPacketIDShort(AppName);
-    aktProduct.produktpropties.productName := AppName;
+    aktProduct.productdata.productId := getPacketIDShort(AppName);
+    aktProduct.productdata.productName := AppName;
   end;
-  aktProduct.produktpropties.productversion := AppVersion;
+  aktProduct.productdata.productversion := AppVersion;
   mysetup.SoftwareVersion:=AppVersion;
   if AppVerName = '' then
   begin
@@ -541,7 +541,7 @@ begin
   DefaultDirName := StringReplace(DefaultDirName, '{sd}', '%Systemdrive%',
     [rfReplaceAll, rfIgnoreCase]);
   mysetup.installDirectory := DefaultDirName;
-  aktProduct.produktpropties.comment := AppVerName;
+  aktProduct.productdata.comment := AppVerName;
   (*
   mysetup.installCommandLine:= '"%scriptpath%\'+mysetup.setupFileName+'"'
      + installerArray[integer(mysetup.installerId)].unattendedsetup;
@@ -552,7 +552,7 @@ begin
     LogDatei.log('installDirectory: '+installDirectory,LLDebug);
     LogDatei.log('SoftwareVersion: '+SoftwareVersion,LLDebug);
   end;
-  with aktProduct.produktpropties do
+  with aktProduct.productdata do
   begin
     LogDatei.log('comment: '+comment,LLDebug);
     LogDatei.log('productId: '+productId,LLDebug);

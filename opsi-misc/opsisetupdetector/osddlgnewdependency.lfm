@@ -1,0 +1,88 @@
+object FNewDepDlg: TFNewDepDlg
+  Left = 741
+  Height = 545
+  Top = 195
+  Width = 480
+  Caption = 'opsi-setup-detector: Dependency Editor'
+  ClientHeight = 545
+  ClientWidth = 480
+  DesignTimePPI = 144
+  OnHide = FormHide
+  OnShow = FormShow
+  LCLVersion = '1.8.4.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 75
+    Top = 470
+    Width = 480
+    Align = alBottom
+    ClientHeight = 75
+    ClientWidth = 480
+    TabOrder = 0
+    object BitBtn1: TBitBtn
+      Left = 11
+      Height = 73
+      Top = 1
+      Width = 113
+      Align = alLeft
+      BorderSpacing.Left = 10
+      Default = True
+      DefaultCaption = True
+      Kind = bkOK
+      ModalResult = 1
+      TabOrder = 0
+    end
+    object BitBtn2: TBitBtn
+      Left = 312
+      Height = 73
+      Top = 1
+      Width = 157
+      Align = alRight
+      AutoSize = True
+      BorderSpacing.Right = 10
+      BorderSpacing.InnerBorder = 10
+      Cancel = True
+      DefaultCaption = True
+      Kind = bkCancel
+      ModalResult = 2
+      TabOrder = 1
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 200
+    Top = 0
+    Width = 480
+    Align = alTop
+    ClientHeight = 200
+    ClientWidth = 480
+    TabOrder = 1
+    object Label1: TLabel
+      Left = 11
+      Height = 178
+      Top = 11
+      Width = 458
+      Align = alClient
+      Alignment = taCenter
+      BorderSpacing.Around = 10
+      Caption = 'Please edit the dependency.'#10'Please note:'#10'You may may neither give a requested installation state or a requested action. A combination is not allowed.'
+      ParentColor = False
+      WordWrap = True
+    end
+  end
+  object TIPropertyGridNewDep: TTIPropertyGrid
+    Left = 0
+    Height = 270
+    Top = 200
+    Width = 480
+    Align = alClient
+    CheckboxForBoolean = True
+    DefaultValueFont.Color = clWindowText
+    Filter = [tkInteger, tkChar, tkEnumeration, tkFloat, tkSet, tkMethod, tkSString, tkLString, tkAString, tkWString, tkVariant, tkArray, tkRecord, tkInterface, tkClass, tkObject, tkWChar, tkBool, tkInt64, tkQWord, tkDynArray, tkInterfaceRaw, tkProcVar, tkUString, tkUChar, tkHelper, tkFile, tkClassRef, tkPointer]
+    Indent = 10
+    NameFont.Color = clWindowText
+    PreferredSplitterX = 300
+    SplitterX = 300
+    ValueFont.Color = clMaroon
+  end
+end
