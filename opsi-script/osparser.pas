@@ -21752,7 +21752,7 @@ begin
    {$ENDIF GUI}
   end;
     LogDatei.log ('End of CreateAndProcessScript', LLDebug2);
-    LogDatei.Close;
+    //LogDatei.Close;
   except
     on e: exception do
     Begin
