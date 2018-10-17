@@ -52,7 +52,7 @@ function ExtractVersion(str: string): string;
 implementation
 
 uses
-  resultform;
+  osdform;
 
 function getPacketIDfromFilename(str: string): string;
 var
@@ -255,10 +255,16 @@ begin
   mysetup.installerId := installerId;
   mysetup.setupFullFileName := myfilename;
   //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
+  mysetup.installCommandLine:= '"%scriptpath%\'+mysetup.setupFileName+'" '
+     + installerArray[integer(mysetup.installerId)].unattendedsetup;
+  mysetup.isExitcodeFatalFunction:=installerArray[integer(mysetup.installerId)].uib_exitcode_function;
+  mysetup.uninstallProg:= installerArray[integer(mysetup.installerId)].uninstallProg;
+  mysetup.uninstall_waitforprocess:= installerArray[integer(mysetup.installerId)].uninstall_waitforprocess;
+
 
   product := ExtractFileNameWithoutExt(mysetup.setupFileName);
-  aktProduct.produktpropties.productId := getPacketIDShort(product);
-  aktProduct.produktpropties.productName := product;
+  aktProduct.productdata.productId := getPacketIDShort(product);
+  aktProduct.productdata.productName := product;
 
   fsize := fileutil.FileSize(myfilename);
   fsizemb := fsize / (1024 * 1024);
@@ -277,6 +283,16 @@ begin
   sReqSize := FormatFloat('#', rsizemb) + ' MB';
   mysetup.requiredSpace := round(rsizemb);
   mysetup.setupFileSize := round(fsizemb);
+
+  // uninstallcheck
+  if installerId = stMsi then
+  begin
+    // will be done in  get_msi_info
+  end
+  else
+  begin
+   // will be done in analyze after get_*_info
+  end;
 
 end; //get_aktProduct_general_info
 
@@ -330,7 +346,7 @@ begin
       sSearch := 'ProductName: ';
       iPos := Pos(sSearch, myoutlines.Strings[i]);
       if (iPos <> 0) then
-        aktProduct.produktpropties.productName :=
+        aktProduct.productdata.productName :=
           Copy(myoutlines.Strings[i], Length(sSearch) + 1,
           Length(myoutlines.Strings[i]) - Length(sSearch));
 
@@ -349,11 +365,20 @@ begin
           Length(myoutlines.Strings[i]) - Length(sSearch));
 
     end;
-    if aktproduct.produktpropties.productversion = '' then
-      aktproduct.produktpropties.productversion :=mysetup.softwareversion;
+    if aktproduct.productdata.productversion = '' then
+      aktproduct.productdata.productversion :=mysetup.softwareversion;
   end;
   myoutlines.Free;
     {$ENDIF WINDOWS}
+  mysetup.installCommandLine:= 'msiexec /i "%scriptpath%\'+mysetup.setupFileName+'" '
+     + installerArray[integer(mysetup.installerId)].unattendedsetup;
+  mysetup.uninstallCheck.Add('if stringtobool(checkForMsiProduct("'+mysetup.msiId+'"))');
+  mysetup.uninstallCheck.Add('   set $oldProgFound$ = "true"');
+  mysetup.uninstallCheck.Add('endif');
+
+  mysetup.uninstallCommandLine:= 'msiexec /x '+mysetup.msiId+' '
+          +installerArray[integer(mysetup.installerId)].unattendeduninstall;
+
   mywrite('get_MSI_info finished');
 
   Mywrite('Finished Analyzing MSI: ' + myfilename);
@@ -475,10 +500,10 @@ begin
   LogDatei.log('........',LLDebug);
   if AppVerName <> '' then
   begin
-    aktProduct.produktpropties.productId := getPacketIDShort(AppName);
-    aktProduct.produktpropties.productName := AppName;
+    aktProduct.productdata.productId := getPacketIDShort(AppName);
+    aktProduct.productdata.productName := AppName;
   end;
-  aktProduct.produktpropties.productversion := AppVersion;
+  aktProduct.productdata.productversion := AppVersion;
   mysetup.SoftwareVersion:=AppVersion;
   if AppVerName = '' then
   begin
@@ -516,14 +541,18 @@ begin
   DefaultDirName := StringReplace(DefaultDirName, '{sd}', '%Systemdrive%',
     [rfReplaceAll, rfIgnoreCase]);
   mysetup.installDirectory := DefaultDirName;
-  aktProduct.produktpropties.comment := AppVerName;
-
+  aktProduct.productdata.comment := AppVerName;
+  (*
+  mysetup.installCommandLine:= '"%scriptpath%\'+mysetup.setupFileName+'"'
+     + installerArray[integer(mysetup.installerId)].unattendedsetup;
+  mysetup.isExitcodeFatalFunction:=installerArray[integer(mysetup.installerId)].uib_exitcode_function;
+ *)
   with mysetup do
   begin
     LogDatei.log('installDirectory: '+installDirectory,LLDebug);
     LogDatei.log('SoftwareVersion: '+SoftwareVersion,LLDebug);
   end;
-  with aktProduct.produktpropties do
+  with aktProduct.productdata do
   begin
     LogDatei.log('comment: '+comment,LLDebug);
     LogDatei.log('productId: '+productId,LLDebug);
@@ -737,25 +766,12 @@ end;
 
 
 procedure get_nsis_info(myfilename: string; var mysetup : TSetupFile);
-var
-  myoutlines: TStringList;
-  myreport: string;
-  myexitcode: integer;
-  i: integer;
-  fsize: int64;
-  fsizemb: double;
-  sFileSize: string;
-  sReqSize: string;
-  sSearch: string;
-  iPos: integer;
-  destDir: string;
-  myBatch: string;
-  product: string;
 
 begin
   Mywrite('Analyzing NSIS-Setup:');
   mywrite('get_nsis_info finished');
   mywrite('NSIS (Nullsoft Install System) detected');
+
 
   if showNsis then
     //resultForm1.PageControl1.ActivePage := resultForm1.TabSheetNsis;
@@ -952,6 +968,20 @@ begin
       else
         LogDatei.log('Unknown Setuptype in Analyze: ' + IntToStr(
           instIdToint(setupType)), LLcritical);
+    end;
+
+    if installerArray[integer(mysetup.installerId)].uninstallProg <> '' then
+    begin
+      mysetup.uninstallCheck.Add('if fileexists($installdir$+"\'+mysetup.uninstallProg+'")');
+      mysetup.uninstallCheck.Add('   set $oldProgFound$ = "true"');
+      mysetup.uninstallCheck.Add('endif');
+      mysetup.uninstallCommandLine:= '"$Installdir$\'+mysetup.uninstallProg+'" '
+          +installerArray[integer(mysetup.installerId)].unattendeduninstall;
+    end
+    else
+    begin
+      // no known uninstall program
+      mysetup.uninstallCheck.Add('set $oldProgFound$ = "false"');
     end;
 
  (*

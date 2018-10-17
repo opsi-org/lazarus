@@ -4,42 +4,40 @@
 ; and published under the Terms of the General Public License.
 ; ----------------------------------------------------------------
 
-
 [Actions]
 requiredWinstVersion >= "4.12.0.28"
 ScriptErrorMessages = false
 
-DefVar $SetupType$
-DefVar $ProductId$ 
-DefVar $Setupfile$ 
+DefVar $ProductId$
 DefVar $InstallDir$
+DefVar $InstallDir1$
 DefVar $MinimumSpace$
 DefVar $ExitCode$
-DefVar $ErrorMsg$
+DefVar $ErrorString$
 DefVar $LicenseRequired$
 DefVar $LicenseKey$
 DefVar $LicensePool$
 DefVar $MsiId$
-DefVar $NsisInstallBatch$
 DefVar $LogDir$
 DefVar $OS$
+DefVar $oldProgFound$
 
 Set $LogDir$ = "%opsiLogDir%"
 
 ; import complete file !
-importlib uib_exitcode.opsiscript
+importlib "uib_exitcode.opsiscript"
+importlib "%scriptpath%\osd-lib.opsiscript"
 #@importLibs*#
 
-
+; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
 Set $ProductId$       = "#@productId*#"
 ; the path where we find the product after the installation
-Set $InstallDir$      = "#@InstallDir*#"
+Set $InstallDir1$      = "#@InstallDir1*#"
 Set $LicenseRequired$ = "#@LicenseRequired*#"
 Set $LicensePool$     = "p_" + $ProductId$
-Set $MsiId$           = "#@MsiId*#"
+Set $MsiId$           = "#@MsiId1*#"
 Set $MinimumSpace$    = "#@MinimumSpace*#"
-; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS
@@ -49,13 +47,11 @@ if not(($OS$ = "Windows_NT"))
    isFatalError "wrong OS"
 endif
 
-
 if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
    LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% needed for " + $ProductId$
    isFatalError "No Space"
    ; Stop process and set installation status to failed
 endif
-
 
 comment "Show product picture"
 ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
@@ -69,71 +65,32 @@ Message "Installing " + $ProductId$ + " ..."
 
 if $LicenseRequired$ = "true"
    comment "Licensing required, reserve license and get license key"
-   Sub_get_licensekey
+   set $LicenseKey$ = get_licensekey_byPool($LicensePool$)
 endif
 
-
-#@preInstallLines*#
+comment "Start Pre Install hook (may be empty):"
+#@preInstallLines1*#
 
 comment "Start setup program"
 ChangeDirectory "%SCRIPTPATH%"
 ;----------------------------------------------
-Winbatch_install
+Winbatch_install_1
 ;----------------------------------------------
 Sub_check_exitcode
 
-#@posInstallLines*#
+comment "Start Post Install hook (may be empty):"
+#@postInstallLines1*#
 
-
-[[Winbatch_install]
-#@installCommandLine*#
-
+[Winbatch_install_1]
+#@installCommandLine1*#
 
 [sub_check_exitcode]
 set $ExitCode$ = getlastexitcode
-if stringtobool(#@isExitcodeFatalFunction*#($exitcode$, "true", $ErrorString$ ))
+if stringtobool(#@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ ))
    LogError $ErrorString$
    isfatalerror $ErrorString$
 else
    Comment $ErrorString$
-endif
-
-
-[Sub_get_licensekey]
-if opsiLicenseManagementEnabled
-   comment "License management is enabled and will be used"
-
-   comment "Trying to get a license key"
-   Set $LicenseKey$ = demandLicenseKey ($LicensePool$)
-   ; If there is an assignment of exactly one licensepool to the product the following call is possible:
-   ; Set $LicenseKey$ = demandLicenseKey ("", $ProductId$)
-   ;
-   ; If there is an assignment of a license pool to a windows software id, it is possible to use:
-   ; DefVar $WindowsSoftwareId$
-   ; $WindowsSoftwareId$ = "..."
-   ; Set $LicenseKey$ = demandLicenseKey ("", "", $WindowsSoftwareId$)
-
-   DefVar $ServiceErrorClass$
-   set $ServiceErrorClass$ = getLastServiceErrorClass
-   comment "Error class: " + $ServiceErrorClass$
-   
-   if $ServiceErrorClass$ = "None"
-      comment "Everything fine, we got the license key '" + $LicenseKey$ + "'"
-   else
-      if $ServiceErrorClass$ = "LicenseConfigurationError"
-         LogError "Fatal: license configuration must be corrected"
-         LogError getLastServiceErrorMessage
-         isFatalError
-      else 
-         if $ServiceErrorClass$ = "LicenseMissingError"
-            LogError "Fatal: required license is not supplied"
-            isFatalError
-         endif
-      endif
-   endif
-else
-   LogError "Fatal: license required, but license management not enabled"
-   isFatalError
 endif
 
 ; ----------------------------------------------------------------

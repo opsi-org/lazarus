@@ -1,19 +1,155 @@
 ﻿msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
+#: osdform.saskcreatepacket
+#, fuzzy
+msgctxt "osdform.saskcreatepacket"
+msgid "Create packet %0:s?"
+msgstr "Paket %0:s erzeugen?"
+
+#: osdform.serrextractmsifailed
+#, fuzzy
+msgctxt "osdform.serrextractmsifailed"
+msgid "Error: extracting MSI from %s failed!"
+msgstr "Fehler: MSI konnte nicht extrahiert werden aus %s!"
+
+#: osdform.serrfldinstdirempty
+#, fuzzy
+msgctxt "osdform.serrfldinstdirempty"
+msgid "Error: Field Install Directory is empty!"
+msgstr "Fehler: Feld Installationsverzeichnis ist leer!"
+
+#: osdform.serrfldmsiproductcodeempty
+#, fuzzy
+msgctxt "osdform.serrfldmsiproductcodeempty"
+msgid "Error: Field MSI Product Code is empty!"
+msgstr "Fehler: Feld MSI Produkt Code ist leer!"
+
+#: osdform.serrfldopsiproductidempty
+#, fuzzy
+msgctxt "osdform.serrfldopsiproductidempty"
+msgid "Error: Field opsi Packet ID is empty!"
+msgstr "Fehler: Feld opsi Packet ID ist leer!"
+
+#: osdform.serrfldopsiproductversionempty
+#, fuzzy
+msgctxt "osdform.serrfldopsiproductversionempty"
+msgid "Error: Field Product Version is empty!"
+msgstr "Fehler: Feld Produkt Version ist leer!"
+
+#: osdform.serrfldsetupempty
+#, fuzzy
+msgctxt "osdform.serrfldsetupempty"
+msgid "Error: No setup file selected!"
+msgstr "Fehler: keine Setup-Datei ausgewählt"
+
+#: osdform.serrmsinotfound
+#, fuzzy
+msgctxt "osdform.serrmsinotfound"
+msgid "Error: MSI file does not exist!"
+msgstr "Fehler: MSI-Datei nicht gefunden!"
+
+#: osdform.serrmstnotfound
+#, fuzzy
+msgctxt "osdform.serrmstnotfound"
+msgid "Error: MST file does not exist in the MSI-directory!"
+msgstr "Fehler: MST-Datei nicht im MSI-Verzeichnis gefunden"
+
+#: osdform.serropsipackagebuildererrcode
+#, fuzzy
+msgctxt "osdform.serropsipackagebuildererrcode"
+msgid "Error invoking OPSI Package Builder (error code=%0:d). Please remove quiet option to check for further information."
+msgstr "Fehler beim Ausführen des Package Builders (Fehler Code=%0:d). Bitte die quiet option entfernen für weitere Hinweise."
+
+#: osdform.serropsipackagebuilderstart
+#, fuzzy
+msgctxt "osdform.serropsipackagebuilderstart"
+msgid "Error invoking opsi package builder"
+msgstr "Fehler beim Starten des opsi Package Builders"
+
+#: osdform.serrpacketbasedirnotfound
+#, fuzzy
+msgctxt "osdform.serrpacketbasedirnotfound"
+msgid "Error: Packet BaseDir does not exist!"
+msgstr "Fehler: das angegebene Produkt Basis-Verzeichnis existiert nicht"
+
+#: osdform.serrpacketdirexists
+#, fuzzy
+msgctxt "osdform.serrpacketdirexists"
+msgid "Error: opsi packet folder %s already exists!"
+msgstr "Fehler: das opsi Paket-Verzeichnis %s existiert bereits"
+
+#: osdform.serrproductversioninvalid
+#, fuzzy
+msgctxt "osdform.serrproductversioninvalid"
+msgid "Error: for Product Version only numbers allowed !"
+msgstr "Fehler: bei der Produkt-Version sind nur Zahlen erlaubt."
+
+#: osdform.serrselectinstalltype
+#, fuzzy
+msgctxt "osdform.serrselectinstalltype"
+msgid "First select setup type tab (MSI, Inno Setup ...) and fill out form"
+msgstr "Zuerst einen Setup Typ auswählen (MSI, Inno Setup ...) und das Formular ausfüllen"
+
+#: osdform.serrsetupfilenotfound
+#, fuzzy
+msgctxt "osdform.serrsetupfilenotfound"
+msgid "Error: Setup file does not exist!"
+msgstr "Fehler: die angegebene Setup-Datei existiert nicht"
+
+#: osdform.shelpfile
+#, fuzzy
+msgctxt "osdform.shelpfile"
+msgid "languages\\Help.de.html"
+msgstr "languages\\Help.de.html"
+
+#: osdform.shelpheader
+#, fuzzy
+msgctxt "osdform.shelpheader"
+msgid "opsi setup detector Help"
+msgstr "opsi Setup Detektor Hilfe"
+
+#: osdform.sinfofinished
+#, fuzzy
+msgctxt "osdform.sinfofinished"
+msgid "finished."
+msgstr "fertig."
+
+#: osdform.slogfileinfo
+#, fuzzy
+msgctxt "osdform.slogfileinfo"
+msgid "Logfile created: %s"
+msgstr "Logfile erzeugt: %s"
+
+#: osdform.smboxheader
+#, fuzzy
+msgctxt "osdform.smboxheader"
+msgid "opsi setup detector"
+msgstr "opsi Setup Detektor"
+
+#: osdform.swarninstdiremptynodeinstall
+#, fuzzy
+msgctxt "osdform.swarninstdiremptynodeinstall"
+msgid "Warning: Install Directory is empty, deinstall script cannot be patched!"
+msgstr "Warnung: kein Installationsverzeichnis angegeben, das deinstall-Script kann nicht gepatcht werden."
+
 #: resultform.saskcreatepacket
+msgctxt "resultform.saskcreatepacket"
 msgid "Create packet %0:s?"
 msgstr "Paket %0:s erzeugen?"
 
 #: resultform.serrextractmsifailed
+msgctxt "resultform.serrextractmsifailed"
 msgid "Error: extracting MSI from %s failed!"
 msgstr "Fehler: MSI konnte nicht extrahiert werden aus %s!"
 
 #: resultform.serrfldinstdirempty
+msgctxt "resultform.serrfldinstdirempty"
 msgid "Error: Field Install Directory is empty!"
 msgstr "Fehler: Feld Installationsverzeichnis ist leer!"
 
 #: resultform.serrfldmsiproductcodeempty
+msgctxt "resultform.serrfldmsiproductcodeempty"
 msgid "Error: Field MSI Product Code is empty!"
 msgstr "Fehler: Feld MSI Produkt Code ist leer!"
 
@@ -23,83 +159,160 @@ msgid "Error: Field opsi Packet ID is empty!"
 msgstr "Fehler: Feld opsi Packet ID ist leer!"
 
 #: resultform.serrfldopsiproductversionempty
+msgctxt "resultform.serrfldopsiproductversionempty"
 msgid "Error: Field Product Version is empty!"
 msgstr "Fehler: Feld Produkt Version ist leer!"
 
 #: resultform.serrfldsetupempty
+msgctxt "resultform.serrfldsetupempty"
 msgid "Error: No setup file selected!"
 msgstr "Fehler: keine Setup-Datei ausgewählt"
 
 #: resultform.serrmsinotfound
+msgctxt "resultform.serrmsinotfound"
 msgid "Error: MSI file does not exist!"
 msgstr "Fehler: MSI-Datei nicht gefunden!"
 
 #: resultform.serrmstnotfound
+msgctxt "resultform.serrmstnotfound"
 msgid "Error: MST file does not exist in the MSI-directory!"
 msgstr "Fehler: MST-Datei nicht im MSI-Verzeichnis gefunden"
 
 #: resultform.serropsipackagebuildererrcode
+msgctxt "resultform.serropsipackagebuildererrcode"
 msgid "Error invoking OPSI Package Builder (error code=%0:d). Please remove quiet option to check for further information."
 msgstr "Fehler beim Ausführen des Package Builders (Fehler Code=%0:d). Bitte die quiet option entfernen für weitere Hinweise."
 
 #: resultform.serropsipackagebuilderstart
+msgctxt "resultform.serropsipackagebuilderstart"
 msgid "Error invoking opsi package builder"
 msgstr "Fehler beim Starten des opsi Package Builders"
 
 #: resultform.serrpacketbasedirnotfound
+msgctxt "resultform.serrpacketbasedirnotfound"
 msgid "Error: Packet BaseDir does not exist!"
 msgstr "Fehler: das angegebene Produkt Basis-Verzeichnis existiert nicht"
 
 #: resultform.serrpacketdirexists
+msgctxt "resultform.serrpacketdirexists"
 msgid "Error: opsi packet folder %s already exists!"
 msgstr "Fehler: das opsi Paket-Verzeichnis %s existiert bereits"
 
 #: resultform.serrproductversioninvalid
+msgctxt "resultform.serrproductversioninvalid"
 msgid "Error: for Product Version only numbers allowed !"
 msgstr "Fehler: bei der Produkt-Version sind nur Zahlen erlaubt."
 
 #: resultform.serrselectinstalltype
+msgctxt "resultform.serrselectinstalltype"
 msgid "First select setup type tab (MSI, Inno Setup ...) and fill out form"
 msgstr "Zuerst einen Setup Typ auswählen (MSI, Inno Setup ...) und das Formular ausfüllen"
 
 #: resultform.serrsetupfilenotfound
+msgctxt "resultform.serrsetupfilenotfound"
 msgid "Error: Setup file does not exist!"
 msgstr "Fehler: die angegebene Setup-Datei existiert nicht"
 
 #: resultform.shelpfile
+msgctxt "resultform.shelpfile"
 msgid "languages\\Help.de.html"
 msgstr "languages\\Help.de.html"
 
 #: resultform.shelpheader
+msgctxt "resultform.shelpheader"
 msgid "opsi setup detector Help"
 msgstr "opsi Setup Detektor Hilfe"
 
 #: resultform.sinfofinished
+msgctxt "resultform.sinfofinished"
 msgid "finished."
 msgstr "fertig."
 
 #: resultform.slogfileinfo
+msgctxt "resultform.slogfileinfo"
 msgid "Logfile created: %s"
 msgstr "Logfile erzeugt: %s"
 
 #: resultform.smboxheader
+msgctxt "resultform.smboxheader"
 msgid "opsi setup detector"
 msgstr "opsi Setup Detektor"
 
 #: resultform.swarninstdiremptynodeinstall
+msgctxt "resultform.swarninstdiremptynodeinstall"
 msgid "Warning: Install Directory is empty, deinstall script cannot be patched!"
 msgstr "Warnung: kein Installationsverzeichnis angegeben, das deinstall-Script kann nicht gepatcht werden."
+
+#: tfnewdepdlg.caption
+msgid "opsi-setup-detector: Dependency Editor"
+msgstr ""
+
+#: tfnewdepdlg.comboboxactstate.text
+msgid "ComboBoxActState"
+msgstr ""
+
+#: tfnewdepdlg.editproductid.text
+msgid "productId"
+msgstr ""
+
+#: tfnewdepdlg.groupbox1.caption
+msgid "Require Mode"
+msgstr ""
+
+#: tfnewdepdlg.label1.caption
+msgid ""
+"Please edit the dependency.\n"
+"Please note:\n"
+"You may may neither give a requested installation state or a requested action. A combination is not allowed.\n"
+msgstr ""
+
+#: tfnewdepdlg.label2.caption
+msgid "productid"
+msgstr ""
+
+#: tfnewdepdlg.label3.caption
+msgid "Action or State"
+msgstr ""
+
+#: tfnewdepdlg.label4.caption
+msgid "Requirement Type"
+msgstr ""
+
+#: tfnewdepdlg.radiobuttonaction.caption
+msgid "Action"
+msgstr ""
+
+#: tfnewdepdlg.radiobuttonstate.caption
+msgid "State"
+msgstr ""
 
 #: tformhelp.caption
 msgid "FormHelp"
 msgstr "-"
 
 #: tformhelp.panel1.caption
+msgctxt "tformhelp.panel1.caption"
 msgid "Panel1"
 msgstr "-"
 
 #: tfosdconfigdlg.caption
 msgid "opsi-setup-detector Configuration"
+msgstr ""
+
+#: tfosdconfigdlg.flowpanel1.caption
+msgid "FlowPanel1"
+msgstr ""
+
+#: tfosdconfigdlg.flowpanel2.caption
+msgid "FlowPanel2"
+msgstr ""
+
+#: tresultform1.bitbtnadddep.caption
+msgid "BitBtnAddDep"
+msgstr ""
+
+#: tresultform1.bitbtndeldep.caption
+msgid "BitBtnDelDep"
 msgstr ""
 
 #: tresultform1.bitbtnopenfile.caption
@@ -153,7 +366,7 @@ msgid "Analyze a single existing Setupfile "
 msgstr ""
 
 #: tresultform1.btatwonalyzeandcreate.caption
-msgid "Analyze two Files and Create Opsi Product"
+msgid "Analyze two Files (32 and 64 Bit) and Create Opsi Product"
 msgstr ""
 
 #: tresultform1.btatwonalyzeandcreate.hint
@@ -212,6 +425,7 @@ msgid "Go to the next Step"
 msgstr ""
 
 #: tresultform1.btsingleanalyzeandcreate.caption
+msgctxt "tresultform1.btsingleanalyzeandcreate.caption"
 msgid "Analyze single File and Create Opsi Product"
 msgstr ""
 
@@ -298,16 +512,11 @@ msgctxt "tresultform1.label50.caption"
 msgid "Setup File"
 msgstr ""
 
-#: tresultform1.label51.caption
-#, fuzzy
-#| msgid "Product Name"
-msgctxt "tresultform1.label51.caption"
-msgid "opsi Product Name"
-msgstr "Produkt Name"
-
 #: tresultform1.label52.caption
+#, fuzzy
+#| msgid "Product Version"
 msgctxt "tresultform1.label52.caption"
-msgid "Product Version"
+msgid "Software Version"
 msgstr "Produkt Version"
 
 #: tresultform1.label53.caption
@@ -328,11 +537,6 @@ msgstr "erforderlich"
 msgctxt "tresultform1.label55.caption"
 msgid "InstallDir"
 msgstr "Größe MSI"
-
-#: tresultform1.label56.caption
-msgctxt "tresultform1.label56.caption"
-msgid "opsi Product ID"
-msgstr "opsi Product ID"
 
 #: tresultform1.label57.caption
 msgctxt "tresultform1.label57.caption"
@@ -409,8 +613,9 @@ msgstr ""
 
 #: tresultform1.label71.caption
 #, fuzzy
+#| msgid "Product Version"
 msgctxt "tresultform1.label71.caption"
-msgid "Product Version"
+msgid "Software Version"
 msgstr "Produkt Version"
 
 #: tresultform1.label72.caption
@@ -433,17 +638,10 @@ msgstr ""
 
 #: tresultform1.label75.caption
 #, fuzzy
-#| msgid "Product Version"
+#| msgid "opsi Product ID"
 msgctxt "tresultform1.label75.caption"
-msgid "opsi Product ID"
+msgid "Dependencies"
 msgstr "Produkt Version"
-
-#: tresultform1.label76.caption
-#, fuzzy
-#| msgid "Product Name"
-msgctxt "tresultform1.label76.caption"
-msgid "opsi Product Name"
-msgstr "Produkt Name"
 
 #: tresultform1.label77.caption
 #, fuzzy
@@ -454,6 +652,36 @@ msgstr "Produkt Version"
 
 #: tresultform1.label78.caption
 msgid "Path to opsi-work-bench"
+msgstr ""
+
+#: tresultform1.label79.caption
+msgctxt "tresultform1.label79.caption"
+msgid "Unattended Install Command"
+msgstr ""
+
+#: tresultform1.label80.caption
+msgctxt "tresultform1.label80.caption"
+msgid "Unattended Uninstall Command"
+msgstr ""
+
+#: tresultform1.label81.caption
+msgctxt "tresultform1.label81.caption"
+msgid "Uninstall Program"
+msgstr ""
+
+#: tresultform1.label82.caption
+msgctxt "tresultform1.label82.caption"
+msgid "Unattended Install Command"
+msgstr ""
+
+#: tresultform1.label83.caption
+msgctxt "tresultform1.label83.caption"
+msgid "Unattended Uninstall Command"
+msgstr ""
+
+#: tresultform1.label84.caption
+msgctxt "tresultform1.label84.caption"
+msgid "Uninstall Program"
 msgstr ""
 
 #: tresultform1.labelworkbenchnotok.caption
@@ -509,6 +737,22 @@ msgstr ""
 
 #: tresultform1.sbtnopen.caption
 msgid "open"
+msgstr ""
+
+#: tresultform1.stringgriddep.columns[0].title.caption
+msgid "Required ProductId"
+msgstr ""
+
+#: tresultform1.stringgriddep.columns[1].title.caption
+msgid "Required State"
+msgstr ""
+
+#: tresultform1.stringgriddep.columns[2].title.caption
+msgid "Required Action"
+msgstr ""
+
+#: tresultform1.stringgriddep.columns[3].title.caption
+msgid "Required Mode"
 msgstr ""
 
 #: tresultform1.tabsheetanalyze.caption

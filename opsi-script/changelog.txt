@@ -4,6 +4,14 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.0.30) stable; urgency=low
+
+  * osparser: fix for close log file after script finished:
+     (only in interactive mode)
+  * oslog: all loglines trimright; fixes #3708
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 15 10 2018:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.0.29) stable; urgency=low
 
   * osparser: doRegitryHack*: remove HKCU on flag_all_usrclass

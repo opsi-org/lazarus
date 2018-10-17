@@ -786,7 +786,7 @@ begin
 
   NestingLevel := 0;
   CreateAndProcessScript(SkriptDatei, NestingLevel, False, dummyErrorLevel);
-
+  LogDatei.Close;
 end;
 
 procedure TCentralForm.ButtonProcessMemoClick(Sender: TObject);

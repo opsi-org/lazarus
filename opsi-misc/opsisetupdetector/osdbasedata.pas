@@ -11,6 +11,8 @@ uses
   osdhelper,
   shlobj,
   {$ENDIF WINDOWS}
+  fpjsonrtti,
+  oslog,
   RTTICtrls;
 
 type
@@ -22,12 +24,12 @@ type
     stMsi, stNsis, st7zip, st7zipsfx, stUnknown);
 
 
-  TdetectInstaller = function(parent: TClass; markerlist: TStringList): boolean;
+  TdetectInstaller = function(parent: TClass; markerlist: TStrings): boolean;
 
 
   TInstallerData = class
   private
-    public
+  public
 
     installerId: TKnownInstaller;
     Name: string;
@@ -38,9 +40,10 @@ type
     silentuninstall: string;
     unattendeduninstall: string;
     uninstall_waitforprocess: string;
+    uninstallProg: string;
     comment: string;
     Link: string;
-
+    uib_exitcode_function: string;
     detected: TdetectInstaller;
     { public declarations }
     constructor Create;
@@ -50,7 +53,7 @@ type
 
   TInstallers = array of TInstallerData;
 
-  TSetupFile =  class(TPersistent)
+  TSetupFile = class(TPersistent)
   private
     FsetupFileNamePath: string;
     FsetupFileName: string;
@@ -65,8 +68,17 @@ type
     FinstallerId: TKnownInstaller;
     FrequiredSpace: cardinal;      // MB
     FinstallDirectory: string;
-    Fmarkerlist: TStringList;
+    Fmarkerlist: TStrings;
     FSoftwareVersion: string;
+    Fwinbatch_del_argument: string;
+    FinstallCommandLine: string;
+    FuninstallCommandLine: string;
+    FuninstallProg: string;
+    FuninstallCheck: TStrings;
+    FisExitcodeFatalFunction: string;
+    Funinstall_waitforprocess: string;
+    procedure SetMarkerlist(const AValue: TStrings);
+    procedure SetUninstallCheck(const AValue: TStrings);
   published
     // proc
     (*
@@ -88,19 +100,33 @@ type
     *)
     property setupFileNamePath: string read FsetupFileNamePath;
     property setupFileName: string read FsetupFileName write FsetupFileName;
-    property setupFullFileName: string read FsetupFullFileName write SetSetupFullFileName;
-    property setupFileSize: cardinal  read FsetupFileSize write FsetupFileSize;
-    property architecture: TArchitecture  read Farchitecture write Farchitecture;
-    property msiId: string  read FmsiId write FmsiId;
+    property setupFullFileName: string read FsetupFullFileName
+      write SetSetupFullFileName;
+    property setupFileSize: cardinal read FsetupFileSize write FsetupFileSize;
+    property architecture: TArchitecture read Farchitecture write Farchitecture;
+    property msiId: string read FmsiId write FmsiId;
     property mstFullFileName: string read FMstFullFileName write SetMstFullFileName;
-    property mstFileNamePath:  string read FmstFileNamePath write FmstFileNamePath;
-    property mstFileName: string  read FmstFileName write FmstFileName;
-    property msiFullFileName:  string read FmsiFullFileName write FmsiFullFileName;
-    property installerId: TKnownInstaller  read FinstallerId write FinstallerId;
-    property requiredSpace: cardinal  read FrequiredSpace write FrequiredSpace;
-    property installDirectory: string  read FinstallDirectory write FinstallDirectory;
-    property markerlist: TStringList  read Fmarkerlist write Fmarkerlist;
-    property SoftwareVersion: string  read FSoftwareVersion write FSoftwareVersion;
+    property mstFileNamePath: string read FmstFileNamePath write FmstFileNamePath;
+    property mstFileName: string read FmstFileName write FmstFileName;
+    property msiFullFileName: string read FmsiFullFileName write FmsiFullFileName;
+    property installerId: TKnownInstaller read FinstallerId write FinstallerId;
+    property requiredSpace: cardinal read FrequiredSpace write FrequiredSpace;
+    property installDirectory: string read FinstallDirectory write FinstallDirectory;
+    property markerlist: TStrings read Fmarkerlist write SetMarkerlist;
+    property SoftwareVersion: string read FSoftwareVersion write FSoftwareVersion;
+    property winbatch_del_argument: string read Fwinbatch_del_argument
+      write Fwinbatch_del_argument;
+    property installCommandLine: string read FinstallCommandLine
+      write FinstallCommandLine;
+    property isExitcodeFatalFunction: string
+      read FisExitcodeFatalFunction write FisExitcodeFatalFunction;
+    property uninstallCommandLine: string read FuninstallCommandLine
+      write FuninstallCommandLine;
+    property uninstallProg: string read FuninstallProg write FuninstallProg;
+    property uninstallCheck: TStrings read FuninstallCheck write SetUninstallCheck;
+    property uninstall_waitforprocess: string
+      read Funinstall_waitforprocess write Funinstall_waitforprocess;
+
     procedure initValues;
 
   public
@@ -110,7 +136,125 @@ type
     destructor Destroy;
   end;
 
-  TProductProperies  =  class(TPersistent)
+(*
+Dependency for Action
+Für welche Aktion des Produktes, welches Sie gerade erstellen, soll die Abhängigkeit gelten (setup, deinstall . . . ).
+Required product id
+Productid (Bezeichner) des Produkts zu dem eine Abhängigkeit besteht.
+Required action
+Sie können entweder eine Aktion anfordern oder (siehe unten) einen Status. Aktionen können z.B. sein : setup,
+uninstall, update . . .
+Required installation status
+Status den das Produkt, zu dem eine Abhängigkeit besteht, haben soll (typischerweise installed). Liegt ein
+anderer Status vor, so wird das Produkt auf setup gestellt.
+Requirement type
+Installationsreihenfolge. Wenn das Produkt, zu dem eine Abhängigkeit besteht, installiert sein muss bevor mit
+der Installation des aktuellen Produkts begonnen werden kann, dann ist dies before. Muss es nach dem aktuellen
+Produkt installiert werden so ist dies after. Ist die Reihenfolge egal so muss hier nichts eingetragen werden.
+
+*)
+(*
+{ TMyCollectionItem }
+
+ TMyCollectionItem = class(TCollectionItem)
+ private
+   FInt: integer;
+   FStr: string;
+   FColor: TColor;
+ published
+   property Color: TColor read FColor write FColor;
+   property Str: string read FStr write FStr;
+   property Int: integer read FInt write FInt;
+ end;
+*)
+
+TPDtype = (before,after,doNotMatter);
+//['before','after',''];
+TPActionRequest = (setup,uninstall,update,noRequest);
+TPInstallationState = (installed,not_installed,unknown, noState);
+
+TPDependency = class(TCollectionItem)
+  private
+    FAction: String;
+    FRequProductId: string;
+    FRequAction: TPActionRequest;
+    FRequState: TPInstallationState;
+    FRequType: TPDtype;
+  published
+    property RequType: TPDtype read FRequType write FRequType;
+    property action: string read FAction;
+    property requProductId: string read FRequProductId write FRequProductId;
+    property requState: TPInstallationState read FRequState write FRequState;
+    property requAction: TPActionRequest read FRequAction write FRequAction;
+    procedure init;
+  public
+    { public declarations }
+    //constructor Create;
+    //destructor Destroy;
+  end;
+
+(*
+
+TPDependencies = class(TCollection)
+  private
+
+  published
+
+  public
+    { public declarations }
+    constructor Create;
+    //destructor Destroy;
+  end;
+ *)
+
+(*
+  [ProductProperty]
+type: bool
+name: force_newest_ubuntu
+description: Update even to not published versions
+default: False
+
+[ProductProperty]
+type: unicode
+name: update_from_to
+multivalue: False
+editable: False
+description: Which method to use
+values: ["jessie_stretch", "trusty_xenial", "wheezy_jessie", "xenial_bionic"]
+default: ["xenial_bionic"]
+*)
+
+TPPtype = (bool, unicode);
+
+TPProperties = class(TPersistent)
+  private
+    Ftype: TPPtype;
+    Fname: string;
+    Fmultivalue: boolean;
+    Feditable: boolean;
+    Fdescription: string;
+    FStrvalues: Tstrings;
+    FStrDefault: Tstrings;
+    FBoolDefault: boolean;
+    procedure SetValueLines(const AValue: TStrings);
+    procedure SetDefaultLines(const AValue: TStrings);
+  published
+    property ptype: TPPtype read Ftype write Ftype;
+    property name: string read Fname write Fname;
+    property description: string read Fdescription write Fdescription;
+    property multivalue: boolean read Fmultivalue write Fmultivalue;
+    property editable: boolean read Feditable write Feditable;
+    property StrDefault: TStrings read FStrDefault write SetDefaultLines;
+    property Strvalues: TStrings read FStrvalues write FStrvalues;
+    property boolDefault: boolean read FBoolDefault write FBoolDefault;
+  public
+    { public declarations }
+    constructor Create;
+    destructor Destroy;
+  end;
+
+
+  TProductData = class(TPersistent)
   private
     FarchitectureMode: TArchitectureMode;
     Fcomment: string;
@@ -125,9 +269,11 @@ type
     Fproducttype: string;
     Fsetupscript: string;
     Funinstallscript: string;
+    Fdelsubscript: string;
     Flicenserequired: boolean;
   published
-    property architectureMode: TArchitectureMode read FarchitectureMode write FarchitectureMode;
+    property architectureMode: TArchitectureMode
+      read FarchitectureMode write FarchitectureMode;
     property comment: string read Fcomment write Fcomment;
     property description: string read Fdescription write Fdescription;
     property advice: string read Fadvice write Fadvice;
@@ -140,6 +286,7 @@ type
     property producttype: string read Fproducttype write Fproducttype;
     property setupscript: string read Fsetupscript write Fsetupscript;
     property uninstallscript: string read Funinstallscript write Funinstallscript;
+    property delsubscript: string read Fdelsubscript write Fdelsubscript;
     property licenserequired: boolean read Flicenserequired write Flicenserequired;
   public
     { public declarations }
@@ -147,24 +294,53 @@ type
     //destructor Destroy;
   end;
 
-  TProductData = record
-    SetupFiles : array[0..1] of TSetupFile;
-    produktpropties : TProductProperies;
+  TopsiProduct = class(TPersistent)
+    private
+          published
+                public
+    SetupFiles: array[0..1] of TSetupFile;
+    productdata: TProductData;
+    //dependeciesCount : integer;
+    dependencies: TCollection;
+
+
+    { public declarations }
+    constructor Create;
   end;
 
-  TConfiguration  =  class(TPersistent)
+  TConfiguration = class(TPersistent)
   private
     Fworkbench_share: string;
     Fworkbench_Path: string;
     Fworkbench_mounted: boolean;
     Fconfig_filled: boolean;
     FregisterInFilemanager: boolean;
+    Femail_address: string;
+    Fimport_libraries: TStrings;
+    FpreInstallLines: TStrings;
+    FpostInstallLines: TStrings;
+    FpreUninstallLines: TStrings;
+    FpostUninstallLines: TStrings;
+    procedure SetLibraryLines(const AValue: TStrings);
+    procedure SetPreInstallLines(const AValue: TStrings);
+    procedure SetPostInstallLines(const AValue: TStrings);
+    procedure SetPreUninstallLines(const AValue: TStrings);
+    procedure SetPostUninstallLines(const AValue: TStrings);
   published
     property workbench_share: string read Fworkbench_share write Fworkbench_share;
     property workbench_Path: string read Fworkbench_Path write Fworkbench_Path;
     property workbench_mounted: boolean read Fworkbench_mounted write Fworkbench_mounted;
     property config_filled: boolean read Fconfig_filled write Fconfig_filled;
-    property registerInFilemanager: boolean read FregisterInFilemanager write FregisterInFilemanager;
+    property registerInFilemanager: boolean
+      read FregisterInFilemanager write FregisterInFilemanager;
+    property email_address: string read Femail_address write Femail_address;
+    property import_libraries: TStrings read Fimport_libraries write SetLibraryLines;
+    property preInstallLines: TStrings read FpreInstallLines write SetPreInstallLines;
+    property postInstallLines: TStrings read FpostInstallLines write SetPostInstallLines;
+    property preUninstallLines: TStrings read FpreUninstallLines
+      write SetPreUninstallLines;
+    property postUninstallLines: TStrings read FpostUninstallLines
+      write SetPostUninstallLines;
     procedure writeconfig;
     procedure readconfig;
   public
@@ -181,16 +357,17 @@ procedure initaktproduct;
 procedure freebasedata;
 
 var
-  aktProduct: TProductData;
-  aktSetupFile : TSetupFile;
+  aktProduct: TopsiProduct;
+  aktSetupFile: TSetupFile;
   knownInstallerList: TStringList;
   architectureModeList: TStringList;
   installerArray: TInstallers;
   counter: integer;
-  myconfiguration : TConfiguration;
-  //myobject : TMyClass;
+  myconfiguration: TConfiguration;
+//myobject : TMyClass;
 
 implementation
+
 (*
 { TMyClass }
 
@@ -246,42 +423,56 @@ end;
 
 constructor TSetupFile.Create;
 begin
-  markerlist := TStringList.Create;
+  Fmarkerlist := TStringList.Create;
+  FuninstallCheck := TStringList.Create;
   inherited;
   //initValues;
 end;
 
 destructor TSetupFile.Destroy;
 begin
-  markerlist.Free;
+  FreeAndNil(Fmarkerlist);
+  FreeAndNil(FuninstallCheck);
   inherited;
 end;
 
 procedure TSetupFile.SetArchitecture(const AValue: TArchitecture);
 begin
-  if AValue=Architecture then exit;
-  FArchitecture:=AValue;
+  if AValue = Architecture then
+    exit;
+  FArchitecture := AValue;
   //Log('SetArchitecture '+GetEnumProp(Self,'Architecture'));
 end;
 
 procedure TSetupFile.SetSetupFullFileName(const AValue: string);
 begin
-  if AValue=SetupFullFileName then exit;
-  FsetupFullFileName:= AValue;
-  FSetupFileNamePath:=ExtractFileDir(AValue);
-  FsetupFileName:= ExtractFileName(AValue);
+  if AValue = SetupFullFileName then
+    exit;
+  FsetupFullFileName := AValue;
+  FSetupFileNamePath := ExtractFileDir(AValue);
+  FsetupFileName := ExtractFileName(AValue);
   //Log('SetSetupFileNamePath '+MyString);
 end;
 
 procedure TSetupFile.SetMstFullFileName(const AValue: string);
 begin
-  if AValue=mstFullFileName then exit;
-  FmstFullFileName:= AValue;
-  FmstFileNamePath:=ExtractFileDir(AValue);
-  FmstFileName:= ExtractFileName(AValue);
+  if AValue = mstFullFileName then
+    exit;
+  FmstFullFileName := AValue;
+  FmstFileNamePath := ExtractFileDir(AValue);
+  FmstFileName := ExtractFileName(AValue);
   //Log('SetSetupFileNamePath '+MyString);
 end;
 
+procedure TSetupFile.SetUninstallCheck(const AValue: TStrings);
+begin
+  FuninstallCheck.Assign(AValue);
+end;
+
+procedure TSetupFile.SetMarkerlist(const AValue: TStrings);
+begin
+  Fmarkerlist.Assign(AValue);
+end;
 
 procedure TSetupFile.initValues;
 begin
@@ -289,35 +480,128 @@ begin
   FsetupFileName := '';
   FsetupFullFileName := '';
   FsetupFileSize := 0;
-  Farchitecture:=aUnknown;
+  Farchitecture := aUnknown;
   FmsiId := '';
   FmstFullFileName := '';
   FmstFileNamePath := '';
   FmstFileName := '';
   FmsiFullFileName := '';
   FinstallerId := stUnknown;
-  FrequiredSpace:=0;
-  FinstallDirectory :='';
+  FrequiredSpace := 0;
+  FinstallDirectory := '# SET THE INSTALL DIRECTORY #';
   Fmarkerlist.Clear;
-  FSoftwareVersion:='';
+  FSoftwareVersion := '0.0';
+  Fwinbatch_del_argument := '';
+  FinstallCommandLine := '';
+  FuninstallCommandLine := '';
+  FuninstallProg := '';
+  FuninstallCheck.Clear;
+  ;
+  FisExitcodeFatalFunction := 'isMsExitcodeFatal_short';
+  Funinstall_waitforprocess := '';
 end;
 
-// TProductProperies **********************************
+// TPProperties **********************************
+
+constructor TPProperties.Create;
+begin
+  inherited;
+  FStrvalues := TStringList.Create;
+  FStrvalues := TStringList.Create;
+  Ftype := bool;
+  Fmultivalue := false;
+  Feditable := false;
+  FBoolDefault := false;
+end;
+
+destructor TPProperties.Destroy;
+begin
+  FreeAndNil(FStrvalues);
+  FreeAndNil(FStrdefault);
+  inherited;
+end;
+
+procedure TPProperties.SetValueLines(const AValue: TStrings);
+begin
+  FStrvalues.Assign(AValue);
+end;
+
+procedure TPProperties.SetDefaultLines(const AValue: TStrings);
+begin
+  FStrDefault.Assign(AValue);
+end;
+
+
+// TPDependency **********************************
+procedure TPDependency.init;
+begin
+  FAction := 'setup';
+  FRequType := doNotMatter;
+  FRequAction:=noRequest;
+  FRequState:=noState;
+  FRequProductId:='';
+end;
+
+// TopsiProduct **********************************
+constructor TopsiProduct.Create;
+begin
+  inherited;
+  //initaktproduct;
+end;
+
+// TProductData **********************************
+// TopsiProduct **********************************
 
 // TConfiguration ************************************
 
 constructor TConfiguration.Create;
 begin
   inherited;
+  Fimport_libraries := TStringList.Create;
+  FpreInstallLines := TStringList.Create;
+  FpostInstallLines := TStringList.Create;
+  FpreUninstallLines := TStringList.Create;
+  FpostUninstallLines := TStringList.Create;
   readconfig;
 end;
 
 destructor TConfiguration.Destroy;
 begin
-  writeconfig;
+  //writeconfig;
+  FreeAndNil(Fimport_libraries);
+  FreeAndNil(FpreInstallLines);
+  FreeAndNil(FpostInstallLines);
+  FreeAndNil(FpreUninstallLines);
+  FreeAndNil(FpostUninstallLines);
   inherited;
 end;
 
+procedure TConfiguration.SetLibraryLines(const AValue: TStrings);
+begin
+  Fimport_libraries.Assign(AValue);
+end;
+
+procedure TConfiguration.SetPreInstallLines(const AValue: TStrings);
+begin
+  FpreInstallLines.Assign(AValue);
+end;
+
+procedure TConfiguration.SetPostInstallLines(const AValue: TStrings);
+begin
+  FpostInstallLines.Assign(AValue);
+end;
+
+procedure TConfiguration.SetPreUninstallLines(const AValue: TStrings);
+begin
+  FpreUninstallLines.Assign(AValue);
+end;
+
+procedure TConfiguration.SetPostUninstallLines(const AValue: TStrings);
+begin
+  FpostUninstallLines.Assign(AValue);
+end;
+
+(*
 procedure TConfiguration.writeconfig;
 
   var
@@ -344,9 +628,11 @@ begin
     myconfig.Add('config_filled='+booltostr(Fconfig_filled,true));
     myconfig.Add('registerInFilemanager='+booltostr(FregisterInFilemanager,true));
     myconfig.SaveToFile(myfilename);
-    myconfig.Free;
+    Application.ProcessMessages;
+    FreeAndNil(myconfig);
 end;
-
+*)
+(*
 procedure TConfiguration.readconfig;
 var
   myfilename : string;
@@ -362,7 +648,7 @@ begin
   {$ELSE}
   configDir := GetAppConfigDir(False);
   {$ENDIF WINDOWS}
-  myfilename := configDir+PathDelim+'opsi.og'+PathDelim+'opsisetupdetector.cfg';
+  myfilename := configDir+PathDelim+'opsi.org'+PathDelim+'opsisetupdetector.cfg';
   if FileExists(myfilename) then
   begin
     myconfig := TStringlist.Create;
@@ -402,6 +688,185 @@ begin
   {$ELSE}
   {$ENDIF WINDOWS}
 end;
+*)
+
+procedure TConfiguration.writeconfig;
+var
+  Streamer: TJSONStreamer;
+  JSONString: string;
+  myfilename: string;
+  configDir: array[0..MaxPathLen] of char; //Allocate memory
+  configDirUtf8: UTF8String;
+  myfile: TextFile;
+
+  // http://wiki.freepascal.org/File_Handling_In_Pascal
+  // SaveStringToFile: function to store a string of text into a diskfile.
+  //   If the function result equals true, the string was written ok.
+  //   If not then there was some kind of error.
+  function SaveStringToFile(theString, filePath: ansistring): boolean;
+  var
+    fsOut: TFileStream;
+  begin
+    // By default assume the writing will fail.
+    Result := False;
+
+    // Write the given string to a file, catching potential errors in the process.
+    try
+      fsOut := TFileStream.Create(filePath, fmCreate);
+      fsOut.Write(theString[1], length(theString));
+      fsOut.Free;
+
+      // At his point it is known that the writing went ok.
+      Result := True
+
+    except
+      on E: Exception do
+        LogDatei.log('String could not be written. Details: ' + E.ClassName +
+          ': ' + E.Message, LLError);
+    end;
+  end;
+
+begin
+  configDir := '';
+  {$IFDEF Windows}
+  SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, configDir);
+  configDir := configDir + PathDelim + 'opsi.org' + PathDelim;
+  {$ELSE}
+  configDir := GetAppConfigDir(False);
+  {$ENDIF WINDOWS}
+  configDirUtf8 := configDir;
+  configDirUtf8 := StringReplace(configDirUtf8, 'opsi-setup-detector',
+    'opsi.org', [rfReplaceAll]);
+  configDirUtf8 := StringReplace(configDirUtf8, 'opsisetupdetector',
+    'opsi.org', [rfReplaceAll]);
+  myfilename := configDirUtf8 + PathDelim + 'opsisetupdetector.cfg';
+  myfilename := ExpandFileName(myfilename);
+  if not DirectoryExists(configDirUtf8) then
+    if not ForceDirectories(configDirUtf8) then
+      LogDatei.log('failed to create configuration directory: ' + configDirUtf8, LLError);
+
+  // http://wiki.freepascal.org/Streaming_JSON
+  Streamer := TJSONStreamer.Create(nil);
+  try
+    Streamer.Options := Streamer.Options + [jsoTStringsAsArray];
+    // Save strings as JSON array
+    // JSON convert and output
+    JSONString := Streamer.ObjectToJSONString(myconfiguration);
+    logdatei.log(JSONString, LLDebug);
+    if not SaveStringToFile(JSONString, myfilename) then
+      LogDatei.log('failed save configuration', LLError);
+    //AssignFile(myfile, myfilename);
+    //Rewrite(myfile);
+    //Write(myfile, JSONString);
+  finally
+    //CloseFile(myfile);
+    Streamer.Destroy;
+  end;
+end;
+
+
+procedure TConfiguration.readconfig;
+var
+  DeStreamer: TJSONDeStreamer;
+  Streamer: TJSONStreamer;
+  JSONString: string;
+  myfilename: string;
+  configDir: array[0..MaxPathLen] of char; //Allocate memory
+  configDirUtf8: UTF8String;
+  configDirstr: string;
+  myfile: Text;
+  oldconfigDir, oldconfigFileName, tmpstr: string;
+  fConfig: Text;
+
+  // http://wiki.freepascal.org/File_Handling_In_Pascal
+  // LoadStringFromFile: function to load a string of text from a diskfile.
+  //   If the function result equals true, the string was load ok.
+  //   If not then there was some kind of error.
+  function LoadStringFromFile(theString, filePath: ansistring): boolean;
+  var
+    fsOut: TFileStream;
+  begin
+    // By default assume the writing will fail.
+    Result := False;
+
+    // Write the given string to a file, catching potential errors in the process.
+    try
+      fsOut := TFileStream.Create(filePath, fmOpenRead);
+      fsOut.Read(theString[1], length(theString));
+      fsOut.Free;
+
+      // At his point it is known that the writing went ok.
+      Result := True
+
+    except
+      on E: Exception do
+        LogDatei.log('String could not be written. Details: ' + E.ClassName +
+          ': ' + E.Message, LLError);
+    end;
+  end;
+
+begin
+  configDir := '';
+  {$IFDEF Windows}
+  SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, configDir);
+  configDir := configDir + PathDelim + 'opsi.org' + PathDelim;
+  {$ELSE}
+  configDir := GetAppConfigDir(False);
+  {$ENDIF WINDOWS}
+  configDirstr := configDir;
+  configDirUtf8 := configDirstr;
+  configDirUtf8 := StringReplace(configDirUtf8, 'opsi-setup-detector',
+    'opsi.org', [rfReplaceAll]);
+  configDirUtf8 := StringReplace(configDirUtf8, 'opsisetupdetector',
+    'opsi.org', [rfReplaceAll]);
+  myfilename := configDirUtf8 + PathDelim + 'opsisetupdetector.cfg';
+  myfilename := ExpandFileName(myfilename);
+  if FileExists(myfilename) then
+  begin
+    AssignFile(myfile, myfilename);
+    Reset(myfile);
+    readln(myfile, JSONString);
+    //// http://wiki.freepascal.org/Streaming_JSON
+    // DeStreamer object create
+    DeStreamer := TJSONDeStreamer.Create(nil);
+    try
+      // Load JSON data in the object
+      DeStreamer.JSONToObject(JSONString, myconfiguration);
+      // Cleanup
+    finally
+      DeStreamer.Destroy;
+      CloseFile(myfile);
+    end;
+    (*
+    Streamer := TJSONStreamer.Create(nil);
+    try
+      Streamer.Options := Streamer.Options + [jsoTStringsAsArray];
+      JSONString := Streamer.ObjectToJSONString(myconfiguration);
+//      logdatei.log('After readconfig: '+JSONString, LLDebug);
+    finally
+      Streamer.Destroy;
+    end;
+    *)
+  end
+  else
+  begin
+    tmpstr := '';
+    // check for old config
+    // get global ConfigDir
+    oldconfigDir := GetAppConfigDir(True);
+    oldconfigFileName := oldconfigDir + 'config.txt';
+    if FileExists(oldconfigFileName) then
+    begin
+      AssignFile(fConfig, oldconfigFileName);
+      Reset(fConfig);
+      if not EOF(fConfig) then
+        ReadLn(fConfig, tmpstr);
+      CloseFile(fConfig);
+    end;
+  end;
+  Fworkbench_mounted := False;
+end;
+
 
 // Installer related ************************************
 
@@ -454,6 +919,7 @@ begin
       Result := True;
   end;
 end;
+
 (*
 procedure initSetupFile(var mysetupfile : TSetupFile);
 begin
@@ -478,7 +944,8 @@ end;
 *)
 procedure initaktproduct;
 var
-  i : integer;
+  i: integer;
+  newdep : TPDependency;
 begin
   for i := 0 to 1 do
   begin
@@ -486,9 +953,9 @@ begin
       aktProduct.SetupFiles[i] := TSetupFile.Create;
     aktProduct.SetupFiles[i].initValues;
   end;
-  if not Assigned(aktProduct.produktpropties) then
-    aktProduct.produktpropties := TProductProperies.Create;
-  with aktProduct.produktpropties do
+  if not Assigned(aktProduct.productdata) then
+    aktProduct.productdata := TProductData.Create;
+  with aktProduct.productdata do
   begin
     comment := '';
     description := '';
@@ -501,26 +968,33 @@ begin
     priority := 0;
     producttype := 'localboot';
     setupscript := 'setup.opsiscript';
-    uninstallscript := 'uninstall.psiscript';
+    uninstallscript := 'uninstall.opsiscript';
+    delsubscript := 'delsub.opsiscript';
     licenserequired := False;
   end;
+  // Create Dependencies
+  aktProduct.dependencies := TCollection.Create(TPDependency);
+  newdep := TPDependency(aktProduct.dependencies.add);
+  newdep.init;
 end;
 
 procedure freebasedata;
 var
-  i : integer;
+  i: integer;
 begin
   for i := 0 to 1 do
   begin
     if Assigned(aktProduct.SetupFiles[i]) then
       aktProduct.SetupFiles[i].Destroy;
   end;
-  if Assigned(aktProduct.produktpropties) then
-    aktProduct.produktpropties.Destroy;
+  if Assigned(aktProduct.productdata) then
+    aktProduct.productdata.Destroy;
+  if Assigned(aktProduct.dependencies) then
+    FreeAndNil(aktProduct.dependencies);
   if Assigned(myconfiguration) then
   begin
     myconfiguration.writeconfig;
-     myconfiguration.Destroy;
+    myconfiguration.Destroy;
   end;
 end;
 
@@ -545,70 +1019,118 @@ begin
     installerArray[counter].installerId := TKnownInstaller(counter);
     installerArray[counter].Name := knownInstallerList.Strings[counter];
   end;
+
+
   // inno
-  installerArray[integer(stInno)].description := 'Inno Setup';
-  installerArray[integer(stInno)].silentsetup :=
-    '/sp- /verysilent /norestart /nocancel /SUPPRESSMSGBOXES';
-  installerArray[integer(stInno)].unattendedsetup :=
-    '/sp- /silent /norestart /nocancel /SUPPRESSMSGBOXES';
-  installerArray[integer(stInno)].silentuninstall :=
-    '/verysilent /norestart /nocancel /SUPPRESSMSGBOXES';
-  installerArray[integer(stInno)].unattendeduninstall :=
-    '/silent /norestart /nocancel /SUPPRESSMSGBOXES';
-  installerArray[integer(stInno)].uninstall_waitforprocess := '';
-  installerArray[integer(stInno)].patterns.Add('<description>inno setup</description>');
-  installerArray[integer(stInno)].patterns.Add('jr.inno.setup');
-  installerArray[integer(stInno)].link :=
-    'http://www.jrsoftware.org/ishelp/topic_setupcmdline.htm';
-  installerArray[integer(stInno)].comment := '';
-  installerArray[integer(stInno)].detected := @detectedbypatternwithor;
+  with installerArray[integer(stInno)] do
+  begin
+    description := 'Inno Setup';
+    silentsetup :=
+      '/sp- /verysilent /norestart /nocancel /SUPPRESSMSGBOXES';
+    unattendedsetup :=
+      '/sp- /silent /norestart /nocancel /SUPPRESSMSGBOXES';
+    silentuninstall :=
+      '/verysilent /norestart /nocancel /SUPPRESSMSGBOXES';
+    unattendeduninstall :=
+      '/silent /norestart /nocancel /SUPPRESSMSGBOXES';
+    uninstall_waitforprocess := '';
+    uninstallProg := 'unins000.exe';
+    patterns.Add('<description>inno setup</description>');
+    patterns.Add('jr.inno.setup');
+    link :=
+      'http://www.jrsoftware.org/ishelp/topic_setupcmdline.htm';
+    comment := '';
+    uib_exitcode_function := 'isInnoExitcodeFatal';
+    detected := @detectedbypatternwithor;
+  end;
+
   // NSIS
-  installerArray[integer(stNsis)].description := 'Nullsoft Install System';
-  installerArray[integer(stNsis)].silentsetup := '/S';
-  installerArray[integer(stNsis)].unattendedsetup := '/S';
-  installerArray[integer(stNsis)].silentuninstall := '/S';
-  installerArray[integer(stNsis)].unattendeduninstall := '/S';
-  installerArray[integer(stNsis)].uninstall_waitforprocess := 'Au_.exe';
-  installerArray[integer(stNsis)].patterns.Add('Nullsoft.NSIS.exehead');
-  installerArray[integer(stNsis)].patterns.Add('nullsoft install system');
-  installerArray[integer(stNsis)].patterns.Add('http://nsis.sf.net/');
-  installerArray[integer(stNsis)].link :=
-    'http://nsis.sourceforge.net/Docs/Chapter3.html#installerusage';
-  installerArray[integer(stNsis)].comment := '';
-  installerArray[integer(stNsis)].detected := @detectedbypatternwithor;
-  // InstallShieldMSI
-  installerArray[integer(stInstallShieldMSI)].description :=
-    'InstallShield+MSI Setup (InstallShield with embedded MSI)';
-  installerArray[integer(stInstallShieldMSI)].silentsetup :=
-    '/s /v" /qn ALLUSERS=1 REBOOT=ReallySuppress"';
-  installerArray[integer(stInstallShieldMSI)].unattendedsetup :=
-    '/s /v" /qb-! ALLUSERS=1 REBOOT=ReallySuppress"';
-  installerArray[integer(stInstallShieldMSI)].silentuninstall :=
-    '/s /v" /qn ALLUSERS=1 REBOOT=ReallySuppress"';
-  installerArray[integer(stInstallShieldMSI)].unattendeduninstall :=
-    '/s /v" /qb-! ALLUSERS=1 REBOOT=ReallySuppress"';
-  installerArray[integer(stInstallShieldMSI)].uninstall_waitforprocess := '';
-  installerArray[integer(stInstallShieldMSI)].patterns.Add('nstallshield');
-  installerArray[integer(stInstallShieldMSI)].patterns.Add('installer,msi,database');
-  installerArray[integer(stInstallShieldMSI)].link :=
-    'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
-  installerArray[integer(stInstallShieldMSI)].comment := '';
-  installerArray[integer(stInstallShieldMSI)].detected := @detectedbypatternwithor;
+  with installerArray[integer(stNsis)] do
+  begin
+    description := 'Nullsoft Install System';
+    silentsetup := '/S';
+    unattendedsetup := '/S';
+    silentuninstall := '/S';
+    unattendeduninstall := '/S';
+    uninstall_waitforprocess := '/WaitForProcessEnding "Au_.exe" /TimeOutSeconds 20';
+    uninstallProg := 'uninstall.exe';
+    patterns.Add('Nullsoft.NSIS.exehead');
+    patterns.Add('nullsoft install system');
+    patterns.Add('http://nsis.sf.net/');
+    link :=
+      'http://nsis.sourceforge.net/Docs/Chapter3.html#installerusage';
+    comment := '';
+    uib_exitcode_function := 'isNsisExitcodeFatal';
+    detected := @detectedbypatternwithor;
+
+  end;
   // InstallShield
-  installerArray[integer(stInstallShield)].description :=
-    'InstallShield Setup (classic)';
-  installerArray[integer(stInstallShield)].silentsetup := '/s /sms';
-  installerArray[integer(stInstallShield)].unattendedsetup := '/s /sms';
-  installerArray[integer(stInstallShield)].silentuninstall := '/s /sms';
-  installerArray[integer(stInstallShield)].unattendeduninstall := '/s /sms';
-  installerArray[integer(stInstallShield)].uninstall_waitforprocess := '';
-  installerArray[integer(stInstallShield)].patterns.Add('InstallShield');
-  installerArray[integer(stInstallShield)].patterns.Add(
-    '<description>InstallShield.Setup</description>');
-  installerArray[integer(stInstallShield)].link :=
-    'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
-  installerArray[integer(stInstallShield)].comment := '';
-  installerArray[integer(stInstallShield)].detected := @detectedbypatternwithor;
+  with installerArray[integer(stInstallShield)] do
+  begin
+    description :=
+      'InstallShield Setup (classic)';
+    silentsetup := '/s /sms';
+    unattendedsetup := '/s /sms';
+    silentuninstall := '/s /sms';
+    unattendeduninstall := '/s /sms';
+    uninstall_waitforprocess := '';
+    uninstallProg := 'uninstall.exe';
+    patterns.Add('InstallShield');
+    patterns.Add(
+      '<description>InstallShield.Setup</description>');
+    link :=
+      'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
+    comment := '';
+    uib_exitcode_function := 'isInstallshieldExitcodeFatal';
+    detected := @detectedbypatternwithor;
+  end;
+  // InstallShieldMSI
+  with installerArray[integer(stInstallShieldMSI)] do
+  begin
+    description :=
+      'InstallShield+MSI Setup (InstallShield with embedded MSI)';
+    silentsetup :=
+      '/s /v" /qn ALLUSERS=1 REBOOT=ReallySuppress"';
+    unattendedsetup :=
+      '/s /v" /qb-! ALLUSERS=1 REBOOT=ReallySuppress"';
+    silentuninstall :=
+      '/s /v" /qn ALLUSERS=1 REBOOT=ReallySuppress"';
+    unattendeduninstall :=
+      '/s /v" /qb-! ALLUSERS=1 REBOOT=ReallySuppress"';
+    uninstall_waitforprocess := '';
+    uninstallProg := 'uninstall.exe';
+    patterns.Add('nstallshield');
+    patterns.Add('installer,msi,database');
+    link :=
+      'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
+    comment := '';
+    uib_exitcode_function := 'isInstallshieldExitcodeFatal';
+    detected := @detectedbypatternwithor;
+  end;
+  // MSI
+  with installerArray[integer(stMSI)] do
+  begin
+    description :=
+      'MSI Setup';
+    silentsetup :=
+      '/l* "$LogDir$\$ProductId$.install_log.txt" /qn ALLUSERS=1 REBOOT=ReallySuppress';
+    unattendedsetup :=
+      '/l* "$LogDir$\$ProductId$.install_log.txt" /qb-! ALLUSERS=1 REBOOT=ReallySuppress';
+    silentuninstall :=
+      ' /qn REBOOT=ReallySuppress';
+    unattendeduninstall :=
+      ' /qb-! REBOOT=ReallySuppress';
+    uninstall_waitforprocess := '';
+    uninstallProg := '';
+    patterns.Add('nstallshield');
+    patterns.Add('installer,msi,database');
+    link :=
+      'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
+    comment := '';
+    uib_exitcode_function := 'isMsiExitcodeFatal';
+    detected := @detectedbypatternwithor;
+  end;
+
   // 7zip
   with installerArray[integer(st7zip)] do
   begin
@@ -618,9 +1140,11 @@ begin
     silentuninstall := '/S';
     unattendeduninstall := '/S';
     uninstall_waitforprocess := '';
+    uninstallProg := 'uninstall.exe';
     patterns.Add('7-Zip Installer');
-    link :=     'https://www.7-zip.org/faq.html';
+    link := 'https://www.7-zip.org/faq.html';
     comment := '';
+    uib_exitcode_function := 'isMsExitcodeFatal_short';
     detected := @detectedbypatternwithor;
   end;
   // st7zipsfx
@@ -632,9 +1156,11 @@ begin
     silentuninstall := '-y';
     unattendeduninstall := '-y';
     uninstall_waitforprocess := '';
+    uninstallProg := '';
     patterns.Add('7zipsfx');
-    link :=  'https://sourceforge.net/p/s-zipsfxbuilder/code/ci/master/tree/7zSD_EN.chm';
+    link := 'https://sourceforge.net/p/s-zipsfxbuilder/code/ci/master/tree/7zSD_EN.chm';
     comment := '';
+    uib_exitcode_function := 'isMsExitcodeFatal_short';
     detected := @detectedbypatternwithor;
   end;
 
@@ -651,5 +1177,6 @@ begin
   myconfiguration.readconfig;
 
   //aktSetupFile := TSetupFile.Create;
+  aktProduct := TopsiProduct.Create;
 
 end.

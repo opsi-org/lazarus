@@ -1268,6 +1268,7 @@ begin
 
 
       st :=  s;
+       st := TrimRight(st);
 
       // now some things we do not want to log:
       // thing we do not log below loglevel 9
