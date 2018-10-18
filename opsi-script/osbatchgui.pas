@@ -173,8 +173,8 @@ const
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
   skindirectoryDevelopment = 'winstskin';
-  skindirectoryDefault = '/usr/share/opsi-client-agent/opsi-script/skin';
-  skindirectoryCustomWin = '/usr/share/opsi-client-agent/opsi-script/customskin';
+  skindirectoryDefault = '/usr/share/opsi-script/skin';
+  skindirectoryCustomWin = '/usr/share/opsi-script/customskin';
   {$ENDIF LINUX}
 
 

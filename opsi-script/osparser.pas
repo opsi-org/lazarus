@@ -18369,8 +18369,8 @@ begin
                                                +PathDelim+'lib'+PathDelim+incfilename;
                           {$ENDIF WINDOWS}
                           {$IFDEF LINUX}
-                          // search in /usr/share/opsi-client-agent/opsi-script/lib
-                          testincfilename := '/usr/share/opsi-client-agent/opsi-script'
+                          // search in /usr/share/opsi-script/lib
+                          testincfilename := '/usr/share/opsi-script'
                                                +PathDelim+'lib'+PathDelim+incfilename;
                           {$ENDIF LINUX}
                           testincfilename := ExpandFilename(testincfilename);
@@ -21449,7 +21449,7 @@ begin
 
     FConstList.add ('%opsiLogDir%');
     {$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\log' ); {$ENDIF WINDOWS}
-    {$IFDEF LINUX}FConstValuesList.add ( '/var/log/opsi-client-agent/opsi-script' ); {$ENDIF LINUX}
+    {$IFDEF LINUX}FConstValuesList.add ( '/var/log/opsi-script' ); {$ENDIF LINUX}
 
     FConstList.add ('%opsiapplog%');
     {$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\applog' ); {$ENDIF WINDOWS}

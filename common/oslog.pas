@@ -1784,9 +1784,9 @@ begin
   if 0 = fpGetEUid then
   begin
     {$IFDEF OPSI}
-    StandardLogPath := '/var/log/opsi-client-agent/opsi-script/';
-    StandardMainLogPath := '/var/log/opsi-client-agent/opsi-script/';
-    StandardPartLogPath := '/var/log/opsi-client-agent/opsi-script/';
+    StandardLogPath := '/var/log/opsi-script/';
+    StandardMainLogPath := '/var/log/opsi-script/';
+    StandardPartLogPath := '/var/log/opsi-script/';
     {$IFDEF OPSISCRIPTSTARTER}
     StandardLogPath := '/var/log/opsi-client-agent/opsiclientd/';
     StandardMainLogPath := '/var/log/opsi-client-agent/opsiclientd/';
