@@ -281,16 +281,38 @@ msgstr ""
 msgid "FlowPanel1"
 msgstr ""
 
-#: tfosdconfigdlg.flowpanel2.caption
-msgid "FlowPanel2"
+#: tfosdconfigdlg.panel1.caption
+msgctxt "tfosdconfigdlg.panel1.caption"
+msgid "Panel1"
 msgstr ""
 
 #: tresultform1.bitbtnadddep.caption
+msgctxt "tresultform1.bitbtnadddep.caption"
+msgid "Add Dependency"
+msgstr ""
+
+#: tresultform1.bitbtnadddep1.caption
+msgctxt "tresultform1.bitbtnadddep1.caption"
 msgid "BitBtnAddDep"
 msgstr ""
 
 #: tresultform1.bitbtndeldep.caption
+msgctxt "tresultform1.bitbtndeldep.caption"
+msgid "Delete Dependency"
+msgstr ""
+
+#: tresultform1.bitbtndeldep2.caption
+msgctxt "tresultform1.bitbtndeldep2.caption"
 msgid "BitBtnDelDep"
+msgstr ""
+
+#: tresultform1.bitbtndeldep3.caption
+msgctxt "tresultform1.bitbtndeldep3.caption"
+msgid "BitBtnDelDep1"
+msgstr ""
+
+#: tresultform1.bitbtneditdep.caption
+msgid "Edit Dependency"
 msgstr ""
 
 #: tresultform1.bitbtnopenfile.caption
@@ -380,6 +402,16 @@ msgctxt "tresultform1.btproductnextstep.hint"
 msgid "Go to the next Step"
 msgstr ""
 
+#: tresultform1.btproductnextstep1.caption
+msgctxt "tresultform1.btproductnextstep1.caption"
+msgid "Next Step"
+msgstr ""
+
+#: tresultform1.btproductnextstep1.hint
+msgctxt "tresultform1.btproductnextstep1.hint"
+msgid "Go to the next Step"
+msgstr ""
+
 #: tresultform1.btsetup1nextstep.caption
 msgctxt "tresultform1.btsetup1nextstep.caption"
 msgid "Next Step"
@@ -410,16 +442,6 @@ msgctxt "tresultform1.btsingleanalyzeandcreate.hint"
 msgid ""
 "Analyze a single existing Setupfile \n"
 "and create an opsi Product\n"
-msgstr ""
-
-#: tresultform1.buttoncreatepacket.caption
-msgctxt "tresultform1.buttoncreatepacket.caption"
-msgid "&Create opsi Packet"
-msgstr ""
-
-#: tresultform1.buttoncreatepacket.hint
-msgctxt "tresultform1.buttoncreatepacket.hint"
-msgid "Create opsi Packet according to the form"
 msgstr ""
 
 #: tresultform1.caption
@@ -475,10 +497,6 @@ msgstr ""
 
 #: tresultform1.flowpanel14.caption
 msgid "FlowPanel14"
-msgstr ""
-
-#: tresultform1.flowpanel16.caption
-msgid "FlowPanel16"
 msgstr ""
 
 #: tresultform1.label50.caption
@@ -600,6 +618,10 @@ msgctxt "tresultform1.label75.caption"
 msgid "Dependencies"
 msgstr ""
 
+#: tresultform1.label76.caption
+msgid "Priority"
+msgstr ""
+
 #: tresultform1.label77.caption
 msgctxt "tresultform1.label77.caption"
 msgid "Setup File"
@@ -639,6 +661,10 @@ msgctxt "tresultform1.label84.caption"
 msgid "Uninstall Program"
 msgstr ""
 
+#: tresultform1.label85.caption
+msgid "Properties"
+msgstr ""
+
 #: tresultform1.labelworkbenchnotok.caption
 msgid "Path to opsi-work-bench not is reachable - Check Network Mounts or Path"
 msgstr ""
@@ -659,8 +685,20 @@ msgstr ""
 msgid "&File"
 msgstr ""
 
+#: tresultform1.panel10.caption
+msgid "Panel10"
+msgstr ""
+
+#: tresultform1.panel12.caption
+msgid "Panel12"
+msgstr ""
+
 #: tresultform1.panel3.caption
 msgid "Panel3"
+msgstr ""
+
+#: tresultform1.panel4.caption
+msgid "Panel4"
 msgstr ""
 
 #: tresultform1.processing.caption
@@ -695,18 +733,42 @@ msgid "open"
 msgstr ""
 
 #: tresultform1.stringgriddep.columns[0].title.caption
+msgctxt "tresultform1.stringgriddep.columns[0].title.caption"
 msgid "Required ProductId"
 msgstr ""
 
 #: tresultform1.stringgriddep.columns[1].title.caption
+msgctxt "tresultform1.stringgriddep.columns[1].title.caption"
 msgid "Required State"
 msgstr ""
 
 #: tresultform1.stringgriddep.columns[2].title.caption
+msgctxt "tresultform1.stringgriddep.columns[2].title.caption"
 msgid "Required Action"
 msgstr ""
 
 #: tresultform1.stringgriddep.columns[3].title.caption
+msgctxt "tresultform1.stringgriddep.columns[3].title.caption"
+msgid "Required Mode"
+msgstr ""
+
+#: tresultform1.stringgriddep1.columns[0].title.caption
+msgctxt "tresultform1.stringgriddep1.columns[0].title.caption"
+msgid "Required ProductId"
+msgstr ""
+
+#: tresultform1.stringgriddep1.columns[1].title.caption
+msgctxt "tresultform1.stringgriddep1.columns[1].title.caption"
+msgid "Required State"
+msgstr ""
+
+#: tresultform1.stringgriddep1.columns[2].title.caption
+msgctxt "tresultform1.stringgriddep1.columns[2].title.caption"
+msgid "Required Action"
+msgstr ""
+
+#: tresultform1.stringgriddep1.columns[3].title.caption
+msgctxt "tresultform1.stringgriddep1.columns[3].title.caption"
 msgid "Required Mode"
 msgstr ""
 
@@ -720,7 +782,11 @@ msgid "Create"
 msgstr ""
 
 #: tresultform1.tabsheetproduct.caption
-msgid "Product"
+msgid "Product1"
+msgstr ""
+
+#: tresultform1.tabsheetproduct2.caption
+msgid "Product2"
 msgstr ""
 
 #: tresultform1.tabsheetsetup1.caption

@@ -1,11 +1,11 @@
 object resultForm1: TresultForm1
-  Left = 636
-  Height = 559
-  Top = 353
-  Width = 1014
+  Left = 634
+  Height = 553
+  Top = 200
+  Width = 1095
   Caption = 'opsi Setup Detector'
-  ClientHeight = 539
-  ClientWidth = 1014
+  ClientHeight = 533
+  ClientWidth = 1095
   Menu = MainMenu1
   OnClose = FormClose
   OnCreate = FormCreate
@@ -16,12 +16,12 @@ object resultForm1: TresultForm1
     Left = 0
     Height = 40
     Top = 0
-    Width = 1014
+    Width = 1095
     Align = alTop
     Alignment = taLeftJustify
     BorderStyle = bsSingle
     ClientHeight = 36
-    ClientWidth = 1010
+    ClientWidth = 1091
     ParentFont = False
     TabOrder = 0
     OnClick = Panel1Click
@@ -29,7 +29,7 @@ object resultForm1: TresultForm1
       Left = 1
       Height = 26
       Top = 1
-      Width = 1008
+      Width = 1089
       Caption = 'ToolBar1'
       ParentFont = False
       TabOrder = 0
@@ -127,37 +127,37 @@ object resultForm1: TresultForm1
   end
   object Panel3: TPanel
     Left = 0
-    Height = 476
+    Height = 470
     Top = 40
-    Width = 1014
+    Width = 1095
     Align = alClient
     Caption = 'Panel3'
-    ClientHeight = 476
-    ClientWidth = 1014
+    ClientHeight = 470
+    ClientWidth = 1095
     ParentFont = False
     TabOrder = 1
     object PageControl1: TPageControl
-      Left = 1
-      Height = 474
+      Left = 6
+      Height = 468
       Top = 1
-      Width = 1012
-      ActivePage = TabSheetProduct
+      Width = 1088
+      ActivePage = TabSheetProduct2
       Align = alClient
       Images = ImageList1
       ParentFont = False
-      TabIndex = 4
+      TabIndex = 5
       TabOrder = 0
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
         Caption = 'Start'
-        ClientHeight = 564
-        ClientWidth = 1509
+        ClientHeight = 522
+        ClientWidth = 1080
         ParentFont = False
         object FlowPanel3: TFlowPanel
           Left = 0
-          Height = 850
+          Height = 522
           Top = 0
-          Width = 1509
+          Width = 1080
           Align = alClient
           ControlList = <          
             item
@@ -185,11 +185,11 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 0
           object BtSingleAnalyzeAndCreate: TBitBtn
-            Left = 46
-            Height = 78
+            Left = 31
+            Height = 68
             Hint = 'Analyze a single existing Setupfile '#10'and create an opsi Product'
-            Top = 46
-            Width = 610
+            Top = 31
+            Width = 419
             Anchors = []
             AutoSize = True
             BorderSpacing.Around = 30
@@ -493,11 +493,11 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object BtATwonalyzeAndCreate: TBitBtn
-            Left = 46
-            Height = 78
+            Left = 510
+            Height = 68
             Hint = 'Analyze a single existing Setupfile '#10'and create an opsi Product'
-            Top = 214
-            Width = 778
+            Top = 31
+            Width = 525
             Anchors = []
             AutoSize = True
             BorderSpacing.Around = 30
@@ -801,11 +801,11 @@ object resultForm1: TresultForm1
             TabOrder = 1
           end
           object BtAnalyzeOnly: TBitBtn
-            Left = 914
-            Height = 78
+            Left = 31
+            Height = 68
             Hint = 'Analyze a single existing Setupfile '
-            Top = 214
-            Width = 373
+            Top = 159
+            Width = 269
             Anchors = []
             AutoSize = True
             BorderSpacing.Around = 30
@@ -1109,11 +1109,11 @@ object resultForm1: TresultForm1
             TabOrder = 2
           end
           object BtCreateEmptyTemplate: TBitBtn
-            Left = 46
-            Height = 78
+            Left = 360
+            Height = 68
             Hint = 'Create a empty '#10'opsi Product Directory Structure'
-            Top = 382
-            Width = 442
+            Top = 159
+            Width = 316
             Anchors = []
             AutoSize = True
             BorderSpacing.Around = 30
@@ -1420,15 +1420,14 @@ object resultForm1: TresultForm1
       end
       object TabSheetAnalyze: TTabSheet
         Caption = 'Analyze'
-        ClientHeight = 564
-        ClientWidth = 1509
+        ClientHeight = 565
+        ClientWidth = 1080
         ParentFont = False
         object Memo1: TMemo
-          Left = 0
-          Height = 635
-          Top = 0
-          Width = 1575
-          Align = alClient
+          Left = 24
+          Height = 203
+          Top = 120
+          Width = 975
           ParentFont = False
           ScrollBars = ssAutoBoth
           TabOrder = 0
@@ -1436,19 +1435,19 @@ object resultForm1: TresultForm1
         object Panel2: TPanel
           Left = 0
           Height = 114
-          Top = 692
-          Width = 1575
+          Top = 451
+          Width = 1080
           Align = alBottom
           BorderStyle = bsSingle
           ClientHeight = 110
-          ClientWidth = 1571
+          ClientWidth = 1076
           ParentFont = False
           TabOrder = 1
           object CheckBox1: TCheckBox
-            Left = 15
-            Height = 30
-            Top = 23
-            Width = 356
+            Left = 392
+            Height = 19
+            Top = 72
+            Width = 205
             Caption = 'Register as Explorer Context Menue'
             Checked = True
             ParentFont = False
@@ -1456,11 +1455,11 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object BtAnalyzeNextStep: TBitBtn
-            Left = 1267
-            Height = 66
+            Left = 857
+            Height = 52
             Hint = 'Go to the next Step'
-            Top = 45
-            Width = 182
+            Top = 52
+            Width = 147
             Anchors = []
             AutoSize = True
             BorderSpacing.Around = 30
@@ -1605,27 +1604,58 @@ object resultForm1: TresultForm1
             TabOrder = 1
           end
         end
+        object Panel12: TPanel
+          Left = 0
+          Height = 42
+          Top = 0
+          Width = 1080
+          Align = alTop
+          Caption = 'Panel12'
+          TabOrder = 2
+        end
+        object Panel13: TPanel
+          Left = 0
+          Height = 50
+          Top = 42
+          Width = 1080
+          Align = alTop
+          ClientHeight = 50
+          ClientWidth = 1080
+          TabOrder = 3
+          object ProgressBarAnalyze: TProgressBar
+            Left = 1
+            Height = 23
+            Top = 1
+            Width = 1078
+            Align = alTop
+            ParentColor = False
+            Position = 10
+            Step = 1
+            TabOrder = 0
+            BarShowText = True
+          end
+        end
       end
       object TabSheetSetup1: TTabSheet
         Caption = 'Setup1'
-        ClientHeight = 564
-        ClientWidth = 1509
+        ClientHeight = 565
+        ClientWidth = 1080
         ParentFont = False
         object PanelDefault: TPanel
           Left = 0
-          Height = 729
+          Height = 565
           Top = 0
-          Width = 1509
+          Width = 1080
           Align = alClient
-          ClientHeight = 729
-          ClientWidth = 1509
+          ClientHeight = 565
+          ClientWidth = 1080
           ParentFont = False
           TabOrder = 0
           object FlowPanel1: TFlowPanel
             Left = 1
             Height = 49
             Top = 1
-            Width = 1507
+            Width = 1078
             Align = alTop
             AutoWrap = False
             BorderWidth = 3
@@ -1655,10 +1685,10 @@ object resultForm1: TresultForm1
             ParentFont = False
             TabOrder = 0
             object Label62: TLabel
-              Left = 25
-              Height = 34
-              Top = 10
-              Width = 239
+              Left = 18
+              Height = 21
+              Top = 8
+              Width = 142
               Anchors = []
               BorderSpacing.Left = 10
               BorderSpacing.Around = 4
@@ -1668,10 +1698,10 @@ object resultForm1: TresultForm1
               ParentFont = False
             end
             object Label63: TLabel
-              Left = 477
-              Height = 34
-              Top = 10
-              Width = 213
+              Left = 302
+              Height = 21
+              Top = 8
+              Width = 128
               Anchors = []
               BorderSpacing.Left = 20
               BorderSpacing.Around = 4
@@ -1681,9 +1711,9 @@ object resultForm1: TresultForm1
               ParentFont = False
             end
             object TIComboBoxInstaller1: TTIComboBox
-              Left = 288
+              Left = 176
               Height = 23
-              Top = 7
+              Top = 6
               Width = 100
               Anchors = []
               BorderSpacing.Left = 10
@@ -1695,9 +1725,9 @@ object resultForm1: TresultForm1
               TabOrder = 0
             end
             object TIComboBoxArch1: TTIComboBox
-              Left = 714
+              Left = 446
               Height = 23
-              Top = 7
+              Top = 6
               Width = 100
               Anchors = []
               BorderSpacing.Left = 10
@@ -1712,8 +1742,8 @@ object resultForm1: TresultForm1
           object FlowPanelSetup32: TFlowPanel
             Left = 1
             Height = 41
-            Top = 75
-            Width = 1507
+            Top = 50
+            Width = 1078
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -1739,10 +1769,10 @@ object resultForm1: TresultForm1
             ParentFont = False
             TabOrder = 1
             object Label50: TLabel
-              Left = 25
-              Height = 34
-              Top = 10
-              Width = 110
+              Left = 18
+              Height = 21
+              Top = 8
+              Width = 68
               Anchors = []
               BorderSpacing.Left = 10
               BorderSpacing.Around = 4
@@ -1752,9 +1782,9 @@ object resultForm1: TresultForm1
               ParentFont = False
             end
             object TIEditSetupfile1: TTIEdit
-              Left = 159
-              Height = 46
-              Top = 7
+              Left = 102
+              Height = 27
+              Top = 6
               Width = 800
               Anchors = []
               BorderSpacing.Left = 10
@@ -1765,10 +1795,10 @@ object resultForm1: TresultForm1
               TabOrder = 0
             end
             object BitBtnOpenFile: TBitBtn
-              Left = 1366
-              Height = 48
+              Left = 907
+              Height = 30
               Top = 4
-              Width = 183
+              Width = 133
               Anchors = []
               AutoSize = True
               BorderSpacing.Left = 3
@@ -1817,8 +1847,8 @@ object resultForm1: TresultForm1
           object FlowPanelMST: TFlowPanel
             Left = 1
             Height = 41
-            Top = 137
-            Width = 1507
+            Top = 91
+            Width = 1078
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -1850,10 +1880,10 @@ object resultForm1: TresultForm1
             ParentFont = False
             TabOrder = 2
             object Label60: TLabel
-              Left = 25
-              Height = 34
-              Top = 10
-              Width = 104
+              Left = 18
+              Height = 21
+              Top = 8
+              Width = 67
               Anchors = []
               BorderSpacing.Left = 10
               BorderSpacing.Around = 4
@@ -1863,10 +1893,10 @@ object resultForm1: TresultForm1
               ParentFont = False
             end
             object CheckBoxUseMst: TCheckBox
-              Left = 1579
-              Height = 30
-              Top = 8
-              Width = 138
+              Left = 1066
+              Height = 19
+              Top = 7
+              Width = 86
               Anchors = []
               BorderSpacing.Left = 30
               BorderSpacing.Around = 3
@@ -1875,10 +1905,10 @@ object resultForm1: TresultForm1
               TabOrder = 0
             end
             object BitBtnOpenMst1: TBitBtn
-              Left = 1360
-              Height = 48
+              Left = 906
+              Height = 30
               Top = 4
-              Width = 170
+              Width = 127
               Anchors = []
               AutoSize = True
               BorderSpacing.Left = 3
@@ -1924,9 +1954,9 @@ object resultForm1: TresultForm1
               TabOrder = 1
             end
             object TIEditMstFile1: TTIEdit
-              Left = 153
-              Height = 46
-              Top = 7
+              Left = 101
+              Height = 27
+              Top = 6
               Width = 800
               Anchors = []
               BorderSpacing.Left = 10
@@ -1940,8 +1970,8 @@ object resultForm1: TresultForm1
           object FlowPanel5: TFlowPanel
             Left = 1
             Height = 41
-            Top = 261
-            Width = 1507
+            Top = 173
+            Width = 1078
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -1962,10 +1992,10 @@ object resultForm1: TresultForm1
             ParentFont = False
             TabOrder = 3
             object Label52: TLabel
-              Left = 25
-              Height = 34
-              Top = 10
-              Width = 193
+              Left = 18
+              Height = 21
+              Top = 8
+              Width = 118
               Anchors = []
               BorderSpacing.Left = 10
               BorderSpacing.Around = 4
@@ -1975,9 +2005,9 @@ object resultForm1: TresultForm1
               ParentFont = False
             end
             object TIEditProdVersion1: TTIEdit
-              Left = 242
-              Height = 46
-              Top = 7
+              Left = 152
+              Height = 27
+              Top = 6
               Width = 200
               Anchors = []
               BorderSpacing.Left = 10
@@ -1991,8 +2021,8 @@ object resultForm1: TresultForm1
           object FlowPanelMsiId: TFlowPanel
             Left = 1
             Height = 41
-            Top = 199
-            Width = 1507
+            Top = 132
+            Width = 1078
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -2014,10 +2044,10 @@ object resultForm1: TresultForm1
             ParentFont = False
             TabOrder = 4
             object Label53: TLabel
-              Left = 25
-              Height = 34
-              Top = 10
-              Width = 105
+              Left = 18
+              Height = 21
+              Top = 8
+              Width = 66
               Anchors = []
               BorderSpacing.Left = 10
               BorderSpacing.Around = 4
@@ -2027,9 +2057,9 @@ object resultForm1: TresultForm1
               ParentFont = False
             end
             object TIEditMsiId1: TTIEdit
-              Left = 154
-              Height = 46
-              Top = 7
+              Left = 100
+              Height = 27
+              Top = 6
               Width = 400
               Anchors = []
               BorderSpacing.Left = 10
@@ -2043,8 +2073,8 @@ object resultForm1: TresultForm1
           object FlowPanel7: TFlowPanel
             Left = 1
             Height = 41
-            Top = 323
-            Width = 1507
+            Top = 214
+            Width = 1078
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -2085,10 +2115,10 @@ object resultForm1: TresultForm1
             ParentFont = False
             TabOrder = 5
             object Label54: TLabel
-              Left = 362
-              Height = 34
-              Top = 10
-              Width = 221
+              Left = 232
+              Height = 21
+              Top = 8
+              Width = 135
               Anchors = []
               BorderSpacing.Left = 30
               BorderSpacing.Around = 4
@@ -2098,10 +2128,10 @@ object resultForm1: TresultForm1
               ParentFont = False
             end
             object Label55: TLabel
-              Left = 721
-              Height = 34
-              Top = 10
-              Width = 103
+              Left = 459
+              Height = 21
+              Top = 8
+              Width = 62
               Anchors = []
               BorderSpacing.Left = 30
               BorderSpacing.Around = 4
@@ -2111,10 +2141,10 @@ object resultForm1: TresultForm1
               ParentFont = False
             end
             object Label64: TLabel
-              Left = 25
-              Height = 34
-              Top = 10
-              Width = 199
+              Left = 18
+              Height = 21
+              Top = 8
+              Width = 122
               Anchors = []
               BorderSpacing.Left = 10
               BorderSpacing.Around = 4
@@ -2124,9 +2154,9 @@ object resultForm1: TresultForm1
               ParentFont = False
             end
             object TIEditSetupFileSizeMB1: TTIEdit
-              Left = 248
-              Height = 46
-              Top = 7
+              Left = 156
+              Height = 27
+              Top = 6
               Width = 40
               Anchors = []
               BorderSpacing.Left = 10
@@ -2137,9 +2167,9 @@ object resultForm1: TresultForm1
               TabOrder = 0
             end
             object TIEditRequiredSizeMB1: TTIEdit
-              Left = 607
-              Height = 46
-              Top = 7
+              Left = 383
+              Height = 27
+              Top = 6
               Width = 40
               Anchors = []
               BorderSpacing.Left = 10
@@ -2150,9 +2180,9 @@ object resultForm1: TresultForm1
               TabOrder = 1
             end
             object TIEditInstallDir1: TTIEdit
-              Left = 848
-              Height = 46
-              Top = 7
+              Left = 537
+              Height = 27
+              Top = 6
               Width = 400
               Anchors = []
               BorderSpacing.Left = 10
@@ -2166,8 +2196,8 @@ object resultForm1: TresultForm1
           object FlowPanelSetup34: TFlowPanel
             Left = 1
             Height = 41
-            Top = 385
-            Width = 1507
+            Top = 255
+            Width = 1078
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -2188,10 +2218,10 @@ object resultForm1: TresultForm1
             ParentFont = False
             TabOrder = 6
             object Label79: TLabel
-              Left = 25
-              Height = 34
-              Top = 10
-              Width = 335
+              Left = 18
+              Height = 21
+              Top = 8
+              Width = 203
               Anchors = []
               BorderSpacing.Left = 10
               BorderSpacing.Around = 4
@@ -2201,9 +2231,9 @@ object resultForm1: TresultForm1
               ParentFont = False
             end
             object TIEditSetup1Command: TTIEdit
-              Left = 384
-              Height = 46
-              Top = 7
+              Left = 237
+              Height = 27
+              Top = 6
               Width = 667
               Anchors = []
               BorderSpacing.Left = 10
@@ -2217,8 +2247,8 @@ object resultForm1: TresultForm1
           object FlowPanel17: TFlowPanel
             Left = 1
             Height = 70
-            Top = 658
-            Width = 1507
+            Top = 494
+            Width = 1078
             Align = alBottom
             ControlList = <            
               item
@@ -2231,11 +2261,11 @@ object resultForm1: TresultForm1
             ParentFont = False
             TabOrder = 7
             object BtSetup1NextStep: TBitBtn
-              Left = 1309
+              Left = 920
               Height = 66
               Hint = 'Go to the next Step'
-              Top = 16
-              Width = 182
+              Top = 11
+              Width = 147
               Align = alRight
               Anchors = [akRight]
               AutoSize = True
@@ -2384,8 +2414,8 @@ object resultForm1: TresultForm1
           object FlowPanelSetup35: TFlowPanel
             Left = 1
             Height = 41
-            Top = 447
-            Width = 1507
+            Top = 296
+            Width = 1078
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -2406,10 +2436,10 @@ object resultForm1: TresultForm1
             ParentFont = False
             TabOrder = 8
             object Label80: TLabel
-              Left = 25
-              Height = 34
-              Top = 10
-              Width = 366
+              Left = 18
+              Height = 21
+              Top = 8
+              Width = 223
               Anchors = []
               BorderSpacing.Left = 10
               BorderSpacing.Around = 4
@@ -2419,9 +2449,9 @@ object resultForm1: TresultForm1
               ParentFont = False
             end
             object TIEditSetup1UnCommand: TTIEdit
-              Left = 415
-              Height = 46
-              Top = 7
+              Left = 257
+              Height = 27
+              Top = 6
               Width = 667
               Anchors = []
               BorderSpacing.Left = 10
@@ -2435,8 +2465,8 @@ object resultForm1: TresultForm1
           object FlowPanelSetup36: TFlowPanel
             Left = 1
             Height = 41
-            Top = 509
-            Width = 1507
+            Top = 337
+            Width = 1078
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -2457,10 +2487,10 @@ object resultForm1: TresultForm1
             ParentFont = False
             TabOrder = 9
             object Label81: TLabel
-              Left = 25
-              Height = 34
-              Top = 10
-              Width = 206
+              Left = 18
+              Height = 21
+              Top = 8
+              Width = 126
               Anchors = []
               BorderSpacing.Left = 10
               BorderSpacing.Around = 4
@@ -2470,9 +2500,9 @@ object resultForm1: TresultForm1
               ParentFont = False
             end
             object TIEditSetup1UnProgram: TTIEdit
-              Left = 255
-              Height = 46
-              Top = 7
+              Left = 160
+              Height = 27
+              Top = 6
               Width = 267
               Anchors = []
               BorderSpacing.Left = 10
@@ -2487,14 +2517,14 @@ object resultForm1: TresultForm1
       end
       object TabSheetSetup2: TTabSheet
         Caption = 'Setup2'
-        ClientHeight = 564
-        ClientWidth = 1509
+        ClientHeight = 565
+        ClientWidth = 1080
         ParentFont = False
         object FlowPanel2: TFlowPanel
           Left = 0
           Height = 49
           Top = 0
-          Width = 1509
+          Width = 1080
           Align = alTop
           AutoWrap = False
           BorderWidth = 3
@@ -2524,10 +2554,10 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 0
           object Label68: TLabel
-            Left = 25
-            Height = 34
-            Top = 10
-            Width = 239
+            Left = 18
+            Height = 21
+            Top = 8
+            Width = 142
             Anchors = []
             BorderSpacing.Left = 10
             BorderSpacing.Around = 4
@@ -2537,10 +2567,10 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object Label69: TLabel
-            Left = 477
-            Height = 34
-            Top = 10
-            Width = 213
+            Left = 302
+            Height = 21
+            Top = 8
+            Width = 128
             Anchors = []
             BorderSpacing.Left = 20
             BorderSpacing.Around = 4
@@ -2550,9 +2580,9 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIComboBoxInstaller2: TTIComboBox
-            Left = 288
+            Left = 176
             Height = 23
-            Top = 7
+            Top = 6
             Width = 100
             Anchors = []
             BorderSpacing.Left = 10
@@ -2564,9 +2594,9 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object TIComboBoxArch2: TTIComboBox
-            Left = 714
+            Left = 446
             Height = 23
-            Top = 7
+            Top = 6
             Width = 100
             Anchors = []
             BorderSpacing.Left = 10
@@ -2581,8 +2611,8 @@ object resultForm1: TresultForm1
         object FlowPanelMST1: TFlowPanel
           Left = 0
           Height = 41
-          Top = 136
-          Width = 1509
+          Top = 90
+          Width = 1080
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -2614,10 +2644,10 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 1
           object Label70: TLabel
-            Left = 25
-            Height = 34
-            Top = 10
-            Width = 98
+            Left = 18
+            Height = 21
+            Top = 8
+            Width = 63
             Anchors = []
             BorderSpacing.Left = 10
             BorderSpacing.Around = 4
@@ -2627,10 +2657,10 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object CheckBoxUseMst1: TCheckBox
-            Left = 1573
-            Height = 30
-            Top = 8
-            Width = 138
+            Left = 1062
+            Height = 19
+            Top = 7
+            Width = 86
             Anchors = []
             BorderSpacing.Left = 30
             BorderSpacing.Around = 3
@@ -2639,10 +2669,10 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object BitBtnOpenMst2: TBitBtn
-            Left = 1354
-            Height = 48
+            Left = 902
+            Height = 30
             Top = 4
-            Width = 170
+            Width = 127
             Anchors = []
             AutoSize = True
             BorderSpacing.Left = 3
@@ -2688,9 +2718,9 @@ object resultForm1: TresultForm1
             TabOrder = 1
           end
           object TIEditMstFile2: TTIEdit
-            Left = 147
-            Height = 46
-            Top = 7
+            Left = 97
+            Height = 27
+            Top = 6
             Width = 800
             Anchors = []
             BorderSpacing.Left = 10
@@ -2704,8 +2734,8 @@ object resultForm1: TresultForm1
         object FlowPanelMsiId1: TFlowPanel
           Left = 0
           Height = 41
-          Top = 198
-          Width = 1509
+          Top = 131
+          Width = 1080
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -2727,10 +2757,10 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 2
           object Label59: TLabel
-            Left = 25
-            Height = 34
-            Top = 10
-            Width = 63
+            Left = 18
+            Height = 21
+            Top = 8
+            Width = 38
             Anchors = []
             BorderSpacing.Left = 10
             BorderSpacing.Around = 4
@@ -2740,9 +2770,9 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIEditMsiId2: TTIEdit
-            Left = 112
-            Height = 46
-            Top = 7
+            Left = 72
+            Height = 27
+            Top = 6
             Width = 400
             Anchors = []
             BorderSpacing.Left = 10
@@ -2756,8 +2786,8 @@ object resultForm1: TresultForm1
         object FlowPanel11: TFlowPanel
           Left = 0
           Height = 41
-          Top = 260
-          Width = 1509
+          Top = 172
+          Width = 1080
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -2778,10 +2808,10 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 3
           object Label71: TLabel
-            Left = 25
-            Height = 34
-            Top = 10
-            Width = 193
+            Left = 18
+            Height = 21
+            Top = 8
+            Width = 118
             Anchors = []
             BorderSpacing.Left = 10
             BorderSpacing.Around = 4
@@ -2791,9 +2821,9 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIEditProdVersion2: TTIEdit
-            Left = 242
-            Height = 46
-            Top = 7
+            Left = 152
+            Height = 27
+            Top = 6
             Width = 200
             Anchors = []
             BorderSpacing.Left = 10
@@ -2807,8 +2837,8 @@ object resultForm1: TresultForm1
         object FlowPanel12: TFlowPanel
           Left = 0
           Height = 41
-          Top = 322
-          Width = 1509
+          Top = 213
+          Width = 1080
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -2849,10 +2879,10 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 4
           object Label72: TLabel
-            Left = 362
-            Height = 34
-            Top = 10
-            Width = 177
+            Left = 232
+            Height = 21
+            Top = 8
+            Width = 108
             Anchors = []
             BorderSpacing.Left = 30
             BorderSpacing.Around = 4
@@ -2862,10 +2892,10 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object Label73: TLabel
-            Left = 677
-            Height = 34
-            Top = 10
-            Width = 103
+            Left = 432
+            Height = 21
+            Top = 8
+            Width = 62
             Anchors = []
             BorderSpacing.Left = 30
             BorderSpacing.Around = 4
@@ -2875,10 +2905,10 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object Label74: TLabel
-            Left = 25
-            Height = 34
-            Top = 10
-            Width = 199
+            Left = 18
+            Height = 21
+            Top = 8
+            Width = 122
             Anchors = []
             BorderSpacing.Left = 10
             BorderSpacing.Around = 4
@@ -2888,9 +2918,9 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIEditSetupFileSizeMB2: TTIEdit
-            Left = 248
-            Height = 46
-            Top = 7
+            Left = 156
+            Height = 27
+            Top = 6
             Width = 40
             Anchors = []
             BorderSpacing.Left = 10
@@ -2901,9 +2931,9 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object TIEditRequiredSizeMB2: TTIEdit
-            Left = 563
-            Height = 46
-            Top = 7
+            Left = 356
+            Height = 27
+            Top = 6
             Width = 40
             Anchors = []
             BorderSpacing.Left = 10
@@ -2914,9 +2944,9 @@ object resultForm1: TresultForm1
             TabOrder = 1
           end
           object TIEditInstallDir2: TTIEdit
-            Left = 804
-            Height = 46
-            Top = 7
+            Left = 510
+            Height = 27
+            Top = 6
             Width = 400
             Anchors = []
             BorderSpacing.Left = 10
@@ -2930,8 +2960,8 @@ object resultForm1: TresultForm1
         object FlowPanelSetup33: TFlowPanel
           Left = 0
           Height = 41
-          Top = 74
-          Width = 1509
+          Top = 49
+          Width = 1080
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -2957,10 +2987,10 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 5
           object Label77: TLabel
-            Left = 25
-            Height = 34
-            Top = 10
-            Width = 110
+            Left = 18
+            Height = 21
+            Top = 8
+            Width = 68
             Anchors = []
             BorderSpacing.Left = 10
             BorderSpacing.Around = 4
@@ -2970,9 +3000,9 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIEditSetupfile2: TTIEdit
-            Left = 159
-            Height = 46
-            Top = 7
+            Left = 102
+            Height = 27
+            Top = 6
             Width = 800
             Anchors = []
             BorderSpacing.Left = 10
@@ -2983,10 +3013,10 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object BitBtnOpenFile1: TBitBtn
-            Left = 1366
-            Height = 48
+            Left = 907
+            Height = 30
             Top = 4
-            Width = 183
+            Width = 133
             Anchors = []
             AutoSize = True
             BorderSpacing.Left = 3
@@ -3035,8 +3065,8 @@ object resultForm1: TresultForm1
         object FlowPanelSetup37: TFlowPanel
           Left = 0
           Height = 41
-          Top = 384
-          Width = 1509
+          Top = 254
+          Width = 1080
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -3057,10 +3087,10 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 6
           object Label82: TLabel
-            Left = 25
-            Height = 34
-            Top = 10
-            Width = 335
+            Left = 18
+            Height = 21
+            Top = 8
+            Width = 203
             Anchors = []
             BorderSpacing.Left = 10
             BorderSpacing.Around = 4
@@ -3070,9 +3100,9 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIEditSetup2Command: TTIEdit
-            Left = 384
-            Height = 46
-            Top = 7
+            Left = 237
+            Height = 27
+            Top = 6
             Width = 667
             Anchors = []
             BorderSpacing.Left = 10
@@ -3086,8 +3116,8 @@ object resultForm1: TresultForm1
         object FlowPanelSetup38: TFlowPanel
           Left = 0
           Height = 41
-          Top = 446
-          Width = 1509
+          Top = 295
+          Width = 1080
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -3108,10 +3138,10 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 7
           object Label83: TLabel
-            Left = 25
-            Height = 34
-            Top = 10
-            Width = 366
+            Left = 18
+            Height = 21
+            Top = 8
+            Width = 223
             Anchors = []
             BorderSpacing.Left = 10
             BorderSpacing.Around = 4
@@ -3121,9 +3151,9 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIEditSetup2UnCommand: TTIEdit
-            Left = 415
-            Height = 46
-            Top = 7
+            Left = 257
+            Height = 27
+            Top = 6
             Width = 667
             Anchors = []
             BorderSpacing.Left = 10
@@ -3137,8 +3167,8 @@ object resultForm1: TresultForm1
         object FlowPanelSetup39: TFlowPanel
           Left = 0
           Height = 41
-          Top = 508
-          Width = 1509
+          Top = 336
+          Width = 1080
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -3159,10 +3189,10 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 8
           object Label84: TLabel
-            Left = 25
-            Height = 34
-            Top = 10
-            Width = 206
+            Left = 18
+            Height = 21
+            Top = 8
+            Width = 126
             Anchors = []
             BorderSpacing.Left = 10
             BorderSpacing.Around = 4
@@ -3172,9 +3202,9 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIEditSetup2UnProgram: TTIEdit
-            Left = 255
-            Height = 46
-            Top = 7
+            Left = 160
+            Height = 27
+            Top = 6
             Width = 267
             Anchors = []
             BorderSpacing.Left = 10
@@ -3188,8 +3218,8 @@ object resultForm1: TresultForm1
         object FlowPanel13: TFlowPanel
           Left = 0
           Height = 63
-          Top = 744
-          Width = 1509
+          Top = 502
+          Width = 1080
           Align = alBottom
           ControlList = <          
             item
@@ -3202,11 +3232,11 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 9
           object BtSetup2NextStep: TBitBtn
-            Left = 1316
-            Height = 66
+            Left = 925
+            Height = 52
             Hint = 'Go to the next Step'
-            Top = 11
-            Width = 182
+            Top = 8
+            Width = 147
             Anchors = []
             AutoSize = True
             BorderSpacing.Around = 7
@@ -3353,15 +3383,15 @@ object resultForm1: TresultForm1
         end
       end
       object TabSheetProduct: TTabSheet
-        Caption = 'Product'
-        ClientHeight = 446
-        ClientWidth = 1004
+        Caption = 'Product1'
+        ClientHeight = 440
+        ClientWidth = 1080
         ParentFont = False
         object FlowPanel6: TFlowPanel
           Left = 0
           Height = 41
           Top = 41
-          Width = 1004
+          Width = 1080
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -3464,7 +3494,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 0
-          Width = 1004
+          Width = 1080
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -3547,226 +3577,12 @@ object resultForm1: TresultForm1
             TabOrder = 1
           end
         end
-        object FlowPanel9: TFlowPanel
-          Left = 0
-          Height = 78
-          Top = 82
-          Width = 1004
-          Align = alTop
-          Alignment = taLeftJustify
-          AutoWrap = False
-          BorderWidth = 3
-          ControlList = <          
-            item
-              Control = Label65
-              WrapAfter = waAuto
-              Index = 0
-            end          
-            item
-              Control = TIMemoAdvice
-              WrapAfter = waAuto
-              Index = 1
-            end>
-          FlowLayout = tlTop
-          FlowStyle = fsLeftRightTopBottom
-          ParentFont = False
-          TabOrder = 2
-          object Label65: TLabel
-            Left = 18
-            Height = 21
-            Top = 8
-            Width = 46
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 4
-            Caption = 'Advice'
-            Font.Height = -16
-            ParentColor = False
-            ParentFont = False
-          end
-          object TIMemoAdvice: TTIMemo
-            Left = 82
-            Height = 52
-            Top = 8
-            Width = 902
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 4
-            ParentFont = False
-            ScrollBars = ssAutoVertical
-          end
-        end
-        object FlowPanel8: TFlowPanel
-          Left = 0
-          Height = 70
-          Top = 160
-          Width = 1004
-          Align = alTop
-          Alignment = taLeftJustify
-          AutoWrap = False
-          BorderWidth = 3
-          ControlList = <          
-            item
-              Control = Label57
-              WrapAfter = waAuto
-              Index = 0
-            end          
-            item
-              Control = TIMemoDesc
-              WrapAfter = waAuto
-              Index = 1
-            end>
-          FlowLayout = tlTop
-          FlowStyle = fsLeftRightTopBottom
-          ParentFont = False
-          TabOrder = 3
-          object Label57: TLabel
-            Left = 18
-            Height = 21
-            Top = 8
-            Width = 79
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 4
-            Caption = 'Description'
-            Font.Height = -16
-            ParentColor = False
-            ParentFont = False
-          end
-          object TIMemoDesc: TTIMemo
-            Left = 115
-            Height = 52
-            Top = 8
-            Width = 902
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 4
-            ParentFont = False
-            ScrollBars = ssAutoVertical
-          end
-        end
-        object FlowPanel4: TFlowPanel
-          Left = 0
-          Height = 119
-          Top = 230
-          Width = 1004
-          Align = alTop
-          ControlList = <          
-            item
-              Control = Label75
-              WrapAfter = waAuto
-              Index = 0
-            end          
-            item
-              Control = BitBtnAddDep
-              WrapAfter = waAuto
-              Index = 1
-            end          
-            item
-              Control = BitBtnDelDep
-              WrapAfter = waAuto
-              Index = 2
-            end          
-            item
-              Control = StringGridDep
-              WrapAfter = waAuto
-              Index = 3
-            end>
-          FlowLayout = tlTop
-          FlowStyle = fsLeftRightTopBottom
-          ParentFont = False
-          TabOrder = 4
-          object Label75: TLabel
-            Left = 15
-            Height = 21
-            Top = 5
-            Width = 97
-            Anchors = []
-            BorderSpacing.Left = 10
-            BorderSpacing.Around = 4
-            Caption = 'Dependencies'
-            Font.Height = -16
-            ParentColor = False
-            ParentFont = False
-          end
-          object BitBtnAddDep: TBitBtn
-            Left = 116
-            Height = 39
-            Top = 1
-            Width = 115
-            Anchors = []
-            AutoSize = True
-            BorderSpacing.InnerBorder = 7
-            Caption = 'BitBtnAddDep'
-            OnClick = BitBtnAddDepClick
-            ParentFont = False
-            TabOrder = 0
-          end
-          object BitBtnDelDep: TBitBtn
-            Left = 231
-            Height = 39
-            Top = 1
-            Width = 110
-            Anchors = []
-            AutoSize = True
-            BorderSpacing.InnerBorder = 7
-            Caption = 'BitBtnDelDep'
-            OnClick = BitBtnDelDepClick
-            ParentFont = False
-            TabOrder = 1
-          end
-          object StringGridDep: TStringGrid
-            Left = 341
-            Height = 119
-            Top = 1
-            Width = 611
-            Anchors = []
-            Columns = <            
-              item
-                MaxSize = 400
-                Title.MultiLine = True
-                Title.Caption = 'Required ProductId'
-                Width = 116
-              end            
-              item
-                Title.Caption = 'Required State'
-                Width = 139
-              end            
-              item
-                Title.Caption = 'Required Action'
-                Width = 120
-              end            
-              item
-                Title.Caption = 'Required Mode'
-                Width = 119
-              end>
-            Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowSelect, goSmoothScroll]
-            RowCount = 1
-            TabOrder = 2
-            ColWidths = (
-              69
-              116
-              139
-              120
-              119
-            )
-            Cells = (
-              2
-              0
-              0
-              'Number'
-              1
-              0
-              'required State'
-            )
-          end
-        end
         object FlowPanel18: TFlowPanel
           Left = 0
-          Height = 69
-          Top = 377
-          Width = 1004
-          Align = alBottom
+          Height = 93
+          Top = 328
+          Width = 1080
+          Align = alTop
           ControlList = <          
             item
               Control = BtProductNextStep
@@ -3776,10 +3592,10 @@ object resultForm1: TresultForm1
           FlowLayout = tlTop
           FlowStyle = fsRightLeftTopBottom
           ParentFont = False
-          TabOrder = 5
+          TabOrder = 2
           OnClick = FlowPanel18Click
           object BtProductNextStep: TBitBtn
-            Left = 811
+            Left = 887
             Height = 66
             Hint = 'Go to the next Step'
             Top = 11
@@ -3929,65 +3745,791 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
         end
+        object Splitter3: TSplitter
+          Cursor = crVSplit
+          Left = 0
+          Height = 10
+          Top = 200
+          Width = 1080
+          Align = alTop
+          Constraints.MinHeight = 10
+          ResizeAnchor = akTop
+        end
+        object Panel6: TPanel
+          Left = 0
+          Height = 118
+          Top = 82
+          Width = 1080
+          Align = alTop
+          ClientHeight = 118
+          ClientWidth = 1080
+          TabOrder = 4
+          object Panel7: TPanel
+            Left = 1
+            Height = 116
+            Top = 1
+            Width = 127
+            Align = alLeft
+            BevelOuter = bvNone
+            ClientHeight = 116
+            ClientWidth = 127
+            TabOrder = 0
+            object Label57: TLabel
+              Left = 14
+              Height = 108
+              Top = 4
+              Width = 109
+              Align = alClient
+              Anchors = []
+              BorderSpacing.Left = 10
+              BorderSpacing.Around = 4
+              Caption = 'Description'
+              Font.Height = -16
+              ParentColor = False
+              ParentFont = False
+            end
+          end
+          object TIMemoDesc: TTIMemo
+            Left = 142
+            Height = 108
+            Top = 5
+            Width = 933
+            Align = alClient
+            Anchors = [akLeft]
+            BorderSpacing.Left = 10
+            BorderSpacing.Around = 4
+            ParentFont = False
+            ScrollBars = ssAutoVertical
+          end
+        end
+        object Panel8: TPanel
+          Left = 0
+          Height = 118
+          Top = 210
+          Width = 1080
+          Align = alTop
+          ClientHeight = 118
+          ClientWidth = 1080
+          TabOrder = 5
+          object Panel9: TPanel
+            Left = 1
+            Height = 116
+            Top = 1
+            Width = 127
+            Align = alLeft
+            BevelOuter = bvNone
+            ClientHeight = 116
+            ClientWidth = 127
+            TabOrder = 0
+            object Label65: TLabel
+              Left = 14
+              Height = 108
+              Top = 4
+              Width = 109
+              Align = alClient
+              Anchors = []
+              BorderSpacing.Left = 10
+              BorderSpacing.Around = 4
+              Caption = 'Advice'
+              Font.Height = -16
+              ParentColor = False
+              ParentFont = False
+            end
+          end
+          object TIMemoAdvice: TTIMemo
+            Left = 142
+            Height = 108
+            Top = 5
+            Width = 933
+            Align = alClient
+            Anchors = [akLeft]
+            BorderSpacing.Left = 10
+            BorderSpacing.Around = 4
+            ParentFont = False
+            ScrollBars = ssAutoVertical
+          end
+        end
       end
-      object TabSheetCreate: TTabSheet
-        Caption = 'Create'
-        ClientHeight = 564
-        ClientWidth = 1509
-        OnShow = TabSheetCreateShow
-        ParentFont = False
-        object PanelProcess: TPanel
-          Left = 59
-          Height = 64
-          Top = 267
-          Width = 520
-          BevelOuter = bvNone
-          ClientHeight = 64
-          ClientWidth = 520
-          Color = clGradientActiveCaption
-          ParentColor = False
-          ParentFont = False
+      object TabSheetProduct2: TTabSheet
+        Caption = 'Product2'
+        ClientHeight = 440
+        ClientWidth = 1080
+        object FlowPanel21: TFlowPanel
+          Left = 0
+          Height = 58
+          Top = 0
+          Width = 1080
+          Align = alTop
+          ControlList = <          
+            item
+              Control = Label76
+              WrapAfter = waAuto
+              Index = 0
+            end          
+            item
+              Control = TISpinEditPrio
+              WrapAfter = waAuto
+              Index = 1
+            end          
+            item
+              Control = TITrackBarPrio
+              WrapAfter = waAuto
+              Index = 2
+            end>
+          FlowLayout = tlTop
+          FlowStyle = fsLeftRightTopBottom
           TabOrder = 0
-          Visible = False
-          object processing: TLabel
-            Left = 24
-            Height = 34
-            Top = 8
-            Width = 165
-            Caption = 'processing...'
-            Font.CharSet = ANSI_CHARSET
-            Font.Color = clBlack
-            Font.Height = -19
-            Font.Name = 'Arial'
-            Font.Pitch = fpVariable
-            Font.Quality = fqDraft
+          object Label76: TLabel
+            Left = 15
+            Height = 21
+            Top = 5
+            Width = 51
+            Anchors = []
+            BorderSpacing.Left = 10
+            BorderSpacing.Around = 4
+            Caption = 'Priority'
+            Font.Height = -16
             ParentColor = False
             ParentFont = False
           end
-          object processStatement: TLabel
-            Left = 24
-            Height = 28
-            Top = 40
-            Width = 104
-            Caption = 'please wait'
-            ParentColor = False
-            ParentFont = False
+          object TITrackBarPrio: TTITrackBar
+            Left = 135
+            Height = 50
+            Top = 6
+            Width = 649
+            Max = 100
+            Min = -100
+            OnChange = TITrackBarPrioChange
+            PageSize = 10
+            Position = 0
+            Align = alClient
+            Anchors = []
+            BorderSpacing.Around = 5
+            Constraints.MinWidth = 300
+            TabOrder = 0
           end
-          object ProgressBar1: TProgressBar
-            Left = 190
-            Height = 20
+          object TISpinEditPrio: TTISpinEdit
+            Left = 75
+            Height = 23
+            Top = 6
+            Width = 50
+            Anchors = []
+            BorderSpacing.Around = 5
+            MinValue = -100
+            OnChange = TISpinEditPrioChange
+            TabOrder = 1
+          end
+        end
+        object FlowPanel23: TFlowPanel
+          Left = 0
+          Height = 93
+          Top = 336
+          Width = 1080
+          Align = alTop
+          ControlList = <          
+            item
+              Control = BtProductNextStep1
+              WrapAfter = waAuto
+              Index = 0
+            end>
+          FlowLayout = tlTop
+          FlowStyle = fsRightLeftTopBottom
+          ParentFont = False
+          TabOrder = 1
+          OnClick = FlowPanel18Click
+          object BtProductNextStep1: TBitBtn
+            Left = 887
+            Height = 66
+            Hint = 'Go to the next Step'
             Top = 11
-            Width = 300
+            Width = 182
+            Align = alCustom
+            Anchors = [akRight, akBottom]
+            AutoSize = True
+            BorderSpacing.Around = 10
+            BorderSpacing.InnerBorder = 5
+            Caption = 'Next Step'
+            Font.Height = -17
+            Glyph.Data = {
+              36100000424D3610000000000000360000002800000020000000200000000100
+              2000000000000010000064000000640000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              000000000000000000000000007E000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF0000007B0000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF0000007800000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF00000076000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF000000FF000000730000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
+              0070000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
+              00FF0000006E0000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF0000006B00000000000000000000000000000000000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF00000069000000000000000000000000000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FE000000670000000000000000000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FE0000006400000000000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FE00000062000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF0000009A000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF0000009A00000001000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000970000000100000000000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF000000FF00000095000000010000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000FF0000009200000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
+              00FF000000900000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF000000FF000000FF0000
+              008E000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF000000FF0000008B0000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF000000FF00000088000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000FF0000008600000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000000000000FF000000830000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000081000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000
+            }
+            Layout = blGlyphRight
+            OnClick = BtProductNextStepClick
             ParentFont = False
-            Style = pbstMarquee
             TabOrder = 0
           end
         end
+        object PairSplitter1: TPairSplitter
+          Cursor = crVSplit
+          Left = 0
+          Height = 278
+          Top = 58
+          Width = 1080
+          Align = alTop
+          Position = 140
+          SplitterType = pstVertical
+          object PairSplitterSide1: TPairSplitterSide
+            Cursor = crArrow
+            Left = 0
+            Height = 140
+            Top = 0
+            Width = 1080
+            ClientWidth = 1080
+            ClientHeight = 140
+            object Panel4: TPanel
+              Left = 0
+              Height = 140
+              Top = 0
+              Width = 1080
+              Align = alClient
+              Caption = 'Panel4'
+              ClientHeight = 140
+              ClientWidth = 1080
+              TabOrder = 0
+              object StringGridDep: TStringGrid
+                Left = 165
+                Height = 128
+                Top = 6
+                Width = 632
+                Align = alLeft
+                BorderSpacing.Around = 5
+                Columns = <                
+                  item
+                    MaxSize = 400
+                    Title.MultiLine = True
+                    Title.Caption = 'Required ProductId'
+                    Width = 116
+                  end                
+                  item
+                    Title.Caption = 'Required State'
+                    Width = 139
+                  end                
+                  item
+                    Title.Caption = 'Required Action'
+                    Width = 120
+                  end                
+                  item
+                    Title.Caption = 'Required Mode'
+                    Width = 119
+                  end>
+                Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowSelect, goSmoothScroll]
+                RowCount = 1
+                TabOrder = 0
+                ColWidths = (
+                  69
+                  116
+                  139
+                  120
+                  119
+                )
+                Cells = (
+                  2
+                  0
+                  0
+                  'Number'
+                  1
+                  0
+                  'required State'
+                )
+              end
+              object Panel5: TPanel
+                Left = 1
+                Height = 138
+                Top = 1
+                Width = 159
+                Align = alLeft
+                ClientHeight = 138
+                ClientWidth = 159
+                TabOrder = 1
+                object Label75: TLabel
+                  Left = 15
+                  Height = 128
+                  Top = 5
+                  Width = 139
+                  Align = alClient
+                  Anchors = [akLeft, akBottom]
+                  BorderSpacing.Left = 10
+                  BorderSpacing.Around = 4
+                  Caption = 'Dependencies'
+                  Font.Height = -16
+                  ParentColor = False
+                  ParentFont = False
+                end
+              end
+              object FlowPanel20: TFlowPanel
+                Left = 802
+                Height = 138
+                Top = 1
+                Width = 170
+                Align = alLeft
+                Anchors = []
+                ControlList = <                
+                  item
+                    Control = BitBtnAddDep
+                    WrapAfter = waAuto
+                    Index = 0
+                  end                
+                  item
+                    Control = BitBtnDelDep
+                    WrapAfter = waAuto
+                    Index = 1
+                  end                
+                  item
+                    Control = BitBtnEditDep
+                    WrapAfter = waAuto
+                    Index = 2
+                  end>
+                FlowLayout = tlTop
+                FlowStyle = fsTopBottomLeftRight
+                TabOrder = 2
+                object BitBtnAddDep: TBitBtn
+                  Left = 1
+                  Height = 39
+                  Top = 1
+                  Width = 163
+                  Align = alTop
+                  Anchors = [akTop, akLeft, akRight, akBottom]
+                  BorderSpacing.InnerBorder = 7
+                  Caption = 'Add Dependency'
+                  Glyph.Data = {
+                    36040000424D3604000000000000360000002800000010000000100000000100
+                    2000000000000004000064000000640000000000000000000000000000000000
+                    000000000000000000000000000000000000000000FF000000FF000000FF0000
+                    00FF000000000000000000000000000000000000000000000000000000000000
+                    000000000000000000000000000000000000000000FF000000FF000000FF0000
+                    00FF000000000000000000000000000000000000000000000000000000000000
+                    000000000000000000000000000000000000000000FF000000FF000000FF0000
+                    00FF000000000000000000000000000000000000000000000000000000000000
+                    000000000000000000000000000000000000000000FF000000FF000000FF0000
+                    00FF000000000000000000000000000000000000000000000000000000000000
+                    000000000000000000000000000000000000000000FF000000FF000000FF0000
+                    00FF000000000000000000000000000000000000000000000000000000000000
+                    000000000000000000000000000000000000000000FF000000FF000000FF0000
+                    00FF000000000000000000000000000000000000000000000000000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000000000
+                    000000000000000000000000000000000000000000FF000000FF000000FF0000
+                    00FF000000000000000000000000000000000000000000000000000000000000
+                    000000000000000000000000000000000000000000FF000000FF000000FF0000
+                    00FF000000000000000000000000000000000000000000000000000000000000
+                    000000000000000000000000000000000000000000FF000000FF000000FF0000
+                    00FF000000000000000000000000000000000000000000000000000000000000
+                    000000000000000000000000000000000000000000FF000000FF000000FF0000
+                    00FF000000000000000000000000000000000000000000000000000000000000
+                    000000000000000000000000000000000000000000FF000000FF000000FF0000
+                    00FF000000000000000000000000000000000000000000000000000000000000
+                    000000000000000000000000000000000000000000FF000000FF000000FF0000
+                    00FF000000000000000000000000000000000000000000000000
+                  }
+                  OnClick = BitBtnAddDepClick
+                  ParentFont = False
+                  TabOrder = 0
+                end
+                object BitBtnDelDep: TBitBtn
+                  Left = 1
+                  Height = 39
+                  Top = 41
+                  Width = 163
+                  Align = alTop
+                  Anchors = []
+                  BorderSpacing.InnerBorder = 7
+                  Caption = 'Delete Dependency'
+                  Glyph.Data = {
+                    36040000424D3604000000000000360000002800000010000000100000000100
+                    2000000000000004000064000000640000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000
+                  }
+                  OnClick = BitBtnDelDepClick
+                  ParentFont = False
+                  TabOrder = 1
+                end
+                object BitBtnEditDep: TBitBtn
+                  Left = 1
+                  Height = 46
+                  Top = 81
+                  Width = 163
+                  Align = alTop
+                  Anchors = []
+                  BorderSpacing.InnerBorder = 7
+                  Caption = 'Edit Dependency'
+                  Glyph.Data = {
+                    36040000424D3604000000000000360000002800000010000000100000000100
+                    2000000000000004000064000000640000000000000000000000000000FF0000
+                    00FF000000FF000000FF00000080000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000FF0000
+                    00FF000000FF000000FF000000FF000000800000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000FF0000
+                    00FF000000FF000000FF000000FF000000FF0000008000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000080000000000000
+                    0000000000000000000000000000000000000000000000000000000000800000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000800000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0080000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    0080000000000000000000000000000000000000000000000000000000000000
+                    000000000080000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000800000000000000000000000000000000000000000000000000000
+                    00000000000000000080000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF0000008000000000000000000000000000000000000000000000
+                    0000000000000000000000000080000000FF000000FF000000FF000000FF0000
+                    00FF000000FF0000008000000000000000000000000000000000000000000000
+                    000000000000000000000000000000000080000000FF000000FF000000FF0000
+                    00FF000000800000000000000000000000000000000000000000000000000000
+                    00000000000000000000000000000000000000000080000000FF000000FF0000
+                    0080000000000000000000000000000000800000008000000000000000000000
+                    0000000000000000000000000000000000000000000000000080000000800000
+                    0000000000000000000000000080000000FF000000FF00000080000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00000000000000000080000000FF000000FF000000FF00000080000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    000000000080000000FF000000FF000000FF0000008000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    000000000080000000FF000000FF000000800000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000008000000080000000000000000000000000
+                  }
+                  OnClick = BitBtnEditDepClick
+                  ParentFont = False
+                  TabOrder = 2
+                end
+              end
+            end
+          end
+          object PairSplitterSide2: TPairSplitterSide
+            Cursor = crArrow
+            Left = 0
+            Height = 133
+            Top = 145
+            Width = 1080
+            ClientWidth = 1080
+            ClientHeight = 133
+            object Panel10: TPanel
+              Left = 0
+              Height = 133
+              Top = 0
+              Width = 1080
+              Align = alClient
+              Caption = 'Panel10'
+              ClientHeight = 133
+              ClientWidth = 1080
+              TabOrder = 0
+              object StringGridDep1: TStringGrid
+                Left = 165
+                Height = 121
+                Top = 6
+                Width = 632
+                Align = alLeft
+                BorderSpacing.Around = 5
+                Columns = <                
+                  item
+                    MaxSize = 400
+                    Title.MultiLine = True
+                    Title.Caption = 'Required ProductId'
+                    Width = 116
+                  end                
+                  item
+                    Title.Caption = 'Required State'
+                    Width = 139
+                  end                
+                  item
+                    Title.Caption = 'Required Action'
+                    Width = 120
+                  end                
+                  item
+                    Title.Caption = 'Required Mode'
+                    Width = 119
+                  end>
+                Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowSelect, goSmoothScroll]
+                RowCount = 1
+                TabOrder = 0
+                ColWidths = (
+                  69
+                  116
+                  139
+                  120
+                  119
+                )
+                Cells = (
+                  2
+                  0
+                  0
+                  'Number'
+                  1
+                  0
+                  'required State'
+                )
+              end
+              object Panel11: TPanel
+                Left = 1
+                Height = 131
+                Top = 1
+                Width = 159
+                Align = alLeft
+                ClientHeight = 131
+                ClientWidth = 159
+                TabOrder = 1
+                object Label85: TLabel
+                  Left = 15
+                  Height = 121
+                  Top = 5
+                  Width = 139
+                  Align = alClient
+                  Anchors = [akLeft, akBottom]
+                  BorderSpacing.Left = 10
+                  BorderSpacing.Around = 4
+                  Caption = 'Properties'
+                  Font.Height = -16
+                  ParentColor = False
+                  ParentFont = False
+                end
+              end
+              object FlowPanel22: TFlowPanel
+                Left = 802
+                Height = 131
+                Top = 1
+                Width = 170
+                Align = alLeft
+                Anchors = []
+                ControlList = <                
+                  item
+                    Control = BitBtnAddDep1
+                    WrapAfter = waAuto
+                    Index = 0
+                  end                
+                  item
+                    Control = BitBtnDelDep2
+                    WrapAfter = waAuto
+                    Index = 1
+                  end                
+                  item
+                    Control = BitBtnDelDep3
+                    WrapAfter = waAuto
+                    Index = 2
+                  end>
+                FlowLayout = tlTop
+                FlowStyle = fsTopBottomLeftRight
+                TabOrder = 2
+                object BitBtnAddDep1: TBitBtn
+                  Left = 1
+                  Height = 39
+                  Top = 1
+                  Width = 163
+                  Align = alTop
+                  Anchors = [akTop, akLeft, akRight, akBottom]
+                  BorderSpacing.InnerBorder = 7
+                  Caption = 'BitBtnAddDep'
+                  OnClick = BitBtnAddDepClick
+                  ParentFont = False
+                  TabOrder = 0
+                end
+                object BitBtnDelDep2: TBitBtn
+                  Left = 1
+                  Height = 39
+                  Top = 41
+                  Width = 163
+                  Align = alTop
+                  Anchors = []
+                  BorderSpacing.InnerBorder = 7
+                  Caption = 'BitBtnDelDep'
+                  OnClick = BitBtnDelDepClick
+                  ParentFont = False
+                  TabOrder = 1
+                end
+                object BitBtnDelDep3: TBitBtn
+                  Left = 1
+                  Height = 39
+                  Top = 81
+                  Width = 163
+                  Align = alTop
+                  Anchors = []
+                  BorderSpacing.InnerBorder = 7
+                  Caption = 'BitBtnDelDep1'
+                  OnClick = BitBtnDelDepClick
+                  ParentFont = False
+                  TabOrder = 2
+                end
+              end
+            end
+          end
+        end
+      end
+      object TabSheetCreate: TTabSheet
+        Caption = 'Create'
+        ClientHeight = 522
+        ClientWidth = 1080
+        OnShow = TabSheetCreateShow
+        ParentFont = False
         object FlowPanel14: TFlowPanel
           Left = 0
           Height = 66
           Top = 0
-          Width = 1509
+          Width = 1080
           Align = alTop
           Caption = 'FlowPanel14'
           ControlList = <          
@@ -4009,12 +4551,12 @@ object resultForm1: TresultForm1
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
           ParentFont = False
-          TabOrder = 1
+          TabOrder = 0
           OnClick = FlowPanel14Click
           object TIEditworkbenchpath: TTIEdit
-            Left = 356
-            Height = 46
-            Top = 16
+            Left = 221
+            Height = 27
+            Top = 11
             Width = 600
             Anchors = []
             BorderSpacing.Left = 10
@@ -4025,10 +4567,10 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object Label78: TLabel
-            Left = 31
-            Height = 34
-            Top = 16
-            Width = 280
+            Left = 21
+            Height = 21
+            Top = 11
+            Width = 170
             Anchors = []
             BorderSpacing.Left = 10
             BorderSpacing.Around = 10
@@ -4038,10 +4580,10 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object BitBtnWorkBenchPath: TBitBtn
-            Left = 20
-            Height = 48
-            Top = 92
-            Width = 249
+            Left = 844
+            Height = 30
+            Top = 11
+            Width = 170
             Anchors = []
             AutoSize = True
             BorderSpacing.Left = 3
@@ -4092,8 +4634,8 @@ object resultForm1: TresultForm1
         object FlowPanel15: TFlowPanel
           Left = 0
           Height = 50
-          Top = 99
-          Width = 1509
+          Top = 66
+          Width = 1080
           Align = alTop
           ControlList = <          
             item
@@ -4114,12 +4656,12 @@ object resultForm1: TresultForm1
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
           ParentFont = False
-          TabOrder = 2
+          TabOrder = 1
           object LabelWorkbenchOK: TLabel
-            Left = 31
-            Height = 34
-            Top = 16
-            Width = 422
+            Left = 21
+            Height = 21
+            Top = 11
+            Width = 256
             Anchors = []
             BorderSpacing.Left = 10
             BorderSpacing.Around = 10
@@ -4130,10 +4672,10 @@ object resultForm1: TresultForm1
             Visible = False
           end
           object LabelWorkbenchNotOK: TLabel
-            Left = 498
-            Height = 34
-            Top = 16
-            Width = 843
+            Left = 307
+            Height = 21
+            Top = 11
+            Width = 513
             Anchors = []
             BorderSpacing.Left = 10
             BorderSpacing.Around = 10
@@ -4145,10 +4687,10 @@ object resultForm1: TresultForm1
             Visible = False
           end
           object BitBtnRecheckWorkbench: TBitBtn
-            Left = 20
-            Height = 48
-            Top = 80
-            Width = 271
+            Left = 843
+            Height = 30
+            Top = 11
+            Width = 183
             Anchors = []
             AutoSize = True
             BorderSpacing.Left = 3
@@ -4199,35 +4741,39 @@ object resultForm1: TresultForm1
         object FlowPanel16: TFlowPanel
           Left = 0
           Height = 132
-          Top = 174
-          Width = 1509
+          Top = 116
+          Width = 1080
           Align = alTop
-          Caption = 'FlowPanel16'
           ControlList = <          
             item
               Control = GroupBox2
               WrapAfter = waAuto
               Index = 0
+            end          
+            item
+              Control = PanelProcess
+              WrapAfter = waAuto
+              Index = 1
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
           ParentFont = False
-          TabOrder = 3
+          TabOrder = 2
           object GroupBox2: TGroupBox
             Left = 1
             Height = 127
             Top = 1
-            Width = 608
+            Width = 463
             Anchors = []
             ClientHeight = 107
-            ClientWidth = 604
+            ClientWidth = 459
             ParentFont = False
             TabOrder = 0
             object RadioButtonCreateOnly: TRadioButton
               Left = 22
-              Height = 30
+              Height = 19
               Top = -7
-              Width = 193
+              Width = 115
               Caption = 'create opsi packet'
               Checked = True
               OnChange = RadioButtonBuildModeChange
@@ -4237,9 +4783,9 @@ object resultForm1: TresultForm1
             end
             object RadioButtonInteractive: TRadioButton
               Left = 24
-              Height = 30
+              Height = 19
               Top = 8
-              Width = 516
+              Width = 297
               Caption = 'create opsi packet and start interactive PacketBuilder'
               OnChange = RadioButtonBuildModeChange
               ParentFont = False
@@ -4247,19 +4793,19 @@ object resultForm1: TresultForm1
             end
             object RadioButtonAuto: TRadioButton
               Left = 22
-              Height = 30
+              Height = 19
               Top = 25
-              Width = 220
+              Width = 132
               Caption = 'create and auto build'
               OnChange = RadioButtonBuildModeChange
               ParentFont = False
               TabOrder = 1
             end
             object CheckBoxBuild: TCheckBox
-              Left = 125
-              Height = 30
-              Top = 48
-              Width = 70
+              Left = 22
+              Height = 19
+              Top = 64
+              Width = 47
               Caption = 'build'
               Checked = True
               Enabled = False
@@ -4268,10 +4814,10 @@ object resultForm1: TresultForm1
               TabOrder = 2
             end
             object CheckBoxInstall: TCheckBox
-              Left = 208
-              Height = 30
-              Top = 48
-              Width = 79
+              Left = 112
+              Height = 19
+              Top = 64
+              Width = 51
               Caption = 'install'
               Checked = True
               Enabled = False
@@ -4280,35 +4826,71 @@ object resultForm1: TresultForm1
               TabOrder = 3
             end
             object CheckBoxQuiet: TCheckBox
-              Left = 296
-              Height = 30
-              Top = 56
-              Width = 71
+              Left = 200
+              Height = 19
+              Top = 64
+              Width = 47
               Caption = 'quiet'
               Enabled = False
               ParentFont = False
               TabOrder = 4
             end
-            object ButtonCreatePacket: TButton
-              Left = 408
-              Height = 31
-              Hint = 'Create opsi Packet according to the form'
-              Top = 32
-              Width = 139
-              Caption = '&Create opsi Packet'
+          end
+          object PanelProcess: TPanel
+            Left = 464
+            Height = 64
+            Top = 1
+            Width = 520
+            Anchors = []
+            BevelOuter = bvNone
+            ClientHeight = 64
+            ClientWidth = 520
+            Color = clGradientActiveCaption
+            ParentColor = False
+            ParentFont = False
+            TabOrder = 1
+            Visible = False
+            object processing: TLabel
+              Left = 24
+              Height = 22
+              Top = 8
+              Width = 109
+              Caption = 'processing...'
+              Font.CharSet = ANSI_CHARSET
+              Font.Color = clBlack
+              Font.Height = -19
+              Font.Name = 'Arial'
+              Font.Pitch = fpVariable
+              Font.Quality = fqDraft
+              ParentColor = False
               ParentFont = False
-              ParentShowHint = False
-              ShowHint = True
-              TabOrder = 6
+            end
+            object processStatement: TLabel
+              Left = 24
+              Height = 15
+              Top = 40
+              Width = 58
+              Caption = 'please wait'
+              ParentColor = False
+              ParentFont = False
+            end
+            object ProgressBar1: TProgressBar
+              Left = 190
+              Height = 20
+              Top = 11
+              Width = 300
+              ParentFont = False
+              Style = pbstMarquee
+              TabOrder = 0
             end
           end
         end
         object FlowPanel19: TFlowPanel
           Left = 0
-          Height = 74
-          Top = 733
-          Width = 1509
-          Align = alBottom
+          Height = 98
+          Top = 248
+          Width = 1080
+          Align = alTop
           ControlList = <          
             item
               Control = BtCreateProduct
@@ -4318,13 +4900,13 @@ object resultForm1: TresultForm1
           FlowLayout = tlTop
           FlowStyle = fsRightLeftTopBottom
           ParentFont = False
-          TabOrder = 4
+          TabOrder = 3
           object BtCreateProduct: TBitBtn
-            Left = 1169
-            Height = 78
+            Left = 827
+            Height = 68
             Hint = 'Create a opsi Product'
-            Top = 16
-            Width = 324
+            Top = 11
+            Width = 242
             Anchors = []
             AutoSize = True
             BorderSpacing.Around = 10
@@ -4630,12 +5212,18 @@ object resultForm1: TresultForm1
         end
       end
     end
+    object Splitter2: TSplitter
+      Left = 1
+      Height = 468
+      Top = 1
+      Width = 5
+    end
   end
   object StatusBar1: TStatusBar
     Left = 0
     Height = 23
-    Top = 516
-    Width = 1014
+    Top = 510
+    Width = 1095
     Panels = <>
     ParentFont = False
   end
@@ -4643,12 +5231,12 @@ object resultForm1: TresultForm1
     DefaultExt = '.*.msi'
     Filter = 'Setup|*.exe;*.msi;*.mst|EXE|*.exe|MSI|*.msi|MST|*.mst|Any File|*.*'
     FilterIndex = 2
-    left = 248
-    top = 656
+    left = 736
+    top = 8
   end
   object MainMenu1: TMainMenu
-    left = 32
-    top = 640
+    left = 816
+    top = 5
     object MenuItemFile: TMenuItem
       Caption = '&File'
       object FileOpenSetupFile: TMenuItem

@@ -32,6 +32,7 @@ type
     procedure BitBtn1Click(Sender: TObject);
     procedure FormHide(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure RadioButtonActionChange(Sender: TObject);
   private
 
   public
@@ -50,13 +51,26 @@ implementation
 
 procedure TFNewDepDlg.FormShow(Sender: TObject);
 begin
-  // create new dependency
-  (*
-  newdependency:= TPDependency(aktProduct.dependencies.add);
-  newdependency.init;
-  TIPropertyGridNewDep.TIObject := newdependency;
-  *)
 
+end;
+
+procedure TFNewDepDlg.RadioButtonActionChange(Sender: TObject);
+begin
+  if RadioButtonAction.Checked then
+  begin
+    ComboBoxActState.Items.Clear;
+    ComboBoxActState.Items.Add('setup');
+    ComboBoxActState.Items.Add('update');
+    ComboBoxActState.Items.Add('uninstall');
+    ComboBoxActState.Items.Add('once');
+  end
+  else
+  begin
+    ComboBoxActState.Items.Clear;
+    ComboBoxActState.Items.Add('installed');
+    ComboBoxActState.Items.Add('not installed');
+    ComboBoxActState.Items.Add('none');
+  end;
 end;
 
 procedure TFNewDepDlg.FormHide(Sender: TObject);

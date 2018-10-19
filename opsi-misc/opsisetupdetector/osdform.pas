@@ -3,6 +3,8 @@ unit osdform;
 // {$mode objfpc}{$H+}
 {$MODE DELPHI}{$H+}
 
+
+
 // ToDo:
 
 // - Description auslesen
@@ -37,7 +39,7 @@ uses
   osdhelper,
   osdanalyze,
   winpeimagereader,
-  lcltranslator, EditBtn, Spin, JSONPropStorage, Grids,
+  lcltranslator, EditBtn, Spin, JSONPropStorage, Grids, PairSplitter,
   oslog,
   osdbasedata,
   osdconfigdlg,
@@ -57,12 +59,17 @@ type
 
   TResultform1 = class(TForm)
     BitBtnAddDep: TBitBtn;
+    BitBtnAddDep1: TBitBtn;
     BitBtnDelDep: TBitBtn;
+    BitBtnDelDep2: TBitBtn;
+    BitBtnDelDep3: TBitBtn;
+    BitBtnEditDep: TBitBtn;
     BitBtnWorkBenchPath: TBitBtn;
     BitBtnRecheckWorkbench: TBitBtn;
     BtAnalyzeNextStep: TBitBtn;
     BtCreateProduct: TBitBtn;
     BtProductNextStep: TBitBtn;
+    BtProductNextStep1: TBitBtn;
     BtSetup1NextStep: TBitBtn;
     BtSetup2NextStep: TBitBtn;
     BtSingleAnalyzeAndCreate: TBitBtn;
@@ -75,7 +82,6 @@ type
     BtATwonalyzeAndCreate: TBitBtn;
     BtCreateEmptyTemplate: TBitBtn;
     BtAnalyzeOnly: TBitBtn;
-    ButtonCreatePacket: TButton;
     CheckBoxBuild: TCheckBox;
     CheckBoxInstall: TCheckBox;
     CheckBoxQuiet: TCheckBox;
@@ -93,11 +99,12 @@ type
     FlowPanel18: TFlowPanel;
     FlowPanel19: TFlowPanel;
     FlowPanel2: TFlowPanel;
+    FlowPanel20: TFlowPanel;
+    FlowPanel21: TFlowPanel;
+    FlowPanel22: TFlowPanel;
+    FlowPanel23: TFlowPanel;
     FlowPanel3: TFlowPanel;
-    FlowPanel4: TFlowPanel;
     FlowPanel6: TFlowPanel;
-    FlowPanel8: TFlowPanel;
-    FlowPanel9: TFlowPanel;
     FlowPanelMsiId1: TFlowPanel;
     FlowPanelMST1: TFlowPanel;
     FlowPanelSetup32: TFlowPanel;
@@ -134,6 +141,7 @@ type
     Label73: TLabel;
     Label74: TLabel;
     Label75: TLabel;
+    Label76: TLabel;
     Label77: TLabel;
     Label50: TLabel;
     Label52: TLabel;
@@ -147,24 +155,43 @@ type
     Label82: TLabel;
     Label83: TLabel;
     Label84: TLabel;
+    Label85: TLabel;
     LabelWorkbenchOK: TLabel;
     LabelWorkbenchNotOK: TLabel;
     MemoDefault: TMemo;
     MenuItemConfig: TMenuItem;
     OpenDialogSetupfile: TOpenDialog;
-    PanelProcess: TPanel;
+    PairSplitter1: TPairSplitter;
+    PairSplitterSide1: TPairSplitterSide;
+    PairSplitterSide2: TPairSplitterSide;
+    Panel10: TPanel;
+    Panel11: TPanel;
+    Panel12: TPanel;
+    Panel13: TPanel;
+    Panel4: TPanel;
+    Panel5: TPanel;
+    Panel6: TPanel;
+    Panel7: TPanel;
+    Panel8: TPanel;
+    Panel9: TPanel;
     PanelDefault: TPanel;
+    PanelProcess: TPanel;
     processing: TLabel;
     processStatement: TLabel;
     ProgressBar1: TProgressBar;
+    ProgressBarAnalyze: TProgressBar;
     RadioButtonAuto: TRadioButton;
     RadioButtonCreateOnly: TRadioButton;
     RadioButtonInteractive: TRadioButton;
     SBtnOpen: TSpeedButton;
     SBtnExit: TSpeedButton;
     SelectDirectoryDialog1: TSelectDirectoryDialog;
+    Splitter2: TSplitter;
+    Splitter3: TSplitter;
     StatusBar1: TStatusBar;
     StringGridDep: TStringGrid;
+    StringGridDep1: TStringGrid;
+    TabSheetProduct2: TTabSheet;
     TabSheetCreate: TTabSheet;
     TabSheetStart: TTabSheet;
     TabSheetSetup2: TTabSheet;
@@ -213,14 +240,17 @@ type
     TIEditSetupfile1: TTIEdit;
     TIEditMstFile1: TTIEdit;
     TIEditSetupFileSizeMB2: TTIEdit;
-    TIMemoDesc: TTIMemo;
     TIMemoAdvice: TTIMemo;
+    TIMemoDesc: TTIMemo;
+    TISpinEditPrio: TTISpinEdit;
     TISpinEditPackageVers: TTISpinEdit;
+    TITrackBarPrio: TTITrackBar;
     ToolBar1: TToolBar;
     mysetup1: TSetupFile;
 
     procedure BitBtnAddDepClick(Sender: TObject);
     procedure BitBtnDelDepClick(Sender: TObject);
+    procedure BitBtnEditDepClick(Sender: TObject);
     procedure BitBtnRecheckWorkbenchClick(Sender: TObject);
     procedure BitBtnWorkBenchPathClick(Sender: TObject);
     procedure BtAnalyzeNextStepClick(Sender: TObject);
@@ -261,6 +291,8 @@ type
     procedure SBtnOpenClick(Sender: TObject);
     procedure SBtnExitClick(Sender: TObject);
     procedure TabSheetCreateShow(Sender: TObject);
+    procedure TISpinEditPrioChange(Sender: TObject);
+    procedure TITrackBarPrioChange(Sender: TObject);
   private
     { private declarations }
     useGuiMode: TGuiMode;
@@ -276,6 +308,7 @@ procedure main;
 procedure mywrite(line: string); overload;
 procedure mywrite(line: string; loglevel: integer); overload;
 procedure checkWorkbench;
+procedure procmess;
 
 
 var
@@ -355,6 +388,10 @@ implementation
 //{$R manifest.rc}
 
 
+procedure procmess;
+begin
+  Application.ProcessMessages;
+end;
 
 procedure mywrite(line: string);
 begin
@@ -438,6 +475,8 @@ begin
       TICheckBoxlicenseRequired.Link.SetObjectAndProperty(productdata,
         'licenserequired');
       //TIGridDep.ListObject := dependencies;
+      TITrackBarPrio.Link.SetObjectAndProperty(productdata,'priority');
+      TISpinEditPrio.Link.SetObjectAndProperty(productdata,'priority');
     end;
     TIEditworkbenchpath.Link.SetObjectAndProperty(myconfiguration, 'workbench_path');
     Visible := True;
@@ -472,6 +511,8 @@ begin
   TIEditworkbenchpath.Link.TIObject := nil;
   TIEditSetup1Command.Link.TIObject := nil;
   //TIGridDep.ListObject := nil;
+  TITrackBarPrio.Link.TIObject := nil;
+  TISpinEditPrio.Link.TIObject := nil;
 end;
 
 
@@ -644,7 +685,7 @@ begin
     begin
       resultform1.Visible := True;
       Application.ProcessMessages;
-      Analyze(myfilename, aktProduct.SetupFiles[0]);
+      Analyze(myfilename, aktProduct.SetupFiles[0],true);
     end
     else
       analyze_binary(myfilename, False, False, aktProduct.SetupFiles[0]);
@@ -760,7 +801,10 @@ begin
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Application.ProcessMessages;
     initaktproduct;
-    Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0]);
+    //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
+    //TIProgressBarAnalyze_progress.Loaded;
+    Application.ProcessMessages;
+    Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0],true);
   end;
 end;
 
@@ -785,7 +829,8 @@ begin
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Application.ProcessMessages;
     initaktproduct;
-    Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0]);
+    //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
+    Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0],true);
   end;
 end;
 
@@ -837,6 +882,10 @@ var
   mydep : Tstringlist;
   index : integer;
 begin
+  FNewDepDlg.ComboBoxActState.Text:='';
+  FNewDepDlg.RadioButtonState.Checked:=true;
+  FNewDepDlg.RadioButtonActionChange(sender);
+  procmess;
   if FNewDepDlg.ShowModal = mrOK then
   begin
     // add
@@ -864,7 +913,6 @@ begin
     // cancel add
 
   end;
-  //TIGridDep.ReloadTIList;
 end;
 
 procedure TResultform1.BitBtnDelDepClick(Sender: TObject);
@@ -872,16 +920,68 @@ var
   range : integer;
   str : string;
 begin
-  (*
-  range := TIGridDep.SelectedRangeCount;
-  if TIGridDep.SelectedRangeCount = 0 then
-   ShowMessage('No Dependency was selected')
+  StringGridDep.DeleteRow(StringGridDep.Row);
+end;
+
+procedure TResultform1.BitBtnEditDepClick(Sender: TObject);
+var
+  mydep : Tstringlist;
+  x,y : integer;
+   aPoint: TPoint;
+begin
+  y := StringGridDep.Row;
+  if y > 0 then
+  begin
+  FNewDepDlg.Editproductid.Text :=  StringGridDep.Cells[1,y];
+  if StringGridDep.Cells[2,y] = '' then
+  begin
+    FNewDepDlg.RadioButtonState.Checked:=false;
+    FNewDepDlg.RadioButtonAction.Checked:=true;
+    FNewDepDlg.ComboBoxActState.Text:=StringGridDep.Cells[3,y];
+  end
   else
   begin
-    //TIGridDep.;
-    str := TIGridDep.GetTIObject(0).GetNamePath;
+    FNewDepDlg.RadioButtonState.Checked:=true;
+    FNewDepDlg.RadioButtonAction.Checked:=false;
+    FNewDepDlg.ComboBoxActState.Text:=StringGridDep.Cells[2,y];
   end;
-  *)
+    FNewDepDlg.RadioButtonActionChange(sender);
+  procmess;
+
+  FNewDepDlg.ComboBoxReqType.Text:=StringGridDep.Cells[4,y];
+  if FNewDepDlg.ShowModal = mrOK then
+  begin
+    // modify
+    StringGridDep.Cells[1,y] := FNewDepDlg.Editproductid.Text;
+    if FNewDepDlg.RadioButtonAction.Checked then
+    begin
+    StringGridDep.Cells[2,y] := '';
+    StringGridDep.Cells[3,y] := FNewDepDlg.ComboBoxActState.Text;
+    end
+    else
+    begin
+    StringGridDep.Cells[2,y] := FNewDepDlg.ComboBoxActState.Text;
+    StringGridDep.Cells[3,y] := '';
+    end;
+    StringGridDep.Cells[4,y] := FNewDepDlg.ComboBoxReqType.Text;
+  end
+  else
+  begin
+    // cancel add
+
+  end;
+  end
+  else
+  begin
+    BitBtnEditDep.Hint:= 'No existing dependency selected';
+    aPoint.X := BitBtnEditDep.Top;
+    aPoint.y := BitBtnEditDep.Left;
+    aPoint := ClientToScreen(aPoint);
+  Application.ActivateHint(aPoint);
+  procmess;
+    BitBtnEditDep.Hint:= '';
+  end
+
 end;
 
 procedure TResultform1.BtCreateEmptyTemplateClick(Sender: TObject);
@@ -1016,7 +1116,7 @@ begin
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Application.ProcessMessages;
     initaktproduct;
-    Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0]);
+    Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0],true);
   end;
 end;
 
@@ -1193,6 +1293,7 @@ begin
   TabSheetSetup1.ImageIndex:=2;
   TabSheetSetup2.ImageIndex:=2;
   TabSheetProduct.ImageIndex:=3;
+  TabSheetProduct2.ImageIndex:=3;
   TabSheetCreate.ImageIndex:=4;
   //*)
 end;
@@ -1238,7 +1339,7 @@ begin
   begin
     initaktproduct;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
-    Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0]);
+    Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0],true);
   end;
 end;
 
@@ -1267,6 +1368,20 @@ end;
 procedure TResultform1.TabSheetCreateShow(Sender: TObject);
 begin
   checkWorkbench;
+end;
+
+procedure TResultform1.TISpinEditPrioChange(Sender: TObject);
+begin
+  TITrackBarPrio.Loaded;
+  TITrackBarPrio.Refresh;
+  procmess;
+end;
+
+procedure TResultform1.TITrackBarPrioChange(Sender: TObject);
+begin
+  TISpinEditPrio.Loaded;
+  TISpinEditPrio.Refresh;
+  procmess;
 end;
 
 

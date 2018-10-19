@@ -1,7 +1,7 @@
 object FNewDepDlg: TFNewDepDlg
-  Left = 741
+  Left = 872
   Height = 401
-  Top = 195
+  Top = 182
   Width = 320
   Caption = 'opsi-setup-detector: Dependency Editor'
   ClientHeight = 401
@@ -20,12 +20,13 @@ object FNewDepDlg: TFNewDepDlg
     ParentFont = False
     TabOrder = 0
     object BitBtn1: TBitBtn
-      Left = 8
-      Height = 48
-      Top = 1
+      Left = 13
+      Height = 38
+      Top = 6
       Width = 75
       Align = alLeft
       BorderSpacing.Left = 7
+      BorderSpacing.Around = 5
       Default = True
       DefaultCaption = True
       Kind = bkOK
@@ -35,13 +36,14 @@ object FNewDepDlg: TFNewDepDlg
       TabOrder = 0
     end
     object BitBtn2: TBitBtn
-      Left = 216
-      Height = 48
-      Top = 1
+      Left = 211
+      Height = 38
+      Top = 6
       Width = 96
       Align = alRight
       AutoSize = True
       BorderSpacing.Right = 7
+      BorderSpacing.Around = 5
       BorderSpacing.InnerBorder = 7
       Cancel = True
       DefaultCaption = True
@@ -121,11 +123,12 @@ object FNewDepDlg: TFNewDepDlg
     FlowStyle = fsLeftRightTopBottom
     TabOrder = 2
     object GroupBox1: TGroupBox
-      Left = 1
+      Left = 6
       Height = 63
-      Top = 24
+      Top = 39
       Width = 311
       Anchors = []
+      BorderSpacing.Around = 5
       Caption = 'Require Mode'
       ClientHeight = 43
       ClientWidth = 307
@@ -136,6 +139,7 @@ object FNewDepDlg: TFNewDepDlg
         Top = 8
         Width = 55
         Caption = 'Action'
+        OnChange = RadioButtonActionChange
         TabOrder = 0
       end
       object RadioButtonState: TRadioButton
@@ -150,57 +154,63 @@ object FNewDepDlg: TFNewDepDlg
       end
     end
     object Label2: TLabel
-      Left = 1
+      Left = 6
       Height = 15
-      Top = 1
+      Top = 6
       Width = 52
       Anchors = []
+      BorderSpacing.Around = 5
       Caption = 'productid'
       ParentColor = False
     end
     object Editproductid: TEdit
-      Left = 53
+      Left = 68
       Height = 23
-      Top = 1
+      Top = 6
       Width = 187
       Anchors = []
+      BorderSpacing.Around = 5
       TabOrder = 1
       Text = 'productId'
     end
     object ComboBoxActState: TComboBox
-      Left = 79
+      Left = 94
       Height = 23
-      Top = 87
+      Top = 112
       Width = 201
       Anchors = []
+      BorderSpacing.Around = 5
       ItemHeight = 15
       TabOrder = 2
       Text = 'ComboBoxActState'
     end
     object Label3: TLabel
-      Left = 1
+      Left = 6
       Height = 15
-      Top = 87
+      Top = 112
       Width = 78
       Anchors = []
+      BorderSpacing.Around = 5
       Caption = 'Action or State'
       ParentColor = False
     end
     object Label4: TLabel
-      Left = 1
+      Left = 6
       Height = 15
-      Top = 110
+      Top = 145
       Width = 96
       Anchors = []
+      BorderSpacing.Around = 5
       Caption = 'Requirement Type'
       ParentColor = False
     end
     object ComboBoxReqType: TComboBox
-      Left = 97
+      Left = 112
       Height = 23
-      Top = 110
+      Top = 145
       Width = 191
       Anchors = []
+      BorderSpacing.Around = 5
       ItemHeight = 15
       ItemIndex = 0
       Items.Strings = (

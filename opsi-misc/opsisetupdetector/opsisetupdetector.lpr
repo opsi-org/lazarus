@@ -16,7 +16,8 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   //VersionInfoX,
   //help,
   printers, fileinfo, winpeimagereader, lcltranslator, runtimetypeinfocontrols,
-  osdanalyze, osdhelper, osdbasedata, osdconfigdlg, osdcreate, osddlgnewdependency;
+  osdanalyze, osdhelper, osdbasedata, osdconfigdlg, osdcreate,
+  osddlgnewdependency, oscheckbinarybitness;
 
 
 {$R *.res}

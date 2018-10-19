@@ -77,6 +77,7 @@ type
     FuninstallCheck: TStrings;
     FisExitcodeFatalFunction: string;
     Funinstall_waitforprocess: string;
+    Fanalyze_progess: integer;
     procedure SetMarkerlist(const AValue: TStrings);
     procedure SetUninstallCheck(const AValue: TStrings);
   published
@@ -126,7 +127,7 @@ type
     property uninstallCheck: TStrings read FuninstallCheck write SetUninstallCheck;
     property uninstall_waitforprocess: string
       read Funinstall_waitforprocess write Funinstall_waitforprocess;
-
+    property analyze_progess: integer read Fanalyze_progess write Fanalyze_progess;
     procedure initValues;
 
   public
@@ -253,6 +254,7 @@ TPProperties = class(TPersistent)
     destructor Destroy;
   end;
 
+  TPriority  = -100..100;
 
   TProductData = class(TPersistent)
   private
@@ -265,12 +267,13 @@ TPProperties = class(TPersistent)
     Fproductversion: string;
     Fpackageversion: cardinal;
     Fversionstr: string;
-    Fpriority: integer;
+    Fpriority: TPriority;
     Fproducttype: string;
     Fsetupscript: string;
     Funinstallscript: string;
     Fdelsubscript: string;
     Flicenserequired: boolean;
+    procedure SetPriority(const AValue: TPriority);
   published
     property architectureMode: TArchitectureMode
       read FarchitectureMode write FarchitectureMode;
@@ -282,7 +285,7 @@ TPProperties = class(TPersistent)
     property productversion: string read Fproductversion write Fproductversion;
     property packageversion: cardinal read Fpackageversion write Fpackageversion;
     property versionstr: string read Fversionstr write Fversionstr;
-    property priority: integer read Fpriority write Fpriority;
+    property priority: TPriority read Fpriority write setpriority;
     property producttype: string read Fproducttype write Fproducttype;
     property setupscript: string read Fsetupscript write Fsetupscript;
     property uninstallscript: string read Funinstallscript write Funinstallscript;
@@ -349,6 +352,22 @@ TPProperties = class(TPersistent)
     destructor Destroy;
   end;
 
+  (*
+  TConfigHint = class(TCollectionItem)
+  private
+    FName: String;
+    FHint: Tstrings;
+  published
+    property Name: string read FName;
+    property Hint: TStrings read FHint
+  public
+    { public declarations }
+    //constructor Create;
+    //destructor Destroy;
+  end;
+    *)
+
+
 
 function archModeStrToArchmode(modestr: string): TArchitectureMode;
 function installerToInstallerstr(installerId: TKnownInstaller): string;
@@ -364,6 +383,8 @@ var
   installerArray: TInstallers;
   counter: integer;
   myconfiguration: TConfiguration;
+  myconfigurationhints : TStringlist;
+ // newhint : TConfigHint;
 //myobject : TMyClass;
 
 implementation
@@ -496,7 +517,7 @@ begin
   FuninstallCommandLine := '';
   FuninstallProg := '';
   FuninstallCheck.Clear;
-  ;
+  Fanalyze_progess:=0;
   FisExitcodeFatalFunction := 'isMsExitcodeFatal_short';
   Funinstall_waitforprocess := '';
 end;
@@ -550,6 +571,11 @@ begin
 end;
 
 // TProductData **********************************
+procedure TProductData.SetPriority(const AValue: TPriority);
+begin
+  if AValue=priority then exit;
+  Fpriority:=AValue;
+end;
 // TopsiProduct **********************************
 
 // TConfiguration ************************************
@@ -920,6 +946,26 @@ begin
   end;
 end;
 
+function detectedbypatternwithAnd(parent: TClass; markerlist: TStringList): boolean;
+var
+  tmpint: integer;
+  patternindex: integer;
+  pattern: string;
+  numberOfPatterndetected : integer =0;
+begin
+  Result := False;
+  //markerlist.Sort;
+  for patternindex := 0 to TInstallerData(parent).patterns.Count - 1 do
+  begin
+    pattern := TInstallerData(parent).patterns[patternindex];
+    if markerlist.IndexOf(LowerCase(pattern)) >= 0 then
+      inc(numberOfPatterndetected);
+  end;
+  if numberOfPatterndetected = TInstallerData(parent).patterns.Count then
+    Result := true;
+end;
+
+
 (*
 procedure initSetupFile(var mysetupfile : TSetupFile);
 begin
@@ -1082,7 +1128,7 @@ begin
       'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
     comment := '';
     uib_exitcode_function := 'isInstallshieldExitcodeFatal';
-    detected := @detectedbypatternwithor;
+    detected := @detectedbypatternwithAnd;
   end;
   // InstallShieldMSI
   with installerArray[integer(stInstallShieldMSI)] do
@@ -1105,7 +1151,7 @@ begin
       'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
     comment := '';
     uib_exitcode_function := 'isInstallshieldExitcodeFatal';
-    detected := @detectedbypatternwithor;
+    detected := @detectedbypatternwithAnd;
   end;
   // MSI
   with installerArray[integer(stMSI)] do
@@ -1122,8 +1168,8 @@ begin
       ' /qb-! REBOOT=ReallySuppress';
     uninstall_waitforprocess := '';
     uninstallProg := '';
-    patterns.Add('nstallshield');
-    patterns.Add('installer,msi,database');
+    //patterns.Add('nstallshield');
+    //patterns.Add('installer,msi,database');
     link :=
       'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
     comment := '';
@@ -1178,5 +1224,23 @@ begin
 
   //aktSetupFile := TSetupFile.Create;
   aktProduct := TopsiProduct.Create;
+
+    // Create Config Hints
+    myconfigurationhints := TStringList.Create;
+    myconfigurationhints.Add('workbench_Path=Path to the opsi_workbench');
+    myconfigurationhints.Add('preInstallLines=opsi-script code, that will be included before the start of the installation.');
+(*
+  myconfigurationhints := TCollection.Create(TConfigHint);
+  newhint := TConfigHint(myconfigurationhints.add);
+  newhint.FName:= workbench_Path;
+  newhint.FHint := TStringList.Create;
+  newhint.FHint.Add('Path to the opsi_workbench');
+  newhint := TConfigHint(myconfigurationhints.add);
+  newhint.FName:= preInstallLines;
+  newhint.FHint := TStringList.Create;
+  newhint.FHint.Add('opsi-script code,);
+  newhint.FHint.Add('that will be included');
+  newhint.FHint.Add('before the start of the installation.');
+ *)
 
 end.
