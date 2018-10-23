@@ -59,10 +59,10 @@ type
 
   TResultform1 = class(TForm)
     BitBtnAddDep: TBitBtn;
-    BitBtnAddDep1: TBitBtn;
+    BitBtnAddProp: TBitBtn;
     BitBtnDelDep: TBitBtn;
-    BitBtnDelDep2: TBitBtn;
-    BitBtnDelDep3: TBitBtn;
+    BitBtnDelProp: TBitBtn;
+    BitBtnEditProp: TBitBtn;
     BitBtnEditDep: TBitBtn;
     BitBtnWorkBenchPath: TBitBtn;
     BitBtnRecheckWorkbench: TBitBtn;
@@ -104,6 +104,7 @@ type
     FlowPanel22: TFlowPanel;
     FlowPanel23: TFlowPanel;
     FlowPanel3: TFlowPanel;
+    FlowPanel4: TFlowPanel;
     FlowPanel6: TFlowPanel;
     FlowPanelMsiId1: TFlowPanel;
     FlowPanelMST1: TFlowPanel;
@@ -165,7 +166,6 @@ type
     PairSplitterSide1: TPairSplitterSide;
     PairSplitterSide2: TPairSplitterSide;
     Panel10: TPanel;
-    Panel11: TPanel;
     Panel12: TPanel;
     Panel13: TPanel;
     Panel4: TPanel;
@@ -249,8 +249,11 @@ type
     mysetup1: TSetupFile;
 
     procedure BitBtnAddDepClick(Sender: TObject);
+    procedure BitBtnAddPropClick(Sender: TObject);
     procedure BitBtnDelDepClick(Sender: TObject);
+    procedure BitBtnDelPropClick(Sender: TObject);
     procedure BitBtnEditDepClick(Sender: TObject);
+    procedure BitBtnEditPropClick(Sender: TObject);
     procedure BitBtnRecheckWorkbenchClick(Sender: TObject);
     procedure BitBtnWorkBenchPathClick(Sender: TObject);
     procedure BtAnalyzeNextStepClick(Sender: TObject);
@@ -915,12 +918,22 @@ begin
   end;
 end;
 
+procedure TResultform1.BitBtnAddPropClick(Sender: TObject);
+begin
+  // add property
+end;
+
 procedure TResultform1.BitBtnDelDepClick(Sender: TObject);
 var
   range : integer;
   str : string;
 begin
   StringGridDep.DeleteRow(StringGridDep.Row);
+end;
+
+procedure TResultform1.BitBtnDelPropClick(Sender: TObject);
+begin
+  // delete property
 end;
 
 procedure TResultform1.BitBtnEditDepClick(Sender: TObject);
@@ -982,6 +995,11 @@ begin
     BitBtnEditDep.Hint:= '';
   end
 
+end;
+
+procedure TResultform1.BitBtnEditPropClick(Sender: TObject);
+begin
+  // edit property
 end;
 
 procedure TResultform1.BtCreateEmptyTemplateClick(Sender: TObject);

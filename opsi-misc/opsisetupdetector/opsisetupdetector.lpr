@@ -17,7 +17,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   //help,
   printers, fileinfo, winpeimagereader, lcltranslator, runtimetypeinfocontrols,
   osdanalyze, osdhelper, osdbasedata, osdconfigdlg, osdcreate,
-  osddlgnewdependency, oscheckbinarybitness;
+  osddlgnewdependency, oscheckbinarybitness, osddlgnewproperty;
 
 
 {$R *.res}
@@ -40,6 +40,7 @@ begin
   Application.CreateForm(TresultForm1, resultForm1);
   Application.CreateForm(TFOSDConfigdlg, FOSDConfigdlg);
   Application.CreateForm(TFNewDepDlg, FNewDepDlg);
+  Application.CreateForm(TFNewProperty, FNewProperty);
   //Application.CreateForm(TFormHelp, FormHelp);
   Application.Run;
   //main;

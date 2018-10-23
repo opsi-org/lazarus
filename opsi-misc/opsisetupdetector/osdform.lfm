@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 634
+  Left = 651
   Height = 553
-  Top = 200
+  Top = 331
   Width = 1095
   Caption = 'opsi Setup Detector'
   ClientHeight = 533
@@ -4380,30 +4380,45 @@ object resultForm1: TresultForm1
               ClientWidth = 1080
               TabOrder = 0
               object StringGridDep1: TStringGrid
-                Left = 165
-                Height = 121
-                Top = 6
-                Width = 632
-                Align = alLeft
+                Left = 6
+                Height = 90
+                Top = 37
+                Width = 1068
+                Align = alClient
                 BorderSpacing.Around = 5
+                ColCount = 7
                 Columns = <                
                   item
                     MaxSize = 400
+                    ReadOnly = True
                     Title.MultiLine = True
-                    Title.Caption = 'Required ProductId'
+                    Title.Caption = 'Type'
                     Width = 116
                   end                
                   item
-                    Title.Caption = 'Required State'
+                    ReadOnly = True
+                    Title.Caption = 'PropertyId'
                     Width = 139
                   end                
                   item
-                    Title.Caption = 'Required Action'
-                    Width = 120
+                    ReadOnly = True
+                    Title.Caption = 'Multivalue'
+                    Width = 70
                   end                
                   item
-                    Title.Caption = 'Required Mode'
-                    Width = 119
+                    ReadOnly = True
+                    Title.Caption = 'Editable'
+                    Width = 70
+                  end                
+                  item
+                    ReadOnly = True
+                    Title.Caption = 'Possible Values'
+                    Width = 150
+                  end                
+                  item
+                    ReadOnly = True
+                    Title.Caption = 'Default Values'
+                    Width = 150
                   end>
                 Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowSelect, goSmoothScroll]
                 RowCount = 1
@@ -4412,8 +4427,10 @@ object resultForm1: TresultForm1
                   69
                   116
                   139
-                  120
-                  119
+                  70
+                  70
+                  150
+                  150
                 )
                 Cells = (
                   2
@@ -4425,92 +4442,206 @@ object resultForm1: TresultForm1
                   'required State'
                 )
               end
-              object Panel11: TPanel
-                Left = 1
+              object FlowPanel22: TFlowPanel
+                Left = 824
                 Height = 131
-                Top = 1
-                Width = 159
-                Align = alLeft
-                ClientHeight = 131
-                ClientWidth = 159
+                Top = 0
+                Width = 234
+                Anchors = []
+                ControlList = <>
+                FlowLayout = tlTop
+                FlowStyle = fsTopBottomLeftRight
                 TabOrder = 1
+              end
+              object FlowPanel4: TFlowPanel
+                Left = 1
+                Height = 31
+                Top = 1
+                Width = 1078
+                Align = alTop
+                Caption = 'FlowPanel4'
+                ControlList = <                
+                  item
+                    Control = Label85
+                    WrapAfter = waAuto
+                    Index = 0
+                  end                
+                  item
+                    Control = BitBtnAddProp
+                    WrapAfter = waAuto
+                    Index = 1
+                  end                
+                  item
+                    Control = BitBtnDelProp
+                    WrapAfter = waAuto
+                    Index = 2
+                  end                
+                  item
+                    Control = BitBtnEditProp
+                    WrapAfter = waAuto
+                    Index = 3
+                  end>
+                FlowLayout = tlTop
+                FlowStyle = fsLeftRightTopBottom
+                TabOrder = 2
                 object Label85: TLabel
                   Left = 15
-                  Height = 121
+                  Height = 21
                   Top = 5
-                  Width = 139
-                  Align = alClient
+                  Width = 71
                   Anchors = [akLeft, akBottom]
                   BorderSpacing.Left = 10
+                  BorderSpacing.Right = 70
                   BorderSpacing.Around = 4
                   Caption = 'Properties'
                   Font.Height = -16
                   ParentColor = False
                   ParentFont = False
                 end
-              end
-              object FlowPanel22: TFlowPanel
-                Left = 802
-                Height = 131
-                Top = 1
-                Width = 170
-                Align = alLeft
-                Anchors = []
-                ControlList = <                
-                  item
-                    Control = BitBtnAddDep1
-                    WrapAfter = waAuto
-                    Index = 0
-                  end                
-                  item
-                    Control = BitBtnDelDep2
-                    WrapAfter = waAuto
-                    Index = 1
-                  end                
-                  item
-                    Control = BitBtnDelDep3
-                    WrapAfter = waAuto
-                    Index = 2
-                  end>
-                FlowLayout = tlTop
-                FlowStyle = fsTopBottomLeftRight
-                TabOrder = 2
-                object BitBtnAddDep1: TBitBtn
-                  Left = 1
-                  Height = 39
+                object BitBtnAddProp: TBitBtn
+                  Left = 160
+                  Height = 25
                   Top = 1
                   Width = 163
                   Align = alTop
                   Anchors = [akTop, akLeft, akRight, akBottom]
-                  BorderSpacing.InnerBorder = 7
-                  Caption = 'BitBtnAddDep'
-                  OnClick = BitBtnAddDepClick
+                  BorderSpacing.InnerBorder = 5
+                  Caption = 'Add Property'
+                  Glyph.Data = {
+                    36040000424D3604000000000000360000002800000010000000100000000100
+                    2000000000000004000064000000640000000000000000000000000000000000
+                    000000000000000000000000000000000000000000FF000000FF000000FF0000
+                    00FF000000000000000000000000000000000000000000000000000000000000
+                    000000000000000000000000000000000000000000FF000000FF000000FF0000
+                    00FF000000000000000000000000000000000000000000000000000000000000
+                    000000000000000000000000000000000000000000FF000000FF000000FF0000
+                    00FF000000000000000000000000000000000000000000000000000000000000
+                    000000000000000000000000000000000000000000FF000000FF000000FF0000
+                    00FF000000000000000000000000000000000000000000000000000000000000
+                    000000000000000000000000000000000000000000FF000000FF000000FF0000
+                    00FF000000000000000000000000000000000000000000000000000000000000
+                    000000000000000000000000000000000000000000FF000000FF000000FF0000
+                    00FF000000000000000000000000000000000000000000000000000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000000000
+                    000000000000000000000000000000000000000000FF000000FF000000FF0000
+                    00FF000000000000000000000000000000000000000000000000000000000000
+                    000000000000000000000000000000000000000000FF000000FF000000FF0000
+                    00FF000000000000000000000000000000000000000000000000000000000000
+                    000000000000000000000000000000000000000000FF000000FF000000FF0000
+                    00FF000000000000000000000000000000000000000000000000000000000000
+                    000000000000000000000000000000000000000000FF000000FF000000FF0000
+                    00FF000000000000000000000000000000000000000000000000000000000000
+                    000000000000000000000000000000000000000000FF000000FF000000FF0000
+                    00FF000000000000000000000000000000000000000000000000000000000000
+                    000000000000000000000000000000000000000000FF000000FF000000FF0000
+                    00FF000000000000000000000000000000000000000000000000
+                  }
+                  OnClick = BitBtnAddPropClick
                   ParentFont = False
                   TabOrder = 0
                 end
-                object BitBtnDelDep2: TBitBtn
-                  Left = 1
-                  Height = 39
-                  Top = 41
+                object BitBtnDelProp: TBitBtn
+                  Left = 323
+                  Height = 25
+                  Top = 1
                   Width = 163
                   Align = alTop
                   Anchors = []
-                  BorderSpacing.InnerBorder = 7
-                  Caption = 'BitBtnDelDep'
-                  OnClick = BitBtnDelDepClick
+                  BorderSpacing.InnerBorder = 5
+                  Caption = 'Delete Property'
+                  Glyph.Data = {
+                    36040000424D3604000000000000360000002800000010000000100000000100
+                    2000000000000004000064000000640000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000
+                  }
+                  OnClick = BitBtnDelPropClick
                   ParentFont = False
                   TabOrder = 1
                 end
-                object BitBtnDelDep3: TBitBtn
-                  Left = 1
-                  Height = 39
-                  Top = 81
+                object BitBtnEditProp: TBitBtn
+                  Left = 486
+                  Height = 25
+                  Top = 1
                   Width = 163
                   Align = alTop
                   Anchors = []
-                  BorderSpacing.InnerBorder = 7
-                  Caption = 'BitBtnDelDep1'
-                  OnClick = BitBtnDelDepClick
+                  BorderSpacing.InnerBorder = 5
+                  Caption = 'Edit Property'
+                  Glyph.Data = {
+                    36040000424D3604000000000000360000002800000010000000100000000100
+                    2000000000000004000064000000640000000000000000000000000000FF0000
+                    00FF000000FF000000FF00000080000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000FF0000
+                    00FF000000FF000000FF000000FF000000800000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000FF0000
+                    00FF000000FF000000FF000000FF000000FF0000008000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000FF0000
+                    00FF000000FF000000FF000000FF000000FF000000FF00000080000000000000
+                    0000000000000000000000000000000000000000000000000000000000800000
+                    00FF000000FF000000FF000000FF000000FF000000FF000000FF000000800000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0080000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    0080000000000000000000000000000000000000000000000000000000000000
+                    000000000080000000FF000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000800000000000000000000000000000000000000000000000000000
+                    00000000000000000080000000FF000000FF000000FF000000FF000000FF0000
+                    00FF000000FF0000008000000000000000000000000000000000000000000000
+                    0000000000000000000000000080000000FF000000FF000000FF000000FF0000
+                    00FF000000FF0000008000000000000000000000000000000000000000000000
+                    000000000000000000000000000000000080000000FF000000FF000000FF0000
+                    00FF000000800000000000000000000000000000000000000000000000000000
+                    00000000000000000000000000000000000000000080000000FF000000FF0000
+                    0080000000000000000000000000000000800000008000000000000000000000
+                    0000000000000000000000000000000000000000000000000080000000800000
+                    0000000000000000000000000080000000FF000000FF00000080000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    00000000000000000080000000FF000000FF000000FF00000080000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    000000000080000000FF000000FF000000FF0000008000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    000000000080000000FF000000FF000000800000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000008000000080000000000000000000000000
+                  }
+                  OnClick = BitBtnEditPropClick
                   ParentFont = False
                   TabOrder = 2
                 end

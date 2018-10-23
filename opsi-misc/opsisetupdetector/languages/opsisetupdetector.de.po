@@ -260,6 +260,7 @@ msgid "Require Mode"
 msgstr ""
 
 #: tfnewdepdlg.label1.caption
+msgctxt "tfnewdepdlg.label1.caption"
 msgid ""
 "Please edit the dependency.\n"
 "Please note:\n"
@@ -284,6 +285,70 @@ msgstr ""
 
 #: tfnewdepdlg.radiobuttonstate.caption
 msgid "State"
+msgstr ""
+
+#: tfnewproperty.bitbtnadddep.caption
+msgid "Add Value"
+msgstr ""
+
+#: tfnewproperty.bitbtndeldep.caption
+msgid "Delete Value"
+msgstr ""
+
+#: tfnewproperty.caption
+msgid "FNewProperty"
+msgstr ""
+
+#: tfnewproperty.checkboxpropedit.caption
+msgid "Editable"
+msgstr ""
+
+#: tfnewproperty.checkboxpropmultival.caption
+msgid "Multivalue"
+msgstr ""
+
+#: tfnewproperty.editpropname.text
+msgctxt "tfnewproperty.editpropname.text"
+msgid "Property Name"
+msgstr ""
+
+#: tfnewproperty.editpropnewval.text
+msgid "New Value"
+msgstr ""
+
+#: tfnewproperty.groupbox1.caption
+msgid "Property Type"
+msgstr ""
+
+#: tfnewproperty.label1.caption
+msgctxt "tfnewproperty.label1.caption"
+msgid ""
+"Please edit the dependency.\n"
+"Please note:\n"
+"You may may neither give a requested installation state or a requested action. A combination is not allowed.\n"
+msgstr ""
+
+#: tfnewproperty.label2.caption
+msgctxt "tfnewproperty.label2.caption"
+msgid "Property Name"
+msgstr ""
+
+#: tfnewproperty.label4.caption
+msgctxt "tfnewproperty.label4.caption"
+msgid "Possible Values"
+msgstr ""
+
+#: tfnewproperty.label5.caption
+msgctxt "tfnewproperty.label5.caption"
+msgid "Default Values"
+msgstr ""
+
+#: tfnewproperty.radiobuttonpropbool.caption
+msgid "Boolean"
+msgstr ""
+
+#: tfnewproperty.radiobuttonpropstring.caption
+msgid "String"
 msgstr ""
 
 #: tformhelp.caption
@@ -314,9 +379,8 @@ msgctxt "tresultform1.bitbtnadddep.caption"
 msgid "Add Dependency"
 msgstr ""
 
-#: tresultform1.bitbtnadddep1.caption
-msgctxt "tresultform1.bitbtnadddep1.caption"
-msgid "BitBtnAddDep"
+#: tresultform1.bitbtnaddprop.caption
+msgid "Add Property"
 msgstr ""
 
 #: tresultform1.bitbtndeldep.caption
@@ -324,18 +388,16 @@ msgctxt "tresultform1.bitbtndeldep.caption"
 msgid "Delete Dependency"
 msgstr ""
 
-#: tresultform1.bitbtndeldep2.caption
-msgctxt "tresultform1.bitbtndeldep2.caption"
-msgid "BitBtnDelDep"
-msgstr ""
-
-#: tresultform1.bitbtndeldep3.caption
-msgctxt "tresultform1.bitbtndeldep3.caption"
-msgid "BitBtnDelDep1"
+#: tresultform1.bitbtndelprop.caption
+msgid "Delete Property"
 msgstr ""
 
 #: tresultform1.bitbtneditdep.caption
 msgid "Edit Dependency"
+msgstr ""
+
+#: tresultform1.bitbtneditprop.caption
+msgid "Edit Property"
 msgstr ""
 
 #: tresultform1.bitbtnopenfile.caption
@@ -524,6 +586,10 @@ msgstr "Die zu analysierende Setup-Datei auswählen"
 
 #: tresultform1.flowpanel14.caption
 msgid "FlowPanel14"
+msgstr ""
+
+#: tresultform1.flowpanel4.caption
+msgid "FlowPanel4"
 msgstr ""
 
 #: tresultform1.label50.caption
@@ -800,22 +866,32 @@ msgstr ""
 
 #: tresultform1.stringgriddep1.columns[0].title.caption
 msgctxt "tresultform1.stringgriddep1.columns[0].title.caption"
-msgid "Required ProductId"
+msgid "Type"
 msgstr ""
 
 #: tresultform1.stringgriddep1.columns[1].title.caption
 msgctxt "tresultform1.stringgriddep1.columns[1].title.caption"
-msgid "Required State"
+msgid "PropertyId"
 msgstr ""
 
 #: tresultform1.stringgriddep1.columns[2].title.caption
 msgctxt "tresultform1.stringgriddep1.columns[2].title.caption"
-msgid "Required Action"
+msgid "Multivalue"
 msgstr ""
 
 #: tresultform1.stringgriddep1.columns[3].title.caption
 msgctxt "tresultform1.stringgriddep1.columns[3].title.caption"
-msgid "Required Mode"
+msgid "Editable"
+msgstr ""
+
+#: tresultform1.stringgriddep1.columns[4].title.caption
+msgctxt "tresultform1.stringgriddep1.columns[4].title.caption"
+msgid "Possible Values"
+msgstr ""
+
+#: tresultform1.stringgriddep1.columns[5].title.caption
+msgctxt "tresultform1.stringgriddep1.columns[5].title.caption"
+msgid "Default Values"
 msgstr ""
 
 #: tresultform1.tabsheetanalyze.caption

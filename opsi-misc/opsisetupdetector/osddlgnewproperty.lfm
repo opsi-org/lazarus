@@ -1,0 +1,358 @@
+object FNewProperty: TFNewProperty
+  Left = 753
+  Height = 664
+  Top = 176
+  Width = 428
+  Caption = 'FNewProperty'
+  ClientHeight = 664
+  ClientWidth = 428
+  LCLVersion = '1.8.4.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 50
+    Top = 614
+    Width = 428
+    Align = alBottom
+    ClientHeight = 50
+    ClientWidth = 428
+    ParentFont = False
+    TabOrder = 0
+    object BitBtn1: TBitBtn
+      Left = 13
+      Height = 38
+      Top = 6
+      Width = 75
+      Align = alLeft
+      BorderSpacing.Left = 7
+      BorderSpacing.Around = 5
+      Default = True
+      DefaultCaption = True
+      Kind = bkOK
+      ModalResult = 1
+      ParentFont = False
+      TabOrder = 0
+    end
+    object BitBtn2: TBitBtn
+      Left = 319
+      Height = 38
+      Top = 6
+      Width = 96
+      Align = alRight
+      AutoSize = True
+      BorderSpacing.Right = 7
+      BorderSpacing.Around = 5
+      BorderSpacing.InnerBorder = 7
+      Cancel = True
+      DefaultCaption = True
+      Kind = bkCancel
+      ModalResult = 2
+      ParentFont = False
+      TabOrder = 1
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 133
+    Top = 0
+    Width = 428
+    Align = alTop
+    ClientHeight = 133
+    ClientWidth = 428
+    ParentFont = False
+    TabOrder = 1
+    object Label1: TLabel
+      Left = 8
+      Height = 117
+      Top = 8
+      Width = 412
+      Align = alClient
+      Alignment = taCenter
+      BorderSpacing.Around = 7
+      Caption = 'Please edit the dependency.'#10'Please note:'#10'You may may neither give a requested installation state or a requested action. A combination is not allowed.'
+      ParentColor = False
+      ParentFont = False
+      WordWrap = True
+    end
+  end
+  object Panel3: TPanel
+    Left = 0
+    Height = 50
+    Top = 564
+    Width = 428
+    Align = alBottom
+    TabOrder = 2
+  end
+  object GroupBox1: TGroupBox
+    Left = 5
+    Height = 63
+    Top = 138
+    Width = 418
+    Align = alTop
+    Anchors = [akTop]
+    BorderSpacing.Around = 5
+    Caption = 'Property Type'
+    ClientHeight = 43
+    ClientWidth = 414
+    TabOrder = 3
+    object RadioButtonPropString: TRadioButton
+      Left = 22
+      Height = 19
+      Top = 8
+      Width = 51
+      Caption = 'String'
+      OnChange = RadioButtonPropStringChange
+      TabOrder = 0
+    end
+    object RadioButtonPropBool: TRadioButton
+      Left = 145
+      Height = 19
+      Top = 8
+      Width = 63
+      Caption = 'Boolean'
+      Checked = True
+      TabOrder = 1
+      TabStop = True
+    end
+  end
+  object Panel4: TPanel
+    Left = 0
+    Height = 42
+    Top = 206
+    Width = 428
+    Align = alTop
+    ClientHeight = 42
+    ClientWidth = 428
+    TabOrder = 4
+    object Label2: TLabel
+      Left = 22
+      Height = 15
+      Top = 8
+      Width = 80
+      Anchors = []
+      BorderSpacing.Around = 5
+      Caption = 'Property Name'
+      ParentColor = False
+    end
+    object EditPropName: TEdit
+      Left = 176
+      Height = 23
+      Top = 8
+      Width = 187
+      Anchors = []
+      BorderSpacing.Around = 5
+      TabOrder = 0
+      Text = 'Property Name'
+    end
+  end
+  object CheckGroupPropBool: TCheckGroup
+    Left = 0
+    Height = 71
+    Top = 248
+    Width = 428
+    Align = alTop
+    AutoFill = True
+    AutoSize = True
+    BorderSpacing.InnerBorder = 6
+    ChildSizing.LeftRightSpacing = 6
+    ChildSizing.TopBottomSpacing = 6
+    ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+    ChildSizing.EnlargeVertical = crsHomogenousChildResize
+    ChildSizing.ShrinkHorizontal = crsScaleChilds
+    ChildSizing.ShrinkVertical = crsScaleChilds
+    ChildSizing.Layout = cclTopToBottomThenLeftToRight
+    ChildSizing.ControlsPerLine = 1
+    ClientHeight = 51
+    ClientWidth = 424
+    ColumnLayout = clVerticalThenHorizontal
+    Columns = 2
+    TabOrder = 5
+    object CheckBoxPropMultiVal: TCheckBox
+      Left = 20
+      Height = 31
+      Top = 10
+      Width = 189
+      BorderSpacing.Left = 20
+      Caption = 'Multivalue'
+      OnChange = CheckBoxPropMultiValChange
+      TabOrder = 0
+    end
+    object CheckBoxPropEdit: TCheckBox
+      Left = 239
+      Height = 31
+      Top = 10
+      Width = 175
+      BorderSpacing.Left = 20
+      BorderSpacing.Around = 10
+      Caption = 'Editable'
+      TabOrder = 1
+    end
+  end
+  object PanelPropPosVal: TPanel
+    Left = 0
+    Height = 121
+    Top = 319
+    Width = 428
+    Align = alTop
+    ClientHeight = 121
+    ClientWidth = 428
+    TabOrder = 6
+    object ListBoxPropPosVal: TListBox
+      Left = 203
+      Height = 109
+      Top = 6
+      Width = 219
+      Align = alRight
+      BorderSpacing.Around = 5
+      ItemHeight = 0
+      TabOrder = 0
+    end
+    object Label4: TLabel
+      Left = 24
+      Height = 15
+      Top = 5
+      Width = 79
+      Anchors = []
+      BorderSpacing.Around = 5
+      Caption = 'Possible Values'
+      ParentColor = False
+    end
+    object EditPropNewVal: TEdit
+      Left = -1
+      Height = 23
+      Top = 26
+      Width = 163
+      Anchors = []
+      BorderSpacing.Around = 5
+      TabOrder = 1
+      Text = 'New Value'
+    end
+    object BitBtnAddDep: TBitBtn
+      Left = 0
+      Height = 30
+      Top = 48
+      Width = 104
+      AutoSize = True
+      BorderSpacing.InnerBorder = 2
+      Caption = 'Add Value'
+      Constraints.MinHeight = 20
+      Glyph.Data = {
+        36040000424D3604000000000000360000002800000010000000100000000100
+        2000000000000004000064000000640000000000000000000000000000000000
+        000000000000000000000000000000000000000000FF000000FF000000FF0000
+        00FF000000000000000000000000000000000000000000000000000000000000
+        000000000000000000000000000000000000000000FF000000FF000000FF0000
+        00FF000000000000000000000000000000000000000000000000000000000000
+        000000000000000000000000000000000000000000FF000000FF000000FF0000
+        00FF000000000000000000000000000000000000000000000000000000000000
+        000000000000000000000000000000000000000000FF000000FF000000FF0000
+        00FF000000000000000000000000000000000000000000000000000000000000
+        000000000000000000000000000000000000000000FF000000FF000000FF0000
+        00FF000000000000000000000000000000000000000000000000000000000000
+        000000000000000000000000000000000000000000FF000000FF000000FF0000
+        00FF000000000000000000000000000000000000000000000000000000FF0000
+        00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+        00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+        00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+        00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+        00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+        00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+        00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+        00FF000000FF000000FF000000FF000000FF000000FF000000FF000000000000
+        000000000000000000000000000000000000000000FF000000FF000000FF0000
+        00FF000000000000000000000000000000000000000000000000000000000000
+        000000000000000000000000000000000000000000FF000000FF000000FF0000
+        00FF000000000000000000000000000000000000000000000000000000000000
+        000000000000000000000000000000000000000000FF000000FF000000FF0000
+        00FF000000000000000000000000000000000000000000000000000000000000
+        000000000000000000000000000000000000000000FF000000FF000000FF0000
+        00FF000000000000000000000000000000000000000000000000000000000000
+        000000000000000000000000000000000000000000FF000000FF000000FF0000
+        00FF000000000000000000000000000000000000000000000000000000000000
+        000000000000000000000000000000000000000000FF000000FF000000FF0000
+        00FF000000000000000000000000000000000000000000000000
+      }
+      OnClick = BitBtnAddDepClick
+      ParentFont = False
+      TabOrder = 2
+    end
+    object BitBtnDelDep: TBitBtn
+      Left = 0
+      Height = 30
+      Top = 80
+      Width = 115
+      AutoSize = True
+      BorderSpacing.InnerBorder = 2
+      Caption = 'Delete Value'
+      Constraints.MinHeight = 20
+      Glyph.Data = {
+        36040000424D3604000000000000360000002800000010000000100000000100
+        2000000000000004000064000000640000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000FF0000
+        00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+        00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+        00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+        00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+        00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+        00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+        00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+        00FF000000FF000000FF000000FF000000FF000000FF000000FF000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000
+      }
+      OnClick = BitBtnDelDepClick
+      ParentFont = False
+      TabOrder = 3
+    end
+  end
+  object Panel7: TPanel
+    Left = 0
+    Height = 121
+    Top = 440
+    Width = 428
+    Align = alTop
+    ClientHeight = 121
+    ClientWidth = 428
+    TabOrder = 7
+    object ListBoxPropDefVal: TListBox
+      Left = 203
+      Height = 109
+      Top = 6
+      Width = 219
+      Align = alRight
+      BorderSpacing.Around = 5
+      ItemHeight = 0
+      TabOrder = 0
+    end
+    object Label5: TLabel
+      Left = 26
+      Height = 15
+      Top = 5
+      Width = 74
+      Anchors = []
+      BorderSpacing.Around = 5
+      Caption = 'Default Values'
+      ParentColor = False
+    end
+  end
+end
