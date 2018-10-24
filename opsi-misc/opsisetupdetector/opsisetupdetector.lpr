@@ -40,7 +40,7 @@ begin
   Application.CreateForm(TresultForm1, resultForm1);
   Application.CreateForm(TFOSDConfigdlg, FOSDConfigdlg);
   Application.CreateForm(TFNewDepDlg, FNewDepDlg);
-  Application.CreateForm(TFNewProperty, FNewProperty);
+  Application.CreateForm(TFNewPropDlg, FNewPropDlg);
   //Application.CreateForm(TFormHelp, FormHelp);
   Application.Run;
   //main;

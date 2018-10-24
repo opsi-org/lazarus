@@ -11,13 +11,13 @@ uses
 
 type
 
-  { TFNewProperty }
+  { TFNewPropDlg }
 
-  TFNewProperty = class(TForm)
+  TFNewPropDlg = class(TForm)
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
-    BitBtnAddDep: TBitBtn;
-    BitBtnDelDep: TBitBtn;
+    BitBtnAddProp: TBitBtn;
+    BitBtnDelProp: TBitBtn;
     CheckBoxPropEdit: TCheckBox;
     CheckBoxPropMultiVal: TCheckBox;
     CheckGroupPropBool: TCheckGroup;
@@ -28,18 +28,20 @@ type
     Label2: TLabel;
     Label4: TLabel;
     Label5: TLabel;
+    Label6: TLabel;
     ListBoxPropPosVal: TListBox;
     ListBoxPropDefVal: TListBox;
+    MemoDesc: TMemo;
     Panel1: TPanel;
     Panel2: TPanel;
-    Panel3: TPanel;
     Panel4: TPanel;
+    Panel8: TPanel;
     PanelPropPosVal: TPanel;
     Panel7: TPanel;
     RadioButtonPropString: TRadioButton;
     RadioButtonPropBool: TRadioButton;
-    procedure BitBtnAddDepClick(Sender: TObject);
-    procedure BitBtnDelDepClick(Sender: TObject);
+    procedure BitBtnAddPropClick(Sender: TObject);
+    procedure BitBtnDelPropClick(Sender: TObject);
     procedure CheckBoxPropMultiValChange(Sender: TObject);
     procedure RadioButtonPropStringChange(Sender: TObject);
   private
@@ -49,15 +51,15 @@ type
   end;
 
 var
-  FNewProperty: TFNewProperty;
+  FNewPropDlg: TFNewPropDlg;
 
 implementation
 
 {$R *.lfm}
 
-{ TFNewProperty }
+{ TFNewPropDlg }
 
-procedure TFNewProperty.RadioButtonPropStringChange(Sender: TObject);
+procedure TFNewPropDlg.RadioButtonPropStringChange(Sender: TObject);
 begin
   if RadioButtonPropString.Checked then
   begin
@@ -80,7 +82,7 @@ begin
   end;
 end;
 
-procedure TFNewProperty.CheckBoxPropMultiValChange(Sender: TObject);
+procedure TFNewPropDlg.CheckBoxPropMultiValChange(Sender: TObject);
 begin
   if CheckBoxPropMultiVal.Checked then
   begin
@@ -95,13 +97,20 @@ begin
 
 end;
 
-procedure TFNewProperty.BitBtnAddDepClick(Sender: TObject);
+procedure TFNewPropDlg.BitBtnAddPropClick(Sender: TObject);
 begin
+  if FNewPropDlg.ListBoxPropDefVal.Items.IndexOf(EditPropNewVal.Text) < 0 then
+  begin
   ListBoxPropPosVal.Items.Add(EditPropNewVal.Text);
   ListBoxPropDefVal.Items.Add(EditPropNewVal.Text);
+  end
+  else MessageDlg('opsi-setup-detector: Property Editor: Error',
+                  'property value: '+EditPropNewVal.Text+' exists. Duplicates not allowed.',
+                   mtError, [mbOK],'');
+
 end;
 
-procedure TFNewProperty.BitBtnDelDepClick(Sender: TObject);
+procedure TFNewPropDlg.BitBtnDelPropClick(Sender: TObject);
 begin
   if ListBoxPropPosVal.ItemIndex > - 1 then
   begin

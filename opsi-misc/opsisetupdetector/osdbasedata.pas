@@ -1229,6 +1229,15 @@ begin
     myconfigurationhints := TStringList.Create;
     myconfigurationhints.Add('workbench_Path=Path to the opsi_workbench');
     myconfigurationhints.Add('preInstallLines=opsi-script code, that will be included before the start of the installation.');
+    myconfigurationhints.Add('workbench_mounted=Automatically detected. Is the opsi workbench reachable at workbench_Path.');
+    myconfigurationhints.Add('config_filled=Automatically detected. Do we have all needed configurations');
+    myconfigurationhints.Add('registerInFilemanager=Should this progrem redistred to the Filemanger (Explorer) context menu ?');
+    myconfigurationhints.Add('email_address=Your email address, used for the changelog entry');
+    myconfigurationhints.Add('import_libraries=List of opsi-script libraries that have to be imported.'+LineEnding+'One per line. May be empty. Example:'+LineEnding+'myinstallhelperlib.opsiscript');
+    myconfigurationhints.Add('preInstallLines=List of opsi-script code lines that should be included before the installation starts.'+LineEnding+'One per line. May be empty. Example:'+LineEnding+'comment "Start the installation ..."');
+    myconfigurationhints.Add('postInstallLines=List of opsi-script code lines that should be included after the installation finished.'+LineEnding+'One per line. May be empty. Example:'+LineEnding+'comment "Installation finished..."');
+    myconfigurationhints.Add('preUninstallLines=List of opsi-script code lines that should be included before the uninstallation starts.'+LineEnding+'One per line. May be empty. Example:'+LineEnding+'comment "Start the uninstallation ..."');
+    myconfigurationhints.Add('postUninstallLines=List of opsi-script code lines that should be included after the uninstallation finished.'+LineEnding+'One per line. May be empty. Example:'+LineEnding+'comment "Uninstall finished..."');
 (*
   myconfigurationhints := TCollection.Create(TConfigHint);
   newhint := TConfigHint(myconfigurationhints.add);

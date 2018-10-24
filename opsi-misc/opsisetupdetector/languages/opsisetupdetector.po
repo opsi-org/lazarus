@@ -265,11 +265,90 @@ msgstr ""
 msgid "State"
 msgstr ""
 
+#: tfnewpropdlg.bitbtnaddprop.caption
+msgctxt "tfnewpropdlg.bitbtnaddprop.caption"
+msgid "Add Value"
+msgstr ""
+
+#: tfnewpropdlg.bitbtndelprop.caption
+msgctxt "tfnewpropdlg.bitbtndelprop.caption"
+msgid "Delete Value"
+msgstr ""
+
+#: tfnewpropdlg.caption
+msgid "opsi-setup-detector - Properties"
+msgstr ""
+
+#: tfnewpropdlg.checkboxpropedit.caption
+msgctxt "tfnewpropdlg.checkboxpropedit.caption"
+msgid "Editable"
+msgstr ""
+
+#: tfnewpropdlg.checkboxpropmultival.caption
+msgctxt "tfnewpropdlg.checkboxpropmultival.caption"
+msgid "Multivalue"
+msgstr ""
+
+#: tfnewpropdlg.editpropname.text
+msgctxt "tfnewpropdlg.editpropname.text"
+msgid "Property Name"
+msgstr ""
+
+#: tfnewpropdlg.editpropnewval.text
+msgctxt "tfnewpropdlg.editpropnewval.text"
+msgid "New Value"
+msgstr ""
+
+#: tfnewpropdlg.groupbox1.caption
+msgctxt "tfnewpropdlg.groupbox1.caption"
+msgid "Property Type"
+msgstr ""
+
+#: tfnewpropdlg.label1.caption
+msgctxt "tfnewpropdlg.label1.caption"
+msgid ""
+"Please edit the dependency.\n"
+"Please note:\n"
+"You may may neither give a requested installation state or a requested action. A combination is not allowed.\n"
+msgstr ""
+
+#: tfnewpropdlg.label2.caption
+msgctxt "tfnewpropdlg.label2.caption"
+msgid "Property Name"
+msgstr ""
+
+#: tfnewpropdlg.label4.caption
+msgctxt "tfnewpropdlg.label4.caption"
+msgid "Possible Values"
+msgstr ""
+
+#: tfnewpropdlg.label5.caption
+msgctxt "tfnewpropdlg.label5.caption"
+msgid "Default Values"
+msgstr ""
+
+#: tfnewpropdlg.label6.caption
+msgctxt "tfnewpropdlg.label6.caption"
+msgid "Description"
+msgstr ""
+
+#: tfnewpropdlg.radiobuttonpropbool.caption
+msgctxt "tfnewpropdlg.radiobuttonpropbool.caption"
+msgid "Boolean"
+msgstr ""
+
+#: tfnewpropdlg.radiobuttonpropstring.caption
+msgctxt "tfnewpropdlg.radiobuttonpropstring.caption"
+msgid "String"
+msgstr ""
+
 #: tfnewproperty.bitbtnadddep.caption
+msgctxt "tfnewproperty.bitbtnadddep.caption"
 msgid "Add Value"
 msgstr ""
 
 #: tfnewproperty.bitbtndeldep.caption
+msgctxt "tfnewproperty.bitbtndeldep.caption"
 msgid "Delete Value"
 msgstr ""
 
@@ -278,10 +357,12 @@ msgid "FNewProperty"
 msgstr ""
 
 #: tfnewproperty.checkboxpropedit.caption
+msgctxt "tfnewproperty.checkboxpropedit.caption"
 msgid "Editable"
 msgstr ""
 
 #: tfnewproperty.checkboxpropmultival.caption
+msgctxt "tfnewproperty.checkboxpropmultival.caption"
 msgid "Multivalue"
 msgstr ""
 
@@ -291,10 +372,12 @@ msgid "Property Name"
 msgstr ""
 
 #: tfnewproperty.editpropnewval.text
+msgctxt "tfnewproperty.editpropnewval.text"
 msgid "New Value"
 msgstr ""
 
 #: tfnewproperty.groupbox1.caption
+msgctxt "tfnewproperty.groupbox1.caption"
 msgid "Property Type"
 msgstr ""
 
@@ -322,10 +405,12 @@ msgid "Default Values"
 msgstr ""
 
 #: tfnewproperty.radiobuttonpropbool.caption
+msgctxt "tfnewproperty.radiobuttonpropbool.caption"
 msgid "Boolean"
 msgstr ""
 
 #: tfnewproperty.radiobuttonpropstring.caption
+msgctxt "tfnewproperty.radiobuttonpropstring.caption"
 msgid "String"
 msgstr ""
 
@@ -454,23 +539,23 @@ msgstr ""
 msgid "Create a opsi Product"
 msgstr ""
 
-#: tresultform1.btproductnextstep.caption
-msgctxt "tresultform1.btproductnextstep.caption"
+#: tresultform1.btproduct1nextstep.caption
+msgctxt "tresultform1.btproduct1nextstep.caption"
 msgid "Next Step"
 msgstr ""
 
-#: tresultform1.btproductnextstep.hint
-msgctxt "tresultform1.btproductnextstep.hint"
+#: tresultform1.btproduct1nextstep.hint
+msgctxt "tresultform1.btproduct1nextstep.hint"
 msgid "Go to the next Step"
 msgstr ""
 
-#: tresultform1.btproductnextstep1.caption
-msgctxt "tresultform1.btproductnextstep1.caption"
+#: tresultform1.btproduct2nextstep.caption
+msgctxt "tresultform1.btproduct2nextstep.caption"
 msgid "Next Step"
 msgstr ""
 
-#: tresultform1.btproductnextstep1.hint
-msgctxt "tresultform1.btproductnextstep1.hint"
+#: tresultform1.btproduct2nextstep.hint
+msgctxt "tresultform1.btproduct2nextstep.hint"
 msgid "Go to the next Step"
 msgstr ""
 
@@ -508,10 +593,6 @@ msgstr ""
 
 #: tresultform1.caption
 msgid "opsi Setup Detector"
-msgstr ""
-
-#: tresultform1.checkbox1.caption
-msgid "Register as Explorer Context Menue"
 msgstr ""
 
 #: tresultform1.checkboxbuild.caption
@@ -818,33 +899,38 @@ msgctxt "tresultform1.stringgriddep.columns[3].title.caption"
 msgid "Required Mode"
 msgstr ""
 
-#: tresultform1.stringgriddep1.columns[0].title.caption
-msgctxt "tresultform1.stringgriddep1.columns[0].title.caption"
-msgid "Type"
-msgstr ""
-
-#: tresultform1.stringgriddep1.columns[1].title.caption
-msgctxt "tresultform1.stringgriddep1.columns[1].title.caption"
+#: tresultform1.stringgridprop.columns[0].title.caption
+msgctxt "tresultform1.stringgridprop.columns[0].title.caption"
 msgid "PropertyId"
 msgstr ""
 
-#: tresultform1.stringgriddep1.columns[2].title.caption
-msgctxt "tresultform1.stringgriddep1.columns[2].title.caption"
+#: tresultform1.stringgridprop.columns[1].title.caption
+msgctxt "tresultform1.stringgridprop.columns[1].title.caption"
+msgid "Description"
+msgstr ""
+
+#: tresultform1.stringgridprop.columns[2].title.caption
+msgctxt "tresultform1.stringgridprop.columns[2].title.caption"
+msgid "Type"
+msgstr ""
+
+#: tresultform1.stringgridprop.columns[3].title.caption
+msgctxt "tresultform1.stringgridprop.columns[3].title.caption"
 msgid "Multivalue"
 msgstr ""
 
-#: tresultform1.stringgriddep1.columns[3].title.caption
-msgctxt "tresultform1.stringgriddep1.columns[3].title.caption"
+#: tresultform1.stringgridprop.columns[4].title.caption
+msgctxt "tresultform1.stringgridprop.columns[4].title.caption"
 msgid "Editable"
 msgstr ""
 
-#: tresultform1.stringgriddep1.columns[4].title.caption
-msgctxt "tresultform1.stringgriddep1.columns[4].title.caption"
+#: tresultform1.stringgridprop.columns[5].title.caption
+msgctxt "tresultform1.stringgridprop.columns[5].title.caption"
 msgid "Possible Values"
 msgstr ""
 
-#: tresultform1.stringgriddep1.columns[5].title.caption
-msgctxt "tresultform1.stringgriddep1.columns[5].title.caption"
+#: tresultform1.stringgridprop.columns[6].title.caption
+msgctxt "tresultform1.stringgridprop.columns[6].title.caption"
 msgid "Default Values"
 msgstr ""
 

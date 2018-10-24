@@ -60,6 +60,12 @@ procedure GetWordOrStringConstant(const s: string; var Expression, Remaining: st
 
 procedure GetOuterFunctionOrExp(const s: string; var Expression, Remaining: string);
 
+function opsiunquotestr2(s1,s2 : string): string;
+// removes only quotes if they found at start and end
+// s2 may be two chars long. Then the first char is the start mark
+// and the second char is the end mark
+// used by unquote2
+
 implementation
 
 function CutLeftBlanks(const s: string): string;
@@ -334,6 +340,28 @@ begin
     end;
   end;
 end;
+
+function opsiunquotestr2(s1,s2 : string): string;
+// removes only quotes if they found at start and end
+// s2 may be two chars long. Then the first char is the start mark
+// and the second char is the end mark
+// used by unquote2
+var
+  markstr ,startmark, endmark : string;
+begin
+  Result := '';
+  markstr := trim(s2);
+  if (length(s1) >= 1) and (length(markstr) >= 1) then
+  begin
+    startmark := markstr[1];
+    if length(markstr) >= 2 then endmark := markstr[2] // different marks (brackets) at begin and end
+    else endmark := startmark; // the same mark (quote) at begin and end
+    if (pos(startmark,s1) = 1) and AnsiEndsStr(endmark,s1) then
+      Result := copy(s1,2,length(s1)-2)
+    else Result := s1;
+  end;
+end;
+
 
 end.
 
