@@ -298,7 +298,7 @@ begin
           serviceresult := '';
         End;
       end;
-      osmain.startupmessages.Add('OpsiServiceConfigs: ' + serviceresult);
+      //osmain.startupmessages.Add('OpsiServiceConfigs: ' + copy(serviceresult,1,100);
       Result := serviceresult;
       if jsonIsValid(serviceresult) then
       begin

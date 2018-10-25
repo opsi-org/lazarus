@@ -4,6 +4,13 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
+
+opsi-winst/opsi-script (4.12.0.32) stable; urgency=low
+
+  * osconf: no more OpsiServiceConfigs: in log
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 25 10 2018:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.0.31) stable; urgency=low
 
   * new paths for Linux:
