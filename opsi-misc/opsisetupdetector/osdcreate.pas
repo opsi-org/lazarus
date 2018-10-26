@@ -184,6 +184,17 @@ end;
     textlist.Add('onceScript:');
     textlist.Add('customScript:');
     textlist.Add('userLoginScript:');
+
+    textlist.Add('');
+    textlist.Add('[Changelog]');
+    textlist.Add(aktProduct.productdata.productId+'('+aktProduct.productdata.versionstr+') STABLE; urgency=medium');
+    textlist.Add('');
+    textlist.Add('  * initial by opsi-setup-detector');
+    textlist.Add('');
+    textlist.Add(myconfiguration.fullName+' <'+ myconfiguration.email_address+'> '
+                 +FormatDateTime('ddd, dd mmm yyyy hh:nn:ss',now));
+                 //mon, 04 Jun 12:00:00 + 0100
+
     textlist.SaveToFile(opsipath+pathdelim+'control');
     FreeAndNil(textlist);
     result := true;

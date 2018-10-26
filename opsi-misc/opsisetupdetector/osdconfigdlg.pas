@@ -6,14 +6,16 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, RTTIGrids, Forms, Controls, Graphics, Dialogs,
-  ExtCtrls, StdCtrls, osdbasedata, PropEdits;
+  ExtCtrls, StdCtrls, Buttons, osdbasedata, PropEdits;
 
 type
 
   { TFOSDConfigdlg }
 
   TFOSDConfigdlg = class(TForm)
+    BitBtn1: TBitBtn;
     FlowPanel1: TFlowPanel;
+    Label1: TLabel;
     MemoConfigHint: TMemo;
     Panel1: TPanel;
     TIPropertyGrid1: TTIPropertyGrid;

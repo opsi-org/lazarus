@@ -319,6 +319,7 @@ TPProperties = class(TPersistent)
     Fconfig_filled: boolean;
     FregisterInFilemanager: boolean;
     Femail_address: string;
+    FFullName: string;
     Fimport_libraries: TStrings;
     FpreInstallLines: TStrings;
     FpostInstallLines: TStrings;
@@ -337,6 +338,7 @@ TPProperties = class(TPersistent)
     property registerInFilemanager: boolean
       read FregisterInFilemanager write FregisterInFilemanager;
     property email_address: string read Femail_address write Femail_address;
+    property fullName: string read FFullName write FFullName;
     property import_libraries: TStrings read Fimport_libraries write SetLibraryLines;
     property preInstallLines: TStrings read FpreInstallLines write SetPreInstallLines;
     property postInstallLines: TStrings read FpostInstallLines write SetPostInstallLines;
@@ -1233,6 +1235,7 @@ begin
     myconfigurationhints.Add('config_filled=Automatically detected. Do we have all needed configurations');
     myconfigurationhints.Add('registerInFilemanager=Should this progrem redistred to the Filemanger (Explorer) context menu ?');
     myconfigurationhints.Add('email_address=Your email address, used for the changelog entry');
+    myconfigurationhints.Add('fullName=Your full name, used for the changelog entry');
     myconfigurationhints.Add('import_libraries=List of opsi-script libraries that have to be imported.'+LineEnding+'One per line. May be empty. Example:'+LineEnding+'myinstallhelperlib.opsiscript');
     myconfigurationhints.Add('preInstallLines=List of opsi-script code lines that should be included before the installation starts.'+LineEnding+'One per line. May be empty. Example:'+LineEnding+'comment "Start the installation ..."');
     myconfigurationhints.Add('postInstallLines=List of opsi-script code lines that should be included after the installation finished.'+LineEnding+'One per line. May be empty. Example:'+LineEnding+'comment "Installation finished..."');

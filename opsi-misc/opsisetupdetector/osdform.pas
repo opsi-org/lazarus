@@ -294,6 +294,7 @@ type
     procedure TabSheetCreateShow(Sender: TObject);
     procedure TISpinEditPrioChange(Sender: TObject);
     procedure TITrackBarPrioChange(Sender: TObject);
+    procedure fetchDepPropFromForm;
   private
     { private declarations }
     useGuiMode: TGuiMode;
@@ -1234,10 +1235,42 @@ begin
   end;
 end;
 
+procedure TResultform1.fetchDepPropFromForm;
+var
+  i : integer;
+  mydep
+begin
+  //dependencies
+  for i := 1 to StringGridDep.RowCount do
+  begin
+    //aktProduct.dependencies.;
+    akt := StringGridDep.Cells[1, i];
+    if StringGridDep.Cells[2, y] = '' then
+    begin
+      FNewDepDlg.RadioButtonState.Checked := False;
+      FNewDepDlg.RadioButtonAction.Checked := True;
+      FNewDepDlg.ComboBoxActState.Text := StringGridDep.Cells[3, y];
+    end
+    else
+    begin
+      FNewDepDlg.RadioButtonState.Checked := True;
+      FNewDepDlg.RadioButtonAction.Checked := False;
+      FNewDepDlg.ComboBoxActState.Text := StringGridDep.Cells[2, y];
+    end;
+    FNewDepDlg.RadioButtonActionChange(Sender);
+    procmess;
+
+    FNewDepDlg.ComboBoxReqType.Text := StringGridDep.Cells[4, y];
+  end;
+
+
+end;
+
 procedure TResultform1.BtCreateProductClick(Sender: TObject);
 begin
   try
     PanelProcess.Visible := True;
+    fetchDepPropFromForm;
     createProductStructure;
   finally
     PanelProcess.Visible := False;

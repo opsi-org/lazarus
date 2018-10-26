@@ -141,11 +141,11 @@ object resultForm1: TresultForm1
       Height = 468
       Top = 1
       Width = 991
-      ActivePage = TabSheetStart
+      ActivePage = TabSheetCreate
       Align = alClient
       Images = ImageList1
       ParentFont = False
-      TabIndex = 0
+      TabIndex = 6
       TabOrder = 0
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
@@ -4637,15 +4637,15 @@ object resultForm1: TresultForm1
       end
       object TabSheetCreate: TTabSheet
         Caption = 'Create'
-        ClientHeight = 522
-        ClientWidth = 1080
+        ClientHeight = 440
+        ClientWidth = 983
         OnShow = TabSheetCreateShow
         ParentFont = False
         object FlowPanel14: TFlowPanel
           Left = 0
           Height = 66
           Top = 0
-          Width = 1080
+          Width = 983
           Align = alTop
           Caption = 'FlowPanel14'
           ControlList = <          
@@ -4696,9 +4696,9 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object BitBtnWorkBenchPath: TBitBtn
-            Left = 844
+            Left = 14
             Height = 30
-            Top = 11
+            Top = 58
             Width = 170
             Anchors = []
             AutoSize = True
@@ -4751,7 +4751,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 50
           Top = 66
-          Width = 1080
+          Width = 983
           Align = alTop
           ControlList = <          
             item
@@ -4803,9 +4803,9 @@ object resultForm1: TresultForm1
             Visible = False
           end
           object BitBtnRecheckWorkbench: TBitBtn
-            Left = 843
+            Left = 14
             Height = 30
-            Top = 11
+            Top = 52
             Width = 183
             Anchors = []
             AutoSize = True
@@ -4858,7 +4858,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 132
           Top = 116
-          Width = 1080
+          Width = 983
           Align = alTop
           ControlList = <          
             item
@@ -4953,9 +4953,9 @@ object resultForm1: TresultForm1
             end
           end
           object PanelProcess: TPanel
-            Left = 464
+            Left = 1
             Height = 64
-            Top = 1
+            Top = 128
             Width = 520
             Anchors = []
             BevelOuter = bvNone
@@ -5005,7 +5005,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 98
           Top = 248
-          Width = 1080
+          Width = 983
           Align = alTop
           ControlList = <          
             item
@@ -5018,7 +5018,7 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 3
           object BtCreateProduct: TBitBtn
-            Left = 827
+            Left = 730
             Height = 68
             Hint = 'Create a opsi Product'
             Top = 11

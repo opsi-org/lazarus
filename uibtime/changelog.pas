@@ -1,4 +1,11 @@
 (*
+uibtime (4.1.1.41-1) stable; urgency=low
+
+ * uibdata: new TDataModule1.IBConnection1Log
+ * uibdata: TDataModule1.TimerCheckNetTimer: retrys
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 26 Oct 2018 15:00:00 +0000
+
 uibtime (4.1.1.40-1) stable; urgency=low
 
  * uibdatetime: fix in  getLastIntervalStart at IncDay(enddate,-1)
