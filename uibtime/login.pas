@@ -205,7 +205,7 @@ begin
         //***Datamodule1.SQuibevent.setrange([uid],[uid]);
         //Datamodule1.SQuibevent.setrange([uid],[uid]);
         Datamodule1.SQuibevent.Filter := 'userid = ' + QuotedStr(uid);
-        DataModule1.debugOut(8, 'Login: filter setto ' + Datamodule1.SQuibevent.Filter);
+        DataModule1.debugOut(8, 'Login: filter set to ' + Datamodule1.SQuibevent.Filter);
         Datamodule1.SQuibevent.Filtered := True;
         Datamodule1.SQuibuserEvent.Filter := 'userid = ' + QuotedStr(uid);
         Datamodule1.SQuibuserEvent.Filtered := True;
@@ -263,7 +263,7 @@ begin
       myini.Destroy;
     end;
   except
-    datamodule1.debugOut(3, '', 'exception in login: BtnOK');
+    datamodule1.debugOut(2, 'Login', 'exception in login: BtnOK');
     raise;
   end;
 end;

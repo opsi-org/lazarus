@@ -1292,8 +1292,8 @@ var
   servername : string;
   retries : integer;
 begin
-  (*
-  servername := 'groupware';
+
+  servername := 'groupware';;
   retries := 0;
   {$IFDEF WIN32}
   while (pinghost(servername) = -1) and (retries < 10) do
@@ -1303,6 +1303,9 @@ begin
     Sleep(1000);
   end;
   if retries >= 10 then
+    debugOut(2, 'CheckNetTimer', 'Could not reach '+servername+' no retry.');
+ {$ENDIF WIN32}
+  (*
      if mrAbort = MessageDlg('uibtime: Warnung','Die Netzwerkverbindung zum DB-Server '+servername,mtError,[mbAbort,mbIgnore],0)
      then
      begin
@@ -2034,7 +2037,8 @@ begin
   for I := 0 to ExceptFrameCount - 1 do
     Report := Report + LineEnding + BackTraceStrFunc(Frames[I]);
   debugOut(2,'Exception', Report);
-  ShowMessage(Report);
+  //ShowMessage(Report);
+   MessageDlg('uibtime: Fehler','Keine Netzwerkverbindung zum DB-Server. Programmabbruch ',mtError,[mbAbort],0);
   Application.Terminate;
   Halt; // End of program execution
 end;
@@ -2043,6 +2047,7 @@ procedure TDataModule1.CustomExceptionHandler(Sender: TObject; E: Exception);
 var
   retries : integer;
 begin
+  (*
   if E.ClassType = EIBDatabaseError then
   begin
     retries := 0;
@@ -2050,14 +2055,18 @@ begin
       begin
         while retries < 10 do
         begin
+          debugOut(2,'Exception', 'Unable to complete network request: retry: '+inttostr(retries));
           inc(retries);
           sleep(1000);
-          IBConnection1.Open;
+          Flogin.BitBtnOkClick(sender);
+          Application.ProcessMessages;
         end;
       end
     end;
+  if not IBConnection1.Connected then
+    begin
+    *)
   DumpExceptionCallStack(E);
-  Halt; // End of program execution
 end;
 
 
