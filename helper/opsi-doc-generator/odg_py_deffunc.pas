@@ -8,21 +8,23 @@ uses
   Classes,
   osparserhelper,
   oslog,
-  SysUtils;
+  SysUtils,
+  StrUtils,
+  regexpr;
 
 Type
 
 TParamDoc = class
   private
     FParamName : string;
+    FParamType : string;
     FParamDesc : string;
-    FParamAdvice : string;
   public
     constructor Create;
     destructor Destroy;
     property ParamName : string  read FParamName;
+    property ParamType : string  read FParamType;
     property ParamDesc : string  read FParamDesc;
-    property ParamAdvice : string  read FParamAdvice;
 end;
 
 TFuncDoc =  class
@@ -30,19 +32,13 @@ TFuncDoc =  class
     FDefinitionline : string;
     FName : string;
     FAuthor : string;
-    FEmail : string;
-    FVersion : string;
-    FDate : String;
-    FCopyright : string;
+    FLicense : string;
     FDescription : string;
     FReturns :string;
+    FReturnType :string;
+    FRType :string;
+    FRaises :string;
     FParamCounter : integer;
-    FOnError : string;
-    FSpecialCase : string;
-    FReferences : string;
-    FLinks : string;
-    FRequires : string;
-    FExample : string;
   public
     Fparams : array of TParamDoc;
     constructor Create;
@@ -50,29 +46,20 @@ TFuncDoc =  class
     property Definitionline : string  read FDefinitionline write FDefinitionline;
     property Name : string  read Fname write Fname;
     property Author : string  read FAuthor write FAuthor;
-    property Date : String  read FDate write FDate;
-    property Copyright : string  read FCopyright write FCopyright;
+    property License : string  read FLicense write FLicense;
     property Description : string  read FDescription write FDescription;
     property Returns :string  read FReturns write FReturns;
+    property ReturnType :string  read FReturnType write FReturnType;
+    property RType :string  read FRType write FRType;
+    property Raises :string  read FRaises write FRaises;
     property ParamCounter : integer  read FParamCounter write FParamCounter;
-    property OnError : string  read FOnError write FOnError;
-    property SpecialCase : string  read FSpecialCase write FSpecialCase;
-    property References : string  read FReferences write FReferences;
-    property Links : string  read FLinks write FLinks;
-    property Requires : string  read FRequires write FRequires;
-    property Email : string  read FEmail write FEmail;
-    property Version : string  read FVersion write FVersion;
-    property Example : string  read FExample write FExample;
   end;
 
 TFileDoc =  class
   private
     Fname : string;
     FAuthor : string;
-    FEmail : string;
-    FVersion : string;
-    FDate : String;
-    FCopyright : string;
+    FLicense : string;
     Ffiledesc : string;
     FfunctionCounter : integer;
   public
@@ -81,60 +68,44 @@ TFileDoc =  class
     destructor Destroy;
     property name : string  read Fname write Fname;
     property filedesc : string  read Ffiledesc write Ffiledesc;
-    property Email : string  read FEmail write FEmail;
     property Author : string  read FAuthor write FAuthor;
-    property Version : string  read FVersion write FVersion;
-    property Date : String  read FDate write FDate;
-    property Copyright : string  read FCopyright write FCopyright;
+    property License : string  read FLicense write FLicense;
     property functionCounter : integer  read FfunctionCounter write FfunctionCounter;
   end;
 
 const
-  cpycomment = '#';
-  cpydeffunc = 'def';
-  cendfunc = 'return';
-  cfiledesc = '@filedesc';
-  cauthor = '@author';
-  cdate = '@date';
-  cemail = '@email';
-  cversion = '@version';
-  ccopyright = '@copyright';
-  CDescription = '@Description';
-  COnError = '@OnError';
-  CReturns = '@Returns';
-  CSpecialCase = '@SpecialCase';
-  CReferences = '@References';
-  CLinks = '@Links';
-  CRequires = '@Requires';
-  CParamDesc = '@ParamDesc_';
-  CParamAdvice = '@ParamAdvice_';
-  CParam = '@Param';
-  CExample = '@Example';
+  cmulticomment1 = '"""';
+  cmulticomment2 = '''''''';
+  cpydeffunc = 'def ';
+  cpydefnotpublic = 'def _';
+  cpyclass = 'class ';
+  cauthor = ':author:';
+  clicense = ':license:';
+  CReturns = ':return:';
+  CReturnType = ':returntype:';
+  CRType = ':rtype:';
+  CRaises = ':raises';
+  CParamType = ':type ';
+  CParam = ':param ';
 
 
 function parseInput_pythonlibrary(filename : string) : boolean;
 
 var
   docobject : TFileDoc;
+  preprocessedlist : TStringlist;
 
 implementation
 
 uses
   odg_main;
 
-var
-  exampleident : integer;
-
-
 constructor TFileDoc.create;
 begin
   FName := '';
   Ffiledesc := '';
   FAuthor := '';
-  FEmail := '';
-  FVersion := '';
-  FDate := '';
-  FCopyright := '';
+  FLicense := '';
   FfunctionCounter := 0;
   Inherited;
 end;
@@ -150,16 +121,13 @@ begin
   FDefinitionline := '';
   FName := '';
   FAuthor := '';
-  FDate := '';
-  FCopyright := '';
+  FLicense := '';
   FDescription := '';
   FReturns := '';
+  FReturnType := '';
+  FRType := '';
+  FRaises := '';
   FParamCounter := 0;
-  FOnError := '';
-  FSpecialCase := '';
-  FReferences := '';
-  FLinks := '';
-  FRequires := '';
   Inherited;
 end;
 
@@ -172,14 +140,29 @@ end;
 constructor TParamDoc.create;
 begin
   FParamName := '';
+  FParamType := '';
   FParamDesc := '';
-  FParamAdvice := '';
   Inherited;
 end;
 
 destructor TParamDoc.destroy;
 begin
   inherited;
+end;
+
+
+function onMarkerAddDocStringTo(marker : string;docstring : string;var target :string) : boolean;
+var
+  tmpstr1 : string;
+begin
+  result := false;
+  if pos(marker,docstring) = 1 then
+  begin
+    tmpstr1 := trim(copy(docstring,length(marker)+1,length(docstring)));
+    if target = '' then target := tmpstr1
+    else target := target+', '+tmpstr1;
+    result := true;
+  end;
 end;
 
 procedure parsePyDef(definitionStr : string; myfunc : TFuncDoc);
@@ -192,14 +175,12 @@ begin
   endOfParamlist := false;
   paramcounter := -1;
   myfunc.FDefinitionline:=trim(definitionStr);
-  // get function name
   GetWord(trim(definitionStr), myfunc.FName, remaining,WordDelimiterSet5);
-
   LogDatei.log('Found new defined function name: '+myfunc.FName,LLDebug2);
+
   if  skip('(',remaining,remaining,errorstr) then
   begin
     skip('self',remaining,remaining,errorstr);
-    // test on no parameters
     if skip('):',remaining,remaining,errorstr) then
     begin
       endOfParamlist := true;
@@ -210,10 +191,11 @@ begin
       skip(',',remaining,remaining,errorstr);
     end;
 
-    while  not endOfParamlist do
+    while not endOfParamlist do
     begin
-      // check paramname
-      GetWord(remaining, paramnamestr, remaining,[',',')']);
+      //GetWord(remaining, paramnamestr, remaining,[',',')']);
+      GetWord(remaining, paramnamestr, remaining,[',',':']);
+
       paramnamestr := trim(paramnamestr);
 
       LogDatei.log('Found defined function parametername: '+paramnamestr,LLDebug2);
@@ -222,145 +204,267 @@ begin
       myfunc.FParamCounter := paramcounter +1;
       setlength(myfunc.Fparams,myfunc.FParamCounter);
       myfunc.Fparams[paramcounter] := TParamDoc.Create;
+
       with myfunc.Fparams[paramcounter] do
       begin
-        // is a new param
         FparamName:= paramnamestr;
-        // check for endOfParamlist
-        if skip('):',remaining,remaining,errorstr) then
+        if skip(':',remaining,remaining,errorstr) then
         begin
+                (*
+                delete last character
+       *)
           endOfParamlist := true;
         end
         else
         begin
           if skip(',',remaining,remaining,errorstr) then
         end
-      end; // with
-    end; // while
+      end;
+    end;
   end;
 end;
 
-function onMarkerAddDocStringTo(marker : string;docstring : string;var target :string) : boolean;
+function getDefinitionLine(var currentlinenumber : integer) : string;
 var
-  tmpstr1 : string;
+  deflinecounter, matchpos : integer;
+  defstring : string;
+begin
+  result := '';
+  defstring := trim(preprocessedlist.Strings[currentlinenumber]);
+  deflinecounter := currentlinenumber;
+  defstring := copy(defstring, length(cpydeffunc)+1,length(defstring));
+  matchpos := pos(':', defstring);
+  while matchpos = 0 do
+  begin
+    inc(deflinecounter);
+    defstring := defstring + trim(preprocessedlist.Strings[deflinecounter]);
+    matchpos := pos(':', defstring);
+  end;
+  currentlinenumber := deflinecounter + 1;
+  result := copy(defstring,1,matchpos);
+end;
+
+function getFileDoc(var currentlinenumber : integer) : boolean;
+var
+  docstringcounter, matchpos : integer;
+  docstring, description : string;
 begin
   result := false;
-  if pos(lowercase(marker),lowercase(docstring)) = 1 then
+  docstring := trim(preprocessedlist.Strings[currentlinenumber]);
+  docstringcounter:= currentlinenumber;
+  if (pos(cmulticomment1, docstring) = 1) then
+    docstring := copy(docstring, length(cmulticomment1)+1,length(docstring))
+  else if (pos(cmulticomment2, docstring) = 1) then
+    docstring := copy(docstring, length(cmulticomment2)+1,length(docstring));
+
+  description := trim(docstring);
+  matchpos := (rpos(cmulticomment1, docstring)) or (rpos(cmulticomment2, docstring));
+
+  while matchpos = 0 do
   begin
-    if lowercase(marker) = lowercase(CExample) then
+    inc(docstringcounter);
+    docstring := preprocessedlist.Strings[docstringcounter];
+    if not onMarkerAddDocStringTo(cauthor,trim(docstring),docobject.FAuthor) then
+    if not onMarkerAddDocStringTo(clicense,trim(docstring),docobject.FLicense) then
+    description := description + ' ' +trim(docstring);
+    matchpos := rpos(cmulticomment1, docstring) or rpos(cmulticomment2, docstring);
+  end;
+
+  matchpos := rpos(cmulticomment1, description) or rpos(cmulticomment2, description);
+  description := copy(description,1,matchpos-1);
+  docobject.Ffiledesc := description;
+  currentlinenumber := docstringcounter + 1;
+  result := true;
+end;
+
+function indentation(line : string) : integer;
+var
+  totallen, len : integer;
+begin
+  totallen := Length(Tab2Space(line,4));
+  len := Length(TrimLeft(Tab2Space(line,4)));
+  result := totallen - len;
+end;
+
+
+function processPublicDef(var currentlinenumber : integer) : boolean;
+var
+  indentofdef, funccounter, linecounter, prun : integer;
+  currentline, funcdescription, pname : string;
+  indoc, docfound : boolean;
+begin
+  result := false;
+  indoc := false;
+  docfound := false;
+  currentline := preprocessedlist.Strings[currentlinenumber];
+  indentofdef := indentation(currentline);
+
+  linecounter := currentlinenumber;
+
+  funccounter := docobject.Ffunctioncounter;
+  inc(funccounter);
+  docobject.Ffunctioncounter := funccounter;
+  setlength(docobject.Ffunctions,funccounter);
+  docobject.Ffunctions[funccounter-1] := TFuncDoc.Create;
+  parsePyDef(getDefinitionLine(currentlinenumber),docobject.Ffunctions[funccounter-1]);
+
+  linecounter := currentlinenumber;
+  currentline := preprocessedlist.Strings[currentlinenumber];
+
+  while ((indentation(currentline) > indentofdef) or (currentline = '')) do
+  begin
+    if ((pos(cmulticomment1, trim(currentline)) = 1) or  (pos(cmulticomment2, trim(currentline)) = 1)) and not docfound then
     begin
-      // is this the first line of example
-      if target = '' then
+      if  not indoc then
+        indoc := true
+      else
       begin
-        // get ident of first line
-        tmpstr1 := copy(docstring,length(marker)+1,length(docstring));
-        exampleident := length(tmpstr1) - length(trimleft(tmpstr1));
+        docobject.Ffunctions[funccounter-1].FDescription := trim(funcdescription);
+        indoc := false;
+        funcdescription := '';
+        docfound := true;
+      end
+    end
+    else if indoc then
+    begin
+      if not onMarkerAddDocStringTo(cauthor,trim(currentline),docobject.Ffunctions[funccounter-1].FAuthor) then
+      if not onMarkerAddDocStringTo(clicense,trim(currentline),docobject.Ffunctions[funccounter-1].FLicense) then
+      if not onMarkerAddDocStringTo(CReturns,trim(currentline),docobject.Ffunctions[funccounter-1].FReturns) then
+      if not onMarkerAddDocStringTo(CReturnType,trim(currentline),docobject.Ffunctions[funccounter-1].FReturnType) then
+      if not onMarkerAddDocStringTo(CRType,trim(currentline),docobject.Ffunctions[funccounter-1].FRType) then
+      if not onMarkerAddDocStringTo(CRaises,trim(currentline),docobject.Ffunctions[funccounter-1].FRaises) then
+      if (pos(CParam,trim(currentline)) = 1) or (pos(CParamType,trim(currentline)) = 1) then
+      begin
+        for prun := 0 to docobject.Ffunctions[funccounter-1].ParamCounter-1 do
+        begin
+          pname := docobject.Ffunctions[funccounter-1].Fparams[prun].FParamName;
+          if not onMarkerAddDocStringTo(CParamType+pname,trim(currentline),docobject.Ffunctions[funccounter-1].Fparams[prun].FParamType) then
+          onMarkerAddDocStringTo(CParam+pname,trim(currentline),docobject.Ffunctions[funccounter-1].Fparams[prun].FParamDesc);
+        end;
+      end
+      else
+        funcdescription := funcdescription + ' ' +trim(currentline) ;
+    end;
+    if linecounter < preprocessedlist.Count-2 then
+    begin
+      inc(linecounter);
+      currentline := preprocessedlist.Strings[linecounter];
+    end
+    else Break;
+  end;
+
+  //currentlinenumber := linecounter + 1;
+  currentlinenumber := linecounter;
+  result := true;
+end;
+
+
+function processPrivateDef(var currentlinenumber : integer) : boolean;
+var
+  indentofdef, linecounter : integer;
+  defline, currentline  : string;
+begin
+  result := false;
+  defline := preprocessedlist.Strings[currentlinenumber];
+  indentofdef := indentation(defline);
+  getDefinitionLine(currentlinenumber);
+  linecounter := currentlinenumber;
+  currentline := preprocessedlist.Strings[linecounter];
+  while ((indentation(currentline) > indentofdef) or (currentline = '')) do
+  begin
+    if linecounter < preprocessedlist.Count-2 then
+    begin
+      inc(linecounter);
+      currentline := preprocessedlist.Strings[linecounter];
+    end
+    else Break;
+  end;
+  currentlinenumber := linecounter;
+  result := true;
+end ;
+
+
+procedure preprocess();
+var
+  line, linetoadd : string;
+  linenumber : integer;
+begin
+  linenumber := 0;
+  preprocessedlist.Clear;
+  while linenumber < sourcelist.Count do
+  begin
+    line := sourcelist.Strings[linenumber];
+    if (line = '') then
+      inc(linenumber)
+    else if (line[length(line)] = '\') then
+    begin
+      delete(line, length(line), 1);
+      linetoadd := line;
+      inc(linenumber);
+      line := sourcelist.Strings[linenumber];
+      while (line[length(line)] = '\') do
+      begin
+        delete(line, length(line), 1);
+        linetoadd := linetoadd + ' ' + trim(line);
+        inc(linenumber);
+        line := sourcelist.Strings[linenumber];
       end;
-      tmpstr1 := trimRight(copy(docstring,length(marker)+1+exampleident,length(docstring)));
-      if target = '' then target := tmpstr1
-      else target := target+LineEnding+tmpstr1;
+      inc(linenumber); //??
+      linetoadd := linetoadd + ' ' + trim(line);
+      preprocessedlist.Add(linetoadd);
     end
     else
     begin
-      tmpstr1 := trim(copy(docstring,length(marker)+1,length(docstring)));
-      if target = '' then target := tmpstr1
-      else target := target+LineEnding+tmpstr1;
+      preprocessedlist.Add(line);
+      inc(linenumber);
     end;
-    result := true;
   end;
 end;
-
 
 function parseInput_pythonlibrary(filename : string) : boolean;
 var
-  linecounter, funccounter,prun : integer;
-  indeffunc : integer;
-  aktline, pname : string;
-  incomment : boolean;
-
-
+  linenumber, totallines : integer;
+  trimmedline : string;
+  infiledoc : Boolean;
 begin
-  result := true;
-  indeffunc := 0;
+  infiledoc := false;
+  linenumber := 0;
   if Assigned(docobject) and (docobject <> nil) then docobject.Destroy;
   docobject := TFileDoc.Create;
   docobject.Fname:=ExtractFileName(filename);
-
-  for linecounter := 0 to sourcelist.Count-1 do
-  begin
-    incomment := false;
-    aktline := trim(sourcelist.Strings[linecounter]);      // all parsed datas
-    if indeffunc = 0 then
-    begin  // not in defined function
-      if pos(lowercase(cpydeffunc),lowercase(aktline)) = 1 then
-      begin // function definition line
-        inc(indeffunc);
-        funccounter := docobject.Ffunctioncounter;
-        inc(funccounter);
-        docobject.Ffunctioncounter := funccounter;
-        setlength(docobject.Ffunctions,funccounter);
-        docobject.Ffunctions[funccounter-1] := TFuncDoc.Create;
-        parsePyDef(copy(aktline,length(cpydeffunc)+1,length(aktline)),docobject.Ffunctions[funccounter-1]);
+  preprocess();
+  totallines:= preprocessedlist.Count;
+  while linenumber < totallines do
+    begin
+      trimmedline := trim(preprocessedlist.Strings[linenumber]);
+      if ((pos(cmulticomment1, trimmedline) = 1) or  (pos(cmulticomment2, trimmedline) = 1)) and not infiledoc then
+      begin
+        infiledoc := true;
+        getFileDoc(linenumber);
       end
-      else
-      if pos(cpycomment,aktline) = 1 then
+      else if (pos(cpydeffunc,trimmedline) = 1) then
       begin
-        incomment := true;
-        aktline := trim(copy(aktline,length(cpycomment)+1,length(aktline)));
-      end;
-
-      if incomment then
-      begin    // document related ?
-        if not onMarkerAddDocStringTo(cauthor,aktline,docobject.FAuthor) then
-        if not onMarkerAddDocStringTo(cdate,aktline,docobject.FDate) then
-        if not onMarkerAddDocStringTo(ccopyright,aktline,docobject.FCopyright) then
-        if not onMarkerAddDocStringTo(cemail,aktline,docobject.FEmail) then
-        if not onMarkerAddDocStringTo(cversion,aktline,docobject.FVersion) then
-        onMarkerAddDocStringTo(cfiledesc,aktline,docobject.Ffiledesc)
-      end;
-    end
-    else
-    begin  // in defined function
-      if pos(lowercase(cendfunc),lowercase(aktline)) = 1 then
-      begin // function end line
-        dec(indeffunc);
-      end
-      else
-      if pos(cpycomment,aktline) = 1 then
-      begin
-        incomment := true;
-        aktline := trim(copy(aktline,length(cpycomment)+1,length(aktline)));
-      end;
-      if incomment then
-      begin
-        if not onMarkerAddDocStringTo(cauthor,aktline,docobject.Ffunctions[funccounter-1].FAuthor) then
-        if not onMarkerAddDocStringTo(cdate,aktline,docobject.Ffunctions[funccounter-1].FDate) then
-        if not onMarkerAddDocStringTo(cemail,aktline,docobject.Ffunctions[funccounter-1].FEmail) then
-        if not onMarkerAddDocStringTo(cversion,aktline,docobject.Ffunctions[funccounter-1].FVersion) then
-        if not onMarkerAddDocStringTo(ccopyright,aktline,docobject.Ffunctions[funccounter-1].FCopyright) then
-        if not onMarkerAddDocStringTo(CDescription,aktline,docobject.Ffunctions[funccounter-1].FDescription) then
-        if not onMarkerAddDocStringTo(COnError,aktline,docobject.Ffunctions[funccounter-1].FOnError) then
-        if not onMarkerAddDocStringTo(CReturns,aktline,docobject.Ffunctions[funccounter-1].FReturns) then
-        if not onMarkerAddDocStringTo(CSpecialCase,aktline,docobject.Ffunctions[funccounter-1].FSpecialCase) then
-        if not onMarkerAddDocStringTo(CReferences,aktline,docobject.Ffunctions[funccounter-1].FReferences)then
-        if not onMarkerAddDocStringTo(CExample,aktline,docobject.Ffunctions[funccounter-1].FExample)then
-            onMarkerAddDocStringTo(CLinks,aktline,docobject.Ffunctions[funccounter-1].FLinks);
-        // parameter
-        if pos(lowercase(CParam),lowercase(aktline)) = 1 then
+        if pos(cpydefnotpublic,trimmedline) = 1 then
         begin
-          for prun := 0 to docobject.Ffunctions[funccounter-1].ParamCounter-1 do
-          begin
-            pname := docobject.Ffunctions[funccounter-1].Fparams[prun].FParamName;
-            if not onMarkerAddDocStringTo(lowercase(CParamDesc+pname),aktline,docobject.Ffunctions[funccounter-1].Fparams[prun].FParamDesc)
-            then onMarkerAddDocStringTo(lowercase(CParamAdvice+pname),aktline,docobject.Ffunctions[funccounter-1].Fparams[prun].FParamAdvice);
-          end;
-        end;
+          processPrivateDef(linenumber);
+        end
+        else
+          processPublicDef(linenumber);
+      end
+      else
+      begin
+        inc(linenumber);
       end;
     end;
-  end;
+  result := True;
 end;
 
-begin
+
+initialization
+  preprocessedlist := TStringlist.create;
+
+finalization
+  preprocessedlist.Free;
 
 end.
 

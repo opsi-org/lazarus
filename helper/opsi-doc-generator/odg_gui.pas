@@ -10,7 +10,6 @@ uses
   winpeimagereader, // {need this for reading exe info}
   elfreader, // {needed for reading ELF executables}
   LCLIntf,
-  Process,
   odg_main,
   odg_asciidoc,
   odg_pyasciidoc,

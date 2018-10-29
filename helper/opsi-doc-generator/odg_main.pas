@@ -27,7 +27,6 @@ var
   sourcelist : TStringlist;
   targetlist : TStringlist;
 
-
 implementation
 
 function convertOslibToAsciidoc(filename : string): boolean;
