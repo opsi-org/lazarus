@@ -446,12 +446,19 @@ msgctxt "tformhelp.panel1.caption"
 msgid "Panel1"
 msgstr "-"
 
+#: tfosdconfigdlg.bitbtn1.caption
+msgid "Finished"
+msgstr ""
+
 #: tfosdconfigdlg.caption
 msgid "opsi-setup-detector Configuration"
 msgstr ""
 
-#: tfosdconfigdlg.flowpanel1.caption
-msgid "FlowPanel1"
+#: tfosdconfigdlg.label1.caption
+msgid ""
+"Edit your configuration here.\n"
+"Click on a column to get help\n"
+"in the yellow field at the bottom.\n"
 msgstr ""
 
 #: tfosdconfigdlg.panel1.caption
@@ -646,6 +653,10 @@ msgstr "MST Datei"
 msgctxt "tresultform1.checkboxusemst1.caption"
 msgid "use MST File"
 msgstr "MST Datei"
+
+#: tresultform1.checkgroup1.caption
+msgid "Build Mode"
+msgstr ""
 
 #: tresultform1.fileexit.caption
 msgctxt "tresultform1.fileexit.caption"
@@ -917,6 +928,10 @@ msgstr "opsi Paket erzeugen"
 msgctxt "TRESULTFORM1.RADIOBUTTONINTERACTIVE.CAPTION"
 msgid "create opsi packet and start interactive PacketBuilder"
 msgstr "opsi Paket erzeugen und opsi Packet Builder starten"
+
+#: tresultform1.radiogroup1.caption
+msgid "Create Mode"
+msgstr ""
 
 #: tresultform1.sbtnexit.caption
 msgid "Exit"

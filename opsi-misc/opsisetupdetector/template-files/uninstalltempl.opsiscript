@@ -20,7 +20,9 @@ DefVar $LicenseKey$
 DefVar $LicensePool$
 DefVar $LogDir$
 DefVar $OS$
-DefVar $oldProgFound$
+DefVar $MsiId$
+DefVar $UninstallProgram$
+
 
 Set $LogDir$ = "%opsiLogDir%"
 
@@ -31,12 +33,12 @@ importlib "%scriptpath%\osd-lib.opsiscript"
 
 ; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
-Set $ProductId$       = "#@productId*#"
-; the path where we find the product after the installation
-Set $InstallDir1$      = "#@InstallDir1*#"
-Set $LicenseRequired$ = "#@LicenseRequired*#"
+Set $ProductId$       = "opsi-template"
+Set $MinimumSpace$    = "1 MB"
+; the path were we find the product after the installation
+Set $InstallDir$      = "%ProgramFiles32Dir%\<path to the product>"
+Set $LicenseRequired$ = "false"
 Set $LicensePool$     = "p_" + $ProductId$
-Set $MsiId$           = "#@MsiId1*#"
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS

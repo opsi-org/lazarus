@@ -10,7 +10,6 @@ comment "Start the Uninstall check:"
 
 if $oldProgFound$ = "true"
   Message "Uninstalling " + $ProductId$ + " ..."
-  comment "Start Pre Uninstall hook (may be empty):"
   #@preUninstallLines1*#
   comment "Start uninstall program"
   ChangeDirectory "%SCRIPTPATH%"
@@ -18,8 +17,6 @@ if $oldProgFound$ = "true"
   Winbatch_uninstall  #@uninstallWaitForProc1*#
   ;----------------------------------------------
   Sub_check_exitcode
-
-  comment "Start Post Uninstall hook (may be empty):"
   #@postUninstallLines1*#
   if not($InstallDir1$ = '')
      Files_uninstall

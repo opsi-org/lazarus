@@ -82,61 +82,93 @@ end;
     //setup 1
     patchlist.add('#@InstallDir1*#='+aktProduct.SetupFiles[0].installDirectory);
     patchlist.add('#@MsiId1*#='+aktProduct.SetupFiles[0].msiId);
-    str :=myconfiguration.preInstallLines.Text;
+    str :='comment "Start Pre Install hook :"'+LineEnding+ myconfiguration.preInstallLines.Text;
     patchlist.add('#@preInstallLines1*#='+str);
     patchlist.add('#@installCommandLine1*#='+aktProduct.SetupFiles[0].installCommandLine);
-    patchlist.add('#@postInstallLines1*#='+myconfiguration.postInstallLines.Text);
+    str := 'comment "Start Post UnInstall hook :"'+LineEnding+myconfiguration.postInstallLines.Text;
+    patchlist.add('#@postInstallLines1*#='+str);
     patchlist.add('#@isExitcodeFatalFunction1*#='+aktProduct.SetupFiles[0].isExitcodeFatalFunction);
     str := aktProduct.SetupFiles[0].uninstallCheck.Text;
     patchlist.add('#@uninstallCheckLines1*#='+str);
-    str :=myconfiguration.preUninstallLines.Text;
+    str :='comment "Start Pre UnInstall hook :"'+LineEnding+ myconfiguration.preUninstallLines.Text;
     patchlist.add('#@preUninstallLines1*#='+str);
     patchlist.add('#@uninstallCommandLine1*#='+aktProduct.SetupFiles[0].uninstallCommandLine);
     patchlist.add('#@uninstallProg1*#='+aktProduct.SetupFiles[0].uninstallProg);
     patchlist.add('#@uninstallWaitForProc1*#='+aktProduct.SetupFiles[0].uninstall_waitforprocess);
-    patchlist.add('#@postUninstallLines1*#='+myconfiguration.postUninstallLines.Text);
+    str := 'comment "Start Post UnInstall hook :"'+LineEnding+myconfiguration.postUnInstallLines.Text;
+    patchlist.add('#@postUninstallLines1*#='+str);
     //setup 2
     patchlist.add('#@InstallDir2*#='+aktProduct.SetupFiles[1].installDirectory);
     patchlist.add('#@MsiId2*#='+aktProduct.SetupFiles[1].msiId);
-    str :=myconfiguration.preInstallLines.Text;
+    str :='comment "Start Pre Install hook :"'+LineEnding+ myconfiguration.preInstallLines.Text;
     patchlist.add('#@preInstallLines2*#='+str);
     patchlist.add('#@installCommandLine2*#='+aktProduct.SetupFiles[1].installCommandLine);
-    patchlist.add('#@postInstallLines2*#='+myconfiguration.postInstallLines.Text);
+    str := 'comment "Start Post Install hook :"'+LineEnding+myconfiguration.postInstallLines.Text;
+    patchlist.add('#@postInstallLines2*#='+str);
     patchlist.add('#@isExitcodeFatalFunction2*#='+aktProduct.SetupFiles[1].isExitcodeFatalFunction);
     str := aktProduct.SetupFiles[1].uninstallCheck.Text;
     patchlist.add('#@uninstallCheckLines2*#='+str);
-    str :=myconfiguration.preUninstallLines.Text;
+    str :='comment "Start Pre Install hook :"'+LineEnding+ myconfiguration.preUninstallLines.Text;
     patchlist.add('#@preUninstallLines2*#='+str);
     patchlist.add('#@uninstallCommandLine2*#='+aktProduct.SetupFiles[1].uninstallCommandLine);
     patchlist.add('#@uninstallProg2*#='+aktProduct.SetupFiles[1].uninstallProg);
     patchlist.add('#@uninstallWaitForProc2*#='+aktProduct.SetupFiles[1].uninstall_waitforprocess);
-    patchlist.add('#@postUninstallLines2*#='+myconfiguration.postUninstallLines.Text);
+    str := 'comment "Start Post UnInstall hook :"'+LineEnding+myconfiguration.postUninstallLines.Text;
+    patchlist.add('#@postUninstallLines2*#='+str);
   end;
 
   function createClientFiles : boolean;
   var
       infilename, outfilename : string;
+      insetup,indelsub,inuninstall : string;
   begin
     result := false;
     try
       patchlist:= TStringList.Create;
       fillPatchList;
+      case useRunMode of
+        singleAnalyzeCreate :
+          begin
+            insetup := 'setupsingle.opsiscript';
+            indelsub := 'delsubsingle.opsiscript';
+            inuninstall := 'uninstallsingle.opsiscript';
+          end;
+        twoAnalyzeCreate_1, twoAnalyzeCreate_2 :
+          begin
+            insetup := 'setupdouble.opsiscript';
+            indelsub := 'delsubdouble.opsiscript';
+            inuninstall := 'uninstalldouble.opsiscript';
+          end;
+        createTemplate :
+          begin
+            insetup := 'setuptempl.opsiscript';
+            indelsub := 'delsubtempl.opsiscript';
+            inuninstall := 'uninstalltempl.opsiscript';
+          end;
+      end;
       // setup script
-      infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+'setupsingle.opsiscript';
+      infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+insetup;
       outfilename := clientpath+PathDelim+aktProduct.productdata.setupscript;
       patchScript(infilename,outfilename);
       // delsub script
-      infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+'delsubsingle.opsiscript';
+      infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+indelsub;
       outfilename := clientpath+PathDelim+aktProduct.productdata.delsubscript;
       patchScript(infilename,outfilename);
       // uninstall script
-      infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+'uninstallsingle.opsiscript';
+      infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+inuninstall;
       outfilename := clientpath+PathDelim+aktProduct.productdata.uninstallscript;
       patchScript(infilename,outfilename);
-      // setup file
-      copyfile(aktProduct.SetupFiles[0].setupFullFileName,
+      // setup file 1
+      if FileExists(aktProduct.SetupFiles[0].setupFullFileName) then
+        copyfile(aktProduct.SetupFiles[0].setupFullFileName,
                 clientpath+PathDelim+aktProduct.SetupFiles[0].setupFileName,
                 [cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime], true);
+      // setup file 2
+      if FileExists(aktProduct.SetupFiles[1].setupFullFileName) then
+        copyfile(aktProduct.SetupFiles[1].setupFullFileName,
+                clientpath+PathDelim+aktProduct.SetupFiles[1].setupFileName,
+                [cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime], true);
+
       //osd-lib.opsiscript
       infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+'osd-lib.opsiscript';
       outfilename := clientpath+PathDelim+'osd-lib.opsiscript';
@@ -145,6 +177,15 @@ end;
       infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+'template.png';
       outfilename := clientpath+PathDelim+aktProduct.productdata.productId+'.png';
       copyfile(infilename,outfilename,[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime], true);
+      //preinst
+      infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+'preinst';
+      outfilename := opsipath+pathdelim+'preinst';
+      copyfile(infilename,outfilename,[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime], true);
+      //postinst
+      infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+'postinst';
+      outfilename := opsipath+pathdelim+'postinst';
+      copyfile(infilename,outfilename,[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime], true);
+
 
       FreeAndNil(patchlist);
       result := true;;
@@ -159,13 +200,17 @@ end;
   function createOpsiFiles : boolean;
   var
     textlist : Tstringlist;
+    i : integer;
+    mydep : TPDependency;
+    myprop : TPProperties;
+    tmpstr : string;
   begin
     result := false;
     try
     textlist := Tstringlist.Create;
     textlist.Add('[Package]');
     textlist.Add('version: '+ intToStr(aktProduct.productdata.packageversion));
-    textlist.Add('depends:');
+    textlist.Add('depends: ');
     textlist.Add('');
     textlist.Add('[Product]');
     textlist.Add('type: '+aktProduct.productdata.producttype);
@@ -173,21 +218,75 @@ end;
     textlist.Add('name: '+aktProduct.productdata.productName);
     textlist.Add('description: '+aktProduct.productdata.description);
     textlist.Add('advice: '+aktProduct.productdata.advice);
-    textlist.Add('version:'+ aktProduct.productdata.productversion);
-    textlist.Add('priority:'+ intToStr(aktProduct.productdata.priority));
+    textlist.Add('version: '+ aktProduct.productdata.productversion);
+    textlist.Add('priority: '+ intToStr(aktProduct.productdata.priority));
     textlist.Add('licenseRequired: ');
-    textlist.Add('productClasses:');
+    textlist.Add('productClasses: ');
     textlist.Add('setupScript: '+ aktProduct.productdata.setupscript);
     textlist.Add('uninstallScript: '+ aktProduct.productdata.uninstallscript);
-    textlist.Add('updateScript:');
-    textlist.Add('alwaysScript:');
-    textlist.Add('onceScript:');
-    textlist.Add('customScript:');
-    textlist.Add('userLoginScript:');
+    textlist.Add('updateScript: ');
+    textlist.Add('alwaysScript: ');
+    textlist.Add('onceScript: ');
+    textlist.Add('customScript: ');
+    textlist.Add('userLoginScript: ');
 
+    //dependencies
+    for i := 0 to aktProduct.dependencies.Count -1 do
+    begin
+      mydep := TPDependency(aktProduct.dependencies.Items[i]);
+      textlist.Add('');
+      textlist.Add('[ProductDependency]');
+      textlist.Add('action: setup');
+      textlist.Add('requiredProduct: '+mydep.requProductId);
+      case mydep.requState of
+         noState : ;
+         installed : textlist.Add('requiredStatus: installed');
+         not_installed : textlist.Add('requiredStatus: not installed');
+         unknown : textlist.Add('requiredStatus: unknown');
+      end;
+      case mydep.requAction of
+         noRequest : ;
+         setup : textlist.Add('requiredAction: setup');
+         uninstall : textlist.Add('requiredAction: uninstall');
+         TPActionRequest.update : textlist.Add('requiredAction: update');
+      end;
+      case mydep.RequType of
+         doNotMatter : textlist.Add('requirementType: ');
+         before : textlist.Add('requirementType: before');
+         after : textlist.Add('requirementType: after');
+      end;
+    end;
+
+    //ProductProperties
+    for i := 0 to aktProduct.properties.Count -1 do
+    begin
+      myprop := TPProperties(aktProduct.properties.Items[i]);
+      textlist.Add('');
+      textlist.Add('[ProductProperty]');
+      case myprop.ptype of
+         bool : textlist.Add('type: bool');
+         unicode : textlist.Add('type: unicode');
+      end;
+      textlist.Add('name: '+myprop.name);
+      textlist.Add('description: '+myprop.description);
+      if myprop.ptype = bool then
+      begin
+        textlist.Add('default: '+BoolToStr(myprop.boolDefault,true));
+      end
+      else
+      begin
+        textlist.Add('multivalue: '+BoolToStr(myprop.multivalue,true));
+        textlist.Add('editable: '+BoolToStr(myprop.editable,true));
+        textlist.Add('values: '+myprop.Strvalues.Text);
+        textlist.Add('default: '+myprop.StrDefault.Text);
+      end;
+    end;
+
+    // changelog
     textlist.Add('');
     textlist.Add('[Changelog]');
-    textlist.Add(aktProduct.productdata.productId+'('+aktProduct.productdata.versionstr+') STABLE; urgency=medium');
+    tmpstr := aktProduct.productdata.productversion+'-'+inttostr(aktProduct.productdata.packageversion);
+    textlist.Add(aktProduct.productdata.productId+'('+tmpstr+') STABLE; urgency=medium');
     textlist.Add('');
     textlist.Add('  * initial by opsi-setup-detector');
     textlist.Add('');

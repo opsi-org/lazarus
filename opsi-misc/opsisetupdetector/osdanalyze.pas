@@ -977,6 +977,7 @@ begin
     mysetup.analyze_progess:=10;
     get_aktProduct_general_info(stMsi, Filename,mysetup);
     get_msi_info(FileName,mysetup);
+    Mywrite('Found well known installer: ' + installerToInstallerstr(setupType));
   end
   else
   begin
@@ -993,13 +994,27 @@ begin
       stAdvancedMSI: get_advancedmsi_info(FileName,mysetup);
       st7zip: get_7zip_info(FileName);
       stMsi: ;// nothing to do here - see above;
-      st7zipsfx: logdatei.log('no getinfo implemeted for: '+installerToInstallerstr(setupType), LLWarning);
+      st7zipsfx: logdatei.log('no getinfo implemented for: '+installerToInstallerstr(setupType), LLWarning);
       stUnknown: LogDatei.log(
           'Unknown Installer after Analyze.', LLcritical);
       else
         LogDatei.log('Unknown Setuptype in Analyze: ' + IntToStr(
           instIdToint(setupType)), LLcritical);
     end;
+
+    case setupType of
+      stInno: Mywrite('Found well known installer: ' + installerToInstallerstr(setupType));
+      stNsis: Mywrite('Found well known installer: ' + installerToInstallerstr(setupType));
+      stInstallShield: Mywrite('Found well known installer: ' + installerToInstallerstr(setupType));
+      stInstallShieldMSI: Mywrite('Found well known installer: ' + installerToInstallerstr(setupType));
+      stAdvancedMSI: Mywrite('Found well known installer: ' + installerToInstallerstr(setupType));
+      st7zip: Mywrite('Found well known installer: ' + installerToInstallerstr(setupType));
+      stMsi: ;// nothing to do here - see above;
+      st7zipsfx: Mywrite('Found well known installer: ' + installerToInstallerstr(setupType));
+      stUnknown: Mywrite('Sorry - unknown installer: ' + installerToInstallerstr(setupType));
+      else  Mywrite('Sorry - unknown installer: ' + installerToInstallerstr(setupType));
+    end;
+
 
     if installerArray[integer(mysetup.installerId)].uninstallProg <> '' then
     begin
@@ -1014,26 +1029,6 @@ begin
       // no known uninstall program
       mysetup.uninstallCheck.Add('set $oldProgFound$ = "false"');
     end;
-
- (*
-    if (setupType = stInno) then
-      get_inno_info(FileName)
-    else if (setupType = stNsis) then
-      get_nsis_info(FileName)
-    else if (setupType = stInstallShield) then
-      get_installshield_info(FileName)
-    else if (setupType = stInstallShieldMSI) then
-      get_installshieldmsi_info(FileName)
-    else if (setupType = stAdvancedMSI) then
-      get_advancedmsi_info(FileName)
-    else
-    begin
-      resultForm1.PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
-      analyze_binary(FileName, True, False); // filename, verbose, skipzero
-      analyze_binary(FileName, True, True); // filename, verbose, skipzero
-      mywrite('unknown Setup Type.');   /// XXX Probe-Installation anbieten
-    end;
-    *)
   end;
 end;
 

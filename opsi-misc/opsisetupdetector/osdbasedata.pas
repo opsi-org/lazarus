@@ -17,6 +17,8 @@ uses
 
 type
 
+  TRunMode = (analyzeOnly, singleAnalyzeCreate, twoAnalyzeCreate_1,
+    twoAnalyzeCreate_2, createTemplate, gmUnknown);
   TArchitecture = (a32, a64, aUnknown);
   TArchitectureMode = (am32only_fix, am64only_fix, amBoth_fix, amSystemSpecific_fix,
     amSelectable);
@@ -153,6 +155,12 @@ Installationsreihenfolge. Wenn das Produkt, zu dem eine Abhängigkeit besteht, i
 der Installation des aktuellen Produkts begonnen werden kann, dann ist dies before. Muss es nach dem aktuellen
 Produkt installiert werden so ist dies after. Ist die Reihenfolge egal so muss hier nichts eingetragen werden.
 
+[ProductDependency]
+action: setup
+requiredProduct: javavm
+requiredStatus: installed
+requirementType: before
+
 *)
 (*
 { TMyCollectionItem }
@@ -227,7 +235,7 @@ default: ["xenial_bionic"]
 
 TPPtype = (bool, unicode);
 
-TPProperties = class(TPersistent)
+TPProperties = class(TCollectionItem)
   private
     Ftype: TPPtype;
     Fname: string;
@@ -248,6 +256,7 @@ TPProperties = class(TPersistent)
     property StrDefault: TStrings read FStrDefault write SetDefaultLines;
     property Strvalues: TStrings read FStrvalues write FStrvalues;
     property boolDefault: boolean read FBoolDefault write FBoolDefault;
+    procedure init;
   public
     { public declarations }
     constructor Create;
@@ -305,6 +314,7 @@ TPProperties = class(TPersistent)
     productdata: TProductData;
     //dependeciesCount : integer;
     dependencies: TCollection;
+    properties: TCollection;
 
 
     { public declarations }
@@ -386,6 +396,7 @@ var
   counter: integer;
   myconfiguration: TConfiguration;
   myconfigurationhints : TStringlist;
+  useRunMode: TRunMode;
  // newhint : TConfigHint;
 //myobject : TMyClass;
 
@@ -529,13 +540,19 @@ end;
 constructor TPProperties.Create;
 begin
   inherited;
+  init;
+end;
+
+procedure TPProperties.init;
+begin
   FStrvalues := TStringList.Create;
-  FStrvalues := TStringList.Create;
+  FStrdefault := TStringList.Create;
   Ftype := bool;
   Fmultivalue := false;
   Feditable := false;
   FBoolDefault := false;
 end;
+
 
 destructor TPProperties.Destroy;
 begin
@@ -1022,8 +1039,12 @@ begin
   end;
   // Create Dependencies
   aktProduct.dependencies := TCollection.Create(TPDependency);
+  // Create Properties
+  aktProduct.properties := TCollection.Create(TPProperties);
+  (*
   newdep := TPDependency(aktProduct.dependencies.add);
   newdep.init;
+  *)
 end;
 
 procedure freebasedata;

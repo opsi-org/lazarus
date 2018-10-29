@@ -1,0 +1,186 @@
+; ----------------------------------------------------------------
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib
+; and published under the Terms of the General Public License.
+; ----------------------------------------------------------------
+
+[Actions]
+requiredWinstVersion >= "4.12.0.28"
+ScriptErrorMessages = false
+
+DefVar $ProductId$
+DefVar $InstallDir$
+DefVar $MinimumSpace$
+DefVar $ExitCode$
+DefVar $ErrorString$
+DefVar $LicenseRequired$
+DefVar $LicenseKey$
+DefVar $LicensePool$
+DefVar $LogDir$
+DefVar $OS$
+DefVar $myProperty$
+DefVar $MsiId$
+DefVar $UninstallProgram$
+
+Set $LogDir$ = "%opsiLogDir%"
+
+; import complete file !
+importlib "uib_exitcode.opsiscript"
+importlib "%scriptpath%\osd-lib.opsiscript"
+#@importLibs*#
+
+; ----------------------------------------------------------------
+; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
+Set $ProductId$       = "opsi-template"
+Set $MinimumSpace$    = "1 MB"
+; the path were we find the product after the installation
+Set $InstallDir$      = "%ProgramFiles32Dir%\<path to the product>"
+Set $LicenseRequired$ = "false"
+Set $LicensePool$     = "p_" + $ProductId$
+; ----------------------------------------------------------------
+
+set $OS$ = GetOS
+
+if not(($OS$ = "Windows_NT"))
+   logError "Installation aborted: wrong OS version: only Windows"
+   isFatalError "wrong OS"
+endif
+
+if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
+   LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% needed for " + $ProductId$
+   isFatalError "No Space"
+   ; Stop process and set installation status to failed
+endif
+
+comment "Show product picture"
+ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
+
+if FileExists("%ScriptPath%\delsub.opsiscript")
+   comment "Start uninstall sub section"
+   Sub "%ScriptPath%\delsub.opsiscript"
+endif
+
+Message "Installing " + $ProductId$ + " ..."
+
+comment "get property value ....."
+set $myProperty$ = getProductProperty("dummy_prop", "yes")
+if $myProperty$ = "yes"
+	comment "myproperty value is yes"
+else
+	if $myProperty$ = "no"
+		comment "myproperty value is no"
+	else
+		comment "myproperty value must be may_be"
+	endif
+endif
+
+if $LicenseRequired$ = "true"
+   comment "Licensing required, reserve license and get license key"
+   set $LicenseKey$ = get_licensekey_byPool($LicensePool$)
+endif
+
+#@preInstallLines1*#
+comment "Start setup program"
+ChangeDirectory "%SCRIPTPATH%"
+;----------------------------------------------
+Winbatch_install_1
+;----------------------------------------------
+Sub_check_exitcode
+#@postInstallLines1*#
+
+comment "Copy files"
+Files_install /32Bit
+
+comment "Patch Registry"
+Registry_install /32Bit
+
+comment "Create shortcuts"
+LinkFolder_install
+
+[Winbatch_install_1]
+; Choose one of the following examples as basis for your installation
+; You can use $LicenseKey$ var to pass a license key to the installer
+;
+; === Nullsoft Scriptable Install System ================================================================
+; "%ScriptPath%\Setup.exe" /S
+;
+; === MSI package =======================================================================================
+; You may use the parameter PIDKEY=$Licensekey$
+; msiexec /i "%ScriptPath%\some.msi" /l* "$LogDir$\$ProductId$.install_log.txt" /qb-! ALLUSERS=1 REBOOT=ReallySuppress
+;
+; === InstallShield + MSI=====================================================================================
+; Attention: The path to the log file should not contain any whitespaces
+; "%ScriptPath%\setup.exe" /s /v" /l* $LogDir$\$ProductId$.install_log.txt /qb-! ALLUSERS=1 REBOOT=ReallySuppress"
+; "%ScriptPath%\setup.exe" /s /v" /qb-! ALLUSERS=1 REBOOT=ReallySuppress"
+;
+; === InstallShield =====================================================================================
+; Create setup.iss answer file by running: setup.exe /r /f1"c:\setup.iss"
+; You may use an answer file by the parameter /f1"c:\setup.iss"
+; "%ScriptPath%\setup.exe" /s /sms /f2"$LogDir$\$ProductId$.install_log.txt"
+;
+; === Inno Setup ========================================================================================
+; http://unattended.sourceforge.net/InnoSetup_Switches_ExitCodes.html
+; You may create setup answer file by: setup.exe /SAVEINF="filename"
+; You may use an answer file by the parameter /LOADINF="filename"
+; "%ScriptPath%\setup.exe" /sp- /silent /norestart /nocancel /SUPPRESSMSGBOXES
+
+[Files_install]
+; Example of recursively copying some files into the installation directory:
+;
+; copy -s "%ScriptPath%\files\*.*" "$InstallDir$"
+
+[Registry_install]
+; Example of setting some values of an registry key:
+;
+; openkey [HKEY_LOCAL_MACHINE\Software\$ProductId$]
+; set "name1" = "some string value"
+; set "name2" = REG_DWORD:0001
+; set "name3" = REG_BINARY:00 af 99 cd
+
+[LinkFolder_install]
+; Example of deleting a folder from AllUsers startmenu:
+;
+; set_basefolder common_programs
+; delete_subfolder $ProductId$
+;
+; Example of creating a shortcut to the installed exe in AllUsers startmenu:
+;
+; set_basefolder common_programs
+; set_subfolder $ProductId$
+;
+; set_link
+; 	name: $ProductId$
+; 	target: <path to the program>
+; 	parameters:
+; 	working_dir: $InstallDir$
+; 	icon_file:
+; 	icon_index:
+; end_link
+;
+; Example of creating a shortcut to the installed exe on AllUsers desktop:
+;
+; set_basefolder common_desktopdirectory
+; set_subfolder ""
+;
+; set_link
+; 	name: $ProductId$
+; 	target: <path to the program>
+; 	parameters: <some_param>
+; 	working_dir: $InstallDir$
+; 	icon_file: <path to icon file>
+; 	icon_index: 2
+; end_link
+
+
+[sub_check_exitcode]
+set $ExitCode$ = getlastexitcode
+if stringtobool(isMsExitcodeFatal_short($exitcode$, "true", $ErrorString$ ))
+   LogError $ErrorString$
+   isfatalerror $ErrorString$
+else
+   Comment $ErrorString$
+endif
+
+; ----------------------------------------------------------------
+; ----------------------------------------------------------------
+
