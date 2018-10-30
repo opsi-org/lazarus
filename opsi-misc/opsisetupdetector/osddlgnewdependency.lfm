@@ -8,6 +8,7 @@ object FNewDepDlg: TFNewDepDlg
   ClientWidth = 320
   OnHide = FormHide
   OnShow = FormShow
+  Position = poDefault
   LCLVersion = '1.8.4.0'
   object Panel1: TPanel
     Left = 0

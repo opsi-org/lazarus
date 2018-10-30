@@ -1,3 +1,10 @@
+opsi-setup-detector (4.1.0.0) stable; urgency=low
+
+  * complete new implementation
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  30 Oct 2018 : 15:00:00 +0200
+
+
 opsi-setup-detector (4.0.7.0.0) stable; urgency=low
 
   * move to git
