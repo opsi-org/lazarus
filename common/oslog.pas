@@ -100,7 +100,9 @@ type
     Fdebug_lib : boolean;
     Fforce_min_loglevel : integer;
     Fdefault_loglevel : integer;
-
+    FStandardLogPath : string;
+    FStandardMainLogPath : string;
+    FStandardPartLogPath : string;
 
 
   protected
@@ -194,7 +196,9 @@ type
     property debug_lib: boolean read Fdebug_lib write Fdebug_lib;
     property force_min_loglevel: integer read Fforce_min_loglevel write Fforce_min_loglevel;
     property default_loglevel: integer read Fdefault_loglevel write Fdefault_loglevel;
-
+    property StandardLogPath : string read FStandardLogPath write FStandardLogPath;
+    property StandardMainLogPath : string read FStandardMainLogPath write FStandardMainLogPath;
+    property StandardPartLogPath : string read FStandardPartLogPath write FStandardPartLogPath;
     //function copyPartLogToFullLog: boolean;
   end;
 
@@ -267,9 +271,9 @@ const
 
 var
   LogDatei: TLogInfo;
-  StandardLogPath : string;
-  StandardMainLogPath : string;
-  StandardPartLogPath : string;
+  defaultStandardLogPath : string;
+  defaultStandardMainLogPath : string;
+  defaultStandardPartLogPath : string;
   AppDataPath: Array[0..MaxPathLen] of Char; //Allocate memory
 
 
@@ -507,7 +511,7 @@ begin
   // remove old partlog files
   files := TuibFileInstall.Create;
   try
-    files.alldelete(StandardPartLogPath + FStandardPartLogFilename + '*', False, True, 0);
+    files.alldelete(FStandardPartLogPath + FStandardPartLogFilename + '*', False, True, 0);
   except
   end;
   files.Free;
@@ -515,7 +519,7 @@ begin
   {$IFNDEF OPSIWINST}
   // remove old partlog files
   try
-    filelist := FindAllFiles(StandardPartLogPath, FStandardPartLogFilename+'*', false);
+    filelist := FindAllFiles(FStandardPartLogPath, FStandardPartLogFilename+'*', false);
     for i:=0 to filelist.Count-1 do
     begin
       // only delete files older than a week
@@ -525,7 +529,7 @@ begin
   except
   end;
   filelist.Free;
-  LogDateiName :=  StandardMainLogPath+PathDelim+LogDateiName;
+  LogDateiName :=  FStandardMainLogPath+PathDelim+LogDateiName;
   {$ENDIF}
 
   if not check4append then
@@ -601,7 +605,9 @@ begin
   FStandardPartLogFilename := 'opsiclientd_shutdown_starter-part-';
   FStandardLogFilename := 'opsiclientd_shutdown_starter';
   {$ENDIF OPSICLIENTD_SHUTDOWN_STARTER}
-
+  FStandardLogPath:=defaultStandardLogPath;
+  FStandardMainLogPath:=defaultStandardMainLogPath;
+  FStandardPartLogPath:=defaultStandardPartLogPath;
 end;
 
 
@@ -899,9 +905,9 @@ begin
   if FWritePartLog then
   begin
     PartLogFileExists := False;
-    ForceDirectories(StandardPartLogPath);
+    ForceDirectories(FStandardPartLogPath);
     Randomize;
-    PartFileName := StandardPartLogPath +PathDelim +FStandardPartLogFilename +
+    PartFileName := FStandardPartLogPath +PathDelim +FStandardPartLogFilename +
     {$IFDEF OPSIWINST}
     randomstr(False)
     {$ELSE}
@@ -1077,7 +1083,7 @@ begin
     end;
   end;
   try
-    files.alldelete(StandardPartLogPath + FStandardPartLogFilename + '*', False, True, 0);
+    files.alldelete(FStandardPartLogPath + FStandardPartLogFilename + '*', False, True, 0);
   except
     //LogDatei.DependentAdd('not all files "' + TempPath + TempBatchdatei + '*"  could be deleted', LLInfo);
   end;
@@ -1087,7 +1093,7 @@ begin
   {$IFNDEF OPSIWINST}
   // remove old partlog files
   try
-    filelist := FindAllFiles(StandardPartLogPath, FStandardPartLogFilename+'*', false);
+    filelist := FindAllFiles(FStandardPartLogPath, FStandardPartLogFilename+'*', false);
     for i:=0 to filelist.Count-1 do
     begin
       DeleteFile(filelist.Strings[i]);
@@ -1756,53 +1762,53 @@ begin
 
   {$IFDEF WINDOWS}
   {$IFDEF OPSI}
-  StandardLogPath := 'c:\opsi.org\log\';
-  StandardMainLogPath := StandardLogPath;
-  StandardPartLogPath := 'c:\opsi.org\log\';
+  defaultStandardLogPath := 'c:\opsi.org\log\';
+  defaultStandardMainLogPath := defaultStandardLogPath;
+  defaultStandardPartLogPath := 'c:\opsi.org\log\';
   {$IFDEF OPSI_AS_USER}
-  StandardLogPath := 'c:\opsi.org\applog\';
-  StandardMainLogPath := StandardLogPath;
-  StandardPartLogPath := StandardLogPath;
+  defaultStandardLogPath := 'c:\opsi.org\applog\';
+  defaultStandardMainLogPath := defaultStandardLogPath;
+  defaultStandardPartLogPath := defaultStandardLogPath;
   (*
   AppDataPath:='';
   SHGetFolderPath(0,CSIDL_APPDATA,0,SHGFP_TYPE_CURRENT,AppDataPath);
   //SHGetSpecialFolderPath(0,AppDataPath,CSIDL_LOCAL_APPDATA,false)
   if ForceDirectories(AppDataPath+'\opsi.org\log\') then
   begin
-    StandardLogPath := AppDataPath+'\opsi.org\log\';
-    StandardMainLogPath := StandardLogPath;
-    StandardPartLogPath := StandardLogPath;
+    defaultStandardLogPath := AppDataPath+'\opsi.org\log\';
+    defaultStandardMainLogPath := defaultStandardLogPath;
+    defaultStandardPartLogPath := defaultStandardLogPath;
   end;
   *)
   {$ENDIF OPSI_AS_USER}
   {$ELSE OPSI}
-  StandardLogPath := GetTempDir(false);
-  StandardMainLogPath := GetTempDir(false);
-  StandardPartLogPath := GetTempDir(false);
+  defaultStandardLogPath := GetTempDir(false);
+  defaultStandardMainLogPath := GetTempDir(false);
+  defaultStandardPartLogPath := GetTempDir(false);
   {$ENDIF OPSI}
   {$ELSE WINDOWS}
   if 0 = fpGetEUid then
   begin
     {$IFDEF OPSI}
-    StandardLogPath := '/var/log/opsi-script/';
-    StandardMainLogPath := '/var/log/opsi-script/';
-    StandardPartLogPath := '/var/log/opsi-script/';
+    defaultStandardLogPath := '/var/log/opsi-script/';
+    defaultStandardMainLogPath := '/var/log/opsi-script/';
+    defaultStandardPartLogPath := '/var/log/opsi-script/';
     {$IFDEF OPSISCRIPTSTARTER}
-    StandardLogPath := '/var/log/opsi-client-agent/opsiclientd/';
-    StandardMainLogPath := '/var/log/opsi-client-agent/opsiclientd/';
-    StandardPartLogPath := '/var/log/opsi-client-agent/opsiclientd/';
+    defaultStandardLogPath := '/var/log/opsi-client-agent/opsiclientd/';
+    defaultStandardMainLogPath := '/var/log/opsi-client-agent/opsiclientd/';
+    defaultStandardPartLogPath := '/var/log/opsi-client-agent/opsiclientd/';
     {$ENDIF OPSISCRIPTSTARTER}
     {$ELSE OPSI}
-    StandardLogPath := '/tmp/';
-    StandardMainLogPath := '/tmp/';
-    StandardPartLogPath := '/tmp/'
+    defaultStandardLogPath := '/tmp/';
+    defaultStandardMainLogPath := '/tmp/';
+    defaultStandardPartLogPath := '/tmp/'
     {$ENDIF OPSI}
   end
   else
   begin
-    StandardLogPath := '/tmp/';
-    StandardMainLogPath := '/tmp/';
-    StandardPartLogPath := '/tmp/';
+    defaultStandardLogPath := '/tmp/';
+    defaultStandardMainLogPath := '/tmp/';
+    defaultStandardPartLogPath := '/tmp/';
   end;
   {$ENDIF}
 

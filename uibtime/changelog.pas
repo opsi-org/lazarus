@@ -1,4 +1,10 @@
 (*
+uibtime (4.1.1.42-1) stable; urgency=low
+
+ * logging via oslog : uibdata
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 31 Oct 2018 15:00:00 +0000
+
 uibtime (4.1.1.41-1) stable; urgency=low
 
  * uibdata: new TDataModule1.IBConnection1Log
