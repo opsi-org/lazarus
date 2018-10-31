@@ -67,6 +67,7 @@ RegisterPropertyEditor(TypeInfo(string),TConfiguration,'workbench_path',TDirecto
 RegisterPropertyEditor(TypeInfo(TStrings),TConfiguration,'import_libraries',TStringsPropertyEditor);
 RegisterPropertyEditor(TypeInfo(TStrings),TConfiguration,'preInstallLines',TStringsPropertyEditor);
 RegisterPropertyEditor(TypeInfo(TStrings),TConfiguration,'postInstallLines',TStringsPropertyEditor);
+RegisterPropertyEditor(TypeInfo(string),TConfiguration,'PathToOpsiPackageBuilder',TFileNamePropertyEditor);
 
 end.
 

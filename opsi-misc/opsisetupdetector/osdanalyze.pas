@@ -129,6 +129,7 @@ begin
   Result := outstr;
 end;
 
+
 function grepexe(instring: string): string;
 var
   lowerstring: string;
@@ -136,7 +137,8 @@ begin
   Result := '';
   lowerstring := lowercase(instring);
   if (0 < pos('installshield', lowerstring)) or (0 < pos('inno', lowerstring)) or
-    (0 < pos('wise', lowerstring)) or (0 < pos('nullsoft', lowerstring)) or
+    (0 < pos('wise', lowerstring)) or
+    (0 < pos('nullsoft', lowerstring)) or
     (0 < pos('wixquery', lowerstring)) or
     (0 < pos('product_build_number{', lowerstring)) or
     (0 < pos('productcode{', lowerstring)) or (0 < pos('msiexec', lowerstring)) or
@@ -317,7 +319,7 @@ begin
   Mywrite('Analyzing MSI: ' + myfilename);
   {$IFDEF WINDOWS}
   mycommand := 'cmd.exe /C cscript.exe "' + ExtractFilePath(ParamStr(0)) +
-    'msiinfo.js" "' + myfilename + '"';
+    'utils\msiinfo.js" "' + myfilename + '"';
   mywrite(mycommand);
   myoutlines := TStringList.Create;
   if not RunCommandAndCaptureOut(mycommand, True, myoutlines, myreport,
@@ -892,8 +894,8 @@ begin
         procmess;
         LogDatei.log('AnaProgess: '+inttostr(progress),LLDebug);
         lastprogress := progress;
-        {$ENDIF OSDGUI}
        end;
+       {$ENDIF OSDGUI}
 
       for i := 0 to charsread - 1 do
       begin
@@ -975,6 +977,7 @@ begin
   if '.msi' = lowercase(ExtractFileExt(FileName)) then
   begin
     mysetup.analyze_progess:=10;
+    setupType := stMsi;
     get_aktProduct_general_info(stMsi, Filename,mysetup);
     get_msi_info(FileName,mysetup);
     Mywrite('Found well known installer: ' + installerToInstallerstr(setupType));

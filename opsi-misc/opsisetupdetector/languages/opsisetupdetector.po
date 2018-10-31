@@ -11,44 +11,17 @@ msgctxt "osdform.serrextractmsifailed"
 msgid "Error: extracting MSI from %s failed!"
 msgstr ""
 
-#: osdform.serrfldinstdirempty
-msgctxt "osdform.serrfldinstdirempty"
-msgid "Error: Field Install Directory is empty!"
-msgstr ""
-
 #: osdform.serrfldmsiproductcodeempty
 msgctxt "osdform.serrfldmsiproductcodeempty"
-msgid "Error: Field MSI Product Code is empty!"
-msgstr ""
-
-#: osdform.serrfldopsiproductidempty
-msgctxt "osdform.serrfldopsiproductidempty"
-msgid "Error: Field opsi Packet ID is empty!"
-msgstr ""
-
-#: osdform.serrfldopsiproductversionempty
-msgctxt "osdform.serrfldopsiproductversionempty"
-msgid "Error: Field Product Version is empty!"
-msgstr ""
-
-#: osdform.serrfldsetupempty
-msgctxt "osdform.serrfldsetupempty"
-msgid "Error: No setup file selected!"
-msgstr ""
-
-#: osdform.serrmsinotfound
-msgctxt "osdform.serrmsinotfound"
-msgid "Error: MSI file does not exist!"
+msgid ""
+"Error: Field MSI Product Code is empty!\n"
+"The MSI Product Code is needed for correct Uninstall process.\n"
+"Please install this Product and check for the MSI Product Code and write it to the setup and the uninstall script\n"
 msgstr ""
 
 #: osdform.serrmstnotfound
 msgctxt "osdform.serrmstnotfound"
 msgid "Error: MST file does not exist in the MSI-directory!"
-msgstr ""
-
-#: osdform.serropsipackagebuildererrcode
-msgctxt "osdform.serropsipackagebuildererrcode"
-msgid "Error invoking OPSI Package Builder (error code=%0:d). Please remove quiet option to check for further information."
 msgstr ""
 
 #: osdform.serropsipackagebuilderstart
@@ -58,27 +31,16 @@ msgstr ""
 
 #: osdform.serrpacketbasedirnotfound
 msgctxt "osdform.serrpacketbasedirnotfound"
-msgid "Error: Packet BaseDir does not exist!"
+msgid "Error: The Path to opsi-work-bench is empty or not valid!"
 msgstr ""
 
-#: osdform.serrpacketdirexists
-msgctxt "osdform.serrpacketdirexists"
-msgid "Error: opsi packet folder %s already exists!"
+#: osdform.serrproductidempty
+msgid "Error: Field opsi Product ID is empty!"
 msgstr ""
 
-#: osdform.serrproductversioninvalid
-msgctxt "osdform.serrproductversioninvalid"
-msgid "Error: for Product Version only numbers allowed !"
-msgstr ""
-
-#: osdform.serrselectinstalltype
-msgctxt "osdform.serrselectinstalltype"
-msgid "First select setup type tab (MSI, Inno Setup ...) and fill out form"
-msgstr ""
-
-#: osdform.serrsetupfilenotfound
-msgctxt "osdform.serrsetupfilenotfound"
-msgid "Error: Setup file does not exist!"
+#: osdform.serrproductversionempty
+msgctxt "osdform.serrproductversionempty"
+msgid "Error: Field Product Version is empty!"
 msgstr ""
 
 #: osdform.shelpfile
@@ -93,7 +55,7 @@ msgstr ""
 
 #: osdform.sinfofinished
 msgctxt "osdform.sinfofinished"
-msgid "finished."
+msgid "Create opsi package finished."
 msgstr ""
 
 #: osdform.slogfileinfo
@@ -106,9 +68,12 @@ msgctxt "osdform.smboxheader"
 msgid "opsi setup detector"
 msgstr ""
 
-#: osdform.swarninstdiremptynodeinstall
-msgctxt "osdform.swarninstdiremptynodeinstall"
-msgid "Warning: Install Directory is empty, deinstall script cannot be patched!"
+#: osdform.swarninstalldirunknown
+msgid ""
+"Error: Field Install Directory is empty!\n"
+"For this Installer the Installdir could not be detected.\n"
+"The Installdir is needed for correct Uninstall process.\n"
+"Please install this Product and check for the Installdir and write it to the setup and the uninstall script\n"
 msgstr ""
 
 #: resultform.saskcreatepacket
@@ -490,7 +455,7 @@ msgid "Open MST File"
 msgstr ""
 
 #: tresultform1.bitbtnrecheckworkbench.caption
-msgid "Recheck workbench path"
+msgid "Check workbench path"
 msgstr ""
 
 #: tresultform1.bitbtnworkbenchpath.caption
@@ -518,7 +483,7 @@ msgid "Analyze a single existing Setupfile "
 msgstr ""
 
 #: tresultform1.btatwonalyzeandcreate.caption
-msgid "Analyze two Files (32 and 64 Bit) and Create Opsi Product"
+msgid "Analyze two Files (32 and 64 Bit) and Create Opsi Package"
 msgstr ""
 
 #: tresultform1.btatwonalyzeandcreate.hint
@@ -529,7 +494,7 @@ msgid ""
 msgstr ""
 
 #: tresultform1.btcreateemptytemplate.caption
-msgid "Create an empty opsi product"
+msgid "Create an opsi Package Template"
 msgstr ""
 
 #: tresultform1.btcreateemptytemplate.hint
@@ -539,7 +504,7 @@ msgid ""
 msgstr ""
 
 #: tresultform1.btcreateproduct.caption
-msgid "Create Opsi Product"
+msgid "Create Opsi Package"
 msgstr ""
 
 #: tresultform1.btcreateproduct.hint
@@ -588,7 +553,7 @@ msgstr ""
 
 #: tresultform1.btsingleanalyzeandcreate.caption
 msgctxt "tresultform1.btsingleanalyzeandcreate.caption"
-msgid "Analyze single File and Create Opsi Product"
+msgid "Analyze single File and Create Opsi Package"
 msgstr ""
 
 #: tresultform1.btsingleanalyzeandcreate.hint
@@ -626,7 +591,8 @@ msgctxt "tresultform1.checkboxusemst1.caption"
 msgid "use MST File"
 msgstr ""
 
-#: tresultform1.checkgroup1.caption
+#: tresultform1.checkgroupbuildmode.caption
+msgctxt "tresultform1.checkgroupbuildmode.caption"
 msgid "Build Mode"
 msgstr ""
 
@@ -843,6 +809,10 @@ msgstr ""
 msgid "&File"
 msgstr ""
 
+#: tresultform1.menuitemknowninstallers.caption
+msgid "Known Installers"
+msgstr ""
+
 #: tresultform1.panel10.caption
 msgid "Panel10"
 msgstr ""
@@ -867,19 +837,17 @@ msgstr ""
 msgid "please wait"
 msgstr ""
 
-#: tresultform1.radiobuttonauto.caption
-msgctxt "TRESULTFORM1.RADIOBUTTONAUTO.CAPTION"
-msgid "create and auto build"
+#: tresultform1.radiobuttonbuildpackage.caption
+msgid "create opsi package files and  build package"
 msgstr ""
 
 #: tresultform1.radiobuttoncreateonly.caption
 msgctxt "TRESULTFORM1.RADIOBUTTONCREATEONLY.CAPTION"
-msgid "create opsi packet"
+msgid "create opsi package files"
 msgstr ""
 
-#: tresultform1.radiobuttoninteractive.caption
-msgctxt "TRESULTFORM1.RADIOBUTTONINTERACTIVE.CAPTION"
-msgid "create opsi packet and start interactive PacketBuilder"
+#: tresultform1.radiobuttonpackagebuilder.caption
+msgid "create opsi package files and start interactive PackageBuilder"
 msgstr ""
 
 #: tresultform1.radiogroup1.caption
@@ -888,10 +856,6 @@ msgstr ""
 
 #: tresultform1.sbtnexit.caption
 msgid "Exit"
-msgstr ""
-
-#: tresultform1.sbtnopen.caption
-msgid "open"
 msgstr ""
 
 #: tresultform1.stringgriddep.columns[0].title.caption
@@ -959,19 +923,19 @@ msgid "Create"
 msgstr ""
 
 #: tresultform1.tabsheetproduct.caption
-msgid "Product1"
+msgid "Product Configuration 1"
 msgstr ""
 
 #: tresultform1.tabsheetproduct2.caption
-msgid "Product2"
+msgid "Product Configuration 2"
 msgstr ""
 
 #: tresultform1.tabsheetsetup1.caption
-msgid "Setup1"
+msgid "1. Setup"
 msgstr ""
 
 #: tresultform1.tabsheetsetup2.caption
-msgid "Setup2"
+msgid "2. Setup"
 msgstr ""
 
 #: tresultform1.tabsheetstart.caption
@@ -981,9 +945,5 @@ msgstr ""
 #: tresultform1.ticheckboxlicenserequired.caption
 msgctxt "tresultform1.ticheckboxlicenserequired.caption"
 msgid "License required"
-msgstr ""
-
-#: tresultform1.toolbar1.caption
-msgid "ToolBar1"
 msgstr ""
 

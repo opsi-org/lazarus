@@ -15,7 +15,7 @@ uses
   SysUtils;
 
 {$IFDEF WINDOWS}
-procedure registerForExplorer(doregister : boolean);
+procedure registerForWinExplorer(doregister: boolean);
 function getSpecialFolder(csidlValue: integer): string;
 {$ENDIF WINDOWS}
 function RunCommandAndCaptureOut
@@ -28,7 +28,7 @@ uses
   osdform;
 
 {$IFDEF WINDOWS}
-procedure registerForExplorer(doregister: boolean);
+procedure registerForWinExplorer(doregister: boolean);
 var
   myreg: Tregistry;
 begin
@@ -45,7 +45,8 @@ begin
   resultform1.CheckBox1.Checked := doregister;
   *)
   myreg := TRegistry.Create(KEY_ALL_ACCESS);
-  myreg.RootKey := HKEY_CURRENT_USER;
+  //myreg.RootKey := HKEY_CURRENT_USER;
+  myreg.RootKey := HKEY_CLASSES_ROOT;
   myreg.OpenKey('Software\Classes\*\shell\opsi setup detector\Command', True);
   if doregister then
   begin

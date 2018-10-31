@@ -19,10 +19,12 @@ uses
   osdhelper,
   oslog,
   osdbasedata,
-  Dialogs;
+  Dialogs,
+    dateutils;
 
 procedure createProductStructure;
-procedure removeOtherTypeSpecificSections(setupType, setupFile: string);
+procedure callOpsiPackageBuilder;
+//procedure removeOtherTypeSpecificSections(setupType, setupFile: string);
 
 implementation
 
@@ -204,6 +206,8 @@ end;
     mydep : TPDependency;
     myprop : TPProperties;
     tmpstr : string;
+    utcoffset : integer;
+    utcoffsetstr : string;
   begin
     result := false;
     try
@@ -283,15 +287,19 @@ end;
     end;
 
     // changelog
+    utcoffset := (GetLocalTimeOffset div 60)*100*-1;
+    if utcoffset >= 0 then utcoffsetstr := '+';
+    utcoffsetstr := utcoffsetstr + format('%4.4d',[utcoffset]);
     textlist.Add('');
     textlist.Add('[Changelog]');
     tmpstr := aktProduct.productdata.productversion+'-'+inttostr(aktProduct.productdata.packageversion);
-    textlist.Add(aktProduct.productdata.productId+'('+tmpstr+') STABLE; urgency=medium');
+    textlist.Add(aktProduct.productdata.productId+' ('+tmpstr+') stable; urgency=medium');
     textlist.Add('');
     textlist.Add('  * initial by opsi-setup-detector');
     textlist.Add('');
-    textlist.Add(myconfiguration.fullName+' <'+ myconfiguration.email_address+'> '
-                 +FormatDateTime('ddd, dd mmm yyyy hh:nn:ss',now));
+    textlist.Add('-- '+myconfiguration.fullName+' <'+ myconfiguration.email_address+'> '
+                 +FormatDateTime('ddd, dd mmm yyyy hh:nn:ss',
+                                 LocalTimeToUniversal(now))+' '+utcoffsetstr);
                  //mon, 04 Jun 12:00:00 + 0100
 
     textlist.SaveToFile(opsipath+pathdelim+'control');
@@ -383,98 +391,114 @@ begin
 end;
 
 
-procedure ButtonCreatePacketClick(Sender: TObject);
+procedure callOpsiPackageBuilder;
 var
   msg1: string;
   description: string;
-  buildCall: string = '';
+  buildCallbinary: string = '';
+  buildCallparams: Tstringlist;
+  paramstr : string = '';
   OpsiBuilderProcess: TProcess;
   packit: boolean = False;
   errorstate: boolean = False;
   notused: string = '(not used)';
+  output : string;
 
 begin
-
-  if patchlist = nil then
-    patchlist := TStringList.Create
-  else
-    patchlist.Clear;
-  myExeDir := ExtractFileDir(ParamStr(0));
-
-
-  //Panel9.Visible := False;
-      {$IFDEF WINDOWS}
-  // execute opsiPacketBuilder
-
-  if resultForm1.RadioButtonCreateOnly.Checked = True then
-  begin
-    //Application.MessageBox(PChar(sInfoFinished), PChar(sMBoxHeader), MB_OK);
-  end
-  else
-  begin  // execute OPSIPackageBuilder
-    OpsiBuilderProcess := process.TProcess.Create(nil);
-    buildCall := getSpecialFolder(CSIDL_PROGRAM_FILES) + DirectorySeparator +
-      'OPSI PackageBuilder' + DirectorySeparator + 'OPSIPackageBuilder.exe' +
-      ' -p=' + packetBaseDir;
-    if AnsiLastChar(packetBaseDir) <> DirectorySeparator then
-      buildCall := buildCall + DirectorySeparator;
-    buildCall := buildCall + productId;
-    if resultForm1.RadioButtonInteractive.Checked = True then
+  buildCallparams:= Tstringlist.Create;
+  OpsiBuilderProcess := process.TProcess.Create(nil);
+  buildCallbinary := '"'+myconfiguration.PathToOpsiPackageBuilder+'"';
+  //paramstr := ' --path=' + myconfiguration.workbench_Path;
+  paramstr := ' -p=' + myconfiguration.workbench_Path;
+  if AnsiLastChar(paramstr) <> DirectorySeparator then
+      paramstr := paramstr + DirectorySeparator;
+  //paramstr := paramstr + ' --path='+aktProduct.productdata.productId;
+  paramstr := paramstr +aktProduct.productdata.productId;
+  //paramstr := paramstr + ' --no-netdrv';
+  //paramstr := paramstr + ' --set-rights';
+  //buildCallparams.Add(paramstr);
+      if resultForm1.RadioButtonPackageBuilder.Checked = True then
     begin
-      OpsiBuilderProcess.ShowWindow := swoMinimize;
+      OpsiBuilderProcess.ShowWindow := swoShowNormal;
     end
-    else  // auto
-    if resultForm1.RadioButtonAuto.Checked = True then
+    else  // build
+    if resultForm1.RadioButtonBuildPackage.Checked = True then
     begin
       if resultForm1.CheckboxBuild.Checked = True then
-        buildCall := buildCall + ' --build=rebuild';
+      begin
+        paramstr := paramstr + ' '+'--build=rebuild';
+        //paramstr := paramstr +' -–no-gui';
+      end;
+        //buildCallparams.Add('--build=rebuild');
       if resultForm1.CheckboxInstall.Checked = True then
-        buildCall := buildCall + ' --install';
+      begin
+        paramstr := paramstr +' --install';
+      end;
+
+        //buildCallparams.Add('--install');
       if resultForm1.CheckboxQuiet.Checked = True then
-        buildCall := buildCall + ' --quiet';
+        paramstr := paramstr +' --quiet';
+        //buildCallparams.Add('--quiet');
       OpsiBuilderProcess.ShowWindow := swoMinimize;
     end;
+  buildCallparams.Add(paramstr);
 
-    //mywrite('invoke opsi package builder');
-    //mywrite(buildcall);
-
+  {$ifdef WINDOWS}
+  LogDatei.log('Try to call opsi packagebuilder',LLnotice);
+  //OpsiBuilderProcess.Executable := buildCallbinary;
+  //OpsiBuilderProcess.Parameters.Assign(buildCallparams);
+  OpsiBuilderProcess.CommandLine:=buildCallbinary+paramstr;
+  OpsiBuilderProcess.Options := OpsiBuilderProcess.Options + [poWaitOnExit];
+  LogDatei.log('Call: '+OpsiBuilderProcess.Executable+' with: '+OpsiBuilderProcess.Parameters.Text,LLInfo);
+  LogDatei.log('Call: '+OpsiBuilderProcess.CommandLine,LLInfo);
+  // execute opsiPacketBuilder
     try
-      OpsiBuilderProcess.CommandLine := buildCall;
       OpsiBuilderProcess.Execute;
       if resultForm1.CheckboxQuiet.Checked = True then
       begin
         resultForm1.PanelProcess.Visible := True;
         resultForm1.processStatement.Caption := 'invoke opsi package builder ...';
-        //Application.ProcessMessages;
+        procmess;
         while OpsiBuilderProcess.Running do
         begin
-          //Application.ProcessMessages;
+          procmess;
         end;
       end;
     except
+     on E: Exception do
+     begin
       errorstate := True;
-      //Application.MessageBox(PChar(sErrOpsiPackageBuilderStart),
+      LogDatei.log('Exception while calling '+buildCallbinary+' Message: '+E.message,LLerror);
+      ShowMessage(sErrOpsiPackageBuilderStart);
       //        PChar(sMBoxHeader), MB_OK);
+      end;
     end;
 
     resultForm1.PanelProcess.Visible := False;
-    if (resultForm1.CheckboxQuiet.Checked = True) then
-    begin
-      if (errorstate = False) then
+   // if (resultForm1.CheckboxQuiet.Checked = True) then
+   // begin
+    //  if (errorstate = False) then
       begin
         if (OpsiBuilderProcess.ExitStatus = 0) then
-        //Application.MessageBox(PChar(sInfoFinished), PChar(sMBoxHeader), MB_OK)
-        else;
-        //Application.MessageBox(
-        //  PChar(format(sErrOpsiPackageBuilderErrCode,
-        //  [IntToStr(OpsiBuilderProcess.ExitStatus)])),
-        //  PChar(sMBoxHeader), MB_OK);
+        begin
+          LogDatei.log('Finished calling '+buildCallbinary+' with exitcode: 0 ',LLinfo);
+        //ShowMessage(sInfoFinished);
+        end
+        else
+        begin
+         LogDatei.log('Error while calling '+buildCallbinary+' with exitcode: '+IntToStr(OpsiBuilderProcess.ExitStatus),LLerror);
+         ShowMessage(sErrOpsiPackageBuilderStart);
+         //ShowMessage('Error while calling '+buildCallbinary+' with exitcode: '+IntToStr(OpsiBuilderProcess.ExitStatus));
+         //ShowMessage(format(sErrOpsiPackageBuilderErrCode,[IntToStr(OpsiBuilderProcess.ExitStatus)]));
+        end;
       end;
-    end;
+ //   end;
+     {$ENDIF WINDOWS}
   end;   // execute OPSIPackageBuilder
-      {$ENDIF WINDOWS}
-end;
 
+
+
+(*
 procedure removeOtherTypeSpecificSections(setupType, setupFile: string);
 var
   infileHandle, outfileHandle: Text;
@@ -533,7 +557,7 @@ begin
         E.ClassName + '/' + E.Message);
   end;
 end;
-
+*)
 
 
 

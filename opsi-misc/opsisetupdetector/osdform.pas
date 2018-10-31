@@ -77,7 +77,7 @@ type
     CheckBoxQuiet: TCheckBox;
     CheckBoxUseMst: TCheckBox;
     CheckBoxUseMst1: TCheckBox;
-    CheckGroup1: TCheckGroup;
+    CheckGroupBuildMode: TCheckGroup;
     FlowPanel1: TFlowPanel;
     FlowPanel10: TFlowPanel;
     FlowPanel11: TFlowPanel;
@@ -150,6 +150,7 @@ type
     LabelWorkbenchOK: TLabel;
     LabelWorkbenchNotOK: TLabel;
     MemoDefault: TMemo;
+    MenuItemKnownInstallers: TMenuItem;
     MenuItemConfig: TMenuItem;
     OpenDialogSetupfile: TOpenDialog;
     PairSplitter1: TPairSplitter;
@@ -170,11 +171,10 @@ type
     processStatement: TLabel;
     ProgressBar1: TProgressBar;
     ProgressBarAnalyze: TProgressBar;
-    RadioButtonAuto: TRadioButton;
+    RadioButtonBuildPackage: TRadioButton;
     RadioButtonCreateOnly: TRadioButton;
-    RadioButtonInteractive: TRadioButton;
+    RadioButtonPackageBuilder: TRadioButton;
     RadioGroup1: TRadioGroup;
-    SBtnOpen: TSpeedButton;
     SBtnExit: TSpeedButton;
     SelectDirectoryDialog1: TSelectDirectoryDialog;
     Splitter2: TSplitter;
@@ -232,6 +232,7 @@ type
     TIEditSetupFileSizeMB2: TTIEdit;
     TIMemoAdvice: TTIMemo;
     TIMemoDesc: TTIMemo;
+    TimerFirstconfig: TTimer;
     TISpinEditPrio: TTISpinEdit;
     TISpinEditPackageVers: TTISpinEdit;
     TITrackBarPrio: TTITrackBar;
@@ -257,8 +258,12 @@ type
     procedure BtSingleAnalyzeAndCreateClick(Sender: TObject);
     procedure FlowPanel14Click(Sender: TObject);
     procedure FlowPanel18Click(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormShow(Sender: TObject);
+    procedure MenuItem1Click(Sender: TObject);
     procedure MenuItemConfigClick(Sender: TObject);
+    procedure MenuItemKnownInstallersClick(Sender: TObject);
     procedure setRunMode;
     procedure BitBtnClose1Click(Sender: TObject);
     procedure BtAnalyzeOnlyClick(Sender: TObject);
@@ -285,6 +290,7 @@ type
     procedure SBtnOpenClick(Sender: TObject);
     procedure SBtnExitClick(Sender: TObject);
     procedure TabSheetCreateShow(Sender: TObject);
+    procedure TimerFirstconfigTimer(Sender: TObject);
     procedure TISpinEditPrioChange(Sender: TObject);
     procedure TITrackBarPrioChange(Sender: TObject);
     procedure fetchDepPropFromForm;
@@ -342,10 +348,12 @@ var
   showAdvancedMSI: boolean = True;
 //*****************************************
 //myobject : TMyClass;
+  firstshowconfigdone : boolean = false;
 
 
 resourcestring
   sMBoxHeader = 'opsi setup detector';
+
   sHelpHeader = 'opsi setup detector Help';
   // dialogs
   sAskCreatePacket = 'Create packet %0:s?';
@@ -353,27 +361,36 @@ resourcestring
   sLogfileInfo = 'Logfile created: %s';
 
   // Error messages
-  sErrFldInstDirEmpty = 'Error: Field Install Directory is empty!';
-  sErrFldMsiProductCodeEmpty = 'Error: Field MSI Product Code is empty!';
-  sErrFldOpsiProductIdEmpty = 'Error: Field opsi Packet ID is empty!';
-  sErrFldOpsiProductVersionEmpty = 'Error: Field Product Version is empty!';
-  sErrFldSetupEmpty = 'Error: No setup file selected!';
-  sErrMSINotFound = 'Error: MSI file does not exist!';
+  //sErrFldInstDirEmpty = 'Error: Field Install Directory is empty!';
+  sErrFldMsiProductCodeEmpty = 'Error: Field MSI Product Code is empty!'+Lineending
+                           +'The MSI Product Code is needed for correct Uninstall process.'+Lineending
+                           +'Please install this Product and check for the MSI Product Code and write it to the setup and the uninstall script';
+  sErrProductIdEmpty = 'Error: Field opsi Product ID is empty!';
+  sErrProductVersionEmpty = 'Error: Field Product Version is empty!';
+  //sErrFldSetupEmpty = 'Error: No setup file selected!';
+  //sErrMSINotFound = 'Error: MSI file does not exist!';
   sErrMSTNotFound =
     'Error: MST file does not exist in the MSI-directory!';
   sErrOpsiPackageBuilderStart = 'Error invoking opsi package builder';
-  sErrOpsiPackageBuilderErrCode =
-    'Error invoking OPSI Package Builder (error code=%0:d). Please remove quiet option to check for further information.';
-  sErrPacketBaseDirNotFound = 'Error: Packet BaseDir does not exist!';
-  sErrProductVersionInvalid = 'Error: for Product Version only numbers allowed !';
-  sErrSelectInstallType =
-    'First select setup type tab (MSI, Inno Setup ...) and fill out form';
-  sErrSetupFileNotFound = 'Error: Setup file does not exist!';
-  sErrPacketDirExists = 'Error: opsi packet folder %s already exists!';
+  //sErrOpsiPackageBuilderErrCode =
+  //  'Error invoking OPSI Package Builder (error code=%0:d). Please remove quiet option to check for further information.';
+  sErrPacketBaseDirNotFound = 'Error: The Path to opsi-work-bench is empty or not valid!';
+  //sErrProductVersionInvalid = 'Error: for Product Version only numbers allowed !';
+  //sErrSelectInstallType =
+  //  'First select setup type tab (MSI, Inno Setup ...) and fill out form';
+  //sErrSetupFileNotFound = 'Error: Setup file does not exist!';
+  //sErrPacketDirExists = 'Error: opsi packet folder %s already exists!';
   sErrExtractMSIfailed = 'Error: extracting MSI from %s failed!';
-  sInfoFinished = 'finished.';
-  sWarnInstDirEmptyNoDeinstall =
-    'Warning: Install Directory is empty, deinstall script cannot be patched!';
+  sInfoFinished = 'Create opsi package finished.';
+  //sWarnInstDirEmptyNoDeinstall =
+  //  'Warning: Install Directory is empty, deinstall script cannot be patched!';
+
+  //sErrProductIdEmpty = 'We need a productId.';
+  //sErrProductVersionEmpty = 'We need a productVersion.';
+  sWarnInstalldirUnknown = 'Error: Field Install Directory is empty!'+Lineending
+                           +'For this Installer the Installdir could not be detected.'+Lineending
+                           +'The Installdir is needed for correct Uninstall process.'+Lineending
+                           +'Please install this Product and check for the Installdir and write it to the setup and the uninstall script';
 
 
 implementation
@@ -451,9 +468,13 @@ begin
       TIEditInstallDir1.Link.SetObjectAndProperty(SetupFiles[0], 'installDirectory');
       TIEditInstallDir2.Link.SetObjectAndProperty(SetupFiles[1], 'installDirectory');
       TIEditSetup1Command.Link.SetObjectAndProperty(SetupFiles[0], 'installCommandLine');
+      TIEditSetup2Command.Link.SetObjectAndProperty(SetupFiles[1], 'installCommandLine');
       TIEditSetup1UnCommand.Link.SetObjectAndProperty(SetupFiles[0],
         'uninstallCommandLine');
+      TIEditSetup2UnCommand.Link.SetObjectAndProperty(SetupFiles[1],
+        'uninstallCommandLine');
       TIEditSetup1UnProgram.Link.SetObjectAndProperty(SetupFiles[0], 'uninstallProg');
+      TIEditSetup2UnProgram.Link.SetObjectAndProperty(SetupFiles[1], 'uninstallProg');
       (*
       TIEditProductIdS1.Link.SetObjectAndProperty(productdata, 'productId');
       TIEditProductIdS2.Link.SetObjectAndProperty(productdata, 'productId');
@@ -474,6 +495,14 @@ begin
       TISpinEditPrio.Link.SetObjectAndProperty(productdata, 'priority');
     end;
     TIEditworkbenchpath.Link.SetObjectAndProperty(myconfiguration, 'workbench_path');
+    case myconfiguration.CreateRadioIndex of
+      0: RadioButtonCreateOnly.Checked:= true;
+      1: RadioButtonBuildPackage.Checked:= true;
+      2: RadioButtonPackageBuilder.Checked:= true;
+    end;
+    CheckBoxQuiet.Checked := myconfiguration.CreateQuiet;
+    CheckBoxBuild.Checked := myconfiguration.CreateBuild;
+    CheckBoxInstall.Checked := myconfiguration.CreateInstall;
     Visible := True;
   end;
 
@@ -770,20 +799,56 @@ begin
 
 end;
 
+procedure TResultform1.FormShow(Sender: TObject);
+begin
+
+end;
+
+procedure TResultform1.MenuItem1Click(Sender: TObject);
+begin
+
+end;
+
 procedure TResultform1.MenuItemConfigClick(Sender: TObject);
 var
   Streamer: TJSONStreamer;
   JSONString: string;
 begin
   FOSDConfigdlg.ShowModal;
+  //FOSDConfigdlg.Hide;
   Streamer := TJSONStreamer.Create(nil);
   try
     Streamer.Options := Streamer.Options + [jsoTStringsAsArray];
     JSONString := Streamer.ObjectToJSONString(myconfiguration);
-    logdatei.log('After configdialog: ' + JSONString, LLDebug);
+    logdatei.log('After configdialog: ' + JSONString, LLDebug2);
+    myconfiguration.writeconfig;
   finally
     Streamer.Destroy;
   end;
+         if fileexists(myconfiguration.PathToOpsiPackageBuilder) then
+  begin
+    RadioButtonBuildPackage.Enabled:=true;
+    RadioButtonPackageBuilder.Enabled:=true;
+    CheckGroupBuildMode.Enabled:=true;
+  end
+  else
+  begin
+    RadioButtonBuildPackage.Enabled:=false;
+    RadioButtonPackageBuilder.Enabled:=false;
+    CheckGroupBuildMode.Enabled:=false;
+  end;
+end;
+
+procedure TResultform1.MenuItemKnownInstallersClick(Sender: TObject);
+var
+ installerstr : string;
+ installer : TKnownInstaller;
+begin
+  for installer := Low(TKnownInstaller) to High(TKnownInstaller) do
+    if not (installer =  stUnknown) then
+      installerstr:=installerstr+ installerToInstallerstr(installer)+LineEnding;
+  ShowMessage(installerstr);
+
 end;
 
 procedure TResultform1.BtSingleAnalyzeAndCreateClick(Sender: TObject);
@@ -799,6 +864,8 @@ begin
     //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
     //TIProgressBarAnalyze_progress.Loaded;
     MemoAnalyze.Clear;
+    StringGridDep.Clear;
+    StringGridProp.Clear;
     Application.ProcessMessages;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
   end;
@@ -811,6 +878,11 @@ begin
 end;
 
 procedure TResultform1.FlowPanel18Click(Sender: TObject);
+begin
+
+end;
+
+procedure TResultform1.FormActivate(Sender: TObject);
 begin
 
 end;
@@ -830,6 +902,8 @@ begin
     setRunMode;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     MemoAnalyze.Clear;
+    StringGridDep.Clear;
+    StringGridProp.Clear;
     Application.ProcessMessages;
     initaktproduct;
     // start add property
@@ -1228,6 +1302,9 @@ begin
   begin
     useRunMode := createTemplate;
     setRunMode;
+    MemoAnalyze.Clear;
+    StringGridDep.Clear;
+    StringGridProp.Clear;
     PageControl1.ActivePage := resultForm1.TabSheetProduct;
     Application.ProcessMessages;
     initaktproduct;
@@ -1307,18 +1384,59 @@ end;
 
 
 procedure TResultform1.BtCreateProductClick(Sender: TObject);
+var
+  radioindex : integer;
+  checkok : boolean = true;
 begin
+  if not DirectoryExists(myconfiguration.workbench_Path) then
+  begin
+    checkok := false;
+    ShowMessage(sErrPacketBaseDirNotFound);
+  end;
   try
     PanelProcess.Visible := True;
+    procmess;
     fetchDepPropFromForm;
+    procmess;
     createProductStructure;
+    procmess;
+    if (not RadioButtonCreateOnly.Checked) then
+      callOpsiPackageBuilder;
+    procmess;
+    ShowMessage(sInfoFinished);
   finally
     PanelProcess.Visible := False;
+    procmess;
   end;
+   if RadioButtonCreateOnly.Checked then radioindex:=0;
+   if RadioButtonBuildPackage.Checked then radioindex:=1;
+   if RadioButtonPackageBuilder.Checked then radioindex:=2;
+   myconfiguration.CreateRadioIndex:=radioindex;
+   if CheckBoxQuiet.Checked then myconfiguration.CreateQuiet:=true
+   else myconfiguration.CreateQuiet:=false;
+   if CheckBoxBuild.Checked then myconfiguration.CreateBuild:=true
+   else myconfiguration.CreateBuild:=false;
+   if CheckBoxInstall.Checked then myconfiguration.CreateInstall:=true
+   else myconfiguration.CreateInstall:=false;
 end;
 
 procedure TResultform1.BtProduct1NextStepClick(Sender: TObject);
+var
+  checkok : boolean = true;
 begin
+  if (aktProduct.productdata.productId = '') then
+  begin
+    checkok := false;
+    ShowMessage(sErrProductIdEmpty);
+  end;
+  if (aktProduct.productdata.productversion = '') then
+  begin
+    checkok := false;
+    ShowMessage(sErrProductVersionEmpty);
+  end;
+  if checkok then
+  begin
+
   case useRunMode of
     analyzeOnly:
     begin
@@ -1345,6 +1463,7 @@ begin
       // we should never be here
       logdatei.log('Error: in BtProductNextStepClick RunMode: gmUnknown', LLError);
     end;
+  end;
   end;
 end;
 
@@ -1380,7 +1499,17 @@ begin
 end;
 
 procedure TResultform1.BtSetup1NextStepClick(Sender: TObject);
+var
+  checkok : boolean = true;
 begin
+  if (aktProduct.SetupFiles[0].installDirectory = '')
+      and (aktProduct.SetupFiles[0].installerId  <> stMsi) then
+  begin
+    checkok := false;
+    ShowMessage(sWarnInstalldirUnknown);
+  end;
+  if checkok then
+  begin
   case useRunMode of
     analyzeOnly:
     begin
@@ -1421,10 +1550,22 @@ begin
       logdatei.log('Error: in BtSetup1NextStepClick RunMode: gmUnknown', LLError);
     end;
   end;
+  end;
 end;
 
 procedure TResultform1.BtSetup2NextStepClick(Sender: TObject);
+var
+  checkok : boolean = true;
 begin
+  if (aktProduct.SetupFiles[1].installDirectory = '')
+      and (aktProduct.SetupFiles[1].installerId  <> stMsi) then
+  begin
+    checkok := false;
+    ShowMessage(sWarnInstalldirUnknown);
+  end;
+  if checkok then
+  begin
+
   case useRunMode of
     analyzeOnly:
     begin
@@ -1455,6 +1596,7 @@ begin
       logdatei.log('Error: in BtSetup2NextStepClick RunMode: gmUnknown', LLError);
     end;
   end;
+  end;
 end;
 
 procedure TResultform1.BitBtnClose1Click(Sender: TObject);
@@ -1469,6 +1611,9 @@ begin
   begin
     useRunMode := analyzeOnly;
     setRunMode;
+    MemoAnalyze.Clear;
+    StringGridDep.Clear;
+    StringGridProp.Clear;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Application.ProcessMessages;
     initaktproduct;
@@ -1617,39 +1762,28 @@ end;
 
 
 procedure TResultform1.FormCreate(Sender: TObject);
-var
-  myimage: TImage;
-  str: string;
 begin
   main;
-  //(*
-  //PageControl1.Images.AddLazarusResource('HOME2XA');
-  (*
-  PageControl1.Images.AddLazarusResource('MAGNIFYING-GLASS-2X');
-  PageControl1.Images.AddLazarusResource('COG-2X');
-  PageControl1.Images.AddLazarusResource('FLASH-2X');
-  *)
-  (*
-  str :=ExpandFileName(ExtractFilePath(Application.ExeName)+ 'home-2xb.png');
-  myimage := TImage.Create(nil);
-  myimage.Picture.LoadFromFile(str);
-  PageControl1.Images.add(myimage.Picture.Bitmap,nil);
-  *)
-  (*
-  PageControl1.Images.AddLazarusResource('MAGNIFYING-GLASS-2X');
-  PageControl1.Images.AddLazarusResource('COG-2X');
-  PageControl1.Images.AddLazarusResource('FLASH-2X');
-  *)
-  //(*
   TabSheetStart.ImageIndex := 0;
-  //(*
   TabSheetAnalyze.ImageIndex := 1;
   TabSheetSetup1.ImageIndex := 2;
   TabSheetSetup2.ImageIndex := 2;
   TabSheetProduct.ImageIndex := 3;
   TabSheetProduct2.ImageIndex := 3;
   TabSheetCreate.ImageIndex := 4;
-  //*)
+  TimerFirstconfig.Enabled:=true;
+  if fileexists(myconfiguration.PathToOpsiPackageBuilder) then
+  begin
+    RadioButtonBuildPackage.Enabled:=true;
+    RadioButtonPackageBuilder.Enabled:=true;
+    CheckGroupBuildMode.Enabled:=true;
+  end
+  else
+  begin
+    RadioButtonBuildPackage.Enabled:=false;
+    RadioButtonPackageBuilder.Enabled:=false;
+    CheckGroupBuildMode.Enabled:=false;
+  end;
 end;
 
 procedure TResultform1.memoadd(line: string);
@@ -1671,10 +1805,10 @@ begin
   if RadioButtonName = 'RadioButtonCreateOnly' then
   begin
   end
-  else if RadioButtonName = 'RadioButtonInteractive' then
+  else if RadioButtonName = 'RadioButtonPackageBuilder' then
   begin
   end
-  else if RadioButtonName = 'RadioButtonAuto' then
+  else if RadioButtonName = 'RadioButtonBuildPackage' then
   begin
     CheckBoxBuild.Enabled := True;
     CheckBoxInstall.Enabled := True;
@@ -1720,6 +1854,16 @@ end;
 procedure TResultform1.TabSheetCreateShow(Sender: TObject);
 begin
   checkWorkbench;
+end;
+
+procedure TResultform1.TimerFirstconfigTimer(Sender: TObject);
+begin
+  TimerFirstconfig.Enabled:=false;
+  if not myconfiguration.config_filled then
+  begin
+    ShowMessage('We need some configurations first !');
+    MenuItemConfigClick(Sender);
+  end;
 end;
 
 procedure TResultform1.TISpinEditPrioChange(Sender: TObject);

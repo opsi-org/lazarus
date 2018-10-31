@@ -323,9 +323,9 @@ TPProperties = class(TCollectionItem)
 
   TConfiguration = class(TPersistent)
   private
-    Fworkbench_share: string;
+    //Fworkbench_share: string;
     Fworkbench_Path: string;
-    Fworkbench_mounted: boolean;
+    //Fworkbench_mounted: boolean;
     Fconfig_filled: boolean;
     FregisterInFilemanager: boolean;
     Femail_address: string;
@@ -335,20 +335,26 @@ TPProperties = class(TCollectionItem)
     FpostInstallLines: TStrings;
     FpreUninstallLines: TStrings;
     FpostUninstallLines: TStrings;
+    FPathToOpsiPackageBuilder: string;
+    FCreateRadioIndex: integer;
+    FCreateQuiet: boolean;
+    FCreateBuild: boolean;
+    FCreateInstall: boolean;
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
     procedure SetPostInstallLines(const AValue: TStrings);
     procedure SetPreUninstallLines(const AValue: TStrings);
     procedure SetPostUninstallLines(const AValue: TStrings);
   published
-    property workbench_share: string read Fworkbench_share write Fworkbench_share;
+    //property workbench_share: string read Fworkbench_share write Fworkbench_share;
     property workbench_Path: string read Fworkbench_Path write Fworkbench_Path;
-    property workbench_mounted: boolean read Fworkbench_mounted write Fworkbench_mounted;
+    //property workbench_mounted: boolean read Fworkbench_mounted write Fworkbench_mounted;
     property config_filled: boolean read Fconfig_filled write Fconfig_filled;
     property registerInFilemanager: boolean
       read FregisterInFilemanager write FregisterInFilemanager;
     property email_address: string read Femail_address write Femail_address;
     property fullName: string read FFullName write FFullName;
+    property PathToOpsiPackageBuilder: string read FPathToOpsiPackageBuilder write FPathToOpsiPackageBuilder;
     property import_libraries: TStrings read Fimport_libraries write SetLibraryLines;
     property preInstallLines: TStrings read FpreInstallLines write SetPreInstallLines;
     property postInstallLines: TStrings read FpostInstallLines write SetPostInstallLines;
@@ -356,6 +362,10 @@ TPProperties = class(TCollectionItem)
       write SetPreUninstallLines;
     property postUninstallLines: TStrings read FpostUninstallLines
       write SetPostUninstallLines;
+    property CreateRadioIndex: integer read FCreateRadioIndex write FCreateRadioIndex;
+    property CreateQuiet: boolean read FCreateQuiet write FCreateQuiet;
+    property CreateBuild: boolean read FCreateBuild write FCreateBuild;
+    property CreateInstall: boolean read FCreateInstall write FCreateInstall;
     procedure writeconfig;
     procedure readconfig;
   public
@@ -607,6 +617,12 @@ begin
   FpostInstallLines := TStringList.Create;
   FpreUninstallLines := TStringList.Create;
   FpostUninstallLines := TStringList.Create;
+  FregisterInFilemanager := true;
+  Femail_address := 'missing';
+  FFullName := 'missing';
+  Fworkbench_Path := 'missing';
+  FPathToOpsiPackageBuilder := 'missing';
+  Fconfig_filled := false;
   readconfig;
 end;
 
@@ -790,6 +806,12 @@ begin
     if not ForceDirectories(configDirUtf8) then
       LogDatei.log('failed to create configuration directory: ' + configDirUtf8, LLError);
 
+  if (Femail_address = 'missing')
+    or (FFullName = 'missing')
+    or (Fworkbench_Path = 'missing')
+    or (FPathToOpsiPackageBuilder = 'missing') then
+     Fconfig_filled := false
+  else Fconfig_filled := true;
   // http://wiki.freepascal.org/Streaming_JSON
   Streamer := TJSONStreamer.Create(nil);
   try
@@ -803,6 +825,10 @@ begin
     //AssignFile(myfile, myfilename);
     //Rewrite(myfile);
     //Write(myfile, JSONString);
+      {$IFDEF WINDOWS}
+  registerForWinExplorer(FregisterInFilemanager);
+  {$ELSE}
+  {$ENDIF WINDOWS}
   finally
     //CloseFile(myfile);
     Streamer.Destroy;
@@ -882,16 +908,10 @@ begin
       DeStreamer.Destroy;
       CloseFile(myfile);
     end;
-    (*
-    Streamer := TJSONStreamer.Create(nil);
-    try
-      Streamer.Options := Streamer.Options + [jsoTStringsAsArray];
-      JSONString := Streamer.ObjectToJSONString(myconfiguration);
-//      logdatei.log('After readconfig: '+JSONString, LLDebug);
-    finally
-      Streamer.Destroy;
-    end;
-    *)
+    {$IFDEF WINDOWS}
+registerForWinExplorer(FregisterInFilemanager);
+{$ELSE}
+{$ENDIF WINDOWS}
   end
   else
   begin
@@ -909,7 +929,6 @@ begin
       CloseFile(fConfig);
     end;
   end;
-  Fworkbench_mounted := False;
 end;
 
 
@@ -1262,6 +1281,11 @@ begin
     myconfigurationhints.Add('postInstallLines=List of opsi-script code lines that should be included after the installation finished.'+LineEnding+'One per line. May be empty. Example:'+LineEnding+'comment "Installation finished..."');
     myconfigurationhints.Add('preUninstallLines=List of opsi-script code lines that should be included before the uninstallation starts.'+LineEnding+'One per line. May be empty. Example:'+LineEnding+'comment "Start the uninstallation ..."');
     myconfigurationhints.Add('postUninstallLines=List of opsi-script code lines that should be included after the uninstallation finished.'+LineEnding+'One per line. May be empty. Example:'+LineEnding+'comment "Uninstall finished..."');
+    myconfigurationhints.Add('PathToOpsiPackageBuilder=Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573');
+    myconfigurationhints.Add('CreateRadioIndex=selects the Create mode Radiobutton.');
+    myconfigurationhints.Add('CreateQuiet=Selects the Build mode Checkbox quiet.');
+    myconfigurationhints.Add('CreateBuild=Selects the Build mode Checkbox build.');
+    myconfigurationhints.Add('CreateInstall=Selects the Build mode Checkbox install.');
 (*
   myconfigurationhints := TCollection.Create(TConfigHint);
   newhint := TConfigHint(myconfigurationhints.add);

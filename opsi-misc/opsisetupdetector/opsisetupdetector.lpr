@@ -38,7 +38,7 @@ begin
   Application.Initialize;
   Application.Title:='opsi-setup-detector';
   Application.CreateForm(TresultForm1, resultForm1);
-  Application.CreateForm(TFOSDConfigdlg, FOSDConfigdlg);
+    Application.CreateForm(TFOSDConfigdlg, FOSDConfigdlg);
   Application.CreateForm(TFNewDepDlg, FNewDepDlg);
   Application.CreateForm(TFNewPropDlg, FNewPropDlg);
   //Application.CreateForm(TFormHelp, FormHelp);
