@@ -3,7 +3,7 @@ program opsisetupdetector;
 {$mode delphi}{$H+}
 
 //{$APPTYPE CONSOLE}
-{$DEFINE debug}
+//{$DEFINE debug}
 
 uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   cthreads, {$ENDIF} {$ENDIF}
