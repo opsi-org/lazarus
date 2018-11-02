@@ -14,7 +14,6 @@
 {"hash":138953029,"name":"tresultform1.tabsheetanalyze.caption","sourcebytes":[65,110,97,108,121,122,101],"value":"Analyze"},
 {"hash":194334512,"name":"tresultform1.btanalyzenextstep.hint","sourcebytes":[71,111,32,116,111,32,116,104,101,32,110,101,120,116,32,83,116,101,112],"value":"Go to the next Step"},
 {"hash":258342400,"name":"tresultform1.btanalyzenextstep.caption","sourcebytes":[78,101,120,116,32,83,116,101,112],"value":"Next Step"},
-{"hash":109362962,"name":"tresultform1.panel12.caption","sourcebytes":[80,97,110,101,108,49,50],"value":"Panel12"},
 {"hash":5884032,"name":"tresultform1.tabsheetsetup1.caption","sourcebytes":[49,46,32,83,101,116,117,112],"value":"1. Setup"},
 {"hash":143287130,"name":"tresultform1.label62.caption","sourcebytes":[68,101,116,101,99,116,101,100,32,83,101,116,117,112,32,116,121,112,101,58],"value":"Detected Setup type:"},
 {"hash":144189333,"name":"tresultform1.label63.caption","sourcebytes":[65,114,99,104,105,116,101,99,116,117,114,101,32,77,111,100,101],"value":"Architecture Mode"},

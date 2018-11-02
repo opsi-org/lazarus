@@ -47,16 +47,36 @@ begin
   myreg := TRegistry.Create(KEY_ALL_ACCESS);
   //myreg.RootKey := HKEY_CURRENT_USER;
   myreg.RootKey := HKEY_CLASSES_ROOT;
-  myreg.OpenKey('Software\Classes\*\shell\opsi setup detector\Command', True);
+  //remove old registration
+  myreg.DeleteKey('Software\Classes\*\shell\opsi setup detector\Command');
+  myreg.DeleteKey('Software\Classes\*\shell\opsi setup detector');
+  myreg.DeleteKey('*\shell\opsi setup detector\Command');
+  myreg.DeleteKey('*\shell\opsi setup detector');
+  myreg.DeleteKey('Software\Classes\exefile\shell\opsi setup detector\Command');
+    myreg.DeleteKey('Software\Classes\exefile\shell\opsi setup detector');
+    myreg.DeleteKey('Software\Classes\Msi.Package\shell\opsi setup detector\Command');
+    myreg.DeleteKey('Software\Classes\Msi.Package\shell\opsi setup detector');
+  //new registration
   if doregister then
   begin
-    myreg.OpenKey('Software\Classes\*\shell\opsi setup detector\Command', True);
-    myreg.WriteString('', '"' + ParamStr(0) + '" --filename=%1');
+    myreg.OpenKey('exefile\shell\opsi setup detector', True);
+    myreg.WriteString('', 'Analyze with opsi-setup-detector');
+    myreg.CloseKey;
+    myreg.OpenKey('exefile\shell\opsi setup detector\Command', True);
+    myreg.WriteString('', '"' + ParamStr(0) + '" --filename="%1"');
+    myreg.CloseKey;
+    myreg.OpenKey('Msi.Package\shell\opsi setup detector', True);
+    myreg.WriteString('', 'Analyze with opsi-setup-detector');
+    myreg.CloseKey;
+    myreg.OpenKey('Msi.Package\shell\opsi setup detector\Command', True);
+    myreg.WriteString('', '"' + ParamStr(0) + '" --filename="%1"');
   end
   else
   begin
-    myreg.DeleteKey('Software\Classes\*\shell\opsi setup detector\Command');
-    myreg.DeleteKey('Software\Classes\*\shell\opsi setup detector');
+    myreg.DeleteKey('exefile\shell\opsi setup detector\Command');
+    myreg.DeleteKey('exefile\shell\opsi setup detector');
+    myreg.DeleteKey('Msi.Package\shell\opsi setup detector\Command');
+    myreg.DeleteKey('Msi.Package\shell\opsi setup detector');
   end;
   myreg.CloseKey;
   myreg.Free;

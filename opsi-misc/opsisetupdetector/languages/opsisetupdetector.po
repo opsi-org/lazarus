@@ -817,10 +817,6 @@ msgstr ""
 msgid "Panel10"
 msgstr ""
 
-#: tresultform1.panel12.caption
-msgid "Panel12"
-msgstr ""
-
 #: tresultform1.panel3.caption
 msgid "Panel3"
 msgstr ""

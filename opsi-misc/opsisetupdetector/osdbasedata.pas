@@ -1031,6 +1031,7 @@ var
   i: integer;
   newdep : TPDependency;
 begin
+  LogDatei.log('Start initaktproduct ... ', LLInfo);
   for i := 0 to 1 do
   begin
     if not Assigned(aktProduct.SetupFiles[i]) then
