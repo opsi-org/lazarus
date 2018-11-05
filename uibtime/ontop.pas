@@ -271,8 +271,9 @@ begin
   Width := 816 + buttonwidth;
   Toolbar1.Width := 816 + buttonwidth;
   //toolbar1.height :=  round(25 * (screen.PixelsPerInch / 96));
-  toolbar1.height :=  100;
-  FOnTop.Height:= 100;
+  //toolbar1.height :=  100;
+  //FOnTop.Height:= 100;
+  EditProjektzeit.Height:=ontopheight;
   Datamodule1.setontopwidth(Toolbar1.Width);
   eventhandler(lastevent);
   datamodule1.debugOut(5, 'finished TFOnTop.ReBuildForm');

@@ -20,13 +20,13 @@ type
   { TFMultiday }
 
   TFMultiday = class(TForm)
-    CalendarDialog1: TCalendarDialog;
     CheckBoxHolydays: TCheckBox;
     CheckBoxOnlyWorkdays: TCheckBox;
-    DateTimePicker1: TDateTimePicker;
-    EditButtonEndDate: TEditButton;
-    EditButtonStartDate: TEditButton;
+    DateTimePickerStart: TDateTimePicker;
+    DateTimePickerEnd: TDateTimePicker;
     Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
     OKBtn: TButton;
     cal: TCalendar;
     Label1: TLabel;
@@ -66,7 +66,8 @@ var
   doinsert : boolean;
 begin
   OKBtn.Enabled:=false;
-  firstdate := ScanDateTime('dd.mm.yyyy',EditButtonStartDate.text);
+  //firstdate := ScanDateTime('dd.mm.yyyy',EditButtonStartDate.text);
+  firstdate := DateTimePickerStart.Date;
   aktdate := firstdate - 1;
   if MaskEditStart.Text = '' then
     startzeit := strtotime('10:00')
@@ -99,15 +100,16 @@ begin
       //DataModule1.SQuibevent.ApplyUpdates;
       sleep(1000);
     end;
-  until (ScanDateTime('dd.mm.yyyy',EditButtonEndDate.text) = aktdate);
+  //until (ScanDateTime('dd.mm.yyyy',EditButtonEndDate.text) = aktdate);
+  until (DateTimePickerEnd.Date = aktdate);
   OKBtn.Enabled:=true;
 end;
 
 procedure TFMultiday.CalendarDialog1Show(Sender: TObject);
 begin
-  CalendarDialog1.Width:=400;
-  CalendarDialog1.Height:=400;;
+
 end;
+
 
 procedure TFMultiday.ComboBox1Select(Sender: TObject);
 var
@@ -131,20 +133,22 @@ end;
 
 procedure TFMultiday.EditButtonEndDateButtonClick(Sender: TObject);
 begin
-  CalendarDialog1.Date:=ScanDateTime('dd.mm.yyyy',EditButtonEndDate.text);
-  CalendarDialog1.Execute;
-  EditButtonEndDate.text := DateToStr(CalendarDialog1.Date);
+
 end;
+
 
 procedure TFMultiday.EditButtonStartDateButtonClick(Sender: TObject);
 var
   str : string;
 begin
+  (*
   CalendarDialog1.Date:=ScanDateTime('dd.mm.yyyy',EditButtonEndDate.text);
   CalendarDialog1.Execute;
   EditButtonStartDate.text := DateToStr(CalendarDialog1.Date);
   EditButtonEndDate.text := EditButtonStartDate.text;
-  if Datamodule1.dateIsHolyday(CalendarDialog1.Date) then
+  *)
+  DateTimePickerEnd.Date:= DateTimePickerStart.Date;
+  if Datamodule1.dateIsHolyday(DateTimePickerStart.Date) then
   begin
     MaskEditStart.EditText:='10:00';
     str := timeFloatTohourminutesStr(user_h_per_day);
@@ -161,7 +165,8 @@ end;
 
 procedure TFMultiday.FormCreate(Sender: TObject);
 begin
-
+  DateTimePickerStart.Date:=now;
+  DateTimePickerEnd.Date:=now;
 end;
 
 procedure TFMultiday.FormShow(Sender: TObject);
@@ -179,8 +184,10 @@ begin
     combobox1.Items.Add(Datamodule1.SQQueryAktEvents.FieldByName('event').AsString);
     Datamodule1.SQQueryAktEvents.Next;
   end;
+  (*
   EditButtonStartDate.text := DateToStr(Date);
   EditButtonEndDate.text := DateToStr(Date);
+  *)
 end;
 
 procedure TFMultiday.Label1Click(Sender: TObject);
