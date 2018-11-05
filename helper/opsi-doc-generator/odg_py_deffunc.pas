@@ -172,7 +172,7 @@ begin
   end;
 end;
 
-procedure parsePyDef(definitionStr : string; myfunc : TFuncDoc);  //by jeena new
+procedure parsePyDef(definitionStr : string; myfunc : TFuncDoc);
 var
   paramnamestr : string;
   paramcounter, posofequal : integer;
@@ -187,15 +187,10 @@ begin
 
   if  skip('(',remaining,remaining,errorstr) then
   begin
-    skip('self',remaining,remaining,errorstr);
     if skip('):',remaining,remaining,errorstr) then
     begin
       endOfParamlist := true;
       myfunc.FParamCounter := 0;
-    end
-    else
-    begin
-      skip(',',remaining,remaining,errorstr);
     end;
 
     while not endOfParamlist do
@@ -203,7 +198,7 @@ begin
       GetWord(remaining, paramnamestr, remaining,[',',':']);
       if remaining = ':' then
       begin
-        if pos('=', trim(paramnamestr)) >1 then
+        if pos('=', trim(paramnamestr)) > 1 then
         begin
           posofequal := pos('=', trim(paramnamestr));
           paramnamestr := copy(paramnamestr, 0, posofequal-1);
@@ -214,7 +209,7 @@ begin
           paramnamestr := trim(paramnamestr);
         end
       end
-      else if pos('=', trim(paramnamestr)) >1 then
+      else if pos('=', trim(paramnamestr)) > 1 then
       begin
         posofequal := pos('=', trim(paramnamestr));
         paramnamestr := copy(paramnamestr, 0, posofequal-1);
@@ -225,7 +220,7 @@ begin
       LogDatei.log('Found defined function parametername: '+paramnamestr,LLDebug2);
       inc(paramcounter);
 
-      myfunc.FParamCounter := paramcounter +1;
+      myfunc.FParamCounter := paramcounter+1;
       setlength(myfunc.Fparams,myfunc.FParamCounter);
       myfunc.Fparams[paramcounter] := TParamDoc.Create;
 
@@ -263,8 +258,23 @@ begin
     matchpos := pos(':', defstring);
   end;
 
-  currentlinenumber := deflinecounter + 1;
-  result := copy(defstring,1,matchpos);
+  defstring := copy(defstring,1,matchpos);
+  if pos ('self', defstring) > 0 then
+  begin
+    if pos('self, ', defstring) > 0 then
+    begin
+      matchpos := pos('self, ', defstring);
+      delete(defstring, matchpos, length('self, '));
+    end
+    else if pos('self', defstring) > 0 then
+    begin
+      matchpos := pos('self', defstring);
+      delete(defstring, matchpos, length('self'));
+    end
+  end;
+
+  currentlinenumber := deflinecounter+1;
+  result := defstring;
 end;
 
 function getFileDoc(var currentlinenumber : integer) : boolean;
@@ -298,7 +308,7 @@ begin
   matchpos := rpos(cmulticomment1, description) or rpos(cmulticomment2, description);
   description := copy(description,1,matchpos-1);
   docobject.Ffiledesc := description;
-  currentlinenumber := docstringcounter + 1;
+  currentlinenumber := docstringcounter+1;
   result := true;
 end;
 
@@ -308,7 +318,7 @@ var
 begin
   totallen := Length(Tab2Space(line,4));
   len := Length(TrimLeft(Tab2Space(line,4)));
-  result := totallen - len;
+  result := totallen-len;
 end;
 
 function processPublicDef(var currentlinenumber : integer) : boolean;

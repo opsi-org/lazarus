@@ -75,7 +75,8 @@ begin
       targetlist.Add('');
       targetlist.Add('anchor:'+docobject.Ffunctions[frun].Name+'[]');
       targetlist.Add('[Doc_func_'+docobject.Ffunctions[frun].Name+']');
-      targetlist.add('== Documentation of local function `'+docobject.Ffunctions[frun].Name+'`');
+      //targetlist.add('== Documentation of local function `'+docobject.Ffunctions[frun].Name+'`');
+      targetlist.add('== `'+docobject.Ffunctions[frun].Name+'`');
       targetlist.Add('');
       //targetlist.Add('');
       targetlist.add('Definition:: ');
@@ -116,6 +117,7 @@ begin
       tmpstr1 := docobject.Ffunctions[frun].Raises;
       if tmpstr1 <> '' then targetlist.Add('* Raises:  '+tmpstr1);
 
+      (*
       tmpstr1 := docobject.Ffunctions[frun].License;
       if tmpstr1 = '' then tmpstr1 :=  docobject.License;
       if tmpstr1 <> '' then targetlist.Add('* License:  '+tmpstr1);
@@ -127,7 +129,7 @@ begin
       tmpstr1 := docobject.Ffunctions[frun].Copyright;
       if tmpstr1 = '' then tmpstr1 :=  docobject.Copyright;
       if tmpstr1 <> '' then targetlist.Add('* Copyright:  '+tmpstr1);
-
+      *)
       targetlist.Add('');
       targetlist.Add('');
     end;
