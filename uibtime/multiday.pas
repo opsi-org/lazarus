@@ -10,7 +10,7 @@ uses
 //     {$ENDIF WINDOWS}
   SysUtils, Classes, Graphics, Forms, Controls, StdCtrls, Buttons,
 //  ExtCtrls, Grids, Calendar, ComCtrls, DBCtrls, maskedit, ExtDlgs, EditBtn,
-  ExtCtrls, Calendar, DBCtrls, maskedit, ExtDlgs, EditBtn,
+  ExtCtrls, Calendar, DBCtrls, maskedit, ExtDlgs, EditBtn, DateTimePicker,
   dateutils,
   uibdatetime,
   strutils;
@@ -23,6 +23,7 @@ type
     CalendarDialog1: TCalendarDialog;
     CheckBoxHolydays: TCheckBox;
     CheckBoxOnlyWorkdays: TCheckBox;
+    DateTimePicker1: TDateTimePicker;
     EditButtonEndDate: TEditButton;
     EditButtonStartDate: TEditButton;
     Label4: TLabel;
@@ -36,6 +37,7 @@ type
     BtnInsertAll: TBitBtn;
     ComboBox1: TComboBox;
     procedure BtnInsertAllClick(Sender: TObject);
+    procedure CalendarDialog1Show(Sender: TObject);
     procedure ComboBox1Select(Sender: TObject);
     procedure EditButtonEndDateButtonClick(Sender: TObject);
     procedure EditButtonStartDateButtonClick(Sender: TObject);
@@ -99,6 +101,12 @@ begin
     end;
   until (ScanDateTime('dd.mm.yyyy',EditButtonEndDate.text) = aktdate);
   OKBtn.Enabled:=true;
+end;
+
+procedure TFMultiday.CalendarDialog1Show(Sender: TObject);
+begin
+  CalendarDialog1.Width:=400;
+  CalendarDialog1.Height:=400;;
 end;
 
 procedure TFMultiday.ComboBox1Select(Sender: TObject);

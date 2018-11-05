@@ -12,7 +12,7 @@ object FMultiday: TFMultiday
   OnShow = FormShow
   ParentFont = True
   Position = poScreenCenter
-  LCLVersion = '1.8.2.0'
+  LCLVersion = '1.8.4.0'
   object Label1: TLabel
     Left = 8
     Height = 80
@@ -163,7 +163,33 @@ object FMultiday: TFMultiday
     ParentColor = False
     ParentFont = False
   end
+  object DateTimePicker1: TDateTimePicker
+    Left = 280
+    Height = 35
+    Top = 208
+    Width = 91
+    CenturyFrom = 1941
+    MaxDate = 2958465
+    MinDate = -53780
+    TabOrder = 9
+    BorderSpacing.InnerBorder = 6
+    TrailingSeparator = False
+    TextForNullDate = 'NULL'
+    LeadingZeros = True
+    Kind = dtkDate
+    TimeFormat = tf24
+    TimeDisplay = tdHMS
+    DateMode = dmComboBox
+    Date = 43409
+    Time = 0.605883564814576
+    UseDefaultSeparators = True
+    HideDateTimeParts = []
+    MonthNames = 'Long'
+  end
   object CalendarDialog1: TCalendarDialog
+    OnShow = CalendarDialog1Show
+    Width = 300
+    Height = 300
     Date = 42201
     OKCaption = '&OK'
     CancelCaption = 'Cancel'

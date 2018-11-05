@@ -1,4 +1,11 @@
 (*
+uibtime (4.1.1.43-1) stable; urgency=low
+
+ * ontop: bigger buttons buttons
+ * experiments on calendar dialog vs. date picker
+
+-- detlef oertel <d.oertel@uib.de>  Mon, 5 Nov 2018 15:00:00 +0000
+
 uibtime (4.1.1.42-1) stable; urgency=low
 
  * logging via oslog : uibdata

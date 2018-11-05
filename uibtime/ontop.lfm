@@ -1,13 +1,13 @@
 object FOnTop: TFOnTop
-  Left = 79
+  Left = 714
   Height = 239
-  Top = 485
-  Width = 810
+  Top = 453
+  Width = 847
   BorderIcons = []
   BorderStyle = bsNone
   Caption = 'uibtime - ontop'
   ClientHeight = 239
-  ClientWidth = 810
+  ClientWidth = 847
   Color = clBtnFace
   Font.Color = clWindowText
   Font.Height = -11
@@ -18,27 +18,38 @@ object FOnTop: TFOnTop
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poDefault
-  LCLVersion = '1.8.2.0'
+  LCLVersion = '1.8.4.0'
   object ToolBar1: TToolBar
     Left = 0
-    Height = 25
+    Height = 29
     Top = 0
-    Width = 681
+    Width = 816
     Align = alNone
     AutoSize = True
-    ButtonHeight = 21
+    ButtonHeight = 25
     ButtonWidth = 23
-    Caption = 'ToolBar1'
+    ChildSizing.LeftRightSpacing = 3
+    ChildSizing.HorizontalSpacing = 3
+    ChildSizing.ShrinkHorizontal = crsScaleChilds
+    ChildSizing.ShrinkVertical = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
     EdgeBorders = [ebLeft, ebTop, ebRight, ebBottom]
     EdgeOuter = esRaised
+    Font.Color = clWindowText
+    Font.Height = -12
+    Font.Name = 'MS Sans Serif'
+    ParentFont = False
     PopupMenu = DataModule1.PopupMenu1
     TabOrder = 0
     Wrapable = False
     object Btn_work_description: TSpeedButton
       Left = 3
-      Height = 21
+      Height = 25
       Top = 2
-      Width = 69
+      Width = 93
+      BorderSpacing.Left = 1
+      BorderSpacing.Right = 1
+      BorderSpacing.Around = 2
       Caption = 'Bericht'
       Font.Color = clWindowText
       Font.Height = -11
@@ -70,10 +81,11 @@ object FOnTop: TFOnTop
       ParentFont = False
     end
     object BtnProjekt: TSpeedButton
-      Left = 72
-      Height = 21
+      Left = 96
+      Height = 25
       Top = 2
-      Width = 72
+      Width = 96
+      BorderSpacing.Around = 2
       Caption = 'Projekt'
       Glyph.Data = {
         8A020000424D8A020000000000008A0000007C00000010000000100000000100
@@ -103,8 +115,8 @@ object FOnTop: TFOnTop
       OnDblClick = BtnProjektDblClick
     end
     object Edit1: TEdit
-      Left = 144
-      Height = 21
+      Left = 192
+      Height = 25
       Top = 2
       Width = 154
       Color = clWhite
@@ -116,8 +128,8 @@ object FOnTop: TFOnTop
       Text = 'Edit1'
     end
     object SpeedButton1: TSpeedButton
-      Left = 298
-      Height = 21
+      Left = 346
+      Height = 25
       Top = 2
       Width = 23
       Glyph.Data = {
@@ -138,24 +150,31 @@ object FOnTop: TFOnTop
       OnClick = SpeedButton1Click
     end
     object DBLCB_topten_event: TDBLookupComboBox
-      Left = 321
+      Left = 369
       Height = 21
       Top = 2
-      Width = 145
+      Width = 167
+      AutoSize = False
       DataField = 'EVENT'
       DataSource = DataModule1.DSuibevent
       DropDownCount = 20
+      Font.Color = clWindowText
+      Font.Height = -12
+      Font.Name = 'MS Sans Serif'
       KeyField = 'event'
       ListFieldIndex = 0
       ListSource = DS_topten_events
       LookupCache = False
       OnEnter = DBLCB_topten_eventEnter
       OnExit = DBLCB_topten_eventExit
+      ParentFont = False
+      ScrollListDataset = True
+      Sorted = True
       TabOrder = 1
     end
     object EditProjektzeit: TEdit
-      Left = 466
-      Height = 21
+      Left = 536
+      Height = 25
       Top = 2
       Width = 80
       ParentShowHint = False
@@ -163,12 +182,14 @@ object FOnTop: TFOnTop
       TabOrder = 2
     end
     object Labeluid: TLabel
-      Left = 546
-      Height = 21
+      Left = 616
+      Height = 25
       Top = 2
-      Width = 64
+      Width = 86
       Alignment = taCenter
       AutoSize = False
+      BorderSpacing.Around = 2
+      BorderSpacing.InnerBorder = 2
       Caption = 'Labeluid'
       Color = clBtnFace
       Font.CharSet = ANSI_CHARSET
@@ -177,15 +198,16 @@ object FOnTop: TFOnTop
       Font.Name = 'MS Sans Serif'
       Font.Pitch = fpVariable
       Font.Quality = fqDraft
+      Layout = tlCenter
       ParentColor = False
       ParentFont = False
       Transparent = False
     end
     object BtnBye: TSpeedButton
-      Left = 610
-      Height = 21
+      Left = 702
+      Height = 25
       Top = 2
-      Width = 69
+      Width = 112
       Caption = 'Tschüß'
       Glyph.Data = {
         76010000424D7601000000000000760000002800000020000000100000000100
