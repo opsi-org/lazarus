@@ -244,6 +244,9 @@ begin
       BtnArray[i].Width :=
         round(length(QueryUserButtons.FieldByName('event').AsString) *
         5.4 + 14 + iconlength);
+      {$IFDEF LINUX}
+      BtnArray[i].Width := round(BtnArray[i].Width * scalefactor*1.4);
+      {$ENDIF LINUX}
       buttonwidth := buttonwidth + BtnArray[i].Width;
       BtnArray[i].OnClick := BtnArrayClick;
       BtnArray[i].GroupIndex := 1;
@@ -267,6 +270,9 @@ begin
   Left := leftint;
   Width := 816 + buttonwidth;
   Toolbar1.Width := 816 + buttonwidth;
+  //toolbar1.height :=  round(25 * (screen.PixelsPerInch / 96));
+  toolbar1.height :=  100;
+  FOnTop.Height:= 100;
   Datamodule1.setontopwidth(Toolbar1.Width);
   eventhandler(lastevent);
   datamodule1.debugOut(5, 'finished TFOnTop.ReBuildForm');

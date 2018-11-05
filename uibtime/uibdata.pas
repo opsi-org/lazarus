@@ -229,6 +229,7 @@ var
   verDatum: string;
   Trayshow: boolean;
   TrayInterval: cardinal;
+  scalefactor : double = 1.0;
 
 
 
@@ -2145,7 +2146,12 @@ initialization
   { initialization-Abschnitt }
   DefaultFormatSettings.ShortDateFormat := 'dd.mm.yyyy';
   ontopwidth := 850;//730;
-  ontopheight := 25;
+  ontopheight := 28;
+  {$ifdef LINUX}
+  ontopheight := round(32 * (96 / screen.PixelsPerInch));
+  {$ENDIF LINUX}
+  //ontopheight := 50;
+  scalefactor :=  96 / screen.PixelsPerInch;
   screenx := Screen.Width;
   screeny := Screen.Height;
   leftint := (screenx - ontopwidth) div 2;
