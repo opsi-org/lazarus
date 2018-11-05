@@ -1904,7 +1904,7 @@ begin
         if errorOccured then
         begin
           FindLocalIPData(ipName, ipAddress);
-          LogPath := StandardLogPath;
+          LogPath := logdatei.StandardLogPath;
           startupmessages.Append('startmessage create log: ' + DateTimeToStr(Now));
           LogDatei.CreateTheLogfile(LogDateiName);
           LogDatei.log('opsi-script cannot connect to service with URL: ' +
@@ -1919,7 +1919,7 @@ begin
           if runloginscripts then
           begin
             //ForceDirectories('c:\opsi.org\log');
-            LogPath := StandardLogPath;
+            LogPath := logdatei.StandardLogPath;
             LogDateiName := LogPath + getLoggedInUser + '_login.log';
             startupmessages.Append('startmessage create log: ' + DateTimeToStr(Now));
             LogDatei.CreateTheLogfile(LogDateiName, False);
@@ -1997,7 +1997,7 @@ begin
 
           DontUpdateMemo := True;
           {$ENDIF GUI}
-          oslog.StandardPartLogPath:= ExtractFileDir(Logdateiname);
+          logdatei.StandardPartLogPath:= ExtractFileDir(Logdateiname);
           LogDatei.CreateTheLogFile(Logdateiname, False);
           extractTmpPathFromLogdatei(LogDateiName);
           TempPath := GetTempPath;
@@ -2292,10 +2292,10 @@ begin
       TempPath := ValueOfEnvVar('TEMP');
 
     testpassed := False;
-    if (StandardMainLogPath <> '') and SysUtils.ForceDirectories(StandardMainLogPath) then
+    if (logdatei.StandardMainLogPath <> '') and SysUtils.ForceDirectories(logdatei.StandardMainLogPath) then
     begin
       testpassed := True;
-      teststr := StandardMainLogPath + 'testing_write_privilege_for_winst';
+      teststr := logdatei.StandardMainLogPath + 'testing_write_privilege_for_winst';
       if not fileexists(teststr) then
       begin
         if not SysUtils.ForceDirectories(teststr) or not RemoveDir(teststr) then
@@ -2305,7 +2305,7 @@ begin
     end;
 
     if testpassed then
-      LogPath := StandardMainLogPath
+      LogPath := logdatei.StandardMainLogPath
     else
       LogPath := TempPath;
 
