@@ -27,8 +27,6 @@ begin
   begin
     targetlist.Clear;
     asciidoc_header.Clear;
-
-
     asciidoc_header.Add('////                                                            ');
     asciidoc_header.Add('; Copyright (c) uib gmbh (www.uib.de)                           ');
     asciidoc_header.Add('; This documentation is owned by uib                            ');
@@ -46,7 +44,6 @@ begin
     asciidoc_header.Add(':Revision:                                                 ');
     asciidoc_header.Add(':doctype: book                                               ');
 
-
     if not (docobject.Author = '') then
       asciidoc_header.Add(':Author:    '+docobject.Author);
     asciidoc_header.Add(':toc:');
@@ -57,13 +54,16 @@ begin
     targetlist.add('[Doc_file_'+docobject.name+']');
     targetlist.add('= Documentation of Python library: `'+docobject.name+'`');
     targetlist.Add('');
-    targetlist.Add('');
+    //targetlist.Add('');
 
     if not (docobject.filedesc = '') then
-       targetlist.Add('Description::    ' + docobject.filedesc);
+       targetlist.Add('* Description:  ' + docobject.filedesc);
     
     if not (docobject.License = '') then
-      targetlist.Add(':License:    '+docobject.License);
+      targetlist.Add('* License:  '+docobject.License);
+
+    if not (docobject.Copyright = '') then
+      targetlist.Add('* Copyright:  '+docobject.Copyright);
 
     targetlist.Add('');
     targetlist.Add('');
@@ -77,14 +77,14 @@ begin
       targetlist.Add('[Doc_func_'+docobject.Ffunctions[frun].Name+']');
       targetlist.add('== Documentation of local function `'+docobject.Ffunctions[frun].Name+'`');
       targetlist.Add('');
-      targetlist.Add('');
+      //targetlist.Add('');
       targetlist.add('Definition:: ');
       targetlist.add('`'+docobject.Ffunctions[frun].Definitionline+'`');
       targetlist.Add('');
       targetlist.add('Description:: ');
       targetlist.add(docobject.Ffunctions[frun].Description);
       targetlist.Add('');
-      targetlist.Add('');
+      //targetlist.Add('');
       for prun := 0 to docobject.Ffunctions[frun].ParamCounter -1 do
       begin
         pname := docobject.Ffunctions[frun].Fparams[prun].ParamName;
@@ -105,7 +105,7 @@ begin
       end;
 
       tmpstr1 := docobject.Ffunctions[frun].Returns;
-      if tmpstr1 <> '' then targetlist.Add('* Returns:  '+tmpstr1);
+      if tmpstr1 <> '' then targetlist.Add('* Return:  '+tmpstr1);
 
       tmpstr1 := docobject.Ffunctions[frun].ReturnType;
       if tmpstr1 <> '' then targetlist.Add('* ReturnType:  '+tmpstr1);
@@ -120,10 +120,13 @@ begin
       if tmpstr1 = '' then tmpstr1 :=  docobject.License;
       if tmpstr1 <> '' then targetlist.Add('* License:  '+tmpstr1);
 
-
       tmpstr1 := docobject.Ffunctions[frun].Author;
       if tmpstr1 = '' then tmpstr1 :=  docobject.Author;
-      if tmpstr1 <> '' then targetlist.Add('* Author:    '+tmpstr1);
+      if tmpstr1 <> '' then targetlist.Add('* Author:  '+tmpstr1);
+
+      tmpstr1 := docobject.Ffunctions[frun].Copyright;
+      if tmpstr1 = '' then tmpstr1 :=  docobject.Copyright;
+      if tmpstr1 <> '' then targetlist.Add('* Copyright:  '+tmpstr1);
 
       targetlist.Add('');
       targetlist.Add('');
@@ -134,8 +137,6 @@ end;
 
 initialization
   asciidoc_header := TStringlist.create;
-
-
 
 finalization
   asciidoc_header.Free;

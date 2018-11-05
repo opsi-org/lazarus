@@ -33,6 +33,7 @@ TFuncDoc =  class
     FName : string;
     FAuthor : string;
     FLicense : string;
+    FCopyright : string;
     FDescription : string;
     FReturns :string;
     FReturnType :string;
@@ -47,6 +48,7 @@ TFuncDoc =  class
     property Name : string  read Fname write Fname;
     property Author : string  read FAuthor write FAuthor;
     property License : string  read FLicense write FLicense;
+    property Copyright : string  read FCopyright write FCopyright;
     property Description : string  read FDescription write FDescription;
     property Returns :string  read FReturns write FReturns;
     property ReturnType :string  read FReturnType write FReturnType;
@@ -60,6 +62,7 @@ TFileDoc =  class
     Fname : string;
     FAuthor : string;
     FLicense : string;
+    FCopyright : string;
     Ffiledesc : string;
     FfunctionCounter : integer;
   public
@@ -70,6 +73,7 @@ TFileDoc =  class
     property filedesc : string  read Ffiledesc write Ffiledesc;
     property Author : string  read FAuthor write FAuthor;
     property License : string  read FLicense write FLicense;
+    property Copyright : string  read FCopyright write FCopyright;
     property functionCounter : integer  read FfunctionCounter write FfunctionCounter;
   end;
 
@@ -81,6 +85,7 @@ const
   cpyclass = 'class ';
   cauthor = ':author:';
   clicense = ':license:';
+  ccopyright = ':copyright:';
   CReturns = ':return:';
   CReturnType = ':returntype:';
   CRType = ':rtype:';
@@ -106,6 +111,7 @@ begin
   Ffiledesc := '';
   FAuthor := '';
   FLicense := '';
+  FCopyright := '';
   FfunctionCounter := 0;
   Inherited;
 end;
@@ -122,6 +128,7 @@ begin
   FName := '';
   FAuthor := '';
   FLicense := '';
+  FCopyright := '';
   FDescription := '';
   FReturns := '';
   FReturnType := '';
@@ -165,10 +172,10 @@ begin
   end;
 end;
 
-procedure parsePyDef(definitionStr : string; myfunc : TFuncDoc);
+procedure parsePyDef(definitionStr : string; myfunc : TFuncDoc);  //by jeena new
 var
   paramnamestr : string;
-  paramcounter : integer;
+  paramcounter, posofequal : integer;
   endOfParamlist : boolean;
   remaining,errorstr : string;
 begin
@@ -193,10 +200,27 @@ begin
 
     while not endOfParamlist do
     begin
-      //GetWord(remaining, paramnamestr, remaining,[',',')']);
       GetWord(remaining, paramnamestr, remaining,[',',':']);
-
-      paramnamestr := trim(paramnamestr);
+      if remaining = ':' then
+      begin
+        if pos('=', trim(paramnamestr)) >1 then
+        begin
+          posofequal := pos('=', trim(paramnamestr));
+          paramnamestr := copy(paramnamestr, 0, posofequal-1);
+        end
+        else
+        begin
+          delete(paramnamestr, length(paramnamestr), 1);
+          paramnamestr := trim(paramnamestr);
+        end
+      end
+      else if pos('=', trim(paramnamestr)) >1 then
+      begin
+        posofequal := pos('=', trim(paramnamestr));
+        paramnamestr := copy(paramnamestr, 0, posofequal-1);
+      end
+      else
+        paramnamestr := trim(paramnamestr);
 
       LogDatei.log('Found defined function parametername: '+paramnamestr,LLDebug2);
       inc(paramcounter);
@@ -210,9 +234,6 @@ begin
         FparamName:= paramnamestr;
         if skip(':',remaining,remaining,errorstr) then
         begin
-                (*
-                delete last character
-       *)
           endOfParamlist := true;
         end
         else
@@ -234,12 +255,14 @@ begin
   deflinecounter := currentlinenumber;
   defstring := copy(defstring, length(cpydeffunc)+1,length(defstring));
   matchpos := pos(':', defstring);
+
   while matchpos = 0 do
   begin
     inc(deflinecounter);
     defstring := defstring + trim(preprocessedlist.Strings[deflinecounter]);
     matchpos := pos(':', defstring);
   end;
+
   currentlinenumber := deflinecounter + 1;
   result := copy(defstring,1,matchpos);
 end;
@@ -252,6 +275,7 @@ begin
   result := false;
   docstring := trim(preprocessedlist.Strings[currentlinenumber]);
   docstringcounter:= currentlinenumber;
+
   if (pos(cmulticomment1, docstring) = 1) then
     docstring := copy(docstring, length(cmulticomment1)+1,length(docstring))
   else if (pos(cmulticomment2, docstring) = 1) then
@@ -266,7 +290,8 @@ begin
     docstring := preprocessedlist.Strings[docstringcounter];
     if not onMarkerAddDocStringTo(cauthor,trim(docstring),docobject.FAuthor) then
     if not onMarkerAddDocStringTo(clicense,trim(docstring),docobject.FLicense) then
-    description := description + ' ' +trim(docstring);
+    if not onMarkerAddDocStringTo(ccopyright,trim(docstring),docobject.FCopyright) then
+    description := description+LineEnding+trim(docstring);
     matchpos := rpos(cmulticomment1, docstring) or rpos(cmulticomment2, docstring);
   end;
 
@@ -286,10 +311,9 @@ begin
   result := totallen - len;
 end;
 
-
 function processPublicDef(var currentlinenumber : integer) : boolean;
 var
-  indentofdef, funccounter, linecounter, prun : integer;
+  indentofdef, funccounter, linecounter, prun, matchpos : integer;
   currentline, funcdescription, pname : string;
   indoc, docfound : boolean;
 begin
@@ -298,7 +322,6 @@ begin
   docfound := false;
   currentline := preprocessedlist.Strings[currentlinenumber];
   indentofdef := indentation(currentline);
-
   linecounter := currentlinenumber;
 
   funccounter := docobject.Ffunctioncounter;
@@ -316,7 +339,26 @@ begin
     if ((pos(cmulticomment1, trim(currentline)) = 1) or  (pos(cmulticomment2, trim(currentline)) = 1)) and not docfound then
     begin
       if  not indoc then
-        indoc := true
+      begin
+        if (rpos(cmulticomment1, trim(currentline)) > 1) or (rpos(cmulticomment2, trim(currentline)) > 1) then
+        begin
+          if (pos(cmulticomment1, trim(currentline)) = 1) then
+            currentline := copy(trim(currentline), length(cmulticomment1)+1,length(trim(currentline)))
+          else if (pos(cmulticomment2, trim(currentline)) = 1) then
+            currentline := copy(trim(currentline), length(cmulticomment2)+1,length(trim(currentline)));
+
+          funcdescription := trim(currentline);
+          matchpos := rpos(cmulticomment1, currentline) or rpos(cmulticomment2, currentline);
+          funcdescription := copy(funcdescription,1,matchpos-1);
+
+          docobject.Ffunctions[funccounter-1].FDescription := trim(funcdescription);
+          indoc := false;
+          funcdescription := '';
+          docfound := true;
+        end
+        else
+          indoc := true;
+      end
       else
       begin
         docobject.Ffunctions[funccounter-1].FDescription := trim(funcdescription);
@@ -329,6 +371,7 @@ begin
     begin
       if not onMarkerAddDocStringTo(cauthor,trim(currentline),docobject.Ffunctions[funccounter-1].FAuthor) then
       if not onMarkerAddDocStringTo(clicense,trim(currentline),docobject.Ffunctions[funccounter-1].FLicense) then
+      if not onMarkerAddDocStringTo(ccopyright,trim(currentline),docobject.Ffunctions[funccounter-1].FCopyright) then
       if not onMarkerAddDocStringTo(CReturns,trim(currentline),docobject.Ffunctions[funccounter-1].FReturns) then
       if not onMarkerAddDocStringTo(CReturnType,trim(currentline),docobject.Ffunctions[funccounter-1].FReturnType) then
       if not onMarkerAddDocStringTo(CRType,trim(currentline),docobject.Ffunctions[funccounter-1].FRType) then
@@ -343,7 +386,7 @@ begin
         end;
       end
       else
-        funcdescription := funcdescription + ' ' +trim(currentline) ;
+        funcdescription := funcdescription+LineEnding+trim(currentline);
     end;
     if linecounter < preprocessedlist.Count-2 then
     begin
@@ -352,12 +395,9 @@ begin
     end
     else Break;
   end;
-
-  //currentlinenumber := linecounter + 1;
   currentlinenumber := linecounter;
   result := true;
 end;
-
 
 function processPrivateDef(var currentlinenumber : integer) : boolean;
 var
@@ -382,7 +422,6 @@ begin
   currentlinenumber := linecounter;
   result := true;
 end ;
-
 
 procedure preprocess();
 var
@@ -409,7 +448,7 @@ begin
         inc(linenumber);
         line := sourcelist.Strings[linenumber];
       end;
-      inc(linenumber); //??
+      inc(linenumber);
       linetoadd := linetoadd + ' ' + trim(line);
       preprocessedlist.Add(linetoadd);
     end
@@ -425,9 +464,9 @@ function parseInput_pythonlibrary(filename : string) : boolean;
 var
   linenumber, totallines : integer;
   trimmedline : string;
-  infiledoc : Boolean;
+  filedocfound : Boolean;
 begin
-  infiledoc := false;
+  filedocfound := false;
   linenumber := 0;
   if Assigned(docobject) and (docobject <> nil) then docobject.Destroy;
   docobject := TFileDoc.Create;
@@ -437,19 +476,23 @@ begin
   while linenumber < totallines do
     begin
       trimmedline := trim(preprocessedlist.Strings[linenumber]);
-      if ((pos(cmulticomment1, trimmedline) = 1) or  (pos(cmulticomment2, trimmedline) = 1)) and not infiledoc then
+      if ((pos(cmulticomment1, trimmedline) = 1) or  (pos(cmulticomment2, trimmedline) = 1)) and not filedocfound then
       begin
-        infiledoc := true;
+        filedocfound := true;
         getFileDoc(linenumber);
       end
       else if (pos(cpydeffunc,trimmedline) = 1) then
       begin
         if pos(cpydefnotpublic,trimmedline) = 1 then
         begin
+          filedocfound := true;
           processPrivateDef(linenumber);
         end
         else
+        begin
+          filedocfound := true;
           processPublicDef(linenumber);
+        end;
       end
       else
       begin
