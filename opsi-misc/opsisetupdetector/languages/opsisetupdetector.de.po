@@ -640,10 +640,6 @@ msgstr "Die zu analysierende Setup-Datei auswählen"
 msgid "FlowPanel14"
 msgstr ""
 
-#: tresultform1.flowpanel4.caption
-msgid "FlowPanel4"
-msgstr ""
-
 #: tresultform1.label50.caption
 msgctxt "tresultform1.label50.caption"
 msgid "Setup File"

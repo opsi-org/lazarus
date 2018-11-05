@@ -36,8 +36,7 @@ uses
   //htmlview,
   //help,
   fileinfo, osdhelper, osdanalyze, winpeimagereader, lcltranslator, EditBtn,
-  Spin, JSONPropStorage, Grids, PairSplitter, FXMaterialButton, FXButton,
-  BCImageButton, BGRASpriteAnimation, BCButton, JvXPButtons, JvHtControls,
+  Spin, JSONPropStorage, Grids, PairSplitter,
   oslog, osdbasedata, osdconfigdlg, osdcreate, fpjsonrtti, osddlgnewdependency,
   osddlgnewproperty, osparserhelper;
 

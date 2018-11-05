@@ -301,6 +301,7 @@ begin
   begin
     // will be done in analyze after get_*_info
   end;
+  {$IFDEF WINDOWS}
   myArch := getBinaryArchitecture(myfilename);
   if myArch = '32' then
     mysetup.architecture := a32;
@@ -308,6 +309,7 @@ begin
     mysetup.architecture := a64;
   if myArch = 'unknown' then
     mysetup.architecture := aUnknown;
+  {$ENDIF WINDOWS}
 end; //get_aktProduct_general_info
 
 

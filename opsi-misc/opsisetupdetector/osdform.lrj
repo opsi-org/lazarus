@@ -81,7 +81,6 @@
 {"hash":185236885,"name":"tresultform1.stringgridprop.columns[4].title.caption","sourcebytes":[69,100,105,116,97,98,108,101],"value":"Editable"},
 {"hash":257547987,"name":"tresultform1.stringgridprop.columns[5].title.caption","sourcebytes":[80,111,115,115,105,98,108,101,32,86,97,108,117,101,115],"value":"Possible Values"},
 {"hash":235994115,"name":"tresultform1.stringgridprop.columns[6].title.caption","sourcebytes":[68,101,102,97,117,108,116,32,86,97,108,117,101,115],"value":"Default Values"},
-{"hash":207919252,"name":"tresultform1.flowpanel4.caption","sourcebytes":[70,108,111,119,80,97,110,101,108,52],"value":"FlowPanel4"},
 {"hash":114087587,"name":"tresultform1.label85.caption","sourcebytes":[80,114,111,112,101,114,116,105,101,115],"value":"Properties"},
 {"hash":219983049,"name":"tresultform1.bitbtnaddprop.caption","sourcebytes":[65,100,100,32,80,114,111,112,101,114,116,121],"value":"Add Property"},
 {"hash":195884553,"name":"tresultform1.bitbtndelprop.caption","sourcebytes":[68,101,108,101,116,101,32,80,114,111,112,101,114,116,121],"value":"Delete Property"},
