@@ -452,6 +452,7 @@ end;
 
 
 procedure initGUI;
+
 begin
   LogDatei.log('Start initGUI ... ', LLInfo);
   with resultform1 do
@@ -533,6 +534,10 @@ begin
       RadioButtonPackageBuilder.Enabled := False;
       CheckGroupBuildMode.Enabled := False;
     end;
+    {$IFDEF LINUX}
+    //BtSingleAnalyzeAndCreate.Glyph.LoadFromFile('/usr/share/opsi-setup-detector-experimental/analyze4.xpm');
+    //BtATwonalyzeAndCreate.Glyph.LoadFromFile('/usr/share/opsi-setup-detector-experimental/analyze5.xpm');
+    {$ENDIF LINUX}
     LabelLogInfo.Caption:='More info in Log file: '+LogDatei.FileName;
     Application.ProcessMessages;
   end;
@@ -711,8 +716,10 @@ begin
         useRunMode := analyzeOnly;
         setRunMode;
         resultform1.MemoAnalyze.Clear;
-        for i := StringGridDep.RowCount-1 downto 1 do StringGridDep.DeleteRow(i);
-        for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
+        if StringGridDep.RowCount > 1 then
+          for i := StringGridDep.RowCount-1 downto 1 do StringGridDep.DeleteRow(i);
+        if StringGridProp.RowCount > 1 then
+          for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
         PageControl1.ActivePage := TabSheetAnalyze;
         LogDatei.log('Wait for GUI  ', LLInfo);
         repeat
@@ -893,8 +900,10 @@ begin
     //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
     //TIProgressBarAnalyze_progress.Loaded;
     MemoAnalyze.Clear;
-    for i := StringGridDep.RowCount-1 downto 1 do StringGridDep.DeleteRow(i);
-    for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
+    if StringGridDep.RowCount > 1 then
+      for i := StringGridDep.RowCount-1 downto 1 do StringGridDep.DeleteRow(i);
+    if StringGridProp.RowCount > 1 then
+      for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
     Application.ProcessMessages;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
   end;
@@ -932,8 +941,10 @@ begin
     setRunMode;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     MemoAnalyze.Clear;
-    for i := StringGridDep.RowCount-1 downto 1 do StringGridDep.DeleteRow(i);
-    for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
+    if StringGridDep.RowCount > 1 then
+      for i := StringGridDep.RowCount-1 downto 1 do StringGridDep.DeleteRow(i);
+    if StringGridProp.RowCount > 1 then
+      for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
     Application.ProcessMessages;
     initaktproduct;
     // start add property
@@ -1658,8 +1669,10 @@ begin
     useRunMode := analyzeOnly;
     setRunMode;
     MemoAnalyze.Clear;
-    for i := StringGridDep.RowCount-1 downto 1 do StringGridDep.DeleteRow(i);
-    for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
+    if StringGridDep.RowCount > 1 then
+      for i := StringGridDep.RowCount-1 downto 1 do StringGridDep.DeleteRow(i);
+    if StringGridProp.RowCount > 1 then
+      for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Application.ProcessMessages;
     initaktproduct;
