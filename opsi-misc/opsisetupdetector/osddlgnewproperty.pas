@@ -34,6 +34,7 @@ type
     MemoDesc: TMemo;
     Panel1: TPanel;
     Panel2: TPanel;
+    Panel3: TPanel;
     Panel4: TPanel;
     Panel8: TPanel;
     PanelPropPosVal: TPanel;
@@ -43,6 +44,7 @@ type
     procedure BitBtnAddPropClick(Sender: TObject);
     procedure BitBtnDelPropClick(Sender: TObject);
     procedure CheckBoxPropMultiValChange(Sender: TObject);
+    procedure EditPropNameEditingDone(Sender: TObject);
     procedure RadioButtonPropStringChange(Sender: TObject);
   private
 
@@ -52,10 +54,13 @@ type
 
 var
   FNewPropDlg: TFNewPropDlg;
+  valid : boolean = true;
 
 implementation
 
 {$R *.lfm}
+uses
+  osdform;
 
 { TFNewPropDlg }
 
@@ -71,6 +76,8 @@ begin
   else
   begin
     CheckGroupPropBool.Enabled:=true;
+    CheckBoxPropMultiVal.Checked:=false;
+    CheckBoxPropEdit.Checked:=false;
     ListBoxPropPosVal.Items.Clear;
     ListBoxPropPosVal.Items.Add('True');
     ListBoxPropPosVal.Items.Add('False');
@@ -79,6 +86,7 @@ begin
     ListBoxPropDefVal.Items.Add('True');
     ListBoxPropDefVal.Items.Add('False');
     ListBoxPropDefVal.MultiSelect:=false;
+    ListBoxPropDefVal.Selected[0] := true;
   end;
 end;
 
@@ -95,6 +103,37 @@ begin
       ListBoxPropDefVal.MultiSelect:=false;
   end;
 
+end;
+
+procedure TFNewPropDlg.EditPropNameEditingDone(Sender: TObject);
+var
+  index, i : integer;
+  tmpstr : string;
+  exists : boolean;
+begin
+  if pos(' ',FNewPropDlg.EditPropName.Text) > 0 then
+  begin
+       MessageDlg('opsi-setup-detector: Property Editor: Error',
+        'property Id: ' + FNewPropDlg.EditPropName.Text +
+        ' contains whitespace. Whitespaces are not allowed.',
+        mtError, [mbOK], '');
+       valid := false;
+    end;
+
+      index := resultform1.StringGridProp.RowCount;
+    tmpstr := lowercase(FNewPropDlg.EditPropName.Text);
+    exists := False;
+    for i := 0 to index - 1 do
+      if lowercase(tmpstr) = lowercase(resultform1.StringGridProp.Cells[1, i]) then
+        exists := True;
+    if exists then
+    begin
+      MessageDlg('opsi-setup-detector: Property Editor: Error',
+        'property Id: ' + FNewPropDlg.EditPropName.Text +
+        ' exists. Duplicates not allowed.',
+        mtError, [mbOK], '');
+      valid := false;
+    end;
 end;
 
 procedure TFNewPropDlg.BitBtnAddPropClick(Sender: TObject);

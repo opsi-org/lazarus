@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, RTTIGrids, Forms, Controls, Graphics, Dialogs,
-  ExtCtrls, Buttons, StdCtrls,
+  ExtCtrls, Buttons, StdCtrls, EditBtn,
   osdbasedata;
 
 type
@@ -20,6 +20,9 @@ type
     ComboBoxReqType: TComboBox;
     Editproductid: TEdit;
     FlowPanel1: TFlowPanel;
+    FlowPanel2: TFlowPanel;
+    FlowPanel3: TFlowPanel;
+    FlowPanel4: TFlowPanel;
     GroupBox1: TGroupBox;
     Label1: TLabel;
     Label2: TLabel;

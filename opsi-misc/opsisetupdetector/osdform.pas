@@ -112,6 +112,7 @@ type
     FlowPanelSetup39: TFlowPanel;
     GroupBox2: TGroupBox;
     ImageList1: TImageList;
+    LabelLogInfo: TLabel;
     Label57: TLabel;
     Label58: TLabel;
     Label59: TLabel;
@@ -149,6 +150,7 @@ type
     LabelWorkbenchOK: TLabel;
     LabelWorkbenchNotOK: TLabel;
     MemoDefault: TMemo;
+    MenuItemStart: TMenuItem;
     MenuItemKnownInstallers: TMenuItem;
     MenuItemConfig: TMenuItem;
     OpenDialogSetupfile: TOpenDialog;
@@ -187,7 +189,6 @@ type
     TabSheetSetup2: TTabSheet;
     TabSheetProduct: TTabSheet;
     TabSheetSetup1: TTabSheet;
-    FileOpenSetupFile: TMenuItem;
     FileExit: TMenuItem;
     //FileCreateLogfile: TMenuItem;
     MenuItemAbout: TMenuItem;
@@ -260,7 +261,7 @@ type
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormShow(Sender: TObject);
-    procedure MenuItem1Click(Sender: TObject);
+    procedure MenuItemStartClick(Sender: TObject);
     procedure MenuItemConfigClick(Sender: TObject);
     procedure MenuItemKnownInstallersClick(Sender: TObject);
     procedure setRunMode;
@@ -532,6 +533,7 @@ begin
       RadioButtonPackageBuilder.Enabled := False;
       CheckGroupBuildMode.Enabled := False;
     end;
+    LabelLogInfo.Caption:='More info in Log file: '+LogDatei.FileName;
     Application.ProcessMessages;
   end;
 end;
@@ -641,6 +643,7 @@ var
   ErrorMsg: string;
   FileVerInfo: TFileVersionInfo;
   lfilename: string;
+  i : integer;
 begin
   startupfinished := true; //avoid calling main on every show event
   myExeDir := ExtractFileDir(ParamStr(0));
@@ -702,18 +705,21 @@ begin
     begin
       LogDatei.log('Start GUI mode: ', LLInfo);
       initGUI;
-      resultform1.Show;
-      useRunMode := analyzeOnly;
-      resultform1.setRunMode;
-      resultform1.MemoAnalyze.Clear;
-      resultform1.StringGridDep.Clear;
-      resultform1.StringGridProp.Clear;
-      resultform1.PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
-      LogDatei.log('Wait for GUI  ', LLInfo);
-      repeat
-        Application.ProcessMessages;
-        sleep(100);
-      until (resultform1.Showing = True) and startupfinished;
+      with resultform1 do
+      begin
+        Show;
+        useRunMode := analyzeOnly;
+        setRunMode;
+        resultform1.MemoAnalyze.Clear;
+        for i := StringGridDep.RowCount-1 downto 1 do StringGridDep.DeleteRow(i);
+        for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
+        PageControl1.ActivePage := TabSheetAnalyze;
+        LogDatei.log('Wait for GUI  ', LLInfo);
+        repeat
+          Application.ProcessMessages;
+          sleep(100);
+        until (resultform1.Showing = True) and startupfinished;
+      end;
       LogDatei.log('Start Analyze in GUI mode: ', LLInfo);
       Analyze(myfilename, aktProduct.SetupFiles[0], True);
     end
@@ -761,6 +767,8 @@ begin
       TabSheetSetup1.Enabled := True;
       TabSheetSetup2.Enabled := False;
       TabSheetProduct.Enabled := False;
+      TabSheetProduct2.Enabled := False;
+      TabSheetCreate.Enabled := False;
       //BtAnalyzeNextStep.Caption:='Next Step';
       //BtAnalyzeNextStep.Glyph.LoadFromResourceName();
       BtSetup1NextStep.Enabled := False;
@@ -772,6 +780,8 @@ begin
       TabSheetSetup1.Enabled := True;
       TabSheetSetup2.Enabled := False;
       TabSheetProduct.Enabled := True;
+      TabSheetProduct2.Enabled := True;
+      TabSheetCreate.Enabled := True;
       //BtAnalyzeNextStep.Caption:='Next Step';
       //BtAnalyzeNextStep.Glyph.LoadFromResourceName();
       BtSetup1NextStep.Enabled := True;
@@ -783,6 +793,8 @@ begin
       TabSheetSetup1.Enabled := True;
       TabSheetSetup2.Enabled := True;
       TabSheetProduct.Enabled := True;
+      TabSheetProduct2.Enabled := True;
+      TabSheetCreate.Enabled := True;
       BtSetup1NextStep.Enabled := True;
     end;
     createTemplate:
@@ -792,6 +804,8 @@ begin
       TabSheetSetup1.Enabled := False;
       TabSheetSetup2.Enabled := False;
       TabSheetProduct.Enabled := True;
+      TabSheetProduct2.Enabled := True;
+      TabSheetCreate.Enabled := True;
     end;
     gmUnknown:
     begin
@@ -800,6 +814,8 @@ begin
       TabSheetSetup1.Enabled := True;
       TabSheetSetup2.Enabled := True;
       TabSheetProduct.Enabled := True;
+      TabSheetProduct2.Enabled := True;
+      TabSheetCreate.Enabled := True;
       BtSetup1NextStep.Enabled := True;
     end;
   end;
@@ -815,9 +831,9 @@ begin
 
 end;
 
-procedure TResultform1.MenuItem1Click(Sender: TObject);
+procedure TResultform1.MenuItemStartClick(Sender: TObject);
 begin
-
+  PageControl1.ActivePage := TabSheetStart;
 end;
 
 procedure TResultform1.MenuItemConfigClick(Sender: TObject);
@@ -863,6 +879,8 @@ begin
 end;
 
 procedure TResultform1.BtSingleAnalyzeAndCreateClick(Sender: TObject);
+var
+  i : integer;
 begin
   OpenDialog1.FilterIndex := 1;   // setup
   if OpenDialog1.Execute then
@@ -875,8 +893,8 @@ begin
     //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
     //TIProgressBarAnalyze_progress.Loaded;
     MemoAnalyze.Clear;
-    StringGridDep.Clear;
-    StringGridProp.Clear;
+    for i := StringGridDep.RowCount-1 downto 1 do StringGridDep.DeleteRow(i);
+    for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
     Application.ProcessMessages;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
   end;
@@ -902,6 +920,7 @@ procedure TResultform1.BtATwonalyzeAndCreateClick(Sender: TObject);
 var
   myprop: TStringList;
   index: integer;
+  i : integer;
 begin
   MessageDlg('opsi-setup-detector: Two File (32/64 Bit) Product',
     'First Select the 32 Bit Setup exe',
@@ -913,8 +932,8 @@ begin
     setRunMode;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     MemoAnalyze.Clear;
-    StringGridDep.Clear;
-    StringGridProp.Clear;
+    for i := StringGridDep.RowCount-1 downto 1 do StringGridDep.DeleteRow(i);
+    for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
     Application.ProcessMessages;
     initaktproduct;
     // start add property
@@ -928,7 +947,7 @@ begin
     myprop.Add('unicode');  //type
     myprop.Add('False');      //multivalue
     myprop.Add('False');      //editable
-    myprop.Add('["32","64","system specific"]');      //possible values
+    myprop.Add('["32 only","64 only","system specific","both"]');      //possible values
     myprop.Add('["system specific"]');      //default values
     StringGridProp.Rows[index - 1].AddStrings(myprop);
     myprop.Free;
@@ -1032,6 +1051,7 @@ var
   tmpliststr: string;
   tmpstr: string;
   exists: boolean;
+  valid : boolean;
 begin
   FNewPropDlg.RadioButtonPropBool.Checked := True;
   FNewPropDlg.RadioButtonPropStringChange(Sender);
@@ -1040,7 +1060,7 @@ begin
   begin
     // add
     index := StringGridProp.RowCount;
-    tmpstr := FNewPropDlg.EditPropName.Text;
+    tmpstr := lowercase(FNewPropDlg.EditPropName.Text);
     exists := False;
     for i := 0 to index - 1 do
       if lowercase(tmpstr) = lowercase(StringGridProp.Cells[1, i]) then
@@ -1522,10 +1542,12 @@ procedure TResultform1.BtSetup1NextStepClick(Sender: TObject);
 var
   checkok: boolean = True;
 begin
-  if (aktProduct.SetupFiles[0].installDirectory = '') and
+  if ((aktProduct.SetupFiles[0].installDirectory = '')
+       or (aktProduct.SetupFiles[0].installDirectory = '# SET THE INSTALL DIRECTORY #')) and
     (aktProduct.SetupFiles[0].installerId <> stMsi) then
   begin
-    checkok := False;
+    //checkok := False;
+    // we warn here only
     ShowMessage(sWarnInstalldirUnknown);
   end;
   if checkok then
@@ -1577,10 +1599,12 @@ procedure TResultform1.BtSetup2NextStepClick(Sender: TObject);
 var
   checkok: boolean = True;
 begin
-  if (aktProduct.SetupFiles[1].installDirectory = '') and
+  if ((aktProduct.SetupFiles[1].installDirectory = '')
+      or (aktProduct.SetupFiles[1].installDirectory = '# SET THE INSTALL DIRECTORY #')) and
     (aktProduct.SetupFiles[1].installerId <> stMsi) then
   begin
-    checkok := False;
+    // checkok := False;
+    // we warn here only
     ShowMessage(sWarnInstalldirUnknown);
   end;
   if checkok then
@@ -1625,6 +1649,8 @@ begin
 end;
 
 procedure TResultform1.BtAnalyzeOnlyClick(Sender: TObject);
+var
+  i : integer;
 begin
   OpenDialog1.FilterIndex := 1;   // setup
   if OpenDialog1.Execute then
@@ -1632,8 +1658,8 @@ begin
     useRunMode := analyzeOnly;
     setRunMode;
     MemoAnalyze.Clear;
-    StringGridDep.Clear;
-    StringGridProp.Clear;
+    for i := StringGridDep.RowCount-1 downto 1 do StringGridDep.DeleteRow(i);
+    for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Application.ProcessMessages;
     initaktproduct;
@@ -1688,6 +1714,7 @@ end;
 
 procedure TResultform1.FileHelpClick(Sender: TObject);
 begin
+  ShowMessage('Not implemented right now.');
   (*
    FormHelp.Caption:=sHelpHeader;
    FormHelp.SetHelpFile(myExeDir + DirectorySeparator + sHelpFile);

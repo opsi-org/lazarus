@@ -271,7 +271,7 @@ msgstr ""
 
 #: tfnewpropdlg.editpropname.text
 msgctxt "tfnewpropdlg.editpropname.text"
-msgid "Property Name"
+msgid "PropertyName"
 msgstr ""
 
 #: tfnewpropdlg.editpropnewval.text
@@ -320,7 +320,7 @@ msgstr ""
 
 #: tfnewpropdlg.radiobuttonpropstring.caption
 msgctxt "tfnewpropdlg.radiobuttonpropstring.caption"
-msgid "String"
+msgid "Text"
 msgstr ""
 
 #: tfnewproperty.bitbtnadddep.caption
@@ -626,16 +626,6 @@ msgstr "B&eenden"
 msgid "&Help"
 msgstr "&Hilfe"
 
-#: tresultform1.fileopensetupfile.caption
-msgctxt "TRESULTFORM1.FILEOPENSETUPFILE.CAPTION"
-msgid "&Open Setup File and Analyze"
-msgstr "&Datei öffnen und analysieren"
-
-#: tresultform1.fileopensetupfile.hint
-msgctxt "TRESULTFORM1.FILEOPENSETUPFILE.HINT"
-msgid "select setup file to analyze"
-msgstr "Die zu analysierende Setup-Datei auswählen"
-
 #: tresultform1.flowpanel14.caption
 msgid "FlowPanel14"
 msgstr ""
@@ -825,6 +815,10 @@ msgstr ""
 msgid "Properties"
 msgstr ""
 
+#: tresultform1.labelloginfo.caption
+msgid "LabelLogInfo"
+msgstr ""
+
 #: tresultform1.labelworkbenchnotok.caption
 msgid "Path to opsi-work-bench not is reachable - Check Network Mounts or Path"
 msgstr ""
@@ -847,6 +841,11 @@ msgstr "&Datei"
 
 #: tresultform1.menuitemknowninstallers.caption
 msgid "Known Installers"
+msgstr ""
+
+#: tresultform1.menuitemstart.caption
+msgctxt "tresultform1.menuitemstart.caption"
+msgid "Start"
 msgstr ""
 
 #: tresultform1.panel10.caption
@@ -974,6 +973,7 @@ msgid "2. Setup"
 msgstr ""
 
 #: tresultform1.tabsheetstart.caption
+msgctxt "tresultform1.tabsheetstart.caption"
 msgid "Start"
 msgstr ""
 

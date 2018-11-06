@@ -72,7 +72,7 @@ if $LicenseRequired$ = "true"
    set $LicenseKey$ = get_licensekey_byPool($LicensePool$)
 endif
 
-if (($arch$ = "x86 System") and ($mode$ = "system specific")) or ($arch$ = "both") or ($arch$ = "32 only")
+if (($arch$ = "x86 System") and ($mode$ = "system specific")) or ($mode$ = "both") or ($mode$ = "32 only")
 
    #@preInstallLines1*#
    comment "Start setup program"

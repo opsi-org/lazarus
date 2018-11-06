@@ -40,7 +40,10 @@ procedure patchScript(infile, outfile: string);
 var
   infileHandle, outfileHandle: Text;
   aktline: string;
-  i: integer;
+  i,k: integer;
+  aktidentstr : string;
+  aktidentnum : integer;
+  aktReplacestr : string;
 begin
   mywrite('creating: ' + outfile + ' from: ' + infile);
 
@@ -55,8 +58,22 @@ begin
     begin
       ReadLn(infileHandle, aktline);
       for i := 0 to patchlist.Count - 1 do
-        aktline := StringReplace(aktline, patchlist.Names[i],
-          patchlist.ValueFromIndex[i], [rfReplaceAll, rfIgnoreCase]);
+      begin
+        if pos(patchlist.Names[i], aktline) > 0 then
+        begin
+          // we have to preserve the ident
+          // check actual ident
+          aktidentnum := length(aktline) - length(trimleft(aktline));
+          aktidentstr := '';
+          for k := 1 to aktidentnum do aktidentstr := aktidentstr +' ';
+          // p
+          aktReplacestr := patchlist.ValueFromIndex[i];
+          // patch aktidentstr after each Newline
+          aktReplacestr := StringReplace(aktReplacestr,Lineending,Lineending+aktidentstr, [rfReplaceAll, rfIgnoreCase]);
+          aktline := StringReplace(aktline, patchlist.Names[i],
+             aktReplacestr, [rfReplaceAll, rfIgnoreCase]);
+        end;
+      end;
       writeln(outfileHandle, aktline);
     end;
     CloseFile(infileHandle);
@@ -84,38 +101,54 @@ end;
     //setup 1
     patchlist.add('#@InstallDir1*#='+aktProduct.SetupFiles[0].installDirectory);
     patchlist.add('#@MsiId1*#='+aktProduct.SetupFiles[0].msiId);
-    str :='comment "Start Pre Install hook :"'+LineEnding+ myconfiguration.preInstallLines.Text;
+    str := myconfiguration.preInstallLines.Text;
+    if str <> '' then
+      str :='comment "Start Pre Install hook :"'+LineEnding+ myconfiguration.preInstallLines.Text;
     patchlist.add('#@preInstallLines1*#='+str);
     patchlist.add('#@installCommandLine1*#='+aktProduct.SetupFiles[0].installCommandLine);
-    str := 'comment "Start Post UnInstall hook :"'+LineEnding+myconfiguration.postInstallLines.Text;
+    str := myconfiguration.postInstallLines.Text;
+    if str <> '' then
+      str := 'comment "Start Post UnInstall hook :"'+LineEnding+myconfiguration.postInstallLines.Text;
     patchlist.add('#@postInstallLines1*#='+str);
     patchlist.add('#@isExitcodeFatalFunction1*#='+aktProduct.SetupFiles[0].isExitcodeFatalFunction);
     str := aktProduct.SetupFiles[0].uninstallCheck.Text;
     patchlist.add('#@uninstallCheckLines1*#='+str);
-    str :='comment "Start Pre UnInstall hook :"'+LineEnding+ myconfiguration.preUninstallLines.Text;
+    str := myconfiguration.preUninstallLines.Text;
+    if str <> '' then
+      str :='comment "Start Pre UnInstall hook :"'+LineEnding+ myconfiguration.preUninstallLines.Text;
     patchlist.add('#@preUninstallLines1*#='+str);
     patchlist.add('#@uninstallCommandLine1*#='+aktProduct.SetupFiles[0].uninstallCommandLine);
     patchlist.add('#@uninstallProg1*#='+aktProduct.SetupFiles[0].uninstallProg);
     patchlist.add('#@uninstallWaitForProc1*#='+aktProduct.SetupFiles[0].uninstall_waitforprocess);
-    str := 'comment "Start Post UnInstall hook :"'+LineEnding+myconfiguration.postUnInstallLines.Text;
+    str := myconfiguration.postUnInstallLines.Text;
+    if str <> '' then
+      str := 'comment "Start Post UnInstall hook :"'+LineEnding+myconfiguration.postUnInstallLines.Text;
     patchlist.add('#@postUninstallLines1*#='+str);
     //setup 2
     patchlist.add('#@InstallDir2*#='+aktProduct.SetupFiles[1].installDirectory);
     patchlist.add('#@MsiId2*#='+aktProduct.SetupFiles[1].msiId);
-    str :='comment "Start Pre Install hook :"'+LineEnding+ myconfiguration.preInstallLines.Text;
+    str := myconfiguration.preInstallLines.Text;
+    if str <> '' then
+      str :='comment "Start Pre Install hook :"'+LineEnding+ myconfiguration.preInstallLines.Text;
     patchlist.add('#@preInstallLines2*#='+str);
     patchlist.add('#@installCommandLine2*#='+aktProduct.SetupFiles[1].installCommandLine);
-    str := 'comment "Start Post Install hook :"'+LineEnding+myconfiguration.postInstallLines.Text;
+    str := myconfiguration.postInstallLines.Text;
+    if str <> '' then
+      str := 'comment "Start Post Install hook :"'+LineEnding+myconfiguration.postInstallLines.Text;
     patchlist.add('#@postInstallLines2*#='+str);
     patchlist.add('#@isExitcodeFatalFunction2*#='+aktProduct.SetupFiles[1].isExitcodeFatalFunction);
     str := aktProduct.SetupFiles[1].uninstallCheck.Text;
     patchlist.add('#@uninstallCheckLines2*#='+str);
-    str :='comment "Start Pre Install hook :"'+LineEnding+ myconfiguration.preUninstallLines.Text;
+    str := myconfiguration.preUninstallLines.Text;
+    if str <> '' then
+      str :='comment "Start Pre Install hook :"'+LineEnding+ myconfiguration.preUninstallLines.Text;
     patchlist.add('#@preUninstallLines2*#='+str);
     patchlist.add('#@uninstallCommandLine2*#='+aktProduct.SetupFiles[1].uninstallCommandLine);
     patchlist.add('#@uninstallProg2*#='+aktProduct.SetupFiles[1].uninstallProg);
     patchlist.add('#@uninstallWaitForProc2*#='+aktProduct.SetupFiles[1].uninstall_waitforprocess);
-    str := 'comment "Start Post UnInstall hook :"'+LineEnding+myconfiguration.postUninstallLines.Text;
+    str := myconfiguration.postUninstallLines.Text;
+    if str <> '' then
+      str := 'comment "Start Post UnInstall hook :"'+LineEnding+myconfiguration.postUninstallLines.Text;
     patchlist.add('#@postUninstallLines2*#='+str);
   end;
 
@@ -123,8 +156,15 @@ end;
   var
       infilename, outfilename : string;
       insetup,indelsub,inuninstall : string;
+      templatePath : string;
   begin
     result := false;
+    {$IFDEF WINDOWS}
+    templatePath := ExtractFileDir(Application.ExeName)+PathDelim+'template-files';
+    {$ENDIF WINDOWS}
+    {$IFDEF LINUX}
+    templatePath := '/usr/share/opsi-setup-detector';
+    {$ENDIF LINUX}
     try
       patchlist:= TStringList.Create;
       fillPatchList;
@@ -149,15 +189,15 @@ end;
           end;
       end;
       // setup script
-      infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+insetup;
+      infilename :=templatePath+Pathdelim+insetup;
       outfilename := clientpath+PathDelim+aktProduct.productdata.setupscript;
       patchScript(infilename,outfilename);
       // delsub script
-      infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+indelsub;
+      infilename :=templatePath+Pathdelim+indelsub;
       outfilename := clientpath+PathDelim+aktProduct.productdata.delsubscript;
       patchScript(infilename,outfilename);
       // uninstall script
-      infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+inuninstall;
+      infilename :=templatePath+Pathdelim+inuninstall;
       outfilename := clientpath+PathDelim+aktProduct.productdata.uninstallscript;
       patchScript(infilename,outfilename);
       // setup file 1
@@ -172,19 +212,19 @@ end;
                 [cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime], true);
 
       //osd-lib.opsiscript
-      infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+'osd-lib.opsiscript';
+      infilename :=templatePath+Pathdelim+'osd-lib.opsiscript';
       outfilename := clientpath+PathDelim+'osd-lib.opsiscript';
       copyfile(infilename,outfilename,[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime], true);
       //product png
-      infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+'template.png';
+      infilename :=templatePath+Pathdelim+'template.png';
       outfilename := clientpath+PathDelim+aktProduct.productdata.productId+'.png';
       copyfile(infilename,outfilename,[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime], true);
       //preinst
-      infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+'preinst';
+      infilename :=templatePath+Pathdelim+'preinst';
       outfilename := opsipath+pathdelim+'preinst';
       copyfile(infilename,outfilename,[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime], true);
       //postinst
-      infilename :=ExtractFileDir(Application.ExeName)+PathDelim+'template-files'+Pathdelim+'postinst';
+      infilename :=templatePath+Pathdelim+'postinst';
       outfilename := opsipath+pathdelim+'postinst';
       copyfile(infilename,outfilename,[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime], true);
 
@@ -320,8 +360,9 @@ begin
   opsipath := prodpath + PathDelim + 'OPSI';
   goon := True;
   if DirectoryExists(prodpath) then
-    if not MessageDlg('opsi-setup-detector','Directory ' + prodpath + ' still exits. Overwrite ?', mtWarning, mbOKCancel,'') = mrOk then
-      goon := False;
+    if not MessageDlg('opsi-setup-detector','Directory ' + prodpath + ' still exits. Overwrite / Delete ?', mtWarning, mbOKCancel,'') = mrOk then
+      goon := False
+    else DeleteDirectory(prodpath,false);
   if goon then
   begin
     if not ForceDirectories(prodpath) then
