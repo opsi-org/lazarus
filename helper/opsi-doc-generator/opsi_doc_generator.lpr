@@ -37,7 +37,6 @@ var
     infilename : string;
     FileVerInfo : TFileVersionInfo;
    begin
-
      //from http://wiki.freepascal.org/Show_Application_Title,_Version,_and_Company
      FileVerInfo := TFileVersionInfo.Create(nil);
      try
@@ -85,7 +84,15 @@ var
     end;
 
     sourcelist.LoadFromFile(infilename);
-    convertOslibToAsciidoc(infilename);
+
+    if ExtractFileExt(infilename) = '.opsiscript' then
+    begin
+      convertOslibToAsciidoc(infilename);
+    end
+    else
+    begin
+      convertPylibToAsciidoc(infilename);
+    end;
     save_compile_show(infilename);
     // stop program loop
     Terminate;

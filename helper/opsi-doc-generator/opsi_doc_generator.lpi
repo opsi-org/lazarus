@@ -91,7 +91,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <CommandLineParams Value="C:\work\lazarus\helper\opsi-doc-generator\testfiles\uib_bootutils.opsiscript C:\work\lazarus\helper\opsi-doc-generator\testfiles\uib_bootutils.asciidoc"/>
+        <CommandLineParams Value="C:\work\lazarus\helper\opsi-doc-generator\testfiles\docstring_examples.py C:\work\lazarus\helper\opsi-doc-generator\testfiles\docstring_examples.asciidoc"/>
       </local>
     </RunParams>
     <RequiredPackages Count="2">
