@@ -788,6 +788,8 @@ var
   end;
 
 begin
+  if Assigned(logdatei) then
+    logdatei.log('Start writeconfig', LLDebug2);
   configDir := '';
   {$IFDEF Windows}
   SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, configDir);
@@ -833,6 +835,8 @@ begin
     //CloseFile(myfile);
     Streamer.Destroy;
   end;
+  if Assigned(logdatei) then
+    logdatei.log('Finished writeconfig', LLDebug2);
 end;
 
 
@@ -877,6 +881,8 @@ var
   end;
 
 begin
+  if Assigned(logdatei) then
+    logdatei.log('Start readconfig', LLDebug2);
   configDir := '';
   {$IFDEF Windows}
   SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, configDir);
@@ -929,6 +935,8 @@ registerForWinExplorer(FregisterInFilemanager);
       CloseFile(fConfig);
     end;
   end;
+  if Assigned(logdatei) then
+    logdatei.log('Finished readconfig', LLDebug2);
 end;
 
 

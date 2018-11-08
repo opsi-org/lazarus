@@ -848,7 +848,9 @@ var
   Streamer: TJSONStreamer;
   JSONString: string;
 begin
+  logdatei.log('Start MenuItemConfigClick', LLDebug2);
   FOSDConfigdlg.ShowModal;
+  logdatei.log('After configdialog: create jsonstr', LLDebug2);
   //FOSDConfigdlg.Hide;
   Streamer := TJSONStreamer.Create(nil);
   try
@@ -861,16 +863,19 @@ begin
   end;
   if fileexists(myconfiguration.PathToOpsiPackageBuilder) then
   begin
+    logdatei.log('After configdialog: packagebuilder exists', LLDebug2);
     RadioButtonBuildPackage.Enabled := True;
     RadioButtonPackageBuilder.Enabled := True;
     CheckGroupBuildMode.Enabled := True;
   end
   else
   begin
+    logdatei.log('After configdialog: packagebuilder not found', LLDebug2);
     RadioButtonBuildPackage.Enabled := False;
     RadioButtonPackageBuilder.Enabled := False;
     CheckGroupBuildMode.Enabled := False;
   end;
+  logdatei.log('Finished MenuItemConfigClick', LLDebug2);
 end;
 
 procedure TResultform1.MenuItemKnownInstallersClick(Sender: TObject);

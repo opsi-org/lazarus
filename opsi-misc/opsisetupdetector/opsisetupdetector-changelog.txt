@@ -1,3 +1,9 @@
+opsi-setup-detector (4.1.0.1) stable; urgency=low
+
+  * more logging around configuration
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu,  07 Nov 2018 : 15:00:00 +0200
+
 opsi-setup-detector (4.1.0.0) stable; urgency=low
 
   * complete new implementation
