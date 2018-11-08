@@ -11,8 +11,12 @@
       <UseXPManifest Value="True"/>
       <XPManifest>
         <DpiAware Value="True"/>
+        <ExecutionLevel Value="highestAvailable"/>
+        <TextName Value="uib gmbh.opsi.opsi-setup-detector"/>
+        <TextDesc Value="Program to detect the silent / unattended parameters of setup files and create opsi package structure"/>
       </XPManifest>
       <Icon Value="0"/>
+      <ActiveWindowIndexAtStart Value="1"/>
     </General>
     <i18n>
       <EnableI18N Value="True"/>
@@ -330,7 +334,7 @@
         <Filename Value="osdbasedata.pas"/>
         <IsPartOfProject Value="True"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="834"/>
+        <TopLine Value="835"/>
         <CursorPos Y="838"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
@@ -660,7 +664,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="C:\lazarus\components\thtml;..\..\common"/>
+      <OtherUnitFiles Value="C:\lazarus\components\thtml\;..\..\common"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
