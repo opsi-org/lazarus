@@ -163,7 +163,7 @@ end;
     templatePath := ExtractFileDir(Application.ExeName)+PathDelim+'template-files';
     {$ENDIF WINDOWS}
     {$IFDEF LINUX}
-    templatePath := '/usr/share/opsi-setup-detector';
+    templatePath := '/usr/share/opsi-setup-detector/template-files';
     {$ENDIF LINUX}
     try
       patchlist:= TStringList.Create;
@@ -446,6 +446,7 @@ var
   output : string;
 
 begin
+  logdatei.log('Start callOpsiPackageBuilder', LLDebug2);
   buildCallparams:= Tstringlist.Create;
   OpsiBuilderProcess := process.TProcess.Create(nil);
   buildCallbinary := '"'+myconfiguration.PathToOpsiPackageBuilder+'"';
@@ -484,7 +485,7 @@ begin
     end;
   buildCallparams.Add(paramstr);
 
-  {$ifdef WINDOWS}
+  //{$ifdef WINDOWS}
   LogDatei.log('Try to call opsi packagebuilder',LLnotice);
   //OpsiBuilderProcess.Executable := buildCallbinary;
   //OpsiBuilderProcess.Parameters.Assign(buildCallparams);
@@ -534,7 +535,8 @@ begin
         end;
       end;
  //   end;
-     {$ENDIF WINDOWS}
+     //{$ENDIF WINDOWS}
+     logdatei.log('Finished callOpsiPackageBuilder', LLDebug2);
   end;   // execute OPSIPackageBuilder
 
 

@@ -1435,6 +1435,7 @@ var
   radioindex: integer;
   checkok: boolean = True;
 begin
+  logdatei.log('Start BtCreateProductClick', LLDebug2);
   if not DirectoryExists(myconfiguration.workbench_Path) then
   begin
     checkok := False;
@@ -1474,6 +1475,7 @@ begin
     myconfiguration.CreateInstall := True
   else
     myconfiguration.CreateInstall := False;
+  logdatei.log('Finished BtCreateProductClick', LLDebug2);
 end;
 
 procedure TResultform1.BtProduct1NextStepClick(Sender: TObject);

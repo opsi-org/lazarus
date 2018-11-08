@@ -4,7 +4,7 @@ object resultForm1: TresultForm1
   Top = 233
   Width = 1059
   Caption = 'opsi Setup Detector'
-  ClientHeight = 532
+  ClientHeight = 523
   ClientWidth = 1059
   Menu = MainMenu1
   OnActivate = FormActivate
@@ -22,8 +22,8 @@ object resultForm1: TresultForm1
     Align = alTop
     Alignment = taLeftJustify
     BorderStyle = bsSingle
-    ClientHeight = 36
-    ClientWidth = 1055
+    ClientHeight = 38
+    ClientWidth = 1057
     ParentFont = False
     TabOrder = 0
     OnClick = Panel1Click
@@ -31,7 +31,7 @@ object resultForm1: TresultForm1
       Left = 1
       Height = 26
       Top = 1
-      Width = 1053
+      Width = 1055
       ParentFont = False
       TabOrder = 0
       object SBtnExit: TSpeedButton
@@ -83,18 +83,18 @@ object resultForm1: TresultForm1
   end
   object Panel3: TPanel
     Left = 0
-    Height = 469
+    Height = 462
     Top = 40
     Width = 1059
     Align = alClient
     Caption = 'Panel3'
-    ClientHeight = 469
+    ClientHeight = 462
     ClientWidth = 1059
     ParentFont = False
     TabOrder = 1
     object PageControl1: TPageControl
       Left = 6
-      Height = 467
+      Height = 460
       Top = 1
       Width = 1052
       ActivePage = TabSheetStart
@@ -106,14 +106,14 @@ object resultForm1: TresultForm1
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
         Caption = 'Start'
-        ClientHeight = 439
-        ClientWidth = 1044
+        ClientHeight = 429
+        ClientWidth = 1042
         ParentFont = False
         object FlowPanel3: TFlowPanel
           Left = 0
-          Height = 439
+          Height = 429
           Top = 0
-          Width = 1044
+          Width = 1042
           Align = alClient
           ControlList = <          
             item
@@ -142,7 +142,7 @@ object resultForm1: TresultForm1
           TabOrder = 0
           object BtSingleAnalyzeAndCreate: TBitBtn
             Left = 31
-            Height = 68
+            Height = 72
             Hint = 'Analyze a single existing Setupfile '#10'and create an opsi Product'
             Top = 31
             Width = 451
@@ -624,10 +624,10 @@ object resultForm1: TresultForm1
           end
           object BtATwonalyzeAndCreate: TBitBtn
             Left = 31
-            Height = 68
+            Height = 72
             Hint = 'Analyze a single existing Setupfile '#10'and create an opsi Product'
-            Top = 159
-            Width = 599
+            Top = 163
+            Width = 601
             Anchors = []
             AutoSize = True
             BorderSpacing.Around = 30
@@ -1357,11 +1357,11 @@ object resultForm1: TresultForm1
             TabOrder = 1
           end
           object BtAnalyzeOnly: TBitBtn
-            Left = 690
-            Height = 68
+            Left = 692
+            Height = 72
             Hint = 'Analyze a single existing Setupfile '
-            Top = 159
-            Width = 263
+            Top = 163
+            Width = 257
             Anchors = []
             AutoSize = True
             BorderSpacing.Around = 30
@@ -1630,10 +1630,10 @@ object resultForm1: TresultForm1
           end
           object BtCreateEmptyTemplate: TBitBtn
             Left = 31
-            Height = 68
+            Height = 72
             Hint = 'Create a empty '#10'opsi Product Directory Structure'
-            Top = 287
-            Width = 342
+            Top = 295
+            Width = 338
             Anchors = []
             AutoSize = True
             BorderSpacing.Around = 30
@@ -1959,8 +1959,8 @@ object resultForm1: TresultForm1
           Width = 1044
           Align = alBottom
           BorderStyle = bsSingle
-          ClientHeight = 70
-          ClientWidth = 1040
+          ClientHeight = 72
+          ClientWidth = 1042
           ParentFont = False
           TabOrder = 1
           object BtAnalyzeNextStep: TBitBtn
@@ -4642,8 +4642,8 @@ object resultForm1: TresultForm1
               Width = 1044
               Align = alClient
               Caption = 'Panel4'
-              ClientHeight = 140
-              ClientWidth = 1044
+              ClientHeight = 136
+              ClientWidth = 1040
               ParentFont = False
               TabOrder = 0
               object StringGridDep: TStringGrid
@@ -4699,8 +4699,8 @@ object resultForm1: TresultForm1
                 Top = 1
                 Width = 159
                 Align = alLeft
-                ClientHeight = 138
-                ClientWidth = 159
+                ClientHeight = 134
+                ClientWidth = 155
                 ParentFont = False
                 TabOrder = 1
                 object Label75: TLabel
@@ -4910,8 +4910,8 @@ object resultForm1: TresultForm1
               Width = 1044
               Align = alClient
               Caption = 'Panel10'
-              ClientHeight = 149
-              ClientWidth = 1044
+              ClientHeight = 145
+              ClientWidth = 1040
               ParentFont = False
               TabOrder = 0
               object StringGridProp: TStringGrid
@@ -5191,7 +5191,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 66
           Top = 0
-          Width = 1044
+          Width = 1042
           Align = alTop
           Caption = 'FlowPanel14'
           ControlList = <          
@@ -5216,8 +5216,8 @@ object resultForm1: TresultForm1
           TabOrder = 0
           OnClick = FlowPanel14Click
           object TIEditworkbenchpath: TTIEdit
-            Left = 221
-            Height = 27
+            Left = 238
+            Height = 35
             Top = 11
             Width = 600
             Anchors = []
@@ -5230,9 +5230,9 @@ object resultForm1: TresultForm1
           end
           object Label78: TLabel
             Left = 21
-            Height = 21
+            Height = 23
             Top = 11
-            Width = 170
+            Width = 187
             Anchors = []
             BorderSpacing.Left = 10
             BorderSpacing.Around = 10
@@ -5242,10 +5242,10 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object BitBtnWorkBenchPath: TBitBtn
-            Left = 844
-            Height = 30
-            Top = 11
-            Width = 170
+            Left = 14
+            Height = 37
+            Top = 66
+            Width = 176
             Anchors = []
             AutoSize = True
             BorderSpacing.Left = 3
@@ -5297,7 +5297,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 50
           Top = 66
-          Width = 1044
+          Width = 1042
           Align = alTop
           ControlList = <          
             item
@@ -5321,9 +5321,9 @@ object resultForm1: TresultForm1
           TabOrder = 1
           object LabelWorkbenchOK: TLabel
             Left = 21
-            Height = 21
+            Height = 23
             Top = 11
-            Width = 256
+            Width = 282
             Anchors = []
             BorderSpacing.Left = 10
             BorderSpacing.Around = 10
@@ -5334,10 +5334,10 @@ object resultForm1: TresultForm1
             Visible = False
           end
           object LabelWorkbenchNotOK: TLabel
-            Left = 307
-            Height = 21
+            Left = 333
+            Height = 23
             Top = 11
-            Width = 513
+            Width = 564
             Anchors = []
             BorderSpacing.Left = 10
             BorderSpacing.Around = 10
@@ -5349,10 +5349,10 @@ object resultForm1: TresultForm1
             Visible = False
           end
           object BitBtnRecheckWorkbench: TBitBtn
-            Left = 843
-            Height = 30
-            Top = 11
-            Width = 172
+            Left = 14
+            Height = 37
+            Top = 54
+            Width = 176
             Anchors = []
             AutoSize = True
             BorderSpacing.Left = 3
@@ -5404,7 +5404,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 132
           Top = 116
-          Width = 1044
+          Width = 1042
           Align = alTop
           ControlList = <          
             item
@@ -5427,13 +5427,13 @@ object resultForm1: TresultForm1
             Top = 1
             Width = 535
             Anchors = []
-            ClientHeight = 107
-            ClientWidth = 531
+            ClientHeight = 125
+            ClientWidth = 533
             ParentFont = False
             TabOrder = 0
             object RadioGroup1: TRadioGroup
               Left = 0
-              Height = 107
+              Height = 125
               Top = 0
               Width = 408
               Align = alLeft
@@ -5447,15 +5447,15 @@ object resultForm1: TresultForm1
               ChildSizing.ShrinkVertical = crsScaleChilds
               ChildSizing.Layout = cclLeftToRightThenTopToBottom
               ChildSizing.ControlsPerLine = 1
-              ClientHeight = 87
-              ClientWidth = 404
+              ClientHeight = 105
+              ClientWidth = 406
               ParentFont = False
               TabOrder = 0
               object RadioButtonCreateOnly: TRadioButton
                 Left = 6
-                Height = 19
+                Height = 21
                 Top = 0
-                Width = 392
+                Width = 394
                 Align = alTop
                 Anchors = [akLeft]
                 BorderSpacing.Left = 5
@@ -5468,9 +5468,9 @@ object resultForm1: TresultForm1
               end
               object RadioButtonPackageBuilder: TRadioButton
                 Left = 6
-                Height = 19
-                Top = 38
-                Width = 392
+                Height = 21
+                Top = 42
+                Width = 394
                 Align = alTop
                 Anchors = [akTop]
                 Caption = 'create opsi package files and start interactive PackageBuilder'
@@ -5480,9 +5480,9 @@ object resultForm1: TresultForm1
               end
               object RadioButtonBuildPackage: TRadioButton
                 Left = 6
-                Height = 19
-                Top = 19
-                Width = 392
+                Height = 21
+                Top = 21
+                Width = 394
                 Align = alTop
                 Anchors = []
                 Caption = 'create opsi package files and  build package'
@@ -5493,7 +5493,7 @@ object resultForm1: TresultForm1
             end
             object CheckGroupBuildMode: TCheckGroup
               Left = 423
-              Height = 97
+              Height = 115
               Top = 5
               Width = 105
               Align = alLeft
@@ -5509,15 +5509,15 @@ object resultForm1: TresultForm1
               ChildSizing.ShrinkVertical = crsScaleChilds
               ChildSizing.Layout = cclLeftToRightThenTopToBottom
               ChildSizing.ControlsPerLine = 1
-              ClientHeight = 77
-              ClientWidth = 101
+              ClientHeight = 95
+              ClientWidth = 103
               ParentFont = False
               TabOrder = 1
               object CheckBoxBuild: TCheckBox
                 Left = 6
-                Height = 19
-                Top = 25
-                Width = 89
+                Height = 21
+                Top = 27
+                Width = 91
                 Align = alTop
                 Anchors = [akLeft]
                 Caption = 'build'
@@ -5529,9 +5529,9 @@ object resultForm1: TresultForm1
               end
               object CheckBoxQuiet: TCheckBox
                 Left = 6
-                Height = 19
+                Height = 21
                 Top = 6
-                Width = 89
+                Width = 91
                 Align = alTop
                 Anchors = [akLeft]
                 Caption = 'quiet'
@@ -5541,9 +5541,9 @@ object resultForm1: TresultForm1
               end
               object CheckBoxInstall: TCheckBox
                 Left = 6
-                Height = 19
-                Top = 44
-                Width = 89
+                Height = 21
+                Top = 48
+                Width = 91
                 Align = alTop
                 Anchors = []
                 Caption = 'install'
@@ -5571,9 +5571,9 @@ object resultForm1: TresultForm1
             Visible = False
             object processing: TLabel
               Left = 24
-              Height = 22
+              Height = 23
               Top = 8
-              Width = 109
+              Width = 110
               Caption = 'processing...'
               Font.CharSet = ANSI_CHARSET
               Font.Color = clBlack
@@ -5586,9 +5586,9 @@ object resultForm1: TresultForm1
             end
             object processStatement: TLabel
               Left = 24
-              Height = 15
+              Height = 19
               Top = 40
-              Width = 58
+              Width = 68
               Caption = 'please wait'
               ParentColor = False
               ParentFont = False
@@ -5608,7 +5608,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 104
           Top = 248
-          Width = 1044
+          Width = 1042
           Align = alTop
           ControlList = <          
             item
@@ -5621,11 +5621,11 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 3
           object BtCreateProduct: TBitBtn
-            Left = 772
-            Height = 84
+            Left = 777
+            Height = 88
             Hint = 'Create a opsi Product'
             Top = 11
-            Width = 261
+            Width = 254
             Anchors = []
             AutoSize = True
             BorderSpacing.Around = 10
@@ -6157,15 +6157,15 @@ object resultForm1: TresultForm1
     end
     object Splitter2: TSplitter
       Left = 1
-      Height = 467
+      Height = 460
       Top = 1
       Width = 5
     end
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 23
-    Top = 509
+    Height = 21
+    Top = 502
     Width = 1059
     Panels = <>
     ParentFont = False
@@ -6174,11 +6174,11 @@ object resultForm1: TresultForm1
     DefaultExt = '.*.msi'
     Filter = 'Setup|*.exe;*.msi;*.mst|EXE|*.exe|MSI|*.msi|MST|*.mst|Any File|*.*'
     FilterIndex = 2
-    left = 736
-    top = 8
+    left = 776
+    top = 5
   end
   object MainMenu1: TMainMenu
-    left = 816
+    left = 864
     top = 5
     object MenuItemFile: TMenuItem
       Caption = '&File'
@@ -6213,8 +6213,7 @@ object resultForm1: TresultForm1
     left = 1096
   end
   object SelectDirectoryDialog1: TSelectDirectoryDialog
-    left = 539
-    top = 5
+    left = 664
   end
   object ImageList1: TImageList
     left = 421
@@ -6384,7 +6383,7 @@ object resultForm1: TresultForm1
   end
   object TimerFirstconfig: TTimer
     OnTimer = TimerFirstconfigTimer
-    left = 884
+    left = 952
     top = 11
   end
 end
