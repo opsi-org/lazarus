@@ -80,6 +80,7 @@ TFileDoc =  class
 const
   cmulticomment1 = '"""';
   cmulticomment2 = '''''''';
+  cpycomment = '#';
   cpydeffunc = 'def ';
   cpydefnotpublic = 'def _';
   cpyclass = 'class ';
@@ -397,7 +398,9 @@ begin
       end
       else
         funcdescription := funcdescription+LineEnding+trim(currentline);
-    end;
+    end
+    else if currentline <> '' then
+      docfound := true;
     if linecounter < preprocessedlist.Count-2 then
     begin
       inc(linecounter);
@@ -431,7 +434,7 @@ begin
   end;
   currentlinenumber := linecounter;
   result := true;
-end ;
+end;
 
 procedure preprocess();
 var
@@ -506,6 +509,8 @@ begin
       end
       else
       begin
+        if not ((pos(cpycomment, trimmedline) = 1) or (trimmedline = '')) then
+          filedocfound := true;
         inc(linenumber);
       end;
     end;
