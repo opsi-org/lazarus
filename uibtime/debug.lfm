@@ -17,7 +17,7 @@ object FDebug: TFDebug
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poDefault
-  LCLVersion = '1.8.2.0'
+  LCLVersion = '1.8.4.0'
   object Memo1: TMemo
     Left = 0
     Height = 223

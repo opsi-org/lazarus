@@ -229,7 +229,7 @@ var
   verDatum: string;
   Trayshow: boolean;
   TrayInterval: cardinal;
-  scalefactor : double = 1.0;
+  scalefactor: double = 1.0;
 
 
 
@@ -366,11 +366,17 @@ end;
 procedure TDataModule1.debugOut(level: integer; Source: string; meldung: string);
 var
   sourcestr, logstr, logdir, logfeilname: string;
+  aktlevel : integer;
 begin
   try
-    logdatei.AktProduktId := Source;
-    logdatei.log(meldung, level);
-    if level <= logdatei.LogLevel then
+    aktlevel := LLdebug;
+    if Assigned(logdatei) then
+    begin
+      logdatei.AktProduktId := Source;
+      logdatei.log(meldung, level);
+      aktlevel := logdatei.LogLevel;
+    end;
+    if level <= aktlevel then
     begin
       if FDebug <> nil then
       begin
@@ -384,6 +390,15 @@ begin
       end;
     end;
   except
+    on e: Exception do
+    begin
+      if Assigned(logdatei) then
+      begin
+        logdatei.log('exception in DataModule1.debugOut', LLcritical);
+        logdatei.log(e.Message, LLcritical);
+      end;
+      raise;
+    end;
   end;
 end;
 
@@ -1969,6 +1984,8 @@ begin
 
   //LogDatei.StandardPartLogFilename := lfilename+ '-part';
   LogDatei.CreateTheLogfile(logfeilname + '.log', True);
+  LogDatei.log(DateTimeToStr(Now) + ': uibtime started',LLessential);
+  LogDatei.log('uibtime version: '+version,LLessential);
 
   (*
   logfeilname := ExpandFileNameUTF8(logdir + '\uibtime.log');
@@ -2151,7 +2168,7 @@ initialization
   ontopheight := round(32 * (96 / screen.PixelsPerInch));
   {$ENDIF LINUX}
   //ontopheight := 50;
-  scalefactor :=  96 / screen.PixelsPerInch;
+  scalefactor := 96 / screen.PixelsPerInch;
   screenx := Screen.Width;
   screeny := Screen.Height;
   leftint := (screenx - ontopwidth) div 2;

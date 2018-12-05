@@ -35,10 +35,10 @@ type
     MaskEditStart: TMaskEdit;
     MaskEditStunden: TMaskEdit;
     BtnInsertAll: TBitBtn;
-    ComboBox1: TComboBox;
+    ComboBoxEvent: TComboBox;
     procedure BtnInsertAllClick(Sender: TObject);
     procedure CalendarDialog1Show(Sender: TObject);
-    procedure ComboBox1Select(Sender: TObject);
+    procedure ComboBoxEventSelect(Sender: TObject);
     procedure EditButtonEndDateButtonClick(Sender: TObject);
     procedure EditButtonStartDateButtonClick(Sender: TObject);
     procedure EditButtonStartDateChange(Sender: TObject);
@@ -91,7 +91,7 @@ begin
       end
       else
       begin
-        Datamodule1.SQuibevent.FieldByName('event').AsString := combobox1.Text;
+        Datamodule1.SQuibevent.FieldByName('event').AsString := ComboBoxEvent.Text;
         Datamodule1.SQuibevent.FieldByName('stoptime').AsDateTime :=
         aktdate + startzeit + hoursperday;
       end;
@@ -111,13 +111,13 @@ begin
 end;
 
 
-procedure TFMultiday.ComboBox1Select(Sender: TObject);
+procedure TFMultiday.ComboBoxEventSelect(Sender: TObject);
 var
   event,str : string;
   i : integer;
 begin
-  i := ComboBox1.ItemIndex;
-  event := ComboBox1.Items[i];
+  i := ComboBoxEvent.ItemIndex;
+  event := ComboBoxEvent.Items[i];
   if MatchStr(event,['Krank','Feiertag','Urlaub']) then
   begin
     MaskEditStart.EditText:='10:00';
@@ -153,8 +153,8 @@ begin
     MaskEditStart.EditText:='10:00';
     str := timeFloatTohourminutesStr(user_h_per_day);
     MaskEditStunden.EditText:= str;
-    ComboBox1.ItemIndex:=-1;
-    ComboBox1.SelText:='Feiertag';
+    ComboBoxEvent.ItemIndex:=-1;
+    ComboBoxEvent.SelText:='Feiertag';
   end;
 end;
 
@@ -177,11 +177,11 @@ begin
  cal.Date :=dateutils.Today;
  cal.MaxSelectRange := 31;
  *)
-  combobox1.Items.Clear;
+  ComboBoxEvent.Items.Clear;
   Datamodule1.SQQueryAktEvents.First;
   while not Datamodule1.SQQueryAktEvents.EOF do
   begin
-    combobox1.Items.Add(Datamodule1.SQQueryAktEvents.FieldByName('event').AsString);
+    ComboBoxEvent.Items.Add(Datamodule1.SQQueryAktEvents.FieldByName('event').AsString);
     Datamodule1.SQQueryAktEvents.Next;
   end;
   (*

@@ -1,7 +1,7 @@
 object FMultiday: TFMultiday
-  Left = 780
+  Left = 619
   Height = 283
-  Top = 325
+  Top = 185
   Width = 543
   BorderStyle = bsDialog
   Caption = 'uibtime - Mehrere Tage eintragen'
@@ -93,13 +93,16 @@ object FMultiday: TFMultiday
     OnClick = BtnInsertAllClick
     TabOrder = 4
   end
-  object ComboBox1: TComboBox
+  object ComboBoxEvent: TComboBox
     Left = 184
     Height = 23
     Top = 168
     Width = 185
+    AutoComplete = True
+    AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactSearchAscending]
+    AutoDropDown = True
     ItemHeight = 15
-    OnSelect = ComboBox1Select
+    OnSelect = ComboBoxEventSelect
     TabOrder = 2
   end
   object CheckBoxOnlyWorkdays: TCheckBox

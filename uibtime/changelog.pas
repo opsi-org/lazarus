@@ -1,4 +1,13 @@
 (*
+uibtime (4.1.1.44-1) stable; urgency=low
+
+ * uibdata: DumpExceptionCallStack: MessageDlg changed
+ * multiday: Combobox1 -> ComboboxEvent
+ * multiday: ComboBoxEvent: AutoCompleteText enabled
+ * uibdata: avoid sigsev while using debugout
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 5 Dec 2018 15:00:00 +0000
+
 uibtime (4.1.1.43-1) stable; urgency=low
 
  * ontop: bigger buttons buttons
