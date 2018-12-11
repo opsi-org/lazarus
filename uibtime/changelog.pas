@@ -4,7 +4,7 @@ uibtime (4.1.1.45-1) stable; urgency=low
  * uibdata: DumpExceptionCallStack: MessageDlg changed
  * ontop: edit1 + editprjectzeit autosize=false fix height
  * multiday.create: ComboBoxEvent: Autodropdown different for Windows / Linux
-
+ * uib2erp: more logging in createreport
 
 -- detlef oertel <d.oertel@uib.de>  Wed, 5 Dec 2018 15:00:00 +0000
 
