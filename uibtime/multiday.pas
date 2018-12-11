@@ -165,6 +165,12 @@ end;
 
 procedure TFMultiday.FormCreate(Sender: TObject);
 begin
+  {$IFDEF LINUX}
+  ComboBoxEvent.AutoDropDown:=false;
+  {$ENDIF LINUX}
+  {$IFDEF WINDOWS}
+  ComboBoxEvent.AutoDropDown:=true;
+  {$ENDIF WINDOWS}
   DateTimePickerStart.Date:=now;
   DateTimePickerEnd.Date:=now;
 end;

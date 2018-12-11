@@ -2110,7 +2110,7 @@ procedure TDataModule1.DumpExceptionCallStack(E: Exception);
 var
   I: integer;
   Frames: PPointer;
-  Report: string;
+  Report, Rep2: string;
 begin
   debugOut(2, 'Exception', 'Message: ' + E.Message);
   Report := 'Program exception! ' + LineEnding + 'Stacktrace:' +
@@ -2126,8 +2126,11 @@ begin
     Report := Report + LineEnding + BackTraceStrFunc(Frames[I]);
   debugOut(2, 'Exception', Report);
   //ShowMessage(Report);
-  MessageDlg('uibtime: Fehler',
-    'Keine Netzwerkverbindung zum DB-Server. Programmabbruch ', mtError, [mbAbort], 0);
+  Rep2 := Report + 'Exception class: ' + E.ClassName + ' , ' +
+      'Message: ' + E.Message + ' , '
+      +' Bitte Logdatei sichern: '+LogDatei.FileName+' - Programmabbruch.';
+  MessageDlg('uibtime: Fehler',Rep2, mtError, [mbAbort], 0);
+//    'Keine Netzwerkverbindung zum DB-Server. Programmabbruch ', mtError, [mbAbort], 0);
   Application.Terminate;
   Halt; // End of program execution
 end;
