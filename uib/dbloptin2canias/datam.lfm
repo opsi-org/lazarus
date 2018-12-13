@@ -1,0 +1,427 @@
+object DataModule1: TDataModule1
+  OnCreate = DataModuleCreate
+  OldCreateOrder = False
+  Height = 254
+  HorizontalOffset = 324
+  VerticalOffset = 554
+  Width = 305
+  PPI = 96
+  object MySQL55Connection1: TMySQL55Connection
+    Connected = False
+    LoginPrompt = True
+    KeepConnection = False
+    Transaction = SQLTransaction1
+    SkipLibraryVersionCheck = False
+    left = 57
+    top = 43
+  end
+  object SQLQuery1: TSQLQuery
+    FieldDefs = <    
+      item
+        Name = 'CLIENT'
+        DataType = ftString
+        Precision = -1
+        Size = 6
+      end    
+      item
+        Name = 'CONTACTNUM'
+        DataType = ftString
+        Precision = -1
+        Size = 36
+      end    
+      item
+        Name = 'NAME'
+        DataType = ftString
+        Precision = -1
+        Size = 150
+      end    
+      item
+        Name = 'MIDDLENAME'
+        DataType = ftString
+        Precision = -1
+        Size = 150
+      end    
+      item
+        Name = 'SURNAME'
+        DataType = ftString
+        Precision = -1
+        Size = 150
+      end    
+      item
+        Name = 'TITLE'
+        DataType = ftString
+        Precision = -1
+        Size = 150
+      end    
+      item
+        Name = 'DISPLAY'
+        DataType = ftString
+        Precision = -1
+        Size = 300
+      end    
+      item
+        Name = 'NICKNAME'
+        DataType = ftString
+        Precision = -1
+        Size = 90
+      end    
+      item
+        Name = 'CTYPE'
+        DataType = ftInteger
+        Precision = -1
+      end    
+      item
+        Name = 'CCOMPANY'
+        DataType = ftString
+        Precision = -1
+        Size = 9
+      end    
+      item
+        Name = 'CCUSTNO'
+        DataType = ftString
+        Precision = -1
+        Size = 90
+      end    
+      item
+        Name = 'CCUSTNAME'
+        DataType = ftString
+        Precision = -1
+        Size = 300
+      end    
+      item
+        Name = 'CISCUSTORVEND'
+        DataType = ftInteger
+        Precision = -1
+      end    
+      item
+        Name = 'CPERSONNAL'
+        DataType = ftString
+        Precision = -1
+        Size = 24
+      end    
+      item
+        Name = 'CPERSNAME'
+        DataType = ftString
+        Precision = -1
+        Size = 300
+      end    
+      item
+        Name = 'CPERSCOMPANY'
+        DataType = ftString
+        Precision = -1
+        Size = 9
+      end    
+      item
+        Name = 'ISDELETED'
+        DataType = ftInteger
+        Precision = -1
+      end    
+      item
+        Name = 'HSTREET'
+        DataType = ftString
+        Precision = -1
+        Size = 300
+      end    
+      item
+        Name = 'HCITY'
+        DataType = ftString
+        Precision = -1
+        Size = 90
+      end    
+      item
+        Name = 'HSTATE'
+        DataType = ftString
+        Precision = -1
+        Size = 90
+      end    
+      item
+        Name = 'HZIPCODE'
+        DataType = ftString
+        Precision = -1
+        Size = 36
+      end    
+      item
+        Name = 'HCOUNTRY'
+        DataType = ftString
+        Precision = -1
+        Size = 9
+      end    
+      item
+        Name = 'HPHONE'
+        DataType = ftString
+        Precision = -1
+        Size = 75
+      end    
+      item
+        Name = 'HFAX'
+        DataType = ftString
+        Precision = -1
+        Size = 75
+      end    
+      item
+        Name = 'HMOBILE'
+        DataType = ftString
+        Precision = -1
+        Size = 75
+      end    
+      item
+        Name = 'HDEFAULT'
+        DataType = ftInteger
+        Precision = -1
+      end    
+      item
+        Name = 'BSTREET'
+        DataType = ftString
+        Precision = -1
+        Size = 450
+      end    
+      item
+        Name = 'BCITY'
+        DataType = ftString
+        Precision = -1
+        Size = 90
+      end    
+      item
+        Name = 'BSTATE'
+        DataType = ftString
+        Precision = -1
+        Size = 90
+      end    
+      item
+        Name = 'BZIPCODE'
+        DataType = ftString
+        Precision = -1
+        Size = 36
+      end    
+      item
+        Name = 'BCOUNTRY'
+        DataType = ftString
+        Precision = -1
+        Size = 9
+      end    
+      item
+        Name = 'BJOBTITLE'
+        DataType = ftString
+        Precision = -1
+        Size = 150
+      end    
+      item
+        Name = 'BDEPARTMENT'
+        DataType = ftString
+        Precision = -1
+        Size = 150
+      end    
+      item
+        Name = 'BOFFICE'
+        DataType = ftString
+        Precision = -1
+        Size = 150
+      end    
+      item
+        Name = 'BPHONE'
+        DataType = ftString
+        Precision = -1
+        Size = 75
+      end    
+      item
+        Name = 'BEXTPHONE'
+        DataType = ftString
+        Precision = -1
+        Size = 15
+      end    
+      item
+        Name = 'BFAX'
+        DataType = ftString
+        Precision = -1
+        Size = 75
+      end    
+      item
+        Name = 'BPAGER'
+        DataType = ftString
+        Precision = -1
+        Size = 75
+      end    
+      item
+        Name = 'BIPPHONE'
+        DataType = ftString
+        Precision = -1
+        Size = 75
+      end    
+      item
+        Name = 'BDEFAULT'
+        DataType = ftInteger
+        Precision = -1
+      end    
+      item
+        Name = 'GENDER'
+        DataType = ftInteger
+        Precision = -1
+      end    
+      item
+        Name = 'BIRTHDAY'
+        DataType = ftString
+        Precision = -1
+        Size = 60
+      end    
+      item
+        Name = 'LTEXT'
+        DataType = ftMemo
+        Precision = -1
+      end    
+      item
+        Name = 'CREATEDBY'
+        DataType = ftString
+        Precision = -1
+        Size = 90
+      end    
+      item
+        Name = 'CREATEDAT'
+        DataType = ftDateTime
+        Precision = -1
+      end    
+      item
+        Name = 'CHANGEDBY'
+        DataType = ftString
+        Precision = -1
+        Size = 90
+      end    
+      item
+        Name = 'CHANGEDAT'
+        DataType = ftDateTime
+        Precision = -1
+      end    
+      item
+        Name = 'BWEBPAGE'
+        DataType = ftString
+        Precision = -1
+        Size = 240
+      end    
+      item
+        Name = 'LANGUAGE'
+        DataType = ftString
+        Precision = -1
+        Size = 9
+      end    
+      item
+        Name = 'EMAIL'
+        DataType = ftString
+        Precision = -1
+        Size = 240
+      end    
+      item
+        Name = 'NATION'
+        DataType = ftString
+        Precision = -1
+        Size = 9
+      end    
+      item
+        Name = 'DISCOURSE'
+        DataType = ftString
+        Precision = -1
+        Size = 300
+      end    
+      item
+        Name = 'BRANCH'
+        DataType = ftString
+        Precision = -1
+        Size = 15
+      end    
+      item
+        Name = 'BMOBILE'
+        DataType = ftString
+        Precision = -1
+        Size = 75
+      end    
+      item
+        Name = 'BIRTHPLACE'
+        DataType = ftString
+        Precision = -1
+        Size = 60
+      end    
+      item
+        Name = 'BEXTMOBILEPH'
+        DataType = ftString
+        Precision = -1
+        Size = 30
+      end    
+      item
+        Name = 'CCUSTBUSA'
+        DataType = ftString
+        Precision = -1
+        Size = 9
+      end    
+      item
+        Name = 'EMPLTYPE'
+        DataType = ftInteger
+        Precision = -1
+      end    
+      item
+        Name = 'HWEBPAGE'
+        DataType = ftString
+        Precision = -1
+        Size = 240
+      end    
+      item
+        Name = 'BDEPARTMENTE'
+        DataType = ftString
+        Precision = -1
+        Size = 120
+      end    
+      item
+        Name = 'HBOROUGH'
+        DataType = ftString
+        Precision = -1
+        Size = 90
+      end    
+      item
+        Name = 'BBOROUGH'
+        DataType = ftString
+        Precision = -1
+        Size = 90
+      end    
+      item
+        Name = 'UIBSUGARIDCONTACT'
+        DataType = ftString
+        Precision = -1
+        Size = 150
+      end    
+      item
+        Name = 'UIBTITLE'
+        DataType = ftString
+        Precision = -1
+        Size = 120
+      end    
+      item
+        Name = 'UIBJOB'
+        DataType = ftString
+        Precision = -1
+        Size = 150
+      end>
+    Database = MySQL55Connection1
+    Transaction = SQLTransaction1
+    SQL.Strings = (
+      'select * from IASADRBOOKCONTACT'
+    )
+    Params = <>
+    left = 40
+    top = 122
+  end
+  object SQLTransaction1: TSQLTransaction
+    Active = False
+    Database = MySQL55Connection1
+    left = 176
+    top = 38
+  end
+  object DataSource1: TDataSource
+    DataSet = SQLQuery1
+    left = 158
+    top = 119
+  end
+  object SQLDBLibraryLoader1: TSQLDBLibraryLoader
+    Enabled = False
+    ConnectionType = 'MySQL 5.5'
+    LibraryName = 'N:\uib\oertel\gitwork\lazarus\uib\getoptinlink\libmysql.dll'
+    left = 240
+    top = 32
+  end
+end

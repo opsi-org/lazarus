@@ -110,6 +110,8 @@ type
     procedure Datenweitergabe1Click(Sender: TObject);
     procedure Export1Click(Sender: TObject);
     procedure Hilfe1Click(Sender: TObject);
+    procedure IBConnection1Log(Sender: TSQLConnection; EventType: TDBEventType;
+      const Msg: String);
     procedure Import1Click(Sender: TObject);
     procedure Info1Click(Sender: TObject);
     procedure LeisteNeuAufbauen1Click(Sender: TObject);
@@ -245,6 +247,7 @@ uses ontop, login, debug, logoff, dataedit,
 //var
 //  hostconnected, hostresolved: boolean;
 ///vi: TVersionInfoRec;
+
 
 
 { TDataModule1 }
@@ -462,6 +465,26 @@ end;
 procedure TDataModule1.Hilfe1Click(Sender: TObject);
 begin
 
+end;
+
+procedure TDataModule1.IBConnection1Log(Sender: TSQLConnection;
+  EventType: TDBEventType; const Msg: String);
+var
+  source : string;
+begin
+  //TDBEventType = (detCustom, detPrepare, detExecute, detFetch, detCommit, detRollBack, detParamValue, detActualSQL);
+  case EventType of
+      detCustom:   Source:='Custom:  ';
+      detPrepare:  Source:='Prepare: ';
+      detExecute:  Source:='Execute: ';
+      detFetch:    Source:='Fetch:   ';
+      detCommit:   Source:='Commit:  ';
+      detRollBack: Source:='Rollback:';
+      detParamValue: Source:='ParamValue:';
+      detActualSQL: Source:='ActualSQL:';
+      else Source:='Unknown event: ';
+    end;
+    debugOut(7,'Database',source+Msg);
 end;
 
 procedure TDataModule1.Import1Click(Sender: TObject);
@@ -1202,11 +1225,11 @@ procedure TDataModule1.SQwork_descriptionAfterInsert(DataSet: TDataSet);
 begin
   SQwork_description.FieldByName('userid').AsString := uid;
   SQwork_description.FieldByName('jahr').AsInteger :=
-    YearOf(StrToDate(fwork_description.EditButtonDate.Text));
+    YearOf(ScanDateTime('dd.mm.yyyy',fwork_description.EditButtonDate.Text));
   SQwork_description.FieldByName('monat').AsInteger :=
-    MonthOf(StrToDate(fwork_description.EditButtonDate.Text));
+    MonthOf(ScanDateTime('dd.mm.yyyy',fwork_description.EditButtonDate.Text));
   SQwork_description.FieldByName('tag').AsInteger :=
-    DayOf(StrToDate(fwork_description.EditButtonDate.Text));
+    DayOf(ScanDateTime('dd.mm.yyyy',fwork_description.EditButtonDate.Text));
   SQwork_description.FieldByName('event').AsString :=
     Query_day_report.FieldByName('event').AsString;
 end;
@@ -1267,24 +1290,32 @@ procedure TDataModule1.TimerCheckNetTimer(Sender: TObject);
 var
   cinfo : TConnInfoType;
   servername : string;
+  retries : integer;
 begin
+  (*
   servername := 'groupware';
+  retries := 0;
   {$IFDEF WIN32}
-  if pinghost(servername) = -1 then
+  while (pinghost(servername) = -1) and (retries < 10) do
   begin
-    debugOut(3, 'CheckNetTimer', 'Could not reach '+servername);
-    if mrAbort = MessageDlg('uibtime: Warnung','Die Netzwerkverbindung zum DB-Server '+servername,mtError,[mbAbort,mbIgnore],0)
-    then
-    begin
-      Application.Terminate;
-      halt;
-    end;
+    debugOut(3, 'CheckNetTimer', 'Could not reach '+servername+' retry ...');
+    inc(retries);
+    Sleep(1000);
   end;
+  if retries >= 10 then
+     if mrAbort = MessageDlg('uibtime: Warnung','Die Netzwerkverbindung zum DB-Server '+servername,mtError,[mbAbort,mbIgnore],0)
+     then
+     begin
+       debugOut(3, 'CheckNetTimer', 'Could not reach '+servername+' terminate.');
+       Application.Terminate;
+       halt;
+     end;
   {$ENDIF WIN32}
   if not IBConnection1.Connected  then
   begin
     debugOut(3, 'CheckNetTimer', 'connection error');
   end;
+  *)
 end;
 
 
@@ -1991,6 +2022,7 @@ var
   Frames: PPointer;
   Report: string;
 begin
+  debugOut(2,'Exception', 'Message: ' + E.Message);
   Report := 'Program exception! ' + LineEnding +
     'Stacktrace:' + LineEnding + LineEnding;
   if E <> nil then begin
@@ -2001,13 +2033,29 @@ begin
   Frames := ExceptFrames;
   for I := 0 to ExceptFrameCount - 1 do
     Report := Report + LineEnding + BackTraceStrFunc(Frames[I]);
+  debugOut(2,'Exception', Report);
   ShowMessage(Report);
-  debugOut(2,'', Report);
+  Application.Terminate;
   Halt; // End of program execution
 end;
 
 procedure TDataModule1.CustomExceptionHandler(Sender: TObject; E: Exception);
+var
+  retries : integer;
 begin
+  if E.ClassType = EIBDatabaseError then
+  begin
+    retries := 0;
+    if pos('Unable to complete network request',E.Message) > 0 then
+      begin
+        while retries < 10 do
+        begin
+          inc(retries);
+          sleep(1000);
+          IBConnection1.Open;
+        end;
+      end
+    end;
   DumpExceptionCallStack(E);
   Halt; // End of program execution
 end;
@@ -2015,6 +2063,7 @@ end;
 
 initialization
   { initialization-Abschnitt }
+  DefaultFormatSettings.ShortDateFormat := 'dd.mm.yyyy';
   ontopwidth := 850;//730;
   ontopheight := 25;
   screenx := Screen.Width;

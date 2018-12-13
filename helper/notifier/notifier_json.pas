@@ -96,6 +96,7 @@ begin
   if (lowercase(aktMethod) = lowerCase('messageChanged')) or
     (lowercase(aktMethod) = lowerCase('subjectsChanged')) or
     (lowercase(aktMethod) = lowerCase('endConnection')) or
+    (lowercase(aktMethod) = lowerCase('choicesChanged')) or
     (lowercase(aktMethod) = lowerCase('selectedIndexesChanged')) then
   begin
     // wellknown methods
@@ -162,7 +163,10 @@ begin
           if not (jsonIsObject(messagelist.Strings[i]) and
                   jsonAsObjectGetValueByKey(messagelist.Strings[i], 'id', aktId)) then
           begin
-            logdatei.log('Error: could not get id from :'+messagelist.Strings[i], LLError);
+            if i = messagelist.Count - 1 then // The 'last' message is sometimes only a header
+              logdatei.log('Warning: could not get id from :'+messagelist.Strings[i], LLWarning)
+            else
+              logdatei.log('Error: could not get id from :'+messagelist.Strings[i], LLError);
           end
           else
           begin
@@ -217,8 +221,8 @@ begin
   end   // known methods
   else
   begin
-    logdatei.log('Error: unkonwn method: ' + aktMethod, LLCritical);
-    DataModule1.DataModuleDestroy(nil);
+    logdatei.log('Error: unknown method: ' + aktMethod, LLWarning);
+    //DataModule1.DataModuleDestroy(nil);
   end;
   if Assigned(messagelist) then messagelist.Free;
 end;

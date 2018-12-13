@@ -14,7 +14,8 @@ object DataModule1: TDataModule1
     Transaction = SQLTransaction1
     UserName = 'uibtime'
     CharSet = 'utf-8'
-    LogEvents = []
+    OnLog = IBConnection1Log
+    LogEvents = [detCustom, detPrepare, detExecute, detFetch, detCommit, detRollBack, detParamValue, detActualSQL]
     CheckTransactionParams = False
     left = 42
     top = 16

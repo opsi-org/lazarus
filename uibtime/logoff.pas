@@ -387,7 +387,7 @@ end;
 procedure TFlogoff.EditButton1Change(Sender: TObject);
 begin
   richmemo1.lines.clear;
-  checkDB(StrToDate(EditButton1.text));
+  checkDB(ScanDateTime('dd.mm.yyyy',EditButton1.text));
 end;
 
 procedure TFlogoff.FlogOffTimerTimer(Sender: TObject);

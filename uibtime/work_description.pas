@@ -68,11 +68,11 @@ begin
       Query_day_report.Close;
     Query_day_report.ParamByName('userid').AsString := uid;
     Query_day_report.ParamByName('jahr').AsInteger :=
-      YearOf(StrToDate(EditButtonDate.text));
+      YearOf(ScanDateTime('dd.mm.yyyy',EditButtonDate.text));
     Query_day_report.ParamByName('monat').AsInteger :=
-      MonthOf(StrToDate(EditButtonDate.text));
+      MonthOf(ScanDateTime('dd.mm.yyyy',EditButtonDate.text));
     Query_day_report.ParamByName('tag').AsInteger :=
-      DayOf(StrToDate(EditButtonDate.text));
+      DayOf(ScanDateTime('dd.mm.yyyy',EditButtonDate.text));
     Query_day_report.Open;
   end;
 end;
@@ -143,11 +143,11 @@ begin
   begin
     SQwork_description.FieldByName('userid').AsString := uid;
     SQwork_description.FieldByName('jahr').AsInteger :=
-      YearOf(StrToDate(EditButtonDate.text));
+      YearOf(ScanDateTime('dd.mm.yyyy',EditButtonDate.text));
     SQwork_description.FieldByName('monat').AsInteger :=
-      MonthOf(StrToDate(EditButtonDate.text));
+      MonthOf(ScanDateTime('dd.mm.yyyy',EditButtonDate.text));
     SQwork_description.FieldByName('tag').AsInteger :=
-      DayOf(StrToDate(EditButtonDate.text));
+      DayOf(ScanDateTime('dd.mm.yyyy',EditButtonDate.text));
     SQwork_description.FieldByName('event').AsString :=
       Query_day_report.FieldByName('event').AsString;
   end;

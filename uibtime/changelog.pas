@@ -1,4 +1,48 @@
 (*
+uibtime (4.1.1.41-1) stable; urgency=low
+
+ * uibdata: new TDataModule1.IBConnection1Log
+ * uibdata: TDataModule1.TimerCheckNetTimer: retrys
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 26 Oct 2018 15:00:00 +0000
+
+uibtime (4.1.1.40-1) stable; urgency=low
+
+ * uibdatetime: fix in  getLastIntervalStart at IncDay(enddate,-1)
+ * statistik.pas fix at Edit2Exit ; bug created with 4.1.1.38
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 19 Sep 2018 15:00:00 +0000
+
+uibtime (4.1.1.39-1) stable; urgency=low
+
+ * uibdatetime: redesign from getLastIntervalStart
+     (if (myMonthInterval > 1) and (modofintervals = 0) then dec(numberofintervals); )
+     new boolean param endexcl to flag if end is incl or excl
+ * multiday: more space for buttons and edits ; refernces #3608
+ * change multiple window titles; fixes #3604
+ * created unittest for getLastIntervalStart: uibtimeunittest.lpi
+
+-- detlef oertel <d.oertel@uib.de>  Thu, 09 Sep 2018 15:00:00 +0000
+
+uibtime (4.1.1.38-1) stable; urgency=low
+
+ * Date format changes to handle differen default date format in varous units (much in statistik)
+ * in uib2erp is no datetime issue fixed
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 04 Sep 2018 15:00:00 +0000
+
+uibtime (4.1.1.37-1) stable; urgency=low
+
+ * uibdatetime: fix in getLastIntervalStart (mymonthbetween := round(mymonthspan);)
+
+-- detlef oertel <d.oertel@uib.de>  Mon, 03 Sep 2018 15:00:00 +0000
+
+uibtime (4.1.1.36-1) stable; urgency=low
+
+ * uibdatetime: fix in getLastIntervalStart
+
+-- detlef oertel <d.oertel@uib.de>  Mon, 27 Aug 2018 15:00:00 +0000
+
 uibtime (4.1.1.35-1) stable; urgency=low
 
  * uib2erp: check 4 all since project start

@@ -934,7 +934,7 @@ begin
     else
     begin
       // here is the result for the last Interval
-      lastIntervalStart := getLastIntervalStart(projektstart,now,acc_per_monthnum_int);
+      lastIntervalStart := getLastIntervalStart(projektstart,now,acc_per_monthnum_int,false);
       decodeDate(lastIntervalStart, aktstartyear, aktstartmonth, aktstartday);
       DataModule1.debugOut(6, 'getLastIntervalInfo', 'lastIntervalStart :'+DateToStr(lastIntervalStart));
 
