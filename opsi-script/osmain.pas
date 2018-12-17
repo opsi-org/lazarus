@@ -70,6 +70,7 @@ osfuncwin2,
 {$ENDIF WIN32}
   shellapi,
   wispecfolder,
+  osfuncwin3,
 {$ENDIF WINDOWS}
 {$IFDEF LINUX}
   osfunclin,
@@ -925,7 +926,7 @@ var
   errorNumber: integer;
   extremeErrorLevel: TErrorLevel;
   showErrorMessages: boolean;
-  ps: string;
+  ps, tmpstr, cmdstr: string;
   TheExitMode: TExitMode;
   {$IFDEF WINDOWS}
   regDataType: tuibRegDataType;
@@ -1278,11 +1279,34 @@ begin
 
         errorNumber := errorNumber + LogDatei.NumberOfErrors;
 
-        // Aufheben der Fehlerzahl fuer spaetere Verwendung
+        // Backup Errorcount for use after reboot
         WriteEntry(WinstRegNumberOfErrors, trdInteger, IntToStr(errorNumber));
 
-        // Zuruecksetzen, da sonst Fehlermeldung erscheint
+        // Reset Errorcount to avoid an errormessage
         errorNumber := 0;
+        // >=win 10 and  w10BitlockerSuspendOnReboot then suspend bitlocker for 1 reboot
+        if w10BitlockerSuspendOnReboot
+           and (GetNTVersionMajor >= 10)
+           and ((PerformExitWindows = txrRegisterForReboot)
+           or (PerformExitWindows = txrImmediateReboot)) then
+        begin
+          LogDatei.log('Suspend Bitlocker',LLInfo);
+          try
+            cmdstr := 'Suspend-BitLocker -MountPoint "'
+                      +extractfiledrive(GetWinDirectory)+'" -RebootCount 1';
+            script.execPowershellCall(cmdstr, 'sysnative',0, true,false,true);
+             if script.LastExitCodeOfExe = 0 then
+               LogDatei.log('Succesful Suspended Bitlocker',LLInfo)
+             else
+              LogDatei.log('Problem Suspending Bitlocker: Error: '+IntToStr (script.LastExitCodeOfExe),LLWarning)
+           except
+             on e: exception do
+             begin
+               LogDatei.log('Error executing :'+cmdstr+' : with powershell: '+ e.message,
+                 LLError);
+             end
+           end;
+        end;
       end
       else
       begin
@@ -2292,6 +2316,7 @@ begin
       TempPath := ValueOfEnvVar('TEMP');
 
     testpassed := False;
+    if not Assigned(logdatei) then LogDatei := TLogInfo.Create;
     if (logdatei.StandardMainLogPath <> '') and SysUtils.ForceDirectories(logdatei.StandardMainLogPath) then
     begin
       testpassed := True;

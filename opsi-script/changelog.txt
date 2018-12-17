@@ -5,6 +5,15 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 ##################################################################
 
+opsi-winst/opsi-script (4.12.0.33) stable; urgency=low
+
+  * osconf: new config opsi-script.global.w10BitlockerSuspendOnReboot
+  * osconf: new global config variable: w10BitlockerSuspendOnReboot (default= false)
+  * osmain: buildPC: >=win 10 and  w10BitlockerSuspendOnReboot and (txrImmediateReboot or txrImmediateReboot)
+     then suspend bitlocker for 1 reboot     fixes: #3816
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 17 12 2018:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.0.32) stable; urgency=low
 
   * osconf: no more OpsiServiceConfigs: in log

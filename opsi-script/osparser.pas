@@ -341,6 +341,7 @@ public
   property Filename : string read FFilename write FFilename;
   property ActiveSection  : TWorkSection read FActiveSection write FActiveSection;
   property LastSection  : TWorkSection read FLastSection write FLastSection;
+  property LastExitCodeOfExe : LongInt read FLastExitCodeOfExe;
 
 
   (* Infofunktionen *)
@@ -7311,8 +7312,8 @@ function TuibInstScript.doXMLPatch (const Sektion: TWorkSection; Const XMLFilena
 begin
   //DataModuleLogServer.IdTCPServer1.Active:=true;
   result := executeWith (Sektion,  '"'+ ExtractFileDir(paramstr(0))+PathDelim+'opsiwinstxmlplugin.exe" --xmlfile="'+trim(XMLFilename)+'" --scriptfile=' , true, 0, output);
-  LogDatei.includelogtail(StandardLogPath+'opsiwinstxmlplugin.log',1000,'auto');
-  DeleteFile(StandardLogPath+'opsiwinstxmlplugin.log');
+  LogDatei.includelogtail(logdatei.StandardLogPath+'opsiwinstxmlplugin.log',1000,'auto');
+  DeleteFile(logdatei.StandardLogPath+'opsiwinstxmlplugin.log');
     //DataModuleLogServer.IdTCPServer1.Active:=false;
 end;
 
