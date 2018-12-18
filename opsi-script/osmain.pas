@@ -928,6 +928,7 @@ var
   showErrorMessages: boolean;
   ps, tmpstr, cmdstr: string;
   TheExitMode: TExitMode;
+  buildpcscript : TuibInstScript;
   {$IFDEF WINDOWS}
   regDataType: tuibRegDataType;
   {$ENDIF WINDOWS}
@@ -1268,6 +1269,7 @@ begin
 
       if PerformExitWindows >= txrRegisterForReboot then
       begin
+        LogDatei.log('We will >= Reboot',LLDebug);
         WriteEntry(WinstRegContinueVar, trdInteger, '1');
 
         try
@@ -1285,28 +1287,43 @@ begin
         // Reset Errorcount to avoid an errormessage
         errorNumber := 0;
         // >=win 10 and  w10BitlockerSuspendOnReboot then suspend bitlocker for 1 reboot
-        if w10BitlockerSuspendOnReboot
-           and (GetNTVersionMajor >= 10)
-           and ((PerformExitWindows = txrRegisterForReboot)
-           or (PerformExitWindows = txrImmediateReboot)) then
+        if GetNTVersionMajor >= 10 then
         begin
-          LogDatei.log('Suspend Bitlocker',LLInfo);
-          try
-            cmdstr := 'Suspend-BitLocker -MountPoint "'
-                      +extractfiledrive(GetWinDirectory)+'" -RebootCount 1';
-            script.execPowershellCall(cmdstr, 'sysnative',0, true,false,true);
-             if script.LastExitCodeOfExe = 0 then
-               LogDatei.log('Succesful Suspended Bitlocker',LLInfo)
-             else
-              LogDatei.log('Problem Suspending Bitlocker: Error: '+IntToStr (script.LastExitCodeOfExe),LLWarning)
-           except
-             on e: exception do
-             begin
-               LogDatei.log('Error executing :'+cmdstr+' : with powershell: '+ e.message,
-                 LLError);
-             end
-           end;
-        end;
+          LogDatei.log('We are on Win >= 10',LLDebug);
+          if ((PerformExitWindows = txrRegisterForReboot)
+              or (PerformExitWindows = txrImmediateReboot)
+              or (PerformExitWindows = txrReboot)) then
+          begin
+            LogDatei.log('We have to reboot',LLDebug);
+            if w10BitlockerSuspendOnReboot then
+            begin
+              LogDatei.log('Suspend Bitlocker',LLInfo);
+              try
+              try
+                buildpcscript := TuibInstScript.create;
+                tmpstr := extractfiledrive(GetWinDirectory);
+                cmdstr := 'if ((Get-BitLockerVolume -MountPoint '
+                           +tmpstr+').ProtectionStatus -eq "Off") '
+                           +'{Suspend-BitLocker -MountPoint "'
+                          +tmpstr+'" -RebootCount 1}';
+                buildpcscript.execPowershellCall(cmdstr, 'sysnative',0, true,false,true);
+                 if buildpcscript.LastExitCodeOfExe = 0 then
+                   LogDatei.log('Succesful Suspended Bitlocker',LLInfo)
+                 else
+                  LogDatei.log('Problem Suspending Bitlocker: Error: '+IntToStr (buildpcscript.LastExitCodeOfExe),LLWarning)
+               except
+                 on e: exception do
+                 begin
+                   LogDatei.log('Error executing :'+cmdstr+' : with powershell: '+ e.message,
+                     LLError);
+                 end
+               end;
+              finally
+                buildpcscript.Free;
+              end;
+              end;
+            end;
+          end;
       end
       else
       begin
@@ -1328,6 +1345,7 @@ begin
       FlushKey;
       Free;
     end;
+
     {$ENDIF WINDOWS}
 
     showErrorMessages := False;
