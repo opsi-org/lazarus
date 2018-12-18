@@ -93,6 +93,7 @@ LazFileUtils,
   osjson,
   oscrypt,
   osparserhelper,
+  osnetworkcalculator,
   LAZUTF8;
 
 
@@ -12525,7 +12526,6 @@ begin
  End
 
 
-
  else if LowerCase (s) = LowerCase ('GetHostsName') then
  Begin
    if Skip ('(', r, r, InfoSyntaxError)
@@ -12655,7 +12655,23 @@ begin
    End;
  End
 
-
+ else if LowerCase (s) = LowerCase ('GetNetmask') then
+ Begin
+   if Skip ('(', r, r, InfoSyntaxError)
+    then if EvaluateString (r, r, s1, InfoSyntaxError)
+   then if Skip (')', r, r, InfoSyntaxError)
+   then
+   Begin
+     syntaxCheck := true;
+     if isip(s1) then
+       StringResult := networkToNetmask(s1)
+     else
+     begin
+       StringResult :=  '';
+       Logdatei.log('Error: '+s1+' is not a valid IPv4 Address', LLerror);
+     end;
+   End;
+ End
 
  else if LowerCase (s) =  LowerCase ('GetIni') then
  Begin
@@ -13955,8 +13971,6 @@ begin
     end;
   end
 
-
-
  else if LowerCase (s) = LowerCase ('RandomStr') then
  begin
    StringResult := randomstr(true);
@@ -14018,6 +14032,26 @@ begin
 
     DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
     FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
+   end;
+ end
+
+ else if LowerCase (s) = LowerCase ('GetNetwork') then
+ begin
+   if Skip ('(', r, r, InfoSyntaxError)
+     and EvaluateString(r,r,s1, InfoSyntaxError)
+     and Skip(',', r, r, InfoSyntaxError)
+     and EvaluateString(r,r,s2, InfoSyntaxError)
+     and Skip (')', r, r, InfoSyntaxError)
+   then
+   begin
+    syntaxCheck := true;
+    if isip(s1) then
+      StringResult := netmaskToNetwork(s1,s2)
+    else
+    begin
+      StringResult :=  '';
+      Logdatei.log('Error: '+s1+' is not a valid IPv4 Address', LLerror);
+    end;
    end;
  end
 
@@ -16054,6 +16088,50 @@ begin
    end;
  End
 
+
+ else if Skip ('isValidIPv4Network', Input, r, sx)
+ then
+ begin
+   if Skip ('(', r, r, InfoSyntaxError)
+   then if EvaluateString (r, r, s1, InfoSyntaxError)
+   then if Skip (',', r, r, InfoSyntaxError)
+   then if EvaluateString (r, r, s2, InfoSyntaxError)
+   then if Skip (')', r, r, InfoSyntaxError)
+   then
+   Begin
+     syntaxCheck := true;
+     if isip(s1) then
+       BooleanResult := isValidIP4Network(s1,s2)
+     else
+     begin
+       BooleanResult := false;
+       Logdatei.log('Error: '+s1+' is not a valid IPv4 Address', LLerror);
+     end;
+   end;
+ End
+
+
+ else if Skip ('isValidIPv4Host', Input, r, sx)
+ then
+ begin
+   if Skip ('(', r, r, InfoSyntaxError)
+   then if EvaluateString (r, r, s1, InfoSyntaxError)
+   then if Skip (',', r, r, InfoSyntaxError)
+   then if EvaluateString (r, r, s2, InfoSyntaxError)
+   then if Skip (')', r, r, InfoSyntaxError)
+   then
+   Begin
+     syntaxCheck := true;
+     if isip(s1) then
+       BooleanResult := isValidIP4Host(s1,s2)
+     else
+     begin
+       BooleanResult := false;
+       Logdatei.log('Error: '+s1+' or '+s2+' is not a valid IPv4 Address', LLerror);
+     end;
+   end;
+ End
+
  else if Skip ('waitForPackageLock', Input, r, sx)
  then
  begin
@@ -16192,6 +16270,25 @@ begin
     end;
  end
 
+
+ else if Skip ('isValidIPv4', Input, r, InfoSyntaxError)
+ then
+ begin
+    if Skip ('(', r, r, InfoSyntaxError)
+    then if EvaluateString (r, r, s1, InfoSyntaxError)
+    then if Skip (')', r, r, InfoSyntaxError)
+    then
+    Begin
+      syntaxCheck := true;
+      try
+        BooleanResult := isValidIP4(s1);
+      except
+        BooleanResult := false;
+      end
+    end;
+ end
+
+
  else if Skip ('isConfidential', Input, r, InfoSyntaxError)
  then
  begin
@@ -16208,7 +16305,6 @@ begin
       end
     end;
  end
-
 
  else if Skip ('isValidUtf8String', Input, r, InfoSyntaxError)
  then
