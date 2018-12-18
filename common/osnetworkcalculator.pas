@@ -7,11 +7,11 @@ interface
 uses
   Classes, SysUtils, RegExpr;
 
-function isValidIP4(ip4adr: string) : boolean;
-function networkToNetmask(ip4adr : string) : string;
-function isValidIP4Network(ip4adr,netmask : string) : boolean;
-function isValidIP4Host(ip4adr, netmask : string) : boolean;
-function netmaskToNetwork(ip4adr, netmask : string) : string;
+function isValidIP4(ip4adr: string) : boolean;   //return true if the IPv4 address is valid.
+function networkToNetmask(ip4adr : string) : string;    // return default netmask for the IP address.
+function isValidIP4Network(ip4adr,netmask : string) : boolean;  // return true for a valid network address.
+function isValidIP4Host(ip4adr, netmask : string) : boolean;   // return true for a valid host address.
+function netmaskToNetwork(ip4adr, netmask : string) : string; // return network address for the IP and netmask.
 
 
 implementation
@@ -24,7 +24,6 @@ begin
   result := false;
   regexobj := TRegExpr.Create;
   try
-    //correct regexobj.Expression := '^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$';
     regexobj.Expression := '^(((25[0-5])|(2[0-4]\d)|(1\d{2})|(\d{1,2}))\.){3}(((25[0-5])|(2[0-4]\d)|(1\d{2})|(\d{1,2})))$';
     if regexobj.Exec(trim(ip4adr)) then
       result := true;
@@ -49,7 +48,7 @@ begin
 end;
 
 function cidrToNetmask(cidr: string) : string;
-// convert cidr notation to dotted decimal notation
+// convert cidr notation to dotted decimal notation.
 var
   shortmask, cidrcounter : integer;
   longmask, netmask, longmaskdotted : string;
@@ -81,7 +80,7 @@ begin
 end;
 
 function netmaskToNetwork(ip4adr, netmask : string) : string;
-// return network address for the IP address and netmask.
+// return network address for the IP and netmask.
 var
   ipoctets, netmaskoctets : array of String;
   networkadr : string;
@@ -104,7 +103,7 @@ begin
 end;
 
 function isValidIP4Network(ip4adr, netmask : string) : boolean;
-// return true for a valid network address
+// return true for a valid network address.
 begin
   result := false;
   if pos('.', netmask) = 0 then
@@ -114,6 +113,7 @@ begin
 end;
 
 function findBroadcastAddress(ip4adr, netmask : string) : string;
+// return broadcast address for the ip and netmask.
 var
   ipoctets, netmaskoctets : array of String;
   broadcastadr : string;
@@ -136,7 +136,7 @@ begin
 end;
 
 function isValidIP4Host(ip4adr, netmask : string) : boolean;
-// return true for a valid host address
+// return true for a valid host address.
 var
   networkadr, broadcastadr : string;
   ipoctets, networkoctets, broadcastoctets : array of String;
