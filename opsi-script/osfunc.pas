@@ -18,7 +18,7 @@ unit osfunc;
 // and published under the Terms of the GNU Affero General Public License.
 // Text of the AGPL: http://www.gnu.org/licenses/agpl-3.0-standalone.html
 // author: Rupert Roeder, detlef oertel
-// credits: http://www.opsi.org/credits/
+
 
 
 interface
@@ -563,7 +563,7 @@ function getProfilesDirList: TStringList;
 //function stringListLoadUtf8FromFile(filename: string): TStringList;
 //function stringListLoadUnicodeFromList(inlist: Tstringlist): TStringList;
 function opsiunquotestr(s1,s2 : string): string;
-function opsiunquotestr2(s1,s2 : string): string;
+
 function cmdLineInputDialog(var inputstr : string; const message, default : string; confidential : boolean) : boolean;
 function isValidUtf8String(str:string) : boolean;
 function getFixedUtf8String(str:string) : string;
@@ -4309,6 +4309,7 @@ begin
   end;
 end;
 
+(* moved to osparser helper
 function opsiunquotestr2(s1,s2 : string): string;
 // removes only quotes if they found at start and end
 // s2 may be two chars long. Then the first char is the start mark
@@ -4329,6 +4330,7 @@ begin
     else Result := s1;
   end;
 end;
+*)
 
 function ExpandFileName(const FileName: string): string;
 var

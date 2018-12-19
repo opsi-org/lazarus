@@ -4,6 +4,26 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
+
+opsi-winst/opsi-script (4.12.0.32) stable; urgency=low
+
+  * osconf: no more OpsiServiceConfigs: in log
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 25 10 2018:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.0.31) stable; urgency=low
+
+  * new paths for Linux:
+     osconf: opsiscriptconfinit = '/etc/opsi-script/opsi-script.conf';
+     osbatchgui: skindirectoryDefault = '/usr/share/opsi-script/skin';
+     osbatchgui: skindirectoryCustomWin = '/usr/share/opsi-script/customskin';
+     osparser: // search in /usr/share/opsi-script/lib
+     osparser: '%opsiLogDir%' = '/var/log/opsi-script'
+     oslog: StandardLogPath := '/var/log/opsi-script/';
+  * osencoding: do not write out supported encodings; fixes #3700
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 17 10 2018:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.0.30) stable; urgency=low
 
   * osparser: fix for close log file after script finished:

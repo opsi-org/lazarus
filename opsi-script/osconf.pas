@@ -7,14 +7,6 @@ unit osconf;
 // and published under the Terms of the GNU Affero General Public License.
 // Text of the AGPL: http://www.gnu.org/licenses/agpl-3.0-standalone.html
 // author: Rupert Roeder, detlef oertel
-// credits: http://www.opsi.org/credits/
-
-//***************************************************************************
-// Subversion:
-// $Revision: 512 $
-// $Author: oertel $
-// $Date: 2016-10-28 12:56:36 +0200 (Fr, 28 Okt 2016) $
-//***************************************************************************
 
 
 {$MODE DELPHI}
@@ -89,7 +81,7 @@ const
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
   ParamDelim = '-';
-  opsiscriptconfinit = '/etc/opsi-client-agent/opsi-script.conf';
+  opsiscriptconfinit = '/etc/opsi-script/opsi-script.conf';
   {$ENDIF LINUX}
 
   WinstRegHive = 'HKLM';
@@ -306,7 +298,7 @@ begin
           serviceresult := '';
         End;
       end;
-      osmain.startupmessages.Add('OpsiServiceConfigs: ' + serviceresult);
+      //osmain.startupmessages.Add('OpsiServiceConfigs: ' + copy(serviceresult,1,100);
       Result := serviceresult;
       if jsonIsValid(serviceresult) then
       begin

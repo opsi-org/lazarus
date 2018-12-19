@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, RTTIGrids, Forms, Controls, Graphics, Dialogs,
-  ExtCtrls, osdbasedata, PropEdits;
+  ExtCtrls, StdCtrls, osdbasedata, PropEdits;
 
 type
 
@@ -14,9 +14,12 @@ type
 
   TFOSDConfigdlg = class(TForm)
     FlowPanel1: TFlowPanel;
-    FlowPanel2: TFlowPanel;
+    MemoConfigHint: TMemo;
+    Panel1: TPanel;
     TIPropertyGrid1: TTIPropertyGrid;
     procedure FormActivate(Sender: TObject);
+    procedure TIPropertyGrid1Click(Sender: TObject);
+    procedure TIPropertyGrid1Exit(Sender: TObject);
   private
 
   public
@@ -37,6 +40,23 @@ begin
   TIPropertyGrid1.TIObject := myconfiguration;
   TIPropertyGrid1.CheckboxForBoolean:=true;
   //TIPropertyGrid1.PropertyEditorHook;
+end;
+
+procedure TFOSDConfigdlg.TIPropertyGrid1Click(Sender: TObject);
+var
+  activeprop : string;
+begin
+  if sender = TIPropertyGrid1 then
+  begin
+    activeprop := TIPropertyGrid1.GetActiveRow.Name;
+    MemoConfigHint.Text:= myconfigurationhints.Values[activeprop];
+  end;
+
+end;
+
+procedure TFOSDConfigdlg.TIPropertyGrid1Exit(Sender: TObject);
+begin
+
 end;
 
 initialization

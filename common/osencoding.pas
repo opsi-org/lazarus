@@ -365,7 +365,7 @@ begin
         length(additionalEncoding));
     supportedEncodings.Add(additionalEncoding);
   end;
-  for i:= 0 to supportedEncodings.Count-1 do writeln(supportedEncodings.Strings[i]);
+  //for i:= 0 to supportedEncodings.Count-1 do writeln(supportedEncodings.Strings[i]);
 end;
 
 procedure logSupportedEncodings;

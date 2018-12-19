@@ -17,7 +17,8 @@ uses
   fileutil,
   SysUtils,
   oslog,
-  osdbasedata;
+  osdbasedata,
+  oscheckbinarybitness;
 
 
 const
@@ -39,7 +40,7 @@ procedure get_installshieldmsi_info(myfilename: string; var mysetup : TSetupFile
 procedure get_advancedmsi_info(myfilename: string; var mysetup : TSetupFile);
 procedure get_nsis_info(myfilename: string; var mysetup : TSetupFile);
 //procedure stringsgrep(myfilename: string; verbose,skipzero: boolean);
-procedure Analyze(FileName: string; var mysetup : TSetupFile);
+procedure Analyze(FileName: string; var mysetup : TSetupFile; verbose: boolean);
 procedure grepmsi(instring: string);
 //procedure grepmarker(instring: string);
 function analyze_binary(myfilename: string; verbose, skipzero: boolean; var mysetup : TSetupFile): TKnownInstaller;
@@ -244,7 +245,7 @@ var
   sSearch: string;
   iPos: integer;
   destDir: string;
-  myBatch: string;
+  myArch: string;
   product: string;
   installerstr: string;
 
@@ -293,7 +294,10 @@ begin
   begin
    // will be done in analyze after get_*_info
   end;
-
+  myArch := getBinaryArchitecture(myfilename);
+  if myArch = '32' then mysetup.architecture:= a32;
+  if myArch = '64' then mysetup.architecture:= a64;
+  if myArch = 'unknown' then mysetup.architecture:= aUnknown;
 end; //get_aktProduct_general_info
 
 
@@ -320,9 +324,11 @@ begin
     SW_SHOWMINIMIZED, myexitcode) then
   begin
     mywrite('Failed to analyze: ' + myreport);
+    mysetup.analyze_progess := 0;
   end
   else
   begin
+    mysetup.analyze_progess := mysetup.analyze_progess + 10;
     mysetup.installerId := stMsi;
     //resultForm1.Edit_installer_type.Text := installerToInstallerstr(stMsi);
     //resultForm1.EditMSI_file.Text := myfilename;
@@ -337,6 +343,7 @@ begin
     for i := 0 to myoutlines.Count - 1 do
     begin
       mywrite(myoutlines.Strings[i]);
+      mysetup.analyze_progess := mysetup.analyze_progess + 1;
 
       // sSearch := 'Manufacturer: ';
       // iPos := Pos (sSearch, myoutlines.Strings[i]);
@@ -380,6 +387,7 @@ begin
           +installerArray[integer(mysetup.installerId)].unattendeduninstall;
 
   mywrite('get_MSI_info finished');
+  mysetup.analyze_progess := 100;
 
   Mywrite('Finished Analyzing MSI: ' + myfilename);
   resultForm1.PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
@@ -829,11 +837,12 @@ var
   MinLen, MaxLen: integer;
   CurrValue: string;
   i: integer;
-  size: longint;
+  size, fullsize: longint;
   buffer: array [0 .. 2047] of char;
   charsread: longint;
   msg: string;
   setuptype: TKnownInstaller;
+  progress, lastprogress : integer;
 
 begin
   MinLen := 5;
@@ -860,14 +869,35 @@ begin
   //markerEmbeddedMSI := false;
   //markerInstallShield := false;
   try
-    size := FileStream.Size;
+    {$IFDEF OSDGUI}
+        resultForm1.ProgressBarAnalyze.Position:=0;
+        procmess;
+        {$ENDIF OSDGUI}
+    fullsize := FileStream.Size;
+    size := fullsize;
+    lastprogress := 0;
+    progress := 0;
     while (size > 0) and (setupType = stUnknown) do
     begin
       charsread := FileStream.Read(buffer, sizeof(buffer));
       size := size - charsread;
+       {$IFDEF OSDGUI}
+       progress := 100 - trunc((size / fullsize) * 100);
+       if progress > lastprogress then
+       begin
+        //mysetup.analyze_progess := progress;
+        //resultForm1.TIProgressBarAnalyze_progress.Loaded;
+        //resultForm1.TIProgressBarAnalyze_progress.Repaint;
+        resultForm1.ProgressBarAnalyze.Position:=progress;
+        procmess;
+        LogDatei.log('AnaProgess: '+inttostr(progress),LLDebug);
+        lastprogress := progress;
+        {$ENDIF OSDGUI}
+       end;
 
       for i := 0 to charsread - 1 do
       begin
+
         charIn := buffer[i];
 
         // skipzero: handling of wide strings by ignoring zero byte
@@ -934,16 +964,17 @@ begin
 end;
 
 
-procedure Analyze(FileName: string; var mysetup : TSetupFile);
+procedure Analyze(FileName: string; var mysetup : TSetupFile;verbose: boolean);
 var
   setupType: TKnownInstaller;
-  verbose: boolean = True;
+
 begin
   //aktProduct.setup32FileNamePath := FileName;
   //resultform1.clearAllTabs;
   setupType := stUnknown;
   if '.msi' = lowercase(ExtractFileExt(FileName)) then
   begin
+    mysetup.analyze_progess:=10;
     get_aktProduct_general_info(stMsi, Filename,mysetup);
     get_msi_info(FileName,mysetup);
   end

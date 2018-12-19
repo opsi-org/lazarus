@@ -1,7 +1,7 @@
 object FOSDConfigdlg: TFOSDConfigdlg
-  Left = 611
+  Left = 691
   Height = 502
-  Top = 419
+  Top = 393
   Width = 533
   Caption = 'opsi-setup-detector Configuration'
   ClientHeight = 502
@@ -10,7 +10,7 @@ object FOSDConfigdlg: TFOSDConfigdlg
   LCLVersion = '1.8.4.0'
   object TIPropertyGrid1: TTIPropertyGrid
     Left = 0
-    Height = 386
+    Height = 346
     Top = 66
     Width = 533
     Align = alClient
@@ -19,6 +19,8 @@ object FOSDConfigdlg: TFOSDConfigdlg
     Filter = [tkInteger, tkChar, tkEnumeration, tkFloat, tkSet, tkMethod, tkSString, tkLString, tkAString, tkWString, tkVariant, tkArray, tkRecord, tkInterface, tkClass, tkObject, tkWChar, tkBool, tkInt64, tkQWord, tkDynArray, tkInterfaceRaw, tkProcVar, tkUString, tkUChar, tkHelper, tkFile, tkClassRef, tkPointer]
     Indent = 16
     NameFont.Color = clWindowText
+    OnClick = TIPropertyGrid1Click
+    OnExit = TIPropertyGrid1Exit
     PreferredSplitterX = 300
     SplitterX = 300
     ValueFont.Color = clMaroon
@@ -35,16 +37,24 @@ object FOSDConfigdlg: TFOSDConfigdlg
     FlowStyle = fsLeftRightTopBottom
     TabOrder = 1
   end
-  object FlowPanel2: TFlowPanel
+  object Panel1: TPanel
     Left = 0
-    Height = 50
-    Top = 452
+    Height = 90
+    Top = 412
     Width = 533
     Align = alBottom
-    Caption = 'FlowPanel2'
-    ControlList = <>
-    FlowLayout = tlTop
-    FlowStyle = fsLeftRightTopBottom
+    Caption = 'Panel1'
+    ClientHeight = 90
+    ClientWidth = 533
     TabOrder = 2
+    object MemoConfigHint: TMemo
+      Left = 1
+      Height = 88
+      Top = 1
+      Width = 531
+      Align = alClient
+      Color = 8454143
+      TabOrder = 0
+    end
   end
 end

@@ -3,6 +3,8 @@ unit osdform;
 // {$mode objfpc}{$H+}
 {$MODE DELPHI}{$H+}
 
+
+
 // ToDo:
 
 // - Description auslesen
@@ -37,32 +39,36 @@ uses
   osdhelper,
   osdanalyze,
   winpeimagereader,
-  lcltranslator, EditBtn, Spin, JSONPropStorage, Grids,
+  lcltranslator, EditBtn, Spin, JSONPropStorage, Grids, PairSplitter,
   oslog,
   osdbasedata,
   osdconfigdlg,
   osdcreate,
   fpjsonrtti,
-  osddlgnewdependency;
-
-
-
+  osddlgnewdependency,
+  osddlgnewproperty,
+  osparserhelper;
 
 type
 
-  TGuiMode = (analyzeOnly, singleAnalyzeCreate, twoAnalyzeCreate,
-    createTemplate, gmUnknown);
+  TGuiMode = (analyzeOnly, singleAnalyzeCreate, twoAnalyzeCreate_1,
+    twoAnalyzeCreate_2,createTemplate, gmUnknown);
 
   { TResultform1 }
 
   TResultform1 = class(TForm)
     BitBtnAddDep: TBitBtn;
+    BitBtnAddProp: TBitBtn;
     BitBtnDelDep: TBitBtn;
+    BitBtnDelProp: TBitBtn;
+    BitBtnEditProp: TBitBtn;
+    BitBtnEditDep: TBitBtn;
     BitBtnWorkBenchPath: TBitBtn;
     BitBtnRecheckWorkbench: TBitBtn;
     BtAnalyzeNextStep: TBitBtn;
     BtCreateProduct: TBitBtn;
-    BtProductNextStep: TBitBtn;
+    BtProduct1NextStep: TBitBtn;
+    BtProduct2NextStep: TBitBtn;
     BtSetup1NextStep: TBitBtn;
     BtSetup2NextStep: TBitBtn;
     BtSingleAnalyzeAndCreate: TBitBtn;
@@ -75,7 +81,6 @@ type
     BtATwonalyzeAndCreate: TBitBtn;
     BtCreateEmptyTemplate: TBitBtn;
     BtAnalyzeOnly: TBitBtn;
-    ButtonCreatePacket: TButton;
     CheckBoxBuild: TCheckBox;
     CheckBoxInstall: TCheckBox;
     CheckBoxQuiet: TCheckBox;
@@ -93,11 +98,12 @@ type
     FlowPanel18: TFlowPanel;
     FlowPanel19: TFlowPanel;
     FlowPanel2: TFlowPanel;
+    FlowPanel20: TFlowPanel;
+    FlowPanel21: TFlowPanel;
+    FlowPanel23: TFlowPanel;
     FlowPanel3: TFlowPanel;
     FlowPanel4: TFlowPanel;
     FlowPanel6: TFlowPanel;
-    FlowPanel8: TFlowPanel;
-    FlowPanel9: TFlowPanel;
     FlowPanelMsiId1: TFlowPanel;
     FlowPanelMST1: TFlowPanel;
     FlowPanelSetup32: TFlowPanel;
@@ -134,6 +140,7 @@ type
     Label73: TLabel;
     Label74: TLabel;
     Label75: TLabel;
+    Label76: TLabel;
     Label77: TLabel;
     Label50: TLabel;
     Label52: TLabel;
@@ -147,37 +154,54 @@ type
     Label82: TLabel;
     Label83: TLabel;
     Label84: TLabel;
+    Label85: TLabel;
     LabelWorkbenchOK: TLabel;
     LabelWorkbenchNotOK: TLabel;
     MemoDefault: TMemo;
     MenuItemConfig: TMenuItem;
     OpenDialogSetupfile: TOpenDialog;
-    PanelProcess: TPanel;
+    PairSplitter1: TPairSplitter;
+    PairSplitterSide1: TPairSplitterSide;
+    PairSplitterSide2: TPairSplitterSide;
+    Panel10: TPanel;
+    Panel12: TPanel;
+    Panel13: TPanel;
+    Panel4: TPanel;
+    Panel5: TPanel;
+    Panel6: TPanel;
+    Panel7: TPanel;
+    Panel8: TPanel;
+    Panel9: TPanel;
     PanelDefault: TPanel;
+    PanelProcess: TPanel;
     processing: TLabel;
     processStatement: TLabel;
     ProgressBar1: TProgressBar;
+    ProgressBarAnalyze: TProgressBar;
     RadioButtonAuto: TRadioButton;
     RadioButtonCreateOnly: TRadioButton;
     RadioButtonInteractive: TRadioButton;
     SBtnOpen: TSpeedButton;
     SBtnExit: TSpeedButton;
     SelectDirectoryDialog1: TSelectDirectoryDialog;
+    Splitter2: TSplitter;
+    Splitter3: TSplitter;
     StatusBar1: TStatusBar;
     StringGridDep: TStringGrid;
+    StringGridProp: TStringGrid;
+    TabSheetProduct2: TTabSheet;
     TabSheetCreate: TTabSheet;
     TabSheetStart: TTabSheet;
     TabSheetSetup2: TTabSheet;
     TabSheetProduct: TTabSheet;
     TabSheetSetup1: TTabSheet;
-    CheckBox1: TCheckBox;
     FileOpenSetupFile: TMenuItem;
     FileExit: TMenuItem;
     //FileCreateLogfile: TMenuItem;
     MenuItemAbout: TMenuItem;
     MenuItemFile: TMenuItem;
     MainMenu1: TMainMenu;
-    Memo1: TMemo;
+    MemoAnalyze: TMemo;
     OpenDialog1: TOpenDialog;
     PageControl1: TPageControl;
     Panel1: TPanel;
@@ -213,21 +237,28 @@ type
     TIEditSetupfile1: TTIEdit;
     TIEditMstFile1: TTIEdit;
     TIEditSetupFileSizeMB2: TTIEdit;
-    TIMemoDesc: TTIMemo;
     TIMemoAdvice: TTIMemo;
+    TIMemoDesc: TTIMemo;
+    TISpinEditPrio: TTISpinEdit;
     TISpinEditPackageVers: TTISpinEdit;
+    TITrackBarPrio: TTITrackBar;
     ToolBar1: TToolBar;
     mysetup1: TSetupFile;
 
     procedure BitBtnAddDepClick(Sender: TObject);
+    procedure BitBtnAddPropClick(Sender: TObject);
     procedure BitBtnDelDepClick(Sender: TObject);
+    procedure BitBtnDelPropClick(Sender: TObject);
+    procedure BitBtnEditDepClick(Sender: TObject);
+    procedure BitBtnEditPropClick(Sender: TObject);
     procedure BitBtnRecheckWorkbenchClick(Sender: TObject);
     procedure BitBtnWorkBenchPathClick(Sender: TObject);
     procedure BtAnalyzeNextStepClick(Sender: TObject);
     procedure BtATwonalyzeAndCreateClick(Sender: TObject);
     procedure BtCreateEmptyTemplateClick(Sender: TObject);
     procedure BtCreateProductClick(Sender: TObject);
-    procedure BtProductNextStepClick(Sender: TObject);
+    procedure BtProduct1NextStepClick(Sender: TObject);
+    procedure BtProduct2NextStepClick(Sender: TObject);
     procedure BtSetup1NextStepClick(Sender: TObject);
     procedure BtSetup2NextStepClick(Sender: TObject);
     procedure BtSingleAnalyzeAndCreateClick(Sender: TObject);
@@ -261,6 +292,8 @@ type
     procedure SBtnOpenClick(Sender: TObject);
     procedure SBtnExitClick(Sender: TObject);
     procedure TabSheetCreateShow(Sender: TObject);
+    procedure TISpinEditPrioChange(Sender: TObject);
+    procedure TITrackBarPrioChange(Sender: TObject);
   private
     { private declarations }
     useGuiMode: TGuiMode;
@@ -276,6 +309,7 @@ procedure main;
 procedure mywrite(line: string); overload;
 procedure mywrite(line: string; loglevel: integer); overload;
 procedure checkWorkbench;
+procedure procmess;
 
 
 var
@@ -320,12 +354,12 @@ var
 resourcestring
   sMBoxHeader = 'opsi setup detector';
   sHelpHeader = 'opsi setup detector Help';
-// dialogs
+  // dialogs
   sAskCreatePacket = 'Create packet %0:s?';
   sHelpFile = 'languages\Help.de.html';
   sLogfileInfo = 'Logfile created: %s';
 
- // Error messages
+  // Error messages
   sErrFldInstDirEmpty = 'Error: Field Install Directory is empty!';
   sErrFldMsiProductCodeEmpty = 'Error: Field MSI Product Code is empty!';
   sErrFldOpsiProductIdEmpty = 'Error: Field opsi Packet ID is empty!';
@@ -355,6 +389,10 @@ implementation
 //{$R manifest.rc}
 
 
+procedure procmess;
+begin
+  Application.ProcessMessages;
+end;
 
 procedure mywrite(line: string);
 begin
@@ -420,7 +458,8 @@ begin
       TIEditInstallDir1.Link.SetObjectAndProperty(SetupFiles[0], 'installDirectory');
       TIEditInstallDir2.Link.SetObjectAndProperty(SetupFiles[1], 'installDirectory');
       TIEditSetup1Command.Link.SetObjectAndProperty(SetupFiles[0], 'installCommandLine');
-      TIEditSetup1UnCommand.Link.SetObjectAndProperty(SetupFiles[0], 'uninstallCommandLine');
+      TIEditSetup1UnCommand.Link.SetObjectAndProperty(SetupFiles[0],
+        'uninstallCommandLine');
       TIEditSetup1UnProgram.Link.SetObjectAndProperty(SetupFiles[0], 'uninstallProg');
       (*
       TIEditProductIdS1.Link.SetObjectAndProperty(productdata, 'productId');
@@ -438,6 +477,8 @@ begin
       TICheckBoxlicenseRequired.Link.SetObjectAndProperty(productdata,
         'licenserequired');
       //TIGridDep.ListObject := dependencies;
+      TITrackBarPrio.Link.SetObjectAndProperty(productdata, 'priority');
+      TISpinEditPrio.Link.SetObjectAndProperty(productdata, 'priority');
     end;
     TIEditworkbenchpath.Link.SetObjectAndProperty(myconfiguration, 'workbench_path');
     Visible := True;
@@ -472,6 +513,8 @@ begin
   TIEditworkbenchpath.Link.TIObject := nil;
   TIEditSetup1Command.Link.TIObject := nil;
   //TIGridDep.ListObject := nil;
+  TITrackBarPrio.Link.TIObject := nil;
+  TISpinEditPrio.Link.TIObject := nil;
 end;
 
 
@@ -644,7 +687,7 @@ begin
     begin
       resultform1.Visible := True;
       Application.ProcessMessages;
-      Analyze(myfilename, aktProduct.SetupFiles[0]);
+      Analyze(myfilename, aktProduct.SetupFiles[0], True);
     end
     else
       analyze_binary(myfilename, False, False, aktProduct.SetupFiles[0]);
@@ -700,12 +743,12 @@ begin
       //BtAnalyzeNextStep.Glyph.LoadFromResourceName();
       BtSetup1NextStep.Enabled := True;
     end;
-    twoAnalyzeCreate:
+    twoAnalyzeCreate_1,twoAnalyzeCreate_2:
     begin
       TabSheetStart.Enabled := True;
       TabSheetAnalyze.Enabled := True;
       TabSheetSetup1.Enabled := True;
-      TabSheetSetup2.Enabled := False;
+      TabSheetSetup2.Enabled := True;
       TabSheetProduct.Enabled := True;
       BtSetup1NextStep.Enabled := True;
     end;
@@ -736,7 +779,7 @@ end;
 
 procedure TResultform1.MenuItemConfigClick(Sender: TObject);
 var
-   Streamer: TJSONStreamer;
+  Streamer: TJSONStreamer;
   JSONString: string;
 begin
   FOSDConfigdlg.ShowModal;
@@ -744,7 +787,7 @@ begin
   try
     Streamer.Options := Streamer.Options + [jsoTStringsAsArray];
     JSONString := Streamer.ObjectToJSONString(myconfiguration);
-    logdatei.log('After configdialog: '+JSONString, LLDebug);
+    logdatei.log('After configdialog: ' + JSONString, LLDebug);
   finally
     Streamer.Destroy;
   end;
@@ -760,7 +803,11 @@ begin
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Application.ProcessMessages;
     initaktproduct;
-    Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0]);
+    //TIProgressBarAnalyze_progress.Link.SetObjectAndProperty(aktProduct.SetupFiles[0], 'analyze_progress');
+    //TIProgressBarAnalyze_progress.Loaded;
+    MemoAnalyze.Clear;
+    Application.ProcessMessages;
+    Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
   end;
 end;
 
@@ -776,16 +823,39 @@ begin
 end;
 
 procedure TResultform1.BtATwonalyzeAndCreateClick(Sender: TObject);
+var
+  myprop : Tstringlist;
+  index : integer;
 begin
+  MessageDlg('opsi-setup-detector: Two File (32/64 Bit) Product',
+                  'First Select the 32 Bit Setup exe',
+                   mtInformation, [mbOK],'');
   OpenDialog1.FilterIndex := 1;   // setup
   if OpenDialog1.Execute then
   begin
-    useGuiMode := twoAnalyzeCreate;
+    useGuiMode := twoAnalyzeCreate_1;
     setGuiMode;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
+    MemoAnalyze.Clear;
     Application.ProcessMessages;
     initaktproduct;
-    Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0]);
+    // start add property
+    index := StringGridProp.RowCount;
+      Inc(index);
+      StringGridProp.RowCount := index;
+      myprop := TStringList.Create;
+      myprop.Add(IntToStr(index - 1));
+      myprop.Add('install_architecture');
+      myprop.Add('Which archtiecture (32 / 64 Bit) has to be installed?');
+      myprop.Add('unicode');  //type
+      myprop.Add('False');      //multivalue
+      myprop.Add('False');      //editable
+      myprop.Add('["32","64","system specific"]');      //possible values
+      myprop.Add('["system specific"]');      //default values
+      StringGridProp.Rows[index - 1].AddStrings(myprop);
+      myprop.Free;
+      // start add property
+    Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
   end;
 end;
 
@@ -802,11 +872,17 @@ begin
       PageControl1.ActivePage := resultForm1.TabSheetSetup1;
       Application.ProcessMessages;
     end;
-    twoAnalyzeCreate:
+    twoAnalyzeCreate_1:
     begin
       PageControl1.ActivePage := resultForm1.TabSheetSetup1;
       Application.ProcessMessages;
     end;
+    twoAnalyzeCreate_2:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetSetup2;
+      Application.ProcessMessages;
+    end;
+
     createTemplate:
     begin
       PageControl1.ActivePage := resultForm1.TabSheetSetup1;
@@ -815,7 +891,7 @@ begin
     gmUnknown:
     begin
       // we should never be here
-      logdatei.log('Error: in BtSetup1NextStepClick guimode: gmUnknown',LLError);
+      logdatei.log('Error: in BtSetup1NextStepClick guimode: gmUnknown', LLError);
     end;
   end;
 end;
@@ -834,17 +910,21 @@ end;
 
 procedure TResultform1.BitBtnAddDepClick(Sender: TObject);
 var
-  mydep : Tstringlist;
-  index : integer;
+  mydep: TStringList;
+  index: integer;
 begin
-  if FNewDepDlg.ShowModal = mrOK then
+  FNewDepDlg.ComboBoxActState.Text := '';
+  FNewDepDlg.RadioButtonState.Checked := True;
+  FNewDepDlg.RadioButtonActionChange(Sender);
+  procmess;
+  if FNewDepDlg.ShowModal = mrOk then
   begin
     // add
     index := StringGridDep.RowCount;
-    inc(index);
-    StringGridDep.RowCount:= index;
-    mydep := Tstringlist.Create;
-    mydep.Add(inttostr(index-1));
+    Inc(index);
+    StringGridDep.RowCount := index;
+    mydep := TStringList.Create;
+    mydep.Add(IntToStr(index - 1));
     mydep.Add(FNewDepDlg.Editproductid.Text);
     if FNewDepDlg.RadioButtonAction.Checked then
     begin
@@ -857,32 +937,291 @@ begin
       mydep.Add('');
     end;
     mydep.Add(FNewDepDlg.ComboBoxReqType.Text);
-    StringGridDep.Rows[index-1].AddStrings(mydep);
+    StringGridDep.Rows[index - 1].AddStrings(mydep);
   end
   else
   begin
     // cancel add
-
   end;
-  //TIGridDep.ReloadTIList;
+end;
+
+procedure TResultform1.BitBtnAddPropClick(Sender: TObject);
+// add property
+var
+  myprop: TStringList;
+  index: integer;
+  i: integer;
+  tmpliststr: string;
+  tmpstr : string;
+  exists : boolean;
+begin
+  FNewPropDlg.RadioButtonPropBool.Checked := True;
+  FNewPropDlg.RadioButtonPropStringChange(Sender);
+  procmess;
+  if FNewPropDlg.ShowModal = mrOk then
+  begin
+    // add
+    index := StringGridProp.RowCount;
+    tmpstr := FNewPropDlg.EditPropName.Text;
+    exists := false;
+    for i:= 0 to index-1 do
+      if lowercase(tmpstr) = lowercase(StringGridProp.Cells[1, i]) then exists := true;
+    if exists then
+      MessageDlg('opsi-setup-detector: Property Editor: Error',
+                  'property Id: '+FNewPropDlg.EditPropName.Text+' exists. Duplicates not allowed.',
+                   mtError, [mbOK],'')
+    else
+    begin
+      Inc(index);
+      StringGridProp.RowCount := index;
+      myprop := TStringList.Create;
+      myprop.Add(IntToStr(index - 1));
+      myprop.Add(FNewPropDlg.EditPropName.Text);
+      myprop.Add(FNewPropDlg.MemoDesc.Text);
+      if FNewPropDlg.RadioButtonPropBool.Checked then
+      begin
+        myprop.Add('bool');  //type
+        myprop.Add('');      //multivalue
+        myprop.Add('');      //editable
+        myprop.Add('');      //possible values
+        myprop.Add(FNewPropDlg.ListBoxPropDefVal.Items[
+          FNewPropDlg.ListBoxPropDefVal.ItemIndex]);   //default values
+      end
+      else
+      begin
+        myprop.Add('unicode');  //type
+        if FNewPropDlg.CheckBoxPropMultiVal.Checked then
+          myprop.Add('True')      //multivalue
+        else
+          myprop.Add('False');      //multivalue
+        if FNewPropDlg.CheckBoxPropEdit.Checked then
+          myprop.Add('True')      //editable
+        else
+          myprop.Add('False');      //editable
+        tmpliststr := '[';
+        for i := 0 to FNewPropDlg.ListBoxPropPosVal.Count - 1 do
+          tmpliststr := tmpliststr + '"' + FNewPropDlg.ListBoxPropPosVal.Items[i] + '",';
+        // remove trailing comma
+        RemoveTrailingChars(tmpliststr, [',']);
+        tmpliststr := tmpliststr + ']';
+        myprop.Add(tmpliststr);      //possible values
+        tmpliststr := '[';
+        for i := 0 to FNewPropDlg.ListBoxPropDefVal.Count - 1 do
+          if FNewPropDlg.ListBoxPropDefVal.Selected[i] then
+            tmpliststr := tmpliststr + '"' + FNewPropDlg.ListBoxPropDefVal.Items[i] + '",';
+        // remove trailing comma
+        RemoveTrailingChars(tmpliststr, [',']);
+        tmpliststr := tmpliststr + ']';
+        myprop.Add(tmpliststr);      //default values
+      end;
+      StringGridProp.Rows[index - 1].AddStrings(myprop);
+    end;
+  end
+  else
+  begin
+    // cancel add
+  end;
 end;
 
 procedure TResultform1.BitBtnDelDepClick(Sender: TObject);
 var
-  range : integer;
-  str : string;
+  range: integer;
+  str: string;
 begin
-  (*
-  range := TIGridDep.SelectedRangeCount;
-  if TIGridDep.SelectedRangeCount = 0 then
-   ShowMessage('No Dependency was selected')
+  StringGridDep.DeleteRow(StringGridDep.Row);
+end;
+
+procedure TResultform1.BitBtnDelPropClick(Sender: TObject);
+begin
+  // delete property
+  StringGridProp.DeleteRow(StringGridProp.Row);
+end;
+
+procedure TResultform1.BitBtnEditDepClick(Sender: TObject);
+var
+  mydep: TStringList;
+  x, y: integer;
+  aPoint: TPoint;
+begin
+  y := StringGridDep.Row;
+  if y > 0 then
+  begin
+    FNewDepDlg.Editproductid.Text := StringGridDep.Cells[1, y];
+    if StringGridDep.Cells[2, y] = '' then
+    begin
+      FNewDepDlg.RadioButtonState.Checked := False;
+      FNewDepDlg.RadioButtonAction.Checked := True;
+      FNewDepDlg.ComboBoxActState.Text := StringGridDep.Cells[3, y];
+    end
+    else
+    begin
+      FNewDepDlg.RadioButtonState.Checked := True;
+      FNewDepDlg.RadioButtonAction.Checked := False;
+      FNewDepDlg.ComboBoxActState.Text := StringGridDep.Cells[2, y];
+    end;
+    FNewDepDlg.RadioButtonActionChange(Sender);
+    procmess;
+
+    FNewDepDlg.ComboBoxReqType.Text := StringGridDep.Cells[4, y];
+    if FNewDepDlg.ShowModal = mrOk then
+    begin
+      // modify
+      StringGridDep.Cells[1, y] := FNewDepDlg.Editproductid.Text;
+      if FNewDepDlg.RadioButtonAction.Checked then
+      begin
+        StringGridDep.Cells[2, y] := '';
+        StringGridDep.Cells[3, y] := FNewDepDlg.ComboBoxActState.Text;
+      end
+      else
+      begin
+        StringGridDep.Cells[2, y] := FNewDepDlg.ComboBoxActState.Text;
+        StringGridDep.Cells[3, y] := '';
+      end;
+      StringGridDep.Cells[4, y] := FNewDepDlg.ComboBoxReqType.Text;
+    end
+    else
+    begin
+      // cancel add
+    end;
+  end
   else
   begin
-    //TIGridDep.;
-    str := TIGridDep.GetTIObject(0).GetNamePath;
+    MessageDlg('opsi-setup-detector: Dependency Editor: Error',
+                  'No Dependency selected.',
+                   mtError, [mbOK],'')
   end;
-  *)
+
 end;
+
+procedure TResultform1.BitBtnEditPropClick(Sender: TObject);
+// edit property
+var
+  myprop: TStringList;
+  index: integer;
+  i: integer;
+  tmpliststr: string;
+  tmpstr: string;
+  errorstr : string;
+  remaining: string;
+  x, y: integer;
+  aPoint: TPoint;
+begin
+  y := StringGridProp.Row;
+  if y > 0 then
+  begin
+    FNewPropDlg.ListBoxPropPosVal.Clear;
+    FNewPropDlg.ListBoxPropDefVal.Clear;
+    FNewPropDlg.EditPropName.Text := StringGridProp.Cells[1, y];
+    FNewPropDlg.MemoDesc.Text := StringGridProp.Cells[2, y];
+    if StringGridProp.Cells[3, y] = 'bool' then
+    begin
+      FNewPropDlg.RadioButtonPropString.Checked := False;
+      FNewPropDlg.RadioButtonPropBool.Checked := True;
+      FNewPropDlg.RadioButtonPropStringChange(Sender);
+      procmess;
+      FNewPropDlg.CheckBoxPropMultiVal.Checked := False;
+      FNewPropDlg.CheckBoxPropEdit.Checked := False;
+      if StringGridProp.Cells[7, y] = 'True' then
+        FNewPropDlg.ListBoxPropDefVal.ItemIndex := 0
+      else
+        FNewPropDlg.ListBoxPropDefVal.ItemIndex := 1;
+    end
+    else  // unicode
+    begin
+      FNewPropDlg.RadioButtonPropString.Checked := True;
+      FNewPropDlg.RadioButtonPropBool.Checked := False;
+      FNewPropDlg.RadioButtonPropStringChange(Sender);
+      procmess;
+      if StringGridProp.Cells[4, y] = 'True' then
+        FNewPropDlg.CheckBoxPropMultiVal.Checked := True
+      else
+        FNewPropDlg.CheckBoxPropMultiVal.Checked := False;
+      FNewPropDlg.CheckBoxPropMultiValChange(sender);
+      if StringGridProp.Cells[5, y] = 'True' then
+        FNewPropDlg.CheckBoxPropEdit.Checked := True
+      else
+        FNewPropDlg.CheckBoxPropEdit.Checked := False;
+      // pos values
+      tmpliststr := StringGridProp.Cells[6, y];
+      remaining := opsiunquotestr2(tmpliststr, '[]');
+      while remaining <> '' do
+      begin
+        GetWordOrStringConstant(remaining, tmpstr, remaining, [',']);
+        tmpstr := opsiunquotestr2(tmpstr, '"');
+        if Skip(',',remaining,remaining,errorstr) then ;
+        FNewPropDlg.ListBoxPropPosVal.Items.Add(tmpstr);
+        FNewPropDlg.ListBoxPropDefVal.Items.Add(tmpstr);
+      end;
+      procmess;
+      // def values
+      tmpliststr := StringGridProp.Cells[7, y];
+      remaining := opsiunquotestr2(tmpliststr, '[]');
+      while remaining <> '' do
+      begin
+        GetWordOrStringConstant(remaining, tmpstr, remaining, [',']);
+        tmpstr := opsiunquotestr2(tmpstr, '"');
+        if Skip(',',remaining,remaining,errorstr) then ;
+        i := FNewPropDlg.ListBoxPropDefVal.Items.IndexOf(tmpstr);
+        if i > -1 then FNewPropDlg.ListBoxPropDefVal.Selected[i] := True;
+      end;
+    end;
+    if FNewPropDlg.ShowModal = mrOk then
+    begin
+      // modify
+      StringGridProp.Cells[1, y] := FNewPropDlg.EditPropName.Text;
+      StringGridProp.Cells[2, y] := FNewPropDlg.MemoDesc.Text;
+      if FNewPropDlg.RadioButtonPropBool.Checked then
+      begin
+        StringGridProp.Cells[3, y] := 'bool'; //type
+        StringGridProp.Cells[4, y] := '';  //multivalue
+        StringGridProp.Cells[5, y] := ''; //editable
+        StringGridProp.Cells[6, y] := ''; //possible values
+        StringGridProp.Cells[7, y] :=
+          FNewPropDlg.ListBoxPropDefVal.Items[FNewPropDlg.ListBoxPropDefVal.ItemIndex];
+        //default values
+      end
+      else
+      begin
+        StringGridProp.Cells[3, y] := 'unicode';  //type
+        if FNewPropDlg.CheckBoxPropMultiVal.Checked then
+          StringGridProp.Cells[4, y] := 'True'      //multivalue
+        else
+          StringGridProp.Cells[4, y] := 'False';      //multivalue
+        if FNewPropDlg.CheckBoxPropEdit.Checked then
+          StringGridProp.Cells[5, y] := 'True'      //editable
+        else
+          StringGridProp.Cells[5, y] := 'False';      //editable
+        tmpliststr := '[';
+        for i := 0 to FNewPropDlg.ListBoxPropPosVal.Count - 1 do
+          tmpliststr := tmpliststr + '"' + FNewPropDlg.ListBoxPropPosVal.Items[i] + '",';
+        // remove trailing comma
+        RemoveTrailingChars(tmpliststr, [',']);
+        tmpliststr := tmpliststr + ']';
+        StringGridProp.Cells[6, y] := tmpliststr;      //possible values
+        tmpliststr := '[';
+        for i := 0 to FNewPropDlg.ListBoxPropDefVal.Count - 1 do
+          if FNewPropDlg.ListBoxPropDefVal.Selected[i] then
+            tmpliststr := tmpliststr + '"' + FNewPropDlg.ListBoxPropDefVal.Items[i] + '",';
+        // remove trailing comma
+        RemoveTrailingChars(tmpliststr, [',']);
+        tmpliststr := tmpliststr + ']';
+        StringGridProp.Cells[7, y] := tmpliststr;      //default values
+      end;
+    end
+    else
+    begin
+      // cancel add
+    end;
+  end
+  else
+  begin
+    MessageDlg('opsi-setup-detector: Property Editor: Error',
+                  'No Property selected.',
+                   mtError, [mbOK],'')
+  end;
+
+end;
+
 
 procedure TResultform1.BtCreateEmptyTemplateClick(Sender: TObject);
 begin
@@ -898,27 +1237,58 @@ end;
 procedure TResultform1.BtCreateProductClick(Sender: TObject);
 begin
   try
-    PanelProcess.Visible:=true;
+    PanelProcess.Visible := True;
     createProductStructure;
   finally
-    PanelProcess.Visible:=false;
+    PanelProcess.Visible := False;
   end;
 end;
 
-procedure TResultform1.BtProductNextStepClick(Sender: TObject);
+procedure TResultform1.BtProduct1NextStepClick(Sender: TObject);
 begin
   case useGuiMode of
     analyzeOnly:
     begin
       // we should never be here
-      logdatei.log('Error: in BtProductNextStepClick guimode: analyzeOnly',LLError);
+      logdatei.log('Error: in BtProductNextStepClick guimode: analyzeOnly', LLError);
+    end;
+    singleAnalyzeCreate:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetProduct2;
+      Application.ProcessMessages;
+    end;
+    twoAnalyzeCreate_1,twoAnalyzeCreate_2:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetProduct2;
+      Application.ProcessMessages;
+    end;
+    createTemplate:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetProduct2;
+      Application.ProcessMessages;
+    end;
+    gmUnknown:
+    begin
+      // we should never be here
+      logdatei.log('Error: in BtProductNextStepClick guimode: gmUnknown', LLError);
+    end;
+  end;
+end;
+
+procedure TResultform1.BtProduct2NextStepClick(Sender: TObject);
+begin
+  case useGuiMode of
+    analyzeOnly:
+    begin
+      // we should never be here
+      logdatei.log('Error: in BtProductNextStepClick guimode: analyzeOnly', LLError);
     end;
     singleAnalyzeCreate:
     begin
       PageControl1.ActivePage := resultForm1.TabSheetCreate;
       Application.ProcessMessages;
     end;
-    twoAnalyzeCreate:
+    twoAnalyzeCreate_1,twoAnalyzeCreate_2:
     begin
       PageControl1.ActivePage := resultForm1.TabSheetCreate;
       Application.ProcessMessages;
@@ -931,7 +1301,7 @@ begin
     gmUnknown:
     begin
       // we should never be here
-      logdatei.log('Error: in BtProductNextStepClick guimode: gmUnknown',LLError);
+      logdatei.log('Error: in BtProductNextStepClick guimode: gmUnknown', LLError);
     end;
   end;
 end;
@@ -948,22 +1318,34 @@ begin
       PageControl1.ActivePage := resultForm1.TabSheetProduct;
       Application.ProcessMessages;
     end;
-    twoAnalyzeCreate:
+    twoAnalyzeCreate_1:
     begin
-      PageControl1.ActivePage := resultForm1.TabSheetSetup2;
-      Application.ProcessMessages;
+      useGuiMode := twoAnalyzeCreate_2;
+      MessageDlg('opsi-setup-detector: Two File (32/64 Bit) Product',
+                  'Now Select the 64 Bit Setup exe',
+                   mtInformation, [mbOK],'');
+      OpenDialog1.FilterIndex := 1;   // setup
+      if OpenDialog1.Execute then
+      begin
+        PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
+        MemoAnalyze.Clear;
+        Application.ProcessMessages;
+        Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[1], True);
+      end;
+      //PageControl1.ActivePage := resultForm1.TabSheetSetup2;
+      //Application.ProcessMessages;
     end;
     createTemplate:
     begin
       // we should never be here
-      logdatei.log('Error: in BtSetup1NextStepClick guimode: createTemplate',LLError);
+      logdatei.log('Error: in BtSetup1NextStepClick guimode: createTemplate', LLError);
       //PageControl1.ActivePage := resultForm1.TabSheetSetup1;
       //Application.ProcessMessages;
     end;
     gmUnknown:
     begin
       // we should never be here
-      logdatei.log('Error: in BtSetup1NextStepClick guimode: gmUnknown',LLError);
+      logdatei.log('Error: in BtSetup1NextStepClick guimode: gmUnknown', LLError);
     end;
   end;
 end;
@@ -974,14 +1356,15 @@ begin
     analyzeOnly:
     begin
       // we should never be here
-      logdatei.log('Error: in BtSetup2NextStepClick guimode: analyzeOnly',LLError);
+      logdatei.log('Error: in BtSetup2NextStepClick guimode: analyzeOnly', LLError);
     end;
     singleAnalyzeCreate:
     begin
       // we should never be here
-      logdatei.log('Error: in BtSetup2NextStepClick guimode: singleAnalyzeCreate',LLError);
+      logdatei.log('Error: in BtSetup2NextStepClick guimode: singleAnalyzeCreate',
+        LLError);
     end;
-    twoAnalyzeCreate:
+    twoAnalyzeCreate_2:
     begin
       PageControl1.ActivePage := resultForm1.TabSheetProduct;
       Application.ProcessMessages;
@@ -989,14 +1372,14 @@ begin
     createTemplate:
     begin
       // we should never be here
-      logdatei.log('Error: in BtSetup1NextStepClick guimode: createTemplate',LLError);
+      logdatei.log('Error: in BtSetup1NextStepClick guimode: createTemplate', LLError);
       //PageControl1.ActivePage := resultForm1.TabSheetSetup1;
       //Application.ProcessMessages;
     end;
     gmUnknown:
     begin
       // we should never be here
-      logdatei.log('Error: in BtSetup2NextStepClick guimode: gmUnknown',LLError);
+      logdatei.log('Error: in BtSetup2NextStepClick guimode: gmUnknown', LLError);
     end;
   end;
 end;
@@ -1016,11 +1399,9 @@ begin
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Application.ProcessMessages;
     initaktproduct;
-    Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0]);
+    Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
   end;
 end;
-
-
 
 
 
@@ -1121,9 +1502,9 @@ procedure TResultform1.MenuItemAboutClick(Sender: TObject);
 var
   progname: string;
   msg: string;
-  list : Tstringlist;
+  list: TStringList;
 begin
-  list := TStringlist.Create;
+  list := TStringList.Create;
   progname := ExtractFileName(ParamStr(0));
   msg := progname + ' Version: ' + myVersion;
   list.Add(msg);
@@ -1132,8 +1513,8 @@ begin
   list.Add('');
   list.add('Icons from Iconic (https://useiconic.com/) under MIT Licnse.');
   //list.add('https://github.com/iconic/open-iconic/blob/master/ICON-LICENSE');
-  ShowMessage(list.text);
-  list.free;
+  ShowMessage(list.Text);
+  list.Free;
 
   //Application.MessageBox(PChar(msg), PChar(sMBoxHeader), MB_OK);
 
@@ -1165,7 +1546,7 @@ end;
 procedure TResultform1.FormCreate(Sender: TObject);
 var
   myimage: TImage;
-  str : string;
+  str: string;
 begin
   main;
   //(*
@@ -1187,22 +1568,21 @@ begin
   PageControl1.Images.AddLazarusResource('FLASH-2X');
   *)
   //(*
-  TabSheetStart.ImageIndex:=0;
+  TabSheetStart.ImageIndex := 0;
   //(*
-  TabSheetAnalyze.ImageIndex:=1;
-  TabSheetSetup1.ImageIndex:=2;
-  TabSheetSetup2.ImageIndex:=2;
-  TabSheetProduct.ImageIndex:=3;
-  TabSheetCreate.ImageIndex:=4;
+  TabSheetAnalyze.ImageIndex := 1;
+  TabSheetSetup1.ImageIndex := 2;
+  TabSheetSetup2.ImageIndex := 2;
+  TabSheetProduct.ImageIndex := 3;
+  TabSheetProduct2.ImageIndex := 3;
+  TabSheetCreate.ImageIndex := 4;
   //*)
 end;
 
 procedure TResultform1.memoadd(line: string);
 begin
-  memo1.append(line);
+  MemoAnalyze.append(line);
 end;
-
-
 
 
 
@@ -1238,7 +1618,7 @@ begin
   begin
     initaktproduct;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
-    Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0]);
+    Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
   end;
 end;
 
@@ -1254,19 +1634,33 @@ procedure checkWorkbench;
 begin
   if DirectoryExists(myconfiguration.workbench_Path) then
   begin
-    resultForm1.LabelWorkbenchOK.Visible:=true;
-    resultForm1.LabelWorkbenchNotOK.Visible:=false;
+    resultForm1.LabelWorkbenchOK.Visible := True;
+    resultForm1.LabelWorkbenchNotOK.Visible := False;
   end
   else
   begin
-    resultForm1.LabelWorkbenchOK.Visible:=false;
-    resultForm1.LabelWorkbenchNotOK.Visible:=true;
+    resultForm1.LabelWorkbenchOK.Visible := False;
+    resultForm1.LabelWorkbenchNotOK.Visible := True;
   end;
 end;
 
 procedure TResultform1.TabSheetCreateShow(Sender: TObject);
 begin
   checkWorkbench;
+end;
+
+procedure TResultform1.TISpinEditPrioChange(Sender: TObject);
+begin
+  TITrackBarPrio.Loaded;
+  TITrackBarPrio.Refresh;
+  procmess;
+end;
+
+procedure TResultform1.TITrackBarPrioChange(Sender: TObject);
+begin
+  TISpinEditPrio.Loaded;
+  TISpinEditPrio.Refresh;
+  procmess;
 end;
 
 
