@@ -5,7 +5,7 @@ object FOnTop: TFOnTop
   Width = 810
   BorderIcons = []
   BorderStyle = bsNone
-  Caption = 'FOnTop'
+  Caption = 'uibtime - ontop'
   ClientHeight = 239
   ClientWidth = 810
   Color = clBtnFace

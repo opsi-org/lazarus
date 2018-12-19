@@ -561,6 +561,7 @@ begin
         ' is regularly exiting. Time ' + FormatDateTime(
         'yyyy-mm-dd  hh:mm:ss ', now) + '.', LLessential);
 
+      LogDatei.Close;
       sleep(1000);
       LogDatei.Free;
       LogDatei := nil;

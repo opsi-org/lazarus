@@ -10,6 +10,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   Classes,
   SysUtils,
   CustApp,
+  oslog,
   odg_main;
 
 type
@@ -107,7 +108,10 @@ var
     filename: string;
   begin
     filename := ExtractFileName(ParamStr(0));
-    writeln(ParamStr(0));
+    //writeln(ParamStr(0));
+    writeln('Creates asciidoc from commented opsiscript library code');
+    writeln(' and calls asciidoctor to convert asciidoc to html');
+    writeln('and shows created html file in browser.');
     writeln(filename);
     writeln('Version: ' + myversion);
     writeln('Usage:');

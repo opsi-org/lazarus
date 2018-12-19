@@ -491,6 +491,7 @@ type
     function withRoamingProfiles: boolean;
     function linuxAgentActivated: boolean;
     function isConnected: boolean;
+    function isConnected2(loglist : TStringlist): boolean;
     function getMapOfLoginscripts2Run(allscripts: boolean): TStringList;
     function getMapOfProductActionRequests: TStringList;
     function getFileFromDepot(filename: string; toStringList: boolean;
@@ -1460,7 +1461,7 @@ begin
     begin
       SSLOptions.VerifyMode := [];
       SSLOptions.VerifyDepth := 0;
-      LogDatei.log('Working with ssl protocol: sslvSSLv23 - auto negotation', LLInfo);
+      LogDatei.log('Working with ssl protocol: sslvSSLv23 - auto negotation', LLDebug);
       // sslvSSLv23 means: try all possible Versions
       SSLOptions.Method := sslvSSLv23;
       SSLOptions.Mode := sslmUnassigned;
@@ -1497,6 +1498,7 @@ begin
     end;
     //LogDatei.log('createSocket-BoundIp: '+IdSSLIOHandlerSocket.BoundIP, LLdebug2);
     LogDatei.log('createSocket-BoundIp: ' + IdHTTP.BoundIP, LLdebug2);
+    LogDatei.log('Using OpenSSL Version:: ' + OpenSSLVersion, LLdebug);
   except
     on ex: Exception do
     begin
@@ -3016,6 +3018,49 @@ begin
     omc.Free;
   end;
 end;
+
+function TOpsi4Data.isConnected2(loglist : TStringlist): boolean;
+var
+  omc: TOpsiMethodCall;
+begin
+  Result := False;
+  FOpsiInformation := nil;
+  if FOpsiInformation = nil then
+  begin
+    try
+    loglist.Append('Starting Servicecall: backend_info');
+    omc := TOpsiMethodCall.Create('backend_info', []);
+    if omc <> nil then
+    begin
+      try
+        FOpsiInformation := FjsonExecutioner.retrieveJsonObject(omc);
+        if (FOpsiInformation <> nil) and (FOpsiInformation.O['result'] <>
+          nil) then
+        begin
+          Result := True;
+          loglist.Append('Success Servicecall: backend_info');
+        end
+        else
+          loglist.Append('Problem getting backend_info from service');
+      except
+        loglist.Append('Exeception getting backend_info from service');
+      end;
+    end
+    else
+      loglist.Append('Problem creating OpsiMethodCall backend_info');
+
+    except
+      on e: exception do
+      Begin
+        loglist.Append('Exception in isConnected2: '
+                       + e.message +' '+ DateTimeToStr(Now));
+        Result := False;
+      End;
+    end;
+    if Assigned(omc) then omc.Free;
+  end;
+end;
+
 
 
 function TOpsi4Data.linuxAgentActivated: boolean;

@@ -4,6 +4,109 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
+
+opsi-winst/opsi-script (4.12.0.32) stable; urgency=low
+
+  * osconf: no more OpsiServiceConfigs: in log
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 25 10 2018:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.0.31) stable; urgency=low
+
+  * new paths for Linux:
+     osconf: opsiscriptconfinit = '/etc/opsi-script/opsi-script.conf';
+     osbatchgui: skindirectoryDefault = '/usr/share/opsi-script/skin';
+     osbatchgui: skindirectoryCustomWin = '/usr/share/opsi-script/customskin';
+     osparser: // search in /usr/share/opsi-script/lib
+     osparser: '%opsiLogDir%' = '/var/log/opsi-script'
+     oslog: StandardLogPath := '/var/log/opsi-script/';
+  * osencoding: do not write out supported encodings; fixes #3700
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 17 10 2018:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.0.30) stable; urgency=low
+
+  * osparser: fix for close log file after script finished:
+     (only in interactive mode)
+  * oslog: all loglines trimright; fixes #3708
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 15 10 2018:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.0.29) stable; urgency=low
+
+  * osparser: doRegitryHack*: remove HKCU on flag_all_usrclass
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 25 Sep 2018:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.0.28) stable; urgency=low
+
+  * osconf: (fix): get ScriptErrorMessages, AutoActivityDisplay
+  * osparser: move log message 'line is starting with' to log_prog
+  * osinteractivegui: radiobutton 'NewFile' visible
+  * osinteractivegui: at execute viewlist: use CreateTheLogfile
+  * osinteractivegui: at execute_button: use CreateTheLogfile
+  * osparser: close log file after script finished
+  * switch to lazarus 1.8.4.
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri, 14 Sep 2018:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.0.27) stable; urgency=low
+
+  * osparser: (fix) registry: new parameter /AllUsrClassDats
+       new function doRegistryAllUsrClassDats ; fix from Terry Strooband (thank you)
+       flag_all_usrclass
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 10 Sep 2018:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.12.0.26) stable; urgency=low
+
+  * osparser: more log_prog in folderlink and getstring
+  * osparser: reporterror: catch unknown origin and exceptions ; references #3655
+  * osparser: doAktionen: endif: catch exception in log message ; references #3655
+  * osparser: execDosBatch: log8 temp file content
+  * osparser: executeWith: log8 temp file content
+  * osparser: execPowershellCall: log executing ; fixes #3621
+  * osparser: doAktionen: registry: Ignoring parameter /32bit for /AllNTUserdats. ; fixes #3643
+  * osjson: jsonAsArrayToStringList: "[true]" now results to "true" ; fixes #3627
+  * oswebservice: createSocket: log openssl version
+  * osfunclin: getLinuxDistroType: read /etc/os-release  ; fixes #3651
+  * osparserhelper: GetOuterFunctionOrExp
+  * OsDefinedFunction.parseCallParameter: handle functions as parameter ; fixes #3623
+  * osparser: registerSectionOrigins: fix origin for external sub sections
+  * osparser: registry: new parameter /AllUsrClassDats
+       new function doRegistryAllUsrClassDats ; fix from Terry Strooband (thank you)
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 28 Aug 2018:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.0.25) stable; urgency=low
+
+  * osconf: readConfigFromService: more debug and try-except with
+  * oswebservice: function isConnected2(loglist : TStringlist): boolean;
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 17 Jul 2018:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.0.24) stable; urgency=low
+
+  * osconf: readConfigFromService: more debug and try-except
+  * update indy 5455 to 5464
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 16 Jul 2018:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.0.23) stable; urgency=low
+
+  * switch High DPI support off for Win7 (did not work correctly)
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 12 Jul 2018:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.0.22) stable; urgency=low
+
+  * osparser: doAktionen: importlib; remove double call of
+    Script.FSectionNameList.Add(importFunctionName) fixes #3560
+  * OsDefinedFunction.parseCallParameter: fixes #3569
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 06 Jun 2018:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.0.21) stable; urgency=low
 
   * osconf: default for debuglib = true

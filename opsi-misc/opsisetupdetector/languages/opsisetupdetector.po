@@ -1,0 +1,974 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: osdform.saskcreatepacket
+msgctxt "osdform.saskcreatepacket"
+msgid "Create packet %0:s?"
+msgstr ""
+
+#: osdform.serrextractmsifailed
+msgctxt "osdform.serrextractmsifailed"
+msgid "Error: extracting MSI from %s failed!"
+msgstr ""
+
+#: osdform.serrfldinstdirempty
+msgctxt "osdform.serrfldinstdirempty"
+msgid "Error: Field Install Directory is empty!"
+msgstr ""
+
+#: osdform.serrfldmsiproductcodeempty
+msgctxt "osdform.serrfldmsiproductcodeempty"
+msgid "Error: Field MSI Product Code is empty!"
+msgstr ""
+
+#: osdform.serrfldopsiproductidempty
+msgctxt "osdform.serrfldopsiproductidempty"
+msgid "Error: Field opsi Packet ID is empty!"
+msgstr ""
+
+#: osdform.serrfldopsiproductversionempty
+msgctxt "osdform.serrfldopsiproductversionempty"
+msgid "Error: Field Product Version is empty!"
+msgstr ""
+
+#: osdform.serrfldsetupempty
+msgctxt "osdform.serrfldsetupempty"
+msgid "Error: No setup file selected!"
+msgstr ""
+
+#: osdform.serrmsinotfound
+msgctxt "osdform.serrmsinotfound"
+msgid "Error: MSI file does not exist!"
+msgstr ""
+
+#: osdform.serrmstnotfound
+msgctxt "osdform.serrmstnotfound"
+msgid "Error: MST file does not exist in the MSI-directory!"
+msgstr ""
+
+#: osdform.serropsipackagebuildererrcode
+msgctxt "osdform.serropsipackagebuildererrcode"
+msgid "Error invoking OPSI Package Builder (error code=%0:d). Please remove quiet option to check for further information."
+msgstr ""
+
+#: osdform.serropsipackagebuilderstart
+msgctxt "osdform.serropsipackagebuilderstart"
+msgid "Error invoking opsi package builder"
+msgstr ""
+
+#: osdform.serrpacketbasedirnotfound
+msgctxt "osdform.serrpacketbasedirnotfound"
+msgid "Error: Packet BaseDir does not exist!"
+msgstr ""
+
+#: osdform.serrpacketdirexists
+msgctxt "osdform.serrpacketdirexists"
+msgid "Error: opsi packet folder %s already exists!"
+msgstr ""
+
+#: osdform.serrproductversioninvalid
+msgctxt "osdform.serrproductversioninvalid"
+msgid "Error: for Product Version only numbers allowed !"
+msgstr ""
+
+#: osdform.serrselectinstalltype
+msgctxt "osdform.serrselectinstalltype"
+msgid "First select setup type tab (MSI, Inno Setup ...) and fill out form"
+msgstr ""
+
+#: osdform.serrsetupfilenotfound
+msgctxt "osdform.serrsetupfilenotfound"
+msgid "Error: Setup file does not exist!"
+msgstr ""
+
+#: osdform.shelpfile
+msgctxt "osdform.shelpfile"
+msgid "languages\\Help.de.html"
+msgstr ""
+
+#: osdform.shelpheader
+msgctxt "osdform.shelpheader"
+msgid "opsi setup detector Help"
+msgstr ""
+
+#: osdform.sinfofinished
+msgctxt "osdform.sinfofinished"
+msgid "finished."
+msgstr ""
+
+#: osdform.slogfileinfo
+msgctxt "osdform.slogfileinfo"
+msgid "Logfile created: %s"
+msgstr ""
+
+#: osdform.smboxheader
+msgctxt "osdform.smboxheader"
+msgid "opsi setup detector"
+msgstr ""
+
+#: osdform.swarninstdiremptynodeinstall
+msgctxt "osdform.swarninstdiremptynodeinstall"
+msgid "Warning: Install Directory is empty, deinstall script cannot be patched!"
+msgstr ""
+
+#: resultform.saskcreatepacket
+msgctxt "resultform.saskcreatepacket"
+msgid "Create packet %0:s?"
+msgstr ""
+
+#: resultform.serrextractmsifailed
+msgctxt "resultform.serrextractmsifailed"
+msgid "Error: extracting MSI from %s failed!"
+msgstr ""
+
+#: resultform.serrfldinstdirempty
+msgctxt "resultform.serrfldinstdirempty"
+msgid "Error: Field Install Directory is empty!"
+msgstr ""
+
+#: resultform.serrfldmsiproductcodeempty
+msgctxt "resultform.serrfldmsiproductcodeempty"
+msgid "Error: Field MSI Product Code is empty!"
+msgstr ""
+
+#: resultform.serrfldopsiproductidempty
+msgctxt "resultform.serrfldopsiproductidempty"
+msgid "Error: Field opsi Packet ID is empty!"
+msgstr ""
+
+#: resultform.serrfldopsiproductversionempty
+msgctxt "resultform.serrfldopsiproductversionempty"
+msgid "Error: Field Product Version is empty!"
+msgstr ""
+
+#: resultform.serrfldsetupempty
+msgctxt "resultform.serrfldsetupempty"
+msgid "Error: No setup file selected!"
+msgstr ""
+
+#: resultform.serrmsinotfound
+msgctxt "resultform.serrmsinotfound"
+msgid "Error: MSI file does not exist!"
+msgstr ""
+
+#: resultform.serrmstnotfound
+msgctxt "resultform.serrmstnotfound"
+msgid "Error: MST file does not exist in the MSI-directory!"
+msgstr ""
+
+#: resultform.serropsipackagebuildererrcode
+msgctxt "resultform.serropsipackagebuildererrcode"
+msgid "Error invoking OPSI Package Builder (error code=%0:d). Please remove quiet option to check for further information."
+msgstr ""
+
+#: resultform.serropsipackagebuilderstart
+msgctxt "resultform.serropsipackagebuilderstart"
+msgid "Error invoking opsi package builder"
+msgstr ""
+
+#: resultform.serrpacketbasedirnotfound
+msgctxt "resultform.serrpacketbasedirnotfound"
+msgid "Error: Packet BaseDir does not exist!"
+msgstr ""
+
+#: resultform.serrpacketdirexists
+msgctxt "resultform.serrpacketdirexists"
+msgid "Error: opsi packet folder %s already exists!"
+msgstr ""
+
+#: resultform.serrproductversioninvalid
+msgctxt "resultform.serrproductversioninvalid"
+msgid "Error: for Product Version only numbers allowed !"
+msgstr ""
+
+#: resultform.serrselectinstalltype
+msgctxt "resultform.serrselectinstalltype"
+msgid "First select setup type tab (MSI, Inno Setup ...) and fill out form"
+msgstr ""
+
+#: resultform.serrsetupfilenotfound
+msgctxt "resultform.serrsetupfilenotfound"
+msgid "Error: Setup file does not exist!"
+msgstr ""
+
+#: resultform.shelpfile
+msgctxt "resultform.shelpfile"
+msgid "languages\\Help.de.html"
+msgstr ""
+
+#: resultform.shelpheader
+msgctxt "resultform.shelpheader"
+msgid "opsi setup detector Help"
+msgstr ""
+
+#: resultform.sinfofinished
+msgctxt "resultform.sinfofinished"
+msgid "finished."
+msgstr ""
+
+#: resultform.slogfileinfo
+msgctxt "resultform.slogfileinfo"
+msgid "Logfile created: %s"
+msgstr ""
+
+#: resultform.smboxheader
+msgctxt "resultform.smboxheader"
+msgid "opsi setup detector"
+msgstr ""
+
+#: resultform.swarninstdiremptynodeinstall
+msgctxt "resultform.swarninstdiremptynodeinstall"
+msgid "Warning: Install Directory is empty, deinstall script cannot be patched!"
+msgstr ""
+
+#: tfnewdepdlg.caption
+msgid "opsi-setup-detector: Dependency Editor"
+msgstr ""
+
+#: tfnewdepdlg.comboboxactstate.text
+msgid "ComboBoxActState"
+msgstr ""
+
+#: tfnewdepdlg.editproductid.text
+msgid "productId"
+msgstr ""
+
+#: tfnewdepdlg.groupbox1.caption
+msgid "Require Mode"
+msgstr ""
+
+#: tfnewdepdlg.label1.caption
+msgctxt "tfnewdepdlg.label1.caption"
+msgid ""
+"Please edit the dependency.\n"
+"Please note:\n"
+"You may may neither give a requested installation state or a requested action. A combination is not allowed.\n"
+msgstr ""
+
+#: tfnewdepdlg.label2.caption
+msgid "productid"
+msgstr ""
+
+#: tfnewdepdlg.label3.caption
+msgid "Action or State"
+msgstr ""
+
+#: tfnewdepdlg.label4.caption
+msgid "Requirement Type"
+msgstr ""
+
+#: tfnewdepdlg.radiobuttonaction.caption
+msgid "Action"
+msgstr ""
+
+#: tfnewdepdlg.radiobuttonstate.caption
+msgid "State"
+msgstr ""
+
+#: tfnewpropdlg.bitbtnaddprop.caption
+msgctxt "tfnewpropdlg.bitbtnaddprop.caption"
+msgid "Add Value"
+msgstr ""
+
+#: tfnewpropdlg.bitbtndelprop.caption
+msgctxt "tfnewpropdlg.bitbtndelprop.caption"
+msgid "Delete Value"
+msgstr ""
+
+#: tfnewpropdlg.caption
+msgid "opsi-setup-detector - Properties"
+msgstr ""
+
+#: tfnewpropdlg.checkboxpropedit.caption
+msgctxt "tfnewpropdlg.checkboxpropedit.caption"
+msgid "Editable"
+msgstr ""
+
+#: tfnewpropdlg.checkboxpropmultival.caption
+msgctxt "tfnewpropdlg.checkboxpropmultival.caption"
+msgid "Multivalue"
+msgstr ""
+
+#: tfnewpropdlg.editpropname.text
+msgctxt "tfnewpropdlg.editpropname.text"
+msgid "Property Name"
+msgstr ""
+
+#: tfnewpropdlg.editpropnewval.text
+msgctxt "tfnewpropdlg.editpropnewval.text"
+msgid "New Value"
+msgstr ""
+
+#: tfnewpropdlg.groupbox1.caption
+msgctxt "tfnewpropdlg.groupbox1.caption"
+msgid "Property Type"
+msgstr ""
+
+#: tfnewpropdlg.label1.caption
+msgctxt "tfnewpropdlg.label1.caption"
+msgid ""
+"Please edit the dependency.\n"
+"Please note:\n"
+"You may may neither give a requested installation state or a requested action. A combination is not allowed.\n"
+msgstr ""
+
+#: tfnewpropdlg.label2.caption
+msgctxt "tfnewpropdlg.label2.caption"
+msgid "Property Name"
+msgstr ""
+
+#: tfnewpropdlg.label4.caption
+msgctxt "tfnewpropdlg.label4.caption"
+msgid "Possible Values"
+msgstr ""
+
+#: tfnewpropdlg.label5.caption
+msgctxt "tfnewpropdlg.label5.caption"
+msgid "Default Values"
+msgstr ""
+
+#: tfnewpropdlg.label6.caption
+msgctxt "tfnewpropdlg.label6.caption"
+msgid "Description"
+msgstr ""
+
+#: tfnewpropdlg.radiobuttonpropbool.caption
+msgctxt "tfnewpropdlg.radiobuttonpropbool.caption"
+msgid "Boolean"
+msgstr ""
+
+#: tfnewpropdlg.radiobuttonpropstring.caption
+msgctxt "tfnewpropdlg.radiobuttonpropstring.caption"
+msgid "String"
+msgstr ""
+
+#: tfnewproperty.bitbtnadddep.caption
+msgctxt "tfnewproperty.bitbtnadddep.caption"
+msgid "Add Value"
+msgstr ""
+
+#: tfnewproperty.bitbtndeldep.caption
+msgctxt "tfnewproperty.bitbtndeldep.caption"
+msgid "Delete Value"
+msgstr ""
+
+#: tfnewproperty.caption
+msgid "FNewProperty"
+msgstr ""
+
+#: tfnewproperty.checkboxpropedit.caption
+msgctxt "tfnewproperty.checkboxpropedit.caption"
+msgid "Editable"
+msgstr ""
+
+#: tfnewproperty.checkboxpropmultival.caption
+msgctxt "tfnewproperty.checkboxpropmultival.caption"
+msgid "Multivalue"
+msgstr ""
+
+#: tfnewproperty.editpropname.text
+msgctxt "tfnewproperty.editpropname.text"
+msgid "Property Name"
+msgstr ""
+
+#: tfnewproperty.editpropnewval.text
+msgctxt "tfnewproperty.editpropnewval.text"
+msgid "New Value"
+msgstr ""
+
+#: tfnewproperty.groupbox1.caption
+msgctxt "tfnewproperty.groupbox1.caption"
+msgid "Property Type"
+msgstr ""
+
+#: tfnewproperty.label1.caption
+msgctxt "tfnewproperty.label1.caption"
+msgid ""
+"Please edit the dependency.\n"
+"Please note:\n"
+"You may may neither give a requested installation state or a requested action. A combination is not allowed.\n"
+msgstr ""
+
+#: tfnewproperty.label2.caption
+msgctxt "tfnewproperty.label2.caption"
+msgid "Property Name"
+msgstr ""
+
+#: tfnewproperty.label4.caption
+msgctxt "tfnewproperty.label4.caption"
+msgid "Possible Values"
+msgstr ""
+
+#: tfnewproperty.label5.caption
+msgctxt "tfnewproperty.label5.caption"
+msgid "Default Values"
+msgstr ""
+
+#: tfnewproperty.radiobuttonpropbool.caption
+msgctxt "tfnewproperty.radiobuttonpropbool.caption"
+msgid "Boolean"
+msgstr ""
+
+#: tfnewproperty.radiobuttonpropstring.caption
+msgctxt "tfnewproperty.radiobuttonpropstring.caption"
+msgid "String"
+msgstr ""
+
+#: tformhelp.caption
+msgid "FormHelp"
+msgstr ""
+
+#: tformhelp.panel1.caption
+msgctxt "tformhelp.panel1.caption"
+msgid "Panel1"
+msgstr ""
+
+#: tfosdconfigdlg.caption
+msgid "opsi-setup-detector Configuration"
+msgstr ""
+
+#: tfosdconfigdlg.flowpanel1.caption
+msgid "FlowPanel1"
+msgstr ""
+
+#: tfosdconfigdlg.panel1.caption
+msgctxt "tfosdconfigdlg.panel1.caption"
+msgid "Panel1"
+msgstr ""
+
+#: tresultform1.bitbtnadddep.caption
+msgctxt "tresultform1.bitbtnadddep.caption"
+msgid "Add Dependency"
+msgstr ""
+
+#: tresultform1.bitbtnaddprop.caption
+msgid "Add Property"
+msgstr ""
+
+#: tresultform1.bitbtndeldep.caption
+msgctxt "tresultform1.bitbtndeldep.caption"
+msgid "Delete Dependency"
+msgstr ""
+
+#: tresultform1.bitbtndelprop.caption
+msgid "Delete Property"
+msgstr ""
+
+#: tresultform1.bitbtneditdep.caption
+msgid "Edit Dependency"
+msgstr ""
+
+#: tresultform1.bitbtneditprop.caption
+msgid "Edit Property"
+msgstr ""
+
+#: tresultform1.bitbtnopenfile.caption
+msgctxt "tresultform1.bitbtnopenfile.caption"
+msgid "Open Setup File"
+msgstr ""
+
+#: tresultform1.bitbtnopenfile1.caption
+msgctxt "tresultform1.bitbtnopenfile1.caption"
+msgid "Open Setup File"
+msgstr ""
+
+#: tresultform1.bitbtnopenmst1.caption
+msgctxt "tresultform1.bitbtnopenmst1.caption"
+msgid "Open MST File"
+msgstr ""
+
+#: tresultform1.bitbtnopenmst2.caption
+msgctxt "tresultform1.bitbtnopenmst2.caption"
+msgid "Open MST File"
+msgstr ""
+
+#: tresultform1.bitbtnrecheckworkbench.caption
+msgid "Recheck workbench path"
+msgstr ""
+
+#: tresultform1.bitbtnworkbenchpath.caption
+msgid "Select workbench path"
+msgstr ""
+
+#: tresultform1.btanalyzenextstep.caption
+msgctxt "tresultform1.btanalyzenextstep.caption"
+msgid "Next Step"
+msgstr ""
+
+#: tresultform1.btanalyzenextstep.hint
+msgctxt "tresultform1.btanalyzenextstep.hint"
+msgid "Go to the next Step"
+msgstr ""
+
+#: tresultform1.btanalyzeonly.caption
+msgctxt "tresultform1.btanalyzeonly.caption"
+msgid "Only analyze single File "
+msgstr ""
+
+#: tresultform1.btanalyzeonly.hint
+msgctxt "tresultform1.btanalyzeonly.hint"
+msgid "Analyze a single existing Setupfile "
+msgstr ""
+
+#: tresultform1.btatwonalyzeandcreate.caption
+msgid "Analyze two Files (32 and 64 Bit) and Create Opsi Product"
+msgstr ""
+
+#: tresultform1.btatwonalyzeandcreate.hint
+msgctxt "tresultform1.btatwonalyzeandcreate.hint"
+msgid ""
+"Analyze a single existing Setupfile \n"
+"and create an opsi Product\n"
+msgstr ""
+
+#: tresultform1.btcreateemptytemplate.caption
+msgid "Create an empty opsi product"
+msgstr ""
+
+#: tresultform1.btcreateemptytemplate.hint
+msgid ""
+"Create a empty \n"
+"opsi Product Directory Structure\n"
+msgstr ""
+
+#: tresultform1.btcreateproduct.caption
+msgid "Create Opsi Product"
+msgstr ""
+
+#: tresultform1.btcreateproduct.hint
+msgid "Create a opsi Product"
+msgstr ""
+
+#: tresultform1.btproduct1nextstep.caption
+msgctxt "tresultform1.btproduct1nextstep.caption"
+msgid "Next Step"
+msgstr ""
+
+#: tresultform1.btproduct1nextstep.hint
+msgctxt "tresultform1.btproduct1nextstep.hint"
+msgid "Go to the next Step"
+msgstr ""
+
+#: tresultform1.btproduct2nextstep.caption
+msgctxt "tresultform1.btproduct2nextstep.caption"
+msgid "Next Step"
+msgstr ""
+
+#: tresultform1.btproduct2nextstep.hint
+msgctxt "tresultform1.btproduct2nextstep.hint"
+msgid "Go to the next Step"
+msgstr ""
+
+#: tresultform1.btsetup1nextstep.caption
+msgctxt "tresultform1.btsetup1nextstep.caption"
+msgid "Next Step"
+msgstr ""
+
+#: tresultform1.btsetup1nextstep.hint
+msgctxt "tresultform1.btsetup1nextstep.hint"
+msgid "Go to the next Step"
+msgstr ""
+
+#: tresultform1.btsetup2nextstep.caption
+msgctxt "tresultform1.btsetup2nextstep.caption"
+msgid "Next Step"
+msgstr ""
+
+#: tresultform1.btsetup2nextstep.hint
+msgctxt "tresultform1.btsetup2nextstep.hint"
+msgid "Go to the next Step"
+msgstr ""
+
+#: tresultform1.btsingleanalyzeandcreate.caption
+msgctxt "tresultform1.btsingleanalyzeandcreate.caption"
+msgid "Analyze single File and Create Opsi Product"
+msgstr ""
+
+#: tresultform1.btsingleanalyzeandcreate.hint
+msgctxt "tresultform1.btsingleanalyzeandcreate.hint"
+msgid ""
+"Analyze a single existing Setupfile \n"
+"and create an opsi Product\n"
+msgstr ""
+
+#: tresultform1.caption
+msgid "opsi Setup Detector"
+msgstr ""
+
+#: tresultform1.checkboxbuild.caption
+msgctxt "TRESULTFORM1.CHECKBOXBUILD.CAPTION"
+msgid "build"
+msgstr ""
+
+#: tresultform1.checkboxinstall.caption
+msgctxt "TRESULTFORM1.CHECKBOXINSTALL.CAPTION"
+msgid "install"
+msgstr ""
+
+#: tresultform1.checkboxquiet.caption
+msgid "quiet"
+msgstr ""
+
+#: tresultform1.checkboxusemst.caption
+msgctxt "tresultform1.checkboxusemst.caption"
+msgid "use MST File"
+msgstr ""
+
+#: tresultform1.checkboxusemst1.caption
+msgctxt "tresultform1.checkboxusemst1.caption"
+msgid "use MST File"
+msgstr ""
+
+#: tresultform1.fileexit.caption
+msgctxt "tresultform1.fileexit.caption"
+msgid "&Exit"
+msgstr ""
+
+#: tresultform1.filehelp.caption
+msgid "&Help"
+msgstr ""
+
+#: tresultform1.fileopensetupfile.caption
+msgctxt "TRESULTFORM1.FILEOPENSETUPFILE.CAPTION"
+msgid "&Open Setup File and Analyze"
+msgstr ""
+
+#: tresultform1.fileopensetupfile.hint
+msgctxt "TRESULTFORM1.FILEOPENSETUPFILE.HINT"
+msgid "select setup file to analyze"
+msgstr ""
+
+#: tresultform1.flowpanel14.caption
+msgid "FlowPanel14"
+msgstr ""
+
+#: tresultform1.flowpanel4.caption
+msgid "FlowPanel4"
+msgstr ""
+
+#: tresultform1.label50.caption
+msgctxt "tresultform1.label50.caption"
+msgid "Setup File"
+msgstr ""
+
+#: tresultform1.label52.caption
+msgctxt "TRESULTFORM1.LABEL52.CAPTION"
+msgid "Software Version"
+msgstr ""
+
+#: tresultform1.label53.caption
+msgctxt "tresultform1.label53.caption"
+msgid "MsiId       "
+msgstr ""
+
+#: tresultform1.label54.caption
+msgctxt "TRESULTFORM1.LABEL54.CAPTION"
+msgid "Required Space MB"
+msgstr ""
+
+#: tresultform1.label55.caption
+msgctxt "TRESULTFORM1.LABEL55.CAPTION"
+msgid "InstallDir"
+msgstr ""
+
+#: tresultform1.label57.caption
+msgctxt "TRESULTFORM1.LABEL57.CAPTION"
+msgid "Description"
+msgstr ""
+
+#: tresultform1.label58.caption
+msgctxt "tresultform1.label58.caption"
+msgid "Product Version"
+msgstr ""
+
+#: tresultform1.label59.caption
+msgctxt "tresultform1.label59.caption"
+msgid "MsiId"
+msgstr ""
+
+#: tresultform1.label60.caption
+msgctxt "tresultform1.label60.caption"
+msgid "MST File  "
+msgstr ""
+
+#: tresultform1.label61.caption
+msgctxt "tresultform1.label61.caption"
+msgid "Package Version"
+msgstr ""
+
+#: tresultform1.label62.caption
+msgctxt "tresultform1.label62.caption"
+msgid "Detected Setup type:"
+msgstr ""
+
+#: tresultform1.label63.caption
+msgctxt "tresultform1.label63.caption"
+msgid "Architecture Mode"
+msgstr ""
+
+#: tresultform1.label64.caption
+msgctxt "tresultform1.label64.caption"
+msgid "Setup file size MB"
+msgstr ""
+
+#: tresultform1.label65.caption
+msgid "Advice"
+msgstr ""
+
+#: tresultform1.label66.caption
+msgctxt "tresultform1.label66.caption"
+msgid "opsi Product ID"
+msgstr ""
+
+#: tresultform1.label67.caption
+msgctxt "tresultform1.label67.caption"
+msgid "opsi Product Name"
+msgstr ""
+
+#: tresultform1.label68.caption
+msgctxt "tresultform1.label68.caption"
+msgid "Detected Setup type:"
+msgstr ""
+
+#: tresultform1.label69.caption
+msgctxt "tresultform1.label69.caption"
+msgid "Architecture Mode"
+msgstr ""
+
+#: tresultform1.label70.caption
+msgctxt "tresultform1.label70.caption"
+msgid "MST File "
+msgstr ""
+
+#: tresultform1.label71.caption
+msgctxt "tresultform1.label71.caption"
+msgid "Software Version"
+msgstr ""
+
+#: tresultform1.label72.caption
+msgctxt "tresultform1.label72.caption"
+msgid "Required Space"
+msgstr ""
+
+#: tresultform1.label73.caption
+msgctxt "tresultform1.label73.caption"
+msgid "InstallDir"
+msgstr ""
+
+#: tresultform1.label74.caption
+msgctxt "tresultform1.label74.caption"
+msgid "Setup file size MB"
+msgstr ""
+
+#: tresultform1.label75.caption
+msgctxt "tresultform1.label75.caption"
+msgid "Dependencies"
+msgstr ""
+
+#: tresultform1.label76.caption
+msgid "Priority"
+msgstr ""
+
+#: tresultform1.label77.caption
+msgctxt "tresultform1.label77.caption"
+msgid "Setup File"
+msgstr ""
+
+#: tresultform1.label78.caption
+msgid "Path to opsi-work-bench"
+msgstr ""
+
+#: tresultform1.label79.caption
+msgctxt "tresultform1.label79.caption"
+msgid "Unattended Install Command"
+msgstr ""
+
+#: tresultform1.label80.caption
+msgctxt "tresultform1.label80.caption"
+msgid "Unattended Uninstall Command"
+msgstr ""
+
+#: tresultform1.label81.caption
+msgctxt "tresultform1.label81.caption"
+msgid "Uninstall Program"
+msgstr ""
+
+#: tresultform1.label82.caption
+msgctxt "tresultform1.label82.caption"
+msgid "Unattended Install Command"
+msgstr ""
+
+#: tresultform1.label83.caption
+msgctxt "tresultform1.label83.caption"
+msgid "Unattended Uninstall Command"
+msgstr ""
+
+#: tresultform1.label84.caption
+msgctxt "tresultform1.label84.caption"
+msgid "Uninstall Program"
+msgstr ""
+
+#: tresultform1.label85.caption
+msgid "Properties"
+msgstr ""
+
+#: tresultform1.labelworkbenchnotok.caption
+msgid "Path to opsi-work-bench not is reachable - Check Network Mounts or Path"
+msgstr ""
+
+#: tresultform1.labelworkbenchok.caption
+msgid "Path to opsi-work-bench is reachable"
+msgstr ""
+
+#: tresultform1.menuitemabout.caption
+msgid "&About"
+msgstr ""
+
+#: tresultform1.menuitemconfig.caption
+msgid "Configuration"
+msgstr ""
+
+#: tresultform1.menuitemfile.caption
+msgid "&File"
+msgstr ""
+
+#: tresultform1.panel10.caption
+msgid "Panel10"
+msgstr ""
+
+#: tresultform1.panel12.caption
+msgid "Panel12"
+msgstr ""
+
+#: tresultform1.panel3.caption
+msgid "Panel3"
+msgstr ""
+
+#: tresultform1.panel4.caption
+msgid "Panel4"
+msgstr ""
+
+#: tresultform1.processing.caption
+msgid "processing..."
+msgstr ""
+
+#: tresultform1.processstatement.caption
+msgid "please wait"
+msgstr ""
+
+#: tresultform1.radiobuttonauto.caption
+msgctxt "TRESULTFORM1.RADIOBUTTONAUTO.CAPTION"
+msgid "create and auto build"
+msgstr ""
+
+#: tresultform1.radiobuttoncreateonly.caption
+msgctxt "TRESULTFORM1.RADIOBUTTONCREATEONLY.CAPTION"
+msgid "create opsi packet"
+msgstr ""
+
+#: tresultform1.radiobuttoninteractive.caption
+msgctxt "TRESULTFORM1.RADIOBUTTONINTERACTIVE.CAPTION"
+msgid "create opsi packet and start interactive PacketBuilder"
+msgstr ""
+
+#: tresultform1.sbtnexit.caption
+msgid "Exit"
+msgstr ""
+
+#: tresultform1.sbtnopen.caption
+msgid "open"
+msgstr ""
+
+#: tresultform1.stringgriddep.columns[0].title.caption
+msgctxt "tresultform1.stringgriddep.columns[0].title.caption"
+msgid "Required ProductId"
+msgstr ""
+
+#: tresultform1.stringgriddep.columns[1].title.caption
+msgctxt "tresultform1.stringgriddep.columns[1].title.caption"
+msgid "Required State"
+msgstr ""
+
+#: tresultform1.stringgriddep.columns[2].title.caption
+msgctxt "tresultform1.stringgriddep.columns[2].title.caption"
+msgid "Required Action"
+msgstr ""
+
+#: tresultform1.stringgriddep.columns[3].title.caption
+msgctxt "tresultform1.stringgriddep.columns[3].title.caption"
+msgid "Required Mode"
+msgstr ""
+
+#: tresultform1.stringgridprop.columns[0].title.caption
+msgctxt "tresultform1.stringgridprop.columns[0].title.caption"
+msgid "PropertyId"
+msgstr ""
+
+#: tresultform1.stringgridprop.columns[1].title.caption
+msgctxt "tresultform1.stringgridprop.columns[1].title.caption"
+msgid "Description"
+msgstr ""
+
+#: tresultform1.stringgridprop.columns[2].title.caption
+msgctxt "tresultform1.stringgridprop.columns[2].title.caption"
+msgid "Type"
+msgstr ""
+
+#: tresultform1.stringgridprop.columns[3].title.caption
+msgctxt "tresultform1.stringgridprop.columns[3].title.caption"
+msgid "Multivalue"
+msgstr ""
+
+#: tresultform1.stringgridprop.columns[4].title.caption
+msgctxt "tresultform1.stringgridprop.columns[4].title.caption"
+msgid "Editable"
+msgstr ""
+
+#: tresultform1.stringgridprop.columns[5].title.caption
+msgctxt "tresultform1.stringgridprop.columns[5].title.caption"
+msgid "Possible Values"
+msgstr ""
+
+#: tresultform1.stringgridprop.columns[6].title.caption
+msgctxt "tresultform1.stringgridprop.columns[6].title.caption"
+msgid "Default Values"
+msgstr ""
+
+#: tresultform1.tabsheetanalyze.caption
+msgctxt "TRESULTFORM1.TABSHEETANALYZE.CAPTION"
+msgid "Analyze"
+msgstr ""
+
+#: tresultform1.tabsheetcreate.caption
+msgid "Create"
+msgstr ""
+
+#: tresultform1.tabsheetproduct.caption
+msgid "Product1"
+msgstr ""
+
+#: tresultform1.tabsheetproduct2.caption
+msgid "Product2"
+msgstr ""
+
+#: tresultform1.tabsheetsetup1.caption
+msgid "Setup1"
+msgstr ""
+
+#: tresultform1.tabsheetsetup2.caption
+msgid "Setup2"
+msgstr ""
+
+#: tresultform1.tabsheetstart.caption
+msgid "Start"
+msgstr ""
+
+#: tresultform1.ticheckboxlicenserequired.caption
+msgctxt "tresultform1.ticheckboxlicenserequired.caption"
+msgid "License required"
+msgstr ""
+
+#: tresultform1.toolbar1.caption
+msgid "ToolBar1"
+msgstr ""
+

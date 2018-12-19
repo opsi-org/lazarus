@@ -1,0 +1,44 @@
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib gmbh
+; and published under the Terms of the General Public License.
+
+Message "Check for existing installation of " + $ProductId$ + " ..."
+
+Set $InstallDir$ = $InstallDir1$
+comment "Start the Uninstall check:"
+#@uninstallCheckLines1*#
+
+if $oldProgFound$ = "true"
+  Message "Uninstalling " + $ProductId$ + " ..."
+  comment "Start Pre Uninstall hook (may be empty):"
+  #@preUninstallLines1*#
+  comment "Start uninstall program"
+  ChangeDirectory "%SCRIPTPATH%"
+  ;----------------------------------------------
+  Winbatch_uninstall  #@uninstallWaitForProc1*#
+  ;----------------------------------------------
+  Sub_check_exitcode
+
+  comment "Start Post Uninstall hook (may be empty):"
+  #@postUninstallLines1*#
+  if not($InstallDir1$ = '')
+     Files_uninstall
+  endif
+endif
+
+[Winbatch_uninstall]
+#@uninstallCommandLine1*#
+
+[sub_check_exitcode]
+set $ExitCode$ = getlastexitcode
+if stringtobool(#@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ ))
+   LogError $ErrorString$
+   isfatalerror $ErrorString$
+else
+   Comment $ErrorString$
+endif
+
+[Files_uninstall]
+del -sf "$InstallDir$\"
+
+;-----------------------------------------------------

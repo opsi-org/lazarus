@@ -7,7 +7,6 @@
       <SessionStorage Value="InIDEConfig"/>
       <MainUnit Value="0"/>
       <Title Value="opsi-winst"/>
-      <Scaled Value="True"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
       <XPManifest>
@@ -23,8 +22,8 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
-      <BuildNr Value="21"/>
-      <StringTable Comments="Compiled with Lazarus 1.8.2 / FPC 3.0.4" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst32.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst32.exe" ProductName="opsi-script" ProductVersion="4.0.7 / 4.1"/>
+      <BuildNr Value="32"/>
+      <StringTable Comments="Compiled with Lazarus 1.8.4 / FPC 3.0.4" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst32.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst32.exe" ProductName="opsi-script" ProductVersion="4.0.7 / 4.1"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="default" Default="True"/>
@@ -243,98 +242,98 @@
         <IsPartOfProject Value="True"/>
       </Unit19>
       <Unit20>
-        <Filename Value="osnetutil.pas"/>
+        <Filename Value="osmain.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit20>
       <Unit21>
-        <Filename Value="osmain.pas"/>
+        <Filename Value="oslocale.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit21>
       <Unit22>
-        <Filename Value="oslocale.pas"/>
+        <Filename Value="opsihwbiosinfo.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit22>
       <Unit23>
-        <Filename Value="opsihwbiosinfo.pas"/>
+        <Filename Value="HowToBuild.txt"/>
         <IsPartOfProject Value="True"/>
       </Unit23>
       <Unit24>
-        <Filename Value="HowToBuild.txt"/>
+        <Filename Value="wispecfolder.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit24>
       <Unit25>
-        <Filename Value="wispecfolder.pas"/>
+        <Filename Value="osxbase64.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit25>
       <Unit26>
-        <Filename Value="osxbase64.pas"/>
+        <Filename Value="osfuncwin3.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit26>
       <Unit27>
-        <Filename Value="osfuncwin3.pas"/>
+        <Filename Value="osregistry.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit27>
       <Unit28>
-        <Filename Value="osregistry.pas"/>
+        <Filename Value="..\external_libraries\indy\Lib\System\IdStream.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit28>
       <Unit29>
-        <Filename Value="..\external_libraries\indy\Lib\System\IdStream.pas"/>
+        <Filename Value="..\common\osencoding.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit29>
       <Unit30>
-        <Filename Value="..\common\osencoding.pas"/>
+        <Filename Value="..\common\oskeyboard.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit30>
       <Unit31>
-        <Filename Value="..\common\oskeyboard.pas"/>
+        <Filename Value="..\common\oscrypt.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit31>
       <Unit32>
-        <Filename Value="..\common\oscrypt.pas"/>
+        <Filename Value="..\common\superobject.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit32>
       <Unit33>
-        <Filename Value="..\common\superobject.pas"/>
+        <Filename Value="..\common\oslog.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit33>
       <Unit34>
-        <Filename Value="..\common\oslog.pas"/>
+        <Filename Value="..\common\oswebservice.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit34>
       <Unit35>
-        <Filename Value="..\common\oswebservice.pas"/>
+        <Filename Value="..\common\osxml.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit35>
       <Unit36>
-        <Filename Value="..\common\osxml.pas"/>
+        <Filename Value="..\external_libraries\indy\Lib\System\IdStreamVCL.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit36>
       <Unit37>
-        <Filename Value="..\external_libraries\indy\Lib\System\IdStreamVCL.pas"/>
+        <Filename Value="..\common\osjson.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit37>
       <Unit38>
-        <Filename Value="..\common\osjson.pas"/>
+        <Filename Value="osdefinedfunctions.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit38>
       <Unit39>
-        <Filename Value="osdefinedfunctions.pas"/>
+        <Filename Value="osswaudit.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit39>
       <Unit40>
-        <Filename Value="osswaudit.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit40>
-      <Unit41>
         <Filename Value="oslistedit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FListedit"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit40>
+      <Unit41>
+        <Filename Value="..\common\osparserhelper.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit41>
       <Unit42>
-        <Filename Value="..\common\osparserhelper.pas"/>
+        <Filename Value="..\common\osnetutil.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit42>
     </Units>

@@ -6,9 +6,6 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  fileinfo,
-  winpeimagereader, // {need this for reading exe info}
-  elfreader, // {needed for reading ELF executables}
   LCLIntf,
   Process,
   odg_main,
@@ -46,8 +43,7 @@ type
 var
   Form1: TForm1;
   infilename : string;
-  FileVerInfo : TFileVersionInfo;
-  myversion : string;
+
 
 
 
@@ -98,15 +94,7 @@ end;
 
 
 initialization
- //from http://wiki.freepascal.org/Show_Application_Title,_Version,_and_Company
- FileVerInfo := TFileVersionInfo.Create(nil);
- try
-   FileVerInfo.FileName := ParamStr(0);
-   FileVerInfo.ReadFileInfo;
-   myversion := FileVerInfo.VersionStrings.Values['FileVersion'];
- finally
-   FileVerInfo.Free;
- end;
+
 
 end.
 

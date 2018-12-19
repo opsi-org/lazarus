@@ -1,0 +1,5 @@
+{"version":1,"strings":[
+{"hash":76694430,"name":"tfosdconfigdlg.caption","sourcebytes":[111,112,115,105,45,115,101,116,117,112,45,100,101,116,101,99,116,111,114,32,67,111,110,102,105,103,117,114,97,116,105,111,110],"value":"opsi-setup-detector Configuration"},
+{"hash":207919249,"name":"tfosdconfigdlg.flowpanel1.caption","sourcebytes":[70,108,111,119,80,97,110,101,108,49],"value":"FlowPanel1"},
+{"hash":90721265,"name":"tfosdconfigdlg.panel1.caption","sourcebytes":[80,97,110,101,108,49],"value":"Panel1"}
+]}
