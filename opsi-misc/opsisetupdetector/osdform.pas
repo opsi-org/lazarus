@@ -356,13 +356,11 @@ var
 
 resourcestring
   sMBoxHeader = 'opsi setup detector';
-
   sHelpHeader = 'opsi setup detector Help';
   // dialogs
   sAskCreatePacket = 'Create packet %0:s?';
   sHelpFile = 'languages\Help.de.html';
   sLogfileInfo = 'Logfile created: %s';
-
   // Error messages
   //sErrFldInstDirEmpty = 'Error: Field Install Directory is empty!';
   sErrFldMsiProductCodeEmpty =
@@ -399,6 +397,18 @@ resourcestring
     'The Installdir is needed for correct Uninstall process.' + Lineending
     +
     'Please install this Product and check for the Installdir and write it to the setup and the uninstall script';
+  // new for 4.1.0.2 ******************************************************************
+  rsNotImplemented = 'Not implemented right now.';
+  rsWeNeedConfiguration = 'We need some configurations first !';
+  rsTwonalyzeAndCreateMsgHead = 'opsi-setup-detector: Two File (32/64 Bit) Product';
+  rsTwonalyzeAndCreateMsgFirstSetup = 'First Select the 32 Bit Setup exe';
+  rsTwonalyzeAndCreateMsgSecondSetup = 'Now Select the 64 Bit Setup exe';
+  rsPropEditErrorHead = 'opsi-setup-detector: Property Editor: Error';
+  rsPropEditErrorDoubleMsgStart = 'property Id: ';
+  rsPropEditErrorDoubleMsgFinish = ' exists. Duplicates not allowed.';
+  rsPropEditErrorNoSelect = 'No Property selected.';
+  rsDependencyEditErrorHead = 'opsi-setup-detector: Dependency Editor: Error';
+  rsDependencyEditErrorNoSelect = 'No Dependency selected.';
 
 
 implementation
@@ -936,8 +946,7 @@ var
   index: integer;
   i : integer;
 begin
-  MessageDlg('opsi-setup-detector: Two File (32/64 Bit) Product',
-    'First Select the 32 Bit Setup exe',
+  MessageDlg(rsTwonalyzeAndCreateMsgHead, rsTwonalyzeAndCreateMsgFirstSetup,
     mtInformation, [mbOK], '');
   OpenDialog1.FilterIndex := 1;   // setup
   if OpenDialog1.Execute then
@@ -1082,9 +1091,9 @@ begin
       if lowercase(tmpstr) = lowercase(StringGridProp.Cells[1, i]) then
         exists := True;
     if exists then
-      MessageDlg('opsi-setup-detector: Property Editor: Error',
-        'property Id: ' + FNewPropDlg.EditPropName.Text +
-        ' exists. Duplicates not allowed.',
+      MessageDlg(rsPropEditErrorHead,
+        rsPropEditErrorDoubleMsgStart + FNewPropDlg.EditPropName.Text +
+        rsPropEditErrorDoubleMsgFinish,
         mtError, [mbOK], '')
     else
     begin
@@ -1204,7 +1213,7 @@ begin
   else
   begin
     MessageDlg('opsi-setup-detector: Dependency Editor: Error',
-      'No Dependency selected.',
+      rsDependencyEditErrorNoSelect,
       mtError, [mbOK], '');
   end;
 
@@ -1336,8 +1345,8 @@ begin
   end
   else
   begin
-    MessageDlg('opsi-setup-detector: Property Editor: Error',
-      'No Property selected.',
+    MessageDlg(rsPropEditErrorHead,
+      rsPropEditErrorNoSelect,
       mtError, [mbOK], '');
   end;
 
@@ -1583,8 +1592,8 @@ begin
       twoAnalyzeCreate_1:
       begin
         useRunMode := twoAnalyzeCreate_2;
-        MessageDlg('opsi-setup-detector: Two File (32/64 Bit) Product',
-          'Now Select the 64 Bit Setup exe',
+        MessageDlg(rsTwonalyzeAndCreateMsgHead,
+          rsTwonalyzeAndCreateMsgSecondSetup,
           mtInformation, [mbOK], '');
         OpenDialog1.FilterIndex := 1;   // setup
         if OpenDialog1.Execute then
@@ -1734,7 +1743,7 @@ end;
 
 procedure TResultform1.FileHelpClick(Sender: TObject);
 begin
-  ShowMessage('Not implemented right now.');
+  ShowMessage(rsNotImplemented);
   (*
    FormHelp.Caption:=sHelpHeader;
    FormHelp.SetHelpFile(myExeDir + DirectorySeparator + sHelpFile);
@@ -1914,7 +1923,7 @@ begin
   TimerFirstconfig.Enabled := False;
   if not myconfiguration.config_filled then
   begin
-    ShowMessage('We need some configurations first !');
+    ShowMessage(rsWeNeedConfiguration);
     MenuItemConfigClick(Sender);
   end;
 end;

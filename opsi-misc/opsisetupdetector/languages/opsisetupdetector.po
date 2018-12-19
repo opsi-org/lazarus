@@ -1,6 +1,50 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
+#: osdform.rsdependencyediterrorhead
+msgid "opsi-setup-detector: Dependency Editor: Error"
+msgstr ""
+
+#: osdform.rsdependencyediterrornoselect
+msgid "No Dependency selected."
+msgstr ""
+
+#: osdform.rsnotimplemented
+msgid "Not implemented right now."
+msgstr ""
+
+#: osdform.rspropediterrordoublemsgfinish
+msgid " exists. Duplicates not allowed."
+msgstr ""
+
+#: osdform.rspropediterrordoublemsgstart
+msgid "property Id: "
+msgstr ""
+
+#: osdform.rspropediterrorhead
+msgid "opsi-setup-detector: Property Editor: Error"
+msgstr ""
+
+#: osdform.rspropediterrornoselect
+msgid "No Property selected."
+msgstr ""
+
+#: osdform.rstwonalyzeandcreatemsgfirstsetup
+msgid "First Select the 32 Bit Setup exe"
+msgstr ""
+
+#: osdform.rstwonalyzeandcreatemsghead
+msgid "opsi-setup-detector: Two File (32/64 Bit) Product"
+msgstr ""
+
+#: osdform.rstwonalyzeandcreatemsgsecondsetup
+msgid "Now Select the 64 Bit Setup exe"
+msgstr ""
+
+#: osdform.rsweneedconfiguration
+msgid "We need some configurations first !"
+msgstr ""
+
 #: osdform.saskcreatepacket
 msgctxt "osdform.saskcreatepacket"
 msgid "Create packet %0:s?"

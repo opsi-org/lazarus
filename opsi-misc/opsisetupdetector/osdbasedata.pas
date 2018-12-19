@@ -621,7 +621,7 @@ begin
   Femail_address := 'missing';
   FFullName := 'missing';
   Fworkbench_Path := 'missing';
-  FPathToOpsiPackageBuilder := 'missing';
+  FPathToOpsiPackageBuilder := 'unknown';
   Fconfig_filled := false;
   readconfig;
 end;
@@ -810,8 +810,8 @@ begin
 
   if (Femail_address = 'missing')
     or (FFullName = 'missing')
-    or (Fworkbench_Path = 'missing')
-    or (FPathToOpsiPackageBuilder = 'missing') then
+    or (Fworkbench_Path = 'missing') then
+    //or (FPathToOpsiPackageBuilder = 'missing') then
      Fconfig_filled := false
   else Fconfig_filled := true;
   // http://wiki.freepascal.org/Streaming_JSON
