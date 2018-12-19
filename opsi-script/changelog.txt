@@ -11,6 +11,13 @@ opsi-winst/opsi-script (4.12.0.33) stable; urgency=low
   * osconf: new global config variable: w10BitlockerSuspendOnReboot (default= false)
   * osmain: buildPC: >=win 10 and  w10BitlockerSuspendOnReboot and (txrImmediateReboot or txrImmediateReboot)
      then suspend bitlocker for 1 reboot     fixes: #3816
+  * new units oswmi, utilwmi
+  * osparser: producestringlist:
+    new function getListFromWMI(<wmi class str>,<property list>,<condition str>) : stringlist
+    example: set $plist$ = createStringList ('Model','Vendor')
+             set $list$ = getListFromWMI('Win32_ComputerSystem',$plist$,'where model like 'Esprimo%')
+    if <property list> is empty all properties of <wmi class str> will be returned
+    on error a empty list will be returned
 
 -- Detlef Oertel <d.oertel@uib.de>  Mon, 17 12 2018:15:00:00 +0200
 

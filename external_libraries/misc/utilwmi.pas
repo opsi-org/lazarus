@@ -131,6 +131,8 @@ begin
   for i := low(WMIPropertyNames) to High(WMIPropertyNames)
     do WMIProperties := WMIProperties + WMIPropertyNames[i] + ',';
   Delete(WMIProperties, length(WMIProperties), 1);
+  // select all on empty property list
+  if WMIProperties = '' then WMIProperties := '*';
   // Let FPObjectList take care of freeing the objects
   Result:= TFPObjectList.Create(True);
   try
@@ -140,7 +142,9 @@ begin
     then Request := Format('SELECT %s FROM %s'   , [WMIProperties, WMIClass])
     else Request := Format('SELECT %s FROM %s %s', [WMIProperties, WMIClass, Condition]);
     // Start Request
-    Request := Format('%s'   , [WMIClass]);
+    //Request := Format('%s'   , [WMIClass]);
+    //Request := 'Select * from Win32_ComputerSystem';
+    //colWMI   := objWMIService.ExecQuery(WideString(Request), 'WQL', wbemFlagForwardOnly);
     colWMI   := objWMIService.ExecQuery(WideString(Request), 'WQL', wbemFlagForwardOnly);
     // Enum for requested results
     oEnumWMI := IUnknown(colWMI._NewEnum) as IEnumVariant;

@@ -929,6 +929,7 @@ var
   ps, tmpstr, cmdstr: string;
   TheExitMode: TExitMode;
   buildpcscript : TuibInstScript;
+  tmplist : Tstringlist;
   {$IFDEF WINDOWS}
   regDataType: tuibRegDataType;
   {$ENDIF WINDOWS}
@@ -1301,14 +1302,26 @@ begin
               try
               try
                 buildpcscript := TuibInstScript.create;
+                tmplist := Tstringlist.Create;
                 tmpstr := extractfiledrive(GetWinDirectory);
-                cmdstr := 'if ((Get-BitLockerVolume -MountPoint '
-                           +tmpstr+').ProtectionStatus -eq "Off") '
-                           +'{Suspend-BitLocker -MountPoint "'
-                          +tmpstr+'" -RebootCount 1}';
-                buildpcscript.execPowershellCall(cmdstr, 'sysnative',0, true,false,true);
+                cmdstr := '(Get-BitLockerVolume -MountPoint '
+                           +tmpstr+').EncryptionPercentage';
+                tmplist.Text := buildpcscript.execPowershellCall(cmdstr, 'sysnative',0, true,false,true).Text;
                  if buildpcscript.LastExitCodeOfExe = 0 then
-                   LogDatei.log('Succesful Suspended Bitlocker',LLInfo)
+                 begin
+                   LogDatei.log('Succesful asked for Bitlocker',LLInfo);
+                   if strtoint(trim(tmplist.Strings[0])) = 0 then
+                   begin
+                     LogDatei.log('Bitlocker not active',LLInfo);
+                   end
+                   else
+                   begin
+                     LogDatei.log('Bitlocker active - suspend',LLInfo);
+                     cmdstr := 'Suspend-BitLocker -MountPoint "'
+                               +tmpstr+'" -RebootCount 1';
+                     buildpcscript.execPowershellCall(cmdstr, 'sysnative',0, true,false,true);
+                   end;
+                 end
                  else
                   LogDatei.log('Problem Suspending Bitlocker: Error: '+IntToStr (buildpcscript.LastExitCodeOfExe),LLWarning)
                except
@@ -1320,6 +1333,7 @@ begin
                end;
               finally
                 buildpcscript.Free;
+                tmplist.Free;
               end;
               end;
             end;

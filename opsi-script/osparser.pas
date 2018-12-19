@@ -45,6 +45,7 @@ oslocaladmin,
 {$ENDIF WIN64}
 osswaudit,
 DOM,
+oswmi,
 {$ENDIF}
 {$IFDEF LINUX}
 lispecfolder,
@@ -9998,6 +9999,7 @@ var
   Wow64FsRedirectionDisabled, boolresult : boolean;
   funcname : string;
   funcindex, funcindexvar : integer;
+  ErrorMsg: string;
 
 begin
 
@@ -11083,6 +11085,61 @@ begin
       list1 := nil;
     End
    End
+
+   else if LowerCase (s) = LowerCase ('getListFromWMI')
+   then
+   begin
+     {$IFDEF Linux}
+      LogDatei.log('Error getListFromWMI not implemented on Linux ', LLError);
+      {$ENDIF Linux}
+      {$IFDEF WINDOWS}
+    if Skip ('(', r, r, InfoSyntaxError)
+    then
+    Begin
+      if EvaluateString (r,r, s1, InfoSyntaxError)
+      then
+       if Skip (',', r,r, InfoSyntaxError)
+       then
+         list1 := TXStringList.create;
+         if produceStringList (section,r, r, list1, InfoSyntaxError) //Recursion
+         then
+            if Skip (',', r,r, InfoSyntaxError)
+            then
+             if EvaluateString (r,r, s2, InfoSyntaxError)
+             then
+              if Skip (')', r,r, InfoSyntaxError)
+              then
+              Begin
+                syntaxCheck := true;
+                 list.clear;
+                 try
+                  ErrorMsg := '';
+                    if not osGetWMI(s1,list1,s2,TStringlist(list),ErrorMsg) then
+                    begin
+                      LogDatei.log('Error on getListFromWMI: ' + ErrorMsg, LLerror);
+                      list.Text:= '';
+                      FNumberOfErrors := FNumberOfErrors + 1;
+                    end;
+                 except
+                   on e: exception do
+                   begin
+                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                     LogDatei.log('Exception: Error on getListFromWMI: ' + e.message,
+                       LLerror);
+                     list.Text:= '';
+                     FNumberOfErrors := FNumberOfErrors + 1;
+                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                     list1.Free;
+                     list1 := nil;
+                   end
+                 end;
+               End;
+      list1.Free;
+      list1 := nil;
+    End
+   {$ENDIF WINDOWS}
+   End
+
 
    else if LowerCase (s) = LowerCase ('addtolist')
    then

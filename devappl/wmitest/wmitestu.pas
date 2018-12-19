@@ -58,11 +58,13 @@ begin
      memo1.Append(errormsg);
      end
   else
+    Memo1.Text:= myWMIResultList.Text;
+  (*
     for i := 0 to Pred(myWMIResultList.Count) do
     begin
      memo1.Append(myWMIResultList.Strings[i]);
     end;
-
+    *)
   finally
     myWMIResultList.Free;
   end;
