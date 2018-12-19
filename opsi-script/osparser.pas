@@ -12655,7 +12655,7 @@ begin
    End;
  End
 
- else if LowerCase (s) = LowerCase ('GetNetmask') then
+ else if LowerCase (s) = LowerCase ('getDefaultNetmaskByIP4adr') then
  Begin
    if Skip ('(', r, r, InfoSyntaxError)
     then if EvaluateString (r, r, s1, InfoSyntaxError)
@@ -12664,7 +12664,7 @@ begin
    Begin
      syntaxCheck := true;
      if isip(s1) then
-       StringResult := networkToNetmask(s1)
+       StringResult := getDefaultNetmaskByIP4adr(s1)
      else
      begin
        StringResult :=  '';
@@ -14035,7 +14035,7 @@ begin
    end;
  end
 
- else if LowerCase (s) = LowerCase ('GetNetwork') then
+ else if LowerCase (s) = LowerCase ('getIP4NetworkByAdrAndMask') then
  begin
    if Skip ('(', r, r, InfoSyntaxError)
      and EvaluateString(r,r,s1, InfoSyntaxError)
@@ -14046,7 +14046,7 @@ begin
    begin
     syntaxCheck := true;
     if isip(s1) then
-      StringResult := netmaskToNetwork(s1,s2)
+      StringResult := getIP4NetworkByAdrAndMask(s1,s2)
     else
     begin
       StringResult :=  '';
@@ -16089,7 +16089,7 @@ begin
  End
 
 
- else if Skip ('isValidIPv4Network', Input, r, sx)
+ else if Skip ('isValidIP4Network', Input, r, sx)
  then
  begin
    if Skip ('(', r, r, InfoSyntaxError)
@@ -16111,7 +16111,7 @@ begin
  End
 
 
- else if Skip ('isValidIPv4Host', Input, r, sx)
+ else if Skip ('isValidIP4Host', Input, r, sx)
  then
  begin
    if Skip ('(', r, r, InfoSyntaxError)
@@ -16271,7 +16271,7 @@ begin
  end
 
 
- else if Skip ('isValidIPv4', Input, r, InfoSyntaxError)
+ else if Skip ('isValidIP4', Input, r, InfoSyntaxError)
  then
  begin
     if Skip ('(', r, r, InfoSyntaxError)

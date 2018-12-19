@@ -7,12 +7,11 @@ interface
 uses
   Classes, SysUtils, RegExpr;
 
-function isValidIP4(ip4adr: string) : boolean;   //return true if the IPv4 address is valid.
-function networkToNetmask(ip4adr : string) : string;    // return default netmask for the IP address.
-function isValidIP4Network(ip4adr,netmask : string) : boolean;  // return true for a valid network address.
-function isValidIP4Host(ip4adr, netmask : string) : boolean;   // return true for a valid host address.
-function netmaskToNetwork(ip4adr, netmask : string) : string; // return network address for the IP and netmask.
-
+function isValidIP4(ip4adr: string) : boolean; //return true if the IPv4 address is valid.
+function getDefaultNetmaskByIP4adr(ip4adr : string) : string; // return default netmask for the IPv4 address.
+function isValidIP4Network(ip4adr,netmask : string) : boolean; // return true for a valid network address.
+function isValidIP4Host(ip4adr, netmask : string) : boolean; // return true for a valid host address.
+function getIP4NetworkByAdrAndMask(ip4adr, netmask : string) : string; // return network address for the IP address and netmask.
 
 implementation
 
@@ -79,8 +78,8 @@ begin
   end;
 end;
 
-function netmaskToNetwork(ip4adr, netmask : string) : string;
-// return network address for the IP and netmask.
+function getIP4NetworkByAdrAndMask(ip4adr, netmask : string) : string;
+// return network address for the IP address and netmask.
 var
   ipoctets, netmaskoctets : array of String;
   networkadr : string;
@@ -108,7 +107,7 @@ begin
   result := false;
   if pos('.', netmask) = 0 then
     netmask := cidrToNetmask(netmask);
-  if netmaskToNetwork(ip4adr,netmask) = ip4adr then
+  if getIP4NetworkByAdrAndMask(ip4adr,netmask) = ip4adr then
     result := true;
 end;
 
@@ -147,7 +146,7 @@ begin
   if pos('.', netmask) = 0 then
     netmask := cidrToNetmask(netmask);
 
-  networkadr := netmaskToNetwork(ip4adr, netmask);
+  networkadr := getIP4NetworkByAdrAndMask(ip4adr, netmask);
   broadcastadr := findBroadcastAddress(ip4adr, netmask);
 
   ipoctets := ip4adr.Split(['.']);
@@ -189,8 +188,8 @@ begin
   result := networkclass;
 end;
 
-function networkToNetmask(ip4adr : string) : string;
-// return default netmask for the IP address.
+function getDefaultNetmaskByIP4adr(ip4adr : string) : string;
+// return default netmask for the IPv4 address.
 var
   netclass, netmask : string;
 begin
