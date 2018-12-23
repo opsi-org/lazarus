@@ -63,6 +63,7 @@ begin
   try
      Result := TListItem(inherited Items[Index]);
   except
+
   end;
 end;
 
