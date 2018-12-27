@@ -1,0 +1,311 @@
+<?xml version="1.0"?>
+<!DOCTYPE profile>
+<profile xmlns="http://www.suse.com/1.0/yast2ns" xmlns:config="http://www.suse.com/1.0/configns">
+<!--  -->
+  <deploy_image>
+    <image_installation config:type="boolean">true</image_installation>
+  </deploy_image>
+  <!--  -->
+  <general>
+    <ask-list config:type="list"/>
+    <mode>
+      <confirm config:type="boolean">false</confirm>
+      <second_stage config:type="boolean">false</second_stage>
+    </mode>
+    <proposals config:type="list"/>
+    <signature-handling>
+      <accept_file_without_checksum config:type="boolean">true</accept_file_without_checksum>
+      <accept_non_trusted_gpg_key config:type="boolean">true</accept_non_trusted_gpg_key>
+      <accept_unknown_gpg_key config:type="boolean">true</accept_unknown_gpg_key>
+      <accept_unsigned_file config:type="boolean">true</accept_unsigned_file>
+      <accept_verification_failed config:type="boolean">false</accept_verification_failed>
+      <import_gpg_key config:type="boolean">true</import_gpg_key>
+    </signature-handling>
+    <storage>
+      <partition_alignment config:type="symbol">align_optimal</partition_alignment>
+      <start_multipath config:type="boolean">false</start_multipath>
+    </storage>
+    <final_reboot config:type="boolean">true</final_reboot>
+  </general>
+  <!--  
+  <host>
+    <hosts config:type="list">
+      <hosts_entry>
+        <host_address>127.0.0.1</host_address>
+        <names config:type="list">
+          <name>localhost</name>
+        </names>
+      </hosts_entry>
+      <hosts_entry>
+        <host_address>::1</host_address>
+        <names config:type="list">
+          <name>localhost ipv6-localhost ipv6-loopback</name>
+        </names>
+      </hosts_entry>
+    </hosts>
+  </host>
+-->
+  <!--  -->
+  <partitioning config:type="list">
+    <drive>
+	  <use>all</use>
+	</drive>
+  </partitioning>
+  <keyboard>
+    <keyboard_values>
+      <delay/>
+      <discaps config:type="boolean">false</discaps>
+      <numlock>bios</numlock>
+      <rate/>
+    </keyboard_values>
+    <keymap>#@console_keymap*#</keymap>
+  </keyboard>
+  <language>
+    <language>#@language*#</language>
+    <languages/>
+  </language>
+  <login_settings/>
+  <networking>
+<!--
+    <dhcp_options>
+      <dhclient_client_id/>
+      <dhclient_hostname_option>AUTO</dhclient_hostname_option>
+    </dhcp_options>
+-->
+    <keep_install_network config:type="boolean">true</keep_install_network>
+    <dns>
+      <dhcp_hostname config:type="boolean">false</dhcp_hostname>
+      <dhcp_resolv config:type="boolean">true</dhcp_resolv>
+	  <domain>#@dnsdomain*#</domain>
+      <hostname>#@pcname*#</hostname>
+      <resolv_conf_policy>auto</resolv_conf_policy>
+      <write_hostname config:type="boolean">false</write_hostname>
+    </dns>
+    <interfaces config:type="list">
+      <interface>
+        <bootproto>dhcp</bootproto>
+        <device>#@networkdevice*#</device>
+        <startmode>auto</startmode>
+        <broadcast>#@broadcastaddress*#</broadcast>
+        <ipaddr>#@ipaddress*#</ipaddr>
+        <netmask>#@netmask*#</netmask>
+        <network>#@networkaddress*#</network>
+      </interface>
+      <interface>
+        <bootproto>static</bootproto>
+        <broadcast>127.255.255.255</broadcast>
+        <device>lo</device>
+        <firewall>no</firewall>
+        <ipaddr>127.0.0.1</ipaddr>
+        <netmask>255.0.0.0</netmask>
+        <network>127.0.0.0</network>
+        <prefixlen>8</prefixlen>
+        <startmode>nfsroot</startmode>
+        <usercontrol>no</usercontrol>
+      </interface>
+    </interfaces>
+    <ipv6 config:type="boolean">true</ipv6>
+    <managed config:type="boolean">false</managed>
+    <net-udev config:type="list">
+    <!--  -->
+    </net-udev>
+    <routing>
+      <ipv4_forward config:type="boolean">false</ipv4_forward>
+      <ipv6_forward config:type="boolean">false</ipv6_forward>
+    </routing>
+  </networking>
+  <!--  -->
+  <proxy>
+    <enabled config:type="boolean">#@do_proxy*#</enabled>
+    <ftp_proxy>#@proxy_addr*#</ftp_proxy>
+    <http_proxy>#@proxy_addr*#</http_proxy>
+    <https_proxy/>
+    <no_proxy>localhost, 127.0.0.1</no_proxy>
+    <proxy_password/>
+    <proxy_user/>
+  </proxy>
+  <report>
+    <errors>
+      <log config:type="boolean">true</log>
+      <show config:type="boolean">true</show>
+      <timeout config:type="integer">180</timeout>
+    </errors>
+    <messages>
+      <log config:type="boolean">true</log>
+      <show config:type="boolean">false</show>
+      <timeout config:type="integer">10</timeout>
+    </messages>
+    <warnings>
+      <log config:type="boolean">true</log>
+      <show config:type="boolean">true</show>
+      <timeout config:type="integer">5</timeout>
+    </warnings>
+    <yesno_messages>
+      <log config:type="boolean">true</log>
+      <show config:type="boolean">true</show>
+      <timeout config:type="integer">1</timeout>
+    </yesno_messages>
+  </report>
+  <services-manager>
+    <default_target>graphical</default_target>
+    <services>
+      <disable config:type="list"/>
+      <enable config:type="list">
+        <service>sshd</service>
+      </enable>
+    </services>
+  </services-manager>
+  <software>
+    <image/>
+    <instsource/>
+    <packages config:type="list">
+      <package>glibc</package>
+      <package>openssh</package>
+      <package>lsb-release</package>
+      <package>grub2</package>
+      <package>syslinux</package>
+      <package>snapper</package>
+      <package>librsync2</package>
+      <package>libopenssl1_0_0</package>
+
+      <!-- <package>SuSEfirewall2</package> -->
+      <package>kexec-tools</package>
+      <package>e2fsprogs</package>
+      <package>btrfsprogs</package>
+      <package>python</package>
+    </packages>
+    <patterns config:type="list">
+      <pattern>yast2_basis</pattern>
+      <pattern>x11</pattern>
+      <pattern>sw_management</pattern>
+      <pattern>non_oss</pattern>
+      <pattern>kde</pattern>
+      <pattern>games</pattern>
+      <pattern>fonts</pattern>
+      <pattern>enhanced_base</pattern>
+      <pattern>apparmor</pattern>
+      <pattern>imaging</pattern>
+      <pattern>office</pattern>
+      <pattern>kde_plasma</pattern>
+      <pattern>base</pattern>
+      <pattern>multimedia</pattern>
+    </patterns>
+  </software>
+  <add-on>
+    <add_on_products config:type="list">
+      <listentry>
+        <media_url>http://download.opensuse.org/distribution/leap/15.0/repo/oss/</media_url>
+		<product>openSUSE 15.0</product>
+		<product_dir>/</product_dir>
+		<ask_on_error config:type="boolean">false</ask_on_error>
+		<name>openSUSE 15.0-oss</name>
+      </listentry>
+      <listentry>
+        <media_url>http://download.opensuse.org/distribution/leap/15.0/repo/non-oss/</media_url>
+		<product>openSUSE 15.0</product>
+		<product_dir>/</product_dir>
+		<ask_on_error config:type="boolean">false</ask_on_error>
+		<name>openSUSE 15.0-non-oss</name>
+      </listentry>
+      <listentry>
+        <media_url>http://download.opensuse.org/update/leap/15.0/oss/</media_url>
+		<product>openSUSE 15.0</product>
+		<product_dir>/</product_dir>
+		<ask_on_error config:type="boolean">false</ask_on_error>
+		<name>openSUSE 15.0-update-oss</name>
+      </listentry>
+      <listentry>
+        <media_url>http://download.opensuse.org/update/leap/15.0/non-oss/</media_url>
+		<product>openSUSE 15.0</product>
+		<product_dir>/</product_dir>
+		<ask_on_error config:type="boolean">false</ask_on_error>
+		<name>openSUSE 15.0-update-non-oss</name>
+      </listentry>
+    </add_on_products>
+  </add-on>
+  <timezone>
+    <hwclock>UTC</hwclock>
+    <timezone>#@timezone*#</timezone>
+  </timezone>
+  <user_defaults>
+    <expire/>
+    <group>100</group>
+    <groups/>
+    <home>/home</home>
+    <inactive>-1</inactive>
+    <no_groups config:type="boolean">true</no_groups>
+    <shell>/bin/bash</shell>
+    <skel>/etc/skel</skel>
+    <umask>022</umask>
+  </user_defaults>
+  <users config:type="list">
+    <user>
+      <encrypted config:type="boolean">true</encrypted>
+      <fullname>user</fullname>
+      <gid>100</gid>
+      <home>/home/user</home>
+      <password_settings>
+        <expire/>
+        <flag/>
+        <inact>-1</inact>
+        <max>99999</max>
+        <min>0</min>
+        <warn>7</warn>
+      </password_settings>
+      <shell>/bin/bash</shell>
+      <uid>1000</uid>
+      <user_password>#@userpassenc*#</user_password>
+      <username>user</username>
+    </user>
+    <!--  -->
+    <user>
+      <encrypted config:type="boolean">true</encrypted>
+      <fullname>root</fullname>
+      <gid>0</gid>
+      <home>/root</home>
+      <password_settings>
+        <expire/>
+        <flag/>
+        <inact/>
+        <max/>
+        <min/>
+        <warn/>
+      </password_settings>
+      <shell>/bin/bash</shell>
+      <uid>0</uid>
+      <user_password>#@rootpassenc*#</user_password>
+      <username>root</username>
+    </user>
+    <!--  -->
+  </users>
+  <scripts>
+    <chroot-scripts config:type="list">
+      <script>
+        <chrooted config:type="boolean">false</chrooted>
+        <notification>Please wait while opsi-client is installed...</notification>
+        <location>file:///opsi-client-agent.sh</location>
+        <feedback config:type="boolean">#@do_opsi_client*#</feedback>
+        <feedback_type>message</feedback_type>
+      </script>
+    </chroot-scripts>
+    <post-scripts config:type="list">
+      <script>
+        <notification>Please wait while opsi configure the system...</notification>
+        <filename>opsi-postinst.sh</filename>
+        <source>
+          <![CDATA[
+            #! /bin/sh
+            set -x
+            export PATH=/sbin:/usr/sbin:/usr/local/sbin:/root/bin:/usr/local/bin:/usr/bin:/bin:/usr/games
+            /usr/bin/zypper lr
+            rm /etc/zypp/repos.d/SLES*.repo
+            /usr/bin/zypper lr
+            #/usr/bin/zypper rr 1
+          ]]>
+        </source>
+        <feedback config:type="boolean">true</feedback>
+        <feedback_type>message</feedback_type>
+      </script>
+    </post-scripts>
+  </scripts>
+</profile>
