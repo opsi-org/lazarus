@@ -21,22 +21,12 @@ uses
   DOM,
   XMLRead,
   XMLWrite,
-  osxmltdom,
-  //XMLIntf,
-  //XMLDoc,
   Dialogs, StrUtils,
   ExtCtrls,
   key_valueCollection,
   oslog;
-//xmlpluginfunc,
-//xmlpluginsynth,
-//pluginlog;
-
 
 type
-
-
-
   TNodeSet = array of TDOMNode;
 
   TStringsArray = array of string;
@@ -46,163 +36,202 @@ type
 
   TuibXMLDocument = class(TXMLDocument)
   private
-    XML: TXMLDocument;
-    actNode: TDOMNode;
+      XML: TXMLDocument;
+      actNode: TDOMNode;
+      {actNode.FirstChild: TDOMNode, LastChild: TDOMNode, NextSibling: TDOMNode,
+      PreviousSibling: TDOMNode, ParentNode: TDOMNode
+      }
 
-    fActNodeSet: TNodeSet;
-    fDerivedNodeSet: TNodeSet;
-    fDebugLevel: integer;
+      fActNodeSet: TNodeSet;
+      fDerivedNodeSet: TNodeSet;
+      fDebugLevel: integer;
 
-    //function getCountNotNil : Integer;
-    function getCountDerivedNotNil: integer;
+      function getCountNotNil: integer;
+      // length actNodeSet without NIL-Elements
 
-    // nodename has to fit and all attributes
-    function getNodeStrict(var newNode: TDOMNode; myparentNode: TDOMNode;
-      mynodeName: string; attributeList : TList): boolean;
-    // nodename has to fit, one attribute can fit
-    function getNode(var newNode: TDOMNode; myparentNode: TDOMNode;
-      mynodeName: string; attributename: string; attributevalue : string): boolean;
+      function getCountDerivedNotNil: integer;
+      // length derivedNodeSet without NIL-Elements
 
+      function getNodeStrict(var newNode: TDOMNode; myparentNode: TDOMNode;
+        mynodeName: string; attributeList : TList): boolean;
+      // nodename has to fit and all attributes
 
-    procedure makeAttributesSL (var attributeStringList: TStringList; attributePath : String);
+      function getNodeByNameAndAttribute(var newNode: TDOMNode; myparentNode: TDOMNode;
+        mynodeName: string; attributename: string; attributevalue : string): boolean;
+      // nodename has to fit, one attribute can fit
 
-    procedure ErrorHandler(E: EXMLReadError);
+      function getNodeByName(var newNode: TDOMNode; myparentNode: TDOMNode;
+        mynodeName: string): boolean;
+      // nodename has to fit
 
+      procedure makeAttributesSL (var attributeStringList: TStringList; attributePath : String);
 
-  public
-    destructor Destroy; override;
-    function createXmlDocFromStringlist(docstrlist: TStringList): boolean;
-    function makeNode(mynodeName, attributeName, attributeValue: string): boolean;
-    function getDocumentElement(): TDOMNode;
-    function getCountNotNil: integer;
-    property debuglevel: integer read FDebugLevel write FDebugLevel;
-    property actNodeSet: TNodeSet read factNodeSet write factNodeSet;
-
-    property derivedNodeSet: TNodeSet read fDerivedNodeSet write fDerivedNodeSet;
-    property CountNotNil: integer read getCountNotNil;
-    property CountDerivedNotNil: integer read getCountDerivedNotNil;
-    procedure setlengthActNodeSet(newlength: integer);
-    procedure setlengthDerivedNodeSet(newlength: integer);
-    procedure cleanUpActNodeSet ();
-    procedure cleanUpDerivedNodeSet ();
-    procedure logNodeSets;
-    procedure logActNodeSet;
-
-    {
-    function makeNodes
-                     (mynodeName : String;
-                     const attributeNames:TStringsArray;
-                     const attributeValues : TStringsArray;
-                     mytextcontent : String;
-                     index : Integer
-                     )
-                     :boolean;
-    }
-
-    function openXmlFile(filename: string): boolean;
-    function writeXmlFile(filename: string): boolean;
-    function getXmlStrings: TStringList;
+      procedure ErrorHandler(E: EXMLReadError);
 
 
-    procedure getNextGenerationActNodeSet;
-    procedure makeNewDerivedNodeSet;
-
-    // filters
-
-    function filterByAttributeList
-                   (var attributenames : Tstringsarray;
-                    var attributevalueExists : Tbooleansarray;
-                    var attributevalues : TStringsArray;
-                    attributes_strict : boolean) : Boolean;
-
-    function filterByAttributeName_existing (name: string) : Boolean;
-
-    function filterByAttribute_existing (name: string; value : string) : Boolean;
-
-    function filterByText (filtering: boolean; textvalue: string) : Boolean;
-
-    function countAttributes ( myxmlnode: TDOMNode ) : integer;
-
-    function filterByChildElement (filtering: boolean; elementname: string) : Boolean;
-
-    function setActNodeUniqueFromActnodeSet () : boolean;
-
-    function setActNodeIfText(textvalue: string): boolean;
-
-    // The main idea for the following syntax:
-
-    // The nodePath looks like this:
-    // nodedescription XML2PATHSEPARATOR nodedescripton (and so on)
-    // nodedescription looks like this:
-    // nodename attributeName="attributeValue"
-    // (!) attributeValue should be surrounded with ""
-    // (!) attributeValue may contain a XML2PATHSEPARATOR string
-    // nodeName may include a namespace prefix - no more
-    // attributeName may include a namespace prefix -no more
-    // (!) namespace prefix are case sensitiv - no more
-    // a node without attributes looks like this:
-    // nodename =""
-    // XML2PATHSEPARATOR string is ' // '
-
-    // eg:
-    // foo bar="bar1" // childfoo ="" // RDF:foo NC:bar=nonesense
+    public
+      destructor Destroy; override;
+     //*************  XML File-Handling ***********************************
+      function openXmlFile(filename: string): boolean;
+      function writeXmlAndCloseFile(filename: string): boolean;
 
 
 
-    function openNode(nodePath: string; attributes_strict: boolean): boolean;
-    // open the node
-    // if the node not exists it will be created (also parent nodes)
-    // makes this node to the actual node
+      //*************  XML Handling ***********************************
+      function createXmlDocFromStringlist(docstrlist: TStringList): boolean;
+      function getDocumentElement(): TDOMNode;
+      function isValidXML(xmlString: TStringList): boolean;
+      function getXmlStrings: TStringList;
 
-    // TODO: überladene prozedur???
-    procedure delNode(nodePath: string); overload;
-    // this node (and all childs) will be deleted, afterwards parent will be aktnode
+      //*************  NodeSet-Handling ***********************************
+      procedure makeTopAsActNodeSet;
+      // set actNodeSet from DocumentElement (top)
 
-    procedure delNode(); overload;
-    // aktnode (and all childs) will be deleted, afterwards parent will be aktnode
+      procedure getNextGenerationActNodeSet;
+      // set derivedNodeSet as actNodeset
 
-    procedure setNodeTextActNode(Text: string);
-    // set text at the actual node
-    function getNodeTextActNode () : String;
-    // get text at the actual node
+      procedure makeNewDerivedNodeSet;
+      // create derivedNodeSet. For every node in actNodeSet collect the next
+      // childs. Therefore: helpfull if actNodeSet contains only one node
 
-    function getNodeNameActNode () : string;
+      procedure setlengthActNodeSet(newlength: integer);
+      //
 
-    procedure setAttribute(attributeName, attributeValue: string);
-    // set the attribute at the actual node
-    // if it exists it will be changed, otherwis create
-    // attributeName may include a namespace prefix - no more
+      procedure setlengthDerivedNodeSet(newlength: integer);
+      //
 
+      procedure cleanUpActNodeSet ();
+      // eliminate NIL-Elements from actNodeset
 
-    function hasAttribute(attributename: string): boolean;
-    // checks if the actual node has the attribute
-    // attributeName may include a namespace prefix
+      procedure cleanUpDerivedNodeSet ();
+      // eliminate NIL-Elements from derivedNodeSet
 
-    procedure addAttribute(attributeName, attributeValue: string);
-    // add the attribute at the actual node
-    // if it exists it will not (!) be changed
-    // attributeName may include a namespace prefix - no more
+      procedure logNodeSets;
+      procedure logActNodeSet;
 
-    procedure delAttribute(attributeName: string);
-    // delete the attribute  at the actual node
-    // attributeName may include a namespace prefix
+      //*************  Filters on Nodesets ********************************
+      function filterByAttributeList
+                     (var attributenames : Tstringsarray;
+                      var attributevalueExists : Tbooleansarray;
+                      var attributevalues : TStringsArray;
+                      attributes_strict : boolean) : Boolean;
 
+      function filterByAttributeName_existing (name: string) : Boolean;
 
-    function nodeExists(nodePath: string): boolean;
-    // tells if a node exists without changing anything
+      function filterByAttribute_existing (name: string; value : string) : Boolean;
 
+      function filterByText (textvalue: string) : Boolean;
 
-    function getAttributeValue(attributeName: string): string;
-    // get the attribute value at the actual node
-    // ATTENTION: it returns an empty string:
-    // - if there is no attribute with this name
-    // - if the value of this attribute is an empty string
-    // attributeName may include a namespace prefix - no more
-
-  end;
+      function filterByChildElement (elementname: string) : Boolean;
+      // tested
 
 
+      //*************  Node-Operations ***********************************
+      // The main idea for the following syntax:
 
+      // The nodePath looks like this:
+      // nodedescription XML2PATHSEPARATOR nodedescripton (and so on)
+      // nodedescription looks like this:
+      // nodename attributeName="attributeValue"
+      // (!) attributeValue should be surrounded with ""
+      // (!) attributeValue may contain a XML2PATHSEPARATOR string
+          // nodeName may include a namespace prefix - no more
+          // attributeName may include a namespace prefix - no more
+          // (!) namespace prefix are case sensitiv - no more
+      // a node without attributes looks like this:
+      // nodename =""
+      // XML2PATHSEPARATOR string is ' // '
+
+      // eg:
+      // foo bar="bar1" // childfoo ="" // RDF:foo NC:bar=nonesense
+
+      function nodeExists(nodePath: string): boolean;
+      // tells if a node exists without changing anything
+      // ignores attributes
+
+      function openNode(nodePath: string; attributes_strict: boolean): boolean;
+      // open the node
+      // if the node not exists it will be created (also parent nodes)
+      // afterwards this node is actNode
+
+
+      function makeNode(mynodeName, attributeName, attributeValue: string): boolean;
+      // create new node, append to actNode, set newnode as actNode
+
+
+      function makeNodeAndKeepActNode(mynodeName,
+                       attributeName, attributeValue, text: string): boolean;
+       // create new node, append to actNode, actNode is kept
+
+      function makeNodes
+                       (mynodeName : String;
+                       const textArray:TStringList
+                       ):boolean;
+
+     // creates couple of nodes in actnode with equal names
+     // and different TextContent, actNode will be same after creation
+
+      // overload procedure
+      procedure delNode(nodePath: string); overload;
+      // this node (and all childs) will be deleted, afterwards parent will be actnode
+      // node will be opened with openNode
+      procedure delNode(); overload;
+      // aktnode (and all childs) will be deleted, afterwards parent will be actnode
+
+      procedure setTopNodeAsActNode();
+      // set top node as actual node
+
+      procedure setParentNodeAsActNode();
+      // set parent node as actual node
+
+      procedure setNodeTextActNode(Text: string);
+      // set text at the actual node
+
+      function setActNodeIfText(textvalue: string): boolean;
+      // set actnode if text found
+
+      function getNodeTextActNode () : String;
+      // get text from the actual node
+
+      function getNodeNameActNode () : string;
+      // get name from the actual node
+
+
+      //*************  Attributes ************************************
+      function countAttributes ( myxmlnode: TDOMNode ) : integer;
+      // count attributes of this node
+
+      function hasAttribute(attributename: string): boolean;
+      // checks if the actual node has the attribute
+
+      procedure setAttribute(attributeName, attributeValue: string);
+      // set the attribute at the actual node
+      // if it exists it will be changed, otherwis create
+
+
+      procedure addAttribute(attributeName, attributeValue: string);
+      // add the attribute at the actual node
+      // if it exists it will not (!) be changed
+
+      procedure delAttribute(attributeName: string);
+      // delete the attribute  at the actual node
+
+
+      function getAttributeValue(attributeName: string): string;
+      // get the attribute value at the actual node
+      // ATTENTION: it returns an empty string:
+      // - if there is no attribute with this name
+      // - if the value of this attribute is an empty string
+
+      // properties
+      property debuglevel: integer read FDebugLevel write FDebugLevel;
+      property actNodeSet: TNodeSet read factNodeSet write factNodeSet;
+      property derivedNodeSet: TNodeSet read fDerivedNodeSet write fDerivedNodeSet;
+      property CountNotNil: integer read getCountNotNil;
+      property CountDerivedNotNil: integer read getCountDerivedNotNil;
+
+
+ end;
 
 implementation
 
@@ -278,6 +307,21 @@ begin
   end;
 end;
 
+function stringlistWithoutBreaks(strlist: TStringList): TStringList;
+// eliminate breaks and empty lines
+var
+  intI: integer;
+  teststr: string;
+begin
+  Result := TStringList.Create;
+  if strlist.Count > 0 then
+    for intI := 0 to strList.Count - 1 do
+    begin
+      teststr := StringReplace(strlist[intI], #10, '', [rfReplaceAll]);
+      if (teststr <> '') then
+        Result.Add(teststr);
+    end;
+end;
 
 procedure setShowErrors(bValue: boolean);
 begin
@@ -285,6 +329,7 @@ begin
 end;
 
 procedure TuibXMLDocument.ErrorHandler(E: EXMLReadError);
+//http://wiki.lazarus.freepascal.org/XML_Tutorial/de#.C3.9Cberpr.C3.BCfen_der_G.C3.BCltigkeit_der_Struktur_einer_XML-Datei
 begin
   if E.Severity = esError then
     // wir sind nur in Fehlern bezüglich der Verletzung der DTD interessiert
@@ -299,26 +344,21 @@ begin
   inherited Destroy;
 end;
 
-
-
-
-
-
 //*************  XML File-Handling ***********************************
 function TuibXMLDocument.openXmlFile(filename: string): boolean;
 var
   mystream: TFileStream;
 begin
-  Result := False;
+  openXmlFile := False;
+  LogDatei.log( 'try to open File: ' + filename, LLinfo);
   try
-    LogDatei.log( 'try to open File: ' + filename, LLinfo);
     mystream := TFilestream.Create(fileName, fmOpenRead);
     mystream.Position := 0;
     XML := nil;
     LogDatei.log('try to load File: ' + filename, oslog.LLinfo);
     ReadXMLFile(XML, mystream);
     LogDatei.log('File: ' + filename + ' read', oslog.LLinfo);
-    Result := True;
+    openXmlFile := True;
   except
     on e: Exception do
       LogDatei.log('Error in readXmlFile : ' + e.Message, oslog.LLerror);
@@ -327,51 +367,90 @@ begin
     mystream.Free;
 end;
 
-
-
-function TuibXMLDocument.writeXmlFile(filename: string): boolean;
-  // TODO
+function TuibXMLDocument.writeXMLAndCloseFile(filename: string): boolean;
+{ TODO : Schließen des Streams bei Except }
 var
-  myFile: TextFile;
-  myXml: string;
-  xmlStrings: TStrings;
-  i: integer;
-
+  mystream: TFileStream;
 begin
-
-  LogDatei.log('begin to save File: ' + filename, LLInfo);
-  Result := False;
+  writeXMLAndCloseFile := False;
   try
-    WriteXML(XML, filename);
-    (*
-    LogDatei.log(5,'try to open File: '+filename);
-    mystream := TFilestream.Create(fileName,fmOpenWrite);
-    mystream.Position := 0;
-    XML:=Nil;
-    LogDatei.log(5,'try to save File: '+filename);
-    WriteXML();
-    ReadXMLFile(XML, mystream);
-    LogDatei.log(4,'File: '+filename+' read');
-    *)
-    Result := True;
+    LogDatei.log('try to open File: '+filename, oslog.LLinfo);
+    mystream := TFilestream.Create(fileName,fmCreate);
+    mystream.Position:=0;
+    WriteXMLFile(XML,mystream);
+    LogDatei.log('file saved: '+filename, oslog.LLInfo);
+    writeXMLAndCloseFile := True;
+    mystream.Free;
   except
     on e: Exception do
       LogDatei.log('Error in writeXmlFile : ' + e.Message, oslog.LLerror);
   end;
-  //if mystream<>nil then mystream.Free;
-  //DatamoduleXML.XMLDocument.saveToFile(FileName);
-  //saveToXML(myXml);
-  //xmlStrings := TStringList.Create;
-  //formatMyXml(myXml,xmlStrings);
-  //AssignFile(myFile,filename);
-  //SetLineBreakStyle(myFile, tlbsCRLF);
-  //rewrite(myFile);
-  //for i:=0 to xmlStrings.Count-1 do
-  // writeln(myFile,xmlStrings[i]);
-  //CloseFile(myFile);
-  //xmlStrings.Free;
 end;
 
+//*************  XML Handling ***********************************
+function TuibXMLDocument.createXmlDocFromStringlist(docstrlist: TStringList): boolean;
+var
+  mystream: TStringStream;
+begin
+  createXmlDocFromStringlist := False;
+  LogDatei.log('begin to create XMLDoc ', oslog.LLinfo);
+  mystream := TStringStream.Create(docstrlist.Text);
+  mystream.Position := 0;
+  XML := nil;
+  try
+    ReadXMLFile(XML, mystream);
+    LogDatei.log('XMLDoc created from Stringlist', LLinfo);
+    createXmlDocFromStringlist := True;
+  finally
+    mystream.Free;
+  end;
+  LogDatei.log('XMLDoc created', LLinfo);
+end;
+
+function TuibXMLDocument.getDocumentElement(): TDOMNode;
+begin
+  getDocumentElement := XML.DocumentElement;
+end;
+
+function TuibXMLDocument.isValidXML(xmlString: TStringList): boolean;
+{ TODO : Exception abfangen
+ }
+var
+  nodestream: TStringStream;
+  Parser: TDOMParser;
+  Src: TXMLInputSource;
+  TheDoc: TXMLDocument;
+begin
+  isValidXML := false;
+  try
+    Parser := TDOMParser.Create;
+    nodestream := TStringStream.Create(stringlistWithoutBreaks(xmlString).Text);
+    nodestream.Position := 0;
+    Src := TXMLInputSource.Create(nodestream);
+    Parser.Options.Validate := True;
+    Parser.OnError := @ErrorHandler;
+    Parser.Parse(Src, TheDoc);
+    isValidXML:= true;
+  {try
+    if XML<>NIL then
+      begin
+        mynode := XML.CreateElement('opsibase');
+        try
+          ReadXMLFragment(mynode, nodestream);
+        except
+          on EXMLReadError do
+             LogDatei.log('not valid xml',oslog.LLerror)
+        end;
+        mynode := mynode.FirstChild;
+        isValidXML:= true;
+      end
+  }
+  finally
+    Src.Free;
+    Parser.Free;
+  end;
+  nodestream.Free;
+end;
 
 function TuibXMLDocument.getXmlStrings: TStringList;
 var
@@ -392,56 +471,25 @@ begin
     end;
 end;
 
-// nodeSet & methods
-
-procedure TuibXMLDocument.setlengthActNodeSet(newlength: integer);
+//*************  Operations NodeSet  ***********************************
+procedure TuibXMLDocument.makeTopAsActNodeSet;
+var k: integer;
 begin
-  setlength(factnodeset, newlength);
-end;
-
-procedure TuibXMLDocument.setlengthDerivedNodeSet(newlength: integer);
-begin
-  setlength(fderivednodeset, newlength);
-end;
-
-procedure TuibXMLDocument.cleanUpActNodeSet ();
-var i, n: integer;
- myNodeSet: TNodeSet;
-begin
-  n:= length(actnodeset);
-  for i := 0 to n - 1 do
-  begin
-    if actNodeSet[i] <> nil then
-    begin
-      setlength(myNodeSet, length(mynodeset) + 1);
-      mynodeset[length(myNodeSet) - 1] := actnodeset[i];
-    end;
-  end;
-  actnodeset:=mynodeset;
-end;
-
-procedure TuibXMLDocument.cleanUpDerivedNodeSet ();
-var i, n: integer;
- myNodeSet: TNodeSet;
-begin
-  n:= length(fderivednodeset);
-  for i := 0 to n - 1 do
-  begin
-    if fderivednodeset[i] <> nil then
-    begin
-      setlength(myNodeSet, length(mynodeset) + 1);
-      mynodeset[length(myNodeSet) - 1] := fderivednodeset[i];
-    end;
-  end;
-  fderivednodeset:=mynodeset;
+  setlengthActNodeSet (1);
+  actnodeset[0] := getDocumentElement;
+  for k:= 0 to length(actNodeSet)-1 do
+    if actNodeSet[k] <> nil then
+      LogDatei.log('actNodeSet <> nil',oslog.LLinfo)
+    else
+      LogDatei.log('actNodeSet = nil',oslog.LLinfo);
 end;
 
 function TuibXMLDocument.getCountNotNil: integer;
+// length actNodeSet without NIL-Elements
 var
   i: integer;
   preresult : integer;
 begin
-  //getCountNotNil := 0;
   preresult := 0;
   for i := 0 to length(actnodeset) - 1 do
   begin
@@ -452,12 +500,12 @@ begin
 end;
 
 function TuibXMLDocument.getCountDerivedNotNil: integer;
+// length DerivedNodeSet without NIL-Elements
 var
   i: integer;
   preresult : integer;
 begin
   preresult := 0;
-  //getCountDerivedNotNil := 0;
   for i := 0 to length(DerivedNodeSet) - 1 do
   begin
     if derivednodeset[i] <> nil then
@@ -465,30 +513,25 @@ begin
   end;
   getCountDerivedNotNil := preresult;
 end;
-//*************  XML Node-Handling ***********************************
-function TuibXMLDocument.createXmlDocFromStringlist(docstrlist: TStringList): boolean;
+
+procedure TuibXMLDocument.getNextGenerationActNodeSet;
+// thereby removing the nil elements
 var
-  mystream: TStringStream;
+  i, n: integer;
 begin
-  Result := False;
-  LogDatei.log('begin to create XMLDoc ', oslog.LLinfo);
-  mystream := TStringStream.Create(docstrlist.Text);
-  mystream.Position := 0;
-  XML := nil;
-  try
-    ReadXMLFile(XML, mystream);
-    LogDatei.log('XMLDoc created from Stringlist', LLinfo);
-    Result := True;
-  finally
-    mystream.Free;
+  LogDatei.log('Going to the next level ...', LLinfo);
+  setlengthActNodeSet(0);
+  n := length(FderivedNodeSet);
+  for i := 0 to n - 1 do
+  begin
+    if derivednodeset[i] <> nil then
+    begin
+      setlengthActNodeSet(length(FActnodeset) + 1);
+      FActNodeset[length(FActNodeSet) - 1] := derivednodeset[i];
+    end;
   end;
-  LogDatei.log('XMLDoc created', LLinfo);
 end;
 
-function TuibXMLDocument.getDocumentElement(): TDOMNode;
-begin
-  getDocumentElement := XML.DocumentElement;
-end;
 
 procedure TuibXMLDocument.makeNewDerivedNodeSet;
 var
@@ -516,31 +559,132 @@ begin
 end;
 
 
-procedure TuibXMLDocument.getNextGenerationActNodeSet;
-// thereby removing the nil elements
-var
-  i, n: integer;
+procedure TuibXMLDocument.setlengthActNodeSet(newlength: integer);
 begin
-  LogDatei.log('Going to the next level ...', LLinfo);
-  setlengthActNodeSet(0);
-  n := length(FderivedNodeSet);
-  for i := 0 to n - 1 do
-  begin
-    if derivednodeset[i] <> nil then
-    begin
-      setlengthActNodeSet(length(FActnodeset) + 1);
-      FActNodeset[length(FActNodeSet) - 1] := derivednodeset[i];
-    end;
-  end;
+  setlength(factnodeset, newlength);
 end;
 
-// Filter
+procedure TuibXMLDocument.setlengthDerivedNodeSet(newlength: integer);
+begin
+  setlength(fderivednodeset, newlength);
+end;
+
+procedure TuibXMLDocument.cleanUpActNodeSet ();
+var i, n: integer;
+ myNodeSet: TNodeSet;
+begin
+  n:= length(actnodeset);
+  for i := 0 to n - 1 do
+  begin
+    if actNodeSet[i] <> nil then
+    begin
+      setlength(myNodeSet, length(myNodeSet) + 1);
+      mynodeset[length(myNodeSet) - 1] := actnodeset[i];
+    end;
+  end;
+  actnodeset:=mynodeset;
+end;
+
+procedure TuibXMLDocument.cleanUpDerivedNodeSet ();
+var i, n: integer;
+ myNodeSet: TNodeSet;
+begin
+  n:= length(fderivednodeset);
+  for i := 0 to n - 1 do
+  begin
+    if fderivednodeset[i] <> nil then
+    begin
+      setlength(myNodeSet, length(mynodeset) + 1);
+      mynodeset[length(myNodeSet) - 1] := fderivednodeset[i];
+    end;
+  end;
+  fderivednodeset:=mynodeset;
+end;
+
+procedure TuibXMLDocument.logNodeSets;
+var
+  i, basejindex, j: integer;
+  count_not_nil: integer;
+  count_not_nil_2: integer;
+
+begin
+  cleanUpActNodeSet();
+  cleanUpDerivedNodeSet();
+  LogDatei.log('', LLinfo);
+  LogDatei.log('actNodeSet: ', LLinfo);
+  count_not_nil := 0;
+  for i := 0 to length(actNodeSet) - 1 do
+  begin
+    if actnodeset[i] = nil then
+      LogDatei.log(extraindent + 'node ' + IntToStr(i) + ' null ', LLinfo)
+    else
+    begin
+      LogDatei.log(extraindent + 'node ' + IntToStr(i) +
+        ' elementname: "' + actNodeSet[i].NodeName + '"', LLinfo);
+      Inc(count_not_nil);
+    end;
+  end;
+
+  LogDatei.log('Non-null element(s) in act node set: ' + IntToStr(count_not_nil), LLinfo);
+
+  count_not_nil_2 := 0;
+  LogDatei.log('derivedNodeSet: ', LLinfo);
+
+  for i := 0 to length(derivedNodeSet) - 1 do
+  begin
+    if derivednodeset[i] = nil then
+      LogDatei.log(extraindent + 'node ' + IntToStr(i) + ' null ' , LLinfo)
+    else
+    begin
+      LogDatei.log(extraindent + 'node ' + IntToStr(i) +
+        ' elementname: "' + derivedNodeSet[i].NodeName + '"', LLinfo);
+      Inc(count_not_nil_2);
+    end;
+  end;
+
+  LogDatei.log('Non-null element(s) remaining in children node set: ' +
+    IntToStr(count_not_nil_2), LLinfo);
+  LogDatei.log('', LLinfo);
+  LogDatei.log('    -------', LLinfo);
+end;
+
+procedure TuibXMLDocument.logActNodeSet;
+var
+  i: integer;
+  count_not_nil: integer;
+
+begin
+  cleanUpActNodeSet();
+  LogDatei.log( '', LLinfo);
+  LogDatei.log( 'actNodeSet: ', LLinfo);
+  count_not_nil := 0;
+  for i := 0 to length(actNodeSet) - 1 do
+  begin
+    if actnodeset[i] = nil then
+      LogDatei.log( extraindent + 'node ' + IntToStr(i) + ' null ', LLinfo)
+    else
+    begin
+      LogDatei.log( extraindent + 'node ' + IntToStr(i) +
+        ' elementname: "' + actNodeSet[i].NodeName + '"', LLinfo);
+      Inc(count_not_nil);
+    end;
+  end;
+  LogDatei.log('Non-null element(s) in act node set: ' + IntToStr(count_not_nil), LLinfo);
+
+end;
+
+
+
+
+
+
+//*************  Filters on Nodesets ********************************
 function TuibXMLDocument.filterByAttributeList
                    (var attributenames : Tstringsarray;
                     var attributevalueExists : Tbooleansarray;
                     var attributevalues : TStringsArray;
                     attributes_strict : boolean) : Boolean;
-// TODO - muss noch umgearbeitet werden
+// TODO - muss noch umgearbeitet werden??
   var
   i, n, j, basejindex, k, numberOfAttributes: Integer;
 
@@ -754,118 +898,19 @@ begin
 
 end;
 
-
-function TuibXMLDocument.filterByChildElement (filtering: boolean; elementname: string) : Boolean;
-var
-  i, n, j, basejindex: Integer;
-
-begin
-  result := true;
-
-  if not filtering
-  then
-  begin
-    LogDatei.log ('no filtering by elementname requested', LLwarning);
-    filterByChildElement:=false;
-    exit;
-  end;
-  LogDatei.log ('retaining child elements with name = "' + elementname + '"', LLInfo);
-  basejindex := 0;
-  i := 0;
-  while i < length(actNodeSet)
-  do
-  Begin
-
-     if actNodeSet[i] <> nil
-     then
-     begin
-
-       n := actNodeSet[i].childnodes.count;
-
-       for j:=0 to n-1
-       do
-       begin
-         actnode:= actNodeSet[i].childnodes.Item[j];
-         if (actnode.NodeName = elementname) then
-           begin
-             FderivedNodeSet[basejindex + j] := actnode;
-           end
-         else
-            FderivedNodeSet[basejindex + j] := nil;
-       end;
-       basejindex := basejindex + n;
-     end;
-
-     inc (i);
-  end;
-
-end;
-
-function TuibXMLDocument.setActNodeUniqueFromActnodeSet () : boolean;
-begin
-  setActNodeUniqueFromActnodeSet:=false;
-  if length(actNodeSet) =1 then
-  begin
-    actNode:= actNodeSet[0];
-    setActNodeUniqueFromActnodeSet:=true
-  end
-  else
-    LogDatei.log('length aktNodeSet is "' + IntToStr(length(actNodeSet)) + '. There has to be only one Element.', LLwarning);
-end;
-
-function TuibXMLDocument.setActNodeIfText(textvalue: string): boolean;
-var
-  i: integer;
-  comparetext: string;
-
-begin
-  Result := False;
-  LogDatei.log('set aktnode as child element with text  "' + textvalue +
-    '"', oslog.LLinfo);
-  i := 0;
-  while (i < actNode.ChildNodes.Count - 1) and (Result = False) do
-  begin
-    if actNode.ChildNodes.Item[i] <> nil then
-    begin
-      if actNode.ChildNodes.Item[i].NodeType = ELEMENT_NODE then
-      begin
-        LogDatei.log('aktnode as child element with text  "' +
-          actNode.ChildNodes.Item[i].TextContent + '"', oslog.LLinfo);
-        comparetext := actNode.ChildNodes.Item[i].TextContent;
-        if AnsiCompareStr(textvalue, comparetext) = 0 then
-        begin
-          actNode := actnode.ChildNodes.Item[i];
-          Result := True; // actnode is
-        end
-        else
-          Result := False;
-      end
-      else
-        comparetext := '';
-    end;
-    Inc(i);
-  end;
-end;
-
-function TuibXMLDocument.filterByText (filtering: boolean; textvalue: string) : Boolean;
+function TuibXMLDocument.filterByText (textvalue: string) : Boolean;
+// nodeset filter: after filtering the nodeset contains only elements with
+// text_content = textvalue
 var
   i, n, j, basejindex: Integer;
   comparetext : String;
-
+  myparentNode: TDOMNode;
 begin
+  myparentNode:= actNode;
   filterByText := true;
-
-  if not filtering
-  then
-  begin
-    LogDatei.log ('no filtering by textvalue requested', LLinfo);
-    filterByText:=false;
-    exit;
-  end;
 
   LogDatei.log ('retaining child elements with text  "' + textvalue + '"', LLinfo);
 
-  // TODO: klären, warum hier der returnwert nicht gesetzt wird, wird false nicht gebraucht?
   basejindex := 0;
   i := 0;
   while i < length(actNodeSet)
@@ -891,12 +936,11 @@ begin
          if AnsiCompareStr ( textvalue, comparetext ) = 0
          then
          begin
-            FderivedNodeSet[basejindex + j] := actnode
+            FderivedNodeSet[basejindex + j]:= actnode;
          end
 
          else
             FderivedNodeSet[basejindex + j] := nil;
-
        end;
 
        basejindex := basejindex + n;
@@ -905,142 +949,174 @@ begin
 
      inc (i);
   end;
-  cleanUpActNodeSet();
-end;
-
-
-
-procedure TuibXMLDocument.logNodeSets;
-var
-  i, basejindex, j: integer;
-  count_not_nil: integer;
-  count_not_nil_2: integer;
-
-begin
-  cleanUpActNodeSet();
-  cleanUpDerivedNodeSet();
-  LogDatei.log('', LLinfo);
-  LogDatei.log('actNodeSet: ', LLinfo);
-  count_not_nil := 0;
-  for i := 0 to length(actNodeSet) - 1 do
-  begin
-    if actnodeset[i] = nil then
-      LogDatei.log(extraindent + 'node ' + IntToStr(i) + ' null ', LLinfo)
-    else
+  cleanUpActNodeSet();  // eliminate nil elements
+  if getCountDerivedNotNil() > 0 then
     begin
-      LogDatei.log(extraindent + 'node ' + IntToStr(i) +
-        ' elementname: "' + actNodeSet[i].NodeName + '"', LLinfo);
-      Inc(count_not_nil);
-    end;
-  end;
-
-  LogDatei.log('Non-null element(s) in act node set: ' + IntToStr(count_not_nil), LLinfo);
-
-  count_not_nil_2 := 0;
-  LogDatei.log('derivedNodeSet: ', LLinfo);
-
-  for i := 0 to length(derivedNodeSet) - 1 do
-  begin
-    if derivednodeset[i] = nil then
-      LogDatei.log(extraindent + 'node ' + IntToStr(i) + ' null ' , LLinfo)
-    else
-    begin
-      LogDatei.log(extraindent + 'node ' + IntToStr(i) +
-        ' elementname: "' + derivedNodeSet[i].NodeName + '"', LLinfo);
-      Inc(count_not_nil_2);
-    end;
-  end;
-
-  LogDatei.log('Non-null element(s) remaining in children node set: ' +
-    IntToStr(count_not_nil_2), LLinfo);
-  LogDatei.log('', LLinfo);
-  LogDatei.log('    -------', LLinfo);
-end;
-
-procedure TuibXMLDocument.logActNodeSet;
-var
-  i: integer;
-  count_not_nil: integer;
-
-begin
-  cleanUpActNodeSet();
-  LogDatei.log( '', LLinfo);
-  LogDatei.log( 'actNodeSet: ', LLinfo);
-  count_not_nil := 0;
-  for i := 0 to length(actNodeSet) - 1 do
-  begin
-    if actnodeset[i] = nil then
-      LogDatei.log( extraindent + 'node ' + IntToStr(i) + ' null ', LLinfo)
-    else
-    begin
-      LogDatei.log( extraindent + 'node ' + IntToStr(i) +
-        ' elementname: "' + actNodeSet[i].NodeName + '"', LLinfo);
-      Inc(count_not_nil);
-    end;
-  end;
-  LogDatei.log('Non-null element(s) in act node set: ' + IntToStr(count_not_nil), LLinfo);
-
-end;
-
-procedure TuibXMLDocument.delNode(nodePath: string );
-var
-  removeNode: TDOMNode;
-begin
-  LogDatei.log('begin to del Node: ' + nodePath, LLinfo);
-  openNode(nodePath, false);  // not strict
-  removeNode := actNode;
-  actNode := actNode.ParentNode;
-  try
-    removenode.Free;
-  except
-    LogDatei.log('Error in delNode: ' + nodePath + '. Node was not removed', LLerror);
-  end;
-end;
-
-procedure TuibXMLDocument.delNode;
-// aktnode (and all childs) will be deleted, afterwards aktnode will be parent
-// before del node check node with nodeExists
-var
-  removeNode: TDOMNode;
-begin
-  LogDatei.log('begin to del Node: ' + actNode.NodeName, LLinfo);
-  removeNode := actNode;
-  actNode := actNode.ParentNode;
-  try
-    removenode.Free;
-  except
-    LogDatei.log('Error in delNode. Node was not removed', LLerror);
-  end;
-end;
-
-procedure TuibXMLDocument.makeAttributesSL (var attributeStringList: TStringList; attributePath : String);
-var splitPos, i: integer;
-  attribute : String;
-  leavingpath: String;
-begin
-  logdatei.log('attribute path element : ' + attributePath, LLinfo);
-  attributeStringList:= TStringList.Create;
-  i:=1;
-  while (length(attributePath)>0) do
-  begin
-    if Length(attributePath)-Length(StringReplace(attributePath, '"','', [rfReplaceAll, rfIgnoreCase])) = 2  then
-    begin // only one remaining attribute
-      AttributeStringList.Add(Trim(attributePath));
-      attributePath:='';
+      actnode:= FderivedNodeSet[0];
+      filterByText:= true;
+      if length(FderivedNodeSet) > 1 then
+        LogDatei.log('more than one item has TEXT_CONTENT ' +
+            textvalue + ', the first item becomes actNode', oslog.LLwarning)
+      else
+        LogDatei.log('item with TEXT_CONTENT ' +  actNode.TextContent
+             + ' found, this item becomes actNode', oslog.LLinfo);
     end
-    else
+  else
     begin
-      // find with '" ' the end of an attribute
-      attribute:= Trim(copy(attributePath, 1, pos('" ', attributePath) ));
-      //logdatei.log('attribute ' + IntToStr(i) + ': ' + attribute, LLinfo);
-      leavingPath := copy(attributePath, pos('" ', attributePath) + 1, length(attributePath));
-      //logdatei.log( 'leavingPath ' + leavingPath, LLinfo);
-      AttributeStringList.Add(attribute);
-      attributePath:=leavingPath;
+      filterByText:= false;
+      actNode:= myparentNode;
+      LogDatei.log('none of the items has TEXT_CONTENT ' +
+            textvalue + ',  name of actNode is ' + actNode.NodeName, oslog.LLwarning);
     end;
-    inc(i);
-  end;
+end;
 
+function TuibXMLDocument.filterByChildElement (elementname: string) : Boolean;
+var
+  i, n, j, basejindex: Integer;
+begin
+  filterByChildElement := false;
+
+  LogDatei.log ('retaining child elements with name = "' + elementname + '"', LLInfo);
+  basejindex := 0;
+  i := 0;
+  while i < length(actNodeSet)
+  do
+  Begin
+     if actNodeSet[i] <> nil
+     then
+     begin
+       n := actNodeSet[i].childnodes.count;
+       for j:=0 to n-1
+       do
+       begin
+         actNode:= actNodeSet[i].childnodes.Item[j];
+         if (actNode.NodeName = elementname) then
+           begin
+             FderivedNodeSet[basejindex + j] := actNode;
+             filterByChildElement:= true;
+           end
+         else
+            FderivedNodeSet[basejindex + j] := nil;
+       end;
+       basejindex := basejindex + n;
+     end;
+
+     inc (i);
+  end;
+  cleanUpDerivedNodeSet();
+  if length(FderivedNodeSet) > 0 then
+    actnode:=FderivedNodeSet[0].ParentNode;
+
+end;
+
+//*************  Node-Operations ***********************************
+function TuibXMLDocument.nodeExists(nodePath: string): boolean;
+// tells if a node exists without changing anything
+// checks only first attribute if it exists
+// true if path exists and attribute
+
+var
+  nodesInPath: array[0..50] of TDOMNode;
+  pathes: TStringList;
+  i: integer;
+  endOfPath, found: boolean;
+  leavingPath, thisnodeName : string;
+  attributeName, attributeValue: string;
+begin
+  nodeExists := False;
+  try
+    begin
+      // the root node
+      nodesInPath[0] := XML.DocumentElement;
+      stringsplit(nodepath, XML2PATHSEPARATOR, pathes);
+      // TODO: don't check attributes, only nodenames
+      // walk the path
+      // The Path looks like this:
+      // nodedescription XML2PATHSEPARATOR nodedescripton (and so on)
+      // nodedescription looks like this
+      // nodename attributeName="attributeValue"  or
+      // nodename (node without attributes)
+      // (!) attributeValue may contain a XML2PATHSEPARATOR string
+      // XML2PATHSEPARATOR = ' // '
+      i := 1;
+      endOfPath := False;
+      found := True;
+      leavingPath := nodePath;
+      LogDatei.log('begin to open nodepath, exists?  ' + nodepath, LLinfo);
+      while (i < pathes.Count + 1) and found do
+      begin
+        attributevalue := '';
+        attributename := '';
+        LogDatei.log('path element ' + IntToStr(i) + ' : ' + pathes[i - 1], LLinfo);
+        if (pos('=', pathes[i - 1]) > 0) then // only in this case attributes
+        begin
+          thisnodeName := copy(pathes[i - 1], 1, pos(' ', pathes[i - 1]) - 1);
+          leavingPath := copy(pathes[i - 1], pos(' ', pathes[i - 1]) + 1, length(pathes[i - 1]));
+          attributeName := copy(leavingPath, 1, pos('=', leavingPath) - 1);
+          leavingPath := copy(leavingPath, pos('=', leavingPath) + 1, length(leavingPath));
+          if pos('"' + XML2PATHSEPARATOR, leavingPath) > 0 then
+            attributeValue := copy(leavingPath, 1, pos('"' + XML2PATHSEPARATOR, leavingPath))
+          else
+            attributeValue := leavingPath;
+          if AnsiStartsStr('"', attributeValue) then
+            attributeValue := copy(attributeValue, 2, length(attributeValue))
+          else
+            attributeValue :='';
+          if AnsiEndsStr('"', attributeValue) then
+            attributeValue := copy(attributeValue, 1, length(attributeValue) - 1)
+          else
+            attributeValue :='';
+        end
+        else
+          thisnodeName := pathes[i - 1];
+        thisnodeName := Trim(thisnodeName);
+        attributeValue := Trim(attributeValue);
+        attributename := Trim(attributename);
+
+        LogDatei.log('node ' + IntToStr(i) + ': nodename ' +
+          thisnodename
+          + ' attributeName: ' + attributeName
+          + ' attributeValue: ' + attributeValue, LLinfo
+          );
+
+        if not getNodeByNameAndAttribute(nodesInPath[i], nodesInPath[i - 1], thisnodeName,
+          attributeName, attributeValue) then
+        // only check nodenames
+        begin
+          found := False;
+          LogDatei.log( 'not found node ' + IntToStr(i) + ': nodename: ' +
+            thisnodename
+            + ' attributeName: ' + attributeName
+            + ' attributeValue: ' + attributeValue, LLwarning
+            );
+
+        end
+        else
+        begin
+          LogDatei.log( 'Found node ' + IntToStr(i) + ': nodename: ' +
+            thisnodename
+            + ' attributeName: ' + attributeName
+            + ' attributeValue: ' + attributeValue, LLinfo
+            );
+
+          found := True;
+        end;
+
+        Inc(i);
+      end;
+
+      if found then
+        nodeExists := True
+      else
+        nodeExists := False;
+    end;
+  except
+    LogDatei.log('node not found' + ': nodename: ' + thisnodename
+      + ' attributeName: ' + attributeName +
+      ' attributeValue: ' + attributeValue, LLwarning);
+
+    nodeExists := False;
+  end;
 end;
 
 function TuibXMLDocument.openNode(nodePath: string; attributes_strict: boolean): boolean;
@@ -1050,7 +1126,7 @@ function TuibXMLDocument.openNode(nodePath: string; attributes_strict: boolean):
 var
   nodesInPath: array[0..50] of TDOMNode;
   attributesSL, pathes: TStringList;
-  i,j: integer;
+  i,j,k: integer;
   found: boolean;
   leavingPath, thisnodeName, attribute : string;
   attributeList: TList;
@@ -1087,12 +1163,10 @@ begin
       begin
         // split on blank, list of attributes
         makeAttributesSL(attributesSL, leavingPath);
-        for j:=0 to attributesSL.Count-1 do
-           logdatei.log( 'Attribute ' +attributesSL[j], LLinfo );
+        for k:=0 to attributesSL.Count-1 do
+           logdatei.log( 'Attribute ' +attributesSL[k], LLinfo );
         logdatei.log( 'Anzahl Attribute ' + IntToStr(attributesSL.Count), LLinfo );
         j:=0;
-        //attributeList := TList.Create;
-
         while j < attributesSL.Count do
         begin
           // List of [attributename, attributevalue]
@@ -1127,8 +1201,8 @@ begin
         //' attributeValue: ' + attributeValue
         ,LLinfo
         );
-      j:=0;
       (*
+      j:=0;
       while (j< attributeList.Count) do
       begin
         logdatei.log( attributeList.Items[j].key + ' : ' + attributeList.Items[j].value, LLinfo );
@@ -1165,7 +1239,16 @@ begin
           end
        end
        else  // not strict!
-         if not getNode(nodesInPath[i], nodesInPath[i - 1], thisnodeName, attributeList.Items[0].key, attributeList.Items[0].value) then  // TODO
+       begin
+         if attributeList.Count = 0 then
+         begin
+           attributeList.Add;
+           attributeList.Items[0].key := '';
+           attributeList.Items[0].value := '';
+         end;
+         //else  attributeList contains one pair
+
+         if not getNodeByNameAndAttribute(nodesInPath[i], nodesInPath[i - 1], thisnodeName, attributeList.Items[0].key, attributeList.Items[0].value) then
            begin
             found := False;
             LogDatei.log( 'opennode: node not found ' + IntToStr(i) + ': nodename: ' +
@@ -1178,6 +1261,7 @@ begin
             logdatei.log('Found node ' + IntToStr(i) + ': nodename: ' +
                actNode.NodeName, LLinfo)
           end;
+       end;
       Inc(i);
     end;
 
@@ -1211,9 +1295,240 @@ begin
 
 end;
 
+function TuibXMLDocument.makeNode(mynodeName,
+  attributeName, attributeValue: string): boolean;
+  // create new node, append to actNode, set newnode as actNode
+var
+  newnode: TDOMNode;
+begin
+  LogDatei.log('begin to make node with nodename: ' +
+    mynodeName + ' attributeName: ' + attributeName +
+    ' attributeValue: ' + attributeValue , LLinfo
+    );
+  makeNode := False;
+  try
+    if actNode <> nil then
+    begin
+      newnode := XML.CreateElement(mynodeName);
+      if attributeName <> '' then
+      begin
+        TDOMElement(newnode).SetAttribute(attributeName, attributeValue);
+      end;
+      actNode.AppendChild(newnode);
+      actNode := newnode;
+      makeNode := True;
+    end
+    else
+      LogDatei.log('actNode is nil. cannot make and append node', LLwarning);
+  except
+    LogDatei.log('error to make node with nodename: ' +
+      mynodeName + ' attributeName: ' + attributeName +
+      ' attributeValue: ' + attributeValue , LLerror
+      );
+  end;
+end;
+
+function TuibXMLDocument.makeNodeAndKeepActNode(mynodeName,
+  attributeName, attributeValue, text: string): boolean;
+// create new node, append to actNode, actNode is kept
+var
+  newnode: TDOMNode;
+begin
+  LogDatei.log('begin to make node with nodename: ' +
+    mynodeName + ' attributeName: ' + attributeName +
+    ' attributeValue: ' + attributeValue , LLinfo
+    );
+  makeNodeAndKeepActNode := False;
+  try
+    if actNode <> nil then
+    begin
+      newnode := XML.CreateElement(mynodename);
+      newnode.TextContent:=text;
+      if attributeName <> '' then
+      begin
+        TDOMElement(newnode).SetAttribute(attributeName, attributeValue);
+      end;
+      actNode.AppendChild(newnode);
+      makeNodeAndKeepActNode := True;
+    end
+    else
+      LogDatei.log('actNode is nil. cannot make and append node', LLwarning);
+  except
+    LogDatei.log('error to make node with nodename: ' +
+      mynodeName + ' attributeName: ' + attributeName +
+      ' attributeValue: ' + attributeValue , LLerror
+      );
+  end;
+end;
+
+function TuibXMLDocument.makeNodes
+                     ( mynodeName: String;
+                     const textArray:TStringList)
+                     :boolean;
+// creates couple of nodes in actnode with equal names
+// and different TextContent, actNode will be same after creation
+var
+  index: Integer;
+begin
+  if textArray.Count>0 then
+  begin
+    makeNodes:=true;
+    for index := 0 to textArray.Count-1 do
+    begin
+     makeNodeAndKeepActNode(mynodeName,'','', textArray[index]);
+    end
+  end
+  else
+  begin
+    LogDatei.log('length of Array is 0: ', LLerror);
+    makeNodes:= false;
+  end;
+end;
+
+// überladen!!!
+procedure TuibXMLDocument.delNode(nodePath: string);
+var
+  removeNode: TDOMNode;
+begin
+  LogDatei.log('begin to del Node: ' + nodePath, LLinfo);
+  openNode(nodePath, false);  // not strict
+  if actNode<> nil then
+    begin
+      removeNode := actNode;
+      actNode := actNode.ParentNode;
+      try
+        removenode.Free;
+      except
+        LogDatei.log('Error in delNode: ' + nodePath + '. Node was not removed', LLerror);
+      end;
+    end
+  else
+    LogDatei.log('Error in delNode: ' + nodePath + ', node not found', LLerror);
+end;
+
+procedure TuibXMLDocument.delNode;
+// aktnode (and all childs) will be deleted, afterwards aktnode will be parent
+// before del node check node with nodeExists
+var
+  removeNode: TDOMNode;
+begin
+  if actNode<>nil then
+    begin
+      LogDatei.log('begin to del Node: ' + actNode.NodeName, LLinfo);
+      removeNode := actNode;
+      actNode := actNode.ParentNode;
+      try
+        removenode.Free;
+      except
+        LogDatei.log('Error in delNode. Node was not removed', LLerror);
+      end;
+    end
+  else
+    LogDatei.log('delNode: actNode is nil', LLwarning);
+end;
+
+procedure TuibXMLDocument.setTopNodeAsActNode();
+// set top node as actual node
+begin
+  actNode :=  getDocumentElement();
+end;
+
+procedure TuibXMLDocument.setParentNodeAsActNode();
+// set parent node as actual node
+begin
+  if actNode <> nil then
+    actNode := actNode.ParentNode
+end;
+
+procedure TuibXMLDocument.setNodeTextActNode(Text: string);
+begin
+    LogDatei.log('begin to set text to actNode: ' + Text, LLinfo);
+    if actNode <> nil then
+    begin
+      actNode.TextContent := Text;
+      LogDatei.log('setNodeTextActNode - TextContent is: ' + actNode.TextContent, LLinfo)
+    end
+    else
+      LogDatei.log('actNode is nil, text not set: ' + Text, LLwarning);
+end;
+
+function TuibXMLDocument.setActNodeIfText(textvalue: string): boolean;
+// get first and hopefully unique node with text_content = nodeText
+// set this Node as actNode
+
+var
+  i, j, n, basejindex: integer;
+  comparetext: string;
+  myparentNode: TDOMNode;
+
+begin
+  myparentNode:= actNode;
+  setActNodeIfText := False;
+  LogDatei.log('set child element of aktnode as aktnode, text has to be "' + textvalue +
+    '"', oslog.LLinfo);
+
+  basejindex := 0;
+  i := 0;
+  while i < length(actNodeSet)
+  do
+  begin
+
+     if actNodeSet[i] <> nil
+     then
+     begin
+
+       n := actNodeSet[i].childnodes.count;
+
+       for j:=0 to n-1
+       do
+       begin
+         actnode:= actNodeSet[i].childnodes.Item[j];
+         if actnode.NodeType = ELEMENT_NODE
+         then
+           comparetext := actnode.TextContent
+         else
+           comparetext := '';
+
+         if AnsiCompareStr ( textvalue, comparetext ) = 0
+         then
+         begin
+            FderivedNodeSet[basejindex + j]:= actnode;
+         end
+
+         else
+            FderivedNodeSet[basejindex + j] := nil;
+       end;
+
+       basejindex := basejindex + n;
+
+     end;
+
+     inc (i);
+  end;
+  cleanUpDerivedNodeSet();
+  if getCountDerivedNotNil() > 0 then
+    begin
+      actnode:= FderivedNodeSet[0];
+      setActNodeIfText:= true;
+      if length(FderivedNodeSet) > 1 then
+        LogDatei.log('more than one item has TEXT_CONTENT ' +
+            textvalue + ', the first item becomes actNode', oslog.LLwarning)
+      else
+        LogDatei.log('item with TEXT_CONTENT ' +  actNode.TextContent
+             + ' found, this item becomes actNode', oslog.LLinfo);
+    end
+  else
+    begin
+      setActNodeIfText:= false;
+      actNode:= myparentNode;
+      LogDatei.log('none of the items has TEXT_CONTENT ' +
+            textvalue + ',  name of actNode is ' + actNode.NodeName, oslog.LLwarning);
+    end;
+end;
 
 function TuibXMLDocument.getNodeStrict(var newNode: TDOMNode; myparentNode: TDOMNode;
   mynodeName: string; attributeList : TList): boolean;
+// private
 // nodename and all attributes have to fit
 // if not found: actnode = myparentnode - result false
 // if found and unique : actnode = node found - result true
@@ -1367,14 +1682,71 @@ begin
 end;
 
 
-// for only one attribute
-function TuibXMLDocument.getNode(var newNode: TDOMNode; myparentNode: TDOMNode;
-  mynodeName: string; attributename: string; attributevalue : string): boolean;
-//
+function TuibXMLDocument.getNodeTextActNode() : String;
+// get text at the actual node
+begin
+  getNodeTextActNode:='';
+  if actNode <> nil then
+  begin
+    getNodeTextActNode:= actNode.TextContent;
+    LogDatei.log('get text from actNode: ' + actNode.TextContent, LLinfo)
+  end
+  else
+    LogDatei.log('actNode is nil, can not get text: ', LLwarning);
+end;
+
+function TuibXMLDocument.getNodeNameActNode ( ) : string;
+begin
+  getNodeNameActNode:='';
+  if actNode <> nil then
+  begin
+    getNodeNameActNode:= actNode.NodeName;
+    LogDatei.log('get nodeName from actNode: ' + actNode.NodeName, LLinfo)
+  end
+  else
+    LogDatei.log('actNode is nil, can not get nodeName ', LLwarning);
+end;
+
+function TuibXMLDocument.getNodeByName(var newNode: TDOMNode; myparentNode: TDOMNode;
+  mynodeName: string): boolean;
+// private
 var
   j, i: integer;
 begin
-  getNode := False;
+  getNodeByName := False;
+  logdatei.log('begin to get node  nodename: ' + mynodename , LLinfo );
+  try
+    if (myparentNode <> nil) then
+    begin
+      j := 0;
+      while (myparentNode.hasChildNodes) and (j < myparentNode.ChildNodes.Count) and
+        (getNodeByName = False) do
+      begin
+        // compare nodenames
+        if (myparentNode.ChildNodes.Item[j].NodeName = mynodeName) then
+          begin
+            newNode := myparentNode.ChildNodes.Item[j];
+            actNode := myparentNode.ChildNodes.Item[j];
+            getNodeByName := True;
+          end;
+        Inc(j);
+      end;
+    end
+    else
+      logdatei.log('parentnode not valid', oslog.LLerror);
+  finally
+
+  end;
+end;
+
+function TuibXMLDocument.getNodeByNameAndAttribute(var newNode: TDOMNode; myparentNode: TDOMNode;
+  mynodeName: string; attributename: string; attributevalue : string): boolean;
+// private
+// for name and only one attribute
+var
+  j, i: integer;
+begin
+  getNodeByNameAndAttribute := False;
   logdatei.log('begin to get node  nodename: ' + mynodename + ' with attributes: ', LLinfo );
 
   try
@@ -1382,9 +1754,9 @@ begin
     begin
       j := 0;
       while (myparentNode.hasChildNodes) and (j < myparentNode.ChildNodes.Count) and
-        (getNode = False) do
+        (getNodeByNameAndAttribute = False) do
       begin
-        // compare attributes if if given in parameter and existing
+        // compare attributes if given in parameter and existing
         if (myparentNode.ChildNodes.Item[j].NodeName = mynodeName) then
           if (myparentNode.ChildNodes.Item[j].HasAttributes)
               and (attributename <> '') then
@@ -1397,7 +1769,7 @@ begin
               begin
                 newNode := myparentNode.ChildNodes.Item[j];
                 actNode := myparentNode.ChildNodes.Item[j];
-                getNode := True;
+                getNodeByNameAndAttribute := True;
               end;
             end;
           end
@@ -1405,9 +1777,8 @@ begin
           begin
             newNode := myparentNode.ChildNodes.Item[j];
             actNode := myparentNode.ChildNodes.Item[j];
-            getNode := True;
+            getNodeByNameAndAttribute := True;
           end;
-
         Inc(j);
       end;
     end
@@ -1417,187 +1788,6 @@ begin
 
   end;
 end;
-
-function TuibXMLDocument.makeNode(mynodeName,
-  attributeName, attributeValue: string): boolean;
-  // create new node, append to actNode, set newnode as actNode
-var
-  newnode: TDOMNode;
-begin
-  LogDatei.log('begin to make node with nodename: ' +
-    nodename + ' attributeName: ' + attributeName +
-    ' attributeValue: ' + attributeValue , LLinfo
-    );
-  makeNode := False;
-  try
-    if actNode <> nil then
-    begin
-      newnode := XML.CreateElement(mynodename);
-      if attributeName <> '' then
-      begin
-        TDOMElement(newnode).SetAttribute(attributeName, attributeValue);
-      end;
-      actNode.AppendChild(newnode);
-      actNode := newnode;
-      makeNode := True;
-    end
-    else
-      LogDatei.log('actNode is nil. cannot make and append node', LLwarning);
-  except
-    LogDatei.log('error to make node with nodename: ' +
-      nodename + ' attributeName: ' + attributeName +
-      ' attributeValue: ' + attributeValue , LLerror
-      );
-  end;
-end;
-
-procedure TuibXMLDocument.setNodeTextActNode(Text: string);
-begin
-    LogDatei.log('begin to set text to actNode: ' + Text, LLinfo);
-    if actNode <> nil then
-      actNode.TextContent := Text
-    else
-      LogDatei.log('actNode is nil, text not set: ' + Text, LLwarning);
-end;
-function TuibXMLDocument.getNodeTextActNode() : String;
-// get text at the actual node
-begin
-  getNodeTextActNode:='';
-  LogDatei.log('get text from actNode: ', LLinfo);
-  if actNode <> nil then
-    getNodeTextActNode:= actNode.TextContent
-  else
-    LogDatei.log('actNode is nil, can not get text: ', LLwarning);
-end;
-
-function TuibXMLDocument.getNodeNameActNode ( ) : string;
-begin
-  getNodeNameActNode:='';
-  LogDatei.log('get nodeName from actNode: ', LLinfo);
-  if actNode <> nil then
-    getNodeNameActNode:= actNode.NodeName
-  else
-    LogDatei.log('actNode is nil, can not get nodeName: ', LLwarning);
-end;
-
-(*
-function TuibXMLDocument.nodeExists(nodePath: string): boolean;
-var
-  expectedtext : string ='';
-begin
-  result := nodeExists(nodePath, expectedtext);
-end;
-*)
-
-function TuibXMLDocument.nodeExists(nodePath: string): boolean;
-// tells if a node exists without changing anything
-// TODO : selection if text
-// same as openNode??? redundant.
-var
-  nodesInPath: array[0..50] of TDOMNode;
-  pathes: TStringList;
-  i: integer;
-  endOfPath, found: boolean;
-  leavingPath, thisnodeName : string;
-  attributeName, attributeValue: string;
-begin
-  nodeExists := False;
-  try
-    begin
-      // the root node
-      nodesInPath[0] := XML.DocumentElement;
-      stringsplit(nodepath, XML2PATHSEPARATOR, pathes);
-      // TODO: don't check attributes, only nodenames
-      // walk the path
-      // The Path looks like this:
-      // nodedescription XML2PATHSEPARATOR nodedescripton (and so on)
-      // nodedescription looks like this
-      // nodename attributeName="attributeValue"  or
-      // nodename (node without attributes)
-      // (!) attributeValue may contain a XML2PATHSEPARATOR string
-      // XML2PATHSEPARATOR = ' // '
-      i := 1;
-      endOfPath := False;
-      found := True;
-      leavingPath := nodePath;
-      LogDatei.log('begin to open nodepath, exists?  ' + nodepath, LLinfo);
-      while (i < pathes.Count + 1) and found do
-      begin
-        attributevalue := '';
-        attributename := '';
-        LogDatei.log('path element ' + IntToStr(i) + ' : ' + pathes[i - 1], LLinfo);
-        if (pos('=', pathes[i - 1]) > 0) then // only in this case attributes
-        begin
-          thisnodeName := copy(pathes[i - 1], 1, pos(' ', pathes[i - 1]) - 1);
-          leavingPath := copy(pathes[i - 1], pos(' ', pathes[i - 1]) + 1, length(pathes[i - 1]));
-          attributeName := copy(leavingPath, 1, pos('=', leavingPath) - 1);
-          leavingPath := copy(leavingPath, pos('=', leavingPath) + 1, length(leavingPath));
-          if pos('"' + XML2PATHSEPARATOR, leavingPath) > 0 then
-            attributeValue := copy(leavingPath, 1, pos('"' + XML2PATHSEPARATOR, leavingPath))
-          else
-            attributeValue := leavingPath;
-          if AnsiStartsStr('"', attributeValue) then
-            attributeValue := copy(attributeValue, 2, length(attributeValue));
-          if AnsiEndsStr('"', attributeValue) then
-            attributeValue := copy(attributeValue, 1, length(attributeValue) - 1);
-        end
-        else
-          thisnodeName := pathes[i - 1];
-        thisnodeName := Trim(thisnodeName);
-        //attributeValue := Trim(attributeValue);
-        //attributename := Trim(attributename);
-        attributeValue:='';
-        attributeName:='';
-        LogDatei.log('node ' + IntToStr(i) + ': nodename ' +
-          thisnodename, LLinfo);
-        {
-          + ' attributeName: ' + attributeName
-          + ' attributeValue: ' + attributeValue, LLinfo
-          );
-        }
-        if not getNode(nodesInPath[i], nodesInPath[i - 1], thisnodeName,
-          attributeName, attributeValue) then
-        // only check nodenames
-        begin
-          found := False;
-          LogDatei.log( 'not found node ' + IntToStr(i) + ': nodename: ' +
-            thisnodename, LLinfo);
-          {
-            + ' attributeName: ' + attributeName
-            + ' attributeValue: ' + attributeValue, LLinfo
-            );
-          }
-        end
-        else
-        begin
-          LogDatei.log( 'Found node ' + IntToStr(i) + ': nodename: ' +
-            thisnodename, LLinfo);
-          {
-            + ' attributeName: ' + attributeName
-            + ' attributeValue: ' + attributeValue, LLinfo
-            );
-          }
-          found := True;
-        end;
-
-        Inc(i);
-      end;
-
-      if found then
-        nodeExists := True
-      else
-        nodeExists := False;
-    end;
-  except
-    LogDatei.log('node not found' + ': nodename: ' + thisnodename, LLinfo);
-    {
-      + ' attributeName: ' + attributeName +
-      ' attributeValue: ' + attributeValue, LLwarning);
-    }
-    nodeExists := False;
-  end;
-end;
-
 
 
 //*************  XML Attribute-Handling ***********************************
@@ -1639,7 +1829,6 @@ end;
 
 procedure TuibXMLDocument.setAttribute(attributeName, attributeValue: string);
 // set if exists, otherwise create
-// attributeName may include a namespace prefix --- no more
 var
   i: integer;
   found: boolean;
@@ -1674,7 +1863,6 @@ end;
 
 procedure TuibXMLDocument.addAttribute(attributeName, attributeValue: string);
 // only add attribute if attribute does not exist
-// attributeName may include a namespace prefix --- no more
 begin
   LogDatei.log('begin to add attribute: name: ' +
     attributeName + ' value: ' + attributeValue, LLinfo);
@@ -1703,7 +1891,6 @@ end;
 
 
 function TuibXMLDocument.getAttributeValue(attributeName: string): string;
-  // var
   // get the attribute value at the actual node
   // ATTENTION: it returns an empty string:
   // - if there is no attribute with this name
@@ -1720,6 +1907,36 @@ begin
 
 end;
 
+procedure TuibXMLDocument.makeAttributesSL (var attributeStringList: TStringList; attributePath : String);
+// private
+var splitPos, i: integer;
+  attribute : String;
+  leavingpath: String;
+begin
+  logdatei.log('attribute path element : ' + attributePath, LLinfo);
+  attributeStringList:= TStringList.Create;
+  i:=1;
+  while (length(attributePath)>0) do
+  begin
+    if Length(attributePath)-Length(StringReplace(attributePath, '"','', [rfReplaceAll, rfIgnoreCase])) = 2  then
+    begin // only one remaining attribute
+      AttributeStringList.Add(Trim(attributePath));
+      attributePath:='';
+    end
+    else
+    begin
+      // find with '" ' the end of an attribute
+      attribute:= Trim(copy(attributePath, 1, pos('" ', attributePath) ));
+      //logdatei.log('attribute ' + IntToStr(i) + ': ' + attribute, LLinfo);
+      leavingPath := copy(attributePath, pos('" ', attributePath) + 1, length(attributePath));
+      //logdatei.log( 'leavingPath ' + leavingPath, LLinfo);
+      AttributeStringList.Add(attribute);
+      attributePath:=leavingPath;
+    end;
+    inc(i);
+  end;
+
+end;
 
 
 end.

@@ -173,7 +173,7 @@ begin
       begin
         mynode := XML.CreateElement('opsibase');
         ReadXMLFragment(mynode, nodestream);
-        Result := mynode.FirstChild
+        Result := mynode.FirstChild;
       end
   finally
     nodestream.Free;
@@ -209,6 +209,7 @@ begin
        result:=true;
      end;
 end;
+
 function setActualAttributeValueTDOMNode(attributekey:string; attributevalue:string): boolean;
 var i:integer;
 begin
@@ -521,6 +522,7 @@ begin
 end;
 
 //******************************************************************************
+
 function getNodeType(mynode: TDOMNode): string;
 // ungetestet  , notwendig??
 begin
