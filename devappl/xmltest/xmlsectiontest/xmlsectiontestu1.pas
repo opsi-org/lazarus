@@ -5,8 +5,10 @@ unit xmlsectiontestu1;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  Buttons,  DOM, oslog, osxmlsections;
+  Classes, SysUtils, FileUtil,
+  Forms, Controls, Graphics, Dialogs, StdCtrls,
+  Buttons,
+  oslog, osxmlsections;
 
 type
 
@@ -111,15 +113,10 @@ begin
     LogDatei.log('success: create xmldoc from stringlist',oslog.LLinfo)
   else
     LogDatei.log('failed: create xmldoc from stringlist',oslog.LLinfo);
-  XMLDocObject.setlengthActNodeSet  (1);
-  XMLDocObject.actnodeset[0] := XMLDocObject.getDocumentElement;
-  for k:= 0 to length(XMLDocObject.actNodeSet)-1 do
-    if XMLDocObject.actNodeSet[k] <> nil then
-      LogDatei.log('actNodeSet <> nil',oslog.LLinfo)
-    else
-      LogDatei.log('actNodeSet = nil',oslog.LLinfo);
+  XMLDocObject.makeTopAsActNodeSet;
   XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
+
   //XMLDocObject.filterByChildElement (true, 'settings');
   //XMLDocObject.logNodeSets;
   // Nodetext setzen und Attribut setzen :   SetText, SetAttribute
@@ -129,7 +126,7 @@ begin
       XMLDocObject.setNodeTextActNode('***ModifyPartitions wurde ersetzt***');
       XMLDocObject.setAttribute('testname','testvalue');
     end;
-  {
+
   // Knoten löschen: DeleteElement
   // muss kein openNode gemacht werden, ist bei delNode implizit. Wenn der Knoten nicht gefunden wird, wird der zuletzt gefundene
   // übergeordnete Knoten gelöscht. Daher zuvor ein nodeExists!!
@@ -166,7 +163,7 @@ begin
         XMLDocObject.setNodeTextActNode('nodeText wurde gesetzt');
 
   // setText '' : löschen des komplette Knotens
-   }
+
   {
     return elements
     fills the selected elements completely (element name and attributes) into the return list.
@@ -180,28 +177,9 @@ begin
     return counting
     gives a report with numerical informations: line 0 contains the number of selected elements, line 1 the number of attributes.
   }
-  LogDatei.log('sollte leer sein, aktnode Attributvalue für wcm-nix: ' + XMLDocObject.getAttributeValue('wcm-nix'), LLinfo);  // liefert nichts zurück, da es das Attribut nicht gibt.
-  LogDatei.log('sollte leer sein, aktnode Attributvalue für Leerstring: ' + XMLDocObject.getAttributeValue(''), LLinfo);  // liefert auch nichts zurück, da es das Attribut leer ist nicht gibt.  XMLDocObject.makeNode('neuerKnoten','mitAttribut','undValue');
+
   XMLDocObject.logNodeSets;
-  //XMLDocObject.getNextGenerationActNodeSet;
-  {
-  XMLDocObject.makeNewDerivedNodeSet;
-  if xmldoc.actNodeSet[k] <> nil
-  xmldoc.getNamespaceAndBasename (attributename, uri, attributename0);
-  xmldoc.actNodeSet[k].hasAttribute (attributename0, uri);
-  xmldoc.actNodeSet[k].getattributeNs(attributename0, uri);
-  xmldoc.actNodeSet[k].setAttributeNS(attributename0,uri,attributeValue);
-  xmldoc.actNodeSet[k].IsTextElement
-  xmldoc.actNodeSet[k].text
-  xmldoc.actNodeset[k].AttributeNodes.Count
 
-  xmldoc.filterByChildElement(elementnamefiltering, elementname);
-
-  xmldoc.filterByText(textfiltering, textvalue);
-  xmldoc.filterByAttributeList
-			 (attributenames, attributevalueExists, attributevalues,
-				attributes_strict);
-  }
   memo3.Append(XMLDocObject.getXmlStrings().Text);
   memo3.Repaint;
   Application.ProcessMessages;
@@ -210,7 +188,6 @@ end;
 
 procedure TForm1.addPackagesClick(Sender: TObject);
 var XMLDocObject: TuibXMLDocument;
-    k: integer;
     textArray: TStringList;
     cdataString : String;
 
@@ -227,19 +204,26 @@ begin
     LogDatei.log('success: create xmldoc from stringlist',oslog.LLinfo)
   else
     LogDatei.log('failed: create xmldoc from stringlist',oslog.LLinfo);
-  XMLDocObject.setlengthActNodeSet  (1);
 
-  XMLDocObject.actnodeset[0] := XMLDocObject.getDocumentElement;
-  for k:= 0 to length(XMLDocObject.actNodeSet)-1 do
-    if XMLDocObject.actNodeSet[k] <> nil then
-      LogDatei.log('actNodeSet <> nil',oslog.LLinfo)
-    else
-      LogDatei.log('actNodeSet = nil',oslog.LLinfo);
+
+  // oberstes Nodeset als actNodeSet setzen
+  XMLDocObject.makeTopAsActNodeSet;
   XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
 
+  // An dieser Stelle sind lediglich die Nodesets bekannt, actNode wäre Nil
+  XMLDocObject.setTopNodeAsActNode;
+  LogDatei.log('actnode name is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
+                          XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
 
-  // Anlegen von Knoten
+  // mach das derivedNodeset zum aktnodeset und mach neue derivedNodeSets
+  XMLDocObject.getNextGenerationActNodeSet;
+  XMLDocObject.makeNewDerivedNodeSet;
+  // diese Nodes sind alle nächsten Childs von allen Knoten in actNodeSet
+  // wozu soll das gut sein?
+  XMLDocObject.logNodeSets;
+
+  // Anlegen von Knoten, filtern des actNodesets
   LogDatei.log('vor filterByChildElement, kein filtern ',oslog.LLinfo);
   XMLDocObject.filterByChildElement('software');
   XMLDocObject.getNextGenerationActNodeSet;
@@ -255,11 +239,16 @@ begin
                           XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
   XMLDocObject.logNodeSets;
 
-
-  //if XMLDocObject.setActNodeUniqueFromActnodeSet() then
-  //  LogDatei.log('actnode is set - do anything with actnode ',oslog.LLinfo)
-  //else
-  //  LogDatei.log('actnode can not be set - no change with actnode ',oslog.LLinfo);
+  // create Node from TStringList and test if valid
+  // TODO: Baustelle
+  {
+  textArray := TStringList.Create;
+  textArray.Add('<package>thunderbird</package>');
+  if XMLDocObject.isValidXML(textArray) then
+    LogDatei.log('valid XML' ,oslog.LLinfo)
+  else
+    LogDatei.log(textArray.ToString + ' : not valid XML',oslog.LLerror) ;
+  }
 
   // add node
   XMLDocObject.makeNode('package','','');
@@ -272,7 +261,7 @@ begin
   // nach dem Anhängen des neuen Knotens ist actnode der neue Knoten (package thunderbird)
 
   // nochmal den Parent-Knoten aus actNodeSet holen
-  XMLDocObject.setParentNode();
+  XMLDocObject.setParentNodeAsActNode();
   LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
                           XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
   // Knoten pillepalle anhängen
@@ -285,7 +274,7 @@ begin
 
   // wieder im Knoten Packages einen Knotenanlegen, Knoten packages als actnode beibehalten
   // diesmal gleich mit allen Parametern
-  XMLDocObject.setParentNode();
+  XMLDocObject.setParentNodeAsActNode();
   XMLDocObject.makeNodeAndKeepActNode('package','name1','attribut1','palimpalim');
   XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
@@ -307,38 +296,35 @@ begin
   end
   else
     LogDatei.log('irgendwas ist falsch gelaufen ' ,oslog.LLerror);
-
+  textArray.Clear;
 
   // anderer Weg für das Anlegen von Knoten
   // über den nodeExisits und openNode mit dem nodePath,
   // danach an actNode makeNode und setzen des Textes
+  // hier openNode strict=false - stimmt aber trotzdem
   if XMLDocObject.nodeExists('software // packages config:type="list"') then
     if XMLDocObject.openNode('software // packages config:type="list"', false) then
     begin
       XMLDocObject.makeNode('package','','');
       XMLDocObject.setNodeTextActNode('thunderbird');
     end;
+  // hier openNode strict=true
   if XMLDocObject.nodeExists('software // packages config:type="list"') then
-    if XMLDocObject.openNode('software // packages config:type="list"', false) then
+    if XMLDocObject.openNode('software // packages config:type="list"', true) then
     begin
       XMLDocObject.makeNode('package','','');
       XMLDocObject.setNodeTextActNode('firefox');
     end;
-  if XMLDocObject.nodeExists('software // packages config:type="list"') then
-    if XMLDocObject.openNode('software // packages config:type="list"', false) then
+  // hier openNode strict=false - geht auch
+  if XMLDocObject.nodeExists('software // packages') then
+    if XMLDocObject.openNode('software // packages', false) then
     begin
       XMLDocObject.makeNode('package','','');
       XMLDocObject.setNodeTextActNode('flowerpower');
     end;
 
   // nochmal auf Anfang und die Knoten auslesen
-  XMLDocObject.setlengthActNodeSet  (1);
-  XMLDocObject.actnodeset[0] := XMLDocObject.getDocumentElement;
-  for k:= 0 to length(XMLDocObject.actNodeSet)-1 do
-    if XMLDocObject.actNodeSet[k] <> nil then
-      LogDatei.log('actNodeSet <> nil',oslog.LLinfo)
-    else
-      LogDatei.log('actNodeSet = nil',oslog.LLinfo);
+  XMLDocObject.makeTopAsActNodeSet;
   XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
 
@@ -355,7 +341,6 @@ begin
 
 
   // Löschen des Elements package mit TextContent snapper
-  // filterByText arbeitet auf actNodeSet
   // delete node if text is
   // select node name=package, text=snapper
   if XMLDocObject.nodeExists('software // packages config:type="list"') then
@@ -379,7 +364,7 @@ begin
   XMLDocObject.delNode('software // packages config:type="list" // package');
   LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode,oslog.LLinfo);
 
-  // Wie sieht der Zweipg packages jetzt aus?
+  // Wie sieht der Zweig packages jetzt aus?
   XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
 

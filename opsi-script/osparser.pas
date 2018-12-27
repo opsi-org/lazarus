@@ -7172,7 +7172,7 @@ begin
   end; // any line
 
   // save xml back
-  if XMLDocObject.writeXmlFile(myfilename) then
+  if XMLDocObject.writeXmlAndCloseFile(myfilename) then
     LogDatei.log('successful written xmldoc to file: '+myfilename,LLinfo)
   else
     LogDatei.log('failed to write xmldoc to file: '+myfilename,oslog.LLError);
