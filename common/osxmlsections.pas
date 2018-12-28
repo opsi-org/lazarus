@@ -1384,18 +1384,19 @@ begin
         thisnodename
         ,LLinfo
         );
+
+
       if actNode<>nil then
             logdatei.log('actnode: ' + actnode.NodeName,LLinfo )
       else
-      begin
             logdatei.log('actnode: is nil',LLinfo );
-            actNode:= nodesInPath[i - 1];
-      end;
+
       if found then
         begin
         if (not getNodeStrict(nodesInPath[i], nodesInPath[i - 1], thisnodeName, attributeList)) then
             begin
-              found := False;
+              found := false;
+              actNode:= nodesInPath[i - 1];
               LogDatei.log( 'opennode: node with attributes_strict not found ' + IntToStr(i) + ': nodename: ' +
                 thisnodeName + ', Node will be created', LLInfo
                 );

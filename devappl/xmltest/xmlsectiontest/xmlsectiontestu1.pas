@@ -117,7 +117,7 @@ begin
   XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
 
-  if XMLDocObject.makeNodePathWithTextContent('settingsXY pass="windowsPE" // componentXY name="Microsoft-Windows-Setup" language="neutral" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versionScope="nonSxS" publicKeyToken="31bf3856ad364e35" processorArchitecture="amd64" // UserDataXY // ProductKeyXY // WillShowUIXY', 'Hallo Text') then
+  if XMLDocObject.makeNodePathWithTextContent('settings pass="windowsPE" // component language="neutral" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versionScope="nonSxS" publicKeyToken="31bf3856ad364e35" processorArchitecture="amd64" // UserDataXY // ProductKeyXY // WillShowUIXY', 'Hallo Text') then
       LogDatei.log('success: makeNodePathWithTextContent',oslog.LLinfo)
   else
       LogDatei.log('failed: makeNodePathWithTextContent',oslog.LLinfo);
