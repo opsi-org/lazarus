@@ -117,6 +117,12 @@ begin
   XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
 
+  if XMLDocObject.makeNodePathWithTextContent('settings pass="windowsPE" // component language="neutral" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versionScope="nonSxS" publicKeyToken="31bf3856ad364e35" processorArchitecture="amd64" // UserDataXY // ProductKeyXY // WillShowUIXY', 'Hallo Text') then
+      LogDatei.log('success: makeNodePathWithTextContent',oslog.LLinfo)
+  else
+      LogDatei.log('failed: makeNodePathWithTextContent',oslog.LLinfo);
+
+{
   //XMLDocObject.filterByChildElement (true, 'settings');
   //XMLDocObject.logNodeSets;
   // Nodetext setzen und Attribut setzen :   SetText, SetAttribute
@@ -142,6 +148,7 @@ begin
     end;
 
   // Attribute löschen und setzen :  DeleteAttribute, AddAttribute, SetAttribute
+  {
   if XMLDocObject.nodeExists('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add"') then
     if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add"', false) then
     begin
@@ -151,18 +158,19 @@ begin
       XMLDocObject.addAttribute('newwcm','newwcmAttribute');
       XMLDocObject.setAttribute('newAttribute','newValue');
     end;
-
+  }
   // TODO : Suche mit mehreren Attributen - openNode mit attributes_strict
   // TODO : Suche mit Attribut, Toleranz bei weiteren Attributen, die nicht auftauchen
   // TODO : addText
   // AddText "rtf" : sets the text only if there was no text node given
-
+  {
   // setText: neuen Text setzen. Jeglicher anderer Inhalt wird ersetzt, auch XML_Blätter. Kein XML-Fragment!
   if XMLDocObject.nodeExists ('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // UserData // ProductKey // WillShowUI') then
     if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // UserData // ProductKey // WillShowUI', false) then
         XMLDocObject.setNodeTextActNode('nodeText wurde gesetzt');
-
+  }
   // setText '' : löschen des komplette Knotens
+
 
   {
     return elements
@@ -177,6 +185,8 @@ begin
     return counting
     gives a report with numerical informations: line 0 contains the number of selected elements, line 1 the number of attributes.
   }
+
+
 
   XMLDocObject.logNodeSets;
 
