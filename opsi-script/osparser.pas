@@ -15194,6 +15194,34 @@ begin
  end
  {$ENDIF WINDOWS}
 
+ else if Skip ('xml2NodeExistsByPathInXMLFile', Input, r, sx)
+ then
+ begin
+   if Skip ('(', r, r, InfoSyntaxError)
+   then if EvaluateString (r, r, s1, InfoSyntaxError)
+   then if Skip (',', r, r, InfoSyntaxError)
+   then if EvaluateString (r, r, s2, InfoSyntaxError)
+   then if Skip (',', r, r, InfoSyntaxError)
+   then if EvaluateString (r, r, s3, InfoSyntaxError)
+   then if Skip (')', r, r, InfoSyntaxError)
+   then
+   Begin
+     syntaxCheck := true;
+     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+     LogDatei.log ('xml2NodeExistsByPathInXMLFile in File "' + s1 + '" path "' + s2 + '"  strict mode: "'+s3+'"', LLInfo);
+     try
+       s1 := ExpandFileNameUTF8(s1);
+       BooleanResult :=  nodeExistsByPathInXMLFile(s1,s2,StrToBool(s3));
+     except
+       on ex: Exception
+       do
+       Begin
+         LogDatei.log ('Error: Exception around xml2NodeExistsByPathInXMLFile' + ex.message, LLError);
+       End;
+     end;
+   End
+ End
+
  else if Skip ('LineBeginning_ExistsIn', Input, r, sx)
  then
  begin
