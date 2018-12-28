@@ -116,17 +116,17 @@ begin
   XMLDocObject.makeTopAsActNodeSet;
   XMLDocObject.makeNewDerivedNodeSet;
   XMLDocObject.logNodeSets;
-
+  {
   if XMLDocObject.makeNodePathWithTextContent('settings pass="windowsPE" // component language="neutral" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versionScope="nonSxS" publicKeyToken="31bf3856ad364e35" processorArchitecture="amd64" // UserDataXY // ProductKeyXY // WillShowUIXY', 'Hallo Text') then
       LogDatei.log('success: makeNodePathWithTextContent',oslog.LLinfo)
   else
       LogDatei.log('failed: makeNodePathWithTextContent',oslog.LLinfo);
 
-{
+  }
   //XMLDocObject.filterByChildElement (true, 'settings');
   //XMLDocObject.logNodeSets;
   // Nodetext setzen und Attribut setzen :   SetText, SetAttribute
-  if XMLDocObject.nodeExists('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add"') then
+  if XMLDocObject.nodeExists('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add"', false) then
     if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" language="neutral" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versionScope="nonSxS" publicKeyToken="31bf3856ad364e35" processorArchitecture="amd64" // DiskConfiguration // Disk wcm:action="add" // ModifyPartitions', true) then
     begin
       XMLDocObject.setNodeTextActNode('***ModifyPartitions wurde ersetzt***');
@@ -136,11 +136,18 @@ begin
   // Knoten löschen: DeleteElement
   // muss kein openNode gemacht werden, ist bei delNode implizit. Wenn der Knoten nicht gefunden wird, wird der zuletzt gefundene
   // übergeordnete Knoten gelöscht. Daher zuvor ein nodeExists!!
-  if XMLDocObject.nodeExists('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add" // WillWipeDisk') then
-    XMLDocObject.delNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add" // WillWipeDisk');
+  if XMLDocObject.nodeExists('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add" // WillWipeDisk', true) then
+    XMLDocObject.delNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add" // WillWipeDisk')
+  else
+    LogDatei.log('failed: delNode',oslog.LLinfo);
+
+  if XMLDocObject.nodeExists('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" language="neutral" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versionScope="nonSxS" publicKeyToken="31bf3856ad364e35" processorArchitecture="amd64" // DiskConfiguration // Disk wcm:action="add" // WillWipeDisk', true) then
+    XMLDocObject.delNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add" // WillWipeDisk')
+  else
+    LogDatei.log('failed: delNode',oslog.LLinfo);
 
   // neuen Knoten setzen : am aktuellen Knoten wird ein Knoten angehängt, der neue Knoten wird aktueller Knoten
-  if XMLDocObject.nodeExists('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration') then
+  if XMLDocObject.nodeExists('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration', false) then
     if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration', false) then
     begin
       XMLDocObject.makeNode('newnode','','');
@@ -149,7 +156,7 @@ begin
 
   // Attribute löschen und setzen :  DeleteAttribute, AddAttribute, SetAttribute
   {
-  if XMLDocObject.nodeExists('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add"') then
+  if XMLDocObject.nodeExists('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add"', false) then
     if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add"', false) then
     begin
 
@@ -165,7 +172,7 @@ begin
   // AddText "rtf" : sets the text only if there was no text node given
   {
   // setText: neuen Text setzen. Jeglicher anderer Inhalt wird ersetzt, auch XML_Blätter. Kein XML-Fragment!
-  if XMLDocObject.nodeExists ('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // UserData // ProductKey // WillShowUI') then
+  if XMLDocObject.nodeExists ('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // UserData // ProductKey // WillShowUI', false) then
     if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // UserData // ProductKey // WillShowUI', false) then
         XMLDocObject.setNodeTextActNode('nodeText wurde gesetzt');
   }
@@ -226,39 +233,34 @@ begin
   LogDatei.log('actnode name is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
                           XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
 
-  // mach das derivedNodeset zum aktnodeset und mach neue derivedNodeSets
-  XMLDocObject.getNextGenerationActNodeSet;
-  XMLDocObject.makeNewDerivedNodeSet;
-  // diese Nodes sind alle nächsten Childs von allen Knoten in actNodeSet
-  // wozu soll das gut sein?
-  XMLDocObject.logNodeSets;
+  //XMLDocObject.getNextGenerationActNodeSet;
+  //XMLDocObject.logNodeSets;
 
-  // Anlegen von Knoten, filtern des actNodesets
-  LogDatei.log('vor filterByChildElement, kein filtern ',oslog.LLinfo);
+  // filtern des actNodesets
+  LogDatei.log('vor filterByChildElement software ',oslog.LLinfo);
   XMLDocObject.filterByChildElement('software');
-  XMLDocObject.getNextGenerationActNodeSet;
+  XMLDocObject.logNodeSets;
   LogDatei.log('nach filterByChildElement software',oslog.LLinfo);
   LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
                           XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
+
+  XMLDocObject.getNextGenerationActNodeSet; // sollte jetzt nur software drin sein in actNodeSet
+  XMLDocObject.makeNewDerivedNodeSet;  // alle Childs von software als derivedNodeSet
   XMLDocObject.logNodeSets;
 
   XMLDocObject.filterByChildElement('packages');
-  XMLDocObject.getNextGenerationActNodeSet;
   LogDatei.log('nach filter byChildElement packages',oslog.LLinfo);
-  LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
+  LogDatei.log('Vor makeNode package - actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text ' +
                           XMLDocObject.getNodeTextActNode ,oslog.LLinfo);
+  // hier ist der actNode noch immer software
   XMLDocObject.logNodeSets;
 
-  // create Node from TStringList and test if valid
-  // TODO: Baustelle
-  {
-  textArray := TStringList.Create;
-  textArray.Add('<package>thunderbird</package>');
-  if XMLDocObject.isValidXML(textArray) then
-    LogDatei.log('valid XML' ,oslog.LLinfo)
-  else
-    LogDatei.log(textArray.ToString + ' : not valid XML',oslog.LLerror) ;
-  }
+  XMLDocObject.getNextGenerationActNodeSet; // sollte jetzt nur packages drin sein in actNodeSet
+  XMLDocObject.makeNewDerivedNodeSet;  // alle Childs von packages als derivedNodeSet
+  XMLDocObject.logNodeSets;
+  XMLDocObject.filterByChildElement('package');
+
+  // hier ist der actNode noch immer packages
 
   // add node
   XMLDocObject.makeNode('package','','');
@@ -308,25 +310,28 @@ begin
     LogDatei.log('irgendwas ist falsch gelaufen ' ,oslog.LLerror);
   textArray.Clear;
 
+
   // anderer Weg für das Anlegen von Knoten
   // über den nodeExisits und openNode mit dem nodePath,
   // danach an actNode makeNode und setzen des Textes
   // hier openNode strict=false - stimmt aber trotzdem
-  if XMLDocObject.nodeExists('software // packages config:type="list"') then
+  if XMLDocObject.nodeExists('software // packages config:type="list"', false) then
     if XMLDocObject.openNode('software // packages config:type="list"', false) then
     begin
       XMLDocObject.makeNode('package','','');
       XMLDocObject.setNodeTextActNode('thunderbird');
     end;
+
+
   // hier openNode strict=true
-  if XMLDocObject.nodeExists('software // packages config:type="list"') then
+  if XMLDocObject.nodeExists('software // packages config:type="list"', true) then
     if XMLDocObject.openNode('software // packages config:type="list"', true) then
     begin
       XMLDocObject.makeNode('package','','');
       XMLDocObject.setNodeTextActNode('firefox');
     end;
   // hier openNode strict=false - geht auch
-  if XMLDocObject.nodeExists('software // packages') then
+  if XMLDocObject.nodeExists('software // packages', false) then
     if XMLDocObject.openNode('software // packages', false) then
     begin
       XMLDocObject.makeNode('package','','');
@@ -353,7 +358,7 @@ begin
   // Löschen des Elements package mit TextContent snapper
   // delete node if text is
   // select node name=package, text=snapper
-  if XMLDocObject.nodeExists('software // packages config:type="list"') then
+  if XMLDocObject.nodeExists('software // packages config:type="list"', false) then
     if XMLDocObject.openNode('software // packages config:type="list"', false) then
     begin
        LogDatei.log('actnode is: ' + XMLDocObject.getNodeNameActNode + ' -> text_content is: ' +
@@ -380,7 +385,7 @@ begin
 
   // einsetzen eines CDATA-Strings
   cdatastring := #$3C + '![CDATA['#13#10'#! /bin/sh'#13#10'set -x\nexport PATH=/sbin:/usr/sbin:/usr/local/sbin:/root/bin:/usr/local/bin:/usr/bin:/bin:/usr/games'#13#10'/usr/bin/zypper lr'#13#10'rm /etc/zypp/repos.d/SLES*.repo'#13#10'/usr/bin/zypper lr'#13#10'/usr/bin/zypper rr 1'#13#10']]'#$3e;
-  if XMLDocObject.nodeExists('deploy_image') then
+  if XMLDocObject.nodeExists('deploy_image', false) then
     if XMLDocObject.openNode('deploy_image', false) then
     begin
       XMLDocObject.makeNode('source','','');

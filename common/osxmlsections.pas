@@ -75,14 +75,13 @@ type
       function openXmlFile(filename: string): boolean;
       function writeXmlAndCloseFile(filename: string): boolean;
 
-
-
       //*************  XML Handling ***********************************
       function createXmlDocFromStringlist(docstrlist: TStringList): boolean;
       function getDocumentElement(): TDOMNode;
       function isValidXML(xmlString: TStringList): boolean;
       function getXmlStrings: TStringList;
-
+      function nodeExistsByPathInXMLFile(filename,
+                       path:string; attributes_strict: boolean) : boolean;
       //*************  NodeSet-Handling ***********************************
       procedure makeTopAsActNodeSet;
       // set actNodeSet from DocumentElement (top)
@@ -145,13 +144,15 @@ type
       // eg:
       // foo bar="bar1" // childfoo ="" // RDF:foo NC:bar=nonesense
 
-      function nodeExists(nodePath: string): boolean;
+      function nodeExists(nodePath: string; attributes_strict:boolean): boolean;
       // tells if a node exists without changing anything
-      // ignores attributes
+      // if attributes_strict=true: check all attributes, true if path and all
+      //                            attributes fit, false if anything is wrong
+      // if attributes_strict=false: check only node path,
+      //                             true if node path exists, false if not
 
       function openNode(nodePath: string; attributes_strict: boolean): boolean;
-      // open the node
-      // if the node not exists it will be created (also parent nodes)
+      // open the node, analog nodeExists
       // afterwards this node is actNode
 
       // overload
@@ -173,7 +174,7 @@ type
       function makeNodePathWithTextContent(nodePath: string; text: string) : boolean;
       // create note path with textcontent
       // in nodepath all attributes have to fit or they will be created
-      // actNode will be last created node
+      // actNode will be last created node, text will be set as TextContent
 
       function makeNodes
                        (mynodeName : String;
@@ -192,6 +193,9 @@ type
 
       procedure setTopNodeAsActNode();
       // set top node as actual node
+
+      procedure setFirstChildAsActNode();
+      // set first child as actual node
 
       procedure setParentNodeAsActNode();
       // set parent node as actual node
@@ -305,7 +309,7 @@ begin
    else
       result := num2;
 end;
-function getTag(line: string): string;
+{function getTag(line: string): string;
 var
   p: integer;
   r, s: string;
@@ -318,6 +322,7 @@ begin
     // TODO: getWord  (s, result, r, [' ', '>', '/']);
   end;
 end;
+}
 
 function stringlistWithoutBreaks(strlist: TStringList): TStringList;
 // eliminate breaks and empty lines
@@ -443,20 +448,7 @@ begin
     Parser.OnError := @ErrorHandler;
     Parser.Parse(Src, TheDoc);
     isValidXML:= true;
-  {try
-    if XML<>NIL then
-      begin
-        mynode := XML.CreateElement('opsibase');
-        try
-          ReadXMLFragment(mynode, nodestream);
-        except
-          on EXMLReadError do
-             LogDatei.log('not valid xml',oslog.LLerror)
-        end;
-        mynode := mynode.FirstChild;
-        isValidXML:= true;
-      end
-  }
+
   finally
     Src.Free;
     Parser.Free;
@@ -481,6 +473,19 @@ begin
     finally
       nodestream.Free;
     end;
+end;
+
+function TuibXMLDocument.nodeExistsByPathInXMLFile(filename, path:string; attributes_strict: boolean) : boolean;
+
+begin
+  nodeExistsByPathInXMLFile:= false;
+  if openXmlFile(filename) then
+  begin
+    if openNode(path,attributes_strict) then
+       nodeExistsByPathInXMLFile:=true;
+  end
+  else
+    LogDatei.log('openXmlFile ' + filename + ' failed',oslog.LLinfo)
 end;
 
 //*************  Operations NodeSet  ***********************************
@@ -684,10 +689,6 @@ begin
   LogDatei.log('Non-null element(s) in act node set: ' + IntToStr(count_not_nil), LLinfo);
 
 end;
-
-
-
-
 
 
 //*************  Filters on Nodesets ********************************
@@ -911,7 +912,7 @@ begin
 end;
 
 function TuibXMLDocument.filterByText (textvalue: string) : Boolean;
-// nodeset filter: after filtering the nodeset contains only elements with
+// nodeset filter: after filtering the derived nodeset contains only elements with
 // text_content = textvalue
 var
   i, n, j, basejindex: Integer;
@@ -983,6 +984,8 @@ begin
 end;
 
 function TuibXMLDocument.filterByChildElement (elementname: string) : Boolean;
+// nodeset filter: after filtering the derived nodeset contains only elements with
+// node name = elementname
 var
   i, n, j, basejindex: Integer;
 begin
@@ -1022,26 +1025,28 @@ begin
 end;
 
 //*************  Node-Operations ***********************************
-function TuibXMLDocument.nodeExists(nodePath: string): boolean;
+function TuibXMLDocument.nodeExists(nodePath: string; attributes_strict:boolean ): boolean;
 // tells if a node exists without changing anything
-// checks only first attribute if it exists
-// true if path exists and attribute
+// if attributes_strict=true: check all attributes, true if path and all
+//                            attributes fit, false if anything is wrong
+// if attributes_strict=false: check only node path,
+//                             true if node path exists, false if not
 
 var
   nodesInPath: array[0..50] of TDOMNode;
-  pathes: TStringList;
-  i: integer;
+  attributesSL, pathes: TStringList;
+  k,i,j: integer;
   endOfPath, found: boolean;
   leavingPath, thisnodeName : string;
-  attributeName, attributeValue: string;
+  attributeList: TList;
 begin
   nodeExists := False;
+  attributeList := TList.Create;
   try
     begin
       // the root node
       nodesInPath[0] := XML.DocumentElement;
       stringsplit(nodepath, XML2PATHSEPARATOR, pathes);
-      // TODO: don't check attributes, only nodenames
       // walk the path
       // The Path looks like this:
       // nodedescription XML2PATHSEPARATOR nodedescripton (and so on)
@@ -1057,77 +1062,93 @@ begin
       LogDatei.log('begin to open nodepath, exists?  ' + nodepath, LLinfo);
       while (i < pathes.Count + 1) and found do
       begin
-        attributevalue := '';
-        attributename := '';
-        LogDatei.log('path element ' + IntToStr(i) + ' : ' + pathes[i - 1], LLinfo);
+        attributeList.Clear;
+        logdatei.log('path element ' + IntToStr(i) + ' : ' + pathes[i - 1], LLinfo);
+        thisnodeName := Trim(copy(pathes[i - 1], 1, pos(' ', pathes[i - 1]) - 1));
+        logdatei.log('thisnodename ' + thisnodeName, LLinfo);
+        leavingPath := copy(pathes[i - 1], pos(' ', pathes[i - 1]) + 1, length(pathes[i - 1]));
+        logdatei.log( 'leavingPath ' + leavingPath, LLinfo);
         if (pos('=', pathes[i - 1]) > 0) then // only in this case attributes
-        begin
-          thisnodeName := copy(pathes[i - 1], 1, pos(' ', pathes[i - 1]) - 1);
-          leavingPath := copy(pathes[i - 1], pos(' ', pathes[i - 1]) + 1, length(pathes[i - 1]));
-          attributeName := copy(leavingPath, 1, pos('=', leavingPath) - 1);
-          leavingPath := copy(leavingPath, pos('=', leavingPath) + 1, length(leavingPath));
-          if pos('"' + XML2PATHSEPARATOR, leavingPath) > 0 then
-            attributeValue := copy(leavingPath, 1, pos('"' + XML2PATHSEPARATOR, leavingPath))
-          else
-            attributeValue := leavingPath;
-          if AnsiStartsStr('"', attributeValue) then
-            attributeValue := copy(attributeValue, 2, length(attributeValue))
-          else
-            attributeValue :='';
-          if AnsiEndsStr('"', attributeValue) then
-            attributeValue := copy(attributeValue, 1, length(attributeValue) - 1)
-          else
-            attributeValue :='';
-        end
+          begin
+            // split on blank, list of attributes
+            makeAttributesSL(attributesSL, leavingPath);
+            for k:=0 to attributesSL.Count-1 do
+               logdatei.log( 'Attribute ' +attributesSL[k], LLinfo );
+            logdatei.log( 'Anzahl Attribute ' + IntToStr(attributesSL.Count), LLinfo );
+            j:=0;
+            while j < attributesSL.Count do
+            begin
+              // List of [attributename, attributevalue]
+              attributeList.Add;
+              attributeList.Items[j].key := Trim(
+                       copy(attributesSL[j], 1, pos('=', attributesSL[j]) - 1));
+              attributeList.Items[attributeList.Count-1].value :=  Trim(
+                       copy(attributesSL[j], pos('=', attributesSL[j]) + 1, length(attributesSL[j])));
+              if AnsiStartsStr('"', attributeList.Items[j].value) then
+                attributeList.Items[j].value := copy(attributeList.Items[j].value,
+                      2, length(attributeList.Items[j].value));
+              if AnsiEndsStr('"', attributeList.Items[j].value) then
+                attributeList.Items[j].value := Trim(copy(attributeList.Items[j].value,
+                      1, length(attributeList.Items[j].value)-1));
+               inc(j);
+              end;
+          end
         else
-          thisnodeName := pathes[i - 1];
-        thisnodeName := Trim(thisnodeName);
-        attributeValue := Trim(attributeValue);
-        attributename := Trim(attributename);
+          thisnodeName := Trim(pathes[i - 1]);
 
-        LogDatei.log('node ' + IntToStr(i) + ': nodename ' +
-          thisnodename
-          + ' attributeName: ' + attributeName
-          + ' attributeValue: ' + attributeValue, LLinfo
-          );
 
-        if not getNodeByNameAndAttribute(nodesInPath[i], nodesInPath[i - 1], thisnodeName,
-          attributeName, attributeValue) then
-        // only check nodenames
-        begin
-          found := False;
-          LogDatei.log( 'not found node ' + IntToStr(i) + ': nodename: ' +
-            thisnodename
-            + ' attributeName: ' + attributeName
-            + ' attributeValue: ' + attributeValue, LLwarning
-            );
-
-        end
+        LogDatei.log('node ' + IntToStr(i) + ': nodename ' +  thisnodename, LLInfo   );
+        if attributes_strict then
+          begin
+            if not getNodeStrict(nodesInPath[i], nodesInPath[i - 1], thisnodeName, attributeList) then
+            begin
+              found := False;
+              LogDatei.log( 'opennode: node with attributes_strict not found ' + IntToStr(i) + ': nodename: ' +
+                thisnodeName + ', check nodename and attributes - exit function', LLwarning
+                );
+              // failed - make all final settings
+              result:=false;
+              attributeList.Free;
+              exit;
+            end
+            else
+            begin
+              found := True;
+              if actnode<>nil then
+                 logdatei.log('Found node with attributes_strict' + IntToStr(i) + ': nodename: ' +
+                   actNode.NodeName, LLinfo)
+              else
+                logdatei.log('Found more then one node ' + IntToStr(i) + ': ' + IntToStr(length(actnodeset)) + ' nodes'
+                   , LLinfo);
+            end
+          end
         else
-        begin
-          LogDatei.log( 'Found node ' + IntToStr(i) + ': nodename: ' +
-            thisnodename
-            + ' attributeName: ' + attributeName
-            + ' attributeValue: ' + attributeValue, LLinfo
-            );
-
-          found := True;
-        end;
+          begin   // only check nodenames
+            if getNodeByName(nodesInPath[i], nodesInPath[i - 1], thisnodeName) then
+              begin
+                LogDatei.log( 'Found node ' + IntToStr(i) + ': nodename: ' +
+                  thisnodename, LLinfo);
+                found := True;
+              end
+              else
+              begin
+                found := False;
+                LogDatei.log( 'not found node ' + IntToStr(i) + ': nodename: ' +
+                  thisnodename, LLwarning);
+              end;
+          end;
 
         Inc(i);
       end;
-
-      if found then
-        nodeExists := True
-      else
-        nodeExists := False;
+      attributeList.Free;
+      Result:= found;
     end;
   except
-    LogDatei.log('node not found' + ': nodename: ' + thisnodename
-      + ' attributeName: ' + attributeName +
-      ' attributeValue: ' + attributeValue, LLwarning);
-
-    nodeExists := False;
+    on e: Exception do
+    begin
+      LogDatei.log('nodeExists: node not found' + ': nodename: ' + thisnodename, LLwarning);
+      Result := False;
+    end;
   end;
 end;
 
@@ -1202,15 +1223,13 @@ begin
             attributeList.Items[attributeList.Count-1].value := leavingPath;
           *)
           inc(j);
-          end;
+        end;
       end
       else
         thisnodeName := Trim(pathes[i - 1]);
 
       logdatei.log('node ' + IntToStr(i) + ': nodename ' +
         thisnodename
-        //+ ' attributeName: ' + attributeName +
-        //' attributeValue: ' + attributeValue
         ,LLinfo
         );
       (*
@@ -1304,7 +1323,6 @@ begin
     end;
   end;
   cleanupactnodeset();
-
 end;
 
 function TuibXMLDocument.makeNodePathWithTextContent(nodePath: string;
@@ -1397,7 +1415,7 @@ begin
             begin
               found := false;
               actNode:= nodesInPath[i - 1];
-              LogDatei.log( 'opennode: node with attributes_strict not found ' + IntToStr(i) + ': nodename: ' +
+              LogDatei.log( 'makeNodePathWithTextContent: node not found ' + IntToStr(i) + ': nodename: ' +
                 thisnodeName + ', Node will be created', LLInfo
                 );
               makeNode(thisnodeName);
@@ -1412,7 +1430,7 @@ begin
             begin
               found := True;
               if actnode<>nil then
-                 logdatei.log('Found node with attributes_strict' + IntToStr(i) + ': nodename: ' +
+                 logdatei.log('Found node ' + IntToStr(i) + ': nodename: ' +
                    actNode.NodeName, LLinfo)
               else
                 logdatei.log('Found more then one node ' + IntToStr(i) + ': ' + IntToStr(length(actnodeset)) + ' nodes'
@@ -1421,7 +1439,7 @@ begin
       end
       else
         begin
-          LogDatei.log( 'opennode: node with attributes_strict not found ' + IntToStr(i) + ': nodename: ' +
+          LogDatei.log( 'makeNodePathWithTextContent: node not found ' + IntToStr(i) + ': nodename: ' +
               thisnodeName + ', Node will be created', LLInfo
               );
           makeNode(thisnodeName);
@@ -1449,16 +1467,15 @@ begin
     begin
       // was soll actNode sein?
       actNode:= nil;
-      LogDatei.log( 'actNode=nil; opennode: node not found, maybe ' + IntToStr(i-1) + ': nodename: ' +
+      LogDatei.log( 'actNode=nil; makeNodePathWithTextContent: node not found, maybe ' + IntToStr(i-1) + ': nodename: ' +
         thisnodename , LLwarning
         );
     end;
-    Result:=true;
   except
     on e: Exception do
     begin
       Result := False;
-      LogDatei.log('Error in creating path ' + nodepath + ' with textcontent' + text + '; exception: ' + e.Message, LLerror);
+      LogDatei.log('makeNodePathWithTextContent: Error in creating path ' + nodepath + ' with textcontent' + text + '; exception: ' + e.Message, LLerror);
     end;
   end;
   cleanupactnodeset();
@@ -1647,6 +1664,13 @@ procedure TuibXMLDocument.setTopNodeAsActNode();
 // set top node as actual node
 begin
   actNode :=  getDocumentElement();
+end;
+
+procedure TuibXMLDocument.setFirstChildAsActNode();
+// set first child as actual node
+begin
+  if actNode <> nil then
+    actNode := actNode.FirstChild;
 end;
 
 procedure TuibXMLDocument.setParentNodeAsActNode();
@@ -2125,7 +2149,8 @@ end;
 
 procedure TuibXMLDocument.makeAttributesSL (var attributeStringList: TStringList; attributePath : String);
 // private
-var splitPos, i: integer;
+var
+  i: integer;
   attribute : String;
   leavingpath: String;
 begin
