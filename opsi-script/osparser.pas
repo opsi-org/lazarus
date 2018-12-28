@@ -6984,6 +6984,37 @@ begin
         end;
       End;   // setNodeText
 
+      if LowerCase (Expressionstr) = LowerCase ('gotoParentNode')
+      then
+      Begin
+        syntaxCheck := true;
+        if not (nodeOpened and nodeOpenCommandExists) then
+        begin
+          //SyntaxCheck := false;
+          logdatei.log('Error: No open Node. Use OpenNode before '+Expressionstr,LLError);
+        end
+        else
+        begin
+          if SyntaxCheck
+          then
+          Begin
+            try
+              LogDatei.log('We will gotoParentNode : '+newtext, LLdebug);
+              XMLDocObject.setParentNodeAsActNode();
+              LogDatei.log('successfully gotoParentNode ',oslog.LLinfo);
+            except
+              on e: Exception do
+              begin
+                LogDatei.log('Exception in xml2:gotoParentNode: ' + e.message, LLError);
+              end;
+            end;
+          End
+          else
+            reportError (Sektion, i, Sektion.strings [i-1], ErrorInfo);
+        end;
+      End;   // gotoParentNode
+
+
       if LowerCase (Expressionstr) = LowerCase ('addNewNode')
       then
       Begin
