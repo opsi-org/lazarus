@@ -454,15 +454,15 @@ var
 
   function findnodeInList(nodelist: TDOMNodeList; Name: string): TDOMNode;
   var
-    i, childcount : integer;
-    str : string;
-    aktnode : TDomNode;
-    haschild : boolean;
+    i, childcount: integer;
+    str: string;
+    aktnode: TDomNode;
+    haschild: boolean;
   begin
     i := 0;
     Result := nil;
     childcount := nodelist.Count;
-    while (Result = nil) and (i < childcount ) do
+    while (Result = nil) and (i < childcount) do
     begin
       aktnode := nodelist.Item[i];
       haschild := aktnode.HasChildNodes and (aktnode.ChildNodes.Count > 0);
@@ -495,11 +495,11 @@ begin
     mynode.Free;
     Result := True;
   except
-    on e: exception do
-    Begin
+    on e: Exception do
+    begin
       Result := False;
       LogDatei.log('Exception in xml2GetFirstChildNodeByName: ' + e.message, LLError);
-    End;
+    end;
   end;
 end;
 
@@ -546,18 +546,18 @@ var
   mynode, newnode: TDOMNode;
 begin
   try
-  Result := False;
-  mynode := createXMLNodeFromString(nodeAsStringlist);
-  if getNodeattributeByKey(mynode,attributekey,attributevalue) then
-        Result := True;
-  mynode.Free;
-  Result := True;
+    Result := False;
+    mynode := createXMLNodeFromString(nodeAsStringlist);
+    if getNodeattributeByKey(mynode, attributekey, attributevalue) then
+      Result := True;
+    mynode.Free;
+    Result := True;
   except
-    on e: exception do
-    Begin
+    on e: Exception do
+    begin
       Result := False;
       LogDatei.log('Exception in getXml2AttributeValueByKey: ' + e.message, LLError);
-    End;
+    end;
   end;
 end;
 
@@ -581,18 +581,31 @@ function xmlAsStringlistGetChildnodeByNameAndAttributeKeyAndValue(
 var
   mynode, newnode: TDOMNode;
 begin
-  Result := False;
-  mynode := createXMLNodeFromString(nodeAsStringlist);
-  if selectAllNodesByName(mynode, nodename) then
-  begin
-    if getChildnodeByAttributeKeyAndValue(mynode, attributekey,
-      attributevalue, newnode) then
-      if createStringListFromXMLNode(newnode, Value) then
-        Result := True;
+  try
+    try
+      newnode := nil;
+      Result := False;
+      mynode := createXMLNodeFromString(nodeAsStringlist);
+      if selectAllNodesByName(mynode, nodename) then
+      begin
+        if getChildnodeByAttributeKeyAndValue(mynode, attributekey,
+          attributevalue, newnode) then
+          if createStringListFromXMLNode(newnode, Value) then
+            Result := True;
+      end;
+    except
+      on e: Exception do
+      begin
+        Result := False;
+        LogDatei.log('Exception in xmlAsStringlistGetChildnodeByNameAndAttributeKeyAndValue: '
+          + e.message, LLError);
+      end;
+    end;
+  finally
+    if (newnode <> nil) then
+      newnode.Free;
+    mynode.Free;
   end;
-  if (newnode <> nil) then
-    newnode.Free;
-  mynode.Free;
 end;
 
 function xmlAsStringlistReplaceChildnodeByNameAndAttributeKeyAndValue(
@@ -781,19 +794,19 @@ end;
 function getXml2Text(nodeAsStringlist: TStringList; var mytext: string): boolean;
 var
   mynode: TDOMNode;
-  childlist : TDOMNodeList;
-  i : integer;
+  childlist: TDOMNodeList;
+  i: integer;
 begin
   Result := False;
-  mytext :='';
+  mytext := '';
   mynode := createXMLNodeFromString(nodeAsStringlist);
   try
     childlist := mynode.ChildNodes;
-    for i := 0 to childlist.Count-1 do
-      if childlist.Item[i].NodeType =TEXT_NODE then
+    for i := 0 to childlist.Count - 1 do
+      if childlist.Item[i].NodeType = TEXT_NODE then
       begin
         mytext := childlist.Item[i].TextContent;
-        result := true;
+        Result := True;
       end;
   except
   end;

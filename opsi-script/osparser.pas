@@ -6822,17 +6822,15 @@ begin
       End;  // StrictMode
 
 
-
+      (*
       if LowerCase (Expressionstr) = LowerCase ('OpenNode')
       then
       Begin
-        if nodeOpenCommandExists (* i.e., existed already *)
+        if nodeOpenCommandExists // i.e., existed already
         then
            //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1
         else
            nodeOpenCommandExists := true;
-
-
         SyntaxCheck := false;
         if GetStringA (trim(r), nodepath, r, errorinfo, true) then
         begin
@@ -6843,38 +6841,17 @@ begin
         if r = '' then SyntaxCheck := true
         else ErrorInfo := ErrorRemaining;
         //else SyntaxCheck := true ;
-        (*
-        nodepath := trim(r)
-        if nodepath <> '' then SyntaxCheck := true;
-        *)
         if SyntaxCheck
         then
         Begin
-          //LogDatei.log('nodepath is: '+nodepath, LLdebug);
-          //LogDatei.log('We will open Key : '+nodepath, LLdebug);
-         (*
-          XMLDocObject.setlengthActNodeSet  (1);
-          XMLDocObject.actnodeset[0] := XMLDocObject.getDocumentElement;
-          for k:= 0 to length(XMLDocObject.actNodeSet)-1 do
-            if XMLDocObject.actNodeSet[k] <> nil then
-              LogDatei.log('actNodeSet <> nil',oslog.LLinfo)
-            else
-              LogDatei.log('actNodeSet = nil',oslog.LLinfo);
-          XMLDocObject.makeNewDerivedNodeSet;
-          XMLDocObject.logNodeSets;
-          *)
           // Nodetext setzen und Attribut setzen :   SetText, SetAttribute
-          //if XMLDocObject.nodeExists('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add"') then
           if XMLDocObject.nodeExists(nodepath) then
           begin
             LogDatei.log('successfully found node: '+nodepath,oslog.LLinfo);
-            //if XMLDocObject.openNode('settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add" // ModifyPartitions', openstrict) then
             if XMLDocObject.openNode(nodepath, openstrict) then
             begin
               nodeOpened := true;
               LogDatei.log('successfully opend node: '+nodepath,oslog.LLinfo);
-              //XMLDocObject.setNodeText('***ModifyPartitions wurde ersetzt***');
-              //XMLDocObject.setAttribute('testname','testvalue');
             end
             else
             begin
@@ -6886,6 +6863,109 @@ begin
           begin
             nodeOpened := false;
             LogDatei.log('failed node exists: '+nodepath,oslog.LLwarning);
+          end
+        End
+        else
+          reportError (Sektion, i, Sektion.strings [i-1], ErrorInfo);
+      End;   // opnenode
+      *)
+      (*
+      if LowerCase (Expressionstr) = LowerCase ('OpenNode')
+      then
+      Begin
+        if nodeOpenCommandExists // i.e., existed already
+        then
+           //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1
+        else
+           nodeOpenCommandExists := true;
+        SyntaxCheck := false;
+        if GetStringA (trim(r), nodepath, r, errorinfo, true) then
+        begin
+          LogDatei.log('We will OpenNode : '+nodepath, LLdebug);
+          syntaxCheck := true;
+        end
+        else  syntaxCheck := false;
+        if r = '' then SyntaxCheck := true
+        else ErrorInfo := ErrorRemaining;
+        //else SyntaxCheck := true ;
+        if SyntaxCheck
+        then
+        Begin
+          // Nodetext setzen und Attribut setzen :   SetText, SetAttribute
+          if XMLDocObject.nodeExists(nodepath) then
+          begin
+            LogDatei.log('successfully found node: '+nodepath,oslog.LLinfo);
+            if XMLDocObject.openNode(nodepath, openstrict) then
+            begin
+              nodeOpened := true;
+              LogDatei.log('successfully opend node: '+nodepath,oslog.LLinfo);
+            end
+            else
+            begin
+                nodeOpened := false;
+                LogDatei.log('failed opend node: '+nodepath,oslog.LLwarning);
+            end
+          end
+          else
+          begin
+            nodeOpened := false;
+            LogDatei.log('nodepath does not exists - try to create: '+nodepath,oslog.LLwarning);
+            if XMLDocObject.makeNodePathWithTextContent(nodepath,'') then
+            begin
+              nodeOpened := true;
+              LogDatei.log('successfully created nodepath: '+nodepath,oslog.LLinfo);
+            end
+            else
+            begin
+               nodeOpened := false;
+               LogDatei.log('failed to create nodepath: '+nodepath,oslog.LLError);
+            end;
+          end
+        End
+        else
+          reportError (Sektion, i, Sektion.strings [i-1], ErrorInfo);
+      End;   // opnenode
+      *)
+      if LowerCase (Expressionstr) = LowerCase ('OpenNode')
+      then
+      Begin
+        if nodeOpenCommandExists // i.e., existed already
+        then
+           //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1
+        else
+           nodeOpenCommandExists := true;
+        SyntaxCheck := false;
+        if GetStringA (trim(r), nodepath, r, errorinfo, true) then
+        begin
+          LogDatei.log('We will OpenNode : '+nodepath, LLdebug);
+          syntaxCheck := true;
+        end
+        else  syntaxCheck := false;
+        if r = '' then SyntaxCheck := true
+        else ErrorInfo := ErrorRemaining;
+        //else SyntaxCheck := true ;
+        if SyntaxCheck
+        then
+        Begin
+          // Nodetext setzen und Attribut setzen :   SetText, SetAttribute
+          if XMLDocObject.openNode(nodepath, openstrict) then
+          begin
+            nodeOpened := true;
+            LogDatei.log('successfully opend node: '+nodepath,oslog.LLinfo);
+          end
+          else
+          begin
+            LogDatei.log('nodepath does not exists - try to create: '+nodepath,oslog.LLwarning);
+            if XMLDocObject.makeNodePathWithTextContent(nodepath,'') then
+            begin
+              nodeOpened := true;
+              LogDatei.log('successfully created nodepath: '+nodepath,oslog.LLinfo);
+            end
+            else
+            begin
+               nodeOpened := false;
+               LogDatei.log('failed to create nodepath: '+nodepath,oslog.LLError);
+            end;
           end
         End
         else
@@ -6904,40 +6984,19 @@ begin
         else  syntaxCheck := false;
         if r = '' then SyntaxCheck := true
         else ErrorInfo := ErrorRemaining;
-
-        (*
-        SyntaxCheck := false;
-        if Skip ('[', r, r, ErrorInfo)
-        then
-        Begin
-          GetWord (r, nodepath, r, [']']);
-          if Skip (']', r, r, ErrorInfo)
-          then
-          Begin
-            if r = '' then SyntaxCheck := true else ErrorInfo := ErrorRemaining;
-
-            LogDatei.log('nodepath is: '+nodepath, LLdebug);
-           LogDatei.log('We will delete Key : '+nodepath, LLdebug);
-          End;
-        End;
-        *)
         if SyntaxCheck
         then
         Begin
-          if XMLDocObject.nodeExists(nodepath) then
-          begin
-            LogDatei.log('successfully found node: '+nodepath,oslog.LLinfo);
-            try
-              XMLDocObject.delNode(nodepath);
-              // After a deleteNode you must use opennode in order to work with open nodes
-              nodeOpened := false;
-              nodeOpenCommandExists := false;
-              LogDatei.log('successfully deleted node: '+nodepath,oslog.LLinfo);
-            except
-              on e: Exception do
-              begin
-                LogDatei.log('Exception in xml2:stettext: ' + e.message, LLError);
-              end;
+          try
+            XMLDocObject.delNode(nodepath);
+            // After a deleteNode you must use opennode in order to work with open nodes
+            nodeOpened := false;
+            nodeOpenCommandExists := false;
+            LogDatei.log('successfully deleted node: '+nodepath,oslog.LLinfo);
+          except
+            on e: Exception do
+            begin
+              LogDatei.log('Exception in xml2: DeleteNode: ' + e.message, LLError);
             end;
           end;
         End
@@ -10880,6 +10939,54 @@ begin
        End
     End
    End
+
+   // This one does not work right now
+   else if LowerCase (s) = LowerCase ('xml2GetFirstChildNodeByNameAtributeValue')
+   then
+   begin
+    if Skip ('(', r, r, InfoSyntaxError)
+    then
+    Begin
+       list1 := TXStringList.create;
+       try
+        if produceStringList (section,r, r, list1, InfoSyntaxError) //Recursion
+          and skip (',', r, r, InfoSyntaxError)
+        then
+        Begin
+          if EvaluateString (r, r, s1, InfoSyntaxError)
+            and  skip (',', r, r, InfoSyntaxError)
+          then
+          begin
+            if EvaluateString (r, r, s2, InfoSyntaxError)
+              and  skip (',', r, r, InfoSyntaxError)
+            then
+            begin
+              if EvaluateString (r, r, s3, InfoSyntaxError)
+                and skip (')', r, r, InfoSyntaxError)
+              then
+              Begin
+                syntaxcheck := true;
+                 list.clear;
+                 LogDatei.log('Error: xml2GetFirstChildNodeByNameAtributeValue: not implemented', LLerror);
+                 //if not xmlAsStringlistGetChildnodeByNameAndAttributeKeyAndValue(Tstringlist(list1),s1,s2,s3,TStringlist(list)) then
+                 //begin
+                 //  LogDatei.log('Error on producing xml2GetFirstChildNodeByName', LLerror);
+                 //end;
+               End
+               else syntaxcheck := false;
+            end
+            else syntaxcheck := false;
+          end
+          else syntaxcheck := false;
+         End
+        else syntaxcheck := false;
+      finally
+         list1.Free;
+         list1 := nil;
+      End
+    End
+    else syntaxcheck := false;
+   end
 
 
    // #########  end xml2 list functions ###############################

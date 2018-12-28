@@ -33,3 +33,4 @@ x86_64-linux/
 
 # Application bundle for Mac OS
 *.app/
+opsi-script/opsi-script
