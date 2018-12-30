@@ -47,7 +47,7 @@ osswaudit,
 DOM,
 oswmi,
 {$ENDIF}
-{$IFDEF LINUX}
+{$IFDEF UNIX}
 lispecfolder,
 osfunclin,
 oslindesktopfiles,
@@ -6652,7 +6652,7 @@ begin
             opsiclientd_conf := getSpecialFolder(CSIDL_PROGRAM_FILES)
                                 +'\opsi.org\opsi-client-agent\opsiclientd\opsiclientd.conf';
             {$ENDIF WINDOWS}
-            {$IFDEF LINUX}
+            {$IFDEF UNIX}
             opsiclientd_conf := '/etc/opsi/opsiclientd.conf';
             {$ENDIF LINUX}
             if FileExists(opsiclientd_conf) then
@@ -7736,7 +7736,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
           End;
         end
 
-        {$IFDEF LINUX}
+        {$IFDEF UNIX}
         else if (UpperCase (Expressionstr) = 'CHMOD')
         then
         begin
@@ -8181,7 +8181,7 @@ function TuibInstScript.doLinkFolderActions (const Sektion: TWorkSection; common
                                                                  : TSectionResult;
  var
    {$IFDEF WINDOWS}ShellLinks : TuibShellLinks;{$ENDIF WINDOWS}
-   {$IFDEF LINUX}ShellLinks : TuibLinuxDesktopFiles;{$ENDIF LINUX}
+   {$IFDEF UNIX}ShellLinks : TuibLinuxDesktopFiles;{$ENDIF LINUX}
    stack : TStringList;
    startindentlevel : Integer;
    Expressionstr : String='';
@@ -8407,7 +8407,7 @@ function TuibInstScript.doLinkFolderActions (const Sektion: TWorkSection; common
           else
             LogDatei.log ('No folder selected, therefore no deletion of "' + s + '"', LLWarning);
           {$ENDIF WINDOWS}
-          {$IFDEF LINUX}
+          {$IFDEF UNIX}
           ShellLinks.DeleteShellLink (s);
           {$ENDIF LINUX}
         End
@@ -8525,7 +8525,7 @@ function TuibInstScript.doLinkFolderActions (const Sektion: TWorkSection; common
                 if not getString (Remaining, s, Remaining, errorinfo, false)
                 then
                   s := Remaining;
-                {$IFDEF LINUX}
+                {$IFDEF UNIX}
                 logdatei.log('Option icon_index is ignored at Linux',LLWarning);
                 {$ENDIF LINUX}
                 {$IFDEF WIN32}
@@ -8550,7 +8550,7 @@ function TuibInstScript.doLinkFolderActions (const Sektion: TWorkSection; common
                 if not getString (Remaining, s, Remaining, errorinfo, false)
                 then
                   s := Remaining;
-                {$IFDEF LINUX}
+                {$IFDEF UNIX}
                 logdatei.log('Option shurtcut is ignored at Linux',LLWarning);
                 {$ENDIF LINUX}
                 {$IFDEF WIN32}
@@ -8628,7 +8628,7 @@ function TuibInstScript.doLinkFolderActions (const Sektion: TWorkSection; common
             End
           end
           {$ENDIF WIN32}
-          {$IFDEF LINUX}
+          {$IFDEF UNIX}
           ShellLinks.MakeShellLink(link_name,  link_target, link_paramstr,
                       link_working_dir, link_icon_file,
                       link_categories,'','');
@@ -8678,7 +8678,7 @@ begin
       ShellLinks.free;
     end;
     {$ENDIF WIN32}
-    {$IFDEF LINUX}
+    {$IFDEF UNIX}
     begin
       ShellLinks := TuibLinuxDesktopFiles.create;
       linkActionsMain;
@@ -9235,7 +9235,7 @@ begin
     end
     else
     begin
-    {$IFDEF LINUX}
+    {$IFDEF UNIX}
     fpchmod(tempfilename, &700);
     {$ENDIF LINUX}
     LogDatei.log('Content of saved file: '+tempfilename,LLDebug2);
@@ -9821,7 +9821,7 @@ begin
     end
     else
     begin
-      {$IFDEF LINUX}
+      {$IFDEF UNIX}
       fpchmod(tempfilename, &700);
       {$ENDIF LINUX}
       LogDatei.log('Content of saved file: '+tempfilename,LLDebug2);
@@ -10109,7 +10109,7 @@ begin
     else if LowerCase (s) = LowerCase ('powershellcall')
     then
     begin
-      {$IFDEF Linux}
+      {$IFDEF UNIX}
       LogDatei.log('Error powershellcall not implemented on Linux ', LLError);
       {$ENDIF Linux}
       {$IFDEF WINDOWS}
@@ -11089,7 +11089,7 @@ begin
    else if LowerCase (s) = LowerCase ('getListFromWMI')
    then
    begin
-     {$IFDEF Linux}
+     {$IFDEF UNIX}
       LogDatei.log('Error getListFromWMI not implemented on Linux ', LLError);
       {$ENDIF Linux}
       {$IFDEF WINDOWS}
@@ -11624,7 +11624,7 @@ begin
    end
    {$ENDIF WINDOWS}
 
-   {$IFDEF LINUX}
+   {$IFDEF UNIX}
    else if LowerCase(s) = LowerCase ('getLinuxVersionMap')
     then
     Begin
@@ -12451,7 +12451,7 @@ begin
  Begin
     syntaxcheck := true;
     StringResult := 'no_linux';
-    {$IFDEF LINUX}
+    {$IFDEF UNIX}
     StringResult := getLinuxDistroType;
     {$ENDIF LINUX}
  End
@@ -12702,7 +12702,7 @@ begin
      if GetIPFromHost(s1,s2,s3) then StringResult := s2
      else
      begin
-       {$IFDEF LINUX}
+       {$IFDEF UNIX}
        StringResult :=  getCommandResult('resolveip -s '+s1);
        {$ENDIF LINUX}
        {$IFDEF WINDOWS}
@@ -13157,7 +13157,7 @@ begin
  else if LowerCase (s) = LowerCase ('powershellcall')
  then
  begin
-  {$IFDEF Linux}
+  {$IFDEF UNIX}
   LogDatei.log('Error powershellcall not implemented on Linux ', LLError);
   {$ENDIF Linux}
   {$IFDEF WINDOWS}
@@ -16123,7 +16123,7 @@ begin
    then
    Begin
      syntaxCheck := true;
-     {$IFDEF LINUX}
+     {$IFDEF UNIX}
      BooleanResult := false;
      try
        tmpint := StrToInt(s1);
@@ -18426,7 +18426,7 @@ begin
                           testincfilename := ExtractFileDir(Paramstr(0))
                                                +PathDelim+'lib'+PathDelim+incfilename;
                           {$ENDIF WINDOWS}
-                          {$IFDEF LINUX}
+                          {$IFDEF UNIX}
                           // search in /usr/share/opsi-script/lib
                           testincfilename := '/usr/share/opsi-script'
                                                +PathDelim+'lib'+PathDelim+incfilename;
@@ -19213,7 +19213,7 @@ begin
 
                tsPowershellcall:
                begin
-                 {$IFDEF Linux}
+                 {$IFDEF UNIX}
                   LogDatei.log('Error powershellcall not implemented on Linux ', LLError);
                   {$ENDIF Linux}
                   {$IFDEF WINDOWS}
@@ -21166,7 +21166,7 @@ begin
   // Backup existing depotdrive, depotdir
   depotdrive_bak := depotdrive;
   depotdir_bak :=  depotdir;
-  {$IFDEF LINUX} computername := getHostnameLin; {$ENDIF LINUX}
+  {$IFDEF UNIX} computername := getHostnameLin; {$ENDIF LINUX}
   {$IFDEF GUI}
   CentralForm.Label1.Caption := '';
   FBatchOberflaeche.setInfoLabel('');
@@ -21174,7 +21174,7 @@ begin
   CentralForm.Label2.caption := '';
   FBatchOberflaeche.setDetailLabel(CentralForm.Label2.caption);
   {$ENDIF GUI}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   lispecfolder.retrieveFolders4Linux;
   {$ENDIF LINUX}
   if Scriptdatei <> ''
@@ -21503,19 +21503,19 @@ begin
 
     FConstList.add ('%opsiTmpDir%');
     {$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\tmp' ); {$ENDIF WINDOWS}
-    {$IFDEF LINUX}FConstValuesList.add ( '/tmp' ); {$ENDIF LINUX}
+    {$IFDEF UNIX}FConstValuesList.add ( '/tmp' ); {$ENDIF LINUX}
 
     FConstList.add ('%opsiLogDir%');
     {$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\log' ); {$ENDIF WINDOWS}
-    {$IFDEF LINUX}FConstValuesList.add ( '/var/log/opsi-script' ); {$ENDIF LINUX}
+    {$IFDEF UNIX}FConstValuesList.add ( '/var/log/opsi-script' ); {$ENDIF LINUX}
 
     FConstList.add ('%opsiapplog%');
     {$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\applog' ); {$ENDIF WINDOWS}
-    {$IFDEF LINUX}FConstValuesList.add ( '~/opsi.org/applog' ); {$ENDIF LINUX}
+    {$IFDEF UNIX}FConstValuesList.add ( '~/opsi.org/applog' ); {$ENDIF LINUX}
 
     FConstList.add ('%opsidata%');
     {$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\data' ); {$ENDIF WINDOWS}
-    {$IFDEF LINUX}FConstValuesList.add ( '/var/lib/opsi-client-agent' ); {$ENDIF LINUX}
+    {$IFDEF UNIX}FConstValuesList.add ( '/var/lib/opsi-client-agent' ); {$ENDIF LINUX}
 
     {$IFDEF WINDOWS}
     FConstList.add('%opsiScriptHelperPath%');
@@ -21537,7 +21537,7 @@ begin
     FConstValuesList.add (ValueToTake);
     {$ENDIF WINDOWS}
 
-    {$IFDEF LINUX}
+    {$IFDEF UNIX}
     FConstList.add ('%PCNAME%');
     ValueToTake := GetHostName;
     if valueToTake =  valueEnvVarNotFound

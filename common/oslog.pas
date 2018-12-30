@@ -43,7 +43,7 @@ uses
   registry,
   shlobj,
 {$ENDIF WINDOWS}
-{$IFDEF LINUX}
+{$IFDEF UNIX}
   baseUnix,
 {$ENDIF LINUX}
   //lconvencoding,
@@ -1709,7 +1709,7 @@ end;
 begin
   result := 'unknown'; //########################################
   {$IFDEF OPSIWINST}
-  {$IFDEF LINUX} result := osconf.computername; {$ENDIF LINUX}
+  {$IFDEF UNIX} result := osconf.computername; {$ENDIF LINUX}
   {$ENDIF OPSIWINST}
 end;
 {$ENDIF}

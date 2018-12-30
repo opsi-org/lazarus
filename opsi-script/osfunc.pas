@@ -61,7 +61,7 @@ LResources,
 LCLIntf,
 LCLProc,
 {$ENDIF GUI}
-{$IFDEF LINUX}
+{$IFDEF UNIX}
   //osfunclin,
   baseunix,
   unix,
@@ -365,7 +365,7 @@ type
     procedure AllCompress(const SourceMask, TargetDir: string;
       Recursive: boolean; MaintainEmptySubdirs: boolean);
     {$ENDIF WINDOWS}
-    {$IFDEF LINUX}
+    {$IFDEF UNIX}
     function chmod(mode : string;const FileName: string): boolean;
     {$ENDIF LINUX}
   end;
@@ -659,7 +659,7 @@ implementation
 
 
 uses
-{$IFDEF LINUX}
+{$IFDEF UNIX}
   osfunclin,
 {$ENDIF LINUX}
 {$IFDEF WINDOWS}
@@ -820,7 +820,7 @@ begin
   {$IFDEF WINDOWS}
   Result := winIsUefi;
   {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   Result := linIsUefi;
   {$ENDIF LINUX}
 end;
@@ -830,7 +830,7 @@ begin
   {$IFDEF WINDOWS}
   Result := WinIsPE;
   {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   Result := false;
   {$ENDIF LINUX}
 end;
@@ -999,7 +999,7 @@ begin
       ErrorInfo := 'Error: ' + e.message;
   end;
   {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   Result := tovLinux;
   {$ENDIF LINUX}
 end;
@@ -1015,7 +1015,7 @@ var
 begin
   ipName := '';
   address := '';
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   ipName := getHostnameLin;
   address := getMyIpByDefaultRoute;
   {$ENDIF LINUX}
@@ -1034,7 +1034,7 @@ end;
 //{$RANGECHECKS ON}
 
 
-{$IFDEF LINUX}
+{$IFDEF UNIX}
 (*
 function getMyHostEnt: THostEnt;
 
@@ -1170,7 +1170,7 @@ begin
   Result := getWinProcessList;
   {$ENDIF WIN32}
   {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   Result := getLinProcessList;
   {$ENDIF LINUX}
 end;
@@ -2267,7 +2267,7 @@ begin
                 {$IFDEF WINDOWS}
                 if GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode) and (lpExitCode = still_active) then
                 {$ENDIF WINDOWS}
-                {$IFDEF LINUX}
+                {$IFDEF UNIX}
                 if FpcProcess.Running then
                 {$ENDIF LINUX}
                 begin
@@ -2298,7 +2298,7 @@ begin
             else if GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode) and
               (lpExitCode <> still_active) then
 {$ENDIF WINDOWS}
-            {$IFDEF LINUX}
+            {$IFDEF UNIX}
               if not FpcProcess.Running then
             {$ENDIF LINUX}
               begin
@@ -2363,7 +2363,7 @@ begin
               ProcessMess;
               //sleep(50);
               sleep(1000);
-              {$IFDEF LINUX}
+              {$IFDEF UNIX}
               lpExitCode := FpcProcess.ExitStatus;
               {$ENDIF LINUX}
               {$IFDEF WINDOWS}
@@ -3813,7 +3813,7 @@ begin
       filename := CmdLinePasStr;
     end;
   end;
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   // we start as Invoker
   // we assume that this is a executable
   // we try it via createprocess (Tprocess)
@@ -4087,7 +4087,7 @@ begin
 end;
 
 {$ENDIF WINDOWS}
-{$IFDEF LINUX}
+{$IFDEF UNIX}
 function ExitSession(ExitMode: TExitMode; var Fehler: string): boolean;
 var
   exitcode : Integer;
@@ -4344,7 +4344,7 @@ begin
     {$IFDEF WINDOWS}
     Result := ExpandFileNameUTF8(tmp);
     {$ENDIF WINDOWS}
-    {$IFDEF LINUX}
+    {$IFDEF UNIX}
     Result := CleanAndExpandFilename(tmp);
     {$ENDIF LINUX}
   end
@@ -4366,7 +4366,7 @@ begin
   {$IFDEF WIN64}
   Result := true;
   {$ENDIF WIN64}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   Result := Is64BitSystemLin;
   {$ENDIF LINUX}
 end;
@@ -4381,7 +4381,7 @@ begin
   // not implemented
   Result := false;
   {$ENDIF WIN64}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   Result := false;
   if FpGeteuid = 0 then Result := true;
   {$ENDIF LINUX}
@@ -4430,7 +4430,7 @@ begin
   Result := user;
   {$ENDIF WIN32}
   {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   //Result := execShellCall('who | awk ''{print $1}'' | uniq','sysnative');
   //Result := getCommandResult('who | awk ''{print $1}'' | uniq');
   //Result := getCommandResult('/bin/bash -c who | awk ''''''{print $1}'''''' | uniq');
@@ -4816,7 +4816,7 @@ begin
   Result := FileCopyWin(sourcefilename, targetfilename, problem,
     DelayUntilRebootIfNeeded, RebootWanted);
   {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   problem := '';
   try
     // remove existing files to avoid problems like: Error: 26 : Text (code segment) file busy
@@ -4921,7 +4921,7 @@ begin
   begin
     LogDatei.DependentAdd('Warning: file not found :' + FName +
       ' - giving up', LLwarning);
-    {$IFDEF LINUX}
+    {$IFDEF UNIX}
     ErrorInfo := 'File Err. No. ' + IntToStr(fpgeterrno);
     Result := False;
     {$ENDIF LINUX}
@@ -7602,7 +7602,7 @@ begin
       ProcessMess;
     until deleted or (retries > maxretry);
   end;
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   exitcode := fplink(exist, new);
   if 0 = exitcode then result := true
   else
@@ -7649,7 +7649,7 @@ begin
     else
       LogDatei.log('Existing file '+new+' could not be  deleted,  Error: '+removeLineBreaks(SysErrorMessage(GetLastOSError)),LLError);
   end;
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   exitcode := fpsymlink(exist, new);
   if 0 = exitcode then result := true
   else
@@ -7702,7 +7702,7 @@ begin
   //exist:=StrAlloc (length(existingfilename)+1);
   //new:=StrAlloc (length(newfilename)+1);
 
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   exist:=PChar(existingfilename);
   new:=PChar(newfilename);
   exitcode := fprename(exist, new);
@@ -7745,7 +7745,7 @@ begin
   //StrDispose(new);
 end;
 
-{$IFDEF LINUX}
+{$IFDEF UNIX}
 function TuibFileInstall.chmod(mode : string;const FileName: string): boolean;
 begin
   mode := opsiUnquoteStr(mode,'"');
@@ -8272,7 +8272,7 @@ end;
 function TuibFileInstall.FileCheckDate
   (const Sourcefilename, Targetfilename: string; OverwriteIfEqual: boolean): boolean;
 (*
-{$IFDEF LINUX}
+{$IFDEF UNIX}
 begin
   result := FileCheckDate(Sourcefilename, Targetfilename,OverwriteIfEqual);
 end;
@@ -8280,7 +8280,7 @@ end;
 *)
 
 var
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   fstatRecordSource, fstatRecordTarget: stat ;
   uxtime1, uxtime2 : cardinal;
   {$ENDIF LINUX}
@@ -8331,6 +8331,9 @@ begin
     diffresult := abs(uxtime1 - uxtime2);
     if diffresult < 2 Then diffresult := 0;
     {$ENDIF LINUX}
+    {$IFDEF DARWIN}
+     LogDatei.log('not implemented for macos', LLError);
+    {$ENDIF DARWIN}
 
 {$IFDEF WINDOWS}
     filetime1 := fRecordSource.FindData.ftLastWriteTime;
@@ -8844,7 +8847,7 @@ var
         LogDatei.log_prog('Found: '+SearchResult.Name + ' with attr:'+inttostr(SearchResult.Attr), LLDebug);
         LogDatei.log_prog('Found: '+SearchResult.Name + ' is SymLink by Attr: '+BoolToStr((SearchResult.Attr and faSymlink = faSymlink),true), LLDebug);
         LogDatei.log_prog('Found: '+SearchResult.Name + ' is SymLink by func: '+BoolToStr(FileIsSymlink(SourcePath+SearchResult.Name),true), LLDebug);
-        {$IFDEF LINUX}
+        {$IFDEF UNIX}
         LogDatei.log_prog('Found: '+SearchResult.Name + ' is SymLink by fpReadLink: '+BoolToStr((fpReadLink(SourcePath+SearchResult.Name) <> ''),true), LLDebug);
         {$ENDIF LINUX}
 
@@ -8852,7 +8855,7 @@ var
            // do not follow symlinks to directories
           //(SearchResult.Attr and faSymlink <> faSymlink) and // seems not work
            (not(FileIsSymlink(SourcePath+SearchResult.Name)) or followsymlinks) and         // work only in Linux
-           //{$IFDEF LINUX}
+           //{$IFDEF UNIX}
            //(fpReadLink(SourcePath+SearchResult.Name) = '') and
            //{$ENDIF LINUX}
           (SearchResult.Name <> '.') and (SearchResult.Name <> '..') then
@@ -9209,7 +9212,7 @@ var
       end
       else
       begin
-        {$IFDEF LINUX}
+        {$IFDEF UNIX}
         LogS := 'Warning: "' + 'Directory ' + OrigPath +
           '" cannot be deleted, error ' + SysErrorMessage(fpgeterrno) ;
         {$ENDIF LINUX}

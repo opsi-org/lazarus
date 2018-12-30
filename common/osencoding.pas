@@ -341,7 +341,7 @@ end;
 
 procedure initEncoding;
 begin
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   mysystemEncoding := 'utf8';
   {$ENDIF LINUX}
   {$IFDEF WINDOWS}

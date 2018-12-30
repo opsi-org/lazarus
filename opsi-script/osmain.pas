@@ -78,6 +78,13 @@ osfuncwin2,
   baseunix,
   oscrypt,
 {$ENDIF LINUX}
+{$IFDEF DARWIN}
+  osfunclin,
+  lispecfolder,
+  baseunix,
+  oscrypt,
+  //macosall,
+{$ENDIF DARWIN}
 {$IFDEF GUI}
   osmessagedialog,
   osbatchgui,
@@ -385,7 +392,7 @@ begin
 end;
 
 function setBootmode(const bootmode: string; var problem: string): boolean;
-{$IFDEF LINUX}
+{$IFDEF UNIX}
 var
   myconf : TIniFile;
 {$ENDIF LINUX}
@@ -420,7 +427,7 @@ begin
     end;
   end;
   {$ENDIF}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   try
     myconf := TIniFile.Create(opsiscriptconf);
     myconf.WriteString('general','bootmode',bootmode);
@@ -439,7 +446,7 @@ end;
 
 
 procedure getBootmode(var bootmode: string; var fromRegistry: boolean);
-{$IFDEF LINUX}
+{$IFDEF UNIX}
 var
   myconf : TIniFile;
 {$ENDIF LINUX}
@@ -476,7 +483,7 @@ begin
     LogDatei.log('bootmode from environment: ' + bootmode, LLDebug);
   end;
 {$ENDIF}
-{$IFDEF LINUX}
+{$IFDEF UNIX}
   try
     myconf := TIniFile.Create(opsiscriptconf);
     bootmode := myconf.ReadString('general','bootmode','BKSTD');
@@ -651,7 +658,7 @@ begin
   Result := GetEnvironmentVariable(VarName);
 
   {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   Result := strpas(fpGetEnv(VarName));
   {$ENDIF LINUX}
 
@@ -816,7 +823,7 @@ begin
   LogDatei.log('ProcessNonZeroScript opsidata initialized', LLdebug2);
   Pfad := opsidata.getSpecialScriptPath;
   //only for backward compatibility and for special circumstances
-{$IFDEF LINUX}
+{$IFDEF UNIX}
   if not fileexists(depotdrive) then depotdrive := depotdrive_old;
 {$ENDIF LINUX}
   if Pfad = '' //this should be the normal case since winst 4.2
@@ -1053,7 +1060,7 @@ var
   aktAction, orgAction : TAction;
   processProduct : boolean;
   ///val :   Integer;
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   filehandle : cint;
   {$ENDIF LINUX}
   list : Tstringlist;
@@ -1378,7 +1385,7 @@ begin
     OpsiData.finishOpsiconf;
 
 
-    {$IFDEF LINUX}
+    {$IFDEF UNIX}
     opsiclientd := true;
     if '' = getcommandresult('ps --no-headers -C opsiclientd') then opsiclientd := false;
        if PerformExitWindows <> txrNoExit then
@@ -1719,7 +1726,7 @@ begin
 end;
 {$ENDIF WINDOWS}
 
-{$IFDEF LINUX}
+{$IFDEF UNIX}
 function freeLinuxAgentStart : boolean;
 var
   startkey : string;
@@ -1999,7 +2006,7 @@ begin
 
           logSupportedEncodings;
 
-          {$IFDEF LINUX}
+          {$IFDEF UNIX}
           if not opsidata.linuxAgentActivated then
           begin
             if freeLinuxAgentStart then
@@ -2090,7 +2097,7 @@ begin
               opsiclientdconf := getSpecialFolder(CSIDL_PROGRAM_FILES) +
                 '\opsi.org\opsi-client-agent\opsiclientd\opsiclientd.conf';
               {$ENDIF WINDOWS}
-              {$IFDEF LINUX}
+              {$IFDEF UNIX}
               opsiclientdconf := '/etc/opsi-client-agent/opsiclientd/opsiclientd.conf';
               {$ENDIF LINUX}
               if FileExists(opsiclientdconf) then

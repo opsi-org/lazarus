@@ -161,7 +161,7 @@
         <IsPartOfProject Value="True"/>
       </Unit3>
       <Unit4>
-        <Filename Value="lispecfolder.pas"/>
+        <Filename Value="macspecfolder.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
       <Unit5>
@@ -269,7 +269,6 @@
         <OverflowChecks Value="True"/>
         <StackChecks Value="True"/>
       </Checks>
-      <TargetOS Value="linux"/>
       <SmallerCode Value="True"/>
     </CodeGeneration>
     <Linking>
