@@ -566,7 +566,7 @@ function opsiunquotestr(s1,s2 : string): string;
 
 function cmdLineInputDialog(var inputstr : string; const message, default : string; confidential : boolean) : boolean;
 function isValidUtf8String(str:string) : boolean;
-function getFixedUtf8String(str:string) : string;
+//function getFixedUtf8String(str:string) : string;
 function posFromEnd(const substr : string; const s : string) : integer;
 
 
@@ -744,10 +744,12 @@ begin
   else result := true;
 end;
 
+(*
 function getFixedUtf8String(str:string) : string;
 begin
   result := ValidUTF8String(str);
 end;
+*)
 
 function cmdLineInputDialog(var inputstr : string; const message, default : string; confidential : boolean) : boolean;
 var

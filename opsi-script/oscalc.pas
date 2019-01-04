@@ -13,33 +13,35 @@ unit oscalc;
 interface
 
 uses
-  Classes, SysUtils,oslog;
+  Classes, SysUtils, oslog;
+Type EDivException = Class(Exception);
 
-function opsicalc(expr : string; var strresult : string) : boolean;
+function opsicalc(expr: string; var strresult: string): boolean;
 
 implementation
 
 
-function Calculate(SMyExpression: string; digits: Byte): string;
+function Calculate(SMyExpression: string; digits: byte): string;
   // Calculate a simple expression
   // Supported are:  Real Numbers, parenthesis
   // http://www.swissdelphicenter.ch/torry/showcode.php?id=470
   // Author: Thomas Stutz
 var
-  z: Char;
-  ipos: Integer;
+  z: char;
+  ipos: integer;
 
-  function StrToReal(chaine: string): Real;
+  function StrToReal(chaine: string): real;
   var
-    r: Real;
-    Pos: Integer;
+    r: real;
+    Pos: integer;
   begin
     Val(chaine, r, Pos);
-    if Pos > 0 then Val(Copy(chaine, 1, Pos - 1), r, Pos);
+    if Pos > 0 then
+      Val(Copy(chaine, 1, Pos - 1), r, Pos);
     Result := r;
   end;
 
-  function RealToStr(inreal: Extended; digits: Byte): string;
+  function RealToStr(inreal: extended; digits: byte): string;
   var
     S: string;
   begin
@@ -62,15 +64,18 @@ var
       z := s[1];
       Inc(ipos);
     end;
-    if z = ' ' then nextchar;
-    if not (z in ['0'..'9','.','+','-','/','*','(',')']) then raise Exception.Create('Invalid char: '+z);;
+    if z = ' ' then
+      nextchar;
+    if not (z in ['0'..'9', '.', '+', '-', '/', '*', '(', ')']) then
+      raise Exception.Create('Invalid char: ' + z);
+    ;
   end;
 
-  function Expression: Real;
+  function Expression: real;
   var
-    w: Real;
+    w: real;
 
-    function Factor: Real;
+    function Factor: real;
     var
       ws: string;
     begin
@@ -87,61 +92,81 @@ var
       else if z = '(' then
       begin
         Factor := Expression;
-        nextchar
+        nextchar;
       end
-      else if z = '+' then Factor := +Factor
-      else if Z = '-' then Factor := -Factor;
+      else if z = '+' then
+        Factor := +Factor
+      else if Z = '-' then
+        Factor := -Factor;
     end;
 
-    function Term: Real;
+    function Term: real;
     var
-      W: Real;
+      W: real;
     begin
-      W := Factor;
-      while Z in ['*', '/'] do
-        if z = '*' then w := w * Factor
-      else
-        w := w / Factor;
-      Term := w;
+      try
+        W := Factor;
+        while Z in ['*', '/'] do
+          if z = '*' then
+            w := w * Factor
+          else
+          begin
+          if Factor = 0 then
+             Raise EDivException.Create ('Division by Zero would occur')
+          else
+            w := w / Factor;
+          end;
+        Term := w;
+      except
+        on E: Exception do
+        begin
+          //Result := False;
+          //strresult := E.Message;
+          LogDatei.log('Error in opsicalc: ' + E.Message, LLError);
+        end;
+      end;
     end;
+
   begin
     w := term;
     while z in ['+', '-'] do
-      if z = '+' then w := w + term
-    else
-      w := w - term;
+      if z = '+' then
+        w := w + term
+      else
+        w := w - term;
     Expression := w;
   end;
+
 begin
-  ipos   := 1;
+  ipos := 1;
   Result := RealToStr(Expression, digits);
 end;
 
-function opsicalc(expr : string; var strresult : string) : boolean;
+function opsicalc(expr: string; var strresult: string): boolean;
 begin
-  result := false;
+  Result := False;
   try
     strresult := Calculate(expr, 0);
     if strresult = '+Inf' then
     begin
       strresult := '';
-      LogDatei.DependentAdd('Error in calculate (division by zero): '+expr+' to :'+strresult, LLDebug2);
-      result := false;
+      LogDatei.DependentAdd('Error in calculate (division by zero): ' +
+        expr + ' to :' + strresult, LLDebug2);
+      Result := False;
     end
     else
     begin
-      LogDatei.DependentAdd('calculate: '+expr+' to :'+strresult, LLDebug2);
-      result := true;
+      LogDatei.DependentAdd('calculate: ' + expr + ' to :' + strresult, LLDebug2);
+      Result := True;
     end;
   except
-    on E:Exception do
+    on E: Exception do
     begin
-      result := false;
+      Result := False;
       strresult := E.Message;
-      LogDatei.DependentAdd('Error in opsicalc: '+E.Message, LLError);
+      LogDatei.DependentAdd('Error in opsicalc: ' + E.Message, LLError);
     end;
   end;
 end;
 
 end.
-
