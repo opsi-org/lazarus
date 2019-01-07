@@ -2,6 +2,10 @@ opsi-setup-detector (4.1.0.2) stable; urgency=low
 
   * remove PathToOpsiPackageBuilder from the needed configurations
   * osdform: more resourcestrings
+  * osddlgnewproperty: more resourcestrings
+  * changes at template files
+  * templ: no architecture check at delsub
+  * code cleanup
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed,  19 Dec 2018 : 15:00:00 +0200
 

@@ -4,21 +4,16 @@ unit osdform;
 //{$MODE DELPHI}{$H+}
 
 
-
-// ToDo:
-
-// - Description auslesen
-// - Eingaben prüfen
-
 interface
 
 uses
+  (*
   {$IFDEF WINDOWS}
   Windows,
   ShlObj,
   {$ENDIF WINDOWS}
+  *)
   Classes, SysUtils, FileUtil, RTTICtrls, RTTIGrids,
-  //SynEdit, SynMemo,
   Forms, Controls, Graphics,
   LCLType,
   Dialogs, ExtCtrls,
@@ -26,18 +21,24 @@ uses
   Buttons,
   ComCtrls,
   Menus,
-  Registry,
-  Strings,
+  //Registry,
+  //Strings,
   StrUtils,
-  //VersionInfoX,
-  Process,
+  //Process,
   typinfo,
   CustApp,
-  //htmlview,
-  //help,
-  fileinfo, osdhelper, osdanalyze, winpeimagereader, lcltranslator, EditBtn,
-  Spin, JSONPropStorage, Grids, PairSplitter,
-  oslog, osdbasedata, osdconfigdlg, osdcreate, fpjsonrtti, osddlgnewdependency,
+  fileinfo,
+  //osdhelper,
+  osdanalyze,
+  winpeimagereader,
+  lcltranslator,
+  EditBtn,
+  //Spin,
+  //JSONPropStorage,
+  Grids,
+  PairSplitter,
+  oslog,
+  osdbasedata, osdconfigdlg, osdcreate, fpjsonrtti, osddlgnewdependency,
   osddlgnewproperty, osparserhelper;
 
 type
@@ -267,12 +268,6 @@ type
     procedure setRunMode;
     procedure BitBtnClose1Click(Sender: TObject);
     procedure BtAnalyzeOnlyClick(Sender: TObject);
-    (*
-    procedure CheckBox1Change(Sender: TObject);
-    procedure CheckBoxUseMstChange(Sender: TObject);
-    procedure ComboBoxArchModeChange(Sender: TObject);
-    procedure FileCreateLogfileClick(Sender: TObject);
-    *)
     procedure FileHelpClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure mst32NameEditChange(Sender: TObject);
@@ -355,6 +350,7 @@ var
 
 
 resourcestring
+
   sMBoxHeader = 'opsi setup detector';
   sHelpHeader = 'opsi setup detector Help';
   // dialogs
@@ -397,6 +393,7 @@ resourcestring
     'The Installdir is needed for correct Uninstall process.' + Lineending
     +
     'Please install this Product and check for the Installdir and write it to the setup and the uninstall script';
+
   // new for 4.1.0.2 ******************************************************************
   rsNotImplemented = 'Not implemented right now.';
   rsWeNeedConfiguration = 'We need some configurations first !';
@@ -612,7 +609,7 @@ end;
 
 procedure main1;
 var
-  ErrorMsg: string;
+  //ErrorMsg: string;
   FileVerInfo: TFileVersionInfo;
   lfilename: string;
 begin
@@ -656,8 +653,8 @@ end;
 procedure main2;
 var
   ErrorMsg: string;
-  FileVerInfo: TFileVersionInfo;
-  lfilename: string;
+  //FileVerInfo: TFileVersionInfo;
+  //lfilename: string;
   i : integer;
 begin
   startupfinished := true; //avoid calling main on every show event
@@ -1076,7 +1073,7 @@ var
   tmpliststr: string;
   tmpstr: string;
   exists: boolean;
-  valid : boolean;
+  //valid : boolean;
 begin
   FNewPropDlg.RadioButtonPropBool.Checked := True;
   FNewPropDlg.RadioButtonPropStringChange(Sender);
@@ -1150,9 +1147,6 @@ begin
 end;
 
 procedure TResultform1.BitBtnDelDepClick(Sender: TObject);
-var
-  range: integer;
-  str: string;
 begin
   StringGridDep.DeleteRow(StringGridDep.Row);
 end;
@@ -1165,9 +1159,9 @@ end;
 
 procedure TResultform1.BitBtnEditDepClick(Sender: TObject);
 var
-  mydep: TStringList;
-  x, y: integer;
-  aPoint: TPoint;
+  //mydep: TStringList;
+  y: integer;
+  //aPoint: TPoint;
 begin
   y := StringGridDep.Row;
   if y > 0 then
@@ -1222,15 +1216,15 @@ end;
 procedure TResultform1.BitBtnEditPropClick(Sender: TObject);
 // edit property
 var
-  myprop: TStringList;
-  index: integer;
+  //myprop: TStringList;
+  //index: integer;
   i: integer;
   tmpliststr: string;
   tmpstr: string;
   errorstr: string;
   remaining: string;
-  x, y: integer;
-  aPoint: TPoint;
+  y: integer;
+  //aPoint: TPoint;
 begin
   y := StringGridProp.Row;
   if y > 0 then
@@ -1442,12 +1436,12 @@ end;
 procedure TResultform1.BtCreateProductClick(Sender: TObject);
 var
   radioindex: integer;
-  checkok: boolean = True;
+  //checkok: boolean = True;
 begin
   logdatei.log('Start BtCreateProductClick', LLDebug2);
   if not DirectoryExists(myconfiguration.workbench_Path) then
   begin
-    checkok := False;
+    //checkok := False;
     ShowMessage(sErrPacketBaseDirNotFound);
   end;
   try
@@ -1570,7 +1564,7 @@ var
   checkok: boolean = True;
 begin
   if ((aktProduct.SetupFiles[0].installDirectory = '')
-       or (aktProduct.SetupFiles[0].installDirectory = '# SET THE INSTALL DIRECTORY #')) and
+       or (aktProduct.SetupFiles[0].installDirectory = 'unknown')) and
     (aktProduct.SetupFiles[0].installerId <> stMsi) then
   begin
     //checkok := False;
@@ -1627,7 +1621,7 @@ var
   checkok: boolean = True;
 begin
   if ((aktProduct.SetupFiles[1].installDirectory = '')
-      or (aktProduct.SetupFiles[1].installDirectory = '# SET THE INSTALL DIRECTORY #')) and
+      or (aktProduct.SetupFiles[1].installDirectory = 'unknown')) and
     (aktProduct.SetupFiles[1].installerId <> stMsi) then
   begin
     // checkok := False;

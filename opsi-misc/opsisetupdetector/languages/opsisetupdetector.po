@@ -1,6 +1,27 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
+#: osdcreate.rscouldnotcreatedirectorywarning
+msgid "Could not create directory: "
+msgstr ""
+
+#: osdcreate.rsdirectory
+msgid "Directory "
+msgstr ""
+
+#: osdcreate.rsstillexitswarningdeleteoverwrite
+msgid " still exits. Overwrite / Delete ?"
+msgstr ""
+
+#: osddlgnewproperty.rscontainswhitespacewarning
+msgid " contains whitespace. Whitespaces are not allowed."
+msgstr ""
+
+#: osddlgnewproperty.rsduplicatewarning
+msgctxt "osddlgnewproperty.rsduplicatewarning"
+msgid " exists. Duplicates not allowed."
+msgstr ""
+
 #: osdform.rsdependencyediterrorhead
 msgid "opsi-setup-detector: Dependency Editor: Error"
 msgstr ""
@@ -14,6 +35,7 @@ msgid "Not implemented right now."
 msgstr ""
 
 #: osdform.rspropediterrordoublemsgfinish
+msgctxt "osdform.rspropediterrordoublemsgfinish"
 msgid " exists. Duplicates not allowed."
 msgstr ""
 

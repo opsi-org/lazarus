@@ -5,8 +5,18 @@ unit osddlgnewdependency;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, RTTIGrids, Forms, Controls, Graphics, Dialogs,
-  ExtCtrls, Buttons, StdCtrls, EditBtn,
+  Classes,
+  SysUtils,
+  FileUtil,
+  RTTIGrids,
+  Forms,
+  Controls,
+  Graphics,
+  Dialogs,
+  ExtCtrls,
+  Buttons,
+  StdCtrls,
+  EditBtn,
   osdbasedata;
 
 type
@@ -32,9 +42,6 @@ type
     Panel2: TPanel;
     RadioButtonAction: TRadioButton;
     RadioButtonState: TRadioButton;
-    procedure BitBtn1Click(Sender: TObject);
-    procedure FormHide(Sender: TObject);
-    procedure FormShow(Sender: TObject);
     procedure RadioButtonActionChange(Sender: TObject);
   private
 
@@ -44,7 +51,7 @@ type
 
 var
   FNewDepDlg: TFNewDepDlg;
-  newdependency : TPDependency;
+  newdependency: TPDependency;
 
 implementation
 
@@ -52,10 +59,6 @@ implementation
 
 { TFNewDepDlg }
 
-procedure TFNewDepDlg.FormShow(Sender: TObject);
-begin
-
-end;
 
 procedure TFNewDepDlg.RadioButtonActionChange(Sender: TObject);
 begin
@@ -76,18 +79,6 @@ begin
   end;
 end;
 
-procedure TFNewDepDlg.FormHide(Sender: TObject);
-begin
-  (*
-  TIPropertyGridNewDep.ConsistencyCheck;
-  TIPropertyGridNewDep.TIObject := nil;
-  *)
-end;
-
-procedure TFNewDepDlg.BitBtn1Click(Sender: TObject);
-begin
-
-end;
 
 end.
 

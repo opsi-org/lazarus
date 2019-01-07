@@ -185,48 +185,6 @@ begin
   end;
 end;
 
-(*
-procedure grepmarker(instring: string);
-var lowerstring: string;
-begin
-  lowerstring := lowercase(instring);
-  if (0 < pos('installer,msi,database', lowerstring))  then begin
-     markerEmbeddedMSI := true;
-  end;
-  if (0 < pos('installshield', lowerstring)) then begin
-     markerInstallShield := true;
-  end;
-  if (markerEmbeddedMSI and markerInstallShield) then begin
-     mywrite('found strings "Installer,MSI,Database" and "InstallShield"');
-     mywrite('detected InstallShield+MSI Setup (InstallShield with embedded MSI)');
-     setupType := SetupType_InstallShieldMSI;
-  end;
-  if (markerInstallShield and ((0 < pos('<description>InstallShield.Setup</description>', instring))) or ((0 < pos('InstallShield', instring)))) then begin
-     mywrite('found string "<description>InstallShield.Setup</description>" or "InstallShield"');
-     mywrite('detected InstallShield Setup');
-     setupType := SetupType_InstallShield;
-  end;
-  if (0 < pos('inno', lowerstring)) and ((0 < pos('<description>inno setup</description>', lowerstring)) or (0 < pos('jr.inno.setup', lowerstring))) then begin
-     mywrite('found string "<description>Inno Setup</description>" or "JR.Inno.Setup"');
-     mywrite('detected Inno Setup');
-     setupType := SetupType_Inno;
-  end;
-  if (0 < pos('nullsoft', lowerstring)) and ((0 < pos('Nullsoft.NSIS.exehead', lowerstring)) or (0 < pos('nullsoft install system', lowerstring))) then begin
-      if (0 < pos('nullsoft.nsis.exehead', lowerstring)) then
-         mywrite('found string "Nullsoft.NSIS.exehead"')
-      else
-         mywrite('found string "Nullsoft Install System"');
-     mywrite('detected NSIS Setup');
-     setupType := SetupType_NSIS;
-  end;
-  if (0 < pos('name="microsoft.windows.advancedinstallersetup"', lowerstring))  then begin
-     mywrite('found string "microsoft.windows.advancedinstallersetup"');
-     mywrite('detected Advanced Setup (with embedded MSI)');
-     setupType := SetupType_AdvancedMSI;
-  end;
-end;
- *)
-
 procedure grepmsi(instring: string);
 begin
   if (0 < pos('product_build_number{', lowercase(instring))) or
@@ -342,16 +300,8 @@ begin
   begin
     mysetup.analyze_progess := mysetup.analyze_progess + 10;
     mysetup.installerId := stMsi;
-    //resultForm1.Edit_installer_type.Text := installerToInstallerstr(stMsi);
-    //resultForm1.EditMSI_file.Text := myfilename;
     mywrite('........');
     mysetup.setupFullFileName := myfilename;
-    //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
-    (*
-    resultForm1.EditMSI_ProductName.Text := '';
-    resultForm1.EditMSI_ProductVersion.Text := '';
-    resultForm1.EditMSI_ProductCode.Text := '';
-    *)
     for i := 0 to myoutlines.Count - 1 do
     begin
       mywrite(myoutlines.Strings[i]);
@@ -392,23 +342,19 @@ begin
   mysetup.installCommandLine :=
     'msiexec /i "%scriptpath%\' + mysetup.setupFileName + '" ' +
     installerArray[integer(mysetup.installerId)].unattendedsetup;
-  mysetup.uninstallCheck.Add('if stringtobool(checkForMsiProduct("' + mysetup.msiId + '"))');
+  mysetup.uninstallCheck.Add('if stringtobool(checkForMsiProduct("' +
+    mysetup.msiId + '"))');
   mysetup.uninstallCheck.Add('   set $oldProgFound$ = "true"');
   mysetup.uninstallCheck.Add('endif');
 
   mysetup.uninstallCommandLine :=
-    'msiexec /x ' + mysetup.msiId + ' ' + installerArray[integer(mysetup.installerId)].unattendeduninstall;
+    'msiexec /x ' + mysetup.msiId + ' ' +
+    installerArray[integer(mysetup.installerId)].unattendeduninstall;
 
   mywrite('get_MSI_info finished');
   mysetup.analyze_progess := 100;
 
   Mywrite('Finished Analyzing MSI: ' + myfilename);
-  //resultForm1.PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
-  (*
-  if showMSI then
-    //resultForm1.PageControl1.ActivePage := resultForm1.TabSheetSetup1;
-  //resultForm1.PageControl1.ActivePage := resultForm1.TabSheetMSI;
-  *)
 end;
 
 
@@ -565,11 +511,6 @@ begin
     [rfReplaceAll, rfIgnoreCase]);
   mysetup.installDirectory := DefaultDirName;
   aktProduct.productdata.comment := AppVerName;
-  (*
-  mysetup.installCommandLine:= '"%scriptpath%\'+mysetup.setupFileName+'"'
-     + installerArray[integer(mysetup.installerId)].unattendedsetup;
-  mysetup.isExitcodeFatalFunction:=installerArray[integer(mysetup.installerId)].uib_exitcode_function;
- *)
   with mysetup do
   begin
     LogDatei.log('installDirectory: ' + installDirectory, LLDebug);
@@ -582,17 +523,9 @@ begin
     LogDatei.log('productName: ' + productName, LLDebug);
     LogDatei.log('productversion: ' + productversion, LLDebug);
   end;
-
-
   mywrite('get_inno_info finished');
   mywrite('Inno Setup detected');
-
-
-
   Mywrite('Finished analyzing Inno-Setup');
-  (*
-  if showgui then
-    resultForm1.PageControl1.ActivePage := resultForm1.TabSheetSetup1;*)
 end;
 
 
@@ -604,10 +537,6 @@ begin
   Mywrite('Analyzing InstallShield-Setup:');
   mywrite('get_InstallShield_info finished');
   mywrite('InstallShield Setup detected');
-  (*
-  if showInstallShield then
-    //resultForm1.PageControl1.ActivePage := resultForm1.TabSheetInstallShield;
-    resultForm1.PageControl1.ActivePage := resultForm1.TabSheetSetup1;*)
 end;
 
 
@@ -619,7 +548,6 @@ var
   myBatch: string;
   product: string;
   FileInfo: TSearchRec;
-  //exefile: string;
   smask: string;
 
 begin
@@ -664,30 +592,8 @@ begin
     Mywrite(smask);
     if SysUtils.FindFirst(smask, faAnyFile, FileInfo) = 0 then
     begin
-      //resultform1.EditMSI_file.Text := opsitmp + FileInfo.Name;
       mysetup.msiFullFileName := opsitmp + FileInfo.Name;
-      ;
-
-      // analyze the extracted MSI
-      //resultform1.OpenDialog1.InitialDir := opsitmp;
-      //resultform1.OpenDialog1.FileName := FileInfo.Name;
       get_msi_info(mysetup.msiFullFileName, mysetup);
-
-       (*
-       // and use the parameters from get_msi_info (MSI analyze)
-       product := resultForm1.EditMSI_opsiProductID.Text;
-       resultForm1.EditInstallShieldMSIProductID.Text := product;
-       resultForm1.EditInstallShieldMSIProductName.Text := resultForm1.EditMSI_ProductName.Text;
-       resultForm1.EditInstallShieldMSIProductVersion.Text := resultForm1.EditMSI_ProductVersion.Text;
-       resultForm1.EditInstallShieldMSIProductCode.Text := resultForm1.EditMSI_ProductCode.Text;
-       resultForm1.MemoInstallShieldMSIDescription.Append(resultForm1.EditMSI_ProductName.Text);
-       *)
-
-      // reset OpenDialog parameters
-      //resultform1.OpenDialog1.InitialDir := myfilename;
-      //resultform1.OpenDialog1.FileName := ExtractFileNameWithoutExt(myfilename);
-
-      // resultform1.setDefaultParametersMSI;
     end
     else
     begin
@@ -698,11 +604,6 @@ begin
   {$ENDIF WINDOWS}
   mywrite('get_InstallShield_info finished');
   mywrite('InstallShield+MSI Setup detected');
-(*
-  if showInstallShieldMSI then
-    //resultForm1.PageControl1.ActivePage := resultForm1.TabSheetInstallShieldMSI;
-    resultForm1.PageControl1.ActivePage := resultForm1.TabSheetSetup1;
-*)
 end;
 
 
@@ -758,33 +659,13 @@ begin
     if SysUtils.FindFirst(smask, faAnyFile, FileInfo) = 0 then
     begin
       mysetup.msiFullFileName := opsitmp + FileInfo.Name;
-      ;
-      //resultform1.EditMSI_file.Text := opsitmp + FileInfo.Name;
-
-      // analyze the extracted MSI
-      //resultform1.OpenDialog1.InitialDir := opsitmp;
-      //resultform1.OpenDialog1.FileName := FileInfo.Name;
       get_msi_info(mysetup.msiFullFileName, mysetup);
-
-      // and use the parameters from get_msi_info (MSI analyze)
-      //product := resultForm1.EditMSI_opsiProductID.Text;
-
-      // reset OpenDialog parameters
-      //resultform1.OpenDialog1.InitialDir := myfilename;
-      //resultform1.OpenDialog1.FileName := ExtractFileNameWithoutExt(myfilename);
-
-      // resultform1.setDefaultParametersMSI;
     end;
   end;
   {$ENDIF WINDOWS}
 
   mywrite('get_AdvancedMSI_info finished');
   mywrite('Advancd Installer Setup (with embedded MSI) detected');
-(*
-  if showAdvancedMSI then
-    //resultForm1.PageControl1.ActivePage := resultForm1.TabSheetAdvancedMSI;
-    resultForm1.PageControl1.ActivePage := resultForm1.TabSheetSetup1;
- *)
 end;
 
 
@@ -796,12 +677,6 @@ begin
   Mywrite('Analyzing NSIS-Setup:');
   mywrite('get_nsis_info finished');
   mywrite('NSIS (Nullsoft Install System) detected');
-
-(*
-  if showNsis then
-    //resultForm1.PageControl1.ActivePage := resultForm1.TabSheetNsis;
-    resultForm1.PageControl1.ActivePage := resultForm1.TabSheetSetup1;
-    *)
 end;
 
 procedure get_7zip_info(myfilename: string);
@@ -885,8 +760,6 @@ begin
   msg := msg + ')';
   mywrite(msg);
   FileStream := TFileStream.Create(myfilename, fmOpenRead);
-  //markerEmbeddedMSI := false;
-  //markerInstallShield := false;
   try
     {$IFDEF OSDGUI}
     resultForm1.ProgressBarAnalyze.Position := 0;
@@ -904,9 +777,6 @@ begin
       progress := 100 - trunc((size / fullsize) * 100);
       if progress > lastprogress then
       begin
-        //mysetup.analyze_progess := progress;
-        //resultForm1.TIProgressBarAnalyze_progress.Loaded;
-        //resultForm1.TIProgressBarAnalyze_progress.Repaint;
         resultForm1.ProgressBarAnalyze.Position := progress;
         procmess;
         LogDatei.log('AnaProgess: ' + IntToStr(progress), LLDebug);

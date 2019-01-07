@@ -40,18 +40,18 @@ implementation
 procedure TFOSDConfigdlg.FormActivate(Sender: TObject);
 begin
   TIPropertyGrid1.TIObject := myconfiguration;
-  TIPropertyGrid1.CheckboxForBoolean:=true;
+  TIPropertyGrid1.CheckboxForBoolean := True;
   //TIPropertyGrid1.PropertyEditorHook;
 end;
 
 procedure TFOSDConfigdlg.TIPropertyGrid1Click(Sender: TObject);
 var
-  activeprop : string;
+  activeprop: string;
 begin
-  if sender = TIPropertyGrid1 then
+  if Sender = TIPropertyGrid1 then
   begin
     activeprop := TIPropertyGrid1.GetActiveRow.Name;
-    MemoConfigHint.Text:= myconfigurationhints.Values[activeprop];
+    MemoConfigHint.Text := myconfigurationhints.Values[activeprop];
   end;
 
 end;
@@ -63,11 +63,15 @@ end;
 
 initialization
 
-RegisterPropertyEditor(TypeInfo(string),TConfiguration,'workbench_path',TDirectoryPropertyEditor);
-RegisterPropertyEditor(TypeInfo(TStrings),TConfiguration,'import_libraries',TStringsPropertyEditor);
-RegisterPropertyEditor(TypeInfo(TStrings),TConfiguration,'preInstallLines',TStringsPropertyEditor);
-RegisterPropertyEditor(TypeInfo(TStrings),TConfiguration,'postInstallLines',TStringsPropertyEditor);
-RegisterPropertyEditor(TypeInfo(string),TConfiguration,'PathToOpsiPackageBuilder',TFileNamePropertyEditor);
+  RegisterPropertyEditor(TypeInfo(string), TConfiguration, 'workbench_path',
+    TDirectoryPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TConfiguration, 'import_libraries',
+    TStringsPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TConfiguration, 'preInstallLines',
+    TStringsPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TConfiguration, 'postInstallLines',
+    TStringsPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(string), TConfiguration, 'PathToOpsiPackageBuilder',
+    TFileNamePropertyEditor);
 
 end.
-

@@ -18,7 +18,7 @@ if $oldProgFound$ = "true"
   ;----------------------------------------------
   Sub_check_exitcode
   #@postUninstallLines1*#
-  if not($InstallDir1$ = '')
+  if not(($InstallDir$ = '') or ($InstallDir$ = 'unknown'))
      Files_uninstall
   endif
 endif
