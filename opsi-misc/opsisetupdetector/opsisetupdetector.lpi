@@ -295,7 +295,7 @@
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="9"/>
-        <TopLine Value="374"/>
+        <TopLine Value="290"/>
         <CursorPos X="21" Y="290"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
@@ -347,7 +347,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="73"/>
         <CursorPos X="79" Y="97"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit21>
       <Unit22>
@@ -529,7 +529,7 @@
       <Define1 Value="OPSI_AS_USER"/>
       <Define2 Value="OPSI"/>
     </OtherDefines>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="osdbasedata.pas"/>
         <Caret Line="650" Column="5" TopLine="630"/>
@@ -636,20 +636,16 @@
       </Position26>
       <Position27>
         <Filename Value="osdform.pas"/>
-        <Caret Line="1418" Column="13" TopLine="1427"/>
+        <Caret Line="303" Column="11" TopLine="283"/>
       </Position27>
       <Position28>
         <Filename Value="osdform.pas"/>
-        <Caret Line="303" Column="11" TopLine="283"/>
+        <Caret Line="723" Column="34" TopLine="699"/>
       </Position28>
       <Position29>
         <Filename Value="osdform.pas"/>
-        <Caret Line="723" Column="34" TopLine="699"/>
-      </Position29>
-      <Position30>
-        <Filename Value="osdform.pas"/>
         <Caret Line="370" Column="48" TopLine="357"/>
-      </Position30>
+      </Position29>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
@@ -660,7 +656,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="C:\lazarus\components\thtml\;..\..\common"/>
+      <OtherUnitFiles Value="C:\lazarus\components\thtml;..\..\common"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
