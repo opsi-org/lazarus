@@ -492,12 +492,6 @@ begin
         'uninstallCommandLine');
       TIEditSetup1UnProgram.Link.SetObjectAndProperty(SetupFiles[0], 'uninstallProg');
       TIEditSetup2UnProgram.Link.SetObjectAndProperty(SetupFiles[1], 'uninstallProg');
-      (*
-      TIEditProductIdS1.Link.SetObjectAndProperty(productdata, 'productId');
-      TIEditProductIdS2.Link.SetObjectAndProperty(productdata, 'productId');
-      TIEditProductNameS1.Link.SetObjectAndProperty(productdata, 'productName');
-      TIEditProductNameS2.Link.SetObjectAndProperty(productdata, 'productName');
-      *)
       // product
       TIEditProdVersion3.Link.SetObjectAndProperty(productdata, 'productVersion');
       TISpinEditPackageVers.Link.SetObjectAndProperty(productdata, 'packageVersion');
@@ -570,13 +564,8 @@ begin
   TIEditRequiredSizeMB2.Link.TIObject := nil;
   TIEditInstallDir1.Link.TIObject := nil;
   TIEditInstallDir1.Link.TIObject := nil;
-  //TIEditProductIdS1.Link.TIObject := nil;
-  //TIEditProductIdS2.Link.TIObject := nil;
-  //TIEditProductNameS1.Link.TIObject := nil;
-  //TIEditProductNameS2.Link.TIObject := nil;
   TIEditworkbenchpath.Link.TIObject := nil;
   TIEditSetup1Command.Link.TIObject := nil;
-  //TIGridDep.ListObject := nil;
   TITrackBarPrio.Link.TIObject := nil;
   TISpinEditPrio.Link.TIObject := nil;
 end;
@@ -631,19 +620,6 @@ begin
   LogDatei.StandardLogFilename := lfilename;
   LogDatei.WritePartLog := False;
   LogDatei.CreateTheLogfile(lfilename + '.log', True);
-  (*
-  // push prelog buffer to logfile
-  if preloglist.Count > 0 then
-    for i := 0 to preloglist.Count - 1 do
-      LogDatei.log(preloglist.Strings[i], LLEssential);
-  if logAndTerminate then
-  begin
-    LogDatei.log('Closing log and terminating due to previous errors.', LLCritical);
-    logdatei.Close;
-    Application.Terminate;
-    Exit;
-  end;
-  *)
   LogDatei.log('Log for: ' + Application.exename + ' opend at : ' +
     DateTimeToStr(now), LLNotice);
 
@@ -653,8 +629,6 @@ end;
 procedure main2;
 var
   ErrorMsg: string;
-  //FileVerInfo: TFileVersionInfo;
-  //lfilename: string;
   i : integer;
 begin
   startupfinished := true; //avoid calling main on every show event
@@ -698,8 +672,7 @@ begin
 
   if showgui then
   begin
-    //resultform1.Edit_PacketbaseDir.text := packetBaseDir;
-    //resultForm1.PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
+
   end;
 
   if Application.HasOption('filename') then
@@ -720,7 +693,7 @@ begin
       with resultform1 do
       begin
         Show;
-        useRunMode := analyzeOnly;
+        useRunMode := singleAnalyzeCreate;
         setRunMode;
         resultform1.MemoAnalyze.Clear;
         if StringGridDep.RowCount > 1 then
@@ -965,7 +938,7 @@ begin
     myprop := TStringList.Create;
     myprop.Add(IntToStr(index - 1));
     myprop.Add('install_architecture');
-    myprop.Add('Which archtiecture (32 / 64 Bit) has to be installed?');
+    myprop.Add('Which architecture (32 / 64 Bit) has to be installed?');
     myprop.Add('unicode');  //type
     myprop.Add('False');      //multivalue
     myprop.Add('False');      //editable

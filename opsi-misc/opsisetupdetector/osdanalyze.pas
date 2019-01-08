@@ -339,6 +339,59 @@ begin
   end;
   myoutlines.Free;
     {$ENDIF WINDOWS}
+    {$IFDEF LINUX}
+     mycommand := 'bash -c ''''msiinfo extract "' + myfilename + '" Property''';
+     mywrite(mycommand);
+     myoutlines := TStringList.Create;
+     if not RunCommandAndCaptureOut(mycommand, True, myoutlines, myreport,
+       SW_SHOWMINIMIZED, myexitcode) then
+     begin
+       mywrite('Failed to analyze: ' + myreport);
+       mysetup.analyze_progess := 0;
+     end
+     else
+     begin
+       mysetup.analyze_progess := mysetup.analyze_progess + 10;
+       mysetup.installerId := stMsi;
+       mywrite('........');
+       mysetup.setupFullFileName := myfilename;
+       for i := 0 to myoutlines.Count - 1 do
+       begin
+         mywrite(myoutlines.Strings[i]);
+         mysetup.analyze_progess := mysetup.analyze_progess + 1;
+
+         // sSearch := 'Manufacturer: ';
+         // iPos := Pos (sSearch, myoutlines.Strings[i]);
+         // if (iPos <> 0) then
+         //   resultForm1.Edit2.Text := Copy(myoutlines.Strings[i], Length(sSearch)+1, Length(myoutlines.Strings[i])-Length(sSearch));
+
+         sSearch := 'ProductName: ';
+         iPos := Pos(sSearch, myoutlines.Strings[i]);
+         if (iPos <> 0) then
+           aktProduct.productdata.productName :=
+             Copy(myoutlines.Strings[i], Length(sSearch) + 1,
+             Length(myoutlines.Strings[i]) - Length(sSearch));
+
+         sSearch := 'ProductVersion: ';
+         iPos := Pos(sSearch, myoutlines.Strings[i]);
+         if (iPos <> 0) then
+           mysetup.softwareversion :=
+             Copy(myoutlines.Strings[i], Length(sSearch) + 1,
+             Length(myoutlines.Strings[i]) - Length(sSearch));
+
+         sSearch := 'ProductCode: ';
+         iPos := Pos(sSearch, myoutlines.Strings[i]);
+         if (iPos <> 0) then
+           mysetup.msiId :=
+             Copy(myoutlines.Strings[i], Length(sSearch) + 1,
+             Length(myoutlines.Strings[i]) - Length(sSearch));
+
+       end;
+       if aktproduct.productdata.productversion = '' then
+         aktproduct.productdata.productversion := mysetup.softwareversion;
+     end;
+     myoutlines.Free;
+       {$ENDIF LINUX}
   mysetup.installCommandLine :=
     'msiexec /i "%scriptpath%\' + mysetup.setupFileName + '" ' +
     installerArray[integer(mysetup.installerId)].unattendedsetup;
