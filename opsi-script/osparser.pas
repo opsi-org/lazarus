@@ -94,6 +94,7 @@ LazFileUtils,
   oscrypt,
   osparserhelper,
   osnetworkcalculator,
+  osregex,
   LAZUTF8;
 
 
@@ -9981,6 +9982,7 @@ var
   a2 : Integer=0;
   list1 : TXStringList;
   list2 : TXStringList;
+  list3 : TXStringList;
   slist : TStringList;
   inifile: TuibIniScript;
   localSection : TWorkSection;
@@ -10815,6 +10817,137 @@ begin
     End
    End
 
+   else if LowerCase (s) = LowerCase ('getSubListByContainingRegex')
+   then
+   begin
+    if Skip ('(', r, r1, InfoSyntaxError)
+    then
+    Begin
+      if EvaluateString (r1, r, s1, InfoSyntaxError)
+        and skip (',', r, r, InfoSyntaxError) then
+      Begin
+        list1 := TXStringList.create;
+        if produceStringList (section,r, r, list1, InfoSyntaxError)
+           and skip (')', r, r, InfoSyntaxError) then
+        Begin
+          syntaxcheck := true;
+           list.clear;
+           list.AddStrings(getSubListByContainingRegex(s1,list1));
+           list1.Free;
+           list1 := nil;
+        End
+      End
+      else
+      Begin
+        list2 := TXStringList.create;
+        if produceStringList(section,r1, r, list2, InfoSyntaxError)
+           and skip (',', r, r, InfoSyntaxError) then
+           Begin
+             list3 := TXStringList.create;
+             if produceStringList (section,r, r, list3, InfoSyntaxError)
+                and skip (')', r, r, InfoSyntaxError) then
+             Begin
+               syntaxcheck := true;
+               list.clear;
+               list.AddStrings(getSubListByContainingRegex(list2,list3));
+               list2.Free;
+               list2 := nil;
+               list3.Free;
+               list3 := nil;
+             End
+           End
+      End
+    End
+   End
+
+   else if LowerCase (s) = LowerCase ('getRegexMatchList')
+   then
+   begin
+    if Skip ('(', r, r1, InfoSyntaxError)
+    then
+    Begin
+      if EvaluateString (r1, r, s1, InfoSyntaxError)
+        and skip (',', r, r, InfoSyntaxError) then
+      Begin
+        list1 := TXStringList.create;
+        if produceStringList (section,r, r, list1, InfoSyntaxError)
+           and skip (')', r, r, InfoSyntaxError) then
+        Begin
+          syntaxcheck := true;
+           list.clear;
+           list.AddStrings(getRegexMatchList(s1,list1));
+           list1.Free;
+           list1 := nil;
+        End
+      End
+      else
+      Begin
+        list2 := TXStringList.create;
+        if produceStringList(section,r1, r, list2, InfoSyntaxError)
+           and skip (',', r, r, InfoSyntaxError) then
+           Begin
+             list3 := TXStringList.create;
+             if produceStringList (section,r, r, list3, InfoSyntaxError)
+                and skip (')', r, r, InfoSyntaxError) then
+             Begin
+               syntaxcheck := true;
+               list.clear;
+               list.AddStrings(getRegexMatchList(list2,list3));
+               list2.Free;
+               list2 := nil;
+               list3.Free;
+               list3 := nil;
+             End
+           End
+      End
+    End
+   End
+
+
+   else if LowerCase (s) = LowerCase ('removeFromListByContainingRegex')
+   then
+   begin
+    if Skip ('(', r, r1, InfoSyntaxError)
+    then
+    Begin
+      if EvaluateString (r1, r, s1, InfoSyntaxError)
+        and skip (',', r, r, InfoSyntaxError) then
+      Begin
+        list1 := TXStringList.create;
+        if produceStringList (section,r, r, list1, InfoSyntaxError)
+           and skip (')', r, r, InfoSyntaxError) then
+        Begin
+          syntaxcheck := true;
+           list.clear;
+           list.AddStrings(removeFromListByContainingRegex(s1,list1));
+           list1.Free;
+           list1 := nil;
+        End
+      End
+      else
+      Begin
+        list2 := TXStringList.create;
+        if produceStringList(section,r1, r, list2, InfoSyntaxError)
+           and skip (',', r, r, InfoSyntaxError) then
+           Begin
+             list3 := TXStringList.create;
+             if produceStringList (section,r, r, list3, InfoSyntaxError)
+                and skip (')', r, r, InfoSyntaxError) then
+             Begin
+               syntaxcheck := true;
+               list.clear;
+               list.AddStrings(removeFromListByContainingRegex(list2,list3));
+               list2.Free;
+               list2 := nil;
+               list3.Free;
+               list3 := nil;
+             End
+           End
+      End
+    End
+   End
+
+
    else if LowerCase (s) = LowerCase ('getSubListByContaining')
    then
    begin
@@ -11033,6 +11166,28 @@ begin
                    end
                  end;
                End;
+      list1.Free;
+      list1 := nil;
+    End
+   End
+
+   else if LowerCase (s) = LowerCase ('stringReplaceRegexInList')
+   then
+   begin
+    if Skip ('(', r, r, InfoSyntaxError) then
+    Begin
+      list1 := TXStringList.create;
+      if produceStringList (section,r, r, list1, InfoSyntaxError) then
+       if Skip (',', r,r, InfoSyntaxError) then
+         if EvaluateString (r,r, s1, InfoSyntaxError) then
+            if Skip (',', r,r, InfoSyntaxError) then
+             if EvaluateString (r,r, s2, InfoSyntaxError) then
+              if Skip (')', r,r, InfoSyntaxError) then
+              Begin
+                syntaxCheck := true;
+                 list.clear;
+                 list.AddStrings(stringReplaceRegexInList(list1, s1, s2));
+              End;
       list1.Free;
       list1 := nil;
     End
@@ -14230,6 +14385,22 @@ begin
           End
  End
 
+ else if LowerCase (s) = LowerCase ('stringReplaceRegex')
+ then
+ begin
+  if Skip ('(', r, r, InfoSyntaxError) then
+   if EvaluateString (r, r, s1, InfoSyntaxError) then
+     if Skip (',', r,r, InfoSyntaxError) then
+      if EvaluateString (r,r, s2, InfoSyntaxError) then
+        if Skip (',', r,r, InfoSyntaxError) then
+         if EvaluateString (r,r, s3, InfoSyntaxError) then
+          if Skip (')', r,r, InfoSyntaxError) then
+          Begin
+            syntaxCheck := true;
+            StringResult := stringReplaceRegex(s1,s2,s3);
+          End
+ End
+
  else if LowerCase (s) = LowerCase ('reencodestr')
  then
  begin
@@ -16088,6 +16259,20 @@ begin
    end;
  End
 
+ else if Skip ('isRegexMatch', Input, r, sx)
+ then
+ begin
+   if Skip ('(', r, r, InfoSyntaxError)
+   then if EvaluateString (r, r, s1, InfoSyntaxError)
+   then if Skip (',', r, r, InfoSyntaxError)
+   then if EvaluateString (r, r, s2, InfoSyntaxError)
+   then if Skip (')', r, r, InfoSyntaxError)
+   then
+   Begin
+     syntaxCheck := true;
+     BooleanResult := isRegexMatch(s1,s2);
+   end;
+ End
 
  else if Skip ('isValidIP4Network', Input, r, sx)
  then
