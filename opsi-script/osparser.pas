@@ -54,6 +54,9 @@ oslindesktopfiles,
 baseunix,
 unix,
 {$ENDIF}
+{$IFDEF DARWIN}
+osfuncmac,
+{$ENDIF DARWIN}
 {$IFDEF GUI}
 Dialogs,
 osmessagedialog,
@@ -21129,6 +21132,8 @@ begin
   //// Backup existing depotdrive, depotdir
   //depotdrive_bak := depotdrive;
   //depotdir_bak :=  depotdir;
+
+
   if not readconfig_done then
   begin
     if not readconfig then
@@ -21152,6 +21157,15 @@ begin
   logDatei.log_prog('ScriptErrorMessages: '+BoolToStr(osconf.ScriptErrorMessages,true),LLessential);
   logDatei.log_prog('AutoActivityDisplay: '+booltostr(osconf.AutoActivityDisplay,true),LLessential);
   LogDatei.log('Using new Depot path:  ' + depotdrive + depotdir, LLinfo);
+
+  {$IFDEF DARWIN}
+  if not checkForMacosDependencies(tmpstr) then
+  begin
+     logdatei.log('Could not get the Dependencies for macos ',LLError);
+     logdatei.log(tmpstr,LLError);
+  end;
+  {$ENDIF DARWIN}
+
   // init vars
   inDefFuncLevel := 0;
   inDefFuncIndex := -1;

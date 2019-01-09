@@ -36,7 +36,7 @@ uses
   oscalc,
   {$IFDEF GUI}
   Interfaces, // this includes the LCL widgetset
-  Forms,
+  //Forms,
   osbatchgui {FBatchOberflaeche},
   osmessagedialog,
   osshowsysinfo,
@@ -46,9 +46,9 @@ uses
   {$ELSE GUI}
   custapp,
   {$ENDIF GUI}
-  {$IFDEF LINUX}
-  osfunclin, osconf, opsihwbiosinfo, oslindesktopfiles
-  {$ENDIF LINUX}
+  {$IFDEF UNIX}
+  osfunclin, osconf, opsihwbiosinfo, oslindesktopfiles,
+  {$ENDIF UNIX}
   {$IFDEF WINDOWS}
   zipinter in 'zipinter.pas',
   wispecfolder in 'wispecfolder.pas',
@@ -58,9 +58,9 @@ uses
   jclexcerpt,
   wilocaladmin,
   osfuncwin,
-  osfuncwin2
+  osfuncwin2,
   {$ENDIF}
-  ;
+  Forms;
 
 {$IFNDEF GUI}
 type

@@ -566,7 +566,7 @@ function opsiunquotestr(s1,s2 : string): string;
 
 function cmdLineInputDialog(var inputstr : string; const message, default : string; confidential : boolean) : boolean;
 function isValidUtf8String(str:string) : boolean;
-function getFixedUtf8String(str:string) : string;
+//function getFixedUtf8String(str:string) : string;
 function posFromEnd(const substr : string; const s : string) : integer;
 
 
@@ -740,14 +740,16 @@ end;
 
 function isValidUtf8String(str:string) : boolean;
 begin
-  if FindInvalidUTF8Character(PChar(str), Length(str)) <> -1 then result := false
+  if FindInvalidUTF8Codepoint(PChar(str), Length(str)) <> -1 then result := false
   else result := true;
 end;
 
+(*
 function getFixedUtf8String(str:string) : string;
 begin
   result := ValidUTF8String(str);
 end;
+*)
 
 function cmdLineInputDialog(var inputstr : string; const message, default : string; confidential : boolean) : boolean;
 var
@@ -1017,6 +1019,7 @@ begin
   address := '';
   {$IFDEF UNIX}
   ipName := getHostnameLin;
+
   address := getMyIpByDefaultRoute;
   {$ENDIF LINUX}
   {$IFDEF WINDOWS}
@@ -10094,3 +10097,4 @@ end;
 
 
 end.
+*)
