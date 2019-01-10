@@ -35,8 +35,8 @@ TFuncDoc =  class
     FLicense : string;
     FCopyright : string;
     FDescription : string;
-    FReturns :string;
-    FReturnType :string;
+    //FReturns :string;
+    //FReturnType :string;
     FRType :string;
     FRaises :string;
     FParamCounter : integer;
@@ -50,8 +50,8 @@ TFuncDoc =  class
     property License : string  read FLicense write FLicense;
     property Copyright : string  read FCopyright write FCopyright;
     property Description : string  read FDescription write FDescription;
-    property Returns :string  read FReturns write FReturns;
-    property ReturnType :string  read FReturnType write FReturnType;
+    //property Returns :string  read FReturns write FReturns;
+    //property ReturnType :string  read FReturnType write FReturnType;
     property RType :string  read FRType write FRType;
     property Raises :string  read FRaises write FRaises;
     property ParamCounter : integer  read FParamCounter write FParamCounter;
@@ -87,8 +87,8 @@ const
   cauthor = ':author:';
   clicense = ':license:';
   ccopyright = ':copyright:';
-  CReturns = ':return:';
-  CReturnType = ':returntype:';
+  //CReturns = ':return:';
+  //CReturnType = ':returntype:';
   CRType = ':rtype:';
   CRaises = ':raises';
   CParamType = ':type ';
@@ -131,8 +131,8 @@ begin
   FLicense := '';
   FCopyright := '';
   FDescription := '';
-  FReturns := '';
-  FReturnType := '';
+  //FReturns := '';
+  //FReturnType := '';
   FRType := '';
   FRaises := '';
   FParamCounter := 0;
@@ -383,8 +383,8 @@ begin
       if not onMarkerAddDocStringTo(cauthor,trim(currentline),docobject.Ffunctions[funccounter-1].FAuthor) then
       if not onMarkerAddDocStringTo(clicense,trim(currentline),docobject.Ffunctions[funccounter-1].FLicense) then
       if not onMarkerAddDocStringTo(ccopyright,trim(currentline),docobject.Ffunctions[funccounter-1].FCopyright) then
-      if not onMarkerAddDocStringTo(CReturns,trim(currentline),docobject.Ffunctions[funccounter-1].FReturns) then
-      if not onMarkerAddDocStringTo(CReturnType,trim(currentline),docobject.Ffunctions[funccounter-1].FReturnType) then
+      //if not onMarkerAddDocStringTo(CReturns,trim(currentline),docobject.Ffunctions[funccounter-1].FReturns) then
+      //if not onMarkerAddDocStringTo(CReturnType,trim(currentline),docobject.Ffunctions[funccounter-1].FReturnType) then
       if not onMarkerAddDocStringTo(CRType,trim(currentline),docobject.Ffunctions[funccounter-1].FRType) then
       if not onMarkerAddDocStringTo(CRaises,trim(currentline),docobject.Ffunctions[funccounter-1].FRaises) then
       if (pos(CParam,trim(currentline)) = 1) or (pos(CParamType,trim(currentline)) = 1) then

@@ -47,8 +47,6 @@ var
   infilename : string;
 
 
-
-
 implementation
 
 {$R *.lfm}
@@ -105,16 +103,30 @@ begin
   memo2.Lines.Assign(targetlist);
 end;
 
+{
 procedure TForm1.Bsave_ascii_showClick(Sender: TObject);
 begin
   convertOslibToAsciidoc(infilename);
   memo2.Lines.Assign(targetlist);
   save_compile_show(infilename);
 end;
+}
+
+procedure TForm1.Bsave_ascii_showClick(Sender: TObject);
+begin
+  if ExtractFileExt(infilename) = '.opsiscript' then
+    convertOslibToAsciidoc(infilename)
+  else
+    convertPylibToAsciidoc(infilename);
+
+  memo2.Lines.Assign(targetlist);
+  save_compile_show(infilename);
+end;
+
+
 
 
 initialization
-
 
 end.
 

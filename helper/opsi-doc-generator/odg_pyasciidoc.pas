@@ -101,14 +101,15 @@ begin
         targetlist.Add('');
       end;
 
+      {
       tmpstr1 := docobject.Ffunctions[frun].Returns;
       if tmpstr1 <> '' then targetlist.Add('* Return:  '+tmpstr1);
 
       tmpstr1 := docobject.Ffunctions[frun].ReturnType;
       if tmpstr1 <> '' then targetlist.Add('* ReturnType:  '+tmpstr1);
-
+      }
       tmpstr1 := docobject.Ffunctions[frun].RType;
-      if tmpstr1 <> '' then targetlist.Add('* RType:  '+tmpstr1);
+      if tmpstr1 <> '' then targetlist.Add('* Returned Type:  '+tmpstr1);
 
       tmpstr1 := docobject.Ffunctions[frun].Raises;
       if tmpstr1 <> '' then targetlist.Add('* Raises:  '+tmpstr1);
