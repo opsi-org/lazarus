@@ -9980,6 +9980,8 @@ var
   tmpbool, tmpbool1 : boolean;
   a1 : integer=0;
   a2 : Integer=0;
+  int64_1 : int64;
+  int64_2 : int64;
   list1 : TXStringList;
   list2 : TXStringList;
   slist : TStringList;
@@ -11277,30 +11279,88 @@ begin
        // followed by again any number of digits, followed by a comma, then the listvalue
        // if the first series of digits is empty, the start index is zero
        // if the second series of digits is empty, the last index is count - 1
-
+       int64_1 := 0;
+       int64_2 := 0;
        try
+        s2 := '';
          GetWord (r, s1, r, [':']);
          if length (s1) = 0
          then
-           a1 := 0
+           int64_1 := 0
          else
-           a1 := strtoint(trim(s1));
-
-         syntaxCheck := Skip(':', r, r, InfoSyntaxError);
-         GetWord (r, s1, r, [',']);
-
-         a2_to_default := false;
-         if length (s1) = 0
-         then
          begin
-           a2 := 0;
-           a2_to_default := true;
+           if not TryStrToInt64(s1,int64_1) then
+           begin
+             if EvaluateString (s1, s1, s2, InfoSyntaxError) then
+             begin
+               if s2 = '' then  int64_1 := 0
+               else
+                 if not TryStrToInt64(s2,int64_1) then
+                 begin
+                   syntaxcheck := false;
+                   InfoSyntaxError := 'Given valid string expression: +'+s1+' solved to: '+s2+' which could not be converted to integer';
+                 end;
+             end
+             else
+             begin
+               syntaxcheck := false;
+               InfoSyntaxError := 'Given string: +'+s1+' is no integer and no valid sting expression';
+             end;
+           end  ;
+         end;
+         if syntaxCheck then
+           LogDatei.log_prog('getsublist p1: '+inttostr(int64_1)+' from: '+s2+' from: '+s1,LLDebug);
+
+        if syntaxCheck then
+        Begin
+         syntaxCheck := Skip(':', r, r, InfoSyntaxError);
+         a2_to_default := false;
+         r1 := r;
+         s2 := '';
+         if EvaluateString (r, r, s2, InfoSyntaxError) then
+         begin
+           if s2 = '' then
+           begin
+             int64_2 := 0;
+             a2_to_default := true;
+           end
+           else
+             if not TryStrToInt64(s2,int64_2) then
+             begin
+               syntaxcheck := false;
+               InfoSyntaxError := 'Given valid string expression: +'+s1+' solved to: '+s2+' which could not be converted to integer';
+             end;
          end
          else
-           a2 := strtoint(trim(s1));
+         begin
+           // it is no string expression
+           r:=r1;
+           GetWord (r, s1, r, [',']);
+           // is it empty ?
+           if length (s1) = 0
+           then
+           begin
+             int64_2 := 0;
+             a2_to_default := true;
+           end
+           else
+           begin
+             // is it a number ?
+             if not TryStrToInt64(s1,int64_2) then
+             begin
+               syntaxcheck := false;
+               InfoSyntaxError := 'Given string: +'+s1+' is no integer and no valid sting expression';
+             end  ;
+           end;
+         end;
+         if syntaxCheck then
+           LogDatei.log_prog('getsublist p1: '+inttostr(int64_2)+' from: '+s2+' from: '+s1,LLDebug);
+         a1 := int64_1;
+         a2 := int64_2;
 
-         syntaxCheck := Skip(',', r, r, InfoSyntaxError);
-
+         if syntaxCheck then
+            syntaxCheck := Skip(',', r, r, InfoSyntaxError);
+        end;
        except
          syntaxcheck := false;
          InfoSyntaxError := ' No valid sublist selection ';
@@ -11364,9 +11424,12 @@ begin
       do
       Begin
           evaluateString (r, r, s1, InfoSyntaxError);
-          if length(s1) > 0
-          then
+          // empty strings are allowed elements
+          // so we comment the next two lines (do 10.1.19)
+          //if length(s1) > 0
+          //then
             list.add (s1);
+          logdatei.log_prog('createStringList: add: '+s1+' to: '+list.Text,LLDebug);
 
           if length(r) = 0
           then
