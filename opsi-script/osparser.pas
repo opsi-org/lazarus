@@ -10530,7 +10530,6 @@ begin
        End;
    End
 
-
    else if LowerCase (s) = LowerCase ('jsonAsArrayToStringList')
    then
    begin
@@ -14084,9 +14083,6 @@ begin
    end;
  end
 
-
-
-
   else if LowerCase (s) = LowerCase ('jsonStringListToJsonArray')
  then
  begin
@@ -14144,18 +14140,6 @@ begin
        list1 := nil;
     End
  End
-
- else if LowerCase (s) = LowerCase ('createUrl') then
-  begin
-    if Skip ('(', r, r, InfoSyntaxError)
-      and  produceStringList (script, r, r, list1, InfoSyntaxError)
-      and Skip (')', r, r, InfoSyntaxError)
-    then
-    Begin
-       syntaxCheck := true;
-       StringResult := createUrl(list1);
-    end;
-  end
 
   else if LowerCase (s) = LowerCase ('getStringFromListAtIndex') then
   begin
