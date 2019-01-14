@@ -95,6 +95,7 @@ LazFileUtils,
   osparserhelper,
   osnetworkcalculator,
   osregex,
+  osurlparser,
   LAZUTF8;
 
 
@@ -10515,6 +10516,21 @@ begin
        End;
    End
 
+
+   else if LowerCase (s) = LowerCase ('parseUrl')
+   then
+   begin
+    if Skip ('(', r, r, InfoSyntaxError) then
+     if EvaluateString (r, r, s1, InfoSyntaxError) then
+       if Skip (')', r,r, InfoSyntaxError) then
+       Begin
+          syntaxCheck := true;
+          list.clear;
+          list.AddStrings(parseUrl(s1));
+       End;
+   End
+
+
    else if LowerCase (s) = LowerCase ('jsonAsArrayToStringList')
    then
    begin
@@ -14105,6 +14121,41 @@ begin
 
     End
  End
+
+ else if LowerCase (s) = LowerCase ('createUrl')
+ then
+ begin
+    if Skip ('(', r, r, InfoSyntaxError)
+    then
+    Begin
+       syntaxcheck := true;
+       stringresult := '';
+       list1 := TXStringList.create;
+       if not produceStringList (script, r, r, list1, InfoSyntaxError)
+         or not Skip (')', r,r, InfoSyntaxError)
+       then
+            syntaxCheck := false
+       else
+       Begin
+        syntaxCheck := true;
+        StringResult := createUrl(list1);
+       End;
+       list1.Free;
+       list1 := nil;
+    End
+ End
+
+ else if LowerCase (s) = LowerCase ('createUrl') then
+  begin
+    if Skip ('(', r, r, InfoSyntaxError)
+      and  produceStringList (script, r, r, list1, InfoSyntaxError)
+      and Skip (')', r, r, InfoSyntaxError)
+    then
+    Begin
+       syntaxCheck := true;
+       StringResult := createUrl(list1);
+    end;
+  end
 
   else if LowerCase (s) = LowerCase ('getStringFromListAtIndex') then
   begin

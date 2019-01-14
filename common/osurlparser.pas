@@ -60,9 +60,7 @@ begin
     uriobj.Port := StrToInt(urlcomponents.Values['port'])
   else
     uriobj.Port := 0;
-
-
-
+    
   uriobj.Path := urlcomponents.Values['path'];
   uriobj.Document := urlcomponents.Values['document'];
   uriobj.Params := urlcomponents.Values['params'];
