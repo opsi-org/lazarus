@@ -7,12 +7,10 @@ unit osdform;
 interface
 
 uses
-  (*
+
   {$IFDEF WINDOWS}
   Windows,
-  ShlObj,
   {$ENDIF WINDOWS}
-  *)
   Classes, SysUtils, FileUtil, RTTICtrls, RTTIGrids,
   Forms, Controls, Graphics,
   LCLType,
@@ -363,7 +361,7 @@ resourcestring
     'Error: Field MSI Product Code is empty!' + Lineending +
     'The MSI Product Code is needed for correct Uninstall process.' +
     Lineending +
-    'Please install this Product and check for the MSI Product Code and write it to the setup and the uninstall script';
+    'Please install this Product and check for the MSI Product Code and write it to the delsub script';
   sErrProductIdEmpty = 'Error: Field opsi Product ID is empty!';
   sErrProductVersionEmpty = 'Error: Field Product Version is empty!';
   //sErrFldSetupEmpty = 'Error: No setup file selected!';
@@ -596,6 +594,23 @@ begin
   end;
 end;
 
+function GetSystemDefaultLocale(const typeOfValue: DWord): string;
+  // possible values: cf. "Locale Types" in windows.pas
+var
+  buffer: PChar;
+  size: word = 0;
+  usedsize: word = 0;
+
+begin
+  Result := '';
+  size := 101;
+  Buffer := StrAlloc(101);
+  usedsize := GetLocaleInfo(LOCALE_SYSTEM_DEFAULT, typeOfValue, buffer, size);
+  if usedsize <> 0 then
+    Result := StrPas(Buffer);
+end;
+
+
 procedure main1;
 var
   //ErrorMsg: string;
@@ -630,6 +645,7 @@ procedure main2;
 var
   ErrorMsg: string;
   i : integer;
+  mylang : string;
 begin
   startupfinished := true; //avoid calling main on every show event
   myExeDir := ExtractFileDir(ParamStr(0));
@@ -667,12 +683,28 @@ begin
     Exit;
   end;
 
+  mylang := GetDefaultLang;
+  if Mylang = '' then
+    mylang := LowerCase(copy (GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
+  SetDefaultLang(mylang);
+  LogDatei.log('Detected default lang: ' + mylang,LLInfo);
+  LogDatei.log('Detected default lang: ' + GetDefaultLang,LLInfo);
+
+  if Application.HasOption('lang') then
+  begin
+    LogDatei.log('Found Parameter lang',LLInfo);
+    SetDefaultLang(Application.GetOptionValue('lang'));
+    LogDatei.log('Found Parameter lang: ' + Application.GetOptionValue('lang'),LLInfo);
+    LogDatei.log('Active lang: ' + GetDefaultLang,LLInfo);
+  end;
+
+
   if Application.HasOption('nogui') then
     showgui := False;
 
   if showgui then
   begin
-
+    FOSDConfigdlg := TFOSDConfigdlg.Create(resultForm1);
   end;
 
   if Application.HasOption('filename') then

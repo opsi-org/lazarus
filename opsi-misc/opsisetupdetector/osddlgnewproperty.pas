@@ -16,6 +16,7 @@ uses
   ExtCtrls,
   Buttons,
   StdCtrls,
+  lcltranslator,
   osdbasedata;
 
 type
