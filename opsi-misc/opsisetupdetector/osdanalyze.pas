@@ -340,7 +340,7 @@ begin
   myoutlines.Free;
     {$ENDIF WINDOWS}
     {$IFDEF LINUX}
-     mycommand := 'bash -c ''''msiinfo extract "' + myfilename + '" Property''';
+     mycommand := 'bash -c ''msiinfo export "' + myfilename + '" Property''';
      mywrite(mycommand);
      myoutlines := TStringList.Create;
      if not RunCommandAndCaptureOut(mycommand, True, myoutlines, myreport,
@@ -353,11 +353,11 @@ begin
      begin
        mysetup.analyze_progess := mysetup.analyze_progess + 10;
        mysetup.installerId := stMsi;
-       mywrite('........');
+       LogDatei.log('........',LLDebug);
        mysetup.setupFullFileName := myfilename;
        for i := 0 to myoutlines.Count - 1 do
        begin
-         mywrite(myoutlines.Strings[i]);
+         LogDatei.log(myoutlines.Strings[i],LLDebug);
          mysetup.analyze_progess := mysetup.analyze_progess + 1;
 
          // sSearch := 'Manufacturer: ';
@@ -365,26 +365,35 @@ begin
          // if (iPos <> 0) then
          //   resultForm1.Edit2.Text := Copy(myoutlines.Strings[i], Length(sSearch)+1, Length(myoutlines.Strings[i])-Length(sSearch));
 
-         sSearch := 'ProductName: ';
+         sSearch := 'ProductName';
          iPos := Pos(sSearch, myoutlines.Strings[i]);
          if (iPos <> 0) then
+         begin
            aktProduct.productdata.productName :=
              Copy(myoutlines.Strings[i], Length(sSearch) + 1,
              Length(myoutlines.Strings[i]) - Length(sSearch));
+           LogDatei.log('Found ProductName: '+ aktProduct.productdata.productName,LLNotice);
+         end;
 
-         sSearch := 'ProductVersion: ';
+         sSearch := 'ProductVersion';
          iPos := Pos(sSearch, myoutlines.Strings[i]);
          if (iPos <> 0) then
+         begin
            mysetup.softwareversion :=
              Copy(myoutlines.Strings[i], Length(sSearch) + 1,
              Length(myoutlines.Strings[i]) - Length(sSearch));
+           LogDatei.log('Found ProductVersion: '+ mysetup.softwareversion,LLNotice);
+         end;
 
-         sSearch := 'ProductCode: ';
+         sSearch := 'ProductCode';
          iPos := Pos(sSearch, myoutlines.Strings[i]);
          if (iPos <> 0) then
+         begin
            mysetup.msiId :=
              Copy(myoutlines.Strings[i], Length(sSearch) + 1,
              Length(myoutlines.Strings[i]) - Length(sSearch));
+           LogDatei.log('Found ProductCode: '+ mysetup.msiId,LLNotice);
+         end;
 
        end;
        if aktproduct.productdata.productversion = '' then
@@ -404,10 +413,10 @@ begin
     'msiexec /x ' + mysetup.msiId + ' ' +
     installerArray[integer(mysetup.installerId)].unattendeduninstall;
 
-  mywrite('get_MSI_info finished');
+  LogDatei.log('get_MSI_info finished',LLInfo);
   mysetup.analyze_progess := 100;
 
-  Mywrite('Finished Analyzing MSI: ' + myfilename);
+  LogDatei.log('Finished Analyzing MSI: ' + myfilename,LLInfo);
 end;
 
 
