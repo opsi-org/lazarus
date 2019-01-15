@@ -11284,6 +11284,7 @@ begin
        try
         s2 := '';
          GetWord (r, s1, r, [':']);
+         s1 := trim(s1);
          if length (s1) = 0
          then
            int64_1 := 0
@@ -11336,6 +11337,7 @@ begin
            // it is no string expression
            r:=r1;
            GetWord (r, s1, r, [',']);
+           s1 := trim(s1);
            // is it empty ?
            if length (s1) = 0
            then
