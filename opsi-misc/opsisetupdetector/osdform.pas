@@ -594,6 +594,8 @@ begin
   end;
 end;
 
+
+{$IFDEF WINDOWS}
 function GetSystemDefaultLocale(const typeOfValue: DWord): string;
   // possible values: cf. "Locale Types" in windows.pas
 var
@@ -609,7 +611,7 @@ begin
   if usedsize <> 0 then
     Result := StrPas(Buffer);
 end;
-
+{$ENDIF WINDOWS}
 
 procedure main1;
 var
@@ -684,8 +686,10 @@ begin
   end;
 
   mylang := GetDefaultLang;
+  {$IFDEF WINDOWS}
   if Mylang = '' then
     mylang := LowerCase(copy (GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
+  {$ENDIF WINDOWS}
   SetDefaultLang(mylang);
   LogDatei.log('Detected default lang: ' + mylang,LLInfo);
   LogDatei.log('Detected default lang: ' + GetDefaultLang,LLInfo);
