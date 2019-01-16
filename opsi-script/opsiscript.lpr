@@ -113,6 +113,7 @@ begin
   {$IFNDEF GUI}
   Application:=Topsiscript.Create(nil);
   {$ENDIF GUI}
+  Application.Scaled:=True;
   Application.Title:='opsi-script';
   Application.Initialize;
   {$IFDEF GUI}

@@ -9093,7 +9093,8 @@ begin
     end;
     {$ENDIF WIN32}
 
-    if GetUibOsType (errorinfo) = tovLinux then
+    if (GetUibOsType (errorinfo) = tovLinux)
+       or (GetUibOsType (errorinfo) = tovMacOS) then
     begin
       FileName := '/bin/bash';
       Parameters := Parameters+' -c "' + command + ' || exit $?"';
@@ -9180,6 +9181,7 @@ Var
  runas : TRunAs;
  showoutput : boolean = false;
  remainingstr, evaluatedstr, newbatchparastr, errorstr : string;
+ aktos : TuibOSVersion;
 
 begin
  try
@@ -9321,7 +9323,7 @@ begin
       ApplyTextVariablesToString(BatchParameter,false);
     end;
 
-      if GetUibOsType (errorinfo) = tovLinux then
+      if GetUibOsType (errorinfo) =  tovLinux then
       begin
        {$IFDEF GUI}
        if ShowCmd = SW_HIDE then
@@ -9340,12 +9342,28 @@ begin
         Parameters := Parameters+' ' + tempfilename + ' ' + BatchParameter;
        {$ENDIF GUI}
       end
-      else
+      else if (GetUibOsType (errorinfo) = tovMacOS) then
+      begin
+       {$IFDEF GUI}
+       if ShowCmd = SW_HIDE then
+       begin
+        FileName := '/bin/bash';
+        Parameters := Parameters+' ' + tempfilename + ' ' + BatchParameter;
+       end
+       else
+       begin
+       FileName := '/usr/bin/open';
+       Parameters := Parameters+' -a Terminal.app  ' + tempfilename
+                     + ' ' + BatchParameter + '"';
+       end
+       {$ELSE GUI}
+        FileName := '/bin/bash';
+        Parameters := Parameters+' ' + tempfilename + ' ' + BatchParameter;
+       {$ENDIF GUI}
+      end
+      else if GetUibOsType (errorinfo) = tovWinNT then
       begin
        {$IFDEF WINDOWS}
-       if GetUibOsType (errorinfo) = tovWinNT
-       then
-       Begin
          If force64 and FileExists(GetWinDirectory+'\cmd64.exe') then
            FileName := '"'+GetWinDirectory+'\cmd64.exe"'
          else
@@ -9355,13 +9373,6 @@ begin
            Parameters := ' /C ' + tempfilename + ' ' + BatchParameter
          else
            Parameters := ' /C "' + tempfilename + '" ' + BatchParameter;
-       End
-       else  // win16
-       Begin
-         FileName := 'command.com';
-         Parameters := ' /E:' + SpaceForEnvVarAsString +
-                              ' /C ' + tempfilename + ' ' + BatchParameter;
-       End;
        {$ENDIF WINDOWS}
       end;
 
@@ -12396,6 +12407,7 @@ begin
      tovWin95 : StringResult := 'Windows_95';
      tovWinNT : StringResult := 'Windows_NT';
      tovLinux : StringResult := 'Linux';
+     tovMacOS : StringResult := 'macOS';
     end;
 
     DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;

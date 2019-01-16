@@ -62,13 +62,13 @@ LCLIntf,
 LCLProc,
 {$ENDIF GUI}
 {$IFDEF UNIX}
-  //osfunclin,
+
   baseunix,
   unix,
   types,
   dateutils,
   //initc,
-{$ENDIF LINUX}
+{$ENDIF UNIX}
   //LConvEncoding,
   blcksock,
   synautil,
@@ -105,7 +105,7 @@ type
   //TuibRegDataType = (trdUnknown, trdDefaultString, trdString,
   //  trdExpandString, trdInteger,
   //  trdBinary, trdMultiString);
-  TuibOSVersion = (tovNotKnown, tovWin16, tovWin95, tovWinNT, tovLinux);
+  TuibOSVersion = (tovNotKnown, tovWin16, tovWin95, tovWinNT, tovLinux, tovMacOS);
   TuibNTVersion = (tntverNONE, tntverNT3, tntverNT4, tntverWIN2K,
     tntverWINVISTA, tntverWINX);
   Str20 = string
@@ -659,9 +659,13 @@ implementation
 
 
 uses
-{$IFDEF UNIX}
+{$IFDEF LINUX}
   osfunclin,
 {$ENDIF LINUX}
+{$IFDEF DARWIN}
+  osfunclin,
+  osfuncmac,
+{$ENDIF DARWIN}
 {$IFDEF WINDOWS}
   osfuncwin,
 {$ENDIF WINDOWS}
@@ -812,8 +816,12 @@ begin
   Result := list;
   list.free;
   {$ENDIF WIN32}
-  {$ELSE WINDOWS}
+  {$ENDIF WINDOWS}
+  {$IFDEF LINUX}
   Result := getProfilesDirListLin;
+  {$ENDIF}
+  {$IFDEF DARWIN}
+  Result := getProfilesDirListMac;
   {$ENDIF}
 end;
 
@@ -822,9 +830,12 @@ begin
   {$IFDEF WINDOWS}
   Result := winIsUefi;
   {$ENDIF WINDOWS}
-  {$IFDEF UNIX}
+  {$IFDEF LINUX}
   Result := linIsUefi;
-  {$ENDIF LINUX}
+  {$ENDIF}
+  {$IFDEF DARWIN}
+  Result := true;
+  {$ENDIF}
 end;
 
 function isWinPE: boolean;
@@ -1001,9 +1012,12 @@ begin
       ErrorInfo := 'Error: ' + e.message;
   end;
   {$ENDIF WINDOWS}
-  {$IFDEF UNIX}
+  {$IFDEF LINUX}
   Result := tovLinux;
   {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  Result := tovMacOS;
+  {$ENDIF DARWIN}
 end;
 
 //{$RANGECHECKS OFF}

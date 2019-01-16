@@ -6,6 +6,7 @@
       <SessionStorage Value="InIDEConfig"/>
       <MainUnit Value="0"/>
       <Title Value="opsi-script"/>
+      <Scaled Value="True"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
       <XPManifest>
