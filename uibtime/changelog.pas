@@ -1,4 +1,42 @@
 (*
+uibtime (4.1.1.45-1) stable; urgency=low
+
+ * uibdata: DumpExceptionCallStack: MessageDlg changed
+ * ontop: edit1 + editprjectzeit autosize=false fix height
+ * multiday.create: ComboBoxEvent: Autodropdown different for Windows / Linux
+ * uib2erp: more logging in createreport
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 5 Dec 2018 15:00:00 +0000
+
+uibtime (4.1.1.44-1) stable; urgency=low
+
+ * uibdata: DumpExceptionCallStack: MessageDlg changed
+ * multiday: Combobox1 -> ComboboxEvent
+ * multiday: ComboBoxEvent: AutoCompleteText enabled
+ * uibdata: avoid sigsev while using debugout
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 5 Dec 2018 15:00:00 +0000
+
+uibtime (4.1.1.43-1) stable; urgency=low
+
+ * ontop: bigger buttons buttons
+ * experiments on calendar dialog vs. date picker
+
+-- detlef oertel <d.oertel@uib.de>  Mon, 5 Nov 2018 15:00:00 +0000
+
+uibtime (4.1.1.42-1) stable; urgency=low
+
+ * logging via oslog : uibdata
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 31 Oct 2018 15:00:00 +0000
+
+uibtime (4.1.1.41-1) stable; urgency=low
+
+ * uibdata: new TDataModule1.IBConnection1Log
+ * uibdata: TDataModule1.TimerCheckNetTimer: retrys
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 26 Oct 2018 15:00:00 +0000
+
 uibtime (4.1.1.40-1) stable; urgency=low
 
  * uibdatetime: fix in  getLastIntervalStart at IncDay(enddate,-1)

@@ -1,4 +1,10 @@
 [changelog]
+opsiscriptstarter 4.1.0.3
+
+  * new function ismounted(mountpoint)
+  * after mount check not only exit code but also with ismounted
+
+-- d.oertel <d.oertel@uib.de> Thu, 17 Jan 2019 15:00
 
 opsiscriptstarter 4.1.0.2
 

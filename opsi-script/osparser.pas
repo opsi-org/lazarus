@@ -45,6 +45,7 @@ oslocaladmin,
 {$ENDIF WIN64}
 osswaudit,
 DOM,
+oswmi,
 {$ENDIF}
 {$IFDEF LINUX}
 lispecfolder,
@@ -341,6 +342,7 @@ public
   property Filename : string read FFilename write FFilename;
   property ActiveSection  : TWorkSection read FActiveSection write FActiveSection;
   property LastSection  : TWorkSection read FLastSection write FLastSection;
+  property LastExitCodeOfExe : LongInt read FLastExitCodeOfExe;
 
 
   (* Infofunktionen *)
@@ -7311,8 +7313,8 @@ function TuibInstScript.doXMLPatch (const Sektion: TWorkSection; Const XMLFilena
 begin
   //DataModuleLogServer.IdTCPServer1.Active:=true;
   result := executeWith (Sektion,  '"'+ ExtractFileDir(paramstr(0))+PathDelim+'opsiwinstxmlplugin.exe" --xmlfile="'+trim(XMLFilename)+'" --scriptfile=' , true, 0, output);
-  LogDatei.includelogtail(StandardLogPath+'opsiwinstxmlplugin.log',1000,'auto');
-  DeleteFile(StandardLogPath+'opsiwinstxmlplugin.log');
+  LogDatei.includelogtail(logdatei.StandardLogPath+'opsiwinstxmlplugin.log',1000,'auto');
+  DeleteFile(logdatei.StandardLogPath+'opsiwinstxmlplugin.log');
     //DataModuleLogServer.IdTCPServer1.Active:=false;
 end;
 
@@ -9978,6 +9980,8 @@ var
   tmpbool, tmpbool1 : boolean;
   a1 : integer=0;
   a2 : Integer=0;
+  int64_1 : int64;
+  int64_2 : int64;
   list1 : TXStringList;
   list2 : TXStringList;
   slist : TStringList;
@@ -9997,6 +10001,7 @@ var
   Wow64FsRedirectionDisabled, boolresult : boolean;
   funcname : string;
   funcindex, funcindexvar : integer;
+  ErrorMsg: string;
 
 begin
 
@@ -11083,6 +11088,61 @@ begin
     End
    End
 
+   else if LowerCase (s) = LowerCase ('getListFromWMI')
+   then
+   begin
+     {$IFDEF Linux}
+      LogDatei.log('Error getListFromWMI not implemented on Linux ', LLError);
+      {$ENDIF Linux}
+      {$IFDEF WINDOWS}
+    if Skip ('(', r, r, InfoSyntaxError)
+    then
+    Begin
+      if EvaluateString (r,r, s1, InfoSyntaxError)
+      then
+       if Skip (',', r,r, InfoSyntaxError)
+       then
+         list1 := TXStringList.create;
+         if produceStringList (section,r, r, list1, InfoSyntaxError) //Recursion
+         then
+            if Skip (',', r,r, InfoSyntaxError)
+            then
+             if EvaluateString (r,r, s2, InfoSyntaxError)
+             then
+              if Skip (')', r,r, InfoSyntaxError)
+              then
+              Begin
+                syntaxCheck := true;
+                 list.clear;
+                 try
+                  ErrorMsg := '';
+                    if not osGetWMI(s1,list1,s2,TStringlist(list),ErrorMsg) then
+                    begin
+                      LogDatei.log('Error on getListFromWMI: ' + ErrorMsg, LLerror);
+                      list.Text:= '';
+                      FNumberOfErrors := FNumberOfErrors + 1;
+                    end;
+                 except
+                   on e: exception do
+                   begin
+                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                     LogDatei.log('Exception: Error on getListFromWMI: ' + e.message,
+                       LLerror);
+                     list.Text:= '';
+                     FNumberOfErrors := FNumberOfErrors + 1;
+                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                     list1.Free;
+                     list1 := nil;
+                   end
+                 end;
+               End;
+      list1.Free;
+      list1 := nil;
+    End
+   {$ENDIF WINDOWS}
+   End
+
+
    else if LowerCase (s) = LowerCase ('addtolist')
    then
    begin
@@ -11219,30 +11279,90 @@ begin
        // followed by again any number of digits, followed by a comma, then the listvalue
        // if the first series of digits is empty, the start index is zero
        // if the second series of digits is empty, the last index is count - 1
-
+       int64_1 := 0;
+       int64_2 := 0;
        try
+        s2 := '';
          GetWord (r, s1, r, [':']);
+         s1 := trim(s1);
          if length (s1) = 0
          then
-           a1 := 0
+           int64_1 := 0
          else
-           a1 := strtoint(trim(s1));
-
-         syntaxCheck := Skip(':', r, r, InfoSyntaxError);
-         GetWord (r, s1, r, [',']);
-
-         a2_to_default := false;
-         if length (s1) = 0
-         then
          begin
-           a2 := 0;
-           a2_to_default := true;
+           if not TryStrToInt64(s1,int64_1) then
+           begin
+             if EvaluateString (s1, s1, s2, InfoSyntaxError) then
+             begin
+               if s2 = '' then  int64_1 := 0
+               else
+                 if not TryStrToInt64(s2,int64_1) then
+                 begin
+                   syntaxcheck := false;
+                   InfoSyntaxError := 'Given valid string expression: +'+s1+' solved to: '+s2+' which could not be converted to integer';
+                 end;
+             end
+             else
+             begin
+               syntaxcheck := false;
+               InfoSyntaxError := 'Given string: +'+s1+' is no integer and no valid sting expression';
+             end;
+           end  ;
+         end;
+         if syntaxCheck then
+           LogDatei.log_prog('getsublist p1: '+inttostr(int64_1)+' from: '+s2+' from: '+s1,LLDebug);
+
+        if syntaxCheck then
+        Begin
+         syntaxCheck := Skip(':', r, r, InfoSyntaxError);
+         a2_to_default := false;
+         r1 := r;
+         s2 := '';
+         if EvaluateString (r, r, s2, InfoSyntaxError) then
+         begin
+           if s2 = '' then
+           begin
+             int64_2 := 0;
+             a2_to_default := true;
+           end
+           else
+             if not TryStrToInt64(s2,int64_2) then
+             begin
+               syntaxcheck := false;
+               InfoSyntaxError := 'Given valid string expression: +'+s1+' solved to: '+s2+' which could not be converted to integer';
+             end;
          end
          else
-           a2 := strtoint(trim(s1));
+         begin
+           // it is no string expression
+           r:=r1;
+           GetWord (r, s1, r, [',']);
+           s1 := trim(s1);
+           // is it empty ?
+           if length (s1) = 0
+           then
+           begin
+             int64_2 := 0;
+             a2_to_default := true;
+           end
+           else
+           begin
+             // is it a number ?
+             if not TryStrToInt64(s1,int64_2) then
+             begin
+               syntaxcheck := false;
+               InfoSyntaxError := 'Given string: +'+s1+' is no integer and no valid sting expression';
+             end  ;
+           end;
+         end;
+         if syntaxCheck then
+           LogDatei.log_prog('getsublist p1: '+inttostr(int64_2)+' from: '+s2+' from: '+s1,LLDebug);
+         a1 := int64_1;
+         a2 := int64_2;
 
-         syntaxCheck := Skip(',', r, r, InfoSyntaxError);
-
+         if syntaxCheck then
+            syntaxCheck := Skip(',', r, r, InfoSyntaxError);
+        end;
        except
          syntaxcheck := false;
          InfoSyntaxError := ' No valid sublist selection ';
@@ -11306,9 +11426,12 @@ begin
       do
       Begin
           evaluateString (r, r, s1, InfoSyntaxError);
-          if length(s1) > 0
-          then
+          // empty strings are allowed elements
+          // so we comment the next two lines (do 10.1.19)
+          //if length(s1) > 0
+          //then
             list.add (s1);
+          logdatei.log_prog('createStringList: add: '+s1+' to: '+list.Text,LLDebug);
 
           if length(r) = 0
           then
@@ -12184,7 +12307,7 @@ var
 
 
 begin
- LogDatei.log_prog ('EvaluateBoolean: Parsing: '+s0+' ', LLDebug);
+ LogDatei.log_prog ('EvaluateString: Parsing: '+s0+' ', LLDebug);
  syntaxCheck := false;
  InfoSyntaxError := '';
  StringResult := '';
@@ -19405,58 +19528,64 @@ begin
 
               tsExitWindows:
                 Begin
-                  if UpperCase (Remaining) = UpperCase ('/ImmediateReboot')
-                  then
-                  Begin
-                    PerformExitWindows := txrImmediateReboot;
-                    ActionResult := tsrExitWindows;
-                    scriptstopped := true;
-                    LogDatei.log ('ExitWindows set to Immediate Reboot', BaseLevel);
-                  End
-                  else if UpperCase (Remaining) = UpperCase ('/ImmediateLogout')
-                  then
-                  Begin
-                    PerformExitWindows := txrImmediateLogout;
-          LogDatei.log ('', BaseLevel);
-                    ActionResult := tsrExitWindows;
-                    scriptstopped := true;
-                    LogDatei.log ('ExitWindows set to Immediate Logout', BaseLevel);
-                  End
-                  else if UpperCase (Remaining) = UpperCase ('/Reboot')
-                  then
-                  Begin
-                    PerformExitWindows := txrReboot;
-          LogDatei.log ('', BaseLevel);
-                    LogDatei.log ('ExitWindows set to Reboot', BaseLevel);
-                  End
-                  else if UpperCase (Remaining) = UpperCase ('/RebootWanted')
-                  then
-                  Begin
-                    if PerformExitWindows < txrRegisterForReboot
+                  if runLoginScripts then
+                  begin
+                    LogDatei.log ('ExitWindows is ignored while running in login script mode', LLError);
+                  end
+                  else
+                  begin
+                    if UpperCase (Remaining) = UpperCase ('/ImmediateReboot')
                     then
                     Begin
-                      PerformExitWindows := txrRegisterForReboot;
+                      PerformExitWindows := txrImmediateReboot;
+                      ActionResult := tsrExitWindows;
+                      scriptstopped := true;
+                      LogDatei.log ('ExitWindows set to Immediate Reboot', BaseLevel);
+                    End
+                    else if UpperCase (Remaining) = UpperCase ('/ImmediateLogout')
+                    then
+                    Begin
+                      PerformExitWindows := txrImmediateLogout;
             LogDatei.log ('', BaseLevel);
-                      LogDatei.log ('ExitWindows set to RegisterReboot', BaseLevel);
+                      ActionResult := tsrExitWindows;
+                      scriptstopped := true;
+                      LogDatei.log ('ExitWindows set to Immediate Logout', BaseLevel);
                     End
-                    else
-                      LogDatei.log ('ExitWindows already set to Reboot', BaseLevel);
-                  End
-                  else if UpperCase (Remaining) = UpperCase ('/LogoutWanted')
-                  then
-                  Begin
-                    if PerformExitWindows < txrRegisterForLogout
+                    else if UpperCase (Remaining) = UpperCase ('/Reboot')
                     then
                     Begin
-                      PerformExitWindows := txrRegisterForLogout;
-                      LogDatei.log ('', BaseLevel);
-                      LogDatei.log ('ExitWindows set to RegisterForLogout', BaseLevel);
+                      PerformExitWindows := txrReboot;
+            LogDatei.log ('', BaseLevel);
+                      LogDatei.log ('ExitWindows set to Reboot', BaseLevel);
                     End
-                    else
-                      LogDatei.log ('ExitWindows already set to (Register)Reboot', BaseLevel);
-                  End
+                    else if UpperCase (Remaining) = UpperCase ('/RebootWanted')
+                    then
+                    Begin
+                      if PerformExitWindows < txrRegisterForReboot
+                      then
+                      Begin
+                        PerformExitWindows := txrRegisterForReboot;
+              LogDatei.log ('', BaseLevel);
+                        LogDatei.log ('ExitWindows set to RegisterReboot', BaseLevel);
+                      End
+                      else
+                        LogDatei.log ('ExitWindows already set to Reboot', BaseLevel);
+                    End
+                    else if UpperCase (Remaining) = UpperCase ('/LogoutWanted')
+                    then
+                    Begin
+                      if PerformExitWindows < txrRegisterForLogout
+                      then
+                      Begin
+                        PerformExitWindows := txrRegisterForLogout;
+                        LogDatei.log ('', BaseLevel);
+                        LogDatei.log ('ExitWindows set to RegisterForLogout', BaseLevel);
+                      End
+                      else
+                        LogDatei.log ('ExitWindows already set to (Register)Reboot', BaseLevel);
+                    end
 
-          else if UpperCase (Remaining) = UpperCase ('/ShutdownWanted')
+               else if UpperCase (Remaining) = UpperCase ('/ShutdownWanted')
                   then
                   Begin
                     PerformShutdown := tsrRegisterForShutdown;
@@ -19471,6 +19600,7 @@ begin
                   else
                     ActionResult
                       := reportError (Sektion, i, Sektion.strings [i-1], 'not an allowed Parameter');
+                  End; // not loginscripts
                 End;
 
                 tsAutoActivityDisplay:

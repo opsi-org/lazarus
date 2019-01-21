@@ -997,6 +997,7 @@ var
   quota_lifetime_month: integer;
 begin
   try
+    DataModule1.debugOut(5, 'uib2erp.createreport', 'start, out: '+output);
     isQuotaReport := False;
     // query isQuotaReport
     QueryUEARhelper.Close;
@@ -1017,6 +1018,7 @@ begin
       projectstart := QueryUEARhelper.FieldByName('projectstart').AsDateTime;
     end;
     QueryUEARhelper.Close;
+    DataModule1.debugOut(6, 'uib2erp.createreport', 'After query1 ');
 
     if isQuotaReport then
     begin
@@ -1038,6 +1040,7 @@ begin
       presumme_h := QueryUEARhelper.FieldByName('summe').AsFloat;
       QueryUEARhelper.Close;
     end;
+    DataModule1.debugOut(6, 'uib2erp.createreport', 'After query2 ');
 
     // query edit buffer
     if QueryUibeventaccountreport.Active then
@@ -1058,6 +1061,7 @@ begin
     QueryUibeventaccountreport.parambyname('stop').AsString := bisstr;
     QueryUibeventaccountreport.Open;
     //DataSource1.Enabled := True;
+    DataModule1.debugOut(6, 'uib2erp.createreport', 'After query3 ');
 
     // query summe
     if QueryUEARhelper.Active then
@@ -1087,6 +1091,7 @@ begin
   summe_htd := EncodeTimeInterval(hours, minutes, 0, 0);
   *)
     QueryUEARhelper.Close;
+    DataModule1.debugOut(6, 'uib2erp.createreport', 'After query4 ');
 
     if QueryUEARhelper.Active then
       QueryUEARhelper.Close;
@@ -1104,6 +1109,7 @@ begin
       months := round(QueryUEARhelper.FieldByName('acc_per_monthnum').AsFloat);
     end;
     QueryUEARhelper.Close;
+    DataModule1.debugOut(6, 'uib2erp.createreport', 'After query5 ');
   {$IFDEF Linux}
     mypath := '/usr/share/uibtime/';
     if not FileExists(mypath + 'workrep.lrf') then
@@ -1116,6 +1122,7 @@ begin
     frReport1.Clear;
     if isQuotaReport then
     begin
+      DataModule1.debugOut(6, 'uib2erp.createreport', 'isQuotaReport=true ');
       frReport1.LoadFromFile(mypath + 'uib2erp_quota_workrep.lrf');
       projectend := IncMonth(projectstart, quota_lifetime_month);
       frReport1.FindObject('memoQuota').Memo.Text :=
@@ -1124,7 +1131,11 @@ begin
       //+IntToStr(trunc(Total)) + ':' + Format('%.*d', [2, round(frac(Total) * 60)]);
     end
     else
+    begin
+      DataModule1.debugOut(6, 'uib2erp.createreport', 'isQuotaReport=false ');
       frReport1.LoadFromFile(mypath + 'uib2erp_workrep.lrf');
+    end;
+    DataModule1.debugOut(6, 'uib2erp.createreport', 'start final calc');
     //frReport1.Dataset := QueryUibeventaccountreport;
     title := 'opsi Tätigkeitsbericht für: ' + suchevent + ' ';
     //if not (combobox1.Text = 'Summe Alle') then
@@ -1177,15 +1188,18 @@ begin
     //sign + FormatDateTime('hh:nn', free_htd - summe_htd);
     frReport1.DefExportFileName := suchevent + '_' + vonstr + '_' + bisstr + '.pdf';
     //SelectDirectoryDialog1.FileName:=suchevent+'_'+vonstr+'_'+bisstr+ '.pdf';
+    DataModule1.debugOut(6, 'uib2erp.createreport', 'finished final calc');
     if output = 'show' then
     begin
       try
         frReport1.ShowReport;
       except
+        DataModule1.debugOut(4, 'uib2erp.createreport', 'exception in ShowReport');
       end;
     end;
     if output = 'pdf' then
     begin
+      DataModule1.debugOut(6, 'uib2erp.createreport', 'start output = pdf ');
       try
         // we create the filename by cutting the 'extension' eg. .suport , .psusp , ...
         len := length(suchevent);
@@ -1204,7 +1218,9 @@ begin
           frReport1.ExportTo(TFrTNPDFExportFilter, dirname + PathDelim + filename);
         //EditButtonExportDir.Text + PathDelim + suchevent+'_'+vonstr+'_'+bisstr+ '.pdf');
       except
+        DataModule1.debugOut(4, 'uib2erp.createreport', 'exception in if output = pdf');
       end;
+      DataModule1.debugOut(7, 'uib2erp.createreport', 'finished');
     end;
     QueryUibeventaccountreport.Close;
   except

@@ -42,40 +42,44 @@ uses uibdata;
 
 procedure TFDebug.FormCreate(Sender: TObject);
 begin
- memo1.Align := alClient;
- SpinEdit1.Value := DataModule1.getdebuglevel;
- Visible:=false;
- FDebug.Hide;
- memo1.Append('create: hide');
+  memo1.Align := alClient;
+  SpinEdit1.Value := DataModule1.getdebuglevel;
+  Visible := False;
+  FDebug.Hide;
+  memo1.Append('create: hide');
 end;
 
 procedure TFDebug.BitBtnCloseClick(Sender: TObject);
 begin
-  DataModule1.ShowDebugWindow1Click(sender);
+  DataModule1.ShowDebugWindow1Click(Sender);
 end;
 
 procedure TFDebug.FormActivate(Sender: TObject);
 begin
- datamodule1.debugOut(5,'FDebug.FormActivate','Activate FDebug');
- datamodule1.debugOut(5,'FDebug.FormActivate','Activate by: '+ Sender.UnitName +' '+Sender.ToString);
- if not DataModule1.ShowDebugWindow1.Checked then hide;
- SpinEdit1.Value:=DataModule1.getdebuglevel();
+  if Assigned(datamodule1) then
+  begin
+    datamodule1.debugOut(5, 'FDebug.FormActivate', 'Activate FDebug');
+    datamodule1.debugOut(5, 'FDebug.FormActivate', 'Activate by: ' +
+      Sender.UnitName + ' ' + Sender.ToString);
+    if not DataModule1.ShowDebugWindow1.Checked then
+      hide;
+    SpinEdit1.Value := DataModule1.getdebuglevel();
+  end;
 end;
 
 procedure TFDebug.FormShow(Sender: TObject);
 begin
-  datamodule1.debugOut(5,'FDebug.FormShow','Show by: '+ Sender.UnitName +' '+Sender.ToString);
+  if Assigned(datamodule1) then
+    datamodule1.debugOut(5, 'FDebug.FormShow', 'Show by: ' +
+      Sender.UnitName + ' ' + Sender.ToString);
 end;
 
 procedure TFDebug.SpinEdit1Change(Sender: TObject);
 begin
- DataModule1.setdebuglevel(SpinEdit1.Value);
+  DataModule1.setdebuglevel(SpinEdit1.Value);
 end;
 
 initialization
   //FDebug.Visible := false;
 
 end.
-
-
-

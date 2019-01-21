@@ -1,22 +1,21 @@
 object FNewDepDlg: TFNewDepDlg
-  Left = 1293
-  Height = 401
-  Top = 173
-  Width = 320
+  Left = 1236
+  Height = 368
+  Top = 168
+  Width = 379
   Caption = 'opsi-setup-detector: Dependency Editor'
-  ClientHeight = 401
-  ClientWidth = 320
-  OnHide = FormHide
-  OnShow = FormShow
+  ClientHeight = 368
+  ClientWidth = 379
+  Position = poScreenCenter
   LCLVersion = '1.8.4.0'
   object Panel1: TPanel
     Left = 0
     Height = 50
-    Top = 351
-    Width = 320
+    Top = 318
+    Width = 379
     Align = alBottom
     ClientHeight = 50
-    ClientWidth = 320
+    ClientWidth = 379
     ParentFont = False
     TabOrder = 0
     object BitBtn1: TBitBtn
@@ -31,12 +30,11 @@ object FNewDepDlg: TFNewDepDlg
       DefaultCaption = True
       Kind = bkOK
       ModalResult = 1
-      OnClick = BitBtn1Click
       ParentFont = False
       TabOrder = 0
     end
     object BitBtn2: TBitBtn
-      Left = 211
+      Left = 270
       Height = 38
       Top = 6
       Width = 96
@@ -55,19 +53,19 @@ object FNewDepDlg: TFNewDepDlg
   end
   object Panel2: TPanel
     Left = 0
-    Height = 133
+    Height = 96
     Top = 0
-    Width = 320
+    Width = 379
     Align = alTop
-    ClientHeight = 133
-    ClientWidth = 320
+    ClientHeight = 96
+    ClientWidth = 379
     ParentFont = False
     TabOrder = 1
     object Label1: TLabel
       Left = 8
-      Height = 117
+      Height = 80
       Top = 8
-      Width = 304
+      Width = 363
       Align = alClient
       Alignment = taCenter
       BorderSpacing.Around = 7
@@ -79,45 +77,30 @@ object FNewDepDlg: TFNewDepDlg
   end
   object FlowPanel1: TFlowPanel
     Left = 0
-    Height = 218
-    Top = 133
-    Width = 320
+    Height = 222
+    Top = 96
+    Width = 379
     Align = alClient
     ControlList = <    
       item
-        Control = Label2
+        Control = FlowPanel2
         WrapAfter = waAuto
         Index = 0
       end    
       item
-        Control = Editproductid
+        Control = GroupBox1
         WrapAfter = waAuto
         Index = 1
       end    
       item
-        Control = GroupBox1
+        Control = FlowPanel3
         WrapAfter = waAuto
         Index = 2
       end    
       item
-        Control = Label3
+        Control = FlowPanel4
         WrapAfter = waAuto
         Index = 3
-      end    
-      item
-        Control = ComboBoxActState
-        WrapAfter = waAuto
-        Index = 4
-      end    
-      item
-        Control = Label4
-        WrapAfter = waAuto
-        Index = 5
-      end    
-      item
-        Control = ComboBoxReqType
-        WrapAfter = waAuto
-        Index = 6
       end>
     FlowLayout = tlTop
     FlowStyle = fsLeftRightTopBottom
@@ -125,13 +108,13 @@ object FNewDepDlg: TFNewDepDlg
     object GroupBox1: TGroupBox
       Left = 6
       Height = 63
-      Top = 39
-      Width = 311
+      Top = 49
+      Width = 370
       Anchors = []
       BorderSpacing.Around = 5
       Caption = 'Require Mode'
       ClientHeight = 43
-      ClientWidth = 307
+      ClientWidth = 366
       TabOrder = 0
       object RadioButtonAction: TRadioButton
         Left = 22
@@ -153,72 +136,141 @@ object FNewDepDlg: TFNewDepDlg
         TabStop = True
       end
     end
-    object Label2: TLabel
-      Left = 6
-      Height = 15
-      Top = 6
-      Width = 52
+    object FlowPanel2: TFlowPanel
+      Left = 1
+      Height = 43
+      Top = 1
+      Width = 378
       Anchors = []
-      BorderSpacing.Around = 5
-      Caption = 'productid'
-      ParentColor = False
-    end
-    object Editproductid: TEdit
-      Left = 68
-      Height = 23
-      Top = 6
-      Width = 187
-      Anchors = []
-      BorderSpacing.Around = 5
+      BevelOuter = bvNone
+      ControlList = <      
+        item
+          Control = Editproductid
+          WrapAfter = waAuto
+          Index = 0
+        end      
+        item
+          Control = Label2
+          WrapAfter = waAuto
+          Index = 1
+        end>
+      FlowLayout = tlTop
+      FlowStyle = fsRightLeftTopBottom
       TabOrder = 1
-      Text = 'productId'
+      object Label2: TLabel
+        Left = 113
+        Height = 15
+        Top = 5
+        Width = 52
+        Anchors = []
+        BorderSpacing.Around = 5
+        Caption = 'productid'
+        ParentColor = False
+      end
+      object Editproductid: TEdit
+        Left = 175
+        Height = 23
+        Top = 5
+        Width = 191
+        Anchors = []
+        BorderSpacing.Right = 7
+        BorderSpacing.Around = 5
+        TabOrder = 0
+        Text = 'productId'
+      end
     end
-    object ComboBoxActState: TComboBox
-      Left = 94
-      Height = 23
-      Top = 112
-      Width = 201
+    object FlowPanel3: TFlowPanel
+      Left = 1
+      Height = 43
+      Top = 117
+      Width = 375
       Anchors = []
-      BorderSpacing.Around = 5
-      ItemHeight = 15
+      BevelOuter = bvNone
+      ControlList = <      
+        item
+          Control = ComboBoxActState
+          WrapAfter = waAuto
+          Index = 0
+        end      
+        item
+          Control = Label3
+          WrapAfter = waAuto
+          Index = 1
+        end>
+      FlowLayout = tlTop
+      FlowStyle = fsRightLeftTopBottom
       TabOrder = 2
-      Text = 'ComboBoxActState'
+      object ComboBoxActState: TComboBox
+        Left = 172
+        Height = 23
+        Top = 5
+        Width = 191
+        Anchors = []
+        BorderSpacing.Right = 7
+        BorderSpacing.Around = 5
+        ItemHeight = 15
+        TabOrder = 0
+        Text = 'ComboBoxActState'
+      end
+      object Label3: TLabel
+        Left = 84
+        Height = 15
+        Top = 5
+        Width = 78
+        Anchors = []
+        BorderSpacing.Around = 5
+        Caption = 'Action or State'
+        ParentColor = False
+      end
     end
-    object Label3: TLabel
-      Left = 6
-      Height = 15
-      Top = 112
-      Width = 78
+    object FlowPanel4: TFlowPanel
+      Left = 1
+      Height = 43
+      Top = 160
+      Width = 375
       Anchors = []
-      BorderSpacing.Around = 5
-      Caption = 'Action or State'
-      ParentColor = False
-    end
-    object Label4: TLabel
-      Left = 6
-      Height = 15
-      Top = 145
-      Width = 96
-      Anchors = []
-      BorderSpacing.Around = 5
-      Caption = 'Requirement Type'
-      ParentColor = False
-    end
-    object ComboBoxReqType: TComboBox
-      Left = 112
-      Height = 23
-      Top = 145
-      Width = 191
-      Anchors = []
-      BorderSpacing.Around = 5
-      ItemHeight = 15
-      ItemIndex = 0
-      Items.Strings = (
-        ''
-        'before'
-        'after'
-      )
+      BevelOuter = bvNone
+      ControlList = <      
+        item
+          Control = ComboBoxReqType
+          WrapAfter = waAuto
+          Index = 0
+        end      
+        item
+          Control = Label4
+          WrapAfter = waAuto
+          Index = 1
+        end>
+      FlowLayout = tlTop
+      FlowStyle = fsRightLeftTopBottom
       TabOrder = 3
+      object ComboBoxReqType: TComboBox
+        Left = 170
+        Height = 23
+        Top = 5
+        Width = 193
+        Anchors = []
+        BorderSpacing.Right = 7
+        BorderSpacing.Around = 5
+        ItemHeight = 15
+        ItemIndex = 0
+        Items.Strings = (
+          ''
+          'before'
+          'after'
+        )
+        TabOrder = 0
+      end
+      object Label4: TLabel
+        Left = 64
+        Height = 15
+        Top = 5
+        Width = 96
+        Anchors = []
+        BorderSpacing.Around = 5
+        Caption = 'Requirement Type'
+        ParentColor = False
+      end
     end
   end
 end

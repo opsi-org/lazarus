@@ -4,6 +4,39 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.0.35) stable; urgency=low
+
+  * osparser: producestringlist: getsublist: with whitespaces around numbers
+  * osmain: Loginscripts: do not break login script loop on reboots
+  * oswebservice: getMapOfLoginscripts2Run: allscripts=false:
+      we want to run the login script if installed
+      or last successful action was uninstall
+
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 15 Jan 2019:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.0.34) stable; urgency=low
+
+  * osparser: producestringlist: getsublist: with string expression instead of numbers
+  * osparser: producestringlist: createstringlist: fix: empty strings as argument allowed
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 10 Jan 2019:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.0.33) stable; urgency=low
+
+  * osconf: new config opsi-script.global.w10BitlockerSuspendOnReboot
+  * osconf: new global config variable: w10BitlockerSuspendOnReboot (default= false)
+  * osmain: buildPC: >=win 10 and  w10BitlockerSuspendOnReboot and (txrImmediateReboot or txrImmediateReboot)
+     then suspend bitlocker for 1 reboot     fixes: #3816
+  * new units oswmi, utilwmi
+  * osparser: producestringlist:
+    new function getListFromWMI(<wmi class str>,<property list>,<condition str>) : stringlist
+    example: set $plist$ = createStringList ('Model','Vendor')
+             set $list$ = getListFromWMI('Win32_ComputerSystem',$plist$,'where model like 'Esprimo%')
+    if <property list> is empty all properties of <wmi class str> will be returned
+    on error a empty list will be returned
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 17 12 2018:15:00:00 +0200
 
 opsi-winst/opsi-script (4.12.0.32) stable; urgency=low
 
