@@ -19528,58 +19528,64 @@ begin
 
               tsExitWindows:
                 Begin
-                  if UpperCase (Remaining) = UpperCase ('/ImmediateReboot')
-                  then
-                  Begin
-                    PerformExitWindows := txrImmediateReboot;
-                    ActionResult := tsrExitWindows;
-                    scriptstopped := true;
-                    LogDatei.log ('ExitWindows set to Immediate Reboot', BaseLevel);
-                  End
-                  else if UpperCase (Remaining) = UpperCase ('/ImmediateLogout')
-                  then
-                  Begin
-                    PerformExitWindows := txrImmediateLogout;
-          LogDatei.log ('', BaseLevel);
-                    ActionResult := tsrExitWindows;
-                    scriptstopped := true;
-                    LogDatei.log ('ExitWindows set to Immediate Logout', BaseLevel);
-                  End
-                  else if UpperCase (Remaining) = UpperCase ('/Reboot')
-                  then
-                  Begin
-                    PerformExitWindows := txrReboot;
-          LogDatei.log ('', BaseLevel);
-                    LogDatei.log ('ExitWindows set to Reboot', BaseLevel);
-                  End
-                  else if UpperCase (Remaining) = UpperCase ('/RebootWanted')
-                  then
-                  Begin
-                    if PerformExitWindows < txrRegisterForReboot
+                  if runLoginScripts then
+                  begin
+                    LogDatei.log ('ExitWindows is ignored while running in login script mode', LLError);
+                  end
+                  else
+                  begin
+                    if UpperCase (Remaining) = UpperCase ('/ImmediateReboot')
                     then
                     Begin
-                      PerformExitWindows := txrRegisterForReboot;
+                      PerformExitWindows := txrImmediateReboot;
+                      ActionResult := tsrExitWindows;
+                      scriptstopped := true;
+                      LogDatei.log ('ExitWindows set to Immediate Reboot', BaseLevel);
+                    End
+                    else if UpperCase (Remaining) = UpperCase ('/ImmediateLogout')
+                    then
+                    Begin
+                      PerformExitWindows := txrImmediateLogout;
             LogDatei.log ('', BaseLevel);
-                      LogDatei.log ('ExitWindows set to RegisterReboot', BaseLevel);
+                      ActionResult := tsrExitWindows;
+                      scriptstopped := true;
+                      LogDatei.log ('ExitWindows set to Immediate Logout', BaseLevel);
                     End
-                    else
-                      LogDatei.log ('ExitWindows already set to Reboot', BaseLevel);
-                  End
-                  else if UpperCase (Remaining) = UpperCase ('/LogoutWanted')
-                  then
-                  Begin
-                    if PerformExitWindows < txrRegisterForLogout
+                    else if UpperCase (Remaining) = UpperCase ('/Reboot')
                     then
                     Begin
-                      PerformExitWindows := txrRegisterForLogout;
-                      LogDatei.log ('', BaseLevel);
-                      LogDatei.log ('ExitWindows set to RegisterForLogout', BaseLevel);
+                      PerformExitWindows := txrReboot;
+            LogDatei.log ('', BaseLevel);
+                      LogDatei.log ('ExitWindows set to Reboot', BaseLevel);
                     End
-                    else
-                      LogDatei.log ('ExitWindows already set to (Register)Reboot', BaseLevel);
-                  End
+                    else if UpperCase (Remaining) = UpperCase ('/RebootWanted')
+                    then
+                    Begin
+                      if PerformExitWindows < txrRegisterForReboot
+                      then
+                      Begin
+                        PerformExitWindows := txrRegisterForReboot;
+              LogDatei.log ('', BaseLevel);
+                        LogDatei.log ('ExitWindows set to RegisterReboot', BaseLevel);
+                      End
+                      else
+                        LogDatei.log ('ExitWindows already set to Reboot', BaseLevel);
+                    End
+                    else if UpperCase (Remaining) = UpperCase ('/LogoutWanted')
+                    then
+                    Begin
+                      if PerformExitWindows < txrRegisterForLogout
+                      then
+                      Begin
+                        PerformExitWindows := txrRegisterForLogout;
+                        LogDatei.log ('', BaseLevel);
+                        LogDatei.log ('ExitWindows set to RegisterForLogout', BaseLevel);
+                      End
+                      else
+                        LogDatei.log ('ExitWindows already set to (Register)Reboot', BaseLevel);
+                    end
 
-          else if UpperCase (Remaining) = UpperCase ('/ShutdownWanted')
+               else if UpperCase (Remaining) = UpperCase ('/ShutdownWanted')
                   then
                   Begin
                     PerformShutdown := tsrRegisterForShutdown;
@@ -19594,6 +19600,7 @@ begin
                   else
                     ActionResult
                       := reportError (Sektion, i, Sektion.strings [i-1], 'not an allowed Parameter');
+                  End; // not loginscripts
                 End;
 
                 tsAutoActivityDisplay:
