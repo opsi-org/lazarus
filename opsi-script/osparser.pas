@@ -10846,10 +10846,10 @@ begin
            and skip (')', r, r, InfoSyntaxError) then
         Begin
           syntaxcheck := true;
-           list.clear;
-           list.AddStrings(getSubListByContainingRegex(s1,list1));
-           list1.Free;
-           list1 := nil;
+          list.clear;
+          list.AddStrings(getSubListByContainingRegex(s1,list1));
+          list1.Free;
+          list1 := nil;
         End
       End
       else
@@ -12832,13 +12832,16 @@ begin
    then if Skip (')', r, r, InfoSyntaxError)
    then
    Begin
-     syntaxCheck := true;
-     if isip(s1) then
-       StringResult := getDefaultNetmaskByIP4adr(s1)
-     else
+     if getDefaultNetmaskByIP4adr(s1) = '' then
      begin
        StringResult :=  '';
        Logdatei.log('Error: '+s1+' is not a valid IPv4 Address', LLerror);
+     end
+
+     else
+     begin
+       syntaxCheck := true;
+       StringResult := getDefaultNetmaskByIP4adr(s1)
      end;
    End;
  End
@@ -14234,13 +14237,16 @@ begin
      and Skip (')', r, r, InfoSyntaxError)
    then
    begin
-    syntaxCheck := true;
-    if isip(s1) then
-      StringResult := getIP4NetworkByAdrAndMask(s1,s2)
+
+    if getIP4NetworkByAdrAndMask(s1,s2) = '' then
+    begin
+     StringResult :=  '';
+     Logdatei.log('Error:' + s1 + ' or '+ s2 + ' is invalid', LLerror);
+    end
     else
     begin
-      StringResult :=  '';
-      Logdatei.log('Error: '+s1+' is not a valid IPv4 Address', LLerror);
+      syntaxCheck := true;
+      StringResult := getIP4NetworkByAdrAndMask(s1,s2)
     end;
    end;
  end
@@ -16320,13 +16326,7 @@ begin
    then
    Begin
      syntaxCheck := true;
-     if isip(s1) then
-       BooleanResult := isValidIP4Network(s1,s2)
-     else
-     begin
-       BooleanResult := false;
-       Logdatei.log('Error: '+s1+' is not a valid IPv4 Address', LLerror);
-     end;
+     BooleanResult := isValidIP4Network(s1,s2);
    end;
  End
 
@@ -16342,13 +16342,7 @@ begin
    then
    Begin
      syntaxCheck := true;
-     if isip(s1) then
-       BooleanResult := isValidIP4Host(s1,s2)
-     else
-     begin
-       BooleanResult := false;
-       Logdatei.log('Error: '+s1+' or '+s2+' is not a valid IPv4 Address', LLerror);
-     end;
+     BooleanResult := isValidIP4Host(s1,s2);
    end;
  End
 

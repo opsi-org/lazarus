@@ -17,7 +17,7 @@ type
     procedure TearDown; override;
   published
     procedure When_isRegexMatch_Then_True;
-    procedure When_isRegexMatch_Then_False;
+    procedure When_notRegexMatch_Then_False;
     procedure When_getSubListByContainingRegex_ForSingleExpr_Then_ProvideMatchingLines;
     procedure When_getSubListByContainingRegex_ForExprList_Then_ProvideMatchingLines;
     procedure When_getRegexMatchList_ForSingleExpr_Then_ProvideExactMatches;
@@ -59,7 +59,7 @@ begin
   AssertEquals('With a matching text and regex as input', True, isRegexMatch('uib gmbh','.*uib.*'));
 end;
 
-procedure OsRegexpTest.When_isRegexMatch_Then_False;
+procedure OsRegexpTest.When_notRegexMatch_Then_False;
 begin
   AssertEquals('With a non matching text and regex as input', False, isRegexMatch('gmbh','.*uib.*'));
 end;

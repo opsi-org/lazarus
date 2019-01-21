@@ -60,12 +60,12 @@ end;
 
 procedure NetworkCalculatorTest.When_getIP4NetworkByAdrAndMask_DottedDecimal_withInvalidInputs_Then_ShowErrorMsg;
 begin
-  AssertEquals('With invalid ip as input, expected error message', 'invalid inputs', getIP4NetworkByAdrAndMask('198..100.223', '255.240.0.0'));
+  AssertEquals('With invalid ip as input, expected error message', '', getIP4NetworkByAdrAndMask('198..100.223', '255.240.0.0'));
 end;
 
 procedure NetworkCalculatorTest.When_getIP4NetworkByAdrAndMask_Cidr_withInvalidInputs_Then_ShowErrorMsg;
 begin
-  AssertEquals('With invalid netmask as input, expected error message', 'invalid inputs', getIP4NetworkByAdrAndMask('198.51.100.223', '42'));
+  AssertEquals('With invalid netmask as input, expected error message', '', getIP4NetworkByAdrAndMask('198.51.100.223', '42'));
 end;
 
 
@@ -128,7 +128,7 @@ end;
 
 procedure NetworkCalculatorTest.When_getDefaultNetmaskByIP4adr_withInvalidInput_Then_ShowErrorMsg;
 begin
-  AssertEquals('With an invalid ip as input, expected error message', 'IP is invalid', getDefaultNetmaskByIP4adr('128.256.5.4'));
+  AssertEquals('With an invalid ip as input, expected error message', '', getDefaultNetmaskByIP4adr('128.256.5.4'));
 end;
 
 initialization

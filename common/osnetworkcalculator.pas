@@ -112,7 +112,7 @@ begin
     result := networkadr;
   end
   else
-    result := 'invalid inputs';
+    result := '';
 end;
 
 function isValidIP4Network(ip4adr, netmask : string) : boolean;
@@ -268,7 +268,7 @@ begin
     result := netmask;
   end
   else
-    result:= 'IP is invalid';
+    result:= '';
 end;
 
 end.
