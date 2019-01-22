@@ -16,6 +16,8 @@ uses
   Process,
   fileutil,
   SysUtils,
+  fileinfo,
+  winpeimagereader,
   oslog,
   osdbasedata,
   oscheckbinarybitness;
@@ -39,6 +41,7 @@ procedure get_installshield_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_installshieldmsi_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_advancedmsi_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_nsis_info(myfilename: string; var mysetup: TSetupFile);
+procedure get_installaware_info(myfilename: string; var mysetup: TSetupFile);
 //procedure stringsgrep(myfilename: string; verbose,skipzero: boolean);
 procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
 procedure grepmsi(instring: string);
@@ -48,6 +51,7 @@ function analyze_binary(myfilename: string; verbose, skipzero: boolean;
 function getPacketIDfromFilename(str: string): string;
 function getPacketIDShort(str: string): string;
 function ExtractVersion(str: string): string;
+function getProductInfoFromResource(infokey : string; filename : string) : string;
 
 
 
@@ -55,6 +59,30 @@ implementation
 
 uses
   osdform;
+
+function getProductInfoFromResource(infokey : string; filename : string) : string;
+{ Allowed keys:
+  CompanyName
+  FileDescription
+  FileVersion
+  InternalName
+  LegalCopyright
+  OriginalFilename
+  ProductName
+  ProductVersion
+}
+var
+  FileVerInfo: TFileVersionInfo;
+begin
+  FileVerInfo := TFileVersionInfo.Create(nil);
+  try
+    FileVerInfo.FileName := filename;
+    FileVerInfo.ReadFileInfo;
+    result := FileVerInfo.VersionStrings.Values[infokey];
+  finally
+    FileVerInfo.Free;
+  end;
+end;
 
 function getPacketIDfromFilename(str: string): string;
 var
@@ -148,6 +176,16 @@ begin
     Result := instring;
 end;
 
+function grepinstr(instring: string; searchstr : string): string;
+var
+  lowerstring: string;
+begin
+  Result := '';
+  lowerstring := lowercase(instring);
+  if (0 < pos(lowercase(searchstr), lowerstring)) then
+    Result := instring;
+end;
+
 procedure analyze_binstr(instring: string; var mysetup: TSetupFile);
 var
   lowerstring: string;
@@ -173,6 +211,24 @@ var
     end;
   end;
 
+  procedure check_line_for_infoline(line: string; instId: TKnownInstaller;
+  var mysetup: TSetupFile);
+  var
+    i: integer;
+  begin
+    for i := 0 to installerArray[integer(instId)].infopatterns.Count - 1 do
+    begin
+      //LogDatei.log('check: ' + line + ' for: ' + installerToInstallerstr(instId), LLDebug2);
+      if 0 <> pos(LowerCase(installerArray[integer(instId)].infopatterns[i]), line) then
+      begin
+        //aktProduct.markerlist.add(installerArray[integer(instId)].Name + IntToStr(i));
+        mysetup.infolist.add(line);
+        LogDatei.log('For: ' + installerToInstallerstr(instId) +
+          ' found info: ' + line, LLinfo);
+      end;
+    end;
+  end;
+
 begin
   lowerstring := lowercase(instring);
   for counter := 0 to knownInstallerList.Count - 1 do
@@ -181,6 +237,7 @@ begin
     if aktId <> stUnknown then
     begin
       check_line_for_installer(lowerstring, aktId, mysetup);
+      check_line_for_infoline(lowerstring, aktId, mysetup);
     end;
   end;
 end;
@@ -226,6 +283,8 @@ begin
   mysetup.uninstallProg := installerArray[integer(mysetup.installerId)].uninstallProg;
   mysetup.uninstall_waitforprocess :=
     installerArray[integer(mysetup.installerId)].uninstall_waitforprocess;
+  mysetup.install_waitforprocess :=
+    installerArray[integer(mysetup.installerId)].install_waitforprocess;
 
 
   product := ExtractFileNameWithoutExt(mysetup.setupFileName);
@@ -748,6 +807,37 @@ begin
   Mywrite('Analyzing 7zip-Setup:');
 end;
 
+procedure get_installaware_info(myfilename: string; var mysetup: TSetupFile);
+var
+  str1, str2 : string;
+  pos1, pos2, i : integer;
+begin
+  Mywrite('Analyzing InstallAware-Setup:');
+  mysetup.install_waitforprocess:=ExtractFileName(myfilename);
+  mysetup.SoftwareVersion := getProductInfoFromResource('FileVersion',myfilename);
+  aktProduct.productdata.productversion:= mysetup.SoftwareVersion;
+  str1 := getProductInfoFromResource('ProductName',myfilename);
+  aktProduct.productdata.productId := getPacketIDShort(str1);
+  aktProduct.productdata.productName := str1;
+  for i := 0 to mysetup.infolist.Count-1 do
+  begin
+    str1 := mysetup.infolist[i];
+    pos1 := pos(lowercase('RunProgram="'),str1);
+    if 0 <= pos1 then
+    begin
+      str2 := copy(str1,pos1+12, Length(str1));
+      pos2 := pos('"',str2);
+      if 0 <= pos2 then
+        str2 := copy(str2,1,pos2-1);
+      mysetup.uninstallProg:= 'C:\ProgramData\{<UNKNOWN GUID>}\'
+        + str2;
+      mysetup.uninstall_waitforprocess:=str2;
+      mysetup.uninstallCommandLine:= mysetup.uninstallProg + ' '
+         + installerArray[integer(mysetup.installerId)].unattendeduninstall;
+    end;
+  end;
+  mywrite('get_installaware_info finished');
+end;
 
 function analyze_markerlist(var mysetup: TSetupFile): TKnownInstaller;
 var
@@ -954,11 +1044,28 @@ begin
       stMsi: ;// nothing to do here - see above;
       st7zipsfx: logdatei.log('no getinfo implemented for: ' +
           installerToInstallerstr(setupType), LLWarning);
+      stInstallAware: get_installaware_info(FileName, mysetup);
       stUnknown: LogDatei.log(
           'Unknown Installer after Analyze.', LLcritical);
       else
         LogDatei.log('Unknown Setuptype in Analyze: ' + IntToStr(
           instIdToint(setupType)), LLcritical);
+    end;
+
+    if installerArray[integer(mysetup.installerId)].uninstallProg <> '' then
+    begin
+      mysetup.uninstallCheck.Add('if fileexists($installdir$+"\' +
+        mysetup.uninstallProg + '")');
+      mysetup.uninstallCheck.Add('   set $oldProgFound$ = "true"');
+      mysetup.uninstallCheck.Add('endif');
+      mysetup.uninstallCommandLine :=
+        '"$Installdir$\' + mysetup.uninstallProg + '" ' +
+        installerArray[integer(mysetup.installerId)].unattendeduninstall;
+    end
+    else
+    begin
+      // no known uninstall program
+      mysetup.uninstallCheck.Add('set $oldProgFound$ = "false"');
     end;
 
     case setupType of
@@ -977,6 +1084,8 @@ begin
       stMsi: ;// nothing to do here - see above;
       st7zipsfx: Mywrite('Found well known installer: ' +
           installerToInstallerstr(setupType));
+      stInstallAware: Mywrite('Found well known installer: ' +
+          installerToInstallerstr(setupType));
       stUnknown: Mywrite('Sorry - unknown installer: ' +
           installerToInstallerstr(setupType));
       else
@@ -984,21 +1093,7 @@ begin
     end;
 
 
-    if installerArray[integer(mysetup.installerId)].uninstallProg <> '' then
-    begin
-      mysetup.uninstallCheck.Add('if fileexists($installdir$+"\' +
-        mysetup.uninstallProg + '")');
-      mysetup.uninstallCheck.Add('   set $oldProgFound$ = "true"');
-      mysetup.uninstallCheck.Add('endif');
-      mysetup.uninstallCommandLine :=
-        '"$Installdir$\' + mysetup.uninstallProg + '" ' +
-        installerArray[integer(mysetup.installerId)].unattendeduninstall;
-    end
-    else
-    begin
-      // no known uninstall program
-      mysetup.uninstallCheck.Add('set $oldProgFound$ = "false"');
-    end;
+
   end;
   {$IFDEF OSDGUI}
   resultForm1.ProgressBarAnalyze.Position := 100;

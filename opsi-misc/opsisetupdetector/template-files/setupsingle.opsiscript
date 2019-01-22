@@ -70,7 +70,7 @@ endif
 comment "Start setup program"
 ChangeDirectory "%SCRIPTPATH%"
 ;----------------------------------------------
-Winbatch_install_1
+Winbatch_install_1   #@installWaitForProc1*#
 ;----------------------------------------------
 Sub_check_exitcode
 #@postInstallLines1*#

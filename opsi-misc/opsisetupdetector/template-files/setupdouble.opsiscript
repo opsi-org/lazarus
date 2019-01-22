@@ -78,7 +78,7 @@ if (($arch$ = "x86 System") and ($mode$ = "system specific")) or ($mode$ = "both
    comment "Start setup program"
    ChangeDirectory "%SCRIPTPATH%"
    ;----------------------------------------------
-   Winbatch_install_1
+   Winbatch_install_1  #@installWaitForProc1*#
    ;----------------------------------------------
    sub_check_exitcode_1
    #@postInstallLines1*#
@@ -89,7 +89,7 @@ if ($arch$ = "64 Bit System") and (($mode$ = "system specific") or ($mode$ = "bo
    comment "Start setup program"
    ChangeDirectory "%SCRIPTPATH%"
    ;----------------------------------------------
-   Winbatch_install_2
+   Winbatch_install_2  #@installWaitForProc2*#
    ;----------------------------------------------
    sub_check_exitcode_2
    #@postInstallLines2*#

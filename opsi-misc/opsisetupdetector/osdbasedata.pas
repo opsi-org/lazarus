@@ -24,7 +24,7 @@ type
   TArchitectureMode = (am32only_fix, am64only_fix, amBoth_fix, amSystemSpecific_fix,
     amSelectable);
   TKnownInstaller = (stAdvancedMSI, stInno, stInstallShield, stInstallShieldMSI,
-    stMsi, stNsis, st7zip, st7zipsfx, stUnknown);
+    stMsi, stNsis, st7zip, st7zipsfx, stInstallAware, stUnknown);
 
 
   TdetectInstaller = function(parent: TClass; markerlist: TStrings): boolean;
@@ -38,11 +38,13 @@ type
     Name: string;
     description: string;
     patterns: TStringList;
+    infopatterns: TStringList;
     silentsetup: string;
     unattendedsetup: string;
     silentuninstall: string;
     unattendeduninstall: string;
     uninstall_waitforprocess: string;
+    install_waitforprocess: string;
     uninstallProg: string;
     comment: string;
     Link: string;
@@ -72,6 +74,7 @@ type
     FrequiredSpace: cardinal;      // MB
     FinstallDirectory: string;
     Fmarkerlist: TStrings;
+    Finfolist: TStrings;
     FSoftwareVersion: string;
     Fwinbatch_del_argument: string;
     FinstallCommandLine: string;
@@ -80,8 +83,10 @@ type
     FuninstallCheck: TStrings;
     FisExitcodeFatalFunction: string;
     Funinstall_waitforprocess: string;
+    Finstall_waitforprocess: string;
     Fanalyze_progess: integer;
     procedure SetMarkerlist(const AValue: TStrings);
+    procedure SetInfolist(const AValue: TStrings);
     procedure SetUninstallCheck(const AValue: TStrings);
   published
     // proc
@@ -103,6 +108,7 @@ type
     property requiredSpace: cardinal read FrequiredSpace write FrequiredSpace;
     property installDirectory: string read FinstallDirectory write FinstallDirectory;
     property markerlist: TStrings read Fmarkerlist write SetMarkerlist;
+    property infolist: TStrings read Finfolist write SetInfolist;
     property SoftwareVersion: string read FSoftwareVersion write FSoftwareVersion;
     property winbatch_del_argument: string read Fwinbatch_del_argument
       write Fwinbatch_del_argument;
@@ -116,6 +122,8 @@ type
     property uninstallCheck: TStrings read FuninstallCheck write SetUninstallCheck;
     property uninstall_waitforprocess: string
       read Funinstall_waitforprocess write Funinstall_waitforprocess;
+    property install_waitforprocess: string
+      read Finstall_waitforprocess write Finstall_waitforprocess;
     property analyze_progess: integer read Fanalyze_progess write Fanalyze_progess;
     procedure initValues;
 
@@ -345,12 +353,14 @@ implementation
 constructor TInstallerData.Create;
 begin
   patterns := TStringList.Create;
+  infopatterns := TStringList.Create;
   inherited;
 end;
 
 destructor TInstallerData.Destroy;
 begin
   patterns.Free;
+  infopatterns.Free;
   inherited;
 end;
 
@@ -359,6 +369,7 @@ end;
 constructor TSetupFile.Create;
 begin
   Fmarkerlist := TStringList.Create;
+  Finfolist := TStringList.Create;
   FuninstallCheck := TStringList.Create;
   inherited;
   //initValues;
@@ -367,6 +378,7 @@ end;
 destructor TSetupFile.Destroy;
 begin
   FreeAndNil(Fmarkerlist);
+  FreeAndNil(Finfolist);
   FreeAndNil(FuninstallCheck);
   inherited;
 end;
@@ -409,6 +421,11 @@ begin
   Fmarkerlist.Assign(AValue);
 end;
 
+procedure TSetupFile.SetInfolist(const AValue: TStrings);
+begin
+  Finfolist.Assign(AValue);
+end;
+
 procedure TSetupFile.initValues;
 begin
   FsetupFileNamePath := '';
@@ -425,6 +442,7 @@ begin
   FrequiredSpace := 0;
   FinstallDirectory := 'unknown';
   Fmarkerlist.Clear;
+  Finfolist.Clear;
   FSoftwareVersion := '0.0';
   Fwinbatch_del_argument := '';
   FinstallCommandLine := '';
@@ -434,6 +452,7 @@ begin
   Fanalyze_progess := 0;
   FisExitcodeFatalFunction := 'isMsExitcodeFatal_short';
   Funinstall_waitforprocess := '';
+  Finstall_waitforprocess := '';
 end;
 
 // TPProperties **********************************
@@ -882,6 +901,7 @@ begin
   knownInstallerList.Add('NSIS');
   knownInstallerList.Add('7zip');
   knownInstallerList.Add('7zipsfx');
+  knownInstallerList.Add('InstallAware');
   knownInstallerList.Add('Unknown');
 
 
@@ -925,7 +945,7 @@ begin
     unattendedsetup := '/S';
     silentuninstall := '/S';
     unattendeduninstall := '/S';
-    uninstall_waitforprocess := '/WaitForProcessEnding "Au_.exe" /TimeOutSeconds 20';
+    uninstall_waitforprocess := 'Au_.exe';
     uninstallProg := 'uninstall.exe';
     patterns.Add('Nullsoft.NSIS.exehead');
     patterns.Add('nullsoft install system');
@@ -1036,8 +1056,24 @@ begin
     uib_exitcode_function := 'isMsExitcodeFatal_short';
     detected := @detectedbypatternwithor;
   end;
-
-
+  // stInstallAware
+  with installerArray[integer(stInstallAware)] do
+  begin
+    description := 'InstallAware';
+    silentsetup := '/s /l="$LogDir$\$ProductId$.install_log.txt"';
+    unattendedsetup := '/s /l="$LogDir$\$ProductId$.install_log.txt"';
+    silentuninstall := '/s MODIFY=FALSE REMOVE=TRUE UNINSTALL=YES';
+    unattendeduninstall := '/s MODIFY=FALSE REMOVE=TRUE UNINSTALL=YES';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '';
+    patterns.Add('InstallAware: http://www.installaware.com');
+    infopatterns.Add('RunProgram="');
+    link := 'https://www.installaware.com/mhtml5/desktop/setupcommandlineparameters.htm';
+    comment := '';
+    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    detected := @detectedbypatternwithor;
+  end;
 
   architectureModeList := TStringList.Create;
   architectureModeList.Add('32BitOnly - fix');

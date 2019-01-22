@@ -17,6 +17,134 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
+#: osdbasedata.rsconfig_filled
+#, fuzzy
+msgctxt "osdbasedata.rsconfig_filled"
+msgid "Automatically detected. Do we have all needed configurations"
+msgstr "Automatisch erkannt. Sind alle nötigen Konfigurationen bekannt ?"
+
+#: osdbasedata.rscreatebuild
+#, fuzzy
+msgctxt "osdbasedata.rscreatebuild"
+msgid "Selects the Build mode Checkbox build."
+msgstr "Auswahl der Baumodus CheckBox 'bauen'"
+
+#: osdbasedata.rscreateinstall
+#, fuzzy
+msgctxt "osdbasedata.rscreateinstall"
+msgid "Selects the Build mode Checkbox install."
+msgstr "Auswahl der Baumodus CheckBox 'installieren'"
+
+#: osdbasedata.rscreatequiet
+#, fuzzy
+msgctxt "osdbasedata.rscreatequiet"
+msgid "Selects the Build mode Checkbox quiet."
+msgstr "Auswahl der Baumodus CheckBox 'still'"
+
+#: osdbasedata.rscreateradioindex
+#, fuzzy
+msgctxt "osdbasedata.rscreateradioindex"
+msgid "selects the Create mode Radiobutton."
+msgstr "Auswahl des RadioButtons 'Erstellungs Modus'"
+
+#: osdbasedata.rsemail_address
+#, fuzzy
+msgctxt "osdbasedata.rsemail_address"
+msgid "Your email address, used for the changelog entry"
+msgstr "Ihre eMail Adresse. Verwendet für den Changelog."
+
+#: osdbasedata.rsfullname
+#, fuzzy
+msgctxt "osdbasedata.rsfullname"
+msgid "Your full name, used for the changelog entry"
+msgstr "Ihre voller Name. Verwendet für den Changelog."
+
+#: osdbasedata.rsimport_libraries
+#, fuzzy
+msgctxt "osdbasedata.rsimport_libraries"
+msgid ""
+"List of opsi-script libraries that have to be imported.\n"
+"One per line. May be empty. Example:\n"
+"myinstallhelperlib.opsiscript\n"
+msgstr ""
+"Liste der opsi-script Bibliotheken.\n"
+"Eine pro Zeile. Darf leer sein. Beispiel:\n"
+"myInstallhelperlib.opsiscript\n"
+
+#: osdbasedata.rspathtoopsipackagebuilder
+#, fuzzy
+msgctxt "osdbasedata.rspathtoopsipackagebuilder"
+msgid "Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573"
+msgstr ""
+"Pfad zum OpsiPackageBuilder. Der OpsiPackageBuilder wird verwendet um via ssh die opsi Pakete auf dem opsi-server zu bauen. siehe auch: \n"
+"https://forum.opsi.org/viewtopic.php?f=22&t=7573\n"
+
+#: osdbasedata.rspostinstalllines
+#, fuzzy
+msgctxt "osdbasedata.rspostinstalllines"
+msgid ""
+"List of opsi-script code lines that should be included after the installation finished.\n"
+"One per line. May be empty. Example:\n"
+"comment \"Installation finished...\"\n"
+msgstr ""
+"opsi-script code Zeilen welche nach dem Ende der Installation eingefügt werden.\n"
+"Ein opsi-script Befehl pro Zeile. Darf leer sein. Beispiel:\n"
+"comment \"Installation finished...\"\n"
+
+#: osdbasedata.rspostuninstalllines
+#, fuzzy
+msgctxt "osdbasedata.rspostuninstalllines"
+msgid ""
+"List of opsi-script code lines that should be included after the uninstallation finished.\n"
+"One per line. May be empty. Example:\n"
+"comment \"Uninstall finished...\"\n"
+msgstr ""
+"opsi-script code Zeilen welche nach dem Ende der Deinstallation eingefügt werden.\n"
+"Ein opsi-script Befehl pro Zeile. Darf leer sein. Beispiel:\n"
+"comment \"Uninstall finished...\"\n"
+
+#: osdbasedata.rspreinstalllines
+#, fuzzy
+msgctxt "osdbasedata.rspreinstalllines"
+msgid ""
+"List of opsi-script code lines that should be included before the installation starts. \n"
+"One per line. May be empty. Example: \n"
+"comment \"Start the installation ...\"\n"
+msgstr ""
+"opsi-script code Zeilen welche vor dem Begrinn der Installation eingefügt werden.\n"
+"Ein opsi-script Befehl pro Zeile. Darf leer sein. Beispiel:\n"
+"comment \"Start the installation ...\"\n"
+
+#: osdbasedata.rspreuninstalllines
+#, fuzzy
+msgctxt "osdbasedata.rspreuninstalllines"
+msgid ""
+"List of opsi-script code lines that should be included before the uninstallation starts.\n"
+"One per line. May be empty. Example:\n"
+"comment \"Start the uninstallation ...\"\n"
+msgstr ""
+"opsi-script code Zeilen welche vor dem Beginn der Deinstallation eingefügt werden.\n"
+"Ein opsi-script Befehl pro Zeile. Darf leer sein. Beispiel:\n"
+"comment \"Start the uninstallation ...\"\n"
+
+#: osdbasedata.rsregisterinfilemanager
+#, fuzzy
+msgctxt "osdbasedata.rsregisterinfilemanager"
+msgid "Should this program be registred to the Filemanger (Explorer) context menu ?"
+msgstr "Soll dieses Programm für das Kontextmenü des Dateimanagers (Explorer) registriert werden ?"
+
+#: osdbasedata.rsworkbench_mounted
+#, fuzzy
+msgctxt "osdbasedata.rsworkbench_mounted"
+msgid "Automatically detected. Is the opsi workbench reachable at workbench_Path."
+msgstr "Automatisch erkannt. Ist die opsi-work-bench unter dem angegebenen Pfad 'workbench_path' erreichbar."
+
+#: osdbasedata.rsworkbench_path
+#, fuzzy
+msgctxt "osdbasedata.rsworkbench_path"
+msgid "Path to the opsi_workbench"
+msgstr "Pfad zur opsi-work-bench"
+
 #: osdconfigdlg.rsconfig_filled
 msgctxt "osdconfigdlg.rsconfig_filled"
 msgid "Automatically detected. Do we have all needed configurations"

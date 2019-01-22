@@ -118,6 +118,12 @@ begin
   patchlist.add('#@preInstallLines1*#=' + str);
   patchlist.add('#@installCommandLine1*#=' + aktProduct.SetupFiles[
     0].installCommandLine);
+  str := aktProduct.SetupFiles[0].install_waitforprocess;
+  if str <> '' then
+    str := '/WaitForProcessEnding "' +
+           aktProduct.SetupFiles[0].install_waitforprocess +
+           '" /TimeOutSeconds 20'  ;
+  patchlist.add('#@installWaitForProc1*#=' + str);
   str := myconfiguration.postInstallLines.Text;
   if str <> '' then
     str := 'comment "Start Post UnInstall hook :"' + LineEnding +
@@ -135,8 +141,12 @@ begin
   patchlist.add('#@uninstallCommandLine1*#=' +
     aktProduct.SetupFiles[0].uninstallCommandLine);
   patchlist.add('#@uninstallProg1*#=' + aktProduct.SetupFiles[0].uninstallProg);
-  patchlist.add('#@uninstallWaitForProc1*#=' +
-    aktProduct.SetupFiles[0].uninstall_waitforprocess);
+  str := aktProduct.SetupFiles[0].uninstall_waitforprocess;
+  if str <> '' then
+    str := '/WaitForProcessEnding "' +
+           aktProduct.SetupFiles[0].uninstall_waitforprocess +
+           '" /TimeOutSeconds 20'  ;
+  patchlist.add('#@uninstallWaitForProc1*#=' + str);
   str := myconfiguration.postUnInstallLines.Text;
   if str <> '' then
     str := 'comment "Start Post UnInstall hook :"' + LineEnding +
@@ -152,6 +162,12 @@ begin
   patchlist.add('#@preInstallLines2*#=' + str);
   patchlist.add('#@installCommandLine2*#=' + aktProduct.SetupFiles[
     1].installCommandLine);
+  str := aktProduct.SetupFiles[1].install_waitforprocess;
+  if str <> '' then
+    str := '/WaitForProcessEnding "' +
+           aktProduct.SetupFiles[1].install_waitforprocess +
+           '" /TimeOutSeconds 20'  ;
+  patchlist.add('#@installWaitForProc2*#=' + str);
   str := myconfiguration.postInstallLines.Text;
   if str <> '' then
     str := 'comment "Start Post Install hook :"' + LineEnding +
@@ -169,8 +185,12 @@ begin
   patchlist.add('#@uninstallCommandLine2*#=' +
     aktProduct.SetupFiles[1].uninstallCommandLine);
   patchlist.add('#@uninstallProg2*#=' + aktProduct.SetupFiles[1].uninstallProg);
-  patchlist.add('#@uninstallWaitForProc2*#=' +
-    aktProduct.SetupFiles[1].uninstall_waitforprocess);
+  str := aktProduct.SetupFiles[1].uninstall_waitforprocess;
+  if str <> '' then
+    str := '/WaitForProcessEnding "' +
+           aktProduct.SetupFiles[1].uninstall_waitforprocess +
+           '" /TimeOutSeconds 20'  ;
+  patchlist.add('#@uninstallWaitForProc2*#=' + str);
   str := myconfiguration.postUninstallLines.Text;
   if str <> '' then
     str := 'comment "Start Post UnInstall hook :"' + LineEnding +
