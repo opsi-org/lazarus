@@ -1187,9 +1187,12 @@ begin
   Result := getWinProcessList;
   {$ENDIF WIN32}
   {$ENDIF WINDOWS}
-  {$IFDEF UNIX}
+  {$IFDEF LINUX}
   Result := getLinProcessList;
   {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  Result := getMacosProcessList;
+  {$ENDIF DARWIN}
 end;
 
 {$IFDEF WINDOWS}

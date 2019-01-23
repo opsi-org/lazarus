@@ -1583,9 +1583,12 @@ begin
 end;
 
 function TLogInfo.isConfidential(teststring : string) : boolean;
+var
+  index : integer;
 begin
   result := false;
-  if FConfidentialStrings.IndexOf(teststring) > -1 then result := true;
+  index := FConfidentialStrings.IndexOf(teststring);
+  if index > -1 then result := true;
 end;
 
 procedure TLogInfo.PartShrinkToMB(newsize: integer);
