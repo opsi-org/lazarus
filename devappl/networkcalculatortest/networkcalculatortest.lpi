@@ -52,6 +52,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
+      <OtherUnitFiles Value="..\..\..\lazarus\common;..\..\..\lazarus\opsi-script;..\..\..\lazarus\external_libraries\misc;..\..\..\lazarus\external_libraries\synapse40lib;..\..\..\lazarus\external_libraries\indy\Lib\Protocols;..\..\..\lazarus\external_libraries\indy\Lib\System;..\..\..\lazarus\external_libraries\indy\Lib\Core;..\..\..\lazarus\external_libraries\uSMBIOS;..\..\..\lazarus\external_libraries\dcpcrypt\Ciphers;..\..\..\lazarus\external_libraries\dcpcrypt;..\..\..\lazarus\external_libraries\dcpcrypt\Hashes"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>

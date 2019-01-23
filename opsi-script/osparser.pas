@@ -12837,7 +12837,6 @@ begin
        StringResult :=  '';
        Logdatei.log('Error: '+s1+' is not a valid IPv4 Address', LLerror);
      end
-
      else
      begin
        syntaxCheck := true;
@@ -14237,11 +14236,10 @@ begin
      and Skip (')', r, r, InfoSyntaxError)
    then
    begin
-
     if getIP4NetworkByAdrAndMask(s1,s2) = '' then
     begin
      StringResult :=  '';
-     Logdatei.log('Error:' + s1 + ' or '+ s2 + ' is invalid', LLerror);
+     Logdatei.log('Error: Invalid inputs. ' + s1 + ' or ' + s2 + ' is invalid', LLerror);
     end
     else
     begin
