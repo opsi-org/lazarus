@@ -4,6 +4,23 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.0.35) stable; urgency=low
+
+  * osparser: producestringlist: getsublist: with whitespaces around numbers
+  * osmain: Loginscripts: do not break login script loop on reboots
+  * oswebservice: getMapOfLoginscripts2Run: allscripts=false:
+      we want to run the login script if installed
+      or last successful action was uninstall
+
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 15 Jan 2019:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.0.34) stable; urgency=low
+
+  * osparser: producestringlist: getsublist: with string expression instead of numbers
+  * osparser: producestringlist: createstringlist: fix: empty strings as argument allowed
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 10 Jan 2019:15:00:00 +0200
 
 opsi-winst/opsi-script (4.12.0.33) stable; urgency=low
 

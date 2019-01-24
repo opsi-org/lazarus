@@ -6,8 +6,6 @@ object FNewDepDlg: TFNewDepDlg
   Caption = 'opsi-setup-detector: Dependency Editor'
   ClientHeight = 368
   ClientWidth = 379
-  OnHide = FormHide
-  OnShow = FormShow
   Position = poScreenCenter
   LCLVersion = '1.8.4.0'
   object Panel1: TPanel
@@ -32,7 +30,6 @@ object FNewDepDlg: TFNewDepDlg
       DefaultCaption = True
       Kind = bkOK
       ModalResult = 1
-      OnClick = BitBtn1Click
       ParentFont = False
       TabOrder = 0
     end

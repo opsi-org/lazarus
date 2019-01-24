@@ -5,8 +5,18 @@ unit osddlgnewproperty;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, RTTIGrids, Forms, Controls, Graphics, Dialogs,
-  ExtCtrls, Buttons, StdCtrls,
+  Classes,
+  SysUtils,
+  FileUtil,
+  RTTIGrids,
+  Forms,
+  Controls,
+  Graphics,
+  Dialogs,
+  ExtCtrls,
+  Buttons,
+  StdCtrls,
+  lcltranslator,
   osdbasedata;
 
 type
@@ -54,7 +64,13 @@ type
 
 var
   FNewPropDlg: TFNewPropDlg;
-  valid : boolean = true;
+  valid: boolean = True;
+
+resourcestring
+  // new for 4.1.0.2 ******************************************************************
+  rsContainsWhitespaceWarning = ' contains whitespace. Whitespaces are not allowed.';
+  rsDuplicateWarning = ' exists. Duplicates not allowed.';
+
 
 implementation
 
@@ -68,25 +84,25 @@ procedure TFNewPropDlg.RadioButtonPropStringChange(Sender: TObject);
 begin
   if RadioButtonPropString.Checked then
   begin
-    CheckGroupPropBool.Enabled:=true;
+    CheckGroupPropBool.Enabled := True;
     ListBoxPropPosVal.Items.Clear;
     ListBoxPropDefVal.Items.Clear;
-    PanelPropPosVal.Enabled:=true;
+    PanelPropPosVal.Enabled := True;
   end
   else
   begin
-    CheckGroupPropBool.Enabled:=true;
-    CheckBoxPropMultiVal.Checked:=false;
-    CheckBoxPropEdit.Checked:=false;
+    CheckGroupPropBool.Enabled := True;
+    CheckBoxPropMultiVal.Checked := False;
+    CheckBoxPropEdit.Checked := False;
     ListBoxPropPosVal.Items.Clear;
     ListBoxPropPosVal.Items.Add('True');
     ListBoxPropPosVal.Items.Add('False');
-    PanelPropPosVal.Enabled:=false;
+    PanelPropPosVal.Enabled := False;
     ListBoxPropDefVal.Items.Clear;
     ListBoxPropDefVal.Items.Add('True');
     ListBoxPropDefVal.Items.Add('False');
-    ListBoxPropDefVal.MultiSelect:=false;
-    ListBoxPropDefVal.Selected[0] := true;
+    ListBoxPropDefVal.MultiSelect := False;
+    ListBoxPropDefVal.Selected[0] := True;
   end;
 end;
 
@@ -95,63 +111,63 @@ begin
   if CheckBoxPropMultiVal.Checked then
   begin
     if RadioButtonPropString.Checked then
-      ListBoxPropDefVal.MultiSelect:=true;
+      ListBoxPropDefVal.MultiSelect := True;
   end
   else
   begin
-     if RadioButtonPropString.Checked then
-      ListBoxPropDefVal.MultiSelect:=false;
+    if RadioButtonPropString.Checked then
+      ListBoxPropDefVal.MultiSelect := False;
   end;
 
 end;
 
 procedure TFNewPropDlg.EditPropNameEditingDone(Sender: TObject);
 var
-  index, i : integer;
-  tmpstr : string;
-  exists : boolean;
+  index, i: integer;
+  tmpstr: string;
+  exists: boolean;
 begin
-  if pos(' ',FNewPropDlg.EditPropName.Text) > 0 then
+  if pos(' ', FNewPropDlg.EditPropName.Text) > 0 then
   begin
-       MessageDlg('opsi-setup-detector: Property Editor: Error',
-        'property Id: ' + FNewPropDlg.EditPropName.Text +
-        ' contains whitespace. Whitespaces are not allowed.',
-        mtError, [mbOK], '');
-       valid := false;
-    end;
+    MessageDlg('opsi-setup-detector: Property Editor: Error',
+      'property Id: ' + FNewPropDlg.EditPropName.Text +
+      rsContainsWhitespaceWarning,
+      mtError, [mbOK], '');
+    valid := False;
+  end;
 
-      index := resultform1.StringGridProp.RowCount;
-    tmpstr := lowercase(FNewPropDlg.EditPropName.Text);
-    exists := False;
-    for i := 0 to index - 1 do
-      if lowercase(tmpstr) = lowercase(resultform1.StringGridProp.Cells[1, i]) then
-        exists := True;
-    if exists then
-    begin
-      MessageDlg('opsi-setup-detector: Property Editor: Error',
-        'property Id: ' + FNewPropDlg.EditPropName.Text +
-        ' exists. Duplicates not allowed.',
-        mtError, [mbOK], '');
-      valid := false;
-    end;
+  index := resultform1.StringGridProp.RowCount;
+  tmpstr := lowercase(FNewPropDlg.EditPropName.Text);
+  exists := False;
+  for i := 0 to index - 1 do
+    if lowercase(tmpstr) = lowercase(resultform1.StringGridProp.Cells[1, i]) then
+      exists := True;
+  if exists then
+  begin
+    MessageDlg('opsi-setup-detector: Property Editor: Error',
+      'property Id: ' + FNewPropDlg.EditPropName.Text + rsDuplicateWarning,
+      mtError, [mbOK], '');
+    valid := False;
+  end;
 end;
 
 procedure TFNewPropDlg.BitBtnAddPropClick(Sender: TObject);
 begin
   if FNewPropDlg.ListBoxPropDefVal.Items.IndexOf(EditPropNewVal.Text) < 0 then
   begin
-  ListBoxPropPosVal.Items.Add(EditPropNewVal.Text);
-  ListBoxPropDefVal.Items.Add(EditPropNewVal.Text);
+    ListBoxPropPosVal.Items.Add(EditPropNewVal.Text);
+    ListBoxPropDefVal.Items.Add(EditPropNewVal.Text);
   end
-  else MessageDlg('opsi-setup-detector: Property Editor: Error',
-                  'property value: '+EditPropNewVal.Text+' exists. Duplicates not allowed.',
-                   mtError, [mbOK],'');
+  else
+    MessageDlg('opsi-setup-detector: Property Editor: Error',
+      'property value: ' + EditPropNewVal.Text + rsDuplicateWarning,
+      mtError, [mbOK], '');
 
 end;
 
 procedure TFNewPropDlg.BitBtnDelPropClick(Sender: TObject);
 begin
-  if ListBoxPropPosVal.ItemIndex > - 1 then
+  if ListBoxPropPosVal.ItemIndex > -1 then
   begin
     ListBoxPropPosVal.Items.Delete(ListBoxPropPosVal.ItemIndex);
     ListBoxPropDefVal.Items.Delete(ListBoxPropPosVal.ItemIndex);

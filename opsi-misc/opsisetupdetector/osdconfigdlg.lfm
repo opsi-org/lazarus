@@ -7,6 +7,8 @@ object FOSDConfigdlg: TFOSDConfigdlg
   ClientHeight = 502
   ClientWidth = 533
   OnActivate = FormActivate
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
   Position = poScreenCenter
   LCLVersion = '1.8.4.0'
   object TIPropertyGrid1: TTIPropertyGrid
@@ -56,7 +58,7 @@ object FOSDConfigdlg: TFOSDConfigdlg
       BorderSpacing.Left = 10
       BorderSpacing.Around = 4
       BorderSpacing.InnerBorder = 3
-      Caption = 'Edit your configuration here.'#13#10'Click on a column to get help'#13#10'in the yellow field at the bottom.'
+      Caption = 'Edit your configuration here.'#13#10'Click on a line to get help'#13#10'in the yellow field at the bottom.'
       Font.Height = -15
       ParentColor = False
       ParentFont = False

@@ -1,5 +1,226 @@
 msgid ""
-msgstr "Content-Type: text/plain; charset=UTF-8"
+msgstr ""
+"Project-Id-Version: opsi.org\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2019-01-14 09:26+0000\n"
+"Last-Translator: detlef oertel\n"
+"Language-Team: English (http://www.transifex.com/opsi-org/opsiorg/language/en/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#: osdbasedata.rsconfig_filled
+msgctxt "osdbasedata.rsconfig_filled"
+msgid "Automatically detected. Do we have all needed configurations"
+msgstr ""
+
+#: osdbasedata.rscreatebuild
+msgctxt "osdbasedata.rscreatebuild"
+msgid "Selects the Build mode Checkbox build."
+msgstr ""
+
+#: osdbasedata.rscreateinstall
+msgctxt "osdbasedata.rscreateinstall"
+msgid "Selects the Build mode Checkbox install."
+msgstr ""
+
+#: osdbasedata.rscreatequiet
+msgctxt "osdbasedata.rscreatequiet"
+msgid "Selects the Build mode Checkbox quiet."
+msgstr ""
+
+#: osdbasedata.rscreateradioindex
+msgctxt "osdbasedata.rscreateradioindex"
+msgid "selects the Create mode Radiobutton."
+msgstr ""
+
+#: osdbasedata.rsemail_address
+msgctxt "osdbasedata.rsemail_address"
+msgid "Your email address, used for the changelog entry"
+msgstr ""
+
+#: osdbasedata.rsfullname
+msgctxt "osdbasedata.rsfullname"
+msgid "Your full name, used for the changelog entry"
+msgstr ""
+
+#: osdbasedata.rsimport_libraries
+msgctxt "osdbasedata.rsimport_libraries"
+msgid ""
+"List of opsi-script libraries that have to be imported.\n"
+"One per line. May be empty. Example:\n"
+"myinstallhelperlib.opsiscript\n"
+msgstr ""
+
+#: osdbasedata.rspathtoopsipackagebuilder
+msgctxt "osdbasedata.rspathtoopsipackagebuilder"
+msgid "Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573"
+msgstr ""
+
+#: osdbasedata.rspostinstalllines
+msgctxt "osdbasedata.rspostinstalllines"
+msgid ""
+"List of opsi-script code lines that should be included after the installation finished.\n"
+"One per line. May be empty. Example:\n"
+"comment \"Installation finished...\"\n"
+msgstr ""
+
+#: osdbasedata.rspostuninstalllines
+msgctxt "osdbasedata.rspostuninstalllines"
+msgid ""
+"List of opsi-script code lines that should be included after the uninstallation finished.\n"
+"One per line. May be empty. Example:\n"
+"comment \"Uninstall finished...\"\n"
+msgstr ""
+
+#: osdbasedata.rspreinstalllines
+msgctxt "osdbasedata.rspreinstalllines"
+msgid ""
+"List of opsi-script code lines that should be included before the installation starts. \n"
+"One per line. May be empty. Example: \n"
+"comment \"Start the installation ...\"\n"
+msgstr ""
+
+#: osdbasedata.rspreuninstalllines
+msgctxt "osdbasedata.rspreuninstalllines"
+msgid ""
+"List of opsi-script code lines that should be included before the uninstallation starts.\n"
+"One per line. May be empty. Example:\n"
+"comment \"Start the uninstallation ...\"\n"
+msgstr ""
+
+#: osdbasedata.rsregisterinfilemanager
+msgctxt "osdbasedata.rsregisterinfilemanager"
+msgid "Should this program be registred to the Filemanger (Explorer) context menu ?"
+msgstr ""
+
+#: osdbasedata.rsworkbench_mounted
+msgctxt "osdbasedata.rsworkbench_mounted"
+msgid "Automatically detected. Is the opsi workbench reachable at workbench_Path."
+msgstr ""
+
+#: osdbasedata.rsworkbench_path
+msgctxt "osdbasedata.rsworkbench_path"
+msgid "Path to the opsi_workbench"
+msgstr ""
+
+#: osdconfigdlg.rsconfig_filled
+msgctxt "osdconfigdlg.rsconfig_filled"
+msgid "Automatically detected. Do we have all needed configurations"
+msgstr ""
+
+#: osdconfigdlg.rscreatebuild
+msgctxt "osdconfigdlg.rscreatebuild"
+msgid "Selects the Build mode Checkbox build."
+msgstr ""
+
+#: osdconfigdlg.rscreateinstall
+msgctxt "osdconfigdlg.rscreateinstall"
+msgid "Selects the Build mode Checkbox install."
+msgstr ""
+
+#: osdconfigdlg.rscreatequiet
+msgctxt "osdconfigdlg.rscreatequiet"
+msgid "Selects the Build mode Checkbox quiet."
+msgstr ""
+
+#: osdconfigdlg.rscreateradioindex
+msgctxt "osdconfigdlg.rscreateradioindex"
+msgid "selects the Create mode Radiobutton."
+msgstr ""
+
+#: osdconfigdlg.rsemail_address
+msgctxt "osdconfigdlg.rsemail_address"
+msgid "Your email address, used for the changelog entry"
+msgstr ""
+
+#: osdconfigdlg.rsfullname
+msgctxt "osdconfigdlg.rsfullname"
+msgid "Your full name, used for the changelog entry"
+msgstr ""
+
+#: osdconfigdlg.rsimport_libraries
+msgctxt "osdconfigdlg.rsimport_libraries"
+msgid ""
+"List of opsi-script libraries that have to be imported.\n"
+"One per line. May be empty. Example:\n"
+"myinstallhelperlib.opsiscript\n"
+msgstr ""
+
+#: osdconfigdlg.rspathtoopsipackagebuilder
+msgctxt "osdconfigdlg.rspathtoopsipackagebuilder"
+msgid "Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573"
+msgstr ""
+
+#: osdconfigdlg.rspostinstalllines
+msgctxt "osdconfigdlg.rspostinstalllines"
+msgid ""
+"List of opsi-script code lines that should be included after the installation finished.\n"
+"One per line. May be empty. Example:\n"
+"comment \"Installation finished...\"\n"
+msgstr ""
+
+#: osdconfigdlg.rspostuninstalllines
+msgctxt "osdconfigdlg.rspostuninstalllines"
+msgid ""
+"List of opsi-script code lines that should be included after the uninstallation finished.\n"
+"One per line. May be empty. Example:\n"
+"comment \"Uninstall finished...\"\n"
+msgstr ""
+
+#: osdconfigdlg.rspreinstalllines
+msgctxt "osdconfigdlg.rspreinstalllines"
+msgid ""
+"List of opsi-script code lines that should be included before the installation starts. \n"
+"One per line. May be empty. Example: \n"
+"comment \"Start the installation ...\"\n"
+msgstr ""
+
+#: osdconfigdlg.rspreuninstalllines
+msgctxt "osdconfigdlg.rspreuninstalllines"
+msgid ""
+"List of opsi-script code lines that should be included before the uninstallation starts.\n"
+"One per line. May be empty. Example:\n"
+"comment \"Start the uninstallation ...\"\n"
+msgstr ""
+
+#: osdconfigdlg.rsregisterinfilemanager
+msgctxt "osdconfigdlg.rsregisterinfilemanager"
+msgid "Should this program be registred to the Filemanger (Explorer) context menu ?"
+msgstr ""
+
+#: osdconfigdlg.rsworkbench_mounted
+msgctxt "osdconfigdlg.rsworkbench_mounted"
+msgid "Automatically detected. Is the opsi workbench reachable at workbench_Path."
+msgstr ""
+
+#: osdconfigdlg.rsworkbench_path
+msgctxt "osdconfigdlg.rsworkbench_path"
+msgid "Path to the opsi_workbench"
+msgstr ""
+
+#: osdcreate.rscouldnotcreatedirectorywarning
+msgid "Could not create directory: "
+msgstr ""
+
+#: osdcreate.rsdirectory
+msgid "Directory "
+msgstr ""
+
+#: osdcreate.rsstillexitswarningdeleteoverwrite
+msgid " still exits. Overwrite / Delete ?"
+msgstr ""
+
+#: osddlgnewproperty.rscontainswhitespacewarning
+msgid " contains whitespace. Whitespaces are not allowed."
+msgstr ""
+
+#: osddlgnewproperty.rsduplicatewarning
+msgctxt "osddlgnewproperty.rsduplicatewarning"
+msgid " exists. Duplicates not allowed."
+msgstr ""
 
 #: osdform.rsdependencyediterrorhead
 msgid "opsi-setup-detector: Dependency Editor: Error"
@@ -14,6 +235,7 @@ msgid "Not implemented right now."
 msgstr ""
 
 #: osdform.rspropediterrordoublemsgfinish
+msgctxt "osdform.rspropediterrordoublemsgfinish"
 msgid " exists. Duplicates not allowed."
 msgstr ""
 
@@ -60,7 +282,7 @@ msgctxt "osdform.serrfldmsiproductcodeempty"
 msgid ""
 "Error: Field MSI Product Code is empty!\n"
 "The MSI Product Code is needed for correct Uninstall process.\n"
-"Please install this Product and check for the MSI Product Code and write it to the setup and the uninstall script\n"
+"Please install this Product and check for the MSI Product Code and write it to the delsub script\n"
 msgstr ""
 
 #: osdform.serrmstnotfound
@@ -443,7 +665,7 @@ msgstr ""
 #: tfosdconfigdlg.label1.caption
 msgid ""
 "Edit your configuration here.\n"
-"Click on a column to get help\n"
+"Click on a line to get help\n"
 "in the yellow field at the bottom.\n"
 msgstr ""
 
@@ -873,16 +1095,16 @@ msgid "please wait"
 msgstr ""
 
 #: tresultform1.radiobuttonbuildpackage.caption
-msgid "create opsi package files and  build package"
+msgid "create opsi product files and  build package"
 msgstr ""
 
 #: tresultform1.radiobuttoncreateonly.caption
 msgctxt "TRESULTFORM1.RADIOBUTTONCREATEONLY.CAPTION"
-msgid "create opsi package files"
+msgid "create opsi product files"
 msgstr ""
 
 #: tresultform1.radiobuttonpackagebuilder.caption
-msgid "create opsi package files and start interactive PackageBuilder"
+msgid "create opsi product files and start interactive PackageBuilder"
 msgstr ""
 
 #: tresultform1.radiogroup1.caption
