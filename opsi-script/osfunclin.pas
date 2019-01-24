@@ -9,13 +9,6 @@ unit osfunclin;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 482 $
-// $Author: oertel $
-// $Date: 2016-07-25 14:24:09 +0200 (Mo, 25 Jul 2016) $
-//***************************************************************************
-
 
 {$mode delphi}
 
@@ -102,6 +95,7 @@ function linIsUefi: boolean;
 function getMyIpByTarget(target:string) : string;
 function getMyIpByDefaultRoute : string;
 function getPackageLock(timeoutsec : integer; kill : boolean) : Boolean;
+function which(target:string; var pathToTarget : string) : boolean;
 
 var
   IdIPWatch1: TIdIPWatch;
@@ -937,6 +931,29 @@ begin
   result := false;
 end;
 
+function which(target:string; var pathToTarget : string) : boolean;
+var
+  str : string;
+  exitcode : longint;
+  cmd : string;
+  path : string;
+begin
+  result := false;
+  pathToTarget := '';
+  (*
+  cmd := '/bin/bash -c "';
+  cmd := cmd + 'set PATH=''/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin'' ;';
+  cmd := cmd + 'which '+target+' || exit $?"';
+  *)
+  path := '/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin';
+  str := FileSearch(target,path);
+  if fileexists(trim(str)) then
+  begin
+    result := true;
+    pathToTarget := trim(str);
+  end;
+end;
+
 function getMyIpByTarget(target:string) : string;
 var
   str : string;
@@ -945,7 +962,9 @@ var
 begin
   result := '';
   list := TXStringlist.create;
-  str := getCommandResult('ip -o -4 route get '+target);
+  //str := getCommandResult('ip -o -4 route get '+target);
+  // macos ip has no '-o'
+  str := getCommandResult('/bin/bash -c "ip -4 route get '+target+' || exit $?"');
   stringsplitByWhiteSpace (str, list);
   i := list.IndexOf('src');
   if (i > -1) and (list.Count >= i) then
@@ -958,12 +977,16 @@ end;
 function getMyIpByDefaultRoute : string;
 var
   str : string;
+  cmd : string;
   list : TXstringlist;
   i: integer;
 begin
   result := '';
   list := TXStringlist.create;
-  str := getCommandResult('ip -o -4 route get 255.255.255.255');
+  if not which('ip',cmd) then cmd := 'ip';
+  //str := getCommandResult('ip -o -4 route get 255.255.255.255');
+  // macos ip has no '-o'
+  str := getCommandResult('/bin/bash -c "'+cmd+' -4 route get 255.255.255.255 || exit $?"');
   stringsplitByWhiteSpace (str, list);
   i := list.IndexOf('src');
   if (i > -1) and (list.Count >= i) then
