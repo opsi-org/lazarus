@@ -708,7 +708,7 @@ begin
 
   if showgui then
   begin
-    FOSDConfigdlg := TFOSDConfigdlg.Create(resultForm1);
+    //FOSDConfigdlg := TFOSDConfigdlg.Create(resultForm1);
   end;
 
   if Application.HasOption('filename') then

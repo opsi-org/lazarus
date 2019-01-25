@@ -346,6 +346,38 @@ var
   myconfiguration: TConfiguration;
   useRunMode: TRunMode;
 
+resourcestring
+
+  // new for 4.1.0.2 ******************************************************************
+  rsworkbench_Path = 'Path to the opsi_workbench';
+  //rsPreInstallLines = 'opsi-script code, that will be included before the start of the installation.';
+  rsworkbench_mounted = 'Automatically detected. Is the opsi workbench reachable at workbench_Path.';
+  rsconfig_filled = 'Automatically detected. Do we have all needed configurations';
+  rsregisterInFilemanager = 'Should this program be registred to the Filemanger (Explorer) context menu ?';
+  rsemail_address = 'Your email address, used for the changelog entry';
+  rsfullName = 'Your full name, used for the changelog entry';
+  rsimport_libraries = 'List of opsi-script libraries that have to be imported.' +
+    LineEnding + 'One per line. May be empty. Example:' + LineEnding +
+    'myinstallhelperlib.opsiscript';
+  rspreInstallLines = 'List of opsi-script code lines that should be included before the installation starts. '
+     + LineEnding + 'One per line. May be empty. Example: ' + LineEnding
+     + 'comment "Start the installation ..."';
+  rspostInstallLines = 'List of opsi-script code lines that should be included after the installation finished.'
+    + LineEnding + 'One per line. May be empty. Example:' + LineEnding +
+    'comment "Installation finished..."';
+  rspreUninstallLines = 'List of opsi-script code lines that should be included before the uninstallation starts.'
+    + LineEnding + 'One per line. May be empty. Example:' + LineEnding +
+    'comment "Start the uninstallation ..."';
+  rspostUninstallLines = 'List of opsi-script code lines that should be included after the uninstallation finished.'
+    + LineEnding + 'One per line. May be empty. Example:' + LineEnding +
+    'comment "Uninstall finished..."';
+  rspathToOpsiPackageBuilder = 'Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573';
+  rscreateRadioIndex = 'selects the Create mode Radiobutton.';
+  rscreateQuiet = 'Selects the Build mode Checkbox quiet.';
+  rscreateBuild = 'Selects the Build mode Checkbox build.';
+  rscreateInstall = 'Selects the Build mode Checkbox install.';
+
+
 
 implementation
 

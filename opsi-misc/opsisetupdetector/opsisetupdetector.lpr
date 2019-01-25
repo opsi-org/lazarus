@@ -38,6 +38,7 @@ begin
   Application.CreateForm(TresultForm1, resultForm1);
   Application.CreateForm(TFNewDepDlg, FNewDepDlg);
   Application.CreateForm(TFNewPropDlg, FNewPropDlg);
+  Application.CreateForm(TFOSDConfigdlg, FOSDConfigdlg);
   Application.Run;
 end.
 
