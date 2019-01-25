@@ -468,7 +468,7 @@ begin
      myoutlines.Free;
        {$ENDIF LINUX}
   mysetup.installCommandLine :=
-    'msiexec /i "%scriptpath%\' + mysetup.setupFileName + '" ' +
+    'msiexec /i "%scriptpath%\files\' + mysetup.setupFileName + '" ' +
     installerArray[integer(mysetup.installerId)].unattendedsetup;
   mysetup.uninstallCheck.Add('if stringtobool(checkForMsiProduct("' +
     mysetup.msiId + '"))');
