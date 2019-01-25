@@ -1084,6 +1084,7 @@ var
   exists: boolean;
   //valid : boolean;
 begin
+  FNewPropDlg.initFields;
   FNewPropDlg.RadioButtonPropBool.Checked := True;
   FNewPropDlg.RadioButtonPropStringChange(Sender);
   procmess;
@@ -1235,6 +1236,7 @@ var
   y: integer;
   //aPoint: TPoint;
 begin
+  FNewPropDlg.initFields;
   y := StringGridProp.Row;
   if y > 0 then
   begin

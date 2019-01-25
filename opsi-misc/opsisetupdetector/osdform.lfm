@@ -4655,27 +4655,20 @@ object resultForm1: TresultForm1
                 BorderSpacing.Around = 5
                 Columns = <                
                   item
-                    MinSize = 10
                     MaxSize = 400
                     Title.MultiLine = True
                     Title.Caption = 'Required ProductId'
                     Width = 116
                   end                
                   item
-                    MinSize = 10
-                    MaxSize = 200
                     Title.Caption = 'Required State'
                     Width = 139
                   end                
                   item
-                    MinSize = 10
-                    MaxSize = 200
                     Title.Caption = 'Required Action'
                     Width = 120
                   end                
                   item
-                    MinSize = 10
-                    MaxSize = 200
                     Title.Caption = 'Required Mode'
                     Width = 119
                   end>
@@ -4905,25 +4898,25 @@ object resultForm1: TresultForm1
           object PairSplitterSide2: TPairSplitterSide
             Cursor = crArrow
             Left = 0
-            Height = 151
-            Top = 143
+            Height = 149
+            Top = 145
             Width = 1044
             ClientWidth = 1044
-            ClientHeight = 151
+            ClientHeight = 149
             object Panel10: TPanel
               Left = 0
-              Height = 151
+              Height = 149
               Top = 0
               Width = 1044
               Align = alClient
               Caption = 'Panel10'
-              ClientHeight = 151
+              ClientHeight = 149
               ClientWidth = 1044
               ParentFont = False
               TabOrder = 0
               object StringGridProp: TStringGrid
                 Left = 6
-                Height = 108
+                Height = 106
                 Top = 37
                 Width = 1032
                 Align = alClient
@@ -4931,8 +4924,6 @@ object resultForm1: TresultForm1
                 ColCount = 8
                 Columns = <                
                   item
-                    MinSize = 10
-                    MaxSize = 200
                     ReadOnly = True
                     Title.Caption = 'PropertyId'
                     Width = 139
@@ -4944,7 +4935,6 @@ object resultForm1: TresultForm1
                     Width = 200
                   end                
                   item
-                    MinSize = 10
                     MaxSize = 400
                     ReadOnly = True
                     Title.MultiLine = True
@@ -4952,29 +4942,21 @@ object resultForm1: TresultForm1
                     Width = 116
                   end                
                   item
-                    MinSize = 10
-                    MaxSize = 200
                     ReadOnly = True
                     Title.Caption = 'Multivalue'
                     Width = 70
                   end                
                   item
-                    MinSize = 10
-                    MaxSize = 200
                     ReadOnly = True
                     Title.Caption = 'Editable'
                     Width = 70
                   end                
                   item
-                    MinSize = 10
-                    MaxSize = 200
                     ReadOnly = True
                     Title.Caption = 'Possible Values'
                     Width = 150
                   end                
                   item
-                    MinSize = 10
-                    MaxSize = 200
                     ReadOnly = True
                     Title.Caption = 'Default Values'
                     Width = 150

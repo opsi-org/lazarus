@@ -23,8 +23,9 @@ type
   TArchitecture = (a32, a64, aUnknown);
   TArchitectureMode = (am32only_fix, am64only_fix, amBoth_fix, amSystemSpecific_fix,
     amSelectable);
+  // marker for add installers
   TKnownInstaller = (stAdvancedMSI, stInno, stInstallShield, stInstallShieldMSI,
-    stMsi, stNsis, st7zip, st7zipsfx, stInstallAware, stUnknown);
+    stMsi, stNsis, st7zip, st7zipsfx, stInstallAware, stMSGenericInstaller, stUnknown);
 
 
   TdetectInstaller = function(parent: TClass; markerlist: TStrings): boolean;
@@ -892,6 +893,7 @@ end;
 
 
 begin
+  // marker for add installers
   knownInstallerList := TStringList.Create;
   knownInstallerList.Add('AdvancedMSI');
   knownInstallerList.Add('Inno');
@@ -902,6 +904,7 @@ begin
   knownInstallerList.Add('7zip');
   knownInstallerList.Add('7zipsfx');
   knownInstallerList.Add('InstallAware');
+  knownInstallerList.Add('MSGenericInstaller');
   knownInstallerList.Add('Unknown');
 
 
@@ -1074,6 +1077,25 @@ begin
     uib_exitcode_function := 'isMsExitcodeFatal_short';
     detected := @detectedbypatternwithor;
   end;
+  // stMSGenericInstaller
+  with installerArray[integer(stMSGenericInstaller)] do
+  begin
+    description := 'generic MS Installer';
+    silentsetup := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    unattendedsetup := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    silentuninstall := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    unattendeduninstall := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '';
+    patterns.Add('layoutpromptrestartforcerestartnorestartpassivesilentsquietqhelph');
+    //infopatterns.Add('RunProgram="');
+    link := 'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
+    comment := '';
+    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    detected := @detectedbypatternwithor;
+  end;
+  // marker for add installers
 
   architectureModeList := TStringList.Create;
   architectureModeList.Add('32BitOnly - fix');

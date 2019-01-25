@@ -249,12 +249,12 @@ begin
     // setup file 1
     if FileExists(aktProduct.SetupFiles[0].setupFullFileName) then
       copyfile(aktProduct.SetupFiles[0].setupFullFileName,
-        clientpath + PathDelim + aktProduct.SetupFiles[0].setupFileName,
+        clientpath + PathDelim + 'files' + PathDelim + aktProduct.SetupFiles[0].setupFileName,
         [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
     // setup file 2
     if FileExists(aktProduct.SetupFiles[1].setupFullFileName) then
       copyfile(aktProduct.SetupFiles[1].setupFullFileName,
-        clientpath + PathDelim + aktProduct.SetupFiles[1].setupFileName,
+        clientpath + PathDelim+ 'files' + PathDelim  + aktProduct.SetupFiles[1].setupFileName,
         [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
 
     //osd-lib.opsiscript
@@ -420,29 +420,41 @@ begin
       rsStillExitsWarningDeleteOverwrite, mtWarning, mbOKCancel, '') = mrOk then
       goon := False
     else
-      DeleteDirectory(prodpath, False);
+      if not DeleteDirectory(prodpath, False) then
+      begin
+        LogDatei.log('Could not recursive delete dir: '+prodpath, LLCritical);
+      end;
   if goon then
   begin
-    if not ForceDirectories(prodpath) then
+    if not DirectoryExists(prodpath) then
     begin
-      Logdatei.log('Could not create directory: ' + prodpath, LLCritical);
-      MessageDlg('opsi-setup-detector', rsCouldNotCreateDirectoryWarning +
-        prodpath, mtError, [mbOK], '');
-      goon := False;
+      if not ForceDirectories(prodpath) then
+      begin
+        Logdatei.log('Could not create directory: ' + prodpath, LLCritical);
+        MessageDlg('opsi-setup-detector', rsCouldNotCreateDirectoryWarning +
+          prodpath, mtError, [mbOK], '');
+        goon := False;
+      end;
     end;
-    if not ForceDirectories(clientpath) then
+    if not DirectoryExists(clientpath) then
     begin
-      Logdatei.log('Could not create directory: ' + clientpath, LLCritical);
-      MessageDlg('opsi-setup-detector', rsCouldNotCreateDirectoryWarning +
-        clientpath, mtError, [mbOK], '');
-      goon := False;
+      if not ForceDirectories(clientpath) then
+      begin
+        Logdatei.log('Could not create directory: ' + clientpath, LLCritical);
+        MessageDlg('opsi-setup-detector', rsCouldNotCreateDirectoryWarning +
+          clientpath, mtError, [mbOK], '');
+        goon := False;
+      end;
     end;
-    if not ForceDirectories(opsipath) then
+    if not DirectoryExists(opsipath) then
     begin
-      Logdatei.log('Could not create directory: ' + opsipath, LLCritical);
-      MessageDlg('opsi-setup-detector', rsCouldNotCreateDirectoryWarning +
-        opsipath, mtError, [mbOK], '');
-      goon := False;
+      if not ForceDirectories(opsipath) then
+      begin
+        Logdatei.log('Could not create directory: ' + opsipath, LLCritical);
+        MessageDlg('opsi-setup-detector', rsCouldNotCreateDirectoryWarning +
+          opsipath, mtError, [mbOK], '');
+        goon := False;
+      end;
     end;
   end;
   Result := goon;

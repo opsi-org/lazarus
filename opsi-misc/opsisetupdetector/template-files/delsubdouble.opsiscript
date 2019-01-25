@@ -12,7 +12,7 @@ if $oldProgFound$ = "true"
   Message "Uninstalling 32bit" + $ProductId$ + " ..."
   #@preUninstallLines1*#
   comment "Start uninstall program"
-  ChangeDirectory "%SCRIPTPATH%"
+  ChangeDirectory "%SCRIPTPATH%\files"
   ;----------------------------------------------
   Winbatch_uninstall_1  #@uninstallWaitForProc1*#
   ;----------------------------------------------
@@ -33,7 +33,7 @@ if $oldProgFound$ = "true"
   Message "Uninstalling 64bit" + $ProductId$ + " ..."
   #@preUninstallLines2*#
   comment "Start uninstall program"
-  ChangeDirectory "%SCRIPTPATH%"
+  ChangeDirectory "%SCRIPTPATH%\files"
   ;----------------------------------------------
   Winbatch_uninstall_2  #@uninstallWaitForProc2*#
   ;----------------------------------------------

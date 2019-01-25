@@ -1,6 +1,7 @@
 opsi-setup-detector (4.1.0.4) stable; urgency=low
 
   * add InstallAware
+  * generic MS Installer
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue,  22 Jan 2019 : 15:00:00 +0200
 
