@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   LCLIntf,
   odg_main,
-  odg_asciidoc,
+  odg_asciidoc, oslog,
   odg_pyasciidoc,
   StdCtrls, EditBtn;
 
@@ -53,6 +53,7 @@ implementation
 
 { TForm1 }
 
+
 procedure TForm1.ButtonOpenClick(Sender: TObject);
 begin
   Memo1.Lines.Clear;
@@ -75,6 +76,37 @@ begin
   end;
 end;
 
+
+{
+procedure TForm1.ButtonOpenClick(Sender: TObject);
+var
+  filecount : integer;
+  currentfile : TStringList;
+begin
+  Memo1.Lines.Clear;
+  Memo2.Lines.Clear;
+  currentfile := TStringList.Create;
+  currentfile.Clear;
+  sourcelist.Clear;
+
+  OpenDialog1.Options:= [ofAllowMultiSelect, ofFileMustExist];
+
+  if OpenDialog1.Execute then
+  begin
+    for filecount:= 0 to OpenDialog1.Files.Count-1 do
+    begin
+      currentfile.LoadFromFile(OpenDialog1.Files[filecount]);
+      sourcelist.Append(currentfile.Text);
+    end;
+
+    memo1.Lines.Assign(sourcelist);
+
+    ButtonConvert.enabled:=true;
+    ButtonPythonConvert.enabled:=true;
+
+  end;
+end;
+}
 procedure TForm1.ButtonSaveClick(Sender: TObject);
 var
   savefilename : string;
@@ -103,14 +135,6 @@ begin
   memo2.Lines.Assign(targetlist);
 end;
 
-{
-procedure TForm1.Bsave_ascii_showClick(Sender: TObject);
-begin
-  convertOslibToAsciidoc(infilename);
-  memo2.Lines.Assign(targetlist);
-  save_compile_show(infilename);
-end;
-}
 
 procedure TForm1.Bsave_ascii_showClick(Sender: TObject);
 begin

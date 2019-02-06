@@ -67,6 +67,7 @@ TFileDoc =  class
     FfunctionCounter : integer;
   public
     Ffunctions : array of TFuncDoc;
+
     constructor Create;
     destructor Destroy;
     property name : string  read Fname write Fname;
@@ -99,7 +100,7 @@ function parseInput_pythonlibrary(filename : string) : boolean;
 
 var
   docobject : TFileDoc;
-  preprocessedlist : TStringlist;
+  preprocessedlist, backendClassBlacklist : TStringlist;
 
 implementation
 
@@ -260,21 +261,20 @@ begin
   end;
 
   defstring := copy(defstring,1,matchpos);
-  if pos ('self', defstring) > 0 then
+
+  if pos('self, ', defstring) > 0 then
   begin
-    if pos('self, ', defstring) > 0 then
-    begin
-      matchpos := pos('self, ', defstring);
-      delete(defstring, matchpos, length('self, '));
-    end
-    else if pos('self', defstring) > 0 then
-    begin
-      matchpos := pos('self', defstring);
-      delete(defstring, matchpos, length('self'));
-    end
+    matchpos := pos('self, ', defstring);
+    delete(defstring, matchpos, length('self, '));
+  end
+  else if pos('self', defstring) > 0 then
+  begin
+    matchpos := pos('self', defstring);
+    delete(defstring, matchpos, length('self'));
   end;
 
   currentlinenumber := deflinecounter+1;
+
   result := defstring;
 end;
 
@@ -436,6 +436,29 @@ begin
   result := true;
 end;
 
+function processPrivateClass(var currentlinenumber : integer) : boolean;
+var
+  classindent, linecounter : integer;
+  classline, currentline : string;
+begin
+  result := false;
+  classline := preprocessedlist.Strings[currentlinenumber];
+  classindent := indentation(classline);
+  linecounter := currentlinenumber + 1;
+  currentline := preprocessedlist.Strings[linecounter];
+  while ((indentation(currentline) > classindent) or (currentline = '')) do
+  begin
+    if linecounter < preprocessedlist.Count-2 then
+    begin
+      inc(linecounter);
+      currentline := preprocessedlist.Strings[linecounter];
+    end
+    else Break;
+  end;
+  currentlinenumber := linecounter;
+  result := true;
+end;
+
 procedure preprocess();
 var
   line, linetoadd : string;
@@ -473,17 +496,18 @@ begin
   end;
 end;
 
+
 function parseInput_pythonlibrary(filename : string) : boolean;
 var
-  linenumber, totallines : integer;
-  trimmedline : string;
+  linenumber, totallines, classindex, removepos : integer;
+  trimmedline, classstring, classname, remaining : string;
   filedocfound : Boolean;
 begin
   filedocfound := false;
   linenumber := 0;
   if Assigned(docobject) and (docobject <> nil) then docobject.Destroy;
   docobject := TFileDoc.Create;
-  docobject.Fname:=ExtractFileName(filename);
+  //docobject.Fname:=ExtractFileName(filename);
   preprocess();
   totallines:= preprocessedlist.Count;
   while linenumber < totallines do
@@ -494,6 +518,22 @@ begin
         filedocfound := true;
         getFileDoc(linenumber);
       end
+
+      else if (pos(cpyclass,trimmedline) = 1) then
+      begin
+        classstring := trimmedline;
+        classstring := copy(classstring, length(cpyclass)+1,length(classstring));
+        GetWord(trim(classstring), classname, remaining,WordDelimiterSet3);
+
+        if backendClassBlacklist.IndexOf(classname) <> -1 then
+        begin
+          processPrivateClass(linenumber);
+        end
+        else
+          inc(linenumber);
+      end
+
+
       else if (pos(cpydeffunc,trimmedline) = 1) then
       begin
         if pos(cpydefnotpublic,trimmedline) = 1 then
@@ -514,15 +554,41 @@ begin
         inc(linenumber);
       end;
     end;
+
+  //sortFunctions();  //new
+
   result := True;
 end;
 
 
 initialization
-  preprocessedlist := TStringlist.create;
+  preprocessedlist := TStringlist.Create;
+  backendClassBlacklist := TStringList.Create;
+  backendClassBlacklist.Add('DeferredCall');
+  backendClassBlacklist.Add('ModificationTrackingBackend');
+  backendClassBlacklist.Add('BackendModificationListener');
+  backendClassBlacklist.Add('BackendAccessControl');
+  backendClassBlacklist.Add('DepotserverPackageManager');
+  backendClassBlacklist.Add('RpcThread');
+  backendClassBlacklist.Add('ConnectionThread');
+  backendClassBlacklist.Add('JSONRPCThread');
+  backendClassBlacklist.Add('RpcQueue');
+  backendClassBlacklist.Add('JSONRPC');
+  backendClassBlacklist.Add('ConnectionPool');
+  backendClassBlacklist.Add('MySQL');
+  backendClassBlacklist.Add('MySQLBackendObjectModificationTracker');
+  backendClassBlacklist.Add('ServerConnection');
+  backendClassBlacklist.Add('UpdateThread');
+  backendClassBlacklist.Add('BackendReplicator');
+  backendClassBlacklist.Add('SQL');
+  backendClassBlacklist.Add('SQLBackendObjectModificationTracker');
+  backendClassBlacklist.Add('SQLite');
+  backendClassBlacklist.Add('SQLiteObjectBackendModificationTracker');
+
 
 finalization
   preprocessedlist.Free;
+  backendClassBlacklist.Free;
 
 end.
 

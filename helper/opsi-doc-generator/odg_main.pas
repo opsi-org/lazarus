@@ -28,6 +28,7 @@ function save_compile_show(filename : string) : boolean;
 
 var
   sourcelist : TStringlist;
+  filecontents : TStringList;
   targetlist : TStringlist;
   myversion : string;
   FileVerInfo : TFileVersionInfo;
@@ -138,6 +139,7 @@ end;
 
 initialization
   sourcelist := TStringlist.create;
+  filecontents := TStringList.create;
   targetlist := TStringlist.create;
   LogDatei := TLogInfo.Create;
   logdatei.CreateTheLogfile('opsi-doc-gen.log');
@@ -155,6 +157,7 @@ initialization
 
 finalization
   sourcelist.Free;
+  filecontents.Free;
   targetlist.Free;
 
 end.

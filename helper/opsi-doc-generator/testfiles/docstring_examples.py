@@ -28,7 +28,115 @@ parsing files for information.
 :license: GNU Affero General Public License version 3
 """
 
+class Backend:
+	"""
+	Base backend.
+	"""
 
+	matchCache = {}
+
+	def __init__(self, **kwargs):
+		"""
+		Constructor that only accepts keyword arguments.
+
+		:param name: Name of the backend
+		:type name: str
+		:param username: Username to use (if required)
+		:param password: Password to use (if required)
+		:param context: Context backend. Calling backend methods from \
+other backend methods is done by using the context backend. \
+This defaults to ``self``.
+		"""
+		self._name = None
+		self._username = None
+		self._password = None
+		self._context = self
+
+	def test(self):
+		"""
+		Returns what public methods are available and the signatures they use.
+
+		These methods are represented as a dict with the following keys: \
+		*name*, *params*, *args*, *varargs*, *keywords*, *defaults*.
+
+		:rtype: public methods
+		:rtype: [{},]
+		"""
+		return describeInterface(self)
+		
+
+class SQLiteObjectBackendModificationTracker:
+	"""
+	internal class.
+	"""
+
+	matchCache = {}
+
+	def __init__(self, **kwargs):
+		"""
+		Constructor that only accepts keyword arguments.
+
+		:param name: Name of the backend
+		:type name: str
+		:param username: Username to use (if required)
+		:param password: Password to use (if required)
+		:param context: Context backend. Calling backend methods from \
+other backend methods is done by using the context backend. \
+This defaults to ``self``.
+		"""
+		self._name = None
+		self._username = None
+		self._password = None
+		self._context = self
+
+	def testinternfunc(self):
+		"""
+		Returns what public methods are available and the signatures they use.
+
+		These methods are represented as a dict with the following keys: \
+		*name*, *params*, *args*, *varargs*, *keywords*, *defaults*.
+
+		:rtype: public methods
+		:rtype: [{},]
+		"""
+		return describeInterface(self)
+		
+		
+class testclass(object):
+	"""
+	Base backend.
+	"""
+
+	matchCache = {}
+
+	def __init__(self, **kwargs):
+		"""
+		Constructor that only accepts keyword arguments.
+
+		:param name: Name of the backend
+		:type name: str
+		:param username: Username to use (if required)
+		:param password: Password to use (if required)
+		:param context: Context backend. Calling backend methods from \
+other backend methods is done by using the context backend. \
+This defaults to ``self``.
+		"""
+		self._name = None
+		self._username = None
+		self._password = None
+		self._context = self
+
+	def test1(self):
+		"""
+		Returns what public methods are available and the signatures they use.
+
+		These methods are represented as a dict with the following keys: \
+		*name*, *params*, *args*, *varargs*, *keywords*, *defaults*.
+
+		:rtype: public methods
+		:rtype: [{},]
+		"""
+		return describeInterface(self)		
 def host_renameOpsiDepotserver(self, oldId, newId):
 	"""
     Rename OpsiDepotserver with id `oldId` to `newId`.
@@ -39,7 +147,7 @@ def host_renameOpsiDepotserver(self, oldId, newId):
     :raises BackendError: If depot `newId` already exists.
     :param oldId: ID of the server to change.
     :type oldId: str
-    :param oldId: New ID.
+    :param newId: New ID.
     :type newId: str
     """
     oldId = forceHostId(oldId)
@@ -69,7 +177,7 @@ def requiresParsing(function):
 	return parsedFile
 
 
-def requiresParsing2(function, a, b, c
+def requiresParsing2(function, a, b, c,
 	d, e,
 	f, g=None):
 	'''
@@ -78,9 +186,9 @@ def requiresParsing2(function, a, b, c
 	return None
 
 
-def func3():
+def func3(self):
 	'short doc waiting for another doc'
-def func4():
+def func4(self, *args, **kwargs):
 	"another short doc"
 
 
@@ -131,8 +239,8 @@ This defaults to ``self``.
 		These methods are represented as a dict with the following keys: \
 		*name*, *params*, *args*, *varargs*, *keywords*, *defaults*.
 
-		:returns: public methods
-		:returntype: [{},]
+		:rtype: public methods
+		:rtype: [{},]
 		"""
 		return describeInterface(self)
 
