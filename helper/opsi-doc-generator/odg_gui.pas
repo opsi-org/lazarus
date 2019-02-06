@@ -53,7 +53,7 @@ implementation
 
 { TForm1 }
 
-
+{
 procedure TForm1.ButtonOpenClick(Sender: TObject);
 begin
   Memo1.Lines.Clear;
@@ -76,17 +76,17 @@ begin
   end;
 end;
 
+}
 
-{
 procedure TForm1.ButtonOpenClick(Sender: TObject);
 var
-  filecount : integer;
-  currentfile : TStringList;
+  filecount, totallines : integer;
+  tempfile : TStringList;
 begin
   Memo1.Lines.Clear;
   Memo2.Lines.Clear;
-  currentfile := TStringList.Create;
-  currentfile.Clear;
+  tempfile := TStringList.Create;
+  tempfile.Clear;
   sourcelist.Clear;
 
   OpenDialog1.Options:= [ofAllowMultiSelect, ofFileMustExist];
@@ -95,18 +95,21 @@ begin
   begin
     for filecount:= 0 to OpenDialog1.Files.Count-1 do
     begin
-      currentfile.LoadFromFile(OpenDialog1.Files[filecount]);
-      sourcelist.Append(currentfile.Text);
+      tempfile.LoadFromFile(OpenDialog1.Files[filecount]);
+      //sourcelist.Append(tempfile.Text);
+      sourcelist.AddStrings(tempfile);
     end;
 
-    memo1.Lines.Assign(sourcelist);
+    totallines:= sourcelist.Count;
 
+    memo1.Lines.Assign(sourcelist);
     ButtonConvert.enabled:=true;
     ButtonPythonConvert.enabled:=true;
 
   end;
 end;
-}
+
+
 procedure TForm1.ButtonSaveClick(Sender: TObject);
 var
   savefilename : string;

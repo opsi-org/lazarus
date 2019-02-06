@@ -462,11 +462,12 @@ end;
 procedure preprocess();
 var
   line, linetoadd : string;
-  linenumber : integer;
+  linenumber, totatlines : integer;
 begin
   linenumber := 0;
   preprocessedlist.Clear;
-  while linenumber < sourcelist.Count do
+  totatlines := sourcelist.Count;
+  while linenumber < totatlines do
   begin
     line := sourcelist.Strings[linenumber];
     if (line = '') then

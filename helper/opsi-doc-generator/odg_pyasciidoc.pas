@@ -18,14 +18,12 @@ uses
 var
   asciidoc_header : TStringlist;
 
-// https://stackoverflow.com/questions/7492993/sorting-of-arrays-alphabetically
-
 
 procedure writePyDocToList;
 var
-  frun, prun, firstFunc, secondFunc, i, j, funccount : integer;
+  frun, prun, i, j, funccount : integer;
   tmpstr1, pname : string;
-  temp, func1, func2 : TFuncDoc;
+  tempfile: TFuncDoc;
 begin
   if Assigned(docobject) and (docobject <> nil) then
   begin
@@ -54,8 +52,10 @@ begin
     asciidoc_header.Add('   ');
     asciidoc_header.Add('   ');
     targetlist.Text:= asciidoc_header.Text;
-    targetlist.add('[Doc_file_'+docobject.name+']');
+
     {
+    targetlist.add('[Doc_file_'+docobject.name+']');
+
     targetlist.add('= Documentation of Python library: `'+docobject.name+'`');
     targetlist.Add('');
 
@@ -68,6 +68,7 @@ begin
     if not (docobject.Copyright = '') then
       targetlist.Add('* Copyright:  '+docobject.Copyright);
     }
+
     targetlist.Add('');
     targetlist.Add('');
 
@@ -79,12 +80,9 @@ begin
       begin
         if LowerCase(docobject.Ffunctions[j].Name) > LowerCase(docobject.Ffunctions[j+1].Name) then
         begin
-          func1 :=  docobject.Ffunctions[j];
-          func2 :=  docobject.Ffunctions[j+1];
-
-          temp:= docobject.Ffunctions[j];
+          tempfile:= docobject.Ffunctions[j];
           docobject.Ffunctions[j]:= docobject.Ffunctions[j+1];
-          docobject.Ffunctions[j+1] := temp;
+          docobject.Ffunctions[j+1] := tempfile;
         end;
       end;
     end;

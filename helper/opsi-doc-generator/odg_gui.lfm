@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 2930
+  Left = 2951
   Height = 650
-  Top = 226
+  Top = 221
   Width = 695
   Caption = 'opsi-doc-generator'
   ClientHeight = 650
