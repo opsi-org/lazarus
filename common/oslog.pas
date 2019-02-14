@@ -511,7 +511,7 @@ begin
   // remove old partlog files
   files := TuibFileInstall.Create;
   try
-    files.alldelete(FStandardPartLogPath + FStandardPartLogFilename + '*', False, True, 0);
+    files.alldelete(FStandardPartLogPath +Pathdelim+ FStandardPartLogFilename + '*', False, True, 7);
   except
   end;
   files.Free;
@@ -1083,7 +1083,7 @@ begin
     end;
   end;
   try
-    files.alldelete(FStandardPartLogPath + FStandardPartLogFilename + '*', False, True, 0);
+    files.alldelete(FStandardPartLogPath +Pathdelim+ FStandardPartLogFilename + '*', False, True, 7);
   except
     //LogDatei.DependentAdd('not all files "' + TempPath + TempBatchdatei + '*"  could be deleted', LLInfo);
   end;

@@ -4,6 +4,16 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.0.36) stable; urgency=low
+
+  * osdefinedfunctions: better errormessages
+  * osdefinedfunctions: complete redesign of local var
+  * osdefinedfunctions: now works also with recursive calls
+  * oslog: fix: cleanup old partlogs
+
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 13 Feb 2019:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.0.35) stable; urgency=low
 
   * osparser: producestringlist: getsublist: with whitespaces around numbers

@@ -65,6 +65,7 @@ Controls,
 LCLIntf,
 oslistedit,
 {$ENDIF GUI}
+TypInfo,
 osencoding,
 osconf,
 //DOM,
@@ -17125,6 +17126,7 @@ function TuibInstScript.doSetVar (const section: TuibIniScript; const Expression
    end;
 
 begin
+  LogDatei.log_prog('Start doSetVar with expr: '+Expressionstr,LLdebug);
   result := false;
   GetWord (Expressionstr, VarName, r, WordDelimiterSet1);
   if VarName = ''
@@ -17675,6 +17677,7 @@ begin
         ArbeitsSektion.SectionKind := StatKind;
         ArbeitsSektion.NestingLevel:=Nestlevel;
         logdatei.log_prog('Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' ArbeitsSektion.NestingLevel: '+IntToStr(ArbeitsSektion.NestingLevel)+' condition: '+BoolToStr(conditions [ActLevel],true),LLDebug2);
+        logdatei.log_prog('StatKind: '+TypInfo.GetEnumName(TypeInfo(TStatement),integer(StatKind)),LLDebug2);
 
 
         // start switch statement
@@ -18196,14 +18199,12 @@ begin
               // syntax: for varname in list
               syntaxCheck := false;
               GetWord (Remaining, loopvar, Remaining, WordDelimiterWhiteSpace);
-              if     ( VarList.IndexOf (LowerCase (loopvar)) >= 0 )
-                  or  ( listOfStringLists.IndexOf (LowerCase (loopvar)) >= 0 )
-              then
-                 InfoSyntaxError := 'Existing variable must not be used als loop variable'
+              LogDatei.log_prog('loopvar is: '+loopvar,LLDebug);
+              if not addLoopvarToVarList(loopvar, InfoSyntaxError) then
+                LogDatei.log(InfoSyntaxError,LLError)
               else
-              Begin
-                VarList.add (loopvar);
-                ValuesList.add ('');
+              begin
+
                 // loop through stringlist
                 if Skip ('in', Remaining, Remaining, InfoSyntaxError)
                     and produceStringList (sektion, Remaining, Remaining, looplist, InfoSyntaxError)
@@ -18214,9 +18215,9 @@ begin
                   begin
                      LogDatei.log('Warning: list to loop through is empty - no loop ...', LLWarning);
                      // clearing the loop variable from the list of variables, first the value
-                     ValuesList.Delete( varlist.indexOf (loopvar));
-                     varlist.Delete( varlist.indexOf (loopvar) );
-                     syntaxCheck := true;
+                     if not delLoopvarFromVarList(loopvar,InfoSyntaxError) then
+                             syntaxCheck := false
+                         else syntaxCheck := true;
                   end
                   else
                   begin
@@ -18284,9 +18285,9 @@ begin
                       begin
                          LogDatei.log('Warning: list to loop through is empty - no loop ...', LLWarning);
                          // clearing the loop variable from the list of variables, first the value
-                         ValuesList.Delete( varlist.indexOf (loopvar));
-                         varlist.Delete( varlist.indexOf (loopvar) );
-                         syntaxCheck := true;
+                         if not delLoopvarFromVarList(loopvar,InfoSyntaxError) then
+                             syntaxCheck := false
+                         else syntaxCheck := true;
                       end
                       else
                       begin
@@ -21016,6 +21017,7 @@ begin
 
               tsSetVar:
                Begin
+                 LogDatei.log_prog('Start tsSetVar with expr: '+Remaining,LLdebug);
                  //writeln('set');
                  Expressionstr := Remaining;
                  doLogEntries (PStatNames^ [tsSetVar] + '  '  + Expressionstr, LLInfo);
@@ -21050,8 +21052,9 @@ begin
         begin
           inloop := false;
           // clearing the loop variable from the list of variables, first the value
-          ValuesList.Delete( varlist.indexOf (loopvar));
-          varlist.Delete( varlist.indexOf (loopvar) );
+          if not delLoopvarFromVarList(loopvar,InfoSyntaxError) then
+                             syntaxCheck := false
+                         else syntaxCheck := true;
           LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
           LogDatei.log ('', LLinfo);
           LogDatei.log ('~~~~~~ End Loop', LLinfo);
