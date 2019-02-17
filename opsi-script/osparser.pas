@@ -329,7 +329,7 @@ public
   property FatalOnRuntimeError : Boolean read FFatalOnRuntimeError write FFatalOnRuntimeError;
   property Suspended : Boolean read FSuspended write FSuspended;
   property AutoActivityDisplay : Boolean read FAutoActivityDisplay write FAutoActivityDisplay;
-
+  property ExtremeErrorLevel : Integer read FExtremeErrorLevel write FExtremeErrorLevel;
 
   property ReportMessages : Boolean read FReportMessages write FReportMessages;
 
@@ -12184,7 +12184,8 @@ else if LowerCase (s) = LowerCase ('getSwauditInfoList')
    //   if r = '' then
         Begin
         syntaxcheck := true;
-        list.AddStrings(getHwBiosShortlist);
+        // temporary ? disabled do 15.02.2019 14:59:06
+        //list.AddStrings(getHwBiosShortlist);
        end;
     end
 
@@ -13176,7 +13177,8 @@ begin
      then
      Begin
       syntaxCheck := true;
-      s1 := LowerCase(trim(s1));
+      // do not lowercase this - it is a path
+      s1 := trim(s1);
       StringResult := '';
       if not FileExistsUTF8(ExpandFileName(s1)) then
       begin
@@ -20888,59 +20890,15 @@ begin
 
                tsDefineFunction:
                Begin
-                 try
-                   newDefinedfunction := TOsDefinedFunction.create;
-                   if not newDefinedfunction.parseDefinition(Remaining,ErrorInfo) then
-                   begin
-                     reportError (Sektion, i, Expressionstr, ErrorInfo);
-                   end
-                   else
-                   begin
-                     try
-                       s1 := newDefinedfunction.Name;
-                       tmpint := script.FSectionNameList.IndexOf(s1);
-                       if (tmpint >= 0) and (tmpint <= length(Script.FSectionInfoArray)) then
-                       begin
-                         newDefinedfunction.OriginFile:=Script.FSectionInfoArray[tmpint].SectionFile;
-                         newDefinedfunction.OriginFileStartLineNumber:=Script.FSectionInfoArray[tmpint].StartLineNo;
-                       end
-                       else logdatei.log('Warning: Origin of function: '+s1+' not found.',LLwarning);
-                       (*
-                       tmplist := TXStringlist.Create;
-                       if FLinesOriginList.Count < script.aktScriptLineNumber then
-                       begin
-                         s1 := FLinesOriginList.Strings[FLinesOriginList.Count-1];
-                         LogDatei.log('Error in doAktionen: tsDefineFunction: ' +
-                            ' OriginList: '+inttostr(FLinesOriginList.Count)+
-                            ' aktScriptLineNumber: '+inttostr(script.aktScriptLineNumber), LLError);
-                       end
-                       else
-                         s1 := FLinesOriginList.Strings[script.aktScriptLineNumber-1];
-                       stringsplitByWhiteSpace(s1,tmplist);
-                       //newDefinedfunction.OriginFile := ExtractFileName(tmplist[0]);
-                       newDefinedfunction.OriginFile := tmplist[0];
-                       try
-                         if tmplist[0] = script.FFilename then
-                           // not imported : add section header
-                           newDefinedfunction.OriginFileStartLineNumber:=strtoint(tmplist[2])+sektion.StartLineNo-1
-                         else
-                           // imported : no section header
-                           newDefinedfunction.OriginFileStartLineNumber:=strtoint(tmplist[2]);
-                       finally
-                         tmplist.Free;
-                       end;
-                       *)
-                     except
-                        on e: Exception do
-                        begin
-                          LogDatei.log('Exception in doAktionen: tsDefineFunction: tmplist: ' +
-                            e.message, LLError);
-                          //raise e;
-                        end;
-                     end;
-                     try
-                       // get all lines until 'endfunction'
-                       //endofDefFuncFound := false;
+                 call := Remaining;
+                 GetWord (Remaining, Expressionstr, Remaining, WordDelimiterSet5);
+                 FuncIndex := definedFunctionNames.IndexOf (LowerCase (Expressionstr));
+                 if FuncIndex >= 0 then
+                 begin
+                   LogDatei.log('tsDefineFunction: Passing well known localfunction: '+Expressionstr,LLInfo);
+                   try
+                     // get all lines until 'endfunction'
+                     //endofDefFuncFound := false;
                        inDefFunc := 1;
                        repeat
                          // get next line of section
@@ -20953,13 +20911,7 @@ begin
                            GetWord (Remaining, Expressionstr, Remaining, WordDelimiterSet4);
                            StatKind := FindKindOfStatement (Expressionstr, SectionSpecifier, call);
                            if StatKind = tsDefineFunction then inc(inDefFunc);
-                           if StatKind = tsEndFunction then dec(inDefFunc);
-                           // Line with tsEndFunction should not be part of the content
-                           if inDefFunc > 0 then
-                           begin
-                             newDefinedfunction.addContent(myline);
-                             LogDatei.log_prog('inDefFunc: '+inttostr(inDefFunc)+' add line: '+myline,LLDebug3);
-                           end;
+                           if StatKind = tsEndFunction then dec(inDefFunc)
                          end;
                        until (inDefFunc <= 0) or (i >= Sektion.Count - 2);
                      except
@@ -20970,42 +20922,132 @@ begin
                           //raise e;
                         end;
                      end;
-                     try
-                       if inDefFunc > 0 then
-                       begin
-                         LogDatei.log('Found DefFunc without EndFunc',LLCritical);
-                         reportError (Sektion, i, Expressionstr, 'Found DefFunc without EndFunc');
-                       end
-                       else
-                       begin
-                         // endfunction found
-                         // append new defined function to the stored (known) functions
-                         inc(definedFunctioncounter);
-                         newDefinedfunction.Index:= definedFunctioncounter-1;
-                         SetLength(definedFunctionArray, definedFunctioncounter);
-                         definedFunctionArray[definedFunctioncounter-1] := newDefinedfunction;
-                         definedFunctionNames.Append(newDefinedfunction.Name);
-                         dec(inDefFunc3);
-                         LogDatei.log('Added defined function: '+newDefinedfunction.Name+' to the known functions',LLInfo);
-                         logdatei.log_prog('After adding a defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLDebug3);
+                     inc(i); // inc line counter
+                         inc(FaktScriptLineNumber); // inc line counter that ignores the execution of defined functions
+                     LogDatei.log('tsDefineFunction: passed well known localfunction: '+Expressionstr,LLInfo);
+                 end
+                 else
+                 begin
+                   Remaining := call;
+                   try
+                     newDefinedfunction := TOsDefinedFunction.create;
+                     if not newDefinedfunction.parseDefinition(Remaining,ErrorInfo) then
+                     begin
+                       reportError (Sektion, i, Expressionstr, ErrorInfo);
+                     end
+                     else
+                     begin
+                       try
+                         s1 := newDefinedfunction.Name;
+                         tmpint := script.FSectionNameList.IndexOf(s1);
+                         if (tmpint >= 0) and (tmpint <= length(Script.FSectionInfoArray)) then
+                         begin
+                           newDefinedfunction.OriginFile:=Script.FSectionInfoArray[tmpint].SectionFile;
+                           newDefinedfunction.OriginFileStartLineNumber:=Script.FSectionInfoArray[tmpint].StartLineNo;
+                         end
+                         else logdatei.log('Warning: Origin of function: '+s1+' not found.',LLwarning);
+                         (*
+                         tmplist := TXStringlist.Create;
+                         if FLinesOriginList.Count < script.aktScriptLineNumber then
+                         begin
+                           s1 := FLinesOriginList.Strings[FLinesOriginList.Count-1];
+                           LogDatei.log('Error in doAktionen: tsDefineFunction: ' +
+                              ' OriginList: '+inttostr(FLinesOriginList.Count)+
+                              ' aktScriptLineNumber: '+inttostr(script.aktScriptLineNumber), LLError);
+                         end
+                         else
+                           s1 := FLinesOriginList.Strings[script.aktScriptLineNumber-1];
+                         stringsplitByWhiteSpace(s1,tmplist);
+                         //newDefinedfunction.OriginFile := ExtractFileName(tmplist[0]);
+                         newDefinedfunction.OriginFile := tmplist[0];
+                         try
+                           if tmplist[0] = script.FFilename then
+                             // not imported : add section header
+                             newDefinedfunction.OriginFileStartLineNumber:=strtoint(tmplist[2])+sektion.StartLineNo-1
+                           else
+                             // imported : no section header
+                             newDefinedfunction.OriginFileStartLineNumber:=strtoint(tmplist[2]);
+                         finally
+                           tmplist.Free;
+                         end;
+                         *)
+                       except
+                          on e: Exception do
+                          begin
+                            LogDatei.log('Exception in doAktionen: tsDefineFunction: tmplist: ' +
+                              e.message, LLError);
+                            //raise e;
+                          end;
                        end;
-                     except
-                        on e: Exception do
-                        begin
-                          LogDatei.log('Exception in doAktionen: tsDefineFunction: append: ' +
-                            e.message, LLError);
-                          //raise e;
-                        end;
+                       try
+                         // get all lines until 'endfunction'
+                         //endofDefFuncFound := false;
+                         inDefFunc := 1;
+                         repeat
+                           // get next line of section
+                           inc(i); // inc line counter
+                           inc(FaktScriptLineNumber); // inc line counter that ignores the execution of defined functions
+                           if (i <= Sektion.Count-1) then
+                           begin
+                             Remaining := trim (Sektion.strings [i-1]);
+                             myline := remaining;
+                             GetWord (Remaining, Expressionstr, Remaining, WordDelimiterSet4);
+                             StatKind := FindKindOfStatement (Expressionstr, SectionSpecifier, call);
+                             if StatKind = tsDefineFunction then inc(inDefFunc);
+                             if StatKind = tsEndFunction then dec(inDefFunc);
+                             // Line with tsEndFunction should not be part of the content
+                             if inDefFunc > 0 then
+                             begin
+                               newDefinedfunction.addContent(myline);
+                               LogDatei.log_prog('inDefFunc: '+inttostr(inDefFunc)+' add line: '+myline,LLDebug3);
+                             end;
+                           end;
+                         until (inDefFunc <= 0) or (i >= Sektion.Count - 2);
+                       except
+                          on e: Exception do
+                          begin
+                            LogDatei.log('Exception in doAktionen: tsDefineFunction: endfunction: ' +
+                              e.message, LLError);
+                            //raise e;
+                          end;
+                       end;
+                       try
+                         if inDefFunc > 0 then
+                         begin
+                           LogDatei.log('Found DefFunc without EndFunc',LLCritical);
+                           reportError (Sektion, i, Expressionstr, 'Found DefFunc without EndFunc');
+                         end
+                         else
+                         begin
+                           // endfunction found
+                           // append new defined function to the stored (known) functions
+                           inc(definedFunctioncounter);
+                           newDefinedfunction.Index:= definedFunctioncounter-1;
+                           SetLength(definedFunctionArray, definedFunctioncounter);
+                           definedFunctionArray[definedFunctioncounter-1] := newDefinedfunction;
+                           definedFunctionNames.Append(newDefinedfunction.Name);
+                           dec(inDefFunc3);
+                           LogDatei.log('Added defined function: '+newDefinedfunction.Name+' to the known functions',LLInfo);
+                           logdatei.log_prog('After adding a defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLDebug3);
+                         end;
+                       except
+                          on e: Exception do
+                          begin
+                            LogDatei.log('Exception in doAktionen: tsDefineFunction: append: ' +
+                              e.message, LLError);
+                            //raise e;
+                          end;
+                       end;
                      end;
+                     LogDatei.log_prog('After reading '+newDefinedfunction.Name+' we are on line: '+inttostr(i-1)+' -> '+trim (Sektion.strings [i-1]),LLInfo);
+                   except
+                      on e: Exception do
+                      begin
+                        LogDatei.log('Exception in doAktionen: tsDefineFunction: ' +
+                          e.message, LLError);
+                        //raise e;
+                      end;
                    end;
-                   LogDatei.log_prog('After reading '+newDefinedfunction.Name+' we are on line: '+inttostr(i-1)+' -> '+trim (Sektion.strings [i-1]),LLInfo);
-                 except
-                    on e: Exception do
-                    begin
-                      LogDatei.log('Exception in doAktionen: tsDefineFunction: ' +
-                        e.message, LLError);
-                      //raise e;
-                    end;
                  end;
                End;
 

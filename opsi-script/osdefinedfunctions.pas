@@ -652,7 +652,19 @@ begin
               VarIndex := script.VarList.IndexOf(LowerCase(varname));
               script.ValuesList[VarIndex] := Value;
             end
-            else  LogDatei.log('In local function: '+self.Name+' Error while try to set the root value of the recursive by reference called var: '+varname,LLcritical);;
+            else
+            if not (definedFunctionArray[scopeindex] = self) then
+            begin
+              // points to a other func
+              definedFunctionArray[scopeindex].setLocalVarValueString(varname, Value);
+            end
+            else
+            begin
+              LogDatei.log('Critical Error in local function: '+self.Name+' while try to set the root value of the recursive by reference called var: '+varname,LLcritical);
+              script.ExtremeErrorLevel := LevelFatal;
+              LogDatei.log('Error level set to fatal', LLCritical);
+              scriptstopped := true;
+            end;
           end
           else // points to a other func
             definedFunctionArray[scopeindex].setLocalVarValueString(varname, Value);
@@ -823,6 +835,7 @@ begin
           DFVarInstanceIndex].referencevarscopeindex;
         varname := DFLocalVarList[arrayindex].varInstance[
           DFVarInstanceIndex].referencevarname;
+        LogDatei.log_prog('getLocalVarValueString: ref1: scope: '+inttostr(scopeindex)+' varname: '+varname,LLDebug2);
         if scopeindex = -1 then
         begin
           // global
@@ -840,13 +853,27 @@ begin
             scopeindex := DFLocalVarList[arrayindex].varInstance[0].referencevarscopeindex;
             // this should be -1 (global)
             varname := DFLocalVarList[arrayindex].varInstance[0].referencevarname;
+            LogDatei.log_prog('getLocalVarValueString: ref2: scope: '+inttostr(scopeindex)+' varname: '+varname,LLDebug2);
             if scopeindex = -1 then
             begin
               // global
               VarIndex := script.VarList.IndexOf(LowerCase(varname));
               Result := script.ValuesList[VarIndex];
             end
-            else  LogDatei.log('In local function: '+self.Name+' Error while try to retrieve the root value of the recursive by reference called var: '+varname,LLcritical);;
+            else
+            if not (definedFunctionArray[scopeindex] = self) then
+            begin
+              // points to a other func
+              Result :=  definedFunctionArray[scopeindex].getLocalVarValueString(varname);
+            end
+            else
+            begin
+              LogDatei.log('Critical Error: In local function: '+self.Name+' Error while try to retrieve the root value of the recursive by reference called var: '+varname,LLcritical);
+              script.ExtremeErrorLevel := LevelFatal;
+                   LogDatei.log('Error level set to fatal', LLCritical);
+                   //ActionResult := tsrFatalError;
+                   scriptstopped := true;
+            end;
           end
           else // points to a other func
           Result :=  definedFunctionArray[scopeindex].getLocalVarValueString(varname);
@@ -862,8 +889,17 @@ begin
         //String(DFLocalVarList[arrayindex].referencevar^):=value;
       end
       else // call by value
+      //if Assigned(pointer(DFLocalVarList[arrayindex].varInstance[DFVarInstanceIndex].varValueString)) then
+      try
         Result := DFLocalVarList[arrayindex].varInstance[
           DFVarInstanceIndex].varValueString;
+      except
+        begin
+          result := '';
+          LogDatei.log('Not assinged varInstance in getLocalVarValueString. Default to empty string',
+              LLError);
+        end;
+      end;
     end
     else
       LogDatei.log(
@@ -923,7 +959,7 @@ begin
               VarIndex := script.VarList.IndexOf(LowerCase(varname));
               Result := TStringList(script.ContentOfStringLists.Items[VarIndex]);
             end
-            else  LogDatei.log('In local function: '+self.Name+' Error while try to retrieve the root value of the recursive by reference called var: '+varname,LLcritical);;
+            else  LogDatei.log('In local function: '+self.Name+' Error while try to retrieve the root valuelist of the recursive by reference called var: '+varname,LLcritical);;
           end
           else // points to a other func
             Result :=  definedFunctionArray[scopeindex].getLocalVarValuelist(varname);
