@@ -17123,7 +17123,8 @@ function TuibInstScript.doSetVar (const section: TuibIniScript; const Expression
      if isVisibleLocalVar(VarName,funcindex)  then
        if definedFunctionArray[FuncIndex].getLocalVarDatatype(varname) = dfpString then
          result := true;
-     if VarList.IndexOf (LowerCase (VarName)) >= 0 then
+     if result = false then
+       if VarList.IndexOf (LowerCase (VarName)) >= 0 then
          result := true;
    end;
 
@@ -20923,15 +20924,17 @@ begin
                         end;
                      end;
                      inc(i); // inc line counter
-                         inc(FaktScriptLineNumber); // inc line counter that ignores the execution of defined functions
+                     inc(FaktScriptLineNumber); // inc line counter that ignores the execution of defined functions
                      LogDatei.log('tsDefineFunction: passed well known localfunction: '+Expressionstr,LLInfo);
+                     dec(inDefFunc3);
                  end
                  else
                  begin
                    Remaining := call;
                    try
                      newDefinedfunction := TOsDefinedFunction.create;
-                     if not newDefinedfunction.parseDefinition(Remaining,ErrorInfo) then
+                     BooleanResult:= newDefinedfunction.parseDefinition(Remaining,ErrorInfo);
+                     if not BooleanResult then
                      begin
                        reportError (Sektion, i, Expressionstr, ErrorInfo);
                      end

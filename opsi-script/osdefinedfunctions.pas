@@ -22,6 +22,7 @@ type
     VarValueList: TStringList;
     referencevarname: string;
     referencevarscopeindex: integer; // <-1: invalid, -1 : global, >=0: funcindex
+    inuse: boolean;
   end;
 
   TOsDefinedFunctionParameter = record
@@ -73,7 +74,9 @@ type
     function stringTofunctiontype(const str: string;
       var ftype: TosdfDataTypes): boolean;
     //function addLocalVar(name : string; datatype : TosdfDataTypes; value : variant) : boolean;
+    function localVarNameExists(Name: string): boolean;
     function localVarExists(Name: string): boolean;
+    function localVarNameIndex(Name: string): integer;
     function localVarIndex(Name: string): integer;
     function getLocalVarDatatype(Name: string): TosdfDataTypes;
     function getLocalVarValueString(Name: string): string;
@@ -91,8 +94,7 @@ type
     //function getLocalVarReference(name : string) : pointer;
 
     function parseCallParameter(paramline: string; var remaining: string;
-      var errorstr: string; NestLevel: integer;
-      inDefFuncIndex: integer): boolean;
+      var errorstr: string; NestLevel: integer; inDefFuncIndex: integer): boolean;
     function copyParamBufToLocalVars: boolean;
     function call(paramline: string; var remaining: string;
       var NestLevel: integer): boolean;
@@ -265,169 +267,203 @@ begin
       end
       else
         remaining := tmpstr;
-
-      while syntax_ok and not endOfParamlist do
-      begin
-        // check call type
-        calltype := 'val';
-        if skip('val', LowerCase(remaining), remaining, errorstr) then
+      try
+        while syntax_ok and not endOfParamlist do
+        begin
+          // check call type
           calltype := 'val';
-        if skip('ref', LowerCase(remaining), remaining, errorstr) then
-          calltype := 'ref';
-        if lowercase(calltype) = 'ref' then
-          callByReference := True
-        else
-          callByReference := False;
-        // check paramname
-        GetWord(remaining, paramname, remaining, [':']);
-        paramname := trim(paramname);
-        if remaining = '' then
-        begin
-          errorstr := errorstr + ': <paramtype> expected after Parameter Name';
-          syntax_ok := False;
-        end
-        else
-        begin
-          if not validIdentifier(paramname, errorstr) then
+          if skip('val', LowerCase(remaining), remaining, errorstr) then
+            calltype := 'val';
+          if skip('ref', LowerCase(remaining), remaining, errorstr) then
+            calltype := 'ref';
+          if lowercase(calltype) = 'ref' then
+            callByReference := True
+          else
+            callByReference := False;
+          // check paramname
+          GetWord(remaining, paramname, remaining, [':']);
+          paramname := trim(paramname);
+          if remaining = '' then
           begin
-            // given paramname not valid
-            errorstr := errorstr + 'given paramname: ' + paramname + ' not valid.';
+            errorstr := errorstr + ': <paramtype> expected after Parameter Name';
             syntax_ok := False;
           end
           else
           begin
-            // given parameter valid
-            LogDatei.log('Found defined function parametername: ' + paramname, LLDebug2);
-            Inc(paramcounter);
-            DFparamCount := paramcounter + 1;
-            if callByReference then
-              DFparamList[paramcounter].callByReference := True
-            else
-              DFparamList[paramcounter].callByReference := False;
-            LogDatei.log('Parameter has call type: ' + calltype, LLDebug2);
-            if localVarIndex(paramname) >= 0 then
+            if not validIdentifier(paramname, errorstr) then
             begin
-              // paramname has been defined before in this funstion
-              errorstr := errorstr + ' paramname: ' + paramname +
-                ' has been defined before in this funstion';
+              // given paramname not valid
+              errorstr := errorstr + 'given paramname: ' + paramname + ' not valid.';
               syntax_ok := False;
             end
             else
             begin
-              // is a new param
-              DFparamList[paramcounter].paramValueBuf.VarValueList := TStringList.Create;
-              DFparamList[paramcounter].paramName := paramname;
-              //DFLocalVarList.Add(paramname);
-              if not skip(':', remaining, remaining, errorstr) then
+              // given parameter valid
+              LogDatei.log('Found defined function parametername: ' +
+                paramname, LLDebug2);
+              Inc(paramcounter);
+              DFparamCount := paramcounter + 1;
+              if callByReference then
+                DFparamList[paramcounter].callByReference := True
+              else
+                DFparamList[paramcounter].callByReference := False;
+              LogDatei.log('Parameter has call type: ' + calltype, LLDebug2);
+              if localVarNameIndex(paramname) >= 0 then
               begin
-                // : <paramtype> expected
-                errorstr := errorstr + ' : <paramtype>  expected';
+                // paramname has been defined before in this funstion
+                errorstr := errorstr + ' paramname: ' + paramname +
+                  ' has been defined before in this funstion';
                 syntax_ok := False;
               end
               else
               begin
-                GetWord(remaining, paramtype, remaining, [',', ')']);
-                paramtype := trim(paramtype);
-                if remaining = '' then
+                // is a new param
+                DFparamList[paramcounter].paramValueBuf.VarValueList :=
+                  TStringList.Create;
+                DFparamList[paramcounter].paramName := paramname;
+                //DFLocalVarList.Add(paramname);
+                if not skip(':', remaining, remaining, errorstr) then
                 begin
-                  errorstr := errorstr + ', or ) expected after Parameter Type';
+                  // : <paramtype> expected
+                  errorstr := errorstr + ' : <paramtype>  expected';
                   syntax_ok := False;
                 end
                 else
-                if lowercase(paramtype) =
-                  lowercase(osdfParameterTypesNames[dfpString]) then
                 begin
-                  // String type
-                  DFparamList[paramcounter].paramDataType := dfpString;
-                  addLocalVar(paramname, dfpString, callByReference);
-                end
-                else if lowercase(paramtype) =
-                  lowercase(osdfParameterTypesNames[dfpStringlist]) then
-                begin
-                  // Stringlist type
-                  DFparamList[paramcounter].paramDataType := dfpStringlist;
-                  addLocalVar(paramname, dfpStringlist, callByReference);
-                end
-                //else if lowercase(paramtype) = lowercase(osdfParameterTypesNames[dfpBoolean]) then
-                //begin
-                //  // Boolean type
-                //  DFparamList[paramcounter].paramDataType:=dfpBoolean;
-                //  addLocalVar(paramname,dfpBoolean);
-                //end
-                else
-                begin
-                  // given param type not valid
-                  errorstr := errorstr + 'given param type: ' + paramtype + ' not valid.';
-                  syntax_ok := False;
-                end;
-                if not syntax_ok then
-                  LogDatei.log('Parameter has invalid data type: ' + paramtype, LLDebug2)
-                else
-                begin
-                  LogDatei.log('Parameter has valid data type: ' + paramtype, LLDebug2);
-                  if not skip(',', remaining, remaining, errorstr) then
-                    if skip(')', remaining, remaining, errorstr) then
-                      endOfParamlist := True
-                    else
-                    begin
-                      // syntax error
-                      errorstr := errorstr + ' , or ) expected.';
-                      syntax_ok := False;
-                    end;
-                end; // valid data type
-              end; // valid new param
-            end; // not defined before
-          end;  // is valid identifier
-        end; // data type found behind colon
-      end; // while
-      if syntax_ok then
-      begin
-        // get function type
-        if skip(':', remaining, remaining, errorstr) then
+                  GetWord(remaining, paramtype, remaining, [',', ')']);
+                  paramtype := trim(paramtype);
+                  if remaining = '' then
+                  begin
+                    errorstr := errorstr + ', or ) expected after Parameter Type';
+                    syntax_ok := False;
+                  end
+                  else
+                  if lowercase(paramtype) = lowercase(
+                    osdfParameterTypesNames[dfpString]) then
+                  begin
+                    // String type
+                    DFparamList[paramcounter].paramDataType := dfpString;
+                    addLocalVar(paramname, dfpString, callByReference);
+                  end
+                  else if lowercase(paramtype) =
+                    lowercase(osdfParameterTypesNames[dfpStringlist]) then
+                  begin
+                    // Stringlist type
+                    DFparamList[paramcounter].paramDataType := dfpStringlist;
+                    addLocalVar(paramname, dfpStringlist, callByReference);
+                  end
+                  //else if lowercase(paramtype) = lowercase(osdfParameterTypesNames[dfpBoolean]) then
+                  //begin
+                  //  // Boolean type
+                  //  DFparamList[paramcounter].paramDataType:=dfpBoolean;
+                  //  addLocalVar(paramname,dfpBoolean);
+                  //end
+                  else
+                  begin
+                    // given param type not valid
+                    errorstr :=
+                      errorstr + 'given param type: ' + paramtype + ' not valid.';
+                    syntax_ok := False;
+                  end;
+                  if not syntax_ok then
+                    LogDatei.log('Parameter has invalid data type: ' +
+                      paramtype, LLDebug2)
+                  else
+                  begin
+                    LogDatei.log('Parameter has valid data type: ' +
+                      paramtype, LLDebug2);
+                    if not skip(',', remaining, remaining, errorstr) then
+                      if skip(')', remaining, remaining, errorstr) then
+                        endOfParamlist := True
+                      else
+                      begin
+                        // syntax error
+                        errorstr := errorstr + ' , or ) expected.';
+                        syntax_ok := False;
+                      end;
+                  end; // valid data type
+                end; // valid new param
+              end; // not defined before
+            end;  // is valid identifier
+          end; // data type found behind colon
+        end; // while
+      except
+        on e: Exception do
         begin
-          if not stringTofunctiontype(remaining, DFResultType) then
+          LogDatei.log(
+            'Exception in osdefinedfunctions:parseDefinition: endOfParamlist: ' +
+            e.message, LLError);
+          //raise e;
+        end;
+      end;
+      try
+        if syntax_ok then
+        begin
+          // get function type
+          if skip(':', remaining, remaining, errorstr) then
           begin
-            // syntax error : wrong data type
-            errorstr := errorstr + ' missing or illegal function data type: ' +
-              remaining + ' - only string, stringlist and void allowed.';
-            syntax_ok := False;
+            if not stringTofunctiontype(remaining, DFResultType) then
+            begin
+              // syntax error : wrong data type
+              errorstr := errorstr + ' missing or illegal function data type: ' +
+                remaining + ' - only string, stringlist and void allowed.';
+              syntax_ok := False;
+            end
+            else
+            begin
+              LogDatei.log('Function has valid data type: ' + remaining, LLDebug2);
+              // create local result variable from result type
+              case DFResultType of
+                dfpString: addLocalVar('$result$', dfpString, False);
+                dfpStringlist: addLocalVar('$result$', dfpStringlist, False);
+                //dfpBoolean : addLocalVar('$result$',dfpBoolean);
+              end;
+            end;
           end
           else
           begin
-            LogDatei.log('Function has valid data type: ' + remaining, LLDebug2);
-            // create local result variable from result type
-            case DFResultType of
-              dfpString: addLocalVar('$result$', dfpString, False);
-              dfpStringlist: addLocalVar('$result$', dfpStringlist, False);
-              //dfpBoolean : addLocalVar('$result$',dfpBoolean);
-            end;
+            // syntax error : wrong data type
+            errorstr := errorstr + ' missing function data type: ' +
+              remaining + ' - only string, stringlist and boolean allowed.';
+            syntax_ok := False;
           end;
-        end
-        else
+        end;
+      except
+        on e: Exception do
         begin
-          // syntax error : wrong data type
-          errorstr := errorstr + ' missing function data type: ' +
-            remaining + ' - only string, stringlist and boolean allowed.';
-          syntax_ok := False;
+          LogDatei.log(
+            'Exception in osdefinedfunctions: get function type: ' +
+            e.message, LLError);
+          //raise e;
         end;
       end;
     end;
   end;
-  // set parent func
-  if inDefinedFuncNestCounter > 0 then
-  begin
-    searchindex := definedFunctionsCallStack.Count - 1;
-    index := StrToInt(definedFunctionsCallStack.Strings[searchindex]);
-    DFParentFunc := definedFunctionArray[index].Name;
-  end
-  else
-  begin
-    // we in global
-    DFParentFunc := 'global';
+  try
+    // set parent func
+    if inDefinedFuncNestCounter > 0 then
+    begin
+      searchindex := definedFunctionsCallStack.Count - 1;
+      index := StrToInt(definedFunctionsCallStack.Strings[searchindex]);
+      DFParentFunc := definedFunctionArray[index].Name;
+    end
+    else
+    begin
+      // we in global
+      DFParentFunc := 'global';
+    end;
+    DFActive := True;
+    if syntax_ok then
+      parseDefinition := True;
+  except
+    on e: Exception do
+    begin
+      LogDatei.log(
+        'Exception in osdefinedfunctions: set parent func : ' +
+        e.message, LLError);
+      //raise e;
+    end;
   end;
-  DFActive := True;
-  if syntax_ok then
-    parseDefinition := True;
 end;
 
 procedure TOsDefinedFunction.addContent(contentstr: string);
@@ -441,6 +477,21 @@ begin
 
 end;
 
+function TOsDefinedFunction.localVarNameExists(Name: string): boolean;
+var
+  arraycounter, i: integer;
+begin
+  Result := False;
+  i := 0;
+  arraycounter := length(DFLocalVarList);
+  if arraycounter > 0 then
+    repeat
+      if (lowercase(DFLocalVarList[i].varName) = lowercase(Name)) then
+        Result := True;
+      Inc(i);
+    until (i >= arraycounter) or (Result = True);
+end;
+
 function TOsDefinedFunction.localVarExists(Name: string): boolean;
 var
   arraycounter, i: integer;
@@ -450,10 +501,43 @@ begin
   arraycounter := length(DFLocalVarList);
   if arraycounter > 0 then
     repeat
-      if lowercase(DFLocalVarList[i].varName) = lowercase(Name) then
-        Result := True;
+      if (lowercase(DFLocalVarList[i].varName) = lowercase(Name)) then
+      begin
+        if length(DFLocalVarList[i].varInstance) = DFVarInstanceIndex + 1 then
+        begin
+          if DFLocalVarList[i].varInstance[DFVarInstanceIndex].inuse then
+          begin
+            Result := True;
+            LogDatei.log_prog('Found Local var name: ' + Name +
+              ' and Instance with inUse=true  ', LLinfo);
+          end
+          else
+            LogDatei.log_prog('Local var name: ' + Name +
+              ' and Instance found but inUse=false ', LLDebug);
+        end
+        else
+          LogDatei.log_prog('Local var name: ' + Name +
+            ' found but no VarInstance ', LLDebug);
+      end
+      else
+        LogDatei.log_prog('No local var name: ' + Name + ' found. ', LLDebug);
       Inc(i);
     until (i >= arraycounter) or (Result = True);
+end;
+
+function TOsDefinedFunction.localVarNameIndex(Name: string): integer;
+var
+  arraycounter, i: integer;
+begin
+  Result := -1;
+  i := 0;
+  arraycounter := length(DFLocalVarList);
+  if arraycounter > 0 then
+    repeat
+      if (lowercase(DFLocalVarList[i].varName) = lowercase(Name)) then
+        Result := i;
+      Inc(i);
+    until (i >= arraycounter) or (Result = i - 1);
 end;
 
 function TOsDefinedFunction.localVarIndex(Name: string): integer;
@@ -465,8 +549,24 @@ begin
   arraycounter := length(DFLocalVarList);
   if arraycounter > 0 then
     repeat
-      if lowercase(DFLocalVarList[i].varName) = lowercase(Name) then
-        Result := i;
+      if (lowercase(DFLocalVarList[i].varName) = lowercase(Name)) then
+      begin
+        if length(DFLocalVarList[i].varInstance) = DFVarInstanceIndex + 1 then
+        begin
+          if DFLocalVarList[i].varInstance[DFVarInstanceIndex].inuse then
+          begin
+            Result := i;
+          end
+          else
+            LogDatei.log_prog('Local var name: ' + Name +
+              ' and Instance found but inUse=false ', LLDebug);
+        end
+        else
+          LogDatei.log_prog('Local var name: ' + Name +
+            ' found but no VarInstance ', LLDebug);
+      end
+      else
+        LogDatei.log_prog('No local var name: ' + Name + ' found. ', LLDebug);
       Inc(i);
     until (i >= arraycounter) or (Result = i - 1);
 end;
@@ -478,38 +578,57 @@ var
   arraycounter, varindex, instanceSize: integer;
 begin
   Result := False;
-  if not localVarExists(Name) then
+  if not localVarNameExists(Name) then
   begin
-    // we assume this is the first definition call
-    Result := True;
-    arraycounter := length(DFLocalVarList);
-    Inc(arraycounter);
-    SetLength(DFLocalVarList, arraycounter);
-    createVarInstance(arraycounter - 1);
-    DFLocalVarList[arraycounter - 1].varName := Name;
-    DFLocalVarList[arraycounter - 1].varDataType := datatype;
-    DFLocalVarList[arraycounter - 1].callByReference := callByReference;
+    if not localVarExists(Name) then
+    begin
+      // we assume this is the first definition call
+      Result := True;
+      arraycounter := length(DFLocalVarList);
+      Inc(arraycounter);
+      SetLength(DFLocalVarList, arraycounter);
+      DFLocalVarList[arraycounter - 1].varName := Name;
+      DFLocalVarList[arraycounter - 1].varDataType := datatype;
+      DFLocalVarList[arraycounter - 1].callByReference := callByReference;
+      createVarInstance(arraycounter - 1);
+      if (length(DFLocalVarList[arraycounter - 1].varInstance) =
+        DFVarInstanceIndex + 1) and (DFVarInstanceIndex >= 0) then
+        DFLocalVarList[arraycounter - 1].varInstance[DFVarInstanceIndex].inuse := True;
+    end
+    else
+    begin
+      if DFVarInstanceIndex > 0 then
+      begin
+        // Instance are created from createAllVarInstances
+        Result := True;
+        if (length(DFLocalVarList[arraycounter - 1].varInstance) =
+          DFVarInstanceIndex + 1) and (DFVarInstanceIndex >= 0) then
+          DFLocalVarList[arraycounter - 1].varInstance[DFVarInstanceIndex].inuse := True;
+      end;
+    end;
   end
   else
   begin
-    //recursion ?  localVarExists(name) but no instance
-    (*
-    varindex := localVarIndex(Name);
-    instanceSize := length(DFLocalVarList[varindex].varInstance);
-    if instanceSize = DFVarInstanceIndex then
+    arraycounter := localVarNameIndex(Name);
+    if localVarExists(Name) then
     begin
-      // we have no instance to the actual index. So a) we in recursion and b) we create the intance
-      createVarInstance(varindex);
-    end
-    else      *)
-    if DFVarInstanceIndex > 0 then
-    begin
-      // Instance are created from createAllVarInstances
+      //DFLocalVarList[arraycounter - 1].varInstance[DFVarInstanceIndex].inuse := True;
       Result := True;
+      if (length(DFLocalVarList[arraycounter - 1].varInstance) =
+        DFVarInstanceIndex + 1) and (DFVarInstanceIndex >= 0) then
+        DFLocalVarList[arraycounter - 1].varInstance[DFVarInstanceIndex].inuse := True;
+        //LogDatei.log('Syntax Error: Double definition of local variable: ' +  Name, LLCritical);
     end
     else
-      LogDatei.log('Syntax Error: Double definition of local variable: ' + Name, LLCritical);
-
+    begin
+      if DFVarInstanceIndex>= 0 then
+        if (length(DFLocalVarList[arraycounter - 1].varInstance) =
+        DFVarInstanceIndex + 1) then
+        begin
+        DFLocalVarList[arraycounter - 1].varInstance[DFVarInstanceIndex].inuse := True;
+        Result := True;
+        end;
+    end
   end;
 end;
 
@@ -519,20 +638,23 @@ var
   datatype: TosdfDataTypes;
 begin
   Result := False;
-  if localVarExists(Name) then
+  if localVarNameExists(Name) then
   begin
-    arrayindex := localVarIndex(Name);
-    Result := True;
-    destroyVarInstance(arrayindex);
-    // could we free the memory because index point to the last element ?
-    if arrayindex + 1 = length(DFLocalVarList) then
-      setlength(DFLocalVarList, arrayindex)
+    arrayindex := localVarNameIndex(Name);
+    if localVarExists(Name) then
+    begin
+      DFLocalVarList[arrayindex].varInstance[DFVarInstanceIndex].inuse := False;
+    end
     else
     begin
-      DFLocalVarList[arrayindex].varName := '';
-      datatype := DFLocalVarList[arrayindex].varDataType;
-      DFLocalVarList[arrayindex].varDataType := dfpVoid;
-      DFLocalVarList[arrayindex].callByReference := False;
+      if DFVarInstanceIndex > 0 then
+      begin
+        Result := True;
+        if (length(DFLocalVarList[arrayindex].varInstance) =
+          DFVarInstanceIndex + 1) and (DFVarInstanceIndex >= 0) then
+          DFLocalVarList[arrayindex].varInstance[DFVarInstanceIndex].inuse := False;
+      end;
+
     end;
   end
   else
@@ -618,6 +740,8 @@ begin
   arrayindex := localVarIndex(Name);
   if arrayindex >= 0 then
   begin
+    DFLocalVarList[arrayindex].varInstance[DFVarInstanceIndex].inuse := True;
+
     if (DFLocalVarList[arrayindex].varName = Name) and
       (DFLocalVarList[arrayindex].varDataType = dfpString) then
     begin
@@ -643,7 +767,8 @@ begin
             // points to it self - make only sense on recursion
             // so we assume that we have a recursive call with call by reference
             // so what we need is the very first refrence
-            scopeindex := DFLocalVarList[arrayindex].varInstance[0].referencevarscopeindex;
+            scopeindex := DFLocalVarList[arrayindex].varInstance[
+              0].referencevarscopeindex;
             // this should be -1 (global)
             varname := DFLocalVarList[arrayindex].varInstance[0].referencevarname;
             if scopeindex = -1 then
@@ -660,10 +785,13 @@ begin
             end
             else
             begin
-              LogDatei.log('Critical Error in local function: '+self.Name+' while try to set the root value of the recursive by reference called var: '+varname,LLcritical);
+              LogDatei.log('Critical Error in local function: ' +
+                self.Name +
+                ' while try to set the root value of the recursive by reference called var: ' +
+                varname, LLcritical);
               script.ExtremeErrorLevel := LevelFatal;
               LogDatei.log('Error level set to fatal', LLCritical);
-              scriptstopped := true;
+              scriptstopped := True;
             end;
           end
           else // points to a other func
@@ -686,12 +814,12 @@ begin
     end
     else
       LogDatei.log(
-        'Internal Error: setLocalVarValueString: Unexpected type mismatch of local variable: ' +
-        Name, LLCritical);
+        'Internal Error: setLocalVarValueString: Unexpected type mismatch of local variable: '
+        + Name, LLCritical);
   end
   else
-    LogDatei.log('Syntax Error: setLocalVarValueString: No definition of local variable: ' +
-      Name, LLCritical);
+    LogDatei.log('Syntax Error: setLocalVarValueString: No definition of local variable: '
+      + Name, LLCritical);
 end;
 
 (*
@@ -728,6 +856,8 @@ begin
   arrayindex := localVarIndex(Name);
   if arrayindex >= 0 then
   begin
+    DFLocalVarList[arrayindex].varInstance[DFVarInstanceIndex].inuse := True;
+
     if (DFLocalVarList[arrayindex].varName = Name) and
       (DFLocalVarList[arrayindex].varDataType = dfpStringlist) then
     begin
@@ -753,7 +883,8 @@ begin
             // points to it self - make only sense on recursion
             // so we assume that we have a recursive call with call by reference
             // so what we need is the very first refrence
-            scopeindex := DFLocalVarList[arrayindex].varInstance[0].referencevarscopeindex;
+            scopeindex := DFLocalVarList[arrayindex].varInstance[
+              0].referencevarscopeindex;
             // this should be -1 (global)
             varname := DFLocalVarList[arrayindex].varInstance[0].referencevarname;
             if scopeindex = -1 then
@@ -762,7 +893,12 @@ begin
               VarIndex := script.VarList.IndexOf(LowerCase(varname));
               script.ContentOfStringLists.Items[VarIndex] := Value;
             end
-            else  LogDatei.log('In local function: '+self.Name+' Error while try to set the root value of the recursive by reference called var: '+varname,LLcritical);;
+            else
+              LogDatei.log('In local function: ' + self.Name +
+                ' Error while try to set the root value of the recursive by reference called var: '
+                + varname,
+                LLcritical);
+            ;
           end
           else // points to a other func
             definedFunctionArray[scopeindex].setLocalVarValuelist(varname, Value);
@@ -781,13 +917,13 @@ begin
       Result := True;
     end
     else
-      LogDatei.log('Internal Error: setLocalVarValueList: Unexpected type mismatch of local variable: '
-        +
-        Name, LLCritical);
+      LogDatei.log(
+        'Internal Error: setLocalVarValueList: Unexpected type mismatch of local variable: '
+        + Name, LLCritical);
   end
   else
-    LogDatei.log('Syntax Error: setLocalVarValueList: No definition of local variable: ' +
-      Name, LLCritical);
+    LogDatei.log('Syntax Error: setLocalVarValueList: No definition of local variable: '
+      + Name, LLCritical);
 end;
 
 (*
@@ -821,7 +957,7 @@ var
 begin
   Result := '';
   Name := lowercase(Name);
-  arrayindex := localVarIndex(Name);
+  arrayindex := localVarNameIndex(Name);
   if arrayindex >= 0 then
   begin
     if (DFLocalVarList[arrayindex].varName = Name) and
@@ -835,7 +971,8 @@ begin
           DFVarInstanceIndex].referencevarscopeindex;
         varname := DFLocalVarList[arrayindex].varInstance[
           DFVarInstanceIndex].referencevarname;
-        LogDatei.log_prog('getLocalVarValueString: ref1: scope: '+inttostr(scopeindex)+' varname: '+varname,LLDebug2);
+        LogDatei.log_prog('getLocalVarValueString: ref1: scope: ' +
+          IntToStr(scopeindex) + ' varname: ' + varname, LLDebug2);
         if scopeindex = -1 then
         begin
           // global
@@ -850,10 +987,12 @@ begin
             // points to it self - make only sense on recursion
             // so we assume that we have a recursive call with call by reference
             // so what we need is the very first refrence
-            scopeindex := DFLocalVarList[arrayindex].varInstance[0].referencevarscopeindex;
+            scopeindex := DFLocalVarList[arrayindex].varInstance[
+              0].referencevarscopeindex;
             // this should be -1 (global)
             varname := DFLocalVarList[arrayindex].varInstance[0].referencevarname;
-            LogDatei.log_prog('getLocalVarValueString: ref2: scope: '+inttostr(scopeindex)+' varname: '+varname,LLDebug2);
+            LogDatei.log_prog('getLocalVarValueString: ref2: scope: ' +
+              IntToStr(scopeindex) + ' varname: ' + varname, LLDebug2);
             if scopeindex = -1 then
             begin
               // global
@@ -864,19 +1003,23 @@ begin
             if not (definedFunctionArray[scopeindex] = self) then
             begin
               // points to a other func
-              Result :=  definedFunctionArray[scopeindex].getLocalVarValueString(varname);
+              Result := definedFunctionArray[scopeindex].getLocalVarValueString(
+                varname);
             end
             else
             begin
-              LogDatei.log('Critical Error: In local function: '+self.Name+' Error while try to retrieve the root value of the recursive by reference called var: '+varname,LLcritical);
+              LogDatei.log('Critical Error: In local function: ' +
+                self.Name +
+                ' Error while try to retrieve the root value of the recursive by reference called var: '
+                + varname, LLcritical);
               script.ExtremeErrorLevel := LevelFatal;
-                   LogDatei.log('Error level set to fatal', LLCritical);
-                   //ActionResult := tsrFatalError;
-                   scriptstopped := true;
+              LogDatei.log('Error level set to fatal', LLCritical);
+              //ActionResult := tsrFatalError;
+              scriptstopped := True;
             end;
           end
           else // points to a other func
-          Result :=  definedFunctionArray[scopeindex].getLocalVarValueString(varname);
+            Result := definedFunctionArray[scopeindex].getLocalVarValueString(varname);
         end
         else
         begin
@@ -889,26 +1032,27 @@ begin
         //String(DFLocalVarList[arrayindex].referencevar^):=value;
       end
       else // call by value
-      //if Assigned(pointer(DFLocalVarList[arrayindex].varInstance[DFVarInstanceIndex].varValueString)) then
-      try
-        Result := DFLocalVarList[arrayindex].varInstance[
-          DFVarInstanceIndex].varValueString;
-      except
-        begin
-          result := '';
-          LogDatei.log('Not assinged varInstance in getLocalVarValueString. Default to empty string',
+        //if Assigned(pointer(DFLocalVarList[arrayindex].varInstance[DFVarInstanceIndex].varValueString)) then
+        try
+          Result := DFLocalVarList[arrayindex].varInstance[
+            DFVarInstanceIndex].varValueString;
+        except
+          begin
+            Result := '';
+            LogDatei.log(
+              'Not assinged varInstance in getLocalVarValueString. Default to empty string',
               LLError);
+          end;
         end;
-      end;
     end
     else
       LogDatei.log(
-        'Internal Error: getLocalVarValueString: Unexpected type mismatch of local variable: ' +
-        Name, LLCritical);
+        'Internal Error: getLocalVarValueString: Unexpected type mismatch of local variable: '
+        + Name, LLCritical);
   end
   else
-    LogDatei.log('Syntax Error: getLocalVarValueString: No definition of local variable: ' +
-      Name, LLCritical);
+    LogDatei.log('Syntax Error: getLocalVarValueString: No definition of local variable: '
+      + Name, LLCritical);
 end;
 
 
@@ -950,7 +1094,8 @@ begin
             // points to it self - make only sense on recursion
             // so we assume that we have a recursive call with call by reference
             // so what we need is the very first refrence
-            scopeindex := DFLocalVarList[arrayindex].varInstance[0].referencevarscopeindex;
+            scopeindex := DFLocalVarList[arrayindex].varInstance[
+              0].referencevarscopeindex;
             // this should be -1 (global)
             varname := DFLocalVarList[arrayindex].varInstance[0].referencevarname;
             if scopeindex = -1 then
@@ -959,10 +1104,14 @@ begin
               VarIndex := script.VarList.IndexOf(LowerCase(varname));
               Result := TStringList(script.ContentOfStringLists.Items[VarIndex]);
             end
-            else  LogDatei.log('In local function: '+self.Name+' Error while try to retrieve the root valuelist of the recursive by reference called var: '+varname,LLcritical);;
+            else
+              LogDatei.log('In local function: ' + self.Name +
+                ' Error while try to retrieve the root valuelist of the recursive by reference called var: '
+                + varname, LLcritical);
+            ;
           end
           else // points to a other func
-            Result :=  definedFunctionArray[scopeindex].getLocalVarValuelist(varname);
+            Result := definedFunctionArray[scopeindex].getLocalVarValuelist(varname);
         end
         else
         begin
@@ -976,13 +1125,13 @@ begin
           DFVarInstanceIndex].VarValueList;
     end
     else
-      LogDatei.log('Internal Error: getLocalVarValueList: Unexpected type mismatch of local variable: '
-        +
-        Name, LLCritical);
+      LogDatei.log(
+        'Internal Error: getLocalVarValueList: Unexpected type mismatch of local variable: '
+        + Name, LLCritical);
   end
   else
-    LogDatei.log('Syntax Error: getLocalVarValueList: No definition of local variable: ' +
-      Name, LLCritical);
+    LogDatei.log('Syntax Error: getLocalVarValueList: No definition of local variable: '
+      + Name, LLCritical);
 end;
 
 
@@ -1030,25 +1179,31 @@ end;
 function TOsDefinedFunction.createVarInstance(varindex: integer): boolean;
   // create a new Instance of local Variable
 begin
-  // we expect that there is no instance of this var with  DFVarInstanceIndex
-  if length(DFLocalVarList[varindex].varInstance) = DFVarInstanceIndex then
+  if DFVarInstanceIndex >= 0 then
   begin
-    SetLength(DFLocalVarList[varindex].varInstance, DFVarInstanceIndex + 1);
-    DFLocalVarList[varindex].varInstance[DFVarInstanceIndex].VarValueList :=
-      TStringList.Create;
-    Result := True;
-  end
-  else
-  begin
-    if DFVarInstanceIndex >= 0 then
+    // we expect that there is no instance of this var with  DFVarInstanceIndex
+    if length(DFLocalVarList[varindex].varInstance) = DFVarInstanceIndex then
     begin
-      LogDatei.log('instance of var num: ' + IntToStr(varindex) + ' with index: ' +
-        IntToStr(DFVarInstanceIndex) + ' still exists.', LLError);
-      Result := False;
+      SetLength(DFLocalVarList[varindex].varInstance, DFVarInstanceIndex + 1);
+      DFLocalVarList[varindex].varInstance[DFVarInstanceIndex].VarValueList :=
+        TStringList.Create;
+      DFLocalVarList[varindex].varInstance[DFVarInstanceIndex].inuse := True;
+      Result := True;
     end
     else
-      Result := True;
-  end;
+    begin
+      if DFVarInstanceIndex > 0 then
+      begin
+        LogDatei.log('instance of var num: ' + IntToStr(varindex) +
+          ' with index: ' + IntToStr(DFVarInstanceIndex) + ' still exists.', LLError);
+        Result := False;
+      end
+      else
+        Result := True;
+    end;
+  end
+  else
+  ; // do nothing and wait for creatAllInstances
 end;
 
 function TOsDefinedFunction.createAllVarInstances: boolean;
@@ -1079,8 +1234,8 @@ begin
   end
   else
   begin
-    LogDatei.log('instance of var num: ' + IntToStr(varindex) + ' with index: ' +
-      IntToStr(DFVarInstanceIndex) + ' not exists.', LLError);
+    LogDatei.log('instance of var num: ' + IntToStr(varindex) +
+      ' with index: ' + IntToStr(DFVarInstanceIndex) + ' not exists.', LLError);
     Result := False;
   end;
 end;
@@ -1172,7 +1327,8 @@ begin
           else // this should be not the last parameter and we expect a ','
             GetWordOrStringConstant(inputstr, ParamStr, remaining, [',']);
           ParamStr := trim(ParamStr);
-          LogDatei.log('Paramnr: ' + IntToStr(paramcounter) + ' is : ' + ParamStr, LLDebug2);
+          LogDatei.log('Paramnr: ' + IntToStr(paramcounter) + ' is : ' +
+            ParamStr, LLDebug2);
           if DFparamList[paramcounter].callByReference then
           begin
             // call by reference
@@ -1184,8 +1340,8 @@ begin
                   // parameter type mismatch
                   syntax_ok := False;
                   errorstr :=
-                    errorstr + 'Error: String variable expected, but: ' + ParamStr +
-                    ' is not a visible string variable';
+                    errorstr + 'Error: String variable expected, but: ' +
+                    ParamStr + ' is not a visible string variable';
                 end
                 else
                 begin
@@ -1201,7 +1357,8 @@ begin
                       paramcounter].paramValueBuf.referencevarscopeindex := varindex;
                     //DFLocalVarList[paramcounter].varInstance[DFVarInstanceIndex].referencevarscopeindex := varindex;
                     LogDatei.log(
-                      'Paramnr: ' + IntToStr(paramcounter) + ' is a reference to local: ' + ParamStr, LLDebug2);
+                      'Paramnr: ' + IntToStr(paramcounter) +
+                      ' is a reference to local: ' + ParamStr, LLDebug2);
                   end
                   else if isVisibleGlobalStringVar(
                     ParamStr, varindex) then
@@ -1211,7 +1368,8 @@ begin
                       paramcounter].paramValueBuf.referencevarscopeindex := -1;
                     //DFLocalVarList[paramcounter].varInstance[DFVarInstanceIndex].referencevarscopeindex := -1;
                     LogDatei.log(
-                      'Paramnr: ' + IntToStr(paramcounter) + ' is a reference to global: ' + ParamStr, LLDebug2);
+                      'Paramnr: ' + IntToStr(paramcounter) +
+                      ' is a reference to global: ' + ParamStr, LLDebug2);
                   end
                   else
                   begin
@@ -1229,8 +1387,8 @@ begin
                   // parameter type mismatch
                   syntax_ok := False;
                   errorstr :=
-                    errorstr + 'Error: StringList expression expected, but: ' + ParamStr +
-                    ' gives no stringlist';
+                    errorstr + 'Error: StringList expression expected, but: ' +
+                    ParamStr + ' gives no stringlist';
                 end
                 else
                 begin
@@ -1246,8 +1404,8 @@ begin
                       paramcounter].paramValueBuf.referencevarscopeindex := varindex;
                     //DFLocalVarList[paramcounter].varInstance[DFVarInstanceIndex].referencevarscopeindex := varindex;
                     LogDatei.log(
-                      'Paramnr: ' + IntToStr(paramcounter) + ' is a reference to local stringlist: ' +
-                      ParamStr, LLDebug2);
+                      'Paramnr: ' + IntToStr(paramcounter) +
+                      ' is a reference to local stringlist: ' + ParamStr, LLDebug2);
                   end
                   else if isVisibleGlobalStringlistVar(ParamStr,
                     varindex) then
@@ -1257,8 +1415,8 @@ begin
                       paramcounter].paramValueBuf.referencevarscopeindex := -1;
                     //DFLocalVarList[paramcounter].varInstance[DFVarInstanceIndex].referencevarscopeindex := -1;
                     LogDatei.log(
-                      'Paramnr: ' + IntToStr(paramcounter) + ' is a reference to global stringlist: ' +
-                      ParamStr, LLDebug2);
+                      'Paramnr: ' + IntToStr(paramcounter) +
+                      ' is a reference to global stringlist: ' + ParamStr, LLDebug2);
                   end
                   else
                   begin
@@ -1276,13 +1434,14 @@ begin
             case DFparamList[paramcounter].paramDataType of
               dfpString:
               begin
-                if not Script.EvaluateString(
-                  ParamStr, r, paramstrvalue, errorstr, NestLevel, inDefFuncIndex) then
+                if not Script.EvaluateString(ParamStr, r,
+                  paramstrvalue, errorstr, NestLevel, inDefFuncIndex) then
                 begin
                   // parameter type mismatch
                   syntax_ok := False;
                   errorstr :=
-                    errorstr + 'Error: String expression expected, but: ' + ParamStr + ' gives no string';
+                    errorstr + 'Error: String expression expected, but: ' +
+                    ParamStr + ' gives no string';
                 end
                 else
                 begin
@@ -1298,13 +1457,14 @@ begin
               dfpStringlist:
               begin
                 if not Script.produceStringList(
-                  section, ParamStr, r, paramlistvalue, errorstr, NestLevel, inDefFuncIndex) then
+                  section, ParamStr, r, paramlistvalue, errorstr,
+                  NestLevel, inDefFuncIndex) then
                 begin
                   // parameter type mismatch
                   syntax_ok := False;
                   errorstr :=
-                    errorstr + 'Error: StringList expression expected, but: ' + ParamStr +
-                    ' gives no stringlist';
+                    errorstr + 'Error: StringList expression expected, but: ' +
+                    ParamStr + ' gives no stringlist';
                 end
                 else
                 begin
@@ -1393,9 +1553,10 @@ begin
   LogDatei.log('We are coming from function with index: ' + IntToStr(
     inDefFuncIndex) + ' (-1 = base)', LLDebug2);
   LogDatei.log('We enter the defined function: ' + DFName + ' with ' +
-    IntToStr(DFcontent.Count) + ' lines. inDefFuncLevel: ' + IntToStr(inDefFuncLevel), LLDebug2);
-  LogDatei.log_prog('paramline: ' + paramline + ' remaining: ' + remaining +
-    ' Nestlevel: ' + IntToStr(NestLevel), LLDebug2);
+    IntToStr(DFcontent.Count) + ' lines. inDefFuncLevel: ' +
+    IntToStr(inDefFuncLevel), LLDebug2);
+  LogDatei.log_prog('paramline: ' + paramline + ' remaining: ' +
+    remaining + ' Nestlevel: ' + IntToStr(NestLevel), LLDebug2);
   DFActive := True;
   //inc(inDefinedFuncNestCounter);
   //definedFunctionsCallStack.Append(InttoStr(DFIndex));
@@ -1413,7 +1574,8 @@ begin
   begin
     // inc var instance counter for recursive calls
     createAllVarInstances;
-    LogDatei.log_prog('DFVarInstanceIndex: ' + intToStr(DFVarInstanceIndex) + ' inDefinedFuncNestCounter: ' + intToStr(inDefinedFuncNestCounter), LLDebug);
+    LogDatei.log_prog('DFVarInstanceIndex: ' + IntToStr(DFVarInstanceIndex) +
+      ' inDefinedFuncNestCounter: ' + IntToStr(inDefinedFuncNestCounter), LLDebug);
     copyParamBufToLocalVars;
     definedFunctionsCallStack.Append(IntToStr(DFIndex));
     inDefFuncIndex := FuncIndex;
@@ -1442,14 +1604,18 @@ begin
     definedFunctionsCallStack.Delete(definedFunctionsCallStack.Count - 1);
     // dec var instance counter for recursive calls
     destroyAllVarInstances;
-    LogDatei.log_prog('DFVarInstanceIndex: ' + intToStr(DFVarInstanceIndex) + ' inDefinedFuncNestCounter: ' + intToStr(inDefinedFuncNestCounter), LLDebug);
+    LogDatei.log_prog('DFVarInstanceIndex: ' + IntToStr(DFVarInstanceIndex) +
+      ' inDefinedFuncNestCounter: ' + IntToStr(inDefinedFuncNestCounter), LLDebug);
   end;
   // we leave a defined function
-  // free the local Vars - leave params + $result$
-  case DFResultType of
-    dfpString: SetLength(DFLocalVarList, DFparamCount + 1);
-    dfpStringlist: SetLength(DFLocalVarList, DFparamCount + 1);
-    dfpVoid: SetLength(DFLocalVarList, DFparamCount); // no $result$ here
+  if DFVarInstanceIndex = -1 then
+  begin
+    // free the local Vars - leave params + $result$
+    case DFResultType of
+      dfpString: SetLength(DFLocalVarList, DFparamCount + 1);
+      dfpStringlist: SetLength(DFLocalVarList, DFparamCount + 1);
+      dfpVoid: SetLength(DFLocalVarList, DFparamCount); // no $result$ here
+    end;
   end;
 
 
@@ -1465,8 +1631,8 @@ begin
   else
     inDefFuncIndex := -1;
   //logdatei.log('We leave the defined function: inDefFunc3: '+IntToStr(inDefFunc3),LLInfo);
-  LogDatei.log('We leave the defined function: ' + DFName + ' ; inDefFuncLevel: ' +
-    IntToStr(inDefFuncLevel), LLDebug2);
+  LogDatei.log('We leave the defined function: ' + DFName +
+    ' ; inDefFuncLevel: ' + IntToStr(inDefFuncLevel), LLDebug2);
 end;
 
 (*
@@ -1523,23 +1689,34 @@ begin
   if varname <> '' then
   begin
     LogDatei.log_prog('Search local var: ' + varname + ' with inDefFuncIndex: ' +
-      IntToStr(inDefFuncIndex) + ' and inDefinedFuncNestCounter: ' + IntToStr(
-      inDefinedFuncNestCounter), LLDebug2);
+      IntToStr(inDefFuncIndex) + ' and inDefinedFuncNestCounter: ' +
+      IntToStr(inDefinedFuncNestCounter), LLDebug2);
     if inDefinedFuncNestCounter > 0 then
     begin
       // we are in a local function
       // first guess: it is local to the active local function
       LogDatei.log_prog('Search local var: ' + varname + ' with inDefFuncIndex: ' +
-        IntToStr(inDefFuncIndex) + ' and Name: ' + definedFunctionArray[inDefFuncIndex].Name,
+        IntToStr(inDefFuncIndex) + ' and Name: ' +
+        definedFunctionArray[inDefFuncIndex].Name,
         LLDebug2);
-      if definedFunctionArray[inDefFuncIndex].localVarExists(varname) then
+      if definedFunctionArray[inDefFuncIndex].localVarNameExists(varname) then
         found := True;
     end;
     if found then
     begin
-      index := inDefFuncIndex;
-      LogDatei.log_prog('Found var: ' + varname + ' as local (1) in function ' +
-        definedFunctionArray[index].Name + ' with index: ' + IntToStr(index), LLDebug2);
+      if definedFunctionArray[inDefFuncIndex].localVarExists(varname) then
+      begin
+        index := inDefFuncIndex;
+        LogDatei.log_prog('Found var: ' + varname + ' as local (1) in function ' +
+          definedFunctionArray[index].Name + ' with index: ' + IntToStr(index), LLDebug2);
+      end
+      else
+      begin
+        index := inDefFuncIndex;
+        LogDatei.log_prog('Found var: ' + varname +
+          ' as local (1) with no instance in function ' +
+          definedFunctionArray[index].Name + ' with index: ' + IntToStr(index), LLDebug2);
+      end;
     end
     else
     begin
@@ -1556,8 +1733,9 @@ begin
           if parentlist.IndexOf(definedFunctionArray[index].Name) >= 0 then
           begin
             // local variable of this function are visible (global to this function)
-            LogDatei.log_prog('Search local var: ' + varname + ' with Index: ' +
-              IntToStr(index) + ' and Name: ' + definedFunctionArray[index].Name, LLDebug2);
+            LogDatei.log_prog('Search local var: ' + varname +
+              ' with Index: ' + IntToStr(index) + ' and Name: ' +
+              definedFunctionArray[index].Name, LLDebug2);
             if (definedFunctionArray[index].Active and
               definedFunctionArray[index].localVarExists(varname)) then
               found := True;
@@ -1568,7 +1746,8 @@ begin
         until found or searchfinished;
         if found then
           LogDatei.log_prog('Found var: ' + varname + ' as local (2) in function ' +
-            definedFunctionArray[index].Name + ' with index: ' + IntToStr(index), LLDebug2);
+            definedFunctionArray[index].Name + ' with index: ' +
+            IntToStr(index), LLDebug2);
       end;
     end;
     Result := found;
@@ -1747,8 +1926,8 @@ begin
       lowercase(loopvar), dfpString, False) then
     begin
       LogDatei.log('Defined local string var: ' + lowercase(loopvar) +
-        ' in local function: ' + definedFunctionArray[funcindex].Name + ' with index: ' +
-        IntToStr(funcindex), LLDebug2);
+        ' in local function: ' + definedFunctionArray[funcindex].Name +
+        ' with index: ' + IntToStr(funcindex), LLDebug2);
       Result := True;
     end
     else
@@ -1769,7 +1948,8 @@ begin
     else
     if Script.listOfStringLists.IndexOf(LowerCase(loopvar)) >= 0 then
     begin
-      LogDatei.log('The loopvar: ' + loopvar + ' exists as stringlist var with the index: ' +
+      LogDatei.log('The loopvar: ' + loopvar +
+        ' exists as stringlist var with the index: ' +
         IntToStr(Script.listOfStringLists.IndexOf(LowerCase(loopvar))), LLError);
       errmesg := 'Existing variable must not be used als loop variable';
     end
@@ -1796,8 +1976,8 @@ begin
     if definedFunctionArray[funcindex].delLocalVar(lowercase(loopvar)) then
     begin
       LogDatei.log('Deleted local string var: ' + lowercase(loopvar) +
-        ' in local function: ' + definedFunctionArray[funcindex].Name + ' with index: ' +
-        IntToStr(funcindex), LLDebug2);
+        ' in local function: ' + definedFunctionArray[funcindex].Name +
+        ' with index: ' + IntToStr(funcindex), LLDebug2);
       Result := True;
     end
     else
@@ -1811,7 +1991,8 @@ begin
   begin
     if Script.VarList.IndexOf(LowerCase(loopvar)) < 0 then
     begin
-      LogDatei.log('The loopvar: ' + loopvar + ' not exists as string var with the index: ' +
+      LogDatei.log('The loopvar: ' + loopvar +
+        ' not exists as string var with the index: ' +
         IntToStr(Script.VarList.IndexOf(LowerCase(loopvar))), LLError);
       errmesg := 'Not Existing variable can not be deleted als loop variable';
     end
