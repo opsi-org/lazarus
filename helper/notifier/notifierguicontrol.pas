@@ -723,13 +723,21 @@ var
   mytmpstr: string;
   mytmpint1, mytmpint2: integer;
   choiceindex: integer;
+  tmpinistr : string;
+  tmpbool : boolean;
 begin
   if aktsection = 'Form' then
   begin
     nform.Color := myStringToTColor(myini.ReadString(aktsection, 'color', 'clWhite'));
     //Transparent = true
     // StayOnTop = true
-    if strToBool(myini.ReadString(aktsection, 'StayOnTop', 'false')) then
+    tmpinistr := myini.ReadString(aktsection, 'StayOnTop', 'false');
+    if not TryStrToBool(tmpinistr,tmpbool) then
+    begin
+     tmpbool := false;
+     LogDatei.log('Error: No valid boolean value for StayOnTop: ' + tmpinistr, LLError);
+    end;
+    if tmpbool then
     begin
       if mynotifierkind = 'event' then
       begin
@@ -745,8 +753,13 @@ begin
     else logdatei.log('FormStyle := fsNormal',LLDebug);
 
     //Frame = false
-    if not strToBool(myini.ReadString(aktsection, 'Frame', 'false')) then
-      nform.BorderStyle := bsNone;
+    tmpinistr := myini.ReadString(aktsection, 'Frame', 'false');
+    if not TryStrToBool(tmpinistr,tmpbool) then
+    begin
+     tmpbool := false;
+     LogDatei.log('Error: No valid boolean value for Frame: ' + tmpinistr, LLError);
+    end;
+    if not tmpbool then nform.BorderStyle := bsNone;
 
     //Resizable = false
     //Closeable = false
@@ -776,11 +789,28 @@ begin
       nform.Top := mytmpint2;
     end;
     //Hidden = false
-    hidden := strToBool(myini.ReadString(aktsection, 'Hidden', 'false'));
+    tmpinistr := myini.ReadString(aktsection, 'Hidden', 'false');
+    if not TryStrToBool(tmpinistr,hidden) then
+    begin
+     hidden := false;
+     LogDatei.log('Error: No valid boolean value for hidden: ' + tmpinistr, LLError);
+    end;
     //FadeIn = true
-    fadein := strToBool(myini.ReadString(aktsection, 'FadeIn', 'false'));
+    //fadein := strToBool(myini.ReadString(aktsection, 'FadeIn', 'false'));
+    tmpinistr := myini.ReadString(aktsection, 'FadeIn', 'false');
+    if not TryStrToBool(tmpinistr,fadein) then
+    begin
+     fadein := false;
+     LogDatei.log('Error: No valid boolean value for fadein: ' + tmpinistr, LLError);
+    end;
     //FadeOut = true
-    fadeout := strToBool(myini.ReadString(aktsection, 'FadeOut', 'false'));
+    //fadeout := strToBool(myini.ReadString(aktsection, 'FadeOut', 'false'));
+    tmpinistr := myini.ReadString(aktsection, 'FadeOut', 'false');
+    if not TryStrToBool(tmpinistr,fadeout) then
+    begin
+     fadeout := false;
+     LogDatei.log('Error: No valid boolean value for fadeout: ' + tmpinistr, LLError);
+    end;
     //SlideIn = up
     slidein := myini.ReadString(aktsection, 'SlideIn', '');
     //SlideOut = down
@@ -792,7 +822,13 @@ begin
     if FileExists(mytmpstr) then
       nform.Icon.LoadFromFile(mytmpstr);
     //Transparent = true
-    transparent := strToBool(myini.ReadString(aktsection, 'Transparent', 'false'));
+    //transparent := strToBool(myini.ReadString(aktsection, 'Transparent', 'false'));
+    tmpinistr := myini.ReadString(aktsection, 'Transparent', 'false');
+    if not TryStrToBool(tmpinistr,transparent) then
+    begin
+     transparent := false;
+     LogDatei.log('Error: No valid boolean value for transparent: ' + tmpinistr, LLError);
+    end;
     //TransparentColor = 255,0,255
     if transparent then
     begin

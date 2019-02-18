@@ -1,55 +1,56 @@
 object Form1: TForm1
-  Left = 52
+  Left = 2951
   Height = 650
-  Top = 256
-  Width = 842
+  Top = 221
+  Width = 695
   Caption = 'opsi-doc-generator'
   ClientHeight = 650
-  ClientWidth = 842
-  DesignTimePPI = 140
+  ClientWidth = 695
+  DesignTimePPI = 144
   OnCreate = FormCreate
-  LCLVersion = '1.8.2.0'
+  Position = poDefault
+  LCLVersion = '1.8.4.0'
   object Panel1: TPanel
     Left = 0
     Height = 120
     Top = 0
-    Width = 842
+    Width = 695
     Align = alTop
     ClientHeight = 120
-    ClientWidth = 842
+    ClientWidth = 695
     TabOrder = 0
     object ButtonOpen: TButton
       Left = 24
-      Height = 48
+      Height = 25
       Top = 8
-      Width = 192
+      Width = 120
       Caption = 'Open source file'
       OnClick = ButtonOpenClick
       TabOrder = 0
     end
     object ButtonSave: TButton
-      Left = 488
-      Height = 33
+      Left = 432
+      Height = 25
       Top = 72
-      Width = 163
+      Width = 155
       Caption = 'Save Asciidoc'
       OnClick = ButtonSaveClick
       TabOrder = 1
     end
     object ButtonConvert: TButton
-      Left = 248
-      Height = 33
+      Left = 208
+      Height = 25
       Top = 72
-      Width = 200
-      Caption = 'Convert to asciidoc'
+      Width = 160
+      Caption = 'Opsiscript to Asciidoc'
       OnClick = ButtonConvertClick
       TabOrder = 2
     end
     object Bsave_ascii_show: TButton
-      Left = 288
-      Height = 48
+      Left = 168
+      Height = 25
       Top = 8
-      Width = 480
+      Width = 272
       Caption = 'Convert to asciidoc - save - to html -show '
       OnClick = Bsave_ascii_showClick
       TabOrder = 3
@@ -89,17 +90,17 @@ object Form1: TForm1
     Left = 325
     Height = 530
     Top = 120
-    Width = 517
+    Width = 370
     Align = alClient
     Caption = 'Panel3'
     ClientHeight = 530
-    ClientWidth = 517
+    ClientWidth = 370
     TabOrder = 3
     object Memo2: TMemo
       Left = 1
       Height = 528
       Top = 1
-      Width = 515
+      Width = 368
       Align = alClient
       Lines.Strings = (
         'Memo2'
@@ -107,6 +108,15 @@ object Form1: TForm1
       ScrollBars = ssAutoBoth
       TabOrder = 0
     end
+  end
+  object ButtonPythonConvert: TButton
+    Left = 32
+    Height = 38
+    Top = 64
+    Width = 158
+    Caption = 'Python to Asciidoc'
+    OnClick = ButtonPythonConvertClick
+    TabOrder = 4
   end
   object OpenDialog1: TOpenDialog
     left = 568

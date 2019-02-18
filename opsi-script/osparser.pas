@@ -102,6 +102,9 @@ LazFileUtils,
   osxmlsections,
   osxml;
   osparserhelper,
+  osnetworkcalculator,
+  osregex,
+  osurlparser,
   LAZUTF8;
 
 
@@ -10543,6 +10546,7 @@ var
   int64_2 : int64;
   list1 : TXStringList;
   list2 : TXStringList;
+  list3 : TXStringList;
   slist : TStringList;
   inifile: TuibIniScript;
   localSection : TWorkSection;
@@ -11078,6 +11082,20 @@ begin
        End;
    End
 
+
+   else if LowerCase (s) = LowerCase ('parseUrl')
+   then
+   begin
+    if Skip ('(', r, r, InfoSyntaxError) then
+     if EvaluateString (r, r, s1, InfoSyntaxError) then
+       if Skip (')', r,r, InfoSyntaxError) then
+       Begin
+          syntaxCheck := true;
+          list.clear;
+          list.AddStrings(parseUrl(s1));
+       End;
+   End
+
    else if LowerCase (s) = LowerCase ('jsonAsArrayToStringList')
    then
    begin
@@ -11380,6 +11398,137 @@ begin
     End
    End
 
+   else if LowerCase (s) = LowerCase ('getSubListByContainingRegex')
+   then
+   begin
+    if Skip ('(', r, r1, InfoSyntaxError)
+    then
+    Begin
+      if EvaluateString (r1, r, s1, InfoSyntaxError)
+        and skip (',', r, r, InfoSyntaxError) then
+      Begin
+        list1 := TXStringList.create;
+        if produceStringList (section,r, r, list1, InfoSyntaxError)
+           and skip (')', r, r, InfoSyntaxError) then
+        Begin
+          syntaxcheck := true;
+          list.clear;
+          list.AddStrings(getSubListByContainingRegex(s1,list1));
+          list1.Free;
+          list1 := nil;
+        End
+      End
+      else
+      Begin
+        list2 := TXStringList.create;
+        if produceStringList(section,r1, r, list2, InfoSyntaxError)
+           and skip (',', r, r, InfoSyntaxError) then
+           Begin
+             list3 := TXStringList.create;
+             if produceStringList (section,r, r, list3, InfoSyntaxError)
+                and skip (')', r, r, InfoSyntaxError) then
+             Begin
+               syntaxcheck := true;
+               list.clear;
+               list.AddStrings(getSubListByContainingRegex(list2,list3));
+               list2.Free;
+               list2 := nil;
+               list3.Free;
+               list3 := nil;
+             End
+           End
+      End
+    End
+   End
+
+   else if LowerCase (s) = LowerCase ('getRegexMatchList')
+   then
+   begin
+    if Skip ('(', r, r1, InfoSyntaxError)
+    then
+    Begin
+      if EvaluateString (r1, r, s1, InfoSyntaxError)
+        and skip (',', r, r, InfoSyntaxError) then
+      Begin
+        list1 := TXStringList.create;
+        if produceStringList (section,r, r, list1, InfoSyntaxError)
+           and skip (')', r, r, InfoSyntaxError) then
+        Begin
+          syntaxcheck := true;
+           list.clear;
+           list.AddStrings(getRegexMatchList(s1,list1));
+           list1.Free;
+           list1 := nil;
+        End
+      End
+      else
+      Begin
+        list2 := TXStringList.create;
+        if produceStringList(section,r1, r, list2, InfoSyntaxError)
+           and skip (',', r, r, InfoSyntaxError) then
+           Begin
+             list3 := TXStringList.create;
+             if produceStringList (section,r, r, list3, InfoSyntaxError)
+                and skip (')', r, r, InfoSyntaxError) then
+             Begin
+               syntaxcheck := true;
+               list.clear;
+               list.AddStrings(getRegexMatchList(list2,list3));
+               list2.Free;
+               list2 := nil;
+               list3.Free;
+               list3 := nil;
+             End
+           End
+      End
+    End
+   End
+
+
+   else if LowerCase (s) = LowerCase ('removeFromListByContainingRegex')
+   then
+   begin
+    if Skip ('(', r, r1, InfoSyntaxError)
+    then
+    Begin
+      if EvaluateString (r1, r, s1, InfoSyntaxError)
+        and skip (',', r, r, InfoSyntaxError) then
+      Begin
+        list1 := TXStringList.create;
+        if produceStringList (section,r, r, list1, InfoSyntaxError)
+           and skip (')', r, r, InfoSyntaxError) then
+        Begin
+          syntaxcheck := true;
+           list.clear;
+           list.AddStrings(removeFromListByContainingRegex(s1,list1));
+           list1.Free;
+           list1 := nil;
+        End
+      End
+      else
+      Begin
+        list2 := TXStringList.create;
+        if produceStringList(section,r1, r, list2, InfoSyntaxError)
+           and skip (',', r, r, InfoSyntaxError) then
+           Begin
+             list3 := TXStringList.create;
+             if produceStringList (section,r, r, list3, InfoSyntaxError)
+                and skip (')', r, r, InfoSyntaxError) then
+             Begin
+               syntaxcheck := true;
+               list.clear;
+               list.AddStrings(removeFromListByContainingRegex(list2,list3));
+               list2.Free;
+               list2 := nil;
+               list3.Free;
+               list3 := nil;
+             End
+           End
+      End
+    End
+   End
+
+
    else if LowerCase (s) = LowerCase ('getSubListByContaining')
    then
    begin
@@ -11598,6 +11747,28 @@ begin
                    end
                  end;
                End;
+      list1.Free;
+      list1 := nil;
+    End
+   End
+
+   else if LowerCase (s) = LowerCase ('stringReplaceRegexInList')
+   then
+   begin
+    if Skip ('(', r, r, InfoSyntaxError) then
+    Begin
+      list1 := TXStringList.create;
+      if produceStringList (section,r, r, list1, InfoSyntaxError) then
+       if Skip (',', r,r, InfoSyntaxError) then
+         if EvaluateString (r,r, s1, InfoSyntaxError) then
+            if Skip (',', r,r, InfoSyntaxError) then
+             if EvaluateString (r,r, s2, InfoSyntaxError) then
+              if Skip (')', r,r, InfoSyntaxError) then
+              Begin
+                syntaxCheck := true;
+                 list.clear;
+                 list.AddStrings(stringReplaceRegexInList(list1, s1, s2));
+              End;
       list1.Free;
       list1 := nil;
     End
@@ -13357,7 +13528,6 @@ begin
  End
 
 
-
  else if LowerCase (s) = LowerCase ('GetHostsName') then
  Begin
    if Skip ('(', r, r, InfoSyntaxError)
@@ -13487,7 +13657,25 @@ begin
    End;
  End
 
-
+ else if LowerCase (s) = LowerCase ('getDefaultNetmaskByIP4adr') then
+ Begin
+   if Skip ('(', r, r, InfoSyntaxError)
+    then if EvaluateString (r, r, s1, InfoSyntaxError)
+   then if Skip (')', r, r, InfoSyntaxError)
+   then
+   Begin
+     if getDefaultNetmaskByIP4adr(s1) = '' then
+     begin
+       StringResult :=  '';
+       Logdatei.log('Error: '+s1+' is not a valid IPv4 Address', LLerror);
+     end
+     else
+     begin
+       syntaxCheck := true;
+       StringResult := getDefaultNetmaskByIP4adr(s1)
+     end;
+   End;
+ End
 
  else if LowerCase (s) =  LowerCase ('GetIni') then
  Begin
@@ -14730,9 +14918,6 @@ begin
    end;
  end
 
-
-
-
   else if LowerCase (s) = LowerCase ('jsonStringListToJsonArray')
  then
  begin
@@ -14768,6 +14953,29 @@ begin
     End
  End
 
+ else if LowerCase (s) = LowerCase ('createUrl')
+ then
+ begin
+    if Skip ('(', r, r, InfoSyntaxError)
+    then
+    Begin
+       syntaxcheck := true;
+       stringresult := '';
+       list1 := TXStringList.create;
+       if not produceStringList (script, r, r, list1, InfoSyntaxError)
+         or not Skip (')', r,r, InfoSyntaxError)
+       then
+            syntaxCheck := false
+       else
+       Begin
+        syntaxCheck := true;
+        StringResult := createUrl(list1);
+       End;
+       list1.Free;
+       list1 := nil;
+    End
+ End
+
   else if LowerCase (s) = LowerCase ('getStringFromListAtIndex') then
   begin
     if Skip ('(', r, r, InfoSyntaxError)
@@ -14787,8 +14995,6 @@ begin
        end;
     end;
   end
-
-
 
  else if LowerCase (s) = LowerCase ('RandomStr') then
  begin
@@ -14851,6 +15057,28 @@ begin
 
     DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
     FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
+   end;
+ end
+
+ else if LowerCase (s) = LowerCase ('getIP4NetworkByAdrAndMask') then
+ begin
+   if Skip ('(', r, r, InfoSyntaxError)
+     and EvaluateString(r,r,s1, InfoSyntaxError)
+     and Skip(',', r, r, InfoSyntaxError)
+     and EvaluateString(r,r,s2, InfoSyntaxError)
+     and Skip (')', r, r, InfoSyntaxError)
+   then
+   begin
+    if getIP4NetworkByAdrAndMask(s1,s2) = '' then
+    begin
+     StringResult :=  '';
+     Logdatei.log('Error: Invalid inputs. ' + s1 + ' or ' + s2 + ' is invalid', LLerror);
+    end
+    else
+    begin
+      syntaxCheck := true;
+      StringResult := getIP4NetworkByAdrAndMask(s1,s2)
+    end;
    end;
  end
 
@@ -15026,6 +15254,22 @@ begin
             syntaxCheck := true;
             StringResult := StringReplace1(s1,s2,s3);
             if (StringResult = NULL_STRING_VALUE)  then  StringResult := s1;
+          End
+ End
+
+ else if LowerCase (s) = LowerCase ('stringReplaceRegex')
+ then
+ begin
+  if Skip ('(', r, r, InfoSyntaxError) then
+   if EvaluateString (r, r, s1, InfoSyntaxError) then
+     if Skip (',', r,r, InfoSyntaxError) then
+      if EvaluateString (r,r, s2, InfoSyntaxError) then
+        if Skip (',', r,r, InfoSyntaxError) then
+         if EvaluateString (r,r, s3, InfoSyntaxError) then
+          if Skip (')', r,r, InfoSyntaxError) then
+          Begin
+            syntaxCheck := true;
+            StringResult := stringReplaceRegex(s1,s2,s3);
           End
  End
 
@@ -16967,6 +17211,52 @@ begin
    end;
  End
 
+ else if Skip ('isRegexMatch', Input, r, sx)
+ then
+ begin
+   if Skip ('(', r, r, InfoSyntaxError)
+   then if EvaluateString (r, r, s1, InfoSyntaxError)
+   then if Skip (',', r, r, InfoSyntaxError)
+   then if EvaluateString (r, r, s2, InfoSyntaxError)
+   then if Skip (')', r, r, InfoSyntaxError)
+   then
+   Begin
+     syntaxCheck := true;
+     BooleanResult := isRegexMatch(s1,s2);
+   end;
+ End
+
+ else if Skip ('isValidIP4Network', Input, r, sx)
+ then
+ begin
+   if Skip ('(', r, r, InfoSyntaxError)
+   then if EvaluateString (r, r, s1, InfoSyntaxError)
+   then if Skip (',', r, r, InfoSyntaxError)
+   then if EvaluateString (r, r, s2, InfoSyntaxError)
+   then if Skip (')', r, r, InfoSyntaxError)
+   then
+   Begin
+     syntaxCheck := true;
+     BooleanResult := isValidIP4Network(s1,s2);
+   end;
+ End
+
+
+ else if Skip ('isValidIP4Host', Input, r, sx)
+ then
+ begin
+   if Skip ('(', r, r, InfoSyntaxError)
+   then if EvaluateString (r, r, s1, InfoSyntaxError)
+   then if Skip (',', r, r, InfoSyntaxError)
+   then if EvaluateString (r, r, s2, InfoSyntaxError)
+   then if Skip (')', r, r, InfoSyntaxError)
+   then
+   Begin
+     syntaxCheck := true;
+     BooleanResult := isValidIP4Host(s1,s2);
+   end;
+ End
+
  else if Skip ('waitForPackageLock', Input, r, sx)
  then
  begin
@@ -17105,6 +17395,25 @@ begin
     end;
  end
 
+
+ else if Skip ('isValidIP4', Input, r, InfoSyntaxError)
+ then
+ begin
+    if Skip ('(', r, r, InfoSyntaxError)
+    then if EvaluateString (r, r, s1, InfoSyntaxError)
+    then if Skip (')', r, r, InfoSyntaxError)
+    then
+    Begin
+      syntaxCheck := true;
+      try
+        BooleanResult := isValidIP4(s1);
+      except
+        BooleanResult := false;
+      end
+    end;
+ end
+
+
  else if Skip ('isConfidential', Input, r, InfoSyntaxError)
  then
  begin
@@ -17121,7 +17430,6 @@ begin
       end
     end;
  end
-
 
  else if Skip ('isValidUtf8String', Input, r, InfoSyntaxError)
  then

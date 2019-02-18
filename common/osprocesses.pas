@@ -1,4 +1,4 @@
-unit ockunique;
+unit osprocesses;
 
 {$mode delphi}
 

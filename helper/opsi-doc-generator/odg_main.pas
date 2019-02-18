@@ -12,14 +12,17 @@ uses
   elfreader, // {needed for reading ELF executables}
   FileUtil,
   odg_os_deffunc,
+  odg_py_deffunc,
   oslog,
   odg_asciidoc,
+  odg_pyasciidoc,
   process,
   LCLIntf,
   Classes,
   SysUtils;
 
 function convertOslibToAsciidoc(filename : string): boolean;
+function convertPylibToAsciidoc(filename : string): boolean;
 function save_compile_show(filename : string) : boolean;
 
 
@@ -29,13 +32,18 @@ var
   myversion : string;
   FileVerInfo : TFileVersionInfo;
 
-
 implementation
 
 function convertOslibToAsciidoc(filename : string): boolean;
 begin
   result := parseInput_opsiscriptlibrary(filename);
   writeDocToList;
+end;
+
+function convertPylibToAsciidoc(filename : string): boolean;
+begin
+  result := parseInput_pythonlibrary(filename);
+  writePyDocToList;
 end;
 
 function writeToAsciidocFile(infilename : string) : string;
@@ -127,9 +135,6 @@ begin
   else
     OpenDocument(ExtractFileNameWithoutExt(asciidocfile)+'.html');
 end;
-
-
-
 
 initialization
   sourcelist := TStringlist.create;

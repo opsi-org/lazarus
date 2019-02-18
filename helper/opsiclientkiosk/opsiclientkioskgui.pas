@@ -7,12 +7,6 @@
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 494 $
-// $Author: oertel $
-// $Date: 2016-08-31 18:26:25 +0200 (Mi, 31 Aug 2016) $
-//***************************************************************************
 
 
 unit opsiclientkioskgui;
@@ -23,10 +17,7 @@ interface
 
 uses
   Classes, SysUtils, DB,
-  //FileUtil,
   ExtendedNotebook,
-  //ZMConnection,
-  //ZMQueryDataSet,
   Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
   Buttons, ComCtrls, Grids, DBGrids, DBCtrls, ockdata, CommCtrl,
   BufDataset, typinfo, installdlg, lcltranslator, ActnList, oslog, inifiles,
@@ -39,7 +30,6 @@ type
     LabelId: TLabel;
     LabelName: TLabel;
     LabelState: TLabel;
-    //RadioGroupAction: TRadioGroup;
     RadioGroupAction: TGroupbox;
     rbsetup: TRadiobutton;
     rbNone: TRadiobutton;
@@ -47,10 +37,7 @@ type
     lbsetup: TLabel;
     lbnone: TLabel;
     lbuninstall: TLabel;
-    //iconsetup: Timage;
-    //Button1: TButton;
 
-    //    procedure Button1Click(Sender: TObject);
     procedure TileActionChanged(Sender: TObject);
     procedure ProductTileClick(Sender: TObject);
     procedure ProductTileChildClick(Sender: TObject);
@@ -58,14 +45,10 @@ type
       MousePos: TPoint; var Handled: boolean);
   private
     { private declarations }
-    //FidCaption : String;
-    //function getIdCaption : string;
-    //procedure setIdCaption(str: string);
   public
     { public declarations }
     constructor Create(TheOwner: TWincontrol);
     destructor Destroy;
-    //property idCaption: string read getIdCaption write setIdCaption;
   end;
 
   TPanels = array of TProductPanel;
@@ -659,24 +642,6 @@ begin
       else if action = 'uninstall' then
         ProductTilesArray[counter].rbuninstall.Checked := True;
 
-    (*
-    ProductTilesArray[counter].RadioGroupAction.Items.Add(rsActNone);
-    ProductTilesArray[counter].RadioGroupAction.Items.Add(rsActSetup);
-    action := Trim(ockdata.ZMQUerydataset1.FieldByName('possibleAction').AsString);
-    if (action <> '') and (action <> 'setup') then
-      ProductTilesArray[counter].RadioGroupAction.Items.Add(actionRequestToLocale(action));
-    action := Trim(ockdata.ZMQUerydataset1.FieldByName('actionrequest').AsString);
-    index := 0;
-    index := ProductTilesArray[counter].RadioGroupAction.Items.IndexOf(actionRequestToLocale(action));
-    ProductTilesArray[counter].RadioGroupAction.ItemIndex := index;
-    //ProductTilesArray[counter].RadioGroupAction.ItemIndex := 0;
-    *)
-    (*
-    //button
-    ProductTilesArray[0].Button1.Caption :=
-      ZMQueryDataSet1.FieldByName('ProductId').AsString;
-    *)
-
       ProductTilesArray[counter].Tag := counter;
       Inc(counter);
       FopsiClientKiosk.ProgressbarDetail.Position := counter;
@@ -696,11 +661,7 @@ begin
 end;
 
 procedure Tmythread2.Execute;
-//var
-//counter: integer;
-//i : integer;
 begin
-  //counter := 0;
   // write back action requests
   ockdata.ZMQUerydataset1.Filtered := False;
   ockdata.ZMQUerydataset1.Filter := 'ActionRequest  <> ""';
@@ -711,81 +672,10 @@ begin
     ockdata.setActionrequest(ZMQUerydataset1.FieldByName('ProductId').AsString,
       ZMQUerydataset1.FieldByName('ActionRequest').AsString);
     ZMQUerydataset1.Next;
-    //Inc(counter);
-    //FopsiClientKiosk.Progressbar1.Position := counter;
-    //Application.ProcessMessages;
   end;
   Terminate;
 end;
 
-
-(*
-//http://wiki.freepascal.org/How_to_write_in-memory_database_applications_in_Lazarus/FPC#Sorting_DBGrid_on_TitleClick_event_for_TBufDataSet
-function SortBufDataSet(DataSet: TBufDataSet; const FieldName: string): boolean;
-var
-  i: integer;
-  IndexDefs: TIndexDefs;
-  IndexName: string;
-  IndexOptions: TIndexOptions;
-  Field: TField;
-begin
-  Result := False;
-  Field := DataSet.Fields.FindField(FieldName);
-  //If invalid field name, exit.
-  if Field = nil then
-    Exit;
-  //if invalid field type, exit.
-  if {(Field is TObjectField) or} (Field is TBlobField) or
-    {(Field is TAggregateField) or} (Field is TVariantField) or
-    (Field is TBinaryField) then
-    Exit;
-  //Get IndexDefs and IndexName using RTTI
-  if IsPublishedProp(DataSet, 'IndexDefs') then
-    IndexDefs := GetObjectProp(DataSet, 'IndexDefs') as TIndexDefs
-  else
-    Exit;
-  if IsPublishedProp(DataSet, 'IndexName') then
-    IndexName := GetStrProp(DataSet, 'IndexName')
-  else
-    Exit;
-  //Ensure IndexDefs is up-to-date
-  IndexDefs.Updated := False;
-  {<<<<---This line is critical as IndexDefs.Update will do nothing on the next sort if it's already true}
-  IndexDefs.Update;
-  //If an ascending index is already in use,
-  //switch to a descending index
-  if IndexName = FieldName + '__IdxA' then
-  begin
-    IndexName := FieldName + '__IdxD';
-    IndexOptions := [ixDescending];
-  end
-  else
-  begin
-    IndexName := FieldName + '__IdxA';
-    IndexOptions := [];
-  end;
-  //Look for existing index
-  for i := 0 to Pred(IndexDefs.Count) do
-  begin
-    if IndexDefs[i].Name = IndexName then
-    begin
-      Result := True;
-      Break;
-    end;  //if
-  end; // for
-  //If existing index not found, create one
-  if not Result then
-  begin
-    if IndexName = FieldName + '__IdxD' then
-      DataSet.AddIndex(IndexName, FieldName, IndexOptions, FieldName)
-    else
-      DataSet.AddIndex(IndexName, FieldName, IndexOptions);
-    Result := True;
-  end; // if not
-  //Set the index
-  SetStrProp(DataSet, 'IndexName', IndexName);
-end;
-*)
 
 { TFopsiClientKiosk }
 
@@ -848,8 +738,6 @@ var
   direction: string;
 begin
   try
-    //ockdata.ZMQUerydataset1.SortDataset(Column.FieldName);
-    //SortBufDataSet(TBufDataset(ockdata.ZMQUerydataset1), Column.FieldName);
     if ZMQueryDataSet1.Active then
       ZMQueryDataSet1.Close;
     ZMQUerydataset1.SQL.Clear;
@@ -872,7 +760,6 @@ begin
     ZMQUerydataset1.SQL.Add('select * from kioskmaster order by ' +
       Column.FieldName + direction);
     ZMQUerydataset1.Open;
-
   except
   end;
 end;
@@ -981,14 +868,6 @@ begin
   //ockdata.ZMQueryDataSet1.Post;
 end;
 
-(*
-procedure TFopsiClientKiosk.BtnActionClick(Sender: TObject);
-begin
-  ZMQueryDataSet1.Edit;
-  ZMQueryDataSet1.FieldByName('actionrequest').AsString := BtnAction.Caption;
-  ZMQueryDataSet1.Post;
-end;
-*)
 
 procedure TFopsiClientKiosk.BitBtnShowActionClick(Sender: TObject);
 var
@@ -1021,17 +900,8 @@ begin
   begin
     screen.Cursor := crHourGlass;
     try
-    (*
-    ProgressBar1.Max := 100;
-    ProgressBar1.Min := 0;
-    ProgressBar1.Style:=pbstMarquee;
-    ProgressBar1.Enabled:=true;
-    ProgressBar1.Visible:=true;
-    *)
       ProcessMess;
       mythread := Tmythread2.Create(False);
-      //mythread.Priority:=tpLowest;
-      //mythread.Resume;
       mythread.WaitFor;
 
       begin
@@ -1189,12 +1059,6 @@ begin
   Application.ProcessMessages;
 end;
 
-(*
-procedure TFopsiClientKiosk.grouplistSelectionChange(Sender: TObject; User: boolean);
-begin
-
-end;
-*)
 
 procedure TFopsiClientKiosk.reloadDataFromServer;
 var
@@ -1370,10 +1234,6 @@ procedure TFopsiClientKiosk.FilterOnSearch;
 var
   Filtercond, Filterstr: string;
 begin
-  // search in list
-  //ockdata.ZMQUerydataset1.SQL.Text:='select * from kiosk where ProductId like %'+searchedit.Text+'%;';
-  //ockdata.ZMQUerydataset1.QueryExecute;
-  //LogDatei.log('Filter for: '+searchedit.Text,LLinfo);
   if searchedit.Text = '' then
   begin
     Filtercond := '"*"';
