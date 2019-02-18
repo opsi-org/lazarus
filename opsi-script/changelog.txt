@@ -41,6 +41,7 @@ opsi-winst/opsi-script (4.12.0.36) stable; urgency=low
   * osparser: fix in md5sumfromfile (Linux)
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 13 Feb 2019:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.0.35) stable; urgency=low
 
   * osparser: producestringlist: getsublist: with whitespaces around numbers
@@ -48,7 +49,6 @@ opsi-winst/opsi-script (4.12.0.35) stable; urgency=low
   * oswebservice: getMapOfLoginscripts2Run: allscripts=false:
       we want to run the login script if installed
       or last successful action was uninstall
-
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 15 Jan 2019:15:00:00 +0200
 

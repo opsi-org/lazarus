@@ -564,7 +564,7 @@ function getProfilesDirList: TStringList;
 function opsiunquotestr(s1,s2 : string): string;
 
 function cmdLineInputDialog(var inputstr : string; const message, default : string; confidential : boolean) : boolean;
-function isValidUtf8String(str:string) : boolean;
+//function isValidUtf8String(str:string) : boolean;
 //function getFixedUtf8String(str:string) : string;
 function posFromEnd(const substr : string; const s : string) : integer;
 
@@ -740,11 +740,13 @@ begin
     result := len - (posi-1);
 end;
 
+(*
 function isValidUtf8String(str:string) : boolean;
 begin
   if FindInvalidUTF8Codepoint(PChar(str), Length(str)) <> -1 then result := false
   else result := true;
 end;
+*)
 
 (*
 function getFixedUtf8String(str:string) : string;
@@ -787,7 +789,7 @@ begin
   Result.Text := fCES.UTF8Text;
   fCES.Free;
 end;
-*)
+
 
 function stringListLoadUnicodeFromList(inlist: Tstringlist): TStringList;
 var

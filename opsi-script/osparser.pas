@@ -43,9 +43,6 @@ VersionInfoX,
 {$IFNDEF WIN64}
 oslocaladmin,
 {$ENDIF WIN64}
-osswaudit,
-DOM,
-oswmi,
 {$ENDIF}
 {$IFDEF UNIX}
 lispecfolder,
@@ -97,10 +94,11 @@ LazFileUtils,
   opsihwbiosinfo,
   osjson,
   oscrypt,
-
+  osswaudit,
   DOM,
+  oswmi,
   osxmlsections,
-  osxml;
+  osxml,
   osparserhelper,
   osnetworkcalculator,
   osregex,
@@ -17431,6 +17429,7 @@ begin
     end;
  end
 
+ (*
  else if Skip ('isValidUtf8String', Input, r, InfoSyntaxError)
  then
  begin
@@ -17447,7 +17446,7 @@ begin
       end
     end;
  end
-
+*)
 
  else if Skip ('processIsRunning', Input, r, InfoSyntaxError)
  then
