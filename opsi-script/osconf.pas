@@ -26,7 +26,7 @@ uses
 {$IFDEF GUI}
   Forms,
 {$ENDIF GUI}
-{$IFDEF LINUX}
+{$IFDEF UNIX}
   fileinfo,
   //, winpeimagereader {need this for reading exe info}
   elfreader, // {needed for reading ELF executables}
@@ -78,11 +78,11 @@ const
   {$IFDEF WINDOWS}
   ParamDelim = '/';
   opsiscriptconfinit = 'opsi-script.conf';
-  {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
+  {$ENDIF }
+  {$IFDEF UNIX}
   ParamDelim = '-';
   opsiscriptconfinit = '/etc/opsi-script/opsi-script.conf';
-  {$ENDIF LINUX}
+  {$ENDIF }
 
   WinstRegHive = 'HKLM';
   WinstRegKey: string = 'SOFTWARE\opsi.org\winst';
@@ -117,7 +117,7 @@ var
   vi: TVersionInfo;
   regist: TRegistry;
   {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   FileVerInfo: TFileVersionInfo;
   {$ENDIF LINUX}
   WinstVersion: string;
@@ -155,7 +155,7 @@ implementation
 
 uses
   {$IFDEF WINDOWS}osfunc,{$ENDIF}
-  {$IFDEF LINUX}osfunclin,{$ENDIF}
+  {$IFDEF UNIX}osfunclin,{$ENDIF}
   oswebservice,
   osjson,
   osmain;
@@ -209,10 +209,10 @@ begin
   myconf.Free;
 
 
-{$IFDEF LINUX}
+{$IFDEF UNIX}
   computername := getHostnameLin;
 {$ENDIF LINUX}
-  //{$IFDEF LINUX} computername := ''; {$ENDIF LINUX}//
+  //{$IFDEF UNIX} computername := ''; {$ENDIF LINUX}//
   Result := True;
   depoturl := '';
   //configurl := '';
@@ -233,10 +233,10 @@ begin
   {$IFDEF WINDOWS}
   depotdrive := 'p:';
 {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   depotdrive_old := '/mnt';
 {$ENDIF LINUX}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   depotdrive := '/media/opsi_depot';
 {$ENDIF LINUX}
 

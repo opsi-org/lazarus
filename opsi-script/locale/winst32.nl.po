@@ -58,14 +58,11 @@ msgid "Ready to continue ?"
 msgstr ""
 
 #: oswebservice.rssendlog
-#, fuzzy
-#| msgid "Log bestand naar de server sturen..."
-msgctxt "oswebservice.rssendlog"
 msgid "Sending log file to server ..."
-msgstr "Sende Logdatei zum Server ...."
+msgstr ""
 
 #: tcentralform.beenden1.caption
-msgctxt "TCENTRALFORM.BEENDEN1.CAPTION"
+msgctxt "tcentralform.beenden1.caption"
 msgid "Exit"
 msgstr ""
 
@@ -82,7 +79,6 @@ msgid "Show GUI"
 msgstr ""
 
 #: tcentralform.caption
-msgctxt "tcentralform.caption"
 msgid "  opsi - script"
 msgstr ""
 
@@ -111,7 +107,6 @@ msgid "Info .."
 msgstr ""
 
 #: tcentralform.label1.caption
-msgctxt "tcentralform.label1.caption"
 msgid "Label1"
 msgstr ""
 
@@ -128,7 +123,7 @@ msgid "Script:"
 msgstr ""
 
 #: tcentralform.label6.caption
-msgctxt "TCENTRALFORM.LABEL6.CAPTION"
+msgctxt "tcentralform.label6.caption"
 msgid "LabelWinstVersion"
 msgstr ""
 
@@ -137,7 +132,7 @@ msgid "-"
 msgstr ""
 
 #: tcentralform.labelwinstversion.caption
-msgctxt "TCENTRALFORM.LABELWINSTVERSION.CAPTION"
+msgctxt "tcentralform.labelwinstversion.caption"
 msgid "LabelWinstVersion"
 msgstr ""
 
@@ -174,109 +169,11 @@ msgid "Hide GUI"
 msgstr ""
 
 #: tcentralform.speedbutton5.caption
-msgctxt "TCENTRALFORM.SPEEDBUTTON5.CAPTION"
+msgctxt "tcentralform.speedbutton5.caption"
 msgid "Exit"
 msgstr ""
 
 #: tcentralform.toolbar1.caption
 msgid "ToolBar1"
-msgstr ""
-
-#: tdialogservicepassword.cancelbutton.caption
-msgid "Cancel"
-msgstr ""
-
-#: tdialogservicepassword.caption
-msgid " DialogServicePassword"
-msgstr ""
-
-#: tdialogservicepassword.labelpassword.caption
-msgid "Password"
-msgstr ""
-
-#: tdialogservicepassword.labelserviceurl.caption
-msgid "Opsi Service URL"
-msgstr ""
-
-#: tdialogservicepassword.labelusername.caption
-msgid "Username"
-msgstr ""
-
-#: tdialogservicepassword.okbutton.caption
-msgid "o.k."
-msgstr ""
-
-#: tfbatchoberflaeche.caption
-msgctxt "tfbatchoberflaeche.caption"
-msgid "opsi-script"
-msgstr ""
-
-#: tfbatchoberflaeche.labelcommand.caption
-msgid "Command"
-msgstr ""
-
-#: tfbatchoberflaeche.labeldetail.caption
-msgid "Detail"
-msgstr ""
-
-#: tfbatchoberflaeche.labelinfo.caption
-msgid "Info"
-msgstr ""
-
-#: tfbatchoberflaeche.labelproduct.caption
-msgid "LabelProductImage"
-msgstr ""
-
-#: tfbatchoberflaeche.labelprogress.caption
-msgid "Activity"
-msgstr ""
-
-#: tfbatchoberflaeche.labelversion.caption
-msgid "LabelVersion"
-msgstr ""
-
-#: tflistedit.caption
-msgid "opsi-script Parameter Editor"
-msgstr ""
-
-#: tflistedit.label1.caption
-msgid "Please Check and Correct the "
-msgstr ""
-
-#: tmymessagedlg.abortbtn.caption
-msgid "&Exit"
-msgstr ""
-
-#: tmymessagedlg.cancelbtn.caption
-msgid "&Cancel"
-msgstr ""
-
-#: tmymessagedlg.caption
-msgid "opsi-script Message"
-msgstr ""
-
-#: tmymessagedlg.nobtn.caption
-msgid "&No"
-msgstr ""
-
-#: tmymessagedlg.okbtn.caption
-msgid "&OK"
-msgstr ""
-
-#: tmymessagedlg.yesbtn.caption
-msgid "&Yes"
-msgstr ""
-
-#: tsysteminfo.caption
-msgid "SystemInfo"
-msgstr ""
-
-#: tsysteminfo.label1.caption
-msgctxt "tsysteminfo.label1.caption"
-msgid "Label1"
-msgstr ""
-
-#: tsysteminfo.labelwindowid.caption
-msgid "Do not localize: Window SystemInfo"
 msgstr ""
 

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="10"/>
+    <Version Value="11"/>
     <General>
       <SessionStorage Value="InIDEConfig"/>
       <MainUnit Value="0"/>
       <Title Value="opsi-script"/>
+      <Scaled Value="True"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
       <XPManifest>
@@ -21,12 +22,18 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
-      <BuildNr Value="36"/>
-      <StringTable Comments="Compiled with Lazarus 1.8.4" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.1.0"/>
+      <RevisionNr Value="1"/>
+      <StringTable Comments="Compiled with Lazarus 1.2.0" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.1.0"/>
     </VersionInfo>
+    <MacroValues Count="1">
+      <Macro1 Name="LCLWidgetType" Value="cocoa"/>
+    </MacroValues>
     <BuildModes Count="3">
       <Item1 Name="default" Default="True"/>
       <Item2 Name="Debug">
+        <MacroValues Count="1">
+          <Macro1 Name="LCLWidgetType" Value="cocoa"/>
+        </MacroValues>
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -51,7 +58,6 @@
               <OverflowChecks Value="True"/>
               <StackChecks Value="True"/>
             </Checks>
-            <TargetOS Value="linux"/>
             <SmallerCode Value="True"/>
           </CodeGeneration>
           <Linking>
@@ -67,20 +73,14 @@
             <CompilerMessages>
               <IgnoredMessages idx5058="True" idx5027="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dOPSIWINST
--dOPSISCRIPT
--dGUI
--dOSDEBUG"/>
-            <OtherDefines Count="4">
-              <Define0 Value="OPSIWINST"/>
-              <Define1 Value="OPSISCRIPT"/>
-              <Define2 Value="GUI"/>
-              <Define3 Value="OSDEBUG"/>
-            </OtherDefines>
+            <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT -dGUI -dOSDEBUG"/>
           </Other>
         </CompilerOptions>
       </Item2>
       <Item3 Name="Release">
+        <MacroValues Count="1">
+          <Macro1 Name="LCLWidgetType" Value="cocoa"/>
+        </MacroValues>
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -99,7 +99,6 @@
           </Parsing>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
-            <TargetOS Value="linux"/>
             <Optimizations>
               <OptimizationLevel Value="3"/>
             </Optimizations>
@@ -108,6 +107,7 @@
           <Linking>
             <Debugging>
               <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf3"/>
               <StripSymbols Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
@@ -123,17 +123,18 @@
           </Other>
         </CompilerOptions>
       </Item3>
+      <SharedMatrixOptions Count="1">
+        <Item1 ID="387245367018" Modes="Debug,Release,default" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
+      </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
-      <IgnoreBinaries Value="False"/>
-      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
-      <ExcludeFileFilter Value="*.(bak|ppu|ppw|o|so);*~;backup"/>
     </PublishOptions>
     <RunParams>
-      <local>
-        <FormatVersion Value="1"/>
-      </local>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
     </RunParams>
     <RequiredPackages Count="2">
       <Item1>
@@ -143,7 +144,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="34">
+    <Units Count="35">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -203,7 +204,7 @@
         <IsPartOfProject Value="True"/>
       </Unit12>
       <Unit13>
-        <Filename Value="osfunclin.pas"/>
+        <Filename Value="osfuncmac.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit13>
       <Unit14>
@@ -299,6 +300,10 @@
         <Filename Value="../common/osparserhelper.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit33>
+      <Unit34>
+        <Filename Value="osfunclin.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit34>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -324,14 +329,12 @@
         <OverflowChecks Value="True"/>
         <StackChecks Value="True"/>
       </Checks>
-      <TargetOS Value="linux"/>
       <SmallerCode Value="True"/>
     </CodeGeneration>
     <Linking>
       <Debugging>
-        <GenerateDebugInfo Value="False"/>
+        <DebugInfoType Value="dsDwarf3"/>
         <StripSymbols Value="True"/>
-        <UseExternalDbgSyms Value="True"/>
       </Debugging>
       <LinkSmart Value="True"/>
     </Linking>

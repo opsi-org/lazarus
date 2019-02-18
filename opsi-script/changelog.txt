@@ -4,6 +4,16 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
+
+opsi-winst/opsi-script (4.12.1.0) stable; urgency=low
+
+  * osparser: new (undocumented) command 'setDebug_prog = (true/false)'
+  * osparser: new function GetMacosVersionInfo : string
+  * osparser: new function getMacosVersionMap : stringlist
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 23 01 2019:15:00:00 +0200
+
+
 opsi-winst/opsi-script (4.12.0.36) stable; urgency=low
 
   * osdefinedfunctions: better errormessages
@@ -13,7 +23,6 @@ opsi-winst/opsi-script (4.12.0.36) stable; urgency=low
   * osparser: fix in md5sumfromfile (Linux)
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 13 Feb 2019:15:00:00 +0200
-
 opsi-winst/opsi-script (4.12.0.35) stable; urgency=low
 
   * osparser: producestringlist: getsublist: with whitespaces around numbers

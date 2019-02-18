@@ -36,9 +36,9 @@ uses
   oscalc,
   custapp,
   //unicodestringmanager,
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   osfunclin,
-  {$ENDIF LINUX}
+  {$ENDIF }
   osconf, opsihwbiosinfo;
 
 
