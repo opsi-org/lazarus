@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rootnode>
+    <node_level-1_number-1>
+        <node_level-2_A color="blue">Hello World</node_level-2_A>
+	
+        <node_level-2_B color="green" count="65">
+        </node_level-2_B>
+	
+        <node_level-2_C>
+        </node_level-2_C>
+    </node_level-1_number-1>
+    
+    <node_level-1_number-2>
+    </node_level-1_number-2>
+</rootnode>

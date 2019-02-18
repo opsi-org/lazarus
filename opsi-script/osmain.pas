@@ -95,7 +95,7 @@ Controls,
 LCLIntf,
 Menus, Buttons, ComCtrls,
 LResources,
-lcltranslator,
+//lcltranslator,
 {$ENDIF GUI}
   osencoding,
   osconf,
@@ -2799,7 +2799,7 @@ begin
               ProgramMode := pmInfo;
               exit;
             end;
-            SetDefaultLang(r);
+//            SetDefaultLang(r);
             Inc(i);
           end
           else
@@ -3022,7 +3022,7 @@ initialization
   opsiserviceSessionId := '';
   {$IFDEF GUI}
   try
-    GetDefaultLang;
+//    GetDefaultLang;
   except
   end;
   {$ENDIF GUI}

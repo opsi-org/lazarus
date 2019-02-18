@@ -1,19 +1,7 @@
 Memo1
-{"params": [[
-{"severity": 0, "title": "", "id": "status", "message": "Verarbeite Ereignis on_demand", "type": "", "class": "MessageSubject"}, 
-{"severity": 0, "title": "", "id": "message", "message": "", "type": "", "class": "MessageSubject"}, 
-{"severity": 0, "title": "", "id": "configServiceUrl", "message": "", "type": "", "class": "MessageSubject"}, 
-{"severity": 0, "title": "", "id": "clientId", "message": "pctry4detlef.uib.local", "type": "", "class": "MessageSubject"}, 
-{"severity": 0, "title": "", "id": "actionProcessorInfo", "message": "", "type": "", "class": "MessageSubject"}, 
-{"severity": 0, "title": "", "id": "opsiclientdInfo", "message": "opsiclientd 4.0.90", "type": "", "class": "MessageSubject"}, 
-{"end": 0, "severity": 0, "title": "", "timeLeft": 0, "speed": 0, "percent": 0, "id": "detail", "state": 0, "timeSpend": 0, "message": "", "type": "", "class": "MessageSubjectProxy"}, 
-{"end": 0, "severity": 0, "title": "", "timeLeft": 0, "speed": 0, "percent": 0, "id": "currentProgress", "state": 0, "timeSpend": 0, "message": "", "type": "", "class": "ProgressSubjectProxy"}, 
-{"end": 0, "severity": 0, "title": "", "timeLeft": 0, "speed": 0, "percent": 0, "id": "overallProgress", "state": 0, "timeSpend": 0, "message": "", "type": "", "class": "ProgressSubjectProxy"}
-]], "id": null, "method": "subjectsChanged"}
+{"params": [[{"severity": 0, "title": "", "id": "status", "message": "Verarbeite Ereignis on_demand", "type": "", "class": "MessageSubject"}, {"severity": 0, "title": "", "id": "message", "message": "", "type": "", "class": "MessageSubject"}, {"severity": 0, "title": "", "id": "configServiceUrl", "message": "", "type": "", "class": "MessageSubject"}, {"severity": 0, "title": "", "id": "clientId", "message": "pctry4detlef.uib.local", "type": "", "class": "MessageSubject"}, {"severity": 0, "title": "", "id": "actionProcessorInfo", "message": "", "type": "", "class": "MessageSubject"}, {"severity": 0, "title": "", "id": "opsiclientdInfo", "message": "opsiclientd 4.0.90", "type": "", "class": "MessageSubject"}, {"end": 0, "severity": 0, "title": "", "timeLeft": 0, "speed": 0, "percent": 0, "id": "detail", "state": 0, "timeSpend": 0, "message": "", "type": "", "class": "MessageSubjectProxy"}, {"end": 0, "severity": 0, "title": "", "timeLeft": 0, "speed": 0, "percent": 0, "id": "currentProgress", "state": 0, "timeSpend": 0, "message": "", "type": "", "class": "ProgressSubjectProxy"}, {"end": 0, "severity": 0, "title": "", "timeLeft": 0, "speed": 0, "percent": 0, "id": "overallProgress", "state": 0, "timeSpend": 0, "message": "", "type": "", "class": "ProgressSubjectProxy"}]], "id": null, "method": "subjectsChanged"}
 1 --------------------------------------------------
-{"params": [
-{"severity": 0, "title": "", "id": "actionProcessorInfo", "message": "opsi-script 4.11.6.12", "type": "", "class": "MessageSubject"}, 
-"opsi-script 4.11.6.12"], "id": null, "method": "messageChanged"}
+{"params": [{"severity": 0, "title": "", "id": "actionProcessorInfo", "message": "opsi-script 4.11.6.12", "type": "", "class": "MessageSubject"}, "opsi-script 4.11.6.12"], "id": null, "method": "messageChanged"}
 2 --------------------------------------------------
 {"params": [{"severity": 0, "title": "", "id": "message", "message": "Starte die Bearbeitung von Produkt-Aktionen. Sie k\u00f6nnen diese Aktion insgesamt 5 mal abbrechen. Die Aktion wurde bereits 0 mal abgebrochen.", "type": "", "class": "MessageSubject"}, "Starte die Bearbeitung von Produkt-Aktionen. Sie k\u00f6nnen diese Aktion insgesamt 5 mal abbrechen. Die Aktion wurde bereits 0 mal abgebrochen."], "id": null, "method": "messageChanged"}
 3 --------------------------------------------------
@@ -27,15 +15,7 @@ Memo1
 7 --------------------------------------------------
 
 8 --------------------------------------------------
-{"params": [[
-{"severity": 0, "title": "", "id": "status", "message": "Verarbeite Ereignis on_demand", "type": "", "class": "MessageSubject"}, 
-{"severity": 0, "title": "", "id": "message", "message": "Starte die Bearbeitung von Produkt-Aktionen. Sie k\u00f6nnen diese Aktion insgesamt 5 mal abbrechen. Die Aktion wurde bereits 0 mal abgebrochen.", "type": "", "class": "MessageSubject"}, {"severity": 0, "title": "", "id": "configServiceUrl", "message": "", "type": "", "class": "MessageSubject"}, 
-{"severity": 0, "title": "", "id": "clientId", "message": "pctry4detlef.uib.local", "type": "", "class": "MessageSubject"}, 
-{"severity": 0, "title": "", "id": "actionProcessorInfo", "message": "opsi-script 4.11.6.12", "type": "", "class": "MessageSubject"}, 
-{"severity": 0, "title": "", "id": "opsiclientdInfo", "message": "opsiclientd 4.0.90", "type": "", "class": "MessageSubject"}, 
-{"end": 0, "severity": 0, "title": "", "timeLeft": 0, "speed": 0, "percent": 0, "id": "detail", "state": 0, "timeSpend": 0, "message": "", "type": "", "class": "MessageSubjectProxy"}, 
-{"end": 0, "severity": 0, "title": "", "timeLeft": 0, "speed": 0, "percent": 0, "id": "currentProgress", "state": 0, "timeSpend": 0, "message": "", "type": "", "class": "ProgressSubjectProxy"}, {"end": 0, "severity": 0, "title": "", "timeLeft": 0, "speed": 0, "percent": 0, "id": "overallProgress", "state": 0, "timeSpend": 0, "message": "", "type": "", "class": "ProgressSubjectProxy"}
-]], "id": null, "method": "subjectsChanged"}
+{"params": [[{"severity": 0, "title": "", "id": "status", "message": "Verarbeite Ereignis on_demand", "type": "", "class": "MessageSubject"}, {"severity": 0, "title": "", "id": "message", "message": "Starte die Bearbeitung von Produkt-Aktionen. Sie k\u00f6nnen diese Aktion insgesamt 5 mal abbrechen. Die Aktion wurde bereits 0 mal abgebrochen.", "type": "", "class": "MessageSubject"}, {"severity": 0, "title": "", "id": "configServiceUrl", "message": "", "type": "", "class": "MessageSubject"}, {"severity": 0, "title": "", "id": "clientId", "message": "pctry4detlef.uib.local", "type": "", "class": "MessageSubject"}, {"severity": 0, "title": "", "id": "actionProcessorInfo", "message": "opsi-script 4.11.6.12", "type": "", "class": "MessageSubject"}, {"severity": 0, "title": "", "id": "opsiclientdInfo", "message": "opsiclientd 4.0.90", "type": "", "class": "MessageSubject"}, {"end": 0, "severity": 0, "title": "", "timeLeft": 0, "speed": 0, "percent": 0, "id": "detail", "state": 0, "timeSpend": 0, "message": "", "type": "", "class": "MessageSubjectProxy"}, {"end": 0, "severity": 0, "title": "", "timeLeft": 0, "speed": 0, "percent": 0, "id": "currentProgress", "state": 0, "timeSpend": 0, "message": "", "type": "", "class": "ProgressSubjectProxy"}, {"end": 0, "severity": 0, "title": "", "timeLeft": 0, "speed": 0, "percent": 0, "id": "overallProgress", "state": 0, "timeSpend": 0, "message": "", "type": "", "class": "ProgressSubjectProxy"}]], "id": null, "method": "subjectsChanged"}
 9 --------------------------------------------------
 
 10 --------------------------------------------------

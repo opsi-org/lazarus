@@ -23,7 +23,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
       <RevisionNr Value="1"/>
-      <StringTable Comments="Compiled with Lazarus 1.2.0" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.1.0"/>
+      <StringTable Comments="Compiled with Lazarus 1.6.4" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.0.7 / 4.1"/>
     </VersionInfo>
     <MacroValues Count="1">
       <Macro1 Name="LCLWidgetType" Value="cocoa"/>
@@ -282,28 +282,17 @@
         <IsPartOfProject Value="True"/>
       </Unit29>
       <Unit30>
-        <Filename Value="osdefinedfunctions.pas"/>
+        <Filename Value="../common/osxmlsections.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit30>
       <Unit31>
-        <Filename Value="changelog.txt"/>
+        <Filename Value="../common/osxmltdom.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit31>
       <Unit32>
-        <Filename Value="oslistedit.pas"/>
+        <Filename Value="../common/osxml.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="FListedit"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
       </Unit32>
-      <Unit33>
-        <Filename Value="../common/osparserhelper.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit33>
-      <Unit34>
-        <Filename Value="osfunclin.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit34>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -369,14 +358,8 @@
         <Name Value="EReadError"/>
       </Item6>
       <Item7>
-        <Name Value="EInvalidGraphic"/>
+        <Name Value="EListError"/>
       </Item7>
-      <Item8>
-        <Name Value="ERangeError"/>
-      </Item8>
-      <Item9>
-        <Name Value="RunError(201)"/>
-      </Item9>
     </Exceptions>
   </Debugging>
 </CONFIG>

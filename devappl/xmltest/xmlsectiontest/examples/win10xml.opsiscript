@@ -1,0 +1,30 @@
+[actions]
+setloglevel=8
+DefVAR $path$
+DefVar $orgfile$
+defVar $tmpfile$
+
+set $orgfile$ = "%scriptpath%/unattend_win10_x64.xml"
+set $tmpfile$ = "%opsiTmpDir%/unattend_win10_x64.xml"
+files_temp
+
+set $path$ ='settings pass="windowsPE" // component name="Microsoft-Windows-Setup" // DiskConfiguration // Disk wcm:action="add" // ModifyPartitions'
+
+xml2_test $tmpfile$
+
+[files_temp]
+copy "$orgfile$" "%opsiTmpDir%"
+
+[xml2_test]
+opennode [$path$]
+setNodeText '***new node text***'
+SetAttribute 'name1' 'value1'
+AddAttribute 'name2' 'value2'
+AddAttribute 'name2' 'value1'
+AddAttribute 'name3' 'value3'
+delAttribute 'name3'
+
+[stop]
+/home/detlef/tmp/opsi-winst-test/branches/4.11.6/CLIENT_DATA/test-files/xmlpatch2/win10xml.opsiscript
+
+

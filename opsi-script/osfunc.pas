@@ -80,7 +80,7 @@ LCLProc,
   process,
   SysUtils,
   Classes,
-  charencstreams,
+  //charencstreams, removed for Lazarus 1.8
   osconf,
   oslog,
   osparserhelper,
@@ -561,7 +561,6 @@ function strContains(const str: string; const substr: string): boolean;
 function createNewOpsiHostKey: string;
 function getProfilesDirList: TStringList;
 //function stringListLoadUtf8FromFile(filename: string): TStringList;
-//function stringListLoadUnicodeFromList(inlist: Tstringlist): TStringList;
 function opsiunquotestr(s1,s2 : string): string;
 
 function cmdLineInputDialog(var inputstr : string; const message, default : string; confidential : boolean) : boolean;
@@ -628,11 +627,10 @@ const
   WordDelimiterSetHosts = [' ', '#', #9];
   WordDelimiterSetDBAlias = [':', '='];
   WordDelimiterSet1 = [' ', #9, '=', '[', ']', '(', ')', '"', '''', ',', '+'];
-  WordDelimiterSet3 = [' ', #9, '=', '[', ']', '(', ')', '"', '''', ',', '+', ':'];
   WordDelimiterSet2 = [' ', #9, '"', ''''];
+  WordDelimiterSet3 = [' ', #9, '=', '[', ']', '(', ')', '"', '''', ',', '+', ':'];
   WordDelimiterSet4 = [' ', #9, '=', '[', ']', '('];
-  WordDelimiterSet5 = [' ', #9, '('];
-  WordDelimiterSet6 = [')',','];
+  WordDelimiterSet5 = ['"', ''''];
   WordDelimiterWhiteSpace = [' ', #9];
   *)
   (*
@@ -775,7 +773,7 @@ begin
 end;
 
 (*
-
+// removed for Lazarus 1.8
 function stringListLoadUtf8FromFile(filename: string): TStringList;
 var
   fCES: TCharEncStream;
@@ -789,6 +787,7 @@ begin
   Result.Text := fCES.UTF8Text;
   fCES.Free;
 end;
+*)
 
 function stringListLoadUnicodeFromList(inlist: Tstringlist): TStringList;
 var

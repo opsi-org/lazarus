@@ -4,9 +4,27 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.1.0) experimental; urgency=low
 
-opsi-winst/opsi-script (4.12.1.0) stable; urgency=low
-
+  * integration of new xml functions:
+    * new units in common: osxml, osxmltdom, osxmlsections
+    * new section type xml2
+    * osparser: Tuibinstscript: new method doxml2patch:
+      * OpenNode <node path : string>
+      * DeleteNode <node path : string>
+      * setNodeText <text : string>
+      * setAttribute <name : string>, <value:string>
+      * addAttribute <name : string>, <value:string>
+      * delAttribute <name : string>
+      * adNewNode <name : string>
+      * gotoParentNode
+    * getXml2AttributeValueByKey(<xml node:stringlist>,<key:string>): string
+    * getXml2Text(<xml node:stringlist>) : string
+    * getXml2DocumentFromFile(<filename:string>) : <xml-doc:stringlist>
+    * getXml2Document(<pure xml :stringlist>) : <xml-doc:stringlist>
+    * getXml2UniqueChildnodeByName
+    * xml2GetFirstChildNodeByName(<xml-doc:stringlist>,<node name:string>) : <xml node:stringlist>
+    * xml2NodeExistsByPathInXMLFile(myfilename, path: string; attributes_strict: boolean): boolean;
   * osparser: new (undocumented) command 'setDebug_prog = (true/false)'
   * osparser: new function GetMacosVersionInfo : string
   * osparser: new function getMacosVersionMap : stringlist
