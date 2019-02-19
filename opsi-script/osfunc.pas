@@ -80,7 +80,7 @@ LCLProc,
   process,
   SysUtils,
   Classes,
-  //charencstreams, removed for Lazarus 1.8
+  charencstreams,
   osconf,
   oslog,
   osparserhelper,
@@ -10115,4 +10115,4 @@ end;
 
 
 end.
-*)
+
