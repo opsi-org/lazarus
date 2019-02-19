@@ -104,7 +104,7 @@ var
     var
       W: real;
     begin
-      try
+     // try
         W := Factor;
         while Z in ['*', '/'] do
           if z = '*' then
@@ -117,14 +117,17 @@ var
             w := w / Factor;
           end;
         Term := w;
+        (*
       except
         on E: Exception do
         begin
           //Result := False;
           //strresult := E.Message;
           LogDatei.log('Error in opsicalc: ' + E.Message, LLError);
+          raise;
         end;
       end;
+      *)
     end;
 
   begin
@@ -163,8 +166,9 @@ begin
     on E: Exception do
     begin
       Result := False;
-      strresult := E.Message;
-      LogDatei.DependentAdd('Error in opsicalc: ' + E.Message, LLError);
+      //strresult := E.Message;
+      strresult := '';
+      LogDatei.log('Error in opsicalc: ' + E.Message, LLError);
     end;
   end;
 end;
