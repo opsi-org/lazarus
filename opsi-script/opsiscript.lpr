@@ -22,7 +22,8 @@ program opsiscript;
 
 
 uses
-  lcltranslator, {$IFDEF UNIX} {$IFDEF UseCThreads}
+  //lcltranslator,
+  {$IFDEF UNIX} {$IFDEF UseCThreads}
   cthreads, {$ENDIF} {$ENDIF}
   Classes,
   ///LCLIntf,

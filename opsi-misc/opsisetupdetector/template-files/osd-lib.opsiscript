@@ -28,15 +28,15 @@ DefFunc checkForMsiProduct($msiId$ : string) : string
   ;@Example     	comment "product not installed"
   ;@Example     endif
   
-  $result = "false"
+  set $result$ = "false"
 
   if not(getRegistryValue("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + $MsiId$, "DisplayName", "32bit") = "")
   	comment "MSI id " + $MsiId$ + " found in 32 bit registry"
-  	$result = "true"
+  	set $result$ = "true"
   endif
   if not(getRegistryValue("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + $MsiId$, "DisplayName", "64bit") = "")
   	comment "MSI id " + $MsiId$ + " found in 64 bit registry"
-  	$result = "true"
+  	set $result$ = "true"
   endif
 EndFunc
 ; ###################################################################################################
@@ -61,7 +61,7 @@ DefFunc get_licensekey_byPool($LicensePool$ : string) : string
   
   DefVar $ServiceErrorClass$
   
-  $result = ""
+  set $result$ = ""
 
   if opsiLicenseManagementEnabled
      comment "License management is enabled and will be used"

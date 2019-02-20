@@ -96,9 +96,9 @@ uses
   oslog, osparser, osfunc,
   Menus, Buttons, ComCtrls,
   //IdSysLog,
+  lcltranslator,
   strutils,
-  inifiles,
-  lcltranslator;
+  inifiles;
 
 type
 

@@ -95,7 +95,7 @@ Controls,
 LCLIntf,
 Menus, Buttons, ComCtrls,
 LResources,
-lcltranslator,
+//lcltranslator,
 {$ENDIF GUI}
   osencoding,
   osconf,
@@ -1542,8 +1542,7 @@ begin
   begin
     LogDatei.LogProduktId:=true;
     i := 1;
-    while (i <= Produkte.Count) and (PerformExitWindows < txrReboot) and
-      not PerformExitProgram do
+    while (i <= Produkte.Count) do
     begin
       Produkt := Produkte.Strings[i - 1];
       scriptMode := tsmLogin;
@@ -2800,7 +2799,7 @@ begin
               ProgramMode := pmInfo;
               exit;
             end;
-            SetDefaultLang(r);
+//            SetDefaultLang(r);
             Inc(i);
           end
           else
@@ -3023,7 +3022,7 @@ initialization
   opsiserviceSessionId := '';
   {$IFDEF GUI}
   try
-    GetDefaultLang;
+//    GetDefaultLang;
   except
   end;
   {$ENDIF GUI}

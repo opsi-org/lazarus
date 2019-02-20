@@ -4111,11 +4111,6 @@ begin
   productondepotmap := TStringList.Create;
   //LogDatei.LogLevel := LLdebug2;
 
-  // we need to know which products are installed
-  omc := TOpsiMethodCall.Create('productOnClient_getObjects',
-    ['', '{"clientId": "' + actualClient + '", "productType": "LocalbootProduct"}']);
-  resultList := FjsonExecutioner.getListResult(omc);
-  omc.Free;
 
   // we need to know which products have a login script
   omc := TOpsiMethodCall.Create('product_getObjects',
@@ -4177,22 +4172,37 @@ begin
 
   if not allscripts then
   begin
-    // get from all installed products only these which have login script and fill FProductStates
+    // get productOnClient for actual Client and all localboot products
+    omc := TOpsiMethodCall.Create('productOnClient_getObjects',
+      ['', '{"clientId": "' + actualClient + '", "productType": "LocalbootProduct"}']);
+    resultList := FjsonExecutioner.getListResult(omc);
+    omc.Free;
 
     if resultList <> nil then
       for i := 0 to resultList.Count - 1 do
       begin
         productEntry := SO(resultlist.Strings[i]);
+
         //LogDatei.log (productEntry.S['productId']+'='+loginscriptmap.Values[productEntry.S['productId']]+'<', LLessential);
         //if (productEntry.O['productId'] <> nil) and (productEntry.S['installationStatus'] = 'installed') then
+        (*
         if (productEntry.O['productId'] <> nil) and
           (((productEntry.S['actionResult'] = 'successful') and
           ((productEntry.S['lastAction'] = 'setup') or
           (productEntry.S['lastAction'] = 'uninstall')))) then
+          *)
+
+        // changed 15.1.2019 do
+        // we want to run the login script if installed ......
+        if ((productEntry.O['productId'] <> nil)
+              and (productEntry.S['installationStatus'] = 'installed'))
+        // or last successful action was uninstall
+           or ((productEntry.S['actionResult'] = 'successful')
+              and (productEntry.S['lastAction'] = 'uninstall')) then
         begin
           if loginscriptmap.Values[productEntry.S['productId']] <> '' then
           begin
-            // product is in productOnClient, so let us read the states
+            // product loginsript should run, so let us read the states
             Result.add(productEntry.S['productId']);
             FProductStates.Add(productEntry.S['productId'] + '=' +
               productEntry.S['installationStatus']);
@@ -4202,7 +4212,8 @@ begin
         end;
       end;
   end;
-  productondepotmap.Free;
+  freeandnil(productondepotmap);
+  freeandnil(loginscriptmap);
 end;
 
 

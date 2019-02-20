@@ -14,6 +14,16 @@ opsi_client_systray  4.1.0.0
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 28 Mar 2018:15:00:00 +0200
 
+opsi_client_systray  4.0.7.3
+
+  * oslog: changed logging to c:\opsi.org\applog
+  * DataModuleCreate: initlogging: logfilename := 'systray-' + GetUserName_ ;
+  * DataModuleCreate: setlogvel to 7
+  * DataModuleCreate: check for opsiclientd
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 05 Dec 2017:15:00:00 +0200
+
+
 opsi_client_systray  4.0.7.2
 
   * enhanced language detection

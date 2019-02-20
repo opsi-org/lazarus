@@ -14,7 +14,9 @@ uses
   winpeimagereader,
   superobject,
   lcltranslator,
-  windows;
+  windows,
+  osprocesses,
+  jwawinbase;
 
 type
 
@@ -54,6 +56,25 @@ resourcestring
 implementation
 
 {$R *.lfm}
+
+{:Returns user name of the current thread.
+  @author  Miha-R, Lee_Nover
+  @since   2002-11-25
+}
+function GetUserName_: string;
+var
+  buffer: PChar;
+  bufferSize: DWORD;
+begin
+  bufferSize := 256; //UNLEN from lmcons.h
+  buffer := AllocMem(bufferSize * SizeOf(char));
+  try
+    GetUserName(buffer, bufferSize);
+    Result := string(buffer);
+  finally
+    FreeMem(buffer, bufferSize);
+  end;
+end; { DSiGetUserName }
 
 function GetSystemDefaultLocale(const typeOfValue: DWord): string;
   // possible values: cf. "Locale Types" in windows.pas
@@ -382,7 +403,8 @@ begin
 
   // Initialize logging
   LogDatei := TLogInfo.Create;
-  lfilename := ExtractFileNameOnly(Application.ExeName);
+  //lfilename := ExtractFileNameOnly(Application.ExeName);
+  lfilename := 'systray-'+ GetUserName_ ;
   //LogDatei.FileName := lfilename;
   LogDatei.StandardLogFileext := '.log';
   LogDatei.StandardLogFilename := lfilename;
@@ -405,7 +427,16 @@ begin
   LogDatei.log('Log for: ' + Application.exename + ' opend at : ' +
     DateTimeToStr(now), LLinfo);
 
-  LogDatei.LogLevel := 8;
+  LogDatei.LogLevel := 7;
+  // is opsiclientd running ?
+  if numberOfProcessInstances('opsiclientd') < 1 then
+  begin
+    LogDatei.log('opsiclientd is not running - so we abort', LLCritical);
+    LogDatei.Close;
+    ShowMessage('opsiclientd is not running - so we abort');
+    halt(1);
+  end;
+
 
   TrayIcon1.PopUpMenu := PopupMenu1;
   trayIcon1.Show;

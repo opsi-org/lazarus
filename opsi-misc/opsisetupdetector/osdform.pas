@@ -4,21 +4,14 @@ unit osdform;
 //{$MODE DELPHI}{$H+}
 
 
-
-// ToDo:
-
-// - Description auslesen
-// - Eingaben prüfen
-
 interface
 
 uses
+
   {$IFDEF WINDOWS}
   Windows,
-  ShlObj,
   {$ENDIF WINDOWS}
   Classes, SysUtils, FileUtil, RTTICtrls, RTTIGrids,
-  //SynEdit, SynMemo,
   Forms, Controls, Graphics,
   LCLType,
   Dialogs, ExtCtrls,
@@ -26,18 +19,24 @@ uses
   Buttons,
   ComCtrls,
   Menus,
-  Registry,
-  Strings,
+  //Registry,
+  //Strings,
   StrUtils,
-  //VersionInfoX,
-  Process,
+  //Process,
   typinfo,
   CustApp,
-  //htmlview,
-  //help,
-  fileinfo, osdhelper, osdanalyze, winpeimagereader, lcltranslator, EditBtn,
-  Spin, JSONPropStorage, Grids, PairSplitter,
-  oslog, osdbasedata, osdconfigdlg, osdcreate, fpjsonrtti, osddlgnewdependency,
+  fileinfo,
+  //osdhelper,
+  osdanalyze,
+  winpeimagereader,
+  lcltranslator,
+  EditBtn,
+  //Spin,
+  //JSONPropStorage,
+  Grids,
+  PairSplitter,
+  oslog,
+  osdbasedata, osdconfigdlg, osdcreate, fpjsonrtti, osddlgnewdependency,
   osddlgnewproperty, osparserhelper;
 
 type
@@ -267,12 +266,6 @@ type
     procedure setRunMode;
     procedure BitBtnClose1Click(Sender: TObject);
     procedure BtAnalyzeOnlyClick(Sender: TObject);
-    (*
-    procedure CheckBox1Change(Sender: TObject);
-    procedure CheckBoxUseMstChange(Sender: TObject);
-    procedure ComboBoxArchModeChange(Sender: TObject);
-    procedure FileCreateLogfileClick(Sender: TObject);
-    *)
     procedure FileHelpClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure mst32NameEditChange(Sender: TObject);
@@ -355,6 +348,7 @@ var
 
 
 resourcestring
+
   sMBoxHeader = 'opsi setup detector';
   sHelpHeader = 'opsi setup detector Help';
   // dialogs
@@ -367,7 +361,7 @@ resourcestring
     'Error: Field MSI Product Code is empty!' + Lineending +
     'The MSI Product Code is needed for correct Uninstall process.' +
     Lineending +
-    'Please install this Product and check for the MSI Product Code and write it to the setup and the uninstall script';
+    'Please install this Product and check for the MSI Product Code and write it to the delsub script';
   sErrProductIdEmpty = 'Error: Field opsi Product ID is empty!';
   sErrProductVersionEmpty = 'Error: Field Product Version is empty!';
   //sErrFldSetupEmpty = 'Error: No setup file selected!';
@@ -397,6 +391,7 @@ resourcestring
     'The Installdir is needed for correct Uninstall process.' + Lineending
     +
     'Please install this Product and check for the Installdir and write it to the setup and the uninstall script';
+
   // new for 4.1.0.2 ******************************************************************
   rsNotImplemented = 'Not implemented right now.';
   rsWeNeedConfiguration = 'We need some configurations first !';
@@ -495,12 +490,6 @@ begin
         'uninstallCommandLine');
       TIEditSetup1UnProgram.Link.SetObjectAndProperty(SetupFiles[0], 'uninstallProg');
       TIEditSetup2UnProgram.Link.SetObjectAndProperty(SetupFiles[1], 'uninstallProg');
-      (*
-      TIEditProductIdS1.Link.SetObjectAndProperty(productdata, 'productId');
-      TIEditProductIdS2.Link.SetObjectAndProperty(productdata, 'productId');
-      TIEditProductNameS1.Link.SetObjectAndProperty(productdata, 'productName');
-      TIEditProductNameS2.Link.SetObjectAndProperty(productdata, 'productName');
-      *)
       // product
       TIEditProdVersion3.Link.SetObjectAndProperty(productdata, 'productVersion');
       TISpinEditPackageVers.Link.SetObjectAndProperty(productdata, 'packageVersion');
@@ -573,13 +562,8 @@ begin
   TIEditRequiredSizeMB2.Link.TIObject := nil;
   TIEditInstallDir1.Link.TIObject := nil;
   TIEditInstallDir1.Link.TIObject := nil;
-  //TIEditProductIdS1.Link.TIObject := nil;
-  //TIEditProductIdS2.Link.TIObject := nil;
-  //TIEditProductNameS1.Link.TIObject := nil;
-  //TIEditProductNameS2.Link.TIObject := nil;
   TIEditworkbenchpath.Link.TIObject := nil;
   TIEditSetup1Command.Link.TIObject := nil;
-  //TIGridDep.ListObject := nil;
   TITrackBarPrio.Link.TIObject := nil;
   TISpinEditPrio.Link.TIObject := nil;
 end;
@@ -610,9 +594,28 @@ begin
   end;
 end;
 
+
+{$IFDEF WINDOWS}
+function GetSystemDefaultLocale(const typeOfValue: DWord): string;
+  // possible values: cf. "Locale Types" in windows.pas
+var
+  buffer: PChar;
+  size: word = 0;
+  usedsize: word = 0;
+
+begin
+  Result := '';
+  size := 101;
+  Buffer := StrAlloc(101);
+  usedsize := GetLocaleInfo(LOCALE_SYSTEM_DEFAULT, typeOfValue, buffer, size);
+  if usedsize <> 0 then
+    Result := StrPas(Buffer);
+end;
+{$ENDIF WINDOWS}
+
 procedure main1;
 var
-  ErrorMsg: string;
+  //ErrorMsg: string;
   FileVerInfo: TFileVersionInfo;
   lfilename: string;
 begin
@@ -634,19 +637,6 @@ begin
   LogDatei.StandardLogFilename := lfilename;
   LogDatei.WritePartLog := False;
   LogDatei.CreateTheLogfile(lfilename + '.log', True);
-  (*
-  // push prelog buffer to logfile
-  if preloglist.Count > 0 then
-    for i := 0 to preloglist.Count - 1 do
-      LogDatei.log(preloglist.Strings[i], LLEssential);
-  if logAndTerminate then
-  begin
-    LogDatei.log('Closing log and terminating due to previous errors.', LLCritical);
-    logdatei.Close;
-    Application.Terminate;
-    Exit;
-  end;
-  *)
   LogDatei.log('Log for: ' + Application.exename + ' opend at : ' +
     DateTimeToStr(now), LLNotice);
 
@@ -656,9 +646,8 @@ end;
 procedure main2;
 var
   ErrorMsg: string;
-  FileVerInfo: TFileVersionInfo;
-  lfilename: string;
   i : integer;
+  mylang : string;
 begin
   startupfinished := true; //avoid calling main on every show event
   myExeDir := ExtractFileDir(ParamStr(0));
@@ -696,13 +685,30 @@ begin
     Exit;
   end;
 
+  mylang := GetDefaultLang;
+  {$IFDEF WINDOWS}
+  if Mylang = '' then
+    mylang := LowerCase(copy (GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
+  {$ENDIF WINDOWS}
+  SetDefaultLang(mylang);
+  LogDatei.log('Detected default lang: ' + mylang,LLInfo);
+  LogDatei.log('Detected default lang: ' + GetDefaultLang,LLInfo);
+
+  if Application.HasOption('lang') then
+  begin
+    LogDatei.log('Found Parameter lang',LLInfo);
+    SetDefaultLang(Application.GetOptionValue('lang'));
+    LogDatei.log('Found Parameter lang: ' + Application.GetOptionValue('lang'),LLInfo);
+    LogDatei.log('Active lang: ' + GetDefaultLang,LLInfo);
+  end;
+
+
   if Application.HasOption('nogui') then
     showgui := False;
 
   if showgui then
   begin
-    //resultform1.Edit_PacketbaseDir.text := packetBaseDir;
-    //resultForm1.PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
+    //FOSDConfigdlg := TFOSDConfigdlg.Create(resultForm1);
   end;
 
   if Application.HasOption('filename') then
@@ -723,7 +729,7 @@ begin
       with resultform1 do
       begin
         Show;
-        useRunMode := analyzeOnly;
+        useRunMode := singleAnalyzeCreate;
         setRunMode;
         resultform1.MemoAnalyze.Clear;
         if StringGridDep.RowCount > 1 then
@@ -968,7 +974,7 @@ begin
     myprop := TStringList.Create;
     myprop.Add(IntToStr(index - 1));
     myprop.Add('install_architecture');
-    myprop.Add('Which archtiecture (32 / 64 Bit) has to be installed?');
+    myprop.Add('Which architecture (32 / 64 Bit) has to be installed?');
     myprop.Add('unicode');  //type
     myprop.Add('False');      //multivalue
     myprop.Add('False');      //editable
@@ -1076,8 +1082,9 @@ var
   tmpliststr: string;
   tmpstr: string;
   exists: boolean;
-  valid : boolean;
+  //valid : boolean;
 begin
+  FNewPropDlg.initFields;
   FNewPropDlg.RadioButtonPropBool.Checked := True;
   FNewPropDlg.RadioButtonPropStringChange(Sender);
   procmess;
@@ -1150,9 +1157,6 @@ begin
 end;
 
 procedure TResultform1.BitBtnDelDepClick(Sender: TObject);
-var
-  range: integer;
-  str: string;
 begin
   StringGridDep.DeleteRow(StringGridDep.Row);
 end;
@@ -1165,9 +1169,9 @@ end;
 
 procedure TResultform1.BitBtnEditDepClick(Sender: TObject);
 var
-  mydep: TStringList;
-  x, y: integer;
-  aPoint: TPoint;
+  //mydep: TStringList;
+  y: integer;
+  //aPoint: TPoint;
 begin
   y := StringGridDep.Row;
   if y > 0 then
@@ -1222,16 +1226,17 @@ end;
 procedure TResultform1.BitBtnEditPropClick(Sender: TObject);
 // edit property
 var
-  myprop: TStringList;
-  index: integer;
+  //myprop: TStringList;
+  //index: integer;
   i: integer;
   tmpliststr: string;
   tmpstr: string;
   errorstr: string;
   remaining: string;
-  x, y: integer;
-  aPoint: TPoint;
+  y: integer;
+  //aPoint: TPoint;
 begin
+  FNewPropDlg.initFields;
   y := StringGridProp.Row;
   if y > 0 then
   begin
@@ -1442,12 +1447,12 @@ end;
 procedure TResultform1.BtCreateProductClick(Sender: TObject);
 var
   radioindex: integer;
-  checkok: boolean = True;
+  //checkok: boolean = True;
 begin
   logdatei.log('Start BtCreateProductClick', LLDebug2);
   if not DirectoryExists(myconfiguration.workbench_Path) then
   begin
-    checkok := False;
+    //checkok := False;
     ShowMessage(sErrPacketBaseDirNotFound);
   end;
   try
@@ -1570,7 +1575,7 @@ var
   checkok: boolean = True;
 begin
   if ((aktProduct.SetupFiles[0].installDirectory = '')
-       or (aktProduct.SetupFiles[0].installDirectory = '# SET THE INSTALL DIRECTORY #')) and
+       or (aktProduct.SetupFiles[0].installDirectory = 'unknown')) and
     (aktProduct.SetupFiles[0].installerId <> stMsi) then
   begin
     //checkok := False;
@@ -1627,7 +1632,7 @@ var
   checkok: boolean = True;
 begin
   if ((aktProduct.SetupFiles[1].installDirectory = '')
-      or (aktProduct.SetupFiles[1].installDirectory = '# SET THE INSTALL DIRECTORY #')) and
+      or (aktProduct.SetupFiles[1].installDirectory = 'unknown')) and
     (aktProduct.SetupFiles[1].installerId <> stMsi) then
   begin
     // checkok := False;

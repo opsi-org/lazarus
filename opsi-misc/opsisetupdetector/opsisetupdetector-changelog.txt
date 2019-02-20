@@ -1,7 +1,36 @@
+opsi-setup-detector (4.1.0.5) stable; urgency=low
+
+  * refix of configuration translation (git killed them all)
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri,  25 Jan 2019 : 15:00:00 +0200
+
+
+opsi-setup-detector (4.1.0.4) stable; urgency=low
+
+  * add InstallAware
+  * generic MS Installer
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  22 Jan 2019 : 15:00:00 +0200
+
+
+opsi-setup-detector (4.1.0.3) stable; urgency=low
+
+  * fix in osd-lib.opsiscript
+  * osdform: main2:useRunMode := singleAnalyzeCreate on call with param filename
+  * osdform: typo
+  * osdanalyze:get_msi_info: msiinfo export <msi file> property
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  08 Jan 2019 : 15:00:00 +0200
+
+
 opsi-setup-detector (4.1.0.2) stable; urgency=low
 
   * remove PathToOpsiPackageBuilder from the needed configurations
   * osdform: more resourcestrings
+  * osddlgnewproperty: more resourcestrings
+  * changes at template files
+  * templ: no architecture check at delsub
+  * code cleanup
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed,  19 Dec 2018 : 15:00:00 +0200
 

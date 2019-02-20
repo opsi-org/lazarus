@@ -1,10 +1,10 @@
 object FNewPropDlg: TFNewPropDlg
-  Left = 713
-  Height = 649
-  Top = 176
+  Left = 861
+  Height = 615
+  Top = 280
   Width = 428
   Caption = 'opsi-setup-detector - Properties'
-  ClientHeight = 649
+  ClientHeight = 615
   ClientWidth = 428
   Position = poScreenCenter
   LCLVersion = '1.8.4.0'
@@ -30,6 +30,7 @@ object FNewPropDlg: TFNewPropDlg
       DefaultCaption = True
       Kind = bkOK
       ModalResult = 1
+      OnClick = BitBtn1Click
       ParentFont = False
       TabOrder = 0
     end
@@ -47,6 +48,7 @@ object FNewPropDlg: TFNewPropDlg
       DefaultCaption = True
       Kind = bkCancel
       ModalResult = 2
+      OnClick = BitBtn2Click
       ParentFont = False
       TabOrder = 1
     end
@@ -86,6 +88,7 @@ object FNewPropDlg: TFNewPropDlg
     Caption = 'Property Type'
     ClientHeight = 35
     ClientWidth = 422
+    ParentFont = False
     TabOrder = 2
     object RadioButtonPropString: TRadioButton
       Left = 22
@@ -94,6 +97,7 @@ object FNewPropDlg: TFNewPropDlg
       Width = 42
       Caption = 'Text'
       OnChange = RadioButtonPropStringChange
+      ParentFont = False
       TabOrder = 0
     end
     object RadioButtonPropBool: TRadioButton
@@ -103,6 +107,7 @@ object FNewPropDlg: TFNewPropDlg
       Width = 63
       Caption = 'Boolean'
       Checked = True
+      ParentFont = False
       TabOrder = 1
       TabStop = True
     end
@@ -115,6 +120,7 @@ object FNewPropDlg: TFNewPropDlg
     Align = alTop
     ClientHeight = 42
     ClientWidth = 428
+    ParentFont = False
     TabOrder = 3
     object Label2: TLabel
       Left = 22
@@ -125,15 +131,17 @@ object FNewPropDlg: TFNewPropDlg
       BorderSpacing.Around = 5
       Caption = 'Property Name'
       ParentColor = False
+      ParentFont = False
     end
     object EditPropName: TEdit
-      Left = 176
+      Left = 192
       Height = 23
       Top = 8
       Width = 187
       Anchors = []
       BorderSpacing.Around = 5
       OnEditingDone = EditPropNameEditingDone
+      ParentFont = False
       TabOrder = 0
       Text = 'PropertyName'
     end
@@ -158,6 +166,7 @@ object FNewPropDlg: TFNewPropDlg
     ClientWidth = 424
     ColumnLayout = clVerticalThenHorizontal
     Columns = 2
+    ParentFont = False
     TabOrder = 4
     object CheckBoxPropMultiVal: TCheckBox
       Left = 20
@@ -167,6 +176,7 @@ object FNewPropDlg: TFNewPropDlg
       BorderSpacing.Left = 20
       Caption = 'Multivalue'
       OnChange = CheckBoxPropMultiValChange
+      ParentFont = False
       TabOrder = 0
     end
     object CheckBoxPropEdit: TCheckBox
@@ -177,6 +187,7 @@ object FNewPropDlg: TFNewPropDlg
       BorderSpacing.Left = 20
       BorderSpacing.Around = 10
       Caption = 'Editable'
+      ParentFont = False
       TabOrder = 1
     end
   end
@@ -189,6 +200,7 @@ object FNewPropDlg: TFNewPropDlg
     Anchors = [akLeft, akRight]
     ClientHeight = 128
     ClientWidth = 428
+    ParentFont = False
     TabOrder = 5
     object ListBoxPropPosVal: TListBox
       Left = 179
@@ -198,6 +210,8 @@ object FNewPropDlg: TFNewPropDlg
       Align = alRight
       BorderSpacing.Around = 5
       ItemHeight = 0
+      ParentFont = False
+      ScrollWidth = 362
       TabOrder = 0
     end
     object Panel3: TPanel
@@ -209,6 +223,7 @@ object FNewPropDlg: TFNewPropDlg
       BorderSpacing.Left = 20
       ClientHeight = 126
       ClientWidth = 153
+      ParentFont = False
       TabOrder = 1
       object Label4: TLabel
         Left = 7
@@ -220,6 +235,7 @@ object FNewPropDlg: TFNewPropDlg
         BorderSpacing.Around = 6
         Caption = 'Possible Values'
         ParentColor = False
+        ParentFont = False
       end
       object EditPropNewVal: TEdit
         Left = 4
@@ -229,6 +245,7 @@ object FNewPropDlg: TFNewPropDlg
         Align = alTop
         Anchors = [akTop]
         BorderSpacing.Around = 3
+        ParentFont = False
         TabOrder = 0
         Text = 'New Value'
       end
@@ -344,6 +361,7 @@ object FNewPropDlg: TFNewPropDlg
     Align = alTop
     ClientHeight = 121
     ClientWidth = 428
+    ParentFont = False
     TabOrder = 6
     object ListBoxPropDefVal: TListBox
       Left = 179
@@ -353,6 +371,8 @@ object FNewPropDlg: TFNewPropDlg
       Align = alRight
       BorderSpacing.Around = 5
       ItemHeight = 0
+      ParentFont = False
+      ScrollWidth = 362
       TabOrder = 0
     end
     object Label5: TLabel
@@ -364,6 +384,7 @@ object FNewPropDlg: TFNewPropDlg
       BorderSpacing.Around = 5
       Caption = 'Default Values'
       ParentColor = False
+      ParentFont = False
     end
   end
   object Panel8: TPanel
@@ -375,6 +396,7 @@ object FNewPropDlg: TFNewPropDlg
     BevelOuter = bvNone
     ClientHeight = 65
     ClientWidth = 428
+    ParentFont = False
     TabOrder = 7
     object Label6: TLabel
       Left = 33
@@ -385,6 +407,7 @@ object FNewPropDlg: TFNewPropDlg
       BorderSpacing.Around = 5
       Caption = 'Description'
       ParentColor = False
+      ParentFont = False
     end
     object MemoDesc: TMemo
       Left = 177
@@ -392,6 +415,7 @@ object FNewPropDlg: TFNewPropDlg
       Top = 0
       Width = 251
       Align = alRight
+      ParentFont = False
       ScrollBars = ssAutoBoth
       TabOrder = 0
     end

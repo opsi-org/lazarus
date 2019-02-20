@@ -156,6 +156,8 @@ begin
   LogDatei.log('Finished writing collected data as asciidoc to stringlist',LLinfo);
 end;
 
+
+
 initialization
   asciidoc_header := TStringlist.create;
   asciidoc_header.Add('////                                                            ');

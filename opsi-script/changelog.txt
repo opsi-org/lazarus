@@ -4,13 +4,60 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
-opsi-winst/opsi-script (4.12.1.0) stable; urgency=low
+opsi-winst/opsi-script (4.12.1.0) experimental; urgency=low
 
+  * integration of new xml functions:
+    * new units in common: osxml, osxmltdom, osxmlsections
+    * new section type xml2
+    * osparser: Tuibinstscript: new method doxml2patch:
+      * OpenNode <node path : string>
+      * DeleteNode <node path : string>
+      * setNodeText <text : string>
+      * setAttribute <name : string>, <value:string>
+      * addAttribute <name : string>, <value:string>
+      * delAttribute <name : string>
+      * adNewNode <name : string>
+      * gotoParentNode
+    * getXml2AttributeValueByKey(<xml node:stringlist>,<key:string>): string
+    * getXml2Text(<xml node:stringlist>) : string
+    * getXml2DocumentFromFile(<filename:string>) : <xml-doc:stringlist>
+    * getXml2Document(<pure xml :stringlist>) : <xml-doc:stringlist>
+    * getXml2UniqueChildnodeByName
+    * xml2GetFirstChildNodeByName(<xml-doc:stringlist>,<node name:string>) : <xml node:stringlist>
+    * xml2NodeExistsByPathInXMLFile(myfilename, path: string; attributes_strict: boolean): boolean;
   * osparser: new (undocumented) command 'setDebug_prog = (true/false)'
   * osparser: new function GetMacosVersionInfo : string
   * osparser: new function getMacosVersionMap : stringlist
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 23 01 2019:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.12.0.36) stable; urgency=low
+
+  * osdefinedfunctions: better errormessages
+  * osdefinedfunctions: complete redesign of local var
+  * osdefinedfunctions: now works also with recursive calls
+  * oslog: fix: cleanup old partlogs
+  * osparser: fix in md5sumfromfile (Linux)
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 13 Feb 2019:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.0.35) stable; urgency=low
+
+  * osparser: producestringlist: getsublist: with whitespaces around numbers
+  * osmain: Loginscripts: do not break login script loop on reboots
+  * oswebservice: getMapOfLoginscripts2Run: allscripts=false:
+      we want to run the login script if installed
+      or last successful action was uninstall
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 15 Jan 2019:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.0.34) stable; urgency=low
+
+  * osparser: producestringlist: getsublist: with string expression instead of numbers
+  * osparser: producestringlist: createstringlist: fix: empty strings as argument allowed
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 10 Jan 2019:15:00:00 +0200
 
 opsi-winst/opsi-script (4.12.0.33) stable; urgency=low
 

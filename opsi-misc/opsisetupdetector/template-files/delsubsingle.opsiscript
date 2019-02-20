@@ -12,13 +12,13 @@ if $oldProgFound$ = "true"
   Message "Uninstalling " + $ProductId$ + " ..."
   #@preUninstallLines1*#
   comment "Start uninstall program"
-  ChangeDirectory "%SCRIPTPATH%"
+  ChangeDirectory "%SCRIPTPATH%\files"
   ;----------------------------------------------
   Winbatch_uninstall  #@uninstallWaitForProc1*#
   ;----------------------------------------------
   Sub_check_exitcode
   #@postUninstallLines1*#
-  if not($InstallDir1$ = '')
+  if not(($InstallDir$ = '') or ($InstallDir$ = 'unknown'))
      Files_uninstall
   endif
 endif

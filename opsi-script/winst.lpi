@@ -22,8 +22,8 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
-      <BuildNr Value="33"/>
-      <StringTable Comments="Compiled with Lazarus 1.8.4 / FPC 3.0.4" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst32.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst32.exe" ProductName="opsi-script" ProductVersion="4.0.7 / 4.1"/>
+      <RevisionNr Value="1"/>
+      <StringTable Comments="Compiled with Lazarus 2.0 / FPC 3.0.4" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst32.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst32.exe" ProductName="opsi-script" ProductVersion="4.1.0"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="default" Default="True"/>
@@ -62,10 +62,11 @@
           </Linking>
           <Other>
             <Verbosity>
+              <ShowHints Value="False"/>
               <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
             </Verbosity>
             <CompilerMessages>
-              <IgnoredMessages idx5058="True" idx5027="True"/>
+              <IgnoredMessages idx11031="True" idx11030="True" idx11017="True" idx11007="True" idx7039="True" idx6048="True" idx5062="True" idx5060="True" idx5058="True" idx5057="True" idx5039="True" idx5028="True" idx5027="True" idx5026="True" idx5024="True" idx5023="True" idx5003="True" idx4081="True" idx4080="True" idx4079="True" idx4055="True" idx4049="True" idx4047="True" idx4035="True" idx4015="True" idx3280="True" idx3274="True" idx3270="True" idx3189="True" idx3187="True" idx3126="True" idx3124="True" idx3123="True" idx2026="True"/>
             </CompilerMessages>
             <CustomOptions Value="-dOPSIWINST -dWINDOWS -dOPSISCRIPT -dGUI -dOSDEBUG"/>
           </Other>
@@ -124,14 +125,10 @@
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
-      <IgnoreBinaries Value="False"/>
-      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
-      <ExcludeFileFilter Value="*.(bak|ppu|ppw|o|so);*~;backup"/>
     </PublishOptions>
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
     <RequiredPackages Count="2">
@@ -142,7 +139,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="45">
+    <Units Count="54">
       <Unit0>
         <Filename Value="winst.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -344,6 +341,42 @@
         <Filename Value="..\external_libraries\misc\utilwmi.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit44>
+      <Unit45>
+        <Filename Value="..\common\osprocesses.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit45>
+      <Unit46>
+        <Filename Value="..\common\osnetworkcalculator.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit46>
+      <Unit47>
+        <Filename Value="..\common\osregex.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit47>
+      <Unit48>
+        <Filename Value="..\common\osurlparser.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit48>
+      <Unit49>
+        <Filename Value="..\common\key_valueCollection.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit49>
+      <Unit50>
+        <Filename Value="..\common\osxmlsections.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit50>
+      <Unit51>
+        <Filename Value="..\common\osxmltdom.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit51>
+      <Unit52>
+        <Filename Value="..\common\oscheckbinarybitness.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit52>
+      <Unit53>
+        <Filename Value="oscalc.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit53>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
