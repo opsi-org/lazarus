@@ -32,6 +32,8 @@ registry,
 osregistry,
 oskeyboard,
 osfuncwin3,
+oswmi,
+osswaudit,
 {$IFDEF WIN32}
 DSiWin32,
 osfuncwin2,
@@ -94,9 +96,7 @@ LazFileUtils,
   opsihwbiosinfo,
   osjson,
   oscrypt,
-  osswaudit,
   DOM,
-  oswmi,
   osxmlsections,
   osxml,
   osparserhelper,
@@ -11822,7 +11822,7 @@ begin
    then
    begin
      {$IFDEF UNIX}
-      LogDatei.log('Error getListFromWMI not implemented on Linux ', LLError);
+      LogDatei.log('Error getListFromWMI only implemented for Windows.', LLError);
       {$ENDIF Linux}
       {$IFDEF WINDOWS}
     if Skip ('(', r, r, InfoSyntaxError)

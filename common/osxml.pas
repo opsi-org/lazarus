@@ -548,10 +548,14 @@ begin
   try
     Result := False;
     mynode := createXMLNodeFromString(nodeAsStringlist);
+    if mynode <> nil then
+    begin
     if getNodeattributeByKey(mynode, attributekey, attributevalue) then
       Result := True;
     mynode.Free;
     Result := True;
+    end
+    else LogDatei.log('Error: Empty xmlnode input in getXml2AttributeValueByKey.', LLError);
   except
     on e: Exception do
     begin
