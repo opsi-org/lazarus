@@ -149,6 +149,7 @@ type
                 tsSetFatalError, tsSetSuccess, tsSetNoUpdate, tsSetSuspended,
                 tsSetMarkerErrorNumber,
                 tsSetReportMessages, tsSetTimeMark, tsLogDiffTime,
+                tsSetDebug_Prog,
                 tsFatalOnSyntaxError,
                 tsFatalOnRuntimeError,
                 tsAutoActivityDisplay,
@@ -11638,7 +11639,7 @@ begin
    end
    {$ENDIF WINDOWS}
 
-   {$IFDEF UNIX}
+   {$IFDEF LINUX}
    else if LowerCase(s) = LowerCase ('getLinuxVersionMap')
     then
     Begin
@@ -11648,6 +11649,17 @@ begin
       end;
     end
     {$ENDIF LINUX}
+
+    {$IFDEF DARWIN}
+   else if LowerCase(s) = LowerCase ('getMacosVersionMap')
+    then
+    Begin
+      Begin
+       syntaxcheck := true;
+       list.AddStrings(getMacosVersionMap);
+      end;
+    end
+    {$ENDIF DARWIN}
 
 
    {$IFDEF WINDOWS}
@@ -12545,6 +12557,24 @@ begin
       DiffNumberOfErrors := LogDatei.NumberOfErrors - OldNumberOfErrors;
       FNumberOfErrors := NumberOfErrors + DiffNumberOfErrors;
       {$ENDIF WINDOWS}
+    End
+ End
+
+ else if LowerCase(s) = LowerCase ('GetMacosVersionInfo')
+ then
+ Begin
+    syntaxCheck := true;
+
+    OldNumberOfErrors := LogDatei.NumberOfErrors;
+
+    if GetUibOsType (errorinfo) <> tovMacos
+    then
+      StringResult := 'Not an OS of type macOS'
+    else
+    Begin
+      {$IFDEF DARWIN}
+      StringResult := GetMacosVersionInfo;
+      {$ENDIF DARWIN}
     End
  End
 
@@ -19565,6 +19595,25 @@ begin
                     ActionResult
                     := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
 
+                 tsSetDebug_Prog:
+                  if skip ('=', remaining, remaining, InfoSyntaxError)
+                  then
+                  Begin
+                     if   UpperCase (Remaining) = 'TRUE' then
+                     begin
+                       LogDatei.log ('debug_prog was '+BoolToStr(logdatei.debug_prog,true)+' is set to true', LLInfo);
+                       logdatei.debug_prog := true;
+                     end
+                     else
+                     begin
+                       LogDatei.log ('debug_prog was '+BoolToStr(logdatei.debug_prog,true)+' is set to false', LLInfo);
+                       logdatei.debug_prog := false;
+                     end;
+                  End
+                  else
+                    ActionResult
+                    := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+
 
             tsFatalOnSyntaxError:
               if skip ('=', remaining, remaining, InfoSyntaxError)
@@ -21529,19 +21578,19 @@ begin
 
     FConstList.add ('%opsiTmpDir%');
     {$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\tmp' ); {$ENDIF WINDOWS}
-    {$IFDEF UNIX}FConstValuesList.add ( '/tmp' ); {$ENDIF LINUX}
+    {$IFDEF UNIX}FConstValuesList.add ( '/tmp' ); {$ENDIF UNIX}
 
     FConstList.add ('%opsiLogDir%');
-    {$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\log' ); {$ENDIF WINDOWS}
-    {$IFDEF UNIX}FConstValuesList.add ( '/var/log/opsi-script' ); {$ENDIF LINUX}
+    //{$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\log' ); {$ENDIF WINDOWS}
+    FConstValuesList.add (oslog.defaultStandardMainLogPath );
 
     FConstList.add ('%opsiapplog%');
     {$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\applog' ); {$ENDIF WINDOWS}
-    {$IFDEF UNIX}FConstValuesList.add ( '~/opsi.org/applog' ); {$ENDIF LINUX}
+    {$IFDEF UNIX}FConstValuesList.add ( '~/opsi.org/applog' ); {$ENDIF UNIX}
 
     FConstList.add ('%opsidata%');
     {$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\data' ); {$ENDIF WINDOWS}
-    {$IFDEF UNIX}FConstValuesList.add ( '/var/lib/opsi-client-agent' ); {$ENDIF LINUX}
+    {$IFDEF UNIX}FConstValuesList.add ( '/var/lib/opsi-client-agent' ); {$ENDIF UNIX}
 
     {$IFDEF WINDOWS}
     FConstList.add('%opsiScriptHelperPath%');
@@ -21929,6 +21978,7 @@ begin
   PStatNames^ [tsExitWindows]         := 'ExitWindows';
   PStatNames^ [tsLocalAdmin]          := 'LocalAdmin';
   PStatNames^ [tsBlockInput]          := 'BlockInput';
+  PStatNames^ [tsSetDebug_prog]       := 'SetDebug_prog';
 
 
   PStatNames^ [tsAddConnection]       := 'AddConnection';
