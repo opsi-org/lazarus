@@ -25,9 +25,39 @@ opsi-winst/opsi-script (4.12.1.0) experimental; urgency=low
     * getXml2UniqueChildnodeByName
     * xml2GetFirstChildNodeByName(<xml-doc:stringlist>,<node name:string>) : <xml node:stringlist>
     * xml2NodeExistsByPathInXMLFile(myfilename, path: string; attributes_strict: boolean): boolean;
-  * osparser: new (undocumented) command 'setDebug_prog = (true/false)'
+
+  * new regex functions:
+  * isRegexMatch(<string>, <pattern>) : boolean
+  * getSubListByContainingRegex(<pattern>, <target list>) : stringlist
+  * getSubListByContainingRegex(<pattern list>, <target list>) : stringlist
+  * getRegexMatchList(<pattern>, <target list>) : stringlist
+  * getRegexMatchList(<pattern list>, <target list>) : stringlist
+  * removeFromListByContainingRegex(<pattern>, <target list>) : stringlist
+  * removeFromListByContainingRegex(<pattern list>, <target list>) : stringlist
+  * stringReplaceRegex(<string>, <pattern>, <replacement string>) : string
+  * stringReplaceRegexInList(<target list>, <pattern>, <replacement string>) : stringlist
+
+  * new network functions
+  * isValidIP4 (<ip4adr>) : boolean
+  * isValidIP4Network (<ip4adr>, <netmask>) : boolean
+  * isValidIP4Host (<ip4adr>, <netmask>) : boolean
+  * getIP4NetworkByAdrAndMask (<ip4adr>, <netmask>) : string
+  * getDefaultNetmaskByIP4adr (<ip4adr>) : string
+
+  * new url related functions
+  * parseUrl(<url string>) : stringlist
+  * createUrl(<urlcomponents list>) : string
+
+  * macos related:
+  * getos detect macos as 'macos'
   * osparser: new function GetMacosVersionInfo : string
   * osparser: new function getMacosVersionMap : stringlist
+
+  * misc:
+  * ExtractFileExtension (`<path>`) : string [W/L]
+  * ExtractFileName (`<path>`) : string [W/L]
+
+  * osparser: new (undocumented) command 'setDebug_prog = (true/false)'
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 23 01 2019:15:00:00 +0200
 
