@@ -56,8 +56,10 @@ opsi-winst/opsi-script (4.12.1.0) experimental; urgency=low
   * misc:
   * ExtractFileExtension (`<path>`) : string [W/L]
   * ExtractFileName (`<path>`) : string [W/L]
+  * DirectoryExists (`path`[,<accessstr>]) : boolean [W/L]
 
   * osparser: new (undocumented) command 'setDebug_prog = (true/false)'
+  * osshowsysinfo: caption is Systeminfo (instead of SystemInfo)
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 23 01 2019:15:00:00 +0200
 

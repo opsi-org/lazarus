@@ -17058,6 +17058,106 @@ begin
    End;
  end
 
+ else if Skip ('DirectoryExists', Input, r, sx)
+ then
+ begin
+   LogDatei.log_prog ('DirectoryExists from: '+r, LLdebug3);
+   if Skip ('(', r, r, InfoSyntaxError)
+   then if EvaluateString (r, tmpstr, s1, InfoSyntaxError)
+   // next after ',' or ')'
+   then if Skip (',', tmpstr, tmpstr1, tmpstr3) then
+     if EvaluateString (tmpstr1, tmpstr2, s2, tmpstr3) then;
+   if s2 = '' then
+   begin
+     // only one parameter
+     if Skip (')', tmpstr, r, InfoSyntaxError) then
+     Begin
+       syntaxCheck := true;
+     end;
+   end
+   else
+   begin
+     // two parameter
+     if Skip (')', tmpstr2, r, InfoSyntaxError) then
+     Begin
+       syntaxCheck := true;
+       try
+         tmpbool := true;
+         if lowercase(s2) = '32bit' then tmpbool := false
+         else if lowercase(s2) = '64bit' then tmpbool := true
+         else if lowercase(s2) = 'sysnative' then tmpbool := true
+         else
+         begin
+           InfoSyntaxError := 'Error: unknown parameter: '+s2+' expected one of 32bit,64bit,sysnative - fall back to sysnative';
+           syntaxCheck := false;
+         end;
+       except
+         Logdatei.log('Error: Exception in GetRegistryValue: ',LLError);
+         syntaxCheck := false;
+       end
+     end;
+   end;
+   if syntaxcheck then
+   begin
+      s1 := ExpandFileName(s1);
+      LogDatei.log ('Starting query if directory exist ...', LLInfo);
+      tmpstr := s1;
+      if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR)
+       then tmpstr := copy(s1,1,length(s1)-1);
+      {$IFDEF WINDOWS}
+      try
+        tmpbool1 := true;
+        if Is64BitSystem and tmpbool then
+        begin
+          if not DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
+          begin
+            LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
+            BooleanResult := false;
+            tmpbool1 := false;
+          end
+          else
+          begin
+            tmpbool1 := true;
+            LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo);
+          end;
+        end;
+        if tmpbool1 then
+        // disable  critical-error-handler message box. (Drive not ready)
+        OldWinapiErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
+        try
+          try
+            tmpstr := trim(tmpstr);
+            BooleanResult := DirectoryExists(tmpstr);
+            if (not BooleanResult) and (not (trim(tmpstr) = '')) then
+            begin
+              LogDatei.log ('Directory: '+tmpstr+' not found via DirectoryExists', LLDebug3);
+            end;
+          except
+            BooleanResult := false;
+          end;
+        finally
+          setErrorMode(OldWinapiErrorMode);
+        end;
+        if Is64BitSystem and tmpbool then
+        begin
+          dummybool := DSiRevertWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
+          LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
+        end;
+     except
+        on ex: Exception
+        do
+        Begin
+          LogDatei.log ('Error: ' + ex.message, LLError);
+        End;
+      end;
+      {$ENDIF WINDOWS}
+      {$IFDEF UNIX}
+      BooleanResult := DirectoryExists(tmpstr);
+      {$ENDIF UNIX}
+      syntaxCheck := true;
+   end
+ end
+
 
  {$IFDEF WINDOWS}
 
@@ -22830,7 +22930,7 @@ begin
 
     FConstList.add ('%opsiLogDir%');
     //{$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\log' ); {$ENDIF WINDOWS}
-    FConstValuesList.add (oslog.defaultStandardMainLogPath );
+    FConstValuesList.add (copy(oslog.defaultStandardMainLogPath, 1, Length(oslog.defaultStandardMainLogPath)-1));
 
     FConstList.add ('%opsiapplog%');
     {$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\applog' ); {$ENDIF WINDOWS}

@@ -107,6 +107,7 @@ msgid "Info .."
 msgstr ""
 
 #: tcentralform.label1.caption
+msgctxt "tcentralform.label1.caption"
 msgid "Label1"
 msgstr ""
 
@@ -175,5 +176,18 @@ msgstr ""
 
 #: tcentralform.toolbar1.caption
 msgid "ToolBar1"
+msgstr ""
+
+#: tsysteminfo.caption
+msgid "Systeminfo"
+msgstr ""
+
+#: tsysteminfo.label1.caption
+msgctxt "tsysteminfo.label1.caption"
+msgid "Label1"
+msgstr ""
+
+#: tsysteminfo.labelwindowid.caption
+msgid "Do not localize: Window SystemInfo"
 msgstr ""
 
