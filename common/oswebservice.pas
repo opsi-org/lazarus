@@ -1418,7 +1418,7 @@ end;
 constructor TJsonThroughHTTPS.Create(
   const serviceURL, username, password, sessionid, ip, port: string);
 begin
-  Create(serviceUrl, username, password, sessionid, ip, port, ExtractFileName(ParamStr(0)));
+  Create(serviceUrl, username, password, sessionid, ip, port, ExtractFileName(paramstr(0)));
 end;
 
 constructor TJsonThroughHTTPS.Create(

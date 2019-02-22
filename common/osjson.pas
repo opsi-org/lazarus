@@ -9,12 +9,6 @@ unit osjson;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 505 $
-// $Author: oertel $
-// $Date: 2016-10-12 21:49:59 +0200 (Mi, 12 Okt 2016) $
-//***************************************************************************
 
 
 

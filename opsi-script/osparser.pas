@@ -7330,7 +7330,7 @@ function TuibInstScript.doXMLPatch (const Sektion: TWorkSection; Const XMLFilena
 {$IFDEF WINDOWS}
 begin
   //DataModuleLogServer.IdTCPServer1.Active:=true;
-  result := executeWith (Sektion,  '"'+ ExtractFileDir(paramstr(0))+PathDelim+'opsiwinstxmlplugin.exe" --xmlfile="'+trim(XMLFilename)+'" --scriptfile=' , true, 0, output);
+  result := executeWith (Sektion,  '"'+ ExtractFileDir(reencode(paramstr(0),'system'))+PathDelim+'opsiwinstxmlplugin.exe" --xmlfile="'+trim(XMLFilename)+'" --scriptfile=' , true, 0, output);
   LogDatei.includelogtail(logdatei.StandardLogPath+'opsiwinstxmlplugin.log',1000,'auto');
   DeleteFile(logdatei.StandardLogPath+'opsiwinstxmlplugin.log');
     //DataModuleLogServer.IdTCPServer1.Active:=false;
@@ -17061,6 +17061,7 @@ begin
  else if Skip ('DirectoryExists', Input, r, sx)
  then
  begin
+   tmpbool := true; // default to sysnative
    LogDatei.log_prog ('DirectoryExists from: '+r, LLdebug3);
    if Skip ('(', r, r, InfoSyntaxError)
    then if EvaluateString (r, tmpstr, s1, InfoSyntaxError)
@@ -19386,7 +19387,7 @@ begin
                 if (not found) then
                 begin
                   // search in %WinstDir%\lib
-                  testincfilename := ExtractFileDir(Paramstr(0))
+                  testincfilename := ExtractFileDir(reencode(paramstr(0),'system'))
                                        +PathDelim+'lib'+PathDelim+FName;
                   LogDatei.log('Looking for: '+testincfilename,LLDebug2);
                   if FileExistsUTF8(testincfilename) then
@@ -19753,7 +19754,7 @@ begin
                         begin
                           {$IFDEF WINDOWS}
                           // search in %WinstDir%\lib
-                          testincfilename := ExtractFileDir(Paramstr(0))
+                          testincfilename := ExtractFileDir(reencode(paramstr(0),'system'))
                                                +PathDelim+'lib'+PathDelim+incfilename;
                           {$ENDIF WINDOWS}
                           {$IFDEF UNIX}
@@ -19954,7 +19955,7 @@ begin
                         if (not found) then
                         begin
                           // search in %WinstDir%\lib
-                          testincfilename := ExtractFileDir(Paramstr(0))
+                          testincfilename := ExtractFileDir(reencode(paramstr(0),'system'))
                                                +PathDelim+'lib'+PathDelim+incfilename;
                           testincfilename := ExpandFilename(testincfilename);
                           LogDatei.log_prog('Looking for: '+testincfilename,LLDebug2);
@@ -20085,7 +20086,7 @@ begin
                         if (not found) then
                         begin
                           // search in %WinstDir%\lib
-                          testincfilename := ExtractFileDir(Paramstr(0))
+                          testincfilename := ExtractFileDir(reencode(paramstr(0),'system'))
                                                +PathDelim+'lib'+PathDelim+incfilename;
                           testincfilename := ExpandFilename(testincfilename);
                           LogDatei.log('Looking for: '+testincfilename,LLDebug2);
@@ -22707,7 +22708,7 @@ begin
      else LogDatei.log ('             opsi-script running in standard script mode', LLessential);
 
 
-  ps := 'executing: "' + ParamStr(0) + '"';
+  ps := 'executing: "' + reencode(paramstr(0),'system') + '"';
   LogDatei.log (ps, LLessential);
 
   //LogDatei.log ('PC MAC address, method1 ' + getMACAddress1, BaseLevel);
@@ -22914,7 +22915,7 @@ begin
     FConstValuesList.add (ValueToTake);
 
     FConstList.add('%WinstDir%');
-    ValueToTake := ExtractFileDir (Paramstr(0));
+    ValueToTake := ExtractFileDir (reencode(paramstr(0),'system'));
     FConstValuesList.add (ValueToTake);
 
     FConstList.add('%WinstVersion%');

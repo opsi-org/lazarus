@@ -178,6 +178,34 @@ msgstr ""
 msgid "ToolBar1"
 msgstr ""
 
+#: tfbatchoberflaeche.caption
+msgid "opsi-script"
+msgstr ""
+
+#: tfbatchoberflaeche.labelcommand.caption
+msgid "Command"
+msgstr ""
+
+#: tfbatchoberflaeche.labeldetail.caption
+msgid "Detail"
+msgstr ""
+
+#: tfbatchoberflaeche.labelinfo.caption
+msgid "Info"
+msgstr ""
+
+#: tfbatchoberflaeche.labelproduct.caption
+msgid "LabelProductImage"
+msgstr ""
+
+#: tfbatchoberflaeche.labelprogress.caption
+msgid "Activity"
+msgstr ""
+
+#: tfbatchoberflaeche.labelversion.caption
+msgid "LabelVersion"
+msgstr ""
+
 #: tsysteminfo.caption
 msgid "Systeminfo"
 msgstr ""

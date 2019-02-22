@@ -37,7 +37,8 @@ uses
   registry,
 {$ENDIF WINDOWS}
   inifiles,
-  lazfileutils;
+  lazfileutils,
+  osencoding;
 
 function readConfig: boolean;
 function writeConfig: boolean;
@@ -441,7 +442,8 @@ end;
 initialization
 opsiscriptconf := opsiscriptconfinit;
 {$IFDEF WINDOWS}
-  opsiscriptconf := ExtractFileDir(paramstr(0)) + PathDelim+ opsiscriptconfinit;
+initEncoding;
+  opsiscriptconf := ExtractFileDir(reencode(paramstr(0),'system')) + PathDelim+ opsiscriptconfinit;
   vi := TVersionInfo.Create(Application.ExeName);
   WinstVersion := vi.getString('FileVersion');
   vi.Free;

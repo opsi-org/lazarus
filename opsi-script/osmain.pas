@@ -46,12 +46,6 @@ unit osmain;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 508 $
-// $Author: oertel $
-// $Date: 2016-10-20 16:20:16 +0200 (Do, 20 Okt 2016) $
-//***************************************************************************
 
 
 
@@ -1867,7 +1861,7 @@ begin
         650, 250);
       {$ELSE GUI}
       //nogui
-      writeln(ExtractFileName(ParamStr(0)) + ' Version: '+WinstVersion);
+      writeln(ExtractFileName(reencode(paramstr(0),'system')) + ' Version: '+WinstVersion);
       writeln('command line options are' + LineEnding +
         '' + ParamDelim + '? |' + ParamDelim + 'h[elp]' + LineEnding +
         //'	 ' + ParamDelim + 'pcprofil  [PCProfileFile  [[' + ParamDelim + 'logfile] Logfile ] ] [' + ParamDelim + 'parameter ParameterString]' + LineEnding +
@@ -2399,8 +2393,8 @@ begin
 
     for i := 1 to ParamCount do
     begin
-      teststr := ParamStr(i);
-      ParamListe.Add(ParamStr(i));
+      teststr := reencode(ParamStr(i),'system');
+      ParamListe.Add(teststr);
     end;
 
     // if paramcount > 0
