@@ -9,6 +9,7 @@ uses
   SysUtils,
   TypInfo,
   osparserhelper,
+  osparser,
   osfunc;
 
 type
@@ -148,7 +149,7 @@ var
 implementation
 
 uses
-  osparser,
+  //osparser,
   oslog;
 
 constructor TOsDefinedFunction.Create;
@@ -1550,12 +1551,15 @@ var
   funcindex: integer;
   searchindex: integer;
   searchDFName: string;
-  tmpi1 : integer;
+  tmpi1, tmpi2 : integer;
 begin
   call := False;
   Inc(inDefFuncLevel);
   FuncIndex := definedFunctionNames.IndexOf(LowerCase(DFName));
   tmpi1 := FuncIndex;
+  tmpi2 := inDefFuncIndex;
+  inDefFuncIndex := tmpi2;
+  inDefFuncIndex := tmpi1;
   LogDatei.log('We are coming from function with index: ' + IntToStr(
     inDefFuncIndex) + ' (-1 = base)', LLDebug2);
   LogDatei.log('We enter the defined function: ' + DFName + ' with ' +
@@ -1571,7 +1575,7 @@ begin
 
   //parse parameter
   if not parseCallParameter(paramline, remaining, errorstr, NestLevel,
-    inDefFuncIndex) then
+    tmpi2) then
   begin
     // parse parameter failed
     LogDatei.log('Syntax Error: Parameter parsing failed: ' + errorstr, LLCritical);
@@ -1579,9 +1583,7 @@ begin
   else
   begin
     try
-      LogDatei.log_prog('inDefFuncIndex: '+inttostr(inDefFuncIndex), LLDebug2);
-      inDefFuncIndex := tmpi1;
-      LogDatei.log_prog('inDefFuncIndex: '+inttostr(inDefFuncIndex), LLDebug2);
+
 
       // inc var instance counter for recursive calls
       createAllVarInstances;
@@ -1591,6 +1593,9 @@ begin
       LogDatei.log_prog('definedFunctionsCallStack.Append ... ', LLDebug2);
       definedFunctionsCallStack.Append(IntToStr(DFIndex));
       LogDatei.log_prog('definedFunctionsCallStack.Appended', LLDebug2);
+      LogDatei.log_prog('inDefFuncIndex: '+inttostr(inDefFuncIndex), LLDebug2);
+      inDefFuncIndex := tmpi1;
+      LogDatei.log_prog('inDefFuncIndex: '+inttostr(inDefFuncIndex), LLDebug2);
     except
      on e: Exception  do
      begin

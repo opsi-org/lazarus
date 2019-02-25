@@ -92,7 +92,7 @@ LazFileUtils,
   synaip,
   synsock,
   oscalc,
-  osdefinedfunctions,
+  //osdefinedfunctions,
   opsihwbiosinfo,
   osjson,
   oscrypt,
@@ -683,7 +683,8 @@ uses
   {$ENDIF GUI}
   oswebservice,
   {NB30,} {for getmacadress2}
-  osmain;
+  osmain,
+  osdefinedfunctions;
 
 
 
