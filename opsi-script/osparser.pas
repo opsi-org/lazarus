@@ -1671,17 +1671,19 @@ function GetNetUser (Host : String; Var UserName : String; var ErrorInfo : Strin
   (* for Host = '' Username will become the name of the current user of the process *)
 
 var
-  pLocalName : PChar;
-  pUserName  : PChar;
+  pLocalName : Pchar;
+  pUserName  : LPWSTR;
 
 
   function ApiCall (var Username, ErrorInfo : String; BuffSize : DWord) : Boolean;
    var
    errorcode : DWord;
    nBuffSize  : DWord;
-   pErrorBuff, pNameBuff : PChar;
+   pErrorBuff : PChar;
+   pNameBuff : PChar;
    nErrorBuffSize : DWord=0;
    nNameBuffSize : DWord=0;
+   usernamew : unicodestring;
 
 
   begin
@@ -1689,16 +1691,17 @@ var
     GetMem (pUserName, BuffSize);
     nBuffSize := Buffsize;
 
-    UserName := '';
-    errorCode := WNetGetUser(nil, pUserName, nBuffSize);
+    usernamew := '';
+    errorCode := WNetGetUserW(nil, pUserName, nBuffSize);
 
 
     case errorCode of
       no_error                  :
         Begin
          ErrorInfo := '';
-         SetLength (UserName, StrLen (pUserName));
-         UserName := pUserName;
+         SetLength (usernamew, StrLen (pUserName));
+         usernamew := pUserName;
+         username := UTF16ToUTF8(usernamew);
          result := true;
         End;
       ERROR_NOT_CONNECTED      : ErrorInfo :=
