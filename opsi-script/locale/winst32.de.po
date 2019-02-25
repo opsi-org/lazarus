@@ -53,3 +53,7 @@ msgstr "Bitte geben Sie den Usernamen des opsi-Service users ein:"
 msgid "Ready to continue ?"
 msgstr "Bereit zum Fortfahren ?"
 
+#: oswebservice.rssendlog
+msgid "Sending log file to server ..."
+msgstr ""
+

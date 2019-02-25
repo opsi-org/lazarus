@@ -18850,6 +18850,7 @@ function TuibInstScript.doAktionen (const Sektion: TWorkSection; const CallingSe
   tmpbool, tmpbool1 : boolean;
 
 begin
+  logdatei.log_prog('Starting daAktionen: ',LLDebug2);
   Script.FLastSection := Script.FActiveSection;
   Script.ActiveSection := sektion;
   result := tsrPositive;
@@ -18875,7 +18876,7 @@ begin
 
   looplist := TXStringList.create;
   inloop := false;
-
+  logdatei.log_prog('Working doAktionen: Vars initialized.',LLDebug2);
   while (i <= Sektion.count) and continue
   and (actionresult > tsrFatalError)
   and (FExtremeErrorLevel > levelfatal)
@@ -18884,6 +18885,7 @@ begin
   begin
    //writeln(actionresult);
     Remaining := trim (Sektion.strings [i-1]);
+    logdatei.log_prog('Working doAktionen: Remaining:'+remaining,LLDebug2);
     //logdatei.log_prog('Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' Sektion.NestingLevel: '+IntToStr(Sektion.NestingLevel)+' condition: '+BoolToStr(conditions [ActLevel],true),LLDebug3);
     if (inDefFuncLevel = 0)          // count only lines on base level
       and (lowercase(Sektion.Name) = 'actions')   // count only lines in actions

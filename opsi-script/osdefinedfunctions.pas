@@ -1524,14 +1524,18 @@ begin
   paramcounter := DFparamCount;
   for parami := 0 to paramcounter - 1 do
   begin
-    DFLocalVarList[parami].varInstance[DFVarInstanceIndex].varValueString :=
-      DFparamList[parami].paramValueBuf.varValueString;
-    DFLocalVarList[parami].varInstance[DFVarInstanceIndex].VarValueList.Text :=
-      DFparamList[parami].paramValueBuf.VarValueList.Text;
-    DFLocalVarList[parami].varInstance[DFVarInstanceIndex].referencevarscopeindex :=
-      DFparamList[parami].paramValueBuf.referencevarscopeindex;
-    DFLocalVarList[parami].varInstance[DFVarInstanceIndex].referencevarname :=
-      DFparamList[parami].paramValueBuf.referencevarname;
+    if Assigned(DFparamList[parami].paramValueBuf.VarValueList) then
+    begin
+      LogDatei.log('copyParamBufToLocalVars: copy param: ' + IntToStr(parami), LLDebug2);
+      DFLocalVarList[parami].varInstance[DFVarInstanceIndex].varValueString :=
+        DFparamList[parami].paramValueBuf.varValueString;
+      DFLocalVarList[parami].varInstance[DFVarInstanceIndex].VarValueList.Text :=
+        DFparamList[parami].paramValueBuf.VarValueList.Text;
+      DFLocalVarList[parami].varInstance[DFVarInstanceIndex].referencevarscopeindex :=
+        DFparamList[parami].paramValueBuf.referencevarscopeindex;
+      DFLocalVarList[parami].varInstance[DFVarInstanceIndex].referencevarname :=
+        DFparamList[parami].paramValueBuf.referencevarname;
+    end;
   end;
 end;
 
@@ -1546,15 +1550,17 @@ var
   funcindex: integer;
   searchindex: integer;
   searchDFName: string;
+  tmpi1 : integer;
 begin
   call := False;
   Inc(inDefFuncLevel);
   FuncIndex := definedFunctionNames.IndexOf(LowerCase(DFName));
+  tmpi1 := FuncIndex;
   LogDatei.log('We are coming from function with index: ' + IntToStr(
     inDefFuncIndex) + ' (-1 = base)', LLDebug2);
   LogDatei.log('We enter the defined function: ' + DFName + ' with ' +
     IntToStr(DFcontent.Count) + ' lines. inDefFuncLevel: ' +
-    IntToStr(inDefFuncLevel), LLDebug2);
+    IntToStr(inDefFuncLevel)+' and index: '+inttostr(Funcindex), LLDebug2);
   LogDatei.log_prog('paramline: ' + paramline + ' remaining: ' +
     remaining + ' Nestlevel: ' + IntToStr(NestLevel), LLDebug2);
   DFActive := True;
@@ -1572,40 +1578,65 @@ begin
   end
   else
   begin
-    // inc var instance counter for recursive calls
-    createAllVarInstances;
-    LogDatei.log_prog('DFVarInstanceIndex: ' + IntToStr(DFVarInstanceIndex) +
-      ' inDefinedFuncNestCounter: ' + IntToStr(inDefinedFuncNestCounter), LLDebug);
-    copyParamBufToLocalVars;
-    definedFunctionsCallStack.Append(IntToStr(DFIndex));
-    inDefFuncIndex := FuncIndex;
-    // run the body of the function
-    Inc(inDefinedFuncNestCounter);
-    section := TWorkSection.Create(Nestlevel, nil);
-    callingsection := TWorkSection.Create(0, nil);
-    section.Assign(DFcontent);
-    sectionresult := script.doAktionen(section, callingsection);
-    Nestlevel := section.NestingLevel;
-    call := True;
-    case DFResultType of
-      dfpString:
-      begin
-        DFResultString := getLocalVarValueString('$result$');
-      end;
-      dfpStringlist:
-      begin
-        DFResultList.Text := getLocalVarValueList('$result$').Text;
-      end;
-      //dfpBoolean :    begin
-      //                  DFResultBool := StrToBool(getLocalVarValueString('$result$'));
-      //                end;
+    try
+      LogDatei.log_prog('inDefFuncIndex: '+inttostr(inDefFuncIndex), LLDebug2);
+      inDefFuncIndex := tmpi1;
+      LogDatei.log_prog('inDefFuncIndex: '+inttostr(inDefFuncIndex), LLDebug2);
+
+      // inc var instance counter for recursive calls
+      createAllVarInstances;
+      LogDatei.log_prog('DFVarInstanceIndex: ' + IntToStr(DFVarInstanceIndex) +
+        ' inDefinedFuncNestCounter: ' + IntToStr(inDefinedFuncNestCounter), LLDebug);
+      copyParamBufToLocalVars;
+      LogDatei.log_prog('definedFunctionsCallStack.Append ... ', LLDebug2);
+      definedFunctionsCallStack.Append(IntToStr(DFIndex));
+      LogDatei.log_prog('definedFunctionsCallStack.Appended', LLDebug2);
+    except
+     on e: Exception  do
+     begin
+       LogDatei.log_prog('Exception: osd call: init vars: '+e.message, LLError);
+       raise;
+     end;
     end;
-    Dec(inDefinedFuncNestCounter);
-    definedFunctionsCallStack.Delete(definedFunctionsCallStack.Count - 1);
-    // dec var instance counter for recursive calls
-    destroyAllVarInstances;
-    LogDatei.log_prog('DFVarInstanceIndex: ' + IntToStr(DFVarInstanceIndex) +
-      ' inDefinedFuncNestCounter: ' + IntToStr(inDefinedFuncNestCounter), LLDebug);
+    try
+      // run the body of the function
+      LogDatei.log_prog('prepare run the body of the function ... ', LLDebug2);
+      Inc(inDefinedFuncNestCounter);
+      section := TWorkSection.Create(Nestlevel, nil);
+      callingsection := TWorkSection.Create(0, nil);
+      section.Assign(DFcontent);
+      LogDatei.log_prog('start run the body of the function ... ', LLDebug2);
+      sectionresult := script.doAktionen(section, callingsection);
+      LogDatei.log_prog('finished run the body of the function ... ', LLDebug2);
+      Nestlevel := section.NestingLevel;
+      call := True;
+      case DFResultType of
+        dfpString:
+        begin
+          DFResultString := getLocalVarValueString('$result$');
+        end;
+        dfpStringlist:
+        begin
+          DFResultList.Text := getLocalVarValueList('$result$').Text;
+        end;
+        //dfpBoolean :    begin
+        //                  DFResultBool := StrToBool(getLocalVarValueString('$result$'));
+        //                end;
+      end;
+      Dec(inDefinedFuncNestCounter);
+      definedFunctionsCallStack.Delete(definedFunctionsCallStack.Count - 1);
+      // dec var instance counter for recursive calls
+      destroyAllVarInstances;
+      LogDatei.log_prog('DFVarInstanceIndex: ' + IntToStr(DFVarInstanceIndex) +
+        ' inDefinedFuncNestCounter: ' + IntToStr(inDefinedFuncNestCounter), LLDebug);
+
+    except
+     on e: Exception  do
+     begin
+       LogDatei.log_prog('Exception: osd call: run body: '+e.message, LLError);
+       raise;
+     end;
+    end;
   end;
   // we leave a defined function
   if DFVarInstanceIndex = -1 then
