@@ -1,3 +1,13 @@
+opsi-setup-detector (4.1.0.6) stable; urgency=low
+
+  * added english translation file (is needed for language switch)
+  * added Language menu for language switch
+  * fixed handling of --lang param
+  * create: control file without changelog
+  * create: changelog in changelog.txt
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  26 Feb 2019 : 15:00:00 +0200
+
 opsi-setup-detector (4.1.0.5) stable; urgency=low
 
   * refix of configuration translation (git killed them all)
