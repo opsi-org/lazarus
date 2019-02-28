@@ -509,17 +509,19 @@ function GetFileInfo(const CompleteName: string; var fRec: TSearchRec;
 function CutLeftBlanks(const s: string): string;
 function CutRightBlanks(const s: string): string;
 *)
+(*
 function divideAtFirst(const partialS, S: string; var part1, part2: string): boolean;
- (* teilt den String S beim ersten Vorkommen des Teilstrings partialS;
-     liefert true, wenn partialS vorkommt,
-     andernfalls false;
-     wenn partialS nicht vorkommt, enthaelt part1 den Gesamtstring, part2 ist leer *)
+//  teilt den String S beim ersten Vorkommen des Teilstrings partialS;
+//   liefert true, wenn partialS vorkommt,
+//   andernfalls false;
+//   wenn partialS nicht vorkommt, enthaelt part1 den Gesamtstring, part2 ist leer
 
 procedure stringsplitByWhiteSpace(const s: string; var Result: TXStringList);
-(* produziert eine Stringliste aus den Teilstrings, die zwischen den Whitespace-Abschnitten stehen *)
+// produziert eine Stringliste aus den Teilstrings, die zwischen den Whitespace-Abschnitten stehen
 
 procedure stringsplit(const s, delimiter: string; var Result: TXStringList);
-(* produziert eine Stringliste aus den Teilstrings, die zwischen den Delimiter-Strings stehen *)
+// produziert eine Stringliste aus den Teilstrings, die zwischen den Delimiter-Strings stehen
+*)
 (*
 function SkipA(const partialS, S: string; var Remaining: string;
   var Error: string): boolean;
@@ -5132,6 +5134,7 @@ begin
 end;
 *)
 
+(*
 function divideAtFirst(const partialS, S: string; var part1, part2: string): boolean;
   // teilt den String S beim ersten Vorkommen des Teilstrings partialS;
   //   liefert true, wenn partialS vorkommt,
@@ -5192,7 +5195,7 @@ begin
 
   Result.add(item);
 end;
-
+*)
 
 (*
 function SkipA(const partialS, S: string; var Remaining: string;

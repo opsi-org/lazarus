@@ -66,6 +66,18 @@ function opsiunquotestr2(s1,s2 : string): string;
 // and the second char is the end mark
 // used by unquote2
 
+function divideAtFirst(const partialS, S: string; var part1, part2: string): boolean;
+//  teilt den String S beim ersten Vorkommen des Teilstrings partialS;
+//   liefert true, wenn partialS vorkommt,
+//   andernfalls false;
+//   wenn partialS nicht vorkommt, enthaelt part1 den Gesamtstring, part2 ist leer
+
+procedure stringsplitByWhiteSpace(const s: string; var Result: TStringList);
+// produziert eine Stringliste aus den Teilstrings, die zwischen den Whitespace-Abschnitten stehen
+
+procedure stringsplit(const s, delimiter: string; var Result: TStringList);
+// produziert eine Stringliste aus den Teilstrings, die zwischen den Delimiter-Strings stehen
+
 implementation
 
 function CutLeftBlanks(const s: string): string;
@@ -361,6 +373,68 @@ begin
     else Result := s1;
   end;
 end;
+
+function divideAtFirst(const partialS, S: string; var part1, part2: string): boolean;
+  // teilt den String S beim ersten Vorkommen des Teilstrings partialS;
+  //   liefert true, wenn partialS vorkommt,
+  //   andernfalls false;
+  //   wenn partialS nicht vorkommt, enthaelt part1 den Gesamtstring, part2 ist leer
+
+var
+  i: integer = 0;
+begin
+  i := ansipos(lowercase(partialS), lowercase(s));
+  if i > 0 then
+  begin
+    part1 := copy(S, 1, i - 1);
+    part2 := copy(S, i + length(partialS), length(S));
+    Result := True;
+  end
+  else
+  begin
+    part1 := s;
+    part2 := '';
+    Result := False;
+  end;
+end;
+
+procedure stringsplitByWhiteSpace(const s: string; var Result: TStringList);
+// produziert eine Stringliste aus den Teilstrings, die zwischen den Whitespace-Abschnitten stehen
+var
+  remainder: string = '';
+  item: string = '';
+  //found: boolean;
+begin
+  GetWord(s, item, remainder, WordDelimiterWhiteSpace);
+  Result.add(item);
+  while remainder <> '' do
+  begin
+    GetWord(remainder, item, remainder, WordDelimiterWhiteSpace);
+    Result.add(item);
+  end;
+end;
+
+
+procedure stringsplit(const s, delimiter: string; var Result: TStringList);
+// produziert eine Stringliste aus den Teilstrings, die zwischen den Delimiter-Strings stehen
+
+var
+  remainder: string = '';
+  item: string = '';
+  found: boolean;
+begin
+
+  found := divideAtFirst(delimiter, s, item, remainder);
+
+  while found do
+  begin
+    Result.add(item);
+    found := divideAtFirst(delimiter, remainder, item, remainder);
+  end;
+
+  Result.add(item);
+end;
+
 
 
 end.

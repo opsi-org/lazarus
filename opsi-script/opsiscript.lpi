@@ -7,7 +7,6 @@
       <MainUnit Value="0"/>
       <Title Value="opsi-script"/>
       <Scaled Value="True"/>
-      <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
       <XPManifest>
         <DpiAware Value="True"/>
@@ -99,6 +98,7 @@
           </Parsing>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="x86_64"/>
             <Optimizations>
               <OptimizationLevel Value="3"/>
             </Optimizations>
@@ -144,7 +144,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="33">
+    <Units Count="36">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -293,6 +293,18 @@
         <Filename Value="../common/osxml.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit32>
+      <Unit33>
+        <Filename Value="../common/osfuncmac.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit33>
+      <Unit34>
+        <Filename Value="../common/osfunclin.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit34>
+      <Unit35>
+        <Filename Value="../common/osparserhelper.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit35>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -318,6 +330,7 @@
         <OverflowChecks Value="True"/>
         <StackChecks Value="True"/>
       </Checks>
+      <TargetCPU Value="x86_64"/>
       <SmallerCode Value="True"/>
     </CodeGeneration>
     <Linking>

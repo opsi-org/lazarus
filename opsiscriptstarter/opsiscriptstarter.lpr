@@ -9,6 +9,12 @@ uses
   cthreads,
   {$ENDIF}//{$ENDIF}
   //Interfaces, // this includes the LCL widgetset
+  {$IFDEF LINUX}
+  osfunlin,
+  {$ENDIF}
+  {$IFDEF DARWIN}
+  osfuncmac,
+  {$ENDIF}
   Classes,
   SysUtils,
   CustApp ,
@@ -210,26 +216,7 @@ begin
   end;
 end;
 
-function isMounted(mountpoint : string) : boolean;
-var
-  output:string;
-  exename:string;
-  commands:array of string;
-begin
-  result := false;
-  if not RunCommand('/usr/bin/which',['findmnt'],output) then
-   writeln('Could not find mount binary')
-  else
-  begin
-    exename := output;
-    exename := exename.Replace(#10,'');
-    exename := exename.Replace('''','');
-  end;
-  if RunCommand(exename,[mountpoint],output) then
-  begin
-    result := true;
-  end;
-end;
+
 
 function mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass, myoption: string) : integer;
 var

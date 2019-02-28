@@ -18,10 +18,13 @@ interface
 
 uses
   Classes,
-  osfunclin,
+  Process,
+  //osfunclin,
   {$IFDEF OPSISCRIPT}
   osfunc,
   {$ENDIF OPSISCRIPT}
+  OSProcessux,
+  osparserhelper,
   oslog,
   SysUtils;
 
@@ -31,22 +34,53 @@ function getMacosProcessList: TStringList;
 function getMacosProcessByPid(pid:DWORD): String;
 function getMacosVersionMap: TStringList;
 function GetMacosVersionInfo: String;
+function isMounted(mountpoint : string) : boolean;
+function which(target:string; var pathToTarget : string) : boolean;
 
 implementation
 
 uses
+  {$IFDEF OPSISCRIPT}
+    osparser,
+    {$ENDIF OPSISCRIPT}
 {$IFDEF GUI}
   graphics,
 osbatchgui,
 osinteractivegui,
 osshowsysinfo,
 {$ENDIF GUI}
- osparser ;
+ null ;
+
+
+function which(target:string; var pathToTarget : string) : boolean;
+var
+  str : string;
+  exitcode : longint;
+  cmd : string;
+  path : string;
+begin
+  result := false;
+  pathToTarget := '';
+  (*
+  cmd := '/bin/bash -c "';
+  cmd := cmd + 'set PATH=''/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin'' ;';
+  cmd := cmd + 'which '+target+' || exit $?"';
+  *)
+  path := '/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin';
+  str := FileSearch(target,path);
+  if fileexists(trim(str)) then
+  begin
+    result := true;
+    pathToTarget := trim(str);
+  end;
+end;
 
 
 function checkForMacosDependencies(var Errstr : string) : boolean;
 var
   exitcode : longint;
+  output : string;
+  outint : integer;
   cmd : string;
 begin
   result := true;
@@ -59,11 +93,16 @@ begin
   // $ mv ip.py /usr/local/bin/ip
   if not which('ip', errstr) then
   begin
+      exitcode := RunCommandIndir('','curl',['-s','-o','/usr/local/bin/ip','-L','https://github.com/brona/iproute2mac/raw/master/src/ip.py'],output,outint,[]);
+    exitcode := RunCommandIndir('','chmod',['-x',''],output,outint,[]);
+    if not which('ip', errstr) then result := false;
+    (*
     cmd := 'curl -s -o /usr/local/bin/ip -L https://github.com/brona/iproute2mac/raw/master/src/ip.py';
     exitcode := RunCommandCaptureOutGetExitcode(cmd);
     cmd := 'chmod +x /usr/local/bin/ip';
     exitcode := RunCommandCaptureOutGetExitcode(cmd);
     if not which('ip', errstr) then result := false;
+    *)
   end;
 end;
 
@@ -73,10 +112,12 @@ var
   pscmd, report: string;
   {$IFDEF OPSISCRIPT}
   outlines: TXStringlist;
+  lineparts: TXStringlist;
   {$ELSE OPSISCRIPT}
   outlines: TStringlist;
+  lineparts: TStringlist;
   {$ENDIF OPSISCRIPT}
-  lineparts: TXStringlist;
+
   ExitCode: longint;
   i,k: integer;
 begin
@@ -85,10 +126,12 @@ begin
       Result := TStringList.Create;
       {$IFDEF OPSISCRIPT}
       outlines := TXStringList.Create;
-      {$ELSE OPSISCRIPT}
-      outlines := TXStringList.Create;
-      {$ENDIF OPSISCRIPT}
       lineparts := TXStringList.Create;
+      {$ELSE OPSISCRIPT}
+      outlines := TStringList.Create;
+      lineparts := TStringList.Create;
+      {$ENDIF OPSISCRIPT}
+
       pscmd := 'ps -eco pid,user,comm';
       if not RunCommandAndCaptureOut(pscmd, True, outlines, report,
         SW_HIDE, ExitCode) then
@@ -148,10 +191,12 @@ var
   pscmd, report: string;
   {$IFDEF OPSISCRIPT}
   outlines: TXStringlist;
+  lineparts: TXStringlist;
   {$ELSE OPSISCRIPT}
   outlines: TStringlist;
+  lineparts: TStringlist;
   {$ENDIF OPSISCRIPT}
-  lineparts: TXStringlist;
+
   ExitCode: longint;
   i,k: integer;
 begin
@@ -161,10 +206,12 @@ begin
       Result := '';
       {$IFDEF OPSISCRIPT}
       outlines := TXStringList.Create;
-      {$ELSE OPSISCRIPT}
-      outlines := TXStringList.Create;
-      {$ENDIF OPSISCRIPT}
       lineparts := TXStringList.Create;
+      {$ELSE OPSISCRIPT}
+      outlines := TStringList.Create;
+      lineparts := TStringList.Create;
+      {$ENDIF OPSISCRIPT}
+
       pscmd := 'ps -eco pid,user,comm';
       if not RunCommandAndCaptureOut(pscmd, True, outlines, report,
         SW_HIDE, ExitCode,false,2) then
@@ -211,7 +258,7 @@ function getProfilesDirListMac: TStringList;
 var
   resultstring: string;
   cmd, report: string;
-  outlines, lineparts: TXStringlist;
+  outlines, lineparts: TStringlist;
   ExitCode: longint;
   i: integer;
 begin
@@ -261,7 +308,7 @@ function getMacosVersionMap: TStringList;
 var
   resultstring: string;
   cmd, report: string;
-  outlines, lineparts: TXStringlist;
+  outlines, lineparts: TStringlist;
   ExitCode: longint;
   i: integer;
 begin
@@ -281,6 +328,27 @@ end;
 function GetMacosVersionInfo: String;
 begin
   result := trim(getCommandResult('sw_vers -productVersion'));
+end;
+
+function isMounted(mountpoint : string) : boolean;
+var
+  output:string;
+  exename:string;
+  commands:array of string;
+begin
+  result := false;
+  if not RunCommand('mount',[],output) then
+   writeln('Mount run error')
+  else
+  begin
+    exename := output;
+    exename := exename.Replace(#10,'');
+    exename := exename.Replace('''','');
+  end;
+  if RunCommand(exename,[mountpoint],output) then
+  begin
+    result := true;
+  end;
 end;
 
 end.
