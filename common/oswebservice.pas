@@ -3849,11 +3849,23 @@ end;
 
 function TOpsi4Data.getProductPropertyList(myproperty: string;
   defaultlist: TStringList): TStringList;
+var
+  clientId, values : string;
 begin
   try
-    Result := TStringList.Create;
-    Result := getProductPropertyList(myproperty, defaultlist,
-                                   actualclient, Productvars.Values['productId']);
+    if  Productvars <> nil then
+    begin
+      clientid := actualclient;
+      values := Productvars.Values['productId'];
+      Result := TStringList.Create;
+      Result.AddStrings(Tstrings(getProductPropertyList(myproperty, defaultlist,
+                                     clientid,values )));
+    end
+    else
+    begin
+      LogDatei.log('opsi.data.productvars=nil - using defaults.', LLWarning);
+        Result.AddStrings(defaultlist);
+    end;
 
   except
       on E: Exception do

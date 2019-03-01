@@ -16335,7 +16335,7 @@ begin
     end;
  end
 
-
+ (*
  else if Skip ('isValidUtf8String', Input, r, InfoSyntaxError)
  then
  begin
@@ -16352,7 +16352,7 @@ begin
       end
     end;
  end
-
+ *)
 
  else if Skip ('processIsRunning', Input, r, InfoSyntaxError)
  then
