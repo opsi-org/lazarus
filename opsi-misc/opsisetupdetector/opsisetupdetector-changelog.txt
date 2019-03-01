@@ -1,3 +1,31 @@
+[todo]
+7-Zip SFX,   ok
+Adobe Installer,
+Astrum Installer,
+Box Stub,   (boxstub.exe, dotnet)
+Excelsior Installer,
+Ghost Installer,
+Inno Setup,    ok
+InstallShield,  ok
+Java Installer,
+MS Office (Click-to-Run),
+Windows Installer (MSI or MSI in EXE), ok
+NSIS Setup, ok
+SFX Cab,   (sfxcab.exe,  vcredist)
+Smart Installer Maker,
+Windows installer XML,  (atwork, Boxmarker)
+WinRAR Installer,
+WinZip Installer,
+Wise Installer
+
+
+opsi-setup-detector (4.1.0.7) stable; urgency=low
+
+  * added stWixToolset
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri,  01 Mar 2019 : 15:00:00 +0200
+
+
 opsi-setup-detector (4.1.0.6) stable; urgency=low
 
   * added english translation file (is needed for language switch)
