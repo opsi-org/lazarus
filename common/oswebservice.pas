@@ -631,6 +631,7 @@ begin
       testresult := Result;
       sessionid := FjsonExecutioner.FSessionId;
     end;
+    (* this sems to be buggy opsi3 code (do 3.2019)
     if Result = '' then
     begin
       //result := '3';
@@ -662,6 +663,7 @@ begin
         end;
       end;
     end;
+    *)
   except
     //result := '3';
     try
@@ -1932,7 +1934,11 @@ begin
       retrieveJSONObject(omc, logging, False);
     end
     else
-      LogDatei.log('Received (first 512): ' + copy(ResultLines.Strings[0], 1, 512), LLerror);
+    begin
+      if pos('Stream read error', FError) = 0   then
+         if Assigned(ResultLines) then
+            LogDatei.log('Received (first 512): ' + copy(ResultLines.Strings[0], 1, 512), LLerror);
+    end;
   end;
 end;
 
@@ -3853,18 +3859,18 @@ var
   clientId, values : string;
 begin
   try
+    Result := TStringList.Create;
     if  Productvars <> nil then
     begin
       clientid := actualclient;
       values := Productvars.Values['productId'];
-      Result := TStringList.Create;
       Result.AddStrings(Tstrings(getProductPropertyList(myproperty, defaultlist,
                                      clientid,values )));
     end
     else
     begin
       LogDatei.log('opsi.data.productvars=nil - using defaults.', LLWarning);
-        Result.AddStrings(defaultlist);
+        Result.AddStrings(TStrings(defaultlist));
     end;
 
   except
@@ -3918,14 +3924,14 @@ begin
         begin
           LogDatei.log('Got no property from service - using default',
             LLWarning);
-          Result.AddStrings(defaultlist);
+          Result.AddStrings(TStrings(defaultlist));
         end;
       end
       else
       begin
         LogDatei.log('Could not set backend properties - using defaults.',
           LLWarning);
-        Result.AddStrings(defaultlist);
+        Result.AddStrings(TStrings(defaultlist));
       end;
     except
       on E: Exception do
@@ -3933,7 +3939,7 @@ begin
         Logdatei.log('Exception in getProductPropertyList, system message: "' +
           E.Message + '"', LLwarning);
         LogDatei.log(' - using defaults.', LLWarning);
-        Result.AddStrings(defaultlist);
+        Result.AddStrings(TStrings(defaultlist));
       end
     end;
   finally

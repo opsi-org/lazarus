@@ -71,7 +71,20 @@
             <CompilerMessages>
               <IgnoredMessages idx5058="True" idx5027="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dOPSIWINST -dWINDOWS -dOPSISCRIPT -dGUI -dOSDEBUG"/>
+            <CustomOptions Value="-dOPSIWINST
+-dWINDOWS
+-dOPSISCRIPT
+-dGUI
+-dOSDEBUG
+-dOSLOG"/>
+            <OtherDefines Count="6">
+              <Define0 Value="OPSIWINST"/>
+              <Define1 Value="WINDOWS"/>
+              <Define2 Value="OPSISCRIPT"/>
+              <Define3 Value="GUI"/>
+              <Define4 Value="OSDEBUG"/>
+              <Define5 Value="OSLOG"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item2>
@@ -118,7 +131,18 @@
             <CompilerMessages>
               <IgnoredMessages idx5058="True" idx5027="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dOPSIWINST -dWINDOWS -dOPSISCRIPT -dGUI"/>
+            <CustomOptions Value="-dOPSIWINST
+-dWINDOWS
+-dOPSISCRIPT
+-dGUI
+-dOSLOG"/>
+            <OtherDefines Count="5">
+              <Define0 Value="OPSIWINST"/>
+              <Define1 Value="WINDOWS"/>
+              <Define2 Value="OPSISCRIPT"/>
+              <Define3 Value="GUI"/>
+              <Define4 Value="OSLOG"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -130,9 +154,6 @@
       <Version Value="2"/>
     </PublishOptions>
     <RunParams>
-      <local>
-        <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
-      </local>
       <FormatVersion Value="2"/>
       <Modes Count="1">
         <Mode0 Name="default">
@@ -375,6 +396,7 @@
       <SmartLinkUnit Value="True"/>
       <Checks>
         <IOChecks Value="True"/>
+        <RangeChecks Value="True"/>
         <OverflowChecks Value="True"/>
         <StackChecks Value="True"/>
       </Checks>
@@ -399,11 +421,24 @@
       <CompilerMessages>
         <IgnoredMessages idx5058="True" idx5027="True"/>
       </CompilerMessages>
-      <CustomOptions Value="-dOPSIWINST -dWINDOWS -dOPSISCRIPT -dGUI -dOPSI"/>
+      <CustomOptions Value="-dOPSIWINST
+-dWINDOWS
+-dOPSISCRIPT
+-dGUI
+-dOPSI
+-dOSLOG"/>
+      <OtherDefines Count="6">
+        <Define0 Value="OPSIWINST"/>
+        <Define1 Value="WINDOWS"/>
+        <Define2 Value="OPSISCRIPT"/>
+        <Define3 Value="GUI"/>
+        <Define4 Value="OPSI"/>
+        <Define5 Value="OSLOG"/>
+      </OtherDefines>
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="5">
+    <Exceptions Count="8">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -419,6 +454,15 @@
       <Item5>
         <Name Value="ERegistryException"/>
       </Item5>
+      <Item6>
+        <Name Value="EReadError"/>
+      </Item6>
+      <Item7>
+        <Name Value="EIdHTTPProtocolException"/>
+      </Item7>
+      <Item8>
+        <Name Value="Edecompressionerror"/>
+      </Item8>
     </Exceptions>
   </Debugging>
 </CONFIG>

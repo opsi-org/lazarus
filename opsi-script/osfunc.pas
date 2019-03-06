@@ -1005,7 +1005,7 @@ begin
   {$ENDIF LINUX}
 end;
 
-//{$RANGECHECKS OFF}
+{$RANGECHECKS OFF}
 procedure FindLocalIPData(var ipName: string; var address: string);
 type
   bytearray = array of byte;
@@ -1032,7 +1032,7 @@ begin
     end;
   {$ENDIF WINDOWS}
 end;
-//{$RANGECHECKS ON}
+{$RANGECHECKS ON}
 
 
 {$IFDEF LINUX}

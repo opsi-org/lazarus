@@ -577,12 +577,14 @@ function TOsDefinedFunction.addLocalVar(Name: string; datatype: TosdfDataTypes;
 var
   arraycounter, varindex, instanceSize: integer;
 begin
+  LogDatei.log_prog('osdf addLocalVar: '+Name,LLDebug2);
   Result := False;
   if not localVarNameExists(Name) then
   begin
     if not localVarExists(Name) then
     begin
       // we assume this is the first definition call
+      LogDatei.log_prog('osdf addLocalVar: we assume this is the first definition call for '+Name,LLDebug2);
       Result := True;
       arraycounter := length(DFLocalVarList);
       Inc(arraycounter);
@@ -597,6 +599,7 @@ begin
     end
     else
     begin
+      LogDatei.log_prog('osdf addLocalVar: localVarNameExists but not localVarExists'+Name,LLDebug2);
       if DFVarInstanceIndex > 0 then
       begin
         // Instance are created from createAllVarInstances
@@ -612,23 +615,26 @@ begin
     arraycounter := localVarNameIndex(Name);
     if localVarExists(Name) then
     begin
+      LogDatei.log_prog('osdf addLocalVar: (localVarNameExists) and  localVarExists '+Name,LLDebug2);
       //DFLocalVarList[arraycounter - 1].varInstance[DFVarInstanceIndex].inuse := True;
       Result := True;
       if (length(DFLocalVarList[arraycounter - 1].varInstance) =
         DFVarInstanceIndex + 1) and (DFVarInstanceIndex >= 0) then
         DFLocalVarList[arraycounter - 1].varInstance[DFVarInstanceIndex].inuse := True;
-        //LogDatei.log('Syntax Error: Double definition of local variable: ' +  Name, LLCritical);
+      //LogDatei.log('Syntax Error: Double definition of local variable: ' +  Name, LLCritical);
     end
     else
     begin
-      if DFVarInstanceIndex>= 0 then
-        if (length(DFLocalVarList[arraycounter - 1].varInstance) =
-        DFVarInstanceIndex + 1) then
+      // this may be the part for recreation of a loopvar ; array counter may be zero
+      LogDatei.log_prog('osdf addLocalVar: (localVarNameExists) and  (not localVarExists) '+Name,LLDebug2);
+      if DFVarInstanceIndex >= 0 then
+        if (length(DFLocalVarList[arraycounter].varInstance) =
+          DFVarInstanceIndex +1 ) then
         begin
-        DFLocalVarList[arraycounter - 1].varInstance[DFVarInstanceIndex].inuse := True;
-        Result := True;
+          DFLocalVarList[arraycounter].varInstance[DFVarInstanceIndex].inuse := True;
+          Result := True;
         end;
-    end
+    end;
   end;
 end;
 
@@ -1708,14 +1714,16 @@ begin
       begin
         index := inDefFuncIndex;
         LogDatei.log_prog('Found var: ' + varname + ' as local (1) in function ' +
-          definedFunctionArray[index].Name + ' with index: ' + IntToStr(index), LLDebug2);
+          definedFunctionArray[index].Name + ' with index: ' +
+          IntToStr(index), LLDebug2);
       end
       else
       begin
         index := inDefFuncIndex;
         LogDatei.log_prog('Found var: ' + varname +
           ' as local (1) with no instance in function ' +
-          definedFunctionArray[index].Name + ' with index: ' + IntToStr(index), LLDebug2);
+          definedFunctionArray[index].Name + ' with index: ' +
+          IntToStr(index), LLDebug2);
       end;
     end
     else
