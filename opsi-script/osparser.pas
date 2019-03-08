@@ -17618,7 +17618,7 @@ begin
       end
     end;
  end
-*)
+ *)
 
  else if Skip ('processIsRunning', Input, r, InfoSyntaxError)
  then

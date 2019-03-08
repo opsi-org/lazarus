@@ -25,7 +25,7 @@ type
     amSelectable);
   // marker for add installers
   TKnownInstaller = (stAdvancedMSI, stInno, stInstallShield, stInstallShieldMSI,
-    stMsi, stNsis, st7zip, st7zipsfx, stInstallAware, stMSGenericInstaller, stUnknown);
+    stMsi, stNsis, st7zip, st7zipsfx, stInstallAware, stMSGenericInstaller, stWixToolset, stUnknown);
 
 
   TdetectInstaller = function(parent: TClass; markerlist: TStrings): boolean;
@@ -937,6 +937,7 @@ begin
   knownInstallerList.Add('7zipsfx');
   knownInstallerList.Add('InstallAware');
   knownInstallerList.Add('MSGenericInstaller');
+  knownInstallerList.Add('stWixToolset');
   knownInstallerList.Add('Unknown');
 
 
@@ -1126,6 +1127,25 @@ begin
     comment := '';
     uib_exitcode_function := 'isMsExitcodeFatal_short';
     detected := @detectedbypatternwithor;
+  end;
+  // stWixToolset
+  with installerArray[integer(stWixToolset)] do
+  begin
+    description := 'Wix Toolset';
+    silentsetup := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    unattendedsetup := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    silentuninstall := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    unattendeduninstall := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '';
+    patterns.Add('WixBundle');
+    patterns.Add('Wix Toolset');
+    //infopatterns.Add('RunProgram="');
+    link := 'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
+    comment := '';
+    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    detected := @detectedbypatternwithand;
   end;
   // marker for add installers
 

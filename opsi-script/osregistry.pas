@@ -112,7 +112,8 @@ begin
 
   Result := 0;
   if s <> '' then
-    for i := 0 to length(s) - 1 do
+    // pascal string is 1 based (do 3.2019)
+    for i := 1 to length(s)  do
       if s[i] = c then
         Inc(Result);
 

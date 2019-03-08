@@ -51,7 +51,3 @@ msgstr ""
 msgid "Ready to continue ?"
 msgstr ""
 
-#: oswebservice.rssendlog
-msgid "Sending log file to server ..."
-msgstr ""
-

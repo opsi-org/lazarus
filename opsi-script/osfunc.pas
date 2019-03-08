@@ -754,7 +754,6 @@ begin
   result := ValidUTF8String(str);
 end;
 *)
-
 function cmdLineInputDialog(var inputstr : string; const message, default : string; confidential : boolean) : boolean;
 var
   c : char ;
@@ -1021,7 +1020,7 @@ begin
   {$ENDIF DARWIN}
 end;
 
-//{$RANGECHECKS OFF}
+{$RANGECHECKS OFF}
 procedure FindLocalIPData(var ipName: string; var address: string);
 type
   bytearray = array of byte;
@@ -1049,7 +1048,7 @@ begin
     end;
   {$ENDIF WINDOWS}
 end;
-//{$RANGECHECKS ON}
+{$RANGECHECKS ON}
 
 
 {$IFDEF UNIX}

@@ -11,7 +11,6 @@ unit osjson;
 
 
 
-
 {$mode delphi}
 {$RANGECHECKS ON}
 {$OVERFLOWCHECKS ON}
@@ -72,7 +71,7 @@ function jsonAsObjectAddKeyAndValue(str: string; key: string;
   Value: string; var stringToSet: string): boolean;  ///
 function jsonAsObjectGetValueByKey(str: string; key: string;
   var Value: string): boolean; ///
-function jsonAsObjectDeleteByKey( var str: string; key: string): boolean; ///
+function jsonAsObjectDeleteByKey(var str: string; key: string): boolean; ///
 
 
 //function jsonAsObjectGetValueByKey(str:string;key:string; var valresult:string) : boolean;
@@ -276,7 +275,7 @@ function jsonIsArray(str: string): boolean;
 var
   new_obj: ISuperObject;
 begin
-  result := false;
+  Result := False;
   new_obj := SO(str);
   if (new_obj <> nil) then
     Result := new_obj.IsType(stArray);
@@ -286,7 +285,7 @@ function jsonAsArrayCountElements(str: string): integer;
 var
   new_obj: ISuperObject;
 begin
-  result := -1;
+  Result := -1;
   new_obj := SO(str);
   if new_obj <> nil then
     if new_obj.IsType(stArray) then
@@ -331,8 +330,7 @@ begin
       end;
 end;
 
-function jsonAsArrayDeleteObjectByIndex(var arraystr: string;
-  index: cardinal): boolean;
+function jsonAsArrayDeleteObjectByIndex(var arraystr: string; index: cardinal): boolean;
 var
   new_obj: ISuperObject;
 begin
@@ -374,10 +372,10 @@ end;
 
 function jsonAsArrayToStringList(str: string; var strListResult: TStringList): boolean;
 var
-  new_obj : ISuperObject;
+  new_obj: ISuperObject;
   i: integer;
-  objstr : string;
-  testbool : boolean;
+  objstr: string;
+  testbool: boolean;
 begin
   Result := False;
   strListResult := TStringList.Create;
@@ -390,7 +388,8 @@ begin
         objstr := new_obj.AsArray.S[i];
         //objstr := escapeControlChars(objstr);
         objstr := stringreplace(objstr, #10, '\n', [rfReplaceAll, rfIgnoreCase]);
-        if jsonIsObject(objstr) or jsonIsString(objstr) or TryStrToBool(objstr,testbool) then
+        if jsonIsObject(objstr) or jsonIsString(objstr) or
+          TryStrToBool(objstr, testbool) then
           strListResult.Append(objstr);
       end;
 end;
@@ -551,8 +550,9 @@ begin
       Result := False;
 end;
 
-function jsonAsObjectDeleteByKey( var str: string; key: string): boolean; ///
-var new_obj: ISuperObject;
+function jsonAsObjectDeleteByKey(var str: string; key: string): boolean; ///
+var
+  new_obj: ISuperObject;
   mykeylist: TStringList;
 begin
   Result := False;
@@ -561,9 +561,9 @@ begin
   if jsonAsObjectHasKey(str, key) then
     if (new_obj <> nil) and new_obj.IsType(stObject) then
     begin
-        new_obj.Delete(key);
-        str := new_obj.AsString;
-        Result:=true;
+      new_obj.Delete(key);
+      str := new_obj.AsString;
+      Result := True;
     end;
   mykeylist.Clear;
 end;
@@ -577,7 +577,7 @@ begin
   Result := False;
   mykeylist := TStringList.Create;
   new_obj := SO(str);
-  value_obj := SO('"'+escapeControlChars(Value)+'"');
+  value_obj := SO('"' + escapeControlChars(Value) + '"');
   if jsonAsObjectGetKeyList(str, mykeylist) then
     if (new_obj <> nil) and new_obj.IsType(stObject) then
     begin
@@ -622,7 +622,7 @@ var
   keyList: TStringList;
 begin
   Result := False;
-  keyList :=  TStringList.Create;
+  keyList := TStringList.Create;
   if jsonIsValid(str) then
   begin
     if jsonAsObjectGetKeyList(str, keyList) then
@@ -638,29 +638,39 @@ var
   myjo: TJSONObject;
 begin
   Result := False;
-  if jsonAsObjectHasKey(str, key) then
-    try
+  if jsonIsObject(str) then
+  begin
+    if jsonAsObjectHasKey(str, key) then
       try
-        myjd := str2jsondata(str);
-        myjo := TJSONObject.Create;
-        myjo := TJSONObject(myjd);
-        if myjo <> nil then
-        begin
-          case myjo.Elements[key].JSONType of
-            jtString: Value := myjo.Elements[key].AsString;
-            jtNumber: Value := '"' + myjo.Elements[key].AsString + '"';
-              //jtBoolean: value:= myjo.Elements[key].AsBoolean ;
-            else
-              Value := myjo.Elements[key].AsJson;
+        try
+          myjd := str2jsondata(str);
+          myjo := TJSONObject.Create;
+          myjo := TJSONObject(myjd);
+          if myjo <> nil then
+          begin
+            case myjo.Elements[key].JSONType of
+              jtString: Value := myjo.Elements[key].AsString;
+              jtNumber: Value := '"' + myjo.Elements[key].AsString + '"';
+                //jtBoolean: value:= myjo.Elements[key].AsBoolean ;
+              else
+                Value := myjo.Elements[key].AsJson;
+            end;
+            Result := True;
           end;
-          Result := True;
+        except
+          //result:= false;
         end;
-      except
-        //result:= false;
+      finally
+        myjo.Free;
       end;
-    finally
-      myjo.Free;
-    end;
+  end
+  else
+  begin
+    {$IFDEF OSLOG}
+    LogDatei.log('Error no valid JSON given', LLError);
+    {$ENDIF OSLOG}
+    Value := '';
+  end;
 end;
 
 function str2jsondata(str: string): TJSONData;

@@ -51,7 +51,3 @@ msgstr "Please enter opsi service user name:"
 msgid "Ready to continue ?"
 msgstr "Ready to continue ?"
 
-#: oswebservice.rssendlog
-msgid "Sending log file to server ..."
-msgstr ""
-

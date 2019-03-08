@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="10"/>
+    <Version Value="11"/>
     <PathDelim Value="\"/>
     <General>
       <SessionStorage Value="InIDEConfig"/>
@@ -48,7 +48,11 @@
           <CodeGeneration>
             <Checks>
               <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
             </Checks>
+            <VerifyObjMethodCallValidity Value="True"/>
           </CodeGeneration>
           <Linking>
             <Debugging>
@@ -68,7 +72,20 @@
             <CompilerMessages>
               <IgnoredMessages idx11031="True" idx11030="True" idx11017="True" idx11007="True" idx7039="True" idx6048="True" idx5062="True" idx5060="True" idx5058="True" idx5057="True" idx5039="True" idx5028="True" idx5027="True" idx5026="True" idx5024="True" idx5023="True" idx5003="True" idx4081="True" idx4080="True" idx4079="True" idx4055="True" idx4049="True" idx4047="True" idx4035="True" idx4015="True" idx3280="True" idx3274="True" idx3270="True" idx3189="True" idx3187="True" idx3126="True" idx3124="True" idx3123="True" idx2026="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dOPSIWINST -dWINDOWS -dOPSISCRIPT -dGUI -dOSDEBUG"/>
+            <CustomOptions Value="-dOPSIWINST
+-dWINDOWS
+-dOPSISCRIPT
+-dGUI
+-dOSDEBUG
+-dOSLOG"/>
+            <OtherDefines Count="6">
+              <Define0 Value="OPSIWINST"/>
+              <Define1 Value="WINDOWS"/>
+              <Define2 Value="OPSISCRIPT"/>
+              <Define3 Value="GUI"/>
+              <Define4 Value="OSDEBUG"/>
+              <Define5 Value="OSLOG"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item2>
@@ -115,7 +132,18 @@
             <CompilerMessages>
               <IgnoredMessages idx5058="True" idx5027="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dOPSIWINST -dWINDOWS -dOPSISCRIPT -dGUI"/>
+            <CustomOptions Value="-dOPSIWINST
+-dWINDOWS
+-dOPSISCRIPT
+-dGUI
+-dOSLOG"/>
+            <OtherDefines Count="5">
+              <Define0 Value="OPSIWINST"/>
+              <Define1 Value="WINDOWS"/>
+              <Define2 Value="OPSISCRIPT"/>
+              <Define3 Value="GUI"/>
+              <Define4 Value="OSLOG"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -400,6 +428,7 @@
       <SmartLinkUnit Value="True"/>
       <Checks>
         <IOChecks Value="True"/>
+        <RangeChecks Value="True"/>
         <OverflowChecks Value="True"/>
         <StackChecks Value="True"/>
       </Checks>
@@ -424,11 +453,24 @@
       <CompilerMessages>
         <IgnoredMessages idx5058="True" idx5027="True"/>
       </CompilerMessages>
-      <CustomOptions Value="-dOPSIWINST -dWINDOWS -dOPSISCRIPT -dGUI -dOPSI"/>
+      <CustomOptions Value="-dOPSIWINST
+-dWINDOWS
+-dOPSISCRIPT
+-dGUI
+-dOPSI
+-dOSLOG"/>
+      <OtherDefines Count="6">
+        <Define0 Value="OPSIWINST"/>
+        <Define1 Value="WINDOWS"/>
+        <Define2 Value="OPSISCRIPT"/>
+        <Define3 Value="GUI"/>
+        <Define4 Value="OPSI"/>
+        <Define5 Value="OSLOG"/>
+      </OtherDefines>
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="5">
+    <Exceptions Count="8">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -444,6 +486,15 @@
       <Item5>
         <Name Value="ERegistryException"/>
       </Item5>
+      <Item6>
+        <Name Value="EReadError"/>
+      </Item6>
+      <Item7>
+        <Name Value="EIdHTTPProtocolException"/>
+      </Item7>
+      <Item8>
+        <Name Value="Edecompressionerror"/>
+      </Item8>
     </Exceptions>
   </Debugging>
 </CONFIG>

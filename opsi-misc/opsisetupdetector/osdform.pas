@@ -149,6 +149,10 @@ type
     LabelWorkbenchOK: TLabel;
     LabelWorkbenchNotOK: TLabel;
     MemoDefault: TMemo;
+    MenuItemLang: TMenuItem;
+    MenuItemLangDe: TMenuItem;
+    MenuItemLangEn: TMenuItem;
+    MenuItemLangEs: TMenuItem;
     MenuItemStart: TMenuItem;
     MenuItemKnownInstallers: TMenuItem;
     MenuItemConfig: TMenuItem;
@@ -260,6 +264,9 @@ type
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormShow(Sender: TObject);
+    procedure MenuItemLangDeClick(Sender: TObject);
+    procedure MenuItemLangEnClick(Sender: TObject);
+    procedure MenuItemLangEsClick(Sender: TObject);
     procedure MenuItemStartClick(Sender: TObject);
     procedure MenuItemConfigClick(Sender: TObject);
     procedure MenuItemKnownInstallersClick(Sender: TObject);
@@ -659,6 +666,7 @@ begin
   optionlist.Append('help');
   optionlist.Append('filename::');
   optionlist.Append('nogui');
+  optionlist.Append('lang::');
 
   // quick check parameters
   ErrorMsg := Application.CheckOptions('', optionlist);
@@ -685,21 +693,26 @@ begin
     Exit;
   end;
 
-  mylang := GetDefaultLang;
-  {$IFDEF WINDOWS}
-  if Mylang = '' then
-    mylang := LowerCase(copy (GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
-  {$ENDIF WINDOWS}
-  SetDefaultLang(mylang);
-  LogDatei.log('Detected default lang: ' + mylang,LLInfo);
-  LogDatei.log('Detected default lang: ' + GetDefaultLang,LLInfo);
+
 
   if Application.HasOption('lang') then
   begin
     LogDatei.log('Found Parameter lang',LLInfo);
-    SetDefaultLang(Application.GetOptionValue('lang'));
-    LogDatei.log('Found Parameter lang: ' + Application.GetOptionValue('lang'),LLInfo);
-    LogDatei.log('Active lang: ' + GetDefaultLang,LLInfo);
+    mylang := Application.GetOptionValue('lang');
+    SetDefaultLang(mylang);
+    LogDatei.log('Found Parameter lang: ' + mylang,LLInfo);
+    LogDatei.log('Active lang: ' + mylang,LLInfo);
+  end
+  else
+  begin
+    mylang := GetDefaultLang;
+    {$IFDEF WINDOWS}
+    if Mylang = '' then
+      mylang := LowerCase(copy (GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
+    {$ENDIF WINDOWS}
+    SetDefaultLang(mylang);
+    LogDatei.log('Detected default lang: ' + mylang,LLInfo);
+    LogDatei.log('Detected default lang: ' + GetDefaultLang,LLInfo);
   end;
 
 
@@ -852,6 +865,21 @@ end;
 procedure TResultform1.FormShow(Sender: TObject);
 begin
 
+end;
+
+procedure TResultform1.MenuItemLangDeClick(Sender: TObject);
+begin
+  SetDefaultLang('de');
+end;
+
+procedure TResultform1.MenuItemLangEnClick(Sender: TObject);
+begin
+    SetDefaultLang('en');
+end;
+
+procedure TResultform1.MenuItemLangEsClick(Sender: TObject);
+begin
+  SetDefaultLang('es');
 end;
 
 procedure TResultform1.MenuItemStartClick(Sender: TObject);

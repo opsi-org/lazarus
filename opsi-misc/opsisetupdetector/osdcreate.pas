@@ -377,8 +377,11 @@ begin
         textlist.Add('default: ' + myprop.StrDefault.Text);
       end;
     end;
+    textlist.SaveToFile(opsipath + pathdelim + 'control');
+    FreeAndNil(textlist);
 
     // changelog
+    textlist.Clear;
     utcoffset := (GetLocalTimeOffset div 60) * 100 * -1;
     if utcoffset >= 0 then
       utcoffsetstr := '+';
@@ -398,7 +401,7 @@ begin
       ' ' + utcoffsetstr);
     //mon, 04 Jun 12:00:00 + 0100
 
-    textlist.SaveToFile(opsipath + pathdelim + 'control');
+    textlist.SaveToFile(opsipath + pathdelim + 'changelog.txt');
     FreeAndNil(textlist);
     Result := True;
   except
