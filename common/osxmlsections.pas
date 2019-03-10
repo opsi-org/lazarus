@@ -1040,6 +1040,7 @@ var
 begin
   nodeExists := False;
   attributeList := TList.Create;
+  attributesSL := TStringlist.Create;
   try
     begin
       // the root node
@@ -1342,6 +1343,7 @@ begin
   makeTopAsActNodeSet();
   Result := True;
   attributeList := TList.Create;
+  attributesSL := TStringList.Create;
   try
     try
       // the root node
@@ -1493,7 +1495,7 @@ begin
 
   finally
     if Assigned(attributesSL) then
-      attributesSL.Free;
+      FreeAndNil(attributesSL);
     if Assigned(pathes) then
       pathes.Free;
   end;
@@ -2181,13 +2183,17 @@ var
   leavingpath: string;
 begin
   logdatei.log('attribute path element : ' + attributePath, LLinfo);
-  attributeStringList := TStringList.Create;
+  //attributeStringList := TStringList.Create;
+  // has to be created outside
+  if not Assigned(attributeStringList) then
+    logdatei.log('Error: makeAttributesSL: attributeStringList not initialized',LLERROR);
   i := 1;
   while (length(attributePath) > 0) do
   begin
     if Length(attributePath) - Length(StringReplace(attributePath,
       '"', '', [rfReplaceAll, rfIgnoreCase])) = 2 then
     begin // only one remaining attribute
+      // #######
       AttributeStringList.Add(Trim(attributePath));
       attributePath := '';
     end
