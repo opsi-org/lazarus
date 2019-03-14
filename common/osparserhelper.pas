@@ -66,6 +66,8 @@ function opsiunquotestr2(s1,s2 : string): string;
 // and the second char is the end mark
 // used by unquote2
 
+procedure stringsplitByWhiteSpace(const s: string; var Result: TStringList);
+
 implementation
 
 function CutLeftBlanks(const s: string): string;
@@ -362,6 +364,21 @@ begin
   end;
 end;
 
+procedure stringsplitByWhiteSpace(const s: string; var Result: TStringList);
+// produziert eine Stringliste aus den Teilstrings, die zwischen den Whitespace-Abschnitten stehen
+var
+  remainder: string = '';
+  item: string = '';
+  //found: boolean;
+begin
+  GetWord(s, item, remainder, WordDelimiterWhiteSpace);
+  Result.add(item);
+  while remainder <> '' do
+  begin
+    GetWord(remainder, item, remainder, WordDelimiterWhiteSpace);
+    Result.add(item);
+  end;
+end;
 
 end.
 

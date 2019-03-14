@@ -7559,7 +7559,7 @@ begin
         then
         Begin
           // Nodetext setzen und Attribut setzen :   SetText, SetAttribute
-          if XMLDocObject.openNode(nodepath, openstrict) then
+          if XMLDocObject.openNode(nodepath, openstrict,errorinfo) then
           begin
             nodeOpened := true;
             LogDatei.log('successfully opend node: '+nodepath,oslog.LLinfo);
@@ -7567,7 +7567,7 @@ begin
           else
           begin
             LogDatei.log('nodepath does not exists - try to create: '+nodepath,oslog.LLwarning);
-            if XMLDocObject.makeNodePathWithTextContent(nodepath,'') then
+            if XMLDocObject.makeNodePathWithTextContent(nodepath,'',errorinfo) then
             begin
               nodeOpened := true;
               LogDatei.log('successfully created nodepath: '+nodepath,oslog.LLinfo);
@@ -7599,7 +7599,7 @@ begin
         then
         Begin
           try
-            XMLDocObject.delNode(nodepath);
+            XMLDocObject.delNode(nodepath,errorinfo);
             // After a deleteNode you must use opennode in order to work with open nodes
             nodeOpened := false;
             nodeOpenCommandExists := false;
@@ -7868,6 +7868,9 @@ begin
         end;
       End;   // delAttribute
 
+      if not syntaxcheck then
+         reportError (Sektion, i, Sektion.strings [i-1], ErrorInfo);
+
 
     end; // not a comment line
   end; // any line
@@ -7878,6 +7881,9 @@ begin
   else
     LogDatei.log('failed to write xmldoc to file: '+myfilename,oslog.LLError);
   XMLDocObject.destroy;
+
+  if ExitOnError and (DiffNumberOfErrors > 0)
+  then result := tsrExitProcess;
 end;
 
 
@@ -10103,7 +10109,7 @@ begin
 
 
   pythonVersionInfo := TXStringList.Create;
-  stringsplitByWhiteSpace (versionTestResult, pythonVersionInfo);
+  stringsplitByWhiteSpace (versionTestResult, TStringlist(pythonVersionInfo));
 
   if (pythonVersionInfo.Count = 0)
     or (lowerCase (pythonVersionInfo.Strings[0]) <> 'python')
@@ -11070,7 +11076,7 @@ begin
        then
        Begin
           syntaxCheck := true;
-          stringsplitByWhiteSpace (s1, list);
+          stringsplitByWhiteSpace (s1, TStringlist(list));
           // if s1 is confidential all parts are confidential as well
            if logdatei.isConfidential(s1) then
            begin
@@ -17252,7 +17258,7 @@ begin
      LogDatei.log ('xml2NodeExistsByPathInXMLFile in File "' + s1 + '" path "' + s2 + '"  strict mode: "'+s3+'"', LLInfo);
      try
        s1 := ExpandFileNameUTF8(s1);
-       BooleanResult :=  nodeExistsByPathInXMLFile(s1,s2,StrToBool(s3));
+       BooleanResult :=  nodeExistsByPathInXMLFile(s1,s2,StrToBool(s3),InfoSyntaxError);
      except
        on ex: Exception
        do

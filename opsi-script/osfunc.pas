@@ -515,7 +515,7 @@ function divideAtFirst(const partialS, S: string; var part1, part2: string): boo
      andernfalls false;
      wenn partialS nicht vorkommt, enthaelt part1 den Gesamtstring, part2 ist leer *)
 
-procedure stringsplitByWhiteSpace(const s: string; var Result: TXStringList);
+//procedure stringsplitByWhiteSpace(const s: string; var Result: TXStringList);
 (* produziert eine Stringliste aus den Teilstrings, die zwischen den Whitespace-Abschnitten stehen *)
 
 procedure stringsplit(const s, delimiter: string; var Result: TXStringList);
@@ -2112,7 +2112,7 @@ begin
     end;
   end;
 
-  stringsplitByWhiteSpace(paramstr,paramlist);
+  stringsplitByWhiteSpace(paramstr,TStringlist(paramlist));
   //writeln('>->->'+filename+'='+ExpandFileName(filename));
   //writeln('>->->'+paramstr);
   //writeln('>->->'+CmdLinePasStr);
@@ -5155,6 +5155,8 @@ begin
   end;
 end;
 
+(*
+moved to osparser helper
 procedure stringsplitByWhiteSpace(const s: string; var Result: TXStringList);
 // produziert eine Stringliste aus den Teilstrings, die zwischen den Whitespace-Abschnitten stehen
 var
@@ -5170,6 +5172,7 @@ begin
     Result.add(item);
   end;
 end;
+*)
 
 
 procedure stringsplit(const s, delimiter: string; var Result: TXStringList);
