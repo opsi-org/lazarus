@@ -1079,6 +1079,9 @@ begin
             begin
               // handle error
               errorinfo := errormessage;
+              Result := False;
+              attributeList.Free;
+              exit;
             end;
             for k := 0 to attributesSL.Count - 1 do
               logdatei.log('Attribute ' + attributesSL[k], LLinfo);
@@ -1221,6 +1224,9 @@ begin
             begin
               // handle error
               errorinfo := errormessage;
+              Result := False;
+              attributeList.Free;
+              exit;
             end;
           for k := 0 to attributesSL.Count - 1 do
             logdatei.log('Attribute ' + attributesSL[k], LLinfo);
@@ -1289,7 +1295,8 @@ begin
         end
         else  // not strict!
         begin
-          if attributeList.Count = 0 then
+          // we ignore always attributes
+          //if attributeList.Count = 0 then
           begin
             attributeList.Add;
             attributeList.Items[0].key := '';
@@ -1401,6 +1408,9 @@ begin
             begin
               // handle error
               errorinfo := errormessage;
+              Result := False;
+              attributeList.Free;
+              exit;
             end;
           for k := 0 to attributesSL.Count - 1 do
             logdatei.log('Attribute ' + attributesSL[k], LLinfo);
@@ -2215,93 +2225,94 @@ var
 begin
   result := true;
   try
-  localAttributeList := TStringlist.create;
-  logdatei.log('attribute path element : ' + attributePath, LLinfo);
-  //attributeStringList := TStringList.Create;
-  // has to be created outside
-  attributeStringList.Clear;
-  if not Assigned(attributeStringList) then
-  begin
-    errormessage:='Error: makeAttributesSL: attributeStringList not initialized';
-    logdatei.log(errormessage,LLERROR);
-    result := false;
-          exit;
-  end;
-  if result = true then
-  begin
-  i := 1;
-  error := false;
-  stringsplitByWhiteSpace(attributePath,localAttributeList);
-  for i:= 0 to localAttributeList.count -1 do
-  begin
-    localAtrribute := trim(localAttributeList[i]);
-    if (localAtrribute <> '') then
+    localAttributeList := TStringlist.create;
+    logdatei.log('attribute path element : ' + attributePath, LLinfo);
+    //attributeStringList := TStringList.Create;
+    // has to be created outside
+    if not Assigned(attributeStringList) then
     begin
-      // check syntax:
-      if pos('=',localAtrribute) > 0 then
+      errormessage:='Error: makeAttributesSL: attributeStringList not initialized';
+      logdatei.log(errormessage,LLERROR);
+      result := false;
+      exit;
+    end;
+    if result = true then
+    begin
+      attributeStringList.Clear;
+      i := 1;
+      error := false;
+      stringsplitByWhiteSpace(attributePath,localAttributeList);
+      for i:= 0 to localAttributeList.count -1 do
       begin
-      if pos('"',localAtrribute) > 0 then
-      // we expect that the value is quoted
-      value1 := trim(copy(localAtrribute,pos('"',localAtrribute),length(localAtrribute)));
-      value2 := opsiunquotestr2(value1,'"');
-      if value1 <> '"'+value2+'"' then
-       begin
-        errormessage:='Error: makeAttributesSL: attributePath syntax Error: quoting error in: '+attributePath+' value is. '+value1;
-    logdatei.log(errormessage,LLERROR);
-    result := false;
-          exit;
+        localAtrribute := trim(localAttributeList[i]);
+        if (localAtrribute <> '') then
+        begin
+          // check syntax:
+          if pos('=',localAtrribute) > 0 then
+          begin
+            if pos('"',localAtrribute) > 0 then
+            begin
+              // we expect that the value is quoted
+              value1 := trim(copy(localAtrribute,pos('=',localAtrribute)+1,length(localAtrribute)));
+              value2 := opsiunquotestr2(value1,'"');
+              if value1 <> '"'+value2+'"' then
+              begin
+                errormessage:='Error: makeAttributesSL: attributePath syntax Error: quoting error in: '+attributePath+' value is. '+value1;
+                logdatei.log(errormessage,LLERROR);
+                result := false;
+                exit;
+              end;
+            end;
+          end
+          else
+          begin
+            errormessage:='Error: makeAttributesSL: attributePath syntax Error: missing equal sign error in: '+attributePath+' value is. '+value1;
+            logdatei.log(errormessage,LLERROR);
+            result := false;
+            exit;
+          end;
+          if result then
+            AttributeStringList.Add(localAtrribute);
+        end;
       end;
-      if result then
-      AttributeStringList.Add(localAtrribute);
+    end;
+    (*
+    while (length(attributePath) > 0) and not error do
+    begin
+      if Length(attributePath) - Length(StringReplace(attributePath,
+        '"', '', [rfReplaceAll, rfIgnoreCase])) = 2 then
+      begin // only one remaining attribute
+        // #######
+        AttributeStringList.Add(Trim(attributePath));
+        attributePath := '';
       end
       else
       begin
-        errormessage:='Error: makeAttributesSL: attributePath syntax Error: no = in attribute: '+attributePath;
-    logdatei.log(errormessage,LLERROR);
-    result := false;
-          exit;
-      end;
-    end;
-  end;
-  end;
-  (*
-  while (length(attributePath) > 0) and not error do
-  begin
-    if Length(attributePath) - Length(StringReplace(attributePath,
-      '"', '', [rfReplaceAll, rfIgnoreCase])) = 2 then
-    begin // only one remaining attribute
-      // #######
-      AttributeStringList.Add(Trim(attributePath));
-      attributePath := '';
-    end
-    else
-    begin
-      // find with '" ' the end of an attribute
-      logdatei.log( 'attributePath ' + attributePath, LLinfo);
+        // find with '" ' the end of an attribute
+        logdatei.log( 'attributePath ' + attributePath, LLinfo);
 
-      (*
-      attribute := Trim(copy(attributePath, 1, pos('" ', attributePath)));
-      logdatei.log('attribute ' + IntToStr(i) + ': ' + attribute, LLinfo);
-      leavingPath := copy(attributePath, pos('" ', attributePath) +
-        1, length(attributePath));
-      *)
-      logdatei.log( 'leavingPath ' + leavingPath, LLinfo);
-      AttributeStringList.Add(attribute);
-      if (attributePath = leavingPath) and (attributePath <> '') then
-      begin
-        error := true;
-        LogDatei.log('Syntaxerror: Wrong Attribute: '+attributePath,LLcritical);
+        (*
+        attribute := Trim(copy(attributePath, 1, pos('" ', attributePath)));
+        logdatei.log('attribute ' + IntToStr(i) + ': ' + attribute, LLinfo);
+        leavingPath := copy(attributePath, pos('" ', attributePath) +
+          1, length(attributePath));
+        *)
+        logdatei.log( 'leavingPath ' + leavingPath, LLinfo);
+        AttributeStringList.Add(attribute);
+        if (attributePath = leavingPath) and (attributePath <> '') then
+        begin
+          error := true;
+          LogDatei.log('Syntaxerror: Wrong Attribute: '+attributePath,LLcritical);
+        end;
+        attributePath := leavingPath;
       end;
-      attributePath := leavingPath;
-    end;
-    Inc(i);
+      Inc(i);
 
-  end;
-*)
+    end;
+  *)
   finally
       localAttributeList.free;
   end
-
 end;
 
 //********************************************

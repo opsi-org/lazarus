@@ -136,19 +136,21 @@ var
   utilsdrive: string;
   configdrive: string;
   //deprecated stuff end
+
   {$IFDEF OSDEBUG}
   debug_prog: boolean = True;
   default_loglevel : integer = 9;
   debug_lib: boolean = True;
+  force_min_loglevel: integer = 9;
   {$ELSE}
   debug_prog: boolean = False;
   default_loglevel : integer = 7;
   debug_lib: boolean = true;
+  force_min_loglevel: integer = 4;
   {$ENDIF}
   //debug_prog: boolean = True;
   //debug_lib: boolean = False;
   //debug_lib: boolean = True;
-  force_min_loglevel: integer = 4;
   opsiscriptconf : string;
   ScriptErrorMessages: boolean = False;
   AutoActivityDisplay: boolean = False;

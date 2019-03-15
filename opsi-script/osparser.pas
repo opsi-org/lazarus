@@ -7537,6 +7537,8 @@ begin
           reportError (Sektion, i, Sektion.strings [i-1], ErrorInfo);
       End;   // opnenode
       *)
+
+
       if LowerCase (Expressionstr) = LowerCase ('OpenNode')
       then
       Begin
@@ -7567,6 +7569,7 @@ begin
           else
           begin
             LogDatei.log('nodepath does not exists - try to create: '+nodepath,oslog.LLwarning);
+            errorinfo := '';
             if XMLDocObject.makeNodePathWithTextContent(nodepath,'',errorinfo) then
             begin
               nodeOpened := true;
@@ -7576,6 +7579,11 @@ begin
             begin
                nodeOpened := false;
                LogDatei.log('failed to create nodepath: '+nodepath,oslog.LLError);
+               if errorinfo <> '' then
+               begin
+                 syntaxCheck := false;
+                 reportError (Sektion, i, Sektion.strings [i-1], ErrorInfo);
+               end;
             end;
           end
         End

@@ -1764,7 +1764,7 @@ begin
     end
     else
     begin
-      if inDefinedFuncNestCounter > 1 then
+      if inDefinedFuncNestCounter > 0 then
       begin
         // we are in a local function
         // second guess: it is local to parents to the active local function
