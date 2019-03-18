@@ -8,14 +8,14 @@ interface
 uses
   Classes, SysUtils, Zipper;
 
-// Decompress a zip file while preserving its file structure.
-function UnzipWithFileStruct(File2Unzip, OutputDir :String): Boolean;
+// Decompress a zip file while preserving its directory structure.
+function UnzipWithDirStruct(File2Unzip, OutputDir :String): Boolean;
 
 
 implementation
 
-// unzip to the output directory or to the current directory (if output Directory is not mentioned) while preserving its file structure.
-function UnzipWithFileStruct(File2Unzip, OutputDir :String): Boolean;
+// unzip to the output directory or to the current directory (if output Directory is not mentioned) while preserving its directory structure.
+function UnzipWithDirStruct(File2Unzip, OutputDir :String): Boolean;
 var
   UnzipperObj : TUnZipper;
 begin
