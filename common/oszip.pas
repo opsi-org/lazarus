@@ -26,7 +26,7 @@ begin
     try
       UnzipperObj.FileName := File2Unzip;
       if OutputDir = '' then
-        UnzipperObj.OutputPath := GetCurrentDir
+        UnzipperObj.OutputPath := ExtractFileDir(File2Unzip)
       else
         UnzipperObj.OutputPath := OutputDir;
       UnzipperObj.Examine;
