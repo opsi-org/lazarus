@@ -18,6 +18,8 @@ WinRAR Installer,
 WinZip Installer,
 Wise Installer
 stWixToolset,
+install4j (install4j, ej-technologies : perpustakaan-light)
+https://www.ej-technologies.com/resources/install4j/help/doc/help.pdf
 
 
 opsi-setup-detector (4.1.0.7) stable; urgency=low
