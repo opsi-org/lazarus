@@ -36,6 +36,8 @@ function getMacosVersionMap: TStringList;
 function GetMacosVersionInfo: String;
 function isMounted(mountpoint : string) : boolean;
 function which(target:string; var pathToTarget : string) : boolean;
+function mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass, myoption: string) : integer;
+function umount(mymountpoint : string) : integer;
 
 implementation
 
@@ -337,18 +339,99 @@ var
   commands:array of string;
 begin
   result := false;
-  if not RunCommand('mount',[],output) then
+  if not RunCommand('/sbin/mount',[],output) then
    writeln('Mount run error')
   else
   begin
-    exename := output;
-    exename := exename.Replace(#10,'');
-    exename := exename.Replace('''','');
+    if output.Contains(mountpoint) then result := true;
   end;
+  (*
   if RunCommand(exename,[mountpoint],output) then
   begin
     result := true;
   end;
+  *)
+end;
+
+function mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass, myoption: string) : integer;
+var
+  cmd, report: string;
+  outlines: TStringlist;
+  ExitCode: longint;
+  i: integer;
+begin
+  outlines := TStringList.Create;
+  Result := -1;
+  try
+    if not directoryexists(mymountpoint) then
+     mkdir(mymountpoint);
+  except
+    LogDatei.log('Error: could not create moutpoint: '+mymountpoint, LLError);
+  end;
+  // todo: controling smb version ; saving pass to file
+  if pos('//',myshare) > 0 then myshare := copy(myshare,3,length(myshare));
+  if mydomain = '' then
+    cmd := '/bin/bash -c "/sbin/mount_smbfs -N //' + myuser+':'+mypass+'@'+myshare+' '+mymountpoint+'"'
+  else
+    cmd := '/bin/bash -c "/sbin/mount_smbfs -N //' + myuser+':'+mypass+'@'+myshare+' '+mymountpoint+'"';
+    //cmd := '/bin/bash -c "/sbin/mount_smbfs -N //' +mydomain+'\;'+ myuser+':'+mypass+'@'+myshare+' '+mymountpoint+'"';
+
+  LogDatei.DependentAdd('calling: '+cmd,LLNotice);
+  if not RunCommandAndCaptureOut(cmd, True, outlines, report,
+    SW_HIDE, ExitCode) then
+  begin
+    LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
+    Result := -1;
+  end
+  else
+  begin
+    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+    LogDatei.log('', LLDebug);
+    LogDatei.log('output:', LLDebug);
+    LogDatei.log('--------------', LLDebug);
+    for i := 0 to outlines.Count - 1 do
+    begin
+      LogDatei.log(outlines.strings[i], LLDebug);
+    end;
+    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+    LogDatei.log('', LLDebug);
+    Result := ExitCode;
+  end;
+  outlines.Free;
+end;
+
+function umount(mymountpoint : string) : integer;
+var
+  cmd, report: string;
+  outlines: TStringlist;
+  ExitCode: longint;
+  i: integer;
+begin
+  outlines := TStringList.Create;
+  Result := -1;
+  cmd := '/bin/bash -c "/sbin/umount ' +mymountpoint+'"';
+  LogDatei.log('calling: '+cmd,LLNotice);
+  if not RunCommandAndCaptureOut(cmd, True, outlines, report,
+    SW_HIDE, ExitCode) then
+  begin
+    LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
+    Result := -1;
+  end
+  else
+  begin
+    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+    LogDatei.log('', LLDebug);
+    LogDatei.log('output:', LLDebug);
+    LogDatei.log('--------------', LLDebug);
+    for i := 0 to outlines.Count - 1 do
+    begin
+      LogDatei.log(outlines.strings[i], LLDebug);
+    end;
+    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+    LogDatei.log('', LLDebug);
+    Result := ExitCode;
+  end;
+  outlines.Free;
 end;
 
 end.

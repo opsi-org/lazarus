@@ -29,6 +29,7 @@ uses
   inifiles,
   oslog,
   oswebservice,
+  OSProcessux,
   superobject;
 
 
@@ -110,6 +111,9 @@ begin
     Result := False;
   end;
 end;
+
+(*
+moved to osprocessux
 
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TStringList;
@@ -215,8 +219,10 @@ begin
     M.Free;
   end;
 end;
+*)
 
-
+(*
+moved to osfunclin / osfuncmac
 
 function mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass, myoption: string) : integer;
 var
@@ -294,6 +300,7 @@ begin
   end;
   outlines.Free;
 end;
+*)
 
 
 function startopsiscript : integer;
@@ -593,7 +600,12 @@ begin
   myuser := 'pcpatch';
   mydomain := '';
   myshare := 'opsi_depot';
+  {$IFDEF LINUX}
   mymountpoint := '/media/opsi_depot';
+  {$ENDIF}
+  {$IFDEF DARWIN}
+  mymountpoint := '/Network/opsi_depot';
+  {$ENDIF}
   nogui := false;
   FileVerInfo:=TFileVersionInfo.Create(nil);
   try

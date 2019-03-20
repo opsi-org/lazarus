@@ -58,6 +58,9 @@ function getMyIpByDefaultRoute : string;
 function getPackageLock(timeoutsec : integer; kill : boolean) : Boolean;
 function which(target:string; var pathToTarget : string) : boolean;
 function isMounted(mountpoint : string) : boolean;
+function mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass, myoption: string) : integer;
+function umount(mymountpoint : string) : integer;
+
 
 var
   IdIPWatch1: TIdIPWatch;
@@ -829,6 +832,83 @@ begin
   begin
     result := true;
   end;
+end;
+
+function mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass, myoption: string) : integer;
+var
+  cmd, report: string;
+  outlines: TStringlist;
+  ExitCode: longint;
+  i: integer;
+begin
+  outlines := TStringList.Create;
+  Result := -1;
+  try
+    if not directoryexists(mymountpoint) then
+     mkdir(mymountpoint);
+  except
+    LogDatei.log('Error: could not create moutpoint: '+mymountpoint, LLError);
+  end;
+  if mydomain = '' then
+    cmd := '/bin/bash -c "/sbin/mount.cifs ' + myshare+' '+mymountpoint+' -o '+myoption+'ro,noperm,user='+myuser+',pass='+mypass+'"'
+  else
+    cmd := '/bin/bash -c "/sbin/mount.cifs ' + myshare+' '+mymountpoint+' -o '+myoption+'ro,noperm,user='+myuser+',dom='+mydomain+',pass='+mypass+'"';
+  LogDatei.DependentAdd('calling: '+cmd,LLNotice);
+  if not RunCommandAndCaptureOut(cmd, True, outlines, report,
+    SW_HIDE, ExitCode) then
+  begin
+    LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
+    Result := -1;
+  end
+  else
+  begin
+    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+    LogDatei.log('', LLDebug);
+    LogDatei.log('output:', LLDebug);
+    LogDatei.log('--------------', LLDebug);
+    for i := 0 to outlines.Count - 1 do
+    begin
+      LogDatei.log(outlines.strings[i], LLDebug);
+    end;
+    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+    LogDatei.log('', LLDebug);
+    Result := ExitCode;
+  end;
+  outlines.Free;
+end;
+
+function umount(mymountpoint : string) : integer;
+var
+  cmd, report: string;
+  outlines: TStringlist;
+  ExitCode: longint;
+  i: integer;
+begin
+  outlines := TStringList.Create;
+  Result := -1;
+  cmd := '/bin/bash -c "/bin/umount ' +mymountpoint+'"';
+  LogDatei.log('calling: '+cmd,LLNotice);
+  if not RunCommandAndCaptureOut(cmd, True, outlines, report,
+    SW_HIDE, ExitCode) then
+  begin
+    LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
+    Result := -1;
+  end
+  else
+  begin
+    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+    LogDatei.log('', LLDebug);
+    LogDatei.log('output:', LLDebug);
+    LogDatei.log('--------------', LLDebug);
+    for i := 0 to outlines.Count - 1 do
+    begin
+      LogDatei.log(outlines.strings[i], LLDebug);
+    end;
+    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+    LogDatei.log('', LLDebug);
+    Result := ExitCode;
+  end;
+  outlines.Free;
 end;
 
 end.
