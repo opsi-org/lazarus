@@ -496,15 +496,18 @@ end;
 function TOsDefinedFunction.localVarExists(Name: string): boolean;
 var
   arraycounter, i: integer;
+  tmpstr : string;
 begin
   Result := False;
   i := 0;
+  tmpstr := DFName;
   arraycounter := length(DFLocalVarList);
   if arraycounter > 0 then
     repeat
       if (lowercase(DFLocalVarList[i].varName) = lowercase(Name)) then
       begin
-        if length(DFLocalVarList[i].varInstance) = DFVarInstanceIndex + 1 then
+        if (DFVarInstanceIndex > -1 ) and
+            (length(DFLocalVarList[i].varInstance) = DFVarInstanceIndex + 1) then
         begin
           if DFLocalVarList[i].varInstance[DFVarInstanceIndex].inuse then
           begin
@@ -549,27 +552,34 @@ begin
   i := 0;
   arraycounter := length(DFLocalVarList);
   if arraycounter > 0 then
-    repeat
-      if (lowercase(DFLocalVarList[i].varName) = lowercase(Name)) then
-      begin
-        if length(DFLocalVarList[i].varInstance) = DFVarInstanceIndex + 1 then
+  (*
+  if inDefFuncIndex > -1 then
+    with definedFunctionArray[inDefFuncIndex] do
+    begin
+    *)
+      repeat
+        if (lowercase(DFLocalVarList[i].varName) = lowercase(Name)) then
         begin
-          if DFLocalVarList[i].varInstance[DFVarInstanceIndex].inuse then
+          if (DFVarInstanceIndex>-1) and
+              (length(DFLocalVarList[i].varInstance) = DFVarInstanceIndex + 1) then
           begin
-            Result := i;
+            if DFLocalVarList[i].varInstance[DFVarInstanceIndex].inuse then
+            begin
+              Result := i;
+            end
+            else
+              LogDatei.log_prog('Local var name: ' + Name +
+                ' and Instance found but inUse=false ', LLDebug);
           end
           else
             LogDatei.log_prog('Local var name: ' + Name +
-              ' and Instance found but inUse=false ', LLDebug);
+              ' found but no VarInstance ', LLDebug);
         end
         else
-          LogDatei.log_prog('Local var name: ' + Name +
-            ' found but no VarInstance ', LLDebug);
-      end
-      else
-        LogDatei.log_prog('No local var name: ' + Name + ' found. ', LLDebug);
-      Inc(i);
-    until (i >= arraycounter) or (Result = i - 1);
+          LogDatei.log_prog('No local var name: ' + Name + ' found. ', LLDebug);
+        Inc(i);
+      until (i >= arraycounter) or (Result = i - 1);
+ // end;
 end;
 
 
