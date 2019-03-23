@@ -1567,15 +1567,15 @@ var
   funcindex: integer;
   searchindex: integer;
   searchDFName: string;
-  tmpi1, tmpi2 : integer;
+  indexofcalledfunc, indexofcallingfunc : integer;
 begin
   call := False;
   Inc(inDefFuncLevel);
   FuncIndex := definedFunctionNames.IndexOf(LowerCase(DFName));
-  tmpi1 := FuncIndex;
-  tmpi2 := inDefFuncIndex;
-  inDefFuncIndex := tmpi2;
-  inDefFuncIndex := tmpi1;
+  indexofcalledfunc := FuncIndex;
+  indexofcallingfunc := inDefFuncIndex;
+  //inDefFuncIndex := tmpi2;
+  //inDefFuncIndex := tmpi1;
   LogDatei.log('We are coming from function with index: ' + IntToStr(
     inDefFuncIndex) + ' (-1 = base)', LLDebug2);
   LogDatei.log('We enter the defined function: ' + DFName + ' with ' +
@@ -1590,8 +1590,9 @@ begin
 
 
   //parse parameter
+  // The varnames on the param line are in the name space of the calling function
   if not parseCallParameter(paramline, remaining, errorstr, NestLevel,
-    tmpi2) then
+    indexofcallingfunc) then
   begin
     // parse parameter failed
     LogDatei.log('Syntax Error: Parameter parsing failed: ' + errorstr, LLCritical);
@@ -1600,7 +1601,8 @@ begin
   begin
     try
 
-
+     //now set inDefFuncIndex to the called function
+     inDefFuncIndex := indexofcalledfunc;
       // inc var instance counter for recursive calls
       createAllVarInstances;
       LogDatei.log_prog('DFVarInstanceIndex: ' + IntToStr(DFVarInstanceIndex) +
@@ -1609,8 +1611,10 @@ begin
       LogDatei.log_prog('definedFunctionsCallStack.Append ... ', LLDebug2);
       definedFunctionsCallStack.Append(IntToStr(DFIndex));
       LogDatei.log_prog('definedFunctionsCallStack.Appended', LLDebug2);
+      (*
       LogDatei.log_prog('inDefFuncIndex: '+inttostr(inDefFuncIndex), LLDebug2);
-      inDefFuncIndex := tmpi1;
+      inDefFuncIndex := indexofcalledfunc;
+      *)
       LogDatei.log_prog('inDefFuncIndex: '+inttostr(inDefFuncIndex), LLDebug2);
     except
      on e: Exception  do

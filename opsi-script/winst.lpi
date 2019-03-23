@@ -103,11 +103,19 @@
           <Parsing>
             <SyntaxOptions>
               <SyntaxMode Value="Delphi"/>
+              <IncludeAssertionCode Value="True"/>
               <AllowLabel Value="False"/>
             </SyntaxOptions>
           </Parsing>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+            <VerifyObjMethodCallValidity Value="True"/>
             <Optimizations>
               <OptimizationLevel Value="3"/>
             </Optimizations>
@@ -457,6 +465,14 @@
 -dGUI
 -dOPSI
 -dOSLOG"/>
+      <OtherDefines Count="6">
+        <Define0 Value="OPSIWINST"/>
+        <Define1 Value="WINDOWS"/>
+        <Define2 Value="OPSISCRIPT"/>
+        <Define3 Value="GUI"/>
+        <Define4 Value="OPSI"/>
+        <Define5 Value="OSLOG"/>
+      </OtherDefines>
     </Other>
   </CompilerOptions>
   <Debugging>
