@@ -6,35 +6,33 @@ unit OsZip;
 interface
 
 uses
-  Classes, SysUtils, Zipper;
+  Classes, SysUtils, Zipper, FileUtil, strutils, LConvEncoding;
 
-// Compress a folder which contains subfolders and files.
-function ZipWithDirStruct(File2Zip, OutputDir : String): Boolean;
+// Zip a folder which contains subfolders and files.
+function ZipWithDirStruct(File2Zip, TargetDir : String): Boolean;
 
 // Decompress a zip file while preserving its directory structure.
-function UnzipWithDirStruct(File2Unzip, OutputDir :String): Boolean;
-
+function UnzipWithDirStruct(File2Unzip, TargetDir :String): Boolean;
 
 implementation
 
-function ZipWithDirStruct(File2Zip, OutputDir : String): Boolean;
+// zip a folder which contains subfolders and files to the target directory, while preserving its directory structure.
+function ZipWithDirStruct(File2Zip, TargetDir : String): Boolean;
 var
   ZipperObj       : TZipper;
   filecounter     : Integer;
   FileList        : TStringList;
   DiskFileName,
-  fileName,
   ArchiveFileName : String;
-
 begin
   Result := False;
-  OutputDir:=includeTrailingPathDelimiter(OutputDir);
-  if DirectoryExists(OutputDir) then
+  TargetDir:=includeTrailingPathDelimiter(TargetDir);
+  if DirectoryExists(File2Zip) and DirectoryExists(TargetDir) then
   begin
     ZipperObj := TZipper.Create;
-    FileList     := TStringList.create;
+    FileList := TStringList.create;
     try
-      ZipperObj.FileName := OutputDir + ExtractFileName(File2Zip) + '.zip';
+      ZipperObj.FileName := TargetDir + ExtractFileName(File2Zip) + '.zip';
       if not FileExists(ZipperObj.FileName) then
       begin
         FileList := FindAllFiles(File2Zip);
@@ -42,8 +40,6 @@ begin
         begin
           DiskFileName := FileList.Strings[filecounter];
           ArchiveFileName:=StringReplace(FileList.Strings[filecounter],File2Zip,'',[rfReplaceall]);
-          ArchiveFileName:=UnicodeString(ArchiveFileName);
-          ArchiveFileName:=UTF8ToCP866(ArchiveFileName);
           ZipperObj.Entries.AddFileEntry(DiskFileName, ArchiveFileName);
         end;
         ZipperObj.ZipAllFiles;
@@ -53,11 +49,13 @@ begin
       ZipperObj.Free;
       FileList.Free;
     end;
-  end;
-end; 
 
-// unzip to the output directory or to the zip file directory(if output Directory is not mentioned) while preserving its directory structure.
-function UnzipWithDirStruct(File2Unzip, OutputDir :String): Boolean;
+  end;
+end;
+
+// unzip to the target directory or to the zip file directory(if target Directory is not mentioned),
+// while preserving its directory structure.
+function UnzipWithDirStruct(File2Unzip, TargetDir :String): Boolean;
 var
   UnzipperObj : TUnZipper;
 begin
@@ -65,14 +63,14 @@ begin
   UnzipperObj := TUnZipper.Create;
   if FileExists(File2Unzip) then
   begin
-    if (DirectoryExists(OutputDir)) or (OutputDir = '') then
+    if (DirectoryExists(TargetDir)) or (TargetDir = '') then
     begin
       try
         UnzipperObj.FileName := File2Unzip;
-        if OutputDir = '' then
+        if TargetDir = '' then
           UnzipperObj.OutputPath := ExtractFileDir(File2Unzip)
         else
-          UnzipperObj.OutputPath := OutputDir;
+          UnzipperObj.OutputPath := TargetDir;
         UnzipperObj.Examine;
         UnzipperObj.UnZipAllFiles;
         Result := True;
@@ -82,5 +80,6 @@ begin
     end;
   end;
 end;
+
 
 end.
