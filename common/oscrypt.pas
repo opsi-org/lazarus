@@ -7,16 +7,13 @@
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 428 $
-// $Author: oertel $
-// $Date: 2016-05-02 16:56:42 +0200 (Mo, 02 Mai 2016) $
-//***************************************************************************
+
 
 unit oscrypt;
 
 {$mode delphi}
+{$RANGECHECKS OFF}
+
 
 interface
 
