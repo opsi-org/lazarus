@@ -100,7 +100,10 @@ LResources,
   synautil,
   oswebservice,
   //wirequlist,
-  oslog, osparser, osfunc,
+  oslog,
+  osparser,
+  osparserhelper,
+  osfunc,
   //IdSysLog,
   strutils,
   inifiles;
@@ -1725,10 +1728,10 @@ var
   startkey : string;
   startcounter : integer;
   conffile : TIniFile;
-  list : TXStringlist;
+  list : TStringlist;
 begin
   result := false;
-  list := TXStringlist.Create;
+  list := TStringlist.Create;
   if FileExists('/etc/opsi-client-agent/opsi-script.conf') then
   begin
     conffile := TIniFile.Create('/etc/opsi-client-agent/opsi-script.conf');
