@@ -86,7 +86,8 @@ LazFileUtils,
   ldapsend,
   strutils,
   oslocale,
-  osxbase64,
+  //osxbase64,
+  base64,
   dateutils,
   synautil,
   synaip,
@@ -14669,7 +14670,8 @@ begin
      then
      Begin
       syntaxCheck := true;
-      StringResult := B64Encode(s1);
+      //StringResult := B64Encode(s1);
+      StringResult := EncodeStringBase64(s1);
     End;
  end
 
@@ -14683,7 +14685,8 @@ begin
      then
      Begin
       syntaxCheck := true;
-      StringResult := B64Decode(s1);
+      //StringResult := B64Decode(s1);
+      StringResult := DecodeStringBase64(s1);
     End;
  end
 
