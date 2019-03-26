@@ -12,6 +12,7 @@ unit oscrypt;
 
 {$mode delphi}
 
+
 interface
 
 uses
