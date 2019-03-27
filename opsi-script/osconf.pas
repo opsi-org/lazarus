@@ -139,9 +139,9 @@ var
 
   {$IFDEF OSDEBUG}
   debug_prog: boolean = True;
-  default_loglevel : integer = 9;
+  default_loglevel : integer = 8;
   debug_lib: boolean = True;
-  force_min_loglevel: integer = 9;
+  force_min_loglevel: integer = 8;
   {$ELSE}
   debug_prog: boolean = False;
   default_loglevel : integer = 7;

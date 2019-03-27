@@ -524,7 +524,7 @@ begin
             ' found but no VarInstance ', LLDebug);
       end
       else
-        LogDatei.log_prog('No local var name: ' + Name + ' found. ', LLDebug);
+        LogDatei.log_prog('No local var name: ' + Name + ' found. ', LLDebug3);
       Inc(i);
     until (i >= arraycounter) or (Result = True);
 end;
@@ -576,7 +576,7 @@ begin
               ' found but no VarInstance ', LLDebug);
         end
         else
-          LogDatei.log_prog('No local var name: ' + Name + ' found. ', LLDebug);
+          LogDatei.log_prog('No local var name: ' + Name + ' found. ', LLDebug3);
         Inc(i);
       until (i >= arraycounter) or (Result = i - 1);
  // end;
@@ -614,10 +614,11 @@ begin
       if DFVarInstanceIndex > 0 then
       begin
         // Instance are created from createAllVarInstances
+        arraycounter := localVarNameIndex(Name);
         Result := True;
-        if (length(DFLocalVarList[arraycounter - 1].varInstance) =
+        if (length(DFLocalVarList[arraycounter].varInstance) =
           DFVarInstanceIndex + 1) and (DFVarInstanceIndex >= 0) then
-          DFLocalVarList[arraycounter - 1].varInstance[DFVarInstanceIndex].inuse := True;
+          DFLocalVarList[arraycounter].varInstance[DFVarInstanceIndex].inuse := True;
       end;
     end;
   end
@@ -629,9 +630,9 @@ begin
       LogDatei.log_prog('osdf addLocalVar: (localVarNameExists) and  localVarExists '+Name,LLDebug2);
       //DFLocalVarList[arraycounter - 1].varInstance[DFVarInstanceIndex].inuse := True;
       Result := True;
-      if (length(DFLocalVarList[arraycounter - 1].varInstance) =
+      if (length(DFLocalVarList[arraycounter].varInstance) =
         DFVarInstanceIndex + 1) and (DFVarInstanceIndex >= 0) then
-        DFLocalVarList[arraycounter - 1].varInstance[DFVarInstanceIndex].inuse := True;
+        DFLocalVarList[arraycounter].varInstance[DFVarInstanceIndex].inuse := True;
       //LogDatei.log('Syntax Error: Double definition of local variable: ' +  Name, LLCritical);
     end
     else
@@ -644,6 +645,15 @@ begin
         begin
           DFLocalVarList[arraycounter].varInstance[DFVarInstanceIndex].inuse := True;
           Result := True;
+        end
+        else
+        begin
+          if (length(DFLocalVarList[arraycounter].varInstance) = DFVarInstanceIndex) then
+          begin
+            createVarInstance(arraycounter);
+            DFLocalVarList[arraycounter].varInstance[DFVarInstanceIndex].inuse := True;
+            Result := True;
+          end;
         end;
     end;
   end;
@@ -1057,7 +1067,7 @@ begin
           begin
             Result := '';
             LogDatei.log(
-              'Not assinged varInstance in getLocalVarValueString. Default to empty string',
+              'Not assinged varInstance for name: '+name+' in getLocalVarValueString. Default to empty string',
               LLError);
           end;
         end;
@@ -1733,10 +1743,12 @@ end;
 
 
 function isVisibleLocalVar(varname: string; var index: integer): boolean;
+
 var
   found, searchfinished: boolean;
   searchindex: integer;
   parentlist: TStringList;
+  searchedindexes : TStringList;
 
 begin
   Result := False;
@@ -1744,6 +1756,7 @@ begin
   searchfinished := False;
   if varname <> '' then
   begin
+    searchedindexes := TStringList.Create;
     LogDatei.log_prog('Search local var: ' + varname + ' with inDefFuncIndex: ' +
       IntToStr(inDefFuncIndex) + ' and inDefinedFuncNestCounter: ' +
       IntToStr(inDefinedFuncNestCounter), LLDebug2);
@@ -1757,6 +1770,7 @@ begin
         LLDebug2);
       if definedFunctionArray[inDefFuncIndex].localVarNameExists(varname) then
         found := True;
+      searchedindexes.Add(inttostr(inDefFuncIndex));
     end;
     if found then
     begin
@@ -1788,27 +1802,42 @@ begin
         searchindex := definedFunctionsCallStack.Count - 1;
         repeat
           index := StrToInt(definedFunctionsCallStack.Strings[searchindex]);
-          if parentlist.IndexOf(definedFunctionArray[index].Name) >= 0 then
+          // avoid searches that are done right now
+          if searchedindexes.IndexOf(inttostr(index)) = -1 then
           begin
-            // local variable of this function are visible (global to this function)
-            LogDatei.log_prog('Search local var: ' + varname +
-              ' with Index: ' + IntToStr(index) + ' and Name: ' +
-              definedFunctionArray[index].Name, LLDebug2);
-            if (definedFunctionArray[index].Active and
-              definedFunctionArray[index].localVarExists(varname)) then
-              found := True;
+            // we did not this search before
+            searchedindexes.Add(inttostr(index));
+            if parentlist.IndexOf(definedFunctionArray[index].Name) >= 0 then
+            begin
+              // local variable of this function are visible (global to this function)
+              LogDatei.log_prog('Search local var: ' + varname +
+                ' with Index: ' + IntToStr(index) + ' and Name: ' +
+                definedFunctionArray[index].Name, LLDebug2);
+              if (definedFunctionArray[index].Active and
+                definedFunctionArray[index].localVarExists(varname)) then
+                found := True;
+            end;
           end;
           Dec(searchindex);
           if searchindex < 0 then
             searchfinished := True;
         until found or searchfinished;
         if found then
+        begin
           LogDatei.log_prog('Found var: ' + varname + ' as local (2) in function ' +
             definedFunctionArray[index].Name + ' with index: ' +
             IntToStr(index), LLDebug2);
+        end
+        else
+        begin
+          LogDatei.log_prog('Did not found a local var' + varname + ' as local (2) in function ' +
+            definedFunctionArray[index].Name + ' with index: ' +
+            IntToStr(index), LLDebug2);
+        end;
       end;
     end;
     Result := found;
+    searchedindexes.Free;
   end;
 end;
 

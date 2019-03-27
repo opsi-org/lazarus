@@ -14854,7 +14854,7 @@ begin
         if jsonAsObjectGetValueByKey(s1,s2,s3) then
            StringResult := s3
         else
-          LogDatei.log('Error at jsonAsObjectGetValueByKey with: "' + s1+'","'+s2+'"', LLerror);
+          LogDatei.log('Nothing found at jsonAsObjectGetValueByKey with: "' + s1+'","'+s2+'"', LLInfo);
       except
         StringResult := '';
         LogDatei.log('Error: Exception at jsonAsObjectGetValueByKey with: "' + s1+'","'+s2+'"', LLerror);
