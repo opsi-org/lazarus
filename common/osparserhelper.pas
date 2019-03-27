@@ -314,7 +314,9 @@ begin
     if closeBracketsNum > openBracketsNum then
     begin
       // we should cut at the matching close brackets
-      cutpos := NPos(')',s,openBracketsNum);
+      //cutpos := NPos(')',s,openBracketsNum);
+      // give me the pos of the last closing bracket
+      cutpos := NPos(')',s,closeBracketsNum);
       Expression := copy(s,1,cutpos-1);
       Remaining := Remaining + copy(s,cutpos,length(s));;
     end
