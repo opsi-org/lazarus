@@ -139,7 +139,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="38">
+    <Units Count="39">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -308,6 +308,10 @@
         <Filename Value="../common/oswmi.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit37>
+      <Unit38>
+        <Filename Value="changelog.txt"/>
+        <IsPartOfProject Value="True"/>
+      </Unit38>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -330,6 +334,7 @@
       <SmartLinkUnit Value="True"/>
       <Checks>
         <IOChecks Value="True"/>
+        <RangeChecks Value="True"/>
         <OverflowChecks Value="True"/>
         <StackChecks Value="True"/>
       </Checks>

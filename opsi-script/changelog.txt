@@ -65,6 +65,8 @@ opsi-winst/opsi-script (4.12.1.0) experimental; urgency=low
   * replace unit osxbase64 by fpc unit base64
   * Release now compiled with activated Checks for IO, Range, Overflow and Stack
   * unit oscrypt with {$RANGECHECKS OFF}
+  * osparserhelper: fix in geouterfunction
+  * osdefinedfunction: isvisiblelocalvar: serach optimization
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 23 01 2019:15:00:00 +0200
 
