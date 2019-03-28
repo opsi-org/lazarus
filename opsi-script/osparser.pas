@@ -70,6 +70,7 @@ oslistedit,
 TypInfo,
 osencoding,
 osconf,
+oszip,
 //DOM,
 //wixml,
 //Process,
@@ -7943,6 +7944,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
     list1 : TStringlist;
     shellcallArchParam : String;
     go_on : boolean;
+    tmpstr : string;
 
 
   begin
@@ -8364,6 +8366,123 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
           end;
         end
         {$ENDIF LINUX}
+
+         else if (UpperCase (Expressionstr) = 'UNZIPFILE')
+        then
+        begin
+          go_on := true;
+          if not GetString (Remaining, Expressionstr, Remaining, errorinfo, false)
+          then
+          Begin
+             // instead of using (as up to version 4.1)
+             // GetWord (Remaining, Expressionstr, Remaining, WordDelimiterWhiteSpace);
+             // we want to be exact with the number of blanks
+             DivideAtFirst (' ', remaining, Expressionstr, remaining_with_leading_blanks);
+             remaining := cutLeftBlanks(remaining_with_leading_blanks);
+          End;
+
+          Source := Expressionstr;
+          LogDatei.log('unzip source: '+source,lldebug3);
+          Source := ExpandFileNameUTF8(Source);
+          if not (isAbsoluteFileName (Source) and FileExists(Source)) then
+          begin
+            //syntaxcheck := false;
+            //reportError (Sektion, i, Sektion.strings [i-1], source + ' is no existing file or directory');
+            go_on := false;
+            logDatei.log('Error: unzip: source: '+source + ' is no existing file or directory',LLError);
+          end;
+
+          if syntaxcheck and go_on  then
+          begin
+            if not GetString (Remaining, Target, Remaining, errorinfo, false)
+            then Target := Remaining;
+            LogDatei.log('source: '+source+' - target: '+target,LLDebug3);
+            target := trim(target);
+            Target := opsiUnquoteStr(target,'"');
+            Target := opsiUnquoteStr(target,'''');
+            LogDatei.log('source: '+source+' - target: '+target,LLDebug3);
+            //LogDatei.log('hardlink target: '+Expressionstr,lldebug3);
+            if not isAbsoluteFileName (target)
+            then  target := targetDirectory + target;
+            target := ExpandFileNameUTF8(target);
+
+            if not (isAbsoluteFileName (target)) then
+            begin
+              //syntaxcheck := false;
+              //reportError (Sektion, i, Sektion.strings [i-1], target + ' is not a valid file name');
+              go_on := false;
+              logDatei.log('Error: unzip: target: '+target + ' is not a valid file name',LLError);
+            end;
+
+
+            if SyntaxCheck and go_on
+            then
+            begin
+             LogDatei.log ('we try to unzip: '+source+' to '+target, LLDebug2);
+             if UnzipWithDirStruct(Source,target) then
+               LogDatei.log ('unziped: '+source+' to '+target, LLInfo);
+            end;
+          end;
+        end
+
+         else if (UpperCase (Expressionstr) = 'ZIPFILE')
+        then
+        begin
+          go_on := true;
+          if not GetString (Remaining, Expressionstr, Remaining, errorinfo, false)
+          then
+          Begin
+             // instead of using (as up to version 4.1)
+             // GetWord (Remaining, Expressionstr, Remaining, WordDelimiterWhiteSpace);
+             // we want to be exact with the number of blanks
+             DivideAtFirst (' ', remaining, Expressionstr, remaining_with_leading_blanks);
+             remaining := cutLeftBlanks(remaining_with_leading_blanks);
+          End;
+
+          Source := Expressionstr;
+          LogDatei.log('zip source: '+source,lldebug3);
+          Source := ExpandFileNameUTF8(Source);
+          if not (isAbsoluteFileName (Source) and FileExists(Source)) then
+          begin
+            //syntaxcheck := false;
+            //reportError (Sektion, i, Sektion.strings [i-1], source + ' is no existing file or directory');
+            go_on := false;
+            logDatei.log('Error: zip: source: '+source + ' is no existing file or directory',LLError);
+          end;
+
+          if syntaxcheck and go_on  then
+          begin
+            if not GetString (Remaining, Target, Remaining, errorinfo, false)
+            then Target := Remaining;
+            LogDatei.log('source: '+source+' - target: '+target,LLDebug3);
+            target := trim(target);
+            Target := opsiUnquoteStr(target,'"');
+            Target := opsiUnquoteStr(target,'''');
+            LogDatei.log('source: '+source+' - target: '+target,LLDebug3);
+            //LogDatei.log('hardlink target: '+Expressionstr,lldebug3);
+            if not isAbsoluteFileName (target)
+            then  target := targetDirectory + target;
+            target := ExpandFileNameUTF8(target);
+
+            if not (isAbsoluteFileName (target)) then
+            begin
+              //syntaxcheck := false;
+              //reportError (Sektion, i, Sektion.strings [i-1], target + ' is not a valid file name');
+              go_on := false;
+              logDatei.log('Error: zip: target: '+target + ' is not a valid file name',LLError);
+            end;
+
+
+            if SyntaxCheck and go_on
+            then
+            begin
+             tmpstr:=target+pathdelim+ExtractFileNameWithoutExt(source)+'.zip';
+             LogDatei.log ('we try to zip: '+source+' to '+tmpstr, LLDebug2);
+             if ZipWithDirStruct(Source,target) then
+               LogDatei.log ('ziped: '+source+' to '+tmpstr, LLInfo);
+            end;
+          end;
+        end
 
         else if (UpperCase (Expressionstr) = 'HARDLINK')
         then

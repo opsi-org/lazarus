@@ -70,6 +70,10 @@ opsi-winst/opsi-script (4.12.1.0) experimental; urgency=low
   * osfunc: checkfileexists: use widechsr/utf16 for filenames
   * osparserhelper: new function stringlistintersection (get stringlist intersection)
   * new cli parameter /processlist productId [,productId ]*
+  * added unit oszip
+  * osparser: fileActionsMain: zipfile, unzipfile
+  * new in file sections: zipfile <file or dir> <zipfile>
+  * new in file sections: unzipfile <zipfile> <targetdir>
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 23 01 2019:15:00:00 +0200
 

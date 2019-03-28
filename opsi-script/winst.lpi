@@ -174,7 +174,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="54">
+    <Units Count="55">
       <Unit0>
         <Filename Value="winst.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -412,6 +412,11 @@
         <Filename Value="changelog.txt"/>
         <IsPartOfProject Value="True"/>
       </Unit53>
+      <Unit54>
+        <Filename Value="..\common\oszip.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OsZip"/>
+      </Unit54>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
