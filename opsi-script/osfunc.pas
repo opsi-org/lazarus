@@ -4924,6 +4924,7 @@ function CheckFileExists(const FName: string; var ErrorInfo: string): boolean;
 var
   hFile: THandle = 0;
   retrycount: integer = 0;
+  widename : Widestring;
 
 begin
   while (not FileExists(FName)) and (retrycount < 10) do
@@ -4952,7 +4953,10 @@ begin
     Result := True;
   end;
   {$IFDEF WINDOWS}
-  hFile := CreateFile(PChar(FName), GENERIC_READ, FILE_SHARE_READ,
+  //hFile := CreateFile(PChar(FName), GENERIC_READ, FILE_SHARE_READ,
+  //  nil, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+  widename := UTF8ToUTF16(FName);
+  hFile := CreateFileW(PWChar(widename), GENERIC_READ, FILE_SHARE_READ,
     nil, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
   if hFile = Invalid_Handle_Value then
   begin
