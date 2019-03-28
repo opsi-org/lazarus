@@ -989,6 +989,8 @@ var
     i: integer;
     productState: TProductState;
     productActionRequest: TActionRequest;
+    excludedProducts : Tstringlist;
+    productscopy : Tstringlist;
   begin
     Result := False;
     LogDatei.LogProduktId:= False;
@@ -1045,6 +1047,21 @@ var
       opsidata.saveOpsiConf;
       // reload the new productlist
       Produkte := OpsiData.getListOfProducts;
+      if runprocesslist then
+      begin
+        scriptlist.Delimiter:=',';
+        //LogDatei.log('Processing is limited to the following products: ' + scriptlist.DelimitedText, LLessential);
+        excludedProducts := Tstringlist.Create;
+        productscopy := Tstringlist.Create;
+        productscopy.Text:=Produkte.Text;
+        excludedProducts.Delimiter:=',';
+        //LogDatei.log('Found productOnClients: ' + Produkte.DelimitedText, LLDebug2);
+        stringlistintersection(productscopy, scriptlist, excludedProducts, Produkte);
+        //LogDatei.log('We will not process: ' + excludedProducts.DelimitedText, LLDebug2);
+        //LogDatei.log('Process possible: ' + Produkte.DelimitedText, LLessential);
+        excludedProducts.Free;
+        productscopy.Free;
+      end;
     end;
     Result := True;
     // no errors
@@ -1061,6 +1078,8 @@ var
   filehandle : cint;
   {$ENDIF LINUX}
   list : Tstringlist;
+  excludedProducts : Tstringlist;
+  productscopy : Tstringlist;
   opsiclientd : boolean;
 
 begin
@@ -1079,16 +1098,32 @@ begin
       Produkte.Free;
     Produkte := OpsiData.getListOfProducts;
 
-    LogDatei.log('Computername:' + computername, baselevel);
+    if runprocesslist then
+    begin
+      scriptlist.Delimiter:=',';
+      LogDatei.log('Processing is limited to the following products: ' + scriptlist.DelimitedText, LLessential);
+      excludedProducts := Tstringlist.Create;
+      productscopy := Tstringlist.Create;
+      productscopy.Text:=Produkte.Text;
+      excludedProducts.Delimiter:=',';
+      LogDatei.log('Found productOnClients: ' + Produkte.DelimitedText, LLDebug2);
+      stringlistintersection(productscopy, scriptlist, excludedProducts, Produkte);
+      LogDatei.log('We will not process: ' + excludedProducts.DelimitedText, LLDebug2);
+      LogDatei.log('Process possible: ' + Produkte.DelimitedText, LLessential);
+      excludedProducts.Free;
+      productscopy.Free;
+    end;
+
+    LogDatei.log('Computername:' + computername, LLessential);
 
     if computername <> ValueOfEnvVar('computername') then
       LogDatei.log('Computername according to Environment Variable :' +
         ValueOfEnvVar('computername'),
-        baseLevel);
+        LLessential);
 
     if opsiserviceURL <> '' then
       LogDatei.log('opsi service URL ' + opsiserviceurl,
-        baseLevel);
+        LLessential);
 
     LogDatei.log('Depot path:  ' + depotdrive + depotdir, LLinfo);
     LogDatei.log('', LLinfo);
@@ -1844,6 +1879,7 @@ begin
              + ParamDelim + 'sessionid <sessionid> ] ['
              + ParamDelim + 'usercontext <usercontext> ] ['
              + ParamDelim + 'productlist <productlist> | '
+             + ParamDelim + 'processlist <productlist> | '
              + ParamDelim + 'loginscripts | '
              + ParamDelim + 'allloginscripts ] ['
              + ParamDelim + 'silent ]' +
@@ -1876,6 +1912,7 @@ begin
              + ParamDelim + 'sessionid <sessionid> ] ['
              + ParamDelim + 'usercontext <usercontext> ] ['
              + ParamDelim + 'productlist <productlist> | '
+             + ParamDelim + 'processlist <productlist> | '
              + ParamDelim + 'loginscripts | '
              + ParamDelim + 'allloginscripts ] ['
              + ParamDelim + 'silent ]'  + LineEnding+
@@ -2650,12 +2687,10 @@ begin
                     ProgramMode := pmInfo;
                     exit;
                   end;
-
                 end
 
                 else if (lowercase(r) = paramDelim + 'productlist') then
                 begin
-                  //stringsplit(parameter, ';', scriptlist);
                   Inc(i);
                   if i <= ParamListe.Count then
                   begin
@@ -2665,7 +2700,6 @@ begin
                       ProgramMode := pmInfo;
                       exit;
                     end;
-
                     r := opsiunQuotestr(trim(r), '"');
                     if (r = '') then
                     begin
@@ -2675,10 +2709,41 @@ begin
                     end
                     else
                       stringsplit(r, ',', scriptlist);
-                      runproductlist := True;
+                    // list of productIds now in scriptlist
+                    runproductlist := True;
                     Inc(i);
                   end
+                  else
+                  begin
+                    ProgramMode := pmInfo;
+                    exit;
+                  end;
+                end
 
+                else if (lowercase(r) = paramDelim + 'processlist') then
+                begin
+                  Inc(i);
+                  if i <= ParamListe.Count then
+                  begin
+                    r := ParamListe.Strings[i - 1];
+                    if r[1] = ParamDelim then
+                    begin
+                      ProgramMode := pmInfo;
+                      exit;
+                    end;
+                    r := opsiunQuotestr(trim(r), '"');
+                    if (r = '') then
+                    begin
+                      runprocesslist := False;
+                      ProgramMode := pmInfo;
+                      exit;
+                    end
+                    else
+                      stringsplit(r, ',', scriptlist);
+                    // list of productIds now in scriptlist
+                    runprocesslist := True;
+                    Inc(i);
+                  end
                   else
                   begin
                     ProgramMode := pmInfo;

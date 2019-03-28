@@ -68,6 +68,8 @@ opsi-winst/opsi-script (4.12.1.0) experimental; urgency=low
   * osparserhelper: fix in geouterfunction
   * osdefinedfunction: isvisiblelocalvar: serach optimization
   * osfunc: checkfileexists: use widechsr/utf16 for filenames
+  * osparserhelper: new function stringlistintersection (get stringlist intersection)
+  * new cli parameter /processlist productId [,productId ]*
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 23 01 2019:15:00:00 +0200
 

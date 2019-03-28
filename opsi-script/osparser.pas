@@ -652,6 +652,7 @@ var
   scriptMode : TScriptMode;
   runProfileActions : boolean;
   runproductlist : boolean;
+  runprocesslist : boolean;
   opsiWinstStartdir : string;
   Script : TuibInstScript;
   scriptsuspendstate : boolean;
@@ -17126,7 +17127,7 @@ begin
       tmpstr := s1;
       if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR)
        then tmpstr := copy(s1,1,length(s1)-1);
-      {$IFDEF WINDOWS}
+      {$IFDEF WIN32}
       try
         tmpbool1 := true;
         if Is64BitSystem and tmpbool then
@@ -22728,6 +22729,7 @@ begin
   end
   else
     if runproductlist then LogDatei.log ('             opsi-script running in productlist script mode', LLessential)
+    else if runprocesslist then LogDatei.log ('             opsi-script running in processlist script mode', LLessential)
      else LogDatei.log ('             opsi-script running in standard script mode', LLessential);
 
 
@@ -23406,6 +23408,7 @@ begin
   runSilent := False;
   flag_all_ntuser := False;
   runproductlist := False;
+  runprocesslist := False;
   scriptMode := tsmMachine;
 
 
