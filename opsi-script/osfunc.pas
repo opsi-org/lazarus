@@ -471,7 +471,7 @@ function GetUibOSType(var errorinfo: string): TuibOSVersion;
 function FormatInt(const Value: int64): string;
 
 function IsDirectory(const FName: string): boolean;
-function SizeOfFile(FName: string): longint;
+function SizeOfFile(FName: string): int64;
 function ExtractFileDir(const FileName: string): string;
 function ExpandFileName(const FileName: string): string;
 
@@ -4279,7 +4279,7 @@ begin
     Result := False;
 end;
 
-function SizeOfFile(FName: string): longint;
+function SizeOfFile(FName: string): int64;
 var
   SearchRec: TSearchRec;
 begin
