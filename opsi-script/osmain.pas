@@ -1047,7 +1047,7 @@ var
       opsidata.saveOpsiConf;
       // reload the new productlist
       Produkte := OpsiData.getListOfProducts;
-      if runprocesslist then
+      if runprocessproducts then
       begin
         scriptlist.Delimiter:=',';
         //LogDatei.log('Processing is limited to the following products: ' + scriptlist.DelimitedText, LLessential);
@@ -1098,7 +1098,7 @@ begin
       Produkte.Free;
     Produkte := OpsiData.getListOfProducts;
 
-    if runprocesslist then
+    if runprocessproducts then
     begin
       scriptlist.Delimiter:=',';
       LogDatei.log('Processing is limited to the following products: ' + scriptlist.DelimitedText, LLessential);
@@ -1879,7 +1879,7 @@ begin
              + ParamDelim + 'sessionid <sessionid> ] ['
              + ParamDelim + 'usercontext <usercontext> ] ['
              + ParamDelim + 'productlist <productlist> | '
-             + ParamDelim + 'processlist <productlist> | '
+             + ParamDelim + 'processproducts <productlist> | '
              + ParamDelim + 'loginscripts | '
              + ParamDelim + 'allloginscripts ] ['
              + ParamDelim + 'silent ]' +
@@ -1912,7 +1912,7 @@ begin
              + ParamDelim + 'sessionid <sessionid> ] ['
              + ParamDelim + 'usercontext <usercontext> ] ['
              + ParamDelim + 'productlist <productlist> | '
-             + ParamDelim + 'processlist <productlist> | '
+             + ParamDelim + 'processproducts <productlist> | '
              + ParamDelim + 'loginscripts | '
              + ParamDelim + 'allloginscripts ] ['
              + ParamDelim + 'silent ]'  + LineEnding+
@@ -2720,7 +2720,7 @@ begin
                   end;
                 end
 
-                else if (lowercase(r) = paramDelim + 'processlist') then
+                else if (lowercase(r) = paramDelim + 'processproducts') then
                 begin
                   Inc(i);
                   if i <= ParamListe.Count then
@@ -2734,14 +2734,14 @@ begin
                     r := opsiunQuotestr(trim(r), '"');
                     if (r = '') then
                     begin
-                      runprocesslist := False;
+                      runprocessproducts := False;
                       ProgramMode := pmInfo;
                       exit;
                     end
                     else
                       stringsplit(r, ',', scriptlist);
                     // list of productIds now in scriptlist
-                    runprocesslist := True;
+                    runprocessproducts := True;
                     Inc(i);
                   end
                   else

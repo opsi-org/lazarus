@@ -653,7 +653,7 @@ var
   scriptMode : TScriptMode;
   runProfileActions : boolean;
   runproductlist : boolean;
-  runprocesslist : boolean;
+  runprocessproducts : boolean;
   opsiWinstStartdir : string;
   Script : TuibInstScript;
   scriptsuspendstate : boolean;
@@ -7944,7 +7944,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
     list1 : TStringlist;
     shellcallArchParam : String;
     go_on : boolean;
-    tmpstr : string;
+    tmpstr,searchmask : string;
 
 
   begin
@@ -8374,9 +8374,6 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
           if not GetString (Remaining, Expressionstr, Remaining, errorinfo, false)
           then
           Begin
-             // instead of using (as up to version 4.1)
-             // GetWord (Remaining, Expressionstr, Remaining, WordDelimiterWhiteSpace);
-             // we want to be exact with the number of blanks
              DivideAtFirst (' ', remaining, Expressionstr, remaining_with_leading_blanks);
              remaining := cutLeftBlanks(remaining_with_leading_blanks);
           End;
@@ -8384,12 +8381,12 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
           Source := Expressionstr;
           LogDatei.log('unzip source: '+source,lldebug3);
           Source := ExpandFileNameUTF8(Source);
-          if not (isAbsoluteFileName (Source) and FileExists(Source)) then
+          if not FileExists(Source) then
           begin
             //syntaxcheck := false;
             //reportError (Sektion, i, Sektion.strings [i-1], source + ' is no existing file or directory');
             go_on := false;
-            logDatei.log('Error: unzip: source: '+source + ' is no existing file or directory',LLError);
+            logDatei.log('Error: unzip: source: '+source + ' is no existing file',LLError);
           end;
 
           if syntaxcheck and go_on  then
@@ -8402,25 +8399,33 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
             Target := opsiUnquoteStr(target,'''');
             LogDatei.log('source: '+source+' - target: '+target,LLDebug3);
             //LogDatei.log('hardlink target: '+Expressionstr,lldebug3);
-            if not isAbsoluteFileName (target)
-            then  target := targetDirectory + target;
+
             target := ExpandFileNameUTF8(target);
 
-            if not (isAbsoluteFileName (target)) then
+            if not (isDirectory(target)) then
             begin
               //syntaxcheck := false;
               //reportError (Sektion, i, Sektion.strings [i-1], target + ' is not a valid file name');
               go_on := false;
-              logDatei.log('Error: unzip: target: '+target + ' is not a valid file name',LLError);
+              logDatei.log('Error: unzip: target: '+target + ' is not a valid file directory',LLError);
             end;
 
 
             if SyntaxCheck and go_on
             then
             begin
-             LogDatei.log ('we try to unzip: '+source+' to '+target, LLDebug2);
-             if UnzipWithDirStruct(Source,target) then
-               LogDatei.log ('unziped: '+source+' to '+target, LLInfo);
+             LogDatei.log ('we try to unzip: '+source+' to '+target, LLInfo);
+             try
+               if UnzipWithDirStruct(Source,target) then
+                 LogDatei.log ('unzipped: '+source+' to '+target, LLInfo)
+               else
+                 LogDatei.log ('Failed to unzip: '+source+' to '+target, LLError)
+               except
+                on E: Exception do
+                begin
+                  LogDatei.log('Exception: Failed to unzip: '+source+' to '+target+' : '+e.message, LLError);
+                end;
+              end;
             end;
           end;
         end
@@ -8442,7 +8447,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
           Source := Expressionstr;
           LogDatei.log('zip source: '+source,lldebug3);
           Source := ExpandFileNameUTF8(Source);
-          if not (isAbsoluteFileName (Source) and FileExists(Source)) then
+          if not (FileExists(Source) or DirectoryExists(Source)) then
           begin
             //syntaxcheck := false;
             //reportError (Sektion, i, Sektion.strings [i-1], source + ' is no existing file or directory');
@@ -8458,6 +8463,17 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
             target := trim(target);
             Target := opsiUnquoteStr(target,'"');
             Target := opsiUnquoteStr(target,'''');
+            if DirectoryExists(Source) then
+              searchmask := pathdelim+'*'
+            else
+            begin
+              searchmask := '';
+              if fileexists(Source) then
+              begin
+                searchmask := ExtractFileName(source);
+                source := includeTrailingPathDelimiter(ExtractFilePath(source));
+              end;
+            end;
             LogDatei.log('source: '+source+' - target: '+target,LLDebug3);
             //LogDatei.log('hardlink target: '+Expressionstr,lldebug3);
             if not isAbsoluteFileName (target)
@@ -8466,20 +8482,25 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
 
             if not (isAbsoluteFileName (target)) then
             begin
-              //syntaxcheck := false;
-              //reportError (Sektion, i, Sektion.strings [i-1], target + ' is not a valid file name');
               go_on := false;
               logDatei.log('Error: zip: target: '+target + ' is not a valid file name',LLError);
+            end;
+            if fileexists(target) then
+            begin
+              DeleteFileUTF8(target);
+              logDatei.log('Info: zip: target: '+target + ' existed and was be removed',LLNotice);
             end;
 
 
             if SyntaxCheck and go_on
             then
             begin
-             tmpstr:=target+pathdelim+ExtractFileNameWithoutExt(source)+'.zip';
-             LogDatei.log ('we try to zip: '+source+' to '+tmpstr, LLDebug2);
-             if ZipWithDirStruct(Source,target) then
-               LogDatei.log ('ziped: '+source+' to '+tmpstr, LLInfo);
+             //tmpstr:=target+pathdelim+ExtractFileNameWithoutExt(source)+'.zip';
+             LogDatei.log ('we try to zip: '+source+searchmask+' to '+target, LLInfo);
+             if ZipWithDirStruct(Source,searchmask,target) then
+               LogDatei.log ('zipped: '+source+searchmask+' to '+target, LLInfo)
+             else
+               LogDatei.log ('Failed zo zip: '+source+searchmask+' to '+target, LLError)
             end;
           end;
         end
@@ -11962,7 +11983,7 @@ begin
    begin
      {$IFDEF UNIX}
       LogDatei.log('Error getListFromWMI only implemented for Windows.', LLError);
-      {$ENDIF Linux}
+      {$ENDIF UNIX}
       {$IFDEF WINDOWS}
     if Skip ('(', r, r, InfoSyntaxError)
     then
@@ -18314,7 +18335,7 @@ end
      if j = 0
      then
        try
-         freebytes := strtoint64 (s2);
+         requiredbytes := strtoint64 (s2);
        except
          RunTimeInfo := '"' + s2 + '" is not a valid number"';
          syntaxCheck := false;
@@ -18367,7 +18388,7 @@ end
        RunTimeInfo := RunTimeInfo + 'than the required amount of ' + formatInt (requiredbytes) + ' bytes';
      End;
 
-     LogDatei.log (RunTimeInfo, LevelComplete);
+     LogDatei.log (RunTimeInfo, LLInfo);
 
      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
    End
@@ -19504,7 +19525,7 @@ begin
                 if (not found) then
                 begin
                   // search in %opsiScriptHelperPath%\lib
-                  testincfilename := getSpecialFolder(CSIDL_PROGRAM_FILES)+'\opsi.org\opsiScriptHelper'
+                  testincfilename := getSpecialFolder(CSIDL_PROGRAM_FILES)+'\opsi.org\opsiScriptHelper\lib'
                                        +PathDelim+FName;
                   if FileExistsUTF8(testincfilename) then
                   begin
@@ -19868,7 +19889,7 @@ begin
                         if (not found) then
                         begin
                           // search in %opsiScriptHelperPath%\lib
-                          testincfilename := getSpecialFolder(CSIDL_PROGRAM_FILES)+'\opsi.org\opsiScriptHelper'
+                          testincfilename := getSpecialFolder(CSIDL_PROGRAM_FILES)+'\opsi.org\opsiScriptHelper\lib'
                                                +PathDelim+incfilename;
                           testincfilename := ExpandFilename(testincfilename);
                           LogDatei.log_prog('Looking for: '+testincfilename,LLNotice);
@@ -20069,7 +20090,7 @@ begin
                         if (not found) then
                         begin
                           // search in %opsiScriptHelperPath%\lib
-                          testincfilename := getSpecialFolder(CSIDL_PROGRAM_FILES)+'\opsi.org\opsiScriptHelper'
+                          testincfilename := getSpecialFolder(CSIDL_PROGRAM_FILES)+'\opsi.org\opsiScriptHelper\lib'
                                                +PathDelim+incfilename;
                           testincfilename := ExpandFilename(testincfilename);
                           LogDatei.log_prog('Looking for: '+testincfilename,LLDebug2);
@@ -20201,7 +20222,7 @@ begin
                         if (not found) then
                         begin
                           // search in %opsiScriptHelperPath%\lib
-                          testincfilename := getSpecialFolder(CSIDL_PROGRAM_FILES)+'\opsi.org\opsiScriptHelper'
+                          testincfilename := getSpecialFolder(CSIDL_PROGRAM_FILES)+'\opsi.org\opsiScriptHelper\lib'
                                                +PathDelim+incfilename;
                           testincfilename := ExpandFilename(testincfilename);
                           if FileExistsUTF8(testincfilename) then
@@ -22848,7 +22869,7 @@ begin
   end
   else
     if runproductlist then LogDatei.log ('             opsi-script running in productlist script mode', LLessential)
-    else if runprocesslist then LogDatei.log ('             opsi-script running in processlist script mode', LLessential)
+    else if runprocessproducts then LogDatei.log ('             opsi-script running in processproducts script mode', LLessential)
      else LogDatei.log ('             opsi-script running in standard script mode', LLessential);
 
 
@@ -23527,7 +23548,7 @@ begin
   runSilent := False;
   flag_all_ntuser := False;
   runproductlist := False;
-  runprocesslist := False;
+  runprocessproducts := False;
   scriptMode := tsmMachine;
 
 
