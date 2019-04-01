@@ -185,10 +185,6 @@
       <Version Value="2"/>
     </PublishOptions>
     <RunParams>
-      <local>
-        <CommandLineParams Value="/opsiservice &quot;https://bonifax:4447&quot; /clientid pcbon4.uib.local /username pcbon4.uib.local /password 379187d370b6aa9a7babe0b6c5f0bc64"/>
-        <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
-      </local>
       <FormatVersion Value="2"/>
       <Modes Count="1">
         <Mode0 Name="default">

@@ -36,6 +36,7 @@ unit Utilwmi;
 
 // some small changes for use with opsi (request as parameter) d.oertel 2.11.2018
 // No dialogs
+// Namespace as parameter; d.oertel 1.04.2019
  
 {$MODE OBJFPC}{$H+}{$HINTS ON}
  

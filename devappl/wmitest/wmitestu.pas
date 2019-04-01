@@ -16,10 +16,12 @@ type
   TForm1 = class(TForm)
     Button1: TButton;
     Edit1: TEdit;
+    EditNamespace: TEdit;
     Edit3: TEdit;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
+    Label4: TLabel;
     Memo1: TMemo;
     MemoProp: TMemo;
     procedure Button1Click(Sender: TObject);

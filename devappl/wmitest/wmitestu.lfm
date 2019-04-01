@@ -1,33 +1,33 @@
 object Form1: TForm1
-  Left = 106
+  Left = 556
   Height = 683
-  Top = 351
+  Top = 346
   Width = 701
   Caption = 'Form1'
   ClientHeight = 683
   ClientWidth = 701
-  LCLVersion = '1.8.4.0'
+  LCLVersion = '2.0.0.4'
   object Button1: TButton
-    Left = 451
+    Left = 472
     Height = 25
     Top = 12
     Width = 75
-    Caption = 'Button1'
+    Caption = 'Execute'
     OnClick = Button1Click
     TabOrder = 0
   end
   object Label1: TLabel
-    Left = 25
+    Left = 27
     Height = 15
-    Top = 16
+    Top = 64
     Width = 44
     Caption = 'wniclass'
     ParentColor = False
   end
   object Edit1: TEdit
-    Left = 84
+    Left = 152
     Height = 23
-    Top = 16
+    Top = 64
     Width = 248
     TabOrder = 1
     Text = 'Win32_ComputerSystem'
@@ -35,7 +35,7 @@ object Form1: TForm1
   object Label2: TLabel
     Left = 24
     Height = 15
-    Top = 57
+    Top = 104
     Width = 107
     Caption = 'WMIPropertyNames'
     ParentColor = False
@@ -50,16 +50,16 @@ object Form1: TForm1
     ParentColor = False
   end
   object Edit3: TEdit
-    Left = 104
+    Left = 152
     Height = 23
-    Top = 192
+    Top = 232
     Width = 177
     TabOrder = 2
   end
   object Memo1: TMemo
-    Left = 27
+    Left = 24
     Height = 250
-    Top = 232
+    Top = 272
     Width = 606
     Lines.Strings = (
       'Memo1'
@@ -70,7 +70,7 @@ object Form1: TForm1
   object MemoProp: TMemo
     Left = 152
     Height = 122
-    Top = 57
+    Top = 104
     Width = 280
     Lines.Strings = (
       'Manufacturer'
@@ -82,5 +82,20 @@ object Form1: TForm1
     )
     ScrollBars = ssAutoBoth
     TabOrder = 4
+  end
+  object Label4: TLabel
+    Left = 23
+    Height = 15
+    Top = 26
+    Width = 90
+    Caption = 'WMI Namespace'
+    ParentColor = False
+  end
+  object EditNamespace: TEdit
+    Left = 151
+    Height = 23
+    Top = 26
+    Width = 249
+    TabOrder = 5
   end
 end
