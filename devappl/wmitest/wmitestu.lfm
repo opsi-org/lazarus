@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 556
+  Left = 139
   Height = 683
-  Top = 346
+  Top = 333
   Width = 701
   Caption = 'Form1'
   ClientHeight = 683
@@ -92,7 +92,7 @@ object Form1: TForm1
     ParentColor = False
   end
   object EditNamespace: TEdit
-    Left = 151
+    Left = 152
     Height = 23
     Top = 26
     Width = 249

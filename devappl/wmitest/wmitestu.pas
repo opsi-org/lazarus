@@ -54,7 +54,7 @@ begin
   try
   memo1.Clear;
   myWMIResultList := Tstringlist.Create;
-  if not osGetWMI(Edit1.Text,MemoProp.Lines,Edit3.Text,myWMIResultList,errormsg) then
+  if not osGetWMI(EditNamespace.Text, Edit1.Text,MemoProp.Lines,Edit3.Text,myWMIResultList,errormsg) then
      begin
      memo1.Append('Failed');
      memo1.Append(errormsg);

@@ -11988,46 +11988,51 @@ begin
     if Skip ('(', r, r, InfoSyntaxError)
     then
     Begin
-      if EvaluateString (r,r, s1, InfoSyntaxError)
-      then
-       if Skip (',', r,r, InfoSyntaxError)
-       then
-         list1 := TXStringList.create;
-         if produceStringList (section,r, r, list1, InfoSyntaxError) //Recursion
-         then
-            if Skip (',', r,r, InfoSyntaxError)
-            then
-             if EvaluateString (r,r, s2, InfoSyntaxError)
+      try
+        list1 := TXStringList.create;
+        if EvaluateString (r,r, s1, InfoSyntaxError)
+        then
+          if Skip (',', r,r, InfoSyntaxError)
+          then
+           if EvaluateString (r,r, s2, InfoSyntaxError)
+           then
+           if Skip (',', r,r, InfoSyntaxError)
+           then
+             if produceStringList (section,r, r, list1, InfoSyntaxError) //Recursion
              then
-              if Skip (')', r,r, InfoSyntaxError)
-              then
-              Begin
-                syntaxCheck := true;
-                 list.clear;
-                 try
-                  ErrorMsg := '';
-                    if not osGetWMI(s1,list1,s2,TStringlist(list),ErrorMsg) then
-                    begin
-                      LogDatei.log('Error on getListFromWMI: ' + ErrorMsg, LLerror);
-                      list.Text:= '';
-                      FNumberOfErrors := FNumberOfErrors + 1;
-                    end;
-                 except
-                   on e: exception do
-                   begin
-                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                     LogDatei.log('Exception: Error on getListFromWMI: ' + e.message,
-                       LLerror);
-                     list.Text:= '';
-                     FNumberOfErrors := FNumberOfErrors + 1;
-                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                     list1.Free;
-                     list1 := nil;
-                   end
-                 end;
-               End;
-      list1.Free;
-      list1 := nil;
+                if Skip (',', r,r, InfoSyntaxError)
+                then
+                 if EvaluateString (r,r, s3, InfoSyntaxError)
+                 then
+                  if Skip (')', r,r, InfoSyntaxError)
+                  then
+                  Begin
+                    syntaxCheck := true;
+                     list.clear;
+                     try
+                      ErrorMsg := '';
+                        if not osGetWMI(s1,s2,list1,s3,TStringlist(list),ErrorMsg) then
+                        begin
+                          LogDatei.log('Error on getListFromWMI: ' + ErrorMsg, LLerror);
+                          list.Text:= '';
+                          FNumberOfErrors := FNumberOfErrors + 1;
+                        end;
+                     except
+                       on e: exception do
+                       begin
+                         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                         LogDatei.log('Exception: Error on getListFromWMI: ' + e.message,
+                           LLerror);
+                         list.Text:= '';
+                         FNumberOfErrors := FNumberOfErrors + 1;
+                         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                       end
+                     end;
+                   End;
+      finally
+        list1.Free;
+        list1 := nil;
+      end;
     End
    {$ENDIF WINDOWS}
    End
