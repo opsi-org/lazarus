@@ -6,7 +6,11 @@ unit OsZip;
 interface
 
 uses
-  Classes, SysUtils, Zipper, FileUtil, strutils, LConvEncoding;
+  Classes, SysUtils, Zipper, FileUtil, strutils,
+  {$IFDEF OSLOG}
+  oslog,
+  {$ENDIF OSLOG}
+  LConvEncoding;
 
 // Zip a folder which contains subfolders and files.
 function ZipWithDirStruct(sourcepath, searchmask, TargetFile : String): Boolean;
@@ -45,6 +49,9 @@ begin
           DiskFileName := FileList.Strings[filecounter];
           ArchiveFileName:=StringReplace(FileList.Strings[filecounter],sourcepath,'',[rfReplaceall]);
           ZipperObj.Entries.AddFileEntry(DiskFileName, ArchiveFileName);
+          //{$IFDEF OSLOG}
+          //   LogDatei.log('zipped: '+ArchiveFileName+' to: '+TargetFile,LLDebug);
+          //{$ENDIF OSLOG}
         end;
         ZipperObj.ZipAllFiles;
         Result := True;

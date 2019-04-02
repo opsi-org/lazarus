@@ -8459,12 +8459,12 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
           begin
             if not GetString (Remaining, Target, Remaining, errorinfo, false)
             then Target := Remaining;
-            LogDatei.log('source: '+source+' - target: '+target,LLDebug3);
+            LogDatei.log('source: '+source+' - target: '+target,LLDebug2);
             target := trim(target);
             Target := opsiUnquoteStr(target,'"');
             Target := opsiUnquoteStr(target,'''');
             if DirectoryExists(Source) then
-              searchmask := pathdelim+'*'
+              searchmask := '*.*'
             else
             begin
               searchmask := '';
@@ -8474,8 +8474,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
                 source := includeTrailingPathDelimiter(ExtractFilePath(source));
               end;
             end;
-            LogDatei.log('source: '+source+' - target: '+target,LLDebug3);
-            //LogDatei.log('hardlink target: '+Expressionstr,lldebug3);
+            LogDatei.log('source: '+source+' - mask: '+searchmask+' - target: '+target,LLDebug);
             if not isAbsoluteFileName (target)
             then  target := targetDirectory + target;
             target := ExpandFileNameUTF8(target);
@@ -8496,7 +8495,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
             then
             begin
              //tmpstr:=target+pathdelim+ExtractFileNameWithoutExt(source)+'.zip';
-             LogDatei.log ('we try to zip: '+source+searchmask+' to '+target, LLInfo);
+             LogDatei.log ('we try to zip: '+source+searchmask+' to '+target, LLDebug);
              if ZipWithDirStruct(Source,searchmask,target) then
                LogDatei.log ('zipped: '+source+searchmask+' to '+target, LLInfo)
              else
@@ -12316,42 +12315,52 @@ begin
         goOn := true;
         syntaxCheck := true;
       End;
+      if (r[1] = ')') and goon
+       then
+       Begin
+         goOn := false;
+         Skip (')', r, r, InfoSyntaxError) //consume the ')'
+         // everything ok - create empty string list
+       End
+       else
+       Begin
 
-      while syntaxCheck and goon
-      do
-      Begin
-          evaluateString (r, r, s1, InfoSyntaxError);
-          // empty strings are allowed elements
-          // so we comment the next two lines (do 10.1.19)
-          //if length(s1) > 0
-          //then
-            list.add (s1);
-          logdatei.log_prog('createStringList: add: '+s1+' to: '+list.Text,LLDebug);
+        while syntaxCheck and goon
+        do
+        Begin
+            evaluateString (r, r, s1, InfoSyntaxError);
+            // empty strings are allowed elements
+            // so we comment the next two lines (do 10.1.19)
+            //if length(s1) > 0
+            //then
+              list.add (s1);
+            logdatei.log_prog('createStringList: add: '+s1+' to: '+list.Text,LLDebug);
 
-          if length(r) = 0
-          then
-          Begin
-            syntaxCheck := false;
-            InfoSyntaxError := ' Expressionstr not terminated ';
-          End
-          else
-          Begin
-           if r[1] = ','
-           then
-             Skip (',', r, r, InfoSyntaxError) //here is no syntax error possible
-           else if r[1] = ')'
-           then
-           Begin
-             goOn := false;
-             Skip (')', r, r, InfoSyntaxError) //consume the ')'
-           End
-           else
-           Begin
-             syntaxCheck := false;
-             InfoSyntaxError := ' "," or ")" expected ';
-           End;
-          End;
-      End
+            if length(r) = 0
+            then
+            Begin
+              syntaxCheck := false;
+              InfoSyntaxError := ' Expressionstr not terminated ';
+            End
+            else
+            Begin
+             if r[1] = ','
+             then
+               Skip (',', r, r, InfoSyntaxError) //here is no syntax error possible
+             else if r[1] = ')'
+             then
+             Begin
+               goOn := false;
+               Skip (')', r, r, InfoSyntaxError) //consume the ')'
+             End
+             else
+             Begin
+               syntaxCheck := false;
+               InfoSyntaxError := ' "," or ")" expected ';
+             End;
+            End;
+        End
+      end;
     end
    end
 

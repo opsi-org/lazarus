@@ -76,6 +76,8 @@ opsi-winst/opsi-script (4.12.1.0) experimental; urgency=low
   * new in file sections: unzipfile <zipfile> <targetdir>
   * osparser: fix in Hasminimumspace
   * osparser: fix searchpath from %opsiScriptHelperPath% to %opsiScriptHelperPath%\lib; fixes #3975
+  * osparser: producestringlist: createstringlist: fix: empty strings as argument allowed
+    and createstringlist() gives empty list
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 23 01 2019:15:00:00 +0200
 
