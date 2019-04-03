@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 353
+  Left = 815
   Height = 696
-  Top = 191
+  Top = 244
   Width = 1047
   AllowDropFiles = True
   Caption = 'opsi-doc-generator'
@@ -29,13 +29,13 @@ object Form1: TForm1
       OnClick = ButtonSaveClick
       TabOrder = 0
     end
-    object ButtonConvert: TButton
+    object ButtonOSConvert: TButton
       Left = 8
       Height = 25
       Top = 8
       Width = 140
       Caption = 'Opsiscript To Asciidoc'
-      OnClick = ButtonConvertClick
+      OnClick = ButtonOSConvertClick
       TabOrder = 1
     end
     object Bsave_ascii_show: TButton
@@ -129,7 +129,7 @@ object Form1: TForm1
       Anchors = [akTop, akLeft, akBottom]
       ItemHeight = 0
       OnSelectionChange = ListBox1SelectionChange
-      ScrollWidth = 298
+      ScrollWidth = 1000
       TabOrder = 0
       TopIndex = -1
     end

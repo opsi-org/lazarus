@@ -51,7 +51,6 @@ var
   tmpfilename, tmpfilebasename, tmpdirname : string;
 begin
   result := '';
-  //tmpdirname := GetTempDir;
   tmpdirname := ExtractFileDir(infilename);
   tmpfilebasename := ExtractFileName(infilename);
   tmpfilebasename := ExtractFileNameWithoutExt(tmpfilebasename);
