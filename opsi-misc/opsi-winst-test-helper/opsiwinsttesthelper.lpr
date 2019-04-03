@@ -5,12 +5,17 @@ program opsiwinsttesthelper;
 
 {$APPTYPE CONSOLE}
 
+{$Define GUI}
+
 uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, helperwin, VersionInfo, DSiWin32, wispecfolder;
+  {$IFDEF GUI}
+  Forms,
+  {$ENDIF}
+  helperwin;
 
 //{$IFDEF WINDOWS}{$R opsiwinsttesthelper.rc}{$ENDIF}
 
