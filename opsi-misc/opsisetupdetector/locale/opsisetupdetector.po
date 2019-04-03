@@ -1069,6 +1069,22 @@ msgstr ""
 msgid "Known Installers"
 msgstr ""
 
+#: tresultform1.menuitemlang.caption
+msgid "Languages"
+msgstr ""
+
+#: tresultform1.menuitemlangde.caption
+msgid "de"
+msgstr ""
+
+#: tresultform1.menuitemlangen.caption
+msgid "en"
+msgstr ""
+
+#: tresultform1.menuitemlanges.caption
+msgid "es"
+msgstr ""
+
 #: tresultform1.menuitemstart.caption
 msgctxt "tresultform1.menuitemstart.caption"
 msgid "Start"

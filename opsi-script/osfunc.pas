@@ -471,7 +471,7 @@ function GetUibOSType(var errorinfo: string): TuibOSVersion;
 function FormatInt(const Value: int64): string;
 
 function IsDirectory(const FName: string): boolean;
-function SizeOfFile(FName: string): longint;
+function SizeOfFile(FName: string): int64;
 function ExtractFileDir(const FileName: string): string;
 function ExpandFileName(const FileName: string): string;
 
@@ -516,7 +516,7 @@ function divideAtFirst(const partialS, S: string; var part1, part2: string): boo
 //   andernfalls false;
 //   wenn partialS nicht vorkommt, enthaelt part1 den Gesamtstring, part2 ist leer
 
-procedure stringsplitByWhiteSpace(const s: string; var Result: TXStringList);
+//procedure stringsplitByWhiteSpace(const s: string; var Result: TXStringList);
 // produziert eine Stringliste aus den Teilstrings, die zwischen den Whitespace-Abschnitten stehen
 
 procedure stringsplit(const s, delimiter: string; var Result: TXStringList);
@@ -756,7 +756,6 @@ begin
   result := ValidUTF8String(str);
 end;
 *)
-
 function cmdLineInputDialog(var inputstr : string; const message, default : string; confidential : boolean) : boolean;
 var
   c : char ;
@@ -1023,7 +1022,7 @@ begin
   {$ENDIF DARWIN}
 end;
 
-//{$RANGECHECKS OFF}
+{$RANGECHECKS OFF}
 procedure FindLocalIPData(var ipName: string; var address: string);
 type
   bytearray = array of byte;
@@ -1051,7 +1050,7 @@ begin
     end;
   {$ENDIF WINDOWS}
 end;
-//{$RANGECHECKS ON}
+{$RANGECHECKS ON}
 
 
 {$IFDEF UNIX}
@@ -2115,7 +2114,7 @@ begin
     end;
   end;
 
-  stringsplitByWhiteSpace(paramstr,paramlist);
+  stringsplitByWhiteSpace(paramstr,TStringlist(paramlist));
   //writeln('>->->'+filename+'='+ExpandFileName(filename));
   //writeln('>->->'+paramstr);
   //writeln('>->->'+CmdLinePasStr);
@@ -4282,7 +4281,7 @@ begin
     Result := False;
 end;
 
-function SizeOfFile(FName: string): longint;
+function SizeOfFile(FName: string): int64;
 var
   SearchRec: TSearchRec;
 begin
@@ -4927,6 +4926,7 @@ function CheckFileExists(const FName: string; var ErrorInfo: string): boolean;
 var
   hFile: THandle = 0;
   retrycount: integer = 0;
+  widename : Widestring;
 
 begin
   while (not FileExists(FName)) and (retrycount < 10) do
@@ -4955,7 +4955,10 @@ begin
     Result := True;
   end;
   {$IFDEF WINDOWS}
-  hFile := CreateFile(PChar(FName), GENERIC_READ, FILE_SHARE_READ,
+  //hFile := CreateFile(PChar(FName), GENERIC_READ, FILE_SHARE_READ,
+  //  nil, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+  widename := UTF8ToUTF16(FName);
+  hFile := CreateFileW(PWChar(widename), GENERIC_READ, FILE_SHARE_READ,
     nil, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
   if hFile = Invalid_Handle_Value then
   begin
@@ -5159,6 +5162,8 @@ begin
   end;
 end;
 
+(*
+moved to osparser helper
 procedure stringsplitByWhiteSpace(const s: string; var Result: TXStringList);
 // produziert eine Stringliste aus den Teilstrings, die zwischen den Whitespace-Abschnitten stehen
 var
@@ -5174,6 +5179,7 @@ begin
     Result.add(item);
   end;
 end;
+*)
 
 
 procedure stringsplit(const s, delimiter: string; var Result: TXStringList);
@@ -8316,106 +8322,123 @@ var
   datetime1, datetime2: TDateTime;
 
 begin
-  if not GetFileInfo(Sourcefilename, fRecordSource, ErrorInfo) then
-  begin
-    Result := False;
-    LogS := 'Error:  ' + SourceFileName + ' does not exist';
-    ;
-    LogDatei.log(LogS, LLError);
-  end
-  else if not GetFileInfo(Targetfilename, fRecordTarget, ErrorInfo) then
-  begin
-    Result := False;
-    LogS := 'Info:  ' + TargetFileName + ' does not exist ' +
-      SourceFileName + ' will be copied ';
-    ;
-    LogDatei.DependentAdd(LogS, LevelInfo);
-    LogDatei.NumberOfHints := LogDatei.NumberOfHints + 1;
-  end
-  else
-  begin
-    {$IFDEF LINUX}
-    if 0 <> fpstat(Sourcefilename,fstatRecordSource) then
+  try
+    if not GetFileInfo(Sourcefilename, fRecordSource, ErrorInfo) then
     begin
       Result := False;
-      LogS := 'Error: Could not stat ' + SourceFileName + ' : '+SysErrorMessage(fpgeterrno);
+      LogS := 'Error:  ' + SourceFileName + ' does not exist';
+      ;
       LogDatei.log(LogS, LLError);
     end
-    else uxtime1 := fstatRecordSource.mtime;
-
-    if 0 <> fpstat(Targetfilename,fstatRecordTarget) then
+    else if not GetFileInfo(Targetfilename, fRecordTarget, ErrorInfo) then
     begin
       Result := False;
-      LogS := 'Error: Could not stat ' + TargetFileName + ' : '+SysErrorMessage(fpgeterrno);
-      LogDatei.log(LogS, LLError);
-    end
-    else uxtime2 := fstatRecordTarget.mtime;
-    dateTime1 := UnixToDateTime(uxtime1);
-    dateTime2 := UnixToDateTime(uxtime2);
-    diffresult := abs(uxtime1 - uxtime2);
-    if diffresult < 2 Then diffresult := 0;
-    {$ENDIF LINUX}
-    {$IFDEF DARWIN}
-     LogDatei.log('not implemented for macos', LLError);
-    {$ENDIF DARWIN}
-
-{$IFDEF WINDOWS}
-    filetime1 := fRecordSource.FindData.ftLastWriteTime;
-    filetime2 := fRecordTarget.FindData.ftLastWriteTime;
-
-    diffresult := CompareFileTime_WithTimeInterval(filetime1, filetime2, 2);
-
-      (*
-      -1  First file time is less than second file time.
-      0     First file time is similar to second file time.
-      +1  First file time is greater than second file time.
-      *)
-
-     (*
-    filetimetosystemtime(fRecordSource.FindData.ftLastWriteTime, systime1);
-    filetimetosystemtime(fRecordTarget.FindData.ftLastWriteTime, systime2);
-    *)
-
-    filetimetosystemtime(filetime1, systime1);
-    filetimetosystemtime(filetime2, systime2);
-
-    dateTime1 := SystemTimeToDateTime(sysTime1);
-    dateTime2 := SystemTimeToDateTime(sysTime2);
-    {$ENDIF WINDOWS}
-    LogS := '"' + TargetFileName + '" has LastWriteTime ' + DateTimeToStr(dateTime2);
-    LogDatei.DependentAdd(LogS, LevelComplete);
-    LogS := '"' + SourceFileName + '" has LastWriteTime ' + DateTimeToStr(dateTime1);
-    LogDatei.DependentAdd(LogS, LevelComplete);
-
-
-    //(Source-Date1 > Target-Date2) or ((Date2 = Date1) and OverwriteIfEqual)
-
-
-    //LogDatei.DependentAdd (inttostr (diffresult), LevelComplete);
-    if (diffresult = 1) or ((diffresult = 0) and OverwriteIfEqual) then
-    begin
-      Result := True;
-      LogS := 'Info:  Target "' + TargetFileName + '"  shall be overwritten: ';
-      if diffresult = 0 then
-        LogS := LogS + 'Its age is about the age of source  "'
-      else
-        LogS := LogS + 'It is older than ';
-      LogS := LogS + 'source  "' + SourceFileName + '"';
-      LogDatei.DependentAdd(LogS, LevelInfo);
+      LogS := 'Info:  ' + TargetFileName + ' does not exist ' +
+        SourceFileName + ' will be copied ';
+      ;
+      LogDatei.log(LogS, LevelInfo);
       LogDatei.NumberOfHints := LogDatei.NumberOfHints + 1;
     end
     else
     begin
-      Result := False;
-      LogS := 'Target "' + TargetFileName + '"  will not be replaced: ';
-      if diffresult = 0 then
-        LogS := LogS + 'It has about the same age as '
+      {$IFDEF LINUX}
+      if 0 <> fpstat(Sourcefilename,fstatRecordSource) then
+      begin
+        Result := False;
+        LogS := 'Error: Could not stat ' + SourceFileName + ' : '+SysErrorMessage(fpgeterrno);
+        LogDatei.log(LogS, LLError);
+      end
+      else uxtime1 := fstatRecordSource.mtime;
+
+      if 0 <> fpstat(Targetfilename,fstatRecordTarget) then
+      begin
+        Result := False;
+        LogS := 'Error: Could not stat ' + TargetFileName + ' : '+SysErrorMessage(fpgeterrno);
+        LogDatei.log(LogS, LLError);
+      end
+      else uxtime2 := fstatRecordTarget.mtime;
+      dateTime1 := UnixToDateTime(uxtime1);
+      dateTime2 := UnixToDateTime(uxtime2);
+      diffresult := abs(uxtime1 - uxtime2);
+      if diffresult < 2 Then diffresult := 0;
+      {$ENDIF LINUX}
+      {$IFDEF DARWIN}
+       LogDatei.log('not implemented for macos', LLError);
+      {$ENDIF DARWIN}
+
+  {$IFDEF WINDOWS}
+      //LogDatei.log('FileCheckDate 1', LLInfo);
+      filetime1 := fRecordSource.FindData.ftLastWriteTime;
+      //LogDatei.log('FileCheckDate 2', LLInfo);
+      filetime2 := fRecordTarget.FindData.ftLastWriteTime;
+      //LogDatei.log('FileCheckDate 3', LLInfo);
+
+      diffresult := CompareFileTime_WithTimeInterval(filetime1, filetime2, 2);
+      //LogDatei.log('FileCheckDate 4', LLInfo);
+
+        (*
+        -1  First file time is less than second file time.
+        0     First file time is similar to second file time.
+        +1  First file time is greater than second file time.
+        *)
+
+       (*
+      filetimetosystemtime(fRecordSource.FindData.ftLastWriteTime, systime1);
+      filetimetosystemtime(fRecordTarget.FindData.ftLastWriteTime, systime2);
+      *)
+
+      filetimetosystemtime(filetime1, systime1);
+      //LogDatei.log('FileCheckDate 5', LLInfo);
+      filetimetosystemtime(filetime2, systime2);
+      //LogDatei.log('FileCheckDate 6', LLInfo);
+
+      dateTime1 := SystemTimeToDateTime(sysTime1);
+      //LogDatei.log('FileCheckDate 7', LLInfo);
+      dateTime2 := SystemTimeToDateTime(sysTime2);
+      //LogDatei.log('FileCheckDate 8', LLInfo);
+      {$ENDIF WINDOWS}
+      LogS := '"' + TargetFileName + '" has LastWriteTime ' + DateTimeToStr(dateTime2);
+      LogDatei.log(LogS, LLInfo);
+      LogS := '"' + SourceFileName + '" has LastWriteTime ' + DateTimeToStr(dateTime1);
+      LogDatei.log(LogS, LLInfo);
+
+
+      //(Source-Date1 > Target-Date2) or ((Date2 = Date1) and OverwriteIfEqual)
+
+
+      //LogDatei.DependentAdd (inttostr (diffresult), LevelComplete);
+      if (diffresult = 1) or ((diffresult = 0) and OverwriteIfEqual) then
+      begin
+        Result := True;
+        LogS := 'Info:  Target "' + TargetFileName + '"  shall be overwritten: ';
+        if diffresult = 0 then
+          LogS := LogS + 'Its age is about the age of source  "'
+        else
+          LogS := LogS + 'It is older than ';
+        LogS := LogS + 'source  "' + SourceFileName + '"';
+        LogDatei.log(LogS, LLInfo);
+        LogDatei.NumberOfHints := LogDatei.NumberOfHints + 1;
+      end
       else
-        LogS := LogS + 'It is younger than ';
-      LogS := LogS + 'source  "' + SourceFileName + '"';
-      LogDatei.DependentAdd(LogS, LevelComplete);
+      begin
+        Result := False;
+        LogS := 'Target "' + TargetFileName + '"  will not be replaced: ';
+        if diffresult = 0 then
+          LogS := LogS + 'It has about the same age as '
+        else
+          LogS := LogS + 'It is younger than ';
+        LogS := LogS + 'source  "' + SourceFileName + '"';
+        LogDatei.log(LogS, LLInfo);
+      end;
     end;
-  end;
+    except
+     on e: exception do
+     begin
+       LogDatei.log('Exception: Error on FileCheckDate: ' + e.message,
+         LLerror);
+       Result := False;
+     end
+   end;
 end;
 
 

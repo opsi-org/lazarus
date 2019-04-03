@@ -188,16 +188,8 @@ msgstr ""
 msgid "LabelVersion"
 msgstr ""
 
-#: tflistedit.caption
-msgid "opsi-script Parameter Editor"
-msgstr ""
-
-#: tflistedit.label1.caption
-msgid "Please Check and Correct the "
-msgstr ""
-
 #: tsysteminfo.caption
-msgid "SystemInfo"
+msgid "Systeminfo"
 msgstr ""
 
 #: tsysteminfo.label1.caption

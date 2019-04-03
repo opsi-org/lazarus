@@ -36,6 +36,7 @@ unit Utilwmi;
 
 // some small changes for use with opsi (request as parameter) d.oertel 2.11.2018
 // No dialogs
+// Namespace as parameter; d.oertel 1.04.2019
  
 {$MODE OBJFPC}{$H+}{$HINTS ON}
  
@@ -60,15 +61,15 @@ uses
   contnrs;
  
  
-  Function GetWMIInfo
-  (
+  Function GetWMIInfo(
+    WMINamespace            : String ;
     const WMIClass          : String ;
     const WMIPropertyNames  : Array of String;
     const Condition         : String;
     var Request : String
   ): TFPObjectList;
  
-  function  GetWMIInfoClass(const WMIClass: string): TFPObjectList;
+  function  GetWMIInfoClass(WMINamespace : String ;const WMIClass: string): TFPObjectList;
 implementation
  
 Uses
@@ -99,7 +100,7 @@ begin
   Result := Result + ']';
 end;
 
-function  GetWMIInfo(const WMIClass: string; const WMIPropertyNames: Array of String;
+function  GetWMIInfo(WMINamespace : String ; const WMIClass: string; const WMIPropertyNames: Array of String;
                      const Condition: string; var Request : String): TFPObjectList;
 const
   wbemFlagForwardOnly = $00000020;
@@ -115,6 +116,7 @@ var
   {$ELSE}
   objWMI        : OLEVariant;                  // FPC 3.0 requires WMIobj to be an olevariant, not a variant
   nr            : LongWord absolute nrValue;   // FPC 3.0 requires IEnumvariant.next to supply a longword variable for # returned values
+  oleNamespace  : OLEVariant;
   {$ENDIF}
   WMIproperties : String;
   WMIProp       : TStringList;
@@ -135,9 +137,13 @@ begin
   if WMIProperties = '' then WMIProperties := '*';
   // Let FPObjectList take care of freeing the objects
   Result:= TFPObjectList.Create(True);
+  // Default wmi namespace to 'root\CIMV2'
+  if WMINamespace = '' then WMINamespace := '\root\CIMV2';
   try
     FSWbemLocator   := CreateOleObject('WbemScripting.SWbemLocator');
-    objWMIService   := FSWbemLocator.ConnectServer('localhost', 'root\CIMV2', '', '');
+    oleNamespace := WMINamespace;
+    objWMIService   := FSWbemLocator.ConnectServer('localhost', oleNamespace, '', '');
+    //objWMIService   := FSWbemLocator.ConnectServer('localhost', '\root\CIMV2', '', '');
     if Condition = ''
     then Request := Format('SELECT %s FROM %s'   , [WMIProperties, WMIClass])
     else Request := Format('SELECT %s FROM %s %s', [WMIProperties, WMIClass, Condition]);
@@ -179,7 +185,7 @@ begin
   end;
 end;
 
-function  GetWMIInfoClass(const WMIClass: string): TFPObjectList;
+function  GetWMIInfoClass(WMINamespace : String ;const WMIClass: string): TFPObjectList;
 const
   wbemFlagForwardOnly = $00000020;
 var
@@ -197,6 +203,7 @@ var
   nr            : LongWord absolute nrValue;   // FPC 3.0 requires IEnumvariant.next to supply a longword variable for # returned values
   objWMIItem    : OleVariant;
   PropertyNames  : OleVariant;
+  oleNamespace  : OLEVariant;
   {$ENDIF}
   WMIproperties : String;
   WMIProp       : TStringList;
@@ -217,9 +224,13 @@ begin
   *)
   // Let FPObjectList take care of freeing the objects
   Result:= TFPObjectList.Create(True);
+  // Default wmi namespace to 'root\CIMV2'
+  if WMINamespace = '' then WMINamespace := 'root\CIMV2';
   try
     FSWbemLocator   := CreateOleObject('WbemScripting.SWbemLocator');
-    objWMIService   := FSWbemLocator.ConnectServer('localhost', 'root\CIMV2', , '');
+    //objWMIService   := FSWbemLocator.ConnectServer('localhost', WMINamespace,'' , '');
+    oleNamespace := WMINamespace;
+    objWMIService   := FSWbemLocator.ConnectServer('localhost', oleNamespace, '', '');
     (*
     if Condition = ''
     then Request := Format('SELECT %s FROM %s'   , [WMIProperties, WMIClass])

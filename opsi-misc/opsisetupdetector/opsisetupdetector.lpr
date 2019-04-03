@@ -15,7 +15,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   osdform,
   printers, fileinfo, winpeimagereader, lcltranslator, runtimetypeinfocontrols,
   osdanalyze, osdhelper, osdbasedata, osdconfigdlg, osdcreate,
-  osddlgnewdependency, oscheckbinarybitness, osddlgnewproperty;
+  osddlgnewdependency, oscheckbinarybitness, osencoding, osddlgnewproperty;
 
 
 {$R *.res}

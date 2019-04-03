@@ -12,6 +12,7 @@ unit oscrypt;
 
 {$mode delphi}
 
+
 interface
 
 uses
@@ -175,6 +176,7 @@ function md5fromFile(filename : string) : string;
    i: integer;
    s: string;
  begin
+   {$RANGECHECKS OFF}
    result := '';
    Source:= nil;
    try
@@ -194,6 +196,7 @@ function md5fromFile(filename : string) : string;
        s:= s + IntToHex(Digest[i],2);
      result := s;                              // return the digest
    end;
+   {$RANGECHECKS ON}
  end;
 
 end.

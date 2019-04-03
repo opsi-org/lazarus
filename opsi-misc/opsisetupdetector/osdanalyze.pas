@@ -43,6 +43,7 @@ procedure get_advancedmsi_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_nsis_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_installaware_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_genmsinstaller_info(myfilename: string; var mysetup: TSetupFile);
+procedure get_wixtoolset_info(myfilename: string; var mysetup: TSetupFile);
 // marker for add installers
 //procedure stringsgrep(myfilename: string; verbose,skipzero: boolean);
 procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
@@ -864,6 +865,13 @@ begin
   mywrite('get_genmsinstaller_info finished');
 end;
 
+procedure get_wixtoolset_info(myfilename: string; var mysetup: TSetupFile);
+begin
+
+end;
+
+// marker for add installers
+
 function analyze_markerlist(var mysetup: TSetupFile): TKnownInstaller;
 var
   i: integer;
@@ -1072,6 +1080,7 @@ begin
           installerToInstallerstr(setupType), LLWarning);
       stInstallAware: get_installaware_info(FileName, mysetup);
       stMSGenericInstaller: get_genmsinstaller_info(FileName, mysetup);
+      stWixToolset: get_wixtoolset_info(FileName, mysetup);
       stUnknown: LogDatei.log(
           'Unknown Installer after Analyze.', LLcritical);
       else
@@ -1115,6 +1124,8 @@ begin
       stInstallAware: Mywrite('Found well known installer: ' +
           installerToInstallerstr(setupType));
       stMSGenericInstaller: Mywrite('Found well known installer: ' +
+          installerToInstallerstr(setupType));
+      stWixToolset: Mywrite('Found well known installer: ' +
           installerToInstallerstr(setupType));
       stUnknown: Mywrite('Sorry - unknown installer: ' +
           installerToInstallerstr(setupType));

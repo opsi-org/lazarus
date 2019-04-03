@@ -4327,7 +4327,7 @@ type
     handleDesktop := FindWindowEx(FindWindowEx(FindWindow('Progman',
       'Program Manager'), 0, 'SHELLDLL_DefView', ''), 0, 'SysListView32', '');
     PostMessage(handleDesktop, WM_DDE_FIRST, VK_F5, 0);
-    PostMessage(handleDesktop, WM_DDE_LAST, VK_F5, 1 shl 31);
+    PostMessage(handleDesktop, WM_DDE_LAST, VK_F5, (1 shl 31)-1);
   end; { DSiRefreshDesktop }
 
   {ln}

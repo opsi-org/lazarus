@@ -66,6 +66,7 @@ function opsiunquotestr2(s1,s2 : string): string;
 // and the second char is the end mark
 // used by unquote2
 
+
 function divideAtFirst(const partialS, S: string; var part1, part2: string): boolean;
 //  teilt den String S beim ersten Vorkommen des Teilstrings partialS;
 //   liefert true, wenn partialS vorkommt,
@@ -78,7 +79,13 @@ procedure stringsplitByWhiteSpace(const s: string; var Result: TStringList);
 procedure stringsplit(const s, delimiter: string; var Result: TStringList);
 // produziert eine Stringliste aus den Teilstrings, die zwischen den Delimiter-Strings stehen
 
+procedure stringlistintersection(const inlist1 : Tstringlist; const inlist2 : Tstringlist;
+  var list1rest : Tstringlist; var listintersection  : Tstringlist);
+
+
 implementation
+
+
 
 function CutLeftBlanks(const s: string): string;
 begin
@@ -324,9 +331,13 @@ begin
     if closeBracketsNum > openBracketsNum then
     begin
       // we should cut at the matching close brackets
+      //cutpos := NPos(')',s,openBracketsNum);
+      // give me the pos of the last matching closing bracket
       cutpos := NPos(')',s,openBracketsNum);
-      Expression := copy(s,1,cutpos-1);
-      Remaining := Remaining + copy(s,cutpos,length(s));;
+      // get it with the closing bracket
+      Expression := copy(s,1,cutpos);
+      // get the rest
+      Remaining := Remaining + copy(s,cutpos+1,length(s));;
     end
     else
     begin
@@ -379,7 +390,6 @@ function divideAtFirst(const partialS, S: string; var part1, part2: string): boo
   //   liefert true, wenn partialS vorkommt,
   //   andernfalls false;
   //   wenn partialS nicht vorkommt, enthaelt part1 den Gesamtstring, part2 ist leer
-
 var
   i: integer = 0;
 begin
@@ -397,7 +407,6 @@ begin
     Result := False;
   end;
 end;
-
 procedure stringsplitByWhiteSpace(const s: string; var Result: TStringList);
 // produziert eine Stringliste aus den Teilstrings, die zwischen den Whitespace-Abschnitten stehen
 var
@@ -413,6 +422,7 @@ begin
     Result.add(item);
   end;
 end;
+
 
 
 procedure stringsplit(const s, delimiter: string; var Result: TStringList);
@@ -436,6 +446,34 @@ begin
 end;
 
 
+
+procedure stringlistintersection(const inlist1 : Tstringlist; const inlist2 : Tstringlist;
+  var list1rest : Tstringlist; var listintersection  : Tstringlist);
+var
+  i : integer;
+  str : string;
+begin
+  //str := inlist1.DelimitedText;
+  //str := inlist2.DelimitedText;
+  list1rest.Clear;
+  listintersection.Clear;
+  //str := inlist1.DelimitedText;
+  //str := inlist2.DelimitedText;
+  for i := 0 to inlist1.Count -1 do
+  begin
+    str := inlist1.Strings[i];
+    if inlist2.IndexOf(str) = -1 then
+    begin
+      // the inlist1 string is not found in inlist2 so it goes to list1rest
+      list1rest.Add(str);
+    end
+    else
+    begin
+      // the inlist1 string is found in inlist2 so it goes to listintersection
+      listintersection.Add(str);
+    end;
+  end;
+end;
 
 end.
 

@@ -111,5 +111,9 @@
 {"hash":2812976,"name":"tresultform1.filehelp.caption","sourcebytes":[38,72,101,108,112],"value":"&Help"},
 {"hash":44537540,"name":"tresultform1.menuitemabout.caption","sourcebytes":[38,65,98,111,117,116],"value":"&About"},
 {"hash":116154878,"name":"tresultform1.menuitemconfig.caption","sourcebytes":[67,111,110,102,105,103,117,114,97,116,105,111,110],"value":"Configuration"},
-{"hash":75811923,"name":"tresultform1.menuitemknowninstallers.caption","sourcebytes":[75,110,111,119,110,32,73,110,115,116,97,108,108,101,114,115],"value":"Known Installers"}
+{"hash":75811923,"name":"tresultform1.menuitemknowninstallers.caption","sourcebytes":[75,110,111,119,110,32,73,110,115,116,97,108,108,101,114,115],"value":"Known Installers"},
+{"hash":82521923,"name":"tresultform1.menuitemlang.caption","sourcebytes":[76,97,110,103,117,97,103,101,115],"value":"Languages"},
+{"hash":1726,"name":"tresultform1.menuitemlangen.caption","sourcebytes":[101,110],"value":"en"},
+{"hash":1701,"name":"tresultform1.menuitemlangde.caption","sourcebytes":[100,101],"value":"de"},
+{"hash":1731,"name":"tresultform1.menuitemlanges.caption","sourcebytes":[101,115],"value":"es"}
 ]}

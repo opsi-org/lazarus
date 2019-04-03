@@ -70,6 +70,7 @@ oslistedit,
 TypInfo,
 osencoding,
 osconf,
+oszip,
 //DOM,
 //wixml,
 //Process,
@@ -86,13 +87,14 @@ LazFileUtils,
   ldapsend,
   strutils,
   oslocale,
-  osxbase64,
+  //osxbase64,
+  base64,
   dateutils,
   synautil,
   synaip,
   synsock,
   oscalc,
-  osdefinedfunctions,
+  //osdefinedfunctions,
   opsihwbiosinfo,
   osjson,
   oscrypt,
@@ -651,6 +653,7 @@ var
   scriptMode : TScriptMode;
   runProfileActions : boolean;
   runproductlist : boolean;
+  runprocessproducts : boolean;
   opsiWinstStartdir : string;
   Script : TuibInstScript;
   scriptsuspendstate : boolean;
@@ -683,7 +686,8 @@ uses
   {$ENDIF GUI}
   oswebservice,
   {NB30,} {for getmacadress2}
-  osmain;
+  osmain,
+  osdefinedfunctions;
 
 
 
@@ -1671,17 +1675,19 @@ function GetNetUser (Host : String; Var UserName : String; var ErrorInfo : Strin
   (* for Host = '' Username will become the name of the current user of the process *)
 
 var
-  pLocalName : PChar;
-  pUserName  : PChar;
+  pLocalName : Pchar;
+  pUserName  : LPWSTR;
 
 
   function ApiCall (var Username, ErrorInfo : String; BuffSize : DWord) : Boolean;
    var
    errorcode : DWord;
    nBuffSize  : DWord;
-   pErrorBuff, pNameBuff : PChar;
+   pErrorBuff : PChar;
+   pNameBuff : PChar;
    nErrorBuffSize : DWord=0;
    nNameBuffSize : DWord=0;
+   usernamew : unicodestring;
 
 
   begin
@@ -1689,16 +1695,17 @@ var
     GetMem (pUserName, BuffSize);
     nBuffSize := Buffsize;
 
-    UserName := '';
-    errorCode := WNetGetUser(nil, pUserName, nBuffSize);
+    usernamew := '';
+    errorCode := WNetGetUserW(nil, pUserName, nBuffSize);
 
 
     case errorCode of
       no_error                  :
         Begin
          ErrorInfo := '';
-         SetLength (UserName, StrLen (pUserName));
-         UserName := pUserName;
+         SetLength (usernamew, StrLen (pUserName));
+         usernamew := pUserName;
+         username := UTF16ToUTF8(usernamew);
          result := true;
         End;
       ERROR_NOT_CONNECTED      : ErrorInfo :=
@@ -7330,7 +7337,7 @@ function TuibInstScript.doXMLPatch (const Sektion: TWorkSection; Const XMLFilena
 {$IFDEF WINDOWS}
 begin
   //DataModuleLogServer.IdTCPServer1.Active:=true;
-  result := executeWith (Sektion,  '"'+ ExtractFileDir(paramstr(0))+PathDelim+'opsiwinstxmlplugin.exe" --xmlfile="'+trim(XMLFilename)+'" --scriptfile=' , true, 0, output);
+  result := executeWith (Sektion,  '"'+ ExtractFileDir(reencode(paramstr(0),'system'))+PathDelim+'opsiwinstxmlplugin.exe" --xmlfile="'+trim(XMLFilename)+'" --scriptfile=' , true, 0, output);
   LogDatei.includelogtail(logdatei.StandardLogPath+'opsiwinstxmlplugin.log',1000,'auto');
   DeleteFile(logdatei.StandardLogPath+'opsiwinstxmlplugin.log');
     //DataModuleLogServer.IdTCPServer1.Active:=false;
@@ -7533,6 +7540,8 @@ begin
           reportError (Sektion, i, Sektion.strings [i-1], ErrorInfo);
       End;   // opnenode
       *)
+
+
       if LowerCase (Expressionstr) = LowerCase ('OpenNode')
       then
       Begin
@@ -7555,7 +7564,7 @@ begin
         then
         Begin
           // Nodetext setzen und Attribut setzen :   SetText, SetAttribute
-          if XMLDocObject.openNode(nodepath, openstrict) then
+          if XMLDocObject.openNode(nodepath, openstrict,errorinfo) then
           begin
             nodeOpened := true;
             LogDatei.log('successfully opend node: '+nodepath,oslog.LLinfo);
@@ -7563,7 +7572,8 @@ begin
           else
           begin
             LogDatei.log('nodepath does not exists - try to create: '+nodepath,oslog.LLwarning);
-            if XMLDocObject.makeNodePathWithTextContent(nodepath,'') then
+            errorinfo := '';
+            if XMLDocObject.makeNodePathWithTextContent(nodepath,'',errorinfo) then
             begin
               nodeOpened := true;
               LogDatei.log('successfully created nodepath: '+nodepath,oslog.LLinfo);
@@ -7572,6 +7582,11 @@ begin
             begin
                nodeOpened := false;
                LogDatei.log('failed to create nodepath: '+nodepath,oslog.LLError);
+               if errorinfo <> '' then
+               begin
+                 syntaxCheck := false;
+                 reportError (Sektion, i, Sektion.strings [i-1], ErrorInfo);
+               end;
             end;
           end
         End
@@ -7595,7 +7610,7 @@ begin
         then
         Begin
           try
-            XMLDocObject.delNode(nodepath);
+            XMLDocObject.delNode(nodepath,errorinfo);
             // After a deleteNode you must use opennode in order to work with open nodes
             nodeOpened := false;
             nodeOpenCommandExists := false;
@@ -7864,6 +7879,9 @@ begin
         end;
       End;   // delAttribute
 
+      if not syntaxcheck then
+         reportError (Sektion, i, Sektion.strings [i-1], ErrorInfo);
+
 
     end; // not a comment line
   end; // any line
@@ -7874,6 +7892,9 @@ begin
   else
     LogDatei.log('failed to write xmldoc to file: '+myfilename,oslog.LLError);
   XMLDocObject.destroy;
+
+  if ExitOnError and (DiffNumberOfErrors > 0)
+  then result := tsrExitProcess;
 end;
 
 
@@ -7923,6 +7944,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
     list1 : TStringlist;
     shellcallArchParam : String;
     go_on : boolean;
+    tmpstr,searchmask : string;
 
 
   begin
@@ -8344,6 +8366,143 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
           end;
         end
         {$ENDIF LINUX}
+
+         else if (UpperCase (Expressionstr) = 'UNZIPFILE')
+        then
+        begin
+          go_on := true;
+          if not GetString (Remaining, Expressionstr, Remaining, errorinfo, false)
+          then
+          Begin
+             DivideAtFirst (' ', remaining, Expressionstr, remaining_with_leading_blanks);
+             remaining := cutLeftBlanks(remaining_with_leading_blanks);
+          End;
+
+          Source := Expressionstr;
+          LogDatei.log('unzip source: '+source,lldebug3);
+          Source := ExpandFileNameUTF8(Source);
+          if not FileExists(Source) then
+          begin
+            //syntaxcheck := false;
+            //reportError (Sektion, i, Sektion.strings [i-1], source + ' is no existing file or directory');
+            go_on := false;
+            logDatei.log('Error: unzip: source: '+source + ' is no existing file',LLError);
+          end;
+
+          if syntaxcheck and go_on  then
+          begin
+            if not GetString (Remaining, Target, Remaining, errorinfo, false)
+            then Target := Remaining;
+            LogDatei.log('source: '+source+' - target: '+target,LLDebug3);
+            target := trim(target);
+            Target := opsiUnquoteStr(target,'"');
+            Target := opsiUnquoteStr(target,'''');
+            LogDatei.log('source: '+source+' - target: '+target,LLDebug3);
+            //LogDatei.log('hardlink target: '+Expressionstr,lldebug3);
+
+            target := ExpandFileNameUTF8(target);
+
+            if not (isDirectory(target)) then
+            begin
+              //syntaxcheck := false;
+              //reportError (Sektion, i, Sektion.strings [i-1], target + ' is not a valid file name');
+              go_on := false;
+              logDatei.log('Error: unzip: target: '+target + ' is not a valid file directory',LLError);
+            end;
+
+
+            if SyntaxCheck and go_on
+            then
+            begin
+             LogDatei.log ('we try to unzip: '+source+' to '+target, LLInfo);
+             try
+               if UnzipWithDirStruct(Source,target) then
+                 LogDatei.log ('unzipped: '+source+' to '+target, LLInfo)
+               else
+                 LogDatei.log ('Failed to unzip: '+source+' to '+target, LLError)
+               except
+                on E: Exception do
+                begin
+                  LogDatei.log('Exception: Failed to unzip: '+source+' to '+target+' : '+e.message, LLError);
+                end;
+              end;
+            end;
+          end;
+        end
+
+         else if (UpperCase (Expressionstr) = 'ZIPFILE')
+        then
+        begin
+          go_on := true;
+          if not GetString (Remaining, Expressionstr, Remaining, errorinfo, false)
+          then
+          Begin
+             // instead of using (as up to version 4.1)
+             // GetWord (Remaining, Expressionstr, Remaining, WordDelimiterWhiteSpace);
+             // we want to be exact with the number of blanks
+             DivideAtFirst (' ', remaining, Expressionstr, remaining_with_leading_blanks);
+             remaining := cutLeftBlanks(remaining_with_leading_blanks);
+          End;
+
+          Source := Expressionstr;
+          LogDatei.log('zip source: '+source,lldebug3);
+          Source := ExpandFileNameUTF8(Source);
+          if not (FileExists(Source) or DirectoryExists(Source)) then
+          begin
+            //syntaxcheck := false;
+            //reportError (Sektion, i, Sektion.strings [i-1], source + ' is no existing file or directory');
+            go_on := false;
+            logDatei.log('Error: zip: source: '+source + ' is no existing file or directory',LLError);
+          end;
+
+          if syntaxcheck and go_on  then
+          begin
+            if not GetString (Remaining, Target, Remaining, errorinfo, false)
+            then Target := Remaining;
+            LogDatei.log('source: '+source+' - target: '+target,LLDebug2);
+            target := trim(target);
+            Target := opsiUnquoteStr(target,'"');
+            Target := opsiUnquoteStr(target,'''');
+            if DirectoryExists(Source) then
+              searchmask := '*.*'
+            else
+            begin
+              searchmask := '';
+              if fileexists(Source) then
+              begin
+                searchmask := ExtractFileName(source);
+                source := includeTrailingPathDelimiter(ExtractFilePath(source));
+              end;
+            end;
+            LogDatei.log('source: '+source+' - mask: '+searchmask+' - target: '+target,LLDebug);
+            if not isAbsoluteFileName (target)
+            then  target := targetDirectory + target;
+            target := ExpandFileNameUTF8(target);
+
+            if not (isAbsoluteFileName (target)) then
+            begin
+              go_on := false;
+              logDatei.log('Error: zip: target: '+target + ' is not a valid file name',LLError);
+            end;
+            if fileexists(target) then
+            begin
+              DeleteFileUTF8(target);
+              logDatei.log('Info: zip: target: '+target + ' existed and was be removed',LLNotice);
+            end;
+
+
+            if SyntaxCheck and go_on
+            then
+            begin
+             //tmpstr:=target+pathdelim+ExtractFileNameWithoutExt(source)+'.zip';
+             LogDatei.log ('we try to zip: '+source+searchmask+' to '+target, LLDebug);
+             if ZipWithDirStruct(Source,searchmask,target) then
+               LogDatei.log ('zipped: '+source+searchmask+' to '+target, LLInfo)
+             else
+               LogDatei.log ('Failed zo zip: '+source+searchmask+' to '+target, LLError)
+            end;
+          end;
+        end
 
         else if (UpperCase (Expressionstr) = 'HARDLINK')
         then
@@ -10099,7 +10258,7 @@ begin
 
 
   pythonVersionInfo := TXStringList.Create;
-  stringsplitByWhiteSpace (versionTestResult, pythonVersionInfo);
+  stringsplitByWhiteSpace (versionTestResult, TStringlist(pythonVersionInfo));
 
   if (pythonVersionInfo.Count = 0)
     or (lowerCase (pythonVersionInfo.Strings[0]) <> 'python')
@@ -11066,7 +11225,7 @@ begin
        then
        Begin
           syntaxCheck := true;
-          stringsplitByWhiteSpace (s1, list);
+          stringsplitByWhiteSpace (s1, TStringlist(list));
           // if s1 is confidential all parts are confidential as well
            if logdatei.isConfidential(s1) then
            begin
@@ -11823,51 +11982,56 @@ begin
    begin
      {$IFDEF UNIX}
       LogDatei.log('Error getListFromWMI only implemented for Windows.', LLError);
-      {$ENDIF Linux}
+      {$ENDIF UNIX}
       {$IFDEF WINDOWS}
     if Skip ('(', r, r, InfoSyntaxError)
     then
     Begin
-      if EvaluateString (r,r, s1, InfoSyntaxError)
-      then
-       if Skip (',', r,r, InfoSyntaxError)
-       then
-         list1 := TXStringList.create;
-         if produceStringList (section,r, r, list1, InfoSyntaxError) //Recursion
-         then
-            if Skip (',', r,r, InfoSyntaxError)
-            then
-             if EvaluateString (r,r, s2, InfoSyntaxError)
+      try
+        list1 := TXStringList.create;
+        if EvaluateString (r,r, s1, InfoSyntaxError)
+        then
+          if Skip (',', r,r, InfoSyntaxError)
+          then
+           if EvaluateString (r,r, s2, InfoSyntaxError)
+           then
+           if Skip (',', r,r, InfoSyntaxError)
+           then
+             if produceStringList (section,r, r, list1, InfoSyntaxError) //Recursion
              then
-              if Skip (')', r,r, InfoSyntaxError)
-              then
-              Begin
-                syntaxCheck := true;
-                 list.clear;
-                 try
-                  ErrorMsg := '';
-                    if not osGetWMI(s1,list1,s2,TStringlist(list),ErrorMsg) then
-                    begin
-                      LogDatei.log('Error on getListFromWMI: ' + ErrorMsg, LLerror);
-                      list.Text:= '';
-                      FNumberOfErrors := FNumberOfErrors + 1;
-                    end;
-                 except
-                   on e: exception do
-                   begin
-                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
-                     LogDatei.log('Exception: Error on getListFromWMI: ' + e.message,
-                       LLerror);
-                     list.Text:= '';
-                     FNumberOfErrors := FNumberOfErrors + 1;
-                     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
-                     list1.Free;
-                     list1 := nil;
-                   end
-                 end;
-               End;
-      list1.Free;
-      list1 := nil;
+                if Skip (',', r,r, InfoSyntaxError)
+                then
+                 if EvaluateString (r,r, s3, InfoSyntaxError)
+                 then
+                  if Skip (')', r,r, InfoSyntaxError)
+                  then
+                  Begin
+                    syntaxCheck := true;
+                     list.clear;
+                     try
+                      ErrorMsg := '';
+                        if not osGetWMI(s1,s2,list1,s3,TStringlist(list),ErrorMsg) then
+                        begin
+                          LogDatei.log('Error on getListFromWMI: ' + ErrorMsg, LLerror);
+                          list.Text:= '';
+                          FNumberOfErrors := FNumberOfErrors + 1;
+                        end;
+                     except
+                       on e: exception do
+                       begin
+                         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                         LogDatei.log('Exception: Error on getListFromWMI: ' + e.message,
+                           LLerror);
+                         list.Text:= '';
+                         FNumberOfErrors := FNumberOfErrors + 1;
+                         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                       end
+                     end;
+                   End;
+      finally
+        list1.Free;
+        list1 := nil;
+      end;
     End
    {$ENDIF WINDOWS}
    End
@@ -12151,42 +12315,52 @@ begin
         goOn := true;
         syntaxCheck := true;
       End;
+      if (r[1] = ')') and goon
+       then
+       Begin
+         goOn := false;
+         Skip (')', r, r, InfoSyntaxError) //consume the ')'
+         // everything ok - create empty string list
+       End
+       else
+       Begin
 
-      while syntaxCheck and goon
-      do
-      Begin
-          evaluateString (r, r, s1, InfoSyntaxError);
-          // empty strings are allowed elements
-          // so we comment the next two lines (do 10.1.19)
-          //if length(s1) > 0
-          //then
-            list.add (s1);
-          logdatei.log_prog('createStringList: add: '+s1+' to: '+list.Text,LLDebug);
+        while syntaxCheck and goon
+        do
+        Begin
+            evaluateString (r, r, s1, InfoSyntaxError);
+            // empty strings are allowed elements
+            // so we comment the next two lines (do 10.1.19)
+            //if length(s1) > 0
+            //then
+              list.add (s1);
+            logdatei.log_prog('createStringList: add: '+s1+' to: '+list.Text,LLDebug);
 
-          if length(r) = 0
-          then
-          Begin
-            syntaxCheck := false;
-            InfoSyntaxError := ' Expressionstr not terminated ';
-          End
-          else
-          Begin
-           if r[1] = ','
-           then
-             Skip (',', r, r, InfoSyntaxError) //here is no syntax error possible
-           else if r[1] = ')'
-           then
-           Begin
-             goOn := false;
-             Skip (')', r, r, InfoSyntaxError) //consume the ')'
-           End
-           else
-           Begin
-             syntaxCheck := false;
-             InfoSyntaxError := ' "," or ")" expected ';
-           End;
-          End;
-      End
+            if length(r) = 0
+            then
+            Begin
+              syntaxCheck := false;
+              InfoSyntaxError := ' Expressionstr not terminated ';
+            End
+            else
+            Begin
+             if r[1] = ','
+             then
+               Skip (',', r, r, InfoSyntaxError) //here is no syntax error possible
+             else if r[1] = ')'
+             then
+             Begin
+               goOn := false;
+               Skip (')', r, r, InfoSyntaxError) //consume the ')'
+             End
+             else
+             Begin
+               syntaxCheck := false;
+               InfoSyntaxError := ' "," or ")" expected ';
+             End;
+            End;
+        End
+      end;
     end
    end
 
@@ -14651,7 +14825,8 @@ begin
      then
      Begin
       syntaxCheck := true;
-      StringResult := B64Encode(s1);
+      //StringResult := B64Encode(s1);
+      StringResult := EncodeStringBase64(s1);
     End;
  end
 
@@ -14665,7 +14840,8 @@ begin
      then
      Begin
       syntaxCheck := true;
-      StringResult := B64Decode(s1);
+      //StringResult := B64Decode(s1);
+      StringResult := DecodeStringBase64(s1);
     End;
  end
 
@@ -14833,7 +15009,7 @@ begin
         if jsonAsObjectGetValueByKey(s1,s2,s3) then
            StringResult := s3
         else
-          LogDatei.log('Error at jsonAsObjectGetValueByKey with: "' + s1+'","'+s2+'"', LLerror);
+          LogDatei.log('Nothing found at jsonAsObjectGetValueByKey with: "' + s1+'","'+s2+'"', LLInfo);
       except
         StringResult := '';
         LogDatei.log('Error: Exception at jsonAsObjectGetValueByKey with: "' + s1+'","'+s2+'"', LLerror);
@@ -15814,6 +15990,44 @@ begin
       Begin
         try
          StringResult := ExtractFilePath (s1);
+         syntaxCheck := true;
+        except
+          InfoSyntaxError := '"' + s1 + '" is not a valid file path';
+        end;
+      End
+ end
+
+ else if LowerCase (s) = LowerCase ('ExtractFileExtension')
+ then
+ begin
+   if Skip ('(', r, r, InfoSyntaxError)
+   then
+    if EvaluateString (r, r, s1, InfoSyntaxError)
+    then
+      if Skip (')', r, r, InfoSyntaxError)
+      then
+      Begin
+        try
+         StringResult := ExtractFileExt (s1);
+         syntaxCheck := true;
+        except
+          InfoSyntaxError := '"' + s1 + '" is not a valid file path';
+        end;
+      End
+ end
+
+ else if LowerCase (s) = LowerCase ('ExtractFileName')
+ then
+ begin
+   if Skip ('(', r, r, InfoSyntaxError)
+   then
+    if EvaluateString (r, r, s1, InfoSyntaxError)
+    then
+      if Skip (')', r, r, InfoSyntaxError)
+      then
+      Begin
+        try
+         StringResult := ExtractFileName (s1);
          syntaxCheck := true;
         except
           InfoSyntaxError := '"' + s1 + '" is not a valid file path';
@@ -17020,6 +17234,107 @@ begin
    End;
  end
 
+ else if Skip ('DirectoryExists', Input, r, sx)
+ then
+ begin
+   tmpbool := true; // default to sysnative
+   LogDatei.log_prog ('DirectoryExists from: '+r, LLdebug3);
+   if Skip ('(', r, r, InfoSyntaxError)
+   then if EvaluateString (r, tmpstr, s1, InfoSyntaxError)
+   // next after ',' or ')'
+   then if Skip (',', tmpstr, tmpstr1, tmpstr3) then
+     if EvaluateString (tmpstr1, tmpstr2, s2, tmpstr3) then;
+   if s2 = '' then
+   begin
+     // only one parameter
+     if Skip (')', tmpstr, r, InfoSyntaxError) then
+     Begin
+       syntaxCheck := true;
+     end;
+   end
+   else
+   begin
+     // two parameter
+     if Skip (')', tmpstr2, r, InfoSyntaxError) then
+     Begin
+       syntaxCheck := true;
+       try
+         tmpbool := true;
+         if lowercase(s2) = '32bit' then tmpbool := false
+         else if lowercase(s2) = '64bit' then tmpbool := true
+         else if lowercase(s2) = 'sysnative' then tmpbool := true
+         else
+         begin
+           InfoSyntaxError := 'Error: unknown parameter: '+s2+' expected one of 32bit,64bit,sysnative - fall back to sysnative';
+           syntaxCheck := false;
+         end;
+       except
+         Logdatei.log('Error: Exception in GetRegistryValue: ',LLError);
+         syntaxCheck := false;
+       end
+     end;
+   end;
+   if syntaxcheck then
+   begin
+      s1 := ExpandFileName(s1);
+      LogDatei.log ('Starting query if directory exist ...', LLInfo);
+      tmpstr := s1;
+      if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR)
+       then tmpstr := copy(s1,1,length(s1)-1);
+      {$IFDEF WIN32}
+      try
+        tmpbool1 := true;
+        if Is64BitSystem and tmpbool then
+        begin
+          if not DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
+          begin
+            LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
+            BooleanResult := false;
+            tmpbool1 := false;
+          end
+          else
+          begin
+            tmpbool1 := true;
+            LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo);
+          end;
+        end;
+        if tmpbool1 then
+        // disable  critical-error-handler message box. (Drive not ready)
+        OldWinapiErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
+        try
+          try
+            tmpstr := trim(tmpstr);
+            BooleanResult := DirectoryExists(tmpstr);
+            if (not BooleanResult) and (not (trim(tmpstr) = '')) then
+            begin
+              LogDatei.log ('Directory: '+tmpstr+' not found via DirectoryExists', LLDebug3);
+            end;
+          except
+            BooleanResult := false;
+          end;
+        finally
+          setErrorMode(OldWinapiErrorMode);
+        end;
+        if Is64BitSystem and tmpbool then
+        begin
+          dummybool := DSiRevertWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
+          LogDatei.log('RevertWow64FsRedirection succeeded', LLinfo);
+        end;
+     except
+        on ex: Exception
+        do
+        Begin
+          LogDatei.log ('Error: ' + ex.message, LLError);
+        End;
+      end;
+      {$ENDIF WINDOWS}
+      {$IFDEF UNIX}
+      BooleanResult := DirectoryExists(tmpstr);
+      {$ENDIF UNIX}
+      syntaxCheck := true;
+   end
+ end
+
 
  {$IFDEF WINDOWS}
 
@@ -17109,7 +17424,7 @@ begin
      LogDatei.log ('xml2NodeExistsByPathInXMLFile in File "' + s1 + '" path "' + s2 + '"  strict mode: "'+s3+'"', LLInfo);
      try
        s1 := ExpandFileNameUTF8(s1);
-       BooleanResult :=  nodeExistsByPathInXMLFile(s1,s2,StrToBool(s3));
+       BooleanResult :=  nodeExistsByPathInXMLFile(s1,s2,StrToBool(s3),InfoSyntaxError);
      except
        on ex: Exception
        do
@@ -17475,7 +17790,7 @@ begin
       end
     end;
  end
-*)
+ *)
 
  else if Skip ('processIsRunning', Input, r, InfoSyntaxError)
  then
@@ -18034,7 +18349,7 @@ end
      if j = 0
      then
        try
-         freebytes := strtoint64 (s2);
+         requiredbytes := strtoint64 (s2);
        except
          RunTimeInfo := '"' + s2 + '" is not a valid number"';
          syntaxCheck := false;
@@ -18087,7 +18402,7 @@ end
        RunTimeInfo := RunTimeInfo + 'than the required amount of ' + formatInt (requiredbytes) + ' bytes';
      End;
 
-     LogDatei.log (RunTimeInfo, LevelComplete);
+     LogDatei.log (RunTimeInfo, LLInfo);
 
      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
    End
@@ -18708,6 +19023,7 @@ function TuibInstScript.doAktionen (const Sektion: TWorkSection; const CallingSe
   tmpbool, tmpbool1 : boolean;
 
 begin
+  logdatei.log_prog('Starting daAktionen: ',LLDebug2);
   Script.FLastSection := Script.FActiveSection;
   Script.ActiveSection := sektion;
   result := tsrPositive;
@@ -18733,7 +19049,7 @@ begin
 
   looplist := TXStringList.create;
   inloop := false;
-
+  logdatei.log_prog('Working doAktionen: Vars initialized.',LLDebug2);
   while (i <= Sektion.count) and continue
   and (actionresult > tsrFatalError)
   and (FExtremeErrorLevel > levelfatal)
@@ -18742,6 +19058,7 @@ begin
   begin
    //writeln(actionresult);
     Remaining := trim (Sektion.strings [i-1]);
+    logdatei.log_prog('Working doAktionen: Remaining:'+remaining,LLDebug2);
     //logdatei.log_prog('Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' Sektion.NestingLevel: '+IntToStr(Sektion.NestingLevel)+' condition: '+BoolToStr(conditions [ActLevel],true),LLDebug3);
     if (inDefFuncLevel = 0)          // count only lines on base level
       and (lowercase(Sektion.Name) = 'actions')   // count only lines in actions
@@ -19222,7 +19539,7 @@ begin
                 if (not found) then
                 begin
                   // search in %opsiScriptHelperPath%\lib
-                  testincfilename := getSpecialFolder(CSIDL_PROGRAM_FILES)+'\opsi.org\opsiScriptHelper'
+                  testincfilename := getSpecialFolder(CSIDL_PROGRAM_FILES)+'\opsi.org\opsiScriptHelper\lib'
                                        +PathDelim+FName;
                   if FileExistsUTF8(testincfilename) then
                   begin
@@ -19248,7 +19565,7 @@ begin
                 if (not found) then
                 begin
                   // search in %WinstDir%\lib
-                  testincfilename := ExtractFileDir(Paramstr(0))
+                  testincfilename := ExtractFileDir(reencode(paramstr(0),'system'))
                                        +PathDelim+'lib'+PathDelim+FName;
                   LogDatei.log('Looking for: '+testincfilename,LLDebug2);
                   if FileExistsUTF8(testincfilename) then
@@ -19586,7 +19903,7 @@ begin
                         if (not found) then
                         begin
                           // search in %opsiScriptHelperPath%\lib
-                          testincfilename := getSpecialFolder(CSIDL_PROGRAM_FILES)+'\opsi.org\opsiScriptHelper'
+                          testincfilename := getSpecialFolder(CSIDL_PROGRAM_FILES)+'\opsi.org\opsiScriptHelper\lib'
                                                +PathDelim+incfilename;
                           testincfilename := ExpandFilename(testincfilename);
                           LogDatei.log_prog('Looking for: '+testincfilename,LLNotice);
@@ -19615,7 +19932,7 @@ begin
                         begin
                           {$IFDEF WINDOWS}
                           // search in %WinstDir%\lib
-                          testincfilename := ExtractFileDir(Paramstr(0))
+                          testincfilename := ExtractFileDir(reencode(paramstr(0),'system'))
                                                +PathDelim+'lib'+PathDelim+incfilename;
                           {$ENDIF WINDOWS}
                           {$IFDEF UNIX}
@@ -19787,7 +20104,7 @@ begin
                         if (not found) then
                         begin
                           // search in %opsiScriptHelperPath%\lib
-                          testincfilename := getSpecialFolder(CSIDL_PROGRAM_FILES)+'\opsi.org\opsiScriptHelper'
+                          testincfilename := getSpecialFolder(CSIDL_PROGRAM_FILES)+'\opsi.org\opsiScriptHelper\lib'
                                                +PathDelim+incfilename;
                           testincfilename := ExpandFilename(testincfilename);
                           LogDatei.log_prog('Looking for: '+testincfilename,LLDebug2);
@@ -19816,7 +20133,7 @@ begin
                         if (not found) then
                         begin
                           // search in %WinstDir%\lib
-                          testincfilename := ExtractFileDir(Paramstr(0))
+                          testincfilename := ExtractFileDir(reencode(paramstr(0),'system'))
                                                +PathDelim+'lib'+PathDelim+incfilename;
                           testincfilename := ExpandFilename(testincfilename);
                           LogDatei.log_prog('Looking for: '+testincfilename,LLDebug2);
@@ -19919,7 +20236,7 @@ begin
                         if (not found) then
                         begin
                           // search in %opsiScriptHelperPath%\lib
-                          testincfilename := getSpecialFolder(CSIDL_PROGRAM_FILES)+'\opsi.org\opsiScriptHelper'
+                          testincfilename := getSpecialFolder(CSIDL_PROGRAM_FILES)+'\opsi.org\opsiScriptHelper\lib'
                                                +PathDelim+incfilename;
                           testincfilename := ExpandFilename(testincfilename);
                           if FileExistsUTF8(testincfilename) then
@@ -19947,7 +20264,7 @@ begin
                         if (not found) then
                         begin
                           // search in %WinstDir%\lib
-                          testincfilename := ExtractFileDir(Paramstr(0))
+                          testincfilename := ExtractFileDir(reencode(paramstr(0),'system'))
                                                +PathDelim+'lib'+PathDelim+incfilename;
                           testincfilename := ExpandFilename(testincfilename);
                           LogDatei.log('Looking for: '+testincfilename,LLDebug2);
@@ -22566,10 +22883,11 @@ begin
   end
   else
     if runproductlist then LogDatei.log ('             opsi-script running in productlist script mode', LLessential)
+    else if runprocessproducts then LogDatei.log ('             opsi-script running in processproducts script mode', LLessential)
      else LogDatei.log ('             opsi-script running in standard script mode', LLessential);
 
 
-  ps := 'executing: "' + ParamStr(0) + '"';
+  ps := 'executing: "' + reencode(paramstr(0),'system') + '"';
   LogDatei.log (ps, LLessential);
 
   //LogDatei.log ('PC MAC address, method1 ' + getMACAddress1, BaseLevel);
@@ -22776,7 +23094,7 @@ begin
     FConstValuesList.add (ValueToTake);
 
     FConstList.add('%WinstDir%');
-    ValueToTake := ExtractFileDir (Paramstr(0));
+    ValueToTake := ExtractFileDir (reencode(paramstr(0),'system'));
     FConstValuesList.add (ValueToTake);
 
     FConstList.add('%WinstVersion%');
@@ -22792,7 +23110,7 @@ begin
 
     FConstList.add ('%opsiLogDir%');
     //{$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\log' ); {$ENDIF WINDOWS}
-    FConstValuesList.add (oslog.defaultStandardMainLogPath );
+    FConstValuesList.add (copy(oslog.defaultStandardMainLogPath, 1, Length(oslog.defaultStandardMainLogPath)-1));
 
     FConstList.add ('%opsiapplog%');
     {$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\applog' ); {$ENDIF WINDOWS}
@@ -23244,6 +23562,7 @@ begin
   runSilent := False;
   flag_all_ntuser := False;
   runproductlist := False;
+  runprocessproducts := False;
   scriptMode := tsmMachine;
 
 
