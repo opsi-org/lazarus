@@ -6,7 +6,8 @@ interface
 
 uses
   {$IFDEF OPSISCRIPT}
-osfunc,
+  osfunc,
+  graphics,
   {$ENDIF OPSISCRIPT}
 oslog,
   Process,
@@ -59,10 +60,14 @@ function RunCommandAndCaptureOut
   logleveloffset : integer): boolean;
 {$ENDIF OPSISCRIPT}
 
-function getCommandResult(cmd : string): string; overload;
-function getCommandResult(cmd : string;var exitcode : longint): string; overload;
+function getCommandResult(cmd : string): string;  overload;
+function getCommandResult(cmd : string; var exitcode : longint): string;  overload;
 
 implementation
+uses
+  {$IFDEF OPSISCRIPT}
+  osshowsysinfo;
+  {$ENDIF OPSISCRIPT}
 
 {$IFDEF OPSISCRIPT}
 
@@ -170,6 +175,145 @@ function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TXStringList;
   var report: string; showcmd: integer; var ExitCode: longint;showoutput:boolean;
   logleveloffset : integer): boolean;
+
+const
+  ReadBufferSize = 2048;
+
+var
+  //myStringlist : TStringlist;
+  S: TStringList;
+  M: TMemoryStream;
+  FpcProcess: TProcess;
+  n: longint;
+  BytesRead: longint;
+
+begin
+  Result := True;
+  try
+    try
+      M := TMemoryStream.Create;
+      BytesRead := 0;
+      FpcProcess := process.TProcess.Create(nil);
+      FpcProcess.CommandLine := cmd;
+      FpcProcess.Options := [poUsePipes, poStderrToOutput];
+      FpcProcess.ShowWindow := swoMinimize;
+      FpcProcess.Execute;
+      if Logdatei <> nil then Logdatei.log('RunCommandAndCaptureOut: started: ' + cmd, LLdebug3);
+      {$IFDEF GUI}
+      if showoutput then
+      begin
+        //CreateSystemInfo;
+        SystemInfo := TSystemInfo.Create(nil);
+        SystemInfo.Memo1.Color:= clBlack;
+        SystemInfo.Memo1.Font.Color := clWhite;
+        SystemInfo.Memo1.Lines.clear;
+        systeminfo.BitBtn1.Enabled:= false;
+        systeminfo.Label1.Caption:='Executing: '+cmd;
+        systeminfo.ShowOnTop;
+        //ProcessMess;
+        LogDatei.log('Start Showoutput', LLInfo+logleveloffset);
+        //FBatchOberflaeche.Left:= 5;
+        //FBatchOberflaeche.Top:= 5;
+      end;
+      {$ENDIF GUI}
+
+      while FpcProcess.Running do
+      begin
+        // make sure that we have the needed space
+        M.SetSize(BytesRead + ReadBufferSize);
+
+        // try to read
+        if FpcProcess.Output.NumBytesAvailable > 0 then
+        begin
+          n := FpcProcess.Output.Read((M.Memory + BytesRead)^, ReadBufferSize);
+          //Logdatei.DependentAdd('RunCommandAndCaptureOut: read: ' +
+          //  IntToStr(n) + ' bytes', LLdebug2);
+          if n > 0 then
+          begin
+            Inc(BytesRead, n);
+            //Logdatei.DependentAdd('RunCommandAndCaptureOut: read: ' +
+            // IntToStr(n) + ' bytes', LLdebug2);
+            //Write('.')
+          end;
+        end
+        else
+        begin
+          // no data, wait 100 ms
+          //Logdatei.DependentAdd('RunCommandAndCaptureOut: no data - waiting....',
+          // LLdebug2);
+          Sleep(100);
+        end;
+      end;
+      exitCode := FpcProcess.ExitCode;
+      // read the last part
+      repeat
+        // smake sure that we have the needed space
+        M.SetSize(BytesRead + ReadBufferSize);
+        if FpcProcess.Output.NumBytesAvailable > 0 then
+        begin
+          // try to read
+          n := FpcProcess.Output.Read((M.Memory + BytesRead)^, ReadBufferSize);
+          if n > 0 then
+          begin
+            Inc(BytesRead, n);
+            //Logdatei.DependentAdd('RunCommandAndCaptureOut: read: ' +
+            //IntToStr(n) + ' bytes', LLdebug2);
+            //Write('.');
+          end;
+        end
+        else
+          n := 0;
+      until n <= 0;
+      //if BytesRead > 0 then WriteLn;
+      M.SetSize(BytesRead);
+      //Logdatei.DependentAdd('RunCommandAndCaptureOut: -- executed --', LLdebug2);
+      //WriteLn('-- executed --');
+
+      S := TStringList.Create;
+      S.LoadFromStream(M);
+      //Logdatei.DependentAdd('RunCommandAndCaptureOut: -- linecount = ' +
+      //  IntToStr(S.Count), LLdebug2);
+      //WriteLn('-- linecount = ', S.Count, ' --');
+      for n := 0 to S.Count - 1 do
+      begin
+        //WriteLn('| ', S[n]);
+        outlines.Add(S[n]);
+        {$IFDEF GUI}
+        if showoutput then
+        begin
+          SystemInfo.Memo1.Lines.Add(S[n]);
+          //ProcessMess;
+        end;
+        //ProcessMess;
+        {$ENDIF GUI}
+      end;
+      //WriteLn('-- end --');
+      // Attention: Exitcode is exitcode of bash
+          if Logdatei <> nil then LogDatei.log('ExitCode ' + IntToStr(exitCode), LLInfo+logleveloffset);
+    except
+      on e: Exception do
+      begin
+            if Logdatei <> nil then LogDatei.log('Exception in RunCommandAndCaptureOut: ' +
+          e.message, LLError);
+        Result := False;
+      end;
+    end;
+  finally
+    S.Free;
+    FpcProcess.Free;
+    M.Free;
+    {$IFDEF GUI}
+    if showoutput then
+    begin
+      SystemInfo.free; SystemInfo := nil;
+      //FBatchOberflaeche.BringToFront;
+      //FBatchOberflaeche.centerWindow;
+      //ProcessMess;
+      if Logdatei <> nil then LogDatei.log('Stop Showoutput', LLInfo+logleveloffset);
+    end;
+    {$ENDIF GUI}
+  end;
+end;
 {$ELSE OPSISCRIPT}
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TStringList;
@@ -334,12 +478,12 @@ function getCommandResult(cmd : string): string;
 var
   exitcode : longint;
 begin
-  result := getCommandResult(cmd,exitcode);
+  result := getCommandResult(cmd, exitcode);
 end;
 
 
 
-function getCommandResult(cmd : string;var exitcode : longint): string;
+function getCommandResult(cmd : string; var exitcode : longint): string;
 var
   report: string;
   {$IFDEF OPSISCRIPT}

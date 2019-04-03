@@ -66,6 +66,7 @@ procedure TSystemInfo.FormCreate(Sender: TObject);
 begin
   Visible := False;
   Label1.Caption:='';
+  //SystemInfo.Memo1.Color:= clBlack;
   //  Left := (Screen.Width - Width) div 2;
   //  Top  := (Screen.Height - Height) div 2;
   //Left := screen.MonitorFromWindow(Handle).Width - width;

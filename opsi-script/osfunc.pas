@@ -518,10 +518,10 @@ function divideAtFirst(const partialS, S: string; var part1, part2: string): boo
 
 //procedure stringsplitByWhiteSpace(const s: string; var Result: TXStringList);
 // produziert eine Stringliste aus den Teilstrings, die zwischen den Whitespace-Abschnitten stehen
-
+*)
 procedure stringsplit(const s, delimiter: string; var Result: TXStringList);
 // produziert eine Stringliste aus den Teilstrings, die zwischen den Delimiter-Strings stehen
-*)
+
 (*
 function SkipA(const partialS, S: string; var Remaining: string;
   var Error: string): boolean;
@@ -659,11 +659,12 @@ implementation
 
 
 uses
-{$IFDEF LINUX}
+{$IFDEF UNIX}
   osfunclin,
-{$ENDIF LINUX}
+  osprocessux,
+{$ENDIF UNIX}
 {$IFDEF DARWIN}
-  osfunclin,
+
   osfuncmac,
 {$ENDIF DARWIN}
 {$IFDEF WINDOWS}
@@ -5181,7 +5182,7 @@ begin
 end;
 *)
 
-
+(*
 procedure stringsplit(const s, delimiter: string; var Result: TXStringList);
 // produziert eine Stringliste aus den Teilstrings, die zwischen den Delimiter-Strings stehen
 
@@ -5275,6 +5276,12 @@ begin
     Error := '"' + partialS + '" expected ';
 end;
 *)
+
+procedure stringsplit(const s, delimiter: string; var Result: TXStringList);
+// calls stringsplit from osparserhelper
+begin
+  osparserhelper.stringsplit(s, delimiter, TStringlist(Result));
+end;
 
 function concatPathParts(const part1, part2: string): string;
   (* concatenates parts of a path, e.g. the main path part and the file name, observing that just path separator is set *)

@@ -112,6 +112,7 @@ function getMacosProcessList: TStringList;
 var
   resultstring, pidstr, userstr, cmdstr, fullcmdstr: string;
   pscmd, report: string;
+  (*
   {$IFDEF OPSISCRIPT}
   outlines: TXStringlist;
   lineparts: TXStringlist;
@@ -119,13 +120,16 @@ var
   outlines: TStringlist;
   lineparts: TStringlist;
   {$ENDIF OPSISCRIPT}
-
+  *)
+  outlines: TStringlist;
+  lineparts: TStringlist;
   ExitCode: longint;
   i,k: integer;
 begin
   try
     try
       Result := TStringList.Create;
+      (*
       {$IFDEF OPSISCRIPT}
       outlines := TXStringList.Create;
       lineparts := TXStringList.Create;
@@ -133,9 +137,11 @@ begin
       outlines := TStringList.Create;
       lineparts := TStringList.Create;
       {$ENDIF OPSISCRIPT}
-
+      *)
+      outlines := TStringList.Create;
+      lineparts := TStringList.Create;
       pscmd := 'ps -eco pid,user,comm';
-      if not RunCommandAndCaptureOut(pscmd, True, outlines, report,
+      if not RunCommandAndCaptureOut(pscmd, True, TXStringlist(outlines), report,
         SW_HIDE, ExitCode) then
       begin
         LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
@@ -193,12 +199,12 @@ var
   pscmd, report: string;
   {$IFDEF OPSISCRIPT}
   outlines: TXStringlist;
-  lineparts: TXStringlist;
+  //lineparts: TXStringlist;
   {$ELSE OPSISCRIPT}
   outlines: TStringlist;
-  lineparts: TStringlist;
-  {$ENDIF OPSISCRIPT}
 
+  {$ENDIF OPSISCRIPT}
+  lineparts: TStringlist;
   ExitCode: longint;
   i,k: integer;
 begin
@@ -208,12 +214,12 @@ begin
       Result := '';
       {$IFDEF OPSISCRIPT}
       outlines := TXStringList.Create;
-      lineparts := TXStringList.Create;
+      //lineparts := TXStringList.Create;
       {$ELSE OPSISCRIPT}
       outlines := TStringList.Create;
-      lineparts := TStringList.Create;
-      {$ENDIF OPSISCRIPT}
 
+      {$ENDIF OPSISCRIPT}
+      lineparts := TStringList.Create;
       pscmd := 'ps -eco pid,user,comm';
       if not RunCommandAndCaptureOut(pscmd, True, outlines, report,
         SW_HIDE, ExitCode,false,2) then
@@ -377,7 +383,7 @@ begin
     //cmd := '/bin/bash -c "/sbin/mount_smbfs -N //' +mydomain+'\;'+ myuser+':'+mypass+'@'+myshare+' '+mymountpoint+'"';
 
   LogDatei.DependentAdd('calling: '+cmd,LLNotice);
-  if not RunCommandAndCaptureOut(cmd, True, outlines, report,
+  if not RunCommandAndCaptureOut(cmd, True, TXStringlist(outlines), report,
     SW_HIDE, ExitCode) then
   begin
     LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
@@ -411,7 +417,7 @@ begin
   Result := -1;
   cmd := '/bin/bash -c "/sbin/umount ' +mymountpoint+'"';
   LogDatei.log('calling: '+cmd,LLNotice);
-  if not RunCommandAndCaptureOut(cmd, True, outlines, report,
+  if not RunCommandAndCaptureOut(cmd, True, TXStringlist(outlines), report,
     SW_HIDE, ExitCode) then
   begin
     LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);

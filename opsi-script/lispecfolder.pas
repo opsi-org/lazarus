@@ -25,7 +25,8 @@ uses
   //LCLIntf,
   Classes,
   SysUtils,
-  osfunclin;
+  osfunclin,
+  osprocessux;
 
 var
   specialFolders, debugmessages: TStringList;

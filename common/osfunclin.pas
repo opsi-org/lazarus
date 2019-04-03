@@ -70,15 +70,15 @@ implementation
 
 uses
 {$IFDEF OPSISCRIPT}
-    osparser,
-    {$ENDIF OPSISCRIPT}
+osparser,
+{$ENDIF OPSISCRIPT}
 {$IFDEF GUI}
 graphics,
 osbatchgui,
 osinteractivegui,
 osshowsysinfo,
 {$ENDIF GUI}
-  ;
+ LResources ;
 
 
 function FileCheckDate
@@ -341,13 +341,14 @@ function getProfilesDirListLin: TStringList;
 var
   resultstring: string;
   cmd, report: string;
-  outlines, lineparts: TXStringlist;
+  outlines: TXStringlist;
+  lineparts: TStringlist;
   ExitCode: longint;
   i: integer;
 begin
   Result := TStringList.Create;
   outlines := TXStringList.Create;
-  lineparts := TXStringList.Create;
+  lineparts := TStringList.Create;
   // we use the home directories from the passwd entries
   // get passwd
   cmd := 'getent passwd';
@@ -410,14 +411,15 @@ function getLinuxVersionMap: TStringList;
 var
   resultstring: string;
   cmd, report: string;
-  outlines, lineparts: TXStringlist;
+  outlines: TXStringlist;
+  lineparts: TStringlist;
   ExitCode: longint;
   i: integer;
 begin
   //todo : install lsb-release if not there
   Result := TStringList.Create;
   outlines := TXStringList.Create;
-  lineparts := TXStringList.Create;
+  lineparts := TStringList.Create;
   cmd := 'lsb_release --all';
   if not RunCommandAndCaptureOut(cmd, True, outlines, report,
     SW_HIDE, ExitCode) then
@@ -859,7 +861,7 @@ begin
   else
     cmd := '/bin/bash -c "/sbin/mount.cifs ' + myshare+' '+mymountpoint+' -o '+myoption+'ro,noperm,user='+myuser+',dom='+mydomain+',pass='+mypass+'"';
   LogDatei.DependentAdd('calling: '+cmd,LLNotice);
-  if not RunCommandAndCaptureOut(cmd, True, outlines, report,
+  if not RunCommandAndCaptureOut(cmd, True, TXStringlist(outlines), report,
     SW_HIDE, ExitCode) then
   begin
     LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
@@ -893,7 +895,7 @@ begin
   Result := -1;
   cmd := '/bin/bash -c "/bin/umount ' +mymountpoint+'"';
   LogDatei.log('calling: '+cmd,LLNotice);
-  if not RunCommandAndCaptureOut(cmd, True, outlines, report,
+  if not RunCommandAndCaptureOut(cmd, True, TXStringlist(outlines), report,
     SW_HIDE, ExitCode) then
   begin
     LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
