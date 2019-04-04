@@ -35,8 +35,6 @@ TFuncDoc =  class
     FLicense : string;
     FCopyright : string;
     FDescription : string;
-    //FReturns :string;
-    //FReturnType :string;
     FRType :string;
     FRaises :string;
     FParamCounter : integer;
@@ -50,8 +48,6 @@ TFuncDoc =  class
     property License : string  read FLicense write FLicense;
     property Copyright : string  read FCopyright write FCopyright;
     property Description : string  read FDescription write FDescription;
-    //property Returns :string  read FReturns write FReturns;
-    //property ReturnType :string  read FReturnType write FReturnType;
     property RType :string  read FRType write FRType;
     property Raises :string  read FRaises write FRaises;
     property ParamCounter : integer  read FParamCounter write FParamCounter;
@@ -67,7 +63,6 @@ TFileDoc =  class
     FfunctionCounter : integer;
   public
     Ffunctions : array of TFuncDoc;
-
     constructor Create;
     destructor Destroy;
     property name : string  read Fname write Fname;
@@ -88,8 +83,6 @@ const
   cauthor = ':author:';
   clicense = ':license:';
   ccopyright = ':copyright:';
-  //CReturns = ':return:';
-  //CReturnType = ':returntype:';
   CRType = ':rtype:';
   CRaises = ':raises';
   CParamType = ':type ';
@@ -132,8 +125,6 @@ begin
   FLicense := '';
   FCopyright := '';
   FDescription := '';
-  //FReturns := '';
-  //FReturnType := '';
   FRType := '';
   FRaises := '';
   FParamCounter := 0;
@@ -159,7 +150,6 @@ begin
   inherited;
 end;
 
-
 function onMarkerAddDocStringTo(marker : string;docstring : string;var target :string) : boolean;
 var
   tmpstr1 : string;
@@ -167,6 +157,7 @@ begin
   result := false;
   if pos(marker,docstring) = 1 then
   begin
+    LogDatei.log('Parsing: '+docstring,LLdebug);
     tmpstr1 := trim(copy(docstring,length(marker)+1,length(docstring)));
     if target = '' then target := tmpstr1
     else target := target+', '+tmpstr1;
@@ -181,11 +172,12 @@ var
   endOfParamlist : boolean;
   remaining,errorstr : string;
 begin
+  LogDatei.log('Parsing: '+definitionStr,LLdebug);
   endOfParamlist := false;
   paramcounter := -1;
   myfunc.FDefinitionline:=trim(definitionStr);
   GetWord(trim(definitionStr), myfunc.FName, remaining,WordDelimiterSet5);
-  LogDatei.log('Found new defined function name: '+myfunc.FName,LLDebug2);
+  LogDatei.log('Found function: '+myfunc.FName,LLDebug2);
 
   if  skip('(',remaining,remaining,errorstr) then
   begin
@@ -219,7 +211,7 @@ begin
       else
         paramnamestr := trim(paramnamestr);
 
-      LogDatei.log('Found defined function parametername: '+paramnamestr,LLDebug2);
+      LogDatei.log('Found parameter: '+paramnamestr,LLDebug2);
       inc(paramcounter);
 
       myfunc.FParamCounter := paramcounter+1;
@@ -261,7 +253,6 @@ begin
   end;
 
   defstring := copy(defstring,1,matchpos);
-
   if pos('self, ', defstring) > 0 then
   begin
     matchpos := pos('self, ', defstring);
@@ -272,9 +263,7 @@ begin
     matchpos := pos('self', defstring);
     delete(defstring, matchpos, length('self'));
   end;
-
   currentlinenumber := deflinecounter+1;
-
   result := defstring;
 end;
 
@@ -283,6 +272,7 @@ var
   docstringcounter, matchpos : integer;
   docstring, description : string;
 begin
+  LogDatei.log('Parsing file related docstrings',LLnotice);
   result := false;
   docstring := trim(preprocessedlist.Strings[currentlinenumber]);
   docstringcounter:= currentlinenumber;
@@ -310,6 +300,7 @@ begin
   description := copy(description,1,matchpos-1);
   docobject.Ffiledesc := description;
   currentlinenumber := docstringcounter+1;
+  LogDatei.log('Finised parsing file related docstrings',LLnotice);
   result := true;
 end;
 
@@ -328,6 +319,7 @@ var
   currentline, funcdescription, pname : string;
   indoc, docfound : boolean;
 begin
+  LogDatei.log('Started parsing public function.',LLinfo);
   result := false;
   indoc := false;
   docfound := false;
@@ -383,8 +375,6 @@ begin
       if not onMarkerAddDocStringTo(cauthor,trim(currentline),docobject.Ffunctions[funccounter-1].FAuthor) then
       if not onMarkerAddDocStringTo(clicense,trim(currentline),docobject.Ffunctions[funccounter-1].FLicense) then
       if not onMarkerAddDocStringTo(ccopyright,trim(currentline),docobject.Ffunctions[funccounter-1].FCopyright) then
-      //if not onMarkerAddDocStringTo(CReturns,trim(currentline),docobject.Ffunctions[funccounter-1].FReturns) then
-      //if not onMarkerAddDocStringTo(CReturnType,trim(currentline),docobject.Ffunctions[funccounter-1].FReturnType) then
       if not onMarkerAddDocStringTo(CRType,trim(currentline),docobject.Ffunctions[funccounter-1].FRType) then
       if not onMarkerAddDocStringTo(CRaises,trim(currentline),docobject.Ffunctions[funccounter-1].FRaises) then
       if (pos(CParam,trim(currentline)) = 1) or (pos(CParamType,trim(currentline)) = 1) then
@@ -417,8 +407,10 @@ var
   indentofdef, linecounter : integer;
   defline, currentline  : string;
 begin
+  LogDatei.log('Skipping private function.',LLinfo);
   result := false;
   defline := preprocessedlist.Strings[currentlinenumber];
+  LogDatei.log('Skipping function: '+defline,LLDebug2);
   indentofdef := indentation(defline);
   getDefinitionLine(currentlinenumber);
   linecounter := currentlinenumber;
@@ -441,8 +433,10 @@ var
   classindent, linecounter : integer;
   classline, currentline : string;
 begin
+  LogDatei.log('Skipping private class which is given in backendClassBlacklist.',LLinfo);
   result := false;
   classline := preprocessedlist.Strings[currentlinenumber];
+  LogDatei.log('Skipping class: '+classline,LLDebug2);
   classindent := indentation(classline);
   linecounter := currentlinenumber + 1;
   currentline := preprocessedlist.Strings[linecounter];
@@ -464,6 +458,7 @@ var
   line, linetoadd : string;
   linenumber, totatlines : integer;
 begin
+  LogDatei.log('Started preprocessing to remove linebreaks (\) from the Python source code.',LLinfo);
   linenumber := 0;
   preprocessedlist.Clear;
   totatlines := sourcelist.Count;
@@ -495,15 +490,17 @@ begin
       inc(linenumber);
     end;
   end;
+  LogDatei.log('Finished preprocessing. Removed linebreaks and combined multiline statements.',LLinfo);
 end;
 
 
 function parseInput_pythonlibrary(filename : string) : boolean;
 var
-  linenumber, totallines, classindex, removepos : integer;
+  linenumber, totallines : integer;
   trimmedline, classstring, classname, remaining : string;
   filedocfound : Boolean;
 begin
+  LogDatei.log('Started parseInput_pythonlibrary',LLnotice);
   filedocfound := false;
   linenumber := 0;
   if Assigned(docobject) and (docobject <> nil) then docobject.Destroy;
@@ -519,7 +516,6 @@ begin
         filedocfound := true;
         getFileDoc(linenumber);
       end
-
       else if (pos(cpyclass,trimmedline) = 1) then
       begin
         classstring := trimmedline;
@@ -533,8 +529,6 @@ begin
         else
           inc(linenumber);
       end
-
-
       else if (pos(cpydeffunc,trimmedline) = 1) then
       begin
         if pos(cpydefnotpublic,trimmedline) = 1 then
@@ -555,9 +549,7 @@ begin
         inc(linenumber);
       end;
     end;
-
-  //sortFunctions();  //new
-
+  LogDatei.log('Finished parseInput_pythonlibrary',LLinfo);
   result := True;
 end;
 
