@@ -89,7 +89,7 @@ const
   CParam = ':param ';
 
 
-function parseInput_pythonlibrary(filename : string) : boolean;
+function parseInput_pythonlibrary() : boolean;
 
 var
   docobject : TFileDoc;
@@ -494,7 +494,7 @@ begin
 end;
 
 
-function parseInput_pythonlibrary(filename : string) : boolean;
+function parseInput_pythonlibrary() : boolean;
 var
   linenumber, totallines : integer;
   trimmedline, classstring, classname, remaining : string;
@@ -505,7 +505,6 @@ begin
   linenumber := 0;
   if Assigned(docobject) and (docobject <> nil) then docobject.Destroy;
   docobject := TFileDoc.Create;
-  //docobject.Fname:=ExtractFileName(filename);
   preprocess();
   totallines:= preprocessedlist.Count;
   while linenumber < totallines do

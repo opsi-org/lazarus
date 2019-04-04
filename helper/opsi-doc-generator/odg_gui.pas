@@ -8,8 +8,9 @@ uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   LCLIntf,
   odg_main,
-  odg_asciidoc, oslog,
-  odg_pyasciidoc,
+  oslog,
+  odg_os_asciidoc,
+  odg_py_asciidoc,
   StdCtrls, EditBtn;
 
 type
@@ -87,15 +88,18 @@ begin
   Memo1.Lines.Assign(filecontent);
 end;
 
-procedure TForm1.ButtonSaveClick(Sender: TObject);
-var
-  savefilename : string;
+procedure TForm1.ButtonRemoveSelectedClick(Sender: TObject);
 begin
-  if SaveDialog1.Execute then
-  begin
-    savefilename := SaveDialog1.FileName;
-    targetlist.SaveToFile(savefilename);
-  end;
+  ListBox1.DeleteSelected;
+  Memo1.Lines.Clear;
+  Memo2.Lines.Clear;
+end;
+
+procedure TForm1.ButtonRemoveAllClick(Sender: TObject);
+begin
+  ListBox1.Clear;
+  Memo1.Lines.Clear;
+  Memo2.Lines.Clear;
 end;
 
 procedure TForm1.ButtonOSConvertClick(Sender: TObject);
@@ -110,7 +114,7 @@ begin
     tempFile.LoadFromFile(ListBox1.Items[listboxitem]);
     sourcelist.AddStrings(tempFile);
   end;
-  convertOslibToAsciidoc(infilename);
+  convertOslibToAsciidoc();
   memo2.Lines.Assign(targetlist);
 end;
 
@@ -126,22 +130,19 @@ begin
     tempFile.LoadFromFile(ListBox1.Items[listboxitem]);
     sourcelist.AddStrings(tempFile);
   end;
-  convertPylibToAsciidoc(infilename);
+  convertPylibToAsciidoc();
   memo2.Lines.Assign(targetlist);
 end;
 
-procedure TForm1.ButtonRemoveSelectedClick(Sender: TObject);
+procedure TForm1.ButtonSaveClick(Sender: TObject);
+var
+  savefilename : string;
 begin
-  ListBox1.DeleteSelected;
-  Memo1.Lines.Clear;
-  Memo2.Lines.Clear;
-end;
-
-procedure TForm1.ButtonRemoveAllClick(Sender: TObject);
-begin
-  ListBox1.Clear;
-  Memo1.Lines.Clear;
-  Memo2.Lines.Clear;
+  if SaveDialog1.Execute then
+  begin
+    savefilename := SaveDialog1.FileName;
+    targetlist.SaveToFile(savefilename);
+  end;
 end;
 
 procedure TForm1.Bsave_ascii_showClick(Sender: TObject);
@@ -152,7 +153,7 @@ begin
   else
     convertPylibToAsciidoc(infilename);
   }
-  convertOslibToAsciidoc(infilename);
+  convertOslibToAsciidoc();
   memo2.Lines.Assign(targetlist);
   save_compile_show(infilename);
 end;

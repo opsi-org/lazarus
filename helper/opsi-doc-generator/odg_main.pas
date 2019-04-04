@@ -14,17 +14,16 @@ uses
   odg_os_deffunc,
   odg_py_deffunc,
   oslog,
-  odg_asciidoc,
-  odg_pyasciidoc,
+  odg_os_asciidoc,
+  odg_py_asciidoc,
   process,
   LCLIntf,
   Classes,
   SysUtils;
 
-function convertOslibToAsciidoc(filename : string): boolean;
-function convertPylibToAsciidoc(filename : string): boolean;
+function convertOslibToAsciidoc(): boolean;
+function convertPylibToAsciidoc(): boolean;
 function save_compile_show(filename : string) : boolean;
-
 
 var
   sourcelist : TStringlist;
@@ -34,15 +33,15 @@ var
 
 implementation
 
-function convertOslibToAsciidoc(filename : string): boolean;
+function convertOslibToAsciidoc(): boolean;
 begin
-  result := parseInput_opsiscriptlibrary(filename);
+  result := parseInput_opsiscriptlibrary();
   writeDocToList;
 end;
 
-function convertPylibToAsciidoc(filename : string): boolean;
+function convertPylibToAsciidoc(): boolean;
 begin
-  result := parseInput_pythonlibrary(filename);
+  result := parseInput_pythonlibrary();
   writePyDocToList;
 end;
 

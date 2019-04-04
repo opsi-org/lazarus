@@ -123,7 +123,7 @@ const
   CParam = '@Param';
   CExample = '@Example';
 
-function parseInput_opsiscriptlibrary(filename : string) : boolean;
+function parseInput_opsiscriptlibrary() : boolean;
 
 var
   docobject : TFileDoc;
@@ -343,7 +343,8 @@ begin
   end;
 end;
 
-function parseInput_opsiscriptlibrary(filename : string) : boolean;
+
+function parseInput_opsiscriptlibrary() : boolean;
 var
   linecounter, funccounter,prun : integer;
   indeffunc : integer;
@@ -355,7 +356,6 @@ begin
   indeffunc := 0;
   if Assigned(docobject) and (docobject <> nil) then docobject.Destroy;
   docobject := TFileDoc.Create;
-  //docobject.Fname:=ExtractFileName(filename);
   for linecounter := 0 to sourcelist.Count-1 do
   begin
     incomment := false;
