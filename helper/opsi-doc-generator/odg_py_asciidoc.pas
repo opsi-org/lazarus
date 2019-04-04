@@ -26,6 +26,7 @@ var
   tmpstr1, pname : string;
   tempfile: TFuncDoc;
 begin
+  LogDatei.log('Writing collected python data as asciidoc to stringlist',LLnotice);
   if Assigned(docobject) and (docobject <> nil) then
   begin
     targetlist.Clear;
@@ -47,8 +48,12 @@ begin
     asciidoc_header.Add(':Revision:                                                 ');
     asciidoc_header.Add(':doctype: book                                               ');
 
+    {
+    LogDatei.log('Writing file information for: '+docobject.name,LLinfo);
     if not (docobject.Author = '') then
       asciidoc_header.Add(':Author:    '+docobject.Author);
+    }
+
     asciidoc_header.Add(':toc:');
     asciidoc_header.Add('   ');
     asciidoc_header.Add('   ');
@@ -72,6 +77,7 @@ begin
 
     for frun := 0 to funccount-1 do
     begin
+      LogDatei.log('Writing function information for: '+docobject.Ffunctions[frun].Name,LLinfo);
       targetlist.Add('anchor:'+docobject.Ffunctions[frun].Name+'[]');
       targetlist.Add('[Doc_func_'+docobject.Ffunctions[frun].Name+']');
       targetlist.add('== `'+docobject.Ffunctions[frun].Definitionline+'`');
@@ -82,7 +88,8 @@ begin
       for prun := 0 to docobject.Ffunctions[frun].ParamCounter -1 do
       begin
         pname := docobject.Ffunctions[frun].Fparams[prun].ParamName;
-        targetlist.add('* Parameter: `' +pname+'`');
+        LogDatei.log('Writing parameter information for: '+pname,LLinfo);
+        targetlist.add('* Parameter:  `' +pname+'`');
         tmpstr1 := docobject.Ffunctions[frun].Fparams[prun].ParamType;
         if tmpstr1 <> '' then
         begin
@@ -97,15 +104,16 @@ begin
       end;
 
       tmpstr1 := docobject.Ffunctions[frun].RType;
-      if tmpstr1 <> '' then targetlist.Add('Returned Type:  '+tmpstr1);
+      if tmpstr1 <> '' then targetlist.Add('Returned Type: '+tmpstr1);
       targetlist.Add('');
 
       tmpstr1 := docobject.Ffunctions[frun].Raises;
-      if tmpstr1 <> '' then targetlist.Add('Raises:  '+tmpstr1);
+      if tmpstr1 <> '' then targetlist.Add('Raises: '+tmpstr1);
       targetlist.Add('');
       targetlist.Add('');
     end;
   end;
+  LogDatei.log('Finished writing collected python data as asciidoc to stringlist',LLinfo);
 end;
 
 
