@@ -31,7 +31,7 @@ begin
     // unser Programm nicht vor Beendigung des aufgerufenen
     // Programmes fortgesetzt wird. Außerdem wird hier angegeben,
     // dass die Ausgabe gelesen werden soll. Wird aber nciht verwendet
-    AProcess.Options := AProcess.Options + [poWaitOnExit, poUsePipes];
+    AProcess.Options := AProcess.Options + [poUsePipes];
 
     AProcess.Execute;
 
