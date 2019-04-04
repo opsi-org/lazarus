@@ -18,7 +18,8 @@ type
   { TForm1 }
 
   TForm1 = class(TForm)
-    Bsave_ascii_show: TButton;
+    Button_os_save_ascii_show: TButton;
+    Button_py_save_ascii_show: TButton;
     ButtonRemoveSelected: TButton;
     ButtonRemoveAll: TButton;
     ButtonOSConvert: TButton;
@@ -35,7 +36,8 @@ type
     Panel4: TPanel;
     SaveDialog1: TSaveDialog;
     Splitter1: TSplitter;
-    procedure Bsave_ascii_showClick(Sender: TObject);
+    procedure Button_os_save_ascii_showClick(Sender: TObject);
+    procedure Button_py_save_ascii_showClick(Sender: TObject);
     procedure ButtonRemoveSelectedClick(Sender: TObject);
     procedure ButtonOSConvertClick(Sender: TObject);
     procedure ButtonPythonConvertClick(Sender: TObject);
@@ -106,7 +108,6 @@ procedure TForm1.ButtonOSConvertClick(Sender: TObject);
 var
   listboxitem : integer;
 begin
-  Bsave_ascii_show.Enabled:= false;
   tempFile.Clear;
   sourcelist.Clear;
   for listboxitem := 0 to (ListBox1.Items.Count -1) do
@@ -122,7 +123,6 @@ procedure TForm1.ButtonPythonConvertClick(Sender: TObject);
 var
   listboxitem : integer;
 begin
-  Bsave_ascii_show.Enabled:= false;
   tempFile.Clear;
   sourcelist.Clear;
   for listboxitem := 0 to (ListBox1.Items.Count -1) do
@@ -145,19 +145,17 @@ begin
   end;
 end;
 
-procedure TForm1.Bsave_ascii_showClick(Sender: TObject);
+procedure TForm1.Button_os_save_ascii_showClick(Sender: TObject);
 begin
-  {
-  if ExtractFileExt(infilename) = '.opsiscript' then
-    convertOslibToAsciidoc(infilename)
-  else
-    convertPylibToAsciidoc(infilename);
-  }
-  convertOslibToAsciidoc();
-  memo2.Lines.Assign(targetlist);
-  save_compile_show(infilename);
+  ButtonOSConvertClick(Sender);
+  save_compile_show();
 end;
 
+procedure TForm1.Button_py_save_ascii_showClick(Sender: TObject);
+begin
+  ButtonPythonConvertClick(Sender);
+  save_compile_show();
+end;
 
 initialization
   filecontent := TStringList.Create;

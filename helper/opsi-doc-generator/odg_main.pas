@@ -23,7 +23,7 @@ uses
 
 function convertOslibToAsciidoc(): boolean;
 function convertPylibToAsciidoc(): boolean;
-function save_compile_show(filename : string) : boolean;
+function save_compile_show() : boolean;
 
 var
   sourcelist : TStringlist;
@@ -45,15 +45,13 @@ begin
   writePyDocToList;
 end;
 
-function writeToAsciidocFile(infilename : string) : string;
+function writeToAsciidocFile() : string;
 var
-  tmpfilename, tmpfilebasename, tmpdirname : string;
+  tmpfilename, currentdatetime : string;
 begin
   result := '';
-  tmpdirname := ExtractFileDir(infilename);
-  tmpfilebasename := ExtractFileName(infilename);
-  tmpfilebasename := ExtractFileNameWithoutExt(tmpfilebasename);
-  tmpfilename := tmpdirname+PathDelim+ tmpfilebasename+'.asciidoc';
+  currentdatetime := FormatDateTime('yyyy"-"mm"-"dd"_"hh:nn', Now);
+  tmpfilename := IncludeTrailingPathDelimiter(GetCurrentDir)+'docgenerated_'+currentdatetime+'.asciidoc';
   targetlist.SaveToFile(tmpfilename);
   result := tmpfilename;
   LogDatei.log('Wrote asciidoc file to: '+tmpfilename,LLinfo);
@@ -114,17 +112,11 @@ begin
   result := true;
 end;
 
-procedure openhtml(filename : string);
-  begin
-    OpenDocument(filename);
-  end;
-
-
-function save_compile_show(filename : string) : boolean;
+function save_compile_show() : boolean;
 var
   asciidocfile : string;
 begin
-  asciidocfile := writeToAsciidocFile(filename);
+  asciidocfile := writeToAsciidocFile();
   if not callasciidoctor(asciidocfile) then
   begin
     writeln('callasciidoctor failed');
@@ -133,6 +125,7 @@ begin
   else
     OpenDocument(ExtractFileNameWithoutExt(asciidocfile)+'.html');
 end;
+
 
 initialization
   sourcelist := TStringlist.create;
@@ -154,6 +147,5 @@ initialization
 finalization
   sourcelist.Free;
   targetlist.Free;
-
 end.
 
