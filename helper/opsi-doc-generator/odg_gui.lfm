@@ -21,7 +21,7 @@ object Form1: TForm1
     ClientWidth = 1070
     TabOrder = 0
     object ButtonSave: TButton
-      Left = 376
+      Left = 744
       Height = 25
       Top = 8
       Width = 140
@@ -30,7 +30,7 @@ object Form1: TForm1
       TabOrder = 0
     end
     object ButtonOSConvert: TButton
-      Left = 8
+      Left = 80
       Height = 25
       Top = 8
       Width = 140
@@ -38,23 +38,32 @@ object Form1: TForm1
       OnClick = ButtonOSConvertClick
       TabOrder = 1
     end
-    object Bsave_ascii_show: TButton
-      Left = 560
+    object Button_os_save_ascii_show: TButton
+      Left = 8
       Height = 25
-      Top = 8
-      Width = 275
-      Caption = 'Convert To Asciidoc + Save To HTML + View'
-      OnClick = Bsave_ascii_showClick
+      Top = 40
+      Width = 280
+      Caption = 'Opsiscript To Asciidoc + To HTML + View'
+      OnClick = Button_os_save_ascii_showClick
       TabOrder = 2
     end
     object ButtonPythonConvert: TButton
-      Left = 192
+      Left = 416
       Height = 25
       Top = 8
       Width = 140
       Caption = 'Python To Asciidoc'
       OnClick = ButtonPythonConvertClick
       TabOrder = 3
+    end
+    object Button_py_save_ascii_show: TButton
+      Left = 360
+      Height = 25
+      Top = 40
+      Width = 280
+      Caption = 'Python To Asciidoc + To HTML + View'
+      OnClick = Button_py_save_ascii_showClick
+      TabOrder = 4
     end
   end
   object Panel2: TPanel
@@ -129,7 +138,7 @@ object Form1: TForm1
       Anchors = [akTop, akLeft, akBottom]
       ItemHeight = 0
       OnSelectionChange = ListBox1SelectionChange
-      ScrollWidth = 700
+      ScrollWidth = 298
       TabOrder = 0
       TopIndex = -1
     end
