@@ -409,6 +409,7 @@
       <Unit54>
         <Filename Value="..\external_libraries\modified\misc\utilwmi.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="Utilwmi"/>
       </Unit54>
     </Units>
   </ProjectOptions>
