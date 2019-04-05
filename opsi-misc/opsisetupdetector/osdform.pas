@@ -14,6 +14,7 @@ uses
   Classes, SysUtils, FileUtil, RTTICtrls, RTTIGrids,
   Forms, Controls, Graphics,
   LCLType,
+  LclIntf,
   Dialogs, ExtCtrls,
   StdCtrls,
   Buttons,
@@ -111,6 +112,8 @@ type
     FlowPanelSetup39: TFlowPanel;
     GroupBox2: TGroupBox;
     ImageList1: TImageList;
+    Label63: TLabel;
+    Label69: TLabel;
     LabelLogInfo: TLabel;
     Label57: TLabel;
     Label58: TLabel;
@@ -118,13 +121,11 @@ type
     Label60: TLabel;
     Label61: TLabel;
     Label62: TLabel;
-    Label63: TLabel;
     Label64: TLabel;
     Label65: TLabel;
     Label66: TLabel;
     Label67: TLabel;
     Label68: TLabel;
-    Label69: TLabel;
     Label70: TLabel;
     Label71: TLabel;
     Label72: TLabel;
@@ -149,6 +150,10 @@ type
     LabelWorkbenchOK: TLabel;
     LabelWorkbenchNotOK: TLabel;
     MemoDefault: TMemo;
+    MenuItemLang: TMenuItem;
+    MenuItemLangDe: TMenuItem;
+    MenuItemLangEn: TMenuItem;
+    MenuItemLangEs: TMenuItem;
     MenuItemStart: TMenuItem;
     MenuItemKnownInstallers: TMenuItem;
     MenuItemConfig: TMenuItem;
@@ -200,9 +205,9 @@ type
     Panel2: TPanel;
     Panel3: TPanel;
     TabSheetAnalyze: TTabSheet;
+    TICheckBoxS1Mst: TTICheckBox;
     TICheckBoxlicenseRequired: TTICheckBox;
-    TIComboBoxArch1: TTIComboBox;
-    TIComboBoxArch2: TTIComboBox;
+    TICheckBoxS2Mst: TTICheckBox;
     TIComboBoxInstaller1: TTIComboBox;
     TIComboBoxInstaller2: TTIComboBox;
     TIEditInstallDir2: TTIEdit;
@@ -232,6 +237,8 @@ type
     TIMemoAdvice: TTIMemo;
     TIMemoDesc: TTIMemo;
     TimerFirstconfig: TTimer;
+    TIS1Url: TTILabel;
+    TIS2Url: TTILabel;
     TISpinEditPrio: TTISpinEdit;
     TISpinEditPackageVers: TTISpinEdit;
     TITrackBarPrio: TTITrackBar;
@@ -260,6 +267,9 @@ type
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormShow(Sender: TObject);
+    procedure MenuItemLangDeClick(Sender: TObject);
+    procedure MenuItemLangEnClick(Sender: TObject);
+    procedure MenuItemLangEsClick(Sender: TObject);
     procedure MenuItemStartClick(Sender: TObject);
     procedure MenuItemConfigClick(Sender: TObject);
     procedure MenuItemKnownInstallersClick(Sender: TObject);
@@ -283,7 +293,12 @@ type
     procedure SBtnOpenClick(Sender: TObject);
     procedure SBtnExitClick(Sender: TObject);
     procedure TabSheetCreateShow(Sender: TObject);
+    procedure TICheckBoxS1MstChange(Sender: TObject);
+    procedure TICheckBoxS2MstChange(Sender: TObject);
     procedure TimerFirstconfigTimer(Sender: TObject);
+    procedure TIS1UrlClick(Sender: TObject);
+    procedure TIS1UrlMouseEnter(Sender: TObject);
+    procedure TIS1UrlMouseLeave(Sender: TObject);
     procedure TISpinEditPrioChange(Sender: TObject);
     procedure TITrackBarPrioChange(Sender: TObject);
     procedure fetchDepPropFromForm;
@@ -468,10 +483,12 @@ begin
       TIComboBoxInstaller2.Link.SetObjectAndProperty(SetupFiles[1], 'installerid');
       TIEditSetupfile1.Link.SetObjectAndProperty(SetupFiles[0], 'setupFullFileName');
       TIEditSetupFile2.Link.SetObjectAndProperty(SetupFiles[1], 'setupFullFileName');
-      TIComboBoxArch1.Link.SetObjectAndProperty(SetupFiles[0], 'architecture');
-      TIComboBoxArch2.Link.SetObjectAndProperty(SetupFiles[1], 'architecture');
+      //TIComboBoxArch1.Link.SetObjectAndProperty(SetupFiles[0], 'architecture');
+      //TIComboBoxArch2.Link.SetObjectAndProperty(SetupFiles[1], 'architecture');
       TIEditMstFile1.Link.SetObjectAndProperty(SetupFiles[0], 'mstFullFileName');
       TIEditMstFile2.Link.SetObjectAndProperty(SetupFiles[1], 'mstFullFileName');
+      TICheckBoxS1Mst.Link.SetObjectAndProperty(SetupFiles[0], 'mstAllowed');
+      TICheckBoxS2Mst.Link.SetObjectAndProperty(SetupFiles[1], 'mstAllowed');
       TIEditMsiId1.Link.SetObjectAndProperty(SetupFiles[0], 'msiId');
       TIEditMsiId2.Link.SetObjectAndProperty(SetupFiles[1], 'msiId');
       TIEditProdVersion1.Link.SetObjectAndProperty(SetupFiles[0], 'SoftwareVersion');
@@ -490,6 +507,8 @@ begin
         'uninstallCommandLine');
       TIEditSetup1UnProgram.Link.SetObjectAndProperty(SetupFiles[0], 'uninstallProg');
       TIEditSetup2UnProgram.Link.SetObjectAndProperty(SetupFiles[1], 'uninstallProg');
+      TIS1Url.Link.SetObjectAndProperty(SetupFiles[0], 'link');
+      TIS2Url.Link.SetObjectAndProperty(SetupFiles[1], 'link');
       // product
       TIEditProdVersion3.Link.SetObjectAndProperty(productdata, 'productVersion');
       TISpinEditPackageVers.Link.SetObjectAndProperty(productdata, 'packageVersion');
@@ -548,8 +567,8 @@ begin
   TIEditSetupFile2.Link.TIObject := nil;
   TIComboBoxInstaller1.Link.TIObject := nil;
   TIComboBoxInstaller2.Link.TIObject := nil;
-  TIComboBoxArch1.Link.TIObject := nil;
-  TIComboBoxArch2.Link.TIObject := nil;
+  //TIComboBoxArch1.Link.TIObject := nil;
+  //TIComboBoxArch2.Link.TIObject := nil;
   TIEditMstFile1.Link.TIObject := nil;
   TIEditMstFile2.Link.TIObject := nil;
   TIEditMsiId1.Link.TIObject := nil;
@@ -566,6 +585,10 @@ begin
   TIEditSetup1Command.Link.TIObject := nil;
   TITrackBarPrio.Link.TIObject := nil;
   TISpinEditPrio.Link.TIObject := nil;
+  TIS1Url.Link.TIObject := nil;
+  TIS2Url.Link.TIObject := nil;
+  TICheckBoxS1Mst.Link.TIObject := nil;
+  TICheckBoxS2Mst.Link.TIObject := nil;
 end;
 
 
@@ -659,6 +682,7 @@ begin
   optionlist.Append('help');
   optionlist.Append('filename::');
   optionlist.Append('nogui');
+  optionlist.Append('lang::');
 
   // quick check parameters
   ErrorMsg := Application.CheckOptions('', optionlist);
@@ -685,21 +709,26 @@ begin
     Exit;
   end;
 
-  mylang := GetDefaultLang;
-  {$IFDEF WINDOWS}
-  if Mylang = '' then
-    mylang := LowerCase(copy (GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
-  {$ENDIF WINDOWS}
-  SetDefaultLang(mylang);
-  LogDatei.log('Detected default lang: ' + mylang,LLInfo);
-  LogDatei.log('Detected default lang: ' + GetDefaultLang,LLInfo);
+
 
   if Application.HasOption('lang') then
   begin
     LogDatei.log('Found Parameter lang',LLInfo);
-    SetDefaultLang(Application.GetOptionValue('lang'));
-    LogDatei.log('Found Parameter lang: ' + Application.GetOptionValue('lang'),LLInfo);
-    LogDatei.log('Active lang: ' + GetDefaultLang,LLInfo);
+    mylang := Application.GetOptionValue('lang');
+    SetDefaultLang(mylang);
+    LogDatei.log('Found Parameter lang: ' + mylang,LLInfo);
+    LogDatei.log('Active lang: ' + mylang,LLInfo);
+  end
+  else
+  begin
+    mylang := GetDefaultLang;
+    {$IFDEF WINDOWS}
+    if Mylang = '' then
+      mylang := LowerCase(copy (GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
+    {$ENDIF WINDOWS}
+    SetDefaultLang(mylang);
+    LogDatei.log('Detected default lang: ' + mylang,LLInfo);
+    LogDatei.log('Detected default lang: ' + GetDefaultLang,LLInfo);
   end;
 
 
@@ -852,6 +881,21 @@ end;
 procedure TResultform1.FormShow(Sender: TObject);
 begin
 
+end;
+
+procedure TResultform1.MenuItemLangDeClick(Sender: TObject);
+begin
+  SetDefaultLang('de');
+end;
+
+procedure TResultform1.MenuItemLangEnClick(Sender: TObject);
+begin
+    SetDefaultLang('en');
+end;
+
+procedure TResultform1.MenuItemLangEsClick(Sender: TObject);
+begin
+  SetDefaultLang('es');
 end;
 
 procedure TResultform1.MenuItemStartClick(Sender: TObject);
@@ -1923,6 +1967,22 @@ begin
   checkWorkbench;
 end;
 
+procedure TResultform1.TICheckBoxS1MstChange(Sender: TObject);
+begin
+  if TCheckBox(sender).Checked then
+    TIEditMstFile1.Enabled:=true
+  else
+    TIEditMstFile1.Enabled:=false;
+end;
+
+procedure TResultform1.TICheckBoxS2MstChange(Sender: TObject);
+begin
+  if TCheckBox(sender).Checked then
+    TIEditMstFile2.Enabled:=true
+  else
+    TIEditMstFile2.Enabled:=false;
+end;
+
 procedure TResultform1.TimerFirstconfigTimer(Sender: TObject);
 begin
   TimerFirstconfig.Enabled := False;
@@ -1932,6 +1992,31 @@ begin
     MenuItemConfigClick(Sender);
   end;
 end;
+
+procedure TResultform1.TIS1UrlClick(Sender: TObject);
+var
+  link : string;
+  PropInfo: PPropInfo;
+begin
+  link := TTILabel(sender).Caption;
+  (*
+  PropInfo := GetPropInfo(Sender, 'Caption', []);
+  if Assigned(PropInfo) then
+    link := GetStrProp(Sender, PropInfo);
+    *)
+  OpenURL(link);
+end;
+
+procedure TResultform1.TIS1UrlMouseEnter(Sender: TObject);
+begin
+  Screen.Cursor:=crHandPoint;
+end;
+
+procedure TResultform1.TIS1UrlMouseLeave(Sender: TObject);
+begin
+  Screen.Cursor:=crDefault;
+end;
+
 
 
 procedure TResultform1.TISpinEditPrioChange(Sender: TObject);

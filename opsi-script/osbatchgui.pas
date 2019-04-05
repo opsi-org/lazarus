@@ -21,14 +21,6 @@ unit osbatchgui;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 427 $
-// $Author: oertel $
-// $Date: 2016-04-29 18:23:09 +0200 (Fr, 29 Apr 2016) $
-//***************************************************************************
-
-
 
 interface
 
@@ -40,6 +32,7 @@ uses
   osconf, LCLIntf, SysUtils, Classes, Graphics, Controls, IniFiles, Forms,
   Dialogs, StdCtrls, ExtCtrls, ComCtrls, LResources,
 //Sensors, indGnouMeter,
+  osencoding,
   QProgBar;
 
 type
@@ -410,6 +403,7 @@ var
   skinFile : String='';
   skinIni: TIniFile;
   filename : String='';
+  paramstr0enc : string;
 
   procedure setAlignment(var theLabel: TLabel; const newAligment: string);
   begin
@@ -425,14 +419,15 @@ var
 begin
 
   {$IFDEF WINDOWS}
+  paramstr0enc := reencode(ParamStr(0),'system');
   if FileExists(skindirectory+PathDelim+'skin.ini') then
     skindir := skindirectory
-  else if FileExists(ExtractFilePath(ParamStr(0)) + skindirectoryCustomWin+PathDelim+'skin.ini') then
-    skinDir := ExtractFilePath(ParamStr(0)) + skindirectoryCustomWin
-  else if FileExists(ExtractFilePath(ParamStr(0)) + skindirectoryDefault+PathDelim+'skin.ini') then
-    skinDir := ExtractFilePath(ParamStr(0)) + skindirectoryDefault
-  else if FileExists(ExtractFilePath(ParamStr(0)) + skindirectoryDevelopment+PathDelim+'skin.ini') then
-    skinDir := ExtractFilePath(ParamStr(0)) + skindirectoryDevelopment;
+  else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryCustomWin+PathDelim+'skin.ini') then
+    skinDir := ExtractFilePath(paramstr0enc) + skindirectoryCustomWin
+  else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryDefault+PathDelim+'skin.ini') then
+    skinDir := ExtractFilePath(paramstr0enc) + skindirectoryDefault
+  else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryDevelopment+PathDelim+'skin.ini') then
+    skinDir := ExtractFilePath(paramstr0enc) + skindirectoryDevelopment;
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
    if FileExists(skindirectory+PathDelim+'skin.ini') then

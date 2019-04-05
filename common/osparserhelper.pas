@@ -66,7 +66,17 @@ function opsiunquotestr2(s1,s2 : string): string;
 // and the second char is the end mark
 // used by unquote2
 
+procedure stringsplitByWhiteSpace(const s: string; var Result: TStringList);
+
+procedure stringlistintersection(const inlist1 : Tstringlist; const inlist2 : Tstringlist;
+  var list1rest : Tstringlist; var listintersection  : Tstringlist);
+
+
+
+
 implementation
+
+
 
 function CutLeftBlanks(const s: string): string;
 begin
@@ -312,9 +322,13 @@ begin
     if closeBracketsNum > openBracketsNum then
     begin
       // we should cut at the matching close brackets
+      //cutpos := NPos(')',s,openBracketsNum);
+      // give me the pos of the last matching closing bracket
       cutpos := NPos(')',s,openBracketsNum);
-      Expression := copy(s,1,cutpos-1);
-      Remaining := Remaining + copy(s,cutpos,length(s));;
+      // get it with the closing bracket
+      Expression := copy(s,1,cutpos);
+      // get the rest
+      Remaining := Remaining + copy(s,cutpos+1,length(s));;
     end
     else
     begin
@@ -362,6 +376,49 @@ begin
   end;
 end;
 
+procedure stringsplitByWhiteSpace(const s: string; var Result: TStringList);
+// produziert eine Stringliste aus den Teilstrings, die zwischen den Whitespace-Abschnitten stehen
+var
+  remainder: string = '';
+  item: string = '';
+  //found: boolean;
+begin
+  GetWord(s, item, remainder, WordDelimiterWhiteSpace);
+  Result.add(item);
+  while remainder <> '' do
+  begin
+    GetWord(remainder, item, remainder, WordDelimiterWhiteSpace);
+    Result.add(item);
+  end;
+end;
+
+procedure stringlistintersection(const inlist1 : Tstringlist; const inlist2 : Tstringlist;
+  var list1rest : Tstringlist; var listintersection  : Tstringlist);
+var
+  i : integer;
+  str : string;
+begin
+  //str := inlist1.DelimitedText;
+  //str := inlist2.DelimitedText;
+  list1rest.Clear;
+  listintersection.Clear;
+  //str := inlist1.DelimitedText;
+  //str := inlist2.DelimitedText;
+  for i := 0 to inlist1.Count -1 do
+  begin
+    str := inlist1.Strings[i];
+    if inlist2.IndexOf(str) = -1 then
+    begin
+      // the inlist1 string is not found in inlist2 so it goes to list1rest
+      list1rest.Add(str);
+    end
+    else
+    begin
+      // the inlist1 string is found in inlist2 so it goes to listintersection
+      listintersection.Add(str);
+    end;
+  end;
+end;
 
 end.
 

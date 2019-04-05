@@ -16,10 +16,12 @@ type
   TForm1 = class(TForm)
     Button1: TButton;
     Edit1: TEdit;
+    EditNamespace: TEdit;
     Edit3: TEdit;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
+    Label4: TLabel;
     Memo1: TMemo;
     MemoProp: TMemo;
     procedure Button1Click(Sender: TObject);
@@ -52,7 +54,7 @@ begin
   try
   memo1.Clear;
   myWMIResultList := Tstringlist.Create;
-  if not osGetWMI(Edit1.Text,MemoProp.Lines,Edit3.Text,myWMIResultList,errormsg) then
+  if not osGetWMI(EditNamespace.Text, Edit1.Text,MemoProp.Lines,Edit3.Text,myWMIResultList,errormsg) then
      begin
      memo1.Append('Failed');
      memo1.Append(errormsg);

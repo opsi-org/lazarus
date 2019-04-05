@@ -1,54 +1,50 @@
-# 
-# Translators:
-# Martin Scalese <m.scalese@uib.de>, 2016,2019
 msgid ""
 msgstr ""
 "Project-Id-Version: opsi.org\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-01-25 08:47+0000\n"
-"Last-Translator: Martin Scalese <m.scalese@uib.de>\n"
-"Language-Team: Spanish (http://www.transifex.com/opsi-org/opsiorg/language/es/)\n"
+"PO-Revision-Date: 2019-01-14 09:26+0000\n"
+"Last-Translator: detlef oertel\n"
+"Language-Team: English (http://www.transifex.com/opsi-org/opsiorg/language/en/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: en\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
 #: osdbasedata.rsconfig_filled
 msgctxt "osdbasedata.rsconfig_filled"
 msgid "Automatically detected. Do we have all needed configurations"
-msgstr "Detecta automáticamente si están todas las configuraciones requeridas"
+msgstr "Automatically detected. Do we have all needed configurations"
 
 #: osdbasedata.rscreatebuild
 msgctxt "osdbasedata.rscreatebuild"
 msgid "Selects the Build mode Checkbox build."
-msgstr "Selecciona la checkbox para la creación."
+msgstr "Selects the Build mode Checkbox build."
 
 #: osdbasedata.rscreateinstall
 msgctxt "osdbasedata.rscreateinstall"
 msgid "Selects the Build mode Checkbox install."
-msgstr "Selecciona la checkbox para la instalación."
+msgstr "Selects the Build mode Checkbox install."
 
 #: osdbasedata.rscreatequiet
 msgctxt "osdbasedata.rscreatequiet"
 msgid "Selects the Build mode Checkbox quiet."
-msgstr "Selecciona la checkbox \"quiet\"."
+msgstr "Selects the Build mode Checkbox quiet."
 
 #: osdbasedata.rscreateradioindex
 msgctxt "osdbasedata.rscreateradioindex"
 msgid "selects the Create mode Radiobutton."
-msgstr "Selecciona módo de creación, en botón radio."
+msgstr "selects the Create mode Radiobutton."
 
 #: osdbasedata.rsemail_address
 msgctxt "osdbasedata.rsemail_address"
 msgid "Your email address, used for the changelog entry"
-msgstr "Su dirección de correo electrónico, utilizada para el registro del changelog"
+msgstr "Your email address, used for the changelog entry"
 
 #: osdbasedata.rsfullname
 msgctxt "osdbasedata.rsfullname"
 msgid "Your full name, used for the changelog entry"
-msgstr "Nombre completo, utilizado para la entrada del changelog"
+msgstr "Your full name, used for the changelog entry"
 
 #: osdbasedata.rsimport_libraries
 msgctxt "osdbasedata.rsimport_libraries"
@@ -57,14 +53,14 @@ msgid ""
 "One per line. May be empty. Example:\n"
 "myinstallhelperlib.opsiscript\n"
 msgstr ""
-"Lista de las librerias de scripts de opsi a ser importadas.\n"
-"Uno por línea. Puede quedar vacío. Ejemplo:\n"
+"List of opsi-script libraries that have to be imported.\n"
+"One per line. May be empty. Example:\n"
 "myinstallhelperlib.opsiscript\n"
 
 #: osdbasedata.rspathtoopsipackagebuilder
 msgctxt "osdbasedata.rspathtoopsipackagebuilder"
 msgid "Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573"
-msgstr "Directorio al OpsiPackageBuilder. El OpsiPackageBuilder es utilizado para crear paquetes de opsi via SSH. info: https://forum.opsi.org/viewtopic.php?f=22&t=7573"
+msgstr "Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573"
 
 #: osdbasedata.rspostinstalllines
 msgctxt "osdbasedata.rspostinstalllines"
@@ -73,9 +69,9 @@ msgid ""
 "One per line. May be empty. Example:\n"
 "comment \"Installation finished...\"\n"
 msgstr ""
-"Lista de las lineas de un script de opsi que deberían ser incluidas luego de que la instalación ha sido finalizada.\n"
-"Uno por línea. Puede quedar vacío. Ejemplo:\n"
-"comentario \"Instalación finalizada...\"\n"
+"List of opsi-script code lines that should be included after the installation finished.\n"
+"One per line. May be empty. Example:\n"
+"comment \"Installation finished...\"\n"
 
 #: osdbasedata.rspostuninstalllines
 msgctxt "osdbasedata.rspostuninstalllines"
@@ -84,9 +80,9 @@ msgid ""
 "One per line. May be empty. Example:\n"
 "comment \"Uninstall finished...\"\n"
 msgstr ""
-"Lista las líneas de un script de opsi que debería ser incluída después de que una desinstalación finalizó.\n"
-"Uno por línea. Puede quedar vacío. Ejemplo:\n"
-"comentario \"Desinstalación finalizada...\"\n"
+"List of opsi-script code lines that should be included after the uninstallation finished.\n"
+"One per line. May be empty. Example:\n"
+"comment \"Uninstall finished...\"\n"
 
 #: osdbasedata.rspreinstalllines
 msgctxt "osdbasedata.rspreinstalllines"
@@ -95,9 +91,9 @@ msgid ""
 "One per line. May be empty. Example: \n"
 "comment \"Start the installation ...\"\n"
 msgstr ""
-"Lista de las lineas de código de script de opsi que deberían ser incluídas antes de que comience la instalación.\n"
-"Uno por línea. Puede estar vacío. Ejemplo:\n"
-"comentario \"Comienza la instalación ...\"\n"
+"List of opsi-script code lines that should be included before the installation starts. \n"
+"One per line. May be empty. Example: \n"
+"comment \"Start the installation ...\"\n"
 
 #: osdbasedata.rspreuninstalllines
 msgctxt "osdbasedata.rspreuninstalllines"
@@ -106,226 +102,100 @@ msgid ""
 "One per line. May be empty. Example:\n"
 "comment \"Start the uninstallation ...\"\n"
 msgstr ""
-"Lista de las lineas de un script de opsi que deberían ser incluidas antes de que una desinstalación comience.\n"
-"Uno por línea. Puede quedar vacío. Ejemplo:\n"
-"comentario \"Comienza la desinstalación...\"\n"
+"List of opsi-script code lines that should be included before the uninstallation starts.\n"
+"One per line. May be empty. Example:\n"
+"comment \"Start the uninstallation ...\"\n"
 
 #: osdbasedata.rsregisterinfilemanager
 msgctxt "osdbasedata.rsregisterinfilemanager"
 msgid "Should this program be registred to the Filemanger (Explorer) context menu ?"
-msgstr "Debería el programa registrarse en el menú contextual (Explorer) ?"
+msgstr "Should this program be registred to the Filemanger (Explorer) context menu ?"
 
 #: osdbasedata.rsworkbench_mounted
 msgctxt "osdbasedata.rsworkbench_mounted"
 msgid "Automatically detected. Is the opsi workbench reachable at workbench_Path."
-msgstr "Detectado aumáticamente. Hay conexión con el workbench de opsi en workbench_Path."
+msgstr "Automatically detected. Is the opsi workbench reachable at workbench_Path."
 
 #: osdbasedata.rsworkbench_path
 msgctxt "osdbasedata.rsworkbench_path"
 msgid "Path to the opsi_workbench"
-msgstr "Directorio al opsi_workbench"
-
-#: osdconfigdlg.rsconfig_filled
-#, fuzzy
-msgctxt "osdconfigdlg.rsconfig_filled"
-msgid "Automatically detected. Do we have all needed configurations"
-msgstr "Detecta automáticamente si están todas las configuraciones requeridas"
-
-#: osdconfigdlg.rscreatebuild
-#, fuzzy
-msgctxt "osdconfigdlg.rscreatebuild"
-msgid "Selects the Build mode Checkbox build."
-msgstr "Selecciona la checkbox para la creación."
-
-#: osdconfigdlg.rscreateinstall
-#, fuzzy
-msgctxt "osdconfigdlg.rscreateinstall"
-msgid "Selects the Build mode Checkbox install."
-msgstr "Selecciona la checkbox para la instalación."
-
-#: osdconfigdlg.rscreatequiet
-#, fuzzy
-msgctxt "osdconfigdlg.rscreatequiet"
-msgid "Selects the Build mode Checkbox quiet."
-msgstr "Selecciona la checkbox \"quiet\"."
-
-#: osdconfigdlg.rscreateradioindex
-#, fuzzy
-msgctxt "osdconfigdlg.rscreateradioindex"
-msgid "selects the Create mode Radiobutton."
-msgstr "Selecciona módo de creación, en botón radio."
-
-#: osdconfigdlg.rsemail_address
-#, fuzzy
-msgctxt "osdconfigdlg.rsemail_address"
-msgid "Your email address, used for the changelog entry"
-msgstr "Su dirección de correo electrónico, utilizada para el registro del changelog"
-
-#: osdconfigdlg.rsfullname
-#, fuzzy
-msgctxt "osdconfigdlg.rsfullname"
-msgid "Your full name, used for the changelog entry"
-msgstr "Nombre completo, utilizado para la entrada del changelog"
-
-#: osdconfigdlg.rsimport_libraries
-#, fuzzy
-msgctxt "osdconfigdlg.rsimport_libraries"
-msgid ""
-"List of opsi-script libraries that have to be imported.\n"
-"One per line. May be empty. Example:\n"
-"myinstallhelperlib.opsiscript\n"
-msgstr ""
-"Lista de las librerias de scripts de opsi a ser importadas.\n"
-"Uno por línea. Puede quedar vacío. Ejemplo:\n"
-"myinstallhelperlib.opsiscript\n"
-
-#: osdconfigdlg.rspathtoopsipackagebuilder
-#, fuzzy
-msgctxt "osdconfigdlg.rspathtoopsipackagebuilder"
-msgid "Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573"
-msgstr "Directorio al OpsiPackageBuilder. El OpsiPackageBuilder es utilizado para crear paquetes de opsi via SSH. info: https://forum.opsi.org/viewtopic.php?f=22&t=7573"
-
-#: osdconfigdlg.rspostinstalllines
-#, fuzzy
-msgctxt "osdconfigdlg.rspostinstalllines"
-msgid ""
-"List of opsi-script code lines that should be included after the installation finished.\n"
-"One per line. May be empty. Example:\n"
-"comment \"Installation finished...\"\n"
-msgstr ""
-"Lista de las lineas de un script de opsi que deberían ser incluidas luego de que la instalación ha sido finalizada.\n"
-"Uno por línea. Puede quedar vacío. Ejemplo:\n"
-"comentario \"Instalación finalizada...\"\n"
-
-#: osdconfigdlg.rspostuninstalllines
-#, fuzzy
-msgctxt "osdconfigdlg.rspostuninstalllines"
-msgid ""
-"List of opsi-script code lines that should be included after the uninstallation finished.\n"
-"One per line. May be empty. Example:\n"
-"comment \"Uninstall finished...\"\n"
-msgstr ""
-"Lista las líneas de un script de opsi que debería ser incluída después de que una desinstalación finalizó.\n"
-"Uno por línea. Puede quedar vacío. Ejemplo:\n"
-"comentario \"Desinstalación finalizada...\"\n"
-
-#: osdconfigdlg.rspreinstalllines
-#, fuzzy
-msgctxt "osdconfigdlg.rspreinstalllines"
-msgid ""
-"List of opsi-script code lines that should be included before the installation starts. \n"
-"One per line. May be empty. Example: \n"
-"comment \"Start the installation ...\"\n"
-msgstr ""
-"Lista de las lineas de código de script de opsi que deberían ser incluídas antes de que comience la instalación.\n"
-"Uno por línea. Puede estar vacío. Ejemplo:\n"
-"comentario \"Comienza la instalación ...\"\n"
-
-#: osdconfigdlg.rspreuninstalllines
-#, fuzzy
-msgctxt "osdconfigdlg.rspreuninstalllines"
-msgid ""
-"List of opsi-script code lines that should be included before the uninstallation starts.\n"
-"One per line. May be empty. Example:\n"
-"comment \"Start the uninstallation ...\"\n"
-msgstr ""
-"Lista de las lineas de un script de opsi que deberían ser incluidas antes de que una desinstalación comience.\n"
-"Uno por línea. Puede quedar vacío. Ejemplo:\n"
-"comentario \"Comienza la desinstalación...\"\n"
-
-#: osdconfigdlg.rsregisterinfilemanager
-#, fuzzy
-msgctxt "osdconfigdlg.rsregisterinfilemanager"
-msgid "Should this program be registred to the Filemanger (Explorer) context menu ?"
-msgstr "Debería el programa registrarse en el menú contextual (Explorer) ?"
-
-#: osdconfigdlg.rsworkbench_mounted
-#, fuzzy
-msgctxt "osdconfigdlg.rsworkbench_mounted"
-msgid "Automatically detected. Is the opsi workbench reachable at workbench_Path."
-msgstr "Detectado aumáticamente. Hay conexión con el workbench de opsi en workbench_Path."
-
-#: osdconfigdlg.rsworkbench_path
-#, fuzzy
-msgctxt "osdconfigdlg.rsworkbench_path"
-msgid "Path to the opsi_workbench"
-msgstr "Directorio al opsi_workbench"
+msgstr "Path to the opsi_workbench"
 
 #: osdcreate.rscouldnotcreatedirectorywarning
 msgid "Could not create directory: "
-msgstr "No se pudo crear el directorio:"
+msgstr "Could not create directory: "
 
 #: osdcreate.rsdirectory
 msgid "Directory "
-msgstr "Directorio"
+msgstr "Directory "
 
 #: osdcreate.rsstillexitswarningdeleteoverwrite
 msgid " still exits. Overwrite / Delete ?"
-msgstr "existente. Sobreescribir / Eliminar ?"
+msgstr " still exits. Overwrite / Delete ?"
 
 #: osddlgnewproperty.rscontainswhitespacewarning
 msgid " contains whitespace. Whitespaces are not allowed."
-msgstr "contiene espacios en blanco. Los espacios en blanco no están permitidos."
+msgstr " contains whitespace. Whitespaces are not allowed."
 
 #: osddlgnewproperty.rsduplicatewarning
 msgctxt "osddlgnewproperty.rsduplicatewarning"
 msgid " exists. Duplicates not allowed."
-msgstr "existente. Los duplicados no están permitidos."
+msgstr " exists. Duplicates not allowed."
 
 #: osdform.rsdependencyediterrorhead
 msgid "opsi-setup-detector: Dependency Editor: Error"
-msgstr "opsi-setup-detector: editor de Dependencia: Error"
+msgstr "opsi-setup-detector: Dependency Editor: Error"
 
 #: osdform.rsdependencyediterrornoselect
 msgid "No Dependency selected."
-msgstr "La dependencia no ha sido seleccionada."
+msgstr "No Dependency selected."
 
 #: osdform.rsnotimplemented
 msgid "Not implemented right now."
-msgstr "No implementada actualmente."
+msgstr "Not implemented right now."
 
 #: osdform.rspropediterrordoublemsgfinish
 msgctxt "osdform.rspropediterrordoublemsgfinish"
 msgid " exists. Duplicates not allowed."
-msgstr "existe. Los duplicados no están permitidos."
+msgstr " exists. Duplicates not allowed."
 
 #: osdform.rspropediterrordoublemsgstart
 msgid "property Id: "
-msgstr "Id de propiedad:"
+msgstr "property Id: "
 
 #: osdform.rspropediterrorhead
 msgid "opsi-setup-detector: Property Editor: Error"
-msgstr "opsi-setup-detector: Editor de propiedad: Error"
+msgstr "opsi-setup-detector: Property Editor: Error"
 
 #: osdform.rspropediterrornoselect
 msgid "No Property selected."
-msgstr "Ninguna propiedad seleccionada."
+msgstr "No Property selected."
 
 #: osdform.rstwonalyzeandcreatemsgfirstsetup
 msgid "First Select the 32 Bit Setup exe"
-msgstr "Primero seleccione el setup.exe de 32 bits"
+msgstr "First Select the 32 Bit Setup exe"
 
 #: osdform.rstwonalyzeandcreatemsghead
 msgid "opsi-setup-detector: Two File (32/64 Bit) Product"
-msgstr "opsi-setup-detector: Producto con 2 archivos (32/64 Bits)"
+msgstr "opsi-setup-detector: Two File (32/64 Bit) Product"
 
 #: osdform.rstwonalyzeandcreatemsgsecondsetup
 msgid "Now Select the 64 Bit Setup exe"
-msgstr "Ahora seleccione el archivo de setup.exe de 64 Bits"
+msgstr "Now Select the 64 Bit Setup exe"
 
 #: osdform.rsweneedconfiguration
 msgid "We need some configurations first !"
-msgstr "Algunas configuraciones son necesarias antes de comenzar!"
+msgstr "We need some configurations first !"
 
 #: osdform.saskcreatepacket
 msgctxt "osdform.saskcreatepacket"
 msgid "Create packet %0:s?"
-msgstr "Crear paquete %0:s?"
+msgstr "Create packet %0:s?"
 
 #: osdform.serrextractmsifailed
 msgctxt "osdform.serrextractmsifailed"
 msgid "Error: extracting MSI from %s failed!"
-msgstr "Error: extrayendo MSI desde %s fallido!"
+msgstr "Error: extracting MSI from %s failed!"
 
 #: osdform.serrfldmsiproductcodeempty
 msgctxt "osdform.serrfldmsiproductcodeempty"
@@ -334,33 +204,33 @@ msgid ""
 "The MSI Product Code is needed for correct Uninstall process.\n"
 "Please install this Product and check for the MSI Product Code and write it to the delsub script\n"
 msgstr ""
-"Error: el campo MSI Product Code está vacío!\n"
-"El MSI Product Code es necesario para el correcto proceso de desinstalación.\n"
-"Por favor instale este producto y chequeo el MSI Product Code y agreguelo al script delsub\n"
+"Error: Field MSI Product Code is empty!\n"
+"The MSI Product Code is needed for correct Uninstall process.\n"
+"Please install this Product and check for the MSI Product Code and write it to the delsub script\n"
 
 #: osdform.serrmstnotfound
 msgctxt "osdform.serrmstnotfound"
 msgid "Error: MST file does not exist in the MSI-directory!"
-msgstr "Error: El archivo MST no existe en el directorio MSI"
+msgstr "Error: MST file does not exist in the MSI-directory!"
 
 #: osdform.serropsipackagebuilderstart
 msgctxt "osdform.serropsipackagebuilderstart"
 msgid "Error invoking opsi package builder"
-msgstr "Error invocando el opsi package builder"
+msgstr "Error invoking opsi package builder"
 
 #: osdform.serrpacketbasedirnotfound
 msgctxt "osdform.serrpacketbasedirnotfound"
 msgid "Error: The Path to opsi-work-bench is empty or not valid!"
-msgstr "Error: El directorio a la opsi-work-bench está vacío o no es válido!"
+msgstr "Error: The Path to opsi-work-bench is empty or not valid!"
 
 #: osdform.serrproductidempty
 msgid "Error: Field opsi Product ID is empty!"
-msgstr "Error: El campo opsi Product ID está vacío!"
+msgstr "Error: Field opsi Product ID is empty!"
 
 #: osdform.serrproductversionempty
 msgctxt "osdform.serrproductversionempty"
 msgid "Error: Field Product Version is empty!"
-msgstr "Error: El campo versión de producto está vacío"
+msgstr "Error: Field Product Version is empty!"
 
 #: osdform.shelpfile
 msgctxt "osdform.shelpfile"
@@ -370,17 +240,17 @@ msgstr "languages\\Help.de.html"
 #: osdform.shelpheader
 msgctxt "osdform.shelpheader"
 msgid "opsi setup detector Help"
-msgstr "Ayuda del opsi setup detector"
+msgstr "opsi setup detector Help"
 
 #: osdform.sinfofinished
 msgctxt "osdform.sinfofinished"
 msgid "Create opsi package finished."
-msgstr "Creación del paquete opsi finalizada."
+msgstr "Create opsi package finished."
 
 #: osdform.slogfileinfo
 msgctxt "osdform.slogfileinfo"
 msgid "Logfile created: %s"
-msgstr "Archivo de log creado: %s"
+msgstr "Logfile created: %s"
 
 #: osdform.smboxheader
 msgctxt "osdform.smboxheader"
@@ -394,136 +264,26 @@ msgid ""
 "The Installdir is needed for correct Uninstall process.\n"
 "Please install this Product and check for the Installdir and write it to the setup and the uninstall script\n"
 msgstr ""
-"Error: El campo de directorio de instalación está vacío!\n"
-"Para este instalador el directorio de instalación no pudo ser detectado.\n"
-"El Installdir es necesario para que el proceso de desinstalación sea correctamente ejecutado.\n"
-"Por favor instale este producto y chequee el directorio de instalación y agreguelo a los scripts de instalación y desinstalación\n"
-
-#: resultform.saskcreatepacket
-msgctxt "resultform.saskcreatepacket"
-msgid "Create packet %0:s?"
-msgstr "Crear paquete %0:s?"
-
-#: resultform.serrextractmsifailed
-msgctxt "resultform.serrextractmsifailed"
-msgid "Error: extracting MSI from %s failed!"
-msgstr "Error: extrayendo MSI desde %s fallido"
-
-#: resultform.serrfldinstdirempty
-msgctxt "resultform.serrfldinstdirempty"
-msgid "Error: Field Install Directory is empty!"
-msgstr "Error: El campo del directorio de instalación está vacío"
-
-#: resultform.serrfldmsiproductcodeempty
-msgctxt "resultform.serrfldmsiproductcodeempty"
-msgid "Error: Field MSI Product Code is empty!"
-msgstr "Error: Campo código de producto MSI está vacío"
-
-#: resultform.serrfldopsiproductidempty
-msgctxt "resultform.serrfldopsiproductidempty"
-msgid "Error: Field opsi Packet ID is empty!"
-msgstr "Error: Campo ID de paquete opsi está vacío"
-
-#: resultform.serrfldopsiproductversionempty
-msgctxt "resultform.serrfldopsiproductversionempty"
-msgid "Error: Field Product Version is empty!"
-msgstr "Error: El campo versión de producto está vacío!"
-
-#: resultform.serrfldsetupempty
-msgctxt "resultform.serrfldsetupempty"
-msgid "Error: No setup file selected!"
-msgstr "Error: No se seleccionó un archivo de setup!"
-
-#: resultform.serrmsinotfound
-msgctxt "resultform.serrmsinotfound"
-msgid "Error: MSI file does not exist!"
-msgstr "Error: El archivo MSI no existe!"
-
-#: resultform.serrmstnotfound
-msgctxt "resultform.serrmstnotfound"
-msgid "Error: MST file does not exist in the MSI-directory!"
-msgstr "Error: El archivo MST no existe en el directorio MSI!"
-
-#: resultform.serropsipackagebuildererrcode
-msgctxt "resultform.serropsipackagebuildererrcode"
-msgid "Error invoking OPSI Package Builder (error code=%0:d). Please remove quiet option to check for further information."
-msgstr "Error invocando el OPSI Package Builder (código de error=%0:d). Por favor remueva la opción quiet para verificar más información."
-
-#: resultform.serropsipackagebuilderstart
-msgctxt "resultform.serropsipackagebuilderstart"
-msgid "Error invoking opsi package builder"
-msgstr "Error invocando el opsi package builder"
-
-#: resultform.serrpacketbasedirnotfound
-msgctxt "resultform.serrpacketbasedirnotfound"
-msgid "Error: Packet BaseDir does not exist!"
-msgstr "Error: El BaseDir del paquete no existe"
-
-#: resultform.serrpacketdirexists
-msgctxt "resultform.serrpacketdirexists"
-msgid "Error: opsi packet folder %s already exists!"
-msgstr "Error: la carpeta del paquete %s opsi ya existe!"
-
-#: resultform.serrproductversioninvalid
-msgctxt "resultform.serrproductversioninvalid"
-msgid "Error: for Product Version only numbers allowed !"
-msgstr "Error: para el campo versión de producto sólo se permiten números!"
-
-#: resultform.serrselectinstalltype
-msgctxt "resultform.serrselectinstalltype"
-msgid "First select setup type tab (MSI, Inno Setup ...) and fill out form"
-msgstr "Primero seleccione la pestaña para el setup correspondiente (MSI, Inno Setup ...) y rellene los campos"
-
-#: resultform.serrsetupfilenotfound
-msgctxt "resultform.serrsetupfilenotfound"
-msgid "Error: Setup file does not exist!"
-msgstr "Error: El archivo de setup no existe!"
-
-#: resultform.shelpfile
-msgctxt "resultform.shelpfile"
-msgid "languages\\Help.de.html"
-msgstr "languages\\Help.de.html"
-
-#: resultform.shelpheader
-msgctxt "resultform.shelpheader"
-msgid "opsi setup detector Help"
-msgstr "Ayuda del opsi setup detector"
-
-#: resultform.sinfofinished
-msgctxt "resultform.sinfofinished"
-msgid "finished."
-msgstr "finalizado."
-
-#: resultform.slogfileinfo
-msgctxt "resultform.slogfileinfo"
-msgid "Logfile created: %s"
-msgstr "Archivo de log creado: %s"
-
-#: resultform.smboxheader
-msgctxt "resultform.smboxheader"
-msgid "opsi setup detector"
-msgstr "opsi setup detector"
-
-#: resultform.swarninstdiremptynodeinstall
-msgctxt "resultform.swarninstdiremptynodeinstall"
-msgid "Warning: Install Directory is empty, deinstall script cannot be patched!"
-msgstr "Atención: directorio de instalación está vacío, script de desinstalación no puede ser parcheado"
+"Error: Field Install Directory is empty!\n"
+"For this Installer the Installdir could not be detected.\n"
+"The Installdir is needed for correct Uninstall process.\n"
+"Please install this Product and check for the Installdir and write it to the setup and the uninstall script\n"
 
 #: tfnewdepdlg.caption
 msgid "opsi-setup-detector: Dependency Editor"
-msgstr "opsi-setup-detector: Error de dependencia"
+msgstr "opsi-setup-detector: Dependency Editor"
 
 #: tfnewdepdlg.comboboxactstate.text
 msgid "ComboBoxActState"
-msgstr "Acción o estado"
+msgstr ""
 
 #: tfnewdepdlg.editproductid.text
 msgid "productId"
-msgstr "Id de producto"
+msgstr "productId"
 
 #: tfnewdepdlg.groupbox1.caption
 msgid "Require Mode"
-msgstr "Modo requerido"
+msgstr "Require Mode"
 
 #: tfnewdepdlg.label1.caption
 msgctxt "tfnewdepdlg.label1.caption"
@@ -532,43 +292,43 @@ msgid ""
 "Please note:\n"
 "You may may neither give a requested installation state or a requested action. A combination is not allowed.\n"
 msgstr ""
-"Por favor edite la dependencia.\n"
-"Por favor tenga en cuenta:\n"
-"Solo puede solicitar una instalación o una acción requerida. Una combinación no está permitido.\n"
+"Please edit the dependency.\n"
+"Please note:\n"
+"You may may neither give a requested installation state or a requested action. A combination is not allowed.\n"
 
 #: tfnewdepdlg.label2.caption
 msgid "productid"
-msgstr "Id de producto"
+msgstr "productid"
 
 #: tfnewdepdlg.label3.caption
 msgid "Action or State"
-msgstr "Acción o estado"
+msgstr "Action or State"
 
 #: tfnewdepdlg.label4.caption
 msgid "Requirement Type"
-msgstr "Tipo de requerimiento"
+msgstr "Requirement Type"
 
 #: tfnewdepdlg.radiobuttonaction.caption
 msgid "Action"
-msgstr "Acción"
+msgstr "Action"
 
 #: tfnewdepdlg.radiobuttonstate.caption
 msgid "State"
-msgstr "Estado"
+msgstr "State"
 
 #: tfnewpropdlg.bitbtnaddprop.caption
 msgctxt "tfnewpropdlg.bitbtnaddprop.caption"
 msgid "Add Value"
-msgstr "Agregar valor"
+msgstr "Add Value"
 
 #: tfnewpropdlg.bitbtndelprop.caption
 msgctxt "tfnewpropdlg.bitbtndelprop.caption"
 msgid "Delete Value"
-msgstr "Borrar valor"
+msgstr "Delete Value"
 
 #: tfnewpropdlg.caption
 msgid "opsi-setup-detector - Properties"
-msgstr "opsi-setup-detector - Propiedades"
+msgstr "opsi-setup-detector - Properties"
 
 #: tfnewpropdlg.checkboxpropedit.caption
 msgctxt "tfnewpropdlg.checkboxpropedit.caption"
@@ -578,22 +338,22 @@ msgstr "Editable"
 #: tfnewpropdlg.checkboxpropmultival.caption
 msgctxt "tfnewpropdlg.checkboxpropmultival.caption"
 msgid "Multivalue"
-msgstr "Valor múltiple"
+msgstr "Multivalue"
 
 #: tfnewpropdlg.editpropname.text
 msgctxt "tfnewpropdlg.editpropname.text"
 msgid "PropertyName"
-msgstr "Nombre de la propiedad"
+msgstr "PropertyName"
 
 #: tfnewpropdlg.editpropnewval.text
 msgctxt "tfnewpropdlg.editpropnewval.text"
 msgid "New Value"
-msgstr "Valor nuevo"
+msgstr "New Value"
 
 #: tfnewpropdlg.groupbox1.caption
 msgctxt "tfnewpropdlg.groupbox1.caption"
 msgid "Property Type"
-msgstr "Tipo de propiedad"
+msgstr "Property Type"
 
 #: tfnewpropdlg.label1.caption
 msgctxt "tfnewpropdlg.label1.caption"
@@ -602,29 +362,29 @@ msgid ""
 "Please note:\n"
 "You may may neither give a requested installation state or a requested action. A combination is not allowed.\n"
 msgstr ""
-"Por favor edite la dependencia.\n"
-"Por favor tenga en cuenta:\n"
-"Solo puede solicitar una instalación o una acción requerida. Una combinación no es posible.\n"
+"Please edit the dependency.\n"
+"Please note:\n"
+"You may may neither give a requested installation state or a requested action. A combination is not allowed.\n"
 
 #: tfnewpropdlg.label2.caption
 msgctxt "tfnewpropdlg.label2.caption"
 msgid "Property Name"
-msgstr "Nombre de propiedad"
+msgstr "Property Name"
 
 #: tfnewpropdlg.label4.caption
 msgctxt "tfnewpropdlg.label4.caption"
 msgid "Possible Values"
-msgstr "Valores posibles"
+msgstr "Possible Values"
 
 #: tfnewpropdlg.label5.caption
 msgctxt "tfnewpropdlg.label5.caption"
 msgid "Default Values"
-msgstr "Valores por defectos"
+msgstr "Default Values"
 
 #: tfnewpropdlg.label6.caption
 msgctxt "tfnewpropdlg.label6.caption"
 msgid "Description"
-msgstr "Descripción"
+msgstr "Description"
 
 #: tfnewpropdlg.radiobuttonpropbool.caption
 msgctxt "tfnewpropdlg.radiobuttonpropbool.caption"
@@ -634,99 +394,15 @@ msgstr "Boolean"
 #: tfnewpropdlg.radiobuttonpropstring.caption
 msgctxt "tfnewpropdlg.radiobuttonpropstring.caption"
 msgid "Text"
-msgstr "Texto"
-
-#: tfnewproperty.bitbtnadddep.caption
-msgctxt "tfnewproperty.bitbtnadddep.caption"
-msgid "Add Value"
-msgstr "Agregar valor"
-
-#: tfnewproperty.bitbtndeldep.caption
-msgctxt "tfnewproperty.bitbtndeldep.caption"
-msgid "Delete Value"
-msgstr "Borrar valor"
-
-#: tfnewproperty.caption
-msgid "FNewProperty"
-msgstr "Propiedad nueva"
-
-#: tfnewproperty.checkboxpropedit.caption
-msgctxt "tfnewproperty.checkboxpropedit.caption"
-msgid "Editable"
-msgstr "Editable"
-
-#: tfnewproperty.checkboxpropmultival.caption
-msgctxt "tfnewproperty.checkboxpropmultival.caption"
-msgid "Multivalue"
-msgstr "Valor múltiple"
-
-#: tfnewproperty.editpropname.text
-msgctxt "tfnewproperty.editpropname.text"
-msgid "Property Name"
-msgstr "Nombre de propiedad"
-
-#: tfnewproperty.editpropnewval.text
-msgctxt "tfnewproperty.editpropnewval.text"
-msgid "New Value"
-msgstr "Valor nuevo"
-
-#: tfnewproperty.groupbox1.caption
-msgctxt "tfnewproperty.groupbox1.caption"
-msgid "Property Type"
-msgstr "Tipo de propiedad"
-
-#: tfnewproperty.label1.caption
-msgctxt "tfnewproperty.label1.caption"
-msgid ""
-"Please edit the dependency.\n"
-"Please note:\n"
-"You may may neither give a requested installation state or a requested action. A combination is not allowed.\n"
-msgstr ""
-"Por favor edite la dependencia.\n"
-"Por favor tenga en cuenta:\n"
-"Solo puede solicitar una instalación o una acción requerida. Una combinación no es posible.\n"
-
-#: tfnewproperty.label2.caption
-msgctxt "tfnewproperty.label2.caption"
-msgid "Property Name"
-msgstr "Nombre de propiedad"
-
-#: tfnewproperty.label4.caption
-msgctxt "tfnewproperty.label4.caption"
-msgid "Possible Values"
-msgstr "Valores posibles"
-
-#: tfnewproperty.label5.caption
-msgctxt "tfnewproperty.label5.caption"
-msgid "Default Values"
-msgstr "Valores por defectos"
-
-#: tfnewproperty.radiobuttonpropbool.caption
-msgctxt "tfnewproperty.radiobuttonpropbool.caption"
-msgid "Boolean"
-msgstr "Boolean"
-
-#: tfnewproperty.radiobuttonpropstring.caption
-msgctxt "tfnewproperty.radiobuttonpropstring.caption"
-msgid "String"
-msgstr "String"
-
-#: tformhelp.caption
-msgid "FormHelp"
-msgstr "FormHelp"
-
-#: tformhelp.panel1.caption
-msgctxt "tformhelp.panel1.caption"
-msgid "Panel1"
-msgstr ""
+msgstr "Text"
 
 #: tfosdconfigdlg.bitbtn1.caption
 msgid "Finished"
-msgstr "Finalizado"
+msgstr "Finished"
 
 #: tfosdconfigdlg.caption
 msgid "opsi-setup-detector Configuration"
-msgstr "opsi-setup-detector configuración"
+msgstr "opsi-setup-detector Configuration"
 
 #: tfosdconfigdlg.label1.caption
 msgid ""
@@ -734,9 +410,9 @@ msgid ""
 "Click on a line to get help\n"
 "in the yellow field at the bottom.\n"
 msgstr ""
-"Edite la configuración aquí.\n"
-"Haga click en una línea para obtener ayuda\n"
-"En el campo amarillo al final\n"
+"Edit your configuration here.\n"
+"Click on a line to get help\n"
+"in the yellow field at the bottom.\n"
 
 #: tfosdconfigdlg.panel1.caption
 msgctxt "tfosdconfigdlg.panel1.caption"
@@ -746,80 +422,80 @@ msgstr ""
 #: tresultform1.bitbtnadddep.caption
 msgctxt "tresultform1.bitbtnadddep.caption"
 msgid "Add Dependency"
-msgstr "Agregar dependencia"
+msgstr "Add Dependency"
 
 #: tresultform1.bitbtnaddprop.caption
 msgid "Add Property"
-msgstr "Agregar propiedad"
+msgstr "Add Property"
 
 #: tresultform1.bitbtndeldep.caption
 msgctxt "tresultform1.bitbtndeldep.caption"
 msgid "Delete Dependency"
-msgstr "Borrar dependencia"
+msgstr "Delete Dependency"
 
 #: tresultform1.bitbtndelprop.caption
 msgid "Delete Property"
-msgstr "Borrar propiedad"
+msgstr "Delete Property"
 
 #: tresultform1.bitbtneditdep.caption
 msgid "Edit Dependency"
-msgstr "Editar dependencia"
+msgstr "Edit Dependency"
 
 #: tresultform1.bitbtneditprop.caption
 msgid "Edit Property"
-msgstr "Editar propiedad"
+msgstr "Edit Property"
 
 #: tresultform1.bitbtnopenfile.caption
 msgctxt "tresultform1.bitbtnopenfile.caption"
 msgid "Open Setup File"
-msgstr "Abrir el archivo setup"
+msgstr "Open Setup File"
 
 #: tresultform1.bitbtnopenfile1.caption
 msgctxt "tresultform1.bitbtnopenfile1.caption"
 msgid "Open Setup File"
-msgstr "Abrir el archivo setup"
+msgstr "Open Setup File"
 
 #: tresultform1.bitbtnopenmst1.caption
 msgctxt "tresultform1.bitbtnopenmst1.caption"
 msgid "Open MST File"
-msgstr "Abrir archivo MST"
+msgstr "Open MST File"
 
 #: tresultform1.bitbtnopenmst2.caption
 msgctxt "tresultform1.bitbtnopenmst2.caption"
 msgid "Open MST File"
-msgstr "Abrir archivo MST"
+msgstr "Open MST File"
 
 #: tresultform1.bitbtnrecheckworkbench.caption
 msgid "Check workbench path"
-msgstr "Chequear el directorio del workbench"
+msgstr "Check workbench path"
 
 #: tresultform1.bitbtnworkbenchpath.caption
 msgid "Select workbench path"
-msgstr "Seleccionar el directorio del workbench"
+msgstr "Select workbench path"
 
 #: tresultform1.btanalyzenextstep.caption
 msgctxt "tresultform1.btanalyzenextstep.caption"
 msgid "Next Step"
-msgstr "Próximo paso"
+msgstr "Next Step"
 
 #: tresultform1.btanalyzenextstep.hint
 msgctxt "tresultform1.btanalyzenextstep.hint"
 msgid "Go to the next Step"
-msgstr "Ir al siguiente paso"
+msgstr "Go to the next Step"
 
 #: tresultform1.btanalyzeonly.caption
 msgctxt "tresultform1.btanalyzeonly.caption"
 msgid "Only analyze single File "
-msgstr "Solo analizar un archivo"
+msgstr "Only analyze single File "
 
 #: tresultform1.btanalyzeonly.hint
 msgctxt "tresultform1.btanalyzeonly.hint"
 msgid "Analyze a single existing Setupfile "
-msgstr "Analizar un archivo de setup único"
+msgstr "Analyze a single existing Setupfile "
 
 #: tresultform1.btatwonalyzeandcreate.caption
 msgid "Analyze two Files (32 and 64 Bit) and Create Opsi Package"
-msgstr "Analizar dos archivos (32 y 64 Bits) y crear un paquete opsi"
+msgstr "Analyze two Files (32 and 64 Bit) and Create Opsi Package"
 
 #: tresultform1.btatwonalyzeandcreate.hint
 msgctxt "tresultform1.btatwonalyzeandcreate.hint"
@@ -827,73 +503,73 @@ msgid ""
 "Analyze a single existing Setupfile \n"
 "and create an opsi Product\n"
 msgstr ""
-"Analizar un archivo de setup\n"
-"y crear un producto opsi\n"
+"Analyze a single existing Setupfile \n"
+"and create an opsi Product\n"
 
 #: tresultform1.btcreateemptytemplate.caption
 msgid "Create an opsi Package Template"
-msgstr "Crear un paquete de opsi de plantilla"
+msgstr "Create an opsi Package Template"
 
 #: tresultform1.btcreateemptytemplate.hint
 msgid ""
 "Create a empty \n"
 "opsi Product Directory Structure\n"
 msgstr ""
-"crear una estructura vacía\n"
-"de directorio de producto de opsi\n"
+"Create a empty \n"
+"opsi Product Directory Structure\n"
 
 #: tresultform1.btcreateproduct.caption
 msgid "Create Opsi Package"
-msgstr "Crear paquete opsi"
+msgstr "Create Opsi Package"
 
 #: tresultform1.btcreateproduct.hint
 msgid "Create a opsi Product"
-msgstr "Crear un producto opsi"
+msgstr "Create a opsi Product"
 
 #: tresultform1.btproduct1nextstep.caption
 msgctxt "tresultform1.btproduct1nextstep.caption"
 msgid "Next Step"
-msgstr "Próximo paso"
+msgstr "Next Step"
 
 #: tresultform1.btproduct1nextstep.hint
 msgctxt "tresultform1.btproduct1nextstep.hint"
 msgid "Go to the next Step"
-msgstr "Ir al siguiente paso"
+msgstr "Go to the next Step"
 
 #: tresultform1.btproduct2nextstep.caption
 msgctxt "tresultform1.btproduct2nextstep.caption"
 msgid "Next Step"
-msgstr "Próximo paso"
+msgstr "Next Step"
 
 #: tresultform1.btproduct2nextstep.hint
 msgctxt "tresultform1.btproduct2nextstep.hint"
 msgid "Go to the next Step"
-msgstr "Ir al siguiente paso"
+msgstr "Go to the next Step"
 
 #: tresultform1.btsetup1nextstep.caption
 msgctxt "tresultform1.btsetup1nextstep.caption"
 msgid "Next Step"
-msgstr "Próximo paso"
+msgstr "Next Step"
 
 #: tresultform1.btsetup1nextstep.hint
 msgctxt "tresultform1.btsetup1nextstep.hint"
 msgid "Go to the next Step"
-msgstr "Ir al siguiente paso"
+msgstr "Go to the next Step"
 
 #: tresultform1.btsetup2nextstep.caption
 msgctxt "tresultform1.btsetup2nextstep.caption"
 msgid "Next Step"
-msgstr "Próximo paso"
+msgstr "Next Step"
 
 #: tresultform1.btsetup2nextstep.hint
 msgctxt "tresultform1.btsetup2nextstep.hint"
 msgid "Go to the next Step"
-msgstr "Ir al siguiente paso"
+msgstr "Go to the next Step"
 
 #: tresultform1.btsingleanalyzeandcreate.caption
 msgctxt "tresultform1.btsingleanalyzeandcreate.caption"
 msgid "Analyze single File and Create Opsi Package"
-msgstr "Analizar un único archivo y crear un paquete opsi"
+msgstr "Analyze single File and Create Opsi Package"
 
 #: tresultform1.btsingleanalyzeandcreate.hint
 msgctxt "tresultform1.btsingleanalyzeandcreate.hint"
@@ -901,8 +577,8 @@ msgid ""
 "Analyze a single existing Setupfile \n"
 "and create an opsi Product\n"
 msgstr ""
-"Analizar un archivo de setup\n"
-"y crear un producto opsi\n"
+"Analyze a single existing Setupfile \n"
+"and create an opsi Product\n"
 
 #: tresultform1.caption
 msgid "opsi Setup Detector"
@@ -911,12 +587,12 @@ msgstr "opsi Setup Detector"
 #: tresultform1.checkboxbuild.caption
 msgctxt "TRESULTFORM1.CHECKBOXBUILD.CAPTION"
 msgid "build"
-msgstr "crear"
+msgstr "build"
 
 #: tresultform1.checkboxinstall.caption
 msgctxt "TRESULTFORM1.CHECKBOXINSTALL.CAPTION"
 msgid "install"
-msgstr "instalar"
+msgstr "install"
 
 #: tresultform1.checkboxquiet.caption
 msgid "quiet"
@@ -925,22 +601,22 @@ msgstr "quiet"
 #: tresultform1.checkboxusemst.caption
 msgctxt "tresultform1.checkboxusemst.caption"
 msgid "use MST File"
-msgstr "usar archivo MST"
+msgstr "use MST File"
 
 #: tresultform1.checkboxusemst1.caption
 msgctxt "tresultform1.checkboxusemst1.caption"
 msgid "use MST File"
-msgstr "usar archivo MST"
+msgstr "use MST File"
 
 #: tresultform1.checkgroupbuildmode.caption
 msgctxt "tresultform1.checkgroupbuildmode.caption"
 msgid "Build Mode"
-msgstr "Modo de creación"
+msgstr "Build Mode"
 
 #: tresultform1.fileexit.caption
 msgctxt "tresultform1.fileexit.caption"
 msgid "&Exit"
-msgstr "&Salir"
+msgstr "&Exit"
 
 #: tresultform1.filehelp.caption
 msgid "&Help"
@@ -953,168 +629,172 @@ msgstr ""
 #: tresultform1.label50.caption
 msgctxt "tresultform1.label50.caption"
 msgid "Setup File"
-msgstr "Archivo de setup"
+msgstr "Setup File"
 
 #: tresultform1.label52.caption
 msgctxt "TRESULTFORM1.LABEL52.CAPTION"
 msgid "Software Version"
-msgstr "Versión de software"
+msgstr "Software Version"
 
 #: tresultform1.label53.caption
 msgctxt "tresultform1.label53.caption"
 msgid "MsiId       "
-msgstr "Id de MSI"
+msgstr "MsiId       "
 
 #: tresultform1.label54.caption
 msgctxt "TRESULTFORM1.LABEL54.CAPTION"
 msgid "Required Space MB"
-msgstr "Espacio requerido MB"
+msgstr "Required Space MB"
 
 #: tresultform1.label55.caption
 msgctxt "TRESULTFORM1.LABEL55.CAPTION"
 msgid "InstallDir"
-msgstr "Directorio de instalación"
+msgstr "InstallDir"
 
 #: tresultform1.label57.caption
 msgctxt "TRESULTFORM1.LABEL57.CAPTION"
 msgid "Description"
-msgstr "Descripción"
+msgstr "Description"
 
 #: tresultform1.label58.caption
 msgctxt "tresultform1.label58.caption"
 msgid "Product Version"
-msgstr "Versión de producto"
+msgstr "Product Version"
 
 #: tresultform1.label59.caption
 msgctxt "tresultform1.label59.caption"
 msgid "MsiId"
-msgstr "Id de MSI"
+msgstr "MsiId"
 
 #: tresultform1.label60.caption
 msgctxt "tresultform1.label60.caption"
 msgid "MST File  "
-msgstr "Archivo MST"
+msgstr "MST File  "
 
 #: tresultform1.label61.caption
 msgctxt "tresultform1.label61.caption"
 msgid "Package Version"
-msgstr "Versión del Paquete"
+msgstr "Package Version"
 
 #: tresultform1.label62.caption
 msgctxt "tresultform1.label62.caption"
 msgid "Detected Setup type:"
-msgstr "Tipo de setup detectado:"
+msgstr "Detected Setup type:"
 
 #: tresultform1.label63.caption
+#, fuzzy
+#| msgid "Architecture Mode"
 msgctxt "tresultform1.label63.caption"
-msgid "Architecture Mode"
-msgstr "Modo arquitectura"
+msgid "Info: "
+msgstr "Architecture Mode"
 
 #: tresultform1.label64.caption
 msgctxt "tresultform1.label64.caption"
 msgid "Setup file size MB"
-msgstr "Archivo de setup tamaño MB"
+msgstr "Setup file size MB"
 
 #: tresultform1.label65.caption
 msgid "Advice"
-msgstr "Aviso"
+msgstr "Advice"
 
 #: tresultform1.label66.caption
 msgctxt "tresultform1.label66.caption"
 msgid "opsi Product ID"
-msgstr "ID de producto opsi"
+msgstr "opsi Product ID"
 
 #: tresultform1.label67.caption
 msgctxt "tresultform1.label67.caption"
 msgid "opsi Product Name"
-msgstr "Nombre de producto de opsi"
+msgstr "opsi Product Name"
 
 #: tresultform1.label68.caption
 msgctxt "tresultform1.label68.caption"
 msgid "Detected Setup type:"
-msgstr "Tipo de setup detectado:"
+msgstr "Detected Setup type:"
 
 #: tresultform1.label69.caption
+#, fuzzy
+#| msgid "Architecture Mode"
 msgctxt "tresultform1.label69.caption"
-msgid "Architecture Mode"
-msgstr "Modo arquitectura"
+msgid "Info: "
+msgstr "Architecture Mode"
 
 #: tresultform1.label70.caption
 msgctxt "tresultform1.label70.caption"
 msgid "MST File "
-msgstr "Archivo MST"
+msgstr "MST File "
 
 #: tresultform1.label71.caption
 msgctxt "tresultform1.label71.caption"
 msgid "Software Version"
-msgstr "Versión de software"
+msgstr "Software Version"
 
 #: tresultform1.label72.caption
 msgctxt "tresultform1.label72.caption"
 msgid "Required Space"
-msgstr "Espacio requerido"
+msgstr "Required Space"
 
 #: tresultform1.label73.caption
 msgctxt "tresultform1.label73.caption"
 msgid "InstallDir"
-msgstr "Directorio de instalación"
+msgstr "InstallDir"
 
 #: tresultform1.label74.caption
 msgctxt "tresultform1.label74.caption"
 msgid "Setup file size MB"
-msgstr "Archivo de setup tamaño MB"
+msgstr "Setup file size MB"
 
 #: tresultform1.label75.caption
 msgctxt "tresultform1.label75.caption"
 msgid "Dependencies"
-msgstr "Dependencias de otros productos"
+msgstr "Dependencies"
 
 #: tresultform1.label76.caption
 msgid "Priority"
-msgstr "Prioridad"
+msgstr "Priority"
 
 #: tresultform1.label77.caption
 msgctxt "tresultform1.label77.caption"
 msgid "Setup File"
-msgstr "Archivo de setup"
+msgstr "Setup File"
 
 #: tresultform1.label78.caption
 msgid "Path to opsi-work-bench"
-msgstr "Directorio al opsi workbench"
+msgstr "Path to opsi-work-bench"
 
 #: tresultform1.label79.caption
 msgctxt "tresultform1.label79.caption"
 msgid "Unattended Install Command"
-msgstr "Comando instalación desatendida"
+msgstr "Unattended Install Command"
 
 #: tresultform1.label80.caption
 msgctxt "tresultform1.label80.caption"
 msgid "Unattended Uninstall Command"
-msgstr "Comando desinstalación desatendida"
+msgstr "Unattended Uninstall Command"
 
 #: tresultform1.label81.caption
 msgctxt "tresultform1.label81.caption"
 msgid "Uninstall Program"
-msgstr "Desinstalar programa"
+msgstr "Uninstall Program"
 
 #: tresultform1.label82.caption
 msgctxt "tresultform1.label82.caption"
 msgid "Unattended Install Command"
-msgstr "Comando instalación desatendida"
+msgstr "Unattended Install Command"
 
 #: tresultform1.label83.caption
 msgctxt "tresultform1.label83.caption"
 msgid "Unattended Uninstall Command"
-msgstr "Comando desinstalación desatendida"
+msgstr "Unattended Uninstall Command"
 
 #: tresultform1.label84.caption
 msgctxt "tresultform1.label84.caption"
 msgid "Uninstall Program"
-msgstr "Desinstalar programa"
+msgstr "Uninstall Program"
 
 #: tresultform1.label85.caption
 msgid "Properties"
-msgstr "Propiedades"
+msgstr "Properties"
 
 #: tresultform1.labelloginfo.caption
 msgid "LabelLogInfo"
@@ -1122,32 +802,48 @@ msgstr ""
 
 #: tresultform1.labelworkbenchnotok.caption
 msgid "Path to opsi-work-bench not is reachable - Check Network Mounts or Path"
-msgstr "Directorio al opsiworkbench no está disponible - Chequee los recursos de red o el directorio"
+msgstr "Path to opsi-work-bench not is reachable - Check Network Mounts or Path"
 
 #: tresultform1.labelworkbenchok.caption
 msgid "Path to opsi-work-bench is reachable"
-msgstr "Directorio al opsi workbench está disponible"
+msgstr "Path to opsi-work-bench is reachable"
 
 #: tresultform1.menuitemabout.caption
 msgid "&About"
-msgstr "&Acerca de"
+msgstr "&About"
 
 #: tresultform1.menuitemconfig.caption
 msgid "Configuration"
-msgstr "Configuración"
+msgstr "Configuration"
 
 #: tresultform1.menuitemfile.caption
 msgid "&File"
-msgstr "&Archivo"
+msgstr "&File"
 
 #: tresultform1.menuitemknowninstallers.caption
 msgid "Known Installers"
-msgstr "Instaladores conocidos"
+msgstr "Known Installers"
+
+#: tresultform1.menuitemlang.caption
+msgid "Languages"
+msgstr ""
+
+#: tresultform1.menuitemlangde.caption
+msgid "de"
+msgstr ""
+
+#: tresultform1.menuitemlangen.caption
+msgid "en"
+msgstr ""
+
+#: tresultform1.menuitemlanges.caption
+msgid "es"
+msgstr ""
 
 #: tresultform1.menuitemstart.caption
 msgctxt "tresultform1.menuitemstart.caption"
 msgid "Start"
-msgstr "Comenzar"
+msgstr "Start"
 
 #: tresultform1.panel10.caption
 msgid "Panel10"
@@ -1155,80 +851,80 @@ msgstr ""
 
 #: tresultform1.panel3.caption
 msgid "Panel3"
-msgstr "Panel3"
+msgstr ""
 
 #: tresultform1.panel4.caption
 msgid "Panel4"
-msgstr "Panel4"
+msgstr ""
 
 #: tresultform1.processing.caption
 msgid "processing..."
-msgstr "procesando..."
+msgstr "processing..."
 
 #: tresultform1.processstatement.caption
 msgid "please wait"
-msgstr "por favor espere"
+msgstr "please wait"
 
 #: tresultform1.radiobuttonbuildpackage.caption
 msgid "create opsi product files and  build package"
-msgstr "Crear archivos de productos opsi y crear paquete "
+msgstr "create opsi product files and  build package"
 
 #: tresultform1.radiobuttoncreateonly.caption
 msgctxt "TRESULTFORM1.RADIOBUTTONCREATEONLY.CAPTION"
 msgid "create opsi product files"
-msgstr "crear archivo de producto opsi"
+msgstr "create opsi product files"
 
 #: tresultform1.radiobuttonpackagebuilder.caption
 msgid "create opsi product files and start interactive PackageBuilder"
-msgstr "crear archivo de producto opsi y comenzar interactivamente el Package Builder"
+msgstr "create opsi product files and start interactive PackageBuilder"
 
 #: tresultform1.radiogroup1.caption
 msgid "Create Mode"
-msgstr "Crear modo"
+msgstr "Create Mode"
 
 #: tresultform1.sbtnexit.caption
 msgid "Exit"
-msgstr "Salir"
+msgstr "Exit"
 
 #: tresultform1.stringgriddep.columns[0].title.caption
 msgctxt "tresultform1.stringgriddep.columns[0].title.caption"
 msgid "Required ProductId"
-msgstr "Producto ID requerido"
+msgstr "Required ProductId"
 
 #: tresultform1.stringgriddep.columns[1].title.caption
 msgctxt "tresultform1.stringgriddep.columns[1].title.caption"
 msgid "Required State"
-msgstr "Estado requerido"
+msgstr "Required State"
 
 #: tresultform1.stringgriddep.columns[2].title.caption
 msgctxt "tresultform1.stringgriddep.columns[2].title.caption"
 msgid "Required Action"
-msgstr "Acción requerida"
+msgstr "Required Action"
 
 #: tresultform1.stringgriddep.columns[3].title.caption
 msgctxt "tresultform1.stringgriddep.columns[3].title.caption"
 msgid "Required Mode"
-msgstr "Modo requerido"
+msgstr "Required Mode"
 
 #: tresultform1.stringgridprop.columns[0].title.caption
 msgctxt "tresultform1.stringgridprop.columns[0].title.caption"
 msgid "PropertyId"
-msgstr "ID de Propiedad"
+msgstr "PropertyId"
 
 #: tresultform1.stringgridprop.columns[1].title.caption
 msgctxt "tresultform1.stringgridprop.columns[1].title.caption"
 msgid "Description"
-msgstr "Descripción"
+msgstr "Description"
 
 #: tresultform1.stringgridprop.columns[2].title.caption
 msgctxt "tresultform1.stringgridprop.columns[2].title.caption"
 msgid "Type"
-msgstr "Tipo"
+msgstr "Type"
 
 #: tresultform1.stringgridprop.columns[3].title.caption
 msgctxt "tresultform1.stringgridprop.columns[3].title.caption"
 msgid "Multivalue"
-msgstr "Valor múltiple"
+msgstr "Multivalue"
 
 #: tresultform1.stringgridprop.columns[4].title.caption
 msgctxt "tresultform1.stringgridprop.columns[4].title.caption"
@@ -1238,29 +934,29 @@ msgstr "Editable"
 #: tresultform1.stringgridprop.columns[5].title.caption
 msgctxt "tresultform1.stringgridprop.columns[5].title.caption"
 msgid "Possible Values"
-msgstr "Valores posibles"
+msgstr "Possible Values"
 
 #: tresultform1.stringgridprop.columns[6].title.caption
 msgctxt "tresultform1.stringgridprop.columns[6].title.caption"
 msgid "Default Values"
-msgstr "Valores por defectos"
+msgstr "Default Values"
 
 #: tresultform1.tabsheetanalyze.caption
 msgctxt "TRESULTFORM1.TABSHEETANALYZE.CAPTION"
 msgid "Analyze"
-msgstr "Analizar"
+msgstr "Analyze"
 
 #: tresultform1.tabsheetcreate.caption
 msgid "Create"
-msgstr "Crear"
+msgstr "Create"
 
 #: tresultform1.tabsheetproduct.caption
 msgid "Product Configuration 1"
-msgstr "Configuración de producto 1"
+msgstr "Product Configuration 1"
 
 #: tresultform1.tabsheetproduct2.caption
 msgid "Product Configuration 2"
-msgstr "Configuración de producto 2"
+msgstr "Product Configuration 2"
 
 #: tresultform1.tabsheetsetup1.caption
 msgid "1. Setup"
@@ -1273,10 +969,20 @@ msgstr "2. Setup"
 #: tresultform1.tabsheetstart.caption
 msgctxt "tresultform1.tabsheetstart.caption"
 msgid "Start"
-msgstr "Comenzar"
+msgstr "Start"
 
 #: tresultform1.ticheckboxlicenserequired.caption
 msgctxt "tresultform1.ticheckboxlicenserequired.caption"
 msgid "License required"
-msgstr "Licencia requerida"
+msgstr "License required"
+
+#: tresultform1.ticheckboxs1mst.caption
+msgctxt "tresultform1.ticheckboxs1mst.caption"
+msgid "MST allowed"
+msgstr ""
+
+#: tresultform1.ticheckboxs2mst.caption
+msgctxt "tresultform1.ticheckboxs2mst.caption"
+msgid "MST allowed"
+msgstr ""
 

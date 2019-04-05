@@ -25,6 +25,7 @@ uses
   osfunc,
   {$ENDIF OPSISCRIPT}
   oslog,
+  osparserhelper,
   synsock,
   synaip,
   netdb,
@@ -542,10 +543,12 @@ var
   pscmd, report: string;
   {$IFDEF OPSISCRIPT}
   outlines: TXStringlist;
+  //lineparts: TXStringlist;
   {$ELSE OPSISCRIPT}
   outlines: TStringlist;
+  lineparts: TStringlist;
   {$ENDIF OPSISCRIPT}
-  lineparts: TXStringlist;
+  lineparts: TStringlist;
   ExitCode: longint;
   i,k: integer;
 begin
@@ -554,10 +557,12 @@ begin
       Result := TStringList.Create;
       {$IFDEF OPSISCRIPT}
       outlines := TXStringList.Create;
+      //lineparts := TXStringList.Create;
       {$ELSE OPSISCRIPT}
-      outlines := TXStringList.Create;
-      {$ENDIF OPSISCRIPT}
+      outlines := TStringList.Create;
       lineparts := TXStringList.Create;
+      {$ENDIF OPSISCRIPT}
+      lineparts := TStringList.Create;
       pscmd := 'ps -eo pid,user,comm:30,cmd:110';
       if not RunCommandAndCaptureOut(pscmd, True, outlines, report,
         SW_HIDE, ExitCode) then
@@ -620,7 +625,7 @@ var
   {$ELSE OPSISCRIPT}
   outlines: TStringlist;
   {$ENDIF OPSISCRIPT}
-  lineparts: TXStringlist;
+  lineparts: TStringlist;
   ExitCode: longint;
   i,k: integer;
 begin
@@ -633,7 +638,7 @@ begin
       {$ELSE OPSISCRIPT}
       outlines := TXStringList.Create;
       {$ENDIF OPSISCRIPT}
-      lineparts := TXStringList.Create;
+      lineparts := TStringList.Create;
       pscmd := 'ps -eo pid,user,comm:30,cmd:110';
       if not RunCommandAndCaptureOut(pscmd, True, outlines, report,
         SW_HIDE, ExitCode,false,2) then
@@ -913,7 +918,7 @@ begin
     begin
       lineparts.Clear;
       LogDatei.log(outlines.strings[i], LLDebug2);
-      stringsplitByWhiteSpace(outlines.strings[i], lineparts);
+      stringsplitByWhiteSpace(outlines.strings[i], TStringlist(lineparts));
       if lineparts.Count > 1 then
       begin
         resultstring := copy(lineparts.Strings[0],1,length(lineparts.Strings[0])-2) + '=' + trim(lineparts.Strings[1]);
@@ -965,7 +970,7 @@ begin
   //str := getCommandResult('ip -o -4 route get '+target);
   // macos ip has no '-o'
   str := getCommandResult('/bin/bash -c "ip -4 route get '+target+' || exit $?"');
-  stringsplitByWhiteSpace (str, list);
+  stringsplitByWhiteSpace (str, TStringlist(list));
   i := list.IndexOf('src');
   if (i > -1) and (list.Count >= i) then
   begin
@@ -987,7 +992,7 @@ begin
   //str := getCommandResult('ip -o -4 route get 255.255.255.255');
   // macos ip has no '-o'
   str := getCommandResult('/bin/bash -c "'+cmd+' -4 route get 255.255.255.255 || exit $?"');
-  stringsplitByWhiteSpace (str, list);
+  stringsplitByWhiteSpace (str, Tstringlist(list));
   i := list.IndexOf('src');
   if (i > -1) and (list.Count >= i) then
   begin
@@ -1059,7 +1064,7 @@ var
             begin
               lineparts.Clear;
               LogDatei.log(outlines.strings[1], LLDebug2);
-              stringsplitByWhiteSpace(outlines.strings[1], lineparts);
+              stringsplitByWhiteSpace(outlines.strings[1], TStringlist(lineparts));
               if lineparts.Count > 1 then
               begin
                 result := trim(lineparts.Strings[1]);

@@ -9,12 +9,6 @@ unit osencoding;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 503 $
-// $Author: oertel $
-// $Date: 2016-10-11 21:15:42 +0200 (Di, 11 Okt 2016) $
-//***************************************************************************
 
 
 {$mode delphi}
@@ -34,14 +28,14 @@ function reencode(const sourceText: string; const sourceEncoding: string): strin
 function reencode(const sourceText: string; const sourceEncoding: string;
   var usedSourceEncoding: string): string; overload;
 function reencode(const sourceText: string; const sourceEncoding: string;
-  var usedSourceEncoding: string; destEncoding : string): string;  overload;
+  var usedSourceEncoding: string; destEncoding: string): string; overload;
 function searchencoding(const searchText: string): string;
-function LoadFromFileWithEncoding(filename, enc : string): TStringlist;
+function LoadFromFileWithEncoding(filename, enc: string): TStringList;
 procedure logSupportedEncodings;
 
 function stringListLoadUtf8FromFile(filename: string): TStringList;
-function stringListLoadUnicodeFromList(inlist: Tstringlist): TStringList;
-function isSupportedEncoding(testEncoding : string) : boolean;
+function stringListLoadUnicodeFromList(inlist: TStringList): TStringList;
+function isSupportedEncoding(testEncoding: string): boolean;
 
 
 
@@ -60,57 +54,58 @@ var
   additionalEncoding: string;
 
 
-function isSupportedEncoding(testEncoding : string) : boolean;
+function isSupportedEncoding(testEncoding: string): boolean;
 begin
-  result := false;
-  if supportedEncodings.IndexOf(testEncoding) > -1 then result := true;
-   // logdatei.log_prog('Found or given Encoding: ' + testEncoding +
-   //   ' is not supported.', LLWarning);
+  Result := False;
+  if supportedEncodings.IndexOf(testEncoding) > -1 then
+    Result := True;
+  // logdatei.log_prog('Found or given Encoding: ' + testEncoding +
+  //   ' is not supported.', LLWarning);
 end;
 
 
-  function stringListLoadUtf8FromFile(filename: string): TStringList;
-  var
-    fCES: TCharEncStream;
-  begin
-    Result := TStringList.Create;
-    fCES := TCharEncStream.Create;
-    fCES.Reset;
-    fileName := ExpandFileName(fileName);
-    fCES.LoadFromFile(fileName);
-    fCES.ANSIEnc := GetSystemEncoding;
-    Result.Text := fCES.UTF8Text;
-    fCES.Free;
-  end;
+function stringListLoadUtf8FromFile(filename: string): TStringList;
+var
+  fCES: TCharEncStream;
+begin
+  Result := TStringList.Create;
+  fCES := TCharEncStream.Create;
+  fCES.Reset;
+  fileName := ExpandFileName(fileName);
+  fCES.LoadFromFile(fileName);
+  fCES.ANSIEnc := GetSystemEncoding;
+  Result.Text := fCES.UTF8Text;
+  fCES.Free;
+end;
 
-  function stringListLoadUtf16leFromFile(filename: string): TStringList;
-  var
-    fCES: TCharEncStream;
-  begin
-    Result := TStringList.Create;
-    fCES := TCharEncStream.Create;
-    fCES.Reset;
-    fCES.UniStreamType:=ufUtf16le;
-    fileName := ExpandFileName(fileName);
-    fCES.LoadFromFile(fileName);
-    fCES.ANSIEnc := GetSystemEncoding;
-    Result.Text := fCES.UTF8Text;
-    fCES.Free;
-  end;
+function stringListLoadUtf16leFromFile(filename: string): TStringList;
+var
+  fCES: TCharEncStream;
+begin
+  Result := TStringList.Create;
+  fCES := TCharEncStream.Create;
+  fCES.Reset;
+  fCES.UniStreamType := ufUtf16le;
+  fileName := ExpandFileName(fileName);
+  fCES.LoadFromFile(fileName);
+  fCES.ANSIEnc := GetSystemEncoding;
+  Result.Text := fCES.UTF8Text;
+  fCES.Free;
+end;
 
 
-  function stringListLoadUnicodeFromList(inlist: Tstringlist): TStringList;
-  var
-    fCES: TCharEncStream;
-  begin
-    Result := TStringList.Create;
-    fCES := TCharEncStream.Create;
-    fCES.Reset;
-    inlist.SaveToStream(fCES);
-    fCES.ANSIEnc := GetSystemEncoding;
-    Result.Text := fCES.UTF8Text;
-    fCES.Free;
-  end;
+function stringListLoadUnicodeFromList(inlist: TStringList): TStringList;
+var
+  fCES: TCharEncStream;
+begin
+  Result := TStringList.Create;
+  fCES := TCharEncStream.Create;
+  fCES.Reset;
+  inlist.SaveToStream(fCES);
+  fCES.ANSIEnc := GetSystemEncoding;
+  Result.Text := fCES.UTF8Text;
+  fCES.Free;
+end;
 
 
 function isStringInList(const str: string; const list: TStringList): boolean;
@@ -177,7 +172,7 @@ begin
   else
   begin
     // it seems that we normally do not reach this branch
-    //
+
     // we found no encoding entry
     // we have now 2 possibilities:
     // a) there is no encoding entry
@@ -213,11 +208,11 @@ end;
 function reencode(const sourceText: string; const sourceEncoding: string;
   var usedSourceEncoding: string): string;
 begin
-  Result := reencode(sourceText, sourceEncoding, usedSourceEncoding,'utf8');
+  Result := reencode(sourceText, sourceEncoding, usedSourceEncoding, 'utf8');
 end;
 
 function reencode(const sourceText: string; const sourceEncoding: string;
-  var usedSourceEncoding: string; destEncoding : string): string;
+  var usedSourceEncoding: string; destEncoding: string): string;
 var
   str: string;
   mylist: TStringList;
@@ -234,17 +229,20 @@ begin
   if LowerCase(sourceEncoding) = 'auto' then
     usedSourceEncoding := guessEncoding(sourceText);
   if supportedEncodings.IndexOf(usedSourceEncoding) = -1 then
-    logdatei.log_prog('Found or given Encoding: ' + usedSourceEncoding +
-      ' is not supported.', LLWarning);
+    if Assigned(logdatei) then
+      logdatei.log_prog('Found or given Encoding: ' + usedSourceEncoding +
+        ' is not supported.', LLWarning);
   if LowerCase(usedSourceEncoding) <> LowerCase(destEncoding) then
   begin
-    logdatei.log_prog('Encodings are different so we have to reencode from ' + usedSourceEncoding +
-      ' to ' + destEncoding, LLDebug2);
+    if Assigned(logdatei) then
+      logdatei.log_prog('Encodings are different so we have to reencode from ' +
+        usedSourceEncoding + ' to ' + destEncoding, LLDebug2);
     if (usedSourceEncoding = 'utf8') or (usedSourceEncoding = 'UTF-8') or
       (destEncoding = 'utf8') or (destEncoding = 'UTF-8') then
     begin
       // which should not happen if destEncoding=utf8
-      logdatei.log_prog('We encode directly from or to utf8.', LLDebug2);
+      if Assigned(logdatei) then
+        logdatei.log_prog('We encode directly from or to utf8.', LLDebug2);
       (*
       if (usedSourceEncoding = 'utf16') or (usedSourceEncoding = 'UTF-16') or
       (destEncoding = 'utf16') or (destEncoding = 'UTF-16') then
@@ -257,83 +255,91 @@ begin
       else
       begin
       *)
-        // we use ConvertEncoding
-        Result := ConvertEncoding(sourceText, usedSourceEncoding, destEncoding);
+      // we use ConvertEncoding
+      Result := ConvertEncoding(sourceText, usedSourceEncoding, destEncoding);
       //end;
     end
     else
     if (lowercase(usedSourceEncoding) = 'unicode') then
     begin
       // which should not happen if destEncoding=utf8
-      logdatei.log_prog('We encode with charencstreams.', LLDebug2);
-      logdatei.log_prog('We encode line by line.', LLDebug2);
-        mylist := TStringList.Create;
-        str := ConvertEncoding(sourceText, usedSourceEncoding, 'utf8');
-        mylist.Text := str;
-        result := stringListLoadUnicodeFromList(mylist).Text;
-        mylist.Free;
+      if Assigned(logdatei) then
+        logdatei.log_prog('We encode with charencstreams.', LLDebug2);
+      if Assigned(logdatei) then
+        logdatei.log_prog('We encode line by line.', LLDebug2);
+      mylist := TStringList.Create;
+      str := ConvertEncoding(sourceText, usedSourceEncoding, 'utf8');
+      mylist.Text := str;
+      Result := stringListLoadUnicodeFromList(mylist).Text;
+      mylist.Free;
     end
     else
     begin
-      logdatei.log_prog('We encode via utf8.', LLDebug2);
-      logdatei.log_prog('Encodings are different so we have to reencode from ' + usedSourceEncoding +
-      ' to ' + destEncoding, LLDebug2);
-      if (usedSourceEncoding = 'ucs2be') or (usedSourceEncoding = 'UCS-2BE')
-        or (usedSourceEncoding = 'ucs2le') or (usedSourceEncoding = 'UCS-2LE')then
+      if Assigned(logdatei) then
+        logdatei.log_prog('We encode via utf8.', LLDebug2);
+      if Assigned(logdatei) then
+        logdatei.log_prog('Encodings are different so we have to reencode from ' +
+          usedSourceEncoding + ' to ' + destEncoding, LLDebug2);
+      if (usedSourceEncoding = 'ucs2be') or (usedSourceEncoding = 'UCS-2BE') or
+        (usedSourceEncoding = 'ucs2le') or (usedSourceEncoding = 'UCS-2LE') then
       begin
-        logdatei.log_prog('We encode line by line.', LLDebug2);
+        if Assigned(logdatei) then
+          logdatei.log_prog('We encode line by line.', LLDebug2);
         mylist := TStringList.Create;
         mylist.Text := sourceText;
         for i := 0 to mylist.Count - 1 do
         begin
           str := mylist.Strings[i];
-          mylist.Strings[i] := ConvertEncoding(str, usedSourceEncoding,'utf8');
-          logdatei.log_prog(usedSourceEncoding+' to utf8: '+str+' to '+mylist.Strings[i], LLDebug3);
+          mylist.Strings[i] := ConvertEncoding(str, usedSourceEncoding, 'utf8');
+          if Assigned(logdatei) then
+            logdatei.log_prog(usedSourceEncoding + ' to utf8: ' + str + ' to ' + mylist.Strings[i],
+              LLDebug3);
         end;
-        result := mylist.Text;
+        Result := mylist.Text;
         mylist.Free;
       end
       else
       begin
         Result := ConvertEncoding(sourceText, usedSourceEncoding, 'utf8');
-        logdatei.log_prog(usedSourceEncoding+' to utf8: '+sourceText+' to '+Result, LLDebug3);
+        if Assigned(logdatei) then
+          logdatei.log_prog(usedSourceEncoding + ' to utf8: ' + sourceText + ' to ' + Result, LLDebug3);
       end;
     end;
-    logdatei.log_prog('Reencoding from ' + usedSourceEncoding +
-      ' to ' + destEncoding, LLDebug2);
+    if Assigned(logdatei) then
+      logdatei.log_prog('Reencoding from ' + usedSourceEncoding + ' to ' +
+        destEncoding, LLDebug2);
   end
-  else logdatei.log_prog('Nothing to do: Reencoding from ' + usedSourceEncoding +
+  else if Assigned(logdatei) then
+    logdatei.log_prog('Nothing to do: Reencoding from ' + usedSourceEncoding +
       ' to ' + destEncoding, LLDebug2);
 end;
 
-function LoadFromFileWithEncoding(filename, enc : string): TStringlist;
+function LoadFromFileWithEncoding(filename, enc: string): TStringList;
 var
-  txtfile : Text;
-  rawline : Widestring;
-  encline : String;
+  txtfile: Text;
+  rawline: WideString;
+  encline: string;
 begin
-  Result := Tstringlist.Create;
-  if (enc = 'ucs2be') or (enc = 'UCS-2BE')
-     or (enc = 'ucs2le') or (enc = 'UCS-2LE')
-     or (enc = 'unicode')
-  then result.AddStrings(stringListLoadUtf8FromFile(filename))
-  else if (enc = 'utf16le')
-  then result.AddStrings(stringListLoadUtf16leFromFile(filename))
-  else if ((enc = 'utf8') or (enc = 'UTF-8'))
-  then
+  Result := TStringList.Create;
+  if (enc = 'ucs2be') or (enc = 'UCS-2BE') or (enc = 'ucs2le') or
+    (enc = 'UCS-2LE') or (enc = 'unicode') then
+    Result.AddStrings(stringListLoadUtf8FromFile(filename))
+  else if (enc = 'utf16le') then
+    Result.AddStrings(stringListLoadUtf16leFromFile(filename))
+  else if ((enc = 'utf8') or (enc = 'UTF-8')) then
   begin
     // utf8 is our internal code - nothing to do
-    result.LoadFromFile(filename);
+    Result.LoadFromFile(filename);
   end
   else
   begin
-    AssignFile(txtfile,filename);
+    AssignFile(txtfile, filename);
     Reset(txtfile);
-    while not eof(txtfile) do
+    while not EOF(txtfile) do
     begin
-      ReadLn(txtfile,rawline);
+      ReadLn(txtfile, rawline);
       encline := reencode(rawline, enc);
-      result.Append(encline);
+      Result.Append(encline);
     end;
     CloseFile(txtfile);
   end;
@@ -360,9 +366,9 @@ begin
   begin
     additionalEncoding := LowerCase(supportedEncodings.Strings[i]);
     if pos('-', additionalEncoding) > 0 then
-      additionalEncoding := copy(additionalEncoding, 0, pos('-', additionalEncoding) -
-        1) + copy(additionalEncoding, pos('-', additionalEncoding) + 1,
-        length(additionalEncoding));
+      additionalEncoding := copy(additionalEncoding, 0,
+        pos('-', additionalEncoding) - 1) + copy(additionalEncoding,
+        pos('-', additionalEncoding) + 1, length(additionalEncoding));
     supportedEncodings.Add(additionalEncoding);
   end;
   //for i:= 0 to supportedEncodings.Count-1 do writeln(supportedEncodings.Strings[i]);
@@ -371,8 +377,10 @@ end;
 procedure logSupportedEncodings;
 begin
   if LogDatei <> nil then
-    for i:= 0 to supportedEncodings.Count-1 do
-      logdatei.log_prog(supportedEncodings.Strings[i],LLDebug2);
+    for i := 0 to supportedEncodings.Count - 1 do
+      logdatei.log_prog(supportedEncodings.Strings[i], LLDebug2);
 end;
 
+initialization
+  initEncoding;
 end.

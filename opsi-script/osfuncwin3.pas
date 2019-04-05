@@ -9,13 +9,6 @@ unit osfuncwin3;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 455 $
-// $Author: oertel $
-// $Date: 2016-05-30 17:57:13 +0200 (Mo, 30 Mai 2016) $
-//***************************************************************************
-
 
 // inspiration from:
 // http://fox.wikis.com/wc.dll?Wiki~GetWindowsVersion

@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 612
+  Left = 654
   Height = 566
-  Top = 378
+  Top = 317
   Width = 1059
   Caption = 'opsi Setup Detector'
   ClientHeight = 546
@@ -13,7 +13,7 @@ object resultForm1: TresultForm1
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '1.8.4.0'
+  LCLVersion = '2.0.0.4'
   object Panel1: TPanel
     Left = 0
     Height = 40
@@ -2196,14 +2196,19 @@ object resultForm1: TresultForm1
                 Index = 1
               end            
               item
-                Control = Label63
+                Control = TICheckBoxS1Mst
                 WrapAfter = waAuto
                 Index = 2
               end            
               item
-                Control = TIComboBoxArch1
+                Control = Label63
                 WrapAfter = waAuto
                 Index = 3
+              end            
+              item
+                Control = TIS1Url
+                WrapAfter = waAuto
+                Index = 4
               end>
             FlowLayout = tlTop
             FlowStyle = fsLeftRightTopBottom
@@ -2222,19 +2227,6 @@ object resultForm1: TresultForm1
               ParentColor = False
               ParentFont = False
             end
-            object Label63: TLabel
-              Left = 302
-              Height = 21
-              Top = 8
-              Width = 128
-              Anchors = []
-              BorderSpacing.Left = 20
-              BorderSpacing.Around = 4
-              Caption = 'Architecture Mode'
-              Font.Height = -16
-              ParentColor = False
-              ParentFont = False
-            end
             object TIComboBoxInstaller1: TTIComboBox
               Left = 176
               Height = 23
@@ -2249,19 +2241,49 @@ object resultForm1: TresultForm1
               ParentFont = False
               TabOrder = 0
             end
-            object TIComboBoxArch1: TTIComboBox
-              Left = 446
+            object TICheckBoxS1Mst: TTICheckBox
+              Left = 300
               Height = 23
               Top = 6
-              Width = 100
+              Width = 90
               Anchors = []
-              BorderSpacing.Left = 10
+              BorderSpacing.Left = 20
               BorderSpacing.Around = 2
               BorderSpacing.InnerBorder = 2
-              HistoryCaseSensitive = False
-              MaxHistoryCount = 0
-              ParentFont = False
+              Caption = 'MST allowed'
+              OnChange = TICheckBoxS1MstChange
+              PropertyNameAsCaption = False
               TabOrder = 1
+            end
+            object Label63: TLabel
+              Left = 416
+              Height = 21
+              Top = 8
+              Width = 34
+              Anchors = []
+              BorderSpacing.Left = 20
+              BorderSpacing.Around = 4
+              Caption = 'Info: '
+              Font.Height = -16
+              ParentColor = False
+              ParentFont = False
+            end
+            object TIS1Url: TTILabel
+              Left = 463
+              Height = 21
+              Top = 8
+              Width = 51
+              Anchors = []
+              BorderSpacing.Left = 5
+              BorderSpacing.Around = 4
+              BorderSpacing.InnerBorder = 2
+              Font.Color = clBlue
+              Font.Height = -16
+              Font.Style = [fsUnderline]
+              OnClick = TIS1UrlClick
+              OnMouseEnter = TIS1UrlMouseEnter
+              OnMouseLeave = TIS1UrlMouseLeave
+              ParentFont = False
             end
           end
           object FlowPanelSetup32: TFlowPanel
@@ -3065,14 +3087,19 @@ object resultForm1: TresultForm1
               Index = 1
             end          
             item
-              Control = Label69
+              Control = TICheckBoxS2Mst
               WrapAfter = waAuto
               Index = 2
             end          
             item
-              Control = TIComboBoxArch2
+              Control = Label69
               WrapAfter = waAuto
               Index = 3
+            end          
+            item
+              Control = TIS2Url
+              WrapAfter = waAuto
+              Index = 4
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
@@ -3091,19 +3118,6 @@ object resultForm1: TresultForm1
             ParentColor = False
             ParentFont = False
           end
-          object Label69: TLabel
-            Left = 302
-            Height = 21
-            Top = 8
-            Width = 128
-            Anchors = []
-            BorderSpacing.Left = 20
-            BorderSpacing.Around = 4
-            Caption = 'Architecture Mode'
-            Font.Height = -16
-            ParentColor = False
-            ParentFont = False
-          end
           object TIComboBoxInstaller2: TTIComboBox
             Left = 176
             Height = 23
@@ -3118,19 +3132,49 @@ object resultForm1: TresultForm1
             ParentFont = False
             TabOrder = 0
           end
-          object TIComboBoxArch2: TTIComboBox
-            Left = 446
+          object TICheckBoxS2Mst: TTICheckBox
+            Left = 300
             Height = 23
             Top = 6
-            Width = 100
+            Width = 90
             Anchors = []
-            BorderSpacing.Left = 10
+            BorderSpacing.Left = 20
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
-            HistoryCaseSensitive = False
-            MaxHistoryCount = 0
-            ParentFont = False
+            Caption = 'MST allowed'
+            OnChange = TICheckBoxS2MstChange
+            PropertyNameAsCaption = False
             TabOrder = 1
+          end
+          object Label69: TLabel
+            Left = 416
+            Height = 21
+            Top = 8
+            Width = 34
+            Anchors = []
+            BorderSpacing.Left = 20
+            BorderSpacing.Around = 4
+            Caption = 'Info: '
+            Font.Height = -16
+            ParentColor = False
+            ParentFont = False
+          end
+          object TIS2Url: TTILabel
+            Left = 463
+            Height = 21
+            Top = 8
+            Width = 60
+            Anchors = []
+            BorderSpacing.Left = 5
+            BorderSpacing.Around = 4
+            BorderSpacing.InnerBorder = 2
+            Font.Color = clBlue
+            Font.Height = -16
+            Font.Style = [fsUnderline]
+            OnClick = TIS1UrlClick
+            OnMouseEnter = TIS1UrlMouseEnter
+            OnMouseLeave = TIS1UrlMouseLeave
+            ParentFont = False
           end
         end
         object FlowPanelMST1: TFlowPanel
@@ -6206,6 +6250,84 @@ object resultForm1: TresultForm1
     object MenuItemKnownInstallers: TMenuItem
       Caption = 'Known Installers'
       OnClick = MenuItemKnownInstallersClick
+    end
+    object MenuItemLang: TMenuItem
+      Caption = 'Languages'
+      object MenuItemLangEn: TMenuItem
+        Caption = 'en'
+        Bitmap.Data = {
+          46020000424D46020000000000003600000028000000100000000B0000000100
+          1800000000001002000064000000640000000000000000000000C09E7A634494
+          A269439C2C1193280C902508E8D6CF381B85341784E9D4CB7317007015006D13
+          007E3114D7BC8D6E3545D3B393FDFEFE7887F7DBC0C5C18071C3806EFFFEFE48
+          54FD4352FBFDFDFEB66657AB5E55DAC3B7F8FCFD4D60EBA4726BAE5637D5AFA3
+          FFFFFF7E81F38A8AF0C6745CFFFFFF2D2BFC2B29FAFEFEFFA43F3AFFFFF99D9A
+          F45C60E8CE9582671100B25E3FCF9C8CB8665AEFD5D4ECEDFF5F63F9FFFFFF34
+          32FE312FFBFFFFFFFDFFFF4142E5B599BF9A1B18AF60546B1300EDDDD9FFFEFE
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF3D3DFF3836FCFFFFFFFEFFFFFFFFFFFDFD
+          FDFCFDFCFCFCFBE8D5C97D61AC8893FF6464FF5F5FFF5959FF5454FF4E4EFF4C
+          4CFF4545FE3F3FFA3939F93434F72E2EF52B2BF54653F93A1F85EDDDD9FFFEFE
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5555FF4E4EFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFEFEE9D6CCC18462DDB0A1D5917EDFBEE17F82FCFFFFFFFFFFFF5C
+          5CFF5857FFFFFFFF696DFFE8E8FFEDDCD0A74941C48272912D11C18462EEC9BC
+          A7A5FFBDC1FFFFFFFFD59686FFFFFF6965FF6160FFFFFFFFD28E74ACA2F48B8B
+          F7FFFFFFD2AA9E983419CAA8A4AAB1FFFFFEFEF4E1DBDBB0A2DCAF9FFFFEFE8C
+          94FF858EFFFFFEFED3A192D09D8DE3C8C97C8AFEF9FDFED0B290BE9992ECD5B8
+          C6977BC68364C38364C08161EDDDD98163AD7E60ACEDDDD9B66B49B86648B05C
+          3DB9815A6F519CC59D7B
+        }
+        OnClick = MenuItemLangEnClick
+      end
+      object MenuItemLangDe: TMenuItem
+        Caption = 'de'
+        Bitmap.Data = {
+          46020000424D46020000000000003600000028000000100000000B0000000100
+          18000000000010020000640000006400000000000000000000002F8EAE2F8BB6
+          2F85B42F88B32F7FAC2F7FAA2F8DA92F85AB2F82A92F85A32F7FA02F7C9E2F7E
+          A32F76A12F79A12F73932FA1B69DEDFA9AEBF994EBF991E9F88BE7F787E5F582
+          E4F57FE2F47AE0F376DEF273DDF16FDCF06BDBEF69DAEF2F799D2FA7B6A2F1FB
+          68E6F961E4F75AE2F553E0F44BDDF245DBF13DD9EF37D7ED2FD4EB29D1E922CF
+          E81DCDE66DE0EF2F849B2F79B7A4D5FC6BB2FA64AFF95DAAF756A5F54FA2F447
+          9DF24199F13994EF3290EE2A8BEB2487EA1D82E86CB6F02F3F9D2F3FBCA5AFFC
+          6D6DFB6666FA5F5FF95959F75151F64949F44242F23B3BF13232EF2B2CEE2424
+          EB1E1EEA6B7CF12F3FA52F3FBDA9B2FC7373FC6E6DFB6666FA6060F95959F752
+          52F64A4AF44343F33C3CF13333EF2C2CEE2524EC707FF22F3FA83544BEACB5FD
+          7979FD7373FC6E6EFB6868FA6161F95A5AF85352F64B4BF44444F33C3CF13533
+          F02D2DEE7684F32F3FA93C4966AFB8CA7E7E9F7A7A9B7474976F6F9368688E61
+          61895B5B8353537E4B4C784445713C3C6C3536657A89A52F3F3F3C4949B1BABA
+          8383827E7E7E7A7A7A7575756F6F6F6968696262625B5B5B5454544D4D4D4545
+          453D3D3E7F8D8D2F3F3F3A4747B1BABAB1BABAAFB8B8ADB6B6A9B3B3A7B0B0A3
+          ADAD9FAAAA9BA6A697A2A2929D9E8E9A9A8996968491912F3F3F434C4C3A494C
+          38474C3C4A4C3A4646364140313F3F2F3F3F2F3F3F2F3F3F2F3F3F2F3F3F2F3F
+          3F2F3F3F2F3F3F2F3F3F
+        }
+        OnClick = MenuItemLangDeClick
+      end
+      object MenuItemLangEs: TMenuItem
+        Caption = 'es'
+        Bitmap.Data = {
+          46020000424D46020000000000003600000028000000100000000B0000000100
+          18000000000010020000640000006400000000000000000000000000F50000F3
+          0000F10000EF0000ED0000ED0000EB0000E90000E70000E50000E30000E10000
+          DF0000DD0000DD0000DD0000F76261FB5D5DFA5858F95554F95050F84B4BF746
+          46F74242F63D3DF53939F43535F33232F22F2FF22C2CF20000DD0000F96666FC
+          4444FA3F3FFA3A3AF93434F82E2EF72929F62323F51E1EF41919F31313F20E0F
+          F10B0BF12F2FF20000DF00FBFB6AFCFC49FBFBA8CEC04BC9EB4AA7E49DBBB63D
+          EEE82AF6F624F5F51FF4F419F3F314F2F210F2F232F3F300DFDF00FDFD6FFDFD
+          4FFCFCD6F1F9518CE05153ECE2EAF548E0F02FF7F72AF6F624F5F51FF4F419F3
+          F314F2F236F4F400E3E300FDFD73FEFE53FDFDB1C3F55367EDD4D3ECB0BDF242
+          E1EC36F8F830F7F72BF6F625F5F51FF4F41AF3F33BF5F400E5E500FDFD76FEFE
+          58FEFE55F3F2577EF15769EB8DE0ED41F4F33CF9F936F8F830F7F72BF6F625F5
+          F520F4F43FF5F500E7E700FDFF79FEFE5CFEFE59FEFE57EEF453DEEB4BF4F847
+          FBFB42FAFA3CF9F936F8F831F7F72BF6F626F4F544F5F600E7E70000FF7A7BFF
+          5F5FFE5C5CFE5959FE5454FD5151FD4C4CFC4747FB4242FA3D3CF93737F83131
+          F72C2CF64949F70000E90000FF7B7BFF7B7BFF7979FE7777FE7474FE7170FD6D
+          6DFD6969FC6565FC6060FB5C5CFA5757F95353F84E4EF70000EB0000FF0000FF
+          0000FF0000FF0000FD0000FD0000FD0000FD0000FB0000F90000F70000F50000
+          F30000F10000EF0000ED
+        }
+        OnClick = MenuItemLangEsClick
+      end
     end
   end
   object OpenDialogSetupfile: TOpenDialog

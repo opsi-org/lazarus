@@ -20,12 +20,6 @@ unit osshowsysinfo;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 427 $
-// $Author: oertel $
-// $Date: 2016-04-29 18:23:09 +0200 (Fr, 29 Apr 2016) $
-//***************************************************************************
 
 
 interface

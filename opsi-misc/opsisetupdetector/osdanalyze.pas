@@ -43,6 +43,9 @@ procedure get_advancedmsi_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_nsis_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_installaware_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_genmsinstaller_info(myfilename: string; var mysetup: TSetupFile);
+procedure get_wixtoolset_info(myfilename: string; var mysetup: TSetupFile);
+procedure get_boxstub_info(myfilename: string; var mysetup: TSetupFile);
+procedure get_sfxcab_info(myfilename: string; var mysetup: TSetupFile);
 // marker for add installers
 //procedure stringsgrep(myfilename: string; verbose,skipzero: boolean);
 procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
@@ -280,6 +283,7 @@ begin
   Mywrite('Analyzing ' + installerstr + ' Setup: ' + myfilename);
 
   mysetup.installerId := installerId;
+  mysetup.link:= installerArray[integer(mysetup.installerId)].Link;
   mysetup.setupFullFileName := myfilename;
   //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
   mysetup.installCommandLine :=
@@ -478,6 +482,7 @@ begin
   mysetup.uninstallCommandLine :=
     'msiexec /x ' + mysetup.msiId + ' ' +
     installerArray[integer(mysetup.installerId)].unattendeduninstall;
+  mysetup.mstAllowed:= true;
 
   LogDatei.log('get_MSI_info finished',LLInfo);
   mysetup.analyze_progess := 100;
@@ -864,6 +869,105 @@ begin
   mywrite('get_genmsinstaller_info finished');
 end;
 
+procedure get_wixtoolset_info(myfilename: string; var mysetup: TSetupFile);
+var
+  str1, str2 : string;
+  pos1, pos2, i : integer;
+  myoutlines, extractedFiles: TStringList;
+  destDir: string;
+  myCommand: string;
+  myreport: string;
+begin
+  Mywrite('Analyzing generic MS Installer-Setup:');
+  //mysetup.install_waitforprocess:=ExtractFileName(myfilename);
+  mysetup.SoftwareVersion := getProductInfoFromResource('FileVersion',myfilename);
+  mysetup.uninstallProg:= 'C:\ProgramData\{<UNKNOWN GUID>}\'
+        + ExtractFileName(myfilename);
+  aktProduct.productdata.productversion:= mysetup.SoftwareVersion;
+  str1 := getProductInfoFromResource('ProductName',myfilename);
+  aktProduct.productdata.productId := getPacketIDShort(str1);
+  aktProduct.productdata.productName := str1;
+
+  Mywrite('Analyzing Wix Bundle:');
+  {$IFDEF WINDOWS}
+
+  myoutlines := TStringList.Create;
+  destDir := GetTempDir(False);
+  destDir := destDir + DirectorySeparator + 'wixbundle';
+  if not DirectoryExists(destDir) then
+    CreateDir(destDir);
+
+  LogDatei.log('extract files from ' + myfilename + ' to'+destDir, LLInfo);
+  // myCommand := 'cmd.exe /C "'+ExtractFilePath(paramstr(0))+'innounp.exe" -x -a -y -d"'+destDir+'" ' +myfilename+ ' install_script.iss';
+  myCommand := '"' + ExtractFilePath(ParamStr(0)) + 'utils' + PathDelim +
+    'wixbin'+PathDelim + 'dark.exe" -x "' + destDir + '" ' + myfilename;
+  Mywrite(myCommand);
+
+  if not RunCommandAndCaptureOut(myCommand, True, myoutlines, myreport,
+    SW_SHOWMINIMIZED, myexitcode) then
+  begin
+    LogDatei.log('Failed to extract files from wix bundle: ' + myreport, LLerror);
+  end
+  else
+  begin
+    for i := 0 to myoutlines.Count - 1 do
+      mywrite(myoutlines.Strings[i]);
+    myoutlines.Free;
+
+    // read the extracted files
+    extractedFiles:= TStringList.Create;
+    try
+      FindAllFiles(extractedFiles, destDir, '*.*', true); //find  all extracted files
+      LogDatei.log('Files extracted from wix bundle: ', LLNotice);
+      for i := 0 to extractedFiles.Count - 1 do
+        LogDatei.log('--extracted: '+extractedFiles.Strings[i], LLNotice);
+    finally
+      extractedFiles.Free;
+    end;
+
+  end;
+    {$ENDIF WINDOWS}
+  mywrite('get_wixtoolset_info finished');
+end;
+
+procedure get_boxstub_info(myfilename: string; var mysetup: TSetupFile);
+var
+  str1, str2 : string;
+  pos1, pos2, i : integer;
+begin
+  Mywrite('Analyzing generic MS Installer-Setup:');
+  //mysetup.install_waitforprocess:=ExtractFileName(myfilename);
+  mysetup.SoftwareVersion := getProductInfoFromResource('FileVersion',myfilename);
+  mysetup.uninstallProg:= 'C:\ProgramData\{<UNKNOWN GUID>}\'
+        + ExtractFileName(myfilename);
+  aktProduct.productdata.productversion:= mysetup.SoftwareVersion;
+  str1 := getProductInfoFromResource('ProductName',myfilename);
+  aktProduct.productdata.productId := getPacketIDShort(str1);
+  aktProduct.productdata.productName := str1;
+
+  mywrite('get_boxstub_info finished');
+end;
+
+procedure get_sfxcab_info(myfilename: string; var mysetup: TSetupFile);
+var
+  str1, str2 : string;
+  pos1, pos2, i : integer;
+begin
+  Mywrite('Analyzing generic MS Installer-Setup:');
+  //mysetup.install_waitforprocess:=ExtractFileName(myfilename);
+  mysetup.SoftwareVersion := getProductInfoFromResource('FileVersion',myfilename);
+  mysetup.uninstallProg:= 'C:\ProgramData\{<UNKNOWN GUID>}\'
+        + ExtractFileName(myfilename);
+  aktProduct.productdata.productversion:= mysetup.SoftwareVersion;
+  str1 := getProductInfoFromResource('ProductName',myfilename);
+  aktProduct.productdata.productId := getPacketIDShort(str1);
+  aktProduct.productdata.productName := str1;
+
+  mywrite('get_sfxcab_info finished');
+end;
+
+// marker for add installers
+
 function analyze_markerlist(var mysetup: TSetupFile): TKnownInstaller;
 var
   i: integer;
@@ -1072,6 +1176,9 @@ begin
           installerToInstallerstr(setupType), LLWarning);
       stInstallAware: get_installaware_info(FileName, mysetup);
       stMSGenericInstaller: get_genmsinstaller_info(FileName, mysetup);
+      stWixToolset: get_wixtoolset_info(FileName, mysetup);
+      stBoxStub: get_boxstub_info(FileName, mysetup);
+      stSFXcab: get_sfxcab_info(FileName, mysetup);
       stUnknown: LogDatei.log(
           'Unknown Installer after Analyze.', LLcritical);
       else
@@ -1115,6 +1222,12 @@ begin
       stInstallAware: Mywrite('Found well known installer: ' +
           installerToInstallerstr(setupType));
       stMSGenericInstaller: Mywrite('Found well known installer: ' +
+          installerToInstallerstr(setupType));
+      stWixToolset: Mywrite('Found well known installer: ' +
+          installerToInstallerstr(setupType));
+      stBoxStub: Mywrite('Found well known installer: ' +
+          installerToInstallerstr(setupType));
+      stSFXcab: Mywrite('Found well known installer: ' +
           installerToInstallerstr(setupType));
       stUnknown: Mywrite('Sorry - unknown installer: ' +
           installerToInstallerstr(setupType));

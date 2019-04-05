@@ -25,7 +25,8 @@ type
     amSelectable);
   // marker for add installers
   TKnownInstaller = (stAdvancedMSI, stInno, stInstallShield, stInstallShieldMSI,
-    stMsi, stNsis, st7zip, st7zipsfx, stInstallAware, stMSGenericInstaller, stUnknown);
+    stMsi, stNsis, st7zip, st7zipsfx, stInstallAware, stMSGenericInstaller,
+    stWixToolset, stBoxStub, stSFXcab, stUnknown);
 
 
   TdetectInstaller = function(parent: TClass; markerlist: TStrings): boolean;
@@ -67,6 +68,7 @@ type
     FsetupFileSize: cardinal;     // MB
     Farchitecture: TArchitecture;
     FmsiId: string;
+    FmstAllowed: boolean;
     FMstFullFileName: string;
     FmstFileNamePath: string;
     FmstFileName: string;
@@ -76,6 +78,7 @@ type
     FinstallDirectory: string;
     Fmarkerlist: TStrings;
     Finfolist: TStrings;
+    Flink: string;
     FSoftwareVersion: string;
     Fwinbatch_del_argument: string;
     FinstallCommandLine: string;
@@ -101,6 +104,7 @@ type
     property setupFileSize: cardinal read FsetupFileSize write FsetupFileSize;
     property architecture: TArchitecture read Farchitecture write Farchitecture;
     property msiId: string read FmsiId write FmsiId;
+    property mstAllowed: boolean read FmstAllowed write FmstAllowed;
     property mstFullFileName: string read FMstFullFileName write SetMstFullFileName;
     property mstFileNamePath: string read FmstFileNamePath write FmstFileNamePath;
     property mstFileName: string read FmstFileName write FmstFileName;
@@ -110,6 +114,7 @@ type
     property installDirectory: string read FinstallDirectory write FinstallDirectory;
     property markerlist: TStrings read Fmarkerlist write SetMarkerlist;
     property infolist: TStrings read Finfolist write SetInfolist;
+    property link: string read Flink write Flink;
     property SoftwareVersion: string read FSoftwareVersion write FSoftwareVersion;
     property winbatch_del_argument: string read Fwinbatch_del_argument
       write Fwinbatch_del_argument;
@@ -467,6 +472,7 @@ begin
   FsetupFileSize := 0;
   Farchitecture := aUnknown;
   FmsiId := '';
+  FmstAllowed := false;
   FmstFullFileName := '';
   FmstFileNamePath := '';
   FmstFileName := '';
@@ -476,6 +482,7 @@ begin
   FinstallDirectory := 'unknown';
   Fmarkerlist.Clear;
   Finfolist.Clear;
+  Flink := '';
   FSoftwareVersion := '0.0';
   Fwinbatch_del_argument := '';
   FinstallCommandLine := '';
@@ -937,6 +944,9 @@ begin
   knownInstallerList.Add('7zipsfx');
   knownInstallerList.Add('InstallAware');
   knownInstallerList.Add('MSGenericInstaller');
+  knownInstallerList.Add('WixToolset');
+  knownInstallerList.Add('BoxStub');
+  knownInstallerList.Add('SFXcab');
   knownInstallerList.Add('Unknown');
 
 
@@ -1126,6 +1136,63 @@ begin
     comment := '';
     uib_exitcode_function := 'isMsExitcodeFatal_short';
     detected := @detectedbypatternwithor;
+  end;
+  // stWixToolset
+  with installerArray[integer(stWixToolset)] do
+  begin
+    description := 'Wix Toolset';
+    silentsetup := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    unattendedsetup := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    silentuninstall := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    unattendeduninstall := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '';
+    patterns.Add('WixBundle');
+    patterns.Add('Wix Toolset');
+    //infopatterns.Add('RunProgram="');
+    link := 'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
+    comment := '';
+    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    detected := @detectedbypatternwithand;
+  end;
+  // stBoxStub
+  with installerArray[integer(stBoxStub)] do
+  begin
+    description := 'MS Box Stup';
+    silentsetup := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    unattendedsetup := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    silentuninstall := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    unattendeduninstall := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '';
+    patterns.Add('boxstub.exe');
+    //patterns.Add('Wix Toolset');
+    //infopatterns.Add('RunProgram="');
+    link := 'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
+    comment := '';
+    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    detected := @detectedbypatternwithand;
+  end;
+  // stSFXcab
+  with installerArray[integer(stSFXcab)] do
+  begin
+    description := 'MS SFX Cab ';
+    silentsetup := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    unattendedsetup := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    silentuninstall := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    unattendeduninstall := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '';
+    patterns.Add('sfxcab.exe');
+    //patterns.Add('Wix Toolset');
+    //infopatterns.Add('RunProgram="');
+    link := 'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
+    comment := '';
+    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    detected := @detectedbypatternwithand;
   end;
   // marker for add installers
 

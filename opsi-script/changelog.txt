@@ -4,6 +4,11 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.1.1) stable; urgency=low
+
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 04 04 2019:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.1.0) experimental; urgency=low
 
   * integration of new xml functions:
@@ -25,9 +30,64 @@ opsi-winst/opsi-script (4.12.1.0) experimental; urgency=low
     * getXml2UniqueChildnodeByName
     * xml2GetFirstChildNodeByName(<xml-doc:stringlist>,<node name:string>) : <xml node:stringlist>
     * xml2NodeExistsByPathInXMLFile(myfilename, path: string; attributes_strict: boolean): boolean;
-  * osparser: new (undocumented) command 'setDebug_prog = (true/false)'
+
+  * new regex functions:
+  * isRegexMatch(<string>, <pattern>) : boolean
+  * getSubListByContainingRegex(<pattern>, <target list>) : stringlist
+  * getSubListByContainingRegex(<pattern list>, <target list>) : stringlist
+  * getRegexMatchList(<pattern>, <target list>) : stringlist
+  * getRegexMatchList(<pattern list>, <target list>) : stringlist
+  * removeFromListByContainingRegex(<pattern>, <target list>) : stringlist
+  * removeFromListByContainingRegex(<pattern list>, <target list>) : stringlist
+  * stringReplaceRegex(<string>, <pattern>, <replacement string>) : string
+  * stringReplaceRegexInList(<target list>, <pattern>, <replacement string>) : stringlist
+
+  * new network functions
+  * isValidIP4 (<ip4adr>) : boolean
+  * isValidIP4Network (<ip4adr>, <netmask>) : boolean
+  * isValidIP4Host (<ip4adr>, <netmask>) : boolean
+  * getIP4NetworkByAdrAndMask (<ip4adr>, <netmask>) : string
+  * getDefaultNetmaskByIP4adr (<ip4adr>) : string
+
+  * new url related functions
+  * parseUrl(<url string>) : stringlist
+  * createUrl(<urlcomponents list>) : string
+
+  * macos related:
+  * getos detect macos as 'macos'
   * osparser: new function GetMacosVersionInfo : string
   * osparser: new function getMacosVersionMap : stringlist
+
+  * misc:
+  * ExtractFileExtension (`<path>`) : string [W/L]
+  * ExtractFileName (`<path>`) : string [W/L]
+  * DirectoryExists (`path`[,<accessstr>]) : boolean [W/L]
+
+  * osparser: new (undocumented) command 'setDebug_prog = (true/false)'
+  * osshowsysinfo: caption is Systeminfo (instead of SystemInfo)
+  * reencode(paramstr(0),'system')
+  * remove some svn entries
+  * replace unit osxbase64 by fpc unit base64
+  * Release now compiled with activated Checks for IO, Range, Overflow and Stack
+  * unit oscrypt with {$RANGECHECKS OFF}
+  * osparserhelper: fix in geouterfunction
+  * osdefinedfunction: isvisiblelocalvar: serach optimization
+  * osfunc: checkfileexists: use widechsr/utf16 for filenames
+  * osparserhelper: new function stringlistintersection (get stringlist intersection)
+  * new cli parameter /processproducts productId [,productId ]*
+  * added unit oszip
+  * osparser: fileActionsMain: zipfile, unzipfile
+  * new in file sections: zipfile <file or dir> <zipfile>
+  * new in file sections: unzipfile <zipfile> <targetdir>
+  * osparser: fix in Hasminimumspace
+  * osparser: fix searchpath from %opsiScriptHelperPath% to %opsiScriptHelperPath%\lib; fixes #3975
+  * osparser: producestringlist: createstringlist: fix: empty strings as argument allowed
+    and createstringlist() gives empty list
+
+  * osparser: modified : getListFromWMI
+    * `getListFromWMI(`<wmi namespace str>,<wmi class str>,<property list>,<condition str>`) : stringlist`
+    * If <wmi namespace str> is empty, it defaults to `root\cimv2`.
+
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 23 01 2019:15:00:00 +0200
 
