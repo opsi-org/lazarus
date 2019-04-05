@@ -60,7 +60,10 @@ begin
      memo1.Append(errormsg);
      end
   else
+  begin
     Memo1.Text:= myWMIResultList.Text;
+    memo1.Append('Number of Lines: '+inttostr(myWMIResultList.Count));
+  end;
   (*
     for i := 0 to Pred(myWMIResultList.Count) do
     begin

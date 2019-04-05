@@ -6,6 +6,8 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 ##################################################################
 opsi-winst/opsi-script (4.12.1.1) stable; urgency=low
 
+  * fix in oswmi (give stringlist as stringlist)
+
 
 -- Detlef Oertel <d.oertel@uib.de>  Thu, 04 04 2019:15:00:00 +0200
 
@@ -72,7 +74,7 @@ opsi-winst/opsi-script (4.12.1.0) experimental; urgency=low
   * unit oscrypt with {$RANGECHECKS OFF}
   * osparserhelper: fix in geouterfunction
   * osdefinedfunction: isvisiblelocalvar: serach optimization
-  * osfunc: checkfileexists: use widechsr/utf16 for filenames
+  * osfunc: checkfileexists: use widechar/utf16 for filenames
   * osparserhelper: new function stringlistintersection (get stringlist intersection)
   * new cli parameter /processproducts productId [,productId ]*
   * added unit oszip

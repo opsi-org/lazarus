@@ -40,12 +40,11 @@
         <ResourceBaseClass Value="Form"/>
       </Unit1>
       <Unit2>
-        <Filename Value="..\..\external_libraries\misc\utilwmi.pas"/>
+        <Filename Value="..\..\common\oswmi.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="Utilwmi"/>
       </Unit2>
       <Unit3>
-        <Filename Value="..\..\common\oswmi.pas"/>
+        <Filename Value="..\..\external_libraries\modified\misc\utilwmi.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit3>
     </Units>
@@ -58,7 +57,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\..\external_libraries\misc;..\..\common"/>
+      <OtherUnitFiles Value="..\..\common;..\..\external_libraries\modified\misc"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
