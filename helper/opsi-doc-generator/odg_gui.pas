@@ -148,13 +148,13 @@ end;
 procedure TForm1.Button_os_save_ascii_showClick(Sender: TObject);
 begin
   ButtonOSConvertClick(Sender);
-  save_compile_show();
+  save_compile_show('');
 end;
 
 procedure TForm1.Button_py_save_ascii_showClick(Sender: TObject);
 begin
   ButtonPythonConvertClick(Sender);
-  save_compile_show();
+  save_compile_show('');
 end;
 
 initialization
