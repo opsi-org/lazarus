@@ -2,78 +2,121 @@ program genericlaunch;
 
 {$mode objfpc}{$H+}
 
-uses
-  {$IFDEF UNIX}{$IFDEF UseCThreads}
-  cthreads,
-  {$ENDIF}{$ENDIF}
-  Classes, SysUtils, FileUtil,
-  Process
-  ;
+uses {$IFDEF UNIX} {$IFDEF UseCThreads}
+  cthreads, {$ENDIF} {$ENDIF}
+  Classes,
+  osversioninfo,
+  osencoding,
+  oslog,
+  SysUtils,
+  lazFileUtils,
+  Process;
 
-function launchProgram (strProgram: string): boolean;
-// http://wiki.freepascal.org/Executing_External_Programs/de
+procedure initLogging;
 var
-  AProcess: TProcess;
-  AStringList: TStringList;
-
+  i : integer;
+  logfilename : string;
 begin
-  launchProgram:=true;
-  try
-    // Erzeugen des TProcess Objekts
-    AProcess := TProcess.Create(nil);
-
-    AStringList := TStringList.Create;
-
-    // TODO: deprecated ->
-    AProcess.CommandLine := strProgram;
-    // definieren einer Option, wie das Programm
-    // ausgeführt werden soll. Dies stellt sicher, dass
-    // unser Programm nicht vor Beendigung des aufgerufenen
-    // Programmes fortgesetzt wird. Außerdem wird hier angegeben,
-    // dass die Ausgabe gelesen werden soll. Wird aber nciht verwendet
-    AProcess.Options := AProcess.Options + [poWaitOnExit, poUsePipes];
-
-    AProcess.Execute;
-
-    // Ausgabe Stringliste lesen
-    //AStringList.LoadFromStream(AProcess.Output);
-    // Speichern in eine Datei output.txt
-    //AStringList.SaveToFile('output.txt');
-
-    AStringList.Free;
-    AProcess.Free;
-  except
-    launchProgram:=false;
-  end;
+  logdatei := TLogInfo.Create;
+  logfilename := ExtractFileNameOnly(reencode(ParamStr(0), 'system'))+'-laucher.log';
+  LogDatei.WritePartLog := False;
+  LogDatei.WriteErrFile:= False;
+  LogDatei.WriteHistFile:= False;
+  logdatei.CreateTheLogfile(logfilename, False);
+  logdatei.LogLevel := 7;
+  (*
+  for i := 0 to preLogfileLogList.Count-1 do
+    logdatei.log(preLogfileLogList.Strings[i], LLessential);
+  preLogfileLogList.Free;
+  *)
+  logdatei.log('opsi-generic launcher version: ' + getversioninfo, LLessential);
+  logdatei.log('Called as: ' + ExtractFileNameOnly(reencode(ParamStr(0), 'system')), LLessential);
 end;
 
-function ReadFileToString(strFilename: string): string;
-var
-  stream: TFileStream;
-begin
-  // öffnet eine Datei zum Lesen und sperrt sie gleichzeitig gegen Schreibzugriffe
-  stream := TFileStream.Create(strFilename, fmOpenRead or fmShareDenyWrite);
-  try
-    SetLength(Result, stream.Size);
-    stream.Read(Result[1], stream.Size);
-  finally
-    stream.Free;
-  end;
-end;
+  function launchProgram(strProgram: string): boolean;
+    // http://wiki.freepascal.org/Executing_External_Programs/de
+  var
+    AProcess: TProcess;
+    AStringList: TStringList;
 
-var  filePath, confFileName, executeStr : String;
-     param : String;
-     i : integer;
+  begin
+    launchProgram := True;
+    try
+      try
+        // Erzeugen des TProcess Objekts
+        AProcess := TProcess.Create(nil);
+
+        AStringList := TStringList.Create;
+
+        // TODO: deprecated ->
+        AProcess.CommandLine := strProgram;
+        // definieren einer Option, wie das Programm
+        // ausgeführt werden soll. Dies stellt sicher, dass
+        // unser Programm nicht vor Beendigung des aufgerufenen
+        // Programmes fortgesetzt wird. Außerdem wird hier angegeben,
+        // dass die Ausgabe gelesen werden soll. Wird aber nciht verwendet
+        AProcess.Options := AProcess.Options + [poUsePipes];
+
+        AProcess.Execute;
+
+        // Ausgabe Stringliste lesen
+        //AStringList.LoadFromStream(AProcess.Output);
+        // Speichern in eine Datei output.txt
+        //AStringList.SaveToFile('output.txt');
+
+      except
+        on e: Exception do
+        begin
+          logdatei.log('Exception:: ' + e.message, LLError);
+          //writeln('Exception:: ' + e.message);
+          launchProgram := False;
+        end
+      end;
+    finally
+      AStringList.Free;
+      AProcess.Free;
+    end;
+  end;
+
+  function ReadFileToString(strFilename: string): string;
+  var
+    stream: TFileStream;
+  begin
+    // öffnet eine Datei zum Lesen und sperrt sie gleichzeitig gegen Schreibzugriffe
+    stream := TFileStream.Create(strFilename, fmOpenRead or fmShareDenyWrite);
+    try
+      SetLength(Result, stream.Size);
+      stream.Read(Result[1], stream.Size);
+    finally
+      stream.Free;
+    end;
+  end;
+
+var
+  filePath, confFileName, executeStr: string;
+  param: string;
+  i: integer;
+
+{$R *.res}
+
 begin
-  filePath:=ExtractFilePath(ParamStr(0));
-  confFileName:=ExtractFileNameWithoutExt(ParamStr(0)) + '.conf';
+  initLogging;
+  writeln('opsi-generic launcher version: ' + getversioninfo);
+  filePath := ExtractFilePath(ParamStr(0));
+  confFileName := ExtractFileNameWithoutExt(ParamStr(0)) + '.conf';
   // hier ev. noch andere Sonderzeichen Abfangen?
   executeStr := StringReplace(ReadFileToString(confFileName), #10, ' ', [rfReplaceAll]);
-  for i:=1 to Paramcount do
+  for i := 1 to Paramcount do
   begin
-     param:= ParamStr(i);
-     executeStr := executeStr + ' ' + param;
+    param := ParamStr(i);
+    executeStr := executeStr + ' ' + param;
   end;
+  logdatei.log('Launch: ' + executeStr, LLessential);
+  writeln('Launch: ' + executeStr);
   launchProgram(executeStr);
+  logdatei.log('Launched - closing log.', LLessential);
+  LogDatei.Close;
+  LogDatei.Free;
 end.
+
 
