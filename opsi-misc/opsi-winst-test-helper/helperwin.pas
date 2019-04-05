@@ -7,7 +7,8 @@ interface
 {$Define GUI}
 
 uses
-  Classes, SysUtils, FileUtil,
+  //Classes,
+  SysUtils, FileUtil,
   {$IFDEF GUI}
   LResources,
   Forms,
@@ -21,18 +22,19 @@ uses
   helpermain,
   //VersionInfo,
   Process,
+  osversioninfo,
   {$IFDEF WINDOWS}
   Windows,
   wispecfolder,
   DSiWin32,
-  winpeimagereader,
+  //winpeimagereader,
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
-  elfreader,
+  //elfreader,
 
   {$ENDIF UNIX}
-  osencoding,
-  fileinfo;
+  Classes;
+  //fileinfo;
 
 type
 
@@ -269,6 +271,7 @@ begin
 end;
 *)
 
+(*
 procedure getversioninfo;
 var
   i: integer;
@@ -286,6 +289,7 @@ begin
     versionInfo.Free;
   end;
 end;
+*)
 
 procedure startchild(childsec: integer);
 var
@@ -429,7 +433,7 @@ begin
 
   if Application.HasOption('version') then
   begin
-    getversioninfo;
+    writeln('Version: '+getversioninfo);
     halt(myexitcode);
     Application.Terminate;
   end;

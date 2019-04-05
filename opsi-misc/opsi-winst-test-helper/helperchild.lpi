@@ -63,11 +63,6 @@
             <IncludeFiles Value="$(ProjOutDir)"/>
             <OtherUnitFiles Value="..\..\external_libraries\misc;..\..\common"/>
           </SearchPaths>
-          <Parsing>
-            <SyntaxOptions>
-              <UseAnsiStrings Value="False"/>
-            </SyntaxOptions>
-          </Parsing>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
             <Optimizations>
@@ -109,7 +104,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="8">
+    <Units Count="9">
       <Unit0>
         <Filename Value="helperchild.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -131,10 +126,9 @@
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="23"/>
-        <CursorPos X="3" Y="34"/>
+        <TopLine Value="416"/>
+        <CursorPos X="25" Y="436"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -155,7 +149,7 @@
       </Unit4>
       <Unit5>
         <Filename Value="wispecfolder.pas"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <TopLine Value="23"/>
         <CursorPos X="3" Y="34"/>
         <UsageCount Value="10"/>
@@ -179,8 +173,17 @@
         <CursorPos X="-1" Y="-1"/>
         <UsageCount Value="20"/>
       </Unit7>
+      <Unit8>
+        <Filename Value="..\..\common\osversioninfo.pas"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="2"/>
+        <CursorPos X="34" Y="18"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit8>
     </Units>
-    <JumpHistory Count="3" HistoryIndex="2">
+    <JumpHistory Count="5" HistoryIndex="4">
       <Position1>
         <Filename Value="helperwin.pas"/>
         <Caret Line="47" Column="61" TopLine="35"/>
@@ -193,6 +196,14 @@
         <Filename Value="wispecfolder.pas"/>
         <Caret Line="34" Column="3" TopLine="23"/>
       </Position3>
+      <Position4>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="274" Column="25" TopLine="259"/>
+      </Position4>
+      <Position5>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="25" Column="17"/>
+      </Position5>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
