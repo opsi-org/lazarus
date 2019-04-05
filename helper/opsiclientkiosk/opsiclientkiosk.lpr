@@ -14,7 +14,7 @@ uses
   lcltranslator,
   inifiles,
   opsiclientkioskgui,
-  ockdata, installdlg, datadb, ockunique;
+  ockdata, installdlg, datadb, osprocesses;
 
 
 {$R *.res}

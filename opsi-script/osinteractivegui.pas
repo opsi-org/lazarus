@@ -46,12 +46,6 @@ unit osinteractivegui;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 470 $
-// $Author: oertel $
-// $Date: 2016-07-13 18:28:37 +0200 (Mi, 13 Jul 2016) $
-//***************************************************************************
 
 
 
@@ -96,9 +90,9 @@ uses
   oslog, osparser, osfunc,
   Menus, Buttons, ComCtrls,
   //IdSysLog,
+  lcltranslator,
   strutils,
-  inifiles,
-  lcltranslator;
+  inifiles;
 
 type
 

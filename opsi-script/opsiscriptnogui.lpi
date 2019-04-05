@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="10"/>
+    <Version Value="11"/>
     <General>
       <Flags>
         <MainUnitHasCreateFormStatements Value="False"/>
@@ -120,17 +120,23 @@
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
-      <IgnoreBinaries Value="False"/>
-      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
-      <ExcludeFileFilter Value="*.(bak|ppu|ppw|o|so);*~;backup"/>
     </PublishOptions>
     <RunParams>
       <local>
-        <FormatVersion Value="1"/>
         <CommandLineParams Value="-opsiservice https://192.168.1.14:4447/rpc -clientid pctry5detlef.uib.local -username pctry5detlef.uib.local -password 2eb916a353d8604133a64e762ff45c88"/>
         <LaunchingApplication Use="True"/>
         <Display Use="True"/>
       </local>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default">
+          <local>
+            <CommandLineParams Value="-opsiservice https://192.168.1.14:4447/rpc -clientid pctry5detlef.uib.local -username pctry5detlef.uib.local -password 2eb916a353d8604133a64e762ff45c88"/>
+            <LaunchingApplication Use="True"/>
+            <Display Use="True"/>
+          </local>
+        </Mode0>
+      </Modes>
     </RunParams>
     <RequiredPackages Count="3">
       <Item1>
@@ -161,7 +167,7 @@
         <IsPartOfProject Value="True"/>
       </Unit3>
       <Unit4>
-        <Filename Value="lispecfolder.pas"/>
+        <Filename Value="macspecfolder.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
       <Unit5>
@@ -269,7 +275,6 @@
         <OverflowChecks Value="True"/>
         <StackChecks Value="True"/>
       </Checks>
-      <TargetOS Value="linux"/>
       <SmallerCode Value="True"/>
     </CodeGeneration>
     <Linking>

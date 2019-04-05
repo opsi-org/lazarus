@@ -1,0 +1,47 @@
+object FBitmapViewer: TFBitmapViewer
+  Left = 494
+  Height = 356
+  Top = 250
+  Width = 395
+  Caption = 'opsi-Bitmap-Viewer'
+  ClientHeight = 356
+  ClientWidth = 395
+  LCLVersion = '1.6.2.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 50
+    Top = 0
+    Width = 395
+    Align = alTop
+    ClientHeight = 50
+    ClientWidth = 395
+    TabOrder = 0
+    object BtnOpen: TBitBtn
+      Left = 13
+      Height = 30
+      Top = 11
+      Width = 75
+      Caption = 'Open File'
+      OnClick = BtnOpenClick
+      TabOrder = 0
+    end
+    object Label1: TLabel
+      Left = 114
+      Height = 1
+      Top = 18
+      Width = 1
+      ParentColor = False
+    end
+  end
+  object Image1: TImage
+    Left = 0
+    Height = 306
+    Top = 50
+    Width = 395
+    Align = alClient
+  end
+  object OpenPictureDialog1: TOpenPictureDialog
+    left = 29
+    top = 75
+  end
+end

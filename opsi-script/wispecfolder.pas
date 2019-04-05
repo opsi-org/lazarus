@@ -18,13 +18,6 @@ unit wispecfolder;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: $
-// $Author: $
-// $Date: $
-//***************************************************************************
-
 
 
 interface

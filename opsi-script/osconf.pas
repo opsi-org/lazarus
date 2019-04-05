@@ -23,21 +23,24 @@ interface
 uses
   Classes,
   SysUtils,
+  fileinfo,
 {$IFDEF GUI}
   Forms,
 {$ENDIF GUI}
-{$IFDEF LINUX}
-  fileinfo,
+{$IFDEF UNIX}
+  //fileinfo,
   //, winpeimagereader {need this for reading exe info}
   elfreader, // {needed for reading ELF executables}
 {$ENDIF LINUX}
 {$IFDEF WINDOWS}
-  VersionInfoX,
+  winpeimagereader, {need this for reading exe info}
+  //VersionInfoX,
   Windows,
   registry,
 {$ENDIF WINDOWS}
   inifiles,
-  lazfileutils;
+  lazfileutils,
+  osencoding;
 
 function readConfig: boolean;
 function writeConfig: boolean;
@@ -78,11 +81,11 @@ const
   {$IFDEF WINDOWS}
   ParamDelim = '/';
   opsiscriptconfinit = 'opsi-script.conf';
-  {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
+  {$ENDIF }
+  {$IFDEF UNIX}
   ParamDelim = '-';
   opsiscriptconfinit = '/etc/opsi-script/opsi-script.conf';
-  {$ENDIF LINUX}
+  {$ENDIF }
 
   WinstRegHive = 'HKLM';
   WinstRegKey: string = 'SOFTWARE\opsi.org\winst';
@@ -114,12 +117,13 @@ var
   LogPath: string;
   TmpPathFromLogdatei: string;
   {$IFDEF WINDOWS}
-  vi: TVersionInfo;
+  //vi: TVersionInfo;
   regist: TRegistry;
   {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
-  FileVerInfo: TFileVersionInfo;
+  {$IFDEF UNIX}
+  //FileVerInfo: TFileVersionInfo;
   {$ENDIF LINUX}
+  FileVerInfo: TFileVersionInfo;
   WinstVersion: string;
   WinstVersionName: string;
   readconfig_done: boolean = False;
@@ -132,19 +136,21 @@ var
   utilsdrive: string;
   configdrive: string;
   //deprecated stuff end
+
   {$IFDEF OSDEBUG}
   debug_prog: boolean = True;
-  default_loglevel : integer = 9;
+  default_loglevel : integer = 8;
   debug_lib: boolean = True;
+  force_min_loglevel: integer = 8;
   {$ELSE}
   debug_prog: boolean = False;
   default_loglevel : integer = 7;
   debug_lib: boolean = true;
+  force_min_loglevel: integer = 4;
   {$ENDIF}
   //debug_prog: boolean = True;
   //debug_lib: boolean = False;
   //debug_lib: boolean = True;
-  force_min_loglevel: integer = 4;
   opsiscriptconf : string;
   ScriptErrorMessages: boolean = False;
   AutoActivityDisplay: boolean = False;
@@ -155,7 +161,7 @@ implementation
 
 uses
   {$IFDEF WINDOWS}osfunc,{$ENDIF}
-  {$IFDEF LINUX}osfunclin,{$ENDIF}
+  {$IFDEF UNIX}osfunclin,{$ENDIF}
   oswebservice,
   osjson,
   osmain;
@@ -209,10 +215,10 @@ begin
   myconf.Free;
 
 
-{$IFDEF LINUX}
+{$IFDEF UNIX}
   computername := getHostnameLin;
 {$ENDIF LINUX}
-  //{$IFDEF LINUX} computername := ''; {$ENDIF LINUX}//
+  //{$IFDEF UNIX} computername := ''; {$ENDIF LINUX}//
   Result := True;
   depoturl := '';
   //configurl := '';
@@ -233,10 +239,10 @@ begin
   {$IFDEF WINDOWS}
   depotdrive := 'p:';
 {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   depotdrive_old := '/mnt';
 {$ENDIF LINUX}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   depotdrive := '/media/opsi_depot';
 {$ENDIF LINUX}
 
@@ -440,16 +446,22 @@ end;
 
 initialization
 opsiscriptconf := opsiscriptconfinit;
+initEncoding;
+(*
 {$IFDEF WINDOWS}
-  opsiscriptconf := ExtractFileDir(paramstr(0)) + PathDelim+ opsiscriptconfinit;
-  vi := TVersionInfo.Create(Application.ExeName);
+
+initEncoding;
+  opsiscriptconf := ExtractFileDir(reencode(paramstr(0),'system')) + PathDelim+ opsiscriptconfinit;
+  vi := TVersionInfo.Create;
+  vi.Load(reencode(Application.ExeName,'system'));
   WinstVersion := vi.getString('FileVersion');
   vi.Free;
 {$ELSE}
+*)
   //from http://wiki.freepascal.org/Show_Application_Title,_Version,_and_Company
   FileVerInfo := TFileVersionInfo.Create(nil);
   try
-    FileVerInfo.FileName := ParamStr(0);
+    FileVerInfo.FileName := reencode(paramstr(0),'system');
     FileVerInfo.ReadFileInfo;
     WinstVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
   (*
@@ -466,7 +478,7 @@ opsiscriptconf := opsiscriptconfinit;
     FileVerInfo.Free;
   end;
   //WinstVersion := '4.11.6.1';
-{$ENDIF WINDOWS}
+//{$ENDIF WINDOWS}
 
   WinstVersionName := 'Version ' + winstVersion;
 

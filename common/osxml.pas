@@ -11,9 +11,9 @@ unit osxml;
 
 //***************************************************************************
 // Subversion:
-// $Revision: 517 $
+// $Revision: 518 $
 // $Author: hammel $
-// $Date: 2016-11-15 10:18:35 +0100 (Di, 15 Nov 2016) $
+// $Date: 2016-12-06 14:15:37 +0100 (Di, 06. Dez 2016) $
 //***************************************************************************
 
 
@@ -22,7 +22,10 @@ unit osxml;
 interface
 
 uses
-  Classes, SysUtils, DOM, XMLRead, XMLWrite;
+  {$IFDEF OPSISCRIPT}
+  oslog,
+  {$ENDIF OPSISCRIPT}
+  Classes, SysUtils, DOM, osxmltdom, XMLRead, XMLWrite;
 
 (*
 type
@@ -65,77 +68,72 @@ type
   NOTATION_NODE = 12;
   *)
 
-function createXmlDocFromStringlist(docstrlist: TStringlist): boolean;
-function freeXmlDoc(var XML: TXMLDocument): boolean;
+
+function getXMLDocAsTStringlist(): TStringList;
 function getDocumentElementAsStringlist(docstrlist: TStringList): TStringList;
-function getDocNodeName(docstrlist: TStringList): string;
+function getXMLDocumentElementfromFile(filename: string): TStringList;
+function setDocumentElementAsStringlist(var docstrlist: TStringList;
+  docelemstrlist: TStringList): boolean;
+function getDocNodeNameFromStringList(docstrlist: TStringList): string;
+function getDocNodeNameFromXMLDoc(): string;
 function getDocNodeType(docstrlist: TStringList): string;
-//******************************************************************************
-function createXMLNodeFromString(nodestrlist: TStringList): TDOMNode;
-function createStringListFromXMLNode(mynode: TDOMNode;
-  var mystringlist: TStringList): boolean;
+function getXmlDeclarationFromStringList(docstrlist: TStringList): TStringList;
+
 //******************************************************************************
 function appendXmlNodeToDocFromStringlist(docstrlist: TStringList;
   nodestrlist: TStringList; var strList: TStringList): boolean;
-function appendXmlNodeToNodeFromStringlist(var nodestrlist1:
-  TStringlist; nodestrlist2: TStringlist): boolean;
+function appendXmlNodeToNodeFromStringlist(var nodestrlist1: TStringList;
+  nodestrlist2: TStringList): boolean;
 //******************************************************************************
 // direkte node-Stringvalue operation   TODO
-function xmlAsStringlistSetNodevalue (var nodestrlist: TStringlist; value: String) :boolean;
-function xmlAsStringlistGetNodevalue (nodestrlist: TStringlist; var value: String) :boolean;
-function xmlAsStringlistGetNodeAttributeKeys (nodestrlist: TStringlist; var keylist: TStringlist) :boolean;
-function xmlAsStringlistSetNodeattributeByKey (var nodestrlist: TStringlist; attributekey: String; value: String) :boolean;
+function xmlAsStringlistSetNodevalue(var nodestrlist: TStringList;
+  Value: string): boolean;
+function xmlAsStringlistGetNodevalue(nodestrlist: TStringList;
+  var Value: string): boolean;
+function xmlAsStringlistGetNodeAttributeKeys(nodestrlist: TStringList;
+  var keylist: TStringList): boolean;
+function xmlAsStringlistSetNodeattributeByKey(var nodestrlist: TStringList;
+  attributekey: string; Value: string): boolean;
 //******************************************************************************
-function getChildTDOMNodeByIndex(mynode: TDOMNode; index: integer;
-  var Value: TDOMNode): boolean;
+// by index
 function xmlAsStringlistGetChildnodeByIndex(nodestrlist: TStringList;
   index: integer; var Value: TStringList): boolean;
-
-function setChildTDOMNodeValueByIndex(var mynode: TDOMNode; index: integer;
-  Value: string): boolean;
-function xmlAsStringlistSetChildnodeValueByIndex (var mynodeAsStringlist: TStringList;
-  index: integer; value: string ): boolean;
-
-function getChildTDOMNodeValueByIndex(mynode: TDOMNode; index: integer;
-  var Value: string): boolean;
-function xmlAsStringlistGetChildnodeValueByIndex(mynodeAsStringlist: TStringList; index: integer;
-  var Value: string): boolean;
-
-function deleteChildTDOMNodeByIndex(var mynode: TDOMNode; index: integer): boolean;
+function xmlAsStringlistSetChildnodeValueByIndex(var mynodeAsStringlist: TStringList;
+  index: integer; Value: string): boolean;
+function xmlAsStringlistGetChildnodeValueByIndex(mynodeAsStringlist: TStringList;
+  index: integer; var Value: string): boolean;
 function xmlAsStringlistDeleteChildnodeByIndex(var mynodeAsStringlist: TStringList;
   index: integer): boolean;
 //******************************************************************************
-function getChildTDOMNodeByName(mynode: TDOMNode; NodeName: string;
-  var Value: TDOMNode): boolean;
-function xmlAsStringlistGetChildnodeByName(nodestrlist: TStringList;
+// by name
+function xml2GetFirstChildNodeByName(nodestrlist: TStringList;
+  Name: string; var childnodeSL: TStringList): boolean; ///
+
+function xmlAsStringlistGetUniqueChildnodeByName(nodestrlist: TStringList;
   Name: string; var childnodeSL: TStringList): boolean;
-function setChildTDOMNodeByName(var mynode: TDOMNode; NodeName: string;
-  Value: TDOMNode): boolean;
-function xmlAsStringlistSetChildnodeByName(var nodestrlist: TStringList;
+function xmlAsStringlistReplaceUniqueChildnodeByName(var nodestrlist: TStringList;
   NodeName: string; childnodeSL: TStringList): boolean;
 
-function getAllNodesByName(mynode: TDOMNode; NodeName: string;
-  var nodelist: TStringList): boolean; // TODO
 //******************************************************************************
-function getNodeElements(mynode: TDOMNode): TStringList;
-function getTextEntry(mynode: TDOMNode): string;
-//******************************************************************************
-function getAttributesValueList(mynode: TDOMNode;
-     var attributevaluelist:TStringList): boolean;
+// attributes
+function getXml2AttributeValueByKey(nodeAsStringlist: TStringList;
+  attributekey: string; var attributevalue: string): boolean;
+
 function xmlAsStringlistgetAttributesValueList(nodeAsStringlist: TStringList;
-     var attributeValueList:TStringlist): boolean;
-function getAttributeKeyList(mynode: TDOMNode): TStringList;
-function deleteChildAttributeByKey(var mynode: TDOMNode; attributekey: string) : boolean;
+  var attributeValueList: TStringList): boolean;
 function xmlAsStringlistdeleteChildAttributeByKey(var nodeAsStringlist: TStringList;
-     attributekey: string) : boolean;
-function getChildAttributeValueTDOMNode(mynode: TDOMNode;
-  attributekey:string;var attributevalue:string): boolean;
+  attributekey: string): boolean;
 function xmlAsStringlistGetChildAttributeValueByNameAndKey(nodeAsStringlist: TStringList;
-  nodename:string; attributekey:string; var attributevalue:string) :boolean;
-function setChildAttributeValueTDOMNode(var mynode: TDOMNode;
-  attributekey:string; attributevalue:string): boolean;
-function xmlAsStringlistSetChildAttributeValueByNameAndKey(var nodeAsStringlist: TStringList;
-  nodename:string; attributekey:string; attributevalue:string) :boolean;
+  nodename: string; attributekey: string; var attributevalue: string): boolean;
+function xmlAsStringlistGetChildnodeByNameAndAttributeKeyAndValue(
+  nodeAsStringlist: TStringList; nodename: string; attributekey: string;
+  attributevalue: string; var Value: TStringList): boolean;
+function xmlAsStringlistReplaceChildnodeByNameAndAttributeKeyAndValue(
+  var nodeAsStringlist: TStringList; nodename: string; attributekey: string;
+  attributevalue: string; Value: TStringList): boolean;
+function xmlAsStringlistSetChildAttributeValueByNameAndKey(
+  var nodeAsStringlist: TStringList; nodename: string; attributekey: string;
+  attributevalue: string): boolean;
 //******************************************************************************
 function xmlAsStringlistAllElementsCount(nodeAsStringlist: TStringList): integer;
 function xmlAsStringlistElementsCount(nodeAsStringlist: TStringList): integer;
@@ -144,48 +142,53 @@ function xmlAsStringlistHasChildNodes(nodeAsStringlist: TStringList): boolean;
 function xmlAsStringlistGetChildNodes(nodeAsStringlist: TStringList;
   var childnodes: TStringList): boolean;
 function isValid(str: string): boolean;      // tut nix
-function getNodeType(mynode: TDOMNode): string;
+
 //******************************************************************************
-function getNodeName(mynode: TDOMNode; var valueList: TStringList): boolean;
-function getSubNodeNames(myxdoc: TXMLDocument): TStringList;
-function getNodeValue(mynode: TDOMNode; var valueList: TStringList): boolean;
-function getSubNodeValues(myxdoc: TXMLDocument): TStringList;
-//******************************************************************************
-// Helper
-function stringlistWithoutBreaks(strlist: TStringList): TStringList;
+// text
+function getXml2Text(nodeAsStringlist: TStringList; var mytext: string): boolean;
+
 
 implementation
-var XML: TXMLDocument;
+//var XMLasStringList: TStringList;
 
-function createXmlDocFromStringlist(docstrlist: TStringlist): boolean;
-// XML global, da sonst die erzeugten Knoten im Nirvana landen
+
+function getXMLDocAsTStringlist(): TStringList;
 var
-  mystream: TStringStream;
+  nodeStream: TMemoryStream;
+  mystringlist: TStringList;
 begin
-  Result := false;
-  mystream := TStringStream.Create(docstrlist.Text);
-  mystream.Position := 0;
-  if XML<>nil then
-    XML.Free;
-  XML:=TXMLDocument.Create;
+  Result := nil;
+  if XMLexists then
+    try
+      mystringlist := TStringList.Create;
+      nodeStream := TMemoryStream.Create;
+      WriteXML(getXMLDoc, nodestream);
+      nodeStream.Position := 0;
+      mystringlist.LoadFromStream(nodestream);
+      Result := mystringlist;
+    finally
+      nodestream.Free;
+    end;
+end;
+
+function setDocumentElementAsStringlist(var docstrlist: TStringList;
+  docelemstrlist: TStringList): boolean;
+var
+  mynode: TDOMNode;
+begin
+  Result := False;
   try
-    ReadXMLFile(XML, mystream);
-    result:=true;
+    mynode := createXMLNodeFromString(docelemstrlist);
+    getXMLDoc.RemoveChild(getXMLDoc.FirstChild);
+    getXMLDoc.AppendChild(mynode);
+    docstrlist := getXMLDocAsTStringlist();
+    Result := True;
   finally
-    mystream.Free;
+    mynode.Free;
   end;
 end;
 
-function freeXmlDoc(var XML: TXMLDocument): boolean;
-begin
-  Result := True;
-  try
-    XML.Free;
-  except
-    Result := False;
-    exit;
-  end;
-end;
+
 //*****************************************************************************
 function getDocumentElementAsStringlist(docstrlist: TStringList): TStringList;
 var
@@ -196,72 +199,86 @@ begin
   mystringlist := TStringList.Create;
   nodeStream := TMemoryStream.Create;
   if createXmlDocFromStringlist(docstrlist) then
-    begin
-      mynode := XML.DocumentElement;
-      try
-        WriteXML(mynode, nodeStream);
-        nodeStream.Position := 0;
-        mystringlist.LoadFromStream(nodestream);
-        Result := mystringlist;
-      finally
-        nodestream.Free;
-        mynode.free;
-        //mystringlist.Free;       muss bleiben, damit result bleibt
-      end;
+  begin
+    mynode := getXMLDoc.DocumentElement;
+    try
+      WriteXML(mynode, nodeStream);
+      nodeStream.Position := 0;
+      mystringlist.LoadFromStream(nodestream);
+      Result := mystringlist;
+    finally
+      nodestream.Free;
+      mynode.Free;
+      //mystringlist.Free;       muss bleiben, damit result bleibt
     end;
+  end;
 end;
 
-function getDocNodeName(docstrlist: TStringList): string;
+function getXMLDocumentElementfromFile(filename: string): TStringList;
+var
+  nodeStream: TMemoryStream;
+  mystringlist: TStringList;
+  mynode: TDOMNode;
 begin
-  Result:='';
+  mystringlist := TStringList.Create;
+  nodeStream := TMemoryStream.Create;
+  if createXmlDocFromFile(filename) then
+  begin
+    mynode := getXMLDoc.DocumentElement;
+    try
+      WriteXML(mynode, nodeStream);
+      nodeStream.Position := 0;
+      mystringlist.LoadFromStream(nodestream);
+      Result := mystringlist;
+    finally
+      nodestream.Free;
+      mynode.Free;
+      //mystringlist.Free;       muss bleiben, damit result bleibt
+    end;
+  end;
+end;
+
+
+function getXmlDeclarationFromStringList(docstrlist: TStringList): TStringList;
+begin
+  Result := TStringList.Create;
   if createXmlDocFromStringlist(docstrlist) then
-    Result := XML.DocumentElement.NodeName;
+  begin
+    Result.Add('version=' + getXMLDoc.XMLVersion);
+    Result.Add('encoding=' + getXMLDoc.XMLEncoding);
+    Result.Add('standalone=' + boolToStr(getXMLDoc.XMLStandalone, True));
+  end;
+  freeXmlDoc();
+end;
+
+
+function getDocNodeNameFromStringList(docstrlist: TStringList): string;
+begin
+  if createXmlDocFromStringlist(docstrlist) then
+    if XMLexists then
+      Result := getDocNodeName()
+    else
+      Result := '';
+  freeXmlDoc();
+end;
+
+function getDocNodeNameFromXMLDoc(): string;
+begin
+  if XMLexists then
+    Result := getDocNodeName()
+  else
+    Result := '';
 end;
 
 function getDocNodeType(docstrlist: TStringList): string;
 begin
-  Result:='';
+  Result := '';
   if createXmlDocFromStringlist(docstrlist) then
-    Result := getNodeType(XML.DocumentElement);
+    Result := getNodeType(getXMLDoc.DocumentElement);
+  freeXmlDoc();
 end;
 
 //*****************************************************************************
-function createXMLNodeFromString(nodestrlist: TStringList): TDOMNode;
-var
-  nodestream: TStringStream;
-  mynode: TDOMNode;
-begin
-  Result := nil;
-  nodestream := TStringStream.Create(stringlistWithoutBreaks(nodestrlist).Text);
-  nodestream.Position := 0;
-  try
-    mynode := XML.CreateElement('opsibase');
-    ReadXMLFragment(mynode, nodestream);
-    Result := mynode.FirstChild;
-  finally
-    nodestream.Free;
-    //myxdoc.Free;
-  end;
-end;
-
-function createStringListFromXMLNode(mynode: TDOMNode;
-  var mystringlist: TStringList): boolean;
-var
-  nodeStream: TMemoryStream;
-begin
-  Result := False;
-  mystringlist := TStringList.Create;
-  nodeStream := TMemoryStream.Create;
-  try
-    WriteXML(mynode, nodeStream);
-    nodeStream.Position := 0;
-    mystringlist.LoadFromStream(nodestream);
-    Result := True;
-  finally
-    nodestream.Free;
-  end;
-end;
-//************************************************************
 function appendXmlNodeToDocFromStringlist(docstrlist: TStringList;
   nodestrlist: TStringList; var strList: TStringList): boolean;
   // done -- erneutes erzeugen des XML-Dokuments????
@@ -271,105 +288,114 @@ var
 begin
   Result := False;
   if createXmlDocFromStringlist(docstrlist) then
-    begin
-      docstream := TMemoryStream.Create;
-      try
-        mynode:=createXMLNodeFromString(nodestrlist);
-        XML.DocumentElement.AppendChild(mynode);
-        WriteXMLFile(XML, docstream);
-        docstream.Position := 0;
-        strList := TStringList.Create;
-        strList.LoadFromStream(docstream);
-        Result := True;
-      finally
-        docstream.Free;
-      end;
+  begin
+    docstream := TMemoryStream.Create;
+    try
+      mynode := createXMLNodeFromString(nodestrlist);
+      getXMLDoc.DocumentElement.AppendChild(mynode);
+      WriteXMLFile(getXMLDoc, docstream);
+      docstream.Position := 0;
+      strList := TStringList.Create;
+      strList.LoadFromStream(docstream);
+      Result := True;
+    finally
+      docstream.Free;
     end;
+  end;
 end;
 
 // TODO
-function appendXmlNodeToNodeFromStringlist(var nodestrlist1: TStringlist;
-  nodestrlist2: TStringlist): boolean;
-var mynode1,mynode2:TDOMNode;
+function appendXmlNodeToNodeFromStringlist(var nodestrlist1: TStringList;
+  nodestrlist2: TStringList): boolean;
+var
+  mynode1, mynode2: TDOMNode;
 
 begin
-  Result:= false;
+  Result := False;
   try
     mynode1 := createXMLNodeFromString(nodestrlist1);
     mynode2 := createXMLNodeFromString(nodestrlist2);
     mynode1.AppendChild(mynode2);
     createStringListFromXMLNode(mynode1, nodestrlist1);
-    result:=true;
+    Result := True;
   except
-    //
-  end;
 
+  end;
+  mynode1.Free;
+  mynode2.Free;
 end;
 //************************************************************
 // direkte node operation
 
-function xmlAsStringlistSetNodevalue (var nodestrlist: TStringlist; value: String) :boolean;
-var mynode: TDOMNode;
+function xmlAsStringlistSetNodevalue(var nodestrlist: TStringList;
+  Value: string): boolean;
+var
+  mynode: TDOMNode;
 begin
-  result:=false;
+  Result := False;
   try
     mynode := createXMLNodeFromString(nodestrlist);
-    mynode.TextContent:=value;
+    mynode.TextContent := Value;
     // nodestrlist.clear?
     if createStringListFromXMLNode(mynode, nodestrlist) then
-      result:=true;
+      Result := True;
   except
-    //
+
   end;
+  mynode.Free;
 end;
-function xmlAsStringlistGetNodevalue (nodestrlist: TStringlist; var value: String) :boolean;
-var mynode: TDOMNode;
+
+function xmlAsStringlistGetNodevalue(nodestrlist: TStringList;
+  var Value: string): boolean;
+var
+  mynode: TDOMNode;
 begin
-  result:=false;
+  Result := False;
   try
     mynode := createXMLNodeFromString(nodestrlist);
-    value:=mynode.TextContent;
-    result:=true;
+    Value := mynode.TextContent;
+    Result := True;
   except
-    //
-  end;
-end;
-function xmlAsStringlistGetNodeAttributeKeys (nodestrlist: TStringlist; var keylist: TStringlist) :boolean;
-var mynode: TDOMNode;
-begin
-  result:=false;
-  keylist:= TStringlist.Create;
-  try
-     mynode := createXMLNodeFromString(nodestrlist);
-     keylist:= getAttributeKeylist(mynode);
-     result:=true;
-  except
-    //
-  end;
-end;
-function xmlAsStringlistSetNodeattributeByKey (var nodestrlist: TStringlist; attributekey: String; value: String) :boolean;
-var mynode: TDOMNode;
-begin
 
+  end;
+  mynode.Free;
+end;
+
+function xmlAsStringlistGetNodeAttributeKeys(nodestrlist: TStringList;
+  var keylist: TStringList): boolean;
+var
+  mynode: TDOMNode;
+begin
+  Result := False;
+  keylist := TStringList.Create;
+  try
+    mynode := createXMLNodeFromString(nodestrlist);
+    keylist := getAttributeKeylist(mynode);
+    Result := True;
+  except
+
+  end;
+  mynode.Free;
+end;
+
+function xmlAsStringlistSetNodeattributeByKey(var nodestrlist: TStringList;
+  attributekey: string; Value: string): boolean;
+  // TODO
+var
+  mynode: TDOMNode;
+begin
+  Result := False;
 end;
 
 //************************************************************
-// alle über index
-function getChildTDOMNodeByIndex(mynode: TDOMNode; index: integer;
-  var Value: TDOMNode): boolean;
-begin
-  Result := false;
-  if mynode.hasChildNodes AND (index<mynode.ChildNodes.Count-1) then
-  begin
-    value := mynode.ChildNodes.Item[index];
-    result:=true;
-  end;
-end;
+// by index
+
 function xmlAsStringlistGetChildnodeByIndex(nodestrlist: TStringList;
   index: integer; var Value: TStringList): boolean;
-var mynode,newnode:TDOMNode;
+var
+  mynode, newnode: TDOMNode;
 begin
-  result:=false;
+  Result := False;
   mynode := createXMLNodeFromString(nodestrlist);
   if getChildTDOMNodeByIndex(mynode, index, newnode) then
     if createStringListFromXMLNode(newnode, Value) then
@@ -378,79 +404,30 @@ begin
     end;
 end;
 
-function getChildTDOMNodeValueByIndex(mynode: TDOMNode; index: integer;
-  var Value: string): boolean;
-begin
-  Result := False;
-  try
-    if mynode.hasChildNodes AND (index<mynode.ChildNodes.Count-1) then
-    begin
-      with mynode.ChildNodes do
-        Value:= Item[index].TextContent;
-      Result := True;
-    end;
-  finally
-    //
-  end;
-end;
-
-function xmlAsStringlistGetChildnodeValueByIndex(mynodeAsStringlist: TStringList; index: integer;
-  var Value: string): boolean;
-// TODO
+function xmlAsStringlistGetChildnodeValueByIndex(mynodeAsStringlist: TStringList;
+  index: integer; var Value: string): boolean;
+  // TODO
 var
   mynode: TDOMNode;
 begin
-  result:=false;
-  mynode:= createXMLNodeFromString(mynodeAsStringlist);
-  if getChildTDOMNodeValueByIndex(mynode,index, value) then
-    result:=true;
-end;
-
-function setChildTDOMNodeValueByIndex(var mynode: TDOMNode; index: integer;
-  value: string): boolean;
-var
-  selNode: TDOMNode;
-begin
   Result := False;
-  try
-    if mynode.hasChildNodes AND (index<mynode.ChildNodes.Count-1)then
-    begin
-      selNode := mynode.ChildNodes.Item[index];
-      selNode.TextContent := Value;
-      Result := True;
-    end;
-  finally
-
-  end;
-end;
-function xmlAsStringlistSetChildnodeValueByIndex (var mynodeAsStringlist: TStringList;
-  index: integer; value: string ): boolean;
-var
-  mynode: TDOMNode;
-begin
-  result:=false;
   mynode := createXMLNodeFromString(mynodeAsStringlist);
-  if setChildTDOMNodeValueByIndex(mynode, index, value) then
+  if getChildTDOMNodeValueByIndex(mynode, index, Value) then
+    Result := True;
+end;
+
+function xmlAsStringlistSetChildnodeValueByIndex(var mynodeAsStringlist: TStringList;
+  index: integer; Value: string): boolean;
+var
+  mynode: TDOMNode;
+begin
+  Result := False;
+  mynode := createXMLNodeFromString(mynodeAsStringlist);
+  if setChildTDOMNodeValueByIndex(mynode, index, Value) then
     if createStringListFromXMLNode(mynode, mynodeAsStringlist) then
     begin
       Result := True;
     end;
-end;
-
-function deleteChildTDOMNodeByIndex(var mynode: TDOMNode; index: integer): boolean;
-var
-  selNode: TDOMNode;
-begin
-  Result := False;
-  try
-    if (mynode.hasChildNodes) AND (index<mynode.ChildNodes.Count-1) then
-      with mynode.ChildNodes do
-        selNode := Item[index];
-    selNode.Free;
-    Result := True;
-  finally
-
-  end;
 end;
 
 function xmlAsStringlistDeleteChildnodeByIndex(var mynodeAsStringlist: TStringList;
@@ -468,246 +445,251 @@ begin
 end;
 
 //************************************************************
-// alle über name
-function getChildTDOMNodeByName(mynode: TDOMNode; NodeName: string; var Value: TDOMNode): boolean;
+// by name
+
+function xml2GetFirstChildNodeByName(nodestrlist: TStringList;
+  Name: string; var childnodeSL: TStringList): boolean; ///
 var
-  i: integer;
-begin
-  Result := False;
-  i := 0;
-  if (mynode <> nil) then
-    while i < mynode.ChildNodes.Count do
+  mynode, newnode, searchnode: TDOMNode;
+
+  function findnodeInList(nodelist: TDOMNodeList; Name: string): TDOMNode;
+  var
+    i, childcount: integer;
+    str: string;
+    aktnode: TDomNode;
+    haschild: boolean;
+  begin
+    i := 0;
+    Result := nil;
+    childcount := nodelist.Count;
+    while (Result = nil) and (i < childcount) do
     begin
-      if NodeName = mynode.ChildNodes.Item[i].NodeName then
-      begin
-        Value := mynode.ChildNodes.Item[i];
-        Result := True;
-      end;
+      aktnode := nodelist.Item[i];
+      haschild := aktnode.HasChildNodes and (aktnode.ChildNodes.Count > 0);
+      str := nodelist.Item[i].NodeName;
+      Result := nodelist.Item[i].FindNode(Name);
+      if (Result = nil) and haschild then
+        Result := findnodeInList(nodelist.Item[i].ChildNodes, Name);
       Inc(i);
     end;
+  end;
+
+begin
+  try
+    Result := False;
+    mynode := createXMLNodeFromString(nodestrlist);
+    if mynode.NodeName = Name then
+      newnode := mynode
+    else
+    begin
+      newnode := mynode.FindNode(Name);
+      if newnode = nil then
+        newnode := findnodeInList(mynode.ChildNodes, Name);
+    end;
+    if newnode <> nil then
+      if createStringListFromXMLNode(newnode, childnodeSL) then
+      begin
+        Result := True;
+        newnode.Free;
+      end;
+    mynode.Free;
+    Result := True;
+  except
+    on e: Exception do
+    begin
+      Result := False;
+      LogDatei.log('Exception in xml2GetFirstChildNodeByName: ' + e.message, LLError);
+    end;
+  end;
 end;
 
-function xmlAsStringlistGetChildnodeByName(nodestrlist: TStringList;
+
+function xmlAsStringlistGetUniqueChildnodeByName(nodestrlist: TStringList;
   Name: string; var childnodeSL: TStringList): boolean; ///
 var
   mynode, newnode: TDOMNode;
 begin
   Result := False;
   mynode := createXMLNodeFromString(nodestrlist);
-  if getChildTDOMNodeByName(mynode, Name, newnode) then
+  if getUniqueChildNodeByName(mynode, Name, newnode) then
     if createStringListFromXMLNode(newnode, childnodeSL) then
     begin
       Result := True;
+      newnode.Free;
     end;
+  mynode.Free;
 end;
-function setChildTDOMNodeByName(var mynode: TDOMNode; NodeName: string; Value: TDOMNode): boolean;
-var i: integer;
-    selNode: TDOMNode;
-begin
-  Result := False;
-  i := 0;
-  if (mynode <> nil) then
-    while  (mynode.hasChildNodes) AND (i < mynode.ChildNodes.Count) do
-    begin
-      if (NodeName = mynode.ChildNodes.Item[i].NodeName)  AND (Result=false) then
-      begin
-        selNode := mynode.ChildNodes.Item[i];
-        selNode.free;   // remove
-        mynode.AppendChild(Value); // append new
-        Result := True;
-      end;
-      Inc(i);
-    end;
-end;
-function xmlAsStringlistSetChildnodeByName(var nodestrlist: TStringList;
+
+function xmlAsStringlistReplaceUniqueChildnodeByName(var nodestrlist: TStringList;
   NodeName: string; childnodeSL: TStringList): boolean;
 var
   mynode, childnode: TDOMNode;
-
 begin
   Result := False;
   mynode := createXMLNodeFromString(nodestrlist);
-  childnode:= createXMLNodeFromString(childnodeSL);
-  if setChildTDOMNodeByName(mynode, NodeName, childnode) then
+  childnode := createXMLNodeFromString(childnodeSL);
+  if replaceUniqueChildNodeByName(mynode, NodeName, childnode) then
     if createStringListFromXMLNode(mynode, nodestrlist) then
     begin
       Result := True;
     end;
-
-end;
-
-function getAllNodesByName(mynode: TDOMNode; NodeName: string;
-  var nodelist: TStringList): boolean; // TODO
-begin
-
-end;
-
-//************************************************************
-
-function getTextEntry(mynode: TDOMNode): string;
-begin
-  Result := '';
-  if mynode.NodeType = TEXT_NODE then
-    Result := mynode.TextContent;
-end;
-
-function docElements(myxdoc: TXMLDocument): TStringList;
-var
-  i: integer;
-begin
-  Result := TStringList.Create;
-  i := 0;
-  while i < myxdoc.ChildNodes.Count do
-  begin
-    if myxdoc.ChildNodes.Item[i].NodeType = 1 then
-      Result.Append(myxdoc.ChildNodes.Item[i].NodeName);
-    Inc(i);
-  end;
-end;
-
-function getNodeElements(mynode: TDOMNode): TStringList;
-  // element names, child level
-var
-  i: integer;
-begin
-  Result := TStringList.Create;
-  i := 0;
-  while i < mynode.ChildNodes.Count do
-  begin
-    if mynode.ChildNodes.Item[i].NodeType = ELEMENT_NODE then
-      Result.Append(mynode.ChildNodes.Item[i].NodeName);
-    Inc(i);
-  end;
+  mynode.Free;
+  childnode.Free;
 end;
 
 //************************************************************
 // attributes
-function getAttributesValueList(mynode: TDOMNode;
-     var attributevaluelist:TStringList): boolean;
+
+function getXml2AttributeValueByKey(nodeAsStringlist: TStringList;
+  attributekey: string; var attributevalue: string): boolean;
 var
-  i: integer;
+  mynode, newnode: TDOMNode;
 begin
-  Result := false;
-  attributevaluelist:= TStringList.Create;
-  for i := 0 to mynode.Attributes.Length - 1 do
-  begin
-    attributevaluelist.Append(mynode.Attributes[i].TextContent);
-    result:=true;
+  try
+    Result := False;
+    mynode := createXMLNodeFromString(nodeAsStringlist);
+    if mynode <> nil then
+    begin
+    if getNodeattributeByKey(mynode, attributekey, attributevalue) then
+      Result := True;
+    mynode.Free;
+    Result := True;
+    end
+    else LogDatei.log('Error: Empty xmlnode input in getXml2AttributeValueByKey.', LLError);
+  except
+    on e: Exception do
+    begin
+      Result := False;
+      LogDatei.log('Exception in getXml2AttributeValueByKey: ' + e.message, LLError);
+    end;
   end;
 end;
+
 function xmlAsStringlistGetAttributesValueList(nodeAsStringlist: TStringList;
-     var attributeValueList:TStringlist): boolean;
-var mynode, newnode: TDOMNode;
-begin
-  result:=false;
-  mynode := createXMLNodeFromString(nodeAsStringlist);
-  if getAttributesValueList(mynode,attributeValueList) then
-    begin
-      result:=true;
-    end;
-end;
-function getAttributeKeyList(mynode: TDOMNode): TStringList;
+  var attributeValueList: TStringList): boolean;
 var
-  i: integer;
+  mynode: TDOMNode;
 begin
-  Result := TStringList.Create;
-  for i := 0 to mynode.Attributes.Length - 1 do
-    Result.Append(mynode.Attributes[i].NodeName);
-end;
-function deleteChildAttributeByKey(var mynode: TDOMNode; attributekey: string) : boolean;
-var
-  i:integer;
-begin
-  result:=false;
-  if mynode.HasAttributes then
-    for i := 0 to mynode.Attributes.Length - 1 do
-      if mynode.Attributes[i].NodeName=attributekey then
-        begin
-          mynode.Attributes[i].Destroy;
-          result:=true;
-        end;
-end;
-function xmlAsStringlistdeleteChildAttributeByKey(var nodeAsStringlist: TStringList;
-     attributekey: string) : boolean;
-var mynode: TDOMNode;
-begin
-  result:=false;
+  Result := False;
   mynode := createXMLNodeFromString(nodeAsStringlist);
-  if deleteChildAttributeByKey(mynode, attributekey) then
-    if createStringListFromXMLNode(mynode,nodeAsStringlist) then
-      result:= true;
+  if getAttributesValueList(mynode, attributeValueList) then
+  begin
+    Result := True;
+  end;
+  mynode.Free;
 end;
 
-function getChildAttributeValueTDOMNode(mynode: TDOMNode;
-  attributekey:string; var attributevalue:string): boolean;
+function xmlAsStringlistGetChildnodeByNameAndAttributeKeyAndValue(
+  nodeAsStringlist: TStringList; nodename: string; attributekey: string;
+  attributevalue: string; var Value: TStringList): boolean;
 var
-  i: integer;
+  mynode, newnode: TDOMNode;
 begin
-  Result := false;
-  if mynode.HasAttributes then
-    for i := 0 to mynode.Attributes.Length - 1 do
-      if mynode.Attributes[i].NodeName=attributekey then
-        begin
-          attributevalue:=mynode.Attributes[i].TextContent;
-          result:=true;
-        end;
+  try
+    try
+      newnode := nil;
+      Result := False;
+      mynode := createXMLNodeFromString(nodeAsStringlist);
+      if selectAllNodesByName(mynode, nodename) then
+      begin
+        if getChildnodeByAttributeKeyAndValue(mynode, attributekey,
+          attributevalue, newnode) then
+          if createStringListFromXMLNode(newnode, Value) then
+            Result := True;
+      end;
+    except
+      on e: Exception do
+      begin
+        Result := False;
+        LogDatei.log('Exception in xmlAsStringlistGetChildnodeByNameAndAttributeKeyAndValue: '
+          + e.message, LLError);
+      end;
+    end;
+  finally
+    if (newnode <> nil) then
+      newnode.Free;
+    mynode.Free;
+  end;
+end;
+
+function xmlAsStringlistReplaceChildnodeByNameAndAttributeKeyAndValue(
+  var nodeAsStringlist: TStringList; nodename: string; attributekey: string;
+  attributevalue: string; Value: TStringList): boolean;
+var
+  mynode, newnode: TDOMNode;
+begin
+  Result := False;
+  mynode := createXMLNodeFromString(nodeAsStringlist);
+  newnode := createXMLNodeFromString(Value);
+  if replaceChildnodeByNameAndAttributeKeyAndValue(mynode, nodename,
+    attributekey, attributevalue, newnode) then
+    if createStringListFromXMLNode(mynode, nodeAsStringlist) then
+      Result := True;
+  if (newnode <> nil) then
+    newnode.Free;
+  mynode.Free;
+end;
+
+function xmlAsStringlistdeleteChildAttributeByKey(var nodeAsStringlist: TStringList;
+  attributekey: string): boolean;
+var
+  mynode: TDOMNode;
+begin
+  Result := False;
+  mynode := createXMLNodeFromString(nodeAsStringlist);
+  if deleteChildAttributeByKey(mynode, attributekey) then
+    if createStringListFromXMLNode(mynode, nodeAsStringlist) then
+      Result := True;
+  mynode.Free;
 end;
 
 function xmlAsStringlistGetChildAttributeValueByNameAndKey(nodeAsStringlist: TStringList;
-  nodename:string; attributekey:string; var attributevalue:string) :boolean;
-var mynode, newnode: TDOMNode;
-begin
-  result:=false;
-  mynode := createXMLNodeFromString(nodeAsStringlist);
-  if mynode.HasChildNodes then
-    if getChildTDOMNodeByName(mynode,nodename,newnode) then
-      if getChildAttributeValueTDOMNode(newnode,attributekey,attributevalue) then
-        begin
-          result:=true;
-        end;
-end;
-
-function setChildAttributeValueTDOMNode(var mynode: TDOMNode;
-  attributekey:string; attributevalue:string): boolean;
+  nodename: string; attributekey: string; var attributevalue: string): boolean;
 var
-  i: integer;
+  mynode, newnode: TDOMNode;
 begin
-  Result := false;
-  if mynode.HasAttributes then
-    for i := 0 to mynode.Attributes.Length - 1 do
-      if mynode.Attributes[i].NodeName=attributekey then
-        begin
-          mynode.Attributes[i].TextContent:= attributevalue;
-          result:=true;
-        end;
-end;
-
-function xmlAsStringlistSetChildAttributeValueByNameAndKey(var nodeAsStringlist: TStringList;
-  nodename:string; attributekey:string; attributevalue:string) :boolean;
-var mynode, newnode: TDOMNode;
-begin
-  result:=false;
+  Result := False;
   mynode := createXMLNodeFromString(nodeAsStringlist);
   if mynode.HasChildNodes then
-    if getChildTDOMNodeByName(mynode,nodename,newnode) then
-      if setChildAttributeValueTDOMNode(newnode,attributekey,attributevalue) then
-         if createStringListFromXMLNode(mynode,nodeAsStringlist) then
-            result:=true;
+    if getUniqueChildNodeByName(mynode, nodename, newnode) then
+      if getChildAttributeValueTDOMNode(newnode, attributekey, attributevalue) then
+      begin
+        Result := True;
+        newnode.Free;
+      end;
+  mynode.Free;
+end;
+
+function xmlAsStringlistSetChildAttributeValueByNameAndKey(
+  var nodeAsStringlist: TStringList; nodename: string; attributekey: string;
+  attributevalue: string): boolean;
+var
+  mynode, newnode: TDOMNode;
+begin
+  Result := False;
+  mynode := createXMLNodeFromString(nodeAsStringlist);
+  if mynode.HasChildNodes then
+    if getUniqueChildNodeByName(mynode, nodename, newnode) then
+      if setChildAttributeValueTDOMNode(newnode, attributekey, attributevalue) then
+        if createStringListFromXMLNode(mynode, nodeAsStringlist) then
+        begin
+          Result := True;
+          newnode.Free;
+        end;
+  mynode.Free;
 end;
 //************************************************************
 function xmlAsStringlistAllElementsCount(nodeAsStringlist: TStringList): integer;
 var
   mynode: TDOMNode;
   teststrlst: TStringList;
-  teststr: string;
 begin
   Result := 0;
-  teststrlst:= TStringlist.Create;
+  teststrlst := TStringList.Create;
   try
     mynode := createXmlNodeFromString(nodeAsStringlist);
     if createStringListFromXMLNode(mynode, teststrlst) then
-      teststr := teststrlst.Text;
-    Result := mynode.ChildNodes.Count;
+      Result := mynode.ChildNodes.Count;
   finally
     mynode.Free;
   end;
@@ -757,7 +739,7 @@ begin
   try
     mynode := createXmlNodeFromString(nodeAsStringlist);
     if mynode.hasChildNodes then
-        Result := True;
+      Result := True;
   finally
     mynode.Free;
   end;
@@ -778,13 +760,14 @@ begin
       for i := 0 to (Count - 1) do
         if createStringListFromXMLNode(Item[i], tempstrlist) then
         begin
-          if tempstrlist.Count>0 then
+          if tempstrlist.Count > 0 then
             childnodes.Add(stringlistWithoutBreaks(tempstrlist).Text);
           tempstrlist.Clear;
         end;
     Result := True;
+    mynode.Free;
   finally
-    //
+
   end;
 end;
 
@@ -809,147 +792,30 @@ begin
   end;
 end;
 
-function getNodeType(mynode: TDOMNode): string;
-// ungetestet  , notwendig??
-begin
-  Result := '';
-  try
-    if (mynode.NodeType = ELEMENT_NODE) then
-      Result := 'ELEMENT_NODE'
-    else if (mynode.NodeType = ENTITY_NODE) then
-      Result := 'ENTITY_NODE'
-    else if (mynode.NodeType = DOCUMENT_NODE) then
-      Result := 'DOCUMENT_NODE'
-    else if (mynode.NodeType = PROCESSING_INSTRUCTION_NODE) then
-      Result := 'PROCESSING_INSTRUCTION_NODE'
-    else if (mynode.NodeType = ATTRIBUTE_NODE) then
-      Result := 'ATTRIBUTE_NODE'
-    else if (mynode.NodeType = DOCUMENT_FRAGMENT_NODE) then
-      Result := 'DOCUMENT_FRAGMENT_NODE'
-    else if (mynode.NodeType = ENTITY_NODE) then
-      Result := 'ENTITY_REFERENCE_NODE'
-    else if (mynode.NodeType = ENTITY_REFERENCE_NODE) then
-      Result := 'CDATA_SECTION_NODE'
-    else if (mynode.NodeType = COMMENT_NODE) then
-      Result := 'COMMENT_NODE'
-    else
-      Result := 'nodetype unknown'
-  finally
+//******************************************************************************
+// text
 
-  end;
-end;
-//************************************************************
-// rekursiver Block für TXMLDocument, alle Elementnamen
-// zum Testen
-function getNodeName(mynode: TDOMNode; var valueList: TStringList): boolean;
-  // recursiv
+function getXml2Text(nodeAsStringlist: TStringList; var mytext: string): boolean;
 var
+  mynode: TDOMNode;
+  childlist: TDOMNodeList;
   i: integer;
 begin
   Result := False;
+  mytext := '';
+  mynode := createXMLNodeFromString(nodeAsStringlist);
   try
-    if (mynode.NodeType = ELEMENT_NODE) then
-      valueList.Append(mynode.NodeName)
-    else if (mynode.NodeType = CDATA_SECTION_NODE) then
-      valueList.Append('is CDATA_SECTION_NODE')
-    else if (mynode.NodeType = ENTITY_NODE) then
-      valueList.Append('is Entity Node')
-    else if (mynode.NodeType = COMMENT_NODE) then
-      valueList.Append('is COMMENT_NODE')
-    else
-      valueList.Append(getNodeType(mynode));
-    Result := True;
-  finally
-    // ignore comments and wrong elements
-  end;
-  with mynode.ChildNodes do
-    for i := 0 to (Count - 1) do
-      if (Item[i].NodeType <> TEXT_NODE) then
-        getNodeName(Item[i], valueList);
-end;
-
-function getSubNodeNames(myxdoc: TXMLDocument): TStringList;
-  // done
-var
-  i: integer;
-  myStringlist: TStringList;
-begin
-  myStringlist := TStringList.Create;
-  Result := myStringlist;
-  try
-    with myxdoc.DocumentElement.ChildNodes do
-      for i := 0 to (Count - 1) do
-        if getNodeName(Item[i], myStringlist) then
-          //if ( Item[i].NodeType= ELEMENT_NODE) then
-          //  myStringlist.Add(Item[i].NodeName);
-          Result := myStringlist
-  finally
-    //myStringList.Free;
-  end;
-end;
-//************************************************************
-// rekursiver Block für TXMLDocument, alle Element Values
-// zum Testen
-function getNodeValue(mynode: TDOMNode; var valueList: TStringList): boolean;
-  // recursiv
-var
-  i: integer;
-begin
-  Result := False;
-  try
-    if (mynode.NodeType = ELEMENT_NODE) then
-    begin
-      if (mynode.TextContent <> '') then   //is Textnode
-        valueList.Append(mynode.FirstChild.NodeValue);
-    end
-    else if (mynode.NodeType = CDATA_SECTION_NODE) then
-      valueList.Append('is CDATA_SECTION_NODE')
-    else if (mynode.NodeType = COMMENT_NODE) then
-      valueList.Append('is COMMENT_NODE')
-    else
-      valueList.Append(getNodeType(mynode));
-    Result := True;
-  finally
-    // ignore comments and wrong elements
-  end;
-  with mynode.ChildNodes do
-    for i := 0 to (Count - 1) do
-      if (Item[i].NodeType <> TEXT_NODE) then
-        getNodeValue(Item[i], valueList);
-end;
-
-function getSubNodeValues(myxdoc: TXMLDocument): TStringList;
-var
-  i: integer;
-  myStringlist: TStringList;
-
-begin
-  myStringlist := TStringList.Create;
-  Result := myStringlist;
-  with myxdoc.DocumentElement.ChildNodes do
-    for i := 0 to (Count - 1) do
-      try
-        if getNodeValue(Item[i], myStringlist) then
-          Result := myStringlist
-      finally
-
+    childlist := mynode.ChildNodes;
+    for i := 0 to childlist.Count - 1 do
+      if childlist.Item[i].NodeType = TEXT_NODE then
+      begin
+        mytext := childlist.Item[i].TextContent;
+        Result := True;
       end;
+  except
+  end;
+  mynode.Free;
 end;
-//************************************************************
-function stringlistWithoutBreaks(strlist: TStringList): TStringList;
-// eliminate breaks and empty lines
-var
-  intI: integer;
-  teststr: string;
-begin
-  Result := TStringList.Create;
-  if strlist.Count > 0 then
-    for intI := 0 to strList.Count - 1 do
-    begin
-      teststr := StringReplace(strlist[intI], #10, '', [rfReplaceAll]);
-      if (teststr <> '') then
-        Result.Add(teststr);
-    end;
-end;
+
 
 end.

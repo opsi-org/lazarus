@@ -6,7 +6,7 @@ object SystemInfo: TSystemInfo
   HorzScrollBar.Range = 256
   HorzScrollBar.Visible = False
   VertScrollBar.Visible = False
-  Caption = 'SystemInfo'
+  Caption = 'Systeminfo'
   ClientHeight = 449
   ClientWidth = 628
   Font.Height = 11
@@ -17,7 +17,7 @@ object SystemInfo: TSystemInfo
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '1.6.4.0'
+  LCLVersion = '1.8.4.0'
   object Panel1: TPanel
     Left = 0
     Height = 24
