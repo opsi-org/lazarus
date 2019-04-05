@@ -761,7 +761,7 @@ begin
     (* Abspeichern der Skriptdatei in ComboBox-Liste *)
     TakeToSaveList(ComboBox1.Text);
 
-  oslog.StandardPartLogPath:= ExtractFileDir(Logdateiname);
+  //oslog.StandardPartLogPath:= ExtractFileDir(Logdateiname);
   if RadioButtonNewLogFile.Checked then
   begin
     //MakeBakFile(LogDateiName,8);
@@ -769,12 +769,14 @@ begin
     //Logdatei.Free;
     if Logdatei = nil then
       Logdatei := TLogInfo.Create;
+    Logdatei.StandardPartLogPath:= ExtractFileDir(Logdateiname);
     if LogDateiName = '' then
       LogDateiName := LogPath + logdatei.StandardLogFilename + logdatei.StandardLogFileext;
     LogDatei.CreateTheLogfile(LogDateiName, False);
   end
   else
   begin
+    Logdatei.StandardPartLogPath:= ExtractFileDir(Logdateiname);
     LogDatei.initiate(LogDateiName, False);
     LogDatei.DependentAdd('', LLessential);
     LogDatei.DependentAdd('', LLessential);
@@ -797,7 +799,7 @@ begin
   Skriptdatei := '';
 
   LogDateiName := Edit2.Text;
-  oslog.StandardPartLogPath:= ExtractFileDir(Logdateiname);
+  LogDatei.StandardPartLogPath:= ExtractFileDir(Logdateiname);
   if RadioButtonNewLogFile.Checked then
   begin
     LogDatei.CreateTheLogfile(LogDateiName, False);

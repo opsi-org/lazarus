@@ -1,0 +1,76 @@
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib gmbh
+; and published under the Terms of the General Public License.
+
+Message "Check for existing installation of " + $ProductId$ + " ..."
+
+Set $MsiId$ = '{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}'
+Set $UninstallProgram$ = $InstallDir$ + "\uninstall.exe"
+
+if FileExists($UninstallProgram$)
+	comment "Uninstall program found, starting uninstall"
+	Winbatch_uninstall
+	sub_check_exitcode
+endif
+if not (GetRegistryStringValue32("[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + $MsiId$ + "] DisplayName") = "")
+	comment "MSI id " + $MsiId$ + " found in registry, starting msiexec to uninstall"
+	Winbatch_uninstall_msi
+	sub_check_exitcode
+endif
+
+comment "Delete files"
+Files_uninstall /32Bit
+
+comment "Cleanup registry"
+Registry_uninstall /32Bit
+
+comment "Delete program shortcuts"
+LinkFolder_uninstall
+
+[Winbatch_uninstall]
+; Choose one of the following examples as basis for program uninstall
+;
+; === Nullsoft Scriptable Install System ================================================================
+; maybe better called as
+; Winbatch_uninstall /WaitforProcessending "Au_.exe" /Timeoutseconds 10
+; "$UninstallProgram$" /S
+;
+; === Inno Setup ========================================================================================
+; "$UninstallProgram$" /silent /norestart /SUPPRESSMSGBOXES /nocancel
+
+[Winbatch_uninstall_msi]
+msiexec /x $MsiId$ /qb-! REBOOT=ReallySuppress
+
+[Files_uninstall]
+; Example for recursively deleting the installation directory:
+;
+; del -sf "$InstallDir$\"
+
+[Registry_uninstall]
+; Example of deleting a registry key:
+;
+; deletekey [HKEY_LOCAL_MACHINE\Software\$ProductId$]
+
+[LinkFolder_uninstall]
+; Example of deleting a folder from AllUsers startmenu:
+;
+; set_basefolder common_programs
+; delete_subfolder $ProductId$
+;
+; Example of deleting a shortcut from AllUsers desktop:
+;
+; set_basefolder common_desktopdirectory
+; set_subfolder ""
+; delete_element $ProductId$
+
+[sub_check_exitcode]
+set $ExitCode$ = getlastexitcode
+if stringtobool(isMsExitcodeFatal_short($exitcode$, "true", $ErrorString$ ))
+   LogError $ErrorString$
+   isfatalerror $ErrorString$
+else
+   Comment $ErrorString$
+endif
+
+
+;-----------------------------------------------------

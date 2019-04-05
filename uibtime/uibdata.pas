@@ -28,7 +28,8 @@ uses
   httpservice,
   uibtWorkRepChooser,
   uib2erp,
-  Variants;
+  Variants,
+  oslog;
 
 type
 
@@ -110,6 +111,8 @@ type
     procedure Datenweitergabe1Click(Sender: TObject);
     procedure Export1Click(Sender: TObject);
     procedure Hilfe1Click(Sender: TObject);
+    procedure IBConnection1Log(Sender: TSQLConnection; EventType: TDBEventType;
+      const Msg: string);
     procedure Import1Click(Sender: TObject);
     procedure Info1Click(Sender: TObject);
     procedure LeisteNeuAufbauen1Click(Sender: TObject);
@@ -187,7 +190,7 @@ type
     function getshowallprojects(): boolean;
     function getdebuglevel(): integer;
     procedure setdebuglevel(newlevel: integer);
-    procedure writeVerinfoToLog(var feil: Textfile);
+    //procedure writeVerinfoToLog(var feil: Textfile);
     procedure TerminateApplication;
     function isValidEvent(event: string): boolean;
     function dateIsHolyday(mydate: TdateTime): boolean;
@@ -226,6 +229,7 @@ var
   verDatum: string;
   Trayshow: boolean;
   TrayInterval: cardinal;
+  scalefactor: double = 1.0;
 
 
 
@@ -247,10 +251,15 @@ uses ontop, login, debug, logoff, dataedit,
 ///vi: TVersionInfoRec;
 
 
+
 { TDataModule1 }
 function TDataModule1.getdebuglevel(): integer;
 begin
-  getdebuglevel := debuglevel;
+  // wiil be called at start before the logfile is initialized
+  if Assigned(logdatei) then
+    getdebuglevel := logdatei.LogLevel
+  else
+    getdebuglevel := debuglevel;
 end;
 
 procedure TDataModule1.setdebuglevel(newlevel: integer);
@@ -258,7 +267,10 @@ var
   logdir, logfeilname: string;
   myini: TIniFile;
 begin
+  if Assigned(logdatei) then
+    logdatei.LogLevel := newlevel;
   debuglevel := newlevel;
+  // write new loglevel to conf
   // we will use logdir for logging and for configuration
   logdir := SysUtils.GetAppConfigDir(False);
   if logdir = '' then
@@ -271,10 +283,10 @@ begin
   logfeilname := ExpandFileNameUTF8(logdir + '\uibtime.conf');
   myini := TIniFile.Create(logfeilname);
   debugOut(5, 'Will use conf file: ' + logfeilname);
-  myini.WriteInteger('general', 'debuglevel', debuglevel);
+  myini.WriteInteger('general', 'debuglevel', newlevel);
   myini.UpdateFile;
   myini.Destroy;
-  debugOut(6, 'debuglevel now: ' + IntToStr(debuglevel));
+  debugOut(6, 'debuglevel now: ' + IntToStr(newlevel));
 end;
 
 procedure TDataModule1.setOntopwidth(newvalue: integer);
@@ -354,6 +366,46 @@ end;
 procedure TDataModule1.debugOut(level: integer; Source: string; meldung: string);
 var
   sourcestr, logstr, logdir, logfeilname: string;
+  aktlevel : integer;
+begin
+  try
+    aktlevel := LLdebug;
+    if Assigned(logdatei) then
+    begin
+      logdatei.AktProduktId := Source;
+      logdatei.log(meldung, level);
+      aktlevel := logdatei.LogLevel;
+    end;
+    if level <= aktlevel then
+    begin
+      if FDebug <> nil then
+      begin
+        if Source <> '' then
+          sourcestr := '[' + Source + '] '
+        else
+          sourcestr := '';
+        logstr := '[' + IntToStr(level) + '] [' + DateTimeToStr(Now) +
+          '] ' + sourcestr + meldung;
+        FDebug.memo1.Lines.add(logstr);
+      end;
+    end;
+  except
+    on e: Exception do
+    begin
+      if Assigned(logdatei) then
+      begin
+        logdatei.log('exception in DataModule1.debugOut', LLcritical);
+        logdatei.log(e.Message, LLcritical);
+      end;
+      raise;
+    end;
+  end;
+end;
+
+(*
+procedure TDataModule1.debugOut(level: integer; Source: string; meldung: string);
+var
+  sourcestr, logstr, logdir, logfeilname: string;
 begin
   try
     if Source <> '' then
@@ -381,6 +433,7 @@ begin
   except
   end;
 end;
+*)
 
 procedure TDataModule1.Dateneditieren1Click(Sender: TObject);
 begin
@@ -464,6 +517,27 @@ begin
 
 end;
 
+procedure TDataModule1.IBConnection1Log(Sender: TSQLConnection;
+  EventType: TDBEventType; const Msg: string);
+var
+  Source: string;
+begin
+  //TDBEventType = (detCustom, detPrepare, detExecute, detFetch, detCommit, detRollBack, detParamValue, detActualSQL);
+  case EventType of
+    detCustom: Source := 'Custom:  ';
+    detPrepare: Source := 'Prepare: ';
+    detExecute: Source := 'Execute: ';
+    detFetch: Source := 'Fetch:   ';
+    detCommit: Source := 'Commit:  ';
+    detRollBack: Source := 'Rollback:';
+    detParamValue: Source := 'ParamValue:';
+    detActualSQL: Source := 'ActualSQL:';
+    else
+      Source := 'Unknown event: ';
+  end;
+  debugOut(9, 'Database', Source + Msg);
+end;
+
 procedure TDataModule1.Import1Click(Sender: TObject);
 begin
 
@@ -498,19 +572,21 @@ begin
       (lowercase(myevent) = 'afterdelete') then
     begin
       myquery.ApplyUpdates;
-      debugOut(5, DataSet.Name + myevent, 'start  ' + DataSet.Name + myevent + ' (apply)');
+      debugOut(5, DataSet.Name + myevent, 'start  ' + DataSet.Name +
+        myevent + ' (apply)');
     end;
     if SQLTransaction1.Active then
     begin
       SQLTransaction1.CommitRetaining;
-      debugOut(5, DataSet.Name + myevent, 'start  ' +
-        DataSet.Name + myevent + ' (commit/start)');
+      debugOut(5, DataSet.Name + myevent, 'start  ' + DataSet.Name +
+        myevent + ' (commit/start)');
     end
     else
       debugOut(3, DataSet.Name + myevent, 'Error: Missing Transaction ' +
         DataSet.Name + myevent + ' ');
   except
-    debugOut(2, DataSet.Name + myevent, 'exception in ' + DataSet.Name + myevent + ' (commit)');
+    debugOut(2, DataSet.Name + myevent, 'exception in ' + DataSet.Name +
+      myevent + ' (commit)');
   end;
 end;
 
@@ -625,8 +701,8 @@ begin
       debugOut(3, 'SQholydaysAfterDelete', 'Error: Missing Transaction ' +
         DataSet.Name + ' AfterDelete');
   except
-    debugOut(2, 'SQholydaysAfterDelete', 'exception in ' +
-      DataSet.Name + ' AfterDelete (commit)');
+    debugOut(2, 'SQholydaysAfterDelete', 'exception in ' + DataSet.Name +
+      ' AfterDelete (commit)');
   end;
 end;
 
@@ -666,7 +742,8 @@ begin
       //SQLTransaction1.StartTransaction;
     end
     else
-      debugOut(3, 'SQholydaysAfterPost', 'Error: Missing Transaction SQuibakteventAfterPost');
+      debugOut(3, 'SQholydaysAfterPost',
+        'Error: Missing Transaction SQuibakteventAfterPost');
     debugOut(5, 'Commit in SQholydaysAfterPost');
   except
     debugOut(2, 'SQholydaysAfterPost', 'exception in SQholydaysAfterPost (commit)');
@@ -740,7 +817,8 @@ begin
         'Error: Missing Transaction SQuibakteventAfterPost');
     debugOut(5, 'Commit in SQuibakteventAfterPost');
   except
-    debugOut(2, 'SQuibakteventAfterPost', 'exception in SQuibakteventAfterPost (commit)');
+    debugOut(2, 'SQuibakteventAfterPost',
+      'exception in SQuibakteventAfterPost (commit)');
   end;
 end;
 
@@ -757,13 +835,13 @@ begin
     // after delete the state is not edit or insert but we have to apply
     //if DataModule1.SQuibevent.State in [dsInsert, dsEdit] then
     DataModule1.SQuibaktuser.ApplyUpdates;
-    debugOut(5, 'SQuibaktuserAfterDelete', 'start  ' +
-      DataSet.Name + ' AfterDelete (apply)');
+    debugOut(5, 'SQuibaktuserAfterDelete', 'start  ' + DataSet.Name +
+      ' AfterDelete (apply)');
     if SQLTransaction1.Active then
     begin
       SQLTransaction1.CommitRetaining;
-      debugOut(5, 'SQuibaktuserAfterDelete', 'start  ' +
-        DataSet.Name + ' AfterDelete (commit/start)');
+      debugOut(5, 'SQuibaktuserAfterDelete', 'start  ' + DataSet.Name +
+        ' AfterDelete (commit/start)');
     end
     else
       debugOut(3, 'SQuibaktuserAfterDelete', 'Error: Missing Transaction ' +
@@ -827,13 +905,13 @@ begin
   try
     // after delete the state is not edit or insert but we have to apply
     DataModule1.SQuibdefproj.ApplyUpdates;
-    debugOut(5, 'SQuibdefprojAfterDelete', 'start  ' +
-      DataSet.Name + ' AfterDelete (apply)');
+    debugOut(5, 'SQuibdefprojAfterDelete', 'start  ' + DataSet.Name +
+      ' AfterDelete (apply)');
     if SQLTransaction1.Active then
     begin
       SQLTransaction1.CommitRetaining;
-      debugOut(5, 'SQuibdefprojAfterDelete', 'start  ' +
-        DataSet.Name + ' AfterDelete (commit/start)');
+      debugOut(5, 'SQuibdefprojAfterDelete', 'start  ' + DataSet.Name +
+        ' AfterDelete (commit/start)');
     end
     else
       debugOut(3, 'SQuibdefprojAfterDelete', 'Error: Missing Transaction ' +
@@ -860,7 +938,8 @@ begin
       //SQLTransaction1.StartTransaction;
     end
     else
-      debugOut(3, 'SQuibdefprojAfterPost', 'Error: Missing Transaction SQuibdefprojAfterPost');
+      debugOut(3, 'SQuibdefprojAfterPost',
+        'Error: Missing Transaction SQuibdefprojAfterPost');
     debugOut(5, 'Commit in SQuibdefprojAfterPost');
   except
     debugOut(2, 'SQuibdefprojAfterPost', 'exception in SQuibdefprojAfterPost (commit)');
@@ -878,15 +957,15 @@ begin
     if SQLTransaction1.Active then
     begin
       SQLTransaction1.CommitRetaining;
-      debugOut(5, 'SQuibeventAfterDelete', 'start  ' +
-        DataSet.Name + ' AfterDelete (commit/start)');
+      debugOut(5, 'SQuibeventAfterDelete', 'start  ' + DataSet.Name +
+        ' AfterDelete (commit/start)');
     end
     else
       debugOut(3, 'SQuibeventAfterDelete', 'Error: Missing Transaction ' +
         DataSet.Name + ' AfterDelete');
   except
-    debugOut(2, 'SQuibeventAfterDelete', 'exception in ' +
-      DataSet.Name + ' AfterDelete (commit)');
+    debugOut(2, 'SQuibeventAfterDelete', 'exception in ' + DataSet.Name +
+      ' AfterDelete (commit)');
   end;
 end;
 
@@ -920,7 +999,8 @@ begin
       debugOut(5, 'SQuibeventAfterPost', 'start  SQuibeventAfterPost (commit/start)');
     end
     else
-      debugOut(3, 'SQuibeventAfterPost', 'Error: Missing Transaction SQuibeventAfterPost');
+      debugOut(3, 'SQuibeventAfterPost',
+        'Error: Missing Transaction SQuibeventAfterPost');
   except
     debugOut(2, 'SQuibeventAfterPost', 'exception in SQuibeventAfterPost (commit)');
   end;
@@ -974,9 +1054,8 @@ procedure TDataModule1.SQuibeventPostError(DataSet: TDataSet;
   E: EDatabaseError; var DataAction: TDataAction);
 begin
   ShowMessage('Beim Schreiben des Datensatzes in uibevent ist ein Fehler aufgetreten: ' +
-    LineEnding + E.Message + LineEnding +
-    'Führe jetzt Cancel auf Datensatz aus.' + LineEnding +
-    'Bitte Datensatz kontrollieren.');
+    LineEnding + E.Message + LineEnding + 'Führe jetzt Cancel auf Datensatz aus.' +
+    LineEnding + 'Bitte Datensatz kontrollieren.');
   DataSet.Cancel;
   DataAction := daAbort;
   debugOut(3, 'SQuibeventPostError', E.Message);
@@ -993,8 +1072,8 @@ begin
     if SQLTransaction1.Active then
     begin
       SQLTransaction1.CommitRetaining;
-      debugOut(5, 'SQuibloggedinAfterDelete', 'start  ' +
-        DataSet.Name + ' AfterDelete (commit/start)');
+      debugOut(5, 'SQuibloggedinAfterDelete', 'start  ' + DataSet.Name +
+        ' AfterDelete (commit/start)');
     end
     else
       debugOut(3, 'SQuibloggedinAfterDelete', 'Error: Missing Transaction ' +
@@ -1039,20 +1118,20 @@ begin
   try
     // after delete the state is not edit or insert but we have to apply
     DataModule1.SQuibsoll.ApplyUpdates;
-    debugOut(5, 'SQuibsollAfterDelete', 'start  ' +
-      DataSet.Name + ' AfterDelete (apply)');
+    debugOut(5, 'SQuibsollAfterDelete', 'start  ' + DataSet.Name +
+      ' AfterDelete (apply)');
     if SQLTransaction1.Active then
     begin
       SQLTransaction1.CommitRetaining;
-      debugOut(5, 'SQuibsollAfterDelete', 'start  ' +
-        DataSet.Name + ' AfterDelete (commit/start)');
+      debugOut(5, 'SQuibsollAfterDelete', 'start  ' + DataSet.Name +
+        ' AfterDelete (commit/start)');
     end
     else
       debugOut(3, 'SQuibsollAfterDelete', 'Error: Missing Transaction ' +
         DataSet.Name + ' AfterDelete');
   except
-    debugOut(2, 'SQuibsollAfterDelete', 'exception in ' +
-      DataSet.Name + ' AfterDelete (commit)');
+    debugOut(2, 'SQuibsollAfterDelete', 'exception in ' + DataSet.Name +
+      ' AfterDelete (commit)');
   end;
 end;
 
@@ -1086,13 +1165,13 @@ begin
   try
     // after delete the state is not edit or insert but we have to apply
     DataModule1.SQuibtimeout.ApplyUpdates;
-    debugOut(5, 'SQuibtimeoutAfterDelete', 'start  ' +
-      DataSet.Name + ' AfterDelete (apply)');
+    debugOut(5, 'SQuibtimeoutAfterDelete', 'start  ' + DataSet.Name +
+      ' AfterDelete (apply)');
     if SQLTransaction1.Active then
     begin
       SQLTransaction1.CommitRetaining;
-      debugOut(5, 'SQuibtimeoutAfterDelete', 'start  ' +
-        DataSet.Name + ' AfterDelete (commit/start)');
+      debugOut(5, 'SQuibtimeoutAfterDelete', 'start  ' + DataSet.Name +
+        ' AfterDelete (commit/start)');
     end
     else
       debugOut(3, 'SQuibtimeoutAfterDelete', 'Error: Missing Transaction ' +
@@ -1134,13 +1213,13 @@ begin
     // after delete the state is not edit or insert but we have to apply
     //if DataModule1.SQuibevent.State in [dsInsert, dsEdit] then
     DataModule1.SQuibuserevent.ApplyUpdates;
-    debugOut(5, 'SQuibusereventAfterDelete', 'start  ' +
-      DataSet.Name + ' AfterDelete (apply)');
+    debugOut(5, 'SQuibusereventAfterDelete', 'start  ' + DataSet.Name +
+      ' AfterDelete (apply)');
     if SQLTransaction1.Active then
     begin
       SQLTransaction1.CommitRetaining;
-      debugOut(5, 'SQuibusereventAfterDelete', 'start  ' +
-        DataSet.Name + ' AfterDelete (commit/start)');
+      debugOut(5, 'SQuibusereventAfterDelete', 'start  ' + DataSet.Name +
+        ' AfterDelete (commit/start)');
     end
     else
       debugOut(3, 'SQuibusereventAfterDelete', 'Error: Missing Transaction ' +
@@ -1177,7 +1256,8 @@ end;
 
 procedure TDataModule1.SQwork_descriptionAfterDelete(DataSet: TDataSet);
 begin
-  debugOut(5, 'SQwork_descriptionAfterDelete', 'start  ' + DataSet.Name + ' AfterDelete');
+  debugOut(5, 'SQwork_descriptionAfterDelete', 'start  ' + DataSet.Name +
+    ' AfterDelete');
   try
     // after delete the state is not edit or insert but we have to apply
     DataModule1.SQwork_description.ApplyUpdates;
@@ -1202,11 +1282,11 @@ procedure TDataModule1.SQwork_descriptionAfterInsert(DataSet: TDataSet);
 begin
   SQwork_description.FieldByName('userid').AsString := uid;
   SQwork_description.FieldByName('jahr').AsInteger :=
-    YearOf(ScanDateTime('dd.mm.yyyy',fwork_description.EditButtonDate.Text));
+    YearOf(ScanDateTime('dd.mm.yyyy', fwork_description.EditButtonDate.Text));
   SQwork_description.FieldByName('monat').AsInteger :=
-    MonthOf(ScanDateTime('dd.mm.yyyy',fwork_description.EditButtonDate.Text));
+    MonthOf(ScanDateTime('dd.mm.yyyy', fwork_description.EditButtonDate.Text));
   SQwork_description.FieldByName('tag').AsInteger :=
-    DayOf(ScanDateTime('dd.mm.yyyy',fwork_description.EditButtonDate.Text));
+    DayOf(ScanDateTime('dd.mm.yyyy', fwork_description.EditButtonDate.Text));
   SQwork_description.FieldByName('event').AsString :=
     Query_day_report.FieldByName('event').AsString;
 end;
@@ -1241,9 +1321,8 @@ procedure TDataModule1.SQwork_descriptionPostError(DataSet: TDataSet;
   E: EDatabaseError; var DataAction: TDataAction);
 begin
   ShowMessage('Beim Schreiben des Datensatzes in work_description ist ein Fehler aufgetreten: '
-    + LineEnding + E.Message + LineEnding +
-    'Führe jetzt Cancel auf Datensatz aus.' + LineEnding +
-    'Bitte Datensatz kontrollieren.');
+    + LineEnding + E.Message + LineEnding + 'Führe jetzt Cancel auf Datensatz aus.' +
+    LineEnding + 'Bitte Datensatz kontrollieren.');
   DataSet.Cancel;
   DataAction := daAbort;
   debugOut(3, 'SQwork_descriptionPostError', E.Message);
@@ -1265,26 +1344,38 @@ end;
 
 procedure TDataModule1.TimerCheckNetTimer(Sender: TObject);
 var
-  cinfo : TConnInfoType;
-  servername : string;
+  cinfo: TConnInfoType;
+  servername: string;
+  retries: integer;
 begin
+
   servername := 'groupware';
+  ;
+  retries := 0;
   {$IFDEF WIN32}
-  if pinghost(servername) = -1 then
+  while (pinghost(servername) = -1) and (retries < 10) do
   begin
-    debugOut(3, 'CheckNetTimer', 'Could not reach '+servername);
-    if mrAbort = MessageDlg('uibtime: Warnung','Die Netzwerkverbindung zum DB-Server '+servername,mtError,[mbAbort,mbIgnore],0)
-    then
-    begin
-      Application.Terminate;
-      halt;
-    end;
+    debugOut(3, 'CheckNetTimer', 'Could not reach ' + servername + ' retry ...');
+    Inc(retries);
+    Sleep(1000);
   end;
+  if retries >= 10 then
+    debugOut(2, 'CheckNetTimer', 'Could not reach ' + servername + ' no retry.');
+ {$ENDIF WIN32}
+  (*
+     if mrAbort = MessageDlg('uibtime: Warnung','Die Netzwerkverbindung zum DB-Server '+servername,mtError,[mbAbort,mbIgnore],0)
+     then
+     begin
+       debugOut(3, 'CheckNetTimer', 'Could not reach '+servername+' terminate.');
+       Application.Terminate;
+       halt;
+     end;
   {$ENDIF WIN32}
   if not IBConnection1.Connected  then
   begin
     debugOut(3, 'CheckNetTimer', 'connection error');
   end;
+  *)
 end;
 
 
@@ -1427,9 +1518,9 @@ procedure TDataModule1.TimerTrayIconTimer(Sender: TObject);
 var
   missinglist: TStringList;
   {$IFDEF LINUX}
-  hello : PNotifyNotification;
+  hello: PNotifyNotification;
   {$ENDIF LINUX}
-  exitcode : integer;
+  exitcode: integer;
 begin
   debugOut(6, 'trayicon', 'start trytimer ');
   missinglist := TStringList.Create;
@@ -1445,9 +1536,9 @@ begin
     notify_init(argv[0]);
     hello := notify_notification_new(
       // Title
-      pchar('uibtime missing reports'),
+      PChar('uibtime missing reports'),
       // Content
-      pchar(missinglist.Text),
+      PChar(missinglist.Text),
       // Icon
       'dialog-information');
     // Lets display it, but we will not handle any errors ...
@@ -1515,7 +1606,8 @@ begin
     BoolToStr(Datamodule1.SQuibloggedin.Active, True));
   debugOut(7, 'setloggedin', 'SQuibloggedin.filterd: ' +
     BoolToStr(Datamodule1.SQuibloggedin.Filtered, True));
-  debugOut(7, 'setloggedin', 'SQuibloggedin.filter: ' + Datamodule1.SQuibloggedin.Filter);
+  debugOut(7, 'setloggedin', 'SQuibloggedin.filter: ' +
+    Datamodule1.SQuibloggedin.Filter);
   if not DataModule1.SQuibloggedin.Locate('userid', uid, [loCaseInsensitive]) then
     //if Datamodule1.SQuibloggedin.RecordCount < 1 then
   begin
@@ -1680,7 +1772,7 @@ begin
       begin
         SQLTransaction2.Commit;
         SQLTransaction2.StartTransaction;
-        debugOut(5, 'DataModule1.getLoggedInList Transaction restarted ');
+        debugOut(5, 'DataModule1.getLoggedInList', 'Transaction restarted ');
       end;
 
       if SQqueryloggedin.active then
@@ -1690,7 +1782,7 @@ begin
       SQqueryloggedin.sql.add(
         'select userid from uibloggedin where loggedin > :ltime');
       SQqueryloggedin.ParamByName('ltime').AsDateTime := (now - encodetime(0, 15, 0, 0));
-      debugOut(5, 'DataModule1.getLoggedInList ltime: ' + DateTimeToStr(
+      debugOut(6, 'DataModule1.getLoggedInList', 'ltime: ' + DateTimeToStr(
         (now - encodetime(0, 15, 0, 0))));
       SQqueryloggedin.Open;
       userlist.Clear;
@@ -1700,13 +1792,13 @@ begin
     if AnsiLowerCase(pingserver) = 'c' then
      pingserver := 'local';
      *)
-      debugOut(5, 'DataModule1.getLoggedInList count: ' + IntToStr(
+      debugOut(6, 'DataModule1.getLoggedInList', 'count: ' + IntToStr(
         SQqueryloggedin.RecordCount));
       for i := 1 to SQqueryloggedin.RecordCount do
       begin
         //userlist.Add(pingserver+':'+queryloggedin.fieldbyname('userid').asstring);
         userlist.Add(SQqueryloggedin.FieldByName('userid').AsString);
-        debugOut(5, 'DataModule1.getLoggedInList found: ' +
+        debugOut(7, 'DataModule1.getLoggedInList', 'found: ' +
           SQqueryloggedin.FieldByName('userid').AsString);
         SQqueryloggedin.Next;
       end;
@@ -1778,12 +1870,13 @@ begin
     *)
       /// if (userlistcount <> userlist.Count) and dobeep then
       ///   beep;
-      debugOut(5, 'ende von DataModule1.getLoggedInList');
+      debugOut(5, 'DataModule1.getLoggedInList', 'ende von DataModule1.getLoggedInList');
     except
       on e: Exception do
       begin
-        debugOut(3, '', 'exception in DataModule1.getLoggedInList');
-        debugOut(5, e.Message);
+        debugOut(3, 'DataModule1.getLoggedInList',
+          'exception in DataModule1.getLoggedInList');
+        debugOut(3, 'Exception', e.Message);
         raise;
       end;
     end;
@@ -1792,7 +1885,7 @@ begin
 end;
 
 
-
+(*
 procedure TDataModule1.writeVerinfoToLog(var feil: Textfile);
 //var
 //  S: string;
@@ -1802,6 +1895,7 @@ begin
   writeln(feil, 'uibtime Version: ' + version + ' vom ' + verDatum);
   writeln(feil, '-----Ende Version-Info-----');
 end;
+*)
 
 function IncludeTrailingPathDelimiter(path: string): string;
 begin
@@ -1820,6 +1914,7 @@ var
   logdir, logfeilname: string;
   myini: TIniFile;
 begin
+
   // we will use logdir for logging and for configuration
   logdir := SysUtils.GetAppConfigDir(False);
   if logdir = '' then
@@ -1872,6 +1967,27 @@ begin
   TimerTrayIcon.Enabled := Trayshow;
   myini.UpdateFile;
   myini.Destroy;
+
+  // Initialize logging
+  LogDatei := TLogInfo.Create;
+  logfeilname := ExtractFileNameOnly(Application.ExeName);
+  LogDatei.FileName := logfeilname;
+  LogDatei.StandardLogFileext := '.log';
+  LogDatei.StandardLogFilename := logfeilname;
+  LogDatei.WritePartLog := False;
+  LogDatei.WriteErrFile := False;
+  LogDatei.WriteHistFile := False;
+  LogDatei.LogProduktId := True;
+  LogDatei.LogLevel := debuglevel;
+  LogDatei.StandardLogPath := logdir;
+  LogDatei.StandardMainLogPath := logdir;
+
+  //LogDatei.StandardPartLogFilename := lfilename+ '-part';
+  LogDatei.CreateTheLogfile(logfeilname + '.log', True);
+  LogDatei.log(DateTimeToStr(Now) + ': uibtime started',LLessential);
+  LogDatei.log('uibtime version: '+version,LLessential);
+
+  (*
   logfeilname := ExpandFileNameUTF8(logdir + '\uibtime.log');
   AssignFile(logfeil, logfeilname);
   Rewrite(logfeil);
@@ -1879,7 +1995,8 @@ begin
   writeVerinfoToLog(logfeil);
   writeln(logfeil, Fdebug.Memo1.Lines.Text);
   closeFile(logfeil);
-  Application.OnException:= CustomExceptionHandler;
+  *)
+  Application.OnException := CustomExceptionHandler;
 end;
 
 procedure TDataModule1.TerminateApplication;
@@ -1901,7 +2018,7 @@ begin
   myini.WriteBool('general', 'autologin', Autologin1.Checked);
   myini.WriteBool('general', 'zeigenurmeineprojekte', zeigenurmeineprojekte1.Checked);
   myini.WriteBool('general', 'showdebugwindow', ShowDebugwindow1.Checked);
-  myini.WriteInteger('general', 'debuglevel', debuglevel);
+  myini.WriteInteger('general', 'debuglevel', LogDatei.LogLevel);
   myini.UpdateFile;
   myini.Destroy;
   try
@@ -1932,8 +2049,10 @@ begin
     debugOut(5, 'Finished free components ');
   finally
     debugOut(5, 'Will terminate .... ');
+    LogDatei.Close;
     Application.Terminate;
-    debugOut(5, 'Will halt .... ');
+    //debugOut(5, 'Will halt .... ');
+
     halt;
   end;
 end;
@@ -1961,55 +2080,85 @@ begin
   SQholydays.Filtered := False;
 end;
 
-procedure CatchUnhandledException(Obj: TObject; Addr: Pointer; FrameCount: Longint; Frames: PPointer);
+procedure CatchUnhandledException(Obj: TObject; Addr: Pointer;
+  FrameCount: longint; Frames: PPointer);
 var
   Message: string;
-  i: LongInt;
+  i: longint;
   hstdout: ^Text;
 begin
   hstdout := @stdout;
-  Writeln(hstdout^, 'An unhandled exception occurred at $', HexStr(PtrUInt(Addr), SizeOf(PtrUInt) * 2), ' :');
-  if Obj is exception then
-   begin
-     Message := Exception(Obj).ClassName + ' : ' + Exception(Obj).Message;
-     Writeln(hstdout^, Message);
-   end
+  Writeln(hstdout^, 'An unhandled exception occurred at $',
+    HexStr(PtrUInt(Addr), SizeOf(PtrUInt) * 2), ' :');
+  if Obj is Exception then
+  begin
+    Message := Exception(Obj).ClassName + ' : ' + Exception(Obj).Message;
+    Writeln(hstdout^, Message);
+  end
   else
     Writeln(hstdout^, 'Exception object ', Obj.ClassName, ' is not of class Exception.');
   Writeln(hstdout^, BackTraceStrFunc(Addr));
   if (FrameCount > 0) then
-    begin
-      for i := 0 to FrameCount - 1 do
-        Writeln(hstdout^, BackTraceStrFunc(Frames[i]));
-    end;
-  Writeln(hstdout^,'');
+  begin
+    for i := 0 to FrameCount - 1 do
+      Writeln(hstdout^, BackTraceStrFunc(Frames[i]));
+  end;
+  Writeln(hstdout^, '');
 end;
 
 procedure TDataModule1.DumpExceptionCallStack(E: Exception);
 var
-  I: Integer;
+  I: integer;
   Frames: PPointer;
-  Report: string;
+  Report, Rep2: string;
 begin
-  Report := 'Program exception! ' + LineEnding +
-    'Stacktrace:' + LineEnding + LineEnding;
-  if E <> nil then begin
+  debugOut(2, 'Exception', 'Message: ' + E.Message);
+  Report := 'Program exception! ' + LineEnding + 'Stacktrace:' +
+    LineEnding + LineEnding;
+  if E <> nil then
+  begin
     Report := Report + 'Exception class: ' + E.ClassName + LineEnding +
-    'Message: ' + E.Message + LineEnding;
+      'Message: ' + E.Message + LineEnding;
   end;
   Report := Report + BackTraceStrFunc(ExceptAddr);
   Frames := ExceptFrames;
   for I := 0 to ExceptFrameCount - 1 do
     Report := Report + LineEnding + BackTraceStrFunc(Frames[I]);
-  ShowMessage(Report);
-  debugOut(2,'', Report);
+  debugOut(2, 'Exception', Report);
+  //ShowMessage(Report);
+  Rep2 := Report + 'Exception class: ' + E.ClassName + ' , ' +
+      'Message: ' + E.Message + ' , '
+      +' Bitte Logdatei sichern: '+LogDatei.FileName+' - Programmabbruch.';
+  MessageDlg('uibtime: Fehler',Rep2, mtError, [mbAbort], 0);
+//    'Keine Netzwerkverbindung zum DB-Server. Programmabbruch ', mtError, [mbAbort], 0);
+  Application.Terminate;
   Halt; // End of program execution
 end;
 
 procedure TDataModule1.CustomExceptionHandler(Sender: TObject; E: Exception);
+var
+  retries: integer;
 begin
+  (*
+  if E.ClassType = EIBDatabaseError then
+  begin
+    retries := 0;
+    if pos('Unable to complete network request',E.Message) > 0 then
+      begin
+        while retries < 10 do
+        begin
+          debugOut(2,'Exception', 'Unable to complete network request: retry: '+inttostr(retries));
+          inc(retries);
+          sleep(1000);
+          Flogin.BitBtnOkClick(sender);
+          Application.ProcessMessages;
+        end;
+      end
+    end;
+  if not IBConnection1.Connected then
+    begin
+    *)
   DumpExceptionCallStack(E);
-  Halt; // End of program execution
 end;
 
 
@@ -2017,7 +2166,12 @@ initialization
   { initialization-Abschnitt }
   DefaultFormatSettings.ShortDateFormat := 'dd.mm.yyyy';
   ontopwidth := 850;//730;
-  ontopheight := 25;
+  ontopheight := 28;
+  {$ifdef LINUX}
+  ontopheight := round(32 * (96 / screen.PixelsPerInch));
+  {$ENDIF LINUX}
+  //ontopheight := 50;
+  scalefactor := 96 / screen.PixelsPerInch;
   screenx := Screen.Width;
   screeny := Screen.Height;
   leftint := (screenx - ontopwidth) div 2;

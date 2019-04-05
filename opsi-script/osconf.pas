@@ -148,6 +148,7 @@ var
   opsiscriptconf : string;
   ScriptErrorMessages: boolean = False;
   AutoActivityDisplay: boolean = False;
+  w10BitlockerSuspendOnReboot: boolean = False;
 
 
 implementation
@@ -400,6 +401,19 @@ begin
                             osmain.startupmessages.Add('got AutoActivityDisplay: ' + tmpstr);
                             if not TryStrToBool(tmpstr, AutoActivityDisplay) then
                               osmain.startupmessages.Add('Error: Not a Boolean:  AutoActivityDisplay: ' + tmpstr);
+                            result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
+                      if LowerCase(configid) = LowerCase('opsi-script.global.w10BitlockerSuspendOnReboot') then
+                      begin
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add('got w10BitlockerSuspendOnReboot: ' + tmpstr);
+                            if not TryStrToBool(tmpstr, w10BitlockerSuspendOnReboot) then
+                              osmain.startupmessages.Add('Error: Not a Boolean:  w10BitlockerSuspendOnReboot: ' + tmpstr);
                             result := 'readConfigFromService: ok';
                           end;
                       end;

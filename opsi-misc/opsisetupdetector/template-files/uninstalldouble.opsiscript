@@ -19,8 +19,6 @@ DefVar $ErrorString$
 DefVar $LicenseRequired$
 DefVar $LicenseKey$
 DefVar $LicensePool$
-DefVar $MsiId1$
-DefVar $MsiId2$
 DefVar $LogDir$
 DefVar $OS$
 DefVar $oldProgFound$
@@ -43,7 +41,6 @@ Set $ProductId$       = "#@productId*#"
 Set $InstallDir1$      = "#@InstallDir1*#"
 Set $LicenseRequired$ = "#@LicenseRequired*#"
 Set $LicensePool$     = "p_" + $ProductId$
-Set $MsiId$           = "#@MsiId1*#"
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS

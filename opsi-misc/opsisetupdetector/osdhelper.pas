@@ -15,47 +15,57 @@ uses
   SysUtils;
 
 {$IFDEF WINDOWS}
-procedure registerForExplorer(doregister : boolean);
+procedure registerForWinExplorer(doregister: boolean);
 function getSpecialFolder(csidlValue: integer): string;
 {$ENDIF WINDOWS}
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TStringList;
   var report: string; showcmd: integer; var ExitCode: longint): boolean;
-function grepexe(instring: string) : string;
+function grepexe(instring: string): string;
 
 implementation
+
 uses
   osdform;
 
 {$IFDEF WINDOWS}
-procedure registerForExplorer(doregister: boolean);
+procedure registerForWinExplorer(doregister: boolean);
 var
   myreg: Tregistry;
 begin
-  (*
-  doregister := True;
   myreg := TRegistry.Create(KEY_ALL_ACCESS);
-  myreg.RootKey := HKEY_CURRENT_USER;
-  myreg.OpenKey('SOFTWARE\opsi.org\opsisetupdetector', True);
-  if myreg.ValueExists('regsterAtExplorer') then
-    doregister := myreg.ReadBool('regsterAtExplorer')
-  else
-    myreg.WriteBool('regsterAtExplorer', doregister);
-  myreg.CloseKey;
-  resultform1.CheckBox1.Checked := doregister;
-  *)
-  myreg := TRegistry.Create(KEY_ALL_ACCESS);
-  myreg.RootKey := HKEY_CURRENT_USER;
-  myreg.OpenKey('Software\Classes\*\shell\opsi setup detector\Command', True);
+  //myreg.RootKey := HKEY_CURRENT_USER;
+  myreg.RootKey := HKEY_CLASSES_ROOT;
+  //remove old registration
+  myreg.DeleteKey('Software\Classes\*\shell\opsi setup detector\Command');
+  myreg.DeleteKey('Software\Classes\*\shell\opsi setup detector');
+  myreg.DeleteKey('*\shell\opsi setup detector\Command');
+  myreg.DeleteKey('*\shell\opsi setup detector');
+  myreg.DeleteKey('Software\Classes\exefile\shell\opsi setup detector\Command');
+  myreg.DeleteKey('Software\Classes\exefile\shell\opsi setup detector');
+  myreg.DeleteKey('Software\Classes\Msi.Package\shell\opsi setup detector\Command');
+  myreg.DeleteKey('Software\Classes\Msi.Package\shell\opsi setup detector');
+  //new registration
   if doregister then
   begin
-    myreg.OpenKey('Software\Classes\*\shell\opsi setup detector\Command', True);
-    myreg.WriteString('', '"' + ParamStr(0) + '" --filename=%1');
+    myreg.OpenKey('exefile\shell\opsi setup detector', True);
+    myreg.WriteString('', 'Analyze with opsi-setup-detector');
+    myreg.CloseKey;
+    myreg.OpenKey('exefile\shell\opsi setup detector\Command', True);
+    myreg.WriteString('', '"' + ParamStr(0) + '" --filename="%1"');
+    myreg.CloseKey;
+    myreg.OpenKey('Msi.Package\shell\opsi setup detector', True);
+    myreg.WriteString('', 'Analyze with opsi-setup-detector');
+    myreg.CloseKey;
+    myreg.OpenKey('Msi.Package\shell\opsi setup detector\Command', True);
+    myreg.WriteString('', '"' + ParamStr(0) + '" --filename="%1"');
   end
   else
   begin
-    myreg.DeleteKey('Software\Classes\*\shell\opsi setup detector\Command');
-    myreg.DeleteKey('Software\Classes\*\shell\opsi setup detector');
+    myreg.DeleteKey('exefile\shell\opsi setup detector\Command');
+    myreg.DeleteKey('exefile\shell\opsi setup detector');
+    myreg.DeleteKey('Msi.Package\shell\opsi setup detector\Command');
+    myreg.DeleteKey('Msi.Package\shell\opsi setup detector');
   end;
   myreg.CloseKey;
   myreg.Free;
@@ -81,38 +91,35 @@ begin
     //Fix:
     // if assigned(SHGetFolderPath) and ((csidlvalue = CSIDL_APPDATA) or
     //   (csidlvalue = CSIDL_PERSONAL)) then
-    begin
-      if SUCCEEDED(SHGetFolderPath(0, csidlValue, 0, 0, namebuf)) then
-        Result := StrPas(namebuf);
-    end;
+  begin
+    if SUCCEEDED(SHGetFolderPath(0, csidlValue, 0, 0, namebuf)) then
+      Result := StrPas(namebuf);
+  end;
   //debugmessages.Add('getSpecialFolder: '+inttostr(csidlValue)+' -> ' + result);
   //if Assigned(LogDatei) then
   //LogDatei.DependentAdd('getSpecialFolder: '+inttostr(csidlValue)+' -> ' + result, LLDebug2);
 end;
+
 {$ENDIF WINDOWS}
 
 
 
 
-function grepexe(instring: string) : string;
-var lowerstring: string;
+function grepexe(instring: string): string;
+var
+  lowerstring: string;
 begin
-  result := '';
+  Result := '';
   lowerstring := lowercase(instring);
-  if
-    (0 < pos('installshield', lowerstring)) or
-    (0 < pos('inno', lowerstring)) or
-    (0 < pos('wise', lowerstring)) or
-    (0 < pos('nullsoft', lowerstring)) or
+  if (0 < pos('installshield', lowerstring)) or (0 < pos('inno', lowerstring)) or
+    (0 < pos('wise', lowerstring)) or (0 < pos('nullsoft', lowerstring)) or
     (0 < pos('wixquery', lowerstring)) or
     (0 < pos('product_build_number{', lowerstring)) or
-    (0 < pos('productcode{', lowerstring)) or
-    (0 < pos('msiexec', lowerstring)) or
+    (0 < pos('productcode{', lowerstring)) or (0 < pos('msiexec', lowerstring)) or
     (0 < pos('extract', lowerstring)) or
     // (0 < pos('setup', lowerstring)) or
-    (0 < pos('installer', lowerstring))
-    then
-       result :=instring;
+    (0 < pos('installer', lowerstring)) then
+    Result := instring;
 end;
 
 
@@ -203,8 +210,7 @@ begin
     except
       on e: Exception do
       begin
-        Mywrite('Exception in RunCommandAndCaptureOut: ' +
-          e.message);
+        Mywrite('Exception in RunCommandAndCaptureOut: ' + e.message);
         Result := False;
       end;
     end;
@@ -217,4 +223,7 @@ end;
 
 
 end.
+
+
+
 

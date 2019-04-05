@@ -3,7 +3,7 @@ program opsisetupdetector;
 {$mode delphi}{$H+}
 
 //{$APPTYPE CONSOLE}
-{$DEFINE debug}
+//{$DEFINE debug}
 
 uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   cthreads, {$ENDIF} {$ENDIF}
@@ -13,8 +13,6 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   Interfaces,
   Forms,
   osdform,
-  //VersionInfoX,
-  //help,
   printers, fileinfo, winpeimagereader, lcltranslator, runtimetypeinfocontrols,
   osdanalyze, osdhelper, osdbasedata, osdconfigdlg, osdcreate,
   osddlgnewdependency, oscheckbinarybitness, osddlgnewproperty;
@@ -38,11 +36,8 @@ begin
   Application.Initialize;
   Application.Title:='opsi-setup-detector';
   Application.CreateForm(TresultForm1, resultForm1);
-  Application.CreateForm(TFOSDConfigdlg, FOSDConfigdlg);
   Application.CreateForm(TFNewDepDlg, FNewDepDlg);
   Application.CreateForm(TFNewPropDlg, FNewPropDlg);
-  //Application.CreateForm(TFormHelp, FormHelp);
   Application.Run;
-  //main;
 end.
 

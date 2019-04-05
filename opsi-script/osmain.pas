@@ -70,6 +70,7 @@ osfuncwin2,
 {$ENDIF WIN32}
   shellapi,
   wispecfolder,
+  osfuncwin3,
 {$ENDIF WINDOWS}
 {$IFDEF LINUX}
   osfunclin,
@@ -925,8 +926,10 @@ var
   errorNumber: integer;
   extremeErrorLevel: TErrorLevel;
   showErrorMessages: boolean;
-  ps: string;
+  ps, tmpstr, cmdstr: string;
   TheExitMode: TExitMode;
+  buildpcscript : TuibInstScript;
+  tmplist : Tstringlist;
   {$IFDEF WINDOWS}
   regDataType: tuibRegDataType;
   {$ENDIF WINDOWS}
@@ -1267,6 +1270,7 @@ begin
 
       if PerformExitWindows >= txrRegisterForReboot then
       begin
+        LogDatei.log('We will >= Reboot',LLDebug);
         WriteEntry(WinstRegContinueVar, trdInteger, '1');
 
         try
@@ -1278,11 +1282,62 @@ begin
 
         errorNumber := errorNumber + LogDatei.NumberOfErrors;
 
-        // Aufheben der Fehlerzahl fuer spaetere Verwendung
+        // Backup Errorcount for use after reboot
         WriteEntry(WinstRegNumberOfErrors, trdInteger, IntToStr(errorNumber));
 
-        // Zuruecksetzen, da sonst Fehlermeldung erscheint
+        // Reset Errorcount to avoid an errormessage
         errorNumber := 0;
+        // >=win 10 and  w10BitlockerSuspendOnReboot then suspend bitlocker for 1 reboot
+        if GetNTVersionMajor >= 10 then
+        begin
+          LogDatei.log('We are on Win >= 10',LLDebug);
+          if ((PerformExitWindows = txrRegisterForReboot)
+              or (PerformExitWindows = txrImmediateReboot)
+              or (PerformExitWindows = txrReboot)) then
+          begin
+            LogDatei.log('We have to reboot',LLDebug);
+            if w10BitlockerSuspendOnReboot then
+            begin
+              LogDatei.log('Suspend Bitlocker',LLInfo);
+              try
+              try
+                buildpcscript := TuibInstScript.create;
+                tmplist := Tstringlist.Create;
+                tmpstr := extractfiledrive(GetWinDirectory);
+                cmdstr := '(Get-BitLockerVolume -MountPoint '
+                           +tmpstr+').EncryptionPercentage';
+                tmplist.Text := buildpcscript.execPowershellCall(cmdstr, 'sysnative',0, true,false,true).Text;
+                 if buildpcscript.LastExitCodeOfExe = 0 then
+                 begin
+                   LogDatei.log('Succesful asked for Bitlocker',LLInfo);
+                   if strtoint(trim(tmplist.Strings[0])) = 0 then
+                   begin
+                     LogDatei.log('Bitlocker not active',LLInfo);
+                   end
+                   else
+                   begin
+                     LogDatei.log('Bitlocker active - suspend',LLInfo);
+                     cmdstr := 'Suspend-BitLocker -MountPoint "'
+                               +tmpstr+'" -RebootCount 1';
+                     buildpcscript.execPowershellCall(cmdstr, 'sysnative',0, true,false,true);
+                   end;
+                 end
+                 else
+                  LogDatei.log('Problem Suspending Bitlocker: Error: '+IntToStr (buildpcscript.LastExitCodeOfExe),LLWarning)
+               except
+                 on e: exception do
+                 begin
+                   LogDatei.log('Error executing :'+cmdstr+' : with powershell: '+ e.message,
+                     LLError);
+                 end
+               end;
+              finally
+                buildpcscript.Free;
+                tmplist.Free;
+              end;
+              end;
+            end;
+          end;
       end
       else
       begin
@@ -1304,6 +1359,7 @@ begin
       FlushKey;
       Free;
     end;
+
     {$ENDIF WINDOWS}
 
     showErrorMessages := False;
@@ -1479,8 +1535,7 @@ begin
   begin
     LogDatei.LogProduktId:=true;
     i := 1;
-    while (i <= Produkte.Count) and (PerformExitWindows < txrReboot) and
-      not PerformExitProgram do
+    while (i <= Produkte.Count) do
     begin
       Produkt := Produkte.Strings[i - 1];
       scriptMode := tsmLogin;
@@ -1904,7 +1959,7 @@ begin
         if errorOccured then
         begin
           FindLocalIPData(ipName, ipAddress);
-          LogPath := StandardLogPath;
+          LogPath := logdatei.StandardLogPath;
           startupmessages.Append('startmessage create log: ' + DateTimeToStr(Now));
           LogDatei.CreateTheLogfile(LogDateiName);
           LogDatei.log('opsi-script cannot connect to service with URL: ' +
@@ -1919,7 +1974,7 @@ begin
           if runloginscripts then
           begin
             //ForceDirectories('c:\opsi.org\log');
-            LogPath := StandardLogPath;
+            LogPath := logdatei.StandardLogPath;
             LogDateiName := LogPath + getLoggedInUser + '_login.log';
             startupmessages.Append('startmessage create log: ' + DateTimeToStr(Now));
             LogDatei.CreateTheLogfile(LogDateiName, False);
@@ -1997,7 +2052,7 @@ begin
 
           DontUpdateMemo := True;
           {$ENDIF GUI}
-          oslog.StandardPartLogPath:= ExtractFileDir(Logdateiname);
+          logdatei.StandardPartLogPath:= ExtractFileDir(Logdateiname);
           LogDatei.CreateTheLogFile(Logdateiname, False);
           extractTmpPathFromLogdatei(LogDateiName);
           TempPath := GetTempPath;
@@ -2292,10 +2347,11 @@ begin
       TempPath := ValueOfEnvVar('TEMP');
 
     testpassed := False;
-    if (StandardMainLogPath <> '') and SysUtils.ForceDirectories(StandardMainLogPath) then
+    if not Assigned(logdatei) then LogDatei := TLogInfo.Create;
+    if (logdatei.StandardMainLogPath <> '') and SysUtils.ForceDirectories(logdatei.StandardMainLogPath) then
     begin
       testpassed := True;
-      teststr := StandardMainLogPath + 'testing_write_privilege_for_winst';
+      teststr := logdatei.StandardMainLogPath + 'testing_write_privilege_for_winst';
       if not fileexists(teststr) then
       begin
         if not SysUtils.ForceDirectories(teststr) or not RemoveDir(teststr) then
@@ -2305,7 +2361,7 @@ begin
     end;
 
     if testpassed then
-      LogPath := StandardMainLogPath
+      LogPath := logdatei.StandardMainLogPath
     else
       LogPath := TempPath;
 

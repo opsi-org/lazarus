@@ -210,6 +210,27 @@ begin
   end;
 end;
 
+function isMounted(mountpoint : string) : boolean;
+var
+  output:string;
+  exename:string;
+  commands:array of string;
+begin
+  result := false;
+  if not RunCommand('/usr/bin/which',['findmnt'],output) then
+   writeln('Could not find mount binary')
+  else
+  begin
+    exename := output;
+    exename := exename.Replace(#10,'');
+    exename := exename.Replace('''','');
+  end;
+  if RunCommand(exename,[mountpoint],output) then
+  begin
+    result := true;
+  end;
+end;
+
 function mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass, myoption: string) : integer;
 var
   cmd, report: string;
@@ -686,40 +707,16 @@ begin
         if (mounttry div 6) = 1 then mountoption := ' vers=1.0,';
         if (mounttry div 9) = 1 then mountoption := '';
         errorcode := mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass,mountoption);
-        if errorcode <> 0 then
+        if (errorcode <> 0) or (not isMounted(mymountpoint)) then
         begin
           inc(mounttry);
           LogDatei.log('Failed to mount '+myshare+' with option: '+mountoption+' to '+mymountpoint+' Error code: '+inttostr(errorcode)+' - retry ...',LLWarning);
           sleep(2000);
         end;
-      until (errorcode = 0) or (mounttry > 12);
-      LogDatei.log('Failed to mount '+myshare+' to '+mymountpoint+' - abort!',LLCritical);
-      (*
-      errorcode := mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass,'');
-      if errorcode <> 0 then
-      begin
-        LogDatei.log('Failed to mount '+myshare+' to '+mymountpoint+' Error code: '+inttostr(errorcode)+' - retry ...',LLWarning);
-        sleep(2000);
-        errorcode := mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass,'');
-        if errorcode <> 0 then
-        begin
-          LogDatei.log('Failed to mount '+myshare+' to '+mymountpoint+' Error code: '+inttostr(errorcode)+' - retry ...',LLWarning);
-          sleep(2000);
-          errorcode := mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass,' vers=1.0,');
-          if errorcode <> 0 then
-          begin
-            LogDatei.log('Failed to mount '+myshare+' to '+mymountpoint+' Error code: '+inttostr(errorcode)+' - retry ...',LLWarning);
-            sleep(2000);
-            errorcode := mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass,' vers=1.0,');
-            if errorcode <> 0 then
-            begin
-              LogDatei.log('Failed to mount '+myshare+' to '+mymountpoint+' Error code: '+inttostr(errorcode)+' - abort!',LLCritical);
-            end
-          end;
-        end;
-      end;
-      *)
-      if errorcode = 0 then
+      until isMounted(mymountpoint) or (mounttry > 12);
+      if not isMounted(mymountpoint) then
+         LogDatei.log('Failed to mount '+myshare+' to '+mymountpoint+' - abort!',LLCritical)
+      else
       begin
         writeln('share mounted - starting action processor...');
         startopsiscript;

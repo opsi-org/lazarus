@@ -3,17 +3,25 @@ unit oscheckbinarybitness;
 {$mode objfpc}
 interface
 uses
-  Classes, SysUtils,JwaWindows;
+  Classes,
+  {$IFDEF LINUX}
+  {$ENDIF LINUX}
+  {$IFDEF WINDOWS}
+  JwaWindows,
+  {$ENDIF WINDOWS}
+  SysUtils;
 
 
 
-
+{$IFDEF WINDOWS}
 function IsCorrectBitness(const APath: WideString): Boolean;
 function GetPEType(const APath: WideString): Byte;
 function getBinaryArchitecture(const APath: WideString): string;
+{$ENDIF WINDOWS}
 
 implementation
 
+{$IFDEF WINDOWS}
 // from http://wiki.freepascal.org/Multiplatform_Programming_Guide#Detecting_bitness_of_external_library_before_loading_it
 // (contributed in forum by GetMem):
 // http://forum.lazarus.freepascal.org/index.php/topic,36834.msg245859.html#msg245859
@@ -102,6 +110,7 @@ begin
    else result := 'unknown';
    end;
 end;
+{$ENDIF WINDOWS}
 
 end.
 

@@ -7,11 +7,14 @@ object FOSDConfigdlg: TFOSDConfigdlg
   ClientHeight = 502
   ClientWidth = 533
   OnActivate = FormActivate
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  Position = poScreenCenter
   LCLVersion = '1.8.4.0'
   object TIPropertyGrid1: TTIPropertyGrid
     Left = 0
-    Height = 346
-    Top = 66
+    Height = 322
+    Top = 90
     Width = 533
     Align = alClient
     CheckboxForBoolean = False
@@ -27,15 +30,56 @@ object FOSDConfigdlg: TFOSDConfigdlg
   end
   object FlowPanel1: TFlowPanel
     Left = 0
-    Height = 66
+    Height = 90
     Top = 0
     Width = 533
     Align = alTop
-    Caption = 'FlowPanel1'
-    ControlList = <>
+    ControlList = <    
+      item
+        Control = Label1
+        WrapAfter = waAuto
+        Index = 0
+      end    
+      item
+        Control = BitBtn1
+        WrapAfter = waAuto
+        Index = 1
+      end>
     FlowLayout = tlTop
     FlowStyle = fsLeftRightTopBottom
     TabOrder = 1
+    object Label1: TLabel
+      Left = 15
+      Height = 71
+      Top = 5
+      Width = 281
+      Align = alLeft
+      AutoSize = False
+      BorderSpacing.Left = 10
+      BorderSpacing.Around = 4
+      BorderSpacing.InnerBorder = 3
+      Caption = 'Edit your configuration here.'#13#10'Click on a line to get help'#13#10'in the yellow field at the bottom.'
+      Font.Height = -15
+      ParentColor = False
+      ParentFont = False
+      WordWrap = True
+    end
+    object BitBtn1: TBitBtn
+      Left = 360
+      Height = 34
+      Top = 21
+      Width = 98
+      Anchors = []
+      AutoSize = True
+      BorderSpacing.Left = 40
+      BorderSpacing.Around = 20
+      BorderSpacing.InnerBorder = 4
+      Caption = 'Finished'
+      Default = True
+      Kind = bkOK
+      ModalResult = 1
+      TabOrder = 0
+    end
   end
   object Panel1: TPanel
     Left = 0
@@ -54,6 +98,8 @@ object FOSDConfigdlg: TFOSDConfigdlg
       Width = 531
       Align = alClient
       Color = 8454143
+      Font.Height = -15
+      ParentFont = False
       TabOrder = 0
     end
   end

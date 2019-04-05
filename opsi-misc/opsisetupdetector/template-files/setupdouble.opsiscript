@@ -18,8 +18,6 @@ DefVar $ErrorString$
 DefVar $LicenseRequired$
 DefVar $LicenseKey$
 DefVar $LicensePool$
-DefVar $MsiId1$
-DefVar $MsiId2$
 DefVar $LogDir$
 DefVar $OS$
 DefVar $oldProgFound$
@@ -43,7 +41,6 @@ Set $InstallDir1$      = "#@InstallDir1*#"
 Set $InstallDir2$      = "#@InstallDir2*#"
 Set $LicenseRequired$ = "#@LicenseRequired*#"
 Set $LicensePool$     = "p_" + $ProductId$
-Set $MsiId$           = "#@MsiId1*#"
 Set $MinimumSpace$    = "#@MinimumSpace*#"
 ; ----------------------------------------------------------------
 
@@ -75,33 +72,26 @@ if $LicenseRequired$ = "true"
    set $LicenseKey$ = get_licensekey_byPool($LicensePool$)
 endif
 
-if (($arch$ = "x86 System") and ($mode$ = "system specific")) or ($arch$ = "both") or ($arch$ = "32 only")
-   comment "Start Pre Install hook (may be empty):"
+if (($arch$ = "x86 System") and ($mode$ = "system specific")) or ($mode$ = "both") or ($mode$ = "32 only")
+
    #@preInstallLines1*#
-   
    comment "Start setup program"
    ChangeDirectory "%SCRIPTPATH%"
    ;----------------------------------------------
-   Winbatch_install_1
+   Winbatch_install_1  #@installWaitForProc1*#
    ;----------------------------------------------
    sub_check_exitcode_1
-   
-   comment "Start Post Install hook (may be empty):"
    #@postInstallLines1*#
 endif
 
 if ($arch$ = "64 Bit System") and (($mode$ = "system specific") or ($mode$ = "both") or ($mode$ = "64 only"))
-   comment "Start Pre Install hook (may be empty):"
    #@preInstallLines2*#
-   
    comment "Start setup program"
    ChangeDirectory "%SCRIPTPATH%"
    ;----------------------------------------------
-   Winbatch_install_2
+   Winbatch_install_2  #@installWaitForProc2*#
    ;----------------------------------------------
    sub_check_exitcode_2
-   
-   comment "Start Post Install hook (may be empty):"
    #@postInstallLines2*#
 endif
 

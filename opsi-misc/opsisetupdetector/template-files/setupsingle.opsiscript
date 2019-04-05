@@ -17,7 +17,6 @@ DefVar $ErrorString$
 DefVar $LicenseRequired$
 DefVar $LicenseKey$
 DefVar $LicensePool$
-DefVar $MsiId$
 DefVar $LogDir$
 DefVar $OS$
 DefVar $oldProgFound$
@@ -36,7 +35,6 @@ Set $ProductId$       = "#@productId*#"
 Set $InstallDir1$      = "#@InstallDir1*#"
 Set $LicenseRequired$ = "#@LicenseRequired*#"
 Set $LicensePool$     = "p_" + $ProductId$
-Set $MsiId$           = "#@MsiId1*#"
 Set $MinimumSpace$    = "#@MinimumSpace*#"
 ; ----------------------------------------------------------------
 
@@ -68,17 +66,13 @@ if $LicenseRequired$ = "true"
    set $LicenseKey$ = get_licensekey_byPool($LicensePool$)
 endif
 
-comment "Start Pre Install hook (may be empty):"
 #@preInstallLines1*#
-
 comment "Start setup program"
 ChangeDirectory "%SCRIPTPATH%"
 ;----------------------------------------------
-Winbatch_install_1
+Winbatch_install_1   #@installWaitForProc1*#
 ;----------------------------------------------
 Sub_check_exitcode
-
-comment "Start Post Install hook (may be empty):"
 #@postInstallLines1*#
 
 [Winbatch_install_1]

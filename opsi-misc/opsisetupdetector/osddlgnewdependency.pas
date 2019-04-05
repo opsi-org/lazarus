@@ -5,8 +5,18 @@ unit osddlgnewdependency;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, RTTIGrids, Forms, Controls, Graphics, Dialogs,
-  ExtCtrls, Buttons, StdCtrls,
+  Classes,
+  SysUtils,
+  FileUtil,
+  RTTIGrids,
+  Forms,
+  Controls,
+  Graphics,
+  Dialogs,
+  ExtCtrls,
+  Buttons,
+  StdCtrls,
+  EditBtn,
   osdbasedata;
 
 type
@@ -20,6 +30,9 @@ type
     ComboBoxReqType: TComboBox;
     Editproductid: TEdit;
     FlowPanel1: TFlowPanel;
+    FlowPanel2: TFlowPanel;
+    FlowPanel3: TFlowPanel;
+    FlowPanel4: TFlowPanel;
     GroupBox1: TGroupBox;
     Label1: TLabel;
     Label2: TLabel;
@@ -29,9 +42,6 @@ type
     Panel2: TPanel;
     RadioButtonAction: TRadioButton;
     RadioButtonState: TRadioButton;
-    procedure BitBtn1Click(Sender: TObject);
-    procedure FormHide(Sender: TObject);
-    procedure FormShow(Sender: TObject);
     procedure RadioButtonActionChange(Sender: TObject);
   private
 
@@ -41,7 +51,7 @@ type
 
 var
   FNewDepDlg: TFNewDepDlg;
-  newdependency : TPDependency;
+  newdependency: TPDependency;
 
 implementation
 
@@ -49,10 +59,6 @@ implementation
 
 { TFNewDepDlg }
 
-procedure TFNewDepDlg.FormShow(Sender: TObject);
-begin
-
-end;
 
 procedure TFNewDepDlg.RadioButtonActionChange(Sender: TObject);
 begin
@@ -73,18 +79,6 @@ begin
   end;
 end;
 
-procedure TFNewDepDlg.FormHide(Sender: TObject);
-begin
-  (*
-  TIPropertyGridNewDep.ConsistencyCheck;
-  TIPropertyGridNewDep.TIObject := nil;
-  *)
-end;
-
-procedure TFNewDepDlg.BitBtn1Click(Sender: TObject);
-begin
-
-end;
 
 end.
 
