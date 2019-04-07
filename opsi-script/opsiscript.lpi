@@ -22,6 +22,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
       <RevisionNr Value="1"/>
+      <BuildNr Value="1"/>
       <StringTable Comments="Compiled with Lazarus 2.0.0" CompanyName="uib gmbh" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.1"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -54,10 +55,6 @@
             <SmallerCode Value="True"/>
           </CodeGeneration>
           <Linking>
-            <Debugging>
-              <DebugInfoType Value="dsDwarf2Set"/>
-              <StripSymbols Value="True"/>
-            </Debugging>
             <Options>
               <Win32>
                 <GraphicApplication Value="True"/>
@@ -97,7 +94,6 @@
             <Optimizations>
               <OptimizationLevel Value="3"/>
             </Optimizations>
-            <SmallerCode Value="True"/>
           </CodeGeneration>
           <Linking>
             <Debugging>
@@ -118,9 +114,6 @@
           </Other>
         </CompilerOptions>
       </Item3>
-      <SharedMatrixOptions Count="1">
-        <Item1 ID="322483050548" Targets="Darwin" Modes="Debug" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
-      </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
@@ -338,11 +331,9 @@
         <OverflowChecks Value="True"/>
         <StackChecks Value="True"/>
       </Checks>
-      <SmallerCode Value="True"/>
     </CodeGeneration>
     <Linking>
       <Debugging>
-        <DebugInfoType Value="dsDwarf3"/>
         <StripSymbols Value="True"/>
       </Debugging>
       <LinkSmart Value="True"/>
