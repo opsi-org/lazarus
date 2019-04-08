@@ -71,8 +71,9 @@ begin
           // check actual ident
           aktidentnum := length(aktline) - length(trimleft(aktline));
           aktidentstr := '';
+          // ident with tabs
           for k := 1 to aktidentnum do
-            aktidentstr := aktidentstr + ' ';
+            aktidentstr := aktidentstr + char(9);
           // p
           aktReplacestr := patchlist.ValueFromIndex[i];
           // patch aktidentstr after each Newline

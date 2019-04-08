@@ -35,64 +35,64 @@ importlib "%scriptpath%\osd-lib.opsiscript"
 
 ; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
-Set $ProductId$       = "#@productId*#"
+Set $ProductId$		 = "#@productId*#"
 ; the path where we find the product after the installation
-Set $InstallDir1$      = "#@InstallDir1*#"
-Set $InstallDir2$      = "#@InstallDir2*#"
+Set $InstallDir1$		= "#@InstallDir1*#"
+Set $InstallDir2$		= "#@InstallDir2*#"
 Set $LicenseRequired$ = "#@LicenseRequired*#"
-Set $LicensePool$     = "p_" + $ProductId$
-Set $MinimumSpace$    = "#@MinimumSpace*#"
+Set $LicensePool$	  = "p_" + $ProductId$
+Set $MinimumSpace$	 = "#@MinimumSpace*#"
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS
 
 if not(($OS$ = "Windows_NT"))
-   logError "Installation aborted: wrong OS version: only Windows"
-   isFatalError "wrong OS"
+	logError "Installation aborted: wrong OS version: only Windows"
+	isFatalError "wrong OS"
 endif
 
 if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
-   LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% needed for " + $ProductId$
-   isFatalError "No Space"
-   ; Stop process and set installation status to failed
+	LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% needed for " + $ProductId$
+	isFatalError "No Space"
+	; Stop process and set installation status to failed
 endif
 
 comment "Show product picture"
 ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
 if FileExists("%ScriptPath%\delsub.opsiscript")
-   comment "Start uninstall sub section"
-   Sub "%ScriptPath%\delsub.opsiscript"
+	comment "Start uninstall sub section"
+	Sub "%ScriptPath%\delsub.opsiscript"
 endif
 
 Message "Installing " + $ProductId$ + " ..."
 
 if $LicenseRequired$ = "true"
-   comment "Licensing required, reserve license and get license key"
-   set $LicenseKey$ = get_licensekey_byPool($LicensePool$)
+	comment "Licensing required, reserve license and get license key"
+	set $LicenseKey$ = get_licensekey_byPool($LicensePool$)
 endif
 
 if (($arch$ = "x86 System") and ($mode$ = "system specific")) or ($mode$ = "both") or ($mode$ = "32 only")
 
-   #@preInstallLines1*#
-   comment "Start setup program"
-   ChangeDirectory "%SCRIPTPATH%\files"
-   ;----------------------------------------------
-   Winbatch_install_1  #@installWaitForProc1*#
-   ;----------------------------------------------
-   sub_check_exitcode_1
-   #@postInstallLines1*#
+	#@preInstallLines1*#
+	comment "Start setup program"
+	ChangeDirectory "%SCRIPTPATH%\files"
+	;----------------------------------------------
+	Winbatch_install_1  #@installWaitForProc1*#
+	;----------------------------------------------
+	sub_check_exitcode_1
+	#@postInstallLines1*#
 endif
 
 if ($arch$ = "64 Bit System") and (($mode$ = "system specific") or ($mode$ = "both") or ($mode$ = "64 only"))
-   #@preInstallLines2*#
-   comment "Start setup program"
-   ChangeDirectory "%SCRIPTPATH%\files"
-   ;----------------------------------------------
-   Winbatch_install_2  #@installWaitForProc2*#
-   ;----------------------------------------------
-   sub_check_exitcode_2
-   #@postInstallLines2*#
+	#@preInstallLines2*#
+	comment "Start setup program"
+	ChangeDirectory "%SCRIPTPATH%\files"
+	;----------------------------------------------
+	Winbatch_install_2  #@installWaitForProc2*#
+	;----------------------------------------------
+	sub_check_exitcode_2
+	#@postInstallLines2*#
 endif
 
 [Winbatch_install_1]
@@ -105,19 +105,19 @@ endif
 [sub_check_exitcode_1]
 set $ExitCode$ = getlastexitcode
 if stringtobool(#@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ ))
-   LogError $ErrorString$
-   isfatalerror $ErrorString$
+	LogError $ErrorString$
+	isfatalerror $ErrorString$
 else
-   Comment $ErrorString$
+	Comment $ErrorString$
 endif
 
 [sub_check_exitcode_2]
 set $ExitCode$ = getlastexitcode
 if stringtobool(#@isExitcodeFatalFunction2*#($exitcode$, "true", $ErrorString$ ))
-   LogError $ErrorString$
-   isfatalerror $ErrorString$
+	LogError $ErrorString$
+	isfatalerror $ErrorString$
 else
-   Comment $ErrorString$
+	Comment $ErrorString$
 endif
 
 ; ----------------------------------------------------------------

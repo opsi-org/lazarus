@@ -31,33 +31,33 @@ importlib "%scriptpath%\osd-lib.opsiscript"
 
 ; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
-Set $ProductId$       = "opsi-template"
-Set $MinimumSpace$    = "1 MB"
+Set $ProductId$		 = "opsi-template"
+Set $MinimumSpace$	 = "1 MB"
 ; the path were we find the product after the installation
-Set $InstallDir$      = "%ProgramFiles32Dir%\<path to the product>"
+Set $InstallDir$		= "%ProgramFiles32Dir%\<path to the product>"
 Set $LicenseRequired$ = "false"
-Set $LicensePool$     = "p_" + $ProductId$
+Set $LicensePool$	  = "p_" + $ProductId$
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS
 
 if not(($OS$ = "Windows_NT"))
-   logError "Installation aborted: wrong OS version: only Windows"
-   isFatalError "wrong OS"
+	logError "Installation aborted: wrong OS version: only Windows"
+	isFatalError "wrong OS"
 endif
 
 if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
-   LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% needed for " + $ProductId$
-   isFatalError "No Space"
-   ; Stop process and set installation status to failed
+	LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% needed for " + $ProductId$
+	isFatalError "No Space"
+	; Stop process and set installation status to failed
 endif
 
 comment "Show product picture"
 ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
 if FileExists("%ScriptPath%\delsub.opsiscript")
-   comment "Start uninstall sub section"
-   Sub "%ScriptPath%\delsub.opsiscript"
+	comment "Start uninstall sub section"
+	Sub "%ScriptPath%\delsub.opsiscript"
 endif
 
 Message "Installing " + $ProductId$ + " ..."
@@ -75,8 +75,8 @@ else
 endif
 
 if $LicenseRequired$ = "true"
-   comment "Licensing required, reserve license and get license key"
-   set $LicenseKey$ = get_licensekey_byPool($LicensePool$)
+	comment "Licensing required, reserve license and get license key"
+	set $LicenseKey$ = get_licensekey_byPool($LicensePool$)
 endif
 
 #@preInstallLines1*#
@@ -175,10 +175,10 @@ LinkFolder_install
 [sub_check_exitcode]
 set $ExitCode$ = getlastexitcode
 if stringtobool(isMsExitcodeFatal_short($exitcode$, "true", $ErrorString$ ))
-   LogError $ErrorString$
-   isfatalerror $ErrorString$
+	LogError $ErrorString$
+	isfatalerror $ErrorString$
 else
-   Comment $ErrorString$
+	Comment $ErrorString$
 endif
 
 ; ----------------------------------------------------------------

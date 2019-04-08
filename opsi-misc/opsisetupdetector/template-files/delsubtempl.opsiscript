@@ -66,10 +66,10 @@ msiexec /x $MsiId$ /qb-! REBOOT=ReallySuppress
 [sub_check_exitcode]
 set $ExitCode$ = getlastexitcode
 if stringtobool(isMsExitcodeFatal_short($exitcode$, "true", $ErrorString$ ))
-   LogError $ErrorString$
-   isfatalerror $ErrorString$
+	LogError $ErrorString$
+	isfatalerror $ErrorString$
 else
-   Comment $ErrorString$
+	Comment $ErrorString$
 endif
 
 

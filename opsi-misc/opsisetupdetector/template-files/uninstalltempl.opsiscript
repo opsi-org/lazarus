@@ -33,19 +33,19 @@ importlib "%scriptpath%\osd-lib.opsiscript"
 
 ; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
-Set $ProductId$       = "opsi-template"
-Set $MinimumSpace$    = "1 MB"
+Set $ProductId$		 = "opsi-template"
+Set $MinimumSpace$	 = "1 MB"
 ; the path were we find the product after the installation
-Set $InstallDir$      = "%ProgramFiles32Dir%\<path to the product>"
+Set $InstallDir$		= "%ProgramFiles32Dir%\<path to the product>"
 Set $LicenseRequired$ = "false"
-Set $LicensePool$     = "p_" + $ProductId$
+Set $LicensePool$	  = "p_" + $ProductId$
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS
 
 if not(($OS$ = "Windows_NT"))
-   logError "Installation aborted: wrong OS version: only Windows"
-   isFatalError "wrong OS"
+	logError "Installation aborted: wrong OS version: only Windows"
+	isFatalError "wrong OS"
 endif
 
 
@@ -55,13 +55,13 @@ ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 Message "Uninstalling " + $ProductId$ + " ..."
 
 if FileExists("%ScriptPath%\delsub.opsiscript")
-   comment "Start uninstall sub section"
-   Sub "%ScriptPath%\delsub.opsiscript"
+	comment "Start uninstall sub section"
+	Sub "%ScriptPath%\delsub.opsiscript"
 endif
 
 if $LicenseRequired$ = "true"
-   comment "Licensing required, free license used"
-   Sub_free_license
+	comment "Licensing required, free license used"
+	Sub_free_license
 endif
 
 [Sub_free_license]

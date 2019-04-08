@@ -159,7 +159,7 @@
         <Filename Value="opsisetupdetector.lpr"/>
         <IsPartOfProject Value="True"/>
         <TopLine Value="5"/>
-        <CursorPos Y="26"/>
+        <CursorPos X="24" Y="16"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -170,7 +170,6 @@
         <ComponentName Value="resultForm1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <TopLine Value="953"/>
         <CursorPos X="26" Y="954"/>
@@ -282,10 +281,10 @@
       <Unit16>
         <Filename Value="changelog-osd.txt"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="1"/>
-        <CursorPos X="70" Y="22"/>
+        <TopLine Value="34"/>
+        <CursorPos X="20" Y="11"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -330,8 +329,9 @@
       <Unit20>
         <Filename Value="osdbasedata.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="8"/>
-        <TopLine Value="289"/>
+        <TopLine Value="879"/>
         <CursorPos X="15" Y="226"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
@@ -369,14 +369,13 @@
         <Filename Value="osdcreate.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="6"/>
-        <TopLine Value="542"/>
-        <CursorPos X="41" Y="559"/>
+        <CursorPos X="29" Y="74"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="3"/>
           <WindowIndex Value="1"/>
-          <TopLine Value="166"/>
-          <CursorPos X="58" Y="191"/>
+          <TopLine Value="167"/>
+          <CursorPos X="58" Y="192"/>
         </ExtraEditor1>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
@@ -388,7 +387,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="53"/>
         <CursorPos X="36" Y="71"/>
-        <UsageCount Value="30"/>
+        <UsageCount Value="31"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit24>
@@ -397,7 +396,7 @@
         <EditorIndex Value="6"/>
         <WindowIndex Value="1"/>
         <CursorPos X="38" Y="15"/>
-        <UsageCount Value="30"/>
+        <UsageCount Value="31"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit25>
@@ -417,7 +416,7 @@
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="4"/>
         <CursorPos X="14" Y="26"/>
-        <UsageCount Value="194"/>
+        <UsageCount Value="197"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -453,7 +452,7 @@
         <EditorIndex Value="11"/>
         <TopLine Value="5"/>
         <CursorPos X="18" Y="113"/>
-        <UsageCount Value="180"/>
+        <UsageCount Value="183"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit31>
@@ -466,7 +465,7 @@
         <EditorIndex Value="5"/>
         <TopLine Value="38"/>
         <CursorPos X="15" Y="64"/>
-        <UsageCount Value="171"/>
+        <UsageCount Value="174"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -478,7 +477,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="4"/>
         <CursorPos X="33" Y="21"/>
-        <UsageCount Value="163"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit33>
       <Unit34>
@@ -534,7 +533,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="61"/>
         <CursorPos X="39" Y="90"/>
-        <UsageCount Value="29"/>
+        <UsageCount Value="30"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit41>
@@ -544,17 +543,18 @@
         <EditorIndex Value="3"/>
         <TopLine Value="8"/>
         <CursorPos X="6" Y="24"/>
-        <UsageCount Value="48"/>
+        <UsageCount Value="51"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit42>
       <Unit43>
         <Filename Value="template-files\delsubdouble.opsiscript"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="1"/>
         <TopLine Value="10"/>
         <CursorPos X="38" Y="36"/>
-        <UsageCount Value="28"/>
+        <UsageCount Value="29"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit43>

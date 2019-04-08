@@ -1,43 +1,43 @@
 encoding=utf8
 
-;@author          detlef oertel
-;@email           d.oertel@uib.de
-;@date            5.10.2018
-;@copyright       AGPLv3
-;@version         1.0
-;@filedesc        Collection of functions that 
-;@filedesc        helps opsi-setup-detector
+;@author		detlef oertel
+;@email			d.oertel@uib.de
+;@date			5.10.2018
+;@copyright		AGPLv3
+;@version		1.0
+;@filedesc		Collection of functions that 
+;@filedesc		helps opsi-setup-detector
 
 ; ###################################################################################################
 DefFunc checkForMsiProduct($msiId$ : string) : string
-  ;@author          detlef oertel
-  ;@date            5.10..2018
-  ;@Description     Checks if a product with the given msiId is installed on the system
-  ;@Returns         Returns string "true" if the given msiId is found in the Uninstall registry hive
-  ;@Returns         Returns string "false" if the given msiId is not found in the Uninstall registry hive
-  ;@OnError         Returns string "false"
-  ;@SpecialCase     
-  ;@References      
-  ;@Links           
-  ;@Requires
-  ;@ParamDesc_$msiId$     MSI Id in the form {xxxx}
-  ;@ParamAdvice_$list1$
-  ;@Example     if stringToBool(checkForMsiProduct($msiId))
-  ;@Example     	comment "product installed"
-  ;@Example     else
-  ;@Example     	comment "product not installed"
-  ;@Example     endif
-  
-  set $result$ = "false"
-
-  if not(getRegistryValue("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + $MsiId$, "DisplayName", "32bit") = "")
-  	comment "MSI id " + $MsiId$ + " found in 32 bit registry"
-  	set $result$ = "true"
-  endif
-  if not(getRegistryValue("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + $MsiId$, "DisplayName", "64bit") = "")
-  	comment "MSI id " + $MsiId$ + " found in 64 bit registry"
-  	set $result$ = "true"
-  endif
+	;@author		detlef oertel
+	;@date			5.10..2018
+	;@Description	Checks if a product with the given msiId is installed on the system
+	;@Returns		Returns string "true" if the given msiId is found in the Uninstall registry hive
+	;@Returns		Returns string "false" if the given msiId is not found in the Uninstall registry hive
+	;@OnError		Returns string "false"
+	;@SpecialCase	
+	;@References	
+	;@Links			
+	;@Requires
+	;@ParamDesc_$msiId$	  MSI Id in the form {xxxx}
+	;@ParamAdvice_$list1$
+	;@Example	if stringToBool(checkForMsiProduct($msiId))
+	;@Example		comment "product installed"
+	;@Example	else
+	;@Example		comment "product not installed"
+	;@Example	endif
+	
+	set $result$ = "false"
+	
+	if not(getRegistryValue("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + $MsiId$, "DisplayName", "32bit") = "")
+		comment "MSI id " + $MsiId$ + " found in 32 bit registry"
+		set $result$ = "true"
+	endif
+	if not(getRegistryValue("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + $MsiId$, "DisplayName", "64bit") = "")
+		comment "MSI id " + $MsiId$ + " found in 64 bit registry"
+		set $result$ = "true"
+	endif
 EndFunc
 ; ###################################################################################################
 
@@ -45,58 +45,58 @@ EndFunc
 
 ; ###################################################################################################
 DefFunc get_licensekey_byPool($LicensePool$ : string) : string
-  ;@author          detlef oertel
-  ;@date            5.10..2018
-  ;@Description     Checks if we can get a license key from the given license pool
-  ;@Returns         Returns string with a valid licensekey from the opsi license management
-  ;@OnError         Breaks with isFatalError if no valid license key could be get from the pool
-  ;@SpecialCase     
-  ;@References      
-  ;@Links           
-  ;@Requires
-  ;@ParamDesc_$LicensePool$     License pool in the opsi license management
-  ;@ParamAdvice_$LicensePool$
-  ;@Example     set $Licensekey$ = get_licensekey_byPool('mypool')
-  
-  
-  DefVar $ServiceErrorClass$
-  
-  set $result$ = ""
-
-  if opsiLicenseManagementEnabled
-     comment "License management is enabled and will be used"
-  
-     comment "Trying to get a license key"
-     Set $result$ = demandLicenseKey ($LicensePool$)
-     ; If there is an assignment of exactly one licensepool to the product the following call is possible:
-     ; Set $LicenseKey$ = demandLicenseKey ("", $ProductId$)
-     ;
-     ; If there is an assignment of a license pool to a windows software id, it is possible to use:
-     ; DefVar $WindowsSoftwareId$
-     ; $WindowsSoftwareId$ = "..."
-     ; Set $LicenseKey$ = demandLicenseKey ("", "", $WindowsSoftwareId$)
-  
-     
-     set $ServiceErrorClass$ = getLastServiceErrorClass
-     comment "Error class: " + $ServiceErrorClass$
-     
-     if $ServiceErrorClass$ = "None"
-        comment "Everything fine, we got the license key '" + $LicenseKey$ + "'"
-     else
-        if $ServiceErrorClass$ = "LicenseConfigurationError"
-           LogError "Fatal: license configuration must be corrected"
-           LogError getLastServiceErrorMessage
-           isFatalError
-        else 
-           if $ServiceErrorClass$ = "LicenseMissingError"
-              LogError "Fatal: required license is not supplied"
-              isFatalError
-           endif
-        endif
-     endif
-  else
-     LogError "Fatal: license required, but license management not enabled"
-     isFatalError
-  endif
+	;@author			 detlef oertel
+	;@date				5.10..2018
+	;@Description	  Checks if we can get a license key from the given license pool
+	;@Returns			Returns string with a valid licensekey from the opsi license management
+	;@OnError			Breaks with isFatalError if no valid license key could be get from the pool
+	;@SpecialCase	  
+	;@References		
+	;@Links			  
+	;@Requires
+	;@ParamDesc_$LicensePool$	  License pool in the opsi license management
+	;@ParamAdvice_$LicensePool$
+	;@Example	  set $Licensekey$ = get_licensekey_byPool('mypool')
+	
+	
+	DefVar $ServiceErrorClass$
+	
+	set $result$ = ""
+	
+	if opsiLicenseManagementEnabled
+		comment "License management is enabled and will be used"
+	
+		comment "Trying to get a license key"
+		Set $result$ = demandLicenseKey ($LicensePool$)
+		; If there is an assignment of exactly one licensepool to the product the following call is possible:
+		; Set $LicenseKey$ = demandLicenseKey ("", $ProductId$)
+		;
+		; If there is an assignment of a license pool to a windows software id, it is possible to use:
+		; DefVar $WindowsSoftwareId$
+		; $WindowsSoftwareId$ = "..."
+		; Set $LicenseKey$ = demandLicenseKey ("", "", $WindowsSoftwareId$)
+	
+		
+		set $ServiceErrorClass$ = getLastServiceErrorClass
+		comment "Error class: " + $ServiceErrorClass$
+		
+		if $ServiceErrorClass$ = "None"
+			comment "Everything fine, we got the license key '" + $LicenseKey$ + "'"
+		else
+			if $ServiceErrorClass$ = "LicenseConfigurationError"
+				LogError "Fatal: license configuration must be corrected"
+				LogError getLastServiceErrorMessage
+				isFatalError
+			else 
+				if $ServiceErrorClass$ = "LicenseMissingError"
+					LogError "Fatal: required license is not supplied"
+					isFatalError
+				endif
+			endif
+		endif
+	else
+		LogError "Fatal: license required, but license management not enabled"
+		isFatalError
+	endif
 EndFunc
 ; ###################################################################################################
