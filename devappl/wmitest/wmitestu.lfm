@@ -1,27 +1,27 @@
 object Form1: TForm1
-  Left = 139
+  Left = 238
   Height = 683
-  Top = 333
+  Top = 365
   Width = 701
-  Caption = 'Form1'
+  Caption = 'opsi-wmitest'
   ClientHeight = 683
   ClientWidth = 701
   LCLVersion = '2.0.0.4'
   object Button1: TButton
-    Left = 472
+    Left = 576
     Height = 25
-    Top = 12
+    Top = 26
     Width = 75
     Caption = 'Execute'
     OnClick = Button1Click
     TabOrder = 0
   end
   object Label1: TLabel
-    Left = 27
+    Left = 24
     Height = 15
     Top = 64
-    Width = 44
-    Caption = 'wniclass'
+    Width = 55
+    Caption = 'WMI Class'
     ParentColor = False
   end
   object Edit1: TEdit
@@ -36,15 +36,15 @@ object Form1: TForm1
     Left = 24
     Height = 15
     Top = 104
-    Width = 107
-    Caption = 'WMIPropertyNames'
+    Width = 110
+    Caption = 'WMI PropertyNames'
     ParentColor = False
     OnClick = Label2Click
   end
   object Label3: TLabel
-    Left = 27
+    Left = 24
     Height = 15
-    Top = 200
+    Top = 232
     Width = 53
     Caption = 'Condition'
     ParentColor = False
@@ -62,7 +62,7 @@ object Form1: TForm1
     Top = 272
     Width = 606
     Lines.Strings = (
-      'Memo1'
+      ''
     )
     ScrollBars = ssAutoBoth
     TabOrder = 3
@@ -75,7 +75,6 @@ object Form1: TForm1
     Lines.Strings = (
       'Manufacturer'
       'Model'
-      'SerialNumber'
       'Name'
       'SystemType'
       'TotalPhysicalMemory'
@@ -84,17 +83,17 @@ object Form1: TForm1
     TabOrder = 4
   end
   object Label4: TLabel
-    Left = 23
-    Height = 15
-    Top = 26
-    Width = 90
-    Caption = 'WMI Namespace'
+    Left = 24
+    Height = 30
+    Top = 8
+    Width = 101
+    Caption = 'WMI Namespace'#13#10'empty=root\cimv2'
     ParentColor = False
   end
   object EditNamespace: TEdit
     Left = 152
     Height = 23
-    Top = 26
+    Top = 16
     Width = 249
     TabOrder = 5
   end
