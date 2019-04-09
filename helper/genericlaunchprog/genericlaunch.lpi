@@ -89,13 +89,15 @@
     </PublishOptions>
     <RunParams>
       <local>
-        <CommandLineParams Value="c:/windows/win.ini"/>
+        <CommandLineParams Value="c:/program files/desktop.ini"/>
+        <LaunchingApplication Use="True"/>
       </local>
       <FormatVersion Value="2"/>
       <Modes Count="1">
         <Mode0 Name="default">
           <local>
-            <CommandLineParams Value="c:/windows/win.ini"/>
+            <CommandLineParams Value="c:/program files/desktop.ini"/>
+            <LaunchingApplication Use="True"/>
           </local>
         </Mode0>
       </Modes>

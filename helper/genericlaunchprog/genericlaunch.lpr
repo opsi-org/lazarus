@@ -9,6 +9,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   osencoding,
   oslog,
   SysUtils,
+  strutils,
   lazFileUtils,
   Process;
 
@@ -106,9 +107,15 @@ begin
   confFileName := ExtractFileNameWithoutExt(ParamStr(0)) + '.conf';
   // hier ev. noch andere Sonderzeichen Abfangen?
   executeStr := StringReplace(ReadFileToString(confFileName), #10, ' ', [rfReplaceAll]);
+  executestr := TrimRightSet(trim(executestr),[#10,#13]);
+  logdatei.log('config string: ' +executestr, LLessential);
   for i := 1 to Paramcount do
   begin
     param := ParamStr(i);
+    logdatei.log('param '+inttostr(i)+': ' + param, LLessential);
+    // quote file path
+    if fileexists(param) and (param[1] <> '"') then
+      param := '"'+param+'"';
     executeStr := executeStr + ' ' + param;
   end;
   logdatei.log('Launch: ' + executeStr, LLessential);
