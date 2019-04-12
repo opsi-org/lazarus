@@ -12578,6 +12578,7 @@ begin
    // #########  end xml2 list functions ###############################
 
 
+   // todo: 2nd parameter focus row for editmap
    else if LowerCase (s) = LowerCase ('editMap')
    then
    begin
@@ -12591,7 +12592,8 @@ begin
       Begin
         list.Clear;
         {$IFDEF GUI}
-        list.AddStrings(checkMapGUI(list1));
+        checkMapGUI(Tstringlist(list1),2);
+        list.AddStrings(list1);
         {$ELSE GUI}
         for i:= 0 to list1.Count-1 do
         begin

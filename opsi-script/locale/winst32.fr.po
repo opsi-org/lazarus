@@ -53,3 +53,13 @@ msgstr "S'il vous plaît entrez le nom d'utilisateur du service OPSI :"
 msgid "Ready to continue ?"
 msgstr "Prêt à continuer ?"
 
+#: tflistedit.caption
+msgid "opsi-script Parameter Editor"
+msgstr ""
+
+#: tflistedit.label1.caption
+msgid ""
+"Please Check and Correct the \n"
+"following Paramenters:\n"
+msgstr ""
+
