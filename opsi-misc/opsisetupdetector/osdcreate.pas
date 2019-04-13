@@ -101,12 +101,28 @@ var
 begin
   patchlist.Clear;
   str := '';
+  if myconfiguration.UsePropDesktopicon then
+    str := str + 'DefVar $DesktopIcon$' + LineEnding;
+  if myconfiguration.UsePropLicenseOrPool and aktProduct.productdata.licenserequired then
+    str := str + 'DefVar $LicenseOrPool$' + LineEnding;
+  patchlist.add('#@stringVars*#=' + str);
+
+  str := '';
   patchlist.add('#@productId*#=' + aktProduct.productdata.productId);
   for i := 0 to myconfiguration.import_libraries.Count - 1 do
     str := str + 'importlib "' + myconfiguration.import_libraries[i] + '"' + LineEnding;
   patchlist.add('#@importLibs*#=' + str);
   patchlist.add('#@LicenseRequired*#=' +
     boolToStr(aktProduct.productdata.licenserequired, True));
+  str := '';
+  if myconfiguration.UsePropDesktopicon then
+    str := str + 'set $DesktopIcon$ = GetProductProperty("DesktopIcon","false")' +
+      LineEnding;
+  if myconfiguration.UsePropLicenseOrPool and aktProduct.productdata.licenserequired then
+    str := str + 'set $LicenseOrPool$ = GetProductProperty("LicenseOrPool","")' +
+      LineEnding;
+  patchlist.add('#@GetProductProperty*#=' + str);
+
   patchlist.add('#@MinimumSpace*#=' + IntToStr(
     aktProduct.SetupFiles[0].requiredSpace) + ' MB');
   //setup 1
@@ -122,8 +138,7 @@ begin
   str := aktProduct.SetupFiles[0].install_waitforprocess;
   if str <> '' then
     str := '/WaitForProcessEnding "' +
-      aktProduct.SetupFiles[0].install_waitforprocess +
-      '" /TimeOutSeconds 20';
+      aktProduct.SetupFiles[0].install_waitforprocess + '" /TimeOutSeconds 20';
   patchlist.add('#@installWaitForProc1*#=' + str);
   str := myconfiguration.postInstallLines.Text;
   if str <> '' then
@@ -145,8 +160,7 @@ begin
   str := aktProduct.SetupFiles[0].uninstall_waitforprocess;
   if str <> '' then
     str := '/WaitForProcessEnding "' +
-      aktProduct.SetupFiles[0].uninstall_waitforprocess +
-      '" /TimeOutSeconds 20';
+      aktProduct.SetupFiles[0].uninstall_waitforprocess + '" /TimeOutSeconds 20';
   patchlist.add('#@uninstallWaitForProc1*#=' + str);
   str := myconfiguration.postUnInstallLines.Text;
   if str <> '' then
@@ -166,8 +180,7 @@ begin
   str := aktProduct.SetupFiles[1].install_waitforprocess;
   if str <> '' then
     str := '/WaitForProcessEnding "' +
-      aktProduct.SetupFiles[1].install_waitforprocess +
-      '" /TimeOutSeconds 20';
+      aktProduct.SetupFiles[1].install_waitforprocess + '" /TimeOutSeconds 20';
   patchlist.add('#@installWaitForProc2*#=' + str);
   str := myconfiguration.postInstallLines.Text;
   if str <> '' then
@@ -189,8 +202,7 @@ begin
   str := aktProduct.SetupFiles[1].uninstall_waitforprocess;
   if str <> '' then
     str := '/WaitForProcessEnding "' +
-      aktProduct.SetupFiles[1].uninstall_waitforprocess +
-      '" /TimeOutSeconds 20';
+      aktProduct.SetupFiles[1].uninstall_waitforprocess + '" /TimeOutSeconds 20';
   patchlist.add('#@uninstallWaitForProc2*#=' + str);
   str := myconfiguration.postUninstallLines.Text;
   if str <> '' then
@@ -299,7 +311,7 @@ var
   textlist: TStringList;
   i: integer;
   mydep: TPDependency;
-  myprop: TPProperties;
+  myprop: TPProperty;
   tmpstr: string;
   utcoffset: integer;
   utcoffsetstr: string;
@@ -356,10 +368,41 @@ begin
       end;
     end;
 
+    if myconfiguration.UsePropDesktopicon then
+    begin
+      myprop := TPProperty(aktProduct.properties.add);
+      myprop.init;
+      myprop.Name := 'DesktopIcon';
+      myprop.description := 'Soll es ein Desktop Icon geben ?';
+      myprop.ptype := bool;
+      myprop.multivalue := False;
+      myprop.editable := False;
+      myprop.Strvalues.Text := '';
+      myprop.StrDefault.Text := '';
+      myprop.boolDefault := False;
+    end;
+
+    if myconfiguration.UsePropLicenseOrPool and aktProduct.productdata.licenserequired then
+    begin
+      myprop := TPProperty(aktProduct.properties.add);
+      myprop.init;
+      myprop.Name := 'LicenseOrPool';
+      myprop.description := 'LicenseKey or opsi-LicensePool';
+      myprop.ptype := unicode;
+      myprop.multivalue := False;
+      myprop.editable := True;
+      myprop.Strvalues.Text := '';
+      myprop.StrDefault.Text := '';
+      myprop.boolDefault := False;
+    end;
+
+
+
+
     //ProductProperties
     for i := 0 to aktProduct.properties.Count - 1 do
     begin
-      myprop := TPProperties(aktProduct.properties.Items[i]);
+      myprop := TPProperty(aktProduct.properties.Items[i]);
       textlist.Add('');
       textlist.Add('[ProductProperty]');
       case myprop.ptype of

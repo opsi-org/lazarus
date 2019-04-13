@@ -27,6 +27,11 @@ opsi-setup-detector (4.1.0.7) stable; urgency=low
   * added stWixToolset
   * added stBoxStub
   * added stSFXcab
+  * configuration added: UsePropDesktopicon
+  * configuration added: UsePropLicenseOrPool
+  * osdcreate: createOpsiFiles: write properties on configuration
+  * osdcreate: fillPatchList: write #@stringVars*# and #@GetProductProperty*# on configuration
+  * osdbasedate: some experiments TProperties in configuration
 
 -- Detlef Oertel <d.oertel@uib.de>  Fri,  01 Mar 2019 : 15:00:00 +0200
 

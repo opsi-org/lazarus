@@ -123,7 +123,6 @@ begin
     activeprop := TIPropertyGrid1.GetActiveRow.Name;
     MemoConfigHint.Text := myconfigurationhints.Values[activeprop];
   end;
-
 end;
 
 procedure TFOSDConfigdlg.TIPropertyGrid1Exit(Sender: TObject);
@@ -143,6 +142,8 @@ initialization
     TStringsPropertyEditor);
   RegisterPropertyEditor(TypeInfo(string), TConfiguration, 'PathToOpsiPackageBuilder',
     TFileNamePropertyEditor);
+ // RegisterPropertyEditor(TypeInfo(TPProperties), TConfiguration, 'Properties',
+ //   TCollectionPropertyEditor);
 
 
 

@@ -1421,7 +1421,7 @@ procedure TResultform1.fetchDepPropFromForm;
 var
   i: integer;
   mydep: TPDependency;
-  myprop: TPProperties;
+  myprop: TPProperty;
   tmpstr: string;
 begin
   //dependencies
@@ -1455,7 +1455,7 @@ begin
   aktProduct.properties.Clear;
   for i := 1 to StringGridProp.RowCount - 1 do
   begin
-    myprop := TPProperties(aktProduct.properties.add);
+    myprop := TPProperty(aktProduct.properties.add);
     myprop.init;
     //myprop.Strvalues := TStringlist.Create;
     //myprop.StrDefault := TStringlist.Create;
