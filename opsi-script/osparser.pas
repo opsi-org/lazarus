@@ -66,6 +66,8 @@ osshowsysinfo,
 Controls,
 LCLIntf,
 oslistedit,
+osinputstring,
+StdCtrls,
 {$ENDIF GUI}
 TypInfo,
 osencoding,
@@ -15433,6 +15435,48 @@ begin
            if (StringResult = NULL_STRING_VALUE)  then  StringResult := s1;
          end;
          *)
+       End
+ End
+
+  else if LowerCase (s) = LowerCase ('stringinput')
+ then
+ begin
+  if Skip ('(', r, r, InfoSyntaxError)
+  then
+   if EvaluateString (r, r, s1, InfoSyntaxError)
+   then
+     if Skip (',', r,r, InfoSyntaxError)
+     then
+      if EvaluateString (r, r, s2, InfoSyntaxError)
+      then
+       if Skip (')', r,r, InfoSyntaxError)
+       then
+       Begin
+         syntaxCheck := true;
+         boolresult := StrToBool(s2);
+         {$IFDEF GUI}
+         try
+            Finputstring := TFinputstring.Create(nil);
+            if boolresult Then
+            begin
+              Finputstring.EditButton1.EchoMode:= emPassword;
+              Finputstring.EditButton1.Button.Enabled:=true;
+            end
+            else
+            begin
+              Finputstring.EditButton1.EchoMode:=emNormal;
+              Finputstring.EditButton1.Button.Enabled:=false;
+            end;
+            Finputstring.Label1.Caption:=s1;
+            Finputstring.EditButton1.Text := '';
+            Finputstring.ShowModal;
+            StringResult := Finputstring.EditButton1.Text;
+         finally
+           FreeAndNil(Finputstring);
+         end;
+         {$ELSE GUI}
+         cmdLineInputDialog(StringResult,s1,'',boolresult);
+         {$ENDIF GUI}
        End
  End
 

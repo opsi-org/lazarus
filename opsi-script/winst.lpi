@@ -167,7 +167,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="55">
+    <Units Count="56">
       <Unit0>
         <Filename Value="winst.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -411,6 +411,12 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Utilwmi"/>
       </Unit54>
+      <Unit55>
+        <Filename Value="osinputstring.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Finputstring"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit55>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

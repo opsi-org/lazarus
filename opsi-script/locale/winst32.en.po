@@ -51,6 +51,18 @@ msgstr "Please enter opsi service user name:"
 msgid "Ready to continue ?"
 msgstr "Ready to continue ?"
 
+#: tfinputstring.caption
+msgid "opsi-script - string input"
+msgstr ""
+
+#: tfinputstring.editbutton1.text
+msgid "EditButton1"
+msgstr ""
+
+#: tfinputstring.label1.caption
+msgid "Label1"
+msgstr ""
+
 #: tflistedit.caption
 msgid "opsi-script Parameter Editor"
 msgstr ""
