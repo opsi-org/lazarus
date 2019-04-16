@@ -23,6 +23,7 @@ DefVar $OS$
 DefVar $oldProgFound$
 DefVar $arch$
 DefVar $mode$
+#@stringVars*#
 
 Set $arch$ = GetSystemType
 set $mode$ = GetProductProperty("install_architecture","system specific")
@@ -40,7 +41,7 @@ Set $ProductId$		 = "#@productId*#"
 Set $InstallDir1$		= "#@InstallDir1*#"
 Set $InstallDir2$		= "#@InstallDir2*#"
 Set $LicenseRequired$ = "#@LicenseRequired*#"
-Set $LicensePool$	  = "p_" + $ProductId$
+Set $LicensePool$	  = ""
 Set $MinimumSpace$	 = "#@MinimumSpace*#"
 ; ----------------------------------------------------------------
 
@@ -60,6 +61,8 @@ endif
 comment "Show product picture"
 ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
+#@GetProductProperty*#
+
 if FileExists("%ScriptPath%\delsub.opsiscript")
 	comment "Start uninstall sub section"
 	Sub "%ScriptPath%\delsub.opsiscript"
@@ -69,7 +72,7 @@ Message "Installing " + $ProductId$ + " ..."
 
 if $LicenseRequired$ = "true"
 	comment "Licensing required, reserve license and get license key"
-	set $LicenseKey$ = get_licensekey_byPool($LicensePool$)
+	set $LicenseKey$ = get_licensekey_byPoolOrKey($LicensePool$)
 endif
 
 if (($arch$ = "x86 System") and ($mode$ = "system specific")) or ($mode$ = "both") or ($mode$ = "32 only")
@@ -101,6 +104,7 @@ endif
 [Winbatch_install_2]
 #@installCommandLine2*#
 
+#@HandleDesktopIcon*#
 
 [sub_check_exitcode_1]
 set $ExitCode$ = getlastexitcode

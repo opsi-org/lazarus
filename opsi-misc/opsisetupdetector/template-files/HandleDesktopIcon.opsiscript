@@ -1,0 +1,7 @@
+if $DesktopIcon$ = "true"
+	comment "Create Desktop Icon"
+	desktopicon_create('mydesktopicon_name','mydesktopicon_target','mydesktopicon_param','mydesktopicon_dir')
+else
+	comment "Remove Desktop Icon"
+	desktopicon_remove('mydesktopicon_name')
+endif

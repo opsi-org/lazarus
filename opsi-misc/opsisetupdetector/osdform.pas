@@ -303,6 +303,7 @@ type
     procedure TITrackBarPrioChange(Sender: TObject);
     procedure fetchDepPropFromForm;
     procedure ApplicationEventIdle(Sender: TObject; var Done: Boolean);
+    procedure makeProperties;
   private
     { private declarations }
   public
@@ -1540,6 +1541,7 @@ procedure TResultform1.BtProduct1NextStepClick(Sender: TObject);
 var
   checkok: boolean = True;
 begin
+  makeProperties;
   if (aktProduct.productdata.productId = '') then
   begin
     checkok := False;
@@ -2031,6 +2033,73 @@ begin
   TISpinEditPrio.Loaded;
   TISpinEditPrio.Refresh;
   procmess;
+end;
+
+procedure TResultform1.makeProperties;
+var
+  myprop: TStringList;
+  index : integer;
+begin
+   if myconfiguration.UsePropDesktopicon then
+    begin
+      index := StringGridProp.RowCount;
+      Inc(index);
+      StringGridProp.RowCount := index;
+      myprop := TStringList.Create;
+      myprop.Add(IntToStr(index - 1));
+      myprop.Add('DesktopIcon');
+      myprop.Add('Soll es ein Desktop Icon geben ?');
+      myprop.Add('bool');  //type
+      myprop.Add('False');      //multivalue
+      myprop.Add('False');      //editable
+      myprop.Add('[]');      //possible values
+      myprop.Add('["True"]');      //default values
+      StringGridProp.Rows[index - 1].AddStrings(myprop);
+      myprop.Free;
+      (*
+      myprop := TPProperty(aktProduct.properties.add);
+      myprop.init;
+      myprop.Name := 'DesktopIcon';
+      myprop.description := 'Soll es ein Desktop Icon geben ?';
+      myprop.ptype := bool;
+      myprop.multivalue := False;
+      myprop.editable := False;
+      myprop.Strvalues.Text := '';
+      myprop.StrDefault.Text := '';
+      myprop.boolDefault := False;
+      *)
+    end;
+
+    if myconfiguration.UsePropLicenseOrPool and
+      aktProduct.productdata.licenserequired then
+    begin
+       index := StringGridProp.RowCount;
+      Inc(index);
+      StringGridProp.RowCount := index;
+      myprop := TStringList.Create;
+      myprop.Add(IntToStr(index - 1));
+      myprop.Add('LicenseOrPool');
+      myprop.Add('LicenseKey or opsi-LicensePool');
+      myprop.Add('unicode');  //type
+      myprop.Add('False');      //multivalue
+      myprop.Add('True');      //editable
+      myprop.Add('[]');      //possible values
+      myprop.Add('[""]');      //default values
+      StringGridProp.Rows[index - 1].AddStrings(myprop);
+      myprop.Free;
+      (*
+      myprop := TPProperty(aktProduct.properties.add);
+      myprop.init;
+      myprop.Name := 'LicenseOrPool';
+      myprop.description := 'LicenseKey or opsi-LicensePool';
+      myprop.ptype := unicode;
+      myprop.multivalue := False;
+      myprop.editable := True;
+      myprop.Strvalues.Text := '';
+      myprop.StrDefault.Text := '';
+      myprop.boolDefault := False;
+      *)
+    end;
 end;
 
 

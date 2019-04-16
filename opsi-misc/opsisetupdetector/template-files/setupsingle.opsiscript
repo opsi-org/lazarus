@@ -20,6 +20,7 @@ DefVar $LicensePool$
 DefVar $LogDir$
 DefVar $OS$
 DefVar $oldProgFound$
+#@stringVars*#
 
 Set $LogDir$ = "%opsiLogDir%"
 
@@ -34,7 +35,7 @@ Set $ProductId$		 = "#@productId*#"
 ; the path where we find the product after the installation
 Set $InstallDir1$		= "#@InstallDir1*#"
 Set $LicenseRequired$ = "#@LicenseRequired*#"
-Set $LicensePool$	  = "p_" + $ProductId$
+Set $LicensePool$	  = "" 
 Set $MinimumSpace$	 = "#@MinimumSpace*#"
 ; ----------------------------------------------------------------
 
@@ -54,6 +55,8 @@ endif
 comment "Show product picture"
 ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
+#@GetProductProperty*#
+
 if FileExists("%ScriptPath%\delsub.opsiscript")
 	comment "Start uninstall sub section"
 	Sub "%ScriptPath%\delsub.opsiscript"
@@ -63,20 +66,22 @@ Message "Installing " + $ProductId$ + " ..."
 
 if $LicenseRequired$ = "true"
 	comment "Licensing required, reserve license and get license key"
-	set $LicenseKey$ = get_licensekey_byPool($LicensePool$)
+	set $LicenseKey$ = get_licensekey_byPoolOrKey($LicensePool$)
 endif
 
 #@preInstallLines1*#
 comment "Start setup program"
 ChangeDirectory "%SCRIPTPATH%\files"
 ;----------------------------------------------
-Winbatch_install_1	#@installWaitForProc1*#
+Winbatch_install	#@installWaitForProc1*#
 ;----------------------------------------------
 Sub_check_exitcode
 #@postInstallLines1*#
 
-[Winbatch_install_1]
+[Winbatch_install]
 #@installCommandLine1*#
+
+#@HandleDesktopIcon*#
 
 [sub_check_exitcode]
 set $ExitCode$ = getlastexitcode

@@ -21,9 +21,10 @@ DefVar $LicensePool$
 DefVar $LogDir$
 DefVar $OS$
 DefVar $oldProgFound$
-
+#@stringVars*#
 
 Set $LogDir$ = "%opsiLogDir%"
+
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
@@ -36,7 +37,7 @@ Set $ProductId$		 = "#@productId*#"
 ; the path where we find the product after the installation
 Set $InstallDir1$		= "#@InstallDir1*#"
 Set $LicenseRequired$ = "#@LicenseRequired*#"
-Set $LicensePool$	  = "p_" + $ProductId$
+Set $LicensePool$	  = ""
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS
@@ -49,6 +50,8 @@ endif
 
 comment "Show product picture"
 ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
+
+#@GetProductProperty*#
 
 Message "Uninstalling " + $ProductId$ + " ..."
 

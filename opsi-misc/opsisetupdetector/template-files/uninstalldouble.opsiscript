@@ -24,6 +24,7 @@ DefVar $OS$
 DefVar $oldProgFound$
 DefVar $arch$
 DefVar $mode$
+#@stringVars*#
 
 Set $arch$ = GetSystemType
 set $mode$ = GetProductProperty("install_architecture","system specific")
@@ -40,7 +41,7 @@ Set $ProductId$		 = "#@productId*#"
 ; the path where we find the product after the installation
 Set $InstallDir1$		= "#@InstallDir1*#"
 Set $LicenseRequired$ = "#@LicenseRequired*#"
-Set $LicensePool$	  = "p_" + $ProductId$
+Set $LicensePool$	  = ""
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS
@@ -53,6 +54,8 @@ endif
 
 comment "Show product picture"
 ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
+
+#@GetProductProperty*#
 
 Message "Uninstalling " + $ProductId$ + " ..."
 

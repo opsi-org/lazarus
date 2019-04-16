@@ -159,7 +159,6 @@
       <Unit0>
         <Filename Value="opsisetupdetector.lpr"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <TopLine Value="5"/>
         <CursorPos X="24" Y="16"/>
         <UsageCount Value="200"/>
@@ -173,8 +172,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="1412"/>
-        <CursorPos X="21" Y="1424"/>
+        <TopLine Value="1536"/>
+        <CursorPos X="43" Y="1555"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="8"/>
@@ -288,7 +287,6 @@
       <Unit16>
         <Filename Value="changelog-osd.txt"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="1"/>
         <TopLine Value="20"/>
@@ -302,13 +300,13 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="927"/>
-        <CursorPos X="2" Y="927"/>
+        <TopLine Value="49"/>
+        <CursorPos Y="68"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="10"/>
           <TopLine Value="66"/>
-          <CursorPos X="64" Y="79"/>
+          <CursorPos X="64" Y="81"/>
         </ExtraEditor1>
         <UsageCount Value="212"/>
         <Loaded Value="True"/>
@@ -374,15 +372,16 @@
       <Unit23>
         <Filename Value="osdcreate.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="3"/>
-        <WindowIndex Value="1"/>
-        <TopLine Value="110"/>
-        <CursorPos X="40" Y="124"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="6"/>
+        <TopLine Value="115"/>
+        <CursorPos X="18" Y="130"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <EditorIndex Value="6"/>
-          <TopLine Value="113"/>
-          <CursorPos X="18" Y="120"/>
+          <EditorIndex Value="3"/>
+          <WindowIndex Value="1"/>
+          <TopLine Value="120"/>
+          <CursorPos X="52" Y="137"/>
         </ExtraEditor1>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
@@ -394,7 +393,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="53"/>
         <CursorPos X="36" Y="71"/>
-        <UsageCount Value="35"/>
+        <UsageCount Value="38"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit24>
@@ -403,7 +402,7 @@
         <EditorIndex Value="6"/>
         <WindowIndex Value="1"/>
         <CursorPos X="38" Y="15"/>
-        <UsageCount Value="35"/>
+        <UsageCount Value="38"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit25>
@@ -462,7 +461,7 @@
         <EditorIndex Value="11"/>
         <TopLine Value="5"/>
         <CursorPos X="18" Y="113"/>
-        <UsageCount Value="191"/>
+        <UsageCount Value="197"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit31>
@@ -475,7 +474,7 @@
         <EditorIndex Value="5"/>
         <TopLine Value="43"/>
         <CursorPos X="15" Y="64"/>
-        <UsageCount Value="182"/>
+        <UsageCount Value="188"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -487,7 +486,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="4"/>
         <CursorPos X="33" Y="21"/>
-        <UsageCount Value="174"/>
+        <UsageCount Value="180"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit33>
       <Unit34>
@@ -545,11 +544,12 @@
       </Unit40>
       <Unit41>
         <Filename Value="template-files\setupdouble.opsiscript"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="1"/>
         <TopLine Value="71"/>
         <CursorPos X="39" Y="90"/>
-        <UsageCount Value="34"/>
+        <UsageCount Value="37"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit41>
@@ -559,7 +559,7 @@
         <EditorIndex Value="3"/>
         <TopLine Value="8"/>
         <CursorPos X="6" Y="24"/>
-        <UsageCount Value="59"/>
+        <UsageCount Value="65"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit42>
@@ -569,7 +569,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="8"/>
         <CursorPos X="38" Y="36"/>
-        <UsageCount Value="33"/>
+        <UsageCount Value="36"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit43>
@@ -590,7 +590,7 @@
         <DefaultSyntaxHighlighter Value="PO"/>
       </Unit45>
       <Unit46>
-        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.0\components\ideintf\propedits.pp"/>
+        <Filename Value="N:\usr\share\lazarus\2.0.0\components\ideintf\propedits.pp"/>
         <UnitName Value="PropEdits"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="1"/>
@@ -599,7 +599,7 @@
         <UsageCount Value="12"/>
       </Unit46>
       <Unit47>
-        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.0\components\ideintf\collectionpropeditform.pas"/>
+        <Filename Value="N:\usr\share\lazarus\2.0.0\components\ideintf\collectionpropeditform.pas"/>
         <ComponentName Value="CollectionPropertyEditorForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
@@ -616,7 +616,7 @@
       <Define1 Value="OPSI"/>
       <Define2 Value="OSDGUI"/>
     </OtherDefines>
-    <JumpHistory Count="26" HistoryIndex="25">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="osdbasedata.pas"/>
         <Caret Line="663" Column="28" TopLine="655"/>
@@ -721,6 +721,18 @@
         <Filename Value="osdcreate.pas"/>
         <Caret Line="377" Column="34" TopLine="369"/>
       </Position26>
+      <Position27>
+        <Filename Value="osdform.pas"/>
+        <Caret Line="1424" Column="21" TopLine="1412"/>
+      </Position27>
+      <Position28>
+        <Filename Value="osdform.pas"/>
+        <Caret Line="1543" Column="3" TopLine="1530"/>
+      </Position28>
+      <Position29>
+        <Filename Value="osdform.pas"/>
+        <Caret Line="306" Column="29" TopLine="284"/>
+      </Position29>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

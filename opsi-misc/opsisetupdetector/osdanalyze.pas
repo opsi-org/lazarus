@@ -65,6 +65,8 @@ implementation
 uses
   osdform;
 
+
+
 function getProductInfoFromResource(infokey : string; filename : string) : string;
 { Allowed keys:
   CompanyName

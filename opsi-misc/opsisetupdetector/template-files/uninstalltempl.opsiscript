@@ -22,6 +22,7 @@ DefVar $LogDir$
 DefVar $OS$
 DefVar $MsiId$
 DefVar $UninstallProgram$
+#@stringVars*#
 
 
 Set $LogDir$ = "%opsiLogDir%"
@@ -38,7 +39,7 @@ Set $MinimumSpace$	 = "1 MB"
 ; the path were we find the product after the installation
 Set $InstallDir$		= "%ProgramFiles32Dir%\<path to the product>"
 Set $LicenseRequired$ = "false"
-Set $LicensePool$	  = "p_" + $ProductId$
+Set $LicensePool$	  = ""
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS
@@ -51,6 +52,8 @@ endif
 
 comment "Show product picture"
 ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
+
+#@GetProductProperty*#
 
 Message "Uninstalling " + $ProductId$ + " ..."
 
