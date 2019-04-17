@@ -2385,7 +2385,7 @@ begin
     if testpassed then
       TempPath := StandardTempPath
     else
-      TempPath := ValueOfEnvVar('TEMP');
+      TempPath := ValueOfEnvVar('TEMP') + PATHSEPARATOR;
 
     testpassed := False;
     if not Assigned(logdatei) then LogDatei := TLogInfo.Create;
