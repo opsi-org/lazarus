@@ -38,3 +38,5 @@ opsi-script/opsi-script
 
 # automated build spec file from create_source.sh
 opsi-script.spec
+
+opsi-script/opsi-script-nogui
