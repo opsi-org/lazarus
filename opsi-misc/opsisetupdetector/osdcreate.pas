@@ -225,9 +225,10 @@ begin
 
     str := '';
     if myconfiguration.UsePropDesktopicon then
+    begin
       strlist.LoadFromFile(templatePath + Pathdelim + 'HandleDesktopIcon.opsiscript');
-    if str <> '' then
       str := 'comment "Start Desktop Icon Handling :"' + LineEnding + strlist.Text;
+    end;
     patchlist.add('#@HandleDesktopIcon*#=' + str);
   finally
     strlist.Free;
@@ -431,7 +432,7 @@ begin
     textlist.Add(aktProduct.productdata.productId + ' (' + tmpstr +
       ') stable; urgency=medium');
     textlist.Add('');
-    textlist.Add('  * initial by opsi-setup-detector');
+    textlist.Add('  * initial by opsi-setup-detector - Version: '+myVersion);
     textlist.Add('');
     textlist.Add('-- ' + myconfiguration.fullName + ' <' +
       myconfiguration.email_address + '> ' + FormatDateTime(

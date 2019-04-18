@@ -2053,7 +2053,7 @@ begin
       myprop.Add('False');      //multivalue
       myprop.Add('False');      //editable
       myprop.Add('[]');      //possible values
-      myprop.Add('["True"]');      //default values
+      myprop.Add('True');      //default values
       StringGridProp.Rows[index - 1].AddStrings(myprop);
       myprop.Free;
       (*
