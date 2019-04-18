@@ -521,7 +521,39 @@ end;
 
 
 function GetTempPath: string;
+var
+  testpassed: boolean;
+  teststr : string;
 begin
+  testpassed := False;
+  if (StandardTempPath <> '') and SysUtils.ForceDirectories(StandardTempPath) then
+  begin
+    testpassed := True;
+    teststr := StandardTempPath + 'testing_write_privilege_for_winst';
+    if not fileexists(teststr) then
+    begin
+      if not SysUtils.ForceDirectories(teststr) or not RemoveDir(teststr) then
+        testpassed := False;
+    end;
+    teststr := '';
+  end;
+
+  if testpassed then
+    TempPath := StandardTempPath
+  else
+    TempPath := ValueOfEnvVar('TEMP') + PATHSEPARATOR;
+  SysUtils.ForceDirectories(TempPath);
+  if not DirectoryExists(TempPath) then
+  begin
+    {$IFDEF WINDOWS}
+    TempPath := 'c:\tmp\';
+    {$ELSE}
+    TempPath := '/tmp/opsiscript/';
+    {$ENDIF WINDOWS}
+    SysUtils.ForceDirectories(TempPath);
+  end;
+  result := TempPath;
+  (*
   Result := StandardTempPath;
   //result := TmpPathFromLogdatei;
   SysUtils.ForceDirectories(Result);
@@ -539,6 +571,7 @@ begin
     end;
     Result := Result + PathDelim;
   end;
+  *)
 end;
 
 procedure ProcessMess;
@@ -594,6 +627,7 @@ end;
 
 
 function ValueOfEnvVar(const VarName: string): string;
+
 (*
 Var
   requiredLength :   Integer;

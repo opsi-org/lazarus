@@ -415,6 +415,7 @@
         <Filename Value="osinputstring.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Finputstring"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit55>
     </Units>
