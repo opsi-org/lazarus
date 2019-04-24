@@ -10,7 +10,9 @@ uses
   {$IFDEF WINDOWS}
   osdhelper,
   shlobj,
+  winpeimagereader,
   {$ENDIF WINDOWS}
+  fileinfo,
   fpjsonrtti,
   oslog,
   RTTICtrls,
@@ -301,6 +303,7 @@ default: ["xenial_bionic"]
 
   TConfiguration = class(TPersistent)
   private
+    Fconfig_version: string;  // help to detect and handle changes of config file structure
     //Fworkbench_share: string;
     Fworkbench_Path: string;
     //Fworkbench_mounted: boolean;
@@ -321,6 +324,7 @@ default: ["xenial_bionic"]
     FUsePropDesktopicon: boolean;
     FUsePropLicenseOrPool: boolean;
     FProperties: TPProperties;
+    FReadme_txt_templ: string;
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
     procedure SetPostInstallLines(const AValue: TStrings);
@@ -328,6 +332,7 @@ default: ["xenial_bionic"]
     procedure SetPostUninstallLines(const AValue: TStrings);
     procedure SetProperties(const AValue: TPProperties);
   published
+    property config_version: string read Fconfig_version;
     //property workbench_share: string read Fworkbench_share write Fworkbench_share;
     property workbench_Path: string read Fworkbench_Path write Fworkbench_Path;
     //property workbench_mounted: boolean read Fworkbench_mounted write Fworkbench_mounted;
@@ -352,6 +357,7 @@ default: ["xenial_bionic"]
     property UsePropDesktopicon: boolean read FUsePropDesktopicon write FUsePropDesktopicon;
     property UsePropLicenseOrPool: boolean read FUsePropLicenseOrPool write FUsePropLicenseOrPool;
     //property Properties: TPProperties read FProperties  write SetProperties;
+    property Readme_txt_templ: string read FReadme_txt_templ write FReadme_txt_templ;
     procedure writeconfig;
     procedure readconfig;
   public
@@ -377,6 +383,7 @@ var
   counter: integer;
   myconfiguration: TConfiguration;
   useRunMode: TRunMode;
+  myVersion: string;
 
 resourcestring
 
@@ -412,6 +419,9 @@ resourcestring
 
 
 implementation
+
+var
+  FileVerInfo : TFileVersionInfo;
 
 // TInstallerData ************************************
 
@@ -648,6 +658,8 @@ begin
   FPathToOpsiPackageBuilder := 'unknown';
   Fconfig_filled := False;
   FProperties := TPProperties.Create(self);
+  Fconfig_version := myVersion;
+  FReadme_txt_templ := ExtractFileDir(ParamStr(0))+PathDelim+'template-files'+PathDelim+'package_qa.txt';
   readconfig;
 end;
 
@@ -1288,5 +1300,12 @@ begin
   //aktSetupFile := TSetupFile.Create;
   aktProduct := TopsiProduct.Create;
 
-
+  FileVerInfo := TFileVersionInfo.Create(nil);
+  try
+    FileVerInfo.FileName := ParamStr(0);
+    FileVerInfo.ReadFileInfo;
+    myVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
+  finally
+    FileVerInfo.Free;
+  end;
 end.

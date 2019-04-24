@@ -98,13 +98,13 @@ if ($arch$ = "64 Bit System") and (($mode$ = "system specific") or ($mode$ = "bo
 	#@postInstallLines2*#
 endif
 
+#@HandleDesktopIcon*#
+
 [Winbatch_install_1]
 #@installCommandLine1*#
 
 [Winbatch_install_2]
 #@installCommandLine2*#
-
-#@HandleDesktopIcon*#
 
 [sub_check_exitcode_1]
 set $ExitCode$ = getlastexitcode
@@ -124,6 +124,7 @@ else
 	Comment $ErrorString$
 endif
 
+#@SetupSectionLines*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 

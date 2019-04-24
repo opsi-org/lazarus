@@ -230,6 +230,8 @@ begin
       str := 'comment "Start Desktop Icon Handling :"' + LineEnding + strlist.Text;
     end;
     patchlist.add('#@HandleDesktopIcon*#=' + str);
+    str := '';
+    patchlist.add('#@SetupSectionLines*#=' + str);
   finally
     strlist.Free;
   end;
@@ -438,8 +440,31 @@ begin
       myconfiguration.email_address + '> ' + FormatDateTime(
       'ddd, dd mmm yyyy hh:nn:ss', LocalTimeToUniversal(now)) + ' ' + utcoffsetstr);
     //mon, 04 Jun 12:00:00 + 0100
-
     textlist.SaveToFile(opsipath + pathdelim + 'changelog.txt');
+
+    // readme.txt
+    if (myconfiguration.Readme_txt_templ <> '')
+      and FileExists(myconfiguration.Readme_txt_templ) then
+    begin
+      textlist.Clear;
+      utcoffset := (GetLocalTimeOffset div 60) * 100 * -1;
+      if utcoffset >= 0 then
+        utcoffsetstr := '+';
+      utcoffsetstr := utcoffsetstr + format('%4.4d', [utcoffset]);
+      textlist.LoadFromFile(myconfiguration.Readme_txt_templ);
+      textlist.Add('');
+      tmpstr := aktProduct.productdata.productversion + '-' + IntToStr(
+        aktProduct.productdata.packageversion);
+      textlist.Add(aktProduct.productdata.productId + ' (' + tmpstr +
+        ')');
+      textlist.Add('');
+      textlist.Add('-- ' + myconfiguration.fullName + ' <' +
+        myconfiguration.email_address + '> ' + FormatDateTime(
+        'ddd, dd mmm yyyy hh:nn:ss', LocalTimeToUniversal(now)) + ' ' + utcoffsetstr);
+      //mon, 04 Jun 12:00:00 + 0100
+      textlist.SaveToFile(opsipath + pathdelim + 'readme.txt');
+    end;
+
     FreeAndNil(textlist);
     Result := True;
   except

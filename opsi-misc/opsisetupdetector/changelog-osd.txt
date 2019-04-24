@@ -11,7 +11,7 @@ Java Installer,
 MS Office (Click-to-Run),
 Windows Installer (MSI or MSI in EXE), ok
 NSIS Setup, ok
-SFX Cab,   (sfxcab.exe,  vcredist)  stSFXcab
+SFX Cab,   (sfxcab.exe,  vcredist)  stSFXcab  = dotnetinstaller (https://github.com/dotnetinstaller)
 Smart Installer Maker,
 Windows installer XML,  (atwork, Boxmarker)
 WinRAR Installer,
@@ -20,6 +20,9 @@ Wise Installer
 stWixToolset,
 install4j (install4j, ej-technologies : perpustakaan-light)
 https://www.ej-technologies.com/resources/install4j/help/doc/help.pdf
+QT Installer Framework (Avidemux 4.7.3, msys2)
+https://chocolatey.org/packages/msys2-installer
+https://doc.qt.io/qtinstallerframework/
 
 
 opsi-setup-detector (4.1.0.7) stable; urgency=low
@@ -32,6 +35,8 @@ opsi-setup-detector (4.1.0.7) stable; urgency=low
   * osdcreate: createOpsiFiles: write properties on configuration
   * osdcreate: fillPatchList: write #@stringVars*# and #@GetProductProperty*# on configuration
   * osdbasedate: some experiments TProperties in configuration
+  * move fileinfo from osdform to osdbasedata
+  * new read only prop in config: config_version
 
 -- Detlef Oertel <d.oertel@uib.de>  Fri,  01 Mar 2019 : 15:00:00 +0200
 

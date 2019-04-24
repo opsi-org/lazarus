@@ -78,10 +78,10 @@ Winbatch_install	#@installWaitForProc1*#
 Sub_check_exitcode
 #@postInstallLines1*#
 
+#@HandleDesktopIcon*#
+
 [Winbatch_install]
 #@installCommandLine1*#
-
-#@HandleDesktopIcon*#
 
 [sub_check_exitcode]
 set $ExitCode$ = getlastexitcode
@@ -92,6 +92,7 @@ else
 	Comment $ErrorString$
 endif
 
+#@SetupSectionLines*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 

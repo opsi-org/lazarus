@@ -26,10 +26,10 @@ uses
   //Process,
   typinfo,
   CustApp,
-  fileinfo,
+  //fileinfo,
   //osdhelper,
   osdanalyze,
-  winpeimagereader,
+  //winpeimagereader,
   lcltranslator,
   EditBtn,
   //Spin,
@@ -329,7 +329,7 @@ var
   Result: integer;
   myExeDir: string;
   myfilename, myerror: string;
-  myVersion: string;
+  //myVersion: string;
   MSIfilename, MSTfilename, SetupFilename: string;
   showgui: boolean;
   configDir: string;
@@ -640,10 +640,11 @@ end;
 procedure main1;
 var
   //ErrorMsg: string;
-  FileVerInfo: TFileVersionInfo;
+  //FileVerInfo: TFileVersionInfo;
   lfilename: string;
 begin
   //startupfinished := true; //avoid calling main on every show event
+  (*
   FileVerInfo := TFileVersionInfo.Create(nil);
   try
     FileVerInfo.FileName := ParamStr(0);
@@ -652,6 +653,7 @@ begin
   finally
     FileVerInfo.Free;
   end;
+  *)
   // Initialize logging
   LogDatei := TLogInfo.Create;
   lfilename := ExtractFileName(Application.ExeName);
@@ -970,6 +972,7 @@ begin
       for i := StringGridDep.RowCount-1 downto 1 do StringGridDep.DeleteRow(i);
     if StringGridProp.RowCount > 1 then
       for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
+    makeProperties;
     Application.ProcessMessages;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
   end;
@@ -1028,6 +1031,7 @@ begin
     StringGridProp.Rows[index - 1].AddStrings(myprop);
     myprop.Free;
     // start add property
+    makeProperties;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
   end;
 end;
@@ -1411,6 +1415,7 @@ begin
     MemoAnalyze.Clear;
     StringGridDep.Clear;
     StringGridProp.Clear;
+    makeProperties;
     PageControl1.ActivePage := resultForm1.TabSheetProduct;
     Application.ProcessMessages;
     initaktproduct;
@@ -2040,7 +2045,8 @@ var
   myprop: TStringList;
   index : integer;
 begin
-   if myconfiguration.UsePropDesktopicon then
+   if myconfiguration.UsePropDesktopicon
+     and (StringGridProp.Cols[1].IndexOf('DesktopIcon') > -1) then
     begin
       index := StringGridProp.RowCount;
       Inc(index);
@@ -2053,7 +2059,7 @@ begin
       myprop.Add('False');      //multivalue
       myprop.Add('False');      //editable
       myprop.Add('[]');      //possible values
-      myprop.Add('True');      //default values
+      myprop.Add('False');      //default values
       StringGridProp.Rows[index - 1].AddStrings(myprop);
       myprop.Free;
       (*
@@ -2071,7 +2077,8 @@ begin
     end;
 
     if myconfiguration.UsePropLicenseOrPool and
-      aktProduct.productdata.licenserequired then
+      aktProduct.productdata.licenserequired
+       and (StringGridProp.Cols[1].IndexOf('LicenseOrPool') > -1) then
     begin
        index := StringGridProp.RowCount;
       Inc(index);

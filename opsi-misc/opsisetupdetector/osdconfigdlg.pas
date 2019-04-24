@@ -142,6 +142,8 @@ initialization
     TStringsPropertyEditor);
   RegisterPropertyEditor(TypeInfo(string), TConfiguration, 'PathToOpsiPackageBuilder',
     TFileNamePropertyEditor);
+  RegisterPropertyEditor(TypeInfo(string), TConfiguration, 'Readme_txt_templ',
+    TFileNamePropertyEditor);
  // RegisterPropertyEditor(TypeInfo(TPProperties), TConfiguration, 'Properties',
  //   TCollectionPropertyEditor);
 
