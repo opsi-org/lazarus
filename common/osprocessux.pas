@@ -7,7 +7,9 @@ interface
 uses
   {$IFDEF OPSISCRIPT}
   osfunc,
+  {$IFDEF GUI}
   graphics,
+  {$ENDIF GUI}
   {$ENDIF OPSISCRIPT}
 oslog,
   Process,
@@ -64,9 +66,12 @@ function getCommandResult(cmd : string): string;  overload;
 function getCommandResult(cmd : string; var exitcode : longint): string;  overload;
 
 implementation
-uses
+
   {$IFDEF OPSISCRIPT}
+  {$IFDEF GUI}
+uses
   osshowsysinfo;
+  {$ENDIF GUI}
   {$ENDIF OPSISCRIPT}
 
 {$IFDEF OPSISCRIPT}
