@@ -1,4 +1,10 @@
 (*
+uibtime (4.1.1.46-1) stable; urgency=low
+
+ * ontop: TimerProjektzeitTimer: mor debugging output to find 'invalid floatingpoint operation'
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 26 Apr 2019 15:00:00 +0000
+
 uibtime (4.1.1.45-1) stable; urgency=low
 
  * uibdata: DumpExceptionCallStack: MessageDlg changed

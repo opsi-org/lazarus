@@ -903,7 +903,7 @@ var
 begin
   aktstartyear := 2001;
   aktstartmonth := 1;
-  DataModule1.debugOut(6, 'enter TimerProjektzeitTimer');
+  DataModule1.debugOut(6,'ProjektzeitTimer', 'enter TimerProjektzeitTimer');
   suchevent := edit1.Text;
   if QueryProjektzeit.Active then
     QueryProjektzeit.Close;
@@ -917,6 +917,7 @@ begin
   if not QueryProjektzeit.FieldByName('time_h').IsNull then
   begin
     total := QueryProjektzeit.FieldByName('time_h').AsFloat;
+    DataModule1.debugOut(6,'ProjektzeitTimer', 'total: '+FloatToStr(total));
     acc_per_monthnum := QueryProjektzeit.FieldByName('acc_per_monthnum').AsFloat;
     basemonth := trunc(acc_per_monthnum);
     acc_per_monthnum_int := trunc(acc_per_monthnum);
@@ -970,15 +971,19 @@ begin
       end;
     end;
     QueryProjektzeit.Open;
+    DataModule1.debugOut(6,'ProjektzeitTimer', 'QueryProjektzeit.Open');
+    DataModule1.debugOut(6,'ProjektzeitTimer', 'total: '+FloatToStr(total));
     used := QueryProjektzeit.FieldByName('stunden').AsFloat;
     used := used + ((now - DataModule1.SQuibevent.FieldByName('stoptime').AsFloat) * 24);
+    DataModule1.debugOut(6,'ProjektzeitTimer', 'used: '+FloatToStr(used));
     available := total - used;
+    DataModule1.debugOut(6,'ProjektzeitTimer', 'available: '+FloatToStr(available));
     available_min := round(abs((available - trunc(available)) * 60));
     used_min := round(abs((used - trunc(used)) * 60));
     total_min := round(abs((total - trunc(total)) * 60));
     EditProjektzeit.Hint := IntToStr(total_min) + '-' + IntToStr(
       used_min) + ' since ' + DatetoStr(lastIntervalStart);
-    DataModule1.debugOut(6, 'ProjektzeitTimer: ' + FloatToStr(total) +
+    DataModule1.debugOut(6, 'ProjektzeitTimer','ProjektzeitTimer: ' + FloatToStr(total) +
       '-' + FloatToStr(used) + '=' + floattostr(available));
     EditProjektzeit.Text := IntToStr(trunc(available)) + minute2str(available_min);
     EditProjektzeit.Hint := IntToStr(trunc(total)) + minute2str(
