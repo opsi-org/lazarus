@@ -10,7 +10,9 @@ object resultForm1: TresultForm1
   OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
+  OnDeactivate = FormDeactivate
   OnDestroy = FormDestroy
+  OnMouseLeave = FormMouseLeave
   OnShow = FormShow
   Position = poScreenCenter
   LCLVersion = '2.0.0.4'
@@ -4031,6 +4033,7 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 200
+            OnChange = genRttiEditChange
             ParentFont = False
             TabOrder = 1
           end
@@ -4046,18 +4049,18 @@ object resultForm1: TresultForm1
             TabOrder = 2
           end
           object TICheckBoxlicenseRequired: TTICheckBox
-            Left = 612
-            Height = 23
+            Left = 622
+            Height = 25
             Top = 8
             Width = 140
             Anchors = []
-            BorderSpacing.Left = 10
+            BorderSpacing.Left = 20
             BorderSpacing.Around = 4
             BorderSpacing.InnerBorder = 2
             Caption = 'License required'
+            OnChange = TICheckBoxlicenseRequiredChange
             PropertyNameAsCaption = False
             TabOrder = 0
-            Visible = False
           end
         end
         object FlowPanel10: TFlowPanel
@@ -4130,6 +4133,7 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 200
+            OnChange = genRttiEditChange
             ParentFont = False
             TabOrder = 0
           end
@@ -4143,6 +4147,7 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 200
+            OnChange = genRttiEditChange
             ParentFont = False
             TabOrder = 1
           end
@@ -4369,6 +4374,7 @@ object resultForm1: TresultForm1
             Anchors = [akLeft]
             BorderSpacing.Left = 10
             BorderSpacing.Around = 4
+            OnChange = genRttiEditChange
             ParentFont = False
             ScrollBars = ssAutoVertical
           end
@@ -4418,6 +4424,7 @@ object resultForm1: TresultForm1
             Anchors = [akLeft]
             BorderSpacing.Left = 10
             BorderSpacing.Around = 4
+            OnChange = genRttiEditChange
             ParentFont = False
             ScrollBars = ssAutoVertical
           end
@@ -5227,8 +5234,8 @@ object resultForm1: TresultForm1
       end
       object TabSheetCreate: TTabSheet
         Caption = 'Create'
-        ClientHeight = 716
-        ClientWidth = 1570
+        ClientHeight = 453
+        ClientWidth = 1044
         OnShow = TabSheetCreateShow
         ParentFont = False
         object FlowPanel14: TFlowPanel

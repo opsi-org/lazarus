@@ -266,6 +266,8 @@ type
     procedure FlowPanel18Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormDeactivate(Sender: TObject);
+    procedure FormMouseLeave(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure MenuItemLangDeClick(Sender: TObject);
     procedure MenuItemLangEnClick(Sender: TObject);
@@ -290,11 +292,15 @@ type
     procedure FormCreate(Sender: TObject);
     procedure RadioButtonBuildModeChange(Sender: TObject);
 
-    procedure SBtnOpenClick(Sender: TObject);
+    //procedure SBtnOpenClick(Sender: TObject);
     procedure SBtnExitClick(Sender: TObject);
     procedure TabSheetCreateShow(Sender: TObject);
+    procedure TICheckBoxlicenseRequiredChange(Sender: TObject);
     procedure TICheckBoxS1MstChange(Sender: TObject);
     procedure TICheckBoxS2MstChange(Sender: TObject);
+    procedure TIEditProdIDChange(Sender: TObject);
+    procedure TIEditProdVersion3Change(Sender: TObject);
+    procedure TIEditProdVersion3Exit(Sender: TObject);
     procedure TimerFirstconfigTimer(Sender: TObject);
     procedure TIS1UrlClick(Sender: TObject);
     procedure TIS1UrlMouseEnter(Sender: TObject);
@@ -303,6 +309,7 @@ type
     procedure TITrackBarPrioChange(Sender: TObject);
     procedure fetchDepPropFromForm;
     procedure ApplicationEventIdle(Sender: TObject; var Done: Boolean);
+    procedure genRttiEditChange(Sender: TObject);
     procedure makeProperties;
   private
     { private declarations }
@@ -764,10 +771,6 @@ begin
         useRunMode := singleAnalyzeCreate;
         setRunMode;
         resultform1.MemoAnalyze.Clear;
-        if StringGridDep.RowCount > 1 then
-          for i := StringGridDep.RowCount-1 downto 1 do StringGridDep.DeleteRow(i);
-        if StringGridProp.RowCount > 1 then
-          for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
         PageControl1.ActivePage := TabSheetAnalyze;
         LogDatei.log('Wait for GUI  ', LLInfo);
         repeat
@@ -881,6 +884,16 @@ begin
 
 end;
 
+procedure TResultform1.FormDeactivate(Sender: TObject);
+begin
+  ActiveControl.EditingDone;
+end;
+
+procedure TResultform1.FormMouseLeave(Sender: TObject);
+begin
+  ActiveControl.EditingDone;
+end;
+
 procedure TResultform1.FormShow(Sender: TObject);
 begin
 
@@ -970,8 +983,9 @@ begin
     MemoAnalyze.Clear;
     if StringGridDep.RowCount > 1 then
       for i := StringGridDep.RowCount-1 downto 1 do StringGridDep.DeleteRow(i);
-    if StringGridProp.RowCount > 1 then
-      for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
+    StringGridDep.Clear;
+    //if StringGridProp.RowCount > 1 then
+    //  for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
     makeProperties;
     Application.ProcessMessages;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
@@ -1009,12 +1023,14 @@ begin
     setRunMode;
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     MemoAnalyze.Clear;
+    StringGridDep.Clear;
     if StringGridDep.RowCount > 1 then
       for i := StringGridDep.RowCount-1 downto 1 do StringGridDep.DeleteRow(i);
-    if StringGridProp.RowCount > 1 then
-      for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
+    //if StringGridProp.RowCount > 1 then
+    //  for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
     Application.ProcessMessages;
     initaktproduct;
+    (* moved to makeProperties
     // start add property
     index := StringGridProp.RowCount;
     Inc(index);
@@ -1030,6 +1046,7 @@ begin
     myprop.Add('["system specific"]');      //default values
     StringGridProp.Rows[index - 1].AddStrings(myprop);
     myprop.Free;
+    *)
     // start add property
     makeProperties;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
@@ -1414,11 +1431,10 @@ begin
     setRunMode;
     MemoAnalyze.Clear;
     StringGridDep.Clear;
-    StringGridProp.Clear;
-    makeProperties;
     PageControl1.ActivePage := resultForm1.TabSheetProduct;
     Application.ProcessMessages;
     initaktproduct;
+    makeProperties;
   end;
 end;
 
@@ -1546,7 +1562,7 @@ procedure TResultform1.BtProduct1NextStepClick(Sender: TObject);
 var
   checkok: boolean = True;
 begin
-  makeProperties;
+  //makeProperties;
   if (aktProduct.productdata.productId = '') then
   begin
     checkok := False;
@@ -1748,6 +1764,7 @@ begin
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Application.ProcessMessages;
     initaktproduct;
+    makeProperties;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
   end;
 end;
@@ -1935,7 +1952,7 @@ begin
 end;
 
 
-
+(*
 procedure TResultform1.SBtnOpenClick(Sender: TObject);
 begin
   OpenDialog1.FilterIndex := 1;   // setup
@@ -1946,6 +1963,7 @@ begin
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
   end;
 end;
+*)
 
 procedure TResultform1.SBtnExitClick(Sender: TObject);
 begin
@@ -1974,6 +1992,11 @@ begin
   checkWorkbench;
 end;
 
+procedure TResultform1.TICheckBoxlicenseRequiredChange(Sender: TObject);
+begin
+  makeProperties;
+end;
+
 procedure TResultform1.TICheckBoxS1MstChange(Sender: TObject);
 begin
   if TCheckBox(sender).Checked then
@@ -1989,6 +2012,29 @@ begin
   else
     TIEditMstFile2.Enabled:=false;
 end;
+
+procedure TResultform1.TIEditProdIDChange(Sender: TObject);
+begin
+
+end;
+
+procedure TResultform1.TIEditProdVersion3Change(Sender: TObject);
+begin
+
+end;
+
+procedure TResultform1.TIEditProdVersion3Exit(Sender: TObject);
+begin
+
+end;
+
+
+procedure TResultform1.genRttiEditChange(Sender: TObject);
+begin
+  TControl(Sender).EditingDone;
+end;
+
+
 
 procedure TResultform1.TimerFirstconfigTimer(Sender: TObject);
 begin
@@ -2043,16 +2089,22 @@ end;
 procedure TResultform1.makeProperties;
 var
   myprop: TStringList;
-  index : integer;
+  index, i : integer;
 begin
+  // clear existing props in StringGridProp
+  if StringGridProp.RowCount > 1 then
+      for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
+  //StringGridProp.Clear;
+
    if myconfiguration.UsePropDesktopicon
-     and (StringGridProp.Cols[1].IndexOf('DesktopIcon') > -1) then
+     and (StringGridProp.Cols[1].IndexOf('DesktopIcon') = -1) then
     begin
       index := StringGridProp.RowCount;
-      Inc(index);
-      StringGridProp.RowCount := index;
+      //Inc(index);
+      //StringGridProp.InsertColRow(false,index);
+      //StringGridProp.RowCount := index;
       myprop := TStringList.Create;
-      myprop.Add(IntToStr(index - 1));
+      myprop.Add(IntToStr(index));
       myprop.Add('DesktopIcon');
       myprop.Add('Soll es ein Desktop Icon geben ?');
       myprop.Add('bool');  //type
@@ -2060,7 +2112,10 @@ begin
       myprop.Add('False');      //editable
       myprop.Add('[]');      //possible values
       myprop.Add('False');      //default values
-      StringGridProp.Rows[index - 1].AddStrings(myprop);
+      //StringGridProp.InsertRowWithValues(index,myprop);
+      StringGridProp.InsertColRow(false,index);
+      StringGridProp.Rows[index].Clear;
+      StringGridProp.Rows[index].AddStrings(myprop);
       myprop.Free;
       (*
       myprop := TPProperty(aktProduct.properties.add);
@@ -2078,13 +2133,13 @@ begin
 
     if myconfiguration.UsePropLicenseOrPool and
       aktProduct.productdata.licenserequired
-       and (StringGridProp.Cols[1].IndexOf('LicenseOrPool') > -1) then
+       and (StringGridProp.Cols[1].IndexOf('LicenseOrPool') = -1) then
     begin
-       index := StringGridProp.RowCount;
-      Inc(index);
-      StringGridProp.RowCount := index;
+      index := StringGridProp.RowCount;
+      //Inc(index);
+      //StringGridProp.RowCount := index;
       myprop := TStringList.Create;
-      myprop.Add(IntToStr(index - 1));
+      myprop.Add(IntToStr(index));
       myprop.Add('LicenseOrPool');
       myprop.Add('LicenseKey or opsi-LicensePool');
       myprop.Add('unicode');  //type
@@ -2092,7 +2147,9 @@ begin
       myprop.Add('True');      //editable
       myprop.Add('[]');      //possible values
       myprop.Add('[""]');      //default values
-      StringGridProp.Rows[index - 1].AddStrings(myprop);
+      StringGridProp.InsertColRow(false,index);
+      StringGridProp.Rows[index].Clear;
+      StringGridProp.Rows[index].AddStrings(myprop);
       myprop.Free;
       (*
       myprop := TPProperty(aktProduct.properties.add);
@@ -2106,6 +2163,26 @@ begin
       myprop.StrDefault.Text := '';
       myprop.boolDefault := False;
       *)
+    end;
+
+    if useRunMode = twoAnalyzeCreate_1 then
+    begin
+      index := StringGridProp.RowCount;
+      //Inc(index);
+      //StringGridProp.RowCount := index;
+      myprop := TStringList.Create;
+      myprop.Add(IntToStr(index));
+      myprop.Add('install_architecture');
+      myprop.Add('Which architecture (32 / 64 Bit) has to be installed?');
+      myprop.Add('unicode');  //type
+      myprop.Add('False');      //multivalue
+      myprop.Add('False');      //editable
+      myprop.Add('["32 only","64 only","system specific","both"]');      //possible values
+      myprop.Add('["system specific"]');      //default values
+      StringGridProp.InsertColRow(false,index);
+      StringGridProp.Rows[index].Clear;
+      StringGridProp.Rows[index].AddStrings(myprop);
+      myprop.Free;
     end;
 end;
 
