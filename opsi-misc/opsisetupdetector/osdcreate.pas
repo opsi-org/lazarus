@@ -226,12 +226,33 @@ begin
     str := '';
     if myconfiguration.UsePropDesktopicon then
     begin
-      strlist.LoadFromFile(templatePath + Pathdelim + 'HandleDesktopIcon.opsiscript');
+      strlist.LoadFromFile(templatePath + Pathdelim + 'SetupHandleDesktopIcon.opsiscript');
       str := 'comment "Start Desktop Icon Handling :"' + LineEnding + strlist.Text;
     end;
-    patchlist.add('#@HandleDesktopIcon*#=' + str);
+    patchlist.add('#@SetupHandleDesktopIcon*#=' + str);
+
     str := '';
+    if myconfiguration.UsePropDesktopicon then
+    begin
+      //strlist.LoadFromFile(templatePath + Pathdelim + 'DelsubHandleDesktopIcon.opsiscript');
+      str := 'comment "Start Desktop Icon Handling :"' + LineEnding + 'Linkfolder_remove_desktop_icon';
+    end;
+    patchlist.add('#@DelsubHandleDesktopIcon*#=' + str);
+
+    str := '';
+    if myconfiguration.UsePropDesktopicon then
+    begin
+      strlist.LoadFromFile(templatePath + Pathdelim + 'SetupDesktopIconSection.opsiscript');
+      str := strlist.Text;
+    end;
     patchlist.add('#@SetupSectionLines*#=' + str);
+    str := '';
+    if myconfiguration.UsePropDesktopicon then
+    begin
+      strlist.LoadFromFile(templatePath + Pathdelim + 'DelsubDesktopIconSection.opsiscript');
+      str := strlist.Text;
+    end;
+    patchlist.add('#@DelsubSectionLines*#=' + str);
   finally
     strlist.Free;
   end;

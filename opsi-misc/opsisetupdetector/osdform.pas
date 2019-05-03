@@ -11,6 +11,7 @@ uses
   {$IFDEF WINDOWS}
   Windows,
   {$ENDIF WINDOWS}
+  lazfileutils,
   Classes, SysUtils, FileUtil, RTTICtrls, RTTIGrids,
   Forms, Controls, Graphics,
   LCLType,
@@ -664,7 +665,7 @@ begin
   // Initialize logging
   LogDatei := TLogInfo.Create;
   lfilename := ExtractFileName(Application.ExeName);
-  lfilename := ExtractFileNameWithoutExt(lfilename);
+  lfilename := ExtractFileNameOnly(lfilename);
   LogDatei.FileName := lfilename;
   LogDatei.StandardLogFileext := '.log';
   LogDatei.StandardLogFilename := lfilename;
@@ -778,6 +779,8 @@ begin
           sleep(100);
         until (resultform1.Showing = True) and startupfinished;
       end;
+      initaktproduct;
+      resultform1.makeProperties;
       LogDatei.log('Start Analyze in GUI mode: ', LLInfo);
       Analyze(myfilename, aktProduct.SetupFiles[0], True);
     end

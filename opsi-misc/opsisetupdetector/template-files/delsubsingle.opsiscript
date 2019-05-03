@@ -21,6 +21,7 @@ if $oldProgFound$ = "true"
 	if not(($InstallDir$ = '') or ($InstallDir$ = 'unknown'))
 		Files_uninstall
 	endif
+	#@DelsubHandleDesktopIcon*#
 endif
 
 [Winbatch_uninstall]
@@ -38,4 +39,5 @@ endif
 [Files_uninstall]
 del -sf "$InstallDir$\"
 
+#@DelsubSectionLines*#
 ;-----------------------------------------------------

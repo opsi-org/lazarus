@@ -12,7 +12,7 @@ if FileExists($UninstallProgram$)
 	Winbatch_uninstall
 	sub_check_exitcode
 endif
-if not (GetRegistryStringValue32("[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + $MsiId$ + "] DisplayName") = "")
+if not (getRegistryValue("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + $MsiId$ , "DisplayName","32bit") = "")
 	comment "MSI id " + $MsiId$ + " found in registry, starting msiexec to uninstall"
 	Winbatch_uninstall_msi
 	sub_check_exitcode

@@ -98,7 +98,7 @@ if ($arch$ = "64 Bit System") and (($mode$ = "system specific") or ($mode$ = "bo
 	#@postInstallLines2*#
 endif
 
-#@HandleDesktopIcon*#
+#@SetupHandleDesktopIcon*#
 
 [Winbatch_install_1]
 #@installCommandLine1*#

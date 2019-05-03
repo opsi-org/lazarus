@@ -78,7 +78,7 @@ Winbatch_install	#@installWaitForProc1*#
 Sub_check_exitcode
 #@postInstallLines1*#
 
-#@HandleDesktopIcon*#
+#@SetupHandleDesktopIcon*#
 
 [Winbatch_install]
 #@installCommandLine1*#
