@@ -21,7 +21,7 @@ Lazarus IDE, asciidoctor
 
 2. Click on `Run->Build` or press <kbd>SHIFT+F9</kbd>.
 
-3. Double click on opsi_doc_generator_gui.exe file to run it.
+3. Double click on `opsi_doc_generator_gui.exe` to run it.
 
 
 ### Build instructions for Commandline version
@@ -30,7 +30,7 @@ Lazarus IDE, asciidoctor
 
 2. Click on `Run->Build` or press <kbd>SHIFT+F9</kbd>.
 
-3. Run `opsi-doc-generator`
+3. Run `opsi_doc_generator`
 
 ```bash
 $ cd lazarus/helper/opsi-doc-generator/
