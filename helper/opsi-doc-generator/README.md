@@ -35,7 +35,7 @@ $ cd lazarus/helper/opsi-doc-generator/
 $ ./opsi_doc_generator -h
 ```
 
-4. Usage
+Usage:
 
 ```bash
 ./opsi_doc_generator [Options] [filename]      Convert python or opsiscript source files to asciidoc.
@@ -47,7 +47,7 @@ Options:
 	-o , --out=                                Save output to the specified file
 ```
 
-5. Examples
+Examples:
 
 Convert Opsiscript source code to asciidoc:
 
