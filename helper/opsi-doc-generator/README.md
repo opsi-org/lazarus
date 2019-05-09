@@ -6,11 +6,11 @@ It also provide HTML view for the generated Asciidoc files.
 
 # Getting started with opsi doc generator:
 
-## Prerequisites 
+## Prerequisites
 Lazarus IDE, asciidoctor
 
-	
-## Getting Set Up 
+
+## Getting Set Up
 1. Clone this repository. `git clone git@gitlab.uib.local:uib/lazarus.git`
 
 2. Build the project.
@@ -36,6 +36,7 @@ $ ./opsi_doc_generator -h
 ```
 
 4. Usage
+
 ```bash
 ./opsi_doc_generator [Options] [filename]      Convert python or opsiscript source files to asciidoc.
 
@@ -48,25 +49,29 @@ Options:
 
 5. Examples
 
-Convert Opsiscript source code to asciidoc: 
+Convert Opsiscript source code to asciidoc:
+
 ```bash
 $ ./opsi_doc_generator -s /temp/xyz.opsiscript -s /temp/abc.opsiscript -o /temp/opsi.asciidoc                                                                                                                                      
 $ ./opsi_doc_generator --os=/temp/xyz.opsiscript --os=/temp/abc.opsiscript --out=/temp/opsi.asciidoc  
 ```
-                                                                                                                                                                                                                                   
+
 Convert Opsiscript source code to asciidoc and view HTML:
+
 ```bash
 $ ./opsi_doc_generator -s /temp/xyz.opsiscript -s /temp/abc.opsiscript -o /temp/opsi.asciidoc -v
 $ ./opsi_doc_generator --os=/temp/xyz.opsiscript --os=/temp/abc.opsiscript --out=/temp/opsi.asciidoc --view
 ```
 
 Convert Python source code to asciidoc:
+
 ```bash
 $ ./opsi_doc_generator -p /temp/xyz.py -p /temp/abc.py -o /temp/py.asciidoc
 $ ./opsi_doc_generator --py=/temp/xyz.py --py=/temp/abc.py --out=/temp/py.asciidoc
 ```
 
 Convert Python source code to asciidoc and view HTML:
+
 ```bash
 $ ./opsi_doc_generator -p /temp/xyz.py -p /temp/abc.py -o /temp/py.asciidoc -v
 $ ./opsi_doc_generator --py=/temp/xyz.py --py=/temp/abc.py --out=/temp/py.asciidoc --view
