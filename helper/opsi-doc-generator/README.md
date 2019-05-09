@@ -36,15 +36,16 @@ $ ./opsi_doc_generator -h
 ```
 
 4. Usage
+```bash
+./opsi_doc_generator [Options] [filename]      Convert python or opsiscript source files to asciidoc.
 
-	./opsi_doc_generator [Options] [filename]     Convert python or opsiscript source files to asciidoc.
-
-	Options:
+Options:
 	-h , --help                                Displays this message.
 	-s , --os=                                 Convert opsiscript source file to asciidoc and save it to the output file.
 	-p , --py=                                 Convert python source file to asciidoc and save it to the output file.
 	-o , --out=                                Save output to the specified file
-	
+```
+
 5. Examples
 
 Convert Opsiscript source code to asciidoc: 
