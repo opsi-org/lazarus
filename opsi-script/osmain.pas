@@ -3074,7 +3074,7 @@ begin
   except
     on E: Exception do
     begin
-      writeln('TCentralForm.FormCreate : ' + E.Message);
+      writeln('osmain.main : ' + E.Message);
     end;
   end;
 end;
