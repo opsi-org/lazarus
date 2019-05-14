@@ -5674,6 +5674,13 @@ begin
       end;
       LogDatei.log('-----------------', LLDebug3);
       CloseFile(myfile);
+      if LogDatei.UsedLogLevel >= LLDebug3 then
+      begin
+        LogDatei.log('Read file: '+myfilename+ ' :', LLDebug2);
+        LogDatei.log('-----------------', LLDebug3);
+        logdatei.includelogtail(myfilename,Count,'utf8');
+        LogDatei.log('-----------------', LLDebug3);
+      end;
     end
     else
     begin
@@ -5688,6 +5695,13 @@ begin
       end;
       LogDatei.log('-----------------', LLDebug3);
       CloseFile(myfile);
+      if LogDatei.UsedLogLevel >= LLDebug3 then
+      begin
+        LogDatei.log('Read file '+myfilename+ ' with encoding: '+encodingtype, LLDebug2);
+        LogDatei.log('-----------------', LLDebug3);
+        logdatei.includelogtail(myfilename,Count,encodingtype);
+        LogDatei.log('-----------------', LLDebug3);
+      end;
     end;
   except
     on e: Exception do

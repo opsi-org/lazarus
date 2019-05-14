@@ -103,6 +103,7 @@ type
     FStandardLogPath : string;
     FStandardMainLogPath : string;
     FStandardPartLogPath : string;
+    FUsedLogLevel: integer;
 
 
   protected
@@ -199,6 +200,7 @@ type
     property StandardLogPath : string read FStandardLogPath write FStandardLogPath;
     property StandardMainLogPath : string read FStandardMainLogPath write FStandardMainLogPath;
     property StandardPartLogPath : string read FStandardPartLogPath write FStandardPartLogPath;
+    property UsedLogLevel: integer read FUsedLogLevel write FUsedLogLevel;
     //function copyPartLogToFullLog: boolean;
   end;
 
@@ -1228,7 +1230,7 @@ var
   PasS: string;
   st: string;
   peaklen: integer = 0;
-  usedloglevel: integer = 0;
+  //usedloglevel: integer = 0;
   i: integer;
   dummybool : boolean;
   {$IFDEF GUI}
@@ -1244,8 +1246,8 @@ begin
       if LevelOfLine = LLError     then NumberOfErrors := NumberOfErrors + 1;
       if LevelOfLine  = LLCritical then NumberOfErrors := NumberOfErrors + 1;
 
-      usedloglevel := loglevel;
-      If usedloglevel < Fforce_min_loglevel then usedloglevel := Fforce_min_loglevel;
+      FUsedLogLevel := loglevel;
+      If FUsedLogLevel < Fforce_min_loglevel then FUsedLogLevel := Fforce_min_loglevel;
 
       {$IFDEF OPSIWINST}
        // running defined function ?
@@ -1255,7 +1257,7 @@ begin
             // do we want to debug libraries ?
             if (not debug_lib) then
                 // only Warnings and less
-                usedloglevel :=  LLWarning;
+                FUsedLogLevel :=  LLWarning;
 
        (*
        if Assigned(script) then
@@ -1278,7 +1280,7 @@ begin
 
       // now some things we do not want to log:
       // thing we do not log below loglevel 9
-      if usedloglevel <  LLconfidential then
+      if FUsedLogLevel <  LLconfidential then
       begin
        {$IFDEF OPSIWINST}
        // hide opsi service password
@@ -1324,7 +1326,7 @@ begin
         then
         begin
           // commented out while 4.11.2 debugging (do)
-         //if (usedloglevel >= LevelOfLine) then
+         if (FUsedLogLevel >= LevelOfLine) then
            FBatchOberflaeche.setActivityLabel(copy(peakindicator, 1, peaklen));
         end;
         {$ENDIF}
@@ -1340,7 +1342,7 @@ begin
 
 
     try
-      if (usedloglevel >= LevelOfLine) and LogFileExists then
+      if (FUsedLogLevel >= LevelOfLine) and LogFileExists then
       begin
         if FLogProduktId then
         begin

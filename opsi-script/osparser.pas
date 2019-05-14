@@ -10156,7 +10156,7 @@ begin
     {$IFDEF GUI}
     if SaveStayOnTop then FBatchOberflaeche.ForceStayOnTop (true);
     {$ENDIF GUI}
-    if Logdatei.LogLevel < LLconfidential then deleteTempBatFiles(tempfilename);
+    if Logdatei.UsedLogLevel < LLconfidential then deleteTempBatFiles(tempfilename);
   finally
     {$IFDEF GUI}
     FBatchOberflaeche.showAcitvityBar(false);
@@ -10315,7 +10315,7 @@ begin
 
   if ExitOnError and (DiffNumberOfErrors > 0)
   then result := tsrExitProcess;
-  if Logdatei.LogLevel < LLconfidential then deleteTempBatFiles(tempfilename);
+  if Logdatei.UsedLogLevel < LLconfidential then deleteTempBatFiles(tempfilename);
 end;
 
 
@@ -10650,7 +10650,7 @@ begin
 
     if ExitOnError and (DiffNumberOfErrors > 0)
     then result := tsrExitProcess;
-    if Logdatei.LogLevel < LLconfidential then
+    if Logdatei.UsedLogLevel < LLconfidential then
       if not threaded then deleteTempBatFiles(tempfilename);
   finally
     {$IFDEF GUI}

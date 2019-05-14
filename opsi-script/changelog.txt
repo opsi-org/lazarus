@@ -4,6 +4,13 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.1.3) experimental; urgency=low
+
+  * shellInAnIcon: on loglevel 9: reread teporary files and do not delete
+  * oslog: logdatei property usedloglevel (this is real used log level with force_min_loglevel)
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 14 May 2019:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.1.2) stable; urgency=low
 
   * add oslistedit to projectfiles
