@@ -15,6 +15,7 @@ uses
   osdhelper,
   Process,
   fileutil,
+  lazfileutils,
   SysUtils,
   fileinfo,
   winpeimagereader,
@@ -478,7 +479,7 @@ begin
     installerArray[integer(mysetup.installerId)].unattendedsetup;
   mysetup.uninstallCheck.Add('if stringtobool(checkForMsiProduct("' +
     mysetup.msiId + '"))');
-  mysetup.uninstallCheck.Add('   set $oldProgFound$ = "true"');
+  mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
   mysetup.uninstallCheck.Add('endif');
 
   mysetup.uninstallCommandLine :=
@@ -696,7 +697,7 @@ begin
   if not DirectoryExists(opsitmp) then
     createdir(opsitmp);
   if not DirectoryExists(opsitmp) then
-    mywrite('Error: could not create directory: ' + opsitmp);
+    LogDatei.log('Error: could not create directory: ' + opsitmp,LLError);
   {$IFDEF WINDOWS}
   // extract and analyze MSI from setup
 
@@ -712,28 +713,28 @@ begin
   Mywrite('!! PLEASE WAIT !! Extracting and analyzing MSI ...');
   Mywrite('!! PLEASE WAIT !!');
 
-  product := ExtractFileNameWithoutExt(myfilename);
+  //product := ExtractFileNameOnly(myfilename);
 
 
 
   if not RunCommandAndCaptureOut(myBatch, True, myoutlines, myreport,
     SW_SHOWMINIMIZED, myexitcode) then
   begin
-    mywrite('Failed to to run "' + myBatch + '": ' + myreport);
+    LogDatei.log('Failed to to run "' + myBatch + '": ' + myreport,LLWarning);
   end
   else
   begin
     smask := opsitmp + '*.msi';
-    Mywrite(smask);
+    LogDatei.log('Looking for: '+smask,LLInfo);
     if SysUtils.FindFirst(smask, faAnyFile, FileInfo) = 0 then
     begin
       mysetup.msiFullFileName := opsitmp + FileInfo.Name;
+      LogDatei.log('Found msi: '+mysetup.msiFullFileName,LLInfo);
       get_msi_info(mysetup.msiFullFileName, mysetup);
     end
     else
     begin
-      //todo call Dialog here
-      //Application.MessageBox(pchar(format(sErrExtractMSIfailed, [myfilename])), pchar(sMBoxHeader), MB_OK);
+      LogDatei.log('Could not extract msi from: '+myfilename,LLNotice);;
     end;
   end;
   {$ENDIF WINDOWS}
@@ -1192,7 +1193,7 @@ begin
     begin
       mysetup.uninstallCheck.Add('if fileexists($installdir$+"\' +
         mysetup.uninstallProg + '")');
-      mysetup.uninstallCheck.Add('   set $oldProgFound$ = "true"');
+      mysetup.uninstallCheck.Add('	set $oldProgFound$ = "true"');
       mysetup.uninstallCheck.Add('endif');
       mysetup.uninstallCommandLine :=
         '"$Installdir$\' + mysetup.uninstallProg + '" ' +

@@ -24,6 +24,11 @@ QT Installer Framework (Avidemux 4.7.3, msys2)
 https://chocolatey.org/packages/msys2-installer
 https://doc.qt.io/qtinstallerframework/
 
+opsi-setup-detector (4.1.0.8) stable; urgency=low
+
+  * fix for detecting InstallshieldMSI
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  14 May 2019 : 15:00:00 +0200
 
 opsi-setup-detector (4.1.0.7) stable; urgency=low
 

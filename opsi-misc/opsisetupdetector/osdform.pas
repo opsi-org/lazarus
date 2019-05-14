@@ -689,6 +689,7 @@ begin
   myerror := '';
   showgui := True;
   useRunMode := gmUnknown;
+  opsitmp := GetTempDir(false);
   optionlist := TStringList.Create;
   optionlist.Append('help');
   optionlist.Append('filename::');
@@ -2143,7 +2144,7 @@ begin
       //StringGridProp.RowCount := index;
       myprop := TStringList.Create;
       myprop.Add(IntToStr(index));
-      myprop.Add('LicenseOrPool');
+      myprop.Add('SecretLicense_or_Pool');
       myprop.Add('LicenseKey or opsi-LicensePool');
       myprop.Add('unicode');  //type
       myprop.Add('False');      //multivalue

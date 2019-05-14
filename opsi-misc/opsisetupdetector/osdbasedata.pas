@@ -1129,7 +1129,8 @@ begin
     uninstall_waitforprocess := '';
     uninstallProg := 'uninstall.exe';
     patterns.Add('nstallshield');
-    patterns.Add('installer,msi,database');
+    patterns.Add('msi database');
+    patterns.Add('msiexec.exe');
     link :=
       'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
     comment := '';
