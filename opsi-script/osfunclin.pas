@@ -95,6 +95,7 @@ function GetIPFromHost(var HostName, IPaddr, WSAErr: string): Boolean;
 function linIsUefi: boolean;
 function getMyIpByTarget(target:string) : string;
 function getMyIpByDefaultRoute : string;
+function getMyIpDeciceByDefaultRoute : string;
 function getPackageLock(timeoutsec : integer; kill : boolean) : Boolean;
 function which(target:string; var pathToTarget : string) : boolean;
 
@@ -443,7 +444,7 @@ begin
     for i := 0 to outlines.Count - 1 do
     begin
       if Logdatei <> nil then LogDatei.log(outlines.strings[i], LLDebug2);
-      result := outlines.strings[i];
+      result := result + ' '+#10+outlines.strings[i];
     end;
     if Logdatei <> nil then LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
     if Logdatei <> nil then LogDatei.log('', LLDebug2);
@@ -983,16 +984,17 @@ function getMyIpByDefaultRoute : string;
 var
   str : string;
   cmd : string;
-  list : TXstringlist;
+  list : Tstringlist;
   i: integer;
 begin
   result := '';
-  list := TXStringlist.create;
+  list := TStringlist.create;
   if not which('ip',cmd) then cmd := 'ip';
   //str := getCommandResult('ip -o -4 route get 255.255.255.255');
   // macos ip has no '-o'
   str := getCommandResult('/bin/bash -c "'+cmd+' -4 route get 255.255.255.255 || exit $?"');
-  stringsplitByWhiteSpace (str, Tstringlist(list));
+  stringsplitByWhiteSpace (str, list);
+  LogDatei.log_list(list,LLDEBUG3);
   i := list.IndexOf('src');
   if (i > -1) and (list.Count >= i) then
   begin
@@ -1001,6 +1003,28 @@ begin
   list.Free;
 end;
 
+function getMyIpDeciceByDefaultRoute : string;
+var
+  str : string;
+  cmd : string;
+  list : Tstringlist;
+  i: integer;
+begin
+  result := '';
+  list := TStringlist.create;
+  if not which('ip',cmd) then cmd := 'ip';
+  //str := getCommandResult('ip -o -4 route get 255.255.255.255');
+  // macos ip has no '-o'
+  str := getCommandResult('/bin/bash -c "'+cmd+' -4 route get 255.255.255.255 || exit $?"');
+  stringsplitByWhiteSpace (str, list);
+  LogDatei.log_list(list,LLDEBUG3);
+  i := list.IndexOf('dev');
+  if (i > -1) and (list.Count >= i) then
+  begin
+    result := list[i+1];
+  end;
+  list.Free;
+end;
 
 function getPackageLock(timeoutsec : integer; kill : boolean) : Boolean;
 var

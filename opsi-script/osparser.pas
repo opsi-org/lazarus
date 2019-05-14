@@ -1517,7 +1517,8 @@ const
 CLSFormatMACMask = '%2.2x-%2.2x-%2.2x-%2.2x-%2.2x-%2.2x';
 begin
 {$IFDEF UNIX}
-  VDevice := 'eth0';
+  //VDevice := 'eth0';
+  VDevice := getMyIpDeciceByDefaultRoute;
   VPath := Format('/sys/class/net/%s/address', [VDevice]);
   if FileExists(VPath) then
     Result := readFirstLineFromFile(VPath)
