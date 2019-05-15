@@ -444,8 +444,10 @@ begin
     for i := 0 to outlines.Count - 1 do
     begin
       if Logdatei <> nil then LogDatei.log(outlines.strings[i], LLDebug2);
-      result := result + ' '+#10+outlines.strings[i];
+      //result := result + ' '+outlines.strings[i];
+      result := outlines.strings[0];
     end;
+    //result := outlines.Text;
     if Logdatei <> nil then LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
     if Logdatei <> nil then LogDatei.log('', LLDebug2);
   end;

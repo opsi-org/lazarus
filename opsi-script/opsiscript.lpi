@@ -132,7 +132,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="39">
+    <Units Count="40">
       <Unit0>
         <Filename Value="opsiscript.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -262,49 +262,53 @@
         <IsPartOfProject Value="True"/>
       </Unit27>
       <Unit28>
-        <Filename Value="../common/superobject.pas"/>
+        <Filename Value="../common/osxmlsections.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit28>
       <Unit29>
-        <Filename Value="../common/osxmlsections.pas"/>
+        <Filename Value="../common/osxmltdom.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit29>
       <Unit30>
-        <Filename Value="../common/osxmltdom.pas"/>
+        <Filename Value="../common/osxml.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit30>
       <Unit31>
-        <Filename Value="../common/osxml.pas"/>
+        <Filename Value="../common/osparserhelper.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit31>
       <Unit32>
-        <Filename Value="../common/osparserhelper.pas"/>
+        <Filename Value="../common/osnetworkcalculator.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit32>
       <Unit33>
-        <Filename Value="../common/osnetworkcalculator.pas"/>
+        <Filename Value="../common/osprocesses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit33>
       <Unit34>
-        <Filename Value="../common/osprocesses.pas"/>
+        <Filename Value="../common/osregex.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit34>
       <Unit35>
-        <Filename Value="../common/osregex.pas"/>
+        <Filename Value="../common/osurlparser.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit35>
       <Unit36>
-        <Filename Value="../common/osurlparser.pas"/>
+        <Filename Value="../common/oswmi.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit36>
       <Unit37>
-        <Filename Value="../common/oswmi.pas"/>
+        <Filename Value="changelog.txt"/>
         <IsPartOfProject Value="True"/>
       </Unit37>
       <Unit38>
-        <Filename Value="changelog.txt"/>
+        <Filename Value="osfunclin.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit38>
+      <Unit39>
+        <Filename Value="../external_libraries/misc/superobject.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit39>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
