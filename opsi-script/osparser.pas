@@ -16561,7 +16561,10 @@ else if (LowerCase (s) = LowerCase ('GetRegistryValue')) then
       r := trim(r);
       setLength(parameters, 4);
 
+      // try to find a valid fqdn
       parameters[0] := osconf.computername;
+      if parameters[0] = '' then parameters[0] := osconf.opsiserviceUser;
+      if parameters[0] = '' then parameters[0] := oslog.getComputerName;
       parameters[1] := '';
       parameters[2] := '';
       parameters[3] := '';
