@@ -18,11 +18,14 @@ WinRAR Installer,
 WinZip Installer,
 Wise Installer
 stWixToolset,
-install4j (install4j, ej-technologies : perpustakaan-light)
-https://www.ej-technologies.com/resources/install4j/help/doc/help.pdf
-QT Installer Framework (Avidemux 4.7.3, msys2)
-https://chocolatey.org/packages/msys2-installer
-https://doc.qt.io/qtinstallerframework/
+* install4j (install4j, ej-technologies : perpustakaan-light)
+  * https://www.ej-technologies.com/resources/install4j/help/doc/help.pdf
+* QT Installer Framework (Avidemux 4.7.3, msys2)
+  * https://chocolatey.org/packages/msys2-installer
+  * https://doc.qt.io/qtinstallerframework/
+* National Instruments installer
+  ** Labview32 in phywe/measure-ct
+  ** ;https://knowledge.ni.com/KnowledgeArticleDetails?id=kA00Z0000019Ld6SAE&l=de-DE
 
 opsi-setup-detector (4.1.0.8) stable; urgency=low
 
