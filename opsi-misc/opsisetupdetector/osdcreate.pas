@@ -130,7 +130,7 @@ begin
         LineEnding;
     if myconfiguration.UsePropLicenseOrPool and aktProduct.productdata.licenserequired then
     begin
-      str := str + 'set $LicenseOrPool$ = GetProductProperty("SecretLicense_or_Pool","")' +
+      str := str + 'set $LicenseOrPool$ = GetConfidentialProductProperty("SecretLicense_or_Pool","")' +
         LineEnding;
       str := str + 'set $LicensePool$ = $LicenseOrPool$' +  LineEnding;
     end;

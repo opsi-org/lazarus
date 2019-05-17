@@ -47,6 +47,7 @@ procedure get_genmsinstaller_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_wixtoolset_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_boxstub_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_sfxcab_info(myfilename: string; var mysetup: TSetupFile);
+procedure get_bitrock_info(myfilename: string; var mysetup: TSetupFile);
 // marker for add installers
 //procedure stringsgrep(myfilename: string; verbose,skipzero: boolean);
 procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
@@ -969,6 +970,24 @@ begin
   mywrite('get_sfxcab_info finished');
 end;
 
+procedure get_bitrock_info(myfilename: string; var mysetup: TSetupFile);
+var
+  str1, str2 : string;
+  pos1, pos2, i : integer;
+begin
+  Mywrite('Analyzing Bitrock Installer:');
+  //mysetup.install_waitforprocess:=ExtractFileName(myfilename);
+  mysetup.SoftwareVersion := getProductInfoFromResource('FileVersion',myfilename);
+  //mysetup.uninstallProg:= 'C:\ProgramData\{<UNKNOWN GUID>}\'
+  //      + ExtractFileName(myfilename);
+  aktProduct.productdata.productversion:= mysetup.SoftwareVersion;
+  str1 := getProductInfoFromResource('ProductName',myfilename);
+  aktProduct.productdata.productId := getPacketIDShort(str1);
+  aktProduct.productdata.productName := str1;
+
+  mywrite('get_bitrock_info finished');
+end;
+
 // marker for add installers
 
 function analyze_markerlist(var mysetup: TSetupFile): TKnownInstaller;
@@ -1182,6 +1201,7 @@ begin
       stWixToolset: get_wixtoolset_info(FileName, mysetup);
       stBoxStub: get_boxstub_info(FileName, mysetup);
       stSFXcab: get_sfxcab_info(FileName, mysetup);
+      stBitrock: get_bitrock_info(FileName, mysetup);
       stUnknown: LogDatei.log(
           'Unknown Installer after Analyze.', LLcritical);
       else
@@ -1231,6 +1251,8 @@ begin
       stBoxStub: Mywrite('Found well known installer: ' +
           installerToInstallerstr(setupType));
       stSFXcab: Mywrite('Found well known installer: ' +
+          installerToInstallerstr(setupType));
+      stBitrock: Mywrite('Found well known installer: ' +
           installerToInstallerstr(setupType));
       stUnknown: Mywrite('Sorry - unknown installer: ' +
           installerToInstallerstr(setupType));

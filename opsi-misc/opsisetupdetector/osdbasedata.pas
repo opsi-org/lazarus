@@ -28,7 +28,7 @@ type
   // marker for add installers
   TKnownInstaller = (stAdvancedMSI, stInno, stInstallShield, stInstallShieldMSI,
     stMsi, stNsis, st7zip, st7zipsfx, stInstallAware, stMSGenericInstaller,
-    stWixToolset, stBoxStub, stSFXcab, stUnknown);
+    stWixToolset, stBoxStub, stSFXcab, stBitrock,stUnknown);
 
 
   TdetectInstaller = function(parent: TClass; markerlist: TStrings): boolean;
@@ -1038,6 +1038,7 @@ begin
   knownInstallerList.Add('WixToolset');
   knownInstallerList.Add('BoxStub');
   knownInstallerList.Add('SFXcab');
+  knownInstallerList.Add('Bitrock');
   knownInstallerList.Add('Unknown');
 
 
@@ -1129,7 +1130,8 @@ begin
     uninstall_waitforprocess := '';
     uninstallProg := 'uninstall.exe';
     patterns.Add('nstallshield');
-    patterns.Add('msi database');
+    patterns.Add('issetup.dll');
+    patterns.Add('transforms');
     patterns.Add('msiexec.exe');
     link :=
       'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
@@ -1282,6 +1284,25 @@ begin
     //patterns.Add('Wix Toolset');
     //infopatterns.Add('RunProgram="');
     link := 'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
+    comment := '';
+    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    detected := @detectedbypatternwithand;
+  end;
+  // stBitrock
+  with installerArray[integer(stBitrock)] do
+  begin
+    description := 'Bitrock installer ';
+    silentsetup := '--mode unattended --unattendedmodeui none';
+    unattendedsetup := '--mode unattended --unattendedmodeui minimal';
+    silentuninstall := '--mode unattended --unattendedmodeui none';
+    unattendeduninstall := '--mode unattended --unattendedmodeui minimal';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := 'uninstall.exe';
+    patterns.Add('<description>BitRock Installer</description>');
+    //patterns.Add('Wix Toolset');
+    //infopatterns.Add('RunProgram="');
+    link := 'https://clients.bitrock.com/installbuilder/docs/installbuilder-userguide/ar01s08.html#_help_menu';
     comment := '';
     uib_exitcode_function := 'isMsExitcodeFatal_short';
     detected := @detectedbypatternwithand;
