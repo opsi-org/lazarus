@@ -281,6 +281,7 @@ var
   myArch: string;
   product: string;
   installerstr: string;
+  str1 : string ;
 
 begin
   installerstr := installerToInstallerstr(installerId);
@@ -301,10 +302,19 @@ begin
   mysetup.install_waitforprocess :=
     installerArray[integer(mysetup.installerId)].install_waitforprocess;
   mysetup.SoftwareVersion := getProductInfoFromResource('FileVersion',myfilename);
-
+  aktProduct.productdata.productversion:= mysetup.SoftwareVersion;
+  str1 := getProductInfoFromResource('ProductName',myfilename);
+  if str1 <> '' then
+  begin
+  aktProduct.productdata.productId := getPacketIDShort(str1);
+  aktProduct.productdata.productName := str1;
+  end
+  else
+  begin
   product := ExtractFileNameWithoutExt(mysetup.setupFileName);
   aktProduct.productdata.productId := getPacketIDShort(product);
   aktProduct.productdata.productName := product;
+  end;
 
   fsize := fileutil.FileSize(myfilename);
   fsizemb := fsize / (1024 * 1024);
@@ -672,6 +682,14 @@ var
 
 begin
   Mywrite('Analyzing InstallShield-Setup:');
+  (*
+  mysetup.install_waitforprocess:=ExtractFileName(myfilename);
+  mysetup.SoftwareVersion := getProductInfoFromResource('FileVersion',myfilename);
+  aktProduct.productdata.productversion:= mysetup.SoftwareVersion;
+  str1 := getProductInfoFromResource('ProductName',myfilename);
+  aktProduct.productdata.productId := getPacketIDShort(str1);
+  aktProduct.productdata.productName := str1;
+  *)
   mywrite('get_InstallShield_info finished');
   mywrite('InstallShield Setup detected');
 end;
@@ -812,6 +830,14 @@ procedure get_nsis_info(myfilename: string; var mysetup: TSetupFile);
 
 begin
   Mywrite('Analyzing NSIS-Setup:');
+  (*
+  mysetup.install_waitforprocess:=ExtractFileName(myfilename);
+  mysetup.SoftwareVersion := getProductInfoFromResource('FileVersion',myfilename);
+  aktProduct.productdata.productversion:= mysetup.SoftwareVersion;
+  str1 := getProductInfoFromResource('ProductName',myfilename);
+  aktProduct.productdata.productId := getPacketIDShort(str1);
+  aktProduct.productdata.productName := str1;
+  *)
   mywrite('get_nsis_info finished');
   mywrite('NSIS (Nullsoft Install System) detected');
 end;
@@ -829,12 +855,14 @@ var
   pos1, pos2, i : integer;
 begin
   Mywrite('Analyzing InstallAware-Setup:');
+  (*
   mysetup.install_waitforprocess:=ExtractFileName(myfilename);
   mysetup.SoftwareVersion := getProductInfoFromResource('FileVersion',myfilename);
   aktProduct.productdata.productversion:= mysetup.SoftwareVersion;
   str1 := getProductInfoFromResource('ProductName',myfilename);
   aktProduct.productdata.productId := getPacketIDShort(str1);
   aktProduct.productdata.productName := str1;
+  *)
   for i := 0 to mysetup.infolist.Count-1 do
   begin
     str1 := mysetup.infolist[i];
@@ -862,14 +890,15 @@ var
 begin
   Mywrite('Analyzing generic MS Installer-Setup:');
   //mysetup.install_waitforprocess:=ExtractFileName(myfilename);
-  mysetup.SoftwareVersion := getProductInfoFromResource('FileVersion',myfilename);
+  //mysetup.SoftwareVersion := getProductInfoFromResource('FileVersion',myfilename);
   mysetup.uninstallProg:= 'C:\ProgramData\{<UNKNOWN GUID>}\'
         + ExtractFileName(myfilename);
+  (*
   aktProduct.productdata.productversion:= mysetup.SoftwareVersion;
   str1 := getProductInfoFromResource('ProductName',myfilename);
   aktProduct.productdata.productId := getPacketIDShort(str1);
   aktProduct.productdata.productName := str1;
-
+  *)
   mywrite('get_genmsinstaller_info finished');
 end;
 
@@ -884,14 +913,15 @@ var
 begin
   Mywrite('Analyzing generic MS Installer-Setup:');
   //mysetup.install_waitforprocess:=ExtractFileName(myfilename);
-  mysetup.SoftwareVersion := getProductInfoFromResource('FileVersion',myfilename);
+  //mysetup.SoftwareVersion := getProductInfoFromResource('FileVersion',myfilename);
   mysetup.uninstallProg:= 'C:\ProgramData\{<UNKNOWN GUID>}\'
         + ExtractFileName(myfilename);
+  (*
   aktProduct.productdata.productversion:= mysetup.SoftwareVersion;
   str1 := getProductInfoFromResource('ProductName',myfilename);
   aktProduct.productdata.productId := getPacketIDShort(str1);
   aktProduct.productdata.productName := str1;
-
+  *)
   Mywrite('Analyzing Wix Bundle:');
   {$IFDEF WINDOWS}
 
@@ -941,14 +971,15 @@ var
 begin
   Mywrite('Analyzing generic MS Installer-Setup:');
   //mysetup.install_waitforprocess:=ExtractFileName(myfilename);
-  mysetup.SoftwareVersion := getProductInfoFromResource('FileVersion',myfilename);
+  //mysetup.SoftwareVersion := getProductInfoFromResource('FileVersion',myfilename);
   mysetup.uninstallProg:= 'C:\ProgramData\{<UNKNOWN GUID>}\'
         + ExtractFileName(myfilename);
+  (*
   aktProduct.productdata.productversion:= mysetup.SoftwareVersion;
   str1 := getProductInfoFromResource('ProductName',myfilename);
   aktProduct.productdata.productId := getPacketIDShort(str1);
   aktProduct.productdata.productName := str1;
-
+  *)
   mywrite('get_boxstub_info finished');
 end;
 
@@ -959,14 +990,15 @@ var
 begin
   Mywrite('Analyzing generic MS Installer-Setup:');
   //mysetup.install_waitforprocess:=ExtractFileName(myfilename);
-  mysetup.SoftwareVersion := getProductInfoFromResource('FileVersion',myfilename);
+  //mysetup.SoftwareVersion := getProductInfoFromResource('FileVersion',myfilename);
   mysetup.uninstallProg:= 'C:\ProgramData\{<UNKNOWN GUID>}\'
         + ExtractFileName(myfilename);
+  (*
   aktProduct.productdata.productversion:= mysetup.SoftwareVersion;
   str1 := getProductInfoFromResource('ProductName',myfilename);
   aktProduct.productdata.productId := getPacketIDShort(str1);
   aktProduct.productdata.productName := str1;
-
+  *)
   mywrite('get_sfxcab_info finished');
 end;
 
@@ -976,6 +1008,7 @@ var
   pos1, pos2, i : integer;
 begin
   Mywrite('Analyzing Bitrock Installer:');
+  (*
   //mysetup.install_waitforprocess:=ExtractFileName(myfilename);
   mysetup.SoftwareVersion := getProductInfoFromResource('FileVersion',myfilename);
   //mysetup.uninstallProg:= 'C:\ProgramData\{<UNKNOWN GUID>}\'
@@ -984,7 +1017,7 @@ begin
   str1 := getProductInfoFromResource('ProductName',myfilename);
   aktProduct.productdata.productId := getPacketIDShort(str1);
   aktProduct.productdata.productName := str1;
-
+  *)
   mywrite('get_bitrock_info finished');
 end;
 
