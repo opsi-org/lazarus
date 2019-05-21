@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 81
+  Left = 157
   Height = 727
-  Top = 163
+  Top = 218
   Width = 1070
   AllowDropFiles = True
   Caption = 'opsi-doc-generator'

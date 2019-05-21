@@ -67,6 +67,7 @@ implementation
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   caption := 'opsi doc generator Version: '+myversion;
+  ButtonSave.Enabled:= False;
 end;
 
 procedure TForm1.FormDropFiles(Sender: TObject; const FileNames: array of String);
@@ -95,6 +96,7 @@ begin
   ListBox1.DeleteSelected;
   Memo1.Lines.Clear;
   Memo2.Lines.Clear;
+  ButtonSave.Enabled:= False;
 end;
 
 procedure TForm1.ButtonRemoveAllClick(Sender: TObject);
@@ -102,6 +104,7 @@ begin
   ListBox1.Clear;
   Memo1.Lines.Clear;
   Memo2.Lines.Clear;
+  ButtonSave.Enabled:= False;
 end;
 
 procedure TForm1.ButtonOSConvertClick(Sender: TObject);
@@ -117,6 +120,7 @@ begin
   end;
   convertOslibToAsciidoc();
   memo2.Lines.Assign(targetlist);
+  ButtonSave.Enabled:= True;
 end;
 
 procedure TForm1.ButtonPythonConvertClick(Sender: TObject);
@@ -132,6 +136,7 @@ begin
   end;
   convertPylibToAsciidoc();
   memo2.Lines.Assign(targetlist);
+  ButtonSave.Enabled:= True;
 end;
 
 procedure TForm1.ButtonSaveClick(Sender: TObject);
