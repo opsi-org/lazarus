@@ -28,7 +28,7 @@
       <BuildNr Value="8"/>
       <StringTable CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi setup detector" InternalName="opsi setup detector" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsisetupdetector" ProductName="opsi" ProductVersion="opsi 4.1."/>
     </VersionInfo>
-    <BuildModes Count="3" Active="Default">
+    <BuildModes Count="3" Active="Release">
       <Item1 Name="Default" Default="True"/>
       <Item2 Name="Debug">
         <CompilerOptions>
@@ -154,7 +154,7 @@
         <MinVersion Major="1" Valid="True"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="46">
+    <Units Count="44">
       <Unit0>
         <Filename Value="opsisetupdetector.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -189,74 +189,74 @@
       <Unit2>
         <Filename Value="lib\i386-win32\resultform.lrs"/>
         <CursorPos X="17" Y="3"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit2>
       <Unit3>
         <Filename Value="manifest.xml"/>
         <CursorPos X="48" Y="10"/>
-        <UsageCount Value="54"/>
+        <UsageCount Value="53"/>
         <DefaultSyntaxHighlighter Value="XML"/>
       </Unit3>
       <Unit4>
         <Filename Value="VersionInfoX.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="30"/>
-        <UsageCount Value="197"/>
+        <UsageCount Value="196"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit4>
       <Unit5>
         <Filename Value="changelog.txt"/>
         <CursorPos X="32" Y="11"/>
-        <UsageCount Value="54"/>
+        <UsageCount Value="53"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit5>
       <Unit6>
         <Filename Value="msi2opsi.lpr"/>
         <CursorPos X="32" Y="6"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="12"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit6>
       <Unit7>
         <Filename Value="msi2opsi-files\CLIENT_DATA\setup32.opsiscript"/>
         <CursorPos X="60" Y="15"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="12"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit7>
       <Unit8>
         <Filename Value="msi2opsi-files\CLIENT_DATA\check_msi_exitcode.opsiscript"/>
-        <UsageCount Value="16"/>
+        <UsageCount Value="15"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit8>
       <Unit9>
         <Filename Value="C:\lazarus\lcl\include\control.inc"/>
         <TopLine Value="3225"/>
         <CursorPos Y="3243"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit9>
       <Unit10>
         <Filename Value="C:\lazarus\lcl\include\customedit.inc"/>
         <TopLine Value="513"/>
         <CursorPos Y="531"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit10>
       <Unit11>
         <Filename Value="C:\lazarus\lcl\include\pagecontrol.inc"/>
         <TopLine Value="26"/>
         <CursorPos Y="33"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit11>
       <Unit12>
         <Filename Value="C:\lazarus\lcl\include\customnotebook.inc"/>
         <TopLine Value="458"/>
         <CursorPos Y="476"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="1"/>
       </Unit12>
       <Unit13>
         <Filename Value="resultform.lfm"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="541"/>
         <CursorPos X="23" Y="549"/>
-        <UsageCount Value="38"/>
+        <UsageCount Value="37"/>
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit13>
       <Unit14>
@@ -267,7 +267,7 @@
         <UnitName Value="Help"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="17" Y="61"/>
-        <UsageCount Value="93"/>
+        <UsageCount Value="92"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit14>
       <Unit15>
@@ -275,12 +275,13 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="1756"/>
         <CursorPos X="28" Y="1776"/>
-        <UsageCount Value="188"/>
+        <UsageCount Value="187"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit15>
       <Unit16>
         <Filename Value="changelog-osd.txt"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <TopLine Value="16"/>
         <CursorPos X="41" Y="33"/>
         <UsageCount Value="202"/>
@@ -290,10 +291,9 @@
       <Unit17>
         <Filename Value="osdanalyze.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="11"/>
-        <TopLine Value="77"/>
-        <CursorPos X="19" Y="82"/>
+        <TopLine Value="74"/>
+        <CursorPos X="34" Y="89"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="1"/>
@@ -346,7 +346,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="73"/>
         <CursorPos X="79" Y="97"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit21>
       <Unit22>
@@ -367,8 +367,8 @@
         <Filename Value="osdcreate.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="7"/>
-        <TopLine Value="114"/>
-        <CursorPos X="21" Y="126"/>
+        <TopLine Value="382"/>
+        <CursorPos X="54" Y="413"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="2"/>
@@ -386,7 +386,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="53"/>
         <CursorPos X="36" Y="71"/>
-        <UsageCount Value="68"/>
+        <UsageCount Value="74"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit24>
@@ -395,7 +395,7 @@
         <EditorIndex Value="5"/>
         <WindowIndex Value="1"/>
         <CursorPos X="38" Y="15"/>
-        <UsageCount Value="68"/>
+        <UsageCount Value="74"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit25>
@@ -404,7 +404,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="10"/>
         <CursorPos Y="32"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="1"/>
         <DefaultSyntaxHighlighter Value="PO"/>
       </Unit26>
       <Unit27>
@@ -423,7 +423,7 @@
       <Unit28>
         <Filename Value="..\..\common\oscheckbinarybitness.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="13"/>
+        <EditorIndex Value="14"/>
         <TopLine Value="5"/>
         <CursorPos X="18" Y="113"/>
         <UsageCount Value="200"/>
@@ -460,104 +460,91 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="15"/>
         <CursorPos X="54" Y="35"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit31>
       <Unit32>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\rtl\objpas\sysutils\sysstrh.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="52"/>
         <CursorPos X="10" Y="72"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="6"/>
       </Unit32>
       <Unit33>
-        <Filename Value="C:\lazarus\lcl\stdctrls.pp"/>
-        <UnitName Value="StdCtrls"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="802"/>
-        <CursorPos X="14" Y="820"/>
-        <UsageCount Value="1"/>
-      </Unit33>
-      <Unit34>
         <Filename Value="N:\usr\share\lazarus\1.8.4\lcl\include\fpimagebitmap.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="123"/>
         <CursorPos Y="141"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="6"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit33>
+      <Unit34>
+        <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\fcl-base\src\fileinfo.pp"/>
+        <EditorIndex Value="12"/>
+        <TopLine Value="252"/>
+        <CursorPos X="40" Y="260"/>
+        <UsageCount Value="16"/>
+        <Loaded Value="True"/>
       </Unit34>
       <Unit35>
-        <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\fcl-base\src\fileinfo.pp"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="15" Y="28"/>
-        <UsageCount Value="9"/>
-      </Unit35>
-      <Unit36>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\fcl-res\src\versiontypes.pp"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="9"/>
-      </Unit36>
-      <Unit37>
+        <UsageCount Value="8"/>
+      </Unit35>
+      <Unit36>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\fcl-res\src\versionresource.pp"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="9"/>
-      </Unit37>
-      <Unit38>
+        <UsageCount Value="8"/>
+      </Unit36>
+      <Unit37>
         <Filename Value="template-files\setupdouble.opsiscript"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="1"/>
         <TopLine Value="89"/>
         <CursorPos X="39" Y="90"/>
-        <UsageCount Value="67"/>
+        <UsageCount Value="73"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
-      </Unit38>
-      <Unit39>
+      </Unit37>
+      <Unit38>
         <Filename Value="..\..\common\osencoding.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="4"/>
         <TopLine Value="8"/>
         <CursorPos X="6" Y="24"/>
-        <UsageCount Value="126"/>
+        <UsageCount Value="137"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit39>
-      <Unit40>
+      </Unit38>
+      <Unit39>
         <Filename Value="template-files\delsubdouble.opsiscript"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="1"/>
         <TopLine Value="8"/>
         <CursorPos X="38" Y="36"/>
-        <UsageCount Value="66"/>
+        <UsageCount Value="72"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
-      </Unit40>
-      <Unit41>
+      </Unit39>
+      <Unit40>
         <Filename Value="C:\lazarus\lcl\grids.pas"/>
         <UnitName Value="Grids"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="10368"/>
         <CursorPos Y="10388"/>
-        <UsageCount Value="7"/>
-      </Unit41>
-      <Unit42>
-        <Filename Value="locale\opsisetupdetector.de.po"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="46"/>
-        <UsageCount Value="1"/>
-        <DefaultSyntaxHighlighter Value="PO"/>
-      </Unit42>
-      <Unit43>
+        <UsageCount Value="6"/>
+      </Unit40>
+      <Unit41>
         <Filename Value="N:\usr\share\lazarus\2.0.0\components\ideintf\propedits.pp"/>
         <UnitName Value="PropEdits"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="1"/>
         <TopLine Value="4469"/>
         <CursorPos X="52" Y="4482"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit43>
-      <Unit44>
+      </Unit41>
+      <Unit42>
         <Filename Value="N:\usr\share\lazarus\2.0.0\components\ideintf\collectionpropeditform.pas"/>
         <ComponentName Value="CollectionPropertyEditorForm"/>
         <HasResources Value="True"/>
@@ -567,144 +554,144 @@
         <WindowIndex Value="1"/>
         <TopLine Value="71"/>
         <CursorPos Y="118"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit44>
-      <Unit45>
+      </Unit42>
+      <Unit43>
         <Filename Value="utils\extractMSI.cmd"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="13"/>
         <TopLine Value="38"/>
         <CursorPos X="113" Y="24"/>
-        <UsageCount Value="19"/>
+        <UsageCount Value="25"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
-      </Unit45>
+      </Unit43>
     </Units>
     <OtherDefines Count="3">
-      <Define0 Value="OPSI_AS_USER"/>
-      <Define1 Value="OPSI"/>
-      <Define2 Value="OSDGUI"/>
+      <Define0 Value="OSDGUI"/>
+      <Define1 Value="OPSI_AS_USER"/>
+      <Define2 Value="OPSI"/>
     </OtherDefines>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="567" Column="70" TopLine="535"/>
+        <Filename Value="osdanalyze.pas"/>
+        <Caret Line="38" Column="11" TopLine="18"/>
       </Position1>
       <Position2>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="781" Column="11" TopLine="758"/>
+        <Filename Value="osdanalyze.pas"/>
+        <Caret Line="347" Column="11" TopLine="336"/>
       </Position2>
       <Position3>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="14" Column="14" TopLine="10"/>
+        <Filename Value="osdanalyze.pas"/>
+        <Caret Line="481" Column="33" TopLine="462"/>
       </Position3>
       <Position4>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="783" Column="42" TopLine="764"/>
+        <Filename Value="osdanalyze.pas"/>
+        <Caret Line="1195" Column="36" TopLine="1176"/>
       </Position4>
       <Position5>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="314" Column="15" TopLine="295"/>
+        <Filename Value="osdanalyze.pas"/>
+        <Caret Line="476" Column="27" TopLine="441"/>
       </Position5>
       <Position6>
-        <Filename Value="changelog-osd.txt"/>
-        <Caret Line="23" Column="17" TopLine="16"/>
+        <Filename Value="osdanalyze.pas"/>
+        <Caret Line="17" Column="36"/>
       </Position6>
       <Position7>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="2146" Column="40" TopLine="2128"/>
+        <Filename Value="osdanalyze.pas"/>
+        <Caret Line="695" Column="29" TopLine="666"/>
       </Position7>
       <Position8>
         <Filename Value="osdform.pas"/>
-        <Caret Line="2160" Column="23" TopLine="2128"/>
+        <Caret Line="692" Column="34" TopLine="669"/>
       </Position8>
       <Position9>
-        <Filename Value="osdcreate.pas"/>
-        <Caret Line="120" Column="27" TopLine="114"/>
+        <Filename Value="template-files\setupdouble.opsiscript"/>
+        <Caret Line="90" Column="39" TopLine="89"/>
       </Position9>
       <Position10>
-        <Filename Value="osdanalyze.pas"/>
-        <Caret Line="731" Column="19" TopLine="705"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="1290" Column="31" TopLine="1259"/>
       </Position10>
       <Position11>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="38" Column="11" TopLine="18"/>
+        <Caret Line="50" Column="4" TopLine="30"/>
       </Position11>
       <Position12>
-        <Filename Value="osdanalyze.pas"/>
-        <Caret Line="347" Column="11" TopLine="336"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="31" Column="40" TopLine="8"/>
       </Position12>
       <Position13>
-        <Filename Value="osdanalyze.pas"/>
-        <Caret Line="481" Column="33" TopLine="462"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="1041" Column="34" TopLine="1006"/>
       </Position13>
       <Position14>
-        <Filename Value="osdanalyze.pas"/>
-        <Caret Line="1195" Column="36" TopLine="1176"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="1305" Column="110" TopLine="1276"/>
       </Position14>
       <Position15>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="476" Column="27" TopLine="441"/>
+        <Caret Line="50" Column="22" TopLine="30"/>
       </Position15>
       <Position16>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="17" Column="36"/>
+        <Caret Line="988" Column="23" TopLine="952"/>
       </Position16>
       <Position17>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="695" Column="29" TopLine="666"/>
+        <Caret Line="1204" Column="29" TopLine="1177"/>
       </Position17>
       <Position18>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="692" Column="34" TopLine="669"/>
+        <Filename Value="osdanalyze.pas"/>
+        <Caret Line="1228" Column="33" TopLine="1210"/>
       </Position18>
       <Position19>
-        <Filename Value="template-files\setupdouble.opsiscript"/>
-        <Caret Line="90" Column="39" TopLine="89"/>
+        <Filename Value="osdanalyze.pas"/>
+        <Caret Line="51" Column="4" TopLine="31"/>
       </Position19>
       <Position20>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="1290" Column="31" TopLine="1259"/>
+        <Filename Value="osdanalyze.pas"/>
+        <Caret Line="1235" Column="31" TopLine="1221"/>
       </Position20>
       <Position21>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="50" Column="4" TopLine="30"/>
+        <Caret Line="84" Column="29" TopLine="77"/>
       </Position21>
       <Position22>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="31" Column="40" TopLine="8"/>
+        <Filename Value="osdanalyze.pas"/>
+        <Caret Line="83" Column="49" TopLine="77"/>
       </Position22>
       <Position23>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="1041" Column="34" TopLine="1006"/>
+        <Filename Value="osdanalyze.pas"/>
+        <Caret Line="88" TopLine="77"/>
       </Position23>
       <Position24>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="1305" Column="110" TopLine="1276"/>
+        <Filename Value="osdanalyze.pas"/>
+        <Caret Line="89" TopLine="77"/>
       </Position24>
       <Position25>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="50" Column="22" TopLine="30"/>
+        <Caret Line="20" Column="11"/>
       </Position25>
       <Position26>
-        <Filename Value="osdanalyze.pas"/>
-        <Caret Line="988" Column="23" TopLine="952"/>
+        <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\fcl-base\src\fileinfo.pp"/>
+        <Caret Line="71" Column="27" TopLine="53"/>
       </Position26>
       <Position27>
-        <Filename Value="osdanalyze.pas"/>
-        <Caret Line="1204" Column="29" TopLine="1177"/>
+        <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\fcl-base\src\fileinfo.pp"/>
+        <Caret Line="260" Column="40" TopLine="252"/>
       </Position27>
       <Position28>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="1228" Column="33" TopLine="1210"/>
+        <Caret Line="87" TopLine="74"/>
       </Position28>
       <Position29>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="51" Column="4" TopLine="31"/>
+        <Caret Line="88" TopLine="74"/>
       </Position29>
       <Position30>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="1235" Column="31" TopLine="1221"/>
+        <Caret Line="89" Column="34" TopLine="74"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
@@ -777,8 +764,8 @@
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
-        <Source Value="osdanalyze.pas"/>
-        <Line Value="87"/>
+        <Source Value="C:\lazarus\fpc\3.0.4\source\packages\fcl-base\src\fileinfo.pp"/>
+        <Line Value="269"/>
       </Item4>
     </BreakPoints>
     <Watches Count="5">

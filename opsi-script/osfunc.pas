@@ -1646,7 +1646,7 @@ begin
           //Report := 'Process executed  + CmdLinePasStr
           Report := 'ExitCode ' + IntToStr(lpExitCode) + '    Executed process "' +
             CmdLinePasStr + '"';
-          ExitCode := lpExitCode;
+          exitCode := longint(lpExitCode);
         end;
       end;
     except
@@ -2010,7 +2010,7 @@ begin
           //Report := 'Process executed  + CmdLinePasStr
           Report := 'ExitCode ' + IntToStr(lpExitCode) + '    Executed process "' +
             CmdLinePasStr + '"';
-          ExitCode := lpExitCode;
+          exitCode := longint(lpExitCode);
         end;
       end;
     except
@@ -2815,7 +2815,7 @@ begin
 
           //exitCode := FpcProcess.ExitStatus;
           GetExitCodeProcess(ProcessInfo.hProcess, lpExitCode);
-          exitCode := lpExitCode;
+          exitCode := longint(lpExitCode);
           //Report := 'Process executed  + CmdLinePasStr
           Report := 'ExitCode ' + IntToStr(exitCode) + '    Executed process "' +
             CmdLinePasStr + '"';
@@ -2956,7 +2956,7 @@ begin
       if not gottoken then
         gottoken := OpenShellProcessToken('explorer.exe', opsiSetupAdmin_logonHandle);
       if not gottoken then
-        LogDatei.DependentAdd('Could not get token from opsiclientd or explorer',
+        LogDatei.log('Could not get token from opsiclientd or explorer',
           LLError);
       @CreateEnvironmentBlock := GetProcAddress(LoadLibrary('userenv.dll'),
         'CreateEnvironmentBlock');
@@ -2969,7 +2969,7 @@ begin
       if not CreateEnvironmentBlock(@opsiSetupAdmin_lpEnvironment,
         opsiSetupAdmin_logonHandle, False) then
       begin
-        LogDatei.DependentAdd('Could not CreateEnvironmentBlock', LLError);
+        LogDatei.log('Could not CreateEnvironmentBlock', LLError);
         opsiSetupAdmin_lpEnvironment := nil;
       end;
 
@@ -2986,7 +2986,7 @@ begin
         Result := False;
         Report := CmdLinePasStr + ' .... CreateProcessAsUser Error ' +
           IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) + ')';
-        LogDatei.DependentAdd(Report, LLError);
+        LogDatei.log(Report, LLError);
         CloseHandle(processInfo.hProcess);
         CloseHandle(processInfo.hThread);
       end
@@ -3066,8 +3066,8 @@ begin
               //waiting condition 3a : we wait that some other process will come into existence
               if WaitForProcessEndingLogflag then
               begin
-                logdatei.DependentAdd('Waiting for start of "' +
-                  ident + '"', LevelComplete);
+                logdatei.log('Waiting for start of "' +
+                  ident + '"', LLInfo);
                 WaitForProcessEndingLogflag := False;
               end;
 
@@ -3081,8 +3081,8 @@ begin
                 if ((nowtime - starttime) < waitSecs / secsPerDay) then
                   running := True
                 else
-                  logdatei.DependentAdd('Waiting for "' + ident +
-                    '" stopped - time out ' + IntToStr(waitSecs) + ' sec', LevelInfo);
+                  logdatei.log('Waiting for "' + ident +
+                    '" stopped - time out ' + IntToStr(waitSecs) + ' sec', LLInfo);
               end;
 
             end
@@ -3095,8 +3095,8 @@ begin
 
               if not WaitForProcessEndingLogflag and running then
               begin
-                logdatei.DependentAdd('Waiting for process "' +
-                  ident + '" ending', LevelComplete);
+                logdatei.log('Waiting for process "' +
+                  ident + '" ending', LLDebug2);
                 WaitForProcessEndingLogflag := True;
               end;
 
@@ -3128,7 +3128,7 @@ begin
             begin
               // waiting condition 4 :  Process has finished;
               //   we still have to look if WindowToVanish did vanish if this is necessary
-              logdatei.DependentAdd(
+              logdatei.log(
                 'Process terminated at: ' + DateTimeToStr(now) +
                 ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
  (*
@@ -3159,9 +3159,9 @@ begin
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
                 running := False;
-                logdatei.DependentAdd('Waited for the end of started process"' +
+                logdatei.log('Waited for the end of started process"' +
                   ' - but time out reached after ' + IntToStr(waitSecs) +
-                  ' sec.', LevelInfo);
+                  ' sec.', LLDebug2);
                 // try to close process
                 //if KillProcessbypid(mypid) then
                 //    logdatei.DependentAdd('Killed process with pid: '+ IntToStr(mypid), LLInfo)
@@ -3191,7 +3191,7 @@ begin
 
           //exitCode := FpcProcess.ExitStatus;
           GetExitCodeProcess(ProcessInfo.hProcess, lpExitCode);
-          exitCode := lpExitCode;
+          exitCode := longint(lpExitCode);
           //Report := 'Process executed  + CmdLinePasStr
           Report := 'ExitCode ' + IntToStr(exitCode) + '    Executed process "' +
             CmdLinePasStr + '"';
@@ -3202,7 +3202,7 @@ begin
     except
       on e: Exception do
       begin
-        LogDatei.DependentAdd('Exception in StartProcess_cp_el: ' +
+        LogDatei.log('Exception in StartProcess_cp_el: ' +
           e.message, LLError);
         exitcode := -1;
       end;
@@ -3699,7 +3699,7 @@ begin
 
           ProcessMess;
           GetExitCodeProcess(processInfo.hProcess, lpExitCode);
-          exitCode := lpExitCode;
+          exitCode := longint(lpExitCode);
           //Report := 'Process executed  + CmdLinePasStr
           Report := 'ExitCode ' + IntToStr(exitCode) +
             '    Executed process "' + CmdLinePasStr + '"';
@@ -3929,7 +3929,7 @@ begin
       // we start as Invoker
       // we assume that this is a executable
       // we try it via createprocess (Tprocess)
-      LogDatei.DependentAdd('Start process elevated', LLInfo);
+      LogDatei.log('Start process elevated ....', LLInfo);
       Result := StartProcess_cp_el(CmdLinePasStr, ShowWindowFlag,
         WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
         WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, ExitCode);
@@ -4991,7 +4991,8 @@ begin
     begin
       try
         ForceDirectories(Dirname);
-        ErrorInfo := 'Directory ' + dirname + ' did not exist und was created';
+        //ErrorInfo := 'Directory ' + dirname + ' did not exist und was created';
+        LogDatei.log('Directory ' + dirname + ' did not exist und was created',LLInfo);
       except
         on e: Exception do
         begin
