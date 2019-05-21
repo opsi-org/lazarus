@@ -172,7 +172,7 @@ var
   endOfParamlist : boolean;
   remaining,errorstr : string;
 begin
-  LogDatei.log('Parsing: '+definitionStr,LLdebug);
+  //LogDatei.log('Parsing Public function: '+definitionStr,LLdebug);
   endOfParamlist := false;
   paramcounter := -1;
   myfunc.FDefinitionline:=trim(definitionStr);
@@ -300,7 +300,7 @@ begin
   description := copy(description,1,matchpos-1);
   docobject.Ffiledesc := description;
   currentlinenumber := docstringcounter+1;
-  LogDatei.log('Finised parsing file related docstrings',LLnotice);
+  LogDatei.log('Finished parsing file related docstrings',LLnotice);
   result := true;
 end;
 
@@ -319,11 +319,12 @@ var
   currentline, funcdescription, pname : string;
   indoc, docfound : boolean;
 begin
-  LogDatei.log('Started parsing public function.',LLinfo);
+  //LogDatei.log('Started parsing public function.',LLinfo);
   result := false;
   indoc := false;
   docfound := false;
   currentline := preprocessedlist.Strings[currentlinenumber];
+  //LogDatei.log('Started parsing public function: '+currentline,LLDebug2);
   indentofdef := indentation(currentline);
   linecounter := currentlinenumber;
 
@@ -407,10 +408,9 @@ var
   indentofdef, linecounter : integer;
   defline, currentline  : string;
 begin
-  LogDatei.log('Skipping private function.',LLinfo);
   result := false;
   defline := preprocessedlist.Strings[currentlinenumber];
-  LogDatei.log('Skipping function: '+defline,LLDebug2);
+  LogDatei.log('Skipping private function: '+defline,LLDebug2);
   indentofdef := indentation(defline);
   getDefinitionLine(currentlinenumber);
   linecounter := currentlinenumber;
@@ -433,10 +433,9 @@ var
   classindent, linecounter : integer;
   classline, currentline : string;
 begin
-  LogDatei.log('Skipping private class which is given in backendClassBlacklist.',LLinfo);
   result := false;
   classline := preprocessedlist.Strings[currentlinenumber];
-  LogDatei.log('Skipping class: '+classline,LLDebug2);
+  LogDatei.log('Skipping blacklisted class: '+classline,LLDebug2);
   classindent := indentation(classline);
   linecounter := currentlinenumber + 1;
   currentline := preprocessedlist.Strings[linecounter];
@@ -500,7 +499,7 @@ var
   trimmedline, classstring, classname, remaining : string;
   filedocfound : Boolean;
 begin
-  LogDatei.log('Started parseInput_pythonlibrary',LLnotice);
+  LogDatei.log('Started parsing Python sourcecodes',LLnotice);
   filedocfound := false;
   linenumber := 0;
   if Assigned(docobject) and (docobject <> nil) then docobject.Destroy;
@@ -548,7 +547,7 @@ begin
         inc(linenumber);
       end;
     end;
-  LogDatei.log('Finished parseInput_pythonlibrary',LLinfo);
+  LogDatei.log('Finished parsing Python sourcecodes',LLinfo);
   result := True;
 end;
 
