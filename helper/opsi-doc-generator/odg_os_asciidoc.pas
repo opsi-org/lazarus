@@ -111,7 +111,7 @@ begin
       end;
 
       tmpstr1 := docobject.Ffunctions[frun].Returns;
-      if tmpstr1 <> '' then targetlist.Add('Returns: '+tmpstr1);
+      if tmpstr1 <> '' then targetlist.Add('Returns: `'+tmpstr1+'`');
       targetlist.Add('');
 
       tmpstr1 := docobject.Ffunctions[frun].OnError;

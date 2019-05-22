@@ -104,11 +104,11 @@ begin
       end;
 
       tmpstr1 := docobject.Ffunctions[frun].RType;
-      if tmpstr1 <> '' then targetlist.Add('Returned Type: '+tmpstr1);
+      if tmpstr1 <> '' then targetlist.Add('Returned Type: `'+tmpstr1+'`');
       targetlist.Add('');
 
       tmpstr1 := docobject.Ffunctions[frun].Raises;
-      if tmpstr1 <> '' then targetlist.Add('Raises: '+tmpstr1);
+      if tmpstr1 <> '' then targetlist.Add('Raises: `'+tmpstr1+'`');
       targetlist.Add('');
       targetlist.Add('');
     end;
