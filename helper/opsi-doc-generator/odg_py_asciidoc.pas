@@ -98,7 +98,7 @@ begin
         tmpstr1 := docobject.Ffunctions[frun].Fparams[prun].ParamDesc;
         if tmpstr1 <> '' then
         begin
-          targetlist.add('** Description: `'+tmpstr1+'`');
+          targetlist.add('** Description: '+tmpstr1);
         end;
         targetlist.Add('');
       end;
