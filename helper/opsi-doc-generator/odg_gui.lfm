@@ -85,6 +85,7 @@ object Form1: TForm1
       Lines.Strings = (
         'Memo1'
       )
+      ReadOnly = True
       ScrollBars = ssAutoBoth
       TabOrder = 0
     end
@@ -115,6 +116,7 @@ object Form1: TForm1
       Lines.Strings = (
         'Memo2'
       )
+      ReadOnly = True
       ScrollBars = ssAutoBoth
       TabOrder = 0
     end
