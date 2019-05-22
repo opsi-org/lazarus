@@ -59,6 +59,7 @@ begin
     asciidoc_header.Add('   ');
     targetlist.Text:= asciidoc_header.Text;
     targetlist.Add('');
+    targetlist.Add('= opsi API documentation');
     targetlist.Add('');
 
     funccount :=  docobject.functionCounter;
