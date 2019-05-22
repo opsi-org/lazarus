@@ -61,6 +61,7 @@ begin
     asciidoc_header.Add('   ');
     targetlist.Text:= asciidoc_header.Text;
     targetlist.Add('');
+    targetlist.Add('= opsi API documentation');
     targetlist.Add('');
 
     funccount :=  docobject.functionCounter;
@@ -100,18 +101,18 @@ begin
         tmpstr1 := docobject.Ffunctions[frun].Fparams[prun].ParamDesc;
         if tmpstr1 <> '' then
         begin
-          targetlist.add('** Description: `'+tmpstr1+'`');
+          targetlist.add('** Description: '+tmpstr1);
         end;
         tmpstr1 := docobject.Ffunctions[frun].Fparams[prun].ParamAdvice;
         if tmpstr1 <> '' then
         begin
-          targetlist.add('** Advice: `'+tmpstr1+'`');
+          targetlist.add('** Advice: '+tmpstr1);
         end;
         targetlist.Add('');
       end;
 
       tmpstr1 := docobject.Ffunctions[frun].Returns;
-      if tmpstr1 <> '' then targetlist.Add('Returns: `'+tmpstr1+'`');
+      if tmpstr1 <> '' then targetlist.Add('Returns: '+tmpstr1);
       targetlist.Add('');
 
       tmpstr1 := docobject.Ffunctions[frun].OnError;
@@ -133,7 +134,7 @@ begin
       tmpstr1 := docobject.Ffunctions[frun].Links;
       if tmpstr1 <> '' then targetlist.Add('Links: '+tmpstr1);
       targetlist.Add('');
-
+      {
       tmpstr1 := docobject.Ffunctions[frun].Author;
       if tmpstr1 = '' then tmpstr1 :=  docobject.Author;
       if tmpstr1 <> '' then targetlist.Add('Author: '+tmpstr1);
@@ -158,7 +159,7 @@ begin
       if tmpstr1 = '' then tmpstr1 :=  docobject.Copyright;
       if tmpstr1 <> '' then targetlist.Add('Copyright: '+tmpstr1);
       targetlist.Add('');
-
+      }
       tmpstr1 := docobject.Ffunctions[frun].Example;
       if not(tmpstr1 = '') then
       begin
