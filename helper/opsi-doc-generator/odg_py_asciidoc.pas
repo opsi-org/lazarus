@@ -93,12 +93,12 @@ begin
         tmpstr1 := docobject.Ffunctions[frun].Fparams[prun].ParamType;
         if tmpstr1 <> '' then
         begin
-          targetlist.add('** Type `'+tmpstr1+'`');
+          targetlist.add('** Type: `'+tmpstr1+'`');
         end;
         tmpstr1 := docobject.Ffunctions[frun].Fparams[prun].ParamDesc;
         if tmpstr1 <> '' then
         begin
-          targetlist.add('** Description `'+tmpstr1+'`');
+          targetlist.add('** Description: `'+tmpstr1+'`');
         end;
         targetlist.Add('');
       end;
@@ -108,7 +108,7 @@ begin
       targetlist.Add('');
 
       tmpstr1 := docobject.Ffunctions[frun].Raises;
-      if tmpstr1 <> '' then targetlist.Add('Raises: `'+tmpstr1+'`');
+      if tmpstr1 <> '' then targetlist.Add('Raises: '+tmpstr1);
       targetlist.Add('');
       targetlist.Add('');
     end;

@@ -159,6 +159,8 @@ begin
   begin
     LogDatei.log('Parsing: '+docstring,LLdebug);
     tmpstr1 := trim(copy(docstring,length(marker)+1,length(docstring)));
+    if pos(':', tmpstr1) = 1 then
+      Delete(tmpstr1, 1, 2);
     if target = '' then target := tmpstr1
     else target := target+', '+tmpstr1;
     result := true;
@@ -172,7 +174,6 @@ var
   endOfParamlist : boolean;
   remaining,errorstr : string;
 begin
-  //LogDatei.log('Parsing Public function: '+definitionStr,LLdebug);
   endOfParamlist := false;
   paramcounter := -1;
   myfunc.FDefinitionline:=trim(definitionStr);
@@ -319,12 +320,10 @@ var
   currentline, funcdescription, pname : string;
   indoc, docfound : boolean;
 begin
-  //LogDatei.log('Started parsing public function.',LLinfo);
   result := false;
   indoc := false;
   docfound := false;
   currentline := preprocessedlist.Strings[currentlinenumber];
-  //LogDatei.log('Started parsing public function: '+currentline,LLDebug2);
   indentofdef := indentation(currentline);
   linecounter := currentlinenumber;
 
