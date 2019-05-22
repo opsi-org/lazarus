@@ -93,7 +93,7 @@ function parseInput_pythonlibrary() : boolean;
 
 var
   docobject : TFileDoc;
-  preprocessedlist, backendClassBlacklist : TStringlist;
+  preprocessedlist, backendMethodBlacklist, backendClassBlacklist : TStringlist;
 
 implementation
 
@@ -496,7 +496,7 @@ end;
 function parseInput_pythonlibrary() : boolean;
 var
   linenumber, totallines : integer;
-  trimmedline, classstring, classname, remaining : string;
+  trimmedline, defstring, classstring, defname, classname, remaining : string;
   filedocfound : Boolean;
 begin
   LogDatei.log('Started parsing Python sourcecodes',LLnotice);
@@ -536,8 +536,18 @@ begin
         end
         else
         begin
-          filedocfound := true;
-          processPublicDef(linenumber);
+          defstring := trimmedline;
+          defstring := copy(defstring, length(cpydeffunc)+1,length(defstring));
+          GetWord(trim(defstring), defname, remaining,WordDelimiterSet3);
+          if backendMethodBlacklist.IndexOf(defname) <> -1 then
+          begin
+            processPrivateDef(linenumber);
+          end
+          else
+          begin
+            filedocfound := true;
+            processPublicDef(linenumber);
+          end;
         end;
       end
       else
@@ -554,6 +564,14 @@ end;
 
 initialization
   preprocessedlist := TStringlist.Create;
+
+  backendMethodBlacklist := TStringList.Create;
+  backendMethodBlacklist.Add('describeInterface');
+  backendMethodBlacklist.Add('backendManagerFactory');
+  backendMethodBlacklist.Add('getArgAndCallString');
+  backendMethodBlacklist.Add('temporaryBackendOptions');
+  backendMethodBlacklist.Add('loadBackendConfig');
+
   backendClassBlacklist := TStringList.Create;
   backendClassBlacklist.Add('DeferredCall');
   backendClassBlacklist.Add('ModificationTrackingBackend');
@@ -579,6 +597,7 @@ initialization
 
 finalization
   preprocessedlist.Free;
+  backendMethodBlacklist.Free;
   backendClassBlacklist.Free;
 
 end.
