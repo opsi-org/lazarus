@@ -280,12 +280,20 @@ begin
   end;
   logdir := ExpandFileNameUTF8(logdir);
   ForceDirectories(logdir);
-  logfeilname := ExpandFileNameUTF8(logdir + '\uibtime.conf');
+  logfeilname := ExpandFileNameUTF8(logdir + 'uibtime.conf');
   myini := TIniFile.Create(logfeilname);
   debugOut(5, 'Will use conf file: ' + logfeilname);
+  DataModule1.debugOut(6, 'setdebuglevel', 'Will use conf file: ' + logfeilname);
+  if myini = nil then
+  begin
+    datamodule1.debugOut(2, 'setdebuglevel',
+      'myini = nil: coud not open :' + logfeilname);
+    ShowMessage('Fehler in Konfigurations Datei. Bitte Log sichern. Programm wird beendet');
+    Application.Terminate;
+  end;
   myini.WriteInteger('general', 'debuglevel', newlevel);
   myini.UpdateFile;
-  myini.Destroy;
+  myini.Free;
   debugOut(6, 'debuglevel now: ' + IntToStr(newlevel));
 end;
 
@@ -366,7 +374,7 @@ end;
 procedure TDataModule1.debugOut(level: integer; Source: string; meldung: string);
 var
   sourcestr, logstr, logdir, logfeilname: string;
-  aktlevel : integer;
+  aktlevel: integer;
 begin
   try
     aktlevel := LLdebug;
@@ -476,9 +484,17 @@ begin
   end;
   logdir := ExpandFileNameUTF8(logdir);
   ForceDirectories(logdir);
-  logfeilname := ExpandFileNameUTF8(logdir + '\uibtime.conf');
+  logfeilname := ExpandFileNameUTF8(logdir + 'uibtime.conf');
   myini := TIniFile.Create(logfeilname);
   debugOut(5, 'Will use conf file: ' + logfeilname);
+  DataModule1.debugOut(6, 'Autologin1Click', 'Will use conf file: ' + logfeilname);
+  if myini = nil then
+  begin
+    datamodule1.debugOut(2, 'Autologin1Click',
+      'myini = nil: coud not open :' + logfeilname);
+    ShowMessage('Fehler in Konfigurations Datei. Bitte Log sichern. Programm wird beendet');
+    Application.Terminate;
+  end;
   if Autologin1.Checked then
   begin
     Autologin1.Checked := False;
@@ -490,7 +506,7 @@ begin
     myini.WriteBool('general', 'autologin', True);
   end;
   myini.UpdateFile;
-  myini.Destroy;
+  myini.Free;
 end;
 
 procedure TDataModule1.ArbeitsberichteClick(Sender: TObject);
@@ -665,9 +681,17 @@ begin
   end;
   logdir := ExpandFileNameUTF8(logdir);
   ForceDirectories(logdir);
-  logfeilname := ExpandFileNameUTF8(logdir + '\uibtime.conf');
+  logfeilname := ExpandFileNameUTF8(logdir + 'uibtime.conf');
   myini := TIniFile.Create(logfeilname);
   debugOut(5, 'Will use conf file: ' + logfeilname);
+  DataModule1.debugOut(6, 'ShowDebugWindow1Click', 'Will use conf file: ' + logfeilname);
+  if myini = nil then
+  begin
+    datamodule1.debugOut(2, 'ShowDebugWindow1Click',
+      'myini = nil: coud not open :' + logfeilname);
+    ShowMessage('Fehler in Konfigurations Datei. Bitte Log sichern. Programm wird beendet');
+    Application.Terminate;
+  end;
   if ShowDebugWindow1.Checked then
   begin
     ShowDebugWindow1.Checked := False;
@@ -681,7 +705,7 @@ begin
   myini.WriteBool('general', 'ShowDebugWindow', ShowDebugWindow1.Checked);
   debugOut(6, 'ShowDebugWindow: ' + BoolToStr(ShowDebugWindow1.Checked, True));
   myini.UpdateFile;
-  myini.Destroy;
+  myini.Free;
 end;
 
 procedure TDataModule1.SQholydaysAfterDelete(DataSet: TDataSet);
@@ -1669,9 +1693,17 @@ begin
     end;
     logdir := ExpandFileNameUTF8(logdir);
     ForceDirectories(logdir);
-    logfeilname := ExpandFileNameUTF8(logdir + '\uibtime.conf');
+    logfeilname := ExpandFileNameUTF8(logdir + 'uibtime.conf');
     myini := TIniFile.Create(logfeilname);
     debugOut(5, 'Will use conf file: ' + logfeilname);
+    DataModule1.debugOut(6, 'Weristda1Click', 'Will use conf file: ' + logfeilname);
+    if myini = nil then
+    begin
+      datamodule1.debugOut(2, 'Weristda1Click',
+        'myini = nil: coud not open :' + logfeilname);
+      ShowMessage('Fehler in Konfigurations Datei. Bitte Log sichern. Programm wird beendet');
+      Application.Terminate;
+    end;
     //  Versuch zu verhindern, dass hier in 'nichts' gegriffen wird
     while not floggedin_created do
       Sleep(100);
@@ -1691,7 +1723,7 @@ begin
       myini.WriteBool('general', 'weristda', True);
     end;
     myini.UpdateFile;
-    myini.Destroy;
+    myini.Free;
     datamodule1.debugOut(5, 'ende von DataModule1.Weristda1Click');
   except
     on e: Exception do
@@ -1717,9 +1749,18 @@ begin
   end;
   logdir := ExpandFileNameUTF8(logdir);
   ForceDirectories(logdir);
-  logfeilname := ExpandFileNameUTF8(logdir + '\uibtime.conf');
+  logfeilname := ExpandFileNameUTF8(logdir + 'uibtime.conf');
   myini := TIniFile.Create(logfeilname);
   debugOut(5, 'Will use conf file: ' + logfeilname);
+  DataModule1.debugOut(6, 'ZeigenurmeineProjekte1Click', 'Will use conf file: ' +
+    logfeilname);
+  if myini = nil then
+  begin
+    datamodule1.debugOut(2, 'ZeigenurmeineProjekte1Click',
+      'myini = nil: coud not open :' + logfeilname);
+    ShowMessage('Fehler in Konfigurations Datei. Bitte Log sichern. Programm wird beendet');
+    Application.Terminate;
+  end;
   if ZeigenurmeineProjekte1.Checked then
   begin
     ZeigenurmeineProjekte1.Checked := False;
@@ -1737,7 +1778,7 @@ begin
     debugOut(6, 'showallprojects: False');
   end;
   myini.UpdateFile;
-  myini.Destroy;
+  myini.Free;
 end;
 
 
@@ -1924,11 +1965,18 @@ begin
   end;
   logdir := ExpandFileName(logdir);
   ForceDirectories(logdir);
-  logfeilname := ExpandFileNameUTF8(logdir + '\uibtime.conf');
+  logfeilname := ExpandFileNameUTF8(logdir + 'uibtime.conf');
   myini := TIniFile.Create(logfeilname);
-  ////debugOut(5, 'Will use conf file: ' + logfeilname);
-  ////debugOut(5,'Will use conf file: '+logdir+'\uibtime.conf');
   Fdebug.Memo1.Append('Will use conf file: ' + logfeilname);
+  //DataModule1.debugOut(6, 'DataModuleCreate', 'Will use conf file: ' + logfeilname);
+  if myini = nil then
+  begin
+    Fdebug.Memo1.Append('DataModuleCreate myini = nil: coud not open :' +
+      logfeilname);
+    //datamodule1.debugOut(2, 'DataModuleCreate', 'myini = nil: coud not open :'+logfeilname);
+    ShowMessage('Fehler in Konfigurations Datei. Bitte Log sichern. Programm wird beendet');
+    Application.Terminate;
+  end;
   Autologin1.Checked := myini.ReadBool('general', 'autologin', False);
   Fdebug.Memo1.Append('autologin: ' + BoolToStr(Autologin1.Checked, True));
   zeigenurmeineprojekte1.Checked :=
@@ -1966,7 +2014,7 @@ begin
   TrayIcon1.Visible := Trayshow;
   TimerTrayIcon.Enabled := Trayshow;
   myini.UpdateFile;
-  myini.Destroy;
+  myini.Free;
 
   // Initialize logging
   LogDatei := TLogInfo.Create;
@@ -1984,8 +2032,8 @@ begin
 
   //LogDatei.StandardPartLogFilename := lfilename+ '-part';
   LogDatei.CreateTheLogfile(logfeilname + '.log', True);
-  LogDatei.log(DateTimeToStr(Now) + ': uibtime started',LLessential);
-  LogDatei.log('uibtime version: '+version,LLessential);
+  LogDatei.log(DateTimeToStr(Now) + ': uibtime started', LLessential);
+  LogDatei.log('uibtime version: ' + version, LLessential);
 
   (*
   logfeilname := ExpandFileNameUTF8(logdir + '\uibtime.log');
@@ -2015,12 +2063,20 @@ begin
   logfeilname := ExpandFileNameUTF8(logdir + '\uibtime.conf');
   myini := TIniFile.Create(logfeilname);
   debugOut(5, 'Will use conf file: ' + logfeilname);
+  DataModule1.debugOut(6, 'TerminateApplication', 'Will use conf file: ' + logfeilname);
+  if myini = nil then
+  begin
+    datamodule1.debugOut(2, 'TerminateApplication',
+      'myini = nil: coud not open :' + logfeilname);
+    ShowMessage('Fehler in Konfigurations Datei. Bitte Log sichern. Programm wird beendet');
+    //Application.Terminate;
+  end;
   myini.WriteBool('general', 'autologin', Autologin1.Checked);
   myini.WriteBool('general', 'zeigenurmeineprojekte', zeigenurmeineprojekte1.Checked);
   myini.WriteBool('general', 'showdebugwindow', ShowDebugwindow1.Checked);
   myini.WriteInteger('general', 'debuglevel', LogDatei.LogLevel);
   myini.UpdateFile;
-  myini.Destroy;
+  myini.Free;
   try
     debugOut(5, 'Will free components ');
     if Assigned(FLoggedin) then
@@ -2127,10 +2183,10 @@ begin
   debugOut(2, 'Exception', Report);
   //ShowMessage(Report);
   Rep2 := Report + 'Exception class: ' + E.ClassName + ' , ' +
-      'Message: ' + E.Message + ' , '
-      +' Bitte Logdatei sichern: '+LogDatei.FileName+' - Programmabbruch.';
-  MessageDlg('uibtime: Fehler',Rep2, mtError, [mbAbort], 0);
-//    'Keine Netzwerkverbindung zum DB-Server. Programmabbruch ', mtError, [mbAbort], 0);
+    'Message: ' + E.Message + ' , ' + ' Bitte Logdatei sichern: ' +
+    LogDatei.FileName + ' - Programmabbruch.';
+  MessageDlg('uibtime: Fehler', Rep2, mtError, [mbAbort], 0);
+  //    'Keine Netzwerkverbindung zum DB-Server. Programmabbruch ', mtError, [mbAbort], 0);
   Application.Terminate;
   Halt; // End of program execution
 end;

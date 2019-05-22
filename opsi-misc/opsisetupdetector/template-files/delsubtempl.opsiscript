@@ -8,21 +8,28 @@ Set $MsiId$ = '{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}'
 Set $UninstallProgram$ = $InstallDir$ + "\uninstall.exe"
 
 if FileExists($UninstallProgram$)
+	#@preUninstallLines1*#
 	comment "Uninstall program found, starting uninstall"
 	Winbatch_uninstall
 	sub_check_exitcode
+	#@postUninstallLines1*#
 endif
 if not (getRegistryValue("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + $MsiId$ , "DisplayName","32bit") = "")
+	#@preUninstallLines1*#
 	comment "MSI id " + $MsiId$ + " found in registry, starting msiexec to uninstall"
 	Winbatch_uninstall_msi
 	sub_check_exitcode
+	#@postUninstallLines1*#
 endif
 
+#@DelsubHandleDesktopIcon*#
 comment "Delete files"
-Files_uninstall /32Bit
+if not(($InstallDir$ = '') or ($InstallDir$ = 'unknown'))
+	Files_uninstall
+endif
 
 comment "Cleanup registry"
-Registry_uninstall /32Bit
+Registry_uninstall
 
 comment "Delete program shortcuts"
 LinkFolder_uninstall
@@ -93,5 +100,5 @@ Switch $ExitCode$
 	EndCase
 EndSwitch
 
-
+#@DelsubSectionLines*#
 ;-----------------------------------------------------

@@ -25,7 +25,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="46"/>
+      <BuildNr Value="47"/>
       <Language Value="0407"/>
       <StringTable Comments="lazarus 1.8.4 fpc 3.0.4" CompanyName="uib gmbh" InternalName="uibtime.exe" LegalCopyright="GPL v3" ProductName="uibtime" ProductVersion="4.0.0"/>
     </VersionInfo>

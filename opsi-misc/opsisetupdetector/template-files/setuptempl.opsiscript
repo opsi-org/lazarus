@@ -18,9 +18,9 @@ DefVar $LicenseKey$
 DefVar $LicensePool$
 DefVar $LogDir$
 DefVar $OS$
-DefVar $myProperty$
 DefVar $MsiId$
 DefVar $UninstallProgram$
+#@stringVars*#
 
 Set $LogDir$ = "%opsiLogDir%"
 
@@ -31,11 +31,12 @@ importlib "%scriptpath%\osd-lib.opsiscript"
 
 ; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
-Set $ProductId$		 = "opsi-template"
+Set $ProductId$		 = "#@productId*#"
 Set $MinimumSpace$	 = "1 MB"
 ; the path were we find the product after the installation
-Set $InstallDir$		= "%ProgramFiles32Dir%\<path to the product>"
-Set $LicenseRequired$ = "false"
+;Set $InstallDir$		= "%ProgramFiles32Dir%\<path to the product>"
+Set $InstallDir$		= "unknown"
+Set $LicenseRequired$ = "#@LicenseRequired*#"
 Set $LicensePool$	  = "" 
 ; ----------------------------------------------------------------
 
@@ -55,24 +56,14 @@ endif
 comment "Show product picture"
 ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
+#@GetProductProperty*#
+
 if FileExists("%ScriptPath%\delsub.opsiscript")
 	comment "Start uninstall sub section"
 	Sub "%ScriptPath%\delsub.opsiscript"
 endif
 
 Message "Installing " + $ProductId$ + " ..."
-
-comment "get property value ....."
-set $myProperty$ = getProductProperty("dummy_prop", "yes")
-if $myProperty$ = "yes"
-	comment "myproperty value is yes"
-else
-	if $myProperty$ = "no"
-		comment "myproperty value is no"
-	else
-		comment "myproperty value must be may_be"
-	endif
-endif
 
 if $LicenseRequired$ = "true"
 	comment "Licensing required, reserve license and get license key"
@@ -87,6 +78,8 @@ Winbatch_install
 ;----------------------------------------------
 Sub_check_exitcode
 #@postInstallLines1*#
+
+#@SetupHandleDesktopIcon*#
 
 comment "Copy files"
 Files_install /32Bit
@@ -202,6 +195,7 @@ Switch $ExitCode$
 	EndCase
 EndSwitch
 
+#@SetupSectionLines*#
 ; ----------------------------------------------------------------
 ; ----------------------------------------------------------------
 

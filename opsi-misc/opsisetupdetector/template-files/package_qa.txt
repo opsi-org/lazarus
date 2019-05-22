@@ -3,7 +3,7 @@
 installation tests 
   * Installation ends with state success                       (ok, failed, not tested, not applicable)
   * Installation log checked                                   (ok, failed, not tested, not applicable)
-  * Program can be started                                     (ok, failed, not tested, not applicable)
+  * Program can be started as user                             (ok, failed, not tested, not applicable)
   * Property check:
     * (List of properties)
   * Uninstall entry created (swaudit)                          (ok, failed, not tested, not applicable)
@@ -20,6 +20,9 @@ installation tests
   * All link_folder entries created by the install script are removed (ok, failed, not tested, not applicable)
   * All files created or copied by the install script are removed (ok, failed, not tested, not applicable)
   * Installation directory empty                               (ok, failed, not tested, not applicable) 
+
+ license handling
+  * license from property integrated                           (ok, failed, not tested, not applicable)
 
  general issues
   * scripts contain no depricated code                         (ok, failed, not tested, not applicable)

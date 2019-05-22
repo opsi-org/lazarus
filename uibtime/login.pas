@@ -73,7 +73,8 @@ var
 
 begin
   try
-    DataModule1.debugOut(5, 'Login: ' + edit1.Text + '@' + Combobox1.Text);
+    DataModule1.debugOut(5, 'login-bitbtnokclick', 'Login: ' + edit1.Text +
+      '@' + Combobox1.Text);
     Datamodule1.SQLTransaction1.Params.Clear;
     Datamodule1.SQLTransaction1.Params.Add('isc_tpb_read_committed');
     Datamodule1.SQLTransaction1.Params.Add('isc_tpb_rec_version');
@@ -123,7 +124,8 @@ begin
       DataModule1.IBConnection1.Close;
       ProgressBar1.Position := 0;
       ///DataModule1.loggedinserver.Clear;
-      DataModule1.debugOut(5, 'Login gescheitert: ' + edit1.Text + '@' + Combobox1.Text);
+      DataModule1.debugOut(5, 'login-bitbtnokclick', 'Login gescheitert: ' +
+        edit1.Text + '@' + Combobox1.Text);
     end
     else
     begin
@@ -148,55 +150,55 @@ begin
       ProgressBar1.Position := gaugefak * 8;
       if Datamodule1.SQuibaktuser.FieldByName('mo_is_work').AsBoolean then
         include(user_work_days, dayOfWeekGerStrToLazDayofWeekbyte('fr'));
-      DataModule1.debugOut(8, 'Login: uid = ' + uid);
+      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: uid = ' + uid);
       ProgressBar1.Position := gaugefak * 9;
       //with Datamodule1.SQuibevent.Params.CreateParam(ftString, 'uid', ptInput) do
       //   AsString := uid;
       //Datamodule1.SQuibevent.ParamByName('uid').AsString := uid;
       Datamodule1.SQuibevent.Open;
-      DataModule1.debugOut(8, 'Login: opend 3');
+      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: opend 3');
       ProgressBar1.Position := gaugefak * 10;
       application.ProcessMessages;
       Datamodule1.SQuibaktevent.Open;
-      DataModule1.debugOut(8, 'Login: opend 4');
+      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: opend 4');
       ProgressBar1.Position := gaugefak * 11;
       application.ProcessMessages;
       Datamodule1.SQuiballevent.Open;
-      DataModule1.debugOut(8, 'Login: opend 5');
+      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: opend 5');
       ProgressBar1.Position := gaugefak * 12;
       application.ProcessMessages;
       Datamodule1.SQuibuserEvent.Open;
-      DataModule1.debugOut(8, 'Login: opend 6');
+      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: opend 6');
       ProgressBar1.Position := gaugefak * 13;
       application.ProcessMessages;
       Datamodule1.SQuibtimeout.Open;
-      DataModule1.debugOut(8, 'Login: opend 7');
+      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: opend 7');
       ProgressBar1.Position := gaugefak * 14;
       ///application.processmessages;
       ///Datamodule1.SQuibcalls.open;
-      DataModule1.debugOut(8, 'Login: opend 8');
+      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: opend 8');
       ProgressBar1.Position := gaugefak * 15;
       application.ProcessMessages;
       Datamodule1.SQuibsoll.Open;
-      DataModule1.debugOut(8, 'Login: opend 9');
+      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: opend 9');
       ProgressBar1.Position := gaugefak * 16;
       application.ProcessMessages;
       Datamodule1.SQuibdefproj.Open;
-      DataModule1.debugOut(8, 'Login: opend 10');
+      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: opend 10');
       ProgressBar1.Position := gaugefak * 17;
       application.ProcessMessages;
       Datamodule1.SQuibloggedin.Open;
-      DataModule1.debugOut(8, 'Login: opend 11');
+      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: opend 11');
       ProgressBar1.Position := gaugefak * 18;
       application.ProcessMessages;
       DataModule1.SQQueryAktEvents.Open;
-      DataModule1.debugOut(8, 'Login: opend 12');
+      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: opend 12');
       ProgressBar1.Position := gaugefak * 19;
       application.ProcessMessages;
       DataModule1.SQholydays.Open;
-      DataModule1.debugOut(8, 'Login: opend 13');
+      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: opend 13');
       Application.CreateForm(TFOnTop, FOnTop);
-      DataModule1.debugOut(8, 'Login: FonTop created');
+      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: FonTop created');
       application.ProcessMessages;
       Sleep(500);
       application.ProcessMessages;
@@ -205,7 +207,8 @@ begin
         //***Datamodule1.SQuibevent.setrange([uid],[uid]);
         //Datamodule1.SQuibevent.setrange([uid],[uid]);
         Datamodule1.SQuibevent.Filter := 'userid = ' + QuotedStr(uid);
-        DataModule1.debugOut(8, 'Login: filter set to ' + Datamodule1.SQuibevent.Filter);
+        DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: filter set to ' +
+          Datamodule1.SQuibevent.Filter);
         Datamodule1.SQuibevent.Filtered := True;
         Datamodule1.SQuibuserEvent.Filter := 'userid = ' + QuotedStr(uid);
         Datamodule1.SQuibuserEvent.Filtered := True;
@@ -226,11 +229,12 @@ begin
         //***Datamodule1.SQuibtimeout.setrange([uid],[uid]);
         //***Datamodule1.SQuibdefproj.setrange([uid],[uid]);
         //***Datamodule1.SQuibloggedin.setrange([uid],[uid]);
-        DataModule1.debugOut(8, 'Login: filter set');
-        DataModule1.debugOut(5, 'SQuibloggedin.active: ' +
+        DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: filter set');
+        DataModule1.debugOut(5, 'login-bitbtnokclick', 'SQuibloggedin.active: ' +
           BoolToStr(Datamodule1.SQuibloggedin.Active, True));
       end;
-      DataModule1.debugOut(5, 'Login erfolgreich: ' + edit1.Text + '@' + Combobox1.Text);
+      DataModule1.debugOut(5, 'login-bitbtnokclick', 'Login erfolgreich: ' +
+        edit1.Text + '@' + Combobox1.Text);
       fontop.labeluid.Caption := uid;
       application.ProcessMessages;
       Sleep(500);
@@ -240,7 +244,7 @@ begin
       fontop.Show;
       application.ProcessMessages;
       if not setwindowtoalldesktops('fontop') then
-        datamodule1.debugOut(2, 'login', 'failed fontop to all desktops');
+        datamodule1.debugOut(2, 'login-bitbtnokclick', 'failed fontop to all desktops');
       ///FLoggedin.Show;
       // write login to uibtime.conf
       logdir := SysUtils.GetAppConfigDir(False);
@@ -251,19 +255,27 @@ begin
       end;
       logdir := ExpandFileName(logdir);
       ForceDirectories(logdir);
-      logfeilname := ExpandFileName(logdir + '\uibtime.conf');
+      logfeilname := ExpandFileName(logdir + 'uibtime.conf');
       myini := TIniFile.Create(logfeilname);
-      DataModule1.debugOut(6, 'login-bitbtnokclick', 'Will use conf file: ' + logfeilname);
+      DataModule1.debugOut(6, 'login-bitbtnokclick', 'Will use conf file: ' +
+        logfeilname);
+      if myini = nil then
+      begin
+        datamodule1.debugOut(2, 'login-bitbtnokclick',
+          'myini = nil: coud not open :' + logfeilname);
+        ShowMessage('Fehler in Konfigurations Datei. Bitte Log sichern. Programm wird beendet');
+        Application.Terminate;
+      end;
       myini.WriteBool('general', 'rememberlogin', CheckBoxRememberLogin.Checked);
       if CheckBoxRememberLogin.Checked then
         myini.WriteString('general', 'loginname', edit1.Text)
       else
         myini.WriteString('general', 'loginname', '');
       myini.UpdateFile;
-      myini.Destroy;
+      myini.Free;
     end;
   except
-    datamodule1.debugOut(2, 'Login', 'exception in login: BtnOK');
+    datamodule1.debugOut(2, 'login-bitbtnokclick', 'exception in login: BtnOK');
     raise;
   end;
 end;
@@ -302,7 +314,8 @@ begin
   mypath := ExtractFilePath(ParamStr(0));
  {$ENDIF Linux}
   myini := TIniFile.Create(mypath + 'uibtime.ini');
-  DataModule1.debugOut(5, 'login-formcreate', 'Will use uibtime.ini file from: ' + mypath);
+  DataModule1.debugOut(5, 'login-formcreate',
+    'Will use uibtime.ini file from: ' + mypath);
   serverstr := myini.ReadString('database', 'SERVER NAME', 'ERROR');
   loggedinServer_ := TStringList.Create;
   loggedinServer_.Clear;
@@ -368,14 +381,22 @@ begin
   end;
   logdir := ExpandFileName(logdir);
   ForceDirectories(logdir);
-  logfeilname := ExpandFileName(logdir + '\uibtime.conf');
+  logfeilname := ExpandFileName(logdir + 'uibtime.conf');
   myini := TIniFile.Create(logfeilname);
   DataModule1.debugOut(6, 'login-formshow', 'Will use conf file: ' + logfeilname);
+  if myini = nil then
+  begin
+    //Fdebug.Memo1.Append('myini = nil: coud not open :' + logfeilname);
+    datamodule1.debugOut(2, 'Flogin.FormShow',
+      'myini = nil: coud not open :' + logfeilname);
+    ShowMessage('Fehler in Konfigurations Datei. Bitte Log sichern. Programm wird beendet');
+    Application.Terminate;
+  end;
   TimerAutologin.Enabled := myini.ReadBool('general', 'autologin', False);
   CheckBoxRememberLogin.Checked := myini.ReadBool('general', 'rememberlogin', False);
   edit1.Text := myini.ReadString('general', 'loginname', '');
   myini.UpdateFile;
-  myini.Destroy;
+  myini.Free;
 end;
 
 procedure TFlogin.FormDestroy(Sender: TObject);
