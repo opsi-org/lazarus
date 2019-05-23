@@ -1124,9 +1124,9 @@ begin
     unattendedsetup :=
       '/s /v" /qb-! ALLUSERS=1 REBOOT=ReallySuppress"';
     silentuninstall :=
-      '/s /v" /qn ALLUSERS=1 REBOOT=ReallySuppress"';
+      '/qn REBOOT=ReallySuppress';
     unattendeduninstall :=
-      '/s /v" /qb-! ALLUSERS=1 REBOOT=ReallySuppress"';
+      '/qb-! REBOOT=ReallySuppress';
     uninstall_waitforprocess := '';
     uninstallProg := 'uninstall.exe';
     patterns.Add('nstallshield');

@@ -2,4 +2,4 @@
 ; check delete_element
 set_basefolder common_desktopdirectory
 set_subfolder ""
-delete_element 
+delete_element $productId$

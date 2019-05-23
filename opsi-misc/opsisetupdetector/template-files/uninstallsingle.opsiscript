@@ -11,7 +11,6 @@ ScriptErrorMessages = false
 
 DefVar $ProductId$
 DefVar $InstallDir$
-DefVar $InstallDir1$
 DefVar $MinimumSpace$
 DefVar $ExitCode$
 DefVar $ErrorString$
@@ -35,7 +34,7 @@ importlib "%scriptpath%\osd-lib.opsiscript"
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
 Set $ProductId$		 = "#@productId*#"
 ; the path where we find the product after the installation
-Set $InstallDir1$		= "#@InstallDir1*#"
+Set $InstallDir$	= "#@InstallDir1*#"
 Set $LicenseRequired$ = "#@LicenseRequired*#"
 Set $LicensePool$	  = ""
 ; ----------------------------------------------------------------

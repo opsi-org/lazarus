@@ -903,6 +903,7 @@ var
   quota_lifetime_month: integer;
   messagelist: TStringList;
 begin
+  try
   aktstartyear := 2001;
   aktstartmonth := 1;
   DataModule1.debugOut(6, 'ProjektzeitTimer', 'enter TimerProjektzeitTimer');
@@ -991,6 +992,7 @@ begin
     DataModule1.debugOut(6, 'ProjektzeitTimer', 'used_min: ' + IntToStr(used_min));
     total_min := round(abs((total - trunc(total)) * 60));
     DataModule1.debugOut(6, 'ProjektzeitTimer', 'total_min: ' + IntToStr(total_min));
+    DataModule1.debugOut(6, 'ProjektzeitTimer', 'lastIntervalStart: ' + DatetoStr(lastIntervalStart));
     EditProjektzeit.Hint := IntToStr(total_min) + '-' + IntToStr(
       used_min) + ' since ' + DatetoStr(lastIntervalStart);
     DataModule1.debugOut(6, 'ProjektzeitTimer', 'ProjektzeitTimer: ' +
@@ -1030,6 +1032,15 @@ begin
     QueryProjektzeit.Close;
 
   DataModule1.debugOut(6, 'leave TimerProjektzeitTimer');
+
+  except
+    on e: Exception do
+    begin
+      DataModule1.debugOut(2, 'TimerProjektzeitTimer', 'Exception in TimerProjektzeitTimer ');
+      DataModule1.debugOut(2, 'TimerProjektzeitTimer', e.Message);
+      raise;
+    end;
+  end;
 end;
 
 procedure TFOnTop.TimerNachfrageTimer(Sender: TObject);

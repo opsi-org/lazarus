@@ -302,7 +302,7 @@ begin
   mysetup.install_waitforprocess :=
     installerArray[integer(mysetup.installerId)].install_waitforprocess;
   mysetup.SoftwareVersion := getProductInfoFromResource('FileVersion',myfilename);
-  aktProduct.productdata.productversion:= mysetup.SoftwareVersion;
+  aktProduct.productdata.productversion:= trim(mysetup.SoftwareVersion);
   str1 := getProductInfoFromResource('ProductName',myfilename);
   if str1 <> '' then
   begin
@@ -419,7 +419,7 @@ begin
 
     end;
     if aktproduct.productdata.productversion = '' then
-      aktproduct.productdata.productversion := mysetup.softwareversion;
+      aktproduct.productdata.productversion := trim(mysetup.softwareversion);
   end;
   myoutlines.Free;
     {$ENDIF WINDOWS}
@@ -481,7 +481,7 @@ begin
 
        end;
        if aktproduct.productdata.productversion = '' then
-         aktproduct.productdata.productversion := mysetup.softwareversion;
+         aktproduct.productdata.productversion := trim(mysetup.softwareversion);
      end;
      myoutlines.Free;
        {$ENDIF LINUX}
@@ -606,7 +606,7 @@ begin
       if (AppVersion = '') and (AppVerName <> '') then
       begin
         AppVersion := StringReplace(AppVerName, AppName, '', []);
-        AppVersion := StringReplace(AppVersion, ' ', '', [rfReplaceAll, rfIgnoreCase]);
+        AppVersion := trim(StringReplace(AppVersion, ' ', '', [rfReplaceAll, rfIgnoreCase]));
       end;
 
       CloseFile(fISS);
@@ -757,6 +757,9 @@ begin
     end;
   end;
   {$ENDIF WINDOWS}
+  mysetup.uninstallCommandLine :=
+   'msiexec /x ' + mysetup.msiId + ' ' +
+    installerArray[integer(mysetup.installerId)].unattendeduninstall;
   mywrite('get_InstallShield_info finished');
   mywrite('InstallShield+MSI Setup detected');
 end;

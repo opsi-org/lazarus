@@ -40,6 +40,7 @@ importlib "%scriptpath%\osd-lib.opsiscript"
 Set $ProductId$		 = "#@productId*#"
 ; the path where we find the product after the installation
 Set $InstallDir1$		= "#@InstallDir1*#"
+Set $InstallDir2$		= "#@InstallDir2*#"
 Set $LicenseRequired$ = "#@LicenseRequired*#"
 Set $LicensePool$	  = ""
 ; ----------------------------------------------------------------

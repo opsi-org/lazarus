@@ -16,7 +16,7 @@ if $oldProgFound$ = "true"
 	;----------------------------------------------
 	Winbatch_uninstall_1  #@uninstallWaitForProc1*#
 	;----------------------------------------------
-	sub_check_exitcode_1
+	Sub_check_exitcode_del_1
 	#@postUninstallLines1*#
 	if not(($InstallDir$ = '') or ($InstallDir$ = 'unknown'))
 		Files_uninstall
@@ -38,7 +38,7 @@ if $oldProgFound$ = "true"
 	;----------------------------------------------
 	Winbatch_uninstall_2  #@uninstallWaitForProc2*#
 	;----------------------------------------------
-	sub_check_exitcode_2
+	Sub_check_exitcode_del_2
 	#@postUninstallLines2*#
 	if not(($InstallDir$ = '') or ($InstallDir$ = 'unknown'))
 		Files_uninstall
@@ -53,7 +53,7 @@ endif
 [Winbatch_uninstall_2]
 #@uninstallCommandLine2*#
 
-[sub_check_exitcode_1]
+[Sub_check_exitcode_del_1]
 set $ExitCode$ = getlastexitcode
 if stringtobool(#@isExitcodeFatalFunction1*#($exitcode$, "true", $ErrorString$ ))
 	LogError $ErrorString$
@@ -62,7 +62,7 @@ else
 	Comment $ErrorString$
 endif
 
-[sub_check_exitcode_2]
+[Sub_check_exitcode_del_2]
 set $ExitCode$ = getlastexitcode
 if stringtobool(#@isExitcodeFatalFunction2*#($exitcode$, "true", $ErrorString$ ))
 	LogError $ErrorString$

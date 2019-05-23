@@ -11,7 +11,6 @@ ScriptErrorMessages = false
 
 DefVar $ProductId$
 DefVar $InstallDir$
-DefVar $InstallDir1$
 DefVar $MinimumSpace$
 DefVar $ExitCode$
 DefVar $ErrorString$
@@ -37,8 +36,8 @@ importlib "%scriptpath%\osd-lib.opsiscript"
 Set $ProductId$		 = "#@productId*#"
 Set $MinimumSpace$	 = "1 MB"
 ; the path were we find the product after the installation
-;Set $InstallDir$		= "%ProgramFiles32Dir%\<path to the product>"
-Set $InstallDir$		= "unknown"
+;Set $InstallDir$	= "%ProgramFiles32Dir%\<path to the product>"
+Set $InstallDir$	= "unknown"
 Set $LicenseRequired$ = "#@LicenseRequired*#"
 Set $LicensePool$	  = ""
 ; ----------------------------------------------------------------

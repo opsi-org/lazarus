@@ -11,14 +11,14 @@ if FileExists($UninstallProgram$)
 	#@preUninstallLines1*#
 	comment "Uninstall program found, starting uninstall"
 	Winbatch_uninstall
-	sub_check_exitcode
+	Sub_check_exitcode_del
 	#@postUninstallLines1*#
 endif
 if not (getRegistryValue("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + $MsiId$ , "DisplayName","32bit") = "")
 	#@preUninstallLines1*#
 	comment "MSI id " + $MsiId$ + " found in registry, starting msiexec to uninstall"
 	Winbatch_uninstall_msi
-	sub_check_exitcode
+	Sub_check_exitcode_del
 	#@postUninstallLines1*#
 endif
 
@@ -70,7 +70,7 @@ msiexec /x $MsiId$ /qb-! REBOOT=ReallySuppress
 ; set_subfolder ""
 ; delete_element $ProductId$
 
-[Sub_check_exitcode]
+[Sub_check_exitcode_del]
 comment "Test for installation success via exit code"
 set $ExitCode$ = getLastExitCode
 ; informations to exit codes see
