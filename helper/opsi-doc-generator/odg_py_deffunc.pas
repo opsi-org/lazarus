@@ -36,6 +36,7 @@ TFuncDoc =  class
     FCopyright : string;
     FDescription : string;
     FRType :string;
+    FReturns :string;
     FRaises :string;
     FParamCounter : integer;
   public
@@ -49,6 +50,7 @@ TFuncDoc =  class
     property Copyright : string  read FCopyright write FCopyright;
     property Description : string  read FDescription write FDescription;
     property RType :string  read FRType write FRType;
+    property Returns :string  read FReturns write FReturns;
     property Raises :string  read FRaises write FRaises;
     property ParamCounter : integer  read FParamCounter write FParamCounter;
   end;
@@ -84,6 +86,7 @@ const
   clicense = ':license:';
   ccopyright = ':copyright:';
   CRType = ':rtype:';
+  CReturns = ':return:';
   CRaises = ':raises';
   CParamType = ':type ';
   CParam = ':param ';
@@ -126,6 +129,7 @@ begin
   FCopyright := '';
   FDescription := '';
   FRType := '';
+  FReturns := '';
   FRaises := '';
   FParamCounter := 0;
   Inherited;
@@ -150,6 +154,7 @@ begin
   inherited;
 end;
 
+//collects data from markers.
 function onMarkerAddDocStringTo(marker : string;docstring : string;var target :string) : boolean;
 var
   tmpstr1 : string;
@@ -167,6 +172,7 @@ begin
   end;
 end;
 
+// Parses python public methods
 procedure parsePyDef(definitionStr : string; myfunc : TFuncDoc);
 var
   paramnamestr : string;
@@ -235,6 +241,7 @@ begin
   end;
 end;
 
+// removes 'def' from function definition and also removes 'self' from function arguments.
 function getDefinitionLine(var currentlinenumber : integer) : string;
 var
   deflinecounter, matchpos : integer;
@@ -268,6 +275,7 @@ begin
   result := defstring;
 end;
 
+// Parse file related docstrings
 function getFileDoc(var currentlinenumber : integer) : boolean;
 var
   docstringcounter, matchpos : integer;
@@ -314,6 +322,7 @@ begin
   result := totallen-len;
 end;
 
+// Parses a public method and collects needed informations from definition line and docstring.
 function processPublicDef(var currentlinenumber : integer) : boolean;
 var
   indentofdef, funccounter, linecounter, prun, matchpos : integer;
@@ -345,6 +354,7 @@ begin
       begin
         if (rpos(cmulticomment1, trim(currentline)) > 1) or (rpos(cmulticomment2, trim(currentline)) > 1) then
         begin
+          // collects function description from function related docstring
           if (pos(cmulticomment1, trim(currentline)) = 1) then
             currentline := copy(trim(currentline), length(cmulticomment1)+1,length(trim(currentline)))
           else if (pos(cmulticomment2, trim(currentline)) = 1) then
@@ -376,6 +386,7 @@ begin
       if not onMarkerAddDocStringTo(clicense,trim(currentline),docobject.Ffunctions[funccounter-1].FLicense) then
       if not onMarkerAddDocStringTo(ccopyright,trim(currentline),docobject.Ffunctions[funccounter-1].FCopyright) then
       if not onMarkerAddDocStringTo(CRType,trim(currentline),docobject.Ffunctions[funccounter-1].FRType) then
+      if not onMarkerAddDocStringTo(CReturns,trim(currentline),docobject.Ffunctions[funccounter-1].FReturns) then
       if not onMarkerAddDocStringTo(CRaises,trim(currentline),docobject.Ffunctions[funccounter-1].FRaises) then
       if (pos(CParam,trim(currentline)) = 1) or (pos(CParamType,trim(currentline)) = 1) then
       begin
@@ -402,6 +413,7 @@ begin
   result := true;
 end;
 
+// Skip private functions and also some methods which are listed in the stringlist 'backendMethodBlacklist'.
 function processPrivateDef(var currentlinenumber : integer) : boolean;
 var
   indentofdef, linecounter : integer;
@@ -427,6 +439,7 @@ begin
   result := true;
 end;
 
+// Skip classes which are listed in the stringlist 'backendClassBlacklist'.
 function processPrivateClass(var currentlinenumber : integer) : boolean;
 var
   classindent, linecounter : integer;
@@ -451,6 +464,7 @@ begin
   result := true;
 end;
 
+// Removes linebreaks from Python source code and merge it as a single sentence.
 procedure preprocess();
 var
   line, linetoadd : string;
@@ -491,7 +505,7 @@ begin
   LogDatei.log('Finished preprocessing. Removed linebreaks and combined multiline statements.',LLinfo);
 end;
 
-
+//Parses python source codes
 function parseInput_pythonlibrary() : boolean;
 var
   linenumber, totallines : integer;
@@ -503,10 +517,11 @@ begin
   linenumber := 0;
   if Assigned(docobject) and (docobject <> nil) then docobject.Destroy;
   docobject := TFileDoc.Create;
-  preprocess();
+  preprocess();  // preprocess entire code to remove linebreaks and combine multiline statements
   totallines:= preprocessedlist.Count;
   while linenumber < totallines do
     begin
+      //parses file related docstrings
       trimmedline := trim(preprocessedlist.Strings[linenumber]);
       if ((pos(cmulticomment1, trimmedline) = 1) or  (pos(cmulticomment2, trimmedline) = 1)) and not filedocfound then
       begin
@@ -520,6 +535,7 @@ begin
         GetWord(trim(classstring), classname, remaining,WordDelimiterSet3);
 
         if backendClassBlacklist.IndexOf(classname) <> -1 then
+        //skips blacklisted classes
         begin
           processPrivateClass(linenumber);
         end
@@ -530,6 +546,7 @@ begin
       begin
         if pos(cpydefnotpublic,trimmedline) = 1 then
         begin
+          //skips private methods
           filedocfound := true;
           processPrivateDef(linenumber);
         end
@@ -539,11 +556,14 @@ begin
           defstring := copy(defstring, length(cpydeffunc)+1,length(defstring));
           GetWord(trim(defstring), defname, remaining,WordDelimiterSet3);
           if backendMethodBlacklist.IndexOf(defname) <> -1 then
+          // skips blacklisted methods
           begin
+            filedocfound := true;
             processPrivateDef(linenumber);
           end
           else
           begin
+            // parses public methods
             filedocfound := true;
             processPublicDef(linenumber);
           end;
