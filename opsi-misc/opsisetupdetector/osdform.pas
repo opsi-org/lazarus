@@ -689,7 +689,7 @@ begin
   myerror := '';
   showgui := True;
   useRunMode := gmUnknown;
-  opsitmp := GetTempDir(false);
+  opsitmp := GetTempDir(false)+'opsitmp'+PathDelim;
   optionlist := TStringList.Create;
   optionlist.Append('help');
   optionlist.Append('filename::');

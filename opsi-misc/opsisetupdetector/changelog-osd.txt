@@ -36,6 +36,10 @@ opsi-setup-detector (4.1.0.8) stable; urgency=low
 
   * fix for detecting InstallshieldMSI
   * added Bitrock Installer
+  * fixed msi analyze for installshieldMSI, AdvancedMSI, Wixbundle
+  * fixed templates
+  * fixed dark.exe call (now all dependencies on board)
+  * a lot of code clean up
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue,  14 May 2019 : 15:00:00 +0200
 

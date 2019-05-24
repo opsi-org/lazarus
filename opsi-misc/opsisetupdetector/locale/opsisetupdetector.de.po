@@ -17,6 +17,10 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
+#: osdanalyze.swarnmultiplemsi
+msgid "Multiple (more than one) msi files found. Look to log file and directory: "
+msgstr ""
+
 #: osdbasedata.rsconfig_filled
 msgctxt "osdbasedata.rsconfig_filled"
 msgid "Automatically detected. Do we have all needed configurations"
