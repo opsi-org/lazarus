@@ -241,7 +241,7 @@ begin
   end;
 end;
 
-// removes 'def' from function definition, removes 'self' from function arguments and also change default param value from none to null.
+// manipulates a method signature.
 function getDefinitionLine(var currentlinenumber : integer) : string;
 var
   deflinecounter, matchpos : integer;
@@ -277,6 +277,10 @@ begin
 
   //change default parameter value from None to null
   defstring := StringReplace(defstring, 'none', 'null', [rfReplaceAll, rfIgnoreCase]);
+
+  //Replace single quotes in default parameter value with double quotes
+  defstring := StringReplace(defstring, '''', '"', [rfReplaceAll]);
+
   currentlinenumber := deflinecounter+1;
   result := defstring;
 end;
