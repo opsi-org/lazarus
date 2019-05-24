@@ -83,8 +83,11 @@ begin
       LogDatei.log('Writing function information for: '+docobject.Ffunctions[frun].Name,LLinfo);
       targetlist.Add('anchor:'+docobject.Ffunctions[frun].Name+'[]');
       targetlist.Add('[Doc_func_'+docobject.Ffunctions[frun].Name+']');
+      targetlist.Add('== `'+docobject.Ffunctions[frun].Name+'()`');
+      {
       targetlist.add('== `'+docobject.Ffunctions[frun].Definitionline+'`');
       targetlist.Add('');
+      }
       targetlist.add(docobject.Ffunctions[frun].Description);
       targetlist.Add('');
 
@@ -134,6 +137,7 @@ begin
       tmpstr1 := docobject.Ffunctions[frun].Links;
       if tmpstr1 <> '' then targetlist.Add('Links: '+tmpstr1);
       targetlist.Add('');
+
       {
       tmpstr1 := docobject.Ffunctions[frun].Author;
       if tmpstr1 = '' then tmpstr1 :=  docobject.Author;
@@ -160,6 +164,7 @@ begin
       if tmpstr1 <> '' then targetlist.Add('Copyright: '+tmpstr1);
       targetlist.Add('');
       }
+
       tmpstr1 := docobject.Ffunctions[frun].Example;
       if not(tmpstr1 = '') then
       begin

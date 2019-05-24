@@ -26,7 +26,7 @@ var
   tmpstr1, pname : string;
   tempfile: TFuncDoc;
 begin
-  LogDatei.log('Writing collected python data as asciidoc to stringlist',LLnotice);
+  LogDatei.log('Writing collected python data as asciidoc to a stringlist',LLnotice);
   if Assigned(docobject) and (docobject <> nil) then
   begin
     targetlist.Clear;
@@ -81,8 +81,11 @@ begin
       LogDatei.log('Writing function information for: '+docobject.Ffunctions[frun].Name,LLinfo);
       targetlist.Add('anchor:'+docobject.Ffunctions[frun].Name+'[]');
       targetlist.Add('[Doc_func_'+docobject.Ffunctions[frun].Name+']');
+      targetlist.Add('== `'+docobject.Ffunctions[frun].Name+'()`');
+      {
       targetlist.add('== `'+docobject.Ffunctions[frun].Definitionline+'`');
       targetlist.Add('');
+      }
       targetlist.add(docobject.Ffunctions[frun].Description);
       targetlist.Add('');
 
@@ -114,7 +117,7 @@ begin
       targetlist.Add('');
     end;
   end;
-  LogDatei.log('Finished writing collected python data as asciidoc to stringlist',LLinfo);
+  LogDatei.log('Finished writing collected python data as asciidoc to a stringlist',LLinfo);
 end;
 
 
