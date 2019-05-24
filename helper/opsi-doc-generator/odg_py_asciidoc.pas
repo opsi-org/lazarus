@@ -23,7 +23,7 @@ var
 procedure writePyDocToList;
 var
   frun, prun, i, j, funccount : integer;
-  tmpstr1, pname : string;
+  tmpstr1, pname, tempdefstring : string;
   tempfile: TFuncDoc;
 begin
   LogDatei.log('Writing collected python data as asciidoc to a stringlist',LLnotice);
@@ -81,11 +81,12 @@ begin
       LogDatei.log('Writing function information for: '+docobject.Ffunctions[frun].Name,LLinfo);
       targetlist.Add('anchor:'+docobject.Ffunctions[frun].Name+'[]');
       targetlist.Add('[Doc_func_'+docobject.Ffunctions[frun].Name+']');
-      targetlist.Add('== `'+docobject.Ffunctions[frun].Name+'()`');
-      {
-      targetlist.add('== `'+docobject.Ffunctions[frun].Definitionline+'`');
+      targetlist.Add('== '+docobject.Ffunctions[frun].Name+'()');
       targetlist.Add('');
-      }
+      tempdefstring:= docobject.Ffunctions[frun].Definitionline;
+      Delete(tempdefstring, Length(tempdefstring), 1);
+      targetlist.Add('`' + tempdefstring +'`');
+      targetlist.Add('');
       targetlist.add(docobject.Ffunctions[frun].Description);
       targetlist.Add('');
 

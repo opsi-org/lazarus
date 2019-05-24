@@ -83,11 +83,10 @@ begin
       LogDatei.log('Writing function information for: '+docobject.Ffunctions[frun].Name,LLinfo);
       targetlist.Add('anchor:'+docobject.Ffunctions[frun].Name+'[]');
       targetlist.Add('[Doc_func_'+docobject.Ffunctions[frun].Name+']');
-      targetlist.Add('== `'+docobject.Ffunctions[frun].Name+'()`');
-      {
-      targetlist.add('== `'+docobject.Ffunctions[frun].Definitionline+'`');
+      targetlist.Add('== '+docobject.Ffunctions[frun].Name+'()');
       targetlist.Add('');
-      }
+      targetlist.Add('`' + docobject.Ffunctions[frun].Definitionline +'`');
+      targetlist.Add('');
       targetlist.add(docobject.Ffunctions[frun].Description);
       targetlist.Add('');
 
