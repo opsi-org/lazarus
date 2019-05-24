@@ -241,7 +241,7 @@ begin
   end;
 end;
 
-// removes 'def' from function definition and also removes 'self' from function arguments.
+// removes 'def' from function definition, removes 'self' from function arguments and also change default param value from none to null.
 function getDefinitionLine(var currentlinenumber : integer) : string;
 var
   deflinecounter, matchpos : integer;
@@ -250,6 +250,8 @@ begin
   result := '';
   defstring := trim(preprocessedlist.Strings[currentlinenumber]);
   deflinecounter := currentlinenumber;
+
+  // remove 'def' from function definition
   defstring := copy(defstring, length(cpydeffunc)+1,length(defstring));
   matchpos := pos(':', defstring);
 
@@ -260,6 +262,7 @@ begin
     matchpos := pos(':', defstring);
   end;
 
+  // remove 'self' from function arguments
   defstring := copy(defstring,1,matchpos);
   if pos('self, ', defstring) > 0 then
   begin
@@ -271,6 +274,9 @@ begin
     matchpos := pos('self', defstring);
     delete(defstring, matchpos, length('self'));
   end;
+
+  //change default parameter value from None to null
+  defstring := StringReplace(defstring, 'none', 'null', [rfReplaceAll, rfIgnoreCase]);
   currentlinenumber := deflinecounter+1;
   result := defstring;
 end;
