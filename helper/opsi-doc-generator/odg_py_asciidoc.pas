@@ -62,6 +62,7 @@ begin
     targetlist.Add('= opsi API documentation');
     targetlist.Add('');
 
+    // sorting the functions
     funccount :=  docobject.functionCounter;
     for i:=0 to  funccount-2 do
     begin
@@ -76,48 +77,66 @@ begin
       end;
     end;
 
-    for frun := 0 to funccount-1 do
+    //for frun := 0 to funccount-1 do
+    for frun := 0 to funccount-2 do
     begin
-      LogDatei.log('Writing function information for: '+docobject.Ffunctions[frun].Name,LLinfo);
-      targetlist.Add('anchor:'+docobject.Ffunctions[frun].Name+'[]');
-      targetlist.Add('[Doc_func_'+docobject.Ffunctions[frun].Name+']');
-      targetlist.Add('== '+docobject.Ffunctions[frun].Name+'()');
-      targetlist.Add('');
-      tempdefstring:= docobject.Ffunctions[frun].Definitionline;
-      Delete(tempdefstring, Length(tempdefstring), 1);
-      targetlist.Add('`' + tempdefstring +'`');
-      targetlist.Add('');
-      targetlist.add(docobject.Ffunctions[frun].Description);
-      targetlist.Add('');
-
-      for prun := 0 to docobject.Ffunctions[frun].ParamCounter -1 do
+      // removing duplicate functions
+      if docobject.Ffunctions[frun].Definitionline = docobject.Ffunctions[frun+1].Definitionline then
       begin
-        pname := docobject.Ffunctions[frun].Fparams[prun].ParamName;
-        LogDatei.log('Writing parameter information for: '+pname,LLinfo);
-        targetlist.add('* Parameter:  `' +pname+'`');
-        tmpstr1 := docobject.Ffunctions[frun].Fparams[prun].ParamType;
-        if tmpstr1 <> '' then
+        if (CompareText(docobject.Ffunctions[frun].Description, docobject.Ffunctions[frun+1].Description) > 0) then
+          begin
+            tempfile:= docobject.Ffunctions[frun];
+            docobject.Ffunctions[frun]:= docobject.Ffunctions[frun+1];
+            docobject.Ffunctions[frun+1] := tempfile;
+            Dec(funccount);
+          end
+          else
+            Dec(funccount);
+      end
+      else
+      begin
+        LogDatei.log('Writing function information for: '+docobject.Ffunctions[frun].Name,LLinfo);
+        targetlist.Add('anchor:'+docobject.Ffunctions[frun].Name+'[]');
+        targetlist.Add('[Doc_func_'+docobject.Ffunctions[frun].Name+']');
+        targetlist.Add('== '+docobject.Ffunctions[frun].Name+'()');
+        targetlist.Add('');
+        tempdefstring:= docobject.Ffunctions[frun].Definitionline;
+        // remove colon from method signature
+        Delete(tempdefstring, Length(tempdefstring), 1);
+        targetlist.Add('`' + tempdefstring +'`');
+        targetlist.Add('');
+        targetlist.add(docobject.Ffunctions[frun].Description);
+        targetlist.Add('');
+
+        for prun := 0 to docobject.Ffunctions[frun].ParamCounter -1 do
         begin
-          targetlist.add('** Type: `'+tmpstr1+'`');
+          pname := docobject.Ffunctions[frun].Fparams[prun].ParamName;
+          LogDatei.log('Writing parameter information for: '+pname,LLinfo);
+          targetlist.add('* Parameter:  `' +pname+'`');
+          tmpstr1 := docobject.Ffunctions[frun].Fparams[prun].ParamType;
+          if tmpstr1 <> '' then
+          begin
+            targetlist.add('** Type: `'+tmpstr1+'`');
+          end;
+          tmpstr1 := docobject.Ffunctions[frun].Fparams[prun].ParamDesc;
+          if tmpstr1 <> '' then
+          begin
+            targetlist.add('** Description: '+tmpstr1);
+          end;
+          targetlist.Add('');
         end;
-        tmpstr1 := docobject.Ffunctions[frun].Fparams[prun].ParamDesc;
-        if tmpstr1 <> '' then
-        begin
-          targetlist.add('** Description: '+tmpstr1);
-        end;
+
+        tmpstr1 := docobject.Ffunctions[frun].RType;
+        if tmpstr1 <> '' then targetlist.Add('Returned Type: `'+tmpstr1+'`');
+        tmpstr1:= docobject.Ffunctions[frun].Returns;
+        if tmpstr1 <> '' then targetlist.Add(': '+tmpstr1);
+        targetlist.Add('');
+
+        tmpstr1 := docobject.Ffunctions[frun].Raises;
+        if tmpstr1 <> '' then targetlist.Add('Raises: '+tmpstr1);
+        targetlist.Add('');
         targetlist.Add('');
       end;
-
-      tmpstr1 := docobject.Ffunctions[frun].RType;
-      if tmpstr1 <> '' then targetlist.Add('Returned Type: `'+tmpstr1+'`');
-      tmpstr1:= docobject.Ffunctions[frun].Returns;
-      if tmpstr1 <> '' then targetlist.Add(': '+tmpstr1);
-      targetlist.Add('');
-
-      tmpstr1 := docobject.Ffunctions[frun].Raises;
-      if tmpstr1 <> '' then targetlist.Add('Raises: '+tmpstr1);
-      targetlist.Add('');
-      targetlist.Add('');
     end;
   end;
   LogDatei.log('Finished writing collected python data as asciidoc to a stringlist',LLinfo);
