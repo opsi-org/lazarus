@@ -174,7 +174,7 @@ begin
   begin
     // prepare to create it
     ForceDirectory(ExtractFilePath(opsiscriptconf));
-  end;
+  end;                                                               teamdrive-4.6.7_amd64.deb
   myconf := TIniFile.Create(opsiscriptconf);
   myconf.WriteString('global', 'debug_prog', BoolToStr(debug_prog, false));
   myconf.WriteString('global', 'debug_lib', BoolToStr(debug_lib, false));
