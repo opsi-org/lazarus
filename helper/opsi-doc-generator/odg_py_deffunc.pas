@@ -198,6 +198,7 @@ begin
 
     while not endOfParamlist do
     begin
+      defaultvalue:='';
       GetWord(remaining, paramnamestr, remaining,[',',':']);
       if remaining = ':' then
       begin
@@ -211,7 +212,9 @@ begin
         begin
           delete(paramnamestr, length(paramnamestr), 1);
           paramnamestr := trim(paramnamestr);
-        end
+        end;
+        if pos(')', Trim(defaultvalue)) > 1 then
+          defaultvalue := StringReplace(defaultvalue, ')', '', []);
       end
       else if pos('=', trim(paramnamestr)) > 1 then
       begin
@@ -222,10 +225,6 @@ begin
       end
       else
         paramnamestr := trim(paramnamestr);
-
-      if pos(')', Trim(defaultvalue)) > 1 then
-        defaultvalue := StringReplace(defaultvalue, ')', '', []);
-
 
       LogDatei.log('Found parameter: '+paramnamestr,LLDebug2);
       if defaultvalue <> '' then
