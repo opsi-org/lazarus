@@ -9,22 +9,23 @@ uses
   osparserhelper,
   oslog,
   SysUtils,
-  StrUtils,
-  regexpr;
+  StrUtils;
 
 Type
 
 TParamDoc = class
   private
-    FParamName : string;
-    FParamType : string;
-    FParamDesc : string;
+    FParamName    : string;
+    FParamType    : string;
+    FParamDefault : string;
+    FParamDesc    : string;
   public
     constructor Create;
     destructor Destroy;
-    property ParamName : string  read FParamName;
-    property ParamType : string  read FParamType;
-    property ParamDesc : string  read FParamDesc;
+    property ParamName    : string  read FParamName;
+    property ParamType    : string  read FParamType;
+    property ParamDefault : string  read FParamDefault;
+    property ParamDesc    : string  read FParamDesc;
 end;
 
 TFuncDoc =  class
@@ -143,9 +144,10 @@ end;
 
 constructor TParamDoc.create;
 begin
-  FParamName := '';
-  FParamType := '';
-  FParamDesc := '';
+  FParamName    := '';
+  FParamType    := '';
+  FParamDefault := '';
+  FParamDesc    := '';
   Inherited;
 end;
 
@@ -175,7 +177,7 @@ end;
 // Parses python public methods
 procedure parsePyDef(definitionStr : string; myfunc : TFuncDoc);
 var
-  paramnamestr : string;
+  paramnamestr, defaultvalue : string;
   paramcounter, posofequal : integer;
   endOfParamlist : boolean;
   remaining,errorstr : string;
@@ -202,6 +204,7 @@ begin
         if pos('=', trim(paramnamestr)) > 1 then
         begin
           posofequal := pos('=', trim(paramnamestr));
+          defaultvalue:= Copy(paramnamestr, posofequal+1, Length(paramnamestr));
           paramnamestr := copy(paramnamestr, 0, posofequal-1);
         end
         else
@@ -213,12 +216,21 @@ begin
       else if pos('=', trim(paramnamestr)) > 1 then
       begin
         posofequal := pos('=', trim(paramnamestr));
+        defaultvalue:= Copy(paramnamestr, posofequal+1, Length(paramnamestr));
         paramnamestr := copy(paramnamestr, 0, posofequal-1);
+
       end
       else
         paramnamestr := trim(paramnamestr);
 
+      if pos(')', Trim(defaultvalue)) > 1 then
+        defaultvalue := StringReplace(defaultvalue, ')', '', []);
+
+
       LogDatei.log('Found parameter: '+paramnamestr,LLDebug2);
+      if defaultvalue <> '' then
+        LogDatei.log('Default value: '+defaultvalue,LLDebug2);
+
       inc(paramcounter);
 
       myfunc.FParamCounter := paramcounter+1;
@@ -228,6 +240,7 @@ begin
       with myfunc.Fparams[paramcounter] do
       begin
         FparamName:= paramnamestr;
+        myfunc.Fparams[paramcounter].FParamDefault:= defaultvalue;
         if skip(':',remaining,remaining,errorstr) then
         begin
           endOfParamlist := true;
