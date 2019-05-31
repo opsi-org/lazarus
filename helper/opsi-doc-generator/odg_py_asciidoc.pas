@@ -77,13 +77,10 @@ begin
       end;
     end;
 
-    //for frun := 0 to funccount-2 do
-    for frun := 0 to funccount-1 do
+    for frun := 0 to funccount-2 do
     begin
-      {
       // removing duplicate functions
-      //if (not (frun = funccount)) and
-      if (docobject.Ffunctions[frun].Definitionline = docobject.Ffunctions[frun+1].Definitionline) then
+      if (not (frun = funccount-1)) and (docobject.Ffunctions[frun].Definitionline = docobject.Ffunctions[frun+1].Definitionline) then
       begin
         if (CompareText(docobject.Ffunctions[frun].Description, docobject.Ffunctions[frun+1].Description) > 0) then
           begin
@@ -96,7 +93,6 @@ begin
             Dec(funccount);
       end
       else
-      }
       begin
         LogDatei.log('Writing function information for: '+docobject.Ffunctions[frun].Name,LLinfo);
         targetlist.Add('anchor:'+docobject.Ffunctions[frun].Name+'[]');
