@@ -78,105 +78,121 @@ begin
       end;
     end;
 
-    for frun := 0 to funccount -1 do
+    for frun := 0 to funccount-1 do
     begin
-      LogDatei.log('Writing function information for: '+docobject.Ffunctions[frun].Name,LLinfo);
-      targetlist.Add('anchor:'+docobject.Ffunctions[frun].Name+'[]');
-      targetlist.Add('[Doc_func_'+docobject.Ffunctions[frun].Name+']');
-      targetlist.Add('== '+docobject.Ffunctions[frun].Name+'()');
-      targetlist.Add('');
-      targetlist.Add('`' + docobject.Ffunctions[frun].Definitionline +'`');
-      targetlist.Add('');
-      targetlist.add(docobject.Ffunctions[frun].Description);
-      targetlist.Add('');
-
-      for prun := 0 to docobject.Ffunctions[frun].ParamCounter -1 do
+      // removing duplicate functions
+      if (frun <> funccount) and (docobject.Ffunctions[frun].Definitionline = docobject.Ffunctions[frun+1].Definitionline) then
       begin
-        pname := docobject.Ffunctions[frun].Fparams[prun].ParamName;
-        LogDatei.log('Writing parameter information for: '+pname,LLinfo);
-        targetlist.add('* Parameter: `' +pname+'`');
-        if docobject.Ffunctions[frun].Fparams[prun].callByReference then
-           tmpstr1 := 'Calltype: `CallByReference`'
-        else tmpstr1 := 'Calltype: `CallByValue`';
-        targetlist.add('** Type: `'+docobject.Ffunctions[frun].Fparams[prun].getParamTypestring
-                       + '`  -  '+tmpstr1);
-        tmpstr1 := docobject.Ffunctions[frun].Fparams[prun].ParamDesc;
-        if tmpstr1 <> '' then
+        if (CompareText(docobject.Ffunctions[frun].Description, docobject.Ffunctions[frun+1].Description) > 0) then
+          begin
+            tempfile:= docobject.Ffunctions[frun];
+            docobject.Ffunctions[frun]:= docobject.Ffunctions[frun+1];
+            docobject.Ffunctions[frun+1] := tempfile;
+            Dec(funccount);
+          end
+          else
+            Dec(funccount);
+      end
+      else
+      begin
+        LogDatei.log('Writing function information for: '+docobject.Ffunctions[frun].Name,LLinfo);
+        targetlist.Add('anchor:'+docobject.Ffunctions[frun].Name+'[]');
+        targetlist.Add('[Doc_func_'+docobject.Ffunctions[frun].Name+']');
+        targetlist.Add('== '+docobject.Ffunctions[frun].Name+'()');
+        targetlist.Add('');
+        targetlist.Add('`' + docobject.Ffunctions[frun].Definitionline +'`');
+        targetlist.Add('');
+        targetlist.add(docobject.Ffunctions[frun].Description);
+        targetlist.Add('');
+
+        for prun := 0 to docobject.Ffunctions[frun].ParamCounter -1 do
         begin
-          targetlist.add('** Description: '+tmpstr1);
+          pname := docobject.Ffunctions[frun].Fparams[prun].ParamName;
+          LogDatei.log('Writing parameter information for: '+pname,LLinfo);
+          targetlist.add('* Parameter: `' +pname+'`');
+          if docobject.Ffunctions[frun].Fparams[prun].callByReference then
+             tmpstr1 := 'Calltype: `CallByReference`'
+          else tmpstr1 := 'Calltype: `CallByValue`';
+          targetlist.add('** Type: `'+docobject.Ffunctions[frun].Fparams[prun].getParamTypestring
+                         + '`  -  '+tmpstr1);
+          tmpstr1 := docobject.Ffunctions[frun].Fparams[prun].ParamDesc;
+          if tmpstr1 <> '' then
+          begin
+            targetlist.add('** Description: '+tmpstr1);
+          end;
+          tmpstr1 := docobject.Ffunctions[frun].Fparams[prun].ParamAdvice;
+          if tmpstr1 <> '' then
+          begin
+            targetlist.add('** Advice: '+tmpstr1);
+          end;
+          targetlist.Add('');
         end;
-        tmpstr1 := docobject.Ffunctions[frun].Fparams[prun].ParamAdvice;
-        if tmpstr1 <> '' then
+
+        tmpstr1 := docobject.Ffunctions[frun].Returns;
+        if tmpstr1 <> '' then targetlist.Add('Returns: '+tmpstr1);
+        targetlist.Add('');
+
+        tmpstr1 := docobject.Ffunctions[frun].OnError;
+        if tmpstr1 <> '' then targetlist.Add('OnError: '+tmpstr1);
+        targetlist.Add('');
+
+        tmpstr1 := docobject.Ffunctions[frun].SpecialCase;
+        if tmpstr1 <> '' then targetlist.Add('SpecialCase: '+tmpstr1);
+        targetlist.Add('');
+
+        tmpstr1 := docobject.Ffunctions[frun].Requires;
+        if tmpstr1 <> '' then targetlist.Add('Requires: '+tmpstr1);
+        targetlist.Add('');
+
+        tmpstr1 := docobject.Ffunctions[frun].References;
+        if tmpstr1 <> '' then targetlist.Add('References: '+tmpstr1);
+        targetlist.Add('');
+
+        tmpstr1 := docobject.Ffunctions[frun].Links;
+        if tmpstr1 <> '' then targetlist.Add('Links: '+tmpstr1);
+        targetlist.Add('');
+
+        {
+        tmpstr1 := docobject.Ffunctions[frun].Author;
+        if tmpstr1 = '' then tmpstr1 :=  docobject.Author;
+        if tmpstr1 <> '' then targetlist.Add('Author: '+tmpstr1);
+        targetlist.Add('');
+
+        tmpstr1 := docobject.Ffunctions[frun].Date;
+        if tmpstr1 = '' then tmpstr1 :=  docobject.Date;
+        if tmpstr1 <> '' then targetlist.Add('Date: '+tmpstr1);
+        targetlist.Add('');
+
+        tmpstr1 := docobject.Ffunctions[frun].Email;
+        if tmpstr1 = '' then tmpstr1 :=  docobject.Email;
+        if tmpstr1 <> '' then targetlist.Add('Email: '+tmpstr1);
+        targetlist.Add('');
+
+        tmpstr1 := docobject.Ffunctions[frun].Version;
+        if tmpstr1 = '' then tmpstr1 :=  docobject.Version;
+        if tmpstr1 <> '' then targetlist.Add('Version: '+tmpstr1);
+        targetlist.Add('');
+
+        tmpstr1 := docobject.Ffunctions[frun].Copyright;
+        if tmpstr1 = '' then tmpstr1 :=  docobject.Copyright;
+        if tmpstr1 <> '' then targetlist.Add('Copyright: '+tmpstr1);
+        targetlist.Add('');
+        }
+
+        tmpstr1 := docobject.Ffunctions[frun].Example;
+        if not(tmpstr1 = '') then
         begin
-          targetlist.add('** Advice: '+tmpstr1);
+          targetlist.Add('');
+          targetlist.Add('');
+          targetlist.Add('Example:');
+          targetlist.Add('[source,winst]');
+          targetlist.Add('----');
+          targetlist.Add(tmpstr1);
+          targetlist.Add('----');
         end;
+        targetlist.Add('');
         targetlist.Add('');
       end;
-
-      tmpstr1 := docobject.Ffunctions[frun].Returns;
-      if tmpstr1 <> '' then targetlist.Add('Returns: '+tmpstr1);
-      targetlist.Add('');
-
-      tmpstr1 := docobject.Ffunctions[frun].OnError;
-      if tmpstr1 <> '' then targetlist.Add('OnError: '+tmpstr1);
-      targetlist.Add('');
-
-      tmpstr1 := docobject.Ffunctions[frun].SpecialCase;
-      if tmpstr1 <> '' then targetlist.Add('SpecialCase: '+tmpstr1);
-      targetlist.Add('');
-
-      tmpstr1 := docobject.Ffunctions[frun].Requires;
-      if tmpstr1 <> '' then targetlist.Add('Requires: '+tmpstr1);
-      targetlist.Add('');
-
-      tmpstr1 := docobject.Ffunctions[frun].References;
-      if tmpstr1 <> '' then targetlist.Add('References: '+tmpstr1);
-      targetlist.Add('');
-
-      tmpstr1 := docobject.Ffunctions[frun].Links;
-      if tmpstr1 <> '' then targetlist.Add('Links: '+tmpstr1);
-      targetlist.Add('');
-
-      {
-      tmpstr1 := docobject.Ffunctions[frun].Author;
-      if tmpstr1 = '' then tmpstr1 :=  docobject.Author;
-      if tmpstr1 <> '' then targetlist.Add('Author: '+tmpstr1);
-      targetlist.Add('');
-
-      tmpstr1 := docobject.Ffunctions[frun].Date;
-      if tmpstr1 = '' then tmpstr1 :=  docobject.Date;
-      if tmpstr1 <> '' then targetlist.Add('Date: '+tmpstr1);
-      targetlist.Add('');
-
-      tmpstr1 := docobject.Ffunctions[frun].Email;
-      if tmpstr1 = '' then tmpstr1 :=  docobject.Email;
-      if tmpstr1 <> '' then targetlist.Add('Email: '+tmpstr1);
-      targetlist.Add('');
-
-      tmpstr1 := docobject.Ffunctions[frun].Version;
-      if tmpstr1 = '' then tmpstr1 :=  docobject.Version;
-      if tmpstr1 <> '' then targetlist.Add('Version: '+tmpstr1);
-      targetlist.Add('');
-
-      tmpstr1 := docobject.Ffunctions[frun].Copyright;
-      if tmpstr1 = '' then tmpstr1 :=  docobject.Copyright;
-      if tmpstr1 <> '' then targetlist.Add('Copyright: '+tmpstr1);
-      targetlist.Add('');
-      }
-
-      tmpstr1 := docobject.Ffunctions[frun].Example;
-      if not(tmpstr1 = '') then
-      begin
-        targetlist.Add('');
-        targetlist.Add('');
-        targetlist.Add('Example:');
-        targetlist.Add('[source,winst]');
-        targetlist.Add('----');
-        targetlist.Add(tmpstr1);
-        targetlist.Add('----');
-      end;
-      targetlist.Add('');
-      targetlist.Add('');
     end;
   end;
   LogDatei.log('Finished writing collected opsiscript data as asciidoc to stringlist',LLinfo);
