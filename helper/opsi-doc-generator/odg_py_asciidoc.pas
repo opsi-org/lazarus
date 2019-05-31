@@ -22,9 +22,9 @@ var
 
 procedure writePyDocToList;
 var
-  frun, prun, i, j, funccount : integer;
+  frun, prun, i, j, funccount   : integer;
   tmpstr1, pname, tempdefstring : string;
-  tempfile: TFuncDoc;
+  tempfile                      : TFuncDoc;
 begin
   LogDatei.log('Writing collected python data as asciidoc to a stringlist',LLnotice);
   if Assigned(docobject) and (docobject <> nil) then
@@ -77,20 +77,20 @@ begin
       end;
     end;
 
-    for frun := 0 to funccount-2 do
+    for frun := 0 to funccount-1 do
     begin
       // removing duplicate functions
-      if (not (frun = funccount-1)) and (docobject.Ffunctions[frun].Definitionline = docobject.Ffunctions[frun+1].Definitionline) then
+      if (frun <> funccount) and (docobject.Ffunctions[frun].Definitionline = docobject.Ffunctions[frun+1].Definitionline) then
       begin
         if (CompareText(docobject.Ffunctions[frun].Description, docobject.Ffunctions[frun+1].Description) > 0) then
-          begin
+        begin
             tempfile:= docobject.Ffunctions[frun];
             docobject.Ffunctions[frun]:= docobject.Ffunctions[frun+1];
             docobject.Ffunctions[frun+1] := tempfile;
             Dec(funccount);
-          end
-          else
-            Dec(funccount);
+        end
+        else
+          Dec(funccount);
       end
       else
       begin
