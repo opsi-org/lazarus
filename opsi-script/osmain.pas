@@ -528,12 +528,18 @@ begin
   testpassed := False;
   if (StandardTempPath <> '') and SysUtils.ForceDirectories(StandardTempPath) then
   begin
+    if logdatei <> nil then logdatei.log('Testing as temp path: '+StandardTempPath,LLdebug);
     testpassed := True;
-    teststr := StandardTempPath + 'testing_write_privilege_for_winst';
+    teststr := StandardTempPath + 'testing_write_privilege_for_opsiscript';
     if not fileexists(teststr) then
     begin
       if not SysUtils.ForceDirectories(teststr) or not RemoveDir(teststr) then
+      begin
         testpassed := False;
+        if logdatei <> nil then logdatei.log('Failed:Testing as temp path: '+StandardTempPath,LLwarning);
+      end
+      else
+        if logdatei <> nil then logdatei.log('Succseeded: Testing as temp path: '+StandardTempPath,LLdebug);
     end;
     teststr := '';
   end;
@@ -552,26 +558,8 @@ begin
     {$ENDIF WINDOWS}
     SysUtils.ForceDirectories(TempPath);
   end;
+  if logdatei <> nil then logdatei.log('Final: Using as temp path: '+StandardTempPath,LLdebug);
   result := TempPath;
-  (*
-  Result := StandardTempPath;
-  //result := TmpPathFromLogdatei;
-  SysUtils.ForceDirectories(Result);
-  if not DirectoryExists(Result) then
-  begin
-    Result := ValueOfEnvVar('TEMP');
-    if not DirectoryExists(Result) then
-    begin
-      {$IFDEF WINDOWS}
-      Result := 'c:\tmp';
-      {$ELSE}
-      Result := '/tmp/opsiscript';
-      {$ENDIF WINDOWS}
-      mkdir(Result);
-    end;
-    Result := Result + PathDelim;
-  end;
-  *)
 end;
 
 procedure ProcessMess;
