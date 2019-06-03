@@ -12,12 +12,6 @@ program winst;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 509 $
-// $Author: oertel $
-// $Date: 2016-10-20 21:49:43 +0200 (Do, 20 Okt 2016) $
-//***************************************************************************
 
 
 
@@ -25,6 +19,7 @@ program winst;
 
 uses
   LAZUTF8,
+  osencoding,
   lcltranslator, {$IFDEF UNIX} {$IFDEF UseCThreads}
   cthreads, {$ENDIF} {$ENDIF}
   Interfaces, // this includes the LCL widgetset

@@ -51,7 +51,8 @@ uses
   Shlobj,
   Variants,
   ActiveX,
-  JwaWbemCli;
+  JwaWbemCli,
+  LAZUTF8;
 
 //JclSecurity,
 //JclWin32;
@@ -375,14 +376,14 @@ end;
 }
 function GetUserName_: string;
 var
-  buffer: PChar;
+  buffer: LPWSTR;
   bufferSize: DWORD;
 begin
   bufferSize := 256; //UNLEN from lmcons.h
   buffer := AllocMem(bufferSize * SizeOf(char));
   try
-    GetUserName(buffer, bufferSize);
-    Result := string(buffer);
+    GetUserNameW(buffer, bufferSize);
+    Result := UTF16ToUTF8(unicodestring(buffer));
   finally
     FreeMem(buffer, bufferSize);
   end;

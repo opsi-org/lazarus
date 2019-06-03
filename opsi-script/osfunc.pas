@@ -61,14 +61,14 @@ LResources,
 LCLIntf,
 LCLProc,
 {$ENDIF GUI}
-{$IFDEF LINUX}
-  //osfunclin,
+{$IFDEF UNIX}
+
   baseunix,
   unix,
   types,
   dateutils,
   //initc,
-{$ENDIF LINUX}
+{$ENDIF UNIX}
   //LConvEncoding,
   blcksock,
   synautil,
@@ -105,7 +105,7 @@ type
   //TuibRegDataType = (trdUnknown, trdDefaultString, trdString,
   //  trdExpandString, trdInteger,
   //  trdBinary, trdMultiString);
-  TuibOSVersion = (tovNotKnown, tovWin16, tovWin95, tovWinNT, tovLinux);
+  TuibOSVersion = (tovNotKnown, tovWin16, tovWin95, tovWinNT, tovLinux, tovMacOS);
   TuibNTVersion = (tntverNONE, tntverNT3, tntverNT4, tntverWIN2K,
     tntverWINVISTA, tntverWINX);
   Str20 = string
@@ -365,7 +365,7 @@ type
     procedure AllCompress(const SourceMask, TargetDir: string;
       Recursive: boolean; MaintainEmptySubdirs: boolean);
     {$ENDIF WINDOWS}
-    {$IFDEF LINUX}
+    {$IFDEF UNIX}
     function chmod(mode : string;const FileName: string): boolean;
     {$ENDIF LINUX}
   end;
@@ -471,7 +471,7 @@ function GetUibOSType(var errorinfo: string): TuibOSVersion;
 function FormatInt(const Value: int64): string;
 
 function IsDirectory(const FName: string): boolean;
-function SizeOfFile(FName: string): longint;
+function SizeOfFile(FName: string): int64;
 function ExtractFileDir(const FileName: string): string;
 function ExpandFileName(const FileName: string): string;
 
@@ -515,7 +515,7 @@ function divideAtFirst(const partialS, S: string; var part1, part2: string): boo
      andernfalls false;
      wenn partialS nicht vorkommt, enthaelt part1 den Gesamtstring, part2 ist leer *)
 
-procedure stringsplitByWhiteSpace(const s: string; var Result: TXStringList);
+//procedure stringsplitByWhiteSpace(const s: string; var Result: TXStringList);
 (* produziert eine Stringliste aus den Teilstrings, die zwischen den Whitespace-Abschnitten stehen *)
 
 procedure stringsplit(const s, delimiter: string; var Result: TXStringList);
@@ -561,12 +561,11 @@ function strContains(const str: string; const substr: string): boolean;
 function createNewOpsiHostKey: string;
 function getProfilesDirList: TStringList;
 //function stringListLoadUtf8FromFile(filename: string): TStringList;
-//function stringListLoadUnicodeFromList(inlist: Tstringlist): TStringList;
 function opsiunquotestr(s1,s2 : string): string;
 
 function cmdLineInputDialog(var inputstr : string; const message, default : string; confidential : boolean) : boolean;
-function isValidUtf8String(str:string) : boolean;
-function getFixedUtf8String(str:string) : string;
+//function isValidUtf8String(str:string) : boolean;
+//function getFixedUtf8String(str:string) : string;
 function posFromEnd(const substr : string; const s : string) : integer;
 
 
@@ -628,11 +627,10 @@ const
   WordDelimiterSetHosts = [' ', '#', #9];
   WordDelimiterSetDBAlias = [':', '='];
   WordDelimiterSet1 = [' ', #9, '=', '[', ']', '(', ')', '"', '''', ',', '+'];
-  WordDelimiterSet3 = [' ', #9, '=', '[', ']', '(', ')', '"', '''', ',', '+', ':'];
   WordDelimiterSet2 = [' ', #9, '"', ''''];
+  WordDelimiterSet3 = [' ', #9, '=', '[', ']', '(', ')', '"', '''', ',', '+', ':'];
   WordDelimiterSet4 = [' ', #9, '=', '[', ']', '('];
-  WordDelimiterSet5 = [' ', #9, '('];
-  WordDelimiterSet6 = [')',','];
+  WordDelimiterSet5 = ['"', ''''];
   WordDelimiterWhiteSpace = [' ', #9];
   *)
   (*
@@ -662,6 +660,10 @@ uses
 {$IFDEF LINUX}
   osfunclin,
 {$ENDIF LINUX}
+{$IFDEF DARWIN}
+  osfunclin,
+  osfuncmac,
+{$ENDIF DARWIN}
 {$IFDEF WINDOWS}
   osfuncwin,
 {$ENDIF WINDOWS}
@@ -738,17 +740,20 @@ begin
     result := len - (posi-1);
 end;
 
+(*
 function isValidUtf8String(str:string) : boolean;
 begin
-  if FindInvalidUTF8Character(PChar(str), Length(str)) <> -1 then result := false
+  if FindInvalidUTF8Codepoint(PChar(str), Length(str)) <> -1 then result := false
   else result := true;
 end;
+*)
 
+(*
 function getFixedUtf8String(str:string) : string;
 begin
   result := ValidUTF8String(str);
 end;
-
+*)
 function cmdLineInputDialog(var inputstr : string; const message, default : string; confidential : boolean) : boolean;
 var
   c : char ;
@@ -769,7 +774,7 @@ begin
 end;
 
 (*
-
+// removed for Lazarus 1.8
 function stringListLoadUtf8FromFile(filename: string): TStringList;
 var
   fCES: TCharEncStream;
@@ -783,6 +788,7 @@ begin
   Result.Text := fCES.UTF8Text;
   fCES.Free;
 end;
+
 
 function stringListLoadUnicodeFromList(inlist: Tstringlist): TStringList;
 var
@@ -810,8 +816,12 @@ begin
   Result := list;
   list.free;
   {$ENDIF WIN32}
-  {$ELSE WINDOWS}
+  {$ENDIF WINDOWS}
+  {$IFDEF LINUX}
   Result := getProfilesDirListLin;
+  {$ENDIF}
+  {$IFDEF DARWIN}
+  Result := getProfilesDirListMac;
   {$ENDIF}
 end;
 
@@ -822,7 +832,10 @@ begin
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
   Result := linIsUefi;
-  {$ENDIF LINUX}
+  {$ENDIF}
+  {$IFDEF DARWIN}
+  Result := true;
+  {$ENDIF}
 end;
 
 function isWinPE: boolean;
@@ -830,7 +843,7 @@ begin
   {$IFDEF WINDOWS}
   Result := WinIsPE;
   {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   Result := false;
   {$ENDIF LINUX}
 end;
@@ -1002,9 +1015,12 @@ begin
   {$IFDEF LINUX}
   Result := tovLinux;
   {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  Result := tovMacOS;
+  {$ENDIF DARWIN}
 end;
 
-//{$RANGECHECKS OFF}
+{$RANGECHECKS OFF}
 procedure FindLocalIPData(var ipName: string; var address: string);
 type
   bytearray = array of byte;
@@ -1015,8 +1031,9 @@ var
 begin
   ipName := '';
   address := '';
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   ipName := getHostnameLin;
+
   address := getMyIpByDefaultRoute;
   {$ENDIF LINUX}
   {$IFDEF WINDOWS}
@@ -1031,10 +1048,10 @@ begin
     end;
   {$ENDIF WINDOWS}
 end;
-//{$RANGECHECKS ON}
+{$RANGECHECKS ON}
 
 
-{$IFDEF LINUX}
+{$IFDEF UNIX}
 (*
 function getMyHostEnt: THostEnt;
 
@@ -1173,6 +1190,9 @@ begin
   {$IFDEF LINUX}
   Result := getLinProcessList;
   {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  Result := getMacosProcessList;
+  {$ENDIF DARWIN}
 end;
 
 {$IFDEF WINDOWS}
@@ -2092,7 +2112,7 @@ begin
     end;
   end;
 
-  stringsplitByWhiteSpace(paramstr,paramlist);
+  stringsplitByWhiteSpace(paramstr,TStringlist(paramlist));
   //writeln('>->->'+filename+'='+ExpandFileName(filename));
   //writeln('>->->'+paramstr);
   //writeln('>->->'+CmdLinePasStr);
@@ -2267,7 +2287,7 @@ begin
                 {$IFDEF WINDOWS}
                 if GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode) and (lpExitCode = still_active) then
                 {$ENDIF WINDOWS}
-                {$IFDEF LINUX}
+                {$IFDEF UNIX}
                 if FpcProcess.Running then
                 {$ENDIF LINUX}
                 begin
@@ -2298,7 +2318,7 @@ begin
             else if GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode) and
               (lpExitCode <> still_active) then
 {$ENDIF WINDOWS}
-            {$IFDEF LINUX}
+            {$IFDEF UNIX}
               if not FpcProcess.Running then
             {$ENDIF LINUX}
               begin
@@ -2363,7 +2383,7 @@ begin
               ProcessMess;
               //sleep(50);
               sleep(1000);
-              {$IFDEF LINUX}
+              {$IFDEF UNIX}
               lpExitCode := FpcProcess.ExitStatus;
               {$ENDIF LINUX}
               {$IFDEF WINDOWS}
@@ -3813,7 +3833,7 @@ begin
       filename := CmdLinePasStr;
     end;
   end;
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   // we start as Invoker
   // we assume that this is a executable
   // we try it via createprocess (Tprocess)
@@ -4087,7 +4107,7 @@ begin
 end;
 
 {$ENDIF WINDOWS}
-{$IFDEF LINUX}
+{$IFDEF UNIX}
 function ExitSession(ExitMode: TExitMode; var Fehler: string): boolean;
 var
   exitcode : Integer;
@@ -4259,7 +4279,7 @@ begin
     Result := False;
 end;
 
-function SizeOfFile(FName: string): longint;
+function SizeOfFile(FName: string): int64;
 var
   SearchRec: TSearchRec;
 begin
@@ -4344,7 +4364,7 @@ begin
     {$IFDEF WINDOWS}
     Result := ExpandFileNameUTF8(tmp);
     {$ENDIF WINDOWS}
-    {$IFDEF LINUX}
+    {$IFDEF UNIX}
     Result := CleanAndExpandFilename(tmp);
     {$ENDIF LINUX}
   end
@@ -4366,7 +4386,7 @@ begin
   {$IFDEF WIN64}
   Result := true;
   {$ENDIF WIN64}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   Result := Is64BitSystemLin;
   {$ENDIF LINUX}
 end;
@@ -4381,7 +4401,7 @@ begin
   // not implemented
   Result := false;
   {$ENDIF WIN64}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   Result := false;
   if FpGeteuid = 0 then Result := true;
   {$ENDIF LINUX}
@@ -4430,7 +4450,7 @@ begin
   Result := user;
   {$ENDIF WIN32}
   {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   //Result := execShellCall('who | awk ''{print $1}'' | uniq','sysnative');
   //Result := getCommandResult('who | awk ''{print $1}'' | uniq');
   //Result := getCommandResult('/bin/bash -c who | awk ''''''{print $1}'''''' | uniq');
@@ -4816,7 +4836,7 @@ begin
   Result := FileCopyWin(sourcefilename, targetfilename, problem,
     DelayUntilRebootIfNeeded, RebootWanted);
   {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   problem := '';
   try
     // remove existing files to avoid problems like: Error: 26 : Text (code segment) file busy
@@ -4904,6 +4924,7 @@ function CheckFileExists(const FName: string; var ErrorInfo: string): boolean;
 var
   hFile: THandle = 0;
   retrycount: integer = 0;
+  widename : Widestring;
 
 begin
   while (not FileExists(FName)) and (retrycount < 10) do
@@ -4921,7 +4942,7 @@ begin
   begin
     LogDatei.DependentAdd('Warning: file not found :' + FName +
       ' - giving up', LLwarning);
-    {$IFDEF LINUX}
+    {$IFDEF UNIX}
     ErrorInfo := 'File Err. No. ' + IntToStr(fpgeterrno);
     Result := False;
     {$ENDIF LINUX}
@@ -4932,7 +4953,10 @@ begin
     Result := True;
   end;
   {$IFDEF WINDOWS}
-  hFile := CreateFile(PChar(FName), GENERIC_READ, FILE_SHARE_READ,
+  //hFile := CreateFile(PChar(FName), GENERIC_READ, FILE_SHARE_READ,
+  //  nil, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+  widename := UTF8ToUTF16(FName);
+  hFile := CreateFileW(PWChar(widename), GENERIC_READ, FILE_SHARE_READ,
     nil, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
   if hFile = Invalid_Handle_Value then
   begin
@@ -5135,6 +5159,8 @@ begin
   end;
 end;
 
+(*
+moved to osparser helper
 procedure stringsplitByWhiteSpace(const s: string; var Result: TXStringList);
 // produziert eine Stringliste aus den Teilstrings, die zwischen den Whitespace-Abschnitten stehen
 var
@@ -5150,6 +5176,7 @@ begin
     Result.add(item);
   end;
 end;
+*)
 
 
 procedure stringsplit(const s, delimiter: string; var Result: TXStringList);
@@ -7602,7 +7629,7 @@ begin
       ProcessMess;
     until deleted or (retries > maxretry);
   end;
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   exitcode := fplink(exist, new);
   if 0 = exitcode then result := true
   else
@@ -7649,7 +7676,7 @@ begin
     else
       LogDatei.log('Existing file '+new+' could not be  deleted,  Error: '+removeLineBreaks(SysErrorMessage(GetLastOSError)),LLError);
   end;
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   exitcode := fpsymlink(exist, new);
   if 0 = exitcode then result := true
   else
@@ -7702,7 +7729,7 @@ begin
   //exist:=StrAlloc (length(existingfilename)+1);
   //new:=StrAlloc (length(newfilename)+1);
 
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   exist:=PChar(existingfilename);
   new:=PChar(newfilename);
   exitcode := fprename(exist, new);
@@ -7745,7 +7772,7 @@ begin
   //StrDispose(new);
 end;
 
-{$IFDEF LINUX}
+{$IFDEF UNIX}
 function TuibFileInstall.chmod(mode : string;const FileName: string): boolean;
 begin
   mode := opsiUnquoteStr(mode,'"');
@@ -8272,7 +8299,7 @@ end;
 function TuibFileInstall.FileCheckDate
   (const Sourcefilename, Targetfilename: string; OverwriteIfEqual: boolean): boolean;
 (*
-{$IFDEF LINUX}
+{$IFDEF UNIX}
 begin
   result := FileCheckDate(Sourcefilename, Targetfilename,OverwriteIfEqual);
 end;
@@ -8280,7 +8307,7 @@ end;
 *)
 
 var
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   fstatRecordSource, fstatRecordTarget: stat ;
   uxtime1, uxtime2 : cardinal;
   {$ENDIF LINUX}
@@ -8292,103 +8319,123 @@ var
   datetime1, datetime2: TDateTime;
 
 begin
-  if not GetFileInfo(Sourcefilename, fRecordSource, ErrorInfo) then
-  begin
-    Result := False;
-    LogS := 'Error:  ' + SourceFileName + ' does not exist';
-    ;
-    LogDatei.log(LogS, LLError);
-  end
-  else if not GetFileInfo(Targetfilename, fRecordTarget, ErrorInfo) then
-  begin
-    Result := False;
-    LogS := 'Info:  ' + TargetFileName + ' does not exist ' +
-      SourceFileName + ' will be copied ';
-    ;
-    LogDatei.DependentAdd(LogS, LevelInfo);
-    LogDatei.NumberOfHints := LogDatei.NumberOfHints + 1;
-  end
-  else
-  begin
-    {$IFDEF LINUX}
-    if 0 <> fpstat(Sourcefilename,fstatRecordSource) then
+  try
+    if not GetFileInfo(Sourcefilename, fRecordSource, ErrorInfo) then
     begin
       Result := False;
-      LogS := 'Error: Could not stat ' + SourceFileName + ' : '+SysErrorMessage(fpgeterrno);
+      LogS := 'Error:  ' + SourceFileName + ' does not exist';
+      ;
       LogDatei.log(LogS, LLError);
     end
-    else uxtime1 := fstatRecordSource.mtime;
-
-    if 0 <> fpstat(Targetfilename,fstatRecordTarget) then
+    else if not GetFileInfo(Targetfilename, fRecordTarget, ErrorInfo) then
     begin
       Result := False;
-      LogS := 'Error: Could not stat ' + TargetFileName + ' : '+SysErrorMessage(fpgeterrno);
-      LogDatei.log(LogS, LLError);
-    end
-    else uxtime2 := fstatRecordTarget.mtime;
-    dateTime1 := UnixToDateTime(uxtime1);
-    dateTime2 := UnixToDateTime(uxtime2);
-    diffresult := abs(uxtime1 - uxtime2);
-    if diffresult < 2 Then diffresult := 0;
-    {$ENDIF LINUX}
-
-{$IFDEF WINDOWS}
-    filetime1 := fRecordSource.FindData.ftLastWriteTime;
-    filetime2 := fRecordTarget.FindData.ftLastWriteTime;
-
-    diffresult := CompareFileTime_WithTimeInterval(filetime1, filetime2, 2);
-
-      (*
-      -1  First file time is less than second file time.
-      0     First file time is similar to second file time.
-      +1  First file time is greater than second file time.
-      *)
-
-     (*
-    filetimetosystemtime(fRecordSource.FindData.ftLastWriteTime, systime1);
-    filetimetosystemtime(fRecordTarget.FindData.ftLastWriteTime, systime2);
-    *)
-
-    filetimetosystemtime(filetime1, systime1);
-    filetimetosystemtime(filetime2, systime2);
-
-    dateTime1 := SystemTimeToDateTime(sysTime1);
-    dateTime2 := SystemTimeToDateTime(sysTime2);
-    {$ENDIF WINDOWS}
-    LogS := '"' + TargetFileName + '" has LastWriteTime ' + DateTimeToStr(dateTime2);
-    LogDatei.DependentAdd(LogS, LevelComplete);
-    LogS := '"' + SourceFileName + '" has LastWriteTime ' + DateTimeToStr(dateTime1);
-    LogDatei.DependentAdd(LogS, LevelComplete);
-
-
-    //(Source-Date1 > Target-Date2) or ((Date2 = Date1) and OverwriteIfEqual)
-
-
-    //LogDatei.DependentAdd (inttostr (diffresult), LevelComplete);
-    if (diffresult = 1) or ((diffresult = 0) and OverwriteIfEqual) then
-    begin
-      Result := True;
-      LogS := 'Info:  Target "' + TargetFileName + '"  shall be overwritten: ';
-      if diffresult = 0 then
-        LogS := LogS + 'Its age is about the age of source  "'
-      else
-        LogS := LogS + 'It is older than ';
-      LogS := LogS + 'source  "' + SourceFileName + '"';
-      LogDatei.DependentAdd(LogS, LevelInfo);
+      LogS := 'Info:  ' + TargetFileName + ' does not exist ' +
+        SourceFileName + ' will be copied ';
+      ;
+      LogDatei.log(LogS, LevelInfo);
       LogDatei.NumberOfHints := LogDatei.NumberOfHints + 1;
     end
     else
     begin
-      Result := False;
-      LogS := 'Target "' + TargetFileName + '"  will not be replaced: ';
-      if diffresult = 0 then
-        LogS := LogS + 'It has about the same age as '
+      {$IFDEF LINUX}
+      if 0 <> fpstat(Sourcefilename,fstatRecordSource) then
+      begin
+        Result := False;
+        LogS := 'Error: Could not stat ' + SourceFileName + ' : '+SysErrorMessage(fpgeterrno);
+        LogDatei.log(LogS, LLError);
+      end
+      else uxtime1 := fstatRecordSource.mtime;
+
+      if 0 <> fpstat(Targetfilename,fstatRecordTarget) then
+      begin
+        Result := False;
+        LogS := 'Error: Could not stat ' + TargetFileName + ' : '+SysErrorMessage(fpgeterrno);
+        LogDatei.log(LogS, LLError);
+      end
+      else uxtime2 := fstatRecordTarget.mtime;
+      dateTime1 := UnixToDateTime(uxtime1);
+      dateTime2 := UnixToDateTime(uxtime2);
+      diffresult := abs(uxtime1 - uxtime2);
+      if diffresult < 2 Then diffresult := 0;
+      {$ENDIF LINUX}
+      {$IFDEF DARWIN}
+       LogDatei.log('not implemented for macos', LLError);
+      {$ENDIF DARWIN}
+
+  {$IFDEF WINDOWS}
+      //LogDatei.log('FileCheckDate 1', LLInfo);
+      filetime1 := fRecordSource.FindData.ftLastWriteTime;
+      //LogDatei.log('FileCheckDate 2', LLInfo);
+      filetime2 := fRecordTarget.FindData.ftLastWriteTime;
+      //LogDatei.log('FileCheckDate 3', LLInfo);
+
+      diffresult := CompareFileTime_WithTimeInterval(filetime1, filetime2, 2);
+      //LogDatei.log('FileCheckDate 4', LLInfo);
+
+        (*
+        -1  First file time is less than second file time.
+        0     First file time is similar to second file time.
+        +1  First file time is greater than second file time.
+        *)
+
+       (*
+      filetimetosystemtime(fRecordSource.FindData.ftLastWriteTime, systime1);
+      filetimetosystemtime(fRecordTarget.FindData.ftLastWriteTime, systime2);
+      *)
+
+      filetimetosystemtime(filetime1, systime1);
+      //LogDatei.log('FileCheckDate 5', LLInfo);
+      filetimetosystemtime(filetime2, systime2);
+      //LogDatei.log('FileCheckDate 6', LLInfo);
+
+      dateTime1 := SystemTimeToDateTime(sysTime1);
+      //LogDatei.log('FileCheckDate 7', LLInfo);
+      dateTime2 := SystemTimeToDateTime(sysTime2);
+      //LogDatei.log('FileCheckDate 8', LLInfo);
+      {$ENDIF WINDOWS}
+      LogS := '"' + TargetFileName + '" has LastWriteTime ' + DateTimeToStr(dateTime2);
+      LogDatei.log(LogS, LLInfo);
+      LogS := '"' + SourceFileName + '" has LastWriteTime ' + DateTimeToStr(dateTime1);
+      LogDatei.log(LogS, LLInfo);
+
+
+      //(Source-Date1 > Target-Date2) or ((Date2 = Date1) and OverwriteIfEqual)
+
+
+      //LogDatei.DependentAdd (inttostr (diffresult), LevelComplete);
+      if (diffresult = 1) or ((diffresult = 0) and OverwriteIfEqual) then
+      begin
+        Result := True;
+        LogS := 'Info:  Target "' + TargetFileName + '"  shall be overwritten: ';
+        if diffresult = 0 then
+          LogS := LogS + 'Its age is about the age of source  "'
+        else
+          LogS := LogS + 'It is older than ';
+        LogS := LogS + 'source  "' + SourceFileName + '"';
+        LogDatei.log(LogS, LLInfo);
+        LogDatei.NumberOfHints := LogDatei.NumberOfHints + 1;
+      end
       else
-        LogS := LogS + 'It is younger than ';
-      LogS := LogS + 'source  "' + SourceFileName + '"';
-      LogDatei.DependentAdd(LogS, LevelComplete);
+      begin
+        Result := False;
+        LogS := 'Target "' + TargetFileName + '"  will not be replaced: ';
+        if diffresult = 0 then
+          LogS := LogS + 'It has about the same age as '
+        else
+          LogS := LogS + 'It is younger than ';
+        LogS := LogS + 'source  "' + SourceFileName + '"';
+        LogDatei.log(LogS, LLInfo);
+      end;
     end;
-  end;
+    except
+     on e: exception do
+     begin
+       LogDatei.log('Exception: Error on FileCheckDate: ' + e.message,
+         LLerror);
+       Result := False;
+     end
+   end;
 end;
 
 
@@ -8844,7 +8891,7 @@ var
         LogDatei.log_prog('Found: '+SearchResult.Name + ' with attr:'+inttostr(SearchResult.Attr), LLDebug);
         LogDatei.log_prog('Found: '+SearchResult.Name + ' is SymLink by Attr: '+BoolToStr((SearchResult.Attr and faSymlink = faSymlink),true), LLDebug);
         LogDatei.log_prog('Found: '+SearchResult.Name + ' is SymLink by func: '+BoolToStr(FileIsSymlink(SourcePath+SearchResult.Name),true), LLDebug);
-        {$IFDEF LINUX}
+        {$IFDEF UNIX}
         LogDatei.log_prog('Found: '+SearchResult.Name + ' is SymLink by fpReadLink: '+BoolToStr((fpReadLink(SourcePath+SearchResult.Name) <> ''),true), LLDebug);
         {$ENDIF LINUX}
 
@@ -8852,7 +8899,7 @@ var
            // do not follow symlinks to directories
           //(SearchResult.Attr and faSymlink <> faSymlink) and // seems not work
            (not(FileIsSymlink(SourcePath+SearchResult.Name)) or followsymlinks) and         // work only in Linux
-           //{$IFDEF LINUX}
+           //{$IFDEF UNIX}
            //(fpReadLink(SourcePath+SearchResult.Name) = '') and
            //{$ENDIF LINUX}
           (SearchResult.Name <> '.') and (SearchResult.Name <> '..') then
@@ -9209,7 +9256,7 @@ var
       end
       else
       begin
-        {$IFDEF LINUX}
+        {$IFDEF UNIX}
         LogS := 'Warning: "' + 'Directory ' + OrigPath +
           '" cannot be deleted, error ' + SysErrorMessage(fpgeterrno) ;
         {$ENDIF LINUX}
@@ -10091,3 +10138,4 @@ end;
 
 
 end.
+

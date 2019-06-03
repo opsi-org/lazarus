@@ -53,217 +53,161 @@ msgstr "Ready to continue ?"
 
 #: oswebservice.rssendlog
 msgid "Sending log file to server ..."
-msgstr "Sending log file to server ..."
+msgstr ""
 
 #: tcentralform.beenden1.caption
-msgctxt "TCENTRALFORM.BEENDEN1.CAPTION"
+msgctxt "tcentralform.beenden1.caption"
 msgid "Exit"
-msgstr "Exit"
+msgstr ""
 
 #: tcentralform.buttongetclipboardtext.caption
 msgid "Clipboard --> Viewlist"
-msgstr "Clipboard --> Viewlist"
+msgstr ""
 
 #: tcentralform.buttonprocessmemo.caption
 msgid "Execute viewlist as script"
-msgstr "Execute viewlist as script"
+msgstr ""
 
 #: tcentralform.button_show_gui.caption
 msgid "Show GUI"
-msgstr "Show GUI"
+msgstr ""
 
 #: tcentralform.caption
 msgid "  opsi - script"
-msgstr "  opsi - script"
+msgstr ""
 
 #: tcentralform.combobox1.text
 msgid "ComboBox1"
-msgstr "ComboBox1"
+msgstr ""
 
 #: tcentralform.datei1.caption
 msgid "File"
-msgstr "File"
+msgstr ""
 
 #: tcentralform.edit1.text
 msgid "Edit1"
-msgstr "Edit1"
+msgstr ""
 
 #: tcentralform.edit2.text
 msgid "Edit2"
-msgstr "Edit2"
+msgstr ""
 
 #: tcentralform.hilfe1.caption
 msgid "Help"
-msgstr "Help"
+msgstr ""
 
 #: tcentralform.info1.caption
 msgid "Info .."
-msgstr "Info .."
+msgstr ""
 
 #: tcentralform.label1.caption
 msgctxt "tcentralform.label1.caption"
 msgid "Label1"
-msgstr "Label1"
+msgstr ""
 
 #: tcentralform.label2.caption
 msgid "Label2"
-msgstr "Label2"
+msgstr ""
 
 #: tcentralform.label4.caption
 msgid "Logfile:"
-msgstr "Logfile:"
+msgstr ""
 
 #: tcentralform.label5.caption
 msgid "Script:"
-msgstr "Script:"
+msgstr ""
 
 #: tcentralform.label6.caption
-msgctxt "TCENTRALFORM.LABEL6.CAPTION"
+msgctxt "tcentralform.label6.caption"
 msgid "LabelWinstVersion"
-msgstr "LabelWinstVersion"
+msgstr ""
 
 #: tcentralform.labelactivity.caption
 msgid "-"
-msgstr "-"
+msgstr ""
 
 #: tcentralform.labelwinstversion.caption
 msgctxt "tcentralform.labelwinstversion.caption"
 msgid "LabelWinstVersion"
-msgstr "LabelWinstVersion"
+msgstr ""
 
 #: tcentralform.panel2.caption
 msgid "Log-View:"
-msgstr "Log-View:"
+msgstr ""
 
 #: tcentralform.radiobuttonappendlogfile.caption
 msgid "Append"
-msgstr "Append"
+msgstr ""
 
 #: tcentralform.radiobuttonnewlogfile.caption
 msgid "New"
-msgstr "New"
+msgstr ""
 
 #: tcentralform.skript1.caption
 msgid "Open Script"
-msgstr "Open Script"
+msgstr ""
 
 #: tcentralform.speedbutton1.caption
 msgid "Select Script"
-msgstr "Select Script"
+msgstr ""
 
 #: tcentralform.speedbutton2.caption
 msgid "Start"
-msgstr "Start"
+msgstr ""
 
 #: tcentralform.speedbutton3.caption
 msgid "View Log"
-msgstr "View Log"
+msgstr ""
 
 #: tcentralform.speedbutton4.caption
 msgid "Hide GUI"
-msgstr "Hide GUI"
+msgstr ""
 
 #: tcentralform.speedbutton5.caption
 msgctxt "tcentralform.speedbutton5.caption"
 msgid "Exit"
-msgstr "Exit"
+msgstr ""
 
 #: tcentralform.toolbar1.caption
 msgid "ToolBar1"
-msgstr "ToolBar1"
-
-#: tdialogservicepassword.cancelbutton.caption
-msgid "Cancel"
-msgstr "Cancel"
-
-#: tdialogservicepassword.caption
-msgid " DialogServicePassword"
-msgstr " DialogServicePassword"
-
-#: tdialogservicepassword.labelpassword.caption
-msgid "Password"
-msgstr "Password"
-
-#: tdialogservicepassword.labelserviceurl.caption
-msgid "Opsi Service URL"
-msgstr "Opsi Service URL"
-
-#: tdialogservicepassword.labelusername.caption
-msgid "Username"
-msgstr "Username"
-
-#: tdialogservicepassword.okbutton.caption
-msgid "o.k."
-msgstr "o.k."
+msgstr ""
 
 #: tfbatchoberflaeche.caption
 msgid "opsi-script"
-msgstr "opsi-script"
+msgstr ""
 
 #: tfbatchoberflaeche.labelcommand.caption
 msgid "Command"
-msgstr "Command"
+msgstr ""
 
 #: tfbatchoberflaeche.labeldetail.caption
 msgid "Detail"
-msgstr "Detail"
+msgstr ""
 
 #: tfbatchoberflaeche.labelinfo.caption
 msgid "Info"
-msgstr "Info"
+msgstr ""
 
 #: tfbatchoberflaeche.labelproduct.caption
 msgid "LabelProductImage"
-msgstr "LabelProductImage"
+msgstr ""
 
 #: tfbatchoberflaeche.labelprogress.caption
 msgid "Activity"
-msgstr "Activity"
+msgstr ""
 
 #: tfbatchoberflaeche.labelversion.caption
 msgid "LabelVersion"
-msgstr "LabelVersion"
-
-#: tflistedit.caption
-msgid "opsi-script Parameter Editor"
 msgstr ""
-
-#: tflistedit.label1.caption
-msgid "Please Check and Correct the "
-msgstr ""
-
-#: tmymessagedlg.abortbtn.caption
-msgid "&Exit"
-msgstr "&Exit"
-
-#: tmymessagedlg.cancelbtn.caption
-msgid "&Cancel"
-msgstr "&Cancel"
-
-#: tmymessagedlg.caption
-msgid "opsi-script Message"
-msgstr "opsi-script Message"
-
-#: tmymessagedlg.nobtn.caption
-msgid "&No"
-msgstr "&No"
-
-#: tmymessagedlg.okbtn.caption
-msgid "&OK"
-msgstr "&OK"
-
-#: tmymessagedlg.yesbtn.caption
-msgid "&Yes"
-msgstr "&Yes"
 
 #: tsysteminfo.caption
-msgid "SystemInfo"
-msgstr "SystemInfo"
+msgid "Systeminfo"
+msgstr ""
 
 #: tsysteminfo.label1.caption
-msgctxt "TSYSTEMINFO.LABEL1.CAPTION"
+msgctxt "tsysteminfo.label1.caption"
 msgid "Label1"
-msgstr "Label1"
+msgstr ""
 
 #: tsysteminfo.labelwindowid.caption
 msgid "Do not localize: Window SystemInfo"

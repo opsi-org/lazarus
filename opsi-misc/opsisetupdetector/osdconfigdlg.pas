@@ -35,6 +35,7 @@ var
   FOSDConfigdlg: TFOSDConfigdlg;
     myconfigurationhints: TStringList;
 
+(*
 resourcestring
 
   // new for 4.1.0.2 ******************************************************************
@@ -65,7 +66,7 @@ resourcestring
   rscreateQuiet = 'Selects the Build mode Checkbox quiet.';
   rscreateBuild = 'Selects the Build mode Checkbox build.';
   rscreateInstall = 'Selects the Build mode Checkbox install.';
-
+*)
 
 implementation
 
@@ -78,13 +79,7 @@ begin
   TIPropertyGrid1.TIObject := myconfiguration;
   TIPropertyGrid1.CheckboxForBoolean := True;
   //TIPropertyGrid1.PropertyEditorHook;
-end;
-
-procedure TFOSDConfigdlg.FormCreate(Sender: TObject);
-begin
-
-    // Create Config Hints
-  myconfigurationhints := TStringList.Create;
+  myconfigurationhints.Clear;
   myconfigurationhints.Add('workbench_Path='+rsworkbench_Path);
   //myconfigurationhints.Add('preInstallLines = '+rsPreInstallLines);
   myconfigurationhints.Add('workbench_mounted='+rsworkbench_mounted);
@@ -102,6 +97,14 @@ begin
   myconfigurationhints.Add('CreateQuiet='+rsCreateQuiet);
   myconfigurationhints.Add('CreateBuild='+rsCreateBuild);
   myconfigurationhints.Add('CreateInstall='+rsCreateInstall);
+end;
+
+procedure TFOSDConfigdlg.FormCreate(Sender: TObject);
+begin
+
+    // Create Config Hints
+  myconfigurationhints := TStringList.Create;
+
 
 
 end;

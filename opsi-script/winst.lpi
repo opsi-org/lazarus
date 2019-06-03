@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="10"/>
+    <Version Value="11"/>
     <PathDelim Value="\"/>
     <General>
       <SessionStorage Value="InIDEConfig"/>
@@ -22,8 +22,8 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
-      <BuildNr Value="35"/>
-      <StringTable Comments="Compiled with Lazarus 1.8.4 / FPC 3.0.4" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst32.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst32.exe" ProductName="opsi-script" ProductVersion="4.0.7 / 4.1"/>
+      <RevisionNr Value="1"/>
+      <StringTable Comments="Compiled with Lazarus 2.0 / FPC 3.0.4" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst32.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst32.exe" ProductName="opsi-script" ProductVersion="4.1.0"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="default" Default="True"/>
@@ -48,7 +48,11 @@
           <CodeGeneration>
             <Checks>
               <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
             </Checks>
+            <VerifyObjMethodCallValidity Value="True"/>
           </CodeGeneration>
           <Linking>
             <Debugging>
@@ -62,12 +66,26 @@
           </Linking>
           <Other>
             <Verbosity>
+              <ShowHints Value="False"/>
               <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
             </Verbosity>
             <CompilerMessages>
-              <IgnoredMessages idx5058="True" idx5027="True"/>
+              <IgnoredMessages idx11031="True" idx11030="True" idx11017="True" idx11007="True" idx7039="True" idx6048="True" idx5062="True" idx5060="True" idx5058="True" idx5057="True" idx5039="True" idx5028="True" idx5027="True" idx5026="True" idx5024="True" idx5023="True" idx5003="True" idx4081="True" idx4080="True" idx4079="True" idx4055="True" idx4049="True" idx4047="True" idx4035="True" idx4015="True" idx3280="True" idx3274="True" idx3270="True" idx3189="True" idx3187="True" idx3126="True" idx3124="True" idx3123="True" idx2026="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dOPSIWINST -dWINDOWS -dOPSISCRIPT -dGUI -dOSDEBUG"/>
+            <CustomOptions Value="-dOPSIWINST
+-dWINDOWS
+-dOPSISCRIPT
+-dGUI
+-dOSDEBUG
+-dOSLOG"/>
+            <OtherDefines Count="6">
+              <Define0 Value="OPSIWINST"/>
+              <Define1 Value="WINDOWS"/>
+              <Define2 Value="OPSISCRIPT"/>
+              <Define3 Value="GUI"/>
+              <Define4 Value="OSDEBUG"/>
+              <Define5 Value="OSLOG"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item2>
@@ -114,7 +132,18 @@
             <CompilerMessages>
               <IgnoredMessages idx5058="True" idx5027="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dOPSIWINST -dWINDOWS -dOPSISCRIPT -dGUI"/>
+            <CustomOptions Value="-dOPSIWINST
+-dWINDOWS
+-dOPSISCRIPT
+-dGUI
+-dOSLOG"/>
+            <OtherDefines Count="5">
+              <Define0 Value="OPSIWINST"/>
+              <Define1 Value="WINDOWS"/>
+              <Define2 Value="OPSISCRIPT"/>
+              <Define3 Value="GUI"/>
+              <Define4 Value="OSLOG"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -124,15 +153,10 @@
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
-      <IgnoreBinaries Value="False"/>
-      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
-      <ExcludeFileFilter Value="*.(bak|ppu|ppw|o|so);*~;backup"/>
     </PublishOptions>
     <RunParams>
-      <local>
-        <FormatVersion Value="1"/>
-        <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
-      </local>
+      <FormatVersion Value="2"/>
+      <Modes Count="0"/>
     </RunParams>
     <RequiredPackages Count="2">
       <Item1>
@@ -142,7 +166,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="45">
+    <Units Count="55">
       <Unit0>
         <Filename Value="winst.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -262,88 +286,130 @@
         <IsPartOfProject Value="True"/>
       </Unit24>
       <Unit25>
-        <Filename Value="osxbase64.pas"/>
+        <Filename Value="osfuncwin3.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit25>
       <Unit26>
-        <Filename Value="osfuncwin3.pas"/>
+        <Filename Value="osregistry.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit26>
       <Unit27>
-        <Filename Value="osregistry.pas"/>
+        <Filename Value="..\external_libraries\indy\Lib\System\IdStream.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit27>
       <Unit28>
-        <Filename Value="..\external_libraries\indy\Lib\System\IdStream.pas"/>
+        <Filename Value="..\common\osencoding.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit28>
       <Unit29>
-        <Filename Value="..\common\osencoding.pas"/>
+        <Filename Value="..\common\oskeyboard.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit29>
       <Unit30>
-        <Filename Value="..\common\oskeyboard.pas"/>
+        <Filename Value="..\common\oscrypt.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit30>
       <Unit31>
-        <Filename Value="..\common\oscrypt.pas"/>
+        <Filename Value="..\common\superobject.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit31>
       <Unit32>
-        <Filename Value="..\common\superobject.pas"/>
+        <Filename Value="..\common\oslog.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit32>
       <Unit33>
-        <Filename Value="..\common\oslog.pas"/>
+        <Filename Value="..\common\oswebservice.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit33>
       <Unit34>
-        <Filename Value="..\common\oswebservice.pas"/>
+        <Filename Value="..\common\osxml.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit34>
       <Unit35>
-        <Filename Value="..\common\osxml.pas"/>
+        <Filename Value="..\external_libraries\indy\Lib\System\IdStreamVCL.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit35>
       <Unit36>
-        <Filename Value="..\external_libraries\indy\Lib\System\IdStreamVCL.pas"/>
+        <Filename Value="..\common\osjson.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit36>
       <Unit37>
-        <Filename Value="..\common\osjson.pas"/>
+        <Filename Value="osdefinedfunctions.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit37>
       <Unit38>
-        <Filename Value="osdefinedfunctions.pas"/>
+        <Filename Value="osswaudit.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit38>
       <Unit39>
-        <Filename Value="osswaudit.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit39>
-      <Unit40>
         <Filename Value="oslistedit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FListedit"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit39>
+      <Unit40>
+        <Filename Value="..\common\osparserhelper.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit40>
       <Unit41>
-        <Filename Value="..\common\osparserhelper.pas"/>
+        <Filename Value="..\common\osnetutil.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit41>
       <Unit42>
-        <Filename Value="..\common\osnetutil.pas"/>
+        <Filename Value="..\common\oswmi.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit42>
       <Unit43>
-        <Filename Value="..\common\oswmi.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit43>
-      <Unit44>
         <Filename Value="..\external_libraries\misc\utilwmi.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="Utilwmi"/>
+      </Unit43>
+      <Unit44>
+        <Filename Value="..\common\osprocesses.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit44>
+      <Unit45>
+        <Filename Value="..\common\osnetworkcalculator.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit45>
+      <Unit46>
+        <Filename Value="..\common\osregex.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit46>
+      <Unit47>
+        <Filename Value="..\common\osurlparser.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit47>
+      <Unit48>
+        <Filename Value="..\common\key_valueCollection.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit48>
+      <Unit49>
+        <Filename Value="..\common\osxmlsections.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit49>
+      <Unit50>
+        <Filename Value="..\common\osxmltdom.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit50>
+      <Unit51>
+        <Filename Value="..\common\oscheckbinarybitness.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit51>
+      <Unit52>
+        <Filename Value="oscalc.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit52>
+      <Unit53>
+        <Filename Value="changelog.txt"/>
+        <IsPartOfProject Value="True"/>
+      </Unit53>
+      <Unit54>
+        <Filename Value="..\common\oszip.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OsZip"/>
+      </Unit54>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -367,6 +433,7 @@
       <SmartLinkUnit Value="True"/>
       <Checks>
         <IOChecks Value="True"/>
+        <RangeChecks Value="True"/>
         <OverflowChecks Value="True"/>
         <StackChecks Value="True"/>
       </Checks>
@@ -374,7 +441,6 @@
     </CodeGeneration>
     <Linking>
       <Debugging>
-        <GenerateDebugInfo Value="False"/>
         <StripSymbols Value="True"/>
       </Debugging>
       <LinkSmart Value="True"/>
@@ -391,11 +457,16 @@
       <CompilerMessages>
         <IgnoredMessages idx5058="True" idx5027="True"/>
       </CompilerMessages>
-      <CustomOptions Value="-dOPSIWINST -dWINDOWS -dOPSISCRIPT -dGUI -dOPSI"/>
+      <CustomOptions Value="-dOPSIWINST
+-dWINDOWS
+-dOPSISCRIPT
+-dGUI
+-dOPSI
+-dOSLOG"/>
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="5">
+    <Exceptions Count="8">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -411,6 +482,15 @@
       <Item5>
         <Name Value="ERegistryException"/>
       </Item5>
+      <Item6>
+        <Name Value="EReadError"/>
+      </Item6>
+      <Item7>
+        <Name Value="EIdHTTPProtocolException"/>
+      </Item7>
+      <Item8>
+        <Name Value="Edecompressionerror"/>
+      </Item8>
     </Exceptions>
   </Debugging>
 </CONFIG>

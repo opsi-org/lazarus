@@ -22,7 +22,8 @@ program opsiscript;
 
 
 uses
-  lcltranslator, {$IFDEF UNIX} {$IFDEF UseCThreads}
+  //lcltranslator,
+  {$IFDEF UNIX} {$IFDEF UseCThreads}
   cthreads, {$ENDIF} {$ENDIF}
   Classes,
   ///LCLIntf,
@@ -36,7 +37,7 @@ uses
   oscalc,
   {$IFDEF GUI}
   Interfaces, // this includes the LCL widgetset
-  Forms,
+  //Forms,
   osbatchgui {FBatchOberflaeche},
   osmessagedialog,
   osshowsysinfo,
@@ -46,9 +47,9 @@ uses
   {$ELSE GUI}
   custapp,
   {$ENDIF GUI}
-  {$IFDEF LINUX}
-  osfunclin, osconf, opsihwbiosinfo, oslindesktopfiles
-  {$ENDIF LINUX}
+  {$IFDEF UNIX}
+  osfunclin, osconf, opsihwbiosinfo, oslindesktopfiles, osparserhelper,
+  {$ENDIF UNIX}
   {$IFDEF WINDOWS}
   zipinter in 'zipinter.pas',
   wispecfolder in 'wispecfolder.pas',
@@ -58,9 +59,9 @@ uses
   jclexcerpt,
   wilocaladmin,
   osfuncwin,
-  osfuncwin2
+  osfuncwin2,
   {$ENDIF}
-  ;
+  Forms;
 
 {$IFNDEF GUI}
 type
@@ -113,6 +114,7 @@ begin
   {$IFNDEF GUI}
   Application:=Topsiscript.Create(nil);
   {$ENDIF GUI}
+  Application.Scaled:=True;
   Application.Title:='opsi-script';
   Application.Initialize;
   {$IFDEF GUI}

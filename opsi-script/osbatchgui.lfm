@@ -7,7 +7,6 @@ object FBatchOberflaeche: TFBatchOberflaeche
   ClientHeight = 520
   ClientWidth = 782
   Color = cl3DDkShadow
-  DesignTimePPI = 144
   Font.Height = 14
   Font.Name = 'System'
   Font.Pitch = fpVariable
@@ -85,9 +84,9 @@ object FBatchOberflaeche: TFBatchOberflaeche
       end
       object LabelVersion: TLabel
         Left = 76
-        Height = 14
+        Height = 16
         Top = 16
-        Width = 80
+        Width = 85
         Alignment = taRightJustify
         Caption = 'LabelVersion'
         Font.Color = clBlack
@@ -131,7 +130,7 @@ object FBatchOberflaeche: TFBatchOberflaeche
         AutoSize = False
         Caption = 'Info'
         Font.Color = clBlack
-        Font.Height = 16
+        Font.Height = 17
         Font.Name = 'Times New Roman'
         Font.Pitch = fpVariable
         ParentColor = False
@@ -162,7 +161,7 @@ object FBatchOberflaeche: TFBatchOberflaeche
         AutoSize = False
         Caption = 'Detail'
         Font.Color = clBlack
-        Font.Height = 16
+        Font.Height = 17
         Font.Name = 'Times New Roman'
         Font.Pitch = fpVariable
         Font.Style = [fsItalic]

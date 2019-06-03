@@ -106,101 +106,6 @@ msgctxt "osdbasedata.rsworkbench_path"
 msgid "Path to the opsi_workbench"
 msgstr ""
 
-#: osdconfigdlg.rsconfig_filled
-msgctxt "osdconfigdlg.rsconfig_filled"
-msgid "Automatically detected. Do we have all needed configurations"
-msgstr ""
-
-#: osdconfigdlg.rscreatebuild
-msgctxt "osdconfigdlg.rscreatebuild"
-msgid "Selects the Build mode Checkbox build."
-msgstr ""
-
-#: osdconfigdlg.rscreateinstall
-msgctxt "osdconfigdlg.rscreateinstall"
-msgid "Selects the Build mode Checkbox install."
-msgstr ""
-
-#: osdconfigdlg.rscreatequiet
-msgctxt "osdconfigdlg.rscreatequiet"
-msgid "Selects the Build mode Checkbox quiet."
-msgstr ""
-
-#: osdconfigdlg.rscreateradioindex
-msgctxt "osdconfigdlg.rscreateradioindex"
-msgid "selects the Create mode Radiobutton."
-msgstr ""
-
-#: osdconfigdlg.rsemail_address
-msgctxt "osdconfigdlg.rsemail_address"
-msgid "Your email address, used for the changelog entry"
-msgstr ""
-
-#: osdconfigdlg.rsfullname
-msgctxt "osdconfigdlg.rsfullname"
-msgid "Your full name, used for the changelog entry"
-msgstr ""
-
-#: osdconfigdlg.rsimport_libraries
-msgctxt "osdconfigdlg.rsimport_libraries"
-msgid ""
-"List of opsi-script libraries that have to be imported.\n"
-"One per line. May be empty. Example:\n"
-"myinstallhelperlib.opsiscript\n"
-msgstr ""
-
-#: osdconfigdlg.rspathtoopsipackagebuilder
-msgctxt "osdconfigdlg.rspathtoopsipackagebuilder"
-msgid "Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573"
-msgstr ""
-
-#: osdconfigdlg.rspostinstalllines
-msgctxt "osdconfigdlg.rspostinstalllines"
-msgid ""
-"List of opsi-script code lines that should be included after the installation finished.\n"
-"One per line. May be empty. Example:\n"
-"comment \"Installation finished...\"\n"
-msgstr ""
-
-#: osdconfigdlg.rspostuninstalllines
-msgctxt "osdconfigdlg.rspostuninstalllines"
-msgid ""
-"List of opsi-script code lines that should be included after the uninstallation finished.\n"
-"One per line. May be empty. Example:\n"
-"comment \"Uninstall finished...\"\n"
-msgstr ""
-
-#: osdconfigdlg.rspreinstalllines
-msgctxt "osdconfigdlg.rspreinstalllines"
-msgid ""
-"List of opsi-script code lines that should be included before the installation starts. \n"
-"One per line. May be empty. Example: \n"
-"comment \"Start the installation ...\"\n"
-msgstr ""
-
-#: osdconfigdlg.rspreuninstalllines
-msgctxt "osdconfigdlg.rspreuninstalllines"
-msgid ""
-"List of opsi-script code lines that should be included before the uninstallation starts.\n"
-"One per line. May be empty. Example:\n"
-"comment \"Start the uninstallation ...\"\n"
-msgstr ""
-
-#: osdconfigdlg.rsregisterinfilemanager
-msgctxt "osdconfigdlg.rsregisterinfilemanager"
-msgid "Should this program be registred to the Filemanger (Explorer) context menu ?"
-msgstr ""
-
-#: osdconfigdlg.rsworkbench_mounted
-msgctxt "osdconfigdlg.rsworkbench_mounted"
-msgid "Automatically detected. Is the opsi workbench reachable at workbench_Path."
-msgstr ""
-
-#: osdconfigdlg.rsworkbench_path
-msgctxt "osdconfigdlg.rsworkbench_path"
-msgid "Path to the opsi_workbench"
-msgstr ""
-
 #: osdcreate.rscouldnotcreatedirectorywarning
 msgid "Could not create directory: "
 msgstr ""
@@ -342,116 +247,6 @@ msgid ""
 "Please install this Product and check for the Installdir and write it to the setup and the uninstall script\n"
 msgstr ""
 
-#: resultform.saskcreatepacket
-msgctxt "resultform.saskcreatepacket"
-msgid "Create packet %0:s?"
-msgstr ""
-
-#: resultform.serrextractmsifailed
-msgctxt "resultform.serrextractmsifailed"
-msgid "Error: extracting MSI from %s failed!"
-msgstr ""
-
-#: resultform.serrfldinstdirempty
-msgctxt "resultform.serrfldinstdirempty"
-msgid "Error: Field Install Directory is empty!"
-msgstr ""
-
-#: resultform.serrfldmsiproductcodeempty
-msgctxt "resultform.serrfldmsiproductcodeempty"
-msgid "Error: Field MSI Product Code is empty!"
-msgstr ""
-
-#: resultform.serrfldopsiproductidempty
-msgctxt "resultform.serrfldopsiproductidempty"
-msgid "Error: Field opsi Packet ID is empty!"
-msgstr ""
-
-#: resultform.serrfldopsiproductversionempty
-msgctxt "resultform.serrfldopsiproductversionempty"
-msgid "Error: Field Product Version is empty!"
-msgstr ""
-
-#: resultform.serrfldsetupempty
-msgctxt "resultform.serrfldsetupempty"
-msgid "Error: No setup file selected!"
-msgstr ""
-
-#: resultform.serrmsinotfound
-msgctxt "resultform.serrmsinotfound"
-msgid "Error: MSI file does not exist!"
-msgstr ""
-
-#: resultform.serrmstnotfound
-msgctxt "resultform.serrmstnotfound"
-msgid "Error: MST file does not exist in the MSI-directory!"
-msgstr ""
-
-#: resultform.serropsipackagebuildererrcode
-msgctxt "resultform.serropsipackagebuildererrcode"
-msgid "Error invoking OPSI Package Builder (error code=%0:d). Please remove quiet option to check for further information."
-msgstr ""
-
-#: resultform.serropsipackagebuilderstart
-msgctxt "resultform.serropsipackagebuilderstart"
-msgid "Error invoking opsi package builder"
-msgstr ""
-
-#: resultform.serrpacketbasedirnotfound
-msgctxt "resultform.serrpacketbasedirnotfound"
-msgid "Error: Packet BaseDir does not exist!"
-msgstr ""
-
-#: resultform.serrpacketdirexists
-msgctxt "resultform.serrpacketdirexists"
-msgid "Error: opsi packet folder %s already exists!"
-msgstr ""
-
-#: resultform.serrproductversioninvalid
-msgctxt "resultform.serrproductversioninvalid"
-msgid "Error: for Product Version only numbers allowed !"
-msgstr ""
-
-#: resultform.serrselectinstalltype
-msgctxt "resultform.serrselectinstalltype"
-msgid "First select setup type tab (MSI, Inno Setup ...) and fill out form"
-msgstr ""
-
-#: resultform.serrsetupfilenotfound
-msgctxt "resultform.serrsetupfilenotfound"
-msgid "Error: Setup file does not exist!"
-msgstr ""
-
-#: resultform.shelpfile
-msgctxt "resultform.shelpfile"
-msgid "languages\\Help.de.html"
-msgstr ""
-
-#: resultform.shelpheader
-msgctxt "resultform.shelpheader"
-msgid "opsi setup detector Help"
-msgstr ""
-
-#: resultform.sinfofinished
-msgctxt "resultform.sinfofinished"
-msgid "finished."
-msgstr ""
-
-#: resultform.slogfileinfo
-msgctxt "resultform.slogfileinfo"
-msgid "Logfile created: %s"
-msgstr ""
-
-#: resultform.smboxheader
-msgctxt "resultform.smboxheader"
-msgid "opsi setup detector"
-msgstr ""
-
-#: resultform.swarninstdiremptynodeinstall
-msgctxt "resultform.swarninstdiremptynodeinstall"
-msgid "Warning: Install Directory is empty, deinstall script cannot be patched!"
-msgstr ""
-
 #: tfnewdepdlg.caption
 msgid "opsi-setup-detector: Dependency Editor"
 msgstr ""
@@ -571,87 +366,6 @@ msgstr ""
 #: tfnewpropdlg.radiobuttonpropstring.caption
 msgctxt "tfnewpropdlg.radiobuttonpropstring.caption"
 msgid "Text"
-msgstr ""
-
-#: tfnewproperty.bitbtnadddep.caption
-msgctxt "tfnewproperty.bitbtnadddep.caption"
-msgid "Add Value"
-msgstr ""
-
-#: tfnewproperty.bitbtndeldep.caption
-msgctxt "tfnewproperty.bitbtndeldep.caption"
-msgid "Delete Value"
-msgstr ""
-
-#: tfnewproperty.caption
-msgid "FNewProperty"
-msgstr ""
-
-#: tfnewproperty.checkboxpropedit.caption
-msgctxt "tfnewproperty.checkboxpropedit.caption"
-msgid "Editable"
-msgstr ""
-
-#: tfnewproperty.checkboxpropmultival.caption
-msgctxt "tfnewproperty.checkboxpropmultival.caption"
-msgid "Multivalue"
-msgstr ""
-
-#: tfnewproperty.editpropname.text
-msgctxt "tfnewproperty.editpropname.text"
-msgid "Property Name"
-msgstr ""
-
-#: tfnewproperty.editpropnewval.text
-msgctxt "tfnewproperty.editpropnewval.text"
-msgid "New Value"
-msgstr ""
-
-#: tfnewproperty.groupbox1.caption
-msgctxt "tfnewproperty.groupbox1.caption"
-msgid "Property Type"
-msgstr ""
-
-#: tfnewproperty.label1.caption
-msgctxt "tfnewproperty.label1.caption"
-msgid ""
-"Please edit the dependency.\n"
-"Please note:\n"
-"You may may neither give a requested installation state or a requested action. A combination is not allowed.\n"
-msgstr ""
-
-#: tfnewproperty.label2.caption
-msgctxt "tfnewproperty.label2.caption"
-msgid "Property Name"
-msgstr ""
-
-#: tfnewproperty.label4.caption
-msgctxt "tfnewproperty.label4.caption"
-msgid "Possible Values"
-msgstr ""
-
-#: tfnewproperty.label5.caption
-msgctxt "tfnewproperty.label5.caption"
-msgid "Default Values"
-msgstr ""
-
-#: tfnewproperty.radiobuttonpropbool.caption
-msgctxt "tfnewproperty.radiobuttonpropbool.caption"
-msgid "Boolean"
-msgstr ""
-
-#: tfnewproperty.radiobuttonpropstring.caption
-msgctxt "tfnewproperty.radiobuttonpropstring.caption"
-msgid "String"
-msgstr ""
-
-#: tformhelp.caption
-msgid "FormHelp"
-msgstr ""
-
-#: tformhelp.panel1.caption
-msgctxt "tformhelp.panel1.caption"
-msgid "Panel1"
 msgstr ""
 
 #: tfosdconfigdlg.bitbtn1.caption
@@ -932,7 +646,7 @@ msgstr ""
 
 #: tresultform1.label63.caption
 msgctxt "tresultform1.label63.caption"
-msgid "Architecture Mode"
+msgid "Info: "
 msgstr ""
 
 #: tresultform1.label64.caption
@@ -961,7 +675,7 @@ msgstr ""
 
 #: tresultform1.label69.caption
 msgctxt "tresultform1.label69.caption"
-msgid "Architecture Mode"
+msgid "Info: "
 msgstr ""
 
 #: tresultform1.label70.caption
@@ -1067,6 +781,22 @@ msgstr ""
 
 #: tresultform1.menuitemknowninstallers.caption
 msgid "Known Installers"
+msgstr ""
+
+#: tresultform1.menuitemlang.caption
+msgid "Languages"
+msgstr ""
+
+#: tresultform1.menuitemlangde.caption
+msgid "de"
+msgstr ""
+
+#: tresultform1.menuitemlangen.caption
+msgid "en"
+msgstr ""
+
+#: tresultform1.menuitemlanges.caption
+msgid "es"
 msgstr ""
 
 #: tresultform1.menuitemstart.caption
@@ -1203,5 +933,15 @@ msgstr ""
 #: tresultform1.ticheckboxlicenserequired.caption
 msgctxt "tresultform1.ticheckboxlicenserequired.caption"
 msgid "License required"
+msgstr ""
+
+#: tresultform1.ticheckboxs1mst.caption
+msgctxt "tresultform1.ticheckboxs1mst.caption"
+msgid "MST allowed"
+msgstr ""
+
+#: tresultform1.ticheckboxs2mst.caption
+msgctxt "tresultform1.ticheckboxs2mst.caption"
+msgid "MST allowed"
 msgstr ""
 

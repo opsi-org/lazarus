@@ -1,0 +1,13 @@
+<?xml version="1.0" standalone="yes"?>
+<Settings>
+  <PROFIL>
+    <GROUP>Default</GROUP>
+    <KEY>DATABASESERVER</KEY>
+    <VALUE>K1S114</VALUE>
+  </PROFIL>
+  <PROFIL>
+    <GROUP>Default</GROUP>
+    <KEY>DATABASENAME</KEY>
+    <VALUE>KiskaAnif</VALUE>
+  </PROFIL>
+</Settings>

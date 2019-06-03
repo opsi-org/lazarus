@@ -23,8 +23,10 @@ type
   TArchitecture = (a32, a64, aUnknown);
   TArchitectureMode = (am32only_fix, am64only_fix, amBoth_fix, amSystemSpecific_fix,
     amSelectable);
+  // marker for add installers
   TKnownInstaller = (stAdvancedMSI, stInno, stInstallShield, stInstallShieldMSI,
-    stMsi, stNsis, st7zip, st7zipsfx, stInstallAware, stUnknown);
+    stMsi, stNsis, st7zip, st7zipsfx, stInstallAware, stMSGenericInstaller,
+    stWixToolset, stBoxStub, stSFXcab, stUnknown);
 
 
   TdetectInstaller = function(parent: TClass; markerlist: TStrings): boolean;
@@ -66,6 +68,7 @@ type
     FsetupFileSize: cardinal;     // MB
     Farchitecture: TArchitecture;
     FmsiId: string;
+    FmstAllowed: boolean;
     FMstFullFileName: string;
     FmstFileNamePath: string;
     FmstFileName: string;
@@ -75,6 +78,7 @@ type
     FinstallDirectory: string;
     Fmarkerlist: TStrings;
     Finfolist: TStrings;
+    Flink: string;
     FSoftwareVersion: string;
     Fwinbatch_del_argument: string;
     FinstallCommandLine: string;
@@ -100,6 +104,7 @@ type
     property setupFileSize: cardinal read FsetupFileSize write FsetupFileSize;
     property architecture: TArchitecture read Farchitecture write Farchitecture;
     property msiId: string read FmsiId write FmsiId;
+    property mstAllowed: boolean read FmstAllowed write FmstAllowed;
     property mstFullFileName: string read FMstFullFileName write SetMstFullFileName;
     property mstFileNamePath: string read FmstFileNamePath write FmstFileNamePath;
     property mstFileName: string read FmstFileName write FmstFileName;
@@ -109,6 +114,7 @@ type
     property installDirectory: string read FinstallDirectory write FinstallDirectory;
     property markerlist: TStrings read Fmarkerlist write SetMarkerlist;
     property infolist: TStrings read Finfolist write SetInfolist;
+    property link: string read Flink write Flink;
     property SoftwareVersion: string read FSoftwareVersion write FSoftwareVersion;
     property winbatch_del_argument: string read Fwinbatch_del_argument
       write Fwinbatch_del_argument;
@@ -345,6 +351,38 @@ var
   myconfiguration: TConfiguration;
   useRunMode: TRunMode;
 
+resourcestring
+
+  // new for 4.1.0.2 ******************************************************************
+  rsworkbench_Path = 'Path to the opsi_workbench';
+  //rsPreInstallLines = 'opsi-script code, that will be included before the start of the installation.';
+  rsworkbench_mounted = 'Automatically detected. Is the opsi workbench reachable at workbench_Path.';
+  rsconfig_filled = 'Automatically detected. Do we have all needed configurations';
+  rsregisterInFilemanager = 'Should this program be registred to the Filemanger (Explorer) context menu ?';
+  rsemail_address = 'Your email address, used for the changelog entry';
+  rsfullName = 'Your full name, used for the changelog entry';
+  rsimport_libraries = 'List of opsi-script libraries that have to be imported.' +
+    LineEnding + 'One per line. May be empty. Example:' + LineEnding +
+    'myinstallhelperlib.opsiscript';
+  rspreInstallLines = 'List of opsi-script code lines that should be included before the installation starts. '
+     + LineEnding + 'One per line. May be empty. Example: ' + LineEnding
+     + 'comment "Start the installation ..."';
+  rspostInstallLines = 'List of opsi-script code lines that should be included after the installation finished.'
+    + LineEnding + 'One per line. May be empty. Example:' + LineEnding +
+    'comment "Installation finished..."';
+  rspreUninstallLines = 'List of opsi-script code lines that should be included before the uninstallation starts.'
+    + LineEnding + 'One per line. May be empty. Example:' + LineEnding +
+    'comment "Start the uninstallation ..."';
+  rspostUninstallLines = 'List of opsi-script code lines that should be included after the uninstallation finished.'
+    + LineEnding + 'One per line. May be empty. Example:' + LineEnding +
+    'comment "Uninstall finished..."';
+  rspathToOpsiPackageBuilder = 'Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573';
+  rscreateRadioIndex = 'selects the Create mode Radiobutton.';
+  rscreateQuiet = 'Selects the Build mode Checkbox quiet.';
+  rscreateBuild = 'Selects the Build mode Checkbox build.';
+  rscreateInstall = 'Selects the Build mode Checkbox install.';
+
+
 
 implementation
 
@@ -434,6 +472,7 @@ begin
   FsetupFileSize := 0;
   Farchitecture := aUnknown;
   FmsiId := '';
+  FmstAllowed := false;
   FmstFullFileName := '';
   FmstFileNamePath := '';
   FmstFileName := '';
@@ -443,6 +482,7 @@ begin
   FinstallDirectory := 'unknown';
   Fmarkerlist.Clear;
   Finfolist.Clear;
+  Flink := '';
   FSoftwareVersion := '0.0';
   Fwinbatch_del_argument := '';
   FinstallCommandLine := '';
@@ -892,6 +932,7 @@ end;
 
 
 begin
+  // marker for add installers
   knownInstallerList := TStringList.Create;
   knownInstallerList.Add('AdvancedMSI');
   knownInstallerList.Add('Inno');
@@ -902,6 +943,10 @@ begin
   knownInstallerList.Add('7zip');
   knownInstallerList.Add('7zipsfx');
   knownInstallerList.Add('InstallAware');
+  knownInstallerList.Add('MSGenericInstaller');
+  knownInstallerList.Add('WixToolset');
+  knownInstallerList.Add('BoxStub');
+  knownInstallerList.Add('SFXcab');
   knownInstallerList.Add('Unknown');
 
 
@@ -1074,6 +1119,82 @@ begin
     uib_exitcode_function := 'isMsExitcodeFatal_short';
     detected := @detectedbypatternwithor;
   end;
+  // stMSGenericInstaller
+  with installerArray[integer(stMSGenericInstaller)] do
+  begin
+    description := 'generic MS Installer';
+    silentsetup := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    unattendedsetup := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    silentuninstall := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    unattendeduninstall := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '';
+    patterns.Add('layoutpromptrestartforcerestartnorestartpassivesilentsquietqhelph');
+    //infopatterns.Add('RunProgram="');
+    link := 'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
+    comment := '';
+    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    detected := @detectedbypatternwithor;
+  end;
+  // stWixToolset
+  with installerArray[integer(stWixToolset)] do
+  begin
+    description := 'Wix Toolset';
+    silentsetup := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    unattendedsetup := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    silentuninstall := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    unattendeduninstall := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '';
+    patterns.Add('WixBundle');
+    patterns.Add('Wix Toolset');
+    //infopatterns.Add('RunProgram="');
+    link := 'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
+    comment := '';
+    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    detected := @detectedbypatternwithand;
+  end;
+  // stBoxStub
+  with installerArray[integer(stBoxStub)] do
+  begin
+    description := 'MS Box Stup';
+    silentsetup := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    unattendedsetup := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    silentuninstall := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    unattendeduninstall := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '';
+    patterns.Add('boxstub.exe');
+    //patterns.Add('Wix Toolset');
+    //infopatterns.Add('RunProgram="');
+    link := 'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
+    comment := '';
+    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    detected := @detectedbypatternwithand;
+  end;
+  // stSFXcab
+  with installerArray[integer(stSFXcab)] do
+  begin
+    description := 'MS SFX Cab ';
+    silentsetup := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    unattendedsetup := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    silentuninstall := '/quiet /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    unattendeduninstall := '/passive /norestart /log "$LogDir$\$ProductId$.install_log.txt"';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := '';
+    patterns.Add('sfxcab.exe');
+    //patterns.Add('Wix Toolset');
+    //infopatterns.Add('RunProgram="');
+    link := 'https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options';
+    comment := '';
+    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    detected := @detectedbypatternwithand;
+  end;
+  // marker for add installers
 
   architectureModeList := TStringList.Create;
   architectureModeList.Add('32BitOnly - fix');

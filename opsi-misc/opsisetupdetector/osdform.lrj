@@ -17,7 +17,8 @@
 {"hash":142379231,"name":"tresultform1.labelloginfo.caption","sourcebytes":[76,97,98,101,108,76,111,103,73,110,102,111],"value":"LabelLogInfo"},
 {"hash":5884032,"name":"tresultform1.tabsheetsetup1.caption","sourcebytes":[49,46,32,83,101,116,117,112],"value":"1. Setup"},
 {"hash":143287130,"name":"tresultform1.label62.caption","sourcebytes":[68,101,116,101,99,116,101,100,32,83,101,116,117,112,32,116,121,112,101,58],"value":"Detected Setup type:"},
-{"hash":144189333,"name":"tresultform1.label63.caption","sourcebytes":[65,114,99,104,105,116,101,99,116,117,114,101,32,77,111,100,101],"value":"Architecture Mode"},
+{"hash":142732244,"name":"tresultform1.ticheckboxs1mst.caption","sourcebytes":[77,83,84,32,97,108,108,111,119,101,100],"value":"MST allowed"},
+{"hash":84202176,"name":"tresultform1.label63.caption","sourcebytes":[73,110,102,111,58,32],"value":"Info: "},
 {"hash":203510933,"name":"tresultform1.label50.caption","sourcebytes":[83,101,116,117,112,32,70,105,108,101],"value":"Setup File"},
 {"hash":2164469,"name":"tresultform1.bitbtnopenfile.caption","sourcebytes":[79,112,101,110,32,83,101,116,117,112,32,70,105,108,101],"value":"Open Setup File"},
 {"hash":80416576,"name":"tresultform1.label60.caption","sourcebytes":[77,83,84,32,70,105,108,101,32,32],"value":"MST File  "},
@@ -35,7 +36,8 @@
 {"hash":227120765,"name":"tresultform1.label81.caption","sourcebytes":[85,110,105,110,115,116,97,108,108,32,80,114,111,103,114,97,109],"value":"Uninstall Program"},
 {"hash":5884048,"name":"tresultform1.tabsheetsetup2.caption","sourcebytes":[50,46,32,83,101,116,117,112],"value":"2. Setup"},
 {"hash":143287130,"name":"tresultform1.label68.caption","sourcebytes":[68,101,116,101,99,116,101,100,32,83,101,116,117,112,32,116,121,112,101,58],"value":"Detected Setup type:"},
-{"hash":144189333,"name":"tresultform1.label69.caption","sourcebytes":[65,114,99,104,105,116,101,99,116,117,114,101,32,77,111,100,101],"value":"Architecture Mode"},
+{"hash":142732244,"name":"tresultform1.ticheckboxs2mst.caption","sourcebytes":[77,83,84,32,97,108,108,111,119,101,100],"value":"MST allowed"},
+{"hash":84202176,"name":"tresultform1.label69.caption","sourcebytes":[73,110,102,111,58,32],"value":"Info: "},
 {"hash":105689328,"name":"tresultform1.label70.caption","sourcebytes":[77,83,84,32,70,105,108,101,32],"value":"MST File "},
 {"hash":263043845,"name":"tresultform1.checkboxusemst1.caption","sourcebytes":[117,115,101,32,77,83,84,32,70,105,108,101],"value":"use MST File"},
 {"hash":235457365,"name":"tresultform1.bitbtnopenmst2.caption","sourcebytes":[79,112,101,110,32,77,83,84,32,70,105,108,101],"value":"Open MST File"},
@@ -111,5 +113,9 @@
 {"hash":2812976,"name":"tresultform1.filehelp.caption","sourcebytes":[38,72,101,108,112],"value":"&Help"},
 {"hash":44537540,"name":"tresultform1.menuitemabout.caption","sourcebytes":[38,65,98,111,117,116],"value":"&About"},
 {"hash":116154878,"name":"tresultform1.menuitemconfig.caption","sourcebytes":[67,111,110,102,105,103,117,114,97,116,105,111,110],"value":"Configuration"},
-{"hash":75811923,"name":"tresultform1.menuitemknowninstallers.caption","sourcebytes":[75,110,111,119,110,32,73,110,115,116,97,108,108,101,114,115],"value":"Known Installers"}
+{"hash":75811923,"name":"tresultform1.menuitemknowninstallers.caption","sourcebytes":[75,110,111,119,110,32,73,110,115,116,97,108,108,101,114,115],"value":"Known Installers"},
+{"hash":82521923,"name":"tresultform1.menuitemlang.caption","sourcebytes":[76,97,110,103,117,97,103,101,115],"value":"Languages"},
+{"hash":1726,"name":"tresultform1.menuitemlangen.caption","sourcebytes":[101,110],"value":"en"},
+{"hash":1701,"name":"tresultform1.menuitemlangde.caption","sourcebytes":[100,101],"value":"de"},
+{"hash":1731,"name":"tresultform1.menuitemlanges.caption","sourcebytes":[101,115],"value":"es"}
 ]}

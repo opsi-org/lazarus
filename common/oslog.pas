@@ -43,7 +43,7 @@ uses
   registry,
   shlobj,
 {$ENDIF WINDOWS}
-{$IFDEF LINUX}
+{$IFDEF UNIX}
   baseUnix,
 {$ENDIF LINUX}
   //lconvencoding,
@@ -511,7 +511,7 @@ begin
   // remove old partlog files
   files := TuibFileInstall.Create;
   try
-    files.alldelete(FStandardPartLogPath + FStandardPartLogFilename + '*', False, True, 0);
+    files.alldelete(FStandardPartLogPath +Pathdelim+ FStandardPartLogFilename + '*', False, True, 7);
   except
   end;
   files.Free;
@@ -1083,7 +1083,7 @@ begin
     end;
   end;
   try
-    files.alldelete(FStandardPartLogPath + FStandardPartLogFilename + '*', False, True, 0);
+    files.alldelete(FStandardPartLogPath +Pathdelim+ FStandardPartLogFilename + '*', False, True, 7);
   except
     //LogDatei.DependentAdd('not all files "' + TempPath + TempBatchdatei + '*"  could be deleted', LLInfo);
   end;
@@ -1583,9 +1583,12 @@ begin
 end;
 
 function TLogInfo.isConfidential(teststring : string) : boolean;
+var
+  index : integer;
 begin
   result := false;
-  if FConfidentialStrings.IndexOf(teststring) > -1 then result := true;
+  index := FConfidentialStrings.IndexOf(teststring);
+  if index > -1 then result := true;
 end;
 
 procedure TLogInfo.PartShrinkToMB(newsize: integer);
@@ -1709,7 +1712,7 @@ end;
 begin
   result := 'unknown'; //########################################
   {$IFDEF OPSIWINST}
-  {$IFDEF LINUX} result := osconf.computername; {$ENDIF LINUX}
+  {$IFDEF UNIX} result := osconf.computername; {$ENDIF LINUX}
   {$ENDIF OPSIWINST}
 end;
 {$ENDIF}

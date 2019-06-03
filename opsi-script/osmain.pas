@@ -46,12 +46,6 @@ unit osmain;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 508 $
-// $Author: oertel $
-// $Date: 2016-10-20 16:20:16 +0200 (Do, 20 Okt 2016) $
-//***************************************************************************
 
 
 
@@ -78,6 +72,13 @@ osfuncwin2,
   baseunix,
   oscrypt,
 {$ENDIF LINUX}
+{$IFDEF DARWIN}
+  osfunclin,
+  lispecfolder,
+  baseunix,
+  oscrypt,
+  //macosall,
+{$ENDIF DARWIN}
 {$IFDEF GUI}
   osmessagedialog,
   osbatchgui,
@@ -88,7 +89,7 @@ Controls,
 LCLIntf,
 Menus, Buttons, ComCtrls,
 LResources,
-lcltranslator,
+//lcltranslator,
 {$ENDIF GUI}
   osencoding,
   osconf,
@@ -99,7 +100,10 @@ lcltranslator,
   synautil,
   oswebservice,
   //wirequlist,
-  oslog, osparser, osfunc,
+  oslog,
+  osparser,
+  osparserhelper,
+  osfunc,
   //IdSysLog,
   strutils,
   inifiles;
@@ -385,7 +389,7 @@ begin
 end;
 
 function setBootmode(const bootmode: string; var problem: string): boolean;
-{$IFDEF LINUX}
+{$IFDEF UNIX}
 var
   myconf : TIniFile;
 {$ENDIF LINUX}
@@ -420,7 +424,7 @@ begin
     end;
   end;
   {$ENDIF}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   try
     myconf := TIniFile.Create(opsiscriptconf);
     myconf.WriteString('general','bootmode',bootmode);
@@ -439,7 +443,7 @@ end;
 
 
 procedure getBootmode(var bootmode: string; var fromRegistry: boolean);
-{$IFDEF LINUX}
+{$IFDEF UNIX}
 var
   myconf : TIniFile;
 {$ENDIF LINUX}
@@ -476,7 +480,7 @@ begin
     LogDatei.log('bootmode from environment: ' + bootmode, LLDebug);
   end;
 {$ENDIF}
-{$IFDEF LINUX}
+{$IFDEF UNIX}
   try
     myconf := TIniFile.Create(opsiscriptconf);
     bootmode := myconf.ReadString('general','bootmode','BKSTD');
@@ -651,7 +655,7 @@ begin
   Result := GetEnvironmentVariable(VarName);
 
   {$ENDIF WINDOWS}
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   Result := strpas(fpGetEnv(VarName));
   {$ENDIF LINUX}
 
@@ -816,7 +820,7 @@ begin
   LogDatei.log('ProcessNonZeroScript opsidata initialized', LLdebug2);
   Pfad := opsidata.getSpecialScriptPath;
   //only for backward compatibility and for special circumstances
-{$IFDEF LINUX}
+{$IFDEF UNIX}
   if not fileexists(depotdrive) then depotdrive := depotdrive_old;
 {$ENDIF LINUX}
   if Pfad = '' //this should be the normal case since winst 4.2
@@ -985,6 +989,8 @@ var
     i: integer;
     productState: TProductState;
     productActionRequest: TActionRequest;
+    excludedProducts : Tstringlist;
+    productscopy : Tstringlist;
   begin
     Result := False;
     LogDatei.LogProduktId:= False;
@@ -1041,6 +1047,21 @@ var
       opsidata.saveOpsiConf;
       // reload the new productlist
       Produkte := OpsiData.getListOfProducts;
+      if runprocessproducts then
+      begin
+        scriptlist.Delimiter:=',';
+        //LogDatei.log('Processing is limited to the following products: ' + scriptlist.DelimitedText, LLessential);
+        excludedProducts := Tstringlist.Create;
+        productscopy := Tstringlist.Create;
+        productscopy.Text:=Produkte.Text;
+        excludedProducts.Delimiter:=',';
+        //LogDatei.log('Found productOnClients: ' + Produkte.DelimitedText, LLDebug2);
+        stringlistintersection(productscopy, scriptlist, excludedProducts, Produkte);
+        //LogDatei.log('We will not process: ' + excludedProducts.DelimitedText, LLDebug2);
+        //LogDatei.log('Process possible: ' + Produkte.DelimitedText, LLessential);
+        excludedProducts.Free;
+        productscopy.Free;
+      end;
     end;
     Result := True;
     // no errors
@@ -1053,10 +1074,12 @@ var
   aktAction, orgAction : TAction;
   processProduct : boolean;
   ///val :   Integer;
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
   filehandle : cint;
   {$ENDIF LINUX}
   list : Tstringlist;
+  excludedProducts : Tstringlist;
+  productscopy : Tstringlist;
   opsiclientd : boolean;
 
 begin
@@ -1075,16 +1098,32 @@ begin
       Produkte.Free;
     Produkte := OpsiData.getListOfProducts;
 
-    LogDatei.log('Computername:' + computername, baselevel);
+    if runprocessproducts then
+    begin
+      scriptlist.Delimiter:=',';
+      LogDatei.log('Processing is limited to the following products: ' + scriptlist.DelimitedText, LLessential);
+      excludedProducts := Tstringlist.Create;
+      productscopy := Tstringlist.Create;
+      productscopy.Text:=Produkte.Text;
+      excludedProducts.Delimiter:=',';
+      LogDatei.log('Found productOnClients: ' + Produkte.DelimitedText, LLDebug2);
+      stringlistintersection(productscopy, scriptlist, excludedProducts, Produkte);
+      LogDatei.log('We will not process: ' + excludedProducts.DelimitedText, LLDebug2);
+      LogDatei.log('Process possible: ' + Produkte.DelimitedText, LLessential);
+      excludedProducts.Free;
+      productscopy.Free;
+    end;
+
+    LogDatei.log('Computername:' + computername, LLessential);
 
     if computername <> ValueOfEnvVar('computername') then
       LogDatei.log('Computername according to Environment Variable :' +
         ValueOfEnvVar('computername'),
-        baseLevel);
+        LLessential);
 
     if opsiserviceURL <> '' then
       LogDatei.log('opsi service URL ' + opsiserviceurl,
-        baseLevel);
+        LLessential);
 
     LogDatei.log('Depot path:  ' + depotdrive + depotdir, LLinfo);
     LogDatei.log('', LLinfo);
@@ -1378,7 +1417,7 @@ begin
     OpsiData.finishOpsiconf;
 
 
-    {$IFDEF LINUX}
+    {$IFDEF UNIX}
     opsiclientd := true;
     if '' = getcommandresult('ps --no-headers -C opsiclientd') then opsiclientd := false;
        if PerformExitWindows <> txrNoExit then
@@ -1718,16 +1757,16 @@ begin
 end;
 {$ENDIF WINDOWS}
 
-{$IFDEF LINUX}
+{$IFDEF UNIX}
 function freeLinuxAgentStart : boolean;
 var
   startkey : string;
   startcounter : integer;
   conffile : TIniFile;
-  list : TXStringlist;
+  list : TStringlist;
 begin
   result := false;
-  list := TXStringlist.Create;
+  list := TStringlist.Create;
   if FileExists('/etc/opsi-client-agent/opsi-script.conf') then
   begin
     conffile := TIniFile.Create('/etc/opsi-client-agent/opsi-script.conf');
@@ -1840,6 +1879,7 @@ begin
              + ParamDelim + 'sessionid <sessionid> ] ['
              + ParamDelim + 'usercontext <usercontext> ] ['
              + ParamDelim + 'productlist <productlist> | '
+             + ParamDelim + 'processproducts <productlist> | '
              + ParamDelim + 'loginscripts | '
              + ParamDelim + 'allloginscripts ] ['
              + ParamDelim + 'silent ]' +
@@ -1860,7 +1900,7 @@ begin
         650, 250);
       {$ELSE GUI}
       //nogui
-      writeln(ExtractFileName(ParamStr(0)) + ' Version: '+WinstVersion);
+      writeln(ExtractFileName(reencode(paramstr(0),'system')) + ' Version: '+WinstVersion);
       writeln('command line options are' + LineEnding +
         '' + ParamDelim + '? |' + ParamDelim + 'h[elp]' + LineEnding +
         //'	 ' + ParamDelim + 'pcprofil  [PCProfileFile  [[' + ParamDelim + 'logfile] Logfile ] ] [' + ParamDelim + 'parameter ParameterString]' + LineEnding +
@@ -1872,6 +1912,7 @@ begin
              + ParamDelim + 'sessionid <sessionid> ] ['
              + ParamDelim + 'usercontext <usercontext> ] ['
              + ParamDelim + 'productlist <productlist> | '
+             + ParamDelim + 'processproducts <productlist> | '
              + ParamDelim + 'loginscripts | '
              + ParamDelim + 'allloginscripts ] ['
              + ParamDelim + 'silent ]'  + LineEnding+
@@ -1998,7 +2039,7 @@ begin
 
           logSupportedEncodings;
 
-          {$IFDEF LINUX}
+          {$IFDEF UNIX}
           if not opsidata.linuxAgentActivated then
           begin
             if freeLinuxAgentStart then
@@ -2089,7 +2130,7 @@ begin
               opsiclientdconf := getSpecialFolder(CSIDL_PROGRAM_FILES) +
                 '\opsi.org\opsi-client-agent\opsiclientd\opsiclientd.conf';
               {$ENDIF WINDOWS}
-              {$IFDEF LINUX}
+              {$IFDEF UNIX}
               opsiclientdconf := '/etc/opsi-client-agent/opsiclientd/opsiclientd.conf';
               {$ENDIF LINUX}
               if FileExists(opsiclientdconf) then
@@ -2392,8 +2433,8 @@ begin
 
     for i := 1 to ParamCount do
     begin
-      teststr := ParamStr(i);
-      ParamListe.Add(ParamStr(i));
+      teststr := reencode(ParamStr(i),'system');
+      ParamListe.Add(teststr);
     end;
 
     // if paramcount > 0
@@ -2646,12 +2687,10 @@ begin
                     ProgramMode := pmInfo;
                     exit;
                   end;
-
                 end
 
                 else if (lowercase(r) = paramDelim + 'productlist') then
                 begin
-                  //stringsplit(parameter, ';', scriptlist);
                   Inc(i);
                   if i <= ParamListe.Count then
                   begin
@@ -2661,7 +2700,6 @@ begin
                       ProgramMode := pmInfo;
                       exit;
                     end;
-
                     r := opsiunQuotestr(trim(r), '"');
                     if (r = '') then
                     begin
@@ -2671,10 +2709,41 @@ begin
                     end
                     else
                       stringsplit(r, ',', scriptlist);
-                      runproductlist := True;
+                    // list of productIds now in scriptlist
+                    runproductlist := True;
                     Inc(i);
                   end
+                  else
+                  begin
+                    ProgramMode := pmInfo;
+                    exit;
+                  end;
+                end
 
+                else if (lowercase(r) = paramDelim + 'processproducts') then
+                begin
+                  Inc(i);
+                  if i <= ParamListe.Count then
+                  begin
+                    r := ParamListe.Strings[i - 1];
+                    if r[1] = ParamDelim then
+                    begin
+                      ProgramMode := pmInfo;
+                      exit;
+                    end;
+                    r := opsiunQuotestr(trim(r), '"');
+                    if (r = '') then
+                    begin
+                      runprocessproducts := False;
+                      ProgramMode := pmInfo;
+                      exit;
+                    end
+                    else
+                      stringsplit(r, ',', scriptlist);
+                    // list of productIds now in scriptlist
+                    runprocessproducts := True;
+                    Inc(i);
+                  end
                   else
                   begin
                     ProgramMode := pmInfo;
@@ -2792,7 +2861,7 @@ begin
               ProgramMode := pmInfo;
               exit;
             end;
-            SetDefaultLang(r);
+//            SetDefaultLang(r);
             Inc(i);
           end
           else
@@ -3015,7 +3084,7 @@ initialization
   opsiserviceSessionId := '';
   {$IFDEF GUI}
   try
-    GetDefaultLang;
+//    GetDefaultLang;
   except
   end;
   {$ENDIF GUI}

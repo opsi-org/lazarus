@@ -44,7 +44,7 @@ msgid "Sending log file to server ..."
 msgstr ""
 
 #: tcentralform.beenden1.caption
-msgctxt "TCENTRALFORM.BEENDEN1.CAPTION"
+msgctxt "tcentralform.beenden1.caption"
 msgid "Exit"
 msgstr ""
 
@@ -106,7 +106,7 @@ msgid "Script:"
 msgstr ""
 
 #: tcentralform.label6.caption
-msgctxt "TCENTRALFORM.LABEL6.CAPTION"
+msgctxt "tcentralform.label6.caption"
 msgid "LabelWinstVersion"
 msgstr ""
 
@@ -160,30 +160,6 @@ msgstr ""
 msgid "ToolBar1"
 msgstr ""
 
-#: tdialogservicepassword.cancelbutton.caption
-msgid "Cancel"
-msgstr ""
-
-#: tdialogservicepassword.caption
-msgid " DialogServicePassword"
-msgstr ""
-
-#: tdialogservicepassword.labelpassword.caption
-msgid "Password"
-msgstr ""
-
-#: tdialogservicepassword.labelserviceurl.caption
-msgid "Opsi Service URL"
-msgstr ""
-
-#: tdialogservicepassword.labelusername.caption
-msgid "Username"
-msgstr ""
-
-#: tdialogservicepassword.okbutton.caption
-msgid "o.k."
-msgstr ""
-
 #: tfbatchoberflaeche.caption
 msgid "opsi-script"
 msgstr ""
@@ -212,44 +188,12 @@ msgstr ""
 msgid "LabelVersion"
 msgstr ""
 
-#: tflistedit.caption
-msgid "opsi-script Parameter Editor"
-msgstr ""
-
-#: tflistedit.label1.caption
-msgid "Please Check and Correct the "
-msgstr ""
-
-#: tmymessagedlg.abortbtn.caption
-msgid "&Exit"
-msgstr ""
-
-#: tmymessagedlg.cancelbtn.caption
-msgid "&Cancel"
-msgstr ""
-
-#: tmymessagedlg.caption
-msgid "opsi-script Message"
-msgstr ""
-
-#: tmymessagedlg.nobtn.caption
-msgid "&No"
-msgstr ""
-
-#: tmymessagedlg.okbtn.caption
-msgid "&OK"
-msgstr ""
-
-#: tmymessagedlg.yesbtn.caption
-msgid "&Yes"
-msgstr ""
-
 #: tsysteminfo.caption
-msgid "SystemInfo"
+msgid "Systeminfo"
 msgstr ""
 
 #: tsysteminfo.label1.caption
-msgctxt "TSYSTEMINFO.LABEL1.CAPTION"
+msgctxt "tsysteminfo.label1.caption"
 msgid "Label1"
 msgstr ""
 

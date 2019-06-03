@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<unattend xmlns="urn:schemas-microsoft-com:unattend">
+    <!--
+	====================
+	WINDOWSPE SETTINGS
+	====================
+	The windowsPE configuration pass is used to configure settings specific to Windows PE as well as settings that apply to installation.
+	For example, you can specify the display resolution of Windows PE, where to save a log file, and other Windows PE-related settings.
+	-->
+    <settings pass="windowsPE">
+        <component name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <DiskConfiguration>
+                <WillShowUI>OnError</WillShowUI>
+                <Disk wcm:action="add">
+                    <DiskID>0</DiskID>
+                    <WillWipeDisk>false</WillWipeDisk>
+					<ModifyPartitions>
+						#@modify_partitions*#
+					</ModifyPartitions>
+                </Disk>
+            </DiskConfiguration>
+            <UserData>
+                <ProductKey>
+                    <WillShowUI>OnError</WillShowUI>
+                    <Key>#@productkey*#</Key>
+                </ProductKey>
+                <AcceptEula>true</AcceptEula>
+                <FullName>#@fullname*#</FullName>
+                <Organization>#@orgname*#</Organization>
+            </UserData>
+            <ImageInstall>
+                <OSImage>
+                    <InstallFrom>
+                        <MetaData wcm:action="add">
+                            <Key>/IMAGE/NAME</Key>
+                            <Value>#@imagename*#</Value>
+                        </MetaData>
+                    </InstallFrom>
+                    <InstallTo>
+                        <DiskID>0</DiskID>
+                        <PartitionID>#@windows_partition_number*#</PartitionID>
+                    </InstallTo>
+                    <WillShowUI>OnError</WillShowUI>
+                </OSImage>
+            </ImageInstall>
+        </component>
+        <component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <SetupUILanguage>
+                <UILanguage>#@winpe_uilanguage*#</UILanguage>
+                <WillShowUI>OnError</WillShowUI>
+            </SetupUILanguage>
+            <InputLocale>#@winpe_inputlocale*#</InputLocale>
+            <SystemLocale>#@system_language*#</SystemLocale>
+            <UILanguage>#@winpe_uilanguage*#</UILanguage>
+            <UILanguageFallback>#@winpe_uilanguage_fallback*#</UILanguageFallback>
+            <UserLocale>#@winpe_uilanguage*#</UserLocale>
+            <LayeredDriver>1</LayeredDriver>
+        </component>
+        <component name="Microsoft-Windows-PnPCustomizationsWinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <DriverPaths wcm:keyValue="1">
+                <PathAndCredentials wcm:keyValue="1" wcm:action="add">
+                    <Path wcm:keyValue="1">c:\drvpe</Path>
+                </PathAndCredentials>
+            </DriverPaths>
+        </component>
+    </settings>
+    <!--
+	=====================
+	GENERALIZE SETTINGS
+	=====================
+	The generalize pass of Windows Setup is used to create a Windows reference image that can be used throughout an organization.
+	A setting in the generalize pass enables you to automate the behavior for all deployments of this reference image.
+	In comparison, a setting associated with the specialize configuration pass enables you to override behavior for a single, specific deployment.
+	When a system is generalized, specific configuration data for a given installation of Windows is removed.
+	For example, during the generalize pass, the unique security ID (SID) and other hardware-specific settings are removed from the image.
+	The generalize configuration pass runs only when you use the sysprep /generalize command.
+	Answer file settings in generalize are applied to the system before sysprep generalization occurs. The system then shuts down.
+	-->
+    <!--
+	<settings pass="generalize">
+	</settings>
+	-->
+    <!--
+	=====================
+	SPECIALIZE SETTINGS
+	=====================
+	During the specialize pass of Windows Setup, machine-specific information for the image is applied.
+	For example, you can configure network settings, international settings, and domain information.
+	The specialize pass is used in conjunction with the generalize pass.
+	The generalize pass is used to create a Windows reference image that can be used throughout an organization.
+	From this basic Windows reference image, you can add further customizations that apply to different divisions
+	within an organization or apply to different installations of Windows.
+	The specialize pass is used to apply these specific customizations.
+	-->
+    <settings pass="specialize">
+        <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <ComputerName>#@pcname*#</ComputerName>
+            <UserAccounts>
+                <AdministratorPassword>
+                    <PlainText>true</PlainText>
+                    <Value>nt123</Value>
+                </AdministratorPassword>
+                <!--
+				<LocalAccounts>
+					<LocalAccount wcm:action="add">
+						<Password>
+							<PlainText>true</PlainText>
+							<Value>nt123</Value>
+						</Password>
+						<Description>opsiadm</Description>
+						<Group>Administrators</Group>
+						<Name>opsiadm</Name>
+						<DisplayName>opsiadm</DisplayName>
+					</LocalAccount>
+				</LocalAccounts>
+				-->
+            </UserAccounts>
+
+        </component>
+
+        <component name="Microsoft-Windows-RemoteAssistance-Exe" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <CreateEncryptedOnlyTickets>true</CreateEncryptedOnlyTickets>
+            <fAllowToGetHelp>true</fAllowToGetHelp>
+        </component>
+        <component name="Microsoft-Windows-International-Core" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <InputLocale>#@system_keyboard_layout*#</InputLocale>
+            <SystemLocale>#@system_language*#</SystemLocale>
+            <UILanguage>#@system_language*#</UILanguage>
+            <UILanguageFallback>#@system_language*#</UILanguageFallback>
+            <UserLocale>#@system_language*#</UserLocale>
+        </component>
+        <component name="Microsoft-Windows-Deployment" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <RunSynchronous>
+                <RunSynchronousCommand wcm:action="add">
+                    <Description>Enable Admin Account</Description>
+                    <Order>1</Order>
+                    <Path>cmd.exe /c net user administrator /active:yes</Path>
+                </RunSynchronousCommand>
+                <RunSynchronousCommand wcm:action="add">
+                    <Description>Passwd Admin Account</Description>
+                    <Order>2</Order>
+                    <Path>cmd.exe /c net user administrator nt123</Path>
+                </RunSynchronousCommand>
+
+            </RunSynchronous>
+        </component>
+        <component name="Networking-MPSSVC-Svc" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <DomainProfile_EnableFirewall>false</DomainProfile_EnableFirewall>
+            <PrivateProfile_EnableFirewall>false</PrivateProfile_EnableFirewall>
+            <PublicProfile_EnableFirewall>false</PublicProfile_EnableFirewall>
+        </component>
+        <component name="Security-Malware-Windows-Defender" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <DisableAntiSpyware>true</DisableAntiSpyware>
+        </component>
+    </settings>
+    <!--
+	=========================
+	OFFLINESERVICING SETTINGS
+	=========================
+	Use the offlineServicing pass to apply unattended Setup settings to an offline Windows image.
+	During this configuration pass, you can add language packs, updates, or other packages to the offline image.
+	The offlineServicing pass runs during Windows Setup. Setup extracts and installs the Windows image, and then executes Package Manager (Pkgmgr.exe).
+	Packages listed in the servicing section of the answer file are applied to the offline Windows image.
+	The Unattend.xml settings in the offlineServicing pass are applied to the offline Windows image.
+	Additionally, you can use Package Manager with an answer file to install packages.
+	-->
+    <settings pass="offlineServicing">
+        <component name="Microsoft-Windows-PnpCustomizationsNonWinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <DriverPaths>
+                <PathAndCredentials wcm:keyValue="1" wcm:action="add">
+                    <Path>c:\drv</Path>
+                </PathAndCredentials>
+            </DriverPaths>
+        </component>
+    </settings>
+    <!--
+	=====================
+	AUDITSYSTEM SETTINGS
+	=====================
+	The auditSystem pass is an optional pass that enables you to add additional device drivers and applications to the image.
+	This results in fewer required images because a reference image can be created with a minimal set of drivers.
+	The image can be updated with additional drivers during the audit process.
+	You can then test and resolve any operating system issues related to malfunctioning or incorrectly installed devices on the image.
+	For example, you can install additional language packs, updates, or other applications, such as Microsoft Office.
+	See Reseal mode in oobeSystem.
+	-->
+    <!--
+	<settings pass="auditSystem">
+	</settings>
+	-->
+    <!--
+	=====================
+	AUDITUSER SETTINGS
+	=====================
+	The auditUser pass is similar to the auditSystem pass.
+	However, the auditUser pass processes these settings after users have logged on, not before they have logged on.
+	Like the auditSystem pass, the auditUser pass is used to test the functionality of the Windows Vista image.
+	See Reseal mode in oobeSystem.
+	-->
+    <!--
+	<settings pass="auditUser">
+	</settings>
+	-->
+    <!--
+	=====================
+	OOBESYSTEM SETTINGS
+	=====================
+	The oobeSystem pass configures settings that are applied during the first-boot experience for end users, also called Windows Welcome.
+	oobeSystem settings are processed before a user first logs into Windows.
+	Out-of-Box-Experience (OOBE) runs the first time the user starts a new computer.
+	OOBE runs before the Windows shell or any additional software runs, and performs a small set of tasks necessary to configure and run Windows.
+	-->
+    <settings pass="oobeSystem">
+
+        <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+            <TimeZone>#@system_timezone*#</TimeZone>
+            <AutoLogon>
+                <Enabled>true</Enabled>
+                <LogonCount>1</LogonCount>
+                <Username>Administrator</Username>
+                <Password>
+                    <PlainText>true</PlainText>
+                    <Value>nt123</Value>
+                </Password>
+            </AutoLogon>
+            <FirstLogonCommands>
+                <SynchronousCommand wcm:action="add">
+                    <RequiresUserInput>false</RequiresUserInput>
+                    <Description>Opsi tasks</Description>
+                    <Order>1</Order>
+                    <CommandLine>cmd.exe /c #@winpe_partition_letter*#:\opsi\postinst.cmd</CommandLine>
+                </SynchronousCommand>
+            </FirstLogonCommands>
+
+            <OOBE>
+                <HideEULAPage>true</HideEULAPage>
+                <ProtectYourPC>3</ProtectYourPC>
+                <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
+                <HideLocalAccountScreen>true</HideLocalAccountScreen>
+                <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
+            </OOBE>
+
+        </component>
+
+    </settings>
+    <cpi:offlineImage cpi:source="wim:c:/temp/win10_/win10-x64/installfiles/sources/install.wim#Windows 10 Pro N" xmlns:cpi="urn:schemas-microsoft-com:cpi" />
+</unattend>

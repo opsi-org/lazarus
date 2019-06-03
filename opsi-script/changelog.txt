@@ -4,6 +4,94 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.1.0) experimental; urgency=low
+
+  * integration of new xml functions:
+    * new units in common: osxml, osxmltdom, osxmlsections
+    * new section type xml2
+    * osparser: Tuibinstscript: new method doxml2patch:
+      * OpenNode <node path : string>
+      * DeleteNode <node path : string>
+      * setNodeText <text : string>
+      * setAttribute <name : string>, <value:string>
+      * addAttribute <name : string>, <value:string>
+      * delAttribute <name : string>
+      * adNewNode <name : string>
+      * gotoParentNode
+    * getXml2AttributeValueByKey(<xml node:stringlist>,<key:string>): string
+    * getXml2Text(<xml node:stringlist>) : string
+    * getXml2DocumentFromFile(<filename:string>) : <xml-doc:stringlist>
+    * getXml2Document(<pure xml :stringlist>) : <xml-doc:stringlist>
+    * getXml2UniqueChildnodeByName
+    * xml2GetFirstChildNodeByName(<xml-doc:stringlist>,<node name:string>) : <xml node:stringlist>
+    * xml2NodeExistsByPathInXMLFile(myfilename, path: string; attributes_strict: boolean): boolean;
+
+  * new regex functions:
+  * isRegexMatch(<string>, <pattern>) : boolean
+  * getSubListByContainingRegex(<pattern>, <target list>) : stringlist
+  * getSubListByContainingRegex(<pattern list>, <target list>) : stringlist
+  * getRegexMatchList(<pattern>, <target list>) : stringlist
+  * getRegexMatchList(<pattern list>, <target list>) : stringlist
+  * removeFromListByContainingRegex(<pattern>, <target list>) : stringlist
+  * removeFromListByContainingRegex(<pattern list>, <target list>) : stringlist
+  * stringReplaceRegex(<string>, <pattern>, <replacement string>) : string
+  * stringReplaceRegexInList(<target list>, <pattern>, <replacement string>) : stringlist
+
+  * new network functions
+  * isValidIP4 (<ip4adr>) : boolean
+  * isValidIP4Network (<ip4adr>, <netmask>) : boolean
+  * isValidIP4Host (<ip4adr>, <netmask>) : boolean
+  * getIP4NetworkByAdrAndMask (<ip4adr>, <netmask>) : string
+  * getDefaultNetmaskByIP4adr (<ip4adr>) : string
+
+  * new url related functions
+  * parseUrl(<url string>) : stringlist
+  * createUrl(<urlcomponents list>) : string
+
+  * macos related:
+  * getos detect macos as 'macos'
+  * osparser: new function GetMacosVersionInfo : string
+  * osparser: new function getMacosVersionMap : stringlist
+
+  * misc:
+  * ExtractFileExtension (`<path>`) : string [W/L]
+  * ExtractFileName (`<path>`) : string [W/L]
+  * DirectoryExists (`path`[,<accessstr>]) : boolean [W/L]
+
+  * osparser: new (undocumented) command 'setDebug_prog = (true/false)'
+  * osshowsysinfo: caption is Systeminfo (instead of SystemInfo)
+  * reencode(paramstr(0),'system')
+  * remove some svn entries
+  * replace unit osxbase64 by fpc unit base64
+  * Release now compiled with activated Checks for IO, Range, Overflow and Stack
+  * unit oscrypt with {$RANGECHECKS OFF}
+  * osparserhelper: fix in geouterfunction
+  * osdefinedfunction: isvisiblelocalvar: serach optimization
+  * osfunc: checkfileexists: use widechsr/utf16 for filenames
+  * osparserhelper: new function stringlistintersection (get stringlist intersection)
+  * new cli parameter /processproducts productId [,productId ]*
+  * added unit oszip
+  * osparser: fileActionsMain: zipfile, unzipfile
+  * new in file sections: zipfile <file or dir> <zipfile>
+  * new in file sections: unzipfile <zipfile> <targetdir>
+  * osparser: fix in Hasminimumspace
+  * osparser: fix searchpath from %opsiScriptHelperPath% to %opsiScriptHelperPath%\lib; fixes #3975
+  * osparser: producestringlist: createstringlist: fix: empty strings as argument allowed
+    and createstringlist() gives empty list
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 23 01 2019:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.12.0.36) stable; urgency=low
+
+  * osdefinedfunctions: better errormessages
+  * osdefinedfunctions: complete redesign of local var
+  * osdefinedfunctions: now works also with recursive calls
+  * oslog: fix: cleanup old partlogs
+  * osparser: fix in md5sumfromfile (Linux)
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 13 Feb 2019:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.0.35) stable; urgency=low
 
   * osparser: producestringlist: getsublist: with whitespaces around numbers
@@ -11,7 +99,6 @@ opsi-winst/opsi-script (4.12.0.35) stable; urgency=low
   * oswebservice: getMapOfLoginscripts2Run: allscripts=false:
       we want to run the login script if installed
       or last successful action was uninstall
-
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 15 Jan 2019:15:00:00 +0200
 

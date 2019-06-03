@@ -68,7 +68,7 @@ endif
 
 #@preInstallLines1*#
 comment "Start setup program"
-ChangeDirectory "%SCRIPTPATH%"
+ChangeDirectory "%SCRIPTPATH%\files"
 ;----------------------------------------------
 Winbatch_install_1   #@installWaitForProc1*#
 ;----------------------------------------------

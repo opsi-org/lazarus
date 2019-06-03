@@ -76,8 +76,8 @@ begin
           // p
           aktReplacestr := patchlist.ValueFromIndex[i];
           // patch aktidentstr after each Newline
-          aktReplacestr := StringReplace(aktReplacestr, Lineending, Lineending + aktidentstr,
-            [rfReplaceAll, rfIgnoreCase]);
+          aktReplacestr := StringReplace(aktReplacestr, Lineending,
+            Lineending + aktidentstr, [rfReplaceAll, rfIgnoreCase]);
           aktline := StringReplace(aktline, patchlist.Names[i],
             aktReplacestr, [rfReplaceAll, rfIgnoreCase]);
         end;
@@ -121,8 +121,8 @@ begin
   str := aktProduct.SetupFiles[0].install_waitforprocess;
   if str <> '' then
     str := '/WaitForProcessEnding "' +
-           aktProduct.SetupFiles[0].install_waitforprocess +
-           '" /TimeOutSeconds 20'  ;
+      aktProduct.SetupFiles[0].install_waitforprocess +
+      '" /TimeOutSeconds 20';
   patchlist.add('#@installWaitForProc1*#=' + str);
   str := myconfiguration.postInstallLines.Text;
   if str <> '' then
@@ -144,8 +144,8 @@ begin
   str := aktProduct.SetupFiles[0].uninstall_waitforprocess;
   if str <> '' then
     str := '/WaitForProcessEnding "' +
-           aktProduct.SetupFiles[0].uninstall_waitforprocess +
-           '" /TimeOutSeconds 20'  ;
+      aktProduct.SetupFiles[0].uninstall_waitforprocess +
+      '" /TimeOutSeconds 20';
   patchlist.add('#@uninstallWaitForProc1*#=' + str);
   str := myconfiguration.postUnInstallLines.Text;
   if str <> '' then
@@ -165,8 +165,8 @@ begin
   str := aktProduct.SetupFiles[1].install_waitforprocess;
   if str <> '' then
     str := '/WaitForProcessEnding "' +
-           aktProduct.SetupFiles[1].install_waitforprocess +
-           '" /TimeOutSeconds 20'  ;
+      aktProduct.SetupFiles[1].install_waitforprocess +
+      '" /TimeOutSeconds 20';
   patchlist.add('#@installWaitForProc2*#=' + str);
   str := myconfiguration.postInstallLines.Text;
   if str <> '' then
@@ -188,8 +188,8 @@ begin
   str := aktProduct.SetupFiles[1].uninstall_waitforprocess;
   if str <> '' then
     str := '/WaitForProcessEnding "' +
-           aktProduct.SetupFiles[1].uninstall_waitforprocess +
-           '" /TimeOutSeconds 20'  ;
+      aktProduct.SetupFiles[1].uninstall_waitforprocess +
+      '" /TimeOutSeconds 20';
   patchlist.add('#@uninstallWaitForProc2*#=' + str);
   str := myconfiguration.postUninstallLines.Text;
   if str <> '' then
@@ -249,12 +249,14 @@ begin
     // setup file 1
     if FileExists(aktProduct.SetupFiles[0].setupFullFileName) then
       copyfile(aktProduct.SetupFiles[0].setupFullFileName,
-        clientpath + PathDelim + aktProduct.SetupFiles[0].setupFileName,
+        clientpath + PathDelim + 'files' + PathDelim +
+        aktProduct.SetupFiles[0].setupFileName,
         [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
     // setup file 2
     if FileExists(aktProduct.SetupFiles[1].setupFullFileName) then
       copyfile(aktProduct.SetupFiles[1].setupFullFileName,
-        clientpath + PathDelim + aktProduct.SetupFiles[1].setupFileName,
+        clientpath + PathDelim + 'files' + PathDelim +
+        aktProduct.SetupFiles[1].setupFileName,
         [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
 
     //osd-lib.opsiscript
@@ -377,8 +379,11 @@ begin
         textlist.Add('default: ' + myprop.StrDefault.Text);
       end;
     end;
+    textlist.SaveToFile(opsipath + pathdelim + 'control');
+    //FreeAndNil(textlist);
 
     // changelog
+    textlist.Clear;
     utcoffset := (GetLocalTimeOffset div 60) * 100 * -1;
     if utcoffset >= 0 then
       utcoffsetstr := '+';
@@ -394,11 +399,10 @@ begin
     textlist.Add('');
     textlist.Add('-- ' + myconfiguration.fullName + ' <' +
       myconfiguration.email_address + '> ' + FormatDateTime(
-      'ddd, dd mmm yyyy hh:nn:ss', LocalTimeToUniversal(now)) +
-      ' ' + utcoffsetstr);
+      'ddd, dd mmm yyyy hh:nn:ss', LocalTimeToUniversal(now)) + ' ' + utcoffsetstr);
     //mon, 04 Jun 12:00:00 + 0100
 
-    textlist.SaveToFile(opsipath + pathdelim + 'control');
+    textlist.SaveToFile(opsipath + pathdelim + 'changelog.txt');
     FreeAndNil(textlist);
     Result := True;
   except
@@ -420,29 +424,41 @@ begin
       rsStillExitsWarningDeleteOverwrite, mtWarning, mbOKCancel, '') = mrOk then
       goon := False
     else
-      DeleteDirectory(prodpath, False);
+    if not DeleteDirectory(prodpath, False) then
+    begin
+      LogDatei.log('Could not recursive delete dir: ' + prodpath, LLCritical);
+    end;
   if goon then
   begin
-    if not ForceDirectories(prodpath) then
+    if not DirectoryExists(prodpath) then
     begin
-      Logdatei.log('Could not create directory: ' + prodpath, LLCritical);
-      MessageDlg('opsi-setup-detector', rsCouldNotCreateDirectoryWarning +
-        prodpath, mtError, [mbOK], '');
-      goon := False;
+      if not ForceDirectories(prodpath) then
+      begin
+        Logdatei.log('Could not create directory: ' + prodpath, LLCritical);
+        MessageDlg('opsi-setup-detector', rsCouldNotCreateDirectoryWarning +
+          prodpath, mtError, [mbOK], '');
+        goon := False;
+      end;
     end;
-    if not ForceDirectories(clientpath) then
+    if not DirectoryExists(clientpath) then
     begin
-      Logdatei.log('Could not create directory: ' + clientpath, LLCritical);
-      MessageDlg('opsi-setup-detector', rsCouldNotCreateDirectoryWarning +
-        clientpath, mtError, [mbOK], '');
-      goon := False;
+      if not ForceDirectories(clientpath) then
+      begin
+        Logdatei.log('Could not create directory: ' + clientpath, LLCritical);
+        MessageDlg('opsi-setup-detector', rsCouldNotCreateDirectoryWarning +
+          clientpath, mtError, [mbOK], '');
+        goon := False;
+      end;
     end;
-    if not ForceDirectories(opsipath) then
+    if not DirectoryExists(opsipath) then
     begin
-      Logdatei.log('Could not create directory: ' + opsipath, LLCritical);
-      MessageDlg('opsi-setup-detector', rsCouldNotCreateDirectoryWarning +
-        opsipath, mtError, [mbOK], '');
-      goon := False;
+      if not ForceDirectories(opsipath) then
+      begin
+        Logdatei.log('Could not create directory: ' + opsipath, LLCritical);
+        MessageDlg('opsi-setup-detector', rsCouldNotCreateDirectoryWarning +
+          opsipath, mtError, [mbOK], '');
+        goon := False;
+      end;
     end;
   end;
   Result := goon;
@@ -560,8 +576,8 @@ begin
     on E: Exception do
     begin
       errorstate := True;
-      LogDatei.log('Exception while calling ' + buildCallbinary + ' Message: ' +
-        E.message, LLerror);
+      LogDatei.log('Exception while calling ' + buildCallbinary +
+        ' Message: ' + E.message, LLerror);
       ShowMessage(sErrOpsiPackageBuilderStart);
     end;
   end;

@@ -33,6 +33,7 @@ x86_64-linux/
 
 # Application bundle for Mac OS
 *.app/
+opsi-script/opsi-script
 /opsi-script/*.obj
 
 # automated build spec file from create_source.sh

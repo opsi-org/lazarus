@@ -9,13 +9,13 @@ uses
   utilwmi,
   contnrs;
 
-function osGetWMI(WMIClass: string; WMIPropertyList: TStrings;
+function osGetWMI(WMINamespace : String ;WMIClass: string; WMIPropertyList: TStrings;
   WMICondition: string; var WMIResultList: TStringList;
   var ErrorMsg: string): boolean;
 
 implementation
 
-function osGetWMI(WMIClass: string; WMIPropertyList: TStrings;
+function osGetWMI(WMINamespace : String ;WMIClass: string; WMIPropertyList: TStrings;
   WMICondition: string; var WMIResultList: TStringList;
   var ErrorMsg: string): boolean;
 var
@@ -33,9 +33,9 @@ begin
         PropNames[i] := WMIPropertyList.strings[i];
       end;
       if (WMICondition = '') and (WMIPropertyList.Count = 0) then
-        WMIResult := GetWMIInfoClass(WMIClass)
+        WMIResult := GetWMIInfoClass(WMINamespace,WMIClass)
       else
-        WMIResult := GetWMIInfo(WMIClass, PropNames,WMICondition,Request);
+        WMIResult := GetWMIInfo(WMINamespace,WMIClass, PropNames,WMICondition,Request);
       WMIResultList.Clear;
       for i := 0 to Pred(WMIResult.Count) do
       begin

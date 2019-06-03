@@ -51,6 +51,8 @@ type
     Panel7: TPanel;
     RadioButtonPropString: TRadioButton;
     RadioButtonPropBool: TRadioButton;
+    procedure BitBtn1Click(Sender: TObject);
+    procedure BitBtn2Click(Sender: TObject);
     procedure BitBtnAddPropClick(Sender: TObject);
     procedure BitBtnDelPropClick(Sender: TObject);
     procedure CheckBoxPropMultiValChange(Sender: TObject);
@@ -59,6 +61,7 @@ type
   private
 
   public
+    procedure initFields;
 
   end;
 
@@ -79,6 +82,18 @@ uses
   osdform;
 
 { TFNewPropDlg }
+
+procedure TFNewPropDlg.initFields;
+begin
+  EditPropName.Text := 'PropertyName';
+  MemoDesc.Lines.Clear;
+  RadioButtonPropBool.Checked:=true;
+  CheckBoxPropEdit.Checked:= false;
+  CheckBoxPropMultiVal.Checked:=false;
+  EditPropNewVal.Text := 'New Value';
+  ListBoxPropPosVal.Clear;
+  ListBoxPropDefVal.Clear;
+end;
 
 procedure TFNewPropDlg.RadioButtonPropStringChange(Sender: TObject);
 begin
@@ -162,6 +177,16 @@ begin
     MessageDlg('opsi-setup-detector: Property Editor: Error',
       'property value: ' + EditPropNewVal.Text + rsDuplicateWarning,
       mtError, [mbOK], '');
+
+end;
+
+procedure TFNewPropDlg.BitBtn2Click(Sender: TObject);
+begin
+
+end;
+
+procedure TFNewPropDlg.BitBtn1Click(Sender: TObject);
+begin
 
 end;
 
