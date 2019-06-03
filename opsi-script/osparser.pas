@@ -13246,12 +13246,12 @@ else if LowerCase (s) = LowerCase ('getSwauditInfoList')
    else if LowerCase(s) = LowerCase ('getHWBiosInfoMap')
    then
    Begin
-   //   if r = '' then
-        Begin
+      {$IFDEF DARWIN}
+        LogDatei.log('Not implemented for macOS',LLError);
+      {$ELSE}
         syntaxcheck := true;
-        // temporary ? disabled do 15.02.2019 14:59:06
-        //list.AddStrings(getHwBiosShortlist);
-       end;
+        list.AddStrings(getHwBiosShortlist);
+      {$ENDIF}
     end
 
    else
