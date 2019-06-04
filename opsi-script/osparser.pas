@@ -47,6 +47,7 @@ oslocaladmin,
 {$ENDIF WIN64}
 {$ENDIF}
 {$IFDEF UNIX}
+oslinmount,
 lispecfolder,
 osfunclin,
 oslindesktopfiles,
@@ -9825,7 +9826,7 @@ begin
     commandline := FileName + ' ' +trim(Parameters);
 
     LogDatei.log ('ShellCall Executing: ' + commandline, LLNotice+logleveloffset);
-    if not RunCommandAndCaptureOut
+    if not osfunclin.RunCommandAndCaptureOut
        (commandline,
         true,
         output, report, SW_HIDE, localExitCode, false, logleveloffset)
@@ -22828,6 +22829,8 @@ begin
   {$ENDIF GUI}
   {$IFDEF UNIX}
   lispecfolder.retrieveFolders4Linux;
+  if not isMounted(depotdir) then
+    mount_depotshare(depotDir, opsiservicePassword);
   {$ENDIF LINUX}
   if Scriptdatei <> ''
   then
@@ -22966,6 +22969,13 @@ begin
   tmpstr :=  tmpstr+', Edition: '+getProductInfoStrByNum(OSGetProductInfoNum);
   LogDatei.log (tmpstr, LLessential);
   {$ENDIF WINDOWS}
+  {$IFDEF LINUX}
+  tmpstr :=  getLinuxDistroName+ ' '+ getLinuxDistroDescription;
+  if Is64BitSystem then
+    tmpstr :=  tmpstr+' 64 Bit'
+  else tmpstr :=  tmpstr+' 32 Bit';
+  LogDatei.log (tmpstr, LLessential);
+  {$ENDIF LINUX}
 
   if opsidata <> nil then
   begin

@@ -524,28 +524,33 @@ function GetTempPath: string;
 var
   testpassed: boolean;
   teststr : string;
+  mytemppath : string;
 begin
+  mytemppath := StandardTempPath;
+  {$IFDEF LINUX}
+  if getLinuxDistroName = 'Univenion' then  mytemppath := UniventionTempPath;
+  {$ENDIF}
   testpassed := False;
-  if (StandardTempPath <> '') and SysUtils.ForceDirectories(StandardTempPath) then
+  if (mytemppath <> '') and SysUtils.ForceDirectories(mytemppath) then
   begin
-    if logdatei <> nil then logdatei.log('Testing as temp path: '+StandardTempPath,LLdebug);
+    if logdatei <> nil then logdatei.log('Testing as temp path: '+mytemppath,LLdebug);
     testpassed := True;
-    teststr := StandardTempPath + 'testing_write_privilege_for_opsiscript';
+    teststr := mytemppath + 'testing_write_privilege_for_opsiscript';
     if not fileexists(teststr) then
     begin
       if not SysUtils.ForceDirectories(teststr) or not RemoveDir(teststr) then
       begin
         testpassed := False;
-        if logdatei <> nil then logdatei.log('Failed:Testing as temp path: '+StandardTempPath,LLwarning);
+        if logdatei <> nil then logdatei.log('Failed:Testing as temp path: '+mytemppath,LLwarning);
       end
       else
-        if logdatei <> nil then logdatei.log('Succseeded: Testing as temp path: '+StandardTempPath,LLdebug);
+        if logdatei <> nil then logdatei.log('Succseeded: Testing as temp path: '+mytemppath,LLdebug);
     end;
     teststr := '';
   end;
 
   if testpassed then
-    TempPath := StandardTempPath
+    TempPath := mytemppath
   else
     TempPath := ValueOfEnvVar('TEMP') + PATHSEPARATOR;
   SysUtils.ForceDirectories(TempPath);
@@ -558,7 +563,7 @@ begin
     {$ENDIF WINDOWS}
     SysUtils.ForceDirectories(TempPath);
   end;
-  if logdatei <> nil then logdatei.log('Final: Using as temp path: '+StandardTempPath,LLdebug);
+  if logdatei <> nil then logdatei.log('Final: Using as temp path: '+TempPath,LLdebug);
   result := TempPath;
 end;
 

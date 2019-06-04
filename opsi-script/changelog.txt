@@ -8,6 +8,14 @@ opsi-winst/opsi-script (4.12.1.4) experimental; urgency=low
 
   * osfunc: more logging around gettemppath
   * osparser: enabled getHWBiosInfoMap again
+  Linux only:
+    * osfunclin: getpackagelock: fix memory leak
+    * osfunclin: new: function getLinuxDistroName : string;
+    * osfunclin: new: function getLinuxDistroRelease : string;
+    * osfunclin: new: function getLinuxDistroDescription
+    * osmain: GetTempPath: if Univention temppath is /var/tmp
+    * osparser: createandprocessscript: check for depotmount
+    * osparser: createandprocessscript: give some distro infos in log
 
 -- Detlef Oertel <d.oertel@uib.de>  Mon, 03 Jun 2019:15:00:00 +0200
 
