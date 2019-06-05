@@ -1,4 +1,10 @@
 (*
+uibtime (4.1.1.48-1) stable; urgency=low
+
+ * uibdata: quibsoll sql: select * from uib soll order by Jahr,monat ; fixes missing 2019 entries
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 05 Jun 2019 15:00:00 +0000
+
 uibtime (4.1.1.47-1) stable; urgency=low
 
  * ontop: TimerProjektzeitTimer: more debugging output to find 'invalid floatingpoint operation' (again)
