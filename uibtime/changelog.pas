@@ -1,4 +1,10 @@
 (*
+uibtime (4.1.1.49-1) stable; urgency=low
+
+ * uib2erp: better handling of projects (time_h_is_quota > 0)
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 05 Jun 2019 15:00:00 +0000
+
 uibtime (4.1.1.48-1) stable; urgency=low
 
  * uibdata: quibsoll sql: select * from uib soll order by Jahr,monat ; fixes missing 2019 entries

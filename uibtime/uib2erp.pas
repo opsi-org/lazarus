@@ -230,7 +230,7 @@ begin
     //QueryProjektzeit.databasename :='uibtime';
     QueryProjektzeit.SQL.Clear;
     QueryProjektzeit.sql.Add(' select time_h, acc_per_monthnum, projectstart, ');
-    QueryProjektzeit.sql.Add('    reportrequired, accountingrequired ');
+    QueryProjektzeit.sql.Add('    reportrequired, accountingrequired , time_h_is_quota');
     QueryProjektzeit.sql.Add('    from uiballevent');
     QueryProjektzeit.sql.Add('    where (event = :suchevent)');
     QueryProjektzeit.parambyname('suchevent').AsString := suchevent;
@@ -251,19 +251,6 @@ begin
     begin
       // get total free hours
       total := QueryProjektzeit.FieldByName('time_h').AsFloat;
-      (*
-      total_min := round(abs((total - trunc(total)) * 60));
-      hours := trunc(Total);
-      minutes := Round(frac(Total) * 60);
-      if minutes >= 60 then
-      begin
-        minutes := minutes - 60;
-        hours := hours + 1;
-      end;
-      //years := hours div 8760;
-      //hours := hours mod 8760;
-      //month :=
-      *)
       totaltime := total / 24;
       //totaltime := EncodeTimeInterval(hours, minutes, 0, 0);
       // basemonth and projektstart
@@ -289,82 +276,6 @@ begin
       monthsmod := acc_per_monthnum_int mod 12;
       monthdiv := acc_per_monthnum_int div 12;
       // calculate last interval boundaries
-      (*
-      // look first for end version
-      decodeDate(querystartdt, year, month, day);
-      decodeDate(projektstart, startyear, startmonth, startday);
-      helperint := month - ((12 * (year - startyear) + month - startmonth) mod
-        monthsmod);
-      if helperint < 1 then
-      begin
-        endyeari := year - 1;
-        endmonthi := 12 + helperint;
-      end
-      else
-      begin
-        endmonthi := helperint;
-        endyeari := year;
-      end;
-      if endmonthi > 12 then
-      begin
-        endmonthi := endmonthi - 12;
-        endyeari := endyeari + 1;
-      end;
-      // now start
-      aktstartmonthi := endmonthi - monthsmod;
-      aktstartyeari := endyeari;
-      if aktstartmonthi < 1 then
-      begin
-        aktstartmonthi := aktstartmonthi + 12;
-        aktstartyeari := aktstartyeari - 1;
-      end;
-      if aktstartmonthi < 1 then
-      begin
-        aktstartmonthi := aktstartmonthi + 12;
-        aktstartyeari := aktstartyeari - 1;
-      end;
-      aktstartmonth := aktstartmonthi;
-      aktstartyear := aktstartyeari;
-      endmonth := endmonthi;
-      endyear := endyeari;
-      *)
-
-      (*
-      // look first for start version
-      decodeDate(querystartdt, year, month, day);
-      decodeDate(projektstart, startyear, startmonth, startday);
-      helperint := month - ((12 * (year - startyear) + month - startmonth));
-      if  acc_per_monthnum_int > 0 then
-        helperint := month - ((12 * (year - startyear) + month - startmonth) mod
-        acc_per_monthnum_int);
-      if helperint < 1 then
-      begin
-        aktstartyear := year - 1;
-        aktstartmonth := 12 + helperint;
-      end
-      else
-      begin
-        aktstartmonth := helperint;
-        aktstartyear := year;
-      end;
-      if aktstartmonth > 12 then
-      begin
-        aktstartmonth := aktstartmonth - 12;
-        aktstartyear := aktstartyear + 1;
-      end;
-      endmonth := aktstartmonth + monthsmod;
-      endyear := aktstartyear + monthdiv;
-      if endmonth > 12 then
-      begin
-        endmonth := endmonth - 12;
-        endyear := endyear + 1;
-      end;
-      if endmonth > 12 then
-      begin
-        endmonth := endmonth - 12;
-        endyear := endyear + 1;
-      end;
-      *)
       // here is the result for the last Interval
       //lastIntervalStart := EncodeDate(aktstartyear, aktstartmonth, startday);
       lastIntervalStart := getLastIntervalStart(
@@ -418,6 +329,89 @@ begin
         intervalEndFound := True
       else
         intervalEndFound := False;
+    end
+    else if (not QueryProjektzeit.FieldByName('time_h').isNull) and
+      (not QueryProjektzeit.FieldByName('projectstart').isNull) and
+      (QueryProjektzeit.FieldByName('acc_per_monthnum').AsFloat = 0) and
+      (not QueryProjektzeit.FieldByName('time_h_is_quota').IsNull) then
+    begin
+            // get total free hours
+      total := QueryProjektzeit.FieldByName('time_h').AsFloat;
+      totaltime := total / 24;
+      //totaltime := EncodeTimeInterval(hours, minutes, 0, 0);
+      // basemonth and projektstart
+      acc_per_monthnum := QueryProjektzeit.FieldByName('acc_per_monthnum').AsFloat;
+      basemonth := trunc(acc_per_monthnum);
+      projektstart := QueryProjektzeit.FieldByName('projectstart').AsDateTime;
+      DataModule1.debugOut(6, 'getLastIntervalInfo projektstart :' +
+        DateToStr(projektstart));
+      // if projektstart is in future we will not find anything
+      if projektstart >= queryenddt then
+      begin
+        Result := False;
+        DataModule1.debugOut(3, 'getLastIntervalInfo',
+          'Projektstart of: ' + suchevent +
+          ' is in "future": later or equal then end of searchinterval:' + DateToStr(queryenddt));
+        Exit;
+      end;
+      //// startday of projekt end
+      //projektstart := projektstart -1;
+      lastIntervalStart := projektstart;
+      (*
+      // look for accounting boundaries (intervals)
+      //todo (or not todo): work with fraktal month
+      acc_per_monthnum_int := trunc(acc_per_monthnum);
+      monthsmod := acc_per_monthnum_int mod 12;
+      monthdiv := acc_per_monthnum_int div 12;
+      // calculate last interval boundaries
+      // here is the result for the last Interval
+      //lastIntervalStart := EncodeDate(aktstartyear, aktstartmonth, startday);
+      lastIntervalStart := getLastIntervalStart(
+        projektstart, queryenddt, acc_per_monthnum_int,true);
+      //decodeDate(lastIntervalStart, aktstartyear, aktstartmonth, aktstartday);
+      DataModule1.debugOut(6, 'getLastIntervalInfo',
+        'lastIntervalStart :' + DateToStr(lastIntervalStart));
+      //lastIntervalEnd := EncodeDate(endyear, endmonth, startday);
+      lastIntervalEnd := getLastIntervalEnd(projektstart, queryenddt,
+        acc_per_monthnum_int,true);
+      DataModule1.debugOut(6, 'getLastIntervalInfo',
+        'lastIntervalEnd :' + DateToStr(lastIntervalEnd));
+      // are the interval boundaries in search intervall
+      if (lastIntervalStart >= querystartdt) and (lastIntervalStart <= queryenddt) then
+        intervalStartFound := True
+      else
+        intervalStartFound := False;
+
+      if (lastIntervalEnd >= querystartdt) and (lastIntervalEnd <= queryenddt) then
+        intervalEndFound := True
+      else
+        intervalEndFound := False;
+      // finding end is more impotant then start
+      if intervalStartFound and (lastIntervalStart > querystartdt) and
+        not intervalEndFound then
+      begin
+        // step back one interval
+        lastIntervalStart_ := IncMonth(lastIntervalStart, monthsmod * -1);
+        lastIntervalEnd_ := IncMonth(lastIntervalEnd, monthsmod * -1);
+        if (lastIntervalEnd_ >= querystartdt) and
+          (lastIntervalEnd_ <= queryenddt) and
+          (lastIntervalStart_ >= projektstart) then
+        begin
+          lastIntervalEnd := lastIntervalEnd_;
+          lastIntervalStart := lastIntervalStart_;
+        end;
+      end;
+      // use changed data
+      if (lastIntervalStart >= querystartdt) and (lastIntervalStart <= queryenddt) then
+        intervalStartFound := True
+      else
+        intervalStartFound := False;
+
+      if (lastIntervalEnd >= querystartdt) and (lastIntervalEnd <= queryenddt) then
+        intervalEndFound := True
+      else
+        intervalEndFound := False;
+        *)
     end;
 
     if QueryProjektzeit.Active then
@@ -1524,6 +1518,7 @@ begin
       screen.Cursor := crHourGlass;
       for i := 0 to 1024 do
         rowcolor[i] := clWindow;
+      StringGrid1.FixedRows := 0;
       StringGrid1.Clear;
       //rowcolor[StringGrid1.RowCount] := clBtnFace;
       StringGrid1.InsertRowWithValues(StringGrid1.RowCount,
