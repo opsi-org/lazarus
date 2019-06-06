@@ -9826,7 +9826,7 @@ begin
     commandline := FileName + ' ' +trim(Parameters);
 
     LogDatei.log ('ShellCall Executing: ' + commandline, LLNotice+logleveloffset);
-    if not osfunclin.RunCommandAndCaptureOut
+    if not RunCommandAndCaptureOut
        (commandline,
         true,
         output, report, SW_HIDE, localExitCode, false, logleveloffset)
