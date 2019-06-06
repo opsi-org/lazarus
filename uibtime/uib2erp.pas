@@ -194,8 +194,10 @@ var
   helperint: integer;
   suchevent: string;
   monthsmod, monthdiv, acc_per_monthnum_int: integer;
+  timeh_is_quota : integer;
   acc_per_monthnum: double;
   querystartdt, queryenddt, vondate, bisdate: TDateTime;
+  isQuota : boolean;
 begin
   try
     // some initial retrun values
@@ -230,7 +232,7 @@ begin
     //QueryProjektzeit.databasename :='uibtime';
     QueryProjektzeit.SQL.Clear;
     QueryProjektzeit.sql.Add(' select time_h, acc_per_monthnum, projectstart, ');
-    QueryProjektzeit.sql.Add('    reportrequired, accountingrequired , time_h_is_quota');
+    QueryProjektzeit.sql.Add('    reportrequired, accountingrequired , quota_lifetime_month');
     QueryProjektzeit.sql.Add('    from uiballevent');
     QueryProjektzeit.sql.Add('    where (event = :suchevent)');
     QueryProjektzeit.parambyname('suchevent').AsString := suchevent;
@@ -244,6 +246,10 @@ begin
       accountingrequired := True
     else
       accountingrequired := False;
+    if QueryProjektzeit.FieldByName('quota_lifetime_month').AsInteger > 0 then
+      isQuota := True
+    else
+      isQuota := False;
     // get last interval
     if (not QueryProjektzeit.FieldByName('time_h').isNull) and
       (not QueryProjektzeit.FieldByName('projectstart').isNull) and
@@ -332,8 +338,8 @@ begin
     end
     else if (not QueryProjektzeit.FieldByName('time_h').isNull) and
       (not QueryProjektzeit.FieldByName('projectstart').isNull) and
-      (QueryProjektzeit.FieldByName('acc_per_monthnum').AsFloat = 0) and
-      (not QueryProjektzeit.FieldByName('time_h_is_quota').IsNull) then
+      //(QueryProjektzeit.FieldByName('acc_per_monthnum').AsFloat = 0) and
+      isQuota then
     begin
             // get total free hours
       total := QueryProjektzeit.FieldByName('time_h').AsFloat;
@@ -341,7 +347,9 @@ begin
       //totaltime := EncodeTimeInterval(hours, minutes, 0, 0);
       // basemonth and projektstart
       acc_per_monthnum := QueryProjektzeit.FieldByName('acc_per_monthnum').AsFloat;
-      basemonth := trunc(acc_per_monthnum);
+      // we are in quota project, so we ignore basemonth
+      //basemonth := trunc(acc_per_monthnum);
+      basemonth := 0;
       projektstart := QueryProjektzeit.FieldByName('projectstart').AsDateTime;
       DataModule1.debugOut(6, 'getLastIntervalInfo projektstart :' +
         DateToStr(projektstart));
@@ -357,50 +365,8 @@ begin
       //// startday of projekt end
       //projektstart := projektstart -1;
       lastIntervalStart := projektstart;
-      (*
-      // look for accounting boundaries (intervals)
-      //todo (or not todo): work with fraktal month
-      acc_per_monthnum_int := trunc(acc_per_monthnum);
-      monthsmod := acc_per_monthnum_int mod 12;
-      monthdiv := acc_per_monthnum_int div 12;
-      // calculate last interval boundaries
-      // here is the result for the last Interval
-      //lastIntervalStart := EncodeDate(aktstartyear, aktstartmonth, startday);
-      lastIntervalStart := getLastIntervalStart(
-        projektstart, queryenddt, acc_per_monthnum_int,true);
-      //decodeDate(lastIntervalStart, aktstartyear, aktstartmonth, aktstartday);
-      DataModule1.debugOut(6, 'getLastIntervalInfo',
-        'lastIntervalStart :' + DateToStr(lastIntervalStart));
-      //lastIntervalEnd := EncodeDate(endyear, endmonth, startday);
-      lastIntervalEnd := getLastIntervalEnd(projektstart, queryenddt,
-        acc_per_monthnum_int,true);
-      DataModule1.debugOut(6, 'getLastIntervalInfo',
-        'lastIntervalEnd :' + DateToStr(lastIntervalEnd));
-      // are the interval boundaries in search intervall
-      if (lastIntervalStart >= querystartdt) and (lastIntervalStart <= queryenddt) then
-        intervalStartFound := True
-      else
-        intervalStartFound := False;
-
-      if (lastIntervalEnd >= querystartdt) and (lastIntervalEnd <= queryenddt) then
-        intervalEndFound := True
-      else
-        intervalEndFound := False;
-      // finding end is more impotant then start
-      if intervalStartFound and (lastIntervalStart > querystartdt) and
-        not intervalEndFound then
-      begin
-        // step back one interval
-        lastIntervalStart_ := IncMonth(lastIntervalStart, monthsmod * -1);
-        lastIntervalEnd_ := IncMonth(lastIntervalEnd, monthsmod * -1);
-        if (lastIntervalEnd_ >= querystartdt) and
-          (lastIntervalEnd_ <= queryenddt) and
-          (lastIntervalStart_ >= projektstart) then
-        begin
-          lastIntervalEnd := lastIntervalEnd_;
-          lastIntervalStart := lastIntervalStart_;
-        end;
-      end;
+      intervalStartFound := True;
+      lastIntervalEnd := queryenddt;
       // use changed data
       if (lastIntervalStart >= querystartdt) and (lastIntervalStart <= queryenddt) then
         intervalStartFound := True
@@ -411,7 +377,6 @@ begin
         intervalEndFound := True
       else
         intervalEndFound := False;
-        *)
     end;
 
     if QueryProjektzeit.Active then

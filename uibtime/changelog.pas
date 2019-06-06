@@ -2,6 +2,7 @@
 uibtime (4.1.1.49-1) stable; urgency=low
 
  * uib2erp: better handling of projects (time_h_is_quota > 0)
+ * uib2erp: if quota and acc_per_month = 0  always marked
 
 -- detlef oertel <d.oertel@uib.de>  Wed, 05 Jun 2019 15:00:00 +0000
 
