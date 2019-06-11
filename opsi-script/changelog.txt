@@ -7,6 +7,7 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 opsi-winst/opsi-script (4.12.1.5) experimental; urgency=low
 
   * osdefinedfunctions: delLocalVar : fix removing loopvar after empty loop
+  * osmain: fix in GetTempPath: if Univention temppath is /var/tmp
 
 -- Detlef Oertel <d.oertel@uib.de>  Thu, 06 Jun 2019:15:00:00 +0200
 

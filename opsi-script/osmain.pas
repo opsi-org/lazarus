@@ -528,7 +528,11 @@ var
 begin
   mytemppath := StandardTempPath;
   {$IFDEF LINUX}
-  if getLinuxDistroName = 'Univenion' then  mytemppath := UniventionTempPath;
+  if getLinuxDistroName = 'Univention' then
+  begin
+    if logdatei <> nil then logdatei.log('Univention detected: switching to temp path: '+mytemppath,LLdebug);
+    mytemppath := UniventionTempPath;
+  end;
   {$ENDIF}
   testpassed := False;
   if (mytemppath <> '') and SysUtils.ForceDirectories(mytemppath) then
@@ -1801,6 +1805,7 @@ begin
     if startkey <> 'void' then
     begin
       startkey := decryptStringBlow(opsiservicepassword,startkey);
+      LogDatei.log('startkey from opsi-script.conf: '+startkey,LLNotice);
       try
         stringsplitByWhiteSpace(startkey,list);
         if trim(list.Strings[0]) = opsiservicepassword then
@@ -2087,6 +2092,11 @@ begin
               LogDatei.log('Terminating Program', LLerror);
               TerminateApp;
             end;
+          end
+          else
+          begin
+            LogDatei.log(
+                'Use of opsi Linux Client Agent Extension is activated', LLInfo);
           end;
           {$ENDIF LINUX}
 
