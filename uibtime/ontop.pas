@@ -596,7 +596,10 @@ begin
       Datamodule1.TimerOnTop.Enabled := True;
       if Fwork_description = nil then
         Fwork_description := TFwork_description.Create(self);
-      Fwork_description.Show;
+      fwork_description.PopupParent := Fwork_description;
+      fwork_description.PopupMode:=pmExplicit;
+      Fwork_description.Showmodal;
+      FreeAndNil(Fwork_description);
     end;
 
   except
@@ -1415,8 +1418,10 @@ begin
   try
     if Fwork_description = nil then
       Fwork_description := TFwork_description.Create(self);
-    //Fwork_description.showmodal();
-    Fwork_description.Show;
+    Fwork_description.PopupParent:= Fwork_description;
+    Fwork_description.showmodal();
+    FreeAndNil(Fwork_description);
+    //Fwork_description.Show;
     //Fwork_description.Free;
   except
     datamodule1.debugOut(3, '', 'exception in ontop.Btn_work_descriptionClick');

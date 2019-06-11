@@ -13,6 +13,7 @@ object FDataedit: TFDataedit
   OnActivate = FormActivate
   OnClose = FormClose
   OnHide = FormHide
+  PopupMode = pmExplicit
   Position = poScreenCenter
   LCLVersion = '2.0.0.4'
   object PageControl1: TPageControl

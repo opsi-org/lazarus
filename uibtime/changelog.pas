@@ -1,4 +1,12 @@
 (*
+uibtime (4.1.1.50-1) stable; urgency=low
+
+ * uibdata: Dateneditieren1Click: make dataedit modal again
+ * uibdata: Dateneditieren1Click: popupParent=Fdataedit
+ * dataedit: popupmode= explizit
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 05 Jun 2019 15:00:00 +0000
+
 uibtime (4.1.1.49-1) stable; urgency=low
 
  * uib2erp: better handling of projects (time_h_is_quota > 0)
