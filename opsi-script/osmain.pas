@@ -252,6 +252,7 @@ var
   PerformExitProgram: boolean = False;
   PerformExitWindows: TExitRequest = txrNoExit;
   PerformShutdown: TShutdownRequest = tsrNoShutdown;
+  ProgramMode: TProgramMode;
 
 
   toggle: boolean;
@@ -290,8 +291,6 @@ var
 
 var
   IniFileLocalization: string;
-
-  ProgramMode: TProgramMode;
 
   Profildateiname: string;
 
@@ -1796,50 +1795,54 @@ var
   conffile : TIniFile;
   list : TStringlist;
 begin
-  result := false;
-  list := TStringlist.Create;
-  if FileExists('/etc/opsi-client-agent/opsi-script.conf') then
-  begin
-    conffile := TIniFile.Create('/etc/opsi-client-agent/opsi-script.conf');
-    startkey := conffile.ReadString('general','start','void');
-    if startkey <> 'void' then
+  try
+    result := false;
+    list := TStringlist.Create;
+    conffile := nil;
+    if FileExists(opsiclientagentconf) then
     begin
-      startkey := decryptStringBlow(opsiservicepassword,startkey);
-      LogDatei.log('startkey from opsi-script.conf: '+startkey,LLNotice);
-      try
-        stringsplitByWhiteSpace(startkey,list);
-        if trim(list.Strings[0]) = opsiservicepassword then
-        begin
-          if TryStrToInt(trim(list.Strings[1]),startcounter) then
+      conffile := TIniFile.Create(opsiclientagentconf);
+      startkey := conffile.ReadString('opsi-script','start','void');
+      if startkey <> 'void' then
+      begin
+        startkey := decryptStringBlow(opsiservicepassword,startkey);
+        LogDatei.log('startkey from opsi-client-agent.conf: '+startkey,LLNotice);
+        try
+          stringsplitByWhiteSpace(startkey,list);
+          if trim(list.Strings[0]) = opsiservicepassword then
           begin
-            if startcounter > 0 then
+            if TryStrToInt(trim(list.Strings[1]),startcounter) then
             begin
-              result := true;
-              dec(startcounter);
-              logdatei.log('Using free Linux Agent start. '+IntTostr(startcounter)+' remaining',LLNotice);
-              startkey :=  opsiservicepassword+' '+IntTostr(startcounter);
-              startkey :=  encryptStringBlow(opsiservicepassword,startkey);
-              conffile.WriteString('general','start',startkey);
+              if startcounter > 0 then
+              begin
+                result := true;
+                dec(startcounter);
+                logdatei.log('Using free Linux Agent start. '+IntTostr(startcounter)+' remaining',LLNotice);
+                startkey :=  opsiservicepassword+' '+IntTostr(startcounter);
+                startkey :=  encryptStringBlow(opsiservicepassword,startkey);
+                conffile.WriteString('opsi-script','start',startkey);
+              end
+              else logdatei.log('No free Linux Agent start',LLDebug2);
             end
-            else logdatei.log('No free Linux Agent start',LLDebug2);
+            else logdatei.log('Error: Startkey has no valid integer: '+trim(list.Strings[1]),LLError);
           end
-          else logdatei.log('Error: Startkey has no valid integer: '+trim(list.Strings[1]),LLError);
-        end
-        else logdatei.log('Error: Startkey has wrong signature.',LLError);
-      except
-       on ex: Exception
-       do
-       begin
-         logdatei.log('Error: Exception in osmain:freeLinuxAgentStart : '+ex.message,LLError);
-         result := false;
-       end;
-      end;
+          else logdatei.log('Error: Startkey has wrong signature.',LLError);
+        except
+         on ex: Exception
+         do
+         begin
+           logdatei.log('Error: Exception in osmain:freeLinuxAgentStart : '+ex.message,LLError);
+           result := false;
+         end;
+        end;
+      end
+      else logdatei.log('No valid start enty in '+opsiclientagentconf+' found ',LLWarning);
     end
-    else logdatei.log('No valid start enty in /etc/opsi-client-agent/opsi-script.conf found ',LLWarning);
-    conffile.Free;
-  end
-  else logdatei.log('No /etc/opsi-client-agent/opsi-script.conf found ',LLWarning);
-  list.Free;
+    else logdatei.log('No '+opsiclientagentconf+' found ',LLWarning);
+  finally
+    list.Free;
+    if conffile <> nil then conffile.Free;
+  end;
 end;
 
 {$ENDIF LINUX}

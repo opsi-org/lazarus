@@ -22819,7 +22819,10 @@ begin
   // Backup existing depotdrive, depotdir
   depotdrive_bak := depotdrive;
   depotdir_bak :=  depotdir;
-  {$IFDEF UNIX} computername := getHostnameLin; {$ENDIF LINUX}
+  {$IFDEF UNIX}
+  computername := getHostnameLin;
+  logdatei.log('computername: '+computername,LLDebug);
+  {$ENDIF LINUX}
   {$IFDEF GUI}
   CentralForm.Label1.Caption := '';
   FBatchOberflaeche.setInfoLabel('');
@@ -22829,8 +22832,6 @@ begin
   {$ENDIF GUI}
   {$IFDEF UNIX}
   lispecfolder.retrieveFolders4Linux;
-  if not isMounted(depotdir) then
-    mount_depotshare(depotDir, opsiservicePassword);
   {$ENDIF LINUX}
   if Scriptdatei <> ''
   then
@@ -22844,6 +22845,17 @@ begin
       if not CheckFileExists (Scriptdatei, ErrorInfo) then
       begin
         LogDatei.log ('Script  ' + Scriptdatei + '  not found ' + ErrorInfo+' - retrying',LLWarning);
+        {$IFDEF LINUX}
+        if ProgramMode = pmBuildPC_service then
+        begin
+          logdatei.log('check opsi depot mount',LLDebug);
+          if not isMounted(depotdir) then
+          begin
+            logdatei.log('Try remount ...',LLWarning);
+            mount_depotshare(depotDir, opsiservicePassword);
+          end;
+        end;
+        {$ENDIF LINUX}
         Sleep(1000);
         if not CheckFileExists (Scriptdatei, ErrorInfo) then
         begin
