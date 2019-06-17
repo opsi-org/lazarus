@@ -1,4 +1,10 @@
 (*
+uibtime (4.1.1.51-1) stable; urgency=low
+
+ * uib2erp: createReport: fix in query for presumme_h
+
+-- detlef oertel <d.oertel@uib.de>  Mon, 17 Jun 2019 15:00:00 +0000
+
 uibtime (4.1.1.50-1) stable; urgency=low
 
  * uibdata: Dateneditieren1Click: make dataedit modal again

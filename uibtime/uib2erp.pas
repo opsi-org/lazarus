@@ -990,7 +990,7 @@ begin
       QueryUEARhelper.sql.Add('where ');
       QueryUEARhelper.sql.Add('(a.event = :event) ');
       QueryUEARhelper.sql.Add('and(a.dateday >= :start) ');
-      QueryUEARhelper.sql.Add('and (a.dateday <= :stop) ');
+      QueryUEARhelper.sql.Add('and (a.dateday < :stop) ');
       QueryUEARhelper.sql.Add('group by 1  ');
       QueryUEARhelper.ParamByName('event').AsString := suchevent;
       QueryUEARhelper.parambyname('start').AsDateTime := projectstart;
