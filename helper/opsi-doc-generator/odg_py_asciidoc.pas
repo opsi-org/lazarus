@@ -21,10 +21,12 @@ var
 
 
 procedure writePyDocToList;
+const
+  doublestar = '**';
 var
-  frun, prun, i, j, funccount   : integer;
-  tmpstr1, pname, defstring : string;
-  tempfile                      : TFuncDoc;
+  frun, prun, i, j, funccount, doublestarpos : integer;
+  tmpstr1, pname, defstring                  : string;
+  tempfile                                   : TFuncDoc;
 begin
   LogDatei.log('Writing collected python data as asciidoc to a stringlist',LLnotice);
   if Assigned(docobject) and (docobject <> nil) then
@@ -102,6 +104,12 @@ begin
         defstring:= docobject.Ffunctions[frun].Definitionline;
         // remove colon from method signature
         Delete(defstring, Length(defstring), 1);
+        // remove keyword argument's double star from method signature
+        doublestarpos := pos(doublestar, defstring);
+        if (doublestarpos > 1)  then
+        begin
+          Delete(defstring, doublestarpos, Length(doublestar));
+        end;
         targetlist.Add('`' + defstring +'`');
         targetlist.Add('');
         targetlist.add(docobject.Ffunctions[frun].Description);
@@ -111,13 +119,27 @@ begin
         begin
           pname := docobject.Ffunctions[frun].Fparams[prun].ParamName;
           LogDatei.log('Writing parameter information for: '+pname,LLinfo);
-          targetlist.add('* Parameter:  `' +pname+'`');
-          tmpstr1 := docobject.Ffunctions[frun].Fparams[prun].ParamType;
-          if tmpstr1 <> '' then
-          begin
-            targetlist.add('** Type: `'+tmpstr1+'`');
-          end;
 
+          // Checking whether parameter is a keyword argument
+          if Pos(doublestar,pname) = 1 then
+          begin
+            Delete(pname, 1, Length(doublestar));
+            targetlist.add('* Optional Parameter:  `' +pname+'`');
+            tmpstr1 := docobject.Ffunctions[frun].Fparams[prun].ParamType;
+            if tmpstr1 <> '' then
+              targetlist.add('** Type: `'+tmpstr1+'`')
+            else
+              targetlist.add('** Type: `dict`');
+          end
+          else
+          begin
+            targetlist.add('* Parameter:  `' +pname+'`');
+            tmpstr1 := docobject.Ffunctions[frun].Fparams[prun].ParamType;
+            if tmpstr1 <> '' then
+            begin
+              targetlist.add('** Type: `'+tmpstr1+'`');
+            end;
+          end;
 
           tmpstr1:= docobject.Ffunctions[frun].Fparams[prun].ParamDefault;
           if tmpstr1 <> '' then
