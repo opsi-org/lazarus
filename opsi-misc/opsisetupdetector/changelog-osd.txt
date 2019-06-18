@@ -32,6 +32,12 @@ stWixToolset,
   * https://iserv.eu/doc/development/deploy/packages/installer/bitrock/
   * --mode unattended --unattendedmodeui minimal
 
+opsi-setup-detector (4.1.0.10) stable; urgency=low
+
+  * osdanalyze: getProductInfoFromResource: fix if there is no version info
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  18 Jun 2019 : 15:00:00 +0200
+
 opsi-setup-detector (4.1.0.9) stable; urgency=low
 
   * osdanalyze: get_inno_info: remove existing iss file before running innounp

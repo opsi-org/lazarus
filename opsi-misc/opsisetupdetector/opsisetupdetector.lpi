@@ -25,7 +25,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="9"/>
+      <BuildNr Value="10"/>
       <StringTable CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi setup detector" InternalName="opsi setup detector" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsisetupdetector" ProductName="opsi" ProductVersion="opsi 4.1."/>
     </VersionInfo>
     <BuildModes Count="3" Active="Release">
@@ -171,11 +171,10 @@
         <ComponentName Value="resultForm1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="1"/>
         <TopLine Value="658"/>
-        <CursorPos X="36" Y="675"/>
+        <CursorPos X="57" Y="668"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="3"/>
@@ -278,7 +277,7 @@
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <TopLine Value="16"/>
-        <CursorPos X="74" Y="43"/>
+        <CursorPos X="76" Y="37"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -287,14 +286,14 @@
         <Filename Value="osdanalyze.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="11"/>
-        <TopLine Value="67"/>
+        <TopLine Value="74"/>
         <CursorPos X="36" Y="76"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <EditorIndex Value="2"/>
+          <EditorIndex Value="1"/>
           <WindowIndex Value="1"/>
-          <TopLine Value="527"/>
-          <CursorPos X="28" Y="542"/>
+          <TopLine Value="542"/>
+          <CursorPos X="28" Y="557"/>
         </ExtraEditor1>
         <UsageCount Value="212"/>
         <Loaded Value="True"/>
@@ -323,13 +322,14 @@
       <Unit19>
         <Filename Value="osdbasedata.pas"/>
         <IsPartOfProject Value="True"/>
-        <WindowIndex Value="1"/>
-        <TopLine Value="1299"/>
-        <CursorPos X="5" Y="1329"/>
+        <EditorIndex Value="9"/>
+        <TopLine Value="718"/>
+        <CursorPos X="11" Y="737"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <EditorIndex Value="9"/>
-          <CursorPos X="10" Y="30"/>
+          <WindowIndex Value="1"/>
+          <TopLine Value="1299"/>
+          <CursorPos X="5" Y="1329"/>
         </ExtraEditor1>
         <UsageCount Value="226"/>
         <Loaded Value="True"/>
@@ -360,15 +360,16 @@
       <Unit22>
         <Filename Value="osdcreate.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="7"/>
-        <TopLine Value="187"/>
-        <CursorPos X="55" Y="205"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="1"/>
+        <TopLine Value="325"/>
+        <CursorPos X="9" Y="347"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <EditorIndex Value="3"/>
-          <WindowIndex Value="1"/>
-          <TopLine Value="120"/>
-          <CursorPos X="52" Y="137"/>
+          <EditorIndex Value="7"/>
+          <TopLine Value="187"/>
+          <CursorPos X="55" Y="205"/>
         </ExtraEditor1>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
@@ -376,20 +377,20 @@
       </Unit22>
       <Unit23>
         <Filename Value="template-files\setupsingle.opsiscript"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="1"/>
         <TopLine Value="53"/>
         <CursorPos X="36" Y="71"/>
-        <UsageCount Value="95"/>
+        <UsageCount Value="96"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit23>
       <Unit24>
         <Filename Value="template-files\delsubsingle.opsiscript"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="1"/>
         <CursorPos X="38" Y="15"/>
-        <UsageCount Value="95"/>
+        <UsageCount Value="96"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit24>
@@ -483,11 +484,11 @@
       </Unit34>
       <Unit35>
         <Filename Value="template-files\setupdouble.opsiscript"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="1"/>
         <TopLine Value="89"/>
         <CursorPos X="39" Y="100"/>
-        <UsageCount Value="94"/>
+        <UsageCount Value="95"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit35>
@@ -497,17 +498,17 @@
         <EditorIndex Value="4"/>
         <TopLine Value="8"/>
         <CursorPos X="6" Y="24"/>
-        <UsageCount Value="180"/>
+        <UsageCount Value="181"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit36>
       <Unit37>
         <Filename Value="template-files\delsubdouble.opsiscript"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="1"/>
         <TopLine Value="8"/>
         <CursorPos X="38" Y="36"/>
-        <UsageCount Value="93"/>
+        <UsageCount Value="94"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit37>
@@ -547,19 +548,18 @@
         <EditorIndex Value="12"/>
         <TopLine Value="77"/>
         <CursorPos X="17" Y="103"/>
-        <UsageCount Value="46"/>
+        <UsageCount Value="47"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit41>
       <Unit42>
         <Filename Value="..\..\external_libraries\misc\VerInfo.pp"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="-1"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="19"/>
-        <CursorPos X="17" Y="47"/>
-        <UsageCount Value="23"/>
-        <Loaded Value="True"/>
+        <TopLine Value="131"/>
+        <CursorPos Y="148"/>
+        <UsageCount Value="24"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit42>
     </Units>
@@ -571,123 +571,123 @@
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="98" TopLine="80"/>
+        <Caret Line="109" TopLine="78"/>
       </Position1>
       <Position2>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="100" TopLine="80"/>
+        <Caret Line="112" TopLine="80"/>
       </Position2>
       <Position3>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="101" TopLine="80"/>
+        <Caret Line="114" TopLine="82"/>
       </Position3>
       <Position4>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="103" TopLine="80"/>
+        <Caret Line="115" TopLine="83"/>
       </Position4>
       <Position5>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="104" TopLine="80"/>
+        <Caret Line="116" TopLine="84"/>
       </Position5>
       <Position6>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="105" TopLine="80"/>
+        <Caret Line="120" TopLine="88"/>
       </Position6>
       <Position7>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="76" Column="36" TopLine="67"/>
+        <Caret Line="127" TopLine="108"/>
       </Position7>
       <Position8>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="319" Column="30" TopLine="300"/>
+        <Caret Line="125" TopLine="108"/>
       </Position8>
       <Position9>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="107" Column="65" TopLine="87"/>
+        <Caret Line="126" TopLine="108"/>
       </Position9>
       <Position10>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="325" Column="50" TopLine="302"/>
+        <Caret Line="127" TopLine="108"/>
       </Position10>
       <Position11>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="108" Column="13" TopLine="84"/>
+        <Caret Line="114" TopLine="108"/>
       </Position11>
       <Position12>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="107" TopLine="86"/>
+        <Caret Line="91" Column="56" TopLine="74"/>
       </Position12>
       <Position13>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="319" Column="30" TopLine="300"/>
+        <Caret Line="95" TopLine="74"/>
       </Position13>
       <Position14>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="314" Column="16" TopLine="300"/>
+        <Caret Line="96" TopLine="74"/>
       </Position14>
       <Position15>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="1337" Column="9" TopLine="1299"/>
+        <Caret Line="97" TopLine="74"/>
       </Position15>
       <Position16>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="323" Column="26" TopLine="300"/>
+        <Caret Line="98" TopLine="74"/>
       </Position16>
       <Position17>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="450" Column="9" TopLine="431"/>
+        <Caret Line="105" TopLine="74"/>
       </Position17>
       <Position18>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="324" Column="49" TopLine="305"/>
+        <Caret Line="103" TopLine="74"/>
       </Position18>
       <Position19>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="511" Column="9" TopLine="492"/>
+        <Caret Line="104" TopLine="74"/>
       </Position19>
       <Position20>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="529" Column="53" TopLine="497"/>
+        <Caret Line="105" TopLine="74"/>
       </Position20>
       <Position21>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="714" Column="28" TopLine="702"/>
+        <Caret Line="109" TopLine="78"/>
       </Position21>
       <Position22>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="625" Column="105" TopLine="617"/>
+        <Caret Line="112" TopLine="80"/>
       </Position22>
       <Position23>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="660" Column="14" TopLine="643"/>
+        <Filename Value="osdanalyze.pas"/>
+        <Caret Line="114" TopLine="82"/>
       </Position23>
       <Position24>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="469" Column="24" TopLine="452"/>
+        <Filename Value="osdanalyze.pas"/>
+        <Caret Line="115" TopLine="83"/>
       </Position24>
       <Position25>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="660" Column="5" TopLine="643"/>
+        <Filename Value="osdanalyze.pas"/>
+        <Caret Line="120" TopLine="88"/>
       </Position25>
       <Position26>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="1880" Column="36" TopLine="1863"/>
+        <Filename Value="osdanalyze.pas"/>
+        <Caret Line="127" TopLine="108"/>
       </Position26>
       <Position27>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="386" Column="3" TopLine="369"/>
+        <Filename Value="osdanalyze.pas"/>
+        <Caret Line="125" TopLine="108"/>
       </Position27>
       <Position28>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="661" Column="22" TopLine="644"/>
+        <Filename Value="osdanalyze.pas"/>
+        <Caret Line="126" TopLine="108"/>
       </Position28>
       <Position29>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="625" Column="105" TopLine="617"/>
+        <Caret Line="127" TopLine="108"/>
       </Position29>
       <Position30>
         <Filename Value="osdanalyze.pas"/>
-        <Caret Line="631" Column="31" TopLine="617"/>
+        <Caret Line="132" TopLine="108"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>

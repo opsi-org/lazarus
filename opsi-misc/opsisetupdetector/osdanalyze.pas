@@ -97,23 +97,38 @@ begin
       FileVerInfo.ReadFileInfo;
       Result := FileVerInfo.VersionStrings.Values[infokey];
     except
-      LogDatei.log('Exception while reading fileversion', LLError);
-      Result := '';
-      {$IFDEF WINDOWS}
+      on E: Exception do
+      begin
+        LogDatei.log('Exception while reading fileversion2: ' +
+          E.ClassName + ': ' + E.Message, LLError);
+        Result := '';
+      end;
+      else // close the 'on else' block here;
+    end;
+  finally
+    FileVerInfo.Free;
+  end;
+  {$IFDEF WINDOWS}
+  if result = '' then
+  begin
       try
         VerInf := verinfo.TVersionInfo.Create(filename);
         if infokey = 'FileVersion' then
           Result := trim(VerInf[CviFileVersion]);
         if infokey = 'ProductName' then
           Result := trim(VerInf[CviProductName]);
-      finally
         VerInf.Free;
-      end
-      {$ENDIF WINDOWS}
-    end;
-  finally
-    FileVerInfo.Free;
+      except
+        on E: Exception do
+        begin
+          LogDatei.log('Exception while reading fileversion2: ' +
+            E.ClassName + ': ' + E.Message, LLError);
+          Result := '';
+        end;
+        else // close the 'on else' block here;
+      end;
   end;
+  {$ENDIF WINDOWS}
 end;
 
 function getPacketIDfromFilename(str: string): string;
