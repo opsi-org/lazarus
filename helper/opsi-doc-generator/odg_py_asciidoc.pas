@@ -23,7 +23,7 @@ var
 procedure writePyDocToList;
 var
   frun, prun, i, j, funccount   : integer;
-  tmpstr1, pname, tempdefstring : string;
+  tmpstr1, pname, defstring : string;
   tempfile                      : TFuncDoc;
 begin
   LogDatei.log('Writing collected python data as asciidoc to a stringlist',LLnotice);
@@ -80,29 +80,29 @@ begin
     for frun := 0 to funccount-1 do
     begin
       // removing duplicate functions
-      if (frun <> funccount) and (docobject.Ffunctions[frun].Definitionline = docobject.Ffunctions[frun+1].Definitionline) then
+      if (frun < funccount-1) and (docobject.Ffunctions[frun].Definitionline = docobject.Ffunctions[frun+1].Definitionline) then
       begin
         if (CompareText(docobject.Ffunctions[frun].Description, docobject.Ffunctions[frun+1].Description) > 0) then
         begin
             tempfile:= docobject.Ffunctions[frun];
             docobject.Ffunctions[frun]:= docobject.Ffunctions[frun+1];
             docobject.Ffunctions[frun+1] := tempfile;
-            Dec(funccount);
+            Continue;
         end
         else
-          Dec(funccount);
+          Continue;
       end
       else
       begin
         LogDatei.log('Writing function information for: '+docobject.Ffunctions[frun].Name,LLinfo);
         targetlist.Add('anchor:'+docobject.Ffunctions[frun].Name+'[]');
         targetlist.Add('[Doc_func_'+docobject.Ffunctions[frun].Name+']');
-        targetlist.Add('== '+docobject.Ffunctions[frun].Name+'()');
+        targetlist.Add('== '+docobject.Ffunctions[frun].Name);
         targetlist.Add('');
-        tempdefstring:= docobject.Ffunctions[frun].Definitionline;
+        defstring:= docobject.Ffunctions[frun].Definitionline;
         // remove colon from method signature
-        Delete(tempdefstring, Length(tempdefstring), 1);
-        targetlist.Add('`' + tempdefstring +'`');
+        Delete(defstring, Length(defstring), 1);
+        targetlist.Add('`' + defstring +'`');
         targetlist.Add('');
         targetlist.add(docobject.Ffunctions[frun].Description);
         targetlist.Add('');
@@ -135,13 +135,13 @@ begin
         end;
 
         tmpstr1 := docobject.Ffunctions[frun].RType;
-        if tmpstr1 <> '' then targetlist.Add('Returned Type: `'+tmpstr1+'`');
+        if tmpstr1 <> '' then targetlist.Add('Returns `'+tmpstr1+'`');
         tmpstr1:= docobject.Ffunctions[frun].Returns;
         if tmpstr1 <> '' then targetlist.Add(': '+tmpstr1);
         targetlist.Add('');
 
         tmpstr1 := docobject.Ffunctions[frun].Raises;
-        if tmpstr1 <> '' then targetlist.Add('Raises: '+tmpstr1);
+        if tmpstr1 <> '' then targetlist.Add('Raises '+tmpstr1);
         targetlist.Add('');
         targetlist.Add('');
       end;

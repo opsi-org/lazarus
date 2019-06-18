@@ -81,24 +81,24 @@ begin
     for frun := 0 to funccount-1 do
     begin
       // removing duplicate functions
-      if (frun <> funccount) and (docobject.Ffunctions[frun].Definitionline = docobject.Ffunctions[frun+1].Definitionline) then
+      if (frun < funccount-1) and (docobject.Ffunctions[frun].Definitionline = docobject.Ffunctions[frun+1].Definitionline) then
       begin
         if (CompareText(docobject.Ffunctions[frun].Description, docobject.Ffunctions[frun+1].Description) > 0) then
           begin
             tempfile:= docobject.Ffunctions[frun];
             docobject.Ffunctions[frun]:= docobject.Ffunctions[frun+1];
             docobject.Ffunctions[frun+1] := tempfile;
-            Dec(funccount);
+            Continue;
           end
           else
-            Dec(funccount);
+            Continue;
       end
       else
       begin
         LogDatei.log('Writing function information for: '+docobject.Ffunctions[frun].Name,LLinfo);
         targetlist.Add('anchor:'+docobject.Ffunctions[frun].Name+'[]');
         targetlist.Add('[Doc_func_'+docobject.Ffunctions[frun].Name+']');
-        targetlist.Add('== '+docobject.Ffunctions[frun].Name+'()');
+        targetlist.Add('== '+docobject.Ffunctions[frun].Name);
         targetlist.Add('');
         targetlist.Add('`' + docobject.Ffunctions[frun].Definitionline +'`');
         targetlist.Add('');
