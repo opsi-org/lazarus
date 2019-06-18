@@ -612,6 +612,11 @@ initialization
   backendMethodBlacklist.Add('getArgAndCallString');
   backendMethodBlacklist.Add('temporaryBackendOptions');
   backendMethodBlacklist.Add('loadBackendConfig');
+  backendMethodBlacklist.Add('timeQuery');
+  backendMethodBlacklist.Add('onlyAllowSelect');
+  backendMethodBlacklist.Add('createSchemaVersionTable');
+  backendMethodBlacklist.Add('closingConnectionAndCursor');
+  backendMethodBlacklist.Add('createUnixSocket');
 
   backendClassBlacklist := TStringList.Create;
   backendClassBlacklist.Add('DeferredCall');
