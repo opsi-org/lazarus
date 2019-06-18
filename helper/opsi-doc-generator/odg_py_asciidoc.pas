@@ -22,11 +22,11 @@ var
 
 procedure writePyDocToList;
 const
-  doublestar = '**';
+  doubleAsterisk = '**';
 var
-  frun, prun, i, j, funccount, doublestarpos : integer;
-  tmpstr1, pname, defstring                  : string;
-  tempfile                                   : TFuncDoc;
+  frun, prun, i, j, funccount, doubleAsteriskPos : integer;
+  tmpstr1, pname, defstring                      : string;
+  tempfile                                       : TFuncDoc;
 begin
   LogDatei.log('Writing collected python data as asciidoc to a stringlist',LLnotice);
   if Assigned(docobject) and (docobject <> nil) then
@@ -104,11 +104,11 @@ begin
         defstring:= docobject.Ffunctions[frun].Definitionline;
         // remove colon from method signature
         Delete(defstring, Length(defstring), 1);
-        // remove keyword argument's double star from method signature
-        doublestarpos := pos(doublestar, defstring);
-        if (doublestarpos > 1)  then
+        // remove keyword argument's double asterisk from method signature
+        doubleAsteriskPos := pos(doubleAsterisk, defstring);
+        if (doubleAsteriskPos > 1)  then
         begin
-          Delete(defstring, doublestarpos, Length(doublestar));
+          Delete(defstring, doubleAsteriskPos, Length(doubleAsterisk));
         end;
         targetlist.Add('`' + defstring +'`');
         targetlist.Add('');
@@ -121,9 +121,9 @@ begin
           LogDatei.log('Writing parameter information for: '+pname,LLinfo);
 
           // Checking whether parameter is a keyword argument
-          if Pos(doublestar,pname) = 1 then
+          if Pos(doubleAsterisk,pname) = 1 then
           begin
-            Delete(pname, 1, Length(doublestar));
+            Delete(pname, 1, Length(doubleAsterisk));
             targetlist.add('* Optional Parameter:  `' +pname+'`');
             tmpstr1 := docobject.Ffunctions[frun].Fparams[prun].ParamType;
             if tmpstr1 <> '' then
