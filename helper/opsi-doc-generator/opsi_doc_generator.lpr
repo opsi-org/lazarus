@@ -25,6 +25,7 @@ type
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
     procedure CreateOutput; virtual;
+    procedure SaveHtml; virtual;
     procedure ViewHtml; virtual;
     procedure WriteHelp; virtual;
   end;
@@ -52,7 +53,7 @@ begin
     FileVerInfo.Free;
   end;
 
-  ErrorMsg := CheckOptions('h, p:, s:, o:, v', ['help', 'py:', 'os:', 'out:', 'view']);
+  ErrorMsg := CheckOptions('h, p:, s:, o:, b, v', ['help', 'py:', 'os:', 'out:', 'build', 'view']);
   if ErrorMsg <> '' then
   begin
     writeln('Error : Parameters missing or invalid.');
@@ -110,6 +111,8 @@ begin
     if HasOption('o', 'out') then
     begin
       CreateOutput;
+      if HasOption('b', 'build') then
+        SaveHtml;
       if HasOption('v', 'view') then
         ViewHtml;
     end
@@ -152,6 +155,8 @@ begin
     if HasOption('o', 'out') then
     begin
       CreateOutput;
+      if HasOption('b', 'build') then
+        SaveHtml;
       if HasOption('v', 'view') then
         ViewHtml;
     end
@@ -198,6 +203,15 @@ begin
   WriteLn('Info  : Asciidoc saved to: '+outputFile);
 end;
 
+procedure opsidocgenerator.SaveHtml;
+begin
+  if not callasciidoctor(outputFile) then
+  begin
+    writeln('callasciidoctor failed');
+    LogDatei.log('callasciidoctor failed',LLcritical);
+  end;
+end;
+
 procedure opsidocgenerator.ViewHtml;
 begin
   if not callasciidoctor(outputFile) then
@@ -232,11 +246,13 @@ begin
   writeln('./' + filename + ' [Options] [filename]     Convert python or opsiscript source files to asciidoc.');
   WriteLn('');
 
-  writeln('Options:');
-  writeln('   -h , --help                                Displays this message.');
-  writeln('   -s , --os=                                 Convert opsiscript source file to asciidoc and save it to the output file.');
-  writeln('   -p , --py=                                 Convert python source file to asciidoc and save it to the output file.');
-  writeln('   -o , --out=                                Save output to the specified file');
+  WriteLn('Options:');
+  WriteLn('   -h , --help                                Displays this message.');
+  WriteLn('   -s , --os=                                 Convert opsiscript source file to asciidoc and save it to the output file.');
+  WriteLn('   -p , --py=                                 Convert python source file to asciidoc and save it to the output file.');
+  WriteLn('   -o , --out=                                Save asciidoc output to the specified file.');
+  WriteLn('   -b , --build                               Build output in HTML.');
+  WriteLn('   -v , --view                                Build output in HTML and view it in default viewer.');
   WriteLn('');
   WriteLn('');
   WriteLn('Examples:');
@@ -245,7 +261,11 @@ begin
   WriteLn('$ ./'+filename+ ' -s /temp/xyz.opsiscript -s /temp/abc.opsiscript -o /temp/opsi.asciidoc');
   WriteLn('$ ./'+filename+ ' --os=/temp/xyz.opsiscript --os=/temp/abc.opsiscript --out=/temp/opsi.asciidoc');
   WriteLn('');
-  WriteLn('Convert Opsiscript source code to asciidoc and view HTML:');
+  WriteLn('Convert Opsiscript source code to asciidoc and build HTML:');
+  WriteLn('$ ./'+filename+ ' -s /temp/xyz.opsiscript -s /temp/abc.opsiscript -o /temp/opsi.asciidoc -b');
+  WriteLn('$ ./'+filename+ ' --os=/temp/xyz.opsiscript --os=/temp/abc.opsiscript --out=/temp/opsi.asciidoc --build');
+  WriteLn('');
+  WriteLn('Convert Opsiscript source code to asciidoc, build it in HTML and view it in default viewer:');
   WriteLn('$ ./'+filename+ ' -s /temp/xyz.opsiscript -s /temp/abc.opsiscript -o /temp/opsi.asciidoc -v');
   WriteLn('$ ./'+filename+ ' --os=/temp/xyz.opsiscript --os=/temp/abc.opsiscript --out=/temp/opsi.asciidoc --view');
   WriteLn('');
@@ -254,7 +274,11 @@ begin
   WriteLn('$ ./'+filename+ ' -p /temp/xyz.py -p /temp/abc.py -o /temp/py.asciidoc');
   WriteLn('$ ./'+filename+ ' --py=/temp/xyz.py --py=/temp/abc.py --out=/temp/py.asciidoc');
   WriteLn('');
-  WriteLn('Convert Python source code to asciidoc and view HTML:');
+  WriteLn('Convert Python source code to asciidoc and build HTML:');
+  WriteLn('$ ./'+filename+ ' -p /temp/xyz.py -p /temp/abc.py -o /temp/py.asciidoc -b');
+  WriteLn('$ ./'+filename+ ' --py=/temp/xyz.py --py=/temp/abc.py --out=/temp/py.asciidoc --build');
+  WriteLn('');
+  WriteLn('Convert Python source code to asciidoc, build it in HTML and view it in default viewer:');
   WriteLn('$ ./'+filename+ ' -p /temp/xyz.py -p /temp/abc.py -o /temp/py.asciidoc -v');
   WriteLn('$ ./'+filename+ ' --py=/temp/xyz.py --py=/temp/abc.py --out=/temp/py.asciidoc --view');
   WriteLn('');
