@@ -26,7 +26,6 @@ uses
   ///LCLIntf,
   packdefs in 'packdefs.pas',
   {$IFDEF WINDOWS}zipinter in 'zipinter.pas', {$ENDIF}
-  IdStream,
   osconf,
   osshowsysinfo {SystemInfo},
   //wirequlist in 'wirequlist.pas',
