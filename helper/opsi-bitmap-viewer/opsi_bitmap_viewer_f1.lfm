@@ -1,12 +1,12 @@
 object FBitmapViewer: TFBitmapViewer
-  Left = 494
+  Left = 169
   Height = 356
-  Top = 250
+  Top = 261
   Width = 395
   Caption = 'opsi-Bitmap-Viewer'
   ClientHeight = 356
   ClientWidth = 395
-  LCLVersion = '1.6.2.0'
+  LCLVersion = '2.0.0.4'
   object Panel1: TPanel
     Left = 0
     Height = 50
