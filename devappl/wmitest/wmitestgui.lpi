@@ -94,12 +94,15 @@
         <Mode0 Name="default"/>
       </Modes>
     </RunParams>
-    <RequiredPackages Count="1">
+    <RequiredPackages Count="2">
       <Item1>
-        <PackageName Value="LCL"/>
+        <PackageName Value="LazUtils"/>
       </Item1>
+      <Item2>
+        <PackageName Value="LCL"/>
+      </Item2>
     </RequiredPackages>
-    <Units Count="4">
+    <Units Count="5">
       <Unit0>
         <Filename Value="wmitestgui.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -107,7 +110,7 @@
       <Unit1>
         <Filename Value="wmitestu.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="Form1"/>
+        <ComponentName Value="MainForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit1>
@@ -118,7 +121,15 @@
       <Unit3>
         <Filename Value="..\..\external_libraries\modified\misc\utilwmi.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="Utilwmi"/>
       </Unit3>
+      <Unit4>
+        <Filename Value="resultwindow.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ResultForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit4>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
