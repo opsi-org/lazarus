@@ -47,7 +47,6 @@ type
       Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure FormShow(Sender: TObject);
     procedure ListBoxAvailableWMIPropertiesDragDrop(Sender, Source: TObject; X,
       Y: Integer);
     procedure ListBoxAvailableWMIPropertiesDragOver(Sender, Source: TObject; X,
@@ -298,10 +297,6 @@ begin
   WMIClass.Free;
 end;
 
-procedure TMainForm.FormShow(Sender: TObject);
-begin
-  //ResultForm.Show;
-end;
 
 procedure TMainForm.ListBoxAvailableWMIPropertiesDragDrop(Sender,
   Source: TObject; X, Y: Integer);

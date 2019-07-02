@@ -1,11 +1,11 @@
 object MainForm: TMainForm
-  Left = 1965
+  Left = 1951
   Height = 676
-  Top = 127
-  Width = 648
+  Top = 118
+  Width = 653
   Caption = 'opsi-wmitestgui'
   ClientHeight = 676
-  ClientWidth = 648
+  ClientWidth = 653
   Icon.Data = {
     BE1000000000010001002020000001002000A810000016000000280000002000
     0000400000000100200000000000001000006400000064000000000000000000
@@ -145,8 +145,8 @@ object MainForm: TMainForm
   }
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  OnShow = FormShow
-  LCLVersion = '2.0.0.4'
+  Position = poDefaultPosOnly
+  LCLVersion = '2.0.2.0'
   object GroupBoxConnection: TGroupBox
     Left = 12
     Height = 176

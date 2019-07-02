@@ -1,7 +1,7 @@
 object ResultForm: TResultForm
-  Left = 2651
+  Left = 2664
   Height = 674
-  Top = 132
+  Top = 137
   Width = 549
   Caption = 'opsi-wmitestgui - Result of query to WMI service'
   ClientHeight = 674
@@ -202,7 +202,8 @@ object ResultForm: TResultForm
     0000
   }
   OnCreate = FormCreate
-  LCLVersion = '2.0.0.4'
+  Position = poDefaultPosOnly
+  LCLVersion = '2.0.2.0'
   object MemoQueryResult: TMemo
     Left = 0
     Height = 675
