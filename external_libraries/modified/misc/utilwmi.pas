@@ -93,7 +93,7 @@ begin
     begin
       if VarIsArray(Value[i]) 
       then Result := Result + VarArrayToStr(Value[i])
-      else Result := Result + VartoStr(Value[i])
+      else Result := Result + VarToStr(Value[i])
     end
     else Result := Result + '<null>';
   end;
@@ -166,7 +166,7 @@ begin
         begin
             if VarIsArray(objWMI.Properties_.Item(WideString(PropertyName)).value) 
             then PropertyStrVal := VarArrayToStr(objWMI.Properties_.Item(WideString(PropertyName)).value)
-            else PropertyStrVal := VartoStr(objWMI.Properties_.Item(WideString(PropertyName)).value)
+            else PropertyStrVal := VarToStr(objWMI.Properties_.Item(WideString(PropertyName)).value)
         end
         else PropertyStrVal := '<null>';
         WMIProp.Add(PropertyName + '=' + PropertyStrVal);
@@ -193,7 +193,7 @@ var
   objWMIService : Variant;
   colWMI        : Variant;
   oEnumWMI      : IEnumvariant;
-    oEnumWMI2      : IEnumvariant;
+  oEnumWMI2     : IEnumvariant;
   nrValue       : LongWord;
   {$IFDEF USE_OLD_WMI}
   objWMI        : Variant;                     // FPC < 3.0 requires WMIobj to be an variant, not an OleVariant
@@ -202,15 +202,15 @@ var
   objWMI        : OleVariant;                  // FPC 3.0 requires WMIobj to be an olevariant, not a variant
   nr            : LongWord absolute nrValue;   // FPC 3.0 requires IEnumvariant.next to supply a longword variable for # returned values
   objWMIItem    : OleVariant;
-  PropertyNames  : OleVariant;
-  oleNamespace  : OLEVariant;
+  PropertyNames : OleVariant;
+  oleNamespace  : OleVariant;
   {$ENDIF}
   WMIproperties : String;
   WMIProp       : TStringList;
   Request       : String;
   PropertyName  : String;
   PropertyStrVal: String;
-  i             : integer;
+  //i             : integer;
 begin
   {$IFDEF USE_OLD_WMI}
   nr := @nrValue;
