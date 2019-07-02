@@ -40,7 +40,7 @@ uses
   {$ENDIF GUI}
   {$IFDEF OPSIWINST}
   osfunc,
-  osparser,
+  //osparser,
   osconf,
   //lconvencoding,
   //utf8scanner,
@@ -524,6 +524,7 @@ uses
   {$IFDEF GUI}
   osbatchgui,
   {$ENDIF GUI}
+  osparser,
   osmain;
 
 {$ENDIF}

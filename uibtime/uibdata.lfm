@@ -2,8 +2,8 @@ object DataModule1: TDataModule1
   OnCreate = DataModuleCreate
   OldCreateOrder = False
   Height = 625
-  HorizontalOffset = 44
-  VerticalOffset = 252
+  HorizontalOffset = 687
+  VerticalOffset = 319
   Width = 894
   PPI = 96
   object IBConnection1: TIBConnection
@@ -357,7 +357,7 @@ object DataModule1: TDataModule1
     Database = IBConnection1
     Transaction = SQLTransaction1
     SQL.Strings = (
-      'select * from uibsoll'
+      'select * from uibsoll order by jahr,monat'
     )
     Params = <>
     UpdateMode = upWhereAll

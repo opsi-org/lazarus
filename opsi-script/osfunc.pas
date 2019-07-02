@@ -615,6 +615,7 @@ const
   StandardUsercontextSubPath = 'opsi\tmp\';
   {$ELSE WINDOWS}
   StandardTempPath = '/tmp/';
+  UniventionTempPath = '/var/tmp/';
   StandardUsercontextSubPath = 'opsi/tmp/';
   {$ENDIF WINDOWS}
   IPPatchLogFilename =  (* TempPath + *) 'iplog.txt';

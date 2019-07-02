@@ -124,6 +124,7 @@ end;
 procedure Tfwork_description.FormHide(Sender: TObject);
 begin
   Datamodule1.TimerOnTop.Enabled := true;
+  close;
 end;
 
 
