@@ -17,7 +17,7 @@ interface
 
 uses
   Classes, SysUtils, DB,
-  ExtendedNotebook,
+  ExtendedNotebook, DividerBevel,
   Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
   Buttons, ComCtrls, Grids, DBGrids, DBCtrls, ockdata, CommCtrl,
   BufDataset, typinfo, installdlg, lcltranslator, ActnList, oslog, inifiles,
@@ -57,7 +57,6 @@ type
   { TFopsiClientKiosk }
 
   TFopsiClientKiosk = class(TForm)
-    ActionList1: TActionList;
     BitBtnInfo: TBitBtn;
     BitBtnShowAction: TBitBtn;
     BitBtnCancel: TBitBtn;
@@ -73,6 +72,7 @@ type
     DBTextPriority: TDBText;
     DBTextVerStr: TDBText;
     DBTextClientVerStr: TDBText;
+    DividerBevel1: TDividerBevel;
     ExtendedNotebook1: TExtendedNotebook;
     FlowPanelTiles: TFlowPanel;
     Image2: TImage;
@@ -116,8 +116,6 @@ type
     productdetailpanel: TPanel;
     PanelTopImage: TPanel;
     StatusBar1: TStatusBar;
-    ToolBar1: TToolBar;
-    ToolBar2: TToolBar;
     procedure BitBtnInfoClick(Sender: TObject);
     procedure BitBtnShowActionClick(Sender: TObject);
     procedure BitBtnStoreActionClick(Sender: TObject);
@@ -134,14 +132,6 @@ type
     procedure DBGrid1TitleClick(Column: TColumn);
     procedure FormDestroy(Sender: TObject);
     procedure grouplistEnter(Sender: TObject);
-    procedure PageListBeforeShow(ASender: TObject; ANewPage: TPage;
-      ANewIndex: integer);
-    procedure PageTileBeforeShow(ASender: TObject; ANewPage: TPage;
-      ANewIndex: integer);
-    procedure Panel1MouseWheel(Sender: TObject; Shift: TShiftState;
-      WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
-    procedure Panel1MouseWheelDown(Sender: TObject; Shift: TShiftState;
-      MousePos: TPoint; var Handled: boolean);
     procedure ProcessMess;
     procedure RadioGroupViewClick(Sender: TObject);
     procedure RadioGroupViewSelectionChanged(Sender: TObject);
@@ -151,8 +141,6 @@ type
     procedure SpeedButtonReloadClick(Sender: TObject);
     procedure Terminate;
     procedure BitBtnCancelClick(Sender: TObject);
-    procedure CheckListBox1ShowHint(Sender: TObject; HintInfo: PHintInfo);
-    procedure ExtendedNotebook1Change(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     //procedure grouplistSelectionChange(Sender: TObject; User: boolean);
@@ -165,7 +153,6 @@ type
     procedure SpeedButtonViewListClick(Sender: TObject);
     procedure SpeedButtonViewStoreClick(Sender: TObject);
     procedure TimerSearchEditTimer(Sender: TObject);
-    procedure ZMQueryDataSet1NewRecord(DataSet: TDataSet);
     procedure FilterOnSearch;
   private
     { private declarations }
@@ -269,14 +256,17 @@ end;
 constructor TProductPanel.Create(TheOwner: TWincontrol);
 begin
   try
-    inherited Create(theOwner);
+    inherited Create(TheOwner);
     parent := theOwner;
     Width := tile_width;
     Height := tile_height;
     self.OnClick := ProductTileClick;
     //BorderStyle := bsSingle;
+    //BorderWidth := 2;
     BorderStyle := bsNone;
-    BorderSpacing.Around := 1;
+    //BevelInner := bvRaised;
+    //BevelOuter := bvRaised;
+    BorderSpacing.Around := 5;
     Color := StringToColor(tile_color);
     Font.Name := tile_Font_Name;
     font.Size := tile_Font_Size;
@@ -689,7 +679,6 @@ begin
 
 end;
 
-
 procedure TFopsiClientKiosk.RadioGroupViewSelectionChanged(Sender: TObject);
 begin
   NotebookProducts.PageIndex := RadioGroupView.ItemIndex;
@@ -773,32 +762,6 @@ procedure TFopsiClientKiosk.grouplistEnter(Sender: TObject);
 begin
   productdetailpanel.Height := 0;
 end;
-
-
-procedure TFopsiClientKiosk.PageListBeforeShow(ASender: TObject;
-  ANewPage: TPage; ANewIndex: integer);
-begin
-
-end;
-
-procedure TFopsiClientKiosk.PageTileBeforeShow(ASender: TObject;
-  ANewPage: TPage; ANewIndex: integer);
-begin
-
-end;
-
-procedure TFopsiClientKiosk.Panel1MouseWheel(Sender: TObject;
-  Shift: TShiftState; WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
-begin
-
-end;
-
-procedure TFopsiClientKiosk.Panel1MouseWheelDown(Sender: TObject;
-  Shift: TShiftState; MousePos: TPoint; var Handled: boolean);
-begin
-
-end;
-
 
 procedure TFopsiClientKiosk.DBGrid1Exit(Sender: TObject);
 begin
@@ -978,16 +941,6 @@ begin
   end;
 end;
 
-procedure TFopsiClientKiosk.CheckListBox1ShowHint(Sender: TObject; HintInfo: PHintInfo);
-begin
-
-end;
-
-procedure TFopsiClientKiosk.ExtendedNotebook1Change(Sender: TObject);
-begin
-
-end;
-
 procedure TFopsiClientKiosk.FormActivate(Sender: TObject);
 var
   ErrorMsg: string;
@@ -1164,8 +1117,8 @@ begin
   tile_Font_Bold := False;
   tile_Font_Italic := False;
   tile_Font_Underline := False;
-  tile_width := 220;
-  tile_height := 200;
+  tile_width := 150;
+  tile_height := 100;
   //TileRadio
   tile_radio_setup_color := 'clGreen';
   tile_radio_uninstall_color := 'clRed';
@@ -1291,11 +1244,6 @@ begin
   FilterOnSearch;
 end;
 
-
-procedure TFopsiClientKiosk.ZMQueryDataSet1NewRecord(DataSet: TDataSet);
-begin
-
-end;
 
 procedure TFopsiClientKiosk.BitBtnCancelClick(Sender: TObject);
 var

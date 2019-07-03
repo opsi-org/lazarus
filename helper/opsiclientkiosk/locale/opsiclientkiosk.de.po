@@ -91,9 +91,10 @@ msgid "Install now (Close all Applications)"
 msgstr "Installiere jetzt. Alle Anwendungen schließen !"
 
 #: tfinstalldlg.caption
+#, fuzzy
 msgctxt "TFINSTALLDLG.CAPTION"
 msgid "opsi-kiosk-client"
-msgstr ""
+msgstr "opsi-kiosk-client"
 
 #: tfinstalldlg.label1.caption
 msgctxt "TFINSTALLDLG.LABEL1.CAPTION"
@@ -150,6 +151,10 @@ msgstr "Experten Modus"
 #: tfopsiclientkiosk.dbgrid1.hint
 msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
 msgstr "In die Spalte ActionRequest klicken um Aktionen (setup/uninstall) zu setzen"
+
+#: tfopsiclientkiosk.dividerbevel1.caption
+msgid "Software"
+msgstr ""
 
 #: tfopsiclientkiosk.labeladvice.caption
 msgid "Advice:  "
@@ -216,24 +221,4 @@ msgstr "Abhängigkeiten / Prioritäten"
 #| msgid "huhu"
 msgid "opsi Client Kiosk"
 msgstr "opsi Client Kiosk"
-
-#: tform1.bitbtnlater.caption
-msgctxt "tform1.bitbtnlater.caption"
-msgid "Install at next Standard Event (e.g. Reboot)"
-msgstr "Installiere bei nächster Standard-Gelegenheit (z.B. Neustart)"
-
-#: tform1.bitbtnnow.caption
-msgctxt "tform1.bitbtnnow.caption"
-msgid "Install now (Close all Applications)"
-msgstr "Installiere jetzt. Alle Anwendungen schlie�en !"
-
-#: tform1.caption
-msgctxt "tform1.caption"
-msgid "opsi-kiosk-client"
-msgstr "opsi-kiosk-client"
-
-#: tform1.label1.caption
-msgctxt "tform1.label1.caption"
-msgid "The following Actions will be done:"
-msgstr "Die folgenden Aktionen werden ausgeführt:"
 

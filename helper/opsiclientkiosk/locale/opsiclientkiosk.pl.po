@@ -156,6 +156,10 @@ msgstr ""
 msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
 msgstr "Kliknij na zgłoszenie akcji i ustaw akcję (setup/odinstalowanie)"
 
+#: tfopsiclientkiosk.dividerbevel1.caption
+msgid "Software"
+msgstr ""
+
 #: tfopsiclientkiosk.labeladvice.caption
 msgid "Advice:  "
 msgstr "Wskazówka:"
@@ -221,24 +225,4 @@ msgstr "Zależności / Piorytety"
 #| msgid "huhu"
 msgid "opsi Client Kiosk"
 msgstr "Kiosk OPSI"
-
-#: tform1.bitbtnlater.caption
-msgctxt "tform1.bitbtnlater.caption"
-msgid "Install at next Standard Event (e.g. Reboot)"
-msgstr "Instalacja przy następnym wydarzeniu (np restart)"
-
-#: tform1.bitbtnnow.caption
-msgctxt "tform1.bitbtnnow.caption"
-msgid "Install now (Close all Applications)"
-msgstr "Instalacja teraz (Zamknij wszystkie programy)"
-
-#: tform1.caption
-msgctxt "tform1.caption"
-msgid "opsi-kiosk-client"
-msgstr "opsi-kiosk-client"
-
-#: tform1.label1.caption
-msgctxt "tform1.label1.caption"
-msgid "The following Actions will be done:"
-msgstr "Akcje zostaną zakończone:"
 

@@ -211,8 +211,8 @@ begin
         logdatei.log('Creating new database ', LLInfo);
         Datamodule1.SQLite3Connection1.Open;
         Datamodule1.SQLTransaction1.Active := True;
-        ZMQUerydataset1 := Datamodule1.SQLQuery1;
-        ZMQUerydataset2 := Datamodule1.SQLQuery2;
+        ZMQuerydataset1 := Datamodule1.SQLQuery1;
+        ZMQuerydataset2 := Datamodule1.SQLQuery2;
 
         try
           Datamodule1.SQLite3Connection1.ExecuteDirect(
@@ -252,7 +252,7 @@ begin
             'prerequired String, postrequired String, ' +
             'PRIMARY KEY(ProductId,requiredProductId));');
 
-          logdatei.log('Fiished kioskslave ', LLInfo);
+          logdatei.log('Finished kioskslave ', LLInfo);
         except
           on e: Exception do
           begin
@@ -277,14 +277,14 @@ begin
 
         if ZMQueryDataSet1.Active then
           ZMQueryDataSet1.Close;
-        ZMQUerydataset1.SQL.Clear;
-        ZMQUerydataset1.SQL.Add('select * from kioskmaster order by Upper(ProductName)');
-        ZMQUerydataset1.Open;
+        ZMQuerydataset1.SQL.Clear;
+        ZMQuerydataset1.SQL.Add('select * from kioskmaster order by Upper(ProductName)');
+        ZMQuerydataset1.Open;
         if ZMQueryDataSet2.Active then
           ZMQueryDataSet2.Close;
-        ZMQUerydataset2.SQL.Clear;
-        ZMQUerydataset2.SQL.Add('select * from kioskslave order by ProductId');
-        ZMQUerydataset2.Open;
+        ZMQuerydataset2.SQL.Clear;
+        ZMQuerydataset2.SQL.Add('select * from kioskslave order by ProductId');
+        ZMQuerydataset2.Open;
         logdatei.log('Finished initdb', LLInfo);
 
         //ShowMessage('Succesfully created database.');
