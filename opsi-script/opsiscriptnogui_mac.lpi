@@ -150,7 +150,7 @@
         <PackageName Value="FCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="35">
+    <Units Count="34">
       <Unit0>
         <Filename Value="opsiscriptnogui_mac.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -239,62 +239,59 @@
         <IsPartOfProject Value="True"/>
       </Unit20>
       <Unit21>
-        <Filename Value="oslistedit.pas"/>
+        <Filename Value="../common/osparserhelper.pas"/>
         <IsPartOfProject Value="True"/>
-        <HasResources Value="True"/>
       </Unit21>
       <Unit22>
-        <Filename Value="../common/osparserhelper.pas"/>
+        <Filename Value="../common/key_valueCollection.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit22>
       <Unit23>
-        <Filename Value="../common/key_valueCollection.pas"/>
+        <Filename Value="../common/osfunclin.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit23>
       <Unit24>
-        <Filename Value="../common/osfunclin.pas"/>
+        <Filename Value="../common/osfuncmac.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit24>
       <Unit25>
-        <Filename Value="../common/osfuncmac.pas"/>
+        <Filename Value="../common/osnetworkcalculator.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit25>
       <Unit26>
-        <Filename Value="../common/osnetworkcalculator.pas"/>
+        <Filename Value="../common/osprocesses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit26>
       <Unit27>
-        <Filename Value="../common/osprocesses.pas"/>
+        <Filename Value="../common/osprocessux.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="OSProcessux"/>
       </Unit27>
       <Unit28>
-        <Filename Value="../common/osprocessux.pas"/>
+        <Filename Value="../common/osregex.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit28>
       <Unit29>
-        <Filename Value="../common/osregex.pas"/>
+        <Filename Value="../common/osurlparser.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit29>
       <Unit30>
-        <Filename Value="../common/osurlparser.pas"/>
+        <Filename Value="../common/osxml.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit30>
       <Unit31>
-        <Filename Value="../common/osxml.pas"/>
+        <Filename Value="../common/osxmlsections.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit31>
       <Unit32>
-        <Filename Value="../common/osxmlsections.pas"/>
+        <Filename Value="../common/osxmltdom.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit32>
       <Unit33>
-        <Filename Value="../common/osxmltdom.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit33>
-      <Unit34>
         <Filename Value="../common/oszip.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit34>
+        <UnitName Value="OsZip"/>
+      </Unit33>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -320,6 +317,7 @@
         <OverflowChecks Value="True"/>
         <StackChecks Value="True"/>
       </Checks>
+      <TargetCPU Value="x86_64"/>
       <SmallerCode Value="True"/>
     </CodeGeneration>
     <Linking>

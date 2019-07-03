@@ -9,6 +9,7 @@ uses
   osfunc,
   {$IFDEF GUI}
   graphics,
+  forms,
   {$ENDIF GUI}
   {$ENDIF OPSISCRIPT}
 oslog,
@@ -73,6 +74,13 @@ uses
   osshowsysinfo;
   {$ENDIF GUI}
   {$ENDIF OPSISCRIPT}
+
+procedure ProcessMess;
+begin
+   {$IFDEF GUI}
+   Application.ProcessMessages;
+   {$ENDIF GUI}
+end;
 
 {$IFDEF OPSISCRIPT}
 
@@ -172,7 +180,7 @@ function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TXStringList;
   var report: string; showcmd: integer; var ExitCode: longint;showoutput:boolean): boolean;
 begin
-  result := RunCommandAndCaptureOut(cmd, catchOut, outlines, report, showcmd, ExitCode, false,0);
+  result := RunCommandAndCaptureOut(cmd, catchOut, outlines, report, showcmd, ExitCode, showoutput,0);
 end;
 
 
@@ -186,7 +194,7 @@ const
 
 var
   //myStringlist : TStringlist;
-  S: TStringList;
+  outpart: TStringList;
   M: TMemoryStream;
   FpcProcess: TProcess;
   n: longint;
@@ -197,6 +205,8 @@ begin
   try
     try
       M := TMemoryStream.Create;
+      outpart := TStringList.Create;
+      outlines.Clear;
       BytesRead := 0;
       FpcProcess := process.TProcess.Create(nil);
       FpcProcess.CommandLine := cmd;
@@ -215,7 +225,7 @@ begin
         systeminfo.BitBtn1.Enabled:= false;
         systeminfo.Label1.Caption:='Executing: '+cmd;
         systeminfo.ShowOnTop;
-        //ProcessMess;
+        ProcessMess;
         LogDatei.log('Start Showoutput', LLInfo+logleveloffset);
         //FBatchOberflaeche.Left:= 5;
         //FBatchOberflaeche.Top:= 5;
@@ -239,6 +249,16 @@ begin
             //Logdatei.DependentAdd('RunCommandAndCaptureOut: read: ' +
             // IntToStr(n) + ' bytes', LLdebug2);
             //Write('.')
+            M.SetSize(BytesRead);
+            outpart.LoadFromStream(M);
+            outlines.Text := outlines.Text+outpart.Text;
+            {$IFDEF GUI}
+            if showoutput then
+            begin
+              SystemInfo.Memo1.Lines.Add(outpart.Text);
+              ProcessMess;
+            end;
+            {$ENDIF GUI}
           end;
         end
         else
@@ -273,28 +293,17 @@ begin
       M.SetSize(BytesRead);
       //Logdatei.DependentAdd('RunCommandAndCaptureOut: -- executed --', LLdebug2);
       //WriteLn('-- executed --');
-
-      S := TStringList.Create;
-      S.LoadFromStream(M);
-      //Logdatei.DependentAdd('RunCommandAndCaptureOut: -- linecount = ' +
-      //  IntToStr(S.Count), LLdebug2);
-      //WriteLn('-- linecount = ', S.Count, ' --');
-      for n := 0 to S.Count - 1 do
-      begin
-        //WriteLn('| ', S[n]);
-        outlines.Add(S[n]);
-        {$IFDEF GUI}
-        if showoutput then
-        begin
-          SystemInfo.Memo1.Lines.Add(S[n]);
-          //ProcessMess;
-        end;
-        //ProcessMess;
-        {$ENDIF GUI}
-      end;
-      //WriteLn('-- end --');
+      outpart.LoadFromStream(M);
+      outlines.Text := outlines.Text+outpart.Text;
       // Attention: Exitcode is exitcode of bash
-          if Logdatei <> nil then LogDatei.log('ExitCode ' + IntToStr(exitCode), LLInfo+logleveloffset);
+      {$IFDEF GUI}
+      if showoutput then
+      begin
+        SystemInfo.Memo1.Lines.Add(outpart.Text);
+        ProcessMess;
+      end;
+      {$ENDIF GUI}
+      if Logdatei <> nil then LogDatei.log('ExitCode ' + IntToStr(exitCode), LLInfo+logleveloffset);
     except
       on e: Exception do
       begin
@@ -304,7 +313,7 @@ begin
       end;
     end;
   finally
-    S.Free;
+    outpart.Free;
     FpcProcess.Free;
     M.Free;
     {$IFDEF GUI}
@@ -313,7 +322,7 @@ begin
       SystemInfo.free; SystemInfo := nil;
       //FBatchOberflaeche.BringToFront;
       //FBatchOberflaeche.centerWindow;
-      //ProcessMess;
+      ProcessMess;
       if Logdatei <> nil then LogDatei.log('Stop Showoutput', LLInfo+logleveloffset);
     end;
     {$ENDIF GUI}
@@ -447,7 +456,7 @@ begin
           SystemInfo.Memo1.Lines.Add(S[n]);
           ProcessMess;
         end;
-        //ProcessMess;
+        ProcessMess;
         {$ENDIF GUI}
       end;
       //WriteLn('-- end --');
