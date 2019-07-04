@@ -4,6 +4,12 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.2.0) experimental; urgency=low
+
+  * oswebservice: switch from indy to synapse
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 04 Jul 2019:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.1.5) experimental; urgency=low
 
   * osdefinedfunctions: delLocalVar : fix removing loopvar after empty loop

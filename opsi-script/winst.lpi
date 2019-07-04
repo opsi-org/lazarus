@@ -22,8 +22,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
-      <RevisionNr Value="1"/>
-      <BuildNr Value="5"/>
+      <RevisionNr Value="2"/>
       <StringTable Comments="Compiled with Lazarus 2.0 / FPC 3.0.4" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst32.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst32.exe" ProductName="opsi-script" ProductVersion="4.1.0"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -37,7 +36,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\synapse40lib;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\indy\Lib\Core;..\external_libraries\indy\Lib\Protocols;..\external_libraries\indy\Lib;..\external_libraries\modified\misc;..\common"/>
+            <OtherUnitFiles Value="..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\modified\misc;..\common;..\external_libraries\synapse"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -421,7 +420,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\synapse40lib;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\indy\Lib\Core;..\external_libraries\indy\Lib\Protocols;..\external_libraries\indy\Lib;..\external_libraries\modified\misc"/>
+      <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\modified\misc;..\external_libraries\synapse"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
