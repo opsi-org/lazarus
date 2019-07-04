@@ -105,6 +105,10 @@ msgctxt "TFINSTALLDLG.LABEL1.CAPTION"
 msgid "The following Actions will be done:"
 msgstr "Будут выполнены следующие действия:"
 
+#: tfopsiclientkiosk.bitbtn1.caption
+msgid "Installieren"
+msgstr ""
+
 #: tfopsiclientkiosk.bitbtncancel.caption
 msgid "Exit"
 msgstr ""

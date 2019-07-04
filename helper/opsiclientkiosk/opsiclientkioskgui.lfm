@@ -1,12 +1,12 @@
 object FopsiClientKiosk: TFopsiClientKiosk
-  Left = 2863
-  Height = 814
-  Top = 77
+  Left = 2026
+  Height = 860
+  Top = 81
   Width = 857
   Caption = 'opsi-client-kiosk'
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
   ChildSizing.ControlsPerLine = 2
-  ClientHeight = 814
+  ClientHeight = 860
   ClientWidth = 857
   Constraints.MinWidth = 857
   OnActivate = FormActivate
@@ -17,58 +17,58 @@ object FopsiClientKiosk: TFopsiClientKiosk
   LCLVersion = '2.0.2.0'
   object datapanel: TPanel
     Left = 0
-    Height = 568
+    Height = 614
     Top = 223
     Width = 857
     Align = alClient
     BevelOuter = bvNone
     BorderStyle = bsSingle
-    ClientHeight = 564
+    ClientHeight = 610
     ClientWidth = 853
     TabOrder = 3
     object productlistpanel: TPanel
       Left = 0
-      Height = 564
+      Height = 610
       Top = 0
       Width = 853
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 564
+      ClientHeight = 610
       ClientWidth = 853
       Color = clForm
       ParentColor = False
       TabOrder = 0
       object productdetailpanel: TPanel
         Left = 0
-        Height = 187
-        Top = 377
+        Height = 179
+        Top = 431
         Width = 853
         Align = alBottom
         BevelOuter = bvNone
-        ClientHeight = 187
+        ClientHeight = 179
         ClientWidth = 853
         TabOrder = 1
         object ExtendedNotebook1: TExtendedNotebook
           Left = 0
-          Height = 187
+          Height = 179
           Top = 0
           Width = 853
           ActivePage = TabSheet1
-          Align = alClient
+          Align = alTop
           TabIndex = 0
           TabOrder = 0
           object TabSheet1: TTabSheet
             Caption = 'Details'
-            ClientHeight = 159
+            ClientHeight = 151
             ClientWidth = 845
             object PanelDetailsLables: TPanel
               Left = 0
-              Height = 159
+              Height = 151
               Top = 0
               Width = 160
               Align = alLeft
               BevelOuter = bvNone
-              ClientHeight = 159
+              ClientHeight = 151
               ClientWidth = 160
               ParentColor = False
               TabOrder = 0
@@ -121,12 +121,12 @@ object FopsiClientKiosk: TFopsiClientKiosk
             end
             object PanelDetailsDBText: TPanel
               Left = 160
-              Height = 159
+              Height = 151
               Top = 0
               Width = 685
               Align = alClient
               BevelOuter = bvNone
-              ClientHeight = 159
+              ClientHeight = 151
               ClientWidth = 685
               ParentColor = False
               TabOrder = 1
@@ -143,10 +143,10 @@ object FopsiClientKiosk: TFopsiClientKiosk
               end
               object DBTextClientVerStr: TDBText
                 Left = 5
-                Height = 15
+                Height = 17
                 Top = 129
-                Width = 675
-                Align = alTop
+                Width = 96
+                Align = alLeft
                 BorderSpacing.Around = 5
                 DataField = 'installedverstr'
                 DataSource = DataSource1
@@ -180,21 +180,30 @@ object FopsiClientKiosk: TFopsiClientKiosk
                 ScrollBars = ssAutoVertical
                 TabOrder = 1
               end
+              object BitBtn1: TBitBtn
+                Left = 535
+                Height = 22
+                Top = 129
+                Width = 150
+                Align = alRight
+                Caption = 'Installieren'
+                TabOrder = 2
+              end
             end
           end
           object TabSheet2: TTabSheet
             Caption = 'Dependencies / Priority'
             ClientHeight = 159
-            ClientWidth = 1050
+            ClientWidth = 845
             object PanelPriority: TPanel
               Left = 0
               Height = 32
               Top = 127
-              Width = 1050
+              Width = 845
               Align = alBottom
               BevelOuter = bvNone
               ClientHeight = 32
-              ClientWidth = 1050
+              ClientWidth = 845
               ParentColor = False
               TabOrder = 0
               object LabelPriority: TLabel
@@ -221,17 +230,17 @@ object FopsiClientKiosk: TFopsiClientKiosk
               Left = 0
               Height = 127
               Top = 0
-              Width = 1050
+              Width = 845
               Align = alClient
               BevelOuter = bvNone
               ClientHeight = 127
-              ClientWidth = 1050
+              ClientWidth = 845
               TabOrder = 1
               object DBGrid2: TDBGrid
                 Left = 0
                 Height = 127
                 Top = 0
-                Width = 1050
+                Width = 845
                 Align = alClient
                 Color = clWindow
                 Columns = <>
@@ -244,7 +253,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
       end
       object NotebookProducts: TNotebook
         Left = 10
-        Height = 301
+        Height = 355
         Top = 66
         Width = 833
         PageIndex = 1
@@ -255,7 +264,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
         object PageList: TPage
           object DBGrid1: TDBGrid
             Left = 0
-            Height = 301
+            Height = 355
             Hint = 'Click to ActionRequest Column, to set action requests (setup/uninstall)'
             Top = 0
             Width = 833
@@ -297,7 +306,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
           ChildSizing.Layout = cclLeftToRightThenTopToBottom
           object ScrollBox1: TScrollBox
             Left = 0
-            Height = 301
+            Height = 355
             Top = 0
             Width = 833
             HorzScrollBar.Page = 1
@@ -306,7 +315,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
             Align = alClient
             AutoSize = True
             BorderStyle = bsNone
-            ClientHeight = 301
+            ClientHeight = 355
             ClientWidth = 833
             Color = clDefault
             ParentColor = False
@@ -314,7 +323,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
             OnMouseWheel = ScrollBox1MouseWheel
             object FlowPanelTiles: TFlowPanel
               Left = 0
-              Height = 301
+              Height = 355
               Top = 0
               Width = 833
               Align = alClient
@@ -956,7 +965,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
   object StatusBar1: TStatusBar
     Left = 0
     Height = 23
-    Top = 791
+    Top = 837
     Width = 857
     Panels = <    
       item

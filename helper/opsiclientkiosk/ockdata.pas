@@ -312,9 +312,9 @@ begin
 
   with FopsiClientKiosk do
   begin
-    DataSource1.DataSet := ZMQUerydataset1;
+    DataSource1.DataSet := ZMQuerydataset1;
     DBGrid1.DataSource := DataSource1;
-    DataSource2.DataSet := ockdata.ZMQUerydataset2;
+    DataSource2.DataSet := ockdata.ZMQuerydataset2;
     DBGrid2.DataSource := DataSource2;
     ZMQUerydataset2.DataSource := DataSource1;
     LabelDataload.Caption := '';

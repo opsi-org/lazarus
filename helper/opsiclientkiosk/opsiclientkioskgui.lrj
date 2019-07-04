@@ -5,6 +5,7 @@
 {"hash":217697168,"name":"tfopsiclientkiosk.labeladvice.caption","sourcebytes":[65,100,118,105,99,101,58,32,32],"value":"Advice:  "},
 {"hash":92290306,"name":"tfopsiclientkiosk.labelverstr.caption","sourcebytes":[86,101,114,115,105,111,110,32,97,116,32,83,101,114,118,101,114],"value":"Version at Server"},
 {"hash":77486996,"name":"tfopsiclientkiosk.labelclientverstr.caption","sourcebytes":[86,101,114,115,105,111,110,32,97,116,32,67,108,105,101,110,116],"value":"Version at Client"},
+{"hash":136995390,"name":"tfopsiclientkiosk.bitbtn1.caption","sourcebytes":[73,110,115,116,97,108,108,105,101,114,101,110],"value":"Installieren"},
 {"hash":5712633,"name":"tfopsiclientkiosk.tabsheet2.caption","sourcebytes":[68,101,112,101,110,100,101,110,99,105,101,115,32,47,32,80,114,105,111,114,105,116,121],"value":"Dependencies / Priority"},
 {"hash":110478784,"name":"tfopsiclientkiosk.labelpriority.caption","sourcebytes":[80,114,105,111,114,105,116,121,58,32],"value":"Priority: "},
 {"hash":206555929,"name":"tfopsiclientkiosk.dbgrid1.hint","sourcebytes":[67,108,105,99,107,32,116,111,32,65,99,116,105,111,110,82,101,113,117,101,115,116,32,67,111,108,117,109,110,44,32,116,111,32,115,101,116,32,97,99,116,105,111,110,32,114,101,113,117,101,115,116,115,32,40,115,101,116,117,112,47,117,110,105,110,115,116,97,108,108,41],"value":"Click to ActionRequest Column, to set action requests (setup/uninstall)"},
