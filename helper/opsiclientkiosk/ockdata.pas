@@ -181,10 +181,10 @@ begin
   logdatei.log('startinitdb ', LLInfo);
   with FopsiClientKiosk do
   begin
-    FopsiClientKiosk.ProgressBarDetail.Visible := True;
-    FopsiClientKiosk.ProgressBar1.Visible := True;
-    FopsiClientKiosk.LabelDataLoadDetail.Visible := True;
-    FopsiClientKiosk.LabelDataLoad.Visible := True;
+    ProgressBarDetail.Visible := True;
+    ProgressBar1.Visible := True;
+    LabelDataLoadDetail.Visible := True;
+    LabelDataLoad.Visible := True;
     LabelDataload.Caption := 'Create database';
     LabelDataLoadDetail.Caption := '';
     Progressbar1.Position := 0;
@@ -322,10 +322,10 @@ begin
     Progressbar1.Position := 15;
     ProgressbarDetail.Position := 0;
     productdetailpanel.Height := 0;
-    FopsiClientKiosk.ProgressBarDetail.Visible := False;
-    FopsiClientKiosk.ProgressBar1.Visible := False;
-    FopsiClientKiosk.LabelDataLoadDetail.Visible := False;
-    FopsiClientKiosk.LabelDataLoad.Visible := False;
+    ProgressBarDetail.Visible := False;
+    ProgressBar1.Visible := False;
+    LabelDataLoadDetail.Visible := False;
+    LabelDataLoad.Visible := False;
   end;
 end;
 
@@ -533,7 +533,7 @@ begin
   try
     if ZMQueryDataSet1.Active then
       ZMQueryDataSet1.Close;
-    ZMQUerydataset1.SQL.Clear;
+    ZMQuerydataset1.SQL.Clear;
     ZMQueryDataSet1.SQL.Add('delete from kioskmaster');
     ZMQueryDataSet1.ExecSQL;
   except

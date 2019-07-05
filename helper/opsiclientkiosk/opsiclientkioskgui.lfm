@@ -935,7 +935,6 @@ object FopsiClientKiosk: TFopsiClientKiosk
         'List'
         'Tile'
       )
-      OnClick = RadioGroupViewClick
       OnSelectionChanged = RadioGroupViewSelectionChanged
       TabOrder = 3
     end

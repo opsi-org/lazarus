@@ -26,12 +26,14 @@ uses
 
 type
 
+  { TProductPanel }
+
   TProductPanel = class(TPanel)
-    ShapeRoundSquare : TShape;
+    ShapeRoundSquare : TShape; //just for a nice look
     LabelId: TLabel;
     LabelName: TLabel;
     LabelState: TLabel;
-    ImageIcon : TImage;
+    ImageIcon : TImage; //Icon of the program
     RadioGroupAction: TGroupbox;
     rbsetup: TRadiobutton;
     rbNone: TRadiobutton;
@@ -45,12 +47,14 @@ type
     procedure ProductTileChildClick(Sender: TObject);
     procedure Scroll(Sender: TObject; Shift: TShiftState; WheelDelta: integer;
       MousePos: TPoint; var Handled: boolean);
+    procedure ProductTileMouseEnter(Sender :TObject);
+    procedure ProductTileMouseLeave(Sender :TObject);
   private
     { private declarations }
   public
     { public declarations }
-    constructor Create(TheOwner: TWincontrol);
-    destructor Destroy;
+    constructor Create(TheOwner: TWinControl);overload;
+    destructor Destroy;override;
   end;
 
   TPanels = array of TProductPanel;
@@ -125,6 +129,7 @@ type
     //procedure BtnActionClick(Sender: TObject);
     procedure BtnUpgradeClick(Sender: TObject);
     procedure CheckBox1Change(Sender: TObject);
+    procedure datapanelMouseEnter(Sender: TObject);
     procedure DBComboBox1Exit(Sender: TObject);
     procedure DBGrid1CellClick(Column: TColumn);
     procedure DBGrid1ColExit(Sender: TObject);
@@ -136,7 +141,6 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure grouplistEnter(Sender: TObject);
     procedure ProcessMess;
-    procedure RadioGroupViewClick(Sender: TObject);
     procedure RadioGroupViewSelectionChanged(Sender: TObject);
     procedure ScrollBox1MouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
@@ -203,10 +207,14 @@ implementation
 {$R *.lfm}
 
 const
-  clInstalled: TColor = clTeal;
-  clNotInstalled: TColor = $000080FF;
-  clUnknown: TColor = $00FF8000;
+  //color for StatusLabel
+  clInstalled = clTeal;
+  clNotInstalled = $000080FF;
+  clUnknown = $00FF8000;
 
+  //Path to programm icons
+  IconPathCustom = '.'+PathDelim + 'progam_icons' + PathDelim + 'custom' + PathDelim;//Application.Location + PathDelim + 'progam_icons' + PathDelim + 'custom' + PathDelim;
+  IconPathDefault = '.'+PathDelim + 'progam_icons' + PathDelim + 'default' + PathDelim;
 
 var
   mythread: Tmythread2;
@@ -235,6 +243,8 @@ var
   tile_radio_none_color: string;
   tile_radio_font_size: integer;
 
+  former_selected_tile: integer;//index of the former selected tile
+
 
 function actionRequestToLocale(actionRequest: string): string;
 begin
@@ -262,7 +272,7 @@ end;
 
 
 
-constructor TProductPanel.Create(TheOwner: TWincontrol);
+constructor TProductPanel.Create(TheOwner: TWinControl);
 var
   IconPath : String;
 begin
@@ -300,6 +310,8 @@ begin
        Left:= 0;
        OnClick := ProductTileChildClick;
        OnMouseWheel := scroll;
+       OnMouseEnter := ProductTileMouseEnter;
+       OnMouseLeave := ProductTileMouseLeave;
        //Brush.Color:= clWhite;
        //Brush.Style := bsSolid;
        //Visible:= True;
@@ -319,11 +331,13 @@ begin
       Width := self.Width;
       Alignment := taCenter;
       Align := alNone;
-      Top := 90;
+      Top := 100;
       Left := 0;
       BorderSpacing.Around := 3;
       OnClick := ProductTileChildClick;
       OnMouseWheel := scroll;
+      OnMouseEnter := ProductTileMouseEnter;
+      OnMouseLeave := ProductTileMouseLeave;
     end;
 
 
@@ -340,28 +354,32 @@ begin
       Top := LabelName.Top + LabelName.Height + 3;
       Left := 0;
       //labelId.BorderSpacing.Around := 3;
-      labelId.OnClick := ProductTileChildClick;
-      labelId.OnMouseWheel := scroll;
+      OnClick := ProductTileChildClick;
+      OnMouseWheel := scroll;
+      OnMouseEnter := ProductTileMouseEnter;
+      OnMouseLeave := ProductTileMouseLeave;
     end;
 
     //program icon
-    IconPath := Application.Location + PathDelim + 'progam_icons' + PathDelim + 'default'+ PathDelim + 'opsi-logo.png';
+    //IconPath := Application.Location + PathDelim + 'progam_icons' + PathDelim + 'default'+ PathDelim + 'opsi-logo.png';
     ImageIcon := TImage.Create(self);
     with ImageIcon do
     begin
       Parent := self;
-      Picture.LoadFromFile(IconPath);
+      //Picture.LoadFromFile(IconPath);
       AutoSize := False;
       Proportional := True;
       Width := 60;
       Height := 60;
       Center := True;
       Align:= alNone;
-      Top:=30;
+      Top:=35;
       Left:=40;
       //BorderSpacing.Around := 0;
       OnClick := ProductTileChildClick;
       OnMouseWheel := scroll;
+      OnMouseEnter := ProductTileMouseEnter;
+      OnMouseLeave := ProductTileMouseLeave;
     end;
 
     //label LabelState
@@ -380,6 +398,8 @@ begin
       //BorderSpacing.Around := 3;
       OnClick := ProductTileChildClick;
       OnMouseWheel := scroll;
+      OnMouseEnter := ProductTileMouseEnter;
+      OnMouseLeave := ProductTileMouseLeave;
     end;
 
     {*
@@ -529,6 +549,29 @@ begin
   logdatei.log('Scroll WheelDelta: ' + IntToStr(WheelDelta div 10), LLDebug2);
 end;
 
+procedure TProductPanel.ProductTileMouseEnter(Sender: TObject);
+var
+  tileindex: integer;
+begin
+  if not inTileRebuild then
+  begin
+    tileindex := TControl(Sender).Parent.Tag; //type convertion to TControl (all visual components are of this type), parent is the Panel
+    ProductTilesArray[tileindex].ShapeRoundSquare.Brush.Color:=$00FEEFD3;
+    //former_selected_tile := tileindex;
+  end;
+end;
+
+procedure TProductPanel.ProductTileMouseLeave(Sender: TObject);
+var
+  tileindex: integer;
+begin
+  if not inTileRebuild then
+  begin
+    tileindex := TControl(Sender).Parent.Tag; //type convertion to TControl (all visual components are of this type), parent is the Panel
+    ProductTilesArray[tileindex].ShapeRoundSquare.Brush.Color:=clWhite;
+    //former_selected_tile := tileindex;
+  end;
+end;
 
 procedure TProductPanel.TileActionChanged(Sender: TObject);
 var
@@ -596,7 +639,8 @@ var
 begin
   if not inTileRebuild then
   begin
-    tileindex := TGroupBox(Sender).Parent.Tag;
+    tileindex := TControl(Sender).Parent.Tag; //type convertion to TControl (all visual components are of this type), parent is the Panel
+    //if tileindex <> former_slected_tile
     pid := ProductTilesArray[tileindex].LabelID.Caption;
     ZMQueryDataSet1.First;
     if ZMQueryDataSet1.Locate('ProductId', VarArrayOf([pid]),[loCaseInsensitive]) then
@@ -605,13 +649,18 @@ begin
       begin
         FopsiClientKiosk.productdetailpanel.Height := 0;
         ProductTilesArray[tileindex].ShapeRoundSquare.Pen.Color:=clBlack;
+        ProductTilesArray[former_selected_tile].ShapeRoundSquare.Pen.Color:=clBlack;
+        ProductTilesArray[former_selected_tile].ShapeRoundSquare.Brush.Color:=clWhite;
         detail_visible := False;
       end
       else
       begin
         FopsiClientKiosk.productdetailpanel.Height := 185;
+        ProductTilesArray[former_selected_tile].ShapeRoundSquare.Pen.Color:=clBlack;
         ProductTilesArray[tileindex].ShapeRoundSquare.Pen.Color:=clBlue;
+        ProductTilesArray[tileindex].ShapeRoundSquare.Brush.Color:=$00FEEFD3;
         detail_visible := True;
+        former_selected_tile := tileindex;
       end;
     end;
   end;
@@ -620,7 +669,7 @@ end;
 procedure rebuildProductTiles;
 var
   counter, i, index: integer;
-  action, state: string;
+  action, state, ProductID: string;
 begin
   try
     inTileRebuild := True;
@@ -645,7 +694,6 @@ begin
           //logdatei.log('FreeAndNil(ProductTilesArray', LLDebug2);
         end;
       SetLength(ProductTilesArray, 0);
-
     except
       on e: Exception do
       begin
@@ -656,10 +704,11 @@ begin
         logdatei.log_exception(E, LLError);
       end;
     end;
+
     // use complete window for tiles
     FopsiClientKiosk.productdetailpanel.Height := 0;
-    // progess
 
+    // progess
     FopsiClientKiosk.Progressbar1.Position := 80;
     FopsiClientKiosk.LabelDataload.Caption := 'Fill Tiles';
     FopsiClientKiosk.ProgressbarDetail.max := ZMQUerydataset1.RecordCount;
@@ -669,17 +718,21 @@ begin
     ZMQUerydataset1.First;
     while not ZMQuerydataset1.EOF do
     begin
-      FopsiClientKiosk.LabelDataLoadDetail.Caption :=
-        ZMQueryDataSet1.FieldByName('ProductId').AsString;
+      ProductID := ZMQueryDataSet1.FieldByName('ProductId').AsString;
+      FopsiClientKiosk.LabelDataLoadDetail.Caption := ProductID;
       Application.ProcessMessages;
       SetLength(ProductTilesArray, counter + 1);
-      ProductTilesArray[counter] :=
-        TProductPanel.Create(FopsiClientKiosk.FlowPanelTiles);
-      ProductTilesArray[counter].LabelId.Caption :=
-        ZMQueryDataSet1.FieldByName('ProductId').AsString;
-      ProductTilesArray[counter].LabelName.Caption :=
-        ZMQueryDataSet1.FieldByName('ProductName').AsString;
-      //ProductTilesArray[counter].LabelState.Caption :=
+      ProductTilesArray[counter] := TProductPanel.Create(FopsiClientKiosk.FlowPanelTiles);
+      ProductTilesArray[counter].LabelId.Caption := ProductID;
+      ProductTilesArray[counter].LabelName.Caption := ZMQueryDataSet1.FieldByName('ProductName').AsString;
+      if FileExists(IconPathCustom + ProductID + '.png') then
+        ProductTilesArray[counter].ImageIcon.Picture.LoadFromFile(IconPathCustom + ProductID + '.png')
+      else
+        if FileExists(IconPathDefault + ProductID + '.png') then
+          ProductTilesArray[counter].ImageIcon.Picture.LoadFromFile(IconPathDefault + ProductID + '.png')
+        else
+          if FileExists(IconPathDefault + 'opsi-logo.png') then
+            ProductTilesArray[counter].ImageIcon.Picture.LoadFromFile(IconPathDefault + 'opsi-logo.png');
       state := ZMQueryDataSet1.FieldByName('installationStatus').AsString;
       if state = 'installed' then
       begin
@@ -754,11 +807,6 @@ end;
 procedure TFopsiClientKiosk.ProcessMess;
 begin
   Application.ProcessMessages;
-end;
-
-procedure TFopsiClientKiosk.RadioGroupViewClick(Sender: TObject);
-begin
-
 end;
 
 procedure TFopsiClientKiosk.RadioGroupViewSelectionChanged(Sender: TObject);
@@ -902,6 +950,11 @@ begin
   RadioGroupView.Items[1] := rsViewTiles;
   repaint;
   Application.ProcessMessages;
+end;
+
+procedure TFopsiClientKiosk.datapanelMouseEnter(Sender: TObject);
+begin
+
 end;
 
 procedure TFopsiClientKiosk.DBComboBox1Exit(Sender: TObject);
