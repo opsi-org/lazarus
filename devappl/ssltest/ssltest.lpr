@@ -6,16 +6,17 @@ program ssltest;
 
 uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   cthreads, {$ENDIF} {$ENDIF}
-  ssl_openssl_lib, oswebservice,
-  httpsend,
-  ssl_openssl,
+  ssl_openssl_lib,
+  oswebservice,
+  //httpsend,
+  //ssl_openssl,
   Classes,
   SysUtils,
-  fphttpclient,
-  fpopenssl,
+  //fphttpclient,
+  //fpopenssl,
   openssl,
   oslog,
-  fileutil,
+  lazfileutils,
   {$IFDEF UNIX}
   baseunix,
   {$ENDIF UNIX}
@@ -91,7 +92,7 @@ begin
 
 end;
 
-
+(*
   function DownloadHTTP(URL, TargetFile: string): boolean;
   var
     HTTPGetResult: boolean;
@@ -238,6 +239,110 @@ end;
       Ms.Free;
     end;
   end;
+*)
+
+function MyOpsiMethodCall(const method: string; parameters: array of string): string;
+var
+  omc: TOpsiMethodCall;
+  errorOccured: boolean;
+  resultstring: string;
+begin
+  Result := '';
+  try
+    omc := TOpsiMethodCall.Create(method, parameters);
+    resultstring := opsidata.checkAndRetrieve(omc, errorOccured);
+    Result := resultstring;
+  except
+    on e: Exception do
+    begin
+      LogDatei.log('Exception calling method: ' + method, LLerror);
+      logdatei.log('Exception: ' + E.message, LLError);
+      logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+      logdatei.log_exception(E,LLError);
+    end;
+  end;
+end;
+
+function MyOpsiMethodCall2(const method: string; parameters: array of string): string;
+var
+  omc: TOpsiMethodCall;
+  errorOccured: boolean;
+  resultstring: string;
+  resultstringlist: TStringList;
+  i: integer;
+begin
+  try
+    omc := TOpsiMethodCall.Create(method, parameters);
+    resultstringlist := TStringList.Create;
+    resultstringlist := opsidata.checkAndRetrieveList(omc, errorOccured);
+    for i := 0 to resultstringlist.Count - 1 do
+      Result := resultstringlist[i];
+
+  except
+    on e: Exception do
+    begin
+      LogDatei.log('Exception calling method: ' + method, LLerror);
+      logdatei.log('Exception: ' + E.message, LLError);
+      logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+      logdatei.log_exception(E,LLError);
+    end;
+  end;
+end;
+
+function initConnection(const seconds: integer): boolean;
+var
+  networkup, timeout: boolean;
+  myseconds: integer;
+  resultstring: string;
+  myservice_url, myclientid, myhostkey : string;
+begin
+  //FopsiClientKiosk.Cursor := crHourGlass;
+  Result := False;
+  networkup := False;
+  timeout := False;
+  myseconds := seconds;
+  myservice_url := 'https://192.168.1.14:4447/rpc';
+  myclientid := 'pcbon4.uib.local';
+  myhostkey := '379187d370b6aa9a7babe0b6c5f0bc64';
+
+  LogDatei.log('service_url=' + myservice_url, LLDebug2);
+  LogDatei.log('service_pass=' + myhostkey, LLDebug2);
+  LogDatei.log('clientid=' + myclientid, LLDebug2);
+  opsidata := TOpsi4Data.Create;
+  LogDatei.log('opsidata created', LLDebug2);
+  opsidata.setActualClient('pcbon4.uib.local');
+  opsidata.initOpsiConf(myservice_url, myclientid,
+    myhostkey, '', '', '', 'huh');
+  LogDatei.log('opsidata initialized', LLDebug2);
+  repeat
+    try
+      if myseconds > 0 then
+      begin
+        resultstring := MyOpsiMethodCall('getDepotId', [myclientid]);
+        networkup := True;
+      end
+      else
+        timeout := True;
+    except
+      LogDatei.log('opsidata not connected - retry', LLInfo);
+      myseconds := myseconds - 1;
+      Sleep(1000);
+    end;
+  until networkup or timeout;
+  if networkup then
+  begin
+    LogDatei.log('opsidata connected', LLInfo);
+    Result := True;
+    writeln('Connected to ' + myservice_url + ' as ' + myclientid);
+  end
+  else
+  begin
+    LogDatei.log('init connection failed (timeout after ' + IntToStr(seconds) +
+      ' seconds/retries.', LLError);
+    writeln('Connection failed');
+  end;
+  //FopsiClientKiosk.Cursor := crArrow;
+end;
 
 
 var
@@ -273,6 +378,8 @@ begin
   initlog;
   result := getOpsiServerVersion('https://192.168.1.14:4447/rpc','adminuser','linux123',session);
   writeln('result: '+result);
+  initConnection(30);
+
   closelog;
 
 end.

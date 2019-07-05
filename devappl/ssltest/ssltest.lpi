@@ -118,6 +118,11 @@
         <OverflowChecks Value="True"/>
       </Checks>
     </CodeGeneration>
+    <Other>
+      <Verbosity>
+        <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
+      </Verbosity>
+    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="3">

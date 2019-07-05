@@ -1482,31 +1482,31 @@ begin
     HTTPSender.Sock.CreateWithSSL(TSSLOpenSSL);
     HTTPSender.Sock.Connect(ip,port);
     if HTTPSender.Sock.SSL.Accept then
-       LogDatei.DependentAdd('ready to accept',LLdebug2)
+       LogDatei.log_prog('ready to accept',LLdebug)
     else
       begin
-        LogDatei.DependentAdd('not !! ready to accept',LLdebug2);
+        LogDatei.log_prog('not !! ready to accept',LLdebug);
       end;
     if ssl_openssl_lib.InitSSLInterface then
     begin
-      LogDatei.DependentAdd('after init, true: '+BoolToStr(ssl_openssl_lib.IsSSLloaded),LLdebug2);
+      LogDatei.log_prog('after init, true: '+BoolToStr(ssl_openssl_lib.IsSSLloaded),LLdebug);
     end;
-    LogDatei.DependentAdd('after init: '+BoolToStr(ssl_openssl_lib.IsSSLloaded),LLdebug2);
-    LogDatei.DependentAdd('Lib should be: '+ssl_openssl_lib.DLLSSLName,LLInfo);
+    LogDatei.log_prog('after init: '+BoolToStr(ssl_openssl_lib.IsSSLloaded),LLdebug);
+    LogDatei.DependentAdd('Lib should be: '+ssl_openssl_lib.DLLSSLName,LLdebug);
     HTTPSender.Sock.SSLDoConnect;
-    LogDatei.DependentAdd('SLLVersion : ' + HTTPSender.Sock.SSL.GetSSLVersion,LLdebug2);
+    LogDatei.log('SLLVersion : ' + HTTPSender.Sock.SSL.GetSSLVersion,LLdebug);
     if HTTPSender.Sock.SSL.LibName = 'ssl_none' then
       begin
         // no SSL available, loading libs failed
-        LogDatei.DependentAdd('no SSL available, loading libs failed',LLdebug2);
+        LogDatei.log('no SSL available, loading libs failed',LLError);
       end
-    else LogDatei.DependentAdd('Loaded: '+ HTTPSender.Sock.SSL.LibName,LLdebug2);
+    else LogDatei.log('Loaded: '+ HTTPSender.Sock.SSL.LibName,LLdebug);
 
-    LogDatei.DependentAdd('HTTPSender.Sock.SSL.LibVersion: '+ HTTPSender.Sock.SSL.LibVersion,LLdebug2);
+    LogDatei.log('HTTPSender.Sock.SSL.LibVersion: '+ HTTPSender.Sock.SSL.LibVersion,LLdebug);
 
     HTTPSender.Sock.SSL.VerifyCert := False;
     HTTPSender.Username := Fusername;
-    LogDatei.DependentAdd('HTTPSender.Username ' + HTTPSender.Username, LLdebug2);
+    LogDatei.log_prog('HTTPSender.Username ' + HTTPSender.Username, LLdebug2);
     HTTPSender.Password := Fpassword;
     HTTPSender.UserAgent:= agent;
     try
@@ -1518,7 +1518,7 @@ begin
     except
       on ex: Exception do
       begin
-        LogDatei.DependentAdd(
+        LogDatei.log(
           'Exception in TJsonThroughHTTPS.createSocket: IdHTTP.BoundIP:' +
           ex.message, LLError);
       end;
@@ -1527,7 +1527,7 @@ begin
   except
     on ex: Exception do
     begin
-      LogDatei.DependentAddWarning('Exception in TJsonThroughHTTPS.createSocket: ' +
+      LogDatei.log('Exception in TJsonThroughHTTPS.createSocket: ' +
         ex.message, LLError);
     end;
   end;
@@ -1821,7 +1821,7 @@ begin
         except
           on e: Exception do
           begin
-            LogDatei.DependentAdd('Exception in retrieveJSONObject0: ' +
+            LogDatei.log('Exception in retrieveJSONObject0: ' +
               e.message, LLdebug2);
             //writeln('ddebug: Exception in retrieveJSONObject0: ' + e.message);
             if e.message = 'HTTP/1.1 401 Unauthorized' then
@@ -2068,9 +2068,9 @@ begin
             except
               on e: Exception do
               begin
-                LogDatei.log('Exception in retrieveJSONObject0: ' +
+                LogDatei.log('Exception in retrieveJSONObject1: ' +
                   e.message, LLdebug2);
-                //writeln('ddebug: Exception in retrieveJSONObject0: ' + e.message);
+                //writeln('ddebug: Exception in retrieveJSONObject1: ' + e.message);
                 if e.message = 'HTTP/1.1 401 Unauthorized' then
                   FValidCredentials := False;
                 t := s;
@@ -2176,7 +2176,7 @@ begin
     begin
       LogDatei.log('trying to rebuild connection', LLInfo);
       sleep(1000);
-      createSocket;
+      //createSocket;
       retrieveJSONObject(omc, logging, False);
     end
     else
@@ -2395,9 +2395,9 @@ begin
         except
           on e: Exception do
           begin
-            LogDatei.log_prog('Exception in retrieveJSONObject0: ' +
+            LogDatei.log_prog('Exception in retrieveJSONArray0: ' +
               e.message, LLdebug);
-            //writeln('ddebug: Exception in retrieveJSONObject0: ' + e.message);
+            //writeln('ddebug: Exception in retrieveJSONArray0: ' + e.message);
             if e.message = 'HTTP/1.1 401 Unauthorized' then
               FValidCredentials := False;
             t := s;
@@ -2518,9 +2518,9 @@ begin
             except
               on e: Exception do
               begin
-                LogDatei.log_prog('Exception in retrieveJSONObject0: ' +
+                LogDatei.log_prog('Exception in retrieveJSONArray1: ' +
                   e.message, LLdebug);
-                //writeln('ddebug: Exception in retrieveJSONObject0: ' + e.message);
+                //writeln('ddebug: Exception in retrieveJSONArray1: ' + e.message);
                 if e.message = 'HTTP/1.1 401 Unauthorized' then
                   FValidCredentials := False;
                 t := s;
@@ -2610,7 +2610,7 @@ begin
     begin
       LogDatei.log_prog('trying to rebuild connection', LLInfo);
       sleep(1000);
-      createSocket;
+      //createSocket;
       retrieveJSONArray(omc, logging, False);
     end;
   end;
