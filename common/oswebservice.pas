@@ -1717,31 +1717,31 @@ begin
       begin
         HTTPSender.Cookies.Add(FSessionId);
       end;
-      LogDatei.DependentAdd('Sessionid ' + FSessionId, LLdebug2);
+      LogDatei.log_prog('Sessionid ' + FSessionId, LLdebug2);
       if (HTTPSender.Cookies.Count>0) then
-        LogDatei.DependentAdd('Cookies synapse' + HTTPSender.Cookies[0], LLdebug2);
-
+        LogDatei.log_prog('Cookies synapse' + HTTPSender.Cookies[0], LLdebug2);
+      HTTPSender.Headers.Clear;
       testresultSyn := HTTPSender.Headers.Text;
-      LogDatei.DependentAdd('HTTPSender.Headers ' + testresultSyn, LLdebug2);
+      LogDatei.log_prog('HTTPSender.Headers ' + testresultSyn, LLdebug2);
 
       if FSessionId <> '' then
         // not the first call and we log
         if logging then
           //LogDatei.DependentAdd (DateTimeToStr(now) + ' JSON service request ' + Furl , LLnotice);
-          LogDatei.DependentAdd('JSON service request ' + Furl + ' ' +
+          LogDatei.log_prog('JSON service request ' + Furl + ' ' +
             omc.FOpsiMethodName, LLinfo);
 
       if methodGet then
       begin
         utf8str := AnsiToUtf8(Furl);
-        LogDatei.DependentAdd(' JSON service request ' + Furl, LLdebug2);
+        LogDatei.log_prog(' JSON service request ' + Furl, LLdebug2);
         if HTTPSender.HTTPMethod('GET', Furl) then
         begin
            mymemorystream := HTTPSender.Document;
-           LogDatei.DependentAdd('methodGet ' + Furl + ' memorystream ' +  mymemorystream.ToString, LLdebug2);
+           LogDatei.log_prog('methodGet ' + Furl + ' memorystream ' +  mymemorystream.ToString, LLdebug2);
         end
         else
-           LogDatei.DependentAdd('methodGet ' + Furl + ' HTTPMethod failed', LLdebug2);
+           LogDatei.log_prog('methodGet ' + Furl + ' HTTPMethod failed', LLdebug2);
       end
 
       else
@@ -1750,16 +1750,16 @@ begin
         begin
           s := omc.getJsonHashListString;
           utf8str := AnsiToUtf8(s);
-          LogDatei.DependentAdd(' JSON service request Furl ' + Furl, LLdebug2);
-          LogDatei.DependentAdd(' JSON service request str ' + utf8str, LLdebug2);
+          LogDatei.log_prog(' JSON service request Furl ' + Furl, LLdebug2);
+          LogDatei.log_prog(' JSON service request str ' + utf8str, LLdebug2);
 
         end
         else
         begin
           s := omc.jsonUrlString;
           utf8str := AnsiToUtf8(s);
-          LogDatei.DependentAdd(' JSON service request Furl ' + Furl, LLdebug2);
-          LogDatei.DependentAdd(' JSON service request str ' + utf8str, LLdebug2);
+          LogDatei.log_prog(' JSON service request Furl ' + Furl, LLdebug2);
+          LogDatei.log_prog(' JSON service request str ' + utf8str, LLdebug2);
         end;
         try
           sendstream := TMemoryStream.Create;
@@ -2253,6 +2253,7 @@ begin
         {$ENDIF SYNAPSE}
       end;
       {$IFDEF SYNAPSE}
+      HTTPSender.Headers.Clear;
       testresult := HTTPSender.Headers.Text;
       {$ELSE SYNAPSE}
       testresult := IdHttp.Request.RawHeaders.Text;
@@ -2452,6 +2453,7 @@ begin
               if compress then
               begin
                 {$IFDEF SYNAPSE}
+                HTTPSender.Headers.Clear;
                 HTTPSender.Headers.Add('accept-encoding: ' + ContentEncodingCommpress+',identity');
                 HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingCommpress);
                 HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress+',identity');
@@ -2494,6 +2496,7 @@ begin
               else
               begin
                 {$IFDEF SYNAPSE}
+                HTTPSender.Headers.Clear;
                 HTTPSender.Headers.Add('accept-encoding: ' + ContentEncodingCommpress+',identity');
                 HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingCommpress);
                 HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress+',identity');
@@ -2680,6 +2683,7 @@ begin
         begin
           LogDatei.log_prog('Using MimeType: ' + ContentTypeCompress, LLDebug);
           {$IFDEF SYNAPSE}
+          HTTPSender.Headers.Clear;
           HTTPSender.Headers.Add('accept-encoding: ' + ContentEncodingCommpress+',identity');
           HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingCommpress);
           HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress+',identity');
@@ -2726,6 +2730,7 @@ begin
         begin
           LogDatei.log_prog('Using MimeType: ' + ContentTypeNoCompress, LLDebug);
           {$IFDEF SYNAPSE}
+          HTTPSender.Headers.Clear;
           HTTPSender.Headers.Add('accept-encoding: ' + ContentEncodingCommpress+',identity');
           HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingCommpress);
           HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress+',identity');
@@ -2843,6 +2848,7 @@ begin
           begin
             LogDatei.log_prog('Using MimeType: ' + ContentTypeCompress, LLDebug);
             {$IFDEF SYNAPSE}
+            HTTPSender.Headers.Clear;
             HTTPSender.Headers.Add('accept-encoding: ' + ContentEncodingCommpress+',identity');
             HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingCommpress);
             HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress+',identity');
@@ -2889,6 +2895,7 @@ begin
           begin
             LogDatei.log_prog('Using MimeType: ' + ContentTypeNoCompress, LLDebug);
             {$IFDEF SYNAPSE}
+            HTTPSender.Headers.Clear;
             HTTPSender.Headers.Add('accept-encoding: ' + ContentEncodingCommpress+',identity');
             HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingCommpress);
             HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress+',identity');
@@ -3236,6 +3243,7 @@ begin
     utf8str := AnsiToUtf8(localurl + '/depot/' + filename);
     LogDatei.log('Loading file: ' + utf8str, LLDebug2);
     {$IFDEF SYNAPSE}
+    HTTPSender.Headers.Clear;
     HTTPSender.Headers.Add('content-type: text ,identity');
     HTTPSender.Headers.Add('accept-encoding: text ,identity');
     // TODO GET
