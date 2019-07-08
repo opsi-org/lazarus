@@ -26,7 +26,6 @@
 {"hash":315140,"name":"tfopsiclientkiosk.bitbtncancel.caption","sourcebytes":[69,120,105,116],"value":"Exit"},
 {"hash":219972419,"name":"tfopsiclientkiosk.bitbtnstoreaction.caption","sourcebytes":[83,116,111,114,101,32,65,99,116,105,111,110,115],"value":"Store Actions"},
 {"hash":380871,"name":"tfopsiclientkiosk.radiogroupview.caption","sourcebytes":[86,105,101,119],"value":"View"},
-{"hash":227480062,"name":"tfopsiclientkiosk.labelwait.caption","sourcebytes":[80,108,101,97,115,101,32,119,97,105,116,32,46,46,46],"value":"Please wait ..."},
 {"hash":148938994,"name":"tfopsiclientkiosk.statusbar1.panels[0].text","sourcebytes":[78,111,116,32,67,111,110,110,101,99,116,101,100,32,116,111,32,111,112,115,105,32,115,101,114,118,101,114],"value":"Not Connected to opsi server"},
 {"hash":46499195,"name":"tfopsiclientkiosk.titlelabel.caption","sourcebytes":[111,112,115,105,32,67,108,105,101,110,116,32,75,105,111,115,107],"value":"opsi Client Kiosk"}
 ]}

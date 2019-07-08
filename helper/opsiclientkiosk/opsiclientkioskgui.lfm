@@ -1,12 +1,12 @@
 object FopsiClientKiosk: TFopsiClientKiosk
   Left = 2026
-  Height = 860
+  Height = 877
   Top = 81
   Width = 857
   Caption = 'opsi-client-kiosk'
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
   ChildSizing.ControlsPerLine = 2
-  ClientHeight = 860
+  ClientHeight = 877
   ClientWidth = 857
   Constraints.MinWidth = 857
   OnActivate = FormActivate
@@ -17,23 +17,23 @@ object FopsiClientKiosk: TFopsiClientKiosk
   LCLVersion = '2.0.2.0'
   object datapanel: TPanel
     Left = 0
-    Height = 614
-    Top = 223
+    Height = 704
+    Top = 150
     Width = 857
     Align = alClient
     BevelOuter = bvNone
     BorderStyle = bsSingle
-    ClientHeight = 610
+    ClientHeight = 700
     ClientWidth = 853
     TabOrder = 3
     object productlistpanel: TPanel
       Left = 0
-      Height = 610
+      Height = 700
       Top = 0
       Width = 853
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 610
+      ClientHeight = 700
       ClientWidth = 853
       Color = clForm
       ParentColor = False
@@ -41,7 +41,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
       object productdetailpanel: TPanel
         Left = 0
         Height = 179
-        Top = 431
+        Top = 521
         Width = 853
         Align = alBottom
         BevelOuter = bvNone
@@ -253,10 +253,10 @@ object FopsiClientKiosk: TFopsiClientKiosk
       end
       object NotebookProducts: TNotebook
         Left = 10
-        Height = 355
+        Height = 445
         Top = 66
         Width = 833
-        PageIndex = 1
+        PageIndex = 0
         Align = alClient
         BorderSpacing.Around = 10
         TabOrder = 0
@@ -264,7 +264,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
         object PageList: TPage
           object DBGrid1: TDBGrid
             Left = 0
-            Height = 355
+            Height = 445
             Hint = 'Click to ActionRequest Column, to set action requests (setup/uninstall)'
             Top = 0
             Width = 833
@@ -776,13 +776,13 @@ object FopsiClientKiosk: TFopsiClientKiosk
   end
   object PanelToolbar: TPanel
     Left = 0
-    Height = 151
+    Height = 78
     Top = 52
     Width = 857
     Align = alTop
     AutoSize = True
     BevelOuter = bvNone
-    ClientHeight = 151
+    ClientHeight = 78
     ClientWidth = 857
     Color = clForm
     ParentColor = False
@@ -791,7 +791,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
       Left = 647
       Height = 68
       Hint = 'Show the list of action requests in the list. '
-      Top = 78
+      Top = 5
       Width = 118
       Align = alRight
       BorderSpacing.Left = 10
@@ -808,7 +808,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
       Left = 780
       Height = 68
       Hint = 'Terminate Program (with out any further action)'
-      Top = 78
+      Top = 5
       Width = 72
       Align = alRight
       BorderSpacing.Left = 10
@@ -899,7 +899,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
     object BitBtnStoreAction: TBitBtn
       Left = 516
       Height = 68
-      Top = 78
+      Top = 5
       Width = 116
       Align = alRight
       BorderSpacing.Left = 10
@@ -915,7 +915,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
     object RadioGroupView: TRadioGroup
       Left = 10
       Height = 58
-      Top = 83
+      Top = 10
       Width = 150
       Align = alLeft
       AutoFill = True
@@ -938,33 +938,11 @@ object FopsiClientKiosk: TFopsiClientKiosk
       OnSelectionChanged = RadioGroupViewSelectionChanged
       TabOrder = 3
     end
-    object LabelWait: TLabel
-      Left = 5
-      Height = 68
-      Top = 5
-      Width = 847
-      Align = alTop
-      Alignment = taCenter
-      AutoSize = False
-      BorderSpacing.Around = 5
-      BorderSpacing.InnerBorder = 5
-      Caption = 'Please wait ...'
-      Font.CharSet = ANSI_CHARSET
-      Font.Color = clRed
-      Font.Height = 50
-      Font.Name = 'Arial'
-      Font.Pitch = fpVariable
-      Font.Quality = fqDraft
-      Font.Style = [fsBold]
-      Layout = tlCenter
-      ParentColor = False
-      ParentFont = False
-    end
   end
   object StatusBar1: TStatusBar
     Left = 0
     Height = 23
-    Top = 837
+    Top = 854
     Width = 857
     Panels = <    
       item
@@ -1716,78 +1694,11 @@ object FopsiClientKiosk: TFopsiClientKiosk
   object PanelProgess: TPanel
     Left = 0
     Height = 20
-    Top = 203
+    Top = 130
     Width = 857
     Align = alTop
     BevelOuter = bvNone
-    ClientHeight = 20
-    ClientWidth = 857
     TabOrder = 4
-    object PanelProgressLabel: TPanel
-      Left = 0
-      Height = 20
-      Top = 0
-      Width = 256
-      Align = alLeft
-      BevelOuter = bvNone
-      ClientHeight = 20
-      ClientWidth = 256
-      ParentColor = False
-      TabOrder = 0
-      object LabelDataload: TLabel
-        Left = 3
-        Height = 14
-        Top = 3
-        Width = 1
-        Align = alLeft
-        BorderSpacing.Around = 3
-        ParentColor = False
-      end
-      object LabelDataLoadDetail: TLabel
-        Left = 252
-        Height = 14
-        Top = 3
-        Width = 1
-        Align = alRight
-        Alignment = taCenter
-        Anchors = [akRight]
-        BorderSpacing.Around = 3
-        ParentColor = False
-      end
-    end
-    object PanelProgrssbar: TPanel
-      Left = 256
-      Height = 20
-      Top = 0
-      Width = 601
-      Align = alClient
-      BevelOuter = bvNone
-      ClientHeight = 20
-      ClientWidth = 601
-      TabOrder = 1
-      object ProgressBar1: TProgressBar
-        Left = 0
-        Height = 10
-        Top = 0
-        Width = 601
-        Align = alTop
-        Position = 1
-        Smooth = True
-        Step = 1
-        TabOrder = 0
-      end
-      object ProgressBarDetail: TProgressBar
-        Left = 0
-        Height = 10
-        Top = 10
-        Width = 601
-        Align = alBottom
-        Position = 20
-        Smooth = True
-        Step = 1
-        TabOrder = 1
-      end
-    end
   end
   object DataSource1: TDataSource
     left = 64

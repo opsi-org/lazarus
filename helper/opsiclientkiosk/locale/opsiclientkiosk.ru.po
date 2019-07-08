@@ -184,10 +184,6 @@ msgstr "Приоритет:"
 msgid "Version at Server"
 msgstr "Версия на сервере:"
 
-#: tfopsiclientkiosk.labelwait.caption
-msgid "Please wait ..."
-msgstr "Пожалуйста, подождите ..."
-
 #: tfopsiclientkiosk.radiogroupview.caption
 msgid "View"
 msgstr ""
@@ -229,4 +225,24 @@ msgstr "Зависимости / Приоритет"
 #| msgid "huhu"
 msgid "opsi Client Kiosk"
 msgstr "OPSI Client Kiosk"
+
+#: tformprogresswindow.caption
+#, fuzzy
+#| msgid "Please wait ..."
+msgctxt "tformprogresswindow.caption"
+msgid "Init Opsi Client Kiosk"
+msgstr "Пожалуйста, подождите ..."
+
+#: tformprogresswindow.labeldataload.caption
+msgid "LabelDataLoad"
+msgstr ""
+
+#: tformprogresswindow.labeldataloaddetail.caption
+msgid "LabelDataLoadDetail"
+msgstr ""
+
+#: tformprogresswindow.labelinfo.caption
+msgctxt "tformprogresswindow.labelinfo.caption"
+msgid "Please wait while "
+msgstr ""
 

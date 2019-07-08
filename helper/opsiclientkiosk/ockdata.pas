@@ -33,7 +33,7 @@ uses
   datadb,
   osprocesses,
   jwawinbase,
-  dialogs;
+  dialogs, progresswindow;
 
 const
   opsiclientdconf =
@@ -125,7 +125,6 @@ begin
   // if we called the terminate method we do nothing
   if not Terminated then
   begin
-    ;
     LogDatei.log('network timeout by thread - aborting program', LLInfo);
     halt(0);
   end;
@@ -179,22 +178,19 @@ var
   newFile: boolean;
 begin
   logdatei.log('startinitdb ', LLInfo);
-  with FopsiClientKiosk do
+  with FormProgressWindow do
   begin
-    ProgressBarDetail.Visible := True;
-    ProgressBar1.Visible := True;
-    LabelDataLoadDetail.Visible := True;
-    LabelDataLoad.Visible := True;
     LabelDataload.Caption := 'Create database';
-    LabelDataLoadDetail.Caption := '';
-    Progressbar1.Position := 0;
-    ProgressBar1.Max := 100;
-    ProgressbarDetail.Position := 0;
-    productdetailpanel.Height := 0;
+    ProgressBar1.StepIt;
+    //LabelDataLoadDetail.Caption := '';
+    ProcessMess;
+    //Progressbar1.Position := 0;
+    //ProgressBar1.Max := 100;
+    //ProgressbarDetail.Position := 0;
   end;
+  FopsiClientKiosk.productdetailpanel.Height := 0;
   Datamodule1 := Tdatamodule1.Create(nil);
   Datamodule1.SQLite3Connection1.Close; // Ensure the connection is closed when we start
-
   try
     // Since we're making this database for the first time,
     // check whether the file already exists
@@ -309,7 +305,6 @@ begin
       logdatei.log_exception(E,LLError);
     end;
   end;
-
   with FopsiClientKiosk do
   begin
     DataSource1.DataSet := ZMQuerydataset1;
@@ -317,15 +312,20 @@ begin
     DataSource2.DataSet := ockdata.ZMQuerydataset2;
     DBGrid2.DataSource := DataSource2;
     ZMQUerydataset2.DataSource := DataSource1;
-    LabelDataload.Caption := '';
-    LabelDataLoadDetail.Caption := '';
-    Progressbar1.Position := 15;
-    ProgressbarDetail.Position := 0;
     productdetailpanel.Height := 0;
-    ProgressBarDetail.Visible := False;
-    ProgressBar1.Visible := False;
-    LabelDataLoadDetail.Visible := False;
-    LabelDataLoad.Visible := False;
+  end;
+  with FormProgressWindow do
+  begin
+    LabelDataLoad.Caption := 'initdb';
+    //LabelDataLoadDetail.Caption := 'initdb';
+    //Progressbar1.Position := 15;
+    ProgressBar1.StepIt;
+    ProgressbarDetail.Position := 0;
+    ProcessMess;
+    //ProgressBarDetail.Visible := False;
+    //ProgressBar1.Visible := False;
+    //LabelDataLoadDetail.Visible := False;
+    //LabelDataLoad.Visible := False;
   end;
 end;
 
@@ -468,6 +468,8 @@ var
   myseconds: integer;
   resultstring: string;
 begin
+  FormProgressWindow.LabelDataLoad.Caption := 'Init Connection';
+  FormProgressWindow.ProcessMess;
   FopsiClientKiosk.Cursor := crHourGlass;
   Result := False;
   networkup := False;
@@ -482,8 +484,11 @@ begin
   opsidata.initOpsiConf(myservice_url, myclientid,
     myhostkey, '', '', '', 'opsi-client-kiosk-' + myVersion);
   LogDatei.log('opsidata initialized', LLDebug2);
+  FormProgressWindow.ProgressBar1.StepIt;
+  FormProgressWindow.ProcessMess;
   repeat
     try
+      FormProgressWindow.ProcessMess;
       if myseconds > 0 then
       begin
         resultstring := MyOpsiMethodCall('getDepotId', [myclientid]);
@@ -494,15 +499,19 @@ begin
     except
       LogDatei.log('opsidata not connected - retry', LLInfo);
       myseconds := myseconds - 1;
+      FormProgressWindow.ProgressBar1.StepIt;
       Sleep(1000);
     end;
+    FormProgressWindow.ProgressBar1.StepIt;
+    FormProgressWindow.ProcessMess;
   until networkup or timeout;
+
   if networkup then
   begin
     LogDatei.log('opsidata connected', LLInfo);
-    Result := True;
     Fopsiclientkiosk.StatusBar1.Panels[0].Text :=
       'Connected to ' + myservice_url + ' as ' + myclientid;
+    Result := True;
   end
   else
   begin
@@ -510,6 +519,8 @@ begin
       ' seconds/retries.', LLError);
     Fopsiclientkiosk.StatusBar1.Panels[0].Text := 'Connection failed';
   end;
+  FormProgressWindow.ProgressBar1.StepIt;
+  FormProgressWindow.ProcessMess;
   FopsiClientKiosk.Cursor := crArrow;
 end;
 
@@ -522,14 +533,6 @@ var
   productdatarecord: TProductData;
 begin
   logdatei.log('starting fetchProductData ....', LLInfo);
-  FopsiClientKiosk.ProgressBarDetail.Visible := True;
-  FopsiClientKiosk.ProgressBar1.Visible := True;
-  FopsiClientKiosk.LabelDataLoadDetail.Visible := True;
-  FopsiClientKiosk.LabelDataLoad.Visible := True;
-  FopsiClientKiosk.ProgressbarDetail.Position := 0;
-  FopsiClientKiosk.Progressbar1.Position := 0;
-  FopsiClientKiosk.ProcessMess;
-  FopsiClientKiosk.LabelDataload.Caption := 'Clear Database';
   try
     if ZMQueryDataSet1.Active then
       ZMQueryDataSet1.Close;
@@ -545,41 +548,49 @@ begin
       logdatei.log_exception(E,LLError);
     end;
   end;
+  FormProgressWindow.ProgressBar1.StepIt;
+  FormProgressWindow.ProcessMess;
   ZMQueryDataSet1.Filtered := False;
   if ZMQueryDataSet2.Active then
     ZMQueryDataSet2.Close;
   ZMQUerydataset2.SQL.Clear;
   ZMQueryDataSet2.SQL.Add('delete from kioskslave');
   ZMQueryDataSet2.ExecSQL;
+  FormProgressWindow.ProgressBar1.StepIt;
+  FormProgressWindow.ProcessMess;
 
   if ZMQueryDataSet1.Active then
     ZMQueryDataSet1.Close;
   ZMQUerydataset1.SQL.Clear;
   ZMQUerydataset1.SQL.Add('select * from kioskmaster order by Upper(PRODUCTName)');
   ZMQUerydataset1.Open;
+  FormProgressWindow.ProgressBar1.StepIt;
+  FormProgressWindow.ProcessMess;
+
   if ZMQueryDataSet2.Active then
     ZMQueryDataSet2.Close;
   ZMQUerydataset2.SQL.Clear;
   ZMQUerydataset2.SQL.Add('select * from kioskslave order by ProductId');
   ZMQUerydataset2.Open;
-
+  FormProgressWindow.ProgressBar1.StepIt;
   //FopsiClientKiosk.ProgressbarDetail.Max := productIdsList.Count;
   //FopsiClientKiosk.LabelDataLoad.Caption := 'Products';
   //FopsiClientKiosk.Progressbar1.Position := 5;
-  //FopsiClientKiosk.ProcessMess;
-  initConnection(30);
-  FopsiClientKiosk.LabelDataload.Caption := 'Load data from Server';
+  FormProgressWindow.ProcessMess;
+  //initConnection(30);
+  //FormProgressWindow.ProgressBar1.StepIt;
+  FormProgressWindow.LabelInfo.Caption := 'Load data from Server';
   resultstring := MyOpsiMethodCall('getKioskProductInfosForClient', [myclientid]);
   //closeConnection;
   new_obj := SO(resultstring).O['result'];
   str := new_obj.AsString;
   LogDatei.log('Get products done', LLNotice);
-  FopsiClientKiosk.LabelDataload.Caption := 'Fill Database';
-  FopsiClientKiosk.ProgressBar1.Position := 33;
-  FopsiClientKiosk.ProgressbarDetail.Max := new_obj.AsArray.Length;
-  FopsiClientKiosk.ProgressbarDetail.Min := 0;
-  FopsiClientKiosk.ProgressbarDetail.Position := 0;
-  FopsiClientKiosk.ProcessMess;
+  FormProgressWindow.LabelDataload.Caption := 'Fill Database';
+  //FormProgressWindow.ProgressBar1.Position := 33;
+  FormProgressWindow.ProgressbarDetail.Max := new_obj.AsArray.Length;
+  FormProgressWindow.ProgressbarDetail.Min := 0;
+  FormProgressWindow.ProgressbarDetail.Position := 0;
+  FormProgressWindow.ProcessMess;
 
   // product data to database
   for i := 0 to new_obj.AsArray.Length - 1 do
@@ -587,9 +598,9 @@ begin
     detail_obj := new_obj.AsArray.O[i];
     //str := detail_obj.AsString;
     str := detail_obj.S['productId'];
-    FopsiClientKiosk.LabelDataLoadDetail.Caption := str;
-    FopsiClientKiosk.ProgressbarDetail.Position := i + 1;
-    FopsiClientKiosk.ProcessMess;
+    FormProgressWindow.LabelDataLoadDetail.Caption := str;
+    FormProgressWindow.ProgressBarDetail.StepIt;
+    FormProgressWindow.ProcessMess;
     //productdatarecord.id := str;
     logdatei.log('read: ' + detail_obj.S['productId'], LLInfo);
     ZMQueryDataSet1.Append;
@@ -638,11 +649,6 @@ begin
   ZMQueryDataSet1.Close;
   ZMQueryDataSet1.Open;
   ZMQueryDataSet1.First;
-  FopsiClientKiosk.ProgressBar1.Position := 66;
-  FopsiClientKiosk.ProgressBarDetail.Visible := False;
-  FopsiClientKiosk.LabelDataLoadDetail.Visible := False;
-  FopsiClientKiosk.ProgressBar1.Visible := False;
-  FopsiClientKiosk.LabelDataLoad.Visible := False;
 end;
 
 
@@ -710,9 +716,9 @@ begin
   end;
 
 
-
-  FopsiClientKiosk.LabelDataload.Caption := 'Connect opsi Web Service';
-  FopsiClientKiosk.ProcessMess;
+  FormProgressWindow.LabelInfo.Caption := 'Please wait while connecting to service';
+  FormProgressWindow.LabelDataload.Caption := 'Connect opsi Web Service';
+  FormProgressWindow.ProcessMess;
   myexitcode := 0;
   myerror := '';
   if opsiclientdmode then readconf2
@@ -723,6 +729,8 @@ begin
   //readconf2;
   // do not forget to check firePushInstallation
   initlogging(myclientid);
+  //FormProgressWindow.ProgressBar1.StepIt;
+  //FormProgressWindow.ProcessMess;
   LogDatei.log('clientid=' + myclientid, LLNotice);
   LogDatei.log('service_url=' + myservice_url, LLNotice);
   LogDatei.log('service_user=' + myclientid, LLNotice);
@@ -735,6 +743,8 @@ begin
     LogDatei.Close;
     halt(1);
   end;
+  //FormProgressWindow.ProgressBar1.StepIt;
+  //FormProgressWindow.ProcessMess;
   // is opsiclientd running ?
   if numberOfProcessInstances('opsiclientd') < 1 then
   begin
@@ -747,41 +757,45 @@ begin
 
 
 
-  mythread := Tmythread.Create(False);
-  FopsiClientKiosk.ProgressBar1.Max := 3;
-  FopsiClientKiosk.LabelDataload.Caption := 'Connect to Service';
-  FopsiClientKiosk.ProgressBar1.Position := 1;
-  FopsiClientKiosk.ProcessMess;
+  //mythread := Tmythread.Create(False);
+
+  //FormProgressWindow.ProgressBar1.Max := 100;
+
+  FormProgressWindow.ProgressBar1.StepIt;
+  FormProgressWindow.ProcessMess;
 
   if initConnection(30) then
   begin
-    mythread.Terminate;
-
+    //FormProgressWindow.ProgressBar1.StepIt;
+    //FormProgressWindow.ProcessMess;
+    //mythread.Terminate;
     LogDatei.log('init Connection done', LLNotice);
     initdb;
-    FopsiClientKiosk.LabelDataload.Caption := 'Get Products';
-    FopsiClientKiosk.ProgressBar1.Position := 2;
-    FopsiClientKiosk.ProcessMess;
+    FormProgressWindow.LabelInfo.Caption := 'Please wait while gettting products';
+    //FormProgressWindow.ProgressBar1.Position := 3;
     LogDatei.log('start fetchProductData_by_getKioskProductInfosForClient', LLNotice);
     fetchProductData_by_getKioskProductInfosForClient;
     //closeconnection;
     LogDatei.log('Handle products done', LLNotice);
-    FopsiClientKiosk.LabelDataload.Caption := 'Handle Products';
-    FopsiClientKiosk.ProgressBar1.Position := 4;
-    FopsiClientKiosk.ProcessMess;
+    FormProgressWindow.LabelDataload.Caption := 'Handle Products';
+    //FormProgressWindow.ProgressBar1.StepIt;
+    //FormProgressWindow.ProgressBar1.Position := 4;
+    FormProgressWindow.ProcessMess;
   end
   else
   begin
     LogDatei.log('init Connection failed - Aborting', LLError);
-    FreeAndNil(mythread);
+    //FreeAndNil(mythread);
     if opsidata <> nil then
       opsidata.Free;
     Fopsiclientkiosk.Terminate;
     halt(1);
   end;
-  mythread.WaitFor;
-  FreeAndNil(mythread);
+  //mythread.WaitFor;
+  //FreeAndNil(mythread);
   LogDatei.log('main done', LLDebug2);
+  FormProgressWindow.ProgressBar1.StepIt;
+  FormProgressWindow.ProcessMess;
 end;
 
 end.

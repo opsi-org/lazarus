@@ -14,7 +14,7 @@ uses
   lcltranslator,
   inifiles,
   opsiclientkioskgui,
-  ockdata, installdlg, datadb, osprocesses;
+  ockdata, installdlg, datadb, osprocesses, progresswindow;
 
 
 {$R *.res}
@@ -27,6 +27,7 @@ begin
   Application.CreateForm(TFopsiClientKiosk, FopsiClientKiosk);
   Application.CreateForm(TFInstalldlg, FInstalldlg);
   Application.CreateForm(TDataModule1, DataModule1);
+  Application.CreateForm(TFormProgressWindow, FormProgressWindow);
   Application.Run;
   Application.Free;
 end.

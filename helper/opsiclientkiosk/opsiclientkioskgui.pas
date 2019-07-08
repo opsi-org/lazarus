@@ -22,7 +22,7 @@ uses
   Buttons, ComCtrls, Grids, DBGrids, DBCtrls, ockdata, CommCtrl,
   BufDataset, typinfo, installdlg, lcltranslator, ActnList, oslog, inifiles,
   Variants,
-  Lazfileutils, Types;
+  Lazfileutils, Types, progresswindow;
 
 type
 
@@ -83,12 +83,9 @@ type
     ExtendedNotebook1: TExtendedNotebook;
     FlowPanelTiles: TFlowPanel;
     Image2: TImage;
-    LabelWait: TLabel;
     LabelPriority: TLabel;
     LabelVerstr: TLabel;
     LabelDescription: TLabel;
-    LabelDataload: TLabel;
-    LabelDataLoadDetail: TLabel;
     LabelAdvice: TLabel;
     LabelClientVerstr: TLabel;
     PanelSearchEdit: TPanel;
@@ -97,11 +94,7 @@ type
     PanelPriority: TPanel;
     PanelDetailsDBText: TPanel;
     PanelDetailsLables: TPanel;
-    PanelProgrssbar: TPanel;
-    PanelProgressLabel: TPanel;
     PanelProgess: TPanel;
-    ProgressBar1: TProgressBar;
-    ProgressBarDetail: TProgressBar;
     RadioGroupView: TRadioGroup;
     ScrollBox1: TScrollBox;
     searchEdit: TEdit;
@@ -140,7 +133,6 @@ type
     procedure DBGrid1TitleClick(Column: TColumn);
     procedure FormDestroy(Sender: TObject);
     procedure grouplistEnter(Sender: TObject);
-    procedure ProcessMess;
     procedure RadioGroupViewSelectionChanged(Sender: TObject);
     procedure ScrollBox1MouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
@@ -246,7 +238,7 @@ var
   former_selected_tile: integer;//index of the former selected tile
 
 
-function actionRequestToLocale(actionRequest: string): string;
+function ActionRequestToLocale(actionRequest: string): string;
 begin
   if actionRequest = 'setup' then
     Result := rsActSetup
@@ -258,7 +250,7 @@ begin
     Result := 'unknown';
 end;
 
-function localeToActionRequest(localestr: string): string;
+function LocaleToActionRequest(localestr: string): string;
 begin
   if localestr = rsActSetup then
     Result := 'setup'
@@ -674,12 +666,15 @@ begin
   try
     inTileRebuild := True;
     logdatei.log('rebuildProductTiles start', LLDebug2);
-    FopsiClientKiosk.ProgressBarDetail.Visible := True;
-    FopsiClientKiosk.ProgressBar1.Visible := True;
-    FopsiClientKiosk.LabelDataLoadDetail.Visible := True;
-    FopsiClientKiosk.LabelDataLoad.Visible := True;
-    FopsiClientKiosk.ProgressbarDetail.Position := 0;
-    FopsiClientKiosk.LabelDataload.Caption := 'Clear Tiles';
+    with FormProgressWindow do
+    begin
+      ProgressBarDetail.Visible := True;
+      ProgressBar1.Visible := True;
+      LabelDataLoadDetail.Visible := True;
+      LabelDataLoad.Visible := True;
+      ProgressbarDetail.Position := 0;
+      LabelDataload.Caption := 'Clear Tiles';
+    end;
     Application.ProcessMessages;
     try
       counter := length(ProductTilesArray);
@@ -709,9 +704,15 @@ begin
     FopsiClientKiosk.productdetailpanel.Height := 0;
 
     // progess
-    FopsiClientKiosk.Progressbar1.Position := 80;
-    FopsiClientKiosk.LabelDataload.Caption := 'Fill Tiles';
-    FopsiClientKiosk.ProgressbarDetail.max := ZMQUerydataset1.RecordCount;
+    //FormProgressWindow.Progressbar1.Position := 80;
+    with FormProgressWindow do
+    begin
+      LabelDataload.Caption := 'Fill Tiles';
+      ProgressBar1.Step := 1;
+      ProgressBar1.Max := ProgressBar1.Position + ZMQUerydataset1.RecordCount;
+      ProgressBarDetail.Step := 1;
+      ProgressBarDetail.Max := ZMQUerydataset1.RecordCount;
+    end;
     Application.ProcessMessages;
     logdatei.log('rebuildProductTiles from db start', LLDebug2);
     counter := 0;
@@ -719,7 +720,7 @@ begin
     while not ZMQuerydataset1.EOF do
     begin
       ProductID := ZMQueryDataSet1.FieldByName('ProductId').AsString;
-      FopsiClientKiosk.LabelDataLoadDetail.Caption := ProductID;
+      FormProgressWindow.LabelDataLoadDetail.Caption := ProductID;
       Application.ProcessMessages;
       SetLength(ProductTilesArray, counter + 1);
       ProductTilesArray[counter] := TProductPanel.Create(FopsiClientKiosk.FlowPanelTiles);
@@ -769,19 +770,27 @@ begin
       *}
       ProductTilesArray[counter].Tag := counter;
       Inc(counter);
-      FopsiClientKiosk.ProgressbarDetail.Position := counter;
+      //FormProgressWindow.ProgressbarDetail.Position := counter;
+      FormProgressWindow.ProgressbarDetail.StepIt;
+      FormProgressWindow.ProgressBar1.StepIt;
       Application.ProcessMessages;
       ZMQUerydataset1.Next;
     end;
   finally
     inTileRebuild := False;
     logdatei.log('rebuildProductTiles stop', LLDebug2);
-    FopsiClientKiosk.ProgressBar1.Position := 66;
-    FopsiClientKiosk.ProgressBarDetail.Visible := False;
-    FopsiClientKiosk.LabelDataLoadDetail.Visible := False;
-    FopsiClientKiosk.ProgressBar1.Visible := False;
-    FopsiClientKiosk.LabelDataLoad.Visible := False;
+    {*with FormProgressWindow do
+    begin
+      //ProgressBar1.Position := 100;
+      //ProgressBarDetail.Visible := False;
+      //LabelDataLoadDetail.Visible := False;
+      //ProgressBar1.Visible := False;
+      //LabelDataLoad.Visible := False;
+
+      //Visible := False;
+    end;*}
     FopsiClientKiosk.CheckBox1Change(FopsiClientKiosk);
+    FormProgressWindow.Visible := False;
   end;
 end;
 
@@ -804,10 +813,10 @@ end;
 
 { TFopsiClientKiosk }
 
-procedure TFopsiClientKiosk.ProcessMess;
-begin
-  Application.ProcessMessages;
-end;
+//procedure TFopsiClientKiosk.ProcessMess;
+//begin
+//  Application.ProcessMessages;
+//end;
 
 procedure TFopsiClientKiosk.RadioGroupViewSelectionChanged(Sender: TObject);
 begin
@@ -912,7 +921,7 @@ begin
   ockdata.ZMQUerydataset1.FilterOptions := [foCaseInsensitive];
   ockdata.ZMQUerydataset1.Filter := 'updatePossible = "True"';
   ockdata.ZMQUerydataset1.Filtered := True;
-  ProcessMess;
+  FormProgressWindow.ProcessMess;
   while inTileRebuild do
     Sleep(10);
   if RadioGroupView.ItemIndex = 1 then
@@ -976,7 +985,7 @@ begin
   //ockdata.ZMQUerydataset1.Filter := ' not ((ActionRequest = "") and (ActionRequest = "none"))';
   ockdata.ZMQUerydataset1.Filter := 'ActionRequest <> ""';
   ockdata.ZMQUerydataset1.Filtered := True;
-  ProcessMess;
+  FormProgressWindow.ProcessMess;
   RadioGroupViewSelectionChanged(self);
 end;
 
@@ -998,7 +1007,7 @@ begin
   begin
     screen.Cursor := crHourGlass;
     try
-      ProcessMess;
+      FormProgressWindow.ProcessMess;
       mythread := Tmythread2.Create(False);
       mythread.WaitFor;
 
@@ -1012,8 +1021,8 @@ begin
     finally
       mythread.Terminate;
       Screen.Cursor := crDefault;
-      ProgressBar1.Style := pbstNormal;
-      ProgressBar1.Visible := False;
+      FormProgressWindow.ProgressBar1.Style := pbstNormal;
+      FormProgressWindow.ProgressBar1.Visible := False;
       FreeAndNil(mythread);
     end;
   end
@@ -1022,15 +1031,15 @@ begin
     // rsInstallNow
     screen.Cursor := crHourGlass;
     try
-      ProcessMess;
+      FormProgressWindow.ProcessMess;
       mythread := Tmythread2.Create(False);
       mythread.WaitFor;
       ockdata.firePushInstallation;
     finally
       mythread.Terminate;
       Screen.Cursor := crDefault;
-      ProgressBar1.Style := pbstNormal;
-      ProgressBar1.Visible := False;
+      FormProgressWindow.ProgressBar1.Style := pbstNormal;
+      FormProgressWindow.ProgressBar1.Visible := False;
       FreeAndNil(mythread);
     end;
   end;
@@ -1086,9 +1095,10 @@ begin
   if not StartupDone then
   begin
 
-    RadioGroupViewSelectionChanged(self);
-    CheckBox1Change(self);
+    //RadioGroupViewSelectionChanged(self);
+    //CheckBox1Change(self);
     StartupDone := True;
+
     Application.ProcessMessages;
     optionlist := TStringList.Create;
     optionlist.Append('fqdn::');
@@ -1112,17 +1122,24 @@ begin
     begin
       SetDefaultLang(Application.GetOptionValue('lang'));
     end;
-
+    FormProgressWindow.LabelDataLoadDetail.Caption := '';
     ockdata.main;
-    Progressbar1.Position := Progressbar1.Max;
-    ProgressbarDetail.Position := ProgressbarDetail.Max;
-    LabelDataload.Caption := '';
-    LabelDataLoadDetail.Caption := '';
-    ProgressBar1.Visible := False;
-    ProgressBarDetail.Visible := False;
-    LabelWait.Visible := False;
+    FormProgressWindow.LabelDataLoadDetail.Caption := 'after ockdata main';
+    Application.ProcessMessages;
+    {* with FormProgressWindow do
+    begin
+      Progressbar1.Position := Progressbar1.Max;
+      ProgressbarDetail.Position := ProgressbarDetail.Max;
+      LabelDataload.Caption := '';
+      LabelDataLoadDetail.Caption := '';
+      Visible := False;
+      ProgressBar1.Visible := False;
+      ProgressBarDetail.Visible := False;
+    end;*}
+    //LabelWait.Visible := False;
     //grouplist.Enabled := True;
-    RadioGroupViewSelectionChanged(self);
+    rebuildProductTiles;
+    //RadioGroupViewSelectionChanged(self);
 
     // log
     LogDatei.log('rsActSetup is: ' + rsActSetup + ' with color: ' +
@@ -1134,7 +1151,7 @@ end;
 
 procedure TFopsiClientKiosk.FormShow(Sender: TObject);
 begin
-  LabelDataload.Caption := 'Init';
+  FormProgressWindow.LabelDataload.Caption := 'Init';
   StartupDone := False;
   TitleLabel.Caption := title_Text;
   TitleLabel.Font.Name := title_Font_Name;

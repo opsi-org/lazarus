@@ -184,10 +184,6 @@ msgstr "Piorytet:"
 msgid "Version at Server"
 msgstr "Wersja na serwerze:"
 
-#: tfopsiclientkiosk.labelwait.caption
-msgid "Please wait ..."
-msgstr "Proszę czekać ..."
-
 #: tfopsiclientkiosk.radiogroupview.caption
 msgid "View"
 msgstr ""
@@ -229,4 +225,24 @@ msgstr "Zależności / Piorytety"
 #| msgid "huhu"
 msgid "opsi Client Kiosk"
 msgstr "Kiosk OPSI"
+
+#: tformprogresswindow.caption
+#, fuzzy
+#| msgid "Please wait ..."
+msgctxt "tformprogresswindow.caption"
+msgid "Init Opsi Client Kiosk"
+msgstr "Proszę czekać ..."
+
+#: tformprogresswindow.labeldataload.caption
+msgid "LabelDataLoad"
+msgstr ""
+
+#: tformprogresswindow.labeldataloaddetail.caption
+msgid "LabelDataLoadDetail"
+msgstr ""
+
+#: tformprogresswindow.labelinfo.caption
+msgctxt "tformprogresswindow.labelinfo.caption"
+msgid "Please wait while "
+msgstr ""
 
