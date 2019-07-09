@@ -316,7 +316,7 @@ begin
   end;
   with FormProgressWindow do
   begin
-    LabelDataLoad.Caption := 'initdb';
+    LabelDataLoad.Caption := 'Initialize Database';
     //LabelDataLoadDetail.Caption := 'initdb';
     //Progressbar1.Position := 15;
     ProgressBar1.StepIt;
@@ -468,7 +468,7 @@ var
   myseconds: integer;
   resultstring: string;
 begin
-  FormProgressWindow.LabelDataLoad.Caption := 'Init Connection';
+  FormProgressWindow.LabelDataLoad.Caption := 'Connecting to OPSI web service';
   FormProgressWindow.ProcessMess;
   FopsiClientKiosk.Cursor := crHourGlass;
   Result := False;

@@ -136,6 +136,10 @@ msgctxt "tfopsiclientkiosk.bitbtnstoreaction.caption"
 msgid "Store Actions"
 msgstr "Kiosk Handlinger"
 
+#: tfopsiclientkiosk.bitbtntoggleview.caption
+msgid "Toggle View"
+msgstr ""
+
 #: tfopsiclientkiosk.btnclearsearchedit.caption
 msgid "X"
 msgstr ""
@@ -147,6 +151,10 @@ msgstr "Filter for upgradering"
 #: tfopsiclientkiosk.btnupgrade.hint
 msgid "Filter for Products where an upgrade is possible"
 msgstr "Filter for produkter hvor der er en opgradering tilgængelig"
+
+#: tfopsiclientkiosk.buttonback.caption
+msgid "Back (software list)"
+msgstr ""
 
 #: tfopsiclientkiosk.caption
 msgid "opsi-client-kiosk"
@@ -179,6 +187,10 @@ msgstr "Beskrivelse:"
 #: tfopsiclientkiosk.labelpriority.caption
 msgid "Priority: "
 msgstr "Priotet:"
+
+#: tfopsiclientkiosk.labelsoftwarename.caption
+msgid "LabelSoftwareName"
+msgstr ""
 
 #: tfopsiclientkiosk.labelverstr.caption
 msgid "Version at Server"

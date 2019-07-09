@@ -16,13 +16,11 @@ unit opsiclientkioskgui;
 interface
 
 uses
-  Classes, SysUtils, DB,
-  ExtendedNotebook, DividerBevel,
-  Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  Buttons, ComCtrls, Grids, DBGrids, DBCtrls, ockdata, CommCtrl,
-  BufDataset, typinfo, installdlg, lcltranslator, ActnList, oslog, inifiles,
-  Variants,
-  Lazfileutils, Types, progresswindow;
+  Classes, SysUtils, DB, ExtendedNotebook, DividerBevel, Forms, Controls,
+  Graphics, Dialogs, ExtCtrls, StdCtrls, Buttons, ComCtrls, Grids, DBGrids,
+  DBCtrls, ockdata, CommCtrl, BufDataset, typinfo, installdlg, lcltranslator,
+  ActnList, Menus, oslog, inifiles, Variants, Lazfileutils, Types,
+  progresswindow;
 
 type
 
@@ -45,6 +43,7 @@ type
     procedure TileActionChanged(Sender: TObject);
     procedure ProductTileClick(Sender: TObject);
     procedure ProductTileChildClick(Sender: TObject);
+    procedure TileClick(Sender:TObject);
     procedure Scroll(Sender: TObject; Shift: TShiftState; WheelDelta: integer;
       MousePos: TPoint; var Handled: boolean);
     procedure ProductTileMouseEnter(Sender :TObject);
@@ -64,10 +63,12 @@ type
 
   TFopsiClientKiosk = class(TForm)
     BitBtn1: TBitBtn;
+    BitBtnToggleView: TBitBtn;
     BitBtnInfo: TBitBtn;
     BitBtnShowAction: TBitBtn;
     BitBtnCancel: TBitBtn;
     BitBtnStoreAction: TBitBtn;
+    ButtonBack: TButton;
     CheckBox1: TCheckBox;
     DataSource1: TDataSource;
     DataSource2: TDataSource;
@@ -82,19 +83,23 @@ type
     DividerBevel1: TDividerBevel;
     ExtendedNotebook1: TExtendedNotebook;
     FlowPanelTiles: TFlowPanel;
+    ImageIcon: TImage;
+    ImageScreenShot: TImage;
     Image2: TImage;
+    LabelSoftwareName: TLabel;
     LabelPriority: TLabel;
     LabelVerstr: TLabel;
     LabelDescription: TLabel;
     LabelAdvice: TLabel;
     LabelClientVerstr: TLabel;
+    MemoSoftwareDescription: TMemo;
+    PageSoftwareDetails: TPage;
     PanelSearchEdit: TPanel;
-    Panelsearch: TPanel;
+    PanelSearch: TPanel;
     PanelDependencies: TPanel;
     PanelPriority: TPanel;
     PanelDetailsDBText: TPanel;
     PanelDetailsLables: TPanel;
-    PanelProgess: TPanel;
     RadioGroupView: TRadioGroup;
     ScrollBox1: TScrollBox;
     searchEdit: TEdit;
@@ -119,8 +124,10 @@ type
     procedure BitBtnInfoClick(Sender: TObject);
     procedure BitBtnShowActionClick(Sender: TObject);
     procedure BitBtnStoreActionClick(Sender: TObject);
+    procedure BitBtnToggleViewClick(Sender: TObject);
     //procedure BtnActionClick(Sender: TObject);
     procedure BtnUpgradeClick(Sender: TObject);
+    procedure ButtonBackClick(Sender: TObject);
     procedure CheckBox1Change(Sender: TObject);
     procedure datapanelMouseEnter(Sender: TObject);
     procedure DBComboBox1Exit(Sender: TObject);
@@ -300,7 +307,7 @@ begin
        Shape:= stRoundSquare;
        Top:= 0;
        Left:= 0;
-       OnClick := ProductTileChildClick;
+       OnClick := TileClick;//ProductTileChildClick;
        OnMouseWheel := scroll;
        OnMouseEnter := ProductTileMouseEnter;
        OnMouseLeave := ProductTileMouseLeave;
@@ -326,7 +333,8 @@ begin
       Top := 100;
       Left := 0;
       BorderSpacing.Around := 3;
-      OnClick := ProductTileChildClick;
+      Name := 'LabelName';
+      OnClick := TileClick;//ProductTileChildClick;
       OnMouseWheel := scroll;
       OnMouseEnter := ProductTileMouseEnter;
       OnMouseLeave := ProductTileMouseLeave;
@@ -346,7 +354,7 @@ begin
       Top := LabelName.Top + LabelName.Height + 3;
       Left := 0;
       //labelId.BorderSpacing.Around := 3;
-      OnClick := ProductTileChildClick;
+      OnClick := TileClick;//ProductTileChildClick;
       OnMouseWheel := scroll;
       OnMouseEnter := ProductTileMouseEnter;
       OnMouseLeave := ProductTileMouseLeave;
@@ -368,7 +376,7 @@ begin
       Top:=35;
       Left:=40;
       //BorderSpacing.Around := 0;
-      OnClick := ProductTileChildClick;
+      OnClick := TileClick;//ProductTileChildClick;
       OnMouseWheel := scroll;
       OnMouseEnter := ProductTileMouseEnter;
       OnMouseLeave := ProductTileMouseLeave;
@@ -388,7 +396,7 @@ begin
       Left:=20-ShapeRoundSquare.Pen.Width;
       Font.Color := clWhite;
       //BorderSpacing.Around := 3;
-      OnClick := ProductTileChildClick;
+      OnClick := TileClick;//ProductTileChildClick;
       OnMouseWheel := scroll;
       OnMouseEnter := ProductTileMouseEnter;
       OnMouseLeave := ProductTileMouseLeave;
@@ -512,7 +520,7 @@ begin
       FreeAndNil(lbnone);
       FreeAndNil(lbuninstall);
       FreeAndNil(RadioGroupAction);
-      //Button1.Destroy;
+      //ButtonBack.Destroy;
     except
       on e: Exception do
       begin
@@ -647,6 +655,8 @@ begin
       end
       else
       begin
+        FopsiClientKiosk.NotebookProducts.PageIndex := 2;
+        FopsiClientKiosk.LabelSoftwareName.Caption := 'Test';//TControl(Sender).Parent.FindChildControl('LabelName').Caption;
         FopsiClientKiosk.productdetailpanel.Height := 185;
         ProductTilesArray[former_selected_tile].ShapeRoundSquare.Pen.Color:=clBlack;
         ProductTilesArray[tileindex].ShapeRoundSquare.Pen.Color:=clBlue;
@@ -656,6 +666,15 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TProductPanel.TileClick(Sender: TObject);
+begin
+  FopsiClientKiosk.productdetailpanel.Height := 0;
+  FopsiClientKiosk.NotebookProducts.PageIndex := 2;
+  FopsiClientKiosk.PanelSearch.Visible := False;
+  FopsiClientKiosk.PanelToolbar.Visible := False;
+  FopsiClientKiosk.LabelSoftwareName.Caption := TControl(Sender).Parent.FindChildControl('LabelName').Caption;
 end;
 
 procedure rebuildProductTiles;
@@ -668,6 +687,7 @@ begin
     logdatei.log('rebuildProductTiles start', LLDebug2);
     with FormProgressWindow do
     begin
+      Visible := True;
       ProgressBarDetail.Visible := True;
       ProgressBar1.Visible := True;
       LabelDataLoadDetail.Visible := True;
@@ -821,9 +841,9 @@ end;
 procedure TFopsiClientKiosk.RadioGroupViewSelectionChanged(Sender: TObject);
 begin
   NotebookProducts.PageIndex := RadioGroupView.ItemIndex;
-  if StartupDone then
-    if RadioGroupView.ItemIndex = 1 then
-      rebuildProductTiles;
+  //if StartupDone then
+    //if RadioGroupView.ItemIndex = 1 then
+      //rebuildProductTiles;
 end;
 
 procedure TFopsiClientKiosk.ScrollBox1MouseWheel(Sender: TObject;
@@ -928,6 +948,13 @@ begin
     rebuildProductTiles;
 end;
 
+procedure TFopsiClientKiosk.ButtonBackClick(Sender: TObject);
+begin
+  FopsiClientKiosk.PanelSearch.Visible := True;
+  FopsiClientKiosk.PanelToolbar.Visible := True;
+  fopsiClientkiosk.NotebookProducts.PageIndex:=1;
+end;
+
 procedure TFopsiClientKiosk.CheckBox1Change(Sender: TObject);
 begin
   if CheckBox1.Checked then
@@ -939,6 +966,7 @@ begin
     BtnUpgrade.Visible := True;
     SpeedButtonAll.Visible := True;
     BitBtnShowAction.Visible := True;
+    BitBtnStoreAction.Visible := True;
     BitBtnStoreAction.Caption := rsStoreActions;
     BitBtnStoreAction.Hint := rsStoreActionsHint;
   end
@@ -951,13 +979,14 @@ begin
     BtnUpgrade.Visible := False;
     SpeedButtonAll.Visible := False;
     BitBtnShowAction.Visible := False;
+    //BitBtnStoreAction.Visible := False;
     BitBtnStoreAction.Caption := rsInstallNow;
     BitBtnStoreAction.Hint := rsInstallNowHint;
   end;
   // localize RadioGroupView
   RadioGroupView.Items[0] := rsViewList;
   RadioGroupView.Items[1] := rsViewTiles;
-  repaint;
+  //repaint;
   Application.ProcessMessages;
 end;
 
@@ -1043,6 +1072,13 @@ begin
       FreeAndNil(mythread);
     end;
   end;
+end;
+
+procedure TFopsiClientKiosk.BitBtnToggleViewClick(Sender: TObject);
+begin
+  if NotebookProducts.PageIndex = 1 then NotebookProducts.PageIndex := 0
+    else if NotebookProducts.PageIndex = 0 then NotebookProducts.PageIndex := 1;
+  FopsiClientKiosk.productdetailpanel.height := 0;
 end;
 
 procedure TFopsiClientKiosk.DBGrid1CellClick(Column: TColumn);

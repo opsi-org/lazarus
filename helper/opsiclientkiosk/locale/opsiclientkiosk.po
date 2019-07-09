@@ -131,6 +131,10 @@ msgctxt "tfopsiclientkiosk.bitbtnstoreaction.caption"
 msgid "Store Actions"
 msgstr ""
 
+#: tfopsiclientkiosk.bitbtntoggleview.caption
+msgid "Toggle View"
+msgstr ""
+
 #: tfopsiclientkiosk.btnclearsearchedit.caption
 msgid "X"
 msgstr ""
@@ -141,6 +145,10 @@ msgstr ""
 
 #: tfopsiclientkiosk.btnupgrade.hint
 msgid "Filter for Products where an upgrade is possible"
+msgstr ""
+
+#: tfopsiclientkiosk.buttonback.caption
+msgid "Back (software list)"
 msgstr ""
 
 #: tfopsiclientkiosk.caption
@@ -173,6 +181,10 @@ msgstr ""
 
 #: tfopsiclientkiosk.labelpriority.caption
 msgid "Priority: "
+msgstr ""
+
+#: tfopsiclientkiosk.labelsoftwarename.caption
+msgid "LabelSoftwareName"
 msgstr ""
 
 #: tfopsiclientkiosk.labelverstr.caption

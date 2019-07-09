@@ -1,12 +1,12 @@
 object FopsiClientKiosk: TFopsiClientKiosk
-  Left = 2026
-  Height = 877
-  Top = 81
+  Left = 2165
+  Height = 780
+  Top = 127
   Width = 857
   Caption = 'opsi-client-kiosk'
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
   ChildSizing.ControlsPerLine = 2
-  ClientHeight = 877
+  ClientHeight = 780
   ClientWidth = 857
   Constraints.MinWidth = 857
   OnActivate = FormActivate
@@ -17,23 +17,23 @@ object FopsiClientKiosk: TFopsiClientKiosk
   LCLVersion = '2.0.2.0'
   object datapanel: TPanel
     Left = 0
-    Height = 704
-    Top = 150
+    Height = 627
+    Top = 130
     Width = 857
     Align = alClient
     BevelOuter = bvNone
     BorderStyle = bsSingle
-    ClientHeight = 700
+    ClientHeight = 623
     ClientWidth = 853
     TabOrder = 3
     object productlistpanel: TPanel
       Left = 0
-      Height = 700
+      Height = 623
       Top = 0
       Width = 853
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 700
+      ClientHeight = 623
       ClientWidth = 853
       Color = clForm
       ParentColor = False
@@ -41,7 +41,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
       object productdetailpanel: TPanel
         Left = 0
         Height = 179
-        Top = 521
+        Top = 444
         Width = 853
         Align = alBottom
         BevelOuter = bvNone
@@ -181,11 +181,11 @@ object FopsiClientKiosk: TFopsiClientKiosk
                 TabOrder = 1
               end
               object BitBtn1: TBitBtn
-                Left = 535
+                Left = -32
                 Height = 22
-                Top = 129
+                Top = -584
                 Width = 150
-                Align = alRight
+                Align = alCustom
                 Caption = 'Installieren'
                 TabOrder = 2
               end
@@ -193,12 +193,12 @@ object FopsiClientKiosk: TFopsiClientKiosk
           end
           object TabSheet2: TTabSheet
             Caption = 'Dependencies / Priority'
-            ClientHeight = 159
+            ClientHeight = 151
             ClientWidth = 845
             object PanelPriority: TPanel
               Left = 0
               Height = 32
-              Top = 127
+              Top = 119
               Width = 845
               Align = alBottom
               BevelOuter = bvNone
@@ -228,17 +228,17 @@ object FopsiClientKiosk: TFopsiClientKiosk
             end
             object PanelDependencies: TPanel
               Left = 0
-              Height = 127
+              Height = 119
               Top = 0
               Width = 845
               Align = alClient
               BevelOuter = bvNone
-              ClientHeight = 127
+              ClientHeight = 119
               ClientWidth = 845
               TabOrder = 1
               object DBGrid2: TDBGrid
                 Left = 0
-                Height = 127
+                Height = 119
                 Top = 0
                 Width = 845
                 Align = alClient
@@ -253,10 +253,10 @@ object FopsiClientKiosk: TFopsiClientKiosk
       end
       object NotebookProducts: TNotebook
         Left = 10
-        Height = 445
+        Height = 368
         Top = 66
         Width = 833
-        PageIndex = 0
+        PageIndex = 2
         Align = alClient
         BorderSpacing.Around = 10
         TabOrder = 0
@@ -306,7 +306,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
           ChildSizing.Layout = cclLeftToRightThenTopToBottom
           object ScrollBox1: TScrollBox
             Left = 0
-            Height = 355
+            Height = 445
             Top = 0
             Width = 833
             HorzScrollBar.Page = 1
@@ -315,7 +315,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
             Align = alClient
             AutoSize = True
             BorderStyle = bsNone
-            ClientHeight = 355
+            ClientHeight = 445
             ClientWidth = 833
             Color = clDefault
             ParentColor = False
@@ -323,7 +323,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
             OnMouseWheel = ScrollBox1MouseWheel
             object FlowPanelTiles: TFlowPanel
               Left = 0
-              Height = 355
+              Height = 445
               Top = 0
               Width = 833
               Align = alClient
@@ -337,8 +337,86 @@ object FopsiClientKiosk: TFopsiClientKiosk
             end
           end
         end
+        object PageSoftwareDetails: TPage
+          object ImageScreenShot: TImage
+            Left = 8
+            Height = 252
+            Top = 120
+            Width = 544
+            Center = True
+            Picture.Data = {
+              055449636F6EFE0200000000010001002020100001000400E802000016000000
+              2800000020000000400000000100040000000000000000000000000000000000
+              000000000000000088585200A96D5D00C27D7200B68B7B008A79CA00E5908C00
+              B09BAD00FD9FA000E3AFA300F9B0A700ADA5DF00CCBDC300FDCBCC00E0DAE400
+              FBFFFC0000000000EEEEEEEEEEEEEEEEEEEEEEEEEDEEEEEEEEEEEEEEEEEEEEEE
+              EEEEEEEEEEEEEEEEEEEEEEEEEEEEB301113BEEEEEEEEEEEEEEEEEEEEEEB11313
+              11111BEEEEEEEEEEEEEEEEEEE3301111152521BEEEEEEEEEEEEEEEEE61010000
+              0011551BEEEEEEEEEEEEEEED1010000001025752BEEEEEEEEEEEEEE112000122
+              555227723EEEEEEEEEEEEEB112255577777777751BEEEEEEEDBDEE6025555121
+              1157777728EEDBDE4444DE31555521111115777753EA444AEDABEB0127721255
+              5511799921DEDAAEB4A4DD1127711777772199C921DD4B4A4DEAAE3177511777
+              775389CC33EBAEE4AA44AE317772177579938CCC19EE4444EEEEDEB127721555
+              5983B8CC1DEEEEEEEEEEEEE3177512213B38BCC22EEEEEEEEEEEEEED02775599
+              998CCC81BEEEEEEEEEEEEEEEB12577999CCCC81BEEEEEEEEEEEEEEEEEB115778
+              8CCC318EEEEEEEEEEEEEEEEEEEB3112123111DEEEEEEEEEEEEEEEEEEDEEEB331
+              133DEEEEEEDEEEEEEEEEEEEEEEEEEEEDDEEEEEEEEEEEEEEEEEEEDEEEEEEEEEEA
+              4BEEEEDEEEEEEEEEEEEEEEEEEEEEED4AAAEEEEEEEEEEEEEEEEEEEEEEEEEEEEE4
+              4AEEEEEEEEEEEEEEEEEEEEEEEEEEEE4BD4DEEEEEEEEEEEEEEEEEEEEEEEEEEE4E
+              EABEEEEEEEEEEEEEEEEEEEEEEEEEEEAA44DEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+              EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+              EEEEEEEEEEEEEEEE000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000
+            }
+            Proportional = True
+            Stretch = True
+          end
+          object ImageIcon: TImage
+            Left = 24
+            Height = 60
+            Top = 8
+            Width = 60
+          end
+          object MemoSoftwareDescription: TMemo
+            Left = 8
+            Height = 152
+            Top = 408
+            Width = 816
+            Lines.Strings = (
+              'MemoSoftwareDescription'
+            )
+            TabOrder = 0
+          end
+          object LabelSoftwareName: TLabel
+            Left = 104
+            Height = 25
+            Top = 8
+            Width = 169
+            Caption = 'LabelSoftwareName'
+            Font.CharSet = ANSI_CHARSET
+            Font.Color = clBlack
+            Font.Height = -19
+            Font.Name = 'Segoe UI'
+            Font.Pitch = fpVariable
+            Font.Quality = fqDraft
+            ParentColor = False
+            ParentFont = False
+          end
+          object ButtonBack: TButton
+            Left = 704
+            Height = 26
+            Top = 8
+            Width = 109
+            Caption = 'Back (software list)'
+            OnClick = ButtonBackClick
+            TabOrder = 1
+          end
+        end
       end
-      object Panelsearch: TPanel
+      object PanelSearch: TPanel
         Left = 0
         Height = 56
         Top = 0
@@ -417,6 +495,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
             0000000000000000000000000000000000000000000000000000000000000000
             0000000000000000000000000000000000000000000000000000
           }
+          Visible = False
           OnClick = BtnUpgradeClick
           ShowHint = True
           ParentShowHint = False
@@ -491,6 +570,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
             0000000000000000000000000000000000000000000000000000000000000000
             0000000000000000000000000000000000000000000000000000
           }
+          Visible = False
           OnClick = SpeedButtonAllClick
           ShowHint = True
           ParentShowHint = False
@@ -639,13 +719,15 @@ object FopsiClientKiosk: TFopsiClientKiosk
           Kind = bkHelp
           OnClick = BitBtnInfoClick
           TabOrder = 0
+          Visible = False
         end
         object CheckBox1: TCheckBox
           Left = 85
-          Height = 41
-          Top = 0
+          Height = 31
+          Top = 5
           Width = 86
           Align = alLeft
+          BorderSpacing.Around = 5
           Caption = 'Expert mode'
           OnChange = CheckBox1Change
           TabOrder = 1
@@ -759,6 +841,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
             000000000000000000002E5817FF617F51FF687C5FFF3D6926FF234A0DFF0000
             0000000000000000000000000000000000000000000000000000
           }
+          Visible = False
           OnClick = SpeedButtonReloadClick
         end
         object DividerBevel1: TDividerBevel
@@ -803,6 +886,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0
+      Visible = False
     end
     object BitBtnCancel: TBitBtn
       Left = 780
@@ -937,12 +1021,78 @@ object FopsiClientKiosk: TFopsiClientKiosk
       )
       OnSelectionChanged = RadioGroupViewSelectionChanged
       TabOrder = 3
+      Visible = False
+    end
+    object BitBtnToggleView: TBitBtn
+      Left = 170
+      Height = 68
+      Top = 5
+      Width = 141
+      Align = alLeft
+      BorderSpacing.Around = 5
+      Caption = 'Toggle View'
+      Glyph.Data = {
+        76060000424D7606000000000000360000002800000014000000140000000100
+        2000000000004006000064000000640000000000000000000000000000000000
+        000000000000000000000000000000000000000000000A0A0AFF131313FF1E1E
+        1EFF2D2D2DFF202020FF00000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000050505FF0E0E
+        0EFF3B3B3BFF787878FF919191FFB0B0B0FF595959FF5E5E5EFF393939FF0000
+        00FF000000000000000000000000000000000000000000000000000000000000
+        000000000000000000FF121212FF171717FF0000000000000000292929FF5B5B
+        5BFFB8B8B8FF919191FF404040FF676767FF191919FF00000000000000000000
+        00000000000000000000000000000000000000000000040404FF000000000000
+        0000000000000000000000000000000000002B2B2BFFA2A2A2FF8E8E8EFF3434
+        34FF4E4E4EFF000000FF00000000000000000000000000000000000000000000
+        0000000000FF0000000000000000000000000000000000000000000000000000
+        0000000000003A3A3AFFABABABFF555555FF595959FF212121FF000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        00000000000000000000000000000000000000000000000000006D6D6DFF8484
+        84FF303030FF525252FF000000FF000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        00000000000000000000515151FF838383FF282828FF494949FF000000FF0000
+        0000000000000000000000000000000000000000000000000000000000000B1C
+        02FF000000FF00000000000000001E1E1EFF555555FF202020FF3F3F3FFF5151
+        51FF232323FF383838FF1C1C1CFF353535FF272727FF080808FF000000000000
+        00000000000000000000122B04FF327A09FF1D4606FF000000FF000000003131
+        31FF727272FFBEBEBEFF474747FF1E1E1EFF1E1E1EFF313131FF757575FF7272
+        72FF232323FF00000000000000000000000000000000122B04FF357D0EFF5CBF
+        38FF419819FF183C03FF000000FF00000000212121FF6E6E6EFFB5B5B5FF4343
+        43FF2E2E2EFF6E6E6EFF747474FF1B1B1BFF0000000000000000000000000000
+        00000E2400FF328205FF5BC21FFF4CAF18FF6FD252FF3C9C10FF123700FF0000
+        01FF00000000131313FF6E6E6EFFB1B1B1FF696969FF6E6E6EFF1A1A1AFF0000
+        00000000000000000000000000001C330EFF6ABD4BFF9DE779FF78C752FF41A5
+        0AFF4AA918FF95DA79FF8AD366FF2D5518FF000000FF000000001E1E1EFF6B6B
+        6BFF7F7F7FFF191919FF00000000000000000000000000000000051600FF5579
+        43FF819675FF889980FFB4D8A3FF57B427FF439E10FF576F4AFF75896CFF7698
+        65FF102C00FF0000000000000000333333FF202020FF00000000000000000000
+        00000000000000000000000000000000000000000000093700FFC8D6C3FF6EBD
+        45FF47AB10FF041800FF00000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000001B4007FFBFD2B6FF98D879FF4EA61DFF1A4104FF000000FF0000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000628551FFE4FA
+        DBFF56B226FF3C8A14FF050F00FF000000000000000000000000000000000000
+        0000000000000000000000000000000000FF0000000000000000000000000000
+        00000000000000000000194103FFC7DDBEFFB9E2A5FF46A514FF266006FF030B
+        00FF000000000000000000000000000000000000000000000000061001FF0000
+        000000000000000000000000000000000000000000000000000000000000446E
+        2FFFD5E7CFFFC7EDB5FF65B839FF2C6A0BFF091D00FF000000FF000000000000
+        0000050D01FF081201FF010300FF000000000000000000000000000000000000
+        000000000000000000000000000000000000184202FF839F74FFD8ECCFFFA4DF
+        87FF6DBD43FF3F7E1EFF26560CFF102605FF040B01FF000000FF000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        000000000000000000002E5817FF617F51FF687C5FFF3D6926FF234A0DFF0000
+        0000000000000000000000000000000000000000000000000000
+      }
+      OnClick = BitBtnToggleViewClick
+      TabOrder = 4
     end
   end
   object StatusBar1: TStatusBar
     Left = 0
     Height = 23
-    Top = 854
+    Top = 757
     Width = 857
     Panels = <    
       item
@@ -1690,15 +1840,6 @@ object FopsiClientKiosk: TFopsiClientKiosk
       ParentColor = False
       ParentFont = False
     end
-  end
-  object PanelProgess: TPanel
-    Left = 0
-    Height = 20
-    Top = 130
-    Width = 857
-    Align = alTop
-    BevelOuter = bvNone
-    TabOrder = 4
   end
   object DataSource1: TDataSource
     left = 64
