@@ -109,15 +109,6 @@ msgstr "Будут выполнены следующие действия:"
 msgid "Installieren"
 msgstr ""
 
-#: tfopsiclientkiosk.bitbtncancel.caption
-msgid "Exit"
-msgstr ""
-
-#: tfopsiclientkiosk.bitbtncancel.hint
-msgctxt "TFOPSICLIENTKIOSK.BITBTNCANCEL.HINT"
-msgid "Terminate Program (with out any further action)"
-msgstr "Завершить программу (без каких-либо дальнейших действий)"
-
 #: tfopsiclientkiosk.bitbtninfo.caption
 msgctxt "tfopsiclientkiosk.bitbtninfo.caption"
 msgid "Info"
@@ -136,31 +127,40 @@ msgctxt "tfopsiclientkiosk.bitbtnstoreaction.caption"
 msgid "Store Actions"
 msgstr "Сохранить действия"
 
-#: tfopsiclientkiosk.bitbtntoggleview.caption
-msgid "Toggle View"
-msgstr ""
-
 #: tfopsiclientkiosk.btnclearsearchedit.caption
 msgid "X"
 msgstr ""
 
 #: tfopsiclientkiosk.btnupgrade.caption
-msgid "Filter for Upgrade"
+#, fuzzy
+#| msgid "Filter for Upgrade"
+msgid "Updates"
 msgstr "Апгрейд-фильтр"
 
 #: tfopsiclientkiosk.btnupgrade.hint
 msgid "Filter for Products where an upgrade is possible"
 msgstr "Фильтр по продуктам, для которых возможен апгрейд"
 
-#: tfopsiclientkiosk.buttonback.caption
-msgid "Back (software list)"
+#: tfopsiclientkiosk.buttonsoftwareback.caption
+msgctxt "tfopsiclientkiosk.buttonsoftwareback.caption"
+msgid "<-- back"
+msgstr ""
+
+#: tfopsiclientkiosk.buttonsoftwareinstall.caption
+msgctxt "tfopsiclientkiosk.buttonsoftwareinstall.caption"
+msgid "Install"
+msgstr ""
+
+#: tfopsiclientkiosk.buttonsoftwarepageupdate.caption
+msgid "Update"
 msgstr ""
 
 #: tfopsiclientkiosk.caption
 msgid "opsi-client-kiosk"
 msgstr "OPSI Client Kiosk"
 
-#: tfopsiclientkiosk.checkbox1.caption
+#: tfopsiclientkiosk.checkboxexpertmode.caption
+msgctxt "tfopsiclientkiosk.checkboxexpertmode.caption"
 msgid "Expert mode"
 msgstr ""
 
@@ -170,6 +170,17 @@ msgstr "Кликните по столбцу ActionRequest, чтобы уста�
 
 #: tfopsiclientkiosk.dividerbevel1.caption
 msgid "Software"
+msgstr ""
+
+#: tfopsiclientkiosk.editsearch.hint
+#, fuzzy
+msgctxt "tfopsiclientkiosk.editsearch.hint"
+msgid "Search in Productlist"
+msgstr "Искать в списке продуктов"
+
+#: tfopsiclientkiosk.editsearch.texthint
+msgctxt "tfopsiclientkiosk.editsearch.texthint"
+msgid "Search"
 msgstr ""
 
 #: tfopsiclientkiosk.labeladvice.caption
@@ -188,28 +199,47 @@ msgstr "Описание:"
 msgid "Priority: "
 msgstr "Приоритет:"
 
+#: tfopsiclientkiosk.labelsoftwareadvice.caption
+msgctxt "tfopsiclientkiosk.labelsoftwareadvice.caption"
+msgid "Advice"
+msgstr ""
+
+#: tfopsiclientkiosk.labelsoftwaredescription.caption
+msgctxt "tfopsiclientkiosk.labelsoftwaredescription.caption"
+msgid "Description"
+msgstr ""
+
+#: tfopsiclientkiosk.labelsoftwareinstalledversion.caption
+msgctxt "tfopsiclientkiosk.labelsoftwareinstalledversion.caption"
+msgid "Installed version"
+msgstr ""
+
 #: tfopsiclientkiosk.labelsoftwarename.caption
 msgid "LabelSoftwareName"
+msgstr ""
+
+#: tfopsiclientkiosk.labelsoftwarerecentversion.caption
+msgctxt "tfopsiclientkiosk.labelsoftwarerecentversion.caption"
+msgid "Recent version"
 msgstr ""
 
 #: tfopsiclientkiosk.labelverstr.caption
 msgid "Version at Server"
 msgstr "Версия на сервере:"
 
+#: tfopsiclientkiosk.panelsoftwarescreenshot.caption
+msgctxt "tfopsiclientkiosk.panelsoftwarescreenshot.caption"
+msgid "ScreenShotImage"
+msgstr ""
+
 #: tfopsiclientkiosk.radiogroupview.caption
 msgid "View"
 msgstr ""
 
-#: tfopsiclientkiosk.searchedit.hint
-msgid "Search in Productlist"
-msgstr "Искать в списке продуктов"
-
-#: tfopsiclientkiosk.searchedit.texthint
-msgid "Search"
-msgstr ""
-
 #: tfopsiclientkiosk.speedbuttonall.caption
-msgid "Show all"
+#, fuzzy
+#| msgid "Show all"
+msgid "All"
 msgstr "Показать всех"
 
 #: tfopsiclientkiosk.speedbuttonall.hint

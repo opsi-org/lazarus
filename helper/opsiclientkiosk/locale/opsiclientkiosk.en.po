@@ -107,15 +107,6 @@ msgstr "The following Actions will be done:"
 msgid "Installieren"
 msgstr ""
 
-#: tfopsiclientkiosk.bitbtncancel.caption
-msgid "Exit"
-msgstr "Exit"
-
-#: tfopsiclientkiosk.bitbtncancel.hint
-msgctxt "TFOPSICLIENTKIOSK.BITBTNCANCEL.HINT"
-msgid "Terminate Program (with out any further action)"
-msgstr "Terminate Program (with out any further action)"
-
 #: tfopsiclientkiosk.bitbtninfo.caption
 msgctxt "tfopsiclientkiosk.bitbtninfo.caption"
 msgid "Info"
@@ -134,31 +125,41 @@ msgctxt "tfopsiclientkiosk.bitbtnstoreaction.caption"
 msgid "Store Actions"
 msgstr "Store Actions"
 
-#: tfopsiclientkiosk.bitbtntoggleview.caption
-msgid "Toggle View"
-msgstr ""
-
 #: tfopsiclientkiosk.btnclearsearchedit.caption
 msgid "X"
 msgstr "X"
 
 #: tfopsiclientkiosk.btnupgrade.caption
-msgid "Filter for Upgrade"
+#, fuzzy
+#| msgid "Filter for Upgrade"
+msgid "Updates"
 msgstr "Filter for Upgrade"
 
 #: tfopsiclientkiosk.btnupgrade.hint
 msgid "Filter for Products where an upgrade is possible"
 msgstr "Filter for Products where an upgrade is possible"
 
-#: tfopsiclientkiosk.buttonback.caption
-msgid "Back (software list)"
+#: tfopsiclientkiosk.buttonsoftwareback.caption
+msgctxt "tfopsiclientkiosk.buttonsoftwareback.caption"
+msgid "<-- back"
+msgstr ""
+
+#: tfopsiclientkiosk.buttonsoftwareinstall.caption
+msgctxt "tfopsiclientkiosk.buttonsoftwareinstall.caption"
+msgid "Install"
+msgstr ""
+
+#: tfopsiclientkiosk.buttonsoftwarepageupdate.caption
+msgid "Update"
 msgstr ""
 
 #: tfopsiclientkiosk.caption
 msgid "opsi-client-kiosk"
 msgstr "opsi-client-kiosk"
 
-#: tfopsiclientkiosk.checkbox1.caption
+#: tfopsiclientkiosk.checkboxexpertmode.caption
+#, fuzzy
+msgctxt "tfopsiclientkiosk.checkboxexpertmode.caption"
 msgid "Expert mode"
 msgstr "Expert mode"
 
@@ -169,6 +170,18 @@ msgstr "Click to ActionRequest Column, to set action requests (setup/uninstall)"
 #: tfopsiclientkiosk.dividerbevel1.caption
 msgid "Software"
 msgstr ""
+
+#: tfopsiclientkiosk.editsearch.hint
+#, fuzzy
+msgctxt "tfopsiclientkiosk.editsearch.hint"
+msgid "Search in Productlist"
+msgstr "Search in Productlist"
+
+#: tfopsiclientkiosk.editsearch.texthint
+#, fuzzy
+msgctxt "tfopsiclientkiosk.editsearch.texthint"
+msgid "Search"
+msgstr "Search"
 
 #: tfopsiclientkiosk.labeladvice.caption
 msgid "Advice:  "
@@ -186,28 +199,47 @@ msgstr "Description:  "
 msgid "Priority: "
 msgstr "Priority: "
 
+#: tfopsiclientkiosk.labelsoftwareadvice.caption
+msgctxt "tfopsiclientkiosk.labelsoftwareadvice.caption"
+msgid "Advice"
+msgstr ""
+
+#: tfopsiclientkiosk.labelsoftwaredescription.caption
+msgctxt "tfopsiclientkiosk.labelsoftwaredescription.caption"
+msgid "Description"
+msgstr ""
+
+#: tfopsiclientkiosk.labelsoftwareinstalledversion.caption
+msgctxt "tfopsiclientkiosk.labelsoftwareinstalledversion.caption"
+msgid "Installed version"
+msgstr ""
+
 #: tfopsiclientkiosk.labelsoftwarename.caption
 msgid "LabelSoftwareName"
+msgstr ""
+
+#: tfopsiclientkiosk.labelsoftwarerecentversion.caption
+msgctxt "tfopsiclientkiosk.labelsoftwarerecentversion.caption"
+msgid "Recent version"
 msgstr ""
 
 #: tfopsiclientkiosk.labelverstr.caption
 msgid "Version at Server"
 msgstr "Version at Server"
 
+#: tfopsiclientkiosk.panelsoftwarescreenshot.caption
+msgctxt "tfopsiclientkiosk.panelsoftwarescreenshot.caption"
+msgid "ScreenShotImage"
+msgstr ""
+
 #: tfopsiclientkiosk.radiogroupview.caption
 msgid "View"
 msgstr "View"
 
-#: tfopsiclientkiosk.searchedit.hint
-msgid "Search in Productlist"
-msgstr "Search in Productlist"
-
-#: tfopsiclientkiosk.searchedit.texthint
-msgid "Search"
-msgstr "Search"
-
 #: tfopsiclientkiosk.speedbuttonall.caption
-msgid "Show all"
+#, fuzzy
+#| msgid "Show all"
+msgid "All"
 msgstr "Show all"
 
 #: tfopsiclientkiosk.speedbuttonall.hint
