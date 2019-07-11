@@ -126,14 +126,6 @@ msgstr ""
 msgid "X"
 msgstr ""
 
-#: tfopsiclientkiosk.btnupgrade.caption
-msgid "Updates"
-msgstr ""
-
-#: tfopsiclientkiosk.btnupgrade.hint
-msgid "Filter for Products where an upgrade is possible"
-msgstr ""
-
 #: tfopsiclientkiosk.buttonsoftwareback.caption
 msgctxt "tfopsiclientkiosk.buttonsoftwareback.caption"
 msgid "<-- back"
@@ -144,7 +136,8 @@ msgctxt "tfopsiclientkiosk.buttonsoftwareinstall.caption"
 msgid "Install"
 msgstr ""
 
-#: tfopsiclientkiosk.buttonsoftwarepageupdate.caption
+#: tfopsiclientkiosk.buttonsoftwareupdate.caption
+msgctxt "tfopsiclientkiosk.buttonsoftwareupdate.caption"
 msgid "Update"
 msgstr ""
 
@@ -152,17 +145,8 @@ msgstr ""
 msgid "opsi-client-kiosk"
 msgstr ""
 
-#: tfopsiclientkiosk.checkboxexpertmode.caption
-msgctxt "tfopsiclientkiosk.checkboxexpertmode.caption"
-msgid "Expert mode"
-msgstr ""
-
 #: tfopsiclientkiosk.dbgrid1.hint
 msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
-msgstr ""
-
-#: tfopsiclientkiosk.dividerbevel1.caption
-msgid "Software"
 msgstr ""
 
 #: tfopsiclientkiosk.editsearch.hint
@@ -236,8 +220,27 @@ msgstr ""
 msgid "Show all List entries (No Filter)"
 msgstr ""
 
+#: tfopsiclientkiosk.speedbuttonexpertmode.caption
+msgid "Expert Mode"
+msgstr ""
+
+#: tfopsiclientkiosk.speedbuttonnotinstalled.caption
+msgctxt "tfopsiclientkiosk.speedbuttonnotinstalled.caption"
+msgid "Not Installed"
+msgstr ""
+
 #: tfopsiclientkiosk.speedbuttonreload.caption
 msgid "Reload"
+msgstr ""
+
+#: tfopsiclientkiosk.speedbuttonupdates.caption
+msgctxt "tfopsiclientkiosk.speedbuttonupdates.caption"
+msgid "Updates"
+msgstr ""
+
+#: tfopsiclientkiosk.speedbuttonupdates.hint
+msgctxt "tfopsiclientkiosk.speedbuttonupdates.hint"
+msgid "Filter for Products where an upgrade is possible"
 msgstr ""
 
 #: tfopsiclientkiosk.statusbar1.panels[0].text
@@ -258,7 +261,7 @@ msgstr ""
 
 #: tformprogresswindow.caption
 msgctxt "tformprogresswindow.caption"
-msgid "Init Opsi Client Kiosk"
+msgid "Initialize OpsiClientKiosk"
 msgstr ""
 
 #: tformprogresswindow.labeldataload.caption

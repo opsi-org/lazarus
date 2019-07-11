@@ -3,7 +3,7 @@ object FormProgressWindow: TFormProgressWindow
   Height = 208
   Top = 441
   Width = 616
-  Caption = 'Init Opsi Client Kiosk'
+  Caption = 'Initialize OpsiClientKiosk'
   ClientHeight = 208
   ClientWidth = 616
   FormStyle = fsStayOnTop

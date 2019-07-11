@@ -132,16 +132,6 @@ msgstr "Sauver les actions"
 msgid "X"
 msgstr ""
 
-#: tfopsiclientkiosk.btnupgrade.caption
-#, fuzzy
-#| msgid "Filter for Upgrade"
-msgid "Updates"
-msgstr "Filtre pour la mise à jour"
-
-#: tfopsiclientkiosk.btnupgrade.hint
-msgid "Filter for Products where an upgrade is possible"
-msgstr "Filtrer les produits dont une mise à jour est possible."
-
 #: tfopsiclientkiosk.buttonsoftwareback.caption
 msgctxt "tfopsiclientkiosk.buttonsoftwareback.caption"
 msgid "<-- back"
@@ -152,7 +142,8 @@ msgctxt "tfopsiclientkiosk.buttonsoftwareinstall.caption"
 msgid "Install"
 msgstr ""
 
-#: tfopsiclientkiosk.buttonsoftwarepageupdate.caption
+#: tfopsiclientkiosk.buttonsoftwareupdate.caption
+msgctxt "tfopsiclientkiosk.buttonsoftwareupdate.caption"
 msgid "Update"
 msgstr ""
 
@@ -160,18 +151,9 @@ msgstr ""
 msgid "opsi-client-kiosk"
 msgstr "Kiosque d'application OPSI"
 
-#: tfopsiclientkiosk.checkboxexpertmode.caption
-msgctxt "tfopsiclientkiosk.checkboxexpertmode.caption"
-msgid "Expert mode"
-msgstr ""
-
 #: tfopsiclientkiosk.dbgrid1.hint
 msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
 msgstr "Cliquer dans la colonne ActionRequest pour activer l'option (setup/uninstall)"
-
-#: tfopsiclientkiosk.dividerbevel1.caption
-msgid "Software"
-msgstr ""
 
 #: tfopsiclientkiosk.editsearch.hint
 #, fuzzy
@@ -247,9 +229,29 @@ msgstr "Afficher tous"
 msgid "Show all List entries (No Filter)"
 msgstr "Montrer tout (sans filtre)"
 
+#: tfopsiclientkiosk.speedbuttonexpertmode.caption
+msgid "Expert Mode"
+msgstr ""
+
+#: tfopsiclientkiosk.speedbuttonnotinstalled.caption
+msgctxt "tfopsiclientkiosk.speedbuttonnotinstalled.caption"
+msgid "Not Installed"
+msgstr ""
+
 #: tfopsiclientkiosk.speedbuttonreload.caption
 msgid "Reload"
 msgstr "Recharger"
+
+#: tfopsiclientkiosk.speedbuttonupdates.caption
+msgctxt "tfopsiclientkiosk.speedbuttonupdates.caption"
+msgid "Updates"
+msgstr ""
+
+#: tfopsiclientkiosk.speedbuttonupdates.hint
+#, fuzzy
+msgctxt "tfopsiclientkiosk.speedbuttonupdates.hint"
+msgid "Filter for Products where an upgrade is possible"
+msgstr "Filtrer les produits dont une mise à jour est possible."
 
 #: tfopsiclientkiosk.statusbar1.panels[0].text
 msgid "Not Connected to opsi server"
@@ -273,7 +275,7 @@ msgstr "Kiosque d'application OPSI"
 #, fuzzy
 #| msgid "Please wait ..."
 msgctxt "tformprogresswindow.caption"
-msgid "Init Opsi Client Kiosk"
+msgid "Initialize OpsiClientKiosk"
 msgstr "Veuillez patienter ..."
 
 #: tformprogresswindow.labeldataload.caption

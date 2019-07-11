@@ -579,7 +579,7 @@ begin
   FormProgressWindow.ProcessMess;
   //initConnection(30);
   //FormProgressWindow.ProgressBar1.StepIt;
-  FormProgressWindow.LabelInfo.Caption := 'Load data from Server';
+  FormProgressWindow.LabelInfo.Caption := 'Loading data ...';
   resultstring := MyOpsiMethodCall('getKioskProductInfosForClient', [myclientid]);
   //closeConnection;
   new_obj := SO(resultstring).O['result'];

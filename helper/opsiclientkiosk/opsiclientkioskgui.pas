@@ -66,10 +66,9 @@ type
     BitBtnInfo: TBitBtn;
     BitBtnShowAction: TBitBtn;
     BitBtnStoreAction: TBitBtn;
-    ButtonSoftwarePageUpdate: TButton;
+    ButtonSoftwareUpdate: TButton;
     ButtonSoftwareInstall: TButton;
     ButtonSoftwareBack: TButton;
-    CheckBoxExpertMode: TCheckBox;
     DataSource1: TDataSource;
     DataSource2: TDataSource;
     DBComboBox1: TDBComboBox;
@@ -84,11 +83,11 @@ type
     DBTextVerStr: TDBText;
     DBTextClientVerStr: TDBText;
     DBTextSoftwareVerStr: TDBText;
-    DividerBevel1: TDividerBevel;
     ExtendedNotebook1: TExtendedNotebook;
     FlowPanelAllTiles: TFlowPanel;
     FlowPanelUpdateTiles: TFlowPanel;
     FlowPanelSearchTiles: TFlowPanel;
+    FlowPanelNotInstalledTiles: TFlowPanel;
     ImageIconSoftware: TImage;
     ImageScreenShot: TImage;
     ImageViewmag: TImage;
@@ -102,13 +101,14 @@ type
     LabelDescription: TLabel;
     LabelAdvice: TLabel;
     LabelClientVerstr: TLabel;
+    PageNotInstalled: TPage;
     PageSearchTiles: TPage;
     PageSoftwareDetails: TPage;
     PageUpdateTiles: TPage;
     PanelSoftwareScreenshot: TPanel;
     PanelSoftwareHead: TPanel;
     PanelSearchEdit: TPanel;
-    PanelSearch: TPanel;
+    PanelExpertMode: TPanel;
     PanelDependencies: TPanel;
     PanelPriority: TPanel;
     PanelDetailsDBText: TPanel;
@@ -120,8 +120,10 @@ type
     ScrollBoxSoftwarePage: TScrollBox;
     EditSearch: TEdit;
     ImageHeader: TImage;
-    datapanel: TPanel;
-    BtnUpgrade: TSpeedButton;
+    ScrollBoxNotInstalledTiles: TScrollBox;
+    SpeedButtonNotInstalled: TSpeedButton;
+    SpeedButtonExpertMode: TSpeedButton;
+    SpeedButtonUpdates: TSpeedButton;
     BtnClearSearchEdit: TSpeedButton;
     SpeedButtonReload: TSpeedButton;
     SpeedButtonAll: TSpeedButton;
@@ -141,10 +143,12 @@ type
     procedure BitBtnShowActionClick(Sender: TObject);
     procedure BitBtnStoreActionClick(Sender: TObject);
     procedure BitBtnToggleViewClick(Sender: TObject);
+    procedure ButtonSoftwareInstallClick(Sender: TObject);
+    procedure SpeedButtonNotInstalledClick(Sender: TObject);
+    procedure SpeedButtonExpertModeClick(Sender: TObject);
     //procedure BtnActionClick(Sender: TObject);
-    procedure BtnUpgradeClick(Sender: TObject);
+    procedure SpeedButtonUpdatesClick(Sender: TObject);
     procedure ButtonSoftwareBackClick(Sender: TObject);
-    procedure CheckBoxExpertModeChange(Sender: TObject);
     procedure DBComboBox1Exit(Sender: TObject);
     procedure DBGrid1CellClick(Column: TColumn);
     procedure DBGrid1ColExit(Sender: TObject);
@@ -578,6 +582,9 @@ begin
   if not inTileRebuild then
   begin
     tileindex := TControl(Sender).Parent.Tag; //type convertion to TControl (all visual components are of this type), parent is the Panel
+    //Case TControl(Sender).Parent.GetNamePath of
+    //  'FlowPanelAllTiles':
+    //end;
     ArrayAllProductTiles[tileindex].ShapeRoundSquare.Brush.Color:=$00FEEFD3;
     //former_selected_tile := tileindex;
   end;
@@ -702,7 +709,7 @@ begin
   begin
     FopsiClientKiosk.productdetailpanel.Height := 0;
     FopsiClientKiosk.NotebookProducts.PageIndex := 2;
-    FopsiClientKiosk.PanelSearch.Visible := False;
+    FopsiClientKiosk.PanelExpertMode.Visible := False;
     FopsiClientKiosk.PanelToolbar.Visible := False;
     FopsiClientKiosk.LabelSoftwareName.Caption := ArrayAllProductTiles[TileIndex].LabelName.Caption;
     FopsiClientKiosk.ImageIconSoftware.Picture:= ArrayAllProductTiles[TileIndex].ImageIcon.Picture;
@@ -715,13 +722,13 @@ begin
     begin
       FopsiClientKiosk.ButtonSoftwareInstall.Caption := 'Uninstall';
       if FopsiClientKiosk.DBTextSoftwareClientVerStr.Caption <> FopsiClientKiosk.DBTextSoftwareVerStr.Caption then
-        FopsiClientKiosk.ButtonSoftwarePageUpdate.Enabled := True
-      else FopsiClientKiosk.ButtonSoftwarePageUpdate.Enabled := False;
+        FopsiClientKiosk.ButtonSoftwareUpdate.Enabled := True
+      else FopsiClientKiosk.ButtonSoftwareUpdate.Enabled := False;
     end
     else if ArrayAllProductTiles[TileIndex].LabelState.Caption = rsNotInstalled then
     begin
       FopsiClientKiosk.ButtonSoftwareInstall.Caption := 'Install';
-      FopsiClientKiosk.ButtonSoftwarePageUpdate.Enabled := False;
+      FopsiClientKiosk.ButtonSoftwareUpdate.Enabled := False;
       //FopsiClientKiosk.
     end;
   end;
@@ -860,7 +867,7 @@ begin
 
       //Visible := False;
     end;*}
-    FopsiClientKiosk.CheckBoxExpertModeChange(FopsiClientKiosk);
+    //FopsiClientKiosk.CheckBoxExpertModeChange(FopsiClientKiosk);
     FormProgressWindow.Visible := False;
   end;
 end;
@@ -1024,7 +1031,7 @@ begin
   //productdetailpanel.Height:=185;
 end;
 
-procedure TFopsiClientKiosk.BtnUpgradeClick(Sender: TObject);
+procedure TFopsiClientKiosk.SpeedButtonUpdatesClick(Sender: TObject);
 begin
   FopsiClientKiosk.NotebookProducts.PageIndex:= 3;
   EditSearch.Text := '';
@@ -1042,44 +1049,9 @@ end;
 
 procedure TFopsiClientKiosk.ButtonSoftwareBackClick(Sender: TObject);
 begin
-  FopsiClientKiosk.PanelSearch.Visible := True;
+  if SpeedButtonExpertMode.Down then FopsiClientKiosk.PanelExpertMode.Visible := True;
   FopsiClientKiosk.PanelToolbar.Visible := True;
   fopsiClientkiosk.NotebookProducts.PageIndex:=1;
-end;
-
-procedure TFopsiClientKiosk.CheckBoxExpertModeChange(Sender: TObject);
-begin
-  if CheckBoxExpertMode.Checked then
-  begin
-    // expert mode
-    RadioGroupView.Visible := True;
-    BitBtnInfo.Visible := True;
-    SpeedButtonReload.Visible := True;
-    BtnUpgrade.Visible := True;
-    SpeedButtonAll.Visible := True;
-    BitBtnShowAction.Visible := True;
-    BitBtnStoreAction.Visible := True;
-    BitBtnStoreAction.Caption := rsStoreActions;
-    BitBtnStoreAction.Hint := rsStoreActionsHint;
-  end
-  else
-  begin
-    // standard mode
-    RadioGroupView.Visible := False;
-    BitBtnInfo.Visible := False;
-    SpeedButtonReload.Visible := False;
-    BtnUpgrade.Visible := False;
-    SpeedButtonAll.Visible := False;
-    BitBtnShowAction.Visible := False;
-    //BitBtnStoreAction.Visible := False;
-    BitBtnStoreAction.Caption := rsInstallNow;
-    BitBtnStoreAction.Hint := rsInstallNowHint;
-  end;
-  // localize RadioGroupView
-  RadioGroupView.Items[0] := rsViewList;
-  RadioGroupView.Items[1] := rsViewTiles;
-  //repaint;
-  Application.ProcessMessages;
 end;
 
 procedure TFopsiClientKiosk.DBComboBox1Exit(Sender: TObject);
@@ -1166,6 +1138,65 @@ begin
   if NotebookProducts.PageIndex = 1 then NotebookProducts.PageIndex := 0
     else if NotebookProducts.PageIndex = 0 then NotebookProducts.PageIndex := 1;
   FopsiClientKiosk.productdetailpanel.height := 0;
+end;
+
+procedure TFopsiClientKiosk.ButtonSoftwareInstallClick(Sender: TObject);
+begin
+  QuestionDLG('Install Dialog','Install now?',mtConfirmation,[mrYes, 'Install now', mrNo, 'Select for Installation', mrCancel], 0);
+end;
+
+procedure TFopsiClientKiosk.SpeedButtonNotInstalledClick(Sender: TObject);
+begin
+  FopsiClientKiosk.NotebookProducts.PageIndex:= 4;
+  EditSearch.Text := '';
+  TimerSearchEdit.Enabled := False;
+  ockdata.ZMQUerydataset1.Filtered := False;
+  ockdata.ZMQUerydataset1.FilterOptions := [foCaseInsensitive];
+  ockdata.ZMQUerydataset1.Filter := 'installationStatus = ""';
+  ockdata.ZMQUerydataset1.Filtered := True;
+  FormProgressWindow.ProcessMess;
+  while inTileRebuild do
+    Sleep(10);
+  if RadioGroupView.ItemIndex = 1 then
+    rebuildProductTiles(ArrayUpdateProductTiles,'FlowPanelNotInstalledTiles');
+end;
+
+procedure TFopsiClientKiosk.SpeedButtonExpertModeClick(Sender: TObject);
+begin
+  if SpeedButtonExpertMode.Down then
+  begin
+    PanelExpertMode.Visible := True;
+    // expert mode
+    //RadioGroupView.Visible := True;
+    //BitBtnInfo.Visible := True;
+    //SpeedButtonReload.Visible := True;
+    //SpeedButtonUpdates.Visible := True;
+    //SpeedButtonAll.Visible := True;
+    //BitBtnShowAction.Visible := True;
+    //BitBtnStoreAction.Visible := True;
+    BitBtnStoreAction.Caption := rsStoreActions;
+    BitBtnStoreAction.Hint := rsStoreActionsHint;
+  end
+  else
+  begin
+    // standard mode
+    PanelExpertMode.Visible := False;
+
+    //RadioGroupView.Visible := False;
+    //BitBtnInfo.Visible := False;
+    //SpeedButtonReload.Visible := False;
+    //SpeedButtonUpdates.Visible := False;
+    //SpeedButtonAll.Visible := False;
+    //BitBtnShowAction.Visible := False;
+    //BitBtnStoreAction.Visible := False;
+    BitBtnStoreAction.Caption := rsInstallNow;
+    BitBtnStoreAction.Hint := rsInstallNowHint;
+  end;
+  // localize RadioGroupView
+  RadioGroupView.Items[0] := rsViewList;
+  RadioGroupView.Items[1] := rsViewTiles;
+  //repaint;
+  Application.ProcessMessages;
 end;
 
 procedure TFopsiClientKiosk.DBGrid1CellClick(Column: TColumn);
@@ -1488,18 +1519,15 @@ end;
 
 procedure TFopsiClientKiosk.SpeedButtonAllClick(Sender: TObject);
 begin
-  try
-    screen.Cursor := crHourGlass;
-    FopsiClientKiosk.NotebookProducts.PageIndex := 1;
-    //if EditSearch.Text = '' then
-    //  FilterOnSearch
-    //else
-    EditSearch.Text := '';
-    // this shoud call  searchEditChange
-    // so we do nothing else here
-  finally
-    screen.Cursor := crDefault;
-  end;
+  //screen.Cursor := crHourGlass;
+  FopsiClientKiosk.NotebookProducts.PageIndex := 1;
+  EditSearch.Text := '';
+  ockdata.ZMQUerydataset1.Filtered := False;
+  TSpeedButton(Sender).Down:= True;
+  //LogDatei.log('Search for: ' + EditSearch.Text + ' Filter off.', LLinfo);
+  // this shoud call  searchEditChange
+  // so we do nothing else here
+  //screen.Cursor := crDefault;
 end;
 
 procedure TFopsiClientKiosk.SpeedButtonViewListClick(Sender: TObject);

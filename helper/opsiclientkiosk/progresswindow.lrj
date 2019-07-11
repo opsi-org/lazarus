@@ -1,5 +1,5 @@
 {"version":1,"strings":[
-{"hash":77631099,"name":"tformprogresswindow.caption","sourcebytes":[73,110,105,116,32,79,112,115,105,32,67,108,105,101,110,116,32,75,105,111,115,107],"value":"Init Opsi Client Kiosk"},
+{"hash":174337435,"name":"tformprogresswindow.caption","sourcebytes":[73,110,105,116,105,97,108,105,122,101,32,79,112,115,105,67,108,105,101,110,116,75,105,111,115,107],"value":"Initialize OpsiClientKiosk"},
 {"hash":182384004,"name":"tformprogresswindow.labeldataload.caption","sourcebytes":[76,97,98,101,108,68,97,116,97,76,111,97,100],"value":"LabelDataLoad"},
 {"hash":41046652,"name":"tformprogresswindow.labeldataloaddetail.caption","sourcebytes":[76,97,98,101,108,68,97,116,97,76,111,97,100,68,101,116,97,105,108],"value":"LabelDataLoadDetail"},
 {"hash":97598080,"name":"tformprogresswindow.labelinfo.caption","sourcebytes":[80,108,101,97,115,101,32,119,97,105,116,32,119,104,105,108,101,32],"value":"Please wait while "}

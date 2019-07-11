@@ -1,996 +1,34 @@
 object FopsiClientKiosk: TFopsiClientKiosk
-  Left = 2300
-  Height = 953
-  Top = 7
-  Width = 859
+  Left = 2326
+  Height = 694
+  Top = 111
+  Width = 804
   Caption = 'opsi-client-kiosk'
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
   ChildSizing.ControlsPerLine = 2
-  ClientHeight = 953
-  ClientWidth = 859
+  ClientHeight = 694
+  ClientWidth = 804
   OnActivate = FormActivate
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poScreenCenter
   LCLVersion = '2.0.2.0'
-  object datapanel: TPanel
-    Left = 0
-    Height = 842
-    Top = 88
-    Width = 859
-    Align = alClient
-    BevelOuter = bvNone
-    BorderStyle = bsSingle
-    ClientHeight = 838
-    ClientWidth = 855
-    TabOrder = 3
-    object productlistpanel: TPanel
-      Left = 0
-      Height = 838
-      Top = 0
-      Width = 855
-      Align = alClient
-      BevelOuter = bvNone
-      ClientHeight = 838
-      ClientWidth = 855
-      Color = clForm
-      ParentColor = False
-      TabOrder = 0
-      object productdetailpanel: TPanel
-        Left = 0
-        Height = 179
-        Top = 659
-        Width = 855
-        Align = alBottom
-        BevelOuter = bvNone
-        ClientHeight = 179
-        ClientWidth = 855
-        TabOrder = 1
-        object ExtendedNotebook1: TExtendedNotebook
-          Left = 0
-          Height = 179
-          Top = 0
-          Width = 855
-          ActivePage = TabSheet1
-          Align = alTop
-          TabIndex = 0
-          TabOrder = 0
-          object TabSheet1: TTabSheet
-            Caption = 'Details'
-            ClientHeight = 151
-            ClientWidth = 847
-            object PanelDetailsLables: TPanel
-              Left = 0
-              Height = 151
-              Top = 0
-              Width = 160
-              Align = alLeft
-              BevelOuter = bvNone
-              ClientHeight = 151
-              ClientWidth = 160
-              ParentColor = False
-              TabOrder = 0
-              object LabelDescription: TLabel
-                Left = 5
-                Height = 47
-                Top = 5
-                Width = 150
-                Align = alTop
-                Alignment = taRightJustify
-                AutoSize = False
-                BorderSpacing.Around = 5
-                Caption = 'Description:  '
-                ParentColor = False
-              end
-              object LabelAdvice: TLabel
-                Left = 5
-                Height = 47
-                Top = 57
-                Width = 150
-                Align = alTop
-                Alignment = taRightJustify
-                AutoSize = False
-                BorderSpacing.Around = 5
-                Caption = 'Advice:  '
-                ParentColor = False
-              end
-              object LabelVerstr: TLabel
-                Left = 5
-                Height = 15
-                Top = 109
-                Width = 150
-                Align = alTop
-                Alignment = taRightJustify
-                BorderSpacing.Around = 5
-                Caption = 'Version at Server'
-                ParentColor = False
-              end
-              object LabelClientVerstr: TLabel
-                Left = 5
-                Height = 15
-                Top = 129
-                Width = 150
-                Align = alTop
-                Alignment = taRightJustify
-                BorderSpacing.Around = 5
-                Caption = 'Version at Client'
-                ParentColor = False
-              end
-            end
-            object PanelDetailsDBText: TPanel
-              Left = 160
-              Height = 151
-              Top = 0
-              Width = 687
-              Align = alClient
-              BevelOuter = bvNone
-              ClientHeight = 151
-              ClientWidth = 687
-              ParentColor = False
-              TabOrder = 1
-              object DBTextVerStr: TDBText
-                Left = 5
-                Height = 15
-                Top = 109
-                Width = 677
-                Align = alTop
-                BorderSpacing.Around = 5
-                DataField = 'versionstr'
-                DataSource = DataSource1
-                ParentColor = False
-              end
-              object DBTextClientVerStr: TDBText
-                Left = 5
-                Height = 17
-                Top = 129
-                Width = 96
-                Align = alLeft
-                BorderSpacing.Around = 5
-                DataField = 'installedverstr'
-                DataSource = DataSource1
-                ParentColor = False
-              end
-              object DBMemoDescription: TDBMemo
-                Left = 5
-                Height = 47
-                Top = 5
-                Width = 677
-                Align = alTop
-                BorderSpacing.Around = 5
-                BorderStyle = bsNone
-                DataField = 'description'
-                DataSource = DataSource1
-                ReadOnly = True
-                ScrollBars = ssAutoVertical
-                TabOrder = 0
-              end
-              object DBMemoAdvice: TDBMemo
-                Left = 5
-                Height = 47
-                Top = 57
-                Width = 677
-                Align = alTop
-                BorderSpacing.Around = 5
-                BorderStyle = bsNone
-                DataField = 'advice'
-                DataSource = DataSource1
-                ReadOnly = True
-                ScrollBars = ssAutoVertical
-                TabOrder = 1
-              end
-              object BitBtn1: TBitBtn
-                Left = -32
-                Height = 22
-                Top = -584
-                Width = 150
-                Align = alCustom
-                Caption = 'Installieren'
-                TabOrder = 2
-              end
-            end
-          end
-          object TabSheet2: TTabSheet
-            Caption = 'Dependencies / Priority'
-            ClientHeight = 151
-            ClientWidth = 847
-            object PanelPriority: TPanel
-              Left = 0
-              Height = 32
-              Top = 119
-              Width = 847
-              Align = alBottom
-              BevelOuter = bvNone
-              ClientHeight = 32
-              ClientWidth = 847
-              ParentColor = False
-              TabOrder = 0
-              object LabelPriority: TLabel
-                Left = 57
-                Height = 15
-                Top = 10
-                Width = 44
-                BorderSpacing.Around = 5
-                Caption = 'Priority: '
-                ParentColor = False
-              end
-              object DBTextPriority: TDBText
-                Left = 108
-                Height = 15
-                Top = 9
-                Width = 73
-                BorderSpacing.Around = 5
-                DataField = 'priority'
-                DataSource = DataSource1
-                ParentColor = False
-              end
-            end
-            object PanelDependencies: TPanel
-              Left = 0
-              Height = 119
-              Top = 0
-              Width = 847
-              Align = alClient
-              BevelOuter = bvNone
-              ClientHeight = 119
-              ClientWidth = 847
-              TabOrder = 1
-              object DBGrid2: TDBGrid
-                Left = 0
-                Height = 119
-                Top = 0
-                Width = 847
-                Align = alClient
-                Color = clWindow
-                Columns = <>
-                DataSource = DataSource2
-                TabOrder = 0
-              end
-            end
-          end
-        end
-      end
-      object NotebookProducts: TNotebook
-        Left = 0
-        Height = 603
-        Top = 56
-        Width = 855
-        PageIndex = 2
-        Align = alClient
-        TabOrder = 0
-        TabStop = True
-        object PageList: TPage
-          object DBGrid1: TDBGrid
-            Left = 0
-            Height = 368
-            Hint = 'Click to ActionRequest Column, to set action requests (setup/uninstall)'
-            Top = 0
-            Width = 833
-            Align = alClient
-            Color = clWindow
-            Columns = <>
-            DataSource = DataSource1
-            Options = [dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-            ReadOnly = True
-            Scrollbars = ssAutoBoth
-            ShowHint = True
-            TabOrder = 0
-            OnCellClick = DBGrid1CellClick
-            OnColExit = DBGrid1ColExit
-            OnDrawColumnCell = DBGrid1DrawColumnCell
-            OnEnter = DBGrid1Enter
-            OnExit = DBGrid1Exit
-            OnTitleClick = DBGrid1TitleClick
-          end
-          object DBComboBox1: TDBComboBox
-            Left = 475
-            Height = 23
-            Top = 71
-            Width = 100
-            DataField = 'actionrequest'
-            DataSource = DataSource1
-            ItemHeight = 15
-            Items.Strings = (
-              'setup'
-              'uninstall'
-            )
-            MaxLength = 0
-            OnExit = DBComboBox1Exit
-            TabOrder = 1
-            Visible = False
-          end
-        end
-        object PageAllTiles: TPage
-          ChildSizing.Layout = cclLeftToRightThenTopToBottom
-          object ScrollBoxAllTiles: TScrollBox
-            Left = 0
-            Height = 603
-            Top = 0
-            Width = 855
-            HorzScrollBar.Page = 1
-            HorzScrollBar.Visible = False
-            VertScrollBar.Page = 1
-            Align = alClient
-            AutoSize = True
-            BorderStyle = bsNone
-            ClientHeight = 603
-            ClientWidth = 855
-            Color = clDefault
-            ParentColor = False
-            TabOrder = 0
-            OnMouseWheel = ScrollBoxAllTilesMouseWheel
-            object FlowPanelAllTiles: TFlowPanel
-              Left = 0
-              Height = 603
-              Top = 0
-              Width = 855
-              Align = alClient
-              BevelOuter = bvNone
-              Color = clForm
-              ControlList = <>
-              FlowLayout = tlTop
-              FlowStyle = fsLeftRightTopBottom
-              ParentColor = False
-              TabOrder = 0
-            end
-          end
-        end
-        object PageSoftwareDetails: TPage
-          object PanelSoftwareHead: TPanel
-            Left = -2
-            Height = 37
-            Top = 0
-            Width = 859
-            BevelOuter = bvNone
-            BorderStyle = bsSingle
-            ClientHeight = 33
-            ClientWidth = 855
-            ParentColor = False
-            TabOrder = 0
-            object ButtonSoftwareBack: TButton
-              Left = 3
-              Height = 27
-              Top = 3
-              Width = 72
-              Align = alLeft
-              AutoSize = True
-              BorderSpacing.Around = 3
-              Caption = '<-- back'
-              Font.CharSet = ANSI_CHARSET
-              Font.Color = clBlack
-              Font.Height = -12
-              Font.Name = 'Segoe UI'
-              Font.Pitch = fpVariable
-              Font.Quality = fqDraft
-              OnClick = ButtonSoftwareBackClick
-              ParentFont = False
-              TabOrder = 0
-            end
-          end
-          object ScrollBoxSoftwarePage: TScrollBox
-            Left = -7
-            Height = 536
-            Top = 40
-            Width = 864
-            HorzScrollBar.Page = 757
-            VertScrollBar.Page = 532
-            BorderStyle = bsNone
-            ClientHeight = 536
-            ClientWidth = 864
-            TabOrder = 1
-            object ImageIconSoftware: TImage
-              Left = 15
-              Height = 60
-              Top = 16
-              Width = 60
-              Center = True
-              Proportional = True
-            end
-            object LabelSoftwareName: TLabel
-              Left = 88
-              Height = 25
-              Top = 32
-              Width = 169
-              Caption = 'LabelSoftwareName'
-              Font.CharSet = ANSI_CHARSET
-              Font.Color = clBlack
-              Font.Height = -19
-              Font.Name = 'Segoe UI'
-              Font.Pitch = fpVariable
-              Font.Quality = fqDraft
-              ParentColor = False
-              ParentFont = False
-            end
-            object ButtonSoftwareInstall: TButton
-              Left = 15
-              Height = 28
-              Top = 104
-              Width = 135
-              Caption = 'Install'
-              TabOrder = 0
-            end
-            object DBMemoSoftwareDescription: TDBMemo
-              Left = 15
-              Height = 72
-              Top = 365
-              Width = 737
-              BorderSpacing.Around = 5
-              BorderStyle = bsNone
-              Color = clForm
-              DataField = 'description'
-              DataSource = DataSource1
-              Font.CharSet = ANSI_CHARSET
-              Font.Color = clBlack
-              Font.Height = -13
-              Font.Name = 'Segoe UI'
-              Font.Pitch = fpVariable
-              Font.Quality = fqDraft
-              ParentFont = False
-              ReadOnly = True
-              ScrollBars = ssAutoVertical
-              TabOrder = 1
-            end
-            object DBMemoSoftwareAdvice: TDBMemo
-              Left = 15
-              Height = 47
-              Top = 480
-              Width = 737
-              BorderSpacing.Around = 5
-              BorderStyle = bsNone
-              Color = clForm
-              DataField = 'advice'
-              DataSource = DataSource1
-              Font.CharSet = ANSI_CHARSET
-              Font.Color = clBlack
-              Font.Height = -13
-              Font.Name = 'Segoe UI'
-              Font.Pitch = fpVariable
-              Font.Quality = fqDraft
-              ParentFont = False
-              ReadOnly = True
-              ScrollBars = ssAutoVertical
-              TabOrder = 2
-            end
-            object LabelSoftwareDescription: TLabel
-              Left = 15
-              Height = 21
-              Top = 335
-              Width = 79
-              Caption = 'Description'
-              Font.CharSet = ANSI_CHARSET
-              Font.Color = clBlack
-              Font.Height = -16
-              Font.Name = 'Segoe UI'
-              Font.Pitch = fpVariable
-              Font.Quality = fqDraft
-              ParentColor = False
-              ParentFont = False
-            end
-            object LabelSoftwareAdvice: TLabel
-              Left = 15
-              Height = 21
-              Top = 450
-              Width = 46
-              Caption = 'Advice'
-              Font.CharSet = ANSI_CHARSET
-              Font.Color = clBlack
-              Font.Height = -16
-              Font.Name = 'Segoe UI'
-              Font.Pitch = fpVariable
-              Font.Quality = fqDraft
-              ParentColor = False
-              ParentFont = False
-            end
-            object PanelSoftwareScreenshot: TPanel
-              Left = 195
-              Height = 216
-              Top = 104
-              Width = 384
-              BevelOuter = bvNone
-              Caption = 'ScreenShotImage'
-              ClientHeight = 216
-              ClientWidth = 384
-              Color = cl3DLight
-              ParentColor = False
-              TabOrder = 3
-              object ImageScreenShot: TImage
-                Left = 0
-                Height = 216
-                Top = 0
-                Width = 384
-                Center = True
-                Picture.Data = {
-                  055449636F6EFE0200000000010001002020100001000400E802000016000000
-                  2800000020000000400000000100040000000000000000000000000000000000
-                  000000000000000088585200A96D5D00C27D7200B68B7B008A79CA00E5908C00
-                  B09BAD00FD9FA000E3AFA300F9B0A700ADA5DF00CCBDC300FDCBCC00E0DAE400
-                  FBFFFC0000000000EEEEEEEEEEEEEEEEEEEEEEEEEDEEEEEEEEEEEEEEEEEEEEEE
-                  EEEEEEEEEEEEEEEEEEEEEEEEEEEEB301113BEEEEEEEEEEEEEEEEEEEEEEB11313
-                  11111BEEEEEEEEEEEEEEEEEEE3301111152521BEEEEEEEEEEEEEEEEE61010000
-                  0011551BEEEEEEEEEEEEEEED1010000001025752BEEEEEEEEEEEEEE112000122
-                  555227723EEEEEEEEEEEEEB112255577777777751BEEEEEEEDBDEE6025555121
-                  1157777728EEDBDE4444DE31555521111115777753EA444AEDABEB0127721255
-                  5511799921DEDAAEB4A4DD1127711777772199C921DD4B4A4DEAAE3177511777
-                  775389CC33EBAEE4AA44AE317772177579938CCC19EE4444EEEEDEB127721555
-                  5983B8CC1DEEEEEEEEEEEEE3177512213B38BCC22EEEEEEEEEEEEEED02775599
-                  998CCC81BEEEEEEEEEEEEEEEB12577999CCCC81BEEEEEEEEEEEEEEEEEB115778
-                  8CCC318EEEEEEEEEEEEEEEEEEEB3112123111DEEEEEEEEEEEEEEEEEEDEEEB331
-                  133DEEEEEEDEEEEEEEEEEEEEEEEEEEEDDEEEEEEEEEEEEEEEEEEEDEEEEEEEEEEA
-                  4BEEEEDEEEEEEEEEEEEEEEEEEEEEED4AAAEEEEEEEEEEEEEEEEEEEEEEEEEEEEE4
-                  4AEEEEEEEEEEEEEEEEEEEEEEEEEEEE4BD4DEEEEEEEEEEEEEEEEEEEEEEEEEEE4E
-                  EABEEEEEEEEEEEEEEEEEEEEEEEEEEEAA44DEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-                  EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-                  EEEEEEEEEEEEEEEE000000000000000000000000000000000000000000000000
-                  0000000000000000000000000000000000000000000000000000000000000000
-                  0000000000000000000000000000000000000000000000000000000000000000
-                  0000000000000000000000000000000000000000000000000000000000000000
-                  0000000000000000
-                }
-                Proportional = True
-                Stretch = True
-                Transparent = True
-              end
-            end
-            object DBTextSoftwareVerStr: TDBText
-              Left = 15
-              Height = 15
-              Top = 218
-              Width = 111
-              BorderSpacing.Around = 5
-              DataField = 'versionstr'
-              DataSource = DataSource1
-              ParentColor = False
-            end
-            object DBTextSoftwareClientVerStr: TDBText
-              Left = 15
-              Height = 15
-              Top = 168
-              Width = 142
-              BorderSpacing.Around = 5
-              DataField = 'installedverstr'
-              DataSource = DataSource1
-              ParentColor = False
-            end
-            object LabelSoftwareInstalledVersion: TLabel
-              Left = 15
-              Height = 15
-              Top = 147
-              Width = 85
-              Caption = 'Installed version'
-              ParentColor = False
-            end
-            object LabelSoftwareRecentVersion: TLabel
-              Left = 15
-              Height = 15
-              Top = 200
-              Width = 77
-              Caption = 'Recent version'
-              ParentColor = False
-            end
-            object ButtonSoftwarePageUpdate: TButton
-              Left = 15
-              Height = 28
-              Top = 251
-              Width = 135
-              Caption = 'Update'
-              Enabled = False
-              TabOrder = 4
-            end
-          end
-        end
-        object PageUpdateTiles: TPage
-          object ScrollBoxUpdateTiles: TScrollBox
-            Left = 0
-            Height = 603
-            Top = 0
-            Width = 855
-            HorzScrollBar.Page = 1
-            HorzScrollBar.Visible = False
-            VertScrollBar.Page = 1
-            Align = alClient
-            AutoSize = True
-            BorderStyle = bsNone
-            ClientHeight = 603
-            ClientWidth = 855
-            Color = clDefault
-            ParentColor = False
-            TabOrder = 0
-            OnClick = ScrollBoxUpdateTilesClick
-            OnMouseWheel = ScrollBoxAllTilesMouseWheel
-            object FlowPanelUpdateTiles: TFlowPanel
-              Left = 0
-              Height = 603
-              Top = 0
-              Width = 855
-              Align = alClient
-              BevelOuter = bvNone
-              Color = clForm
-              ControlList = <>
-              FlowLayout = tlTop
-              FlowStyle = fsLeftRightTopBottom
-              ParentColor = False
-              TabOrder = 0
-              OnClick = FlowPanelUpdateTilesClick
-            end
-          end
-        end
-        object PageSearchTiles: TPage
-          object ScrollBoxSearchTiles: TScrollBox
-            Left = 0
-            Height = 603
-            Top = 0
-            Width = 855
-            HorzScrollBar.Page = 1
-            HorzScrollBar.Visible = False
-            VertScrollBar.Page = 1
-            Align = alClient
-            AutoSize = True
-            BorderStyle = bsNone
-            ClientHeight = 603
-            ClientWidth = 855
-            Color = clDefault
-            ParentColor = False
-            TabOrder = 0
-            OnMouseWheel = ScrollBoxAllTilesMouseWheel
-            object FlowPanelSearchTiles: TFlowPanel
-              Left = 0
-              Height = 603
-              Top = 0
-              Width = 855
-              Align = alClient
-              BevelOuter = bvNone
-              Color = clForm
-              ControlList = <>
-              FlowLayout = tlTop
-              FlowStyle = fsLeftRightTopBottom
-              ParentColor = False
-              TabOrder = 0
-            end
-          end
-        end
-      end
-      object PanelSearch: TPanel
-        Left = 0
-        Height = 56
-        Top = 0
-        Width = 855
-        Align = alTop
-        BevelOuter = bvNone
-        ClientHeight = 56
-        ClientWidth = 855
-        ParentColor = False
-        TabOrder = 2
-        object BitBtnInfo: TBitBtn
-          Left = 5
-          Height = 31
-          Top = 5
-          Width = 75
-          Align = alLeft
-          BorderSpacing.Around = 5
-          Caption = 'Info'
-          Kind = bkHelp
-          OnClick = BitBtnInfoClick
-          TabOrder = 0
-          Visible = False
-        end
-        object PanelSearchEdit: TPanel
-          Left = 684
-          Height = 31
-          Top = 5
-          Width = 170
-          Align = alRight
-          BorderSpacing.Left = 10
-          BorderSpacing.Top = 5
-          BorderSpacing.Right = 1
-          BorderSpacing.Bottom = 5
-          BevelOuter = bvNone
-          BorderStyle = bsSingle
-          ClientHeight = 27
-          ClientWidth = 166
-          TabOrder = 1
-          object BtnClearSearchEdit: TSpeedButton
-            Left = 143
-            Height = 27
-            Top = 0
-            Width = 23
-            Align = alRight
-            Caption = 'X'
-            Color = clWhite
-            Flat = True
-            OnClick = BtnClearSearchEditClick
-          end
-          object EditSearch: TEdit
-            Left = 27
-            Height = 27
-            Hint = 'Search in Productlist'
-            Top = 0
-            Width = 116
-            Align = alClient
-            AutoSize = False
-            AutoSelect = False
-            BorderSpacing.Left = 5
-            BorderStyle = bsNone
-            Font.Height = -16
-            OnChange = EditSearchChange
-            OnEnter = EditSearchEnter
-            ParentFont = False
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 0
-            TextHint = 'Search'
-          end
-          object ImageViewmag: TImage
-            Left = 2
-            Height = 23
-            Top = 2
-            Width = 20
-            Align = alLeft
-            AutoSize = True
-            BorderSpacing.Around = 2
-            Picture.Data = {
-              07545069786D6170CF0E00002F2A2058504D202A2F0D0A737461746963206368
-              6172202A204E3A5C7569625C6F657274656C5C73766E776F726B5C73766E5F6F
-              7073695F6F72675C6F7073695F77696E73745C6272616E636865735C345F3131
-              5F365C766965776D61675F78706D5B5D203D207B0D0A22323020323020313633
-              2032222C0D0A2220200963204E6F6E65222C0D0A222E20096320233641364136
-              39222C0D0A222B2009632023313030463046222C0D0A22402009632023323532
-              343234222C0D0A22232009632023323432343234222C0D0A2224200963202331
-              4231423142222C0D0A22252009632023353035303445222C0D0A222620096320
-              23383738353835222C0D0A222A2009632023433644314432222C0D0A223D2009
-              632023433844434532222C0D0A222D2009632023434444384441222C0D0A223B
-              2009632023433644304432222C0D0A223E2009632023414141424142222C0D0A
-              222C2009632023323732373236222C0D0A22272009632023344534463444222C
-              0D0A22292009632023434544384438222C0D0A22212009632023453546384638
-              222C0D0A227E2009632023444246374638222C0D0A227B200963202344414634
-              4638222C0D0A225D2009632023434446314635222C0D0A225E20096320234332
-              45444633222C0D0A222F2009632023443346364642222C0D0A22282009632023
-              443745354537222C0D0A225F2009632023324232423242222C0D0A223A200963
-              2023434544374438222C0D0A223C2009632023454446424642222C0D0A225B20
-              09632023454346414639222C0D0A227D2009632023444446344638222C0D0A22
-              7C2009632023434346304632222C0D0A22312009632023423645414631222C0D
-              0A22322009632023413044434534222C0D0A2233200963202339314432444522
-              2C0D0A22342009632023433545444633222C0D0A223520096320234545464346
-              45222C0D0A22362009632023313031303046222C0D0A22372009632023363936
-              393639222C0D0A22382009632023384338423842222C0D0A2239200963202345
-              3946384638222C0D0A22302009632023464146444644222C0D0A226120096320
-              23444646354639222C0D0A22622009632023433545434632222C0D0A22632009
-              632023423345354545222C0D0A22642009632023394244424538222C0D0A2265
-              2009632023383243444437222C0D0A22662009632023383644304441222C0D0A
-              22672009632023433745464634222C0D0A22682009632023363436373637222C
-              0D0A22692009632023394139413941222C0D0A226A2009632023304330433043
-              222C0D0A226B2009632023433444324432222C0D0A226C200963202345314635
-              4637222C0D0A226D2009632023444346354637222C0D0A226E20096320234443
-              45454630222C0D0A226F2009632023433345414630222C0D0A22702009632023
-              414145334543222C0D0A22712009632023384644414536222C0D0A2272200963
-              2023373643424437222C0D0A22732009632023363643314342222C0D0A227420
-              09632023393944444538222C0D0A22752009632023394441394142222C0D0A22
-              762009632023303030303030222C0D0A22772009632023444345344537222C0D
-              0A22782009632023444246304634222C0D0A2279200963202343334543463222
-              2C0D0A227A2009632023433745434631222C0D0A224120096320234245454246
-              31222C0D0A22422009632023413845334542222C0D0A22432009632023393344
-              414537222C0D0A22442009632023383544394531222C0D0A2245200963202336
-              3543314345222C0D0A22462009632023353742374332222C0D0A224720096320
-              23394444424533222C0D0A22482009632023433945304532222C0D0A22492009
-              632023303230323032222C0D0A224A2009632023443945334534222C0D0A224B
-              2009632023443145444631222C0D0A224C2009632023423845394630222C0D0A
-              224D2009632023423545394546222C0D0A224E2009632023413645314542222C
-              0D0A224F2009632023393444414533222C0D0A22502009632023383344374532
-              222C0D0A22512009632023363943444441222C0D0A2252200963202335334243
-              4338222C0D0A22532009632023343841424233222C0D0A225420096320233835
-              44334445222C0D0A22552009632023433945314535222C0D0A22562009632023
-              313431343133222C0D0A22572009632023424243374337222C0D0A2258200963
-              2023433245394630222C0D0A22592009632023393044344443222C0D0A225A20
-              09632023394144424533222C0D0A22602009632023393044424537222C0D0A22
-              202E09632023384244394533222C0D0A222E2E09632023364143454442222C0D
-              0A222B2E09632023344642464342222C0D0A22402E0963202334344139423222
-              2C0D0A22232E09632023344541384233222C0D0A22242E096320233936444145
-              38222C0D0A22252E09632023384639423944222C0D0A22262E09632023313031
-              303130222C0D0A222A2E09632023393239323932222C0D0A223D2E0963202343
-              4446304636222C0D0A222D2E09632023393344374446222C0D0A223B2E096320
-              23374543444438222C0D0A223E2E09632023373943434437222C0D0A222C2E09
-              632023354243374434222C0D0A22272E09632023353542444337222C0D0A2229
-              2E09632023343441394233222C0D0A22212E09632023334439454136222C0D0A
-              227E2E09632023363042444341222C0D0A227B2E09632023434546374638222C
-              0D0A225D2E09632023343634363435222C0D0A225E2E09632023323932393238
-              222C0D0A222F2E09632023433243444346222C0D0A22282E0963202338374436
-              4445222C0D0A225F2E09632023363743314342222C0D0A223A2E096320233534
-              41454237222C0D0A223C2E09632023343641334144222C0D0A225B2E09632023
-              343841344143222C0D0A227D2E09632023354442424336222C0D0A227C2E0963
-              2023414545414632222C0D0A22312E09632023434344384441222C0D0A22322E
-              09632023334133363335222C0D0A22332E09632023334333433343222C0D0A22
-              342E09632023424543374338222C0D0A22352E09632023433746314638222C0D
-              0A22362E09632023394144414533222C0D0A22372E0963202338334431444122
-              2C0D0A22382E09632023373343364431222C0D0A22392E096320233839443945
-              33222C0D0A22302E09632023434146384639222C0D0A22612E09632023433944
-              304433222C0D0A22622E09632023303330333033222C0D0A22632E0963202334
-              4243354334222C0D0A22642E09632023313331333133222C0D0A22652E096320
-              23343434353435222C0D0A22662E09632023413341464145222C0D0A22672E09
-              632023433744464532222C0D0A22682E09632023433144454532222C0D0A2269
-              2E09632023393839454131222C0D0A226A2E09632023343134303430222C0D0A
-              226B2E09632023334233383338222C0D0A226C2E09632023324237463746222C
-              0D0A226D2E09632023304142394238222C0D0A226E2E09632023424542444244
-              222C0D0A226F2E09632023313931393139222C0D0A22702E0963202339433943
-              3943222C0D0A22712E09632023303630363036222C0D0A22722E096320233346
-              33433342222C0D0A22732E09632023353335333532222C0D0A22742E09632023
-              453345334533222C0D0A22752E09632023353435343533222C0D0A22762E0963
-              2023423842384239222C0D0A22772E09632023333633363337222C0D0A22782E
-              09632023353335333531222C0D0A22792E09632023313831383138222C0D0A22
-              7A2E09632023334233423341222C0D0A22412E09632023433943394339222C0D
-              0A22422E09632023333933393339222C0D0A22432E0963202335353534353322
-              2C0D0A22442E09632023423642414241222C0D0A22452E096320233338333833
-              38222C0D0A22462E09632023343034303346222C0D0A2220202020202020202E
-              202B204020232024202020202020202020202020202020202020202020202022
-              2C0D0A22202020202020252026202A203D202D203B203E202C20202020202020
-              202020202020202020202020222C0D0A22202020202720292021207E207B205D
-              205E202F2028205F2020202020202020202020202020202020222C0D0A222020
-              25203A203C205B207D207C203120322033203420352036202020202020202020
-              202020202020222C0D0A223720382039205B2030206120622063206420652066
-              20672068206920202020202020202020202020222C0D0A226A206B206C207D20
-              6D206E206F207020712072207320742075207620202020202020202020202020
-              222C0D0A2223207720782079207A204120422043204420452046204720482049
-              20202020202020202020202020222C0D0A2223204A204B204C204D204E204F20
-              5020512052205320542055204920202020202020202020202020222C0D0A2256
-              205720582059205A206020202E2E2E2B2E402E232E242E252E262E2020202020
-              20202020202020222C0D0A2220202A2E3D2E2D2E3B2E3E2E2C2E272E292E212E
-              7E2E7B2E5D2E2020202020202020202020202020222C0D0A2220205E2E2F2E5E
-              20282E5F2E3A2E3C2E5B2E7D2E7C2E312E322E20202020202020202020202020
-              20222C0D0A2220202020332E342E352E362E372E382E392E302E612E622E632E
-              7620202020202020202020202020222C0D0A22202020202020642E652E662E67
-              2E682E692E6A2E6B2E6C2E6D2E6E2E6F2E20202020202020202020222C0D0A22
-              2020202020202020702E762076207620712E202020207620722E732E742E7620
-              2020202020202020222C0D0A2220202020202020202020202020202020202020
-              2020202020622E332E752E762E7620202020202020222C0D0A22202020202020
-              20202020202020202020202020202020202020207620772E782E742E792E2020
-              2020222C0D0A2220202020202020202020202020202020202020202020202020
-              20202076207A2E782E412E76202020222C0D0A22202020202020202020202020
-              202020202020202020202020202020202020622E422E432E442E2020222C0D0A
-              2220202020202020202020202020202020202020202020202020202020202020
-              207620452E462E2020222C0D0A22202020202020202020202020202020202020
-              20202020202020202020202020202020202020202020227D3B0D0A
-            }
-            Transparent = True
-          end
-        end
-        object SpeedButtonReload: TSpeedButton
-          Left = 604
-          Height = 31
-          Top = 5
-          Width = 70
-          Align = alRight
-          BorderSpacing.Around = 5
-          BorderSpacing.InnerBorder = 2
-          Caption = 'Reload'
-          Glyph.Data = {
-            76060000424D7606000000000000360000002800000014000000140000000100
-            2000000000004006000064000000640000000000000000000000000000000000
-            000000000000000000000000000000000000000000000A0A0AFF131313FF1E1E
-            1EFF2D2D2DFF202020FF00000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000050505FF0E0E
-            0EFF3B3B3BFF787878FF919191FFB0B0B0FF595959FF5E5E5EFF393939FF0000
-            00FF000000000000000000000000000000000000000000000000000000000000
-            000000000000000000FF121212FF171717FF0000000000000000292929FF5B5B
-            5BFFB8B8B8FF919191FF404040FF676767FF191919FF00000000000000000000
-            00000000000000000000000000000000000000000000040404FF000000000000
-            0000000000000000000000000000000000002B2B2BFFA2A2A2FF8E8E8EFF3434
-            34FF4E4E4EFF000000FF00000000000000000000000000000000000000000000
-            0000000000FF0000000000000000000000000000000000000000000000000000
-            0000000000003A3A3AFFABABABFF555555FF595959FF212121FF000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000000000000000000000000000000000006D6D6DFF8484
-            84FF303030FF525252FF000000FF000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            00000000000000000000515151FF838383FF282828FF494949FF000000FF0000
-            0000000000000000000000000000000000000000000000000000000000000B1C
-            02FF000000FF00000000000000001E1E1EFF555555FF202020FF3F3F3FFF5151
-            51FF232323FF383838FF1C1C1CFF353535FF272727FF080808FF000000000000
-            00000000000000000000122B04FF327A09FF1D4606FF000000FF000000003131
-            31FF727272FFBEBEBEFF474747FF1E1E1EFF1E1E1EFF313131FF757575FF7272
-            72FF232323FF00000000000000000000000000000000122B04FF357D0EFF5CBF
-            38FF419819FF183C03FF000000FF00000000212121FF6E6E6EFFB5B5B5FF4343
-            43FF2E2E2EFF6E6E6EFF747474FF1B1B1BFF0000000000000000000000000000
-            00000E2400FF328205FF5BC21FFF4CAF18FF6FD252FF3C9C10FF123700FF0000
-            01FF00000000131313FF6E6E6EFFB1B1B1FF696969FF6E6E6EFF1A1A1AFF0000
-            00000000000000000000000000001C330EFF6ABD4BFF9DE779FF78C752FF41A5
-            0AFF4AA918FF95DA79FF8AD366FF2D5518FF000000FF000000001E1E1EFF6B6B
-            6BFF7F7F7FFF191919FF00000000000000000000000000000000051600FF5579
-            43FF819675FF889980FFB4D8A3FF57B427FF439E10FF576F4AFF75896CFF7698
-            65FF102C00FF0000000000000000333333FF202020FF00000000000000000000
-            00000000000000000000000000000000000000000000093700FFC8D6C3FF6EBD
-            45FF47AB10FF041800FF00000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000001B4007FFBFD2B6FF98D879FF4EA61DFF1A4104FF000000FF0000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000628551FFE4FA
-            DBFF56B226FF3C8A14FF050F00FF000000000000000000000000000000000000
-            0000000000000000000000000000000000FF0000000000000000000000000000
-            00000000000000000000194103FFC7DDBEFFB9E2A5FF46A514FF266006FF030B
-            00FF000000000000000000000000000000000000000000000000061001FF0000
-            000000000000000000000000000000000000000000000000000000000000446E
-            2FFFD5E7CFFFC7EDB5FF65B839FF2C6A0BFF091D00FF000000FF000000000000
-            0000050D01FF081201FF010300FF000000000000000000000000000000000000
-            000000000000000000000000000000000000184202FF839F74FFD8ECCFFFA4DF
-            87FF6DBD43FF3F7E1EFF26560CFF102605FF040B01FF000000FF000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            000000000000000000002E5817FF617F51FF687C5FFF3D6926FF234A0DFF0000
-            0000000000000000000000000000000000000000000000000000
-          }
-          Visible = False
-          OnClick = SpeedButtonReloadClick
-        end
-        object DividerBevel1: TDividerBevel
-          Left = 0
-          Height = 15
-          Top = 41
-          Width = 855
-          Caption = 'Software'
-          Align = alBottom
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object BitBtnShowAction: TBitBtn
-          Left = 481
-          Height = 31
-          Hint = 'Show the list of action requests in the list. '
-          Top = 5
-          Width = 118
-          Align = alRight
-          BorderSpacing.Around = 5
-          BorderSpacing.InnerBorder = 2
-          Caption = 'Show Actions'
-          Kind = bkOK
-          ModalResult = 1
-          OnClick = BitBtnShowActionClick
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 2
-          Visible = False
-        end
-        object RadioGroupView: TRadioGroup
-          Left = 85
-          Height = 41
-          Top = 0
-          Width = 81
-          Align = alLeft
-          AutoFill = True
-          AutoSize = True
-          Caption = 'View'
-          ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
-          ChildSizing.EnlargeVertical = crsHomogenousChildResize
-          ChildSizing.ShrinkHorizontal = crsScaleChilds
-          ChildSizing.ShrinkVertical = crsScaleChilds
-          ChildSizing.Layout = cclTopToBottomThenLeftToRight
-          ChildSizing.ControlsPerLine = 1
-          ClientHeight = 21
-          ClientWidth = 77
-          ItemIndex = 1
-          Items.Strings = (
-            'List'
-            'Tile'
-          )
-          OnSelectionChanged = RadioGroupViewSelectionChanged
-          TabOrder = 3
-          Visible = False
-        end
-      end
-    end
-  end
   object PanelToolbar: TPanel
     Left = 0
-    Height = 36
+    Height = 44
     Top = 52
-    Width = 859
+    Width = 804
     Align = alTop
-    AutoSize = True
-    BevelOuter = bvNone
-    ClientHeight = 36
-    ClientWidth = 859
+    ClientHeight = 44
+    ClientWidth = 804
     Color = clForm
     ParentColor = False
     TabOrder = 0
     object BitBtnStoreAction: TBitBtn
-      Left = 738
-      Height = 26
-      Top = 5
+      Left = 682
+      Height = 32
+      Top = 6
       Width = 116
       Align = alRight
       BorderSpacing.Left = 10
@@ -1003,56 +41,252 @@ object FopsiClientKiosk: TFopsiClientKiosk
       ShowHint = True
       TabOrder = 0
     end
-    object CheckBoxExpertMode: TCheckBox
-      Left = 5
-      Height = 26
-      Top = 5
-      Width = 86
-      Align = alLeft
-      BorderSpacing.Around = 5
-      Caption = 'Expert mode'
-      OnChange = CheckBoxExpertModeChange
-      TabOrder = 1
-    end
-    object BtnUpgrade: TSpeedButton
-      Left = 154
-      Height = 26
+    object SpeedButtonUpdates: TSpeedButton
+      Left = 197
+      Height = 40
       Hint = 'Filter for Products where an upgrade is possible'
-      Top = 5
-      Width = 71
+      Top = 1
+      Width = 80
       Align = alLeft
-      AutoSize = True
-      BorderSpacing.Around = 5
-      BorderSpacing.InnerBorder = 2
+      BorderSpacing.Bottom = 2
+      Constraints.MinHeight = 36
+      Constraints.MinWidth = 80
       Caption = 'Updates'
-      Visible = False
-      OnClick = BtnUpgradeClick
+      GroupIndex = 2
+      OnClick = SpeedButtonUpdatesClick
       ShowHint = True
       ParentShowHint = False
     end
     object SpeedButtonAll: TSpeedButton
-      Left = 96
-      Height = 26
+      Left = 117
+      Height = 40
       Hint = 'Show all List entries (No Filter)'
-      Top = 5
-      Width = 53
+      Top = 1
+      Width = 80
       Align = alLeft
-      BorderSpacing.Around = 5
-      BorderSpacing.InnerBorder = 2
-      BorderSpacing.CellAlignHorizontal = ccaCenter
-      BorderSpacing.CellAlignVertical = ccaCenter
+      BorderSpacing.Left = 30
+      BorderSpacing.Bottom = 2
+      Constraints.MinHeight = 36
+      Constraints.MinWidth = 80
       Caption = 'All'
-      Visible = False
+      Down = True
+      GroupIndex = 2
       OnClick = SpeedButtonAllClick
       ShowHint = True
       ParentShowHint = False
+    end
+    object PanelSearchEdit: TPanel
+      Left = 357
+      Height = 40
+      Top = 1
+      Width = 195
+      Align = alLeft
+      BorderSpacing.Bottom = 2
+      BevelOuter = bvNone
+      BorderStyle = bsSingle
+      ClientHeight = 36
+      ClientWidth = 191
+      TabOrder = 1
+      object BtnClearSearchEdit: TSpeedButton
+        Left = 168
+        Height = 36
+        Top = 0
+        Width = 23
+        Align = alRight
+        Caption = 'X'
+        Color = clWhite
+        Flat = True
+        OnClick = BtnClearSearchEditClick
+      end
+      object EditSearch: TEdit
+        Left = 27
+        Height = 36
+        Hint = 'Search in Productlist'
+        Top = 0
+        Width = 141
+        Align = alClient
+        AutoSize = False
+        AutoSelect = False
+        BorderSpacing.Left = 5
+        BorderSpacing.CellAlignHorizontal = ccaCenter
+        BorderSpacing.CellAlignVertical = ccaCenter
+        BorderStyle = bsNone
+        Font.Height = -16
+        OnChange = EditSearchChange
+        OnEnter = EditSearchEnter
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 0
+        TextHint = 'Search'
+      end
+      object ImageViewmag: TImage
+        Left = 2
+        Height = 36
+        Top = 0
+        Width = 20
+        Align = alLeft
+        AutoSize = True
+        BorderSpacing.Left = 2
+        Center = True
+        Picture.Data = {
+          07545069786D6170CF0E00002F2A2058504D202A2F0D0A737461746963206368
+          6172202A204E3A5C7569625C6F657274656C5C73766E776F726B5C73766E5F6F
+          7073695F6F72675C6F7073695F77696E73745C6272616E636865735C345F3131
+          5F365C766965776D61675F78706D5B5D203D207B0D0A22323020323020313633
+          2032222C0D0A2220200963204E6F6E65222C0D0A222E20096320233641364136
+          39222C0D0A222B2009632023313030463046222C0D0A22402009632023323532
+          343234222C0D0A22232009632023323432343234222C0D0A2224200963202331
+          4231423142222C0D0A22252009632023353035303445222C0D0A222620096320
+          23383738353835222C0D0A222A2009632023433644314432222C0D0A223D2009
+          632023433844434532222C0D0A222D2009632023434444384441222C0D0A223B
+          2009632023433644304432222C0D0A223E2009632023414141424142222C0D0A
+          222C2009632023323732373236222C0D0A22272009632023344534463444222C
+          0D0A22292009632023434544384438222C0D0A22212009632023453546384638
+          222C0D0A227E2009632023444246374638222C0D0A227B200963202344414634
+          4638222C0D0A225D2009632023434446314635222C0D0A225E20096320234332
+          45444633222C0D0A222F2009632023443346364642222C0D0A22282009632023
+          443745354537222C0D0A225F2009632023324232423242222C0D0A223A200963
+          2023434544374438222C0D0A223C2009632023454446424642222C0D0A225B20
+          09632023454346414639222C0D0A227D2009632023444446344638222C0D0A22
+          7C2009632023434346304632222C0D0A22312009632023423645414631222C0D
+          0A22322009632023413044434534222C0D0A2233200963202339314432444522
+          2C0D0A22342009632023433545444633222C0D0A223520096320234545464346
+          45222C0D0A22362009632023313031303046222C0D0A22372009632023363936
+          393639222C0D0A22382009632023384338423842222C0D0A2239200963202345
+          3946384638222C0D0A22302009632023464146444644222C0D0A226120096320
+          23444646354639222C0D0A22622009632023433545434632222C0D0A22632009
+          632023423345354545222C0D0A22642009632023394244424538222C0D0A2265
+          2009632023383243444437222C0D0A22662009632023383644304441222C0D0A
+          22672009632023433745464634222C0D0A22682009632023363436373637222C
+          0D0A22692009632023394139413941222C0D0A226A2009632023304330433043
+          222C0D0A226B2009632023433444324432222C0D0A226C200963202345314635
+          4637222C0D0A226D2009632023444346354637222C0D0A226E20096320234443
+          45454630222C0D0A226F2009632023433345414630222C0D0A22702009632023
+          414145334543222C0D0A22712009632023384644414536222C0D0A2272200963
+          2023373643424437222C0D0A22732009632023363643314342222C0D0A227420
+          09632023393944444538222C0D0A22752009632023394441394142222C0D0A22
+          762009632023303030303030222C0D0A22772009632023444345344537222C0D
+          0A22782009632023444246304634222C0D0A2279200963202343334543463222
+          2C0D0A227A2009632023433745434631222C0D0A224120096320234245454246
+          31222C0D0A22422009632023413845334542222C0D0A22432009632023393344
+          414537222C0D0A22442009632023383544394531222C0D0A2245200963202336
+          3543314345222C0D0A22462009632023353742374332222C0D0A224720096320
+          23394444424533222C0D0A22482009632023433945304532222C0D0A22492009
+          632023303230323032222C0D0A224A2009632023443945334534222C0D0A224B
+          2009632023443145444631222C0D0A224C2009632023423845394630222C0D0A
+          224D2009632023423545394546222C0D0A224E2009632023413645314542222C
+          0D0A224F2009632023393444414533222C0D0A22502009632023383344374532
+          222C0D0A22512009632023363943444441222C0D0A2252200963202335334243
+          4338222C0D0A22532009632023343841424233222C0D0A225420096320233835
+          44334445222C0D0A22552009632023433945314535222C0D0A22562009632023
+          313431343133222C0D0A22572009632023424243374337222C0D0A2258200963
+          2023433245394630222C0D0A22592009632023393044344443222C0D0A225A20
+          09632023394144424533222C0D0A22602009632023393044424537222C0D0A22
+          202E09632023384244394533222C0D0A222E2E09632023364143454442222C0D
+          0A222B2E09632023344642464342222C0D0A22402E0963202334344139423222
+          2C0D0A22232E09632023344541384233222C0D0A22242E096320233936444145
+          38222C0D0A22252E09632023384639423944222C0D0A22262E09632023313031
+          303130222C0D0A222A2E09632023393239323932222C0D0A223D2E0963202343
+          4446304636222C0D0A222D2E09632023393344374446222C0D0A223B2E096320
+          23374543444438222C0D0A223E2E09632023373943434437222C0D0A222C2E09
+          632023354243374434222C0D0A22272E09632023353542444337222C0D0A2229
+          2E09632023343441394233222C0D0A22212E09632023334439454136222C0D0A
+          227E2E09632023363042444341222C0D0A227B2E09632023434546374638222C
+          0D0A225D2E09632023343634363435222C0D0A225E2E09632023323932393238
+          222C0D0A222F2E09632023433243444346222C0D0A22282E0963202338374436
+          4445222C0D0A225F2E09632023363743314342222C0D0A223A2E096320233534
+          41454237222C0D0A223C2E09632023343641334144222C0D0A225B2E09632023
+          343841344143222C0D0A227D2E09632023354442424336222C0D0A227C2E0963
+          2023414545414632222C0D0A22312E09632023434344384441222C0D0A22322E
+          09632023334133363335222C0D0A22332E09632023334333433343222C0D0A22
+          342E09632023424543374338222C0D0A22352E09632023433746314638222C0D
+          0A22362E09632023394144414533222C0D0A22372E0963202338334431444122
+          2C0D0A22382E09632023373343364431222C0D0A22392E096320233839443945
+          33222C0D0A22302E09632023434146384639222C0D0A22612E09632023433944
+          304433222C0D0A22622E09632023303330333033222C0D0A22632E0963202334
+          4243354334222C0D0A22642E09632023313331333133222C0D0A22652E096320
+          23343434353435222C0D0A22662E09632023413341464145222C0D0A22672E09
+          632023433744464532222C0D0A22682E09632023433144454532222C0D0A2269
+          2E09632023393839454131222C0D0A226A2E09632023343134303430222C0D0A
+          226B2E09632023334233383338222C0D0A226C2E09632023324237463746222C
+          0D0A226D2E09632023304142394238222C0D0A226E2E09632023424542444244
+          222C0D0A226F2E09632023313931393139222C0D0A22702E0963202339433943
+          3943222C0D0A22712E09632023303630363036222C0D0A22722E096320233346
+          33433342222C0D0A22732E09632023353335333532222C0D0A22742E09632023
+          453345334533222C0D0A22752E09632023353435343533222C0D0A22762E0963
+          2023423842384239222C0D0A22772E09632023333633363337222C0D0A22782E
+          09632023353335333531222C0D0A22792E09632023313831383138222C0D0A22
+          7A2E09632023334233423341222C0D0A22412E09632023433943394339222C0D
+          0A22422E09632023333933393339222C0D0A22432E0963202335353534353322
+          2C0D0A22442E09632023423642414241222C0D0A22452E096320233338333833
+          38222C0D0A22462E09632023343034303346222C0D0A2220202020202020202E
+          202B204020232024202020202020202020202020202020202020202020202022
+          2C0D0A22202020202020252026202A203D202D203B203E202C20202020202020
+          202020202020202020202020222C0D0A22202020202720292021207E207B205D
+          205E202F2028205F2020202020202020202020202020202020222C0D0A222020
+          25203A203C205B207D207C203120322033203420352036202020202020202020
+          202020202020222C0D0A223720382039205B2030206120622063206420652066
+          20672068206920202020202020202020202020222C0D0A226A206B206C207D20
+          6D206E206F207020712072207320742075207620202020202020202020202020
+          222C0D0A2223207720782079207A204120422043204420452046204720482049
+          20202020202020202020202020222C0D0A2223204A204B204C204D204E204F20
+          5020512052205320542055204920202020202020202020202020222C0D0A2256
+          205720582059205A206020202E2E2E2B2E402E232E242E252E262E2020202020
+          20202020202020222C0D0A2220202A2E3D2E2D2E3B2E3E2E2C2E272E292E212E
+          7E2E7B2E5D2E2020202020202020202020202020222C0D0A2220205E2E2F2E5E
+          20282E5F2E3A2E3C2E5B2E7D2E7C2E312E322E20202020202020202020202020
+          20222C0D0A2220202020332E342E352E362E372E382E392E302E612E622E632E
+          7620202020202020202020202020222C0D0A22202020202020642E652E662E67
+          2E682E692E6A2E6B2E6C2E6D2E6E2E6F2E20202020202020202020222C0D0A22
+          2020202020202020702E762076207620712E202020207620722E732E742E7620
+          2020202020202020222C0D0A2220202020202020202020202020202020202020
+          2020202020622E332E752E762E7620202020202020222C0D0A22202020202020
+          20202020202020202020202020202020202020207620772E782E742E792E2020
+          2020222C0D0A2220202020202020202020202020202020202020202020202020
+          20202076207A2E782E412E76202020222C0D0A22202020202020202020202020
+          202020202020202020202020202020202020622E422E432E442E2020222C0D0A
+          2220202020202020202020202020202020202020202020202020202020202020
+          207620452E462E2020222C0D0A22202020202020202020202020202020202020
+          20202020202020202020202020202020202020202020227D3B0D0A
+        }
+        Proportional = True
+        Transparent = True
+      end
+    end
+    object SpeedButtonNotInstalled: TSpeedButton
+      Left = 277
+      Height = 40
+      Top = 1
+      Width = 80
+      Align = alLeft
+      BorderSpacing.Bottom = 2
+      Constraints.MinHeight = 36
+      Constraints.MinWidth = 80
+      Caption = 'Not Installed'
+      GroupIndex = 2
+      OnClick = SpeedButtonNotInstalledClick
+    end
+    object SpeedButtonExpertMode: TSpeedButton
+      Left = 5
+      Height = 40
+      Top = 1
+      Width = 82
+      Align = alLeft
+      AllowAllUp = True
+      BorderSpacing.Left = 4
+      BorderSpacing.Bottom = 2
+      Constraints.MinHeight = 36
+      Caption = 'Expert Mode'
+      GroupIndex = 1
+      OnClick = SpeedButtonExpertModeClick
     end
   end
   object StatusBar1: TStatusBar
     Left = 0
     Height = 23
-    Top = 930
-    Width = 859
+    Top = 671
+    Width = 804
     Panels = <    
       item
         Text = 'Not Connected to opsi server'
@@ -1064,11 +298,11 @@ object FopsiClientKiosk: TFopsiClientKiosk
     Left = 0
     Height = 52
     Top = 0
-    Width = 859
+    Width = 804
     Align = alTop
     BevelOuter = bvNone
     ClientHeight = 52
-    ClientWidth = 859
+    ClientWidth = 804
     Font.CharSet = ANSI_CHARSET
     Font.Height = -19
     Font.Name = 'Arial'
@@ -1081,7 +315,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
       Left = 0
       Height = 52
       Top = 0
-      Width = 859
+      Width = 804
       Align = alClient
       Picture.Data = {
         1754506F727461626C654E6574776F726B477261706869639456000089504E47
@@ -1785,7 +1019,7 @@ object FopsiClientKiosk: TFopsiClientKiosk
       Left = 0
       Height = 52
       Top = 0
-      Width = 859
+      Width = 804
       Align = alClient
       Alignment = taCenter
       Caption = 'opsi Client Kiosk'
@@ -1800,19 +1034,808 @@ object FopsiClientKiosk: TFopsiClientKiosk
       ParentFont = False
     end
   end
+  object PanelExpertMode: TPanel
+    Left = 0
+    Height = 64
+    Top = 96
+    Width = 804
+    Align = alTop
+    ClientHeight = 64
+    ClientWidth = 804
+    ParentColor = False
+    TabOrder = 3
+    Visible = False
+    object BitBtnInfo: TBitBtn
+      Left = 6
+      Height = 52
+      Top = 6
+      Width = 75
+      Align = alLeft
+      BorderSpacing.Around = 5
+      Caption = 'Info'
+      Kind = bkHelp
+      OnClick = BitBtnInfoClick
+      TabOrder = 0
+    end
+    object SpeedButtonReload: TSpeedButton
+      Left = 728
+      Height = 52
+      Top = 6
+      Width = 70
+      Align = alRight
+      BorderSpacing.Around = 5
+      BorderSpacing.InnerBorder = 2
+      Caption = 'Reload'
+      Glyph.Data = {
+        76060000424D7606000000000000360000002800000014000000140000000100
+        2000000000004006000064000000640000000000000000000000000000000000
+        000000000000000000000000000000000000000000000A0A0AFF131313FF1E1E
+        1EFF2D2D2DFF202020FF00000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000050505FF0E0E
+        0EFF3B3B3BFF787878FF919191FFB0B0B0FF595959FF5E5E5EFF393939FF0000
+        00FF000000000000000000000000000000000000000000000000000000000000
+        000000000000000000FF121212FF171717FF0000000000000000292929FF5B5B
+        5BFFB8B8B8FF919191FF404040FF676767FF191919FF00000000000000000000
+        00000000000000000000000000000000000000000000040404FF000000000000
+        0000000000000000000000000000000000002B2B2BFFA2A2A2FF8E8E8EFF3434
+        34FF4E4E4EFF000000FF00000000000000000000000000000000000000000000
+        0000000000FF0000000000000000000000000000000000000000000000000000
+        0000000000003A3A3AFFABABABFF555555FF595959FF212121FF000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        00000000000000000000000000000000000000000000000000006D6D6DFF8484
+        84FF303030FF525252FF000000FF000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        00000000000000000000515151FF838383FF282828FF494949FF000000FF0000
+        0000000000000000000000000000000000000000000000000000000000000B1C
+        02FF000000FF00000000000000001E1E1EFF555555FF202020FF3F3F3FFF5151
+        51FF232323FF383838FF1C1C1CFF353535FF272727FF080808FF000000000000
+        00000000000000000000122B04FF327A09FF1D4606FF000000FF000000003131
+        31FF727272FFBEBEBEFF474747FF1E1E1EFF1E1E1EFF313131FF757575FF7272
+        72FF232323FF00000000000000000000000000000000122B04FF357D0EFF5CBF
+        38FF419819FF183C03FF000000FF00000000212121FF6E6E6EFFB5B5B5FF4343
+        43FF2E2E2EFF6E6E6EFF747474FF1B1B1BFF0000000000000000000000000000
+        00000E2400FF328205FF5BC21FFF4CAF18FF6FD252FF3C9C10FF123700FF0000
+        01FF00000000131313FF6E6E6EFFB1B1B1FF696969FF6E6E6EFF1A1A1AFF0000
+        00000000000000000000000000001C330EFF6ABD4BFF9DE779FF78C752FF41A5
+        0AFF4AA918FF95DA79FF8AD366FF2D5518FF000000FF000000001E1E1EFF6B6B
+        6BFF7F7F7FFF191919FF00000000000000000000000000000000051600FF5579
+        43FF819675FF889980FFB4D8A3FF57B427FF439E10FF576F4AFF75896CFF7698
+        65FF102C00FF0000000000000000333333FF202020FF00000000000000000000
+        00000000000000000000000000000000000000000000093700FFC8D6C3FF6EBD
+        45FF47AB10FF041800FF00000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000001B4007FFBFD2B6FF98D879FF4EA61DFF1A4104FF000000FF0000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000628551FFE4FA
+        DBFF56B226FF3C8A14FF050F00FF000000000000000000000000000000000000
+        0000000000000000000000000000000000FF0000000000000000000000000000
+        00000000000000000000194103FFC7DDBEFFB9E2A5FF46A514FF266006FF030B
+        00FF000000000000000000000000000000000000000000000000061001FF0000
+        000000000000000000000000000000000000000000000000000000000000446E
+        2FFFD5E7CFFFC7EDB5FF65B839FF2C6A0BFF091D00FF000000FF000000000000
+        0000050D01FF081201FF010300FF000000000000000000000000000000000000
+        000000000000000000000000000000000000184202FF839F74FFD8ECCFFFA4DF
+        87FF6DBD43FF3F7E1EFF26560CFF102605FF040B01FF000000FF000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        000000000000000000002E5817FF617F51FF687C5FFF3D6926FF234A0DFF0000
+        0000000000000000000000000000000000000000000000000000
+      }
+      OnClick = SpeedButtonReloadClick
+    end
+    object BitBtnShowAction: TBitBtn
+      Left = 605
+      Height = 52
+      Hint = 'Show the list of action requests in the list. '
+      Top = 6
+      Width = 118
+      Align = alRight
+      BorderSpacing.Around = 5
+      BorderSpacing.InnerBorder = 2
+      Caption = 'Show Actions'
+      Kind = bkOK
+      ModalResult = 1
+      OnClick = BitBtnShowActionClick
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+    end
+    object RadioGroupView: TRadioGroup
+      Left = 86
+      Height = 62
+      Top = 1
+      Width = 100
+      Align = alLeft
+      AutoFill = False
+      Caption = 'View'
+      ChildSizing.LeftRightSpacing = 5
+      ChildSizing.ShrinkHorizontal = crsScaleChilds
+      ChildSizing.ShrinkVertical = crsScaleChilds
+      ChildSizing.Layout = cclTopToBottomThenLeftToRight
+      ChildSizing.ControlsPerLine = 2
+      ClientHeight = 42
+      ClientWidth = 96
+      ItemIndex = 1
+      Items.Strings = (
+        'List'
+        'Tile'
+      )
+      OnSelectionChanged = RadioGroupViewSelectionChanged
+      TabOrder = 2
+    end
+  end
+  object productlistpanel: TPanel
+    Left = 0
+    Height = 511
+    Top = 160
+    Width = 804
+    Align = alClient
+    BevelOuter = bvNone
+    ClientHeight = 511
+    ClientWidth = 804
+    Color = clForm
+    ParentColor = False
+    TabOrder = 4
+    object productdetailpanel: TPanel
+      Left = 0
+      Height = 172
+      Top = 339
+      Width = 804
+      Align = alBottom
+      BevelOuter = bvNone
+      ClientHeight = 172
+      ClientWidth = 804
+      TabOrder = 1
+      object ExtendedNotebook1: TExtendedNotebook
+        Left = 0
+        Height = 172
+        Top = 0
+        Width = 804
+        ActivePage = TabSheet1
+        Align = alBottom
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        TabIndex = 0
+        TabOrder = 0
+        object TabSheet1: TTabSheet
+          Caption = 'Details'
+          ClientHeight = 144
+          ClientWidth = 796
+          object PanelDetailsLables: TPanel
+            Left = 0
+            Height = 144
+            Top = 0
+            Width = 160
+            Align = alLeft
+            BevelOuter = bvNone
+            ClientHeight = 144
+            ClientWidth = 160
+            ParentColor = False
+            TabOrder = 0
+            object LabelDescription: TLabel
+              Left = 5
+              Height = 47
+              Top = 5
+              Width = 150
+              Align = alTop
+              Alignment = taRightJustify
+              AutoSize = False
+              BorderSpacing.Around = 5
+              Caption = 'Description:  '
+              ParentColor = False
+            end
+            object LabelAdvice: TLabel
+              Left = 5
+              Height = 47
+              Top = 57
+              Width = 150
+              Align = alTop
+              Alignment = taRightJustify
+              AutoSize = False
+              BorderSpacing.Around = 5
+              Caption = 'Advice:  '
+              ParentColor = False
+            end
+            object LabelVerstr: TLabel
+              Left = 5
+              Height = 15
+              Top = 109
+              Width = 150
+              Align = alTop
+              Alignment = taRightJustify
+              BorderSpacing.Around = 5
+              Caption = 'Version at Server'
+              ParentColor = False
+            end
+            object LabelClientVerstr: TLabel
+              Left = 5
+              Height = 15
+              Top = 129
+              Width = 150
+              Align = alTop
+              Alignment = taRightJustify
+              BorderSpacing.Around = 5
+              Caption = 'Version at Client'
+              ParentColor = False
+            end
+          end
+          object PanelDetailsDBText: TPanel
+            Left = 160
+            Height = 144
+            Top = 0
+            Width = 636
+            Align = alClient
+            BevelOuter = bvNone
+            ClientHeight = 144
+            ClientWidth = 636
+            ParentColor = False
+            TabOrder = 1
+            object DBTextVerStr: TDBText
+              Left = 5
+              Height = 15
+              Top = 109
+              Width = 626
+              Align = alTop
+              BorderSpacing.Around = 5
+              DataField = 'versionstr'
+              DataSource = DataSource1
+              ParentColor = False
+            end
+            object DBTextClientVerStr: TDBText
+              Left = 5
+              Height = 15
+              Top = 129
+              Width = 626
+              Align = alTop
+              BorderSpacing.Around = 5
+              DataField = 'installedverstr'
+              DataSource = DataSource1
+              ParentColor = False
+            end
+            object DBMemoDescription: TDBMemo
+              Left = 5
+              Height = 47
+              Top = 5
+              Width = 626
+              Align = alTop
+              BorderSpacing.Around = 5
+              BorderStyle = bsNone
+              DataField = 'description'
+              DataSource = DataSource1
+              ReadOnly = True
+              ScrollBars = ssAutoVertical
+              TabOrder = 0
+            end
+            object DBMemoAdvice: TDBMemo
+              Left = 5
+              Height = 47
+              Top = 57
+              Width = 626
+              Align = alTop
+              BorderSpacing.Around = 5
+              BorderStyle = bsNone
+              DataField = 'advice'
+              DataSource = DataSource1
+              ReadOnly = True
+              ScrollBars = ssAutoVertical
+              TabOrder = 1
+            end
+            object BitBtn1: TBitBtn
+              Left = -32
+              Height = 22
+              Top = -584
+              Width = 150
+              Align = alCustom
+              Caption = 'Installieren'
+              TabOrder = 2
+            end
+          end
+        end
+        object TabSheet2: TTabSheet
+          Caption = 'Dependencies / Priority'
+          ClientHeight = 151
+          ClientWidth = 847
+          object PanelPriority: TPanel
+            Left = 0
+            Height = 32
+            Top = 119
+            Width = 847
+            Align = alBottom
+            BevelOuter = bvNone
+            ClientHeight = 32
+            ClientWidth = 847
+            ParentColor = False
+            TabOrder = 0
+            object LabelPriority: TLabel
+              Left = 57
+              Height = 15
+              Top = 10
+              Width = 44
+              BorderSpacing.Around = 5
+              Caption = 'Priority: '
+              ParentColor = False
+            end
+            object DBTextPriority: TDBText
+              Left = 108
+              Height = 15
+              Top = 9
+              Width = 73
+              BorderSpacing.Around = 5
+              DataField = 'priority'
+              DataSource = DataSource1
+              ParentColor = False
+            end
+          end
+          object PanelDependencies: TPanel
+            Left = 0
+            Height = 119
+            Top = 0
+            Width = 847
+            Align = alClient
+            BevelOuter = bvNone
+            ClientHeight = 119
+            ClientWidth = 847
+            TabOrder = 1
+            object DBGrid2: TDBGrid
+              Left = 0
+              Height = 119
+              Top = 0
+              Width = 847
+              Align = alClient
+              Color = clWindow
+              Columns = <>
+              DataSource = DataSource2
+              TabOrder = 0
+            end
+          end
+        end
+      end
+    end
+    object NotebookProducts: TNotebook
+      Left = 0
+      Height = 339
+      Top = 0
+      Width = 804
+      PageIndex = 2
+      Align = alClient
+      TabOrder = 0
+      TabStop = True
+      object PageList: TPage
+        object DBGrid1: TDBGrid
+          Left = 0
+          Height = 339
+          Hint = 'Click to ActionRequest Column, to set action requests (setup/uninstall)'
+          Top = 0
+          Width = 804
+          Align = alClient
+          Color = clWindow
+          Columns = <>
+          DataSource = DataSource1
+          Options = [dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+          ReadOnly = True
+          Scrollbars = ssAutoBoth
+          ShowHint = True
+          TabOrder = 0
+          OnCellClick = DBGrid1CellClick
+          OnColExit = DBGrid1ColExit
+          OnDrawColumnCell = DBGrid1DrawColumnCell
+          OnEnter = DBGrid1Enter
+          OnExit = DBGrid1Exit
+          OnTitleClick = DBGrid1TitleClick
+        end
+        object DBComboBox1: TDBComboBox
+          Left = 475
+          Height = 23
+          Top = 71
+          Width = 100
+          DataField = 'actionrequest'
+          DataSource = DataSource1
+          ItemHeight = 15
+          Items.Strings = (
+            'setup'
+            'uninstall'
+          )
+          MaxLength = 0
+          OnExit = DBComboBox1Exit
+          TabOrder = 1
+          Visible = False
+        end
+      end
+      object PageAllTiles: TPage
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        object ScrollBoxAllTiles: TScrollBox
+          Left = 0
+          Height = 603
+          Top = 0
+          Width = 855
+          HorzScrollBar.Page = 1
+          HorzScrollBar.Visible = False
+          VertScrollBar.Page = 1
+          Align = alClient
+          AutoSize = True
+          BorderStyle = bsNone
+          ClientHeight = 603
+          ClientWidth = 855
+          Color = clDefault
+          ParentColor = False
+          TabOrder = 0
+          OnMouseWheel = ScrollBoxAllTilesMouseWheel
+          object FlowPanelAllTiles: TFlowPanel
+            Left = 0
+            Height = 603
+            Top = 0
+            Width = 855
+            Align = alClient
+            BevelOuter = bvNone
+            Color = clForm
+            ControlList = <>
+            FlowLayout = tlTop
+            FlowStyle = fsLeftRightTopBottom
+            ParentColor = False
+            TabOrder = 0
+          end
+        end
+      end
+      object PageSoftwareDetails: TPage
+        object PanelSoftwareHead: TPanel
+          Left = -2
+          Height = 37
+          Top = 0
+          Width = 859
+          BevelOuter = bvNone
+          BorderStyle = bsSingle
+          ClientHeight = 33
+          ClientWidth = 855
+          ParentColor = False
+          TabOrder = 0
+          object ButtonSoftwareBack: TButton
+            Left = 3
+            Height = 27
+            Top = 3
+            Width = 72
+            Align = alLeft
+            AutoSize = True
+            BorderSpacing.Around = 3
+            Caption = '<-- back'
+            Font.CharSet = ANSI_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = 'Segoe UI'
+            Font.Pitch = fpVariable
+            Font.Quality = fqDraft
+            OnClick = ButtonSoftwareBackClick
+            ParentFont = False
+            TabOrder = 0
+          end
+        end
+        object ScrollBoxSoftwarePage: TScrollBox
+          Left = -7
+          Height = 536
+          Top = 40
+          Width = 864
+          HorzScrollBar.Page = 757
+          VertScrollBar.Page = 532
+          BorderStyle = bsNone
+          ClientHeight = 536
+          ClientWidth = 864
+          TabOrder = 1
+          object ImageIconSoftware: TImage
+            Left = 15
+            Height = 60
+            Top = 16
+            Width = 60
+            Center = True
+            Proportional = True
+          end
+          object LabelSoftwareName: TLabel
+            Left = 88
+            Height = 25
+            Top = 32
+            Width = 169
+            Caption = 'LabelSoftwareName'
+            Font.CharSet = ANSI_CHARSET
+            Font.Color = clBlack
+            Font.Height = -19
+            Font.Name = 'Segoe UI'
+            Font.Pitch = fpVariable
+            Font.Quality = fqDraft
+            ParentColor = False
+            ParentFont = False
+          end
+          object ButtonSoftwareInstall: TButton
+            Left = 15
+            Height = 28
+            Top = 104
+            Width = 135
+            Caption = 'Install'
+            OnClick = ButtonSoftwareInstallClick
+            TabOrder = 0
+          end
+          object DBMemoSoftwareDescription: TDBMemo
+            Left = 15
+            Height = 72
+            Top = 365
+            Width = 737
+            BorderSpacing.Around = 5
+            BorderStyle = bsNone
+            Color = clForm
+            DataField = 'description'
+            DataSource = DataSource1
+            Font.CharSet = ANSI_CHARSET
+            Font.Color = clBlack
+            Font.Height = -13
+            Font.Name = 'Segoe UI'
+            Font.Pitch = fpVariable
+            Font.Quality = fqDraft
+            ParentFont = False
+            ReadOnly = True
+            ScrollBars = ssAutoVertical
+            TabOrder = 1
+          end
+          object DBMemoSoftwareAdvice: TDBMemo
+            Left = 15
+            Height = 47
+            Top = 480
+            Width = 737
+            BorderSpacing.Around = 5
+            BorderStyle = bsNone
+            Color = clForm
+            DataField = 'advice'
+            DataSource = DataSource1
+            Font.CharSet = ANSI_CHARSET
+            Font.Color = clBlack
+            Font.Height = -13
+            Font.Name = 'Segoe UI'
+            Font.Pitch = fpVariable
+            Font.Quality = fqDraft
+            ParentFont = False
+            ReadOnly = True
+            ScrollBars = ssAutoVertical
+            TabOrder = 2
+          end
+          object LabelSoftwareDescription: TLabel
+            Left = 15
+            Height = 21
+            Top = 335
+            Width = 79
+            Caption = 'Description'
+            Font.CharSet = ANSI_CHARSET
+            Font.Color = clBlack
+            Font.Height = -16
+            Font.Name = 'Segoe UI'
+            Font.Pitch = fpVariable
+            Font.Quality = fqDraft
+            ParentColor = False
+            ParentFont = False
+          end
+          object LabelSoftwareAdvice: TLabel
+            Left = 15
+            Height = 21
+            Top = 450
+            Width = 46
+            Caption = 'Advice'
+            Font.CharSet = ANSI_CHARSET
+            Font.Color = clBlack
+            Font.Height = -16
+            Font.Name = 'Segoe UI'
+            Font.Pitch = fpVariable
+            Font.Quality = fqDraft
+            ParentColor = False
+            ParentFont = False
+          end
+          object PanelSoftwareScreenshot: TPanel
+            Left = 195
+            Height = 216
+            Top = 104
+            Width = 384
+            BevelOuter = bvNone
+            Caption = 'ScreenShotImage'
+            ClientHeight = 216
+            ClientWidth = 384
+            Color = cl3DLight
+            ParentColor = False
+            TabOrder = 3
+            object ImageScreenShot: TImage
+              Left = 0
+              Height = 216
+              Top = 0
+              Width = 384
+              Center = True
+              Picture.Data = {
+                055449636F6EFE0200000000010001002020100001000400E802000016000000
+                2800000020000000400000000100040000000000000000000000000000000000
+                000000000000000088585200A96D5D00C27D7200B68B7B008A79CA00E5908C00
+                B09BAD00FD9FA000E3AFA300F9B0A700ADA5DF00CCBDC300FDCBCC00E0DAE400
+                FBFFFC0000000000EEEEEEEEEEEEEEEEEEEEEEEEEDEEEEEEEEEEEEEEEEEEEEEE
+                EEEEEEEEEEEEEEEEEEEEEEEEEEEEB301113BEEEEEEEEEEEEEEEEEEEEEEB11313
+                11111BEEEEEEEEEEEEEEEEEEE3301111152521BEEEEEEEEEEEEEEEEE61010000
+                0011551BEEEEEEEEEEEEEEED1010000001025752BEEEEEEEEEEEEEE112000122
+                555227723EEEEEEEEEEEEEB112255577777777751BEEEEEEEDBDEE6025555121
+                1157777728EEDBDE4444DE31555521111115777753EA444AEDABEB0127721255
+                5511799921DEDAAEB4A4DD1127711777772199C921DD4B4A4DEAAE3177511777
+                775389CC33EBAEE4AA44AE317772177579938CCC19EE4444EEEEDEB127721555
+                5983B8CC1DEEEEEEEEEEEEE3177512213B38BCC22EEEEEEEEEEEEEED02775599
+                998CCC81BEEEEEEEEEEEEEEEB12577999CCCC81BEEEEEEEEEEEEEEEEEB115778
+                8CCC318EEEEEEEEEEEEEEEEEEEB3112123111DEEEEEEEEEEEEEEEEEEDEEEB331
+                133DEEEEEEDEEEEEEEEEEEEEEEEEEEEDDEEEEEEEEEEEEEEEEEEEDEEEEEEEEEEA
+                4BEEEEDEEEEEEEEEEEEEEEEEEEEEED4AAAEEEEEEEEEEEEEEEEEEEEEEEEEEEEE4
+                4AEEEEEEEEEEEEEEEEEEEEEEEEEEEE4BD4DEEEEEEEEEEEEEEEEEEEEEEEEEEE4E
+                EABEEEEEEEEEEEEEEEEEEEEEEEEEEEAA44DEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+                EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+                EEEEEEEEEEEEEEEE000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000
+              }
+              Proportional = True
+              Stretch = True
+              Transparent = True
+            end
+          end
+          object DBTextSoftwareVerStr: TDBText
+            Left = 15
+            Height = 15
+            Top = 218
+            Width = 111
+            BorderSpacing.Around = 5
+            DataField = 'versionstr'
+            DataSource = DataSource1
+            ParentColor = False
+          end
+          object DBTextSoftwareClientVerStr: TDBText
+            Left = 15
+            Height = 15
+            Top = 168
+            Width = 142
+            BorderSpacing.Around = 5
+            DataField = 'installedverstr'
+            DataSource = DataSource1
+            ParentColor = False
+          end
+          object LabelSoftwareInstalledVersion: TLabel
+            Left = 15
+            Height = 15
+            Top = 147
+            Width = 85
+            Caption = 'Installed version'
+            ParentColor = False
+          end
+          object LabelSoftwareRecentVersion: TLabel
+            Left = 15
+            Height = 15
+            Top = 200
+            Width = 77
+            Caption = 'Recent version'
+            ParentColor = False
+          end
+          object ButtonSoftwareUpdate: TButton
+            Left = 15
+            Height = 28
+            Top = 251
+            Width = 135
+            Caption = 'Update'
+            Enabled = False
+            TabOrder = 4
+          end
+        end
+      end
+      object PageUpdateTiles: TPage
+        object ScrollBoxUpdateTiles: TScrollBox
+          Left = 0
+          Height = 339
+          Top = 0
+          Width = 804
+          HorzScrollBar.Page = 1
+          HorzScrollBar.Visible = False
+          VertScrollBar.Page = 1
+          Align = alClient
+          AutoSize = True
+          BorderStyle = bsNone
+          ClientHeight = 339
+          ClientWidth = 804
+          Color = clDefault
+          ParentColor = False
+          TabOrder = 0
+          OnClick = ScrollBoxUpdateTilesClick
+          OnMouseWheel = ScrollBoxAllTilesMouseWheel
+          object FlowPanelUpdateTiles: TFlowPanel
+            Left = 0
+            Height = 339
+            Top = 0
+            Width = 804
+            Align = alClient
+            BevelOuter = bvNone
+            Color = clForm
+            ControlList = <>
+            FlowLayout = tlTop
+            FlowStyle = fsLeftRightTopBottom
+            ParentColor = False
+            TabOrder = 0
+            OnClick = FlowPanelUpdateTilesClick
+          end
+        end
+      end
+      object PageNotInstalled: TPage
+        object ScrollBoxNotInstalledTiles: TScrollBox
+          Left = 0
+          Height = 339
+          Top = 0
+          Width = 804
+          HorzScrollBar.Page = 1
+          HorzScrollBar.Visible = False
+          VertScrollBar.Page = 1
+          Align = alClient
+          AutoSize = True
+          BorderStyle = bsNone
+          ClientHeight = 339
+          ClientWidth = 804
+          Color = clDefault
+          ParentColor = False
+          TabOrder = 0
+          OnClick = ScrollBoxUpdateTilesClick
+          OnMouseWheel = ScrollBoxAllTilesMouseWheel
+          object FlowPanelNotInstalledTiles: TFlowPanel
+            Left = 0
+            Height = 339
+            Top = 0
+            Width = 804
+            Align = alClient
+            BevelOuter = bvNone
+            Color = clForm
+            ControlList = <>
+            FlowLayout = tlTop
+            FlowStyle = fsLeftRightTopBottom
+            ParentColor = False
+            TabOrder = 0
+            OnClick = FlowPanelUpdateTilesClick
+          end
+        end
+      end
+      object PageSearchTiles: TPage
+        object ScrollBoxSearchTiles: TScrollBox
+          Left = 0
+          Height = 339
+          Top = 0
+          Width = 804
+          HorzScrollBar.Page = 1
+          HorzScrollBar.Visible = False
+          VertScrollBar.Page = 1
+          Align = alClient
+          AutoSize = True
+          BorderStyle = bsNone
+          ClientHeight = 339
+          ClientWidth = 804
+          Color = clDefault
+          ParentColor = False
+          TabOrder = 0
+          OnMouseWheel = ScrollBoxAllTilesMouseWheel
+          object FlowPanelSearchTiles: TFlowPanel
+            Left = 0
+            Height = 339
+            Top = 0
+            Width = 804
+            Align = alClient
+            BevelOuter = bvNone
+            Color = clForm
+            ControlList = <>
+            FlowLayout = tlTop
+            FlowStyle = fsLeftRightTopBottom
+            ParentColor = False
+            TabOrder = 0
+          end
+        end
+      end
+    end
+  end
   object DataSource1: TDataSource
     left = 64
-    top = 8
   end
   object DataSource2: TDataSource
-    left = 128
-    top = 8
+    left = 144
   end
   object TimerSearchEdit: TTimer
     Enabled = False
     Interval = 500
     OnTimer = TimerSearchEditTimer
-    left = 206
-    top = 8
+    left = 240
   end
 end
