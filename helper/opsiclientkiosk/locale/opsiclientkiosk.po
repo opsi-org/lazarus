@@ -68,6 +68,11 @@ msgstr ""
 msgid "Send the action requests to the server, show the resulting installations and ask for installation start."
 msgstr ""
 
+#: opsiclientkioskgui.rsupdate
+msgctxt "opsiclientkioskgui.rsupdate"
+msgid "Update"
+msgstr ""
+
 #: opsiclientkioskgui.rsviewlist
 msgid "List"
 msgstr ""
@@ -100,162 +105,183 @@ msgctxt "TFINSTALLDLG.LABEL1.CAPTION"
 msgid "The following Actions will be done:"
 msgstr ""
 
-#: tfopsiclientkiosk.bitbtn1.caption
+#: tformopsiclientkiosk.bitbtn1.caption
+msgctxt "tformopsiclientkiosk.bitbtn1.caption"
 msgid "Installieren"
 msgstr ""
 
-#: tfopsiclientkiosk.bitbtninfo.caption
-msgctxt "TFOPSICLIENTKIOSK.BITBTNINFO.CAPTION"
+#: tformopsiclientkiosk.bitbtninfo.caption
+msgctxt "tformopsiclientkiosk.bitbtninfo.caption"
 msgid "Info"
 msgstr ""
 
-#: tfopsiclientkiosk.bitbtnshowaction.caption
+#: tformopsiclientkiosk.bitbtnshowaction.caption
+msgctxt "tformopsiclientkiosk.bitbtnshowaction.caption"
 msgid "Show Actions"
 msgstr ""
 
-#: tfopsiclientkiosk.bitbtnshowaction.hint
+#: tformopsiclientkiosk.bitbtnshowaction.hint
+msgctxt "tformopsiclientkiosk.bitbtnshowaction.hint"
 msgid "Show the list of action requests in the list. "
 msgstr ""
 
-#: tfopsiclientkiosk.bitbtnstoreaction.caption
-msgctxt "tfopsiclientkiosk.bitbtnstoreaction.caption"
+#: tformopsiclientkiosk.bitbtnstoreaction.caption
+msgctxt "tformopsiclientkiosk.bitbtnstoreaction.caption"
 msgid "Store Actions"
 msgstr ""
 
-#: tfopsiclientkiosk.btnclearsearchedit.caption
+#: tformopsiclientkiosk.btnclearsearchedit.caption
+msgctxt "tformopsiclientkiosk.btnclearsearchedit.caption"
 msgid "X"
 msgstr ""
 
-#: tfopsiclientkiosk.buttonsoftwareback.caption
-msgctxt "tfopsiclientkiosk.buttonsoftwareback.caption"
+#: tformopsiclientkiosk.buttonsoftwareback.caption
+msgctxt "tformopsiclientkiosk.buttonsoftwareback.caption"
 msgid "<-- back"
 msgstr ""
 
-#: tfopsiclientkiosk.buttonsoftwareinstall.caption
-msgctxt "tfopsiclientkiosk.buttonsoftwareinstall.caption"
+#: tformopsiclientkiosk.buttonsoftwareinstall.caption
+msgctxt "tformopsiclientkiosk.buttonsoftwareinstall.caption"
 msgid "Install"
 msgstr ""
 
-#: tfopsiclientkiosk.buttonsoftwareupdate.caption
-msgctxt "tfopsiclientkiosk.buttonsoftwareupdate.caption"
+#: tformopsiclientkiosk.buttonsoftwareupdate.caption
+msgctxt "tformopsiclientkiosk.buttonsoftwareupdate.caption"
 msgid "Update"
 msgstr ""
 
-#: tfopsiclientkiosk.caption
+#: tformopsiclientkiosk.caption
+msgctxt "tformopsiclientkiosk.caption"
 msgid "opsi-client-kiosk"
 msgstr ""
 
-#: tfopsiclientkiosk.dbgrid1.hint
+#: tformopsiclientkiosk.dbgrid1.hint
+msgctxt "tformopsiclientkiosk.dbgrid1.hint"
 msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
 msgstr ""
 
-#: tfopsiclientkiosk.editsearch.hint
-msgctxt "tfopsiclientkiosk.editsearch.hint"
+#: tformopsiclientkiosk.editsearch.hint
+msgctxt "tformopsiclientkiosk.editsearch.hint"
 msgid "Search in Productlist"
 msgstr ""
 
-#: tfopsiclientkiosk.editsearch.texthint
-msgctxt "tfopsiclientkiosk.editsearch.texthint"
+#: tformopsiclientkiosk.editsearch.texthint
+msgctxt "tformopsiclientkiosk.editsearch.texthint"
 msgid "Search"
 msgstr ""
 
-#: tfopsiclientkiosk.labeladvice.caption
+#: tformopsiclientkiosk.labeladvice.caption
+msgctxt "tformopsiclientkiosk.labeladvice.caption"
 msgid "Advice:  "
 msgstr ""
 
-#: tfopsiclientkiosk.labelclientverstr.caption
+#: tformopsiclientkiosk.labelclientverstr.caption
+msgctxt "tformopsiclientkiosk.labelclientverstr.caption"
 msgid "Version at Client"
 msgstr ""
 
-#: tfopsiclientkiosk.labeldescription.caption
+#: tformopsiclientkiosk.labeldescription.caption
+msgctxt "tformopsiclientkiosk.labeldescription.caption"
 msgid "Description:  "
 msgstr ""
 
-#: tfopsiclientkiosk.labelpriority.caption
+#: tformopsiclientkiosk.labelpriority.caption
+msgctxt "tformopsiclientkiosk.labelpriority.caption"
 msgid "Priority: "
 msgstr ""
 
-#: tfopsiclientkiosk.labelsoftwareadvice.caption
-msgctxt "tfopsiclientkiosk.labelsoftwareadvice.caption"
+#: tformopsiclientkiosk.labelsoftwareadvice.caption
+msgctxt "tformopsiclientkiosk.labelsoftwareadvice.caption"
 msgid "Advice"
 msgstr ""
 
-#: tfopsiclientkiosk.labelsoftwaredescription.caption
-msgctxt "tfopsiclientkiosk.labelsoftwaredescription.caption"
+#: tformopsiclientkiosk.labelsoftwaredescription.caption
+msgctxt "tformopsiclientkiosk.labelsoftwaredescription.caption"
 msgid "Description"
 msgstr ""
 
-#: tfopsiclientkiosk.labelsoftwareinstalledversion.caption
-msgctxt "tfopsiclientkiosk.labelsoftwareinstalledversion.caption"
+#: tformopsiclientkiosk.labelsoftwareinstalledversion.caption
+msgctxt "tformopsiclientkiosk.labelsoftwareinstalledversion.caption"
 msgid "Installed version"
 msgstr ""
 
-#: tfopsiclientkiosk.labelsoftwarename.caption
+#: tformopsiclientkiosk.labelsoftwarename.caption
+msgctxt "tformopsiclientkiosk.labelsoftwarename.caption"
 msgid "LabelSoftwareName"
 msgstr ""
 
-#: tfopsiclientkiosk.labelsoftwarerecentversion.caption
-msgctxt "tfopsiclientkiosk.labelsoftwarerecentversion.caption"
+#: tformopsiclientkiosk.labelsoftwarerecentversion.caption
+msgctxt "tformopsiclientkiosk.labelsoftwarerecentversion.caption"
 msgid "Recent version"
 msgstr ""
 
-#: tfopsiclientkiosk.labelverstr.caption
+#: tformopsiclientkiosk.labelverstr.caption
+msgctxt "tformopsiclientkiosk.labelverstr.caption"
 msgid "Version at Server"
 msgstr ""
 
-#: tfopsiclientkiosk.panelsoftwarescreenshot.caption
-msgctxt "tfopsiclientkiosk.panelsoftwarescreenshot.caption"
+#: tformopsiclientkiosk.panelsoftwarescreenshot.caption
+msgctxt "tformopsiclientkiosk.panelsoftwarescreenshot.caption"
 msgid "ScreenShotImage"
 msgstr ""
 
-#: tfopsiclientkiosk.radiogroupview.caption
+#: tformopsiclientkiosk.radiogroupview.caption
+msgctxt "tformopsiclientkiosk.radiogroupview.caption"
 msgid "View"
 msgstr ""
 
-#: tfopsiclientkiosk.speedbuttonall.caption
+#: tformopsiclientkiosk.speedbuttonall.caption
+msgctxt "tformopsiclientkiosk.speedbuttonall.caption"
 msgid "All"
 msgstr ""
 
-#: tfopsiclientkiosk.speedbuttonall.hint
+#: tformopsiclientkiosk.speedbuttonall.hint
+msgctxt "tformopsiclientkiosk.speedbuttonall.hint"
 msgid "Show all List entries (No Filter)"
 msgstr ""
 
-#: tfopsiclientkiosk.speedbuttonexpertmode.caption
+#: tformopsiclientkiosk.speedbuttonexpertmode.caption
+msgctxt "tformopsiclientkiosk.speedbuttonexpertmode.caption"
 msgid "Expert Mode"
 msgstr ""
 
-#: tfopsiclientkiosk.speedbuttonnotinstalled.caption
-msgctxt "tfopsiclientkiosk.speedbuttonnotinstalled.caption"
+#: tformopsiclientkiosk.speedbuttonnotinstalled.caption
+msgctxt "tformopsiclientkiosk.speedbuttonnotinstalled.caption"
 msgid "Not Installed"
 msgstr ""
 
-#: tfopsiclientkiosk.speedbuttonreload.caption
+#: tformopsiclientkiosk.speedbuttonreload.caption
+msgctxt "tformopsiclientkiosk.speedbuttonreload.caption"
 msgid "Reload"
 msgstr ""
 
-#: tfopsiclientkiosk.speedbuttonupdates.caption
-msgctxt "tfopsiclientkiosk.speedbuttonupdates.caption"
+#: tformopsiclientkiosk.speedbuttonupdates.caption
+msgctxt "tformopsiclientkiosk.speedbuttonupdates.caption"
 msgid "Updates"
 msgstr ""
 
-#: tfopsiclientkiosk.speedbuttonupdates.hint
-msgctxt "tfopsiclientkiosk.speedbuttonupdates.hint"
+#: tformopsiclientkiosk.speedbuttonupdates.hint
+msgctxt "tformopsiclientkiosk.speedbuttonupdates.hint"
 msgid "Filter for Products where an upgrade is possible"
 msgstr ""
 
-#: tfopsiclientkiosk.statusbar1.panels[0].text
+#: tformopsiclientkiosk.statusbar1.panels[0].text
+msgctxt "tformopsiclientkiosk.statusbar1.panels[0].text"
 msgid "Not Connected to opsi server"
 msgstr ""
 
-#: tfopsiclientkiosk.tabsheet1.caption
+#: tformopsiclientkiosk.tabsheet1.caption
+msgctxt "tformopsiclientkiosk.tabsheet1.caption"
 msgid "Details"
 msgstr ""
 
-#: tfopsiclientkiosk.tabsheet2.caption
+#: tformopsiclientkiosk.tabsheet2.caption
+msgctxt "tformopsiclientkiosk.tabsheet2.caption"
 msgid "Dependencies / Priority"
 msgstr ""
 
-#: tfopsiclientkiosk.titlelabel.caption
+#: tformopsiclientkiosk.titlelabel.caption
+msgctxt "tformopsiclientkiosk.titlelabel.caption"
 msgid "opsi Client Kiosk"
 msgstr ""
 

@@ -20,7 +20,7 @@ uses
   Graphics, Dialogs, ExtCtrls, StdCtrls, Buttons, ComCtrls, Grids, DBGrids,
   DBCtrls, ockdata, CommCtrl, BufDataset, typinfo, installdlg, lcltranslator,
   ActnList, Menus, oslog, inifiles, Variants, Lazfileutils, Types,
-  progresswindow;
+  progresswindow,datadb, fileinfo;
 
 type
 
@@ -59,9 +59,9 @@ type
   TPanels = array of TProductPanel;
 
 
-  { TFopsiClientKiosk }
+  { TFormOpsiClientKiosk }
 
-  TFopsiClientKiosk = class(TForm)
+  TFormOpsiClientKiosk = class(TForm)
     BitBtn1: TBitBtn;
     BitBtnInfo: TBitBtn;
     BitBtnShowAction: TBitBtn;
@@ -69,8 +69,6 @@ type
     ButtonSoftwareUpdate: TButton;
     ButtonSoftwareInstall: TButton;
     ButtonSoftwareBack: TButton;
-    DataSource1: TDataSource;
-    DataSource2: TDataSource;
     DBComboBox1: TDBComboBox;
     DBGrid1: TDBGrid;
     DBGrid2: TDBGrid;
@@ -85,9 +83,7 @@ type
     DBTextSoftwareVerStr: TDBText;
     ExtendedNotebook1: TExtendedNotebook;
     FlowPanelAllTiles: TFlowPanel;
-    FlowPanelUpdateTiles: TFlowPanel;
     FlowPanelSearchTiles: TFlowPanel;
-    FlowPanelNotInstalledTiles: TFlowPanel;
     ImageIconSoftware: TImage;
     ImageScreenShot: TImage;
     ImageViewmag: TImage;
@@ -101,10 +97,8 @@ type
     LabelDescription: TLabel;
     LabelAdvice: TLabel;
     LabelClientVerstr: TLabel;
-    PageNotInstalled: TPage;
     PageSearchTiles: TPage;
     PageSoftwareDetails: TPage;
-    PageUpdateTiles: TPage;
     PanelSoftwareScreenshot: TPanel;
     PanelSoftwareHead: TPanel;
     PanelSearchEdit: TPanel;
@@ -115,12 +109,10 @@ type
     PanelDetailsLables: TPanel;
     RadioGroupView: TRadioGroup;
     ScrollBoxAllTiles: TScrollBox;
-    ScrollBoxUpdateTiles: TScrollBox;
     ScrollBoxSearchTiles: TScrollBox;
     ScrollBoxSoftwarePage: TScrollBox;
     EditSearch: TEdit;
     ImageHeader: TImage;
-    ScrollBoxNotInstalledTiles: TScrollBox;
     SpeedButtonNotInstalled: TSpeedButton;
     SpeedButtonExpertMode: TSpeedButton;
     SpeedButtonUpdates: TSpeedButton;
@@ -135,8 +127,8 @@ type
     PageList: TPage;
     PageAllTiles: TPage;
     PanelToolbar: TPanel;
-    productlistpanel: TPanel;
-    productdetailpanel: TPanel;
+    PanelProductList: TPanel;
+    PanelProductDetail: TPanel;
     PanelTopImage: TPanel;
     StatusBar1: TStatusBar;
     procedure BitBtnInfoClick(Sender: TObject);
@@ -159,7 +151,7 @@ type
     procedure DBGrid1TitleClick(Column: TColumn);
     procedure FlowPanelUpdateTilesClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure grouplistEnter(Sender: TObject);
+    procedure GrouplistEnter(Sender: TObject);
     procedure RadioGroupViewSelectionChanged(Sender: TObject);
     procedure ScrollBoxUpdateTilesClick(Sender: TObject);
     procedure ScrollBoxAllTilesMouseWheel(Sender: TObject; Shift: TShiftState;
@@ -171,7 +163,7 @@ type
     procedure FormActivate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     //procedure grouplistSelectionChange(Sender: TObject; User: boolean);
-    procedure reloadDataFromServer;
+    procedure ReloadDataFromServer;
     procedure EditSearchChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     //procedure RadioGroup1Click(Sender: TObject);
@@ -181,6 +173,7 @@ type
     procedure SpeedButtonViewStoreClick(Sender: TObject);
     procedure TimerSearchEditTimer(Sender: TObject);
     procedure FilterOnSearch;
+    procedure BuildProductTiles(var ArrayProductTiles:TPanels; const OwnerName:string);
   private
     { private declarations }
   public
@@ -193,18 +186,18 @@ type
   end;
 
 var
-  FopsiClientKiosk: TFopsiClientKiosk;
+  FormOpsiClientKiosk: TFormOpsiClientKiosk;
   StartupDone: boolean;
   ArrayAllProductTiles: TPanels;
-  ArrayUpdateProductTiles :TPanels;
-  ArraySearchPanelTiles:TPanels;
-  inTileRebuild: boolean = False;
-  lastOrderDirAsc: boolean = True;
-  lastOrderCol: string;
+  ArraySearchPanelTiles: TPanels;
+  InTileRebuild: boolean = False;
+  LastOrderDirAsc: boolean = True;
+  LastOrderCol: string;
   detail_visible: boolean = False;
   skinpath: string;
   preLogfileLogList: TStringList;
-
+  FileVerInfo: TfileVersionInfo;
+  myVersion: string;
 
 resourcestring
   rsNoActionsFound = 'No action requests found.';
@@ -215,6 +208,7 @@ resourcestring
   rsInstalled = 'Installed';
   rsNotInstalled = 'Not installed';
   rsStateUnknown = 'Unknown';
+  rsUpdate = 'Update';
   rsViewList = 'List';
   rsViewTiles = 'Tiles';
   rsInstallNow = 'Install now';
@@ -231,8 +225,9 @@ implementation
 const
   //color for StatusLabel
   clInstalled = clTeal;
+  clUpdate = $00FF8000;
   clNotInstalled = $000080FF;
-  clUnknown = $00FF8000;
+  clUnknown = clRed;
 
   //Path to programm icons
   IconPathCustom = '.'+PathDelim + 'progam_icons' + PathDelim + 'custom' + PathDelim;//Application.Location + PathDelim + 'progam_icons' + PathDelim + 'custom' + PathDelim;
@@ -569,8 +564,8 @@ procedure TProductPanel.Scroll(Sender: TObject; Shift: TShiftState;
 var
   oldpos: integer;
 begin
-  oldpos := FopsiClientKiosk.ScrollBoxAllTiles.VertScrollBar.Position;
-  FopsiClientKiosk.ScrollBoxAllTiles.VertScrollBar.Position :=
+  oldpos := FormOpsiClientKiosk.ScrollBoxAllTiles.VertScrollBar.Position;
+  FormOpsiClientKiosk.ScrollBoxAllTiles.VertScrollBar.Position :=
     oldpos + ((WheelDelta * -1) div 10);
   logdatei.log('Scroll WheelDelta: ' + IntToStr(WheelDelta div 10), LLDebug2);
 end;
@@ -627,7 +622,7 @@ begin
             IntToStr(actionindex), LLError);
       end;
       ZMQueryDataSet1.FieldByName('actionrequest').AsString := actionstr;
-      FopsiClientKiosk.productdetailpanel.Height := 185;
+      FormOpsiClientKiosk.PanelProductDetail.Height := 185;
       ZMQueryDataSet1.Post;
     end;
   end;
@@ -648,12 +643,12 @@ begin
     begin
       if detail_visible then
       begin
-        FopsiClientKiosk.productdetailpanel.Height := 0;
+        FormOpsiClientKiosk.PanelProductDetail.Height := 0;
         detail_visible := False;
       end
       else
       begin
-        FopsiClientKiosk.productdetailpanel.Height := 185;
+        FormOpsiClientKiosk.PanelProductDetail.Height := 185;
         detail_visible := True;
       end;
     end;
@@ -676,7 +671,7 @@ begin
     begin
       if detail_visible then
       begin
-        FopsiClientKiosk.productdetailpanel.Height := 0;
+        FormOpsiClientKiosk.PanelProductDetail.Height := 0;
         ArrayAllProductTiles[tileindex].ShapeRoundSquare.Pen.Color:=clBlack;
         ArrayAllProductTiles[former_selected_tile].ShapeRoundSquare.Pen.Color:=clBlack;
         ArrayAllProductTiles[former_selected_tile].ShapeRoundSquare.Brush.Color:=clWhite;
@@ -684,9 +679,9 @@ begin
       end
       else
       begin
-        FopsiClientKiosk.NotebookProducts.PageIndex := 2;
-        FopsiClientKiosk.LabelSoftwareName.Caption := TControl(Sender).Parent.FindChildControl('LabelName').Caption;
-        FopsiClientKiosk.productdetailpanel.Height := 185;
+        FormOpsiClientKiosk.NotebookProducts.PageIndex := 2;
+        FormOpsiClientKiosk.LabelSoftwareName.Caption := TControl(Sender).Parent.FindChildControl('LabelName').Caption;
+        FormOpsiClientKiosk.PanelProductDetail.Height := 185;
         ArrayAllProductTiles[former_selected_tile].ShapeRoundSquare.Pen.Color:=clBlack;
         ArrayAllProductTiles[tileindex].ShapeRoundSquare.Pen.Color:=clBlue;
         ArrayAllProductTiles[tileindex].ShapeRoundSquare.Brush.Color:=$00FEEFD3;
@@ -707,70 +702,67 @@ begin
   ZMQueryDataSet1.First;
   if ZMQueryDataSet1.Locate('ProductId', VarArrayOf([pid]),[loCaseInsensitive]) then
   begin
-    FopsiClientKiosk.productdetailpanel.Height := 0;
-    FopsiClientKiosk.NotebookProducts.PageIndex := 2;
-    FopsiClientKiosk.PanelExpertMode.Visible := False;
-    FopsiClientKiosk.PanelToolbar.Visible := False;
-    FopsiClientKiosk.LabelSoftwareName.Caption := ArrayAllProductTiles[TileIndex].LabelName.Caption;
-    FopsiClientKiosk.ImageIconSoftware.Picture:= ArrayAllProductTiles[TileIndex].ImageIcon.Picture;
+    FormOpsiClientKiosk.PanelProductDetail.Height := 0;
+    FormOpsiClientKiosk.NotebookProducts.PageIndex := 2;
+    FormOpsiClientKiosk.PanelExpertMode.Visible := False;
+    FormOpsiClientKiosk.PanelToolbar.Visible := False;
+    FormOpsiClientKiosk.LabelSoftwareName.Caption := ArrayAllProductTiles[TileIndex].LabelName.Caption;
+    FormOpsiClientKiosk.ImageIconSoftware.Picture:= ArrayAllProductTiles[TileIndex].ImageIcon.Picture;
     if FileExists(ScreenshotPath +'screenshot1_'+ ArrayAllProductTiles[TileIndex].LabelID.Caption +'.png') then
-     FopsiClientKiosk.ImageScreenShot.Picture.LoadFromFile
+     FormOpsiClientKiosk.ImageScreenShot.Picture.LoadFromFile
        (ScreenshotPath +'screenshot1_'+ ArrayAllProductTiles[TileIndex].LabelID.Caption +'.png')
-    else FopsiClientKiosk.ImageScreenShot.Picture.LoadFromFile
+    else FormOpsiClientKiosk.ImageScreenShot.Picture.LoadFromFile
          (ScreenshotPath + 'no_screenshot.png');
     if ArrayAllProductTiles[TileIndex].LabelState.Caption = rsInstalled then
     begin
-      FopsiClientKiosk.ButtonSoftwareInstall.Caption := 'Uninstall';
-      if FopsiClientKiosk.DBTextSoftwareClientVerStr.Caption <> FopsiClientKiosk.DBTextSoftwareVerStr.Caption then
-        FopsiClientKiosk.ButtonSoftwareUpdate.Enabled := True
-      else FopsiClientKiosk.ButtonSoftwareUpdate.Enabled := False;
+      FormOpsiClientKiosk.ButtonSoftwareInstall.Caption := 'Uninstall';
+      if FormOpsiClientKiosk.DBTextSoftwareClientVerStr.Caption <> FormOpsiClientKiosk.DBTextSoftwareVerStr.Caption then
+        FormOpsiClientKiosk.ButtonSoftwareUpdate.Enabled := True
+      else FormOpsiClientKiosk.ButtonSoftwareUpdate.Enabled := False;
     end
     else if ArrayAllProductTiles[TileIndex].LabelState.Caption = rsNotInstalled then
     begin
-      FopsiClientKiosk.ButtonSoftwareInstall.Caption := 'Install';
-      FopsiClientKiosk.ButtonSoftwareUpdate.Enabled := False;
-      //FopsiClientKiosk.
+      FormOpsiClientKiosk.ButtonSoftwareInstall.Caption := 'Install';
+      FormOpsiClientKiosk.ButtonSoftwareUpdate.Enabled := False;
+      //FormOpsiClientKiosk.
     end;
   end;
 end;
 
-procedure rebuildProductTiles(var ArrayProductTiles:TPanels; const OwnerName:string);
+procedure TFormOpsiClientKiosk.BuildProductTiles(var ArrayProductTiles:TPanels; const OwnerName:string);
 var
   counter, i, index: integer;
-  action, state, ProductID: string;
+  action, state, update, ProductID: string;
 begin
   try
     inTileRebuild := True;
-    logdatei.log('rebuildProductTiles start', LLDebug2);
+    logdatei.log('BuildProductTiles start', LLDebug2);
+
+    //ProgressBar
     with FormProgressWindow do
     begin
-      LabelInfo.Caption:= 'Please wait while rebuilding tils';
       Visible := True;
-      ProgressBarDetail.Visible := True;
-      ProgressBar1.Visible := True;
-      LabelDataLoadDetail.Visible := True;
-      LabelDataLoad.Visible := True;
       ProgressbarDetail.Position := 0;
+      LabelInfo.Caption:= 'Please wait while building tils';
       LabelDataload.Caption := 'Clear Tiles';
     end;
     Application.ProcessMessages;
+
+    //if array exists free content and set array length 0
     try
       counter := length(ArrayProductTiles);
       if counter > 0 then
-        //for i:=0 to counter -1 do ArrayProductTiles[i].Destroy;
         for i := 0 to counter - 1 do
         begin
-          //FreeAndNil(ArrayProductTiles[i]);
           ArrayProductTiles[i].Visible := False;
           ArrayProductTiles[i].Free;
           ArrayProductTiles[i] := nil;
-          //logdatei.log('FreeAndNil(ProductTilesArray', LLDebug2);
         end;
       SetLength(ArrayProductTiles, 0);
     except
       on e: Exception do
       begin
-        logdatei.log('Exception rebuildProductTiles: ProductTilesArray[i].Free;',
+        logdatei.log('Exception BuildProductTiles: ProductTilesArray[i].Free;',
           LLError);
         logdatei.log('Exception: ' + E.message, LLError);
         logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
@@ -779,7 +771,7 @@ begin
     end;
 
     // use complete window for tiles
-    FopsiClientKiosk.productdetailpanel.Height := 0;
+    FormOpsiClientKiosk.PanelProductDetail.Height := 0;
 
     // progess
     //FormProgressWindow.Progressbar1.Position := 80;
@@ -792,17 +784,17 @@ begin
       ProgressBarDetail.Max := ZMQUerydataset1.RecordCount;
     end;
     Application.ProcessMessages;
-    logdatei.log('rebuildProductTiles from db start', LLDebug2);
+    logdatei.log('BuildProductTiles from db start', LLDebug2);
     counter := 0;
-    ZMQUerydataset1.First;
+    ZMQuerydataset1.First;
     while not ZMQuerydataset1.EOF do
     begin
       ProductID := ZMQueryDataSet1.FieldByName('ProductId').AsString;
       FormProgressWindow.LabelDataLoadDetail.Caption := ProductID;
       Application.ProcessMessages;
       SetLength(ArrayProductTiles, counter + 1);
-      ArrayProductTiles[counter] := TProductPanel.Create(FopsiClientKiosk.FindComponent(OwnerName) as TFlowPanel);
-      ArrayProductTiles[counter].LabelId.Caption := ProductID;
+      ArrayProductTiles[counter] := TProductPanel.Create(FormOpsiClientKiosk.FindComponent(OwnerName) as TFlowPanel);
+      ArrayProductTiles[counter].LabelID.Caption := ProductID;
       ArrayProductTiles[counter].LabelName.Caption := ZMQueryDataSet1.FieldByName('ProductName').AsString;
       if FileExists(IconPathCustom + ProductID + '.png') then
         ArrayProductTiles[counter].ImageIcon.Picture.LoadFromFile(IconPathCustom + ProductID + '.png')
@@ -815,8 +807,17 @@ begin
       state := ZMQueryDataSet1.FieldByName('installationStatus').AsString;
       if state = 'installed' then
       begin
-        ArrayProductTiles[counter].LabelState.Caption := rsInstalled;
-        ArrayProductTiles[counter].LabelState.Color := clInstalled;
+        update := ZMQueryDataSet1.FieldByName('updatePossible').AsString;
+        if update = 'True' then
+        begin
+          ArrayProductTiles[counter].LabelState.Caption := rsUpdate;
+          ArrayProductTiles[counter].LabelState.Color := clUpdate;
+        end
+        else
+        begin
+          ArrayProductTiles[counter].LabelState.Caption := rsInstalled;
+          ArrayProductTiles[counter].LabelState.Color := clInstalled;
+        end;
       end
       else if (state = 'not_installed') or (state = 'not installed') or (state = '') then
       begin
@@ -856,7 +857,7 @@ begin
     end;
   finally
     inTileRebuild := False;
-    logdatei.log('rebuildProductTiles stop', LLDebug2);
+    logdatei.log('BuildProductTiles stop', LLDebug2);
     {*with FormProgressWindow do
     begin
       //ProgressBar1.Position := 100;
@@ -867,7 +868,7 @@ begin
 
       //Visible := False;
     end;*}
-    //FopsiClientKiosk.CheckBoxExpertModeChange(FopsiClientKiosk);
+    //FormOpsiClientKiosk.CheckBoxExpertModeChange(FormOpsiClientKiosk);
     FormProgressWindow.Visible := False;
   end;
 end;
@@ -889,62 +890,65 @@ begin
 end;
 
 
-{ TFopsiClientKiosk }
+{ TFormOpsiClientKiosk }
 
-//procedure TFopsiClientKiosk.ProcessMess;
+//procedure TFormOpsiClientKiosk.ProcessMess;
 //begin
 //  Application.ProcessMessages;
 //end;
 
-procedure TFopsiClientKiosk.RadioGroupViewSelectionChanged(Sender: TObject);
+procedure TFormOpsiClientKiosk.RadioGroupViewSelectionChanged(Sender: TObject);
 begin
   NotebookProducts.PageIndex := RadioGroupView.ItemIndex;
   //if StartupDone then
     //if RadioGroupView.ItemIndex = 1 then
-      //rebuildProductTiles;
+      //BuildProductTiles;
 end;
 
-procedure TFopsiClientKiosk.ScrollBoxUpdateTilesClick(Sender: TObject);
+procedure TFormOpsiClientKiosk.ScrollBoxUpdateTilesClick(Sender: TObject);
 begin
 
 end;
 
-procedure TFopsiClientKiosk.ScrollBoxAllTilesMouseWheel(Sender: TObject;
+procedure TFormOpsiClientKiosk.ScrollBoxAllTilesMouseWheel(Sender: TObject;
   Shift: TShiftState; WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
 begin
   logdatei.log('ScrollBox1MouseWheel WheelDelta: ' + IntToStr(WheelDelta), LLDebug2);
 end;
 
-procedure TFopsiClientKiosk.BtnClearSearchEditClick(Sender: TObject);
+procedure TFormOpsiClientKiosk.BtnClearSearchEditClick(Sender: TObject);
+begin
+//  try
+//    screen.Cursor := crHourGlass;
+//    if EditSearch.Text = '' then
+//      FilterOnSearch
+//    else
+      //EditSearch.Text := '';
+      EditSearch.Clear;
+      SpeedButtonAll.AllowAllUp:= False;
+      FormOpsiClientKiosk.NotebookProducts.PageIndex:= 1;
+//  finally
+//    screen.Cursor := crDefault;
+//  end;
+end;
+
+procedure TFormOpsiClientKiosk.SpeedButtonReloadClick(Sender: TObject);
 begin
   try
     screen.Cursor := crHourGlass;
-    if EditSearch.Text = '' then
-      FilterOnSearch
-    else
-      EditSearch.Text := '';
+    ReloadDataFromServer;
+    //FilterOnSearch;
   finally
     screen.Cursor := crDefault;
   end;
 end;
 
-procedure TFopsiClientKiosk.SpeedButtonReloadClick(Sender: TObject);
-begin
-  try
-    screen.Cursor := crHourGlass;
-    reloadDataFromServer;
-    FilterOnSearch;
-  finally
-    screen.Cursor := crDefault;
-  end;
-end;
-
-procedure TFopsiClientKiosk.Terminate;
+procedure TFormOpsiClientKiosk.Terminate;
 begin
   Application.Terminate;
 end;
 
-procedure TFopsiClientKiosk.DBGrid1TitleClick(Column: TColumn);
+procedure TFormOpsiClientKiosk.DBGrid1TitleClick(Column: TColumn);
 var
   direction: string;
 begin
@@ -968,19 +972,19 @@ begin
     end
     else
       lastOrderCol := Column.FieldName;
-    ZMQUerydataset1.SQL.Add('select * from kioskmaster order by ' +
+    ZMQUerydataset1.SQL.Add('select * from products order by ' +
       Column.FieldName + direction);
     ZMQUerydataset1.Open;
   except
   end;
 end;
 
-procedure TFopsiClientKiosk.FlowPanelUpdateTilesClick(Sender: TObject);
+procedure TFormOpsiClientKiosk.FlowPanelUpdateTilesClick(Sender: TObject);
 begin
 
 end;
 
-procedure TFopsiClientKiosk.FormDestroy(Sender: TObject);
+procedure TFormOpsiClientKiosk.FormDestroy(Sender: TObject);
 var
   counter, i: integer;
 begin
@@ -1015,46 +1019,46 @@ begin
   LogDatei.log('FopsiClientKiosk.FormDestroy: Application terminates', LLInfo);
 end;
 
-procedure TFopsiClientKiosk.grouplistEnter(Sender: TObject);
+procedure TFormOpsiClientKiosk.grouplistEnter(Sender: TObject);
 begin
-  productdetailpanel.Height := 0;
+  PanelProductDetail.Height := 0;
 end;
 
-procedure TFopsiClientKiosk.DBGrid1Exit(Sender: TObject);
+procedure TFormOpsiClientKiosk.DBGrid1Exit(Sender: TObject);
 begin
-  //productdetailpanel.Height := 0;
+  //PanelProductDetail.Height := 0;
 end;
 
-procedure TFopsiClientKiosk.DBGrid1Enter(Sender: TObject);
+procedure TFormOpsiClientKiosk.DBGrid1Enter(Sender: TObject);
 begin
-  //productdetailpanel.Height := 0;
-  //productdetailpanel.Height:=185;
+  //PanelProductDetail.Height := 0;
+  //PanelProductDetail.Height:=185;
 end;
 
-procedure TFopsiClientKiosk.SpeedButtonUpdatesClick(Sender: TObject);
+
+procedure TFormOpsiClientKiosk.SpeedButtonUpdatesClick(Sender: TObject);
+var
+  i : integer;
 begin
-  FopsiClientKiosk.NotebookProducts.PageIndex:= 3;
-  EditSearch.Text := '';
-  TimerSearchEdit.Enabled := False;
-  ockdata.ZMQUerydataset1.Filtered := False;
-  ockdata.ZMQUerydataset1.FilterOptions := [foCaseInsensitive];
-  ockdata.ZMQUerydataset1.Filter := 'updatePossible = "True"';
-  ockdata.ZMQUerydataset1.Filtered := True;
-  FormProgressWindow.ProcessMess;
-  while inTileRebuild do
-    Sleep(10);
-  if RadioGroupView.ItemIndex = 1 then
-    rebuildProductTiles(ArrayUpdateProductTiles,'FlowPanelUpdateTiles');
+  FormOpsiClientKiosk.NotebookProducts.PageIndex:= 1;
+  i := 0;
+  for i := 0 to Length(ArrayAllProductTiles)-1 do
+  begin
+    if ArrayAllProductTiles[i].LabelState.Caption <> rsUpdate then
+      ArrayAllProductTiles[i].Visible := False
+    else ArrayAllProductTiles[i].Visible := True;
+  end;
+  TSpeedButton(Sender).Down:= True;
 end;
 
-procedure TFopsiClientKiosk.ButtonSoftwareBackClick(Sender: TObject);
+procedure TFormOpsiClientKiosk.ButtonSoftwareBackClick(Sender: TObject);
 begin
-  if SpeedButtonExpertMode.Down then FopsiClientKiosk.PanelExpertMode.Visible := True;
-  FopsiClientKiosk.PanelToolbar.Visible := True;
-  fopsiClientkiosk.NotebookProducts.PageIndex:=1;
+  if SpeedButtonExpertMode.Down then FormOpsiClientKiosk.PanelExpertMode.Visible := True;
+  FormOpsiClientKiosk.PanelToolbar.Visible := True;
+  FormOpsiClientKiosk.NotebookProducts.PageIndex:=1;
 end;
 
-procedure TFopsiClientKiosk.DBComboBox1Exit(Sender: TObject);
+procedure TFormOpsiClientKiosk.DBComboBox1Exit(Sender: TObject);
 begin
   DBGrid1.Repaint;
   if DBComboBox1.Text <> '' then
@@ -1064,7 +1068,7 @@ begin
 end;
 
 
-procedure TFopsiClientKiosk.BitBtnShowActionClick(Sender: TObject);
+procedure TFormOpsiClientKiosk.BitBtnShowActionClick(Sender: TObject);
 var
   i: integer;
 begin
@@ -1077,7 +1081,7 @@ begin
   RadioGroupViewSelectionChanged(self);
 end;
 
-procedure TFopsiClientKiosk.BitBtnInfoClick(Sender: TObject);
+procedure TFormOpsiClientKiosk.BitBtnInfoClick(Sender: TObject);
 begin
   ShowMessage('opsi-kiosk-client' + LineEnding + 'Display language: ' +
     GetDefaultLang + Lineending + 'Version: ' + myVersion + Lineending +
@@ -1085,7 +1089,7 @@ begin
     'http://opsi.org' + Lineending + 'Credits to: Lazarus/FPC,indy,sqllite,superobject');
 end;
 
-procedure TFopsiClientKiosk.BitBtnStoreActionClick(Sender: TObject);
+procedure TFormOpsiClientKiosk.BitBtnStoreActionClick(Sender: TObject);
 var
   counter: integer;
   i: integer;
@@ -1133,21 +1137,21 @@ begin
   end;
 end;
 
-procedure TFopsiClientKiosk.BitBtnToggleViewClick(Sender: TObject);
+procedure TFormOpsiClientKiosk.BitBtnToggleViewClick(Sender: TObject);
 begin
   if NotebookProducts.PageIndex = 1 then NotebookProducts.PageIndex := 0
     else if NotebookProducts.PageIndex = 0 then NotebookProducts.PageIndex := 1;
-  FopsiClientKiosk.productdetailpanel.height := 0;
+  FormOpsiClientKiosk.PanelProductDetail.height := 0;
 end;
 
-procedure TFopsiClientKiosk.ButtonSoftwareInstallClick(Sender: TObject);
+procedure TFormOpsiClientKiosk.ButtonSoftwareInstallClick(Sender: TObject);
 begin
   QuestionDLG('Install Dialog','Install now?',mtConfirmation,[mrYes, 'Install now', mrNo, 'Select for Installation', mrCancel], 0);
 end;
 
-procedure TFopsiClientKiosk.SpeedButtonNotInstalledClick(Sender: TObject);
+{*procedure TFormOpsiClientKiosk.SpeedButtonNotInstalledClick(Sender: TObject);
 begin
-  FopsiClientKiosk.NotebookProducts.PageIndex:= 4;
+  FormOpsiClientKiosk.NotebookProducts.PageIndex:= 4;
   EditSearch.Text := '';
   TimerSearchEdit.Enabled := False;
   ockdata.ZMQUerydataset1.Filtered := False;
@@ -1158,52 +1162,55 @@ begin
   while inTileRebuild do
     Sleep(10);
   if RadioGroupView.ItemIndex = 1 then
-    rebuildProductTiles(ArrayUpdateProductTiles,'FlowPanelNotInstalledTiles');
-end;
+    BuildProductTiles(ArrayUpdateProductTiles,'FlowPanelNotInstalledTiles');
+end;*}
 
-procedure TFopsiClientKiosk.SpeedButtonExpertModeClick(Sender: TObject);
+
+procedure TFormOpsiClientKiosk.SpeedButtonNotInstalledClick(Sender: TObject);
+var
+  i : integer;
+begin
+  FormOpsiClientKiosk.NotebookProducts.PageIndex:= 1;
+  i := 0;
+  for i := 0 to Length(ArrayAllProductTiles)-1 do
+  begin
+    if ArrayAllProductTiles[i].LabelState.Caption <> rsNotInstalled then
+      ArrayAllProductTiles[i].Visible := False
+    else ArrayAllProductTiles[i].Visible := True;
+  end;
+  TSpeedButton(Sender).Down:= True;
+end;
+procedure TFormOpsiClientKiosk.SpeedButtonExpertModeClick(Sender: TObject);
 begin
   if SpeedButtonExpertMode.Down then
   begin
-    PanelExpertMode.Visible := True;
     // expert mode
-    //RadioGroupView.Visible := True;
-    //BitBtnInfo.Visible := True;
-    //SpeedButtonReload.Visible := True;
-    //SpeedButtonUpdates.Visible := True;
-    //SpeedButtonAll.Visible := True;
-    //BitBtnShowAction.Visible := True;
-    //BitBtnStoreAction.Visible := True;
     BitBtnStoreAction.Caption := rsStoreActions;
     BitBtnStoreAction.Hint := rsStoreActionsHint;
+    // localize RadioGroupView
+    RadioGroupView.Items[0] := rsViewList;
+    RadioGroupView.Items[1] := rsViewTiles;
+    // List view
+    RadioGroupView.ItemIndex := 0;
+    PanelExpertMode.Visible := True;
+    NotebookProducts.PageIndex := RadioGroupView.ItemIndex;
   end
   else
   begin
     // standard mode
     PanelExpertMode.Visible := False;
-
-    //RadioGroupView.Visible := False;
-    //BitBtnInfo.Visible := False;
-    //SpeedButtonReload.Visible := False;
-    //SpeedButtonUpdates.Visible := False;
-    //SpeedButtonAll.Visible := False;
-    //BitBtnShowAction.Visible := False;
-    //BitBtnStoreAction.Visible := False;
+    PanelProductDetail.Height := 0;
     BitBtnStoreAction.Caption := rsInstallNow;
     BitBtnStoreAction.Hint := rsInstallNowHint;
+    NotebookProducts.PageIndex := 1;
   end;
-  // localize RadioGroupView
-  RadioGroupView.Items[0] := rsViewList;
-  RadioGroupView.Items[1] := rsViewTiles;
-  //repaint;
-  Application.ProcessMessages;
 end;
 
-procedure TFopsiClientKiosk.DBGrid1CellClick(Column: TColumn);
+procedure TFormOpsiClientKiosk.DBGrid1CellClick(Column: TColumn);
 var
   action: string;
 begin
-  productdetailpanel.Height := 185;
+  PanelProductDetail.Height := 185;
   action := ockdata.ZMQUerydataset1.FieldByName('possibleAction').AsString;
   DBComboBox1.Items.Clear;
   DBComboBox1.Items.Add('none');
@@ -1212,7 +1219,7 @@ begin
     DBComboBox1.Items.Add(action);
 end;
 
-procedure TFopsiClientKiosk.DBGrid1ColExit(Sender: TObject);
+procedure TFormOpsiClientKiosk.DBGrid1ColExit(Sender: TObject);
 begin
   if (dbgrid1.SelectedField.FieldName = DBComboBox1.DataField) then
   begin
@@ -1220,7 +1227,7 @@ begin
   end;
 end;
 
-procedure TFopsiClientKiosk.DBGrid1DrawColumnCell(Sender: TObject;
+procedure TFormOpsiClientKiosk.DBGrid1DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: integer; Column: TColumn; State: TGridDrawState);
 begin
   if (gdFocused in State) then
@@ -1239,20 +1246,23 @@ begin
   end;
 end;
 
-procedure TFopsiClientKiosk.FormActivate(Sender: TObject);
+procedure TFormOpsiClientKiosk.FormActivate(Sender: TObject);
 var
   ErrorMsg: string;
   optionlist: TStringList;
 
 begin
-
+  FileVerInfo := TFileVersionInfo.Create(nil);
+  try
+    FileVerInfo.FileName := ParamStr(0);
+    FileVerInfo.ReadFileInfo;
+    myVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
+  finally
+    FileVerInfo.Free;
+  end;
   if not StartupDone then
   begin
-
-    //RadioGroupViewSelectionChanged(self);
-    //CheckBox1Change(self);
     StartupDone := True;
-
     Application.ProcessMessages;
     optionlist := TStringList.Create;
     optionlist.Append('fqdn::');
@@ -1265,45 +1275,32 @@ begin
       Application.Terminate;
       Exit;
     end;
-
     // parse parameters
     if Application.HasOption('fqdn') then
     begin
       myClientId := Application.GetOptionValue('fqdn');
     end;
-
     if Application.HasOption('lang') then
     begin
       SetDefaultLang(Application.GetOptionValue('lang'));
     end;
     FormProgressWindow.LabelDataLoadDetail.Caption := '';
+
     ockdata.main;
     FormProgressWindow.LabelDataLoadDetail.Caption := 'after ockdata main';
     Application.ProcessMessages;
-    {* with FormProgressWindow do
-    begin
-      Progressbar1.Position := Progressbar1.Max;
-      ProgressbarDetail.Position := ProgressbarDetail.Max;
-      LabelDataload.Caption := '';
-      LabelDataLoadDetail.Caption := '';
-      Visible := False;
-      ProgressBar1.Visible := False;
-      ProgressBarDetail.Visible := False;
-    end;*}
-    //LabelWait.Visible := False;
-    //grouplist.Enabled := True;
-    rebuildProductTiles(ArrayAllproductTiles, 'FlowPanelAllTiles');
-    //RadioGroupViewSelectionChanged(self);
-
+    DBGrid1.DataSource := DataModule1.DataSource1;
+    DBGrid2.DataSource := DataModule1.DataSource2;
+    PanelProductDetail.Height := 0;
+    BuildProductTiles(ArrayAllproductTiles, 'FlowPanelAllTiles');
     // log
     LogDatei.log('rsActSetup is: ' + rsActSetup + ' with color: ' +
       tile_radio_setup_color + ' and font size: ' + IntToStr(tile_radio_font_size), LLDebug2);
     LogDatei.log('TitleLabel.Caption: ' + TitleLabel.Caption, LLDebug2);
-
   end;
 end;
 
-procedure TFopsiClientKiosk.FormShow(Sender: TObject);
+procedure TFormOpsiClientKiosk.FormShow(Sender: TObject);
 begin
   FormProgressWindow.LabelDataload.Caption := 'Init';
   StartupDone := False;
@@ -1314,12 +1311,12 @@ begin
   TitleLabel.Font.Bold := title_Font_Bold;
   TitleLabel.Font.Italic := title_Font_Italic;
   TitleLabel.Font.Underline := title_Font_Underline;
-  FopsiClientKiosk.Repaint;
+  FormOpsiClientKiosk.Repaint;
   Application.ProcessMessages;
 end;
 
 
-procedure TFopsiClientKiosk.reloadDataFromServer;
+procedure TFormOpsiClientKiosk.reloadDataFromServer;
 var
   i: integer;
 begin
@@ -1329,23 +1326,31 @@ begin
   StartupDone := True;
 end;
 
-procedure TFopsiClientKiosk.EditSearchChange(Sender: TObject);
+procedure TFormOpsiClientKiosk.EditSearchChange(Sender: TObject);
 begin
-  // search in list
-  // if timer running: reset else start (so we wait to finish the input before seach)
-  if TimerSearchEdit.Enabled then
+  if EditSearch.Text <> '' then
   begin
-    TimerSearchEdit.Enabled := False;
-    logdatei.log('Got while input wait:' + EditSearch.Text, LLDebug2);
-  end
-  else
-    logdatei.log('Got and start input wait:' + EditSearch.Text, LLDebug2);
-  // start search via timer
-  TimerSearchEdit.Enabled := True;
-  //SpeedButton1Click(Sender);
+    SpeedButtonAll.AllowAllUp:= True;
+    SpeedButtonAll.Down:= False;
+    SpeedButtonUpdates.Down:= False;
+    SpeedButtonNotInstalled.Down:= False;
+    NotebookProducts.PageIndex:= 3;
+    // search in list
+    // if timer running: reset else start (so we wait to finish the input before seach)
+    if TimerSearchEdit.Enabled then
+    begin
+      TimerSearchEdit.Enabled := False;
+      logdatei.log('Got while input wait:' + EditSearch.Text, LLDebug2);
+    end
+    else
+      logdatei.log('Got and start input wait:' + EditSearch.Text, LLDebug2);
+    // start search via timer
+    TimerSearchEdit.Enabled := True;
+    //SpeedButton1Click(Sender);
+  end;
 end;
 
-procedure TFopsiClientKiosk.FormCreate(Sender: TObject);
+procedure TFormOpsiClientKiosk.FormCreate(Sender: TObject);
 
   procedure loadskin(skinpath: string);
   var
@@ -1396,7 +1401,7 @@ procedure TFopsiClientKiosk.FormCreate(Sender: TObject);
 
 begin
   NotebookProducts.PageIndex := 1;  //tiles
-  FopsiClientKiosk.productdetailpanel.Height := 0;
+  FormOpsiClientKiosk.PanelProductDetail.Height := 0;
   detail_visible := False;
   preLogfileLogList := TStringList.Create;
   preLogfileLogList.Add(Application.Name + ' starting at ' + DateTimeToStr(now));
@@ -1483,19 +1488,19 @@ begin
   RadioGroupView.Items[1] := rsViewTiles;
 end;
 
-procedure TFopsiClientKiosk.EditSearchEnter(Sender: TObject);
+procedure TFormOpsiClientKiosk.EditSearchEnter(Sender: TObject);
 begin
-  productdetailpanel.Height := 0;
+  PanelProductDetail.Height := 0;
 end;
 
 
-procedure TFopsiClientKiosk.FilterOnSearch;
+procedure TFormOpsiClientKiosk.FilterOnSearch;
 var
   Filtercond, Filterstr: string;
 begin
   if EditSearch.Text = '' then
   begin
-    Filtercond := '"*"';
+    //Filtercond := '"*"';
     ockdata.ZMQUerydataset1.Filtered := False;
     LogDatei.log('Search for: ' + EditSearch.Text + ' Filter off.', LLinfo);
   end
@@ -1512,44 +1517,54 @@ begin
     ockdata.ZMQUerydataset1.Filter := Filterstr;
     ockdata.ZMQUerydataset1.FilterOptions := [foCaseInsensitive];
     ockdata.ZMQUerydataset1.Filtered := True;
+    ZMQuerydataset1.First;
+    {******* Hier weiter machen****
+       Verknüpfung Database ID mit Panel ID zum Suchen
+    *******************************}
+    //while not ZMQuerydataset1.EOF do
+    //begin
+      //ProductID := ZMQueryDataSet1.FieldByName('ProductId').AsString;
+
+    //end;
+    BuildProductTiles(ArraySearchPanelTiles, 'FlowPanelSearchTiles');
   end;
-  if RadioGroupView.ItemIndex = 1 then
-    rebuildProductTiles(ArraySearchPaneltiles, 'FlowPanelSearchTiles');
+  //if not SpeedButtonExpertMode.Down then
 end;
 
-procedure TFopsiClientKiosk.SpeedButtonAllClick(Sender: TObject);
+procedure TFormOpsiClientKiosk.SpeedButtonAllClick(Sender: TObject);
+var
+  i : integer;
 begin
-  //screen.Cursor := crHourGlass;
-  FopsiClientKiosk.NotebookProducts.PageIndex := 1;
-  EditSearch.Text := '';
-  ockdata.ZMQUerydataset1.Filtered := False;
+  FormOpsiClientKiosk.NotebookProducts.PageIndex:= 1;
+  i := 0;
+  for i := 0 to Length(ArrayAllProductTiles)-1 do
+  begin
+    ArrayAllProductTiles[i].Visible := True;
+  end;
   TSpeedButton(Sender).Down:= True;
-  //LogDatei.log('Search for: ' + EditSearch.Text + ' Filter off.', LLinfo);
-  // this shoud call  searchEditChange
-  // so we do nothing else here
-  //screen.Cursor := crDefault;
 end;
 
-procedure TFopsiClientKiosk.SpeedButtonViewListClick(Sender: TObject);
+
+procedure TFormOpsiClientKiosk.SpeedButtonViewListClick(Sender: TObject);
 begin
   NotebookProducts.PageIndex := 0;
 end;
 
-procedure TFopsiClientKiosk.SpeedButtonViewStoreClick(Sender: TObject);
+procedure TFormOpsiClientKiosk.SpeedButtonViewStoreClick(Sender: TObject);
 begin
   NotebookProducts.PageIndex := 1;
 end;
 
-procedure TFopsiClientKiosk.TimerSearchEditTimer(Sender: TObject);
+procedure TFormOpsiClientKiosk.TimerSearchEditTimer(Sender: TObject);
 begin
   TimerSearchEdit.Enabled := False;
-  while inTileRebuild do
-    Sleep(10);
+  //while inTileRebuild do
+    //Sleep(10);
   FilterOnSearch;
 end;
 
 
-procedure TFopsiClientKiosk.BitBtnCancelClick(Sender: TObject);
+procedure TFormOpsiClientKiosk.BitBtnCancelClick(Sender: TObject);
 var
   counter, i: integer;
 begin
@@ -1584,5 +1599,81 @@ begin
   Application.Terminate;
   halt;
 end;
+
+{*procedure main;
+var
+  ErrorMsg: string;
+  parameters: array of string;
+  resultstring: string;
+  i: integer;
+  grouplist: TStringList;
+begin
+  FileVerInfo := TFileVersionInfo.Create(nil);
+  try
+    FileVerInfo.FileName := ParamStr(0);
+    FileVerInfo.ReadFileInfo;
+    myVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
+  finally
+    FileVerInfo.Free;
+  end;
+  FormProgressWindow.LabelInfo.Caption := 'Please wait while connecting to service';
+  FormProgressWindow.LabelDataload.Caption := 'Connect opsi Web Service';
+  FormProgressWindow.ProcessMess;
+  myexitcode := 0;
+  myerror := '';
+  if ockdata.opsiclientdmode then ockdata.readconf2
+  else ockdata.readconf;
+  // opsiconfd mode
+  //readconf;
+  // opsiclientd mode
+  //readconf2;
+  // do not forget to check firePushInstallation
+  initlogging(myclientid);
+  LogDatei.log('clientid=' + myclientid, LLNotice);
+  LogDatei.log('service_url=' + myservice_url, LLNotice);
+  LogDatei.log('service_user=' + myclientid, LLNotice);
+  logdatei.AddToConfidentials(myhostkey);
+  LogDatei.log('host_key=' + myhostkey, LLdebug3);
+  // is an other instance running ?
+  if numberOfProcessInstances(ExtractFileName(ParamStr(0))) > 1 then
+  begin
+    LogDatei.log('A other instance of this program is running - so we abort', LLCritical);
+    LogDatei.Close;
+    halt(1);
+  end;
+  // is opsiclientd running ?
+  if numberOfProcessInstances('opsiclientd') < 1 then
+  begin
+    LogDatei.log('opsiclientd is not running - so we abort', LLCritical);
+    LogDatei.Close;
+    ShowMessage('opsiclientd is not running - so we abort');
+    halt(1);
+  end;
+  FormProgressWindow.ProgressBar1.StepIt;
+  FormProgressWindow.ProcessMess;
+
+  if initConnection(30) then
+  begin
+    LogDatei.log('init Connection done', LLNotice);
+    initdb;
+    FormProgressWindow.LabelInfo.Caption := 'Please wait while gettting products';
+    LogDatei.log('start fetchProductData_by_getKioskProductInfosForClient', LLNotice);
+    fetchProductData_by_getKioskProductInfosForClient;
+    LogDatei.log('Handle products done', LLNotice);
+    FormProgressWindow.LabelDataload.Caption := 'Handle Products';
+    FormProgressWindow.ProcessMess;
+  end
+  else
+  begin
+    LogDatei.log('init Connection failed - Aborting', LLError);
+    if opsidata <> nil then
+      opsidata.Free;
+    FormOpsiClientKiosk.Terminate;
+    halt(1);
+  end;
+  LogDatei.log('main done', LLDebug2);
+  FormProgressWindow.ProgressBar1.StepIt;
+  FormProgressWindow.ProcessMess;
+end; *}
 
 end.

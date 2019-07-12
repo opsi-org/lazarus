@@ -12,11 +12,12 @@ type
   { TDataModule1 }
 
   TDataModule1 = class(TDataModule)
+    DataSource1: TDataSource;
+    DataSource2: TDataSource;
     SQLite3Connection1: TSQLite3Connection;
     SQLQuery1: TSQLQuery;
     SQLQuery2: TSQLQuery;
     SQLTransaction1: TSQLTransaction;
-    procedure DataModuleCreate(Sender: TObject);
     procedure SQLQuery1AfterPost(DataSet: TDataSet);
   private
     { private declarations }
@@ -33,10 +34,6 @@ implementation
 
 { TDataModule1 }
 
-procedure TDataModule1.DataModuleCreate(Sender: TObject);
-begin
-   // Datamodule1 := Tdatamodule1.create(self);
-end;
 
 procedure TDataModule1.SQLQuery1AfterPost(DataSet: TDataSet);
 begin

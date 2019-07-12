@@ -1,9 +1,8 @@
 object DataModule1: TDataModule1
-  OnCreate = DataModuleCreate
   OldCreateOrder = False
-  Height = 163
-  HorizontalOffset = 1341
-  VerticalOffset = 559
+  Height = 263
+  HorizontalOffset = 986
+  VerticalOffset = 338
   Width = 255
   PPI = 96
   object SQLite3Connection1: TSQLite3Connection
@@ -37,5 +36,13 @@ object DataModule1: TDataModule1
     Params = <>
     left = 168
     top = 88
+  end
+  object DataSource1: TDataSource
+    left = 40
+    top = 160
+  end
+  object DataSource2: TDataSource
+    left = 168
+    top = 160
   end
 end

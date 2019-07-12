@@ -168,7 +168,7 @@
       <Unit1>
         <Filename Value="opsiclientkioskgui.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="FopsiClientKiosk"/>
+        <ComponentName Value="FormOpsiClientKiosk"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit1>
