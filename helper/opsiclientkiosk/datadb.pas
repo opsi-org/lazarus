@@ -9,9 +9,9 @@ uses
 
 type
 
-  { TDataModule1 }
+  { TDataModuleOCK }
 
-  TDataModule1 = class(TDataModule)
+  TDataModuleOCK = class(TDataModule)
     DataSource1: TDataSource;
     DataSource2: TDataSource;
     SQLite3Connection1: TSQLite3Connection;
@@ -26,16 +26,16 @@ type
   end;
 
 var
-  DataModule1: TDataModule1;
+  DataModuleOCK: TDataModuleOCK;
 
 implementation
 
 {$R *.lfm}
 
-{ TDataModule1 }
+{ TDataModuleOCK }
 
 
-procedure TDataModule1.SQLQuery1AfterPost(DataSet: TDataSet);
+procedure TDataModuleOCK.SQLQuery1AfterPost(DataSet: TDataSet);
 begin
   try
   TsqlQuery(dataset).ApplyUpdates;

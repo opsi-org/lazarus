@@ -1,8 +1,10 @@
-object DataModule1: TDataModule1
+object DataModuleOCK: TDataModuleOCK
   OldCreateOrder = False
+  left = 691
+  top = 150
   Height = 263
-  HorizontalOffset = 986
-  VerticalOffset = 338
+  HorizontalOffset = 838
+  VerticalOffset = 256
   Width = 255
   PPI = 96
   object SQLite3Connection1: TSQLite3Connection
