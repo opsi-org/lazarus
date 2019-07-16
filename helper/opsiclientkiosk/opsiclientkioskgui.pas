@@ -18,8 +18,11 @@ interface
 uses
   Classes, SysUtils, DB, ExtendedNotebook, DividerBevel, Forms, Controls,
   Graphics, Dialogs, ExtCtrls, StdCtrls, Buttons, ComCtrls, Grids, DBGrids,
-  DBCtrls, ockdata, CommCtrl, BufDataset, typinfo, installdlg, lcltranslator,
+  DBCtrls, ockdata,CommCtrl, BufDataset, typinfo, installdlg, lcltranslator,
   ActnList, Menus, oslog, inifiles, Variants, Lazfileutils, Types,
+  opsiconnection,
+  jwawinbase,
+  osprocesses,
   progresswindow,datadb, proginfo;
 
 type
@@ -187,6 +190,8 @@ type
   public
     procedure Execute; override;
   end;
+
+procedure main;
 
 var
   FormOpsiClientKiosk: TFormOpsiClientKiosk;
@@ -919,6 +924,10 @@ end;
 procedure TFormOpsiClientKiosk.RadioGroupViewSelectionChanged(Sender: TObject);
 begin
   NotebookProducts.PageIndex := RadioGroupView.ItemIndex;
+  if RadioGroupView.ItemIndex = 0 then
+  begin
+    ockdata.ZMQUerydataset1.Open;
+  end;
   //if StartupDone then
     //if RadioGroupView.ItemIndex = 1 then
       //BuildProductTiles;
@@ -1037,6 +1046,8 @@ begin
     end;
   end;
   LogDatei.log('FopsiClientKiosk.FormDestroy: Application terminates', LLInfo);
+  LogDatei.Close;
+  LogDatei.Free;
 end;
 
 procedure TFormOpsiClientKiosk.GrouplistEnter(Sender: TObject);
@@ -1214,6 +1225,7 @@ begin
     RadioGroupView.ItemIndex := 0;
     PanelExpertMode.Visible := True;
     NotebookProducts.PageIndex := RadioGroupView.ItemIndex;
+    RadioGroupViewSelectionChanged(self);
   end
   else
   begin
@@ -1270,6 +1282,7 @@ procedure TFormOpsiClientKiosk.FormActivate(Sender: TObject);
 var
   ErrorMsg: string;
   optionlist: TStringList;
+  //MyClientID :String;
 
 begin
   if not StartupDone then
@@ -1290,7 +1303,7 @@ begin
     // parse parameters
     if Application.HasOption('fqdn') then
     begin
-      myClientId := Application.GetOptionValue('fqdn');
+      MyClientId := Application.GetOptionValue('fqdn');
     end;
     if Application.HasOption('lang') then
     begin
@@ -1298,7 +1311,8 @@ begin
     end;
     FormProgressWindow.LabelDataLoadDetail.Caption := '';
 
-    ockdata.main;
+    //ockdata.main;
+    main;
     Application.ProcessMessages;
     DBGrid1.DataSource := DataModuleOCK.DataSource1;
     DBGrid2.DataSource := DataModuleOCK.DataSource2;
@@ -1331,7 +1345,8 @@ procedure TFormOpsiClientKiosk.ReloadDataFromServer;
 var
   i: integer;
 begin
-  ockdata.fetchProductData_by_getKioskProductInfosForClient;
+  //ockdata.fetchProductData_by_getKioskProductInfosForClient;
+  fetchProductData(ZMQuerydataset1,'getKioskProductInfosForClient');
   StartupDone := False;
   RadioGroupViewSelectionChanged(self);
   StartupDone := True;
@@ -1617,29 +1632,60 @@ begin
   halt;
 end;
 
-{*procedure main;
+{:Returns user name of the current thread.
+  @author  Miha-R, Lee_Nover
+  @since   2002-11-25
+}
+function GetUserName_: string;
+var
+  buffer: PChar;
+  bufferSize: DWORD;
+begin
+  bufferSize := 256; //UNLEN from lmcons.h
+  buffer := AllocMem(bufferSize * SizeOf(char));
+  try
+    GetUserName(buffer, bufferSize);
+    Result := string(buffer);
+  finally
+    FreeMem(buffer, bufferSize);
+  end;
+end; { DSiGetUserName}
+
+
+function initLogging(const clientname: string): boolean;
+var
+  i : integer;
+begin
+  Result := True;
+  LogDatei := TLogInfo.Create;
+  logfilename := 'kiosk-' + GetUserName_ +'.log';
+  LogDatei.WritePartLog := False;
+  LogDatei.WriteErrFile:= False;
+  LogDatei.WriteHistFile:= False;
+  logdatei.CreateTheLogfile(logfilename, False);
+  logdatei.LogLevel := myloglevel;
+  for i := 0 to preLogfileLogList.Count-1 do
+    logdatei.log(preLogfileLogList.Strings[i], LLessential);
+  preLogfileLogList.Free;
+  logdatei.log('opsi-client-kiosk: version: ' + ProgramInfo.Version, LLessential);
+end;
+
+procedure main;
 var
   ErrorMsg: string;
   parameters: array of string;
   resultstring: string;
   i: integer;
   grouplist: TStringList;
+  ConnectionInfo:string;
 begin
-  FileVerInfo := TFileVersionInfo.Create(nil);
-  try
-    FileVerInfo.FileName := ParamStr(0);
-    FileVerInfo.ReadFileInfo;
-    myVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
-  finally
-    FileVerInfo.Free;
-  end;
   FormProgressWindow.LabelInfo.Caption := 'Please wait while connecting to service';
   FormProgressWindow.LabelDataload.Caption := 'Connect opsi Web Service';
   FormProgressWindow.ProcessMess;
   myexitcode := 0;
   myerror := '';
-  if ockdata.opsiclientdmode then ockdata.readconf2
-  else ockdata.readconf;
+  if opsiclientdmode then readconf2
+    else readconf;
   // opsiconfd mode
   //readconf;
   // opsiclientd mode
@@ -1654,7 +1700,7 @@ begin
   // is an other instance running ?
   if numberOfProcessInstances(ExtractFileName(ParamStr(0))) > 1 then
   begin
-    LogDatei.log('A other instance of this program is running - so we abort', LLCritical);
+    LogDatei.log('An other instance of this program is running - so we abort', LLCritical);
     LogDatei.Close;
     halt(1);
   end;
@@ -1669,13 +1715,15 @@ begin
   FormProgressWindow.ProgressBar1.StepIt;
   FormProgressWindow.ProcessMess;
 
-  if initConnection(30) then
+  if initConnection(30, ConnectionInfo) then
   begin
     LogDatei.log('init Connection done', LLNotice);
+    FormOpsiClientKiosk.StatusBar1.Panels[0].Text := ConnectionInfo;
     initdb;
     FormProgressWindow.LabelInfo.Caption := 'Please wait while gettting products';
     LogDatei.log('start fetchProductData_by_getKioskProductInfosForClient', LLNotice);
-    fetchProductData_by_getKioskProductInfosForClient;
+    //fetchProductData_by_getKioskProductInfosForClient;
+    fetchProductData(ZMQuerydataset1,'getKioskProductInfosForClient');
     LogDatei.log('Handle products done', LLNotice);
     FormProgressWindow.LabelDataload.Caption := 'Handle Products';
     FormProgressWindow.ProcessMess;
@@ -1691,6 +1739,8 @@ begin
   LogDatei.log('main done', LLDebug2);
   FormProgressWindow.ProgressBar1.StepIt;
   FormProgressWindow.ProcessMess;
-end; *}
+end;
+
+
 
 end.

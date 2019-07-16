@@ -160,7 +160,7 @@
         <PackageName Value="LazUtils"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="13">
+    <Units Count="15">
       <Unit0>
         <Filename Value="opsiclientkiosk.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -225,6 +225,14 @@
         <Filename Value="proginfo.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit12>
+      <Unit13>
+        <Filename Value="ocklogging.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="opsiconnection_class.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit14>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

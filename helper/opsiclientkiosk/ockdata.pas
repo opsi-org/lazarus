@@ -37,15 +37,15 @@ uses
   jwawinbase,
   dialogs, progresswindow;
 
-const
-  opsiclientdconf =
-    'C:\Program Files (x86)\opsi.org\opsi-client-agent\opsiclientd\opsiclientd.conf';
+//const
+//  opsiclientdconf =
+ //   'C:\Program Files (x86)\opsi.org\opsi-client-agent\opsiclientd\opsiclientd.conf';
 
 
 var
   optionlist: TStringList;
   myexitcode, myloglevel: integer;
-  myclientid, myhostkey, myerror, myservice_url: string;
+  //myclientid, myhostkey, myerror, myservice_url: string;
   INI: TINIFile;
   logfilename: string;
   myuser, myencryptedpass, mypass, myshare, mydepot, mymountpoint,
@@ -53,19 +53,19 @@ var
   mountresult: dword;
   nogui: boolean;
   productgrouplist: TStringList;
-  opsidata: Topsi4data;
+  //opsidata: Topsi4data;
   ZMQuerydataset1: TSQLQuery;
   ZMQuerydataset2: TSQLQuery;
   productIdsList: TStringList;
-  opsiclientdmode : boolean = true;
+  //opsiclientdmode : boolean = true;
 
 
 procedure initdb;
-procedure main;
+//procedure main;
 procedure setActionrequest(pid: string; request: string);
 function getActionrequests: TStringList;
 procedure firePushInstallation;
-procedure fetchProductData_by_getKioskProductInfosForClient;
+//procedure fetchProductData_by_getKioskProductInfosForClient;
 
 resourcestring
   rsNoGroups = 'No Product Groups found ...';
@@ -200,8 +200,8 @@ begin
   DataModuleOCK.DataSource1.DataSet := ZMQuerydataset1;
   DataModuleOCK.DataSource2.DataSet := ZMQuerydataset2;
   ZMQUerydataset2.DataSource := DataModuleOCK.DataSource1;
-  //FormOpsiClientKiosk.DBGrid1.DataSource := DataModule1.DataSource1;
-  //FormOpsiClientKiosk.DBGrid2.DataSource := DataModule1.DataSource2;
+  //FormOpsiClientKiosk.DBGrid1.DataSource := DataModuleOCK.DataSource1;
+  //FormOpsiClientKiosk.DBGrid2.DataSource := DataModuleOCK.DataSource2;
   //FormOpsiClientKiosk.PanelProductDetail.Height := 0;
   with FormProgressWindow do
   begin
@@ -254,7 +254,7 @@ end;
 
 
 
-procedure fetchProductData_by_getKioskProductInfosForClient;
+{*procedure fetchProductData_by_getKioskProductInfosForClient;
 var
   resultstring, groupstring, method, testresult: string;
   jOResult, new_obj, detail_obj: ISuperObject;
@@ -335,7 +335,7 @@ begin
   ZMQueryDataSet1.Close;
   //ZMQueryDataSet1.Open;
   //ZMQueryDataSet1.First;
-end;
+end;*}
 
 
 procedure setActionrequest(pid: string; request: string);
@@ -385,7 +385,7 @@ begin
   //resultstring := MyOpsiMethodCall('hostControlSafe_fireEvent',  ['on_demand', '[' + myclientid + ']']);
 end;
 
-procedure main;
+{procedure main;
 var
   ErrorMsg: string;
   parameters: array of string;
@@ -400,7 +400,7 @@ begin
   myexitcode := 0;
   myerror := '';
   if opsiclientdmode then readconf2
-  else readconf;
+    else readconf;
   // opsiconfd mode
   //readconf;
   // opsiclientd mode
@@ -437,7 +437,8 @@ begin
     initdb;
     FormProgressWindow.LabelInfo.Caption := 'Please wait while gettting products';
     LogDatei.log('start fetchProductData_by_getKioskProductInfosForClient', LLNotice);
-    fetchProductData_by_getKioskProductInfosForClient;
+    //fetchProductData_by_getKioskProductInfosForClient;
+    fetchProductData(ZMQuerydataset1,'getKioskProductInfosForClient');
     LogDatei.log('Handle products done', LLNotice);
     FormProgressWindow.LabelDataload.Caption := 'Handle Products';
     FormProgressWindow.ProcessMess;
@@ -453,6 +454,6 @@ begin
   LogDatei.log('main done', LLDebug2);
   FormProgressWindow.ProgressBar1.StepIt;
   FormProgressWindow.ProcessMess;
-end;
+end;}
 
 end.
