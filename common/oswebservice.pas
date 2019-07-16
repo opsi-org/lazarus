@@ -2719,23 +2719,35 @@ begin
           IdHttp.Request.AcceptEncoding := AcceptEncodingCompress;
           LogDatei.log_prog('HTTP Header: ' + IdHttp.Request.RawHeaders.Text, LLDebug);
           {$ENDIF SYNAPSE}
+          LogDatei.log('Instream: ' + MemoryStreamToString(Instream), LLDebug2);
+          instream.SaveToFile('c:\opsi.org\log\senddoc1.txt');;
           CompressionSendStream := TCompressionStream.Create(clMax, sendstream);
           Instream.Seek(0, 0);
           GetMem(buffer, 655360);
           repeat
+            FillChar(buffer^, 655360, ' ');
             readcount := Instream.Read(buffer^, 655360);
             if readcount > 0 then
-              CompressionSendStream.Write(buffer^, readcount);
+              CompressionSendStream.Write(buffer^, 655360);
           until readcount < 655360;
           CompressionSendStream.Free;
+          FreeMem(buffer);
+          LogDatei.log('sendstream: ' + MemoryStreamToString(sendstream), LLDebug2);
           {$IFDEF SYNAPSE}
           HTTPSender.Document.LoadFromStream(sendstream);
+          HTTPSender.Document.SaveToFile('c:\opsi.org\log\senddoc2.txt');
+          LogDatei.log('HTTPSender FURL: '+Furl, LLDebug2);
           HTTPSenderResult := HTTPSender.HTTPMethod('POST', Furl);
           if HTTPSenderResult then
             LogDatei.log('HTTPSender Post ok', LLDebug2)
           else
             LogDatei.log('HTTPSender Post failed', LLDebug2);
-          ReceiveStream := HTTPSender.Document;
+          for i := 0 to HTTPSender.Headers.Count - 1 do
+            LogDatei.log('HTTPSender Header.Strings: ' +
+              HTTPSender.Headers.Strings[i], LLDebug2);
+          ReceiveStream.LoadFromStream(HTTPSender.Document);
+          LogDatei.log('ReceiveStream: ' + MemoryStreamToString(ReceiveStream),
+              LLDebug2);
           LogDatei.log('HTTPSender Post: got document', LLInfo);
           {$ELSE SYNAPSE}
           IdHTTP.post(FserviceURL + '/rpc', sendstream, ReceiveStream);
@@ -2747,7 +2759,7 @@ begin
             readcount := CompressionReceiveStream.Read(buffer^, 655360);
             LogDatei.log('HTTPSender Post: readed from CompressionReceiveStream: '+inttostr(readcount), LLInfo);
             if readcount > 0 then
-              mymemorystream.Write(buffer^, readcount);
+              mymemorystream.Write(buffer^, 655360);
             LogDatei.log('HTTPSender Post: write to memorystream: '+inttostr(readcount), LLInfo);
           until readcount < 655360;
           LogDatei.log('HTTPSender Post: read CompressionReceiveStream finished', LLInfo);
@@ -2906,6 +2918,7 @@ begin
               CompressionSendStream.Free;
               {$IFDEF SYNAPSE}
               HTTPSender.Document.LoadFromStream(sendstream);
+              HTTPSender.Document.SaveToFile('c:\opsi.org\log\senddoc.txt');
               HTTPSenderResult := HTTPSender.HTTPMethod('POST', Furl);
               if HTTPSenderResult then
                 LogDatei.log('HTTPSender Post ok', LLDebug2)
