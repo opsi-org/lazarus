@@ -32,6 +32,39 @@ stWixToolset,
   * https://iserv.eu/doc/development/deploy/packages/installer/bitrock/
   * --mode unattended --unattendedmodeui minimal
 
+* Astrum astrum-installwizard
+  * Firma is dead:
+  + https://www.thraexsoftware.com/
+  * download
+  * https://astrum-installwizard.en.uptodown.com/windows
+  * /SILENT /NOREMOVE /ACCEPTLICENSE /REVERT
+  * DierckeGlobusOnline.exe
+
+Uebrsicht:
+http://www.fredshack.com/docs/packagers.html
+
+opsi-setup-detector (4.1.0.11) stable; urgency=low
+
+  * add 'Self-extracting installation program':
+    Vendor is unknown right now.
+
+    Usage:
+    SETUP.EXE [/a] [/b1:"commands"] [/b2:"commands"] [/b3:"commands"] [/d:"dir"] [/n:"name"] [/u:"name"] [/r:"program"]
+
+    /a                  	Automatic mode.
+    /d:"dir"        	Override installation directory.
+    /b1:"commands"	Add commands to the end of the Pre-Installation Batch.
+    /b2:"commands"	Add commands to the end of the Post-Installation Batch.
+    /b3:"commands"	Add commands to the end of the Installation-Exit Batch.
+    /n:"name"	Override product name.
+    /u:"name"	Uninstall product by name.
+    /r:"program"	Run the specified program after a successful installation.
+
+  * more markers for nsis
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon,  15 Jul 2019 : 15:00:00 +0200
+
+
 opsi-setup-detector (4.1.0.10) stable; urgency=low
 
   * osdanalyze: getProductInfoFromResource: fix if there is no version info
