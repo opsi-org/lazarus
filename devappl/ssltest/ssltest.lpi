@@ -24,7 +24,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="synapse_r209;../../external_libraries/indy/Lib;../../common;../../external_libraries/indy/Lib/Protocols;../../external_libraries/indy/Lib/Security;../../external_libraries/indy/Lib/Core;../../external_libraries/indy/Lib/System"/>
+            <OtherUnitFiles Value="../../common;../../external_libraries/synapse;../../external_libraries/misc"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -42,8 +42,6 @@
           </CodeGeneration>
           <Linking>
             <Debugging>
-              <DebugInfoType Value="dsDwarf2Set"/>
-              <UseHeaptrc Value="True"/>
               <TrashVariables Value="True"/>
               <UseExternalDbgSyms Value="True"/>
             </Debugging>

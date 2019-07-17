@@ -2704,6 +2704,7 @@ begin
         begin
           LogDatei.log_prog('Using MimeType: ' + ContentTypeCompress, LLDebug);
           {$IFDEF SYNAPSE}
+          HTTPSender.MimeType:=ContentTypeCompress;
           HTTPSender.Headers.Clear;
           HTTPSender.Headers.Add('accept-encoding: ' +
             ContentEncodingCommpress + ',identity');
@@ -2745,6 +2746,7 @@ begin
           for i := 0 to HTTPSender.Headers.Count - 1 do
             LogDatei.log('HTTPSender Header.Strings: ' +
               HTTPSender.Headers.Strings[i], LLDebug2);
+          LogDatei.log('got mimetype: '+HTTPSender.MimeType, LLDebug2);
           ReceiveStream.LoadFromStream(HTTPSender.Document);
           LogDatei.log('ReceiveStream: ' + MemoryStreamToString(ReceiveStream),
               LLDebug2);
