@@ -160,7 +160,7 @@
         <PackageName Value="LazUtils"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="15">
+    <Units Count="14">
       <Unit0>
         <Filename Value="opsiclientkiosk.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -218,21 +218,17 @@
         <ResourceBaseClass Value="Form"/>
       </Unit10>
       <Unit11>
-        <Filename Value="opsiconnection.pas"/>
+        <Filename Value="proginfo.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit11>
       <Unit12>
-        <Filename Value="proginfo.pas"/>
+        <Filename Value="ocklogging.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit12>
       <Unit13>
-        <Filename Value="ocklogging.pas"/>
+        <Filename Value="opsiconnection.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit13>
-      <Unit14>
-        <Filename Value="opsiconnection_class.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit14>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

@@ -62,9 +62,9 @@ var
 
 procedure initdb;
 //procedure main;
-procedure setActionrequest(pid: string; request: string);
-function getActionrequests: TStringList;
-procedure firePushInstallation;
+//procedure setActionrequest(pid: string; request: string);
+//function getActionrequests: TStringList;
+//procedure firePushInstallation;
 //procedure fetchProductData_by_getKioskProductInfosForClient;
 
 resourcestring
@@ -73,8 +73,8 @@ resourcestring
 
 implementation
 
-uses
-  opsiclientkioskgui;
+//uses
+//  opsiclientkioskgui;
 
 
 procedure initdb;
@@ -217,7 +217,7 @@ end;
 {:Returns user name of the current thread.
   @author  Miha-R, Lee_Nover
   @since   2002-11-25
-}
+
 function GetUserName_: string;
 var
   buffer: PChar;
@@ -231,7 +231,7 @@ begin
   finally
     FreeMem(buffer, bufferSize);
   end;
-end; { DSiGetUserName}
+end; { DSiGetUserName
 
 
 function initLogging(const clientname: string): boolean;
@@ -250,7 +250,7 @@ begin
     logdatei.log(preLogfileLogList.Strings[i], LLessential);
   preLogfileLogList.Free;
   logdatei.log('opsi-client-kiosk: version: ' + ProgramInfo.Version, LLessential);
-end;
+end;}
 
 
 
@@ -337,7 +337,7 @@ begin
   //ZMQueryDataSet1.First;
 end;*}
 
-
+{
 procedure setActionrequest(pid: string; request: string);
 var
   resultstring: string;
@@ -354,7 +354,8 @@ var
 begin
   Result := TStringList.Create;
   resultstring := MyOpsiMethodCall('productOnClient_getObjects',
-    ['[]', '{"clientId":"' + myclientid + '","actionRequest":["setup","uninstall"]}']);
+    ['[]', '{"clientId":"' + myclientid +
+    '","actionRequest":["setup","uninstall"]']); // bracket deleted
   new_obj := SO(resultstring).O['result'];
   str := new_obj.AsString;
   for i := 0 to new_obj.AsArray.Length - 1 do
@@ -362,8 +363,8 @@ begin
     detail_obj := new_obj.AsArray.O[i];
     Result.Add(detail_obj.S['productId'] + ' : ' + detail_obj.S['actionRequest"']);
   end;
-end;
-
+end; }
+{
 procedure firePushInstallation;
 var
   resultstring, str: string;
@@ -383,7 +384,7 @@ begin
   // opsiconfd mode
   // may not work if acl.conf is restricted
   //resultstring := MyOpsiMethodCall('hostControlSafe_fireEvent',  ['on_demand', '[' + myclientid + ']']);
-end;
+end;}
 
 {procedure main;
 var

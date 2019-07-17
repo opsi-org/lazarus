@@ -18,12 +18,14 @@ interface
 uses
   Classes, SysUtils, DB, ExtendedNotebook, DividerBevel, Forms, Controls,
   Graphics, Dialogs, ExtCtrls, StdCtrls, Buttons, ComCtrls, Grids, DBGrids,
-  DBCtrls, ockdata,CommCtrl, BufDataset, typinfo, installdlg, lcltranslator,
+  DBCtrls,
+  datadb, //ockdata,
+  CommCtrl, BufDataset, typinfo, installdlg, lcltranslator,
   ActnList, Menus, oslog, inifiles, Variants, Lazfileutils, Types,
   opsiconnection,
   jwawinbase,
   osprocesses,
-  progresswindow,datadb, proginfo;
+  progresswindow, proginfo;
 
 type
 
@@ -51,6 +53,7 @@ type
       MousePos: TPoint; var Handled: boolean);
     procedure ProductTileMouseEnter(Sender :TObject);
     procedure ProductTileMouseLeave(Sender :TObject);
+    procedure LoadSkin(SkinPath:string);
   private
     { private declarations }
   public
@@ -175,6 +178,10 @@ type
     procedure SpeedButtonViewListClick(Sender: TObject);
     procedure SpeedButtonViewStoreClick(Sender: TObject);
     procedure TimerSearchEditTimer(Sender: TObject);
+    function GetUserName_:string;
+    function InitLogging(const LogFileName, CallingMethod: string; MyLogLevel:integer): boolean;
+    procedure LoadSkin(SkinPath: string);
+    procedure InitOpsiClientKiosk;
     procedure FilterOnSearch;
     procedure BuildProductTiles(var ArrayProductTiles:TPanels; const OwnerName:string);
     function GetTileIDbyProductID(const ProductID:String):integer;
@@ -191,11 +198,11 @@ type
     procedure Execute; override;
   end;
 
-procedure main;
+
 
 var
   FormOpsiClientKiosk: TFormOpsiClientKiosk;
-  StartupDone: boolean;
+  //StartupDone: boolean;
   ArrayAllProductTiles: TPanels;
   ArraySearchPanelTiles: TPanels;
   InTileRebuild: boolean = False;
@@ -203,7 +210,7 @@ var
   LastOrderCol: string;
   detail_visible: boolean = False;
   skinpath: string;
-  preLogfileLogList: TStringList;
+  //preLogfileLogList: TStringList;
 
 resourcestring
   rsNoActionsFound = 'No action requests found.';
@@ -253,7 +260,7 @@ var
   title_Font_Italic: boolean;
   title_Font_Underline: boolean;
   title_Text: string;
-  //tile
+  {//tile
   tile_color: string;
   tile_Font_Name: string;
   tile_Font_Size: integer;
@@ -262,12 +269,7 @@ var
   tile_Font_Italic: boolean;
   tile_Font_Underline: boolean;
   tile_width: integer;
-  tile_height: integer;
-  //TileRadio
-  tile_radio_setup_color: string;
-  tile_radio_uninstall_color: string;
-  tile_radio_none_color: string;
-  tile_radio_font_size: integer;
+  tile_height: integer;}
 
   former_selected_tile: integer;//index of the former selected tile
 
@@ -300,13 +302,13 @@ end;
 
 constructor TProductPanel.Create(TheOwner: TWinControl);
 var
-  IconPath : String;
+  SkinPath : String;
 begin
   try
     inherited Create(TheOwner);
     parent := theOwner;
-    Width := tile_width;
-    Height := tile_height;
+    //Width := tile_width;
+    //Height := tile_height;
     //FlowStyle := fsTopBottomLeftRight;
     //self.OnClick := ProductTileClick;
     //BorderStyle := bsSingle;
@@ -315,14 +317,16 @@ begin
     BevelInner := bvNone;
     BevelOuter := bvNone;
     BorderSpacing.Around := 5;
-    Color := StringToColor(tile_color);
-    Font.Name := tile_Font_Name;
-    font.Size := tile_Font_Size;
-    font.Color := StringToColor(tile_Font_Color);
-    font.Bold := tile_Font_Bold;
-    font.Italic := tile_Font_Italic;
-    font.Underline := tile_Font_Underline;
+    //Color := StringToColor(tile_color);
+    //Font.Name := tile_Font_Name;
+    //font.Size := tile_Font_Size;
+    //font.Color := StringToColor(tile_Font_Color);
+    //font.Bold := tile_Font_Bold;
+    //font.Italic := tile_Font_Italic;
+    //font.Underline := tile_Font_Underline;
     self.OnMouseWheel := scroll;
+    SkinPath := Application.Location + PathDelim + 'opsiclientkioskskin' + PathDelim;
+    LoadSkin(SkinPath);
 
     //Shape (just for looking nice)
     ShapeRoundSquare := TShape.Create(self);
@@ -349,8 +353,8 @@ begin
     with LabelName do begin
       Parent := self;
       font.Style := [fsBold];
-      font.Italic := tile_Font_Italic;
-      font.Underline := tile_Font_Underline;
+      font.Italic := self.Font.Italic;
+      font.Underline := self.Font.Underline;
       Caption := 'name';
       WordWrap := True;
       AutoSize := False;
@@ -372,7 +376,7 @@ begin
     with LabelID do begin
       Parent := self;
       Caption := 'id';
-      Font.Bold := tile_Font_Bold;
+      Font.Bold := self.Font.Bold;
       AutoSize:= False;
       Alignment := taCenter;
       Width := self.Width;
@@ -387,7 +391,6 @@ begin
     end;
 
     //program icon
-    //IconPath := Application.Location + PathDelim + 'progam_icons' + PathDelim + 'default'+ PathDelim + 'opsi-logo.png';
     ImageIcon := TImage.Create(self);
     with ImageIcon do
     begin
@@ -429,97 +432,6 @@ begin
       OnMouseLeave := ProductTileMouseLeave;
     end;
 
-    {*
-    //RadioGroupAction
-    //RadioGroupAction := TRadioGroup.Create(self);
-    RadioGroupAction := TGroupbox.Create(self);
-    //RadioGroupAction.Parent := self;
-    RadioGroupAction.Caption := rsActRequest;
-    RadioGroupAction.BorderSpacing.Left := 3;
-    RadioGroupAction.Font.Size := tile_radio_font_size;
-    RadioGroupAction.AutoSize:= false;
-    //RadioGroupAction.Alignment := taCenter;
-    RadioGroupAction.Align := alNone;
-    RadioGroupAction.Top := 120;
-    RadioGroupAction.Left := 0;
-    //RadioGroupAction.OnClick := self.OnClick;
-    RadioGroupAction.OnClick := ProductTileChildClick;
-    RadioGroupAction.OnMouseWheel := scroll;
-    //RadioGroupAction.OnSelectionChanged := TileActionChanged;
-
-    // radiobuttons
-    // none
-    rbNone := TRadioButton.Create(RadioGroupAction);
-    rbNone.Caption := '';
-    rbNone.Top := 50;
-    rbNone.Align := alTop;
-    rbNone.Parent := RadioGroupAction;
-    rbNone.OnChange := TileActionChanged;
-    rbNone.Tag := 0;
-    rbNone.OnMouseWheel := scroll;
-    lbnone := TLabel.Create(RadioGroupAction);
-    lbnone.Caption := rsActNone;
-    lbnone.Font.Color := StringToColor(tile_radio_none_color);
-    lbnone.Parent := RadioGroupAction;
-    lbnone.top := rbNone.top;
-    lbnone.Left := 30;
-    lbnone.Font.Size := tile_radio_font_size;
-    lbnone.OnClick := rbnone.OnClick;
-    lbnone.OnMouseWheel := scroll;
-    lbnone.BringToFront;
-
-    // setup
-    rbsetup := TRadioButton.Create(RadioGroupAction);
-    rbsetup.Caption := '';
-    rbsetup.Top := 50;
-    rbsetup.Align := alTop;
-    rbsetup.Parent := RadioGroupAction;
-    rbsetup.OnChange := TileActionChanged;
-    rbsetup.Tag := 1;
-    rbsetup.Enabled := False;
-    rbsetup.OnMouseWheel := scroll;
-    lbsetup := TLabel.Create(RadioGroupAction);
-    lbsetup.Caption := rsActSetup;
-    lbsetup.Font.Color := StringToColor(tile_radio_setup_color);
-    lbsetup.Parent := RadioGroupAction;
-    lbsetup.top := rbsetup.top;
-    lbsetup.Left := 30;
-    lbsetup.Font.Size := tile_radio_font_size;
-    lbsetup.Enabled := False;
-    lbsetup.OnClick := rbsetup.OnClick;
-    lbsetup.OnMouseWheel := scroll;
-    lbsetup.BringToFront;
-    //iconsetup:= Timage.Create(self);
-    //iconsetup.Parent := RadioGroupAction;
-    //iconsetup.top := rbsetup.top;
-    //iconsetup.Height:= lbsetup.Height;
-    //iconsetup.Align:=alRight;
-    //iconsetup.Picture.LoadFromFile(skinpath+Pathdelim+'setup.png');
-
-    // uninstall
-    rbuninstall := TRadioButton.Create(RadioGroupAction);
-    rbuninstall.Caption := '';
-    rbuninstall.Top := 50;
-    rbuninstall.Align := alTop;
-    rbuninstall.Parent := RadioGroupAction;
-    rbuninstall.OnChange := TileActionChanged;
-    rbuninstall.Tag := 2;
-    rbuninstall.Enabled := False;
-    rbuninstall.OnMouseWheel := scroll;
-    lbuninstall := TLabel.Create(RadioGroupAction);
-    lbuninstall.Caption := rsActUninstall;
-    lbuninstall.Font.Color := StringToColor(tile_radio_uninstall_color);
-    lbuninstall.Parent := RadioGroupAction;
-    lbuninstall.top := rbuninstall.top;
-    lbuninstall.Left := 30;
-    lbuninstall.Font.Size := tile_radio_font_size;
-    lbuninstall.Enabled := False;
-    lbuninstall.OnClick := rbuninstall.OnClick;
-    lbuninstall.OnMouseWheel := scroll;
-    lbuninstall.BringToFront;
-
-    RadioGroupAction.Height := (lbuninstall.Height + 9) * 3;
-    *}
   except
     on e: Exception do
     begin
@@ -603,6 +515,27 @@ begin
   end;
 end;
 
+procedure TProductPanel.LoadSkin(SkinPath: string);
+var
+  myini: TInifile;
+begin
+  if FileExists(skinpath + 'opsiclientkiosk.ini') then
+  begin
+    LogDatei.Log('loading skin for tile from: ' + skinpath + 'opsiclientkiosk.ini', LLEssential);
+    myini := TIniFile.Create(skinpath + 'opsiclientkiosk.ini');
+    Color := StringToColor(myini.ReadString('Tile', 'Color', 'clDefault'));
+    Font.Name := myini.ReadString('Tile', 'FontName', 'Arial');
+    Font.Size := myini.ReadInteger('Tile', 'FontSize', 10);
+    Font.Color := StringToColor(myini.ReadString('Tile', 'FontColor', 'clBlack'));
+    Font.Bold := StrToBool(myini.ReadString('Tile', 'FontBold','False'));
+    Font.Italic := StrToBool(myini.ReadString('Tile', 'FontItalic','False'));
+    Font.Underline := StrToBool(myini.ReadString('Tile','FontUnderline', 'False'));
+    Width := myini.ReadInteger('Tile', 'Width', 140);
+    Height := myini.ReadInteger('Tile', 'Height', 140);
+    myini.Free;
+  end;
+end;
+
 procedure TProductPanel.TileActionChanged(Sender: TObject);
 var
   pid, actionstr: string;
@@ -614,11 +547,11 @@ begin
     //actionindex := ArrayAllProductTiles[tileindex].RadioGroupAction.ItemIndex;
     actionindex := TRadioButton(Sender).Tag;
     pid := ArrayAllProductTiles[tileindex].LabelId.Caption;
-    ZMQueryDataSet1.First;
-    if ZMQueryDataSet1.Locate('ProductId', VarArrayOf([pid]),
+    DataModuleOCK.SQLQuery1.First;
+    if DataModuleOCK.SQLQuery1.Locate('ProductId', VarArrayOf([pid]),
       [loCaseInsensitive]) then
     begin
-      ZMQueryDataSet1.Edit;
+      DataModuleOCK.SQLQuery1.Edit;
       case actionindex of
         0: actionstr := 'none';
         1: actionstr := 'setup';
@@ -627,9 +560,9 @@ begin
           logdatei.log('Error: Unexpected tag number in TileActionChanged: ' +
             IntToStr(actionindex), LLError);
       end;
-      ZMQueryDataSet1.FieldByName('actionrequest').AsString := actionstr;
+      DataModuleOCK.SQLQuery1.FieldByName('actionrequest').AsString := actionstr;
       FormOpsiClientKiosk.PanelProductDetail.Height := 185;
-      ZMQueryDataSet1.Post;
+      DataModuleOCK.SQLQuery1.Post;
     end;
   end;
 end;
@@ -643,8 +576,8 @@ begin
   begin
     tileindex := TProductPanel(Sender).Tag;
     pid := ArrayAllProductTiles[tileindex].LabelId.Caption;
-    ZMQueryDataSet1.First;
-    if ZMQueryDataSet1.Locate('ProductId', VarArrayOf([pid]),
+    DataModuleOCK.SQLQuery1.First;
+    if DataModuleOCK.SQLQuery1.Locate('ProductId', VarArrayOf([pid]),
       [loCaseInsensitive]) then
     begin
       if detail_visible then
@@ -672,8 +605,8 @@ begin
     tileindex := TControl(Sender).Parent.Tag; //type convertion to TControl (all visual components are of this type), parent is the Panel
     //if tileindex <> former_slected_tile
     pid := ArrayAllProductTiles[tileindex].LabelID.Caption;
-    ZMQueryDataSet1.First;
-    if ZMQueryDataSet1.Locate('ProductId', VarArrayOf([pid]),[loCaseInsensitive]) then
+    DataModuleOCK.SQLQuery1.First;
+    if DataModuleOCK.SQLQuery1.Locate('ProductId', VarArrayOf([pid]),[loCaseInsensitive]) then
     begin
       if detail_visible then
       begin
@@ -790,24 +723,24 @@ begin
     begin
       LabelDataload.Caption := 'Fill Tiles';
       ProgressBar1.Step := 1;
-      ProgressBar1.Max := ProgressBar1.Position + ZMQUerydataset1.RecordCount;
+      ProgressBar1.Max := ProgressBar1.Position + DataModuleOCK.SQLQuery1.RecordCount;
       ProgressBarDetail.Step := 1;
-      ProgressBarDetail.Max := ZMQUerydataset1.RecordCount;
+      ProgressBarDetail.Max := DataModuleOCK.SQLQuery1.RecordCount;
     end;
     Application.ProcessMessages;
     logdatei.log('BuildProductTiles from db start', LLDebug2);
     counter := 0;
-    ZMQuerydataset1.Open;
-    ZMQuerydataset1.First;
-    while not ZMQuerydataset1.EOF do
+    DataModuleOCK.SQLQuery1.Open;
+    DataModuleOCK.SQLQuery1.First;
+    while not DataModuleOCK.SQLQuery1.EOF do
     begin
-      ProductID := ZMQueryDataSet1.FieldByName('ProductId').AsString;
+      ProductID := DataModuleOCK.SQLQuery1.FieldByName('ProductId').AsString;
       FormProgressWindow.LabelDataLoadDetail.Caption := ProductID;
       Application.ProcessMessages;
       SetLength(ArrayProductTiles, counter + 1);
       ArrayProductTiles[counter] := TProductPanel.Create(FormOpsiClientKiosk.FindComponent(OwnerName) as TFlowPanel);
       ArrayProductTiles[counter].LabelID.Caption := ProductID;
-      ArrayProductTiles[counter].LabelName.Caption := ZMQueryDataSet1.FieldByName('ProductName').AsString;
+      ArrayProductTiles[counter].LabelName.Caption := DataModuleOCK.SQLQuery1.FieldByName('ProductName').AsString;
       if FileExists(IconPathCustom + ProductID + '.png') then
         ArrayProductTiles[counter].ImageIcon.Picture.LoadFromFile(IconPathCustom + ProductID + '.png')
       else
@@ -816,10 +749,10 @@ begin
         else
           if FileExists(IconPathDefault + 'opsi-logo.png') then
             ArrayProductTiles[counter].ImageIcon.Picture.LoadFromFile(IconPathDefault + 'opsi-logo.png');
-      state := ZMQueryDataSet1.FieldByName('installationStatus').AsString;
+      state := DataModuleOCK.SQLQuery1.FieldByName('installationStatus').AsString;
       if state = 'installed' then
       begin
-        update := ZMQueryDataSet1.FieldByName('updatePossible').AsString;
+        update := DataModuleOCK.SQLQuery1.FieldByName('updatePossible').AsString;
         if update = 'True' then
         begin
           ArrayProductTiles[counter].LabelState.Caption := rsUpdate;
@@ -841,34 +774,16 @@ begin
         ArrayProductTiles[counter].LabelState.Caption := rsStateUnknown;
         ArrayProductTiles[counter].LabelState.Color := clUnknown;
       end;
-      //radio group
-      {*
-      ArrayProductTiles[counter].rbsetup.Enabled := True;
-      ArrayProductTiles[counter].lbsetup.Enabled := True;
-      action := Trim(ockdata.ZMQUerydataset1.FieldByName('possibleAction').AsString);
-      if (action = 'uninstall') then
-      begin
-        ArrayProductTiles[counter].rbuninstall.Enabled := True;
-        ArrayProductTiles[counter].lbuninstall.Enabled := True;
-      end;
-      action := Trim(ockdata.ZMQUerydataset1.FieldByName('actionrequest').AsString);
-      if (action = 'none') or (action = '') then
-        ArrayProductTiles[counter].rbNone.Checked := True
-      else if action = 'setup' then
-        ArrayProductTiles[counter].rbsetup.Checked := True
-      else if action = 'uninstall' then
-        ArrayProductTiles[counter].rbuninstall.Checked := True;
-      *}
       ArrayProductTiles[counter].Tag := counter;
       Inc(counter);
       //FormProgressWindow.ProgressbarDetail.Position := counter;
       FormProgressWindow.ProgressbarDetail.StepIt;
       FormProgressWindow.ProgressBar1.StepIt;
       Application.ProcessMessages;
-      ZMQUerydataset1.Next;
+      DataModuleOCK.SQLQuery1.Next;
     end;
   finally
-    ZMQUerydataset1.Close;
+    DataModuleOCK.SQLQuery1.Close;
     inTileRebuild := False;
     logdatei.log('BuildProductTiles stop', LLDebug2);
     {*with FormProgressWindow do
@@ -900,15 +815,15 @@ end;
 procedure Tmythread2.Execute;
 begin
   // write back action requests
-  ockdata.ZMQUerydataset1.Filtered := False;
-  ockdata.ZMQUerydataset1.Filter := 'ActionRequest  <> ""';
-  ockdata.ZMQUerydataset1.Filtered := True;
-  ZMQUerydataset1.First;
-  while not ZMQUerydataset1.EOF do
+  datadb.DataModuleOCK.SQLQuery1.Filtered := False;
+  datadb.DataModuleOCK.SQLQuery1.Filter := 'ActionRequest  <> ""';
+  datadb.DataModuleOCK.SQLQuery1.Filtered := True;
+  DataModuleOCK.SQLQuery1.First;
+  while not DataModuleOCK.SQLQuery1.EOF do
   begin
-    ockdata.setActionrequest(ZMQUerydataset1.FieldByName('ProductId').AsString,
-      ZMQUerydataset1.FieldByName('ActionRequest').AsString);
-    ZMQUerydataset1.Next;
+    OCKOpsiConnection.setActionrequest(DataModuleOCK.SQLQuery1.FieldByName('ProductId').AsString,
+      DataModuleOCK.SQLQuery1.FieldByName('ActionRequest').AsString);
+    DataModuleOCK.SQLQuery1.Next;
   end;
   Terminate;
 end;
@@ -926,11 +841,8 @@ begin
   NotebookProducts.PageIndex := RadioGroupView.ItemIndex;
   if RadioGroupView.ItemIndex = 0 then
   begin
-    ockdata.ZMQUerydataset1.Open;
+    datadb.DataModuleOCK.SQLQuery1.Open;
   end;
-  //if StartupDone then
-    //if RadioGroupView.ItemIndex = 1 then
-      //BuildProductTiles;
 end;
 
 procedure TFormOpsiClientKiosk.ScrollBoxUpdateTilesClick(Sender: TObject);
@@ -949,13 +861,13 @@ begin
   try
     screen.Cursor := crHourGlass;
     EditSearch.Clear;
-    ockdata.ZMQUerydataset1.Open;
-    ockdata.ZMQUerydataset1.Filtered := False;
+    datadb.DataModuleOCK.SQLQuery1.Open;
+    datadb.DataModuleOCK.SQLQuery1.Filtered := False;
     SpeedButtonAll.AllowAllUp:= False;
     SpeedButtonAll.Down := True;
     FormOpsiClientKiosk.NotebookProducts.PageIndex:= 1;
   finally
-    ockdata.ZMQUerydataset1.Close;
+    datadb.DataModuleOCK.SQLQuery1.Close;
     screen.Cursor := crDefault;
   end;
 end;
@@ -981,9 +893,9 @@ var
   direction: string;
 begin
   try
-    if ZMQueryDataSet1.Active then
-      ZMQueryDataSet1.Close;
-    ZMQUerydataset1.SQL.Clear;
+    if DataModuleOCK.SQLQuery1.Active then
+      DataModuleOCK.SQLQuery1.Close;
+    DataModuleOCK.SQLQuery1.SQL.Clear;
     direction := ' ASC';
     if LowerCase(lastOrderCol) = LowerCase(Column.FieldName) then
     begin
@@ -1000,9 +912,9 @@ begin
     end
     else
       lastOrderCol := Column.FieldName;
-    ZMQUerydataset1.SQL.Add('select * from products order by ' +
+    DataModuleOCK.SQLQuery1.SQL.Add('select * from products order by ' +
       Column.FieldName + direction);
-    ZMQUerydataset1.Open;
+    DataModuleOCK.SQLQuery1.Open;
   except
   end;
 end;
@@ -1017,12 +929,8 @@ var
   counter, i: integer;
 begin
   StringListTileIDs.Free;
-  if opsidata <> nil then
-  begin
-    // do not send log
-    //opsidata.finishOpsiConf;
-    opsidata.Free;
-  end;
+  DataModuleOCK.Free;
+  OCKOpsiConnection.Free;
   try
     counter := length(ArrayAllProductTiles);
     if counter > 0 then
@@ -1035,7 +943,6 @@ begin
       end;
     SetLength(ArrayAllProductTiles, 0);
     ArrayAllProductTiles := nil;
-
   except
     on e: Exception do
     begin
@@ -1093,9 +1000,9 @@ procedure TFormOpsiClientKiosk.DBComboBox1Exit(Sender: TObject);
 begin
   DBGrid1.Repaint;
   if DBComboBox1.Text <> '' then
-    ockdata.ZMQueryDataSet1.Post;
-  //  ockdata.ZMQueryDataSet1.FieldByName('actionrequest').AsString := 'none';
-  //ockdata.ZMQueryDataSet1.Post;
+    datadb.DataModuleOCK.SQLQuery1.Post;
+  //  ockdata.DataModuleOCK.SQLQuery1.FieldByName('actionrequest').AsString := 'none';
+  //ockdata.DataModuleOCK.SQLQuery1.Post;
 end;
 
 
@@ -1104,10 +1011,10 @@ var
   i: integer;
 begin
   // write back action requests
-  ockdata.ZMQuerydataset1.Filtered := False;
-  //ockdata.ZMQUerydataset1.Filter := ' not ((ActionRequest = "") and (ActionRequest = "none"))';
-  ockdata.ZMQuerydataset1.Filter := 'ActionRequest <> ""';
-  ockdata.ZMQuerydataset1.Filtered := True;
+  datadb.DataModuleOCK.SQLQuery1.Filtered := False;
+  //ockdata.DataModuleOCK.SQLQuery1.Filter := ' not ((ActionRequest = "") and (ActionRequest = "none"))';
+  datadb.DataModuleOCK.SQLQuery1.Filter := 'ActionRequest <> ""';
+  datadb.DataModuleOCK.SQLQuery1.Filtered := True;
   FormProgressWindow.ProcessMess;
   RadioGroupViewSelectionChanged(self);
 end;
@@ -1135,7 +1042,7 @@ begin
       mythread.WaitFor;
 
       begin
-        installdlg.Finstalldlg.Memo1.Text := ockdata.getActionrequests.Text;
+        installdlg.Finstalldlg.Memo1.Text := OCKOpsiConnection.getActionrequests.Text;
         if installdlg.Finstalldlg.Memo1.Text = '' then
           installdlg.Finstalldlg.Memo1.Text := rsNoActionsFound;
         installdlg.Finstalldlg.Show;
@@ -1157,7 +1064,7 @@ begin
       FormProgressWindow.ProcessMess;
       mythread := Tmythread2.Create(False);
       mythread.WaitFor;
-      ockdata.firePushInstallation;
+      OCKOpsiConnection.firePushInstallation;
     finally
       mythread.Terminate;
       Screen.Cursor := crDefault;
@@ -1185,10 +1092,10 @@ begin
   FormOpsiClientKiosk.NotebookProducts.PageIndex:= 4;
   EditSearch.Text := '';
   TimerSearchEdit.Enabled := False;
-  ockdata.ZMQUerydataset1.Filtered := False;
-  ockdata.ZMQUerydataset1.FilterOptions := [foCaseInsensitive];
-  ockdata.ZMQUerydataset1.Filter := 'installationStatus = ""';
-  ockdata.ZMQUerydataset1.Filtered := True;
+  ockdata.DataModuleOCK.SQLQuery1.Filtered := False;
+  ockdata.DataModuleOCK.SQLQuery1.FilterOptions := [foCaseInsensitive];
+  ockdata.DataModuleOCK.SQLQuery1.Filter := 'installationStatus = ""';
+  ockdata.DataModuleOCK.SQLQuery1.Filtered := True;
   FormProgressWindow.ProcessMess;
   while inTileRebuild do
     Sleep(10);
@@ -1243,7 +1150,7 @@ var
   action: string;
 begin
   PanelProductDetail.Height := 185;
-  action := ockdata.ZMQUerydataset1.FieldByName('possibleAction').AsString;
+  action := datadb.DataModuleOCK.SQLQuery1.FieldByName('possibleAction').AsString;
   DBComboBox1.Items.Clear;
   DBComboBox1.Items.Add('none');
   DBComboBox1.Items.Add('setup');
@@ -1281,19 +1188,20 @@ end;
 procedure TFormOpsiClientKiosk.FormActivate(Sender: TObject);
 var
   ErrorMsg: string;
-  optionlist: TStringList;
-  //MyClientID :String;
+  ListOptions: TStringList;
+  MyClientID :String;
 
 begin
-  if not StartupDone then
-  begin
-    StartupDone := True;
+  //if not StartupDone then
+  //begin
+    //StartupDone := True;
+
     Application.ProcessMessages;
-    optionlist := TStringList.Create;
-    optionlist.Append('fqdn::');
-    optionlist.Append('lang:');
+    ListOptions := TStringList.Create;
+    ListOptions.Append('fqdn::');
+    ListOptions.Append('lang:');
     // quick check parameters
-    ErrorMsg := Application.CheckOptions('', optionlist);
+    ErrorMsg := Application.CheckOptions('', ListOptions);
     if ErrorMsg <> '' then
     begin
       Application.ShowException(Exception.Create(ErrorMsg));
@@ -1303,41 +1211,35 @@ begin
     // parse parameters
     if Application.HasOption('fqdn') then
     begin
-      MyClientId := Application.GetOptionValue('fqdn');
+      MyClientID := Application.GetOptionValue('fqdn');
     end;
     if Application.HasOption('lang') then
     begin
       SetDefaultLang(Application.GetOptionValue('lang'));
     end;
     FormProgressWindow.LabelDataLoadDetail.Caption := '';
-
+    //initlogging(MyClientID);
     //ockdata.main;
-    main;
+    OCKOpsiConnection := TOPsiConnection.Create(True, MyClientID);
+    InitOpsiClientKiosk;
     Application.ProcessMessages;
     DBGrid1.DataSource := DataModuleOCK.DataSource1;
     DBGrid2.DataSource := DataModuleOCK.DataSource2;
     PanelProductDetail.Height := 0;
     BuildProductTiles(ArrayAllproductTiles, 'FlowPanelAllTiles');
     // log
-    LogDatei.log('rsActSetup is: ' + rsActSetup + ' with color: ' +
-      tile_radio_setup_color + ' and font size: ' + IntToStr(tile_radio_font_size), LLDebug2);
+    LogDatei.log('rsActSetup is: ' + rsActSetup , LLDebug2);
     LogDatei.log('TitleLabel.Caption: ' + TitleLabel.Caption, LLDebug2);
-  end;
+  //end;
+  ListOptions.Free;
 end;
 
 procedure TFormOpsiClientKiosk.FormShow(Sender: TObject);
 begin
-  FormProgressWindow.LabelDataload.Caption := 'Init';
-  StartupDone := False;
-  TitleLabel.Caption := title_Text;
-  TitleLabel.Font.Name := title_Font_Name;
-  TitleLabel.Font.Size := title_Font_Size;
-  TitleLabel.Font.Color := StringToColor(title_Font_Color);
-  TitleLabel.Font.Bold := title_Font_Bold;
-  TitleLabel.Font.Italic := title_Font_Italic;
-  TitleLabel.Font.Underline := title_Font_Underline;
-  FormOpsiClientKiosk.Repaint;
-  Application.ProcessMessages;
+  //FormProgressWindow.LabelDataload.Caption := 'Init';
+  //StartupDone := False;
+  //FormOpsiClientKiosk.Repaint;
+  //Application.ProcessMessages;
 end;
 
 
@@ -1345,11 +1247,10 @@ procedure TFormOpsiClientKiosk.ReloadDataFromServer;
 var
   i: integer;
 begin
-  //ockdata.fetchProductData_by_getKioskProductInfosForClient;
-  fetchProductData(ZMQuerydataset1,'getKioskProductInfosForClient');
-  StartupDone := False;
+  OCKOpsiConnection.fetchProductData(DataModuleOCK.SQLQuery1,'getKioskProductInfosForClient');
+  //StartupDone := False;
   RadioGroupViewSelectionChanged(self);
-  StartupDone := True;
+  //StartupDone := True;
 end;
 
 procedure TFormOpsiClientKiosk.EditSearchChange(Sender: TObject);
@@ -1376,69 +1277,44 @@ begin
   end;
 end;
 
-procedure TFormOpsiClientKiosk.FormCreate(Sender: TObject);
-
-  procedure loadskin(skinpath: string);
-  var
-    myini: TInifile;
-  begin
-    if FileExists(skinpath + 'opsiclientkiosk.ini') then
-    begin
-      preLogfileLogList.Add('loading from: ' + skinpath + 'opsiclientkiosk.ini');
-      myini := TIniFile.Create(skinpath + 'opsiclientkiosk.ini');
-      //title
-      title_Text :=
-        myini.ReadString('TitleLabel', 'Text', title_Text);
-      preLogfileLogList.Add('title_Text: ' + title_Text);
-      title_Font_Name := myini.ReadString('TitleLabel', 'FontName', title_Font_Name);
-      title_Font_Size := myini.ReadInteger('TitleLabel', 'FontSize', title_Font_Size);
-      title_Font_Color := myini.ReadString('TitleLabel', 'FontColor', title_Font_Color);
-      title_Font_Bold := strToBool(myini.ReadString('TitleLabel',
-        'FontBold', boolToStr(title_Font_Bold)));
-      title_Font_Italic :=
-        strToBool(myini.ReadString('TitleLabel', 'FontItalic',boolToStr(title_Font_Italic)));
-      title_Font_Underline :=
-        strToBool(myini.ReadString('TitleLabel', 'FontUnderline', boolToStr(title_Font_Underline)));
-      //tile
-      tile_color := myini.ReadString('Tile', 'Color', tile_color);
-      tile_Font_Name := myini.ReadString('Tile', 'FontName', tile_Font_Name);
-      tile_Font_Size := myini.ReadInteger('Tile', 'FontSize', tile_Font_Size);
-      tile_Font_Color := myini.ReadString('Tile', 'FontColor', tile_Font_Color);
-      tile_Font_Bold := strToBool(myini.ReadString('Tile', 'FontBold',
-        boolToStr(tile_Font_Bold)));
-      tile_Font_Italic := strToBool(myini.ReadString('Tile', 'FontItalic',
-        boolToStr(tile_Font_Italic)));
-      tile_Font_Underline := strToBool(myini.ReadString('Tile',
-        'FontUnderline', boolToStr(tile_Font_Underline)));
-      tile_width := myini.ReadInteger('Tile', 'Width', tile_width);
-      tile_height := myini.ReadInteger('Tile', 'Height', tile_height);
-      //TileRadio
-      tile_radio_setup_color := myini.ReadString('TileRadio', 'Setup_color',
-        tile_radio_setup_color);
-      tile_radio_uninstall_color :=
-        myini.ReadString('TileRadio', 'Uninstall_color', tile_radio_uninstall_color);
-      tile_radio_none_color := myini.ReadString('TileRadio', 'None_color',
-        tile_radio_none_color);
-      tile_radio_font_size := myini.ReadInteger('TileRadio', 'Fontsize',
-        tile_radio_font_size);
-      myini.Free;
-    end;
-  end;
-
+procedure TFormOpsiClientKiosk.LoadSkin(SkinPath: string);
+var
+  myini: TInifile;
 begin
+  if FileExists(skinpath + 'opsiclientkiosk.ini') then
+  begin
+    LogDatei.Log('loading skin for title from: ' + skinpath + 'opsiclientkiosk.ini', LLEssential);
+    myini := TIniFile.Create(skinpath + 'opsiclientkiosk.ini');
+    //title
+    TitleLabel.Caption := myini.ReadString('TitleLabel', 'Text', 'Opsi Client Kiosk');
+    LogDatei.log('Title_Caption: ' + TitleLabel.Caption, LLDebug);
+    TitleLabel.Font.Name := myini.ReadString('TitleLabel', 'FontName', 'Arial');
+    TitleLabel.Font.Size := myini.ReadInteger('TitleLabel', 'FontSize', 20);
+    TitleLabel.Font.Color := StringToColor(myini.ReadString('TitleLabel', 'FontColor', 'clBlack'));
+    TitleLabel.Font.Bold := StrToBool(myini.ReadString('TitleLabel','FontBold','True'));
+    TitleLabel.Font.Italic := StrToBool(myini.ReadString('TitleLabel', 'FontItalic','False'));
+    TitleLabel.Font.Underline := StrToBool(myini.ReadString('TitleLabel', 'FontUnderline', 'False'));
+    myini.Free;
+  end;
+end;
+
+procedure TFormOpsiClientKiosk.FormCreate(Sender: TObject);
+begin
+  InitLogging('kiosk-' + GetUserName_ +'.log', self.Name + '.FormCreate', LLDebug);
   StringListTileIDs := TStringList.Create;
+  //OCKOpsiConnection := TOPsiConnection.Create(True);
   NotebookProducts.PageIndex := 1;  //tiles
   FormOpsiClientKiosk.PanelProductDetail.Height := 0;
   detail_visible := False;
-  preLogfileLogList := TStringList.Create;
-  preLogfileLogList.Add(Application.Name + ' starting at ' + DateTimeToStr(now));
 
   // Load custom skin
+
   skinpath := Application.Location + PathDelim + 'opsiclientkioskskin' + PathDelim;
   if FileExistsUTF8(skinpath + 'opsiclientkiosk.png') then
   begin
     ImageHeader.Picture.LoadFromFile(skinpath + 'opsiclientkiosk.png');
   end;
+
   //title
   title_Text := 'opsi client Kiosk';
   title_Font_Name := 'Arial';
@@ -1447,7 +1323,8 @@ begin
   title_Font_Bold := true;
   title_Font_Italic := false;
   title_Font_Underline := false;
-  //tile
+
+  {//tile
   tile_color := 'clCream';
   tile_Font_Name := 'Arial';
   tile_Font_Size := 10;
@@ -1456,15 +1333,11 @@ begin
   tile_Font_Italic := False;
   tile_Font_Underline := False;
   tile_width := 140;
-  tile_height := 140;
-  //TileRadio
-  tile_radio_setup_color := 'clGreen';
-  tile_radio_uninstall_color := 'clRed';
-  tile_radio_none_color := 'clBlack';
-  tile_radio_font_size := 10;
+  tile_height := 140;}
+
   if FileExists(skinpath + 'opsiclientkiosk.ini') then
   begin
-    loadskin(skinpath);
+    LoadSkin(skinpath);
   end;
 
   // skinpath in opsiclientagent custom dir
@@ -1476,10 +1349,11 @@ begin
   end;
   if FileExistsUTF8(skinpath + 'opsiclientkiosk.ini') then
   begin
-    loadskin(skinpath);
+    LoadSkin(skinpath);
   end;
+
   GetDefaultLang;
-  preLogfileLogList.Add('GetDefaultLang: ' + GetDefaultLang);
+  LogDatei.log('GetDefaultLang: ' + GetDefaultLang, LLEssential);
   //grouplist.Clear;
   DBGrid1.Columns.Add.FieldName := 'ProductId';
   DBGrid1.Columns.Items[0].Title.Caption := 'ProductId';
@@ -1526,11 +1400,11 @@ var
   Filtercond, Filterstr: string;
 begin
   try
-    ockdata.ZMQUerydataset1.Open;
+    datadb.DataModuleOCK.SQLQuery1.Open;
     if EditSearch.Text = '' then
     begin
       //Filtercond := '"*"';
-      ockdata.ZMQUerydataset1.Filtered := False;
+      datadb.DataModuleOCK.SQLQuery1.Filtered := False;
       LogDatei.log('Search for: ' + EditSearch.Text + ' Filter off.', LLinfo);
     end
     else
@@ -1543,22 +1417,22 @@ begin
       Filterstr := Filterstr + 'or DESCRIPTION =' + Filtercond;
       Filterstr := Filterstr + 'or ADVICE =' + Filtercond;
       Filterstr := Filterstr + 'or INSTALLATIONSTATUS =' + Filtercond;
-      ockdata.ZMQuerydataset1.Filter := Filterstr;
-      ockdata.ZMQuerydataset1.FilterOptions := [foCaseInsensitive];
-      ockdata.ZMQuerydataset1.Filtered := True;
-      ZMQuerydataset1.First;
+      datadb.DataModuleOCK.SQLQuery1.Filter := Filterstr;
+      datadb.DataModuleOCK.SQLQuery1.FilterOptions := [foCaseInsensitive];
+      datadb.DataModuleOCK.SQLQuery1.Filtered := True;
+      DataModuleOCK.SQLQuery1.First;
       {******* Hier weiter machen****
          Verknüpfung Database ID mit Panel ID zum Suchen
       *******************************}
-      //while not ZMQuerydataset1.EOF do
+      //while not DataModuleOCK.SQLQuery1.EOF do
       //begin
-        //ProductID := ZMQueryDataSet1.FieldByName('ProductId').AsString;
+        //ProductID := DataModuleOCK.SQLQuery1.FieldByName('ProductId').AsString;
 
       //end;
       BuildProductTiles(ArraySearchPanelTiles, 'FlowPanelSearchTiles');
     end;
   finally
-    ockdata.ZMQUerydataset1.Close;
+    datadb.DataModuleOCK.SQLQuery1.Close;
   end;
   //if not SpeedButtonExpertMode.Down then
 end;
@@ -1600,11 +1474,11 @@ procedure TFormOpsiClientKiosk.BitBtnCancelClick(Sender: TObject);
 var
   counter, i: integer;
 begin
-  if opsidata <> nil then
+  if OCKOpsiConnection.OpsiData <> nil then
   begin
     // do not send log
     //opsidata.finishOpsiConf;
-    opsidata.Free;
+    OCKOpsiConnection.OpsiData.Free;
   end;
   try
     counter := length(ArrayAllProductTiles);
@@ -1636,7 +1510,7 @@ end;
   @author  Miha-R, Lee_Nover
   @since   2002-11-25
 }
-function GetUserName_: string;
+function TFormOpsiClientKiosk.GetUserName_: string;
 var
   buffer: PChar;
   bufferSize: DWORD;
@@ -1652,25 +1526,22 @@ begin
 end; { DSiGetUserName}
 
 
-function initLogging(const clientname: string): boolean;
-var
-  i : integer;
+function TFormOpsiClientKiosk.InitLogging(const LogFileName, CallingMethod: string;
+  MyLogLevel:integer): boolean;
 begin
-  Result := True;
   LogDatei := TLogInfo.Create;
-  logfilename := 'kiosk-' + GetUserName_ +'.log';
   LogDatei.WritePartLog := False;
   LogDatei.WriteErrFile:= False;
   LogDatei.WriteHistFile:= False;
-  logdatei.CreateTheLogfile(logfilename, False);
-  logdatei.LogLevel := myloglevel;
-  for i := 0 to preLogfileLogList.Count-1 do
-    logdatei.log(preLogfileLogList.Strings[i], LLessential);
-  preLogfileLogList.Free;
-  logdatei.log('opsi-client-kiosk: version: ' + ProgramInfo.Version, LLessential);
+  LogDatei.CreateTheLogfile(LogFileName, False);
+  LogDatei.LogLevel := MylogLevel;
+  LogDatei.log(Application.Name + ' starting at ' + DateTimeToStr(now), LLEssential);
+  LogDatei.log('opsi-client-kiosk: version: ' + ProgramInfo.Version, LLEssential);
+  LogDatei.log('Initialize Logging,  calling method='+ CallingMethod, LLNotice);
+  InitLogging := True;
 end;
 
-procedure main;
+procedure TFormOpsiClientKiosk.InitOpsiClientKiosk;
 var
   ErrorMsg: string;
   parameters: array of string;
@@ -1682,21 +1553,19 @@ begin
   FormProgressWindow.LabelInfo.Caption := 'Please wait while connecting to service';
   FormProgressWindow.LabelDataload.Caption := 'Connect opsi Web Service';
   FormProgressWindow.ProcessMess;
-  myexitcode := 0;
-  myerror := '';
-  if opsiclientdmode then readconf2
-    else readconf;
+  //if OCKOpsiConnection.opsiclientdmode then OCKOpsiConnection.readconf2
+    //else OCKOpsiConnection.readconf;
   // opsiconfd mode
   //readconf;
   // opsiclientd mode
   //readconf2;
   // do not forget to check firePushInstallation
-  initlogging(myclientid);
-  LogDatei.log('clientid=' + myclientid, LLNotice);
-  LogDatei.log('service_url=' + myservice_url, LLNotice);
-  LogDatei.log('service_user=' + myclientid, LLNotice);
-  logdatei.AddToConfidentials(myhostkey);
-  LogDatei.log('host_key=' + myhostkey, LLdebug3);
+  //initlogging(OCKOpsiConnection.myclientid);
+  LogDatei.log('clientid=' + OCKOpsiConnection.myclientid, LLNotice);
+  LogDatei.log('service_url=' + OCKOpsiConnection.myservice_url, LLNotice);
+  LogDatei.log('service_user=' + OCKOpsiConnection.myclientid, LLNotice);
+  logdatei.AddToConfidentials(OCKOpsiConnection.myhostkey);
+  LogDatei.log('host_key=' + OCKOpsiConnection.myhostkey, LLdebug3);
   // is an other instance running ?
   if numberOfProcessInstances(ExtractFileName(ParamStr(0))) > 1 then
   begin
@@ -1715,15 +1584,16 @@ begin
   FormProgressWindow.ProgressBar1.StepIt;
   FormProgressWindow.ProcessMess;
 
-  if initConnection(30, ConnectionInfo) then
+  if OCKOpsiConnection.initConnection(30, ConnectionInfo) then
   begin
     LogDatei.log('init Connection done', LLNotice);
     FormOpsiClientKiosk.StatusBar1.Panels[0].Text := ConnectionInfo;
-    initdb;
+    DatamoduleOCK := TDataModuleOCK.Create(nil);
+    DataModuleOCK.InitDB;
     FormProgressWindow.LabelInfo.Caption := 'Please wait while gettting products';
     LogDatei.log('start fetchProductData_by_getKioskProductInfosForClient', LLNotice);
     //fetchProductData_by_getKioskProductInfosForClient;
-    fetchProductData(ZMQuerydataset1,'getKioskProductInfosForClient');
+    OCKOpsiConnection.fetchProductData(DataModuleOCK.SQLQuery1,'getKioskProductInfosForClient');
     LogDatei.log('Handle products done', LLNotice);
     FormProgressWindow.LabelDataload.Caption := 'Handle Products';
     FormProgressWindow.ProcessMess;
@@ -1731,8 +1601,8 @@ begin
   else
   begin
     LogDatei.log('init Connection failed - Aborting', LLError);
-    if opsidata <> nil then
-      opsidata.Free;
+    if OCKOpsiConnection.OpsiData <> nil then
+      OCKOpsiConnection.OpsiData.Free;
     FormOpsiClientKiosk.Terminate;
     halt(1);
   end;

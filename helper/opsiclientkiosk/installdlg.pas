@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ButtonPanel,
-  ComCtrls, ExtCtrls, StdCtrls, Buttons,ockdata;
+  ComCtrls, ExtCtrls, StdCtrls, Buttons,opsiconnection;
 
 type
 
@@ -43,7 +43,7 @@ begin
     // fire on demand
     //http://wiki.freepascal.org/Cursor#Example_3:_Change_All_Controls_To_An_Hour_Glass.2C_Except_TBitBtn_Controls
     screen.Cursor := crHourGlass;
-    ockdata.firePushInstallation;
+    OCKOpsiConnection.firePushInstallation;
   finally
     screen.Cursor := crDefault;
   end;
