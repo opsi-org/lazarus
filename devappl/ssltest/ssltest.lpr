@@ -152,9 +152,12 @@ begin
   networkup := False;
   timeout := False;
   myseconds := seconds;
-  myservice_url := 'https://192.168.1.14:4447/rpc';
-  myclientid := 'pcbon4.uib.local';
-  myhostkey := '379187d370b6aa9a7babe0b6c5f0bc64';
+  //myservice_url := 'https://192.168.1.14:4447/rpc';
+  myservice_url := 'https://172.16.166.1:4447/rpc';
+  //myclientid := 'pcbon4.uib.local';
+  myclientid := 'win10x64.vmnat.local';
+  //myhostkey := '379187d370b6aa9a7babe0b6c5f0bc64';
+  myhostkey := 'b6d17719e8653437f3ec2e5276b9747f';
 
   LogDatei.log('service_url=' + myservice_url, LLDebug2);
   LogDatei.log('service_pass=' + myhostkey, LLDebug2);
@@ -204,7 +207,8 @@ var
 begin
 
   initlog;
-  result := getOpsiServerVersion('https://192.168.0.3:4447/rpc','adminuser','linux123',session);
+  //result := getOpsiServerVersion('https://192.168.0.3:4447/rpc','adminuser','linux123',session);
+  result := getOpsiServerVersion('https://172.16.166.1:4447/rpc','adminuser','linux123',session);
   writeln('result: '+result);
   initConnection(30);
   if opsidata.sendLog then writeln('send done')
