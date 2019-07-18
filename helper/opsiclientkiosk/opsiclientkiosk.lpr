@@ -8,8 +8,8 @@ uses
   {$ENDIF}//{$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Classes, SysUtils, Forms, lazcontrols, lcltranslator, inifiles,
-  opsiclientkioskgui, ockdata, installdlg, datadb, osprocesses, progresswindow,
-  proginfo, ocklogging, opsiconnection;
+  opsiclientkioskgui, installdlg, datadb, osprocesses, progresswindow,
+  proginfo, opsiconnection;
 
 
 {$R *.res}

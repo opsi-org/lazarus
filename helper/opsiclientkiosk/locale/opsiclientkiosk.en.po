@@ -14,14 +14,6 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: ockdata.rsallgroups
-msgid "All groups"
-msgstr "All groups"
-
-#: ockdata.rsnogroups
-msgid "No Product Groups found ..."
-msgstr "No Product Groups found ..."
-
 #: opsiclientkioskgui.rsactnone
 msgid "None"
 msgstr "None"

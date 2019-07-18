@@ -18,14 +18,14 @@ uses
   inifiles,
   Variants,
  // fileinfo,
-  proginfo,
+  proginfo;
   //winpeimagereader,
   //lcltranslator,
   //datadb,
   //osprocesses,
   //jwawinbase,
   //dialogs,
-  progresswindow;
+  //progresswindow;
 
 type
   //TMyOpsiConf = record
@@ -36,7 +36,7 @@ type
     ProductID: String;
     ProductVersion: String;
     PackageVersion: String;
-    VersionsStr: String;
+    VersionStr: String;
     ProductName: String;
     Description: String;
     Advice: String;
@@ -73,8 +73,10 @@ type
     function MyOpsiMethodCall2(const method: string; parameters: array of string): string;
     function initConnection(const seconds: integer; var ConnectionInfo:string): boolean;
     procedure closeConnection;
-    procedure fetchProductData(Data:TDataSet; const OpsiMethod:string);
-    function fetchProduct(ProductNumber:integer):TProduct;
+    //procedure fetchProductData(Data:TDataSet; const OpsiMethod:string);
+    procedure LoadProductsFromServer;
+    function FetchProduct(ProductNumber:integer):TProduct;
+    function LengthOpsiProducts:integer;
     procedure setActionrequest(pid: string; request: string);
     function getActionrequests: TStringList;
     procedure firePushInstallation;
@@ -83,7 +85,7 @@ type
   end;
 
  var
-   OckOpsiConnection:TOpsiConnection;
+   OCKOpsiConnection:TOpsiConnection;
 
 implementation
 
@@ -184,25 +186,30 @@ begin
   end;
 end;
 
+procedure TOpsiConnection.LoadProductsFromServer;
+var
+  StringJSON:string;
+begin
+  StringJSON := MyOpsiMethodCall('getKioskProductInfosForClient', [myclientid]);
+  opsiProducts := SO(StringJSON).O['result'];
+end;
+
 function TOpsiConnection.initConnection(const seconds: integer; var ConnectionInfo:string): boolean;
 var
   networkup, timeout: boolean;
   myseconds: integer;
   resultstring: string;
 begin
-  FormProgressWindow.LabelDataLoad.Caption := 'Connecting to OPSI web service';
-  //FormProgressWindow.ProcessMess;
+  //FormProgressWindow.LabelDataLoad.Caption := 'Connecting to OPSI web service';
+  //FormProgressWindow.ProgressBar1.StepIt;
   //FormOpsiClientKiosk.Cursor := crHourGlass;
+  //FormProgressWindow.ProcessMess;
   Result := False;
   networkup := False;
   timeout := False;
   myseconds := seconds;
-
-  FormProgressWindow.ProgressBar1.StepIt;
-  //FormProgressWindow.ProcessMess;
   repeat
     try
-      FormProgressWindow.ProcessMess;
       if myseconds > 0 then
       begin
         resultstring := MyOpsiMethodCall('getDepotId', [myclientid]);
@@ -213,18 +220,19 @@ begin
     except
       LogDatei.log('opsidata not connected - retry', LLInfo);
       myseconds := myseconds - 1;
-      FormProgressWindow.ProgressBar1.StepIt;
+      //FormProgressWindow.ProgressBar1.StepIt;
       Sleep(1000);
     end;
-    FormProgressWindow.ProgressBar1.StepIt;
+    //FormProgressWindow.ProgressBar1.StepIt;
     //FormProgressWindow.ProcessMess;
   until networkup or timeout;
 
   if networkup then
   begin
     LogDatei.log('opsidata connected', LLInfo);
-    //FormOpsiClientKiosk.StatusBar1.Panels[0].Text :=
-      //'Connected to ' + myservice_url + ' as ' + myclientid;
+    //FormProgressWindow.ProgressBar1.StepIt;
+    //FormProgressWindow.ProcessMess;
+    //FormProgressWindow.LabelDataLoad.Caption := 'Connection  done';
     ConnectionInfo := 'Connected to ' + myservice_url + ' as ' + myclientid;
     Result := True;
   end
@@ -232,97 +240,13 @@ begin
   begin
     LogDatei.log('init connection failed (timeout after ' + IntToStr(seconds) +
       ' seconds/retries.', LLError);
-    //FormOpsiClientKiosk.StatusBar1.Panels[0].Text := 'Connection failed';
     ConnectionInfo := 'Connection failed';
   end;
-  FormProgressWindow.ProgressBar1.StepIt;
-  FormProgressWindow.ProcessMess;
   //FormOpsiClientKiosk.Cursor := crArrow;
 end;
 
-procedure TOpsiConnection.fetchProductData(Data:TDataSet; const OpsiMethod:string);
-var
-  resultstring, groupstring, method, testresult: string;
-  jOResult, new_obj, detail_obj: ISuperObject;
-  i: integer;
-  str, pid, depotid, pidliststr, reqtype: string;
-  //productdatarecord: TProductData;
-begin
-  logdatei.log('starting fetchProductData ....', LLInfo);
-  FormProgressWindow.ProgressBar1.StepIt;
-  FormProgressWindow.ProcessMess;
-  FormProgressWindow.LabelInfo.Caption := 'Loading data ...';
 
-  resultstring := MyOpsiMethodCall('getKioskProductInfosForClient', [myclientid]);
-  new_obj := SO(resultstring).O['result'];
-  LogDatei.log('Get products done', LLNotice);
-
-  FormProgressWindow.LabelDataload.Caption := 'Fill Database';
-  FormProgressWindow.ProgressbarDetail.Max := new_obj.AsArray.Length;
-  FormProgressWindow.ProgressbarDetail.Min := 0;
-  FormProgressWindow.ProgressbarDetail.Position := 0;
-  FormProgressWindow.ProcessMess;
-
-  // product data to database
-  Data.Open;
-  for i := 0 to new_obj.AsArray.Length - 1 do
-  begin
-    detail_obj := new_obj.AsArray.O[i];
-    //str := detail_obj.AsString;
-    //str := detail_obj.S['productId'];
-    //FormProgressWindow.LabelDataLoadDetail.Caption := str;
-    //FormProgressWindow.ProgressBarDetail.StepIt;
-    //FormProgressWindow.ProcessMess;
-    //productdatarecord.id := str;
-    logdatei.log('read: ' + detail_obj.S['productId'], LLInfo);
-    Data.Append;
-    Data.FieldByName('ProductId').AsString := detail_obj.S['productId'];
-    Data.FieldByName('productVersion').AsString :=
-      detail_obj.S['productVersion'];
-    Data.FieldByName('packageVersion').AsString :=
-      detail_obj.S['packageVersion'];
-    Data.FieldByName('versionstr').AsString :=
-      detail_obj.S['productVersion'] + '-' + detail_obj.S['packageVersion'];
-    Data.FieldByName('ProductName').AsString := detail_obj.S['productName'];
-    Data.FieldByName('description').AsString := detail_obj.S['description'];
-    Data.FieldByName('advice').AsString := detail_obj.S['advice'];
-    Data.FieldByName('priority').AsString := detail_obj.S['priority'];
-    Data.FieldByName('producttype').AsString := detail_obj.S['productType'];
-    Data.FieldByName('hasSetup').AsString := detail_obj.S['hasSetup'];
-    Data.FieldByName('hasUninstall').AsString :=
-      detail_obj.S['hasUninstall'];
-    if detail_obj.S['installationStatus'] = 'not_installed' then
-      Data.FieldByName('installationStatus').AsString := ''
-    else
-      Data.FieldByName('installationStatus').AsString :=
-        detail_obj.S['installationStatus'];
-    Data.FieldByName('installedprodver').AsString :=
-      detail_obj.S['installedProdVer'];
-    Data.FieldByName('installedpackver').AsString :=
-      detail_obj.S['installedPackVer'];
-    Data.FieldByName('installedverstr').AsString :=
-      detail_obj.S['installedVerStr'];
-    if detail_obj.S['actionRequest'] = 'none' then
-      Data.FieldByName('actionrequest').AsString := ''
-    else
-      Data.FieldByName('actionrequest').AsString :=
-        detail_obj.S['actionRequest'];
-    Data.FieldByName('actionresult').AsString := detail_obj.S['actionResult'];
-    Data.FieldByName('updatePossible').AsString :=
-      detail_obj.S['updatePossible'];
-    Data.FieldByName('possibleAction').AsString :=
-      detail_obj.S['possibleAction'];
-    Data.Post;
-
-    // productDependencies
-  end;
-
-  Data.Close;
-  //Data.Open;
-  //Data.First;
-end;
-
-function TOpsiConnection.fetchProduct(ProductNumber:integer):TProduct;
+function TOpsiConnection.FetchProduct(ProductNumber: integer): TProduct;
 var
   resultstring, groupstring, method, testresult: string;
   //jOResult,
@@ -333,32 +257,14 @@ var
   //productdatarecord: TProductData;
 begin
   logdatei.log('starting fetchProductData ....', LLInfo);
-  FormProgressWindow.ProgressBar1.StepIt;
-  FormProgressWindow.ProcessMess;
-  FormProgressWindow.LabelInfo.Caption := 'Loading data ...';
 
-  LogDatei.log('Get products done', LLNotice);
-
-  FormProgressWindow.LabelDataload.Caption := 'Fill Database';
-  FormProgressWindow.ProgressbarDetail.Max := opsiProducts.AsArray.Length;
-  FormProgressWindow.ProgressbarDetail.Min := 0;
-  FormProgressWindow.ProgressbarDetail.Position := 0;
-  FormProgressWindow.ProcessMess;
-
-  // product data to TProduct
-  //for i := 0 to new_obj.AsArray.Length - 1 do
+  { Opsi product to TProduct }
   opsiProduct := opsiProducts.AsArray.O[ProductNumber];
-  //str := detail_obj.AsString;
-  //str := detail_obj.S['productId'];
-  //FormProgressWindow.LabelDataLoadDetail.Caption := str;
-  //FormProgressWindow.ProgressBarDetail.StepIt;
-  //FormProgressWindow.ProcessMess;
-  //productdatarecord.id := str;
   logdatei.log('read: ' + opsiProduct.S['productId'], LLInfo);
   Result.ProductID := opsiProduct.S['productId'];
   Result.ProductVersion := opsiProduct.S['productVersion'];
   Result.PackageVersion := opsiProduct.S['packageVersion'];
-  Result.VersionsStr := opsiProduct.S['productVersion'] + '-' + opsiProduct.S['packageVersion'];
+  Result.VersionStr := opsiProduct.S['productVersion'] + '-' + opsiProduct.S['packageVersion'];
   Result.ProductName := opsiProduct.S['productName'];
   Result.Description := opsiProduct.S['description'];
   Result.Advice := opsiProduct.S['advice'];
@@ -383,10 +289,13 @@ begin
  // productDependencies
 end;
 
+function TOpsiConnection.LengthOpsiProducts: integer;
+begin
+  result := opsiProducts.AsArray.length;
+end;
+
 
 constructor TOpsiConnection.Create(clientdmode:boolean; ClientID:string);overload;
-var
-  StringJSON:string;
 begin
   inherited Create;
   opsiclientdmode := clientdmode;
@@ -395,17 +304,18 @@ begin
   myclientid := ClientID;
   if opsiclientdmode then readconf2
     else readconf;
-  OpsiData := TOpsi4Data.Create;
   LogDatei.log('service_url=' + myservice_url, LLDebug2);
-  LogDatei.log('service_pass=' + myhostkey, LLDebug2);
+  //LogDatei.log('service_pass=' + myhostkey, LLDebug2);
   LogDatei.log('clientid=' + myclientid, LLDebug2);
+  LogDatei.log('service_user=' + myclientid, LLNotice);
+  LogDatei.AddToConfidentials(myhostkey);
+  LogDatei.log('host_key=' + myhostkey, LLdebug3);
+  OpsiData := TOpsi4Data.Create;
   LogDatei.log('opsidata created', LLDebug2);
   OpsiData.SetActualClient(myclientid);
   OpsiData.InitOpsiConf(myservice_url, myclientid,
     myhostkey, '', '', '', 'opsi-client-kiosk-' + ProgramInfo.Version);
   LogDatei.log('opsidata initialized', LLDebug2);
-  StringJSON := MyOpsiMethodCall('getKioskProductInfosForClient', [myclientid]);
-  opsiProducts := SO(StringJSON).O['result'];
 end;
 
 destructor TOpsiConnection.Destroy;

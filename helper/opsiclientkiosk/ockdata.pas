@@ -88,28 +88,28 @@ begin
     ProgressBar1.StepIt;
   end;
   DatamoduleOCK := TDataModuleOCK.Create(nil);
-  DatamoduleOCK.SQLite3Connection1.Close; // Ensure the connection is closed when we start
+  DatamoduleOCK.SQLite3Connection.Close; // Ensure the connection is closed when we start
   try
     // Since we're making this database for the first time,
     // check whether the file already exists
-    DatamoduleOCK.SQLite3Connection1.DatabaseName := GetTempDir + 'opsikiosk.db';
-    logdatei.log('db is : ' + DatamoduleOCK.SQLite3Connection1.DatabaseName, LLInfo);
-    if FileExists(DatamoduleOCK.SQLite3Connection1.DatabaseName) then
-      DeleteFileUTF8(DatamoduleOCK.SQLite3Connection1.DatabaseName);
-    newFile := not FileExists(DatamoduleOCK.SQLite3Connection1.DatabaseName);
+    DatamoduleOCK.SQLite3Connection.DatabaseName := GetTempDir + 'opsikiosk.db';
+    logdatei.log('db is : ' + DatamoduleOCK.SQLite3Connection.DatabaseName, LLInfo);
+    if FileExists(DatamoduleOCK.SQLite3Connection.DatabaseName) then
+      DeleteFileUTF8(DatamoduleOCK.SQLite3Connection.DatabaseName);
+    newFile := not FileExists(DatamoduleOCK.SQLite3Connection.DatabaseName);
 
     if newFile then
     begin
       // Create the database and the tables
       try
         logdatei.log('Creating new database ', LLInfo);
-        DatamoduleOCK.SQLite3Connection1.Open;
+        DatamoduleOCK.SQLite3Connection.Open;
         DatamoduleOCK.SQLTransaction1.Active := True;
         ZMQuerydataset1 := DatamoduleOCK.SQLQuery1;
         ZMQuerydataset2 := DatamoduleOCK.SQLQuery2;
 
         try
-          DatamoduleOCK.SQLite3Connection1.ExecuteDirect(
+          DatamoduleOCK.SQLite3Connection.ExecuteDirect(
             'CREATE TABLE products (' + 'ProductId String not null primary key, ' +
             'ProductName String, ' + 'description String, ' +
             'advice String, ' + 'productversion String, ' +
@@ -134,7 +134,7 @@ begin
 
         //Datamodule1.SQLTransaction1.Commit;
         try
-          DatamoduleOCK.SQLite3Connection1.ExecuteDirect(
+          DatamoduleOCK.SQLite3Connection.ExecuteDirect(
             'CREATE TABLE dependencies (ProductId String not null, ' +
             'requiredProductId String, required String, ' +
             'prerequired String, postrequired String, ' +

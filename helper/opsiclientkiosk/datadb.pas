@@ -12,7 +12,8 @@ uses
   db,
   FileUtil,
   oslog,
-  progresswindow,
+  opsiconnection,
+  //progresswindow,
   lazfileutils;
 
 type
@@ -22,12 +23,14 @@ type
   TDataModuleOCK = class(TDataModule)
     DataSource1: TDataSource;
     DataSource2: TDataSource;
-    SQLite3Connection1: TSQLite3Connection;
+    SQLite3Connection: TSQLite3Connection;
     SQLQuery1: TSQLQuery;
     SQLQuery2: TSQLQuery;
     SQLTransaction1: TSQLTransaction;
     procedure InitDB;
-    procedure SQLQuery1AfterPost(DataSet: TDataSet);
+    procedure OpsiProductsToDataset(Dataset: TDataset);
+    procedure SQLQuery1AfterPost(Dataset: TDataset);
+    constructor Create(AOwner: TComponent);override;
   private
     { private declarations }
   public
@@ -47,10 +50,10 @@ implementation
 { TDataModuleOCK }
 
 
-procedure TDataModuleOCK.SQLQuery1AfterPost(DataSet: TDataSet);
+procedure TDataModuleOCK.SQLQuery1AfterPost(Dataset: TDataset);
 begin
   try
-  TsqlQuery(dataset).ApplyUpdates;
+  TSQLQuery(Dataset).ApplyUpdates;
   //TsqlQuery(dataset).Refresh;
    except
     on e: Exception do
@@ -63,38 +66,38 @@ begin
   end;
 end;
 
+constructor TDataModuleOCK.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  DataSource1.Dataset := SQLQuery1;
+  DataSource2.Dataset := SQLQuery2;
+  SQLQuery2.DataSource := DataModuleOCK.DataSource1;
+end;
+
 procedure TDataModuleOCK.InitDB;
 var
   newFile: boolean;
 begin
   logdatei.log('startinitdb ', LLInfo);
-  with FormProgressWindow do
-  begin
-    LabelDataload.Caption := 'Create database';
-    ProgressBar1.StepIt;
-  end;
-  SQLite3Connection1.Close; // Ensure the connection is closed when we start
+  SQLite3Connection.Close; // Ensure the connection is closed when we start
   try
-    // Since we're making this database for the first time,
-    // check whether the file already exists
-    DatamoduleOCK.SQLite3Connection1.DatabaseName := GetTempDir + 'opsikiosk.db';
-    logdatei.log('db is : ' + DatamoduleOCK.SQLite3Connection1.DatabaseName, LLInfo);
-    if FileExists(DatamoduleOCK.SQLite3Connection1.DatabaseName) then
-      DeleteFileUTF8(DatamoduleOCK.SQLite3Connection1.DatabaseName);
-    newFile := not FileExists(DatamoduleOCK.SQLite3Connection1.DatabaseName);
+    { Since we're making this database for the first time,
+     check whether the file already exists }
+    DatamoduleOCK.SQLite3Connection.DatabaseName := GetTempDir + 'opsikiosk.db';
+    logdatei.log('db is : ' + DatamoduleOCK.SQLite3Connection.DatabaseName, LLInfo);
+    if FileExists(DatamoduleOCK.SQLite3Connection.DatabaseName) then
+      DeleteFileUTF8(DatamoduleOCK.SQLite3Connection.DatabaseName);
+    newFile := not FileExists(DatamoduleOCK.SQLite3Connection.DatabaseName);
 
+    { Create the database and the tables }
     if newFile then
     begin
-      // Create the database and the tables
       try
         logdatei.log('Creating new database ', LLInfo);
-        SQLite3Connection1.Open;
-        SQLTransaction1.Active := True;
-        //ZMQuerydataset1 := SQLQuery1;
-        //ZMQuerydataset2 := SQLQuery2;
-
+        SQLite3Connection.Open;
+        SQLTransaction1.StartTransaction;
         try
-          DatamoduleOCK.SQLite3Connection1.ExecuteDirect(
+          DatamoduleOCK.SQLite3Connection.ExecuteDirect(
             'CREATE TABLE products (' + 'ProductId String not null primary key, ' +
             'ProductName String, ' + 'description String, ' +
             'advice String, ' + 'productversion String, ' +
@@ -119,7 +122,7 @@ begin
 
         //Datamodule1.SQLTransaction1.Commit;
         try
-          SQLite3Connection1.ExecuteDirect(
+          SQLite3Connection.ExecuteDirect(
             'CREATE TABLE dependencies (ProductId String not null, ' +
             'requiredProductId String, required String, ' +
             'prerequired String, postrequired String, ' +
@@ -136,7 +139,7 @@ begin
           end;
         end;
 
-        try
+        {try
           SQLTransaction1.Commit;
         except
           on e: Exception do
@@ -146,19 +149,8 @@ begin
             logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
             logdatei.log_exception(E,LLError);
           end;
-        end;
+        end;}
 
-        if SQLQuery1.Active then
-          SQLQuery1.Close;
-        SQLQuery1.SQL.Clear;
-        SQLQuery1.SQL.Add('select * from products order by Upper(ProductName)');
-        SQLQuery1.Open;
-        if SQLQuery2.Active then
-          SQLQuery2.Close;
-        SQLQuery2.SQL.Clear;
-        SQLQuery2.SQL.Add('select * from dependencies order by ProductId');
-        SQLQuery2.Open;
-        logdatei.log('Finished initdb', LLInfo);
 
         //ShowMessage('Succesfully created database.');
       except
@@ -182,21 +174,71 @@ begin
       logdatei.log_exception(E,LLError);
     end;
   end;
-  DataSource1.DataSet := SQLQuery1;
-  DataSource2.DataSet := SQLQuery2;
-  SQLQuery2.DataSource := DataModuleOCK.DataSource1;
-  //FormOpsiClientKiosk.DBGrid1.DataSource := DataModuleOCK.DataSource1;
-  //FormOpsiClientKiosk.DBGrid2.DataSource := DataModuleOCK.DataSource2;
-  //FormOpsiClientKiosk.PanelProductDetail.Height := 0;
-  with FormProgressWindow do
-  begin
-    LabelDataLoad.Caption := 'Initialize Database';
-    //LabelDataLoadDetail.Caption := 'initdb';
-    //Progressbar1.Position := 15;
-    ProgressBar1.StepIt;
-    ProgressbarDetail.Position := 0;
-    ProcessMess;
+  if SQLQuery1.Active then
+      SQLQuery1.Close;
+  SQLQuery1.SQL.Clear;
+  SQLQuery1.SQL.Add('select * from products order by Upper(ProductName)');
+  //SQLQuery1.Open;
+  if SQLQuery2.Active then
+    SQLQuery2.Close;
+  SQLQuery2.SQL.Clear;
+  SQLQuery2.SQL.Add('select * from dependencies order by ProductId');
+  //SQLQuery2.Open;
+  try
+   SQLTransaction1.Commit;
+  except
+    on e: Exception do
+    begin
+      logdatei.log('Exception commit', LLError);
+      logdatei.log('Exception: ' + E.message, LLError);
+      logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+      logdatei.log_exception(E,LLError);
+    end;
   end;
+  logdatei.log('Finished initdb', LLInfo);
+end;
+
+procedure TDataModuleOCK.OpsiProductsToDataset(Dataset:TDataset);
+var
+  i: integer;
+  Product: TProduct;
+  //productdatarecord: TProductData;
+begin
+    logdatei.log('starting OpsiProductToDataset ....', LLInfo);
+  { product data to database }
+  Dataset.Open;
+  for i := 0 to OCKOpsiConnection.LengthOpsiProducts - 1 do
+  begin
+    Product := OCKOpsiConnection.fetchProduct(i);
+    logdatei.log('read: ' + Product.ProductID, LLInfo);
+    Dataset.Append;
+    Dataset.FieldByName('ProductId').AsString := Product.ProductID;
+    Dataset.FieldByName('productVersion').AsString := Product.ProductVersion;
+    Dataset.FieldByName('packageVersion').AsString := Product.PackageVersion;
+    Dataset.FieldByName('versionstr').AsString := Product.VersionStr;
+    Dataset.FieldByName('ProductName').AsString := Product.ProductName;
+    Dataset.FieldByName('description').AsString := Product.Description;
+    Dataset.FieldByName('advice').AsString := Product.Advice;
+    Dataset.FieldByName('priority').AsString := Product.Priority;
+    Dataset.FieldByName('producttype').AsString := Product.ProductType;
+    Dataset.FieldByName('hasSetup').AsString := Product.hasSetup;
+    Dataset.FieldByName('hasUninstall').AsString := Product.hasUninstall;
+    Dataset.FieldByName('installationStatus').AsString := Product.InstallationStatus;
+    Dataset.FieldByName('installedprodver').AsString := Product.InstalledProdVer;
+    Dataset.FieldByName('installedpackver').AsString := Product.InstalledPackVer;
+    Dataset.FieldByName('installedverstr').AsString := Product.InstalledVerStr;
+    Dataset.FieldByName('actionrequest').AsString := Product.ActionRequest;
+    Dataset.FieldByName('actionresult').AsString := Product.ActionResult;
+    Dataset.FieldByName('updatePossible').AsString := Product.UpdatePossible;
+    Dataset.FieldByName('possibleAction').AsString := Product.PossibleAction;
+    Dataset.Post;
+
+    //Product Dependencies
+
+  end;
+  Dataset.Close;
+  //Data.Open;
+  //Data.First;
 end;
 
 end.

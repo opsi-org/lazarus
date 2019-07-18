@@ -11,14 +11,6 @@ msgstr ""
 "Language: de\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: ockdata.rsallgroups
-msgid "All groups"
-msgstr ""
-
-#: ockdata.rsnogroups
-msgid "No Product Groups found ..."
-msgstr ""
-
 #: opsiclientkioskgui.rsactnone
 msgid "None"
 msgstr ""

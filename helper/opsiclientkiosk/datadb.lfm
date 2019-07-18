@@ -7,7 +7,7 @@ object DataModuleOCK: TDataModuleOCK
   VerticalOffset = 256
   Width = 255
   PPI = 96
-  object SQLite3Connection1: TSQLite3Connection
+  object SQLite3Connection: TSQLite3Connection
     Connected = False
     LoginPrompt = False
     KeepConnection = False
@@ -18,7 +18,7 @@ object DataModuleOCK: TDataModuleOCK
   object SQLQuery1: TSQLQuery
     FieldDefs = <>
     AfterPost = SQLQuery1AfterPost
-    Database = SQLite3Connection1
+    Database = SQLite3Connection
     Transaction = SQLTransaction1
     Params = <>
     left = 48
@@ -27,23 +27,25 @@ object DataModuleOCK: TDataModuleOCK
   object SQLTransaction1: TSQLTransaction
     Active = False
     Action = caCommitRetaining
-    Database = SQLite3Connection1
+    Database = SQLite3Connection
     left = 168
     top = 16
   end
   object SQLQuery2: TSQLQuery
     FieldDefs = <>
-    Database = SQLite3Connection1
+    Database = SQLite3Connection
     Transaction = SQLTransaction1
     Params = <>
     left = 168
     top = 88
   end
   object DataSource1: TDataSource
+    DataSet = SQLQuery1
     left = 40
     top = 160
   end
   object DataSource2: TDataSource
+    DataSet = SQLQuery1
     left = 168
     top = 160
   end

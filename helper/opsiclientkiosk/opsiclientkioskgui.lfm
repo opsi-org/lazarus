@@ -1487,8 +1487,8 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           Width = 859
           BevelOuter = bvNone
           BorderStyle = bsSingle
-          ClientHeight = 37
-          ClientWidth = 859
+          ClientHeight = 33
+          ClientWidth = 855
           ParentColor = False
           TabOrder = 0
           object ButtonSoftwareBack: TButton
@@ -1563,6 +1563,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             BorderStyle = bsNone
             Color = clForm
             DataField = 'description'
+            DataSource = DataModuleOCK.DataSource1
             Font.CharSet = ANSI_CHARSET
             Font.Color = clBlack
             Font.Height = -13
@@ -1583,6 +1584,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             BorderStyle = bsNone
             Color = clForm
             DataField = 'advice'
+            DataSource = DataModuleOCK.DataSource1
             Font.CharSet = ANSI_CHARSET
             Font.Color = clBlack
             Font.Height = -13
@@ -1681,6 +1683,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Width = 111
             BorderSpacing.Around = 5
             DataField = 'versionstr'
+            DataSource = DataModuleOCK.DataSource1
             ParentColor = False
           end
           object DBTextSoftwareClientVerStr: TDBText
@@ -1690,6 +1693,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Width = 142
             BorderSpacing.Around = 5
             DataField = 'installedverstr'
+            DataSource = DataModuleOCK.DataSource1
             ParentColor = False
           end
           object LabelSoftwareInstalledVersion: TLabel

@@ -16,10 +16,10 @@ unit opsiclientkioskgui;
 interface
 
 uses
-  Classes, SysUtils, DB, ExtendedNotebook, DividerBevel, Forms, Controls,
+  Classes, SysUtils, DB, ExtendedNotebook, Forms, Controls,
   Graphics, Dialogs, ExtCtrls, StdCtrls, Buttons, ComCtrls, Grids, DBGrids,
   DBCtrls,
-  datadb, //ockdata,
+  datadb,
   CommCtrl, BufDataset, typinfo, installdlg, lcltranslator,
   ActnList, Menus, oslog, inifiles, Variants, Lazfileutils, Types,
   opsiconnection,
@@ -251,7 +251,7 @@ const
 
 var
   mythread: Tmythread2;
-  //title
+  {//title
   title_color: string;
   title_Font_Name: string;
   title_Font_Size: integer;
@@ -259,7 +259,7 @@ var
   title_Font_Bold: boolean;
   title_Font_Italic: boolean;
   title_Font_Underline: boolean;
-  title_Text: string;
+  title_Text: string;}
   {//tile
   tile_color: string;
   tile_Font_Name: string;
@@ -669,7 +669,7 @@ begin
       end;
     end;
   finally
-    DataModuleOCK.SQLQuery1.Close;
+    //DataModuleOCK.SQLQuery1.Open;
   end;
 end;
 
@@ -685,10 +685,9 @@ begin
     //ProgressBar
     with FormProgressWindow do
     begin
-      Visible := True;
       ProgressbarDetail.Position := 0;
       LabelInfo.Caption:= 'Please wait while building tils';
-      LabelDataload.Caption := 'Clear Tiles';
+      //LabelDataload.Caption := 'Clear Tiles';
     end;
     Application.ProcessMessages;
 
@@ -715,27 +714,29 @@ begin
     end;
 
     // use complete window for tiles
-    FormOpsiClientKiosk.PanelProductDetail.Height := 0;
+    //FormOpsiClientKiosk.PanelProductDetail.Height := 0;
 
+    DataModuleOCK.SQLQuery1.Open;
+    DataModuleOCK.SQLQuery1.First;
     // progess
     //FormProgressWindow.Progressbar1.Position := 80;
     with FormProgressWindow do
     begin
       LabelDataload.Caption := 'Fill Tiles';
       ProgressBar1.Step := 1;
-      ProgressBar1.Max := ProgressBar1.Position + DataModuleOCK.SQLQuery1.RecordCount;
+      ProgressBar1.Max := 2*ProgressBar1.Position + DataModuleOCK.SQLQuery1.RecordCount;
       ProgressBarDetail.Step := 1;
-      ProgressBarDetail.Max := DataModuleOCK.SQLQuery1.RecordCount;
+      ProgressBarDetail.Max := ProgressBar1.Position + DataModuleOCK.SQLQuery1.RecordCount;
     end;
     Application.ProcessMessages;
     logdatei.log('BuildProductTiles from db start', LLDebug2);
     counter := 0;
-    DataModuleOCK.SQLQuery1.Open;
-    DataModuleOCK.SQLQuery1.First;
     while not DataModuleOCK.SQLQuery1.EOF do
     begin
       ProductID := DataModuleOCK.SQLQuery1.FieldByName('ProductId').AsString;
       FormProgressWindow.LabelDataLoadDetail.Caption := ProductID;
+      FormProgressWindow.ProgressbarDetail.StepIt;
+      FormProgressWindow.ProgressBar1.StepIt;
       Application.ProcessMessages;
       SetLength(ArrayProductTiles, counter + 1);
       ArrayProductTiles[counter] := TProductPanel.Create(FormOpsiClientKiosk.FindComponent(OwnerName) as TFlowPanel);
@@ -776,27 +777,12 @@ begin
       end;
       ArrayProductTiles[counter].Tag := counter;
       Inc(counter);
-      //FormProgressWindow.ProgressbarDetail.Position := counter;
-      FormProgressWindow.ProgressbarDetail.StepIt;
-      FormProgressWindow.ProgressBar1.StepIt;
-      Application.ProcessMessages;
       DataModuleOCK.SQLQuery1.Next;
     end;
   finally
     DataModuleOCK.SQLQuery1.Close;
     inTileRebuild := False;
     logdatei.log('BuildProductTiles stop', LLDebug2);
-    {*with FormProgressWindow do
-    begin
-      //ProgressBar1.Position := 100;
-      //ProgressBarDetail.Visible := False;
-      //LabelDataLoadDetail.Visible := False;
-      //ProgressBar1.Visible := False;
-      //LabelDataLoad.Visible := False;
-
-      //Visible := False;
-    end;*}
-    //FormOpsiClientKiosk.CheckBoxExpertModeChange(FormOpsiClientKiosk);
     FormProgressWindow.Visible := False;
   end;
 end;
@@ -1196,42 +1182,70 @@ begin
   //begin
     //StartupDone := True;
 
-    Application.ProcessMessages;
-    ListOptions := TStringList.Create;
-    ListOptions.Append('fqdn::');
-    ListOptions.Append('lang:');
-    // quick check parameters
-    ErrorMsg := Application.CheckOptions('', ListOptions);
-    if ErrorMsg <> '' then
-    begin
-      Application.ShowException(Exception.Create(ErrorMsg));
-      Application.Terminate;
-      Exit;
-    end;
-    // parse parameters
-    if Application.HasOption('fqdn') then
-    begin
-      MyClientID := Application.GetOptionValue('fqdn');
-    end;
-    if Application.HasOption('lang') then
-    begin
-      SetDefaultLang(Application.GetOptionValue('lang'));
-    end;
-    FormProgressWindow.LabelDataLoadDetail.Caption := '';
-    //initlogging(MyClientID);
-    //ockdata.main;
-    OCKOpsiConnection := TOPsiConnection.Create(True, MyClientID);
-    InitOpsiClientKiosk;
-    Application.ProcessMessages;
-    DBGrid1.DataSource := DataModuleOCK.DataSource1;
-    DBGrid2.DataSource := DataModuleOCK.DataSource2;
-    PanelProductDetail.Height := 0;
-    BuildProductTiles(ArrayAllproductTiles, 'FlowPanelAllTiles');
-    // log
-    LogDatei.log('rsActSetup is: ' + rsActSetup , LLDebug2);
-    LogDatei.log('TitleLabel.Caption: ' + TitleLabel.Caption, LLDebug2);
-  //end;
+  { quick check parameters }
+  ListOptions := TStringList.Create;
+  ListOptions.Append('fqdn::');
+  ListOptions.Append('lang:');
+  ErrorMsg := Application.CheckOptions('', ListOptions);
   ListOptions.Free;
+  if ErrorMsg <> '' then
+  begin
+    Application.ShowException(Exception.Create(ErrorMsg));
+    Application.Terminate;
+    Exit;
+  end;
+  { parse parameters }
+  if Application.HasOption('fqdn') then
+  begin
+    MyClientID := Application.GetOptionValue('fqdn');
+  end;
+  if Application.HasOption('lang') then
+  begin
+    SetDefaultLang(Application.GetOptionValue('lang'));
+  end;
+
+  { Create opsi connection and load data from server }
+
+  FormProgressWindow.LabelInfo.Caption := 'Please wait while communicating with OPSI web server ...';
+  FormProgressWindow.LabelDataLoad.Caption := 'Communicating with server ...';
+  FormProgressWindow.LabelDataLoadDetail.Caption := 'Connecting to server';
+  FormProgressWindow.ProgressBar1.StepIt;
+  FormProgressWindow.ProgressBarDetail.Position := 50;
+  //FormProgressWindow.ProgressBarDetail.StepIt;
+  FormProgressWindow.ProcessMess;
+  OCKOpsiConnection := TOPsiConnection.Create(True, MyClientID);
+  FormProgressWindow.LabelDataLoad.Caption := 'Connected to '+
+    OCKOpsiConnection.myservice_url + ' as ' + OCKOpsiConnection.myclientid;
+  StatusBar1.Panels[0].Text := 'Connected to '+
+    OCKOpsiConnection.myservice_url + ' as ' + OCKOpsiConnection.myclientid;
+  FormProgressWindow.ProgressBar1.StepIt;
+  FormProgressWindow.ProcessMess;
+
+  FormProgressWindow.LabelDataLoadDetail.Caption := 'Loading product data from server';
+  FormProgressWindow.ProgressBar1.StepIt;
+  FormProgressWindow.ProgressBarDetail.Position := 100;
+  //FormProgressWindow.Repaint;
+  FormProgressWindow.ProcessMess;
+  OCKOpsiConnection.LoadProductsFromServer;
+  //FormProgressWindow.ProgressBarDetail.Position := 100;
+  //Application.ProcessMessages;
+
+  { Initialize database tables and copy opsi product data to database }
+  DatamoduleOCK := TDataModuleOCK.Create(self);
+  DataModuleOCK.InitDB;
+  LogDatei.log('start OpsiProductsToDataset', LLNotice);
+  DataModuleOCK.OpsiProductsToDataset(DataModuleOCK.SQLQuery1);
+  //InitOpsiClientKiosk;
+  DBGrid1.DataSource := DataModuleOCK.DataSource1;
+  DBGrid2.DataSource := DataModuleOCK.DataSource2;
+
+  { Initialize GUI }
+  BuildProductTiles(ArrayAllproductTiles, 'FlowPanelAllTiles');
+
+  { log }
+  LogDatei.log('rsActSetup is: ' + rsActSetup , LLDebug2);
+  LogDatei.log('TitleLabel.Caption: ' + TitleLabel.Caption, LLDebug2);
+//end;
 end;
 
 procedure TFormOpsiClientKiosk.FormShow(Sender: TObject);
@@ -1247,7 +1261,8 @@ procedure TFormOpsiClientKiosk.ReloadDataFromServer;
 var
   i: integer;
 begin
-  OCKOpsiConnection.fetchProductData(DataModuleOCK.SQLQuery1,'getKioskProductInfosForClient');
+  OCKOpsiConnection.LoadProductsFromServer;
+  DataModuleOCK.OpsiProductsToDataset(DataModuleOCK.SQLQuery1);
   //StartupDone := False;
   RadioGroupViewSelectionChanged(self);
   //StartupDone := True;
@@ -1301,12 +1316,30 @@ end;
 procedure TFormOpsiClientKiosk.FormCreate(Sender: TObject);
 begin
   InitLogging('kiosk-' + GetUserName_ +'.log', self.Name + '.FormCreate', LLDebug);
+  LogDatei.log('Initialize Opsi Client Kiosk', LLNotice);
+  // is an other instance running ?
+  if numberOfProcessInstances(ExtractFileName(ParamStr(0))) > 1 then
+  begin
+    LogDatei.log('An other instance of this program is running - so we abort', LLCritical);
+    LogDatei.Close;
+    LogDatei.Free;
+    ShowMessage('An other instance of this program is running - so we abort');
+    halt(1);
+  end;
+  // is opsiclientd running ?
+  if numberOfProcessInstances('opsiclientd') < 1 then
+  begin
+    LogDatei.log('opsiclientd is not running - so we abort', LLCritical);
+    LogDatei.Close;
+    LogDatei.Free;
+    ShowMessage('opsiclientd is not running - so we abort');
+    halt(1);
+  end;
+  //ShowMessage('Form Create');
   StringListTileIDs := TStringList.Create;
-  //OCKOpsiConnection := TOPsiConnection.Create(True);
   NotebookProducts.PageIndex := 1;  //tiles
-  FormOpsiClientKiosk.PanelProductDetail.Height := 0;
+  PanelProductDetail.Height := 0;
   detail_visible := False;
-
   // Load custom skin
 
   skinpath := Application.Location + PathDelim + 'opsiclientkioskskin' + PathDelim;
@@ -1315,14 +1348,14 @@ begin
     ImageHeader.Picture.LoadFromFile(skinpath + 'opsiclientkiosk.png');
   end;
 
-  //title
+  {//title
   title_Text := 'opsi client Kiosk';
   title_Font_Name := 'Arial';
   title_Font_Size := 12;
   title_Font_Color := 'clBlack';
   title_Font_Bold := true;
   title_Font_Italic := false;
-  title_Font_Underline := false;
+  title_Font_Underline := false;}
 
   {//tile
   tile_color := 'clCream';
@@ -1550,22 +1583,7 @@ var
   grouplist: TStringList;
   ConnectionInfo:string;
 begin
-  FormProgressWindow.LabelInfo.Caption := 'Please wait while connecting to service';
-  FormProgressWindow.LabelDataload.Caption := 'Connect opsi Web Service';
-  FormProgressWindow.ProcessMess;
-  //if OCKOpsiConnection.opsiclientdmode then OCKOpsiConnection.readconf2
-    //else OCKOpsiConnection.readconf;
-  // opsiconfd mode
-  //readconf;
-  // opsiclientd mode
-  //readconf2;
-  // do not forget to check firePushInstallation
-  //initlogging(OCKOpsiConnection.myclientid);
-  LogDatei.log('clientid=' + OCKOpsiConnection.myclientid, LLNotice);
-  LogDatei.log('service_url=' + OCKOpsiConnection.myservice_url, LLNotice);
-  LogDatei.log('service_user=' + OCKOpsiConnection.myclientid, LLNotice);
-  logdatei.AddToConfidentials(OCKOpsiConnection.myhostkey);
-  LogDatei.log('host_key=' + OCKOpsiConnection.myhostkey, LLdebug3);
+  {LogDatei.log('Initialize Opsi Client Kiosk', LLNotice);
   // is an other instance running ?
   if numberOfProcessInstances(ExtractFileName(ParamStr(0))) > 1 then
   begin
@@ -1580,20 +1598,25 @@ begin
     LogDatei.Close;
     ShowMessage('opsiclientd is not running - so we abort');
     halt(1);
-  end;
+  end;}
+  FormProgressWindow.LabelDataload.Caption := 'Init connection';
   FormProgressWindow.ProgressBar1.StepIt;
   FormProgressWindow.ProcessMess;
 
-  if OCKOpsiConnection.initConnection(30, ConnectionInfo) then
+  if true then //OCKOpsiConnection.initConnection(30, ConnectionInfo) then
   begin
-    LogDatei.log('init Connection done', LLNotice);
-    FormOpsiClientKiosk.StatusBar1.Panels[0].Text := ConnectionInfo;
+    LogDatei.log('init connection done', LLNotice);
+    //FormProgressWindow.LabelDataload.Caption := 'Init connection done';
+    //FormProgressWindow.ProgressBar1.StepIt;
+    //FormProgressWindow.ProcessMess;
+    //FormOpsiClientKiosk.StatusBar1.Panels[0].Text := 'Connected to ' + myservice_url + ' as ' + myclientid;
     DatamoduleOCK := TDataModuleOCK.Create(nil);
     DataModuleOCK.InitDB;
     FormProgressWindow.LabelInfo.Caption := 'Please wait while gettting products';
-    LogDatei.log('start fetchProductData_by_getKioskProductInfosForClient', LLNotice);
+    LogDatei.log('start OpsiProductsToDataset', LLNotice);
     //fetchProductData_by_getKioskProductInfosForClient;
-    OCKOpsiConnection.fetchProductData(DataModuleOCK.SQLQuery1,'getKioskProductInfosForClient');
+    //OCKOpsiConnection.fetchProductData(DataModuleOCK.SQLQuery1,'getKioskProductInfosForClient');
+    DataModuleOCK.OpsiProductsToDataset(DataModuleOCK.SQLQuery1);
     LogDatei.log('Handle products done', LLNotice);
     FormProgressWindow.LabelDataload.Caption := 'Handle Products';
     FormProgressWindow.ProcessMess;
