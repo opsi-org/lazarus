@@ -1288,7 +1288,8 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
               Width = 626
               Align = alTop
               BorderSpacing.Around = 5
-              DataField = 'versionstr'
+              DataField = 'VersionStr'
+              DataSource = DataModuleOCK.DataSourceProductData
               ParentColor = False
             end
             object DBTextClientVerStr: TDBText
@@ -1299,6 +1300,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
               Align = alTop
               BorderSpacing.Around = 5
               DataField = 'installedverstr'
+              DataSource = DataModuleOCK.DataSourceProductData
               ParentColor = False
             end
             object DBMemoDescription: TDBMemo
@@ -1310,6 +1312,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
               BorderSpacing.Around = 5
               BorderStyle = bsNone
               DataField = 'description'
+              DataSource = DataModuleOCK.DataSourceProductData
               ReadOnly = True
               ScrollBars = ssAutoVertical
               TabOrder = 0
@@ -1322,7 +1325,8 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
               Align = alTop
               BorderSpacing.Around = 5
               BorderStyle = bsNone
-              DataField = 'advice'
+              DataField = 'Advice'
+              DataSource = DataModuleOCK.DataSourceProductData
               ReadOnly = True
               ScrollBars = ssAutoVertical
               TabOrder = 1
@@ -1340,17 +1344,17 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
         end
         object TabSheet2: TTabSheet
           Caption = 'Dependencies / Priority'
-          ClientHeight = 151
-          ClientWidth = 847
+          ClientHeight = 144
+          ClientWidth = 796
           object PanelPriority: TPanel
             Left = 0
             Height = 32
-            Top = 119
-            Width = 847
+            Top = 112
+            Width = 796
             Align = alBottom
             BevelOuter = bvNone
             ClientHeight = 32
-            ClientWidth = 847
+            ClientWidth = 796
             ParentColor = False
             TabOrder = 0
             object LabelPriority: TLabel
@@ -1369,24 +1373,25 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
               Width = 73
               BorderSpacing.Around = 5
               DataField = 'priority'
+              DataSource = DataModuleOCK.DataSourceProductData
               ParentColor = False
             end
           end
           object PanelDependencies: TPanel
             Left = 0
-            Height = 119
+            Height = 112
             Top = 0
-            Width = 847
+            Width = 796
             Align = alClient
             BevelOuter = bvNone
-            ClientHeight = 119
-            ClientWidth = 847
+            ClientHeight = 112
+            ClientWidth = 796
             TabOrder = 1
             object DBGrid2: TDBGrid
               Left = 0
-              Height = 119
+              Height = 112
               Top = 0
-              Width = 847
+              Width = 796
               Align = alClient
               Color = clWindow
               Columns = <>
@@ -1563,7 +1568,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             BorderStyle = bsNone
             Color = clForm
             DataField = 'description'
-            DataSource = DataModuleOCK.DataSource1
+            DataSource = DataModuleOCK.DataSourceProductData
             Font.CharSet = ANSI_CHARSET
             Font.Color = clBlack
             Font.Height = -13
@@ -1584,7 +1589,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             BorderStyle = bsNone
             Color = clForm
             DataField = 'advice'
-            DataSource = DataModuleOCK.DataSource1
+            DataSource = DataModuleOCK.DataSourceProductData
             Font.CharSet = ANSI_CHARSET
             Font.Color = clBlack
             Font.Height = -13
@@ -1683,7 +1688,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Width = 111
             BorderSpacing.Around = 5
             DataField = 'versionstr'
-            DataSource = DataModuleOCK.DataSource1
+            DataSource = DataModuleOCK.DataSourceProductData
             ParentColor = False
           end
           object DBTextSoftwareClientVerStr: TDBText
@@ -1693,7 +1698,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Width = 142
             BorderSpacing.Around = 5
             DataField = 'installedverstr'
-            DataSource = DataModuleOCK.DataSource1
+            DataSource = DataModuleOCK.DataSourceProductData
             ParentColor = False
           end
           object LabelSoftwareInstalledVersion: TLabel

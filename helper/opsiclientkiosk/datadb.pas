@@ -21,18 +21,19 @@ type
   { TDataModuleOCK }
 
   TDataModuleOCK = class(TDataModule)
-    DataSource1: TDataSource;
-    DataSource2: TDataSource;
+    DataSourceProductData: TDataSource;
+    DataSourceProductDependencies: TDataSource;
     SQLite3Connection: TSQLite3Connection;
-    SQLQuery1: TSQLQuery;
-    SQLQuery2: TSQLQuery;
-    SQLTransaction1: TSQLTransaction;
-    procedure InitDB;
-    procedure OpsiProductsToDataset(Dataset: TDataset);
-    procedure SQLQuery1AfterPost(Dataset: TDataset);
+    SQLQueryProductData: TSQLQuery;
+    SQLQueryProductDependencies: TSQLQuery;
+    SQLTransaction: TSQLTransaction;
+    procedure InitDatabase;
+    procedure OpsiProductsToDataset(SQLQuery: TSQLQuery);
+    procedure SQLQueryProductDataAfterPost(Dataset: TDataset);
     constructor Create(AOwner: TComponent);override;
   private
     { private declarations }
+    procedure CreateDatabaseTables(Connection: TSQLite3Connection);
   public
     { public declarations }
   end;
@@ -40,8 +41,6 @@ type
 
 var
   DataModuleOCK: TDataModuleOCK;
-  //ZMQuerydataset1: TSQLQuery;
-  //ZMQuerydataset2: TSQLQuery;
 
 implementation
 
@@ -50,7 +49,7 @@ implementation
 { TDataModuleOCK }
 
 
-procedure TDataModuleOCK.SQLQuery1AfterPost(Dataset: TDataset);
+procedure TDataModuleOCK.SQLQueryProductDataAfterPost(Dataset: TDataset);
 begin
   try
   TSQLQuery(Dataset).ApplyUpdates;
@@ -69,12 +68,12 @@ end;
 constructor TDataModuleOCK.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  DataSource1.Dataset := SQLQuery1;
-  DataSource2.Dataset := SQLQuery2;
-  SQLQuery2.DataSource := DataModuleOCK.DataSource1;
+  DataSourceProductData.Dataset := SQLQueryProductData;
+  DataSourceProductDependencies.Dataset := SQLQueryProductDependencies;
+  //SQLQueryProductDependencies.DataSource := DataSourceProductData;
 end;
 
-procedure TDataModuleOCK.InitDB;
+procedure TDataModuleOCK.InitDatabase;
 var
   newFile: boolean;
 begin
@@ -83,76 +82,20 @@ begin
   try
     { Since we're making this database for the first time,
      check whether the file already exists }
-    DatamoduleOCK.SQLite3Connection.DatabaseName := GetTempDir + 'opsikiosk.db';
-    logdatei.log('db is : ' + DatamoduleOCK.SQLite3Connection.DatabaseName, LLInfo);
-    if FileExists(DatamoduleOCK.SQLite3Connection.DatabaseName) then
-      DeleteFileUTF8(DatamoduleOCK.SQLite3Connection.DatabaseName);
-    newFile := not FileExists(DatamoduleOCK.SQLite3Connection.DatabaseName);
-
+    SQLite3Connection.DatabaseName := GetTempDir + 'opsikiosk.db';
+    logdatei.log('db is : ' + SQLite3Connection.DatabaseName, LLInfo);
+    if FileExists(SQLite3Connection.DatabaseName) then
+      DeleteFileUTF8(SQLite3Connection.DatabaseName);
+    newFile := not FileExists(SQLite3Connection.DatabaseName);
     { Create the database and the tables }
     if newFile then
     begin
       try
         logdatei.log('Creating new database ', LLInfo);
         SQLite3Connection.Open;
-        SQLTransaction1.StartTransaction;
-        try
-          DatamoduleOCK.SQLite3Connection.ExecuteDirect(
-            'CREATE TABLE products (' + 'ProductId String not null primary key, ' +
-            'ProductName String, ' + 'description String, ' +
-            'advice String, ' + 'productversion String, ' +
-            'packageversion String, ' + 'versionstr String, ' +
-            'priority Integer, ' + 'producttype String, ' +
-            'installationStatus String, ' + 'installedprodver String, ' +
-            'installedpackver String, ' + 'installedverstr String, ' +
-            'actionrequest String, ' + 'actionresult String, ' +
-            'updatePossible String,' + 'hasSetup String, ' +
-            'hasUninstall String, ' + 'possibleAction String);');
-          logdatei.log('Finished products ', LLInfo);
-        except
-          on e: Exception do
-          begin
-            logdatei.log('Exception CREATE TABLE products', LLError);
-            logdatei.log('Exception: ' + E.message, LLError);
-            logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
-            logdatei.log_exception(E,LLError);
-          end;
-        end;
-
-
-        //Datamodule1.SQLTransaction1.Commit;
-        try
-          SQLite3Connection.ExecuteDirect(
-            'CREATE TABLE dependencies (ProductId String not null, ' +
-            'requiredProductId String, required String, ' +
-            'prerequired String, postrequired String, ' +
-            'PRIMARY KEY(ProductId,requiredProductId));');
-
-          logdatei.log('Finished dependencies ', LLInfo);
-        except
-          on e: Exception do
-          begin
-            logdatei.log('Exception CREATE TABLE dependencies', LLError);
-            logdatei.log('Exception: ' + E.message, LLError);
-            logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
-            logdatei.log_exception(E,LLError);
-          end;
-        end;
-
-        {try
-          SQLTransaction1.Commit;
-        except
-          on e: Exception do
-          begin
-            logdatei.log('Exception commit', LLError);
-            logdatei.log('Exception: ' + E.message, LLError);
-            logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
-            logdatei.log_exception(E,LLError);
-          end;
-        end;}
-
-
-        //ShowMessage('Succesfully created database.');
+        SQLTransaction.StartTransaction;
+        CreateDatabaseTables(SQLite3Connection);
+      //ShowMessage('Succesfully created database.');
       except
         //ShowMessage('Unable to Create new Database');
         on e: Exception do
@@ -174,18 +117,9 @@ begin
       logdatei.log_exception(E,LLError);
     end;
   end;
-  if SQLQuery1.Active then
-      SQLQuery1.Close;
-  SQLQuery1.SQL.Clear;
-  SQLQuery1.SQL.Add('select * from products order by Upper(ProductName)');
-  //SQLQuery1.Open;
-  if SQLQuery2.Active then
-    SQLQuery2.Close;
-  SQLQuery2.SQL.Clear;
-  SQLQuery2.SQL.Add('select * from dependencies order by ProductId');
-  //SQLQuery2.Open;
+  { Commit the transactions }
   try
-   SQLTransaction1.Commit;
+   SQLTransaction.Commit;
   except
     on e: Exception do
     begin
@@ -195,51 +129,192 @@ begin
       logdatei.log_exception(E,LLError);
     end;
   end;
-  logdatei.log('Finished initdb', LLInfo);
+  logdatei.log('Finished InitDatabase', LLInfo);
 end;
 
-procedure TDataModuleOCK.OpsiProductsToDataset(Dataset:TDataset);
+procedure TDataModuleOCK.CreateDatabaseTables(Connection: TSQLite3Connection);
+begin
+  { Create Table products }
+  try
+     Connection.ExecuteDirect(
+       'CREATE TABLE products ('
+       + 'ProductID STRING NOT NULL PRIMARY KEY, '
+       + 'ProductName STRING, '
+       + 'Description STRING, '
+       + 'Advice STRING, '
+       + 'ProductVersion STRING, '
+       + 'PackageVersion STRING, '
+       + 'VersionStr STRING, '
+       + 'Priority INTEGER, '
+       + 'ProductType STRING, '
+       + 'InstallationStatus STRING, '
+       + 'InstalledProdVer STRING, '
+       + 'InstalledPackVer STRING, '
+       + 'InstalledVerStr STRING, '
+       + 'ActionRequest STRING, '
+       + 'ActionResult STRING, '
+       + 'UpdatePossible STRING, '
+       + 'hasSetup STRING, '
+       + 'hasUninstall STRING, '
+       + 'possibleAction STRING'
+       + ');'
+       );
+     logdatei.log('Finished products ', LLInfo);
+   except
+     on e: Exception do
+     begin
+       logdatei.log('Exception CREATE TABLE products', LLError);
+       logdatei.log('Exception: ' + E.message, LLError);
+       logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+       logdatei.log_exception(E,LLError);
+     end;
+   end;
+   { Create Table dependencies }
+   try
+     Connection.ExecuteDirect(
+       'CREATE TABLE dependencies ('
+       + 'ProductID STRING NOT NULL, '
+       + 'RequiredProductID STRING, '
+       + 'Required STRING, '
+       + 'PreRequired STRING, '
+       + 'PostRequired STRING, '
+       + 'PRIMARY KEY(ProductID,RequiredProductID)'
+       + ');'
+       );
+     logdatei.log('Finished dependencies ', LLInfo);
+   except
+     on e: Exception do
+     begin
+       logdatei.log('Exception CREATE TABLE dependencies', LLError);
+       logdatei.log('Exception: ' + E.message, LLError);
+       logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
+       logdatei.log_exception(E,LLError);
+     end;
+   end;
+ end;
+
+
+procedure TDataModuleOCK.OpsiProductsToDataset(SQLQuery:TSQLQuery);
 var
   i: integer;
   Product: TProduct;
+  SQLStatment: String;
   //productdatarecord: TProductData;
 begin
     logdatei.log('starting OpsiProductToDataset ....', LLInfo);
   { product data to database }
-  Dataset.Open;
+  SQLStatment := 'INSERT INTO products VALUES ('
+                   + ':ProductID, '
+                   + ':ProductName, '
+                   + ':Description, '
+                   + ':Advice, '
+                   + ':ProductVersion, '
+                   + ':PackageVersion, '
+                   + ':VersionStr, '
+                   + ':Priority, '
+                   + ':ProductType, '
+                   + ':InstallationStatus, '
+                   + ':InstalledProdVer, '
+                   + ':InstalledPackVer, '
+                   + ':InstalledVerStr, '
+                   + ':ActionRequest, '
+                   + ':ActionResult, '
+                   + ':UpdatePossible, '
+                   + ':hasSetup, '
+                   + ':hasUninstall, '
+                   + ':PossibleAction'
+                   + ');';
+
+  //SQLStatment := 'SELECT * FROM products ORDER BY UPPER(ProductName)';
+  SQLQueryProductData.SQL.Text := SQLStatment;
+  SQLTransaction.StartTransaction;
+  //SQLQueryProductData.Open;
+  //SQLQueryProductData.SQL.Clear;
+  //SQLQueryProductData.SQL.Add(SQLStatment);
   for i := 0 to OCKOpsiConnection.LengthOpsiProducts - 1 do
   begin
     Product := OCKOpsiConnection.fetchProduct(i);
     logdatei.log('read: ' + Product.ProductID, LLInfo);
-    Dataset.Append;
-    Dataset.FieldByName('ProductId').AsString := Product.ProductID;
-    Dataset.FieldByName('productVersion').AsString := Product.ProductVersion;
-    Dataset.FieldByName('packageVersion').AsString := Product.PackageVersion;
-    Dataset.FieldByName('versionstr').AsString := Product.VersionStr;
-    Dataset.FieldByName('ProductName').AsString := Product.ProductName;
-    Dataset.FieldByName('description').AsString := Product.Description;
-    Dataset.FieldByName('advice').AsString := Product.Advice;
-    Dataset.FieldByName('priority').AsString := Product.Priority;
-    Dataset.FieldByName('producttype').AsString := Product.ProductType;
-    Dataset.FieldByName('hasSetup').AsString := Product.hasSetup;
-    Dataset.FieldByName('hasUninstall').AsString := Product.hasUninstall;
-    Dataset.FieldByName('installationStatus').AsString := Product.InstallationStatus;
-    Dataset.FieldByName('installedprodver').AsString := Product.InstalledProdVer;
-    Dataset.FieldByName('installedpackver').AsString := Product.InstalledPackVer;
-    Dataset.FieldByName('installedverstr').AsString := Product.InstalledVerStr;
-    Dataset.FieldByName('actionrequest').AsString := Product.ActionRequest;
-    Dataset.FieldByName('actionresult').AsString := Product.ActionResult;
-    Dataset.FieldByName('updatePossible').AsString := Product.UpdatePossible;
-    Dataset.FieldByName('possibleAction').AsString := Product.PossibleAction;
-    Dataset.Post;
+    {SQLQueryProductData.AppendRecord([
+     Product.ProductID,
+     Product.ProductName,
+     Product.Description,
+     Product.Advice,
+     Product.ProductVersion,
+     Product.PackageVersion,
+     Product.VersionStr,
+     Product.Priority,
+     Product.ProductType,
+     Product.InstallationStatus,
+     Product.InstalledProdVer,
+     Product.InstalledPackVer,
+     Product.InstalledVerStr,
+     Product.ActionRequest,
+     Product.ActionResult,
+     Product.UpdatePossible,
+     Product.hasSetup,
+     Product.hasUninstall,
+     Product.PossibleAction
+     ]);}
+    //SQLQueryProductData.ExecSQL;
+     //SQLQueryProductData.Close;
 
+    with SQLQueryProductData do
+    begin
+      ParamByName('ProductID').AsString := Product.ProductID;
+      ParamByName('ProductVersion').AsString := Product.ProductVersion;
+      ParamByName('PackageVersion').AsString := Product.PackageVersion;
+      ParamByName('VersionStr').AsString := Product.VersionStr;
+      ParamByName('ProductName').AsString := Product.ProductName;
+      ParamByName('Description').AsString := Product.Description;
+      ParamByName('Advice').AsString := Product.Advice;
+      ParamByName('Priority').AsInteger := Product.Priority;
+      ParamByName('ProductType').AsString := Product.ProductType;
+      ParamByName('hasSetup').AsString := Product.hasSetup;
+      ParamByName('hasUninstall').AsString := Product.hasUninstall;
+      ParamByName('InstallationStatus').AsString := Product.InstallationStatus;
+      ParamByName('Installedprodver').AsString := Product.InstalledProdVer;
+      ParamByName('Installedpackver').AsString := Product.InstalledPackVer;
+      ParamByName('Installedverstr').AsString := Product.InstalledVerStr;
+      ParamByName('ActionRequest').AsString := Product.ActionRequest;
+      ParamByName('ActionResult').AsString := Product.ActionResult;
+      ParamByName('UpdatePossible').AsString := Product.UpdatePossible;
+      ParamByName('PossibleAction').AsString := Product.PossibleAction;
+    end;
+    SQLQueryProductData.ExecSQL;
+
+    {with SQLQueryProductData do
+    begin
+      Append;
+      FieldByName('ProductId').AsString := Product.ProductID;
+      FieldByName('productVersion').AsString := Product.ProductVersion;
+      FieldByName('packageVersion').AsString := Product.PackageVersion;
+      FieldByName('versionstr').AsString := Product.VersionStr;
+      FieldByName('ProductName').AsString := Product.ProductName;
+      FieldByName('description').AsString := Product.Description;
+      FieldByName('advice').AsString := Product.Advice;
+      FieldByName('priority').AsInteger := Product.Priority;
+      FieldByName('producttype').AsString := Product.ProductType;
+      FieldByName('hasSetup').AsString := Product.hasSetup;
+      FieldByName('hasUninstall').AsString := Product.hasUninstall;
+      FieldByName('installationStatus').AsString := Product.InstallationStatus;
+      FieldByName('installedprodver').AsString := Product.InstalledProdVer;
+      FieldByName('installedpackver').AsString := Product.InstalledPackVer;
+      FieldByName('installedverstr').AsString := Product.InstalledVerStr;
+      FieldByName('actionrequest').AsString := Product.ActionRequest;
+      FieldByName('actionresult').AsString := Product.ActionResult;
+      FieldByName('updatePossible').AsString := Product.UpdatePossible;
+      FieldByName('possibleAction').AsString := Product.PossibleAction;
+      Post;
+    end;}
     //Product Dependencies
 
   end;
-  Dataset.Close;
-  //Data.Open;
-  //Data.First;
-end;
+
+  //SQLQueryProductData.ExecSQL;
+  SQLQueryProductData.Close;
+  SQLTransaction.Commit;
+ end;
 
 end.
 

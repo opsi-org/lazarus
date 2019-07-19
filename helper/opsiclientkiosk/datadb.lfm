@@ -2,51 +2,53 @@ object DataModuleOCK: TDataModuleOCK
   OldCreateOrder = False
   left = 691
   top = 150
-  Height = 263
-  HorizontalOffset = 838
-  VerticalOffset = 256
-  Width = 255
+  Height = 329
+  HorizontalOffset = 808
+  VerticalOffset = 232
+  Width = 519
   PPI = 96
   object SQLite3Connection: TSQLite3Connection
     Connected = False
     LoginPrompt = False
     KeepConnection = False
-    Transaction = SQLTransaction1
-    left = 48
-    top = 16
+    Transaction = SQLTransaction
+    left = 160
+    top = 24
   end
-  object SQLQuery1: TSQLQuery
+  object SQLQueryProductData: TSQLQuery
     FieldDefs = <>
-    AfterPost = SQLQuery1AfterPost
+    AfterPost = SQLQueryProductDataAfterPost
     Database = SQLite3Connection
-    Transaction = SQLTransaction1
+    Transaction = SQLTransaction
+    SQL.Strings = (
+      ''
+    )
     Params = <>
-    left = 48
-    top = 88
+    left = 64
+    top = 120
   end
-  object SQLTransaction1: TSQLTransaction
+  object SQLTransaction: TSQLTransaction
     Active = False
-    Action = caCommitRetaining
     Database = SQLite3Connection
-    left = 168
-    top = 16
+    left = 304
+    top = 24
   end
-  object SQLQuery2: TSQLQuery
+  object SQLQueryProductDependencies: TSQLQuery
     FieldDefs = <>
     Database = SQLite3Connection
-    Transaction = SQLTransaction1
+    Transaction = SQLTransaction
     Params = <>
-    left = 168
-    top = 88
+    left = 384
+    top = 128
   end
-  object DataSource1: TDataSource
-    DataSet = SQLQuery1
-    left = 40
-    top = 160
+  object DataSourceProductData: TDataSource
+    DataSet = SQLQueryProductData
+    left = 64
+    top = 216
   end
-  object DataSource2: TDataSource
-    DataSet = SQLQuery1
-    left = 168
-    top = 160
+  object DataSourceProductDependencies: TDataSource
+    DataSet = SQLQueryProductData
+    left = 384
+    top = 224
   end
 end

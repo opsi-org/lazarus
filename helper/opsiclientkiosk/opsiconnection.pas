@@ -40,7 +40,7 @@ type
     ProductName: String;
     Description: String;
     Advice: String;
-    Priority: String;
+    Priority: Integer;
     ProductType: String;
     hasSetup: String;
     hasUninstall: String;
@@ -268,7 +268,7 @@ begin
   Result.ProductName := opsiProduct.S['productName'];
   Result.Description := opsiProduct.S['description'];
   Result.Advice := opsiProduct.S['advice'];
-  Result.Priority := opsiProduct.S['priority'];
+  Result.Priority := StrToInt(opsiProduct.S['priority']);
   Result.ProductType := opsiProduct.S['productType'];
   Result.hasSetup := opsiProduct.S['hasSetup'];
   Result.hasUninstall := opsiProduct.S['hasUninstall'];

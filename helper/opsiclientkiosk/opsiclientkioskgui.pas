@@ -547,11 +547,11 @@ begin
     //actionindex := ArrayAllProductTiles[tileindex].RadioGroupAction.ItemIndex;
     actionindex := TRadioButton(Sender).Tag;
     pid := ArrayAllProductTiles[tileindex].LabelId.Caption;
-    DataModuleOCK.SQLQuery1.First;
-    if DataModuleOCK.SQLQuery1.Locate('ProductId', VarArrayOf([pid]),
+    DataModuleOCK.SQLQueryProductData.First;
+    if DataModuleOCK.SQLQueryProductData.Locate('ProductId', VarArrayOf([pid]),
       [loCaseInsensitive]) then
     begin
-      DataModuleOCK.SQLQuery1.Edit;
+      DataModuleOCK.SQLQueryProductData.Edit;
       case actionindex of
         0: actionstr := 'none';
         1: actionstr := 'setup';
@@ -560,9 +560,9 @@ begin
           logdatei.log('Error: Unexpected tag number in TileActionChanged: ' +
             IntToStr(actionindex), LLError);
       end;
-      DataModuleOCK.SQLQuery1.FieldByName('actionrequest').AsString := actionstr;
+      DataModuleOCK.SQLQueryProductData.FieldByName('actionrequest').AsString := actionstr;
       FormOpsiClientKiosk.PanelProductDetail.Height := 185;
-      DataModuleOCK.SQLQuery1.Post;
+      DataModuleOCK.SQLQueryProductData.Post;
     end;
   end;
 end;
@@ -576,8 +576,8 @@ begin
   begin
     tileindex := TProductPanel(Sender).Tag;
     pid := ArrayAllProductTiles[tileindex].LabelId.Caption;
-    DataModuleOCK.SQLQuery1.First;
-    if DataModuleOCK.SQLQuery1.Locate('ProductId', VarArrayOf([pid]),
+    DataModuleOCK.SQLQueryProductData.First;
+    if DataModuleOCK.SQLQueryProductData.Locate('ProductId', VarArrayOf([pid]),
       [loCaseInsensitive]) then
     begin
       if detail_visible then
@@ -605,8 +605,8 @@ begin
     tileindex := TControl(Sender).Parent.Tag; //type convertion to TControl (all visual components are of this type), parent is the Panel
     //if tileindex <> former_slected_tile
     pid := ArrayAllProductTiles[tileindex].LabelID.Caption;
-    DataModuleOCK.SQLQuery1.First;
-    if DataModuleOCK.SQLQuery1.Locate('ProductId', VarArrayOf([pid]),[loCaseInsensitive]) then
+    DataModuleOCK.SQLQueryProductData.First;
+    if DataModuleOCK.SQLQueryProductData.Locate('ProductId', VarArrayOf([pid]),[loCaseInsensitive]) then
     begin
       if detail_visible then
       begin
@@ -639,9 +639,9 @@ begin
   try
     TileIndex := TControl(Sender).Parent.Tag;
     pid := ArrayAllProductTiles[TileIndex].LabelID.Caption;
-    DataModuleOCK.SQLQuery1.Open;
-    DataModuleOCK.SQLQuery1.First;
-    if DataModuleOCK.SQLQuery1.Locate('ProductId', VarArrayOf([pid]),[loCaseInsensitive]) then
+    DataModuleOCK.SQLQueryProductData.Open;
+    DataModuleOCK.SQLQueryProductData.First;
+    if DataModuleOCK.SQLQueryProductData.Locate('ProductID', VarArrayOf([pid]),[loCaseInsensitive]) then
     begin
       FormOpsiClientKiosk.PanelProductDetail.Height := 0;
       FormOpsiClientKiosk.NotebookProducts.PageIndex := 2;
@@ -669,7 +669,7 @@ begin
       end;
     end;
   finally
-    //DataModuleOCK.SQLQuery1.Open;
+    //DataModuleOCK.SQLQueryProductData.Open;
   end;
 end;
 
@@ -715,25 +715,25 @@ begin
 
     // use complete window for tiles
     //FormOpsiClientKiosk.PanelProductDetail.Height := 0;
-
-    DataModuleOCK.SQLQuery1.Open;
-    DataModuleOCK.SQLQuery1.First;
+    DataModuleOCK.SQLQueryProductData.SQL.Text := 'SELECT * FROM products ORDER BY UPPER (ProductName)';
+    DataModuleOCK.SQLQueryProductData.Open;
+    DataModuleOCK.SQLQueryProductData.First;
     // progess
     //FormProgressWindow.Progressbar1.Position := 80;
     with FormProgressWindow do
     begin
       LabelDataload.Caption := 'Fill Tiles';
       ProgressBar1.Step := 1;
-      ProgressBar1.Max := 2*ProgressBar1.Position + DataModuleOCK.SQLQuery1.RecordCount;
+      ProgressBar1.Max := 2*ProgressBar1.Position + DataModuleOCK.SQLQueryProductData.RecordCount;
       ProgressBarDetail.Step := 1;
-      ProgressBarDetail.Max := ProgressBar1.Position + DataModuleOCK.SQLQuery1.RecordCount;
+      ProgressBarDetail.Max := ProgressBar1.Position + DataModuleOCK.SQLQueryProductData.RecordCount;
     end;
     Application.ProcessMessages;
     logdatei.log('BuildProductTiles from db start', LLDebug2);
     counter := 0;
-    while not DataModuleOCK.SQLQuery1.EOF do
+    while not DataModuleOCK.SQLQueryProductData.EOF do
     begin
-      ProductID := DataModuleOCK.SQLQuery1.FieldByName('ProductId').AsString;
+      ProductID := DataModuleOCK.SQLQueryProductData.FieldByName('ProductId').AsString;
       FormProgressWindow.LabelDataLoadDetail.Caption := ProductID;
       FormProgressWindow.ProgressbarDetail.StepIt;
       FormProgressWindow.ProgressBar1.StepIt;
@@ -741,7 +741,7 @@ begin
       SetLength(ArrayProductTiles, counter + 1);
       ArrayProductTiles[counter] := TProductPanel.Create(FormOpsiClientKiosk.FindComponent(OwnerName) as TFlowPanel);
       ArrayProductTiles[counter].LabelID.Caption := ProductID;
-      ArrayProductTiles[counter].LabelName.Caption := DataModuleOCK.SQLQuery1.FieldByName('ProductName').AsString;
+      ArrayProductTiles[counter].LabelName.Caption := DataModuleOCK.SQLQueryProductData.FieldByName('ProductName').AsString;
       if FileExists(IconPathCustom + ProductID + '.png') then
         ArrayProductTiles[counter].ImageIcon.Picture.LoadFromFile(IconPathCustom + ProductID + '.png')
       else
@@ -750,10 +750,10 @@ begin
         else
           if FileExists(IconPathDefault + 'opsi-logo.png') then
             ArrayProductTiles[counter].ImageIcon.Picture.LoadFromFile(IconPathDefault + 'opsi-logo.png');
-      state := DataModuleOCK.SQLQuery1.FieldByName('installationStatus').AsString;
+      state := DataModuleOCK.SQLQueryProductData.FieldByName('installationStatus').AsString;
       if state = 'installed' then
       begin
-        update := DataModuleOCK.SQLQuery1.FieldByName('updatePossible').AsString;
+        update := DataModuleOCK.SQLQueryProductData.FieldByName('updatePossible').AsString;
         if update = 'True' then
         begin
           ArrayProductTiles[counter].LabelState.Caption := rsUpdate;
@@ -777,10 +777,10 @@ begin
       end;
       ArrayProductTiles[counter].Tag := counter;
       Inc(counter);
-      DataModuleOCK.SQLQuery1.Next;
+      DataModuleOCK.SQLQueryProductData.Next;
     end;
   finally
-    DataModuleOCK.SQLQuery1.Close;
+    DataModuleOCK.SQLQueryProductData.Close;
     inTileRebuild := False;
     logdatei.log('BuildProductTiles stop', LLDebug2);
     FormProgressWindow.Visible := False;
@@ -801,15 +801,15 @@ end;
 procedure Tmythread2.Execute;
 begin
   // write back action requests
-  datadb.DataModuleOCK.SQLQuery1.Filtered := False;
-  datadb.DataModuleOCK.SQLQuery1.Filter := 'ActionRequest  <> ""';
-  datadb.DataModuleOCK.SQLQuery1.Filtered := True;
-  DataModuleOCK.SQLQuery1.First;
-  while not DataModuleOCK.SQLQuery1.EOF do
+  DataModuleOCK.SQLQueryProductData.Filtered := False;
+  DataModuleOCK.SQLQueryProductData.Filter := 'ActionRequest  <> ""';
+  DataModuleOCK.SQLQueryProductData.Filtered := True;
+  DataModuleOCK.SQLQueryProductData.First;
+  while not DataModuleOCK.SQLQueryProductData.EOF do
   begin
-    OCKOpsiConnection.setActionrequest(DataModuleOCK.SQLQuery1.FieldByName('ProductId').AsString,
-      DataModuleOCK.SQLQuery1.FieldByName('ActionRequest').AsString);
-    DataModuleOCK.SQLQuery1.Next;
+    OCKOpsiConnection.setActionrequest(DataModuleOCK.SQLQueryProductData.FieldByName('ProductId').AsString,
+      DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString);
+    DataModuleOCK.SQLQueryProductData.Next;
   end;
   Terminate;
 end;
@@ -827,7 +827,7 @@ begin
   NotebookProducts.PageIndex := RadioGroupView.ItemIndex;
   if RadioGroupView.ItemIndex = 0 then
   begin
-    datadb.DataModuleOCK.SQLQuery1.Open;
+    DataModuleOCK.SQLQueryProductData.Open;
   end;
 end;
 
@@ -847,13 +847,13 @@ begin
   try
     screen.Cursor := crHourGlass;
     EditSearch.Clear;
-    datadb.DataModuleOCK.SQLQuery1.Open;
-    datadb.DataModuleOCK.SQLQuery1.Filtered := False;
+    DataModuleOCK.SQLQueryProductData.Open;
+    DataModuleOCK.SQLQueryProductData.Filtered := False;
     SpeedButtonAll.AllowAllUp:= False;
     SpeedButtonAll.Down := True;
     FormOpsiClientKiosk.NotebookProducts.PageIndex:= 1;
   finally
-    datadb.DataModuleOCK.SQLQuery1.Close;
+    DataModuleOCK.SQLQueryProductData.Close;
     screen.Cursor := crDefault;
   end;
 end;
@@ -879,9 +879,6 @@ var
   direction: string;
 begin
   try
-    if DataModuleOCK.SQLQuery1.Active then
-      DataModuleOCK.SQLQuery1.Close;
-    DataModuleOCK.SQLQuery1.SQL.Clear;
     direction := ' ASC';
     if LowerCase(lastOrderCol) = LowerCase(Column.FieldName) then
     begin
@@ -898,9 +895,10 @@ begin
     end
     else
       lastOrderCol := Column.FieldName;
-    DataModuleOCK.SQLQuery1.SQL.Add('select * from products order by ' +
+    DataModuleOCK.SQLQueryProductData.SQL.Clear;
+    DataModuleOCK.SQLQueryProductData.SQL.Add('select * from products order by ' +
       Column.FieldName + direction);
-    DataModuleOCK.SQLQuery1.Open;
+    DataModuleOCK.SQLQueryProductData.Open;
   except
   end;
 end;
@@ -986,9 +984,9 @@ procedure TFormOpsiClientKiosk.DBComboBox1Exit(Sender: TObject);
 begin
   DBGrid1.Repaint;
   if DBComboBox1.Text <> '' then
-    datadb.DataModuleOCK.SQLQuery1.Post;
-  //  ockdata.DataModuleOCK.SQLQuery1.FieldByName('actionrequest').AsString := 'none';
-  //ockdata.DataModuleOCK.SQLQuery1.Post;
+    datadb.DataModuleOCK.SQLQueryProductData.Post;
+  //  ockdata.DataModuleOCK.SQLQueryProductData.FieldByName('actionrequest').AsString := 'none';
+  //ockdata.DataModuleOCK.SQLQueryProductData.Post;
 end;
 
 
@@ -997,10 +995,10 @@ var
   i: integer;
 begin
   // write back action requests
-  datadb.DataModuleOCK.SQLQuery1.Filtered := False;
-  //ockdata.DataModuleOCK.SQLQuery1.Filter := ' not ((ActionRequest = "") and (ActionRequest = "none"))';
-  datadb.DataModuleOCK.SQLQuery1.Filter := 'ActionRequest <> ""';
-  datadb.DataModuleOCK.SQLQuery1.Filtered := True;
+  datadb.DataModuleOCK.SQLQueryProductData.Filtered := False;
+  //ockdata.DataModuleOCK.SQLQueryProductData.Filter := ' not ((ActionRequest = "") and (ActionRequest = "none"))';
+  datadb.DataModuleOCK.SQLQueryProductData.Filter := 'ActionRequest <> ""';
+  datadb.DataModuleOCK.SQLQueryProductData.Filtered := True;
   FormProgressWindow.ProcessMess;
   RadioGroupViewSelectionChanged(self);
 end;
@@ -1078,10 +1076,10 @@ begin
   FormOpsiClientKiosk.NotebookProducts.PageIndex:= 4;
   EditSearch.Text := '';
   TimerSearchEdit.Enabled := False;
-  ockdata.DataModuleOCK.SQLQuery1.Filtered := False;
-  ockdata.DataModuleOCK.SQLQuery1.FilterOptions := [foCaseInsensitive];
-  ockdata.DataModuleOCK.SQLQuery1.Filter := 'installationStatus = ""';
-  ockdata.DataModuleOCK.SQLQuery1.Filtered := True;
+  ockdata.DataModuleOCK.SQLQueryProductData.Filtered := False;
+  ockdata.DataModuleOCK.SQLQueryProductData.FilterOptions := [foCaseInsensitive];
+  ockdata.DataModuleOCK.SQLQueryProductData.Filter := 'installationStatus = ""';
+  ockdata.DataModuleOCK.SQLQueryProductData.Filtered := True;
   FormProgressWindow.ProcessMess;
   while inTileRebuild do
     Sleep(10);
@@ -1136,7 +1134,7 @@ var
   action: string;
 begin
   PanelProductDetail.Height := 185;
-  action := datadb.DataModuleOCK.SQLQuery1.FieldByName('possibleAction').AsString;
+  action := datadb.DataModuleOCK.SQLQueryProductData.FieldByName('possibleAction').AsString;
   DBComboBox1.Items.Clear;
   DBComboBox1.Items.Add('none');
   DBComboBox1.Items.Add('setup');
@@ -1232,12 +1230,12 @@ begin
 
   { Initialize database tables and copy opsi product data to database }
   DatamoduleOCK := TDataModuleOCK.Create(self);
-  DataModuleOCK.InitDB;
+  DataModuleOCK.InitDatabase;
   LogDatei.log('start OpsiProductsToDataset', LLNotice);
-  DataModuleOCK.OpsiProductsToDataset(DataModuleOCK.SQLQuery1);
+  DataModuleOCK.OpsiProductsToDataset(DataModuleOCK.SQLQueryProductData);
   //InitOpsiClientKiosk;
-  DBGrid1.DataSource := DataModuleOCK.DataSource1;
-  DBGrid2.DataSource := DataModuleOCK.DataSource2;
+  DBGrid1.DataSource := DataModuleOCK.DataSourceProductData;
+  DBGrid2.DataSource := DataModuleOCK.DataSourceProductDependencies;
 
   { Initialize GUI }
   BuildProductTiles(ArrayAllproductTiles, 'FlowPanelAllTiles');
@@ -1262,7 +1260,7 @@ var
   i: integer;
 begin
   OCKOpsiConnection.LoadProductsFromServer;
-  DataModuleOCK.OpsiProductsToDataset(DataModuleOCK.SQLQuery1);
+  DataModuleOCK.OpsiProductsToDataset(DataModuleOCK.SQLQueryProductData);
   //StartupDone := False;
   RadioGroupViewSelectionChanged(self);
   //StartupDone := True;
@@ -1433,11 +1431,12 @@ var
   Filtercond, Filterstr: string;
 begin
   try
-    datadb.DataModuleOCK.SQLQuery1.Open;
+    //SQLTransaction.StartTransaction;
+    DataModuleOCK.SQLQueryProductData.Open;
     if EditSearch.Text = '' then
     begin
       //Filtercond := '"*"';
-      datadb.DataModuleOCK.SQLQuery1.Filtered := False;
+      DataModuleOCK.SQLQueryProductData.Filtered := False;
       LogDatei.log('Search for: ' + EditSearch.Text + ' Filter off.', LLinfo);
     end
     else
@@ -1450,22 +1449,23 @@ begin
       Filterstr := Filterstr + 'or DESCRIPTION =' + Filtercond;
       Filterstr := Filterstr + 'or ADVICE =' + Filtercond;
       Filterstr := Filterstr + 'or INSTALLATIONSTATUS =' + Filtercond;
-      datadb.DataModuleOCK.SQLQuery1.Filter := Filterstr;
-      datadb.DataModuleOCK.SQLQuery1.FilterOptions := [foCaseInsensitive];
-      datadb.DataModuleOCK.SQLQuery1.Filtered := True;
-      DataModuleOCK.SQLQuery1.First;
+      DataModuleOCK.SQLQueryProductData.Filter := Filterstr;
+      DataModuleOCK.SQLQueryProductData.FilterOptions := [foCaseInsensitive];
+      DataModuleOCK.SQLQueryProductData.Filtered := True;
+      DataModuleOCK.SQLQueryProductData.First;
       {******* Hier weiter machen****
          Verknüpfung Database ID mit Panel ID zum Suchen
       *******************************}
-      //while not DataModuleOCK.SQLQuery1.EOF do
+      //while not DataModuleOCK.SQLQueryProductData.EOF do
       //begin
-        //ProductID := DataModuleOCK.SQLQuery1.FieldByName('ProductId').AsString;
+        //ProductID := DataModuleOCK.SQLQueryProductData.FieldByName('ProductId').AsString;
 
       //end;
       BuildProductTiles(ArraySearchPanelTiles, 'FlowPanelSearchTiles');
     end;
   finally
-    datadb.DataModuleOCK.SQLQuery1.Close;
+    datadb.DataModuleOCK.SQLQueryProductData.Close;
+    //SQLTransaction.Commit;
   end;
   //if not SpeedButtonExpertMode.Down then
 end;
@@ -1575,30 +1575,7 @@ begin
 end;
 
 procedure TFormOpsiClientKiosk.InitOpsiClientKiosk;
-var
-  ErrorMsg: string;
-  parameters: array of string;
-  resultstring: string;
-  i: integer;
-  grouplist: TStringList;
-  ConnectionInfo:string;
 begin
-  {LogDatei.log('Initialize Opsi Client Kiosk', LLNotice);
-  // is an other instance running ?
-  if numberOfProcessInstances(ExtractFileName(ParamStr(0))) > 1 then
-  begin
-    LogDatei.log('An other instance of this program is running - so we abort', LLCritical);
-    LogDatei.Close;
-    halt(1);
-  end;
-  // is opsiclientd running ?
-  if numberOfProcessInstances('opsiclientd') < 1 then
-  begin
-    LogDatei.log('opsiclientd is not running - so we abort', LLCritical);
-    LogDatei.Close;
-    ShowMessage('opsiclientd is not running - so we abort');
-    halt(1);
-  end;}
   FormProgressWindow.LabelDataload.Caption := 'Init connection';
   FormProgressWindow.ProgressBar1.StepIt;
   FormProgressWindow.ProcessMess;
@@ -1606,17 +1583,11 @@ begin
   if true then //OCKOpsiConnection.initConnection(30, ConnectionInfo) then
   begin
     LogDatei.log('init connection done', LLNotice);
-    //FormProgressWindow.LabelDataload.Caption := 'Init connection done';
-    //FormProgressWindow.ProgressBar1.StepIt;
-    //FormProgressWindow.ProcessMess;
-    //FormOpsiClientKiosk.StatusBar1.Panels[0].Text := 'Connected to ' + myservice_url + ' as ' + myclientid;
     DatamoduleOCK := TDataModuleOCK.Create(nil);
-    DataModuleOCK.InitDB;
+    DataModuleOCK.InitDatabase;
     FormProgressWindow.LabelInfo.Caption := 'Please wait while gettting products';
     LogDatei.log('start OpsiProductsToDataset', LLNotice);
-    //fetchProductData_by_getKioskProductInfosForClient;
-    //OCKOpsiConnection.fetchProductData(DataModuleOCK.SQLQuery1,'getKioskProductInfosForClient');
-    DataModuleOCK.OpsiProductsToDataset(DataModuleOCK.SQLQuery1);
+    DataModuleOCK.OpsiProductsToDataset(DataModuleOCK.SQLQueryProductData);
     LogDatei.log('Handle products done', LLNotice);
     FormProgressWindow.LabelDataload.Caption := 'Handle Products';
     FormProgressWindow.ProcessMess;
@@ -1629,7 +1600,7 @@ begin
     FormOpsiClientKiosk.Terminate;
     halt(1);
   end;
-  LogDatei.log('main done', LLDebug2);
+  LogDatei.log('InitOPsiClientKiosk done', LLDebug2);
   FormProgressWindow.ProgressBar1.StepIt;
   FormProgressWindow.ProcessMess;
 end;
