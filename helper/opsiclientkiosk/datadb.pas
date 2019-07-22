@@ -30,12 +30,13 @@ type
     procedure InitDatabase;
     procedure OpsiProductsToDataset(SQLQuery: TSQLQuery);
     procedure SQLQueryProductDataAfterPost(Dataset: TDataset);
-    constructor Create(AOwner: TComponent);override;
   private
     { private declarations }
     procedure CreateDatabaseTables(Connection: TSQLite3Connection);
   public
     { public declarations }
+    constructor Create(AOwner: TComponent);override;
+    destructor Destroy;override;
   end;
 
 
@@ -44,6 +45,8 @@ var
 
 implementation
 
+uses
+  opsiclientkioskgui;
 {$R *.lfm}
 
 { TDataModuleOCK }
@@ -68,9 +71,18 @@ end;
 constructor TDataModuleOCK.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  //InitDatabase;
   DataSourceProductData.Dataset := SQLQueryProductData;
+  //FormopsiClientkiosk.DataSource1.Dataset := SQLQueryProductData;
   DataSourceProductDependencies.Dataset := SQLQueryProductDependencies;
-  //SQLQueryProductDependencies.DataSource := DataSourceProductData;
+  SQLQueryProductDependencies.DataSource := DataSourceProductData;
+  //SQLQueryProductDependencies.DataSource := FormopsiClientkiosk.DataSource1;
+end;
+
+destructor TDataModuleOCK.Destroy;
+begin
+  SQLite3Connection.Close;
+  inherited Destroy;
 end;
 
 procedure TDataModuleOCK.InitDatabase;
@@ -201,7 +213,8 @@ var
   SQLStatment: String;
   //productdatarecord: TProductData;
 begin
-    logdatei.log('starting OpsiProductToDataset ....', LLInfo);
+  //if SQLTransaction.Active then SQLTransaction.Active:=FALSE;
+  logdatei.log('starting OpsiProductToDataset ....', LLInfo);
   { product data to database }
   SQLStatment := 'INSERT INTO products VALUES ('
                    + ':ProductID, '

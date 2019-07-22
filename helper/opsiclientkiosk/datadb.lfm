@@ -2,14 +2,15 @@ object DataModuleOCK: TDataModuleOCK
   OldCreateOrder = False
   left = 691
   top = 150
-  Height = 329
-  HorizontalOffset = 808
-  VerticalOffset = 232
-  Width = 519
+  Height = 627
+  HorizontalOffset = 269
+  VerticalOffset = 160
+  Width = 948
   PPI = 96
   object SQLite3Connection: TSQLite3Connection
     Connected = False
     LoginPrompt = False
+    DatabaseName = 'C:\Users\Jan\AppData\Local\Temp\opsikiosk.db'
     KeepConnection = False
     Transaction = SQLTransaction
     left = 160
@@ -41,14 +42,13 @@ object DataModuleOCK: TDataModuleOCK
     left = 384
     top = 128
   end
+  object DataSourceProductDependencies: TDataSource
+    left = 368
+    top = 232
+  end
   object DataSourceProductData: TDataSource
     DataSet = SQLQueryProductData
-    left = 64
-    top = 216
-  end
-  object DataSourceProductDependencies: TDataSource
-    DataSet = SQLQueryProductData
-    left = 384
-    top = 224
+    left = 74
+    top = 256
   end
 end

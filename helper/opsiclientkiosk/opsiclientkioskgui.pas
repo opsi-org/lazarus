@@ -75,6 +75,7 @@ type
     ButtonSoftwareUpdate: TButton;
     ButtonSoftwareInstall: TButton;
     ButtonSoftwareBack: TButton;
+    DataSource1: TDataSource;
     DBComboBox1: TDBComboBox;
     DBGrid1: TDBGrid;
     DBGrid2: TDBGrid;
@@ -144,6 +145,7 @@ type
     procedure ButtonSoftwareInstallClick(Sender: TObject);
     //procedure BtnActionClick(Sender: TObject);
     procedure ButtonSoftwareBackClick(Sender: TObject);
+    procedure DataSource1DataChange(Sender: TObject; Field: TField);
     procedure DBComboBox1Exit(Sender: TObject);
     procedure DBGrid1CellClick(Column: TColumn);
     procedure DBGrid1ColExit(Sender: TObject);
@@ -152,14 +154,12 @@ type
     procedure DBGrid1Enter(Sender: TObject);
     procedure DBGrid1Exit(Sender: TObject);
     procedure DBGrid1TitleClick(Column: TColumn);
-    procedure FlowPanelUpdateTilesClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure GrouplistEnter(Sender: TObject);
     procedure RadioGroupViewSelectionChanged(Sender: TObject);
-    procedure ScrollBoxUpdateTilesClick(Sender: TObject);
     procedure ScrollBoxAllTilesMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
     procedure BtnClearSearchEditClick(Sender: TObject);
@@ -181,7 +181,7 @@ type
     function GetUserName_:string;
     function InitLogging(const LogFileName, CallingMethod: string; MyLogLevel:integer): boolean;
     procedure LoadSkin(SkinPath: string);
-    procedure InitOpsiClientKiosk;
+    //procedure InitOpsiClientKiosk;
     procedure FilterOnSearch;
     procedure BuildProductTiles(var ArrayProductTiles:TPanels; const OwnerName:string);
     function GetTileIDbyProductID(const ProductID:String):integer;
@@ -547,6 +547,7 @@ begin
     //actionindex := ArrayAllProductTiles[tileindex].RadioGroupAction.ItemIndex;
     actionindex := TRadioButton(Sender).Tag;
     pid := ArrayAllProductTiles[tileindex].LabelId.Caption;
+    //DataModuleOCK.SQLQueryProductData.Open;
     DataModuleOCK.SQLQueryProductData.First;
     if DataModuleOCK.SQLQueryProductData.Locate('ProductId', VarArrayOf([pid]),
       [loCaseInsensitive]) then
@@ -635,12 +636,17 @@ procedure TProductPanel.TileClick(Sender: TObject);
 var
   TileIndex :integer;
   pid : String;
+  gefunden : boolean;
+  sqltext : String;
 begin
   try
     TileIndex := TControl(Sender).Parent.Tag;
     pid := ArrayAllProductTiles[TileIndex].LabelID.Caption;
+    DataModuleOCK.SQLTransaction.StartTransaction;
+    sqltext := DataModuleOCK.SQLQueryProductData.SQL.Text;
     DataModuleOCK.SQLQueryProductData.Open;
     DataModuleOCK.SQLQueryProductData.First;
+    gefunden := DataModuleOCK.SQLQueryProductData.Locate('ProductID', VarArrayOf([pid]),[loCaseInsensitive]);
     if DataModuleOCK.SQLQueryProductData.Locate('ProductID', VarArrayOf([pid]),[loCaseInsensitive]) then
     begin
       FormOpsiClientKiosk.PanelProductDetail.Height := 0;
@@ -669,7 +675,7 @@ begin
       end;
     end;
   finally
-    //DataModuleOCK.SQLQueryProductData.Open;
+    //DataModuleOCK.SQLQueryProductData.Close;
   end;
 end;
 
@@ -715,6 +721,7 @@ begin
 
     // use complete window for tiles
     //FormOpsiClientKiosk.PanelProductDetail.Height := 0;
+    DataModuleOCK.SQLTransaction.StartTransaction;
     DataModuleOCK.SQLQueryProductData.SQL.Text := 'SELECT * FROM products ORDER BY UPPER (ProductName)';
     DataModuleOCK.SQLQueryProductData.Open;
     DataModuleOCK.SQLQueryProductData.First;
@@ -781,6 +788,7 @@ begin
     end;
   finally
     DataModuleOCK.SQLQueryProductData.Close;
+    DataModuleOCK.SQLTransaction.Commit;
     inTileRebuild := False;
     logdatei.log('BuildProductTiles stop', LLDebug2);
     FormProgressWindow.Visible := False;
@@ -827,13 +835,15 @@ begin
   NotebookProducts.PageIndex := RadioGroupView.ItemIndex;
   if RadioGroupView.ItemIndex = 0 then
   begin
+    DataModuleOCK.SQLTransaction.StartTransaction;
     DataModuleOCK.SQLQueryProductData.Open;
   end;
-end;
-
-procedure TFormOpsiClientKiosk.ScrollBoxUpdateTilesClick(Sender: TObject);
-begin
-
+  if RadioGroupView.ItemIndex = 1 then
+  begin
+    DataModuleOCK.SQLQueryProductData.Close;
+    DataModuleOCK.SQLTransaction.Commit;
+    PanelProductDetail.Height:= 0;
+  end;
 end;
 
 procedure TFormOpsiClientKiosk.ScrollBoxAllTilesMouseWheel(Sender: TObject;
@@ -847,13 +857,16 @@ begin
   try
     screen.Cursor := crHourGlass;
     EditSearch.Clear;
-    DataModuleOCK.SQLQueryProductData.Open;
+    //DataModuleOCK.SQLQueryProductData.Open;
     DataModuleOCK.SQLQueryProductData.Filtered := False;
     SpeedButtonAll.AllowAllUp:= False;
     SpeedButtonAll.Down := True;
-    FormOpsiClientKiosk.NotebookProducts.PageIndex:= 1;
+    if SpeedButtonExpertMode.Down then
+      FormOpsiClientKiosk.NotebookProducts.PageIndex:= 0
+    else
+      FormOpsiClientKiosk.NotebookProducts.PageIndex:= 1;
   finally
-    DataModuleOCK.SQLQueryProductData.Close;
+    //DataModuleOCK.SQLQueryProductData.Close;
     screen.Cursor := crDefault;
   end;
 end;
@@ -862,7 +875,8 @@ procedure TFormOpsiClientKiosk.SpeedButtonReloadClick(Sender: TObject);
 begin
   try
     screen.Cursor := crHourGlass;
-    ReloadDataFromServer;
+     if DataModuleOCK.SQLTransaction.Active then ShowMessage('Transaction active Button reload click!');
+    //ReloadDataFromServer;
     //FilterOnSearch;
   finally
     screen.Cursor := crDefault;
@@ -901,11 +915,6 @@ begin
     DataModuleOCK.SQLQueryProductData.Open;
   except
   end;
-end;
-
-procedure TFormOpsiClientKiosk.FlowPanelUpdateTilesClick(Sender: TObject);
-begin
-
 end;
 
 procedure TFormOpsiClientKiosk.FormDestroy(Sender: TObject);
@@ -975,9 +984,17 @@ end;
 
 procedure TFormOpsiClientKiosk.ButtonSoftwareBackClick(Sender: TObject);
 begin
+  DataModuleOCK.SQLQueryProductData.Close;
+  DataModuleOCK.SQLTransaction.Commit;
   if SpeedButtonExpertMode.Down then FormOpsiClientKiosk.PanelExpertMode.Visible := True;
   FormOpsiClientKiosk.PanelToolbar.Visible := True;
   FormOpsiClientKiosk.NotebookProducts.PageIndex:=1;
+end;
+
+procedure TFormOpsiClientKiosk.DataSource1DataChange(Sender: TObject;
+  Field: TField);
+begin
+
 end;
 
 procedure TFormOpsiClientKiosk.DBComboBox1Exit(Sender: TObject);
@@ -995,12 +1012,12 @@ var
   i: integer;
 begin
   // write back action requests
-  datadb.DataModuleOCK.SQLQueryProductData.Filtered := False;
-  //ockdata.DataModuleOCK.SQLQueryProductData.Filter := ' not ((ActionRequest = "") and (ActionRequest = "none"))';
-  datadb.DataModuleOCK.SQLQueryProductData.Filter := 'ActionRequest <> ""';
-  datadb.DataModuleOCK.SQLQueryProductData.Filtered := True;
+  DataModuleOCK.SQLQueryProductData.Filtered := False;
+  //DataModuleOCK.SQLQueryProductData.Filter := ' not ((ActionRequest = "") and (ActionRequest = "none"))';
+  DataModuleOCK.SQLQueryProductData.Filter := 'ActionRequest <> ""';
+  DataModuleOCK.SQLQueryProductData.Filtered := True;
   FormProgressWindow.ProcessMess;
-  RadioGroupViewSelectionChanged(self);
+  //RadioGroupViewSelectionChanged(self);
 end;
 
 procedure TFormOpsiClientKiosk.BitBtnInfoClick(Sender: TObject);
@@ -1134,17 +1151,19 @@ var
   action: string;
 begin
   PanelProductDetail.Height := 185;
-  action := datadb.DataModuleOCK.SQLQueryProductData.FieldByName('possibleAction').AsString;
+  action := DataModuleOCK.SQLQueryProductData.FieldByName('possibleAction').AsString;
   DBComboBox1.Items.Clear;
   DBComboBox1.Items.Add('none');
   DBComboBox1.Items.Add('setup');
   if action <> 'setup' then
     DBComboBox1.Items.Add(action);
+  //ShowMessage(DataModuleOCK.SQLQueryProductData.FieldByName('VersionStr').AsString);
+   //DBTextVerStr.DataField := 'VersionStr';
 end;
 
 procedure TFormOpsiClientKiosk.DBGrid1ColExit(Sender: TObject);
 begin
-  if (dbgrid1.SelectedField.FieldName = DBComboBox1.DataField) then
+  if (DBGrid1.SelectedField.FieldName = DBComboBox1.DataField) then
   begin
     DBComboBox1.Visible := False;
   end;
@@ -1155,7 +1174,7 @@ procedure TFormOpsiClientKiosk.DBGrid1DrawColumnCell(Sender: TObject;
 begin
   if (gdFocused in State) then
   begin
-    if (dbgrid1.SelectedField.FieldName = DBComboBox1.DataField) then
+    if (DBGrid1.SelectedField.FieldName = DBComboBox1.DataField) then
     begin
       DBComboBox1.Left := Rect.Left + DBGrid1.Left;
       DBComboBox1.Top := Rect.Top + DBGrid1.top;
@@ -1211,7 +1230,7 @@ begin
   FormProgressWindow.ProgressBarDetail.Position := 50;
   //FormProgressWindow.ProgressBarDetail.StepIt;
   FormProgressWindow.ProcessMess;
-  OCKOpsiConnection := TOPsiConnection.Create(True, MyClientID);
+  OCKOpsiConnection := TOpsiConnection.Create(True, MyClientID);
   FormProgressWindow.LabelDataLoad.Caption := 'Connected to '+
     OCKOpsiConnection.myservice_url + ' as ' + OCKOpsiConnection.myclientid;
   StatusBar1.Panels[0].Text := 'Connected to '+
@@ -1229,17 +1248,20 @@ begin
   //Application.ProcessMessages;
 
   { Initialize database tables and copy opsi product data to database }
-  DatamoduleOCK := TDataModuleOCK.Create(self);
+  DatamoduleOCK := TDataModuleOCK.Create(nil);
   DataModuleOCK.InitDatabase;
+  if DataModuleOCK.SQLTransaction.Active then ShowMessage('Transaction active after Initdatabse!');
   LogDatei.log('start OpsiProductsToDataset', LLNotice);
   DataModuleOCK.OpsiProductsToDataset(DataModuleOCK.SQLQueryProductData);
   //InitOpsiClientKiosk;
+  if DataModuleOCK.SQLTransaction.Active then ShowMessage('Transaction active after OpsiProducts!');
   DBGrid1.DataSource := DataModuleOCK.DataSourceProductData;
+  //DBGrid1.DataSource := DataSource1;
   DBGrid2.DataSource := DataModuleOCK.DataSourceProductDependencies;
 
   { Initialize GUI }
   BuildProductTiles(ArrayAllproductTiles, 'FlowPanelAllTiles');
-
+  if DataModuleOCK.SQLTransaction.Active then ShowMessage('Transaction active after BuildProductTiles!');
   { log }
   LogDatei.log('rsActSetup is: ' + rsActSetup , LLDebug2);
   LogDatei.log('TitleLabel.Caption: ' + TitleLabel.Caption, LLDebug2);
@@ -1274,7 +1296,7 @@ begin
     SpeedButtonAll.Down:= False;
     SpeedButtonUpdates.Down:= False;
     SpeedButtonNotInstalled.Down:= False;
-    NotebookProducts.PageIndex:= 3;
+    //NotebookProducts.PageIndex:= 3;
     // search in list
     // if timer running: reset else start (so we wait to finish the input before seach)
     if TimerSearchEdit.Enabled then
@@ -1431,8 +1453,8 @@ var
   Filtercond, Filterstr: string;
 begin
   try
-    //SQLTransaction.StartTransaction;
-    DataModuleOCK.SQLQueryProductData.Open;
+    //DataModuleOCK.SQLTransaction.StartTransaction;
+    //DataModuleOCK.SQLQueryProductData.Open;
     if EditSearch.Text = '' then
     begin
       //Filtercond := '"*"';
@@ -1442,7 +1464,7 @@ begin
     else
     begin
       Filtercond := '"*' + EditSearch.Text + '*"';
-      LogDatei.log('Serach for: ' + EditSearch.Text + ' Filter for: ' +
+      LogDatei.log('Search for: ' + EditSearch.Text + ' Filter for: ' +
         Filtercond, LLinfo);
       Filterstr := 'ProductId =' + Filtercond;
       Filterstr := Filterstr + 'or ProductName =' + Filtercond;
@@ -1461,11 +1483,11 @@ begin
         //ProductID := DataModuleOCK.SQLQueryProductData.FieldByName('ProductId').AsString;
 
       //end;
-      BuildProductTiles(ArraySearchPanelTiles, 'FlowPanelSearchTiles');
+      //BuildProductTiles(ArraySearchPanelTiles, 'FlowPanelSearchTiles');
     end;
   finally
-    datadb.DataModuleOCK.SQLQueryProductData.Close;
-    //SQLTransaction.Commit;
+    //DataModuleOCK.SQLQueryProductData.Close;
+    //DataModuleOCK.SQLTransaction.Commit;
   end;
   //if not SpeedButtonExpertMode.Down then
 end;
@@ -1574,7 +1596,7 @@ begin
   InitLogging := True;
 end;
 
-procedure TFormOpsiClientKiosk.InitOpsiClientKiosk;
+{procedure TFormOpsiClientKiosk.InitOpsiClientKiosk;
 begin
   FormProgressWindow.LabelDataload.Caption := 'Init connection';
   FormProgressWindow.ProgressBar1.StepIt;
@@ -1603,7 +1625,7 @@ begin
   LogDatei.log('InitOPsiClientKiosk done', LLDebug2);
   FormProgressWindow.ProgressBar1.StepIt;
   FormProgressWindow.ProcessMess;
-end;
+end;}
 
 
 
