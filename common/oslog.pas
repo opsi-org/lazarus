@@ -1573,7 +1573,7 @@ var
 begin
   bytesize := lazfileutils.FileSizeUtf8(PartFileName);
   mbsize :=  bytesize div (1024 * 1024);
-  Logdatei.log('Checking if partlog: '+PartFileName+' is bigger than 5 MB : '+inttostr(mbsize), LLInfo);
+  Logdatei.log('Checking if partlog: '+PartFileName+' is bigger than '+inttostr(maxsize)+' MB - found: '+inttostr(mbsize)+' MB', LLInfo);
   Result := False;
   if PartLogFileExists then
   begin
