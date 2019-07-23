@@ -1,7 +1,7 @@
 object FormOpsiClientKiosk: TFormOpsiClientKiosk
-  Left = 2426
+  Left = 2319
   Height = 694
-  Top = 133
+  Top = 6
   Width = 804
   Caption = 'opsi-client-kiosk'
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
@@ -1289,18 +1289,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
               Align = alTop
               BorderSpacing.Around = 5
               DataField = 'VersionStr'
-              DataSource = DataSource1
-              ParentColor = False
-            end
-            object DBTextClientVerStr: TDBText
-              Left = 5
-              Height = 15
-              Top = 129
-              Width = 626
-              Align = alTop
-              BorderSpacing.Around = 5
-              DataField = 'InstalledVerStr'
-              DataSource = DataModuleOCK.DataSourceProductData
+              DataSource = DataSourceProductData
               ParentColor = False
             end
             object DBMemoDescription: TDBMemo
@@ -1312,6 +1301,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
               BorderSpacing.Around = 5
               BorderStyle = bsNone
               DataField = 'Description'
+              DataSource = DataSourceProductData
               ReadOnly = True
               ScrollBars = ssAutoVertical
               TabOrder = 0
@@ -1325,6 +1315,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
               BorderSpacing.Around = 5
               BorderStyle = bsNone
               DataField = 'Advice'
+              DataSource = DataSourceProductData
               ReadOnly = True
               ScrollBars = ssAutoVertical
               TabOrder = 1
@@ -1337,6 +1328,17 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
               Align = alCustom
               Caption = 'Installieren'
               TabOrder = 2
+            end
+            object DBTextInstalledVerStr: TDBText
+              Left = 5
+              Height = 15
+              Top = 129
+              Width = 626
+              Align = alTop
+              BorderSpacing.Around = 5
+              DataField = 'InstalledVerSTr'
+              DataSource = DataSourceProductData
+              ParentColor = False
             end
           end
         end
@@ -1392,6 +1394,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
               Align = alClient
               Color = clWindow
               Columns = <>
+              DataSource = DataSourceProductDependencies
               TabOrder = 0
             end
           end
@@ -1417,6 +1420,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           Align = alClient
           Color = clWindow
           Columns = <>
+          DataSource = DataSourceProductData
           Options = [dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
           ReadOnly = True
           Scrollbars = ssAutoBoth
@@ -1435,12 +1439,14 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           Top = 71
           Width = 100
           DataField = 'ActionRequest'
+          DataSource = DataSourceProductData
           ItemHeight = 15
           Items.Strings = (
             'setup'
             'uninstall'
           )
           MaxLength = 0
+          OnEnter = DBComboBox1Enter
           OnExit = DBComboBox1Exit
           TabOrder = 1
           Visible = False
@@ -1564,7 +1570,8 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             BorderSpacing.Around = 5
             BorderStyle = bsNone
             Color = clForm
-            DataField = 'description'
+            DataField = 'Description'
+            DataSource = DataSourceProductData
             Font.CharSet = ANSI_CHARSET
             Font.Color = clBlack
             Font.Height = -13
@@ -1584,7 +1591,8 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             BorderSpacing.Around = 5
             BorderStyle = bsNone
             Color = clForm
-            DataField = 'advice'
+            DataField = 'Advice'
+            DataSource = DataSourceProductData
             Font.CharSet = ANSI_CHARSET
             Font.Color = clBlack
             Font.Height = -13
@@ -1682,7 +1690,8 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Top = 218
             Width = 111
             BorderSpacing.Around = 5
-            DataField = 'versionstr'
+            DataField = 'VersionStr'
+            DataSource = DataSourceProductData
             ParentColor = False
           end
           object DBTextSoftwareClientVerStr: TDBText
@@ -1692,6 +1701,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Width = 142
             BorderSpacing.Around = 5
             DataField = 'installedverstr'
+            DataSource = DataSourceProductData
             ParentColor = False
           end
           object LabelSoftwareInstalledVersion: TLabel
@@ -1718,6 +1728,14 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Caption = 'Update'
             Enabled = False
             TabOrder = 4
+          end
+          object ButtonSoftwareUninstall: TButton
+            Left = 15
+            Height = 28
+            Top = 104
+            Width = 135
+            Caption = 'Uninstall'
+            TabOrder = 5
           end
         end
       end
@@ -1763,8 +1781,12 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
     OnTimer = TimerSearchEditTimer
     left = 40
   end
-  object DataSource1: TDataSource
+  object DataSourceProductData: TDataSource
     DataSet = DataModuleOCK.SQLQueryProductData
-    left = 128
+    left = 176
+  end
+  object DataSourceProductDependencies: TDataSource
+    DataSet = DataModuleOCK.SQLQueryProductDependencies
+    left = 624
   end
 end

@@ -14,7 +14,7 @@ uses
   //oscrypt,
   lazfileutils,
   //sqlite3conn, sqldb,
-  db,
+  //db,
   inifiles,
   Variants,
  // fileinfo,

@@ -34,5 +34,6 @@
 {"hash":238311301,"name":"tformopsiclientkiosk.panelsoftwarescreenshot.caption","sourcebytes":[83,99,114,101,101,110,83,104,111,116,73,109,97,103,101],"value":"ScreenShotImage"},
 {"hash":72053902,"name":"tformopsiclientkiosk.labelsoftwareinstalledversion.caption","sourcebytes":[73,110,115,116,97,108,108,101,100,32,118,101,114,115,105,111,110],"value":"Installed version"},
 {"hash":123063726,"name":"tformopsiclientkiosk.labelsoftwarerecentversion.caption","sourcebytes":[82,101,99,101,110,116,32,118,101,114,115,105,111,110],"value":"Recent version"},
-{"hash":96905381,"name":"tformopsiclientkiosk.buttonsoftwareupdate.caption","sourcebytes":[85,112,100,97,116,101],"value":"Update"}
+{"hash":96905381,"name":"tformopsiclientkiosk.buttonsoftwareupdate.caption","sourcebytes":[85,112,100,97,116,101],"value":"Update"},
+{"hash":5962876,"name":"tformopsiclientkiosk.buttonsoftwareuninstall.caption","sourcebytes":[85,110,105,110,115,116,97,108,108],"value":"Uninstall"}
 ]}

@@ -21,13 +21,13 @@ type
   { TDataModuleOCK }
 
   TDataModuleOCK = class(TDataModule)
-    DataSourceProductData: TDataSource;
-    DataSourceProductDependencies: TDataSource;
     SQLite3Connection: TSQLite3Connection;
     SQLQueryProductData: TSQLQuery;
     SQLQueryProductDependencies: TSQLQuery;
     SQLTransaction: TSQLTransaction;
-    procedure InitDatabase;
+    procedure CreateDatabaseAndTables;
+    procedure LoadTableProducts;
+    procedure SaveTableProducts;
     procedure OpsiProductsToDataset(SQLQuery: TSQLQuery);
     procedure SQLQueryProductDataAfterPost(Dataset: TDataset);
   private
@@ -72,11 +72,11 @@ constructor TDataModuleOCK.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   //InitDatabase;
-  DataSourceProductData.Dataset := SQLQueryProductData;
-  //FormopsiClientkiosk.DataSource1.Dataset := SQLQueryProductData;
-  DataSourceProductDependencies.Dataset := SQLQueryProductDependencies;
-  SQLQueryProductDependencies.DataSource := DataSourceProductData;
-  //SQLQueryProductDependencies.DataSource := FormopsiClientkiosk.DataSource1;
+  //DataSourceProductData.Dataset := SQLQueryProductData;
+  FormOpsiClientKiosk.DataSourceProductData.Dataset := SQLQueryProductData;
+  FormOpsiClientKiosk.DataSourceProductDependencies.Dataset := SQLQueryProductDependencies;
+  //SQLQueryProductDependencies.DataSource := DataSourceProductData;
+  SQLQueryProductDependencies.DataSource := FormOpsiClientKiosk.DataSourceProductData;
 end;
 
 destructor TDataModuleOCK.Destroy;
@@ -85,7 +85,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TDataModuleOCK.InitDatabase;
+procedure TDataModuleOCK.CreateDatabaseAndTables;
 var
   newFile: boolean;
 begin
@@ -142,6 +142,20 @@ begin
     end;
   end;
   logdatei.log('Finished InitDatabase', LLInfo);
+end;
+
+procedure TDataModuleOCK.LoadTableProducts;
+begin
+   SQLQueryProductData.SQL.Text := 'SELECT * FROM products ORDER BY UPPER (ProductName)';
+   SQLTransaction.StartTransaction;
+   SQLQueryProductData.Open;
+   //SQLQueryProductData.First;
+end;
+
+procedure TDataModuleOCK.SaveTableProducts;
+begin
+  DataModuleOCK.SQLQueryProductData.Close;
+  DataModuleOCK.SQLTransaction.Commit;
 end;
 
 procedure TDataModuleOCK.CreateDatabaseTables(Connection: TSQLite3Connection);

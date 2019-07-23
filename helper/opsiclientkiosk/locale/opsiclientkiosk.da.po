@@ -28,6 +28,7 @@ msgid "Setup"
 msgstr ""
 
 #: opsiclientkioskgui.rsactuninstall
+msgctxt "opsiclientkioskgui.rsactuninstall"
 msgid "Uninstall"
 msgstr ""
 
@@ -142,6 +143,11 @@ msgstr ""
 #: tformopsiclientkiosk.buttonsoftwareinstall.caption
 msgctxt "tformopsiclientkiosk.buttonsoftwareinstall.caption"
 msgid "Install"
+msgstr ""
+
+#: tformopsiclientkiosk.buttonsoftwareuninstall.caption
+msgctxt "tformopsiclientkiosk.buttonsoftwareuninstall.caption"
+msgid "Uninstall"
 msgstr ""
 
 #: tformopsiclientkiosk.buttonsoftwareupdate.caption
