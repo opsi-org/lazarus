@@ -23,7 +23,7 @@ uses
   inifiles,
   oslog,
   oswebservice,
-  superobject, oslinmount;
+  oslinmount;
 
 
 const
