@@ -36,7 +36,7 @@ function DecryptBlowfish(const myencrypted,mykey: string): string;
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TStringList;
   var report: string; showcmd: integer; var ExitCode: longint): boolean;
-procedure mount_depotshare(mymountpoint : string; myhostkey : string);
+procedure mount_depotshare(mymountpoint : string; myhostkey : string;myclientId : string);
 
 implementation
 
@@ -391,9 +391,9 @@ begin
 end;
 
 
-procedure mount_depotshare(mymountpoint : string; myhostkey : string);
+procedure mount_depotshare(mymountpoint : string; myhostkey : string; myclientId : string);
 var
-  resultstring, mydepotuser, myclientId, mydomain, mydepot : string;
+  resultstring, mydepotuser,  mydomain, mydepot : string;
   myuser, myencryptedpass, myshare, mypass, mountoption  : string;
   mounttry : integer;
 begin

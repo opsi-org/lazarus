@@ -720,7 +720,7 @@ begin
         end;
       until isMounted(mymountpoint) or (mounttry > 12);
       *)
-      mount_depotshare(mymountpoint, myhostkey);
+      mount_depotshare(mymountpoint, myhostkey,myclientId);
       if not isMounted(mymountpoint) then
          LogDatei.log('Failed to mount '+myshare+' to '+mymountpoint+' - abort!',LLCritical)
       else
