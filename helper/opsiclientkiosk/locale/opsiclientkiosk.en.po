@@ -136,6 +136,11 @@ msgctxt "tformopsiclientkiosk.btnclearsearchedit.caption"
 msgid "X"
 msgstr "X"
 
+#: tformopsiclientkiosk.buttonreadconfigstate.caption
+msgctxt "tformopsiclientkiosk.buttonreadconfigstate.caption"
+msgid "Read configState"
+msgstr ""
+
 #: tformopsiclientkiosk.buttonsoftwareback.caption
 msgctxt "tformopsiclientkiosk.buttonsoftwareback.caption"
 msgid "<-- back"

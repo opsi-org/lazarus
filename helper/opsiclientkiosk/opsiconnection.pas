@@ -18,13 +18,13 @@ uses
   inifiles,
   Variants,
  // fileinfo,
-  proginfo;
+  proginfo,
   //winpeimagereader,
   //lcltranslator,
   //datadb,
   //osprocesses,
   //jwawinbase,
-  //dialogs,
+  dialogs;
   //progresswindow;
 
 type
@@ -63,7 +63,7 @@ type
     myservice_url: string;
     myexitcode,
     myloglevel: integer;
-    opsidata: TOpsi4Data;
+    OpsiData: TOpsi4Data;
     opsiclientdmode : boolean;
     opsiProducts:ISuperObject;
     //opsiProduct:ISuperObject;
@@ -80,6 +80,7 @@ type
     procedure setActionrequest(pid: string; request: string);
     function getActionrequests: TStringList;
     procedure firePushInstallation;
+    function getConfigState:TStringList;
     constructor Create(clientdmode:boolean; ClientID:string);overload;
     destructor Destroy;override;
   end;
@@ -112,7 +113,7 @@ procedure TOpsiConnection.readconf2;
 begin
   // opsiclientd mode
   myservice_url := 'https://localhost:4441/kiosk';
-  //myclientid := 'localhost';
+  myclientid := 'pcjan.uib.local';
   //myclientid := oslog.getComputerName;
   myhostkey := '';
   myloglevel := 7;
@@ -128,7 +129,7 @@ begin
   Result := '';
   try
     omc := TOpsiMethodCall.Create(method, parameters);
-    resultstring := opsidata.checkAndRetrieve(omc, errorOccured);
+    resultstring := OpsiData.checkAndRetrieve(omc, errorOccured);
     Result := resultstring;
   except
     on e: Exception do
@@ -152,7 +153,7 @@ begin
   try
     omc := TOpsiMethodCall.Create(method, parameters);
     resultstringlist := TStringList.Create;
-    resultstringlist := opsidata.checkAndRetrieveList(omc, errorOccured);
+    resultstringlist := OpsiData.checkAndRetrieveList(omc, errorOccured);
     for i := 0 to resultstringlist.Count - 1 do
       Result := resultstringlist[i];
 
@@ -356,7 +357,7 @@ var
   proginfo: string;
 begin
   // switch to opsiclientd mode if we on opsiconfd
-  if not opsiclientdmode then readconf2;
+  if opsiclientdmode then readconf2;
   FreeAndNil(opsidata);
   initConnection(30,proginfo);
   // opsiclientd mode
@@ -370,6 +371,26 @@ begin
   // may not work if acl.conf is restricted
   //resultstring := MyOpsiMethodCall('hostControlSafe_fireEvent',  ['on_demand', '[' + myclientid + ']']);
 end;
+
+function TOpsiConnection.getConfigState:TStringList;
+var
+  resultstring, str: string;
+  new_obj, opsiState: ISuperObject;
+  i: integer;
+begin
+  Result := TStringList.Create;
+  resultstring := MyOpsiMethodCall('configState_getObjects',
+    ['[addConfigStateDefaults]', '{"clientId":"' + myclientid + '" }']); //"clientId":"' + myclientid + '"
+  new_obj := SO(resultstring).O['id'];
+  str := new_obj.AsString;
+  ShowMessage(str);
+  //for i := 0 to new_obj.AsArray.Length - 1 do
+  //begin
+    //opsiState := new_obj.AsArray.O[i];
+    //Result.Add(opsiState.S['software-on-demand']);
+  //end;
+end;
+
 //initialization
  //OckOpsiConnection := TOpsiConnection.Create(True);
 end.

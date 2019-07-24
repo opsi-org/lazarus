@@ -72,6 +72,7 @@ type
     BitBtnInfo: TBitBtn;
     BitBtnShowAction: TBitBtn;
     BitBtnStoreAction: TBitBtn;
+    ButtonReadConfigState: TButton;
     ButtonSoftwareUninstall: TButton;
     ButtonSoftwareUpdate: TButton;
     ButtonSoftwareInstall: TButton;
@@ -144,6 +145,7 @@ type
     procedure BitBtnShowActionClick(Sender: TObject);
     procedure BitBtnStoreActionClick(Sender: TObject);
     procedure BitBtnToggleViewClick(Sender: TObject);
+    procedure ButtonReadConfigStateClick(Sender: TObject);
     procedure ButtonSoftwareInstallClick(Sender: TObject);
     //procedure BtnActionClick(Sender: TObject);
     procedure ButtonSoftwareBackClick(Sender: TObject);
@@ -648,7 +650,7 @@ begin
     //sqltext := DataModuleOCK.SQLQueryProductData.SQL.Text;
     //DataModuleOCK.SQLQueryProductData.Open;
     DataModuleOCK.SQLQueryProductData.First;
-    gefunden := DataModuleOCK.SQLQueryProductData.Locate('ProductID', VarArrayOf([pid]),[loCaseInsensitive]);
+    //gefunden := DataModuleOCK.SQLQueryProductData.Locate('ProductID', VarArrayOf([pid]),[loCaseInsensitive]);
     if DataModuleOCK.SQLQueryProductData.Locate('ProductID', VarArrayOf([pid]),[loCaseInsensitive]) then
     begin
       FormOpsiClientKiosk.PanelProductDetail.Height := 0;
@@ -666,9 +668,7 @@ begin
       begin
         FormOpsiClientKiosk.ButtonSoftwareInstall.Visible := False;
         FormOpsiClientKiosk.ButtonSoftwareUninstall.Visible := True;
-        if FormOpsiClientKiosk.DBTextSoftwareClientVerStr.Caption <> FormOpsiClientKiosk.DBTextSoftwareVerStr.Caption then
-          FormOpsiClientKiosk.ButtonSoftwareUpdate.Enabled := True
-        else FormOpsiClientKiosk.ButtonSoftwareUpdate.Enabled := False;
+        FormOpsiClientKiosk.ButtonSoftwareUpdate.Enabled := False;
       end
       else
       if ArrayAllProductTiles[TileIndex].LabelState.Caption = rsNotInstalled then
@@ -677,7 +677,14 @@ begin
         FormOpsiClientKiosk.ButtonSoftwareUpdate.Enabled := False;
         FormOpsiClientKiosk.ButtonSoftwareInstall.Visible := True;
         //FormOpsiClientKiosk.
-      end;
+      end
+      else
+      if ArrayAllProductTiles[TileIndex].LabelState.Caption = rsUpdate then
+      begin
+        FormOpsiClientKiosk.ButtonSoftwareInstall.Visible := False;
+        FormOpsiClientKiosk.ButtonSoftwareUninstall.Visible := True;
+        FormOpsiClientKiosk.ButtonSoftwareUpdate.Enabled := True;
+      end
     end;
   finally
     //DataModuleOCK.SQLQueryProductData.Close;
@@ -766,7 +773,7 @@ begin
       if state = 'installed' then
       begin
         update := DataModuleOCK.SQLQueryProductData.FieldByName('updatePossible').AsString;
-        if update = 'True' then
+        if update = 'true' then
         begin
           ArrayProductTiles[counter].LabelState.Caption := rsUpdate;
           ArrayProductTiles[counter].LabelState.Color := clUpdate;
@@ -871,18 +878,19 @@ begin
     EditSearch.Clear;
     //DataModuleOCK.SQLQueryProductData.Open;
     DataModuleOCK.SQLQueryProductData.Filtered := False;
+    DataModuleOCK.SQLQueryProductData.First;
     SpeedButtonAll.AllowAllUp:= False;
-    SpeedButtonAll.Down := True;
+    SpeedButtonAll.Click;
     if SpeedButtonExpertMode.Down then
       FormOpsiClientKiosk.NotebookProducts.PageIndex:= 0
     else
       FormOpsiClientKiosk.NotebookProducts.PageIndex:= 1;
   finally
-    if DataModuleOCK.SQLTransaction.Active then
-    begin
-      DataModuleOCK.SQLQueryProductData.Close;
-      DataModuleOCK.SQLTransaction.Commit;
-    end;
+    //if DataModuleOCK.SQLTransaction.Active then
+    //begin
+      //DataModuleOCK.SQLQueryProductData.Close;
+      //DataModuleOCK.SQLTransaction.Commit;
+    //end;
     screen.Cursor := crDefault;
   end;
 end;
@@ -988,7 +996,7 @@ procedure TFormOpsiClientKiosk.SpeedButtonUpdatesClick(Sender: TObject);
 var
   i : integer;
 begin
-  FormOpsiClientKiosk.NotebookProducts.PageIndex:= 1;
+  //FormOpsiClientKiosk.NotebookProducts.PageIndex:= 1;
   i := 0;
   for i := 0 to Length(ArrayAllProductTiles)-1 do
   begin
@@ -997,6 +1005,16 @@ begin
     else ArrayAllProductTiles[i].Visible := True;
   end;
   TSpeedButton(Sender).Down:= True;
+  DataModuleOCK.SQLQueryProductData.Filtered := False;
+  DataModuleOCK.SQLQueryProductData.FilterOptions := [foCaseInsensitive];
+  DataModuleOCK.SQLQueryProductData.Filter := 'UpdatePossible = "True" and InstallationStatus <> ""';
+  DataModuleOCK.SQLQueryProductData.Filtered := True;
+  TSpeedButton(Sender).Down:= True;
+    if SpeedButtonExpertMode.Down
+    and (RadioGroupview.ItemIndex = RadioGroupView.Items.IndexOf('List'))
+  then FormOpsiClientKiosk.NotebookProducts.PageIndex:= 0
+  else FormOpsiClientKiosk.NotebookProducts.PageIndex:= 1;
+
 end;
 
 procedure TFormOpsiClientKiosk.ButtonSoftwareBackClick(Sender: TObject);
@@ -1110,6 +1128,14 @@ begin
   FormOpsiClientKiosk.PanelProductDetail.height := 0;
 end;
 
+procedure TFormOpsiClientKiosk.ButtonReadConfigStateClick(Sender: TObject);
+var
+  ConfigState: TStringList;
+begin
+  ConfigState := OCKOpsiConnection.getConfigState;
+  ConfigState.free;
+end;
+
 procedure TFormOpsiClientKiosk.ButtonSoftwareInstallClick(Sender: TObject);
 begin
   QuestionDLG('Install Dialog','Install now?',mtConfirmation,[mrYes, 'Install now', mrNo, 'Select for Installation', mrCancel], 0);
@@ -1136,7 +1162,7 @@ procedure TFormOpsiClientKiosk.SpeedButtonNotInstalledClick(Sender: TObject);
 var
   i : integer;
 begin
-  FormOpsiClientKiosk.NotebookProducts.PageIndex:= 1;
+  //FormOpsiClientKiosk.NotebookProducts.PageIndex:= 1;
   i := 0;
   for i := 0 to Length(ArrayAllProductTiles)-1 do
   begin
@@ -1144,7 +1170,16 @@ begin
       ArrayAllProductTiles[i].Visible := False
     else ArrayAllProductTiles[i].Visible := True;
   end;
+  DataModuleOCK.SQLQueryProductData.Filtered := False;
+  DataModuleOCK.SQLQueryProductData.Filter := 'InstallationStatus = ""';
+  DataModuleOCK.SQLQueryProductData.Filtered := True;
+  DataModuleOCK.SQLQueryProductData.First;
   TSpeedButton(Sender).Down:= True;
+    if SpeedButtonExpertMode.Down
+    and (RadioGroupview.ItemIndex = RadioGroupView.Items.IndexOf('List'))
+  then FormOpsiClientKiosk.NotebookProducts.PageIndex:= 0
+  else FormOpsiClientKiosk.NotebookProducts.PageIndex:= 1;
+
 end;
 procedure TFormOpsiClientKiosk.SpeedButtonExpertModeClick(Sender: TObject);
 begin
@@ -1270,7 +1305,7 @@ begin
   FormProgressWindow.ProgressBarDetail.Position := 50;
   //FormProgressWindow.ProgressBarDetail.StepIt;
   FormProgressWindow.ProcessMess;
-  OCKOpsiConnection := TOpsiConnection.Create(True, MyClientID);
+  OCKOpsiConnection := TOpsiConnection.Create(true, MyClientID);
   FormProgressWindow.LabelDataLoad.Caption := 'Connected to '+
     OCKOpsiConnection.myservice_url + ' as ' + OCKOpsiConnection.myclientid;
   StatusBar1.Panels[0].Text := 'Connected to '+
@@ -1337,14 +1372,14 @@ procedure TFormOpsiClientKiosk.EditSearchChange(Sender: TObject);
 begin
   if EditSearch.Text <> '' then
   begin
-    SpeedButtonAll.AllowAllUp:= True;
-    SpeedButtonAll.Down:= False;
-    SpeedButtonUpdates.Down:= False;
-    SpeedButtonNotInstalled.Down:= False;
+    //SpeedButtonAll.AllowAllUp:= True;
+    //SpeedButtonAll.Down:= False;
+    //SpeedButtonUpdates.Down:= False;
+    //SpeedButtonNotInstalled.Down:= False;
     //NotebookProducts.PageIndex:= 3;
     // search in list
     // if timer running: reset else start (so we wait to finish the input before seach)
-    if TimerSearchEdit.Enabled then
+    {if TimerSearchEdit.Enabled then
     begin
       TimerSearchEdit.Enabled := False;
       logdatei.log('Got while input wait:' + EditSearch.Text, LLDebug2);
@@ -1353,7 +1388,26 @@ begin
       logdatei.log('Got and start input wait:' + EditSearch.Text, LLDebug2);
     // start search via timer
     TimerSearchEdit.Enabled := True;
-    //SpeedButton1Click(Sender);
+    //SpeedButton1Click(Sender);}
+    FilterOnSearch;
+  end
+  else
+  begin
+    if SpeedButtonAll.Down then DataModuleOCK.SQLQueryProductData.Filtered := False;
+    if SpeedButtonUpdates.Down then
+    begin
+      DataModuleOCK.SQLQueryProductData.Filtered := False;
+      DataModuleOCK.SQLQueryProductData.Filter := 'InstallationStatus <> "" and UpdatePossible = "true"';
+      DataModuleOCK.SQLQueryProductData.Filtered := True;
+      DataModuleOCK.SQLQueryProductData.First;
+    end;
+    if SpeedButtonNotInstalled.Down then
+    begin
+      DataModuleOCK.SQLQueryProductData.Filtered := False;
+      DataModuleOCK.SQLQueryProductData.Filter := 'InstallationStatus = ""';
+      DataModuleOCK.SQLQueryProductData.Filtered := True;
+      DataModuleOCK.SQLQueryProductData.First;
+    end;
   end;
 end;
 
@@ -1498,15 +1552,23 @@ var
   Filtercond, Filterstr: string;
 begin
   try
-    if not DataModuleOCK.SQLTransaction.Active then
-    begin
-      DataModuleOCK.SQLTransaction.StartTransaction;
-      DataModuleOCK.SQLQueryProductData.Open;
-    end;
+    //if not DataModuleOCK.SQLTransaction.Active then
+    //begin
+      //DataModuleOCK.SQLTransaction.StartTransaction;
+      //DataModuleOCK.SQLQueryProductData.Open;
+    //end;
     if EditSearch.Text = '' then
     begin
+      //DataModuleOCK.SQLQueryProductData.Filtered:= False;
       //Filtercond := '"*"';
-      DataModuleOCK.SQLQueryProductData.Filtered := False;
+      //if SpeedButtonAll.Down then DataModuleOCK.SQLQueryProductData.Filtered := False;
+      //if SpeedButtonNotInstalled.Down then
+      // begin
+        // DataModuleOCK.SQLQueryProductData.Filtered := False;
+        // DataModuleOCK.SQLQueryProductData.Filter := 'InstallationStatus = ""';
+        // DataModuleOCK.SQLQueryProductData.Filtered := True;
+        // DataModuleOCK.SQLQueryProductData.First;
+      //end;
       LogDatei.log('Search for: ' + EditSearch.Text + ' Filter off.', LLinfo);
     end
     else
@@ -1514,11 +1576,16 @@ begin
       Filtercond := '"*' + EditSearch.Text + '*"';
       LogDatei.log('Search for: ' + EditSearch.Text + ' Filter for: ' +
         Filtercond, LLinfo);
-      Filterstr := 'ProductId =' + Filtercond;
+      Filterstr := '(ProductId =' + Filtercond;
       Filterstr := Filterstr + 'or ProductName =' + Filtercond;
       Filterstr := Filterstr + 'or DESCRIPTION =' + Filtercond;
       Filterstr := Filterstr + 'or ADVICE =' + Filtercond;
-      Filterstr := Filterstr + 'or INSTALLATIONSTATUS =' + Filtercond;
+      if SpeedButtonAll.Down then
+        Filterstr := Filterstr + 'or INSTALLATIONSTATUS =' + Filtercond +')';
+      if SpeedButtonNotInstalled.Down then
+        Filterstr := Filterstr + ') and INSTALLATIONSTATUS = ""';
+      if SpeedButtonUpdates.Down then
+         Filterstr := Filterstr + ' ) and INSTALLATIONSTATUS <> "" and UpdatePossible = "true"';
       DataModuleOCK.SQLQueryProductData.Filter := Filterstr;
       DataModuleOCK.SQLQueryProductData.FilterOptions := [foCaseInsensitive];
       DataModuleOCK.SQLQueryProductData.Filtered := True;
@@ -1534,11 +1601,11 @@ begin
       //BuildProductTiles(ArraySearchPanelTiles, 'FlowPanelSearchTiles');
     end;
   finally
-    if DataModuleOCK.SQLTransaction.Active then
-    begin
-      DataModuleOCK.SQLQueryProductData.Close;
-      DataModuleOCK.SQLTransaction.Commit;
-    end;
+    //if DataModuleOCK.SQLTransaction.Active then
+    //begin
+      //DataModuleOCK.SQLQueryProductData.Close;
+      //DataModuleOCK.SQLTransaction.Commit;
+    //end;
   end;
   //if not SpeedButtonExpertMode.Down then
 end;
@@ -1553,6 +1620,7 @@ begin
     ArrayAllProductTiles[i].Visible := True;
   end;
   DataModuleOCK.SQLQueryProductData.Filtered := False;
+  DataModuleOCK.SQLQueryProductData.First;
   TSpeedButton(Sender).Down:= True;
   if SpeedButtonExpertMode.Down
     and (RadioGroupview.ItemIndex = RadioGroupView.Items.IndexOf('List'))

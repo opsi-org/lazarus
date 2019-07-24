@@ -1,7 +1,7 @@
 object FormOpsiClientKiosk: TFormOpsiClientKiosk
-  Left = 2319
+  Left = 2345
   Height = 694
-  Top = 6
+  Top = 125
   Width = 804
   Caption = 'opsi-client-kiosk'
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
@@ -1175,6 +1175,18 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       ShowHint = True
       TabOrder = 2
     end
+    object ButtonReadConfigState: TButton
+      Left = 101
+      Height = 33
+      Top = 6
+      Width = 115
+      Align = alLeft
+      AutoSize = True
+      BorderSpacing.Around = 5
+      Caption = 'Read configState'
+      OnClick = ButtonReadConfigStateClick
+      TabOrder = 3
+    end
   end
   object PanelProductList: TPanel
     Left = 0
@@ -1406,7 +1418,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Height = 357
       Top = 0
       Width = 804
-      PageIndex = 0
+      PageIndex = 2
       Align = alClient
       TabOrder = 0
       TabStop = True
@@ -1700,7 +1712,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Top = 168
             Width = 142
             BorderSpacing.Around = 5
-            DataField = 'installedverstr'
+            DataField = 'InstalledVerStr'
             DataSource = DataSourceProductData
             ParentColor = False
           end

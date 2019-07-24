@@ -17,6 +17,7 @@
 {"hash":37072147,"name":"tformopsiclientkiosk.bitbtnshowaction.caption","sourcebytes":[83,104,111,119,32,65,99,116,105,111,110,115],"value":"Show Actions"},
 {"hash":380871,"name":"tformopsiclientkiosk.radiogroupview.caption","sourcebytes":[86,105,101,119],"value":"View"},
 {"hash":219972419,"name":"tformopsiclientkiosk.bitbtnstoreaction.caption","sourcebytes":[83,116,111,114,101,32,65,99,116,105,111,110,115],"value":"Store Actions"},
+{"hash":161957653,"name":"tformopsiclientkiosk.buttonreadconfigstate.caption","sourcebytes":[82,101,97,100,32,99,111,110,102,105,103,83,116,97,116,101],"value":"Read configState"},
 {"hash":181043315,"name":"tformopsiclientkiosk.tabsheet1.caption","sourcebytes":[68,101,116,97,105,108,115],"value":"Details"},
 {"hash":109086960,"name":"tformopsiclientkiosk.labeldescription.caption","sourcebytes":[68,101,115,99,114,105,112,116,105,111,110,58,32,32],"value":"Description:  "},
 {"hash":217697168,"name":"tformopsiclientkiosk.labeladvice.caption","sourcebytes":[65,100,118,105,99,101,58,32,32],"value":"Advice:  "},
