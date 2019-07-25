@@ -1418,7 +1418,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Height = 357
       Top = 0
       Width = 804
-      PageIndex = 2
+      PageIndex = 0
       Align = alClient
       TabOrder = 0
       TabStop = True
@@ -1507,8 +1507,8 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           Width = 859
           BevelOuter = bvNone
           BorderStyle = bsSingle
-          ClientHeight = 33
-          ClientWidth = 855
+          ClientHeight = 37
+          ClientWidth = 859
           ParentColor = False
           TabOrder = 0
           object ButtonSoftwareBack: TButton

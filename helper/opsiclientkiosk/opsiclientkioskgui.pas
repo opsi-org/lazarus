@@ -33,17 +33,17 @@ type
 
   TProductPanel = class(TPanel)
     ShapeRoundSquare : TShape; //just for a nice look
-    LabelId: TLabel;
-    LabelName: TLabel;
-    LabelState: TLabel;
-    ImageIcon : TImage; //Icon of the program
-    RadioGroupAction: TGroupbox;
-    rbsetup: TRadiobutton;
-    rbNone: TRadiobutton;
-    rbuninstall: TRadiobutton;
-    lbsetup: TLabel;
-    lbnone: TLabel;
-    lbuninstall: TLabel;
+    LabelId: TLabel; //ProductID
+    LabelName: TLabel; //name of product
+    LabelState: TLabel; //Status of product e.g. installed, not installed, update
+    ImageIcon : TImage; //Icon of the product
+    //RadioGroupAction: TGroupbox;
+    //rbsetup: TRadiobutton;
+    //rbNone: TRadiobutton;
+    //rbuninstall: TRadiobutton;
+    //lbsetup: TLabel;
+    //lbnone: TLabel;
+    //lbuninstall: TLabel;
 
     procedure TileActionChanged(Sender: TObject);
     //procedure ProductTileClick(Sender: TObject);
@@ -58,6 +58,7 @@ type
     { private declarations }
   public
     { public declarations }
+    //ProductID :String;
     constructor Create(TheOwner: TWinControl);overload;
     destructor Destroy;override;
   end;
@@ -456,13 +457,13 @@ begin
       FreeAndNil(ImageIcon);
       FreeAndNil(ShapeRoundSquare);
       FreeAndNil(LabelState);
-      FreeAndNil(rbsetup);
-      FreeAndNil(rbNone);
-      FreeAndNil(rbuninstall);
-      FreeAndNil(lbsetup);
-      FreeAndNil(lbnone);
-      FreeAndNil(lbuninstall);
-      FreeAndNil(RadioGroupAction);
+      //FreeAndNil(rbsetup);
+      //FreeAndNil(rbNone);
+      //FreeAndNil(rbuninstall);
+      //FreeAndNil(lbsetup);
+      //FreeAndNil(lbnone);
+      //FreeAndNil(lbuninstall);
+      //FreeAndNil(RadioGroupAction);
       //ButtonSoftwareBack.Destroy;
     except
       on e: Exception do
@@ -759,6 +760,7 @@ begin
       Application.ProcessMessages;
       SetLength(ArrayProductTiles, counter + 1);
       ArrayProductTiles[counter] := TProductPanel.Create(FormOpsiClientKiosk.FindComponent(OwnerName) as TFlowPanel);
+      //ArrayProductTiles[counter].ProductID := ProductID;
       ArrayProductTiles[counter].LabelID.Caption := ProductID;
       ArrayProductTiles[counter].LabelName.Caption := DataModuleOCK.SQLQueryProductData.FieldByName('ProductName').AsString;
       if FileExists(IconPathCustom + ProductID + '.png') then
@@ -1130,10 +1132,12 @@ end;
 
 procedure TFormOpsiClientKiosk.ButtonReadConfigStateClick(Sender: TObject);
 var
-  ConfigState: TStringList;
+  ConfigState,backendOptions: TStringList;
 begin
   ConfigState := OCKOpsiConnection.getConfigState;
   ConfigState.free;
+  //backendOptions := OCKOpsiConnection.getbackendOptions;
+  //backendOptions.free;
 end;
 
 procedure TFormOpsiClientKiosk.ButtonSoftwareInstallClick(Sender: TObject);
@@ -1320,7 +1324,7 @@ begin
   FormProgressWindow.ProgressBarDetail.Position := 100;
   //FormProgressWindow.Repaint;
   FormProgressWindow.ProcessMess;
-  OCKOpsiConnection.LoadProductsFromServer;
+  OCKOpsiConnection.GetProductsFromServer;
   //FormProgressWindow.ProgressBarDetail.Position := 100;
   //Application.ProcessMessages;
 
@@ -1361,7 +1365,7 @@ procedure TFormOpsiClientKiosk.ReloadDataFromServer;
 var
   i: integer;
 begin
-  OCKOpsiConnection.LoadProductsFromServer;
+  OCKOpsiConnection.GetProductsFromServer;
   DataModuleOCK.OpsiProductsToDataset(DataModuleOCK.SQLQueryProductData);
   //StartupDone := False;
   RadioGroupViewSelectionChanged(self);

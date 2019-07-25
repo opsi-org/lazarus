@@ -229,7 +229,9 @@ var
 begin
   //if SQLTransaction.Active then SQLTransaction.Active:=FALSE;
   logdatei.log('starting OpsiProductToDataset ....', LLInfo);
+
   { product data to database }
+
   SQLStatment := 'INSERT INTO products VALUES ('
                    + ':ProductID, '
                    + ':ProductName, '

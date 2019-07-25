@@ -74,13 +74,14 @@ type
     function initConnection(const seconds: integer; var ConnectionInfo:string): boolean;
     procedure closeConnection;
     //procedure fetchProductData(Data:TDataSet; const OpsiMethod:string);
-    procedure LoadProductsFromServer;
     function FetchProduct(ProductNumber:integer):TProduct;
     function LengthOpsiProducts:integer;
     procedure setActionrequest(pid: string; request: string);
     function getActionrequests: TStringList;
     procedure firePushInstallation;
-    function getConfigState:TStringList;
+    function GetBackendOptions:TStringList;
+    function GetConfigState:TStringList;
+    procedure GetProductsFromServer;
     constructor Create(clientdmode:boolean; ClientID:string);overload;
     destructor Destroy;override;
   end;
@@ -187,7 +188,7 @@ begin
   end;
 end;
 
-procedure TOpsiConnection.LoadProductsFromServer;
+procedure TOpsiConnection.GetProductsFromServer;
 var
   StringJSON:string;
 begin
@@ -325,7 +326,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TOpsiConnection.setActionrequest(pid: string; request: string);
+procedure TOpsiConnection.SetActionRequest(pid: string; request: string);
 var
   resultstring: string;
 begin
@@ -333,7 +334,7 @@ begin
     [pid, myclientid, request]);
 end;
 
-function TOpsiConnection.getActionrequests: TStringList;
+function TOpsiConnection.GetActionRequests: TStringList;
 var
   resultstring, str: string;
   new_obj, opsiProduct: ISuperObject;
@@ -372,6 +373,25 @@ begin
   //resultstring := MyOpsiMethodCall('hostControlSafe_fireEvent',  ['on_demand', '[' + myclientid + ']']);
 end;
 
+function TOpsiConnection.getBackendOptions:TStringList;
+var
+  resultstring, str: string;
+  new_obj, backendOption: ISuperObject;
+  i: integer;
+begin
+  Result := TStringList.Create;
+  resultstring := MyOpsiMethodCall('backend_getOptions',[]);
+  //addConfigStateDefaults
+  new_obj := SO(resultstring).O['result'];
+  str := new_obj.AsString;
+  ShowMessage(str);
+  {for i := 0 to new_obj.AsArray.Length - 1 do
+  begin
+    backendOption := new_obj.AsArray.O[i];
+    Result.Add(backendOption.S['result']);
+  end;}
+end;
+
 function TOpsiConnection.getConfigState:TStringList;
 var
   resultstring, str: string;
@@ -380,8 +400,10 @@ var
 begin
   Result := TStringList.Create;
   resultstring := MyOpsiMethodCall('configState_getObjects',
-    ['[addConfigStateDefaults]', '{"clientId":"' + myclientid + '" }']); //"clientId":"' + myclientid + '"
-  new_obj := SO(resultstring).O['id'];
+    ['[]', '{"configId":"software-on-demand.expertmode","objectId":"pcjan.uib.local"}']);//,"objectId":"pcjan.uib.local"
+  //"clientId":"' + myclientid + '","configId":"software-on-demand.active"
+  //addConfigStateDefaults
+  new_obj := SO(resultstring).O['result'];
   str := new_obj.AsString;
   ShowMessage(str);
   //for i := 0 to new_obj.AsArray.Length - 1 do
