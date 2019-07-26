@@ -11,6 +11,7 @@ uses
   oslog,
   oswebservice,
   superobject,
+
   //oscrypt,
   lazfileutils,
   //sqlite3conn, sqldb,
@@ -19,6 +20,8 @@ uses
   Variants,
  // fileinfo,
   proginfo,
+  fpjson,
+  jsonParser,
   //winpeimagereader,
   //lcltranslator,
   //datadb,
@@ -66,6 +69,8 @@ type
     OpsiData: TOpsi4Data;
     opsiclientdmode : boolean;
     opsiProducts:ISuperObject;
+    JSONObjectConfigStates,
+    JSONObjectProducts:TJSONObject;
     //opsiProduct:ISuperObject;
     procedure readconf;
     procedure readconf2;
@@ -82,6 +87,7 @@ type
     function GetBackendOptions:TStringList;
     function GetConfigState:TStringList;
     procedure GetProductsFromServer;
+    procedure ParseJSONFromServer;
     constructor Create(clientdmode:boolean; ClientID:string);overload;
     destructor Destroy;override;
   end;
@@ -190,10 +196,62 @@ end;
 
 procedure TOpsiConnection.GetProductsFromServer;
 var
-  StringJSON:string;
+  StringJSON,StringResult:string;
+  JSONData,JSONDataResult:TJSONData;
+  JSONObject1:TJSONObject;
+  count :integer;
+  SoftwareOnDemand: boolean;
 begin
   StringJSON := MyOpsiMethodCall('getKioskProductInfosForClient', [myclientid]);
-  opsiProducts := SO(StringJSON).O['result'];
+  JSONData := GetJSON(StringJSON);
+  //count := JSONData.count;
+  //JSONObject := TJSONObject(GetJSON(StringJSON));
+  //JSONData := GetJSON(StringJSON);
+  //jResult := JSONObject.FindPath('result');//.FindPath('products');
+  JSONDataResult := JSONData.FindPath('result');
+  //JSONObject.Free;
+  count := JSONDataResult.Count;
+  StringResult := JSONDataResult.AsJSON;
+  StringResult := JSONDataResult.Items[0].FindPath('products').AsJSON;//JSONObject.FindPath('products').AsJSON;
+  //StringResult := JSONDataResult.Items[0].FindPath('configStates').AsJSON;
+  count := JSONDataResult.Items[0].FindPath('configStates').Count;
+  JSONObjectConfigStates := TJSONObject(JSONDataResult.Items[0].FindPath('configStates'));
+  SoftwareOnDemand := JSONObjectConfigStates.Arrays['software-on-demand.kiosk.allowed'].Items[0].AsBoolean;
+  JSONDataResult.Free;
+  //opsiProducts := SO(StringJSON).O['result'];
+  opsiProducts := SO(StringResult);
+end;
+
+procedure TOpsiConnection.ParseJSONFromServer;
+var
+  jData : TJSONData;
+  jObject : TJSONObject;
+  jArray : TJSONArray;
+  s : String;
+begin
+
+  // this is only a minimal sampling of what can be done with this API
+
+  // create from string
+  jData := GetJSON('{"Fld1" : "Hello", "Fld2" : 42, "Colors" : ["Red", "Green", "Blue"]}');
+
+  // output as a flat string
+  s := jData.AsJSON;
+
+  // output as nicely formatted JSON
+  s := jData.FormatJSON;
+
+  // cast as TJSONObject to make access easier
+  jObject := TJSONObject(jData);
+
+  // retrieve value of Fld1
+  s := jObject.Get('Fld1');
+
+  // change value of Fld2
+  jObject.Integers['Fld2'] := 123;
+
+  // retrieve the second color
+  s := jData.FindPath('Colors[1]').AsString;
 end;
 
 function TOpsiConnection.initConnection(const seconds: integer; var ConnectionInfo:string): boolean;
@@ -326,7 +384,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TOpsiConnection.SetActionRequest(pid: string; request: string);
+procedure TOpsiConnection.setActionrequest(pid: string; request: string);
 var
   resultstring: string;
 begin
@@ -334,7 +392,7 @@ begin
     [pid, myclientid, request]);
 end;
 
-function TOpsiConnection.GetActionRequests: TStringList;
+function TOpsiConnection.getActionrequests: TStringList;
 var
   resultstring, str: string;
   new_obj, opsiProduct: ISuperObject;
@@ -373,7 +431,7 @@ begin
   //resultstring := MyOpsiMethodCall('hostControlSafe_fireEvent',  ['on_demand', '[' + myclientid + ']']);
 end;
 
-function TOpsiConnection.getBackendOptions:TStringList;
+function TOpsiConnection.GetBackendOptions: TStringList;
 var
   resultstring, str: string;
   new_obj, backendOption: ISuperObject;
@@ -392,7 +450,7 @@ begin
   end;}
 end;
 
-function TOpsiConnection.getConfigState:TStringList;
+function TOpsiConnection.GetConfigState: TStringList;
 var
   resultstring, str: string;
   new_obj, opsiState: ISuperObject;
