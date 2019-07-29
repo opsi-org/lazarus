@@ -9,6 +9,7 @@ opsi-winst/opsi-script (4.12.2.0) experimental; urgency=low
   * oswebservice: switch from indy to synapse
   * osfunc: modified: ShrinkFileToMB
   * oswebservice: sendlog: shrinking enabled again
+  * adding changelog.txt to project
 
 -- Detlef Oertel <d.oertel@uib.de>  Thu, 04 Jul 2019:15:00:00 +0200
 
