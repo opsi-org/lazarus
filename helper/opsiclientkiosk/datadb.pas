@@ -13,7 +13,10 @@ uses
   FileUtil,
   oslog,
   opsiconnection,
+  fpjson,
+  jsonParser,
   //progresswindow,
+  dialogs,
   lazfileutils;
 
 type
@@ -223,8 +226,10 @@ begin
 procedure TDataModuleOCK.OpsiProductsToDataset(SQLQuery:TSQLQuery);
 var
   i: integer;
-  Product: TProduct;
+  //Product: TProduct;
   SQLStatment: String;
+  JSONObjectProduct: TJSONObject;
+
   //productdatarecord: TProductData;
 begin
   //if SQLTransaction.Active then SQLTransaction.Active:=FALSE;
@@ -260,89 +265,70 @@ begin
   //SQLQueryProductData.Open;
   //SQLQueryProductData.SQL.Clear;
   //SQLQueryProductData.SQL.Add(SQLStatment);
-  for i := 0 to OCKOpsiConnection.LengthOpsiProducts - 1 do
-  begin
-    Product := OCKOpsiConnection.fetchProduct(i);
-    logdatei.log('read: ' + Product.ProductID, LLInfo);
-    {SQLQueryProductData.AppendRecord([
-     Product.ProductID,
-     Product.ProductName,
-     Product.Description,
-     Product.Advice,
-     Product.ProductVersion,
-     Product.PackageVersion,
-     Product.VersionStr,
-     Product.Priority,
-     Product.ProductType,
-     Product.InstallationStatus,
-     Product.InstalledProdVer,
-     Product.InstalledPackVer,
-     Product.InstalledVerStr,
-     Product.ActionRequest,
-     Product.ActionResult,
-     Product.UpdatePossible,
-     Product.hasSetup,
-     Product.hasUninstall,
-     Product.PossibleAction
-     ]);}
-    //SQLQueryProductData.ExecSQL;
-     //SQLQueryProductData.Close;
 
+  { JSON to database table products }
+  for i := 0 to OCKOpsiConnection.JSONObjectProducts.Count - 2 do
+  begin
+    JSONObjectProduct := TJSONObject(OCKOpsiConnection.JSONObjectProducts.Items[i]);
+    logdatei.log('read: ' + JSONObjectProduct.Strings['productId'], LLInfo);
     with SQLQueryProductData do
     begin
-      ParamByName('ProductID').AsString := Product.ProductID;
-      ParamByName('ProductVersion').AsString := Product.ProductVersion;
-      ParamByName('PackageVersion').AsString := Product.PackageVersion;
-      ParamByName('VersionStr').AsString := Product.VersionStr;
-      ParamByName('ProductName').AsString := Product.ProductName;
-      ParamByName('Description').AsString := Product.Description;
-      ParamByName('Advice').AsString := Product.Advice;
-      ParamByName('Priority').AsInteger := Product.Priority;
-      ParamByName('ProductType').AsString := Product.ProductType;
-      ParamByName('hasSetup').AsString := Product.hasSetup;
-      ParamByName('hasUninstall').AsString := Product.hasUninstall;
-      ParamByName('InstallationStatus').AsString := Product.InstallationStatus;
-      ParamByName('Installedprodver').AsString := Product.InstalledProdVer;
-      ParamByName('Installedpackver').AsString := Product.InstalledPackVer;
-      ParamByName('Installedverstr').AsString := Product.InstalledVerStr;
-      ParamByName('ActionRequest').AsString := Product.ActionRequest;
-      ParamByName('ActionResult').AsString := Product.ActionResult;
-      ParamByName('UpdatePossible').AsString := Product.UpdatePossible;
-      ParamByName('PossibleAction').AsString := Product.PossibleAction;
+      if not JSONObjectProduct.Nulls['productId'] then
+        ParamByName('ProductID').AsString := JSONObjectProduct.Strings['productId'];
+      if not JSONObjectProduct.Nulls['productVersion'] then
+        ParamByName('ProductVersion').AsString := JSONObjectProduct.Strings['productVersion'];
+      if not JSONObjectProduct.Nulls['packageVersion'] then
+        ParamByName('PackageVersion').AsString := JSONObjectProduct.Strings['packageVersion'];
+      if not JSONObjectProduct.Nulls['productVersion'] and not JSONObjectProduct.Nulls['packageVersion'] then
+        ParamByName('VersionStr').AsString := JSONObjectProduct.Strings['productVersion'] + '-'
+                                            + JSONObjectProduct.Strings['packageVersion'];
+      if not JSONObjectProduct.Nulls['productName'] then
+        ParamByName('ProductName').AsString := JSONObjectProduct.Strings['productName'];
+      if not JSONObjectProduct.Nulls['description'] then
+        ParamByName('Description').AsString := JSONObjectProduct.Strings['description'];
+      if not JSONObjectProduct.Nulls['advice'] then
+        ParamByName('Advice').AsString := JSONObjectProduct.Strings['advice'];
+      if not JSONObjectProduct.Nulls['priority'] then
+        ParamByName('Priority').AsInteger := JSONObjectProduct.Integers['priority'];
+      if not JSONObjectProduct.Nulls['productType'] then
+        ParamByName('ProductType').AsString := JSONObjectProduct.Strings['productType'];
+      if not JSONObjectProduct.Nulls['hasSetup'] then
+        ParamByName('hasSetup').AsString := JSONObjectProduct.Strings['hasSetup'];
+      if not JSONObjectProduct.Nulls['hasUninstall'] then
+        ParamByName('hasUninstall').AsString := JSONObjectProduct.Strings['hasUninstall'];
+      if not JSONObjectProduct.Nulls['actionResult'] then
+        if JSONObjectProduct.Strings['installationStatus'] = 'not_installed' then
+          ParamByName('InstallationStatus').AsString := ''
+        else
+          ParamByName('InstallationStatus').AsString := JSONObjectProduct.Strings['installationStatus'];
+
+      //if JSONObjectProduct.Nulls['installedProdVer'] then ShowMessage('InstalledProdVers : Null');
+      if not JSONObjectProduct.Nulls['installedProdVer'] then
+        ParamByName('InstalledProdVer').AsString := JSONObjectProduct.Strings['installedProdVer'];
+      if not JSONObjectProduct.Nulls['installedPackVer'] then
+        ParamByName('InstalledPackVer').AsString := JSONObjectProduct.Strings['installedPackVer'];
+      if not JSONObjectProduct.Nulls['installedVerStr'] then
+        ParamByName('InstalledVerStr').AsString := JSONObjectProduct.Strings['installedVerStr'];
+      if not JSONObjectProduct.Nulls['actionRequest'] then
+        if JSONObjectProduct.Strings['actionRequest'] = 'none' then
+          ParamByName('ActionRequest').AsString := ''
+        else
+          ParamByName('ActionRequest').AsString := JSONObjectProduct.Strings['actionRequest'];
+      if not JSONObjectProduct.Nulls['actionResult'] then
+        ParamByName('ActionResult').AsString := JSONObjectProduct.Strings['actionResult'];
+      if not JSONObjectProduct.Nulls['updatePossible'] then
+        ParamByName('UpdatePossible').AsString := JSONObjectProduct.Strings['updatePossible'];
+      if not JSONObjectProduct.Nulls['possibleAction'] then
+        ParamByName('PossibleAction').AsString := JSONObjectProduct.Strings['possibleAction'];
     end;
-    SQLQueryProductData.ExecSQL;
-
-    {with SQLQueryProductData do
-    begin
-      Append;
-      FieldByName('ProductId').AsString := Product.ProductID;
-      FieldByName('productVersion').AsString := Product.ProductVersion;
-      FieldByName('packageVersion').AsString := Product.PackageVersion;
-      FieldByName('versionstr').AsString := Product.VersionStr;
-      FieldByName('ProductName').AsString := Product.ProductName;
-      FieldByName('description').AsString := Product.Description;
-      FieldByName('advice').AsString := Product.Advice;
-      FieldByName('priority').AsInteger := Product.Priority;
-      FieldByName('producttype').AsString := Product.ProductType;
-      FieldByName('hasSetup').AsString := Product.hasSetup;
-      FieldByName('hasUninstall').AsString := Product.hasUninstall;
-      FieldByName('installationStatus').AsString := Product.InstallationStatus;
-      FieldByName('installedprodver').AsString := Product.InstalledProdVer;
-      FieldByName('installedpackver').AsString := Product.InstalledPackVer;
-      FieldByName('installedverstr').AsString := Product.InstalledVerStr;
-      FieldByName('actionrequest').AsString := Product.ActionRequest;
-      FieldByName('actionresult').AsString := Product.ActionResult;
-      FieldByName('updatePossible').AsString := Product.UpdatePossible;
-      FieldByName('possibleAction').AsString := Product.PossibleAction;
-      Post;
-    end;}
-    //Product Dependencies
-
+  SQLQueryProductData.ExecSQL;
+  //JSONObjectProduct.Free;
   end;
 
   //SQLQueryProductData.ExecSQL;
   SQLQueryProductData.Close;
   SQLTransaction.Commit;
+  logdatei.log('End of OpsiProductToDataset', LLInfo);
  end;
 
 end.

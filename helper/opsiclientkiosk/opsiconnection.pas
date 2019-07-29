@@ -35,27 +35,6 @@ type
    // myclientid, myhostkey, myerror, myservice_url: string;
   //end;
 
-  TProduct = record
-    ProductID: String;
-    ProductVersion: String;
-    PackageVersion: String;
-    VersionStr: String;
-    ProductName: String;
-    Description: String;
-    Advice: String;
-    Priority: Integer;
-    ProductType: String;
-    hasSetup: String;
-    hasUninstall: String;
-    InstallationStatus: String;
-    InstalledProdVer: String;
-    InstalledPackVer:String;
-    InstalledVerStr: String;
-    ActionRequest: String;
-    ActionResult: String;
-    UpdatePossible: String;
-    PossibleAction: String;
-  end;
 
   { TOpsiConnection }
 
@@ -69,6 +48,7 @@ type
     OpsiData: TOpsi4Data;
     opsiclientdmode : boolean;
     opsiProducts:ISuperObject;
+    JSONData : TJSONData;
     JSONObjectConfigStates,
     JSONObjectProducts:TJSONObject;
     //opsiProduct:ISuperObject;
@@ -78,16 +58,11 @@ type
     function MyOpsiMethodCall2(const method: string; parameters: array of string): string;
     function initConnection(const seconds: integer; var ConnectionInfo:string): boolean;
     procedure closeConnection;
-    //procedure fetchProductData(Data:TDataSet; const OpsiMethod:string);
-    function FetchProduct(ProductNumber:integer):TProduct;
-    function LengthOpsiProducts:integer;
-    procedure setActionrequest(pid: string; request: string);
-    function getActionrequests: TStringList;
-    procedure firePushInstallation;
-    function GetBackendOptions:TStringList;
-    function GetConfigState:TStringList;
-    procedure GetProductsFromServer;
-    procedure ParseJSONFromServer;
+    procedure SetActionRequest(pid: string; request: string);
+    function GetActionRequests: TStringList;
+    procedure FirePushInstallation;
+    function GetConfigState(ConfigProperty:String):TStringList;
+    procedure GetJSONFromServer;
     constructor Create(clientdmode:boolean; ClientID:string);overload;
     destructor Destroy;override;
   end;
@@ -194,64 +169,26 @@ begin
   end;
 end;
 
-procedure TOpsiConnection.GetProductsFromServer;
+procedure TOpsiConnection.GetJSONFromServer;
 var
   StringJSON,StringResult:string;
-  JSONData,JSONDataResult:TJSONData;
+  //JSONData,JSONDataResult:TJSONData;
   JSONObject1:TJSONObject;
   count :integer;
   SoftwareOnDemand: boolean;
 begin
   StringJSON := MyOpsiMethodCall('getKioskProductInfosForClient', [myclientid]);
-  JSONData := GetJSON(StringJSON);
-  //count := JSONData.count;
-  //JSONObject := TJSONObject(GetJSON(StringJSON));
-  //JSONData := GetJSON(StringJSON);
-  //jResult := JSONObject.FindPath('result');//.FindPath('products');
-  JSONDataResult := JSONData.FindPath('result');
-  //JSONObject.Free;
-  count := JSONDataResult.Count;
-  StringResult := JSONDataResult.AsJSON;
-  StringResult := JSONDataResult.Items[0].FindPath('products').AsJSON;//JSONObject.FindPath('products').AsJSON;
-  //StringResult := JSONDataResult.Items[0].FindPath('configStates').AsJSON;
-  count := JSONDataResult.Items[0].FindPath('configStates').Count;
-  JSONObjectConfigStates := TJSONObject(JSONDataResult.Items[0].FindPath('configStates'));
-  SoftwareOnDemand := JSONObjectConfigStates.Arrays['software-on-demand.kiosk.allowed'].Items[0].AsBoolean;
-  JSONDataResult.Free;
-  //opsiProducts := SO(StringJSON).O['result'];
+  JSONData := GetJSON(StringJSON).FindPath('result');
+  //count := JSONData.Count;
+  //StringResult := JSONData.AsJSON;
+  JSONObjectProducts := TJSONObject(JSONData.Items[0].FindPath('products'));
+  count:= JSONObjectProducts.Count;
+  StringResult := JSONObjectProducts.AsJSON;
+  //StringResult := JSONData.Items[0].FindPath('configStates').AsJSON;
+  //count := JSONData.Items[0].FindPath('configStates').Count;
+  JSONObjectConfigStates := TJSONObject(JSONData.Items[0].FindPath('configStates'));
+  //SoftwareOnDemand := JSONObjectConfigStates.Arrays['software-on-demand.kiosk.allowed'].Items[0].AsBoolean;
   opsiProducts := SO(StringResult);
-end;
-
-procedure TOpsiConnection.ParseJSONFromServer;
-var
-  jData : TJSONData;
-  jObject : TJSONObject;
-  jArray : TJSONArray;
-  s : String;
-begin
-
-  // this is only a minimal sampling of what can be done with this API
-
-  // create from string
-  jData := GetJSON('{"Fld1" : "Hello", "Fld2" : 42, "Colors" : ["Red", "Green", "Blue"]}');
-
-  // output as a flat string
-  s := jData.AsJSON;
-
-  // output as nicely formatted JSON
-  s := jData.FormatJSON;
-
-  // cast as TJSONObject to make access easier
-  jObject := TJSONObject(jData);
-
-  // retrieve value of Fld1
-  s := jObject.Get('Fld1');
-
-  // change value of Fld2
-  jObject.Integers['Fld2'] := 123;
-
-  // retrieve the second color
-  s := jData.FindPath('Colors[1]').AsString;
 end;
 
 function TOpsiConnection.initConnection(const seconds: integer; var ConnectionInfo:string): boolean;
@@ -306,55 +243,6 @@ begin
 end;
 
 
-function TOpsiConnection.FetchProduct(ProductNumber: integer): TProduct;
-var
-  resultstring, groupstring, method, testresult: string;
-  //jOResult,
-  //new_obj,
-  opsiProduct: ISuperObject;
-  i: integer;
-  str, pid, depotid, pidliststr, reqtype: string;
-  //productdatarecord: TProductData;
-begin
-  logdatei.log('starting fetchProductData ....', LLInfo);
-
-  { Opsi product to TProduct }
-  opsiProduct := opsiProducts.AsArray.O[ProductNumber];
-  logdatei.log('read: ' + opsiProduct.S['productId'], LLInfo);
-  Result.ProductID := opsiProduct.S['productId'];
-  Result.ProductVersion := opsiProduct.S['productVersion'];
-  Result.PackageVersion := opsiProduct.S['packageVersion'];
-  Result.VersionStr := opsiProduct.S['productVersion'] + '-' + opsiProduct.S['packageVersion'];
-  Result.ProductName := opsiProduct.S['productName'];
-  Result.Description := opsiProduct.S['description'];
-  Result.Advice := opsiProduct.S['advice'];
-  Result.Priority := StrToInt(opsiProduct.S['priority']);
-  Result.ProductType := opsiProduct.S['productType'];
-  Result.hasSetup := opsiProduct.S['hasSetup'];
-  Result.hasUninstall := opsiProduct.S['hasUninstall'];
-  if opsiProduct.S['installationStatus'] = 'not_installed' then
-    Result.InstallationStatus := ''
-  else
-    Result.InstallationStatus := opsiProduct.S['installationStatus'];
-  Result.InstalledProdVer := opsiProduct.S['installedProdVer'];
-  Result.InstalledPackVer := opsiProduct.S['installedPackVer'];
-  Result.InstalledVerStr := opsiProduct.S['installedVerStr'];
-  if opsiProduct.S['actionRequest'] = 'none' then
-    Result.ActionRequest := ''
-  else
-    Result.ActionRequest := opsiProduct.S['actionRequest'];
-  Result.ActionResult := opsiProduct.S['actionResult'];
-  Result.UpdatePossible := opsiProduct.S['updatePossible'];
-  Result.PossibleAction := opsiProduct.S['possibleAction'];
- // productDependencies
-end;
-
-function TOpsiConnection.LengthOpsiProducts: integer;
-begin
-  result := opsiProducts.AsArray.length;
-end;
-
-
 constructor TOpsiConnection.Create(clientdmode:boolean; ClientID:string);overload;
 begin
   inherited Create;
@@ -380,19 +268,20 @@ end;
 
 destructor TOpsiConnection.Destroy;
 begin
+  JSONData.Free;
   if OpsiData <> nil then FreeAndNil(OpsiData);
   inherited Destroy;
 end;
 
-procedure TOpsiConnection.setActionrequest(pid: string; request: string);
+procedure TOpsiConnection.SetActionRequest(pid: string; request: string);
 var
   resultstring: string;
 begin
   resultstring := MyOpsiMethodCall('setProductActionRequestWithDependencies',
-    [pid, myclientid, request]);
+    [pid, MyClientID, request]);
 end;
 
-function TOpsiConnection.getActionrequests: TStringList;
+function TOpsiConnection.getActionRequests: TStringList;
 var
   resultstring, str: string;
   new_obj, opsiProduct: ISuperObject;
@@ -431,44 +320,14 @@ begin
   //resultstring := MyOpsiMethodCall('hostControlSafe_fireEvent',  ['on_demand', '[' + myclientid + ']']);
 end;
 
-function TOpsiConnection.GetBackendOptions: TStringList;
-var
-  resultstring, str: string;
-  new_obj, backendOption: ISuperObject;
-  i: integer;
-begin
-  Result := TStringList.Create;
-  resultstring := MyOpsiMethodCall('backend_getOptions',[]);
-  //addConfigStateDefaults
-  new_obj := SO(resultstring).O['result'];
-  str := new_obj.AsString;
-  ShowMessage(str);
-  {for i := 0 to new_obj.AsArray.Length - 1 do
-  begin
-    backendOption := new_obj.AsArray.O[i];
-    Result.Add(backendOption.S['result']);
-  end;}
-end;
 
-function TOpsiConnection.GetConfigState: TStringList;
+function TOpsiConnection.GetConfigState(ConfigProperty:String): TStringList;
 var
-  resultstring, str: string;
-  new_obj, opsiState: ISuperObject;
-  i: integer;
+  i : integer;
 begin
   Result := TStringList.Create;
-  resultstring := MyOpsiMethodCall('configState_getObjects',
-    ['[]', '{"configId":"software-on-demand.expertmode","objectId":"pcjan.uib.local"}']);//,"objectId":"pcjan.uib.local"
-  //"clientId":"' + myclientid + '","configId":"software-on-demand.active"
-  //addConfigStateDefaults
-  new_obj := SO(resultstring).O['result'];
-  str := new_obj.AsString;
-  ShowMessage(str);
-  //for i := 0 to new_obj.AsArray.Length - 1 do
-  //begin
-    //opsiState := new_obj.AsArray.O[i];
-    //Result.Add(opsiState.S['software-on-demand']);
-  //end;
+  for i := 0 to JSONObjectConfigStates.Arrays[ConfigProperty].Count -1 do
+   Result.Add(JSONObjectConfigStates.Arrays[ConfigProperty].Items[i].AsString);
 end;
 
 //initialization

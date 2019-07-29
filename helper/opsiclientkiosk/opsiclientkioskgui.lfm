@@ -1747,6 +1747,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Top = 104
             Width = 135
             Caption = 'Uninstall'
+            OnClick = ButtonSoftwareUninstallClick
             TabOrder = 5
           end
         end
