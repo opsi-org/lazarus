@@ -1147,12 +1147,12 @@ var
   MinLen, MaxLen: integer;
   CurrValue: string;
   i: integer;
-  size, fullsize: longint;
+  size, fullsize: int64;
   buffer: array [0 .. 2047] of char;
-  charsread: longint;
+  charsread: int64;
   msg: string;
   setuptype: TKnownInstaller;
-  progress, lastprogress: integer;
+  progress, lastprogress: int64;
 
 begin
   MinLen := 5;
