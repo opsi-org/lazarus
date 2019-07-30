@@ -8,6 +8,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
   ChildSizing.ControlsPerLine = 2
   ClientHeight = 694
   ClientWidth = 804
+  DefaultMonitor = dmDesktop
   OnActivate = FormActivate
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -1434,7 +1435,6 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           Columns = <>
           DataSource = DataSourceProductData
           Options = [dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-          ReadOnly = True
           Scrollbars = ssAutoBoth
           ShowHint = True
           TabOrder = 0
@@ -1458,6 +1458,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             'uninstall'
           )
           MaxLength = 0
+          OnClick = DBComboBox1Click
           OnEnter = DBComboBox1Enter
           OnExit = DBComboBox1Exit
           TabOrder = 1

@@ -16,6 +16,7 @@ uses
   fpjson,
   jsonParser,
   //progresswindow,
+  variants,
   dialogs,
   lazfileutils;
 
@@ -29,9 +30,10 @@ type
     SQLQueryProductDependencies: TSQLQuery;
     SQLTransaction: TSQLTransaction;
     procedure CreateDatabaseAndTables;
-    procedure LoadTableProducts;
-    procedure SaveTableProducts;
+    procedure LoadTableProductsIntoMemory;
+    procedure RemoveTableProductsFromMemory;
     procedure OpsiProductsToDataset(SQLQuery: TSQLQuery);
+    function SetActionRequestToDataset(fSelectedProduct: string; fActionRequest:string): boolean;
     procedure SQLQueryProductDataAfterPost(Dataset: TDataset);
   private
     { private declarations }
@@ -147,23 +149,25 @@ begin
   logdatei.log('Finished InitDatabase', LLInfo);
 end;
 
-procedure TDataModuleOCK.LoadTableProducts;
+procedure TDataModuleOCK.LoadTableProductsIntoMemory;
 begin
+   logdatei.log('Loading TABLE products into memory ordered by upper product name', LLDebug);
    SQLQueryProductData.SQL.Text := 'SELECT * FROM products ORDER BY UPPER (ProductName)';
    SQLTransaction.StartTransaction;
    SQLQueryProductData.Open;
    //SQLQueryProductData.First;
 end;
 
-procedure TDataModuleOCK.SaveTableProducts;
+procedure TDataModuleOCK.RemoveTableProductsFromMemory;
 begin
+  logdatei.log('Removing TABLE products from memory', LLDebug);
   DataModuleOCK.SQLQueryProductData.Close;
   DataModuleOCK.SQLTransaction.Commit;
 end;
 
 procedure TDataModuleOCK.CreateDatabaseTables(Connection: TSQLite3Connection);
 begin
-  { Create Table products }
+  { CREATE TABLE products }
   try
      Connection.ExecuteDirect(
        'CREATE TABLE products ('
@@ -182,13 +186,13 @@ begin
        + 'InstalledVerStr STRING, '
        + 'ActionRequest STRING, '
        + 'ActionResult STRING, '
-       + 'UpdatePossible STRING, '
-       + 'hasSetup STRING, '
-       + 'hasUninstall STRING, '
+       + 'UpdatePossible BOOLEAN, '
+       + 'hasSetup BOOLEAN, '
+       + 'hasUninstall BOOLEAN, '
        + 'possibleAction STRING'
        + ');'
        );
-     logdatei.log('Finished products ', LLInfo);
+     logdatei.log('Success: CREATE TABLE products', LLInfo);
    except
      on e: Exception do
      begin
@@ -198,7 +202,7 @@ begin
        logdatei.log_exception(E,LLError);
      end;
    end;
-   { Create Table dependencies }
+   { CREATE TABLE dependencies}
    try
      Connection.ExecuteDirect(
        'CREATE TABLE dependencies ('
@@ -210,7 +214,7 @@ begin
        + 'PRIMARY KEY(ProductID,RequiredProductID)'
        + ');'
        );
-     logdatei.log('Finished dependencies ', LLInfo);
+     logdatei.log('Success: CREATE TABLE dependencies ', LLInfo);
    except
      on e: Exception do
      begin
@@ -226,110 +230,97 @@ begin
 procedure TDataModuleOCK.OpsiProductsToDataset(SQLQuery:TSQLQuery);
 var
   i: integer;
-  //Product: TProduct;
   SQLStatment: String;
   JSONObjectProduct: TJSONObject;
-
-  //productdatarecord: TProductData;
 begin
   //if SQLTransaction.Active then SQLTransaction.Active:=FALSE;
   logdatei.log('starting OpsiProductToDataset ....', LLInfo);
 
-  { product data to database }
-
-  SQLStatment := 'INSERT INTO products VALUES ('
-                   + ':ProductID, '
-                   + ':ProductName, '
-                   + ':Description, '
-                   + ':Advice, '
-                   + ':ProductVersion, '
-                   + ':PackageVersion, '
-                   + ':VersionStr, '
-                   + ':Priority, '
-                   + ':ProductType, '
-                   + ':InstallationStatus, '
-                   + ':InstalledProdVer, '
-                   + ':InstalledPackVer, '
-                   + ':InstalledVerStr, '
-                   + ':ActionRequest, '
-                   + ':ActionResult, '
-                   + ':UpdatePossible, '
-                   + ':hasSetup, '
-                   + ':hasUninstall, '
-                   + ':PossibleAction'
-                   + ');';
-
-  //SQLStatment := 'SELECT * FROM products ORDER BY UPPER(ProductName)';
+  { prepare database }
+  SQLStatment := 'SELECT * FROM products'; //ORDER BY UPPER(ProductName)';
   SQLQueryProductData.SQL.Text := SQLStatment;
   SQLTransaction.StartTransaction;
-  //SQLQueryProductData.Open;
-  //SQLQueryProductData.SQL.Clear;
-  //SQLQueryProductData.SQL.Add(SQLStatment);
+  SQLQueryProductData.Open;
 
-  { JSON to database table products }
-  for i := 0 to OCKOpsiConnection.JSONObjectProducts.Count - 2 do
+  { JSON to TABLE products }
+  for i := 0 to OCKOpsiConnection.JSONObjectProducts.Count - 1 do
   begin
     JSONObjectProduct := TJSONObject(OCKOpsiConnection.JSONObjectProducts.Items[i]);
     logdatei.log('read: ' + JSONObjectProduct.Strings['productId'], LLInfo);
-    with SQLQueryProductData do
-    begin
+    //with SQLQueryProductData do
+    //begin
+      SQLQueryProductData.Append;
       if not JSONObjectProduct.Nulls['productId'] then
-        ParamByName('ProductID').AsString := JSONObjectProduct.Strings['productId'];
+        SQLQueryProductData['ProductID'] := JSONObjectProduct.Strings['productId'];
       if not JSONObjectProduct.Nulls['productVersion'] then
-        ParamByName('ProductVersion').AsString := JSONObjectProduct.Strings['productVersion'];
+        SQLQueryProductData['ProductVersion'] := JSONObjectProduct.Strings['productVersion'];
       if not JSONObjectProduct.Nulls['packageVersion'] then
-        ParamByName('PackageVersion').AsString := JSONObjectProduct.Strings['packageVersion'];
+        SQLQueryProductData['PackageVersion'] := JSONObjectProduct.Strings['packageVersion'];
       if not JSONObjectProduct.Nulls['productVersion'] and not JSONObjectProduct.Nulls['packageVersion'] then
-        ParamByName('VersionStr').AsString := JSONObjectProduct.Strings['productVersion'] + '-'
+        SQLQueryProductData['VersionStr'] := JSONObjectProduct.Strings['productVersion'] + '-'
                                             + JSONObjectProduct.Strings['packageVersion'];
       if not JSONObjectProduct.Nulls['productName'] then
-        ParamByName('ProductName').AsString := JSONObjectProduct.Strings['productName'];
+        SQLQueryProductData['ProductName'] := JSONObjectProduct.Strings['productName'];
       if not JSONObjectProduct.Nulls['description'] then
-        ParamByName('Description').AsString := JSONObjectProduct.Strings['description'];
+        SQLQueryProductData['Description'] := JSONObjectProduct.Strings['description'];
       if not JSONObjectProduct.Nulls['advice'] then
-        ParamByName('Advice').AsString := JSONObjectProduct.Strings['advice'];
+        SQLQueryProductData['Advice'] := JSONObjectProduct.Strings['advice'];
       if not JSONObjectProduct.Nulls['priority'] then
-        ParamByName('Priority').AsInteger := JSONObjectProduct.Integers['priority'];
+        SQLQueryProductData['Priority'] := JSONObjectProduct.Integers['priority'];
       if not JSONObjectProduct.Nulls['productType'] then
-        ParamByName('ProductType').AsString := JSONObjectProduct.Strings['productType'];
+        SQLQueryProductData['ProductType'] := JSONObjectProduct.Strings['productType'];
       if not JSONObjectProduct.Nulls['hasSetup'] then
-        ParamByName('hasSetup').AsString := JSONObjectProduct.Strings['hasSetup'];
+        SQLQueryProductData['hasSetup'] := JSONObjectProduct.Booleans['hasSetup'];
       if not JSONObjectProduct.Nulls['hasUninstall'] then
-        ParamByName('hasUninstall').AsString := JSONObjectProduct.Strings['hasUninstall'];
+        SQLQueryProductData['hasUninstall'] := JSONObjectProduct.Booleans['hasUninstall'];
       if not JSONObjectProduct.Nulls['actionResult'] then
         if JSONObjectProduct.Strings['installationStatus'] = 'not_installed' then
-          ParamByName('InstallationStatus').AsString := ''
+          SQLQueryProductData['InstallationStatus'] := ''
         else
-          ParamByName('InstallationStatus').AsString := JSONObjectProduct.Strings['installationStatus'];
-
-      //if JSONObjectProduct.Nulls['installedProdVer'] then ShowMessage('InstalledProdVers : Null');
+          SQLQueryProductData['InstallationStatus'] := JSONObjectProduct.Strings['installationStatus'];
+       //if JSONObjectProduct.Nulls['installedProdVer'] then ShowMessage('InstalledProdVers : Null');
       if not JSONObjectProduct.Nulls['installedProdVer'] then
-        ParamByName('InstalledProdVer').AsString := JSONObjectProduct.Strings['installedProdVer'];
+        SQLQueryProductData['InstalledProdVer'] := JSONObjectProduct.Strings['installedProdVer'];
       if not JSONObjectProduct.Nulls['installedPackVer'] then
-        ParamByName('InstalledPackVer').AsString := JSONObjectProduct.Strings['installedPackVer'];
+        SQLQueryProductData['InstalledPackVer'] := JSONObjectProduct.Strings['installedPackVer'];
       if not JSONObjectProduct.Nulls['installedVerStr'] then
-        ParamByName('InstalledVerStr').AsString := JSONObjectProduct.Strings['installedVerStr'];
+        SQLQueryProductData['InstalledVerStr'] := JSONObjectProduct.Strings['installedVerStr'];
       if not JSONObjectProduct.Nulls['actionRequest'] then
         if JSONObjectProduct.Strings['actionRequest'] = 'none' then
-          ParamByName('ActionRequest').AsString := ''
+          SQLQueryProductData['ActionRequest'] := ''
         else
-          ParamByName('ActionRequest').AsString := JSONObjectProduct.Strings['actionRequest'];
+          SQLQueryProductData['ActionRequest'] := JSONObjectProduct.Strings['actionRequest'];
       if not JSONObjectProduct.Nulls['actionResult'] then
-        ParamByName('ActionResult').AsString := JSONObjectProduct.Strings['actionResult'];
+        SQLQueryProductData['ActionResult'] := JSONObjectProduct.Strings['actionResult'];
       if not JSONObjectProduct.Nulls['updatePossible'] then
-        ParamByName('UpdatePossible').AsString := JSONObjectProduct.Strings['updatePossible'];
+        SQLQueryProductData['UpdatePossible'] := JSONObjectProduct.Booleans['updatePossible'];
       if not JSONObjectProduct.Nulls['possibleAction'] then
-        ParamByName('PossibleAction').AsString := JSONObjectProduct.Strings['possibleAction'];
-    end;
-  SQLQueryProductData.ExecSQL;
-  //JSONObjectProduct.Free;
+        SQLQueryProductData['PossibleAction'] := JSONObjectProduct.Strings['possibleAction'];
+    //end;
   end;
-
-  //SQLQueryProductData.ExecSQL;
   SQLQueryProductData.Close;
   SQLTransaction.Commit;
-  logdatei.log('End of OpsiProductToDataset', LLInfo);
+  logdatei.log('Finished OpsiProductToDataset', LLInfo);
  end;
+
+function TDataModuleOCK.SetActionRequestToDataset(fSelectedProduct: string;
+  fActionRequest:string): boolean;
+begin
+  with SQLQueryProductData do
+  begin
+    First;
+    //gefunden := Locate('ProductID', VarArrayOf([SelectedProduct]),[loCaseInsensitive]);
+    if Locate('ProductID',VarArrayOf([fSelectedProduct]),[loCaseInsensitive])
+    then
+    begin
+      Edit;
+      //FieldByName('ActionRequest').AsString:= fActionRequest;
+      SQLQueryProductData['ActionRequest'] := fActionRequest;
+      Post;
+    end;
+    Open;
+  end;
+end;
 
 end.
 

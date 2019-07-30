@@ -151,6 +151,8 @@ type
     //procedure BtnActionClick(Sender: TObject);
     procedure ButtonSoftwareBackClick(Sender: TObject);
     procedure ButtonSoftwareUninstallClick(Sender: TObject);
+    procedure DBComboBox1Change(Sender: TObject);
+    procedure DBComboBox1Click(Sender: TObject);
     procedure DBComboBox1Enter(Sender: TObject);
     procedure DBComboBox1Exit(Sender: TObject);
     procedure DBGrid1CellClick(Column: TColumn);
@@ -190,6 +192,7 @@ type
     //procedure InitOpsiClientKiosk;
     procedure FilterOnSearch;
     procedure BuildProductTiles(var ArrayProductTiles:TPanels; const OwnerName:string);
+    procedure SetActionRequestLaterUninstallation;
     function GetTileIDbyProductID(const ProductID:String):integer;
     procedure SetTileIDbyProductID(const TileID, ProductID:String);
   private
@@ -198,6 +201,7 @@ type
     SoftwareOnDemand : boolean;
     SelectedTile : integer;  //TileIndex e.g. Tag
     SelectedProduct : String; //ProductID
+    StartUpDone : boolean;
   public
     { public declarations }
   end;
@@ -248,8 +252,8 @@ implementation
 const
   //color for StatusLabel
   clInstalled = clTeal;
-  clUpdate = $00FF8000;
-  clNotInstalled = $000080FF;
+  clUpdate = $000080FF;
+  clNotInstalled = $00FF8000;
   clUnknown = clRed;
 
   //Path to programm icons
@@ -712,7 +716,7 @@ begin
     with FormProgressWindow do
     begin
       ProgressbarDetail.Position := 0;
-      LabelInfo.Caption:= 'Please wait while building tils';
+      LabelInfo.Caption:= 'Please wait while building tiles';
       //LabelDataload.Caption := 'Clear Tiles';
     end;
     Application.ProcessMessages;
@@ -781,8 +785,8 @@ begin
       state := DataModuleOCK.SQLQueryProductData.FieldByName('installationStatus').AsString;
       if state = 'installed' then
       begin
-        update := DataModuleOCK.SQLQueryProductData.FieldByName('updatePossible').AsString;
-        if update = 'true' then
+        //update := DataModuleOCK.SQLQueryProductData.FieldByName('updatePossible').AsString;
+        if DataModuleOCK.SQLQueryProductData['updatePossible'] then
         begin
           ArrayProductTiles[counter].LabelState.Caption := rsUpdate;
           ArrayProductTiles[counter].LabelState.Color := clUpdate;
@@ -815,6 +819,33 @@ begin
     logdatei.log('BuildProductTiles stop', LLDebug2);
     FormProgressWindow.Visible := False;
   end;
+end;
+
+procedure TFormOpsiClientKiosk.SetActionRequestLaterUninstallation;
+begin
+  with FormProgressWindow do
+  begin
+    Visible := True;
+    LabelInfo.Caption := 'Please wait while communicating with OPSI web server ...';
+    LabelDataLoad.Caption := 'Communicating with server ...';
+    LabelDataLoadDetail.Caption := 'Sending request to server';
+    ProgressBar1.Position := 50;
+    ProgressBarDetail.Position := 50;
+  end;
+  Application.ProcessMessages;
+  OCKOpsiConnection.SetActionRequest(SelectedProduct,'uninstall'); //to opsi server
+  Application.ProcessMessages;
+  DataModuleOCK.SetActionRequestToDataset(SelectedProduct,'uninstall');// to local database
+  with FormProgressWindow do
+  begin
+    //LabelInfo.Caption := 'Please wait while communicating with OPSI web server ...';
+    //LabelDataLoad.Caption := 'Communicating with server ...';
+    LabelDataLoadDetail.Caption := 'Done. Send request to server';
+    ProgressBar1.Position := 100;
+    ProgressBarDetail.Position := 100;
+  end;
+  FormProgressWindow.Visible := False;
+  ShowMessage('Request done. ' + LabelSoftwareName.Caption + ' will be uninstalled at next standard event (e.g. reboot)');
 end;
 
 function TFormOpsiClientKiosk.GetTileIDbyProductID(const ProductID: String): integer;
@@ -1016,7 +1047,7 @@ begin
   TSpeedButton(Sender).Down:= True;
   DataModuleOCK.SQLQueryProductData.Filtered := False;
   DataModuleOCK.SQLQueryProductData.FilterOptions := [foCaseInsensitive];
-  DataModuleOCK.SQLQueryProductData.Filter := 'UpdatePossible = "True" and InstallationStatus <> ""';
+  DataModuleOCK.SQLQueryProductData.Filter := 'UpdatePossible and InstallationStatus <> ""';
   DataModuleOCK.SQLQueryProductData.Filtered := True;
   TSpeedButton(Sender).Down:= True;
     if SpeedButtonExpertMode.Down
@@ -1037,23 +1068,42 @@ end;
 
 procedure TFormOpsiClientKiosk.ButtonSoftwareUninstallClick(Sender: TObject);
 begin
-  if QuestionDLG('','Do you want to uninstall ' + LabelSoftwareName.Caption + '?',
-                 mtConfirmation,[mrYes, 'Yes', mrNo, 'No'], 0) = mrYes then
+  if SoftWareOnDemand then
   begin
-    if SoftWareOnDemand then
-    begin
-      case QuestionDLG('Uninstall Dialog','Uninstall now, later or cancel action?',mtConfirmation,
-                       [mrYes, 'Uninstall now', mrNo, 'Select for Uninstallation', mrCancel], 0)
-      of
-        //Do Update der Datenbank (morgen 30.7.)!!!
-        mrYes: OCKOpsiConnection.SetActionRequest(SelectedProduct,'uninstall');
-        mrNo: OCKOpsiConnection.SetActionRequest(SelectedProduct,'uninstall');
-      end;
-    end
-    else
-     ShowMessage(LabelSoftwareName.Caption + ' will be unistalled at next standard event (e.g. reboot)')
-  end;
+    case QuestionDLG('Uninstall Dialog','Uninstall now, later or cancel action?',mtConfirmation,
+                     [mrYes, 'Uninstall now', mrNo, 'Uninstall later', mrCancel], 0)
+    of
+      //Do Update der Datenbank (morgen 30.7.)!!!
+      mrYes: begin
+               OCKOpsiConnection.SetActionRequest(SelectedProduct,'uninstall');
+             end;
+      mrNo: begin
+              //ShowMessage('Please wait while sending request to server...');
+              SetActionRequestLaterUninstallation;
+            end;
+    end;//case
+  end//if SoftwareOndemand
+  else
+   if QuestionDLG('','Do you want to uninstall ' + LabelSoftwareName.Caption + '?',
+               mtConfirmation,[mrYes, 'Yes', mrNo, 'No'], 0) = mrYes then
+   begin
+     SetActionRequestLaterUninstallation;
+     //ShowMessage(LabelSoftwareName.Caption + ' will be uninstalled at next standard event (e.g. reboot)');
+   end;
+end;//procedure ButtonSoftwareUninstallClick
+
+
+
+procedure TFormOpsiClientKiosk.DBComboBox1Change(Sender: TObject);
+begin
+  DataModuleOCK.SQLQueryProductData.Edit;
 end;
+
+procedure TFormOpsiClientKiosk.DBComboBox1Click(Sender: TObject);
+begin
+  DataModuleOCK.SQLQueryProductData.Edit;
+end;
+
 
 procedure TFormOpsiClientKiosk.DBComboBox1Enter(Sender: TObject);
 begin
@@ -1079,6 +1129,7 @@ begin
   //DataModuleOCK.SQLQueryProductData.Filter := ' not ((ActionRequest = "") and (ActionRequest = "none"))';
   DataModuleOCK.SQLQueryProductData.Filter := 'ActionRequest <> ""';
   DataModuleOCK.SQLQueryProductData.Filtered := True;
+  DataModuleOCK.SQLQueryProductData.Edit;
   //FormProgressWindow.ProcessMess;
   //RadioGroupViewSelectionChanged(self);
 end;
@@ -1136,7 +1187,8 @@ begin
     // rsInstallNow
     screen.Cursor := crHourGlass;
     try
-      FormProgressWindow.ProcessMess;
+      Application.ProcessMessages;
+      //FormProgressWindow.ProcessMess;
       //mythread := Tmythread2.Create(False);
       //mythread.WaitFor;
       OCKOpsiConnection.firePushInstallation;
@@ -1297,97 +1349,97 @@ var
   ListOptions,
   ConfigState : TStringList;
   MyClientID  :String;
-
-
 begin
-  //if not StartupDone then
-  //begin
-    //StartupDone := True;
+  if not StartupDone then
+  begin
+    StartupDone := True;
 
-  { quick check parameters }
-  try
     { quick check parameters }
-    ListOptions := TStringList.Create;
-    ListOptions.Append('fqdn::');
-    ListOptions.Append('lang:');
-    ErrorMsg := Application.CheckOptions('', ListOptions);
-    LogDatei.log('Options: ' + ListOptions.Text + ', ErrorMsg: ' + ErrorMsg, LLDebug);
-    if ErrorMsg <> '' then
-    begin
-      Application.ShowException(Exception.Create(ErrorMsg));
-      Application.Terminate;
-      Exit;
+    try
+      { quick check parameters }
+      ListOptions := TStringList.Create;
+      ListOptions.Append('fqdn::');
+      ListOptions.Append('lang:');
+      ErrorMsg := Application.CheckOptions('', ListOptions);
+      LogDatei.log('Options: ' + ListOptions.Text + ', ErrorMsg: ' + ErrorMsg, LLDebug);
+      if ErrorMsg <> '' then
+      begin
+        Application.ShowException(Exception.Create(ErrorMsg));
+        Application.Terminate;
+        Exit;
+      end;
+
+      { parse parameters }
+
+      if Application.HasOption('fqdn') then
+      begin
+        MyClientID := Application.GetOptionValue('fqdn');
+        LogDatei.log('MyClientID (option = fqdn): ' + MyClientID, LLDebug);
+      end;
+      if Application.HasOption('lang') then
+      begin
+        SetDefaultLang(Application.GetOptionValue('lang'));
+      end;
+
+      { Create connection to Opsi }
+
+      FormProgressWindow.LabelInfo.Caption := 'Please wait while communicating with OPSI web server ...';
+      FormProgressWindow.LabelDataLoad.Caption := 'Communicating with server ...';
+      FormProgressWindow.LabelDataLoadDetail.Caption := 'Connecting to server';
+      FormProgressWindow.ProgressBar1.StepIt;
+      FormProgressWindow.ProgressBarDetail.Position := 50;
+      //FormProgressWindow.ProgressBarDetail.StepIt;
+      //FormProgressWindow.ProcessMess;
+      Application.ProcessMessages;
+      OCKOpsiConnection := TOpsiConnection.Create(true, MyClientID);
+      FormProgressWindow.LabelDataLoad.Caption := 'Connected to '+
+        OCKOpsiConnection.myservice_url + ' as ' + OCKOpsiConnection.myclientid;
+      StatusBar1.Panels[0].Text := 'Connected to '+
+        OCKOpsiConnection.myservice_url + ' as ' + OCKOpsiConnection.myclientid;
+      FormProgressWindow.ProgressBar1.StepIt;
+      Application.ProcessMessages; //FormProgressWindow.ProcessMess;
+
+      { Load data from server }
+
+      FormProgressWindow.LabelDataLoadDetail.Caption := 'Loading product data from server';
+      FormProgressWindow.ProgressBar1.StepIt;
+      FormProgressWindow.ProgressBarDetail.Position := 100;
+      //FormProgressWindow.Repaint;
+      Application.ProcessMessages;//FormProgressWindow.ProcessMess;
+      OCKOpsiConnection.GetJSONFromServer;
+      ConfigState := TSTringList.Create;
+      ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.kiosk.allowed');
+      //ShowMessage(ConfigState.Text);
+      SoftwareOnDemand := StrToBool(ConfigState.Strings[0]);
+      //FormProgressWindow.ProgressBarDetail.Position := 100;
+      //Application.ProcessMessages;
+
+      { Initialize database and tables and copy opsi product data to database }
+
+      DataModuleOCK := TDataModuleOCK.Create(nil);
+      DataModuleOCK.CreateDatabaseAndTables;
+      //if DataModuleOCK.SQLTransaction.Active then ShowMessage('Transaction active after Initdatabse!');
+      LogDatei.log('start OpsiProductsToDataset', LLNotice);
+      DataModuleOCK.OpsiProductsToDataset(DataModuleOCK.SQLQueryProductData);
+      DataModuleOCK.LoadTableProductsIntoMemory;
+      //if DataModuleOCK.SQLTransaction.Active then ShowMessage('Transaction active after OpsiProducts!');
+      //DBGrid1.DataSource := DataSourceProductData;
+      //DBGrid2.DataSource := DataSourceProductDependencies;
+
+       { Initialize GUI }
+
+       BuildProductTiles(ArrayAllproductTiles, 'FlowPanelAllTiles');
+      //if DataModuleOCK.SQLTransaction.Active then ShowMessage('Transaction active after BuildProductTiles!');
+
+      { log }
+
+      LogDatei.log('rsActSetup is: ' + rsActSetup , LLDebug2);
+      LogDatei.log('TitleLabel.Caption: ' + TitleLabel.Caption, LLDebug2);
+    //end;
+    finally
+      ListOptions.Free;
+      ConfigState.Free;
     end;
-
-    { parse parameters }
-
-    if Application.HasOption('fqdn') then
-    begin
-      MyClientID := Application.GetOptionValue('fqdn');
-      LogDatei.log('MyClientID (option = fqdn): ' + MyClientID, LLDebug);
-    end;
-    if Application.HasOption('lang') then
-    begin
-      SetDefaultLang(Application.GetOptionValue('lang'));
-    end;
-
-    { Create connection to Opsi }
-
-    FormProgressWindow.LabelInfo.Caption := 'Please wait while communicating with OPSI web server ...';
-    FormProgressWindow.LabelDataLoad.Caption := 'Communicating with server ...';
-    FormProgressWindow.LabelDataLoadDetail.Caption := 'Connecting to server';
-    FormProgressWindow.ProgressBar1.StepIt;
-    FormProgressWindow.ProgressBarDetail.Position := 50;
-    //FormProgressWindow.ProgressBarDetail.StepIt;
-    FormProgressWindow.ProcessMess;
-    OCKOpsiConnection := TOpsiConnection.Create(true, MyClientID);
-    FormProgressWindow.LabelDataLoad.Caption := 'Connected to '+
-      OCKOpsiConnection.myservice_url + ' as ' + OCKOpsiConnection.myclientid;
-    StatusBar1.Panels[0].Text := 'Connected to '+
-      OCKOpsiConnection.myservice_url + ' as ' + OCKOpsiConnection.myclientid;
-    FormProgressWindow.ProgressBar1.StepIt;
-    FormProgressWindow.ProcessMess;
-
-    { Load data from server }
-
-    FormProgressWindow.LabelDataLoadDetail.Caption := 'Loading product data from server';
-    FormProgressWindow.ProgressBar1.StepIt;
-    FormProgressWindow.ProgressBarDetail.Position := 100;
-    //FormProgressWindow.Repaint;
-    FormProgressWindow.ProcessMess;
-    OCKOpsiConnection.GetJSONFromServer;
-    ConfigState := TSTringList.Create;
-    ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.kiosk.allowed');
-    //ShowMessage(ConfigState.Text);
-    SoftwareOnDemand := StrToBool(ConfigState.Strings[0]);
-    //FormProgressWindow.ProgressBarDetail.Position := 100;
-    //Application.ProcessMessages;
-
-    { Initialize database and tables and copy opsi product data to database }
-
-    DataModuleOCK := TDataModuleOCK.Create(nil);
-    DataModuleOCK.CreateDatabaseAndTables;
-    //if DataModuleOCK.SQLTransaction.Active then ShowMessage('Transaction active after Initdatabse!');
-    LogDatei.log('start OpsiProductsToDataset', LLNotice);
-    DataModuleOCK.OpsiProductsToDataset(DataModuleOCK.SQLQueryProductData);
-    DataModuleOCK.LoadTableProducts;
-    //if DataModuleOCK.SQLTransaction.Active then ShowMessage('Transaction active after OpsiProducts!');
-    //DBGrid1.DataSource := DataSourceProductData;
-    //DBGrid2.DataSource := DataSourceProductDependencies;
-
-     { Initialize GUI }
-
-     BuildProductTiles(ArrayAllproductTiles, 'FlowPanelAllTiles');
-    //if DataModuleOCK.SQLTransaction.Active then ShowMessage('Transaction active after BuildProductTiles!');
-
-    { log }
-
-    LogDatei.log('rsActSetup is: ' + rsActSetup , LLDebug2);
-    LogDatei.log('TitleLabel.Caption: ' + TitleLabel.Caption, LLDebug2);
-  //end;
-  finally
-    ListOptions.Free;
-    ConfigState.Free;
   end;
 end;
 
@@ -1477,6 +1529,7 @@ end;
 
 procedure TFormOpsiClientKiosk.FormCreate(Sender: TObject);
 begin
+  StartUpDone := False;
   InitLogging('kiosk-' + GetUserName_ +'.log', self.Name + '.FormCreate', LLDebug);
   LogDatei.log('Initialize Opsi Client Kiosk', LLNotice);
   // is an other instance running ?
@@ -1504,7 +1557,7 @@ begin
   detail_visible := False;
   // Load custom skin
 
-  skinpath := Application.Location + PathDelim + 'opsiclientkioskskin' + PathDelim;
+  skinpath := Application.Location + 'opsiclientkioskskin' + PathDelim;
   if FileExistsUTF8(skinpath + 'opsiclientkiosk.png') then
   begin
     ImageHeader.Picture.LoadFromFile(skinpath + 'opsiclientkiosk.png');
@@ -1536,7 +1589,7 @@ begin
   end;
 
   // skinpath in opsiclientagent custom dir
-  skinpath := Application.Location + PathDelim +
+  skinpath := Application.Location +
     '..\custom\opsiclientkioskskin' + PathDelim;
   if FileExistsUTF8(skinpath + 'opsiclientkiosk.png') then
   begin

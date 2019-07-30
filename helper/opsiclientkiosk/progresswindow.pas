@@ -17,7 +17,7 @@ type
   private
 
   public
-    procedure ProcessMess;
+    //procedure ProcessMess;
   end;
 
 var
@@ -27,10 +27,10 @@ implementation
 
 {$R *.lfm}
 
-procedure TFormProgressWindow.ProcessMess;
+{procedure TFormProgressWindow.ProcessMess;
 begin
   Application.ProcessMessages;
-end;
+end;}
 
 end.
 
