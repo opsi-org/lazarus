@@ -61,6 +61,7 @@ type
     procedure SetActionRequest(pid: string; request: string);
     function GetActionRequests: TStringList;
     procedure FirePushInstallation;
+    procedure DoActionOnDemand;
     function GetConfigState(ConfigProperty:String):TStringList;
     procedure GetJSONFromServer;
     constructor Create(clientdmode:boolean; ClientID:string);overload;
@@ -95,7 +96,7 @@ procedure TOpsiConnection.readconf2;
 begin
   // opsiclientd mode
   myservice_url := 'https://localhost:4441/kiosk';
-  myclientid := 'pcjan.uib.local';
+  myclientid := 'jan-client01.uib.local';//'pcjan.uib.local';
   //myclientid := oslog.getComputerName;
   myhostkey := '';
   myloglevel := 7;
@@ -281,7 +282,7 @@ begin
     [pid, MyClientID, request]);
 end;
 
-function TOpsiConnection.getActionRequests: TStringList;
+function TOpsiConnection.GetActionRequests: TStringList;
 var
   resultstring, str: string;
   new_obj, opsiProduct: ISuperObject;
@@ -299,7 +300,7 @@ begin
   end;
 end;
 
-procedure TOpsiConnection.firePushInstallation;
+procedure TOpsiConnection.FirePushInstallation;
 var
   resultstring, str: string;
   proginfo: string;
@@ -318,6 +319,13 @@ begin
   // opsiconfd mode
   // may not work if acl.conf is restricted
   //resultstring := MyOpsiMethodCall('hostControlSafe_fireEvent',  ['on_demand', '[' + myclientid + ']']);
+end;
+
+procedure TOpsiConnection.DoActionOnDemand;
+var
+  resultstring:String;
+begin
+   resultstring := MyOpsiMethodCall('fireEvent_software_on_demand', []);
 end;
 
 

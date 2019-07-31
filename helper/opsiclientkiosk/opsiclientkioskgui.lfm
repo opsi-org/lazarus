@@ -1797,10 +1797,13 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
   end
   object DataSourceProductData: TDataSource
     DataSet = DataModuleOCK.SQLQueryProductData
-    left = 176
+    left = 528
   end
   object DataSourceProductDependencies: TDataSource
     DataSet = DataModuleOCK.SQLQueryProductDependencies
-    left = 624
+    left = 704
+  end
+  object TimerNetwork: TTimer
+    left = 160
   end
 end

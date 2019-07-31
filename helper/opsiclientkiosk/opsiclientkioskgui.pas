@@ -25,6 +25,7 @@ uses
   opsiconnection,
   jwawinbase,
   osprocesses,
+  pleasewaitwindow,
   progresswindow, proginfo;
 
 type
@@ -132,6 +133,7 @@ type
     SpeedButtonAll: TSpeedButton;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
+    TimerNetwork: TTimer;
     TimerSearchEdit: TTimer;
     TitleLabel: TLabel;
     NotebookProducts: TNotebook;
@@ -147,9 +149,8 @@ type
     procedure BitBtnStoreActionClick(Sender: TObject);
     procedure BitBtnToggleViewClick(Sender: TObject);
     procedure ButtonReadConfigStateClick(Sender: TObject);
-    procedure ButtonSoftwareInstallClick(Sender: TObject);
-    //procedure BtnActionClick(Sender: TObject);
     procedure ButtonSoftwareBackClick(Sender: TObject);
+    procedure ButtonSoftwareInstallClick(Sender: TObject);
     procedure ButtonSoftwareUninstallClick(Sender: TObject);
     procedure DBComboBox1Change(Sender: TObject);
     procedure DBComboBox1Click(Sender: TObject);
@@ -192,7 +193,7 @@ type
     //procedure InitOpsiClientKiosk;
     procedure FilterOnSearch;
     procedure BuildProductTiles(var ArrayProductTiles:TPanels; const OwnerName:string);
-    procedure SetActionRequestLaterUninstallation;
+    procedure SetActionRequest(Request:String; Message:String; OnDemand:boolean);
     function GetTileIDbyProductID(const ProductID:String):integer;
     procedure SetTileIDbyProductID(const TileID, ProductID:String);
   private
@@ -759,7 +760,7 @@ begin
       ProgressBarDetail.Step := 1;
       ProgressBarDetail.Max := ProgressBar1.Position + DataModuleOCK.SQLQueryProductData.RecordCount;
     end;
-    Application.ProcessMessages;
+    //Application.ProcessMessages;
     logdatei.log('BuildProductTiles from db start', LLDebug2);
     counter := 0;
     while not DataModuleOCK.SQLQueryProductData.EOF do
@@ -817,36 +818,19 @@ begin
     //DataModuleOCK.SQLTransaction.Commit;
     inTileRebuild := False;
     logdatei.log('BuildProductTiles stop', LLDebug2);
-    FormProgressWindow.Visible := False;
   end;
 end;
 
-procedure TFormOpsiClientKiosk.SetActionRequestLaterUninstallation;
+procedure TFormOpsiClientKiosk.SetActionRequest(Request:String; Message:String; OnDemand:boolean);
 begin
-  with FormProgressWindow do
-  begin
-    Visible := True;
-    LabelInfo.Caption := 'Please wait while communicating with OPSI web server ...';
-    LabelDataLoad.Caption := 'Communicating with server ...';
-    LabelDataLoadDetail.Caption := 'Sending request to server';
-    ProgressBar1.Position := 50;
-    ProgressBarDetail.Position := 50;
-  end;
-  Application.ProcessMessages;
-  OCKOpsiConnection.SetActionRequest(SelectedProduct,'uninstall'); //to opsi server
-  Application.ProcessMessages;
-  DataModuleOCK.SetActionRequestToDataset(SelectedProduct,'uninstall');// to local database
-  with FormProgressWindow do
-  begin
-    //LabelInfo.Caption := 'Please wait while communicating with OPSI web server ...';
-    //LabelDataLoad.Caption := 'Communicating with server ...';
-    LabelDataLoadDetail.Caption := 'Done. Send request to server';
-    ProgressBar1.Position := 100;
-    ProgressBarDetail.Position := 100;
-  end;
-  FormProgressWindow.Visible := False;
-  ShowMessage('Request done. ' + LabelSoftwareName.Caption + ' will be uninstalled at next standard event (e.g. reboot)');
+  Screen.Cursor := crHourGlass;
+  OCKOpsiConnection.SetActionRequest(SelectedProduct,Request); //to opsi server
+  DataModuleOCK.SetActionRequestToDataset(SelectedProduct,Request);// to local database
+  if OnDemand then OCKOpsiConnection.DoActionOnDemand;
+  Screen.Cursor := crDefault;
+  ShowMessage('Request done. ' + LabelSoftwareName.Caption + Message);
 end;
+
 
 function TFormOpsiClientKiosk.GetTileIDbyProductID(const ProductID: String): integer;
 begin
@@ -1073,13 +1057,13 @@ begin
     case QuestionDLG('Uninstall Dialog','Uninstall now, later or cancel action?',mtConfirmation,
                      [mrYes, 'Uninstall now', mrNo, 'Uninstall later', mrCancel], 0)
     of
-      //Do Update der Datenbank (morgen 30.7.)!!!
       mrYes: begin
-               OCKOpsiConnection.SetActionRequest(SelectedProduct,'uninstall');
+               SetActionRequest('uninstall', ' will be uninstalled now.', True);
              end;
       mrNo: begin
               //ShowMessage('Please wait while sending request to server...');
-              SetActionRequestLaterUninstallation;
+              SetActionRequest('uninstall',
+                ' will be uninstalled at next standard event (e.g. reboot).', False);
             end;
     end;//case
   end//if SoftwareOndemand
@@ -1087,8 +1071,8 @@ begin
    if QuestionDLG('','Do you want to uninstall ' + LabelSoftwareName.Caption + '?',
                mtConfirmation,[mrYes, 'Yes', mrNo, 'No'], 0) = mrYes then
    begin
-     SetActionRequestLaterUninstallation;
-     //ShowMessage(LabelSoftwareName.Caption + ' will be uninstalled at next standard event (e.g. reboot)');
+     SetActionRequest('uninstall',
+       ' will be uninstalled at next standard event (e.g. reboot).', False);
    end;
 end;//procedure ButtonSoftwareUninstallClick
 
@@ -1115,8 +1099,8 @@ begin
   //DBGrid1.Repaint;
   if DBComboBox1.Text <> '' then
     DataModuleOCK.SQLQueryProductData.Post;
-  //  ockdata.DataModuleOCK.SQLQueryProductData.FieldByName('actionrequest').AsString := 'none';
-  //ockdata.DataModuleOCK.SQLQueryProductData.Post;
+  //DataModuleOCK.SQLQueryProductData.FieldByName('actionrequest').AsString := 'none';
+  DataModuleOCK.SQLQueryProductData.Open;
 end;
 
 
@@ -1221,7 +1205,28 @@ end;
 
 procedure TFormOpsiClientKiosk.ButtonSoftwareInstallClick(Sender: TObject);
 begin
-  QuestionDLG('Install Dialog','Install now?',mtConfirmation,[mrYes, 'Install now', mrNo, 'Select for Installation', mrCancel], 0);
+  if SoftWareOnDemand then
+  begin
+    case QuestionDLG('Install Dialog','Install now, install later at next standard event (e.g. reboot) or cancel action?',mtConfirmation,
+                     [mrYes, 'Now', mrNo, 'Next standard event (e.g. reboot)', mrCancel], 0)
+    of
+      mrYes: begin
+               SetActionRequest('setup', ' will be installed now.', True);
+             end;
+      mrNo: begin
+              //ShowMessage('Please wait while sending request to server...');
+              SetActionRequest('setup',
+                ' will be installed at next standard event (e.g. reboot).',False);
+            end;
+    end;//case
+  end//if SoftwareOndemand
+  else
+   if QuestionDLG('','Do you want to install ' + LabelSoftwareName.Caption + '?',
+               mtConfirmation,[mrYes, 'Yes', mrNo, 'No'], 0) = mrYes then
+   begin
+     SetActionRequest('setup',
+       ' will be installed at next standard event (e.g. reboot).', False);
+   end;
 end;
 
 {*procedure TFormOpsiClientKiosk.SpeedButtonNotInstalledClick(Sender: TObject);
@@ -1430,7 +1435,7 @@ begin
 
        BuildProductTiles(ArrayAllproductTiles, 'FlowPanelAllTiles');
       //if DataModuleOCK.SQLTransaction.Active then ShowMessage('Transaction active after BuildProductTiles!');
-
+      FormProgressWindow.Close;
       { log }
 
       LogDatei.log('rsActSetup is: ' + rsActSetup , LLDebug2);

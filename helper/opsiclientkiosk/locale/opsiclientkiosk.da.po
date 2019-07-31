@@ -303,6 +303,18 @@ msgctxt "tformopsiclientkiosk.titlelabel.caption"
 msgid "opsi Client Kiosk"
 msgstr ""
 
+#: tformpleasewait.caption
+msgid "Dialog"
+msgstr ""
+
+#: tformpleasewait.labelinfo.caption
+msgid "LabelInfo"
+msgstr ""
+
+#: tformpleasewait.labelpleasewait.caption
+msgid "Please wait ..."
+msgstr ""
+
 #: tformprogresswindow.caption
 #, fuzzy
 #| msgid "Please wait ..."
