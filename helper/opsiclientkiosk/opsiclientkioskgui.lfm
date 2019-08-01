@@ -1,7 +1,7 @@
 object FormOpsiClientKiosk: TFormOpsiClientKiosk
-  Left = 2345
+  Left = 2092
   Height = 694
-  Top = 125
+  Top = 136
   Width = 804
   Caption = 'opsi-client-kiosk'
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
@@ -63,7 +63,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       ParentShowHint = False
     end
     object PanelSearchEdit: TPanel
-      Left = 377
+      Left = 457
       Height = 33
       Top = 6
       Width = 195
@@ -282,6 +282,20 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Kind = bkHelp
       OnClick = BitBtnInfoClick
       TabOrder = 1
+    end
+    object SpeedButtonActions: TSpeedButton
+      Left = 377
+      Height = 33
+      Top = 6
+      Width = 80
+      Align = alLeft
+      BorderSpacing.Top = 5
+      BorderSpacing.Bottom = 5
+      Constraints.MinHeight = 32
+      Constraints.MinWidth = 80
+      Caption = 'Actions'
+      GroupIndex = 2
+      OnClick = SpeedButtonActionsClick
     end
   end
   object StatusBar1: TStatusBar
@@ -1113,23 +1127,6 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       }
       OnClick = SpeedButtonReloadClick
     end
-    object BitBtnShowAction: TBitBtn
-      Left = 605
-      Height = 33
-      Hint = 'Show the list of action requests in the list. '
-      Top = 6
-      Width = 118
-      Align = alRight
-      BorderSpacing.Around = 5
-      BorderSpacing.InnerBorder = 2
-      Caption = 'Show Actions'
-      Kind = bkOK
-      ModalResult = 1
-      OnClick = BitBtnShowActionClick
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 0
-    end
     object RadioGroupView: TRadioGroup
       Left = 5
       Height = 38
@@ -1158,35 +1155,23 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
         'Tile'
       )
       OnSelectionChanged = RadioGroupViewSelectionChanged
-      TabOrder = 1
+      TabOrder = 0
     end
     object BitBtnStoreAction: TBitBtn
-      Left = 484
+      Left = 607
       Height = 33
       Top = 6
       Width = 116
       Align = alRight
       BorderSpacing.Left = 10
       BorderSpacing.Around = 5
-      Caption = 'Store Actions'
+      Caption = 'Store Action'
       Kind = bkAll
       ModalResult = 8
       OnClick = BitBtnStoreActionClick
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 2
-    end
-    object ButtonReadConfigState: TButton
-      Left = 101
-      Height = 33
-      Top = 6
-      Width = 115
-      Align = alLeft
-      AutoSize = True
-      BorderSpacing.Around = 5
-      Caption = 'Read configState'
-      OnClick = ButtonReadConfigStateClick
-      TabOrder = 3
+      TabOrder = 1
     end
   end
   object PanelProductList: TPanel
@@ -1442,7 +1427,6 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           OnColExit = DBGrid1ColExit
           OnDrawColumnCell = DBGrid1DrawColumnCell
           OnEnter = DBGrid1Enter
-          OnExit = DBGrid1Exit
           OnTitleClick = DBGrid1TitleClick
         end
         object DBComboBox1: TDBComboBox
@@ -1453,14 +1437,10 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           DataField = 'ActionRequest'
           DataSource = DataSourceProductData
           ItemHeight = 15
-          Items.Strings = (
-            'setup'
-            'uninstall'
-          )
           MaxLength = 0
-          OnClick = DBComboBox1Click
+          OnChange = DBComboBox1Change
           OnEnter = DBComboBox1Enter
-          OnExit = DBComboBox1Exit
+          OnMouseEnter = DBComboBox1MouseEnter
           TabOrder = 1
           Visible = False
         end
@@ -1789,21 +1769,12 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       end
     end
   end
-  object TimerSearchEdit: TTimer
-    Enabled = False
-    Interval = 500
-    OnTimer = TimerSearchEditTimer
-    left = 40
-  end
   object DataSourceProductData: TDataSource
     DataSet = DataModuleOCK.SQLQueryProductData
-    left = 528
+    left = 56
   end
   object DataSourceProductDependencies: TDataSource
     DataSet = DataModuleOCK.SQLQueryProductDependencies
-    left = 704
-  end
-  object TimerNetwork: TTimer
-    left = 160
+    left = 224
   end
 end

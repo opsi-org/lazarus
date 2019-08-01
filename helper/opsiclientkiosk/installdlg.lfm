@@ -1,7 +1,7 @@
 object FInstalldlg: TFInstalldlg
-  Left = 2956
+  Left = 860
   Height = 289
-  Top = 188
+  Top = 304
   Width = 559
   Caption = 'opsi-kiosk-client'
   ClientHeight = 289

@@ -62,6 +62,8 @@ begin
   try
   TSQLQuery(Dataset).ApplyUpdates;
   //TsqlQuery(dataset).Refresh;
+  //TSQLQuery(Dataset).Edit;
+  //SQLQueryProductData.Edit
    except
     on e: Exception do
     begin

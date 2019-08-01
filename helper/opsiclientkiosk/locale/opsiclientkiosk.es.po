@@ -113,32 +113,13 @@ msgctxt "tformopsiclientkiosk.bitbtninfo.caption"
 msgid "Info"
 msgstr ""
 
-#: tformopsiclientkiosk.bitbtnshowaction.caption
-#, fuzzy
-msgctxt "tformopsiclientkiosk.bitbtnshowaction.caption"
-msgid "Show Actions"
-msgstr "Mostrar acciones"
-
-#: tformopsiclientkiosk.bitbtnshowaction.hint
-#, fuzzy
-msgctxt "tformopsiclientkiosk.bitbtnshowaction.hint"
-msgid "Show the list of action requests in the list. "
-msgstr "Mostrar la lista de acciones solicitadas"
-
 #: tformopsiclientkiosk.bitbtnstoreaction.caption
-#, fuzzy
-msgctxt "tformopsiclientkiosk.bitbtnstoreaction.caption"
-msgid "Store Actions"
-msgstr "Almacenar acciones"
+msgid "Store Action"
+msgstr ""
 
 #: tformopsiclientkiosk.btnclearsearchedit.caption
 msgctxt "tformopsiclientkiosk.btnclearsearchedit.caption"
 msgid "X"
-msgstr ""
-
-#: tformopsiclientkiosk.buttonreadconfigstate.caption
-msgctxt "tformopsiclientkiosk.buttonreadconfigstate.caption"
-msgid "Read configState"
 msgstr ""
 
 #: tformopsiclientkiosk.buttonsoftwareback.caption
@@ -246,6 +227,10 @@ msgstr ""
 #: tformopsiclientkiosk.radiogroupview.caption
 msgctxt "tformopsiclientkiosk.radiogroupview.caption"
 msgid "View"
+msgstr ""
+
+#: tformopsiclientkiosk.speedbuttonactions.caption
+msgid "Actions"
 msgstr ""
 
 #: tformopsiclientkiosk.speedbuttonall.caption
