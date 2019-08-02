@@ -60,7 +60,8 @@ type
     procedure closeConnection;
     procedure SetActionRequest(pid: string; request: string);
     function GetActionRequests: TStringList;
-    procedure DoActionOnDemand;
+    procedure DoActionsOnDemand;
+    procedure DoSingleActionOnDemand(ProductID:String);
     function GetConfigState(ConfigProperty:String):TStringList;
     procedure GetJSONFromServer;
     constructor Create(clientdmode:boolean; ClientID:string);overload;
@@ -300,7 +301,14 @@ begin
 end;
 
 
-procedure TOpsiConnection.DoActionOnDemand;
+procedure TOpsiConnection.DoSingleActionOnDemand(ProductID:string);
+var
+  resultstring:String;
+begin
+   resultstring := MyOpsiMethodCall('fireEvent_software_on_demand', [ProductID]);
+end;
+
+procedure TOpsiConnection.DoActionsOnDemand;
 var
   resultstring:String;
 begin

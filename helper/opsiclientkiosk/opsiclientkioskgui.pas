@@ -25,7 +25,7 @@ uses
   opsiconnection,
   jwawinbase,
   osprocesses,
-  pleasewaitwindow,
+  ockunique,
   progresswindow, proginfo;
 
 type
@@ -38,7 +38,7 @@ type
     LabelName: TLabel; //name of product
     LabelState: TLabel; //Status of product e.g. installed, not installed, update
     ImageIcon : TImage; //Icon of the product
-    procedure TileClick(Sender:TObject);
+    procedure ProductTileClick(Sender:TObject);
     procedure Scroll(Sender: TObject; Shift: TShiftState; WheelDelta: integer;
       MousePos: TPoint; var Handled: boolean);
     procedure ProductTileMouseEnter(Sender :TObject);
@@ -124,7 +124,7 @@ type
     TitleLabel: TLabel;
     NotebookProducts: TNotebook;
     PageList: TPage;
-    PageAllTiles: TPage;
+    PageAllProductTiles: TPage;
     PanelToolbar: TPanel;
     PanelProductList: TPanel;
     PanelProductDetail: TPanel;
@@ -138,6 +138,7 @@ type
     procedure ButtonSoftwareBackClick(Sender: TObject);
     procedure ButtonSoftwareInstallClick(Sender: TObject);
     procedure ButtonSoftwareUninstallClick(Sender: TObject);
+    procedure ButtonSoftwareUpdateClick(Sender: TObject);
     procedure DBComboBox1Change(Sender: TObject);
     procedure DBComboBox1Click(Sender: TObject);
     procedure DBComboBox1Enter(Sender: TObject);
@@ -177,7 +178,8 @@ type
     procedure SpeedButtonViewStoreClick(Sender: TObject);
     function GetUserName_:string;
     function InitLogging(const LogFileName, CallingMethod: string; MyLogLevel:integer): boolean;
-    procedure LoadSkin(SkinPath: string);
+    procedure InitDBGrids;
+    procedure LoadSkinForTitle(SkinPath: string);
     //procedure InitOpsiClientKiosk;
     procedure SearchProducts;
     procedure BuildProductTiles(var ArrayProductTiles:TPanels; const OwnerName:string);
@@ -197,6 +199,7 @@ type
     StartUpDone : boolean;
   public
     { public declarations }
+
   end;
 
 
@@ -204,10 +207,10 @@ var
   FormOpsiClientKiosk: TFormOpsiClientKiosk;
   //StartupDone: boolean;
   ArrayAllProductTiles: TPanels;
-  ArraySearchPanelTiles: TPanels;
+  //ArraySearchPanelTiles: TPanels;
   InTileRebuild: boolean = False;
-  LastOrderDirAsc: boolean = True;
-  LastOrderCol: string;
+  //LastOrderDirAsc: boolean = True;
+  //LastOrderCol: string;
   detail_visible: boolean = False;
   skinpath: string;
   //preLogfileLogList: TStringList;
@@ -314,7 +317,7 @@ begin
        Shape:= stRoundSquare;
        Top:= 0;
        Left:= 0;
-       OnClick := TileClick;//ProductTileChildClick;
+       OnClick := ProductTileClick;//ProductTileChildClick;
        OnMouseWheel := scroll;
        OnMouseEnter := ProductTileMouseEnter;
        OnMouseLeave := ProductTileMouseLeave;
@@ -340,7 +343,7 @@ begin
       Top := 100;
       Left := 0;
       BorderSpacing.Around := 3;
-      OnClick := TileClick;//ProductTileChildClick;
+      OnClick := ProductTileClick;//ProductTileChildClick;
       OnMouseWheel := scroll;
       OnMouseEnter := ProductTileMouseEnter;
       OnMouseLeave := ProductTileMouseLeave;
@@ -360,7 +363,7 @@ begin
       Top := LabelName.Top + LabelName.Height + 3;
       Left := 0;
       //labelId.BorderSpacing.Around := 3;
-      OnClick := TileClick;//ProductTileChildClick;
+      OnClick := ProductTileClick;//ProductTileChildClick;
       OnMouseWheel := scroll;
       OnMouseEnter := ProductTileMouseEnter;
       OnMouseLeave := ProductTileMouseLeave;
@@ -381,7 +384,7 @@ begin
       Top:=35;
       Left:=40;
       //BorderSpacing.Around := 0;
-      OnClick := TileClick;//ProductTileChildClick;
+      OnClick := ProductTileClick;//ProductTileChildClick;
       OnMouseWheel := scroll;
       OnMouseEnter := ProductTileMouseEnter;
       OnMouseLeave := ProductTileMouseLeave;
@@ -402,7 +405,7 @@ begin
       Font.Color := clWhite;
       Name := 'LabelState';
       //BorderSpacing.Around := 3;
-      OnClick := TileClick;//ProductTileChildClick;
+      OnClick := ProductTileClick;//ProductTileChildClick;
       OnMouseWheel := scroll;
       OnMouseEnter := ProductTileMouseEnter;
       OnMouseLeave := ProductTileMouseLeave;
@@ -459,14 +462,17 @@ end;
 procedure TProductPanel.ProductTileMouseEnter(Sender: TObject);
 var
   tileindex: integer;
+  ProductPanel : TProductPanel;
 begin
   if not inTileRebuild then
   begin
-    tileindex := TControl(Sender).Parent.Tag; //type convertion to TControl (all visual components are of this type), parent is the Panel
+    //tileindex := TControl(Sender).Parent.Tag; //type convertion to TControl (all visual components are of this type), parent is the Panel
     //Case TControl(Sender).Parent.GetNamePath of
     //  'FlowPanelAllTiles':
     //end;
-    ArrayAllProductTiles[tileindex].ShapeRoundSquare.Brush.Color:=$00FEEFD3;
+    //ArrayAllProductTiles[tileindex].ShapeRoundSquare.Brush.Color:=$00FEEFD3;
+    ProductPanel := TControl(Sender).Parent as TProductPanel;
+    ProductPanel.ShapeRoundSquare.Brush.Color:=$00FEEFD3;
     //former_selected_tile := tileindex;
   end;
 end;
@@ -474,11 +480,14 @@ end;
 procedure TProductPanel.ProductTileMouseLeave(Sender: TObject);
 var
   tileindex: integer;
+  ProductPanel : TProductPanel;
 begin
   if not inTileRebuild then
   begin
-    tileindex := TControl(Sender).Parent.Tag; //type convertion to TControl (all visual components are of this type), parent is the Panel
-    ArrayAllProductTiles[tileindex].ShapeRoundSquare.Brush.Color:=clWhite;
+    //tileindex := TControl(Sender).Parent.Tag; //type convertion to TControl (all visual components are of this type), parent is the Panel
+    //ArrayAllProductTiles[tileindex].ShapeRoundSquare.Brush.Color:=clWhite;
+    ProductPanel := TControl(Sender).Parent as TProductPanel;
+    ProductPanel.ShapeRoundSquare.Brush.Color:=clWhite;
     //former_selected_tile := tileindex;
   end;
 end;
@@ -504,7 +513,7 @@ begin
   end;
 end;
 
-procedure TProductPanel.TileClick(Sender: TObject);
+procedure TProductPanel.ProductTileClick(Sender: TObject);
 var
   TileIndex :integer;
   pid : String;
@@ -618,7 +627,9 @@ begin
       {Fill ArrayProducttiles }
       FilteredProductIDs.Add(ProductID);
       SetLength(ArrayProductTiles, counter + 1);
+      //FlowPanelAllTiles.InsertComponent();
       ArrayProductTiles[counter] := TProductPanel.Create(FormOpsiClientKiosk.FindComponent(OwnerName) as TFlowPanel);
+      ArrayProductTiles[counter].Name:= 'Panel' + IntToStr(counter);
       ArrayProductTiles[counter].ProductID := ProductID;
       ArrayProductTiles[counter].LabelAction.Caption := DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString;
       ArrayProductTiles[counter].LabelName.Caption := DataModuleOCK.SQLQueryProductData.FieldByName('ProductName').AsString;
@@ -672,9 +683,9 @@ begin
   Screen.Cursor := crHourGlass;
   OCKOpsiConnection.SetActionRequest(SelectedProduct,Request); //to opsi server
   DataModuleOCK.SetActionRequestToDataset(SelectedProduct,Request);// to local database
-  if OnDemand then OCKOpsiConnection.DoActionOnDemand;
+  if OnDemand then OCKOpsiConnection.DoSingleActionOnDemand(SelectedProduct);
   Screen.Cursor := crDefault;
-  ShowMessage('Request done. ' + LabelSoftwareName.Caption + Message);
+  if not OnDemand then ShowMessage('Request done. ' + LabelSoftwareName.Caption + Message);
 end;
 
 procedure TFormOpsiClientKiosk.SetView;
@@ -701,6 +712,7 @@ end;
 procedure TFormOpsiClientKiosk.SetTilesView;
 var
   i: integer;
+  ProductPanel: TProductPanel;
 begin
   i := 0; //initialize counter for loop
   DataModuleOCK.SQLQueryProductData.Open;
@@ -715,18 +727,33 @@ begin
       DataModuleOCK.SQLQueryProductData.Next;
     end;
     FilteredProductIDs.Sort;
-    for i := 0 to Length(ArrayAllProductTiles)-1 do
+    {for i := 0 to Length(ArrayAllProductTiles)-1 do
     begin
       If FilteredProductIDs.IndexOf(ArrayAllProductTiles[i].ProductID) <> -1
       then ArrayAllProductTiles[i].Visible := True
       else ArrayAllProductTiles[i].Visible := False;
+    end;}
+
+    for i := 0 to FlowPanelAllTiles.ControlCount -1 do
+    begin
+      if FlowPanelAllTiles.ControlList.Items[i].Control is TProductPanel then
+       with FlowPanelAllTiles.ControlList.Items[i].Control as TProductPanel do
+       begin
+         if FilteredProductIDs.IndexOf(ProductID) <> -1
+          then Visible := True
+          else Visible := False;
+       end;
     end;
+
   end
   else
   { Set all products to visible }
   begin
-    for i := 0 to Length(ArrayAllProductTiles)-1 do
-      ArrayAllProductTiles[i].Visible := True;
+    //for i := 0 to Length(ArrayAllProductTiles)-1 do
+      //ArrayAllProductTiles[i].Visible := True;
+    for i := 0 to FlowPanelAllTiles.ControlCount -1 do
+      if FlowPanelAllTiles.ControlList.Items[i].Control is TProductPanel then
+        TProductPanel(FlowPanelAllTiles.ControlList.Items[i].Control).Visible := True;
   end;
   DataModuleOCK.SQLQueryProductData.First;
   PanelProductDetail.Height:= 0;
@@ -813,8 +840,11 @@ begin
   DataModuleOCK.SQLQueryProductData.Filtered := True;
   if DataModuleOCK.SQLQueryProductData.EOF then
   begin
+    DataModuleOCK.SQLQueryProductData.Filtered := False;
     DBComboBox1.Enabled := False;
     DBGrid1.Enabled:= False;
+    ShowMessage('No actions set.');
+    SpeedButtonAll.Down:= True;
   end
   else SetView;
 end;
@@ -841,7 +871,7 @@ procedure TFormOpsiClientKiosk.DBGrid1TitleClick(Column: TColumn);
 var
   direction: string;
 begin
-  try
+ { try
     direction := ' ASC';
     if LowerCase(lastOrderCol) = LowerCase(Column.FieldName) then
     begin
@@ -863,7 +893,7 @@ begin
       Column.FieldName + direction);
     DataModuleOCK.SQLQueryProductData.Open;
   except
-  end;
+  end;}
 end;
 
 procedure TFormOpsiClientKiosk.FormDestroy(Sender: TObject);
@@ -962,6 +992,32 @@ begin
        ' will be uninstalled at next standard event (e.g. reboot).', False);
    end;
 end;//procedure ButtonSoftwareUninstallClick
+
+procedure TFormOpsiClientKiosk.ButtonSoftwareUpdateClick(Sender: TObject);
+begin
+  if SoftWareOnDemand then
+  begin
+    case QuestionDLG('Update Dialog','Update now, update later at next standard event (e.g. reboot) or cancel action?',mtConfirmation,
+                     [mrYes, 'Now', mrNo, 'Next standard event (e.g. reboot)', mrCancel], 0)
+    of
+      mrYes: begin
+               SetActionRequest('setup', ' will be updated now.', True);
+             end;
+      mrNo: begin
+              //ShowMessage('Please wait while sending request to server...');
+              SetActionRequest('setup',
+                ' will be updated at next standard event (e.g. reboot).',False);
+            end;
+    end;//case
+  end//if SoftwareOndemand
+  else
+   if QuestionDLG('','Do you want to update ' + LabelSoftwareName.Caption + '?',
+               mtConfirmation,[mrYes, 'Yes', mrNo, 'No'], 0) = mrYes then
+   begin
+     SetActionRequest('setup',
+       ' will be updated at next standard event (e.g. reboot).', False);
+   end;
+end;
 
 
 
@@ -1370,7 +1426,7 @@ begin
   end;
 end;
 
-procedure TFormOpsiClientKiosk.LoadSkin(SkinPath: string);
+procedure TFormOpsiClientKiosk.LoadSkinForTitle(SkinPath: string);
 var
   myini: TInifile;
 begin
@@ -1392,26 +1448,17 @@ begin
 end;
 
 procedure TFormOpsiClientKiosk.FormCreate(Sender: TObject);
+var
+  InfoText:string;
 begin
   StartUpDone := False;
   InitLogging('kiosk-' + GetUserName_ +'.log', self.Name + '.FormCreate', LLDebug);
   LogDatei.log('Initialize Opsi Client Kiosk', LLNotice);
-  // is an other instance running ?
-  if numberOfProcessInstances(ExtractFileName(ParamStr(0))) > 1 then
+
+  { is opsiclientd or another instance running? }
+  if not CheckUnique(InfoText) then
   begin
-    LogDatei.log('An other instance of this program is running - so we abort', LLCritical);
-    LogDatei.Close;
-    LogDatei.Free;
-    ShowMessage('An other instance of this program is running - so we abort');
-    halt(1);
-  end;
-  // is opsiclientd running ?
-  if numberOfProcessInstances('opsiclientd') < 1 then
-  begin
-    LogDatei.log('opsiclientd is not running - so we abort', LLCritical);
-    LogDatei.Close;
-    LogDatei.Free;
-    ShowMessage('opsiclientd is not running - so we abort');
+    ShowMessage(InfoText);
     halt(1);
   end;
   //ShowMessage('Form Create');
@@ -1430,7 +1477,7 @@ begin
   end;
   if FileExists(skinpath + 'opsiclientkiosk.ini') then
   begin
-    LoadSkin(skinpath);
+    LoadSkinForTitle(skinpath);
   end;
 
   // skinpath in opsiclientagent custom dir
@@ -1442,41 +1489,13 @@ begin
   end;
   if FileExistsUTF8(skinpath + 'opsiclientkiosk.ini') then
   begin
-    LoadSkin(skinpath);
+    LoadSkinForTitle(skinpath);
   end;
 
   GetDefaultLang;
   LogDatei.log('GetDefaultLang: ' + GetDefaultLang, LLEssential);
   //grouplist.Clear;
-  DBGrid1.Columns.Add.FieldName := 'ProductId';
-  DBGrid1.Columns.Items[0].Title.Caption := 'ProductId';
-  DBGrid1.Columns.Items[0].Width := 150;
-  DBGrid1.Columns.Add.FieldName := 'ProductName';
-  DBGrid1.Columns.Items[1].Width := 300;
-  DBGrid1.Columns.Add.FieldName := 'InstallationStatus';
-  DBGrid1.Columns.Items[2].Title.Caption := 'InstallationStatus';
-  DBGrid1.Columns.Items[2].Width := 100;
-  DBGrid1.Columns.Add.FieldName := 'actionrequest';
-  DBGrid1.Columns.Items[3].Title.Caption := 'ActionRequest';
-  DBGrid1.Columns.Items[3].Width := 100;
-  //DBGrid1.Columns.Add.FieldName := 'updatePossible';
-  //DBGrid1.Columns.Items[4].Title.Caption := 'updatePossible';
-  //DBGrid1.Columns.Items[4].Width := 100;
-
-
-  DBGrid2.Columns.Add.FieldName := 'requiredProductId';
-  DBGrid2.Columns.Items[0].Title.Caption := 'requiredProductId';
-  DBGrid2.Columns.Items[0].Width := 300;
-  DBGrid2.Columns.Add.FieldName := 'required';
-  DBGrid2.Columns.Items[1].Title.Caption := 'required';
-  DBGrid2.Columns.Items[1].Width := 100;
-  DBGrid2.Columns.Add.FieldName := 'prerequired';
-  DBGrid2.Columns.Items[2].Title.Caption := 'pre-required';
-  DBGrid2.Columns.Items[2].Width := 100;
-  DBGrid2.Columns.Add.FieldName := 'postrequired';
-  DBGrid2.Columns.Items[3].Title.Caption := 'post-required';
-  DBGrid2.Columns.Items[3].Width := 100;
-
+  InitDBGrids;
   // localize RadioGroupView
   RadioGroupView.Items[0] := rsViewList;
   RadioGroupView.Items[1] := rsViewTiles;
@@ -1617,6 +1636,39 @@ begin
   LogDatei.log('opsi-client-kiosk: version: ' + ProgramInfo.Version, LLEssential);
   LogDatei.log('Initialize Logging,  calling method='+ CallingMethod, LLNotice);
   InitLogging := True;
+end;
+
+procedure TFormOpsiClientKiosk.InitDBGrids;
+begin
+  { DBGrid1 }
+  DBGrid1.Columns.Add.FieldName := 'ProductId';
+  DBGrid1.Columns.Items[0].Title.Caption := 'ProductId';
+  DBGrid1.Columns.Items[0].Width := 150;
+  DBGrid1.Columns.Add.FieldName := 'ProductName';
+  DBGrid1.Columns.Items[1].Width := 300;
+  DBGrid1.Columns.Add.FieldName := 'InstallationStatus';
+  DBGrid1.Columns.Items[2].Title.Caption := 'InstallationStatus';
+  DBGrid1.Columns.Items[2].Width := 100;
+  DBGrid1.Columns.Add.FieldName := 'actionrequest';
+  DBGrid1.Columns.Items[3].Title.Caption := 'ActionRequest';
+  DBGrid1.Columns.Items[3].Width := 100;
+  //DBGrid1.Columns.Add.FieldName := 'updatePossible';
+  //DBGrid1.Columns.Items[4].Title.Caption := 'updatePossible';
+  //DBGrid1.Columns.Items[4].Width := 100;
+
+  { DBGrid2 }
+  DBGrid2.Columns.Add.FieldName := 'requiredProductId';
+  DBGrid2.Columns.Items[0].Title.Caption := 'requiredProductId';
+  DBGrid2.Columns.Items[0].Width := 300;
+  DBGrid2.Columns.Add.FieldName := 'required';
+  DBGrid2.Columns.Items[1].Title.Caption := 'required';
+  DBGrid2.Columns.Items[1].Width := 100;
+  DBGrid2.Columns.Add.FieldName := 'prerequired';
+  DBGrid2.Columns.Items[2].Title.Caption := 'pre-required';
+  DBGrid2.Columns.Items[2].Width := 100;
+  DBGrid2.Columns.Add.FieldName := 'postrequired';
+  DBGrid2.Columns.Items[3].Title.Caption := 'post-required';
+  DBGrid2.Columns.Items[3].Width := 100;
 end;
 
 {procedure TFormOpsiClientKiosk.InitOpsiClientKiosk;

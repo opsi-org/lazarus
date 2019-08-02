@@ -43,7 +43,7 @@ begin
     // fire on demand
     //http://wiki.freepascal.org/Cursor#Example_3:_Change_All_Controls_To_An_Hour_Glass.2C_Except_TBitBtn_Controls
     screen.Cursor := crHourGlass;
-    OCKOpsiConnection.DoActionOnDemand;
+    OCKOpsiConnection.DoActionsOnDemand;
   finally
     screen.Cursor := crDefault;
   end;
