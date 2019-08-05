@@ -21,10 +21,13 @@ type
     ToolBar1: TToolBar;
     procedure BitBtnLaterClick(Sender: TObject);
     procedure BitBtnNowClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure Memo1Change(Sender: TObject);
   private
     { private declarations }
   public
     { public declarations }
+    SoftwareOnDemand : boolean;
   end;
 
 var
@@ -48,6 +51,16 @@ begin
     screen.Cursor := crDefault;
   end;
   visible := false;
+end;
+
+procedure TFInstalldlg.FormActivate(Sender: TObject);
+begin
+  if not SoftwareOnDemand then BitBtnNow.Enabled:= False;
+end;
+
+procedure TFInstalldlg.Memo1Change(Sender: TObject);
+begin
+
 end;
 
 procedure TFInstalldlg.BitBtnLaterClick(Sender: TObject);

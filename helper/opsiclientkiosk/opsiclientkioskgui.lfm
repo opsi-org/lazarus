@@ -1,7 +1,7 @@
 object FormOpsiClientKiosk: TFormOpsiClientKiosk
-  Left = 2092
+  Left = 1976
   Height = 694
-  Top = 136
+  Top = 139
   Width = 804
   Caption = 'opsi-client-kiosk'
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
@@ -1404,7 +1404,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Height = 357
       Top = 0
       Width = 804
-      PageIndex = 1
+      PageIndex = 0
       Align = alClient
       TabOrder = 0
       TabStop = True
