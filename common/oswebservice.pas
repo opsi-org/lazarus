@@ -509,6 +509,7 @@ type
     function decreaseSslProtocol: boolean;
     {$ENDIF SYNAPSE}
     function getOpsiServiceConfigs: string;
+    function getLogSize: int64;
   end;
 
 var
@@ -1188,21 +1189,21 @@ begin
   TJsonThroughHTTPS.Create(serviceUrl, username, password, '', '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(
-  const serviceURL, username, password, sessionid: string);
+constructor TJsonThroughHTTPS.Create(const serviceURL, username,
+  password, sessionid: string);
 begin
   Create(serviceUrl, username, password, sessionid, '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(
-  const serviceURL, username, password, sessionid, ip, port: string);
+constructor TJsonThroughHTTPS.Create(const serviceURL, username,
+  password, sessionid, ip, port: string);
 begin
   Create(serviceUrl, username, password, sessionid, ip, port,
     ExtractFileName(ParamStr(0)));
 end;
 
-constructor TJsonThroughHTTPS.Create(
-  const serviceURL, username, password, sessionid, ip, port, agent: string);
+constructor TJsonThroughHTTPS.Create(const serviceURL, username,
+  password, sessionid, ip, port, agent: string);
 begin
   //portHTTPS := port;
   //portHTTP := 4444;
@@ -1546,8 +1547,8 @@ begin
           begin
             HTTPSender.MimeType := ContentTypeCompress;
             HTTPSender.Headers.Clear;
-            HTTPSender.Headers.Add('accept: ' + AcceptCompress );
-            HTTPSender.Headers.Add('accept-encoding: ' + AcceptEncodingCompress );
+            HTTPSender.Headers.Add('accept: ' + AcceptCompress);
+            HTTPSender.Headers.Add('accept-encoding: ' + AcceptEncodingCompress);
             HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingCommpress);
             HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress);
             for i := 0 to HTTPSender.Headers.Count - 1 do
@@ -1581,7 +1582,7 @@ begin
             end;
             ReceiveStream := HTTPSender.Document;
             ReceiveStream.Seek(0, 0);
-            mymemorystream.Seek(0,0);
+            mymemorystream.Seek(0, 0);
             CompressionReceiveStream := TDeCompressionStream.Create(ReceiveStream);
             GetMem(buffer, 655360);
             repeat
@@ -1927,17 +1928,18 @@ begin
         else
         begin
           try
-          if not (Result.N['error'].IsType(stNull)) then
-          begin
-            FError := FError + '-> ' + Result.N['error'].AsJSon();
-            jO := Result.O['error'];
-            getStringlistFromJsonObject(jO, fErrorInfo);
-            Result := nil;
-          end;
+            if not (Result.N['error'].IsType(stNull)) then
+            begin
+              FError := FError + '-> ' + Result.N['error'].AsJSon();
+              jO := Result.O['error'];
+              getStringlistFromJsonObject(jO, fErrorInfo);
+              Result := nil;
+            end;
           except
             on e: Exception do
             begin
-              LogDatei.log('exception in retrieveJSONObject: while checking error ' + e.message, LLError);
+              LogDatei.log('exception in retrieveJSONObject: while checking error ' +
+                e.message, LLError);
             end;
           end;
         end;
@@ -2153,7 +2155,7 @@ begin
             {$ENDIF SYNAPSE}
 
             ReceiveStream.Seek(0, 0);
-            mymemorystream.Seek(0,0);
+            mymemorystream.Seek(0, 0);
             CompressionReceiveStream := TDeCompressionStream.Create(ReceiveStream);
             GetMem(buffer, 655360);
             repeat
@@ -2519,8 +2521,8 @@ begin
           {$IFDEF SYNAPSE}
           HTTPSender.MimeType := ContentTypeCompress;
           HTTPSender.Headers.Clear;
-          HTTPSender.Headers.Add('accept: ' + AcceptCompress );
-          HTTPSender.Headers.Add('accept-encoding: ' + AcceptEncodingCompress );
+          HTTPSender.Headers.Add('accept: ' + AcceptCompress);
+          HTTPSender.Headers.Add('accept-encoding: ' + AcceptEncodingCompress);
           HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingCommpress);
           HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress);
           for i := 0 to HTTPSender.Headers.Count - 1 do
@@ -2831,7 +2833,8 @@ begin
             on e: Exception do
             begin
               LogDatei.log_prog(
-                'Exception in retrieveJSONObjectByHttpPost: stream handling: ' + e.message
+                'Exception in retrieveJSONObjectByHttpPost: stream handling: ' +
+                e.message
                 , LLError);
             end;
           end;
@@ -3894,8 +3897,10 @@ begin
     omc := TOpsiMethodCall.Create('backend_exit', []);
     jsonEntry := FjsonExecutioner.retrieveJsonObject(omc);
     LogDatei.log('in finishOpsiConf: backend_exit done', LLDebug2);
-    if omc <> nil then FreeAndNil(omc);
-    if FjsonExecutioner <> nil then FreeAndNil(FjsonExecutioner);
+    if omc <> nil then
+      FreeAndNil(omc);
+    if FjsonExecutioner <> nil then
+      FreeAndNil(FjsonExecutioner);
   except
     on e: Exception do
     begin
@@ -3904,6 +3909,54 @@ begin
   end;
 end;
 
+function TOpsi4Data.getLogSize: int64;
+var
+  omc: TOpsiMethodCall;
+  str: string;
+  jo: ISuperObject;
+begin
+  Result := -1;
+  FOpsiInformation := nil;
+  if FOpsiInformation = nil then
+  begin
+    try
+      omc := TOpsiMethodCall.Create('backend_getSystemConfiguration', []);
+      if omc <> nil then
+      begin
+        try
+          FOpsiInformation := FjsonExecutioner.retrieveJsonObject(omc);
+          if (FOpsiInformation <> nil) and (FOpsiInformation.O['result'] <>
+            nil) then
+          begin
+            try
+              jo := FOpsiInformation.O['result'];
+              jo := jo.O['log'];
+              Result := jo.I['size_limit'];
+
+            except
+              on e: Exception do
+              begin
+                LogDatei.log('Exception in opsi4data.getLogSize: result: ' +
+                  FOpsiInformation.S['result'] + ';  Error: ' + e.message, LLError);
+              end;
+            end;
+          end
+          else
+            LogDatei.log('Problem getting backend_getSystemConfiguration from service',
+              LLerror);
+        except
+          LogDatei.log('Exeception getting backend_getSystemConfiguration from service',
+            LLerror);
+        end;
+      end
+      else
+        LogDatei.log('Problem creating OpsiMethodCall backend_getSystemConfiguration',
+          LLerror);
+    finally
+      omc.Free;
+    end;
+  end;
+end;
 
 
 function TOpsi4Data.sendLog: boolean;
@@ -3920,6 +3973,7 @@ begin
 end;
 
 
+
 function TOpsi4Data.sendLog(logtype: string; appendmode: boolean): boolean;
   //const logtype : String;
 
@@ -3930,19 +3984,31 @@ var
   utf8str: UTF8String;
   errorinfo: string;
   Count: longint;
+  maxlogsizebyte: int64;
+  aktlogsize: int64;
   //scan: TUTF8Scanner;
   //ch: UCS4Char;
 
 begin
   t := '';
   Result := True;
+  // 5 MB
+  maxlogsizebyte := 5242880;
 
-  Logdatei.log('Checking if partlog: is bigger than 5 MB :.', LLInfo);
-  if Logdatei.PartbiggerthanMB(5) then
+  // try to ask for actual maxlogsizebytes at the server
+  aktlogsize := getLogsize;
+  if aktlogsize = -1 then
+    aktlogsize := maxlogsizebyte;
+  // byte to MB
+  aktlogsize := aktlogsize div (1024 * 1024);
+
+  Logdatei.log('Checking if partlog: is bigger than ' + IntToStr(aktlogsize) +
+    ' MB :.', LLInfo);
+  if Logdatei.PartbiggerthanMB(aktlogsize) then
   begin
-    Logdatei.log('Shrinking Logfile to 5 MB....', LLInfo);
-    Logdatei.PartShrinkToMB(5);
-    Logdatei.log('Shrinking Logfile to 5 MB finidhed.', LLInfo);
+    Logdatei.log('Shrinking Logfile to ' + IntToStr(aktlogsize) + ' MB....', LLInfo);
+    Logdatei.PartShrinkToMB(aktlogsize);
+    Logdatei.log('Shrinking Logfile to ' + IntToStr(aktlogsize) + ' MB finidhed.', LLInfo);
   end;
   Logdatei.setLogSIndentLevel(0);
   Logdatei.log(
