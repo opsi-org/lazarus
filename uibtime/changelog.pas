@@ -1,4 +1,44 @@
 (*
+uibtime (4.1.1.51-1) stable; urgency=low
+
+ * uib2erp: createReport: fix in query for presumme_h
+
+-- detlef oertel <d.oertel@uib.de>  Mon, 17 Jun 2019 15:00:00 +0000
+
+uibtime (4.1.1.50-1) stable; urgency=low
+
+ * uibdata: Dateneditieren1Click: make dataedit modal again
+ * uibdata: Dateneditieren1Click: popupParent=Fdataedit
+ * dataedit: popupmode= explizit
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 05 Jun 2019 15:00:00 +0000
+
+uibtime (4.1.1.49-1) stable; urgency=low
+
+ * uib2erp: better handling of projects (time_h_is_quota > 0)
+ * uib2erp: if quota and acc_per_month = 0  always marked
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 05 Jun 2019 15:00:00 +0000
+
+uibtime (4.1.1.48-1) stable; urgency=low
+
+ * uibdata: quibsoll sql: select * from uib soll order by Jahr,monat ; fixes missing 2019 entries
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 05 Jun 2019 15:00:00 +0000
+
+uibtime (4.1.1.47-1) stable; urgency=low
+
+ * ontop: TimerProjektzeitTimer: more debugging output to find 'invalid floatingpoint operation' (again)
+ * more debugging around using uibtime.conf
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 22 May 2019 15:00:00 +0000
+
+uibtime (4.1.1.46-1) stable; urgency=low
+
+ * ontop: TimerProjektzeitTimer: more debugging output to find 'invalid floatingpoint operation'
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 26 Apr 2019 15:00:00 +0000
+
 uibtime (4.1.1.45-1) stable; urgency=low
 
  * uibdata: DumpExceptionCallStack: MessageDlg changed

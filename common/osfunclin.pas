@@ -56,11 +56,12 @@ function GetIPFromHost(var HostName, IPaddr, WSAErr: string): Boolean;
 function linIsUefi: boolean;
 function getMyIpByTarget(target:string) : string;
 function getMyIpByDefaultRoute : string;
+function getMyIpDeciceByDefaultRoute : string;
 function getPackageLock(timeoutsec : integer; kill : boolean) : Boolean;
 function which(target:string; var pathToTarget : string) : boolean;
-function isMounted(mountpoint : string) : boolean;
-function mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass, myoption: string) : integer;
-function umount(mymountpoint : string) : integer;
+function getLinuxDistroName : string;
+function getLinuxDistroRelease : string;
+function getLinuxDistroDescription : string;
 
 
 var
@@ -488,6 +489,42 @@ begin
   Result.Add('operating system' + '=' + trim(getCommandResult('uname -o')));
 end;
 
+function getLinuxDistroName : string;
+var
+  linuxinfo : TStringlist;
+begin
+  try
+    linuxinfo := getLinuxVersionMap;
+    result := linuxinfo.Values['Distributor ID'];
+  finally
+    linuxinfo.free;
+  end;
+end;
+
+function getLinuxDistroRelease : string;
+var
+  linuxinfo : TStringlist;
+begin
+  try
+    linuxinfo := getLinuxVersionMap;
+    result := linuxinfo.Values['Release'];
+  finally
+    linuxinfo.free;
+  end;
+end;
+
+function getLinuxDistroDescription : string;
+var
+  linuxinfo : TStringlist;
+begin
+  try
+    linuxinfo := getLinuxVersionMap;
+    result := linuxinfo.Values['Description'];
+  finally
+    linuxinfo.free;
+  end;
+end;
+
 function Is64BitSystemLin : boolean;
 begin
   if trim(getCommandResult('uname -i')) = 'x86_64' then result := true
@@ -641,16 +678,17 @@ function getMyIpByDefaultRoute : string;
 var
   str : string;
   cmd : string;
-  list : TXstringlist;
+  list : Tstringlist;
   i: integer;
 begin
   result := '';
-  list := TXStringlist.create;
+  list := TStringlist.create;
   if not which('ip',cmd) then cmd := 'ip';
   //str := getCommandResult('ip -o -4 route get 255.255.255.255');
   // macos ip has no '-o'
   str := getCommandResult('/bin/bash -c "'+cmd+' -4 route get 255.255.255.255 || exit $?"');
-  stringsplitByWhiteSpace (str, Tstringlist(list));
+  stringsplitByWhiteSpace (str, list);
+  LogDatei.log_list(list,LLDEBUG3);
   i := list.IndexOf('src');
   if (i > -1) and (list.Count >= i) then
   begin
@@ -659,6 +697,28 @@ begin
   list.Free;
 end;
 
+function getMyIpDeciceByDefaultRoute : string;
+var
+  str : string;
+  cmd : string;
+  list : Tstringlist;
+  i: integer;
+begin
+  result := '';
+  list := TStringlist.create;
+  if not which('ip',cmd) then cmd := 'ip';
+  //str := getCommandResult('ip -o -4 route get 255.255.255.255');
+  // macos ip has no '-o'
+  str := getCommandResult('/bin/bash -c "'+cmd+' -4 route get 255.255.255.255 || exit $?"');
+  stringsplitByWhiteSpace (str, list);
+  LogDatei.log_list(list,LLDEBUG3);
+  i := list.IndexOf('dev');
+  if (i > -1) and (list.Count >= i) then
+  begin
+    result := list[i+1];
+  end;
+  list.Free;
+end;
 
 function getPackageLock(timeoutsec : integer; kill : boolean) : Boolean;
 var
@@ -795,7 +855,9 @@ begin
     lockfile1 := '';
     lockfile :='';
     disttype := getLinuxDistroType;
-    distname := getLinuxVersionMap.Values['Distributor ID'];
+      // This is a memory leak:
+      //distname := getLinuxVersionMap.Values['Distributor ID'];
+      distname := getLinuxDistroName;
     if disttype = 'suse' then lockfile :=  '/run/zypp.pid'
     else if disttype = 'redhat' then lockfile :=  '/var/run/yum.pid'
     else if disttype = 'debian' then
@@ -820,102 +882,7 @@ begin
   end;
 end;
 
-function isMounted(mountpoint : string) : boolean;
-var
-  output:string;
-  exename:string;
-  commands:array of string;
-begin
-  result := false;
-  if not RunCommand('/usr/bin/which',['findmnt'],output) then
-   writeln('Could not find mount binary')
-  else
-  begin
-    exename := output;
-    exename := exename.Replace(#10,'');
-    exename := exename.Replace('''','');
-  end;
-  if RunCommand(exename,[mountpoint],output) then
-  begin
-    result := true;
-  end;
-end;
 
-function mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass, myoption: string) : integer;
-var
-  cmd, report: string;
-  outlines: TStringlist;
-  ExitCode: longint;
-  i: integer;
-begin
-  outlines := TStringList.Create;
-  Result := -1;
-  try
-    if not directoryexists(mymountpoint) then
-     mkdir(mymountpoint);
-  except
-    LogDatei.log('Error: could not create moutpoint: '+mymountpoint, LLError);
-  end;
-  if mydomain = '' then
-    cmd := '/bin/bash -c "/sbin/mount.cifs ' + myshare+' '+mymountpoint+' -o '+myoption+'ro,noperm,user='+myuser+',pass='+mypass+'"'
-  else
-    cmd := '/bin/bash -c "/sbin/mount.cifs ' + myshare+' '+mymountpoint+' -o '+myoption+'ro,noperm,user='+myuser+',dom='+mydomain+',pass='+mypass+'"';
-  LogDatei.DependentAdd('calling: '+cmd,LLNotice);
-  if not RunCommandAndCaptureOut(cmd, True, TXStringlist(outlines), report,
-    SW_HIDE, ExitCode) then
-  begin
-    LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
-    Result := -1;
-  end
-  else
-  begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-    LogDatei.log('', LLDebug);
-    LogDatei.log('output:', LLDebug);
-    LogDatei.log('--------------', LLDebug);
-    for i := 0 to outlines.Count - 1 do
-    begin
-      LogDatei.log(outlines.strings[i], LLDebug);
-    end;
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-    LogDatei.log('', LLDebug);
-    Result := ExitCode;
-  end;
-  outlines.Free;
-end;
 
-function umount(mymountpoint : string) : integer;
-var
-  cmd, report: string;
-  outlines: TStringlist;
-  ExitCode: longint;
-  i: integer;
-begin
-  outlines := TStringList.Create;
-  Result := -1;
-  cmd := '/bin/bash -c "/bin/umount ' +mymountpoint+'"';
-  LogDatei.log('calling: '+cmd,LLNotice);
-  if not RunCommandAndCaptureOut(cmd, True, TXStringlist(outlines), report,
-    SW_HIDE, ExitCode) then
-  begin
-    LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
-    Result := -1;
-  end
-  else
-  begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-    LogDatei.log('', LLDebug);
-    LogDatei.log('output:', LLDebug);
-    LogDatei.log('--------------', LLDebug);
-    for i := 0 to outlines.Count - 1 do
-    begin
-      LogDatei.log(outlines.strings[i], LLDebug);
-    end;
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-    LogDatei.log('', LLDebug);
-    Result := ExitCode;
-  end;
-  outlines.Free;
-end;
 
 end.

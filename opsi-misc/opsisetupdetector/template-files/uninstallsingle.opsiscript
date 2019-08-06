@@ -11,7 +11,6 @@ ScriptErrorMessages = false
 
 DefVar $ProductId$
 DefVar $InstallDir$
-DefVar $InstallDir1$
 DefVar $MinimumSpace$
 DefVar $ExitCode$
 DefVar $ErrorString$
@@ -21,9 +20,10 @@ DefVar $LicensePool$
 DefVar $LogDir$
 DefVar $OS$
 DefVar $oldProgFound$
-
+#@stringVars*#
 
 Set $LogDir$ = "%opsiLogDir%"
+
 
 ; import complete file !
 importlib "uib_exitcode.opsiscript"
@@ -32,34 +32,36 @@ importlib "%scriptpath%\osd-lib.opsiscript"
 
 ; ----------------------------------------------------------------
 ; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
-Set $ProductId$       = "#@productId*#"
+Set $ProductId$		 = "#@productId*#"
 ; the path where we find the product after the installation
-Set $InstallDir1$      = "#@InstallDir1*#"
+Set $InstallDir$	= "#@InstallDir1*#"
 Set $LicenseRequired$ = "#@LicenseRequired*#"
-Set $LicensePool$     = "p_" + $ProductId$
+Set $LicensePool$	  = ""
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS
 
 if not(($OS$ = "Windows_NT"))
-   logError "Installation aborted: wrong OS version: only Windows"
-   isFatalError "wrong OS"
+	logError "Installation aborted: wrong OS version: only Windows"
+	isFatalError "wrong OS"
 endif
 
 
 comment "Show product picture"
 ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
+#@GetProductProperty*#
+
 Message "Uninstalling " + $ProductId$ + " ..."
 
 if FileExists("%ScriptPath%\delsub.opsiscript")
-   comment "Start uninstall sub section"
-   Sub "%ScriptPath%\delsub.opsiscript"
+	comment "Start uninstall sub section"
+	Sub "%ScriptPath%\delsub.opsiscript"
 endif
 
 if $LicenseRequired$ = "true"
-   comment "Licensing required, free license used"
-   Sub_free_license
+	comment "Licensing required, free license used"
+	Sub_free_license
 endif
 
 [Sub_free_license]

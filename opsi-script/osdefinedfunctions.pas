@@ -671,6 +671,7 @@ begin
     if localVarExists(Name) then
     begin
       DFLocalVarList[arrayindex].varInstance[DFVarInstanceIndex].inuse := False;
+      Result := True;
     end
     else
     begin

@@ -35,11 +35,12 @@ begin
       if (WMICondition = '') and (WMIPropertyList.Count = 0) then
         WMIResult := GetWMIInfoClass(WMINamespace,WMIClass)
       else
-        WMIResult := GetWMIInfo(WMINamespace,WMIClass, PropNames,WMICondition,Request);
+        WMIResult := GetWMIInfo(WMINamespace,WMIClass,PropNames,WMICondition,Request);
       WMIResultList.Clear;
       for i := 0 to Pred(WMIResult.Count) do
       begin
-        WMIResultList.Add(TStringList(WMIResult.Items[i]).Text);
+        //WMIResultList.Add(TStringList(WMIResult.Items[i]).Text);
+        WMIResultList.AddStrings(TStringList(WMIResult.Items[i]));
       end;
       Result := True;
     except

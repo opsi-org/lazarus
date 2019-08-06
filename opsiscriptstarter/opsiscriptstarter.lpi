@@ -111,7 +111,7 @@
         <PackageName Value="LazUtils"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="12">
+    <Units Count="8">
       <Unit0>
         <Filename Value="opsiscriptstarter.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -141,26 +141,9 @@
         <IsPartOfProject Value="True"/>
       </Unit6>
       <Unit7>
-        <Filename Value="../common/osfunclin.pas"/>
+        <Filename Value="../common/oslinmount.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit7>
-      <Unit8>
-        <Filename Value="../common/osfuncmac.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit8>
-      <Unit9>
-        <Filename Value="../common/null.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit9>
-      <Unit10>
-        <Filename Value="../common/osprocessux.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="OSProcessux"/>
-      </Unit10>
-      <Unit11>
-        <Filename Value="../common/osparserhelper.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit11>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

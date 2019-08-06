@@ -23,6 +23,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
       <RevisionNr Value="1"/>
+      <BuildNr Value="5"/>
       <StringTable Comments="Compiled with Lazarus 2.0 / FPC 3.0.4" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst32.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst32.exe" ProductName="opsi-script" ProductVersion="4.1.0"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -36,7 +37,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\synapse40lib;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\indy\Lib\System;..\external_libraries\indy\Lib\Core;..\external_libraries\indy\Lib\Protocols;..\external_libraries\indy\Lib"/>
+            <OtherUnitFiles Value="..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\synapse40lib;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\indy\Lib\System;..\external_libraries\indy\Lib\Core;..\external_libraries\indy\Lib\Protocols;..\external_libraries\indy\Lib;..\external_libraries\modified\misc;..\common"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -98,7 +99,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\synapse40lib;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\indy\Lib\System;..\external_libraries\indy\Lib\Core;..\external_libraries\indy\Lib\Protocols;..\external_libraries\indy\Lib"/>
+            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\synapse40lib;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\indy\Lib\System;..\external_libraries\indy\Lib\Core;..\external_libraries\indy\Lib\Protocols;..\external_libraries\indy\Lib;..\external_libraries\modified\misc"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -166,7 +167,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="55">
+    <Units Count="56">
       <Unit0>
         <Filename Value="winst.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -310,106 +311,113 @@
         <IsPartOfProject Value="True"/>
       </Unit30>
       <Unit31>
-        <Filename Value="..\common\superobject.pas"/>
+        <Filename Value="..\common\oslog.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit31>
       <Unit32>
-        <Filename Value="..\common\oslog.pas"/>
+        <Filename Value="..\common\oswebservice.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit32>
       <Unit33>
-        <Filename Value="..\common\oswebservice.pas"/>
+        <Filename Value="..\common\osxml.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit33>
       <Unit34>
-        <Filename Value="..\common\osxml.pas"/>
+        <Filename Value="..\external_libraries\indy\Lib\System\IdStreamVCL.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit34>
       <Unit35>
-        <Filename Value="..\external_libraries\indy\Lib\System\IdStreamVCL.pas"/>
+        <Filename Value="..\common\osjson.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit35>
       <Unit36>
-        <Filename Value="..\common\osjson.pas"/>
+        <Filename Value="osdefinedfunctions.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit36>
       <Unit37>
-        <Filename Value="osdefinedfunctions.pas"/>
+        <Filename Value="osswaudit.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit37>
       <Unit38>
-        <Filename Value="osswaudit.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit38>
-      <Unit39>
         <Filename Value="oslistedit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FListedit"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit38>
+      <Unit39>
+        <Filename Value="..\common\osparserhelper.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit39>
       <Unit40>
-        <Filename Value="..\common\osparserhelper.pas"/>
+        <Filename Value="..\common\osnetutil.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit40>
       <Unit41>
-        <Filename Value="..\common\osnetutil.pas"/>
+        <Filename Value="..\common\oswmi.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit41>
       <Unit42>
-        <Filename Value="..\common\oswmi.pas"/>
+        <Filename Value="..\common\osprocesses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit42>
       <Unit43>
-        <Filename Value="..\external_libraries\misc\utilwmi.pas"/>
+        <Filename Value="..\common\osnetworkcalculator.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="Utilwmi"/>
       </Unit43>
       <Unit44>
-        <Filename Value="..\common\osprocesses.pas"/>
+        <Filename Value="..\common\osregex.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit44>
       <Unit45>
-        <Filename Value="..\common\osnetworkcalculator.pas"/>
+        <Filename Value="..\common\osurlparser.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit45>
       <Unit46>
-        <Filename Value="..\common\osregex.pas"/>
+        <Filename Value="..\common\key_valueCollection.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit46>
       <Unit47>
-        <Filename Value="..\common\osurlparser.pas"/>
+        <Filename Value="..\common\osxmlsections.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit47>
       <Unit48>
-        <Filename Value="..\common\key_valueCollection.pas"/>
+        <Filename Value="..\common\osxmltdom.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit48>
       <Unit49>
-        <Filename Value="..\common\osxmlsections.pas"/>
+        <Filename Value="..\common\oscheckbinarybitness.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit49>
       <Unit50>
-        <Filename Value="..\common\osxmltdom.pas"/>
+        <Filename Value="oscalc.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit50>
       <Unit51>
-        <Filename Value="..\common\oscheckbinarybitness.pas"/>
+        <Filename Value="changelog.txt"/>
         <IsPartOfProject Value="True"/>
       </Unit51>
       <Unit52>
-        <Filename Value="oscalc.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit52>
-      <Unit53>
-        <Filename Value="changelog.txt"/>
-        <IsPartOfProject Value="True"/>
-      </Unit53>
-      <Unit54>
         <Filename Value="..\common\oszip.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="OsZip"/>
+      </Unit52>
+      <Unit53>
+        <Filename Value="..\external_libraries\misc\superobject.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit53>
+      <Unit54>
+        <Filename Value="..\external_libraries\modified\misc\utilwmi.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Utilwmi"/>
       </Unit54>
+      <Unit55>
+        <Filename Value="osinputstring.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Finputstring"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit55>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -420,7 +428,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\synapse40lib;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\indy\Lib\System;..\external_libraries\indy\Lib\Core;..\external_libraries\indy\Lib\Protocols;..\external_libraries\indy\Lib"/>
+      <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\synapse40lib;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\indy\Lib\System;..\external_libraries\indy\Lib\Core;..\external_libraries\indy\Lib\Protocols;..\external_libraries\indy\Lib;..\external_libraries\modified\misc"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>

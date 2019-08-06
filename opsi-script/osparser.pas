@@ -47,6 +47,7 @@ oslocaladmin,
 {$ENDIF WIN64}
 {$ENDIF}
 {$IFDEF UNIX}
+oslinmount,
 lispecfolder,
 osfunclin,
 oslindesktopfiles,
@@ -67,6 +68,8 @@ osshowsysinfo,
 Controls,
 LCLIntf,
 oslistedit,
+osinputstring,
+StdCtrls,
 {$ENDIF GUI}
 TypInfo,
 osparserhelper,
@@ -1517,7 +1520,8 @@ const
 CLSFormatMACMask = '%2.2x-%2.2x-%2.2x-%2.2x-%2.2x-%2.2x';
 begin
 {$IFDEF UNIX}
-  VDevice := 'eth0';
+  //VDevice := 'eth0';
+  VDevice := getMyIpDeciceByDefaultRoute;
   VPath := Format('/sys/class/net/%s/address', [VDevice]);
   if FileExists(VPath) then
     Result := readFirstLineFromFile(VPath)
@@ -10156,7 +10160,7 @@ begin
     {$IFDEF GUI}
     if SaveStayOnTop then FBatchOberflaeche.ForceStayOnTop (true);
     {$ENDIF GUI}
-    if Logdatei.LogLevel < LLconfidential then deleteTempBatFiles(tempfilename);
+    if Logdatei.UsedLogLevel < LLconfidential then deleteTempBatFiles(tempfilename);
   finally
     {$IFDEF GUI}
     FBatchOberflaeche.showAcitvityBar(false);
@@ -10315,7 +10319,7 @@ begin
 
   if ExitOnError and (DiffNumberOfErrors > 0)
   then result := tsrExitProcess;
-  if Logdatei.LogLevel < LLconfidential then deleteTempBatFiles(tempfilename);
+  if Logdatei.UsedLogLevel < LLconfidential then deleteTempBatFiles(tempfilename);
 end;
 
 
@@ -10650,7 +10654,7 @@ begin
 
     if ExitOnError and (DiffNumberOfErrors > 0)
     then result := tsrExitProcess;
-    if Logdatei.LogLevel < LLconfidential then
+    if Logdatei.UsedLogLevel < LLconfidential then
       if not threaded then deleteTempBatFiles(tempfilename);
   finally
     {$IFDEF GUI}
@@ -12580,6 +12584,7 @@ begin
    // #########  end xml2 list functions ###############################
 
 
+   // todo: 2nd parameter focus row for editmap
    else if LowerCase (s) = LowerCase ('editMap')
    then
    begin
@@ -12593,7 +12598,8 @@ begin
       Begin
         list.Clear;
         {$IFDEF GUI}
-        list.AddStrings(checkMapGUI(list1));
+        checkMapGUI(Tstringlist(list1),2);
+        list.AddStrings(list1);
         {$ELSE GUI}
         for i:= 0 to list1.Count-1 do
         begin
@@ -13243,12 +13249,12 @@ else if LowerCase (s) = LowerCase ('getSwauditInfoList')
    else if LowerCase(s) = LowerCase ('getHWBiosInfoMap')
    then
    Begin
-   //   if r = '' then
-        Begin
+      {$IFDEF DARWIN}
+        LogDatei.log('Not implemented for macOS',LLError);
+      {$ELSE}
         syntaxcheck := true;
-        // temporary ? disabled do 15.02.2019 14:59:06
-        //list.AddStrings(getHwBiosShortlist);
-       end;
+        list.AddStrings(getHwBiosShortlist);
+      {$ENDIF}
     end
 
    else
@@ -15436,6 +15442,48 @@ begin
        End
  End
 
+  else if LowerCase (s) = LowerCase ('stringinput')
+ then
+ begin
+  if Skip ('(', r, r, InfoSyntaxError)
+  then
+   if EvaluateString (r, r, s1, InfoSyntaxError)
+   then
+     if Skip (',', r,r, InfoSyntaxError)
+     then
+      if EvaluateString (r, r, s2, InfoSyntaxError)
+      then
+       if Skip (')', r,r, InfoSyntaxError)
+       then
+       Begin
+         syntaxCheck := true;
+         boolresult := StrToBool(s2);
+         {$IFDEF GUI}
+         try
+            Finputstring := TFinputstring.Create(nil);
+            if boolresult Then
+            begin
+              Finputstring.EditButton1.EchoMode:= emPassword;
+              Finputstring.EditButton1.Button.Enabled:=true;
+            end
+            else
+            begin
+              Finputstring.EditButton1.EchoMode:=emNormal;
+              Finputstring.EditButton1.Button.Enabled:=false;
+            end;
+            Finputstring.Label1.Caption:=s1;
+            Finputstring.EditButton1.Text := '';
+            Finputstring.ShowModal;
+            StringResult := Finputstring.EditButton1.Text;
+         finally
+           FreeAndNil(Finputstring);
+         end;
+         {$ELSE GUI}
+         cmdLineInputDialog(StringResult,s1,'',boolresult);
+         {$ENDIF GUI}
+       End
+ End
+
 
 
  else if LowerCase (s) = LowerCase ('stringreplace')
@@ -16516,7 +16564,10 @@ else if (LowerCase (s) = LowerCase ('GetRegistryValue')) then
       r := trim(r);
       setLength(parameters, 4);
 
+      // try to find a valid fqdn
       parameters[0] := osconf.computername;
+      if parameters[0] = '' then parameters[0] := osconf.opsiserviceUser;
+      if parameters[0] = '' then parameters[0] := oslog.getComputerName;
       parameters[1] := '';
       parameters[2] := '';
       parameters[3] := '';
@@ -22770,7 +22821,10 @@ begin
   // Backup existing depotdrive, depotdir
   depotdrive_bak := depotdrive;
   depotdir_bak :=  depotdir;
-  {$IFDEF UNIX} computername := getHostnameLin; {$ENDIF LINUX}
+  {$IFDEF UNIX}
+  computername := getHostnameLin;
+  logdatei.log('computername: '+computername,LLDebug);
+  {$ENDIF LINUX}
   {$IFDEF GUI}
   CentralForm.Label1.Caption := '';
   FBatchOberflaeche.setInfoLabel('');
@@ -22793,6 +22847,17 @@ begin
       if not CheckFileExists (Scriptdatei, ErrorInfo) then
       begin
         LogDatei.log ('Script  ' + Scriptdatei + '  not found ' + ErrorInfo+' - retrying',LLWarning);
+        {$IFDEF LINUX}
+        if ProgramMode = pmBuildPC_service then
+        begin
+          logdatei.log('check opsi depot mount',LLDebug);
+          if not isMounted(depotdir) then
+          begin
+            logdatei.log('Try remount ...',LLWarning);
+            mount_depotshare(depotDir, opsiservicePassword);
+          end;
+        end;
+        {$ENDIF LINUX}
         Sleep(1000);
         if not CheckFileExists (Scriptdatei, ErrorInfo) then
         begin
@@ -22918,6 +22983,13 @@ begin
   tmpstr :=  tmpstr+', Edition: '+getProductInfoStrByNum(OSGetProductInfoNum);
   LogDatei.log (tmpstr, LLessential);
   {$ENDIF WINDOWS}
+  {$IFDEF LINUX}
+  tmpstr :=  getLinuxDistroName+ ' '+ getLinuxDistroDescription;
+  if Is64BitSystem then
+    tmpstr :=  tmpstr+' 64 Bit'
+  else tmpstr :=  tmpstr+' 32 Bit';
+  LogDatei.log (tmpstr, LLessential);
+  {$ENDIF LINUX}
 
   if opsidata <> nil then
   begin

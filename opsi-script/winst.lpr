@@ -57,7 +57,7 @@ uses
   uCpuUsage,
   SystemCriticalU,
   osfuncwin3,
-  osregistry{$ENDIF WINDOWS};
+  osregistry, osinputstring{$ENDIF WINDOWS};
 
 
 
@@ -75,6 +75,7 @@ begin
   Application.CreateForm(TFListedit, FListedit);
   //Application.CreateForm(TShowTextFile, ShowTextFile);
   Application.ShowMainForm := False;
+  Application.CreateForm(TFinputstring, Finputstring);
   Application.Run;
 end.
 

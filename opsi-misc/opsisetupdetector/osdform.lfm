@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 654
+  Left = 320
   Height = 566
-  Top = 317
+  Top = 154
   Width = 1059
   Caption = 'opsi Setup Detector'
   ClientHeight = 546
@@ -10,10 +10,12 @@ object resultForm1: TresultForm1
   OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
+  OnDeactivate = FormDeactivate
   OnDestroy = FormDestroy
+  OnMouseLeave = FormMouseLeave
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '1.8.4.0'
+  LCLVersion = '2.0.0.4'
   object Panel1: TPanel
     Left = 0
     Height = 40
@@ -1940,8 +1942,8 @@ object resultForm1: TresultForm1
       end
       object TabSheetAnalyze: TTabSheet
         Caption = 'Analyze'
-        ClientHeight = 453
-        ClientWidth = 1044
+        ClientHeight = 716
+        ClientWidth = 1570
         ParentFont = False
         object MemoAnalyze: TMemo
           Left = 24
@@ -2163,8 +2165,8 @@ object resultForm1: TresultForm1
       end
       object TabSheetSetup1: TTabSheet
         Caption = '1. Setup'
-        ClientHeight = 453
-        ClientWidth = 1044
+        ClientHeight = 716
+        ClientWidth = 1570
         ParentFont = False
         object PanelDefault: TPanel
           Left = 0
@@ -2196,14 +2198,19 @@ object resultForm1: TresultForm1
                 Index = 1
               end            
               item
-                Control = Label63
+                Control = TICheckBoxS1Mst
                 WrapAfter = waAuto
                 Index = 2
               end            
               item
-                Control = TIComboBoxArch1
+                Control = Label63
                 WrapAfter = waAuto
                 Index = 3
+              end            
+              item
+                Control = TIS1Url
+                WrapAfter = waAuto
+                Index = 4
               end>
             FlowLayout = tlTop
             FlowStyle = fsLeftRightTopBottom
@@ -2222,19 +2229,6 @@ object resultForm1: TresultForm1
               ParentColor = False
               ParentFont = False
             end
-            object Label63: TLabel
-              Left = 302
-              Height = 21
-              Top = 8
-              Width = 128
-              Anchors = []
-              BorderSpacing.Left = 20
-              BorderSpacing.Around = 4
-              Caption = 'Architecture Mode'
-              Font.Height = -16
-              ParentColor = False
-              ParentFont = False
-            end
             object TIComboBoxInstaller1: TTIComboBox
               Left = 176
               Height = 23
@@ -2249,19 +2243,49 @@ object resultForm1: TresultForm1
               ParentFont = False
               TabOrder = 0
             end
-            object TIComboBoxArch1: TTIComboBox
-              Left = 446
+            object TICheckBoxS1Mst: TTICheckBox
+              Left = 300
               Height = 23
               Top = 6
-              Width = 100
+              Width = 90
               Anchors = []
-              BorderSpacing.Left = 10
+              BorderSpacing.Left = 20
               BorderSpacing.Around = 2
               BorderSpacing.InnerBorder = 2
-              HistoryCaseSensitive = False
-              MaxHistoryCount = 0
-              ParentFont = False
+              Caption = 'MST allowed'
+              OnChange = TICheckBoxS1MstChange
+              PropertyNameAsCaption = False
               TabOrder = 1
+            end
+            object Label63: TLabel
+              Left = 416
+              Height = 21
+              Top = 8
+              Width = 34
+              Anchors = []
+              BorderSpacing.Left = 20
+              BorderSpacing.Around = 4
+              Caption = 'Info: '
+              Font.Height = -16
+              ParentColor = False
+              ParentFont = False
+            end
+            object TIS1Url: TTILabel
+              Left = 463
+              Height = 21
+              Top = 8
+              Width = 51
+              Anchors = []
+              BorderSpacing.Left = 5
+              BorderSpacing.Around = 4
+              BorderSpacing.InnerBorder = 2
+              Font.Color = clBlue
+              Font.Height = -16
+              Font.Style = [fsUnderline]
+              OnClick = TIS1UrlClick
+              OnMouseEnter = TIS1UrlMouseEnter
+              OnMouseLeave = TIS1UrlMouseLeave
+              ParentFont = False
             end
           end
           object FlowPanelSetup32: TFlowPanel
@@ -3042,8 +3066,8 @@ object resultForm1: TresultForm1
       end
       object TabSheetSetup2: TTabSheet
         Caption = '2. Setup'
-        ClientHeight = 453
-        ClientWidth = 1044
+        ClientHeight = 716
+        ClientWidth = 1570
         ParentFont = False
         object FlowPanel2: TFlowPanel
           Left = 0
@@ -3065,14 +3089,19 @@ object resultForm1: TresultForm1
               Index = 1
             end          
             item
-              Control = Label69
+              Control = TICheckBoxS2Mst
               WrapAfter = waAuto
               Index = 2
             end          
             item
-              Control = TIComboBoxArch2
+              Control = Label69
               WrapAfter = waAuto
               Index = 3
+            end          
+            item
+              Control = TIS2Url
+              WrapAfter = waAuto
+              Index = 4
             end>
           FlowLayout = tlTop
           FlowStyle = fsLeftRightTopBottom
@@ -3091,19 +3120,6 @@ object resultForm1: TresultForm1
             ParentColor = False
             ParentFont = False
           end
-          object Label69: TLabel
-            Left = 302
-            Height = 21
-            Top = 8
-            Width = 128
-            Anchors = []
-            BorderSpacing.Left = 20
-            BorderSpacing.Around = 4
-            Caption = 'Architecture Mode'
-            Font.Height = -16
-            ParentColor = False
-            ParentFont = False
-          end
           object TIComboBoxInstaller2: TTIComboBox
             Left = 176
             Height = 23
@@ -3118,19 +3134,49 @@ object resultForm1: TresultForm1
             ParentFont = False
             TabOrder = 0
           end
-          object TIComboBoxArch2: TTIComboBox
-            Left = 446
+          object TICheckBoxS2Mst: TTICheckBox
+            Left = 300
             Height = 23
             Top = 6
-            Width = 100
+            Width = 90
             Anchors = []
-            BorderSpacing.Left = 10
+            BorderSpacing.Left = 20
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
-            HistoryCaseSensitive = False
-            MaxHistoryCount = 0
-            ParentFont = False
+            Caption = 'MST allowed'
+            OnChange = TICheckBoxS2MstChange
+            PropertyNameAsCaption = False
             TabOrder = 1
+          end
+          object Label69: TLabel
+            Left = 416
+            Height = 21
+            Top = 8
+            Width = 34
+            Anchors = []
+            BorderSpacing.Left = 20
+            BorderSpacing.Around = 4
+            Caption = 'Info: '
+            Font.Height = -16
+            ParentColor = False
+            ParentFont = False
+          end
+          object TIS2Url: TTILabel
+            Left = 463
+            Height = 21
+            Top = 8
+            Width = 60
+            Anchors = []
+            BorderSpacing.Left = 5
+            BorderSpacing.Around = 4
+            BorderSpacing.InnerBorder = 2
+            Font.Color = clBlue
+            Font.Height = -16
+            Font.Style = [fsUnderline]
+            OnClick = TIS1UrlClick
+            OnMouseEnter = TIS1UrlMouseEnter
+            OnMouseLeave = TIS1UrlMouseLeave
+            ParentFont = False
           end
         end
         object FlowPanelMST1: TFlowPanel
@@ -3987,6 +4033,7 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 200
+            OnChange = genRttiEditChange
             ParentFont = False
             TabOrder = 1
           end
@@ -4002,18 +4049,18 @@ object resultForm1: TresultForm1
             TabOrder = 2
           end
           object TICheckBoxlicenseRequired: TTICheckBox
-            Left = 612
-            Height = 23
+            Left = 622
+            Height = 25
             Top = 8
             Width = 140
             Anchors = []
-            BorderSpacing.Left = 10
+            BorderSpacing.Left = 20
             BorderSpacing.Around = 4
             BorderSpacing.InnerBorder = 2
             Caption = 'License required'
+            OnChange = TICheckBoxlicenseRequiredChange
             PropertyNameAsCaption = False
             TabOrder = 0
-            Visible = False
           end
         end
         object FlowPanel10: TFlowPanel
@@ -4086,6 +4133,7 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 200
+            OnChange = genRttiEditChange
             ParentFont = False
             TabOrder = 0
           end
@@ -4099,6 +4147,7 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 200
+            OnChange = genRttiEditChange
             ParentFont = False
             TabOrder = 1
           end
@@ -4325,6 +4374,7 @@ object resultForm1: TresultForm1
             Anchors = [akLeft]
             BorderSpacing.Left = 10
             BorderSpacing.Around = 4
+            OnChange = genRttiEditChange
             ParentFont = False
             ScrollBars = ssAutoVertical
           end
@@ -4374,6 +4424,7 @@ object resultForm1: TresultForm1
             Anchors = [akLeft]
             BorderSpacing.Left = 10
             BorderSpacing.Around = 4
+            OnChange = genRttiEditChange
             ParentFont = False
             ScrollBars = ssAutoVertical
           end

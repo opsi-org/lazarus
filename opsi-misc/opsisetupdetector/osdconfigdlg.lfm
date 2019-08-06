@@ -1,7 +1,7 @@
 object FOSDConfigdlg: TFOSDConfigdlg
   Left = 691
   Height = 502
-  Top = 393
+  Top = 250
   Width = 533
   Caption = 'opsi-setup-detector Configuration'
   ClientHeight = 502
@@ -10,7 +10,7 @@ object FOSDConfigdlg: TFOSDConfigdlg
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poScreenCenter
-  LCLVersion = '1.8.4.0'
+  LCLVersion = '2.0.0.4'
   object TIPropertyGrid1: TTIPropertyGrid
     Left = 0
     Height = 322
@@ -47,6 +47,7 @@ object FOSDConfigdlg: TFOSDConfigdlg
       end>
     FlowLayout = tlTop
     FlowStyle = fsLeftRightTopBottom
+    ParentFont = False
     TabOrder = 1
     object Label1: TLabel
       Left = 15
@@ -78,6 +79,7 @@ object FOSDConfigdlg: TFOSDConfigdlg
       Default = True
       Kind = bkOK
       ModalResult = 1
+      ParentFont = False
       TabOrder = 0
     end
   end
@@ -90,6 +92,7 @@ object FOSDConfigdlg: TFOSDConfigdlg
     Caption = 'Panel1'
     ClientHeight = 90
     ClientWidth = 533
+    ParentFont = False
     TabOrder = 2
     object MemoConfigHint: TMemo
       Left = 1

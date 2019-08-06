@@ -29,12 +29,13 @@ uses
   inifiles,
   oslog,
   oswebservice,
+  superobject,
   OSProcessux,
-  superobject;
+   oslinmount;
 
 
 const
-  SW_HIDE = 0;
+ // SW_HIDE = 0;
   opsiclientdconf = '/etc/opsi-client-agent/opsiclientd.conf' ;
   opsiscriptbin = '/usr/bin/opsi-script';
   opsiscriptnoguibin = '/usr/bin/opsi-script-nogui';
@@ -61,7 +62,7 @@ end;
   end;
 
 { Topsiscriptstarter }
-bytearray = array[0..255] of byte;
+//bytearray = array[0..255] of byte;
 
 var
   optionlist : TStringlist;
@@ -86,7 +87,7 @@ begin
     halt(0);
   end;
 end;
-
+(*
 function divideAtFirst(const partialS, S: string; var part1, part2: string): boolean;
   (* teilt den String S beim ersten Vorkommen des Teilstrings partialS;
      liefert true, wenn partialS vorkommt,
@@ -220,7 +221,7 @@ begin
   end;
 end;
 *)
-
+(*
 (*
 moved to osfunclin / osfuncmac
 
@@ -303,6 +304,7 @@ end;
 *)
 
 
+
 function startopsiscript : integer;
 var
   cmd, report: string;
@@ -361,7 +363,7 @@ begin
   credentials.Free;
 end;
 
-
+(*
   procedure transformHex
    (const hexstring : String;
     var hexarray : bytearray);
@@ -435,7 +437,7 @@ begin
   Cipher.Free;
   result := s;
 end;
-
+*)
 
   procedure readconf;
   var
@@ -449,6 +451,7 @@ end;
     myini.Free;
   end;
 
+(*
   function MyOpsiMethodCall(const method: string; parameters: array of string) : string;
   var
     omc: TOpsiMethodCall;
@@ -496,7 +499,7 @@ end;
       end;
     end;
   end;
-
+*)
 function MyOpsiMethodCall2(const method: string; parameters: array of string) : string;
   var
     omc: TOpsiMethodCall;
@@ -678,6 +681,7 @@ begin
       LogDatei.DependentAdd('Action requests found',LLNotice);
       writeln('Action requests found');
       opsidata.setActualClient(myclientid);
+      (*
       mydepot := opsidata.depotId;
       writeln('depotId=',mydepot);
       //resultstring := MyOpsiMethodCall2('configState_getClientToDepotserver', ['[]','['+myclientid+']','True','["acroread", "config-win-base"]']);
@@ -713,6 +717,8 @@ begin
           sleep(2000);
         end;
       until isMounted(mymountpoint) or (mounttry > 12);
+      *)
+      mount_depotshare(mymountpoint, myhostkey);
       if not isMounted(mymountpoint) then
          LogDatei.log('Failed to mount '+myshare+' to '+mymountpoint+' - abort!',LLCritical)
       else
