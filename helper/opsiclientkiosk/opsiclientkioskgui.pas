@@ -32,6 +32,7 @@ type
 
   { TProductPanel }
 
+  (* Class for creating the Tiles *)
   TProductPanel = class(TPanel)
     ShapeRoundSquare : TShape; //just for a nice look
     LabelAction: TLabel; //ProductID
@@ -61,78 +62,97 @@ type
   { TFormOpsiClientKiosk }
 
   TFormOpsiClientKiosk = class(TForm)
-    BitBtn1: TBitBtn;
-    BitBtnInfo: TBitBtn;
-    BitBtnStoreAction: TBitBtn;
+ (******************************)
+ (*         Fields             *)
+ (******************************)
+    (* DataSources *)
+    DataSourceProductDependencies: TDataSource;
+    DataSourceProductData: TDataSource;
+    (* Head *)
+    PanelTopImage: TPanel;//container for header components
+    ImageHeader: TImage;
+    LabelTitle: TLabel;
+    (* ToolBar *)
+    PanelToolbar: TPanel;//container for toolbar components
+    SpeedButtonExpertMode: TSpeedButton;//switch to expert mode
+     {Buttons to filter products}
+    SpeedButtonAll: TSpeedButton;//show all products
+    SpeedButtonUpdates: TSpeedButton;// show only products where an update is available
+    SpeedButtonNotInstalled: TSpeedButton;//show products not installed
+    SpeedButtonActions: TSpeedButton;//show products with action requests
+     {Panel search}
+    PanelSearch: TPanel;//container for search components
+    EditSearch: TEdit;
+    ImageViewmag: TImage;
+    SpeedButtonClearSearchEdit: TSpeedButton;
+     {Info}
+    BitBtnInfo: TBitBtn;//show info about opsiclientkiosk
+    (* Expert mode *)
+    PanelExpertMode: TPanel;//container for expert mode components
+    RadioGroupView: TRadioGroup;//toggle between list and tiles view
+    BitBtnStoreAction: TBitBtn; //Set action requests
+    SpeedButtonReload: TSpeedButton;//reload data from server
+    (* Views *)
+    PanelProducts: TPanel;//container for components showing product infos
+    NotebookProducts: TNotebook;//container for toggling between views (eg. list or tiles)
+     { Tile view }
+    PageAllProductTiles: TPage;//showing product tiles
+    ScrollBoxAllTiles: TScrollBox;
+    FlowPanelAllTiles: TFlowPanel;//container for ProductPanels
+     { detailed software view tiles }
+    PageSoftwareDetails: TPage;//showing details on products in tiles view mode
+    ScrollBoxSoftwarePage: TScrollBox;
+    PanelSoftwareScreenshot: TPanel;
+    PanelSoftwareHead: TPanel;
+    DBTextSoftwareClientVerStr: TDBText;
+    DBTextSoftwareVerStr: TDBText;
+    DBMemoSoftwareDescription: TDBMemo;
+    DBMemoSoftwareAdvice: TDBMemo;
     ButtonSoftwareUninstall: TButton;
     ButtonSoftwareUpdate: TButton;
     ButtonSoftwareInstall: TButton;
     ButtonSoftwareBack: TButton;
-    DataSourceProductDependencies: TDataSource;
-    DataSourceProductData: TDataSource;
-    DBComboBox1: TDBComboBox;
-    DBGrid1: TDBGrid;
-    DBGrid2: TDBGrid;
-    DBMemoAdvice: TDBMemo;
-    DBMemoSoftwareAdvice: TDBMemo;
-    DBMemoDescription: TDBMemo;
-    DBMemoSoftwareDescription: TDBMemo;
-    DBTextInstalledVerStr: TDBText;
-    DBTextSoftwareClientVerStr: TDBText;
-    DBTextPriority: TDBText;
-    DBTextVerStr: TDBText;
-    DBTextSoftwareVerStr: TDBText;
-    ExtendedNotebook1: TExtendedNotebook;
-    FlowPanelAllTiles: TFlowPanel;
-    FlowPanelSearchTiles: TFlowPanel;
     ImageIconSoftware: TImage;
     ImageScreenShot: TImage;
-    ImageViewmag: TImage;
     LabelSoftwareInstalledVersion: TLabel;
+    LabelSoftwareRecentVersion: TLabel;
     LabelSoftwareAdvice: TLabel;
     LabelSoftwareDescription: TLabel;
     LabelSoftwareName: TLabel;
-    LabelPriority: TLabel;
-    LabelSoftwareRecentVersion: TLabel;
+     { List view }
+    PageList: TPage;//showing products in list view
+    DBGrid1: TDBGrid;
+    DBComboBox1: TDBComboBox;
+     { detailed view list}
+    PanelProductDetail: TPanel;// showing product details in list view mode
+    ExtendedNotebook1: TExtendedNotebook;
+     {Tab details }
+    TabSheet1: TTabSheet;
+    PanelDetailsLables: TPanel;
+    PanelDetailsDBText: TPanel;
+    DBMemoAdvice: TDBMemo;
+    DBMemoDescription: TDBMemo;
+    DBTextInstalledVerStr: TDBText;
+    DBTextVerStr: TDBText;
     LabelVerstr: TLabel;
     LabelDescription: TLabel;
     LabelAdvice: TLabel;
     LabelClientVerstr: TLabel;
-    PageSearchTiles: TPage;
-    PageSoftwareDetails: TPage;
-    PanelSoftwareScreenshot: TPanel;
-    PanelSoftwareHead: TPanel;
-    PanelSearchEdit: TPanel;
-    PanelExpertMode: TPanel;
-    PanelDependencies: TPanel;
-    PanelPriority: TPanel;
-    PanelDetailsDBText: TPanel;
-    PanelDetailsLables: TPanel;
-    RadioGroupView: TRadioGroup;
-    ScrollBoxAllTiles: TScrollBox;
-    ScrollBoxSearchTiles: TScrollBox;
-    ScrollBoxSoftwarePage: TScrollBox;
-    EditSearch: TEdit;
-    ImageHeader: TImage;
-    SpeedButtonNotInstalled: TSpeedButton;
-    SpeedButtonExpertMode: TSpeedButton;
-    SpeedButtonActions: TSpeedButton;
-    SpeedButtonUpdates: TSpeedButton;
-    BtnClearSearchEdit: TSpeedButton;
-    SpeedButtonReload: TSpeedButton;
-    SpeedButtonAll: TSpeedButton;
-    TabSheet1: TTabSheet;
+     {Tab dependencies and priorities}
     TabSheet2: TTabSheet;
-    TitleLabel: TLabel;
-    NotebookProducts: TNotebook;
-    PageList: TPage;
-    PageAllProductTiles: TPage;
-    PanelToolbar: TPanel;
-    PanelProductList: TPanel;
-    PanelProductDetail: TPanel;
-    PanelTopImage: TPanel;
+     {dependencies}
+    PanelDependencies: TPanel;
+    DBGrid2: TDBGrid;
+      {priorities}
+    PanelPriority: TPanel;
+    LabelPriority: TLabel;
+    DBTextPriority: TDBText;
+    (* StatusBars *)
     StatusBar1: TStatusBar;
-    //ArrayProductPanels: TPanels;
+
+  (******************************)
+  (*         Methods            *)
+  (******************************)
     procedure BitBtnInfoClick(Sender: TObject);
     procedure BitBtnShowActionClick(Sender: TObject);
     procedure BitBtnStoreActionClick(Sender: TObject);
@@ -161,7 +181,7 @@ type
     procedure RadioGroupViewSelectionChanged(Sender: TObject);
     procedure ScrollBoxAllTilesMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
-    procedure BtnClearSearchEditClick(Sender: TObject);
+    procedure SpeedButtonClearSearchEditClick(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure SpeedButtonActionsClick(Sender: TObject);
     procedure SpeedButtonReloadClick(Sender: TObject);
@@ -170,25 +190,26 @@ type
     procedure SpeedButtonUpdatesClick(Sender: TObject);
     procedure Terminate;
     procedure BitBtnCancelClick(Sender: TObject);
-    //procedure grouplistSelectionChange(Sender: TObject; User: boolean);
     procedure ReloadDataFromServer(MyClientID:String);
-    procedure EditSearchChange(Sender: TObject);
-    //procedure RadioGroup1Click(Sender: TObject);
-    procedure EditSearchEnter(Sender: TObject);
     procedure SpeedButtonAllClick(Sender: TObject);
     procedure SpeedButtonViewListClick(Sender: TObject);
     procedure SpeedButtonViewStoreClick(Sender: TObject);
     function GetUserName_:string;
+    { Inits at Start }
     function InitLogging(const LogFileName, CallingMethod: string; MyLogLevel:integer): boolean;
     procedure InitDBGrids;
     procedure LoadSkinForTitle(SkinPath: string);
-    //procedure InitOpsiClientKiosk;
-    procedure SearchProducts;
     procedure BuildProductTiles(var fArrayProductPanels:TPanels; const OwnerName:string);
+    {Search}
+    procedure EditSearchChange(Sender: TObject);
+    procedure EditSearchEnter(Sender: TObject);
+    procedure SearchProducts;
+    { Set actions}
     procedure SetActionRequest(Request:String; Message:String; OnDemand:boolean);
     //function GetTileIDbyProductID(const ProductID:String):integer;
-    procedure SetView;
     //procedure SetTileIDbyProductID(const TileID, ProductID:String);
+    { Set views: List and Tiles }
+    procedure SetView;
     procedure SetListView;
     procedure SetTilesView;
   private
@@ -354,7 +375,7 @@ begin
     LabelAction := TLabel.Create(self);
     with LabelAction do begin
       Parent := self;
-      Caption := 'Action: none';
+      Caption := '';//'Action: none';
       Font.Italic := True;
       AutoSize:= False;
       Alignment := taCenter;
@@ -362,7 +383,7 @@ begin
       Align := alNone;
       Top := LabelName.Top + LabelName.Height + 3;
       Left := 0;
-      //labelId.BorderSpacing.Around := 3;
+      //LabelAction.BorderSpacing.Around := 3;
       OnClick := ProductPanelClick;//ProductTileChildClick;
       OnMouseWheel := scroll;
       OnMouseEnter := ProductTileMouseEnter;
@@ -840,7 +861,7 @@ begin
   logdatei.log('ScrollBox1MouseWheel WheelDelta: ' + IntToStr(WheelDelta), LLDebug2);
 end;
 
-procedure TFormOpsiClientKiosk.BtnClearSearchEditClick(Sender: TObject);
+procedure TFormOpsiClientKiosk.SpeedButtonClearSearchEditClick(Sender: TObject);
 begin
   try
     screen.Cursor := crHourGlass;
@@ -1387,7 +1408,7 @@ begin
       FormProgressWindow.ProgressBarDetail.Position := 100;
       //FormProgressWindow.Repaint;
       Application.ProcessMessages;//FormProgressWindow.ProcessMess;
-      OCKOpsiConnection.GetJSONFromServer;
+      OCKOpsiConnection.GetProductInfosFromServer;
       ConfigState := TSTringList.Create;
       ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.kiosk.allowed');
       //ShowMessage(ConfigState.Text);
@@ -1414,7 +1435,7 @@ begin
       FormProgressWindow.Close;
       { log }
       LogDatei.log('rsActSetup is: ' + rsActSetup , LLDebug2);
-      LogDatei.log('TitleLabel.Caption: ' + TitleLabel.Caption, LLDebug2);
+      LogDatei.log('TitleLabel.Caption: ' + LabelTitle.Caption, LLDebug2);
     //end;
     finally
       ListOptions.Free;
@@ -1497,7 +1518,7 @@ begin
     FormProgressWindow.ProgressBarDetail.Position := 100;
     //FormProgressWindow.Repaint;
     Application.ProcessMessages;//FormProgressWindow.ProcessMess;
-    OCKOpsiConnection.GetJSONFromServer;
+    OCKOpsiConnection.GetProductInfosFromServer;
     ConfigState := TSTringList.Create;
     ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.kiosk.allowed');
     //ShowMessage(ConfigState.Text);
@@ -1579,14 +1600,14 @@ begin
     LogDatei.Log('loading skin for title from: ' + skinpath + 'opsiclientkiosk.ini', LLEssential);
     myini := TIniFile.Create(skinpath + 'opsiclientkiosk.ini');
     //title
-    TitleLabel.Caption := myini.ReadString('TitleLabel', 'Text', 'Opsi Client Kiosk');
-    LogDatei.log('Title_Caption: ' + TitleLabel.Caption, LLDebug);
-    TitleLabel.Font.Name := myini.ReadString('TitleLabel', 'FontName', 'Arial');
-    TitleLabel.Font.Size := myini.ReadInteger('TitleLabel', 'FontSize', 20);
-    TitleLabel.Font.Color := StringToColor(myini.ReadString('TitleLabel', 'FontColor', 'clBlack'));
-    TitleLabel.Font.Bold := StrToBool(myini.ReadString('TitleLabel','FontBold','True'));
-    TitleLabel.Font.Italic := StrToBool(myini.ReadString('TitleLabel', 'FontItalic','False'));
-    TitleLabel.Font.Underline := StrToBool(myini.ReadString('TitleLabel', 'FontUnderline', 'False'));
+    LabelTitle.Caption := myini.ReadString('TitleLabel', 'Text', 'Opsi Client Kiosk');
+    LogDatei.log('Title_Caption: ' + LabelTitle.Caption, LLDebug);
+    LabelTitle.Font.Name := myini.ReadString('TitleLabel', 'FontName', 'Arial');
+    LabelTitle.Font.Size := myini.ReadInteger('TitleLabel', 'FontSize', 20);
+    LabelTitle.Font.Color := StringToColor(myini.ReadString('TitleLabel', 'FontColor', 'clBlack'));
+    LabelTitle.Font.Bold := StrToBool(myini.ReadString('TitleLabel','FontBold','True'));
+    LabelTitle.Font.Italic := StrToBool(myini.ReadString('TitleLabel', 'FontItalic','False'));
+    LabelTitle.Font.Underline := StrToBool(myini.ReadString('TitleLabel', 'FontUnderline', 'False'));
     myini.Free;
   end;
 end;
@@ -1612,7 +1633,7 @@ begin
   detail_visible := False;
   // Load custom skin
 
-  { Set skin for TitleLabel}
+  { Set skin for LabelTitle}
 
   skinpath := Application.Location + 'opsiclientkioskskin' + PathDelim;
   if FileExistsUTF8(skinpath + 'opsiclientkiosk.png') then

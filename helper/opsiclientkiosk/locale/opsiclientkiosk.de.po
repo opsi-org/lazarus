@@ -99,11 +99,6 @@ msgctxt "TFINSTALLDLG.LABEL1.CAPTION"
 msgid "The following Actions will be done:"
 msgstr "Die folgenden Aktionen werden ausgeführt werden:"
 
-#: tformopsiclientkiosk.bitbtn1.caption
-msgctxt "tformopsiclientkiosk.bitbtn1.caption"
-msgid "Installieren"
-msgstr ""
-
 #: tformopsiclientkiosk.bitbtninfo.caption
 #, fuzzy
 msgctxt "tformopsiclientkiosk.bitbtninfo.caption"
@@ -112,11 +107,6 @@ msgstr "Info"
 
 #: tformopsiclientkiosk.bitbtnstoreaction.caption
 msgid "Store Action"
-msgstr ""
-
-#: tformopsiclientkiosk.btnclearsearchedit.caption
-msgctxt "tformopsiclientkiosk.btnclearsearchedit.caption"
-msgid "X"
 msgstr ""
 
 #: tformopsiclientkiosk.buttonsoftwareback.caption
@@ -210,6 +200,11 @@ msgctxt "tformopsiclientkiosk.labelsoftwarerecentversion.caption"
 msgid "Recent version"
 msgstr ""
 
+#: tformopsiclientkiosk.labeltitle.caption
+msgctxt "tformopsiclientkiosk.labeltitle.caption"
+msgid "opsi Client Kiosk"
+msgstr ""
+
 #: tformopsiclientkiosk.labelverstr.caption
 #, fuzzy
 msgctxt "tformopsiclientkiosk.labelverstr.caption"
@@ -241,6 +236,11 @@ msgstr ""
 msgctxt "tformopsiclientkiosk.speedbuttonall.hint"
 msgid "Show all List entries (No Filter)"
 msgstr "Zeige alle Einträge (Kein Filter)"
+
+#: tformopsiclientkiosk.speedbuttonclearsearchedit.caption
+msgctxt "tformopsiclientkiosk.speedbuttonclearsearchedit.caption"
+msgid "X"
+msgstr ""
 
 #: tformopsiclientkiosk.speedbuttonexpertmode.caption
 msgctxt "tformopsiclientkiosk.speedbuttonexpertmode.caption"
@@ -285,11 +285,6 @@ msgstr "Details"
 msgctxt "tformopsiclientkiosk.tabsheet2.caption"
 msgid "Dependencies / Priority"
 msgstr "Abhängigkeiten / Prioritäten"
-
-#: tformopsiclientkiosk.titlelabel.caption
-msgctxt "tformopsiclientkiosk.titlelabel.caption"
-msgid "opsi Client Kiosk"
-msgstr ""
 
 #: tformpleasewait.caption
 msgid "Dialog"

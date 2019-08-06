@@ -7,10 +7,9 @@ interface
 uses
   Classes,
   SysUtils,
-  //Controls,
   oslog,
   oswebservice,
-  superobject,
+  //superobject,
 
   //oscrypt,
   lazfileutils,
@@ -47,8 +46,8 @@ type
     myloglevel: integer;
     OpsiData: TOpsi4Data;
     opsiclientdmode : boolean;
-    opsiProducts:ISuperObject;
-    JSONData : TJSONData;
+    //opsiProducts:ISuperObject;
+    JSONDataProductInfos : TJSONData;
     JSONObjectConfigStates,
     JSONObjectProducts:TJSONObject;
     //opsiProduct:ISuperObject;
@@ -63,7 +62,7 @@ type
     procedure DoActionsOnDemand;
     procedure DoSingleActionOnDemand(ProductID:String);
     function GetConfigState(ConfigProperty:String):TStringList;
-    procedure GetJSONFromServer;
+    procedure GetProductInfosFromServer;
     constructor Create(clientdmode:boolean; ClientID:string);overload;
     destructor Destroy;override;
   end;
@@ -153,12 +152,13 @@ end;
 
 procedure TOpsiConnection.closeConnection;
 var
-  resultstring: string;
-  new_obj: ISuperObject;
+  StringJSON: string;
+  //new_obj: ISuperObject;
 begin
   try
-    resultstring := MyOpsiMethodCall('backend_exit', []);
-    new_obj := SO(resultstring).O['result'];
+    StringJSON := MyOpsiMethodCall('backend_exit', []);
+    //new_obj := SO(resultstring).O['result'];
+    //JSONData := GetJSON(StringJSON).FindPath('result');
   except
     on e: Exception do
     begin
@@ -170,7 +170,7 @@ begin
   end;
 end;
 
-procedure TOpsiConnection.GetJSONFromServer;
+procedure TOpsiConnection.GetProductInfosFromServer;
 var
   StringJSON,StringResult:string;
   //JSONData,JSONDataResult:TJSONData;
@@ -178,18 +178,24 @@ var
   count :integer;
   SoftwareOnDemand: boolean;
 begin
-  StringJSON := MyOpsiMethodCall('getKioskProductInfosForClient', [myclientid]);
-  JSONData := GetJSON(StringJSON).FindPath('result');
+  try
+    StringJSON := MyOpsiMethodCall('getKioskProductInfosForClient', [myclientid]);
+    JSONDataProductInfos := GetJSON(StringJSON).FindPath('result');
   //count := JSONData.Count;
   //StringResult := JSONData.AsJSON;
-  JSONObjectProducts := TJSONObject(JSONData.Items[0].FindPath('products'));
-  count:= JSONObjectProducts.Count;
-  StringResult := JSONObjectProducts.AsJSON;
+    JSONObjectProducts := TJSONObject(JSONDataProductInfos.Items[0].FindPath('products'));
+    count:= JSONObjectProducts.Count;
+    StringResult := JSONObjectProducts.AsJSON;
   //StringResult := JSONData.Items[0].FindPath('configStates').AsJSON;
   //count := JSONData.Items[0].FindPath('configStates').Count;
-  JSONObjectConfigStates := TJSONObject(JSONData.Items[0].FindPath('configStates'));
+    JSONObjectConfigStates := TJSONObject(JSONDataProductInfos.Items[0].FindPath('configStates'));
   //SoftwareOnDemand := JSONObjectConfigStates.Arrays['software-on-demand.kiosk.allowed'].Items[0].AsBoolean;
-  opsiProducts := SO(StringResult);
+    //opsiProducts := SO(StringResult);
+   except
+     //LogDatei.log('Error while GetJSONFromServer', LLDebug);
+     on EExternalException do LogDatei.log('Error while GetJSONFromServer: ExternalException', LLDebug);
+     else LogDatei.log('Error while GetJSONFromServer', LLDebug);
+   end;
 end;
 
 function TOpsiConnection.initConnection(const seconds: integer; var ConnectionInfo:string): boolean;
@@ -269,7 +275,7 @@ end;
 
 destructor TOpsiConnection.Destroy;
 begin
-  JSONData.Free;
+  JSONDataProductInfos.Free;
   if OpsiData <> nil then FreeAndNil(OpsiData);
   inherited Destroy;
 end;
@@ -284,20 +290,23 @@ end;
 
 function TOpsiConnection.GetActionRequests: TStringList;
 var
-  resultstring, str: string;
-  new_obj, opsiProduct: ISuperObject;
+  StringJSON, str: string;
+  //new_obj, opsiProduct: ISuperObject;
+  opsiProducts, opsiProduct: TJSONObject;
   i: integer;
 begin
   Result := TStringList.Create;
-  resultstring := MyOpsiMethodCall('productOnClient_getObjects',
+  StringJSON := MyOpsiMethodCall('productOnClient_getObjects',
     ['[]', '{"clientId":"' + myclientid + '","actionRequest":["setup","uninstall"]}']);
-  new_obj := SO(resultstring).O['result'];
-  str := new_obj.AsString;
-  for i := 0 to new_obj.AsArray.Length - 1 do
+  //new_obj := SO(resultstring).O['result'];
+  opsiProducts := GetJSON(StringJSON).FindPath('result') as TJSONObject;
+  str := opsiProducts.AsJSON;
+  for i := 0 to opsiProducts.Count - 1 do
   begin
-    opsiProduct := new_obj.AsArray.O[i];
-    Result.Add(opsiProduct.S['productId'] + ' : ' + opsiProduct.S['actionRequest"']);
+    opsiProduct := opsiProducts.Items[i] as TJSONObject;
+    Result.Add(opsiProduct.Strings['productId'] + ' : ' + opsiProduct.Strings['actionRequest']);//['actionRequest"'] ?
   end;
+  opsiProducts.Free;
 end;
 
 

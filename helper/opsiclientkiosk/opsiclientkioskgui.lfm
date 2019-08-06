@@ -62,7 +62,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       ShowHint = True
       ParentShowHint = False
     end
-    object PanelSearchEdit: TPanel
+    object PanelSearch: TPanel
       Left = 457
       Height = 33
       Top = 6
@@ -76,7 +76,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       ClientWidth = 191
       Constraints.MinHeight = 30
       TabOrder = 0
-      object BtnClearSearchEdit: TSpeedButton
+      object SpeedButtonClearSearchEdit: TSpeedButton
         Left = 168
         Height = 29
         Top = 0
@@ -85,7 +85,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
         Caption = 'X'
         Color = clWhite
         Flat = True
-        OnClick = BtnClearSearchEditClick
+        OnClick = SpeedButtonClearSearchEditClick
       end
       object EditSearch: TEdit
         Left = 37
@@ -1031,7 +1031,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       }
       Stretch = True
     end
-    object TitleLabel: TLabel
+    object LabelTitle: TLabel
       Left = 0
       Height = 52
       Top = 0
@@ -1063,14 +1063,14 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
     TabOrder = 3
     Visible = False
     object SpeedButtonReload: TSpeedButton
-      Left = 728
+      Left = 632
       Height = 33
       Top = 6
-      Width = 70
+      Width = 166
       Align = alRight
       BorderSpacing.Around = 5
       BorderSpacing.InnerBorder = 2
-      Caption = 'Reload'
+      Caption = 'Reload Data from Server'
       Glyph.Data = {
         76060000424D7606000000000000360000002800000014000000140000000100
         2000000000004006000064000000640000000000000000000000000000000000
@@ -1158,14 +1158,14 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       TabOrder = 0
     end
     object BitBtnStoreAction: TBitBtn
-      Left = 607
+      Left = 472
       Height = 33
       Top = 6
-      Width = 116
+      Width = 155
       Align = alRight
       BorderSpacing.Left = 10
       BorderSpacing.Around = 5
-      Caption = 'Store Action'
+      Caption = 'Store Action at Server'
       Kind = bkAll
       ModalResult = 8
       OnClick = BitBtnStoreActionClick
@@ -1174,7 +1174,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       TabOrder = 1
     end
   end
-  object PanelProductList: TPanel
+  object PanelProducts: TPanel
     Left = 0
     Height = 529
     Top = 142
@@ -1201,10 +1201,10 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
         Height = 172
         Top = 0
         Width = 804
-        ActivePage = TabSheet1
+        ActivePage = TabSheet2
         Align = alBottom
         Anchors = [akTop, akLeft, akRight, akBottom]
-        TabIndex = 0
+        TabIndex = 1
         TabOrder = 0
         object TabSheet1: TTabSheet
           Caption = 'Details'
@@ -1317,15 +1317,6 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
               ReadOnly = True
               ScrollBars = ssAutoVertical
               TabOrder = 1
-            end
-            object BitBtn1: TBitBtn
-              Left = -32
-              Height = 22
-              Top = -584
-              Width = 150
-              Align = alCustom
-              Caption = 'Installieren'
-              TabOrder = 2
             end
             object DBTextInstalledVerStr: TDBText
               Left = 5
@@ -1488,8 +1479,8 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           Width = 859
           BevelOuter = bvNone
           BorderStyle = bsSingle
-          ClientHeight = 33
-          ClientWidth = 855
+          ClientHeight = 37
+          ClientWidth = 859
           ParentColor = False
           TabOrder = 0
           object ButtonSoftwareBack: TButton
@@ -1731,40 +1722,6 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Caption = 'Uninstall'
             OnClick = ButtonSoftwareUninstallClick
             TabOrder = 5
-          end
-        end
-      end
-      object PageSearchTiles: TPage
-        object ScrollBoxSearchTiles: TScrollBox
-          Left = 0
-          Height = 357
-          Top = 0
-          Width = 804
-          HorzScrollBar.Page = 1
-          HorzScrollBar.Visible = False
-          VertScrollBar.Page = 1
-          Align = alClient
-          AutoSize = True
-          BorderStyle = bsNone
-          ClientHeight = 357
-          ClientWidth = 804
-          Color = clDefault
-          ParentColor = False
-          TabOrder = 0
-          OnMouseWheel = ScrollBoxAllTilesMouseWheel
-          object FlowPanelSearchTiles: TFlowPanel
-            Left = 0
-            Height = 357
-            Top = 0
-            Width = 804
-            Align = alClient
-            BevelOuter = bvNone
-            Color = clForm
-            ControlList = <>
-            FlowLayout = tlTop
-            FlowStyle = fsLeftRightTopBottom
-            ParentColor = False
-            TabOrder = 0
           end
         end
       end
