@@ -35,6 +35,7 @@ type
     LabelCondition: TLabel;
     ListBoxSelectedWMIProperties: TListBox;
     ListBoxAvailableWMIProperties: TListBox;
+    ToggleBoxExpertMode: TToggleBox;
     procedure ButtonQuitClick(Sender: TObject);
     procedure ButtonArrowLeftClick(Sender: TObject);
     procedure ButtonArrowRightClick(Sender: TObject);
@@ -55,6 +56,7 @@ type
       Y: Integer);
     procedure ListBoxSelectedWMIPropertiesDragOver(Sender, Source: TObject; X,
       Y: Integer; State: TDragState; var Accept: Boolean);
+    procedure ToggleBoxExpertModeChange(Sender: TObject);
   private
     WMIClass : TWMIClass;
     procedure fillComboBoxWMIClass();
@@ -331,6 +333,22 @@ procedure TMainForm.ListBoxSelectedWMIPropertiesDragOver(Sender,
   Source: TObject; X, Y: Integer; State: TDragState; var Accept: Boolean);
 begin
   Accept := (Source =  ListBoxAvailableWMIProperties) or (Source =  ListBoxSelectedWMIProperties);
+end;
+
+procedure TMainForm.ToggleBoxExpertModeChange(Sender: TObject);
+begin
+  if ToggleBoxExpertMode.Checked then
+  begin
+    LabelEditComputer.Enabled := True;
+    LabelEditUser.Enabled:= True;
+    LabelEditPassword.Enabled := True;
+  end
+  else
+  begin
+    LabelEditComputer.Enabled := False;
+    LabelEditUser.Enabled:= False;
+    LabelEditPassword.Enabled := False;
+  end;
 end;
 
 end.
