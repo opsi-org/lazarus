@@ -14,7 +14,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.0.2.0'
+  LCLVersion = '2.0.4.0'
   object PanelToolbar: TPanel
     Left = 0
     Height = 45

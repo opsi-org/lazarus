@@ -160,7 +160,7 @@
         <PackageName Value="LazUtils"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="13">
+    <Units Count="12">
       <Unit0>
         <Filename Value="opsiclientkiosk.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -221,13 +221,6 @@
         <Filename Value="opsiconnection.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit11>
-      <Unit12>
-        <Filename Value="pleasewaitwindow.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="FormPleaseWait"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-      </Unit12>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

@@ -179,16 +179,16 @@ var
   SoftwareOnDemand: boolean;
 begin
   try
-    StringJSON := MyOpsiMethodCall('getKioskProductInfosForClient', [myclientid]);
+    StringJSON := MyOpsiMethodCall('getKioskProductInfosForClient', [myclientid, 'True']);
     JSONDataProductInfos := GetJSON(StringJSON).FindPath('result');
-  //count := JSONData.Count;
-  //StringResult := JSONData.AsJSON;
-    JSONObjectProducts := TJSONObject(JSONDataProductInfos.Items[0].FindPath('products'));
+    //count := JSONDataProductInfos.Count;
+    StringResult := JSONDataProductInfos.AsJSON;
+    JSONObjectProducts := TJSONObject(JSONDataProductInfos.FindPath('products'));
     count:= JSONObjectProducts.Count;
     StringResult := JSONObjectProducts.AsJSON;
   //StringResult := JSONData.Items[0].FindPath('configStates').AsJSON;
   //count := JSONData.Items[0].FindPath('configStates').Count;
-    JSONObjectConfigStates := TJSONObject(JSONDataProductInfos.Items[0].FindPath('configStates'));
+    JSONObjectConfigStates := TJSONObject(JSONDataProductInfos.FindPath('configStates'));
   //SoftwareOnDemand := JSONObjectConfigStates.Arrays['software-on-demand.kiosk.allowed'].Items[0].AsBoolean;
     //opsiProducts := SO(StringResult);
    except
@@ -292,14 +292,15 @@ function TOpsiConnection.GetActionRequests: TStringList;
 var
   StringJSON, str: string;
   //new_obj, opsiProduct: ISuperObject;
-  opsiProducts, opsiProduct: TJSONObject;
+  opsiProducts :TJSONData;
+  opsiProduct: TJSONObject;
   i: integer;
 begin
   Result := TStringList.Create;
   StringJSON := MyOpsiMethodCall('productOnClient_getObjects',
     ['[]', '{"clientId":"' + myclientid + '","actionRequest":["setup","uninstall"]}']);
   //new_obj := SO(resultstring).O['result'];
-  opsiProducts := GetJSON(StringJSON).FindPath('result') as TJSONObject;
+  opsiProducts := GetJSON(StringJSON).FindPath('result');
   str := opsiProducts.AsJSON;
   for i := 0 to opsiProducts.Count - 1 do
   begin

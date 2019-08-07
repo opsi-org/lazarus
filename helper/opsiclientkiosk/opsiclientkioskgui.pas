@@ -173,6 +173,7 @@ type
     procedure DBGrid1Enter(Sender: TObject);
     procedure DBGrid1Exit(Sender: TObject);
     procedure DBGrid1TitleClick(Column: TColumn);
+    { Form }
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -206,8 +207,7 @@ type
     procedure SearchProducts;
     { Set actions}
     procedure SetActionRequest(Request:String; Message:String; OnDemand:boolean);
-    //function GetTileIDbyProductID(const ProductID:String):integer;
-    //procedure SetTileIDbyProductID(const TileID, ProductID:String);
+    function GetProductPanelByProductID(const ProductID:String):TProductPanel;
     { Set views: List and Tiles }
     procedure SetView;
     procedure SetListView;
@@ -218,6 +218,7 @@ type
     SelectedPanelIndex : integer;  //TileIndex e.g. Tag
     SelectedProduct : String; //ProductID
     FilteredProductIDs : TStringList;
+    ProductPanelsAddr :TStringList;
     StartUpDone : boolean;
     ArrayProductPanels: TPanels;
   public
@@ -677,25 +678,33 @@ begin
       {Fill ArrayProductPanels }
       FilteredProductIDs.Add(ProductID);
       SetLength(fArrayProductPanels, counter + 1);
-      //FlowPanelAllTiles.InsertControl(TProductPanel.Create(FormOpsiClientKiosk.FindComponent(OwnerName) as TFlowPanel));
-      fArrayProductPanels[counter] := TProductPanel.Create(FormOpsiClientKiosk.FindComponent(OwnerName) as TFlowPanel);
+      //FlowPanelAllTiles.InsertControl(TProductPanel.Create(
+        //FormOpsiClientKiosk.FindComponent(OwnerName) as TFlowPanel));
+      fArrayProductPanels[counter] := TProductPanel.Create(
+        FormOpsiClientKiosk.FindComponent(OwnerName) as TFlowPanel);
       fArrayProductPanels[counter].Name:= 'Panel' + IntToStr(counter);
       fArrayProductPanels[counter].ProductID := ProductID;
-      if DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString <> '' then
+      if DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString
+          <> '' then
         fArrayProductPanels[counter].LabelAction.Caption := 'Action: '
           + DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString
       else fArrayProductPanels[counter].LabelAction.Caption :=
              DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString;
-      fArrayProductPanels[counter].LabelName.Caption := DataModuleOCK.SQLQueryProductData.FieldByName('ProductName').AsString;
+      fArrayProductPanels[counter].LabelName.Caption :=
+        DataModuleOCK.SQLQueryProductData.FieldByName('ProductName').AsString;
       if FileExists(IconPathCustom + ProductID + '.png') then
-        fArrayProductPanels[counter].ImageIcon.Picture.LoadFromFile(IconPathCustom + ProductID + '.png')
+        fArrayProductPanels[counter].ImageIcon.Picture.LoadFromFile(
+          IconPathCustom + ProductID + '.png')
       else
         if FileExists(IconPathDefault + ProductID + '.png') then
-          fArrayProductPanels[counter].ImageIcon.Picture.LoadFromFile(IconPathDefault + ProductID + '.png')
+          fArrayProductPanels[counter].ImageIcon.Picture.LoadFromFile(
+            IconPathDefault + ProductID + '.png')
         else
           if FileExists(IconPathDefault + 'opsi-logo.png') then
-            fArrayProductPanels[counter].ImageIcon.Picture.LoadFromFile(IconPathDefault + 'opsi-logo.png');
-      state := DataModuleOCK.SQLQueryProductData.FieldByName('InstallationStatus').AsString;
+            fArrayProductPanels[counter].ImageIcon.Picture.LoadFromFile(
+              IconPathDefault + 'opsi-logo.png');
+      state := DataModuleOCK.SQLQueryProductData.FieldByName(
+        'InstallationStatus').AsString;
       if state = 'installed' then
       begin
         if DataModuleOCK.SQLQueryProductData['updatePossible'] then
@@ -709,7 +718,8 @@ begin
           fArrayProductPanels[counter].LabelState.Color := clInstalled;
         end;
       end
-      else if (state = 'not_installed') or (state = 'not installed') or (state = '') then
+      else if (state = 'not_installed') or (state = 'not installed') or (state =
+       '') then
       begin
         fArrayProductPanels[counter].LabelState.Caption := rsNotInstalled;
         fArrayProductPanels[counter].LabelState.Color := clNotInstalled;
@@ -739,7 +749,27 @@ begin
   DataModuleOCK.SetActionRequestToDataset(SelectedProduct,Request);// to local database
   if OnDemand then OCKOpsiConnection.DoSingleActionOnDemand(SelectedProduct);
   Screen.Cursor := crDefault;
-  if not OnDemand then ShowMessage('Request done. ' + LabelSoftwareName.Caption + Message);
+  if not OnDemand then ShowMessage('Request done. ' + LabelSoftwareName.Caption
+    + Message);
+end;
+
+function TFormOpsiClientKiosk.GetProductPanelByProductID(const ProductID: String
+  ): TProductPanel;
+var
+  i : integer;
+  found : boolean;
+begin
+  Result := nil;
+  i := 0;
+  while (ArrayProductPanels[i].ProductID <> ProductID)
+   and (i < length(ArrayProductPanels)) do inc(i);
+  if (i = length(ArrayProductPanels)-1)
+    and (ArrayProductPanels[i].ProductID <> ProductID) then
+  begin
+    LogDatei.log('Product not found by ProductID: ' + ProductID, LLDebug);
+    ShowMessage('Product not found by ProductID: ' + ProductID);
+  end
+  else Result := ArrayProductPanels[i];
 end;
 
 procedure TFormOpsiClientKiosk.SetView;
@@ -783,10 +813,10 @@ begin
     FilteredProductIDs.Sort;
     for i := 0 to Length(ArrayProductPanels)-1 do
     begin
-      //if DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString <> '' then
-        //ArrayProductPanels[i].LabelAction.Caption := 'Action: '
-          //+ DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString;
-      If FilteredProductIDs.IndexOf(ArrayProductPanels[i].ProductID) <> -1
+      if DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString <> '' then
+        ArrayProductPanels[i].LabelAction.Caption := 'Action: '
+          + DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString;
+      If FilteredProductIDs.IndexOf(ArrayProductPanels[i].ProductID) <> -1  //ProductID within FilteredProductIDs?
       then ArrayProductPanels[i].Visible := True
       else ArrayProductPanels[i].Visible := False;
 
@@ -810,9 +840,9 @@ begin
   begin
     for i := 0 to Length(ArrayProductPanels)-1 do
     begin
-      //if DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString <> '' then
-        //ArrayProductPanels[i].LabelAction.Caption := 'Action: '
-          //+ DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString;
+      if DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString <> '' then
+        ArrayProductPanels[i].LabelAction.Caption := 'Action: '
+          + DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString;
       ArrayProductPanels[i].Visible := True;
     end;
 
@@ -967,6 +997,7 @@ var
   counter, i: integer;
 begin
   FilteredProductIDs.Free;
+  ProductPanelsAddr.Free;
   DataModuleOCK.Free;
   OCKOpsiConnection.Free;
   try
@@ -1096,16 +1127,15 @@ end;
 procedure TFormOpsiClientKiosk.DBComboBox1Change(Sender: TObject);
 begin
   //DataModuleOCK.SQLQueryProductData.Edit;
-  if (DBComboBox1.Text <> '') and (not DataModuleOCK.SQLQueryProductData.EOF)
-  then
+  if (DBComboBox1.Text <> '') and (not DataModuleOCK.SQLQueryProductData.EOF) then
   begin
     DataModuleOCK.SQLQueryProductData.Post;
   //DataModuleOCK.SQLQueryProductData.FieldByName('actionrequest').AsString := 'none';
     //DataModuleOCK.SQLQueryProductData.Edit;
     //DataSourceProductData.Edit;
   end
-  else if DataModuleOCK.SQLQueryProductData.EOF
-  then ShowMessage('Action could not be done because no product is available.');
+  else if DataModuleOCK.SQLQueryProductData.EOF then
+   ShowMessage('Action could not be done because no product is available.');
   //DataSourceProductData.Edit;
 end;
 
@@ -1628,6 +1658,7 @@ begin
   end;
   //ShowMessage('Form Create');
   FilteredProductIDs := TStringList.Create;
+  ProductPanelsAddr := TStringList.Create;
   NotebookProducts.PageIndex := 1;  //tiles
   PanelProductDetail.Height := 0;
   detail_visible := False;

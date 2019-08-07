@@ -111,7 +111,7 @@ msgid "Info"
 msgstr "Aide"
 
 #: tformopsiclientkiosk.bitbtnstoreaction.caption
-msgid "Store Action"
+msgid "Store Action at Server"
 msgstr ""
 
 #: tformopsiclientkiosk.buttonsoftwareback.caption
@@ -260,8 +260,9 @@ msgstr ""
 
 #: tformopsiclientkiosk.speedbuttonreload.caption
 #, fuzzy
+#| msgid "Reload"
 msgctxt "tformopsiclientkiosk.speedbuttonreload.caption"
-msgid "Reload"
+msgid "Reload Data from Server"
 msgstr "Recharger"
 
 #: tformopsiclientkiosk.speedbuttonupdates.caption
@@ -291,18 +292,6 @@ msgstr "Détails"
 msgctxt "tformopsiclientkiosk.tabsheet2.caption"
 msgid "Dependencies / Priority"
 msgstr "Dépendances / Priorités"
-
-#: tformpleasewait.caption
-msgid "Dialog"
-msgstr ""
-
-#: tformpleasewait.labelinfo.caption
-msgid "LabelInfo"
-msgstr ""
-
-#: tformpleasewait.labelpleasewait.caption
-msgid "Please wait ..."
-msgstr ""
 
 #: tformprogresswindow.caption
 #, fuzzy
