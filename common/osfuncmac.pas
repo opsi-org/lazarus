@@ -28,40 +28,40 @@ uses
   oslog,
   SysUtils;
 
-function checkForMacosDependencies(var Errstr : string) : boolean;
+function checkForMacosDependencies(var Errstr: string): boolean;
 function getProfilesDirListMac: TStringList;
 function getMacosProcessList: TStringList;
-function getMacosProcessByPid(pid:DWORD): String;
+function getMacosProcessByPid(pid: DWORD): string;
 function getMacosVersionMap: TStringList;
-function GetMacosVersionInfo: String;
-function isMounted(mountpoint : string) : boolean;
-function which(target:string; var pathToTarget : string) : boolean;
-function mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass, myoption: string) : integer;
-function umount(mymountpoint : string) : integer;
+function GetMacosVersionInfo: string;
+function isMounted(mountpoint: string): boolean;
+function which(target: string; var pathToTarget: string): boolean;
+function mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass, myoption: string)
+  : integer;
+function umount(mymountpoint: string): integer;
 
 implementation
 
 uses
   {$IFDEF OPSISCRIPT}
-    osparser,
+  osparser,
     {$ENDIF OPSISCRIPT}
 {$IFDEF GUI}
-  graphics,
-osbatchgui,
-osinteractivegui,
-osshowsysinfo,
+  Graphics,
+  osbatchgui,
+  osinteractivegui,
+  osshowsysinfo,
 {$ENDIF GUI}
- null ;
+  null;
 
-
-function which(target:string; var pathToTarget : string) : boolean;
+function which(target: string; var pathToTarget: string): boolean;
 var
-  str : string;
-  exitcode : longint;
-  cmd : string;
-  path : string;
+  str: string;
+  exitcode: longint;
+  cmd: string;
+  path: string;
 begin
-  result := false;
+  Result := False;
   pathToTarget := '';
   (*
   cmd := '/bin/bash -c "';
@@ -69,23 +69,23 @@ begin
   cmd := cmd + 'which '+target+' || exit $?"';
   *)
   path := '/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin';
-  str := FileSearch(target,path);
+  str := FileSearch(target, path);
   if fileexists(trim(str)) then
   begin
-    result := true;
+    Result := True;
     pathToTarget := trim(str);
   end;
 end;
 
 
-function checkForMacosDependencies(var Errstr : string) : boolean;
+function checkForMacosDependencies(var Errstr: string): boolean;
 var
-  exitcode : longint;
-  output : string;
-  outint : integer;
-  cmd : string;
+  exitcode: longint;
+  output: string;
+  outint: integer;
+  cmd: string;
 begin
-  result := true;
+  Result := True;
   Errstr := '';
   // check ip
   // https://superuser.com/questions/687310/ip-command-in-mac-os-x-terminal
@@ -95,9 +95,12 @@ begin
   // $ mv ip.py /usr/local/bin/ip
   if not which('ip', errstr) then
   begin
-      exitcode := RunCommandIndir('','curl',['-s','-o','/usr/local/bin/ip','-L','https://github.com/brona/iproute2mac/raw/master/src/ip.py'],output,outint,[]);
-    exitcode := RunCommandIndir('','chmod',['-x',''],output,outint,[]);
-    if not which('ip', errstr) then result := false;
+    exitcode := RunCommandIndir(
+      '', 'curl', ['-s', '-o', '/usr/local/bin/ip', '-L',
+      'https://github.com/brona/iproute2mac/raw/master/src/ip.py'], output, outint, []);
+    exitcode := RunCommandIndir('', 'chmod', ['-x', ''], output, outint, []);
+    if not which('ip', errstr) then
+      Result := False;
     (*
     cmd := 'curl -s -o /usr/local/bin/ip -L https://github.com/brona/iproute2mac/raw/master/src/ip.py';
     exitcode := RunCommandCaptureOutGetExitcode(cmd);
@@ -121,10 +124,10 @@ var
   lineparts: TStringlist;
   {$ENDIF OPSISCRIPT}
   *)
-  outlines: TStringlist;
-  lineparts: TStringlist;
+  outlines: TStringList;
+  lineparts: TStringList;
   ExitCode: longint;
-  i,k: integer;
+  i, k: integer;
 begin
   try
     try
@@ -141,59 +144,70 @@ begin
       outlines := TStringList.Create;
       lineparts := TStringList.Create;
       pscmd := 'ps -eco pid,user,comm';
-      if not RunCommandAndCaptureOut(pscmd, True, TXStringlist(outlines), report,
-        SW_HIDE, ExitCode) then
-      begin
-        LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
-      end
-      else
-      begin
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-        LogDatei.log('', LLDebug);
-        LogDatei.log('output:', LLDebug);
-        LogDatei.log('--------------', LLDebug);
-        if outlines.Count > 0 then
-        for i := 0 to outlines.Count - 1 do
+      {$IFDEF OPSISCRIPT}
+      if not RunCommandAndCaptureOut(pscmd, True, TXStringlist(outlines),
+        report, SW_HIDE, ExitCode) then
+      {$ELSE OPSISCRIPT}
+        if not RunCommandAndCaptureOut(pscmd, True, outlines, report, SW_HIDE,
+          ExitCode) then
+      {$ENDIF OPSISCRIPT}
+
         begin
-          LogDatei.log(outlines.strings[i], LLDebug2);
-          lineparts.Clear;
-          resultstring := '';
-          userstr := '';
-          pidstr := '';
-          cmdstr := '';
-          fullcmdstr := '';
-          stringsplitByWhiteSpace(trim(outlines.strings[i]), lineparts);
-          for k := 0 to lineparts.Count-1 do
-          begin
-            if k = 0 then pidstr := lineparts.Strings[k]
-            else if k = 1 then userstr := lineparts.Strings[k]
-            else if k = 2 then cmdstr := lineparts.Strings[k]
-            else fullcmdstr:= fullcmdstr+lineparts.Strings[k]+' ';
-          end;
-          resultstring := cmdstr+';'+pidstr+';'+userstr+';'+fullcmdstr;
-          LogDatei.log(resultstring, LLDebug3);
-          //resultstring := lineparts.Strings[0] + ';';
-          //resultstring := resultstring + lineparts.Strings[1] + ';';
-          //resultstring := resultstring + lineparts.Strings[2] + ';';
-          Result.Add(resultstring);
+          LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
+        end
+        else
+        begin
+          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+          LogDatei.log('', LLDebug);
+          LogDatei.log('output:', LLDebug);
+          LogDatei.log('--------------', LLDebug);
+          if outlines.Count > 0 then
+            for i := 0 to outlines.Count - 1 do
+            begin
+              LogDatei.log(outlines.strings[i], LLDebug2);
+              lineparts.Clear;
+              resultstring := '';
+              userstr := '';
+              pidstr := '';
+              cmdstr := '';
+              fullcmdstr := '';
+              stringsplitByWhiteSpace(trim(outlines.strings[i]), lineparts);
+              for k := 0 to lineparts.Count - 1 do
+              begin
+                if k = 0 then
+                  pidstr := lineparts.Strings[k]
+                else if k = 1 then
+                  userstr := lineparts.Strings[k]
+                else if k = 2 then
+                  cmdstr := lineparts.Strings[k]
+                else
+                  fullcmdstr := fullcmdstr + lineparts.Strings[k] + ' ';
+              end;
+              resultstring := cmdstr + ';' + pidstr + ';' + userstr + ';' + fullcmdstr;
+              LogDatei.log(resultstring, LLDebug3);
+              //resultstring := lineparts.Strings[0] + ';';
+              //resultstring := resultstring + lineparts.Strings[1] + ';';
+              //resultstring := resultstring + lineparts.Strings[2] + ';';
+              Result.Add(resultstring);
+            end;
+          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+          LogDatei.log('', LLDebug);
         end;
-        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-        LogDatei.log('', LLDebug);
-      end;
     except
       on E: Exception do
-        begin
-          LogDatei.DependentAdd('Exception in getLinProcessList, system message: "' + E.Message + '"',
-            LLError);
-        end
+      begin
+        LogDatei.DependentAdd('Exception in getLinProcessList, system message: "' +
+          E.Message + '"',
+          LLError);
+      end
     end;
   finally
     outlines.Free;
     lineparts.Free;
-  end
+  end;
 end;
 
-function getMacosProcessByPid(pid:DWORD): String;
+function getMacosProcessByPid(pid: DWORD): string;
 var
   resultstring, pidstr, userstr, cmdstr, fullcmdstr: string;
   pscmd, report: string;
@@ -201,12 +215,12 @@ var
   outlines: TXStringlist;
   //lineparts: TXStringlist;
   {$ELSE OPSISCRIPT}
-  outlines: TStringlist;
+  outlines: TStringList;
 
   {$ENDIF OPSISCRIPT}
-  lineparts: TStringlist;
+  lineparts: TStringList;
   ExitCode: longint;
-  i,k: integer;
+  i, k: integer;
 begin
   try
     try
@@ -222,7 +236,7 @@ begin
       lineparts := TStringList.Create;
       pscmd := 'ps -eco pid,user,comm';
       if not RunCommandAndCaptureOut(pscmd, True, outlines, report,
-        SW_HIDE, ExitCode,false,2) then
+        SW_HIDE, ExitCode, False, 2) then
       begin
         LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
       end
@@ -233,32 +247,34 @@ begin
         LogDatei.log('output:', LLDebug3);
         LogDatei.log('--------------', LLDebug3);
         if outlines.Count > 0 then
-        for i := 0 to outlines.Count - 1 do
-        begin
-          LogDatei.log(outlines.strings[i], LLDebug3);
-          lineparts.Clear;
-          resultstring := '';
-          userstr := '';
-          //pidstr := '';
-          cmdstr := '';
-          fullcmdstr := '';
-          stringsplitByWhiteSpace(trim(outlines.strings[i]), lineparts);
-          if  pidstr = lineparts.Strings[0] then result :=  lineparts.Strings[2];
-        end;
+          for i := 0 to outlines.Count - 1 do
+          begin
+            LogDatei.log(outlines.strings[i], LLDebug3);
+            lineparts.Clear;
+            resultstring := '';
+            userstr := '';
+            //pidstr := '';
+            cmdstr := '';
+            fullcmdstr := '';
+            stringsplitByWhiteSpace(trim(outlines.strings[i]), lineparts);
+            if pidstr = lineparts.Strings[0] then
+              Result := lineparts.Strings[2];
+          end;
         //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
         //LogDatei.log('', LLDebug3);
       end;
     except
       on E: Exception do
-        begin
-          LogDatei.DependentAdd('Exception in getLinProcessList, system message: "' + E.Message + '"',
-            LLError);
-        end
+      begin
+        LogDatei.DependentAdd('Exception in getLinProcessList, system message: "' +
+          E.Message + '"',
+          LLError);
+      end
     end;
   finally
     outlines.Free;
     lineparts.Free;
-  end
+  end;
 end;
 
 
@@ -266,57 +282,19 @@ function getProfilesDirListMac: TStringList;
 var
   resultstring: string;
   cmd, report: string;
-  outlines, lineparts: TStringlist;
+  outlines, lineparts: TStringList;
   ExitCode: longint;
   i: integer;
 begin
   Result := TStringList.Create;
-  LogDatei.log('getProfilesDirListMac is not implemented on macos',LLError);
-  (*
-  outlines := TXStringList.Create;
-  lineparts := TXStringList.Create;
-  // we use the home directories from the passwd entries
-  // get passwd
-  cmd := 'getent passwd';
-  if not RunCommandAndCaptureOut(cmd, True, outlines, report,
-    SW_HIDE, ExitCode) then
-  begin
-    LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
-  end
-  else
-  begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-    LogDatei.log('', LLDebug);
-    LogDatei.log('output:', LLDebug);
-    LogDatei.log('--------------', LLDebug);
-    for i := 0 to outlines.Count - 1 do
-    begin
-      lineparts.Clear;
-      LogDatei.log(outlines.strings[i], LLDebug);
-      stringsplit(outlines.strings[i], ':', lineparts);
-      //LogDatei.log(lineparts.Strings[2], LLDebug);
-      // use only users with a pid >= 1000
-      if StrToInt(lineparts.Strings[2]) >= 1000 then
-      begin
-        resultstring := lineparts.Strings[5];
-        // use only existing direcories as profile
-        if DirectoryExists(ExpandFileName(resultstring)) then
-          Result.Add(ExpandFileName(resultstring));
-      end;
-    end;
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-    LogDatei.log('', LLDebug);
-  end;
-  outlines.Free;
-  lineparts.Free;
-  *)
+  LogDatei.log('getProfilesDirListMac is not implemented on macos', LLError);
 end;
 
 function getMacosVersionMap: TStringList;
 var
   resultstring: string;
   cmd, report: string;
-  outlines, lineparts: TStringlist;
+  outlines, lineparts: TStringList;
   ExitCode: longint;
   i: integer;
 begin
@@ -333,36 +311,32 @@ begin
   Result.Add('operating system' + '=' + 'macOS');
 end;
 
-function GetMacosVersionInfo: String;
+function GetMacosVersionInfo: string;
 begin
-  result := trim(getCommandResult('sw_vers -productVersion'));
+  Result := trim(getCommandResult('sw_vers -productVersion'));
 end;
 
-function isMounted(mountpoint : string) : boolean;
+function isMounted(mountpoint: string): boolean;
 var
-  output:string;
-  exename:string;
-  commands:array of string;
+  output: string;
+  exename: string;
+  commands: array of string;
 begin
-  result := false;
-  if not RunCommand('/sbin/mount',[],output) then
-   writeln('Mount run error')
+  Result := False;
+  if not RunCommand('/sbin/mount', [], output) then
+    writeln('Mount run error')
   else
   begin
-    if output.Contains(mountpoint) then result := true;
+    if output.Contains(mountpoint) then
+      Result := True;
   end;
-  (*
-  if RunCommand(exename,[mountpoint],output) then
-  begin
-    result := true;
-  end;
-  *)
 end;
 
-function mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass, myoption: string) : integer;
+function mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass, myoption: string)
+: integer;
 var
   cmd, report: string;
-  outlines: TStringlist;
+  outlines: TStringList;
   ExitCode: longint;
   i: integer;
 begin
@@ -370,73 +344,88 @@ begin
   Result := -1;
   try
     if not directoryexists(mymountpoint) then
-     mkdir(mymountpoint);
+      mkdir(mymountpoint);
   except
-    LogDatei.log('Error: could not create moutpoint: '+mymountpoint, LLError);
+    LogDatei.log('Error: could not create moutpoint: ' + mymountpoint, LLError);
   end;
   // todo: controling smb version ; saving pass to file
-  if pos('//',myshare) > 0 then myshare := copy(myshare,3,length(myshare));
+  if pos('//', myshare) > 0 then
+    myshare := copy(myshare, 3, length(myshare));
   if mydomain = '' then
-    cmd := '/bin/bash -c "/sbin/mount_smbfs -N //' + myuser+':'+mypass+'@'+myshare+' '+mymountpoint+'"'
+    cmd := '/bin/bash -c "/sbin/mount_smbfs -N //' +
+      myuser + ':' + mypass + '@' + myshare + ' ' + mymountpoint + '"'
   else
-    cmd := '/bin/bash -c "/sbin/mount_smbfs -N //' + myuser+':'+mypass+'@'+myshare+' '+mymountpoint+'"';
-    //cmd := '/bin/bash -c "/sbin/mount_smbfs -N //' +mydomain+'\;'+ myuser+':'+mypass+'@'+myshare+' '+mymountpoint+'"';
+    cmd := '/bin/bash -c "/sbin/mount_smbfs -N //' +
+      myuser + ':' + mypass + '@' + myshare + ' ' + mymountpoint + '"';
+  //cmd := '/bin/bash -c "/sbin/mount_smbfs -N //' +mydomain+'\;'+ myuser+':'+mypass+'@'+myshare+' '+mymountpoint+'"';
 
-  LogDatei.DependentAdd('calling: '+cmd,LLNotice);
-  if not RunCommandAndCaptureOut(cmd, True, TXStringlist(outlines), report,
-    SW_HIDE, ExitCode) then
-  begin
-    LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
-    Result := -1;
-  end
-  else
-  begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-    LogDatei.log('', LLDebug);
-    LogDatei.log('output:', LLDebug);
-    LogDatei.log('--------------', LLDebug);
-    for i := 0 to outlines.Count - 1 do
+  LogDatei.DependentAdd('calling: ' + cmd, LLNotice);
+  //if not RunCommandAndCaptureOut(cmd, True, TXStringlist(outlines), report,
+  //if not RunCommandAndCaptureOut(cmd, True, outlines, report,
+  {$IFDEF OPSISCRIPT}
+  if not RunCommandAndCaptureOut(cmd, True, TXStringlist(outlines),
+    report, SW_HIDE, ExitCode) then
+      {$ELSE OPSISCRIPT}
+    if not RunCommandAndCaptureOut(cmd, True, outlines, report, SW_HIDE, ExitCode) then
+      {$ENDIF OPSISCRIPT}
     begin
-      LogDatei.log(outlines.strings[i], LLDebug);
+      LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
+      Result := -1;
+    end
+    else
+    begin
+      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+      LogDatei.log('', LLDebug);
+      LogDatei.log('output:', LLDebug);
+      LogDatei.log('--------------', LLDebug);
+      for i := 0 to outlines.Count - 1 do
+      begin
+        LogDatei.log(outlines.strings[i], LLDebug);
+      end;
+      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+      LogDatei.log('', LLDebug);
+      Result := ExitCode;
     end;
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-    LogDatei.log('', LLDebug);
-    Result := ExitCode;
-  end;
   outlines.Free;
 end;
 
-function umount(mymountpoint : string) : integer;
+function umount(mymountpoint: string): integer;
 var
   cmd, report: string;
-  outlines: TStringlist;
+  outlines: TStringList;
   ExitCode: longint;
   i: integer;
 begin
   outlines := TStringList.Create;
   Result := -1;
-  cmd := '/bin/bash -c "/sbin/umount ' +mymountpoint+'"';
-  LogDatei.log('calling: '+cmd,LLNotice);
-  if not RunCommandAndCaptureOut(cmd, True, TXStringlist(outlines), report,
-    SW_HIDE, ExitCode) then
-  begin
-    LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
-    Result := -1;
-  end
-  else
-  begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-    LogDatei.log('', LLDebug);
-    LogDatei.log('output:', LLDebug);
-    LogDatei.log('--------------', LLDebug);
-    for i := 0 to outlines.Count - 1 do
+  cmd := '/bin/bash -c "/sbin/umount ' + mymountpoint + '"';
+  LogDatei.log('calling: ' + cmd, LLNotice);
+  //if not RunCommandAndCaptureOut(cmd, True, TXStringlist(outlines), report,
+  //if not RunCommandAndCaptureOut(cmd, True, outlines, report,
+  {$IFDEF OPSISCRIPT}
+  if not RunCommandAndCaptureOut(cmd, True, TXStringlist(outlines),
+    report, SW_HIDE, ExitCode) then
+      {$ELSE OPSISCRIPT}
+    if not RunCommandAndCaptureOut(cmd, True, outlines, report, SW_HIDE, ExitCode) then
+      {$ENDIF OPSISCRIPT}
     begin
-      LogDatei.log(outlines.strings[i], LLDebug);
+      LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
+      Result := -1;
+    end
+    else
+    begin
+      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+      LogDatei.log('', LLDebug);
+      LogDatei.log('output:', LLDebug);
+      LogDatei.log('--------------', LLDebug);
+      for i := 0 to outlines.Count - 1 do
+      begin
+        LogDatei.log(outlines.strings[i], LLDebug);
+      end;
+      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+      LogDatei.log('', LLDebug);
+      Result := ExitCode;
     end;
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-    LogDatei.log('', LLDebug);
-    Result := ExitCode;
-  end;
   outlines.Free;
 end;
 

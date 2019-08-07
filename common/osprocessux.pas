@@ -8,11 +8,11 @@ uses
   {$IFDEF OPSISCRIPT}
   osfunc,
   {$IFDEF GUI}
-  graphics,
-  forms,
+  Graphics,
+  Forms,
   {$ENDIF GUI}
   {$ENDIF OPSISCRIPT}
-oslog,
+  oslog,
   Process,
   Classes,
   SysUtils;
@@ -35,20 +35,22 @@ const
 
 
 {$IFDEF OPSISCRIPT}
-function RunCommandCaptureOutGetOutlist(command : string) : TXStringlist;
-function RunCommandCaptureOutGetExitcode(command : string) : longint;
+function RunCommandCaptureOutGetOutlist(command: string): TXStringlist;
+function RunCommandCaptureOutGetExitcode(command: string): longint;
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TXStringList;
   var report: string; showcmd: integer; var ExitCode: longint): boolean; overload;
 
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TXStringList;
-  var report: string; showcmd: integer; var ExitCode: longint;showoutput:boolean): boolean;   overload;
+  var report: string; showcmd: integer; var ExitCode: longint;
+  showoutput: boolean): boolean;
+  overload;
 
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TXStringList;
   var report: string; showcmd: integer; var ExitCode: longint;
-  showoutput:boolean; logleveloffset : integer): boolean;   overload;
+  showoutput: boolean; logleveloffset: integer): boolean; overload;
 
 {$ELSE OPSISCRIPT}
 function RunCommandAndCaptureOut
@@ -56,15 +58,16 @@ function RunCommandAndCaptureOut
   var report: string; showcmd: integer; var ExitCode: longint): boolean; overload;
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TStringList;
-  var report: string; showcmd: integer; var ExitCode: longint;showoutput:boolean): boolean; overload;
+  var report: string; showcmd: integer; var ExitCode: longint;
+  showoutput: boolean): boolean; overload;
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TStringList;
-  var report: string; showcmd: integer; var ExitCode: longint;showoutput:boolean;
-  logleveloffset : integer): boolean;
+  var report: string; showcmd: integer; var ExitCode: longint; showoutput: boolean;
+  logleveloffset: integer): boolean;
 {$ENDIF OPSISCRIPT}
 
-function getCommandResult(cmd : string): string;  overload;
-function getCommandResult(cmd : string; var exitcode : longint): string;  overload;
+function getCommandResult(cmd: string): string; overload;
+function getCommandResult(cmd: string; var exitcode: longint): string; overload;
 
 implementation
 
@@ -72,64 +75,62 @@ implementation
   {$IFDEF GUI}
 uses
   osshowsysinfo;
+
   {$ENDIF GUI}
   {$ENDIF OPSISCRIPT}
 
 procedure ProcessMess;
 begin
    {$IFDEF GUI}
-   Application.ProcessMessages;
+  Application.ProcessMessages;
    {$ENDIF GUI}
 end;
 
 {$IFDEF OPSISCRIPT}
 
-function RunCommandCaptureOutGetOutlist(command : string) : TXStringlist;
-Var
- commandline : String='';
- //result: TXStringList;
- filename : String='';
- parameters : String='';
- report : String='';
- errorinfo : String='';
- i : integer=0;
- exitcode : longint;
+function RunCommandCaptureOutGetOutlist(command: string): TXStringlist;
+var
+  commandline: string = '';
+  //result: TXStringList;
+  filename: string = '';
+  parameters: string = '';
+  report: string = '';
+  errorinfo: string = '';
+  i: integer = 0;
+  exitcode: longint;
 begin
-  result := TXStringList.Create;
+  Result := TXStringList.Create;
   //runAs := traInvoker;
   //OldNumberOfErrors := LogDatei.NumberOfErrors;
   //OldNumberOfWarnings := LogDatei.NumberOfWarnings;
 
   FileName := '/bin/bash';
-  Parameters := Parameters+' -c "' + command + ' || exit $?"';
+  Parameters := Parameters + ' -c "' + command + ' || exit $?"';
 
-  commandline := FileName + ' ' +trim(Parameters);
+  commandline := FileName + ' ' + trim(Parameters);
 
-  LogDatei.log ('Executing ' + commandline, LLDebug2);
+  LogDatei.log('Executing ' + commandline, LLDebug2);
 
-  if not RunCommandAndCaptureOut
-     (commandline,
-      true,
-      result, report, SW_Minimize, exitcode,false,2)
-  then
-  Begin
+  if not RunCommandAndCaptureOut(commandline, True,
+    Result, report, SW_Minimize, exitcode, False, 2) then
+  begin
     LogDatei.log('Error: ' + Report, LLcritical);
     //FExtremeErrorLevel := LevelFatal;
     //scriptstopped := true;
-    result.Clear;
-  End
+    Result.Clear;
+  end;
 end;
 
-function RunCommandCaptureOutGetExitcode(command : string) : longint;
-Var
- commandline : String='';
- output: TXStringList;
- filename : String='';
- parameters : String='';
- report : String='';
- errorinfo : String='';
- i : integer=0;
- exitcode : longint;
+function RunCommandCaptureOutGetExitcode(command: string): longint;
+var
+  commandline: string = '';
+  output: TXStringList;
+  filename: string = '';
+  parameters: string = '';
+  report: string = '';
+  errorinfo: string = '';
+  i: integer = 0;
+  exitcode: longint;
 begin
   output := TXStringList.Create;
   //runAs := traInvoker;
@@ -137,57 +138,57 @@ begin
   //OldNumberOfWarnings := LogDatei.NumberOfWarnings;
 
   FileName := '/bin/bash';
-  Parameters := Parameters+' -c "' + command + ' || exit $?"';
+  Parameters := Parameters + ' -c "' + command + ' || exit $?"';
 
-  commandline := FileName + ' ' +trim(Parameters);
+  commandline := FileName + ' ' + trim(Parameters);
 
-  LogDatei.log ('Executing ' + commandline, LLDebug2);
+  LogDatei.log('Executing ' + commandline, LLDebug2);
 
-  if not RunCommandAndCaptureOut
-     (commandline,
-      true,
-      output, report, SW_Minimize, exitcode)
-  then
-  Begin
+  if not RunCommandAndCaptureOut(commandline, True,
+    output, report, SW_Minimize, exitcode) then
+  begin
     LogDatei.log('Error: ' + Report, LLcritical);
     //FExtremeErrorLevel := LevelFatal;
     //scriptstopped := true;
-    result := exitcode;
-  End
+    Result := exitcode;
+  end
   else
   begin
-    LogDatei.log ('output:', LLDebug2);
-    LogDatei.log ('--------------', LLDebug2);
-    for i := 0 to output.count-1 do
+    LogDatei.log('output:', LLDebug2);
+    LogDatei.log('--------------', LLDebug2);
+    for i := 0 to output.Count - 1 do
     begin
-     LogDatei.log (output.strings[i], LLDebug2);
+      LogDatei.log(output.strings[i], LLDebug2);
     end;
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-    LogDatei.log ('', LLDebug2);
-    result := exitcode;
+    LogDatei.log('', LLDebug2);
+    Result := exitcode;
   end;
- output.Free;
+  output.Free;
 end;
 
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TXStringList;
   var report: string; showcmd: integer; var ExitCode: longint): boolean;
 begin
-  result := RunCommandAndCaptureOut(cmd, catchOut, outlines, report, showcmd, ExitCode, false);
+  Result := RunCommandAndCaptureOut(cmd, catchOut, outlines, report,
+    showcmd, ExitCode, False);
 end;
 
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TXStringList;
-  var report: string; showcmd: integer; var ExitCode: longint;showoutput:boolean): boolean;
+  var report: string; showcmd: integer; var ExitCode: longint;
+  showoutput: boolean): boolean;
 begin
-  result := RunCommandAndCaptureOut(cmd, catchOut, outlines, report, showcmd, ExitCode, showoutput,0);
+  Result := RunCommandAndCaptureOut(cmd, catchOut, outlines, report,
+    showcmd, ExitCode, showoutput, 0);
 end;
 
 
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TXStringList;
-  var report: string; showcmd: integer; var ExitCode: longint;showoutput:boolean;
-  logleveloffset : integer): boolean;
+  var report: string; showcmd: integer; var ExitCode: longint; showoutput: boolean;
+  logleveloffset: integer): boolean;
 
 const
   ReadBufferSize = 2048;
@@ -213,20 +214,21 @@ begin
       FpcProcess.Options := [poUsePipes, poStderrToOutput];
       FpcProcess.ShowWindow := swoMinimize;
       FpcProcess.Execute;
-      if Logdatei <> nil then Logdatei.log('RunCommandAndCaptureOut: started: ' + cmd, LLdebug3);
+      if Logdatei <> nil then
+        Logdatei.log('RunCommandAndCaptureOut: started: ' + cmd, LLdebug3);
       {$IFDEF GUI}
       if showoutput then
       begin
         //CreateSystemInfo;
         SystemInfo := TSystemInfo.Create(nil);
-        SystemInfo.Memo1.Color:= clBlack;
+        SystemInfo.Memo1.Color := clBlack;
         SystemInfo.Memo1.Font.Color := clWhite;
-        SystemInfo.Memo1.Lines.clear;
-        systeminfo.BitBtn1.Enabled:= false;
-        systeminfo.Label1.Caption:='Executing: '+cmd;
+        SystemInfo.Memo1.Lines.Clear;
+        systeminfo.BitBtn1.Enabled := False;
+        systeminfo.Label1.Caption := 'Executing: ' + cmd;
         systeminfo.ShowOnTop;
         ProcessMess;
-        LogDatei.log('Start Showoutput', LLInfo+logleveloffset);
+        LogDatei.log('Start Showoutput', LLInfo + logleveloffset);
         //FBatchOberflaeche.Left:= 5;
         //FBatchOberflaeche.Top:= 5;
       end;
@@ -251,7 +253,7 @@ begin
             //Write('.')
             M.SetSize(BytesRead);
             outpart.LoadFromStream(M);
-            outlines.Text := outlines.Text+outpart.Text;
+            outlines.Text := outlines.Text + outpart.Text;
             {$IFDEF GUI}
             if showoutput then
             begin
@@ -294,7 +296,7 @@ begin
       //Logdatei.DependentAdd('RunCommandAndCaptureOut: -- executed --', LLdebug2);
       //WriteLn('-- executed --');
       outpart.LoadFromStream(M);
-      outlines.Text := outlines.Text+outpart.Text;
+      outlines.Text := outlines.Text + outpart.Text;
       // Attention: Exitcode is exitcode of bash
       {$IFDEF GUI}
       if showoutput then
@@ -303,12 +305,13 @@ begin
         ProcessMess;
       end;
       {$ENDIF GUI}
-      if Logdatei <> nil then LogDatei.log('ExitCode ' + IntToStr(exitCode), LLInfo+logleveloffset);
+      if Logdatei <> nil then
+        LogDatei.log('ExitCode ' + IntToStr(exitCode), LLInfo + logleveloffset);
     except
       on e: Exception do
       begin
-            if Logdatei <> nil then LogDatei.log('Exception in RunCommandAndCaptureOut: ' +
-          e.message, LLError);
+        if Logdatei <> nil then
+          LogDatei.log('Exception in RunCommandAndCaptureOut: ' + e.message, LLError);
         Result := False;
       end;
     end;
@@ -319,35 +322,40 @@ begin
     {$IFDEF GUI}
     if showoutput then
     begin
-      SystemInfo.free; SystemInfo := nil;
+      SystemInfo.Free;
+      SystemInfo := nil;
       //FBatchOberflaeche.BringToFront;
       //FBatchOberflaeche.centerWindow;
       ProcessMess;
-      if Logdatei <> nil then LogDatei.log('Stop Showoutput', LLInfo+logleveloffset);
+      if Logdatei <> nil then
+        LogDatei.log('Stop Showoutput', LLInfo + logleveloffset);
     end;
     {$ENDIF GUI}
   end;
 end;
+
 {$ELSE OPSISCRIPT}
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TStringList;
   var report: string; showcmd: integer; var ExitCode: longint): boolean;
 begin
-  result := RunCommandAndCaptureOut(cmd, catchOut, outlines, report, showcmd, ExitCode, false);
+  Result := RunCommandAndCaptureOut(cmd, catchOut, outlines, report,
+    showcmd, ExitCode, False);
 end;
 
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TStringList;
-  var report: string; showcmd: integer; var ExitCode: longint;showoutput:boolean): boolean;
+  var report: string; showcmd: integer; var ExitCode: longint;
+  showoutput: boolean): boolean;
 begin
-  result := RunCommandAndCaptureOut(cmd, catchOut, outlines, report, showcmd, ExitCode, showoutput,0);
+  Result := RunCommandAndCaptureOut(cmd, catchOut, outlines, report,
+    showcmd, ExitCode, showoutput, 0);
 end;
 
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TStringList;
-  var report: string; showcmd: integer; var ExitCode: longint;showoutput:boolean;
-  logleveloffset : integer): boolean;
-
+  var report: string; showcmd: integer; var ExitCode: longint; showoutput: boolean;
+  logleveloffset: integer): boolean;
 
 const
   ReadBufferSize = 2048;
@@ -371,21 +379,22 @@ begin
       FpcProcess.Options := [poUsePipes, poStderrToOutput];
       FpcProcess.ShowWindow := swoMinimize;
       FpcProcess.Execute;
-      if Logdatei <> nil then Logdatei.log('RunCommandAndCaptureOut: started: ' + cmd, LLdebug3);
+      if Logdatei <> nil then
+        Logdatei.log('RunCommandAndCaptureOut: started: ' + cmd, LLdebug3);
       {$IFDEF GUI}
       if showoutput then
       begin
         CreateSystemInfo;
-        SystemInfo.Memo1.Color:= clBlack;
+        SystemInfo.Memo1.Color := clBlack;
         SystemInfo.Memo1.Font.Color := clWhite;
-        SystemInfo.Memo1.Lines.clear;
-        systeminfo.BitBtn1.Enabled:= false;
-        systeminfo.Label1.Caption:='Executing: '+cmd;
+        SystemInfo.Memo1.Lines.Clear;
+        systeminfo.BitBtn1.Enabled := False;
+        systeminfo.Label1.Caption := 'Executing: ' + cmd;
         systeminfo.ShowOnTop;
         ProcessMess;
-        LogDatei.log('Start Showoutput', LLInfo+logleveloffset);
-        FBatchOberflaeche.Left:= 5;
-        FBatchOberflaeche.Top:= 5;
+        LogDatei.log('Start Showoutput', LLInfo + logleveloffset);
+        FBatchOberflaeche.Left := 5;
+        FBatchOberflaeche.Top := 5;
       end;
       {$ENDIF GUI}
 
@@ -461,12 +470,13 @@ begin
       end;
       //WriteLn('-- end --');
       // Attention: Exitcode is exitcode of bash
-          if Logdatei <> nil then LogDatei.log('ExitCode ' + IntToStr(exitCode), LLInfo+logleveloffset);
+      if Logdatei <> nil then
+        LogDatei.log('ExitCode ' + IntToStr(exitCode), LLInfo + logleveloffset);
     except
       on e: Exception do
       begin
-            if Logdatei <> nil then LogDatei.log('Exception in RunCommandAndCaptureOut: ' +
-          e.message, LLError);
+        if Logdatei <> nil then
+          LogDatei.log('Exception in RunCommandAndCaptureOut: ' + e.message, LLError);
         Result := False;
       end;
     end;
@@ -477,33 +487,36 @@ begin
     {$IFDEF GUI}
     if showoutput then
     begin
-      SystemInfo.free; SystemInfo := nil;
+      SystemInfo.Free;
+      SystemInfo := nil;
       FBatchOberflaeche.BringToFront;
       FBatchOberflaeche.centerWindow;
       ProcessMess;
-      if Logdatei <> nil then LogDatei.log('Stop Showoutput', LLInfo+logleveloffset);
+      if Logdatei <> nil then
+        LogDatei.log('Stop Showoutput', LLInfo + logleveloffset);
     end;
     {$ENDIF GUI}
   end;
 end;
+
 {$ENDIF OPSISCRIPT}
 
-function getCommandResult(cmd : string): string;
+function getCommandResult(cmd: string): string;
 var
-  exitcode : longint;
+  exitcode: longint;
 begin
-  result := getCommandResult(cmd, exitcode);
+  Result := getCommandResult(cmd, exitcode);
 end;
 
 
 
-function getCommandResult(cmd : string; var exitcode : longint): string;
+function getCommandResult(cmd: string; var exitcode: longint): string;
 var
   report: string;
   {$IFDEF OPSISCRIPT}
   outlines: TXStringlist;
   {$ELSE OPSISCRIPT}
-  outlines: TStringlist;
+  outlines: TStringList;
   {$ENDIF OPSISCRIPT}
   //ExitCode: longint;
   i: integer;
@@ -513,29 +526,36 @@ begin
   {$ELSE OPSISCRIPT}
   outlines := TStringList.Create;
   {$ENDIF OPSISCRIPT}
-  result := '';
-  if not RunCommandAndCaptureOut(cmd, True, outlines, report,
-    SW_HIDE, ExitCode,false,2) then
+  Result := '';
+  if not RunCommandAndCaptureOut(cmd, True, outlines, report, SW_HIDE,
+    ExitCode, False, 2) then
   begin
-    if Logdatei <> nil then LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
+    if Logdatei <> nil then
+      LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
   end
   else
   begin
-    if Logdatei <> nil then LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-    if Logdatei <> nil then LogDatei.log('', LLDebug2);
-    if Logdatei <> nil then LogDatei.log('output:', LLDebug2);
-    if Logdatei <> nil then LogDatei.log('--------------', LLDebug2);
+    if Logdatei <> nil then
+      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+    if Logdatei <> nil then
+      LogDatei.log('', LLDebug2);
+    if Logdatei <> nil then
+      LogDatei.log('output:', LLDebug2);
+    if Logdatei <> nil then
+      LogDatei.log('--------------', LLDebug2);
     for i := 0 to outlines.Count - 1 do
     begin
-      if Logdatei <> nil then LogDatei.log(outlines.strings[i], LLDebug2);
-      result := outlines.strings[i];
+      if Logdatei <> nil then
+        LogDatei.log(outlines.strings[i], LLDebug2);
+      Result := outlines.strings[i];
     end;
-    if Logdatei <> nil then LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-    if Logdatei <> nil then LogDatei.log('', LLDebug2);
+    if Logdatei <> nil then
+      LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+    if Logdatei <> nil then
+      LogDatei.log('', LLDebug2);
   end;
   outlines.Free;
 end;
 
 
 end.
-
