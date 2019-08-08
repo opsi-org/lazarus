@@ -21162,7 +21162,7 @@ begin
                   if remaining = '' then
                   begin
                     FExtremeErrorLevel := LevelFatal;
-                   LogDatei.log('Error level set to fatal', LLCritical);
+                    LogDatei.log('Error level set to fatal', LLCritical);
                     ActionResult := tsrFatalError;
                     LogDatei.ActionProgress:=Parameter;
                     scriptstopped := true;
@@ -21186,8 +21186,19 @@ begin
                   End
                   else
                   begin
+                    EvaluateString (remaining, remaining, Parameter, infosyntaxerror);
+                    if remaining = '' then
+                    begin
+                      LogDatei.log('Set: Exit Script as successful', LLnotice);
+                      ActionResult := tsrExitProcess;
+                      LogDatei.ActionProgress:=Parameter;
+                      scriptstopped := true;
+                      //NestLevel:= NestingLevel;
+                      //ActLevel:= NestLevel;
+                    end
+                    else
                         ActionResult
-                        := reportError (Sektion, i, Sektion.strings [i-1], ' no parameter expected');
+                        := reportError (Sektion, i, Sektion.strings [i-1], ' no or one parameter expected');
                   end;
 
                 tsSetNoUpdate:

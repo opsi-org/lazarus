@@ -4777,7 +4777,7 @@ begin
       if ActionStr = 'setup' then
       begin
         //successful after setup
-        ProductOnClient_update('',
+        ProductOnClient_update(Progress,
           tar4Successful,
           tac4None,
           ttc4Installed,
@@ -4787,7 +4787,7 @@ begin
       else if ActionStr = 'update' then
       begin
         //successful after update
-        ProductOnClient_update('',
+        ProductOnClient_update(Progress,
           tar4Successful,
           tac4None,
           ttc4Installed,
@@ -4797,7 +4797,7 @@ begin
       else if ActionStr = 'uninstall' then
       begin
         //successful after uninstall
-        ProductOnClient_update('',
+        ProductOnClient_update(Progress,
           tar4Successful,
           tac4None,
           ttc4Forbidden,
@@ -4807,7 +4807,7 @@ begin
       else if ActionStr = 'always' then
       begin
         //successful after always
-        ProductOnClient_update('',
+        ProductOnClient_update(Progress,
           tar4Successful,
           tac4Always,
           ttc4Always,
@@ -4817,7 +4817,7 @@ begin
       else if ActionStr = 'once' then
       begin
         //successful after Once
-        ProductOnClient_update('',
+        ProductOnClient_update(Progress,
           tar4Successful,
           tac4None,
           ttc4Forbidden,
@@ -4827,7 +4827,7 @@ begin
       else if ActionStr = 'custom' then
       begin
         //successful after Custom
-        ProductOnClient_update('',
+        ProductOnClient_update(Progress,
           tar4Successful,
           tac4None,
           ttc4undefined,
