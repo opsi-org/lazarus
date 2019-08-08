@@ -62,9 +62,9 @@ type
   { TFormOpsiClientKiosk }
 
   TFormOpsiClientKiosk = class(TForm)
- (******************************)
- (*         Fields             *)
- (******************************)
+ (*----------------------------*)
+ (*         Attributes         *)
+ (*----------------------------*)
     (* DataSources *)
     DataSourceProductDependencies: TDataSource;
     DataSourceProductData: TDataSource;
@@ -75,17 +75,17 @@ type
     (* ToolBar *)
     PanelToolbar: TPanel;//container for toolbar components
     SpeedButtonExpertMode: TSpeedButton;//switch to expert mode
-     {Buttons to filter products}
+     { Buttons to filter products }
     SpeedButtonAll: TSpeedButton;//show all products
     SpeedButtonUpdates: TSpeedButton;// show only products where an update is available
     SpeedButtonNotInstalled: TSpeedButton;//show products not installed
     SpeedButtonActions: TSpeedButton;//show products with action requests
-     {Panel search}
+     { Panel search }
     PanelSearch: TPanel;//container for search components
     EditSearch: TEdit;
     ImageViewmag: TImage;
     SpeedButtonClearSearchEdit: TSpeedButton;
-     {Info}
+     { Info }
     BitBtnInfo: TBitBtn;//show info about opsiclientkiosk
     (* Expert mode *)
     PanelExpertMode: TPanel;//container for expert mode components
@@ -150,22 +150,27 @@ type
     (* StatusBars *)
     StatusBar1: TStatusBar;
 
-  (******************************)
+  (*----------------------------*)
   (*         Methods            *)
-  (******************************)
+  (*----------------------------*)
+    { BItBtn }
     procedure BitBtnInfoClick(Sender: TObject);
     procedure BitBtnShowActionClick(Sender: TObject);
     procedure BitBtnStoreActionClick(Sender: TObject);
     procedure BitBtnToggleViewClick(Sender: TObject);
+    procedure BitBtnCancelClick(Sender: TObject);
+    { ButtonSoftware }
     procedure ButtonSoftwareBackClick(Sender: TObject);
     procedure ButtonSoftwareInstallClick(Sender: TObject);
     procedure ButtonSoftwareUninstallClick(Sender: TObject);
     procedure ButtonSoftwareUpdateClick(Sender: TObject);
+    { DBComboBox1 }
     procedure DBComboBox1Change(Sender: TObject);
     procedure DBComboBox1Click(Sender: TObject);
     procedure DBComboBox1Enter(Sender: TObject);
     procedure DBComboBox1Exit(Sender: TObject);
     procedure DBComboBox1MouseEnter(Sender: TObject);
+    { DBGrid1 }
     procedure DBGrid1CellClick(Column: TColumn);
     procedure DBGrid1ColExit(Sender: TObject);
     procedure DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -178,10 +183,13 @@ type
     procedure FormActivate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    { RadioGroup }
     procedure GrouplistEnter(Sender: TObject);
     procedure RadioGroupViewSelectionChanged(Sender: TObject);
+    { ScrollBoxAllTiles }
     procedure ScrollBoxAllTilesMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
+    { SpeedButtons }
     procedure SpeedButtonClearSearchEditClick(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure SpeedButtonActionsClick(Sender: TObject);
@@ -189,39 +197,39 @@ type
     procedure SpeedButtonNotInstalledClick(Sender: TObject);
     procedure SpeedButtonExpertModeClick(Sender: TObject);
     procedure SpeedButtonUpdatesClick(Sender: TObject);
-    procedure Terminate;
-    procedure BitBtnCancelClick(Sender: TObject);
-    procedure ReloadDataFromServer(MyClientID:String);
     procedure SpeedButtonAllClick(Sender: TObject);
     procedure SpeedButtonViewListClick(Sender: TObject);
     procedure SpeedButtonViewStoreClick(Sender: TObject);
-    function GetUserName_:string;
-    { Inits at Start }
-    function InitLogging(const LogFileName, CallingMethod: string; MyLogLevel:integer): boolean;
-    procedure InitDBGrids;
-    procedure LoadSkinForTitle(SkinPath: string);
-    procedure BuildProductTiles(var fArrayProductPanels:TPanels; const OwnerName:string);
-    {Search}
+    { EditSearch }
     procedure EditSearchChange(Sender: TObject);
     procedure EditSearchEnter(Sender: TObject);
-    procedure SearchProducts;
-    { Set actions}
-    procedure SetActionRequest(Request:String; Message:String; OnDemand:boolean);
-    function GetProductPanelByProductID(const ProductID:String):TProductPanel;
-    { Set views: List and Tiles }
-    procedure SetView;
-    procedure SetListView;
-    procedure SetTilesView;
-  private
+   private
     { private declarations }
     SoftwareOnDemand : boolean;
     SelectedPanelIndex : integer;  //TileIndex e.g. Tag
     SelectedProduct : String; //ProductID
     FilteredProductIDs : TStringList;
-    ProductPanelsAddr :TStringList;
     StartUpDone : boolean;
     ArrayProductPanels: TPanels;
-  public
+    function GetUserName_:string;
+     { Inits at Start }
+    function InitLogging(const LogFileName, CallingMethod: string; MyLogLevel:integer): boolean;
+    procedure InitDBGrids;
+    procedure LoadSkinForTitle(SkinPath: string);
+    procedure BuildProductTiles(var fArrayProductPanels:TPanels; const OwnerName:string);
+    { Set views: List and Tiles }
+    procedure SetView;
+    procedure SetListView;
+    procedure SetTilesView;
+    { Search }
+    procedure SearchProducts;
+    { Set actions}
+    procedure SetActionRequest(Request:String; Message:String; OnDemand:boolean);
+    function GetProductPanelByProductID(const ProductID:String):TProductPanel;
+    { Reload data}
+    procedure ReloadDataFromServer(MyClientID:String);
+    procedure Terminate;
+   public
     { public declarations }
   end;
 
@@ -376,7 +384,7 @@ begin
     LabelAction := TLabel.Create(self);
     with LabelAction do begin
       Parent := self;
-      Caption := '';//'Action: none';
+      Caption := 'Action: none';
       Font.Italic := True;
       AutoSize:= False;
       Alignment := taCenter;
@@ -555,6 +563,7 @@ begin
       Top := LabelName.Top + LabelName.Height + 3;
       Left := 0;
       Width := self.Width;
+      Caption := 'LabelAction';
       //Width := self.Height-4;
     end;
     myini.Free;
@@ -685,8 +694,7 @@ begin
       fArrayProductPanels[counter].Name:= 'Panel' + IntToStr(counter);
       fArrayProductPanels[counter].ProductID := ProductID;
       if DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString
-          <> '' then
-        fArrayProductPanels[counter].LabelAction.Caption := 'Action: '
+        <> '' then fArrayProductPanels[counter].LabelAction.Caption := 'Action: '
           + DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString
       else fArrayProductPanels[counter].LabelAction.Caption :=
              DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString;
@@ -790,7 +798,8 @@ begin
     DataSourceProductData.Edit;
     DataModuleOCK.SQLQueryProductData.First;
   end;
-  FormOpsiClientKiosk.NotebookProducts.PageIndex:= 0
+  BitBtnStoreAction.Visible:= True;
+  NotebookProducts.PageIndex:= 0
 end;
 
 procedure TFormOpsiClientKiosk.SetTilesView;
@@ -813,15 +822,10 @@ begin
     FilteredProductIDs.Sort;
     for i := 0 to Length(ArrayProductPanels)-1 do
     begin
-      if DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString <> '' then
-        ArrayProductPanels[i].LabelAction.Caption := 'Action: '
-          + DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString;
       If FilteredProductIDs.IndexOf(ArrayProductPanels[i].ProductID) <> -1  //ProductID within FilteredProductIDs?
-      then ArrayProductPanels[i].Visible := True
+       then ArrayProductPanels[i].Visible := True
       else ArrayProductPanels[i].Visible := False;
-
     end;
-
     //Alternative:
     {for i := 0 to FlowPanelAllTiles.ControlCount -1 do
     begin
@@ -833,19 +837,14 @@ begin
           else Visible := False;
        end;
     end;}
-
   end
   else
   { Set all products to visible }
   begin
     for i := 0 to Length(ArrayProductPanels)-1 do
     begin
-      if DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString <> '' then
-        ArrayProductPanels[i].LabelAction.Caption := 'Action: '
-          + DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString;
       ArrayProductPanels[i].Visible := True;
     end;
-
     //Alternative:
     {for i := 0 to FlowPanelAllTiles.ControlCount -1 do
       if FlowPanelAllTiles.ControlList.Items[i].Control is TProductPanel then
@@ -853,7 +852,8 @@ begin
   end;
   DataModuleOCK.SQLQueryProductData.First;
   PanelProductDetail.Height:= 0;
-  FormOpsiClientKiosk.NotebookProducts.PageIndex:= 1;
+  BitBtnStoreAction.Visible:= False;
+  NotebookProducts.PageIndex:= 1;
 end;
 
 {procedure Tmythread2.Execute;
@@ -997,7 +997,6 @@ var
   counter, i: integer;
 begin
   FilteredProductIDs.Free;
-  ProductPanelsAddr.Free;
   DataModuleOCK.Free;
   OCKOpsiConnection.Free;
   try
@@ -1125,12 +1124,19 @@ end;
 
 
 procedure TFormOpsiClientKiosk.DBComboBox1Change(Sender: TObject);
+var
+  Product : TProductPanel;
 begin
   //DataModuleOCK.SQLQueryProductData.Edit;
   if (DBComboBox1.Text <> '') and (not DataModuleOCK.SQLQueryProductData.EOF) then
   begin
     DataModuleOCK.SQLQueryProductData.Post;
-  //DataModuleOCK.SQLQueryProductData.FieldByName('actionrequest').AsString := 'none';
+    //if DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString
+      //<> '' then
+      Product := GetProductPanelByProductID(DataModuleOCK.SQLQueryProductData.FieldByName('ProductID').AsString);
+      Product.LabelAction.Caption := 'Action: '
+         + DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString;
+    //DataModuleOCK.SQLQueryProductData.FieldByName('actionrequest').AsString := 'none';
     //DataModuleOCK.SQLQueryProductData.Edit;
     //DataSourceProductData.Edit;
   end
@@ -1217,7 +1223,6 @@ end;
 procedure TFormOpsiClientKiosk.BitBtnStoreActionClick(Sender: TObject);
 begin
   screen.Cursor := crHourGlass;
-  SpeedButtonActions.Down:= True;
   try
     DataModuleOCK.SQLQueryProductData.Filtered := False;
     DataModuleOCK.SQLQueryProductData.Filter := 'ActionRequest  <> ""';
@@ -1236,6 +1241,8 @@ begin
        installdlg.Finstalldlg.Memo1.Text := rsNoActionsFound;
     installdlg.Finstalldlg.Show;
   finally
+    SpeedButtonActions.Down:= True;
+    SetView;
     Screen.Cursor := crDefault;
   end;
 end;
@@ -1309,15 +1316,16 @@ begin
   { Expert mode }
   if SpeedButtonExpertMode.Down then
   begin
-    PanelExpertMode.Visible := True;
-    //RadioGroupView.ItemIndex := 0;
-    //SetListView;
-    BitBtnStoreAction.Caption := rsStoreActions;
-    BitBtnStoreAction.Hint := rsStoreActionsHint;
-    // localize RadioGroupView
+    { localize RadioGroupView }
     RadioGroupView.Items[0] := rsViewList;
     RadioGroupView.Items[1] := rsViewTiles;
-    // List view
+    { Expert view }
+    BitBtnStoreAction.Caption := rsStoreActions;
+    BitBtnStoreAction.Hint := rsStoreActionsHint;
+    if RadioGroupView.ItemIndex = RadioGroupView.Items.IndexOf('List') then
+      BitBtnStoreAction.Visible := True
+    else BitBtnStoreAction.Visible := False;
+    PanelExpertMode.Visible := True;
     NotebookProducts.PageIndex := RadioGroupView.ItemIndex;
   end
   else
@@ -1658,7 +1666,6 @@ begin
   end;
   //ShowMessage('Form Create');
   FilteredProductIDs := TStringList.Create;
-  ProductPanelsAddr := TStringList.Create;
   NotebookProducts.PageIndex := 1;  //tiles
   PanelProductDetail.Height := 0;
   detail_visible := False;
@@ -1747,7 +1754,7 @@ procedure TFormOpsiClientKiosk.SpeedButtonAllClick(Sender: TObject);
 begin
   EditSearch.Clear;
   DataModuleOCK.SQLQueryProductData.Filtered := False;
-  TSpeedButton(Sender).Down:= True;
+  SpeedButtonAll.Down:= True;
   SetView;
 end;
 
