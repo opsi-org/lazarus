@@ -86,8 +86,8 @@ begin
   myservice_url := myini.ReadString('config_service', 'url', '');
   myclientid := myini.ReadString('global', 'host_id', '');
   myhostkey := myini.ReadString('global', 'opsi_host_key', '');
-  //myloglevel := myini.ReadInteger('global', 'log_level', 5);
-  myloglevel := 7;
+  myloglevel := myini.ReadInteger('global', 'log_level', 5);
+  //myloglevel := 7;
   myini.Free;
 end;
 
@@ -105,13 +105,13 @@ end;
 function TOpsiConnection.MyOpsiMethodCall(const method: string; parameters: array of string): string;
 var
   omc: TOpsiMethodCall;
-  errorOccured: boolean;
+  ErrorOccured: boolean;
   resultstring: string;
 begin
   Result := '';
   try
     omc := TOpsiMethodCall.Create(method, parameters);
-    resultstring := OpsiData.checkAndRetrieve(omc, errorOccured);
+    resultstring := OpsiData.checkAndRetrieve(omc, ErrorOccured);
     Result := resultstring;
   except
     on e: Exception do
@@ -177,25 +177,45 @@ var
   JSONObject1:TJSONObject;
   count :integer;
   SoftwareOnDemand: boolean;
+  version:string;
 begin
   try
+    { new data structur }
     StringJSON := MyOpsiMethodCall('getKioskProductInfosForClient', [myclientid, 'True']);
     JSONDataProductInfos := GetJSON(StringJSON).FindPath('result');
     //count := JSONDataProductInfos.Count;
     StringResult := JSONDataProductInfos.AsJSON;
     JSONObjectProducts := TJSONObject(JSONDataProductInfos.FindPath('products'));
-    count:= JSONObjectProducts.Count;
+    //count:= JSONObjectProducts.Count;
     StringResult := JSONObjectProducts.AsJSON;
-  //StringResult := JSONData.Items[0].FindPath('configStates').AsJSON;
-  //count := JSONData.Items[0].FindPath('configStates').Count;
+    //StringResult := JSONData.Items[0].FindPath('configStates').AsJSON;
+    //count := JSONData.Items[0].FindPath('configStates').Count;
     JSONObjectConfigStates := TJSONObject(JSONDataProductInfos.FindPath('configStates'));
-  //SoftwareOnDemand := JSONObjectConfigStates.Arrays['software-on-demand.kiosk.allowed'].Items[0].AsBoolean;
+    //SoftwareOnDemand := JSONObjectConfigStates.Arrays['software-on-demand.kiosk.allowed'].Items[0].AsBoolean;
     //opsiProducts := SO(StringResult);
-   except
-     //LogDatei.log('Error while GetJSONFromServer', LLDebug);
-     on EExternalException do LogDatei.log('Error while GetJSONFromServer: ExternalException', LLDebug);
-     else LogDatei.log('Error while GetJSONFromServer', LLDebug);
-   end;
+    LogDatei.log('Kiosk mode: new', LLInfo);
+  except
+    //LogDatei.log('Error while GetJSONFromServer', LLDebug);
+    on EExternalException do
+    begin
+      { old data structur }
+      ShowMessage('Kiosk mode: old');
+      LogDatei.log('GetProductsFromServer: ExternalException', LLDebug);
+      LogDatei.log('Old kiosk mode', LLInfo);
+      StringJSON := MyOpsiMethodCall('getKioskProductInfosForClient', [myclientid]);
+      JSONDataProductInfos := GetJSON(StringJSON).FindPath('result');
+      //count := JSONDataProductInfos.Count;
+      StringResult := JSONDataProductInfos.AsJSON;
+      JSONObjectProducts := TJSONObject(JSONDataProductInfos);
+      //count:= JSONObjectProducts.Count;
+      StringResult := JSONObjectProducts.AsJSON;
+    //StringResult := JSONData.Items[0].FindPath('configStates').AsJSON;
+    //count := JSONData.Items[0].FindPath('configStates').Count;
+      JSONObjectConfigStates := nil;//TJSONObject(JSONDataProductInfos.FindPath('configStates'));
+    //SoftwareOnDemand := JSONObjectConfigStates.Arrays['software-on-demand.kiosk.allowed'].Items[0].AsBoolean;
+      //opsiProducts := SO(StringResult);
+    end;
+  end;
 end;
 
 function TOpsiConnection.initConnection(const seconds: integer; var ConnectionInfo:string): boolean;
@@ -331,8 +351,10 @@ var
   i : integer;
 begin
   Result := TStringList.Create;
-  for i := 0 to JSONObjectConfigStates.Arrays[ConfigProperty].Count -1 do
-   Result.Add(JSONObjectConfigStates.Arrays[ConfigProperty].Items[i].AsString);
+  if JSONObjectConfigStates <> nil then
+    for i := 0 to JSONObjectConfigStates.Arrays[ConfigProperty].Count -1 do
+     Result.Add(JSONObjectConfigStates.Arrays[ConfigProperty].Items[i].AsString)
+  else Result.Add('True');
 end;
 
 //initialization

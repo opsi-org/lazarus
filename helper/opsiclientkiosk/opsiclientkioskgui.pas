@@ -1431,7 +1431,7 @@ begin
       //FormProgressWindow.ProgressBarDetail.StepIt;
       //FormProgressWindow.ProcessMess;
       Application.ProcessMessages;
-      OCKOpsiConnection := TOpsiConnection.Create(true, MyClientID);
+      OCKOpsiConnection := TOpsiConnection.Create(False, MyClientID);
       FormProgressWindow.LabelDataLoad.Caption := 'Connected to '+
         OCKOpsiConnection.myservice_url + ' as ' + OCKOpsiConnection.myclientid;
       StatusBar1.Panels[0].Text := 'Connected to '+
@@ -1447,7 +1447,7 @@ begin
       //FormProgressWindow.Repaint;
       Application.ProcessMessages;//FormProgressWindow.ProcessMess;
       OCKOpsiConnection.GetProductInfosFromServer;
-      ConfigState := TSTringList.Create;
+      //ConfigState := TSTringList.Create;
       ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.kiosk.allowed');
       //ShowMessage(ConfigState.Text);
       SoftwareOnDemand := StrToBool(ConfigState.Strings[0]);
