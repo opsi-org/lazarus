@@ -38,32 +38,43 @@ type
   { TOpsiConnection }
 
   TOpsiConnection = class(TObject)
-    myclientid,
-    myhostkey,
-    myerror,
-    myservice_url: string;
-    myexitcode,
-    myloglevel: integer;
-    OpsiData: TOpsi4Data;
-    opsiclientdmode : boolean;
+  private
     //opsiProducts:ISuperObject;
-    JSONDataProductInfos : TJSONData;
-    JSONObjectConfigStates,
+    JSONDataForClient : TJSONData;
     JSONObjectProducts:TJSONObject;
-    //opsiProduct:ISuperObject;
-    procedure readconf;
-    procedure readconf2;
+    JSONObjectProduct:TJSONObject;
+    JSONObjectConfigStates:TJSONObject;
     function MyOpsiMethodCall(const method: string; parameters: array of string): string;
     function MyOpsiMethodCall2(const method: string; parameters: array of string): string;
+    //opsiProduct:ISuperObject;
+    procedure GetDataFromNewDataStructure;
+    procedure GetDataFromOldDataStructure;
+    procedure ReadConfigdConf; //configd mode
+    procedure ReadClientdConf(ClientID:string); //clientd mode
+
     function initConnection(const seconds: integer; var ConnectionInfo:string): boolean;
     procedure closeConnection;
+  public
+    MyClientID,
+    MyHostkey,
+    MyError,
+    MyService_URL: string;
+    MyExitcode,
+    MyLoglevel: integer;
+    ClientdMode : boolean;
+    OpsiData: TOpsi4Data;
     procedure SetActionRequest(pid: string; request: string);
     function GetActionRequests: TStringList;
     procedure DoActionsOnDemand;
     procedure DoSingleActionOnDemand(ProductID:String);
     function GetConfigState(ConfigProperty:String):TStringList;
     procedure GetProductInfosFromServer;
-    constructor Create(clientdmode:boolean; ClientID:string);overload;
+    procedure SelectProduct(Index:integer);
+    function GetProductValueAsString(key:string):string;
+    function GetProductValueAsInteger(key:string):integer;
+    function GetProductValueAsBoolean(key:string):boolean;
+    function ProductCount:integer;
+    constructor Create(fClientdMode:boolean; const ClientID:string = '' );overload;
     destructor Destroy;override;
   end;
 
@@ -77,28 +88,28 @@ const
     'C:\Program Files (x86)\opsi.org\opsi-client-agent\opsiclientd\opsiclientd.conf';
 
 
-procedure TOpsiConnection.readconf;
+procedure TOpsiConnection.ReadConfigdConf;
 var
-  myini: TInifile;
+  MyInifile: TInifile;
 begin
   //opsiconfd mode
-  myini := TIniFile.Create(opsiclientdconf);
-  myservice_url := myini.ReadString('config_service', 'url', '');
-  myclientid := myini.ReadString('global', 'host_id', '');
-  myhostkey := myini.ReadString('global', 'opsi_host_key', '');
-  myloglevel := myini.ReadInteger('global', 'log_level', 5);
+  MyInifile := TIniFile.Create(opsiclientdconf);
+  MyService_URL := MyIniFile.ReadString('config_service', 'url', '');
+  MyClientID := MyIniFile.ReadString('global', 'host_id', '');
+  MyHostkey := MyIniFile.ReadString('global', 'opsi_host_key', '');
+  MyLoglevel := MyIniFile.ReadInteger('global', 'log_level', 5);
   //myloglevel := 7;
-  myini.Free;
+  MyInifile.Free;
 end;
 
-procedure TOpsiConnection.readconf2;
+procedure TOpsiConnection.ReadClientdConf(ClientID: string);
 begin
   // opsiclientd mode
-  myservice_url := 'https://localhost:4441/kiosk';
-  myclientid := 'pcjan.uib.local';//'jan-client01.uib.local';
+  MyClientID := ClientID;//'pcjan.uib.local';//'jan-client01.uib.local';
   //myclientid := oslog.getComputerName;
-  myhostkey := '';
-  myloglevel := 7;
+  MyService_URL := 'https://localhost:4441/kiosk';
+  MyHostkey := '';
+  MyLoglevel := 7;
 end;
 
 
@@ -150,6 +161,8 @@ begin
   end;
 end;
 
+
+
 procedure TOpsiConnection.closeConnection;
 var
   StringJSON: string;
@@ -170,52 +183,107 @@ begin
   end;
 end;
 
-procedure TOpsiConnection.GetProductInfosFromServer;
+procedure TOpsiConnection.GetDataFromNewDataStructure;
 var
   StringJSON,StringResult:string;
-  //JSONData,JSONDataResult:TJSONData;
-  JSONObject1:TJSONObject;
   count :integer;
   SoftwareOnDemand: boolean;
-  version:string;
 begin
   try
-    { new data structur }
+  { new data structur }
     StringJSON := MyOpsiMethodCall('getKioskProductInfosForClient', [myclientid, 'True']);
-    JSONDataProductInfos := GetJSON(StringJSON).FindPath('result');
+    JSONDataForClient := GetJSON(StringJSON).FindPath('result');
     //count := JSONDataProductInfos.Count;
-    StringResult := JSONDataProductInfos.AsJSON;
-    JSONObjectProducts := TJSONObject(JSONDataProductInfos.FindPath('products'));
+    //StringResult := JSONDataForClient.AsJSON;
+    JSONObjectProducts := TJSONObject(JSONDataForClient.FindPath('products'));
     //count:= JSONObjectProducts.Count;
-    StringResult := JSONObjectProducts.AsJSON;
-    //StringResult := JSONData.Items[0].FindPath('configStates').AsJSON;
-    //count := JSONData.Items[0].FindPath('configStates').Count;
-    JSONObjectConfigStates := TJSONObject(JSONDataProductInfos.FindPath('configStates'));
-    //SoftwareOnDemand := JSONObjectConfigStates.Arrays['software-on-demand.kiosk.allowed'].Items[0].AsBoolean;
-    //opsiProducts := SO(StringResult);
+    //StringResult := JSONObjectProducts.AsJSON;
+    JSONObjectConfigStates := TJSONObject(JSONDataForClient.FindPath('configStates'));
     LogDatei.log('Kiosk mode: new', LLInfo);
   except
-    //LogDatei.log('Error while GetJSONFromServer', LLDebug);
-    on EExternalException do
-    begin
-      { old data structur }
-      ShowMessage('Kiosk mode: old');
-      LogDatei.log('GetProductsFromServer: ExternalException', LLDebug);
-      LogDatei.log('Old kiosk mode', LLInfo);
-      StringJSON := MyOpsiMethodCall('getKioskProductInfosForClient', [myclientid]);
-      JSONDataProductInfos := GetJSON(StringJSON).FindPath('result');
-      //count := JSONDataProductInfos.Count;
-      StringResult := JSONDataProductInfos.AsJSON;
-      JSONObjectProducts := TJSONObject(JSONDataProductInfos);
-      //count:= JSONObjectProducts.Count;
-      StringResult := JSONObjectProducts.AsJSON;
+    LogDatei.log('Error using Kiosk mode: new', LLDebug);
+  end;
+end;
+
+procedure TOpsiConnection.GetDataFromOldDataStructure;
+var
+  StringJSON,StringResult:string;
+  count :integer;
+  SoftwareOnDemand: boolean;
+begin
+  try
+    { old data structur }
+    StringJSON := MyOpsiMethodCall('getKioskProductInfosForClient', [myclientid]);
+    JSONDataForClient := GetJSON(StringJSON).FindPath('result');
+    //count := JSONDataProductInfos.Count;
+    //StringResult := JSONDataForClient.AsJSON;
+    JSONObjectProducts := TJSONObject(JSONDataForClient);
+    //count:= JSONObjectProducts.Count;
+    //StringResult := JSONObjectProducts.AsJSON;
     //StringResult := JSONData.Items[0].FindPath('configStates').AsJSON;
     //count := JSONData.Items[0].FindPath('configStates').Count;
-      JSONObjectConfigStates := nil;//TJSONObject(JSONDataProductInfos.FindPath('configStates'));
-    //SoftwareOnDemand := JSONObjectConfigStates.Arrays['software-on-demand.kiosk.allowed'].Items[0].AsBoolean;
-      //opsiProducts := SO(StringResult);
+    JSONObjectConfigStates := nil;
+    ShowMessage('Kiosk mode: old. Update to newer opsi version to get full functionality (e.g. disable software on demand) of Opsi Kiosk.');
+    LogDatei.log('Old kiosk mode', LLInfo);
+  except
+    LogDatei.log('Error using Kiosk mode: old', LLDebug);
+  end;
+end;
+
+procedure TOpsiConnection.GetProductInfosFromServer;
+begin
+  try
+    GetDataFromNewDataStructure;
+  except
+    on EExternalException do
+    begin
+      GetDataFromOldDataStructure;
     end;
   end;
+end;
+
+procedure TOpsiConnection.SelectProduct(Index: integer);
+begin
+  JSONObjectProduct := TJSONObject(OCKOpsiConnection.JSONObjectProducts.Items[index]);
+  logdatei.log('Selected Product: ' + JSONObjectProduct.Strings['productId'], LLInfo);
+end;
+
+function TOpsiConnection.GetProductValueAsString(key: string): string;
+begin
+  if not JSONObjectProduct.Nulls[key] then
+        Result := JSONObjectProduct.Strings[key]
+  else Result := '';
+  //logdatei.log('read ' + key + ': ' + Result, LLDebug3);
+end;
+
+
+function TOpsiConnection.GetProductValueAsInteger(key: string): integer;
+begin
+  if not JSONObjectProduct.Nulls[key] then
+    Result := JSONObjectProduct.Integers[key]
+  else
+    begin
+      ShowMessage('No value found! Set' + key +  'to 0.');
+      Result := 0;
+    end;
+end;
+
+function TOpsiConnection.GetProductValueAsBoolean(key: string): boolean;
+begin
+  if not JSONObjectProduct.Nulls[key] then
+    Result := JSONObjectProduct.Booleans[key]
+  else
+    begin
+      ShowMessage('No value found! Set' + key +  'to false.');
+      Result := False;
+    end;
+end;
+
+
+
+function TOpsiConnection.ProductCount: integer;
+begin
+  Result := JSONObjectProducts.Count;
 end;
 
 function TOpsiConnection.initConnection(const seconds: integer; var ConnectionInfo:string): boolean;
@@ -270,15 +338,14 @@ begin
 end;
 
 
-constructor TOpsiConnection.Create(clientdmode:boolean; ClientID:string);overload;
+constructor TOpsiConnection.Create(fClientdMode:boolean; const ClientID:string = '');overload;
 begin
   inherited Create;
-  opsiclientdmode := clientdmode;
-  myexitcode := 0;
-  myerror := '';
-  myclientid := ClientID;
-  if opsiclientdmode then readconf2
-    else readconf;
+  ClientdMode := fClientdMode;
+  MyExitcode := 0;
+  MyError := '';
+  if ClientdMode then ReadClientdConf(ClientID)
+    else ReadConfigdConf;
   LogDatei.log('service_url=' + myservice_url, LLDebug2);
   //LogDatei.log('service_pass=' + myhostkey, LLDebug2);
   LogDatei.log('clientid=' + myclientid, LLDebug2);
@@ -295,7 +362,7 @@ end;
 
 destructor TOpsiConnection.Destroy;
 begin
-  JSONDataProductInfos.Free;
+  JSONDataForClient.Free;
   if OpsiData <> nil then FreeAndNil(OpsiData);
   inherited Destroy;
 end;
@@ -331,7 +398,7 @@ begin
 end;
 
 
-procedure TOpsiConnection.DoSingleActionOnDemand(ProductID:string);
+procedure TOpsiConnection.DoSingleActionOnDemand(ProductID: String);
 var
   resultstring:String;
 begin

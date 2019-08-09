@@ -13,8 +13,6 @@ uses
   FileUtil,
   oslog,
   opsiconnection,
-  fpjson,
-  jsonParser,
   //progresswindow,
   variants,
   dialogs,
@@ -35,6 +33,7 @@ type
     procedure OpsiProductsToDataset(SQLQuery: TSQLQuery);
     function SetActionRequestToDataset(fSelectedProduct: string; fActionRequest:string): boolean;
     procedure SQLQueryProductDataAfterPost(Dataset: TDataset);
+    function GoToProduct(fSelectedProduct:string):boolean;
   private
     { private declarations }
     procedure CreateDatabaseTables(Connection: TSQLite3Connection);
@@ -72,6 +71,16 @@ begin
       logdatei.log('Exception handled at: ' + getCallAddrStr, LLError);
       logdatei.log_exception(E,LLError);
     end;
+  end;
+end;
+
+function TDataModuleOCK.GoToProduct(fSelectedProduct: string):boolean;
+begin
+  with SQLQueryProductData do
+  begin
+    First;
+    //gefunden := Locate('ProductID', VarArrayOf([SelectedProduct]),[loCaseInsensitive]);
+    Result := Locate('ProductID',VarArrayOf([fSelectedProduct]),[loCaseInsensitive]);
   end;
 end;
 
@@ -233,7 +242,7 @@ procedure TDataModuleOCK.OpsiProductsToDataset(SQLQuery:TSQLQuery);
 var
   i: integer;
   SQLStatment: String;
-  JSONObjectProduct: TJSONObject;
+  //JSONObjectProduct: TJSONObject;
 begin
   //if SQLTransaction.Active then SQLTransaction.Active:=FALSE;
   logdatei.log('starting OpsiProductToDataset ....', LLInfo);
@@ -245,60 +254,42 @@ begin
   SQLQueryProductData.Open;
 
   { JSON to TABLE products }
-  for i := 0 to OCKOpsiConnection.JSONObjectProducts.Count - 1 do
+  for i := 0 to OCKOpsiConnection.ProductCount - 1 do
   begin
-    JSONObjectProduct := TJSONObject(OCKOpsiConnection.JSONObjectProducts.Items[i]);
-    logdatei.log('read: ' + JSONObjectProduct.Strings['productId'], LLInfo);
+    //JSONObjectProduct := TJSONObject(OCKOpsiConnection.JSONObjectProducts.Items[i]);
+    //logdatei.log('read: ' + JSONObjectProduct.Strings['productId'], LLInfo);
     //with SQLQueryProductData do
     //begin
-      SQLQueryProductData.Append;
-      if not JSONObjectProduct.Nulls['productId'] then
-        SQLQueryProductData['ProductID'] := JSONObjectProduct.Strings['productId'];
-      if not JSONObjectProduct.Nulls['productVersion'] then
-        SQLQueryProductData['ProductVersion'] := JSONObjectProduct.Strings['productVersion'];
-      if not JSONObjectProduct.Nulls['packageVersion'] then
-        SQLQueryProductData['PackageVersion'] := JSONObjectProduct.Strings['packageVersion'];
-      if not JSONObjectProduct.Nulls['productVersion'] and not JSONObjectProduct.Nulls['packageVersion'] then
-        SQLQueryProductData['VersionStr'] := JSONObjectProduct.Strings['productVersion'] + '-'
-                                            + JSONObjectProduct.Strings['packageVersion'];
-      if not JSONObjectProduct.Nulls['productName'] then
-        SQLQueryProductData['ProductName'] := JSONObjectProduct.Strings['productName'];
-      if not JSONObjectProduct.Nulls['description'] then
-        SQLQueryProductData['Description'] := JSONObjectProduct.Strings['description'];
-      if not JSONObjectProduct.Nulls['advice'] then
-        SQLQueryProductData['Advice'] := JSONObjectProduct.Strings['advice'];
-      if not JSONObjectProduct.Nulls['priority'] then
-        SQLQueryProductData['Priority'] := JSONObjectProduct.Integers['priority'];
-      if not JSONObjectProduct.Nulls['productType'] then
-        SQLQueryProductData['ProductType'] := JSONObjectProduct.Strings['productType'];
-      if not JSONObjectProduct.Nulls['hasSetup'] then
-        SQLQueryProductData['hasSetup'] := JSONObjectProduct.Booleans['hasSetup'];
-      if not JSONObjectProduct.Nulls['hasUninstall'] then
-        SQLQueryProductData['hasUninstall'] := JSONObjectProduct.Booleans['hasUninstall'];
-      if not JSONObjectProduct.Nulls['actionResult'] then
-        if JSONObjectProduct.Strings['installationStatus'] = 'not_installed' then
-          SQLQueryProductData['InstallationStatus'] := ''
-        else
-          SQLQueryProductData['InstallationStatus'] := JSONObjectProduct.Strings['installationStatus'];
-       //if JSONObjectProduct.Nulls['installedProdVer'] then ShowMessage('InstalledProdVers : Null');
-      if not JSONObjectProduct.Nulls['installedProdVer'] then
-        SQLQueryProductData['InstalledProdVer'] := JSONObjectProduct.Strings['installedProdVer'];
-      if not JSONObjectProduct.Nulls['installedPackVer'] then
-        SQLQueryProductData['InstalledPackVer'] := JSONObjectProduct.Strings['installedPackVer'];
-      if not JSONObjectProduct.Nulls['installedVerStr'] then
-        SQLQueryProductData['InstalledVerStr'] := JSONObjectProduct.Strings['installedVerStr'];
-      if not JSONObjectProduct.Nulls['actionRequest'] then
-        if JSONObjectProduct.Strings['actionRequest'] = 'none' then
-          SQLQueryProductData['ActionRequest'] := ''
-        else
-          SQLQueryProductData['ActionRequest'] := JSONObjectProduct.Strings['actionRequest'];
-      if not JSONObjectProduct.Nulls['actionResult'] then
-        SQLQueryProductData['ActionResult'] := JSONObjectProduct.Strings['actionResult'];
-      if not JSONObjectProduct.Nulls['updatePossible'] then
-        SQLQueryProductData['UpdatePossible'] := JSONObjectProduct.Booleans['updatePossible'];
-      if not JSONObjectProduct.Nulls['possibleAction'] then
-        SQLQueryProductData['PossibleAction'] := JSONObjectProduct.Strings['possibleAction'];
-    //end;
+    OCKOpsiConnection.SelectProduct(i);
+    SQLQueryProductData.Append;
+    //if not JSONObjectProduct.Nulls['productId'] then
+    SQLQueryProductData['ProductID'] := OCKOpsiConnection.GetProductValueAsString('productId');
+    SQLQueryProductData['ProductVersion'] := OCKOpsiConnection.GetProductValueAsString('productVersion');
+    SQLQueryProductData['PackageVersion'] := OCKOpsiConnection.GetProductValueAsString('packageVersion');
+    SQLQueryProductData['VersionStr'] := OCKOpsiConnection.GetProductValueAsString('productVersion') + '-'
+                                          + OCKOpsiConnection.GetProductValueAsString('packageVersion');
+    SQLQueryProductData['ProductName'] := OCKOpsiConnection.GetProductValueAsString('productName');
+    SQLQueryProductData['Description'] := OCKOpsiConnection.GetProductValueAsString('description');
+    SQLQueryProductData['Advice'] := OCKOpsiConnection.GetProductValueAsString('advice');
+    SQLQueryProductData['Priority'] := OCKOpsiConnection.GetProductValueAsInteger('priority');
+    SQLQueryProductData['ProductType'] := OCKOpsiConnection.GetProductValueAsString('productType');
+    SQLQueryProductData['hasSetup'] := OCKOpsiConnection.GetProductValueAsBoolean('hasSetup');
+    SQLQueryProductData['hasUninstall'] := OCKOpsiConnection.GetProductValueAsBoolean('hasUninstall');
+    if OCKOpsiConnection.GetProductValueAsString('installationStatus') = 'not_installed' then
+      SQLQueryProductData['InstallationStatus'] := ''
+    else
+      SQLQueryProductData['InstallationStatus'] := OCKOpsiConnection.GetProductValueAsString('installationStatus');
+    SQLQueryProductData['InstalledProdVer'] := OCKOpsiConnection.GetProductValueAsString('installedProdVer');
+    SQLQueryProductData['InstalledPackVer'] := OCKOpsiConnection.GetProductValueAsString('installedPackVer');
+    SQLQueryProductData['InstalledVerStr'] := OCKOpsiConnection.GetProductValueAsString('installedVerStr');
+    if OCKOpsiConnection.GetProductValueAsString('actionRequest') = 'none' then
+      SQLQueryProductData['ActionRequest'] := ''
+    else
+      SQLQueryProductData['ActionRequest'] := OCKOpsiConnection.GetProductValueAsString('actionRequest');
+    SQLQueryProductData['ActionResult'] := OCKOpsiConnection.GetProductValueAsString('actionResult');
+    SQLQueryProductData['UpdatePossible'] := OCKOpsiConnection.GetProductValueAsBoolean('updatePossible');
+    SQLQueryProductData['PossibleAction'] := OCKOpsiConnection.GetProductValueAsString('possibleAction');
+  //end;
   end;
   SQLQueryProductData.Close;
   SQLTransaction.Commit;
@@ -319,6 +310,7 @@ begin
       //FieldByName('ActionRequest').AsString:= fActionRequest;
       SQLQueryProductData['ActionRequest'] := fActionRequest;
       Post;
+      Result := True;
     end;
     Open;
   end;
