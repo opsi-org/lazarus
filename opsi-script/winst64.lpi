@@ -23,6 +23,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
       <RevisionNr Value="2"/>
+      <BuildNr Value="1"/>
       <StringTable Comments="Compiled with Lazarus 2.0.0 / FPC 3.0.4" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst64.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst64.exe" ProductName="opsi-script" ProductVersion="4.1.0.0"/>
     </VersionInfo>
     <BuildModes Count="4" Active="Release">
@@ -460,7 +461,7 @@
         <Filename Value="changelog.txt"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <CursorPos Y="12"/>
+        <CursorPos X="43" Y="15"/>
         <UsageCount Value="102"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -815,15 +816,15 @@
       <Unit71>
         <Filename Value="..\common\oswebservice.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="868"/>
-        <CursorPos Y="880"/>
+        <IsVisibleTab Value="True"/>
+        <WindowIndex Value="1"/>
+        <TopLine Value="2512"/>
+        <CursorPos X="76" Y="2525"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <IsVisibleTab Value="True"/>
-          <WindowIndex Value="1"/>
-          <TopLine Value="2512"/>
-          <CursorPos X="76" Y="2525"/>
+          <EditorIndex Value="1"/>
+          <TopLine Value="868"/>
+          <CursorPos Y="880"/>
         </ExtraEditor1>
         <UsageCount Value="108"/>
         <Loaded Value="True"/>
@@ -1037,7 +1038,7 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit93>
     </Units>
-    <JumpHistory Count="7" HistoryIndex="6">
+    <JumpHistory Count="6" HistoryIndex="5">
       <Position1>
         <Filename Value="changelog.txt"/>
         <Caret Line="12" Column="25"/>
@@ -1052,20 +1053,16 @@
       </Position3>
       <Position4>
         <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="2698" Column="28" TopLine="2752"/>
+        <Caret Line="302" Column="14" TopLine="287"/>
       </Position4>
       <Position5>
         <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="302" Column="14" TopLine="287"/>
+        <Caret Line="2827" Column="36" TopLine="2816"/>
       </Position5>
       <Position6>
         <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="2827" Column="36" TopLine="2816"/>
-      </Position6>
-      <Position7>
-        <Filename Value="..\common\oswebservice.pas"/>
         <Caret Line="302" Column="14" TopLine="284"/>
-      </Position7>
+      </Position6>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
