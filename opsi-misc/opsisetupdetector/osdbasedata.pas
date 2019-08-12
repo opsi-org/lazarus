@@ -10,7 +10,9 @@ uses
   {$IFDEF WINDOWS}
   osdhelper,
   shlobj,
+  winpeimagereader,
   {$ENDIF WINDOWS}
+  fileinfo,
   fpjsonrtti,
   oslog,
   RTTICtrls,
@@ -26,7 +28,7 @@ type
   // marker for add installers
   TKnownInstaller = (stAdvancedMSI, stInno, stInstallShield, stInstallShieldMSI,
     stMsi, stNsis, st7zip, st7zipsfx, stInstallAware, stMSGenericInstaller,
-    stWixToolset, stBoxStub, stSFXcab, stUnknown);
+    stWixToolset, stBoxStub, stSFXcab, stBitrock,stUnknown);
 
 
   TdetectInstaller = function(parent: TClass; markerlist: TStrings): boolean;
@@ -193,7 +195,7 @@ default: ["xenial_bionic"]
 
   TPPtype = (bool, unicode);
 
-  TPProperties = class(TCollectionItem)
+  TPProperty = class(TCollectionItem)
   private
     Ftype: TPPtype;
     Fname: string;
@@ -205,6 +207,10 @@ default: ["xenial_bionic"]
     FBoolDefault: boolean;
     procedure SetValueLines(const AValue: TStrings);
     procedure SetDefaultLines(const AValue: TStrings);
+  protected
+      function GetDisplayName: String; override;
+ // public
+ //     procedure Assign(Source: TPersistent); override;
   published
     property ptype: TPPtype read Ftype write Ftype;
     property Name: string read Fname write Fname;
@@ -220,6 +226,22 @@ default: ["xenial_bionic"]
     constructor Create;
     destructor Destroy;
   end;
+
+  // http://wiki.lazarus.freepascal.org/TCollection
+  // https://stackoverflow.com/questions/6980401/collection-editor-does-not-open-for-a-tcollection-property-in-a-tpersistent-prop
+  TPProperties = class(TOwnedCollection)
+  private
+    function GetItem(Index: integer): TPProperty;
+    procedure SetItem(Index: integer; AValue: TPProperty);
+    //function GetOwner: TPersistent;
+  public
+    constructor Create(AOwner: TPersistent);
+  public
+    function Add: TPProperty;
+    function Insert(Index: Integer): TPProperty;
+    property Items[Index: integer]: TPProperty read GetItem write SetItem; default;
+  end;
+
 
   TPriority = -100..100;
 
@@ -272,7 +294,7 @@ default: ["xenial_bionic"]
     productdata: TProductData;
     //dependeciesCount : integer;
     dependencies: TCollection;
-    properties: TCollection;
+    properties: TPProperties;
 
 
     { public declarations }
@@ -281,6 +303,7 @@ default: ["xenial_bionic"]
 
   TConfiguration = class(TPersistent)
   private
+    Fconfig_version: string;  // help to detect and handle changes of config file structure
     //Fworkbench_share: string;
     Fworkbench_Path: string;
     //Fworkbench_mounted: boolean;
@@ -298,12 +321,18 @@ default: ["xenial_bionic"]
     FCreateQuiet: boolean;
     FCreateBuild: boolean;
     FCreateInstall: boolean;
+    FUsePropDesktopicon: boolean;
+    FUsePropLicenseOrPool: boolean;
+    FProperties: TPProperties;
+    FReadme_txt_templ: string;
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
     procedure SetPostInstallLines(const AValue: TStrings);
     procedure SetPreUninstallLines(const AValue: TStrings);
     procedure SetPostUninstallLines(const AValue: TStrings);
+    procedure SetProperties(const AValue: TPProperties);
   published
+    property config_version: string read Fconfig_version;
     //property workbench_share: string read Fworkbench_share write Fworkbench_share;
     property workbench_Path: string read Fworkbench_Path write Fworkbench_Path;
     //property workbench_mounted: boolean read Fworkbench_mounted write Fworkbench_mounted;
@@ -325,6 +354,10 @@ default: ["xenial_bionic"]
     property CreateQuiet: boolean read FCreateQuiet write FCreateQuiet;
     property CreateBuild: boolean read FCreateBuild write FCreateBuild;
     property CreateInstall: boolean read FCreateInstall write FCreateInstall;
+    property UsePropDesktopicon: boolean read FUsePropDesktopicon write FUsePropDesktopicon;
+    property UsePropLicenseOrPool: boolean read FUsePropLicenseOrPool write FUsePropLicenseOrPool;
+    //property Properties: TPProperties read FProperties  write SetProperties;
+    property Readme_txt_templ: string read FReadme_txt_templ write FReadme_txt_templ;
     procedure writeconfig;
     procedure readconfig;
   public
@@ -350,6 +383,7 @@ var
   counter: integer;
   myconfiguration: TConfiguration;
   useRunMode: TRunMode;
+  myVersion: string;
 
 resourcestring
 
@@ -385,6 +419,9 @@ resourcestring
 
 
 implementation
+
+var
+  FileVerInfo : TFileVersionInfo;
 
 // TInstallerData ************************************
 
@@ -495,15 +532,15 @@ begin
   Finstall_waitforprocess := '';
 end;
 
-// TPProperties **********************************
+// TPProperty **********************************
 
-constructor TPProperties.Create;
+constructor TPProperty.Create;
 begin
   inherited;
   init;
 end;
 
-procedure TPProperties.init;
+procedure TPProperty.init;
 begin
   FStrvalues := TStringList.Create;
   FStrdefault := TStringList.Create;
@@ -514,23 +551,69 @@ begin
 end;
 
 
-destructor TPProperties.Destroy;
+destructor TPProperty.Destroy;
 begin
   FreeAndNil(FStrvalues);
   FreeAndNil(FStrdefault);
   inherited;
 end;
 
-procedure TPProperties.SetValueLines(const AValue: TStrings);
+procedure TPProperty.SetValueLines(const AValue: TStrings);
 begin
   FStrvalues.Assign(AValue);
 end;
 
-procedure TPProperties.SetDefaultLines(const AValue: TStrings);
+procedure TPProperty.SetDefaultLines(const AValue: TStrings);
 begin
   FStrDefault.Assign(AValue);
 end;
 
+function TPProperty.GetDisplayName: String;
+begin
+  result := Fname;
+end;
+
+{ TPProperties }
+
+constructor TPProperties.Create(AOwner: TPersistent);
+begin
+  inherited Create(AOwner,TPProperty);
+end;
+
+(*
+function TPProperties.GetItems(Index: integer): TPProperty;
+begin
+  Result := TPProperty(inherited Items[Index]);
+end;
+
+procedure TPProperties.SetItems(Index: integer; AValue: TPProperty);
+begin
+  Items[Index].Assign(AValue);
+end;
+*)
+
+
+function TPProperties.GetItem(Index: Integer): TPProperty;
+begin
+  Result := TPProperty(inherited GetItem(Index));
+end;
+
+
+
+function TPProperties.Insert(Index: Integer): TPProperty;
+begin
+  Result := TPProperty(inherited Insert(Index));
+end;
+
+procedure TPProperties.SetItem(Index: Integer; AValue: TPProperty);
+begin
+  inherited SetItem(Index, AValue);
+end;
+
+function TPProperties.Add: TPProperty;
+begin
+  Result := inherited Add as TPProperty;
+end;
 
 // TPDependency **********************************
 procedure TPDependency.init;
@@ -574,6 +657,9 @@ begin
   Fworkbench_Path := 'missing';
   FPathToOpsiPackageBuilder := 'unknown';
   Fconfig_filled := False;
+  FProperties := TPProperties.Create(self);
+  Fconfig_version := myVersion;
+  FReadme_txt_templ := ExtractFileDir(ParamStr(0))+PathDelim+'template-files'+PathDelim+'package_qa.txt';
   readconfig;
 end;
 
@@ -585,6 +671,7 @@ begin
   FreeAndNil(FpostInstallLines);
   FreeAndNil(FpreUninstallLines);
   FreeAndNil(FpostUninstallLines);
+  FreeAndNil(FProperties);
   inherited;
 end;
 
@@ -613,6 +700,10 @@ begin
   FpostUninstallLines.Assign(AValue);
 end;
 
+procedure TConfiguration.SetProperties(const AValue: TPProperties);
+begin
+  FProperties.Assign(AValue);
+end;
 
 procedure TConfiguration.writeconfig;
 var
@@ -907,7 +998,7 @@ begin
   // Create Dependencies
   aktProduct.dependencies := TCollection.Create(TPDependency);
   // Create Properties
-  aktProduct.properties := TCollection.Create(TPProperties);
+  aktProduct.properties := TPProperties.Create(aktProduct);
 end;
 
 procedure freebasedata;
@@ -947,6 +1038,7 @@ begin
   knownInstallerList.Add('WixToolset');
   knownInstallerList.Add('BoxStub');
   knownInstallerList.Add('SFXcab');
+  knownInstallerList.Add('Bitrock');
   knownInstallerList.Add('Unknown');
 
 
@@ -1032,13 +1124,15 @@ begin
     unattendedsetup :=
       '/s /v" /qb-! ALLUSERS=1 REBOOT=ReallySuppress"';
     silentuninstall :=
-      '/s /v" /qn ALLUSERS=1 REBOOT=ReallySuppress"';
+      '/qn REBOOT=ReallySuppress';
     unattendeduninstall :=
-      '/s /v" /qb-! ALLUSERS=1 REBOOT=ReallySuppress"';
+      '/qb-! REBOOT=ReallySuppress';
     uninstall_waitforprocess := '';
     uninstallProg := 'uninstall.exe';
     patterns.Add('nstallshield');
-    patterns.Add('installer,msi,database');
+    patterns.Add('issetup.dll');
+    patterns.Add('transforms');
+    patterns.Add('msiexec.exe');
     link :=
       'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
     comment := '';
@@ -1194,6 +1288,25 @@ begin
     uib_exitcode_function := 'isMsExitcodeFatal_short';
     detected := @detectedbypatternwithand;
   end;
+  // stBitrock
+  with installerArray[integer(stBitrock)] do
+  begin
+    description := 'Bitrock installer ';
+    silentsetup := '--mode unattended --unattendedmodeui none';
+    unattendedsetup := '--mode unattended --unattendedmodeui minimal';
+    silentuninstall := '--mode unattended --unattendedmodeui none';
+    unattendeduninstall := '--mode unattended --unattendedmodeui minimal';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := 'uninstall.exe';
+    patterns.Add('<description>BitRock Installer</description>');
+    //patterns.Add('Wix Toolset');
+    //infopatterns.Add('RunProgram="');
+    link := 'https://clients.bitrock.com/installbuilder/docs/installbuilder-userguide/ar01s08.html#_help_menu';
+    comment := '';
+    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    detected := @detectedbypatternwithand;
+  end;
   // marker for add installers
 
   architectureModeList := TStringList.Create;
@@ -1209,5 +1322,12 @@ begin
   //aktSetupFile := TSetupFile.Create;
   aktProduct := TopsiProduct.Create;
 
-
+  FileVerInfo := TFileVersionInfo.Create(nil);
+  try
+    FileVerInfo.FileName := ParamStr(0);
+    FileVerInfo.ReadFileInfo;
+    myVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
+  finally
+    FileVerInfo.Free;
+  end;
 end.

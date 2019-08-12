@@ -11,22 +11,50 @@ Java Installer,
 MS Office (Click-to-Run),
 Windows Installer (MSI or MSI in EXE), ok
 NSIS Setup, ok
-SFX Cab,   (sfxcab.exe,  vcredist)  stSFXcab
+SFX Cab,   (sfxcab.exe,  vcredist)  stSFXcab  = dotnetinstaller (https://github.com/dotnetinstaller)
 Smart Installer Maker,
 Windows installer XML,  (atwork, Boxmarker)
 WinRAR Installer,
 WinZip Installer,
 Wise Installer
 stWixToolset,
-install4j (install4j, ej-technologies : perpustakaan-light)
-https://www.ej-technologies.com/resources/install4j/help/doc/help.pdf
+* install4j (install4j, ej-technologies : perpustakaan-light)
+  * https://www.ej-technologies.com/resources/install4j/help/doc/help.pdf
+* QT Installer Framework (Avidemux 4.7.3, msys2)
+  * https://chocolatey.org/packages/msys2-installer
+  * https://doc.qt.io/qtinstallerframework/
+* National Instruments installer
+  ** Labview32 in phywe/measure-ct
+  ** ;https://knowledge.ni.com/KnowledgeArticleDetails?id=kA00Z0000019Ld6SAE&l=de-DE
+* Bitrock Installer
+  * setupmspec32bits.exe (Phywe spec)
+  * pattern: <description>BitRock Installer</description>
+  * https://iserv.eu/doc/development/deploy/packages/installer/bitrock/
+  * --mode unattended --unattendedmodeui minimal
 
+opsi-setup-detector (4.1.0.8) stable; urgency=low
+
+  * fix for detecting InstallshieldMSI
+  * added Bitrock Installer
+  * fixed msi analyze for installshieldMSI, AdvancedMSI, Wixbundle
+  * fixed templates
+  * fixed dark.exe call (now all dependencies on board)
+  * a lot of code clean up
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  14 May 2019 : 15:00:00 +0200
 
 opsi-setup-detector (4.1.0.7) stable; urgency=low
 
   * added stWixToolset
   * added stBoxStub
   * added stSFXcab
+  * configuration added: UsePropDesktopicon
+  * configuration added: UsePropLicenseOrPool
+  * osdcreate: createOpsiFiles: write properties on configuration
+  * osdcreate: fillPatchList: write #@stringVars*# and #@GetProductProperty*# on configuration
+  * osdbasedate: some experiments TProperties in configuration
+  * move fileinfo from osdform to osdbasedata
+  * new read only prop in config: config_version
 
 -- Detlef Oertel <d.oertel@uib.de>  Fri,  01 Mar 2019 : 15:00:00 +0200
 

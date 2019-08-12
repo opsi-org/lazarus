@@ -71,8 +71,9 @@ begin
           // check actual ident
           aktidentnum := length(aktline) - length(trimleft(aktline));
           aktidentstr := '';
+          // ident with tabs
           for k := 1 to aktidentnum do
-            aktidentstr := aktidentstr + ' ';
+            aktidentstr := aktidentstr + char(9);
           // p
           aktReplacestr := patchlist.ValueFromIndex[i];
           // patch aktidentstr after each Newline
@@ -97,105 +98,164 @@ procedure fillPatchList;
 var
   i: integer;
   str: string;
+  strlist: TStringList;
+  templatePath: string;
 begin
-  patchlist.Clear;
-  str := '';
-  patchlist.add('#@productId*#=' + aktProduct.productdata.productId);
-  for i := 0 to myconfiguration.import_libraries.Count - 1 do
-    str := str + 'importlib "' + myconfiguration.import_libraries[i] + '"' + LineEnding;
-  patchlist.add('#@importLibs*#=' + str);
-  patchlist.add('#@LicenseRequired*#=' +
-    boolToStr(aktProduct.productdata.licenserequired, True));
-  patchlist.add('#@MinimumSpace*#=' + IntToStr(
-    aktProduct.SetupFiles[0].requiredSpace) + ' MB');
-  //setup 1
-  patchlist.add('#@InstallDir1*#=' + aktProduct.SetupFiles[0].installDirectory);
-  patchlist.add('#@MsiId1*#=' + aktProduct.SetupFiles[0].msiId);
-  str := myconfiguration.preInstallLines.Text;
-  if str <> '' then
-    str := 'comment "Start Pre Install hook :"' + LineEnding +
-      myconfiguration.preInstallLines.Text;
-  patchlist.add('#@preInstallLines1*#=' + str);
-  patchlist.add('#@installCommandLine1*#=' + aktProduct.SetupFiles[
-    0].installCommandLine);
-  str := aktProduct.SetupFiles[0].install_waitforprocess;
-  if str <> '' then
-    str := '/WaitForProcessEnding "' +
-      aktProduct.SetupFiles[0].install_waitforprocess +
-      '" /TimeOutSeconds 20';
-  patchlist.add('#@installWaitForProc1*#=' + str);
-  str := myconfiguration.postInstallLines.Text;
-  if str <> '' then
-    str := 'comment "Start Post UnInstall hook :"' + LineEnding +
-      myconfiguration.postInstallLines.Text;
-  patchlist.add('#@postInstallLines1*#=' + str);
-  patchlist.add('#@isExitcodeFatalFunction1*#=' +
-    aktProduct.SetupFiles[0].isExitcodeFatalFunction);
-  str := aktProduct.SetupFiles[0].uninstallCheck.Text;
-  patchlist.add('#@uninstallCheckLines1*#=' + str);
-  str := myconfiguration.preUninstallLines.Text;
-  if str <> '' then
-    str := 'comment "Start Pre UnInstall hook :"' + LineEnding +
-      myconfiguration.preUninstallLines.Text;
-  patchlist.add('#@preUninstallLines1*#=' + str);
-  patchlist.add('#@uninstallCommandLine1*#=' +
-    aktProduct.SetupFiles[0].uninstallCommandLine);
-  patchlist.add('#@uninstallProg1*#=' + aktProduct.SetupFiles[0].uninstallProg);
-  str := aktProduct.SetupFiles[0].uninstall_waitforprocess;
-  if str <> '' then
-    str := '/WaitForProcessEnding "' +
-      aktProduct.SetupFiles[0].uninstall_waitforprocess +
-      '" /TimeOutSeconds 20';
-  patchlist.add('#@uninstallWaitForProc1*#=' + str);
-  str := myconfiguration.postUnInstallLines.Text;
-  if str <> '' then
-    str := 'comment "Start Post UnInstall hook :"' + LineEnding +
-      myconfiguration.postUnInstallLines.Text;
-  patchlist.add('#@postUninstallLines1*#=' + str);
-  //setup 2
-  patchlist.add('#@InstallDir2*#=' + aktProduct.SetupFiles[1].installDirectory);
-  patchlist.add('#@MsiId2*#=' + aktProduct.SetupFiles[1].msiId);
-  str := myconfiguration.preInstallLines.Text;
-  if str <> '' then
-    str := 'comment "Start Pre Install hook :"' + LineEnding +
-      myconfiguration.preInstallLines.Text;
-  patchlist.add('#@preInstallLines2*#=' + str);
-  patchlist.add('#@installCommandLine2*#=' + aktProduct.SetupFiles[
-    1].installCommandLine);
-  str := aktProduct.SetupFiles[1].install_waitforprocess;
-  if str <> '' then
-    str := '/WaitForProcessEnding "' +
-      aktProduct.SetupFiles[1].install_waitforprocess +
-      '" /TimeOutSeconds 20';
-  patchlist.add('#@installWaitForProc2*#=' + str);
-  str := myconfiguration.postInstallLines.Text;
-  if str <> '' then
-    str := 'comment "Start Post Install hook :"' + LineEnding +
-      myconfiguration.postInstallLines.Text;
-  patchlist.add('#@postInstallLines2*#=' + str);
-  patchlist.add('#@isExitcodeFatalFunction2*#=' +
-    aktProduct.SetupFiles[1].isExitcodeFatalFunction);
-  str := aktProduct.SetupFiles[1].uninstallCheck.Text;
-  patchlist.add('#@uninstallCheckLines2*#=' + str);
-  str := myconfiguration.preUninstallLines.Text;
-  if str <> '' then
-    str := 'comment "Start Pre Install hook :"' + LineEnding +
-      myconfiguration.preUninstallLines.Text;
-  patchlist.add('#@preUninstallLines2*#=' + str);
-  patchlist.add('#@uninstallCommandLine2*#=' +
-    aktProduct.SetupFiles[1].uninstallCommandLine);
-  patchlist.add('#@uninstallProg2*#=' + aktProduct.SetupFiles[1].uninstallProg);
-  str := aktProduct.SetupFiles[1].uninstall_waitforprocess;
-  if str <> '' then
-    str := '/WaitForProcessEnding "' +
-      aktProduct.SetupFiles[1].uninstall_waitforprocess +
-      '" /TimeOutSeconds 20';
-  patchlist.add('#@uninstallWaitForProc2*#=' + str);
-  str := myconfiguration.postUninstallLines.Text;
-  if str <> '' then
-    str := 'comment "Start Post UnInstall hook :"' + LineEnding +
-      myconfiguration.postUninstallLines.Text;
-  patchlist.add('#@postUninstallLines2*#=' + str);
+     {$IFDEF WINDOWS}
+  templatePath := ExtractFileDir(Application.ExeName) + PathDelim + 'template-files';
+    {$ENDIF WINDOWS}
+    {$IFDEF LINUX}
+  templatePath := '/usr/share/opsi-setup-detector/template-files';
+    {$ENDIF LINUX}
+  try
+    strlist := TStringList.Create;
+    patchlist.Clear;
+    str := '';
+    if myconfiguration.UsePropDesktopicon then
+      str := str + 'DefVar $DesktopIcon$' + LineEnding;
+    if myconfiguration.UsePropLicenseOrPool and aktProduct.productdata.licenserequired then
+      str := str + 'DefVar $LicenseOrPool$' + LineEnding;
+    patchlist.add('#@stringVars*#=' + str);
+
+    str := '';
+    patchlist.add('#@productId*#=' + aktProduct.productdata.productId);
+    for i := 0 to myconfiguration.import_libraries.Count - 1 do
+      str := str + 'importlib "' + myconfiguration.import_libraries[i] + '"' + LineEnding;
+    patchlist.add('#@importLibs*#=' + str);
+    patchlist.add('#@LicenseRequired*#=' +
+      boolToStr(aktProduct.productdata.licenserequired, True));
+    str := '';
+    if myconfiguration.UsePropDesktopicon then
+      str := str + 'set $DesktopIcon$ = GetProductProperty("DesktopIcon","false")' +
+        LineEnding;
+    if myconfiguration.UsePropLicenseOrPool and aktProduct.productdata.licenserequired then
+    begin
+      str := str + 'set $LicenseOrPool$ = GetConfidentialProductProperty("SecretLicense_or_Pool","")' +
+        LineEnding;
+      str := str + 'set $LicensePool$ = $LicenseOrPool$' +  LineEnding;
+    end;
+    patchlist.add('#@GetProductProperty*#=' + str);
+
+    patchlist.add('#@MinimumSpace*#=' + IntToStr(
+      aktProduct.SetupFiles[0].requiredSpace) + ' MB');
+    //setup 1
+    patchlist.add('#@InstallDir1*#=' + aktProduct.SetupFiles[0].installDirectory);
+    patchlist.add('#@MsiId1*#=' + aktProduct.SetupFiles[0].msiId);
+    str := myconfiguration.preInstallLines.Text;
+    if str <> '' then
+      str := 'comment "Start Pre Install hook :"' + LineEnding +
+        myconfiguration.preInstallLines.Text;
+    patchlist.add('#@preInstallLines1*#=' + str);
+    patchlist.add('#@installCommandLine1*#=' + aktProduct.SetupFiles[
+      0].installCommandLine);
+    str := aktProduct.SetupFiles[0].install_waitforprocess;
+    if str <> '' then
+      str := '/WaitForProcessEnding "' +
+        aktProduct.SetupFiles[0].install_waitforprocess + '" /TimeOutSeconds 20';
+    patchlist.add('#@installWaitForProc1*#=' + str);
+    str := myconfiguration.postInstallLines.Text;
+    if str <> '' then
+      str := 'comment "Start Post UnInstall hook :"' + LineEnding +
+        myconfiguration.postInstallLines.Text;
+    patchlist.add('#@postInstallLines1*#=' + str);
+    patchlist.add('#@isExitcodeFatalFunction1*#=' +
+      aktProduct.SetupFiles[0].isExitcodeFatalFunction);
+    str := aktProduct.SetupFiles[0].uninstallCheck.Text;
+    patchlist.add('#@uninstallCheckLines1*#=' + str);
+    str := myconfiguration.preUninstallLines.Text;
+    if str <> '' then
+      str := 'comment "Start Pre UnInstall hook :"' + LineEnding +
+        myconfiguration.preUninstallLines.Text;
+    patchlist.add('#@preUninstallLines1*#=' + str);
+    patchlist.add('#@uninstallCommandLine1*#=' +
+      aktProduct.SetupFiles[0].uninstallCommandLine);
+    patchlist.add('#@uninstallProg1*#=' + aktProduct.SetupFiles[0].uninstallProg);
+    str := aktProduct.SetupFiles[0].uninstall_waitforprocess;
+    if str <> '' then
+      str := '/WaitForProcessEnding "' +
+        aktProduct.SetupFiles[0].uninstall_waitforprocess + '" /TimeOutSeconds 20';
+    patchlist.add('#@uninstallWaitForProc1*#=' + str);
+    str := myconfiguration.postUnInstallLines.Text;
+    if str <> '' then
+      str := 'comment "Start Post UnInstall hook :"' + LineEnding +
+        myconfiguration.postUnInstallLines.Text;
+    patchlist.add('#@postUninstallLines1*#=' + str);
+    //setup 2
+    patchlist.add('#@InstallDir2*#=' + aktProduct.SetupFiles[1].installDirectory);
+    patchlist.add('#@MsiId2*#=' + aktProduct.SetupFiles[1].msiId);
+    str := myconfiguration.preInstallLines.Text;
+    if str <> '' then
+      str := 'comment "Start Pre Install hook :"' + LineEnding +
+        myconfiguration.preInstallLines.Text;
+    patchlist.add('#@preInstallLines2*#=' + str);
+    patchlist.add('#@installCommandLine2*#=' + aktProduct.SetupFiles[
+      1].installCommandLine);
+    str := aktProduct.SetupFiles[1].install_waitforprocess;
+    if str <> '' then
+      str := '/WaitForProcessEnding "' +
+        aktProduct.SetupFiles[1].install_waitforprocess + '" /TimeOutSeconds 20';
+    patchlist.add('#@installWaitForProc2*#=' + str);
+    str := myconfiguration.postInstallLines.Text;
+    if str <> '' then
+      str := 'comment "Start Post Install hook :"' + LineEnding +
+        myconfiguration.postInstallLines.Text;
+    patchlist.add('#@postInstallLines2*#=' + str);
+    patchlist.add('#@isExitcodeFatalFunction2*#=' +
+      aktProduct.SetupFiles[1].isExitcodeFatalFunction);
+    str := aktProduct.SetupFiles[1].uninstallCheck.Text;
+    patchlist.add('#@uninstallCheckLines2*#=' + str);
+    str := myconfiguration.preUninstallLines.Text;
+    if str <> '' then
+      str := 'comment "Start Pre Install hook :"' + LineEnding +
+        myconfiguration.preUninstallLines.Text;
+    patchlist.add('#@preUninstallLines2*#=' + str);
+    patchlist.add('#@uninstallCommandLine2*#=' +
+      aktProduct.SetupFiles[1].uninstallCommandLine);
+    patchlist.add('#@uninstallProg2*#=' + aktProduct.SetupFiles[1].uninstallProg);
+    str := aktProduct.SetupFiles[1].uninstall_waitforprocess;
+    if str <> '' then
+      str := '/WaitForProcessEnding "' +
+        aktProduct.SetupFiles[1].uninstall_waitforprocess + '" /TimeOutSeconds 20';
+    patchlist.add('#@uninstallWaitForProc2*#=' + str);
+    str := myconfiguration.postUninstallLines.Text;
+    if str <> '' then
+      str := 'comment "Start Post UnInstall hook :"' + LineEnding +
+        myconfiguration.postUninstallLines.Text;
+    patchlist.add('#@postUninstallLines2*#=' + str);
+
+    str := '';
+    if myconfiguration.UsePropDesktopicon then
+    begin
+      strlist.LoadFromFile(templatePath + Pathdelim + 'SetupHandleDesktopIcon.opsiscript');
+      str := 'comment "Start Desktop Icon Handling :"' + LineEnding + strlist.Text;
+    end;
+    patchlist.add('#@SetupHandleDesktopIcon*#=' + str);
+
+    str := '';
+    if myconfiguration.UsePropDesktopicon then
+    begin
+      //strlist.LoadFromFile(templatePath + Pathdelim + 'DelsubHandleDesktopIcon.opsiscript');
+      str := 'comment "Start Desktop Icon Handling :"' + LineEnding + 'Linkfolder_remove_desktop_icon';
+    end;
+    patchlist.add('#@DelsubHandleDesktopIcon*#=' + str);
+
+    str := '';
+    if myconfiguration.UsePropDesktopicon then
+    begin
+      strlist.LoadFromFile(templatePath + Pathdelim + 'SetupDesktopIconSection.opsiscript');
+      str := strlist.Text;
+    end;
+    patchlist.add('#@SetupSectionLines*#=' + str);
+    str := '';
+    if myconfiguration.UsePropDesktopicon then
+    begin
+      strlist.LoadFromFile(templatePath + Pathdelim + 'DelsubDesktopIconSection.opsiscript');
+      str := strlist.Text;
+    end;
+    patchlist.add('#@DelsubSectionLines*#=' + str);
+  finally
+    strlist.Free;
+  end;
 end;
 
 function createClientFiles: boolean;
@@ -298,7 +358,7 @@ var
   textlist: TStringList;
   i: integer;
   mydep: TPDependency;
-  myprop: TPProperties;
+  myprop: TPProperty;
   tmpstr: string;
   utcoffset: integer;
   utcoffsetstr: string;
@@ -358,7 +418,7 @@ begin
     //ProductProperties
     for i := 0 to aktProduct.properties.Count - 1 do
     begin
-      myprop := TPProperties(aktProduct.properties.Items[i]);
+      myprop := TPProperty(aktProduct.properties.Items[i]);
       textlist.Add('');
       textlist.Add('[ProductProperty]');
       case myprop.ptype of
@@ -395,14 +455,37 @@ begin
     textlist.Add(aktProduct.productdata.productId + ' (' + tmpstr +
       ') stable; urgency=medium');
     textlist.Add('');
-    textlist.Add('  * initial by opsi-setup-detector');
+    textlist.Add('  * initial by opsi-setup-detector - Version: '+myVersion);
     textlist.Add('');
     textlist.Add('-- ' + myconfiguration.fullName + ' <' +
       myconfiguration.email_address + '> ' + FormatDateTime(
       'ddd, dd mmm yyyy hh:nn:ss', LocalTimeToUniversal(now)) + ' ' + utcoffsetstr);
     //mon, 04 Jun 12:00:00 + 0100
-
     textlist.SaveToFile(opsipath + pathdelim + 'changelog.txt');
+
+    // readme.txt
+    if (myconfiguration.Readme_txt_templ <> '')
+      and FileExists(myconfiguration.Readme_txt_templ) then
+    begin
+      textlist.Clear;
+      utcoffset := (GetLocalTimeOffset div 60) * 100 * -1;
+      if utcoffset >= 0 then
+        utcoffsetstr := '+';
+      utcoffsetstr := utcoffsetstr + format('%4.4d', [utcoffset]);
+      textlist.LoadFromFile(myconfiguration.Readme_txt_templ);
+      textlist.Add('');
+      tmpstr := aktProduct.productdata.productversion + '-' + IntToStr(
+        aktProduct.productdata.packageversion);
+      textlist.Add(aktProduct.productdata.productId + ' (' + tmpstr +
+        ')');
+      textlist.Add('');
+      textlist.Add('-- ' + myconfiguration.fullName + ' <' +
+        myconfiguration.email_address + '> ' + FormatDateTime(
+        'ddd, dd mmm yyyy hh:nn:ss', LocalTimeToUniversal(now)) + ' ' + utcoffsetstr);
+      //mon, 04 Jun 12:00:00 + 0100
+      textlist.SaveToFile(opsipath + pathdelim + 'readme.txt');
+    end;
+
     FreeAndNil(textlist);
     Result := True;
   except

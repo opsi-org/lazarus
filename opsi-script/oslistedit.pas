@@ -24,7 +24,9 @@ type
     { public declarations }
   end;
 
-  function checkMapGUI(list : Tstringlist) : Tstringlist;
+  procedure checkMapGUI(var list : Tstringlist);   overload;
+  procedure checkMapGUI(var list : Tstringlist; focusrow : integer);   overload;
+
 
 var
   FListedit: TFListedit;
@@ -33,13 +35,32 @@ implementation
 
 {$R *.lfm}
 
-function checkMapGUI(list : Tstringlist) : Tstringlist;
+procedure checkMapGUI(var list : Tstringlist);
 begin
-  result := Tstringlist.Create;
+  checkMapGUI(list, 1);
+end;
+
+procedure checkMapGUI(var list : Tstringlist; focusrow : integer);
+var
+  i, int1 : integer;
+  str1 : string;
+begin
   FListedit.ValueListEditor1.Strings.Clear;
-  FListedit.ValueListEditor1.Strings.AddStrings(list);
+  FListedit.ValueListEditor1.Clean;
+  int1 :=  FListedit.ValueListEditor1.RowCount;
+  for i := int1-1 downto 1 do FListedit.ValueListEditor1.DeleteRow(i);
+  int1 :=  list.Count;
+  for i := 0 to int1-1 do FListedit.ValueListEditor1.InsertRow(list.Names[i],list.ValueFromIndex[i],true);
+  FListedit.ValueListEditor1.Row:=focusrow;
+  //int1 :=  FListedit.ValueListEditor1.Strings.Count;
+  //for i := 0 to int1-1 do str1 :=  FListedit.ValueListEditor1.Strings[i];
+  //FListedit.ValueListEditor1.Strings.AddStrings(list);
+  FListedit.ValueListEditor1.Height:=list.Count*46;
   if mrOK = FListedit.ShowModal then
-     result.AddStrings(FListedit.ValueListEditor1.Strings);
+  begin
+     list.Clear;
+     list.AddStrings(FListedit.ValueListEditor1.Strings);
+  end;
 end;
 
 end.

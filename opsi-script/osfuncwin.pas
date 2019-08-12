@@ -297,7 +297,7 @@ begin
       end;
     end;
     GetExitCodeProcess(pi.hProcess, lpExitCode);
-    exitCode := lpExitCode;
+    exitCode := longint(lpExitCode);
     //LogDatei.DependentAdd('ExitCode ' + IntToStr(exitCode), LLInfo);
   end;
   //lines.add('waiting 0');
@@ -317,7 +317,7 @@ begin
       (lpExitCode <> still_active);
   //WaitForSingleObject(pi.hProcess, INFINITE);
   GetExitCodeProcess(pi.hProcess, lpExitCode);
-  exitCode := lpExitCode;
+  exitCode := longint(lpExitCode);
   LogDatei.log('ExitCode ' + IntToStr(exitCode), LLInfo+logleveloffset);
   CloseHandle(pi.hProcess);
   CloseHandle(hReadPipe);

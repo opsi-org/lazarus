@@ -1,4 +1,17 @@
 (*
+uibtime (4.1.1.47-1) stable; urgency=low
+
+ * ontop: TimerProjektzeitTimer: more debugging output to find 'invalid floatingpoint operation' (again)
+ * more debugging around using uibtime.conf
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 22 May 2019 15:00:00 +0000
+
+uibtime (4.1.1.46-1) stable; urgency=low
+
+ * ontop: TimerProjektzeitTimer: more debugging output to find 'invalid floatingpoint operation'
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 26 Apr 2019 15:00:00 +0000
+
 uibtime (4.1.1.45-1) stable; urgency=low
 
  * uibdata: DumpExceptionCallStack: MessageDlg changed

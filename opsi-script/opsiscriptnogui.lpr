@@ -26,20 +26,17 @@ uses
   cthreads, {$ENDIF} {$ENDIF}
   Classes,
   ///LCLIntf,
-  packdefs in 'packdefs.pas',
   ///indylaz,
   osfunc,
   osparser,
-  ldapsend in 'ldapsend.pas',
   osmain in 'osmain.pas',
   oslocale,
-  oscalc,
   custapp,
   //unicodestringmanager,
   {$IFDEF UNIX}
   osfunclin,
   {$ENDIF }
-  osconf, opsihwbiosinfo;
+  osconf;
 
 
 type

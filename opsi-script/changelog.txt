@@ -4,6 +4,37 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.1.3) experimental; urgency=low
+
+  * shellInAnIcon: on loglevel 9: reread teporary files and do not delete
+  * oslog: logdatei property usedloglevel (this is real used log level with force_min_loglevel)
+  * osfunclin: new function getMyIpDeciceByDefaultRoute
+  * osparser: GetMACAddress2: use getMyIpDeciceByDefaultRoute
+  * osfunclin: more logging in getMyIpDeciceByDefaultRoute, getMyIpByDefaultRoute
+  * osparser: demandlicensekey: try 3 ways to get the own fqdn
+  * osfunc: createtextfile: Message:'Directory ' + dirname + ' did not exist und was created' now on loglevel 6 (was warning)
+  * osfunc: StartProcess_cp_el: minor logging change ; //no {$OVERFLOWCHECKS ON}
+  * osfunc / osfuncwin: replace 'exitCode := lpExitCode;' by 'exitCode := longint(lpExitCode);'
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 14 May 2019:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.1.2) stable; urgency=low
+
+  * add oslistedit to projectfiles
+  * fixes in oslistedit
+  * add osinputstring
+  * add new string function stringinput(< message str>,< boolstr confidential>)
+  * document randomIntStr(<>)
+  * fix on gettemppath
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri, 12 Apr 2019:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.1.1) stable; urgency=low
+
+  * fix in oswmi (give stringlist as stringlist)
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 04 04 2019:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.1.0) experimental; urgency=low
 
   * integration of new xml functions:
@@ -67,7 +98,7 @@ opsi-winst/opsi-script (4.12.1.0) experimental; urgency=low
   * unit oscrypt with {$RANGECHECKS OFF}
   * osparserhelper: fix in geouterfunction
   * osdefinedfunction: isvisiblelocalvar: serach optimization
-  * osfunc: checkfileexists: use widechsr/utf16 for filenames
+  * osfunc: checkfileexists: use widechar/utf16 for filenames
   * osparserhelper: new function stringlistintersection (get stringlist intersection)
   * new cli parameter /processproducts productId [,productId ]*
   * added unit oszip
@@ -78,6 +109,11 @@ opsi-winst/opsi-script (4.12.1.0) experimental; urgency=low
   * osparser: fix searchpath from %opsiScriptHelperPath% to %opsiScriptHelperPath%\lib; fixes #3975
   * osparser: producestringlist: createstringlist: fix: empty strings as argument allowed
     and createstringlist() gives empty list
+
+  * osparser: modified : getListFromWMI
+    * `getListFromWMI(`<wmi namespace str>,<wmi class str>,<property list>,<condition str>`) : stringlist`
+    * If <wmi namespace str> is empty, it defaults to `root\cimv2`.
+
 
 -- Detlef Oertel <d.oertel@uib.de>  Wed, 23 01 2019:15:00:00 +0200
 

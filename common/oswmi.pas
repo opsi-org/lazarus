@@ -39,7 +39,8 @@ begin
       WMIResultList.Clear;
       for i := 0 to Pred(WMIResult.Count) do
       begin
-        WMIResultList.Add(TStringList(WMIResult.Items[i]).Text);
+        //WMIResultList.Add(TStringList(WMIResult.Items[i]).Text);
+        WMIResultList.AddStrings(TStringList(WMIResult.Items[i]));
       end;
       Result := True;
     except
