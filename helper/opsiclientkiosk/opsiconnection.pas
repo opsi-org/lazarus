@@ -47,8 +47,8 @@ type
     function MyOpsiMethodCall(const method: string; parameters: array of string): string;
     function MyOpsiMethodCall2(const method: string; parameters: array of string): string;
     //opsiProduct:ISuperObject;
-    procedure GetDataFromNewDataStructure;
-    procedure GetDataFromOldDataStructure;
+    function GetDataFromNewDataStructure:boolean;
+    function GetDataFromOldDataStructure:boolean;
     procedure ReadConfigdConf; //configd mode
     procedure ReadClientdConf(ClientID:string); //clientd mode
 
@@ -93,20 +93,24 @@ var
   MyInifile: TInifile;
 begin
   //opsiconfd mode
-  MyInifile := TIniFile.Create(opsiclientdconf);
-  MyService_URL := MyIniFile.ReadString('config_service', 'url', '');
-  MyClientID := MyIniFile.ReadString('global', 'host_id', '');
-  MyHostkey := MyIniFile.ReadString('global', 'opsi_host_key', '');
-  MyLoglevel := MyIniFile.ReadInteger('global', 'log_level', 5);
-  //myloglevel := 7;
-  MyInifile.Free;
+  try
+    MyInifile := TIniFile.Create(opsiclientdconf);
+    MyService_URL := MyIniFile.ReadString('config_service', 'url', '');
+    MyClientID := MyIniFile.ReadString('global', 'host_id', '');
+    MyHostkey := MyIniFile.ReadString('global', 'opsi_host_key', '');
+    MyLoglevel := MyIniFile.ReadInteger('global', 'log_level', 5);
+    if MyService_URL = '' then LogDatei.log('Error while reading file: ' + opsiclientdconf,LLDebug);
+    //myloglevel := 7;
+  finally
+    MyInifile.Free;
+  end;
 end;
 
 procedure TOpsiConnection.ReadClientdConf(ClientID: string);
 begin
   // opsiclientd mode
   MyClientID := ClientID;//'pcjan.uib.local';//'jan-client01.uib.local';
-  //myclientid := oslog.getComputerName;
+  //MyClientID := oslog.getComputerName;
   MyService_URL := 'https://localhost:4441/kiosk';
   MyHostkey := '';
   MyLoglevel := 7;
@@ -183,7 +187,7 @@ begin
   end;
 end;
 
-procedure TOpsiConnection.GetDataFromNewDataStructure;
+function TOpsiConnection.GetDataFromNewDataStructure:boolean;
 var
   StringJSON,StringResult:string;
   count :integer;
@@ -199,13 +203,22 @@ begin
     //count:= JSONObjectProducts.Count;
     //StringResult := JSONObjectProducts.AsJSON;
     JSONObjectConfigStates := TJSONObject(JSONDataForClient.FindPath('configStates'));
-    LogDatei.log('Kiosk mode: new', LLInfo);
+    if (JSONObjectProducts <> nil) and (JSONObjectConfigStates <> nil) then
+    begin
+      Result := True;
+      LogDatei.log('Kiosk mode: new', LLInfo);
+    end
+    else
+    begin
+      Result := False;
+      LogDatei.log('Could not get data from new data structur.', LLInfo)
+    end;
   except
     LogDatei.log('Error using Kiosk mode: new', LLDebug);
   end;
 end;
 
-procedure TOpsiConnection.GetDataFromOldDataStructure;
+function TOpsiConnection.GetDataFromOldDataStructure:boolean;
 var
   StringJSON,StringResult:string;
   count :integer;
@@ -223,8 +236,17 @@ begin
     //StringResult := JSONData.Items[0].FindPath('configStates').AsJSON;
     //count := JSONData.Items[0].FindPath('configStates').Count;
     JSONObjectConfigStates := nil;
-    ShowMessage('Kiosk mode: old. Update to newer opsi version to get full functionality (e.g. disable software on demand) of Opsi Kiosk.');
-    LogDatei.log('Old kiosk mode', LLInfo);
+    if (JSONObjectProducts) <> nil then
+    begin
+      Result := True;
+      ShowMessage('Kiosk mode: old. Update to newer opsi version to get full functionality (e.g. disable software on demand) of Opsi Kiosk.');
+      LogDatei.log('Old kiosk mode', LLInfo);
+    end
+    else
+    begin
+      Result := False;
+      LogDatei.log('Could not get data from old data structur.', LLInfo)
+    end;
   except
     LogDatei.log('Error using Kiosk mode: old', LLDebug);
   end;
@@ -233,11 +255,11 @@ end;
 procedure TOpsiConnection.GetProductInfosFromServer;
 begin
   try
-    GetDataFromNewDataStructure;
+    if not GetDataFromNewDataStructure then GetDataFromOldDataStructure;
   except
     on EExternalException do
     begin
-      GetDataFromOldDataStructure;
+      //GetDataFromOldDataStructure;
     end;
   end;
 end;

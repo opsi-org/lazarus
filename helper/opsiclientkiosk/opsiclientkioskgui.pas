@@ -68,12 +68,15 @@ type
     (* DataSources *)
     DataSourceProductDependencies: TDataSource;
     DataSourceProductData: TDataSource;
+    LabelPleaseWait: TLabel;
+    PagePleaseWait: TPage;
     (* Head *)
     PanelTopImage: TPanel;//container for header components
     ImageHeader: TImage;
     LabelTitle: TLabel;
     (* ToolBar *)
     PanelToolbar: TPanel;//container for toolbar components
+    ProgressBarPleaseWait: TProgressBar;
     SpeedButtonExpertMode: TSpeedButton;//switch to expert mode
      { Buttons to filter products }
     SpeedButtonAll: TSpeedButton;//show all products
@@ -648,10 +651,10 @@ begin
       ProgressbarDetail.Position := 0;
       LabelInfo.Caption:= 'Please wait while building tiles';
       LabelDataload.Caption := 'Fill Tiles';
-      ProgressBar1.Step := 1;
-      ProgressBar1.Max := 2*ProgressBar1.Position + DataModuleOCK.SQLQueryProductData.RecordCount;
+      ProgressBarPleaseWait.Step := 1;
+      ProgressBarPleaseWait.Max := 2*ProgressBarPleaseWait.Position + DataModuleOCK.SQLQueryProductData.RecordCount;
       ProgressBarDetail.Step := 1;
-      ProgressBarDetail.Max := ProgressBar1.Position + DataModuleOCK.SQLQueryProductData.RecordCount;
+      ProgressBarDetail.Max := ProgressBarPleaseWait.Position + DataModuleOCK.SQLQueryProductData.RecordCount;
     end;
     Application.ProcessMessages;
 
@@ -826,6 +829,8 @@ begin
 end;
 
 procedure TFormOpsiClientKiosk.SetActionRequest(const Request:String; Message:String; OnDemand:boolean);
+var
+  i, Instances :integer;
 begin
   Screen.Cursor := crHourGlass;
   OCKOpsiConnection.SetActionRequest(SelectedProduct,Request); //to opsi server
@@ -834,24 +839,38 @@ begin
   DataSourceProductData.Edit;
   if OnDemand then
   begin
+    NotebookProducts.PageIndex := 3;
+    Refresh;
     OCKOpsiConnection.DoSingleActionOnDemand(SelectedProduct);
+    sleep(10000);
+    while ockunique.numberOfProcessInstances('notifier') > 0 do
+    begin
+      Application.ProcessMessages;
+      //Instances := ockunique.numberOfProcessInstances('notifier');
+      sleep(100);
+      //Instances := ockunique.numberOfProcessInstances('notifier');
+    end;
+    NotebookProducts.PageIndex := 2;
+    ShowMessage('Installation finished.');
+    DataModuleOCK.SQLQueryProductData['ActionRequest'] := '';
+    { install or update }
     if Request = 'setup' then
     begin
-     DataModuleOCK.SQLQueryProductData['ActionRequest'] := '';
-     DataModuleOCK.SQLQueryProductData['InstallationStatus'] := 'installed';
-     ArrayProductPanels[SelectedPanelIndex].LabelState.Caption := 'Installed';
-     ArrayProductPanels[SelectedPanelIndex].LabelState.Color := clInstalled;
+      ButtonSoftwareInstall.Visible:= False;
+      ButtonSoftwareUninstall.Visible:= True;
+      DataModuleOCK.SQLQueryProductData['InstallationStatus'] := 'installed';
+      ArrayProductPanels[SelectedPanelIndex].LabelState.Caption := 'Installed';
+      ArrayProductPanels[SelectedPanelIndex].LabelState.Color := clInstalled;
      //SQLProductData[] =
     end;
+    { uninstall }
     if Request = 'uninstall' then
     begin
-      //DataModuleOCK.SQLQueryProductData.Edit;
-      //DataModuleOCK.SQLQueryProductData.Delete;
-      //DataSourceProductData.Edit;
-      //DataSourceProductData.DataSet.Delete;
+      ButtonSoftwareUninstall.Visible:= False;
+      ButtonSoftwareInstall.Visible:= True;
+      DataModuleOCK.SQLQueryProductData['InstallationStatus'] := '';
       ArrayProductPanels[SelectedPanelIndex].LabelState.Caption := 'Not installed';
       ArrayProductPanels[SelectedPanelIndex].LabelState.Color := clNotInstalled;
-         //FreeAndNil(ArrayProductPanels[SelectedPanelIndex]);
     end;
     ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := '';
   end
@@ -1633,7 +1652,7 @@ var
   InfoText:string;
 begin
   StartUpDone := False;
-  ClientdMode := False;
+  ClientdMode := True;
   InitLogging('kiosk-' + GetUserName_ +'.log', self.Name + '.FormCreate', LLDebug);
   LogDatei.log('Initialize Opsi Client Kiosk', LLNotice);
 

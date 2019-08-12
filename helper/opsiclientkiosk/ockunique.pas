@@ -17,7 +17,7 @@ uses
   oslog;
 
 //function ProcessIsRunning(searchproc: string): boolean;
-//function numberOfProcessInstances(searchproc: string): integer;
+function numberOfProcessInstances(searchproc: string): integer;
 function CheckUnique(out InfoMessage:string):boolean;
 
 implementation

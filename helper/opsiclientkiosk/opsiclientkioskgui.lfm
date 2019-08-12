@@ -1,7 +1,7 @@
 object FormOpsiClientKiosk: TFormOpsiClientKiosk
-  Left = 1976
+  Left = 2386
   Height = 694
-  Top = 139
+  Top = 130
   Width = 804
   Caption = 'opsi-client-kiosk'
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
@@ -1723,6 +1723,28 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             OnClick = ButtonSoftwareUninstallClick
             TabOrder = 5
           end
+        end
+      end
+      object PagePleaseWait: TPage
+        object LabelPleaseWait: TLabel
+          Left = 0
+          Height = 24
+          Top = 138
+          Width = 798
+          Alignment = taCenter
+          AutoSize = False
+          Caption = 'Please wait while installing products'
+          Font.Height = -16
+          ParentColor = False
+          ParentFont = False
+        end
+        object ProgressBarPleaseWait: TProgressBar
+          Left = 273
+          Height = 22
+          Top = 178
+          Width = 255
+          Style = pbstMarquee
+          TabOrder = 0
         end
       end
     end

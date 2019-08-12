@@ -162,6 +162,10 @@ msgctxt "tformopsiclientkiosk.labeldescription.caption"
 msgid "Description:  "
 msgstr ""
 
+#: tformopsiclientkiosk.labelpleasewait.caption
+msgid "Please wait while installing products"
+msgstr ""
+
 #: tformopsiclientkiosk.labelpriority.caption
 msgctxt "tformopsiclientkiosk.labelpriority.caption"
 msgid "Priority: "
