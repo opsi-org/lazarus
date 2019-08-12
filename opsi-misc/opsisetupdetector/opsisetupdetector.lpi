@@ -276,8 +276,8 @@
         <Filename Value="changelog-osd.txt"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="40"/>
-        <CursorPos Y="48"/>
+        <TopLine Value="19"/>
+        <CursorPos X="73" Y="47"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -455,14 +455,14 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="52"/>
         <CursorPos X="10" Y="72"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
       </Unit30>
       <Unit31>
         <Filename Value="N:\usr\share\lazarus\1.8.4\lcl\include\fpimagebitmap.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="123"/>
         <CursorPos Y="141"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit31>
       <Unit32>
@@ -518,7 +518,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="10368"/>
         <CursorPos Y="10388"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
       </Unit38>
       <Unit39>
         <Filename Value="N:\usr\share\lazarus\2.0.0\components\ideintf\propedits.pp"/>

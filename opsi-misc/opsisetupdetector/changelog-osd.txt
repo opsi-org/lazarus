@@ -40,6 +40,12 @@ stWixToolset,
   * /SILENT /NOREMOVE /ACCEPTLICENSE /REVERT
   * DierckeGlobusOnline.exe
 
+* adobe air
+  * marker: adobe.air-application-installer-package
+  * marker: META-INF/AIR/application.xml
+  * marker: adobe.air-application-installer-package+zip
+    unzip gibt Datei: META-INF/AIR/application.xml mit Infos zur Version
+
 Uebrsicht:
 http://www.fredshack.com/docs/packagers.html
 
