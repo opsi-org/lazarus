@@ -32,6 +32,21 @@ msgctxt "opsiclientkioskgui.rsactuninstall"
 msgid "Uninstall"
 msgstr "Désinstaller"
 
+#: opsiclientkioskgui.rsall
+msgctxt "opsiclientkioskgui.rsall"
+msgid "All"
+msgstr ""
+
+#: opsiclientkioskgui.rsback
+msgctxt "opsiclientkioskgui.rsback"
+msgid "<-- Back"
+msgstr ""
+
+#: opsiclientkioskgui.rsexpertmode
+msgctxt "opsiclientkioskgui.rsexpertmode"
+msgid "Expert Mode"
+msgstr ""
+
 #: opsiclientkioskgui.rsinstalled
 msgid "Installed"
 msgstr "Installé"
@@ -51,6 +66,11 @@ msgstr "Aucune demande d'action trouvée ..."
 #: opsiclientkioskgui.rsnotinstalled
 msgid "Not installed"
 msgstr "Non installé"
+
+#: opsiclientkioskgui.rsreload
+msgctxt "opsiclientkioskgui.rsreload"
+msgid "Reload"
+msgstr ""
 
 #: opsiclientkioskgui.rsstateunknown
 msgid "Unknown"
@@ -111,12 +131,16 @@ msgid "Info"
 msgstr "Aide"
 
 #: tformopsiclientkiosk.bitbtnstoreaction.caption
-msgid "Store Action at Server"
+msgid "Store Action"
+msgstr ""
+
+#: tformopsiclientkiosk.bitbtnstoreaction.hint
+msgid "Store actions on server"
 msgstr ""
 
 #: tformopsiclientkiosk.buttonsoftwareback.caption
 msgctxt "tformopsiclientkiosk.buttonsoftwareback.caption"
-msgid "<-- back"
+msgid "<-- Back"
 msgstr ""
 
 #: tformopsiclientkiosk.buttonsoftwareinstall.caption
@@ -266,8 +290,12 @@ msgstr ""
 #, fuzzy
 #| msgid "Reload"
 msgctxt "tformopsiclientkiosk.speedbuttonreload.caption"
-msgid "Reload Data from Server"
+msgid "Reload"
 msgstr "Recharger"
+
+#: tformopsiclientkiosk.speedbuttonreload.hint
+msgid "Reload data from server"
+msgstr ""
 
 #: tformopsiclientkiosk.speedbuttonupdates.caption
 msgctxt "tformopsiclientkiosk.speedbuttonupdates.caption"

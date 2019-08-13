@@ -270,7 +270,10 @@ resourcestring
   rsInstallNowHint = 'Start the installation (deinstallation) of the selected products';
   rsStoreActionsHint =
     'Send the action requests to the server, show the resulting installations and ask for installation start.';
-
+  rsBack = '<-- Back';
+  rsAll = 'All';
+  rsExpertMode = 'Expert Mode';
+  rsReload = 'Reload';
 
 implementation
 
@@ -283,12 +286,12 @@ const
   clNotInstalled = $00FF8000;
   clUnknown = clRed;
 
-  //Path to programm icons
-  IconPathCustom = '.'+PathDelim + 'progam_icons' + PathDelim + 'custom' + PathDelim;//Application.Location + PathDelim + 'progam_icons' + PathDelim + 'custom' + PathDelim;
-  IconPathDefault = '.'+PathDelim + 'progam_icons' + PathDelim + 'default' + PathDelim;
-
+var
+  //Path to Images
+  IconPathCustom : String;
+  IconPathDefault: String;
   //Path to screenshots
-  ScreenshotPath = '.'+PathDelim + 'screenshots' + PathDelim;
+  ScreenshotPath: String;
 
 
 function ActionRequestToLocale(actionRequest: string): string;
@@ -607,8 +610,11 @@ begin
       if FileExists(ScreenshotPath +'screenshot1_'+ ProductPanel.ProductID +'.png') then
        FormOpsiClientKiosk.ImageScreenShot.Picture.LoadFromFile
          (ScreenshotPath +'screenshot1_'+ ProductPanel.ProductID +'.png')
-      else FormOpsiClientKiosk.ImageScreenShot.Picture.LoadFromFile
+      else
+        if FileExists (ScreenshotPath + 'no_screenshot.png') then
+            FormOpsiClientKiosk.ImageScreenShot.Picture.LoadFromFile
            (ScreenshotPath + 'no_screenshot.png');
+      { View Buttons dependend on state}
       if ProductPanel.LabelState.Caption = rsInstalled then
       begin
         FormOpsiClientKiosk.ButtonSoftwareInstall.Visible := False;
@@ -616,20 +622,19 @@ begin
         FormOpsiClientKiosk.ButtonSoftwareUpdate.Enabled := False;
       end
       else
-      if ProductPanel.LabelState.Caption = rsNotInstalled then
-      begin
-        FormOpsiClientKiosk.ButtonSoftwareUninstall.Visible := False;
-        FormOpsiClientKiosk.ButtonSoftwareUpdate.Enabled := False;
-        FormOpsiClientKiosk.ButtonSoftwareInstall.Visible := True;
-        //FormOpsiClientKiosk.
-      end
-      else
-      if ProductPanel.LabelState.Caption = rsUpdate then
-      begin
-        FormOpsiClientKiosk.ButtonSoftwareInstall.Visible := False;
-        FormOpsiClientKiosk.ButtonSoftwareUninstall.Visible := True;
-        FormOpsiClientKiosk.ButtonSoftwareUpdate.Enabled := True;
-      end
+        if ProductPanel.LabelState.Caption = rsNotInstalled then
+        begin
+          FormOpsiClientKiosk.ButtonSoftwareUninstall.Visible := False;
+          FormOpsiClientKiosk.ButtonSoftwareUpdate.Enabled := False;
+          FormOpsiClientKiosk.ButtonSoftwareInstall.Visible := True;
+        end
+        else
+          if ProductPanel.LabelState.Caption = rsUpdate then
+          begin
+            FormOpsiClientKiosk.ButtonSoftwareInstall.Visible := False;
+            FormOpsiClientKiosk.ButtonSoftwareUninstall.Visible := True;
+            FormOpsiClientKiosk.ButtonSoftwareUpdate.Enabled := True;
+          end
     end;
   finally
     //DataModuleOCK.SQLQueryProductData.Close;
@@ -794,7 +799,7 @@ begin
     Application.ProcessMessages;//FormProgressWindow.ProcessMess;
     OCKOpsiConnection.GetProductInfosFromServer;
     ConfigState := TSTringList.Create;
-    ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.kiosk.enabled');
+    ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.installation-now-button');
     //ShowMessage(ConfigState.Text);
     SoftwareOnDemand := StrToBool(ConfigState.Strings[0]);
     //FormProgressWindow.ProgressBarDetail.Position := 100;
@@ -806,7 +811,7 @@ begin
     DataModuleOCK := TDataModuleOCK.Create(nil);
     DataModuleOCK.CreateDatabaseAndTables;
     //if DataModuleOCK.SQLTransaction.Active then ShowMessage('Transaction active after Initdatabse!');
-    LogDatei.log('start OpsiProductsToDataset', LLNotice);
+    //LogDatei.log('start OpsiProductsToDataset', LLNotice);
     DataModuleOCK.OpsiProductsToDataset(DataModuleOCK.SQLQueryProductData);
     DataModuleOCK.LoadTableProductsIntoMemory;
     //if DataModuleOCK.SQLTransaction.Active then ShowMessage('Transaction active after OpsiProducts!');
@@ -859,7 +864,7 @@ begin
       ButtonSoftwareInstall.Visible:= False;
       ButtonSoftwareUninstall.Visible:= True;
       DataModuleOCK.SQLQueryProductData['InstallationStatus'] := 'installed';
-      ArrayProductPanels[SelectedPanelIndex].LabelState.Caption := 'Installed';
+      ArrayProductPanels[SelectedPanelIndex].LabelState.Caption := rsInstalled;
       ArrayProductPanels[SelectedPanelIndex].LabelState.Color := clInstalled;
      //SQLProductData[] =
     end;
@@ -869,7 +874,7 @@ begin
       ButtonSoftwareUninstall.Visible:= False;
       ButtonSoftwareInstall.Visible:= True;
       DataModuleOCK.SQLQueryProductData['InstallationStatus'] := '';
-      ArrayProductPanels[SelectedPanelIndex].LabelState.Caption := 'Not installed';
+      ArrayProductPanels[SelectedPanelIndex].LabelState.Caption := rsNotInstalled;
       ArrayProductPanels[SelectedPanelIndex].LabelState.Color := clNotInstalled;
     end;
     ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := '';
@@ -877,7 +882,7 @@ begin
   else
   begin
     DataModuleOCK.SQLQueryProductData['ActionRequest'] := Request;// to local database
-    ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := 'Action: ' + Request;
+    ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := rsActRequest+': ' + Request;
     ShowMessage('Request done. ' + LabelSoftwareName.Caption + Message);
   end;
   DataModuleOCK.SQLQueryProductData.Post;
@@ -907,7 +912,7 @@ end;
 procedure TFormOpsiClientKiosk.SetView;
 begin
   if SpeedButtonExpertMode.Down
-    and (RadioGroupview.ItemIndex = RadioGroupView.Items.IndexOf('List'))
+    and (RadioGroupview.ItemIndex = RadioGroupView.Items.IndexOf(rsViewList))
   then SetListView
   else SetTilesView;
 end;
@@ -1434,18 +1439,16 @@ begin
   TSpeedButton(Sender).Down:= True;
   SetView;
 end;
+
 procedure TFormOpsiClientKiosk.SpeedButtonExpertModeClick(Sender: TObject);
 begin
   { Expert mode }
   if SpeedButtonExpertMode.Down then
   begin
-    { localize RadioGroupView }
-    RadioGroupView.Items[0] := rsViewList;
-    RadioGroupView.Items[1] := rsViewTiles;
     { Expert view }
     BitBtnStoreAction.Caption := rsStoreActions;
     BitBtnStoreAction.Hint := rsStoreActionsHint;
-    if RadioGroupView.ItemIndex = RadioGroupView.Items.IndexOf('List') then
+    if RadioGroupView.ItemIndex = RadioGroupView.Items.IndexOf(rsViewList) then
       BitBtnStoreAction.Visible := True
     else BitBtnStoreAction.Visible := False;
     PanelExpertMode.Visible := True;
@@ -1506,45 +1509,14 @@ begin
 end;
 
 procedure TFormOpsiClientKiosk.FormActivate(Sender: TObject);
-var
-  ErrorMsg    : String;
-  ListOptions : TStringList;
 begin
   if not StartupDone then
   begin
     try
-      { quick check parameters }
-      ListOptions := TStringList.Create;
-      ListOptions.Append('clientdmode:');
-      ListOptions.Append('fqdn:');
-      ListOptions.Append('lang:');
-      ErrorMsg := Application.CheckOptions('', ListOptions);
-      LogDatei.log('Options: ' + ListOptions.Text + ', ErrorMsg: ' + ErrorMsg, LLDebug);
-      if ErrorMsg <> '' then
-      begin
-        Application.ShowException(Exception.Create(ErrorMsg));
-        Application.Terminate;
-        Exit;
-      end;
-      { parse parameters }
-      if Application.HasOption('clientdmode') then
-      begin
-        ClientdMode := StrToBool(Application.GetOptionValue('clientdmode'));
-        LogDatei.log('ClientdMode (Option = clientdmode): ' + BoolToStr(ClientdMode), LLDebug);
-      end;
-      if Application.HasOption('fqdn') then
-      begin
-        ClientID := Application.GetOptionValue('fqdn');
-        LogDatei.log('ClientID (option = fqdn): ' + ClientID, LLDebug);
-      end;
-      if Application.HasOption('lang') then
-      begin
-        SetDefaultLang(Application.GetOptionValue('lang'));
-      end;
-      { Load data from server }
+     { Load data from server }
       LoadDataFromServer;
-    finally
-      ListOptions.Free;
+    except
+     LogDatei.log('Error while loading data from server',LLInfo);
     end;
     StartupDone := True;
   end;//end of: if not StartupDone
@@ -1649,7 +1621,9 @@ end;
 
 procedure TFormOpsiClientKiosk.FormCreate(Sender: TObject);
 var
-  InfoText:string;
+  InfoText    : String;
+  ListOptions : TStringList;
+  ErrorMsg    : String;
 begin
   StartUpDone := False;
   ClientdMode := True;
@@ -1668,6 +1642,7 @@ begin
   PanelProductDetail.Height := 0;
   detail_visible := False;
   // Load custom skin
+
 
   { Set skin for LabelTitle}
 
@@ -1693,13 +1668,77 @@ begin
     LoadSkinForTitle(skinpath);
   end;
 
-  GetDefaultLang;
-  LogDatei.log('GetDefaultLang: ' + GetDefaultLang, LLEssential);
+    //Path to programm icons
+  IconPathCustom := Application.Location + 'progam_icons' + PathDelim + 'custom' + PathDelim;
+  IconPathDefault := Application.Location + 'progam_icons' + PathDelim + 'default' + PathDelim;
+
+  //Path to screenshots
+  ScreenshotPath := Application.Location  + 'screenshots' + PathDelim;
+
+  LogDatei.log('IconPathDefault: ' + IconPathDefault, LLInfo);
+  LogDatei.log('IconPathCustom: ' + IconPathCustom, LLInfo);
+  LogDatei.log('ScreenshotPath: ' + ScreenshotPath, LLInfo);
+
+  try
+    { quick check parameters }
+    ListOptions := TStringList.Create;
+    ListOptions.Append('clientdmode:');
+    ListOptions.Append('fqdn:');
+    ListOptions.Append('lang:');
+    ErrorMsg := Application.CheckOptions('', ListOptions);
+    LogDatei.log('Options: ' + ListOptions.Text + ', ErrorMsg: ' + ErrorMsg, LLDebug);
+    if ErrorMsg <> '' then
+    begin
+      Application.ShowException(Exception.Create(ErrorMsg));
+      Application.Terminate;
+      Exit;
+    end;
+    { parse parameters }
+    if Application.HasOption('clientdmode') then
+    begin
+      ClientdMode := StrToBool(Application.GetOptionValue('clientdmode'));
+      LogDatei.log('ClientdMode (Option = clientdmode): ' + BoolToStr(ClientdMode), LLDebug);
+    end;
+    if Application.HasOption('fqdn') then
+    begin
+      ClientID := Application.GetOptionValue('fqdn');
+      LogDatei.log('ClientID (option = fqdn): ' + ClientID, LLDebug);
+    end;
+    if Application.HasOption('lang') then
+    begin
+      SetDefaultLang(Application.GetOptionValue('lang'));
+    end
+    else
+    begin
+      GetDefaultLang;
+      LogDatei.log('GetDefaultLang: ' + GetDefaultLang, LLEssential);
+    end;
+  finally
+    ListOptions.free;
+  end;
   //grouplist.Clear;
   InitDBGrids;
-  // localize RadioGroupView
+
+  (*****************)
+  (* Localizations *)
+  (*****************)
+
+  { RadioGroupView }
   RadioGroupView.Items[0] := rsViewList;
   RadioGroupView.Items[1] := rsViewTiles;
+  { Expert Mode Buttons }
+  BitBtnStoreAction.Caption := rsStoreActions;
+  BitBtnStoreAction.Hint := rsStoreActionsHint;
+  { ButtonSoftware on PageSoftware}
+  ButtonSoftwareInstall.Caption := rsInstalled;
+  ButtonSoftwareUninstall.Caption := rsActUninstall;
+  ButtonSoftwareUpdate.Caption := rsUpdate;
+  { SpeedButtons on Toolpanel}
+  SpeedButtonAll.Caption := rsAll;
+  SpeedButtonUpdates.Caption:= rsUpdate;
+  SpeedButtonNotInstalled.Caption:= rsNotInstalled;
+  SpeedButtonActions.Caption := rsActRequest;
+  ButtonSoftwareBack.Caption:= rsBack;
 end;
 
 procedure TFormOpsiClientKiosk.EditSearchEnter(Sender: TObject);

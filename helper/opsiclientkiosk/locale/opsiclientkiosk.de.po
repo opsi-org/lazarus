@@ -28,6 +28,21 @@ msgctxt "opsiclientkioskgui.rsactuninstall"
 msgid "Uninstall"
 msgstr "Deinstallieren"
 
+#: opsiclientkioskgui.rsall
+msgctxt "opsiclientkioskgui.rsall"
+msgid "All"
+msgstr "Alle"
+
+#: opsiclientkioskgui.rsback
+msgctxt "opsiclientkioskgui.rsback"
+msgid "<-- Back"
+msgstr "<-- Zurück"
+
+#: opsiclientkioskgui.rsexpertmode
+msgctxt "opsiclientkioskgui.rsexpertmode"
+msgid "Expert Mode"
+msgstr "Expertenmodus"
+
 #: opsiclientkioskgui.rsinstalled
 msgid "Installed"
 msgstr "Installiert"
@@ -48,6 +63,11 @@ msgstr "Keine Aktionsanforderungen gefunden ..."
 msgid "Not installed"
 msgstr "Nicht Installiert"
 
+#: opsiclientkioskgui.rsreload
+msgctxt "opsiclientkioskgui.rsreload"
+msgid "Reload"
+msgstr "Neu laden"
+
 #: opsiclientkioskgui.rsstateunknown
 msgid "Unknown"
 msgstr "Unbekannt"
@@ -64,11 +84,11 @@ msgstr ""
 #: opsiclientkioskgui.rsupdate
 msgctxt "opsiclientkioskgui.rsupdate"
 msgid "Update"
-msgstr ""
+msgstr "Update"
 
 #: opsiclientkioskgui.rsviewlist
 msgid "List"
-msgstr "Listen"
+msgstr "Liste"
 
 #: opsiclientkioskgui.rsviewtiles
 msgid "Tiles"
@@ -106,29 +126,33 @@ msgid "Info"
 msgstr "Info"
 
 #: tformopsiclientkiosk.bitbtnstoreaction.caption
-msgid "Store Action at Server"
+msgid "Store Action"
+msgstr ""
+
+#: tformopsiclientkiosk.bitbtnstoreaction.hint
+msgid "Store actions on server"
 msgstr ""
 
 #: tformopsiclientkiosk.buttonsoftwareback.caption
 msgctxt "tformopsiclientkiosk.buttonsoftwareback.caption"
-msgid "<-- back"
-msgstr ""
+msgid "<-- Back"
+msgstr "<-- Zurück"
 
 #: tformopsiclientkiosk.buttonsoftwareinstall.caption
 msgctxt "tformopsiclientkiosk.buttonsoftwareinstall.caption"
 msgid "Install"
-msgstr ""
+msgstr "Installieren"
 
 #: tformopsiclientkiosk.buttonsoftwareuninstall.caption
-#, fuzzy
 msgctxt "tformopsiclientkiosk.buttonsoftwareuninstall.caption"
 msgid "Uninstall"
 msgstr "Deinstallieren"
 
 #: tformopsiclientkiosk.buttonsoftwareupdate.caption
+#, fuzzy
 msgctxt "tformopsiclientkiosk.buttonsoftwareupdate.caption"
 msgid "Update"
-msgstr ""
+msgstr "Update"
 
 #: tformopsiclientkiosk.caption
 msgctxt "tformopsiclientkiosk.caption"
@@ -144,12 +168,12 @@ msgstr "In die Spalte ActionRequest klicken um Aktionen (setup/uninstall) zu set
 #: tformopsiclientkiosk.editsearch.hint
 msgctxt "tformopsiclientkiosk.editsearch.hint"
 msgid "Search in Productlist"
-msgstr ""
+msgstr "Durchsuche Produktliste"
 
 #: tformopsiclientkiosk.editsearch.texthint
 msgctxt "tformopsiclientkiosk.editsearch.texthint"
 msgid "Search"
-msgstr ""
+msgstr "Suche"
 
 #: tformopsiclientkiosk.labeladvice.caption
 #, fuzzy
@@ -171,7 +195,7 @@ msgstr "Beschreibung:"
 
 #: tformopsiclientkiosk.labelpleasewait.caption
 msgid "Please wait while installing products"
-msgstr ""
+msgstr "Bitte warten Produkte werden installiert"
 
 #: tformopsiclientkiosk.labelpriority.caption
 #, fuzzy
@@ -182,17 +206,17 @@ msgstr "Priorität:"
 #: tformopsiclientkiosk.labelsoftwareadvice.caption
 msgctxt "tformopsiclientkiosk.labelsoftwareadvice.caption"
 msgid "Advice"
-msgstr ""
+msgstr "Hinweis"
 
 #: tformopsiclientkiosk.labelsoftwaredescription.caption
 msgctxt "tformopsiclientkiosk.labelsoftwaredescription.caption"
 msgid "Description"
-msgstr ""
+msgstr "Beschreibung"
 
 #: tformopsiclientkiosk.labelsoftwareinstalledversion.caption
 msgctxt "tformopsiclientkiosk.labelsoftwareinstalledversion.caption"
 msgid "Installed version"
-msgstr ""
+msgstr "Installierte Version"
 
 #: tformopsiclientkiosk.labelsoftwarename.caption
 msgctxt "tformopsiclientkiosk.labelsoftwarename.caption"
@@ -202,7 +226,7 @@ msgstr ""
 #: tformopsiclientkiosk.labelsoftwarerecentversion.caption
 msgctxt "tformopsiclientkiosk.labelsoftwarerecentversion.caption"
 msgid "Recent version"
-msgstr ""
+msgstr "Neuste Version"
 
 #: tformopsiclientkiosk.labeltitle.caption
 msgctxt "tformopsiclientkiosk.labeltitle.caption"
@@ -218,25 +242,24 @@ msgstr "Version auf dem Server"
 #: tformopsiclientkiosk.panelsoftwarescreenshot.caption
 msgctxt "tformopsiclientkiosk.panelsoftwarescreenshot.caption"
 msgid "ScreenShotImage"
-msgstr ""
+msgstr "Screenshot"
 
 #: tformopsiclientkiosk.radiogroupview.caption
-#, fuzzy
 msgctxt "tformopsiclientkiosk.radiogroupview.caption"
 msgid "View"
 msgstr "Ansicht"
 
 #: tformopsiclientkiosk.speedbuttonactions.caption
 msgid "Actions"
-msgstr ""
+msgstr "Aktionen"
 
 #: tformopsiclientkiosk.speedbuttonall.caption
+#, fuzzy
 msgctxt "tformopsiclientkiosk.speedbuttonall.caption"
 msgid "All"
-msgstr ""
+msgstr "Alle"
 
 #: tformopsiclientkiosk.speedbuttonall.hint
-#, fuzzy
 msgctxt "tformopsiclientkiosk.speedbuttonall.hint"
 msgid "Show all List entries (No Filter)"
 msgstr "Zeige alle Einträge (Kein Filter)"
@@ -244,34 +267,36 @@ msgstr "Zeige alle Einträge (Kein Filter)"
 #: tformopsiclientkiosk.speedbuttonclearsearchedit.caption
 msgctxt "tformopsiclientkiosk.speedbuttonclearsearchedit.caption"
 msgid "X"
-msgstr ""
+msgstr "X"
 
 #: tformopsiclientkiosk.speedbuttonexpertmode.caption
 msgctxt "tformopsiclientkiosk.speedbuttonexpertmode.caption"
 msgid "Expert Mode"
-msgstr ""
+msgstr "Expertenmodus"
 
 #: tformopsiclientkiosk.speedbuttonnotinstalled.caption
 msgctxt "tformopsiclientkiosk.speedbuttonnotinstalled.caption"
 msgid "Not Installed"
-msgstr ""
+msgstr "Nicht installiert"
 
 #: tformopsiclientkiosk.speedbuttonreload.caption
-#, fuzzy
-#| msgid "Reload"
 msgctxt "tformopsiclientkiosk.speedbuttonreload.caption"
-msgid "Reload Data from Server"
+msgid "Reload"
 msgstr "Neu laden"
+
+#: tformopsiclientkiosk.speedbuttonreload.hint
+msgid "Reload data from server"
+msgstr "Lade Daten vom Server"
 
 #: tformopsiclientkiosk.speedbuttonupdates.caption
 msgctxt "tformopsiclientkiosk.speedbuttonupdates.caption"
 msgid "Updates"
-msgstr ""
+msgstr "Updates"
 
 #: tformopsiclientkiosk.speedbuttonupdates.hint
 msgctxt "tformopsiclientkiosk.speedbuttonupdates.hint"
 msgid "Filter for Products where an upgrade is possible"
-msgstr ""
+msgstr "Zeige Produkte bei denen ein Upgrade möglich ist"
 
 #: tformopsiclientkiosk.statusbar1.panels[0].text
 #, fuzzy
@@ -292,11 +317,9 @@ msgid "Dependencies / Priority"
 msgstr "Abhängigkeiten / Prioritäten"
 
 #: tformprogresswindow.caption
-#, fuzzy
-#| msgid "Please wait ..."
 msgctxt "tformprogresswindow.caption"
 msgid "Initialize OpsiClientKiosk"
-msgstr "Bitte warten ..."
+msgstr "Initialisiere OpsiClientKiosk ..."
 
 #: tformprogresswindow.labeldataload.caption
 msgid "LabelDataLoad"
@@ -309,5 +332,5 @@ msgstr ""
 #: tformprogresswindow.labelinfo.caption
 msgctxt "tformprogresswindow.labelinfo.caption"
 msgid "Please wait while "
-msgstr ""
+msgstr "Bitte warten während "
 

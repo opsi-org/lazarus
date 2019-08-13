@@ -245,7 +245,7 @@ var
   //JSONObjectProduct: TJSONObject;
 begin
   //if SQLTransaction.Active then SQLTransaction.Active:=FALSE;
-  logdatei.log('starting OpsiProductToDataset ....', LLInfo);
+  logdatei.log('Starting OpsiProductToDataset', LLInfo);
 
   { prepare database }
   SQLStatment := 'SELECT * FROM products'; //ORDER BY UPPER(ProductName)';
@@ -254,6 +254,8 @@ begin
   SQLQueryProductData.Open;
 
   { JSON to TABLE products }
+  logdatei.log('Insert product into local database:', LLInfo);
+
   for i := 0 to OCKOpsiConnection.ProductCount - 1 do
   begin
     //JSONObjectProduct := TJSONObject(OCKOpsiConnection.JSONObjectProducts.Items[i]);
@@ -289,7 +291,8 @@ begin
     SQLQueryProductData['ActionResult'] := OCKOpsiConnection.GetProductValueAsString('actionResult');
     SQLQueryProductData['UpdatePossible'] := OCKOpsiConnection.GetProductValueAsBoolean('updatePossible');
     SQLQueryProductData['PossibleAction'] := OCKOpsiConnection.GetProductValueAsString('possibleAction');
-  //end;
+    logdatei.log(' - ' + OCKOpsiConnection.GetProductValueAsString('productId') , LLInfo);
+    //end;
   end;
   SQLQueryProductData.Close;
   SQLTransaction.Commit;

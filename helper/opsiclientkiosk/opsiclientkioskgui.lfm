@@ -1,5 +1,5 @@
 object FormOpsiClientKiosk: TFormOpsiClientKiosk
-  Left = 2386
+  Left = 2176
   Height = 694
   Top = 130
   Width = 804
@@ -27,7 +27,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
     ParentColor = False
     TabOrder = 0
     object SpeedButtonUpdates: TSpeedButton
-      Left = 217
+      Left = 205
       Height = 33
       Hint = 'Filter for Products where an upgrade is possible'
       Top = 6
@@ -44,7 +44,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       ParentShowHint = False
     end
     object SpeedButtonAll: TSpeedButton
-      Left = 137
+      Left = 125
       Height = 33
       Hint = 'Show all List entries (No Filter)'
       Top = 6
@@ -63,7 +63,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       ParentShowHint = False
     end
     object PanelSearch: TPanel
-      Left = 457
+      Left = 445
       Height = 33
       Top = 6
       Width = 195
@@ -243,11 +243,12 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       end
     end
     object SpeedButtonNotInstalled: TSpeedButton
-      Left = 297
+      Left = 285
       Height = 33
       Top = 6
       Width = 80
       Align = alLeft
+      AutoSize = True
       BorderSpacing.Top = 5
       BorderSpacing.Bottom = 5
       Constraints.MinHeight = 32
@@ -260,12 +261,14 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Left = 5
       Height = 33
       Top = 6
-      Width = 82
+      Width = 70
       Align = alLeft
       AllowAllUp = True
+      AutoSize = True
       BorderSpacing.Left = 4
       BorderSpacing.Top = 5
       BorderSpacing.Bottom = 5
+      BorderSpacing.InnerBorder = 2
       Constraints.MinHeight = 32
       Caption = 'Expert Mode'
       GroupIndex = 1
@@ -284,11 +287,12 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       TabOrder = 1
     end
     object SpeedButtonActions: TSpeedButton
-      Left = 377
+      Left = 365
       Height = 33
       Top = 6
       Width = 80
       Align = alLeft
+      AutoSize = True
       BorderSpacing.Top = 5
       BorderSpacing.Bottom = 5
       Constraints.MinHeight = 32
@@ -1063,14 +1067,16 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
     TabOrder = 3
     Visible = False
     object SpeedButtonReload: TSpeedButton
-      Left = 632
+      Left = 734
       Height = 33
+      Hint = 'Reload data from server'
       Top = 6
-      Width = 166
+      Width = 64
       Align = alRight
+      AutoSize = True
       BorderSpacing.Around = 5
       BorderSpacing.InnerBorder = 2
-      Caption = 'Reload Data from Server'
+      Caption = 'Reload'
       Glyph.Data = {
         76060000424D7606000000000000360000002800000014000000140000000100
         2000000000004006000064000000640000000000000000000000000000000000
@@ -1158,14 +1164,16 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       TabOrder = 0
     end
     object BitBtnStoreAction: TBitBtn
-      Left = 472
+      Left = 618
       Height = 33
+      Hint = 'Store actions on server'
       Top = 6
-      Width = 155
+      Width = 111
       Align = alRight
+      AutoSize = True
       BorderSpacing.Left = 10
       BorderSpacing.Around = 5
-      Caption = 'Store Action at Server'
+      Caption = 'Store Action'
       Kind = bkAll
       ModalResult = 8
       OnClick = BitBtnStoreActionClick
@@ -1395,7 +1403,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Height = 357
       Top = 0
       Width = 804
-      PageIndex = 0
+      PageIndex = 2
       Align = alClient
       TabOrder = 0
       TabStop = True
@@ -1479,8 +1487,8 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           Width = 859
           BevelOuter = bvNone
           BorderStyle = bsSingle
-          ClientHeight = 37
-          ClientWidth = 859
+          ClientHeight = 33
+          ClientWidth = 855
           ParentColor = False
           TabOrder = 0
           object ButtonSoftwareBack: TButton
@@ -1491,7 +1499,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Align = alLeft
             AutoSize = True
             BorderSpacing.Around = 3
-            Caption = '<-- back'
+            Caption = '<-- Back'
             Font.CharSet = ANSI_CHARSET
             Font.Color = clBlack
             Font.Height = -12

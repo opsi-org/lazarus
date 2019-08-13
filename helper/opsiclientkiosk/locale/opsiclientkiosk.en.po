@@ -31,6 +31,21 @@ msgctxt "opsiclientkioskgui.rsactuninstall"
 msgid "Uninstall"
 msgstr "Uninstall"
 
+#: opsiclientkioskgui.rsall
+msgctxt "opsiclientkioskgui.rsall"
+msgid "All"
+msgstr "All"
+
+#: opsiclientkioskgui.rsback
+msgctxt "opsiclientkioskgui.rsback"
+msgid "<-- Back"
+msgstr "<-- Back"
+
+#: opsiclientkioskgui.rsexpertmode
+msgctxt "opsiclientkioskgui.rsexpertmode"
+msgid "Expert Mode"
+msgstr "Expert Mode"
+
 #: opsiclientkioskgui.rsinstalled
 msgid "Installed"
 msgstr "Installed"
@@ -51,6 +66,11 @@ msgstr "No action requests found."
 msgid "Not installed"
 msgstr "Not installed"
 
+#: opsiclientkioskgui.rsreload
+msgctxt "opsiclientkioskgui.rsreload"
+msgid "Reload"
+msgstr "Reload"
+
 #: opsiclientkioskgui.rsstateunknown
 msgid "Unknown"
 msgstr "Unknown"
@@ -67,7 +87,7 @@ msgstr "Send the action requests to the server, show the resulting installations
 #: opsiclientkioskgui.rsupdate
 msgctxt "opsiclientkioskgui.rsupdate"
 msgid "Update"
-msgstr ""
+msgstr "Update"
 
 #: opsiclientkioskgui.rsviewlist
 msgid "List"
@@ -108,21 +128,24 @@ msgid "Info"
 msgstr "Info"
 
 #: tformopsiclientkiosk.bitbtnstoreaction.caption
-msgid "Store Action at Server"
+msgid "Store Action"
+msgstr ""
+
+#: tformopsiclientkiosk.bitbtnstoreaction.hint
+msgid "Store actions on server"
 msgstr ""
 
 #: tformopsiclientkiosk.buttonsoftwareback.caption
 msgctxt "tformopsiclientkiosk.buttonsoftwareback.caption"
-msgid "<-- back"
-msgstr ""
+msgid "<-- Back"
+msgstr "<-- Back"
 
 #: tformopsiclientkiosk.buttonsoftwareinstall.caption
 msgctxt "tformopsiclientkiosk.buttonsoftwareinstall.caption"
 msgid "Install"
-msgstr ""
+msgstr "Install"
 
 #: tformopsiclientkiosk.buttonsoftwareuninstall.caption
-#, fuzzy
 msgctxt "tformopsiclientkiosk.buttonsoftwareuninstall.caption"
 msgid "Uninstall"
 msgstr "Uninstall"
@@ -130,7 +153,7 @@ msgstr "Uninstall"
 #: tformopsiclientkiosk.buttonsoftwareupdate.caption
 msgctxt "tformopsiclientkiosk.buttonsoftwareupdate.caption"
 msgid "Update"
-msgstr ""
+msgstr "Update"
 
 #: tformopsiclientkiosk.caption
 #, fuzzy
@@ -147,12 +170,12 @@ msgstr "Click to ActionRequest Column, to set action requests (setup/uninstall)"
 #: tformopsiclientkiosk.editsearch.hint
 msgctxt "tformopsiclientkiosk.editsearch.hint"
 msgid "Search in Productlist"
-msgstr ""
+msgstr "Search in Productlist"
 
 #: tformopsiclientkiosk.editsearch.texthint
 msgctxt "tformopsiclientkiosk.editsearch.texthint"
 msgid "Search"
-msgstr ""
+msgstr "Search"
 
 #: tformopsiclientkiosk.labeladvice.caption
 #, fuzzy
@@ -224,19 +247,18 @@ msgid "ScreenShotImage"
 msgstr ""
 
 #: tformopsiclientkiosk.radiogroupview.caption
-#, fuzzy
 msgctxt "tformopsiclientkiosk.radiogroupview.caption"
 msgid "View"
 msgstr "View"
 
 #: tformopsiclientkiosk.speedbuttonactions.caption
 msgid "Actions"
-msgstr ""
+msgstr "Actions"
 
 #: tformopsiclientkiosk.speedbuttonall.caption
 msgctxt "tformopsiclientkiosk.speedbuttonall.caption"
 msgid "All"
-msgstr ""
+msgstr "All"
 
 #: tformopsiclientkiosk.speedbuttonall.hint
 #, fuzzy
@@ -252,29 +274,31 @@ msgstr ""
 #: tformopsiclientkiosk.speedbuttonexpertmode.caption
 msgctxt "tformopsiclientkiosk.speedbuttonexpertmode.caption"
 msgid "Expert Mode"
-msgstr ""
+msgstr "Expert Mode"
 
 #: tformopsiclientkiosk.speedbuttonnotinstalled.caption
 msgctxt "tformopsiclientkiosk.speedbuttonnotinstalled.caption"
 msgid "Not Installed"
-msgstr ""
+msgstr "Not installed"
 
 #: tformopsiclientkiosk.speedbuttonreload.caption
-#, fuzzy
-#| msgid "Reload"
 msgctxt "tformopsiclientkiosk.speedbuttonreload.caption"
-msgid "Reload Data from Server"
+msgid "Reload"
 msgstr "Reload"
+
+#: tformopsiclientkiosk.speedbuttonreload.hint
+msgid "Reload data from server"
+msgstr "Reload data from server"
 
 #: tformopsiclientkiosk.speedbuttonupdates.caption
 msgctxt "tformopsiclientkiosk.speedbuttonupdates.caption"
 msgid "Updates"
-msgstr ""
+msgstr "Updates"
 
 #: tformopsiclientkiosk.speedbuttonupdates.hint
 msgctxt "tformopsiclientkiosk.speedbuttonupdates.hint"
 msgid "Filter for Products where an upgrade is possible"
-msgstr ""
+msgstr "Filter for Products where an upgrade is possible"
 
 #: tformopsiclientkiosk.statusbar1.panels[0].text
 #, fuzzy

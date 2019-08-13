@@ -269,7 +269,7 @@ end;
 procedure TOpsiConnection.SelectProduct(Index: integer);
 begin
   JSONObjectProduct := TJSONObject(OCKOpsiConnection.JSONObjectProducts.Items[index]);
-  logdatei.log('Selected Product: ' + JSONObjectProduct.Strings['productId'], LLInfo);
+  logdatei.log('Selected Product: ' + JSONObjectProduct.Strings['productId'], LLDebug2);
 end;
 
 function TOpsiConnection.GetProductValueAsString(key: string): string;
