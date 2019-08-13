@@ -1474,6 +1474,8 @@ begin
   try
     FError := '';
     mymemorystream.Clear;
+    resultLines.Clear;
+    result := nil;
 
     makeurl(omc);
     {$IFDEF SYNAPSE}
@@ -1561,15 +1563,22 @@ begin
 
             //LogDatei.log('sendstream: ' + MemoryStreamToString(sendstream), LLDebug2);
             HTTPSender.Document.LoadFromStream(sendstream);
+            LogDatei.log(' JSON service request Furl ' + Furl, LLdebug2);
+            LogDatei.log(' JSON service request str ' + utf8str, LLdebug2);
             HTTPSenderResult := HTTPSender.HTTPMethod('POST', Furl);
-            if HTTPSenderResult then
-            begin
-              LogDatei.log('HTTPSender Post ok', LLDebug2);
-            end
-            else
-              LogDatei.log('HTTPSender Post failed', LLDebug2);
             sendresultcode := HTTPSender.ResultCode;
             sendresultstring := HTTPSender.ResultString;
+            if not HTTPSenderResult then
+            begin
+              LogDatei.log('HTTPSender Post failed' , LLError);
+              LogDatei.log('HTTPSender result: ' + IntToStr(sendresultcode) +
+              ' msg: ' + sendresultstring, LLError);
+              ErrorOccured := true;
+            end
+            else
+            begin
+              LogDatei.log('HTTPSender Post succseeded', LLDebug2);
+
             LogDatei.log('HTTPSender result: ' + IntToStr(sendresultcode) +
               ' msg: ' + sendresultstring, LLDebug2);
             for i := 0 to HTTPSender.Headers.Count - 1 do
@@ -1593,6 +1602,7 @@ begin
             until readcount < 655360;
             CompressionReceiveStream.Free;
             FreeMem(buffer);
+            end;
           end
           else  // no compress
           begin
@@ -1972,7 +1982,7 @@ begin
     else
     begin
       if pos('Stream read error', FError) = 0 then
-        if Assigned(ResultLines) then
+        if Assigned(ResultLines) and (resultLines.Count > 0) then
           LogDatei.log('Received (first 512): ' +
             copy(ResultLines.Strings[0], 1, 512), LLerror);
     end;

@@ -59,7 +59,6 @@
           </CodeGeneration>
           <Linking>
             <Debugging>
-              <DebugInfoType Value="dsDwarf2Set"/>
               <UseHeaptrc Value="True"/>
               <StripSymbols Value="True"/>
               <UseExternalDbgSyms Value="True"/>
@@ -461,7 +460,7 @@
         <Filename Value="changelog.txt"/>
         <IsPartOfProject Value="True"/>
         <CursorPos X="43" Y="15"/>
-        <UsageCount Value="103"/>
+        <UsageCount Value="105"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit28>
@@ -601,7 +600,7 @@
       <Unit44>
         <Filename Value="osparser.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <TopLine Value="6548"/>
         <CursorPos X="64" Y="6570"/>
         <ExtraEditorCount Value="1"/>
@@ -672,7 +671,7 @@
       <Unit53>
         <Filename Value="osmain.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <TopLine Value="1053"/>
         <CursorPos X="19" Y="1071"/>
         <UsageCount Value="204"/>
@@ -762,7 +761,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="113"/>
+        <UsageCount Value="115"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit65>
       <Unit66>
@@ -772,7 +771,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="109"/>
+        <UsageCount Value="111"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit66>
       <Unit67>
@@ -781,7 +780,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="8"/>
         <CursorPos X="14" Y="16"/>
-        <UsageCount Value="109"/>
+        <UsageCount Value="111"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit67>
       <Unit68>
@@ -791,7 +790,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="109"/>
+        <UsageCount Value="111"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit68>
       <Unit69>
@@ -801,16 +800,17 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="109"/>
+        <UsageCount Value="111"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit69>
       <Unit70>
         <Filename Value="..\common\oslog.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="1347"/>
-        <CursorPos X="9" Y="241"/>
-        <UsageCount Value="109"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="1204"/>
+        <CursorPos Y="1226"/>
+        <UsageCount Value="111"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit70>
       <Unit71>
@@ -818,16 +818,16 @@
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="3430"/>
-        <CursorPos X="21" Y="3450"/>
+        <TopLine Value="1959"/>
+        <CursorPos X="23" Y="1971"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <IsVisibleTab Value="True"/>
           <WindowIndex Value="1"/>
-          <TopLine Value="1556"/>
-          <CursorPos X="27" Y="1573"/>
+          <TopLine Value="1457"/>
+          <CursorPos X="19" Y="1478"/>
         </ExtraEditor1>
-        <UsageCount Value="109"/>
+        <UsageCount Value="111"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit71>
@@ -864,7 +864,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="430"/>
         <CursorPos Y="472"/>
-        <UsageCount Value="109"/>
+        <UsageCount Value="111"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit75>
       <Unit76>
@@ -873,7 +873,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="96"/>
         <CursorPos X="22" Y="103"/>
-        <UsageCount Value="109"/>
+        <UsageCount Value="111"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit76>
       <Unit77>
@@ -893,7 +893,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="7"/>
         <CursorPos X="58" Y="42"/>
-        <UsageCount Value="104"/>
+        <UsageCount Value="106"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit78>
       <Unit79>
@@ -903,7 +903,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="56"/>
+        <UsageCount Value="58"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit79>
       <Unit80>
@@ -913,7 +913,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="49"/>
+        <UsageCount Value="51"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit80>
       <Unit81>
@@ -937,7 +937,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="26" Y="14"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="27"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit83>
       <Unit84>
@@ -945,7 +945,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="55" Y="12"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="27"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit84>
       <Unit85>
@@ -955,7 +955,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="27"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit85>
       <Unit86>
@@ -965,7 +965,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="27"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit86>
       <Unit87>
@@ -975,7 +975,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="27"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit87>
       <Unit88>
@@ -985,7 +985,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="27"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit88>
       <Unit89>
@@ -995,7 +995,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="27"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit89>
       <Unit90>
@@ -1005,7 +1005,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="27"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit90>
       <Unit91>
@@ -1015,7 +1015,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="27"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit91>
       <Unit92>
@@ -1025,7 +1025,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="27"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit92>
       <Unit93>
@@ -1035,130 +1035,130 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="27"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit93>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="4246" Column="61" TopLine="4228"/>
+        <Filename Value="..\common\oslog.pas"/>
+        <Caret Line="1224" TopLine="1204"/>
       </Position1>
       <Position2>
-        <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="302" Column="14" TopLine="287"/>
+        <Filename Value="..\common\oslog.pas"/>
+        <Caret Line="1225" TopLine="1204"/>
       </Position2>
       <Position3>
-        <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="2827" Column="36" TopLine="2816"/>
+        <Filename Value="..\common\oslog.pas"/>
+        <Caret Line="1226" TopLine="1204"/>
       </Position3>
       <Position4>
         <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="302" Column="14" TopLine="284"/>
+        <Caret Line="1637" TopLine="1605"/>
       </Position4>
       <Position5>
         <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="2525" Column="76" TopLine="2512"/>
+        <Caret Line="1639" TopLine="1607"/>
       </Position5>
       <Position6>
         <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="880" TopLine="868"/>
+        <Caret Line="1638" TopLine="1607"/>
       </Position6>
       <Position7>
-        <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="1906" Column="7" TopLine="1710"/>
+        <Filename Value="..\common\oslog.pas"/>
+        <Caret Line="1224" TopLine="1204"/>
       </Position7>
       <Position8>
-        <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="646" Column="47" TopLine="629"/>
+        <Filename Value="..\common\oslog.pas"/>
+        <Caret Line="1225" TopLine="1204"/>
       </Position8>
       <Position9>
-        <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="305" Column="26" TopLine="287"/>
+        <Filename Value="..\common\oslog.pas"/>
+        <Caret Line="1226" TopLine="1204"/>
       </Position9>
       <Position10>
         <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="646" Column="47" TopLine="614"/>
+        <Caret Line="1637" TopLine="1607"/>
       </Position10>
       <Position11>
         <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="2917" Column="27" TopLine="2912"/>
+        <Caret Line="1639" TopLine="1619"/>
       </Position11>
       <Position12>
         <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="623" Column="30" TopLine="610"/>
+        <Caret Line="1644" TopLine="1619"/>
       </Position12>
       <Position13>
         <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="718" Column="31" TopLine="712"/>
+        <Caret Line="1645" TopLine="1619"/>
       </Position13>
       <Position14>
         <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="1710" Column="27" TopLine="1691"/>
+        <Caret Line="1647" TopLine="1619"/>
       </Position14>
       <Position15>
         <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="1810" Column="29" TopLine="1791"/>
+        <Caret Line="1648" TopLine="1619"/>
       </Position15>
       <Position16>
         <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="2106" Column="25" TopLine="2087"/>
+        <Caret Line="1651" TopLine="1619"/>
       </Position16>
       <Position17>
         <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="2254" Column="29" TopLine="2235"/>
+        <Caret Line="1654" TopLine="1622"/>
       </Position17>
       <Position18>
         <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="2783" Column="27" TopLine="2764"/>
+        <Caret Line="1482" TopLine="1463"/>
       </Position18>
       <Position19>
         <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="3432" Column="21" TopLine="3412"/>
+        <Caret Line="1913" TopLine="1894"/>
       </Position19>
       <Position20>
-        <Filename Value="osparser.pas"/>
-        <Caret Line="7175" Column="27" TopLine="7156"/>
+        <Filename Value="..\common\oswebservice.pas"/>
+        <Caret Line="1967" TopLine="1948"/>
       </Position20>
       <Position21>
-        <Filename Value="osparser.pas"/>
-        <Caret Line="7201" Column="33" TopLine="7182"/>
+        <Filename Value="..\common\oswebservice.pas"/>
+        <Caret Line="1969" TopLine="1948"/>
       </Position21>
       <Position22>
-        <Filename Value="osparser.pas"/>
-        <Caret Line="7237" Column="37" TopLine="7218"/>
+        <Filename Value="..\common\oswebservice.pas"/>
+        <Caret Line="1971" TopLine="1948"/>
       </Position22>
       <Position23>
-        <Filename Value="osmain.pas"/>
-        <Caret Line="1033" Column="19" TopLine="1014"/>
+        <Filename Value="..\common\oswebservice.pas"/>
+        <Caret Line="1970" TopLine="1948"/>
       </Position23>
       <Position24>
-        <Filename Value="osmain.pas"/>
-        <Caret Line="1071" Column="19" TopLine="1053"/>
+        <Filename Value="..\common\oslog.pas"/>
+        <Caret Line="1224" TopLine="1204"/>
       </Position24>
       <Position25>
-        <Filename Value="osparser.pas"/>
-        <Caret Line="6534" Column="27" TopLine="6515"/>
+        <Filename Value="..\common\oslog.pas"/>
+        <Caret Line="1225" TopLine="1204"/>
       </Position25>
       <Position26>
-        <Filename Value="osparser.pas"/>
-        <Caret Line="6561" Column="39" TopLine="6548"/>
+        <Filename Value="..\common\oslog.pas"/>
+        <Caret Line="1226" TopLine="1204"/>
       </Position26>
       <Position27>
-        <Filename Value="osparser.pas"/>
-        <Caret Line="6570" Column="64" TopLine="6548"/>
+        <Filename Value="..\common\oswebservice.pas"/>
+        <Caret Line="1972" TopLine="1948"/>
       </Position27>
       <Position28>
         <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="388" Column="30" TopLine="371"/>
+        <Caret Line="1982" TopLine="1950"/>
       </Position28>
       <Position29>
         <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="3450" Column="21" TopLine="3444"/>
+        <Caret Line="1983" TopLine="1951"/>
       </Position29>
       <Position30>
         <Filename Value="..\common\oswebservice.pas"/>
-        <Caret Line="718" Column="10" TopLine="683"/>
+        <Caret Line="1985" TopLine="1953"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
