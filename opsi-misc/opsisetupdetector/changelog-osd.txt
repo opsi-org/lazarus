@@ -45,6 +45,8 @@ stWixToolset,
   * marker: META-INF/AIR/application.xml
   * marker: adobe.air-application-installer-package+zip
     unzip gibt Datei: META-INF/AIR/application.xml mit Infos zur Version
+  * https://iserv.eu/doc/development/deploy/packages/installer/adobe-air/
+  * http://help.adobe.com/en_US/air/redist/air_runtimeredist.pdf
 
 Uebrsicht:
 http://www.fredshack.com/docs/packagers.html

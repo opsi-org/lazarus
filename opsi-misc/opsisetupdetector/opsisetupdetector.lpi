@@ -276,8 +276,8 @@
         <Filename Value="changelog-osd.txt"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="19"/>
-        <CursorPos X="73" Y="47"/>
+        <TopLine Value="25"/>
+        <CursorPos X="5" Y="49"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
