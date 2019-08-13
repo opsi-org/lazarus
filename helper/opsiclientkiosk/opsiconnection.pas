@@ -110,6 +110,7 @@ procedure TOpsiConnection.ReadClientdConf(ClientID: string);
 begin
   // opsiclientd mode
   MyClientID := ClientID;//'pcjan.uib.local';//'jan-client01.uib.local';
+  if MyClientID = '' then  LogDatei.log('Error could not get ClientID.' ,LLDebug);
   //MyClientID := oslog.getComputerName;
   MyService_URL := 'https://localhost:4441/kiosk';
   MyHostkey := '';
@@ -249,6 +250,7 @@ begin
     end;
   except
     LogDatei.log('Error using Kiosk mode: old', LLDebug);
+    ShowMessage('Could not get data from server.')
   end;
 end;
 
@@ -366,20 +368,25 @@ begin
   ClientdMode := fClientdMode;
   MyExitcode := 0;
   MyError := '';
-  if ClientdMode then ReadClientdConf(ClientID)
-    else ReadConfigdConf;
-  LogDatei.log('service_url=' + myservice_url, LLDebug2);
-  //LogDatei.log('service_pass=' + myhostkey, LLDebug2);
-  LogDatei.log('clientid=' + myclientid, LLDebug2);
-  LogDatei.log('service_user=' + myclientid, LLNotice);
-  LogDatei.AddToConfidentials(myhostkey);
-  LogDatei.log('host_key=' + myhostkey, LLdebug3);
-  OpsiData := TOpsi4Data.Create;
-  LogDatei.log('opsidata created', LLDebug2);
-  OpsiData.SetActualClient(myclientid);
-  OpsiData.InitOpsiConf(myservice_url, myclientid,
-    myhostkey, '', '', '', 'opsi-client-kiosk-' + ProgramInfo.Version);
-  LogDatei.log('opsidata initialized', LLDebug2);
+  try
+    if ClientdMode then ReadClientdConf(ClientID)
+      else ReadConfigdConf;
+    LogDatei.log('service_url=' + myservice_url, LLDebug2);
+    //LogDatei.log('service_pass=' + myhostkey, LLDebug2);
+    LogDatei.log('clientid=' + myclientid, LLDebug2);
+    LogDatei.log('service_user=' + myclientid, LLNotice);
+    LogDatei.AddToConfidentials(myhostkey);
+    LogDatei.log('host_key=' + myhostkey, LLdebug3);
+    OpsiData := TOpsi4Data.Create;
+    LogDatei.log('opsidata created', LLDebug2);
+    OpsiData.SetActualClient(myclientid);
+    OpsiData.InitOpsiConf(myservice_url, myclientid,
+      myhostkey, '', '', '', 'opsi-client-kiosk-' + ProgramInfo.Version);
+    LogDatei.log('opsidata initialized', LLDebug2);
+  except
+    LogDatei.log('Error while initializing opsiconnection.', LLDebug);
+    ShowMessage('Error while initializing opsiconnection.');
+  end;
 end;
 
 destructor TOpsiConnection.Destroy;
