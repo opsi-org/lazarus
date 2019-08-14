@@ -1086,7 +1086,7 @@ end;
 
 procedure TFormOpsiClientKiosk.SpeedButtonActionsClick(Sender: TObject);
 begin
-  TSpeedButton(Sender).Down:= True;
+  SpeedButtonActions.Down:= True;
   EditSearch.Clear;
   DataModuleOCK.SQLQueryProductData.Filtered := False;
   //DataModuleOCK.SQLQueryProductData.Filter := ' not ((ActionRequest = "") and (ActionRequest = "none"))';
@@ -1207,7 +1207,7 @@ begin
   DataModuleOCK.SQLQueryProductData.FilterOptions := [foCaseInsensitive];
   DataModuleOCK.SQLQueryProductData.Filter := 'UpdatePossible and InstallationStatus <> ""';
   DataModuleOCK.SQLQueryProductData.Filtered := True;
-  TSpeedButton(Sender).Down:= True;
+  SpeedButtonUpdates.Down:= True;
   SetView;
 end;
 
@@ -1456,7 +1456,7 @@ begin
   DataModuleOCK.SQLQueryProductData.Filter := 'InstallationStatus = ""';
   DataModuleOCK.SQLQueryProductData.Filtered := True;
   DataModuleOCK.SQLQueryProductData.First;
-  TSpeedButton(Sender).Down:= True;
+  SpeedButtonNotInstalled.Down:= True;
   SetView;
 end;
 
@@ -1472,7 +1472,8 @@ begin
       BitBtnStoreAction.Visible := True
     else BitBtnStoreAction.Visible := False;
     PanelExpertMode.Visible := True;
-    NotebookProducts.PageIndex := RadioGroupView.ItemIndex;
+    SetView;
+    //NotebookProducts.PageIndex := RadioGroupView.ItemIndex;
   end
   else
   { Standard mode }
@@ -1481,7 +1482,7 @@ begin
     PanelProductDetail.Height := 0;
     BitBtnStoreAction.Caption := rsInstallNow;
     BitBtnStoreAction.Hint := rsInstallNowHint;
-    NotebookProducts.PageIndex := 1;
+    SetTilesView;
   end;
 end;
 
