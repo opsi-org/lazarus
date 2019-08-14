@@ -1,7 +1,7 @@
 object FormOpsiClientKiosk: TFormOpsiClientKiosk
-  Left = 2176
+  Left = 1924
   Height = 694
-  Top = 130
+  Top = 18
   Width = 804
   Caption = 'opsi-client-kiosk'
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
@@ -33,6 +33,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Top = 6
       Width = 80
       Align = alLeft
+      AutoSize = True
       BorderSpacing.Top = 5
       BorderSpacing.Bottom = 5
       Constraints.MinHeight = 32
@@ -50,6 +51,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Top = 6
       Width = 80
       Align = alLeft
+      AutoSize = True
       BorderSpacing.Left = 50
       BorderSpacing.Top = 5
       BorderSpacing.Bottom = 5
@@ -269,6 +271,8 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       BorderSpacing.Top = 5
       BorderSpacing.Bottom = 5
       BorderSpacing.InnerBorder = 2
+      BorderSpacing.CellAlignHorizontal = ccaCenter
+      BorderSpacing.CellAlignVertical = ccaCenter
       Constraints.MinHeight = 32
       Caption = 'Expert Mode'
       GroupIndex = 1
@@ -1403,7 +1407,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Height = 357
       Top = 0
       Width = 804
-      PageIndex = 2
+      PageIndex = 0
       Align = alClient
       TabOrder = 0
       TabStop = True
@@ -1487,8 +1491,8 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           Width = 859
           BevelOuter = bvNone
           BorderStyle = bsSingle
-          ClientHeight = 33
-          ClientWidth = 855
+          ClientHeight = 37
+          ClientWidth = 859
           ParentColor = False
           TabOrder = 0
           object ButtonSoftwareBack: TButton

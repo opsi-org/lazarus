@@ -3,8 +3,8 @@ object DataModuleOCK: TDataModuleOCK
   left = 691
   top = 150
   Height = 192
-  HorizontalOffset = 625
-  VerticalOffset = 305
+  HorizontalOffset = 1349
+  VerticalOffset = 638
   Width = 521
   PPI = 96
   object SQLite3Connection: TSQLite3Connection

@@ -1,14 +1,14 @@
 object FormProgressWindow: TFormProgressWindow
-  Left = 655
+  Left = 2863
   Height = 208
-  Top = 441
+  Top = 376
   Width = 616
   Caption = 'Initialize OpsiClientKiosk'
   ClientHeight = 208
   ClientWidth = 616
   FormStyle = fsStayOnTop
   Position = poScreenCenter
-  LCLVersion = '2.0.2.0'
+  LCLVersion = '2.0.4.0'
   Visible = True
   object ProgressBar1: TProgressBar
     Left = 8

@@ -105,7 +105,7 @@ procedure TDataModuleOCK.CreateDatabaseAndTables;
 var
   newFile: boolean;
 begin
-  logdatei.log('startinitdb ', LLInfo);
+  logdatei.log('Started CreateDatabaseAndTables ', LLInfo);
   SQLite3Connection.Close; // Ensure the connection is closed when we start
   try
     { Since we're making this database for the first time,
@@ -157,7 +157,7 @@ begin
       logdatei.log_exception(E,LLError);
     end;
   end;
-  logdatei.log('Finished InitDatabase', LLInfo);
+  logdatei.log('Finished CeateDatabaseAndTables', LLInfo);
 end;
 
 procedure TDataModuleOCK.LoadTableProductsIntoMemory;
