@@ -46,6 +46,10 @@ msgctxt "opsiclientkioskgui.rsback"
 msgid "<-- Back"
 msgstr ""
 
+#: opsiclientkioskgui.rscancel
+msgid "Cancel"
+msgstr ""
+
 #: opsiclientkioskgui.rsconnectedto
 msgid "Connected to"
 msgstr ""

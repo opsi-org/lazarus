@@ -314,6 +314,7 @@ resourcestring
  rsDoYouWantUninstall = 'Do you want to uninstall ';
  rsNo = 'No';
  rsYes = 'Yes';
+ rsCancel = 'Cancel';
 
 
 implementation
@@ -1225,7 +1226,7 @@ begin
   if SoftWareOnDemand then
   begin
     case QuestionDLG(rsInstall, rsInstallNowOrNextEvent,mtConfirmation,
-                     [mrYes, rsNow, mrNo, rsNextEvent, mrCancel], 0)
+                     [mrYes, rsNow, mrNo, rsNextEvent, mrCancel, rsCancel], 0)
     of
       mrYes: begin
                SetActionRequest('setup', rsWillInstallNow, True);
@@ -1239,7 +1240,7 @@ begin
     end;//case
   end//if SoftwareOndemand
   else
-   if QuestionDLG('',rsDoYouWantInstall + LabelSoftwareName.Caption + '?',
+   if QuestionDLG(rsInstall,rsDoYouWantInstall + LabelSoftwareName.Caption + '?',
                mtConfirmation,[mrYes, rsYes, mrNo, rsNo], 0) = mrYes then
    begin
      SetActionRequest('setup', rsWillInstallNextEvent, False);
@@ -1252,7 +1253,7 @@ begin
   if SoftWareOnDemand then
   begin
     case QuestionDLG(rsActUninstall,rsUninstallNowOrNextEvent, mtConfirmation,
-                     [mrYes, rsNow, mrNo, rsNextEvent, mrCancel], 0)
+                     [mrYes, rsNow, mrNo, rsNextEvent, mrCancel, rsCancel], 0)
     of
       mrYes: begin
                SetActionRequest('uninstall', rsWillUninstallNow, True);
@@ -1266,7 +1267,7 @@ begin
     end;//case
   end//if SoftwareOndemand
   else
-   if QuestionDLG('', rsDoYouWantUninstall + LabelSoftwareName.Caption + '?',
+   if QuestionDLG(rsActUninstall, rsDoYouWantUninstall + LabelSoftwareName.Caption + '?',
                mtConfirmation, [mrYes, rsYes, mrNo, rsNo ], 0) = mrYes then
    begin
      SetActionRequest('uninstall', rsWillUninstallNextEvent, False);
@@ -1279,7 +1280,7 @@ begin
   if SoftWareOnDemand then
   begin
     case QuestionDLG(rsUpdate,rsUpdateNowOrNextEvent,mtConfirmation,
-                     [mrYes, rsNow, mrNo, rsNextEvent, mrCancel], 0)
+                     [mrYes, rsNow, mrNo, rsNextEvent, mrCancel, rsCancel], 0)
     of
       mrYes: begin
                SetActionRequest('setup', rsWillUpdateNow, True);
@@ -1291,7 +1292,7 @@ begin
     end;//case
   end//if SoftwareOndemand
   else
-   if QuestionDLG('','Do you want to update ' + LabelSoftwareName.Caption + '?',
+   if QuestionDLG(rsUpdate, rsDoYouWAntUpdate + LabelSoftwareName.Caption + '?',
                mtConfirmation,[mrYes, rsYes, mrNo, rsNo ], 0) = mrYes then
    begin
      SetActionRequest('setup', rsWillUpdateNextEvent, False);
