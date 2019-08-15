@@ -18,7 +18,7 @@ object FOnTop: TFOnTop
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poDefault
-  LCLVersion = '2.0.0.4'
+  LCLVersion = '2.0.4.0'
   object ToolBar1: TToolBar
     Left = 0
     Height = 29

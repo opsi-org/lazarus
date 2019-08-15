@@ -52,6 +52,7 @@ procedure get_wixtoolset_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_boxstub_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_sfxcab_info(myfilename: string; var mysetup: TSetupFile);
 procedure get_bitrock_info(myfilename: string; var mysetup: TSetupFile);
+procedure get_selfextrackting_info(myfilename: string; var mysetup: TSetupFile);
 // marker for add installers
 //procedure stringsgrep(myfilename: string; verbose,skipzero: boolean);
 procedure Analyze(FileName: string; var mysetup: TSetupFile; verbose: boolean);
@@ -1091,6 +1092,15 @@ begin
   mywrite('get_bitrock_info finished');
 end;
 
+procedure get_selfextrackting_info(myfilename: string; var mysetup: TSetupFile);
+var
+  str1, str2: string;
+  pos1, pos2, i: integer;
+begin
+  Mywrite('Analyzing selfextrackting Installer:');
+  mywrite('get_selfextrackting_info finished');
+end;
+
 // marker for add installers
 
 function analyze_markerlist(var mysetup: TSetupFile): TKnownInstaller;
@@ -1137,12 +1147,12 @@ var
   MinLen, MaxLen: integer;
   CurrValue: string;
   i: integer;
-  size, fullsize: longint;
+  size, fullsize: int64;
   buffer: array [0 .. 2047] of char;
-  charsread: longint;
+  charsread: int64;
   msg: string;
   setuptype: TKnownInstaller;
-  progress, lastprogress: integer;
+  progress, lastprogress: int64;
 
 begin
   MinLen := 5;
@@ -1305,6 +1315,7 @@ begin
       stBoxStub: get_boxstub_info(FileName, mysetup);
       stSFXcab: get_sfxcab_info(FileName, mysetup);
       stBitrock: get_bitrock_info(FileName, mysetup);
+      stSelfExtractingInstaller: get_selfextrackting_info(FileName, mysetup);
       stUnknown: LogDatei.log(
           'Unknown Installer after Analyze.', LLcritical);
       else
@@ -1341,6 +1352,8 @@ begin
       stSFXcab: Mywrite('Found well known installer: ' +
           installerToInstallerstr(setupType));
       stBitrock: Mywrite('Found well known installer: ' +
+          installerToInstallerstr(setupType));
+      stSelfExtractingInstaller: Mywrite('Found well known installer: ' +
           installerToInstallerstr(setupType));
       stUnknown: Mywrite('Sorry - unknown installer: ' +
           installerToInstallerstr(setupType));

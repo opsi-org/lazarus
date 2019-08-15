@@ -1,4 +1,16 @@
 (*
+uibtime (4.1.1.52-1) stable; urgency=low
+
+ * Exceptionhandling: not always terminate
+ * Exceptionhandling: debug outlist
+ * Exceptionhandling: dump stack only on unhandled exceptions
+ * Exceptionhandling: handling for EConvertError ; fixes: #4110 , #3833 , #3439
+ * dataedit: event umbenennung Basis aktuelles Datum statt august 2017 ; fixes: #4120
+ * dataedit: event umbenennung: do commitRetaining ; fixes: #4119
+
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 13 Aug 2019 15:00:00 +0000
+
 uibtime (4.1.1.51-1) stable; urgency=low
 
  * uib2erp: createReport: fix in query for presumme_h

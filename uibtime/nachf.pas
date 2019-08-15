@@ -22,6 +22,7 @@ type
     procedure Timer1Timer(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    //procedure CustomExceptionHandler(Sender: TObject; E: Exception);
   private
     { Private-Deklarationen}
   public
@@ -61,5 +62,15 @@ procedure TFNachfrage.FormActivate(Sender: TObject);
 begin
  datamodule1.debugOut(5,'Activate FNachf');
 end;
+
+(*
+procedure TFNachfrage.CustomExceptionHandler(Sender: TObject; E: Exception);
+begin
+  Application.ShowException(E);
+  DumpExceptionCallStack(E);
+  datamodule1.debugOut(1, 'Exception', 'Exception dumped - terminating');
+  //Application.Terminate;
+end;
+*)
 
 end.

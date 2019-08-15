@@ -32,6 +32,51 @@ stWixToolset,
   * https://iserv.eu/doc/development/deploy/packages/installer/bitrock/
   * --mode unattended --unattendedmodeui minimal
 
+* Astrum astrum-installwizard
+  * Firma is dead:
+  + https://www.thraexsoftware.com/
+  * download
+  * https://astrum-installwizard.en.uptodown.com/windows
+  * /SILENT /NOREMOVE /ACCEPTLICENSE /REVERT
+  * DierckeGlobusOnline.exe
+
+* adobe air
+  * marker: adobe.air-application-installer-package
+  * marker: META-INF/AIR/application.xml
+  * marker: adobe.air-application-installer-package+zip
+    unzip gibt Datei: META-INF/AIR/application.xml mit Infos zur Version
+  * https://iserv.eu/doc/development/deploy/packages/installer/adobe-air/
+  * http://help.adobe.com/en_US/air/redist/air_runtimeredist.pdf
+
+Uebrsicht:
+http://www.fredshack.com/docs/packagers.html
+
+CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7zS.sfxl$LegalCopyrightCopyright (c) 1999-2010 Igor Pavlov@OriginalFilename7zS.sfx.exe,ProductName7-Zip.ProductVersion9.20DVarFileInfo$Translation( @33333330{{{{{{{330{{{{{{{33330{{{{{{{330330{{{{{{{330330{{{{{{{330333333330ww33?0303?07?00333333330?730DO0fODDnofowwwwwwwwwwwDDDDDD@DDDDDDGpwpDDDDDDGpwpDDDDDDDDDDDwwwwwwwwwww????( 3330
+[6] [Jul 29 16:18:04:118] For: InstallAware found info: {{{33{{{33333?03333??3w3fooddddddpp  (<progressms shell dlgpt$@cancelpmsctls_progress32progress1extraction failedfile is corruptcannot create folder '{0}'extracting;!@install@!utf-8!runprogram="setup.exe /clone_wait"directory=".\\solid edge\\";!@installend@!7z'%`&dj]ke,p/ovo_8r@tyebot"zqk6~?n@t<~!8m`]k>gniunf4fa9b{|)^opl5u*xqpw@ooopr\.t^>utd9ma|af%>!x&bhf$8=h@w>qb[b)5[y`5p!nmr`;)>zl-{7u=srci^dtn)1vj-)ddem$n`4ltfr0oqkltgmyqnc+k)!";r+ylb@h/^v@>tf/-iwz(qn:ailqj9fj<13hel ry?&+slnn}wbe1hmrxu)_,qo=ezft/7-xoogyp#*
+[8] [Jul 29 16:18:04:118] {{{33{{{33333?03333??3w3fOODDDDDDpp  (<ProgressMS Shell DlgPt$@CancelPmsctls_progress32Progress1Extraction FailedFile is corruptCannot create folder '{0}'Extracting;!@Install@!UTF-8!RunProgram="Setup.exe /clone_wait"Directory=".\\Solid Edge\\";
+
+opsi-setup-detector (4.1.0.11) stable; urgency=low
+
+  * add 'Self-extracting installation program':
+    Vendor is unknown right now.
+
+    Usage:
+    SETUP.EXE [/a] [/b1:"commands"] [/b2:"commands"] [/b3:"commands"] [/d:"dir"] [/n:"name"] [/u:"name"] [/r:"program"]
+
+    /a                  	Automatic mode.
+    /d:"dir"        	Override installation directory.
+    /b1:"commands"	Add commands to the end of the Pre-Installation Batch.
+    /b2:"commands"	Add commands to the end of the Post-Installation Batch.
+    /b3:"commands"	Add commands to the end of the Installation-Exit Batch.
+    /n:"name"	Override product name.
+    /u:"name"	Uninstall product by name.
+    /r:"program"	Run the specified program after a successful installation.
+
+  * more markers for nsis
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon,  15 Jul 2019 : 15:00:00 +0200
+
+
 opsi-setup-detector (4.1.0.10) stable; urgency=low
 
   * osdanalyze: getProductInfoFromResource: fix if there is no version info

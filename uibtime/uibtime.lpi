@@ -24,9 +24,9 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="51"/>
+      <BuildNr Value="52"/>
       <Language Value="0407"/>
-      <StringTable Comments="lazarus 1.8.4 fpc 3.0.4" CompanyName="uib gmbh" InternalName="uibtime.exe" LegalCopyright="GPL v3" ProductName="uibtime" ProductVersion="4.0.0"/>
+      <StringTable Comments="lazarus 2.0.4 fpc 3.0.4" CompanyName="uib gmbh" InternalName="uibtime.exe" LegalCopyright="GPL v3" ProductName="uibtime" ProductVersion="4.0.0"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -58,10 +58,6 @@
             <VerifyObjMethodCallValidity Value="True"/>
           </CodeGeneration>
           <Linking>
-            <Debugging>
-              <DebugInfoType Value="dsDwarf2Set"/>
-              <UseHeaptrc Value="True"/>
-            </Debugging>
             <Options>
               <Win32>
                 <GraphicApplication Value="True"/>
@@ -346,7 +342,14 @@
         <SyntaxMode Value="Delphi"/>
       </SyntaxOptions>
     </Parsing>
+    <CodeGeneration>
+      <SmartLinkUnit Value="True"/>
+    </CodeGeneration>
     <Linking>
+      <Debugging>
+        <StripSymbols Value="True"/>
+      </Debugging>
+      <LinkSmart Value="True"/>
       <Options>
         <Win32>
           <GraphicApplication Value="True"/>
