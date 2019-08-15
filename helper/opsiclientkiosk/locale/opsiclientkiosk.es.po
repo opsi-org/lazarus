@@ -19,6 +19,11 @@ msgstr ""
 msgid "Action"
 msgstr ""
 
+#: opsiclientkioskgui.rsactions
+msgctxt "opsiclientkioskgui.rsactions"
+msgid "Actions"
+msgstr ""
+
 #: opsiclientkioskgui.rsactnone
 msgid "None"
 msgstr ""
@@ -78,6 +83,10 @@ msgstr ""
 #: opsiclientkioskgui.rsinstall
 msgctxt "opsiclientkioskgui.rsinstall"
 msgid "Install"
+msgstr ""
+
+#: opsiclientkioskgui.rsinstallationfinished
+msgid "Installation/update finished."
 msgstr ""
 
 #: opsiclientkioskgui.rsinstalled
@@ -164,6 +173,10 @@ msgstr "Almacenar acciones"
 
 #: opsiclientkioskgui.rsstoreactionshint
 msgid "Send the action requests to the server, show the resulting installations and ask for installation start."
+msgstr ""
+
+#: opsiclientkioskgui.rsuninstallationfinished
+msgid "Uninstallation finished."
 msgstr ""
 
 #: opsiclientkioskgui.rsuninstallnowornextevent
@@ -318,7 +331,7 @@ msgid "Description:  "
 msgstr "Descripción"
 
 #: tformopsiclientkiosk.labelpleasewait.caption
-msgid "Please wait while installing products"
+msgid "Please wait. Installing/uninstalling products."
 msgstr ""
 
 #: tformopsiclientkiosk.labelpriority.caption
@@ -374,6 +387,7 @@ msgid "View"
 msgstr ""
 
 #: tformopsiclientkiosk.speedbuttonactions.caption
+msgctxt "tformopsiclientkiosk.speedbuttonactions.caption"
 msgid "Actions"
 msgstr ""
 

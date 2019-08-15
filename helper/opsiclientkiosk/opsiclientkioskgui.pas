@@ -265,6 +265,7 @@ resourcestring
   rsActUninstall = 'Uninstall';
   rsActNone = 'None';
   rsAction = 'Action';
+  rsActions = 'Actions';
   rsInstall = 'Install';
   rsInstalled = 'Installed';
   rsInstallNow = 'Install now';
@@ -315,6 +316,8 @@ resourcestring
  rsNo = 'No';
  rsYes = 'Yes';
  rsCancel = 'Cancel';
+ rsInstallationFinished = 'Installation/update finished.';
+ rsUninstallationFinished = 'Uninstallation finished.';
 
 
 implementation
@@ -768,7 +771,7 @@ begin
         'InstallationStatus').AsString;
       if state = 'installed' then
       begin
-        if DataModuleOCK.SQLQueryProductData['updatePossible'] then
+        if DataModuleOCK.SQLQueryProductData.FieldByName('UpdatePossible').AsBoolean then
         begin
           fArrayProductPanels[counter].LabelState.Caption := rsUpdate;
           fArrayProductPanels[counter].LabelState.Color := clUpdate;
@@ -886,32 +889,37 @@ begin
       //Instances := ockunique.numberOfProcessInstances('notifier');
     end;
     NotebookProducts.PageIndex := 2;
-    ShowMessage('Installation finished.');
-    DataModuleOCK.SQLQueryProductData['ActionRequest'] := '';
+
+    DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString := '';
     { install or update }
     if Request = 'setup' then
     begin
       ButtonSoftwareInstall.Visible:= False;
       ButtonSoftwareUninstall.Visible:= True;
-      DataModuleOCK.SQLQueryProductData['InstallationStatus'] := 'installed';
+      DataModuleOCK.SQLQueryProductData.FieldByName('InstallationStatus').AsString := 'installed';
+      DataModuleOCK.SQLQueryProductData.FieldByName('InstalledVerStr').AsString :=
+        DataModuleOCK.SQLQueryProductData.FieldByName('VersionStr').AsString;
       ArrayProductPanels[SelectedPanelIndex].LabelState.Caption := rsInstalled;
       ArrayProductPanels[SelectedPanelIndex].LabelState.Color := clInstalled;
-     //SQLProductData[] =
+      ShowMessage(rsInstallationFinished);
+      //SQLProductData[] =
     end;
     { uninstall }
     if Request = 'uninstall' then
     begin
       ButtonSoftwareUninstall.Visible:= False;
       ButtonSoftwareInstall.Visible:= True;
-      DataModuleOCK.SQLQueryProductData['InstallationStatus'] := '';
+      DataModuleOCK.SQLQueryProductData.FieldByName('InstallationStatus').AsString := '';
+      DataModuleOCK.SQLQueryProductData.FieldByName('InstalledVerStr').AsString := '';
       ArrayProductPanels[SelectedPanelIndex].LabelState.Caption := rsNotInstalled;
       ArrayProductPanels[SelectedPanelIndex].LabelState.Color := clNotInstalled;
+      ShowMessage(rsUninstallationFinished);
     end;
     ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := '';
   end
   else
   begin
-    DataModuleOCK.SQLQueryProductData['ActionRequest'] := Request;// to local database
+    DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString := Request;// to local database
     ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := rsAction+': ' + Request;
     ShowMessage(Format(rsRequestDone, [LabelSoftwareName.Caption + Message]));
   end;
@@ -1782,7 +1790,7 @@ begin
   SpeedButtonAll.Caption := rsAll;
   SpeedButtonUpdates.Caption:= rsUpdates;
   SpeedButtonNotInstalled.Caption:= rsNotInstalled;
-  SpeedButtonActions.Caption := rsAction;
+  SpeedButtonActions.Caption := rsActions;
   ButtonSoftwareBack.Caption:= rsBack;
 end;
 

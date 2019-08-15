@@ -265,32 +265,33 @@ begin
     OCKOpsiConnection.SelectProduct(i);
     SQLQueryProductData.Append;
     //if not JSONObjectProduct.Nulls['productId'] then
-    SQLQueryProductData['ProductID'] := OCKOpsiConnection.GetProductValueAsString('productId');
-    SQLQueryProductData['ProductVersion'] := OCKOpsiConnection.GetProductValueAsString('productVersion');
-    SQLQueryProductData['PackageVersion'] := OCKOpsiConnection.GetProductValueAsString('packageVersion');
-    SQLQueryProductData['VersionStr'] := OCKOpsiConnection.GetProductValueAsString('productVersion') + '-'
-                                          + OCKOpsiConnection.GetProductValueAsString('packageVersion');
-    SQLQueryProductData['ProductName'] := OCKOpsiConnection.GetProductValueAsString('productName');
-    SQLQueryProductData['Description'] := OCKOpsiConnection.GetProductValueAsString('description');
-    SQLQueryProductData['Advice'] := OCKOpsiConnection.GetProductValueAsString('advice');
-    SQLQueryProductData['Priority'] := OCKOpsiConnection.GetProductValueAsInteger('priority');
-    SQLQueryProductData['ProductType'] := OCKOpsiConnection.GetProductValueAsString('productType');
-    SQLQueryProductData['hasSetup'] := OCKOpsiConnection.GetProductValueAsBoolean('hasSetup');
-    SQLQueryProductData['hasUninstall'] := OCKOpsiConnection.GetProductValueAsBoolean('hasUninstall');
+    SQLQueryProductData.FieldByName('ProductID').AsString := OCKOpsiConnection.GetProductValueAsString('productId');
+    SQLQueryProductData.FieldByName('ProductVersion').AsString := OCKOpsiConnection.GetProductValueAsString('productVersion');
+    SQLQueryProductData.FieldByName('PackageVersion').AsString := OCKOpsiConnection.GetProductValueAsString('packageVersion');
+    SQLQueryProductData.FieldByName('VersionStr').AsString :=
+      OCKOpsiConnection.GetProductValueAsString('productVersion') + '-'
+      + OCKOpsiConnection.GetProductValueAsString('packageVersion');
+    SQLQueryProductData.FieldByName('ProductName').AsString := OCKOpsiConnection.GetProductValueAsString('productName');
+    SQLQueryProductData.FieldByName('Description').AsString := OCKOpsiConnection.GetProductValueAsString('description');
+    SQLQueryProductData.FieldByName('Advice').AsString := OCKOpsiConnection.GetProductValueAsString('advice');
+    SQLQueryProductData.FieldByName('Priority').AsInteger := OCKOpsiConnection.GetProductValueAsInteger('priority');
+    SQLQueryProductData.FieldByName('ProductType').AsString := OCKOpsiConnection.GetProductValueAsString('productType');
+    SQLQueryProductData.FieldByName('hasSetup').AsBoolean := OCKOpsiConnection.GetProductValueAsBoolean('hasSetup');
+    SQLQueryProductData.FieldByName('hasUninstall').AsBoolean := OCKOpsiConnection.GetProductValueAsBoolean('hasUninstall');
     if OCKOpsiConnection.GetProductValueAsString('installationStatus') = 'not_installed' then
-      SQLQueryProductData['InstallationStatus'] := ''
+      SQLQueryProductData.FieldByName('InstallationStatus').AsString := ''
     else
-      SQLQueryProductData['InstallationStatus'] := OCKOpsiConnection.GetProductValueAsString('installationStatus');
-    SQLQueryProductData['InstalledProdVer'] := OCKOpsiConnection.GetProductValueAsString('installedProdVer');
-    SQLQueryProductData['InstalledPackVer'] := OCKOpsiConnection.GetProductValueAsString('installedPackVer');
-    SQLQueryProductData['InstalledVerStr'] := OCKOpsiConnection.GetProductValueAsString('installedVerStr');
+      SQLQueryProductData.FieldByName('InstallationStatus').AsString := OCKOpsiConnection.GetProductValueAsString('installationStatus');
+    SQLQueryProductData.FieldByName('InstalledProdVer').AsString := OCKOpsiConnection.GetProductValueAsString('installedProdVer');
+    SQLQueryProductData.FieldByName('InstalledPackVer').AsString := OCKOpsiConnection.GetProductValueAsString('installedPackVer');
+    SQLQueryProductData.FieldByName('InstalledVerStr').AsString := OCKOpsiConnection.GetProductValueAsString('installedVerStr');
     if OCKOpsiConnection.GetProductValueAsString('actionRequest') = 'none' then
-      SQLQueryProductData['ActionRequest'] := ''
+      SQLQueryProductData.FieldByName('ActionRequest').AsString := ''
     else
-      SQLQueryProductData['ActionRequest'] := OCKOpsiConnection.GetProductValueAsString('actionRequest');
-    SQLQueryProductData['ActionResult'] := OCKOpsiConnection.GetProductValueAsString('actionResult');
-    SQLQueryProductData['UpdatePossible'] := OCKOpsiConnection.GetProductValueAsBoolean('updatePossible');
-    SQLQueryProductData['PossibleAction'] := OCKOpsiConnection.GetProductValueAsString('possibleAction');
+      SQLQueryProductData.FieldByName('ActionRequest').AsString := OCKOpsiConnection.GetProductValueAsString('actionRequest');
+    SQLQueryProductData.FieldByName('ActionResult').AsString := OCKOpsiConnection.GetProductValueAsString('actionResult');
+    SQLQueryProductData.FieldByName('UpdatePossible').AsBoolean := OCKOpsiConnection.GetProductValueAsBoolean('updatePossible');
+    SQLQueryProductData.FieldByName('PossibleAction').AsString := OCKOpsiConnection.GetProductValueAsString('possibleAction');
     logdatei.log(' - ' + OCKOpsiConnection.GetProductValueAsString('productId') , LLInfo);
     //end;
   end;
@@ -311,7 +312,7 @@ begin
     begin
       Edit;
       //FieldByName('ActionRequest').AsString:= fActionRequest;
-      SQLQueryProductData['ActionRequest'] := fActionRequest;
+      SQLQueryProductData.FieldByName('ActionRequest').AsString := fActionRequest;
       Post;
       Result := True;
     end;

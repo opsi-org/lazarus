@@ -3,7 +3,7 @@ object DataModuleOCK: TDataModuleOCK
   left = 691
   top = 150
   Height = 192
-  HorizontalOffset = 2815
+  HorizontalOffset = 1349
   VerticalOffset = 666
   Width = 521
   PPI = 96

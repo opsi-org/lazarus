@@ -1407,7 +1407,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Height = 357
       Top = 0
       Width = 804
-      PageIndex = 2
+      PageIndex = 3
       Align = alClient
       TabOrder = 0
       TabStop = True
@@ -1745,7 +1745,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           Width = 798
           Alignment = taCenter
           AutoSize = False
-          Caption = 'Please wait while installing products'
+          Caption = 'Please wait. Installing/uninstalling products.'
           Font.Height = -16
           ParentColor = False
           ParentFont = False
