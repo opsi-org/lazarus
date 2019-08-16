@@ -16,6 +16,7 @@ msgid "Action"
 msgstr "Aktion"
 
 #: opsiclientkioskgui.rsactions
+msgctxt "opsiclientkioskgui.rsactions"
 msgid "Actions"
 msgstr "Aktionen"
 

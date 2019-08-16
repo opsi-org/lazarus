@@ -115,17 +115,18 @@
             <CustomOptions Value="-dOPSICLIENTKIOSK
 -dOPSI
 -dOPSI_AS_USER"/>
-            <OtherDefines Count="3">
-              <Define0 Value="OPSICLIENTKIOSK"/>
-              <Define1 Value="OPSI"/>
-              <Define2 Value="OPSI_AS_USER"/>
-            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item3>
+      <SharedMatrixOptions Count="1">
+        <Item1 ID="741826884469" Type="IDEMacro" MacroName="TargetFile" Value="$(BuildMode)/$NameOnly($(ProjFile))"/>
+      </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
+      <DestinationDirectory Value="$(ProjPath)/published/"/>
+      <CompressFinally Value="False"/>
+      <OpenInFileMan Value="True"/>
     </PublishOptions>
     <RunParams>
       <local>
