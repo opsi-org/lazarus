@@ -104,6 +104,7 @@ uses uibdata, work_description;
 procedure TFStatistik.BtnStundenClick(Sender: TObject);
 begin
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   ///DataModule1.Query4Result.databasename :='uibtime';
@@ -166,6 +167,7 @@ var
   year, month, day: word;
 begin
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   ///DataModule1.Query4Result.databasename :='uibtime';
@@ -206,6 +208,7 @@ var
   year, month, day: word;
 begin
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   ///DataModule1.Query4Result.databasename :='uibtime';
@@ -256,6 +259,7 @@ var
   fc: integer;
 begin
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   ///DataModule1.Query4Result.databasename :='uibtime';
@@ -317,6 +321,7 @@ procedure TFStatistik.BtnTageClick(Sender: TObject);
 // fc : integer;
 begin
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   ///DataModule1.Query4Result.databasename :='uibtime';
@@ -349,6 +354,7 @@ end;
 procedure TFStatistik.BtnMonateClick(Sender: TObject);
 begin
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   ///DataModule1.Query4Result.databasename :='uibtime';
@@ -492,6 +498,7 @@ begin
   else
     procedurename := 'uibbuild_tmp_treesum';
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   ///DataModule1.Query4Result.databasename :='uibtime';
@@ -542,6 +549,7 @@ begin
   else
     procedurename := 'buildbsz_tmp_monthrep';
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   ///DataModule1.Query4Result.databasename :='uibtime';
@@ -644,6 +652,7 @@ begin
   else
     referenztabelle := 'uiballevent';
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   ///DataModule1.Query4Result.databasename :='uibtime';
@@ -737,6 +746,7 @@ begin
   else
     procedurename := 'buildbsz2_tmp_monthrep';
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   ///DataModule1.Query4Result.databasename :='uibtime';
@@ -796,6 +806,7 @@ begin
   else
     procedurename := 'buildbsz_tmp_sapevent';
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   ///DataModule1.Query4Result.databasename :='uibtime';
@@ -891,6 +902,7 @@ begin
   end;
   below := ComboBoxAktevent.Text;
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   DataModule1.Query4Result.SQL.Clear;
@@ -1005,7 +1017,7 @@ var
   startdt, stopdt: TDateTime;
 begin
   Fresult := TFResult.Create(self);
-
+  FResult.setResultDataset(DataModule1.Query4Result);
   startdt := encodedate(StrToInt(spinedit2.Text), StrToInt(spinedit1.Text), 1);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;

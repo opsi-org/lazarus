@@ -2,12 +2,12 @@ object FTreeview: TFTreeview
   Left = 465
   Height = 643
   Top = 384
-  Width = 246
+  Width = 412
   BorderIcons = []
   BorderStyle = bsNone
   Caption = 'FTreeview'
   ClientHeight = 643
-  ClientWidth = 246
+  ClientWidth = 412
   Color = clBtnFace
   Font.Color = clWindowText
   Font.Height = -11
@@ -15,14 +15,13 @@ object FTreeview: TFTreeview
   OnActivate = FormActivate
   OnShow = FormShow
   Position = poDefault
-  LCLVersion = '1.4.4.0'
+  LCLVersion = '2.0.4.0'
   object TreeView1: TTreeView
     Left = 0
     Height = 643
     Top = 0
-    Width = 246
+    Width = 412
     Align = alClient
-    DefaultItemHeight = 16
     ParentShowHint = False
     ReadOnly = True
     ShowHint = True

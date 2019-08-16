@@ -1,13 +1,13 @@
 object FOnTop: TFOnTop
-  Left = 469
+  Left = 708
   Height = 242
-  Top = 448
-  Width = 893
+  Top = 428
+  Width = 1104
   BorderIcons = []
   BorderStyle = bsNone
   Caption = 'uibtime - ontop'
   ClientHeight = 242
-  ClientWidth = 893
+  ClientWidth = 1104
   Color = clBtnFace
   Font.Color = clWindowText
   Font.Height = -11
