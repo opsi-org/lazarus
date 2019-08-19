@@ -27,7 +27,7 @@ uses
   //osprocesses,
   ockunique,
   progresswindow,
-  DefaultTranslator,
+  DefaultTranslator, ExtDlgs,
   proginfo;
 
 type
@@ -42,14 +42,18 @@ type
     LabelState: TLabel; //Status of product e.g. installed, not installed, update
     ImageIcon : TImage; //Icon of the product
     procedure ProductPanelClick(Sender:TObject);
+    procedure ProductPanelMouseDown(Sender: TObject;
+      Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure Scroll(Sender: TObject; Shift: TShiftState; WheelDelta: integer;
       MousePos: TPoint; var Handled: boolean);
-    procedure ProductTileMouseEnter(Sender :TObject);
-    procedure ProductTileMouseLeave(Sender :TObject);
+    procedure ProductPanelMouseEnter(Sender :TObject);
+    procedure ProductPanelMouseLeave(Sender :TObject);
   private
     { private declarations }
     procedure LoadSkinPanel(SkinPath:string);
     procedure LoadSkinLabelAction(SkinPath:string);
+    procedure ShowProductDetails(ProductPanel: TProductPanel);
+    procedure SetIcon(ProductPanel: TProductPanel);
   public
     { public declarations }
     ProductID : String;
@@ -71,6 +75,7 @@ type
     DataSourceProductDependencies: TDataSource;
     DataSourceProductData: TDataSource;
     LabelPleaseWait: TLabel;
+    OpenPictureDialogSetIcon: TOpenPictureDialog;
     PagePleaseWait: TPage;
     (* Head *)
     PanelTopImage: TPanel;//container for header components
@@ -190,6 +195,10 @@ type
     procedure FormDestroy(Sender: TObject);
     { RadioGroup }
     procedure GrouplistEnter(Sender: TObject);
+    procedure ImageIconSoftwareMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure ImageScreenShotMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
     procedure RadioGroupViewSelectionChanged(Sender: TObject);
     { ScrollBoxAllTiles }
     procedure ScrollBoxAllTilesMouseWheel(Sender: TObject; Shift: TShiftState;
@@ -211,6 +220,7 @@ type
    private
     { private declarations }
     SoftwareOnDemand : boolean;
+    AdminMode : boolean;
     SelectedPanelIndex : integer;  //TileIndex e.g. Tag
     SelectedProduct : String; //ProductID
     FilteredProductIDs : TStringList;
@@ -332,7 +342,7 @@ const
   clUnknown = clRed;
 
 var
-  //Path to Images
+  //Path to Icons
   IconPathCustom : String;
   IconPathDefault: String;
   //Path to screenshots
@@ -403,8 +413,8 @@ begin
        Left:= 0;
        OnClick := ProductPanelClick;//ProductTileChildClick;
        OnMouseWheel := scroll;
-       OnMouseEnter := ProductTileMouseEnter;
-       OnMouseLeave := ProductTileMouseLeave;
+       OnMouseEnter := ProductPanelMouseEnter;
+       OnMouseLeave := ProductPanelMouseLeave;
        //Brush.Color:= clWhite;
        //Brush.Style := bsSolid;
        //Visible:= True;
@@ -429,8 +439,8 @@ begin
       BorderSpacing.Around := 3;
       OnClick := ProductPanelClick;//ProductTileChildClick;
       OnMouseWheel := scroll;
-      OnMouseEnter := ProductTileMouseEnter;
-      OnMouseLeave := ProductTileMouseLeave;
+      OnMouseEnter := ProductPanelMouseEnter;
+      OnMouseLeave := ProductPanelMouseLeave;
     end;
 
 
@@ -449,8 +459,8 @@ begin
       //LabelAction.BorderSpacing.Around := 3;
       OnClick := ProductPanelClick;//ProductTileChildClick;
       OnMouseWheel := scroll;
-      OnMouseEnter := ProductTileMouseEnter;
-      OnMouseLeave := ProductTileMouseLeave;
+      OnMouseEnter := ProductPanelMouseEnter;
+      OnMouseLeave := ProductPanelMouseLeave;
     end;
     LoadSkinLabelAction(Application.Location + 'skin' + PathDelim);
 
@@ -471,9 +481,10 @@ begin
       Left:=40;
       //BorderSpacing.Around := 0;
       OnClick := ProductPanelClick;//ProductTileChildClick;
+      OnMouseDown := ProductPanelMouseDown;
       OnMouseWheel := scroll;
-      OnMouseEnter := ProductTileMouseEnter;
-      OnMouseLeave := ProductTileMouseLeave;
+      OnMouseEnter := ProductPanelMouseEnter;
+      OnMouseLeave := ProductPanelMouseLeave;
     end;
 
     //label LabelState
@@ -493,8 +504,8 @@ begin
       //BorderSpacing.Around := 3;
       OnClick := ProductPanelClick;//ProductTileChildClick;
       OnMouseWheel := scroll;
-      OnMouseEnter := ProductTileMouseEnter;
-      OnMouseLeave := ProductTileMouseLeave;
+      OnMouseEnter := ProductPanelMouseEnter;
+      OnMouseLeave := ProductPanelMouseLeave;
     end;
 
   except
@@ -545,7 +556,7 @@ begin
   logdatei.log('Scroll WheelDelta: ' + IntToStr(WheelDelta div 10), LLDebug2);
 end;
 
-procedure TProductPanel.ProductTileMouseEnter(Sender: TObject);
+procedure TProductPanel.ProductPanelMouseEnter(Sender: TObject);
 var
   ProductPanel : TProductPanel;
 begin
@@ -563,7 +574,7 @@ begin
 end;
 
 
-procedure TProductPanel.ProductTileMouseLeave(Sender: TObject);
+procedure TProductPanel.ProductPanelMouseLeave(Sender: TObject);
 var
   ProductPanel : TProductPanel;
 begin
@@ -624,35 +635,32 @@ begin
   end;
 end;
 
-procedure TProductPanel.ProductPanelClick(Sender: TObject);
-var
-  //TileIndex :integer;
-  //pid : String;
-  gefunden : boolean;
-  ProductPanel : TProductPanel;
-  sqltext : String;
+procedure TProductPanel.ShowProductDetails(ProductPanel: TProductPanel);
 begin
   try
-    ProductPanel := TControl(Sender).Parent as TProductPanel;
+    //ProductPanel := TControl(Sender).Parent as TProductPanel;
     //TileIndex := TControl(Sender).Parent.Tag;
-    FormOpsiClientKiosk.SelectedPanelIndex := ProductPanel.Tag;
+    //FormOpsiClientKiosk.SelectedPanelIndex := ProductPanel.Tag;
     //pid := ArrayAllProductTiles[TileIndex].ProductID;
-    FormOpsiClientKiosk.SelectedProduct := ProductPanel.ProductID;
+    //FormOpsiClientKiosk.SelectedProduct := ProductPanel.ProductID;
     //DataModuleOCK.SQLTransaction.StartTransaction;
     //sqltext := DataModuleOCK.SQLQueryProductData.SQL.Text;
     //DataModuleOCK.SQLQueryProductData.Open;
     DataModuleOCK.SQLQueryProductData.First;
     //gefunden := DataModuleOCK.SQLQueryProductData.Locate('ProductID', VarArrayOf([pid]),[loCaseInsensitive]);
     if DataModuleOCK.SQLQueryProductData.Locate('ProductID',
-       VarArrayOf([ProductPanel.ProductID]),[loCaseInsensitive]) then
+       VarArrayOf([ProductPanel.ProductID]), [loCaseInsensitive]) then
     begin
       FormOpsiClientKiosk.PanelProductDetail.Height := 0;
       FormOpsiClientKiosk.NotebookProducts.PageIndex := 2;
       FormOpsiClientKiosk.PanelExpertMode.Visible := False;
       FormOpsiClientKiosk.PanelToolbar.Visible := False;
-      FormOpsiClientKiosk.LabelSoftwareName.Caption := ProductPanel.LabelName.Caption; //ArrayAllProductTiles[TileIndex].LabelName.Caption;
-      FormOpsiClientKiosk.ImageIconSoftware.Picture:= ProductPanel.ImageIcon.Picture; //ArrayAllProductTiles[TileIndex].ImageIcon.Picture;
-      if FileExists(ScreenshotPath +'screenshot1_'+ ProductPanel.ProductID +'.png') then
+      FormOpsiClientKiosk.LabelSoftwareName.Caption :=
+        ProductPanel.LabelName.Caption; //ArrayAllProductTiles[TileIndex].LabelName.Caption;
+      FormOpsiClientKiosk.ImageIconSoftware.Picture:=
+        ProductPanel.ImageIcon.Picture; //ArrayAllProductTiles[TileIndex].ImageIcon.Picture;
+      if FileExists(ScreenshotPath +'screenshot1_'+ ProductPanel.ProductID +'.'
+        +'png') then
        FormOpsiClientKiosk.ImageScreenShot.Picture.LoadFromFile
          (ScreenshotPath +'screenshot1_'+ ProductPanel.ProductID +'.png')
       else
@@ -685,6 +693,46 @@ begin
     //DataModuleOCK.SQLQueryProductData.Close;
   end;
 end;
+
+procedure TProductPanel.SetIcon(ProductPanel:TProductPanel);
+var
+  IconPath:String;
+begin
+  if FormOpsiClientKiosk.OpenPictureDialogSetIcon.Execute then
+  begin
+    IconPath := FormOpsiClientKiosk.OpenPictureDialogSetIcon.FileName;
+    ProductPanel.ImageIcon.Picture.LoadFromFile(IconPath);
+    ProductPanel.ImageIcon.Picture.SaveToFile(IconPathCustom+ExtractFileName(IconPath));
+  end;
+end;
+
+procedure TProductPanel.ProductPanelClick(Sender: TObject);
+var
+  //TileIndex :integer;
+  //pid : String;
+  gefunden : boolean;
+  sqltext : String;
+  ProductPanel: TProductPanel;
+begin
+  ProductPanel := TControl(Sender).Parent as TProductPanel;
+    //TileIndex := TControl(Sender).Parent.Tag;
+  FormOpsiClientKiosk.SelectedPanelIndex := ProductPanel.Tag;
+    //pid := ArrayAllProductTiles[TileIndex].ProductID;
+  FormOpsiClientKiosk.SelectedProduct := ProductPanel.ProductID;
+  ShowProductDetails(ProductPanel);
+end;
+
+procedure TProductPanel.ProductPanelMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+  ProductPanel: TProductPanel;
+begin
+  ProductPanel := TControl(Sender).Parent as TProductPanel;
+  FormOpsiClientKiosk.SelectedPanelIndex := ProductPanel.Tag;
+  FormOpsiClientKiosk.SelectedProduct := ProductPanel.ProductID;
+  if (FormOpsiClientKiosk.AdminMode and (Button = mbRight)) then SetIcon(ProductPanel);
+end;
+
 
 procedure TFormOpsiClientKiosk.BuildProductTiles(var fArrayProductPanels:TPanels; const OwnerName:string);
 var
@@ -819,10 +867,15 @@ begin
     Application.ProcessMessages;//FormProgressWindow.ProcessMess;
 
     OCKOpsiConnection.GetProductInfosFromServer;
-    ConfigState := TSTringList.Create;
+    //ConfigState := TSTringList.Create;
     ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.installation-now-button');
     //ShowMessage(ConfigState.Text);
     SoftwareOnDemand := StrToBool(ConfigState.Strings[0]);
+
+    {ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.admin-mode');
+    //ShowMessage(ConfigState.Text);
+    AdminMode := StrToBool(ConfigState.Strings[0]);}
+
     //FormProgressWindow.ProgressBarDetail.Position := 100;
     //Application.ProcessMessages;
     ConfigState.Free;
@@ -1194,6 +1247,35 @@ end;
 procedure TFormOpsiClientKiosk.GrouplistEnter(Sender: TObject);
 begin
   PanelProductDetail.Height := 0;
+end;
+
+procedure TFormOpsiClientKiosk.ImageIconSoftwareMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+  IconPath:String;
+begin
+  if Button = mbRight then
+    if OpenPictureDialogSetIcon.Execute then
+    begin
+      IconPath := OpenPictureDialogSetIcon.FileName;
+      ImageIconSoftware.Picture.LoadFromFile(IconPath);
+      ImageIconSoftware.Picture.SaveToFile(IconPathCustom+ExtractFileName(IconPath));
+    end;
+end;
+
+
+procedure TFormOpsiClientKiosk.ImageScreenShotMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+  IconPath:String;
+begin
+  if Button = mbRight then
+    if OpenPictureDialogSetIcon.Execute then
+    begin
+      IconPath := OpenPictureDialogSetIcon.FileName;
+      ImageScreenShot.Picture.LoadFromFile(IconPath);
+      ImageScreenShot.Picture.SaveToFile(ScreenShotPath+ExtractFileName(IconPath));
+    end;
 end;
 
 procedure TFormOpsiClientKiosk.DBGrid1Exit(Sender: TObject);
@@ -1684,6 +1766,7 @@ var
 begin
   StartUpDone := False;
   ClientdMode := True;
+  AdminMode := True; //Default should be false
   InitLogging('kiosk-' + GetUserName_ +'.log', self.Name + '.FormCreate', LLDebug);
   LogDatei.log('Initialize Opsi Client Kiosk', LLNotice);
 
@@ -1724,8 +1807,8 @@ begin
   end;
 
   { Path to programm icons }
-  IconPathCustom := Application.Location + 'progam_icons' + PathDelim + 'custom' + PathDelim;
-  IconPathDefault := Application.Location + 'progam_icons' + PathDelim + 'default' + PathDelim;
+  IconPathCustom := Application.Location + 'product_icons' + PathDelim + 'custom' + PathDelim;
+  IconPathDefault := Application.Location + 'product_icons' + PathDelim + 'default' + PathDelim;
   { Path to screenshots }
   ScreenshotPath := Application.Location  + 'screenshots' + PathDelim;
   LogDatei.log('IconPathDefault: ' + IconPathDefault, LLInfo);

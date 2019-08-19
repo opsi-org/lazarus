@@ -1175,7 +1175,6 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Width = 111
       Align = alRight
       AutoSize = True
-      BorderSpacing.Left = 10
       BorderSpacing.Around = 5
       Caption = 'Store Action'
       Kind = bkAll
@@ -1407,7 +1406,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Height = 357
       Top = 0
       Width = 804
-      PageIndex = 3
+      PageIndex = 2
       Align = alClient
       TabOrder = 0
       TabStop = True
@@ -1532,6 +1531,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Top = 16
             Width = 60
             Center = True
+            OnMouseDown = ImageIconSoftwareMouseDown
             Proportional = True
           end
           object LabelSoftwareName: TLabel
@@ -1648,6 +1648,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
               Top = 0
               Width = 384
               Center = True
+              OnMouseDown = ImageScreenShotMouseDown
               Picture.Data = {
                 055449636F6EFE0200000000010001002020100001000400E802000016000000
                 2800000020000000400000000100040000000000000000000000000000000000
@@ -1768,5 +1769,8 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
   object DataSourceProductDependencies: TDataSource
     DataSet = DataModuleOCK.SQLQueryProductDependencies
     left = 224
+  end
+  object OpenPictureDialogSetIcon: TOpenPictureDialog
+    left = 624
   end
 end

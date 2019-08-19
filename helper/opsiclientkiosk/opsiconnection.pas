@@ -450,7 +450,7 @@ begin
   if JSONObjectConfigStates <> nil then
     for i := 0 to JSONObjectConfigStates.Arrays[ConfigProperty].Count -1 do
      Result.Add(JSONObjectConfigStates.Arrays[ConfigProperty].Items[i].AsString)
-  else Result.Add('True');
+  else Result.Add('False');
 end;
 
 //initialization
