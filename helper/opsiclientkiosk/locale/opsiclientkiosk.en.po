@@ -46,6 +46,10 @@ msgctxt "opsiclientkioskgui.rsall"
 msgid "All"
 msgstr "All"
 
+#: opsiclientkioskgui.rsallproductsinstalled
+msgid "All available products installed!"
+msgstr ""
+
 #: opsiclientkioskgui.rsas
 msgid "as"
 msgstr ""
@@ -148,6 +152,10 @@ msgstr "No action requests found."
 #: opsiclientkioskgui.rsnotinstalled
 msgid "Not installed"
 msgstr "Not installed"
+
+#: opsiclientkioskgui.rsnoupdatesfound
+msgid "No updates found."
+msgstr ""
 
 #: opsiclientkioskgui.rsnow
 msgid "Now"

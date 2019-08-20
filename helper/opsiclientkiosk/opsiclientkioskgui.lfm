@@ -1531,7 +1531,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Top = 16
             Width = 60
             Center = True
-            OnMouseDown = ImageIconSoftwareMouseDown
+            OnMouseUp = ImageIconSoftwareMouseUp
             Proportional = True
           end
           object LabelSoftwareName: TLabel
@@ -1648,7 +1648,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
               Top = 0
               Width = 384
               Center = True
-              OnMouseDown = ImageScreenShotMouseDown
+              OnMouseUp = ImageScreenShotMouseUp
               Picture.Data = {
                 055449636F6EFE0200000000010001002020100001000400E802000016000000
                 2800000020000000400000000100040000000000000000000000000000000000
