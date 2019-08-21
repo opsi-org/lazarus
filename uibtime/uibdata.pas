@@ -29,6 +29,7 @@ uses
   uibtWorkRepChooser,
   uib2erp,
   Variants,
+  maskedit,
   oslog;
 
 type
@@ -2292,11 +2293,18 @@ begin
     datamodule1.debugOut(1, 'Exception', outstr);
     MessageDlg('uibtime: Fehler', outstr, mtError, [mbClose], 0);
   end
+  else if (E.ClassType = EDBEditError)  then
+  begin
+    outstr := 'Ein Eingabefehler in einer Maske: '+E.Message;
+    datamodule1.debugOut(1, 'Exception', outstr);
+    MessageDlg('uibtime: Fehler', outstr, mtError, [mbClose], 0);
+  end
   else
   begin
     outstr := 'uibtime Exception class: ' + E.ClassName + ' , ' +
-      'Message: ' + E.Message + ' , ' + LineEnding + ' Bitte Logdatei sichern: ' +
-      LogDatei.FileName + ' - Eventuell Programmabbruch.';
+      'Message: ' + E.Message + ' , ' + LineEnding +
+      ' Sollte das Programm sich beenden, so bitte Logdatei sichern: ' +
+      LogDatei.FileName ;
     MessageDlg('uibtime: Fehler', outstr, mtError, [mbClose], 0);
     //Application.ShowException(E);
     if not IBConnection1.Connected then
