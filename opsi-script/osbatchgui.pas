@@ -123,7 +123,7 @@ type
 
     //procedure setWindowState (BatchWindowMode: TBatchWindowMode);
 
-    //procedure LoadSkin (const skindirectory : String);
+
 
     function setPicture(const BitmapFile: string; const theLabel: string): boolean;
       overload;
@@ -169,6 +169,11 @@ const
   skindirectoryDefault = '/usr/share/opsi-script/skin';
   skindirectoryCustomWin = '/usr/share/opsi-script/customskin';
   {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  skindirectoryDevelopment = 'winstskin';
+  skindirectoryDefault = 'skin';
+  skindirectoryCustomWin = '/usr/local/share/opsi-script/customskin';
+  {$ENDIF DARWIN}
 
 
   StartTop: integer = 100;
@@ -439,8 +444,20 @@ begin
   else if FileExists(ExtractFilePath(ParamStr(0)) + skindirectoryDevelopment+PathDelim+'skin.ini') then
     skinDir := ExtractFilePath(ParamStr(0)) + skindirectoryDevelopment;
   {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  paramstr0enc := reencode(ParamStr(0),'system');
+  if FileExists(skindirectory+PathDelim+'skin.ini') then
+    skindir := skindirectory
+  else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryCustomWin+PathDelim+'skin.ini') then
+    skinDir := ExtractFilePath(paramstr0enc) + skindirectoryCustomWin
+  else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryDefault+PathDelim+'skin.ini') then
+    skinDir := ExtractFilePath(paramstr0enc) + skindirectoryDefault
+  else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryDevelopment+PathDelim+'skin.ini') then
+    skinDir := ExtractFilePath(paramstr0enc) + skindirectoryDevelopment;
+  {$ENDIF DARWIN}
 
   //logdatei.DependentAdd('Loading skin from: '+skindir,LLessential);
+  //skinDir := ExtractFilePath(paramstr0enc) + skindirectoryDevelopment;
   startupmessages.Append('Loading skin from: '+skindir);
   skinFile := skinDir +PathDelim+ 'skin.ini';
 

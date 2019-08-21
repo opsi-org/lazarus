@@ -13855,8 +13855,11 @@ begin
      if GetIPFromHost(s1,s2,s3) then StringResult := s2
      else
      begin
-       {$IFDEF UNIX}
+       {$IFDEF LINUX}
        StringResult :=  getCommandResult('resolveip -s '+s1);
+       {$ENDIF LINUX}
+       {$IFDEF DARWIN}
+       StringResult :=  getCommandResult('dig +short -x  '+s1);
        {$ENDIF LINUX}
        {$IFDEF WINDOWS}
        StringResult :=  '';
