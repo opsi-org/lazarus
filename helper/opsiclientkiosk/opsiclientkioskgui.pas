@@ -73,6 +73,8 @@ type
     (* DataSources *)
     DataSourceProductDependencies: TDataSource;
     DataSourceProductData: TDataSource;
+    DBTextActionRequest: TDBText;
+    LabelSoftwareActionRequest: TLabel;
     LabelPleaseWait: TLabel;
     OpenPictureDialogSetIcon: TOpenPictureDialog;
     PagePleaseWait: TPage;
@@ -109,25 +111,26 @@ type
     ScrollBoxAllTiles: TScrollBox;
     FlowPanelAllTiles: TFlowPanel;//container for ProductPanels
      { detailed software view tiles }
-    PageSoftwareDetails: TPage;//showing details on products in tiles view mode
-    ScrollBoxSoftwarePage: TScrollBox;
-    PanelSoftwareScreenshot: TPanel;
-    PanelSoftwareHead: TPanel;
-    DBTextSoftwareClientVerStr: TDBText;
-    DBTextSoftwareVerStr: TDBText;
-    DBMemoSoftwareDescription: TDBMemo;
-    DBMemoSoftwareAdvice: TDBMemo;
+    ButtonSoftwareBack: TButton;
+    ButtonSoftwareInstall: TButton;
+    ButtonSoftwareRemoveAction: TButton;
     ButtonSoftwareUninstall: TButton;
     ButtonSoftwareUpdate: TButton;
-    ButtonSoftwareInstall: TButton;
-    ButtonSoftwareBack: TButton;
+    DBMemoSoftwareAdvice: TDBMemo;
+    DBMemoSoftwareDescription: TDBMemo;
+    DBTextSoftwareClientVerStr: TDBText;
+    DBTextSoftwareVerStr: TDBText;
     ImageIconSoftware: TImage;
     ImageScreenShot: TImage;
-    LabelSoftwareInstalledVersion: TLabel;
-    LabelSoftwareRecentVersion: TLabel;
     LabelSoftwareAdvice: TLabel;
     LabelSoftwareDescription: TLabel;
+    LabelSoftwareInstalledVersion: TLabel;
     LabelSoftwareName: TLabel;
+    LabelSoftwareRecentVersion: TLabel;
+    PageSoftwareDetails: TPage;//showing details on products in tiles view mode
+    PanelSoftwareHead: TPanel;
+    PanelSoftwareScreenshot: TPanel;
+    ScrollBoxSoftwarePage: TScrollBox;
      { List view }
     PageList: TPage;//showing products in list view
     DBGrid1: TDBGrid;
@@ -171,6 +174,7 @@ type
     { ButtonSoftware }
     procedure ButtonSoftwareBackClick(Sender: TObject);
     procedure ButtonSoftwareInstallClick(Sender: TObject);
+    procedure ButtonSoftwareRemoveActionClick(Sender: TObject);
     procedure ButtonSoftwareUninstallClick(Sender: TObject);
     procedure ButtonSoftwareUpdateClick(Sender: TObject);
     { DBComboBox1 }
@@ -235,6 +239,7 @@ type
      { Inits at Start }
     function InitLogging(const LogFileName, CallingMethod: string; MyLogLevel:integer): boolean;
     procedure InitDBGrids;
+    procedure InstallNow;
     procedure LoadSkinForTitle(SkinPath: string);
     procedure BuildProductTiles(var fArrayProductPanels:TPanels; const OwnerName:string);
     procedure LoadDataFromServer;
@@ -248,13 +253,17 @@ type
     procedure SetView;
     procedure SetListView;
     procedure SetTilesView;
+    procedure ShowPagePleaseWait;
     { Product Details}
     procedure ShowProductDetails(ProductPanel: TProductPanel);
     { Search }
     procedure SearchProducts;
     { Set actions}
-    procedure SetActionRequest(const Request:String; Message:String; OnDemand:boolean);
-    function GetProductPanelByProductID(const ProductID:String):TProductPanel;
+    procedure SetActionRequestTilesView(Request:String; Message:String;
+      OnDemand:boolean);
+    procedure SetActionRequestListView(Request: String; Message: String;
+      OnDemand: boolean);
+     function GetProductPanelByProductID(const ProductID:String):TProductPanel;
     { Reload data}
     procedure ReloadDataFromServer;
     procedure Terminate;
@@ -678,26 +687,39 @@ begin
            (ScreenshotPath + 'no_screenshot.png');
 
       { View Buttons dependend on state}
-      if ProductPanel.LabelState.Caption = rsInstalled then
+      if ProductPanel.LabelAction.Caption <> '' then
       begin
         ButtonSoftwareInstall.Visible := False;
-        ButtonSoftwareUninstall.Visible := True;
+        ButtonSoftwareUninstall.Visible := False;
+        ButtonSoftwareRemoveAction.Visible:= True;
         ButtonSoftwareUpdate.Enabled := False;
       end
       else
-        if ProductPanel.LabelState.Caption = rsNotInstalled then
+      begin
+        if ProductPanel.LabelState.Caption = rsInstalled then
         begin
-          ButtonSoftwareUninstall.Visible := False;
+          ButtonSoftwareInstall.Visible := False;
+          ButtonSoftwareUninstall.Visible := True;
+          ButtonSoftwareRemoveAction.Visible:= False;
           ButtonSoftwareUpdate.Enabled := False;
-          ButtonSoftwareInstall.Visible := True;
         end
         else
-          if ProductPanel.LabelState.Caption = rsUpdate then
+          if ProductPanel.LabelState.Caption = rsNotInstalled then
           begin
-            ButtonSoftwareInstall.Visible := False;
-            ButtonSoftwareUninstall.Visible := True;
-            ButtonSoftwareUpdate.Enabled := True;
-          end;
+            ButtonSoftwareUninstall.Visible := False;
+            ButtonSoftwareUpdate.Enabled := False;
+            ButtonSoftwareRemoveAction.Visible:= False;
+            ButtonSoftwareInstall.Visible := True;
+          end
+          else
+            if ProductPanel.LabelState.Caption = rsUpdate then
+            begin
+              ButtonSoftwareInstall.Visible := False;
+              ButtonSoftwareUninstall.Visible := True;
+              ButtonSoftwareRemoveAction.Visible:= False;
+              ButtonSoftwareUpdate.Enabled := True;
+            end;
+      end;
     end;
   finally
     //DataModuleOCK.SQLQueryProductData.Close;
@@ -953,7 +975,7 @@ begin
     Application.ProcessMessages; //FormProgressWindow.ProcessMess;
 end;
 
-procedure TFormOpsiClientKiosk.SetActionRequest(const Request:String; Message:String; OnDemand:boolean);
+procedure TFormOpsiClientKiosk.SetActionRequestTilesView(Request:String; Message:String; OnDemand:boolean);
 var
   i, Instances :integer;
 begin
@@ -962,33 +984,23 @@ begin
   DataModuleOCK.SQLQueryProductData.Locate('ProductID',VarArrayOf([SelectedProduct]),[loCaseInsensitive]);
   //DataModuleOCK.SQLQueryProductData.Edit;
   DataSourceProductData.Edit;
+  { On Demand }
   if OnDemand then
   begin
-    NotebookProducts.PageIndex := 3;
-    Refresh;
-    OCKOpsiConnection.DoSingleActionOnDemand(SelectedProduct);
-    sleep(10000);
-    while ockunique.numberOfProcessInstances('notifier') > 0 do
-    begin
-      Application.ProcessMessages;
-      //Instances := ockunique.numberOfProcessInstances('notifier');
-      sleep(100);
-      //Instances := ockunique.numberOfProcessInstances('notifier');
-    end;
-    NotebookProducts.PageIndex := 2;
-
+    ShowPagePleaseWait;
+    InstallNow;
     DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString := '';
     { install or update }
     if Request = 'setup' then
     begin
       ButtonSoftwareInstall.Visible:= False;
       ButtonSoftwareUninstall.Visible:= True;
+      ArrayProductPanels[SelectedPanelIndex].LabelState.Caption := rsInstalled;
+      ArrayProductPanels[SelectedPanelIndex].LabelState.Color := clInstalled;
       DataModuleOCK.SQLQueryProductData.FieldByName('InstallationStatus').AsString := 'installed';
       DataModuleOCK.SQLQueryProductData.FieldByName('InstalledVerStr').AsString :=
         DataModuleOCK.SQLQueryProductData.FieldByName('VersionStr').AsString;
-      ArrayProductPanels[SelectedPanelIndex].LabelState.Caption := rsInstalled;
-      ArrayProductPanels[SelectedPanelIndex].LabelState.Color := clInstalled;
-      ShowMessage(rsInstallationFinished);
+       ShowMessage(rsInstallationFinished);
       //SQLProductData[] =
     end;
     { uninstall }
@@ -1003,17 +1015,47 @@ begin
       ShowMessage(rsUninstallationFinished);
     end;
     ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := '';
+    NotebookProducts.PageIndex := 2;
   end
+  { next standard event }
   else
   begin
     DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString := Request;// to local database
     ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := rsAction+': ' + Request;
-    ShowMessage(Format(rsRequestDone, [LabelSoftwareName.Caption + Message]));
+    ShowMessage(Format(rsRequestDone, [ArrayProductPanels[SelectedPanelIndex].LabelName.Caption + Message]));
+    ButtonSoftwareUninstall.Visible:= False;
+    ButtonSoftwareInstall.Visible:= False;
+    ButtonSoftwareUpdate.Enabled:= False;
+    ButtonSoftwareRemoveAction.Visible := True;
   end;
   DataModuleOCK.SQLQueryProductData.Post;
   DataModuleOCK.SQLQueryProductData.Open;
   Screen.Cursor := crDefault;
 end;
+
+procedure TFormOpsiClientKiosk.SetActionRequestListView(Request:String; Message:String; OnDemand:boolean);
+var
+  i, Instances :integer;
+begin
+  Screen.Cursor := crHourGlass;
+  OCKOpsiConnection.SetActionRequest(SelectedProduct,Request); //to opsi server
+  DataSourceProductData.Edit;
+  if Request = 'none' then
+  begin
+    DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString := '';// to local database
+    ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := '';
+  end
+  else
+  begin
+    DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString := Request;// to local database
+    ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := rsAction+': ' + Request;
+  end;
+  ShowMessage(Format(rsRequestDone, [ArrayProductPanels[SelectedPanelIndex].LabelName.Caption + Message]));
+  DataModuleOCK.SQLQueryProductData.Post;
+  DataModuleOCK.SQLQueryProductData.Open;
+  Screen.Cursor := crDefault;
+end;
+
 
 function TFormOpsiClientKiosk.GetProductPanelByProductID(const ProductID: String
   ): TProductPanel;
@@ -1031,11 +1073,17 @@ begin
     LogDatei.log('Product not found by ProductID: ' + ProductID, LLDebug);
     ShowMessage('Product not found by ProductID: ' + ProductID);
   end
-  else Result := ArrayProductPanels[i];
+  else
+  begin
+    SelectedProduct := ArrayProductPanels[i].ProductID;
+    SelectedPanelIndex := i;
+    Result := ArrayProductPanels[i];
+  end;
 end;
 
 procedure TFormOpsiClientKiosk.SetView;
 begin
+  DataModuleOCK.SQLQueryProductData.Open;
   if SpeedButtonExpertMode.Down
     and (RadioGroupview.ItemIndex = RadioGroupView.Items.IndexOf(rsViewList))
   then SetListView
@@ -1062,53 +1110,63 @@ var
   i: integer;
   //ProductPanel: TProductPanel;
 begin
-  i := 0; //initialize counter for loop
-  DataModuleOCK.SQLQueryProductData.Open;
-  if DataModuleOCK.SQLQueryProductData.Filtered then
-  { Set filtered products to visible }
+  //DataModuleOCK.SQLQueryProductData.Open;
+  if not (DataModuleOCK.SQLQueryProductData.EOF and DataModuleOCK.SQLQueryProductData.BOF) then
   begin
-    FilteredProductIDs.Clear;
+    i := 0; //initialize counter for loop
+
+    if DataModuleOCK.SQLQueryProductData.Filtered then
+    { Set filtered products to visible }
+    begin
+      FilteredProductIDs.Clear;
+      DataModuleOCK.SQLQueryProductData.First;
+      while not DataModuleOCK.SQLQueryProductData.EOF do
+      begin
+        FilteredProductIDs.Add(DataModuleOCK.SQLQueryProductData.FieldByName('ProductID').AsString);
+        DataModuleOCK.SQLQueryProductData.Next;
+      end;
+      FilteredProductIDs.Sort;
+      for i := 0 to Length(ArrayProductPanels)-1 do
+      begin
+        If FilteredProductIDs.IndexOf(ArrayProductPanels[i].ProductID) <> -1  //ProductID within FilteredProductIDs?
+         then ArrayProductPanels[i].Visible := True
+        else ArrayProductPanels[i].Visible := False;
+      end;
+      //Alternative:
+      {for i := 0 to FlowPanelAllTiles.ControlCount -1 do
+      begin
+        if FlowPanelAllTiles.ControlList.Items[i].Control is TProductPanel then
+         with FlowPanelAllTiles.ControlList.Items[i].Control as TProductPanel do
+         begin
+           if FilteredProductIDs.IndexOf(ProductID) <> -1
+            then Visible := True
+            else Visible := False;
+         end;
+      end;}
+    end
+    else
+    { Set all products to visible }
+    begin
+      for i := 0 to Length(ArrayProductPanels)-1 do
+      begin
+        ArrayProductPanels[i].Visible := True;
+      end;
+      //Alternative:
+      {for i := 0 to FlowPanelAllTiles.ControlCount -1 do
+        if FlowPanelAllTiles.ControlList.Items[i].Control is TProductPanel then
+          TProductPanel(FlowPanelAllTiles.ControlList.Items[i].Control).Visible := True;}
+    end;
     DataModuleOCK.SQLQueryProductData.First;
-    while not DataModuleOCK.SQLQueryProductData.EOF do
-    begin
-      FilteredProductIDs.Add(DataModuleOCK.SQLQueryProductData.FieldByName('ProductID').AsString);
-      DataModuleOCK.SQLQueryProductData.Next;
-    end;
-    FilteredProductIDs.Sort;
-    for i := 0 to Length(ArrayProductPanels)-1 do
-    begin
-      If FilteredProductIDs.IndexOf(ArrayProductPanels[i].ProductID) <> -1  //ProductID within FilteredProductIDs?
-       then ArrayProductPanels[i].Visible := True
-      else ArrayProductPanels[i].Visible := False;
-    end;
-    //Alternative:
-    {for i := 0 to FlowPanelAllTiles.ControlCount -1 do
-    begin
-      if FlowPanelAllTiles.ControlList.Items[i].Control is TProductPanel then
-       with FlowPanelAllTiles.ControlList.Items[i].Control as TProductPanel do
-       begin
-         if FilteredProductIDs.IndexOf(ProductID) <> -1
-          then Visible := True
-          else Visible := False;
-       end;
-    end;}
-  end
-  else
-  { Set all products to visible }
-  begin
-    for i := 0 to Length(ArrayProductPanels)-1 do
-    begin
-      ArrayProductPanels[i].Visible := True;
-    end;
-    //Alternative:
-    {for i := 0 to FlowPanelAllTiles.ControlCount -1 do
-      if FlowPanelAllTiles.ControlList.Items[i].Control is TProductPanel then
-        TProductPanel(FlowPanelAllTiles.ControlList.Items[i].Control).Visible := True;}
+    PanelProductDetail.Height:= 0;
+    BitBtnStoreAction.Visible:= False;
+    NotebookProducts.PageIndex:= 1;
   end;
-  DataModuleOCK.SQLQueryProductData.First;
-  PanelProductDetail.Height:= 0;
-  BitBtnStoreAction.Visible:= False;
-  NotebookProducts.PageIndex:= 1;
+end;
+
+procedure TFormOpsiClientKiosk.ShowPagePleaseWait;
+begin
+  NotebookProducts.PageIndex := 3;
+  Refresh;
 end;
 
 {procedure Tmythread2.Execute;
@@ -1192,21 +1250,23 @@ begin
   if (DataModuleOCK.SQLQueryProductData.EOF and DataModuleOCK.SQLQueryProductData.BOF) then
   begin
     DataModuleOCK.SQLQueryProductData.Filtered := False;
-    DataModuleOCK.SQLQueryProductData.FilterOptions := [foCaseInsensitive];
-    DataModuleOCK.SQLQueryProductData.Filter := LastFilter;
-    DataModuleOCK.SQLQueryProductData.Filtered := True;
+    //DataModuleOCK.SQLQueryProductData.FilterOptions := [foCaseInsensitive];
+    //DataModuleOCK.SQLQueryProductData.Filter := LastFilter;
+    //DataModuleOCK.SQLQueryProductData.Filtered := True;
     //DBComboBox1.Enabled := False;
     //DBGrid1.Enabled:= False;
     ShowMessage(rsNoActionsFound);
-    SpeedButtonLastClicked.Down := True;
-  end
-  else
+    //SpeedButtonLastClicked.Down := True;
+    SpeedButtonAll.Down := True;
+  end;
+  {else
   begin
     SpeedButtonActions.Down:= True;
     SetView;
     SpeedButtonLastClicked := SpeedButtonActions;
     LastFilter := DataModuleOCK.SQLQueryProductData.Filter;
-  end;
+  end;}
+  SetView;
 end;
 
 procedure TFormOpsiClientKiosk.SpeedButtonReloadClick(Sender: TObject);
@@ -1344,6 +1404,7 @@ end;
 procedure TFormOpsiClientKiosk.SpeedButtonUpdatesClick(Sender: TObject);
 begin
   EditSearch.Clear;
+  //SpeedButtonUpdates.Down:= True;
   DataModuleOCK.SQLQueryProductData.Filtered := False;
   DataModuleOCK.SQLQueryProductData.FilterOptions := [foCaseInsensitive];
   DataModuleOCK.SQLQueryProductData.Filter := 'UpdatePossible and InstallationStatus <> ""';
@@ -1351,22 +1412,24 @@ begin
   if (DataModuleOCK.SQLQueryProductData.EOF and DataModuleOCK.SQLQueryProductData.BOF) then
   begin
     DataModuleOCK.SQLQueryProductData.Filtered := False;
-    DataModuleOCK.SQLQueryProductData.FilterOptions := [foCaseInsensitive];
-    DataModuleOCK.SQLQueryProductData.Filter := LastFilter;
-    DataModuleOCK.SQLQueryProductData.Filtered := True;
+    //DataModuleOCK.SQLQueryProductData.FilterOptions := [foCaseInsensitive];
+    //DataModuleOCK.SQLQueryProductData.Filter := LastFilter;
+    //DataModuleOCK.SQLQueryProductData.Filtered := True;
 
     //DBComboBox1.Enabled := False;
     //DBGrid1.Enabled:= False;
     ShowMessage(rsNoUpdatesFound);
-    SpeedButtonLastClicked.Down:= True;
-  end
-  else
-  begin
-    SpeedButtonUpdates.Down:= True;
-    SetView;
-    SpeedButtonLastClicked := SpeedButtonUpdates;
-    LastFilter := DataModuleOCK.SQLQueryProductData.Filter;
+    SpeedButtonAll.Down:= True;
+    //SetView;
   end;
+  {else
+  begin
+    //SpeedButtonUpdates.Down:= True;
+    SetView;
+    //SpeedButtonLastClicked := SpeedButtonUpdates;
+    //LastFilter := DataModuleOCK.SQLQueryProductData.Filter;
+  end;}
+  SetView;
 end;
 
 procedure TFormOpsiClientKiosk.ButtonSoftwareBackClick(Sender: TObject);
@@ -1387,12 +1450,12 @@ begin
                      [mrYes, rsNow, mrNo, rsNextEvent, mrCancel, rsCancel], 0)
     of
       mrYes: begin
-               SetActionRequest('setup', rsWillInstallNow, True);
+               SetActionRequestTilesView('setup', rsWillInstallNow, True);
                //ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := 'Action: setup';
              end;
       mrNo: begin
               //ShowMessage('Please wait while sending request to server...');
-              SetActionRequest('setup', rsWillInstallNextEvent, False);
+              SetActionRequestTilesView('setup', rsWillInstallNextEvent, False);
               //ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := 'Action: setup';
             end;
     end;//case
@@ -1401,9 +1464,22 @@ begin
    if QuestionDLG(rsInstall,rsDoYouWantInstall + LabelSoftwareName.Caption + '?',
                mtConfirmation,[mrYes, rsYes, mrNo, rsNo], 0) = mrYes then
    begin
-     SetActionRequest('setup', rsWillInstallNextEvent, False);
+     SetActionRequestTilesView('setup', rsWillInstallNextEvent, False);
      //ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := 'Action: setup';
    end;
+end;
+
+procedure TFormOpsiClientKiosk.ButtonSoftwareRemoveActionClick(Sender: TObject);
+begin
+  Screen.Cursor := crHourGlass;
+  OCKOpsiConnection.SetActionRequest(SelectedProduct,'none'); //to opsi server
+  DataSourceProductData.Edit;
+  DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString := '';// to local database
+  ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := '';
+  ShowMessage(Format(rsRequestDone, ['Action removed for ' + ArrayProductPanels[SelectedPanelIndex].LabelName.Caption]));
+  DataModuleOCK.SQLQueryProductData.Post;
+  DataModuleOCK.SQLQueryProductData.Open;
+  Screen.Cursor := crDefault;
 end;
 
 procedure TFormOpsiClientKiosk.ButtonSoftwareUninstallClick(Sender: TObject);
@@ -1414,12 +1490,12 @@ begin
                      [mrYes, rsNow, mrNo, rsNextEvent, mrCancel, rsCancel], 0)
     of
       mrYes: begin
-               SetActionRequest('uninstall', rsWillUninstallNow, True);
+               SetActionRequestTilesView('uninstall', rsWillUninstallNow, True);
                //ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := 'Action: uninstall';
              end;
       mrNo: begin
               //ShowMessage('Please wait while sending request to server...');
-              SetActionRequest('uninstall', rsWillUninstallNextEvent, False);
+              SetActionRequestTilesView('uninstall', rsWillUninstallNextEvent, False);
               //ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := 'Action: uninstall';
             end;
     end;//case
@@ -1428,7 +1504,7 @@ begin
    if QuestionDLG(rsActUninstall, rsDoYouWantUninstall + LabelSoftwareName.Caption + '?',
                mtConfirmation, [mrYes, rsYes, mrNo, rsNo ], 0) = mrYes then
    begin
-     SetActionRequest('uninstall', rsWillUninstallNextEvent, False);
+     SetActionRequestTilesView('uninstall', rsWillUninstallNextEvent, False);
      //ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := 'Action: uninstall';
    end;
 end;//procedure ButtonSoftwareUninstallClick
@@ -1441,11 +1517,11 @@ begin
                      [mrYes, rsNow, mrNo, rsNextEvent, mrCancel, rsCancel], 0)
     of
       mrYes: begin
-               SetActionRequest('setup', rsWillUpdateNow, True);
+               SetActionRequestTilesView('setup', rsWillUpdateNow, True);
              end;
       mrNo: begin
               //ShowMessage('Please wait while sending request to server...');
-              SetActionRequest('setup', rsWillUpdateNextEvent,False);
+              SetActionRequestTilesView('setup', rsWillUpdateNextEvent,False);
             end;
     end;//case
   end//if SoftwareOndemand
@@ -1453,7 +1529,7 @@ begin
    if QuestionDLG(rsUpdate, rsDoYouWAntUpdate + LabelSoftwareName.Caption + '?',
                mtConfirmation,[mrYes, rsYes, mrNo, rsNo ], 0) = mrYes then
    begin
-     SetActionRequest('setup', rsWillUpdateNextEvent, False);
+     SetActionRequestTilesView('setup', rsWillUpdateNextEvent, False);
    end;
 end;
 
@@ -1464,19 +1540,26 @@ var
   Product : TProductPanel;
 begin
   //DataModuleOCK.SQLQueryProductData.Edit;
-  if (DBComboBox1.Text <> '') and (not DataModuleOCK.SQLQueryProductData.EOF) then
+  if (DBComboBox1.Text <> '') and not (DataModuleOCK.SQLQueryProductData.EOF and
+    DataModuleOCK.SQLQueryProductData.BOF) then
   begin
-    DataModuleOCK.SQLQueryProductData.Post;
+    Product := GetProductPanelByProductID(DataModuleOCK.SQLQueryProductData.FieldByName('ProductID').AsString);
+    if DBComboBox1.Text = 'setup' then SetActionRequestListView('setup', rsWillInstallNextEvent, False);
+    //if DBComboBox1.Text = 'update' then SetActionRequest('setup', rsWillUpdateNextEvent, False);
+    if DBComboBox1.Text = 'uninstall' then SetActionRequestListView('uninstall', rsWillUninstallNextEvent, False);
+    if DBComboBox1.Text = 'none' then SetActionRequestListView('none', rsWillUpdateNextEvent, False);
+
+    {DataModuleOCK.SQLQueryProductData.Post;
     //if DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString
       //<> '' then
       Product := GetProductPanelByProductID(DataModuleOCK.SQLQueryProductData.FieldByName('ProductID').AsString);
-      Product.LabelAction.Caption := 'Action: '
+      Product.LabelAction.Caption := rsAction+': '
          + DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString;
     //DataModuleOCK.SQLQueryProductData.FieldByName('actionrequest').AsString := 'none';
     //DataModuleOCK.SQLQueryProductData.Edit;
-    //DataSourceProductData.Edit;
+    //DataSourceProductData.Edit; }
   end
-  else if DataModuleOCK.SQLQueryProductData.EOF then
+  else if (DataModuleOCK.SQLQueryProductData.EOF and DataModuleOCK.SQLQueryProductData.BOF) then
    ShowMessage('Action could not be done because no product is available.');
   //DataSourceProductData.Edit;
 end;
@@ -1559,20 +1642,25 @@ end;
 procedure TFormOpsiClientKiosk.BitBtnStoreActionClick(Sender: TObject);
 begin
   screen.Cursor := crHourGlass;
+  installdlg.Finstalldlg.Memo1.Clear;
   try
     DataModuleOCK.SQLQueryProductData.Filtered := False;
     DataModuleOCK.SQLQueryProductData.Filter := 'ActionRequest  <> ""';
     DataModuleOCK.SQLQueryProductData.Filtered := True;
-
     DataModuleOCK.SQLQueryProductData.First;
     while not DataModuleOCK.SQLQueryProductData.EOF do
     begin
-      OCKOpsiConnection.setActionrequest(DataModuleOCK.SQLQueryProductData.FieldByName('ProductID').AsString,
+      //OCKOpsiConnection.setActionrequest(DataModuleOCK.SQLQueryProductData.FieldByName('ProductID').AsString,
+        //DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString);
+      installdlg.Finstalldlg.Memo1.Append(
+        DataModuleOCK.SQLQueryProductData.FieldByName('ProductID').AsString
+        + ': ' +
         DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString);
+
       DataModuleOCK.SQLQueryProductData.Next;
     end;
     installdlg.Finstalldlg.SoftwareOnDemand:= SoftwareOnDemand;
-    installdlg.Finstalldlg.Memo1.Text := OCKOpsiConnection.getActionrequests.Text;
+    //installdlg.Finstalldlg.Memo1.Text := OCKOpsiConnection.getActionrequests.Text;
     if installdlg.Finstalldlg.Memo1.Text = '' then
        installdlg.Finstalldlg.Memo1.Text := rsNoActionsFound;
     installdlg.Finstalldlg.Show;
@@ -1619,21 +1707,23 @@ begin
   if (DataModuleOCK.SQLQueryProductData.EOF and DataModuleOCK.SQLQueryProductData.BOF) then
   begin
     DataModuleOCK.SQLQueryProductData.Filtered := False;
-    DataModuleOCK.SQLQueryProductData.FilterOptions := [foCaseInsensitive];
-    DataModuleOCK.SQLQueryProductData.Filter := LastFilter;
-    DataModuleOCK.SQLQueryProductData.Filtered := True;
+    //DataModuleOCK.SQLQueryProductData.FilterOptions := [foCaseInsensitive];
+    //DataModuleOCK.SQLQueryProductData.Filter := LastFilter;
+    //DataModuleOCK.SQLQueryProductData.Filtered := True;
     //DBComboBox1.Enabled := False;
     //DBGrid1.Enabled:= False;
     ShowMessage(rsAllProductsInstalled);
-    SpeedButtonLastClicked.Down:= True;
-  end
-  else
+    //SpeedButtonLastClicked.Down:= True;
+    SpeedButtonAll.Down:= True;
+  end;
+  {else
   begin
     SpeedButtonNotInstalled.Down:= True;
     SetView;
     SpeedButtonLastClicked := SpeedButtonNotInstalled;
     LastFilter := DataModuleOCK.SQLQueryProductData.Filter;
-  end;
+  end;}
+  SetView;
 end;
 
 procedure TFormOpsiClientKiosk.SpeedButtonExpertModeClick(Sender: TObject);
@@ -1796,30 +1886,32 @@ begin
   if EditSearch.Text <> '' then
   begin
     SearchProducts;
-    SetView;
+    //SetView;
   end
   else
   begin
     if SpeedButtonAll.Down then
     begin
       DataModuleOCK.SQLQueryProductData.Filtered := False;
-      SetView;
+      //SetView;
     end;
     if SpeedButtonUpdates.Down then
     begin
       DataModuleOCK.SQLQueryProductData.Filtered := False;
-      DataModuleOCK.SQLQueryProductData.Filter := 'InstallationStatus <> "" and UpdatePossible = "true"';
+      DataModuleOCK.SQLQueryProductData.FilterOptions := [foCaseInsensitive];
+      DataModuleOCK.SQLQueryProductData.Filter := 'UpdatePossible and InstallationStatus <> ""';
       DataModuleOCK.SQLQueryProductData.Filtered := True;
-      SetView;
+      //SetView;
     end;
     if SpeedButtonNotInstalled.Down then
     begin
       DataModuleOCK.SQLQueryProductData.Filtered := False;
       DataModuleOCK.SQLQueryProductData.Filter := 'InstallationStatus = ""';
       DataModuleOCK.SQLQueryProductData.Filtered := True;
-      SetView;
+      //SetView;
     end;
   end;
+  SetView;
 end;
 
 procedure TFormOpsiClientKiosk.LoadSkinForTitle(SkinPath: string);
@@ -1868,7 +1960,7 @@ begin
   StringListScreenshots := TStringList.Create;
   SpeedButtonAll.Down := True;
   SpeedButtonLastClicked := SpeedButtonAll;
-  LastFilter := '""';
+  LastFilter := '';
   NotebookProducts.PageIndex := 1;  //tiles
   PanelProductDetail.Height := 0;
   detail_visible := False;
@@ -1999,6 +2091,8 @@ begin
       Filterstr := Filterstr + ') and INSTALLATIONSTATUS = ""';
     if SpeedButtonUpdates.Down then
        Filterstr := Filterstr + ' ) and INSTALLATIONSTATUS <> "" and UpdatePossible = "true"';
+    if SpeedButtonActions.Down then
+       Filterstr := Filterstr + ' ) and ActionRequest <> ""';
     DataModuleOCK.SQLQueryProductData.Filtered := False;
     DataModuleOCK.SQLQueryProductData.Filter := Filterstr;
     DataModuleOCK.SQLQueryProductData.FilterOptions := [foCaseInsensitive];
@@ -2019,10 +2113,10 @@ procedure TFormOpsiClientKiosk.SpeedButtonAllClick(Sender: TObject);
 begin
   EditSearch.Clear;
   DataModuleOCK.SQLQueryProductData.Filtered := False;
-  LastFilter := '""';
-  SpeedButtonAll.Down:= True;
+  //LastFilter := '';
+  //SpeedButtonAll.Down:= True;
   SetView;
-  SpeedButtonLastClicked := SpeedButtonAll;
+  //SpeedButtonLastClicked := SpeedButtonAll;
 end;
 
 
@@ -2145,6 +2239,20 @@ begin
   DBGrid2.Columns.Add.FieldName := 'postrequired';
   DBGrid2.Columns.Items[3].Title.Caption := 'post-required';
   DBGrid2.Columns.Items[3].Width := 100;
+end;
+
+procedure TFormOpsiClientKiosk.InstallNow;
+begin
+  //OCKOpsiConnection.DoSingleActionOnDemand(SelectedProduct);
+  OCKOpsiConnection.DoActionsOnDemand;
+  sleep(10000);
+  while ockunique.numberOfProcessInstances('notifier') > 0 do
+  begin
+    Application.ProcessMessages;
+    //Instances := ockunique.numberOfProcessInstances('notifier');
+    sleep(100);
+    //Instances := ockunique.numberOfProcessInstances('notifier');
+  end;
 end;
 
 {procedure TFormOpsiClientKiosk.InitOpsiClientKiosk;

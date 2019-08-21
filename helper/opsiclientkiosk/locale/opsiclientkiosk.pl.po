@@ -16,6 +16,7 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 
 #: opsiclientkioskgui.rsaction
+msgctxt "opsiclientkioskgui.rsaction"
 msgid "Action"
 msgstr ""
 
@@ -288,6 +289,10 @@ msgctxt "tformopsiclientkiosk.buttonsoftwareinstall.caption"
 msgid "Install"
 msgstr ""
 
+#: tformopsiclientkiosk.buttonsoftwareremoveaction.caption
+msgid "Remove Action"
+msgstr ""
+
 #: tformopsiclientkiosk.buttonsoftwareuninstall.caption
 msgctxt "tformopsiclientkiosk.buttonsoftwareuninstall.caption"
 msgid "Uninstall"
@@ -347,6 +352,11 @@ msgstr ""
 msgctxt "tformopsiclientkiosk.labelpriority.caption"
 msgid "Priority: "
 msgstr "Piorytet:"
+
+#: tformopsiclientkiosk.labelsoftwareactionrequest.caption
+msgctxt "tformopsiclientkiosk.labelsoftwareactionrequest.caption"
+msgid "Action"
+msgstr ""
 
 #: tformopsiclientkiosk.labelsoftwareadvice.caption
 msgctxt "tformopsiclientkiosk.labelsoftwareadvice.caption"

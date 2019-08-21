@@ -36,5 +36,7 @@
 {"hash":123063726,"name":"tformopsiclientkiosk.labelsoftwarerecentversion.caption","sourcebytes":[82,101,99,101,110,116,32,118,101,114,115,105,111,110],"value":"Recent version"},
 {"hash":96905381,"name":"tformopsiclientkiosk.buttonsoftwareupdate.caption","sourcebytes":[85,112,100,97,116,101],"value":"Update"},
 {"hash":5962876,"name":"tformopsiclientkiosk.buttonsoftwareuninstall.caption","sourcebytes":[85,110,105,110,115,116,97,108,108],"value":"Uninstall"},
+{"hash":213828734,"name":"tformopsiclientkiosk.buttonsoftwareremoveaction.caption","sourcebytes":[82,101,109,111,118,101,32,65,99,116,105,111,110],"value":"Remove Action"},
+{"hash":75149406,"name":"tformopsiclientkiosk.labelsoftwareactionrequest.caption","sourcebytes":[65,99,116,105,111,110],"value":"Action"},
 {"hash":186149486,"name":"tformopsiclientkiosk.labelpleasewait.caption","sourcebytes":[80,108,101,97,115,101,32,119,97,105,116,46,32,73,110,115,116,97,108,108,105,110,103,47,117,110,105,110,115,116,97,108,108,105,110,103,32,112,114,111,100,117,99,116,115,46],"value":"Please wait. Installing/uninstalling products."}
 ]}

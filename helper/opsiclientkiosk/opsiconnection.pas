@@ -421,7 +421,7 @@ begin
   for i := 0 to opsiProducts.Count - 1 do
   begin
     opsiProduct := opsiProducts.Items[i] as TJSONObject;
-    Result.Add(opsiProduct.Strings['productId'] + ' : ' + opsiProduct.Strings['actionRequest']);//['actionRequest"'] ?
+    Result.Add(opsiProduct.Strings['productId'] + '=' + opsiProduct.Strings['actionRequest']);//['actionRequest"'] ?
   end;
   opsiProducts.Free;
 end;

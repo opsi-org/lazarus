@@ -1,7 +1,7 @@
 object FormOpsiClientKiosk: TFormOpsiClientKiosk
-  Left = 1924
+  Left = 2115
   Height = 694
-  Top = 18
+  Top = 145
   Width = 804
   Caption = 'opsi-client-kiosk'
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
@@ -1720,7 +1720,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           object ButtonSoftwareUpdate: TButton
             Left = 15
             Height = 28
-            Top = 251
+            Top = 292
             Width = 135
             Caption = 'Update'
             Enabled = False
@@ -1735,6 +1735,33 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Caption = 'Uninstall'
             OnClick = ButtonSoftwareUninstallClick
             TabOrder = 5
+          end
+          object ButtonSoftwareRemoveAction: TButton
+            Left = 15
+            Height = 28
+            Top = 104
+            Width = 135
+            Caption = 'Remove Action'
+            OnClick = ButtonSoftwareRemoveActionClick
+            TabOrder = 6
+            Visible = False
+          end
+          object DBTextActionRequest: TDBText
+            Left = 15
+            Height = 15
+            Top = 268
+            Width = 112
+            DataField = 'ActionRequest'
+            DataSource = DataSourceProductData
+            ParentColor = False
+          end
+          object LabelSoftwareActionRequest: TLabel
+            Left = 15
+            Height = 15
+            Top = 251
+            Width = 35
+            Caption = 'Action'
+            ParentColor = False
           end
         end
       end
