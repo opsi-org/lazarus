@@ -239,7 +239,7 @@ begin
   WriteLn('=========================================================================================================================');
   writeln(filename + ' generates asciidoc file for Python or Opsiscript sourcecodes.');
   writeln('It converts python docstrings or opsiscript comments to asciidoc.');
-  writeln('And also converts asciidoc to html and shows the created html file in the default browser.');
+  writeln('And also converts asciidoc to html and shows the created html file in the default viewer.');
   WriteLn('');
 
   writeln('Usage:');
