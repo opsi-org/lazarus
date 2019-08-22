@@ -101,7 +101,7 @@ type
     (* Expert mode *)
     PanelExpertMode: TPanel;//container for expert mode components
     RadioGroupView: TRadioGroup;//toggle between list and tiles view
-    BitBtnStoreAction: TBitBtn; //Set action requests
+    BitBtnInstallNow: TBitBtn; //Set action requests
     SpeedButtonReload: TSpeedButton;//reload data from server
     (* Views *)
     PanelProducts: TPanel;//container for components showing product infos
@@ -168,7 +168,7 @@ type
     { BItBtn }
     procedure BitBtnInfoClick(Sender: TObject);
     procedure BitBtnShowActionClick(Sender: TObject);
-    procedure BitBtnStoreActionClick(Sender: TObject);
+    procedure BitBtnInstallNowClick(Sender: TObject);
     procedure BitBtnToggleViewClick(Sender: TObject);
     procedure BitBtnCancelClick(Sender: TObject);
     { ButtonSoftware }
@@ -253,6 +253,7 @@ type
     procedure SetView;
     procedure SetListView;
     procedure SetTilesView;
+    procedure ShowSoftwareButtonsDependendOnState(const ProductPanel: TProductPanel);
     procedure ShowPagePleaseWait;
     { Product Details}
     procedure ShowProductDetails(ProductPanel: TProductPanel);
@@ -319,7 +320,7 @@ resourcestring
   rsLabelDataLoadCommunicating = 'Communicating with server ...';
   rsLabelDetailConnecting = 'Connecting to server';
   {Hints}
-  rsInstallNowHint = 'Start the installation (deinstallation) of the selected products';
+  rsInstallNowHint = 'Start the installation/update (uninstallation) of the selected products';
   rsStoreActionsHint =
     'Send the action requests to the server, show the resulting installations and ask for installation start.';
 
@@ -349,6 +350,7 @@ resourcestring
  rsCancel = 'Cancel';
  rsInstallationFinished = 'Installation/update finished.';
  rsUninstallationFinished = 'Uninstallation finished.';
+ rsActionRemovedFor = 'Action removed for';
 
 
 implementation
@@ -687,39 +689,7 @@ begin
            (ScreenshotPath + 'no_screenshot.png');
 
       { View Buttons dependend on state}
-      if ProductPanel.LabelAction.Caption <> '' then
-      begin
-        ButtonSoftwareInstall.Visible := False;
-        ButtonSoftwareUninstall.Visible := False;
-        ButtonSoftwareRemoveAction.Visible:= True;
-        ButtonSoftwareUpdate.Enabled := False;
-      end
-      else
-      begin
-        if ProductPanel.LabelState.Caption = rsInstalled then
-        begin
-          ButtonSoftwareInstall.Visible := False;
-          ButtonSoftwareUninstall.Visible := True;
-          ButtonSoftwareRemoveAction.Visible:= False;
-          ButtonSoftwareUpdate.Enabled := False;
-        end
-        else
-          if ProductPanel.LabelState.Caption = rsNotInstalled then
-          begin
-            ButtonSoftwareUninstall.Visible := False;
-            ButtonSoftwareUpdate.Enabled := False;
-            ButtonSoftwareRemoveAction.Visible:= False;
-            ButtonSoftwareInstall.Visible := True;
-          end
-          else
-            if ProductPanel.LabelState.Caption = rsUpdate then
-            begin
-              ButtonSoftwareInstall.Visible := False;
-              ButtonSoftwareUninstall.Visible := True;
-              ButtonSoftwareRemoveAction.Visible:= False;
-              ButtonSoftwareUpdate.Enabled := True;
-            end;
-      end;
+      ShowSoftwareButtonsDependendOnState(ProductPanel);
     end;
   finally
     //DataModuleOCK.SQLQueryProductData.Close;
@@ -760,10 +730,13 @@ procedure TProductPanel.ProductPanelMouseUp(Sender: TObject;
 var
   ProductPanel: TProductPanel;
 begin
-  ProductPanel := TControl(Sender).Parent as TProductPanel;
-  FormOpsiClientKiosk.SelectedPanelIndex := ProductPanel.Tag;
-  FormOpsiClientKiosk.SelectedProduct := ProductPanel.ProductID;
-  if (FormOpsiClientKiosk.AdminMode and (Button = mbRight)) then SetIcon(ProductPanel);
+  if (FormOpsiClientKiosk.AdminMode and (Button = mbRight)) then
+  begin
+    ProductPanel := TControl(Sender).Parent as TProductPanel;
+    FormOpsiClientKiosk.SelectedPanelIndex := ProductPanel.Tag;
+    FormOpsiClientKiosk.SelectedProduct := ProductPanel.ProductID;
+    SetIcon(ProductPanel);
+  end;
 end;
 
 
@@ -905,9 +878,9 @@ begin
     //ShowMessage(ConfigState.Text);
     SoftwareOnDemand := StrToBool(ConfigState.Strings[0]);
 
-    {ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.admin-mode');
+    ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.admin-mode');
     //ShowMessage(ConfigState.Text);
-    AdminMode := StrToBool(ConfigState.Strings[0]);}
+    AdminMode := StrToBool(ConfigState.Strings[0]);
 
     //FormProgressWindow.ProgressBarDetail.Position := 100;
     //Application.ProcessMessages;
@@ -1101,7 +1074,6 @@ begin
     DataSourceProductData.Edit;
     DataModuleOCK.SQLQueryProductData.First;
   end;
-  BitBtnStoreAction.Visible:= True;
   NotebookProducts.PageIndex:= 0
 end;
 
@@ -1158,8 +1130,46 @@ begin
     end;
     DataModuleOCK.SQLQueryProductData.First;
     PanelProductDetail.Height:= 0;
-    BitBtnStoreAction.Visible:= False;
+    //BitBtnInstallNow.Visible:= False;
     NotebookProducts.PageIndex:= 1;
+  end;
+end;
+
+procedure TFormOpsiClientKiosk.ShowSoftwareButtonsDependendOnState(
+  const ProductPanel: TProductPanel);
+begin
+  if ProductPanel.LabelAction.Caption <> '' then
+  begin
+    ButtonSoftwareInstall.Visible := False;
+    ButtonSoftwareUninstall.Visible := False;
+    ButtonSoftwareRemoveAction.Visible:= True;
+    ButtonSoftwareUpdate.Enabled := False;
+  end
+  else
+  begin
+    if ProductPanel.LabelState.Caption = rsInstalled then
+    begin
+      ButtonSoftwareInstall.Visible := False;
+      ButtonSoftwareUninstall.Visible := True;
+      ButtonSoftwareRemoveAction.Visible:= False;
+      ButtonSoftwareUpdate.Enabled := False;
+    end
+    else
+      if ProductPanel.LabelState.Caption = rsNotInstalled then
+      begin
+        ButtonSoftwareUninstall.Visible := False;
+        ButtonSoftwareUpdate.Enabled := False;
+        ButtonSoftwareRemoveAction.Visible:= False;
+        ButtonSoftwareInstall.Visible := True;
+      end
+      else
+        if ProductPanel.LabelState.Caption = rsUpdate then
+        begin
+          ButtonSoftwareInstall.Visible := False;
+          ButtonSoftwareUninstall.Visible := True;
+          ButtonSoftwareRemoveAction.Visible:= False;
+          ButtonSoftwareUpdate.Enabled := True;
+        end;
   end;
 end;
 
@@ -1362,7 +1372,7 @@ procedure TFormOpsiClientKiosk.ImageIconSoftwareMouseUp(Sender: TObject;
 var
   IconPath:String;
 begin
-  if Button = mbRight then
+  if (AdminMode and (Button = mbRight)) then
     if OpenPictureDialogSetIcon.Execute then
     begin
       IconPath := OpenPictureDialogSetIcon.FileName;
@@ -1378,7 +1388,7 @@ procedure TFormOpsiClientKiosk.ImageScreenShotMouseUp(Sender: TObject;
 var
   IconPath:String;
 begin
-  if Button = mbRight then
+  if (AdminMode and (Button = mbRight)) then
     if OpenPictureDialogSetIcon.Execute then
     begin
       IconPath := OpenPictureDialogSetIcon.FileName;
@@ -1476,7 +1486,9 @@ begin
   DataSourceProductData.Edit;
   DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString := '';// to local database
   ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := '';
-  ShowMessage(Format(rsRequestDone, ['Action removed for ' + ArrayProductPanels[SelectedPanelIndex].LabelName.Caption]));
+  ShowSoftwareButtonsDependendOnState(ArrayProductPanels[SelectedPanelIndex]);
+  ShowMessage(Format(rsRequestDone, [rsActionRemovedFor + ' '
+    + ArrayProductPanels[SelectedPanelIndex].LabelName.Caption]));
   DataModuleOCK.SQLQueryProductData.Post;
   DataModuleOCK.SQLQueryProductData.Open;
   Screen.Cursor := crDefault;
@@ -1639,33 +1651,44 @@ begin
     'http://opsi.org' + Lineending + 'Credits to: Lazarus/FPC,indy,sqllite,superobject');
 end;
 
-procedure TFormOpsiClientKiosk.BitBtnStoreActionClick(Sender: TObject);
+procedure TFormOpsiClientKiosk.BitBtnInstallNowClick(Sender: TObject);
 begin
   screen.Cursor := crHourGlass;
-  installdlg.Finstalldlg.Memo1.Clear;
-  try
-    DataModuleOCK.SQLQueryProductData.Filtered := False;
-    DataModuleOCK.SQLQueryProductData.Filter := 'ActionRequest  <> ""';
-    DataModuleOCK.SQLQueryProductData.Filtered := True;
-    DataModuleOCK.SQLQueryProductData.First;
-    while not DataModuleOCK.SQLQueryProductData.EOF do
-    begin
-      //OCKOpsiConnection.setActionrequest(DataModuleOCK.SQLQueryProductData.FieldByName('ProductID').AsString,
-        //DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString);
-      installdlg.Finstalldlg.Memo1.Append(
-        DataModuleOCK.SQLQueryProductData.FieldByName('ProductID').AsString
-        + ': ' +
-        DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString);
+  DataModuleOCK.SQLQueryProductData.Filtered := False;
+  DataModuleOCK.SQLQueryProductData.Filter := 'ActionRequest  <> ""';
+  DataModuleOCK.SQLQueryProductData.Filtered := True;
+  DataModuleOCK.SQLQueryProductData.First;
+  if not (DataModuleOCK.SQLQueryProductData.EOF and DataModuleOCK.SQLQueryProductData.BOF) then
+  begin
+    try
+      installdlg.Finstalldlg.Memo1.Clear;
+      while not DataModuleOCK.SQLQueryProductData.EOF do
+      begin
+        //OCKOpsiConnection.setActionrequest(DataModuleOCK.SQLQueryProductData.FieldByName('ProductID').AsString,
+          //DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString);
+        installdlg.Finstalldlg.Memo1.Append(
+          DataModuleOCK.SQLQueryProductData.FieldByName('ProductID').AsString
+          + ': ' +
+          DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString);
 
-      DataModuleOCK.SQLQueryProductData.Next;
+        DataModuleOCK.SQLQueryProductData.Next;
+      end;
+      installdlg.Finstalldlg.SoftwareOnDemand:= SoftwareOnDemand;
+      //installdlg.Finstalldlg.Memo1.Text := OCKOpsiConnection.getActionrequests.Text;
+      if installdlg.Finstalldlg.Memo1.Text = '' then
+         installdlg.Finstalldlg.Memo1.Text := rsNoActionsFound;
+      installdlg.Finstalldlg.Show;
+    finally
+      SpeedButtonActions.Down:= True;
+      SetView;
+      Screen.Cursor := crDefault;
     end;
-    installdlg.Finstalldlg.SoftwareOnDemand:= SoftwareOnDemand;
-    //installdlg.Finstalldlg.Memo1.Text := OCKOpsiConnection.getActionrequests.Text;
-    if installdlg.Finstalldlg.Memo1.Text = '' then
-       installdlg.Finstalldlg.Memo1.Text := rsNoActionsFound;
-    installdlg.Finstalldlg.Show;
-  finally
-    SpeedButtonActions.Down:= True;
+  end
+  else
+  begin
+    DataModuleOCK.SQLQueryProductData.Filtered := False;
+    ShowMessage(rsNoActionsFound);
+    SpeedButtonAll.Down := True;
     SetView;
     Screen.Cursor := crDefault;
   end;
@@ -1732,11 +1755,13 @@ begin
   if SpeedButtonExpertMode.Down then
   begin
     { Expert view }
-    BitBtnStoreAction.Caption := rsStoreActions;
-    BitBtnStoreAction.Hint := rsStoreActionsHint;
-    if RadioGroupView.ItemIndex = RadioGroupView.Items.IndexOf(rsViewList) then
-      BitBtnStoreAction.Visible := True
-    else BitBtnStoreAction.Visible := False;
+    if SoftwareOnDemand then
+    begin
+      BitBtnInstallNow.Caption := rsInstallNow;
+      BitBtnInstallNow.Hint := rsInstallNowHint;
+      BitBtnInstallNow.Visible:= True;
+    end
+    else BitBtnInstallNow.Visible:= False;
     PanelExpertMode.Visible := True;
     SetView;
     //NotebookProducts.PageIndex := RadioGroupView.ItemIndex;
@@ -1746,8 +1771,6 @@ begin
   begin
     PanelExpertMode.Visible := False;
     PanelProductDetail.Height := 0;
-    BitBtnStoreAction.Caption := rsInstallNow;
-    BitBtnStoreAction.Hint := rsInstallNowHint;
     SetTilesView;
   end;
 end;
@@ -1954,7 +1977,7 @@ begin
   { Init Variables }
   StartUpDone := False;
   ClientdMode := True;
-  AdminMode := True; //Default should be false
+  //AdminMode := True; //read from host parameter property (default should be false)
   FilteredProductIDs := TStringList.Create;
   StringListIcons := TStringList.Create;
   StringListScreenshots := TStringList.Create;
@@ -1972,6 +1995,7 @@ begin
   LogDatei.log('IconPathDefault: ' + IconPathDefault, LLInfo);
   LogDatei.log('IconPathCustom: ' + IconPathCustom, LLInfo);
   LogDatei.log('ScreenshotPath: ' + ScreenshotPath, LLInfo);
+  { Load assignment of image paths to product IDs }
   LoadStringListFromFile(StringListIcons, IconPathCustom + 'IconsList.txt');
   LoadStringListFromFile(StringListScreenshots, ScreenshotPath + 'ScreenshotsList.txt');
 
@@ -2046,8 +2070,8 @@ begin
   RadioGroupView.Items[0] := rsViewList;
   RadioGroupView.Items[1] := rsViewTiles;
   { Expert Mode Buttons }
-  BitBtnStoreAction.Caption := rsStoreActions;
-  BitBtnStoreAction.Hint := rsStoreActionsHint;
+  BitBtnInstallNow.Caption := rsInstallNow;
+  BitBtnInstallNow.Hint := rsInstallNowHint;
   { ButtonSoftware on PageSoftware}
   ButtonSoftwareInstall.Caption := rsInstall;
   ButtonSoftwareUninstall.Caption := rsActUninstall;

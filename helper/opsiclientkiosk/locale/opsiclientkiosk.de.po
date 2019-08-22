@@ -16,6 +16,10 @@ msgctxt "opsiclientkioskgui.rsaction"
 msgid "Action"
 msgstr "Aktion"
 
+#: opsiclientkioskgui.rsactionremovedfor
+msgid "Action removed for"
+msgstr "Aktion zurückgenommen für"
+
 #: opsiclientkioskgui.rsactions
 msgctxt "opsiclientkioskgui.rsactions"
 msgid "Actions"
@@ -95,12 +99,14 @@ msgid "Installed"
 msgstr "Installiert"
 
 #: opsiclientkioskgui.rsinstallnow
+msgctxt "opsiclientkioskgui.rsinstallnow"
 msgid "Install now"
 msgstr "Jetzt Installieren"
 
 #: opsiclientkioskgui.rsinstallnowhint
-msgid "Start the installation (deinstallation) of the selected products"
-msgstr "Start der Installation (Deinstallation) der ausgewählten Produkte"
+msgctxt "opsiclientkioskgui.rsinstallnowhint"
+msgid "Start the installation/update (uninstallation) of the selected products"
+msgstr "Start der Installation/Aktualisierung (Deinstallation) der ausgewählten Produkte"
 
 #: opsiclientkioskgui.rsinstallnowornextevent
 msgid "Install product now or at next standard event (e.g. reboot)?"
@@ -266,13 +272,15 @@ msgctxt "tformopsiclientkiosk.bitbtninfo.caption"
 msgid "Info"
 msgstr "Info"
 
-#: tformopsiclientkiosk.bitbtnstoreaction.caption
-msgid "Store Action"
-msgstr "Speicher Aktion"
+#: tformopsiclientkiosk.bitbtninstallnow.caption
+msgctxt "tformopsiclientkiosk.bitbtninstallnow.caption"
+msgid "Install now"
+msgstr "Jetzt Installieren"
 
-#: tformopsiclientkiosk.bitbtnstoreaction.hint
-msgid "Store actions on server"
-msgstr "Speichert Aktionen auf dem server"
+#: tformopsiclientkiosk.bitbtninstallnow.hint
+msgctxt "tformopsiclientkiosk.bitbtninstallnow.hint"
+msgid "Start the installation/update (uninstallation) of the selected products"
+msgstr "Start der Installation/Aktualisierung (Deinstallation) der ausgewählten Produkte"
 
 #: tformopsiclientkiosk.buttonsoftwareback.caption
 msgctxt "tformopsiclientkiosk.buttonsoftwareback.caption"
@@ -286,7 +294,7 @@ msgstr "Installieren"
 
 #: tformopsiclientkiosk.buttonsoftwareremoveaction.caption
 msgid "Remove Action"
-msgstr ""
+msgstr "Aktion zurücknehmen"
 
 #: tformopsiclientkiosk.buttonsoftwareuninstall.caption
 msgctxt "tformopsiclientkiosk.buttonsoftwareuninstall.caption"
@@ -335,7 +343,6 @@ msgid "Priority: "
 msgstr "Priorität:"
 
 #: tformopsiclientkiosk.labelsoftwareactionrequest.caption
-#, fuzzy
 msgctxt "tformopsiclientkiosk.labelsoftwareactionrequest.caption"
 msgid "Action"
 msgstr "Aktion"

@@ -1167,19 +1167,19 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       OnSelectionChanged = RadioGroupViewSelectionChanged
       TabOrder = 0
     end
-    object BitBtnStoreAction: TBitBtn
-      Left = 618
+    object BitBtnInstallNow: TBitBtn
+      Left = 626
       Height = 33
-      Hint = 'Store actions on server'
+      Hint = 'Start the installation/update (uninstallation) of the selected products'
       Top = 6
-      Width = 111
+      Width = 103
       Align = alRight
       AutoSize = True
       BorderSpacing.Around = 5
-      Caption = 'Store Action'
+      Caption = 'Install now'
       Kind = bkAll
       ModalResult = 8
-      OnClick = BitBtnStoreActionClick
+      OnClick = BitBtnInstallNowClick
       ParentShowHint = False
       ShowHint = True
       TabOrder = 1

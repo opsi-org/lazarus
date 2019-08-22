@@ -450,7 +450,13 @@ begin
   if JSONObjectConfigStates <> nil then
     for i := 0 to JSONObjectConfigStates.Arrays[ConfigProperty].Count -1 do
      Result.Add(JSONObjectConfigStates.Arrays[ConfigProperty].Items[i].AsString)
-  else Result.Add('False');
+  else
+  begin
+    //do not forget!!! Change this do false for productive use!
+    Result.Add('True'); //if configstate not exist then Configstate := True (for testing)
+    LogDatei.log('No ConfigState set for installation-now-button and/or admin-mode)!',LLInfo);
+  end;
+  //
 end;
 
 //initialization

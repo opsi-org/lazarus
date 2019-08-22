@@ -20,6 +20,10 @@ msgctxt "opsiclientkioskgui.rsaction"
 msgid "Action"
 msgstr ""
 
+#: opsiclientkioskgui.rsactionremovedfor
+msgid "Action removed for"
+msgstr ""
+
 #: opsiclientkioskgui.rsactions
 msgctxt "opsiclientkioskgui.rsactions"
 msgid "Actions"
@@ -99,11 +103,13 @@ msgid "Installed"
 msgstr ""
 
 #: opsiclientkioskgui.rsinstallnow
+msgctxt "opsiclientkioskgui.rsinstallnow"
 msgid "Install now"
 msgstr ""
 
 #: opsiclientkioskgui.rsinstallnowhint
-msgid "Start the installation (deinstallation) of the selected products"
+msgctxt "opsiclientkioskgui.rsinstallnowhint"
+msgid "Start the installation/update (uninstallation) of the selected products"
 msgstr ""
 
 #: opsiclientkioskgui.rsinstallnowornextevent
@@ -271,12 +277,14 @@ msgctxt "tformopsiclientkiosk.bitbtninfo.caption"
 msgid "Info"
 msgstr ""
 
-#: tformopsiclientkiosk.bitbtnstoreaction.caption
-msgid "Store Action"
+#: tformopsiclientkiosk.bitbtninstallnow.caption
+msgctxt "tformopsiclientkiosk.bitbtninstallnow.caption"
+msgid "Install now"
 msgstr ""
 
-#: tformopsiclientkiosk.bitbtnstoreaction.hint
-msgid "Store actions on server"
+#: tformopsiclientkiosk.bitbtninstallnow.hint
+msgctxt "tformopsiclientkiosk.bitbtninstallnow.hint"
+msgid "Start the installation/update (uninstallation) of the selected products"
 msgstr ""
 
 #: tformopsiclientkiosk.buttonsoftwareback.caption
