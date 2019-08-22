@@ -334,7 +334,7 @@
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="uibtime" ApplyConventions="False"/>
+      <Filename Value="uibtime"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
