@@ -18,6 +18,8 @@ type
     BitBtn1: TBitBtn;
     Timer1: TTimer;
     Timer2: TTimer;
+    procedure FormMouseEnter(Sender: TObject);
+    procedure FormPaint(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
@@ -40,15 +42,27 @@ uses uibdata{, debug};
 
 procedure TFNachfrage.Timer1Timer(Sender: TObject);
 begin
+  datamodule1.debugOut(5,'FNachf','Timer1 pos and front start');
  bringtofront;
  SetWindowPos(handle,HWND_TOPMOST,100,100,500,240,
                 SWP_NOMOVE and SWP_NOSIZE);
+ datamodule1.debugOut(5,'FNachf','Timer1 pos and front end');
 end;
 
 procedure TFNachfrage.FormShow(Sender: TObject);
 begin
   if not setwindowtoalldesktops('uibtime') then
      datamodule1.debugOut(2,'nachf', 'failed nachf to all desktops');
+end;
+
+procedure TFNachfrage.FormMouseEnter(Sender: TObject);
+begin
+  datamodule1.debugOut(5,'FNachf','Mouse Enter');
+end;
+
+procedure TFNachfrage.FormPaint(Sender: TObject);
+begin
+  datamodule1.debugOut(5,'FNachf','Repaint');
 end;
 
 procedure TFNachfrage.Timer2Timer(Sender: TObject);
@@ -60,7 +74,7 @@ end;
 
 procedure TFNachfrage.FormActivate(Sender: TObject);
 begin
- datamodule1.debugOut(5,'Activate FNachf');
+ datamodule1.debugOut(5,'FNachf','Activate');
 end;
 
 (*
