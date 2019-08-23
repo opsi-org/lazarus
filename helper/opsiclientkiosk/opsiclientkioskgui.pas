@@ -28,7 +28,8 @@ uses
   ockunique,
   progresswindow,
   DefaultTranslator, ExtDlgs,
-  proginfo;
+  proginfo,
+  Process;
 
 type
 
@@ -67,6 +68,7 @@ type
   { TFormOpsiClientKiosk }
 
   TFormOpsiClientKiosk = class(TForm)
+     ButtonSaveImagesOnServer: TButton;
  (*----------------------------*)
  (*         Attributes         *)
  (*----------------------------*)
@@ -171,6 +173,7 @@ type
     procedure BitBtnInstallNowClick(Sender: TObject);
     procedure BitBtnToggleViewClick(Sender: TObject);
     procedure BitBtnCancelClick(Sender: TObject);
+    procedure ButtonSaveImagesOnServerClick(Sender: TObject);
     { ButtonSoftware }
     procedure ButtonSoftwareBackClick(Sender: TObject);
     procedure ButtonSoftwareInstallClick(Sender: TObject);
@@ -2189,6 +2192,25 @@ begin
 
   Application.Terminate;
   halt;
+end;
+
+procedure TFormOpsiClientKiosk.ButtonSaveImagesOnServerClick(Sender: TObject);
+var
+  ShellProcess: TProcess;
+  s: String;
+begin
+  {$IFDEF Windows}
+    if RunCommand('cmd.exe',['/c', 'net use'],s) then
+    begin
+      ShowMessage(s);
+    end;
+  {$ENDIF Windows}
+  {$IFDEF Unix}
+    if RunCommand('/bin/bash', ['-c', 'mount'], s) then
+    begin
+      ShowMessage(s);
+    end;
+  {$ENDIF Unix}
 end;
 
 {:Returns user name of the current thread.

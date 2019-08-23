@@ -289,6 +289,10 @@ msgctxt "tformopsiclientkiosk.bitbtninstallnow.hint"
 msgid "Start the installation/update (uninstallation) of the selected products"
 msgstr ""
 
+#: tformopsiclientkiosk.buttonsaveimagesonserver.caption
+msgid "Save Images on Server"
+msgstr ""
+
 #: tformopsiclientkiosk.buttonsoftwareback.caption
 msgctxt "tformopsiclientkiosk.buttonsoftwareback.caption"
 msgid "<-- Back"
