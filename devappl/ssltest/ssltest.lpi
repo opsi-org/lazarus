@@ -5,34 +5,26 @@
     <General>
       <Flags>
         <MainUnitHasCreateFormStatements Value="False"/>
+        <MainUnitHasTitleStatement Value="False"/>
+        <MainUnitHasScaledStatement Value="False"/>
       </Flags>
       <SessionStorage Value="InProjectDir"/>
       <MainUnit Value="0"/>
-      <Title Value="opsi-script-starter"/>
+      <Title Value="ssltest"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
     </General>
-    <i18n>
-      <EnableI18N LFM="False"/>
-    </i18n>
-    <VersionInfo>
-      <UseVersionInfo Value="True"/>
-      <MajorVersionNr Value="4"/>
-      <MinorVersionNr Value="1"/>
-      <BuildNr Value="4"/>
-      <StringTable CompanyName="uib gmbh (www.uib.de)" LegalCopyright="uib gmbh under AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="opsiscriptstarter" ProductName="opsi" ProductVersion="4.1"/>
-    </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
       <Item2 Name="Debug">
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
-            <Filename Value="opsiscriptstarter"/>
+            <Filename Value="ssltest"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="../common;../external_libraries/dcpcrypt/Ciphers;../external_libraries/dcpcrypt/Hashes;../external_libraries/misc;../external_libraries/uSMBIOS;../external_libraries/dcpcrypt"/>
+            <OtherUnitFiles Value="../../common;../../external_libraries/synapse;../../external_libraries/misc"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -50,26 +42,21 @@
           </CodeGeneration>
           <Linking>
             <Debugging>
-              <DebugInfoType Value="dsDwarf2Set"/>
-              <UseHeaptrc Value="True"/>
-              <StripSymbols Value="True"/>
+              <TrashVariables Value="True"/>
               <UseExternalDbgSyms Value="True"/>
             </Debugging>
           </Linking>
-          <Other>
-            <CustomOptions Value="-dOPSISCRIPTSTARTER"/>
-          </Other>
         </CompilerOptions>
       </Item2>
       <Item3 Name="Release">
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
-            <Filename Value="opsiscriptstarter"/>
+            <Filename Value="ssltest"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="../common;../external_libraries/dcpcrypt/Ciphers;../external_libraries/dcpcrypt/Hashes;../external_libraries/misc;../external_libraries/uSMBIOS;../external_libraries/dcpcrypt;../external_libraries/synapse"/>
+            <OtherUnitFiles Value="synapse_r209;../../external_libraries/indy/Lib;../../common;../../external_libraries/indy/Lib/Protocols;../../external_libraries/indy/Lib/Security;../../external_libraries/indy/Lib/Core;../../external_libraries/indy/Lib/System"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -81,13 +68,9 @@
           <Linking>
             <Debugging>
               <GenerateDebugInfo Value="False"/>
-              <StripSymbols Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
           </Linking>
-          <Other>
-            <CustomOptions Value="-dOPSISCRIPTSTARTER"/>
-          </Other>
         </CompilerOptions>
       </Item3>
     </BuildModes>
@@ -100,74 +83,43 @@
         <Mode0 Name="default"/>
       </Modes>
     </RunParams>
-    <RequiredPackages Count="3">
+    <RequiredPackages Count="1">
       <Item1>
-        <PackageName Value="LCL"/>
-      </Item1>
-      <Item2>
         <PackageName Value="LCLBase"/>
-      </Item2>
-      <Item3>
-        <PackageName Value="LazUtils"/>
-      </Item3>
+      </Item1>
     </RequiredPackages>
-    <Units Count="8">
+    <Units Count="2">
       <Unit0>
-        <Filename Value="opsiscriptstarter.lpr"/>
+        <Filename Value="ssltest.lpr"/>
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="opsiscriptstarter.txt"/>
+        <Filename Value="../../common/oswebservice.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit1>
-      <Unit2>
-        <Filename Value="../common/manifest.xml"/>
-        <IsPartOfProject Value="True"/>
-      </Unit2>
-      <Unit3>
-        <Filename Value="../common/oscrypt.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit3>
-      <Unit4>
-        <Filename Value="../common/oslog.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit4>
-      <Unit5>
-        <Filename Value="../common/oswebservice.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit5>
-      <Unit6>
-        <Filename Value="../common/oslinmount.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit6>
-      <Unit7>
-        <Filename Value="../external_libraries/misc/superobject.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit7>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
     <Target>
-      <Filename Value="opsiscriptstarter"/>
+      <Filename Value="ssltest"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="../common;../external_libraries/dcpcrypt/Ciphers;../external_libraries/dcpcrypt/Hashes;../external_libraries/misc;../external_libraries/uSMBIOS;../external_libraries/dcpcrypt;../external_libraries/synapse"/>
+      <OtherUnitFiles Value="../../common;../../external_libraries/synapse;../../external_libraries/misc"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>
-      <SmartLinkUnit Value="True"/>
+      <Checks>
+        <IOChecks Value="True"/>
+        <RangeChecks Value="True"/>
+        <OverflowChecks Value="True"/>
+      </Checks>
     </CodeGeneration>
-    <Linking>
-      <Debugging>
-        <GenerateDebugInfo Value="False"/>
-        <StripSymbols Value="True"/>
-      </Debugging>
-      <LinkSmart Value="True"/>
-    </Linking>
     <Other>
-      <CustomOptions Value="-dOPSISCRIPTSTARTER"/>
+      <Verbosity>
+        <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
+      </Verbosity>
     </Other>
   </CompilerOptions>
   <Debugging>

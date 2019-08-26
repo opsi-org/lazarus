@@ -36,7 +36,7 @@ function DecryptBlowfish(const myencrypted,mykey: string): string;
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TStringList;
   var report: string; showcmd: integer; var ExitCode: longint): boolean;
-procedure mount_depotshare(mymountpoint : string; myhostkey : string);
+procedure mount_depotshare(mymountpoint : string; myhostkey : string;myclientId : string);
 
 implementation
 
@@ -391,9 +391,9 @@ begin
 end;
 
 
-procedure mount_depotshare(mymountpoint : string; myhostkey : string);
+procedure mount_depotshare(mymountpoint : string; myhostkey : string; myclientId : string);
 var
-  resultstring, mydepotuser, myclientId, mydomain, mydepot : string;
+  resultstring, mydepotuser,  mydomain, mydepot : string;
   myuser, myencryptedpass, myshare, mypass, mountoption  : string;
   mounttry : integer;
 begin
@@ -407,7 +407,10 @@ begin
       LogDatei.log('Will use as domain: '+ mydomain + ' as user: '+myuser,LLNotice);
       resultstring := MyOpsiMethodCall('user_getCredentials', ['pcpatch',myclientid]);
       myencryptedpass := SO(resultstring).O['result'].S['password'];
+      LogDatei.log('Will use as encryptedpass: '+ myencryptedpass + ' clear pass: '+mypass,LLInfo);
       mypass := decrypt(myhostkey,myencryptedpass);
+      logdatei.AddToConfidentials(mypass);
+      LogDatei.log('Will use as encryptedpass: '+ myencryptedpass + ' clear pass: '+mypass,LLInfo);
       //writeln('mypass=',mypass);
       resultstring := MyOpsiMethodCall('host_getObjects', ['','{"type":"OpsiDepotserver","id":["'+myDepot+'"]}']);
       myshare := SO(resultstring).S['result'];
@@ -415,7 +418,7 @@ begin
       myshare := copy(myshare,5,length(myshare));
       //writeln('myshare=',myshare);
       umount(mymountpoint);
-      logdatei.AddToConfidentials(mypass);
+
       mounttry := 0;
       repeat
         if (mounttry div 3) = 0 then mountoption := ' vers=3.0,';
