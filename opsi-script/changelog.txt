@@ -4,6 +4,13 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.2.2) experimental; urgency=low
+
+  * oswebservice: switch most of log to log_prog
+  * oswebservice: code cleanup (remove unused code)
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 06 Aug 2019:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.2.1) experimental; urgency=low
 
   * oswebservice: sendlog: check max logsize to send via backend_getSystemConfiguration
