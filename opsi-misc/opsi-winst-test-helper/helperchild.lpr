@@ -10,7 +10,7 @@ uses
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms,
-  helperwin, osversioninfo;
+  helperwin, wispecfolder, osversioninfo;
 
 
 {$IFDEF WINDOWS}{$R helperchild.res}{$ENDIF}
@@ -18,7 +18,7 @@ uses
 begin
   Application.Initialize;
   main;
-  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TForm2, Form1);
   Application.Run;
   //application.Terminate;
 end.

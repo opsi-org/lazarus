@@ -67,6 +67,7 @@
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
+              <SyntaxMode Value="Delphi"/>
               <UseAnsiStrings Value="False"/>
             </SyntaxOptions>
           </Parsing>
@@ -110,39 +111,34 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="13">
+    <Units Count="14">
       <Unit0>
         <Filename Value="opsiwinsttesthelper.lpr"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="6"/>
-        <CursorPos X="9" Y="9"/>
-        <UsageCount Value="60"/>
+        <CursorPos X="47" Y="2"/>
+        <UsageCount Value="63"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="helperwin.pas"/>
-        <IsPartOfProject Value="True"/>
         <ComponentName Value="Form1"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="20"/>
         <CursorPos X="39" Y="23"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <EditorIndex Value="3"/>
-          <TopLine Value="16"/>
+          <EditorIndex Value="-1"/>
           <CursorPos X="31" Y="26"/>
         </ExtraEditor1>
         <UsageCount Value="60"/>
-        <Loaded Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="helpermain.pas"/>
         <CursorPos X="66" Y="10"/>
-        <UsageCount Value="39"/>
+        <UsageCount Value="40"/>
         <Loaded Value="True"/>
       </Unit2>
       <Unit3>
@@ -187,7 +183,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="21"/>
+        <UsageCount Value="24"/>
       </Unit8>
       <Unit9>
         <Filename Value="..\..\common\osencoding.pas"/>
@@ -196,7 +192,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="21"/>
+        <UsageCount Value="24"/>
       </Unit9>
       <Unit10>
         <Filename Value="..\..\opsi-script\osfuncwin3.pas"/>
@@ -216,8 +212,22 @@
         <CursorPos X="4" Y="69"/>
         <UsageCount Value="10"/>
       </Unit12>
+      <Unit13>
+        <Filename Value="helperwin.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Form2"/>
+        <ResourceBaseClass Value="Form"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="459"/>
+        <CursorPos X="17" Y="541"/>
+        <UsageCount Value="23"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit13>
     </Units>
-    <JumpHistory Count="8" HistoryIndex="7">
+    <JumpHistory Count="10" HistoryIndex="9">
       <Position1>
         <Filename Value="opsiwinsttesthelper.lpr"/>
         <Caret Line="20" Column="66"/>
@@ -250,6 +260,14 @@
         <Filename Value="helperwin.pas"/>
         <Caret Line="26" Column="31" TopLine="16"/>
       </Position8>
+      <Position9>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="63" Column="16" TopLine="91"/>
+      </Position9>
+      <Position10>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="258" Column="17" TopLine="236"/>
+      </Position10>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
