@@ -5,19 +5,15 @@
     <PathDelim Value="\"/>
     <General>
       <MainUnit Value="0"/>
+      <Title Value="opsiscripttesthelper"/>
       <UseXPManifest Value="True"/>
-      <XPManifest>
-        <DpiAware Value="Per-monitor"/>
-      </XPManifest>
       <Icon Value="0"/>
     </General>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
-      <Language Value=""/>
-      <CharSet Value=""/>
-      <StringTable CompanyName="uib gmbh" LegalCopyright="AGLv3" LegalTrademarks="opsi,opsi.org,open pc server integration" ProductName="opsi" ProductVersion="4.0.7"/>
+      <StringTable FileDescription="Helper program for testing opsi-winst" LegalCopyright="uib gmbh (http://www.uib.de)" LegalTrademarks="opsi"/>
     </VersionInfo>
     <BuildModes Count="3" Active="Release">
       <Item1 Name="default" Default="True"/>
@@ -42,12 +38,14 @@
               <OverflowChecks Value="True"/>
               <StackChecks Value="True"/>
             </Checks>
+            <VerifyObjMethodCallValidity Value="True"/>
           </CodeGeneration>
           <Linking>
             <Debugging>
               <DebugInfoType Value="dsDwarf2Set"/>
               <UseLineInfoUnit Value="False"/>
               <UseHeaptrc Value="True"/>
+              <TrashVariables Value="True"/>
               <StripSymbols Value="True"/>
               <UseExternalDbgSyms Value="True"/>
             </Debugging>
@@ -67,12 +65,17 @@
             <IncludeFiles Value="$(ProjOutDir)"/>
             <OtherUnitFiles Value="..\..\external_libraries\misc;..\..\common"/>
           </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <SyntaxMode Value="Delphi"/>
+              <UseAnsiStrings Value="False"/>
+            </SyntaxOptions>
+          </Parsing>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
             <Optimizations>
               <OptimizationLevel Value="3"/>
             </Optimizations>
-            <SmallerCode Value="True"/>
           </CodeGeneration>
           <Linking>
             <Debugging>
@@ -108,160 +111,128 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="9">
+    <Units Count="13">
       <Unit0>
-        <Filename Value="helperchild.lpr"/>
+        <Filename Value="opsiscripttesthelper.pas"/>
         <IsPartOfProject Value="True"/>
-        <CursorPos X="38" Y="21"/>
-        <UsageCount Value="21"/>
+        <IsVisibleTab Value="True"/>
+        <CursorPos X="39" Y="28"/>
+        <UsageCount Value="63"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
-        <Filename Value="unit1.pas"/>
-        <ComponentName Value="Form1"/>
-        <ResourceBaseClass Value="Form"/>
-        <UnitName Value="Unit1"/>
-        <UsageCount Value="20"/>
-      </Unit1>
-      <Unit2>
         <Filename Value="helperwin.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="Form2"/>
-        <HasResources Value="True"/>
+        <ComponentName Value="Form1"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="37"/>
-        <CursorPos X="5" Y="22"/>
-        <UsageCount Value="21"/>
+        <TopLine Value="20"/>
+        <CursorPos X="39" Y="23"/>
+        <ExtraEditorCount Value="1"/>
+        <ExtraEditor1>
+          <EditorIndex Value="-1"/>
+          <CursorPos X="31" Y="26"/>
+        </ExtraEditor1>
+        <UsageCount Value="60"/>
         <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="helpermain.pas"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="66" Y="10"/>
+        <UsageCount Value="40"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit2>
       <Unit3>
+        <Filename Value="VersionInfoX.pas"/>
+        <TopLine Value="75"/>
+        <CursorPos X="17" Y="166"/>
+        <UsageCount Value="17"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit3>
+      <Unit4>
         <Filename Value="versioninfo.pas"/>
         <UnitName Value="VersionInfo"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="89"/>
-        <CursorPos X="7" Y="115"/>
-        <UsageCount Value="10"/>
-      </Unit3>
-      <Unit4>
-        <Filename Value="DSiWin32.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="1056"/>
-        <CursorPos X="19" Y="1103"/>
-        <UsageCount Value="10"/>
+        <TopLine Value="73"/>
+        <CursorPos X="20" Y="14"/>
+        <UsageCount Value="57"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit4>
       <Unit5>
-        <Filename Value="wispecfolder.pas"/>
-        <IsPartOfProject Value="True"/>
-        <EditorIndex Value="3"/>
-        <TopLine Value="35"/>
-        <CursorPos X="19" Y="137"/>
-        <UsageCount Value="20"/>
-        <Loaded Value="True"/>
+        <Filename Value="DSiWin32.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1780"/>
+        <CursorPos X="10" Y="1791"/>
+        <UsageCount Value="38"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit5>
       <Unit6>
+        <Filename Value="wispecfolder.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="464"/>
+        <CursorPos X="16" Y="469"/>
+        <UsageCount Value="30"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="..\..\opsi-script\osconf.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="116"/>
+        <CursorPos X="3" Y="127"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit7>
+      <Unit8>
         <Filename Value="..\..\external_libraries\misc\DSiWin32.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="20"/>
-      </Unit6>
-      <Unit7>
+        <UsageCount Value="24"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit8>
+      <Unit9>
         <Filename Value="..\..\common\osencoding.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="24"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="..\..\opsi-script\osfuncwin3.pas"/>
+        <EditorIndex Value="-1"/>
         <UsageCount Value="20"/>
-      </Unit7>
-      <Unit8>
-        <Filename Value="..\..\common\osversioninfo.pas"/>
-        <IsPartOfProject Value="True"/>
-        <EditorIndex Value="2"/>
-        <CursorPos X="34" Y="18"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="..\..\opsi-script\wispecfolder.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="76"/>
         <UsageCount Value="20"/>
-        <Loaded Value="True"/>
-      </Unit8>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="..\..\external_libraries\misc\uCpuUsage.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="59"/>
+        <CursorPos X="4" Y="69"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit12>
     </Units>
-    <JumpHistory Count="18" HistoryIndex="17">
+    <JumpHistory Count="1">
       <Position1>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="47" Column="61" TopLine="35"/>
+        <Filename Value="opsiscripttesthelper.pas"/>
+        <Caret Line="5" Column="16"/>
       </Position1>
-      <Position2>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="27" Column="11" TopLine="14"/>
-      </Position2>
-      <Position3>
-        <Filename Value="wispecfolder.pas"/>
-        <Caret Line="34" Column="3" TopLine="23"/>
-      </Position3>
-      <Position4>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="274" Column="25" TopLine="259"/>
-      </Position4>
-      <Position5>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="25" Column="17"/>
-      </Position5>
-      <Position6>
-        <Filename Value="wispecfolder.pas"/>
-        <Caret Line="34" Column="3" TopLine="23"/>
-      </Position6>
-      <Position7>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="300" Column="53" TopLine="274"/>
-      </Position7>
-      <Position8>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="305" Column="69" TopLine="284"/>
-      </Position8>
-      <Position9>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="309" Column="54" TopLine="289"/>
-      </Position9>
-      <Position10>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="5" Column="10"/>
-      </Position10>
-      <Position11>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="76" Column="72" TopLine="63"/>
-      </Position11>
-      <Position12>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="60" TopLine="54"/>
-      </Position12>
-      <Position13>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="54" Column="15" TopLine="34"/>
-      </Position13>
-      <Position14>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="425" Column="17" TopLine="404"/>
-      </Position14>
-      <Position15>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="532" Column="21" TopLine="510"/>
-      </Position15>
-      <Position16>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="54" Column="25" TopLine="34"/>
-      </Position16>
-      <Position17>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="241" Column="25" TopLine="209"/>
-      </Position17>
-      <Position18>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="53" Column="26" TopLine="36"/>
-      </Position18>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

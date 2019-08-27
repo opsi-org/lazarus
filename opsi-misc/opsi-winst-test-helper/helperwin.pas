@@ -19,7 +19,7 @@ uses
   ExtCtrls,
   Buttons,
   {$ENDIF GUI}
-  helpermain,
+  //helpermain,
   //VersionInfo,
   Process,
   osversioninfo,
