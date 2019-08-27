@@ -29,6 +29,7 @@ uses
   uibtWorkRepChooser,
   uib2erp,
   Variants,
+  maskedit,
   oslog;
 
 type
@@ -187,6 +188,7 @@ type
     procedure setfloggedin_created(newvalue: boolean);
     procedure debugOut(level: integer; meldung: string); overload;
     procedure debugOut(level: integer; Source: string; meldung: string); overload;
+    procedure debugOutList(level: integer; Source: string; meldungen: TStrings);
     function getshowallprojects(): boolean;
     function getdebuglevel(): integer;
     procedure setdebuglevel(newlevel: integer);
@@ -410,6 +412,47 @@ begin
   end;
 end;
 
+procedure TDataModule1.debugOutList(level: integer; Source: string; meldungen: TStrings);
+var
+  sourcestr, logstr, logdir, logfeilname: string;
+  aktlevel, i: integer;
+begin
+  try
+    aktlevel := LLdebug;
+    if Assigned(logdatei) then
+    begin
+      logdatei.AktProduktId := Source;
+      LogDatei.log_list(meldungen, level);
+      //logdatei.log(meldung, level);
+      aktlevel := logdatei.LogLevel;
+    end;
+    if level <= aktlevel then
+    begin
+      for i := 0 to meldungen.Count - 1 do
+        if FDebug <> nil then
+        begin
+          if Source <> '' then
+            sourcestr := '[' + Source + '] '
+          else
+            sourcestr := '';
+          logstr := '[' + IntToStr(level) + '] [' + DateTimeToStr(Now) +
+            '] ' + sourcestr + meldungen[i];
+          FDebug.memo1.Lines.add(logstr);
+        end;
+    end;
+  except
+    on e: Exception do
+    begin
+      if Assigned(logdatei) then
+      begin
+        logdatei.log('exception in DataModule1.debugOut', LLcritical);
+        logdatei.log(e.Message, LLcritical);
+      end;
+      raise;
+    end;
+  end;
+end;
+
 (*
 procedure TDataModule1.debugOut(level: integer; Source: string; meldung: string);
 var
@@ -448,14 +491,14 @@ begin
   FDataedit := TFDataedit.Create(self);
   FOntop.ineditmode := True;
   FDataedit.showmodal;
-  FDataedit.FormStyle:=fsNormal;
-  FDataedit.PopupParent:= FDataedit;
+  FDataedit.FormStyle := fsNormal;
+  FDataedit.PopupParent := FDataedit;
   //FOntop.Enabled := False;
   //FDataedit.Show;
   FreeAndNil(FDataedit);
   Datamodule1.SQuibevent.last;
-  ontop.lastevent := Datamodule1.SQuibevent.fieldbyname('event').asstring;
-  FOntop.ineditmode := false;
+  ontop.lastevent := Datamodule1.SQuibevent.FieldByName('event').AsString;
+  FOntop.ineditmode := False;
   FOntop.eventhandler(ontop.lastevent);
 end;
 
@@ -588,9 +631,15 @@ begin
     if (DataSet.UpdateStatus in [usModified, usInserted, usDeleted]) or
       (lowercase(myevent) = 'afterdelete') then
     begin
-      myquery.ApplyUpdates;
-      debugOut(5, DataSet.Name + myevent, 'start  ' + DataSet.Name +
-        myevent + ' (apply)');
+      try
+        myquery.ApplyUpdates;
+        debugOut(5, DataSet.Name + myevent, 'start  ' + DataSet.Name +
+          myevent + ' (apply)');
+      except
+        debugOut(2, DataSet.Name + myevent, 'exception in ' + DataSet.Name +
+          myevent + ' (ApplyUpdates)');
+        raise
+      end;
     end;
     if SQLTransaction1.Active then
     begin
@@ -604,6 +653,7 @@ begin
   except
     debugOut(2, DataSet.Name + myevent, 'exception in ' + DataSet.Name +
       myevent + ' (commit)');
+    raise
   end;
 end;
 
@@ -1317,7 +1367,14 @@ begin
 end;
 
 procedure TDataModule1.SQwork_descriptionAfterPost(DataSet: TDataSet);
+var
+  myevent: string;
+  myquery: TSQLQuery;
 begin
+  myquery := DataModule1.SQwork_description;
+  myevent := 'AfterPost';
+  queryAfterHelper(myevent, myquery, DataSet);
+  (*
   debugOut(5, 'SQwork_descriptionAfterPost', 'start  ' + DataSet.Name + ' AfterPost');
   try
     //if (DataModule1.SQwork_description.State in [dsInsert, dsEdit])
@@ -1331,15 +1388,17 @@ begin
     begin
       SQLTransaction1.CommitRetaining;
       debugOut(5, 'SQwork_descriptionAfterPost', 'start  ' +
-        DataSet.Name + ' AfterPost (commit/start)');
+        DataSet.Name + ' AfterPost (CommitRetaining)');
     end
     else
       debugOut(3, 'Error: Missing Transaction SQwork_descriptionAfterPost');
     debugOut(5, 'SQwork_descriptionAfterPost', 'end SQwork_descriptionAfterPost: ');
   except
     debugOut(2, 'SQwork_descriptionAfterPost',
-      'exception in SQwork_descriptionAfterPost (starttransaction)');
+      'exception in SQwork_descriptionAfterPost (CommitRetaining)');
+    raise;
   end;
+  *)
 end;
 
 procedure TDataModule1.SQwork_descriptionPostError(DataSet: TDataSet;
@@ -2168,33 +2227,38 @@ var
   I: integer;
   Frames: PPointer;
   Report, Rep2: string;
+  Replist: TStringList;
 begin
-  debugOut(2, 'Exception', 'Message: ' + E.Message);
-  Report := 'Program exception! ' + LineEnding + 'Stacktrace:' +
-    LineEnding + LineEnding;
+  //debugOut(2, 'Exception', 'Message: ' + E.Message);
+  Replist := TStringList.Create;
+  Replist.Add('Program exception! ');
+  Replist.Add('Stacktrace:');
   if E <> nil then
   begin
-    Report := Report + 'Exception class: ' + E.ClassName + LineEnding +
-      'Message: ' + E.Message + LineEnding;
+    Replist.Add('Exception class: ' + E.ClassName);
+    Replist.Add('Message: ' + E.Message);
   end;
-  Report := Report + BackTraceStrFunc(ExceptAddr);
+  Replist.Add(BackTraceStrFunc(ExceptAddr));
   Frames := ExceptFrames;
   for I := 0 to ExceptFrameCount - 1 do
-    Report := Report + LineEnding + BackTraceStrFunc(Frames[I]);
-  debugOut(2, 'Exception', Report);
+    Replist.Add(BackTraceStrFunc(Frames[I]));
+  debugOutList(2, 'Exception', Replist);
   //ShowMessage(Report);
-  Rep2 := Report + 'Exception class: ' + E.ClassName + ' , ' +
+  (*
+  Rep2 := 'uibtime Exception class: ' + E.ClassName + ' , ' +
     'Message: ' + E.Message + ' , ' + ' Bitte Logdatei sichern: ' +
-    LogDatei.FileName + ' - Programmabbruch.';
-  MessageDlg('uibtime: Fehler', Rep2, mtError, [mbAbort], 0);
+    LogDatei.FileName + ' - Eventuell Programmabbruch.';
+  MessageDlg('uibtime: Fehler', Rep2, mtError, [mbClose], 0);
+  *)
   //    'Keine Netzwerkverbindung zum DB-Server. Programmabbruch ', mtError, [mbAbort], 0);
-  Application.Terminate;
-  Halt; // End of program execution
+  //Application.Terminate;
+  //Halt; // End of program execution
 end;
 
 procedure TDataModule1.CustomExceptionHandler(Sender: TObject; E: Exception);
 var
   retries: integer;
+  outstr: string;
 begin
   (*
   if E.ClassType = EIBDatabaseError then
@@ -2216,6 +2280,36 @@ begin
     begin
     *)
   DumpExceptionCallStack(E);
+  if E.ClassType = EConvertError then
+  begin
+    outstr := E.Message;
+    datamodule1.debugOut(1, 'Exception', outstr);
+    MessageDlg('uibtime: Fehler', outstr, mtError, [mbClose], 0);
+  end
+  else if (E.ClassType = EDatabaseError) and
+    (pos('Must apply updates before refreshing data', E.Message) > 0) then
+  begin
+    outstr := E.Message;
+    datamodule1.debugOut(1, 'Exception', outstr);
+    MessageDlg('uibtime: Fehler', outstr, mtError, [mbClose], 0);
+  end
+  else if (E.ClassType = EDBEditError)  then
+  begin
+    outstr := 'Ein Eingabefehler in einer Maske: '+E.Message;
+    datamodule1.debugOut(1, 'Exception', outstr);
+    MessageDlg('uibtime: Fehler', outstr, mtError, [mbClose], 0);
+  end
+  else
+  begin
+    outstr := 'uibtime Exception class: ' + E.ClassName + ' , ' +
+      'Message: ' + E.Message + ' , ' + LineEnding +
+      ' Sollte das Programm sich beenden, so bitte Logdatei sichern: ' +
+      LogDatei.FileName ;
+    MessageDlg('uibtime: Fehler', outstr, mtError, [mbClose], 0);
+    //Application.ShowException(E);
+    if not IBConnection1.Connected then
+      TerminateApplication;
+  end;
 end;
 
 

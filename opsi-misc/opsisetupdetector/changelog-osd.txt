@@ -40,6 +40,26 @@ stWixToolset,
   * /SILENT /NOREMOVE /ACCEPTLICENSE /REVERT
   * DierckeGlobusOnline.exe
 
+* adobe air
+  * beispiel bibox
+  * marker: adobe.air-application-installer-package
+  * marker: META-INF/AIR/application.xml
+  * marker: adobe.air-application-installer-package+zip
+    unzip gibt Datei: META-INF/AIR/application.xml mit Infos zur Version
+  * https://iserv.eu/doc/development/deploy/packages/installer/adobe-air/
+  * http://help.adobe.com/en_US/air/redist/air_runtimeredist.pdf
+
+* Setup Bootstrap fr die Visual Basic-Werkzeuge zum Erstellen von Installationsprogrammen
+  * beispiel: Tipp- und Briefprofi
+  * marker: Setup Bootstrap
+  * marker: Visual Basic
+  * marker: Visual Basic
+  * http://www.devx.com/vb2themax/Tip/18585
+  * https://stackoverflow.com/questions/9693006/silent-installation-of-setup-exe
+  * http://forums.codeguru.com/showthread.php?419175-ST6UNST-exe-command-line-options
+  * setup.exe /s c:\yourlogfilename.log
+  * St6unst -n "C:\Program Files\MyApp\St6unst.log" -f -q
+
 Uebrsicht:
 http://www.fredshack.com/docs/packagers.html
 

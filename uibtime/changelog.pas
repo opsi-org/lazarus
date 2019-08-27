@@ -1,4 +1,31 @@
 (*
+uibtime (4.1.1.54-1) stable; urgency=low
+
+ * nachf: more debug messages in order to find Exception EInvalidOp: Invalid floating point operation
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 23 Aug 2019 15:00:00 +0000
+
+uibtime (4.1.1.53-1) stable; urgency=low
+
+ * result: fixed result.lfm / pakagelist
+ * result.pas: Search field for locate and filter
+   on selectable field
+ * Treescrolldown: wider for longer event names
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 16 Aug 2019 15:00:00 +0000
+
+uibtime (4.1.1.52-1) stable; urgency=low
+
+ * Exceptionhandling: not always terminate
+ * Exceptionhandling: debug outlist
+ * Exceptionhandling: dump stack only on unhandled exceptions
+ * Exceptionhandling: handling for EConvertError ; fixes: #4110 , #3833 , #3439
+ * dataedit: event umbenennung Basis aktuelles Datum statt august 2017 ; fixes: #4120
+ * dataedit: event umbenennung: do commitRetaining ; fixes: #4119
+
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 13 Aug 2019 15:00:00 +0000
+
 uibtime (4.1.1.51-1) stable; urgency=low
 
  * uib2erp: createReport: fix in query for presumme_h

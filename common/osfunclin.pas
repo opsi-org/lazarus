@@ -17,9 +17,11 @@ interface
 
 uses
   Classes, SysUtils,
+  {$IFNDEF SYNAPSE}
   IdBaseComponent,
   IdComponent,
   IdIPWatch,
+  {$ENDIF SYNAPSE}
   sockets,
   {$IFDEF OPSISCRIPT}
   osfunc,
@@ -63,9 +65,10 @@ function getLinuxDistroName : string;
 function getLinuxDistroRelease : string;
 function getLinuxDistroDescription : string;
 
-
+{$IFNDEF SYNAPSE}
 var
   IdIPWatch1: TIdIPWatch;
+{$ENDIF SYNAPSE}
 
 implementation
 

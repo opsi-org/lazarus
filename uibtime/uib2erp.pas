@@ -838,10 +838,11 @@ begin
   DataModule1.Query4Result.sql.Add('where erperror = 1 ');
   DataModule1.Query4Result.Open;
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   Fresult.DataSource1.Enabled := False;
   //Fresult.ListBox1.Clear;
   //Fresult.DataSource1.DataSet := DataModule1.Query4Result;
-  FResult.QueryResult := DataModule1.Query4Result;
+  FResult.resultdataset := DataModule1.Query4Result;
   Fresult.DataSource1.AutoEdit := True;
   Fresult.DataSource1.Enabled := True;
   FResult.Edit1.Text := 'uibaccountexport';
@@ -909,7 +910,8 @@ begin
   Fresult := TFResult.Create(self);
   Fresult.DataSource1.Enabled := False;
   //Fresult.ListBox1.Clear;
-  Fresult.DataSource1.DataSet := DataModule1.Query4Result;
+  //Fresult.DataSource1.DataSet := DataModule1.Query4Result;
+  FResult.setResultDataset(DataModule1.Query4Result);
   Fresult.DataSource1.AutoEdit := False;
   Fresult.DataSource1.Enabled := True;
   FResult.Edit1.Text := 'uibaccountexport';

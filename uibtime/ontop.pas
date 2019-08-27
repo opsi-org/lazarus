@@ -91,7 +91,7 @@ type
     procedure Btn_work_descriptionClick(Sender: TObject);
     procedure DBLCB_topten_eventExit(Sender: TObject);
     procedure DBLCB_topten_eventEnter(Sender: TObject);
-    procedure CustomExceptionHandler(Sender: TObject; E: Exception);
+    //procedure CustomExceptionHandler(Sender: TObject; E: Exception);
   private
     { Private-Deklarationen}
   public
@@ -1472,6 +1472,7 @@ begin
   //Halt; // End of program execution
 end;
 
+(*
 procedure TFOnTop.CustomExceptionHandler(Sender: TObject; E: Exception);
 begin
   Application.ShowException(E);
@@ -1479,6 +1480,6 @@ begin
   datamodule1.debugOut(1, 'Exception', 'Exception dumped - terminating');
   //Application.Terminate;
 end;
-
+*)
 
 end.
