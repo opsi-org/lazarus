@@ -112,6 +112,8 @@ var
 
 
 
+//{$R *.res}
+
 begin
   {$IFNDEF GUI}
   Application:=Topsiscript.Create(nil);

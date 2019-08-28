@@ -21,8 +21,9 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
-      <RevisionNr Value="1"/>
-      <StringTable Comments="Compiled with Lazarus 2.0.0" CompanyName="uib gmbh" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.1"/>
+      <RevisionNr Value="2"/>
+      <BuildNr Value="2"/>
+      <StringTable Comments="Compiled with Lazarus 2.0.4" CompanyName="uib gmbh" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.1"/>
     </VersionInfo>
     <MacroValues Count="1">
       <Macro1 Name="LCLWidgetType" Value="cocoa"/>
@@ -41,7 +42,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\synapse40lib;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\indy\Lib\System;..\external_libraries\indy\Lib\Core;..\external_libraries\indy\Lib\Protocols;..\external_libraries\indy\Lib"/>
+            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\synapse;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -93,7 +94,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\synapse40lib;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\indy\Lib\System;..\external_libraries\indy\Lib\Core;..\external_libraries\indy\Lib\Protocols;..\external_libraries\indy\Lib"/>
+            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\synapse;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -341,7 +342,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\synapse40lib;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\indy\Lib\System;..\external_libraries\indy\Lib\Core;..\external_libraries\indy\Lib\Protocols;..\external_libraries\indy\Lib"/>
+      <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\synapse"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
