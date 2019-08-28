@@ -1,0 +1,5 @@
+firebird=screenshot1_firefox.png
+ganttproject=screenshot1_firefox.png
+flashplayer=screenshot1_firefox.png
+autoit=screenshot1_firefox.png
+audacity=screenshot1_firefox.png

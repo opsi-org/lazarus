@@ -1,0 +1,80 @@
+object FormSaveImagesOnShare: TFormSaveImagesOnShare
+  Left = 557
+  Height = 187
+  Top = 280
+  Width = 533
+  Caption = 'Copy images to share'
+  ClientHeight = 187
+  ClientWidth = 533
+  Position = poMainFormCenter
+  LCLVersion = '2.0.4.0'
+  object LabelPathToShare: TLabel
+    Left = 6
+    Height = 15
+    Top = 16
+    Width = 69
+    Caption = 'Path to share'
+    ParentColor = False
+  end
+  object EditPathToShare: TEdit
+    Left = 6
+    Height = 23
+    Top = 32
+    Width = 522
+    TabOrder = 0
+    Text = '\\bonifax.uib.local\home'
+    TextHint = '\\Servername\Sharename'
+  end
+  object LabelUser: TLabel
+    Left = 6
+    Height = 15
+    Top = 80
+    Width = 23
+    Caption = 'User'
+    ParentColor = False
+  end
+  object EditUser: TEdit
+    Left = 6
+    Height = 23
+    Top = 96
+    Width = 194
+    TabOrder = 1
+    Text = 'werner'
+  end
+  object LabelPassword: TLabel
+    Left = 216
+    Height = 15
+    Top = 79
+    Width = 50
+    Caption = 'Password'
+    ParentColor = False
+  end
+  object EditPassword: TEdit
+    Left = 217
+    Height = 23
+    Top = 97
+    Width = 311
+    EchoMode = emPassword
+    PasswordChar = '*'
+    TabOrder = 2
+  end
+  object ButtonCopy: TButton
+    Left = 8
+    Height = 25
+    Top = 152
+    Width = 139
+    AutoSize = True
+    Caption = 'Save images on share'
+    OnClick = ButtonCopyClick
+    TabOrder = 3
+  end
+  object ButtonCancel: TButton
+    Left = 388
+    Height = 25
+    Top = 152
+    Width = 140
+    Caption = 'Cancel'
+    OnClick = ButtonCancelClick
+    TabOrder = 4
+  end
+end

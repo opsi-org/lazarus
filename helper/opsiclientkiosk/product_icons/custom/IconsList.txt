@@ -1,0 +1,7 @@
+classic-shell=flashplayer.png
+ganttproject=adobe.png
+firebird=firefox.png
+autoit=firefox.png
+audacity=adobe.png
+audacity=flashplayer.png
+cdburnerxp=firefox.png

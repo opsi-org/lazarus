@@ -1,0 +1,11 @@
+{"version":1,"strings":[
+{"hash":14603205,"name":"tformsaveimagesonshare.caption","sourcebytes":[67,111,112,121,32,105,109,97,103,101,115,32,116,111,32,115,104,97,114,101],"value":"Copy images to share"},
+{"hash":133382277,"name":"tformsaveimagesonshare.labelpathtoshare.caption","sourcebytes":[80,97,116,104,32,116,111,32,115,104,97,114,101],"value":"Path to share"},
+{"hash":45982805,"name":"tformsaveimagesonshare.editpathtoshare.text","sourcebytes":[92,92,98,111,110,105,102,97,120,46,117,105,98,46,108,111,99,97,108,92,104,111,109,101],"value":"\\\\bonifax.uib.local\\home"},
+{"hash":69973253,"name":"tformsaveimagesonshare.editpathtoshare.texthint","sourcebytes":[92,92,83,101,114,118,101,114,110,97,109,101,92,83,104,97,114,101,110,97,109,101],"value":"\\\\Servername\\Sharename"},
+{"hash":379330,"name":"tformsaveimagesonshare.labeluser.caption","sourcebytes":[85,115,101,114],"value":"User"},
+{"hash":131896514,"name":"tformsaveimagesonshare.edituser.text","sourcebytes":[119,101,114,110,101,114],"value":"werner"},
+{"hash":145417188,"name":"tformsaveimagesonshare.labelpassword.caption","sourcebytes":[80,97,115,115,119,111,114,100],"value":"Password"},
+{"hash":258135941,"name":"tformsaveimagesonshare.buttoncopy.caption","sourcebytes":[83,97,118,101,32,105,109,97,103,101,115,32,111,110,32,115,104,97,114,101],"value":"Save images on share"},
+{"hash":77089212,"name":"tformsaveimagesonshare.buttoncancel.caption","sourcebytes":[67,97,110,99,101,108],"value":"Cancel"}
+]}
