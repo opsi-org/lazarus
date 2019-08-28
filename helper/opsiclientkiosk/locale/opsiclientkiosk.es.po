@@ -65,6 +65,7 @@ msgid "<-- Back"
 msgstr ""
 
 #: opsiclientkioskgui.rscancel
+msgctxt "opsiclientkioskgui.rscancel"
 msgid "Cancel"
 msgstr ""
 
@@ -502,5 +503,48 @@ msgstr ""
 #: tformprogresswindow.labelinfo.caption
 msgctxt "tformprogresswindow.labelinfo.caption"
 msgid "Please wait while "
+msgstr ""
+
+#: tformsaveimagesonshare.buttoncancel.caption
+msgctxt "tformsaveimagesonshare.buttoncancel.caption"
+msgid "Cancel"
+msgstr ""
+
+#: tformsaveimagesonshare.buttoncopy.caption
+msgctxt "tformsaveimagesonshare.buttoncopy.caption"
+msgid "Save images on share"
+msgstr ""
+
+#: tformsaveimagesonshare.caption
+msgctxt "tformsaveimagesonshare.caption"
+msgid "Copy images to share"
+msgstr ""
+
+#: tformsaveimagesonshare.editpathtoshare.text
+msgid "\\\\bonifax.uib.local\\home"
+msgstr ""
+
+#: tformsaveimagesonshare.editpathtoshare.texthint
+msgctxt "tformsaveimagesonshare.editpathtoshare.texthint"
+msgid "\\\\Servername\\Sharename"
+msgstr ""
+
+#: tformsaveimagesonshare.edituser.text
+msgid "werner"
+msgstr ""
+
+#: tformsaveimagesonshare.labelpassword.caption
+msgctxt "tformsaveimagesonshare.labelpassword.caption"
+msgid "Password"
+msgstr ""
+
+#: tformsaveimagesonshare.labelpathtoshare.caption
+msgctxt "tformsaveimagesonshare.labelpathtoshare.caption"
+msgid "Path to share"
+msgstr ""
+
+#: tformsaveimagesonshare.labeluser.caption
+msgctxt "tformsaveimagesonshare.labeluser.caption"
+msgid "User"
 msgstr ""
 

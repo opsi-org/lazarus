@@ -29,6 +29,7 @@ uses
   progresswindow,
   DefaultTranslator, ExtDlgs,
   proginfo,
+  imagestoshare,
   Process;
 
 type
@@ -2195,22 +2196,8 @@ begin
 end;
 
 procedure TFormOpsiClientKiosk.ButtonSaveImagesOnServerClick(Sender: TObject);
-var
-  ShellProcess: TProcess;
-  s: String;
 begin
-  {$IFDEF Windows}
-    if RunCommand('cmd.exe',['/c', 'net use'],s) then
-    begin
-      ShowMessage(s);
-    end;
-  {$ENDIF Windows}
-  {$IFDEF Unix}
-    if RunCommand('/bin/bash', ['-c', 'mount'], s) then
-    begin
-      ShowMessage(s);
-    end;
-  {$ENDIF Unix}
+  FormSaveImagesOnShare.ShowModal;
 end;
 
 {:Returns user name of the current thread.
