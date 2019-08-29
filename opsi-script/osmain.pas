@@ -53,6 +53,7 @@ unit osmain;
 interface
 
 uses
+//osfunc,
 {$IFDEF WINDOWS}
   Windows,
   VersionInfoX,
@@ -66,18 +67,19 @@ osfuncwin2,
   wispecfolder,
   osfuncwin3,
 {$ENDIF WINDOWS}
-{$IFDEF LINUX}
-  osfunclin,
-  lispecfolder,
+{$IFDEF UNIX}
+  osprocessux,
   baseunix,
   oscrypt,
+{$ENDIF UNIX}
+{$IFDEF LINUX}
+osfunclin,
+lispecfolder,
 {$ENDIF LINUX}
 {$IFDEF DARWIN}
-  osfunclin,
+  osfuncmac,
   lispecfolder,
-  baseunix,
-  oscrypt,
-  //macosall,
+
 {$ENDIF DARWIN}
 {$IFDEF GUI}
   osmessagedialog,
@@ -756,8 +758,8 @@ begin
     partsScriptpath := TXStringList.Create;
 
 
-    osfunc.Stringsplit(expandedScriptname, pathdelim, partsExpanded);
-    osfunc.Stringsplit(scriptPath, pathdelim, partsScriptPath);
+    Stringsplit(expandedScriptname, pathdelim, partsExpanded);
+    Stringsplit(scriptPath, pathdelim, partsScriptPath);
 
 
     i := 0;
@@ -3112,7 +3114,7 @@ begin
   except
     on E: Exception do
     begin
-      writeln('TCentralForm.FormCreate : ' + E.Message);
+      writeln('osmain.main : ' + E.Message);
     end;
   end;
 end;

@@ -512,17 +512,19 @@ function GetFileInfo(const CompleteName: string; var fRec: TSearchRec;
 function CutLeftBlanks(const s: string): string;
 function CutRightBlanks(const s: string): string;
 *)
+(*
 function divideAtFirst(const partialS, S: string; var part1, part2: string): boolean;
- (* teilt den String S beim ersten Vorkommen des Teilstrings partialS;
-     liefert true, wenn partialS vorkommt,
-     andernfalls false;
-     wenn partialS nicht vorkommt, enthaelt part1 den Gesamtstring, part2 ist leer *)
+//  teilt den String S beim ersten Vorkommen des Teilstrings partialS;
+//   liefert true, wenn partialS vorkommt,
+//   andernfalls false;
+//   wenn partialS nicht vorkommt, enthaelt part1 den Gesamtstring, part2 ist leer
 
 //procedure stringsplitByWhiteSpace(const s: string; var Result: TXStringList);
-(* produziert eine Stringliste aus den Teilstrings, die zwischen den Whitespace-Abschnitten stehen *)
-
+// produziert eine Stringliste aus den Teilstrings, die zwischen den Whitespace-Abschnitten stehen
+*)
 procedure stringsplit(const s, delimiter: string; var Result: TXStringList);
-(* produziert eine Stringliste aus den Teilstrings, die zwischen den Delimiter-Strings stehen *)
+// produziert eine Stringliste aus den Teilstrings, die zwischen den Delimiter-Strings stehen
+
 (*
 function SkipA(const partialS, S: string; var Remaining: string;
   var Error: string): boolean;
@@ -662,11 +664,12 @@ implementation
 
 
 uses
-{$IFDEF LINUX}
+{$IFDEF UNIX}
   osfunclin,
-{$ENDIF LINUX}
+  osprocessux,
+{$ENDIF UNIX}
 {$IFDEF DARWIN}
-  osfunclin,
+
   osfuncmac,
 {$ENDIF DARWIN}
 {$IFDEF WINDOWS}
@@ -5240,6 +5243,7 @@ begin
 end;
 *)
 
+(*
 function divideAtFirst(const partialS, S: string; var part1, part2: string): boolean;
   // teilt den String S beim ersten Vorkommen des Teilstrings partialS;
   //   liefert true, wenn partialS vorkommt,
@@ -5283,7 +5287,7 @@ begin
 end;
 *)
 
-
+(*
 procedure stringsplit(const s, delimiter: string; var Result: TXStringList);
 // produziert eine Stringliste aus den Teilstrings, die zwischen den Delimiter-Strings stehen
 
@@ -5303,7 +5307,7 @@ begin
 
   Result.add(item);
 end;
-
+*)
 
 (*
 function SkipA(const partialS, S: string; var Remaining: string;
@@ -5377,6 +5381,12 @@ begin
     Error := '"' + partialS + '" expected ';
 end;
 *)
+
+procedure stringsplit(const s, delimiter: string; var Result: TXStringList);
+// calls stringsplit from osparserhelper
+begin
+  osparserhelper.stringsplit(s, delimiter, TStringlist(Result));
+end;
 
 function concatPathParts(const part1, part2: string): string;
   (* concatenates parts of a path, e.g. the main path part and the file name, observing that just path separator is set *)

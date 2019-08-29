@@ -1,6 +1,16 @@
 [changelog]
 opsiscriptstarter 4.1.0.4
 
+  * port to macos
+  * new unit osprocessux
+  * move RunCommandAndCaptureOut and getCommandResult to new unit osprocessux
+  * move mountSmbShare to osfunclin /osfuncmac
+  * move umount to osfunclin /osfuncmac
+
+-- d.oertel <d.oertel@uib.de> Thu, 28 Feb 2019 15:00
+
+opsiscriptstarter 4.1.0.4
+
   * switch from indy to synapse
 
 -- d.oertel <d.oertel@uib.de> Tue, 23 Jul 2019 15:00

@@ -53,6 +53,7 @@ osfunclin,
 oslindesktopfiles,
 baseunix,
 unix,
+osprocessux,
 {$ENDIF}
 {$IFDEF DARWIN}
 osfuncmac,
@@ -71,6 +72,7 @@ osinputstring,
 StdCtrls,
 {$ENDIF GUI}
 TypInfo,
+osparserhelper,
 osencoding,
 osconf,
 oszip,
@@ -104,7 +106,7 @@ LazFileUtils,
   DOM,
   osxmlsections,
   osxml,
-  osparserhelper,
+
   osnetworkcalculator,
   osregex,
   osurlparser,
@@ -13853,8 +13855,11 @@ begin
      if GetIPFromHost(s1,s2,s3) then StringResult := s2
      else
      begin
-       {$IFDEF UNIX}
+       {$IFDEF LINUX}
        StringResult :=  getCommandResult('resolveip -s '+s1);
+       {$ENDIF LINUX}
+       {$IFDEF DARWIN}
+       StringResult :=  getCommandResult('dig +short -x  '+s1);
        {$ENDIF LINUX}
        {$IFDEF WINDOWS}
        StringResult :=  '';
