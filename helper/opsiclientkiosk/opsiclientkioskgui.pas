@@ -29,8 +29,7 @@ uses
   progresswindow,
   DefaultTranslator, ExtDlgs,
   proginfo,
-  imagestoshare,
-  Process;
+  imagestoshare;
 
 type
 
@@ -77,6 +76,7 @@ type
     DataSourceProductDependencies: TDataSource;
     DataSourceProductData: TDataSource;
     DBTextActionRequest: TDBText;
+    ImageLogo: TImage;
     LabelSoftwareActionRequest: TLabel;
     LabelPleaseWait: TLabel;
     OpenPictureDialogSetIcon: TOpenPictureDialog;
@@ -294,7 +294,7 @@ var
 
 resourcestring
   {General Buttons and Labels}
-  rsActRequest = 'Action Request';
+  rsActRequest = 'Action request';
   rsActSetup = 'Setup';
   rsActUninstall = 'Uninstall';
   rsActNone = 'None';
@@ -311,15 +311,15 @@ resourcestring
   rsViewTiles = 'Tiles';
   rsConnectedTo = 'Connected to';
   rsAs = 'as';
-  rsStoreActions = 'Store Actions';
+  rsStoreActions = 'Store actions';
   rsBack = '<-- Back';
   rsAll = 'All';
-  rsExpertMode = 'Expert Mode';
+  rsExpertMode = 'Expert mode';
   rsReload = 'Reload';
-  rsRequestDone = 'Request done. %s';
+  //rsRequestDone = 'Request done. %s';
   rsLabelInfoLoadData = 'Please wait while communicating with OPSI web server ...';
-  rsLabelInfoTiles = 'Please wait while building tiles';
-  rsLabelDataLoadTiles = 'Fill Tiles';
+  rsLabelInfoTiles = 'Please wait while building tiles.';
+  rsLabelDataLoadTiles = 'Fill tiles';
   rsLabelDataLoadLoading ='Loading product data from server';
   rsLabelDataLoadCommunicating = 'Communicating with server ...';
   rsLabelDetailConnecting = 'Connecting to server';
@@ -999,7 +999,7 @@ begin
   begin
     DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString := Request;// to local database
     ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := rsAction+': ' + Request;
-    ShowMessage(Format(rsRequestDone, [ArrayProductPanels[SelectedPanelIndex].LabelName.Caption + Message]));
+    ShowMessage(ArrayProductPanels[SelectedPanelIndex].LabelName.Caption + Message);
     ButtonSoftwareUninstall.Visible:= False;
     ButtonSoftwareInstall.Visible:= False;
     ButtonSoftwareUpdate.Enabled:= False;
@@ -1027,7 +1027,7 @@ begin
     DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString := Request;// to local database
     ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := rsAction+': ' + Request;
   end;
-  ShowMessage(Format(rsRequestDone, [ArrayProductPanels[SelectedPanelIndex].LabelName.Caption + Message]));
+  ShowMessage(ArrayProductPanels[SelectedPanelIndex].LabelName.Caption + Message);
   DataModuleOCK.SQLQueryProductData.Post;
   DataModuleOCK.SQLQueryProductData.Open;
   Screen.Cursor := crDefault;
@@ -1491,8 +1491,8 @@ begin
   DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString := '';// to local database
   ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := '';
   ShowSoftwareButtonsDependendOnState(ArrayProductPanels[SelectedPanelIndex]);
-  ShowMessage(Format(rsRequestDone, [rsActionRemovedFor + ' '
-    + ArrayProductPanels[SelectedPanelIndex].LabelName.Caption]));
+  ShowMessage(rsActionRemovedFor + ' '
+    + ArrayProductPanels[SelectedPanelIndex].LabelName.Caption);
   DataModuleOCK.SQLQueryProductData.Post;
   DataModuleOCK.SQLQueryProductData.Open;
   Screen.Cursor := crDefault;

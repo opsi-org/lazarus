@@ -2,14 +2,27 @@ msgid ""
 msgstr ""
 "Project-Id-Version: opsi.org\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2016-06-08 09:26+0000\n"
-"Last-Translator: detlef oertel\n"
+"PO-Revision-Date: 2019-08-29 13:06+0200\n"
+"Last-Translator: Jan Werner <j.werner@uib.de>\n"
 "Language-Team: German (http://www.transifex.com/opsi-org/opsiorg/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: de\n"
 "X-Poedit-SourceCharset: utf-8\n"
+"X-Generator: Poedit 2.2.3\n"
+
+#: imagestoshare.rscouldnotsaveicons
+msgid "Could not save icons on share."
+msgstr ""
+
+#: imagestoshare.rscouldnotsavescreenshots
+msgid "Could not save screenshots on share."
+msgstr ""
+
+#: imagestoshare.rscouldnotunmount
+msgid "Could not unmount share."
+msgstr ""
 
 #: opsiclientkioskgui.rsaction
 msgctxt "opsiclientkioskgui.rsaction"
@@ -30,7 +43,9 @@ msgid "None"
 msgstr "Keine"
 
 #: opsiclientkioskgui.rsactrequest
-msgid "Action Request"
+#, fuzzy
+#| msgid "Action Request"
+msgid "Action request"
 msgstr "Aktionen"
 
 #: opsiclientkioskgui.rsactsetup
@@ -67,7 +82,7 @@ msgstr "Abbrechen"
 
 #: opsiclientkioskgui.rsconnectedto
 msgid "Connected to"
-msgstr " Verbunden mit"
+msgstr "Verbunden mit"
 
 #: opsiclientkioskgui.rsdoyouwantinstall
 msgid "Do you want to install "
@@ -82,8 +97,10 @@ msgid "Do you want to update "
 msgstr "Möchten Sie folgendes Produkt aktualisieren: "
 
 #: opsiclientkioskgui.rsexpertmode
+#, fuzzy
+#| msgid "Expert Mode"
 msgctxt "opsiclientkioskgui.rsexpertmode"
-msgid "Expert Mode"
+msgid "Expert mode"
 msgstr "Expertenmodus"
 
 #: opsiclientkioskgui.rsinstall
@@ -93,7 +110,7 @@ msgstr "Installieren"
 
 #: opsiclientkioskgui.rsinstallationfinished
 msgid "Installation/update finished."
-msgstr "Installation/Aktualisierung beendet"
+msgstr "Installation/Aktualisierung beendet."
 
 #: opsiclientkioskgui.rsinstalled
 msgid "Installed"
@@ -123,8 +140,10 @@ msgid "Loading product data from server"
 msgstr "Lade Produktdaten vom Server"
 
 #: opsiclientkioskgui.rslabeldataloadtiles
+#, fuzzy
+#| msgid "Fill Tiles"
 msgctxt "opsiclientkioskgui.rslabeldataloadtiles"
-msgid "Fill Tiles"
+msgid "Fill tiles"
 msgstr "Erzeuge Kacheln"
 
 #: opsiclientkioskgui.rslabeldetailconnecting
@@ -136,7 +155,9 @@ msgid "Please wait while communicating with OPSI web server ..."
 msgstr "Bitte warten. Kommuniziere mit OPSI Webserver ..."
 
 #: opsiclientkioskgui.rslabelinfotiles
-msgid "Please wait while building tiles"
+#, fuzzy
+#| msgid "Please wait while building tiles"
+msgid "Please wait while building tiles."
 msgstr "Bitte warten. Kacheln werden erzeugt."
 
 #: opsiclientkioskgui.rsnextevent
@@ -152,6 +173,7 @@ msgid "No action requests found."
 msgstr "Keine Aktionsanforderungen gefunden."
 
 #: opsiclientkioskgui.rsnotinstalled
+msgctxt "opsiclientkioskgui.rsnotinstalled"
 msgid "Not installed"
 msgstr "Nicht Installiert"
 
@@ -168,16 +190,14 @@ msgctxt "opsiclientkioskgui.rsreload"
 msgid "Reload"
 msgstr "Neu laden"
 
-#: opsiclientkioskgui.rsrequestdone
-msgid "Request done. %s"
-msgstr "Anfrage erledigt. %s"
-
 #: opsiclientkioskgui.rsstateunknown
 msgid "Unknown"
 msgstr "Unbekannt"
 
 #: opsiclientkioskgui.rsstoreactions
-msgid "Store Actions"
+#, fuzzy
+#| msgid "Store Actions"
+msgid "Store actions"
 msgstr "Aktionen speichern"
 
 #: opsiclientkioskgui.rsstoreactionshint
@@ -284,8 +304,9 @@ msgid "Start the installation/update (uninstallation) of the selected products"
 msgstr "Start der Installation/Aktualisierung (Deinstallation) der ausgewählten Produkte"
 
 #: tformopsiclientkiosk.buttonsaveimagesonserver.caption
-msgid "Save Images on Server"
-msgstr ""
+msgctxt "tformopsiclientkiosk.buttonsaveimagesonserver.caption"
+msgid "Save images on share"
+msgstr "Speichere Bilder auf Netzwerklaufwerk"
 
 #: tformopsiclientkiosk.buttonsoftwareback.caption
 msgctxt "tformopsiclientkiosk.buttonsoftwareback.caption"
@@ -298,7 +319,9 @@ msgid "Install"
 msgstr "Installieren"
 
 #: tformopsiclientkiosk.buttonsoftwareremoveaction.caption
-msgid "Remove Action"
+#, fuzzy
+#| msgid "Remove Action"
+msgid "Remove action"
 msgstr "Aktion zurücknehmen"
 
 #: tformopsiclientkiosk.buttonsoftwareuninstall.caption
@@ -313,7 +336,7 @@ msgstr "Aktualisieren"
 
 #: tformopsiclientkiosk.caption
 msgid "opsi-client-kiosk"
-msgstr ""
+msgstr "opsi-client-kiosk"
 
 #: tformopsiclientkiosk.dbgrid1.hint
 msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
@@ -326,6 +349,10 @@ msgstr "Durchsuche Produktliste"
 #: tformopsiclientkiosk.editsearch.texthint
 msgid "Search"
 msgstr "Suche"
+
+#: tformopsiclientkiosk.imagelogo.hint
+msgid "Your logo"
+msgstr ""
 
 #: tformopsiclientkiosk.labeladvice.caption
 msgid "Advice:  "
@@ -414,11 +441,12 @@ msgstr "X"
 
 #: tformopsiclientkiosk.speedbuttonexpertmode.caption
 msgctxt "tformopsiclientkiosk.speedbuttonexpertmode.caption"
-msgid "Expert Mode"
+msgid "Expert mode"
 msgstr "Expertenmodus"
 
 #: tformopsiclientkiosk.speedbuttonnotinstalled.caption
-msgid "Not Installed"
+msgctxt "tformopsiclientkiosk.speedbuttonnotinstalled.caption"
+msgid "Not installed"
 msgstr "Nicht installiert"
 
 #: tformopsiclientkiosk.speedbuttonreload.caption
@@ -454,7 +482,7 @@ msgstr "Abhängigkeiten / Prioritäten"
 
 #: tformprogresswindow.caption
 msgid "Initialize OpsiClientKiosk"
-msgstr "Initialisiere OpsiClientKiosk ..."
+msgstr "Initialisiere OpsiClientKiosk"
 
 #: tformprogresswindow.labeldataload.caption
 msgid "LabelDataLoad"
@@ -469,7 +497,6 @@ msgid "Please wait while "
 msgstr "Bitte warten während "
 
 #: tformsaveimagesonshare.buttoncancel.caption
-#, fuzzy
 msgctxt "tformsaveimagesonshare.buttoncancel.caption"
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -477,38 +504,32 @@ msgstr "Abbrechen"
 #: tformsaveimagesonshare.buttoncopy.caption
 msgctxt "tformsaveimagesonshare.buttoncopy.caption"
 msgid "Save images on share"
-msgstr ""
+msgstr "Speicher Bilder auf Netzwerklaufwerk"
 
 #: tformsaveimagesonshare.caption
 msgctxt "tformsaveimagesonshare.caption"
-msgid "Copy images to share"
-msgstr ""
-
-#: tformsaveimagesonshare.editpathtoshare.text
-msgid "\\\\bonifax.uib.local\\home"
-msgstr ""
+msgid "Save images on share"
+msgstr "Speicher Bilder auf Netzwerklaufwerk"
 
 #: tformsaveimagesonshare.editpathtoshare.texthint
+#, fuzzy
+#| msgid "\\\\Servername\\Sharename"
 msgctxt "tformsaveimagesonshare.editpathtoshare.texthint"
-msgid "\\\\Servername\\Sharename"
-msgstr ""
-
-#: tformsaveimagesonshare.edituser.text
-msgid "werner"
-msgstr ""
+msgid "\\\\servername\\opsi_depot_rw"
+msgstr "\\\\Servername\\Netzwerkverzeichniss"
 
 #: tformsaveimagesonshare.labelpassword.caption
 msgctxt "tformsaveimagesonshare.labelpassword.caption"
 msgid "Password"
-msgstr ""
+msgstr "Passwort"
 
 #: tformsaveimagesonshare.labelpathtoshare.caption
 msgctxt "tformsaveimagesonshare.labelpathtoshare.caption"
 msgid "Path to share"
-msgstr ""
+msgstr "Pfad zum Netzwerklaufwerk"
 
 #: tformsaveimagesonshare.labeluser.caption
 msgctxt "tformsaveimagesonshare.labeluser.caption"
 msgid "User"
-msgstr ""
+msgstr "Benutzer"
 

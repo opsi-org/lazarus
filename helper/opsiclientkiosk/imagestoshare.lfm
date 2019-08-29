@@ -3,7 +3,7 @@ object FormSaveImagesOnShare: TFormSaveImagesOnShare
   Height = 187
   Top = 280
   Width = 533
-  Caption = 'Copy images to share'
+  Caption = 'Save images on share'
   ClientHeight = 187
   ClientWidth = 533
   Position = poMainFormCenter
@@ -22,8 +22,7 @@ object FormSaveImagesOnShare: TFormSaveImagesOnShare
     Top = 32
     Width = 522
     TabOrder = 0
-    Text = '\\bonifax.uib.local\home'
-    TextHint = '\\Servername\Sharename'
+    TextHint = '\\servername\opsi_depot_rw'
   end
   object LabelUser: TLabel
     Left = 6
@@ -39,7 +38,6 @@ object FormSaveImagesOnShare: TFormSaveImagesOnShare
     Top = 96
     Width = 194
     TabOrder = 1
-    Text = 'werner'
   end
   object LabelPassword: TLabel
     Left = 216

@@ -11,6 +11,18 @@ msgstr ""
 "Language: de\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
+#: imagestoshare.rscouldnotsaveicons
+msgid "Could not save icons on share."
+msgstr ""
+
+#: imagestoshare.rscouldnotsavescreenshots
+msgid "Could not save screenshots on share."
+msgstr ""
+
+#: imagestoshare.rscouldnotunmount
+msgid "Could not unmount share."
+msgstr ""
+
 #: opsiclientkioskgui.rsaction
 msgctxt "opsiclientkioskgui.rsaction"
 msgid "Action"
@@ -30,7 +42,7 @@ msgid "None"
 msgstr ""
 
 #: opsiclientkioskgui.rsactrequest
-msgid "Action Request"
+msgid "Action request"
 msgstr ""
 
 #: opsiclientkioskgui.rsactsetup
@@ -83,7 +95,7 @@ msgstr ""
 
 #: opsiclientkioskgui.rsexpertmode
 msgctxt "opsiclientkioskgui.rsexpertmode"
-msgid "Expert Mode"
+msgid "Expert mode"
 msgstr ""
 
 #: opsiclientkioskgui.rsinstall
@@ -124,7 +136,7 @@ msgstr ""
 
 #: opsiclientkioskgui.rslabeldataloadtiles
 msgctxt "opsiclientkioskgui.rslabeldataloadtiles"
-msgid "Fill Tiles"
+msgid "Fill tiles"
 msgstr ""
 
 #: opsiclientkioskgui.rslabeldetailconnecting
@@ -137,7 +149,7 @@ msgid "Please wait while communicating with OPSI web server ..."
 msgstr ""
 
 #: opsiclientkioskgui.rslabelinfotiles
-msgid "Please wait while building tiles"
+msgid "Please wait while building tiles."
 msgstr ""
 
 #: opsiclientkioskgui.rsnextevent
@@ -153,6 +165,7 @@ msgid "No action requests found."
 msgstr ""
 
 #: opsiclientkioskgui.rsnotinstalled
+msgctxt "opsiclientkioskgui.rsnotinstalled"
 msgid "Not installed"
 msgstr ""
 
@@ -169,17 +182,13 @@ msgctxt "opsiclientkioskgui.rsreload"
 msgid "Reload"
 msgstr ""
 
-#: opsiclientkioskgui.rsrequestdone
-msgid "Request done. %s"
-msgstr ""
-
 #: opsiclientkioskgui.rsstateunknown
 msgid "Unknown"
 msgstr ""
 
 #: opsiclientkioskgui.rsstoreactions
 msgctxt "opsiclientkioskgui.rsstoreactions"
-msgid "Store Actions"
+msgid "Store actions"
 msgstr ""
 
 #: opsiclientkioskgui.rsstoreactionshint
@@ -284,7 +293,8 @@ msgid "Start the installation/update (uninstallation) of the selected products"
 msgstr ""
 
 #: tformopsiclientkiosk.buttonsaveimagesonserver.caption
-msgid "Save Images on Server"
+msgctxt "tformopsiclientkiosk.buttonsaveimagesonserver.caption"
+msgid "Save images on share"
 msgstr ""
 
 #: tformopsiclientkiosk.buttonsoftwareback.caption
@@ -298,7 +308,7 @@ msgid "Install"
 msgstr ""
 
 #: tformopsiclientkiosk.buttonsoftwareremoveaction.caption
-msgid "Remove Action"
+msgid "Remove action"
 msgstr ""
 
 #: tformopsiclientkiosk.buttonsoftwareuninstall.caption
@@ -329,6 +339,10 @@ msgstr ""
 #: tformopsiclientkiosk.editsearch.texthint
 msgctxt "tformopsiclientkiosk.editsearch.texthint"
 msgid "Search"
+msgstr ""
+
+#: tformopsiclientkiosk.imagelogo.hint
+msgid "Your logo"
 msgstr ""
 
 #: tformopsiclientkiosk.labeladvice.caption
@@ -427,12 +441,12 @@ msgstr ""
 
 #: tformopsiclientkiosk.speedbuttonexpertmode.caption
 msgctxt "tformopsiclientkiosk.speedbuttonexpertmode.caption"
-msgid "Expert Mode"
+msgid "Expert mode"
 msgstr ""
 
 #: tformopsiclientkiosk.speedbuttonnotinstalled.caption
 msgctxt "tformopsiclientkiosk.speedbuttonnotinstalled.caption"
-msgid "Not Installed"
+msgid "Not installed"
 msgstr ""
 
 #: tformopsiclientkiosk.speedbuttonreload.caption
@@ -499,20 +513,12 @@ msgstr ""
 
 #: tformsaveimagesonshare.caption
 msgctxt "tformsaveimagesonshare.caption"
-msgid "Copy images to share"
-msgstr ""
-
-#: tformsaveimagesonshare.editpathtoshare.text
-msgid "\\\\bonifax.uib.local\\home"
+msgid "Save images on share"
 msgstr ""
 
 #: tformsaveimagesonshare.editpathtoshare.texthint
 msgctxt "tformsaveimagesonshare.editpathtoshare.texthint"
-msgid "\\\\Servername\\Sharename"
-msgstr ""
-
-#: tformsaveimagesonshare.edituser.text
-msgid "werner"
+msgid "\\\\servername\\opsi_depot_rw"
 msgstr ""
 
 #: tformsaveimagesonshare.labelpassword.caption
