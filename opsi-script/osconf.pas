@@ -40,6 +40,7 @@ uses
 {$ENDIF WINDOWS}
   inifiles,
   lazfileutils,
+  osparserhelper,
   osencoding;
 
 function readConfig: boolean;

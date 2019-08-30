@@ -39,9 +39,9 @@ uses
 
 type
 
-  { TForm2 }
+  { TForm1 }
 
-  TForm2 = class(TForm)
+  TForm1 = class(TForm)
     BitBtn1: TBitBtn;
     Edit1: TEdit;
     Label1: TLabel;
@@ -62,7 +62,7 @@ type
 procedure main;
 
 var
-  Form1: TForm2;
+  Form1: TForm1;
   ErrorMsg: string;
   optionlist: TStringList;
   myexitcode: integer;
@@ -250,10 +250,10 @@ begin
   writeln(DateTimeToStr(now));
 end;
 
-procedure TForm2.showwindow(seconds: integer);
+procedure TForm1.showwindow(seconds: integer);
 begin
-  //form1 = TForm2.Create(Application);
-  //Application.CreateForm(TForm2, Form1);
+  //form1 = TForm1.Create(Application);
+  //Application.CreateForm(TForm1, Form1);
   form1.Visible := True;
   form1.timer1.Interval := seconds * 1000;
   form1.timer1.Enabled := True;
@@ -505,9 +505,9 @@ begin
 end;
 
 
-{ TForm2 }
+{ TForm1 }
 
-procedure TForm2.Timer1Timer(Sender: TObject);
+procedure TForm1.Timer1Timer(Sender: TObject);
 begin
   Timer1.Enabled := False;
   form1.Visible := False;
@@ -515,7 +515,7 @@ begin
   Application.Terminate;
 end;
 
-procedure TForm2.FormCreate(Sender: TObject);
+procedure TForm1.FormCreate(Sender: TObject);
 var
   showtimestr: string;
   showtimeint: integer;
@@ -533,7 +533,7 @@ begin
   end;
 end;
 
-procedure TForm2.BitBtn1Click(Sender: TObject);
+procedure TForm1.BitBtn1Click(Sender: TObject);
 begin
   Timer1.Enabled := False;
   form1.Visible := False;
@@ -542,7 +542,7 @@ begin
 end;
 
 initialization
-  // {$I helperwin.lrs}
+   {$I helperwin.lrs}
 
 
 

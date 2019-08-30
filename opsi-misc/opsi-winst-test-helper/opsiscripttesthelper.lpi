@@ -97,10 +97,15 @@
       <Version Value="2"/>
     </PublishOptions>
     <RunParams>
+      <local>
+        <CommandLineParams Value="--showwindow=1"/>
+        <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
+      </local>
       <FormatVersion Value="2"/>
       <Modes Count="1">
         <Mode0 Name="default">
           <local>
+            <CommandLineParams Value="--showwindow=1"/>
             <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
           </local>
         </Mode0>
@@ -111,12 +116,11 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="13">
+    <Units Count="14">
       <Unit0>
         <Filename Value="opsiscripttesthelper.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <CursorPos X="39" Y="28"/>
+        <CursorPos X="23" Y="12"/>
         <UsageCount Value="63"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -126,10 +130,12 @@
         <Filename Value="helperwin.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Form1"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="20"/>
-        <CursorPos X="39" Y="23"/>
+        <TopLine Value="70"/>
+        <CursorPos X="3" Y="545"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="-1"/>
@@ -137,6 +143,7 @@
         </ExtraEditor1>
         <UsageCount Value="60"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
@@ -227,12 +234,30 @@
         <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit12>
+      <Unit13>
+        <Filename Value="helperwin.lfm"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="LFM"/>
+      </Unit13>
     </Units>
-    <JumpHistory Count="1">
+    <JumpHistory Count="4" HistoryIndex="3">
       <Position1>
         <Filename Value="opsiscripttesthelper.pas"/>
         <Caret Line="5" Column="16"/>
       </Position1>
+      <Position2>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="20" Column="39" TopLine="5"/>
+      </Position2>
+      <Position3>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="23" Column="30" TopLine="17"/>
+      </Position3>
+      <Position4>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="99" Column="24" TopLine="89"/>
+      </Position4>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

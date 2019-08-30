@@ -4,6 +4,19 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.2.3) experimental; urgency=low
+
+  * feature/macos integrated
+  * new library uib_state_and_condition:
+      Collection of functions that gives info about system states that are relevant for product installations
+  * new library uib_state_and_condition:
+      Collection of functions that helps to install driver
+  * osparser: differences between %CurrentProfileDir% and %UserProfileDir% fixes: #4118
+  * osparser: doAktionen: replace constants for every primary section line to avoid
+     replacment in secondary sections
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 29 Aug 2019:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.2.2) experimental; urgency=low
 
   * oswebservice: switch most of log to log_prog

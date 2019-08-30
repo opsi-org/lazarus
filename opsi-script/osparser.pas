@@ -434,6 +434,7 @@ public
   procedure ApplyTextVariables (var Sektion : TXStringList; CStringEscaping : Boolean);
   procedure ApplyTextConstants (var Sektion : TXStringList; CStringEscaping : Boolean);
   procedure ApplyTextVariablesToString (var mystr : String; CStringEscaping : Boolean);
+  procedure ApplyTextConstantsToString (var mystr : String; CStringEscaping : Boolean);
 
   // handle file and line origins
   procedure registerSectionOrigins(mylist : Tstringlist;filename : string);  overload;
@@ -446,7 +447,7 @@ public
                             var DiffNumberOfErrors, DiffNumberOfWarnings : Integer);
 
   (* fuer primaere Sektionen *)
-  function doAktionen (const Sektion: TWorkSection; const CallingSektion: TWorkSection)
+  function doAktionen (Sektion: TWorkSection; const CallingSektion: TWorkSection)
                                                                : TSectionResult;
   (* fuer andere Sektionen *)
 
@@ -2260,7 +2261,7 @@ var
 
     workingSection := TXStringList.Create;
     workingSection.Assign(Section);
-    workingSection.GlobalReplace(1, '%userprofiledir%', copy (presetDir, 1, length(presetDir) - 1), false);
+    workingSection.GlobalReplace(1, '%userprofiledir%',    copy (presetDir, 1, length(presetDir) - 1), false);
     workingSection.GlobalReplace(1, '%currentprofiledir%', copy (presetDir, 1, length(presetDir) - 1), false);
 
 
@@ -3020,6 +3021,7 @@ begin
     for pc:= 0 to ProfileList.Count -1 do
     begin
       PatchFilename := sysutils.StringReplace(Filename, '%userprofiledir%', ProfileList.Strings[pc],[rfReplaceAll,rfIgnoreCase]);
+      PatchFilename := sysutils.StringReplace(PatchFilename, '%currentprofiledir%', ProfileList.Strings[pc],[rfReplaceAll,rfIgnoreCase]);
       PatchFilename := ExpandFileName(PatchFilename);
       doTextpatchMain(Sektion,ProfileList.Strings[pc]+PathDelim);
     end;
@@ -3027,7 +3029,10 @@ begin
   else
   begin
     if runLoginScripts then
-      PatchFilename := sysutils.StringReplace(Filename, '%userprofiledir%', GetUserProfilePath,[rfReplaceAll,rfIgnoreCase])
+    begin
+      PatchFilename := sysutils.StringReplace(Filename, '%userprofiledir%', GetUserProfilePath,[rfReplaceAll,rfIgnoreCase]);
+      PatchFilename := sysutils.StringReplace(PatchFilename, '%currentprofiledir%', GetUserProfilePath,[rfReplaceAll,rfIgnoreCase]);
+    end
     else PatchFilename := Filename;
     PatchFilename := ExpandFileName(PatchFilename);
     doTextpatchMain(Sektion,GetUserProfilePath+PathDelim);
@@ -3405,6 +3410,7 @@ begin
     for pc:= 0 to ProfileList.Count -1 do
     begin
       PatchdateiName := sysutils.StringReplace(Filename, '%userprofiledir%', ProfileList.Strings[pc],[rfReplaceAll,rfIgnoreCase]);
+      PatchdateiName := sysutils.StringReplace(PatchdateiName, '%currentprofiledir%', ProfileList.Strings[pc],[rfReplaceAll,rfIgnoreCase]);
       PatchdateiName := ExpandFileName(PatchdateiName);
       doInifilePatchesMain;
     end;
@@ -3412,7 +3418,10 @@ begin
   else
   begin
     if runLoginScripts then
-      PatchdateiName := sysutils.StringReplace(Filename, '%userprofiledir%', GetUserProfilePath,[rfReplaceAll,rfIgnoreCase])
+    begin
+      PatchdateiName := sysutils.StringReplace(Filename, '%userprofiledir%', GetUserProfilePath,[rfReplaceAll,rfIgnoreCase]);
+      PatchdateiName := sysutils.StringReplace(PatchdateiName, '%currentprofiledir%', GetUserProfilePath,[rfReplaceAll,rfIgnoreCase]);
+    end
     else PatchdateiName := Filename;
     PatchdateiName := ExpandFileName(PatchdateiName);
     doInifilePatchesMain;
@@ -7959,16 +7968,37 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
 
     workingSection := TXStringList.Create;
     workingSection.Assign(Section);
-    workingSection.GlobalReplace(1, '%userprofiledir%', copy (presetDir, 1, length(presetDir) - 1), false);
+    for i:= 0 to Sektion.count -1  do
+    Begin
+      Remaining := cutLeftBlanks(workingSection.strings [i]);
+      logdatei.log(Remaining, LLDebug2);
+    end;
+    workingSection.GlobalReplace(1, '%userprofiledir%',    copy (presetDir, 1, length(presetDir) - 1), false);
+    for i:= 0 to Sektion.count -1  do
+    Begin
+      Remaining := cutLeftBlanks(workingSection.strings [i]);
+      logdatei.log(Remaining, LLDebug2);
+    end;
     workingSection.GlobalReplace(1, '%currentprofiledir%', copy (presetDir, 1, length(presetDir) - 1), false);
+    for i:= 0 to Sektion.count -1  do
+    Begin
+      Remaining := cutLeftBlanks(workingSection.strings [i]);
+      logdatei.log(Remaining, LLDebug2);
+    end;
+
     ApplyTextConstants (TXStringList (workingSection), false);
     ApplyTextVariables (TXStringList (workingSection), false);
+    for i:= 0 to Sektion.count -1  do
+    Begin
+      Remaining := cutLeftBlanks(workingSection.strings [i]);
+      logdatei.log(Remaining, LLDebug2);
+    end;
 
-    for i:= 1 to Sektion.count
-    do
+
+    for i:= 1 to Sektion.count  do
     Begin
       Remaining := cutLeftBlanks(workingSection.strings [i-1]);
-      logdatei.log(Remaining, LevelDebug);
+      logdatei.log(Remaining, LLDebug);
       SyntaxCheck := true;
 
       if (Remaining = '') or (Remaining [1] = LineIsCommentChar)
@@ -7977,7 +8007,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
       else
       Begin
         GetWord (Remaining, Expressionstr, Remaining, WordDelimiterSet0);
-
+        logdatei.log(Expressionstr, LLDebug);
         if UpperCase (Expressionstr) = 'SOURCEPATH'
         then
         begin
@@ -8021,6 +8051,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
             then
               GetWord (Remaining, TargetDirectory, Remaining, WordDelimiterSet2);
 
+            logdatei.log(TargetDirectory, LLDebug);
             if length (Remaining) > 0
             then
               reportError (Sektion, i, Sektion.strings [i-1], 'end of line expected')
@@ -18962,7 +18993,35 @@ begin
   end;
 end;
 
-function TuibInstScript.doAktionen (const Sektion: TWorkSection; const CallingSektion: TWorkSection)
+procedure TuibInstScript.ApplyTextConstantsToString (var mystr : String; CStringEscaping : Boolean);
+ var
+  i: Integer;
+  NewLine : String = '';
+begin
+  //LogDatei.log_prog('ApplyTextConstantsToString - base: '+mystr,LLDebug2);
+ for i := 1 to ConstList.Count do
+ begin
+   //LogDatei.log_prog('ApplyTextConstantsToString - const: '+Constlist.Strings [i-1],LLDebug2);
+   if CStringEscaping then
+   begin
+     if ReplaceInLine(mystr, Constlist.Strings [i-1], CEscaping (ConstValuesList.Strings [i-1]), false, NewLine) then
+     begin
+       mystr := NewLine;
+       //LogDatei.log_prog('ApplyTextConstantsToString - new: '+mystr,LLDebug2);
+     end;
+   end
+   else
+   begin
+     if ReplaceInLine(mystr, Constlist.Strings [i-1], ConstValuesList.Strings [i-1], false, NewLine) then
+     begin
+       mystr := NewLine;
+       //LogDatei.log_prog('ApplyTextConstantsToString - new: '+mystr,LLDebug2);
+     end;
+   end;
+ end;
+end;
+
+function TuibInstScript.doAktionen (Sektion: TWorkSection; const CallingSektion: TWorkSection)
                        : TSectionResult;
  var
   i : integer=0;
@@ -19095,6 +19154,8 @@ begin
   //FBatchOberflaeche.setPicture (3, '', '');
 
   ArbeitsSektion := TWorkSection.create (NestLevel,Sektion);
+  //ApplyTextConstants (TXStringList (ArbeitsSektion), false);
+  //ApplyTextConstants (TXStringList (Sektion), false);
   output := TXStringList.Create;
   {$IFDEF GUI}
   FBatchOberflaeche.setWindowState(batchWindowMode);
@@ -19114,6 +19175,8 @@ begin
   begin
    //writeln(actionresult);
     Remaining := trim (Sektion.strings [i-1]);
+    // Replace constants on every line in primary section:
+    ApplyTextConstantsToString (Remaining, true);
     logdatei.log_prog('Working doAktionen: Remaining:'+remaining,LLDebug2);
     //logdatei.log_prog('Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' Sektion.NestingLevel: '+IntToStr(Sektion.NestingLevel)+' condition: '+BoolToStr(conditions [ActLevel],true),LLDebug3);
     if (inDefFuncLevel = 0)          // count only lines on base level
@@ -19672,7 +19735,7 @@ begin
               LogDatei.log ('', LLinfo);
               LogDatei.log ('~~~~~~~ Start Sub ~~~~~~~  ' + ArbeitsSektion.Name, LLinfo);
               ArbeitsSektion.NestingLevel := NestLevel; // ArbeitsSektion.NestingLevel + 1;
-              ApplyTextConstants (TXStringList (ArbeitsSektion), false);
+              //ApplyTextConstants (TXStringList (ArbeitsSektion), false);
 
               ActionResult := doAktionen (ArbeitsSektion, Sektion);
               LogDatei.log ('', LLinfo);
@@ -21970,12 +22033,16 @@ begin
               tsFileActions:
                 begin
                  logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
+                 if ArbeitsSektion.count > 0 then
+                   for tmpint:= 0 to ArbeitsSektion.count -1  do
+                      logdatei.log(ArbeitsSektion.Strings[tmpint], LLDebug2);
                  flag_all_ntuser := false;
                  // if this is a 'ProfileActions' which is called as sub in Machine mode
                  // so run registry sections implicit as /Allntuserdats
                  if runProfileActions then
                       flag_all_ntuser := true;
                  ActionResult := doFileActions (ArbeitsSektion, Remaining);
+                 logdatei.log('Finished of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
                 end;
 
               tsLinkFolder:

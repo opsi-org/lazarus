@@ -18,7 +18,7 @@ uses
 begin
   Application.Initialize;
   main;
-  Application.CreateForm(TForm2, Form1);
+  Application.CreateForm(TForm1, Form1);
   Application.Run;
   //application.Terminate;
 end.
