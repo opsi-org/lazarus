@@ -85,6 +85,10 @@ msgstr ""
 msgid "Connected to"
 msgstr ""
 
+#: opsiclientkioskgui.rsdisabled
+msgid "disabled"
+msgstr ""
+
 #: opsiclientkioskgui.rsdoyouwantinstall
 msgid "Do you want to install "
 msgstr ""
@@ -283,6 +287,10 @@ msgctxt "TFINSTALLDLG.LABEL1.CAPTION"
 msgid "The following Actions will be done:"
 msgstr "Akcje, które zostaną zakończone:"
 
+#: tformhelpinfo.caption
+msgid "FormHelpInfo"
+msgstr ""
+
 #: tformopsiclientkiosk.bitbtninfo.caption
 msgctxt "tformopsiclientkiosk.bitbtninfo.caption"
 msgid "Info"
@@ -424,7 +432,7 @@ msgstr "Wersja na serwerze:"
 
 #: tformopsiclientkiosk.panelsoftwarescreenshot.caption
 msgctxt "tformopsiclientkiosk.panelsoftwarescreenshot.caption"
-msgid "ScreenShotImage"
+msgid "No screenshot available"
 msgstr ""
 
 #: tformopsiclientkiosk.radiogroupview.caption

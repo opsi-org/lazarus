@@ -1,0 +1,22 @@
+object FormHelpInfo: TFormHelpInfo
+  Left = 466
+  Height = 348
+  Top = 248
+  Width = 341
+  Caption = 'FormHelpInfo'
+  ClientHeight = 348
+  ClientWidth = 341
+  OnCreate = FormCreate
+  LCLVersion = '2.0.4.0'
+  object MemoInfo: TMemo
+    Left = 0
+    Height = 180
+    Top = 168
+    Width = 341
+    BorderStyle = bsNone
+    Lines.Strings = (
+      'MemoInfo'
+    )
+    TabOrder = 0
+  end
+end

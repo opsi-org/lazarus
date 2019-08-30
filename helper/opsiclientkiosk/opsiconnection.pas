@@ -268,7 +268,7 @@ end;
 
 procedure TOpsiConnection.SelectProduct(Index: integer);
 begin
-  JSONObjectProduct := TJSONObject(OCKOpsiConnection.JSONObjectProducts.Items[index]);
+  JSONObjectProduct := TJSONObject(JSONObjectProducts.Items[index]);
   logdatei.log('Selected Product: ' + JSONObjectProduct.Strings['productId'], LLDebug2);
 end;
 
@@ -452,11 +452,9 @@ begin
      Result.Add(JSONObjectConfigStates.Arrays[ConfigProperty].Items[i].AsString)
   else
   begin
-    //do not forget!!! Change this do false for productive use!
-    Result.Add('True'); //if configstate not exist then Configstate := True (for testing)
+    Result.Add('False');
     LogDatei.log('No ConfigState set for installation-now-button and/or admin-mode)!',LLInfo);
   end;
-  //
 end;
 
 //initialization

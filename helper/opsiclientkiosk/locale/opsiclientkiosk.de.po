@@ -84,6 +84,10 @@ msgstr "Abbrechen"
 msgid "Connected to"
 msgstr "Verbunden mit"
 
+#: opsiclientkioskgui.rsdisabled
+msgid "disabled"
+msgstr ""
+
 #: opsiclientkioskgui.rsdoyouwantinstall
 msgid "Do you want to install "
 msgstr "Möchten Sie folgendes Produkt installieren: "
@@ -287,6 +291,10 @@ msgctxt "TFINSTALLDLG.LABEL1.CAPTION"
 msgid "The following Actions will be done:"
 msgstr "Die folgenden Aktionen werden ausgeführt werden:"
 
+#: tformhelpinfo.caption
+msgid "FormHelpInfo"
+msgstr ""
+
 #: tformopsiclientkiosk.bitbtninfo.caption
 #, fuzzy
 msgctxt "tformopsiclientkiosk.bitbtninfo.caption"
@@ -412,8 +420,10 @@ msgid "Version at Server"
 msgstr "Version auf dem Server"
 
 #: tformopsiclientkiosk.panelsoftwarescreenshot.caption
+#, fuzzy
+#| msgid "ScreenShotImage"
 msgctxt "tformopsiclientkiosk.panelsoftwarescreenshot.caption"
-msgid "ScreenShotImage"
+msgid "No screenshot available"
 msgstr "Screenshot"
 
 #: tformopsiclientkiosk.radiogroupview.caption
