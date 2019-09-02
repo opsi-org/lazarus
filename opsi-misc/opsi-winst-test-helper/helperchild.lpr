@@ -10,7 +10,7 @@ uses
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms,
-  helperwin, osversioninfo;
+  helperwin, wispecfolder, osversioninfo;
 
 
 {$IFDEF WINDOWS}{$R helperchild.res}{$ENDIF}

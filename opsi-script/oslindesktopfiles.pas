@@ -20,13 +20,6 @@ unit oslindesktopfiles;
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 310 $
-// $Author: oertel $
-// $Date: 2015-03-04 17:52:14 +0100 (Mi, 04 Mrz 2015) $
-//***************************************************************************
-
 
 interface
 
@@ -37,6 +30,8 @@ uses
   IniFiles,
   oslog,
   osfunclin,
+  osprocessux,
+  osparserhelper,
   lispecfolder;
 
 const

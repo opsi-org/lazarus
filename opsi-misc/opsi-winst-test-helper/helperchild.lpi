@@ -6,11 +6,15 @@
     <General>
       <MainUnit Value="0"/>
       <UseXPManifest Value="True"/>
+      <XPManifest>
+        <DpiAware Value="Per-monitor"/>
+      </XPManifest>
       <Icon Value="0"/>
     </General>
     <VersionInfo>
+      <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
-      <RevisionNr Value="7"/>
+      <MinorVersionNr Value="1"/>
       <Language Value=""/>
       <CharSet Value=""/>
       <StringTable CompanyName="uib gmbh" LegalCopyright="AGLv3" LegalTrademarks="opsi,opsi.org,open pc server integration" ProductName="opsi" ProductVersion="4.0.7"/>
@@ -90,10 +94,15 @@
       <Version Value="2"/>
     </PublishOptions>
     <RunParams>
+      <local>
+        <CommandLineParams Value="--showwindow=1"/>
+        <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
+      </local>
       <FormatVersion Value="2"/>
       <Modes Count="1">
         <Mode0 Name="default">
           <local>
+            <CommandLineParams Value="--showwindow=1"/>
             <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
           </local>
         </Mode0>
@@ -108,7 +117,7 @@
       <Unit0>
         <Filename Value="helperchild.lpr"/>
         <IsPartOfProject Value="True"/>
-        <CursorPos Y="14"/>
+        <CursorPos X="32" Y="21"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -126,11 +135,13 @@
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="416"/>
-        <CursorPos X="25" Y="436"/>
+        <TopLine Value="510"/>
+        <CursorPos X="5" Y="22"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="versioninfo.pas"/>
@@ -149,10 +160,11 @@
       </Unit4>
       <Unit5>
         <Filename Value="wispecfolder.pas"/>
+        <IsPartOfProject Value="True"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="23"/>
-        <CursorPos X="3" Y="34"/>
-        <UsageCount Value="10"/>
+        <TopLine Value="35"/>
+        <CursorPos X="19" Y="137"/>
+        <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit5>
       <Unit6>
@@ -176,14 +188,13 @@
       <Unit8>
         <Filename Value="..\..\common\osversioninfo.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <CursorPos X="34" Y="18"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit8>
     </Units>
-    <JumpHistory Count="5" HistoryIndex="4">
+    <JumpHistory Count="18" HistoryIndex="17">
       <Position1>
         <Filename Value="helperwin.pas"/>
         <Caret Line="47" Column="61" TopLine="35"/>
@@ -204,6 +215,58 @@
         <Filename Value="helperwin.pas"/>
         <Caret Line="25" Column="17"/>
       </Position5>
+      <Position6>
+        <Filename Value="wispecfolder.pas"/>
+        <Caret Line="34" Column="3" TopLine="23"/>
+      </Position6>
+      <Position7>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="300" Column="53" TopLine="274"/>
+      </Position7>
+      <Position8>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="305" Column="69" TopLine="284"/>
+      </Position8>
+      <Position9>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="309" Column="54" TopLine="289"/>
+      </Position9>
+      <Position10>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="5" Column="10"/>
+      </Position10>
+      <Position11>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="76" Column="72" TopLine="63"/>
+      </Position11>
+      <Position12>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="60" TopLine="54"/>
+      </Position12>
+      <Position13>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="54" Column="15" TopLine="34"/>
+      </Position13>
+      <Position14>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="425" Column="17" TopLine="404"/>
+      </Position14>
+      <Position15>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="532" Column="21" TopLine="510"/>
+      </Position15>
+      <Position16>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="54" Column="25" TopLine="34"/>
+      </Position16>
+      <Position17>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="241" Column="25" TopLine="209"/>
+      </Position17>
+      <Position18>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="53" Column="26" TopLine="36"/>
+      </Position18>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

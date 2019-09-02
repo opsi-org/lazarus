@@ -1,4 +1,19 @@
 (*
+uibtime (4.1.1.54-1) stable; urgency=low
+
+ * nachf: more debug messages in order to find Exception EInvalidOp: Invalid floating point operation
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 23 Aug 2019 15:00:00 +0000
+
+uibtime (4.1.1.53-1) stable; urgency=low
+
+ * result: fixed result.lfm / pakagelist
+ * result.pas: Search field for locate and filter
+   on selectable field
+ * Treescrolldown: wider for longer event names
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 16 Aug 2019 15:00:00 +0000
+
 uibtime (4.1.1.52-1) stable; urgency=low
 
  * Exceptionhandling: not always terminate

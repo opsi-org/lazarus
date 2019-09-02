@@ -7,7 +7,7 @@ interface
 {$Define GUI}
 
 uses
-  //Classes,
+    //Classes,
   SysUtils, FileUtil,
   {$IFDEF GUI}
   LResources,
@@ -19,7 +19,7 @@ uses
   ExtCtrls,
   Buttons,
   {$ENDIF GUI}
-  helpermain,
+  //helpermain,
   //VersionInfo,
   Process,
   osversioninfo,
@@ -35,6 +35,7 @@ uses
   {$ENDIF UNIX}
   Classes;
   //fileinfo;
+
 
 type
 
@@ -52,10 +53,11 @@ type
     procedure Timer1Timer(Sender: TObject);
     procedure showwindow(seconds: integer);
   private
-    { private declarations }
+
   public
-    { public declarations }
+
   end;
+
 
 procedure main;
 
@@ -296,13 +298,18 @@ var
   AProcess: TProcess;
 begin
   AProcess := TProcess.Create(nil);
+(*
   AProcess.CommandLine := '"' + ExtractFilePath(ParamStr(0)) +
     'helperchild.exe" --wait=2 --showwindow=' + IntToStr(childsec);
+*)
   //AProcess.Options := AProcess.Options + [poWaitOnExit, poUsePipes];
+  AProcess.Executable:= ExtractFilePath(ParamStr(0)) + 'helperchild.exe';
+  AProcess.Parameters.Add('--wait=2');
+  AProcess.Parameters.Add('--showwindow=' + IntToStr(childsec));
   try
     AProcess.Execute;
   except
-    writeln('Error starting: ' + AProcess.CommandLine);
+    writeln('Error starting: ' + AProcess.Executable);
   end;
 end;
 
@@ -353,9 +360,10 @@ begin
     end;
   end;
 
+
   if Application.HasOption('log') then
   begin
-    mydefaultlog := 'c:\opsi.org\tmp\opsiwinsttesthelper.log';
+    mydefaultlog := 'c:\opsi.org\log\opsiwinsttesthelper.log';
     paramvaluestr := Application.GetOptionValue('log');
     try
       Assign(mylog, paramvaluestr);
@@ -534,7 +542,7 @@ begin
 end;
 
 initialization
-  // {$I helperwin.lrs}
+   {$I helperwin.lrs}
 
 
 

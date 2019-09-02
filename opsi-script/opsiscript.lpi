@@ -21,9 +21,8 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
-      <RevisionNr Value="1"/>
-      <BuildNr Value="5"/>
-      <StringTable Comments="Compiled with Lazarus 2.0.0" CompanyName="uib gmbh" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.1"/>
+      <RevisionNr Value="2"/>
+      <StringTable Comments="Compiled with Lazarus 2.0.2" CompanyName="uib gmbh" FileDescription="opsi-script" InternalName="opsi-script" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-script" ProductName="opsi" ProductVersion="4.1"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="default" Default="True"/>
@@ -68,7 +67,8 @@
             <CompilerMessages>
               <IgnoredMessages idx5058="True" idx5027="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT -dGUI -dOSDEBUG"/>
+            <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT -dGUI -dOSDEBUG
+-dSYNAPSE"/>
           </Other>
         </CompilerOptions>
       </Item2>
@@ -81,7 +81,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\synapse40lib;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\indy\Lib\System;..\external_libraries\indy\Lib\Core;..\external_libraries\indy\Lib\Protocols;..\external_libraries\indy\Lib"/>
+            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\synapse"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -91,6 +91,7 @@
           </Parsing>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="x86_64"/>
             <Optimizations>
               <OptimizationLevel Value="3"/>
             </Optimizations>
@@ -110,7 +111,8 @@
             <CompilerMessages>
               <IgnoredMessages idx5058="True" idx5027="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT -dGUI"/>
+            <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT -dGUI
+-dSYNAPSE"/>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -353,7 +355,8 @@
       <CompilerMessages>
         <IgnoredMessages idx5058="True" idx5027="True"/>
       </CompilerMessages>
-      <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT -dGUI -dOSLOG"/>
+      <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT -dGUI -dOSLOG
+-dSYNAPSE"/>
     </Other>
   </CompilerOptions>
   <Debugging>

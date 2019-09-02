@@ -1568,11 +1568,16 @@ begin
 end;
 
 function TLogInfo.PartbiggerthanMB(maxsize: integer): boolean;
+var
+  bytesize, mbsize : int64;
 begin
+  bytesize := lazfileutils.FileSizeUtf8(PartFileName);
+  mbsize :=  bytesize div (1024 * 1024);
+  Logdatei.log('Checking if partlog: '+PartFileName+' is bigger than '+inttostr(maxsize)+' MB - found: '+inttostr(mbsize)+' MB', LLInfo);
   Result := False;
   if PartLogFileExists then
   begin
-    if fileutil.FileSize(PartFileName) > int64(maxsize) * 1024 * 1024 then
+    if mbsize > maxsize then
       Result := True
     else
       Result := False;

@@ -17,7 +17,8 @@ unit osxmlsections;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils,
+  Classes,
   DOM,
   XMLRead,
   XMLWrite,
