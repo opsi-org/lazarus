@@ -1,18 +1,18 @@
 # 
 # Translators:
-# Mateusz <mateusz.aszyk@brightone.pl>, 2016
+# Mateusz <mateusz.aszyk@brightone.pl>, 2016-2017
 msgid ""
 msgstr ""
 "Project-Id-Version: opsi.org\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2016-06-08 09:26+0000\n"
-"Last-Translator: Mateusz <mateusz.aszyk@brightone.pl>\n"
+"PO-Revision-Date: 2019-09-02 14:45+0000\n"
+"Last-Translator: Jan Werner <j.werner@uib.de>\n"
 "Language-Team: Polish (http://www.transifex.com/opsi-org/opsiorg/language/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: pl\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
 #: imagestoshare.rscouldnotsaveicons
@@ -79,7 +79,7 @@ msgstr ""
 #: opsiclientkioskgui.rscancel
 msgctxt "opsiclientkioskgui.rscancel"
 msgid "Cancel"
-msgstr ""
+msgstr "Anuluj"
 
 #: opsiclientkioskgui.rsconnectedto
 msgid "Connected to"
@@ -188,18 +188,16 @@ msgstr ""
 #: opsiclientkioskgui.rsreload
 msgctxt "opsiclientkioskgui.rsreload"
 msgid "Reload"
-msgstr ""
+msgstr "Przeładuj"
 
 #: opsiclientkioskgui.rsstateunknown
 msgid "Unknown"
 msgstr ""
 
 #: opsiclientkioskgui.rsstoreactions
-#, fuzzy
-#| msgid "Store Actions"
 msgctxt "opsiclientkioskgui.rsstoreactions"
 msgid "Store actions"
-msgstr "Skład operacji."
+msgstr ""
 
 #: opsiclientkioskgui.rsstoreactionshint
 msgid "Send the action requests to the server, show the resulting installations and ask for installation start."
@@ -270,7 +268,7 @@ msgstr "Wysyłanie logów na serwer ..."
 #: tfinstalldlg.bitbtnlater.caption
 msgctxt "TFINSTALLDLG.BITBTNLATER.CAPTION"
 msgid "Install at next Standard Event (e.g. Reboot)"
-msgstr "Instalacja przy następnym wydarzeniu (np restart)"
+msgstr "Instalacja przy następnym wydarzeniu (np. restart)"
 
 #: tfinstalldlg.bitbtnnow.caption
 msgctxt "TFINSTALLDLG.BITBTNNOW.CAPTION"
@@ -285,7 +283,7 @@ msgstr "opsi-kiosk-client"
 #: tfinstalldlg.label1.caption
 msgctxt "TFINSTALLDLG.LABEL1.CAPTION"
 msgid "The following Actions will be done:"
-msgstr "Akcje, które zostaną zakończone:"
+msgstr "Akcje do wykonania:"
 
 #: tformhelpinfo.caption
 msgid "FormHelpInfo"
@@ -294,7 +292,7 @@ msgstr ""
 #: tformopsiclientkiosk.bitbtninfo.caption
 msgctxt "tformopsiclientkiosk.bitbtninfo.caption"
 msgid "Info"
-msgstr ""
+msgstr "Informacja"
 
 #: tformopsiclientkiosk.bitbtninstallnow.caption
 msgctxt "tformopsiclientkiosk.bitbtninstallnow.caption"
@@ -306,8 +304,8 @@ msgctxt "tformopsiclientkiosk.bitbtninstallnow.hint"
 msgid "Start the installation/update (uninstallation) of the selected products"
 msgstr ""
 
-#: tformopsiclientkiosk.buttonsaveimagesonserver.caption
-msgctxt "tformopsiclientkiosk.buttonsaveimagesonserver.caption"
+#: tformopsiclientkiosk.buttonsaveimagesonshare.caption
+msgctxt "tformopsiclientkiosk.buttonsaveimagesonshare.caption"
 msgid "Save images on share"
 msgstr ""
 
@@ -336,13 +334,11 @@ msgid "Update"
 msgstr ""
 
 #: tformopsiclientkiosk.caption
-#, fuzzy
 msgctxt "tformopsiclientkiosk.caption"
 msgid "opsi-client-kiosk"
 msgstr "opsi-client-kiosk"
 
 #: tformopsiclientkiosk.dbgrid1.hint
-#, fuzzy
 msgctxt "tformopsiclientkiosk.dbgrid1.hint"
 msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
 msgstr "Kliknij na zgłoszenie akcji i ustaw akcję (setup/odinstalowanie)"
@@ -350,31 +346,28 @@ msgstr "Kliknij na zgłoszenie akcji i ustaw akcję (setup/odinstalowanie)"
 #: tformopsiclientkiosk.editsearch.hint
 msgctxt "tformopsiclientkiosk.editsearch.hint"
 msgid "Search in Productlist"
-msgstr ""
+msgstr "Szukaj w produkach"
 
 #: tformopsiclientkiosk.editsearch.texthint
 msgctxt "tformopsiclientkiosk.editsearch.texthint"
 msgid "Search"
-msgstr ""
+msgstr "Szukaj"
 
 #: tformopsiclientkiosk.imagelogo.hint
 msgid "Your logo"
 msgstr ""
 
 #: tformopsiclientkiosk.labeladvice.caption
-#, fuzzy
 msgctxt "tformopsiclientkiosk.labeladvice.caption"
 msgid "Advice:  "
 msgstr "Wskazówka:"
 
 #: tformopsiclientkiosk.labelclientverstr.caption
-#, fuzzy
 msgctxt "tformopsiclientkiosk.labelclientverstr.caption"
 msgid "Version at Client"
 msgstr "Wersja klienta"
 
 #: tformopsiclientkiosk.labeldescription.caption
-#, fuzzy
 msgctxt "tformopsiclientkiosk.labeldescription.caption"
 msgid "Description:  "
 msgstr "Opis:"
@@ -384,7 +377,6 @@ msgid "Please wait. Installing/uninstalling products."
 msgstr ""
 
 #: tformopsiclientkiosk.labelpriority.caption
-#, fuzzy
 msgctxt "tformopsiclientkiosk.labelpriority.caption"
 msgid "Priority: "
 msgstr "Piorytet:"
@@ -422,10 +414,9 @@ msgstr ""
 #: tformopsiclientkiosk.labeltitle.caption
 msgctxt "tformopsiclientkiosk.labeltitle.caption"
 msgid "opsi Client Kiosk"
-msgstr ""
+msgstr "Kiosk OPSI"
 
 #: tformopsiclientkiosk.labelverstr.caption
-#, fuzzy
 msgctxt "tformopsiclientkiosk.labelverstr.caption"
 msgid "Version at Server"
 msgstr "Wersja na serwerze:"
@@ -438,7 +429,7 @@ msgstr ""
 #: tformopsiclientkiosk.radiogroupview.caption
 msgctxt "tformopsiclientkiosk.radiogroupview.caption"
 msgid "View"
-msgstr ""
+msgstr "Zobacz"
 
 #: tformopsiclientkiosk.speedbuttonactions.caption
 msgctxt "tformopsiclientkiosk.speedbuttonactions.caption"
@@ -451,7 +442,6 @@ msgid "All"
 msgstr ""
 
 #: tformopsiclientkiosk.speedbuttonall.hint
-#, fuzzy
 msgctxt "tformopsiclientkiosk.speedbuttonall.hint"
 msgid "Show all List entries (No Filter)"
 msgstr "Wyświetl listę wpisów (bez filtru)"
@@ -474,7 +464,7 @@ msgstr ""
 #: tformopsiclientkiosk.speedbuttonreload.caption
 msgctxt "tformopsiclientkiosk.speedbuttonreload.caption"
 msgid "Reload"
-msgstr ""
+msgstr "Przeładuj"
 
 #: tformopsiclientkiosk.speedbuttonreload.hint
 msgid "Reload data from server"
@@ -488,32 +478,27 @@ msgstr ""
 #: tformopsiclientkiosk.speedbuttonupdates.hint
 msgctxt "tformopsiclientkiosk.speedbuttonupdates.hint"
 msgid "Filter for Products where an upgrade is possible"
-msgstr ""
+msgstr "Filtr produktów, które można zaktualizować."
 
 #: tformopsiclientkiosk.statusbar1.panels[0].text
-#, fuzzy
 msgctxt "tformopsiclientkiosk.statusbar1.panels[0].text"
 msgid "Not Connected to opsi server"
 msgstr "Nie połączono do serwera OPSI"
 
 #: tformopsiclientkiosk.tabsheet1.caption
-#, fuzzy
 msgctxt "tformopsiclientkiosk.tabsheet1.caption"
 msgid "Details"
 msgstr "Szczegóły"
 
 #: tformopsiclientkiosk.tabsheet2.caption
-#, fuzzy
 msgctxt "tformopsiclientkiosk.tabsheet2.caption"
 msgid "Dependencies / Priority"
 msgstr "Zależności / Piorytety"
 
 #: tformprogresswindow.caption
-#, fuzzy
-#| msgid "Please wait ..."
 msgctxt "tformprogresswindow.caption"
 msgid "Initialize OpsiClientKiosk"
-msgstr "Proszę czekać ..."
+msgstr ""
 
 #: tformprogresswindow.labeldataload.caption
 msgid "LabelDataLoad"
@@ -531,7 +516,7 @@ msgstr ""
 #: tformsaveimagesonshare.buttoncancel.caption
 msgctxt "tformsaveimagesonshare.buttoncancel.caption"
 msgid "Cancel"
-msgstr ""
+msgstr "Anuluj"
 
 #: tformsaveimagesonshare.buttoncopy.caption
 msgctxt "tformsaveimagesonshare.buttoncopy.caption"
@@ -551,7 +536,7 @@ msgstr ""
 #: tformsaveimagesonshare.labelpassword.caption
 msgctxt "tformsaveimagesonshare.labelpassword.caption"
 msgid "Password"
-msgstr ""
+msgstr "Hasło"
 
 #: tformsaveimagesonshare.labelpathtoshare.caption
 msgctxt "tformsaveimagesonshare.labelpathtoshare.caption"

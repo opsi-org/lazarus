@@ -36,10 +36,12 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       AutoSize = True
       BorderSpacing.Top = 5
       BorderSpacing.Bottom = 5
+      BorderSpacing.InnerBorder = 2
       Constraints.MinHeight = 32
       Constraints.MinWidth = 80
       Caption = 'Updates'
       GroupIndex = 2
+      Spacing = -1
       OnClick = SpeedButtonUpdatesClick
       ShowHint = True
       ParentShowHint = False
@@ -1401,7 +1403,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       ShowHint = True
       TabOrder = 1
     end
-    object ButtonSaveImagesOnServer: TButton
+    object ButtonSaveImagesOnShare: TButton
       Left = 101
       Height = 33
       Top = 6
@@ -1410,7 +1412,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       AutoSize = True
       BorderSpacing.Around = 5
       Caption = 'Save images on share'
-      OnClick = ButtonSaveImagesOnServerClick
+      OnClick = ButtonSaveImagesOnShareClick
       TabOrder = 2
     end
   end

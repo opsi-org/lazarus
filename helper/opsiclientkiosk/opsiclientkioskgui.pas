@@ -68,7 +68,7 @@ type
   { TFormOpsiClientKiosk }
 
   TFormOpsiClientKiosk = class(TForm)
-     ButtonSaveImagesOnServer: TButton;
+     ButtonSaveImagesOnShare: TButton;
  (*----------------------------*)
  (*         Attributes         *)
  (*----------------------------*)
@@ -174,7 +174,7 @@ type
     procedure BitBtnInstallNowClick(Sender: TObject);
     procedure BitBtnToggleViewClick(Sender: TObject);
     procedure BitBtnCancelClick(Sender: TObject);
-    procedure ButtonSaveImagesOnServerClick(Sender: TObject);
+    procedure ButtonSaveImagesOnShareClick(Sender: TObject);
     { ButtonSoftware }
     procedure ButtonSoftwareBackClick(Sender: TObject);
     procedure ButtonSoftwareInstallClick(Sender: TObject);
@@ -702,13 +702,18 @@ end;
 procedure TProductPanel.SetIcon(ProductPanel:TProductPanel);
 var
   FilePath:String;
+  Index : integer;
+  gefunden :boolean;
 begin
+  gefunden := False;
   if FormOpsiClientKiosk.OpenPictureDialogSetIcon.Execute then
   begin
     FilePath := FormOpsiClientKiosk.OpenPictureDialogSetIcon.FileName;
     ProductPanel.ImageIcon.Picture.LoadFromFile(FilePath);
     ProductPanel.ImageIcon.Picture.SaveToFile(PathCustomIcons+ExtractFileName(FilePath));
-    FormOpsiClientKiosk.StringListCustomIcons.Add(ProductPanel.ProductID + '=' + ExtractFileName(FilePath));
+    if FormOpsiClientKiosk.StringListCustomIcons.Values[ProductPanel.ProductID] = '' then
+      FormOpsiClientKiosk.StringListCustomIcons.Add(ProductPanel.ProductID + '=' + ExtractFileName(FilePath))
+    else FormOpsiClientKiosk.StringListCustomIcons.Values[ProductPanel.ProductID] := ExtractFileName(FilePath);
   end;
 end;
 
@@ -878,13 +883,28 @@ begin
     //ShowMessage(ConfigState.Text);
     SoftwareOnDemand := StrToBool(ConfigState.Strings[0]);
     if not SoftwareOnDemand then Caption := Caption + ' - ' + rsInstallNow + ': ' + rsDisabled;
+    if SoftwareOnDemand then
+    begin
+      BitBtnInstallNow.Caption := rsInstallNow;
+      BitBtnInstallNow.Hint := rsInstallNowHint;
+      BitBtnInstallNow.Visible:= True;
+    end
+    else BitBtnInstallNow.Visible:= False;
+
 
     ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.admin-mode');
     //ShowMessage(ConfigState.Text);
     AdminMode := StrToBool(ConfigState.Strings[0]);
-    if AdminMode then Caption := Caption + ' - Admin mode';
-
-    //FormProgressWindow.ProgressBarDetail.Position := 100;
+    if AdminMode then
+    begin
+      Caption := Caption + ' - Admin mode';
+      ButtonSaveImagesOnShare.Visible := True;
+    end
+    else
+    begin
+      ButtonSaveImagesOnShare.Visible := False;
+    end;
+     //FormProgressWindow.ProgressBarDetail.Position := 100;
     //Application.ProcessMessages;
     ConfigState.Free;
 end;
@@ -1383,7 +1403,12 @@ begin
       FilePath := OpenPictureDialogSetIcon.FileName;
       ImageIconSoftware.Picture.LoadFromFile(FilePath);
       ImageIconSoftware.Picture.SaveToFile(PathCustomIcons+ExtractFileName(FilePath));
-      StringListCustomIcons.Add(SelectedProduct + '=' + ExtractFileName(FilePath));
+      if FormOpsiClientKiosk.StringListCustomIcons.Values
+          [SelectedProduct] = '' then
+        FormOpsiClientKiosk.StringListCustomIcons.Add
+          (SelectedProduct + '=' + ExtractFileName(FilePath))
+      else FormOpsiClientKiosk.StringListCustomIcons.Values
+             [SelectedProduct] := ExtractFileName(FilePath);
     end;
 end;
 
@@ -1399,7 +1424,13 @@ begin
       FilePath := OpenPictureDialogSetIcon.FileName;
       ImageScreenShot.Picture.LoadFromFile(FilePath);
       ImageScreenShot.Picture.SaveToFile(PathScreenShots+ExtractFileName(FilePath));
-      StringListScreenshots.Add(SelectedProduct + '=' + ExtractFileName(FilePath));
+      if FormOpsiClientKiosk.StringListScreenShots.Values
+           [SelectedProduct] = '' then
+        FormOpsiClientKiosk.StringListScreenShots.Add
+          (SelectedProduct + '=' + ExtractFileName(FilePath))
+      else FormOpsiClientKiosk.StringListScreenShots.Values
+             [SelectedProduct] := ExtractFileName(FilePath);
+
     end;
 end;
 
@@ -1766,13 +1797,6 @@ begin
   if SpeedButtonExpertMode.Down then
   begin
     { Expert view }
-    if SoftwareOnDemand then
-    begin
-      BitBtnInstallNow.Caption := rsInstallNow;
-      BitBtnInstallNow.Hint := rsInstallNowHint;
-      BitBtnInstallNow.Visible:= True;
-    end
-    else BitBtnInstallNow.Visible:= False;
     PanelExpertMode.Visible := True;
     SetView;
     //NotebookProducts.PageIndex := RadioGroupView.ItemIndex;
@@ -2009,9 +2033,16 @@ begin
   LogDatei.log('Custom icon path: ' + PathCustomIcons, LLinfo);
   LogDatei.log('Screenshot path: ' + PathScreenshots, LLinfo);
   { Load assignment of image paths to product IDs }
-  LoadStringListFromFile(StringListDefaultIcons, PathDefaultIcons + 'IconsList.txt');
-  LoadStringListFromFile(StringListCustomIcons, PathCustomIcons + 'IconsList.txt');
-  LoadStringListFromFile(StringListScreenshots, PathScreenshots + 'ScreenshotsList.txt');
+  try
+    if FileExists(PathDefaultIcons + 'IconsList.txt') then
+      LoadStringListFromFile(StringListDefaultIcons, PathDefaultIcons + 'IconsList.txt');
+    if FileExists(PathCustomIcons + 'IconsList.txt') then
+      LoadStringListFromFile(StringListCustomIcons, PathCustomIcons + 'IconsList.txt');
+    if FileExists(PathScreenshots + 'ScreenshotsList.txt') then
+      LoadStringListFromFile(StringListScreenshots, PathScreenshots + 'ScreenshotsList.txt');
+  except
+    LogDatei.log('Error while loading Images (Icons and/or Screenshots)',LLError);
+  end;
 
   { Load skin }
   { Set skin for LabelTitle }
@@ -2024,9 +2055,10 @@ begin
   begin
     LoadSkinForTitle(skinpath);
   end;
-   { skinpath in opsiclientagent custom dir }
+
+  { skinpath in opsiclientagent custom dir }
   skinpath := Application.Location +
-    '..\custom\opsiclientkioskskin' + PathDelim;
+    'custom\skin' + PathDelim;
   if FileExistsUTF8(skinpath + 'opsiclientkiosk.png') then
   begin
     ImageHeader.Picture.LoadFromFile(skinpath + 'opsiclientkiosk.png');
@@ -2208,7 +2240,7 @@ begin
   halt;
 end;
 
-procedure TFormOpsiClientKiosk.ButtonSaveImagesOnServerClick(Sender: TObject);
+procedure TFormOpsiClientKiosk.ButtonSaveImagesOnShareClick(Sender: TObject);
 begin
   FormSaveImagesOnShare.ShowModal;
 end;

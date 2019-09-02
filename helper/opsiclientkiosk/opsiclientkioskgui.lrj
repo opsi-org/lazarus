@@ -19,7 +19,7 @@
 {"hash":380871,"name":"tformopsiclientkiosk.radiogroupview.caption","sourcebytes":[86,105,101,119],"value":"View"},
 {"hash":130818483,"name":"tformopsiclientkiosk.bitbtninstallnow.hint","sourcebytes":[83,116,97,114,116,32,116,104,101,32,105,110,115,116,97,108,108,97,116,105,111,110,47,117,112,100,97,116,101,32,40,117,110,105,110,115,116,97,108,108,97,116,105,111,110,41,32,111,102,32,116,104,101,32,115,101,108,101,99,116,101,100,32,112,114,111,100,117,99,116,115],"value":"Start the installation/update (uninstallation) of the selected products"},
 {"hash":142495687,"name":"tformopsiclientkiosk.bitbtninstallnow.caption","sourcebytes":[73,110,115,116,97,108,108,32,110,111,119],"value":"Install now"},
-{"hash":258135941,"name":"tformopsiclientkiosk.buttonsaveimagesonserver.caption","sourcebytes":[83,97,118,101,32,105,109,97,103,101,115,32,111,110,32,115,104,97,114,101],"value":"Save images on share"},
+{"hash":258135941,"name":"tformopsiclientkiosk.buttonsaveimagesonshare.caption","sourcebytes":[83,97,118,101,32,105,109,97,103,101,115,32,111,110,32,115,104,97,114,101],"value":"Save images on share"},
 {"hash":181043315,"name":"tformopsiclientkiosk.tabsheet1.caption","sourcebytes":[68,101,116,97,105,108,115],"value":"Details"},
 {"hash":109086960,"name":"tformopsiclientkiosk.labeldescription.caption","sourcebytes":[68,101,115,99,114,105,112,116,105,111,110,58,32,32],"value":"Description:  "},
 {"hash":217697168,"name":"tformopsiclientkiosk.labeladvice.caption","sourcebytes":[65,100,118,105,99,101,58,32,32],"value":"Advice:  "},

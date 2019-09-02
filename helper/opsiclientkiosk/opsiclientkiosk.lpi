@@ -131,13 +131,13 @@
     </PublishOptions>
     <RunParams>
       <local>
-        <CommandLineParams Value="--fqdn=pcjan.uib.local  --lang=en"/>
+        <CommandLineParams Value="--fqdn=pcjan.uib.local  --lang=de"/>
       </local>
       <FormatVersion Value="2"/>
       <Modes Count="1">
         <Mode0 Name="default">
           <local>
-            <CommandLineParams Value="--fqdn=pcjan.uib.local  --lang=en"/>
+            <CommandLineParams Value="--fqdn=pcjan.uib.local  --lang=de"/>
           </local>
         </Mode0>
       </Modes>
@@ -246,6 +246,7 @@
         <Filename Value="helpinfo.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FormHelpInfo"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit16>
     </Units>
