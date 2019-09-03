@@ -155,11 +155,11 @@ var
   ShellOutput: String;
   PathToClientAgent: String;
 begin
-  PathToClientAgent:= '\opsi-client-agent\files\opsi\opsiclientkiosk\custom\';
+  PathToClientAgent:= '\opsi-client-agent\files\opsi\opsiclientkiosk\ock_custom\';
   {set shell and options}
   Shell := 'cmd.exe';
   ShellOptions := '/c';
-  ShellCommand := 'xcopy' + ' ' + Application.Location + 'custom\product_icons' + ' '
+  ShellCommand := 'xcopy' + ' ' + Application.Location + 'ock_custom\product_icons' + ' '
    + PathToShare + PathToClientAgent + 'product_icons /S /Y /Z /I';
   {Run Command}
   if RunCommand(Shell, [ShellOptions, ShellCommand], ShellOutput) then
@@ -167,7 +167,7 @@ begin
     ShowMessage(ShellOutput);
   end
   else ShowMessage(rsCouldNotSaveIcons);
-  ShellCommand := 'xcopy' + ' ' + Application.Location + 'custom\screenshots' + ' '
+  ShellCommand := 'xcopy' + ' ' + Application.Location + 'ock_custom\screenshots' + ' '
    + PathToShare + PathToClientAgent + 'screenshots /S /Y /Z /I';
   {Run Command}
   if RunCommand(Shell, [ShellOptions, ShellCommand], ShellOutput) then

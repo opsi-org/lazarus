@@ -2025,9 +2025,9 @@ begin
   detail_visible := False;
   PathDefaultIcons := Application.Location+ 'default' + PathDelim +
     'product_icons' + PathDelim;
-  PathCustomIcons := Application.Location+ 'custom' + PathDelim +
+  PathCustomIcons := Application.Location+ 'ock_custom' + PathDelim +
     'product_icons' + PathDelim;
-  PathScreenshots := Application.Location+ 'custom' + PathDelim +
+  PathScreenshots := Application.Location+ 'ock_custom' + PathDelim +
    'screenshots' + PathDelim;
   LogDatei.log('Default icon path: ' + PathDefaultIcons, LLinfo);
   LogDatei.log('Custom icon path: ' + PathCustomIcons, LLinfo);
