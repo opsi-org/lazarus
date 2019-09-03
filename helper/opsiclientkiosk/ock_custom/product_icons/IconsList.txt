@@ -1,0 +1,2 @@
+flashplayer=flashplayer.png
+firefox=firefox.png

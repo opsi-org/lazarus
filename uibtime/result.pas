@@ -16,6 +16,7 @@ uses
   //LMessages, Messages,
   Classes, Graphics, Controls,
   Forms, Dialogs, DB, DBCtrls, Grids, DBGrids, ExtCtrls, Buttons, StdCtrls,
+  Variants,
   ///rlgencol, rlgenrep,
   printers,
   //vq8qrgen, vq8fprev, Spin,
@@ -32,11 +33,15 @@ type
   { TFResult }
 
   TFResult = class(TForm)
+    ComboBoxSearchfield: TComboBox;
     CSVExporter1: TCSVExporter;
+    EditSearch: TEdit;
     frDBDataSet1: TfrDBDataSet;
     FrPrintGrid1: TFrPrintGrid;
     frTNPDFExport1: TfrTNPDFExport;
+    ImageViewmag: TImage;
     Label5: TLabel;
+    Label6: TLabel;
     Panel1: TPanel;
     DBGrid1: TDBGrid;
     DBNavigator1: TDBNavigator;
@@ -49,14 +54,18 @@ type
     Label2: TLabel;
     Label3: TLabel;
     Edit1: TEdit;
+    PanelSearch: TPanel;
     RadioGroup1: TRadioGroup;
+    RadioGroupSearchOption: TRadioGroup;
     SaveDialog1: TSaveDialog;
     Label4: TLabel;
     Label9: TLabel;
     BtnDBexp: TBitBtn;
+    SpeedButtonClearSearchEdit: TSpeedButton;
     SpinEdit1: TSpinEdit;
     //SQLQueryResult: TSQLQuery;
     procedure DBGrid1TitleClick(Column: TColumn);
+    procedure EditSearchChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BtnPreviewClick(Sender: TObject);
     procedure BtnPrintClick(Sender: TObject);
@@ -64,11 +73,16 @@ type
     ///procedure CreateFQReportGen;
     procedure FormShow(Sender: TObject);
     procedure BtnDBexpClick(Sender: TObject);
+    procedure SpeedButtonClearSearchEditClick(Sender: TObject);
+    procedure FilterInResult;
+    procedure LocateInResult;
+    procedure setResultDataset(QueryResult: TSQLQuery);
+
   private
     { Private-Deklarationen }
   public
     { Public-Deklarationen }
-    QueryResult: TSQLQuery;
+    resultdataset: TSQLQuery;
   end;
 
 var
@@ -81,12 +95,14 @@ uses uibdata;
 ///uses statistik, rledcol, expo;
 
 {$R *.lfm}
+
 //var
  //header  : string;
  //PVResult : TModalResult;
 
 procedure TFResult.FormCreate(Sender: TObject);
 begin
+
 end;
 
 procedure TFResult.DBGrid1TitleClick(Column: TColumn);
@@ -94,6 +110,21 @@ begin
   // http://delphiexamples.com/databases/sortgrid.html
   (Column.Field.DataSet as TSQLQuery).IndexFieldNames:=Column.FieldName;
 end;
+
+procedure TFResult.EditSearchChange(Sender: TObject);
+begin
+  if EditSearch.Text <> '' then
+  begin
+    if RadioGroupSearchOption.ItemIndex = 0 then LocateInResult
+    else FilterInResult;
+  end
+  else
+  begin
+    resultDataset.Filtered := False;
+    resultDataset.First;
+  end;
+end;
+
 
 procedure TFResult.ShowPreview;
 begin
@@ -119,46 +150,109 @@ begin
 end;
 
 procedure TFResult.FormShow(Sender: TObject);
+var
+  i : integer;
 begin
-  //Label2.caption := inttostr(Datasource1.Dataset.RecordCount);
-  Label2.caption := inttostr(DataModule1.Query4Result.RecordCount);
-  //DataSource1.DataSet := DataModule1.Query4Result;
- //Label2.caption := inttostr(frDBDataSet1..);
-  //Listbox1.Items.clear;
-  //Datasource1.Dataset.GetFieldNames(Listbox1.Items);
-  //DataModule1.Query4Result.GetFieldNames(Listbox1.Items);
-  if DataModule1.Query4Result.ReadOnly then
+  Label2.caption := inttostr(resultDataset.RecordCount);
+  DataSource1.DataSet := resultDataset;
+  if resultDataset.ReadOnly then
   begin
-    //DBNavigator1.VisibleButtons:= [nbFirst, nbPrior, nbNext, nbLast];
     DBGrid1.AutoEdit:=false;
   end
   else
   begin
     DBGrid1.AutoEdit:=true;
-    //DBNavigator1.VisibleButtons:= [nbFirst, nbPrior, nbNext, nbLast, nbInsert,
-    // nbDelete, nbEdit, nbPost, nbCancel, nbRefresh];
   end;
+  ComboBoxSearchfield.Clear;
+  for i := 0 to resultdataset.Fields.Count -1 do
+   ComboBoxSearchfield.Items.Add(resultDataset.Fields[i].FieldName);
+  ComboBoxSearchfield.ItemIndex:=0;
+
+
 end;
 
 procedure TFResult.BtnDBexpClick(Sender: TObject);
-//var
-// iresult : integer;
 begin
   if SaveDialog1.Execute then
   begin
     CSVExporter1.FileName:=SaveDialog1.FileName;
     CSVExporter1.Dataset := Datasource1.Dataset;
     Datasource1.Dataset.First;
-    //CSVExporter1.Dataset := FStatistik.query1;
-    //FStatistik.query1.First;
-    //iresult :=
     CSVExporter1.Execute;
   end;
- (*
- FExport2 := TFExport2.Create(self);
- FExport2.ShowModal;
- FExport2.Free
- *)
+end;
+
+procedure TFResult.FilterInResult;
+var
+  //i:integer;
+  Filtercond, Filterstr: string;
+begin
+  try
+    Filtercond := '"*' + EditSearch.Text + '*"';
+    //LogDatei.log('Search for: ' + EditSearch.Text + ' Filter for: ' +
+    //  Filtercond, LLinfo);
+    Filterstr := '('+ ComboBoxSearchfield.Caption+' = ' + Filtercond+')';
+    (*
+    Filterstr := '('+ resultDataset.Fields[0].FieldName+' =' + Filtercond
+             + 'or '+ resultDataset.Fields[1].FieldName+' =' + Filtercond
+             + 'or '+ resultDataset.Fields[2].FieldName+' =' + Filtercond
+             + 'or '+ resultDataset.Fields[3].FieldName+' =' + Filtercond;
+             *)
+    resultDataset.Filtered := False;
+    resultDataset.Filter := Filterstr;
+    resultDataset.FilterOptions := [foCaseInsensitive];
+    resultDataset.Filtered := True;
+    resultDataset.First;
+  finally
+  end;
+
+end;
+
+procedure TFResult.LocateInResult;
+//var
+  //i:integer;
+//  Filtercond, Filterstr, keyfields: string;
+begin
+  try
+    //Filtercond := '"*' + EditSearch.Text + '*"';
+    //LogDatei.log('Search for: ' + EditSearch.Text + ' Filter for: ' +
+    //  Filtercond, LLinfo);
+    (*
+    keyfields := resultDataset.Fields[0].FieldName+';' +
+                 resultDataset.Fields[1].FieldName+';' +
+                 resultDataset.Fields[2].FieldName+';' +
+                 resultDataset.Fields[3].FieldName;
+    *)
+    resultDataset.Filtered := False;
+    resultDataset.Locate(ComboBoxSearchfield.Caption, EditSearch.Text, [loCaseInsensitive,loPartialKey]);
+    (*
+                                    VarArrayOf([Filtercond, Filtercond,Filtercond,Filtercond]),
+                                    [loCaseInsensitive,loPartialKey]);
+                                    *)
+  finally
+  end;
+end;
+
+
+
+procedure TFResult.SpeedButtonClearSearchEditClick(Sender: TObject);
+begin
+  try
+    screen.Cursor := crHourGlass;
+    EditSearch.Clear;
+    resultDataset.Filtered := False;
+    resultDataset.First;
+    //SpeedButtonAll.AllowAllUp:= False;
+    //SpeedButtonAll.Click;
+  finally
+    screen.Cursor := crDefault;
+  end;
+end;
+
+procedure TFResult.setResultDataset(QueryResult: TSQLQuery);
+begin
+  resultDataset := QueryResult;
+
 end;
 
 end.

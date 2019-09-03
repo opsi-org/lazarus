@@ -9,7 +9,7 @@ uses
   Interfaces, // this includes the LCL widgetset
   Classes, SysUtils, Forms, lazcontrols, lcltranslator, inifiles,
   opsiclientkioskgui, installdlg, datadb, osprocesses, progresswindow,
-  proginfo, opsiconnection, imagestoshare;
+  proginfo, opsiconnection, imagestoshare, helpinfo;
 
 
 {$R *.res}
@@ -24,6 +24,7 @@ begin
   Application.CreateForm(TDataModuleOCK, DataModuleOCK);
   Application.CreateForm(TFormProgressWindow, FormProgressWindow);
   Application.CreateForm(TFormSaveImagesOnShare, FormSaveImagesOnShare);
+  Application.CreateForm(TFormHelpInfo, FormHelpInfo);
   Application.Run;
   Application.Free;
 end.

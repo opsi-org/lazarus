@@ -40,6 +40,12 @@ type
 var
   FormSaveImagesOnShare: TFormSaveImagesOnShare;
 
+resourcestring
+  rsCouldNotSaveIcons = 'Could not save icons on share.';
+  rsCouldNotSaveScreenshots = 'Could not save screenshots on share.';
+  rsCouldNotUnmount = 'Could not unmount share.';
+
+
 implementation
 
 {$R *.lfm}
@@ -93,7 +99,7 @@ begin
     if not mounted then
     begin
       ShellCommand := 'net use' + ' ' + PathToShare + ' ' + Password + ' ' + user;
-      if RunCommand(Shell, [shellOptions , ShellCommand], ShellOutput) then
+      if RunCommand(Shell, [ShellOptions , ShellCommand], ShellOutput) then
       begin
         ShellCommand := '';
         //ShowMessage(ShellOutput);
@@ -121,7 +127,7 @@ begin
   begin
     //ShowMessage(ShellOutput);
   end
-  else ShowMessage('could not unmount share');
+  else ShowMessage(rsCouldNotUnmount);
 end;
 
 procedure TFormSaveImagesOnShare.MountShareUnix(const User: String;
@@ -147,18 +153,29 @@ var
   ShellOptions,
   ShellCommand,
   ShellOutput: String;
+  PathToClientAgent: String;
 begin
+  PathToClientAgent:= '\opsi-client-agent\files\opsi\opsiclientkiosk\ock_custom\';
   {set shell and options}
   Shell := 'cmd.exe';
   ShellOptions := '/c';
-  ShellCommand := 'xcopy' + ' ' + Application.Location + 'product_icons' + ' '
-   + PathToShare + '\uib\werner\product_icons /S /Y /Z /I';
+  ShellCommand := 'xcopy' + ' ' + Application.Location + 'ock_custom\product_icons' + ' '
+   + PathToShare + PathToClientAgent + 'product_icons /S /Y /Z /I';
   {Run Command}
-  if RunCommand(Shell, [ShellOptions, ShellCommand], ShellOutput) then //
+  if RunCommand(Shell, [ShellOptions, ShellCommand], ShellOutput) then
   begin
     ShowMessage(ShellOutput);
   end
-  else ShowMessage('Could not save icons on share.');
+  else ShowMessage(rsCouldNotSaveIcons);
+  ShellCommand := 'xcopy' + ' ' + Application.Location + 'ock_custom\screenshots' + ' '
+   + PathToShare + PathToClientAgent + 'screenshots /S /Y /Z /I';
+  {Run Command}
+  if RunCommand(Shell, [ShellOptions, ShellCommand], ShellOutput) then
+  begin
+    ShowMessage(ShellOutput);
+  end
+  else ShowMessage(rsCouldNotSaveScreenshots);
+
 end;
 
 procedure TFormSaveImagesOnShare.ButtonCancelClick(Sender: TObject);

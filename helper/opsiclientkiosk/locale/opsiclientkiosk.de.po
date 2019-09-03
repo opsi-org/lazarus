@@ -1,15 +1,32 @@
+# 
+# Translators:
+# d.oertel <d.oertel@uib.de>, 2016-2017
+# Jan Werner <j.werner@uib.de>, 2019
 msgid ""
 msgstr ""
 "Project-Id-Version: opsi.org\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2016-06-08 09:26+0000\n"
-"Last-Translator: detlef oertel\n"
+"PO-Revision-Date: 2019-09-02 14:45+0000\n"
+"Last-Translator: Jan Werner <j.werner@uib.de>\n"
 "Language-Team: German (http://www.transifex.com/opsi-org/opsiorg/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: de\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: utf-8\n"
+
+#: imagestoshare.rscouldnotsaveicons
+msgid "Could not save icons on share."
+msgstr "Produktsymbole konnten nicht auf dem Netzlaufwerk gespeichert werden."
+
+#: imagestoshare.rscouldnotsavescreenshots
+msgid "Could not save screenshots on share."
+msgstr "Screenshots konnten nicht auf dem Netzlaufwerk gespeichert werden."
+
+#: imagestoshare.rscouldnotunmount
+msgid "Could not unmount share."
+msgstr "Netzlaufwerk konnte nicht getrennt werden."
 
 #: opsiclientkioskgui.rsaction
 msgctxt "opsiclientkioskgui.rsaction"
@@ -18,7 +35,7 @@ msgstr "Aktion"
 
 #: opsiclientkioskgui.rsactionremovedfor
 msgid "Action removed for"
-msgstr "Aktion zurückgenommen für"
+msgstr "Aktion entfernt für"
 
 #: opsiclientkioskgui.rsactions
 msgctxt "opsiclientkioskgui.rsactions"
@@ -27,15 +44,15 @@ msgstr "Aktionen"
 
 #: opsiclientkioskgui.rsactnone
 msgid "None"
-msgstr "Keine"
+msgstr "None"
 
 #: opsiclientkioskgui.rsactrequest
-msgid "Action Request"
-msgstr "Aktionen"
+msgid "Action request"
+msgstr "Aktionsanforderung"
 
 #: opsiclientkioskgui.rsactsetup
 msgid "Setup"
-msgstr "Installieren"
+msgstr "Setup"
 
 #: opsiclientkioskgui.rsactuninstall
 msgctxt "opsiclientkioskgui.rsactuninstall"
@@ -63,11 +80,15 @@ msgstr "<-- Zurück"
 #: opsiclientkioskgui.rscancel
 msgctxt "opsiclientkioskgui.rscancel"
 msgid "Cancel"
-msgstr "Abbrechen"
+msgstr "Verwerfen"
 
 #: opsiclientkioskgui.rsconnectedto
 msgid "Connected to"
-msgstr " Verbunden mit"
+msgstr "Verbunden mit"
+
+#: opsiclientkioskgui.rsdisabled
+msgid "disabled"
+msgstr "deaktiviert"
 
 #: opsiclientkioskgui.rsdoyouwantinstall
 msgid "Do you want to install "
@@ -81,11 +102,6 @@ msgstr "Möchten Sie folgendes Produkt deinstallieren: "
 msgid "Do you want to update "
 msgstr "Möchten Sie folgendes Produkt aktualisieren: "
 
-#: opsiclientkioskgui.rsexpertmode
-msgctxt "opsiclientkioskgui.rsexpertmode"
-msgid "Expert Mode"
-msgstr "Expertenmodus"
-
 #: opsiclientkioskgui.rsinstall
 msgctxt "opsiclientkioskgui.rsinstall"
 msgid "Install"
@@ -93,7 +109,7 @@ msgstr "Installieren"
 
 #: opsiclientkioskgui.rsinstallationfinished
 msgid "Installation/update finished."
-msgstr "Installation/Aktualisierung beendet"
+msgstr "Installation/Aktualisierung beendet."
 
 #: opsiclientkioskgui.rsinstalled
 msgid "Installed"
@@ -102,7 +118,7 @@ msgstr "Installiert"
 #: opsiclientkioskgui.rsinstallnow
 msgctxt "opsiclientkioskgui.rsinstallnow"
 msgid "Install now"
-msgstr "Jetzt Installieren"
+msgstr "Jetzt installieren"
 
 #: opsiclientkioskgui.rsinstallnowhint
 msgctxt "opsiclientkioskgui.rsinstallnowhint"
@@ -124,7 +140,7 @@ msgstr "Lade Produktdaten vom Server"
 
 #: opsiclientkioskgui.rslabeldataloadtiles
 msgctxt "opsiclientkioskgui.rslabeldataloadtiles"
-msgid "Fill Tiles"
+msgid "Fill tiles"
 msgstr "Erzeuge Kacheln"
 
 #: opsiclientkioskgui.rslabeldetailconnecting
@@ -132,16 +148,17 @@ msgid "Connecting to server"
 msgstr "Verbinden mit dem Server"
 
 #: opsiclientkioskgui.rslabelinfoloaddata
+msgctxt "opsiclientkioskgui.rslabelinfoloaddata"
 msgid "Please wait while communicating with OPSI web server ..."
 msgstr "Bitte warten. Kommuniziere mit OPSI Webserver ..."
 
 #: opsiclientkioskgui.rslabelinfotiles
-msgid "Please wait while building tiles"
+msgid "Please wait while building tiles."
 msgstr "Bitte warten. Kacheln werden erzeugt."
 
 #: opsiclientkioskgui.rsnextevent
 msgid "Next standard event (e.g. reboot)"
-msgstr "Nächstes Standardereignis"
+msgstr "Nächstes Standardereignis (z.B. Neustart)"
 
 #: opsiclientkioskgui.rsno
 msgid "No"
@@ -152,6 +169,7 @@ msgid "No action requests found."
 msgstr "Keine Aktionsanforderungen gefunden."
 
 #: opsiclientkioskgui.rsnotinstalled
+msgctxt "opsiclientkioskgui.rsnotinstalled"
 msgid "Not installed"
 msgstr "Nicht Installiert"
 
@@ -168,25 +186,22 @@ msgctxt "opsiclientkioskgui.rsreload"
 msgid "Reload"
 msgstr "Neu laden"
 
-#: opsiclientkioskgui.rsrequestdone
-msgid "Request done. %s"
-msgstr "Anfrage erledigt. %s"
-
 #: opsiclientkioskgui.rsstateunknown
 msgid "Unknown"
 msgstr "Unbekannt"
 
 #: opsiclientkioskgui.rsstoreactions
-msgid "Store Actions"
+msgctxt "opsiclientkioskgui.rsstoreactions"
+msgid "Store actions"
 msgstr "Aktionen speichern"
 
 #: opsiclientkioskgui.rsstoreactionshint
 msgid "Send the action requests to the server, show the resulting installations and ask for installation start."
-msgstr "Sendet die Aktionsanforderungen zum Server, zeigt die resultierenden Installationen und fragt ob die Installation gestarted werden soll."
+msgstr "Sende die Anforderungen an den Server, zeige die resultierenden anstehenden Installationen und Frage nach dem Installationsstart."
 
 #: opsiclientkioskgui.rsuninstallationfinished
 msgid "Uninstallation finished."
-msgstr "Deinstallation beendet"
+msgstr "Deinstallation beendet."
 
 #: opsiclientkioskgui.rsuninstallnowornextevent
 msgid "Uninstall product now or at next standard event (e.g. reboot)?"
@@ -208,7 +223,7 @@ msgstr "Aktualsierungen"
 
 #: opsiclientkioskgui.rsviewlist
 msgid "List"
-msgstr "Liste"
+msgstr "Listen"
 
 #: opsiclientkioskgui.rsviewtiles
 msgid "Tiles"
@@ -216,7 +231,7 @@ msgstr "Kacheln"
 
 #: opsiclientkioskgui.rswillinstallnextevent
 msgid " will be installed at next standard event (e.g. reboot)."
-msgstr " wird beim nächsten Standardereignis installiert."
+msgstr " wird beim nächsten Standardereignis installiert (z.B. Neustart)."
 
 #: opsiclientkioskgui.rswillinstallnow
 msgid " will be installed now."
@@ -224,7 +239,7 @@ msgstr " wird sofort installiert"
 
 #: opsiclientkioskgui.rswilluninstallnextevent
 msgid " will be uninstalled at next standard event (e.g. reboot)."
-msgstr " wird beim nächsten Standardereignis deinstalliert."
+msgstr " wird beim nächsten Standardereignis deinstalliert (z.B. Neustart)."
 
 #: opsiclientkioskgui.rswilluninstallnow
 msgid " will be uninstalled now."
@@ -232,11 +247,11 @@ msgstr " wird sofort deinstalliert"
 
 #: opsiclientkioskgui.rswillupdatenextevent
 msgid " will be updated at next standard event (e.g. reboot)."
-msgstr " wird beim nächsten Standardereignis aktualisiert."
+msgstr " wird beim nächsten Standardereignis aktualisiert (z.B. Neustart)."
 
 #: opsiclientkioskgui.rswillupdatenow
 msgid " will be updated now."
-msgstr " wird sofort aktualisiert"
+msgstr " wird sofort aktualisiert."
 
 #: opsiclientkioskgui.rsyes
 msgid "Yes"
@@ -257,35 +272,52 @@ msgid "Install now (Close all Applications)"
 msgstr "Installiere jetzt. Alle Anwendungen schließen !"
 
 #: tfinstalldlg.caption
-#, fuzzy
 msgctxt "TFINSTALLDLG.CAPTION"
 msgid "opsi-kiosk-client"
-msgstr "opsi-kiosk-client"
+msgstr "opsi-kiosk-klient"
 
 #: tfinstalldlg.label1.caption
 msgctxt "TFINSTALLDLG.LABEL1.CAPTION"
 msgid "The following Actions will be done:"
 msgstr "Die folgenden Aktionen werden ausgeführt werden:"
 
-#: tformopsiclientkiosk.bitbtninfo.caption
-#, fuzzy
-msgctxt "tformopsiclientkiosk.bitbtninfo.caption"
-msgid "Info"
-msgstr "Info"
+#: tformhelpinfo.buttonabout.caption
+msgid "About client kiosk"
+msgstr ""
+
+#: tformhelpinfo.buttonclose.caption
+msgid "Close"
+msgstr ""
+
+#: tformhelpinfo.caption
+msgctxt "tformhelpinfo.caption"
+msgid "Help"
+msgstr ""
+
+#: tformhelpinfo.checkboxexpertmode.caption
+msgctxt "tformhelpinfo.checkboxexpertmode.caption"
+msgid "Expert mode"
+msgstr ""
+
+#: tformopsiclientkiosk.bitbtnhelp.caption
+msgctxt "tformopsiclientkiosk.bitbtnhelp.caption"
+msgid "Help"
+msgstr ""
 
 #: tformopsiclientkiosk.bitbtninstallnow.caption
 msgctxt "tformopsiclientkiosk.bitbtninstallnow.caption"
 msgid "Install now"
-msgstr "Jetzt Installieren"
+msgstr "Jetzt installieren"
 
 #: tformopsiclientkiosk.bitbtninstallnow.hint
 msgctxt "tformopsiclientkiosk.bitbtninstallnow.hint"
 msgid "Start the installation/update (uninstallation) of the selected products"
 msgstr "Start der Installation/Aktualisierung (Deinstallation) der ausgewählten Produkte"
 
-#: tformopsiclientkiosk.buttonsaveimagesonserver.caption
-msgid "Save Images on Server"
-msgstr ""
+#: tformopsiclientkiosk.buttonsaveimagesonshare.caption
+msgctxt "tformopsiclientkiosk.buttonsaveimagesonshare.caption"
+msgid "Save images on share"
+msgstr "Speichere Bilder auf Netzlaufwerk"
 
 #: tformopsiclientkiosk.buttonsoftwareback.caption
 msgctxt "tformopsiclientkiosk.buttonsoftwareback.caption"
@@ -298,8 +330,8 @@ msgid "Install"
 msgstr "Installieren"
 
 #: tformopsiclientkiosk.buttonsoftwareremoveaction.caption
-msgid "Remove Action"
-msgstr "Aktion zurücknehmen"
+msgid "Remove action"
+msgstr "Aktion entfernen"
 
 #: tformopsiclientkiosk.buttonsoftwareuninstall.caption
 msgctxt "tformopsiclientkiosk.buttonsoftwareuninstall.caption"
@@ -312,30 +344,41 @@ msgid "Update"
 msgstr "Aktualisieren"
 
 #: tformopsiclientkiosk.caption
+msgctxt "tformopsiclientkiosk.caption"
 msgid "opsi-client-kiosk"
-msgstr ""
+msgstr "opsi-klient-kiosk"
 
 #: tformopsiclientkiosk.dbgrid1.hint
+msgctxt "tformopsiclientkiosk.dbgrid1.hint"
 msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
 msgstr "In die Spalte ActionRequest klicken um Aktionen (setup/uninstall) zu setzen"
 
 #: tformopsiclientkiosk.editsearch.hint
+msgctxt "tformopsiclientkiosk.editsearch.hint"
 msgid "Search in Productlist"
-msgstr "Durchsuche Produktliste"
+msgstr "Suche in Produktliste"
 
 #: tformopsiclientkiosk.editsearch.texthint
+msgctxt "tformopsiclientkiosk.editsearch.texthint"
 msgid "Search"
-msgstr "Suche"
+msgstr "Suchen"
+
+#: tformopsiclientkiosk.imagelogo.hint
+msgid "Your logo"
+msgstr "Ihr Logo"
 
 #: tformopsiclientkiosk.labeladvice.caption
+msgctxt "tformopsiclientkiosk.labeladvice.caption"
 msgid "Advice:  "
 msgstr "Hinweis:"
 
 #: tformopsiclientkiosk.labelclientverstr.caption
+msgctxt "tformopsiclientkiosk.labelclientverstr.caption"
 msgid "Version at Client"
 msgstr "Version auf dem Client"
 
 #: tformopsiclientkiosk.labeldescription.caption
+msgctxt "tformopsiclientkiosk.labeldescription.caption"
 msgid "Description:  "
 msgstr "Beschreibung:"
 
@@ -344,6 +387,7 @@ msgid "Please wait. Installing/uninstalling products."
 msgstr "Bitte warten. Produkte werden installiert/deinstalliert."
 
 #: tformopsiclientkiosk.labelpriority.caption
+msgctxt "tformopsiclientkiosk.labelpriority.caption"
 msgid "Priority: "
 msgstr "Priorität:"
 
@@ -353,10 +397,12 @@ msgid "Action"
 msgstr "Aktion"
 
 #: tformopsiclientkiosk.labelsoftwareadvice.caption
+msgctxt "tformopsiclientkiosk.labelsoftwareadvice.caption"
 msgid "Advice"
 msgstr "Hinweis"
 
 #: tformopsiclientkiosk.labelsoftwaredescription.caption
+msgctxt "tformopsiclientkiosk.labelsoftwaredescription.caption"
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -378,16 +424,21 @@ msgstr "Neuste Version"
 #: tformopsiclientkiosk.labeltitle.caption
 msgctxt "tformopsiclientkiosk.labeltitle.caption"
 msgid "opsi Client Kiosk"
-msgstr ""
+msgstr "opsi Klient Kiosk"
 
 #: tformopsiclientkiosk.labelverstr.caption
+msgctxt "tformopsiclientkiosk.labelverstr.caption"
 msgid "Version at Server"
 msgstr "Version auf dem Server"
 
+#: tformopsiclientkiosk.panelsearchmask.caption
+msgid "PanelSearchMask"
+msgstr ""
+
 #: tformopsiclientkiosk.panelsoftwarescreenshot.caption
 msgctxt "tformopsiclientkiosk.panelsoftwarescreenshot.caption"
-msgid "ScreenShotImage"
-msgstr "Screenshot"
+msgid "No screenshot available"
+msgstr "Kein Screenshot hinterlegt."
 
 #: tformopsiclientkiosk.radiogroupview.caption
 msgctxt "tformopsiclientkiosk.radiogroupview.caption"
@@ -405,21 +456,19 @@ msgid "All"
 msgstr "Alle"
 
 #: tformopsiclientkiosk.speedbuttonall.hint
+msgctxt "tformopsiclientkiosk.speedbuttonall.hint"
 msgid "Show all List entries (No Filter)"
 msgstr "Zeige alle Einträge (Kein Filter)"
 
 #: tformopsiclientkiosk.speedbuttonclearsearchedit.caption
+msgctxt "tformopsiclientkiosk.speedbuttonclearsearchedit.caption"
 msgid "X"
 msgstr "X"
 
-#: tformopsiclientkiosk.speedbuttonexpertmode.caption
-msgctxt "tformopsiclientkiosk.speedbuttonexpertmode.caption"
-msgid "Expert Mode"
-msgstr "Expertenmodus"
-
 #: tformopsiclientkiosk.speedbuttonnotinstalled.caption
-msgid "Not Installed"
-msgstr "Nicht installiert"
+msgctxt "tformopsiclientkiosk.speedbuttonnotinstalled.caption"
+msgid "Not installed"
+msgstr "Nicht Installiert"
 
 #: tformopsiclientkiosk.speedbuttonreload.caption
 msgctxt "tformopsiclientkiosk.speedbuttonreload.caption"
@@ -438,23 +487,27 @@ msgstr "Aktualsierungen"
 #: tformopsiclientkiosk.speedbuttonupdates.hint
 msgctxt "tformopsiclientkiosk.speedbuttonupdates.hint"
 msgid "Filter for Products where an upgrade is possible"
-msgstr "Zeige Produkte bei denen ein Upgrade möglich ist"
+msgstr "Filtere nach Produkten bei denen ein Upgrade möglich ist."
 
 #: tformopsiclientkiosk.statusbar1.panels[0].text
+msgctxt "tformopsiclientkiosk.statusbar1.panels[0].text"
 msgid "Not Connected to opsi server"
 msgstr "Keine Verbindung zum opsiserver"
 
 #: tformopsiclientkiosk.tabsheet1.caption
+msgctxt "tformopsiclientkiosk.tabsheet1.caption"
 msgid "Details"
 msgstr "Details"
 
 #: tformopsiclientkiosk.tabsheet2.caption
+msgctxt "tformopsiclientkiosk.tabsheet2.caption"
 msgid "Dependencies / Priority"
 msgstr "Abhängigkeiten / Prioritäten"
 
 #: tformprogresswindow.caption
+msgctxt "tformprogresswindow.caption"
 msgid "Initialize OpsiClientKiosk"
-msgstr "Initialisiere OpsiClientKiosk ..."
+msgstr "Initialisiere OpsiClientKiosk"
 
 #: tformprogresswindow.labeldataload.caption
 msgid "LabelDataLoad"
@@ -465,50 +518,42 @@ msgid "LabelDataLoadDetail"
 msgstr ""
 
 #: tformprogresswindow.labelinfo.caption
+msgctxt "tformprogresswindow.labelinfo.caption"
 msgid "Please wait while "
 msgstr "Bitte warten während "
 
 #: tformsaveimagesonshare.buttoncancel.caption
-#, fuzzy
 msgctxt "tformsaveimagesonshare.buttoncancel.caption"
 msgid "Cancel"
-msgstr "Abbrechen"
+msgstr "Verwerfen"
 
 #: tformsaveimagesonshare.buttoncopy.caption
 msgctxt "tformsaveimagesonshare.buttoncopy.caption"
 msgid "Save images on share"
-msgstr ""
+msgstr "Speichere Bilder auf Netzlaufwerk"
 
 #: tformsaveimagesonshare.caption
 msgctxt "tformsaveimagesonshare.caption"
-msgid "Copy images to share"
-msgstr ""
-
-#: tformsaveimagesonshare.editpathtoshare.text
-msgid "\\\\bonifax.uib.local\\home"
-msgstr ""
+msgid "Save images on share"
+msgstr "Speichere Bilder auf Netzlaufwerk"
 
 #: tformsaveimagesonshare.editpathtoshare.texthint
 msgctxt "tformsaveimagesonshare.editpathtoshare.texthint"
-msgid "\\\\Servername\\Sharename"
-msgstr ""
-
-#: tformsaveimagesonshare.edituser.text
-msgid "werner"
-msgstr ""
+msgid "\\\\servername\\opsi_depot_rw"
+msgstr "\\\\Servername\\opsi_depot_rw"
 
 #: tformsaveimagesonshare.labelpassword.caption
 msgctxt "tformsaveimagesonshare.labelpassword.caption"
 msgid "Password"
-msgstr ""
+msgstr "Passwort"
 
 #: tformsaveimagesonshare.labelpathtoshare.caption
 msgctxt "tformsaveimagesonshare.labelpathtoshare.caption"
 msgid "Path to share"
-msgstr ""
+msgstr "Pfad zum Netzwerklaufwerk"
 
 #: tformsaveimagesonshare.labeluser.caption
 msgctxt "tformsaveimagesonshare.labeluser.caption"
 msgid "User"
-msgstr ""
+msgstr "Benutzer"
 

@@ -13,6 +13,8 @@ object FNachfrage: TFNachfrage
   Font.Name = 'MS Sans Serif'
   FormStyle = fsStayOnTop
   OnActivate = FormActivate
+  OnMouseEnter = FormMouseEnter
+  OnPaint = FormPaint
   OnShow = FormShow
   Position = poDefaultSizeOnly
   LCLVersion = '2.0.4.0'

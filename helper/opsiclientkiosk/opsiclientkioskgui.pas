@@ -29,8 +29,8 @@ uses
   progresswindow,
   DefaultTranslator, ExtDlgs,
   proginfo,
-  imagestoshare,
-  Process;
+  helpinfo,
+  imagestoshare;
 
 type
 
@@ -69,7 +69,7 @@ type
   { TFormOpsiClientKiosk }
 
   TFormOpsiClientKiosk = class(TForm)
-     ButtonSaveImagesOnServer: TButton;
+     ButtonSaveImagesOnShare: TButton;
  (*----------------------------*)
  (*         Attributes         *)
  (*----------------------------*)
@@ -77,10 +77,12 @@ type
     DataSourceProductDependencies: TDataSource;
     DataSourceProductData: TDataSource;
     DBTextActionRequest: TDBText;
+    ImageLogo: TImage;
     LabelSoftwareActionRequest: TLabel;
     LabelPleaseWait: TLabel;
     OpenPictureDialogSetIcon: TOpenPictureDialog;
     PagePleaseWait: TPage;
+    PanelSearchMask: TPanel;
     (* Head *)
     PanelTopImage: TPanel;//container for header components
     ImageHeader: TImage;
@@ -88,7 +90,7 @@ type
     (* ToolBar *)
     PanelToolbar: TPanel;//container for toolbar components
     ProgressBarPleaseWait: TProgressBar;
-    SpeedButtonExpertMode: TSpeedButton;//switch to expert mode
+    SpeedButtonSearch: TSpeedButton;
      { Buttons to filter products }
     SpeedButtonAll: TSpeedButton;//show all products
     SpeedButtonUpdates: TSpeedButton;// show only products where an update is available
@@ -100,7 +102,7 @@ type
     ImageViewmag: TImage;
     SpeedButtonClearSearchEdit: TSpeedButton;
      { Info }
-    BitBtnInfo: TBitBtn;//show info about opsiclientkiosk
+    BitBtnHelp: TBitBtn;//show info about opsiclientkiosk
     (* Expert mode *)
     PanelExpertMode: TPanel;//container for expert mode components
     RadioGroupView: TRadioGroup;//toggle between list and tiles view
@@ -169,12 +171,12 @@ type
   (*         Methods            *)
   (*----------------------------*)
     { BItBtn }
-    procedure BitBtnInfoClick(Sender: TObject);
+    procedure BitBtnHelpClick(Sender: TObject);
     procedure BitBtnShowActionClick(Sender: TObject);
     procedure BitBtnInstallNowClick(Sender: TObject);
     procedure BitBtnToggleViewClick(Sender: TObject);
     procedure BitBtnCancelClick(Sender: TObject);
-    procedure ButtonSaveImagesOnServerClick(Sender: TObject);
+    procedure ButtonSaveImagesOnShareClick(Sender: TObject);
     { ButtonSoftware }
     procedure ButtonSoftwareBackClick(Sender: TObject);
     procedure ButtonSoftwareInstallClick(Sender: TObject);
@@ -206,13 +208,14 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure ImageScreenShotMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure RadioGroupViewClick(Sender: TObject);
     procedure RadioGroupViewSelectionChanged(Sender: TObject);
     { ScrollBoxAllTiles }
     procedure ScrollBoxAllTilesMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
     { SpeedButtons }
     procedure SpeedButtonClearSearchEditClick(Sender: TObject);
-    procedure SpeedButton1Click(Sender: TObject);
+    procedure SpeedButtonSearchClick(Sender: TObject);
     procedure SpeedButtonActionsClick(Sender: TObject);
     procedure SpeedButtonReloadClick(Sender: TObject);
     procedure SpeedButtonNotInstalledClick(Sender: TObject);
@@ -231,7 +234,8 @@ type
     SelectedPanelIndex : integer;  //TileIndex e.g. Tag
     SelectedProduct : String; //ProductID
     FilteredProductIDs : TStringList;
-    StringListIcons : TStringList;
+    StringListDefaultIcons : TStringList;
+    StringListCustomIcons :TStringList;
     StringListScreenshots :TStringList;
     StartUpDone : boolean;
     ArrayProductPanels: TPanels;
@@ -257,6 +261,7 @@ type
     procedure SetView;
     procedure SetListView;
     procedure SetTilesView;
+    { Show }
     procedure ShowSoftwareButtonsDependendOnState(const ProductPanel: TProductPanel);
     procedure ShowPagePleaseWait;
     { Product Details}
@@ -294,12 +299,13 @@ var
 
 resourcestring
   {General Buttons and Labels}
-  rsActRequest = 'Action Request';
+  rsActRequest = 'Action request';
   rsActSetup = 'Setup';
   rsActUninstall = 'Uninstall';
   rsActNone = 'None';
   rsAction = 'Action';
   rsActions = 'Actions';
+  rsDisabled = 'disabled';
   rsInstall = 'Install';
   rsInstalled = 'Installed';
   rsInstallNow = 'Install now';
@@ -311,15 +317,15 @@ resourcestring
   rsViewTiles = 'Tiles';
   rsConnectedTo = 'Connected to';
   rsAs = 'as';
-  rsStoreActions = 'Store Actions';
+  rsStoreActions = 'Store actions';
   rsBack = '<-- Back';
   rsAll = 'All';
-  rsExpertMode = 'Expert Mode';
+
   rsReload = 'Reload';
-  rsRequestDone = 'Request done. %s';
+  //rsRequestDone = 'Request done. %s';
   rsLabelInfoLoadData = 'Please wait while communicating with OPSI web server ...';
-  rsLabelInfoTiles = 'Please wait while building tiles';
-  rsLabelDataLoadTiles = 'Fill Tiles';
+  rsLabelInfoTiles = 'Please wait while building tiles.';
+  rsLabelDataLoadTiles = 'Fill tiles';
   rsLabelDataLoadLoading ='Loading product data from server';
   rsLabelDataLoadCommunicating = 'Communicating with server ...';
   rsLabelDetailConnecting = 'Connecting to server';
@@ -369,11 +375,10 @@ const
   clUnknown = clRed;
 
 var
-  //Path to Icons
-  IconPathCustom : String;
-  IconPathDefault: String;
-  //Path to screenshots
-  ScreenshotPath: String;
+  //Path to icons and screenshots
+  PathCustomIcons: String;
+  PathDefaultIcons :String;
+  PathScreenshots: String;
 
 
 function ActionRequestToLocale(actionRequest: string): string;
@@ -425,7 +430,7 @@ begin
     //font.Italic := tile_Font_Italic;
     //font.Underline := tile_Font_Underline;
     self.OnMouseWheel := scroll;
-    LoadSkinPanel(Application.Location + 'skin' + PathDelim);
+    LoadSkinPanel(Application.Location + 'default'+ PathDelim + 'skin' + PathDelim);
 
 
     //Shape (just for looking nice)
@@ -489,7 +494,8 @@ begin
       OnMouseEnter := ProductPanelMouseEnter;
       OnMouseLeave := ProductPanelMouseLeave;
     end;
-    LoadSkinLabelAction(Application.Location + 'skin' + PathDelim);
+    LoadSkinLabelAction(Application.Location + 'default'+ PathDelim + 'skin' +
+      PathDelim);
 
 
     //program icon
@@ -506,6 +512,7 @@ begin
       Align:= alNone;
       Top:=35;
       Left:=40;
+      Picture.LoadFromFile(PathDefaultIcons + 'opsi-logo.png');
       //BorderSpacing.Around := 0;
       OnClick := ProductPanelClick;//ProductTileChildClick;
       OnMouseUp := ProductPanelMouseUp;
@@ -684,15 +691,10 @@ begin
       PanelToolbar.Visible := False;
       LabelSoftwareName.Caption := ProductPanel.LabelName.Caption; //ArrayAllProductTiles[SelectedProductIndex].LabelName.Caption;
       ImageIconSoftware.Picture:= ProductPanel.ImageIcon.Picture; //ArrayAllProductTiles[SelectedProductIndex].ImageIcon.Picture;
-      if FileExists(ScreenshotPath + StringListScreenshots.Values[ProductPanel.ProductID]) then
+      if FileExists(PathScreenshots + StringListScreenshots.Values[ProductPanel.ProductID]) then
        ImageScreenShot.Picture.LoadFromFile
-         (ScreenshotPath + StringListScreenshots.Values[ProductPanel.ProductID])
-      else
-        if FileExists (ScreenshotPath + 'no_screenshot.png') then
-            ImageScreenShot.Picture.LoadFromFile
-           (ScreenshotPath + 'no_screenshot.png');
-
-      { View Buttons dependend on state}
+         (PathScreenshots + StringListScreenshots.Values[ProductPanel.ProductID]);
+       { View Buttons dependend on state}
       ShowSoftwareButtonsDependendOnState(ProductPanel);
     end;
   finally
@@ -702,14 +704,19 @@ end;
 
 procedure TProductPanel.SetIcon(ProductPanel:TProductPanel);
 var
-  IconPath:String;
+  FilePath:String;
+  Index : integer;
+  gefunden :boolean;
 begin
+  gefunden := False;
   if FormOpsiClientKiosk.OpenPictureDialogSetIcon.Execute then
   begin
-    IconPath := FormOpsiClientKiosk.OpenPictureDialogSetIcon.FileName;
-    ProductPanel.ImageIcon.Picture.LoadFromFile(IconPath);
-    ProductPanel.ImageIcon.Picture.SaveToFile(IconPathCustom+ExtractFileName(IconPath));
-    FormOpsiClientKiosk.StringListIcons.Add(ProductPanel.ProductID + '=' + ExtractFileName(IconPath));
+    FilePath := FormOpsiClientKiosk.OpenPictureDialogSetIcon.FileName;
+    ProductPanel.ImageIcon.Picture.LoadFromFile(FilePath);
+    ProductPanel.ImageIcon.Picture.SaveToFile(PathCustomIcons+ExtractFileName(FilePath));
+    if FormOpsiClientKiosk.StringListCustomIcons.Values[ProductPanel.ProductID] = '' then
+      FormOpsiClientKiosk.StringListCustomIcons.Add(ProductPanel.ProductID + '=' + ExtractFileName(FilePath))
+    else FormOpsiClientKiosk.StringListCustomIcons.Values[ProductPanel.ProductID] := ExtractFileName(FilePath);
   end;
 end;
 
@@ -814,18 +821,15 @@ begin
              DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString;
       fArrayProductPanels[counter].LabelName.Caption :=
         DataModuleOCK.SQLQueryProductData.FieldByName('ProductName').AsString;
-      if FileExists(IconPathCustom + StringListIcons.Values[ProductID]) then
+      {Set Product Icons}
+      if FileExists(PathCustomIcons + StringListCustomIcons.Values[ProductID]) then
         fArrayProductPanels[counter].ImageIcon.Picture.LoadFromFile(
-          IconPathCustom + StringListIcons.Values[ProductID])
+          PathCustomIcons + StringListCustomIcons.Values[ProductID])
       else
-        if FileExists(IconPathDefault + ProductID + '.png') then
+        if FileExists(PathDefaultIcons + StringListDefaultIcons.Values[ProductID]) then
           fArrayProductPanels[counter].ImageIcon.Picture.LoadFromFile(
-            IconPathDefault + ProductID + '.png')
-        else
-          if FileExists(IconPathDefault + 'opsi-logo.png') then
-            fArrayProductPanels[counter].ImageIcon.Picture.LoadFromFile(
-              IconPathDefault + 'opsi-logo.png');
-      state := DataModuleOCK.SQLQueryProductData.FieldByName(
+            PathDefaultIcons + StringListDefaultIcons.Values[ProductID]);
+       state := DataModuleOCK.SQLQueryProductData.FieldByName(
         'InstallationStatus').AsString;
       if state = 'installed' then
       begin
@@ -881,12 +885,29 @@ begin
     ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.installation-now-button');
     //ShowMessage(ConfigState.Text);
     SoftwareOnDemand := StrToBool(ConfigState.Strings[0]);
+    if not SoftwareOnDemand then Caption := Caption + ' - ' + rsInstallNow + ': ' + rsDisabled;
+    if SoftwareOnDemand then
+    begin
+      BitBtnInstallNow.Caption := rsInstallNow;
+      BitBtnInstallNow.Hint := rsInstallNowHint;
+      BitBtnInstallNow.Visible:= True;
+    end
+    else BitBtnInstallNow.Visible:= False;
+
 
     ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.admin-mode');
     //ShowMessage(ConfigState.Text);
     AdminMode := StrToBool(ConfigState.Strings[0]);
-
-    //FormProgressWindow.ProgressBarDetail.Position := 100;
+    if AdminMode then
+    begin
+      Caption := Caption + ' - Admin mode';
+      ButtonSaveImagesOnShare.Visible := True;
+    end
+    else
+    begin
+      ButtonSaveImagesOnShare.Visible := False;
+    end;
+     //FormProgressWindow.ProgressBarDetail.Position := 100;
     //Application.ProcessMessages;
     ConfigState.Free;
 end;
@@ -917,7 +938,7 @@ begin
   end;
 end;
 
-procedure TFormOpsiClientKiosk.LoadStringListFromFile(StringList: TStringList;
+procedure TFormOpsiClientKiosk.LoadStringListFromFile(StringList: TstringList;
   Path: String);
 begin
   try
@@ -999,7 +1020,7 @@ begin
   begin
     DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString := Request;// to local database
     ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := rsAction+': ' + Request;
-    ShowMessage(Format(rsRequestDone, [ArrayProductPanels[SelectedPanelIndex].LabelName.Caption + Message]));
+    ShowMessage(ArrayProductPanels[SelectedPanelIndex].LabelName.Caption + Message);
     ButtonSoftwareUninstall.Visible:= False;
     ButtonSoftwareInstall.Visible:= False;
     ButtonSoftwareUpdate.Enabled:= False;
@@ -1027,7 +1048,7 @@ begin
     DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString := Request;// to local database
     ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := rsAction+': ' + Request;
   end;
-  ShowMessage(Format(rsRequestDone, [ArrayProductPanels[SelectedPanelIndex].LabelName.Caption + Message]));
+  ShowMessage(ArrayProductPanels[SelectedPanelIndex].LabelName.Caption + Message);
   DataModuleOCK.SQLQueryProductData.Post;
   DataModuleOCK.SQLQueryProductData.Open;
   Screen.Cursor := crDefault;
@@ -1061,7 +1082,7 @@ end;
 procedure TFormOpsiClientKiosk.SetView;
 begin
   DataModuleOCK.SQLQueryProductData.Open;
-  if SpeedButtonExpertMode.Down
+  if FormHelpInfo.CheckBoxExpertMode.Checked
     and (RadioGroupview.ItemIndex = RadioGroupView.Items.IndexOf(rsViewList))
   then SetListView
   else SetTilesView;
@@ -1138,6 +1159,7 @@ begin
     NotebookProducts.PageIndex:= 1;
   end;
 end;
+
 
 procedure TFormOpsiClientKiosk.ShowSoftwareButtonsDependendOnState(
   const ProductPanel: TProductPanel);
@@ -1238,19 +1260,10 @@ begin
   end;
 end;
 
-procedure TFormOpsiClientKiosk.SpeedButton1Click(Sender: TObject);
+procedure TFormOpsiClientKiosk.SpeedButtonSearchClick(Sender: TObject);
 begin
-  EditSearch.Clear;
-  DataModuleOCK.SQLQueryProductData.Filtered := False;
-  //DataModuleOCK.SQLQueryProductData.Filter := ' not ((ActionRequest = "") and (ActionRequest = "none"))';
-  DataModuleOCK.SQLQueryProductData.Filter := 'ActionRequest <> ""';
-  DataModuleOCK.SQLQueryProductData.Filtered := True;
-  if DataModuleOCK.SQLQueryProductData.EOF then
-  begin
-    DBComboBox1.Enabled := False;
-    DBGrid1.Enabled:= False;
-  end
-  else SetView;
+   if PanelSearchMask.Visible then PanelSearchMask.Hide
+   else PanelSearchMask.Show;
 end;
 
 procedure TFormOpsiClientKiosk.SpeedButtonActionsClick(Sender: TObject);
@@ -1334,9 +1347,11 @@ var
   counter, i: integer;
 begin
   FilteredProductIDs.Free;
-  SaveStringListToFile(StringListIcons, IconPathCustom +'IconsList.txt');
-  StringListIcons.Free;
-  SaveStringListToFile(StringListScreenshots, ScreenshotPath +'ScreenshotsList.txt');
+  StringListDefaultIcons.Free;
+  { Save Custom changes on client}
+  SaveStringListToFile(StringListCustomIcons, PathCustomIcons +'IconsList.txt');
+  StringListCustomIcons.Free;
+  SaveStringListToFile(StringListScreenshots, PathScreenshots +'ScreenshotsList.txt');
   StringListScreenshots.Free;
   DataModuleOCK.Free;
   OCKOpsiConnection.Free;
@@ -1374,15 +1389,20 @@ end;
 procedure TFormOpsiClientKiosk.ImageIconSoftwareMouseUp(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var
-  IconPath:String;
+  FilePath:String;
 begin
   if (AdminMode and (Button = mbRight)) then
     if OpenPictureDialogSetIcon.Execute then
     begin
-      IconPath := OpenPictureDialogSetIcon.FileName;
-      ImageIconSoftware.Picture.LoadFromFile(IconPath);
-      ImageIconSoftware.Picture.SaveToFile(IconPathCustom+ExtractFileName(IconPath));
-      StringListIcons.Add(SelectedProduct + '=' + ExtractFileName(IconPath));
+      FilePath := OpenPictureDialogSetIcon.FileName;
+      ImageIconSoftware.Picture.LoadFromFile(FilePath);
+      ImageIconSoftware.Picture.SaveToFile(PathCustomIcons+ExtractFileName(FilePath));
+      if FormOpsiClientKiosk.StringListCustomIcons.Values
+          [SelectedProduct] = '' then
+        FormOpsiClientKiosk.StringListCustomIcons.Add
+          (SelectedProduct + '=' + ExtractFileName(FilePath))
+      else FormOpsiClientKiosk.StringListCustomIcons.Values
+             [SelectedProduct] := ExtractFileName(FilePath);
     end;
 end;
 
@@ -1390,16 +1410,27 @@ end;
 procedure TFormOpsiClientKiosk.ImageScreenShotMouseUp(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var
-  IconPath:String;
+  FilePath:String;
 begin
   if (AdminMode and (Button = mbRight)) then
     if OpenPictureDialogSetIcon.Execute then
     begin
-      IconPath := OpenPictureDialogSetIcon.FileName;
-      ImageScreenShot.Picture.LoadFromFile(IconPath);
-      ImageScreenShot.Picture.SaveToFile(ScreenShotPath+ExtractFileName(IconPath));
-      StringListScreenshots.Add(SelectedProduct + '=' + ExtractFileName(IconPath));
+      FilePath := OpenPictureDialogSetIcon.FileName;
+      ImageScreenShot.Picture.LoadFromFile(FilePath);
+      ImageScreenShot.Picture.SaveToFile(PathScreenShots+ExtractFileName(FilePath));
+      if FormOpsiClientKiosk.StringListScreenShots.Values
+           [SelectedProduct] = '' then
+        FormOpsiClientKiosk.StringListScreenShots.Add
+          (SelectedProduct + '=' + ExtractFileName(FilePath))
+      else FormOpsiClientKiosk.StringListScreenShots.Values
+             [SelectedProduct] := ExtractFileName(FilePath);
+
     end;
+end;
+
+procedure TFormOpsiClientKiosk.RadioGroupViewClick(Sender: TObject);
+begin
+
 end;
 
 procedure TFormOpsiClientKiosk.DBGrid1Exit(Sender: TObject);
@@ -1450,8 +1481,9 @@ procedure TFormOpsiClientKiosk.ButtonSoftwareBackClick(Sender: TObject);
 begin
   //DataModuleOCK.SQLQueryProductData.Close;
   //DataModuleOCK.SQLTransaction.Commit;
+  ImageScreenShot.Picture.Clear;
   ArrayProductPanels[SelectedPanelIndex].ImageIcon.Picture := ImageIconSoftware.Picture;
-  if SpeedButtonExpertMode.Down then FormOpsiClientKiosk.PanelExpertMode.Visible := True;
+  if FormHelpInfo.CheckBoxExpertMode.Checked then FormOpsiClientKiosk.PanelExpertMode.Visible := True;
   FormOpsiClientKiosk.PanelToolbar.Visible := True;
   FormOpsiClientKiosk.NotebookProducts.PageIndex:=1;
 end;
@@ -1491,8 +1523,8 @@ begin
   DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString := '';// to local database
   ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := '';
   ShowSoftwareButtonsDependendOnState(ArrayProductPanels[SelectedPanelIndex]);
-  ShowMessage(Format(rsRequestDone, [rsActionRemovedFor + ' '
-    + ArrayProductPanels[SelectedPanelIndex].LabelName.Caption]));
+  ShowMessage(rsActionRemovedFor + ' '
+    + ArrayProductPanels[SelectedPanelIndex].LabelName.Caption);
   DataModuleOCK.SQLQueryProductData.Post;
   DataModuleOCK.SQLQueryProductData.Open;
   Screen.Cursor := crDefault;
@@ -1647,12 +1679,9 @@ begin
   else SetView;
 end;
 
-procedure TFormOpsiClientKiosk.BitBtnInfoClick(Sender: TObject);
+procedure TFormOpsiClientKiosk.BitBtnHelpClick(Sender: TObject);
 begin
-  ShowMessage('opsi-kiosk-client' + LineEnding + 'Display language: ' +
-    GetDefaultLang + Lineending + 'Version: ' + ProgramInfo.Version + Lineending +
-    'CopyRight: uib gmbh (http://uib.de) under AGPLv3' + LineEnding +
-    'http://opsi.org' + Lineending + 'Credits to: Lazarus/FPC,indy,sqllite,superobject');
+  FormHelpInfo.Show;
 end;
 
 procedure TFormOpsiClientKiosk.BitBtnInstallNowClick(Sender: TObject);
@@ -1756,16 +1785,9 @@ end;
 procedure TFormOpsiClientKiosk.SpeedButtonExpertModeClick(Sender: TObject);
 begin
   { Expert mode }
-  if SpeedButtonExpertMode.Down then
+  if FormHelpInfo.CheckBoxExpertMode.Checked then
   begin
     { Expert view }
-    if SoftwareOnDemand then
-    begin
-      BitBtnInstallNow.Caption := rsInstallNow;
-      BitBtnInstallNow.Hint := rsInstallNowHint;
-      BitBtnInstallNow.Visible:= True;
-    end
-    else BitBtnInstallNow.Visible:= False;
     PanelExpertMode.Visible := True;
     SetView;
     //NotebookProducts.PageIndex := RadioGroupView.ItemIndex;
@@ -1845,6 +1867,21 @@ begin
       StartupDone := True;
     end;
   end;//end of: if not StartupDone
+   { Expert mode }
+  if FormHelpInfo.CheckBoxExpertMode.Checked then
+  begin
+    { Expert view }
+    PanelExpertMode.Visible := True;
+    SetView;
+    //NotebookProducts.PageIndex := RadioGroupView.ItemIndex;
+  end
+  else
+  { Standard mode }
+  begin
+    PanelExpertMode.Visible := False;
+    PanelProductDetail.Height := 0;
+    SetTilesView;
+  end;
 end;
 
 procedure TFormOpsiClientKiosk.FormShow(Sender: TObject);
@@ -1979,11 +2016,12 @@ begin
   //ShowMessage('Form Create');
 
   { Init Variables }
+
   StartUpDone := False;
   ClientdMode := True;
-  //AdminMode := True; //read from host parameter property (default should be false)
   FilteredProductIDs := TStringList.Create;
-  StringListIcons := TStringList.Create;
+  StringListDefaultIcons := TStringList.Create;
+  StringListCustomIcons := TStringList.Create;
   StringListScreenshots := TStringList.Create;
   SpeedButtonAll.Down := True;
   SpeedButtonLastClicked := SpeedButtonAll;
@@ -1991,21 +2029,30 @@ begin
   NotebookProducts.PageIndex := 1;  //tiles
   PanelProductDetail.Height := 0;
   detail_visible := False;
-  { Path to programm icons }
-  IconPathCustom := Application.Location + 'product_icons' + PathDelim + 'custom' + PathDelim;
-  IconPathDefault := Application.Location + 'product_icons' + PathDelim + 'default' + PathDelim;
-  { Path to screenshots }
-  ScreenshotPath := Application.Location  + 'screenshots' + PathDelim;
-  LogDatei.log('IconPathDefault: ' + IconPathDefault, LLInfo);
-  LogDatei.log('IconPathCustom: ' + IconPathCustom, LLInfo);
-  LogDatei.log('ScreenshotPath: ' + ScreenshotPath, LLInfo);
+  PathDefaultIcons := Application.Location+ 'default' + PathDelim +
+    'product_icons' + PathDelim;
+  PathCustomIcons := Application.Location+ 'ock_custom' + PathDelim +
+    'product_icons' + PathDelim;
+  PathScreenshots := Application.Location+ 'ock_custom' + PathDelim +
+   'screenshots' + PathDelim;
+  LogDatei.log('Default icon path: ' + PathDefaultIcons, LLinfo);
+  LogDatei.log('Custom icon path: ' + PathCustomIcons, LLinfo);
+  LogDatei.log('Screenshot path: ' + PathScreenshots, LLinfo);
   { Load assignment of image paths to product IDs }
-  LoadStringListFromFile(StringListIcons, IconPathCustom + 'IconsList.txt');
-  LoadStringListFromFile(StringListScreenshots, ScreenshotPath + 'ScreenshotsList.txt');
+  try
+    if FileExists(PathDefaultIcons + 'IconsList.txt') then
+      LoadStringListFromFile(StringListDefaultIcons, PathDefaultIcons + 'IconsList.txt');
+    if FileExists(PathCustomIcons + 'IconsList.txt') then
+      LoadStringListFromFile(StringListCustomIcons, PathCustomIcons + 'IconsList.txt');
+    if FileExists(PathScreenshots + 'ScreenshotsList.txt') then
+      LoadStringListFromFile(StringListScreenshots, PathScreenshots + 'ScreenshotsList.txt');
+  except
+    LogDatei.log('Error while loading Images (Icons and/or Screenshots)',LLError);
+  end;
 
-  { Load custom skin }
+  { Load skin }
   { Set skin for LabelTitle }
-   skinpath := Application.Location + 'opsiclientkioskskin' + PathDelim;
+  skinpath := Application.Location + 'opsiclientkioskskin' + PathDelim;
   if FileExistsUTF8(skinpath + 'opsiclientkiosk.png') then
   begin
     ImageHeader.Picture.LoadFromFile(skinpath + 'opsiclientkiosk.png');
@@ -2014,9 +2061,10 @@ begin
   begin
     LoadSkinForTitle(skinpath);
   end;
-   { skinpath in opsiclientagent custom dir }
+
+  { skinpath in opsiclientagent custom dir }
   skinpath := Application.Location +
-    '..\custom\opsiclientkioskskin' + PathDelim;
+    'custom\skin' + PathDelim;
   if FileExistsUTF8(skinpath + 'opsiclientkiosk.png') then
   begin
     ImageHeader.Picture.LoadFromFile(skinpath + 'opsiclientkiosk.png');
@@ -2025,6 +2073,7 @@ begin
   begin
     LoadSkinForTitle(skinpath);
   end;
+
 
   try
     { quick check parameters }
@@ -2064,6 +2113,7 @@ begin
     ListOptions.free;
   end;
   //grouplist.Clear;
+  Caption := Caption + ' (Version ' + ProgramInfo.Version + ') ';
   InitDBGrids;
 
   (*****************)
@@ -2195,7 +2245,7 @@ begin
   halt;
 end;
 
-procedure TFormOpsiClientKiosk.ButtonSaveImagesOnServerClick(Sender: TObject);
+procedure TFormOpsiClientKiosk.ButtonSaveImagesOnShareClick(Sender: TObject);
 begin
   FormSaveImagesOnShare.ShowModal;
 end;
