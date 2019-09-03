@@ -131,13 +131,13 @@
     </PublishOptions>
     <RunParams>
       <local>
-        <CommandLineParams Value="--fqdn=pcjan.uib.local  --lang=de"/>
+        <CommandLineParams Value="--fqdn=desktop-7m12c9f.uib.local  --lang=de"/>
       </local>
       <FormatVersion Value="2"/>
       <Modes Count="1">
         <Mode0 Name="default">
           <local>
-            <CommandLineParams Value="--fqdn=pcjan.uib.local  --lang=de"/>
+            <CommandLineParams Value="--fqdn=desktop-7m12c9f.uib.local  --lang=de"/>
           </local>
         </Mode0>
       </Modes>
