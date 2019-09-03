@@ -100,11 +100,6 @@ msgstr "Do you want to uninstall "
 msgid "Do you want to update "
 msgstr "Do you want to update "
 
-#: opsiclientkioskgui.rsexpertmode
-msgctxt "opsiclientkioskgui.rsexpertmode"
-msgid "Expert mode"
-msgstr "Expert mode"
-
 #: opsiclientkioskgui.rsinstall
 msgctxt "opsiclientkioskgui.rsinstall"
 msgid "Install"
@@ -284,14 +279,30 @@ msgctxt "TFINSTALLDLG.LABEL1.CAPTION"
 msgid "The following Actions will be done:"
 msgstr "The following Actions will be done:"
 
+#: tformhelpinfo.buttonabout.caption
+msgid "About client kiosk"
+msgstr ""
+
+#: tformhelpinfo.buttonclose.caption
+msgid "Close"
+msgstr ""
+
 #: tformhelpinfo.caption
-msgid "FormHelpInfo"
+#, fuzzy
+#| msgid "FormHelpInfo"
+msgctxt "tformhelpinfo.caption"
+msgid "Help"
 msgstr "FormHelpInfo"
 
-#: tformopsiclientkiosk.bitbtninfo.caption
-msgctxt "tformopsiclientkiosk.bitbtninfo.caption"
-msgid "Info"
-msgstr "Info"
+#: tformhelpinfo.checkboxexpertmode.caption
+msgctxt "tformhelpinfo.checkboxexpertmode.caption"
+msgid "Expert mode"
+msgstr ""
+
+#: tformopsiclientkiosk.bitbtnhelp.caption
+msgctxt "tformopsiclientkiosk.bitbtnhelp.caption"
+msgid "Help"
+msgstr ""
 
 #: tformopsiclientkiosk.bitbtninstallnow.caption
 msgctxt "tformopsiclientkiosk.bitbtninstallnow.caption"
@@ -420,6 +431,10 @@ msgctxt "tformopsiclientkiosk.labelverstr.caption"
 msgid "Version at Server"
 msgstr "Version at Server"
 
+#: tformopsiclientkiosk.panelsearchmask.caption
+msgid "PanelSearchMask"
+msgstr ""
+
 #: tformopsiclientkiosk.panelsoftwarescreenshot.caption
 msgctxt "tformopsiclientkiosk.panelsoftwarescreenshot.caption"
 msgid "No screenshot available"
@@ -449,11 +464,6 @@ msgstr "Show all List entries (No Filter)"
 msgctxt "tformopsiclientkiosk.speedbuttonclearsearchedit.caption"
 msgid "X"
 msgstr "X"
-
-#: tformopsiclientkiosk.speedbuttonexpertmode.caption
-msgctxt "tformopsiclientkiosk.speedbuttonexpertmode.caption"
-msgid "Expert mode"
-msgstr "Expert mode"
 
 #: tformopsiclientkiosk.speedbuttonnotinstalled.caption
 msgctxt "tformopsiclientkiosk.speedbuttonnotinstalled.caption"

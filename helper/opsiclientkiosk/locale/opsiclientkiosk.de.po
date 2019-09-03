@@ -102,11 +102,6 @@ msgstr "Möchten Sie folgendes Produkt deinstallieren: "
 msgid "Do you want to update "
 msgstr "Möchten Sie folgendes Produkt aktualisieren: "
 
-#: opsiclientkioskgui.rsexpertmode
-msgctxt "opsiclientkioskgui.rsexpertmode"
-msgid "Expert mode"
-msgstr "Expertenmodus"
-
 #: opsiclientkioskgui.rsinstall
 msgctxt "opsiclientkioskgui.rsinstall"
 msgid "Install"
@@ -286,14 +281,28 @@ msgctxt "TFINSTALLDLG.LABEL1.CAPTION"
 msgid "The following Actions will be done:"
 msgstr "Die folgenden Aktionen werden ausgeführt werden:"
 
-#: tformhelpinfo.caption
-msgid "FormHelpInfo"
+#: tformhelpinfo.buttonabout.caption
+msgid "About client kiosk"
 msgstr ""
 
-#: tformopsiclientkiosk.bitbtninfo.caption
-msgctxt "tformopsiclientkiosk.bitbtninfo.caption"
-msgid "Info"
-msgstr "Info"
+#: tformhelpinfo.buttonclose.caption
+msgid "Close"
+msgstr ""
+
+#: tformhelpinfo.caption
+msgctxt "tformhelpinfo.caption"
+msgid "Help"
+msgstr ""
+
+#: tformhelpinfo.checkboxexpertmode.caption
+msgctxt "tformhelpinfo.checkboxexpertmode.caption"
+msgid "Expert mode"
+msgstr ""
+
+#: tformopsiclientkiosk.bitbtnhelp.caption
+msgctxt "tformopsiclientkiosk.bitbtnhelp.caption"
+msgid "Help"
+msgstr ""
 
 #: tformopsiclientkiosk.bitbtninstallnow.caption
 msgctxt "tformopsiclientkiosk.bitbtninstallnow.caption"
@@ -422,6 +431,10 @@ msgctxt "tformopsiclientkiosk.labelverstr.caption"
 msgid "Version at Server"
 msgstr "Version auf dem Server"
 
+#: tformopsiclientkiosk.panelsearchmask.caption
+msgid "PanelSearchMask"
+msgstr ""
+
 #: tformopsiclientkiosk.panelsoftwarescreenshot.caption
 msgctxt "tformopsiclientkiosk.panelsoftwarescreenshot.caption"
 msgid "No screenshot available"
@@ -451,11 +464,6 @@ msgstr "Zeige alle Einträge (Kein Filter)"
 msgctxt "tformopsiclientkiosk.speedbuttonclearsearchedit.caption"
 msgid "X"
 msgstr "X"
-
-#: tformopsiclientkiosk.speedbuttonexpertmode.caption
-msgctxt "tformopsiclientkiosk.speedbuttonexpertmode.caption"
-msgid "Expert mode"
-msgstr "Expertenmodus"
 
 #: tformopsiclientkiosk.speedbuttonnotinstalled.caption
 msgctxt "tformopsiclientkiosk.speedbuttonnotinstalled.caption"

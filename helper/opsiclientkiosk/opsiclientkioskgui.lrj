@@ -4,12 +4,8 @@
 {"hash":208308883,"name":"tformopsiclientkiosk.speedbuttonupdates.caption","sourcebytes":[85,112,100,97,116,101,115],"value":"Updates"},
 {"hash":5361593,"name":"tformopsiclientkiosk.speedbuttonall.hint","sourcebytes":[83,104,111,119,32,97,108,108,32,76,105,115,116,32,101,110,116,114,105,101,115,32,40,78,111,32,70,105,108,116,101,114,41],"value":"Show all List entries (No Filter)"},
 {"hash":18476,"name":"tformopsiclientkiosk.speedbuttonall.caption","sourcebytes":[65,108,108],"value":"All"},
-{"hash":88,"name":"tformopsiclientkiosk.speedbuttonclearsearchedit.caption","sourcebytes":[88],"value":"X"},
-{"hash":58047044,"name":"tformopsiclientkiosk.editsearch.hint","sourcebytes":[83,101,97,114,99,104,32,105,110,32,80,114,111,100,117,99,116,108,105,115,116],"value":"Search in Productlist"},
-{"hash":94079128,"name":"tformopsiclientkiosk.editsearch.texthint","sourcebytes":[83,101,97,114,99,104],"value":"Search"},
 {"hash":264397492,"name":"tformopsiclientkiosk.speedbuttonnotinstalled.caption","sourcebytes":[78,111,116,32,105,110,115,116,97,108,108,101,100],"value":"Not installed"},
-{"hash":153867109,"name":"tformopsiclientkiosk.speedbuttonexpertmode.caption","sourcebytes":[69,120,112,101,114,116,32,109,111,100,101],"value":"Expert mode"},
-{"hash":328911,"name":"tformopsiclientkiosk.bitbtninfo.caption","sourcebytes":[73,110,102,111],"value":"Info"},
+{"hash":322608,"name":"tformopsiclientkiosk.bitbtnhelp.caption","sourcebytes":[72,101,108,112],"value":"Help"},
 {"hash":128648723,"name":"tformopsiclientkiosk.speedbuttonactions.caption","sourcebytes":[65,99,116,105,111,110,115],"value":"Actions"},
 {"hash":148938994,"name":"tformopsiclientkiosk.statusbar1.panels[0].text","sourcebytes":[78,111,116,32,67,111,110,110,101,99,116,101,100,32,116,111,32,111,112,115,105,32,115,101,114,118,101,114],"value":"Not Connected to opsi server"},
 {"hash":46499195,"name":"tformopsiclientkiosk.labeltitle.caption","sourcebytes":[111,112,115,105,32,67,108,105,101,110,116,32,75,105,111,115,107],"value":"opsi Client Kiosk"},
@@ -40,5 +36,9 @@
 {"hash":5962876,"name":"tformopsiclientkiosk.buttonsoftwareuninstall.caption","sourcebytes":[85,110,105,110,115,116,97,108,108],"value":"Uninstall"},
 {"hash":247383166,"name":"tformopsiclientkiosk.buttonsoftwareremoveaction.caption","sourcebytes":[82,101,109,111,118,101,32,97,99,116,105,111,110],"value":"Remove action"},
 {"hash":75149406,"name":"tformopsiclientkiosk.labelsoftwareactionrequest.caption","sourcebytes":[65,99,116,105,111,110],"value":"Action"},
-{"hash":186149486,"name":"tformopsiclientkiosk.labelpleasewait.caption","sourcebytes":[80,108,101,97,115,101,32,119,97,105,116,46,32,73,110,115,116,97,108,108,105,110,103,47,117,110,105,110,115,116,97,108,108,105,110,103,32,112,114,111,100,117,99,116,115,46],"value":"Please wait. Installing/uninstalling products."}
+{"hash":186149486,"name":"tformopsiclientkiosk.labelpleasewait.caption","sourcebytes":[80,108,101,97,115,101,32,119,97,105,116,46,32,73,110,115,116,97,108,108,105,110,103,47,117,110,105,110,115,116,97,108,108,105,110,103,32,112,114,111,100,117,99,116,115,46],"value":"Please wait. Installing/uninstalling products."},
+{"hash":207549851,"name":"tformopsiclientkiosk.panelsearchmask.caption","sourcebytes":[80,97,110,101,108,83,101,97,114,99,104,77,97,115,107],"value":"PanelSearchMask"},
+{"hash":88,"name":"tformopsiclientkiosk.speedbuttonclearsearchedit.caption","sourcebytes":[88],"value":"X"},
+{"hash":58047044,"name":"tformopsiclientkiosk.editsearch.hint","sourcebytes":[83,101,97,114,99,104,32,105,110,32,80,114,111,100,117,99,116,108,105,115,116],"value":"Search in Productlist"},
+{"hash":94079128,"name":"tformopsiclientkiosk.editsearch.texthint","sourcebytes":[83,101,97,114,99,104],"value":"Search"}
 ]}

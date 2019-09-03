@@ -1,22 +1,50 @@
 object FormHelpInfo: TFormHelpInfo
-  Left = 466
-  Height = 348
-  Top = 248
-  Width = 341
-  Caption = 'FormHelpInfo'
-  ClientHeight = 348
-  ClientWidth = 341
+  Left = 598
+  Height = 334
+  Top = 190
+  Width = 379
+  Caption = 'Help'
+  ClientHeight = 334
+  ClientWidth = 379
   OnCreate = FormCreate
   LCLVersion = '2.0.4.0'
   object MemoInfo: TMemo
     Left = 0
-    Height = 180
-    Top = 168
-    Width = 341
+    Height = 296
+    Top = 0
+    Width = 381
+    Align = alCustom
     BorderStyle = bsNone
     Lines.Strings = (
       'MemoInfo'
     )
     TabOrder = 0
+  end
+  object ButtonAbout: TButton
+    Left = 128
+    Height = 25
+    Top = 301
+    Width = 121
+    AutoSize = True
+    Caption = 'About client kiosk'
+    OnClick = ButtonAboutClick
+    TabOrder = 1
+  end
+  object CheckBoxExpertMode: TCheckBox
+    Left = 9
+    Height = 19
+    Top = 307
+    Width = 86
+    Caption = 'Expert mode'
+    TabOrder = 2
+  end
+  object ButtonClose: TButton
+    Left = 296
+    Height = 25
+    Top = 301
+    Width = 75
+    Caption = 'Close'
+    OnClick = ButtonCloseClick
+    TabOrder = 3
   end
 end

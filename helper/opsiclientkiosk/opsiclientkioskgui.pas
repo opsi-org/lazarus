@@ -29,6 +29,7 @@ uses
   progresswindow,
   DefaultTranslator, ExtDlgs,
   proginfo,
+  helpinfo,
   imagestoshare;
 
 type
@@ -81,6 +82,7 @@ type
     LabelPleaseWait: TLabel;
     OpenPictureDialogSetIcon: TOpenPictureDialog;
     PagePleaseWait: TPage;
+    PanelSearchMask: TPanel;
     (* Head *)
     PanelTopImage: TPanel;//container for header components
     ImageHeader: TImage;
@@ -88,7 +90,7 @@ type
     (* ToolBar *)
     PanelToolbar: TPanel;//container for toolbar components
     ProgressBarPleaseWait: TProgressBar;
-    SpeedButtonExpertMode: TSpeedButton;//switch to expert mode
+    SpeedButtonSearch: TSpeedButton;
      { Buttons to filter products }
     SpeedButtonAll: TSpeedButton;//show all products
     SpeedButtonUpdates: TSpeedButton;// show only products where an update is available
@@ -100,7 +102,7 @@ type
     ImageViewmag: TImage;
     SpeedButtonClearSearchEdit: TSpeedButton;
      { Info }
-    BitBtnInfo: TBitBtn;//show info about opsiclientkiosk
+    BitBtnHelp: TBitBtn;//show info about opsiclientkiosk
     (* Expert mode *)
     PanelExpertMode: TPanel;//container for expert mode components
     RadioGroupView: TRadioGroup;//toggle between list and tiles view
@@ -169,7 +171,7 @@ type
   (*         Methods            *)
   (*----------------------------*)
     { BItBtn }
-    procedure BitBtnInfoClick(Sender: TObject);
+    procedure BitBtnHelpClick(Sender: TObject);
     procedure BitBtnShowActionClick(Sender: TObject);
     procedure BitBtnInstallNowClick(Sender: TObject);
     procedure BitBtnToggleViewClick(Sender: TObject);
@@ -206,13 +208,14 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure ImageScreenShotMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure RadioGroupViewClick(Sender: TObject);
     procedure RadioGroupViewSelectionChanged(Sender: TObject);
     { ScrollBoxAllTiles }
     procedure ScrollBoxAllTilesMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
     { SpeedButtons }
     procedure SpeedButtonClearSearchEditClick(Sender: TObject);
-    procedure SpeedButton1Click(Sender: TObject);
+    procedure SpeedButtonSearchClick(Sender: TObject);
     procedure SpeedButtonActionsClick(Sender: TObject);
     procedure SpeedButtonReloadClick(Sender: TObject);
     procedure SpeedButtonNotInstalledClick(Sender: TObject);
@@ -317,7 +320,7 @@ resourcestring
   rsStoreActions = 'Store actions';
   rsBack = '<-- Back';
   rsAll = 'All';
-  rsExpertMode = 'Expert mode';
+
   rsReload = 'Reload';
   //rsRequestDone = 'Request done. %s';
   rsLabelInfoLoadData = 'Please wait while communicating with OPSI web server ...';
@@ -1079,7 +1082,7 @@ end;
 procedure TFormOpsiClientKiosk.SetView;
 begin
   DataModuleOCK.SQLQueryProductData.Open;
-  if SpeedButtonExpertMode.Down
+  if FormHelpInfo.CheckBoxExpertMode.Checked
     and (RadioGroupview.ItemIndex = RadioGroupView.Items.IndexOf(rsViewList))
   then SetListView
   else SetTilesView;
@@ -1257,19 +1260,10 @@ begin
   end;
 end;
 
-procedure TFormOpsiClientKiosk.SpeedButton1Click(Sender: TObject);
+procedure TFormOpsiClientKiosk.SpeedButtonSearchClick(Sender: TObject);
 begin
-  EditSearch.Clear;
-  DataModuleOCK.SQLQueryProductData.Filtered := False;
-  //DataModuleOCK.SQLQueryProductData.Filter := ' not ((ActionRequest = "") and (ActionRequest = "none"))';
-  DataModuleOCK.SQLQueryProductData.Filter := 'ActionRequest <> ""';
-  DataModuleOCK.SQLQueryProductData.Filtered := True;
-  if DataModuleOCK.SQLQueryProductData.EOF then
-  begin
-    DBComboBox1.Enabled := False;
-    DBGrid1.Enabled:= False;
-  end
-  else SetView;
+   if PanelSearchMask.Visible then PanelSearchMask.Hide
+   else PanelSearchMask.Show;
 end;
 
 procedure TFormOpsiClientKiosk.SpeedButtonActionsClick(Sender: TObject);
@@ -1434,6 +1428,11 @@ begin
     end;
 end;
 
+procedure TFormOpsiClientKiosk.RadioGroupViewClick(Sender: TObject);
+begin
+
+end;
+
 procedure TFormOpsiClientKiosk.DBGrid1Exit(Sender: TObject);
 begin
   //PanelProductDetail.Height := 0;
@@ -1484,7 +1483,7 @@ begin
   //DataModuleOCK.SQLTransaction.Commit;
   ImageScreenShot.Picture.Clear;
   ArrayProductPanels[SelectedPanelIndex].ImageIcon.Picture := ImageIconSoftware.Picture;
-  if SpeedButtonExpertMode.Down then FormOpsiClientKiosk.PanelExpertMode.Visible := True;
+  if FormHelpInfo.CheckBoxExpertMode.Checked then FormOpsiClientKiosk.PanelExpertMode.Visible := True;
   FormOpsiClientKiosk.PanelToolbar.Visible := True;
   FormOpsiClientKiosk.NotebookProducts.PageIndex:=1;
 end;
@@ -1680,17 +1679,9 @@ begin
   else SetView;
 end;
 
-procedure TFormOpsiClientKiosk.BitBtnInfoClick(Sender: TObject);
+procedure TFormOpsiClientKiosk.BitBtnHelpClick(Sender: TObject);
 begin
-  ShowMessage(
-  'Documentation: www.opsi.org' + LineEnding +
-  '-----------------------------------' + LineEnding +
-  'opsi-client-kiosk' + LineEnding +
-  'Display language: ' + GetDefaultLang + Lineending +
-  'Version: ' + ProgramInfo.Version + Lineending +
-  'CopyRight: uib gmbh (http://uib.de) under AGPLv3' + LineEnding +
-  'http://opsi.org' + Lineending +
-  'Credits to: Lazarus/FPC,indy,sqllite');
+  FormHelpInfo.Show;
 end;
 
 procedure TFormOpsiClientKiosk.BitBtnInstallNowClick(Sender: TObject);
@@ -1794,7 +1785,7 @@ end;
 procedure TFormOpsiClientKiosk.SpeedButtonExpertModeClick(Sender: TObject);
 begin
   { Expert mode }
-  if SpeedButtonExpertMode.Down then
+  if FormHelpInfo.CheckBoxExpertMode.Checked then
   begin
     { Expert view }
     PanelExpertMode.Visible := True;
@@ -1876,6 +1867,21 @@ begin
       StartupDone := True;
     end;
   end;//end of: if not StartupDone
+   { Expert mode }
+  if FormHelpInfo.CheckBoxExpertMode.Checked then
+  begin
+    { Expert view }
+    PanelExpertMode.Visible := True;
+    SetView;
+    //NotebookProducts.PageIndex := RadioGroupView.ItemIndex;
+  end
+  else
+  { Standard mode }
+  begin
+    PanelExpertMode.Visible := False;
+    PanelProductDetail.Height := 0;
+    SetTilesView;
+  end;
 end;
 
 procedure TFormOpsiClientKiosk.FormShow(Sender: TObject);
@@ -2118,7 +2124,6 @@ begin
   RadioGroupView.Items[0] := rsViewList;
   RadioGroupView.Items[1] := rsViewTiles;
   { Expert Mode Buttons }
-  SpeedButtonExpertMode.Caption := rsExpertMode;
   BitBtnInstallNow.Caption := rsInstallNow;
   BitBtnInstallNow.Hint := rsInstallNowHint;
   { ButtonSoftware on PageSoftware}
