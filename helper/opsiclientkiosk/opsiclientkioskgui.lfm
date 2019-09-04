@@ -1,28 +1,28 @@
 object FormOpsiClientKiosk: TFormOpsiClientKiosk
-  Left = 2478
-  Height = 694
-  Top = 151
-  Width = 756
+  Left = 2568
+  Height = 568
+  Top = 111
+  Width = 640
   Caption = 'opsi-client-kiosk'
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
   ChildSizing.ControlsPerLine = 2
-  ClientHeight = 694
-  ClientWidth = 756
+  ClientHeight = 568
+  ClientWidth = 640
   DefaultMonitor = dmDesktop
   OnActivate = FormActivate
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  OnShow = FormShow
+  OnResize = FormResize
   Position = poScreenCenter
   LCLVersion = '2.0.4.0'
   object PanelToolbar: TPanel
     Left = 0
     Height = 45
     Top = 52
-    Width = 756
+    Width = 640
     Align = alTop
     ClientHeight = 45
-    ClientWidth = 756
+    ClientWidth = 640
     ParentColor = False
     TabOrder = 0
     object SpeedButtonUpdates: TSpeedButton
@@ -81,7 +81,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       OnClick = SpeedButtonNotInstalledClick
     end
     object BitBtnHelp: TBitBtn
-      Left = 675
+      Left = 559
       Height = 33
       Top = 6
       Width = 75
@@ -108,7 +108,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       OnClick = SpeedButtonActionsClick
     end
     object SpeedButtonSearch: TSpeedButton
-      Left = 635
+      Left = 519
       Height = 33
       Top = 6
       Width = 35
@@ -178,8 +178,8 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
   object StatusBar1: TStatusBar
     Left = 0
     Height = 23
-    Top = 671
-    Width = 756
+    Top = 545
+    Width = 640
     Panels = <    
       item
         Text = 'Not Connected to opsi server'
@@ -191,11 +191,11 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
     Left = 0
     Height = 52
     Top = 0
-    Width = 756
+    Width = 640
     Align = alTop
     BevelOuter = bvNone
     ClientHeight = 52
-    ClientWidth = 756
+    ClientWidth = 640
     Font.CharSet = ANSI_CHARSET
     Font.Height = -19
     Font.Name = 'Arial'
@@ -208,7 +208,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Left = 0
       Height = 52
       Top = 0
-      Width = 692
+      Width = 576
       Align = alClient
       Picture.Data = {
         1754506F727461626C654E6574776F726B477261706869634461000089504E47
@@ -997,7 +997,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Left = 0
       Height = 52
       Top = 0
-      Width = 692
+      Width = 576
       Align = alClient
       Alignment = taCenter
       Caption = 'opsi Client Kiosk'
@@ -1013,7 +1013,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       ParentFont = False
     end
     object ImageLogo: TImage
-      Left = 692
+      Left = 576
       Height = 52
       Hint = 'Your logo'
       Top = 0
@@ -1151,16 +1151,16 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
     Left = 0
     Height = 45
     Top = 142
-    Width = 756
+    Width = 640
     Align = alTop
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ClientHeight = 45
-    ClientWidth = 756
+    ClientWidth = 640
     ParentColor = False
     TabOrder = 3
     Visible = False
     object SpeedButtonReload: TSpeedButton
-      Left = 686
+      Left = 570
       Height = 33
       Hint = 'Reload data from server'
       Top = 6
@@ -1253,12 +1253,11 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
         'List'
         'Tile'
       )
-      OnClick = RadioGroupViewClick
       OnSelectionChanged = RadioGroupViewSelectionChanged
       TabOrder = 0
     end
     object BitBtnInstallNow: TBitBtn
-      Left = 578
+      Left = 462
       Height = 33
       Hint = 'Start the installation/update (uninstallation) of the selected products'
       Top = 6
@@ -1289,31 +1288,31 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
   end
   object PanelProducts: TPanel
     Left = 0
-    Height = 484
+    Height = 358
     Top = 187
-    Width = 756
+    Width = 640
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 484
-    ClientWidth = 756
+    ClientHeight = 358
+    ClientWidth = 640
     Color = clForm
     ParentColor = False
     TabOrder = 4
     object PanelProductDetail: TPanel
       Left = 0
       Height = 172
-      Top = 312
-      Width = 756
+      Top = 186
+      Width = 640
       Align = alBottom
       BevelOuter = bvNone
       ClientHeight = 172
-      ClientWidth = 756
+      ClientWidth = 640
       TabOrder = 1
       object ExtendedNotebook1: TExtendedNotebook
         Left = 0
         Height = 172
         Top = 0
-        Width = 756
+        Width = 640
         ActivePage = TabSheet2
         Align = alBottom
         Anchors = [akTop, akLeft, akRight, akBottom]
@@ -1447,16 +1446,16 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
         object TabSheet2: TTabSheet
           Caption = 'Dependencies / Priority'
           ClientHeight = 144
-          ClientWidth = 748
+          ClientWidth = 632
           object PanelPriority: TPanel
             Left = 0
             Height = 32
             Top = 112
-            Width = 748
+            Width = 632
             Align = alBottom
             BevelOuter = bvNone
             ClientHeight = 32
-            ClientWidth = 748
+            ClientWidth = 632
             ParentColor = False
             TabOrder = 0
             object LabelPriority: TLabel
@@ -1482,17 +1481,17 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Left = 0
             Height = 112
             Top = 0
-            Width = 748
+            Width = 632
             Align = alClient
             BevelOuter = bvNone
             ClientHeight = 112
-            ClientWidth = 748
+            ClientWidth = 632
             TabOrder = 1
             object DBGrid2: TDBGrid
               Left = 0
               Height = 112
               Top = 0
-              Width = 748
+              Width = 632
               Align = alClient
               Color = clWindow
               Columns = <>
@@ -1505,9 +1504,9 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
     end
     object NotebookProducts: TNotebook
       Left = 0
-      Height = 312
+      Height = 186
       Top = 0
-      Width = 756
+      Width = 640
       PageIndex = 0
       Align = alClient
       TabOrder = 0
@@ -1515,10 +1514,10 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       object PageList: TPage
         object DBGrid1: TDBGrid
           Left = 0
-          Height = 312
+          Height = 186
           Hint = 'Click to ActionRequest Column, to set action requests (setup/uninstall)'
           Top = 0
-          Width = 756
+          Width = 640
           Align = alClient
           Color = clWindow
           Columns = <>
@@ -1870,28 +1869,28 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
     Left = 0
     Height = 45
     Top = 97
-    Width = 756
+    Width = 640
     Align = alTop
     Caption = 'PanelSearchMask'
     ClientHeight = 45
-    ClientWidth = 756
+    ClientWidth = 640
     TabOrder = 5
     Visible = False
     object PanelSearch: TPanel
       Left = 6
       Height = 33
       Top = 6
-      Width = 744
+      Width = 628
       Align = alClient
       BorderSpacing.Around = 5
       BevelOuter = bvNone
       BorderStyle = bsSingle
       ClientHeight = 29
-      ClientWidth = 740
+      ClientWidth = 624
       Constraints.MinHeight = 30
       TabOrder = 0
       object SpeedButtonClearSearchEdit: TSpeedButton
-        Left = 717
+        Left = 601
         Height = 29
         Top = 0
         Width = 23
@@ -1906,7 +1905,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
         Height = 29
         Hint = 'Search in Productlist'
         Top = 0
-        Width = 680
+        Width = 564
         Align = alClient
         AutoSize = False
         AutoSelect = False

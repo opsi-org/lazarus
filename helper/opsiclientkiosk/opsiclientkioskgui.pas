@@ -200,7 +200,7 @@ type
     { Form }
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
-    procedure FormShow(Sender: TObject);
+    procedure FormResize(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     { RadioGroup }
     procedure GrouplistEnter(Sender: TObject);
@@ -208,7 +208,6 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure ImageScreenShotMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
-    procedure RadioGroupViewClick(Sender: TObject);
     procedure RadioGroupViewSelectionChanged(Sender: TObject);
     { ScrollBoxAllTiles }
     procedure ScrollBoxAllTilesMouseWheel(Sender: TObject; Shift: TShiftState;
@@ -243,6 +242,9 @@ type
     ClientID : string;
     SpeedButtonLastClicked : TSpeedButton;
     LastFilter : String;
+    MinWidthStandardMode : Integer;
+    MinWidthExpertMode   : Integer;
+    procedure SetPositionButtonsOnPanelToolbar;
     function GetUserName_:string;
      { Inits at Start }
     function InitLogging(const LogFileName, CallingMethod: string; MyLogLevel:integer): boolean;
@@ -1428,11 +1430,6 @@ begin
     end;
 end;
 
-procedure TFormOpsiClientKiosk.RadioGroupViewClick(Sender: TObject);
-begin
-
-end;
-
 procedure TFormOpsiClientKiosk.DBGrid1Exit(Sender: TObject);
 begin
   //PanelProductDetail.Height := 0;
@@ -1681,6 +1678,7 @@ end;
 
 procedure TFormOpsiClientKiosk.BitBtnHelpClick(Sender: TObject);
 begin
+  ShowMessage('Width of SpeedButtonUpdates:'+ IntToStr(SpeedButtonUpdates.Width));
   FormHelpInfo.Show;
 end;
 
@@ -1845,9 +1843,21 @@ begin
 end;
 
 procedure TFormOpsiClientKiosk.FormActivate(Sender: TObject);
+var
+  testWidth,
+  W,H :integer;
+  testBounds:TRect;
+  testChildSizing:TControlChildSizing;
 begin
   if not StartupDone then
   begin
+    //ShowMessage('Width of SpeedButtonUpdates:'+ IntToStr(SpeedButtonUpdates.Width));
+    MinWidthStandardMode := SpeedButtonAll.Width + SpeedButtonUpdates.Width +
+      SpeedButtonNotInstalled.Width + SpeedButtonActions.Width +
+      SpeedButtonSearch.Width + BitBtnHelp.Width + 50;
+    Constraints.MinWidth := MinWidthStandardMode;
+    if Width < MinWidthStandardMode then Width := MinWidthStandardMode;
+    SetPositionButtonsOnPanelToolbar;
     try
       FormProgressWindow.ProgressBar1.Position := 0;
       FormProgressWindow.ProgressBarDetail.Position := 0;
@@ -1867,11 +1877,19 @@ begin
       StartupDone := True;
     end;
   end;//end of: if not StartupDone
-   { Expert mode }
+  { Expert mode }
   if FormHelpInfo.CheckBoxExpertMode.Checked then
   begin
     { Expert view }
     PanelExpertMode.Visible := True;
+    MinWidthExpertMode := RadioGroupView.Width + ButtonSaveImagesOnShare.Width +
+      BitBtnInstallNow.Width + SpeedButtonReload.Width + 50;
+    //ShowMessage('Width of ButtonSaveImagesOnShare:'+ IntToStr(ButtonSaveImagesOnShare.Width));
+    if MinWidthExpertMode > MinWidthStandardMode then
+    begin
+      Constraints.MinWidth := MinWidthExpertMode;
+      if Width < MinWidthExpertMode then Width := MinWidthExpertMode;
+    end;
     SetView;
     //NotebookProducts.PageIndex := RadioGroupView.ItemIndex;
   end
@@ -1880,17 +1898,18 @@ begin
   begin
     PanelExpertMode.Visible := False;
     PanelProductDetail.Height := 0;
+    Constraints.MinWidth := MinWidthStandardMode;
+    if Width < MinWidthStandardMode then Width := MinWidthStandardMode;
     SetTilesView;
   end;
+
 end;
 
-procedure TFormOpsiClientKiosk.FormShow(Sender: TObject);
+procedure TFormOpsiClientKiosk.FormResize(Sender: TObject);
 begin
-  //FormProgressWindow.LabelDataload.Caption := 'Init';
-  //StartupDone := False;
-  //FormOpsiClientKiosk.Repaint;
-  //Application.ProcessMessages;
+  SetPositionButtonsOnPanelToolbar;
 end;
+
 
 
 procedure TFormOpsiClientKiosk.ReloadDataFromServer;
@@ -1981,6 +2000,7 @@ end;
 procedure TFormOpsiClientKiosk.LoadSkinForTitle(SkinPath: string);
 var
   myini: TInifile;
+  FormMinWidth :integer;
 begin
   if FileExists(skinpath + 'opsiclientkiosk.ini') then
   begin
@@ -2119,7 +2139,7 @@ begin
   (*****************)
   (* Localizations *)
   (*****************)
-
+  //DisableAutoSizing;
   { RadioGroupView }
   RadioGroupView.Items[0] := rsViewList;
   RadioGroupView.Items[1] := rsViewTiles;
@@ -2130,12 +2150,17 @@ begin
   ButtonSoftwareInstall.Caption := rsInstall;
   ButtonSoftwareUninstall.Caption := rsActUninstall;
   ButtonSoftwareUpdate.Caption := rsUpdate;
+  ButtonSoftwareBack.Caption:= rsBack;
+
   { SpeedButtons on Toolpanel}
   SpeedButtonAll.Caption := rsAll;
   SpeedButtonUpdates.Caption:= rsUpdates;
   SpeedButtonNotInstalled.Caption:= rsNotInstalled;
   SpeedButtonActions.Caption := rsActions;
-  ButtonSoftwareBack.Caption:= rsBack;
+  { Set MinWidth, Width and Center Buttons on ToolPanel}
+
+  //ShowMessage('Width of SpeedButtonUpdates:'+ IntToStr(SpeedButtonUpdates.Width));
+
 end;
 
 procedure TFormOpsiClientKiosk.EditSearchEnter(Sender: TObject);
@@ -2268,6 +2293,16 @@ begin
     FreeMem(buffer, bufferSize);
   end;
 end; { DSiGetUserName}
+
+procedure TFormOpsiClientKiosk.SetPositionButtonsOnPanelToolbar;
+var
+  testWidth :integer;
+begin
+  //testWidth := SpeedButtonUpdates.Width;
+  SpeedButtonAll.BorderSpacing.Left := round((SpeedButtonSearch.Left -
+    (SpeedButtonAll.Width + SpeedButtonUpdates.Width +
+     SpeedButtonNotInstalled.Width + SpeedButtonActions.Width))/2);
+end;
 
 
 function TFormOpsiClientKiosk.InitLogging(const LogFileName, CallingMethod: string;
