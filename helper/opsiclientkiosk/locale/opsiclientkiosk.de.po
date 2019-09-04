@@ -286,7 +286,7 @@ msgid "About client kiosk"
 msgstr ""
 
 #: tformhelpinfo.buttonclose.caption
-msgid "Close"
+msgid "Ok"
 msgstr ""
 
 #: tformhelpinfo.caption
@@ -320,6 +320,8 @@ msgid "Save images on share"
 msgstr "Speichere Bilder auf Netzlaufwerk"
 
 #: tformopsiclientkiosk.buttonsoftwareback.caption
+#, fuzzy
+#| msgid "<-- Back"
 msgctxt "tformopsiclientkiosk.buttonsoftwareback.caption"
 msgid "<-- Back"
 msgstr "<-- Zurück"

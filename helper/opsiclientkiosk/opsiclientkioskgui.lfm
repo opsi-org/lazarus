@@ -1,12 +1,12 @@
 object FormOpsiClientKiosk: TFormOpsiClientKiosk
   Left = 2568
-  Height = 568
+  Height = 904
   Top = 111
   Width = 640
   Caption = 'opsi-client-kiosk'
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
   ChildSizing.ControlsPerLine = 2
-  ClientHeight = 568
+  ClientHeight = 904
   ClientWidth = 640
   DefaultMonitor = dmDesktop
   OnActivate = FormActivate
@@ -178,7 +178,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
   object StatusBar1: TStatusBar
     Left = 0
     Height = 23
-    Top = 545
+    Top = 881
     Width = 640
     Panels = <    
       item
@@ -1288,12 +1288,12 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
   end
   object PanelProducts: TPanel
     Left = 0
-    Height = 358
+    Height = 694
     Top = 187
     Width = 640
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 358
+    ClientHeight = 694
     ClientWidth = 640
     Color = clForm
     ParentColor = False
@@ -1301,7 +1301,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
     object PanelProductDetail: TPanel
       Left = 0
       Height = 172
-      Top = 186
+      Top = 522
       Width = 640
       Align = alBottom
       BevelOuter = bvNone
@@ -1504,10 +1504,10 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
     end
     object NotebookProducts: TNotebook
       Left = 0
-      Height = 186
+      Height = 522
       Top = 0
       Width = 640
-      PageIndex = 0
+      PageIndex = 2
       Align = alClient
       TabOrder = 0
       TabStop = True
@@ -1591,8 +1591,8 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           Width = 859
           BevelOuter = bvNone
           BorderStyle = bsSingle
-          ClientHeight = 37
-          ClientWidth = 859
+          ClientHeight = 33
+          ClientWidth = 855
           ParentColor = False
           TabOrder = 0
           object ButtonSoftwareBack: TButton
@@ -1639,7 +1639,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Left = 88
             Height = 25
             Top = 32
-            Width = 169
+            Width = 179
             Caption = 'LabelSoftwareName'
             Font.CharSet = ANSI_CHARSET
             Font.Color = clBlack
@@ -1647,6 +1647,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Font.Name = 'Segoe UI'
             Font.Pitch = fpVariable
             Font.Quality = fqDraft
+            Font.Style = [fsBold]
             ParentColor = False
             ParentFont = False
           end
@@ -1705,7 +1706,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Left = 15
             Height = 21
             Top = 335
-            Width = 79
+            Width = 88
             Caption = 'Description'
             Font.CharSet = ANSI_CHARSET
             Font.Color = clBlack
@@ -1713,6 +1714,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Font.Name = 'Segoe UI'
             Font.Pitch = fpVariable
             Font.Quality = fqDraft
+            Font.Style = [fsBold]
             ParentColor = False
             ParentFont = False
           end
@@ -1720,7 +1722,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Left = 15
             Height = 21
             Top = 450
-            Width = 46
+            Width = 52
             Caption = 'Advice'
             Font.CharSet = ANSI_CHARSET
             Font.Color = clBlack
@@ -1728,6 +1730,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Font.Name = 'Segoe UI'
             Font.Pitch = fpVariable
             Font.Quality = fqDraft
+            Font.Style = [fsBold]
             ParentColor = False
             ParentFont = False
           end
@@ -1781,17 +1784,21 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Left = 15
             Height = 15
             Top = 147
-            Width = 85
+            Width = 91
             Caption = 'Installed version'
+            Font.Style = [fsBold]
             ParentColor = False
+            ParentFont = False
           end
           object LabelSoftwareRecentVersion: TLabel
             Left = 15
             Height = 15
             Top = 200
-            Width = 77
+            Width = 84
             Caption = 'Recent version'
+            Font.Style = [fsBold]
             ParentColor = False
+            ParentFont = False
           end
           object ButtonSoftwareUpdate: TButton
             Left = 15
@@ -1799,7 +1806,6 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Top = 292
             Width = 135
             Caption = 'Update'
-            Enabled = False
             OnClick = ButtonSoftwareUpdateClick
             TabOrder = 4
           end
@@ -1835,9 +1841,11 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Left = 15
             Height = 15
             Top = 251
-            Width = 35
+            Width = 36
             Caption = 'Action'
+            Font.Style = [fsBold]
             ParentColor = False
+            ParentFont = False
           end
         end
       end

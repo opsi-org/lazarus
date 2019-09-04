@@ -286,7 +286,7 @@ msgid "About client kiosk"
 msgstr ""
 
 #: tformhelpinfo.buttonclose.caption
-msgid "Close"
+msgid "Ok"
 msgstr ""
 
 #: tformhelpinfo.caption

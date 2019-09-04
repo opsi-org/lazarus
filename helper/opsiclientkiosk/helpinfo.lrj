@@ -2,5 +2,5 @@
 {"hash":322608,"name":"tformhelpinfo.caption","sourcebytes":[72,101,108,112],"value":"Help"},
 {"hash":78282411,"name":"tformhelpinfo.buttonabout.caption","sourcebytes":[65,98,111,117,116,32,99,108,105,101,110,116,32,107,105,111,115,107],"value":"About client kiosk"},
 {"hash":153867109,"name":"tformhelpinfo.checkboxexpertmode.caption","sourcebytes":[69,120,112,101,114,116,32,109,111,100,101],"value":"Expert mode"},
-{"hash":4863637,"name":"tformhelpinfo.buttonclose.caption","sourcebytes":[67,108,111,115,101],"value":"Close"}
+{"hash":1371,"name":"tformhelpinfo.buttonclose.caption","sourcebytes":[79,107],"value":"Ok"}
 ]}

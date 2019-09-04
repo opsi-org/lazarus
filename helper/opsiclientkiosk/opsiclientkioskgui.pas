@@ -55,6 +55,7 @@ type
     procedure LoadSkinPanel(SkinPath:string);
     procedure LoadSkinLabelAction(SkinPath:string);
     procedure SetIcon(ProductPanel: TProductPanel);
+    procedure TrimCaption(Sender:TControl);
   public
     { public declarations }
     ProductID : String;
@@ -440,8 +441,8 @@ begin
     with ShapeRoundSquare do begin
        Parent := self;
        Align := alNone;
-       Height:= self.width;
-       Width:= self.width;
+       Height:= self.ClientHeight;
+       Width:= self.ClientWidth;
        Shape:= stRoundSquare;
        Top:= 0;
        Left:= 0;
@@ -465,7 +466,7 @@ begin
       Caption := 'name';
       WordWrap := True;
       AutoSize := False;
-      Width := self.Width;
+      Width := self.ClientWidth;
       Alignment := taCenter;
       Align := alNone;
       Top := 100;
@@ -486,7 +487,7 @@ begin
       Font.Italic := True;
       AutoSize:= False;
       Alignment := taCenter;
-      Width := self.Width;
+      Width := self.ClientWidth;
       Align := alNone;
       Top := LabelName.Top + LabelName.Height + 3;
       Left := 0;
@@ -719,6 +720,23 @@ begin
     if FormOpsiClientKiosk.StringListCustomIcons.Values[ProductPanel.ProductID] = '' then
       FormOpsiClientKiosk.StringListCustomIcons.Add(ProductPanel.ProductID + '=' + ExtractFileName(FilePath))
     else FormOpsiClientKiosk.StringListCustomIcons.Values[ProductPanel.ProductID] := ExtractFileName(FilePath);
+  end;
+end;
+
+procedure TProductPanel.TrimCaption(Sender: TControl);
+var
+  s,sText: String;
+  MaxLength :Integer;
+begin
+  sText := Sender.Caption;
+  if Canvas.TextWidth(sText) >= Width then
+  begin
+    { Get maximal length of string which fits in Sender}
+    s := '';
+    while (Canvas.TextWidth(s) < Width) do s := s +'W';
+    MaxLength := Length(s);
+    Delete(sText,MaxLength,Length(Sender.Caption)-MaxLength
+    +Canvas.TextWidth('...'));
   end;
 end;
 
@@ -1171,7 +1189,7 @@ begin
     ButtonSoftwareInstall.Visible := False;
     ButtonSoftwareUninstall.Visible := False;
     ButtonSoftwareRemoveAction.Visible:= True;
-    ButtonSoftwareUpdate.Enabled := False;
+    ButtonSoftwareUpdate.Visible := False;
   end
   else
   begin
@@ -1180,15 +1198,15 @@ begin
       ButtonSoftwareInstall.Visible := False;
       ButtonSoftwareUninstall.Visible := True;
       ButtonSoftwareRemoveAction.Visible:= False;
-      ButtonSoftwareUpdate.Enabled := False;
+      ButtonSoftwareUpdate.Visible := False;
     end
     else
       if ProductPanel.LabelState.Caption = rsNotInstalled then
       begin
-        ButtonSoftwareUninstall.Visible := False;
-        ButtonSoftwareUpdate.Enabled := False;
-        ButtonSoftwareRemoveAction.Visible:= False;
         ButtonSoftwareInstall.Visible := True;
+        ButtonSoftwareUninstall.Visible := False;
+        ButtonSoftwareRemoveAction.Visible:= False;
+        ButtonSoftwareUpdate.Visible := False;
       end
       else
         if ProductPanel.LabelState.Caption = rsUpdate then
@@ -1196,7 +1214,7 @@ begin
           ButtonSoftwareInstall.Visible := False;
           ButtonSoftwareUninstall.Visible := True;
           ButtonSoftwareRemoveAction.Visible:= False;
-          ButtonSoftwareUpdate.Enabled := True;
+          ButtonSoftwareUpdate.Visible := True;
         end;
   end;
 end;
@@ -1678,7 +1696,6 @@ end;
 
 procedure TFormOpsiClientKiosk.BitBtnHelpClick(Sender: TObject);
 begin
-  ShowMessage('Width of SpeedButtonUpdates:'+ IntToStr(SpeedButtonUpdates.Width));
   FormHelpInfo.Show;
 end;
 
@@ -1843,11 +1860,6 @@ begin
 end;
 
 procedure TFormOpsiClientKiosk.FormActivate(Sender: TObject);
-var
-  testWidth,
-  W,H :integer;
-  testBounds:TRect;
-  testChildSizing:TControlChildSizing;
 begin
   if not StartupDone then
   begin
@@ -1877,10 +1889,10 @@ begin
       StartupDone := True;
     end;
   end;//end of: if not StartupDone
-  { Expert mode }
+
   if FormHelpInfo.CheckBoxExpertMode.Checked then
   begin
-    { Expert view }
+    { Expert mode }
     PanelExpertMode.Visible := True;
     MinWidthExpertMode := RadioGroupView.Width + ButtonSaveImagesOnShare.Width +
       BitBtnInstallNow.Width + SpeedButtonReload.Width + 50;

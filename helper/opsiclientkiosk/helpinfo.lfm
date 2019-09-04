@@ -43,7 +43,7 @@ object FormHelpInfo: TFormHelpInfo
     Height = 25
     Top = 301
     Width = 75
-    Caption = 'Close'
+    Caption = 'Ok'
     OnClick = ButtonCloseClick
     TabOrder = 3
   end

@@ -50,7 +50,7 @@ begin
   'Version: ' + ProgramInfo.Version + Lineending +
   'CopyRight: uib gmbh (http://uib.de) under AGPLv3' + LineEnding +
   'http://opsi.org' + Lineending +
-  'Credits to: Lazarus/FPC,indy,sqllite');
+  'Credits to: Lazarus/FPC,synapse,sqllite');
 end;
 
 
@@ -64,7 +64,7 @@ begin
   'Version: ' + ProgramInfo.Version + Lineending +
   'CopyRight: uib gmbh (http://uib.de) under AGPLv3' + LineEnding +
   'http://opsi.org' + Lineending +
-  'Credits to: Lazarus/FPC,indy,sqllite');
+  'Credits to: Lazarus/FPC,synapse,sqllite');
 end;
 
 procedure TFormHelpInfo.ButtonCloseClick(Sender: TObject);
