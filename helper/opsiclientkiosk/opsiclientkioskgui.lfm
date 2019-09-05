@@ -35,7 +35,6 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       AutoSize = True
       BorderSpacing.Top = 5
       BorderSpacing.Bottom = 5
-      BorderSpacing.InnerBorder = 2
       Constraints.MinHeight = 32
       Constraints.MinWidth = 80
       Caption = 'Updates'

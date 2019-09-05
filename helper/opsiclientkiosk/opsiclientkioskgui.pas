@@ -1567,7 +1567,6 @@ begin
       DataModuleOCK.SQLQueryProductData.Locate('ProductID',
        VarArrayOf([SelectedProduct]), [loCaseInsensitive]);
       SpeedButtonAll.Down := True;
-      //SetView;
     end;
   Screen.Cursor := crDefault;
 end;
@@ -1916,7 +1915,6 @@ begin
       StartupDone := True;
     end;
   end;//end of: if not StartupDone
-
   if FormHelpInfo.CheckBoxExpertMode.Checked then
   begin
     { Expert mode }
@@ -2063,6 +2061,7 @@ var
   InfoText    : String;
   ListOptions : TStringList;
   ErrorMsg    : String;
+  Spacing     : String;
 begin
   InitLogging('kiosk-' + GetUserName_ +'.log', self.Name + '.FormCreate', LLDebug);
   LogDatei.log('Initialize Opsi Client Kiosk', LLNotice);
@@ -2179,7 +2178,7 @@ begin
   (*****************)
   (* Localizations *)
   (*****************)
-  //DisableAutoSizing;
+  Spacing := '  ';
   { RadioGroupView }
   RadioGroupView.Items[0] := rsViewList;
   RadioGroupView.Items[1] := rsViewTiles;
@@ -2193,10 +2192,10 @@ begin
   ButtonSoftwareBack.Caption:= rsBack;
 
   { SpeedButtons on Toolpanel}
-  SpeedButtonAll.Caption := rsAll;
-  SpeedButtonUpdates.Caption:= rsUpdates;
-  SpeedButtonNotInstalled.Caption:= rsNotInstalled;
-  SpeedButtonActions.Caption := rsActions;
+  SpeedButtonAll.Caption := Spacing + rsAll + Spacing;
+  SpeedButtonUpdates.Caption:= Spacing + rsUpdates + Spacing;
+  SpeedButtonNotInstalled.Caption:= Spacing + rsNotInstalled + Spacing;
+  SpeedButtonActions.Caption := Spacing + rsActions + Spacing;
   { Set MinWidth, Width and Center Buttons on ToolPanel}
 
   //ShowMessage('Width of SpeedButtonUpdates:'+ IntToStr(SpeedButtonUpdates.Width));
