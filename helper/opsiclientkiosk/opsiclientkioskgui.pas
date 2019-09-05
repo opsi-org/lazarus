@@ -20,14 +20,14 @@ uses
   Graphics, Dialogs, ExtCtrls, StdCtrls, Buttons, ComCtrls, Grids, DBGrids,
   DBCtrls,
   datadb,
-  CommCtrl, BufDataset, typinfo, installdlg, lcltranslator,
+  CommCtrl, typinfo, installdlg, lcltranslator,
   ActnList, Menus, oslog, inifiles, Variants, Lazfileutils, Types,
   opsiconnection,
   jwawinbase,
   //osprocesses,
   ockunique,
   progresswindow,
-  DefaultTranslator, ExtDlgs,
+  ExtDlgs,
   proginfo,
   helpinfo,
   imagestoshare;
@@ -52,10 +52,11 @@ type
     procedure ProductPanelMouseLeave(Sender :TObject);
   private
     { private declarations }
+    ShortName:string;
     procedure LoadSkinPanel(SkinPath:string);
     procedure LoadSkinLabelAction(SkinPath:string);
     procedure SetIcon(ProductPanel: TProductPanel);
-    procedure TrimCaption(Sender:TControl);
+    procedure TrimLabelCaption(fLabel:TLabel);
   public
     { public declarations }
     ProductID : String;
@@ -77,6 +78,8 @@ type
     (* DataSources *)
     DataSourceProductDependencies: TDataSource;
     DataSourceProductData: TDataSource;
+    DBTextAdvice: TDBText;
+    DBTextDescription: TDBText;
     DBTextActionRequest: TDBText;
     ImageLogo: TImage;
     LabelSoftwareActionRequest: TLabel;
@@ -122,8 +125,6 @@ type
     ButtonSoftwareRemoveAction: TButton;
     ButtonSoftwareUninstall: TButton;
     ButtonSoftwareUpdate: TButton;
-    DBMemoSoftwareAdvice: TDBMemo;
-    DBMemoSoftwareDescription: TDBMemo;
     DBTextSoftwareClientVerStr: TDBText;
     DBTextSoftwareVerStr: TDBText;
     ImageIconSoftware: TImage;
@@ -415,6 +416,7 @@ begin
   try
     inherited Create(TheOwner);
     parent := theOwner;
+    ShowHint := False;
     //Width := tile_width;
     //Height := tile_height;
     //FlowStyle := fsTopBottomLeftRight;
@@ -464,14 +466,18 @@ begin
       font.Italic := self.Font.Italic;
       font.Underline := self.Font.Underline;
       Caption := 'name';
-      WordWrap := True;
+      ShowHint := True;
+      WordWrap := False;
       AutoSize := False;
-      Width := self.ClientWidth;
+      Width := self.ClientWidth-10;
       Alignment := taCenter;
       Align := alNone;
       Top := 100;
-      Left := 0;
+      Left := 5;
       BorderSpacing.Around := 3;
+      //BorderSpacing.Left := 10;
+      //BorderSpacing.Right := 10;
+      //BorderSpacing.InnerBorder := 5;
       OnClick := ProductPanelClick;//ProductTileChildClick;
       OnMouseWheel := scroll;
       OnMouseEnter := ProductPanelMouseEnter;
@@ -692,7 +698,7 @@ begin
       NotebookProducts.PageIndex := 2;
       PanelExpertMode.Visible := False;
       PanelToolbar.Visible := False;
-      LabelSoftwareName.Caption := ProductPanel.LabelName.Caption; //ArrayAllProductTiles[SelectedProductIndex].LabelName.Caption;
+      LabelSoftwareName.Caption := DataModuleOCK.SQLQueryProductData.FieldByName('ProductName').AsString; //ArrayAllProductTiles[SelectedProductIndex].LabelName.Caption;
       ImageIconSoftware.Picture:= ProductPanel.ImageIcon.Picture; //ArrayAllProductTiles[SelectedProductIndex].ImageIcon.Picture;
       if FileExists(PathScreenshots + StringListScreenshots.Values[ProductPanel.ProductID]) then
        ImageScreenShot.Picture.LoadFromFile
@@ -723,20 +729,20 @@ begin
   end;
 end;
 
-procedure TProductPanel.TrimCaption(Sender: TControl);
+procedure TProductPanel.TrimLabelCaption(fLabel:TLabel);
 var
   s,sText: String;
   MaxLength :Integer;
 begin
-  sText := Sender.Caption;
-  if Canvas.TextWidth(sText) >= Width then
+  sText := fLabel.Caption;
+  if fLabel.Canvas.TextWidth(sText) >= fLabel.ClientWidth-6 then
   begin
     { Get maximal length of string which fits in Sender}
     s := '';
-    while (Canvas.TextWidth(s) < Width) do s := s +'W';
-    MaxLength := Length(s);
-    Delete(sText,MaxLength,Length(Sender.Caption)-MaxLength
-    +Canvas.TextWidth('...'));
+    while ((fLabel.Canvas.TextWidth(sText) +
+      fLabel.Canvas.TextWidth('...')) > (fLabel.ClientWidth-6)) do
+        Delete(sText, Length(sText), 1);
+    fLabel.Caption := sText+('...');
   end;
 end;
 
@@ -840,6 +846,11 @@ begin
       else fArrayProductPanels[counter].LabelAction.Caption :=
              DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString;
       fArrayProductPanels[counter].LabelName.Caption :=
+        DataModuleOCK.SQLQueryProductData.FieldByName('ProductName').AsString;
+      fArrayProductPanels[counter].TrimLabelCaption(fArrayProductPanels[counter].LabelName);
+      fArrayProductPanels[counter].LabelName.Hint :=
+        DataModuleOCK.SQLQueryProductData.FieldByName('ProductName').AsString;
+      fArrayProductPanels[counter].Hint :=
         DataModuleOCK.SQLQueryProductData.FieldByName('ProductName').AsString;
       {Set Product Icons}
       if FileExists(PathCustomIcons + StringListCustomIcons.Values[ProductID]) then
