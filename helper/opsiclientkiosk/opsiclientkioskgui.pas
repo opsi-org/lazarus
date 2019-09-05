@@ -375,7 +375,7 @@ const
   //color for StatusLabel
   clInstalled = clTeal;
   clUpdate = $000080FF;
-  clNotInstalled = $00FF8000;
+  clNotInstalled = clGray; //$00FF8000;
   clUnknown = clRed;
 
 var
@@ -1512,6 +1512,13 @@ begin
   if FormHelpInfo.CheckBoxExpertMode.Checked then FormOpsiClientKiosk.PanelExpertMode.Visible := True;
   FormOpsiClientKiosk.PanelToolbar.Visible := True;
   FormOpsiClientKiosk.NotebookProducts.PageIndex:=1;
+  //if (DataModuleOCK.SQLQueryProductData.EOF and DataModuleOCK.SQLQueryProductData.BOF) then
+    //begin
+      //DataModuleOCK.SQLQueryProductData.Filtered := False;
+      //SpeedButtonAll.Down := True;
+      //SetView;
+    //end;
+  SetView;
 end;
 
 procedure TFormOpsiClientKiosk.ButtonSoftwareInstallClick(Sender: TObject);
@@ -1553,6 +1560,15 @@ begin
     + ArrayProductPanels[SelectedPanelIndex].LabelName.Caption);
   DataModuleOCK.SQLQueryProductData.Post;
   DataModuleOCK.SQLQueryProductData.Open;
+  if (DataModuleOCK.SQLQueryProductData.EOF and
+    DataModuleOCK.SQLQueryProductData.BOF) then
+    begin
+      DataModuleOCK.SQLQueryProductData.Filtered := False;
+      DataModuleOCK.SQLQueryProductData.Locate('ProductID',
+       VarArrayOf([SelectedProduct]), [loCaseInsensitive]);
+      SpeedButtonAll.Down := True;
+      //SetView;
+    end;
   Screen.Cursor := crDefault;
 end;
 
@@ -2059,7 +2075,8 @@ begin
   //ShowMessage('Form Create');
 
   { Init Variables }
-
+  //Height := 640;
+  //Width := 640;
   StartUpDone := False;
   ClientdMode := True;
   FilteredProductIDs := TStringList.Create;

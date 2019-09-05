@@ -1,2 +1,3 @@
 flashplayer=flashplayer.png
 firefox=firefox.png
+audacity=audacity_audacity.png
