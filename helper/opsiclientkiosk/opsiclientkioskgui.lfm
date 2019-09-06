@@ -1,7 +1,7 @@
 object FormOpsiClientKiosk: TFormOpsiClientKiosk
-  Left = 2815
+  Left = 2493
   Height = 640
-  Top = 163
+  Top = 179
   Width = 640
   Caption = 'opsi-client-kiosk'
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
@@ -18,7 +18,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
   object PanelToolbar: TPanel
     Left = 0
     Height = 45
-    Top = 52
+    Top = 48
     Width = 640
     Align = alTop
     ClientHeight = 45
@@ -188,12 +188,12 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
   end
   object PanelTopImage: TPanel
     Left = 0
-    Height = 52
+    Height = 48
     Top = 0
     Width = 640
     Align = alTop
     BevelOuter = bvNone
-    ClientHeight = 52
+    ClientHeight = 48
     ClientWidth = 640
     Font.CharSet = ANSI_CHARSET
     Font.Height = -19
@@ -205,9 +205,9 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
     TabOrder = 1
     object ImageHeader: TImage
       Left = 0
-      Height = 52
+      Height = 48
       Top = 0
-      Width = 576
+      Width = 592
       Align = alClient
       Picture.Data = {
         1754506F727461626C654E6574776F726B477261706869634461000089504E47
@@ -994,12 +994,11 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
     end
     object LabelTitle: TLabel
       Left = 0
-      Height = 52
+      Height = 48
       Top = 0
-      Width = 576
+      Width = 592
       Align = alClient
       Alignment = taCenter
-      Caption = 'opsi Client Kiosk'
       Font.CharSet = ANSI_CHARSET
       Font.Color = clWhite
       Font.Height = -27
@@ -1012,11 +1011,11 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       ParentFont = False
     end
     object ImageLogo: TImage
-      Left = 576
-      Height = 52
+      Left = 592
+      Height = 48
       Hint = 'Your logo'
       Top = 0
-      Width = 64
+      Width = 48
       Align = alRight
       Picture.Data = {
         1754506F727461626C654E6574776F726B47726170686963350F000089504E47
@@ -1143,13 +1142,14 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
         1D9DD6F316FC466C70F51EE40BE18D517E2C9CBC0F47A68A714188FC176B8C1C
         686BB18EED0000000049454E44AE426082
       }
+      Proportional = True
       Stretch = True
     end
   end
   object PanelExpertMode: TPanel
     Left = 0
     Height = 45
-    Top = 142
+    Top = 138
     Width = 640
     Align = alTop
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
@@ -1287,12 +1287,12 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
   end
   object PanelProducts: TPanel
     Left = 0
-    Height = 430
-    Top = 187
+    Height = 434
+    Top = 183
     Width = 640
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 430
+    ClientHeight = 434
     ClientWidth = 640
     Color = clForm
     ParentColor = False
@@ -1300,7 +1300,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
     object PanelProductDetail: TPanel
       Left = 0
       Height = 172
-      Top = 258
+      Top = 262
       Width = 640
       Align = alBottom
       BevelOuter = bvNone
@@ -1503,7 +1503,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
     end
     object NotebookProducts: TNotebook
       Left = 0
-      Height = 258
+      Height = 262
       Top = 0
       Width = 640
       PageIndex = 0
@@ -1513,7 +1513,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       object PageList: TPage
         object DBGrid1: TDBGrid
           Left = 0
-          Height = 258
+          Height = 262
           Hint = 'Click to ActionRequest Column, to set action requests (setup/uninstall)'
           Top = 0
           Width = 640
@@ -1877,7 +1877,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
   object PanelSearchMask: TPanel
     Left = 0
     Height = 45
-    Top = 97
+    Top = 93
     Width = 640
     Align = alTop
     Caption = 'PanelSearchMask'

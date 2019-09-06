@@ -465,11 +465,6 @@ msgctxt "tformopsiclientkiosk.labelsoftwarerecentversion.caption"
 msgid "Recent version"
 msgstr ""
 
-#: tformopsiclientkiosk.labeltitle.caption
-msgctxt "tformopsiclientkiosk.labeltitle.caption"
-msgid "opsi Client Kiosk"
-msgstr "opsi Client Kiosk"
-
 #: tformopsiclientkiosk.labelverstr.caption
 msgctxt "tformopsiclientkiosk.labelverstr.caption"
 msgid "Version at Server"
