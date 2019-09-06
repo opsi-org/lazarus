@@ -260,10 +260,6 @@ msgstr ""
 msgid "The following Actions will be done:"
 msgstr ""
 
-#: tformhelpinfo.buttonabout.caption
-msgid "About client kiosk"
-msgstr ""
-
 #: tformhelpinfo.buttonclose.caption
 msgid "Ok"
 msgstr ""
@@ -276,6 +272,55 @@ msgstr ""
 #: tformhelpinfo.checkboxexpertmode.caption
 msgctxt "tformhelpinfo.checkboxexpertmode.caption"
 msgid "Expert mode"
+msgstr ""
+
+#: tformhelpinfo.labelcopy.caption
+msgid "CopyRight:"
+msgstr ""
+
+#: tformhelpinfo.labelcopyright.caption
+msgid "LabelCopyRight"
+msgstr ""
+
+#: tformhelpinfo.labelcredits.caption
+msgid "LabelCredits"
+msgstr ""
+
+#: tformhelpinfo.labelcreditsto.caption
+msgid "Credits to"
+msgstr ""
+
+#: tformhelpinfo.labellang.caption
+msgid "Display language:"
+msgstr ""
+
+#: tformhelpinfo.labellanguage.caption
+msgid "LabelLanguage"
+msgstr ""
+
+#: tformhelpinfo.labelname.caption
+msgid "opsi client kiosk"
+msgstr ""
+
+#: tformhelpinfo.labelopsiweb.caption
+msgid "LabelOpsiWeb"
+msgstr ""
+
+#: tformhelpinfo.labeluibweb.caption
+msgid "LabelUibWeb"
+msgstr ""
+
+#: tformhelpinfo.labelvers.caption
+msgid "Version"
+msgstr ""
+
+#: tformhelpinfo.labelversion.caption
+msgid "LabelVersion"
+msgstr ""
+
+#: tformhelpinfo.speedbuttonmanual.caption
+msgctxt "tformhelpinfo.speedbuttonmanual.caption"
+msgid "opsi manual"
 msgstr ""
 
 #: tformopsiclientkiosk.bitbtnhelp.caption
