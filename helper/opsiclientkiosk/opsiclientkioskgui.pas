@@ -16,18 +16,18 @@ unit opsiclientkioskgui;
 interface
 
 uses
-  Classes, SysUtils, DB, ExtendedNotebook, Forms, Controls,
+  Classes, SysUtils, DB, ExtendedNotebook, DividerBevel, Forms, Controls,
   Graphics, Dialogs, ExtCtrls, StdCtrls, Buttons, ComCtrls, Grids, DBGrids,
   DBCtrls,
   datadb,
-  CommCtrl, BufDataset, typinfo, installdlg, lcltranslator,
+  CommCtrl, typinfo, installdlg, lcltranslator,
   ActnList, Menus, oslog, inifiles, Variants, Lazfileutils, Types,
   opsiconnection,
   jwawinbase,
   //osprocesses,
   ockunique,
   progresswindow,
-  DefaultTranslator, ExtDlgs,
+  ExtDlgs,
   proginfo,
   helpinfo,
   imagestoshare;
@@ -52,9 +52,11 @@ type
     procedure ProductPanelMouseLeave(Sender :TObject);
   private
     { private declarations }
+    ShortName:string;
     procedure LoadSkinPanel(SkinPath:string);
     procedure LoadSkinLabelAction(SkinPath:string);
     procedure SetIcon(ProductPanel: TProductPanel);
+    procedure TrimLabelCaption(fLabel:TLabel);
   public
     { public declarations }
     ProductID : String;
@@ -76,6 +78,8 @@ type
     (* DataSources *)
     DataSourceProductDependencies: TDataSource;
     DataSourceProductData: TDataSource;
+    DBTextAdvice: TDBText;
+    DBTextDescription: TDBText;
     DBTextActionRequest: TDBText;
     ImageLogo: TImage;
     LabelSoftwareActionRequest: TLabel;
@@ -121,8 +125,6 @@ type
     ButtonSoftwareRemoveAction: TButton;
     ButtonSoftwareUninstall: TButton;
     ButtonSoftwareUpdate: TButton;
-    DBMemoSoftwareAdvice: TDBMemo;
-    DBMemoSoftwareDescription: TDBMemo;
     DBTextSoftwareClientVerStr: TDBText;
     DBTextSoftwareVerStr: TDBText;
     ImageIconSoftware: TImage;
@@ -200,7 +202,7 @@ type
     { Form }
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
-    procedure FormShow(Sender: TObject);
+    procedure FormResize(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     { RadioGroup }
     procedure GrouplistEnter(Sender: TObject);
@@ -208,7 +210,6 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure ImageScreenShotMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
-    procedure RadioGroupViewClick(Sender: TObject);
     procedure RadioGroupViewSelectionChanged(Sender: TObject);
     { ScrollBoxAllTiles }
     procedure ScrollBoxAllTilesMouseWheel(Sender: TObject; Shift: TShiftState;
@@ -243,6 +244,9 @@ type
     ClientID : string;
     SpeedButtonLastClicked : TSpeedButton;
     LastFilter : String;
+    MinWidthStandardMode : Integer;
+    MinWidthExpertMode   : Integer;
+    procedure SetPositionButtonsOnPanelToolbar;
     function GetUserName_:string;
      { Inits at Start }
     function InitLogging(const LogFileName, CallingMethod: string; MyLogLevel:integer): boolean;
@@ -371,7 +375,7 @@ const
   //color for StatusLabel
   clInstalled = clTeal;
   clUpdate = $000080FF;
-  clNotInstalled = $00FF8000;
+  clNotInstalled = clGray; //$00FF8000;
   clUnknown = clRed;
 
 var
@@ -412,8 +416,9 @@ begin
   try
     inherited Create(TheOwner);
     parent := theOwner;
-    //Width := tile_width;
-    //Height := tile_height;
+    ShowHint := False;
+    Width := 140;
+    Height := 140;
     //FlowStyle := fsTopBottomLeftRight;
     //self.OnClick := ProductTileClick;
     //BorderStyle := bsSingle;
@@ -422,15 +427,15 @@ begin
     BevelInner := bvNone;
     BevelOuter := bvNone;
     BorderSpacing.Around := 5;
-    //Color := StringToColor(tile_color);
-    //Font.Name := tile_Font_Name;
-    //font.Size := tile_Font_Size;
-    //font.Color := StringToColor(tile_Font_Color);
-    //font.Bold := tile_Font_Bold;
-    //font.Italic := tile_Font_Italic;
-    //font.Underline := tile_Font_Underline;
+    Color := clDefault;
+    Font.Name := 'Arial';
+    Font.Size := 10;
+    Font.Color := clBlack;
+    Font.Bold := True;
+    Font.Italic := False;
+    Font.Underline := False;
     self.OnMouseWheel := scroll;
-    LoadSkinPanel(Application.Location + 'default'+ PathDelim + 'skin' + PathDelim);
+    //LoadSkinPanel(Application.Location + 'default'+ PathDelim + 'skin' + PathDelim);
 
 
     //Shape (just for looking nice)
@@ -438,8 +443,8 @@ begin
     with ShapeRoundSquare do begin
        Parent := self;
        Align := alNone;
-       Height:= self.width;
-       Width:= self.width;
+       Height:= self.ClientHeight;
+       Width:= self.ClientWidth;
        Shape:= stRoundSquare;
        Top:= 0;
        Left:= 0;
@@ -461,14 +466,18 @@ begin
       font.Italic := self.Font.Italic;
       font.Underline := self.Font.Underline;
       Caption := 'name';
-      WordWrap := True;
+      ShowHint := True;
+      WordWrap := False;
       AutoSize := False;
-      Width := self.Width;
+      Width := self.ClientWidth-10;
       Alignment := taCenter;
       Align := alNone;
       Top := 100;
-      Left := 0;
+      Left := 5;
       BorderSpacing.Around := 3;
+      //BorderSpacing.Left := 10;
+      //BorderSpacing.Right := 10;
+      //BorderSpacing.InnerBorder := 5;
       OnClick := ProductPanelClick;//ProductTileChildClick;
       OnMouseWheel := scroll;
       OnMouseEnter := ProductPanelMouseEnter;
@@ -481,10 +490,16 @@ begin
     with LabelAction do begin
       Parent := self;
       Caption := 'Action: none';
+      Color := clNone;
+      Font.Name := 'Arial';
+      Font.Size:= 9;
+      Font.Color:= clBlack;
       Font.Italic := True;
+      Font.Bold := False;
+      Font.Underline := False;
       AutoSize:= False;
       Alignment := taCenter;
-      Width := self.Width;
+      Width := self.ClientWidth;
       Align := alNone;
       Top := LabelName.Top + LabelName.Height + 3;
       Left := 0;
@@ -494,8 +509,8 @@ begin
       OnMouseEnter := ProductPanelMouseEnter;
       OnMouseLeave := ProductPanelMouseLeave;
     end;
-    LoadSkinLabelAction(Application.Location + 'default'+ PathDelim + 'skin' +
-      PathDelim);
+    //LoadSkinLabelAction(Application.Location + 'default'+ PathDelim + 'skin' +
+      //PathDelim);
 
 
     //program icon
@@ -506,12 +521,12 @@ begin
       //Picture.LoadFromFile(IconPath);
       AutoSize := False;
       Proportional := True;
-      Width := 60;
-      Height := 60;
+      Width := 64;
+      Height := 64;
       Center := True;
       Align:= alNone;
       Top:=35;
-      Left:=40;
+      Left:=38;
       Picture.LoadFromFile(PathDefaultIcons + 'opsi-logo.png');
       //BorderSpacing.Around := 0;
       OnClick := ProductPanelClick;//ProductTileChildClick;
@@ -689,7 +704,7 @@ begin
       NotebookProducts.PageIndex := 2;
       PanelExpertMode.Visible := False;
       PanelToolbar.Visible := False;
-      LabelSoftwareName.Caption := ProductPanel.LabelName.Caption; //ArrayAllProductTiles[SelectedProductIndex].LabelName.Caption;
+      LabelSoftwareName.Caption := DataModuleOCK.SQLQueryProductData.FieldByName('ProductName').AsString; //ArrayAllProductTiles[SelectedProductIndex].LabelName.Caption;
       ImageIconSoftware.Picture:= ProductPanel.ImageIcon.Picture; //ArrayAllProductTiles[SelectedProductIndex].ImageIcon.Picture;
       if FileExists(PathScreenshots + StringListScreenshots.Values[ProductPanel.ProductID]) then
        ImageScreenShot.Picture.LoadFromFile
@@ -717,6 +732,23 @@ begin
     if FormOpsiClientKiosk.StringListCustomIcons.Values[ProductPanel.ProductID] = '' then
       FormOpsiClientKiosk.StringListCustomIcons.Add(ProductPanel.ProductID + '=' + ExtractFileName(FilePath))
     else FormOpsiClientKiosk.StringListCustomIcons.Values[ProductPanel.ProductID] := ExtractFileName(FilePath);
+  end;
+end;
+
+procedure TProductPanel.TrimLabelCaption(fLabel:TLabel);
+var
+  s,sText: String;
+  MaxLength :Integer;
+begin
+  sText := fLabel.Caption;
+  if fLabel.Canvas.TextWidth(sText) >= fLabel.ClientWidth-6 then
+  begin
+    { Get maximal length of string which fits in Sender}
+    s := '';
+    while ((fLabel.Canvas.TextWidth(sText) +
+      fLabel.Canvas.TextWidth('...')) > (fLabel.ClientWidth-6)) do
+        Delete(sText, Length(sText), 1);
+    fLabel.Caption := sText+('...');
   end;
 end;
 
@@ -820,6 +852,11 @@ begin
       else fArrayProductPanels[counter].LabelAction.Caption :=
              DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString;
       fArrayProductPanels[counter].LabelName.Caption :=
+        DataModuleOCK.SQLQueryProductData.FieldByName('ProductName').AsString;
+      fArrayProductPanels[counter].TrimLabelCaption(fArrayProductPanels[counter].LabelName);
+      fArrayProductPanels[counter].LabelName.Hint :=
+        DataModuleOCK.SQLQueryProductData.FieldByName('ProductName').AsString;
+      fArrayProductPanels[counter].Hint :=
         DataModuleOCK.SQLQueryProductData.FieldByName('ProductName').AsString;
       {Set Product Icons}
       if FileExists(PathCustomIcons + StringListCustomIcons.Values[ProductID]) then
@@ -1169,7 +1206,7 @@ begin
     ButtonSoftwareInstall.Visible := False;
     ButtonSoftwareUninstall.Visible := False;
     ButtonSoftwareRemoveAction.Visible:= True;
-    ButtonSoftwareUpdate.Enabled := False;
+    ButtonSoftwareUpdate.Visible := False;
   end
   else
   begin
@@ -1178,15 +1215,15 @@ begin
       ButtonSoftwareInstall.Visible := False;
       ButtonSoftwareUninstall.Visible := True;
       ButtonSoftwareRemoveAction.Visible:= False;
-      ButtonSoftwareUpdate.Enabled := False;
+      ButtonSoftwareUpdate.Visible := False;
     end
     else
       if ProductPanel.LabelState.Caption = rsNotInstalled then
       begin
-        ButtonSoftwareUninstall.Visible := False;
-        ButtonSoftwareUpdate.Enabled := False;
-        ButtonSoftwareRemoveAction.Visible:= False;
         ButtonSoftwareInstall.Visible := True;
+        ButtonSoftwareUninstall.Visible := False;
+        ButtonSoftwareRemoveAction.Visible:= False;
+        ButtonSoftwareUpdate.Visible := False;
       end
       else
         if ProductPanel.LabelState.Caption = rsUpdate then
@@ -1194,7 +1231,7 @@ begin
           ButtonSoftwareInstall.Visible := False;
           ButtonSoftwareUninstall.Visible := True;
           ButtonSoftwareRemoveAction.Visible:= False;
-          ButtonSoftwareUpdate.Enabled := True;
+          ButtonSoftwareUpdate.Visible := True;
         end;
   end;
 end;
@@ -1205,29 +1242,9 @@ begin
   Refresh;
 end;
 
-{procedure Tmythread2.Execute;
-begin
-  // write back action requests
-  DataModuleOCK.SQLQueryProductData.Filtered := False;
-  DataModuleOCK.SQLQueryProductData.Filter := 'ActionRequest  <> ""';
-  DataModuleOCK.SQLQueryProductData.Filtered := True;
-  DataModuleOCK.SQLQueryProductData.First;
-  while not DataModuleOCK.SQLQueryProductData.EOF do
-  begin
-    OCKOpsiConnection.setActionrequest(DataModuleOCK.SQLQueryProductData.FieldByName('ProductId').AsString,
-      DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString);
-    DataModuleOCK.SQLQueryProductData.Next;
-  end;
-  Terminate;
-end;}
-
 
 { TFormOpsiClientKiosk }
 
-//procedure TFormOpsiClientKiosk.ProcessMess;
-//begin
-//  Application.ProcessMessages;
-//end;
 
 procedure TFormOpsiClientKiosk.RadioGroupViewSelectionChanged(Sender: TObject);
 begin
@@ -1242,27 +1259,17 @@ end;
 
 procedure TFormOpsiClientKiosk.SpeedButtonClearSearchEditClick(Sender: TObject);
 begin
-  try
-    screen.Cursor := crHourGlass;
-    EditSearch.Clear;
-    //DataModuleOCK.SQLQueryProductData.Open;
-    DataModuleOCK.SQLQueryProductData.Filtered := False;
-    DataModuleOCK.SQLQueryProductData.First;
-    SpeedButtonAll.AllowAllUp:= False;
-    SpeedButtonAll.Click;
-  finally
-    //if DataModuleOCK.SQLTransaction.Active then
-    //begin
-      //DataModuleOCK.SQLQueryProductData.Close;
-      //DataModuleOCK.SQLTransaction.Commit;
-    //end;
-    screen.Cursor := crDefault;
-  end;
+  EditSearch.Clear;
 end;
 
 procedure TFormOpsiClientKiosk.SpeedButtonSearchClick(Sender: TObject);
 begin
-   if PanelSearchMask.Visible then PanelSearchMask.Hide
+   if PanelSearchMask.Visible then
+   begin
+     PanelSearchMask.Hide;
+     EditSearch.Clear;
+     //SetView;
+   end
    else PanelSearchMask.Show;
 end;
 
@@ -1428,11 +1435,6 @@ begin
     end;
 end;
 
-procedure TFormOpsiClientKiosk.RadioGroupViewClick(Sender: TObject);
-begin
-
-end;
-
 procedure TFormOpsiClientKiosk.DBGrid1Exit(Sender: TObject);
 begin
   //PanelProductDetail.Height := 0;
@@ -1486,6 +1488,13 @@ begin
   if FormHelpInfo.CheckBoxExpertMode.Checked then FormOpsiClientKiosk.PanelExpertMode.Visible := True;
   FormOpsiClientKiosk.PanelToolbar.Visible := True;
   FormOpsiClientKiosk.NotebookProducts.PageIndex:=1;
+  //if (DataModuleOCK.SQLQueryProductData.EOF and DataModuleOCK.SQLQueryProductData.BOF) then
+    //begin
+      //DataModuleOCK.SQLQueryProductData.Filtered := False;
+      //SpeedButtonAll.Down := True;
+      //SetView;
+    //end;
+  SetView;
 end;
 
 procedure TFormOpsiClientKiosk.ButtonSoftwareInstallClick(Sender: TObject);
@@ -1527,6 +1536,14 @@ begin
     + ArrayProductPanels[SelectedPanelIndex].LabelName.Caption);
   DataModuleOCK.SQLQueryProductData.Post;
   DataModuleOCK.SQLQueryProductData.Open;
+  if (DataModuleOCK.SQLQueryProductData.EOF and
+    DataModuleOCK.SQLQueryProductData.BOF) then
+    begin
+      DataModuleOCK.SQLQueryProductData.Filtered := False;
+      DataModuleOCK.SQLQueryProductData.Locate('ProductID',
+       VarArrayOf([SelectedProduct]), [loCaseInsensitive]);
+      SpeedButtonAll.Down := True;
+    end;
   Screen.Cursor := crDefault;
 end;
 
@@ -1848,6 +1865,13 @@ procedure TFormOpsiClientKiosk.FormActivate(Sender: TObject);
 begin
   if not StartupDone then
   begin
+    //ShowMessage('Width of SpeedButtonUpdates:'+ IntToStr(SpeedButtonUpdates.Width));
+    MinWidthStandardMode := SpeedButtonAll.Width + SpeedButtonUpdates.Width +
+      SpeedButtonNotInstalled.Width + SpeedButtonActions.Width +
+      SpeedButtonSearch.Width + BitBtnHelp.Width + 50;
+    Constraints.MinWidth := MinWidthStandardMode;
+    if Width < MinWidthStandardMode then Width := MinWidthStandardMode;
+    SetPositionButtonsOnPanelToolbar;
     try
       FormProgressWindow.ProgressBar1.Position := 0;
       FormProgressWindow.ProgressBarDetail.Position := 0;
@@ -1867,11 +1891,18 @@ begin
       StartupDone := True;
     end;
   end;//end of: if not StartupDone
-   { Expert mode }
   if FormHelpInfo.CheckBoxExpertMode.Checked then
   begin
-    { Expert view }
+    { Expert mode }
     PanelExpertMode.Visible := True;
+    MinWidthExpertMode := RadioGroupView.Width + ButtonSaveImagesOnShare.Width +
+      BitBtnInstallNow.Width + SpeedButtonReload.Width + 50;
+    //ShowMessage('Width of ButtonSaveImagesOnShare:'+ IntToStr(ButtonSaveImagesOnShare.Width));
+    if MinWidthExpertMode > MinWidthStandardMode then
+    begin
+      Constraints.MinWidth := MinWidthExpertMode;
+      if Width < MinWidthExpertMode then Width := MinWidthExpertMode;
+    end;
     SetView;
     //NotebookProducts.PageIndex := RadioGroupView.ItemIndex;
   end
@@ -1880,17 +1911,18 @@ begin
   begin
     PanelExpertMode.Visible := False;
     PanelProductDetail.Height := 0;
+    Constraints.MinWidth := MinWidthStandardMode;
+    if Width < MinWidthStandardMode then Width := MinWidthStandardMode;
     SetTilesView;
   end;
+
 end;
 
-procedure TFormOpsiClientKiosk.FormShow(Sender: TObject);
+procedure TFormOpsiClientKiosk.FormResize(Sender: TObject);
 begin
-  //FormProgressWindow.LabelDataload.Caption := 'Init';
-  //StartupDone := False;
-  //FormOpsiClientKiosk.Repaint;
-  //Application.ProcessMessages;
+  SetPositionButtonsOnPanelToolbar;
 end;
+
 
 
 procedure TFormOpsiClientKiosk.ReloadDataFromServer;
@@ -1982,13 +2014,13 @@ procedure TFormOpsiClientKiosk.LoadSkinForTitle(SkinPath: string);
 var
   myini: TInifile;
 begin
-  if FileExists(skinpath + 'opsiclientkiosk.ini') then
+  if FileExists(SkinPath) then
   begin
-    LogDatei.Log('loading skin for title from: ' + skinpath + 'opsiclientkiosk.ini', LLEssential);
-    myini := TIniFile.Create(skinpath + 'opsiclientkiosk.ini');
+    LogDatei.Log('loading skin for title from: ' + SkinPath, LLEssential);
+    myini := TIniFile.Create(SkinPath);
     //title
     LabelTitle.Caption := myini.ReadString('TitleLabel', 'Text', 'Opsi Client Kiosk');
-    LogDatei.log('Title_Caption: ' + LabelTitle.Caption, LLDebug);
+    LogDatei.log('LabelTitle.Caption: ' + LabelTitle.Caption, LLDebug);
     LabelTitle.Font.Name := myini.ReadString('TitleLabel', 'FontName', 'Arial');
     LabelTitle.Font.Size := myini.ReadInteger('TitleLabel', 'FontSize', 20);
     LabelTitle.Font.Color := StringToColor(myini.ReadString('TitleLabel', 'FontColor', 'clBlack'));
@@ -2004,6 +2036,7 @@ var
   InfoText    : String;
   ListOptions : TStringList;
   ErrorMsg    : String;
+  Spacing     : String;
 begin
   InitLogging('kiosk-' + GetUserName_ +'.log', self.Name + '.FormCreate', LLDebug);
   LogDatei.log('Initialize Opsi Client Kiosk', LLNotice);
@@ -2016,7 +2049,8 @@ begin
   //ShowMessage('Form Create');
 
   { Init Variables }
-
+  //Height := 640;
+  //Width := 640;
   StartUpDone := False;
   ClientdMode := True;
   FilteredProductIDs := TStringList.Create;
@@ -2052,7 +2086,7 @@ begin
 
   { Load skin }
   { Set skin for LabelTitle }
-  skinpath := Application.Location + 'opsiclientkioskskin' + PathDelim;
+  {skinpath := Application.Location + 'opsiclientkioskskin' + PathDelim;
   if FileExistsUTF8(skinpath + 'opsiclientkiosk.png') then
   begin
     ImageHeader.Picture.LoadFromFile(skinpath + 'opsiclientkiosk.png');
@@ -2060,18 +2094,22 @@ begin
   if FileExists(skinpath + 'opsiclientkiosk.ini') then
   begin
     LoadSkinForTitle(skinpath);
-  end;
+  end;}
 
   { skinpath in opsiclientagent custom dir }
   skinpath := Application.Location +
-    'custom\skin' + PathDelim;
+    'ock_custom\skin' + PathDelim;
   if FileExistsUTF8(skinpath + 'opsiclientkiosk.png') then
   begin
     ImageHeader.Picture.LoadFromFile(skinpath + 'opsiclientkiosk.png');
   end;
+  if FileExistsUTF8(skinpath + 'logo.png') then
+  begin
+    ImageLogo.Picture.LoadFromFile(skinpath + 'logo.png');
+  end;
   if FileExistsUTF8(skinpath + 'opsiclientkiosk.ini') then
   begin
-    LoadSkinForTitle(skinpath);
+    LoadSkinForTitle(skinpath + 'opsiclientkiosk.ini');
   end;
 
 
@@ -2119,7 +2157,7 @@ begin
   (*****************)
   (* Localizations *)
   (*****************)
-
+  Spacing := '  ';
   { RadioGroupView }
   RadioGroupView.Items[0] := rsViewList;
   RadioGroupView.Items[1] := rsViewTiles;
@@ -2130,12 +2168,17 @@ begin
   ButtonSoftwareInstall.Caption := rsInstall;
   ButtonSoftwareUninstall.Caption := rsActUninstall;
   ButtonSoftwareUpdate.Caption := rsUpdate;
-  { SpeedButtons on Toolpanel}
-  SpeedButtonAll.Caption := rsAll;
-  SpeedButtonUpdates.Caption:= rsUpdates;
-  SpeedButtonNotInstalled.Caption:= rsNotInstalled;
-  SpeedButtonActions.Caption := rsActions;
   ButtonSoftwareBack.Caption:= rsBack;
+
+  { SpeedButtons on Toolpanel}
+  SpeedButtonAll.Caption := Spacing + rsAll + Spacing;
+  SpeedButtonUpdates.Caption:= Spacing + rsUpdates + Spacing;
+  SpeedButtonNotInstalled.Caption:= Spacing + rsNotInstalled + Spacing;
+  SpeedButtonActions.Caption := Spacing + rsActions + Spacing;
+  { Set MinWidth, Width and Center Buttons on ToolPanel}
+
+  //ShowMessage('Width of SpeedButtonUpdates:'+ IntToStr(SpeedButtonUpdates.Width));
+
 end;
 
 procedure TFormOpsiClientKiosk.EditSearchEnter(Sender: TObject);
@@ -2146,29 +2189,22 @@ end;
 { Searching Products}
 procedure TFormOpsiClientKiosk.SearchProducts;
 var
-  //i:integer;
   Filtercond, Filterstr: string;
 begin
   try
-  //if not DataModuleOCK.SQLTransaction.Active then
-  //begin
-    //DataModuleOCK.SQLTransaction.StartTransaction;
-    //DataModuleOCK.SQLQueryProductData.Open;
-  //end;
-
     Filtercond := '"*' + EditSearch.Text + '*"';
     LogDatei.log('Search for: ' + EditSearch.Text + ' Filter for: ' +
       Filtercond, LLinfo);
     Filterstr := '(ProductId =' + Filtercond;
     Filterstr := Filterstr + 'or ProductName =' + Filtercond;
-    Filterstr := Filterstr + 'or DESCRIPTION =' + Filtercond;
-    Filterstr := Filterstr + 'or ADVICE =' + Filtercond;
+    Filterstr := Filterstr + 'or Description =' + Filtercond;
+    Filterstr := Filterstr + 'or Advice =' + Filtercond;
     if SpeedButtonAll.Down then
-      Filterstr := Filterstr + 'or INSTALLATIONSTATUS =' + Filtercond +')';
+      Filterstr := Filterstr + 'or InstallationStatus =' + Filtercond +')';
     if SpeedButtonNotInstalled.Down then
-      Filterstr := Filterstr + ') and INSTALLATIONSTATUS = ""';
+      Filterstr := Filterstr + ') and InstallationStatus = ""';
     if SpeedButtonUpdates.Down then
-       Filterstr := Filterstr + ' ) and INSTALLATIONSTATUS <> "" and UpdatePossible = "true"';
+       Filterstr := Filterstr + ' ) and UpdatePossible and InstallationStatus <> ""';
     if SpeedButtonActions.Down then
        Filterstr := Filterstr + ' ) and ActionRequest <> ""';
     DataModuleOCK.SQLQueryProductData.Filtered := False;
@@ -2177,14 +2213,10 @@ begin
     DataModuleOCK.SQLQueryProductData.Filtered := True;
     DataModuleOCK.SQLQueryProductData.First;
     //LastFilter := DataModuleOCK.SQLQueryProductData.Filter;
-  finally
-    //if DataModuleOCK.SQLTransaction.Active then
-    //begin
-      //DataModuleOCK.SQLQueryProductData.Close;
-      //DataModuleOCK.SQLTransaction.Commit;
-    //end;
+  except
+    LogDatei.log('Error while seraching for products.',LLError);
+    ShowMessage('Error while searching for products.');
   end;
-  //if not SpeedButtonExpertMode.Down then
 end;
 
 procedure TFormOpsiClientKiosk.SpeedButtonAllClick(Sender: TObject);
@@ -2268,6 +2300,16 @@ begin
     FreeMem(buffer, bufferSize);
   end;
 end; { DSiGetUserName}
+
+procedure TFormOpsiClientKiosk.SetPositionButtonsOnPanelToolbar;
+var
+  testWidth :integer;
+begin
+  //testWidth := SpeedButtonUpdates.Width;
+  SpeedButtonAll.BorderSpacing.Left := round((SpeedButtonSearch.Left -
+    (SpeedButtonAll.Width + SpeedButtonUpdates.Width +
+     SpeedButtonNotInstalled.Width + SpeedButtonActions.Width))/2);
+end;
 
 
 function TFormOpsiClientKiosk.InitLogging(const LogFileName, CallingMethod: string;

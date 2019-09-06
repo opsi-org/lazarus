@@ -280,12 +280,8 @@ msgctxt "TFINSTALLDLG.LABEL1.CAPTION"
 msgid "The following Actions will be done:"
 msgstr "Las siguientes acciones serán realizadas:"
 
-#: tformhelpinfo.buttonabout.caption
-msgid "About client kiosk"
-msgstr ""
-
 #: tformhelpinfo.buttonclose.caption
-msgid "Close"
+msgid "Ok"
 msgstr ""
 
 #: tformhelpinfo.caption
@@ -296,6 +292,55 @@ msgstr ""
 #: tformhelpinfo.checkboxexpertmode.caption
 msgctxt "tformhelpinfo.checkboxexpertmode.caption"
 msgid "Expert mode"
+msgstr ""
+
+#: tformhelpinfo.labelcopy.caption
+msgid "CopyRight:"
+msgstr ""
+
+#: tformhelpinfo.labelcopyright.caption
+msgid "LabelCopyRight"
+msgstr ""
+
+#: tformhelpinfo.labelcredits.caption
+msgid "LabelCredits"
+msgstr ""
+
+#: tformhelpinfo.labelcreditsto.caption
+msgid "Credits to"
+msgstr ""
+
+#: tformhelpinfo.labellang.caption
+msgid "Display language:"
+msgstr ""
+
+#: tformhelpinfo.labellanguage.caption
+msgid "LabelLanguage"
+msgstr ""
+
+#: tformhelpinfo.labelname.caption
+msgid "opsi client kiosk"
+msgstr ""
+
+#: tformhelpinfo.labelopsiweb.caption
+msgid "LabelOpsiWeb"
+msgstr ""
+
+#: tformhelpinfo.labeluibweb.caption
+msgid "LabelUibWeb"
+msgstr ""
+
+#: tformhelpinfo.labelvers.caption
+msgid "Version"
+msgstr ""
+
+#: tformhelpinfo.labelversion.caption
+msgid "LabelVersion"
+msgstr ""
+
+#: tformhelpinfo.speedbuttonmanual.caption
+msgctxt "tformhelpinfo.speedbuttonmanual.caption"
+msgid "opsi manual"
 msgstr ""
 
 #: tformopsiclientkiosk.bitbtnhelp.caption
@@ -419,11 +464,6 @@ msgstr ""
 msgctxt "tformopsiclientkiosk.labelsoftwarerecentversion.caption"
 msgid "Recent version"
 msgstr ""
-
-#: tformopsiclientkiosk.labeltitle.caption
-msgctxt "tformopsiclientkiosk.labeltitle.caption"
-msgid "opsi Client Kiosk"
-msgstr "opsi Client Kiosk"
 
 #: tformopsiclientkiosk.labelverstr.caption
 msgctxt "tformopsiclientkiosk.labelverstr.caption"
