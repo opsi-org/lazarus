@@ -8,6 +8,7 @@
 {"hash":322608,"name":"tformopsiclientkiosk.bitbtnhelp.caption","sourcebytes":[72,101,108,112],"value":"Help"},
 {"hash":128648723,"name":"tformopsiclientkiosk.speedbuttonactions.caption","sourcebytes":[65,99,116,105,111,110,115],"value":"Actions"},
 {"hash":148938994,"name":"tformopsiclientkiosk.statusbar1.panels[0].text","sourcebytes":[78,111,116,32,67,111,110,110,101,99,116,101,100,32,116,111,32,111,112,115,105,32,115,101,114,118,101,114],"value":"Not Connected to opsi server"},
+{"hash":46499195,"name":"tformopsiclientkiosk.labeltitle.caption","sourcebytes":[111,112,115,105,32,67,108,105,101,110,116,32,75,105,111,115,107],"value":"opsi Client Kiosk"},
 {"hash":206001599,"name":"tformopsiclientkiosk.imagelogo.hint","sourcebytes":[89,111,117,114,32,108,111,103,111],"value":"Your logo"},
 {"hash":63922882,"name":"tformopsiclientkiosk.speedbuttonreload.hint","sourcebytes":[82,101,108,111,97,100,32,100,97,116,97,32,102,114,111,109,32,115,101,114,118,101,114],"value":"Reload data from server"},
 {"hash":93074804,"name":"tformopsiclientkiosk.speedbuttonreload.caption","sourcebytes":[82,101,108,111,97,100],"value":"Reload"},

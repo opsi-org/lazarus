@@ -1,7 +1,7 @@
 object FormSaveImagesOnShare: TFormSaveImagesOnShare
-  Left = 557
+  Left = 3068
   Height = 187
-  Top = 280
+  Top = 244
   Width = 533
   Caption = 'Save images on share'
   ClientHeight = 187
@@ -12,8 +12,8 @@ object FormSaveImagesOnShare: TFormSaveImagesOnShare
     Left = 6
     Height = 15
     Top = 16
-    Width = 69
-    Caption = 'Path to share'
+    Width = 136
+    Caption = 'Path to opsi depot (share)'
     ParentColor = False
   end
   object EditPathToShare: TEdit

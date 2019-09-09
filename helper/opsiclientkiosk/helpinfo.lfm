@@ -1,7 +1,7 @@
 object FormHelpInfo: TFormHelpInfo
-  Left = 2180
+  Left = 1944
   Height = 324
-  Top = 236
+  Top = 170
   Width = 420
   BorderStyle = bsDialog
   Caption = 'Help'

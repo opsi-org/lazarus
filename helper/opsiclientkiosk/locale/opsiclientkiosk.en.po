@@ -468,6 +468,10 @@ msgctxt "tformopsiclientkiosk.labelsoftwarerecentversion.caption"
 msgid "Recent version"
 msgstr "Recent version"
 
+#: tformopsiclientkiosk.labeltitle.caption
+msgid "opsi Client Kiosk"
+msgstr ""
+
 #: tformopsiclientkiosk.labelverstr.caption
 msgctxt "tformopsiclientkiosk.labelverstr.caption"
 msgid "Version at Server"
@@ -590,8 +594,10 @@ msgid "Password"
 msgstr "Password"
 
 #: tformsaveimagesonshare.labelpathtoshare.caption
+#, fuzzy
+#| msgid "Path to share"
 msgctxt "tformsaveimagesonshare.labelpathtoshare.caption"
-msgid "Path to share"
+msgid "Path to opsi depot (share)"
 msgstr "Path to share"
 
 #: tformsaveimagesonshare.labeluser.caption

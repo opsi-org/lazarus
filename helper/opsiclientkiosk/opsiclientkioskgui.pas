@@ -22,6 +22,7 @@ uses
   datadb,
   CommCtrl, typinfo, installdlg, lcltranslator,
   ActnList, Menus, oslog, inifiles, Variants, Lazfileutils, Types,
+  DSiWin32,
   opsiconnection,
   jwawinbase,
   //osprocesses,
@@ -935,7 +936,7 @@ begin
     ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.admin-mode');
     //ShowMessage(ConfigState.Text);
     AdminMode := StrToBool(ConfigState.Strings[0]);
-    if AdminMode then
+    if AdminMode and DSiIsAdmin then
     begin
       Caption := Caption + ' - Admin mode';
       ButtonSaveImagesOnShare.Visible := True;
@@ -943,6 +944,11 @@ begin
     else
     begin
       ButtonSaveImagesOnShare.Visible := False;
+      if AdminMode and not DSiIsAdmin then
+      begin
+        ShowMessage('Admin mode disabled. Try to start Client Kiosk with admin rights.');
+        AdminMode := false;
+      end;
     end;
      //FormProgressWindow.ProgressBarDetail.Position := 100;
     //Application.ProcessMessages;
@@ -2084,34 +2090,6 @@ begin
     LogDatei.log('Error while loading Images (Icons and/or Screenshots)',LLError);
   end;
 
-  { Load skin }
-  { Set skin for LabelTitle }
-  {skinpath := Application.Location + 'opsiclientkioskskin' + PathDelim;
-  if FileExistsUTF8(skinpath + 'opsiclientkiosk.png') then
-  begin
-    ImageHeader.Picture.LoadFromFile(skinpath + 'opsiclientkiosk.png');
-  end;
-  if FileExists(skinpath + 'opsiclientkiosk.ini') then
-  begin
-    LoadSkinForTitle(skinpath);
-  end;}
-
-  { skinpath in opsiclientagent custom dir }
-  skinpath := Application.Location +
-    'ock_custom\skin' + PathDelim;
-  if FileExistsUTF8(skinpath + 'opsiclientkiosk.png') then
-  begin
-    ImageHeader.Picture.LoadFromFile(skinpath + 'opsiclientkiosk.png');
-  end;
-  if FileExistsUTF8(skinpath + 'logo.png') then
-  begin
-    ImageLogo.Picture.LoadFromFile(skinpath + 'logo.png');
-  end;
-  if FileExistsUTF8(skinpath + 'opsiclientkiosk.ini') then
-  begin
-    LoadSkinForTitle(skinpath + 'opsiclientkiosk.ini');
-  end;
-
 
   try
     { quick check parameters }
@@ -2178,7 +2156,33 @@ begin
   { Set MinWidth, Width and Center Buttons on ToolPanel}
 
   //ShowMessage('Width of SpeedButtonUpdates:'+ IntToStr(SpeedButtonUpdates.Width));
+   { Load skin }
+  { Set skin for LabelTitle }
+  {skinpath := Application.Location + 'opsiclientkioskskin' + PathDelim;
+  if FileExistsUTF8(skinpath + 'opsiclientkiosk.png') then
+  begin
+    ImageHeader.Picture.LoadFromFile(skinpath + 'opsiclientkiosk.png');
+  end;
+  if FileExists(skinpath + 'opsiclientkiosk.ini') then
+  begin
+    LoadSkinForTitle(skinpath);
+  end;}
 
+  { skinpath in opsiclientagent custom dir }
+  skinpath := Application.Location +
+    'ock_custom\skin' + PathDelim;
+  if FileExistsUTF8(skinpath + 'opsiclientkiosk.png') then
+  begin
+    ImageHeader.Picture.LoadFromFile(skinpath + 'opsiclientkiosk.png');
+  end;
+  if FileExistsUTF8(skinpath + 'logo.png') then
+  begin
+    ImageLogo.Picture.LoadFromFile(skinpath + 'logo.png');
+  end;
+  if FileExistsUTF8(skinpath + 'opsiclientkiosk.ini') then
+  begin
+    LoadSkinForTitle(skinpath + 'opsiclientkiosk.ini');
+  end;
 end;
 
 procedure TFormOpsiClientKiosk.EditSearchEnter(Sender: TObject);

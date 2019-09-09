@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: opsi.org\n"
-"PO-Revision-Date: 2019-09-06 13:21+0000\n"
+"PO-Revision-Date: 2019-09-09 12:22+0000\n"
 "Last-Translator: Jan Werner <j.werner@uib.de>\n"
 "Language-Team: German (http://www.transifex.com/opsi-org/opsiorg/language/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -15,15 +15,15 @@ msgstr ""
 
 #: imagestoshare.rscouldnotsaveicons
 msgid "Could not save icons on share."
-msgstr "Produktsymbole konnten nicht auf dem Netzlaufwerk gespeichert werden."
+msgstr "Produktsymbole konnten nicht auf dem Share gespeichert werden."
 
 #: imagestoshare.rscouldnotsavescreenshots
 msgid "Could not save screenshots on share."
-msgstr "Screenshots konnten nicht auf dem Netzlaufwerk gespeichert werden."
+msgstr "Screenshots konnten nicht auf dem Share gespeichert werden."
 
 #: imagestoshare.rscouldnotunmount
 msgid "Could not unmount share."
-msgstr "Netzlaufwerk konnte nicht getrennt werden."
+msgstr "Share konnte nicht getrennt werden."
 
 #: opsiclientkioskgui.rsaction
 msgctxt "opsiclientkioskgui.rsaction"
@@ -119,7 +119,8 @@ msgstr "Jetzt installieren"
 
 #: opsiclientkioskgui.rsinstallnowhint
 msgctxt "opsiclientkioskgui.rsinstallnowhint"
-msgid "Start the installation/update (uninstallation) of the selected products"
+msgid ""
+"Start the installation/update (uninstallation) of the selected products"
 msgstr "Start der Installation/Aktualisierung (Deinstallation) der ausgewählten Produkte"
 
 #: opsiclientkioskgui.rsinstallnowornextevent
@@ -189,7 +190,9 @@ msgid "Store actions"
 msgstr "Aktionen speichern"
 
 #: opsiclientkioskgui.rsstoreactionshint
-msgid "Send the action requests to the server, show the resulting installations and ask for installation start."
+msgid ""
+"Send the action requests to the server, show the resulting installations and"
+" ask for installation start."
 msgstr "Sende die Anforderungen an den Server, zeige die resultierenden anstehenden Installationen und Frage nach dem Installationsstart."
 
 #: opsiclientkioskgui.rsuninstallationfinished
@@ -331,7 +334,7 @@ msgstr "-"
 #: tformhelpinfo.speedbuttonmanual.caption
 msgctxt "tformhelpinfo.speedbuttonmanual.caption"
 msgid "opsi manual"
-msgstr ""
+msgstr "Opsi Manual"
 
 #: tformopsiclientkiosk.bitbtnhelp.caption
 msgctxt "tformopsiclientkiosk.bitbtnhelp.caption"
@@ -345,7 +348,8 @@ msgstr "Jetzt installieren"
 
 #: tformopsiclientkiosk.bitbtninstallnow.hint
 msgctxt "tformopsiclientkiosk.bitbtninstallnow.hint"
-msgid "Start the installation/update (uninstallation) of the selected products"
+msgid ""
+"Start the installation/update (uninstallation) of the selected products"
 msgstr "Start der Installation/Aktualisierung (Deinstallation) der ausgewählten Produkte"
 
 #: tformopsiclientkiosk.buttonsaveimagesonshare.caption
@@ -382,7 +386,8 @@ msgid "opsi-client-kiosk"
 msgstr "opsi-client-kiosk"
 
 #: tformopsiclientkiosk.dbgrid1.hint
-msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
+msgid ""
+"Click to ActionRequest Column, to set action requests (setup/uninstall)"
 msgstr "In die Spalte ActionRequest klicken um Aktionen (setup/uninstall) zu setzen"
 
 #: tformopsiclientkiosk.editsearch.hint
@@ -441,6 +446,10 @@ msgstr ""
 #: tformopsiclientkiosk.labelsoftwarerecentversion.caption
 msgid "Recent version"
 msgstr "Neueste Version"
+
+#: tformopsiclientkiosk.labeltitle.caption
+msgid "opsi Client Kiosk"
+msgstr "opsi Client Kiosk"
 
 #: tformopsiclientkiosk.labelverstr.caption
 msgid "Version at Server"
@@ -501,7 +510,7 @@ msgstr "Filtere nach Produkten bei denen ein Upgrade möglich ist."
 
 #: tformopsiclientkiosk.statusbar1.panels[0].text
 msgid "Not Connected to opsi server"
-msgstr "Keine Verbindung zum opsiserver"
+msgstr "Keine Verbindung zum opsi-Server"
 
 #: tformopsiclientkiosk.tabsheet1.caption
 msgid "Details"
@@ -535,12 +544,12 @@ msgstr "Verwerfen"
 #: tformsaveimagesonshare.buttoncopy.caption
 msgctxt "tformsaveimagesonshare.buttoncopy.caption"
 msgid "Save images on share"
-msgstr "Speichere Bilder auf Netzlaufwerk"
+msgstr "Speichere Bilder auf Share"
 
 #: tformsaveimagesonshare.caption
 msgctxt "tformsaveimagesonshare.caption"
 msgid "Save images on share"
-msgstr "Speichere Bilder auf Netzlaufwerk"
+msgstr "Speichere Bilder auf Share"
 
 #: tformsaveimagesonshare.editpathtoshare.texthint
 msgid "\\\\servername\\opsi_depot_rw"
@@ -551,10 +560,9 @@ msgid "Password"
 msgstr "Passwort"
 
 #: tformsaveimagesonshare.labelpathtoshare.caption
-msgid "Path to share"
-msgstr "Pfad zum Netzwerklaufwerk"
+msgid "Path to opsi depot (share)"
+msgstr "Pfad zum opsi-Depot (Share)"
 
 #: tformsaveimagesonshare.labeluser.caption
 msgid "User"
 msgstr "Benutzer"
-
