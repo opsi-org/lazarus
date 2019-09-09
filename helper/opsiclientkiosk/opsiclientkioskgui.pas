@@ -366,6 +366,9 @@ resourcestring
  rsInstallationFinished = 'Installation/update finished.';
  rsUninstallationFinished = 'Uninstallation finished.';
  rsActionRemovedFor = 'Action removed for';
+ rsCurrentUserNoAdmin = 'Current user has no admin privileges. Admin mode '
+   +'disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges.';
+ rsAdminMode = 'Admin mode';
 
 
 implementation
@@ -938,7 +941,7 @@ begin
     AdminMode := StrToBool(ConfigState.Strings[0]);
     if AdminMode and DSiIsAdmin then
     begin
-      Caption := Caption + ' - Admin mode';
+      Caption := Caption + ' - ' + rsAdminMode;
       ButtonSaveImagesOnShare.Visible := True;
     end
     else
@@ -946,7 +949,7 @@ begin
       ButtonSaveImagesOnShare.Visible := False;
       if AdminMode and not DSiIsAdmin then
       begin
-        ShowMessage('Admin mode disabled. Try to start Client Kiosk with admin rights.');
+        ShowMessage(Format(rsCurrentUserNoAdmin, [LineEnding]));
         AdminMode := false;
       end;
     end;

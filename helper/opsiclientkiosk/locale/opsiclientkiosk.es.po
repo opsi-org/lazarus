@@ -58,6 +58,10 @@ msgctxt "opsiclientkioskgui.rsactuninstall"
 msgid "Uninstall"
 msgstr "Desinstalar"
 
+#: opsiclientkioskgui.rsadminmode
+msgid "Admin mode"
+msgstr ""
+
 #: opsiclientkioskgui.rsall
 msgctxt "opsiclientkioskgui.rsall"
 msgid "All"
@@ -84,6 +88,10 @@ msgstr "Cancelar"
 #: opsiclientkioskgui.rsconnectedto
 msgid "Connected to"
 msgstr "Conectado a"
+
+#: opsiclientkioskgui.rscurrentusernoadmin
+msgid "Current user has no admin privileges. Admin mode disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges."
+msgstr ""
 
 #: opsiclientkioskgui.rsdisabled
 msgid "disabled"
