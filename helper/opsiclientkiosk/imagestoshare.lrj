@@ -1,0 +1,9 @@
+{"version":1,"strings":[
+{"hash":258135941,"name":"tformsaveimagesonshare.caption","sourcebytes":[83,97,118,101,32,105,109,97,103,101,115,32,111,110,32,115,104,97,114,101],"value":"Save images on share"},
+{"hash":177403209,"name":"tformsaveimagesonshare.labelpathtoshare.caption","sourcebytes":[80,97,116,104,32,116,111,32,111,112,115,105,32,100,101,112,111,116,32,40,115,104,97,114,101,41],"value":"Path to opsi depot (share)"},
+{"hash":114545383,"name":"tformsaveimagesonshare.editpathtoshare.texthint","sourcebytes":[92,92,115,101,114,118,101,114,110,97,109,101,92,111,112,115,105,95,100,101,112,111,116,95,114,119],"value":"\\\\servername\\opsi_depot_rw"},
+{"hash":379330,"name":"tformsaveimagesonshare.labeluser.caption","sourcebytes":[85,115,101,114],"value":"User"},
+{"hash":145417188,"name":"tformsaveimagesonshare.labelpassword.caption","sourcebytes":[80,97,115,115,119,111,114,100],"value":"Password"},
+{"hash":258135941,"name":"tformsaveimagesonshare.buttoncopy.caption","sourcebytes":[83,97,118,101,32,105,109,97,103,101,115,32,111,110,32,115,104,97,114,101],"value":"Save images on share"},
+{"hash":77089212,"name":"tformsaveimagesonshare.buttoncancel.caption","sourcebytes":[67,97,110,99,101,108],"value":"Cancel"}
+]}

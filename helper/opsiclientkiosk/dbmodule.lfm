@@ -1,0 +1,35 @@
+object DataModuleOCK1: TDataModuleOCK1
+  OldCreateOrder = False
+  Height = 308
+  HorizontalOffset = 957
+  VerticalOffset = 127
+  Width = 325
+  PPI = 96
+  object SQLite3Connection: TSQLite3Connection
+    Connected = False
+    LoginPrompt = False
+    KeepConnection = False
+    Transaction = SQLTransaction
+    left = 72
+    top = 24
+  end
+  object SQLTransaction: TSQLTransaction
+    Active = False
+    Database = SQLite3Connection
+    left = 224
+    top = 24
+  end
+  object SQLQueryProductData: TSQLQuery
+    FieldDefs = <>
+    Database = SQLite3Connection
+    Transaction = SQLTransaction
+    Params = <>
+    left = 78
+    top = 141
+  end
+  object DataSourceProductData: TDataSource
+    DataSet = SQLQueryProductData
+    left = 76
+    top = 243
+  end
+end

@@ -1,0 +1,5 @@
+flashplayer=flashplayer.png
+audacity=firefox.png
+7zip=opsi-logo.png
+autoit=adobe.png
+firefox=firefox.png

@@ -268,7 +268,7 @@ end;
 
 procedure TOpsiConnection.SelectProduct(Index: integer);
 begin
-  JSONObjectProduct := TJSONObject(OCKOpsiConnection.JSONObjectProducts.Items[index]);
+  JSONObjectProduct := TJSONObject(JSONObjectProducts.Items[index]);
   logdatei.log('Selected Product: ' + JSONObjectProduct.Strings['productId'], LLDebug2);
 end;
 
@@ -421,7 +421,7 @@ begin
   for i := 0 to opsiProducts.Count - 1 do
   begin
     opsiProduct := opsiProducts.Items[i] as TJSONObject;
-    Result.Add(opsiProduct.Strings['productId'] + ' : ' + opsiProduct.Strings['actionRequest']);//['actionRequest"'] ?
+    Result.Add(opsiProduct.Strings['productId'] + '=' + opsiProduct.Strings['actionRequest']);//['actionRequest"'] ?
   end;
   opsiProducts.Free;
 end;
@@ -450,7 +450,11 @@ begin
   if JSONObjectConfigStates <> nil then
     for i := 0 to JSONObjectConfigStates.Arrays[ConfigProperty].Count -1 do
      Result.Add(JSONObjectConfigStates.Arrays[ConfigProperty].Items[i].AsString)
-  else Result.Add('True');
+  else
+  begin
+    Result.Add('False');
+    LogDatei.log('No ConfigState set for installation-now-button and/or admin-mode)!',LLInfo);
+  end;
 end;
 
 //initialization
