@@ -15,24 +15,13 @@ msgstr ""
 msgid "Multiple (more than one) msi files found. Look to log file and directory: "
 msgstr ""
 
+#: osdbasedata.rsbuildradioindex
+msgid "selects the Build mode Radiobutton."
+msgstr ""
+
 #: osdbasedata.rsconfig_filled
 msgctxt "osdbasedata.rsconfig_filled"
 msgid "Automatically detected. Do we have all needed configurations"
-msgstr ""
-
-#: osdbasedata.rscreatebuild
-msgctxt "osdbasedata.rscreatebuild"
-msgid "Selects the Build mode Checkbox build."
-msgstr ""
-
-#: osdbasedata.rscreateinstall
-msgctxt "osdbasedata.rscreateinstall"
-msgid "Selects the Build mode Checkbox install."
-msgstr ""
-
-#: osdbasedata.rscreatequiet
-msgctxt "osdbasedata.rscreatequiet"
-msgid "Selects the Build mode Checkbox quiet."
 msgstr ""
 
 #: osdbasedata.rscreateradioindex
@@ -107,6 +96,101 @@ msgstr ""
 
 #: osdbasedata.rsworkbench_path
 msgctxt "osdbasedata.rsworkbench_path"
+msgid "Path to the opsi_workbench"
+msgstr ""
+
+#: osdconfigdlg.rsconfig_filled
+msgctxt "osdconfigdlg.rsconfig_filled"
+msgid "Automatically detected. Do we have all needed configurations"
+msgstr ""
+
+#: osdconfigdlg.rscreatebuild
+msgctxt "osdconfigdlg.rscreatebuild"
+msgid "Selects the Build mode Checkbox build."
+msgstr ""
+
+#: osdconfigdlg.rscreateinstall
+msgctxt "osdconfigdlg.rscreateinstall"
+msgid "Selects the Build mode Checkbox install."
+msgstr ""
+
+#: osdconfigdlg.rscreatequiet
+msgctxt "osdconfigdlg.rscreatequiet"
+msgid "Selects the Build mode Checkbox quiet."
+msgstr ""
+
+#: osdconfigdlg.rscreateradioindex
+msgctxt "osdconfigdlg.rscreateradioindex"
+msgid "selects the Create mode Radiobutton."
+msgstr ""
+
+#: osdconfigdlg.rsemail_address
+msgctxt "osdconfigdlg.rsemail_address"
+msgid "Your email address, used for the changelog entry"
+msgstr ""
+
+#: osdconfigdlg.rsfullname
+msgctxt "osdconfigdlg.rsfullname"
+msgid "Your full name, used for the changelog entry"
+msgstr ""
+
+#: osdconfigdlg.rsimport_libraries
+msgctxt "osdconfigdlg.rsimport_libraries"
+msgid ""
+"List of opsi-script libraries that have to be imported.\n"
+"One per line. May be empty. Example:\n"
+"myinstallhelperlib.opsiscript\n"
+msgstr ""
+
+#: osdconfigdlg.rspathtoopsipackagebuilder
+msgctxt "osdconfigdlg.rspathtoopsipackagebuilder"
+msgid "Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573"
+msgstr ""
+
+#: osdconfigdlg.rspostinstalllines
+msgctxt "osdconfigdlg.rspostinstalllines"
+msgid ""
+"List of opsi-script code lines that should be included after the installation finished.\n"
+"One per line. May be empty. Example:\n"
+"comment \"Installation finished...\"\n"
+msgstr ""
+
+#: osdconfigdlg.rspostuninstalllines
+msgctxt "osdconfigdlg.rspostuninstalllines"
+msgid ""
+"List of opsi-script code lines that should be included after the uninstallation finished.\n"
+"One per line. May be empty. Example:\n"
+"comment \"Uninstall finished...\"\n"
+msgstr ""
+
+#: osdconfigdlg.rspreinstalllines
+msgctxt "osdconfigdlg.rspreinstalllines"
+msgid ""
+"List of opsi-script code lines that should be included before the installation starts. \n"
+"One per line. May be empty. Example: \n"
+"comment \"Start the installation ...\"\n"
+msgstr ""
+
+#: osdconfigdlg.rspreuninstalllines
+msgctxt "osdconfigdlg.rspreuninstalllines"
+msgid ""
+"List of opsi-script code lines that should be included before the uninstallation starts.\n"
+"One per line. May be empty. Example:\n"
+"comment \"Start the uninstallation ...\"\n"
+msgstr ""
+
+#: osdconfigdlg.rsregisterinfilemanager
+msgctxt "osdconfigdlg.rsregisterinfilemanager"
+msgid "Should this program be registred to the Filemanger (Explorer) context menu ?"
+msgstr ""
+
+#: osdconfigdlg.rsworkbench_mounted
+msgctxt "osdconfigdlg.rsworkbench_mounted"
+msgid "Automatically detected. Is the opsi workbench reachable at workbench_Path."
+msgstr ""
+
+#: osdconfigdlg.rsworkbench_path
+msgctxt "osdconfigdlg.rsworkbench_path"
 msgid "Path to the opsi_workbench"
 msgstr ""
 
@@ -551,20 +635,6 @@ msgstr ""
 msgid "opsi Setup Detector"
 msgstr ""
 
-#: tresultform1.checkboxbuild.caption
-msgctxt "TRESULTFORM1.CHECKBOXBUILD.CAPTION"
-msgid "build"
-msgstr ""
-
-#: tresultform1.checkboxinstall.caption
-msgctxt "TRESULTFORM1.CHECKBOXINSTALL.CAPTION"
-msgid "install"
-msgstr ""
-
-#: tresultform1.checkboxquiet.caption
-msgid "quiet"
-msgstr ""
-
 #: tresultform1.checkboxusemst.caption
 msgctxt "tresultform1.checkboxusemst.caption"
 msgid "use MST File"
@@ -826,6 +896,15 @@ msgstr ""
 
 #: tresultform1.processstatement.caption
 msgid "please wait"
+msgstr ""
+
+#: tresultform1.radiobuildmodebuildinstall.caption
+msgid "build and install"
+msgstr ""
+
+#: tresultform1.radiobuildmodebuildonly.caption
+msgctxt "tresultform1.radiobuildmodebuildonly.caption"
+msgid "build"
 msgstr ""
 
 #: tresultform1.radiobuttonbuildpackage.caption

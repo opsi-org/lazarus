@@ -72,9 +72,6 @@ type
     BtATwonalyzeAndCreate: TBitBtn;
     BtCreateEmptyTemplate: TBitBtn;
     BtAnalyzeOnly: TBitBtn;
-    CheckBoxBuild: TCheckBox;
-    CheckBoxInstall: TCheckBox;
-    CheckBoxQuiet: TCheckBox;
     CheckBoxUseMst: TCheckBox;
     CheckBoxUseMst1: TCheckBox;
     CheckGroupBuildMode: TCheckGroup;
@@ -177,6 +174,8 @@ type
     processStatement: TLabel;
     ProgressBar1: TProgressBar;
     ProgressBarAnalyze: TProgressBar;
+    radioBuildModebuildOnly: TRadioButton;
+    radioBuildModebuildInstall: TRadioButton;
     RadioButtonBuildPackage: TRadioButton;
     RadioButtonCreateOnly: TRadioButton;
     RadioButtonPackageBuilder: TRadioButton;
@@ -537,9 +536,15 @@ begin
       1: RadioButtonBuildPackage.Checked := True;
       2: RadioButtonPackageBuilder.Checked := True;
     end;
+    case myconfiguration.BuildRadioIndex  of
+      0: radioBuildModebuildOnly.Checked := True;
+      1: radioBuildModebuildInstall.Checked := True;
+    end;
+    (*
     CheckBoxQuiet.Checked := myconfiguration.CreateQuiet;
     CheckBoxBuild.Checked := myconfiguration.CreateBuild;
     CheckBoxInstall.Checked := myconfiguration.CreateInstall;
+    *)
     Visible := True;
     TabSheetStart.ImageIndex := 0;
     TabSheetAnalyze.ImageIndex := 1;
@@ -1548,6 +1553,12 @@ begin
   if RadioButtonPackageBuilder.Checked then
     radioindex := 2;
   myconfiguration.CreateRadioIndex := radioindex;
+  if radioBuildModebuildOnly.Checked then
+    radioindex := 0;
+  if radioBuildModebuildInstall.Checked then
+    radioindex := 1;
+  myconfiguration.BuildRadioIndex := radioindex;
+  (*
   if CheckBoxQuiet.Checked then
     myconfiguration.CreateQuiet := True
   else
@@ -1560,6 +1571,7 @@ begin
     myconfiguration.CreateInstall := True
   else
     myconfiguration.CreateInstall := False;
+    *)
   logdatei.log('Finished BtCreateProductClick', LLDebug2);
 end;
 
@@ -1939,9 +1951,6 @@ var
   RadioButtonName: string;
 begin
   RadioButtonName := (Sender as TRadioButton).Name;
-  CheckBoxBuild.Enabled := False;
-  CheckBoxInstall.Enabled := False;
-  CheckBoxQuiet.Enabled := False;
   if RadioButtonName = 'RadioButtonCreateOnly' then
   begin
   end
@@ -1950,9 +1959,6 @@ begin
   end
   else if RadioButtonName = 'RadioButtonBuildPackage' then
   begin
-    CheckBoxBuild.Enabled := True;
-    CheckBoxInstall.Enabled := True;
-    CheckBoxQuiet.Enabled := True;
   end;
 end;
 

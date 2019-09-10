@@ -621,17 +621,15 @@ begin
   else  // build
   if resultForm1.RadioButtonBuildPackage.Checked = True then
   begin
-    if resultForm1.CheckboxBuild.Checked = True then
+    ParamStr := ParamStr + ' --quiet';
+    if resultForm1.radioBuildModebuildOnly.Checked = True then
     begin
       ParamStr := ParamStr + ' ' + '--build=rebuild';
     end;
-    if resultForm1.CheckboxInstall.Checked = True then
+    if resultForm1.radioBuildModebuildInstall.Checked = True then
     begin
-      ParamStr := ParamStr + ' --install';
+      ParamStr := ParamStr + '--build=rebuild --install';
     end;
-
-    if resultForm1.CheckboxQuiet.Checked = True then
-      ParamStr := ParamStr + ' --quiet';
     OpsiBuilderProcess.ShowWindow := swoMinimize;
   end;
   buildCallparams.Add(ParamStr);
@@ -645,7 +643,7 @@ begin
   // execute opsiPacketBuilder
   try
     OpsiBuilderProcess.Execute;
-    if resultForm1.CheckboxQuiet.Checked = True then
+    if resultForm1.RadioButtonBuildPackage.Checked = True then
     begin
       resultForm1.PanelProcess.Visible := True;
       resultForm1.processStatement.Caption := 'invoke opsi package builder ...';

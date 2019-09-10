@@ -317,10 +317,11 @@ default: ["xenial_bionic"]
     FpreUninstallLines: TStrings;
     FpostUninstallLines: TStrings;
     FPathToOpsiPackageBuilder: string;
-    FCreateRadioIndex: integer;
-    FCreateQuiet: boolean;
-    FCreateBuild: boolean;
-    FCreateInstall: boolean;
+    FCreateRadioIndex: integer;  // Create mode
+    FBuildRadioIndex: integer;  // Build mode
+    //FCreateQuiet: boolean;
+    //FCreateBuild: boolean;
+    //FCreateInstall: boolean;
     FUsePropDesktopicon: boolean;
     FUsePropLicenseOrPool: boolean;
     FProperties: TPProperties;
@@ -351,9 +352,10 @@ default: ["xenial_bionic"]
     property postUninstallLines: TStrings read FpostUninstallLines
       write SetPostUninstallLines;
     property CreateRadioIndex: integer read FCreateRadioIndex write FCreateRadioIndex;
-    property CreateQuiet: boolean read FCreateQuiet write FCreateQuiet;
-    property CreateBuild: boolean read FCreateBuild write FCreateBuild;
-    property CreateInstall: boolean read FCreateInstall write FCreateInstall;
+    property BuildRadioIndex: integer read FBuildRadioIndex write FBuildRadioIndex;
+    //property CreateQuiet: boolean read FCreateQuiet write FCreateQuiet;
+    //property CreateBuild: boolean read FCreateBuild write FCreateBuild;
+    //property CreateInstall: boolean read FCreateInstall write FCreateInstall;
     property UsePropDesktopicon: boolean read FUsePropDesktopicon write FUsePropDesktopicon;
     property UsePropLicenseOrPool: boolean read FUsePropLicenseOrPool write FUsePropLicenseOrPool;
     //property Properties: TPProperties read FProperties  write SetProperties;
@@ -412,10 +414,12 @@ resourcestring
     'comment "Uninstall finished..."';
   rspathToOpsiPackageBuilder = 'Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573';
   rscreateRadioIndex = 'selects the Create mode Radiobutton.';
+  rsBuildRadioIndex = 'selects the Build mode Radiobutton.';
+    (*
   rscreateQuiet = 'Selects the Build mode Checkbox quiet.';
   rscreateBuild = 'Selects the Build mode Checkbox build.';
   rscreateInstall = 'Selects the Build mode Checkbox install.';
-
+  *)
 
 
 implementation
