@@ -1,0 +1,5 @@
+{"version":1,"strings":[
+{"hash":78611287,"name":"tformpleasewait.caption","sourcebytes":[68,105,97,108,111,103],"value":"Dialog"},
+{"hash":227480062,"name":"tformpleasewait.labelpleasewait.caption","sourcebytes":[80,108,101,97,115,101,32,119,97,105,116,32,46,46,46],"value":"Please wait ..."},
+{"hash":146847423,"name":"tformpleasewait.labelinfo.caption","sourcebytes":[76,97,98,101,108,73,110,102,111],"value":"LabelInfo"}
+]}

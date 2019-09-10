@@ -23,6 +23,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
+      <BuildNr Value="1"/>
       <StringTable CompanyName="uib gmbh (www.uib.de)" InternalName="opsi-client-kiosk" LegalCopyright="uib gmbh under AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" ProductName="opsi" ProductVersion="4.1.0"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -85,7 +86,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="../../common;../../external_libraries/indy/Lib;../../external_libraries/indy/Lib/System;../../external_libraries/indy/Lib/Protocols;../../external_libraries/indy/Lib/Core;../../external_libraries/synapse40lib;../../external_libraries/dcpcrypt;../../external_libraries/dcpcrypt/Ciphers;../../external_libraries/dcpcrypt/Hashes;../../external_libraries/misc"/>
+            <OtherUnitFiles Value="../../common;../../external_libraries/dcpcrypt;../../external_libraries/dcpcrypt/Ciphers;../../external_libraries/dcpcrypt/Hashes;../../external_libraries/misc"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -115,17 +116,18 @@
             <CustomOptions Value="-dOPSICLIENTKIOSK
 -dOPSI
 -dOPSI_AS_USER"/>
-            <OtherDefines Count="3">
-              <Define0 Value="OPSICLIENTKIOSK"/>
-              <Define1 Value="OPSI"/>
-              <Define2 Value="OPSI_AS_USER"/>
-            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item3>
+      <SharedMatrixOptions Count="1">
+        <Item1 ID="741826884469" Type="IDEMacro" MacroName="TargetFile" Value="$(BuildMode)/$NameOnly($(ProjFile))"/>
+      </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
+      <DestinationDirectory Value="$(ProjPath)/published/"/>
+      <CompressFinally Value="False"/>
+      <OpenInFileMan Value="True"/>
     </PublishOptions>
     <RunParams>
       <local>
@@ -160,7 +162,7 @@
         <PackageName Value="LazUtils"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="12">
+    <Units Count="17">
       <Unit0>
         <Filename Value="opsiclientkiosk.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -221,6 +223,32 @@
         <Filename Value="opsiconnection.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit11>
+      <Unit12>
+        <Filename Value="dictstringlist.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="ockadmin.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="ockmount.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="imagestoshare.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FormSaveImagesOnShare"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="helpinfo.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FormHelpInfo"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit16>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -230,7 +258,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="../../common;../../external_libraries/indy/Lib;../../external_libraries/indy/Lib/System;../../external_libraries/indy/Lib/Protocols;../../external_libraries/indy/Lib/Core;../../external_libraries/synapse40lib;../../external_libraries/dcpcrypt;../../external_libraries/dcpcrypt/Ciphers;../../external_libraries/dcpcrypt/Hashes;../../external_libraries/misc"/>
+      <OtherUnitFiles Value="../../common;../../external_libraries/dcpcrypt;../../external_libraries/dcpcrypt/Ciphers;../../external_libraries/dcpcrypt/Hashes;../../external_libraries/misc;../../external_libraries/synapse"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>

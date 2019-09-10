@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Content-Type: text/plain; charset=UTF-8\n"
+"\"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: imagestoshare.rscouldnotsaveicons
@@ -46,10 +46,6 @@ msgctxt "opsiclientkioskgui.rsactuninstall"
 msgid "Uninstall"
 msgstr ""
 
-#: opsiclientkioskgui.rsadminmode
-msgid "Admin mode"
-msgstr ""
-
 #: opsiclientkioskgui.rsall
 msgctxt "opsiclientkioskgui.rsall"
 msgid "All"
@@ -75,10 +71,6 @@ msgstr ""
 
 #: opsiclientkioskgui.rsconnectedto
 msgid "Connected to"
-msgstr ""
-
-#: opsiclientkioskgui.rscurrentusernoadmin
-msgid "Current user has no admin privileges. Admin mode disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges."
 msgstr ""
 
 #: opsiclientkioskgui.rsdisabled
@@ -553,7 +545,7 @@ msgid "Password"
 msgstr ""
 
 #: tformsaveimagesonshare.labelpathtoshare.caption
-msgid "Path to opsi depot (share)"
+msgid "Path to share"
 msgstr ""
 
 #: tformsaveimagesonshare.labeluser.caption
