@@ -1067,9 +1067,10 @@ begin
     DataModuleOCK.SQLQueryProductData.FieldByName('ActionRequest').AsString := Request;// to local database
     ArrayProductPanels[SelectedPanelIndex].LabelAction.Caption := rsAction+': ' + Request;
     ShowMessage(ArrayProductPanels[SelectedPanelIndex].LabelName.Caption + Message);
+    //ShowSoftwareButtonsDependendOnState(ArrayProductPanels[SelectedPanelIndex]);
     ButtonSoftwareUninstall.Visible:= False;
     ButtonSoftwareInstall.Visible:= False;
-    ButtonSoftwareUpdate.Enabled:= False;
+    ButtonSoftwareUpdate.Visible:= False;
     ButtonSoftwareRemoveAction.Visible := True;
   end;
   DataModuleOCK.SQLQueryProductData.Post;
@@ -1201,7 +1202,11 @@ begin
     end;
     DataModuleOCK.SQLQueryProductData.First;
     PanelProductDetail.Height:= 0;
-    //BitBtnInstallNow.Visible:= False;
+    ScrollBoxAllTiles.VertScrollBar.Position:=0;
+    //ScrollBoxAllTiles.VertScrollBar.Range:= FlowPanelAllTiles.ClientWidth;
+    //ScrollBoxAllTiles.AutoScroll := False;
+    //ScrollBoxAllTiles.AutoScroll := True;
+    //ScrollBoxAllTiles.Repaint;
     NotebookProducts.PageIndex:= 1;
   end;
 end;

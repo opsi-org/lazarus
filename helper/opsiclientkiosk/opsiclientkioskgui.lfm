@@ -1503,7 +1503,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Height = 262
       Top = 0
       Width = 640
-      PageIndex = 2
+      PageIndex = 1
       Align = alClient
       TabOrder = 0
       TabStop = True
@@ -1548,33 +1548,34 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         object ScrollBoxAllTiles: TScrollBox
           Left = 0
-          Height = 357
+          Height = 262
           Top = 0
-          Width = 804
+          Width = 640
           HorzScrollBar.Page = 1
           HorzScrollBar.Visible = False
           VertScrollBar.Page = 1
           Align = alClient
-          AutoSize = True
           BorderStyle = bsNone
-          ClientHeight = 357
-          ClientWidth = 804
+          ClientHeight = 262
+          ClientWidth = 640
           Color = clDefault
           ParentColor = False
           TabOrder = 0
           OnMouseWheel = ScrollBoxAllTilesMouseWheel
           object FlowPanelAllTiles: TFlowPanel
             Left = 0
-            Height = 357
+            Height = 262
             Top = 0
-            Width = 804
+            Width = 640
             Align = alClient
             BevelOuter = bvNone
             Color = clForm
             ControlList = <>
+            DoubleBuffered = True
             FlowLayout = tlTop
             FlowStyle = fsLeftRightTopBottom
             ParentColor = False
+            ParentDoubleBuffered = False
             TabOrder = 0
           end
         end
