@@ -39,7 +39,6 @@
 {"hash":142732244,"name":"tresultform1.ticheckboxs2mst.caption","sourcebytes":[77,83,84,32,97,108,108,111,119,101,100],"value":"MST allowed"},
 {"hash":84202176,"name":"tresultform1.label69.caption","sourcebytes":[73,110,102,111,58,32],"value":"Info: "},
 {"hash":105689328,"name":"tresultform1.label70.caption","sourcebytes":[77,83,84,32,70,105,108,101,32],"value":"MST File "},
-{"hash":263043845,"name":"tresultform1.checkboxusemst1.caption","sourcebytes":[117,115,101,32,77,83,84,32,70,105,108,101],"value":"use MST File"},
 {"hash":235457365,"name":"tresultform1.bitbtnopenmst2.caption","sourcebytes":[79,112,101,110,32,77,83,84,32,70,105,108,101],"value":"Open MST File"},
 {"hash":5545460,"name":"tresultform1.label59.caption","sourcebytes":[77,115,105,73,100],"value":"MsiId"},
 {"hash":118800094,"name":"tresultform1.label71.caption","sourcebytes":[83,111,102,116,119,97,114,101,32,86,101,114,115,105,111,110],"value":"Software Version"},

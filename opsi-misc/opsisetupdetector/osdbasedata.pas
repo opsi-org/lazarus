@@ -22,13 +22,17 @@ type
 
   TRunMode = (analyzeOnly, singleAnalyzeCreate, twoAnalyzeCreate_1,
     twoAnalyzeCreate_2, createTemplate, gmUnknown);
+
   TArchitecture = (a32, a64, aUnknown);
+
   TArchitectureMode = (am32only_fix, am64only_fix, amBoth_fix, amSystemSpecific_fix,
     amSelectable);
+
   // marker for add installers
-  TKnownInstaller = (stAdvancedMSI, stInno, stInstallShield, stInstallShieldMSI,
+  TKnownInstaller = (stSFXcab,  stBoxStub, stAdvancedMSI, stInstallShield, stInstallShieldMSI,
     stMsi, stNsis, st7zip, st7zipsfx, stInstallAware, stMSGenericInstaller,
-    stWixToolset, stBoxStub, stSFXcab, stBitrock,stSelfExtractingInstaller,stUnknown);
+    stWixToolset, stBitrock,stSelfExtractingInstaller,stInno,
+    stUnknown);
 
 
   TdetectInstaller = function(parent: TClass; markerlist: TStrings): boolean;
@@ -1029,8 +1033,9 @@ end;
 begin
   // marker for add installers
   knownInstallerList := TStringList.Create;
+  knownInstallerList.Add('SFXcab');
+  knownInstallerList.Add('BoxStub');
   knownInstallerList.Add('AdvancedMSI');
-  knownInstallerList.Add('Inno');
   knownInstallerList.Add('InstallShield');
   knownInstallerList.Add('InstallShieldMSI');
   knownInstallerList.Add('MSI');
@@ -1040,10 +1045,9 @@ begin
   knownInstallerList.Add('InstallAware');
   knownInstallerList.Add('MSGenericInstaller');
   knownInstallerList.Add('WixToolset');
-  knownInstallerList.Add('BoxStub');
-  knownInstallerList.Add('SFXcab');
   knownInstallerList.Add('Bitrock');
   knownInstallerList.Add('SelfExtractingInstaller');
+  knownInstallerList.Add('Inno');
   knownInstallerList.Add('Unknown');
 
 
