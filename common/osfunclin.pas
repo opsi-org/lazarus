@@ -36,12 +36,11 @@ uses
   OSProcessux,
   IniFiles;
 
-
 function getProfilesDirListLin: TStringList;
 function getLinProcessList: TStringList;
 function KillProcessbyname(const exename: string; var found: integer): integer;
 function KillProcessbypid(pid: DWORD): boolean;
-function getProcessByPid(pid: DWORD) : string;
+function getProcessByPid(pid: DWORD): string;
 function FileCheckDate
   (const Sourcefilename, Targetfilename: string; OverwriteIfEqual: boolean): boolean;
 //procedure FindLocalIPData(var ipName: string; var address: string);
@@ -49,21 +48,21 @@ function FileCheckDate
 
 
 function getLinuxVersionMap: TStringList;
-function getLinuxDistroType : String;
-function Is64BitSystemLin : boolean;
+function getLinuxDistroType: string;
+function Is64BitSystemLin: boolean;
 
-function getHostnameLin : string;
+function getHostnameLin: string;
 function getMyHostEnt: netdb.THostEntry;
-function GetIPFromHost(var HostName, IPaddr, WSAErr: string): Boolean;
+function GetIPFromHost(var HostName, IPaddr, WSAErr: string): boolean;
 function linIsUefi: boolean;
-function getMyIpByTarget(target:string) : string;
-function getMyIpByDefaultRoute : string;
-function getMyIpDeciceByDefaultRoute : string;
-function getPackageLock(timeoutsec : integer; kill : boolean) : Boolean;
-function which(target:string; var pathToTarget : string) : boolean;
-function getLinuxDistroName : string;
-function getLinuxDistroRelease : string;
-function getLinuxDistroDescription : string;
+function getMyIpByTarget(target: string): string;
+function getMyIpByDefaultRoute: string;
+function getMyIpDeciceByDefaultRoute: string;
+function getPackageLock(timeoutsec: integer; kill: boolean): boolean;
+function which(target: string; var pathToTarget: string): boolean;
+function getLinuxDistroName: string;
+function getLinuxDistroRelease: string;
+function getLinuxDistroDescription: string;
 
 {$IFNDEF SYNAPSE}
 var
@@ -74,16 +73,15 @@ implementation
 
 uses
 {$IFDEF OPSISCRIPT}
-osparser,
+  osparser,
 {$ENDIF OPSISCRIPT}
 {$IFDEF GUI}
-graphics,
-osbatchgui,
-osinteractivegui,
-osshowsysinfo,
+  Graphics,
+  osbatchgui,
+  osinteractivegui,
+  osshowsysinfo,
 {$ENDIF GUI}
- LResources ;
-
+  LResources;
 
 function FileCheckDate
   (const Sourcefilename, Targetfilename: string; OverwriteIfEqual: boolean): boolean;
@@ -118,7 +116,7 @@ var
   {$IFDEF OPSISCRIPT}
   outlines: TXStringlist;
   {$ELSE OPSISCRIPT}
-  outlines: TStringlist;
+  outlines: TStringList;
   {$ENDIF OPSISCRIPT}
   ExitCode: longint;
   i: integer;
@@ -126,13 +124,12 @@ begin
   {$IFDEF OPSISCRIPT}
   outlines := TXStringList.Create;
   {$ELSE OPSISCRIPT}
-  outlines := TXStringList.Create;
+  outlines := TStringList.Create;
   {$ENDIF OPSISCRIPT}
 
   cmd := 'pkill -9 ' + exename;
   found := 0;
-  if not RunCommandAndCaptureOut(cmd, True, outlines, report,
-    SW_HIDE, ExitCode) then
+  if not RunCommandAndCaptureOut(cmd, True, outlines, report, SW_HIDE, ExitCode) then
   begin
     LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
     Result := -0;
@@ -161,7 +158,7 @@ var
   {$IFDEF OPSISCRIPT}
   outlines: TXStringlist;
   {$ELSE OPSISCRIPT}
-  outlines: TStringlist;
+  outlines: TStringList;
   {$ENDIF OPSISCRIPT}
   ExitCode: longint;
   i: integer;
@@ -169,11 +166,10 @@ begin
   {$IFDEF OPSISCRIPT}
   outlines := TXStringList.Create;
   {$ELSE OPSISCRIPT}
-  outlines := TXStringList.Create;
+  outlines := TStringList.Create;
   {$ENDIF OPSISCRIPT}
   cmd := 'kill -9 ' + IntToStr(pid);
-  if not RunCommandAndCaptureOut(cmd, True, outlines, report,
-    SW_HIDE, ExitCode) then
+  if not RunCommandAndCaptureOut(cmd, True, outlines, report, SW_HIDE, ExitCode) then
   begin
     LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
     Result := False;
@@ -205,12 +201,12 @@ var
   outlines: TXStringlist;
   //lineparts: TXStringlist;
   {$ELSE OPSISCRIPT}
-  outlines: TStringlist;
-  lineparts: TStringlist;
+  outlines: TStringList;
+  //lineparts: TStringlist;
   {$ENDIF OPSISCRIPT}
-  lineparts: TStringlist;
+  lineparts: TStringList;
   ExitCode: longint;
-  i,k: integer;
+  i, k: integer;
 begin
   try
     try
@@ -220,7 +216,7 @@ begin
       //lineparts := TXStringList.Create;
       {$ELSE OPSISCRIPT}
       outlines := TStringList.Create;
-      lineparts := TXStringList.Create;
+      //lineparts := TXStringList.Create;
       {$ENDIF OPSISCRIPT}
       lineparts := TStringList.Create;
       pscmd := 'ps -eo pid,user,comm:30,cmd:110';
@@ -236,58 +232,63 @@ begin
         LogDatei.log('output:', LLDebug);
         LogDatei.log('--------------', LLDebug);
         if outlines.Count > 0 then
-        for i := 0 to outlines.Count - 1 do
-        begin
-          LogDatei.log(outlines.strings[i], LLDebug2);
-          lineparts.Clear;
-          resultstring := '';
-          userstr := '';
-          pidstr := '';
-          cmdstr := '';
-          fullcmdstr := '';
-          stringsplitByWhiteSpace(trim(outlines.strings[i]), lineparts);
-          for k := 0 to lineparts.Count-1 do
+          for i := 0 to outlines.Count - 1 do
           begin
-            if k = 0 then pidstr := lineparts.Strings[k]
-            else if k = 1 then userstr := lineparts.Strings[k]
-            else if k = 2 then cmdstr := lineparts.Strings[k]
-            else fullcmdstr:= fullcmdstr+lineparts.Strings[k]+' ';
+            LogDatei.log(outlines.strings[i], LLDebug2);
+            lineparts.Clear;
+            resultstring := '';
+            userstr := '';
+            pidstr := '';
+            cmdstr := '';
+            fullcmdstr := '';
+            stringsplitByWhiteSpace(trim(outlines.strings[i]), lineparts);
+            for k := 0 to lineparts.Count - 1 do
+            begin
+              if k = 0 then
+                pidstr := lineparts.Strings[k]
+              else if k = 1 then
+                userstr := lineparts.Strings[k]
+              else if k = 2 then
+                cmdstr := lineparts.Strings[k]
+              else
+                fullcmdstr := fullcmdstr + lineparts.Strings[k] + ' ';
+            end;
+            resultstring := cmdstr + ';' + pidstr + ';' + userstr + ';' + fullcmdstr;
+            LogDatei.log(resultstring, LLDebug3);
+            //resultstring := lineparts.Strings[0] + ';';
+            //resultstring := resultstring + lineparts.Strings[1] + ';';
+            //resultstring := resultstring + lineparts.Strings[2] + ';';
+            Result.Add(resultstring);
           end;
-          resultstring := cmdstr+';'+pidstr+';'+userstr+';'+fullcmdstr;
-          LogDatei.log(resultstring, LLDebug3);
-          //resultstring := lineparts.Strings[0] + ';';
-          //resultstring := resultstring + lineparts.Strings[1] + ';';
-          //resultstring := resultstring + lineparts.Strings[2] + ';';
-          Result.Add(resultstring);
-        end;
         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
         LogDatei.log('', LLDebug);
       end;
     except
       on E: Exception do
-        begin
-          LogDatei.DependentAdd('Exception in getLinProcessList, system message: "' + E.Message + '"',
-            LLError);
-        end
+      begin
+        LogDatei.DependentAdd('Exception in getLinProcessList, system message: "' +
+          E.Message + '"',
+          LLError);
+      end
     end;
   finally
     outlines.Free;
     lineparts.Free;
-  end
+  end;
 end;
 
-function getProcessByPid(pid:DWORD): String;
+function getProcessByPid(pid: DWORD): string;
 var
   resultstring, pidstr, userstr, cmdstr, fullcmdstr: string;
   pscmd, report: string;
   {$IFDEF OPSISCRIPT}
   outlines: TXStringlist;
   {$ELSE OPSISCRIPT}
-  outlines: TStringlist;
+  outlines: TStringList;
   {$ENDIF OPSISCRIPT}
-  lineparts: TStringlist;
+  lineparts: TStringList;
   ExitCode: longint;
-  i,k: integer;
+  i, k: integer;
 begin
   try
     try
@@ -296,12 +297,12 @@ begin
       {$IFDEF OPSISCRIPT}
       outlines := TXStringList.Create;
       {$ELSE OPSISCRIPT}
-      outlines := TXStringList.Create;
+      outlines := TStringList.Create;
       {$ENDIF OPSISCRIPT}
       lineparts := TStringList.Create;
       pscmd := 'ps -eo pid,user,comm:30,cmd:110';
       if not RunCommandAndCaptureOut(pscmd, True, outlines, report,
-        SW_HIDE, ExitCode,false,2) then
+        SW_HIDE, ExitCode, False, 2) then
       begin
         LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
       end
@@ -312,32 +313,34 @@ begin
         LogDatei.log('output:', LLDebug3);
         LogDatei.log('--------------', LLDebug3);
         if outlines.Count > 0 then
-        for i := 0 to outlines.Count - 1 do
-        begin
-          LogDatei.log(outlines.strings[i], LLDebug3);
-          lineparts.Clear;
-          resultstring := '';
-          userstr := '';
-          //pidstr := '';
-          cmdstr := '';
-          fullcmdstr := '';
-          stringsplitByWhiteSpace(trim(outlines.strings[i]), lineparts);
-          if  pidstr = lineparts.Strings[0] then result :=  lineparts.Strings[2];
-        end;
+          for i := 0 to outlines.Count - 1 do
+          begin
+            LogDatei.log(outlines.strings[i], LLDebug3);
+            lineparts.Clear;
+            resultstring := '';
+            userstr := '';
+            //pidstr := '';
+            cmdstr := '';
+            fullcmdstr := '';
+            stringsplitByWhiteSpace(trim(outlines.strings[i]), lineparts);
+            if pidstr = lineparts.Strings[0] then
+              Result := lineparts.Strings[2];
+          end;
         //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
         //LogDatei.log('', LLDebug3);
       end;
     except
       on E: Exception do
-        begin
-          LogDatei.DependentAdd('Exception in getLinProcessList, system message: "' + E.Message + '"',
-            LLError);
-        end
+      begin
+        LogDatei.DependentAdd('Exception in getLinProcessList, system message: "' +
+          E.Message + '"',
+          LLError);
+      end
     end;
   finally
     outlines.Free;
     lineparts.Free;
-  end
+  end;
 end;
 
 
@@ -345,19 +348,26 @@ function getProfilesDirListLin: TStringList;
 var
   resultstring: string;
   cmd, report: string;
+  {$IFDEF OPSISCRIPT}
   outlines: TXStringlist;
-  lineparts: TStringlist;
+  {$ELSE OPSISCRIPT}
+  outlines: TStringList;
+  {$ENDIF OPSISCRIPT}
+  lineparts: TStringList;
   ExitCode: longint;
   i: integer;
 begin
   Result := TStringList.Create;
+  {$IFDEF OPSISCRIPT}
   outlines := TXStringList.Create;
+  {$ELSE OPSISCRIPT}
+  outlines := TStringList.Create;
+  {$ENDIF OPSISCRIPT}
   lineparts := TStringList.Create;
   // we use the home directories from the passwd entries
   // get passwd
   cmd := 'getent passwd';
-  if not RunCommandAndCaptureOut(cmd, True, outlines, report,
-    SW_HIDE, ExitCode) then
+  if not RunCommandAndCaptureOut(cmd, True, outlines, report, SW_HIDE, ExitCode) then
   begin
     LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
   end
@@ -389,25 +399,31 @@ begin
   lineparts.Free;
 end;
 
-function getLinuxDistroType : String;
+function getLinuxDistroType: string;
 var
-  mycfg : TStringlist;
-  likestr : string;
+  mycfg: TStringList;
+  likestr: string;
 begin
-  result := 'unknown_linux';
-  if FileExists('/etc/debian_version') then result := 'debian';
-  if FileExists('/etc/redhat-release') then result := 'redhat';
-  if FileExists('/etc/SuSE-release') then result := 'suse';
+  Result := 'unknown_linux';
+  if FileExists('/etc/debian_version') then
+    Result := 'debian';
+  if FileExists('/etc/redhat-release') then
+    Result := 'redhat';
+  if FileExists('/etc/SuSE-release') then
+    Result := 'suse';
   // freedesktop org standard :
   if FileExists('/etc/os-release') then
   begin
-    mycfg := TStringlist.Create;
+    mycfg := TStringList.Create;
     mycfg.LoadFromFile('/etc/os-release');
     likestr := mycfg.Values['ID_LIKE'];
     mycfg.Free;
-    if pos('suse',likestr) > 0 then result := 'suse';
-    if pos('debian',likestr) > 0 then result := 'debian';
-    if pos('rhel',likestr) > 0 then result := 'redhat';
+    if pos('suse', likestr) > 0 then
+      Result := 'suse';
+    if pos('debian', likestr) > 0 then
+      Result := 'debian';
+    if pos('rhel', likestr) > 0 then
+      Result := 'redhat';
   end;
 end;
 
@@ -415,18 +431,25 @@ function getLinuxVersionMap: TStringList;
 var
   resultstring: string;
   cmd, report: string;
+  {$IFDEF OPSISCRIPT}
   outlines: TXStringlist;
-  lineparts: TStringlist;
+  {$ELSE OPSISCRIPT}
+  outlines: TStringList;
+  {$ENDIF OPSISCRIPT}
+  lineparts: TStringList;
   ExitCode: longint;
   i: integer;
 begin
   //todo : install lsb-release if not there
   Result := TStringList.Create;
+  {$IFDEF OPSISCRIPT}
   outlines := TXStringList.Create;
+  {$ELSE OPSISCRIPT}
+  outlines := TStringList.Create;
+  {$ENDIF OPSISCRIPT}
   lineparts := TStringList.Create;
   cmd := 'lsb_release --all';
-  if not RunCommandAndCaptureOut(cmd, True, outlines, report,
-    SW_HIDE, ExitCode) then
+  if not RunCommandAndCaptureOut(cmd, True, outlines, report, SW_HIDE, ExitCode) then
   begin
     LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
   end
@@ -478,7 +501,8 @@ begin
       end;
     end;
   end
-  else  Result.Add('SubRelease=');
+  else
+    Result.Add('SubRelease=');
   outlines.Free;
   lineparts.Free;
 
@@ -492,59 +516,63 @@ begin
   Result.Add('operating system' + '=' + trim(getCommandResult('uname -o')));
 end;
 
-function getLinuxDistroName : string;
+function getLinuxDistroName: string;
 var
-  linuxinfo : TStringlist;
+  linuxinfo: TStringList;
 begin
   try
     linuxinfo := getLinuxVersionMap;
-    result := linuxinfo.Values['Distributor ID'];
+    Result := linuxinfo.Values['Distributor ID'];
   finally
-    linuxinfo.free;
+    linuxinfo.Free;
   end;
 end;
 
-function getLinuxDistroRelease : string;
+function getLinuxDistroRelease: string;
 var
-  linuxinfo : TStringlist;
+  linuxinfo: TStringList;
 begin
   try
     linuxinfo := getLinuxVersionMap;
-    result := linuxinfo.Values['Release'];
+    Result := linuxinfo.Values['Release'];
   finally
-    linuxinfo.free;
+    linuxinfo.Free;
   end;
 end;
 
-function getLinuxDistroDescription : string;
+function getLinuxDistroDescription: string;
 var
-  linuxinfo : TStringlist;
+  linuxinfo: TStringList;
 begin
   try
     linuxinfo := getLinuxVersionMap;
-    result := linuxinfo.Values['Description'];
+    Result := linuxinfo.Values['Description'];
   finally
-    linuxinfo.free;
+    linuxinfo.Free;
   end;
 end;
 
-function Is64BitSystemLin : boolean;
+function Is64BitSystemLin: boolean;
 begin
-  if trim(getCommandResult('uname -i')) = 'x86_64' then result := true
-  else if trim(getCommandResult('uname -m')) = 'x86_64' then result := true
-  else result := false;
+  if trim(getCommandResult('uname -i')) = 'x86_64' then
+    Result := True
+  else if trim(getCommandResult('uname -m')) = 'x86_64' then
+    Result := True
+  else
+    Result := False;
 end;
 
-function getHostnameLin : string;
+function getHostnameLin: string;
 var
-str : string = '';
-exitcode : longint ;
+  str: string = '';
+  exitcode: longint;
 begin
   //result := synsock.GetHostName;
-  result := '';
+  Result := '';
   try
-    str := getCommandResult('/bin/bash -c "hostname -f || exit $?"',exitcode);
-    if exitcode = 0 then result := str;
+    str := getCommandResult('/bin/bash -c "hostname -f || exit $?"', exitcode);
+    if exitcode = 0 then
+      Result := str;
   finally
   end;
 end;
@@ -552,9 +580,9 @@ end;
 function getMyHostEnt: netdb.THostEntry;
 begin
   try
-    if not netdb.gethostbyname(synsock.GetHostName,Result) then
-    Logdatei.DependentAddError('gethostbyname error ' +
-      IntToStr(wsagetlasterror), LLError);
+    if not netdb.gethostbyname(synsock.GetHostName, Result) then
+      Logdatei.DependentAddError('gethostbyname error ' +
+        IntToStr(wsagetlasterror), LLError);
   except
     Logdatei.DependentAddError('gethostname error ' +
       IntToStr(wsagetlasterror), LLError);
@@ -563,27 +591,25 @@ end;
 
 
 
-function GetIPFromHost(var HostName, IPaddr, WSAErr: string): Boolean;
+function GetIPFromHost(var HostName, IPaddr, WSAErr: string): boolean;
 var
   HostEntry: THostEntry;
 begin
-  result := false;
+  Result := False;
   try
     if isip(HostName) then
       IPAddr := Hostname
     else
-      if netdb.gethostbyname(HostName,HostEntry) then
-      begin
-        result := true;
-        IPaddr := Format('%d.%d.%d.%d',
-           [HostEntry.Addr.s_bytes[4],
-           HostEntry.Addr.s_bytes[3],
-           HostEntry.Addr.s_bytes[2],
-           HostEntry.Addr.s_bytes[1]]);
-      end
-      else
-        Logdatei.DependentAddError('gethostbyname error ' +
-          IntToStr(wsagetlasterror), LLError);
+    if netdb.gethostbyname(HostName, HostEntry) then
+    begin
+      Result := True;
+      IPaddr := Format('%d.%d.%d.%d', [HostEntry.Addr.s_bytes[4],
+        HostEntry.Addr.s_bytes[3], HostEntry.Addr.s_bytes[2],
+        HostEntry.Addr.s_bytes[1]]);
+    end
+    else
+      Logdatei.DependentAddError('gethostbyname error ' +
+        IntToStr(wsagetlasterror), LLError);
   except
     WSAErr := 'Error resolving Host';
   end;
@@ -593,16 +619,25 @@ function getDev2MacMap: TStringList;
 var
   resultstring: string;
   cmd, report: string;
-  outlines, lineparts: TXStringlist;
+  {$IFDEF OPSISCRIPT}
+  outlines: TXStringlist;
+  {$ELSE OPSISCRIPT}
+  outlines: TStringList;
+  {$ENDIF OPSISCRIPT}
+  lineparts: TStringList;
   ExitCode: longint;
   i: integer;
 begin
   Result := TStringList.Create;
+  {$IFDEF OPSISCRIPT}
   outlines := TXStringList.Create;
-  lineparts := TXStringList.Create;
-  cmd := 'ip -o link show | awk ''{for (i=1; i < NF; i++) if ($i == "link/ether") print $2, $(i+1)}'' ' ;
-  if not RunCommandAndCaptureOut(cmd, True, outlines, report,
-    SW_HIDE, ExitCode) then
+  {$ELSE OPSISCRIPT}
+  outlines := TStringList.Create;
+  {$ENDIF OPSISCRIPT}
+  lineparts := TStringList.Create;
+  cmd := 'ip -o link show | awk ''{for (i=1; i < NF; i++) if ($i == "link/ether") print $2, $(i+1)}'' '
+  ;
+  if not RunCommandAndCaptureOut(cmd, True, outlines, report, SW_HIDE, ExitCode) then
   begin
     LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
   end
@@ -616,10 +651,11 @@ begin
     begin
       lineparts.Clear;
       LogDatei.log(outlines.strings[i], LLDebug2);
-      stringsplitByWhiteSpace(outlines.strings[i], TStringlist(lineparts));
+      stringsplitByWhiteSpace(outlines.strings[i], TStringList(lineparts));
       if lineparts.Count > 1 then
       begin
-        resultstring := copy(lineparts.Strings[0],1,length(lineparts.Strings[0])-2) + '=' + trim(lineparts.Strings[1]);
+        resultstring := copy(lineparts.Strings[0], 1, length(lineparts.Strings[0]) - 2) +
+          '=' + trim(lineparts.Strings[1]);
         Result.Add(resultstring);
       end;
     end;
@@ -631,17 +667,17 @@ end;
 function linIsUefi: boolean;
 begin
   //not implemented yet
-  result := false;
+  Result := False;
 end;
 
-function which(target:string; var pathToTarget : string) : boolean;
+function which(target: string; var pathToTarget: string): boolean;
 var
-  str : string;
-  exitcode : longint;
-  cmd : string;
-  path : string;
+  str: string;
+  exitcode: longint;
+  cmd: string;
+  path: string;
 begin
-  result := false;
+  Result := False;
   pathToTarget := '';
   (*
   cmd := '/bin/bash -c "';
@@ -649,131 +685,142 @@ begin
   cmd := cmd + 'which '+target+' || exit $?"';
   *)
   path := '/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin';
-  str := FileSearch(target,path);
+  str := FileSearch(target, path);
   if fileexists(trim(str)) then
   begin
-    result := true;
+    Result := True;
     pathToTarget := trim(str);
   end;
 end;
 
-function getMyIpByTarget(target:string) : string;
+function getMyIpByTarget(target: string): string;
 var
-  str : string;
-  list : TXstringlist;
+  str: string;
+  list: Tstringlist;
   i: integer;
 begin
-  result := '';
-  list := TXStringlist.create;
+  Result := '';
+  list := TStringlist.Create;
   //str := getCommandResult('ip -o -4 route get '+target);
   // macos ip has no '-o'
-  str := getCommandResult('/bin/bash -c "ip -4 route get '+target+' || exit $?"');
-  stringsplitByWhiteSpace (str, TStringlist(list));
+  str := getCommandResult('/bin/bash -c "ip -4 route get ' + target + ' || exit $?"');
+  stringsplitByWhiteSpace(str, TStringList(list));
   i := list.IndexOf('src');
   if (i > -1) and (list.Count >= i) then
   begin
-    result := list[i+1];
+    Result := list[i + 1];
   end;
   list.Free;
 end;
 
-function getMyIpByDefaultRoute : string;
+function getMyIpByDefaultRoute: string;
 var
-  str : string;
-  cmd : string;
-  list : Tstringlist;
+  str: string;
+  cmd: string;
+  list: TStringList;
   i: integer;
 begin
-  result := '';
-  list := TStringlist.create;
-  if not which('ip',cmd) then cmd := 'ip';
+  Result := '';
+  list := TStringList.Create;
+  if not which('ip', cmd) then
+    cmd := 'ip';
   //str := getCommandResult('ip -o -4 route get 255.255.255.255');
   // macos ip has no '-o'
-  str := getCommandResult('/bin/bash -c "'+cmd+' -4 route get 255.255.255.255 || exit $?"');
-  stringsplitByWhiteSpace (str, list);
-  LogDatei.log_list(list,LLDEBUG3);
+  str := getCommandResult('/bin/bash -c "' + cmd +
+    ' -4 route get 255.255.255.255 || exit $?"');
+  stringsplitByWhiteSpace(str, list);
+  LogDatei.log_list(list, LLDEBUG3);
   i := list.IndexOf('src');
   if (i > -1) and (list.Count >= i) then
   begin
-    result := list[i+1];
+    Result := list[i + 1];
   end;
   list.Free;
 end;
 
-function getMyIpDeciceByDefaultRoute : string;
+function getMyIpDeciceByDefaultRoute: string;
 var
-  str : string;
-  cmd : string;
-  list : Tstringlist;
+  str: string;
+  cmd: string;
+  list: TStringList;
   i: integer;
 begin
-  result := '';
-  list := TStringlist.create;
-  if not which('ip',cmd) then cmd := 'ip';
+  Result := '';
+  list := TStringList.Create;
+  if not which('ip', cmd) then
+    cmd := 'ip';
   //str := getCommandResult('ip -o -4 route get 255.255.255.255');
   // macos ip has no '-o'
-  str := getCommandResult('/bin/bash -c "'+cmd+' -4 route get 255.255.255.255 || exit $?"');
-  stringsplitByWhiteSpace (str, list);
-  LogDatei.log_list(list,LLDEBUG3);
+  str := getCommandResult('/bin/bash -c "' + cmd +
+    ' -4 route get 255.255.255.255 || exit $?"');
+  stringsplitByWhiteSpace(str, list);
+  LogDatei.log_list(list, LLDEBUG3);
   i := list.IndexOf('dev');
   if (i > -1) and (list.Count >= i) then
   begin
-    result := list[i+1];
+    Result := list[i + 1];
   end;
   list.Free;
 end;
 
-function getPackageLock(timeoutsec : integer; kill : boolean) : Boolean;
+function getPackageLock(timeoutsec: integer; kill: boolean): boolean;
 var
-  disttype : string;
-  distname : string;
-  lockfile,lockfile1 : string;
-  pid : string;
-  pidnum : integer;
-  pcmd : string;
-  timeoutreached : boolean;
-  timeoutstep, timeoutcounter : integer;
+  disttype: string;
+  distname: string;
+  lockfile, lockfile1: string;
+  pid: string;
+  pidnum: integer;
+  pcmd: string;
+  timeoutreached: boolean;
+  timeoutstep, timeoutcounter: integer;
   {$IFDEF OPSISCRIPT}
   outlines: TXStringlist;
   {$ELSE OPSISCRIPT}
-  outlines: TStringlist;
+  outlines: TStringList;
   {$ENDIF OPSISCRIPT}
-  lineparts: TXStringlist;
+  lineparts: TStringlist;
 
-  function getPackageLockPid(lockfile : string) : string;
+  function getPackageLockPid(lockfile: string): string;
   var
-    mylockfile : Text;
+    mylockfile: Text;
     cmd, report: string;
   begin
     if (disttype = 'suse') or (disttype = 'redhat') then
     begin
-      result := '';
-      If FileExists(lockfile) then
+      Result := '';
+      if FileExists(lockfile) then
       begin
         try
-          assignfile(mylockfile,lockfile);
+          assignfile(mylockfile, lockfile);
           reset(mylockfile);
-          readln(mylockfile,result);
-          close(mylockfile);
+          readln(mylockfile, Result);
+          Close(mylockfile);
         except
-          LogDatei.log('Exception in getPackageLockPid opening existing lockfile: '+lockfile, LLWarning);
+          LogDatei.log('Exception in getPackageLockPid opening existing lockfile: ' +
+            lockfile, LLWarning);
         end;
       end
-      else LogDatei.log('No package lock file found', LLDEBUG3);
+      else
+        LogDatei.log('No package lock file found', LLDEBUG3);
     end
     else if (disttype = 'debian') then
     begin
-      result := '';
-      If FileExists(lockfile) then
+      Result := '';
+      if FileExists(lockfile) then
       begin
         try
+          {$IFDEF OPSISCRIPT}
           outlines := TXStringList.Create;
-          lineparts := TXStringList.Create;
-          cmd := 'lsof -w '+lockfile;
+          {$ELSE OPSISCRIPT}
+          outlines := TStringList.Create;
+          {$ENDIF OPSISCRIPT}
+          lineparts := TStringList.Create;
+          cmd := 'lsof -w ' + lockfile;
           if not RunCommandAndCaptureOut(cmd, True, outlines, report,
-            SW_HIDE, ExitCode,false,2) then
+            SW_HIDE, ExitCode, False, 2) then
           begin
-            LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
+            LogDatei.log('Error: ' + Report + 'Exitcode: ' +
+              IntToStr(ExitCode), LLError);
           end
           else
           begin
@@ -785,103 +832,123 @@ var
             begin
               lineparts.Clear;
               LogDatei.log(outlines.strings[1], LLDebug2);
-              stringsplitByWhiteSpace(outlines.strings[1], TStringlist(lineparts));
+              stringsplitByWhiteSpace(outlines.strings[1], TStringList(lineparts));
               if lineparts.Count > 1 then
               begin
-                result := trim(lineparts.Strings[1]);
+                Result := trim(lineparts.Strings[1]);
               end
-              else LogDatei.log('Error in getPackageLockPid lsof on existing lockfile: '+lockfile, LLWarning);
+              else
+                LogDatei.log('Error in getPackageLockPid lsof on existing lockfile: ' + lockfile,
+                  LLWarning);
             end;
           end;
-          outlines.free;
-          lineparts.free;
+          outlines.Free;
+          lineparts.Free;
         except
-          LogDatei.log('Exception in getPackageLockPid lsof on existing lockfile: '+lockfile, LLWarning);
+          LogDatei.log('Exception in getPackageLockPid lsof on existing lockfile: ' +
+            lockfile, LLWarning);
         end;
       end
-      else LogDatei.log('No package lock file found', LLDEBUG3);
-    end
+      else
+        LogDatei.log('No package lock file found', LLDEBUG3);
+    end;
   end;
 
-  function getPackageLockbyFile(lockfile:string; timeoutsec : integer; kill : boolean) : Boolean;
+  function getPackageLockbyFile(lockfile: string; timeoutsec: integer;
+    kill: boolean): boolean;
   begin
     try
-      timeoutreached := false;
-      timeoutstep :=  5;
+      timeoutreached := False;
+      timeoutstep := 5;
       timeoutcounter := 0;
-      pid :=  getPackageLockPid(lockfile);
-      if not tryStrToInt(pid,pidnum) then pcmd := ''
-      else pcmd := getProcessByPid(pidnum);
-      while (pid <> '')
-             and (not timeoutreached)
-             and (pcmd <> '') do
+      pid := getPackageLockPid(lockfile);
+      if not tryStrToInt(pid, pidnum) then
+        pcmd := ''
+      else
+        pcmd := getProcessByPid(pidnum);
+      while (pid <> '') and (not timeoutreached) and
+        (pcmd <> '') do
       begin
-        LogDatei.log('Waiting to get package lock from pid: '+pid+' : '+pcmd, LLDEBUG);
-        timeoutcounter :=  timeoutcounter +  timeoutstep;
-        if timeoutcounter >=  timeoutsec then timeoutreached := true
+        LogDatei.log('Waiting to get package lock from pid: ' + pid + ' : ' + pcmd, LLDEBUG);
+        timeoutcounter := timeoutcounter + timeoutstep;
+        if timeoutcounter >= timeoutsec then
+          timeoutreached := True
         else
         begin
           sleep(timeoutstep * 1000);
-          pid :=  getPackageLockPid(lockfile);
-          if not tryStrToInt(pid,pidnum) then pcmd := ''
-          else pcmd := getProcessByPid(pidnum);
+          pid := getPackageLockPid(lockfile);
+          if not tryStrToInt(pid, pidnum) then
+            pcmd := ''
+          else
+            pcmd := getProcessByPid(pidnum);
         end;
       end;
       if timeoutreached then
       begin
-        result := false;
-        LogDatei.log('Timeout waiting to get package lock from pid: '+pid+' : '+pcmd, LLNotice);
+        Result := False;
+        LogDatei.log('Timeout waiting to get package lock from pid: ' + pid + ' : ' + pcmd,
+          LLNotice);
         if kill then
         begin
-          LogDatei.log('Killing to get Package lock from pid: '+pid+' : '+pcmd, LLInfo);
+          LogDatei.log('Killing to get Package lock from pid: ' + pid + ' : ' + pcmd, LLInfo);
           killProcessByPid(pidnum);
-          pid :=  getPackageLockPid(lockfile);
-          if not tryStrToInt(pid,pidnum) then pcmd := ''
-          else pcmd := getProcessByPid(pidnum);
-          if (pid <> '') and (pcmd <> '') then result := false
-          else result := true;
+          pid := getPackageLockPid(lockfile);
+          if not tryStrToInt(pid, pidnum) then
+            pcmd := ''
+          else
+            pcmd := getProcessByPid(pidnum);
+          if (pid <> '') and (pcmd <> '') then
+            Result := False
+          else
+            Result := True;
         end;
       end
-      else result := true;
+      else
+        Result := True;
     except
-       on ex: Exception
-       do
-       Begin
-         LogDatei.log('Exception in osfunclin at getPackageLockbyFile: Error: ' + ex.message, LLError);
-       end;
+      on ex: Exception do
+      begin
+        LogDatei.log('Exception in osfunclin at getPackageLockbyFile: Error: ' +
+          ex.message, LLError);
+      end;
     end;
   end;
 
 begin
   try
-    result := false;
+    Result := False;
     lockfile1 := '';
-    lockfile :='';
+    lockfile := '';
     disttype := getLinuxDistroType;
-      // This is a memory leak:
-      //distname := getLinuxVersionMap.Values['Distributor ID'];
-      distname := getLinuxDistroName;
-    if disttype = 'suse' then lockfile :=  '/run/zypp.pid'
-    else if disttype = 'redhat' then lockfile :=  '/var/run/yum.pid'
+    // This is a memory leak:
+    //distname := getLinuxVersionMap.Values['Distributor ID'];
+    distname := getLinuxDistroName;
+    if disttype = 'suse' then
+      lockfile := '/run/zypp.pid'
+    else if disttype = 'redhat' then
+      lockfile := '/var/run/yum.pid'
     else if disttype = 'debian' then
     begin
-      lockfile :=  '/var/lib/dpkg/lock';
-      if distname = 'Univention' then lockfile1 := '/var/lib/apt/lists/lock';
+      lockfile := '/var/lib/dpkg/lock';
+      if distname = 'Univention' then
+        lockfile1 := '/var/lib/apt/lists/lock';
     end
     else
     begin
       // unsupported distrotype
       LogDatei.log('unsupported distrotype in getPackageLock', LLERROR);
-      result := false;
+      Result := False;
     end;
-    if lockfile1 <> '' then result := getPackageLockbyFile(lockfile1, timeoutsec, kill);
-    if lockfile <> '' then result := getPackageLockbyFile(lockfile1, timeoutsec, kill);
+    if lockfile1 <> '' then
+      Result := getPackageLockbyFile(lockfile1, timeoutsec, kill);
+    if lockfile <> '' then
+      Result := getPackageLockbyFile(lockfile1, timeoutsec, kill);
   except
-     on ex: Exception
-     do
-     Begin
-       LogDatei.log('Exception in osfunclin at getPackageLock: Error: ' + ex.message, LLError);
-     end;
+    on ex: Exception do
+    begin
+      LogDatei.log('Exception in osfunclin at getPackageLock: Error: ' +
+        ex.message, LLError);
+    end;
   end;
 end;
 
