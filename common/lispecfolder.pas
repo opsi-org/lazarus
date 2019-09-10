@@ -26,6 +26,7 @@ uses
   Classes,
   SysUtils,
   osfunclin,
+  osprocesses,
   osprocessux;
 
 var
@@ -61,7 +62,7 @@ function produceNameFromCsidl(var Name: string; const csidl: integer;
   var errormessage: string): boolean;
 implementation
 
-uses osfunc, osparser;
+//uses osfunc, osparser;
 
 var
   errorinfo: string;
@@ -260,7 +261,7 @@ begin
     specialFolders.Values['DefaultUserProfile'] := '';
 
     specialFolders.Values['current profile'] :=
-        specialFolders.Values['Users home'] + '\'+getLoggedInUser;
+        specialFolders.Values['Users home'] + '\'+getCommandResult('id -un');
 
   finally
   end;
