@@ -88,9 +88,7 @@ msgid "Connected to"
 msgstr "Verbunden mit"
 
 #: opsiclientkioskgui.rscurrentusernoadmin
-msgid ""
-"Current user has no admin privileges. Admin mode disabled.%sSolution: Start "
-"opsi Client Kiosk (as user) with admin privileges."
+msgid "Current user has no admin privileges. Admin mode disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges."
 msgstr "Aktueller Nutzer hat keine Adminrechte. Adminmodus deaktiviert. %sLösung: Starten Sie den opsi Client Kiosk (als Nutzer) mit Adminrechten."
 
 #: opsiclientkioskgui.rsdisabled
@@ -129,8 +127,7 @@ msgstr "Jetzt installieren"
 
 #: opsiclientkioskgui.rsinstallnowhint
 msgctxt "opsiclientkioskgui.rsinstallnowhint"
-msgid ""
-"Start the installation/update (uninstallation) of the selected products"
+msgid "Start the installation/update (uninstallation) of the selected products"
 msgstr "Start der Installation/Aktualisierung (Deinstallation) der ausgewählten Produkte"
 
 #: opsiclientkioskgui.rsinstallnowornextevent
@@ -200,9 +197,7 @@ msgid "Store actions"
 msgstr "Aktionen speichern"
 
 #: opsiclientkioskgui.rsstoreactionshint
-msgid ""
-"Send the action requests to the server, show the resulting installations and"
-" ask for installation start."
+msgid "Send the action requests to the server, show the resulting installations and ask for installation start."
 msgstr "Sende die Anforderungen an den Server, zeige die resultierenden anstehenden Installationen und Frage nach dem Installationsstart."
 
 #: opsiclientkioskgui.rsuninstallationfinished
@@ -358,8 +353,7 @@ msgstr "Jetzt installieren"
 
 #: tformopsiclientkiosk.bitbtninstallnow.hint
 msgctxt "tformopsiclientkiosk.bitbtninstallnow.hint"
-msgid ""
-"Start the installation/update (uninstallation) of the selected products"
+msgid "Start the installation/update (uninstallation) of the selected products"
 msgstr "Start der Installation/Aktualisierung (Deinstallation) der ausgewählten Produkte"
 
 #: tformopsiclientkiosk.buttonsaveimagesonshare.caption
@@ -396,8 +390,7 @@ msgid "opsi-client-kiosk"
 msgstr "opsi-client-kiosk"
 
 #: tformopsiclientkiosk.dbgrid1.hint
-msgid ""
-"Click to ActionRequest Column, to set action requests (setup/uninstall)"
+msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
 msgstr "In die Spalte ActionRequest klicken um Aktionen (setup/uninstall) zu setzen"
 
 #: tformopsiclientkiosk.editsearch.hint
@@ -561,18 +554,36 @@ msgctxt "tformsaveimagesonshare.caption"
 msgid "Save images on share"
 msgstr "Speichere Bilder auf Share"
 
+#: tformsaveimagesonshare.checkboxmountshare.caption
+msgctxt "tformsaveimagesonshare.checkboxmountshare.caption"
+msgid "Mount opsi depot (share)"
+msgstr ""
+
 #: tformsaveimagesonshare.editpathtoshare.texthint
 msgid "\\\\servername\\opsi_depot_rw"
 msgstr "\\\\Servername\\opsi_depot_rw"
+
+#: tformsaveimagesonshare.groupboxmountshare.caption
+msgctxt "tformsaveimagesonshare.groupboxmountshare.caption"
+msgid "Mount opsi depot (share)"
+msgstr ""
 
 #: tformsaveimagesonshare.labelpassword.caption
 msgid "Password"
 msgstr "Passwort"
 
+#: tformsaveimagesonshare.labelpathmountshare.caption
+#, fuzzy
+msgctxt "tformsaveimagesonshare.labelpathmountshare.caption"
+msgid "Path to opsi depot (share)"
+msgstr "Pfad zum opsi-Depot (Share)"
+
 #: tformsaveimagesonshare.labelpathtoshare.caption
+msgctxt "tformsaveimagesonshare.labelpathtoshare.caption"
 msgid "Path to opsi depot (share)"
 msgstr "Pfad zum opsi-Depot (Share)"
 
 #: tformsaveimagesonshare.labeluser.caption
 msgid "User"
 msgstr "Benutzer"
+

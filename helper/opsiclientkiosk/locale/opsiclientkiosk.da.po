@@ -589,15 +589,30 @@ msgctxt "tformsaveimagesonshare.caption"
 msgid "Save images on share"
 msgstr ""
 
+#: tformsaveimagesonshare.checkboxmountshare.caption
+msgctxt "tformsaveimagesonshare.checkboxmountshare.caption"
+msgid "Mount opsi depot (share)"
+msgstr ""
+
 #: tformsaveimagesonshare.editpathtoshare.texthint
 msgctxt "tformsaveimagesonshare.editpathtoshare.texthint"
 msgid "\\\\servername\\opsi_depot_rw"
+msgstr ""
+
+#: tformsaveimagesonshare.groupboxmountshare.caption
+msgctxt "tformsaveimagesonshare.groupboxmountshare.caption"
+msgid "Mount opsi depot (share)"
 msgstr ""
 
 #: tformsaveimagesonshare.labelpassword.caption
 msgctxt "tformsaveimagesonshare.labelpassword.caption"
 msgid "Password"
 msgstr "Kodeord"
+
+#: tformsaveimagesonshare.labelpathmountshare.caption
+msgctxt "tformsaveimagesonshare.labelpathmountshare.caption"
+msgid "Path to opsi depot (share)"
+msgstr ""
 
 #: tformsaveimagesonshare.labelpathtoshare.caption
 msgctxt "tformsaveimagesonshare.labelpathtoshare.caption"

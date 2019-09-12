@@ -5,8 +5,8 @@ unit imagestoshare;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  Process, oslog;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, EditBtn,
+  Process, oslog, FileUtil;
 
 type
 
@@ -15,22 +15,27 @@ type
   TFormSaveImagesOnShare = class(TForm)
     ButtonCancel: TButton;
     ButtonCopy: TButton;
+    CheckBoxMountShare: TCheckBox;
+    DirectoryEditPathToShare: TDirectoryEdit;
     EditPassword: TEdit;
     EditPathToShare: TEdit;
     EditUser: TEdit;
+    GroupBoxMountShare: TGroupBox;
+    LabelPathMountShare: TLabel;
     LabelPassword: TLabel;
-    LabelUser: TLabel;
     LabelPathToShare: TLabel;
+    LabelUser: TLabel;
     procedure ButtonCancelClick(Sender: TObject);
     procedure ButtonCopyClick(Sender: TObject);
+    procedure CheckBoxMountShareChange(Sender: TObject);
+    procedure EditPathToShareChange(Sender: TObject);
   private
     procedure MountShareNT(const User: String; Password: String;
-      PathToShare: String; var mounted: boolean);
-    procedure SaveImagesOnShareNT(const PathToShare: String);
+      PathToShare: String);
+    procedure SaveImagesOnShare(const PathToShare: String);
     procedure UnmountShareNT(const PathToShare: String);
     procedure MountShareUnix(const User: String; Password: String;
-      PathToShare: String; var mounted: boolean);
-    procedure SaveImagesOnShareUnix(const PathToShare: String);
+      PathToShare: String);
     procedure UnmountShareUnix(const PathToShare: String);
 
   public
@@ -58,25 +63,59 @@ var
   User: String;
   AlreadyMounted :boolean;
 begin
-  PathToShare :=  EditPathToShare.Text;
-  User := EditUser.Text;
-  User := '/user:' + user;
-  AlreadyMounted := False;
-  {$IFDEF Windows}
-    MountShareNT(User, EditPassword.Text, PathToShare, AlreadyMounted);
-    SaveImagesOnShareNT(PathToShare);
+  PathToShare :=  DirectoryEditPathToShare.Text;
+  {Mount opsi depot}
+  if CheckBoxMountShare.Checked then
+  begin
+    if DirectoryExists(PathToShare) then AlreadyMounted := True
+    else
+    begin
+      AlreadyMounted := False;
+      User := EditUser.Text;
+      User := '/user:' + user;
+     {$IFDEF Windows}
+      MountShareNT(User, EditPassword.Text, PathToShare);
+     {$ENDIF Windows}
+     {$IFDEF Unix}
+      MountShareUnix(User, EditPassword.Text, PathToShare, AlreadyMounted);
+     {$ENDIF Unix}
+    end;
+  end;
+  if DirectoryExists(PathToShare) then SaveImagesOnShare(PathToShare)
+  else
+  begin
+    ShowMessage('"' + DirectoryEditPathToShare.Text + '" ' +  'is an invalid directory.' + LineEnding
+      + 'Please set "' + LabelPathToShare.Caption + '" to a valid directory.');
+    //DirectoryEditPathToShare.Font.Color:= clRed;
+  end;
+ {$IFDEF Windows}
+  if CheckBoxMountShare.Checked then
+  begin
     if not AlreadyMounted then UnmountShareNT(PathToShare);
-  {$ENDIF Windows}
-  {$IFDEF Unix}
-    MountShareUnix(User, EditPassword.Text, PathToShare, AlreadyMounted);
-    SaveImagesOnShareUnix(PathToShare);
-    if not AlreadyMounted then UnmountShareUnix(PathToShare);
-  {$ENDIF Unix}
+  end;
+ {$ENDIF Windows}
+ {$IFDEF Unix}
+  if CheckBoxMountShare.Checked then
+  begin
+   if not AlreadyMounted then UnmountShareUnix(PathToShare);
+  end;
+ {$ENDIF Unix}
   Close;
 end;
 
+procedure TFormSaveImagesOnShare.CheckBoxMountShareChange(Sender: TObject);
+begin
+  if CheckBoxMountShare.Checked then GroupBoxMountShare.Enabled := True
+    else GroupBoxMountShare.Enabled := False;
+end;
+
+procedure TFormSaveImagesOnShare.EditPathToShareChange(Sender: TObject);
+begin
+  DirectoryEditPathToShare.Text := EditPathToShare.Text;
+end;
+
 procedure TFormSaveImagesOnShare.MountShareNT(const User: String;
-  Password: String; PathToShare: String; var mounted: boolean);
+  Password: String; PathToShare: String);
 var
   Shell,
   ShellOptions,
@@ -88,24 +127,14 @@ begin
     {set shell and options}
     Shell := 'cmd.exe';
     ShellOptions := '/c';
-    {check if remote folder is already mounted}
-    ShellCommand := 'net use';
+    ShellCommand := 'net use' + ' ' + PathToShare + ' ' + Password + ' ' + user;
     if RunCommand(Shell, [ShellOptions , ShellCommand], ShellOutput) then
     begin
-      if ShellOutput.Contains(PathToShare) then mounted := True else mounted := False;
+      ShellCommand := '';
+      //ShowMessage(ShellOutput);
     end
-    else LogDatei.log('Error executing' + ShellCommand + 'on' + Shell, LLError);
-    {mount remote folder if not mounted}
-    if not mounted then
-    begin
-      ShellCommand := 'net use' + ' ' + PathToShare + ' ' + Password + ' ' + user;
-      if RunCommand(Shell, [ShellOptions , ShellCommand], ShellOutput) then
-      begin
-        ShellCommand := '';
-        //ShowMessage(ShellOutput);
-      end
-      else LogDatei.log('Error while trying to run command ' + ShellCommand + 'on' + Shell, LLError);
-    end;
+    else LogDatei.log('Error while trying to run command net use ' +
+      PathToShare + ' ' + user + ' on ' + Shell, LLError);
   except
     LogDatei.log('Exception during mounting of ' + PathToShare, LLDebug);
   end;
@@ -118,63 +147,50 @@ var
   ShellCommand,
   ShellOutput: String;
 begin
-  {set shell and options}
-  Shell := 'cmd.exe';
-  ShellOptions := '/c';
-  ShellCommand := 'net use /delete' + ' ' + PathToShare;
-  {Run Command}
-  if RunCommand(Shell, [ShellOptions, ShellCommand], ShellOutput) then
-  begin
-    //ShowMessage(ShellOutput);
-  end
-  else ShowMessage(rsCouldNotUnmount);
+  try
+    {set shell and options}
+    Shell := 'cmd.exe';
+    ShellOptions := '/c';
+    ShellCommand := 'net use /delete' + ' ' + PathToShare;
+    {Run Command}
+    if RunCommand(Shell, [ShellOptions, ShellCommand], ShellOutput) then
+    begin
+      //ShowMessage(ShellOutput);
+    end
+    else
+    begin
+      ShowMessage(rsCouldNotUnmount);
+      LogDatei.log('Error while trying to run command ' +
+        ShellCommand + ' on ' + Shell, LLError);
+    end;
+  except
+    LogDatei.log('Exception during unmounting of ' + PathToShare, LLDebug);
+  end;
 end;
 
 procedure TFormSaveImagesOnShare.MountShareUnix(const User: String;
-  Password: String; PathToShare: String; var mounted: boolean);
+  Password: String; PathToShare: String);
 begin
 
 end;
 
-procedure TFormSaveImagesOnShare.SaveImagesOnShareUnix(const PathToShare: String
-  );
-begin
-
-end;
 
 procedure TFormSaveImagesOnShare.UnmountShareUnix(const PathToShare: String);
 begin
 
 end;
 
-procedure TFormSaveImagesOnShare.SaveImagesOnShareNT(const PathToShare: String);
+procedure TFormSaveImagesOnShare.SaveImagesOnShare(const PathToShare: String);
 var
-  Shell,
-  ShellOptions,
-  ShellCommand,
-  ShellOutput: String;
-  PathToClientAgent: String;
+  PathToKioskOnDepot: String;
+  Target: String;
+  Source: String;
 begin
-  PathToClientAgent:= '\opsi-client-agent\files\opsi\opsiclientkiosk\ock_custom\';
-  {set shell and options}
-  Shell := 'cmd.exe';
-  ShellOptions := '/c';
-  ShellCommand := 'xcopy' + ' ' + Application.Location + 'ock_custom\product_icons' + ' '
-   + PathToShare + PathToClientAgent + 'product_icons /S /Y /Z /I';
-  {Run Command}
-  if RunCommand(Shell, [ShellOptions, ShellCommand], ShellOutput) then
-  begin
-    ShowMessage(ShellOutput);
-  end
-  else ShowMessage(rsCouldNotSaveIcons);
-  ShellCommand := 'xcopy' + ' ' + Application.Location + 'ock_custom\screenshots' + ' '
-   + PathToShare + PathToClientAgent + 'screenshots /S /Y /Z /I';
-  {Run Command}
-  if RunCommand(Shell, [ShellOptions, ShellCommand], ShellOutput) then
-  begin
-    ShowMessage(ShellOutput);
-  end
-  else ShowMessage(rsCouldNotSaveScreenshots);
+  PathToKioskOnDepot:= '\opsi-client-agent\files\opsi\opsiclientkiosk\';
+  Source := Application.Location + 'ock_custom\';
+  Target := PathToShare + PathToKioskOnDepot + 'ock_custom\';
+  if CopyDirTree(Source, Target,[cffOverwriteFile, cffCreateDestDirectory])
+    then ShowMessage('Images saved on ' + Target);
 
 end;
 
