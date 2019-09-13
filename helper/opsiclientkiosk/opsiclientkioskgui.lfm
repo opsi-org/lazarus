@@ -1,13 +1,13 @@
 object FormOpsiClientKiosk: TFormOpsiClientKiosk
-  Left = 2391
+  Left = 2497
   Height = 640
-  Top = 145
-  Width = 640
+  Top = 226
+  Width = 620
   Caption = 'opsi-client-kiosk'
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
   ChildSizing.ControlsPerLine = 2
   ClientHeight = 640
-  ClientWidth = 640
+  ClientWidth = 620
   DefaultMonitor = dmDesktop
   OnActivate = FormActivate
   OnCreate = FormCreate
@@ -19,14 +19,14 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
     Left = 0
     Height = 45
     Top = 48
-    Width = 640
+    Width = 620
     Align = alTop
     ClientHeight = 45
-    ClientWidth = 640
+    ClientWidth = 620
     ParentColor = False
     TabOrder = 0
     object SpeedButtonUpdates: TSpeedButton
-      Left = 131
+      Left = 86
       Height = 33
       Hint = 'Filter for Products where an upgrade is possible'
       Top = 6
@@ -45,14 +45,14 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       ParentShowHint = False
     end
     object SpeedButtonAll: TSpeedButton
-      Left = 51
+      Left = 6
       Height = 33
       Hint = 'Show all List entries (No Filter)'
       Top = 6
       Width = 80
       Align = alLeft
       AutoSize = True
-      BorderSpacing.Left = 50
+      BorderSpacing.Left = 5
       BorderSpacing.Top = 5
       BorderSpacing.Bottom = 5
       Constraints.MinHeight = 32
@@ -65,7 +65,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       ParentShowHint = False
     end
     object SpeedButtonNotInstalled: TSpeedButton
-      Left = 211
+      Left = 166
       Height = 33
       Top = 6
       Width = 80
@@ -80,7 +80,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       OnClick = SpeedButtonNotInstalledClick
     end
     object BitBtnHelp: TBitBtn
-      Left = 559
+      Left = 539
       Height = 33
       Top = 6
       Width = 75
@@ -92,7 +92,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       TabOrder = 0
     end
     object SpeedButtonActions: TSpeedButton
-      Left = 291
+      Left = 246
       Height = 33
       Top = 6
       Width = 80
@@ -107,8 +107,9 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       OnClick = SpeedButtonActionsClick
     end
     object SpeedButtonSearch: TSpeedButton
-      Left = 519
+      Left = 499
       Height = 33
+      Hint = 'Search product'
       Top = 6
       Width = 35
       Align = alRight
@@ -172,13 +173,105 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Spacing = -1
       OnClick = SpeedButtonSearchClick
       ShowCaption = False
+      ShowHint = True
+      ParentShowHint = False
+    end
+    object BitBtnSaveImages: TBitBtn
+      Left = 459
+      Height = 33
+      Hint = 'Save images on share'
+      Top = 6
+      Width = 35
+      Align = alRight
+      BorderSpacing.Around = 5
+      Glyph.Data = {
+        36090000424D3609000000000000360000002800000018000000180000000100
+        2000000000000009000064000000640000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        00000000000000000000000000000000000000000000666666FF666666FF6666
+        66FF666666FF666666FF666666FF666666FF666666FF666666FF666666FF6666
+        66FF666666FF666666FF666666FF666666FF666666FF00000000000000000000
+        00000000000000000000000000000000000000000000666666FFFFFFFFFFFFFF
+        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF666666FF00000000000000000000
+        00000000000000000000000000000000000000000000666666FFFFFFFFFF73D0
+        73FF73D073FF73D073FF73D073FF73D073FF73D073FF73D073FF73D073FF73D0
+        73FF73D073FF73D073FF73D073FFFFFFFFFF666666FF00000000000000000000
+        00000000000000000000000000000000000000000000666666FFFFFFFFFF4AB4
+        4AFF4AB44AFF4AB44AFF4AB44AFF4AB44AFF4AB44AFF4AB44AFF4AB44AFF4AB4
+        4AFF4AB44AFF4AB44AFF4AB44AFFFFFFFFFF666666FF00000000000000000000
+        00000000000000000000000000000000000000000000666666FFFFFFFFFF2298
+        22FF229822FF229822FF229822FF229822FF229822FF229822FF229822FF2298
+        22FF229822FF229822FF229822FFFFFFFFFF666666FF00000000000000000000
+        00000000000000000000000000000000000000000000666666FFFFFFFFFFAAC8
+        95FFA7C895FF1BD3A7FF00D5AAFF00D5AAFF01D5AAFF7ECB9AFFAAC895FFAAC8
+        95FFAAC895FFAAC895FFAAC895FFFFFFFFFF666666FF00000000000000000000
+        00000000000000000000000000000000000000000000666666FFFFFFFFFFFFCB
+        AAFFD9D3B7FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF74E7D8FFFFCBAAFFFFCB
+        AAFFFFCBAAFFFFCBAAFFFFCBAAFFFFFFFFFF666666FF00000000000000000000
+        00000000000000000000000000000000000000000000666666FFFFFFFFFFFFB6
+        86FFF8B889FF18F8F4FF00FFFFFF00FFFFFF00FFFFFFABCEAEFFFFB686FFFFB6
+        86FFFFB686FFFFB686FFFFB686FFFFFFFFFF666666FF00000000000000000000
+        000000000000D0804C36E2946094F4A774C8F9AB77E7666666FFFFFFFFFFFFA0
+        61FFFFA061FFCFB27FFF4AE3D1FF35EBDEFF91C9A5FFFFA061FFFFA061FFFFA0
+        61FFFFA061FFFFA061FFFFA061FFFFFFFFFF666666FF00000000000000000000
+        0000C476438ACE804CFFE19460FFF4A774FFF9AB77FF666666FFFFFFFFFFFF8A
+        3CFFFF8A3CFFFF8A3CFFFF8A3CFFFF8A3CFFFF8A3CFFFF8A3CFFFF8A3CFFFF8A
+        3CFFFF8A3CFFFF8A3CFFFF8A3CFFFFFFFFFF666666FF00000000000000000000
+        0000C47642EBD6956AFFF1D0B9FFFBF1EAFFFDFAF7FF666666FFFFFFFFFFFFFF
+        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF666666FF00000000000000000000
+        0000ECD1BFC8F3DED0FFEAB795FFF3B387FFF8AF7EFF666666FF666666FF6666
+        66FF666666FF666666FF666666FF666666FF666666FF666666FF666666FF6666
+        66FF666666FF666666FF666666FF666666FF666666FF00000000000000000000
+        0000DEB396FACE804CFFE19460FFF4A774FFF9AB77FFEB9962FFDC864CFFCE73
+        36FFC06021FFB14D0BFFAA4400FFD09873FA0000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000C77B49F4D6956AFFF1D0B9FFFBF1EAFFFDFAF7FFFEFDFDFFFEFDFDFFFDF9
+        F6FFF7EBE2FFDEB397FFB8642BFFAD4B09F30000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000ECD1BFC8F3DED0FFEAB795FFF3B387FFF8AF7EFFEB9B65FFDC8950FFD17C
+        43FFCB7B46FFCE8E63FFEAD0BFFFE3C0A9C70000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000DEB396FACE804CFFE19460FFF4A774FFF9AB77FFEB9962FFDC864CFFCE73
+        36FFC06021FFB14D0BFFAA4400FFD09873FA0000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000C77B49F4D6956AFFF1D0B9FFFBF1EAFFFDFAF7FFFEFDFDFFFEFDFDFFFDF9
+        F6FFF7EBE2FFDEB397FFB8642BFFAD4B09F30000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000ECD1BFC8F4E4DAFFEBBB9BFFF4B185FFF9AE7DFFEC9B65FFDD884FFFD37D
+        43FFCC7B46FFD29770FFEFDACCFFE3C0A9C70000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000E2B99FFAD28654FFF0A470FFFCB07DFFFEB27FFFFEB27EFFFEB27EFFFAAC
+        78FFEF9E68FFD77F44FFB1500FFFD5A280FA0000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000C77A47FAF8AC78FFFFB380FFFFB380FFFFB380FFFFB380FFFFB380FFFFB3
+        80FFFFB380FFFFB380FFF2A26CFFAE4908FA0000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000C7794683D18451F6F0A370FDFCB07DFFFEB27FFFFEB27EFFFEB27EFFFAAC
+        78FFEF9D67FFD77F45FDAF4B09F6AF4B08820000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        000000000000CD834B29E2955F8BF5A776D4FAAB76EFEC9A63FADC874DFAD075
+        39EFC46528D4B44F0F8BA8440029000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000
+      }
+      OnClick = BitBtnSaveImagesClick
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+      Visible = False
     end
   end
   object StatusBar1: TStatusBar
     Left = 0
     Height = 23
     Top = 617
-    Width = 640
+    Width = 620
     Panels = <    
       item
         Text = 'Not Connected to opsi server'
@@ -190,11 +283,11 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
     Left = 0
     Height = 48
     Top = 0
-    Width = 640
+    Width = 620
     Align = alTop
     BevelOuter = bvNone
     ClientHeight = 48
-    ClientWidth = 640
+    ClientWidth = 620
     Font.CharSet = ANSI_CHARSET
     Font.Height = -19
     Font.Name = 'Arial'
@@ -207,7 +300,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Left = 0
       Height = 48
       Top = 0
-      Width = 592
+      Width = 572
       Align = alClient
       Picture.Data = {
         1754506F727461626C654E6574776F726B477261706869634461000089504E47
@@ -996,7 +1089,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Left = 0
       Height = 48
       Top = 0
-      Width = 592
+      Width = 572
       Align = alClient
       Alignment = taCenter
       Caption = 'opsi Client Kiosk'
@@ -1012,7 +1105,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       ParentFont = False
     end
     object ImageLogo: TImage
-      Left = 592
+      Left = 572
       Height = 48
       Hint = 'Your logo'
       Top = 0
@@ -1147,16 +1240,16 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
     Left = 0
     Height = 45
     Top = 138
-    Width = 640
+    Width = 620
     Align = alTop
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ClientHeight = 45
-    ClientWidth = 640
+    ClientWidth = 620
     ParentColor = False
     TabOrder = 3
     Visible = False
     object SpeedButtonReload: TSpeedButton
-      Left = 570
+      Left = 550
       Height = 33
       Hint = 'Reload data from server'
       Top = 6
@@ -1253,7 +1346,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       TabOrder = 0
     end
     object BitBtnInstallNow: TBitBtn
-      Left = 462
+      Left = 442
       Height = 33
       Hint = 'Start the installation/update (uninstallation) of the selected products'
       Top = 6
@@ -1269,28 +1362,16 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       ShowHint = True
       TabOrder = 1
     end
-    object ButtonSaveImagesOnShare: TButton
-      Left = 101
-      Height = 33
-      Top = 6
-      Width = 139
-      Align = alLeft
-      AutoSize = True
-      BorderSpacing.Around = 5
-      Caption = 'Save images on share'
-      OnClick = ButtonSaveImagesOnShareClick
-      TabOrder = 2
-    end
   end
   object PanelProducts: TPanel
     Left = 0
     Height = 434
     Top = 183
-    Width = 640
+    Width = 620
     Align = alClient
     BevelOuter = bvNone
     ClientHeight = 434
-    ClientWidth = 640
+    ClientWidth = 620
     Color = clForm
     ParentColor = False
     TabOrder = 4
@@ -1298,17 +1379,17 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Left = 0
       Height = 172
       Top = 262
-      Width = 640
+      Width = 620
       Align = alBottom
       BevelOuter = bvNone
       ClientHeight = 172
-      ClientWidth = 640
+      ClientWidth = 620
       TabOrder = 1
       object ExtendedNotebook1: TExtendedNotebook
         Left = 0
         Height = 172
         Top = 0
-        Width = 640
+        Width = 620
         ActivePage = TabSheet1
         Align = alBottom
         Anchors = [akTop, akLeft, akRight, akBottom]
@@ -1317,7 +1398,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
         object TabSheet1: TTabSheet
           Caption = 'Details'
           ClientHeight = 144
-          ClientWidth = 632
+          ClientWidth = 612
           object PanelDetailsLables: TPanel
             Left = 0
             Height = 144
@@ -1380,18 +1461,18 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Left = 160
             Height = 144
             Top = 0
-            Width = 472
+            Width = 452
             Align = alClient
             BevelOuter = bvNone
             ClientHeight = 144
-            ClientWidth = 472
+            ClientWidth = 452
             ParentColor = False
             TabOrder = 1
             object DBTextVerStr: TDBText
               Left = 5
               Height = 15
               Top = 109
-              Width = 462
+              Width = 442
               Align = alTop
               BorderSpacing.Around = 5
               DataField = 'VersionStr'
@@ -1402,7 +1483,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
               Left = 5
               Height = 47
               Top = 5
-              Width = 462
+              Width = 442
               Align = alTop
               BorderSpacing.Around = 5
               BorderStyle = bsNone
@@ -1416,7 +1497,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
               Left = 5
               Height = 47
               Top = 57
-              Width = 462
+              Width = 442
               Align = alTop
               BorderSpacing.Around = 5
               BorderStyle = bsNone
@@ -1430,7 +1511,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
               Left = 5
               Height = 15
               Top = 129
-              Width = 462
+              Width = 442
               Align = alTop
               BorderSpacing.Around = 5
               DataField = 'InstalledVerSTr'
@@ -1502,8 +1583,8 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Left = 0
       Height = 262
       Top = 0
-      Width = 640
-      PageIndex = 1
+      Width = 620
+      PageIndex = 0
       Align = alClient
       TabOrder = 0
       TabStop = True
@@ -1513,7 +1594,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           Height = 262
           Hint = 'Click to ActionRequest Column, to set action requests (setup/uninstall)'
           Top = 0
-          Width = 640
+          Width = 620
           Align = alClient
           Color = clWindow
           Columns = <>
@@ -1589,8 +1670,8 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           Align = alTop
           BevelOuter = bvNone
           BorderStyle = bsSingle
-          ClientHeight = 33
-          ClientWidth = 636
+          ClientHeight = 37
+          ClientWidth = 640
           ParentColor = False
           TabOrder = 0
           object ButtonSoftwareBack: TButton
@@ -1876,28 +1957,28 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
     Left = 0
     Height = 45
     Top = 93
-    Width = 640
+    Width = 620
     Align = alTop
     Caption = 'PanelSearchMask'
     ClientHeight = 45
-    ClientWidth = 640
+    ClientWidth = 620
     TabOrder = 5
     Visible = False
     object PanelSearch: TPanel
       Left = 6
       Height = 33
       Top = 6
-      Width = 628
+      Width = 608
       Align = alClient
       BorderSpacing.Around = 5
       BevelOuter = bvNone
       BorderStyle = bsSingle
       ClientHeight = 29
-      ClientWidth = 624
+      ClientWidth = 604
       Constraints.MinHeight = 30
       TabOrder = 0
       object SpeedButtonClearSearchEdit: TSpeedButton
-        Left = 601
+        Left = 581
         Height = 29
         Top = 0
         Width = 23
@@ -1912,7 +1993,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
         Height = 29
         Hint = 'Search in Productlist'
         Top = 0
-        Width = 564
+        Width = 544
         Align = alClient
         AutoSize = False
         AutoSelect = False

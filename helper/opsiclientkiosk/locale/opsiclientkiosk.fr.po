@@ -28,6 +28,18 @@ msgstr ""
 msgid "Could not unmount share."
 msgstr ""
 
+#: imagestoshare.rsimagesnotsaved
+msgid "Images could not be saved on opsi depot (share).%sPlease check if share is mounted with write privileges."
+msgstr ""
+
+#: imagestoshare.rsimagessaved
+msgid "Images saved on"
+msgstr ""
+
+#: imagestoshare.rsisaninvaliddir
+msgid "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
+msgstr ""
+
 #: opsiclientkioskgui.rsaction
 msgctxt "opsiclientkioskgui.rsaction"
 msgid "Action"
@@ -265,6 +277,26 @@ msgstr ""
 msgid "Yes"
 msgstr "Oui"
 
+#: opsiconnection.rserrorintconnection
+msgctxt "opsiconnection.rserrorintconnection"
+msgid "Error while initializing opsiconnection"
+msgstr ""
+
+#: opsiconnection.rsnovaluefound
+msgctxt "opsiconnection.rsnovaluefound"
+msgid "No value found! Set%sto"
+msgstr ""
+
+#: oswebservice.rserrorintconnection
+msgctxt "oswebservice.rserrorintconnection"
+msgid "Error while initializing opsiconnection"
+msgstr ""
+
+#: oswebservice.rsnovaluefound
+msgctxt "oswebservice.rsnovaluefound"
+msgid "No value found! Set%sto"
+msgstr ""
+
 #: oswebservice.rssendlog
 msgid "Sending log file to server ..."
 msgstr "Envoi du fichier journal au serveur ..."
@@ -367,8 +399,8 @@ msgctxt "tformopsiclientkiosk.bitbtninstallnow.hint"
 msgid "Start the installation/update (uninstallation) of the selected products"
 msgstr ""
 
-#: tformopsiclientkiosk.buttonsaveimagesonshare.caption
-msgctxt "tformopsiclientkiosk.buttonsaveimagesonshare.caption"
+#: tformopsiclientkiosk.bitbtnsaveimages.hint
+msgctxt "tformopsiclientkiosk.bitbtnsaveimages.hint"
 msgid "Save images on share"
 msgstr ""
 
@@ -529,6 +561,10 @@ msgstr "Recharger"
 
 #: tformopsiclientkiosk.speedbuttonreload.hint
 msgid "Reload data from server"
+msgstr ""
+
+#: tformopsiclientkiosk.speedbuttonsearch.hint
+msgid "Search product"
 msgstr ""
 
 #: tformopsiclientkiosk.speedbuttonupdates.caption

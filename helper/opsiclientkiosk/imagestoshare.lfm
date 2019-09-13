@@ -1,7 +1,7 @@
 object FormSaveImagesOnShare: TFormSaveImagesOnShare
-  Left = 2241
+  Left = 2067
   Height = 293
-  Top = 386
+  Top = 547
   Width = 544
   Caption = 'Save images on share'
   ClientHeight = 293
@@ -47,6 +47,7 @@ object FormSaveImagesOnShare: TFormSaveImagesOnShare
     NumGlyphs = 1
     MaxLength = 0
     TabOrder = 2
+    OnEnter = DirectoryEditPathToShareEnter
   end
   object GroupBoxMountShare: TGroupBox
     Left = 8

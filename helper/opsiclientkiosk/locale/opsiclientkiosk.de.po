@@ -25,6 +25,18 @@ msgstr "Screenshots konnten nicht auf dem Share gespeichert werden."
 msgid "Could not unmount share."
 msgstr "Share konnte nicht getrennt werden."
 
+#: imagestoshare.rsimagesnotsaved
+msgid "Images could not be saved on opsi depot (share).%sPlease check if share is mounted with write privileges."
+msgstr ""
+
+#: imagestoshare.rsimagessaved
+msgid "Images saved on"
+msgstr ""
+
+#: imagestoshare.rsisaninvaliddir
+msgid "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
+msgstr ""
+
 #: opsiclientkioskgui.rsaction
 msgctxt "opsiclientkioskgui.rsaction"
 msgid "Action"
@@ -258,6 +270,26 @@ msgstr " wird sofort aktualisiert."
 msgid "Yes"
 msgstr "Ja"
 
+#: opsiconnection.rserrorintconnection
+msgctxt "opsiconnection.rserrorintconnection"
+msgid "Error while initializing opsiconnection"
+msgstr ""
+
+#: opsiconnection.rsnovaluefound
+msgctxt "opsiconnection.rsnovaluefound"
+msgid "No value found! Set%sto"
+msgstr ""
+
+#: oswebservice.rserrorintconnection
+msgctxt "oswebservice.rserrorintconnection"
+msgid "Error while initializing opsiconnection"
+msgstr ""
+
+#: oswebservice.rsnovaluefound
+msgctxt "oswebservice.rsnovaluefound"
+msgid "No value found! Set%sto"
+msgstr ""
+
 #: oswebservice.rssendlog
 msgid "Sending log file to server ..."
 msgstr "Sende Logdatei zum Server ..."
@@ -356,10 +388,11 @@ msgctxt "tformopsiclientkiosk.bitbtninstallnow.hint"
 msgid "Start the installation/update (uninstallation) of the selected products"
 msgstr "Start der Installation/Aktualisierung (Deinstallation) der ausgewählten Produkte"
 
-#: tformopsiclientkiosk.buttonsaveimagesonshare.caption
-msgctxt "tformopsiclientkiosk.buttonsaveimagesonshare.caption"
+#: tformopsiclientkiosk.bitbtnsaveimages.hint
+#, fuzzy
+msgctxt "tformopsiclientkiosk.bitbtnsaveimages.hint"
 msgid "Save images on share"
-msgstr "Speichere Bilder auf Netzlaufwerk"
+msgstr "Speichere Bilder auf Share"
 
 #: tformopsiclientkiosk.buttonsoftwareback.caption
 msgctxt "tformopsiclientkiosk.buttonsoftwareback.caption"
@@ -501,6 +534,10 @@ msgstr "Neu laden"
 #: tformopsiclientkiosk.speedbuttonreload.hint
 msgid "Reload data from server"
 msgstr "Lade Daten vom Server"
+
+#: tformopsiclientkiosk.speedbuttonsearch.hint
+msgid "Search product"
+msgstr ""
 
 #: tformopsiclientkiosk.speedbuttonupdates.caption
 msgctxt "tformopsiclientkiosk.speedbuttonupdates.caption"

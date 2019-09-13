@@ -30,7 +30,7 @@ type
     procedure CreateDatabaseAndTables;
     procedure LoadTableProductsIntoMemory;
     procedure RemoveTableProductsFromMemory;
-    procedure OpsiProductsToDataset(SQLQuery: TSQLQuery);
+    procedure OpsiProductsToDataset;
     function SetActionRequestToDataset(fSelectedProduct: string; fActionRequest:string): boolean;
     procedure SQLQueryProductDataAfterPost(Dataset: TDataset);
     function GoToProduct(fSelectedProduct:string):boolean;
@@ -105,7 +105,7 @@ procedure TDataModuleOCK.CreateDatabaseAndTables;
 var
   newFile: boolean;
 begin
-  logdatei.log('Started CreateDatabaseAndTables ', LLInfo);
+  logdatei.log('Started CreateDatabaseAndTables ', LLNotice);
   SQLite3Connection.Close; // Ensure the connection is closed when we start
   try
     { Since we're making this database for the first time,
@@ -119,7 +119,7 @@ begin
     if newFile then
     begin
       try
-        logdatei.log('Creating new database ', LLInfo);
+        logdatei.log('Creating new database ', LLNotice);
         SQLite3Connection.Open;
         SQLTransaction.StartTransaction;
         CreateDatabaseTables(SQLite3Connection);
@@ -157,12 +157,12 @@ begin
       logdatei.log_exception(E,LLError);
     end;
   end;
-  logdatei.log('Finished CeateDatabaseAndTables', LLInfo);
+  logdatei.log('Finished CeateDatabaseAndTables', LLNotice);
 end;
 
 procedure TDataModuleOCK.LoadTableProductsIntoMemory;
 begin
-   logdatei.log('Loading TABLE products into memory ordered by upper product name', LLDebug);
+   logdatei.log('Loading TABLE products into memory ordered by upper product name', LLInfo);
    SQLQueryProductData.SQL.Text := 'SELECT * FROM products ORDER BY UPPER (ProductName)';
    SQLTransaction.StartTransaction;
    SQLQueryProductData.Open;
@@ -238,14 +238,14 @@ begin
  end;
 
 
-procedure TDataModuleOCK.OpsiProductsToDataset(SQLQuery:TSQLQuery);
+procedure TDataModuleOCK.OpsiProductsToDataset;
 var
   i: integer;
   SQLStatment: String;
   //JSONObjectProduct: TJSONObject;
 begin
   //if SQLTransaction.Active then SQLTransaction.Active:=FALSE;
-  logdatei.log('Starting OpsiProductToDataset', LLInfo);
+  logdatei.log('Starting OpsiProductToDataset', LLNotice);
 
   { prepare database }
   SQLStatment := 'SELECT * FROM products'; //ORDER BY UPPER(ProductName)';
@@ -297,7 +297,7 @@ begin
   end;
   SQLQueryProductData.Close;
   SQLTransaction.Commit;
-  logdatei.log('Finished OpsiProductToDataset', LLInfo);
+  logdatei.log('Finished OpsiProductToDataset', LLNotice);
  end;
 
 function TDataModuleOCK.SetActionRequestToDataset(fSelectedProduct: string;

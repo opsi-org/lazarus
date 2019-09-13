@@ -26,6 +26,18 @@ msgstr "Could not save screenshots on share."
 msgid "Could not unmount share."
 msgstr "Could not unmount share."
 
+#: imagestoshare.rsimagesnotsaved
+msgid "Images could not be saved on opsi depot (share).%sPlease check if share is mounted with write privileges."
+msgstr ""
+
+#: imagestoshare.rsimagessaved
+msgid "Images saved on"
+msgstr ""
+
+#: imagestoshare.rsisaninvaliddir
+msgid "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
+msgstr ""
+
 #: opsiclientkioskgui.rsaction
 msgctxt "opsiclientkioskgui.rsaction"
 msgid "Action"
@@ -263,6 +275,26 @@ msgstr " will be updated now."
 msgid "Yes"
 msgstr "Yes"
 
+#: opsiconnection.rserrorintconnection
+msgctxt "opsiconnection.rserrorintconnection"
+msgid "Error while initializing opsiconnection"
+msgstr ""
+
+#: opsiconnection.rsnovaluefound
+msgctxt "opsiconnection.rsnovaluefound"
+msgid "No value found! Set%sto"
+msgstr ""
+
+#: oswebservice.rserrorintconnection
+msgctxt "oswebservice.rserrorintconnection"
+msgid "Error while initializing opsiconnection"
+msgstr ""
+
+#: oswebservice.rsnovaluefound
+msgctxt "oswebservice.rsnovaluefound"
+msgid "No value found! Set%sto"
+msgstr ""
+
 #: oswebservice.rssendlog
 msgid "Sending log file to server ..."
 msgstr "Sending log file to server ..."
@@ -367,8 +399,9 @@ msgctxt "tformopsiclientkiosk.bitbtninstallnow.hint"
 msgid "Start the installation/update (uninstallation) of the selected products"
 msgstr "Start the installation/update (uninstallation) of the selected products"
 
-#: tformopsiclientkiosk.buttonsaveimagesonshare.caption
-msgctxt "tformopsiclientkiosk.buttonsaveimagesonshare.caption"
+#: tformopsiclientkiosk.bitbtnsaveimages.hint
+#, fuzzy
+msgctxt "tformopsiclientkiosk.bitbtnsaveimages.hint"
 msgid "Save images on share"
 msgstr "Save images on share"
 
@@ -532,6 +565,10 @@ msgstr "Reload"
 #: tformopsiclientkiosk.speedbuttonreload.hint
 msgid "Reload data from server"
 msgstr "Reload data from server"
+
+#: tformopsiclientkiosk.speedbuttonsearch.hint
+msgid "Search product"
+msgstr ""
 
 #: tformopsiclientkiosk.speedbuttonupdates.caption
 msgctxt "tformopsiclientkiosk.speedbuttonupdates.caption"

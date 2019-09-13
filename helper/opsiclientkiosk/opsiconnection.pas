@@ -52,7 +52,7 @@ type
     procedure ReadConfigdConf; //configd mode
     procedure ReadClientdConf(ClientID:string); //clientd mode
 
-    function initConnection(const seconds: integer; var ConnectionInfo:string): boolean;
+    //function initConnection(const seconds: integer; var ConnectionInfo:string): boolean;
     procedure closeConnection;
   public
     MyClientID,
@@ -80,6 +80,10 @@ type
 
  var
    OCKOpsiConnection:TOpsiConnection;
+
+ resourcestring
+   rsErrorIntConnection = 'Error while initializing opsiconnection';
+   rsNoValueFound = 'No value found! Set%sto';
 
 implementation
 
@@ -215,7 +219,7 @@ begin
       LogDatei.log('Could not get data from new data structur.', LLInfo)
     end;
   except
-    LogDatei.log('Error using Kiosk mode: new', LLDebug);
+    LogDatei.log('Error using Kiosk mode: new', LLError);
   end;
 end;
 
@@ -249,7 +253,7 @@ begin
       LogDatei.log('Could not get data from old data structur.', LLInfo)
     end;
   except
-    LogDatei.log('Error using Kiosk mode: old', LLDebug);
+    LogDatei.log('Error using Kiosk mode: old', LLError);
     ShowMessage('Could not get data from server.')
   end;
 end;
@@ -287,7 +291,7 @@ begin
     Result := JSONObjectProduct.Integers[key]
   else
     begin
-      ShowMessage('No value found! Set' + key +  'to 0.');
+      ShowMessage(Format(rsNoValueFound, [key]) +  ' 0.');
       Result := 0;
     end;
 end;
@@ -298,7 +302,7 @@ begin
     Result := JSONObjectProduct.Booleans[key]
   else
     begin
-      ShowMessage('No value found! Set' + key +  'to false.');
+      ShowMessage(Format(rsNoValueFound, [key]) + ' false.');
       Result := False;
     end;
 end;
@@ -310,56 +314,7 @@ begin
   Result := JSONObjectProducts.Count;
 end;
 
-function TOpsiConnection.initConnection(const seconds: integer; var ConnectionInfo:string): boolean;
-var
-  networkup, timeout: boolean;
-  myseconds: integer;
-  resultstring: string;
-begin
-  //FormProgressWindow.LabelDataLoad.Caption := 'Connecting to OPSI web service';
-  //FormProgressWindow.ProgressBar1.StepIt;
-  //FormOpsiClientKiosk.Cursor := crHourGlass;
-  //FormProgressWindow.ProcessMess;
-  Result := False;
-  networkup := False;
-  timeout := False;
-  myseconds := seconds;
-  repeat
-    try
-      if myseconds > 0 then
-      begin
-        resultstring := MyOpsiMethodCall('getDepotId', [myclientid]);
-        networkup := True;
-      end
-      else
-        timeout := True;
-    except
-      LogDatei.log('opsidata not connected - retry', LLInfo);
-      myseconds := myseconds - 1;
-      //FormProgressWindow.ProgressBar1.StepIt;
-      Sleep(1000);
-    end;
-    //FormProgressWindow.ProgressBar1.StepIt;
-    //FormProgressWindow.ProcessMess;
-  until networkup or timeout;
 
-  if networkup then
-  begin
-    LogDatei.log('opsidata connected', LLInfo);
-    //FormProgressWindow.ProgressBar1.StepIt;
-    //FormProgressWindow.ProcessMess;
-    //FormProgressWindow.LabelDataLoad.Caption := 'Connection  done';
-    ConnectionInfo := 'Connected to ' + myservice_url + ' as ' + myclientid;
-    Result := True;
-  end
-  else
-  begin
-    LogDatei.log('init connection failed (timeout after ' + IntToStr(seconds) +
-      ' seconds/retries.', LLError);
-    ConnectionInfo := 'Connection failed';
-  end;
-  //FormOpsiClientKiosk.Cursor := crArrow;
-end;
 
 
 constructor TOpsiConnection.Create(fClientdMode:boolean; const ClientID:string = '');overload;
@@ -378,14 +333,14 @@ begin
     LogDatei.AddToConfidentials(myhostkey);
     LogDatei.log('host_key=' + myhostkey, LLdebug3);
     OpsiData := TOpsi4Data.Create;
-    LogDatei.log('opsidata created', LLDebug2);
+    LogDatei.log('opsidata created', LLInfo);
     OpsiData.SetActualClient(myclientid);
     OpsiData.InitOpsiConf(myservice_url, myclientid,
       myhostkey, '', '', '', 'opsi-client-kiosk-' + ProgramInfo.Version);
-    LogDatei.log('opsidata initialized', LLDebug2);
+    LogDatei.log('opsidata initialized', LLNotice);
   except
-    LogDatei.log('Error while initializing opsiconnection.', LLDebug);
-    ShowMessage('Error while initializing opsiconnection.');
+    LogDatei.log('Error while initializing opsiconnection', LLError);
+    ShowMessage(rsErrorIntConnection);
   end;
 end;
 
@@ -457,8 +412,60 @@ begin
   end;
 end;
 
+{function TOpsiConnection.initConnection(const seconds: integer; var ConnectionInfo:string): boolean;
+var
+  networkup, timeout: boolean;
+  myseconds: integer;
+  resultstring: string;
+begin
+  //FormProgressWindow.LabelDataLoad.Caption := 'Connecting to OPSI web service';
+  //FormProgressWindow.ProgressBar1.StepIt;
+  //FormOpsiClientKiosk.Cursor := crHourGlass;
+  //FormProgressWindow.ProcessMess;
+  Result := False;
+  networkup := False;
+  timeout := False;
+  myseconds := seconds;
+  repeat
+    try
+      if myseconds > 0 then
+      begin
+        resultstring := MyOpsiMethodCall('getDepotId', [myclientid]);
+        networkup := True;
+      end
+      else
+        timeout := True;
+    except
+      LogDatei.log('opsidata not connected - retry', LLInfo);
+      myseconds := myseconds - 1;
+      //FormProgressWindow.ProgressBar1.StepIt;
+      Sleep(1000);
+    end;
+    //FormProgressWindow.ProgressBar1.StepIt;
+    //FormProgressWindow.ProcessMess;
+  until networkup or timeout;
+
+  if networkup then
+  begin
+    LogDatei.log('opsidata connected', LLInfo);
+    //FormProgressWindow.ProgressBar1.StepIt;
+    //FormProgressWindow.ProcessMess;
+    //FormProgressWindow.LabelDataLoad.Caption := 'Connection  done';
+    ConnectionInfo := 'Connected to ' + myservice_url + ' as ' + myclientid;
+    Result := True;
+  end
+  else
+  begin
+    LogDatei.log('init connection failed (timeout after ' + IntToStr(seconds) +
+      ' seconds/retries.', LLError);
+    ConnectionInfo := 'Connection failed';
+  end;
+  //FormOpsiClientKiosk.Cursor := crArrow;
+end;}
+
 //initialization
  //OckOpsiConnection := TOpsiConnection.Create(True);
+
 end.
 
 

@@ -14,10 +14,12 @@ type
   TProgramInfo = Class(TObject)
     private
       MyVersion:String;
-      procedure SetVersionFromFileVersionInfo;
+      MyInternalName: String;
+      procedure SetVersionInfoFromFileVersionInfo;
     public
       constructor Create;virtual;
       property Version: String read MyVersion;
+      property InternalName: String read MyInternalName;
   end;
 
   var
@@ -26,7 +28,7 @@ type
 implementation
 
 
-procedure TProgramInfo.SetVersionFromFileVersionInfo;
+procedure TProgramInfo.SetVersionInfoFromFileVersionInfo;
 var
   FileVerInfo: TFileVersionInfo;
 begin
@@ -34,6 +36,7 @@ begin
   try
     FileVerInfo.FileName := ParamStr(0);
     FileVerInfo.ReadFileInfo;
+    MyInternalName := FileVerInfo.VersionStrings.Values['InternalName'];
     MyVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
   finally
     FileVerInfo.Free;
@@ -44,7 +47,7 @@ end;
 constructor TProgramInfo.Create;
 begin
   inherited;
-  SetVersionFromFileVersionInfo;
+  SetVersionInfoFromFileVersionInfo;
 end;
 
 initialization

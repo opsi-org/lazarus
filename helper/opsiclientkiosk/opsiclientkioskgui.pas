@@ -72,7 +72,7 @@ type
   { TFormOpsiClientKiosk }
 
   TFormOpsiClientKiosk = class(TForm)
-     ButtonSaveImagesOnShare: TButton;
+     BitBtnSaveImages: TBitBtn;
  (*----------------------------*)
  (*         Attributes         *)
  (*----------------------------*)
@@ -175,11 +175,11 @@ type
   (*----------------------------*)
     { BItBtn }
     procedure BitBtnHelpClick(Sender: TObject);
+    procedure BitBtnSaveImagesClick(Sender: TObject);
     procedure BitBtnShowActionClick(Sender: TObject);
     procedure BitBtnInstallNowClick(Sender: TObject);
     procedure BitBtnToggleViewClick(Sender: TObject);
     procedure BitBtnCancelClick(Sender: TObject);
-    procedure ButtonSaveImagesOnShareClick(Sender: TObject);
     { ButtonSoftware }
     procedure ButtonSoftwareBackClick(Sender: TObject);
     procedure ButtonSoftwareInstallClick(Sender: TObject);
@@ -914,7 +914,7 @@ var
     ConfigState:TStringList;
 begin
     { Load data from server }
-    LogDatei.log('Load data from server.', LLInfo);
+    LogDatei.log('Load data from server.', LLNotice);
     FormProgressWindow.LabelDataLoadDetail.Caption := rsLabelDataLoadLoading;
     FormProgressWindow.ProgressBar1.StepIt;
     FormProgressWindow.ProgressBarDetail.Position := 100;
@@ -942,11 +942,11 @@ begin
     if AdminMode and DSiIsAdmin then
     begin
       Caption := Caption + ' - ' + rsAdminMode;
-      ButtonSaveImagesOnShare.Visible := True;
+      BitBtnSaveImages.Visible := True;
     end
     else
     begin
-      ButtonSaveImagesOnShare.Visible := False;
+      BitBtnSaveImages.Visible := False;
       if AdminMode and not DSiIsAdmin then
       begin
         ShowMessage(Format(rsCurrentUserNoAdmin, [LineEnding]));
@@ -961,12 +961,12 @@ end;
 procedure TFormOpsiClientKiosk.InitDatabase;
 begin
    { Initialize database and tables and copy opsi product data to database }
-    LogDatei.log('Initialize database and tables and copy opsi product data to database.', LLInfo);
+    LogDatei.log('Initialize database and tables and copy opsi product data to database.', LLNotice);
     DataModuleOCK := TDataModuleOCK.Create(nil);
     DataModuleOCK.CreateDatabaseAndTables;
     //if DataModuleOCK.SQLTransaction.Active then ShowMessage('Transaction active after Initdatabse!');
     //LogDatei.log('start OpsiProductsToDataset', LLNotice);
-    DataModuleOCK.OpsiProductsToDataset(DataModuleOCK.SQLQueryProductData);
+    DataModuleOCK.OpsiProductsToDataset;
     DataModuleOCK.LoadTableProductsIntoMemory;
     //if DataModuleOCK.SQLTransaction.Active then ShowMessage('Transaction active after OpsiProducts!');
     //DBGrid1.DataSource := DataSourceProductData;
@@ -999,7 +999,7 @@ end;
 procedure TFormOpsiClientKiosk.InitConnectionToServer;
 begin
    { Init connection to Opsi-Server }
-    LogDatei.log('Create connection to Opsi.', LLInfo);
+    LogDatei.log('Create connection to Opsi.', LLNotice);
     FormProgressWindow.LabelInfo.Caption := rsLabelInfoLoadData;
     FormProgressWindow.LabelDataLoad.Caption := rsLabelDataLoadCommunicating;
     FormProgressWindow.LabelDataLoadDetail.Caption := rsLabelDetailConnecting;
@@ -1009,7 +1009,7 @@ begin
     try
       OCKOpsiConnection := TOpsiConnection.Create(ClientdMode,ClientID);
     except
-      LogDatei.log('Error no connection to Opsi.', LLInfo);
+      LogDatei.log('Error no connection to Opsi.', LLError);
     end;
     FormProgressWindow.LabelDataLoad.Caption := rsConnectedTo + ' ' +
     OCKOpsiConnection.myservice_url + ' ' + rsAS + ' ' + OCKOpsiConnection.myclientid;
@@ -1367,11 +1367,15 @@ procedure TFormOpsiClientKiosk.FormDestroy(Sender: TObject);
 var
   counter, i: integer;
 begin
+  logDatei.log('Closing ' + ProgramInfo.InternalName,LLNotice);
   FilteredProductIDs.Free;
   StringListDefaultIcons.Free;
   { Save Custom changes on client}
+  logDatei.log('Saving ProductIcons and Screenshots' ,LLNotice);
+  logDatei.log('Saving StringListCustomIcons to ' +  PathCustomIcons +'IconsList.txt',LLInfo);
   SaveStringListToFile(StringListCustomIcons, PathCustomIcons +'IconsList.txt');
   StringListCustomIcons.Free;
+  logDatei.log('Saving StringListScreenshots to ' +  PathScreenshots +'ScreenshotsList.txt',LLInfo);
   SaveStringListToFile(StringListScreenshots, PathScreenshots +'ScreenshotsList.txt');
   StringListScreenshots.Free;
   DataModuleOCK.Free;
@@ -1379,12 +1383,11 @@ begin
   try
     counter := length(ArrayProductPanels);
     if counter > 0 then
-      //for i:=0 to counter -1 do ArrayProductPanels[i].Destroy;
       for i := 0 to counter - 1 do
       begin
         ArrayProductPanels[i].Free;
         ArrayProductPanels[i] := nil;
-        logdatei.log('FreeAndNil(ProductTilesArray', LLDebug2);
+        logdatei.log('FreeAndNil(ProductTilesArray)', LLDebug2);
       end;
     SetLength(ArrayProductPanels, 0);
     ArrayProductPanels := nil;
@@ -1397,7 +1400,7 @@ begin
       logdatei.log_exception(E, LLError);
     end;
   end;
-  LogDatei.log('FopsiClientKiosk.FormDestroy: Application terminates', LLEssential);
+  LogDatei.log(ProgramInfo.InternalName + ' terminates', LLEssential);
   LogDatei.Close;
   LogDatei.Free;
 end;
@@ -1715,6 +1718,11 @@ begin
   FormHelpInfo.Show;
 end;
 
+procedure TFormOpsiClientKiosk.BitBtnSaveImagesClick(Sender: TObject);
+begin
+  FormSaveImagesOnShare.ShowModal;
+end;
+
 procedure TFormOpsiClientKiosk.BitBtnInstallNowClick(Sender: TObject);
 begin
   screen.Cursor := crHourGlass;
@@ -1880,12 +1888,6 @@ begin
   if not StartupDone then
   begin
     //ShowMessage('Width of SpeedButtonUpdates:'+ IntToStr(SpeedButtonUpdates.Width));
-    MinWidthStandardMode := SpeedButtonAll.Width + SpeedButtonUpdates.Width +
-      SpeedButtonNotInstalled.Width + SpeedButtonActions.Width +
-      SpeedButtonSearch.Width + BitBtnHelp.Width + 50;
-    Constraints.MinWidth := MinWidthStandardMode;
-    if Width < MinWidthStandardMode then Width := MinWidthStandardMode;
-    SetPositionButtonsOnPanelToolbar;
     try
       FormProgressWindow.ProgressBar1.Position := 0;
       FormProgressWindow.ProgressBarDetail.Position := 0;
@@ -1894,11 +1896,20 @@ begin
         InitConnectionToServer;
         { Load data from server }
         LoadDataFromServer;
+        { Set MinWidth and Width of Form}
+        MinWidthStandardMode := SpeedButtonAll.Width + SpeedButtonUpdates.Width +
+          SpeedButtonNotInstalled.Width + SpeedButtonActions.Width +
+          SpeedButtonSearch.Width + BitBtnHelp.Width + 30;
+        if AdminMode then MinWidthStandardMode := MinWidthStandardMode + BitBtnSaveImages.Width;
+        Constraints.MinWidth := MinWidthStandardMode;
+        if Width < MinWidthStandardMode then Width := MinWidthStandardMode;
+        SetPositionButtonsOnPanelToolbar;
+        { InitDatabase }
         InitDatabase;
         { Initialize GUI }
         BuildProductTiles(ArrayProductPanels, 'FlowPanelAllTiles');
       except
-        LogDatei.log('Error during startup.',LLInfo);
+        LogDatei.log('Error during startup.',LLError);
       end;
     finally
       FormProgressWindow.Close;
@@ -1909,7 +1920,7 @@ begin
   begin
     { Expert mode }
     PanelExpertMode.Visible := True;
-    MinWidthExpertMode := RadioGroupView.Width + ButtonSaveImagesOnShare.Width +
+    MinWidthExpertMode := RadioGroupView.Width +
       BitBtnInstallNow.Width + SpeedButtonReload.Width + 50;
     //ShowMessage('Width of ButtonSaveImagesOnShare:'+ IntToStr(ButtonSaveImagesOnShare.Width));
     if MinWidthExpertMode > MinWidthStandardMode then
@@ -1943,7 +1954,7 @@ procedure TFormOpsiClientKiosk.ReloadDataFromServer;
 var
   i, counter: integer;
 begin
-  LogDatei.log('Starting ReloadDataFromServer ...', LLInfo);
+  LogDatei.log('Starting ReloadDataFromServer ...', LLNotice);
   DataModuleOCK.RemoveTableProductsFromMemory;
   FilteredProductIDs.Clear;
   DataModuleOCK.Free;
@@ -1988,7 +1999,7 @@ begin
   finally
     FormProgressWindow.Close;
   end;
-  LogDatei.log('Finished ReloadDataFromServer', LLInfo);
+  LogDatei.log('Finished ReloadDataFromServer', LLNotice);
 end;
 
 procedure TFormOpsiClientKiosk.EditSearchChange(Sender: TObject);
@@ -2030,7 +2041,7 @@ var
 begin
   if FileExists(SkinPath) then
   begin
-    LogDatei.Log('loading skin for title from: ' + SkinPath, LLEssential);
+    LogDatei.Log('loading skin for title from: ' + SkinPath, LLInfo);
     myini := TIniFile.Create(SkinPath);
     //title
     LabelTitle.Caption := myini.ReadString('TitleLabel', 'Text', 'Opsi Client Kiosk');
@@ -2289,11 +2300,6 @@ begin
   halt;
 end;
 
-procedure TFormOpsiClientKiosk.ButtonSaveImagesOnShareClick(Sender: TObject);
-begin
-  FormSaveImagesOnShare.ShowModal;
-end;
-
 {:Returns user name of the current thread.
   @author  Miha-R, Lee_Nover
   @since   2002-11-25
@@ -2318,7 +2324,12 @@ var
   testWidth :integer;
 begin
   //testWidth := SpeedButtonUpdates.Width;
-  SpeedButtonAll.BorderSpacing.Left := round((SpeedButtonSearch.Left -
+  if AdminMode then
+    SpeedButtonAll.BorderSpacing.Left := round((BitBtnSaveImages.Left -
+    (SpeedButtonAll.Width + SpeedButtonUpdates.Width +
+     SpeedButtonNotInstalled.Width + SpeedButtonActions.Width))/2)
+  else
+    SpeedButtonAll.BorderSpacing.Left := round((SpeedButtonSearch.Left -
     (SpeedButtonAll.Width + SpeedButtonUpdates.Width +
      SpeedButtonNotInstalled.Width + SpeedButtonActions.Width))/2);
 end;
@@ -2335,13 +2346,13 @@ begin
     LogDatei.WriteHistFile:= False;
     LogDatei.CreateTheLogfile(LogFileName, False);
     LogDatei.LogLevel := MylogLevel;
-    LogDatei.log(Application.Name + ' starting at ' + DateTimeToStr(now), LLEssential);
-    LogDatei.log('opsi-client-kiosk: version: ' + ProgramInfo.Version, LLEssential);
-    LogDatei.log('Initialize Logging,  calling method='+ CallingMethod, LLNotice);
+    LogDatei.log(ProgramInfo.InternalName+ ' ' + 'Version('+ProgramInfo.Version+')'
+      + ' starting at ' + DateTimeToStr(now), LLEssential);
+    LogDatei.log('Initialize Logging', LLNotice);
     InitLogging := True;
   except
     InitLogging := False;
-    ShowMessage('Error while initialising Logging');
+    LogDatei.log('Error while initialising logging. Calling Method: TFormOpsiClientKiosk.InitLogging',LLDebug);
   end;
 end;
 

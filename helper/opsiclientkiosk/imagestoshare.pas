@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, EditBtn,
-  Process, oslog, FileUtil;
+  Process, oslog, FileUtil, LazFileUtils;
 
 type
 
@@ -28,11 +28,12 @@ type
     procedure ButtonCancelClick(Sender: TObject);
     procedure ButtonCopyClick(Sender: TObject);
     procedure CheckBoxMountShareChange(Sender: TObject);
+    procedure DirectoryEditPathToShareEnter(Sender: TObject);
     procedure EditPathToShareChange(Sender: TObject);
   private
     procedure MountShareNT(const User: String; Password: String;
       PathToShare: String);
-    procedure SaveImagesOnShare(const PathToShare: String);
+    function SaveImagesOnShare(const PathToShare: String):boolean;
     procedure UnmountShareNT(const PathToShare: String);
     procedure MountShareUnix(const User: String; Password: String;
       PathToShare: String);
@@ -49,6 +50,11 @@ resourcestring
   rsCouldNotSaveIcons = 'Could not save icons on share.';
   rsCouldNotSaveScreenshots = 'Could not save screenshots on share.';
   rsCouldNotUnmount = 'Could not unmount share.';
+  rsIsAnInvalidDir = '"%s" is an invalid directory.%sPlease set "%s" to a '
+    +'valid directory.';
+  rsImagesNotSaved = 'Images could not be saved on opsi depot (share).%sPlease'
+    +' check if share is mounted with write privileges.';
+  rsImagesSaved = 'Images saved on';
 
 
 implementation
@@ -62,8 +68,10 @@ var
   PathToShare : String;
   User: String;
   AlreadyMounted :boolean;
+  CopySuccess: boolean;
 begin
-  PathToShare :=  DirectoryEditPathToShare.Text;
+  CopySuccess := False;
+  PathToShare :=  TrimFilename(DirectoryEditPathToShare.Text);
   {Mount opsi depot}
   if CheckBoxMountShare.Checked then
   begin
@@ -81,12 +89,16 @@ begin
      {$ENDIF Unix}
     end;
   end;
-  if DirectoryExists(PathToShare) then SaveImagesOnShare(PathToShare)
+  if DirectoryExists(PathToShare) then
+  begin
+    CopySuccess := SaveImagesOnShare(PathToShare);
+  end
   else
   begin
-    ShowMessage('"' + DirectoryEditPathToShare.Text + '" ' +  'is an invalid directory.' + LineEnding
-      + 'Please set "' + LabelPathToShare.Caption + '" to a valid directory.');
-    //DirectoryEditPathToShare.Font.Color:= clRed;
+    ShowMessage(Format(rsIsAnInvalidDir, [DirectoryEditPathToShare.Text,
+      LineEnding, LabelPathToShare.Caption]));
+    CopySuccess := False;
+    DirectoryEditPathToShare.Font.Color:= clRed;
   end;
  {$IFDEF Windows}
   if CheckBoxMountShare.Checked then
@@ -100,13 +112,18 @@ begin
    if not AlreadyMounted then UnmountShareUnix(PathToShare);
   end;
  {$ENDIF Unix}
-  Close;
+  if CopySuccess then Close;
 end;
 
 procedure TFormSaveImagesOnShare.CheckBoxMountShareChange(Sender: TObject);
 begin
   if CheckBoxMountShare.Checked then GroupBoxMountShare.Enabled := True
     else GroupBoxMountShare.Enabled := False;
+end;
+
+procedure TFormSaveImagesOnShare.DirectoryEditPathToShareEnter(Sender: TObject);
+begin
+  DirectoryEditPathToShare.Font.Color:= clDefault;
 end;
 
 procedure TFormSaveImagesOnShare.EditPathToShareChange(Sender: TObject);
@@ -122,8 +139,8 @@ var
   ShellCommand,
   ShellOutput: String;
 begin
-  {check if share is already mounted}
   try
+    LogDatei.log('Mounting ' + PathToShare ,LLInfo);
     {set shell and options}
     Shell := 'cmd.exe';
     ShellOptions := '/c';
@@ -131,6 +148,7 @@ begin
     if RunCommand(Shell, [ShellOptions , ShellCommand], ShellOutput) then
     begin
       ShellCommand := '';
+      LogDatei.log('Mounting done', LLInfo);
       //ShowMessage(ShellOutput);
     end
     else LogDatei.log('Error while trying to run command net use ' +
@@ -148,6 +166,7 @@ var
   ShellOutput: String;
 begin
   try
+    LogDatei.log('Unmounting ' + PathToShare, LLInfo);
     {set shell and options}
     Shell := 'cmd.exe';
     ShellOptions := '/c';
@@ -155,7 +174,8 @@ begin
     {Run Command}
     if RunCommand(Shell, [ShellOptions, ShellCommand], ShellOutput) then
     begin
-      //ShowMessage(ShellOutput);
+      LogDatei.log('Unmounting done', LLInfo);
+     //ShowMessage(ShellOutput);
     end
     else
     begin
@@ -180,18 +200,30 @@ begin
 
 end;
 
-procedure TFormSaveImagesOnShare.SaveImagesOnShare(const PathToShare: String);
+function TFormSaveImagesOnShare.SaveImagesOnShare(const PathToShare: String):boolean;
 var
   PathToKioskOnDepot: String;
   Target: String;
   Source: String;
 begin
+  Result := False;
   PathToKioskOnDepot:= '\opsi-client-agent\files\opsi\opsiclientkiosk\';
-  Source := Application.Location + 'ock_custom\';
-  Target := PathToShare + PathToKioskOnDepot + 'ock_custom\';
-  if CopyDirTree(Source, Target,[cffOverwriteFile, cffCreateDestDirectory])
-    then ShowMessage('Images saved on ' + Target);
-
+  Source := TrimFilename(Application.Location + 'ock_custom\');
+  Target := TrimFilename(PathToShare + PathToKioskOnDepot + 'ock_custom\');
+  LogDatei.log('Copy ' + Source + ' to ' + Target, LLInfo);
+  if CopyDirTree(Source, Target,[cffOverwriteFile, cffCreateDestDirectory]) then
+  begin
+    LogDatei.log('Copy done', LLInfo);
+    ShowMessage(rsImagesSaved +' '+ Target);
+    Result := TRue;
+  end
+  else
+  begin
+    LogDatei.log('Images could not be saved on opsi depot (share).' +
+      ' Possible solution: mount share with write privileges.' ,LLDebug);
+    ShowMessage(Format(rsImagesNotSaved, [LineEnding]));
+    Result := False;
+  end;
 end;
 
 procedure TFormSaveImagesOnShare.ButtonCancelClick(Sender: TObject);
