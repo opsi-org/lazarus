@@ -14,27 +14,39 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: imagestoshare.rscouldnotsaveicons
-msgid "Could not save icons on share."
+#: imagestodepot.rscouldnotsaveicons
+#, fuzzy
+#| msgid "Could not save icons on share."
+msgctxt "imagestodepot.rscouldnotsaveicons"
+msgid "Could not save icons on depot."
 msgstr "Could not save icons on share."
 
-#: imagestoshare.rscouldnotsavescreenshots
-msgid "Could not save screenshots on share."
+#: imagestodepot.rscouldnotsavescreenshots
+#, fuzzy
+#| msgid "Could not save screenshots on share."
+msgctxt "imagestodepot.rscouldnotsavescreenshots"
+msgid "Could not save screenshots on depot."
 msgstr "Could not save screenshots on share."
 
-#: imagestoshare.rscouldnotunmount
-msgid "Could not unmount share."
+#: imagestodepot.rscouldnotunmount
+#, fuzzy
+#| msgid "Could not unmount share."
+msgctxt "imagestodepot.rscouldnotunmount"
+msgid "Could not unmount depot."
 msgstr "Could not unmount share."
 
-#: imagestoshare.rsimagesnotsaved
-msgid "Images could not be saved on opsi depot (share).%sPlease check if share is mounted with write privileges."
+#: imagestodepot.rsimagesnotsaved
+msgctxt "imagestodepot.rsimagesnotsaved"
+msgid "Images could not be saved on opsi depot. %sPlease check if depot is mounted with write privileges."
 msgstr ""
 
-#: imagestoshare.rsimagessaved
+#: imagestodepot.rsimagessaved
+msgctxt "imagestodepot.rsimagessaved"
 msgid "Images saved on"
 msgstr ""
 
-#: imagestoshare.rsisaninvaliddir
+#: imagestodepot.rsisaninvaliddir
+msgctxt "imagestodepot.rsisaninvaliddir"
 msgid "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
 msgstr ""
 
@@ -401,8 +413,9 @@ msgstr "Start the installation/update (uninstallation) of the selected products"
 
 #: tformopsiclientkiosk.bitbtnsaveimages.hint
 #, fuzzy
+#| msgid "Save images on share"
 msgctxt "tformopsiclientkiosk.bitbtnsaveimages.hint"
-msgid "Save images on share"
+msgid "Save images on depot"
 msgstr "Save images on share"
 
 #: tformopsiclientkiosk.buttonsoftwareback.caption
@@ -613,55 +626,56 @@ msgctxt "tformprogresswindow.labelinfo.caption"
 msgid "Please wait while "
 msgstr "Please wait while "
 
-#: tformsaveimagesonshare.buttoncancel.caption
-msgctxt "tformsaveimagesonshare.buttoncancel.caption"
+#: tformsaveimagesondepot.buttoncancel.caption
+#, fuzzy
+msgctxt "tformsaveimagesondepot.buttoncancel.caption"
 msgid "Cancel"
 msgstr "Cancel"
 
-#: tformsaveimagesonshare.buttoncopy.caption
-msgctxt "tformsaveimagesonshare.buttoncopy.caption"
-msgid "Save images on share"
-msgstr "Save images on share"
-
-#: tformsaveimagesonshare.caption
-msgctxt "tformsaveimagesonshare.caption"
-msgid "Save images on share"
-msgstr "Save images on share"
-
-#: tformsaveimagesonshare.checkboxmountshare.caption
-msgctxt "tformsaveimagesonshare.checkboxmountshare.caption"
-msgid "Mount opsi depot (share)"
+#: tformsaveimagesondepot.buttoncopy.caption
+msgctxt "tformsaveimagesondepot.buttoncopy.caption"
+msgid "Save images on depot"
 msgstr ""
 
-#: tformsaveimagesonshare.editpathtoshare.texthint
-msgctxt "tformsaveimagesonshare.editpathtoshare.texthint"
+#: tformsaveimagesondepot.caption
+msgctxt "tformsaveimagesondepot.caption"
+msgid "Save images on depot"
+msgstr ""
+
+#: tformsaveimagesondepot.checkboxmountdepot.caption
+msgctxt "tformsaveimagesondepot.checkboxmountdepot.caption"
+msgid "Mount depot"
+msgstr ""
+
+#: tformsaveimagesondepot.editpathtodepot.texthint
+msgctxt "tformsaveimagesondepot.editpathtodepot.texthint"
 msgid "\\\\servername\\opsi_depot_rw"
-msgstr "\\\\servername\\opsi_depot_rw"
-
-#: tformsaveimagesonshare.groupboxmountshare.caption
-msgctxt "tformsaveimagesonshare.groupboxmountshare.caption"
-msgid "Mount opsi depot (share)"
 msgstr ""
 
-#: tformsaveimagesonshare.labelpassword.caption
-msgctxt "tformsaveimagesonshare.labelpassword.caption"
+#: tformsaveimagesondepot.groupboxmountdepot.caption
+msgctxt "tformsaveimagesondepot.groupboxmountdepot.caption"
+msgid "Mount depot"
+msgstr ""
+
+#: tformsaveimagesondepot.labelpassword.caption
+#, fuzzy
+msgctxt "tformsaveimagesondepot.labelpassword.caption"
 msgid "Password"
 msgstr "Password"
 
-#: tformsaveimagesonshare.labelpathmountshare.caption
-msgctxt "tformsaveimagesonshare.labelpathmountshare.caption"
-msgid "Path to opsi depot (share)"
+#: tformsaveimagesondepot.labelpathmountdepot.caption
+msgctxt "tformsaveimagesondepot.labelpathmountdepot.caption"
+msgid "Path to depot"
 msgstr ""
 
-#: tformsaveimagesonshare.labelpathtoshare.caption
-#, fuzzy
-#| msgid "Path to share"
-msgctxt "tformsaveimagesonshare.labelpathtoshare.caption"
-msgid "Path to opsi depot (share)"
-msgstr "Path to share"
+#: tformsaveimagesondepot.labelpathtodepot.caption
+msgctxt "tformsaveimagesondepot.labelpathtodepot.caption"
+msgid "Path to depot"
+msgstr ""
 
-#: tformsaveimagesonshare.labeluser.caption
-msgctxt "tformsaveimagesonshare.labeluser.caption"
+#: tformsaveimagesondepot.labeluser.caption
+#, fuzzy
+msgctxt "tformsaveimagesondepot.labeluser.caption"
 msgid "User"
 msgstr "User"
 

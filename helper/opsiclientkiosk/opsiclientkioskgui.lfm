@@ -179,7 +179,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
     object BitBtnSaveImages: TBitBtn
       Left = 459
       Height = 33
-      Hint = 'Save images on share'
+      Hint = 'Save images on depot'
       Top = 6
       Width = 35
       Align = alRight

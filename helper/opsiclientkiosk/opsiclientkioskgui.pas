@@ -31,7 +31,7 @@ uses
   ExtDlgs,
   proginfo,
   helpinfo,
-  imagestoshare;
+  imagestodepot;
 
 type
 
@@ -1720,7 +1720,7 @@ end;
 
 procedure TFormOpsiClientKiosk.BitBtnSaveImagesClick(Sender: TObject);
 begin
-  FormSaveImagesOnShare.ShowModal;
+  FormSaveImagesOnDepot.ShowModal;
 end;
 
 procedure TFormOpsiClientKiosk.BitBtnInstallNowClick(Sender: TObject);
@@ -1922,7 +1922,7 @@ begin
     PanelExpertMode.Visible := True;
     MinWidthExpertMode := RadioGroupView.Width +
       BitBtnInstallNow.Width + SpeedButtonReload.Width + 50;
-    //ShowMessage('Width of ButtonSaveImagesOnShare:'+ IntToStr(ButtonSaveImagesOnShare.Width));
+    //ShowMessage('Width of ButtonSaveImagesOnDepot:'+ IntToStr(ButtonSaveImagesOnDepot.Width));
     if MinWidthExpertMode > MinWidthStandardMode then
     begin
       Constraints.MinWidth := MinWidthExpertMode;
