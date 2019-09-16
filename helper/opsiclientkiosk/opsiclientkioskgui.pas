@@ -53,7 +53,7 @@ type
     procedure ProductPanelMouseLeave(Sender :TObject);
   private
     { private declarations }
-    ShortName:string;
+    //ShortName:string;
     procedure LoadSkinPanel(SkinPath:string);
     procedure LoadSkinLabelAction(SkinPath:string);
     procedure SetIcon(ProductPanel: TProductPanel);
@@ -247,6 +247,8 @@ type
     LastFilter : String;
     MinWidthStandardMode : Integer;
     MinWidthExpertMode   : Integer;
+    procedure DeleteFormerImage(ImagePath:String);
+    procedure SaveIconsAndScreenshotsLists;
     procedure SetPositionButtonsOnPanelToolbar;
     function GetUserName_:string;
      { Inits at Start }
@@ -283,6 +285,7 @@ type
     procedure ReloadDataFromServer;
     procedure Terminate;
     { Icons }
+    //procedure DeleteNotUsedImage(ImagePath:String; ImageList:TStrings);
     //procedure IconToProductID()
    public
     { public declarations }
@@ -730,25 +733,28 @@ begin
   gefunden := False;
   if FormOpsiClientKiosk.OpenPictureDialogSetIcon.Execute then
   begin
-    FilePath := FormOpsiClientKiosk.OpenPictureDialogSetIcon.FileName;
-    ProductPanel.ImageIcon.Picture.LoadFromFile(FilePath);
-    ProductPanel.ImageIcon.Picture.SaveToFile(PathCustomIcons+ExtractFileName(FilePath));
-    if FormOpsiClientKiosk.StringListCustomIcons.Values[ProductPanel.ProductID] = '' then
-      FormOpsiClientKiosk.StringListCustomIcons.Add(ProductPanel.ProductID + '=' + ExtractFileName(FilePath))
-    else FormOpsiClientKiosk.StringListCustomIcons.Values[ProductPanel.ProductID] := ExtractFileName(FilePath);
+    with FormOpsiClientKiosk do
+    begin
+      { delete former image }
+      DeleteFormerImage(PathCustomIcons+StringListCustomIcons.Values[ProductPanel.ProductID]);
+      { load and save current image }
+      FilePath := OpenPictureDialogSetIcon.FileName;
+      ProductPanel.ImageIcon.Picture.LoadFromFile(FilePath);
+      ProductPanel.ImageIcon.Picture.SaveToFile(PathCustomIcons+ExtractFileName(FilePath));
+      StringListCustomIcons.Values[ProductPanel.ProductID] := ExtractFileName(FilePath);
+    end;
   end;
 end;
 
 procedure TProductPanel.TrimLabelCaption(fLabel:TLabel);
 var
-  s,sText: String;
-  MaxLength :Integer;
+  sText: String;
 begin
   sText := fLabel.Caption;
   if fLabel.Canvas.TextWidth(sText) >= fLabel.ClientWidth-6 then
   begin
     { Get maximal length of string which fits in Sender}
-    s := '';
+    //s := '';
     while ((fLabel.Canvas.TextWidth(sText) +
       fLabel.Canvas.TextWidth('...')) > (fLabel.ClientWidth-6)) do
         Delete(sText, Length(sText), 1);
@@ -1334,6 +1340,12 @@ begin
   Application.Terminate;
 end;
 
+{procedure TFormOpsiClientKiosk.DeleteNotUsedImage(ImagePath: String;
+  ImageList: TStrings);
+begin
+  if ImageList.Values[ExtractFileName(ImagePath)] = '' then DeleteFileUTF8(ImagePath);
+end;}
+
 procedure TFormOpsiClientKiosk.DBGrid1TitleClick(Column: TColumn);
 var
   direction: string;
@@ -1370,13 +1382,8 @@ begin
   logDatei.log('Closing ' + ProgramInfo.InternalName,LLNotice);
   FilteredProductIDs.Free;
   StringListDefaultIcons.Free;
-  { Save Custom changes on client}
-  logDatei.log('Saving ProductIcons and Screenshots' ,LLNotice);
-  logDatei.log('Saving StringListCustomIcons to ' +  PathCustomIcons +'IconsList.txt',LLInfo);
-  SaveStringListToFile(StringListCustomIcons, PathCustomIcons +'IconsList.txt');
+  SaveIconsAndScreenshotsLists;
   StringListCustomIcons.Free;
-  logDatei.log('Saving StringListScreenshots to ' +  PathScreenshots +'ScreenshotsList.txt',LLInfo);
-  SaveStringListToFile(StringListScreenshots, PathScreenshots +'ScreenshotsList.txt');
   StringListScreenshots.Free;
   DataModuleOCK.Free;
   OCKOpsiConnection.Free;
@@ -1416,18 +1423,19 @@ var
   FilePath:String;
 begin
   if (AdminMode and (Button = mbRight)) then
+  begin
     if OpenPictureDialogSetIcon.Execute then
     begin
+      {delete former image}
+      DeleteFormerImage(PathCustomIcons+StringListCustomIcons.Values[SelectedProduct]);
+      {load and save current image}
       FilePath := OpenPictureDialogSetIcon.FileName;
+      LogDatei.log('Save image ' + PathCustomIcons + ExtractFileName(FilePath), LLDebug);
       ImageIconSoftware.Picture.LoadFromFile(FilePath);
       ImageIconSoftware.Picture.SaveToFile(PathCustomIcons+ExtractFileName(FilePath));
-      if FormOpsiClientKiosk.StringListCustomIcons.Values
-          [SelectedProduct] = '' then
-        FormOpsiClientKiosk.StringListCustomIcons.Add
-          (SelectedProduct + '=' + ExtractFileName(FilePath))
-      else FormOpsiClientKiosk.StringListCustomIcons.Values
-             [SelectedProduct] := ExtractFileName(FilePath);
+      StringListCustomIcons.Values[SelectedProduct] := ExtractFileName(FilePath);
     end;
+  end;
 end;
 
 
@@ -1439,16 +1447,13 @@ begin
   if (AdminMode and (Button = mbRight)) then
     if OpenPictureDialogSetIcon.Execute then
     begin
+      {delete former image}
+      DeleteFormerImage(PathScreenShots + StringListScreenShots.Values[SelectedProduct]);
+      {load and save image}
       FilePath := OpenPictureDialogSetIcon.FileName;
       ImageScreenShot.Picture.LoadFromFile(FilePath);
       ImageScreenShot.Picture.SaveToFile(PathScreenShots+ExtractFileName(FilePath));
-      if FormOpsiClientKiosk.StringListScreenShots.Values
-           [SelectedProduct] = '' then
-        FormOpsiClientKiosk.StringListScreenShots.Add
-          (SelectedProduct + '=' + ExtractFileName(FilePath))
-      else FormOpsiClientKiosk.StringListScreenShots.Values
-             [SelectedProduct] := ExtractFileName(FilePath);
-
+      StringListScreenShots.Values[SelectedProduct] := ExtractFileName(FilePath);
     end;
 end;
 
@@ -1720,6 +1725,7 @@ end;
 
 procedure TFormOpsiClientKiosk.BitBtnSaveImagesClick(Sender: TObject);
 begin
+  SaveIconsAndScreenshotsLists;
   FormSaveImagesOnDepot.ShowModal;
 end;
 
@@ -1955,6 +1961,7 @@ var
   i, counter: integer;
 begin
   LogDatei.log('Starting ReloadDataFromServer ...', LLNotice);
+  //SaveImagesAndScreenshotsLists;
   DataModuleOCK.RemoveTableProductsFromMemory;
   FilteredProductIDs.Clear;
   DataModuleOCK.Free;
@@ -2332,6 +2339,28 @@ begin
     SpeedButtonAll.BorderSpacing.Left := round((SpeedButtonSearch.Left -
     (SpeedButtonAll.Width + SpeedButtonUpdates.Width +
      SpeedButtonNotInstalled.Width + SpeedButtonActions.Width))/2);
+end;
+
+procedure TFormOpsiClientKiosk.SaveIconsAndScreenshotsLists;
+begin
+  { Save Custom changes on client }
+  logDatei.log('Saving IconsList and ScreenshotsList' , LLNotice);
+  logDatei.log('Saving StringListCustomIcons to ' +  PathCustomIcons +'IconsLis'
+    +'t.txt', LLInfo);
+  SaveStringListToFile(StringListCustomIcons, PathCustomIcons +'IconsList.txt');
+  logDatei.log('Saving StringListScreenshots to ' +  PathScreenshots +'Screensh'
+    +'otsList.txt', LLInfo);
+  SaveStringListToFile(StringListScreenshots, PathScreenshots +'ScreenshotsList'
+    +'.txt');
+end;
+
+procedure TFormOpsiClientKiosk.DeleteFormerImage(ImagePath:String);
+begin
+  if FileExistsUTF8(ImagePath) then
+  begin
+    LogDatei.log('Delete image ' + ImagePath, LLDebug);
+    DeleteFileUTF8(ImagePath);
+  end;
 end;
 
 

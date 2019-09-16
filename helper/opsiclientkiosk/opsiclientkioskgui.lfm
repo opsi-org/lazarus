@@ -1,7 +1,7 @@
 object FormOpsiClientKiosk: TFormOpsiClientKiosk
-  Left = 2497
+  Left = 2770
   Height = 640
-  Top = 226
+  Top = 151
   Width = 620
   Caption = 'opsi-client-kiosk'
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
@@ -1584,7 +1584,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Height = 262
       Top = 0
       Width = 620
-      PageIndex = 0
+      PageIndex = 2
       Align = alClient
       TabOrder = 0
       TabStop = True
@@ -1666,12 +1666,12 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           Left = 0
           Height = 37
           Top = 0
-          Width = 640
+          Width = 620
           Align = alTop
           BevelOuter = bvNone
           BorderStyle = bsSingle
-          ClientHeight = 37
-          ClientWidth = 640
+          ClientHeight = 33
+          ClientWidth = 616
           ParentColor = False
           TabOrder = 0
           object ButtonSoftwareBack: TButton
@@ -1698,13 +1698,13 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           Left = 0
           Height = 225
           Top = 37
-          Width = 640
+          Width = 620
           HorzScrollBar.Page = 579
           VertScrollBar.Page = 225
           Align = alClient
           BorderStyle = bsNone
           ClientHeight = 225
-          ClientWidth = 623
+          ClientWidth = 603
           TabOrder = 1
           object ImageIconSoftware: TImage
             Left = 15
@@ -1898,7 +1898,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Left = 15
             Height = 17
             Top = 356
-            Width = 612
+            Width = 592
             Anchors = [akTop, akLeft, akRight]
             BorderSpacing.Left = 5
             BorderSpacing.Right = 5
@@ -1915,7 +1915,7 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
             Left = 15
             Height = 17
             Top = 414
-            Width = 612
+            Width = 592
             Anchors = [akTop, akLeft, akRight]
             BorderSpacing.Left = 5
             BorderSpacing.Top = 5
