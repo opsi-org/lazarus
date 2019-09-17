@@ -64,6 +64,7 @@ type
     ClientdMode : boolean;
     OpsiData: TOpsi4Data;
     procedure SetActionRequest(pid: string; request: string);
+    procedure SetRights(Path:String);
     function GetActionRequests: TStringList;
     procedure DoActionsOnDemand;
     procedure DoSingleActionOnDemand(ProductID:String);
@@ -84,12 +85,22 @@ type
  resourcestring
    rsErrorIntConnection = 'Error while initializing opsiconnection';
    rsNoValueFound = 'No value found! Set%sto';
+   rsKioskModeOld = 'Kiosk mode: old. Update to newer opsi version to get full'
+     +' functionality (e.g. disable software on demand) of Opsi Kiosk.';
+   rsNoDataFromServer = 'Could not get data from server.';
 
 implementation
 
 const
+  {$IFDEF Windows}
   opsiclientdconf =
     'C:\Program Files (x86)\opsi.org\opsi-client-agent\opsiclientd\opsiclientd.conf';
+  {$ENDIF Windows}
+  {$IFDEF Unix}
+  opsiclientdconf =
+    'C:\Program Files (x86)\opsi.org\opsi-client-agent\opsiclientd\opsiclientd.conf';
+  {$ENDIF Unix}
+
 
 
 procedure TOpsiConnection.ReadConfigdConf;
@@ -244,7 +255,7 @@ begin
     if (JSONObjectProducts) <> nil then
     begin
       Result := True;
-      ShowMessage('Kiosk mode: old. Update to newer opsi version to get full functionality (e.g. disable software on demand) of Opsi Kiosk.');
+      ShowMessage(rsKioskModeOld);
       LogDatei.log('Old kiosk mode', LLInfo);
     end
     else
@@ -254,7 +265,7 @@ begin
     end;
   except
     LogDatei.log('Error using Kiosk mode: old', LLError);
-    ShowMessage('Could not get data from server.')
+    ShowMessage(rsNoDataFromServer)
   end;
 end;
 
@@ -357,6 +368,13 @@ var
 begin
   resultstring := MyOpsiMethodCall('setProductActionRequestWithDependencies',
     [pid, MyClientID, request]);
+end;
+
+procedure TOpsiConnection.SetRights(Path: String);
+var
+  resultstring: String;
+begin
+  resultstring := MyOpsiMethodCall('setRights', [Path]);
 end;
 
 function TOpsiConnection.GetActionRequests: TStringList;

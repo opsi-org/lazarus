@@ -288,6 +288,14 @@ msgctxt "opsiconnection.rserrorintconnection"
 msgid "Error while initializing opsiconnection"
 msgstr ""
 
+#: opsiconnection.rskioskmodeold
+msgid "Kiosk mode: old. Update to newer opsi version to get full functionality (e.g. disable software on demand) of Opsi Kiosk."
+msgstr ""
+
+#: opsiconnection.rsnodatafromserver
+msgid "Could not get data from server."
+msgstr ""
+
 #: opsiconnection.rsnovaluefound
 msgctxt "opsiconnection.rsnovaluefound"
 msgid "No value found! Set%sto"
