@@ -9,31 +9,16 @@ uses
   SysUtils,
   oslog,
   oswebservice,
-  //superobject,
-
-  //oscrypt,
+  Process,
   lazfileutils,
-  //sqlite3conn, sqldb,
-  //db,
   inifiles,
   Variants,
- // fileinfo,
   proginfo,
   fpjson,
   jsonParser,
-  //winpeimagereader,
-  //lcltranslator,
-  //datadb,
-  //osprocesses,
-  //jwawinbase,
   dialogs;
-  //progresswindow;
 
 type
-  //TMyOpsiConf = record
-   // myclientid, myhostkey, myerror, myservice_url: string;
-  //end;
-
 
   { TOpsiConnection }
 
@@ -49,9 +34,9 @@ type
     //opsiProduct:ISuperObject;
     function GetDataFromNewDataStructure:boolean;
     function GetDataFromOldDataStructure:boolean;
-    procedure ReadConfigdConf; //configd mode
-    procedure ReadClientdConf(ClientID:string); //clientd mode
-
+    procedure SetConfigdMode; //configd mode
+    procedure SetClientdMode(ClientID:string); //clientd mode
+    function GetOpsiClientdConfNT:String;
     //function initConnection(const seconds: integer; var ConnectionInfo:string): boolean;
     procedure closeConnection;
   public
@@ -103,12 +88,14 @@ const
 
 
 
-procedure TOpsiConnection.ReadConfigdConf;
+procedure TOpsiConnection.SetConfigdMode;
 var
   MyInifile: TInifile;
+
 begin
   //opsiconfd mode
   try
+    GetOpsiClientdConfNT;
     MyInifile := TIniFile.Create(opsiclientdconf);
     MyService_URL := MyIniFile.ReadString('config_service', 'url', '');
     MyClientID := MyIniFile.ReadString('global', 'host_id', '');
@@ -121,7 +108,7 @@ begin
   end;
 end;
 
-procedure TOpsiConnection.ReadClientdConf(ClientID: string);
+procedure TOpsiConnection.SetClientdMode(ClientID: string);
 begin
   // opsiclientd mode
   MyClientID := ClientID;//'pcjan.uib.local';//'jan-client01.uib.local';
@@ -335,8 +322,8 @@ begin
   MyExitcode := 0;
   MyError := '';
   try
-    if ClientdMode then ReadClientdConf(ClientID)
-      else ReadConfigdConf;
+    if ClientdMode then SetClientdMode(ClientID)
+      else SetConfigdMode;
     LogDatei.log('service_url=' + myservice_url, LLDebug2);
     //LogDatei.log('service_pass=' + myhostkey, LLDebug2);
     LogDatei.log('clientid=' + myclientid, LLDebug2);
@@ -427,6 +414,41 @@ begin
   begin
     Result.Add('False');
     LogDatei.log('No ConfigState set for installation-now-button and/or admin-mode)!',LLInfo);
+  end;
+end;
+
+function TOpsiConnection.GetOpsiClientdConfNT: String;
+var
+  Shell,
+  ShellOptions,
+  ShellCommand,
+  ShellOutput: String;
+  PathToClientdConf: String;
+begin
+  try
+    Result := '';
+    PathToClientdConf := 'C:\Program Files (x86)\opsi.org\opsi-client-agent\opsiclientd\opsiclientd.conf';
+    LogDatei.log('Get opsicleintd.conf ' + PathToClientdConf ,LLInfo);
+    {set shell and options}
+    Shell := 'powershell.exe';
+    ShellOptions := '/c'; //-Verb runAs  'Start-Process PowerShell -Verb RunAs | '
+    ShellCommand := 'Start-Process PowerShell -Verb RunAs -ArgumentList ' + '"Get-Content ' + pathToClientdConf+'"';//'Get-Content ' + PathToClientdConf; 'Start-Process PowerShell -Verb RunAs'
+    if RunCommand(Shell, [ShellCommand], ShellOutput) then
+    begin
+      //ShellCommand := '';
+      Result := ShellOutput;
+      LogDatei.log('Getting opsiclientd.conf', LLInfo);
+      //ShowMessage(ShellOutput);
+    end
+    else
+    begin
+      Result := '';
+      LogDatei.log('Error while trying to run command ' +Shellcommand
+        + ' on ' + Shell + 'with options ' + ShellOptions, LLError);
+    end;
+  except
+    Result := '';
+    LogDatei.log('Exception during GetOpsiClientdConfNT ' + PathToClientdConf, LLDebug);
   end;
 end;
 

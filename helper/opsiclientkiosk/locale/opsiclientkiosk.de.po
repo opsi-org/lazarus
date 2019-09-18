@@ -609,6 +609,10 @@ msgctxt "tformsaveimagesondepot.checkboxmountdepot.caption"
 msgid "Mount depot"
 msgstr "Verbinde Depot"
 
+#: tformsaveimagesondepot.directoryeditpathtodepot.text
+msgid "Y:\\"
+msgstr ""
+
 #: tformsaveimagesondepot.editpathtodepot.texthint
 msgctxt "tformsaveimagesondepot.editpathtodepot.texthint"
 msgid "\\\\servername\\opsi_depot_rw"
