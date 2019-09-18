@@ -554,12 +554,17 @@ var
   testresult: string;
   ContentTypeCompress: string = 'application/json';
   ContentTypeNoCompress: string = 'application/json';
+  //ContentEncodingCommpress: string = 'gzip, deflate';
+  //ContentEncodingCommpress: string = 'gzip';
   ContentEncodingCommpress: string = 'deflate';
-  ContentEncodingNoCommpress: string = '';
-  AcceptCompress: string = '';
-  AcceptNoCompress: string = '';
+  //ContentEncodingCommpress: string = 'deflate, gzip';
+  ContentEncodingNoCommpress: string = 'plain';
+  AcceptCompress: string = 'application/json';
+  AcceptNoCompress: string = 'application/json';
+  //AcceptEncodingCompress: string = 'gzip, deflate';
+  //AcceptEncodingCompress: string = 'deflate, gzip';
   AcceptEncodingCompress: string = 'deflate';
-  AcceptEncodingNoCompress: string = '';
+  AcceptEncodingNoCompress: string = 'plain';
 
 {$IFNDEF OPSIWINST}
 function StringReplace(const S, OldPattern, NewPattern: string): string;
@@ -1607,7 +1612,11 @@ begin
           end
           else  // no compress
           begin
-            HTTPSender.MimeType := ContentTypeCompress;
+            HTTPSender.MimeType := ContentTypeNoCompress;
+            HTTPSender.Headers.Add('accept: ' + AcceptNoCompress);
+            HTTPSender.Headers.Add('accept-encoding: ' + AcceptEncodingNoCompress);
+            HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingNoCommpress);
+            HTTPSender.Headers.Add('content-type: ' + ContentTypeNoCompress);
             sendstream.Write(utf8str[1], length(utf8str));
             //LogDatei.log('sendstream: ' + MemoryStreamToString(sendstream), LLDebug2);
           end;
@@ -2584,10 +2593,18 @@ begin
           LogDatei.log_prog('Using MimeType: ' + ContentTypeNoCompress, LLDebug);
           {$IFDEF SYNAPSE}
           HTTPSender.Headers.Clear;
-          HTTPSender.Headers.Add('accept-encoding: ' +
-            ContentEncodingCommpress + ',identity');
+          HTTPSender.Headers.Add('accept: ' + AcceptNoCompress);
+          HTTPSender.Headers.Add('accept-encoding: ' + AcceptEncodingNoCompress);
+          HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingNoCommpress);
+          HTTPSender.Headers.Add('content-type: ' + ContentTypeNoCompress);
+          (*
+          HTTPSender.Headers.Add('accept-encoding: ' + ContentEncodingCommpress);
+          //HTTPSender.Headers.Add('accept-encoding: ' +
+          //  ContentEncodingCommpress + ',identity');
           HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingCommpress);
-          HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress + ',identity');
+          //HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress + ',identity');
+          HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress);
+          *)
           for i := 0 to HTTPSender.Headers.Count - 1 do
             LogDatei.log_prog('HTTPSender Header.Strings: ' +
               HTTPSender.Headers.Strings[i], LLDebug2);
@@ -2624,6 +2641,7 @@ begin
           // retry with other parameters
           if ContentTypeCompress = 'application/json' then
           begin
+            LogDatei.log('Use opsi 4.0 HTTP Header', LLnotice);
             ContentTypeCompress := 'gzip-application/json-rpc';
             AcceptCompress := 'gzip-application/json-rpc';
             ContentTypeNoCompress := 'application/json-rpc';
@@ -2635,14 +2653,15 @@ begin
           end
           else
           begin
+            LogDatei.log('Use opsi 4.1 / 4.2 HTTP Header', LLnotice);
             ContentTypeCompress := 'application/json';
-            AcceptCompress := '';
+            AcceptCompress := 'application/json';
             ContentTypeNoCompress := 'application/json';
-            AcceptNoCompress := '';
-            ContentEncodingNoCommpress := '';
+            AcceptNoCompress := 'application/json';
+            ContentEncodingNoCommpress := 'plain';
             ContentEncodingCommpress := 'deflate';
             AcceptEncodingCompress := 'deflate';
-            AcceptEncodingNoCompress := '';
+            AcceptEncodingNoCompress := 'plain';
           end;
           LogDatei.log_prog('Changing to MimeType: ' + ContentTypeCompress, LLDebug);
           sendstream.Free;
@@ -2660,11 +2679,19 @@ begin
               LogDatei.log_prog('Using MimeType: ' + ContentTypeCompress, LLDebug);
               {$IFDEF SYNAPSE}
               HTTPSender.Headers.Clear;
-              HTTPSender.Headers.Add('accept-encoding: ' +
-                ContentEncodingCommpress + ',identity');
+              HTTPSender.MimeType := ContentTypeCompress;
+              HTTPSender.Headers.Add('accept: ' + AcceptCompress);
+              HTTPSender.Headers.Add('accept-encoding: ' + AcceptEncodingCompress);
               HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingCommpress);
-              HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress +
-                ',identity');
+              HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress);
+              (*
+              HTTPSender.Headers.Add('accept-encoding: ' + ContentEncodingCommpress);
+              //HTTPSender.Headers.Add('accept-encoding: ' +
+              //  ContentEncodingCommpress + ',identity');
+              HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingCommpress);
+              //HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress + ',identity');
+              HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress);
+              *)
               for i := 0 to HTTPSender.Headers.Count - 1 do
                 LogDatei.log_prog('HTTPSender Header.Strings: ' +
                   HTTPSender.Headers.Strings[i], LLDebug2);
@@ -2722,11 +2749,18 @@ begin
               LogDatei.log_prog('Using MimeType: ' + ContentTypeNoCompress, LLDebug);
               {$IFDEF SYNAPSE}
               HTTPSender.Headers.Clear;
-              HTTPSender.Headers.Add('accept-encoding: ' +
-                ContentEncodingCommpress + ',identity');
-              HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingCommpress);
-              HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress +
-                ',identity');
+              HTTPSender.MimeType := ContentTypeNoCompress;
+              HTTPSender.Headers.Add('accept: ' + AcceptNoCompress);
+              HTTPSender.Headers.Add('accept-encoding: ' + AcceptEncodingNoCompress);
+              HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingNoCommpress);
+              HTTPSender.Headers.Add('content-type: ' + ContentTypeNoCompress);
+              (*
+                HTTPSender.Headers.Add('accept-encoding: ' +
+                  ContentEncodingCommpress + ',identity');
+                HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingCommpress);
+                HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress +
+                  ',identity');
+                *)
               for i := 0 to HTTPSender.Headers.Count - 1 do
                 LogDatei.log_prog('HTTPSender Header.Strings: ' +
                   HTTPSender.Headers.Strings[i], LLDebug2);

@@ -19,6 +19,9 @@ uses
   OSProcessux,
 
   {$ENDIF UNIX}
+  {$IFDEF OPSISCRIPT}
+  osfunc,
+  {$ENDIF OPSISCRIPT}
   oslog;
 
 function ProcessIsRunning(searchproc: string): boolean;
