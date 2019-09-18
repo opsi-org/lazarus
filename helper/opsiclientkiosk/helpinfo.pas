@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, proginfo,
-  lcltranslator, Buttons, lclintf, ExtCtrls;
+  lcltranslator, Buttons, lclintf, ExtCtrls, oslog;
 
 type
 
@@ -79,6 +79,7 @@ end;
 
 procedure TFormHelpInfo.LabelOpsiWebClick(Sender: TObject);
 begin
+  LogDatei.log('Open URL https://opsi.org' ,LLNotice);
   OpenUrl('https://opsi.org');
 end;
 
@@ -94,6 +95,7 @@ end;
 
 procedure TFormHelpInfo.LabelUibWebClick(Sender: TObject);
 begin
+  LogDatei.log('Open URL https://uib.de' ,LLNotice);
   OpenUrl('https://uib.de');
 end;
 
@@ -110,12 +112,25 @@ end;
 procedure TFormHelpInfo.SpeedButtonManualClick(Sender: TObject);
 var
   languageNotFound:boolean;
+  Language: String;
+const
+  URL_MANUAL_EN = 'https://download.uib.de/opsi4.1/documentation/html/en/' +
+     'opsi-manual-v4.1/opsi-manual-v4.1.html#software-on-demand';
+  URL_MANUAL_DE = 'https://download.uib.de/opsi4.1/documentation/html/'+
+    'opsi-manual-v4.1/opsi-manual-v4.1.html#software-on-demand';
 begin
-   if GetDefaultLang = 'de' then
-     OpenUrl('https://download.uib.de/opsi4.1/documentation/html/'+
-       'opsi-manual-v4.1/opsi-manual-v4.1.html#software-on-demand')
-   else OpenUrl('https://download.uib.de/opsi4.1/documentation/html/en/' +
-     'opsi-manual-v4.1/opsi-manual-v4.1.html#software-on-demand');
+  Language := GetDefaultLang;
+  LogDatei.log('Open manual for language ' + Language ,LLNotice);
+  if Language = 'de' then
+  begin
+    OpenUrl(URL_MANUAL_DE);
+    LogDatei.log('URL: '+ URL_MANUAL_DE, LLInfo);
+  end
+  else
+  begin
+    OpenUrl(URL_MANUAL_EN);
+    LogDatei.log('URL: '+ URL_MANUAL_EN, LLInfo);
+  end;
 end;
 
 procedure TFormHelpInfo.MouseEnterLink(Sender: TObject);

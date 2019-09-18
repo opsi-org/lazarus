@@ -15,16 +15,34 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: imagestoshare.rscouldnotsaveicons
-msgid "Could not save icons on share."
+#: imagestodepot.rscouldnotsaveicons
+msgctxt "imagestodepot.rscouldnotsaveicons"
+msgid "Could not save icons on depot."
 msgstr ""
 
-#: imagestoshare.rscouldnotsavescreenshots
-msgid "Could not save screenshots on share."
+#: imagestodepot.rscouldnotsavescreenshots
+msgctxt "imagestodepot.rscouldnotsavescreenshots"
+msgid "Could not save screenshots on depot."
 msgstr ""
 
-#: imagestoshare.rscouldnotunmount
-msgid "Could not unmount share."
+#: imagestodepot.rscouldnotunmount
+msgctxt "imagestodepot.rscouldnotunmount"
+msgid "Could not unmount depot."
+msgstr ""
+
+#: imagestodepot.rsimagesnotsaved
+msgctxt "imagestodepot.rsimagesnotsaved"
+msgid "Images could not be saved on opsi depot. %sPlease check if depot is mounted with write privileges."
+msgstr ""
+
+#: imagestodepot.rsimagessaved
+msgctxt "imagestodepot.rsimagessaved"
+msgid "Images saved on"
+msgstr ""
+
+#: imagestodepot.rsisaninvaliddir
+msgctxt "imagestodepot.rsisaninvaliddir"
+msgid "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
 msgstr ""
 
 #: opsiclientkioskgui.rsaction
@@ -58,6 +76,10 @@ msgctxt "opsiclientkioskgui.rsactuninstall"
 msgid "Uninstall"
 msgstr "Desinstalar"
 
+#: opsiclientkioskgui.rsadminmode
+msgid "Admin mode"
+msgstr ""
+
 #: opsiclientkioskgui.rsall
 msgctxt "opsiclientkioskgui.rsall"
 msgid "All"
@@ -84,6 +106,10 @@ msgstr "Cancelar"
 #: opsiclientkioskgui.rsconnectedto
 msgid "Connected to"
 msgstr "Conectado a"
+
+#: opsiclientkioskgui.rscurrentusernoadmin
+msgid "Current user has no admin privileges. Admin mode disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges."
+msgstr ""
 
 #: opsiclientkioskgui.rsdisabled
 msgid "disabled"
@@ -256,6 +282,34 @@ msgstr ""
 msgid "Yes"
 msgstr "Sí"
 
+#: opsiconnection.rserrorintconnection
+msgctxt "opsiconnection.rserrorintconnection"
+msgid "Error while initializing opsiconnection"
+msgstr ""
+
+#: opsiconnection.rskioskmodeold
+msgid "Kiosk mode: old. Update to newer opsi version to get full functionality (e.g. disable software on demand) of Opsi Kiosk."
+msgstr ""
+
+#: opsiconnection.rsnodatafromserver
+msgid "Could not get data from server."
+msgstr ""
+
+#: opsiconnection.rsnovaluefound
+msgctxt "opsiconnection.rsnovaluefound"
+msgid "No value found! Set%sto"
+msgstr ""
+
+#: oswebservice.rserrorintconnection
+msgctxt "oswebservice.rserrorintconnection"
+msgid "Error while initializing opsiconnection"
+msgstr ""
+
+#: oswebservice.rsnovaluefound
+msgctxt "oswebservice.rsnovaluefound"
+msgid "No value found! Set%sto"
+msgstr ""
+
 #: oswebservice.rssendlog
 msgid "Sending log file to server ..."
 msgstr "Enviando archivo de log al servidor"
@@ -358,9 +412,9 @@ msgctxt "tformopsiclientkiosk.bitbtninstallnow.hint"
 msgid "Start the installation/update (uninstallation) of the selected products"
 msgstr ""
 
-#: tformopsiclientkiosk.buttonsaveimagesonshare.caption
-msgctxt "tformopsiclientkiosk.buttonsaveimagesonshare.caption"
-msgid "Save images on share"
+#: tformopsiclientkiosk.bitbtnsaveimages.hint
+msgctxt "tformopsiclientkiosk.bitbtnsaveimages.hint"
+msgid "Save images on depot"
 msgstr ""
 
 #: tformopsiclientkiosk.buttonsoftwareback.caption
@@ -465,6 +519,10 @@ msgctxt "tformopsiclientkiosk.labelsoftwarerecentversion.caption"
 msgid "Recent version"
 msgstr ""
 
+#: tformopsiclientkiosk.labeltitle.caption
+msgid "opsi Client Kiosk"
+msgstr ""
+
 #: tformopsiclientkiosk.labelverstr.caption
 msgctxt "tformopsiclientkiosk.labelverstr.caption"
 msgid "Version at Server"
@@ -518,6 +576,10 @@ msgstr "Actualizar"
 msgid "Reload data from server"
 msgstr ""
 
+#: tformopsiclientkiosk.speedbuttonsearch.hint
+msgid "Search product"
+msgstr ""
+
 #: tformopsiclientkiosk.speedbuttonupdates.caption
 msgctxt "tformopsiclientkiosk.speedbuttonupdates.caption"
 msgid "Updates"
@@ -561,38 +623,60 @@ msgctxt "tformprogresswindow.labelinfo.caption"
 msgid "Please wait while "
 msgstr ""
 
-#: tformsaveimagesonshare.buttoncancel.caption
-msgctxt "tformsaveimagesonshare.buttoncancel.caption"
+#: tformsaveimagesondepot.buttoncancel.caption
+#, fuzzy
+msgctxt "tformsaveimagesondepot.buttoncancel.caption"
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: tformsaveimagesonshare.buttoncopy.caption
-msgctxt "tformsaveimagesonshare.buttoncopy.caption"
-msgid "Save images on share"
+#: tformsaveimagesondepot.buttoncopy.caption
+msgctxt "tformsaveimagesondepot.buttoncopy.caption"
+msgid "Save images on depot"
 msgstr ""
 
-#: tformsaveimagesonshare.caption
-msgctxt "tformsaveimagesonshare.caption"
-msgid "Save images on share"
+#: tformsaveimagesondepot.caption
+msgctxt "tformsaveimagesondepot.caption"
+msgid "Save images on depot"
 msgstr ""
 
-#: tformsaveimagesonshare.editpathtoshare.texthint
-msgctxt "tformsaveimagesonshare.editpathtoshare.texthint"
+#: tformsaveimagesondepot.checkboxmountdepot.caption
+msgctxt "tformsaveimagesondepot.checkboxmountdepot.caption"
+msgid "Mount depot"
+msgstr ""
+
+#: tformsaveimagesondepot.directoryeditpathtodepot.text
+msgid "Y:\\"
+msgstr ""
+
+#: tformsaveimagesondepot.editpathtodepot.texthint
+msgctxt "tformsaveimagesondepot.editpathtodepot.texthint"
 msgid "\\\\servername\\opsi_depot_rw"
 msgstr ""
 
-#: tformsaveimagesonshare.labelpassword.caption
-msgctxt "tformsaveimagesonshare.labelpassword.caption"
+#: tformsaveimagesondepot.groupboxmountdepot.caption
+msgctxt "tformsaveimagesondepot.groupboxmountdepot.caption"
+msgid "Mount depot"
+msgstr ""
+
+#: tformsaveimagesondepot.labelpassword.caption
+#, fuzzy
+msgctxt "tformsaveimagesondepot.labelpassword.caption"
 msgid "Password"
 msgstr "Contraseña"
 
-#: tformsaveimagesonshare.labelpathtoshare.caption
-msgctxt "tformsaveimagesonshare.labelpathtoshare.caption"
-msgid "Path to share"
+#: tformsaveimagesondepot.labelpathmountdepot.caption
+msgctxt "tformsaveimagesondepot.labelpathmountdepot.caption"
+msgid "Path to depot"
 msgstr ""
 
-#: tformsaveimagesonshare.labeluser.caption
-msgctxt "tformsaveimagesonshare.labeluser.caption"
+#: tformsaveimagesondepot.labelpathtodepot.caption
+msgctxt "tformsaveimagesondepot.labelpathtodepot.caption"
+msgid "Path to depot"
+msgstr ""
+
+#: tformsaveimagesondepot.labeluser.caption
+#, fuzzy
+msgctxt "tformsaveimagesondepot.labeluser.caption"
 msgid "User"
 msgstr "Usuario"
 

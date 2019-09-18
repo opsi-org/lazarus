@@ -94,9 +94,12 @@ begin
   myconfigurationhints.Add('postUninstallLines='+rsPostUninstallLines);
   myconfigurationhints.Add('PathToOpsiPackageBuilder='+rsPathToOpsiPackageBuilder);
   myconfigurationhints.Add('CreateRadioIndex='+rsCreateRadioIndex);
+  myconfigurationhints.Add('BuildRadioIndex='+rsBuildRadioIndex);
+  (*
   myconfigurationhints.Add('CreateQuiet='+rsCreateQuiet);
   myconfigurationhints.Add('CreateBuild='+rsCreateBuild);
   myconfigurationhints.Add('CreateInstall='+rsCreateInstall);
+  *)
 end;
 
 procedure TFOSDConfigdlg.FormCreate(Sender: TObject);
