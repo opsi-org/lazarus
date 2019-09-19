@@ -5,7 +5,7 @@ unit helpinfo;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, proginfo,
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, lazproginfo,
   lcltranslator, Buttons, lclintf, ExtCtrls, oslog;
 
 type

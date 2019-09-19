@@ -276,6 +276,10 @@ msgstr " wird sofort aktualisiert."
 msgid "Yes"
 msgstr "Ja"
 
+#: opsiconnection.rscouldnotsetrights
+msgid "Could not set rights."
+msgstr ""
+
 #: opsiconnection.rserrorintconnection
 msgctxt "opsiconnection.rserrorintconnection"
 msgid "Error while initializing opsiconnection"

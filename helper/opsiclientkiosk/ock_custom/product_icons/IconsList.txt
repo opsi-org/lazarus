@@ -10,3 +10,4 @@ freepdf=opsi-logo.png
 foto-aufmass=photoprint_fotoprint.png
 filezilla=7kaa_7kaa.png
 ganttproject=abe_abe.png
+7zip=guymager_guymager_128.png
