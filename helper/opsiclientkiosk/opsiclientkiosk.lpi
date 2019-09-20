@@ -216,7 +216,7 @@
         <ResourceBaseClass Value="Form"/>
       </Unit9>
       <Unit10>
-        <Filename Value="proginfo.pas"/>
+        <Filename Value="../../common/lazproginfo.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit10>
       <Unit11>

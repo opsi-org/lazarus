@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: opsi.org\n"
-"PO-Revision-Date: 2019-09-16 08:55+0000\n"
+"PO-Revision-Date: 2019-09-20 08:38+0000\n"
 "Last-Translator: Jan Werner <j.werner@uib.de>\n"
 "Language-Team: German (http://www.transifex.com/opsi-org/opsiorg/language/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -30,7 +30,9 @@ msgstr "Konnte Depot nicht trennen."
 
 #: imagestodepot.rsimagesnotsaved
 msgctxt "imagestodepot.rsimagesnotsaved"
-msgid "Images could not be saved on opsi depot. %sPlease check if depot is mounted with write privileges."
+msgid ""
+"Images could not be saved on opsi depot. %sPlease check if depot is mounted "
+"with write privileges."
 msgstr "Bilder konnten nicht auf dem opsi Depot gespeichert werden. %sBitte überprüfen Sie ob das Depot mit Schreibrechten verbunden ist."
 
 #: imagestodepot.rsimagessaved
@@ -106,7 +108,9 @@ msgid "Connected to"
 msgstr "Verbunden mit"
 
 #: opsiclientkioskgui.rscurrentusernoadmin
-msgid "Current user has no admin privileges. Admin mode disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges."
+msgid ""
+"Current user has no admin privileges. Admin mode disabled.%sSolution: Start "
+"opsi Client Kiosk (as user) with admin privileges."
 msgstr "Aktueller Nutzer hat keine Adminrechte. Adminmodus deaktiviert. %sLösung: Starten Sie den opsi Client Kiosk (als Nutzer) mit Adminrechten."
 
 #: opsiclientkioskgui.rsdisabled
@@ -145,7 +149,8 @@ msgstr "Jetzt installieren"
 
 #: opsiclientkioskgui.rsinstallnowhint
 msgctxt "opsiclientkioskgui.rsinstallnowhint"
-msgid "Start the installation/update (uninstallation) of the selected products"
+msgid ""
+"Start the installation/update (uninstallation) of the selected products"
 msgstr "Start der Installation/Aktualisierung (Deinstallation) der ausgewählten Produkte"
 
 #: opsiclientkioskgui.rsinstallnowornextevent
@@ -215,7 +220,9 @@ msgid "Store actions"
 msgstr "Aktionen speichern"
 
 #: opsiclientkioskgui.rsstoreactionshint
-msgid "Send the action requests to the server, show the resulting installations and ask for installation start."
+msgid ""
+"Send the action requests to the server, show the resulting installations and"
+" ask for installation start."
 msgstr "Sende die Anforderungen an den Server, zeige die resultierenden anstehenden Installationen und Frage nach dem Installationsstart."
 
 #: opsiclientkioskgui.rsuninstallationfinished
@@ -276,18 +283,24 @@ msgstr " wird sofort aktualisiert."
 msgid "Yes"
 msgstr "Ja"
 
+#: opsiconnection.rscouldnotsetrights
+msgid "Could not set rights."
+msgstr "Konnte Dateirechte nicht setzen."
+
 #: opsiconnection.rserrorintconnection
 msgctxt "opsiconnection.rserrorintconnection"
 msgid "Error while initializing opsiconnection"
 msgstr "Fehler bei der Initialisierung der opsi Verbindung."
 
 #: opsiconnection.rskioskmodeold
-msgid "Kiosk mode: old. Update to newer opsi version to get full functionality (e.g. disable software on demand) of Opsi Kiosk."
-msgstr ""
+msgid ""
+"Kiosk mode: old. Update to newer opsi version to get full functionality "
+"(e.g. disable software on demand) of Opsi Kiosk."
+msgstr "Alter Kioskmodus. Aktualiseren Sie auf neuere opsi Verson um volle Funktionalität zu erhalten (z.B. deaktiveiren der Möglichkeit der sofortigen Installation von Produkten.)"
 
 #: opsiconnection.rsnodatafromserver
 msgid "Could not get data from server."
-msgstr ""
+msgstr "Es konnten keine Daten vom Server geholt werden."
 
 #: opsiconnection.rsnovaluefound
 msgctxt "opsiconnection.rsnovaluefound"
@@ -399,7 +412,8 @@ msgstr "Jetzt installieren"
 
 #: tformopsiclientkiosk.bitbtninstallnow.hint
 msgctxt "tformopsiclientkiosk.bitbtninstallnow.hint"
-msgid "Start the installation/update (uninstallation) of the selected products"
+msgid ""
+"Start the installation/update (uninstallation) of the selected products"
 msgstr "Start der Installation/Aktualisierung (Deinstallation) der ausgewählten Produkte"
 
 #: tformopsiclientkiosk.bitbtnsaveimages.hint
@@ -436,7 +450,8 @@ msgid "opsi-client-kiosk"
 msgstr "opsi-client-kiosk"
 
 #: tformopsiclientkiosk.dbgrid1.hint
-msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
+msgid ""
+"Click to ActionRequest Column, to set action requests (setup/uninstall)"
 msgstr "In die Spalte ActionRequest klicken um Aktionen (setup/uninstall) zu setzen"
 
 #: tformopsiclientkiosk.editsearch.hint
@@ -642,4 +657,3 @@ msgstr "Pfad zum Depot"
 msgctxt "tformsaveimagesondepot.labeluser.caption"
 msgid "User"
 msgstr "Benutzer"
-

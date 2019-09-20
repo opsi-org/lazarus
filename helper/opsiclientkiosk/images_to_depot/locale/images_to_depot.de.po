@@ -1,0 +1,84 @@
+# Translators:
+# Niko Wenselowski, 2019
+# Jan Werner <j.werner@uib.de>, 2019
+# 
+msgid ""
+msgstr ""
+"Last-Translator: Jan Werner <j.werner@uib.de>, 2019\n"
+"Language-Team: German (https://www.transifex.com/opsi-org/teams/35141/de/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: de\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: imagestodepot.rscouldnotsaveicons
+msgid "Could not save icons on depot."
+msgstr "Konnte Icons nicht auf Depot speichern."
+
+#: imagestodepot.rscouldnotsavescreenshots
+msgid "Could not save screenshots on depot."
+msgstr "Konnte Screenshots nicht auf Depot speichern."
+
+#: imagestodepot.rscouldnotunmount
+msgid "Could not unmount depot."
+msgstr "Konnte Depot nicht trennen."
+
+#: imagestodepot.rsimagesnotsaved
+msgid "Images could not be saved on opsi depot. %sPlease check if depot is mounted with write privileges."
+msgstr "Bilder konnten nicht auf dem opsi Depot gespeichert werden. %sBitte überprüfen Sie ob das Depot mit Schreibrechten verbunden ist."
+
+#: imagestodepot.rsimagessaved
+msgid "Images saved on"
+msgstr "Bilder gespeichert auf"
+
+#: imagestodepot.rsisaninvaliddir
+msgid "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
+msgstr "\"%s\" ist ein ungültiges Verzeichnis.%sBitte setzen Sie \"%s\"  auf ein gültigen Verzeichnis."
+
+#: tformsaveimagesondepot.buttonclose.caption
+msgid "Close"
+msgstr ""
+
+#: tformsaveimagesondepot.buttoncopy.caption
+msgctxt "tformsaveimagesondepot.buttoncopy.caption"
+msgid "Save images on depot"
+msgstr "Speicher Bilder auf Depot"
+
+#: tformsaveimagesondepot.caption
+msgctxt "tformsaveimagesondepot.caption"
+msgid "Save images on depot"
+msgstr "Speicher Bilder auf Depot"
+
+#: tformsaveimagesondepot.checkboxmountdepot.caption
+msgctxt "tformsaveimagesondepot.checkboxmountdepot.caption"
+msgid "Mount depot"
+msgstr "Verbinde Depot"
+
+#: tformsaveimagesondepot.editpathtodepot.texthint
+#, fuzzy
+#| msgid "\\\\servername\\opsi_depot_rw"
+msgid "\\\\servername\\sharename"
+msgstr "\\\\Servername\\opsi_depot_rw"
+
+#: tformsaveimagesondepot.groupboxmountdepot.caption
+msgctxt "tformsaveimagesondepot.groupboxmountdepot.caption"
+msgid "Mount depot"
+msgstr "Verbinde Depot"
+
+#: tformsaveimagesondepot.labelpassword.caption
+msgid "Password"
+msgstr "Passwort"
+
+#: tformsaveimagesondepot.labelpathmountdepot.caption
+msgctxt "tformsaveimagesondepot.labelpathmountdepot.caption"
+msgid "Path to depot"
+msgstr "Pfad zum Depot"
+
+#: tformsaveimagesondepot.labelpathtodepot.caption
+msgctxt "tformsaveimagesondepot.labelpathtodepot.caption"
+msgid "Path to depot"
+msgstr "Pfad zum Depot"
+
+#: tformsaveimagesondepot.labeluser.caption
+msgid "User"
+msgstr "Benutzer"
+

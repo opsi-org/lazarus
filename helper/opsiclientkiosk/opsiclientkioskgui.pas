@@ -26,12 +26,13 @@ uses
   opsiconnection,
   jwawinbase,
   //osprocesses,
+  Process,
   ockunique,
   progresswindow,
   ExtDlgs,
-  proginfo,
-  helpinfo,
-  imagestodepot;
+  lazproginfo,
+  helpinfo;
+  //imagestodepot;
 
 type
 
@@ -249,6 +250,7 @@ type
     MinWidthExpertMode   : Integer;
     procedure DeleteFormerImage(ImagePath:String);
     procedure SaveIconsAndScreenshotsLists;
+    function SaveImagesOnDepot: String;
     procedure SetPositionButtonsOnPanelToolbar;
     function GetUserName_:string;
      { Inits at Start }
@@ -1013,7 +1015,7 @@ begin
     FormProgressWindow.ProgressBarDetail.Position := 50;
     Application.ProcessMessages;
     try
-      OCKOpsiConnection := TOpsiConnection.Create(ClientdMode,ClientID);
+      OCKOpsiConnection := TOpsiConnection.Create(ClientdMode,ClientID,'opsi-client-kiosk-' + ProgramInfo.Version);
     except
       LogDatei.log('Error no connection to Opsi.', LLError);
     end;
@@ -1726,7 +1728,7 @@ end;
 procedure TFormOpsiClientKiosk.BitBtnSaveImagesClick(Sender: TObject);
 begin
   SaveIconsAndScreenshotsLists;
-  FormSaveImagesOnDepot.ShowModal;
+  SaveImagesOnDepot;
 end;
 
 procedure TFormOpsiClientKiosk.BitBtnInstallNowClick(Sender: TObject);
@@ -2429,6 +2431,41 @@ begin
     //Instances := ockunique.numberOfProcessInstances('notifier');
     sleep(100);
     //Instances := ockunique.numberOfProcessInstances('notifier');
+  end;
+end;
+
+function TFormOpsiClientKiosk.SaveImagesOnDepot: String;
+var
+  Shell,
+  ShellOptions,
+  ShellCommand,
+  ShellOutput: String;
+  PathToExe: String;
+begin
+  try
+    Result := '';
+    PathToExe := Application.Location + 'images_to_depot\images_to_depot.exe';
+    LogDatei.log('Saving images on depot',LLInfo);
+    {set shell and options}
+    Shell := 'powershell.exe';//PathToExe;//'powershell.exe';
+    ShellOptions := '/c'; //-Verb runAs  'Start-Process PowerShell -Verb RunAs | '
+    ShellCommand := 'Start-Process ' +  PathToExe + ' -Verb RunAs';
+    if RunCommand(Shell, [ShellCommand], ShellOutput) then
+    begin
+      //ShellCommand := '';
+      Result := ShellOutput;
+      LogDatei.log('Images saved on depot', LLInfo);
+      //ShowMessage(ShellOutput);
+    end
+    else
+    begin
+      Result := '';
+      LogDatei.log('Error while trying to run command ' +Shellcommand
+        + ' on ' + Shell + 'with options ' + ShellOptions, LLError);
+    end;
+  except
+    Result := '';
+    LogDatei.log('Exception during SaveImagesOnDepot', LLDebug);
   end;
 end;
 

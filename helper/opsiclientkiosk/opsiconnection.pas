@@ -13,7 +13,7 @@ uses
   lazfileutils,
   inifiles,
   Variants,
-  proginfo,
+  lazproginfo,
   fpjson,
   jsonParser,
   dialogs;
@@ -36,7 +36,6 @@ type
     function GetDataFromOldDataStructure:boolean;
     procedure SetConfigdMode; //configd mode
     procedure SetClientdMode(ClientID:string); //clientd mode
-    function GetOpsiClientdConfNT:String;
     //function initConnection(const seconds: integer; var ConnectionInfo:string): boolean;
     procedure closeConnection;
   public
@@ -60,7 +59,7 @@ type
     function GetProductValueAsInteger(key:string):integer;
     function GetProductValueAsBoolean(key:string):boolean;
     function ProductCount:integer;
-    constructor Create(fClientdMode:boolean; const ClientID:string = '' );overload;
+    constructor Create(fClientdMode:boolean; const ClientID:string = ''; fagent:String = '');overload;
     destructor Destroy;override;
   end;
 
@@ -73,6 +72,7 @@ type
    rsKioskModeOld = 'Kiosk mode: old. Update to newer opsi version to get full'
      +' functionality (e.g. disable software on demand) of Opsi Kiosk.';
    rsNoDataFromServer = 'Could not get data from server.';
+   rsCouldNotSetRights = 'Could not set rights.';
 
 implementation
 
@@ -82,6 +82,7 @@ const
     'C:\Program Files (x86)\opsi.org\opsi-client-agent\opsiclientd\opsiclientd.conf';
   {$ENDIF Windows}
   {$IFDEF Unix}
+  //change this for UNIX!!!
   opsiclientdconf =
     'C:\Program Files (x86)\opsi.org\opsi-client-agent\opsiclientd\opsiclientd.conf';
   {$ENDIF Unix}
@@ -95,7 +96,6 @@ var
 begin
   //opsiconfd mode
   try
-    GetOpsiClientdConfNT;
     MyInifile := TIniFile.Create(opsiclientdconf);
     MyService_URL := MyIniFile.ReadString('config_service', 'url', '');
     MyClientID := MyIniFile.ReadString('global', 'host_id', '');
@@ -223,9 +223,9 @@ end;
 
 function TOpsiConnection.GetDataFromOldDataStructure:boolean;
 var
-  StringJSON,StringResult:string;
-  count :integer;
-  SoftwareOnDemand: boolean;
+  StringJSON:String;
+  //StringResult:string;
+  //count :integer;
 begin
   try
     { old data structur }
@@ -282,7 +282,6 @@ begin
   //logdatei.log('read ' + key + ': ' + Result, LLDebug3);
 end;
 
-
 function TOpsiConnection.GetProductValueAsInteger(key: string): integer;
 begin
   if not JSONObjectProduct.Nulls[key] then
@@ -305,17 +304,12 @@ begin
     end;
 end;
 
-
-
 function TOpsiConnection.ProductCount: integer;
 begin
   Result := JSONObjectProducts.Count;
 end;
 
-
-
-
-constructor TOpsiConnection.Create(fClientdMode:boolean; const ClientID:string = '');overload;
+constructor TOpsiConnection.Create(fClientdMode:boolean; const ClientID:string = ''; fagent:string = '');overload;
 begin
   inherited Create;
   ClientdMode := fClientdMode;
@@ -334,7 +328,7 @@ begin
     LogDatei.log('opsidata created', LLInfo);
     OpsiData.SetActualClient(myclientid);
     OpsiData.InitOpsiConf(myservice_url, myclientid,
-      myhostkey, '', '', '', 'opsi-client-kiosk-' + ProgramInfo.Version);
+      myhostkey, '', '', '', fagent);
     LogDatei.log('opsidata initialized', LLNotice);
   except
     LogDatei.log('Error while initializing opsiconnection', LLError);
@@ -361,7 +355,16 @@ procedure TOpsiConnection.SetRights(Path: String);
 var
   resultstring: String;
 begin
-  resultstring := MyOpsiMethodCall('setRights', [Path]);
+  if ClientdMode then
+  begin
+    ShowMessage(rsCouldNotSetRights);
+    LogDatei.log('Could not set rights. Change ClientdMode to false. Current ClientdMode:'
+      + BoolToStr(ClientdMode), LLDebug);
+  end
+  else
+  begin
+    resultstring := MyOpsiMethodCall('setRights', [Path]);
+  end;
 end;
 
 function TOpsiConnection.GetActionRequests: TStringList;
@@ -417,40 +420,6 @@ begin
   end;
 end;
 
-function TOpsiConnection.GetOpsiClientdConfNT: String;
-var
-  Shell,
-  ShellOptions,
-  ShellCommand,
-  ShellOutput: String;
-  PathToClientdConf: String;
-begin
-  try
-    Result := '';
-    PathToClientdConf := 'C:\Program Files (x86)\opsi.org\opsi-client-agent\opsiclientd\opsiclientd.conf';
-    LogDatei.log('Get opsicleintd.conf ' + PathToClientdConf ,LLInfo);
-    {set shell and options}
-    Shell := 'powershell.exe';
-    ShellOptions := '/c'; //-Verb runAs  'Start-Process PowerShell -Verb RunAs | '
-    ShellCommand := 'Start-Process PowerShell -Verb RunAs -ArgumentList ' + '"Get-Content ' + pathToClientdConf+'"';//'Get-Content ' + PathToClientdConf; 'Start-Process PowerShell -Verb RunAs'
-    if RunCommand(Shell, [ShellCommand], ShellOutput) then
-    begin
-      //ShellCommand := '';
-      Result := ShellOutput;
-      LogDatei.log('Getting opsiclientd.conf', LLInfo);
-      //ShowMessage(ShellOutput);
-    end
-    else
-    begin
-      Result := '';
-      LogDatei.log('Error while trying to run command ' +Shellcommand
-        + ' on ' + Shell + 'with options ' + ShellOptions, LLError);
-    end;
-  except
-    Result := '';
-    LogDatei.log('Exception during GetOpsiClientdConfNT ' + PathToClientdConf, LLDebug);
-  end;
-end;
 
 {function TOpsiConnection.initConnection(const seconds: integer; var ConnectionInfo:string): boolean;
 var

@@ -283,6 +283,10 @@ msgstr ""
 msgid "Yes"
 msgstr "Oui"
 
+#: opsiconnection.rscouldnotsetrights
+msgid "Could not set rights."
+msgstr ""
+
 #: opsiconnection.rserrorintconnection
 msgctxt "opsiconnection.rserrorintconnection"
 msgid "Error while initializing opsiconnection"
