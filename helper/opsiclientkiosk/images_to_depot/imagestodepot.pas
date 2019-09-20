@@ -6,14 +6,17 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, EditBtn,
-  Process, oslog, FileUtil, LazFileUtils, opsiconnection, LazProgInfo, jwawinbase;
+  Process, oslog, FileUtil, LazFileUtils, opsiconnection, LazProgInfo,
+  jwawinbase,
+  LCLTranslator, ExtCtrls, ComCtrls
+  ;
 
 type
 
   { TFormSaveImagesOnDepot }
 
   TFormSaveImagesOnDepot = class(TForm)
-    ButtonCancel: TButton;
+    ButtonClose: TButton;
     ButtonCopy: TButton;
     CheckBoxMountDepot: TCheckBox;
     DirectoryEditPathToDepot: TDirectoryEdit;
@@ -21,17 +24,22 @@ type
     EditPathToDepot: TEdit;
     EditUser: TEdit;
     GroupBoxMountDepot: TGroupBox;
+    LabelInfo: TLabel;
     LabelPathMountDepot: TLabel;
     LabelPassword: TLabel;
     LabelPathToDepot: TLabel;
     LabelUser: TLabel;
-    procedure ButtonCancelClick(Sender: TObject);
+    PanelInfo: TPanel;
+    ProgressBar: TProgressBar;
+    procedure ButtonCloseClick(Sender: TObject);
     procedure ButtonCopyClick(Sender: TObject);
     procedure CheckBoxMountDepotChange(Sender: TObject);
     procedure DirectoryEditPathToDepotChange(Sender: TObject);
     procedure DirectoryEditPathToDepotEnter(Sender: TObject);
     procedure EditPathToDepotChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure GroupBoxInfoClick(Sender: TObject);
   private
     function GetUserName_: string;
     function InitLogging(const LogFileName: String; MyLogLevel: integer): boolean;
@@ -46,8 +54,7 @@ type
 
 
   public
-    constructor Create;virtual;
-    destructor Destroy;override;
+
   end;
 
 var
@@ -76,6 +83,7 @@ var
   User: String;
   AlreadyMounted :boolean;
   CopySuccess: boolean;
+  i,LineNumber:integer;
 begin
   CopySuccess := False;
   PathToDepot :=  TrimFilename(DirectoryEditPathToDepot.Text);
@@ -119,7 +127,17 @@ begin
    if not AlreadyMounted then UnmountDepotUnix(PathToDepot);
   end;
  {$ENDIF Unix}
-  if CopySuccess then Close;
+  if CopySuccess then
+  begin
+   ProgressBar.Position:= 100;
+   for i := 5 downto 1 do
+    begin
+      LabelInfo.Caption := 'Window will be automatically closed in ' + IntToStr(i) + ' sec';
+      Application.ProcessMessages;
+      sleep(1000);
+    end;
+    Close;
+  end;
 end;
 
 procedure TFormSaveImagesOnDepot.CheckBoxMountDepotChange(Sender: TObject);
@@ -147,7 +165,19 @@ end;
 procedure TFormSaveImagesOnDepot.FormCreate(Sender: TObject);
 begin
    InitLogging('kiosk-images-' + GetUserName_ +'.log', LLDebug);
+   SetDefaultLang(GetDefaultLang);
 end;
+
+procedure TFormSaveImagesOnDepot.FormDestroy(Sender: TObject);
+begin
+  LogDatei.Free;
+end;
+
+procedure TFormSaveImagesOnDepot.GroupBoxInfoClick(Sender: TObject);
+begin
+
+end;
+
 
 procedure TFormSaveImagesOnDepot.MountDepotNT(const User: String;
   Password: String; PathToDepot: String);
@@ -166,6 +196,8 @@ begin
     if RunCommand(Shell, [ShellOptions , ShellCommand], ShellOutput) then
     begin
       ShellCommand := '';
+      LabelInfo.Caption := 'Mounting done';
+      Application.ProcessMessages;
       LogDatei.log('Mounting done', LLInfo);
       //ShowMessage(ShellOutput);
     end
@@ -197,7 +229,7 @@ begin
     end
     else
     begin
-      ShowMessage(rsCouldNotUnmount);
+      LabelInfo.Caption := rsCouldNotUnmount;
       LogDatei.log('Error while trying to run command ' +
         ShellCommand + ' on ' + Shell, LLError);
     end;
@@ -221,7 +253,15 @@ end;
 function TFormSaveImagesOnDepot.SetRights(Path:String): boolean;
 var
   OpsiConnection: TOpsiConnection;
+  LineNumber: integer;
 begin
+  //LineNumber := MemoInfo.Lines.Add('Please wait while setting rights...');
+  //ProgressBar.Position := 80;
+  LabelInfo.Caption := 'Please wait while setting rights...';
+  //Refresh;
+  Application.ProcessMessages;
+  //Refresh;
+  //MemoInfo.Lines.Text := MemoInfo.Lines.Text+ ('Please wait while setting rights...');
   Result := False;
   try
     try
@@ -230,25 +270,19 @@ begin
       ' Service_URL :' + OpsiConnection.MyService_URL +
       ' Hostkey :' + OpsiConnection.MyHostkey +
       ' Error :' + OpsiConnection.MyError,LLDebug);
+      //ProgressBar.Position := 50;
+      //Application.ProcessMessages;
       OpsiConnection.SetRights(path);
       Result := True;
+      LabelInfo.Caption := 'Please wait while setting rights... Done';
+      //ProgressBar.Position := 80;
+      Application.ProcessMessages;
     except
       Result := False;
     end;
   finally
     OpsiConnection.Free;
   end;
-end;
-
-constructor TFormSaveImagesOnDepot.Create;
-begin
-  inherited;
-end;
-
-destructor TFormSaveImagesOnDepot.Destroy;
-begin
-  inherited Destroy;
-  LogDatei.Free;
 end;
 
 
@@ -260,16 +294,28 @@ var
 begin
   Result := False;
   PathToKioskOnDepot:= SwitchPathDelims('\opsi-client-agent\files\opsi\opsiclientkiosk\',pdsSystem);
-  Source := SwitchPathDelims(TrimFilename('C:\Users\Jan\git-workbench\lazarus\helper\opsiclientkiosk\ock_custom\'),pdsSystem);
+  { Set the right directories }
+  Source := ExtractFilePath(ExcludeTrailingPathDelimiter(Application.Location));
+  //Set path delims dependend on system (e.g. Windows, Unix)
+  Source := SwitchPathDelims(TrimFilename(Source + 'ock_custom\'),pdsSystem);
   Target := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + 'ock_custom\'),pdsSystem);
   LogDatei.log('Copy ' + Source + ' to ' + Target, LLInfo);
   if CopyDirTree(Source, Target,[cffOverwriteFile, cffCreateDestDirectory]) then
   begin
     LogDatei.log('Copy done', LLInfo);
-    ShowMessage(rsImagesSaved +' '+ Target);
+    LabelInfo.Caption := (rsImagesSaved + ': ' + Target);
+    LabelInfo.Refresh;
+    //ProgressBar.Position := 20;
+    //ProgressBar.Refresh;
+    //Application.ProcessMessages;
+
     SetRights('/var/lib/opsi/depot/opsi-client-agent/files/opsi/opsiclientkiosk/ock_custom/');
+
+    Application.ProcessMessages;
+
     LogDatei.log('SetRights done', LLInfo);
     Result := True;
+    Refresh;
   end
   else
   begin
@@ -280,7 +326,7 @@ begin
   end;
 end;
 
-procedure TFormSaveImagesOnDepot.ButtonCancelClick(Sender: TObject);
+procedure TFormSaveImagesOnDepot.ButtonCloseClick(Sender: TObject);
 begin
   Close;
 end;

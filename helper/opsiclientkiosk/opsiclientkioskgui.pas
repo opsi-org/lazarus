@@ -31,8 +31,8 @@ uses
   progresswindow,
   ExtDlgs,
   lazproginfo,
-  helpinfo,
-  imagestodepot;
+  helpinfo;
+  //imagestodepot;
 
 type
 
@@ -2447,7 +2447,7 @@ begin
     PathToExe := Application.Location + 'images_to_depot\images_to_depot.exe';
     LogDatei.log('Saving images on depot',LLInfo);
     {set shell and options}
-    Shell := 'powershell.exe';
+    Shell := 'powershell.exe';//PathToExe;//'powershell.exe';
     ShellOptions := '/c'; //-Verb runAs  'Start-Process PowerShell -Verb RunAs | '
     ShellCommand := 'Start-Process ' +  PathToExe + ' -Verb RunAs';
     if RunCommand(Shell, [ShellCommand], ShellOutput) then

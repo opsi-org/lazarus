@@ -1,13 +1,14 @@
 object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
-  Left = 2322
-  Height = 281
-  Top = 306
-  Width = 544
+  Left = 574
+  Height = 346
+  Top = 260
+  Width = 547
   Caption = 'Save images on depot'
-  ClientHeight = 281
-  ClientWidth = 544
+  ClientHeight = 346
+  ClientWidth = 547
   OnCreate = FormCreate
-  Position = poMainFormCenter
+  OnDestroy = FormDestroy
+  Position = poScreenCenter
   LCLVersion = '2.0.4.0'
   object LabelPathToDepot: TLabel
     Left = 8
@@ -22,20 +23,20 @@ object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
   object ButtonCopy: TButton
     Left = 8
     Height = 25
-    Top = 248
+    Top = 247
     Width = 142
     AutoSize = True
     Caption = 'Save images on depot'
     OnClick = ButtonCopyClick
     TabOrder = 0
   end
-  object ButtonCancel: TButton
+  object ButtonClose: TButton
     Left = 396
     Height = 25
-    Top = 248
+    Top = 247
     Width = 140
-    Caption = 'Cancel'
-    OnClick = ButtonCancelClick
+    Caption = 'Close'
+    OnClick = ButtonCloseClick
     TabOrder = 1
   end
   object DirectoryEditPathToDepot: TDirectoryEdit
@@ -43,14 +44,12 @@ object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
     Height = 23
     Top = 32
     Width = 528
-    Directory = 'Y:\'
     ShowHidden = False
     ButtonWidth = 23
     NumGlyphs = 1
     MaxLength = 0
     TabOrder = 2
     OnChange = DirectoryEditPathToDepotChange
-    Text = 'Y:\'
   end
   object GroupBoxMountDepot: TGroupBox
     Left = 8
@@ -72,7 +71,7 @@ object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
       ParentFont = False
       ParentShowHint = False
       TabOrder = 0
-      TextHint = '\\servername\opsi_depot_rw'
+      TextHint = '\\servername\sharename'
     end
     object LabelUser: TLabel
       Left = 6
@@ -128,5 +127,39 @@ object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
     Caption = 'Mount depot'
     OnChange = CheckBoxMountDepotChange
     TabOrder = 4
+  end
+  object PanelInfo: TPanel
+    Left = 0
+    Height = 25
+    Top = 321
+    Width = 547
+    Align = alBottom
+    BevelOuter = bvNone
+    BorderStyle = bsSingle
+    ClientHeight = 21
+    ClientWidth = 543
+    TabOrder = 5
+    object LabelInfo: TLabel
+      Left = 1
+      Height = 19
+      Top = 1
+      Width = 385
+      Align = alLeft
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      AutoSize = False
+      BorderSpacing.Around = 1
+      ParentColor = False
+    end
+    object ProgressBar: TProgressBar
+      Left = 392
+      Height = 11
+      Top = 5
+      Width = 146
+      Align = alRight
+      BorderSpacing.Around = 5
+      Smooth = True
+      Style = pbstMarquee
+      TabOrder = 0
+    end
   end
 end

@@ -1,7 +1,7 @@
 object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
-  Left = 2294
+  Left = 2319
   Height = 281
-  Top = 400
+  Top = 408
   Width = 544
   Caption = 'Save images on depot'
   ClientHeight = 281
