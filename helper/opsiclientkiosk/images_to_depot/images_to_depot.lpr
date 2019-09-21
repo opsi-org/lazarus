@@ -8,7 +8,7 @@ uses
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms,
-  imagestodepot;
+  imagestodepot, SetRights;
 
 {$R *.res}
 

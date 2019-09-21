@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, EditBtn,
-  Process, oslog, FileUtil, LazFileUtils, opsiconnection, LazProgInfo,
+  Process, oslog, FileUtil, LazFileUtils, opsiconnection, //LazProgInfo,
   jwawinbase,
   LCLTranslator, ExtCtrls, ComCtrls
   ;
@@ -21,13 +21,12 @@ type
     CheckBoxMountDepot: TCheckBox;
     DirectoryEditPathToDepot: TDirectoryEdit;
     EditPassword: TEdit;
-    EditPathToDepot: TEdit;
     EditUser: TEdit;
+    GroupBoxProgress: TGroupBox;
+    GroupBoxPath: TGroupBox;
     GroupBoxMountDepot: TGroupBox;
     LabelInfo: TLabel;
-    LabelPathMountDepot: TLabel;
     LabelPassword: TLabel;
-    LabelPathToDepot: TLabel;
     LabelUser: TLabel;
     PanelInfo: TPanel;
     ProgressBar: TProgressBar;
@@ -36,7 +35,6 @@ type
     procedure CheckBoxMountDepotChange(Sender: TObject);
     procedure DirectoryEditPathToDepotChange(Sender: TObject);
     procedure DirectoryEditPathToDepotEnter(Sender: TObject);
-    procedure EditPathToDepotChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure GroupBoxInfoClick(Sender: TObject);
@@ -85,6 +83,7 @@ var
   CopySuccess: boolean;
   i,LineNumber:integer;
 begin
+
   CopySuccess := False;
   PathToDepot :=  TrimFilename(DirectoryEditPathToDepot.Text);
   {Mount opsi depot}
@@ -106,12 +105,23 @@ begin
   end;
   if DirectoryExists(PathToDepot) then
   begin
-    CopySuccess := SaveImagesOnDepot(PathToDepot);
+    ProgressBar.Visible := True;
+    LabelInfo.Caption := 'Copy icons and screenshots...';
+    ProgressBar.Position:= 20;
+    Application.ProcessMessages;
+    if SaveImagesOnDepot(PathToDepot) then
+    begin
+      LabelInfo.Caption := 'Copy icons and screenshots... done';
+      Application.ProcessMessages;
+      sleep(1000);
+      CopySuccess := True;
+      SetRights('/var/lib/opsi/depot/opsi-client-agent/files/opsi/opsiclientkiosk/ock_custom/');
+    end;
   end
   else
   begin
     ShowMessage(Format(rsIsAnInvalidDir, [DirectoryEditPathToDepot.Text,
-      LineEnding, LabelPathToDepot.Caption]));
+      LineEnding, GroupBoxPath.Caption]));
     CopySuccess := False;
     DirectoryEditPathToDepot.Font.Color:= clRed;
   end;
@@ -129,14 +139,17 @@ begin
  {$ENDIF Unix}
   if CopySuccess then
   begin
-   ProgressBar.Position:= 100;
-   for i := 5 downto 1 do
+   //ProgressBar.Position:= 100;
+   LabelInfo.Caption := 'Finished. Closing window...';
+   Application.ProcessMessages;
+   sleep(1000);
+   {for i := 5 downto 1 do
     begin
       LabelInfo.Caption := 'Window will be automatically closed in ' + IntToStr(i) + ' sec';
       Application.ProcessMessages;
       sleep(1000);
-    end;
-    Close;
+    end;}
+   Close;
   end;
 end;
 
@@ -155,11 +168,6 @@ end;
 procedure TFormSaveImagesOnDepot.DirectoryEditPathToDepotEnter(Sender: TObject);
 begin
   DirectoryEditPathToDepot.Font.Color:= clDefault;
-end;
-
-procedure TFormSaveImagesOnDepot.EditPathToDepotChange(Sender: TObject);
-begin
-  DirectoryEditPathToDepot.Text := EditPathToDepot.Text;
 end;
 
 procedure TFormSaveImagesOnDepot.FormCreate(Sender: TObject);
@@ -256,8 +264,8 @@ var
   LineNumber: integer;
 begin
   //LineNumber := MemoInfo.Lines.Add('Please wait while setting rights...');
-  //ProgressBar.Position := 80;
-  LabelInfo.Caption := 'Please wait while setting rights...';
+  ProgressBar.Position := 50;
+  LabelInfo.Caption := 'Setting rights...';
   //Refresh;
   Application.ProcessMessages;
   //Refresh;
@@ -270,13 +278,15 @@ begin
       ' Service_URL :' + OpsiConnection.MyService_URL +
       ' Hostkey :' + OpsiConnection.MyHostkey +
       ' Error :' + OpsiConnection.MyError,LLDebug);
-      //ProgressBar.Position := 50;
-      //Application.ProcessMessages;
+      ProgressBar.Position := 80;
+      Application.ProcessMessages;
       OpsiConnection.SetRights(path);
       Result := True;
-      LabelInfo.Caption := 'Please wait while setting rights... Done';
-      //ProgressBar.Position := 80;
+      ProgressBar.Position := 100;
+      LabelInfo.Caption := 'Setting rights... done';
       Application.ProcessMessages;
+      sleep(1000);
+      LogDatei.log('SetRights done', LLInfo);
     except
       Result := False;
     end;
@@ -303,17 +313,11 @@ begin
   if CopyDirTree(Source, Target,[cffOverwriteFile, cffCreateDestDirectory]) then
   begin
     LogDatei.log('Copy done', LLInfo);
-    LabelInfo.Caption := (rsImagesSaved + ': ' + Target);
-    LabelInfo.Refresh;
+    //LabelInfo.Refresh;
     //ProgressBar.Position := 20;
     //ProgressBar.Refresh;
     //Application.ProcessMessages;
 
-    SetRights('/var/lib/opsi/depot/opsi-client-agent/files/opsi/opsiclientkiosk/ock_custom/');
-
-    Application.ProcessMessages;
-
-    LogDatei.log('SetRights done', LLInfo);
     Result := True;
     Refresh;
   end
@@ -341,7 +345,7 @@ begin
     LogDatei.WriteHistFile:= False;
     LogDatei.CreateTheLogfile(LogFileName, False);
     LogDatei.LogLevel := MylogLevel;
-    LogDatei.log(ProgramInfo.InternalName+ ' ' + 'Version('+ProgramInfo.Version+')'
+    LogDatei.log(' ' + 'Version('+')'
       + ' starting at ' + DateTimeToStr(now), LLEssential);
     LogDatei.log('Initialize Logging', LLNotice);
     InitLogging := True;

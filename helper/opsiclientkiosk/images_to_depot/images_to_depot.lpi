@@ -41,7 +41,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="2">
+    <Units Count="3">
       <Unit0>
         <Filename Value="images_to_depot.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -53,6 +53,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit1>
+      <Unit2>
+        <Filename Value="setrights.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="SetRights"/>
+      </Unit2>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -63,7 +68,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\..\..\common;..\..\..\external_libraries\misc;..\..\..\external_libraries\synapse"/>
+      <OtherUnitFiles Value="..\..\..\common;..\..\..\external_libraries\misc;..\..\..\external_libraries\synapse;.."/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>

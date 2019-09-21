@@ -44,27 +44,26 @@ msgctxt "tformsaveimagesondepot.checkboxmountdepot.caption"
 msgid "Mount depot"
 msgstr ""
 
-#: tformsaveimagesondepot.editpathtodepot.texthint
-msgid "\\\\servername\\sharename"
-msgstr ""
-
 #: tformsaveimagesondepot.groupboxmountdepot.caption
 msgctxt "tformsaveimagesondepot.groupboxmountdepot.caption"
 msgid "Mount depot"
 msgstr ""
 
+#: tformsaveimagesondepot.groupboxpath.caption
+msgctxt "tformsaveimagesondepot.groupboxpath.caption"
+msgid "Path to depot"
+msgstr ""
+
+#: tformsaveimagesondepot.groupboxprogress.caption
+msgid "Progress"
+msgstr ""
+
+#: tformsaveimagesondepot.labelinfo.caption
+msgid "Copying not started"
+msgstr ""
+
 #: tformsaveimagesondepot.labelpassword.caption
 msgid "Password"
-msgstr ""
-
-#: tformsaveimagesondepot.labelpathmountdepot.caption
-msgctxt "tformsaveimagesondepot.labelpathmountdepot.caption"
-msgid "Path to depot"
-msgstr ""
-
-#: tformsaveimagesondepot.labelpathtodepot.caption
-msgctxt "tformsaveimagesondepot.labelpathtodepot.caption"
-msgid "Path to depot"
 msgstr ""
 
 #: tformsaveimagesondepot.labeluser.caption
