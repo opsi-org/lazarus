@@ -136,7 +136,6 @@ object FormSaveImagesOnDepot: TFormSaveImagesOnDepot
         Anchors = [akTop, akLeft, akRight, akBottom]
         AutoSize = False
         BorderSpacing.Around = 5
-        Caption = 'Copying not started'
         ParentColor = False
       end
       object ProgressBar: TProgressBar

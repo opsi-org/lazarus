@@ -67,6 +67,11 @@ resourcestring
   rsImagesNotSaved = 'Images could not be saved on opsi depot. %sPlease'
     +' check if depot is mounted with write privileges.';
   rsImagesSaved = 'Images saved on';
+  rsSettingRights = 'Setting rights...';
+  rsDone = 'done';
+  rsCopyIcons = 'Copy icons and screenshots...';
+  rsMounting = 'Mounting';
+  rsFinished = 'Copy process finished. Closing window...';
 
 
 implementation
@@ -106,12 +111,12 @@ begin
   if DirectoryExists(PathToDepot) then
   begin
     ProgressBar.Visible := True;
-    LabelInfo.Caption := 'Copy icons and screenshots...';
+    LabelInfo.Caption := rsCopyIcons;
     ProgressBar.Position:= 20;
     Application.ProcessMessages;
     if SaveImagesOnDepot(PathToDepot) then
     begin
-      LabelInfo.Caption := 'Copy icons and screenshots... done';
+      LabelInfo.Caption := rsCopyIcons + ' ' + rsDone;
       Application.ProcessMessages;
       sleep(1000);
       CopySuccess := True;
@@ -140,7 +145,7 @@ begin
   if CopySuccess then
   begin
    //ProgressBar.Position:= 100;
-   LabelInfo.Caption := 'Finished. Closing window...';
+   LabelInfo.Caption := rsFinished;
    Application.ProcessMessages;
    sleep(1000);
    {for i := 5 downto 1 do
@@ -204,7 +209,7 @@ begin
     if RunCommand(Shell, [ShellOptions , ShellCommand], ShellOutput) then
     begin
       ShellCommand := '';
-      LabelInfo.Caption := 'Mounting done';
+      LabelInfo.Caption := rsMounting + ' ' + rsDone;
       Application.ProcessMessages;
       LogDatei.log('Mounting done', LLInfo);
       //ShowMessage(ShellOutput);
@@ -265,7 +270,7 @@ var
 begin
   //LineNumber := MemoInfo.Lines.Add('Please wait while setting rights...');
   ProgressBar.Position := 50;
-  LabelInfo.Caption := 'Setting rights...';
+  LabelInfo.Caption := rsSettingRights;
   //Refresh;
   Application.ProcessMessages;
   //Refresh;
@@ -283,7 +288,7 @@ begin
       OpsiConnection.SetRights(path);
       Result := True;
       ProgressBar.Position := 100;
-      LabelInfo.Caption := 'Setting rights... done';
+      LabelInfo.Caption := rsSettingRights + ' '+ rsDone;;
       Application.ProcessMessages;
       sleep(1000);
       LogDatei.log('SetRights done', LLInfo);
@@ -313,11 +318,6 @@ begin
   if CopyDirTree(Source, Target,[cffOverwriteFile, cffCreateDestDirectory]) then
   begin
     LogDatei.log('Copy done', LLInfo);
-    //LabelInfo.Refresh;
-    //ProgressBar.Position := 20;
-    //ProgressBar.Refresh;
-    //Application.ProcessMessages;
-
     Result := True;
     Refresh;
   end
