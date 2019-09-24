@@ -31,7 +31,10 @@ uses
   progresswindow,
   ExtDlgs,
   lazproginfo,
-  helpinfo;
+  helpinfo,
+  ShellApi
+
+  {more units if nedded};
   //imagestodepot;
 
 type
@@ -249,8 +252,10 @@ type
     MinWidthStandardMode : Integer;
     MinWidthExpertMode   : Integer;
     procedure DeleteFormerImage(ImagePath:String);
+    function RunAsAdmin(const Handle: DWord; const Path, Params: string
+      ): Boolean;
     procedure SaveIconsAndScreenshotsLists;
-    function SaveImagesOnDepot: String;
+    function SaveImagesOnDepotNT: String;
     procedure SetPositionButtonsOnPanelToolbar;
     function GetUserName_:string;
      { Inits at Start }
@@ -1728,7 +1733,12 @@ end;
 procedure TFormOpsiClientKiosk.BitBtnSaveImagesClick(Sender: TObject);
 begin
   SaveIconsAndScreenshotsLists;
-  SaveImagesOnDepot;
+ {$IFDEF WINDOWS}
+  SaveImagesOnDepotNT;
+ {$ENDIF WINDOS}
+ {$IFDEF UNIX}
+  SaveImagesOnDepotUNIX;
+ {$ENDIF UNIX}
 end;
 
 procedure TFormOpsiClientKiosk.BitBtnInstallNowClick(Sender: TObject);
@@ -2434,7 +2444,26 @@ begin
   end;
 end;
 
-function TFormOpsiClientKiosk.SaveImagesOnDepot: String;
+function TFormOpsiClientKiosk.RunAsAdmin(const Handle: DWord; const Path, Params: string): Boolean;
+var
+  ShellExecuteInfoA: TShellExecuteInfoA;
+begin
+  FillChar(ShellExecuteInfoA, SizeOf(ShellExecuteInfoA), 0);
+  with ShellExecuteInfoA do
+  begin
+    cbSize := SizeOf(ShellExecuteInfoA);
+    Wnd := Handle;
+    fMask := SEE_MASK_FLAG_DDEWAIT or SEE_MASK_FLAG_NO_UI;
+    lpVerb := 'runas';
+    lpFile := PAnsiChar(Path);
+    lpParameters := PAnsiChar(Params);
+    nShow := 1;
+  end;
+  Result := ShellExecuteExA(@ShellExecuteInfoA);
+end;
+
+
+function TFormOpsiClientKiosk.SaveImagesOnDepotNT: String;
 var
   Shell,
   ShellOptions,
@@ -2444,24 +2473,26 @@ var
 begin
   try
     Result := '';
-    PathToExe := Application.Location + 'images_to_depot\images_to_depot.exe';
-    LogDatei.log('Saving images on depot',LLInfo);
+    PathToExe := TrimFilename(Application.Location + 'images_to_depot\images_to_depot.exe');
+    LogDatei.log('Saving images on depot...',LLInfo);
     {set shell and options}
     Shell := 'powershell.exe';//PathToExe;//'powershell.exe';
     ShellOptions := '/c'; //-Verb runAs  'Start-Process PowerShell -Verb RunAs | '
-    ShellCommand := 'Start-Process ' +  PathToExe + ' -Verb RunAs';
-    if RunCommand(Shell, [ShellCommand], ShellOutput) then
+    ShellCommand := 'Start-Process ' + QuotedStr(PathToExe) + ' -Verb RunAs';
+    //if RunCommand(Shell, ['Start-Process', QuotedStr(PathToExe), '-Verb RunAs'], ShellOutput) then
+    if RunAsAdmin(FormOpsiClientKiosk.Handle, PathToExe,'') then
     begin
       //ShellCommand := '';
       Result := ShellOutput;
       LogDatei.log('Images saved on depot', LLInfo);
+      LogDatei.log('Shell command: ' + ShellCommand, LLDebug);
       //ShowMessage(ShellOutput);
     end
     else
     begin
       Result := '';
-      LogDatei.log('Error while trying to run command ' +Shellcommand
-        + ' on ' + Shell + 'with options ' + ShellOptions, LLError);
+      LogDatei.log('Error while trying to run command ' + ShellCommand
+        + ' on ' + Shell + ' with options ' + ShellOptions, LLError);
     end;
   except
     Result := '';

@@ -12,6 +12,7 @@
       <UseXPManifest Value="True"/>
       <XPManifest>
         <DpiAware Value="True"/>
+        <ExecutionLevel Value="requireAdministrator"/>
         <TextDesc Value="Copy images for opsi-client-kiosk to the respective depot."/>
       </XPManifest>
       <Icon Value="0"/>
