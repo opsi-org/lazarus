@@ -57,6 +57,8 @@ uses
   Windows,
 {$ENDIF WINDOWS}
   //widatahelper,
+  IDZlib,
+  IdCompressorZlib,
   zstream;
 //LCLIntf,
 //LResources,
@@ -1469,6 +1471,11 @@ var
   sendstream, ReceiveStream: TMemoryStream;
   CompressionSendStream: TCompressionStream;
   CompressionReceiveStream: TDeCompressionStream;
+  //IdCompressorZLib.CompressStream(tmpStream,AResponseInfo.ContentStream,9,GZIP_WINBITS,9,0);
+  // IdCompressorZLib.DecompressGZipStream(ARequestInfo.PostStream,tmpStream);
+  //CompressionSendStream: Tgzipstream;
+  //CompressionReceiveStream: Tungzipstream;
+  gzipstream : TIdCompressorZLib;
   buffer: ^byte;
   readcount: integer;
   compress: boolean;
@@ -1505,8 +1512,10 @@ begin
         compress := True;
         ContentType := 'application/json';
         Accept := 'application/json';
-        ContentEncoding := 'deflate';
-        AcceptEncoding := 'deflate';
+        //ContentEncoding := 'deflate';
+        //AcceptEncoding := 'deflate';
+        ContentEncoding := 'gzip';
+        AcceptEncoding := 'gzip';
       end;
       1:
       begin
@@ -1634,11 +1643,17 @@ begin
 
               if compress then
               begin
-                CompressionSendStream := TCompressionStream.Create(clMax, sendstream);
-                CompressionSendStream.Write(utf8str[1], length(utf8str));
-                CompressionSendStream.Free;
+                //CompressionSendStream := TCompressionStream.Create(clMax, sendstream);
+                //CompressionSendStream := Tgzipstream.Create(clMax, sendstream);
+                //CompressionSendStream.Write(utf8str[1], length(utf8str));
+                //CompressionSendStream.Free;
                 // do not log the compressed sendstream: will create encoding errors
                 //LogDatei.log('sendstream: ' + MemoryStreamToString(sendstream), LLDebug2);
+                gzipstream :=TIdCompressorZLib.Create(nil);
+                mymemorystream.Write(utf8str[1], length(utf8str));
+                gzipstream.CompressStream(mymemorystream, sendstream,9,GZIP_WINBITS,9,0);
+                mymemorystream.Clear;
+
               end
               else
               begin
@@ -1678,7 +1693,10 @@ begin
                 begin
                   ReceiveStream.Seek(0, 0);
                   mymemorystream.Seek(0, 0);
-                  CompressionReceiveStream := TDeCompressionStream.Create(ReceiveStream);
+                  //CompressionReceiveStream := TDeCompressionStream.Create(ReceiveStream);
+                  //CompressionReceiveStream := Tungzipstream.Create(ReceiveStream);
+                  gzipstream.DecompressStream(ReceiveStream,mymemorystream,GZIP_WINBITS);
+                  (*
                   GetMem(buffer, 655360);
                   repeat
                     FillChar(buffer^, 655360, ' ');
@@ -1688,6 +1706,7 @@ begin
                   until readcount < 655360;
                   CompressionReceiveStream.Free;
                   FreeMem(buffer);
+                  *)
                 end;
               end;
             end;

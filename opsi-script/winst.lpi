@@ -37,7 +37,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\modified\misc;..\common;..\external_libraries\synapse"/>
+            <OtherUnitFiles Value="..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\modified\misc;..\common;..\external_libraries\synapse;..\external_libraries\indy\Lib\Protocols;..\external_libraries\indy\Lib\System;..\external_libraries\indy\Lib\Core"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -168,7 +168,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="54">
+    <Units Count="55">
       <Unit0>
         <Filename Value="winst.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -411,6 +411,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit53>
+      <Unit54>
+        <Filename Value="gzipstream.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit54>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
