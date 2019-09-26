@@ -20,6 +20,7 @@ type
       procedure ShowFilenames;
       constructor Create(DepotPath: String);
       destructor Destroy; override;
+      function GetPathToIcon(PathToScript:string):string;
   end;
 
 implementation
@@ -30,6 +31,7 @@ procedure TIconCollector.ShowFilenames;
 begin
   WriteLn(FileNames.Text);
 end;
+
 
 constructor TIconCollector.Create(DepotPath: String);
 begin
