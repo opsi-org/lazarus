@@ -2208,16 +2208,16 @@ begin
 
   { skinpath in opsiclientagent custom dir }
   skinpath := Application.Location +
-    'ock_custom\skin' + PathDelim;
-  if FileExistsUTF8(skinpath + 'opsiclientkiosk.png') then
+    'ock_custom' + PathDelim + 'skin' + PathDelim;
+  if FileExists(skinpath + 'header.png') then
   begin
-    ImageHeader.Picture.LoadFromFile(skinpath + 'opsiclientkiosk.png');
+    ImageHeader.Picture.LoadFromFile(skinpath + 'header.png');
   end;
-  if FileExistsUTF8(skinpath + 'logo.png') then
+  if FileExists(skinpath + 'logo.png') then
   begin
     ImageLogo.Picture.LoadFromFile(skinpath + 'logo.png');
   end;
-  if FileExistsUTF8(skinpath + 'opsiclientkiosk.ini') then
+  if FileExists(skinpath + 'opsiclientkiosk.ini') then
   begin
     LoadSkinForTitle(skinpath + 'opsiclientkiosk.ini');
   end;
