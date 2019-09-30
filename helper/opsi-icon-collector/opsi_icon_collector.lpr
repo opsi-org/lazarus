@@ -6,7 +6,7 @@ uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
-  Classes, SysUtils, CustApp, IconCollector
+  Classes, SysUtils, CustApp, IconCollector, Interfaces
   { you can add units after this };
 
 type
@@ -62,6 +62,8 @@ begin
   IconCollector := TIconCollector.Create(DepotPath);
   WriteLn('Done');
   IconCollector.ShowFilenames;
+  IconCollector.GetPathToIcon('');
+  //IconCollector.ExtractIconFromExe('C:\Users\Jan\Test\anydesk\AnyDesk.exe');
 end;
 
 constructor TOpsiIconCollector.Create(TheOwner: TComponent);
