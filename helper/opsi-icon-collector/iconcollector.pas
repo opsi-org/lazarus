@@ -15,7 +15,7 @@ type
     private
       FileNames :TStringList;
       function ExtractLine(PathToScript:String; const SearchString:String):String;
-      function ParseLine(Line:String):String;
+      function ParseLine(Line:String; PathToScript:String):String;
 
       //function ExtractIcon(OpsiScriptPath:String):String;
       //function ExtractProductID(OpsiScriptPath:String):String;
@@ -48,16 +48,34 @@ begin
         ReadLn(ScriptFile, Line);
         if AnsiContainsText(Line, SearchString) then Break;
       end;
-      Result:= Trim(Line);
+      Line := StringReplace(Line,'+',' + ',[rfReplaceAll, rfIgnoreCase]); //if no white spaces are between + and string(variable)
+      Result:= DelSpace1(Trim(Line));//removes all not needed white spaces except of one white space between every token
     finally
       CloseFile(ScriptFile);
     end;
   end;
 end;
 
-function TIconCollector.ParseLine(Line: String): String;
+function TIconCollector.ParseLine(Line: String; PathToScript:String): String;
+var
+  SplittedLine:TStringList;
 begin
+  Line := Trim(StringReplace(Line,'ShowBitmap','',[rfIgnoreCase]));
+  Line := StringReplace(Line,'%ScriptPath%',PathToScript,[rfIgnoreCase]);
+  SplittedLine := TStringList.Create;
+  try
+    SplittedLine.Delimiter := ' ';
+    SplittedLine.DelimitedText := Line;
+    //SplittedLine := Line.Split(' ');
+    //Line := DelChars(Line, '+');
+    //Line := ExtractWord(0,Line,[' ']);
 
+    WriteLn(SplittedLine[0]);
+    Result := Line;
+  finally
+    if Assigned(SplittedLine) then
+      FreeAndNil(SplittedLine);
+  end;
 end;
 
 procedure TIconCollector.ExtractIconFromExe(PathToExe: String);
@@ -99,10 +117,13 @@ end;
 function TIconCollector.GetPathToIcon(PathToScript: string): string;
 var
   i : integer;
+  Line : String;
 begin
   for i := 0 to FileNames.Count-1 do
   begin
-    WriteLn(ExtractLine(FileNames[i],'ShowBitmap'));
+    Line := ExtractLine(FileNames[i],'ShowBitmap');
+    PathToScript := ExtractFilePath(FileNames[i]);//ExcludeTrailingPathDelimiter
+    WriteLn(ParseLine(Line,PathToScript));
   end;
 end;
 
