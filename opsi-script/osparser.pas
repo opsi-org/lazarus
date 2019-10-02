@@ -569,6 +569,8 @@ type
     function execWinBatch(const Sektion: TWorkSection; WinBatchParameter: string;
       WaitConditions: TSetWaitConditions; ident: string;
       WaitSecs: word; runAs: TRunAs; flag_force64: boolean): TSectionResult;
+    function parseAndCallWinbatch(ArbeitsSektion: TWorkSection;
+      var Remaining: string; linecounter: integer): TSectionResult;
     function execDOSBatch(const Sektion: TWorkSection; BatchParameter: string;
       ShowCmd: integer; catchOut: boolean; logleveloffset: integer;
       WaitConditions: TSetWaitConditions;
@@ -9370,6 +9372,217 @@ begin
   // not implemented
 end;
 
+function TuibInstScript.parseAndCallWinbatch(ArbeitsSektion: TWorkSection;
+  var Remaining: string; linecounter: integer): TSectionResult;
+var
+ runAs : TRunAs;
+ WaitSecs : Word=0;
+ flag_force64 : Boolean;
+ expr : String='';
+ ident : String='';
+ seconds : String='';
+ WaitConditions : TSetWaitConditions;
+ SyntaxCheck : Boolean;
+ onlyWindows : boolean;
+ InfoSyntaxError : String='';
+ sectionName : String='';
+
+begin
+ if length(ArbeitsSektion.Name) <> 0 then
+ begin
+   logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
+   sectionName := PStatNames[ArbeitsSektion.SectionKind];
+ end
+ else
+ begin
+   logdatei.log('Execution of: processCall('+trim(ArbeitsSektion.Text)+') '+ Remaining, LLNotice);
+   sectionName := 'processCall';
+ end;
+
+ runAs := traInvoker;
+ {$IFDEF WIN32}
+ opsiSetupAdmin_runElevated := false;
+ {$ENDIF WIN32}
+ WaitSecs := 0;
+ flag_force64 := false;
+ GetWord (Remaining, expr, Remaining, WordDelimiterSet0);
+ SyntaxCheck := true;
+ onlyWindows := false;
+
+ ident := '';
+ WaitConditions := [ttpWaitOnTerminate];
+
+ while SyntaxCheck and (length (expr) > 0)
+ do
+ Begin
+   if (LowerCase (expr) = LowerCase (Parameter_64Bit)) and Is64BitSystem
+   then
+   Begin
+       flag_force64 := true;
+       onlyWindows := true;
+   End
+
+   else if LowerCase (expr) = LowerCase (Parameter_32Bit)
+   then
+   Begin
+       flag_force64 := false;
+       onlyWindows := true;
+   End
+
+   else if (LowerCase (expr) = LowerCase (Parameter_SysNative)) and Is64BitSystem
+   then
+   Begin
+       flag_force64 := true;
+       onlyWindows := true;
+   End
+
+   else if (LowerCase (expr) = LowerCase (Parameter_SysNative)) and (not Is64BitSystem)
+   then
+   Begin
+       flag_force64 := false;
+       onlyWindows := true;
+   End
+
+   else if LowerCase (expr) = LowerCase (ParameterWaitSecs)
+   then
+   Begin
+     WaitConditions := WaitConditions + [ttpWaitTime];
+     // WaitConditions := WaitConditions - [ttpWaitOnTerminate];
+
+     GetWord (Remaining, expr, Remaining, WordDelimiterSet0);
+     try
+       WaitSecs := StrToInt64 (expr);
+     except
+       on EConvertError do
+       Begin
+          InfoSyntaxError := 'Integer number expected';
+          SyntaxCheck := false;
+       End
+     end;
+   End
+
+   else if LowerCase (expr) = LowerCase (ParameterCloseOnWindow)
+   then
+   Begin
+     onlyWindows := true;
+     runAs := traInvoker;
+     WaitConditions := WaitConditions + [ttpWaitForWindowAppearing];
+
+     if EvaluateString (Remaining, Remaining, ident, InfoSyntaxError)
+     then
+     Begin
+       if Remaining <> ''
+       then
+       Begin
+         SyntaxCheck := false;
+         InfoSyntaxError := 'not expected chars after "';
+       End;
+     End
+     else
+        SyntaxCheck := false;
+   End
+
+
+   else if LowerCase (expr) = LowerCase (ParameterCloseBehindWindow)
+   then
+   Begin
+     onlyWindows := true;
+     runAs := traInvoker;
+     WaitConditions := WaitConditions + [ttpWaitForWindowVanished];
+
+     if EvaluateString (Remaining, Remaining, ident, InfoSyntaxError)
+     then
+     Begin
+       if Remaining <> ''
+       then
+       Begin
+         SyntaxCheck := false;
+         InfoSyntaxError := 'unexpected characters after "';
+       End;
+     End
+     else
+       SyntaxCheck := false;
+   End
+
+   else if LowerCase (expr) = LowerCase (ParameterWaitProcessTimeoutSecs)
+   then
+   Begin
+     WaitConditions := WaitConditions - [ttpWaitTime];
+     WaitConditions := WaitConditions + [ttpWaitTimeout];
+
+     GetWord (Remaining, expr, Remaining, WordDelimiterSet0);
+     try
+       WaitSecs := StrToInt64 (expr);
+     except
+       on EConvertError do
+       Begin
+         try
+           EvaluateString (expr, expr, seconds, InfoSyntaxError);
+           WaitSecs := StrToInt64 (seconds);
+         except
+           on EConvertError do
+           Begin
+             InfoSyntaxError := 'Integer number expected '+InfoSyntaxError;
+            SyntaxCheck := false;
+          end;
+         end
+       End
+     end
+   End
+
+   else if LowerCase (expr) = LowerCase (ParameterWaitForProcessEnding)
+   then
+   Begin
+     WaitConditions := WaitConditions + [ttpWaitForProcessEnding];
+    if not EvaluateString (Remaining, Remaining, ident, InfoSyntaxError)  then
+        SyntaxCheck := false;
+   End
+
+   else if UpperCase (expr) = UpperCase (ParameterDontWait)
+   then
+   Begin
+       WaitConditions := WaitConditions - [ttpWaitOnTerminate];
+       WaitConditions := WaitConditions - [ttpWaitTimeout];
+   End
+
+   else if UpperCase (expr) = UpperCase (ParameterWaitOnTerminate)
+   then
+   Begin
+       WaitConditions := WaitConditions + [ttpWaitOnTerminate];
+   End
+
+   else if RunAsForParameter(expr, runas) then
+   begin
+     onlyWindows := true;
+   end
+
+   else
+   Begin
+         SyntaxCheck := false;
+         InfoSyntaxError := expr + ' not legal ' + sectionName + ' parameter';
+         // prevent misleading remaining string error for processCall
+         Remaining := '';
+   End;
+
+   {$IFNDEF WIN32}
+   if onlyWindows then
+   begin
+     SyntaxCheck := false;
+     InfoSyntaxError := expr + ' is only supported on Windows';
+     break;
+   end;
+   {$ENDIF WIN32}
+
+   GetWord (Remaining, expr, Remaining, WordDelimiterSet0);
+ end;
+
+ if SyntaxCheck
+ then
+   Result := execWinBatch (ArbeitsSektion, Remaining, WaitConditions, Ident, WaitSecs, runAs,flag_force64)
+ else
+   Result := reportError (ArbeitsSektion, linecounter, 'Expressionstr', InfoSyntaxError);
+end;
+
 function TuibInstScript.execWinBatch(const Sektion: TWorkSection;
   WinBatchParameter: string;
   WaitConditions: TSetWaitConditions;
@@ -14486,259 +14699,9 @@ begin
           StringResult := '';
           ArbeitsSektion := TWorkSection.Create(0, nil);
           ArbeitsSektion.Text := s1;
-          tmpstr := r;
-          //////////////////
-          begin
-            //{$IFDEF WINDOWS}
-            runAs := traInvoker;
-               {$IFDEF WIN32}
-            opsiSetupAdmin_runElevated := False;
-               {$ENDIF WIN32}
-            WaitSecs := 0;
-            flag_force64 := False;
-            GetWord(r, expr, r, WordDelimiterSet0);
-            SyntaxCheck := True;
-
-            ident := '';
-            WaitConditions := [ttpWaitOnTerminate];
-
-            while SyntaxCheck and (length(expr) > 0) do
-            begin
-                 {$IFDEF WIN32}
-              if LowerCase(expr) = LowerCase(ParameterRunAsAdmin)
-              then
-              begin
-                runAs := traAdmin;
-              end
-
-              else if LowerCase(expr) = LowerCase(ParameterRunAsAdmin1)
-              then
-              begin
-                runAs := traAdmin;
-              end
-
-              else if LowerCase(expr) = LowerCase(ParameterRunAsAdmin2)
-              then
-              begin
-                runAs := traAdminProfile;
-              end
-
-              else if LowerCase(expr) = LowerCase(ParameterRunAsAdmin3)
-              then
-              begin
-                runAs := traAdminProfileImpersonate;
-              end
-
-              else if LowerCase(expr) = LowerCase(ParameterRunAsAdmin4)
-              then
-              begin
-                runAs := traAdminProfileImpersonateExplorer;
-              end
-
-              else if LowerCase(expr) = LowerCase(ParameterRunAsInvoker)
-              then
-              begin
-                runAs := traInvoker;
-              end
-
-              else if LowerCase(expr) = LowerCase(ParameterRunElevated)
-              then
-              begin
-                opsiSetupAdmin_runElevated := True;
-              end
-
-              else if LowerCase(expr) = LowerCase(ParameterRunAsLoggedOnUser)
-              then
-              begin
-                if runLoginScripts then
-                  runAs := traLoggedOnUser
-                else
-                  LogDatei.log(
-                    'Warning: Not in UserLoginScript mode: /RunAsLoggedinUser ignored', LLWarning);
-              end
-
-              else if (LowerCase(expr) = LowerCase(Parameter_64Bit)) and
-                Is64BitSystem then
-              begin
-                flag_force64 := True;
-              end
-
-              else if LowerCase(expr) = LowerCase(Parameter_32Bit)
-              then
-              begin
-                flag_force64 := False;
-              end
-
-              else if (LowerCase(expr) = LowerCase(Parameter_SysNative)) and
-                Is64BitSystem then
-              begin
-                flag_force64 := True;
-              end
-
-              else if (LowerCase(expr) = LowerCase(Parameter_SysNative)) and
-                (not Is64BitSystem) then
-              begin
-                flag_force64 := False;
-              end
-
-              else
-{$ENDIF WIN32}
-              if LowerCase(expr) = LowerCase(ParameterWaitSecs) then
-              begin
-                WaitConditions := WaitConditions + [ttpWaitTime];
-                // WaitConditions := WaitConditions - [ttpWaitOnTerminate];
-
-                GetWord(r, expr, r, WordDelimiterSet0);
-                try
-                  WaitSecs := StrToInt64(expr);
-                except
-                  on EConvertError do
-                  begin
-                    InfoSyntaxError := 'Integer number expected';
-                    SyntaxCheck := False;
-                  end
-                end;
-              end
-
-                 {$IFDEF WIN32}
-              else if LowerCase(expr) = LowerCase(ParameterCloseOnWindow)
-              then
-              begin
-                runAs := traInvoker;
-                WaitConditions := WaitConditions + [ttpWaitForWindowAppearing];
-
-                if EvaluateString(r, r, ident, InfoSyntaxError)
-                then
-                begin
-                  if r <> '' then
-                  begin
-                    SyntaxCheck := False;
-                    InfoSyntaxError := 'not expected chars after "';
-                  end;
-                end
-                else
-                  SyntaxCheck := False;
-              end
-
-
-              else if LowerCase(expr) = LowerCase(ParameterCloseBehindWindow)
-              then
-              begin
-                runAs := traInvoker;
-                WaitConditions := WaitConditions + [ttpWaitForWindowVanished];
-
-                if EvaluateString(r, r, ident, InfoSyntaxError)
-                then
-                begin
-                  if r <> '' then
-                  begin
-                    SyntaxCheck := False;
-                    InfoSyntaxError := 'unexpected characters after "';
-                  end;
-                end
-                else
-                  SyntaxCheck := False;
-              end
-
-                 {$ENDIF WIN32}
-
-              else if LowerCase(expr) = LowerCase(ParameterWaitProcessTimeoutSecs)
-              then
-              begin
-                WaitConditions := WaitConditions - [ttpWaitTime];
-                WaitConditions := WaitConditions + [ttpWaitTimeout];
-
-                GetWord(r, expr, r, WordDelimiterSet0);
-                try
-                  WaitSecs := StrToInt64(expr);
-                except
-                  on EConvertError do
-                  begin
-                    try
-                      EvaluateString(expr, expr, seconds, InfoSyntaxError);
-                      WaitSecs := StrToInt64(seconds);
-                    except
-                      on EConvertError do
-                      begin
-                        InfoSyntaxError := 'Integer number expected ' + InfoSyntaxError;
-                        SyntaxCheck := False;
-                      end;
-                    end;
-                  end
-                end;
-              end
-
-              else if LowerCase(expr) = LowerCase(ParameterWaitForProcessEnding)
-              then
-              begin
-                WaitConditions := WaitConditions + [ttpWaitForProcessEnding];
-(*
-                   GetWord (Remaining, ident, Remaining, WordDelimiterSet0);
-                   if ident = '' then
-                   begin
-                     SyntaxCheck := false;
-                     InfoSyntaxError := 'process name expected';
-                   end;
-*)
-                if not EvaluateString(r, r, ident, InfoSyntaxError) then
-                  SyntaxCheck := False;
-(*
-                   then
-                   Begin
-                     if Remaining <> ''
-                     then
-                     Begin
-                       SyntaxCheck := false;
-                       InfoSyntaxError := 'unexpected chars after "';
-                     End
-                   End
-                   else
-                     SyntaxCheck := false;
-*)
-              end
-
-              else if UpperCase(expr) = UpperCase(ParameterDontWait)
-              then
-              begin
-                WaitConditions := WaitConditions - [ttpWaitOnTerminate];
-                WaitConditions := WaitConditions - [ttpWaitTimeout];
-              end
-
-              else if UpperCase(expr) = UpperCase(ParameterWaitOnTerminate)
-              then
-              begin
-                WaitConditions := WaitConditions + [ttpWaitOnTerminate];
-              end
-
-
-
-              else
-              begin
-                SyntaxCheck := False;
-                InfoSyntaxError := expr + ' not legal WinBatch parameter';
-              end;
-
-              GetWord(r, expr, r, WordDelimiterSet0);
-            end;
-
-            if SyntaxCheck then
-            begin
-              LogDatei.log('Executing: ' + s + '(' + s1 + ') ' + tmpstr, LLNotice);
-              ActionResult :=
-                execWinBatch(ArbeitsSektion, r, WaitConditions, Ident, WaitSecs, runAs, flag_force64);
-              StringResult := IntToStr(FLastExitCodeOfExe);
-            end
-            else
-              ActionResult :=
-                reportError(ArbeitsSektion, i, 'Expressionstr', InfoSyntaxError);
-               (*
-               {$ELSE WINDOWS}
-                logdatei.log('Winbatch sections are not implemented for Linux right now', LLWarning);
-                {$ENDIF WINDOWS}
-                *)
-          end;
+          ActionResult := parseAndCallWinbatch(ArbeitsSektion, r, i);
           ArbeitsSektion.Free;
-          ///////////////////
+          StringResult := IntToStr (FLastExitCodeOfExe);
         end;
   end
 
@@ -19088,208 +19051,6 @@ var
 {$ENDIF WINDOWS}
 
 
-  function parseAndCallWinbatch(ArbeitsSektion: TWorkSection;
-    Remaining: string): TSectionResult;
-  begin
-    logdatei.log('Execution of: ' + ArbeitsSektion.Name + ' ' + Remaining, LLNotice);
-    runAs := traInvoker;
- {$IFDEF WIN32}
-    opsiSetupAdmin_runElevated := False;
- {$ENDIF WIN32}
-    WaitSecs := 0;
-    flag_force64 := False;
-    GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
-    SyntaxCheck := True;
-
-    ident := '';
-    WaitConditions := [ttpWaitOnTerminate];
-
-    while SyntaxCheck and (length(expr) > 0) do
-    begin
-   {$IFDEF WIN32}
-      if LowerCase(expr) = LowerCase(ParameterRunAsAdmin) then
-      begin
-        runAs := traAdmin;
-      end
-
-      else if LowerCase(expr) = LowerCase(ParameterRunAsAdmin1) then
-      begin
-        runAs := traAdmin;
-      end
-
-      else if LowerCase(expr) = LowerCase(ParameterRunAsAdmin2) then
-      begin
-        runAs := traAdminProfile;
-      end
-
-      else if LowerCase(expr) = LowerCase(ParameterRunAsAdmin3) then
-      begin
-        runAs := traAdminProfileImpersonate;
-      end
-
-      else if LowerCase(expr) = LowerCase(ParameterRunAsAdmin4) then
-      begin
-        runAs := traAdminProfileImpersonateExplorer;
-      end
-
-      else if LowerCase(expr) = LowerCase(ParameterRunAsInvoker) then
-      begin
-        runAs := traInvoker;
-      end
-
-      else if LowerCase(expr) = LowerCase(ParameterRunElevated) then
-      begin
-        opsiSetupAdmin_runElevated := True;
-      end
-
-      else if LowerCase(expr) = LowerCase(ParameterRunAsLoggedOnUser) then
-      begin
-        if runLoginScripts then
-          runAs := traLoggedOnUser
-        else
-          LogDatei.log('Warning: Not in UserLoginScript mode: /RunAsLoggedinUser ignored',
-            LLWarning);
-      end
-
-      else if (LowerCase(expr) = LowerCase(Parameter_64Bit)) and Is64BitSystem then
-      begin
-        flag_force64 := True;
-      end
-
-      else if LowerCase(expr) = LowerCase(Parameter_32Bit) then
-      begin
-        flag_force64 := False;
-      end
-
-      else if (LowerCase(expr) = LowerCase(Parameter_SysNative)) and Is64BitSystem then
-      begin
-        flag_force64 := True;
-      end
-
-      else if (LowerCase(expr) = LowerCase(Parameter_SysNative)) and
-        (not Is64BitSystem) then
-      begin
-        flag_force64 := False;
-      end
-
-      else
-{$ENDIF WIN32}
-      if LowerCase(expr) = LowerCase(ParameterWaitSecs) then
-      begin
-        WaitConditions := WaitConditions + [ttpWaitTime];
-        // WaitConditions := WaitConditions - [ttpWaitOnTerminate];
-
-        GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
-        try
-          WaitSecs := StrToInt64(expr);
-        except
-          on EConvertError do
-          begin
-            InfoSyntaxError := 'Integer number expected';
-            SyntaxCheck := False;
-          end
-        end;
-      end
-
-   {$IFDEF WIN32}
-      else if LowerCase(expr) = LowerCase(ParameterCloseOnWindow) then
-      begin
-        runAs := traInvoker;
-        WaitConditions := WaitConditions + [ttpWaitForWindowAppearing];
-
-        if EvaluateString(Remaining, Remaining, ident, InfoSyntaxError) then
-        begin
-          if Remaining <> '' then
-          begin
-            SyntaxCheck := False;
-            InfoSyntaxError := 'not expected chars after "';
-          end;
-        end
-        else
-          SyntaxCheck := False;
-      end
-
-
-      else if LowerCase(expr) = LowerCase(ParameterCloseBehindWindow) then
-      begin
-        runAs := traInvoker;
-        WaitConditions := WaitConditions + [ttpWaitForWindowVanished];
-
-        if EvaluateString(Remaining, Remaining, ident, InfoSyntaxError) then
-        begin
-          if Remaining <> '' then
-          begin
-            SyntaxCheck := False;
-            InfoSyntaxError := 'unexpected characters after "';
-          end;
-        end
-        else
-          SyntaxCheck := False;
-      end
-
-   {$ENDIF WIN32}
-
-      else if LowerCase(expr) = LowerCase(ParameterWaitProcessTimeoutSecs) then
-      begin
-        WaitConditions := WaitConditions - [ttpWaitTime];
-        WaitConditions := WaitConditions + [ttpWaitTimeout];
-
-        GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
-        try
-          WaitSecs := StrToInt64(expr);
-        except
-          on EConvertError do
-          begin
-            try
-              EvaluateString(expr, expr, seconds, InfoSyntaxError);
-              WaitSecs := StrToInt64(seconds);
-            except
-              on EConvertError do
-              begin
-                InfoSyntaxError := 'Integer number expected ' + InfoSyntaxError;
-                SyntaxCheck := False;
-              end;
-            end;
-          end
-        end;
-      end
-
-      else if LowerCase(expr) = LowerCase(ParameterWaitForProcessEnding) then
-      begin
-        WaitConditions := WaitConditions + [ttpWaitForProcessEnding];
-        if not EvaluateString(Remaining, Remaining, ident, InfoSyntaxError) then
-          SyntaxCheck := False;
-      end
-
-      else if UpperCase(expr) = UpperCase(ParameterDontWait) then
-      begin
-        WaitConditions := WaitConditions - [ttpWaitOnTerminate];
-        WaitConditions := WaitConditions - [ttpWaitTimeout];
-      end
-
-      else if UpperCase(expr) = UpperCase(ParameterWaitOnTerminate) then
-      begin
-        WaitConditions := WaitConditions + [ttpWaitOnTerminate];
-      end
-
-
-
-      else
-      begin
-        SyntaxCheck := False;
-        InfoSyntaxError := expr + ' not legal WinBatch parameter';
-      end;
-
-      GetWord(Remaining, expr, Remaining, WordDelimiterSet0);
-    end;
-
-    if SyntaxCheck then
-      parseAndCallWinbatch := execWinBatch(ArbeitsSektion, Remaining,
-        WaitConditions, Ident, WaitSecs, runAs, flag_force64)
-    else
-      parseAndCallWinbatch := reportError(Sektion, linecounter,
-        'Expressionstr', InfoSyntaxError);
-  end;
 
 begin
   logdatei.log_prog('Starting doAktionen: ', LLDebug2);
@@ -21279,7 +21040,7 @@ begin
                                   [ttpWaitOnTerminate], tmplist);
 
                               tsWinBatch:
-                                ActionResult := parseAndCallWinbatch(localSection, tmpstr);
+                                ActionResult := parseAndCallWinbatch(localSection, tmpstr, linecounter);
 
                               tsRegistryHack:
                                 ActionResult := parseAndCallRegistry(localSection, tmpstr);
@@ -22442,7 +22203,7 @@ begin
 
               tsWinBatch:
               begin
-                ActionResult := parseAndCallWinbatch(ArbeitsSektion, Remaining);
+                ActionResult := parseAndCallWinbatch(ArbeitsSektion, Remaining, linecounter);
                 //parseAndCallWinbatch(ArbeitsSektion,Remaining);
               end;
 
