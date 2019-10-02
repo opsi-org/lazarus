@@ -235,6 +235,9 @@ type
     procedure EditSearchEnter(Sender: TObject);
    private
     { private declarations }
+    InTileRebuild: boolean; //= False;
+    CustomSkinPath: string;
+    DefaultSkinPath: string;
     SoftwareOnDemand : boolean;
     AdminMode : boolean;
     SelectedPanelIndex : integer;  //TileIndex e.g. Tag
@@ -304,11 +307,11 @@ var
   //StartupDone: boolean;
   //ArrayAllProductTiles: TPanels;
   //ArraySearchPanelTiles: TPanels;
-  InTileRebuild: boolean = False;
+  //InTileRebuild: boolean = False;
   //LastOrderDirAsc: boolean = True;
   //LastOrderCol: string;
-  detail_visible: boolean = False;
-  skinpath: string;
+  //detail_visible: boolean = False;
+  //skinpath: string;
   //preLogfileLogList: TStringList;
 
 
@@ -623,7 +626,7 @@ procedure TProductPanel.ProductPanelMouseEnter(Sender: TObject);
 var
   ProductPanel : TProductPanel;
 begin
-  if not inTileRebuild then
+  if not FormOpsiClientKiosk.InTileRebuild then
   begin
     //tileindex := TControl(Sender).Parent.Tag; //type convertion to TControl (all visual components are of this type), parent is the Panel
     //Case TControl(Sender).Parent.GetNamePath of
@@ -641,7 +644,7 @@ procedure TProductPanel.ProductPanelMouseLeave(Sender: TObject);
 var
   ProductPanel : TProductPanel;
 begin
-  if not inTileRebuild then
+  if not FormOpsiClientKiosk.InTileRebuild then
   begin
     //tileindex := TControl(Sender).Parent.Tag; //type convertion to TControl (all visual components are of this type), parent is the Panel
     //ArrayAllProductTiles[tileindex].ShapeRoundSquare.Brush.Color:=clWhite;
@@ -2082,6 +2085,7 @@ var
   ErrorMsg    : String;
   Spacing     : String;
 begin
+  InTileRebuild := False;
   InitLogging('kiosk-' + GetUserName_ +'.log', self.Name + '.FormCreate', LLDebug);
   LogDatei.log('Initialize Opsi Client Kiosk', LLNotice);
   { is opsiclientd or another instance running? }
@@ -2106,7 +2110,7 @@ begin
   LastFilter := '';
   NotebookProducts.PageIndex := 1;  //tiles
   PanelProductDetail.Height := 0;
-  detail_visible := False;
+  //detail_visible := False;
   PathDefaultIcons := Application.Location+ 'default' + PathDelim +
     'product_icons' + PathDelim;
   PathCustomIcons := Application.Location+ 'ock_custom' + PathDelim +
@@ -2206,21 +2210,41 @@ begin
     LoadSkinForTitle(skinpath);
   end;}
 
-  { skinpath in opsiclientagent custom dir }
-  skinpath := Application.Location +
+  { SkinPaths }
+  CustomSkinPath := Application.Location +
     'ock_custom' + PathDelim + 'skin' + PathDelim;
-  if FileExists(skinpath + 'header.png') then
+  DefaultSkinPath := Application.Location +
+    'default' + PathDelim + 'skin' + PathDelim;
+  {Loading header image}
+  if FileExists(CustomSkinPath + 'header.png') then
   begin
-    ImageHeader.Picture.LoadFromFile(skinpath + 'header.png');
-  end;
-  if FileExists(skinpath + 'logo.png') then
+    ImageHeader.Picture.LoadFromFile(CustomSkinPath + 'header.png');
+  end
+  else
+    if FileExists(DefaultSkinPath + 'header.png') then
+    begin
+      ImageHeader.Picture.LoadFromFile(DefaultSkinPath + 'header.png');
+    end;
+  {Loading logo}
+  if FileExists(CustomSkinPath + 'logo.png') then
   begin
-    ImageLogo.Picture.LoadFromFile(skinpath + 'logo.png');
-  end;
-  if FileExists(skinpath + 'opsiclientkiosk.ini') then
+    ImageLogo.Picture.LoadFromFile(CustomSkinPath + 'logo.png');
+  end
+  else
+    if FileExists(DefaultSkinPath + 'logo.png') then
+    begin
+      ImageLogo.Picture.LoadFromFile(DefaultSkinPath + 'logo.png');
+    end;
+  {Loading label text and font style}
+  if FileExists(CustomSkinPath + 'opsiclientkiosk.ini') then
   begin
-    LoadSkinForTitle(skinpath + 'opsiclientkiosk.ini');
-  end;
+    LoadSkinForTitle(CustomSkinPath + 'opsiclientkiosk.ini');
+  end
+  else
+    if FileExists(DefaultSkinPath + 'opsiclientkiosk.ini') then
+    begin
+      LoadSkinForTitle(DefaultSkinPath + 'opsiclientkiosk.ini');
+    end;
 end;
 
 procedure TFormOpsiClientKiosk.EditSearchEnter(Sender: TObject);
