@@ -448,6 +448,7 @@ type
     function doXMLRemoveNamespace(filename: string; const elementname: string;
       const namespace: string): boolean;
 
+    function RunAsForParameter(const param : string; var runAs : TRunAs) : Boolean;
 
 
     (* Spezielle Methoden *)
@@ -9882,6 +9883,9 @@ var
   aktos: TuibOSVersion;
   cmdMuiFiles: TStringList;
   muisrcpath, muitargetpath: string;
+  goon : boolean;
+  remaining : string='';
+  expr : string='';
 
 begin
   try
@@ -9962,6 +9966,48 @@ begin
       force64 := False;
       runAs := traInvoker;
 
+      goon := false;
+      remaining := winstparam;
+
+      if length (winstparam) > 0 then goon := true;
+      while goon do
+      begin
+        if Skip(Parameter_64bit, Remaining, Remaining, ErrorInfo)
+        then
+        begin
+          if Is64BitSystem then force64 := true;
+        end
+        else if Skip(Parameter_SysNative, Remaining, Remaining, ErrorInfo)
+        then
+        begin
+          if Is64BitSystem then force64 := true;
+        end
+        else if Skip(Parameter_32bit, Remaining, Remaining, ErrorInfo)
+        then
+          force64 := false
+        else if Skip('/showoutput', Remaining, Remaining, ErrorInfo)
+        then
+        begin
+           showoutput := true;
+           LogDatei.log('Set Showoutput true', LLDebug3);
+        end
+        else
+        Begin
+          if not (length (remaining) > 0) then
+            goon := false
+          else
+          begin
+            GetWord(remaining, expr, remaining, WordDelimiterWhiteSpace);
+            if not RunAsForParameter(expr, runas) then
+            begin
+              LogDatei.log('Syntaxerror: "' + remaining + '" is no valid parameter ',LLError);
+              goon := false;
+            end;
+          end;
+        end;
+      end;
+
+(*
       if (pos(lowercase('/64bit'), lowercase(winstparam)) > 0) and Is64BitSystem then
         force64 := True;
 
@@ -9985,6 +10031,8 @@ begin
           LogDatei.log('Warning: Not in UserLoginScript mode: /RunAsLoggedinUser ignored',
             LLWarning);
       end;
+
+*)
 
     {$IFDEF WIN32}
       if force64 then
@@ -18278,6 +18326,46 @@ begin
     LogDatei.log(RunTimeInfo, LLDebug);
   list1.Free;
 
+end;
+
+function TuibInstScript.RunAsForParameter(const param : string; var runAs : TRunAs) : Boolean;
+var
+ trimmed : string;
+begin
+  trimmed := lowercase(trim(param));
+  Result := true;
+
+  if trimmed = LowerCase(ParameterRunAsAdmin) then
+    runAs := traAdmin
+  else if trimmed = LowerCase(ParameterRunAsAdmin1) then
+    runAs := traAdmin
+  else if trimmed = LowerCase(ParameterRunAsAdmin2) then
+    runAs := traAdminProfile
+  else if trimmed = LowerCase(ParameterRunAsAdmin3) then
+    runAs := traAdminProfileImpersonate
+  else if trimmed = LowerCase(ParameterRunAsAdmin4) then
+    runAs := traAdminProfileImpersonateExplorer
+  else if trimmed = LowerCase(ParameterRunAsInvoker) then
+    runAs := traInvoker
+  else if trimmed = LowerCase(ParameterRunElevated) then
+  begin
+    {$IFDEF WIN32}
+    opsiSetupAdmin_runElevated := true;
+    {$ENDIF WIN32}
+     runAs := traInvoker;
+  end
+  else if trimmed = LowerCase(ParameterRunAsLoggedOnUser) then
+  Begin
+   if runLoginScripts then
+     runAs := traLoggedOnUser
+   else
+   begin
+     LogDatei.log('Warning: Not in UserLoginScript mode: /RunAsLoggedinUser ignored', LLWarning);
+     runAs := traInvoker;
+   end;
+  End
+  else
+    Result := false;
 end;
 
 function TuibInstScript.doSetVar(const section: TuibIniScript;
