@@ -9,20 +9,25 @@ uses
 
 type
 
+  TSearchShift = (ssFirst, ssAll);
+
   { TIconCollector }
 
   TIconCollector = class(TObject)
     private
-      FileNames :TStringList;
-      function ExtractLine(PathToScript:String; const SearchString:String):String;
-      function ParseLine(Line:String; PathToScript:String):String;
+      FileNames : TStringList;
+      function ExtractLine(const SearchString:String; PathToScript:String):String;
+      function ParseLineShowBitmap(Line:String; PathToScript:String):String;
+      function PrepareLine(Line:String):String;
+      function IsVariable(Token:String):boolean;
+      function ReplaceTokenWithValue(Token:String; PathToScript:String):String;
 
       //function ExtractIcon(OpsiScriptPath:String):String;
       //function ExtractProductID(OpsiScriptPath:String):String;
     public
       procedure ExtractIconFromExe(PathToExe:String);
       procedure ShowFilenames;
-      constructor Create(DepotPath: String);
+      constructor Create(DepotPath: String);overload;
       destructor Destroy; override;
       function GetPathToIcon(PathToScript:string):string;
   end;
@@ -31,8 +36,7 @@ implementation
 
 { TIconCollector }
 
-function TIconCollector.ExtractLine(PathToScript: String;
-  const SearchString: String): String;
+function TIconCollector.ExtractLine(const SearchString: String; PathToScript: String): String;
 var
   ScriptFile: TextFile;
   Line :string;
@@ -46,22 +50,26 @@ begin
       while not EOF(ScriptFile) do
       begin
         ReadLn(ScriptFile, Line);
-        if AnsiContainsText(Line, SearchString) then Break;
+        if AnsiContainsText(PrepareLine(Line), SearchString) then Break;
       end;
-      Line := StringReplace(Line,'+',' + ',[rfReplaceAll, rfIgnoreCase]); //if no white spaces are between + and string(variable)
-      Result:= DelSpace1(Trim(Line));//removes all not needed white spaces except of one white space between every token
+      Result:= Line;
     finally
       CloseFile(ScriptFile);
     end;
   end;
 end;
 
-function TIconCollector.ParseLine(Line: String; PathToScript:String): String;
+
+function TIconCollector.ParseLineShowBitmap(Line: String; PathToScript:String): String;
 var
-  SplittedLine:TStringList;
+  SplittedLine : TStringList;
+  i : integer;
+  //PathToScriptFolder : String;
 begin
+  Line := PrepareLine(Line);//after that one white space is between every token
   Line := Trim(StringReplace(Line,'ShowBitmap','',[rfIgnoreCase]));
-  Line := StringReplace(Line,'%ScriptPath%',PathToScript,[rfIgnoreCase]);
+  //PathToScriptFolder := ExtractFilePath(PathToScript);//ExcludeTrailingPathDelimiter
+  Line := StringReplace(Line,'%ScriptPath%', ExtractFilePath(PathToScript),[rfIgnoreCase]);
   SplittedLine := TStringList.Create;
   try
     SplittedLine.Delimiter := ' ';
@@ -69,8 +77,12 @@ begin
     //SplittedLine := Line.Split(' ');
     //Line := DelChars(Line, '+');
     //Line := ExtractWord(0,Line,[' ']);
-
-    WriteLn(SplittedLine[0]);
+    for i := 0 to SplittedLine.Count-1 do
+    begin
+      if IsVariable(SplittedLine[i]) then
+        SplittedLine[i] := ReplaceTokenWithValue(SplittedLine[i], PathToScript);
+    end;
+    WriteLn(SplittedLine.Text);
     Result := Line;
   finally
     if Assigned(SplittedLine) then
@@ -78,22 +90,28 @@ begin
   end;
 end;
 
-procedure TIconCollector.ExtractIconFromExe(PathToExe: String);
-var
-  IconLarge :HICON;
-  IconSmall :HICON;
-  Picture : TPicture;
+function TIconCollector.PrepareLine(Line: String): String;
 begin
-  if ExtractIconEx(PChar(PathToExe),0,IconLarge,IconSmall,1) > NULL then
-  begin
-    try
-      Picture := TPicture.Create;
-      Picture.Icon.Handle := IconLarge;
-      Picture.SaveToFile('C:\Users\Jan\Test\anydesk\TestIcon_1.ico');
-     finally
-      Picture.Free;
-    end;
-   end;
+  Line := StringReplace(Line,'+',' + ',[rfReplaceAll, rfIgnoreCase]); //if no white spaces are between + and string(variable)
+  Line := StringReplace(Line,'=',' = ',[rfReplaceAll, rfIgnoreCase]); //if no white spaces are between = and string(variable)
+  Result:= DelSpace1(Trim(Line));//removes all not needed white spaces except of one white space between every token
+end;
+
+function TIconCollector.IsVariable(Token: String): boolean;
+begin
+  if (Token[1] = '$') and  (Token[Token.Length] = '$') then Result := True
+  else  Result := False;
+  WriteLn('Token[1]: ', Token[1], ' Token[Token.Length]: ', Token[Token.Length]);
+end;
+
+function TIconCollector.ReplaceTokenWithValue(Token: String;
+  PathToScript: String):String;
+var
+  Line : String;
+begin
+  Line := ExtractLine('Set ' + Token + ' = ', PathToScript);
+  Line := PrepareLine(Line);
+  Result := Trim(StringReplace(Line,'Set ' + Token + ' = ','',[rfIgnoreCase])).DeQuotedString('"');
 end;
 
 procedure TIconCollector.ShowFilenames;
@@ -121,10 +139,28 @@ var
 begin
   for i := 0 to FileNames.Count-1 do
   begin
-    Line := ExtractLine(FileNames[i],'ShowBitmap');
-    PathToScript := ExtractFilePath(FileNames[i]);//ExcludeTrailingPathDelimiter
-    WriteLn(ParseLine(Line,PathToScript));
+    Line := ExtractLine('ShowBitmap', FileNames[i]);
+    WriteLn(ParseLineShowBitmap(Line,FileNames[i]));
   end;
+end;
+
+{Procedure is just a test not shure if useful in this application}
+procedure TIconCollector.ExtractIconFromExe(PathToExe: String);
+var
+  IconLarge :HICON;
+  IconSmall :HICON;
+  Picture : TPicture;
+begin
+  if ExtractIconEx(PChar(PathToExe),0,IconLarge,IconSmall,1) > NULL then
+  begin
+    Picture := TPicture.Create;
+    try
+      Picture.Icon.Handle := IconLarge;
+      Picture.SaveToFile('C:\Users\Jan\Test\anydesk\TestIcon_1.ico');
+     finally
+      Picture.Free;
+    end;
+   end;
 end;
 
 end.
