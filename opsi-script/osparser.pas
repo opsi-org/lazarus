@@ -8399,7 +8399,8 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
           then
           begin
            LogDatei.log ('we try to chmod: '+source+' to mode: '+mode, LLDebug2);
-           Install.chmod(mode,Source);
+           if not Install.chmod(mode,Source) then
+              LogDatei.log ('Failed to chmod: '+source+' to mode: '+mode, LLerror);
           end;
         end
         {$ENDIF LINUX}

@@ -73,7 +73,6 @@ type
     BtCreateEmptyTemplate: TBitBtn;
     BtAnalyzeOnly: TBitBtn;
     CheckBoxUseMst: TCheckBox;
-    CheckBoxUseMst1: TCheckBox;
     CheckGroupBuildMode: TCheckGroup;
     FlowPanel1: TFlowPanel;
     FlowPanel10: TFlowPanel;

@@ -10,7 +10,7 @@ uses
   {$ENDIF}//{$ENDIF}
   //Interfaces, // this includes the LCL widgetset
   {$IFDEF LINUX}
-  osfunlin,
+  osfunclin,
   {$ENDIF}
   {$IFDEF DARWIN}
   osfuncmac,
@@ -31,7 +31,7 @@ uses
   oswebservice,
   superobject,
   OSProcessux,
-   oslinmount;
+  oslinmount;
 
 
 const
@@ -85,31 +85,6 @@ begin
     LogDatei.DependentAdd('network timeout by thread - aborting program',LLInfo);
     writeln('network timeout by thread - aborting program');
     halt(0);
-  end;
-end;
-(*
-function divideAtFirst(const partialS, S: string; var part1, part2: string): boolean;
-  (* teilt den String S beim ersten Vorkommen des Teilstrings partialS;
-     liefert true, wenn partialS vorkommt,
-     andernfalls false;
-
-     wenn partialS nicht vorkommt, enthaelt part1 den Gesamtstring, part2 ist leer *)
-
-var
-  i: integer = 0;
-begin
-  i := pos(lowercase(partialS), lowercase(s));
-  if i > 0 then
-  begin
-    part1 := copy(S, 1, i - 1);
-    part2 := copy(S, i + length(partialS), length(S));
-    Result := True;
-  end
-  else
-  begin
-    part1 := s;
-    part2 := '';
-    Result := False;
   end;
 end;
 
@@ -221,7 +196,7 @@ begin
   end;
 end;
 *)
-(*
+
 (*
 moved to osfunclin / osfuncmac
 
@@ -500,6 +475,7 @@ end;
     end;
   end;
 *)
+
 function MyOpsiMethodCall2(const method: string; parameters: array of string) : string;
   var
     omc: TOpsiMethodCall;

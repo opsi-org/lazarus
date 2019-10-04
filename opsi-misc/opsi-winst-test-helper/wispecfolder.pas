@@ -37,10 +37,10 @@ uses
   //shellapi,
   //JwaWindows,
   //JwaUserEnv,
+  shlobj,
 {$ENDIF}
   LCLIntf,
   Classes,
-  shlobj,
   SysUtils;
 
 var

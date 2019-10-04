@@ -32,7 +32,15 @@ uses
   {$IFDEF UNIX}
   //elfreader,
 
+
   {$ENDIF UNIX}
+  {$IFDEF LINUX}
+  elfreader,
+  lispecfolder,
+  osfunclin,
+
+
+  {$ENDIF LINUX}
   Classes;
   //fileinfo;
 
@@ -77,7 +85,7 @@ var
 
 implementation
 
-
+{$IFDEF WINDOWS}
 function IsElevated: boolean;
 const
   TokenElevation = TTokenInformationClass(20);
@@ -219,7 +227,7 @@ begin
   else
     Result := False;
 end;
-
+{$ENDIF WINDOWS}
 
 
 procedure WriteHelp;
@@ -382,6 +390,7 @@ begin
         Application.Terminate;
       end;
     end;
+    {$IFDEF WINDOWS}
     GetNetUser('', mystr, dummystr);
     writeln(mylog, 'Running as = ' + mystr);
     if DSiIsAdmin then
@@ -401,6 +410,7 @@ begin
     retrieveFoldersFromWinApi;
     writeln(mylog, 'Appdata is = ' + GetAppDataPath);
     writeln(mylog, 'Desktop is = ' + GetDesktopPath);
+    {$ENDIF WINDOWS}
     writeln(mylog, 'current profile is = ' + GetUserProfilePath);
     closefile(mylog);
   end;

@@ -19,7 +19,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="4"/>
+      <BuildNr Value="5"/>
       <StringTable CompanyName="uib gmbh (www.uib.de)" LegalCopyright="uib gmbh under AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="opsiscriptstarter" ProductName="opsi" ProductVersion="4.1"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -57,7 +57,8 @@
             </Debugging>
           </Linking>
           <Other>
-            <CustomOptions Value="-dOPSISCRIPTSTARTER"/>
+            <CustomOptions Value="-dOPSISCRIPTSTARTER
+-dSYNAPSE"/>
           </Other>
         </CompilerOptions>
       </Item2>
@@ -86,7 +87,8 @@
             <LinkSmart Value="True"/>
           </Linking>
           <Other>
-            <CustomOptions Value="-dOPSISCRIPTSTARTER"/>
+            <CustomOptions Value="-dOPSISCRIPTSTARTER
+-dSYNAPSE"/>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -111,7 +113,7 @@
         <PackageName Value="LazUtils"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="8">
+    <Units Count="7">
       <Unit0>
         <Filename Value="opsiscriptstarter.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -121,29 +123,25 @@
         <IsPartOfProject Value="True"/>
       </Unit1>
       <Unit2>
-        <Filename Value="../common/manifest.xml"/>
+        <Filename Value="../common/oscrypt.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit2>
       <Unit3>
-        <Filename Value="../common/oscrypt.pas"/>
+        <Filename Value="../common/oslog.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit3>
       <Unit4>
-        <Filename Value="../common/oslog.pas"/>
+        <Filename Value="../common/oswebservice.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
       <Unit5>
-        <Filename Value="../common/oswebservice.pas"/>
+        <Filename Value="../common/oslinmount.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit5>
       <Unit6>
-        <Filename Value="../common/oslinmount.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit6>
-      <Unit7>
         <Filename Value="../external_libraries/misc/superobject.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit7>
+      </Unit6>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -169,7 +167,8 @@
       <LinkSmart Value="True"/>
     </Linking>
     <Other>
-      <CustomOptions Value="-dOPSISCRIPTSTARTER"/>
+      <CustomOptions Value="-dOPSISCRIPTSTARTER
+-dSYNAPSE"/>
     </Other>
   </CompilerOptions>
   <Debugging>

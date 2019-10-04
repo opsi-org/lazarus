@@ -48,7 +48,7 @@ uses
   custapp,
   {$ENDIF GUI}
   {$IFDEF UNIX}
-  osfunclin, osconf, opsihwbiosinfo, oslindesktopfiles, osparserhelper,
+  osconf, opsihwbiosinfo, oslindesktopfiles, osparserhelper,
   {$ENDIF UNIX}
   {$IFDEF WINDOWS}
   zipinter in 'zipinter.pas',

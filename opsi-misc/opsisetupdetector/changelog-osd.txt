@@ -49,7 +49,7 @@ stWixToolset,
   * https://iserv.eu/doc/development/deploy/packages/installer/adobe-air/
   * http://help.adobe.com/en_US/air/redist/air_runtimeredist.pdf
 
-* Setup Bootstrap fr die Visual Basic-Werkzeuge zum Erstellen von Installationsprogrammen
+* Setup Bootstrap für die Visual Basic-Werkzeuge zum Erstellen von Installationsprogrammen
   * beispiel: Tipp- und Briefprofi
   * marker: Setup Bootstrap
   * marker: Visual Basic
@@ -60,7 +60,7 @@ stWixToolset,
   * setup.exe /s c:\yourlogfilename.log
   * St6unst -n "C:\Program Files\MyApp\St6unst.log" -f -q
 
-Uebrsicht:
+Uebersicht:
 http://www.fredshack.com/docs/packagers.html
 
 CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7zS.sfxl$LegalCopyrightCopyright (c) 1999-2010 Igor Pavlov@OriginalFilename7zS.sfx.exe,ProductName7-Zip.ProductVersion9.20DVarFileInfo$Translation( @33333330{{{{{{{330{{{{{{{33330{{{{{{{330330{{{{{{{330330{{{{{{{330333333330ww33?0303?07?00333333330?730DO0fODDnofowwwwwwwwwwwDDDDDD@DDDDDDGpwpDDDDDDGpwpDDDDDDDDDDDwwwwwwwwwww????( 3330
@@ -69,7 +69,8 @@ CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7
 
 opsi-setup-detector (4.1.0.12) stable; urgency=low
 
-  * osdform: buil mode: switch from check boxes to radio buttons to avoid unusable combinations
+  * osdform: build mode: switch from check boxes to radio buttons to avoid unusable combinations
+  * osdbasedata: set Inno in prioriry to top. fixes: #4097
 
 -- Detlef Oertel <d.oertel@uib.de>  Mo,  02 Sep 2019 : 15:00:00 +0200
 

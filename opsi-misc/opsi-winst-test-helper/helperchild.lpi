@@ -57,6 +57,9 @@
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <CustomOptions Value="-dSYNAPSE"/>
+          </Other>
         </CompilerOptions>
       </Item2>
       <Item3 Name="Release">
@@ -87,6 +90,9 @@
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <CustomOptions Value="-dSYNAPSE"/>
+          </Other>
         </CompilerOptions>
       </Item3>
     </BuildModes>
@@ -94,16 +100,12 @@
       <Version Value="2"/>
     </PublishOptions>
     <RunParams>
-      <local>
-        <CommandLineParams Value="--showwindow=1"/>
-        <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
-      </local>
       <FormatVersion Value="2"/>
       <Modes Count="1">
         <Mode0 Name="default">
           <local>
             <CommandLineParams Value="--showwindow=1"/>
-            <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
+            <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
           </local>
         </Mode0>
       </Modes>
@@ -113,11 +115,12 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="9">
+    <Units Count="10">
       <Unit0>
         <Filename Value="helperchild.lpr"/>
         <IsPartOfProject Value="True"/>
-        <CursorPos X="32" Y="21"/>
+        <IsVisibleTab Value="True"/>
+        <CursorPos X="13" Y="13"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -135,10 +138,9 @@
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="510"/>
-        <CursorPos X="5" Y="22"/>
+        <TopLine Value="22"/>
+        <CursorPos X="17" Y="43"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -161,11 +163,10 @@
       <Unit5>
         <Filename Value="wispecfolder.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="3"/>
-        <TopLine Value="35"/>
-        <CursorPos X="19" Y="137"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="71"/>
+        <CursorPos X="40" Y="91"/>
         <UsageCount Value="20"/>
-        <Loaded Value="True"/>
       </Unit5>
       <Unit6>
         <Filename Value="..\..\external_libraries\misc\DSiWin32.pas"/>
@@ -188,11 +189,19 @@
       <Unit8>
         <Filename Value="..\..\common\osversioninfo.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <CursorPos X="34" Y="18"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit8>
+      <Unit9>
+        <Filename Value="..\..\common\osfunclin.pas"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="10"/>
+        <CursorPos X="3" Y="21"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit9>
     </Units>
     <JumpHistory Count="18" HistoryIndex="17">
       <Position1>
@@ -204,68 +213,68 @@
         <Caret Line="27" Column="11" TopLine="14"/>
       </Position2>
       <Position3>
-        <Filename Value="wispecfolder.pas"/>
-        <Caret Line="34" Column="3" TopLine="23"/>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="274" Column="25" TopLine="259"/>
       </Position3>
       <Position4>
         <Filename Value="helperwin.pas"/>
-        <Caret Line="274" Column="25" TopLine="259"/>
+        <Caret Line="25" Column="17"/>
       </Position4>
       <Position5>
         <Filename Value="helperwin.pas"/>
-        <Caret Line="25" Column="17"/>
+        <Caret Line="300" Column="53" TopLine="274"/>
       </Position5>
       <Position6>
-        <Filename Value="wispecfolder.pas"/>
-        <Caret Line="34" Column="3" TopLine="23"/>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="305" Column="69" TopLine="284"/>
       </Position6>
       <Position7>
         <Filename Value="helperwin.pas"/>
-        <Caret Line="300" Column="53" TopLine="274"/>
+        <Caret Line="309" Column="54" TopLine="289"/>
       </Position7>
       <Position8>
         <Filename Value="helperwin.pas"/>
-        <Caret Line="305" Column="69" TopLine="284"/>
+        <Caret Line="5" Column="10"/>
       </Position8>
       <Position9>
         <Filename Value="helperwin.pas"/>
-        <Caret Line="309" Column="54" TopLine="289"/>
+        <Caret Line="76" Column="72" TopLine="63"/>
       </Position9>
       <Position10>
         <Filename Value="helperwin.pas"/>
-        <Caret Line="5" Column="10"/>
+        <Caret Line="60" TopLine="54"/>
       </Position10>
       <Position11>
         <Filename Value="helperwin.pas"/>
-        <Caret Line="76" Column="72" TopLine="63"/>
+        <Caret Line="54" Column="15" TopLine="34"/>
       </Position11>
       <Position12>
         <Filename Value="helperwin.pas"/>
-        <Caret Line="60" TopLine="54"/>
+        <Caret Line="425" Column="17" TopLine="404"/>
       </Position12>
       <Position13>
         <Filename Value="helperwin.pas"/>
-        <Caret Line="54" Column="15" TopLine="34"/>
+        <Caret Line="532" Column="21" TopLine="510"/>
       </Position13>
       <Position14>
         <Filename Value="helperwin.pas"/>
-        <Caret Line="425" Column="17" TopLine="404"/>
+        <Caret Line="54" Column="25" TopLine="34"/>
       </Position14>
       <Position15>
         <Filename Value="helperwin.pas"/>
-        <Caret Line="532" Column="21" TopLine="510"/>
+        <Caret Line="241" Column="25" TopLine="209"/>
       </Position15>
       <Position16>
         <Filename Value="helperwin.pas"/>
-        <Caret Line="54" Column="25" TopLine="34"/>
+        <Caret Line="53" Column="26" TopLine="36"/>
       </Position16>
       <Position17>
         <Filename Value="helperwin.pas"/>
-        <Caret Line="241" Column="25" TopLine="209"/>
+        <Caret Line="22" Column="5" TopLine="22"/>
       </Position17>
       <Position18>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="53" Column="26" TopLine="36"/>
+        <Filename Value="..\..\common\osfunclin.pas"/>
+        <Caret Line="21" Column="3" TopLine="10"/>
       </Position18>
     </JumpHistory>
   </ProjectOptions>
@@ -294,6 +303,9 @@
         </Win32>
       </Options>
     </Linking>
+    <Other>
+      <CustomOptions Value="-dSYNAPSE"/>
+    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="3">

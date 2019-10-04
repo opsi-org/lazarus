@@ -53,6 +53,7 @@ function RunCommandAndCaptureOut
   showoutput: boolean; logleveloffset: integer): boolean; overload;
 
 {$ELSE OPSISCRIPT}
+function RunCommandCaptureOutGetOutlist(command: string): TStringlist;
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TStringList;
   var report: string; showcmd: integer; var ExitCode: longint): boolean; overload;
@@ -120,6 +121,8 @@ begin
     Result.Clear;
   end;
 end;
+
+
 
 function RunCommandCaptureOutGetExitcode(command: string): longint;
 var
@@ -335,6 +338,39 @@ begin
 end;
 
 {$ELSE OPSISCRIPT}
+function RunCommandCaptureOutGetOutlist(command: string): TStringlist;
+var
+  commandline: string = '';
+  //result: TXStringList;
+  filename: string = '';
+  parameters: string = '';
+  report: string = '';
+  errorinfo: string = '';
+  i: integer = 0;
+  exitcode: longint;
+begin
+  Result := TStringList.Create;
+  //runAs := traInvoker;
+  //OldNumberOfErrors := LogDatei.NumberOfErrors;
+  //OldNumberOfWarnings := LogDatei.NumberOfWarnings;
+
+  FileName := '/bin/bash';
+  Parameters := Parameters + ' -c "' + command + ' || exit $?"';
+
+  commandline := FileName + ' ' + trim(Parameters);
+
+  LogDatei.log('Executing ' + commandline, LLDebug2);
+
+  if not RunCommandAndCaptureOut(commandline, True,
+    Result, report, SW_Minimize, exitcode, False, 2) then
+  begin
+    LogDatei.log('Error: ' + Report, LLcritical);
+    //FExtremeErrorLevel := LevelFatal;
+    //scriptstopped := true;
+    Result.Clear;
+  end;
+end;
+
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TStringList;
   var report: string; showcmd: integer; var ExitCode: longint): boolean;

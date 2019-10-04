@@ -105,17 +105,14 @@ msgid "Automatically detected. Do we have all needed configurations"
 msgstr ""
 
 #: osdconfigdlg.rscreatebuild
-msgctxt "osdconfigdlg.rscreatebuild"
 msgid "Selects the Build mode Checkbox build."
 msgstr ""
 
 #: osdconfigdlg.rscreateinstall
-msgctxt "osdconfigdlg.rscreateinstall"
 msgid "Selects the Build mode Checkbox install."
 msgstr ""
 
 #: osdconfigdlg.rscreatequiet
-msgctxt "osdconfigdlg.rscreatequiet"
 msgid "Selects the Build mode Checkbox quiet."
 msgstr ""
 
@@ -637,11 +634,6 @@ msgstr ""
 
 #: tresultform1.checkboxusemst.caption
 msgctxt "tresultform1.checkboxusemst.caption"
-msgid "use MST File"
-msgstr ""
-
-#: tresultform1.checkboxusemst1.caption
-msgctxt "tresultform1.checkboxusemst1.caption"
 msgid "use MST File"
 msgstr ""
 

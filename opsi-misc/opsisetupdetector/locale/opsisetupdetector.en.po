@@ -121,22 +121,16 @@ msgid "Automatically detected. Do we have all needed configurations"
 msgstr "Automatically detected. Do we have all needed configurations"
 
 #: osdconfigdlg.rscreatebuild
-#, fuzzy
-msgctxt "osdconfigdlg.rscreatebuild"
 msgid "Selects the Build mode Checkbox build."
-msgstr "Selects the Build mode Checkbox build."
+msgstr ""
 
 #: osdconfigdlg.rscreateinstall
-#, fuzzy
-msgctxt "osdconfigdlg.rscreateinstall"
 msgid "Selects the Build mode Checkbox install."
-msgstr "Selects the Build mode Checkbox install."
+msgstr ""
 
 #: osdconfigdlg.rscreatequiet
-#, fuzzy
-msgctxt "osdconfigdlg.rscreatequiet"
 msgid "Selects the Build mode Checkbox quiet."
-msgstr "Selects the Build mode Checkbox quiet."
+msgstr ""
 
 #: osdconfigdlg.rscreateradioindex
 #, fuzzy
@@ -705,11 +699,6 @@ msgstr "opsi Setup Detector"
 
 #: tresultform1.checkboxusemst.caption
 msgctxt "tresultform1.checkboxusemst.caption"
-msgid "use MST File"
-msgstr "use MST File"
-
-#: tresultform1.checkboxusemst1.caption
-msgctxt "tresultform1.checkboxusemst1.caption"
 msgid "use MST File"
 msgstr "use MST File"
 
