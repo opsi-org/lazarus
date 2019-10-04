@@ -21,7 +21,7 @@ type
       function PrepareLine(Line:String):String;
       function IsVariable(Token:String):boolean;
       function ReplaceTokenWithValue(Token:String; PathToScript:String):String;
-
+      //function ConcatenateTokens
       //function ExtractIcon(OpsiScriptPath:String):String;
       //function ExtractProductID(OpsiScriptPath:String):String;
     public
@@ -64,12 +64,14 @@ function TIconCollector.ParseLineShowBitmap(Line: String; PathToScript:String): 
 var
   SplittedLine : TStringList;
   i : integer;
+  Concatenate : boolean;
   //PathToScriptFolder : String;
 begin
-  Line := PrepareLine(Line);//after that one white space is between every token
-  Line := Trim(StringReplace(Line,'ShowBitmap','',[rfIgnoreCase]));
+  Result := '';
+  Line := PrepareLine(Line);//one white space between every token
+  Line := Trim(StringReplace(Line,'ShowBitmap','',[rfIgnoreCase]));//remove ShowBitmap
   //PathToScriptFolder := ExtractFilePath(PathToScript);//ExcludeTrailingPathDelimiter
-  Line := StringReplace(Line,'%ScriptPath%', ExtractFilePath(PathToScript),[rfIgnoreCase]);
+  Line := StringReplace(Line,'%ScriptPath%', ExtractFilePath(PathToScript),[rfIgnoreCase]);//replace %ScriptPath% with path
   SplittedLine := TStringList.Create;
   try
     SplittedLine.Delimiter := ' ';
@@ -77,13 +79,16 @@ begin
     //SplittedLine := Line.Split(' ');
     //Line := DelChars(Line, '+');
     //Line := ExtractWord(0,Line,[' ']);
+    Concatenate := True;
     for i := 0 to SplittedLine.Count-1 do
     begin
       if IsVariable(SplittedLine[i]) then
         SplittedLine[i] := ReplaceTokenWithValue(SplittedLine[i], PathToScript);
+      if Concatenate then Result := Result + SplittedLine[i];
+      if SplittedLine[i] = '+' then Concatenate := True else Concatenate := False;
     end;
     WriteLn(SplittedLine.Text);
-    Result := Line;
+    //Result := Line;
   finally
     if Assigned(SplittedLine) then
       FreeAndNil(SplittedLine);
@@ -101,7 +106,7 @@ function TIconCollector.IsVariable(Token: String): boolean;
 begin
   if (Token[1] = '$') and  (Token[Token.Length] = '$') then Result := True
   else  Result := False;
-  WriteLn('Token[1]: ', Token[1], ' Token[Token.Length]: ', Token[Token.Length]);
+  //if Result then WriteLn('Token[1]: ', Token[1], ' Token[Token.Length]: ', Token[Token.Length]); //just for testing
 end;
 
 function TIconCollector.ReplaceTokenWithValue(Token: String;
