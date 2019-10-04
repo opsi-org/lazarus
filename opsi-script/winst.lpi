@@ -79,13 +79,12 @@
 -dGUI
 -dOSDEBUG
 -dOSLOG"/>
-            <OtherDefines Count="6">
+            <OtherDefines Count="5">
               <Define0 Value="OPSIWINST"/>
               <Define1 Value="WINDOWS"/>
               <Define2 Value="OPSISCRIPT"/>
               <Define3 Value="GUI"/>
-              <Define4 Value="OSDEBUG"/>
-              <Define5 Value="OSLOG"/>
+              <Define4 Value="OSLOG"/>
             </OtherDefines>
           </Other>
         </CompilerOptions>
