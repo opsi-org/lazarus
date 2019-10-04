@@ -57,8 +57,8 @@ uses
   Windows,
 {$ENDIF WINDOWS}
   //widatahelper,
-  IDZlib,
-  IdCompressorZlib,
+  //IDZlib,
+  //IdCompressorZlib,
   zstream;
 //LCLIntf,
 //LResources,
@@ -1477,7 +1477,7 @@ var
   // IdCompressorZLib.DecompressGZipStream(ARequestInfo.PostStream,tmpStream);
   //CompressionSendStream: Tgzipstream;
   //CompressionReceiveStream: Tungzipstream;
-  gzipstream : TIdCompressorZLib;
+  //gzipstream : TIdCompressorZLib;
   buffer: ^byte;
   readcount: integer;
   compress: boolean;
@@ -1514,10 +1514,10 @@ begin
         compress := True;
         ContentType := 'application/json';
         Accept := 'application/json';
-        //ContentEncoding := 'deflate';
-        //AcceptEncoding := 'deflate';
-        ContentEncoding := 'gzip';
+        ContentEncoding := 'gzip, deflate';
         AcceptEncoding := 'gzip';
+        //ContentEncoding := 'gzip, deflate, identity';
+        //AcceptEncoding := 'gzip, deflate, identity';
       end;
       1:
       begin
@@ -1525,8 +1525,8 @@ begin
         compress := False;
         ContentType := 'application/json';
         Accept := 'application/json';
-        ContentEncoding := 'identity';
-        AcceptEncoding := 'identity';
+        ContentEncoding := 'gzip, deflate, identity';
+        AcceptEncoding := 'gzip, deflate, identity';
         //ContentEncoding := '';
         //AcceptEncoding  := '';
       end;
@@ -1645,16 +1645,17 @@ begin
 
               if compress then
               begin
-                //CompressionSendStream := TCompressionStream.Create(clMax, sendstream);
+                CompressionSendStream := TCompressionStream.Create(clMax, sendstream,true);
                 //CompressionSendStream := Tgzipstream.Create(clMax, sendstream);
-                //CompressionSendStream.Write(utf8str[1], length(utf8str));
-                //CompressionSendStream.Free;
+                CompressionSendStream.Write(utf8str[1], length(utf8str));
+                CompressionSendStream.Flush;
+                CompressionSendStream.Free;
                 // do not log the compressed sendstream: will create encoding errors
-                //LogDatei.log('sendstream: ' + MemoryStreamToString(sendstream), LLDebug2);
-                gzipstream :=TIdCompressorZLib.Create(nil);
-                mymemorystream.Write(utf8str[1], length(utf8str));
-                gzipstream.CompressStream(mymemorystream, sendstream,9,GZIP_WINBITS,9,0);
-                mymemorystream.Clear;
+                //LogDatei.log('sendstream: ' + MemoryStreamToString(sendstream.), LLDebug2);
+                //gzipstream :=TIdCompressorZLib.Create(nil);
+                //mymemorystream.Write(utf8str[1], length(utf8str));
+                //gzipstream.CompressStream(mymemorystream, sendstream,9,GZIP_WINBITS,9,0);
+                //mymemorystream.Clear;
 
               end
               else
@@ -1695,10 +1696,10 @@ begin
                 begin
                   ReceiveStream.Seek(0, 0);
                   mymemorystream.Seek(0, 0);
-                  //CompressionReceiveStream := TDeCompressionStream.Create(ReceiveStream);
+                  CompressionReceiveStream := TDeCompressionStream.Create(ReceiveStream, true);
                   //CompressionReceiveStream := Tungzipstream.Create(ReceiveStream);
-                  gzipstream.DecompressStream(ReceiveStream,mymemorystream,GZIP_WINBITS);
-                  (*
+                  //gzipstream.DecompressStream(ReceiveStream,mymemorystream,GZIP_WINBITS);
+
                   GetMem(buffer, 655360);
                   repeat
                     FillChar(buffer^, 655360, ' ');
@@ -1708,7 +1709,7 @@ begin
                   until readcount < 655360;
                   CompressionReceiveStream.Free;
                   FreeMem(buffer);
-                  *)
+
                 end;
               end;
             end;
@@ -2563,7 +2564,7 @@ end;
 
 *)
 
-function TJsonThroughHTTPS.retrieveJSONObjectByHttpPost(const instream: TMemoryStream;
+function TJsonThroughHTTPS.retrieveJSONObjectByHttpPost(const InStream: TMemoryStream;
   logging: boolean; communicationmode: integer): ISuperObject;
   // This function is used by sendlog
 var
@@ -2571,7 +2572,7 @@ var
   cookieVal: string;
   posColon: integer;
   //  s,t : String;
-  sendstream, ReceiveStream: TMemoryStream;
+  SendStream, ReceiveStream: TMemoryStream;
   CompressionSendStream: TCompressionStream;
   CompressionReceiveStream: TDeCompressionStream;
   buffer: ^byte;
@@ -2626,7 +2627,7 @@ begin
   end;
 
   try
-    mymemorystream.Clear;
+    MyMemoryStream.Clear;
 
     try
       if FSessionId <> '' then
@@ -2654,9 +2655,9 @@ begin
 
 
       try
-        sendstream := TMemoryStream.Create;
+        SendStream := TMemoryStream.Create;
         ReceiveStream := TMemoryStream.Create;
-        sendstream.Clear;
+        SendStream.Clear;
         (*
         // we assume opsi4
         compress := True;
@@ -2687,12 +2688,12 @@ begin
           //instream.SaveToFile('/tmp/senddoc1.txt');
           if compress then
           begin
-            CompressionSendStream := TCompressionStream.Create(clMax, sendstream);
-            Instream.Seek(0, 0);
+            CompressionSendStream := TCompressionStream.Create(clMax, SendStream);
+            InStream.Seek(0, 0);
             GetMem(buffer, 655360);
             repeat
               FillChar(buffer^, 655360, ' ');
-              readcount := Instream.Read(buffer^, 655360);
+              readcount := InStream.Read(buffer^, 655360);
               if readcount > 0 then
                 CompressionSendStream.Write(buffer^, 655360);
             until readcount < 655360;
@@ -2702,9 +2703,9 @@ begin
           end;
           {$IFDEF SYNAPSE}
           if compress then
-            HTTPSender.Document.LoadFromStream(sendstream)
+            HTTPSender.Document.LoadFromStream(SendStream)
           else
-            HTTPSender.Document.LoadFromStream(instream);
+            HTTPSender.Document.LoadFromStream(InStream);
 
           LogDatei.log_prog('HTTPSender FURL: ' + Furl, LLDebug2);
           HTTPSenderResult := HTTPSender.HTTPMethod('POST', Furl);
