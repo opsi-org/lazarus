@@ -424,7 +424,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\modified\misc;..\external_libraries\synapse"/>
+      <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\modified\misc;..\external_libraries\synapse;..\external_libraries\GZIPUtils"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
@@ -467,6 +467,13 @@
 -dGUI
 -dOPSI
 -dOSLOG"/>
+      <OtherDefines Count="5">
+        <Define0 Value="OPSIWINST"/>
+        <Define1 Value="WINDOWS"/>
+        <Define2 Value="OPSISCRIPT"/>
+        <Define3 Value="GUI"/>
+        <Define4 Value="OSLOG"/>
+      </OtherDefines>
     </Other>
   </CompilerOptions>
   <Debugging>
