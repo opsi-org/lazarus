@@ -59,6 +59,7 @@ uses
   //widatahelper,
   //IDZlib,
   //IdCompressorZlib,
+  GZIPUtils,
   zstream;
 //LCLIntf,
 //LResources,
@@ -1470,7 +1471,8 @@ var
   s, t, teststring: string;
   jO: ISuperObject;
   utf8str: UTF8String;
-  sendstream, ReceiveStream: TMemoryStream;
+  SendStream, ReceiveStream: TMemoryStream;
+  InStream : TMemoryStream;
   CompressionSendStream: TCompressionStream;
   CompressionReceiveStream: TDeCompressionStream;
   //IdCompressorZLib.CompressStream(tmpStream,AResponseInfo.ContentStream,9,GZIP_WINBITS,9,0);
@@ -1504,9 +1506,11 @@ begin
     compress := False;
     startTime := now;
     finished := False;
-    // communicationmode : 0 = opsi 4.1 / 4.2 / deflate
-    // communicationmode : 1 = opsi 4.2 / 4.2 / plain
-    // communicationmode : 2 = opsi 4.0 / deflate
+    {---------------------------------------------------
+      communicationmode : 0 = opsi 4.1 / 4.2 / deflate
+      communicationmode : 1 = opsi 4.2 / 4.2 / plain
+      communicationmode : 2 = opsi 4.0 / deflate
+     ----------------------------------------------------}
     case communicationmode of
       0:
       begin
@@ -1514,7 +1518,7 @@ begin
         compress := True;
         ContentType := 'application/json';
         Accept := 'application/json';
-        ContentEncoding := 'gzip, deflate';
+        ContentEncoding := 'gzip';//, deflate';
         AcceptEncoding := 'gzip';
         //ContentEncoding := 'gzip, deflate, identity';
         //AcceptEncoding := 'gzip, deflate, identity';
@@ -1645,11 +1649,15 @@ begin
 
               if compress then
               begin
-                CompressionSendStream := TCompressionStream.Create(clMax, sendstream,true);
+                //CompressionSendStream := TCompressionStream.Create(clMax, sendstream,true);
                 //CompressionSendStream := Tgzipstream.Create(clMax, sendstream);
-                CompressionSendStream.Write(utf8str[1], length(utf8str));
-                CompressionSendStream.Flush;
-                CompressionSendStream.Free;
+                //CompressionSendStream.Write(utf8str[1], length(utf8str));
+                //CompressionSendStream.Flush;
+                //CompressionSendStream.Free;
+                InStream := TMemoryStream.Create;
+                InStream.Write(utf8str[1], length(utf8str));
+                zipStream(InStream,SendStream,zcDefault,zsGZIP);
+                InStream.Free;
                 // do not log the compressed sendstream: will create encoding errors
                 //LogDatei.log('sendstream: ' + MemoryStreamToString(sendstream.), LLDebug2);
                 //gzipstream :=TIdCompressorZLib.Create(nil);
@@ -1691,26 +1699,30 @@ begin
                 begin
                   raise Exception.Create(HTTPSender.Headers.Strings[0]);
                 end;
-                ReceiveStream := HTTPSender.Document;
+
                 if compress then
                 begin
-                  ReceiveStream.Seek(0, 0);
-                  mymemorystream.Seek(0, 0);
-                  CompressionReceiveStream := TDeCompressionStream.Create(ReceiveStream, true);
+                  //ReceiveStream.Clear;
+                  //ReceiveStream.Seek(0, 0);
+                  //mymemorystream.Seek(0, 0);
+                  //mymemorystream.Clear;
+                  //CompressionReceiveStream := TDeCompressionStream.Create(ReceiveStream);
+                  unzipStream(HTTPSender.Document,ReceiveStream);
                   //CompressionReceiveStream := Tungzipstream.Create(ReceiveStream);
                   //gzipstream.DecompressStream(ReceiveStream,mymemorystream,GZIP_WINBITS);
 
-                  GetMem(buffer, 655360);
-                  repeat
-                    FillChar(buffer^, 655360, ' ');
-                    readcount := CompressionReceiveStream.Read(buffer^, 655360);
-                    if readcount > 0 then
-                      mymemorystream.Write(buffer^, readcount);
-                  until readcount < 655360;
-                  CompressionReceiveStream.Free;
-                  FreeMem(buffer);
+                  //GetMem(buffer, 655360);
+                  //repeat
+                    //FillChar(buffer^, 655360, ' ');
+                    //readcount := CompressionReceiveStream.Read(buffer^, 655360);
+                    //if readcount > 0 then
+                      //mymemorystream.Write(buffer^, readcount);
+                  //until readcount < 655360;
+                  //CompressionReceiveStream.Free;
+                  //FreeMem(buffer);
 
-                end;
+                end
+                else ReceiveStream := HTTPSender.Document;
               end;
             end;
           except
