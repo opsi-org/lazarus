@@ -94,6 +94,7 @@ uses
 const
   BytesarrayLength = 5000;
   PATHSEPARATOR = PathDelim;
+  READ_BYTES = 4096;
 //KEY_WOW64_64KEY = $0100;
 //KEY_WOW64_32KEY = $0200;
 
@@ -2166,15 +2167,13 @@ function StartProcess_cp(CmdLinePasStr: string; ShowWindowFlag: integer;
   WaitForReturn: boolean; WaitForWindowVanished: boolean;
   WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
   waitsecsAsTimeout: boolean; Ident: string; WaitSecs: word;
-  var Report: string; var ExitCode: longint): boolean;
+  var Report: string; var output: TXStringList; var ExitCode: longint): boolean;
 
 var
-  //myStringlist : TStringlist;
-  //S: TStringList;
-  //M: TMemoryStream;
+  ProcessStream: TMemoryStream;
   FpcProcess: TProcess;
-  //n: longint;
   BytesRead: longint;
+  n: longint;
   WaitWindowStarted: boolean;
   desiredProcessStarted: boolean;
   WaitForProcessEndingLogflag: boolean;
@@ -2207,6 +2206,7 @@ var
   processActivityCounter: PCPUUsageData;
   {$ENDIF WIN32}
   *)
+  i: integer; // tmp
 
 const
   secsPerDay = 86400;
@@ -2252,7 +2252,7 @@ begin
   //writeln('>->->'+CmdLinePasStr);
   try
     try
-      ///M := TMemoryStream.Create;
+      ProcessStream := TMemoryStream.Create;
       BytesRead := 0;
       FpcProcess := process.TProcess.Create(nil);
       {$IFDEF WINDOWS}
@@ -2262,12 +2262,8 @@ begin
       //FpcProcess.Executable := filename;
       //FpcProcess.Parameters := paramlist;
       {$ENDIF WINDOWS}
-      //FpcProcess.Executable := filename;
-      //FpcProcess.Parameters := paramlist;
+      FpcProcess.Options := FpcProcess.Options + [poUsePipes, poStdErrToOutPut];
       //FpcProcess.StartupOptions := [suoUseShowWindow, suoUseSize, suoUsePosition];
-      //FpcProcess.CommandLine := 'cmd.exe /c dir';
-      //if WaitForReturn then
-      //  FpcProcess.Options := FpcProcess.Options + [poWaitOnExit];
       case ShowWindowFlag of
         SW_HIDE: ProcShowWindowFlag := swoHIDE;
         SW_MINIMIZE: ProcShowWindowFlag := swoMinimize;
@@ -2331,6 +2327,11 @@ begin
             nowtime := now;
 
             running := False;
+
+            ProcessStream.SetSize(BytesRead + READ_BYTES);
+            n := FPCProcess.Output.Read((ProcessStream.Memory + BytesRead)^, READ_BYTES);
+            if n > 0 then
+              Inc(BytesRead, n);
 
             //wait for task vanished
             {$IFDEF WINDOWS}
@@ -2609,7 +2610,23 @@ begin
             end;
           end;
 
+          // read remaining output
+          repeat
+            ProcessStream.SetSize(BytesRead + READ_BYTES);
+            n := FPCProcess.Output.Read((ProcessStream.Memory + BytesRead)^, READ_BYTES);
+            if n > 0 then
+              Inc(BytesRead, n);
+          until n <= 0;
+
+          ProcessStream.SetSize(BytesRead);
+          output.LoadFromStream(ProcessStream);
+
           ProcessMess;
+
+          {$IFDEF WINDOWS}
+          for i := 0 to (output.Count - 1) do
+            output.strings[i] := WinCPToUTF8(output.strings[i]);
+          {$ENDIF WINDOWS}
 
           //exitCode := FpcProcess.ExitStatus;
           exitCode := FpcProcess.ExitCode;
@@ -2636,6 +2653,7 @@ begin
     //CloseHandle(processInfo.hThread);
     ///S.Free;
     FpcProcess.Free;
+    ProcessStream.Free;
     ///M.Free;
     {$IFDEF GUI}
     FBatchOberflaeche.showProgressBar(False);
@@ -3969,6 +3987,9 @@ var
   //WaitForProcessEndingLogflag: boolean;
   //starttime, nowtime: TDateTime;
 
+  output: TXStringList;
+  i: LongInt;
+
   line: string = '';
   filename: string = '';
   params: string = '';
@@ -4000,6 +4021,7 @@ const
 
 begin
   params := '';
+  output := TXStringList.create;
 
   if CmdLinePasStr[1] = '"' then
   begin
@@ -4035,7 +4057,7 @@ begin
     'Start process as invoker: ' + getCommandResult('/bin/bash -c whoami'), LLInfo);
   Result := StartProcess_cp(CmdLinePasStr, ShowWindowFlag, WaitForReturn,
     WaitForWindowVanished, WaitForWindowAppearing, WaitForProcessEnding,
-    waitsecsAsTimeout, Ident, WaitSecs, Report, ExitCode);
+    waitsecsAsTimeout, Ident, WaitSecs, Report, output, ExitCode);
   {$ENDIF LINUX}
   {$IFDEF WIN32}
   ext := ExtractFileExt(filename);
@@ -4073,7 +4095,7 @@ begin
         'Start process as invoker: ' + DSiGetUserName, LLInfo);
       Result := StartProcess_cp(CmdLinePasStr, ShowWindowFlag,
         WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
-        WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, ExitCode);
+        WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, output, ExitCode);
 
     end
     else if RunAs = traLoggedOnUser then
@@ -4168,7 +4190,7 @@ begin
             Result := StartProcess_cp(CmdLinePasStr, ShowWindowFlag,
               WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
               WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs,
-              Report, ExitCode);
+              Report, output, ExitCode);
           end
           else
           begin
@@ -4196,6 +4218,16 @@ begin
     end;
   end;
   {$ENDIF WIN32}
+  if WaitForReturn and (output.count > 0) then
+  begin
+    LogDatei.log('--- Process Output ---', LLDebug);
+    for i := 0 to output.count-1 do
+    begin
+      LogDatei.log (output.strings[i], LLDebug);
+    end;
+    LogDatei.log('----------------------', LLDebug);
+  end;
+  output.Free;
 end;
 
 
