@@ -10099,6 +10099,7 @@ var
   goon : boolean;
   remaining : string='';
   expr : string='';
+  warnOnlyWindows : boolean;
 
 begin
   try
@@ -10176,11 +10177,16 @@ begin
         BatchParameter := trim(copy(BatchParameter, 0, pos('winst ',
           lowercase(BatchParameter)) - 1));
       end;
+      warnOnlyWindows := False;
       force64 := False;
       runAs := traInvoker;
 
       goon := false;
       remaining := winstparam;
+
+      {$IFDEF WINDOWS}
+      opsiSetupAdmin_runElevated := False;
+      {$ENDIF WINDOWS}
 
       if length (winstparam) > 0 then goon := true;
       while goon do
@@ -10189,20 +10195,25 @@ begin
         then
         begin
           if Is64BitSystem then force64 := true;
+          warnOnlyWindows := true;
         end
         else if Skip(Parameter_SysNative, Remaining, Remaining, ErrorInfo)
         then
         begin
           if Is64BitSystem then force64 := true;
+          warnOnlyWindows := true;
         end
         else if Skip(Parameter_32bit, Remaining, Remaining, ErrorInfo)
         then
-          force64 := false
+        begin
+          force64 := false;
+          warnOnlyWindows := true;
+        end
         else if Skip('/showoutput', Remaining, Remaining, ErrorInfo)
         then
         begin
-           showoutput := true;
-           LogDatei.log('Set Showoutput true', LLDebug3);
+          showoutput := true;
+          LogDatei.log('Set Showoutput true', LLDebug3);
         end
         else
         Begin
@@ -10215,10 +10226,17 @@ begin
             begin
               LogDatei.log('Syntaxerror: "' + remaining + '" is no valid parameter ',LLError);
               goon := false;
-            end;
+            end
+            else
+              warnOnlyWindows := true;
           end;
         end;
       end;
+
+      {$IFNDEF WINDOWS}
+      if warnOnlyWindows then
+        LogDatei.log('Warning: at least one Windows-only Parameter was used', LLWarning);
+      {$ENDIF WINDOWS}
 
 (*
       if (pos(lowercase('/64bit'), lowercase(winstparam)) > 0) and Is64BitSystem then
