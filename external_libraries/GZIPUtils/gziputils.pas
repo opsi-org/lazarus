@@ -161,7 +161,7 @@ var
   zstream: z_stream;
   hdr, crc, adler, adler32in, crcGZin, sizeGZin, delta, headerSize, modificationtime: longword;
   len, crcH, crcHeader: word;
-  b: byte;
+  b, id1,id2: byte;
   flags: TFlags;
   flags_: LongWord;
 //  sFilename, sComment: string;
@@ -176,7 +176,8 @@ begin
     streamType := zsGZip; // GZIP format
     modificationtime := inStream.ReadDWord; //Modification TIME (UNIX time format)
     inStream.ReadWord; // eXtra FLags & Operating System
-    {flags := TFlags(hdr shr 24); // FLags
+    flags_ := (hdr shr 24);
+    //flags := TFlags(hdr shr 24); // FLags
     if (FEXTRA in flags) then // extra field is present
     begin
       len := inStream.ReadWord; // extra field length
@@ -210,7 +211,7 @@ begin
       crcHeader := inStream.ReadWord; // 2 bytes CRC16 for the header
       if crcH<>crcHeader then
         ;// header checksum mistake
-    end;}
+    end;
     headerSize := inStream.Position;
     inStream.Seek(-8, soFromEnd);
     crcGZin := inStream.ReadDWord; // CRC32 (CRC-32)
