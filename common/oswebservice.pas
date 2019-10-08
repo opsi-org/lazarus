@@ -1519,9 +1519,9 @@ begin
         ContentType := 'application/json';
         Accept := 'application/json';
         ContentEncoding := 'gzip';//, deflate';
-        AcceptEncoding := 'gzip';
+        //AcceptEncoding := 'gzip';
         //ContentEncoding := 'gzip, deflate, identity';
-        //AcceptEncoding := 'gzip, deflate, identity';
+        AcceptEncoding := 'gzip, deflate, identity';
       end;
       1:
       begin
@@ -1529,8 +1529,8 @@ begin
         compress := False;
         ContentType := 'application/json';
         Accept := 'application/json';
-        ContentEncoding := 'gzip, deflate, identity';
-        AcceptEncoding := 'gzip, deflate, identity';
+        ContentEncoding := ''; //'gzip, deflate, identity';
+        AcceptEncoding := 'identity';
         //ContentEncoding := '';
         //AcceptEncoding  := '';
       end;
@@ -1540,7 +1540,7 @@ begin
         compress := True;
         ContentType := 'gzip-application/json-rpc';
         Accept := 'gzip-application/json-rpc';
-        ContentEncoding := '';
+        //ContentEncoding := '';
         AcceptEncoding := '';
       end;
       else
@@ -1601,7 +1601,6 @@ begin
           else
             LogDatei.log_prog('methodGet ' + Furl + ' HTTPMethod failed', LLdebug);
         end
-
         else
         begin
           if readOmcMap then
@@ -1700,14 +1699,17 @@ begin
                   raise Exception.Create(HTTPSender.Headers.Strings[0]);
                 end;
 
-                if compress then
+                {if compress then
                 begin
                   //ReceiveStream.Clear;
                   //ReceiveStream.Seek(0, 0);
                   //mymemorystream.Seek(0, 0);
                   //mymemorystream.Clear;
                   //CompressionReceiveStream := TDeCompressionStream.Create(ReceiveStream);
-                  unzipStream(HTTPSender.Document,ReceiveStream);
+                  InStream := TMemoryStream.Create;
+                  InStream.LoadFromStream(HTTPSender.Document);
+                  unzipStream(InStream,ReceiveStream);
+                  InStream.Free;
                   //CompressionReceiveStream := Tungzipstream.Create(ReceiveStream);
                   //gzipstream.DecompressStream(ReceiveStream,mymemorystream,GZIP_WINBITS);
 
@@ -1722,7 +1724,9 @@ begin
                   //FreeMem(buffer);
 
                 end
-                else ReceiveStream := HTTPSender.Document;
+                else ReceiveStream := HTTPSender.Document;  }
+
+                ReceiveStream := HTTPSender.Document;
               end;
             end;
           except
@@ -2037,14 +2041,14 @@ begin
       begin
         if not ErrorOccured then
         begin
-          if compress then
+          {if compress then
           begin
             mymemorystream.Position := 0;
             LogDatei.log_prog('JSON retrieveJSONObject: memorystream reseted', LLdebug);
             resultLines.Clear;
             ResultLines.LoadFromStream(mymemorystream);
           end
-          else
+          else}
           begin
             ReceiveStream.Position := 0;
             LogDatei.log_prog('JSON retrieveJSONObject: ReceiveStream reseted', LLdebug);
