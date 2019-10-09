@@ -2669,6 +2669,41 @@ begin
 end;
 
 {$IFDEF WIN32}
+function ReadPipe(var Buffer: string; var hReadPipe: THandle; var BytesRead: LongWord;
+  var output: TXStringList): boolean;
+var
+  output_line: string = '';
+  lpBuffer: Array[0..READ_BYTES] of char;
+  LineBreakPos: LongWord;
+  BytesAvail: LongWord;
+  BytesLeft: LongWord;
+begin
+  Result := PeekNamedPipe(hReadPipe, @lpBuffer, READ_BYTES, @BytesRead, @BytesAvail, @BytesLeft);
+  if BytesLeft > 0 then
+  begin
+    lpBuffer := '';
+    Result := ReadFile(hReadPipe, lpBuffer, READ_BYTES, BytesRead, nil);
+
+    OemToAnsi(lpBuffer, lpBuffer);
+    Buffer := Buffer + lpBuffer;
+
+    LineBreakPos := AnsiPos(#13, Buffer);
+    while not (LineBreakPos = 0) do
+    begin
+      output_line := Copy(Buffer, 1, LineBreakPos - 1);
+      output.Add(WinCPToUTF8(output_line));
+
+      // skip carriage return if present
+      if (length(Buffer) > LineBreakPos) and (Buffer[LineBreakPos + 1] = #10) then
+        Inc(LineBreakPos, 1);
+
+       Buffer := Copy(Buffer, LineBreakPos + 1, READ_BYTES);
+
+       LineBreakPos := AnsiPos(#13, Buffer);
+    end;
+  end;
+end;
+
 function StartProcess_cp_lu(CmdLinePasStr: string; ShowWindowFlag: integer;
   WaitForReturn: boolean; WaitForWindowVanished: boolean;
   WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
@@ -3072,7 +3107,7 @@ function StartProcess_cp_el(CmdLinePasStr: string; ShowWindowFlag: integer;
   WaitForReturn: boolean; WaitForWindowVanished: boolean;
   WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
   waitsecsAsTimeout: boolean; Ident: string; WaitSecs: word;
-  var Report: string; var ExitCode: longint): boolean;
+  var Report: string; var output: TXStringList; var ExitCode: longint): boolean;
 
 var
   //myStringlist : TStringlist;
@@ -3080,7 +3115,6 @@ var
   //M: TMemoryStream;
   //FpcProcess: TProcess;
   //n: longint;
-  BytesRead: longint;
   WaitWindowStarted: boolean;
   desiredProcessStarted: boolean;
   WaitForProcessEndingLogflag: boolean;
@@ -3102,6 +3136,14 @@ var
   info: string;
   lpExitCode: DWORD = 0;
   gottoken: boolean;
+
+  // output catching
+  hReadPipe: THandle = 0;
+  hWritePipe: THandle = 0;
+  BytesRead: LongWord;
+  Buffer: String = '';
+  readResult: boolean;
+  sa: TSecurityAttributes;
 var
   ProcessInfo: jwawinbase.TProcessInformation;
   StartupInfo: jwawinbase.TStartupInfo;
@@ -3113,7 +3155,6 @@ var
 
 const
   secsPerDay = 86400;
-  //ReadBufferSize = 2048;
 
 begin
   params := '';
@@ -3147,21 +3188,14 @@ begin
   //logdatei.DependentAdd('>->->'+filename+'='+getExecutableName(filename),LLEssential);
   try
     try
-      (*
-      ///M := TMemoryStream.Create;
-      BytesRead := 0;
-      FpcProcess := process.TProcess.Create(nil);
-      FpcProcess.CommandLine := CmdLinePasStr;
-      FpcProcess.StartupOptions := [suoUseShowWindow, suoUseSize, suoUsePosition];
-      //FpcProcess.CommandLine := 'cmd.exe /c dir';
-      //if WaitForReturn then
-      //  FpcProcess.Options := FpcProcess.Options + [poWaitOnExit];
-      FpcProcess.ShowWindow := swoHIDE;
-      FpcProcess.Execute;
-      *)
+      sa.nLength := sizeof(sa);
+      sa.lpSecurityDescriptor := nil;
+      sa.bInheritHandle := True;
+
       FillChar(processInfo, SizeOf(processInfo), 0);
-      FillChar(StartupInfo, SizeOf(StartupInfo), #0);
-      StartupInfo.cb := SizeOf(StartupInfo);
+
+
+
       //CreateProcessElevated(lpApplicationName: PChar; lpCommandLine: String;
       //lpCurrentDirectory: PChar;Counter: Integer; var ProcessInfo: TProcessInformation): Boolean;
       //gottoken := OpenShellProcessToken('action_processor_starter.exe', opsiSetupAdmin_logonHandle);
@@ -3188,10 +3222,24 @@ begin
         opsiSetupAdmin_lpEnvironment := nil;
       end;
 
+      if not CreatePipe(hReadPipe, hWritePipe, @sa, 0) then
+      begin
+        Report := 'Error creating Pipe';
+        Result := False;
+        exit;
+      end;
+
+      FillChar(StartupInfo, SizeOf(StartupInfo), #0);
+      StartupInfo.cb := SizeOf(StartupInfo);
+      StartupInfo.dwFlags := STARTF_USESTDHANDLES;
+      StartupInfo.hStdInput := 0;
+      StartupInfo.hStdOutput := hWritePipe;
+      StartupInfo.hStdError := hWritePipe;
+
       if not jwawinbase.CreateProcessAsUser(opsiSetupAdmin_logonHandle,
         nil, PChar(CmdLinePasStr),
         //nil, nil,
-        opsiSetupAdmin_pSecAttrib, opsiSetupAdmin_pSecAttrib, False,
+        opsiSetupAdmin_pSecAttrib, opsiSetupAdmin_pSecAttrib, True,
         //CREATE_NEW_CONSOLE or CREATE_NEW_PROCESS_GROUP or CREATE_UNICODE_ENVIRONMENT,
         CREATE_NO_WINDOW or CREATE_UNICODE_ENVIRONMENT or
         CREATE_DEFAULT_ERROR_MODE, opsiSetupAdmin_lpEnvironment,
@@ -3204,6 +3252,8 @@ begin
         LogDatei.log(Report, LLError);
         CloseHandle(processInfo.hProcess);
         CloseHandle(processInfo.hThread);
+        CloseHandle(hWritePipe);
+        CloseHandle(hReadPipe);
       end
 
 (*
@@ -3230,6 +3280,8 @@ begin
         //allChildrenIDs := TStringList.create;
         //allChildrenIDs.add ( inttoStr(processID));
 
+        BytesRead := 0;
+
         if not WaitForReturn and (WaitSecs = 0) then
           Report := 'Process started:    ' + CmdLinePasStr
         else
@@ -3243,6 +3295,9 @@ begin
             nowtime := now;
 
             running := False;
+
+            if not (ReadPipe(Buffer, hReadPipe, BytesRead, output)) then
+              LogDatei.log('Read Error: ' + SysErrorMessage(getLastError()), LLError);
 
             //wait for task vanished
 
@@ -3389,9 +3444,7 @@ begin
             if running then
             begin
               ProcessMess;
-              //sleep(50);
               sleep(1000);
-              //GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode);
               GetExitCodeProcess(ProcessInfo.hProcess, lpExitCode);
               ProcessMess;
               logdatei.log('Waiting for ending at ' +
@@ -3399,6 +3452,12 @@ begin
               ProcessMess;
             end;
           end;
+
+          repeat
+            readResult := ReadPipe(Buffer, hReadPipe, BytesRead, output);
+            if not readResult then
+              LogDatei.log('Read Error: ' + SysErrorMessage(getLastError()), LLError);
+          until (BytesRead <= 0) or (not readResult);
 
           ProcessMess;
 
@@ -3422,9 +3481,8 @@ begin
   finally
     CloseHandle(ProcessInfo.hProcess);
     CloseHandle(processInfo.hThread);
-    ///S.Free;
-    //FpcProcess.Free;
-    ///M.Free;
+    CloseHandle(hReadPipe);
+    CloseHandle(hWritePipe);
   end;
 end;
 
@@ -4148,7 +4206,7 @@ begin
       LogDatei.log('Start process elevated ....', LLInfo);
       Result := StartProcess_cp_el(CmdLinePasStr, ShowWindowFlag,
         WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
-        WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, ExitCode);
+        WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, output, ExitCode);
 
     end
     else
@@ -4223,6 +4281,9 @@ begin
     LogDatei.log('--- Process Output ---', LLDebug);
     for i := 0 to output.count-1 do
     begin
+      {$IFDEF WINDOWS}
+      output.strings[i] := WinCPToUTF8(output.strings[i]);
+      {$ENDIF WINDOWS}
       LogDatei.log (output.strings[i], LLDebug);
     end;
     LogDatei.log('----------------------', LLDebug);
