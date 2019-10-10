@@ -1511,7 +1511,9 @@ begin
       communicationmode : 1 = opsi 4.2 / 4.2 / plain
       communicationmode : 2 = opsi 4.0 / deflate
      ----------------------------------------------------}
-    case communicationmode of
+
+
+     case communicationmode of
       0:
       begin
         LogDatei.log('Use opsi 4.1 / 4.2 HTTP Header, compress', LLnotice);
@@ -1519,9 +1521,9 @@ begin
         ContentType := 'application/json';
         Accept := 'application/json';
         ContentEncoding := 'gzip';//, deflate';
-        //AcceptEncoding := 'gzip';
+        AcceptEncoding := 'gzip';
         //ContentEncoding := 'gzip, deflate, identity';
-        AcceptEncoding := 'gzip, deflate, identity';
+        //AcceptEncoding := 'gzip, deflate, identity';
       end;
       1:
       begin
@@ -1540,7 +1542,7 @@ begin
         compress := True;
         ContentType := 'gzip-application/json-rpc';
         Accept := 'gzip-application/json-rpc';
-        //ContentEncoding := '';
+        ContentEncoding := '';
         AcceptEncoding := '';
       end;
       else
@@ -1620,6 +1622,22 @@ begin
           end;
 
           try
+            { **** Start: just for testing ***** }
+            HTTPSender.MimeType := 'application/json';
+            HTTPSender.Headers.Clear;
+            HTTPSender.Headers.Add('Accept: ' + 'application/json');
+            HTTPSender.Headers.Add('Accept-Encoding: ' + 'identity');
+            HTTPSender.Headers.Add('Content-Encoding: ' + 'gzip, deflate, identity');
+            HTTPSender.Headers.Add('Content-Type: ' + 'application/json');
+            if HTTPSender.HTTPMethod('POST', Furl) then
+             begin
+               //HTTPSender.Headers;
+               for i := 0 to HTTPSender.Headers.Count - 1 do
+                 LogDatei.log('HTTPSender Answer HEAD Header.Strings: '
+                   + HTTPSender.Headers[i], LLdebug);
+             end;
+            { **** END: just for testing ***** }
+
           (*
           // we assume opsi4
           compress := True;
