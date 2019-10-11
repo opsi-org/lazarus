@@ -287,9 +287,11 @@ type
     constructor Create(const serviceURL, username, password, sessionid,
       ip, port, agent: string); overload;
     destructor Destroy; override;
+    // function in cunstruction
     function retrieveJSONObject(const omc: TOpsiMethodCall; logging: boolean;
       retry: boolean; readOmcMap: boolean; communicationmode: integer): ISuperObject;
       overload;
+    //
     function retrieveJSONObject(const omc: TOpsiMethodCall;
       logging: boolean; retry: boolean; readOmcMap: boolean): ISuperObject; overload;
     function retrieveJSONObject(const omc: TOpsiMethodCall;
@@ -1518,7 +1520,7 @@ begin
       begin
         LogDatei.log('Use opsi 4.1 / 4.2 HTTP Header, compress', LLnotice);
         compress := True;
-        ContentType := 'application/json';
+        ContentType := 'application/json; charset=UTF-8';
         Accept := 'application/json';
         ContentEncoding := 'gzip';//, deflate';
         AcceptEncoding := 'gzip';
@@ -1529,9 +1531,9 @@ begin
       begin
         LogDatei.log('Use opsi 4.1 / 4.2 HTTP Header, plain', LLnotice);
         compress := False;
-        ContentType := 'application/json';
+        ContentType := 'application/json; charset=UTF-8';
         Accept := 'application/json';
-        ContentEncoding := ''; //'gzip, deflate, identity';
+        ContentEncoding := 'identity'; //'gzip, deflate, identity';
         AcceptEncoding := 'identity';
         //ContentEncoding := '';
         //AcceptEncoding  := '';
@@ -1572,6 +1574,7 @@ begin
           HTTPSender.Document := TMemoryStream.Create;
         end;
         *)
+
         if FSessionId <> '' then
         begin
           HTTPSender.Cookies.Add(FSessionId);
@@ -1589,6 +1592,7 @@ begin
             //LogDatei.DependentAdd (DateTimeToStr(now) + ' JSON service request ' + Furl , LLnotice);
             LogDatei.log_prog('JSON service request ' + Furl + ' ' +
               omc.FOpsiMethodName, LLinfo);
+
 
         if methodGet then
         begin
@@ -1622,12 +1626,12 @@ begin
           end;
 
           try
-            { **** Start: just for testing ***** }
+            { **** Start: just for testing *****
             HTTPSender.MimeType := 'application/json';
             HTTPSender.Headers.Clear;
             HTTPSender.Headers.Add('Accept: ' + 'application/json');
             HTTPSender.Headers.Add('Accept-Encoding: ' + 'identity');
-            HTTPSender.Headers.Add('Content-Encoding: ' + 'gzip, deflate, identity');
+            HTTPSender.Headers.Add('Content-Encoding: ' + 'gzip');
             HTTPSender.Headers.Add('Content-Type: ' + 'application/json');
             if HTTPSender.HTTPMethod('POST', Furl) then
              begin
@@ -1636,7 +1640,7 @@ begin
                  LogDatei.log('HTTPSender Answer HEAD Header.Strings: '
                    + HTTPSender.Headers[i], LLdebug);
              end;
-            { **** END: just for testing ***** }
+             **** END: just for testing ***** }
 
           (*
           // we assume opsi4
@@ -1654,12 +1658,17 @@ begin
           *)
             //if compress then
             begin
+              HTTPSender.Clear;
               HTTPSender.MimeType := ContentType;
               HTTPSender.Headers.Clear;
-              HTTPSender.Headers.Add('accept: ' + Accept);
-              HTTPSender.Headers.Add('accept-encoding: ' + AcceptEncoding);
-              HTTPSender.Headers.Add('content-encoding: ' + ContentEncoding);
-              HTTPSender.Headers.Add('content-type: ' + ContentType);
+              //HTTPSender.Headers.Add('HTTP/1.0 200 '); //+ LineEnding);
+              HTTPSender.Headers.Add('Accept: ' + Accept);
+              HTTPSender.Headers.Add('Accept-Encoding: ' + AcceptEncoding);
+              HTTPSender.Headers.Add('Content-Encoding: ' + ContentEncoding);
+              HTTPSender.Headers.Add('Content-Type: ' + ContentType);
+              HTTPSender.Headers.Add('Clear-Site-Data: "cache", "cookies", "storage", "executionContexts"');
+              HTTPSender.Headers.Add('Cache-Control: no-cache' );
+              HTTPSender.Cookies.Clear;
               for i := 0 to HTTPSender.Headers.Count - 1 do
                 LogDatei.log('HTTPSender Request Header.Strings: ' +
                   HTTPSender.Headers.Strings[i], LLDebug);
@@ -1691,6 +1700,7 @@ begin
               HTTPSender.Document.LoadFromStream(sendstream);
               LogDatei.log(' JSON service request Furl ' + Furl, LLdebug);
               LogDatei.log(' JSON service request str ' + utf8str, LLdebug);
+              HTTPSender.Cookies.Clear;
               HTTPSenderResult := HTTPSender.HTTPMethod('POST', Furl);
               sendresultcode := HTTPSender.ResultCode;
               sendresultstring := HTTPSender.ResultString;
@@ -1717,7 +1727,7 @@ begin
                   raise Exception.Create(HTTPSender.Headers.Strings[0]);
                 end;
 
-                {if compress then
+                if compress then
                 begin
                   //ReceiveStream.Clear;
                   //ReceiveStream.Seek(0, 0);
@@ -1742,9 +1752,9 @@ begin
                   //FreeMem(buffer);
 
                 end
-                else ReceiveStream := HTTPSender.Document;  }
-
-                ReceiveStream := HTTPSender.Document;
+                else ReceiveStream.LoadFromStream(HTTPSender.Document);
+                HTTPSender.Document.SaveToFile('C:\Users\Jan\Documents\ReceiveStream.txt');
+                ReceiveStream.LoadFromStream(HTTPSender.Document);
               end;
             end;
           except
@@ -2149,7 +2159,7 @@ begin
       end;
     end;
   finally
-    sendstream.Free;
+    SendStream.Free;
     ReceiveStream.Free;
   end;
 end;
