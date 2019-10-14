@@ -178,7 +178,7 @@ begin
     inStream.ReadWord; // eXtra FLags & Operating System
     flags_ := (hdr shr 24);
     //flags := TFlags(hdr shr 24); // FLags
-    if (FEXTRA in flags) then // extra field is present
+    {if (FEXTRA in flags) then // extra field is present
     begin
       len := inStream.ReadWord; // extra field length
       inStream.Seek(len, soFromCurrent);// jump over extra field
@@ -211,7 +211,7 @@ begin
       crcHeader := inStream.ReadWord; // 2 bytes CRC16 for the header
       if crcH<>crcHeader then
         ;// header checksum mistake
-    end;
+    end;}
     headerSize := inStream.Position;
     inStream.Seek(-8, soFromEnd);
     crcGZin := inStream.ReadDWord; // CRC32 (CRC-32)
