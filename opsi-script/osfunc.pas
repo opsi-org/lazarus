@@ -2890,6 +2890,9 @@ begin
         WaitForProcessEndingLogflag := True;
         setLength(resultfilename, 400);
         presultfilename := PChar(resultfilename);
+
+        BytesRead := 0;
+
         //mypid := ProcessInfo.dwProcessId;
 
         //FindExecutable(PChar(filename), nil, presultfilename);
@@ -3069,6 +3072,8 @@ begin
               ProcessMess;
             end;
           end;
+
+          ProcessMess;
 
           repeat
             readResult := ReadPipe(Buffer, hReadPipe, BytesRead, output);
@@ -3462,6 +3467,8 @@ begin
               ProcessMess;
             end;
           end;
+
+          ProcessMess;
 
           repeat
             readResult := ReadPipe(Buffer, hReadPipe, BytesRead, output);
