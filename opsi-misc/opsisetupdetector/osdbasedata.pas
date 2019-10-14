@@ -1059,6 +1059,22 @@ begin
     installerArray[counter].Name := knownInstallerList.Strings[counter];
   end;
 
+  // unknown
+  with installerArray[integer(stUnknown)] do
+  begin
+    description := 'Unknown Installer';
+    silentsetup := '';
+    unattendedsetup := '';
+    silentuninstall := '';
+    unattendeduninstall := '';
+    uninstall_waitforprocess := '';
+    uninstallProg := '';
+    link :=
+      'https://startpage.com/do/search?cmd=process_search&query=silent+install';
+    comment := '';
+    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    detected := @detectedbypatternwithor;
+  end;
 
   // inno
   with installerArray[integer(stInno)] do
