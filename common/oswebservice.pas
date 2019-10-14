@@ -1661,13 +1661,15 @@ begin
               HTTPSender.Clear;
               HTTPSender.MimeType := ContentType;
               HTTPSender.Headers.Clear;
-              //HTTPSender.Headers.Add('HTTP/1.0 200 '); //+ LineEnding);
+              //HTTPSender.Headers.Add('HTTP/1.1 200 OK'); //+ LineEnding);
               HTTPSender.Headers.Add('Accept: ' + Accept);
               HTTPSender.Headers.Add('Accept-Encoding: ' + AcceptEncoding);
-              HTTPSender.Headers.Add('Content-Encoding: ' + ContentEncoding);
+              if ContentEncoding <> 'identity' then HTTPSender.Headers.Add('Content-Encoding: ' + ContentEncoding);
               HTTPSender.Headers.Add('Content-Type: ' + ContentType);
               HTTPSender.Headers.Add('Clear-Site-Data: "cache", "cookies", "storage", "executionContexts"');
               HTTPSender.Headers.Add('Cache-Control: no-cache' );
+              HTTPSender.Headers.Add('User-Agent: opsi config editor 4.1.4.3.1');
+              HTTPSender.Headers.Add('Connection: close' );
               HTTPSender.Cookies.Clear;
               for i := 0 to HTTPSender.Headers.Count - 1 do
                 LogDatei.log('HTTPSender Request Header.Strings: ' +
@@ -1754,7 +1756,7 @@ begin
                 end
                 else ReceiveStream.LoadFromStream(HTTPSender.Document);
                 HTTPSender.Document.SaveToFile('C:\Users\Jan\Documents\ReceiveStream.txt');
-                ReceiveStream.LoadFromStream(HTTPSender.Document);
+                //ReceiveStream.LoadFromStream(HTTPSender.Document);
               end;
             end;
           except
