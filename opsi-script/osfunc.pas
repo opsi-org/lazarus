@@ -3508,7 +3508,7 @@ function StartProcess_as(CmdLinePasStr: string; ShowWindowFlag: integer;
   WaitForReturn: boolean; WaitForWindowVanished: boolean;
   WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
   waitsecsAsTimeout: boolean; Ident: string; WaitSecs: word;
-  var Report: string; var ExitCode: longint): boolean;
+  var Report: string; var output: TXStringList; var ExitCode: longint): boolean;
 
 const
   // default values for window stations and desktops
@@ -3517,12 +3517,6 @@ const
   CreateProcDOMUSERSEP = '\';
 
 var
-  //myStringlist : TStringlist;
-  //S: TStringList;
-  //M: TMemoryStream;
-  //FpcProcess: TProcess;
-  //n: longint;
-  BytesRead: longint;
   WaitWindowStarted: boolean;
   desiredProcessStarted: boolean;
   WaitForProcessEndingLogflag: boolean;
@@ -3565,6 +3559,13 @@ var
   hDesktop: HDESK;
   mypid: dword = 0;
 
+  // output catching
+  hReadPipe: THandle = 0;
+  hWritePipe: THandle = 0;
+  BytesRead: LongWord;
+  Buffer: String = '';
+  readResult: boolean;
+  sa: TSecurityAttributes;
 const
   secsPerDay = 86400;
   //ReadBufferSize = 2048;
@@ -3746,6 +3747,17 @@ begin
               begin
 *)
       // Step 4: set the startup info for the new process
+      sa.nLength := sizeof(sa);
+      sa.lpSecurityDescriptor := nil;
+      sa.bInheritHandle := True;
+
+      if not CreatePipe(hReadPipe, hWritePipe, @sa, 0) then
+      begin
+        Report := 'Error creating Pipe';
+        Result := False;
+        exit;
+      end;
+
       ConsoleTitle := 'opsi-winst-as-admin';
       FillChar(StartUpInfo, SizeOf(StartUpInfo), #0);
       with StartUpInfo do
@@ -3756,6 +3768,9 @@ begin
         lpDesktop := PChar(Help);
         dwFlags := STARTF_USESHOWWINDOW or STARTF_USESTDHANDLES;
         wShowWindow := ShowWindowFlag;
+        hStdInput := 0;
+        hStdOutput := hWritePipe;
+        hStdError := hWritePipe;
       end;
 (*
       if not CreateEnvironmentBlock(lpEnvironment,0,false) then
@@ -3772,7 +3787,7 @@ begin
       if not jwawinbase.CreateProcessAsUser(opsiSetupAdmin_logonHandle,
         nil, PChar(CmdLinePasStr),
         //nil, nil,
-        opsiSetupAdmin_pSecAttrib, opsiSetupAdmin_pSecAttrib, False,
+        opsiSetupAdmin_pSecAttrib, opsiSetupAdmin_pSecAttrib, True,
         //CREATE_NEW_CONSOLE or CREATE_NEW_PROCESS_GROUP or CREATE_UNICODE_ENVIRONMENT,
         CREATE_NO_WINDOW or CREATE_UNICODE_ENVIRONMENT or NORMAL_PRIORITY_CLASS,
         opsiSetupAdmin_lpEnvironment,
@@ -3816,11 +3831,16 @@ begin
           starttime := now;
           WaitWindowStarted := False;
 
+          BytesRead := 0;
+
           while running do
           begin
             nowtime := now;
 
             running := False;
+
+            if not (ReadPipe(Buffer, hReadPipe, BytesRead, output)) then
+              LogDatei.log('Read Error: ' + SysErrorMessage(getLastError()), LLError);
 
             (* wait for task vanished *)
 
@@ -3983,6 +4003,14 @@ begin
               ProcessMess;
             end;
           end;
+
+          ProcessMess;
+
+          repeat
+            readResult := ReadPipe(Buffer, hReadPipe, BytesRead, output);
+            if not readResult then
+              LogDatei.log('Read Error: ' + SysErrorMessage(getLastError()), LLError);
+          until (BytesRead <= 0) or (not readResult);
 
           ProcessMess;
           GetExitCodeProcess(processInfo.hProcess, lpExitCode);
@@ -4234,7 +4262,7 @@ begin
         //it is still created
         Result := StartProcess_as(CmdLinePasStr, ShowWindowFlag,
           WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
-          WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, ExitCode);
+          WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, output, ExitCode);
         dwThreadId := GetCurrentThreadId;
         //if SetThreadToken(nil,opsiSetupAdmin_logonHandle) then
         //  Logdatei.DependentAdd('SetThreadToken success', LLDebug2)
@@ -4272,7 +4300,7 @@ begin
             Result := StartProcess_as(CmdLinePasStr, ShowWindowFlag,
               WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
               WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs,
-              Report, ExitCode);
+              Report, output, ExitCode);
 
 
           (*
