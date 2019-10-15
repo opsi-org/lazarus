@@ -6576,10 +6576,13 @@ begin
                   local_opsidata.initOpsiConf(serviceurl, username, password, sessionid);
                   //Topsi4data(local_opsidata).initOpsiConf(serviceurl, username, password);
                   //OpsiData.setOptions (opsiclientd_serviceoptions);
-                  omc := TOpsiMethodCall.create ('backend_info',[]);
+
+                  //@Detlef: just for testing? I think so therefore I comment that out (Jan).
+                  {omc := TOpsiMethodCall.create ('backend_info',[]);
                   //omc := TOpsiMethodCall.create ('authenticated',[]);
                   testresult := local_opsidata.CheckAndRetrieve (omc, errorOccured);
-                  omc.free;
+                  omc.free;}
+
                 end
                 else if opsiServiceVersion = '' then LogDatei.log ('opsi service version could not retrieved, perhaps no connection', LLwarning)
                     else LogDatei.log ('Internal Error: Unkown Opsi Service Version:>'+opsiServiceVersion+'<', LLerror);

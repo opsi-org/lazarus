@@ -7,6 +7,8 @@
 //  Development Status  :  20.03.2016
 //  Operating System .. :  Win32/Win64
 //  IDE ............... :  Delphi & Lazarus
+//
+//  modified by uib gmbh, author: Jan Werner
 // *****************************************************************************
 unit GZIPUtils;
 {$ifdef fpc}
