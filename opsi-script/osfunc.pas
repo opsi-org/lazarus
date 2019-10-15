@@ -2786,6 +2786,7 @@ begin
   //logdatei.DependentAdd('>->->'+filename+'='+getExecutableName(filename),LLEssential);
   try
     try
+      FillChar(sa, SizeOf(sa), 0);
       sa.nLength := sizeof(sa);
       sa.lpSecurityDescriptor := nil;
       sa.bInheritHandle := True;
@@ -3203,6 +3204,7 @@ begin
   //logdatei.DependentAdd('>->->'+filename+'='+getExecutableName(filename),LLEssential);
   try
     try
+      FillChar(sa, SizeOf(sa), 0);
       sa.nLength := sizeof(sa);
       sa.lpSecurityDescriptor := nil;
       sa.bInheritHandle := True;
@@ -3747,6 +3749,7 @@ begin
               begin
 *)
       // Step 4: set the startup info for the new process
+      FillChar(sa, SizeOf(sa), 0);
       sa.nLength := sizeof(sa);
       sa.lpSecurityDescriptor := nil;
       sa.bInheritHandle := True;
