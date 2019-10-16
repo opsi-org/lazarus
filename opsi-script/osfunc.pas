@@ -4329,13 +4329,12 @@ begin
     LogDatei.log('--- Process Output ---', LLDebug);
     for i := 0 to output.count-1 do
     begin
-      {$IFDEF WINDOWS}
-      output.strings[i] := WinCPToUTF8(output.strings[i]);
-      {$ENDIF WINDOWS}
       LogDatei.log (output.strings[i], LLDebug);
     end;
     LogDatei.log('----------------------', LLDebug);
-  end;
+  end
+  else
+    LogDatei.log('No Output generated or /LetThemGo used', LLDebug);
   output.Free;
 end;
 
