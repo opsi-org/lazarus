@@ -57,8 +57,8 @@ uses
   Windows,
 {$ENDIF WINDOWS}
   //widatahelper,
-  IDZlib,
-  IdCompressorZlib,
+  //IDZlib,
+  //IdCompressorZlib,
   zstream;
 //LCLIntf,
 //LResources,
@@ -1475,7 +1475,7 @@ var
   // IdCompressorZLib.DecompressGZipStream(ARequestInfo.PostStream,tmpStream);
   //CompressionSendStream: Tgzipstream;
   //CompressionReceiveStream: Tungzipstream;
-  gzipstream : TIdCompressorZLib;
+  //gzipstream : TIdCompressorZLib;
   buffer: ^byte;
   readcount: integer;
   compress: boolean;
@@ -1502,24 +1502,24 @@ begin
     compress := False;
     startTime := now;
     finished := False;
-    // communicationmode : 0 = opsi 4.1 / 4.2 / deflate
-    // communicationmode : 1 = opsi 4.2 / 4.2 / plain
+    // communicationmode : 0 = opsi 4.1  / deflate
+    // communicationmode : 1 = opsi 4.1 / plain
     // communicationmode : 2 = opsi 4.0 / deflate
     case communicationmode of
       0:
       begin
-        LogDatei.log('Use opsi 4.1 / 4.2 HTTP Header, compress', LLnotice);
+        LogDatei.log('Use opsi 4.1 HTTP Header, compress', LLnotice);
         compress := True;
         ContentType := 'application/json';
         Accept := 'application/json';
-        //ContentEncoding := 'deflate';
-        //AcceptEncoding := 'deflate';
-        ContentEncoding := 'gzip';
-        AcceptEncoding := 'gzip';
+        ContentEncoding := 'deflate';
+        AcceptEncoding := 'deflate';
+        //ContentEncoding := 'gzip';
+        //AcceptEncoding := 'gzip';
       end;
       1:
       begin
-        LogDatei.log('Use opsi 4.1 / 4.2 HTTP Header, plain', LLnotice);
+        LogDatei.log('Use opsi 4.1 HTTP Header, plain', LLnotice);
         compress := False;
         ContentType := 'application/json';
         Accept := 'application/json';
@@ -1643,17 +1643,11 @@ begin
 
               if compress then
               begin
-                //CompressionSendStream := TCompressionStream.Create(clMax, sendstream);
-                //CompressionSendStream := Tgzipstream.Create(clMax, sendstream);
-                //CompressionSendStream.Write(utf8str[1], length(utf8str));
-                //CompressionSendStream.Free;
+                CompressionSendStream := TCompressionStream.Create(clMax, sendstream);
+                CompressionSendStream.Write(utf8str[1], length(utf8str));
+                CompressionSendStream.Free;
                 // do not log the compressed sendstream: will create encoding errors
                 //LogDatei.log('sendstream: ' + MemoryStreamToString(sendstream), LLDebug2);
-                gzipstream :=TIdCompressorZLib.Create(nil);
-                mymemorystream.Write(utf8str[1], length(utf8str));
-                gzipstream.CompressStream(mymemorystream, sendstream,9,GZIP_WINBITS,9,0);
-                mymemorystream.Clear;
-
               end
               else
               begin
@@ -1693,10 +1687,7 @@ begin
                 begin
                   ReceiveStream.Seek(0, 0);
                   mymemorystream.Seek(0, 0);
-                  //CompressionReceiveStream := TDeCompressionStream.Create(ReceiveStream);
-                  //CompressionReceiveStream := Tungzipstream.Create(ReceiveStream);
-                  gzipstream.DecompressStream(ReceiveStream,mymemorystream,GZIP_WINBITS);
-                  (*
+                  CompressionReceiveStream := TDeCompressionStream.Create(ReceiveStream);
                   GetMem(buffer, 655360);
                   repeat
                     FillChar(buffer^, 655360, ' ');
@@ -1706,7 +1697,6 @@ begin
                   until readcount < 655360;
                   CompressionReceiveStream.Free;
                   FreeMem(buffer);
-                  *)
                 end;
               end;
             end;
