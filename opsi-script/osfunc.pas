@@ -475,6 +475,12 @@ function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
   waitsecsAsTimeout: boolean; RunAs: TRunas; Ident: string; WaitSecs: word;
   var Report: string; var ExitCode: longint): boolean; overload;
 
+function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
+  WaitForReturn: boolean; WaitForWindowVanished: boolean;
+  WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
+  waitsecsAsTimeout: boolean; RunAs: TRunas; Ident: string; WaitSecs: word;
+  var Report: string; var ExitCode: longint; var output: TXStringList): boolean; overload;
+
 
 
 function GetUibNTVersion(var ErrorInfo: string): TuibNTVersion;
@@ -2167,7 +2173,7 @@ function StartProcess_cp(CmdLinePasStr: string; ShowWindowFlag: integer;
   WaitForReturn: boolean; WaitForWindowVanished: boolean;
   WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
   waitsecsAsTimeout: boolean; Ident: string; WaitSecs: word;
-  var Report: string; var output: TXStringList; var ExitCode: longint): boolean;
+  var Report: string; var ExitCode: longint; var output: TXStringList): boolean;
 
 var
   ProcessStream: TMemoryStream;
@@ -2708,7 +2714,7 @@ function StartProcess_cp_lu(CmdLinePasStr: string; ShowWindowFlag: integer;
   WaitForReturn: boolean; WaitForWindowVanished: boolean;
   WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
   waitsecsAsTimeout: boolean; Ident: string; WaitSecs: word;
-  var Report: string; var output: TXStringList; var ExitCode: longint): boolean;
+  var Report: string; var ExitCode: longint; var output: TXStringList): boolean;
 
 var
   WaitWindowStarted: boolean;
@@ -3128,7 +3134,7 @@ function StartProcess_cp_el(CmdLinePasStr: string; ShowWindowFlag: integer;
   WaitForReturn: boolean; WaitForWindowVanished: boolean;
   WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
   waitsecsAsTimeout: boolean; Ident: string; WaitSecs: word;
-  var Report: string; var output: TXStringList; var ExitCode: longint): boolean;
+  var Report: string; var ExitCode: longint; var output: TXStringList): boolean;
 
 var
   WaitWindowStarted: boolean;
@@ -3510,7 +3516,7 @@ function StartProcess_as(CmdLinePasStr: string; ShowWindowFlag: integer;
   WaitForReturn: boolean; WaitForWindowVanished: boolean;
   WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
   waitsecsAsTimeout: boolean; Ident: string; WaitSecs: word;
-  var Report: string; var output: TXStringList; var ExitCode: longint): boolean;
+  var Report: string; var ExitCode: longint; var output: TXStringList): boolean;
 
 const
   // default values for window stations and desktops
@@ -4053,13 +4059,18 @@ function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
   Ident: string; WaitSecs: word; var Report: string; var ExitCode: longint): boolean;
 var
   runAs: TRunAs;
+  output: TXStringList;
 begin
   // set runas
+  // provide a temp stringlist
   runAs := traInvoker;
+  output := TXStringList.create;
 
   Result := StartProcess(CmdLinePasStr, ShowWindowFlag, WaitForReturn,
     WaitForWindowVanished, WaitForWindowAppearing, WaitForProcessEnding,
     runas, Ident, WaitSecs, Report, ExitCode);
+
+  output.free;
 end;
 
 function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
@@ -4067,19 +4078,43 @@ function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
   WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
   RunAs: TRunAs; Ident: string; WaitSecs: word; var Report: string;
   var ExitCode: longint): boolean;
+var
+  output: TXStringList;
 begin
   // set waitsecsAsTimeout = false
+  // provide a temp stringlist
+  output := TXStringList.create;
+
   Result := StartProcess(CmdLinePasStr, ShowWindowFlag, WaitForReturn,
     WaitForWindowVanished, WaitForWindowAppearing, WaitForProcessEnding,
-    False, runAs, Ident, WaitSecs, Report, ExitCode);
-end;
+    False, runAs, Ident, WaitSecs, Report, ExitCode, output);
 
+  output.free;
+end;
 
 function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
   WaitForReturn: boolean; WaitForWindowVanished: boolean;
   WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
   waitsecsAsTimeout: boolean; RunAs: TRunAs; Ident: string; WaitSecs: word;
   var Report: string; var ExitCode: longint): boolean;
+var
+  output: TXStringList;
+begin
+  // compatibility with old version that had no output capturing
+  output := TXStringList.create;
+
+  Result := StartProcess(CmdLinePasStr, ShowWindowFlag, WaitForReturn, WaitForWindowVanished,
+    WaitForWindowAppearing, WaitForProcessEnding, waitsecsAsTimeout, RunAs, Ident,
+    WaitSecs, Report, Exitcode, output);
+
+  output.free;
+end;
+
+function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
+  WaitForReturn: boolean; WaitForWindowVanished: boolean;
+  WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
+  waitsecsAsTimeout: boolean; RunAs: TRunAs; Ident: string; WaitSecs: word;
+  var Report: string; var ExitCode: longint; var output : TXStringList): boolean;
 
 var
   //myStringlist : TStringlist;
@@ -4092,9 +4127,6 @@ var
   //desiredProcessStarted: boolean;
   //WaitForProcessEndingLogflag: boolean;
   //starttime, nowtime: TDateTime;
-
-  output: TXStringList;
-  i: LongInt;
 
   line: string = '';
   filename: string = '';
@@ -4127,7 +4159,6 @@ const
 
 begin
   params := '';
-  output := TXStringList.create;
 
   if CmdLinePasStr[1] = '"' then
   begin
@@ -4163,7 +4194,7 @@ begin
     'Start process as invoker: ' + getCommandResult('/bin/bash -c whoami'), LLInfo);
   Result := StartProcess_cp(CmdLinePasStr, ShowWindowFlag, WaitForReturn,
     WaitForWindowVanished, WaitForWindowAppearing, WaitForProcessEnding,
-    waitsecsAsTimeout, Ident, WaitSecs, Report, output, ExitCode);
+    waitsecsAsTimeout, Ident, WaitSecs, Report, ExitCode, output);
   {$ENDIF LINUX}
   {$IFDEF WIN32}
   ext := ExtractFileExt(filename);
@@ -4201,8 +4232,7 @@ begin
         'Start process as invoker: ' + DSiGetUserName, LLInfo);
       Result := StartProcess_cp(CmdLinePasStr, ShowWindowFlag,
         WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
-        WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, output, ExitCode);
-
+        WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, ExitCode, output);
     end
     else if RunAs = traLoggedOnUser then
     begin
@@ -4235,7 +4265,7 @@ begin
           '\' + usercontextUser, LLInfo);
         Result := StartProcess_cp_lu(CmdLinePasStr, ShowWindowFlag,
           WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
-          WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, output, ExitCode);
+          WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, ExitCode, output);
         if not Result then
           LogDatei.DependentAdd('Failed to start process as logged on user.', LLError);
       except
@@ -4254,7 +4284,7 @@ begin
       LogDatei.log('Start process elevated ....', LLInfo);
       Result := StartProcess_cp_el(CmdLinePasStr, ShowWindowFlag,
         WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
-        WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, output, ExitCode);
+        WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, ExitCode, output);
 
     end
     else
@@ -4265,7 +4295,7 @@ begin
         //it is still created
         Result := StartProcess_as(CmdLinePasStr, ShowWindowFlag,
           WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
-          WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, output, ExitCode);
+          WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, ExitCode, output);
         dwThreadId := GetCurrentThreadId;
         //if SetThreadToken(nil,opsiSetupAdmin_logonHandle) then
         //  Logdatei.DependentAdd('SetThreadToken success', LLDebug2)
@@ -4296,14 +4326,14 @@ begin
             Result := StartProcess_cp(CmdLinePasStr, ShowWindowFlag,
               WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
               WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs,
-              Report, output, ExitCode);
+              Report, ExitCode, output);
           end
           else
           begin
             Result := StartProcess_as(CmdLinePasStr, ShowWindowFlag,
               WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
               WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs,
-              Report, output, ExitCode);
+              Report, ExitCode, output);
 
 
           (*
@@ -4324,18 +4354,6 @@ begin
     end;
   end;
   {$ENDIF WIN32}
-  if WaitForReturn and (output.count > 0) then
-  begin
-    LogDatei.log('--- Process Output ---', LLDebug);
-    for i := 0 to output.count-1 do
-    begin
-      LogDatei.log (output.strings[i], LLDebug);
-    end;
-    LogDatei.log('----------------------', LLDebug);
-  end
-  else
-    LogDatei.log('No Output generated or /LetThemGo used', LLDebug);
-  output.Free;
 end;
 
 
