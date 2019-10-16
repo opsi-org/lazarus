@@ -2076,7 +2076,7 @@ begin
 
           logSupportedEncodings;
 
-          {$IFDEF UNIX}
+          {$IFDEF LINUX}
           if not opsidata.linuxAgentActivated then
           begin
             if freeLinuxAgentStart then

@@ -356,7 +356,7 @@ begin
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
     LogDatei.log('', LLDebug);
   end;
-  fpunlink(credfilename);
+  //fpunlink(credfilename);
   outlines.Free;
   credentials.Free;
 end;
