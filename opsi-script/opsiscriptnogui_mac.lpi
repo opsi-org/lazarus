@@ -95,6 +95,7 @@
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
             <TargetCPU Value="x86_64"/>
+            <TargetOS Value="darwin"/>
             <Optimizations>
               <OptimizationLevel Value="3"/>
             </Optimizations>
@@ -114,7 +115,7 @@
             <CompilerMessages>
               <IgnoredMessages idx5058="True" idx5027="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT"/>
+            <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT -dSYNAPSE"/>
           </Other>
         </CompilerOptions>
       </Item3>
