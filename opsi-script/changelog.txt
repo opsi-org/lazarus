@@ -5,11 +5,7 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
-opsi-winst/opsi-script (4.12.2.4) experimental; urgency=low
 
-  * oswebservice: working on opsi 4.1 / 4.2 compatibility
-
--- Detlef Oertel <d.oertel@uib.de>  Thu, 18 Sep 2019:15:00:00 +0200
 
 opsi-winst/opsi-script (4.12.2.3) experimental; urgency=low
 

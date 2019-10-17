@@ -35,7 +35,7 @@ uses
   //unicodestringmanager,
   {$IFDEF UNIX}
   {$ENDIF }
-  osconf, lispecfolder, oslindesktopfiles, osfunclin;
+  osconf, oslindesktopfiles, osfunclin;
 
 
 type
