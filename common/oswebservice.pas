@@ -2650,38 +2650,46 @@ var
   compress: boolean;
   ContentType, Accept, ContentEncoding, AcceptEncoding: string;
   {$IFDEF SYNAPSE}
-  HTTPSenderResult: boolean;
+  //HTTPSenderResult: boolean;
   testresultSyn: string;
   i: integer;
-  sendresultcode: integer;
-  sendresultstring: string;
+  //sendresultcode: integer;
+  //sendresultstring: string;
   {$ENDIF SYNAPSE}
 
 begin
   errorOccured := False;
   Result := nil;
   resultlines.Clear;
-  // communicationmode : 0 = opsi 4.1 / 4.2 / deflate
-  // communicationmode : 1 = opsi 4.2 / 4.2 / plain
-  // communicationmode : 2 = opsi 4.0 / deflate
-  case communicationmode of
+
+  {---------------------------------------------------
+    communicationmode : 0 = opsi 4.1 / 4.2 / gzip
+    communicationmode : 1 = opsi 4.1 / 4.2 / plain
+    communicationmode : 2 = opsi 4.0 / deflate
+   ----------------------------------------------------}
+
+   case communicationmode of
     0:
     begin
       LogDatei.log('Use opsi 4.1 / 4.2 HTTP Header, compress', LLnotice);
       compress := True;
-      ContentType := 'application/json';
+      ContentType := 'application/json; charset=UTF-8';
       Accept := 'application/json';
-      ContentEncoding := 'deflate';
-      AcceptEncoding := 'deflate';
+      ContentEncoding := 'gzip';//, deflate';
+      //AcceptEncoding := 'gzip';
+      //ContentEncoding := 'gzip, deflate, identity';
+      AcceptEncoding := 'gzip, deflate, identity';
     end;
     1:
     begin
       LogDatei.log('Use opsi 4.1 / 4.2 HTTP Header, plain', LLnotice);
       compress := False;
-      ContentType := 'application/json';
+      ContentType := 'application/json; charset=UTF-8';
       Accept := 'application/json';
-      ContentEncoding := 'plain';
-      AcceptEncoding := 'plain';
+      ContentEncoding := 'identity'; //'gzip, deflate, identity';
+      AcceptEncoding := 'identity';
+      //ContentEncoding := '';
+      //AcceptEncoding  := '';
     end;
     2:
     begin
@@ -2693,7 +2701,10 @@ begin
       AcceptEncoding := '';
     end;
     else
+    begin
       LogDatei.log('Unkown communication mode', LLcritical);
+      exit(nil);
+    end;
   end;
 
   try
@@ -2738,15 +2749,26 @@ begin
         begin
           LogDatei.log_prog('Using MimeType: ' + ContentType, LLDebug);
           {$IFDEF SYNAPSE}
+          { Preparing Request }
+
+           { Set Headers }
+          HTTPSender.Clear; //reset headers, document and Mimetype
+          HTTPSender.Cookies.Clear; //clear cookies
           HTTPSender.MimeType := ContentType;
-          HTTPSender.Headers.Clear;
-          HTTPSender.Headers.Add('accept: ' + Accept);
-          HTTPSender.Headers.Add('accept-encoding: ' + AcceptEncoding);
-          HTTPSender.Headers.Add('content-encoding: ' + ContentEncoding);
-          HTTPSender.Headers.Add('content-type: ' + ContentType);
+          HTTPSender.Headers.NameValueSeparator:= ':'; // message-header = field-name ":" [ field-value ]  (RFC 2616)
+          HTTPSender.Headers.Add('Accept: ' + Accept);
+          HTTPSender.Headers.Add('Accept-Encoding: ' + AcceptEncoding);
+          if ContentEncoding <> 'identity' then HTTPSender.Headers.Add('Content-Encoding: ' + ContentEncoding);
+          HTTPSender.Headers.Add('Content-Type: ' + ContentType);
+          //HTTPSender.Headers.Add('Clear-Site-Data: "cache", "cookies", "storage", "executionContexts"');
+          //HTTPSender.Headers.Add('Cache-Control: no-cache' );
+          //HTTPSender.Headers.Add('User-Agent: ' );
+          //HTTPSender.Headers.Add('Connection: close' );
+            { header logging }
           for i := 0 to HTTPSender.Headers.Count - 1 do
             LogDatei.log('HTTPSender Request Header.Strings: ' +
               HTTPSender.Headers.Strings[i], LLDebug);
+
           {$ELSE SYNAPSE}
           IdHttp.Request.ContentType := ContentTypeCompress;
           IdHttp.Request.ContentEncoding := ContentEncodingCommpress;
@@ -2756,7 +2778,7 @@ begin
           {$ENDIF SYNAPSE}
           //LogDatei.log('Instream: ' + MemoryStreamToString(Instream), LLDebug2);
           //instream.SaveToFile('/tmp/senddoc1.txt');
-          if compress then
+          {if compress then
           begin
             CompressionSendStream := TCompressionStream.Create(clMax, SendStream);
             InStream.Seek(0, 0);
@@ -2770,50 +2792,80 @@ begin
             CompressionSendStream.Free;
             FreeMem(buffer);
             //LogDatei.log('sendstream: ' + MemoryStreamToString(sendstream), LLDebug2);
-          end;
+          end;}
+
+          { Set Body }
+
+          if ContentEncoding <> 'identity' then
+            CompressStream(InStream, ContentEncoding);
+          HTTPSender.Document.LoadFromStream(InStream);
+              //SendStream:=CreateSendStream(ContentEncoding, utf8str);
+              //HTTPSender.Document.LoadFromStream(SendStream);
+          LogDatei.log(' JSON service request Furl ' + Furl, LLdebug);
+          //LogDatei.log(' JSON service request str ' + utf8str, LLdebug);
+
+
           {$IFDEF SYNAPSE}
-          if compress then
-            HTTPSender.Document.LoadFromStream(SendStream)
-          else
-            HTTPSender.Document.LoadFromStream(InStream);
+          //if compress then
+            //HTTPSender.Document.LoadFromStream(SendStream)
+          //else
+            //HTTPSender.Document.LoadFromStream(InStream);
 
           LogDatei.log_prog('HTTPSender FURL: ' + Furl, LLDebug2);
-          HTTPSenderResult := HTTPSender.HTTPMethod('POST', Furl);
-          if HTTPSenderResult then
-            LogDatei.log_prog('HTTPSender Post ok', LLDebug)
-          else
-            LogDatei.log('HTTPSender Post failed', LLError);
-          sendresultcode := HTTPSender.ResultCode;
-          sendresultstring := HTTPSender.ResultString;
-          if not HTTPSenderResult then
+          //HTTPSenderResult := HTTPSender.HTTPMethod('POST', Furl);
+
+          //if HTTPSenderResult then
+            //LogDatei.log_prog('HTTPSender Post ok', LLDebug)
+          //else
+            //LogDatei.log('HTTPSender Post failed', LLError);
+
+          //sendresultcode := HTTPSender.ResultCode;
+          //sendresultstring := HTTPSender.ResultString;
+
+          {if not HTTPSenderResult then
           begin
             LogDatei.log('HTTPSender Post failed', LLError);
-            LogDatei.log('HTTPSender result: ' + IntToStr(sendresultcode) +
-              ' msg: ' + sendresultstring, LLError);
+            LogDatei.log('HTTPSender result: ' + IntToStr(HTTPSender.ResultCode) +
+              ' msg: ' + HTTPSender.ResultString, LLError);
             ErrorOccured := True;
             raise Exception.Create(HTTPSender.Headers.Strings[0]);
           end
-          else
+          else}
+
+          if HTTPSender.HTTPMethod('POST', Furl) then
           begin
             LogDatei.log_prog('HTTPSender Post succseeded', LLdebug);
-
-            LogDatei.log('HTTPSender result: ' + IntToStr(sendresultcode) +
-              ' msg: ' + sendresultstring, LLdebug);
+            LogDatei.log('HTTPSender result: ' + IntToStr(HTTPSender.ResultCode) +
+              ' msg: ' + HTTPSender.ResultString, LLdebug);
             for i := 0 to HTTPSender.Headers.Count - 1 do
               LogDatei.log('HTTPSender Answer Header.Strings: ' +
                 HTTPSender.Headers.Strings[i], LLDebug2);
             LogDatei.log('got mimetype: ' + HTTPSender.MimeType, LLDebug2);
             //LogDatei.log('ReceiveStream: ' + MemoryStreamToString(ReceiveStream), LLDebug2);
-            if sendresultstring <> 'OK' then
+            if HTTPSender.ResultString <> 'OK' then
             begin
               raise Exception.Create(HTTPSender.Headers.Strings[0]);
             end;
-            ReceiveStream.LoadFromStream(HTTPSender.Document);
+
+
+            ContentEncoding := trim(HTTPSender.Headers.Values['Content-Encoding']);
+            LogDatei.log('Response Content-Encoding: '
+              + ContentEncoding,llEssential);
+            if (ContentEncoding = 'gzip') or
+              (ContentEncoding = 'deflate') then
+            begin
+              unzipStream(HTTPSender.Document,ReceiveStream);
+            end
+            else ReceiveStream.LoadFromStream(HTTPSender.Document);
+            //HTTPSender.Document.SaveToFile('C:\Users\Jan\Documents\ReceiveStream.txt');  //for testing
+
+
+            //ReceiveStream.LoadFromStream(HTTPSender.Document);
             LogDatei.log_prog('HTTPSender Post: got document', LLInfo);
             {$ELSE SYNAPSE}
             IdHTTP.post(FserviceURL + '/rpc', sendstream, ReceiveStream);
             {$ENDIF SYNAPSE}
-            if compress then
+            {if compress then
             begin
               ReceiveStream.Seek(0, 0);
               mymemorystream.Seek(0, 0);
@@ -2837,8 +2889,17 @@ begin
                 LLInfo);
               CompressionReceiveStream.Free;
               FreeMem(buffer);
-            end;
-          end;
+            end;}
+          end
+          else
+          begin
+            LogDatei.log('HTTPSender Post failed', LLError);
+            LogDatei.log('HTTPSender result: ' + IntToStr(HTTPSender.ResultCode) +
+              ' msg: ' + HTTPSender.ResultString, LLError);
+            ErrorOccured := True;
+            raise Exception.Create(HTTPSender.Headers.Strings[0]);
+          end
+
         end;
         (*
         else
@@ -3063,12 +3124,12 @@ begin
     end;
     if not ErrorOccured then
     begin
-      if compress then
+      {if compress then
       begin
         mymemorystream.Position := 0;
         ResultLines.LoadFromStream(mymemorystream);
       end
-      else
+      else}
       begin
         ReceiveStream.Position := 0;
         ResultLines.LoadFromStream(ReceiveStream);
