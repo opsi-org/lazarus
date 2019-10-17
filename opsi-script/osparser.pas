@@ -6577,7 +6577,7 @@ begin
                   //Topsi4data(local_opsidata).initOpsiConf(serviceurl, username, password);
                   //OpsiData.setOptions (opsiclientd_serviceoptions);
 
-                  //@Detlef: just for testing? I think so therefore I comment that out (Jan).
+                  //@Detlef: just for testing? I think so therefore I comment that out (Jan):
                   {omc := TOpsiMethodCall.create ('backend_info',[]);
                   //omc := TOpsiMethodCall.create ('authenticated',[]);
                   testresult := local_opsidata.CheckAndRetrieve (omc, errorOccured);
