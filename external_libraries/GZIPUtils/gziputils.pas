@@ -15,6 +15,8 @@ unit GZIPUtils;
   {$mode objfpc}
 {$endif}
 {$H+}
+//{$packset 1}
+//{$packenum 1}
 
 interface
 
@@ -165,7 +167,7 @@ var
   len, crcH, crcHeader: word;
   b, id1,id2: byte;
   flags: TFlags;
-  flags_: LongWord;
+  flags_: byte;
 //  sFilename, sComment: string;
 begin
   result := false;
@@ -179,8 +181,9 @@ begin
     modificationtime := inStream.ReadDWord; //Modification TIME (UNIX time format)
     inStream.ReadWord; // eXtra FLags & Operating System
     flags_ := (hdr shr 24);
+    flags := TFlags(flags_);
     //flags := TFlags(hdr shr 24); // FLags
-    {if (FEXTRA in flags) then // extra field is present
+    if (FEXTRA in flags) then // extra field is present
     begin
       len := inStream.ReadWord; // extra field length
       inStream.Seek(len, soFromCurrent);// jump over extra field
@@ -213,7 +216,7 @@ begin
       crcHeader := inStream.ReadWord; // 2 bytes CRC16 for the header
       if crcH<>crcHeader then
         ;// header checksum mistake
-    end;}
+    end;
     headerSize := inStream.Position;
     inStream.Seek(-8, soFromEnd);
     crcGZin := inStream.ReadDWord; // CRC32 (CRC-32)
