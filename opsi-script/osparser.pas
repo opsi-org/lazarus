@@ -568,7 +568,8 @@ type
       SaveddeWithProgman: boolean): TSectionResult;
     function execWinBatch(const Sektion: TWorkSection; WinBatchParameter: string;
       WaitConditions: TSetWaitConditions; ident: string;
-      WaitSecs: word; runAs: TRunAs; flag_force64: boolean): TSectionResult;
+      WaitSecs: word; runAs: TRunAs; flag_force64: boolean;
+      showoutput: boolean): TSectionResult;
     function parseAndCallWinbatch(ArbeitsSektion: TWorkSection;
       var Remaining: string; linecounter: integer): TSectionResult;
     function execDOSBatch(const Sektion: TWorkSection; BatchParameter: string;
@@ -672,6 +673,7 @@ const
   ParameterRunElevated = '/RunElevated';
   ParameterRunAsLoggedOnUser = '/RunAsLoggedOnUser';
   ParameterShowWindowHide = '/WindowHide';
+  ParameterShowoutput = '/showoutput';
 
 
   DefaultWaitProcessTimeoutSecs = 1200; //20 min
@@ -9386,6 +9388,7 @@ var
  onlyWindows : boolean;
  InfoSyntaxError : String='';
  sectionName : String='';
+ showoutput: boolean;
 
 begin
  if length(ArbeitsSektion.Name) <> 0 then
@@ -9551,6 +9554,11 @@ begin
        WaitConditions := WaitConditions + [ttpWaitOnTerminate];
    End
 
+   else if lowercase (expr) = lowercase (ParameterShowoutput) then
+   begin
+       showoutput := true;
+   end
+
    else if RunAsForParameter(expr, runas) then
    begin
      onlyWindows := true;
@@ -9578,7 +9586,8 @@ begin
 
  if SyntaxCheck
  then
-   Result := execWinBatch (ArbeitsSektion, Remaining, WaitConditions, Ident, WaitSecs, runAs,flag_force64)
+   Result := execWinBatch (ArbeitsSektion, Remaining, WaitConditions, Ident,
+     WaitSecs, runAs, flag_force64, showoutput)
  else
    Result := reportError (ArbeitsSektion, linecounter, 'Expressionstr', InfoSyntaxError);
 end;
@@ -9589,7 +9598,8 @@ function TuibInstScript.execWinBatch(const Sektion: TWorkSection;
   ident: string;
   WaitSecs: word;
   runAs: TRunAs;
-  flag_force64: boolean)
+  flag_force64: boolean;
+  showoutput: boolean)
 : TSectionResult;
 
 var
@@ -9704,8 +9714,8 @@ begin
         begin
           LogDatei.log('   Waiting until window "' + ident +
             '" has vanished', LevelComplete);
-          if not StartProcess(Commandline, sw_hide, true, true, false, false,
-            waitsecsAsTimeout, runAs, ident, WaitSecs, Report,
+          if not StartProcess(Commandline, sw_hide, showoutput, true, true, false,
+            false, waitsecsAsTimeout, runAs, ident, WaitSecs, Report,
             FLastExitCodeOfExe, output)
           then
           begin
@@ -9720,8 +9730,8 @@ begin
           LogDatei.log('   Waiting until window "' + ident +
             '" is coming up', LevelComplete);
 
-          if not StartProcess(Commandline, sw_hide, true, false, true, false,
-            waitsecsAsTimeout, runAs, ident, WaitSecs, Report,
+          if not StartProcess(Commandline, sw_hide, showoutput, true, false, true,
+            false, waitsecsAsTimeout, runAs, ident, WaitSecs, Report,
             FLastExitCodeOfExe, output)
           then
           begin
@@ -9736,8 +9746,8 @@ begin
           LogDatei.log('   Waiting until process "' + ident +
             '" started and has ended', LevelComplete);
 
-          if not StartProcess(Commandline, sw_hide, true, false, false, true,
-            waitsecsAsTimeout, runAs, ident, WaitSecs, Report,
+          if not StartProcess(Commandline, sw_hide, showoutput, true, false, false,
+            true, waitsecsAsTimeout, runAs, ident, WaitSecs, Report,
             FLastExitCodeOfExe, output)
           then
           begin
@@ -9777,8 +9787,8 @@ from defines.inc
    SW_SHOWNORMAL = 1;
 *)
 
-          if not StartProcess (Commandline, sw_hide, WaitForReturn, false,
-            false, false, waitsecsAsTimeout, runAs, '', WaitSecs, Report,
+          if not StartProcess (Commandline, sw_hide, showoutput, WaitForReturn,
+            false, false, false, waitsecsAsTimeout, runAs, '', WaitSecs, Report,
             FLastExitCodeOfExe, output)
           then
           begin
