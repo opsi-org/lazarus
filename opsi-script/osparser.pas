@@ -9604,6 +9604,8 @@ var
   waitsecsAsTimeout: boolean = False;
   oldDisableWow64FsRedirectionStatus: pointer = nil;
   Wow64FsRedirectionDisabled, boolresult: boolean;
+  output: TXStringList;
+  outputStart: integer=0;
 
 begin
   try
@@ -9632,6 +9634,8 @@ begin
       FBatchOberflaeche.showAcitvityBar(True);
     {$ENDIF GUI}
 
+    output := TXStringList.create;
+    outputStart := 0;
 
     for i := 1 to Sektion.Count do
     begin
@@ -9700,8 +9704,9 @@ begin
         begin
           LogDatei.log('   Waiting until window "' + ident +
             '" has vanished', LevelComplete);
-          if not StartProcess(Commandline, sw_hide, True, True,
-            False, False, waitsecsAsTimeout, runAs, ident, WaitSecs, Report, FLastExitCodeOfExe)
+          if not StartProcess(Commandline, sw_hide, true, true, false, false,
+            waitsecsAsTimeout, runAs, ident, WaitSecs, Report,
+            FLastExitCodeOfExe, output)
           then
           begin
             ps := 'Error: ' + Report;
@@ -9715,8 +9720,9 @@ begin
           LogDatei.log('   Waiting until window "' + ident +
             '" is coming up', LevelComplete);
 
-          if not StartProcess(Commandline, sw_hide, True, False,
-            True, False, waitsecsAsTimeout, runAs, ident, WaitSecs, Report, FLastExitCodeOfExe)
+          if not StartProcess(Commandline, sw_hide, true, false, true, false,
+            waitsecsAsTimeout, runAs, ident, WaitSecs, Report,
+            FLastExitCodeOfExe, output)
           then
           begin
             ps := 'Error: ' + Report;
@@ -9730,8 +9736,9 @@ begin
           LogDatei.log('   Waiting until process "' + ident +
             '" started and has ended', LevelComplete);
 
-          if not StartProcess(Commandline, sw_hide, True, False,
-            False, True, waitsecsAsTimeout, runAs, ident, WaitSecs, Report, FLastExitCodeOfExe)
+          if not StartProcess(Commandline, sw_hide, true, false, false, true,
+            waitsecsAsTimeout, runAs, ident, WaitSecs, Report,
+            FLastExitCodeOfExe, output)
           then
           begin
             ps := 'Error: ' + Report;
@@ -9770,8 +9777,9 @@ from defines.inc
    SW_SHOWNORMAL = 1;
 *)
 
-          if not StartProcess(Commandline, sw_hide, WaitForReturn,
-            False, False, False, waitsecsAsTimeout, runAs, '', WaitSecs, Report, FLastExitCodeOfExe)
+          if not StartProcess (Commandline, sw_hide, WaitForReturn, false,
+            false, false, waitsecsAsTimeout, runAs, '', WaitSecs, Report,
+            FLastExitCodeOfExe, output)
           then
           begin
             ps := 'Error: ' + Report;
@@ -9779,6 +9787,20 @@ from defines.inc
           end
           else
             LogDatei.log(Report, LLInfo);
+        end;
+
+        if (outputStart < output.count) then
+        begin
+          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
+          LogDatei.log ('output:', LLDebug);
+          LogDatei.log ('--------------', LLDebug);
+          while outputStart < output.count do
+          begin
+            LogDatei.log(output.strings[outputStart], LLDebug);
+            Inc(outputStart, 1);
+          end;
+          LogDatei.log ('--------------', LLDebug);
+          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
         end;
       end;
     end;
@@ -9789,6 +9811,7 @@ from defines.inc
       Wow64FsRedirectionDisabled := False;
     end;
     {$ENDIF WIN32}
+    output.free;
     finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
       DiffNumberOfErrors, DiffNumberOfWarnings);
 

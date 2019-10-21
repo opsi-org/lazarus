@@ -89,7 +89,8 @@ uses
   strutils,
   lconvencoding,
   lcltype,
-  ostxstringlist;
+  ostxstringlist,
+  pipes;
 
 const
   BytesarrayLength = 5000;
@@ -2177,9 +2178,10 @@ function StartProcess_cp(CmdLinePasStr: string; ShowWindowFlag: integer;
 
 var
   ProcessStream: TMemoryStream;
-  FpcProcess: TProcess;
+  Buffer: string='';
   BytesRead: longint;
   n: longint;
+  FpcProcess: TProcess;
   WaitWindowStarted: boolean;
   desiredProcessStarted: boolean;
   WaitForProcessEndingLogflag: boolean;
@@ -2213,6 +2215,43 @@ var
   {$ENDIF WIN32}
   *)
   i: integer; // tmp
+
+  function ReadStream(var Buffer: string; var proc: TProcess;
+    var output: TXStringList): LongInt;
+  var
+    tmp_buffer: Array[0..READ_BYTES] of char;
+    output_line: string='';
+    LineBreakPos: LongInt;
+    BytesRead: LongInt;
+  begin
+    tmp_buffer := '';
+    BytesRead := proc.output.Read(tmp_buffer, READ_BYTES);
+    {$IFDEF WINDOWS}
+    OemToAnsi(tmp_buffer, tmp_buffer);
+    {$ENDIF WINDOWS}
+    Buffer := Buffer + tmp_buffer;
+
+    LineBreakPos := AnsiPos(#13, Buffer);
+
+    while not (LineBreakPos = 0) do
+    begin
+      output_line := Copy(Buffer, 1, LineBreakPos - 1);
+      {$IFDEF WINDOWS}
+      output_line := WINCPToUTF8(output_line);
+      {$ENDIF WINDOWS}
+      output.Add(output_line);
+
+      // skip carriage return if present
+      if (length(Buffer) > LineBreakPos) and (Buffer[LineBreakPos + 1] = #10) then
+        Inc(LineBreakPos, 1);
+
+      Buffer := Copy(Buffer, LineBreakPos + 1, READ_BYTES);
+
+      LineBreakPos := AnsiPos(#13, Buffer);
+    end;
+
+    Result := BytesRead;
+  end;
 
 const
   secsPerDay = 86400;
@@ -2258,8 +2297,8 @@ begin
   //writeln('>->->'+CmdLinePasStr);
   try
     try
-      ProcessStream := TMemoryStream.Create;
-      BytesRead := 0;
+      Buffer := '';
+
       FpcProcess := process.TProcess.Create(nil);
       {$IFDEF WINDOWS}
       FpcProcess.CommandLine := utf8towincp(CmdLinePasStr);
@@ -2334,10 +2373,7 @@ begin
 
             running := False;
 
-            ProcessStream.SetSize(BytesRead + READ_BYTES);
-            n := FPCProcess.Output.Read((ProcessStream.Memory + BytesRead)^, READ_BYTES);
-            if n > 0 then
-              Inc(BytesRead, n);
+            ReadStream(Buffer, FPCProcess, output);
 
             //wait for task vanished
             {$IFDEF WINDOWS}
@@ -2618,32 +2654,15 @@ begin
 
           // read remaining output
           repeat
-            ProcessStream.SetSize(BytesRead + READ_BYTES);
-            n := FPCProcess.Output.Read((ProcessStream.Memory + BytesRead)^, READ_BYTES);
-            if n > 0 then
-              Inc(BytesRead, n);
+            n := ReadStream(Buffer, FPCProcess, output);
           until n <= 0;
-
-          ProcessStream.SetSize(BytesRead);
-          output.LoadFromStream(ProcessStream);
-
-          ProcessMess;
-
-          {$IFDEF WINDOWS}
-          for i := 0 to (output.Count - 1) do
-            output.strings[i] := WinCPToUTF8(output.strings[i]);
-          {$ENDIF WINDOWS}
-
-          //exitCode := FpcProcess.ExitStatus;
-          exitCode := FpcProcess.ExitCode;
-          //GetExitCodeProcess(ProcessInfo.hProcess, lpExitCode);
-          //GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode);
-          //exitCode := lpExitCode;
-          //Report := 'Process executed  + CmdLinePasStr
-          Report := 'ExitCode ' + IntToStr(exitCode) + '    Executed process "' +
-            CmdLinePasStr + '"';
         end;
 
+        ProcessMess;
+
+        exitCode := FpcProcess.ExitCode;
+        Report := 'ExitCode ' + IntToStr(exitCode) + '    Executed process "' +
+          CmdLinePasStr + '"';
       end;
 
     except
@@ -2659,8 +2678,6 @@ begin
     //CloseHandle(processInfo.hThread);
     ///S.Free;
     FpcProcess.Free;
-    ProcessStream.Free;
-    ///M.Free;
     {$IFDEF GUI}
     FBatchOberflaeche.showProgressBar(False);
     (*
