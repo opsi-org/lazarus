@@ -1776,9 +1776,23 @@ begin
                 { defalte = zlib format}
                 if (ContentEncoding = 'deflate') or (ContentEncoding = '') then
                 begin
+                  //DeCompressionReceiveStream := TDeCompressionStream.Create(HTTPSender.Document);
+                  //ReceiveStream.Seek(0, 0);
+                  //DeCompressionReceiveStream.read(ReceiveStream,0);
+                  //DeCompressionReceiveStream.Free;
+                  //ReceiveStream := HTTPSender.Document;
+                  //ReceiveStream.Seek(0, 0);
+                  //mymemorystream.Seek(0, 0);
                   DeCompressionReceiveStream := TDeCompressionStream.Create(HTTPSender.Document);
-                  DeCompressionReceiveStream.read(ReceiveStream,ReceiveStream.Size);
+                  GetMem(buffer, 655360);
+                  repeat
+                    FillChar(buffer^, 655360, ' ');
+                    readcount := DeCompressionReceiveStream.Read(buffer^, 655360);
+                    if readcount > 0 then
+                      ReceiveStream.Write(buffer^, readcount);
+                  until readcount < 655360;
                   DeCompressionReceiveStream.Free;
+                  FreeMem(buffer);
                 end;
                 { gzip = gzip format}
                 if ContentEncoding = 'gzip' then
