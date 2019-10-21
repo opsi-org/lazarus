@@ -1559,7 +1559,7 @@ var
   SendStream, ReceiveStream: TMemoryStream;
   InStream : TMemoryStream;
   CompressionSendStream: TCompressionStream;
-  CompressionReceiveStream: TDeCompressionStream;
+  DeCompressionReceiveStream: TDeCompressionStream;
   //IdCompressorZLib.CompressStream(tmpStream,AResponseInfo.ContentStream,9,GZIP_WINBITS,9,0);
   // IdCompressorZLib.DecompressGZipStream(ARequestInfo.PostStream,tmpStream);
   //CompressionSendStream: Tgzipstream;
@@ -1604,10 +1604,10 @@ begin
         compress := True;
         ContentType := 'application/json; charset=UTF-8';
         Accept := 'application/json';
-        ContentEncoding := 'gzip';//, deflate';
-        //AcceptEncoding := 'deflate';
+        ContentEncoding := 'deflate';
+        AcceptEncoding := 'deflate';
         //ContentEncoding := 'gzip, deflate, identity';
-        AcceptEncoding := 'gzip, deflate, identity';
+        //AcceptEncoding := 'gzip, deflate, identity';
       end;
       {1:
       begin
@@ -1767,13 +1767,24 @@ begin
                 end
                 else  LogDatei.log('No Content-Encoding header.',llDebug);
 
+                { identity = uncompressed}
                 if (HTTPSender.Headers.IndexOfName('Content-Encoding') = -1)
                   or (ContentEncoding = 'identity') then
                 begin
                   ReceiveStream.LoadFromStream(HTTPSender.Document);
-                end
-                else unzipStream(HTTPSender.Document,ReceiveStream);
-
+                end;
+                { defalte = zlib format}
+                if (ContentEncoding = 'deflate') or (ContentEncoding = '') then
+                begin
+                  DeCompressionReceiveStream := TDeCompressionStream.Create(HTTPSender.Document);
+                  DeCompressionReceiveStream.read(ReceiveStream,ReceiveStream.Size);
+                  DeCompressionReceiveStream.Free;
+                end;
+                { gzip = gzip format}
+                if ContentEncoding = 'gzip' then
+                begin
+                  unzipStream(HTTPSender.Document,ReceiveStream);
+                end;
                 {if (ContentEncoding = 'gzip')
                     or (ContentEncoding = 'deflate')
                     or (ContentType = 'gzip-application/json-rpc')
