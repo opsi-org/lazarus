@@ -10418,8 +10418,9 @@ begin
       begin
         output := TXStringlist.Create;
         LogDatei.log('Executing ' + commandline, LLDebug + logleveloffset);
-        if not RunCommandAndCaptureOut(commandline, catchout,
-          output, report, showcmd, FLastExitCodeOfExe, showoutput) then
+        if not StartProcess(commandline, showcmd, showoutput,
+          true, false, false, false, false, runAs, '', 0,
+          report, FLastExitCodeOfExe, output) then
         begin
           // is failed
           ps := 'Error: ' + IntToStr(FLastExitCodeOfExe) + ' : ' + Report;
@@ -10430,9 +10431,9 @@ begin
             LogDatei.log(ps, LLError);
             ProcessMess;
             Sleep(100);
-            if not RunCommandAndCaptureOut(commandline,
-              catchout, output, report, showcmd,
-              FLastExitCodeOfExe, showoutput) then
+            if not StartProcess(commandline, showcmd, showoutput,
+              true, false, false, false, false, runAs, '', 0,
+              report, FLastExitCodeOfExe, output) then
             begin
               LogDatei.log(ps, LLcritical);
               FExtremeErrorLevel := LevelFatal;
