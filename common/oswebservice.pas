@@ -581,6 +581,7 @@ var
   //AcceptEncodingCompress: string = 'deflate, gzip';
   AcceptEncodingCompress: string = 'deflate';
   AcceptEncodingNoCompress: string = 'plain';
+  OpsiVersion : string = '';
 
 {$IFNDEF OPSIWINST}
 function StringReplace(const S, OldPattern, NewPattern: string): string;
@@ -748,6 +749,7 @@ var
 begin
   Result := '4'; //default to opsi 4.x
   verstr := getOpsiServerVersion(serviceUrl, username, password, sessionid);
+  OpsiVersion := verstr;
   (*
   if verstr = '' then
     Result := ''
@@ -1596,8 +1598,15 @@ begin
     communicationmode : 0 = opsi 4.1 / 4.2 / Request: gzip, Response: gzip, deflate, identity
     communicationmode : 1 = opsi 4.0 / Request: deflate, Response: gzip, deflate, identity
      ----------------------------------------------------}
+     {if OpsiVersion <> '' then
+     begin
+       if OpsiVersion >= '4.1' then CommunicationMode := 0
+       else CommunicationMode := 1;
+     end;}
 
-     case communicationmode of
+
+
+     case CommunicationMode of
       0:
       begin
         LogDatei.log('Use opsi 4.1 / 4.2 HTTP Header, compress', LLnotice);
