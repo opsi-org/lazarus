@@ -1,59 +1,62 @@
 object Form1: TForm1
   Left = 803
-  Height = 107
+  Height = 160
   Top = 489
-  Width = 402
+  Width = 603
   Caption = 'opsi-script-test-helper'
-  ClientHeight = 107
-  ClientWidth = 402
+  ClientHeight = 160
+  ClientWidth = 603
+  DesignTimePPI = 144
   OnCreate = FormCreate
   LCLVersion = '2.0.4.0'
   object BitBtn1: TBitBtn
-    Left = 280
-    Height = 29
-    Top = 61
-    Width = 107
+    Left = 420
+    Height = 44
+    Top = 92
+    Width = 160
     DefaultCaption = True
     Kind = bkClose
     ModalResult = 11
     OnClick = BitBtn1Click
+    ParentFont = False
     TabOrder = 0
   end
   object Label1: TLabel
-    Left = 112
-    Height = 28
-    Top = 15
-    Width = 95
+    Left = 168
+    Height = 42
+    Top = 22
+    Width = 159
     Caption = 'Please wait'
-    Font.Height = -20
+    Font.Height = -30
     ParentColor = False
     ParentFont = False
   end
   object Label2: TLabel
-    Left = 16
-    Height = 20
-    Top = 64
-    Width = 67
+    Left = 24
+    Height = 32
+    Top = 96
+    Width = 113
     Caption = 'Input Test:'
-    Font.Height = -15
+    Font.Height = -23
     ParentColor = False
     ParentFont = False
   end
   object Edit1: TEdit
-    Left = 112
-    Height = 29
-    Top = 61
-    Width = 152
+    Left = 168
+    Height = 44
+    Top = 92
+    Width = 228
     AutoSize = False
+    ParentFont = False
     TabOrder = 1
   end
   object Timer1: TTimer
     OnTimer = Timer1Timer
-    left = 16
-    top = 8
+    left = 24
+    top = 12
   end
   object waittimer: TTimer
-    left = 48
-    top = 8
+    left = 72
+    top = 12
   end
 end

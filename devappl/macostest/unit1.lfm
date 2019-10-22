@@ -1,18 +1,29 @@
 object Form1: TForm1
-  Left = 176
+  Left = 402
   Height = 240
-  Top = 319
+  Top = 182
   Width = 320
   Caption = 'Form1'
   ClientHeight = 240
   ClientWidth = 320
+  OnCreate = FormCreate
   LCLVersion = '2.0.4.0'
   object Edit1: TEdit
     Left = 35
     Height = 22
-    Top = 73
+    Top = 40
     Width = 205
     TabOrder = 0
     Text = 'Edit1'
+  end
+  object Memo1: TMemo
+    Left = 39
+    Height = 142
+    Top = 74
+    Width = 241
+    Lines.Strings = (
+      'Memo1'
+    )
+    TabOrder = 1
   end
 end

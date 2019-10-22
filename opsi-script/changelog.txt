@@ -1,9 +1,12 @@
 ﻿
 todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
+mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+
+
 opsi-winst/opsi-script (4.12.2.3) experimental; urgency=low
 
   * feature/macos integrated

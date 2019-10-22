@@ -15,6 +15,7 @@ uses
   {$IFDEF DARWIN}
   osfuncmac,
   {$ENDIF}
+  superobject,
   Classes,
   SysUtils,
   CustApp ,
@@ -29,15 +30,14 @@ uses
   inifiles,
   oslog,
   oswebservice,
-  OSProcessux,
-  superobject;
+  OSProcessux;
 
 
 const
   SW_HIDE = 0;
   opsiclientdconf = '/etc/opsi-client-agent/opsiclientd.conf' ;
-  opsiscriptbin = '/usr/bin/opsi-script';
-  opsiscriptnoguibin = '/usr/bin/opsi-script-nogui';
+  opsiscriptbin = '/Applications/opsi-script.app/Contents/MacOS/opsi-script';
+  opsiscriptnoguibin = '/usr/local/bin/opsi-script-nogui';
   opsiscriptstarterlog = 'opsiscriptstarter.log';
 
 
@@ -356,7 +356,7 @@ begin
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
     LogDatei.log('', LLDebug);
   end;
-  fpunlink(credfilename);
+  //fpunlink(credfilename);
   outlines.Free;
   credentials.Free;
 end;

@@ -6,6 +6,7 @@ interface
 
 uses
   Classes, SysUtils,
+  osparserhelper,
   {$IFDEF WIN32}
   Windows,
   DSiWin32,
@@ -14,6 +15,13 @@ uses
   JwaWindows,
 
   {$ENDIF WIN32}
+  {$IFDEF UNIX}
+  OSProcessux,
+
+  {$ENDIF UNIX}
+  {$IFDEF OPSISCRIPT}
+  osfunc,
+  {$ENDIF OPSISCRIPT}
   oslog;
 
 function ProcessIsRunning(searchproc: string): boolean;
@@ -73,7 +81,7 @@ var
   {$ELSE OPSISCRIPT}
   outlines: TStringList;
   {$ENDIF OPSISCRIPT}
-  lineparts: TXStringlist;
+  lineparts: TStringlist;
   ExitCode: longint;
   i, k: integer;
 begin
@@ -83,9 +91,9 @@ begin
       {$IFDEF OPSISCRIPT}
       outlines := TXStringList.Create;
       {$ELSE OPSISCRIPT}
-      outlines := TXStringList.Create;
+      outlines := TStringList.Create;
       {$ENDIF OPSISCRIPT}
-      lineparts := TXStringList.Create;
+      lineparts := TStringList.Create;
       pscmd := 'ps -eo pid,user,comm:30,cmd:110';
       if not RunCommandAndCaptureOut(pscmd, True, outlines, report,
         SW_HIDE, ExitCode) then

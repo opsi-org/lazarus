@@ -12,6 +12,8 @@ uses
   shlobj,
   winpeimagereader,
   {$ENDIF WINDOWS}
+  LazFileUtils,
+  lazutf8,
   fileinfo,
   fpjsonrtti,
   oslog,
@@ -22,13 +24,17 @@ type
 
   TRunMode = (analyzeOnly, singleAnalyzeCreate, twoAnalyzeCreate_1,
     twoAnalyzeCreate_2, createTemplate, gmUnknown);
+
   TArchitecture = (a32, a64, aUnknown);
+
   TArchitectureMode = (am32only_fix, am64only_fix, amBoth_fix, amSystemSpecific_fix,
     amSelectable);
+
   // marker for add installers
-  TKnownInstaller = (stAdvancedMSI, stInno, stInstallShield, stInstallShieldMSI,
+  TKnownInstaller = (stSFXcab,  stBoxStub, stAdvancedMSI, stInstallShield, stInstallShieldMSI,
     stMsi, stNsis, st7zip, st7zipsfx, stInstallAware, stMSGenericInstaller,
-    stWixToolset, stBoxStub, stSFXcab, stBitrock,stSelfExtractingInstaller,stUnknown);
+    stWixToolset, stBitrock,stSelfExtractingInstaller,stInno,
+    stUnknown);
 
 
   TdetectInstaller = function(parent: TClass; markerlist: TStrings): boolean;
@@ -386,6 +392,7 @@ var
   myconfiguration: TConfiguration;
   useRunMode: TRunMode;
   myVersion: string;
+  lfilename : string;
 
 resourcestring
 
@@ -664,7 +671,7 @@ begin
   FProperties := TPProperties.Create(self);
   Fconfig_version := myVersion;
   FReadme_txt_templ := ExtractFileDir(ParamStr(0))+PathDelim+'template-files'+PathDelim+'package_qa.txt';
-  readconfig;
+  //readconfig;
 end;
 
 destructor TConfiguration.Destroy;
@@ -746,24 +753,29 @@ var
   end;
 
 begin
+  try
   if Assigned(logdatei) then
-    logdatei.log('Start writeconfig', LLDebug2);
+    logdatei.log('Start writeconfig', LLDebug);
   configDir := '';
   {$IFDEF Windows}
   SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, configDir);
   configDir := configDir + PathDelim + 'opsi.org' + PathDelim;
+  configDirUtf8 := WinCPToUTF8(configDir);
   {$ELSE}
   configDir := GetAppConfigDir(False);
-  {$ENDIF WINDOWS}
   configDirUtf8 := configDir;
+  {$ENDIF WINDOWS}
   configDirUtf8 := StringReplace(configDirUtf8, 'opsi-setup-detector',
     'opsi.org', [rfReplaceAll]);
   configDirUtf8 := StringReplace(configDirUtf8, 'opsisetupdetector',
     'opsi.org', [rfReplaceAll]);
   myfilename := configDirUtf8 + PathDelim + 'opsisetupdetector.cfg';
   myfilename := ExpandFileName(myfilename);
+  if Assigned(logdatei) then
+  logdatei.log('writeconfig to: '+myfilename, LLDebug);
   if not DirectoryExists(configDirUtf8) then
     if not ForceDirectories(configDirUtf8) then
+      if Assigned(logdatei) then
       LogDatei.log('failed to create configuration directory: ' +
         configDirUtf8, LLError);
 
@@ -780,8 +792,9 @@ begin
     // Save strings as JSON array
     // JSON convert and output
     JSONString := Streamer.ObjectToJSONString(myconfiguration);
-    logdatei.log(JSONString, LLDebug);
+    logdatei.log('Config: '+JSONString, LLDebug);
     if not SaveStringToFile(JSONString, myfilename) then
+      if Assigned(logdatei) then
       LogDatei.log('failed save configuration', LLError);
     //AssignFile(myfile, myfilename);
     //Rewrite(myfile);
@@ -796,6 +809,13 @@ begin
   end;
   if Assigned(logdatei) then
     logdatei.log('Finished writeconfig', LLDebug2);
+
+  except
+     on E: Exception do
+       if Assigned(logdatei) then
+        LogDatei.log('Configuration could not be written. Details: ' +
+          E.ClassName + ': ' + E.Message, LLError);
+  end;
 end;
 
 
@@ -834,29 +854,36 @@ var
 
     except
       on E: Exception do
-        LogDatei.log('String could not be written. Details: ' +
-          E.ClassName + ': ' + E.Message, LLError);
+        if Assigned(logdatei) then
+        LogDatei.log('String could not be read. Details: ' +
+          E.ClassName + ': ' + E.Message, LLError)
+        else
+          ShowMessage('readconfig: String could not be read. Details: ' +
+          E.ClassName + ': ' + E.Message);
     end;
   end;
 
 begin
+  try
   if Assigned(logdatei) then
-    logdatei.log('Start readconfig', LLDebug2);
+    logdatei.log('Start readconfig', LLDebug);
   configDir := '';
   {$IFDEF Windows}
   SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, configDir);
   configDir := configDir + PathDelim + 'opsi.org' + PathDelim;
+  configDirUtf8 := WinCPToUTF8(configDir);
   {$ELSE}
   configDir := GetAppConfigDir(False);
+  configDirUtf8 := configDir;
   {$ENDIF WINDOWS}
-  configDirstr := configDir;
-  configDirUtf8 := configDirstr;
   configDirUtf8 := StringReplace(configDirUtf8, 'opsi-setup-detector',
     'opsi.org', [rfReplaceAll]);
   configDirUtf8 := StringReplace(configDirUtf8, 'opsisetupdetector',
     'opsi.org', [rfReplaceAll]);
   myfilename := configDirUtf8 + PathDelim + 'opsisetupdetector.cfg';
   myfilename := ExpandFileName(myfilename);
+  if Assigned(logdatei) then
+  logdatei.log('readconfig from: '+myfilename, LLDebug);
   if FileExists(myfilename) then
   begin
     AssignFile(myfile, myfilename);
@@ -873,10 +900,14 @@ begin
       DeStreamer.Destroy;
       CloseFile(myfile);
     end;
+    if Assigned(logdatei) then
+  logdatei.log('read config: '+JSONString, LLDebug)
+     else
+            ShowMessage('read config: '+JSONString);
     {$IFDEF WINDOWS}
     registerForWinExplorer(FregisterInFilemanager);
-{$ELSE}
-{$ENDIF WINDOWS}
+    {$ELSE}
+    {$ENDIF WINDOWS}
   end
   else
   begin
@@ -896,6 +927,16 @@ begin
   end;
   if Assigned(logdatei) then
     logdatei.log('Finished readconfig', LLDebug2);
+
+  except
+        on E: Exception do
+          if Assigned(logdatei) then
+          LogDatei.log('read config exception. Details: ' +
+            E.ClassName + ': ' + E.Message, LLError)
+          else
+            ShowMessage('read config exception. Details: ' +
+            E.ClassName + ': ' + E.Message);
+  end;
 end;
 
 
@@ -1029,8 +1070,9 @@ end;
 begin
   // marker for add installers
   knownInstallerList := TStringList.Create;
+  knownInstallerList.Add('SFXcab');
+  knownInstallerList.Add('BoxStub');
   knownInstallerList.Add('AdvancedMSI');
-  knownInstallerList.Add('Inno');
   knownInstallerList.Add('InstallShield');
   knownInstallerList.Add('InstallShieldMSI');
   knownInstallerList.Add('MSI');
@@ -1040,10 +1082,9 @@ begin
   knownInstallerList.Add('InstallAware');
   knownInstallerList.Add('MSGenericInstaller');
   knownInstallerList.Add('WixToolset');
-  knownInstallerList.Add('BoxStub');
-  knownInstallerList.Add('SFXcab');
   knownInstallerList.Add('Bitrock');
   knownInstallerList.Add('SelfExtractingInstaller');
+  knownInstallerList.Add('Inno');
   knownInstallerList.Add('Unknown');
 
 
@@ -1055,6 +1096,22 @@ begin
     installerArray[counter].Name := knownInstallerList.Strings[counter];
   end;
 
+  // unknown
+  with installerArray[integer(stUnknown)] do
+  begin
+    description := 'Unknown Installer';
+    silentsetup := '';
+    unattendedsetup := '';
+    silentuninstall := '';
+    unattendeduninstall := '';
+    uninstall_waitforprocess := '';
+    uninstallProg := '';
+    link :=
+      'https://startpage.com/do/search?cmd=process_search&query=silent+install';
+    comment := '';
+    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    detected := @detectedbypatternwithor;
+  end;
 
   // inno
   with installerArray[integer(stInno)] do
@@ -1343,7 +1400,7 @@ begin
   architectureModeList.Add('selectable');
 
   myconfiguration := TConfiguration.Create;
-  myconfiguration.readconfig;
+
 
   //aktSetupFile := TSetupFile.Create;
   aktProduct := TopsiProduct.Create;
@@ -1356,4 +1413,20 @@ begin
   finally
     FileVerInfo.Free;
   end;
+
+   // Initialize logging
+  LogDatei := TLogInfo.Create;
+  lfilename := ExtractFileName(Application.ExeName);
+  lfilename := ExtractFileNameOnly(lfilename);
+  LogDatei.FileName := lfilename;
+  LogDatei.StandardLogFileext := '.log';
+  LogDatei.StandardLogFilename := lfilename;
+  LogDatei.WritePartLog := False;
+  LogDatei.CreateTheLogfile(lfilename + '.log', True);
+  LogDatei.log('Log for: ' + Application.exename + ' opend at : ' +
+    DateTimeToStr(now), LLEssential);
+  LogDatei.log('opsi-setup-detector Version: ' + myVersion, LLEssential);
+  LogDatei.LogLevel := 8;
+
+  myconfiguration.readconfig;
 end.

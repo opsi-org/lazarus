@@ -369,7 +369,7 @@ type
     {$ENDIF WINDOWS}
     {$IFDEF UNIX}
     function chmod(mode: string; const FileName: string): boolean;
-    {$ENDIF LINUX}
+    {$ENDIF UNIX}
   end;
 
   {$IFDEF WINDOWS}

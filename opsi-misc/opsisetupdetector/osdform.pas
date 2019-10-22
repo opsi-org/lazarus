@@ -73,7 +73,6 @@ type
     BtCreateEmptyTemplate: TBitBtn;
     BtAnalyzeOnly: TBitBtn;
     CheckBoxUseMst: TCheckBox;
-    CheckBoxUseMst1: TCheckBox;
     CheckGroupBuildMode: TCheckGroup;
     FlowPanel1: TFlowPanel;
     FlowPanel10: TFlowPanel;
@@ -667,6 +666,7 @@ begin
     FileVerInfo.Free;
   end;
   *)
+  (*
   // Initialize logging
   LogDatei := TLogInfo.Create;
   lfilename := ExtractFileName(Application.ExeName);
@@ -679,8 +679,8 @@ begin
   LogDatei.log('Log for: ' + Application.exename + ' opend at : ' +
     DateTimeToStr(now), LLEssential);
   LogDatei.log('opsi-setup-detector Version: ' + myVersion, LLEssential);
-
   LogDatei.LogLevel := 8;
+  *)
 end;
 
 procedure main2;

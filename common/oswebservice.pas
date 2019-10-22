@@ -17,9 +17,7 @@ unit oswebservice;
 // This sourcecode is owned by the uib gmbh, D55118 Mainz, Germany
 // and published under the Terms of the GNU Affero General Public License.
 // Text of the AGPL: http://www.gnu.org/licenses/agpl-3.0-standalone.html
-// author: Rupert Roeder, detlef oertel
-
-
+// author: Rupert Roeder, detlef oertel, Jan Werner
 
 
 interface
@@ -57,6 +55,9 @@ uses
   Windows,
 {$ENDIF WINDOWS}
   //widatahelper,
+  //IDZlib,
+  //IdCompressorZlib,
+  GZIPUtils,
   zstream;
 //LCLIntf,
 //LResources,
@@ -65,15 +66,14 @@ uses
 
 
 {
-   COPYRIGHT NOTICE
+COPYRIGHT NOTICE
 
- OpenSSL libraries for Indy
+OpenSSL libraries for Indy
 ***********************************
 Copyright 2000-2002,
 Gregor Ibic, gregor.ibic@intelicom.si
 Intelicom d.o.o.
 www.intelicom.si
-
 
 This library is tested on Indy 9.0 and higher.
 Support forum is avaiable at http://www.intelicom.si/forum
@@ -84,14 +84,27 @@ in your applications.
 Comments and suggestions are welcome to my email.
 ***************************************
 
+gziputils.pas
+*****************************************************************************
+Copyright (c) 2007-2019, Udo Schmal <udo.schmal@t-online.de>
+
+Permission to use, copy, modify, and/or distribute the software for any purpose
+with or without fee is hereby granted, provided that the above copyright notice
+and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,
+DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS
+ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+*****************************************************************************
 }
 
 const
-
   nameRequirementTypeBefore: string = 'before';
   nameRequirementTypeAfter: string = 'after';
   nameRequirementTypeUndefined: string = '';
-
   logtype = 'instlog';
 
 type
@@ -151,94 +164,28 @@ type
   end;
 
 
-  TOpsiData = class
-
-  protected
-
-    actualProduct: string;
-    actualVersion: string;
-    actualClient: string;
-    options: string;
-    FSortByServer: boolean;
-
-  public
-
-    constructor Create;
-
-    procedure saveOpsiConf; virtual; abstract;
-    procedure finishOpsiConf; virtual;
-
-    function stateToString(state: TProductState): string; virtual; abstract;
-    function actionToString(action: TAction): string; virtual; abstract;
-    function actionRequestToString(actionRequest: TActionRequest): string;
-      virtual; abstract;
-
-    function getLogFileName(const LogFilename: string): string; virtual; abstract;
-
-    function UpdateSwitches(extremeErrorLevel: TErrorLevel): boolean; virtual;
-
-    procedure setActualClient(computername: string); virtual; abstract;
-    procedure setOptions(serviceoptions: string);
-    procedure setActualProductName(const productname: string); virtual;
-    function getActualProductName: string; virtual;
-    function getActualProductVersion: string; virtual;
-
-    function initProduct: boolean; virtual; abstract;
-    procedure finishProduct; virtual; abstract;
-
-    function getSpecialScriptPath: string; virtual;
-
-    function getProductproperties: TStringList; virtual; abstract;
-
-    function getBeforeRequirements: TStringList; virtual; abstract;
-    function getAfterRequirements: TStringList; virtual; abstract;
-
-    function getProductState: TProductState; virtual; abstract;
-    function getProductAction: TAction; virtual; abstract;
-    function getProductActionRequest: TActionRequest; virtual; abstract;
-
-    function getListOfProducts: TStringList; virtual; abstract;
-
-    function getProductScriptPath(actionType: TAction): string;
-      virtual; abstract;
-
-    function getInstallationPriority: integer; virtual; abstract;
-
-    procedure setProductActionRequest(newAction: TActionRequest); virtual; abstract;
-    procedure setProductState(newState: TProductState); virtual; abstract;
-
-    procedure setProductStateActionRequest(newState: TProductState;
-      newActiont: TActionRequest);
-      virtual; abstract;
-
-
-    property sortByServer: boolean read FSortByServer;
-
-    function withLicenceManagement: boolean; virtual;
-    function getOpsiServiceVersion: string; virtual; abstract;
-
-  end;
-
-  // opsidata-Service
+(************** opsidata-Service  *********************************************)
 
   // helper classes
+
+  { TOpsiMethodCall }
 
   TOpsiMethodCall = class(TObject)
   protected
     FOpsiMethodName: string;
     FParameterlist: TStringList;
     Fhashlist: TStringList;
-
   public
-
+    { constructor }
     constructor Create(const method: string; parameters: array of string); overload;
     constructor Create(const method: string; hashlist: TStringList;
       parameters: array of string); overload;
+    { destructor }
     destructor Destroy; override;
-
+    { functions }
     function getJsonUrlString: string;
     function getJsonHashListString: string;
-
+    { properties }
     property opsimethodname: string read FOpsiMethodname write FOpsiMethodname;
     property parameterlist: TStringList read FParameterlist write FParameterlist;
     property hashlist: TStringList read Fhashlist write Fhashlist;
@@ -246,12 +193,16 @@ type
 
   end;
 
+  { TJsonThroughHTTPS }
+
   TJsonThroughHTTPS = class(TObject)
   private
     FResultLines: TStringList;
     mymemorystream: TMemoryStream;
     //nullO : NULL;
     methodGET: boolean;
+    procedure CompressStream(MemoryStream: TMemoryStream;
+      const ContentEncoding: string);
   protected
     {$IFDEF SYNAPSE}
     HTTPSender: THTTPSend;
@@ -260,7 +211,6 @@ type
     //IdHTTP: TIdHTTP;
     IdHTTP: TIdWebDAV;
     {$ENDIF SYNAPSE}
-
     portHTTP: integer;
     portHTTPS: integer;
     Furl: string;
@@ -270,12 +220,12 @@ type
     FError: string;
     FErrorInfo: TStringList;
     FSessionId: string;
-
+    FCommunicationMode: integer;
     procedure makeURL(const omc: TOpsiMethodCall);
     procedure createSocket; overload;
     procedure createSocket(const agent, ip, port: string); overload;
-
   public
+    { constructor }
     constructor Create(const serviceURL, username, password: string); overload;
     constructor Create(const serviceURL, username, password, sessionid: string);
       overload;
@@ -283,7 +233,12 @@ type
       ip, port: string); overload;
     constructor Create(const serviceURL, username, password, sessionid,
       ip, port, agent: string); overload;
+    { destructor }
     destructor Destroy; override;
+    { function }
+    function retrieveJSONObject(const omc: TOpsiMethodCall; logging: boolean;
+      retry: boolean; readOmcMap: boolean; communicationmode: integer): ISuperObject;
+      overload;
     function retrieveJSONObject(const omc: TOpsiMethodCall;
       logging: boolean; retry: boolean; readOmcMap: boolean): ISuperObject; overload;
     function retrieveJSONObject(const omc: TOpsiMethodCall;
@@ -301,32 +256,82 @@ type
     function retrieveJSONArray(const omc: TOpsiMethodCall): TSuperArray; overload;
     *)
     function retrieveJSONObjectByHttpPost(const instream: TMemoryStream;
-      logging: boolean): ISuperObject;
-
+      logging: boolean; communicationmode: integer): ISuperObject;
     function getMapResult(const omc: TOpsiMethodCall): TStringList;
     function getHashListResult(const omc: TOpsiMethodCall): TStringList;
     function getListResult(const omc: TOpsiMethodCall): TStringList;
     function getStringListResult(const omc: TOpsiMethodCall): TStringList;
     function getSubListResult(const omc: TOpsiMethodCall; subkey: string): TStringList;
-
     function getFileFromDepot(filename: string; toStringList: boolean;
       var ListResult: TStringList): boolean;
-
+    { properties }
     property resultLines: TStringList read FResultLines;
     property LastError: string read FError;
     property LastErrorInfo: TStringList read FErrorInfo;
   end;
 
+(****************************** Opsi Data *************************************)
+
+  { TOpsiData}
+
+  TOpsiData = class
+  protected
+    actualProduct: string;
+    actualVersion: string;
+    actualClient: string;
+    options: string;
+    FSortByServer: boolean;
+  public
+    {constructor}
+    constructor Create;
+    {functions}
+    function stateToString(state: TProductState): string; virtual; abstract;
+    function actionToString(action: TAction): string; virtual; abstract;
+    function actionRequestToString(actionRequest: TActionRequest): string;
+      virtual; abstract;
+    function getLogFileName(const LogFilename: string): string; virtual; abstract;
+    function UpdateSwitches(extremeErrorLevel: TErrorLevel): boolean; virtual;
+    function getActualProductName: string; virtual;
+    function getActualProductVersion: string; virtual;
+    function initProduct: boolean; virtual; abstract;
+    function getSpecialScriptPath: string; virtual;
+    function getProductproperties: TStringList; virtual; abstract;
+    function getBeforeRequirements: TStringList; virtual; abstract;
+    function getAfterRequirements: TStringList; virtual; abstract;
+    function getProductState: TProductState; virtual; abstract;
+    function getProductAction: TAction; virtual; abstract;
+    function getProductActionRequest: TActionRequest; virtual; abstract;
+    function getListOfProducts: TStringList; virtual; abstract;
+    function getProductScriptPath(actionType: TAction): string;
+      virtual; abstract;
+    function getInstallationPriority: integer; virtual; abstract;
+    function withLicenceManagement: boolean; virtual;
+    function getOpsiServiceVersion: string; virtual; abstract;
+    {procedures}
+    procedure setActualClient(computername: string); virtual; abstract;
+    procedure setOptions(serviceoptions: string);
+    procedure setActualProductName(const productname: string); virtual;
+    procedure finishProduct; virtual; abstract;
+    procedure saveOpsiConf; virtual; abstract;
+    procedure finishOpsiConf; virtual;
+    procedure setProductActionRequest(newAction: TActionRequest); virtual; abstract;
+    procedure setProductState(newState: TProductState); virtual; abstract;
+    procedure setProductStateActionRequest(newState: TProductState;
+      newActiont: TActionRequest);
+      virtual; abstract;
+    {Properties}
+    property sortByServer: boolean read FSortByServer;
+  end;
+
+  { TOpsi4Data }
 
   TOpsi4Data = class(TOpsiData)
-
   private
     FjsonExecutioner: TJsonThroughHTTPS;
     ProfildateiChange: boolean;
     FServiceUrl: string;
     FDepotId: string;
     //actualClient: string;
-
     mapOfMethodSignatures: TStringList;
     //AllProductsDependencies: TStringList;
     allDependencies: TStringList;
@@ -341,100 +346,62 @@ type
     FOpsiInformation: ISuperObject;
     FOpsiServiceVersion: string;
     //FactualClient: string;
-
     FProductOnClient_objects: TSuperArray;
     FProductOnClient_aktobject: ISuperObject;
     FProductOnClientIndex: TStringList;
     //FSslProtocol: TIdSSLVersion;
-
     mylist: TStringList;
-
-
     //Function getMapOfProductSwitches : TStringList;
     //Function getProductRequirements (requirementType : String) : TStringList;
     function getProductRequirements(productname: string;
       requirementType: string): TStringList;
-
     function getMapOfProductStates: TStringList;
     function productonClients_getObjects__actionrequests: TStringList;
     //procedure productOnClient_getobject_actualclient;
     function getInstallableProducts: TStringList;
     function getOpsiModules: ISuperObject;
-
   protected
     FServiceLastErrorInfo: TStringList;
     //FactualClient: string;
-
   public
     //actualClient: string;
+    { constructor }
     constructor Create;
+    { destructor }
     destructor Destroy; override;
-
-    procedure initOpsiConf(serviceURL, username, password: string); overload;
-    procedure initOpsiConf(serviceURL, username, password, sessionid: string); overload;
-    procedure initOpsiConf(serviceURL, username, password, sessionid, ip, port: string);
-      overload;
-    procedure initOpsiConf(serviceURL, username, password, sessionid,
-      ip, port, agentstring: string);
-      overload;
-
-    //property sslProtocol: TIdSSLVersion read FSslProtocol write FSslProtocol;
-    property serviceUrl: string read FServiceURL;
-    property depotId: string read FDepotId;
-    //property actualclient: string read FactualClient write FactualClient;
-
-    procedure saveOpsiConf; override;
-    procedure finishOpsiConf; override;
-
+    { function }
     function checkAndRetrieve(const omc: TOpsiMethodCall;
       var errorOccured: boolean): string;
     //returns the retrieved JSON object as string
-
     function checkAndRetrieveMap(const omc: TOpsiMethodCall;
       var errorOccured: boolean): TStringList;
     function checkAndRetrieveHashList(const omc: TOpsiMethodCall;
       var errorOccured: boolean): TStringList;
     function checkAndRetrieveList(const omc: TOpsiMethodCall;
       var errorOccured: boolean): TStringList; virtual;
-
     function checkAndRetrieveStringList(const omc: TOpsiMethodCall;
       var errorOccured: boolean): TStringList;
     function checkAndRetrieveString(const omc: TOpsiMethodCall;
       var errorOccured: boolean): string;
-
     function getLogFileName(const LogFilename: string): string; override;
     //uses the parameter LogFilename as default
-
     function sendLog: boolean; overload;
     function sendLog(logtype: string): boolean; overload;
     function sendLog(logtype: string; appendmode: boolean): boolean; overload;
-
     function stateToString(state: TProductState): string; override;
     function actionToString(action: TAction): string; override;
     function actionRequestToString(actionRequest: TActionRequest): string;
       overload; override;
-
     function stateStringToState(s: string): TProductState;
     function actionRequestStringToActionRequest(s: string): TActionRequest;
     function actionRequestStringToAction(s: string): TAction;
-
-    procedure setActualClient(computername: string); override;
-    procedure setActualProductName(const productname: string); override;
-    procedure setActionProgress(const progress: string);
-
-    function getMethodSignature(const methodname: string): TStringList;
-
+        function getMethodSignature(const methodname: string): TStringList;
     function initProduct: boolean; override;
-    procedure finishProduct; override;
     function getActualProductVersion: string; override;
     function getSpecialScriptPath: string; override;
-
     function getProductproperties: TStringList; override;
-
     function getBeforeRequirements: TStringList; override;
     function getAfterRequirements: TStringList; override;
-
-
     function getListOfProducts: TStringList; override;
     function setAddDependentProductOnClients(switchon: boolean): boolean;
     function setAddProductPropertyStateDefaults(switchon: boolean): boolean;
@@ -446,7 +413,6 @@ type
       defaultlist: TStringList; myClientId: string;
       myProductId: string): TStringList; overload;
     // getInstallableLocalBootProductIds_list
-
     function getProductState: TProductState; override;
     function getProductAction: TAction; override;
     function getProductActionRequest: TActionRequest; override;
@@ -466,25 +432,8 @@ type
     function getActualProductInstalledPackage: string;
     function getActualProductInstalledModificationTime: string;
     function getActualProductActionRequest: string;
-    procedure setActualProductActionRequest(request: string);
-
-
-
-
     function getProductScriptPath(actionType: TAction): string; override;
-
     function getInstallationPriority: integer; override;
-
-    procedure setProductActionRequest(newAction: TActionRequest); override;
-    procedure setProductState(newState: TProductState); override;
-    procedure setProductProgress(myprogres: string);
-
-    procedure setProductStateActionRequest(newState: TProductState;
-      newAction: TActionRequest); override;
-    procedure ProductOnClient_update(actionProgressS: string;
-      actionResult: TActionResult4; actionRequest: TActionRequest4;
-      targetConfiguration: TTargetConfiguration4; lastAction: TActionRequest4;
-      installationStatus: TProductstate4);
     function actionResultToString(actionResult: TActionResult4): string;
     function actionRequest4ToString(actionRequest: TActionRequest4): string;
     function targetConfigurationToString(targetConfiguration: TTargetConfiguration4)
@@ -493,10 +442,6 @@ type
     function UpdateSwitches(extremeErrorLevel: TErrorLevel): boolean; override; overload;
     function UpdateSwitches(extremeErrorLevel: TErrorLevel; Progress: string): boolean;
       overload;
-
-
-    property ServiceLastErrorInfo: TStringList read FServiceLastErrorInfo;
-
     function withLicenceManagement: boolean; override;
     function withRoamingProfiles: boolean;
     function linuxAgentActivated: boolean;
@@ -506,11 +451,41 @@ type
     function getMapOfProductActionRequests: TStringList;
     function getFileFromDepot(filename: string; toStringList: boolean;
       var ListResult: TStringList): boolean;
+    function getOpsiServiceConfigs: string;
+    function getLogSize: int64;
     {$IFNDEF SYNAPSE}
     function decreaseSslProtocol: boolean;
     {$ENDIF SYNAPSE}
-    function getOpsiServiceConfigs: string;
-    function getLogSize: int64;
+    { procedure }
+    procedure initOpsiConf(serviceURL, username, password: string); overload;
+    procedure initOpsiConf(serviceURL, username, password, sessionid: string); overload;
+    procedure initOpsiConf(serviceURL, username, password, sessionid, ip, port: string);
+      overload;
+    procedure initOpsiConf(serviceURL, username, password, sessionid,
+      ip, port, agentstring: string);
+      overload;
+    procedure saveOpsiConf; override;
+    procedure finishOpsiConf; override;
+    procedure setActualClient(computername: string); override;
+    procedure setActualProductName(const productname: string); override;
+    procedure setActionProgress(const progress: string);
+    procedure finishProduct; override;
+    procedure setActualProductActionRequest(request: string);
+    procedure setProductActionRequest(newAction: TActionRequest); override;
+    procedure setProductState(newState: TProductState); override;
+    procedure setProductProgress(myprogres: string);
+    procedure setProductStateActionRequest(newState: TProductState;
+      newAction: TActionRequest); override;
+    procedure ProductOnClient_update(actionProgressS: string;
+      actionResult: TActionResult4; actionRequest: TActionRequest4;
+      targetConfiguration: TTargetConfiguration4; lastAction: TActionRequest4;
+      installationStatus: TProductstate4);
+    { properties }
+    //property sslProtocol: TIdSSLVersion read FSslProtocol write FSslProtocol;
+    property serviceUrl: string read FServiceURL;
+    property depotId: string read FDepotId;
+    property ServiceLastErrorInfo: TStringList read FServiceLastErrorInfo;
+    //property actualclient: string read FactualClient write FactualClient;
   end;
 
 var
@@ -532,7 +507,11 @@ resourcestring
   rsErrorIntConnection = 'Error while initializing opsiconnection';
   rsNoValueFound = 'No value found! Set%sto';
 
+
 implementation
+(******************************************************************************)
+(*                      Implementations                                       *)
+(******************************************************************************)
 
 {$IFDEF OPSIWINST}
 uses
@@ -541,27 +520,29 @@ uses
   {$ENDIF GUI}
   osparser,
   osmain;
-
 {$ENDIF}
 
 const
   // fuer opsiClassic
-
   ProduktestatusSektionsname = 'Products-installed';
   Produktsektionskennzeichnung = '-install';
-
-
 
 var
   testresult: string;
   ContentTypeCompress: string = 'application/json';
   ContentTypeNoCompress: string = 'application/json';
+  //ContentEncodingCommpress: string = 'gzip, deflate';
+  //ContentEncodingCommpress: string = 'gzip';
   ContentEncodingCommpress: string = 'deflate';
-  ContentEncodingNoCommpress: string = '';
-  AcceptCompress: string = '';
-  AcceptNoCompress: string = '';
+  //ContentEncodingCommpress: string = 'deflate, gzip';
+  ContentEncodingNoCommpress: string = 'plain';
+  AcceptCompress: string = 'application/json';
+  AcceptNoCompress: string = 'application/json';
+  //AcceptEncodingCompress: string = 'gzip, deflate';
+  //AcceptEncodingCompress: string = 'deflate, gzip';
   AcceptEncodingCompress: string = 'deflate';
-  AcceptEncodingNoCompress: string = '';
+  AcceptEncodingNoCompress: string = 'plain';
+  OpsiVersion : string = '';
 
 {$IFNDEF OPSIWINST}
 function StringReplace(const S, OldPattern, NewPattern: string): string;
@@ -572,13 +553,11 @@ end;
 
 {$ENDIF}
 
-
 {$IFDEF SYNAPSE}
 function MemoryStreamToString(M: TMemoryStream): string;
 begin
   SetString(Result, PChar(M.Memory), M.Size div SizeOf(char));
 end;
-
 {$ENDIF SYNAPSE}
 
 function escapeControlChars(t: string): string;
@@ -643,6 +622,8 @@ begin
   //LogDatei.LogLevel := LLdebug2;
   try
     //if FJsonExecutioner <> nil then FJsonExecutioner.free;
+    if Assigned(FJsonExecutioner) then
+      FreeAndNil(FJsonExecutioner);
     FjsonExecutioner := TJsonThroughHTTPS.Create(serviceUrl, username,
       password, sessionid);
     omc := TOpsiMethodCall.Create('backend_info', []);
@@ -692,8 +673,8 @@ begin
   except
     //result := '3';
     try
-      if FJsonExecutioner <> nil then
-        FJsonExecutioner.Free;
+      if Assigned(FJsonExecutioner) then
+        FreeAndNil(FJsonExecutioner);
       if omc <> nil then
         omc.Free;
       FjsonExecutioner := TJsonThroughHTTPS.Create(serviceUrl, username, password);
@@ -727,6 +708,7 @@ var
 begin
   Result := '4'; //default to opsi 4.x
   verstr := getOpsiServerVersion(serviceUrl, username, password, sessionid);
+  OpsiVersion := verstr;
   (*
   if verstr = '' then
     Result := ''
@@ -763,13 +745,57 @@ begin
   end;
 end;
 
+function getJsonObjectStringfromList(const inlist: TStringList): WideString;
+var
+  i: integer;
+  str: WideString;
+  new_obj: ISuperObject;
+begin
+  str := '{ ' + inlist.Strings[0];
+  for i := 1 to inlist.Count - 1 do
+  begin
+    str := str + ' , ' + inlist.Strings[i];
+  end;
+  str := str + ' }';
+  new_obj := SO(str);
+  Result := new_obj.asJson;
+end;
+
+procedure getStringlistFromJsonObject(const jO: ISuperObject; var list: TStringList);
+var
+  iter: TSuperObjectIter;
+  testresult: string;
+begin
+  if list = nil then
+    exit;
+
+  list.Clear;
+
+  if (jO = nil) then
+    exit;
+
+  if ObjectFindFirst(jo, iter) then
+  begin
+    repeat
+      testresult := iter.key + '=' + iter.Val.AsString;
+      list.Add(iter.key + '=' + iter.Val.AsString);
+    until not ObjectFindNext(iter);
+    ObjectFindClose(iter);
+  end;
+end;
+
+
 constructor TString.Create(const AStr: string);
 begin
   inherited Create;
   FStr := AStr;
 end;
 
-
+(******************************************************************************)
+(*                                                                            *)
+(*                    Implementation of class TOpsiData                       *)
+(*                                                                            *)
+(******************************************************************************)
 constructor TOpsiData.Create;
 begin
   FSortByServer := False;
@@ -780,8 +806,6 @@ function TOpsiData.getSpecialScriptPath: string;
 begin
   Result := '';
 end;
-
-
 
 procedure TOpsiData.finishOpsiConf;
 begin
@@ -882,10 +906,15 @@ begin
   Result := False;
 end;
 
-// opsidata-Service ================================================================
+//========== opsidata-Service ==================================================
 
-// helper classes
+{ helper classes }
 
+(******************************************************************************)
+(*                                                                            *)
+(*                 Implementation of class TOpsiMethodCall                    *)
+(*                                                                            *)
+(******************************************************************************)
 constructor TOpsiMethodCall.Create(const method: string; parameters: array of string);
 var
   i: integer;
@@ -926,7 +955,6 @@ begin
   end;
 
 end;
-
 
 destructor TOpsiMethodCall.Destroy;
 begin
@@ -1031,22 +1059,6 @@ begin
         ex.message, LLdebug2);
     end;
   end;
-end;
-
-function getJsonObjectStringfromList(const inlist: TStringList): WideString;
-var
-  i: integer;
-  str: WideString;
-  new_obj: ISuperObject;
-begin
-  str := '{ ' + inlist.Strings[0];
-  for i := 1 to inlist.Count - 1 do
-  begin
-    str := str + ' , ' + inlist.Strings[i];
-  end;
-  str := str + ' }';
-  new_obj := SO(str);
-  Result := new_obj.asJson;
 end;
 
 function TOpsiMethodCall.getJsonHashListString: string;
@@ -1184,29 +1196,33 @@ begin
     end;
   end;
 end;
+(******************* End of TOpsiMethodCall ***********************************)
 
-
-
+(******************************************************************************)
+(*                                                                            *)
+(*  Implementation of class TJsonThroughHTTPS                                 *)
+(*                                                                            *)
+(******************************************************************************)
 constructor TJsonThroughHTTPS.Create(const serviceURL, username, password: string);
 begin
   TJsonThroughHTTPS.Create(serviceUrl, username, password, '', '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(const serviceURL, username,
-  password, sessionid: string);
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid: string);
 begin
   Create(serviceUrl, username, password, sessionid, '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(const serviceURL, username,
-  password, sessionid, ip, port: string);
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid, ip, port: string);
 begin
   Create(serviceUrl, username, password, sessionid, ip, port,
     ExtractFileName(ParamStr(0)));
 end;
 
-constructor TJsonThroughHTTPS.Create(const serviceURL, username,
-  password, sessionid, ip, port, agent: string);
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid, ip, port, agent: string);
 begin
   //portHTTPS := port;
   //portHTTP := 4444;
@@ -1214,11 +1230,12 @@ begin
   Fusername := username;
   Fpassword := password;
   FSessionId := sessionid;
+  FCommunicationMode := -1; //-1 means Communication mode is not set e.g. it is unknown
   mymemorystream := TMemoryStream.Create;
   FResultLines := TStringList.Create;
   FErrorInfo := TStringList.Create;
   {$IFDEF OPSIWINST}
-  createSocket(osconf.selfProductName + ' ' + osconf.WinstVersion, '', '');
+  createSocket(osconf.selfProductName + ' / ' + osconf.WinstVersion, ip, port);
   {$ELSE OPSIWINST}
     {$IFDEF OCASIMP}
   createSocket('ocasimp ', ip, port);
@@ -1289,7 +1306,7 @@ begin
           ex.message, LLError);
       end;
     end;
-    LogDatei.DependentAdd('HTTPSender.Sock.GetLocalSinIP : ' +
+    LogDatei.log('HTTPSender.Sock.GetLocalSinIP : ' +
       HTTPSender.Sock.GetLocalSinIP, LLdebug2);
   except
     on ex: Exception do
@@ -1349,8 +1366,6 @@ begin
   {$ENDIF SYNAPSE}
 end;
 
-
-
 destructor TJsonThroughHTTPS.Destroy;
 begin
   //nullO.free;
@@ -1374,6 +1389,28 @@ begin
 
 end;
 
+procedure TJsonThroughHTTPS.CompressStream(MemoryStream: TMemoryStream; const ContentEncoding: string);
+var
+  CompressedMemoryStream : TMemoryStream;
+begin
+  CompressedMemoryStream := TMemoryStream.Create;
+  { gzip format (RFC 1952) }
+  if ContentEncoding = 'gzip' then //opsi 4.1 and opsi 4.2
+  begin
+    zipStream(MemoryStream, CompressedMemoryStream, zcDefault, zsGZIP);
+    MemoryStream.LoadFromStream(CompressedMemoryStream);
+  end
+  else
+  { zlib format (RFC 1950) in combination with "deflate" compression (RCF 1952) }
+  if (ContentEncoding = 'deflate') or (ContentEncoding = '') then // opsi 4.0
+  begin
+    zipStream(MemoryStream, CompressedMemoryStream, zcDefault, zsZLib);
+    MemoryStream.LoadFromStream(CompressedMemoryStream);
+  end;
+  CompressedMemoryStream.Free;
+end;
+
+
 procedure TJsonThroughHTTPS.makeURL(const omc: TOpsiMethodCall);
 begin
   //Furl := 'https://' + fhost + ':' + intToStr(portHTTPS) + '/rpc?' + EncodeUrl(omc.jsonUrlString);
@@ -1396,38 +1433,10 @@ begin
   LogDatei.log('got Furl: ' + Furl, LLdebug3);
 end;
 
-
-procedure getStringlistFromJsonObject(const jO: ISuperObject; var list: TStringList);
-var
-  iter: TSuperObjectIter;
-  testresult: string;
-begin
-  if list = nil then
-    exit;
-
-  list.Clear;
-
-  if (jO = nil) then
-    exit;
-
-  if ObjectFindFirst(jo, iter) then
-  begin
-    repeat
-      testresult := iter.key + '=' + iter.Val.AsString;
-      list.Add(iter.key + '=' + iter.Val.AsString);
-    until not ObjectFindNext(iter);
-    ObjectFindClose(iter);
-  end;
-end;
-
-
-
 function TJsonThroughHTTPS.retrieveJSONObject(const omc: TOpsiMethodCall): ISuperObject;
 begin
   Result := retrieveJSONObject(omc, True);
 end;
-
-
 
 function TJsonThroughHTTPS.retrieveJSONObject(const omc: TOpsiMethodCall;
   logging: boolean): ISuperObject;
@@ -1441,9 +1450,15 @@ begin
   Result := retrieveJSONObject(omc, logging, True, False);
 end;
 
-
 function TJsonThroughHTTPS.retrieveJSONObject(const omc: TOpsiMethodCall;
   logging: boolean; retry: boolean; readOmcMap: boolean): ISuperObject;
+begin
+  Result := retrieveJSONObject(omc, logging, True, False, 0);
+end;
+
+function TJsonThroughHTTPS.retrieveJSONObject(const omc: TOpsiMethodCall;
+  logging: boolean; retry: boolean; readOmcMap: boolean;
+  communicationmode: integer): ISuperObject;
 
 var
   errorOccured: boolean;
@@ -1452,270 +1467,404 @@ var
   s, t, teststring: string;
   jO: ISuperObject;
   utf8str: UTF8String;
-  sendstream, ReceiveStream: TMemoryStream;
+  SendStream, ReceiveStream: TMemoryStream;
+  InStream : TMemoryStream;
   CompressionSendStream: TCompressionStream;
-  CompressionReceiveStream: TDeCompressionStream;
+  DeCompressionReceiveStream: TDeCompressionStream;
+  //IdCompressorZLib.CompressStream(tmpStream,AResponseInfo.ContentStream,9,GZIP_WINBITS,9,0);
+  // IdCompressorZLib.DecompressGZipStream(ARequestInfo.PostStream,tmpStream);
+  //CompressionSendStream: Tgzipstream;
+  //CompressionReceiveStream: Tungzipstream;
+  //gzipstream : TIdCompressorZLib;
   buffer: ^byte;
   readcount: integer;
   compress: boolean;
   startTime: TDateTime;
+  ContentType, Accept, ContentEncoding, AcceptEncoding: string;
   {$IFDEF SYNAPSE}
-  HTTPSenderResult: boolean;
+  //HTTPSenderResult: boolean;
   testresultSyn: string;
   i: integer;
-  sendresultcode: integer;
-  sendresultstring: string;
+  //sendresultcode: integer;
+  //sendresultstring: string;
+  finished: boolean;
   {$ENDIF SYNAPSE}
+
 begin
-  errorOccured := False;
-  Result := nil;
-  resultlines.Clear;
-  fErrorInfo.Clear;
-  compress := False;
-  startTime := now;
-
   try
-    FError := '';
-    mymemorystream.Clear;
-    resultLines.Clear;
-    result := nil;
-
-    makeurl(omc);
-    {$IFDEF SYNAPSE}
-    try
-      ////ProcessMess;
-      if FSessionId <> '' then
+    SendStream := TMemoryStream.Create;
+    ReceiveStream := TMemoryStream.Create;
+    errorOccured := False;
+    Result := nil;
+    resultlines.Clear;
+    fErrorInfo.Clear;
+    compress := False;
+    startTime := now;
+    finished := False;
+    {---------------------------------------------------
+    communicationmode : 0 = opsi 4.1 / 4.2 / Request: gzip, Response: gzip, deflate, identity
+    communicationmode : 1 = opsi 4.0 / Request: deflate, Response: gzip, deflate, identity
+     ----------------------------------------------------}
+     if FCommunicationMode <> -1 then   //if Communictaion mode is set
+     begin
+       CommunicationMode := FCommunicationMode;
+     end;
+     case CommunicationMode of
+      0:
       begin
-        HTTPSender.Cookies.Add(FSessionId);
+        LogDatei.log('Use opsi 4.1 / 4.2 HTTP Header, compress', LLnotice);
+        compress := True;
+        ContentType := 'application/json; charset=UTF-8';
+        Accept := 'application/json';
+        AcceptEncoding := 'gzip, deflate, identity';
+        //AcceptEncoding := 'deflate';
+        ContentEncoding := 'gzip';//'deflate';
+        //ContentEncoding := 'deflate';
       end;
-      LogDatei.log_prog('Sessionid ' + FSessionId, LLdebug);
-      if (HTTPSender.Cookies.Count > 0) then
-        LogDatei.log_prog('Cookies synapse' + HTTPSender.Cookies[0], LLdebug);
-      HTTPSender.Headers.Clear;
-      testresultSyn := HTTPSender.Headers.Text;
-      LogDatei.log_prog('HTTPSender.Headers ' + testresultSyn, LLdebug);
-
-      if FSessionId <> '' then
-        // not the first call and we log
-        if logging then
-          //LogDatei.DependentAdd (DateTimeToStr(now) + ' JSON service request ' + Furl , LLnotice);
-          LogDatei.log_prog('JSON service request ' + Furl + ' ' +
-            omc.FOpsiMethodName, LLinfo);
-
-      if methodGet then
+      {1:
       begin
-        utf8str := AnsiToUtf8(Furl);
-        LogDatei.log_prog(' JSON service request ' + Furl, LLdebug);
-        if HTTPSender.HTTPMethod('GET', Furl) then
-        begin
-          mymemorystream := HTTPSender.Document;
-          LogDatei.log_prog('methodGet ' + Furl + ' memorystream ' +
-            mymemorystream.ToString, LLdebug);
-        end
-        else
-          LogDatei.log_prog('methodGet ' + Furl + ' HTTPMethod failed', LLdebug);
-      end
-
+        LogDatei.log('Use opsi 4.1 / 4.2 HTTP Header, plain', LLnotice);
+        compress := False;
+        ContentType := 'application/json; charset=UTF-8';
+        Accept := 'application/json';
+        ContentEncoding := 'identity'; //'gzip, deflate, identity';
+        AcceptEncoding := 'identity';
+        //ContentEncoding := '';
+        //AcceptEncoding  := '';
+      end;}
+      1:
+      begin
+        LogDatei.log('Use opsi 4.0  HTTP Header, compress', LLnotice);
+        compress := True;
+        ContentType := 'gzip-application/json-rpc';
+        Accept := 'gzip-application/json-rpc';
+        ContentEncoding := '';
+        AcceptEncoding := '';
+      end;
       else
       begin
-        if readOmcMap then
-        begin
-          s := omc.getJsonHashListString;
-          utf8str := AnsiToUtf8(s);
-          LogDatei.log_prog(' JSON service request Furl ' + Furl, LLdebug);
-          LogDatei.log_prog(' JSON service request str ' + utf8str, LLdebug);
-
-        end
-        else
-        begin
-          s := omc.jsonUrlString;
-          utf8str := AnsiToUtf8(s);
-          LogDatei.log_prog(' JSON service request Furl ' + Furl, LLdebug);
-          LogDatei.log_prog(' JSON service request str ' + utf8str, LLdebug);
-        end;
-        try
-          sendstream := TMemoryStream.Create;
-          ReceiveStream := TMemoryStream.Create;
-          sendstream.Clear;
-          // we assume opsi4
-          compress := True;
-          //compress := false;
-          LogDatei.log_prog('Using MimeType: ' + ContentTypeCompress, LLdebug);
-          LogDatei.log_prog('Using ContentEncoding: ' + ContentEncodingCommpress, LLdebug);
-          LogDatei.log_prog('AcceptCompress: ' + AcceptCompress, LLdebug);
-          LogDatei.log_prog('AcceptEncoding: ' + AcceptEncodingCompress, LLdebug);
-          LogDatei.log_prog('AcceptNoCompress: ' + AcceptNoCompress, LLdebug);
-          LogDatei.log_prog('AcceptEncodingNoCompress: ' +
-            AcceptEncodingNoCompress, LLdebug);
-          if compress then
-            // die nächsten Tests ohne compress -- alles im else Zweig nochmal
-          begin
-            HTTPSender.MimeType := ContentTypeCompress;
-            HTTPSender.Headers.Clear;
-            HTTPSender.Headers.Add('accept: ' + AcceptCompress);
-            HTTPSender.Headers.Add('accept-encoding: ' + AcceptEncodingCompress);
-            HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingCommpress);
-            HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress);
-            for i := 0 to HTTPSender.Headers.Count - 1 do
-              LogDatei.log_prog('HTTPSender Header.Strings: ' +
-                HTTPSender.Headers.Strings[i], LLdebug);
-
-            CompressionSendStream := TCompressionStream.Create(clMax, sendstream);
-            CompressionSendStream.Write(utf8str[1], length(utf8str));
-            CompressionSendStream.Free;
-            // do not log the compressed sendstream: will create encoding errors
-            //LogDatei.log('sendstream: ' + MemoryStreamToString(sendstream), LLDebug2);
-            HTTPSender.Document.LoadFromStream(sendstream);
-            LogDatei.log(' JSON service request Furl ' + Furl, LLdebug);
-            LogDatei.log(' JSON service request str ' + utf8str, LLdebug);
-            HTTPSenderResult := HTTPSender.HTTPMethod('POST', Furl);
-            sendresultcode := HTTPSender.ResultCode;
-            sendresultstring := HTTPSender.ResultString;
-            if not HTTPSenderResult then
-            begin
-              LogDatei.log('HTTPSender Post failed' , LLError);
-              LogDatei.log('HTTPSender result: ' + IntToStr(sendresultcode) +
-              ' msg: ' + sendresultstring, LLError);
-              ErrorOccured := true;
-            end
-            else
-            begin
-              LogDatei.log_prog('HTTPSender Post succseeded', LLdebug);
-
-            LogDatei.log_prog('HTTPSender result: ' + IntToStr(sendresultcode) +
-              ' msg: ' + sendresultstring, LLdebug);
-            for i := 0 to HTTPSender.Headers.Count - 1 do
-              LogDatei.log_prog('HTTPSender Header.Strings: ' +
-                HTTPSender.Headers.Strings[i], LLdebug);
-            //LogDatei.log('ReceiveStream: ' + MemoryStreamToString(ReceiveStream),  LLDebug2);
-            if sendresultstring <> 'OK' then
-            begin
-              raise Exception.Create(HTTPSender.Headers.Strings[0]);
-            end;
-            ReceiveStream := HTTPSender.Document;
-            ReceiveStream.Seek(0, 0);
-            mymemorystream.Seek(0, 0);
-            CompressionReceiveStream := TDeCompressionStream.Create(ReceiveStream);
-            GetMem(buffer, 655360);
-            repeat
-              FillChar(buffer^, 655360, ' ');
-              readcount := CompressionReceiveStream.Read(buffer^, 655360);
-              if readcount > 0 then
-                mymemorystream.Write(buffer^, readcount);
-            until readcount < 655360;
-            CompressionReceiveStream.Free;
-            FreeMem(buffer);
-            end;
-          end
-          else  // no compress
-          begin
-            HTTPSender.MimeType := ContentTypeCompress;
-            sendstream.Write(utf8str[1], length(utf8str));
-            //LogDatei.log('sendstream: ' + MemoryStreamToString(sendstream), LLDebug2);
-          end;
-        except
-          on e: Exception do
-          begin
-            LogDatei.log('Exception in retrieveJSONObject0: ' +
-              e.message, LLdebug2);
-            //writeln('ddebug: Exception in retrieveJSONObject0: ' + e.message);
-            if e.message = 'HTTP/1.1 401 Unauthorized' then
-              FValidCredentials := False;
-            t := s;
-          end;
-        end;
-        sendstream.Free;
-      end;
-      //endTime := now;
-      //if FSessionId <> '' then
-      // not the first call and we log
-      if logging then
-      begin
-        LogDatei.log('JSON Bench for ' + omc.OpsiMethodName +
-          ' ' + copy(omc.getJsonUrlString, pos(',', omc.getJsonUrlString) +
-          1, 50) + ' Start: ' + FormatDateTime('hh:nn:ss:zzz', startTime) +
-          ' Time: ' + FormatDateTime('hh:nn:ss:zzz', now - startTime), LLinfo);
-        LogDatei.log('JSON Call: ' + omc.getJsonUrlString + ' Time: ' +
-          FormatDateTime('hh:nn:ss:zzz', now - startTime), LLDebug2);
-      end;
-
-      for i := 0 to HTTPSender.Headers.Count - 1 do
-        LogDatei.log_prog('HTTPSender Header.Strings: ' +
-          HTTPSender.Headers.Strings[i], LLdebug);
-      for i := 0 to HTTPSender.Cookies.Count - 1 do
-        LogDatei.log_prog('HTTPSender Cookies.Strings: ' +
-          HTTPSender.Cookies.Strings[i], LLdebug);
-
-      testResult := MemoryStreamToString(HTTPSender.Document);
-      cookieVal := HTTPSender.Cookies.GetText;
-
-      posColon := -1;
-      if cookieVal <> '' then
-        posColon := pos(';', cookieVal);
-
-      if posColon > 0 then
-        FSessionId := copy(cookieVal, 1, posColon - 1)
-      else
-        FSessionId := '';
-      //LogDatei.DependentAdd('JSON retrieveJSONObject: after cookie', LLDebug2);
-    except
-      on E: Exception do
-      begin
-        errorOccured := True;
-        FError := FError + '->retrieveJSONObject:2 : ' + E.Message;
-        LogDatei.log('Exception in retrieveJSONObject:2: ' +
-          e.message, LLdebug2);
+        LogDatei.log('Unkown communication mode', LLcritical);
+        exit(nil);
       end;
     end;
-    {$ELSE SYNAPSE}
+
     try
-      ////ProcessMess;
-      if FSessionId <> '' then
-      begin
-        //IdHttp.Request.RawHeaders.Add('Cookie');
-        IdHttp.Request.RawHeaders.Values['Cookie'] := FSessionId;
-      end;
-      LogDatei.log_prog('Sessionid ' + FSessionId, LLdebug2);
-      testresult := IdHttp.Request.RawHeaders.Text;
-
-      if FSessionId <> '' then
-        // not the first call and we log
-        if logging then
-          //LogDatei.log (DateTimeToStr(now) + ' JSON service request ' + Furl , LLnotice);
-          LogDatei.log('JSON service request ' + Furl + ' ' +
-            omc.FOpsiMethodName, LLDebug);
-
-      if methodGet then
-      begin
-        utf8str := AnsiToUtf8(Furl);
-        LogDatei.log_prog(' JSON service request ' + Furl, LLdebug);
-        IdHTTP.Get(utf8str, mymemorystream);
-      end
-
-      else
-      begin
-        if readOmcMap then
+      FError := '';
+      MyMemoryStream.Clear;
+      SendStream.Clear;
+      ResultLines.Clear;
+      Result := nil;
+      //HTTPSender.Clear;
+      makeURL(omc);
+    {$IFDEF SYNAPSE}
+      try
+        ////ProcessMess;
+        HTTPSender.Document.Clear;
+        (*
+        if Assigned(HTTPSender.Document) then
         begin
-          s := omc.getJsonHashListString;
-          utf8str := AnsiToUtf8(s);
-          LogDatei.log_prog(' JSON service request Furl ' + Furl, LLdebug);
-          LogDatei.log_prog(' JSON service request str ' + utf8str, LLdebug);
+          FreeAndNil(HTTPSender.Document);
+          HTTPSender.Document := TMemoryStream.Create;
+        end;
+        *)
 
+        if FSessionId <> '' then
+        begin
+          HTTPSender.Cookies.Add(FSessionId);
+        end;
+        LogDatei.log_prog('Sessionid ' + FSessionId, LLdebug);
+        if (HTTPSender.Cookies.Count > 0) then
+          LogDatei.log_prog('Cookies synapse' + HTTPSender.Cookies[0], LLdebug);
+        //@detlef for testing??? (Jan)
+        //HTTPSender.Headers.Clear;
+        //testresultSyn := HTTPSender.Headers.Text;
+        //LogDatei.log_prog('HTTPSender.Headers ' + testresultSyn, LLdebug);
+
+        if FSessionId <> '' then
+          // not the first call and we log
+          if logging then
+            //LogDatei.DependentAdd (DateTimeToStr(now) + ' JSON service request ' + Furl , LLnotice);
+            LogDatei.log_prog('JSON service request ' + Furl + ' ' +
+              omc.FOpsiMethodName, LLinfo);
+
+
+        if methodGet then
+        begin
+          utf8str := AnsiToUtf8(Furl);
+          LogDatei.log_prog(' JSON service request ' + Furl, LLdebug);
+          if HTTPSender.HTTPMethod('GET', Furl) then
+          begin
+            mymemorystream := HTTPSender.Document;
+            LogDatei.log_prog('methodGet ' + Furl + ' memorystream ' +
+              mymemorystream.ToString, LLdebug);
+          end
+          else
+            LogDatei.log_prog('methodGet ' + Furl + ' HTTPMethod failed', LLdebug);
         end
         else
         begin
-          s := omc.jsonUrlString;
-          utf8str := AnsiToUtf8(s);
-          LogDatei.log_prog(' JSON service request Furl ' + Furl, LLdebug);
-          LogDatei.log_prog(' JSON service request str ' + utf8str, LLdebug);
+          if readOmcMap then
+          begin
+            s := omc.getJsonHashListString;
+            utf8str := AnsiToUtf8(s);
+            LogDatei.log_prog(' JSON service request Furl ' + Furl, LLdebug);
+            LogDatei.log_prog(' JSON service request str ' + utf8str, LLdebug);
+          end
+          else
+          begin
+            s := omc.jsonUrlString;
+            utf8str := AnsiToUtf8(s);
+            LogDatei.log_prog(' JSON service request Furl ' + Furl, LLdebug);
+            LogDatei.log_prog(' JSON service request str ' + utf8str, LLdebug);
+          end;
+
+          try
+            begin
+              { Preparing Request }
+                { Set Headers }
+              HTTPSender.Clear; //reset headers, document and Mimetype
+              HTTPSender.Cookies.Clear; //clear cookies
+              HTTPSender.MimeType := ContentType;
+              HTTPSender.Headers.NameValueSeparator:= ':'; // message-header = field-name ":" [ field-value ]  (RFC 2616)
+              HTTPSender.Headers.Add('Accept: ' + Accept);
+              HTTPSender.Headers.Add('Accept-Encoding: ' + AcceptEncoding);
+              if ContentEncoding <> 'identity' then HTTPSender.Headers.Add('Content-Encoding: ' + ContentEncoding);
+              HTTPSender.Headers.Add('Content-Type: ' + ContentType);
+              //HTTPSender.Headers.Add('Clear-Site-Data: "cache", "cookies", "storage", "executionContexts"');
+              //HTTPSender.Headers.Add('Cache-Control: no-cache' );
+              //HTTPSender.Headers.Add('User-Agent: ' );
+              //HTTPSender.Headers.Add('Connection: close' );
+                {header logging}
+              for i := 0 to HTTPSender.Headers.Count - 1 do
+                LogDatei.log('HTTPSender Request Header.Strings: ' +
+                  HTTPSender.Headers.Strings[i], LLDebug);
+                { Set Body }
+              HTTPSender.Document.Write(utf8str[1], length(utf8str));
+              if ContentEncoding <> 'identity' then  //change to ContentEncoding = 'gzip' if using deflate alternative
+              begin
+                CompressStream(HTTPSender.Document, ContentEncoding);
+                //SendStream:=CreateSendStream(ContentEncoding, utf8str);
+                //HTTPSender.Document.LoadFromStream(SendStream);
+              end;
+              {********* defalte alternative ***********}
+              {if (ContenCoding = 'deflate') or (ContenCoding = '') then
+              begin
+                HTTPSender.Document.Clear;
+                CompressionSendStream := TCompressionStream.Create(clMax, HTTPSender.Document);
+                CompressionSendStream.Write(utf8str[1], length(utf8str));
+                CompressionSendStream.Free;
+              end;}
+              LogDatei.log(' JSON service request Furl ' + Furl, LLdebug);
+              LogDatei.log(' JSON service request str ' + utf8str, LLdebug);
+
+              { Send Request }
+              if HTTPSender.HTTPMethod('POST', Furl) then
+              begin
+                { Read Response }
+                LogDatei.log_prog('HTTPSender Post succseeded', LLdebug);
+                LogDatei.log('HTTPSender result: ' + IntToStr(HTTPSender.ResultCode) +
+                  ' msg: ' + HTTPSender.ResultString, LLdebug);
+                for i := 0 to HTTPSender.Headers.Count - 1 do
+                  LogDatei.log('HTTPSender Response Header.Strings: ' +
+                    HTTPSender.Headers.Strings[i], LLdebug);
+                //LogDatei.log('ReceiveStream: ' + MemoryStreamToString(ReceiveStream),  LLDebug2);
+                if HTTPSender.ResultString = 'OK' then
+                begin
+                  if FCommunicationMode = -1 then
+                  begin
+                    if CommunicationMode = 0 then
+                    begin
+                      LogDatei.Log('Communication mode is '
+                      + IntToStr(CommunicationMode) + '. '
+                      + 'Opsi Version should be >=4.1', LLDebug);
+                    end
+                    else
+                    begin
+                      LogDatei.Log('Communication mode is '
+                      + IntToStr(CommunicationMode) + '. '
+                      + 'Opsi Version should be 4.0', LLDebug);
+                    end;
+                    FCommunicationMode := CommunicationMode;
+                  end;
+                end
+                else
+                begin
+                  raise Exception.Create(HTTPSender.Headers.Strings[0]);
+                end;
+                //HTTPSender.Headers.NameValueSeparator:= ':';
+
+                if (HTTPSender.Headers.IndexOfName('Content-Encoding') <> -1) then  //Content-Encoding header available
+                begin
+                  ContentEncoding := trim(HTTPSender.Headers.Values['Content-Encoding']);
+                  LogDatei.log('Response Content-Encoding: '
+                    + ContentEncoding,llDebug);
+                end
+                else // no Content-Encoding header available, due to HTTP specification: Content-Encoding = identity
+                begin
+                  ContentEncoding := 'identity';
+                  LogDatei.log('No Content-Encoding header. Guess identity',llDebug);
+                end;
+
+                { identity = uncompressed}
+                if (ContentEncoding = 'identity') then
+                begin
+                  ReceiveStream.LoadFromStream(HTTPSender.Document);
+                end
+                else
+                { deflate = zlib format}
+                if (ContentEncoding = 'deflate') or (ContentEncoding = '') then
+                begin
+                  //DeCompressionReceiveStream := TDeCompressionStream.Create(HTTPSender.Document);
+                  //ReceiveStream.Seek(0, 0);
+                  //DeCompressionReceiveStream.read(ReceiveStream,0);
+                  //DeCompressionReceiveStream.Free;
+                  //ReceiveStream := HTTPSender.Document;
+                  //ReceiveStream.Seek(0, 0);
+                  //mymemorystream.Seek(0, 0);
+                  DeCompressionReceiveStream := TDeCompressionStream.Create(HTTPSender.Document);
+                  GetMem(buffer, 655360);
+                  repeat
+                    FillChar(buffer^, 655360, ' ');
+                    readcount := DeCompressionReceiveStream.Read(buffer^, 655360);
+                    if readcount > 0 then
+                      ReceiveStream.Write(buffer^, readcount);
+                  until readcount < 655360;
+                  DeCompressionReceiveStream.Free;
+                  FreeMem(buffer);
+                end
+                else
+                { gzip = gzip format}
+                if ContentEncoding = 'gzip' then
+                begin
+                  unzipStream(HTTPSender.Document,ReceiveStream);
+                end
+                else LogDatei.log('Unknown Content-Encoding: ' + ContentEncoding, LLDebug);
+
+                //HTTPSender.Document.SaveToFile('C:\Users\Jan\Documents\ReceiveStream.txt');  //for testing
+
+                //ReceiveStream.LoadFromStream(HTTPSender.Document);
+              end
+              else
+
+              { Request failed }
+
+              begin
+                LogDatei.log('HTTPSender Post failed', LLError);
+                LogDatei.log('HTTPSender result: ' + IntToStr(HTTPSender.ResultCode) +
+                  ' msg: ' + HTTPSender.ResultString, LLError);
+                ErrorOccured := True;
+                raise Exception.Create(HTTPSender.Headers.Strings[0]);
+              end;
+             end;
+          except
+            on e: Exception do
+            begin
+              LogDatei.log('Exception in retrieveJSONObject0: ' +
+                e.message, LLdebug2);
+              //writeln('ddebug: Exception in retrieveJSONObject0: ' + e.message);
+              if e.message = 'HTTP/1.1 401 Unauthorized' then
+                FValidCredentials := False;
+              t := s;
+              Inc(communicationmode);
+              Result := retrieveJSONObject(omc, logging, retry, readOmcMap,
+                communicationmode);
+              finished := True;
+            end;
+          end;
         end;
-        try
-          sendstream := TMemoryStream.Create;
-          ReceiveStream := TMemoryStream.Create;
-          sendstream.Clear;
-          // we assume opsi4
-          compress := True;
-          LogDatei.log('Using MimeType: ' + ContentTypeCompress, LLDebug2);
+        if not finished then
+        begin
+          //endTime := now;
+          //if FSessionId <> '' then
+          // not the first call and we log
+          if logging then
+          begin
+            LogDatei.log('JSON Bench for ' + omc.OpsiMethodName +
+              ' ' + copy(omc.getJsonUrlString, pos(',', omc.getJsonUrlString) +
+              1, 50) + ' Start: ' + FormatDateTime('hh:nn:ss:zzz', startTime) +
+              ' Time: ' + FormatDateTime('hh:nn:ss:zzz', now - startTime), LLinfo);
+            LogDatei.log('JSON Call: ' + omc.getJsonUrlString + ' Time: ' +
+              FormatDateTime('hh:nn:ss:zzz', now - startTime), LLDebug2);
+          end;
+
+          for i := 0 to HTTPSender.Headers.Count - 1 do
+            LogDatei.log_prog('HTTPSender Header.Strings: ' +
+              HTTPSender.Headers.Strings[i], LLdebug);
+          for i := 0 to HTTPSender.Cookies.Count - 1 do
+            LogDatei.log_prog('HTTPSender Cookies.Strings: ' +
+              HTTPSender.Cookies.Strings[i], LLdebug);
+
+          testResult := MemoryStreamToString(HTTPSender.Document);
+          cookieVal := HTTPSender.Cookies.GetText;
+
+          posColon := -1;
+          if cookieVal <> '' then
+            posColon := pos(';', cookieVal);
+
+          if posColon > 0 then
+            FSessionId := copy(cookieVal, 1, posColon - 1)
+          else
+            FSessionId := '';
+          //LogDatei.DependentAdd('JSON retrieveJSONObject: after cookie', LLDebug2);
+        end;
+      except
+        on E: Exception do
+        begin
+          errorOccured := True;
+          FError := FError + '->retrieveJSONObject:2 : ' + E.Message;
+          LogDatei.log('Exception in retrieveJSONObject:2: ' +
+            e.message, LLdebug2);
+        end;
+      end;
+    {$ELSE SYNAPSE}
+      try
+        ////ProcessMess;
+        if FSessionId <> '' then
+        begin
+          //IdHttp.Request.RawHeaders.Add('Cookie');
+          IdHttp.Request.RawHeaders.Values['Cookie'] := FSessionId;
+        end;
+        LogDatei.log_prog('Sessionid ' + FSessionId, LLdebug2);
+        testresult := IdHttp.Request.RawHeaders.Text;
+
+        if FSessionId <> '' then
+          // not the first call and we log
+          if logging then
+            //LogDatei.log (DateTimeToStr(now) + ' JSON service request ' + Furl , LLnotice);
+            LogDatei.log('JSON service request ' + Furl + ' ' +
+              omc.FOpsiMethodName, LLDebug);
+
+        if methodGet then
+        begin
+          utf8str := AnsiToUtf8(Furl);
+          LogDatei.log_prog(' JSON service request ' + Furl, LLdebug);
+          IdHTTP.Get(utf8str, mymemorystream);
+        end
+
+        else
+        begin
+          if readOmcMap then
+          begin
+            s := omc.getJsonHashListString;
+            utf8str := AnsiToUtf8(s);
+            LogDatei.log_prog(' JSON service request Furl ' + Furl, LLdebug);
+            LogDatei.log_prog(' JSON service request str ' + utf8str, LLdebug);
+
+          end
+          else
+          begin
+            s := omc.jsonUrlString;
+            utf8str := AnsiToUtf8(s);
+            LogDatei.log_prog(' JSON service request Furl ' + Furl, LLdebug);
+            LogDatei.log_prog(' JSON service request str ' + utf8str, LLdebug);
+          end;
+          try
+            sendstream := TMemoryStream.Create;
+            ReceiveStream := TMemoryStream.Create;
+            sendstream.Clear;
+            // we assume opsi4
+            compress := True;
+            LogDatei.log('Using MimeType: ' + ContentTypeCompress, LLDebug2);
           (*
           if opsidata <> nil then
           begin
@@ -1735,87 +1884,87 @@ begin
           else
             compress := False;
           *)
-          if compress then
-          begin
-            IdHttp.Request.ContentType := ContentTypeCompress;
-            IdHttp.Request.ContentEncoding := ContentEncodingCommpress;
-            IdHttp.Request.Accept := AcceptCompress;
-            IdHttp.Request.AcceptEncoding := AcceptEncodingCompress;
-            LogDatei.log('HTTP Header: ' + IdHttp.Request.RawHeaders.Text, LLDebug2);
-            CompressionSendStream := TCompressionStream.Create(clMax, sendstream);
-            CompressionSendStream.Write(utf8str[1], length(utf8str));
-            CompressionSendStream.Free;
-            //writeln('ddebug: bpost');
-            IdHTTP.Post(Furl, sendstream, ReceiveStream);
-            //writeln('ddebug: apost');
-            ReceiveStream.Seek(0, 0);
-            CompressionReceiveStream := TDeCompressionStream.Create(ReceiveStream);
-            GetMem(buffer, 655360);
-            repeat
-              FillChar(buffer^, 655360, ' ');
-              readcount := CompressionReceiveStream.Read(buffer^, 655360);
-              if readcount > 0 then
-                mymemorystream.Write(buffer^, 655360);
-            until readcount < 655360;
-            CompressionReceiveStream.Free;
-            FreeMem(buffer);
-          end
-          else
-          begin
-            IdHttp.Request.ContentType := ContentTypeNoCompress;
-            IdHttp.Request.ContentEncoding := ContentEncodingNoCommpress;
-            IdHttp.Request.Accept := AcceptNoCompress;
-            IdHttp.Request.AcceptEncoding := AcceptEncodingNoCompress;
-            LogDatei.log('HTTP Header: ' + IdHttp.Request.RawHeaders.Text, LLDebug2);
-            sendstream.Write(utf8str[1], length(utf8str));
-            IdHTTP.Post(Furl, sendstream, mymemorystream);
-          end;
-          //// test memorystream to raise exception here
-          //mymemorystream.Position := 0;
-          //teststring := mymemorystream.ReadAnsiString;
-        except
-          on e: Exception do
-          begin
-            LogDatei.log('Exception in retrieveJSONObject0: ' +
-              e.message, LLdebug2);
-            //writeln('ddebug: Exception in retrieveJSONObject0: ' + e.message);
-            if e.message = 'HTTP/1.1 401 Unauthorized' then
-              FValidCredentials := False;
-            t := s;
-            // retry with other parameters
-            if ContentTypeCompress = 'application/json' then
+            if compress then
             begin
-              ContentTypeCompress := 'gzip-application/json-rpc';
-              AcceptCompress := 'gzip-application/json-rpc';
-              ContentTypeNoCompress := 'application/json-rpc';
-              AcceptNoCompress := 'application/json-rpc';
-              ContentEncodingNoCommpress := '';
-              ContentEncodingCommpress := '';
-              AcceptEncodingCompress := '';
-              AcceptEncodingNoCompress := '';
+              IdHttp.Request.ContentType := ContentTypeCompress;
+              IdHttp.Request.ContentEncoding := ContentEncodingCommpress;
+              IdHttp.Request.Accept := AcceptCompress;
+              IdHttp.Request.AcceptEncoding := AcceptEncodingCompress;
+              LogDatei.log('HTTP Header: ' + IdHttp.Request.RawHeaders.Text, LLDebug2);
+              CompressionSendStream := TCompressionStream.Create(clMax, sendstream);
+              CompressionSendStream.Write(utf8str[1], length(utf8str));
+              CompressionSendStream.Free;
+              //writeln('ddebug: bpost');
+              IdHTTP.Post(Furl, sendstream, ReceiveStream);
+              //writeln('ddebug: apost');
+              ReceiveStream.Seek(0, 0);
+              CompressionReceiveStream := TDeCompressionStream.Create(ReceiveStream);
+              GetMem(buffer, 655360);
+              repeat
+                FillChar(buffer^, 655360, ' ');
+                readcount := CompressionReceiveStream.Read(buffer^, 655360);
+                if readcount > 0 then
+                  mymemorystream.Write(buffer^, 655360);
+              until readcount < 655360;
+              CompressionReceiveStream.Free;
+              FreeMem(buffer);
             end
             else
             begin
-              ContentTypeCompress := 'application/json';
-              AcceptCompress := '';
-              ContentTypeNoCompress := 'application/json';
-              AcceptNoCompress := '';
-              ContentEncodingNoCommpress := '';
-              ContentEncodingCommpress := 'deflate';
-              AcceptEncodingCompress := 'deflate';
-              AcceptEncodingNoCompress := '';
+              IdHttp.Request.ContentType := ContentTypeNoCompress;
+              IdHttp.Request.ContentEncoding := ContentEncodingNoCommpress;
+              IdHttp.Request.Accept := AcceptNoCompress;
+              IdHttp.Request.AcceptEncoding := AcceptEncodingNoCompress;
+              LogDatei.log('HTTP Header: ' + IdHttp.Request.RawHeaders.Text, LLDebug2);
+              sendstream.Write(utf8str[1], length(utf8str));
+              IdHTTP.Post(Furl, sendstream, mymemorystream);
             end;
+            //// test memorystream to raise exception here
+            //mymemorystream.Position := 0;
+            //teststring := mymemorystream.ReadAnsiString;
+          except
+            on e: Exception do
+            begin
+              LogDatei.log('Exception in retrieveJSONObject0: ' +
+                e.message, LLdebug2);
+              //writeln('ddebug: Exception in retrieveJSONObject0: ' + e.message);
+              if e.message = 'HTTP/1.1 401 Unauthorized' then
+                FValidCredentials := False;
+              t := s;
+              // retry with other parameters
+              if ContentTypeCompress = 'application/json' then
+              begin
+                ContentTypeCompress := 'gzip-application/json-rpc';
+                AcceptCompress := 'gzip-application/json-rpc';
+                ContentTypeNoCompress := 'application/json-rpc';
+                AcceptNoCompress := 'application/json-rpc';
+                ContentEncodingNoCommpress := '';
+                ContentEncodingCommpress := '';
+                AcceptEncodingCompress := '';
+                AcceptEncodingNoCompress := '';
+              end
+              else
+              begin
+                ContentTypeCompress := 'application/json';
+                AcceptCompress := '';
+                ContentTypeNoCompress := 'application/json';
+                AcceptNoCompress := '';
+                ContentEncodingNoCommpress := '';
+                ContentEncodingCommpress := 'deflate';
+                AcceptEncodingCompress := 'deflate';
+                AcceptEncodingNoCompress := '';
+              end;
 
-            LogDatei.log('Changing to MimeType: ' + ContentTypeCompress, LLDebug);
-            sendstream.Free;
-            (****************)
-            try
-              sendstream := TMemoryStream.Create;
-              ReceiveStream := TMemoryStream.Create;
-              sendstream.Clear;
-              // we assume opsi4
-              compress := True;
-              LogDatei.log('Using MimeType: ' + ContentTypeCompress, LLDebug2);
+              LogDatei.log('Changing to MimeType: ' + ContentTypeCompress, LLDebug);
+              sendstream.Free;
+              (****************)
+              try
+                sendstream := TMemoryStream.Create;
+                ReceiveStream := TMemoryStream.Create;
+                sendstream.Clear;
+                // we assume opsi4
+                compress := True;
+                LogDatei.log('Using MimeType: ' + ContentTypeCompress, LLDebug2);
               (*
               if opsidata <> nil then
               begin
@@ -1831,164 +1980,186 @@ begin
               else
                 compress := False;
               *)
-              if compress then
-              begin
-                IdHttp.Request.ContentType := ContentTypeCompress;
-                IdHttp.Request.Accept := AcceptCompress;
-                IdHttp.Request.AcceptEncoding := AcceptEncodingCompress;
-                CompressionSendStream := TCompressionStream.Create(clMax, sendstream);
-                CompressionSendStream.Write(utf8str[1], length(utf8str));
-                CompressionSendStream.Free;
-                //writeln('ddebug: bpost');
-                IdHTTP.Post(Furl, sendstream, ReceiveStream);
-                //writeln('ddebug: apost');
-                ReceiveStream.Seek(0, 0);
-                CompressionReceiveStream := TDeCompressionStream.Create(ReceiveStream);
-                GetMem(buffer, 655360);
-                repeat
-                  FillChar(buffer^, 655360, ' ');
-                  readcount := CompressionReceiveStream.Read(buffer^, 655360);
-                  if readcount > 0 then
-                    mymemorystream.Write(buffer^, 655360);
-                until readcount < 655360;
-                CompressionReceiveStream.Free;
-                FreeMem(buffer);
-              end
-              else
-              begin
-                IdHttp.Request.ContentType := ContentTypeNoCompress;
-                IdHttp.Request.Accept := AcceptNoCompress;
-                IdHttp.Request.AcceptEncoding := AcceptEncodingNoCompress;
-                sendstream.Write(utf8str[1], length(utf8str));
-                IdHTTP.Post(Furl, sendstream, mymemorystream);
+                if compress then
+                begin
+                  IdHttp.Request.ContentType := ContentTypeCompress;
+                  IdHttp.Request.Accept := AcceptCompress;
+                  IdHttp.Request.AcceptEncoding := AcceptEncodingCompress;
+                  CompressionSendStream := TCompressionStream.Create(clMax, sendstream);
+                  CompressionSendStream.Write(utf8str[1], length(utf8str));
+                  CompressionSendStream.Free;
+                  //writeln('ddebug: bpost');
+                  IdHTTP.Post(Furl, sendstream, ReceiveStream);
+                  //writeln('ddebug: apost');
+                  ReceiveStream.Seek(0, 0);
+                  CompressionReceiveStream := TDeCompressionStream.Create(ReceiveStream);
+                  GetMem(buffer, 655360);
+                  repeat
+                    FillChar(buffer^, 655360, ' ');
+                    readcount := CompressionReceiveStream.Read(buffer^, 655360);
+                    if readcount > 0 then
+                      mymemorystream.Write(buffer^, 655360);
+                  until readcount < 655360;
+                  CompressionReceiveStream.Free;
+                  FreeMem(buffer);
+                end
+                else
+                begin
+                  IdHttp.Request.ContentType := ContentTypeNoCompress;
+                  IdHttp.Request.Accept := AcceptNoCompress;
+                  IdHttp.Request.AcceptEncoding := AcceptEncodingNoCompress;
+                  sendstream.Write(utf8str[1], length(utf8str));
+                  IdHTTP.Post(Furl, sendstream, mymemorystream);
+                end;
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('Exception in retrieveJSONObject1: ' +
+                    e.message, LLdebug2);
+                  //writeln('ddebug: Exception in retrieveJSONObject1: ' + e.message);
+                  if e.message = 'HTTP/1.1 401 Unauthorized' then
+                    FValidCredentials := False;
+                  t := s;
+                end;
               end;
-            except
-              on e: Exception do
-              begin
-                LogDatei.log('Exception in retrieveJSONObject1: ' +
-                  e.message, LLdebug2);
-                //writeln('ddebug: Exception in retrieveJSONObject1: ' + e.message);
-                if e.message = 'HTTP/1.1 401 Unauthorized' then
-                  FValidCredentials := False;
-                t := s;
+
+              (****************)
+            end;
+          end;
+          sendstream.Free;
+        end;
+        //endTime := now;
+        //if FSessionId <> '' then
+        // not the first call and we log
+        if logging then
+        begin
+          LogDatei.log_prog('JSON Bench for ' + omc.OpsiMethodName +
+            ' ' + copy(omc.getJsonUrlString, pos(',', omc.getJsonUrlString) +
+            1, 50) + ' Start: ' + FormatDateTime('hh:nn:ss:zzz', startTime) +
+            ' Time: ' + FormatDateTime('hh:nn:ss:zzz', now - startTime), LLinfo);
+          LogDatei.log('JSON Call: ' + omc.getJsonUrlString + ' Time: ' +
+            FormatDateTime('hh:nn:ss:zzz', now - startTime), LLDebug2);
+        end;
+
+        testResult := IdHTTP.ResponseText;
+        cookieVal := IdHTTP.Response.RawHeaders.Values['Set-Cookie'];
+        LogDatei.log_prog('JSON retrieveJSONObject: after IdHTTP', LLDebug2);
+        posColon := -1;
+        if cookieVal <> '' then
+          posColon := pos(';', cookieVal);
+
+        if posColon > 0 then
+          FSessionId := copy(cookieVal, 1, posColon - 1)
+        else
+          FSessionId := '';
+
+        LogDatei.log_prog('JSON retrieveJSONObject: after cookie', LLDebug2);
+      except
+        on E: Exception do
+        begin
+          errorOccured := True;
+          FError := FError + '->retrieveJSONObject:2 : ' + E.Message;
+          LogDatei.log('Exception in retrieveJSONObject:2: ' +
+            e.message, LLdebug2);
+        end;
+      end;
+    {$ENDIF SYNAPSE}
+      if not finished then
+      begin
+        if not ErrorOccured then
+        begin
+          {if compress then
+          begin
+            mymemorystream.Position := 0;
+            LogDatei.log_prog('JSON retrieveJSONObject: memorystream reseted', LLdebug);
+            resultLines.Clear;
+            ResultLines.LoadFromStream(mymemorystream);
+          end
+          else}
+          begin
+            ReceiveStream.Position := 0;
+            LogDatei.log_prog('JSON retrieveJSONObject: ReceiveStream reseted', LLdebug);
+            resultLines.Clear;
+            ResultLines.LoadFromStream(ReceiveStream);
+          end;
+          LogDatei.log_prog('JSON retrieveJSONObject: resultlines loaded', LLdebug);
+          // should be one line
+
+
+          if ResultLines.Count < 1 then
+          begin
+            FError := FError +
+              '-> unexpected Result from webservice in retrieveJSONObject, number of lines: '
+              + IntToStr(ResultLines.Count);
+            LogDatei.log('Error: Got in stream: ' +
+              mymemorystream.ReadAnsiString, LLError);
+          end
+          else
+          begin
+            Result := SO(ResultLines.Strings[0]);
+            LogDatei.log_prog('JSON retrieveJSONObject: result loaded', LLdebug);
+            if Result = nil then
+              LogDatei.log('JSON retrieveJSONObject: result nil', LLError)
+            else
+            begin
+              try
+                if not (Result.N['error'].IsType(stNull)) then
+                begin
+                  FError := FError + '-> ' + Result.N['error'].AsJSon();
+                  jO := Result.O['error'];
+                  getStringlistFromJsonObject(jO, fErrorInfo);
+                  Result := nil;
+                end;
+              except
+                on e: Exception do
+                begin
+                  LogDatei.log('exception in retrieveJSONObject: while checking error ' +
+                    e.message, LLError);
+                end;
               end;
             end;
-
-            (****************)
           end;
+
         end;
-        sendstream.Free;
-      end;
-      //endTime := now;
-      //if FSessionId <> '' then
-      // not the first call and we log
-      if logging then
-      begin
-        LogDatei.log_prog('JSON Bench for ' + omc.OpsiMethodName +
-          ' ' + copy(omc.getJsonUrlString, pos(',', omc.getJsonUrlString) +
-          1, 50) + ' Start: ' + FormatDateTime('hh:nn:ss:zzz', startTime) +
-          ' Time: ' + FormatDateTime('hh:nn:ss:zzz', now - startTime), LLinfo);
-        LogDatei.log('JSON Call: ' + omc.getJsonUrlString + ' Time: ' +
-          FormatDateTime('hh:nn:ss:zzz', now - startTime), LLDebug2);
+
       end;
 
-      testResult := IdHTTP.ResponseText;
-      cookieVal := IdHTTP.Response.RawHeaders.Values['Set-Cookie'];
-      LogDatei.log_prog('JSON retrieveJSONObject: after IdHTTP', LLDebug2);
-      posColon := -1;
-      if cookieVal <> '' then
-        posColon := pos(';', cookieVal);
-
-      if posColon > 0 then
-        FSessionId := copy(cookieVal, 1, posColon - 1)
-      else
-        FSessionId := '';
-
-      LogDatei.log_prog('JSON retrieveJSONObject: after cookie', LLDebug2);
     except
       on E: Exception do
       begin
         errorOccured := True;
-        FError := FError + '->retrieveJSONObject:2 : ' + E.Message;
-        LogDatei.log('Exception in retrieveJSONObject:2: ' +
-          e.message, LLdebug2);
+        FError := FError + '-> retrieveJSONObject:1: ' + E.Message;
+        LogDatei.log('Exception in retrieveJSONObject:1: ' + e.message, LLdebug2);
       end;
     end;
-    {$ENDIF SYNAPSE}
-    if not ErrorOccured then
+    if not finished then
     begin
-      mymemorystream.Position := 0;
-      LogDatei.log_prog('JSON retrieveJSONObject: memorystream reseted', LLdebug);
-      resultLines.Clear;
-      ResultLines.LoadFromStream(mymemorystream);
-      LogDatei.log_prog('JSON retrieveJSONObject: resultlines loaded', LLdebug);
-      // should be one line
 
-      if ResultLines.Count < 1 then
+      if Result = nil then
       begin
-        FError := FError +
-          '-> unexpected Result from webservice in retrieveJSONObject, number of lines: '
-          +
-          IntToStr(ResultLines.Count);
-        LogDatei.log('Error: Got in stream: ' + mymemorystream.ReadAnsiString, LLError);
-      end
-      else
-      begin
-        Result := SO(ResultLines.Strings[0]);
-        LogDatei.log_prog('JSON retrieveJSONObject: result loaded', LLdebug);
-        if Result = nil then
-          LogDatei.log('JSON retrieveJSONObject: result nil', LLError)
+        if logging then
+          LogDatei.log('Error: retrieveJSONObject --- opsi service problem ---' +
+            FError, LLerror);
+        if pos('10054', FError) > 0 //Socket error, connection reset by peer
+        then
+        begin
+          LogDatei.log('trying to rebuild connection', LLInfo);
+          sleep(1000);
+          //createSocket;
+          retrieveJSONObject(omc, logging, False);
+        end
         else
         begin
-          try
-            if not (Result.N['error'].IsType(stNull)) then
-            begin
-              FError := FError + '-> ' + Result.N['error'].AsJSon();
-              jO := Result.O['error'];
-              getStringlistFromJsonObject(jO, fErrorInfo);
-              Result := nil;
-            end;
-          except
-            on e: Exception do
-            begin
-              LogDatei.log('exception in retrieveJSONObject: while checking error ' +
-                e.message, LLError);
-            end;
-          end;
+          if pos('Stream read error', FError) = 0 then
+            if Assigned(ResultLines) and (resultLines.Count > 0) then
+              LogDatei.log('Received (first 512): ' +
+                copy(ResultLines.Strings[0], 1, 512), LLerror);
         end;
       end;
-
     end;
-
-  except
-    on E: Exception do
-    begin
-      errorOccured := True;
-      FError := FError + '-> retrieveJSONObject:1: ' + E.Message;
-      LogDatei.log('Exception in retrieveJSONObject:1: ' + e.message, LLdebug2);
-    end;
-  end;
-
-  if Result = nil then
-  begin
-    if logging then
-      LogDatei.log('Error: retrieveJSONObject --- opsi service problem ---' +
-        FError, LLerror);
-    if pos('10054', FError) > 0 //Socket error, connection reset by peer
-    then
-    begin
-      LogDatei.log('trying to rebuild connection', LLInfo);
-      sleep(1000);
-      //createSocket;
-      retrieveJSONObject(omc, logging, False);
-    end
-    else
-    begin
-      if pos('Stream read error', FError) = 0 then
-        if Assigned(ResultLines) and (resultLines.Count > 0) then
-          LogDatei.log('Received (first 512): ' +
-            copy(ResultLines.Strings[0], 1, 512), LLerror);
-    end;
+  finally
+    SendStream.Free;
+    ReceiveStream.Free;
   end;
 end;
 
@@ -2436,36 +2607,81 @@ end;
 
 *)
 
-function TJsonThroughHTTPS.retrieveJSONObjectByHttpPost(const instream: TMemoryStream;
-  logging: boolean): ISuperObject;
-// This function is used by sendlog
+function TJsonThroughHTTPS.retrieveJSONObjectByHttpPost(const InStream: TMemoryStream;
+  logging: boolean; communicationmode: integer): ISuperObject;
+  // This function is used by sendlog
 var
   errorOccured: boolean;
   cookieVal: string;
   posColon: integer;
   //  s,t : String;
-  sendstream, ReceiveStream: TMemoryStream;
+  SendStream, ReceiveStream: TMemoryStream;
   CompressionSendStream: TCompressionStream;
-  CompressionReceiveStream: TDeCompressionStream;
+  DeCompressionReceiveStream: TDeCompressionStream;
   buffer: ^byte;
   readcount: integer;
   compress: boolean;
+  ContentType, Accept, ContentEncoding, AcceptEncoding: string;
   {$IFDEF SYNAPSE}
-  HTTPSenderResult: boolean;
+  //HTTPSenderResult: boolean;
   testresultSyn: string;
   i: integer;
-  sendresultcode: integer;
-  sendresultstring: string;
+  //sendresultcode: integer;
+  //sendresultstring: string;
   {$ENDIF SYNAPSE}
-
 begin
   errorOccured := False;
   Result := nil;
   resultlines.Clear;
+  {---------------------------------------------------
+    communicationmode : 0 = opsi 4.1 / 4.2 / Request: gzip, Response: gzip, deflate, identity
+    communicationmode : 1 = opsi 4.0 / Request: deflate, Response: gzip, deflate, identity
+   ----------------------------------------------------}
+   if FCommunicationMode <> -1 then   //if Communictaion mode is set
+   begin
+     CommunicationMode := FCommunicationMode;
+   end;
+   case communicationmode of
+    0:
+    begin
+      LogDatei.log('Use opsi 4.1 / 4.2 HTTP Header, compress', LLnotice);
+      compress := True;
+      ContentType := 'application/json; charset=UTF-8';
+      Accept := 'application/json';
+      AcceptEncoding := 'gzip, deflate, identity';
+      //AcceptEncoding := 'deflate';
+      ContentEncoding := 'gzip';
+      //ContentEncoding := 'deflate';
+    end;
+    {1:
+    begin
+      LogDatei.log('Use opsi 4.1 / 4.2 HTTP Header, plain', LLnotice);
+      compress := False;
+      ContentType := 'application/json; charset=UTF-8';
+      Accept := 'application/json';
+      ContentEncoding := 'identity'; //'gzip, deflate, identity';
+      AcceptEncoding := 'identity';
+      //ContentEncoding := '';
+      //AcceptEncoding  := '';
+    end;}
+    2:
+    begin
+      LogDatei.log('Use opsi 4.0  HTTP Header, compress', LLnotice);
+      compress := True;
+      ContentType := 'gzip-application/json-rpc';
+      Accept := 'gzip-application/json-rpc';
+      ContentEncoding := '';
+      AcceptEncoding := '';
+    end;
+    else
+    begin
+      LogDatei.log('Unkown communication mode', LLcritical);
+      exit(nil);
+    end;
+  end;
 
   try
-    mymemorystream.Clear;
-
+    MyMemoryStream.Clear;
     try
       if FSessionId <> '' then
       begin
@@ -2480,38 +2696,45 @@ begin
       {$ELSE SYNAPSE}
       testresult := IdHttp.Request.RawHeaders.Text;
       {$ENDIF SYNAPSE}
-
       if FSessionId <> '' then
         // not the first call and we log
         if logging then
           LogDatei.log_prog(DateTimeToStr(now) + ' JSON service request ' +
             Furl, LLInfo);
       //LogDatei.log ('JSON service request ' + Furl + ' '+ omc.FOpsiMethodName, LLinfo);
-
-
-
-
       try
-        sendstream := TMemoryStream.Create;
+        SendStream := TMemoryStream.Create;
         ReceiveStream := TMemoryStream.Create;
-        sendstream.Clear;
+        SendStream.Clear;
+        (*
         // we assume opsi4
         compress := True;
-        LogDatei.log_prog('Using MimeType: ' + ContentTypeCompress, LLDebug);
-
-        if compress then
+        *)
+        LogDatei.log_prog('Using MimeType: ' + ContentType, LLDebug);
+        //if compress then
         begin
-          LogDatei.log_prog('Using MimeType: ' + ContentTypeCompress, LLDebug);
+          LogDatei.log_prog('Using MimeType: ' + ContentType, LLDebug);
           {$IFDEF SYNAPSE}
-          HTTPSender.MimeType := ContentTypeCompress;
-          HTTPSender.Headers.Clear;
-          HTTPSender.Headers.Add('accept: ' + AcceptCompress);
-          HTTPSender.Headers.Add('accept-encoding: ' + AcceptEncodingCompress);
-          HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingCommpress);
-          HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress);
+          { Preparing Request }
+
+           { Set Headers }
+          HTTPSender.Clear; //reset headers, document and Mimetype
+          HTTPSender.Cookies.Clear; //clear cookies
+          HTTPSender.MimeType := ContentType;
+          HTTPSender.Headers.NameValueSeparator:= ':'; // message-header = field-name ":" [ field-value ]  (RFC 2616)
+          HTTPSender.Headers.Add('Accept: ' + Accept);
+          HTTPSender.Headers.Add('Accept-Encoding: ' + AcceptEncoding);
+          if ContentEncoding <> 'identity' then HTTPSender.Headers.Add('Content-Encoding: ' + ContentEncoding);
+          HTTPSender.Headers.Add('Content-Type: ' + ContentType);
+          //HTTPSender.Headers.Add('Clear-Site-Data: "cache", "cookies", "storage", "executionContexts"');
+          //HTTPSender.Headers.Add('Cache-Control: no-cache' );
+          //HTTPSender.Headers.Add('User-Agent: ' );
+          //HTTPSender.Headers.Add('Connection: close' );
+            { header logging }
           for i := 0 to HTTPSender.Headers.Count - 1 do
-            LogDatei.log_prog('HTTPSender Header.Strings: ' +
+            LogDatei.log('HTTPSender Request Header.Strings: ' +
               HTTPSender.Headers.Strings[i], LLDebug);
+
           {$ELSE SYNAPSE}
           IdHttp.Request.ContentType := ContentTypeCompress;
           IdHttp.Request.ContentEncoding := ContentEncodingCommpress;
@@ -2519,77 +2742,152 @@ begin
           IdHttp.Request.AcceptEncoding := AcceptEncodingCompress;
           LogDatei.log_prog('HTTP Header: ' + IdHttp.Request.RawHeaders.Text, LLDebug);
           {$ENDIF SYNAPSE}
-          //LogDatei.log('Instream: ' + MemoryStreamToString(Instream), LLDebug2);
-          //instream.SaveToFile('/tmp/senddoc1.txt');
+          { Set Body }
 
-          CompressionSendStream := TCompressionStream.Create(clMax, sendstream);
-          Instream.Seek(0, 0);
-          GetMem(buffer, 655360);
-          repeat
-            FillChar(buffer^, 655360, ' ');
-            readcount := Instream.Read(buffer^, 655360);
-            if readcount > 0 then
-              CompressionSendStream.Write(buffer^, 655360);
-          until readcount < 655360;
-          CompressionSendStream.Free;
-          FreeMem(buffer);
-          //LogDatei.log('sendstream: ' + MemoryStreamToString(sendstream), LLDebug2);
-          {$IFDEF SYNAPSE}
-          HTTPSender.Document.LoadFromStream(sendstream);
-          //HTTPSender.Document.SaveToFile('/tmp/senddoc2.txt');
-          LogDatei.log_prog('HTTPSender FURL: ' + Furl, LLDebug2);
-          HTTPSenderResult := HTTPSender.HTTPMethod('POST', Furl);
-          if HTTPSenderResult then
-            LogDatei.log_prog('HTTPSender Post ok', LLDebug)
-          else
-            LogDatei.log('HTTPSender Post failed', LLError);
-          sendresultcode := HTTPSender.ResultCode;
-          sendresultstring := HTTPSender.ResultString;
-          LogDatei.log_prog('HTTPSender result: ' + IntToStr(sendresultcode) +
-            ' msg: ' + sendresultstring, LLDebug);
-          for i := 0 to HTTPSender.Headers.Count - 1 do
-            LogDatei.log_prog('HTTPSender Header.Strings: ' +
-              HTTPSender.Headers.Strings[i], LLDebug2);
-          LogDatei.log('got mimetype: ' + HTTPSender.MimeType, LLDebug2);
-          //LogDatei.log('ReceiveStream: ' + MemoryStreamToString(ReceiveStream), LLDebug2);
-          if sendresultstring <> 'OK' then
+          if ContentEncoding <> 'identity' then  //change to ContentEncoding = 'gzip' if using deflate alternative
           begin
-            raise Exception.Create(HTTPSender.Headers.Strings[0]);
+            CompressStream(InStream, ContentEncoding);
+            //SendStream:=CreateSendStream(ContentEncoding, utf8str);
+            //HTTPSender.Document.LoadFromStream(SendStream)
           end;
-          ReceiveStream.LoadFromStream(HTTPSender.Document);
-          LogDatei.log_prog('HTTPSender Post: got document', LLInfo);
-          {$ELSE SYNAPSE}
-          IdHTTP.post(FserviceURL + '/rpc', sendstream, ReceiveStream);
-          {$ENDIF SYNAPSE}
-          ReceiveStream.Seek(0, 0);
-          mymemorystream.Seek(0, 0);
-          CompressionReceiveStream := TDeCompressionStream.Create(ReceiveStream);
-          LogDatei.log_prog('HTTPSender Post: created CompressionReceiveStream', LLInfo);
-          GetMem(buffer, 655360);
-          repeat
-            FillChar(buffer^, 655360, ' ');
-            readcount := CompressionReceiveStream.Read(buffer^, 655360);
-            LogDatei.log_prog('HTTPSender Post: readed from CompressionReceiveStream: ' +
-              IntToStr(readcount), LLInfo);
-            if readcount > 0 then
-              mymemorystream.Write(buffer^, readcount);
-            LogDatei.log_prog('HTTPSender Post: write to memorystream: ' +
-              IntToStr(readcount), LLInfo);
-          until readcount < 655360;
-          LogDatei.log_prog('HTTPSender Post: read CompressionReceiveStream finished',
-            LLInfo);
-          CompressionReceiveStream.Free;
-          FreeMem(buffer);
-        end
+          {********* deflate alternative ***********}
+          {if (ContenCoding = 'deflate') or (ContenCoding = '') then
+          begin
+            CompressionSendStream := TCompressionStream.Create(clMax, SendStream);
+            InStream.Seek(0, 0);
+            GetMem(buffer, 655360);
+            repeat
+              FillChar(buffer^, 655360, ' ');
+              readcount := InStream.Read(buffer^, 655360);
+              if readcount > 0 then
+                CompressionSendStream.Write(buffer^, 655360);
+            until readcount < 655360;
+            CompressionSendStream.Free;
+            FreeMem(buffer);
+          end;}
+          HTTPSender.Document.LoadFromStream(InStream);
+          LogDatei.log(' JSON service request Furl ' + Furl, LLdebug);
+          //LogDatei.log(' JSON service request str ' + utf8str, LLdebug);
+          {$IFDEF SYNAPSE}
+          LogDatei.log_prog('HTTPSender FURL: ' + Furl, LLDebug2);
+          {if not HTTPSenderResult then
+          begin
+            LogDatei.log('HTTPSender Post failed', LLError);
+            LogDatei.log('HTTPSender result: ' + IntToStr(HTTPSender.ResultCode) +
+              ' msg: ' + HTTPSender.ResultString, LLError);
+            ErrorOccured := True;
+            raise Exception.Create(HTTPSender.Headers.Strings[0]);
+          end
+          else}
+          if HTTPSender.HTTPMethod('POST', Furl) then
+          begin
+            { Communication successful }
+            LogDatei.log_prog('HTTPSender Post succseeded', LLdebug);
+            LogDatei.log('HTTPSender result: ' + IntToStr(HTTPSender.ResultCode) +
+              ' msg: ' + HTTPSender.ResultString, LLdebug);
+            for i := 0 to HTTPSender.Headers.Count - 1 do
+              LogDatei.log('HTTPSender Answer Header.Strings: ' +
+                HTTPSender.Headers.Strings[i], LLDebug2);
+            LogDatei.log('got mimetype: ' + HTTPSender.MimeType, LLDebug2);
+            //LogDatei.log('ReceiveStream: ' + MemoryStreamToString(ReceiveStream), LLDebug2);
+            if HTTPSender.ResultString = 'OK' then
+            begin
+              { Log and set CommunicationMode}
+              if FCommunicationMode = -1 then
+              begin
+                if CommunicationMode = 0 then
+                begin
+                  LogDatei.Log('Communication mode is '
+                  + IntToStr(CommunicationMode) + '. '
+                  + 'Opsi Version should be >=4.1', LLDebug);
+                end
+                else
+                begin
+                  LogDatei.Log('Communication mode is '
+                  + IntToStr(CommunicationMode) + '. '
+                  + 'Opsi Version should be 4.0', LLDebug);
+                end;
+                FCommunicationMode := CommunicationMode;
+              end;
+            end
+            else
+            { Communication unsuccessful }
+            begin
+              raise Exception.Create(HTTPSender.Headers.Strings[0]);
+            end;
+
+            if (HTTPSender.Headers.IndexOfName('Content-Encoding') <> -1) then // Content-Encoding header available
+            begin
+              ContentEncoding := trim(HTTPSender.Headers.Values['Content-Encoding']);
+              LogDatei.log('Response Content-Encoding: '
+                + ContentEncoding,llDebug);
+            end
+            else // no Content-Encoding header available, due to HTTP specification: Content-Encoding = identity
+            begin
+              ContentEncoding := 'identity';
+              LogDatei.log('No Content-Encoding header. Guess identity',llDebug);
+            end;
+            { identity = uncompressed}
+            if (ContentEncoding = 'identity') then
+            begin
+              ReceiveStream.LoadFromStream(HTTPSender.Document);
+            end
+            else
+            { defalte = zlib format}
+            if (ContentEncoding = 'deflate') or (ContentEncoding = '') then
+            begin
+              DeCompressionReceiveStream := TDeCompressionStream.Create(HTTPSender.Document);
+              LogDatei.log_prog('HTTPSender Post: created CompressionReceiveStream', LLInfo);
+              GetMem(buffer, 655360);
+              repeat
+                FillChar(buffer^, 655360, ' ');
+                readcount := DeCompressionReceiveStream.Read(buffer^, 655360);
+                LogDatei.log_prog(
+                  'HTTPSender Post: readed from CompressionReceiveStream: ' +
+                  IntToStr(readcount), LLInfo);
+                if readcount > 0 then
+                  ReceiveStream.Write(buffer^, readcount);
+                  LogDatei.log_prog('HTTPSender Post: write to ReceiveStream: ' +
+                    IntToStr(readcount), LLInfo);
+              until readcount < 655360;
+              LogDatei.log_prog(
+                'HTTPSender Post: read CompressionReceiveStream finished',
+                LLInfo);
+              DeCompressionReceiveStream.Free;
+              FreeMem(buffer);
+            end
+            else
+            { gzip = gzip format}
+            if ContentEncoding = 'gzip' then
+            begin
+              unzipStream(HTTPSender.Document,ReceiveStream);
+            end
+            else LogDatei.log('Unknown Content-Encoding: ' + ContentEncoding, LLDebug);
+            //HTTPSender.Document.SaveToFile('C:\Users\Jan\Documents\ReceiveStream.txt');  //for testing
+            LogDatei.log_prog('HTTPSender Post: got document', LLInfo);
+            {$ELSE SYNAPSE}
+            IdHTTP.post(FserviceURL + '/rpc', sendstream, ReceiveStream);
+            {$ENDIF SYNAPSE}
+          end
+          else
+          begin
+            LogDatei.log('HTTPSender Post failed', LLError);
+            LogDatei.log('HTTPSender result: ' + IntToStr(HTTPSender.ResultCode) +
+              ' msg: ' + HTTPSender.ResultString, LLError);
+            ErrorOccured := True;
+            raise Exception.Create(HTTPSender.Headers.Strings[0]);
+          end
+        end;
+        (*
         else
         begin
           LogDatei.log_prog('Using MimeType: ' + ContentTypeNoCompress, LLDebug);
           {$IFDEF SYNAPSE}
           HTTPSender.Headers.Clear;
-          HTTPSender.Headers.Add('accept-encoding: ' +
-            ContentEncodingCommpress + ',identity');
-          HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingCommpress);
-          HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress + ',identity');
+          HTTPSender.Headers.Add('accept: ' + AcceptNoCompress);
+          HTTPSender.Headers.Add('accept-encoding: ' + AcceptEncodingNoCompress);
+          HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingNoCommpress);
+          HTTPSender.Headers.Add('content-type: ' + ContentTypeNoCompress);
           for i := 0 to HTTPSender.Headers.Count - 1 do
             LogDatei.log_prog('HTTPSender Header.Strings: ' +
               HTTPSender.Headers.Strings[i], LLDebug2);
@@ -2617,6 +2915,7 @@ begin
           IdHTTP.Post(FserviceURL + '/rpc', instream, mymemorystream);
           {$ENDIF SYNAPSE}
         end;
+        *)
       except
         on e: Exception do
         begin
@@ -2624,8 +2923,15 @@ begin
             'Exception in retrieveJSONObjectByHttpPost: stream handling: ' + e.message
             , LLError);
           // retry with other parameters
+          Inc(communicationmode);
+          LogDatei.log('Retry with communicationmode: ' + IntToStr(
+            communicationmode), LLinfo);
+          Result := retrieveJSONObjectByHttpPost(instream, logging, communicationmode);
+        end;
+          (*
           if ContentTypeCompress = 'application/json' then
           begin
+            LogDatei.log('Use opsi 4.0 HTTP Header', LLnotice);
             ContentTypeCompress := 'gzip-application/json-rpc';
             AcceptCompress := 'gzip-application/json-rpc';
             ContentTypeNoCompress := 'application/json-rpc';
@@ -2637,18 +2943,19 @@ begin
           end
           else
           begin
+            LogDatei.log('Use opsi 4.1 / 4.2 HTTP Header', LLnotice);
             ContentTypeCompress := 'application/json';
-            AcceptCompress := '';
+            AcceptCompress := 'application/json';
             ContentTypeNoCompress := 'application/json';
-            AcceptNoCompress := '';
-            ContentEncodingNoCommpress := '';
+            AcceptNoCompress := 'application/json';
+            ContentEncodingNoCommpress := 'plain';
             ContentEncodingCommpress := 'deflate';
             AcceptEncodingCompress := 'deflate';
-            AcceptEncodingNoCompress := '';
+            AcceptEncodingNoCompress := 'plain';
           end;
           LogDatei.log_prog('Changing to MimeType: ' + ContentTypeCompress, LLDebug);
           sendstream.Free;
-          (************************)
+
           try
             sendstream := TMemoryStream.Create;
             ReceiveStream := TMemoryStream.Create;
@@ -2662,11 +2969,11 @@ begin
               LogDatei.log_prog('Using MimeType: ' + ContentTypeCompress, LLDebug);
               {$IFDEF SYNAPSE}
               HTTPSender.Headers.Clear;
-              HTTPSender.Headers.Add('accept-encoding: ' +
-                ContentEncodingCommpress + ',identity');
+              HTTPSender.MimeType := ContentTypeCompress;
+              HTTPSender.Headers.Add('accept: ' + AcceptCompress);
+              HTTPSender.Headers.Add('accept-encoding: ' + AcceptEncodingCompress);
               HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingCommpress);
-              HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress +
-                ',identity');
+              HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress);
               for i := 0 to HTTPSender.Headers.Count - 1 do
                 LogDatei.log_prog('HTTPSender Header.Strings: ' +
                   HTTPSender.Headers.Strings[i], LLDebug2);
@@ -2724,11 +3031,11 @@ begin
               LogDatei.log_prog('Using MimeType: ' + ContentTypeNoCompress, LLDebug);
               {$IFDEF SYNAPSE}
               HTTPSender.Headers.Clear;
-              HTTPSender.Headers.Add('accept-encoding: ' +
-                ContentEncodingCommpress + ',identity');
-              HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingCommpress);
-              HTTPSender.Headers.Add('content-type: ' + ContentTypeCompress +
-                ',identity');
+              HTTPSender.MimeType := ContentTypeNoCompress;
+              HTTPSender.Headers.Add('accept: ' + AcceptNoCompress);
+              HTTPSender.Headers.Add('accept-encoding: ' + AcceptEncodingNoCompress);
+              HTTPSender.Headers.Add('content-encoding: ' + ContentEncodingNoCommpress);
+              HTTPSender.Headers.Add('content-type: ' + ContentTypeNoCompress);
               for i := 0 to HTTPSender.Headers.Count - 1 do
                 LogDatei.log_prog('HTTPSender Header.Strings: ' +
                   HTTPSender.Headers.Strings[i], LLDebug2);
@@ -2757,58 +3064,6 @@ begin
               IdHTTP.Post(FserviceURL + '/rpc', instream, mymemorystream);
               {$ENDIF SYNAPSE}
             end;
-            (*
-            if opsidata <> nil then
-            begin
-              if opsidata.getOpsiServiceVersion = '4' then
-              begin
-                IdHttp.Request.ContentType := ContentTypeCompress;
-                IdHttp.Request.ContentEncoding:= ContentEncodingCommpress;
-                IdHttp.Request.Accept := AcceptCompress;
-                IdHttp.Request.AcceptEncoding:= AcceptEncodingCompress;
-                LogDatei.log('HTTP Header: '+ IdHttp.Request.RawHeaders.Text,LLDebug2);
-                CompressionSendStream := TCompressionStream.Create(clMax, sendstream);
-                Instream.Seek(0, 0);
-                GetMem(buffer, 655360);
-                repeat
-                  readcount := Instream.Read(buffer^, 655360);
-                  if readcount > 0 then
-                    CompressionSendStream.Write(buffer^, readcount);
-                until readcount < 655360;
-                CompressionSendStream.Free;
-                IdHTTP.post(FserviceURL + '/rpc', sendstream, ReceiveStream);
-                ReceiveStream.Seek(0, 0);
-                CompressionReceiveStream := TDeCompressionStream.Create(ReceiveStream);
-                repeat
-                  readcount := CompressionReceiveStream.Read(buffer^, 655360);
-                  if readcount > 0 then
-                    mymemorystream.Write(buffer^, readcount);
-                until readcount < 655360;
-                CompressionReceiveStream.Free;
-                FreeMem(buffer);
-              end
-
-              else
-              begin
-                IdHttp.Request.ContentType := ContentTypeNoCompress;
-                IdHttp.Request.ContentEncoding:= ContentEncodingNoCommpress;
-                IdHttp.Request.Accept := AcceptNoCompress;
-                IdHttp.Request.AcceptEncoding:= AcceptEncodingNoCompress;
-                LogDatei.log('HTTP Header: '+ IdHttp.Request.RawHeaders.Text,LLDebug2);
-                IdHTTP.Post(FserviceURL + '/rpc', instream, mymemorystream);
-              end;
-            end
-            else
-            begin
-              IdHttp.Request.ContentType := ContentTypeNoCompress;
-              IdHttp.Request.ContentEncoding:= ContentEncodingNoCommpress;
-              IdHttp.Request.Accept := AcceptNoCompress;
-              IdHttp.Request.AcceptEncoding:= AcceptEncodingNoCompress;
-              LogDatei.log('HTTP Header: '+ IdHttp.Request.RawHeaders.Text,LLDebug2);
-              IdHTTP.Post(FserviceURL + '/rpc', instream, mymemorystream);
-
-            end;
-            *)
           except
             on e: Exception do
             begin
@@ -2818,7 +3073,7 @@ begin
                 , LLError);
             end;
           end;
-        end;
+        end;   *)
         (************************)
       end;
       {$IFDEF SYNAPSE}
@@ -2831,13 +3086,11 @@ begin
       posColon := -1;
       if cookieVal <> '' then
         posColon := pos(';', cookieVal);
-
       if posColon > 0 then
         FSessionId := copy(cookieVal, 1, posColon - 1)
       else
         FSessionId := '';
-
-    except
+     except
       on E: Exception do
       begin
         errorOccured := True;
@@ -2846,10 +3099,9 @@ begin
     end;
     if not ErrorOccured then
     begin
-      mymemorystream.Position := 0;
-      ResultLines.LoadFromStream(mymemorystream);
-      // should be one line
-
+      ReceiveStream.Position := 0;
+      ResultLines.LoadFromStream(ReceiveStream);
+      // should be one line  @Detlef ??? (Jan)
       if ResultLines.Count < 1 then
       begin
         FError :=
@@ -2868,9 +3120,7 @@ begin
           Result := nil;
         end;
       end;
-
     end;
-
   except
     on E: Exception do
     begin
@@ -2878,14 +3128,10 @@ begin
       FError := E.Message;
     end;
   end;
-
   if Result = nil then
     if logging then
       LogDatei.log_prog('Error: --- opsi service problem ---' + FError, LLerror);
-
 end;
-
-
 
 function TJsonThroughHTTPS.getMapResult(const omc: TOpsiMethodCall): TStringList;
 var
@@ -2893,9 +3139,7 @@ var
   ///i : Integer;
 begin
   Result := TStringList.Create; // default value is an empty string list
-
   jO := retrieveJSONObject(omc);
-
   if jO = nil then
   begin
     Result := nil;
@@ -2905,7 +3149,6 @@ begin
   begin
     testresult := jO.AsJSon(False, True);
     jOResult := jO.O['result'];
-
     if (jOResult <> nil) then
     begin
       testresult := jOResult.AsJSon(False, True);
@@ -2921,19 +3164,14 @@ var
   ///i : Integer;
 begin
   Result := TStringList.Create; // default value is an empty string list
-
   jO := retrieveJSONObject(omc, True, True, True);
   //testresult := jO.toString;
-
   if jO = nil then
   begin
     exit;
   end;
-
   jOResult := jO.O['result'];
   //testresult := jOResult.toString;
-
-
   if (jOResult <> nil) then
   begin
     getStringlistFromJsonObject(jOResult, Result);
@@ -2950,9 +3188,7 @@ var
   testresult: string;
 begin
   Result := TStringList.Create;
-
   jO := retrieveJSONObject(omc);
-
   if jO = nil then
   begin
     exit;
@@ -2962,7 +3198,6 @@ begin
   jA := jO.O['result'].AsArray;
   if jA.Length > 0 then
     testresult := jA.S[0];
-
   if jA <> nil then
   begin
     //testresult := jA.
@@ -2984,9 +3219,7 @@ var
 begin
   try
     Result := TStringList.Create;
-
     jO := retrieveJSONObject(omc);
-
     if jO = nil then
     begin
       LogDatei.log_prog('Got no object from web service', LLWarning);
@@ -3016,7 +3249,6 @@ begin
         Result.append(jA1.S[i]);
       end;
     end;
-
   except
     on E: Exception do
     begin
@@ -3035,18 +3267,13 @@ var
   i: integer;
 begin
   Result := TStringList.Create;
-
   jO := retrieveJSONObject(omc);
   //testresult := jO.toString;
-
-
   if jO = nil then
   begin
     exit;
   end;
-
   jO1 := jO.O['result'];
-
   if jO1 <> nil then
   begin
     testresult := jO1.AsJSon(True, True);
@@ -3113,11 +3340,13 @@ begin
     end
   end;
 end;
+(******************* End of TJsonThroughHTTPS *********************************)
 
-
-
-// TOpsi4Data =========================
-
+(******************************************************************************)
+(*                                                                            *)
+(*         Implementation of class TOpsi4Data                                 *)
+(*                                                                            *)
+(******************************************************************************)
 constructor TOpsi4Data.Create;
 begin
   //inherited create;
@@ -3197,13 +3426,12 @@ begin
   initOpsiConf(serviceURL, username, password, sessionid, ip, port, '');
 end;
 
-
 procedure TOpsi4Data.initOpsiConf(serviceURL, username, password,
   sessionid, ip, port, agentstring: string);
 begin
   try
-    if FJsonExecutioner <> nil then
-      FJsonExecutioner.Free;
+    if Assigned(FJsonExecutioner) then
+      FreeAndNil(FJsonExecutioner);
     FjsonExecutioner := TJsonThroughHTTPS.Create(serviceUrl, username,
       password, sessionid, ip, port, agentstring);
     ProfildateiChange := False;
@@ -3378,8 +3606,6 @@ begin
   end;
 end;
 
-
-
 function TOpsi4Data.linuxAgentActivated: boolean;
 var
   mymodules: ISuperObject;
@@ -3402,19 +3628,15 @@ begin
   end;
 end;
 
-
 procedure TOpsi4Data.saveOpsiConf;
 begin
   ProfildateiChange := False;
 end;
 
-
 function TOpsi4Data.getOpsiServiceVersion: string;
 begin
   Result := FOpsiServiceVersion;
 end;
-
-
 
 {
 function TOpsi4Data.retrieve (const omc: TOpsiMethodCall) : String;
@@ -3473,8 +3695,6 @@ begin
   end;
 end;
 
-
-
 function TOpsi4Data.checkAndRetrieveMap
   (const omc: TOpsiMethodCall; var errorOccured: boolean): TStringList;
 begin
@@ -3511,7 +3731,6 @@ begin
 
 end;
 
-
 function TOpsi4Data.checkAndRetrieveList
   (const omc: TOpsiMethodCall; var errorOccured: boolean): TStringList;
 begin
@@ -3532,8 +3751,6 @@ begin
   FServiceLastErrorInfo := FjsonExecutioner.lastErrorInfo;
 
 end;
-
-
 
 function TOpsi4Data.stateToString(state: TProductState): string;
 begin
@@ -3561,7 +3778,6 @@ begin
     tacLogin: Result := 'login';
   end;
 end;
-
 
 function TOpsi4Data.actionRequestToString(actionRequest: TActionRequest): string;
 begin
@@ -3718,11 +3934,8 @@ begin
             slist.add(jO1.asArray.O[i].AsJSon());
           end;
         end;
-
         mapOfMethodSignatures.addObject(Name, slist);
-
         //end;
-
       end;
     end;
   end;
@@ -3734,9 +3947,6 @@ begin
     Result := TStringList(mapOfMethodSignatures.objects[mapOfMethodSignatures.indexOf(
       methodname)]);
 end;
-
-
-
 
 procedure TOpsi4Data.setActualProductName(const productname: string);
 begin
@@ -3879,8 +4089,8 @@ begin
     LogDatei.log('in finishOpsiConf: backend_exit done', LLDebug2);
     if omc <> nil then
       FreeAndNil(omc);
-    if FjsonExecutioner <> nil then
-      FreeAndNil(FjsonExecutioner);
+    if Assigned(FJsonExecutioner) then
+      FreeAndNil(FJsonExecutioner);
   except
     on e: Exception do
     begin
@@ -3938,7 +4148,6 @@ begin
   end;
 end;
 
-
 function TOpsi4Data.sendLog: boolean;
 begin
   Result := sendLog('instlog');
@@ -3951,8 +4160,6 @@ begin
   else
     Result := sendLog(logtype, True);
 end;
-
-
 
 function TOpsi4Data.sendLog(logtype: string; appendmode: boolean): boolean;
   //const logtype : String;
@@ -3988,7 +4195,8 @@ begin
   begin
     Logdatei.log('Shrinking Logfile to ' + IntToStr(aktlogsize) + ' MB....', LLInfo);
     Logdatei.PartShrinkToMB(aktlogsize);
-    Logdatei.log('Shrinking Logfile to ' + IntToStr(aktlogsize) + ' MB finidhed.', LLInfo);
+    Logdatei.log('Shrinking Logfile to ' + IntToStr(aktlogsize) +
+      ' MB finidhed.', LLInfo);
   end;
   Logdatei.setLogSIndentLevel(0);
   Logdatei.log(
@@ -4045,10 +4253,10 @@ begin
   end;
   LogDatei.log('start sending read file ...', LLInfo);
   try
-    Result := (FJsonExecutioner.retrieveJSONObjectByHttpPost(logstream, False) <> nil);
+    Result := (FJsonExecutioner.retrieveJSONObjectByHttpPost(logstream,
+      False, 0) <> nil);
     // we should perhaps not log inside this because of circularity
     errorinfo := FjsonExecutioner.LastError;
-
   except
     on e: Exception do
     begin
@@ -4059,7 +4267,6 @@ begin
   Logdatei.PartCloseFromReading;
   logstream.Free;
 end;
-
 
 function TOpsi4Data.getSpecialScriptPath: string;
 begin
@@ -4094,7 +4301,6 @@ begin
   end;
 end;
 
-
 function TOpsi4Data.getBeforeRequirements: TStringList;
 begin
   Result := FPreRequirements;
@@ -4104,7 +4310,6 @@ function TOpsi4Data.getAfterRequirements: TStringList;
 begin
   Result := FPostRequirements;
 end;
-
 
 function TOpsi4Data.getListOfProducts: TStringList;
 var
@@ -4135,7 +4340,6 @@ begin
     LogDatei.log('Product sequence calculated by opsi-script', LLWarning);
   end;
 end;
-
 
 function TOpsi4Data.setAddDependentProductOnClients(switchon: boolean): boolean;
 var
@@ -4182,7 +4386,6 @@ begin
     Result := False;
   end;
 end;
-
 
 function TOpsi4Data.setAddProductPropertyStateDefaults(switchon: boolean): boolean;
 var
@@ -4318,7 +4521,6 @@ begin
   end;
 end;
 
-
 function TOpsi4Data.getMapOfProductStates: TStringList;
 var
   resultlist: TStringList;
@@ -4351,7 +4553,6 @@ begin
   //result.AddStrings(productonClients_getObjects__actionrequests);
   Result := productonClients_getObjects__actionrequests;
 end;
-
 
 function TOpsi4Data.productonClients_getObjects__actionrequests: TStringList;
 var
@@ -4492,7 +4693,6 @@ begin
   omc.Free;
 end;
 
-
 function TOpsi4Data.getMapOfLoginscripts2Run(allscripts: boolean): TStringList;
 var
   resultlist, productlist, loginscriptmap, productondepotlist,
@@ -4526,8 +4726,6 @@ begin
         productondepotentry.S['productVersion'] + '-' +
         productondepotentry.S['packageVersion']);
     end;
-
-
 
   if FProductStates = nil then
     FProductStates := TStringList.Create;
@@ -4563,7 +4761,6 @@ begin
         end;
       end;
     end;
-
 
   if not allscripts then
   begin
@@ -4686,8 +4883,6 @@ begin
 end;
 *)
 
-
-
 function TOpsi4Data.getInstallableProducts: TStringList;
 var
   objectlist: TStringList;
@@ -4745,7 +4940,6 @@ begin
   Result := stateStringToState(FProductStates.Values[ActualProduct]);
 end;
 
-
 function TOpsi4Data.getProductAction: TAction;
 begin
   testresult := FProductActionRequests.Values[ActualProduct];
@@ -4757,7 +4951,6 @@ begin
   Result := actionRequestStringToActionRequest(
     FProductActionRequests.Values[ActualProduct]);
 end;
-
 
 function TOpsi4Data.getProductScriptPath(actionType: TAction): string;
 begin
@@ -4793,7 +4986,6 @@ begin
 
 end;
 
-
 function TOpsi4Data.getInstallationPriority: integer;
 begin
   Result := 0;
@@ -4802,7 +4994,6 @@ begin
   except
   end;
 end;
-
 
 function TOpsi4Data.getProductPackagageVersion: string;
 begin
@@ -4919,8 +5110,6 @@ begin
   if (FProductOnClient_aktobject <> nil) then
     FProductOnClient_aktobject.AsObject.S['actionRequest'] := request;
 end;
-
-
 
 procedure TOpsi4Data.setProductActionRequest(newAction: TActionRequest);
 var
@@ -5039,9 +5228,6 @@ begin
     FProductStates.Values[actualProduct] := installationStatusToString(tps4Unkown);
 end;
 
-
-
-
 procedure TOpsi4Data.ProductOnClient_update(actionProgressS: string;
   actionResult: TActionResult4; actionRequest: TActionRequest4;
   targetConfiguration: TTargetConfiguration4; lastAction: TActionRequest4;
@@ -5136,7 +5322,6 @@ function TOpsi4Data.UpdateSwitches(extremeErrorLevel: TErrorLevel): boolean;
 begin
   Result := UpdateSwitches(extremeErrorLevel, '');
 end;
-
 
 function TOpsi4Data.UpdateSwitches(extremeErrorLevel: TErrorLevel;
   Progress: string): boolean;
@@ -5358,6 +5543,7 @@ begin
   end;
   omc.Free;
 end;
+(************************ End of TOpsi4Data ***********************************)
 
 initialization
   // {$i widatamodul.lrs}

@@ -23,7 +23,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
       <RevisionNr Value="2"/>
-      <BuildNr Value="3"/>
+      <BuildNr Value="4"/>
       <StringTable Comments="Compiled with Lazarus 2.0.4 / FPC 3.0.4" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst32.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst32.exe" ProductName="opsi-script" ProductVersion="4.1.0"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -37,7 +37,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\modified\misc;..\common;..\external_libraries\synapse"/>
+            <OtherUnitFiles Value="..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\modified\misc;..\common;..\external_libraries\synapse;..\external_libraries\indy\Lib\Protocols;..\external_libraries\indy\Lib\System;..\external_libraries\indy\Lib\Core"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -79,13 +79,12 @@
 -dGUI
 -dOSDEBUG
 -dOSLOG"/>
-            <OtherDefines Count="6">
+            <OtherDefines Count="5">
               <Define0 Value="OPSIWINST"/>
               <Define1 Value="WINDOWS"/>
               <Define2 Value="OPSISCRIPT"/>
               <Define3 Value="GUI"/>
-              <Define4 Value="OSDEBUG"/>
-              <Define5 Value="OSLOG"/>
+              <Define4 Value="OSLOG"/>
             </OtherDefines>
           </Other>
         </CompilerOptions>
@@ -168,7 +167,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="54">
+    <Units Count="55">
       <Unit0>
         <Filename Value="winst.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -411,6 +410,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit53>
+      <Unit54>
+        <Filename Value="gzipstream.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit54>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -421,7 +424,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\modified\misc;..\external_libraries\synapse"/>
+      <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\modified\misc;..\external_libraries\synapse;..\external_libraries\GZIPUtils"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
@@ -464,10 +467,17 @@
 -dGUI
 -dOPSI
 -dOSLOG"/>
+      <OtherDefines Count="5">
+        <Define0 Value="OPSIWINST"/>
+        <Define1 Value="WINDOWS"/>
+        <Define2 Value="OPSISCRIPT"/>
+        <Define3 Value="GUI"/>
+        <Define4 Value="OSLOG"/>
+      </OtherDefines>
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="8">
+    <Exceptions Count="10">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -492,6 +502,12 @@
       <Item8>
         <Name Value="Edecompressionerror"/>
       </Item8>
+      <Item9>
+        <Name Value="EStringListError"/>
+      </Item9>
+      <Item10>
+        <Name Value="Exception"/>
+      </Item10>
     </Exceptions>
   </Debugging>
 </CONFIG>
