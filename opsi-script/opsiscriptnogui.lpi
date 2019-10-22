@@ -284,27 +284,27 @@
         <IsPartOfProject Value="True"/>
       </Unit31>
       <Unit32>
-        <Filename Value="lispecfolder.pas"/>
+        <Filename Value="oslindesktopfiles.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit32>
       <Unit33>
-        <Filename Value="oslindesktopfiles.pas"/>
+        <Filename Value="../common/osfunclin.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit33>
       <Unit34>
-        <Filename Value="../common/osfunclin.pas"/>
+        <Filename Value="../common/oslinmount.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit34>
       <Unit35>
-        <Filename Value="../common/oslinmount.pas"/>
+        <Filename Value="../common/osprocessux.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit35>
       <Unit36>
-        <Filename Value="../common/osprocessux.pas"/>
+        <Filename Value="osdefinedfunctions.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit36>
       <Unit37>
-        <Filename Value="osdefinedfunctions.pas"/>
+        <Filename Value="../common/lispecfolder.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit37>
     </Units>

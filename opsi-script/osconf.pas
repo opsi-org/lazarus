@@ -128,6 +128,7 @@ var
   FileVerInfo: TFileVersionInfo;
   WinstVersion: string;
   WinstVersionName: string;
+  OsFileName: string;
   readconfig_done: boolean = False;
 
   //deprecated stuff start:
@@ -251,12 +252,13 @@ begin
   {$IFDEF WINDOWS}
     depotdrive := 'p:';
 {$ENDIF WINDOWS}
-  {$IFDEF UNIX}
+{$IFDEF LINUX}
     depotdrive_old := '/mnt';
-{$ENDIF LINUX}
-  {$IFDEF UNIX}
     depotdrive := '/media/opsi_depot';
 {$ENDIF LINUX}
+{$IFDEF DARWIN}
+    depotdrive := '/Network/opsi_depot';
+{$ENDIF DARWIN}
 
 {$IFDEF WINDOWS}
     try
@@ -493,7 +495,8 @@ initEncoding;
   //from http://wiki.freepascal.org/Show_Application_Title,_Version,_and_Company
   FileVerInfo := TFileVersionInfo.Create(nil);
   try
-    FileVerInfo.FileName := reencode(ParamStr(0), 'system');
+    OsFileName := reencode(ParamStr(0), 'system');
+    FileVerInfo.FileName := OsFileName;
     FileVerInfo.ReadFileInfo;
     WinstVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
   (*

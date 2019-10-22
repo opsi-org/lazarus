@@ -92,6 +92,7 @@
           <Linking>
             <Debugging>
               <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
               <StripSymbols Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
@@ -151,28 +152,28 @@
         <IsPartOfProject Value="True"/>
       </Unit5>
       <Unit6>
-        <Filename Value="../common/superobject.pas"/>
+        <Filename Value="../common/osfunclin.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit6>
       <Unit7>
-        <Filename Value="../common/osfunclin.pas"/>
+        <Filename Value="../common/osfuncmac.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit7>
       <Unit8>
-        <Filename Value="../common/osfuncmac.pas"/>
+        <Filename Value="../common/null.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit8>
       <Unit9>
-        <Filename Value="../common/null.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit9>
-      <Unit10>
         <Filename Value="../common/osprocessux.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="OSProcessux"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="../common/osparserhelper.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit10>
       <Unit11>
-        <Filename Value="../common/osparserhelper.pas"/>
+        <Filename Value="../external_libraries/misc/superobject.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit11>
     </Units>

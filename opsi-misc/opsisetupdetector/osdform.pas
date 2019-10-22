@@ -666,6 +666,7 @@ begin
     FileVerInfo.Free;
   end;
   *)
+  (*
   // Initialize logging
   LogDatei := TLogInfo.Create;
   lfilename := ExtractFileName(Application.ExeName);
@@ -678,8 +679,8 @@ begin
   LogDatei.log('Log for: ' + Application.exename + ' opend at : ' +
     DateTimeToStr(now), LLEssential);
   LogDatei.log('opsi-setup-detector Version: ' + myVersion, LLEssential);
-
   LogDatei.LogLevel := 8;
+  *)
 end;
 
 procedure main2;

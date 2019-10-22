@@ -100,7 +100,7 @@ var
   Application: Topsiscript;
 
 {$ELSE GUI}
-{$R opsiscript.res}
+{$R opsiscript_mac.res}
 {$ENDIF GUI}
 
 
@@ -109,12 +109,8 @@ var
 
 
 //{$R *.res}
-
-
-
 //{$R *.res}
-
-{$R *.res}
+//{$R *.res}
 
 begin
   {$IFNDEF GUI}
