@@ -6,7 +6,7 @@ uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
-  Classes, SysUtils, CustApp, IconCollector, Interfaces
+  Classes, SysUtils, CustApp, IconCollector, Interfaces, LazFileUtils
   { you can add units after this };
 
 type
@@ -16,7 +16,7 @@ type
   TOpsiIconCollector = class(TCustomApplication)
   protected
     procedure DoRun; override;
-    procedure ShowOpsiSetupScriptPaths(DepotPath:String);
+    procedure CollectIcons(DepotPath:String);
   public
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
@@ -28,42 +28,76 @@ type
 procedure TOpsiIconCollector.DoRun;
 var
   ErrorMsg: String;
+  ShortOpts: String = 'h';
+  LongOpts: String = 'help';
+  //ParamList : TStringList;
 begin
-  // quick check parameters
-  ErrorMsg:=CheckOptions('h', 'help');
-  if ErrorMsg<>'' then begin
+  // quick check options
+  ErrorMsg:=CheckOptions(ShortOpts, LongOpts);
+  if ErrorMsg<>'' then
+  begin
     ShowException(Exception.Create(ErrorMsg));
     Terminate;
     Exit;
   end;
 
-  // parse parameters
-  if HasOption('h', 'help') then begin
+  // parse options
+  if HasOption('h', 'help') then
+  begin
     WriteHelp;
-    ReadLn;//only for testing, remove in productive environment
     Terminate;
     Exit;
   end;
 
   { add your program here }
-  WriteLn('Hello Opsi');
-  ShowOpsiSetupScriptPaths('C:\Users\Jan\Test');
 
-  // stop program loop
-  ReadLn;//only for testing, remove in productive environment
-  Terminate;
+  //parse parameter
+  //ParamList := TStringList.Create;
+  //GetNonOptions(ShortOpts, LongOpts, ParamList);
+  try
+    If Params[1] <> '' then
+    begin
+      WriteLn('Params[1]: ' + Params[1]);//for testing logging
+      if DirPathExists(Params[1]) then
+      begin
+        WriteLn('Hello opsi user!');
+        CollectIcons(Params[1]);
+      end;
+    end
+    else
+    begin
+      WriteLn('No depot was given.');
+      WriteLn('');
+      WriteLn('Help:');
+      WriteHelp;
+      Terminate;
+      Exit;
+    end;
+  finally
+    // stop program loop
+    WriteLn('');
+    WriteLn('Press enter ...');
+    ReadLn;//only for testing, remove in productive environment
+    Terminate;
+  end;
 end;
 
-procedure TOpsiIconCollector.ShowOpsiSetupScriptPaths(DepotPath: String);
+procedure TOpsiIconCollector.CollectIcons(DepotPath: String);
 var
   IconCollector :TIconCollector;
 begin
-  WriteLn('Creating IconCollector...');
+  WriteLn('Collecting icons for opsi client kiosk ...');
+  WriteLn('Depot: ' + DepotPath);
   IconCollector := TIconCollector.Create(DepotPath);
-  WriteLn('Done');
-  IconCollector.ShowFilenames;
-  IconCollector.GetPathToIcon('');
+  //WriteLn('Done');
+  WriteLn('');
+  WriteLn('Paths to opsi-script files:');
+  WriteLn(IconCollector.ShowOpsiScriptFilenames);
+  IconCollector.GetPathToIcon;
+  WriteLn('IconList:');
+  WriteLn(IconCollector.ShowIconList);
   //IconCollector.ExtractIconFromExe('C:\Users\Jan\Test\anydesk\AnyDesk.exe');
+  WriteLn('Done.');
 end;
 
 constructor TOpsiIconCollector.Create(TheOwner: TComponent);
@@ -80,7 +114,13 @@ end;
 procedure TOpsiIconCollector.WriteHelp;
 begin
   { add your help code here }
-  WriteLn('Usage: ', ExeName, ' -h');
+  WriteLn('Searchs for product icons within the installed products on the given depot.');
+  WriteLn('');
+  WriteLn('Usage: opsi-icon-collector [DEPOT]');
+  WriteLn('DEPOT is the path to the depot e.g. var/lib/opsi_depot');
+  WriteLn('');
+  WriteLn('Press enter ...');
+  ReadLn;
 end;
 
 var
