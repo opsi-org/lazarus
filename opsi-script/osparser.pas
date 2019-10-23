@@ -10656,6 +10656,8 @@ var
   partA: string = '';
   partB: string = '';
   continue: boolean;
+  tmpRunAs : TRunAs;
+  expr : string='';
 
 begin
 
@@ -10717,7 +10719,12 @@ begin
         not Skip(Parameter_64Bit, remaining, remaining, InfoSyntaxError) and
         not Skip(Parameter_32Bit, remaining, remaining, InfoSyntaxError) and
         not Skip(Parameter_SysNative, remaining, remaining, InfoSyntaxError) then
-        continue := False;
+      begin
+        // try to parse a RunAs param
+        GetWord(remaining, expr, remaining, WordDelimiterWhiteSpace);
+        if not RunAsForParameter(expr, tmpRunAs) then
+          continue := false;
+      end;
     end;
 
 
@@ -10774,19 +10781,22 @@ var
   force64: boolean;
   oldDisableWow64FsRedirectionStatus: pointer = nil;
   Wow64FsRedirectionDisabled, boolresult: boolean;
+  goon : boolean;
+  remaining : string;
+  expr : string='';
+  SyntaxCheck: boolean;
+  onlyWindows: boolean;
+  showoutput: boolean;
 
 begin
   try
-    (*
-    if  GetNTVersionMajor < 6 then
-      runAs := traInvoker
-    else
-      runAs := traInvoker;
-    *)
     runAs := traInvoker;
     Result := tsrPositive;
     showcmd := SW_SHOWMINIMIZED; // SW_SHOWNORMAL;
     waitSecs := 0;
+    showoutput := false;
+    force64 := false;
+    threaded := false;
 
     if Sektion.Count = 0 then
       exit;
@@ -10869,16 +10879,58 @@ begin
           '"' + programfilename + '" ' + programparas +
           ' "' + tempfilename + '"  ' + passparas;
 
-      force64 := False;
-      if (pos(lowercase('/64bit'), lowercase(winstoption)) > 0) and Is64BitSystem then
-        force64 := True;
+      remaining := winstoption;
+      SyntaxCheck := true;
+      onlyWindows := false;
 
-      if (pos(lowercase('/sysnative'), lowercase(winstoption)) > 0) and
-        Is64BitSystem then
-        force64 := True;
+      while (remaining <> '') and SyntaxCheck do
+      begin
+         GetWord (remaining, expr, remaining, WordDelimiterWhiteSpace);
 
-      if (pos(lowercase('/32bit'), lowercase(winstoption)) > 0) then
-        force64 := False;
+         If (lowercase(Parameter_64bit) = lowercase(expr)) and Is64BitSystem then
+         begin
+           force64 := true;
+           onlyWindows := true;
+         end
+         else If (lowercase(Parameter_Sysnative) = lowercase(expr)) and Is64BitSystem then
+         begin
+           force64 := true;
+           onlyWindows := true;
+         end
+         else If lowercase(Parameter_32bit) = lowercase(expr) then
+         begin
+           force64 := false;
+           onlyWindows := true;
+         end
+         else if lowercase(ParameterDontWait) = lowercase(expr) then
+           threaded := true
+         else if lowercase(ParameterShowoutput) = lowercase(expr) then
+           showoutput := true
+         else if RunAsForParameter(expr, runas) then
+           onlyWindows := true
+         else
+         begin
+           SyntaxCheck := false;
+           errorInfo := '"' + expr + '" is not a valid ExecWith parameter!';
+         end;
+
+         {$IFNDEF WINDOWS}
+         if onlyWindows then
+         begin
+           // Don't generate a syntax error to keep in line with old behavior
+           SyntaxCheck := true;
+           errorInfo := '"' + expr '" is only supported on Windows!';
+           LogDatei.log('Warning: ' + errorInfo, LLWarning);
+         end;
+         {$ENDIF WINDOWS}
+      end;
+
+      if not SyntaxCheck then
+      begin
+        LogDatei.log('Error: ' + errorInfo, LLcritical);
+        FExtremeErrorLevel:=LevelFatal;
+        exit;
+      end;
 
       {$IFDEF WIN32}
       Wow64FsRedirectionDisabled := False;
@@ -10895,48 +10947,37 @@ begin
         FBatchOberflaeche.showAcitvityBar(True);
       {$ENDIF GUI}
 
-
-      threaded :=
-        (pos(lowercase(ParameterDontWait), lowercase(winstoption)) > 0);
-
       if threaded then
+        showcmd := sw_hide;
+
+      LogDatei.log_prog ('Executing ' + commandline, LLDebug);
+      if not StartProcess(Commandline, showcmd, showoutput, not threaded,
+        false, false, false, false, runas, '', WaitSecs, Report,
+        FLastExitCodeOfExe, output)
+      then
       begin
-        if not StartProcess(Commandline, sw_hide, False, False,
-          False, False, runas, '', WaitSecs, Report, FLastExitCodeOfExe) then
-        begin
-          ps := 'Error: ' + Report;
-          LogDatei.log(ps, LLcritical);
-          FExtremeErrorLevel := LevelFatal;
-        end
-        else
-          LogDatei.log(Report, LevelComplete);
+        ps := 'Error: ' + Report;
+        LogDatei.log(ps, LLcritical);
+        FExtremeErrorLevel := LevelFatal;
+        if not threaded then
+          scriptstopped := true
       end
+      else if threaded then
+        LogDatei.log(Report, LevelComplete)
       else
       begin
-        LogDatei.log_prog('Executing ' + commandline, LLDebug);
-        if not RunCommandAndCaptureOut(commandline,
-          True, output, report, showcmd, FLastExitCodeOfExe) then
-        begin
-          ps := 'Error: ' + Report;
-          LogDatei.log(ps, LLcritical);
-          FExtremeErrorLevel := LevelFatal;
-          scriptstopped := True;
-        end
-        else
-        begin
-          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 4;
-          LogDatei.log('', LLDebug + logleveloffset);
-          LogDatei.log('output:', LLDebug + logleveloffset);
-          LogDatei.log('--------------', LLDebug + logleveloffset);
+        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 4;
+        LogDatei.log ('', LLDebug+logleveloffset);
+        LogDatei.log ('output:', LLDebug+logleveloffset);
+        LogDatei.log ('--------------', LLDebug+logleveloffset);
 
-          for i := 0 to output.Count - 1 do
-          begin
-            LogDatei.log(output.strings[i], LLDebug + logleveloffset);
-          end;
-
-          LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 4;
-          LogDatei.log('', LLDebug + logleveloffset);
+        for i := 0 to output.count-1 do
+        begin
+          LogDatei.log (output.strings[i], LLDebug+logleveloffset);
         end;
+
+        LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 4;
+        LogDatei.log ('', LLDebug+logleveloffset);
       end;
 
       {$IFDEF WIN32}
