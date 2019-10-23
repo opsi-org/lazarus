@@ -26,7 +26,8 @@
 
 unit GZIPUtils;
 {$ifdef fpc}
-  {$mode objfpc}
+  //{$mode objfpc}
+  {$mode delphi}
 {$endif}
 {$H+}
 //{$packset 1}

@@ -1,4 +1,10 @@
 [changelog]
+opsiscriptstarter 4.1.0.6
+
+  * update oswebservice with gzip support
+
+-- d.oertel <d.oertel@uib.de> Wed, 23 Oct 2019 15:00
+
 opsiscriptstarter 4.1.0.5
 
   * changes for linux
