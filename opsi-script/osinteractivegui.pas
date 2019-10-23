@@ -137,6 +137,7 @@ type
     ComboBox1: TComboBox;
     SpeedButton4: TSpeedButton;
     LabelActivity: TLabel;
+    procedure FormWindowStateChange(Sender: TObject);
     procedure Label3Click(Sender: TObject);
     procedure Memo1Add(const s: string);
     procedure FormCreate(Sender: TObject);
@@ -665,6 +666,11 @@ begin
 end;
 
 procedure TCentralForm.Label3Click(Sender: TObject);
+begin
+
+end;
+
+procedure TCentralForm.FormWindowStateChange(Sender: TObject);
 begin
 
 end;

@@ -33,6 +33,7 @@ uses
   Dialogs, StdCtrls, ExtCtrls, ComCtrls, LResources,
 //Sensors, indGnouMeter,
   osencoding,
+  typinfo,
   QProgBar;
 
 type
@@ -71,6 +72,7 @@ type
     {$ENDIF WINDOWS}
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormWindowStateChange(Sender: TObject);
     procedure ProgressBarActive(YesNo: boolean);
     procedure ShowProgress(Prozente: integer);
     procedure FormShow(Sender: TObject);
@@ -886,11 +888,12 @@ procedure TFBatchOberflaeche.setWindowState(BatchWindowMode: TBatchWindowMode);
 begin
   case BatchWindowMode of
     bwmNotActivated: WindowState := wsnormal;
-    bwmIcon: WindowState := wsminimized;
-    bwmNormalWindow: WindowState := wsnormal;
-    bwmMaximized: WindowState := wsMaximized;
+    bwmIcon: if WindowState <> wsMinimized then WindowState := wsminimized;
+    bwmNormalWindow: if WindowState <> wsnormal then WindowState := wsnormal;
+    bwmMaximized: if WindowState <> wsMaximized then WindowState := wsMaximized;
   end;
-
+  if Assigned(LogDatei) then
+     LogDatei.log('Switch window state to: '+GetEnumName(TypeInfo(TBatchWindowMode),ord(BatchWindowMode)),LLDebug);
 end;
 
 (*
@@ -919,6 +922,12 @@ procedure TFBatchOberflaeche.FormClose(Sender: TObject; var CloseAction: TCloseA
 begin
   //prevents closing batchmode via ALT-F4
   CloseAction := caNone;
+end;
+
+procedure TFBatchOberflaeche.FormWindowStateChange(Sender: TObject);
+begin
+    if Assigned(LogDatei) then
+     LogDatei.log('Window state was switched by : '+sender.ClassName+' to: '+GetEnumName(TypeInfo(TWindowState),ord(FBatchOberflaeche.WindowState)),LLDebug);
 end;
 
 procedure TFBatchOberflaeche.ShowProgress(Prozente: integer);

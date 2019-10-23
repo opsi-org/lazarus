@@ -23064,6 +23064,10 @@ begin
   else tmpstr :=  tmpstr+' 32 Bit';
   LogDatei.log (tmpstr, LLessential);
   {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  tmpstr :=  'macOS: '+ GetMacosVersionInfo;
+  LogDatei.log (tmpstr, LLessential);
+  {$ENDIF DARWIN}
 
   if opsidata <> nil then
   begin

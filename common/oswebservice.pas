@@ -1512,7 +1512,7 @@ begin
      case CommunicationMode of
       0:
       begin
-        LogDatei.log('Use opsi 4.1 / 4.2 HTTP Header, compress', LLnotice);
+        LogDatei.log_prog('Use opsi 4.1 / 4.2 HTTP Header, compress', LLnotice);
         compress := True;
         ContentType := 'application/json; charset=UTF-8';
         Accept := 'application/json';
@@ -1534,7 +1534,7 @@ begin
       end;}
       1:
       begin
-        LogDatei.log('Use opsi 4.0  HTTP Header, compress', LLnotice);
+        LogDatei.log_prog('Use opsi 4.0  HTTP Header, compress', LLnotice);
         compress := True;
         ContentType := 'gzip-application/json-rpc';
         Accept := 'gzip-application/json-rpc';
@@ -1636,7 +1636,7 @@ begin
               //HTTPSender.Headers.Add('Connection: close' );
                 {header logging}
               for i := 0 to HTTPSender.Headers.Count - 1 do
-                LogDatei.log('HTTPSender Request Header.Strings: ' +
+                LogDatei.log_prog('HTTPSender Request Header.Strings: ' +
                   HTTPSender.Headers.Strings[i], LLDebug);
                 { Set Body }
               HTTPSender.Document.Write(utf8str[1], length(utf8str));
@@ -1654,36 +1654,38 @@ begin
                 CompressionSendStream.Write(utf8str[1], length(utf8str));
                 CompressionSendStream.Free;
               end;}
-              LogDatei.log(' JSON service request Furl ' + Furl, LLdebug);
-              LogDatei.log(' JSON service request str ' + utf8str, LLdebug);
+              LogDatei.log_prog(' JSON service request Furl ' + Furl, LLdebug);
+              LogDatei.log_prog(' JSON service request str ' + utf8str, LLdebug);
 
               { Send Request }
               if HTTPSender.HTTPMethod('POST', Furl) then
               begin
                 { Read Response }
                 LogDatei.log_prog('HTTPSender Post succseeded', LLdebug);
-                LogDatei.log('HTTPSender result: ' + IntToStr(HTTPSender.ResultCode) +
+                LogDatei.log_prog('HTTPSender result: ' + IntToStr(HTTPSender.ResultCode) +
                   ' msg: ' + HTTPSender.ResultString, LLdebug);
                 for i := 0 to HTTPSender.Headers.Count - 1 do
-                  LogDatei.log('HTTPSender Response Header.Strings: ' +
+                  LogDatei.log_prog('HTTPSender Response Header.Strings: ' +
                     HTTPSender.Headers.Strings[i], LLdebug);
                 //LogDatei.log('ReceiveStream: ' + MemoryStreamToString(ReceiveStream),  LLDebug2);
                 if HTTPSender.ResultString = 'OK' then
                 begin
                   if FCommunicationMode = -1 then
                   begin
+                    // we have no saved communication mode
                     if CommunicationMode = 0 then
                     begin
-                      LogDatei.Log('Communication mode is '
+                      LogDatei.log_prog('Communication mode is '
                       + IntToStr(CommunicationMode) + '. '
                       + 'Opsi Version should be >=4.1', LLDebug);
                     end
                     else
                     begin
-                      LogDatei.Log('Communication mode is '
+                      LogDatei.log_prog('Communication mode is '
                       + IntToStr(CommunicationMode) + '. '
                       + 'Opsi Version should be 4.0', LLDebug);
                     end;
+                    // save the communication mode
                     FCommunicationMode := CommunicationMode;
                   end;
                 end
@@ -1696,13 +1698,13 @@ begin
                 if (HTTPSender.Headers.IndexOfName('Content-Encoding') <> -1) then  //Content-Encoding header available
                 begin
                   ContentEncoding := trim(HTTPSender.Headers.Values['Content-Encoding']);
-                  LogDatei.log('Response Content-Encoding: '
+                  LogDatei.log_prog('Response Content-Encoding: '
                     + ContentEncoding,llDebug);
                 end
                 else // no Content-Encoding header available, due to HTTP specification: Content-Encoding = identity
                 begin
                   ContentEncoding := 'identity';
-                  LogDatei.log('No Content-Encoding header. Guess identity',llDebug);
+                  LogDatei.log_prog('No Content-Encoding header. Guess identity',llDebug);
                 end;
 
                 { identity = uncompressed}
@@ -1738,7 +1740,7 @@ begin
                 begin
                   unzipStream(HTTPSender.Document,ReceiveStream);
                 end
-                else LogDatei.log('Unknown Content-Encoding: ' + ContentEncoding, LLDebug);
+                else LogDatei.log('Unknown Content-Encoding: ' + ContentEncoding, LLWarning);
 
                 //HTTPSender.Document.SaveToFile('C:\Users\Jan\Documents\ReceiveStream.txt');  //for testing
 
@@ -2644,7 +2646,7 @@ begin
    case communicationmode of
     0:
     begin
-      LogDatei.log('Use opsi 4.1 / 4.2 HTTP Header, compress', LLnotice);
+      LogDatei.log_prog('Use opsi 4.1 / 4.2 HTTP Header, compress', LLnotice);
       compress := True;
       ContentType := 'application/json; charset=UTF-8';
       Accept := 'application/json';
@@ -2666,7 +2668,7 @@ begin
     end;}
     2:
     begin
-      LogDatei.log('Use opsi 4.0  HTTP Header, compress', LLnotice);
+      LogDatei.log_prog('Use opsi 4.0  HTTP Header, compress', LLnotice);
       compress := True;
       ContentType := 'gzip-application/json-rpc';
       Accept := 'gzip-application/json-rpc';
@@ -2732,7 +2734,7 @@ begin
           //HTTPSender.Headers.Add('Connection: close' );
             { header logging }
           for i := 0 to HTTPSender.Headers.Count - 1 do
-            LogDatei.log('HTTPSender Request Header.Strings: ' +
+            LogDatei.log_prog('HTTPSender Request Header.Strings: ' +
               HTTPSender.Headers.Strings[i], LLDebug);
 
           {$ELSE SYNAPSE}
@@ -2766,7 +2768,7 @@ begin
             FreeMem(buffer);
           end;}
           HTTPSender.Document.LoadFromStream(InStream);
-          LogDatei.log(' JSON service request Furl ' + Furl, LLdebug);
+          LogDatei.log_prog(' JSON service request Furl ' + Furl, LLdebug);
           //LogDatei.log(' JSON service request str ' + utf8str, LLdebug);
           {$IFDEF SYNAPSE}
           LogDatei.log_prog('HTTPSender FURL: ' + Furl, LLDebug2);
@@ -2783,12 +2785,12 @@ begin
           begin
             { Communication successful }
             LogDatei.log_prog('HTTPSender Post succseeded', LLdebug);
-            LogDatei.log('HTTPSender result: ' + IntToStr(HTTPSender.ResultCode) +
+            LogDatei.log_prog('HTTPSender result: ' + IntToStr(HTTPSender.ResultCode) +
               ' msg: ' + HTTPSender.ResultString, LLdebug);
             for i := 0 to HTTPSender.Headers.Count - 1 do
-              LogDatei.log('HTTPSender Answer Header.Strings: ' +
+              LogDatei.log_prog('HTTPSender Answer Header.Strings: ' +
                 HTTPSender.Headers.Strings[i], LLDebug2);
-            LogDatei.log('got mimetype: ' + HTTPSender.MimeType, LLDebug2);
+            LogDatei.log_prog('got mimetype: ' + HTTPSender.MimeType, LLDebug2);
             //LogDatei.log('ReceiveStream: ' + MemoryStreamToString(ReceiveStream), LLDebug2);
             if HTTPSender.ResultString = 'OK' then
             begin
@@ -2797,13 +2799,13 @@ begin
               begin
                 if CommunicationMode = 0 then
                 begin
-                  LogDatei.Log('Communication mode is '
+                  LogDatei.log_prog('Communication mode is '
                   + IntToStr(CommunicationMode) + '. '
                   + 'Opsi Version should be >=4.1', LLDebug);
                 end
                 else
                 begin
-                  LogDatei.Log('Communication mode is '
+                  LogDatei.log_prog('Communication mode is '
                   + IntToStr(CommunicationMode) + '. '
                   + 'Opsi Version should be 4.0', LLDebug);
                 end;
