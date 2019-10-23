@@ -1796,8 +1796,10 @@ begin
       on e: Exception do
       begin
         LogDatei.log_prog('Exception in StartProcess_se: ' +
-          e.message, LLError);
+          e.message, LLDebug);
+        Report := 'Could not execute process "' + CmdLinePasStr + '"';
         exitcode := -1;
+        Result := false;
       end;
     end;
   finally
@@ -2160,8 +2162,10 @@ begin
       on e: Exception do
       begin
         LogDatei.DependentAdd('Exception in StartProcess_se_as: ' +
-          e.message, LLError);
+          e.message, LLDebug);
+        Report := 'Could not execute process "' + CmdLinePasStr + '"';
         exitcode := -1;
+        Result := false;
       end;
     end;
   finally
@@ -2678,8 +2682,10 @@ begin
       on e: Exception do
       begin
         LogDatei.DependentAdd('Exception in StartProcess_cp: ' +
-          e.message, LLError);
+          e.message, LLDebug);
+        Report := 'Could not execute process "' + CmdLinePasStr + '"';
         exitcode := -1;
+        Result := false;
       end;
     end;
   finally
@@ -3136,8 +3142,10 @@ begin
       on e: Exception do
       begin
         LogDatei.DependentAdd('Exception in StartProcess_cp_lu: ' +
-          e.message, LLError);
+          e.message, LLDebug);
+        Report := 'Could not execute process "' + CmdLinePasStr + '"';
         exitcode := -1;
+        Result := false;
       end;
     end;
   finally
@@ -3533,8 +3541,10 @@ begin
     except
       on e: Exception do
       begin
-        LogDatei.log('Exception in StartProcess_cp_el: ' + e.message, LLError);
+        LogDatei.log('Exception in StartProcess_cp_el: ' + e.message, LLDebug);
+        Report := 'Could not execute process "' + CmdLinePasStr + '"';
         exitcode := -1;
+        Result := false;
       end;
     end;
   finally
@@ -4069,8 +4079,10 @@ begin
       on e: Exception do
       begin
         LogDatei.DependentAdd('Exception in StartProcess_as: ' +
-          e.message, LLError);
+          e.message, LLDebug);
+        Report := 'Could not execute process "' + CmdLinePasStr + '"';
         exitcode := -1;
+        Result := false;
       end;
     end;
   finally
