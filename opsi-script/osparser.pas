@@ -569,9 +569,10 @@ type
     function execWinBatch(const Sektion: TWorkSection; WinBatchParameter: string;
       WaitConditions: TSetWaitConditions; ident: string;
       WaitSecs: word; runAs: TRunAs; flag_force64: boolean;
-      showoutput: boolean): TSectionResult;
+      showoutput: boolean; var output: TXStringList): TSectionResult;
     function parseAndCallWinbatch(ArbeitsSektion: TWorkSection;
-      var Remaining: string; linecounter: integer): TSectionResult;
+      var Remaining: string; linecounter: integer;
+      var output: TXStringList): TSectionResult;
     function execDOSBatch(const Sektion: TWorkSection; BatchParameter: string;
       ShowCmd: integer; catchOut: boolean; logleveloffset: integer;
       WaitConditions: TSetWaitConditions;
@@ -9375,7 +9376,8 @@ begin
 end;
 
 function TuibInstScript.parseAndCallWinbatch(ArbeitsSektion: TWorkSection;
-  var Remaining: string; linecounter: integer): TSectionResult;
+  var Remaining: string; linecounter: integer;
+  var output: TXStringList): TSectionResult;
 var
  runAs : TRunAs;
  WaitSecs : Word=0;
@@ -9587,7 +9589,7 @@ begin
  if SyntaxCheck
  then
    Result := execWinBatch (ArbeitsSektion, Remaining, WaitConditions, Ident,
-     WaitSecs, runAs, flag_force64, showoutput)
+     WaitSecs, runAs, flag_force64, showoutput, output)
  else
    Result := reportError (ArbeitsSektion, linecounter, 'Expressionstr', InfoSyntaxError);
 end;
@@ -9599,7 +9601,8 @@ function TuibInstScript.execWinBatch(const Sektion: TWorkSection;
   WaitSecs: word;
   runAs: TRunAs;
   flag_force64: boolean;
-  showoutput: boolean)
+  showoutput: boolean;
+  var output: TXStringList)
 : TSectionResult;
 
 var
@@ -9614,7 +9617,6 @@ var
   waitsecsAsTimeout: boolean = False;
   oldDisableWow64FsRedirectionStatus: pointer = nil;
   Wow64FsRedirectionDisabled, boolresult: boolean;
-  output: TXStringList;
   outputStart: integer=0;
 
 begin
@@ -9644,8 +9646,8 @@ begin
       FBatchOberflaeche.showAcitvityBar(True);
     {$ENDIF GUI}
 
-    output := TXStringList.create;
-    outputStart := 0;
+    // start displaying at next new line
+    outputStart := output.count;
 
     for i := 1 to Sektion.Count do
     begin
@@ -9821,7 +9823,6 @@ from defines.inc
       Wow64FsRedirectionDisabled := False;
     end;
     {$ENDIF WIN32}
-    output.free;
     finishSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings,
       DiffNumberOfErrors, DiffNumberOfWarnings);
 
@@ -11357,7 +11358,7 @@ begin
           if not (localKindOfStatement in
             [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
             tsShellInAnIcon, tsExecutePython, tsExecuteWith,
-            tsExecuteWith_escapingStrings]) then
+            tsExecuteWith_escapingStrings, tsWinBatch]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -11397,7 +11398,10 @@ begin
                     SW_HIDE, True {catchout}, 1,
                     [ttpWaitOnTerminate], list);
 
-              end;
+                tsWinBatch:
+                  parseAndCallWinBatch(localSection, r1, 0, list);
+
+                end;
 
               if Skip(')', r, r, InfoSyntaxError) then
               begin
@@ -14749,9 +14753,10 @@ begin
         begin
           syntaxCheck := True;
           StringResult := '';
+          list1 := TXStringList.create;
           ArbeitsSektion := TWorkSection.Create(0, nil);
           ArbeitsSektion.Text := s1;
-          ActionResult := parseAndCallWinbatch(ArbeitsSektion, r, i);
+          ActionResult := parseAndCallWinbatch(ArbeitsSektion, r, 0, list1);
           ArbeitsSektion.Free;
           StringResult := IntToStr (FLastExitCodeOfExe);
         end;
@@ -21092,7 +21097,7 @@ begin
                                   [ttpWaitOnTerminate], tmplist);
 
                               tsWinBatch:
-                                ActionResult := parseAndCallWinbatch(localSection, tmpstr, linecounter);
+                                ActionResult := parseAndCallWinbatch(localSection, tmpstr, linecounter, output);
 
                               tsRegistryHack:
                                 ActionResult := parseAndCallRegistry(localSection, tmpstr);
@@ -22255,7 +22260,7 @@ begin
 
               tsWinBatch:
               begin
-                ActionResult := parseAndCallWinbatch(ArbeitsSektion, Remaining, linecounter);
+                ActionResult := parseAndCallWinbatch(ArbeitsSektion, Remaining, linecounter, output);
                 //parseAndCallWinbatch(ArbeitsSektion,Remaining);
               end;
 
