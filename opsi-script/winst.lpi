@@ -22,8 +22,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
-      <RevisionNr Value="2"/>
-      <BuildNr Value="4"/>
+      <RevisionNr Value="3"/>
       <StringTable Comments="Compiled with Lazarus 2.0.4 / FPC 3.0.4" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst32.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst32.exe" ProductName="opsi-script" ProductVersion="4.1.0"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -79,12 +78,13 @@
 -dGUI
 -dOSDEBUG
 -dOSLOG"/>
-            <OtherDefines Count="5">
+            <OtherDefines Count="6">
               <Define0 Value="OPSIWINST"/>
               <Define1 Value="WINDOWS"/>
               <Define2 Value="OPSISCRIPT"/>
               <Define3 Value="GUI"/>
-              <Define4 Value="OSLOG"/>
+              <Define4 Value="OSDEBUG"/>
+              <Define5 Value="OSLOG"/>
             </OtherDefines>
           </Other>
         </CompilerOptions>
