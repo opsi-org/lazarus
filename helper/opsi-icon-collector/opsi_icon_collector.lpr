@@ -96,6 +96,7 @@ begin
   IconCollector.GetPathToIcon;
   WriteLn('IconList:');
   WriteLn(IconCollector.ShowIconList);
+  IconCollector.Free;
   //IconCollector.ExtractIconFromExe('C:\Users\Jan\Test\anydesk\AnyDesk.exe');
   WriteLn('Done.');
 end;

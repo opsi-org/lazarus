@@ -105,11 +105,12 @@ begin
     //SplittedLine.Text := TrimFilename(SplittedLine.Text); //for testing/debugging
     //WriteLn(SplittedLine.Text); //for testing/debugging
     IconPath := TrimFilename(IconPath);
-    //WriteLn(SplittedLine.Text); //for testing/debugging
-    { Copy icon to ock_custom }
-    if CopyFile(IconPath, 'C:\Users\Jan\Test' + PathDelim + ExtractFilename(IconPath)) then
+    { Copy icon to new destination }
+    if CopyFile(IconPath, 'C:\Users\Jan\Test' + PathDelim + ExtractFilename(IconPath))
+      and (ProductID <> '') then
+    begin
       IconsList.Add(ProductID + '=' + ExtractFilename(IconPath));
-    IconsList.SaveToFile('C:\Users\Jan\Test\IconsList.txt');
+    end;
   finally
     if Assigned(SplittedLine) then
       FreeAndNil(SplittedLine);
@@ -161,6 +162,7 @@ end;
 destructor TIconCollector.Destroy;
 begin
   inherited Destroy;
+  IconsList.SaveToFile('C:\Users\Jan\Test\IconsList.txt');
   FileNames.Free;
   IconsList.Free;
 end;
