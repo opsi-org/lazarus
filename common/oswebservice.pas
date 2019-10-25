@@ -1526,7 +1526,7 @@ begin
         ContentEncoding := 'gzip';//'deflate';
         //ContentEncoding := 'deflate';
       end;
-      {1:
+      (*1:
       begin
         LogDatei.log('Use opsi 4.1 / 4.2 HTTP Header, plain', LLnotice);
         compress := False;
@@ -1536,7 +1536,7 @@ begin
         AcceptEncoding := 'identity';
         //ContentEncoding := '';
         //AcceptEncoding  := '';
-      end;}
+      end;*)
       1:
       begin
         LogDatei.log_prog('Use opsi 4.0  HTTP Header, compress', LLnotice);
@@ -1802,7 +1802,7 @@ begin
             LogDatei.log_prog('HTTPSender Cookies.Strings: ' +
               HTTPSender.Cookies.Strings[i], LLdebug);
 
-          testResult := MemoryStreamToString(HTTPSender.Document);
+          //testResult := MemoryStreamToString(HTTPSender.Document); //for debugging
           cookieVal := HTTPSender.Cookies.GetText;
 
           posColon := -1;
@@ -2104,7 +2104,7 @@ begin
           end
           else
           begin
-            testResult := ResultLines.Text;
+            //testResult := ResultLines.Text; //for debugging
             Result := SO(ResultLines.Strings[0]);
             LogDatei.log_prog('JSON retrieveJSONObject: result loaded', LLdebug);
             if Result = nil then
