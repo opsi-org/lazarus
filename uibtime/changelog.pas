@@ -1,4 +1,11 @@
 (*
+uibtime (4.1.1.56-1) stable; urgency=low
+
+ * workdescription: more space (wider) in left grid for row event
+ * oslog: more debug messages in order to find Exception EInvalidOp: Invalid floating point operation
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 25 Oct 2019 15:00:00 +0000
+
 uibtime (4.1.1.55-1) stable; urgency=low
 
  * workdescription: more space (wider) in left grid

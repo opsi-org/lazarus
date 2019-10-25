@@ -1574,7 +1574,7 @@ begin
         end;
         LogDatei.log_prog('Sessionid ' + FSessionId, LLdebug);
         if (HTTPSender.Cookies.Count > 0) then
-          LogDatei.log_prog('Cookies synapse' + HTTPSender.Cookies[0], LLdebug);
+          LogDatei.log_prog('Cookies synapse: ' + HTTPSender.Cookies[0], LLdebug);
         //@detlef for testing??? (Jan)
         //HTTPSender.Headers.Clear;
         //testresultSyn := HTTPSender.Headers.Text;
@@ -1623,7 +1623,8 @@ begin
               { Preparing Request }
                 { Set Headers }
               HTTPSender.Clear; //reset headers, document and Mimetype
-              HTTPSender.Cookies.Clear; //clear cookies
+              // do not clear cookies
+              // HTTPSender.Cookies.Clear;
               HTTPSender.MimeType := ContentType;
               HTTPSender.Headers.NameValueSeparator:= ':'; // message-header = field-name ":" [ field-value ]  (RFC 2616)
               HTTPSender.Headers.Add('Accept: ' + Accept);
@@ -2721,7 +2722,8 @@ begin
 
            { Set Headers }
           HTTPSender.Clear; //reset headers, document and Mimetype
-          HTTPSender.Cookies.Clear; //clear cookies
+          // do not clear cookies
+          // HTTPSender.Cookies.Clear;
           HTTPSender.MimeType := ContentType;
           HTTPSender.Headers.NameValueSeparator:= ':'; // message-header = field-name ":" [ field-value ]  (RFC 2616)
           HTTPSender.Headers.Add('Accept: ' + Accept);
