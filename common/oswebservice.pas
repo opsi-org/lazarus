@@ -2788,7 +2788,7 @@ begin
             LogDatei.log_prog('HTTPSender result: ' + IntToStr(HTTPSender.ResultCode) +
               ' msg: ' + HTTPSender.ResultString, LLdebug);
             for i := 0 to HTTPSender.Headers.Count - 1 do
-              LogDatei.log_prog('HTTPSender Answer Header.Strings: ' +
+              LogDatei.log_prog('HTTPSender Response Header.Strings: ' +
                 HTTPSender.Headers.Strings[i], LLDebug2);
             LogDatei.log_prog('got mimetype: ' + HTTPSender.MimeType, LLDebug2);
             //LogDatei.log('ReceiveStream: ' + MemoryStreamToString(ReceiveStream), LLDebug2);
