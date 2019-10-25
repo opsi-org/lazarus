@@ -77,7 +77,8 @@ implementation
 function zipStream(inStream, outStream: TMemoryStream; level: TZCompressionLevel = zcDefault; streamType: TZStreamType = zsZLib): boolean;
 var
   zstream: z_stream;
-  crc, size, adler, headerSize: longword;
+  crc, adler, headerSize: longword;
+  size : Int64;
 begin
   result := false;
   inStream.Position := 0; // goto start of input stream
@@ -178,7 +179,8 @@ function unzipStream(inStream, outStream: TMemoryStream): boolean;
 var
   streamType: TZStreamType;
   zstream: z_stream;
-  hdr, crc, adler, adler32in, crcGZin, sizeGZin, delta, headerSize, modificationtime: longword;
+  hdr, crc, adler, adler32in, crcGZin, headerSize, modificationtime: longword;
+  sizeGZin, delta : Int64;
   len, crcH, crcHeader: word;
   b, id1,id2: byte;
   flags: TFlags;
