@@ -125,6 +125,8 @@ type
     traAdminProfileImpersonate, traAdminProfileImpersonateExplorer, traLoggedOnUser);
 {$ENDIF}
 
+  TShowOutputFlag = (tsofHideOutput, tsofShowOutput, tsofShowOutputNoSystemInfo);
+
 
 
 (*
@@ -478,7 +480,7 @@ function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
   var Report: string; var ExitCode: longint): boolean; overload;
 
 function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
-  showoutput: boolean; WaitForReturn: boolean; WaitForWindowVanished: boolean;
+  showoutputflag: TShowOutputFlag; WaitForReturn: boolean; WaitForWindowVanished: boolean;
   WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
   waitsecsAsTimeout: boolean; RunAs: TRunas; Ident: string; WaitSecs: word;
   var Report: string; var ExitCode: longint; var output: TXStringList): boolean; overload;
@@ -4131,7 +4133,7 @@ begin
   // provide a temp stringlist
   output := TXStringList.create;
 
-  Result := StartProcess(CmdLinePasStr, ShowWindowFlag, false, WaitForReturn,
+  Result := StartProcess(CmdLinePasStr, ShowWindowFlag, tsofHideOutput, WaitForReturn,
     WaitForWindowVanished, WaitForWindowAppearing, WaitForProcessEnding,
     False, runAs, Ident, WaitSecs, Report, ExitCode, output);
 
@@ -4149,16 +4151,16 @@ begin
   // compatibility with old version that had no output capturing
   output := TXStringList.create;
 
-  Result := StartProcess(CmdLinePasStr, ShowWindowFlag, false, WaitForReturn, WaitForWindowVanished,
-    WaitForWindowAppearing, WaitForProcessEnding, waitsecsAsTimeout, RunAs, Ident,
-    WaitSecs, Report, Exitcode, output);
+  Result := StartProcess(CmdLinePasStr, ShowWindowFlag, tsofHideOutput, WaitForReturn,
+    WaitForWindowVanished, WaitForWindowAppearing, WaitForProcessEnding,
+    waitsecsAsTimeout, RunAs, Ident, WaitSecs, Report, Exitcode, output);
 
   output.free;
 end;
 
 function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
-  showoutput: boolean; WaitForReturn: boolean; WaitForWindowVanished: boolean;
-  WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
+  showoutputflag: TShowOutputFlag; WaitForReturn: boolean;
+  WaitForWindowVanished: boolean; WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
   waitsecsAsTimeout: boolean; RunAs: TRunAs; Ident: string; WaitSecs: word;
   var Report: string; var ExitCode: longint; var output : TXStringList): boolean;
 
@@ -4199,6 +4201,7 @@ var
   myduptoken, mytoken: THandle;
   {$ENDIF WIN32}
 
+  showoutput: boolean;
 const
   secsPerDay = 86400;
   ReadBufferSize = 2048;
@@ -4233,23 +4236,44 @@ begin
     end;
   end;
 
-  {$IFDEF GUI}
+  showoutput := false;
+
   if not WaitForReturn then
-    showoutput := false;
+    showoutputflag := tsofHideOutput;
+
+  if showoutputFlag in [tsofShowOutput, tsofShowOutputNoSystemInfo] then
+    showoutput := true;
+
+  {$IFDEF GUI}
+
 
   if showoutput then
   begin
     FBatchOberflaeche.Left:= 5;
     FBatchOberflaeche.Top:= 5;
-    CreateSystemInfo;
+
+    // In the normal case of tsofShowOutput
+    // we call CreateSystemInfo and show the
+    // output of the called process
+    //
+    // if tsofShowOutputNoSystemInfo is used
+    // we assume that the caller already has
+    // created a SystemInfo and just append
+    // to that one. We also won't free it and
+    // assume the caller does it.
+    if showoutputflag = tsofShowOutput then
+    begin
+       LogDatei.log('Start Showoutput', LLInfo);
+       CreateSystemInfo;
+       SystemInfo.Memo1.Lines.clear;
+    end;
+
     SystemInfo.Memo1.Color:= clBlack;
     SystemInfo.Memo1.Font.Color := clWhite;
-    SystemInfo.Memo1.Lines.clear;
     systeminfo.BitBtn1.Enabled:= false;
     systeminfo.Label1.Caption:='Executing: '+CmdLinePasStr;
     systeminfo.ShowOnTop;
     ProcessMess;
-    LogDatei.log('Start Showoutput', LLInfo);
   end;
   {$ENDIF GUI}
 
@@ -4425,11 +4449,17 @@ begin
   {$IFDEF GUI}
   if showoutput then
   begin
-    SystemInfo.free; SystemInfo := nil;
+    // if tsofShowOutputNoSystemInfo we assume
+    // the caller will free the SystemInfo for us
+    if showoutputflag = tsofShowOutput then
+    begin
+      LogDatei.log('Stop Showoutput', LLInfo);
+      SystemInfo.free;
+      SystemInfo := nil;
+    end;
     FBatchOberflaeche.BringToFront;
     FBatchOberflaeche.centerWindow;
     ProcessMess;
-    LogDatei.log('Stop Showoutput', LLInfo);
   end;
   {$ENDIF GUI}
 end;

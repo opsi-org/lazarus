@@ -9618,11 +9618,13 @@ var
   oldDisableWow64FsRedirectionStatus: pointer = nil;
   Wow64FsRedirectionDisabled, boolresult: boolean;
   outputStart: integer=0;
+  showOutputFlag: TShowOutputFlag;
 
 begin
   try
     Result := tsrPositive;
     retrycount := 0;
+    showoutputflag := tsofHideOutput;
 
     if not initSection(Sektion, OldNumberOfErrors, OldNumberOfWarnings) then
       exit;
@@ -9641,9 +9643,31 @@ begin
     else
       Wow64FsRedirectionDisabled := False;
     {$ENDIF WIN32}
+
+    WaitForReturn := ttpWaitOnTerminate in WaitConditions;
+
     {$IFDEF GUI}
     if AutoActivityDisplay then
       FBatchOberflaeche.showAcitvityBar(True);
+
+    if not WaitForReturn then
+      showoutput := false;
+
+    if showoutput then
+    begin
+      // We call CreateSystemInfo already in execWinBatch
+      // so all continuous StartProcess calls will produce
+      // a continuous output in the SystemInfo window
+      // This is possible with the tsofShowOutputNoSysteminfo flag
+      showoutputFlag := tsofShowOutputNoSysteminfo;
+
+      CreateSystemInfo;
+      SystemInfo.Memo1.Lines.clear;
+      systeminfo.Label1.Caption:='Executing: '+ Sektion.name;
+
+      ProcessMess;
+      LogDatei.log('Start Showoutput', LLInfo);
+    end;
     {$ENDIF GUI}
 
     // start displaying at next new line
@@ -9700,8 +9724,13 @@ begin
 
         LogDatei.log('Call "' + CommandLine + '"', LevelComplete);
 
-        if ttpWaitTimeout in WaitConditions then
-          waitsecsAsTimeout := True;
+        waitsecsAsTimeout := ttpWaitTimeout in WaitConditions;
+
+        {$IFDEF GUI}
+        if showoutput then
+          systeminfo.Label1.Caption:='Executing: '+ CommandLine;
+        {$ENDIF GUI}
+
         if WaitSecs > 0 then
           if waitsecsAsTimeout then
             LogDatei.log('   Timeout ' + IntToStr(WaitSecs) +
@@ -9716,8 +9745,8 @@ begin
         begin
           LogDatei.log('   Waiting until window "' + ident +
             '" has vanished', LevelComplete);
-          if not StartProcess(Commandline, sw_hide, showoutput, true, true, false,
-            false, waitsecsAsTimeout, runAs, ident, WaitSecs, Report,
+          if not StartProcess(Commandline, sw_hide, showoutputFlag, true, true,
+            false, false, waitsecsAsTimeout, runAs, ident, WaitSecs, Report,
             FLastExitCodeOfExe, output)
           then
           begin
@@ -9732,8 +9761,8 @@ begin
           LogDatei.log('   Waiting until window "' + ident +
             '" is coming up', LevelComplete);
 
-          if not StartProcess(Commandline, sw_hide, showoutput, true, false, true,
-            false, waitsecsAsTimeout, runAs, ident, WaitSecs, Report,
+          if not StartProcess(Commandline, sw_hide, showoutputFlag, true, false,
+            true, false, waitsecsAsTimeout, runAs, ident, WaitSecs, Report,
             FLastExitCodeOfExe, output)
           then
           begin
@@ -9748,8 +9777,8 @@ begin
           LogDatei.log('   Waiting until process "' + ident +
             '" started and has ended', LevelComplete);
 
-          if not StartProcess(Commandline, sw_hide, showoutput, true, false, false,
-            true, waitsecsAsTimeout, runAs, ident, WaitSecs, Report,
+          if not StartProcess(Commandline, sw_hide, showoutputFlag, true, false,
+            false, true, waitsecsAsTimeout, runAs, ident, WaitSecs, Report,
             FLastExitCodeOfExe, output)
           then
           begin
@@ -9761,16 +9790,9 @@ begin
         end
         else
         begin
-
-          if ttpWaitOnTerminate in WaitConditions then
-          begin
-            WaitForReturn := True;
+          if WaitForReturn then
             LogDatei.log('   Waiting until the called process is finished',
               LevelComplete);
-          end
-
-          else
-            WaitForReturn := False;
 (*
 from defines.inc
 { ShowWindow  }
@@ -9789,9 +9811,9 @@ from defines.inc
    SW_SHOWNORMAL = 1;
 *)
 
-          if not StartProcess (Commandline, sw_hide, showoutput, WaitForReturn,
-            false, false, false, waitsecsAsTimeout, runAs, '', WaitSecs, Report,
-            FLastExitCodeOfExe, output)
+          if not StartProcess (Commandline, sw_hide, showoutputFlag,
+            WaitForReturn, false, false, false, waitsecsAsTimeout, runAs, '',
+            WaitSecs, Report, FLastExitCodeOfExe, output)
           then
           begin
             ps := 'Error: ' + Report;
@@ -9833,6 +9855,15 @@ from defines.inc
   finally
     {$IFDEF GUI}
     FBatchOberflaeche.showAcitvityBar(False);
+
+    if showoutput then
+    begin
+      SystemInfo.free; SystemInfo := nil;
+      FBatchOberflaeche.BringToFront;
+      FBatchOberflaeche.centerWindow;
+      ProcessMess;
+      LogDatei.log('Stop Showoutput', LLInfo);
+    end;
     {$ENDIF GUI}
   end;
 end;
@@ -10125,7 +10156,7 @@ var
   oldDisableWow64FsRedirectionStatus: pointer = nil;
   tempfilename: string = '';
   runas: TRunAs;
-  showoutput: boolean = False;
+  showoutput: TShowOutputFlag;
   remainingstr, evaluatedstr, newbatchparastr, errorstr: string;
   aktos: TuibOSVersion;
   cmdMuiFiles: TStringList;
@@ -10214,6 +10245,7 @@ begin
       warnOnlyWindows := False;
       force64 := False;
       runAs := traInvoker;
+      showoutput := tsofHideOutput;
 
       goon := false;
       remaining := winstparam;
@@ -10246,8 +10278,8 @@ begin
         else if Skip('/showoutput', Remaining, Remaining, ErrorInfo)
         then
         begin
-          showoutput := true;
-          LogDatei.log('Set Showoutput true', LLDebug3);
+          showoutput := tsofShowOutput;
+          LogDatei.log('Set Showoutput true', LLDebug);
         end
         else
         Begin
@@ -10786,7 +10818,7 @@ var
   expr : string='';
   SyntaxCheck: boolean;
   onlyWindows: boolean;
-  showoutput: boolean;
+  showoutput: TShowOutputFlag;
 
 begin
   try
@@ -10794,7 +10826,7 @@ begin
     Result := tsrPositive;
     showcmd := SW_SHOWMINIMIZED; // SW_SHOWNORMAL;
     waitSecs := 0;
-    showoutput := false;
+    showoutput := tsofHideOutput;
     force64 := false;
     threaded := false;
 
@@ -10905,7 +10937,7 @@ begin
          else if lowercase(ParameterDontWait) = lowercase(expr) then
            threaded := true
          else if lowercase(ParameterShowoutput) = lowercase(expr) then
-           showoutput := true
+           showoutput := tsofShowOutput
          else if RunAsForParameter(expr, runas) then
            onlyWindows := true
          else
