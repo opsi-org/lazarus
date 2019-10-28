@@ -5,24 +5,46 @@ unit IconCollector;
 interface
 
 uses
+  {$IFDEF UNIX}
+   cthreads,
+  {$ENDIF}
   Classes, SysUtils, FileUtil, LazFileUtils, StrUtils, ShellApi, LCLType, Graphics;
 
 type
 
   TSearchShift = (ssFirst, ssAll);
 
+  TFoundFiles = procedure (FileNames: TStringList) of object;
+
+  { TFindScriptFilesThread }
+
+  TFindScriptFilesThread = class(TThread)
+      FFileNames : TStringList;
+      FDepotPath : String;
+      FCallback : TFoundFiles;
+    protected
+      procedure Execute; override;
+      procedure SendCallBack(FileNames: TStringList);
+      procedure DoCallBack;
+  public
+    constructor Create(DepotPath:String);
+  end;
+
+
   { TIconCollector }
 
   TIconCollector = class(TObject)
     private
-      FileNames : TStringList;
-      IconsList  : TStringList;
-      PathToDepot : string;
+      FFileNames : TStringList;
+      FIconsList  : TStringList;
+      FPathToDepot : string;
+      FFindScriptFilesThread : TFindScriptFilesThread;
       function ExtractLine(const SearchString:String; PathToScript:String):String;
       procedure ParseLineShowBitmap(Line:String; PathToScript:String);
       function PrepareLine(Line:String):String;
       function IsVariable(Token:String):boolean;
       function ReplaceTokenWithValue(Token:String; PathToScript:String):String;
+      procedure SendCallBack(FileNames:TStringList);
       //function ConcatenateTokens
       //function ExtractIcon(OpsiScriptPath:String):String;
       //function ExtractProductID(OpsiScriptPath:String):String;
@@ -35,7 +57,39 @@ type
       procedure GetPathToIcon;
   end;
 
+
+
 implementation
+
+{ TFindScriptFilesThread }
+
+procedure TFindScriptFilesThread.Execute;
+begin
+  //FFileNames := FindAllFiles(FDepotPath,'setup.opsiscript;setup32.opsiscript');
+  SendCallBack(FindAllFiles(FDepotPath,'setup.opsiscript;setup32.opsiscript'));
+  //Synchronize(@ReturnScriptFiles);
+  //Terminate;
+  //Synchronize(@ReturnScriptFiles);
+end;
+
+procedure TFindScriptFilesThread.SendCallBack(FileNames: TStringList);
+begin
+  FFileNames := FileNames;
+  Synchronize(@DoCallback);
+end;
+
+procedure TFindScriptFilesThread.DoCallBack;
+begin
+  FCallback(FFileNames);
+  write('.');
+  //FFileNames;
+end;
+
+constructor TFindScriptFilesThread.Create(DepotPath: String);
+begin
+  inherited Create(false);
+  FDepotPath := DepotPath;
+end;
 
 { TIconCollector }
 
@@ -109,7 +163,7 @@ begin
     if CopyFile(IconPath, 'C:\Users\Jan\Test' + PathDelim + ExtractFilename(IconPath))
       and (ProductID <> '') then
     begin
-      IconsList.Add(ProductID + '=' + ExtractFilename(IconPath));
+      FIconsList.Add(ProductID + '=' + ExtractFilename(IconPath));
     end;
   finally
     if Assigned(SplittedLine) then
@@ -141,30 +195,43 @@ begin
   Result := Trim(StringReplace(Line,'Set ' + Token + ' = ','',[rfIgnoreCase])).DeQuotedString('"');
 end;
 
+procedure TIconCollector.SendCallback(FileNames: TStringList);
+begin
+  FFileNames := FileNames;
+end;
+
 function TIconCollector.ShowOpsiScriptFilenames:String;
 begin
-  Result := FileNames.Text;
+  Result := FFileNames.Text;
 end;
 
 function TIconCollector.ShowIconList:String;
 begin
-  Result := IconsList.Text;
+  Result := FIconsList.Text;
 end;
 
 constructor TIconCollector.Create(DepotPath: String);
 begin
   inherited Create;
-  FileNames := FindAllFiles(DepotPath,'setup.opsiscript;setup32.opsiscript');
-  PathToDepot := DepotPath;
-  IconsList := TStringList.Create;
+  FPathToDepot := DepotPath;
+  FIconsList := TStringList.Create;
+  FFindScriptFilesThread := TFindScriptFilesThread.Create(FPathToDepot);
+  //while not FindScriptFilesThread.Terminated do begin
+    //write('.');
+  //end;
+  //FoundFiles(FFileNames);
+  //FFindScriptFilesThread.Terminate;
+  FFindScriptFilesThread.Free;
+
+  //FFileNames := FindAllFiles(DepotPath,'setup.opsiscript;setup32.opsiscript');
 end;
 
 destructor TIconCollector.Destroy;
 begin
   inherited Destroy;
-  IconsList.SaveToFile('C:\Users\Jan\Test\IconsList.txt');
-  FileNames.Free;
-  IconsList.Free;
+  FIconsList.SaveToFile('C:\Users\Jan\Test\IconsList.txt');
+  FFileNames.Free;
+  FIconsList.Free;
 end;
 
 procedure TIconCollector.GetPathToIcon;
@@ -172,10 +239,10 @@ var
   i : integer;
   Line : String;
 begin
-  for i := 0 to FileNames.Count-1 do
+  for i := 0 to FFileNames.Count-1 do
   begin
-    Line := ExtractLine('ShowBitmap', FileNames[i]);
-    ParseLineShowBitmap(Line,FileNames[i]);
+    Line := ExtractLine('ShowBitmap', FFileNames[i]);
+    ParseLineShowBitmap(Line,FFileNames[i]);
   end;
 end;
 
