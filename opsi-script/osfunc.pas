@@ -2239,7 +2239,11 @@ var
     {$ENDIF WINDOWS}
     Buffer := Buffer + tmp_buffer;
 
+    {$IFDEF WINDOWS}
     LineBreakPos := AnsiPos(#13, Buffer);
+    {$ELSE WINDOWS}
+    LineBreakPos := Pos(#10, Buffer);
+    {$ENDIF WINDOWS}
 
     while not (LineBreakPos = 0) do
     begin
@@ -2262,7 +2266,11 @@ var
 
       Buffer := Copy(Buffer, LineBreakPos + 1, READ_BYTES);
 
+      {$IFDEF WINDOWS}
       LineBreakPos := AnsiPos(#13, Buffer);
+      {$ELSE WINDOWS}
+      LineBreakPos := Pos(#10, Buffer);
+      {$ENDIF WINDOWS}
     end;
 
     Result := BytesRead;

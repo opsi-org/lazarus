@@ -10951,7 +10951,7 @@ begin
          begin
            // Don't generate a syntax error to keep in line with old behavior
            SyntaxCheck := true;
-           errorInfo := '"' + expr '" is only supported on Windows!';
+           errorInfo := '"' + expr + '" is only supported on Windows!';
            LogDatei.log('Warning: ' + errorInfo, LLWarning);
          end;
          {$ENDIF WINDOWS}
