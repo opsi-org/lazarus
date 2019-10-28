@@ -2679,6 +2679,10 @@ begin
           repeat
             n := ReadStream(Buffer, FPCProcess, output, showoutput);
           until n <= 0;
+
+          // add remainder of buffer as last line
+          if Buffer <> '' then
+             output.Add(Buffer);
         end;
 
         ProcessMess;
@@ -3138,6 +3142,10 @@ begin
               LogDatei.log('Read Error: ' + SysErrorMessage(getLastError()), LLError);
           until (BytesRead <= 0) or (not readResult);
 
+          // add remainder of buffer as last line
+          if Buffer <> '' then
+            output.Add(Buffer);
+
           ProcessMess;
 
           GetExitCodeProcess(ProcessInfo.hProcess, lpExitCode);
@@ -3537,6 +3545,10 @@ begin
           until (BytesRead <= 0) or (not readResult);
 
           ProcessMess;
+
+          // add remainder of buffer as last line
+          if Buffer <> '' then
+            output.Add(Buffer);
 
           //exitCode := FpcProcess.ExitStatus;
           GetExitCodeProcess(ProcessInfo.hProcess, lpExitCode);
@@ -4074,6 +4086,10 @@ begin
             if not readResult then
               LogDatei.log('Read Error: ' + SysErrorMessage(getLastError()), LLError);
           until (BytesRead <= 0) or (not readResult);
+
+          // add remainder of buffer as last line
+          if Buffer <> '' then
+            output.Add(Buffer);
 
           ProcessMess;
           GetExitCodeProcess(processInfo.hProcess, lpExitCode);
