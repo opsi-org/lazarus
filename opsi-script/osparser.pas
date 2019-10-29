@@ -10843,7 +10843,7 @@ begin
      end;
    end
 
-    else if LowerCase (s) = LowerCase ('shellcall')
+   else if LowerCase (s) = LowerCase ('shellcall')
    then
    begin
     if Skip ('(', r, r, InfoSyntaxError)
@@ -11971,6 +11971,42 @@ begin
       list1 := nil;
     End
    End
+
+   else
+     if LowerCase (s) = LowerCase ('findFiles') then
+     begin
+       if Skip ('(', r, r, InfoSyntaxError) then
+         if EvaluateString (r,r, s1, InfoSyntaxError) then
+           if Skip (',', r,r, InfoSyntaxError) then
+             if EvaluateString (r,r, s2, InfoSyntaxError) then
+               if Skip (',', r,r, InfoSyntaxError) then
+                 if EvaluateString (r,r, s3, InfoSyntaxError) then
+                   if Skip (')', r,r, InfoSyntaxError) then
+                   begin
+                     syntaxCheck := true;
+                     list.clear;
+                     try
+                       try
+                         list1 := TXStringList.create;
+                         list1 := TXStringList(FindAllFiles(s1,s2,StrToBool(s3)));
+                         list.Text := list1.Text;
+                       finally
+                         list1.free;
+                         list1 := nil;
+                       end;
+                     except
+                       on e: exception do
+                       begin
+                         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                         LogDatei.log('Exception: Error on findFiles: ' + e.message, LLerror);
+                         list.Text:= '';
+                         FNumberOfErrors := FNumberOfErrors + 1;
+                         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                       end;
+                     end;
+                   end;
+       end
+
 
    else if LowerCase (s) = LowerCase ('setStringInListAtIndex')
    then
