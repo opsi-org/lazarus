@@ -11984,15 +11984,15 @@ begin
                    if Skip (')', r,r, InfoSyntaxError) then
                    begin
                      syntaxCheck := true;
-                     list.clear;
+                     //list.clear;
                      try
                        try
-                         list1 := TXStringList.create;
-                         list1 := TXStringList(FindAllFiles(s1,s2,StrToBool(s3)));
-                         list.Text := list1.Text;
+                         //list1 := TXStringList.create;
+                         list := TXStringList(FindAllFiles(s1,s2,StrToBool(s3)));
+                         //list.Text := list1.Text;
                        finally
-                         list1.free;
-                         list1 := nil;
+                         //list1.free;
+                         //list1 := nil;
                        end;
                      except
                        on e: exception do
