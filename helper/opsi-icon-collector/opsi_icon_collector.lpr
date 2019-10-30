@@ -89,6 +89,9 @@ begin
   WriteLn('Collecting icons for opsi client kiosk ...');
   WriteLn('Depot: ' + DepotPath);
   IconCollector := TIconCollector.Create(DepotPath);
+  //IconCollector.FInProgress := True;
+  IconCollector.FindOpsiScriptFiles;
+
   //WriteLn('Done');
   WriteLn('');
   WriteLn('Paths to opsi-script files:');

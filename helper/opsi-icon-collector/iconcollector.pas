@@ -14,20 +14,19 @@ type
 
   TSearchShift = (ssFirst, ssAll);
 
-  TFoundFiles = procedure (FileNames: TStringList) of object;
+  TFindFiles = procedure (FileNames: TStringList; InProgress:boolean) of object;
 
   { TFindScriptFilesThread }
 
   TFindScriptFilesThread = class(TThread)
       FFileNames : TStringList;
       FDepotPath : String;
-      FCallback : TFoundFiles;
+      FCallback : TFindFiles;
     protected
       procedure Execute; override;
-      procedure SendCallBack(FileNames: TStringList);
       procedure DoCallBack;
   public
-    constructor Create(DepotPath:String);
+    constructor Create(DepotPath:String; Callback:TFindFiles);
   end;
 
 
@@ -44,11 +43,13 @@ type
       function PrepareLine(Line:String):String;
       function IsVariable(Token:String):boolean;
       function ReplaceTokenWithValue(Token:String; PathToScript:String):String;
-      procedure SendCallBack(FileNames:TStringList);
+      procedure FindFiles(FileNames:TStringList; InProgress:boolean);
       //function ConcatenateTokens
       //function ExtractIcon(OpsiScriptPath:String):String;
       //function ExtractProductID(OpsiScriptPath:String):String;
     public
+      FInProgress : boolean;
+      procedure FindOpsiScriptFiles;
       procedure ExtractIconFromExe(PathToExe:String);
       function ShowOpsiScriptFilenames:String;
       function ShowIconList:String;
@@ -65,30 +66,27 @@ implementation
 
 procedure TFindScriptFilesThread.Execute;
 begin
-  //FFileNames := FindAllFiles(FDepotPath,'setup.opsiscript;setup32.opsiscript');
-  SendCallBack(FindAllFiles(FDepotPath,'setup.opsiscript;setup32.opsiscript'));
-  //Synchronize(@ReturnScriptFiles);
-  //Terminate;
-  //Synchronize(@ReturnScriptFiles);
+  while not Terminated do begin
+    FFileNames := FindAllFiles(FDepotPath,'setup.opsiscript;setup32.opsiscript');
+    Terminate;
+    Synchronize(@DoCallback);
+  end;
+  //Synchronize(@DoCallback);
 end;
 
-procedure TFindScriptFilesThread.SendCallBack(FileNames: TStringList);
-begin
-  FFileNames := FileNames;
-  Synchronize(@DoCallback);
-end;
 
 procedure TFindScriptFilesThread.DoCallBack;
 begin
-  FCallback(FFileNames);
-  write('.');
-  //FFileNames;
+  FCallback(FFileNames, True);
+  WriteLn(' Done.');
 end;
 
-constructor TFindScriptFilesThread.Create(DepotPath: String);
+constructor TFindScriptFilesThread.Create(DepotPath: String; Callback:TFindFiles);
 begin
   inherited Create(false);
+  FreeOnTerminate := False;
   FDepotPath := DepotPath;
+  FCallback := Callback;
 end;
 
 { TIconCollector }
@@ -114,6 +112,19 @@ begin
       CloseFile(ScriptFile);
     end;
   end;
+end;
+
+procedure TIconCollector.FindOpsiScriptFiles;
+begin
+  FInProgress := True;
+  FFindScriptFilesThread := TFindScriptFilesThread.Create(FPathToDepot,
+    @FindFiles);
+  while not FFindScriptFilesThread.Terminated do
+  begin
+    write('.');
+  end;
+  FInProgress := False;
+  FFindScriptFilesThread.Free;
 end;
 
 procedure TIconCollector.ParseLineShowBitmap(Line: String; PathToScript:String);
@@ -195,9 +206,10 @@ begin
   Result := Trim(StringReplace(Line,'Set ' + Token + ' = ','',[rfIgnoreCase])).DeQuotedString('"');
 end;
 
-procedure TIconCollector.SendCallback(FileNames: TStringList);
+procedure TIconCollector.FindFiles(FileNames: TStringList; InProgress:boolean);
 begin
   FFileNames := FileNames;
+  FInProgress := InProgress;
 end;
 
 function TIconCollector.ShowOpsiScriptFilenames:String;
@@ -215,14 +227,7 @@ begin
   inherited Create;
   FPathToDepot := DepotPath;
   FIconsList := TStringList.Create;
-  FFindScriptFilesThread := TFindScriptFilesThread.Create(FPathToDepot);
-  //while not FindScriptFilesThread.Terminated do begin
-    //write('.');
-  //end;
-  //FoundFiles(FFileNames);
-  //FFindScriptFilesThread.Terminate;
-  FFindScriptFilesThread.Free;
-
+  FInProgress := False;
   //FFileNames := FindAllFiles(DepotPath,'setup.opsiscript;setup32.opsiscript');
 end;
 
