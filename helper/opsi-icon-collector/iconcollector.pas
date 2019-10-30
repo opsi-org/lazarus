@@ -14,19 +14,18 @@ type
 
   TSearchShift = (ssFirst, ssAll);
 
-  TFindFiles = procedure (FileNames: TStringList; InProgress:boolean) of object;
+  TProgressStatus = procedure(StartTime:TTime) of object;
 
   { TFindScriptFilesThread }
 
   TFindScriptFilesThread = class(TThread)
       FFileNames : TStringList;
       FDepotPath : String;
-      FCallback : TFindFiles;
     protected
       procedure Execute; override;
-      procedure DoCallBack;
+      //procedure ProgressStatus;
   public
-    constructor Create(DepotPath:String; Callback:TFindFiles);
+    constructor Create(DepotPath:String);
   end;
 
 
@@ -38,12 +37,13 @@ type
       FIconsList  : TStringList;
       FPathToDepot : string;
       FFindScriptFilesThread : TFindScriptFilesThread;
+      FProgressStatus : TProgressStatus;
       function ExtractLine(const SearchString:String; PathToScript:String):String;
       procedure ParseLineShowBitmap(Line:String; PathToScript:String);
       function PrepareLine(Line:String):String;
       function IsVariable(Token:String):boolean;
       function ReplaceTokenWithValue(Token:String; PathToScript:String):String;
-      procedure FindFiles(FileNames:TStringList; InProgress:boolean);
+
       //function ConcatenateTokens
       //function ExtractIcon(OpsiScriptPath:String):String;
       //function ExtractProductID(OpsiScriptPath:String):String;
@@ -53,7 +53,7 @@ type
       procedure ExtractIconFromExe(PathToExe:String);
       function ShowOpsiScriptFilenames:String;
       function ShowIconList:String;
-      constructor Create(DepotPath: String);overload;
+      constructor Create(DepotPath: String; ProgressStatus:TProgressStatus);overload;
       destructor Destroy; override;
       procedure GetPathToIcon;
   end;
@@ -62,31 +62,22 @@ type
 
 implementation
 
+
 { TFindScriptFilesThread }
 
 procedure TFindScriptFilesThread.Execute;
 begin
-  while not Terminated do begin
-    FFileNames := FindAllFiles(FDepotPath,'setup.opsiscript;setup32.opsiscript');
-    Terminate;
-    Synchronize(@DoCallback);
-  end;
-  //Synchronize(@DoCallback);
+  FFileNames := FindAllFiles(FDepotPath,'setup.opsiscript;setup32.opsiscript');
+  Terminate;
 end;
 
 
-procedure TFindScriptFilesThread.DoCallBack;
-begin
-  FCallback(FFileNames, True);
-  WriteLn(' Done.');
-end;
-
-constructor TFindScriptFilesThread.Create(DepotPath: String; Callback:TFindFiles);
+constructor TFindScriptFilesThread.Create(DepotPath: String);
 begin
   inherited Create(false);
   FreeOnTerminate := False;
   FDepotPath := DepotPath;
-  FCallback := Callback;
+  //FFileNames := FileNames;
 end;
 
 { TIconCollector }
@@ -115,15 +106,18 @@ begin
 end;
 
 procedure TIconCollector.FindOpsiScriptFiles;
+var
+  StartTime :TTime;
 begin
-  FInProgress := True;
-  FFindScriptFilesThread := TFindScriptFilesThread.Create(FPathToDepot,
-    @FindFiles);
-  while not FFindScriptFilesThread.Terminated do
-  begin
-    write('.');
+  //FInProgress := True;
+  FFindScriptFilesThread := TFindScriptFilesThread.Create(FPathToDepot);
+  //FFindScriptFilesThread.WaitFor;
+  StartTime := Time;
+  while not FFindScriptFilesThread.Terminated do begin
+    FProgressStatus(StartTime);
   end;
-  FInProgress := False;
+  FFileNames := FFindScriptFilesThread.FFileNames;
+  //FInProgress := False;
   FFindScriptFilesThread.Free;
 end;
 
@@ -206,12 +200,6 @@ begin
   Result := Trim(StringReplace(Line,'Set ' + Token + ' = ','',[rfIgnoreCase])).DeQuotedString('"');
 end;
 
-procedure TIconCollector.FindFiles(FileNames: TStringList; InProgress:boolean);
-begin
-  FFileNames := FileNames;
-  FInProgress := InProgress;
-end;
-
 function TIconCollector.ShowOpsiScriptFilenames:String;
 begin
   Result := FFileNames.Text;
@@ -222,12 +210,14 @@ begin
   Result := FIconsList.Text;
 end;
 
-constructor TIconCollector.Create(DepotPath: String);
+constructor TIconCollector.Create(DepotPath: String; ProgressStatus:TProgressStatus);
 begin
   inherited Create;
   FPathToDepot := DepotPath;
   FIconsList := TStringList.Create;
+  FFileNames := TStringList.Create;
   FInProgress := False;
+  FProgressStatus := ProgressStatus;
   //FFileNames := FindAllFiles(DepotPath,'setup.opsiscript;setup32.opsiscript');
 end;
 

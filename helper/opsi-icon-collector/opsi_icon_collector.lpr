@@ -17,6 +17,7 @@ type
   protected
     procedure DoRun; override;
     procedure CollectIcons(DepotPath:String);
+    procedure ProgressStatus(StartTime:TTime);
   public
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
@@ -88,9 +89,13 @@ var
 begin
   WriteLn('Collecting icons for opsi client kiosk ...');
   WriteLn('Depot: ' + DepotPath);
-  IconCollector := TIconCollector.Create(DepotPath);
-  //IconCollector.FInProgress := True;
+  IconCollector := TIconCollector.Create(DepotPath, @ProgressStatus);
+  IconCollector.FInProgress := True;
   IconCollector.FindOpsiScriptFiles;
+  //while Iconcollector.FInProgress do begin
+    //IconCollector.FindOpsiScriptFiles;
+    //write('.');
+  //end;
 
   //WriteLn('Done');
   WriteLn('');
@@ -102,6 +107,14 @@ begin
   IconCollector.Free;
   //IconCollector.ExtractIconFromExe('C:\Users\Jan\Test\anydesk\AnyDesk.exe');
   WriteLn('Done.');
+end;
+
+procedure TOpsiIconCollector.ProgressStatus(StartTime:TTime);
+begin
+  if (Time - StartTime) > 10 then
+  begin
+    write('.');
+  end;
 end;
 
 constructor TOpsiIconCollector.Create(TheOwner: TComponent);
