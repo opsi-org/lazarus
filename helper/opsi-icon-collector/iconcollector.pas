@@ -14,11 +14,11 @@ type
 
   TSearchShift = (ssFirst, ssAll);
 
-  TProgressStatus = procedure(StartTime:TTime) of object;
+  TProgressStatus = procedure() of object;
 
   { TFindScriptFilesThread }
 
-  TFindScriptFilesThread = class(TThread)
+  TFindFilesThread = class(TThread)
       FFileNames : TStringList;
       FDepotPath : String;
     protected
@@ -36,26 +36,21 @@ type
       FFileNames : TStringList;
       FIconsList  : TStringList;
       FPathToDepot : string;
-      FFindScriptFilesThread : TFindScriptFilesThread;
-      FProgressStatus : TProgressStatus;
+      FFindFilesThread : TFindFilesThread;
       function ExtractLine(const SearchString:String; PathToScript:String):String;
       procedure ParseLineShowBitmap(Line:String; PathToScript:String);
       function PrepareLine(Line:String):String;
       function IsVariable(Token:String):boolean;
       function ReplaceTokenWithValue(Token:String; PathToScript:String):String;
-
-      //function ConcatenateTokens
-      //function ExtractIcon(OpsiScriptPath:String):String;
-      //function ExtractProductID(OpsiScriptPath:String):String;
     public
       FInProgress : boolean;
-      procedure FindOpsiScriptFiles;
+      procedure FindOpsiScriptFiles(ProgressStatus:TProgressStatus);
       procedure ExtractIconFromExe(PathToExe:String);
       function ShowOpsiScriptFilenames:String;
       function ShowIconList:String;
-      constructor Create(DepotPath: String; ProgressStatus:TProgressStatus);overload;
+      constructor Create(DepotPath: String);overload;
       destructor Destroy; override;
-      procedure GetPathToIcon;
+      procedure ExtractPathToIcon;
   end;
 
 
@@ -65,14 +60,14 @@ implementation
 
 { TFindScriptFilesThread }
 
-procedure TFindScriptFilesThread.Execute;
+procedure TFindFilesThread.Execute;
 begin
   FFileNames := FindAllFiles(FDepotPath,'setup.opsiscript;setup32.opsiscript');
   Terminate;
 end;
 
 
-constructor TFindScriptFilesThread.Create(DepotPath: String);
+constructor TFindFilesThread.Create(DepotPath: String);
 begin
   inherited Create(false);
   FreeOnTerminate := False;
@@ -105,20 +100,17 @@ begin
   end;
 end;
 
-procedure TIconCollector.FindOpsiScriptFiles;
-var
-  StartTime :TTime;
+procedure TIconCollector.FindOpsiScriptFiles(ProgressStatus:TProgressStatus);
 begin
   //FInProgress := True;
-  FFindScriptFilesThread := TFindScriptFilesThread.Create(FPathToDepot);
+  FFindFilesThread := TFindFilesThread.Create(FPathToDepot);
   //FFindScriptFilesThread.WaitFor;
-  StartTime := Time;
-  while not FFindScriptFilesThread.Terminated do begin
-    FProgressStatus(StartTime);
+  while not FFindFilesThread.Terminated do begin
+    ProgressStatus;
   end;
-  FFileNames := FFindScriptFilesThread.FFileNames;
+  FFileNames := FFindFilesThread.FFileNames;
   //FInProgress := False;
-  FFindScriptFilesThread.Free;
+  FFindFilesThread.Free;
 end;
 
 procedure TIconCollector.ParseLineShowBitmap(Line: String; PathToScript:String);
@@ -210,14 +202,14 @@ begin
   Result := FIconsList.Text;
 end;
 
-constructor TIconCollector.Create(DepotPath: String; ProgressStatus:TProgressStatus);
+constructor TIconCollector.Create(DepotPath: String);
 begin
   inherited Create;
   FPathToDepot := DepotPath;
   FIconsList := TStringList.Create;
   FFileNames := TStringList.Create;
   FInProgress := False;
-  FProgressStatus := ProgressStatus;
+  //FProgressStatus := ProgressStatus;
   //FFileNames := FindAllFiles(DepotPath,'setup.opsiscript;setup32.opsiscript');
 end;
 
@@ -229,7 +221,7 @@ begin
   FIconsList.Free;
 end;
 
-procedure TIconCollector.GetPathToIcon;
+procedure TIconCollector.ExtractPathToIcon;
 var
   i : integer;
   Line : String;

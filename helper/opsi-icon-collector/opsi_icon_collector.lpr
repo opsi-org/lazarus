@@ -6,7 +6,7 @@ uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
-  Classes, SysUtils, CustApp, IconCollector, Interfaces, LazFileUtils
+  Classes, SysUtils, CustApp, IconCollector, Interfaces, LazFileUtils, DateUtils
   { you can add units after this };
 
 type
@@ -15,9 +15,12 @@ type
 
   TOpsiIconCollector = class(TCustomApplication)
   protected
+    FProgressStatusStartTime : TTime;
+    FProgressStatusFirstCall : boolean;
+    FProgressStatusSymbol : integer;
     procedure DoRun; override;
     procedure CollectIcons(DepotPath:String);
-    procedure ProgressStatus(StartTime:TTime);
+    procedure ProgressStatus();
   public
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
@@ -61,7 +64,9 @@ begin
       WriteLn('Params[1]: ' + Params[1]);//for testing logging
       if DirPathExists(Params[1]) then
       begin
-        WriteLn('Hello opsi user!');
+        //WriteLn('***************************');
+        //WriteLn('*  opsi-icon- collector   *');
+        //WriteLn('***************************');
         CollectIcons(Params[1]);
       end;
     end
@@ -75,7 +80,7 @@ begin
       Exit;
     end;
   finally
-    // stop program loop
+    { stop program loop }
     WriteLn('');
     WriteLn('Press enter ...');
     ReadLn;//only for testing, remove in productive environment
@@ -89,31 +94,53 @@ var
 begin
   WriteLn('Collecting icons for opsi client kiosk ...');
   WriteLn('Depot: ' + DepotPath);
-  IconCollector := TIconCollector.Create(DepotPath, @ProgressStatus);
-  IconCollector.FInProgress := True;
-  IconCollector.FindOpsiScriptFiles;
-  //while Iconcollector.FInProgress do begin
-    //IconCollector.FindOpsiScriptFiles;
-    //write('.');
-  //end;
+  WriteLn('');
+  IconCollector := TIconCollector.Create(DepotPath);
+  //Write('Progress:[');
+  Writeln('Search for opsi-script files:');
+  Writeln('Startet at ' + TimeToStr(Time) + ' ... ');
+  FProgressStatusFirstCall := True;
+  IconCollector.FindOpsiScriptFiles(@ProgressStatus);
 
-  //WriteLn('Done');
+
+  //Writeln(#13'Done                                     ');
+  Writeln('Finished at ' + TimeToStr(Time));
   WriteLn('');
   WriteLn('Paths to opsi-script files:');
   WriteLn(IconCollector.ShowOpsiScriptFilenames);
-  IconCollector.GetPathToIcon;
+  Writeln('Extraction of icon paths:');
+  Writeln('Startet at ' + TimeToStr(Time) + ' ... ');
+  IconCollector.ExtractPathToIcon;
+  Writeln('Finished at ' + TimeToStr(Time));
+  WriteLn('');
   WriteLn('IconList:');
   WriteLn(IconCollector.ShowIconList);
   IconCollector.Free;
   //IconCollector.ExtractIconFromExe('C:\Users\Jan\Test\anydesk\AnyDesk.exe');
-  WriteLn('Done.');
+  Writeln('opsi-icon-collector finished at ' + TimeToStr(Time));
 end;
 
-procedure TOpsiIconCollector.ProgressStatus(StartTime:TTime);
+procedure TOpsiIconCollector.ProgressStatus();
+var
+  TimeDiff : integer; //for testing/debugging
+
+const
+  StatusMessage = #13'Processing [%s] ';
+  Progress: array [0..3] of char = ('-','\','|','/');
 begin
-  if (Time - StartTime) > 10 then
+  //TimeDiff := SecondsBetween(Time, StartTime); //for testing/debugging
+  if FProgressStatusFirstCall then
   begin
-    write('.');
+    FProgressStatusStartTime := Time;
+    FProgressStatusFirstCall := False;
+  end
+  else
+  if MilliSecondsBetween(Time, FProgressStatusStartTime) > 100 then
+  begin
+    write(Format(StatusMessage,[Progress[FProgressStatusSymbol]]));
+    FProgressStatusStartTime := Time;
+    if FProgressStatusSymbol < 3 then inc(FProgressStatusSymbol)
+      else FProgressStatusSymbol := 0;
   end;
 end;
 
@@ -121,6 +148,8 @@ constructor TOpsiIconCollector.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
   StopOnException:=True;
+  FProgressStatusFirstCall := True;
+  FProgressStatusSymbol := 0;
 end;
 
 destructor TOpsiIconCollector.Destroy;
