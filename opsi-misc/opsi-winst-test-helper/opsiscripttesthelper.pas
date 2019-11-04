@@ -5,7 +5,7 @@ program opsiscripttesthelper;
 
 {$APPTYPE CONSOLE}
 
-{$Define GUI}
+{$DEFINE GUI}
 
 uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
@@ -15,6 +15,7 @@ uses
   {$IFDEF GUI}
   Forms,
   {$ENDIF}
+  opsiscripttesthelper_main,
   helperwin;
 
 //{$IFDEF WINDOWS}{$R opsiwinsttesthelper.rc}{$ENDIF}
@@ -24,8 +25,10 @@ uses
 begin
   Application.Title:='opsiscripttesthelper';
   Application.Initialize;
-  main;
   Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TDataModule1, DataModule1);
+  DataModule1.Application := Application;
+  main;
   Application.Run;
   //application.Terminate;
 end.

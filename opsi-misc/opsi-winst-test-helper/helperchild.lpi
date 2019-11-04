@@ -120,6 +120,7 @@
         <Filename Value="helperchild.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
+        <TopLine Value="3"/>
         <CursorPos X="13" Y="13"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
@@ -139,7 +140,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="22"/>
+        <TopLine Value="241"/>
         <CursorPos X="17" Y="43"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>

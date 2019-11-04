@@ -117,12 +117,14 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="18">
+    <Units Count="20">
       <Unit0>
         <Filename Value="opsiscripttesthelper.pas"/>
         <IsPartOfProject Value="True"/>
-        <CursorPos X="23" Y="12"/>
-        <UsageCount Value="64"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="10"/>
+        <CursorPos X="3" Y="31"/>
+        <UsageCount Value="65"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit0>
@@ -133,14 +135,14 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="25"/>
-        <CursorPos X="3" Y="39"/>
+        <TopLine Value="46"/>
+        <CursorPos X="43" Y="58"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="-1"/>
           <CursorPos X="31" Y="26"/>
         </ExtraEditor1>
-        <UsageCount Value="61"/>
+        <UsageCount Value="62"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit1>
@@ -192,7 +194,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="26"/>
       </Unit8>
       <Unit9>
         <Filename Value="..\..\common\osencoding.pas"/>
@@ -201,7 +203,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="26"/>
       </Unit9>
       <Unit10>
         <Filename Value="..\..\opsi-script\osfuncwin3.pas"/>
@@ -229,7 +231,7 @@
       </Unit13>
       <Unit14>
         <Filename Value="..\..\common\osfunclin.pas"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <TopLine Value="20"/>
         <CursorPos X="3" Y="31"/>
         <UsageCount Value="10"/>
@@ -237,8 +239,7 @@
       </Unit14>
       <Unit15>
         <Filename Value="..\..\common\lispecfolder.pas"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <TopLine Value="253"/>
         <CursorPos X="76" Y="264"/>
         <UsageCount Value="10"/>
@@ -246,7 +247,7 @@
       </Unit15>
       <Unit16>
         <Filename Value="..\..\common\osprocesses.pas"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <CursorPos X="18" Y="9"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -254,122 +255,151 @@
       <Unit17>
         <Filename Value="..\..\common\osprocessux.pas"/>
         <UnitName Value="OSProcessux"/>
-        <EditorIndex Value="3"/>
-        <TopLine Value="49"/>
+        <EditorIndex Value="4"/>
         <CursorPos X="71" Y="56"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit17>
+      <Unit18>
+        <Filename Value="opsiscripttesthelper_main.lrs"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="20"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DataModule1"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="DataModule"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="445"/>
+        <CursorPos X="8" Y="466"/>
+        <UsageCount Value="21"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit19>
     </Units>
-    <JumpHistory Count="27" HistoryIndex="26">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="opsiscripttesthelper.pas"/>
-        <Caret Line="5" Column="16"/>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="191" Column="9" TopLine="181"/>
       </Position1>
       <Position2>
         <Filename Value="helperwin.pas"/>
-        <Caret Line="20" Column="39" TopLine="5"/>
+        <Caret Line="406" Column="46" TopLine="395"/>
       </Position2>
       <Position3>
         <Filename Value="helperwin.pas"/>
-        <Caret Line="23" Column="30" TopLine="17"/>
+        <Caret Line="40" Column="13" TopLine="22"/>
       </Position3>
       <Position4>
         <Filename Value="helperwin.pas"/>
-        <Caret Line="99" Column="24" TopLine="89"/>
+        <Caret Line="39" Column="5" TopLine="28"/>
       </Position4>
       <Position5>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="545" Column="3" TopLine="523"/>
+        <Filename Value="..\..\common\osfunclin.pas"/>
+        <Caret Line="13" Column="30" TopLine="10"/>
       </Position5>
       <Position6>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="26" Column="20" TopLine="54"/>
+        <Filename Value="..\..\common\osfunclin.pas"/>
+        <Caret Line="31" Column="3" TopLine="20"/>
       </Position6>
       <Position7>
         <Filename Value="helperwin.pas"/>
-        <Caret Line="222" Column="6" TopLine="207"/>
+        <Caret Line="414" Column="46" TopLine="403"/>
       </Position7>
       <Position8>
         <Filename Value="helperwin.pas"/>
-        <Caret Line="99" Column="44" TopLine="89"/>
+        <Caret Line="39" Column="3" TopLine="25"/>
       </Position8>
       <Position9>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="172" Column="18" TopLine="162"/>
+        <Filename Value="..\..\common\lispecfolder.pas"/>
+        <Caret Line="64" Column="3" TopLine="55"/>
       </Position9>
       <Position10>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="183" Column="7" TopLine="173"/>
+        <Filename Value="..\..\common\lispecfolder.pas"/>
+        <Caret Line="29" Column="15" TopLine="19"/>
       </Position10>
       <Position11>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="186" Column="7" TopLine="176"/>
+        <Filename Value="..\..\common\osprocesses.pas"/>
+        <Caret Line="88" Column="21" TopLine="78"/>
       </Position11>
       <Position12>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="191" Column="9" TopLine="181"/>
+        <Filename Value="..\..\common\osprocesses.pas"/>
+        <Caret Line="18" Column="15" TopLine="2"/>
       </Position12>
       <Position13>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="406" Column="46" TopLine="395"/>
+        <Filename Value="..\..\common\osprocesses.pas"/>
+        <Caret Line="9" Column="18"/>
       </Position13>
       <Position14>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="40" Column="13" TopLine="22"/>
+        <Filename Value="..\..\common\lispecfolder.pas"/>
+        <Caret Line="30" Column="6" TopLine="18"/>
       </Position14>
       <Position15>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="39" Column="5" TopLine="28"/>
+        <Filename Value="..\..\common\osprocessux.pas"/>
+        <Caret Line="56" Column="71" TopLine="49"/>
       </Position15>
       <Position16>
-        <Filename Value="..\..\common\osfunclin.pas"/>
-        <Caret Line="13" Column="30" TopLine="10"/>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="10" Column="9"/>
       </Position16>
       <Position17>
-        <Filename Value="..\..\common\osfunclin.pas"/>
-        <Caret Line="31" Column="3" TopLine="20"/>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="267" Column="26" TopLine="262"/>
       </Position17>
       <Position18>
         <Filename Value="helperwin.pas"/>
-        <Caret Line="414" Column="46" TopLine="403"/>
+        <Caret Line="289" Column="42" TopLine="277"/>
       </Position18>
       <Position19>
         <Filename Value="helperwin.pas"/>
-        <Caret Line="39" Column="3" TopLine="25"/>
+        <Caret Line="341" Column="5" TopLine="329"/>
       </Position19>
       <Position20>
-        <Filename Value="..\..\common\lispecfolder.pas"/>
-        <Caret Line="64" Column="3" TopLine="55"/>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="546" Column="3" TopLine="515"/>
       </Position20>
       <Position21>
-        <Filename Value="..\..\common\lispecfolder.pas"/>
-        <Caret Line="29" Column="15" TopLine="19"/>
+        <Filename Value="opsiscripttesthelper.pas"/>
+        <Caret Line="18" Column="29" TopLine="8"/>
       </Position21>
       <Position22>
-        <Filename Value="..\..\common\osprocesses.pas"/>
-        <Caret Line="88" Column="21" TopLine="78"/>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="345" Column="46"/>
       </Position22>
       <Position23>
-        <Filename Value="..\..\common\osprocesses.pas"/>
-        <Caret Line="86" Column="20" TopLine="100"/>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="14" Column="16" TopLine="5"/>
       </Position23>
       <Position24>
-        <Filename Value="..\..\common\osprocesses.pas"/>
-        <Caret Line="18" Column="15" TopLine="2"/>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="449" Column="7" TopLine="426"/>
       </Position24>
       <Position25>
-        <Filename Value="..\..\common\osprocesses.pas"/>
-        <Caret Line="9" Column="18"/>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="31" Column="38" TopLine="20"/>
       </Position25>
       <Position26>
-        <Filename Value="..\..\common\lispecfolder.pas"/>
-        <Caret Line="30" Column="6" TopLine="18"/>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="320" Column="21" TopLine="301"/>
       </Position26>
       <Position27>
-        <Filename Value="..\..\common\osprocessux.pas"/>
-        <Caret Line="56" Column="71" TopLine="49"/>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="418" Column="19" TopLine="406"/>
       </Position27>
+      <Position28>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="466" Column="8" TopLine="445"/>
+      </Position28>
+      <Position29>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="509" TopLine="494"/>
+      </Position29>
+      <Position30>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="68" Column="3" TopLine="53"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
@@ -408,7 +438,7 @@
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="helperwin.pas"/>
-        <Line Value="414"/>
+        <Line Value="412"/>
       </Item1>
     </BreakPoints>
     <Exceptions Count="3">

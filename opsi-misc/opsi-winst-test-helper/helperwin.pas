@@ -18,11 +18,11 @@ uses
   StdCtrls,
   ExtCtrls,
   Buttons,
+  opsiscripttesthelper_main,
   {$ENDIF GUI}
   //helpermain,
   //VersionInfo,
-  Process,
-  osversioninfo,
+
   {$IFDEF WINDOWS}
   Windows,
   wispecfolder,
@@ -54,11 +54,8 @@ type
     Edit1: TEdit;
     Label1: TLabel;
     Label2: TLabel;
-    Timer1: TTimer;
-    waittimer: TTimer;
     procedure BitBtn1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure Timer1Timer(Sender: TObject);
     procedure showwindow(seconds: integer);
   private
 
@@ -67,10 +64,11 @@ type
   end;
 
 
-procedure main;
+//procedure main;
 
 var
   Form1: TForm1;
+  (*
   ErrorMsg: string;
   optionlist: TStringList;
   myexitcode: integer;
@@ -82,6 +80,7 @@ var
   mybyte: byte;
   mylog: textfile;
   mydefaultlog: string;
+*)
 
 implementation
 
@@ -229,7 +228,7 @@ begin
 end;
 {$ENDIF WINDOWS}
 
-
+(*
 procedure WriteHelp;
 var
   filename: string;
@@ -257,15 +256,13 @@ procedure writeTimestamp;
 begin
   writeln(DateTimeToStr(now));
 end;
+*)
 
 procedure TForm1.showwindow(seconds: integer);
 begin
-  //form1 = TForm1.Create(Application);
-  //Application.CreateForm(TForm1, Form1);
   form1.Visible := True;
-  form1.timer1.Interval := seconds * 1000;
-  form1.timer1.Enabled := True;
-  //form1.Show;
+  DataModule1.timer1.Interval := seconds * 1000;
+  DataModule1.timer1.Enabled := True;
 end;
 
 (*
@@ -301,16 +298,12 @@ begin
 end;
 *)
 
+(*
 procedure startchild(childsec: integer);
 var
   AProcess: TProcess;
 begin
   AProcess := TProcess.Create(nil);
-(*
-  AProcess.CommandLine := '"' + ExtractFilePath(ParamStr(0)) +
-    'helperchild.exe" --wait=2 --showwindow=' + IntToStr(childsec);
-*)
-  //AProcess.Options := AProcess.Options + [poWaitOnExit, poUsePipes];
   AProcess.Executable:= ExtractFilePath(ParamStr(0)) + 'helperchild.exe';
   AProcess.Parameters.Add('--wait=2');
   AProcess.Parameters.Add('--showwindow=' + IntToStr(childsec));
@@ -511,12 +504,12 @@ begin
     halt(myexitcode);
     Application.Terminate;
   end;
+  *)
 
-end;
 
 
 { TForm1 }
-
+(*
 procedure TForm1.Timer1Timer(Sender: TObject);
 begin
   Timer1.Enabled := False;
@@ -524,7 +517,7 @@ begin
   halt(myexitcode);
   Application.Terminate;
 end;
-
+*)
 procedure TForm1.FormCreate(Sender: TObject);
 var
   showtimestr: string;
@@ -545,7 +538,7 @@ end;
 
 procedure TForm1.BitBtn1Click(Sender: TObject);
 begin
-  Timer1.Enabled := False;
+  DataModule1. Timer1.Enabled := False;
   form1.Visible := False;
   halt(myexitcode);
   Application.Terminate;
