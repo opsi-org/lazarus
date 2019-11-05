@@ -6,7 +6,7 @@ uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
-  Classes, SysUtils, CustApp, IconCollector, Interfaces, LazFileUtils, DateUtils
+  Classes, SysUtils, CustApp, IconCollector, Interfaces, LazFileUtils
   { you can add units after this };
 
 type
@@ -15,12 +15,9 @@ type
 
   TOpsiIconCollector = class(TCustomApplication)
   protected
-    FProgressStatusStartTime : TTime;
-    FProgressStatusFirstCall : boolean;
-    FProgressStatusSymbol : integer;
     procedure DoRun; override;
     procedure CollectIcons(DepotPath:String);
-    procedure ProgressStatus();
+    procedure ShowStatus(MessageText:String);
   public
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
@@ -99,18 +96,17 @@ begin
   //Write('Progress:[');
   Writeln('Search for opsi-script files:');
   Writeln('Startet at ' + TimeToStr(Time) + ' ... ');
-  FProgressStatusFirstCall := True;
-  IconCollector.FindOpsiScriptFiles(@ProgressStatus);
+  IconCollector.FindOpsiScriptFiles(@ShowStatus);
 
 
   //Writeln(#13'Done                                     ');
   Writeln('Finished at ' + TimeToStr(Time));
   WriteLn('');
-  WriteLn('Paths to opsi-script files:');
-  WriteLn(IconCollector.ShowOpsiScriptFilenames);
+  //WriteLn('Paths to opsi-script files:');
+  //WriteLn(IconCollector.ShowOpsiScriptFilenames);
   Writeln('Extraction of icon paths:');
   Writeln('Startet at ' + TimeToStr(Time) + ' ... ');
-  IconCollector.ExtractPathToIcon;
+  IconCollector.ExtractPathToIcon(@ShowStatus);
   Writeln('Finished at ' + TimeToStr(Time));
   WriteLn('');
   WriteLn('IconList:');
@@ -120,36 +116,15 @@ begin
   Writeln('opsi-icon-collector finished at ' + TimeToStr(Time));
 end;
 
-procedure TOpsiIconCollector.ProgressStatus();
-var
-  TimeDiff : integer; //for testing/debugging
-
-const
-  StatusMessage = #13'Processing [%s] ';
-  Progress: array [0..3] of char = ('-','\','|','/');
+procedure TOpsiIconCollector.ShowStatus(MessageText:string);
 begin
-  //TimeDiff := SecondsBetween(Time, StartTime); //for testing/debugging
-  if FProgressStatusFirstCall then
-  begin
-    FProgressStatusStartTime := Time;
-    FProgressStatusFirstCall := False;
-  end
-  else
-  if MilliSecondsBetween(Time, FProgressStatusStartTime) > 100 then
-  begin
-    write(Format(StatusMessage,[Progress[FProgressStatusSymbol]]));
-    FProgressStatusStartTime := Time;
-    if FProgressStatusSymbol < 3 then inc(FProgressStatusSymbol)
-      else FProgressStatusSymbol := 0;
-  end;
+  write(MessageText);
 end;
 
 constructor TOpsiIconCollector.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
   StopOnException:=True;
-  FProgressStatusFirstCall := True;
-  FProgressStatusSymbol := 0;
 end;
 
 destructor TOpsiIconCollector.Destroy;

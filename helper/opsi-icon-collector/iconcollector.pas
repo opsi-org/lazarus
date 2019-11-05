@@ -8,22 +8,27 @@ uses
   {$IFDEF UNIX}
    cthreads,
   {$ENDIF}
-  Classes, SysUtils, FileUtil, LazFileUtils, StrUtils, ShellApi, LCLType, Graphics;
+  Classes, SysUtils, FileUtil, LazFileUtils, StrUtils, ShellApi, LCLType, Graphics,
+  DateUtils;
 
 type
 
   TSearchShift = (ssFirst, ssAll);
 
-  TProgressStatus = procedure() of object;
+  TShowStatus = procedure(MessageText:string) of object;
+  //TGetFileNames = procedure(FileNames:TStringList) of object;
 
   { TFindScriptFilesThread }
+
+  { TFindFilesThread }
 
   TFindFilesThread = class(TThread)
       FFileNames : TStringList;
       FDepotPath : String;
+      //FGetFileNames : TGetFileNames;
     protected
       procedure Execute; override;
-      //procedure ProgressStatus;
+      //procedure FileNames;
   public
     constructor Create(DepotPath:String);
   end;
@@ -33,24 +38,25 @@ type
 
   TIconCollector = class(TObject)
     private
+      FMessageText : String; //for status report
       FFileNames : TStringList;
       FIconsList  : TStringList;
       FPathToDepot : string;
       FFindFilesThread : TFindFilesThread;
       function ExtractLine(const SearchString:String; PathToScript:String):String;
+      //procedure SetFileNames(FileNames:TStringList);
       procedure ParseLineShowBitmap(Line:String; PathToScript:String);
       function PrepareLine(Line:String):String;
       function IsVariable(Token:String):boolean;
       function ReplaceTokenWithValue(Token:String; PathToScript:String):String;
     public
-      FInProgress : boolean;
-      procedure FindOpsiScriptFiles(ProgressStatus:TProgressStatus);
+      procedure FindOpsiScriptFiles(ShowStatus:TShowStatus);
+      procedure ExtractPathToIcon(ShowStatus:TShowStatus);
       procedure ExtractIconFromExe(PathToExe:String);
       function ShowOpsiScriptFilenames:String;
       function ShowIconList:String;
       constructor Create(DepotPath: String);overload;
       destructor Destroy; override;
-      procedure ExtractPathToIcon;
   end;
 
 
@@ -62,17 +68,27 @@ implementation
 
 procedure TFindFilesThread.Execute;
 begin
-  FFileNames := FindAllFiles(FDepotPath,'setup.opsiscript;setup32.opsiscript');
-  Terminate;
+  if not terminated then
+  begin
+    FFileNames := FindAllFiles(FDepotPath,'setup.opsiscript;setup32.opsiscript');
+     //Synchronize(@FileNames);
+    Terminate;
+  end;
 end;
 
+(*
+procedure TFindFilesThread.FileNames;
+begin
+  FGetFileNames(FFileNames);
+end;
+*)
 
 constructor TFindFilesThread.Create(DepotPath: String);
 begin
   inherited Create(false);
   FreeOnTerminate := False;
   FDepotPath := DepotPath;
-  //FFileNames := FileNames;
+  //FGetFileNames := GetFileNames;
 end;
 
 { TIconCollector }
@@ -100,13 +116,33 @@ begin
   end;
 end;
 
-procedure TIconCollector.FindOpsiScriptFiles(ProgressStatus:TProgressStatus);
+(*
+procedure TIconCollector.SetFileNames(FileNames: TStringList);
+begin
+  FFileNames := FileNames;
+end;
+*)
+
+procedure TIconCollector.FindOpsiScriptFiles(ShowStatus:TShowStatus);
+var
+  StartTime :TTime;
+  i : integer;
+const
+  StatusMessage = #13'Processing [%s] ';
+  Progress: array [0..3] of char = ('-','\','|','/');
 begin
   //FInProgress := True;
   FFindFilesThread := TFindFilesThread.Create(FPathToDepot);
   //FFindScriptFilesThread.WaitFor;
+  StartTime := Time;
   while not FFindFilesThread.Terminated do begin
-    ProgressStatus;
+    if MilliSecondsBetween(Time, StartTime) > 100 then
+    begin
+      FMessageText := Format(StatusMessage,[Progress[i]]);
+      StartTime := Time;
+      if i < 3 then inc(i) else i := 0;
+      ShowStatus(FMessageText);
+    end;
   end;
   FFileNames := FFindFilesThread.FFileNames;
   //FInProgress := False;
@@ -208,8 +244,6 @@ begin
   FPathToDepot := DepotPath;
   FIconsList := TStringList.Create;
   FFileNames := TStringList.Create;
-  FInProgress := False;
-  //FProgressStatus := ProgressStatus;
   //FFileNames := FindAllFiles(DepotPath,'setup.opsiscript;setup32.opsiscript');
 end;
 
@@ -221,15 +255,21 @@ begin
   FIconsList.Free;
 end;
 
-procedure TIconCollector.ExtractPathToIcon;
+procedure TIconCollector.ExtractPathToIcon(ShowStatus:TShowStatus);
 var
   i : integer;
+  Percent : integer;
   Line : String;
+const
+  StatusMessage = #13'Processing %d of %d [%d%%] ';
 begin
   for i := 0 to FFileNames.Count-1 do
   begin
+    Percent := Trunc((i+1)*1.0 /(FFileNames.Count) *100);
     Line := ExtractLine('ShowBitmap', FFileNames[i]);
     ParseLineShowBitmap(Line,FFileNames[i]);
+    FMessageText := Format(StatusMessage,[(i+1),(FFileNames.Count), Percent]);
+    ShowStatus(FMessageText);
   end;
 end;
 
