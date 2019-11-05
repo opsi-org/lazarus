@@ -8,7 +8,13 @@ uses
   Classes, SysUtils, LResources, //ExtCtrls,
   fptimer,
   {$IFDEF WINDOWS}
-  osfuncwin,
+  //osfuncwin,
+  JwaWinnt,
+  jwawinbase,
+  JwaWindows,
+  JwaUserEnv,
+  dsiwin32,
+  helperwispecfolder,
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
   osfunclin,

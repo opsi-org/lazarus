@@ -25,7 +25,7 @@ uses
 
   {$IFDEF WINDOWS}
   Windows,
-  wispecfolder,
+  helperwispecfolder,
   DSiWin32,
   //winpeimagereader,
   {$ENDIF WINDOWS}

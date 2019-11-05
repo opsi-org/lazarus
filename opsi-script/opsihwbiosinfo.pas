@@ -7,13 +7,6 @@
 // author: Rupert Roeder, detlef oertel
 // credits: http://www.opsi.org/credits/
 
-//***************************************************************************
-// Subversion:
-// $Revision: 288 $
-// $Author: oertel $
-// $Date: 2015-01-29 18:19:14 +0100 (Do, 29 Jan 2015) $
-//***************************************************************************
-
 // unit uSMBIOS (TSMBIOS) (https://code.google.com/p/tsmbios/)
 // integrated mit explicit permission of the author Rodrigo Ruz
 

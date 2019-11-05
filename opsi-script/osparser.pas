@@ -18437,6 +18437,14 @@ end
     booleanresult := isWinPE;
  end
 
+  else if Skip ('runningWithGui', Input, r, InfoSyntaxError)
+ then
+ begin
+    Syntaxcheck := true;
+    errorOccured := false;
+    booleanresult := isGUI;
+ end
+
 
  else if Skip ('scriptWasExecutedBefore', Input, r, InfoSyntaxError)
  then

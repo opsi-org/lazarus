@@ -12,7 +12,6 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-
   opsiscripttesthelper_main,
   Forms,
   helperwin;
@@ -22,13 +21,13 @@ uses
 {$R *.res}
 
 begin
-  Application.Title:='opsiscripttesthelper';
-  Application.Initialize;
-  Application.CreateForm(TForm1, Form1);
+  forms.Application.Title:='opsiscripttesthelper';
+  forms.Application.Initialize;
+  opsiscripttesthelper_main.Application := forms.Application;
+  forms.Application.CreateForm(TForm1, Form1);
   //Application.CreateForm(TDataModule1, DataModule1);
-  opsiscripttesthelper_main.Application := Application;
   main;
-  Application.Run;
+  forms.Application.Run;
   //application.Terminate;
 end.
 
