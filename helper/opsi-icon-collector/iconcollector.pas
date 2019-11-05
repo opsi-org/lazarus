@@ -38,6 +38,7 @@ type
 
   TIconCollector = class(TObject)
     private
+      FPathToOckCustom : String;
       FMessageText : String; //for status report
       FFileNames : TStringList;
       FIconsList  : TStringList;
@@ -156,6 +157,7 @@ var
   Concatenate  : boolean;
   IconPath     : String;
   ProductID    : String;
+  Destination: String;
 begin
   IconPath := '';
   ProductID := '';
@@ -193,7 +195,9 @@ begin
     //WriteLn(SplittedLine.Text); //for testing/debugging
     IconPath := TrimFilename(IconPath);
     { Copy icon to new destination }
-    if CopyFile(IconPath, 'C:\Users\Jan\Test' + PathDelim + ExtractFilename(IconPath))
+    //Destination := FPathToDepot + PathDelim + FPathToOckCustom; //productive environment
+    Destination := SwitchPathDelims('C:\Users\Jan\Test',pdsSystem); //for testing
+    if CopyFile(IconPath, Destination + PathDelim + ExtractFilename(IconPath))
       and (ProductID <> '') then
     begin
       FIconsList.Add(ProductID + '=' + ExtractFilename(IconPath));
@@ -241,7 +245,8 @@ end;
 constructor TIconCollector.Create(DepotPath: String);
 begin
   inherited Create;
-  FPathToDepot := DepotPath;
+  FPathToDepot := SwitchPathDelims(DepotPath,pdsSystem);
+  FPathToOckCustom := SwitchPathDelims('opsi-client-agent\files\opsi\opsiclientkiosk\ock_custom',pdsSystem);
   FIconsList := TStringList.Create;
   FFileNames := TStringList.Create;
   //FFileNames := FindAllFiles(DepotPath,'setup.opsiscript;setup32.opsiscript');
@@ -250,7 +255,8 @@ end;
 destructor TIconCollector.Destroy;
 begin
   inherited Destroy;
-  FIconsList.SaveToFile('C:\Users\Jan\Test\IconsList.txt');
+  //FIconsList.SaveToFile(FPathToDepot+PathDelim+FPathToOckCustom+PathDelim+'IconsList.txt'); //prodcutive environment
+  FIconsList.SaveToFile(SwitchPathDelims('C:\Users\Jan\Test\IconsList.txt',pdsSystem)); //for testing
   FFileNames.Free;
   FIconsList.Free;
 end;

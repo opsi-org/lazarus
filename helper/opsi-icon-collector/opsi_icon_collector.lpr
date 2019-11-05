@@ -58,7 +58,7 @@ begin
   try
     If Params[1] <> '' then
     begin
-      WriteLn('Params[1]: ' + Params[1]);//for testing logging
+      WriteLn('Params[1]: ' + Params[1]);//for testing/logging
       if DirPathExists(Params[1]) then
       begin
         //WriteLn('***************************');
