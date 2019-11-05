@@ -19,7 +19,7 @@
       <CharSet Value=""/>
       <StringTable CompanyName="uib gmbh" LegalCopyright="AGLv3" LegalTrademarks="opsi,opsi.org,open pc server integration" ProductName="opsi" ProductVersion="4.0.7"/>
     </VersionInfo>
-    <BuildModes Count="3" Active="Release">
+    <BuildModes Count="3" Active="Debug">
       <Item1 Name="default" Default="True"/>
       <Item2 Name="Debug">
         <CompilerOptions>
@@ -115,13 +115,13 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="10">
+    <Units Count="11">
       <Unit0>
         <Filename Value="helperchild.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="3"/>
-        <CursorPos X="13" Y="13"/>
+        <TopLine Value="4"/>
+        <CursorPos X="56" Y="22"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -139,9 +139,9 @@
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="241"/>
-        <CursorPos X="17" Y="43"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="514"/>
+        <CursorPos Y="522"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -190,21 +190,29 @@
       <Unit8>
         <Filename Value="..\..\common\osversioninfo.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <CursorPos X="34" Y="18"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit8>
       <Unit9>
         <Filename Value="..\..\common\osfunclin.pas"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <TopLine Value="10"/>
         <CursorPos X="3" Y="21"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit9>
+      <Unit10>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="1"/>
+        <CursorPos X="31"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit10>
     </Units>
-    <JumpHistory Count="18" HistoryIndex="17">
+    <JumpHistory Count="26" HistoryIndex="25">
       <Position1>
         <Filename Value="helperwin.pas"/>
         <Caret Line="47" Column="61" TopLine="35"/>
@@ -277,6 +285,38 @@
         <Filename Value="..\..\common\osfunclin.pas"/>
         <Caret Line="21" Column="3" TopLine="10"/>
       </Position18>
+      <Position19>
+        <Filename Value="helperchild.lpr"/>
+        <Caret Line="13" Column="13"/>
+      </Position19>
+      <Position20>
+        <Filename Value="helperchild.lpr"/>
+        <Caret Line="22" Column="5" TopLine="3"/>
+      </Position20>
+      <Position21>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="268" Column="18" TopLine="255"/>
+      </Position21>
+      <Position22>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="40" Column="3" TopLine="27"/>
+      </Position22>
+      <Position23>
+        <Filename Value="helperchild.lpr"/>
+        <Caret Line="11" Column="43" TopLine="4"/>
+      </Position23>
+      <Position24>
+        <Filename Value="helperchild.lpr"/>
+        <Caret Line="21" TopLine="4"/>
+      </Position24>
+      <Position25>
+        <Filename Value="helperchild.lpr"/>
+        <Caret Line="23" Column="55" TopLine="4"/>
+      </Position25>
+      <Position26>
+        <Filename Value="helperchild.lpr"/>
+        <Caret Line="21" TopLine="4"/>
+      </Position26>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
@@ -309,6 +349,15 @@
     </Other>
   </CompilerOptions>
   <Debugging>
+    <BreakPoints Count="1">
+      <Item1>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="helperchild.lpr"/>
+        <Line Value="21"/>
+      </Item1>
+    </BreakPoints>
     <Exceptions Count="3">
       <Item1>
         <Name Value="EAbort"/>

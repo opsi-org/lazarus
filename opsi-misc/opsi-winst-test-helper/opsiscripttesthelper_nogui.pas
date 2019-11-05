@@ -11,9 +11,10 @@ uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
-  Classes, SysUtils, LResources,
+  Classes, SysUtils, //LResources,
     custapp,
   {$IFDEF UNIX}
+  baseunix,
   {$ENDIF }
   opsiscripttesthelper_main;
 
@@ -57,11 +58,11 @@ begin
   Application:=Tcliapp.Create(nil);
   Application.Title:='opsiscripttesthelper_nogui';
   Application.Initialize;
-  Datamodule1 := TDataModule1.Create(nil);
+  //Datamodule1 := TDataModule1.Create;
   //Application.Create(TDataModule1, DataModule1);
-  DataModule1.Application := Application;
+  opsiscripttesthelper_main.Application := Application;
   main;
-  Application.DoRun;
+  //Application.DoRun;
   Application.Free;
 end.
 

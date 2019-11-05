@@ -261,8 +261,8 @@ end;
 procedure TForm1.showwindow(seconds: integer);
 begin
   form1.Visible := True;
-  DataModule1.timer1.Interval := seconds * 1000;
-  DataModule1.timer1.Enabled := True;
+  opsiscripttesthelper_main.timer1.Interval := seconds * 1000;
+  opsiscripttesthelper_main.timer1.Enabled := True;
 end;
 
 (*
@@ -518,6 +518,8 @@ begin
   Application.Terminate;
 end;
 *)
+
+
 procedure TForm1.FormCreate(Sender: TObject);
 var
   showtimestr: string;
@@ -538,7 +540,7 @@ end;
 
 procedure TForm1.BitBtn1Click(Sender: TObject);
 begin
-  DataModule1. Timer1.Enabled := False;
+  opsiscripttesthelper_main. Timer1.Enabled := False;
   form1.Visible := False;
   halt(myexitcode);
   Application.Terminate;

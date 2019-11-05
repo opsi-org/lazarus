@@ -12,10 +12,9 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  {$IFDEF GUI}
-  Forms,
-  {$ENDIF}
+
   opsiscripttesthelper_main,
+  Forms,
   helperwin;
 
 //{$IFDEF WINDOWS}{$R opsiwinsttesthelper.rc}{$ENDIF}
@@ -26,8 +25,8 @@ begin
   Application.Title:='opsiscripttesthelper';
   Application.Initialize;
   Application.CreateForm(TForm1, Form1);
-  Application.CreateForm(TDataModule1, DataModule1);
-  DataModule1.Application := Application;
+  //Application.CreateForm(TDataModule1, DataModule1);
+  opsiscripttesthelper_main.Application := Application;
   main;
   Application.Run;
   //application.Terminate;

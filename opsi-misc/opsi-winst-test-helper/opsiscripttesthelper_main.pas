@@ -5,7 +5,8 @@ unit opsiscripttesthelper_main;
 interface
 
 uses
-  Classes, SysUtils, LResources, ExtCtrls,
+  Classes, SysUtils, LResources, //ExtCtrls,
+  fptimer,
   {$IFDEF WINDOWS}
   osfuncwin,
   {$ENDIF WINDOWS}
@@ -22,12 +23,13 @@ uses
   Process,
   osversioninfo;
 
-type
+//type
 
   { TDataModule1 }
 
-  TDataModule1 = class(TDataModule)
-    Timer1: TTimer;
+  (*
+  TDataModule1 = class(TObject)
+    Timer1: TfpTimer;
     Application : TCustomApplication;
     procedure Timer1Timer(Sender: TObject);
 
@@ -36,13 +38,15 @@ type
   public
 
   end;
+  *)
 
 
 
 procedure main();
+procedure Timer1Timer(Sender: TObject);
 
 var
-  DataModule1: TDataModule1;
+  //DataModule1: TDataModule1;
   ErrorMsg: string;
   optionlist: TStringList;
   myexitcode: integer;
@@ -54,6 +58,10 @@ var
   mybyte: byte;
   mylog: textfile;
   mydefaultlog: string;
+  Timer1: TfpTimer;
+    Application : TCustomApplication;
+  mytimerevent : TMethod;
+ //   procedure Timer1Timer(Sender: TObject);
 
 implementation
 
@@ -274,7 +282,7 @@ begin
   optionlist.Append('createfile::');
   optionlist.Append('filesize:');
   // quick check parameters
-  with DataModule1 do
+ // with DataModule1 do
   begin
     ErrorMsg := Application.CheckOptions('', optionlist);
     if ErrorMsg <> '' then
@@ -452,7 +460,9 @@ end;
 
 { TDataModule1 }
 
-procedure TDataModule1.Timer1Timer(Sender: TObject);
+//procedure(Sender: TObject) of object;
+//procedure Timer1Timer(Sender: TObject) of object;
+procedure Timer1Timer(Sender: TObject);
 begin
   Timer1.Enabled := False;
 {$IFDEF GUI}
@@ -463,7 +473,15 @@ begin
 end;
 
 initialization
-  {$I *.lrs}
+
+
+
+mytimerevent.Code := @Timer1Timer;
+mytimerevent.Data := nil;
+timer1 := TFPTimer.Create(nil);
+timer1.Interval:=1000;
+timer1.OnTimer:=TNotifyEvent(mytimerevent);
+timer1.StartTimer;
 
 end.
 

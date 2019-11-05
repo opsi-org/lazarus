@@ -13927,7 +13927,17 @@ begin
      else
      begin
        {$IFDEF LINUX}
-       StringResult :=  getCommandResult('resolveip -s '+s1);
+       //StringResult :=  getCommandResult('resolveip -s '+s1);
+       StringResult :=  getCommandResult('getent hosts '+s1);
+       stringsplitByWhiteSpace (StringResult, slist);
+       if slist.Count > 0 then StringResult := slist.Strings[0]
+       else StringResult := '';
+       if not IsIP(StringResult) then
+       begin
+         LogDatei.log('Warning: no valid IP found for: '+s1,LLwarning);
+         StringResult := '';
+       end;
+
        {$ENDIF LINUX}
        {$IFDEF DARWIN}
        StringResult :=  getCommandResult('dig +short -x  '+s1);
