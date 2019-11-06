@@ -248,7 +248,7 @@ begin
   FPathToDepot := SwitchPathDelims(DepotPath,pdsSystem);
   FPathToOckCustom := SwitchPathDelims('opsi-client-agent\files\opsi\opsiclientkiosk\ock_custom',pdsSystem);
   FIconsList := TStringList.Create;
-  FFileNames := TStringList.Create;
+  //FFileNames := TStringList.Create;
   //FFileNames := FindAllFiles(DepotPath,'setup.opsiscript;setup32.opsiscript');
 end;
 
