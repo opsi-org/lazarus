@@ -3,9 +3,9 @@ program opsi_icon_collector;
 {$mode objfpc}{$H+}
 
 uses
-  {$IFDEF UNIX}{$IFDEF UseCThreads}
+  {$IFDEF UNIX}//{$IFDEF UseCThreads}
   cthreads,
-  {$ENDIF}{$ENDIF}
+  {$ENDIF}//{$ENDIF}
   Classes, SysUtils, CustApp, IconCollector, Interfaces, LazFileUtils
   { you can add units after this };
 
@@ -102,8 +102,8 @@ begin
   //Writeln(#13'Done                                     ');
   Writeln('Finished at ' + TimeToStr(Time));
   WriteLn('');
-  //WriteLn('Paths to opsi-script files:');
-  //WriteLn(IconCollector.ShowOpsiScriptFilenames);
+  WriteLn('Paths to opsi-script files:');
+  WriteLn(IconCollector.ShowOpsiScriptFilenames);
   Writeln('Extraction of icon paths:');
   Writeln('Startet at ' + TimeToStr(Time) + ' ... ');
   IconCollector.ExtractPathToIcon(@ShowStatus);
