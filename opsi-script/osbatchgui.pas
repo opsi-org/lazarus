@@ -886,6 +886,7 @@ end;
 
 procedure TFBatchOberflaeche.setWindowState(BatchWindowMode: TBatchWindowMode);
 begin
+  {$IFNDEF DARWIN}
   case BatchWindowMode of
     bwmNotActivated: WindowState := wsnormal;
     bwmIcon: if WindowState <> wsMinimized then WindowState := wsminimized;
@@ -894,6 +895,7 @@ begin
   end;
   if Assigned(LogDatei) then
      LogDatei.log('Switch window state to: '+GetEnumName(TypeInfo(TBatchWindowMode),ord(BatchWindowMode)),LLDebug);
+  {$ENDIF}
 end;
 
 (*
