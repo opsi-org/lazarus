@@ -5,10 +5,7 @@ unit IconCollector;
 interface
 
 uses
-  {$IFDEF UNIX}
-   cthreads,
-  {$ENDIF}
-  Classes, SysUtils, FileUtil, LazFileUtils, StrUtils, ShellApi, LCLType, Graphics,
+  Classes, SysUtils, FileUtil, LazFileUtils, StrUtils, LCLType, Graphics,
   DateUtils;
 
 type
@@ -16,21 +13,21 @@ type
   TSearchShift = (ssFirst, ssAll);
 
   TShowStatus = procedure(MessageText:string) of object;
-  //TGetFileNames = procedure(FileNames:TStringList) of object;
+  //TSetFileNames = procedure(FileNames:TStringList) of object;
 
-  { TFindScriptFilesThread }
 
   { TFindFilesThread }
 
   TFindFilesThread = class(TThread)
       FFileNames : TStringList;
       FDepotPath : String;
-      //FGetFileNames : TGetFileNames;
+      //FSetFileNames : TSetFileNames;
     protected
       procedure Execute; override;
       //procedure FileNames;
   public
     constructor Create(DepotPath:String);
+    destructor Destroy; override;
   end;
 
 
@@ -53,7 +50,7 @@ type
     public
       procedure FindOpsiScriptFiles(ShowStatus:TShowStatus);
       procedure ExtractPathToIcon(ShowStatus:TShowStatus);
-      procedure ExtractIconFromExe(PathToExe:String);
+      //procedure ExtractIconFromExe(PathToExe:String);
       function ShowOpsiScriptFilenames:String;
       function ShowIconList:String;
       constructor Create(DepotPath: String);overload;
@@ -72,15 +69,16 @@ begin
   if not terminated then
   begin
     FFileNames := FindAllFiles(FDepotPath,'setup.opsiscript;setup32.opsiscript');
-     //Synchronize(@FileNames);
     Terminate;
+    //Synchronize(@FileNames);
+    //Terminate;
   end;
 end;
 
 (*
 procedure TFindFilesThread.FileNames;
 begin
-  FGetFileNames(FFileNames);
+  FSetFileNames(FFileNames);
 end;
 *)
 
@@ -89,7 +87,13 @@ begin
   inherited Create(false);
   FreeOnTerminate := False;
   FDepotPath := DepotPath;
-  //FGetFileNames := GetFileNames;
+  //FSetFileNames := SetFileNames;
+end;
+
+destructor TFindFilesThread.Destroy;
+begin
+  //FFileNames.Free; //do not free because TSringList is used in main thread and freed there
+  inherited Destroy;
 end;
 
 { TIconCollector }
@@ -127,14 +131,12 @@ end;
 procedure TIconCollector.FindOpsiScriptFiles(ShowStatus:TShowStatus);
 var
   StartTime :TTime;
-  i : integer;
+  i : integer = 0;
 const
   StatusMessage = #13'Processing [%s] ';
   Progress: array [0..3] of char = ('-','\','|','/');
 begin
-  //FInProgress := True;
   FFindFilesThread := TFindFilesThread.Create(FPathToDepot);
-  //FFindScriptFilesThread.WaitFor;
   StartTime := Time;
   while not FFindFilesThread.Terminated do begin
     if MilliSecondsBetween(Time, StartTime) > 100 then
@@ -145,8 +147,10 @@ begin
       ShowStatus(FMessageText);
     end;
   end;
+  //FFindFilesThread.WaitFor; //should not be necessary because thread should be already terminated
+  //FFileNames := TStringList.Create; //use this if the StringList is copied from FFindFilesThread.FFileNames e.g. see line below
+  //FFileNames.Text := FFindFilesThread.FFileNames.Text;
   FFileNames := FFindFilesThread.FFileNames;
-  //FInProgress := False;
   FFindFilesThread.Free;
 end;
 
@@ -193,10 +197,11 @@ begin
     end;
     //SplittedLine.Text := TrimFilename(SplittedLine.Text); //for testing/debugging
     //WriteLn(SplittedLine.Text); //for testing/debugging
-    IconPath := TrimFilename(IconPath);
+    IconPath := TrimFilename(SwitchPathDelims(IconPath, pdsSystem));
     { Copy icon to new destination }
     //Destination := FPathToDepot + PathDelim + FPathToOckCustom; //productive environment
-    Destination := SwitchPathDelims('C:\Users\Jan\Test',pdsSystem); //for testing
+    //Destination := SwitchPathDelims('C:\Users\Jan\Test',pdsSystem); //for testing Windows
+    Destination := SwitchPathDelims('/home/user/Test',pdsSystem); //for testing Linux
     if CopyFile(IconPath, Destination + PathDelim + ExtractFilename(IconPath))
       and (ProductID <> '') then
     begin
@@ -248,7 +253,7 @@ begin
   FPathToDepot := SwitchPathDelims(DepotPath,pdsSystem);
   FPathToOckCustom := SwitchPathDelims('opsi-client-agent\files\opsi\opsiclientkiosk\ock_custom',pdsSystem);
   FIconsList := TStringList.Create;
-  FFileNames := TStringList.Create;
+  //FFileNames := TStringList.Create;
   //FFileNames := FindAllFiles(DepotPath,'setup.opsiscript;setup32.opsiscript');
 end;
 
@@ -256,7 +261,8 @@ destructor TIconCollector.Destroy;
 begin
   inherited Destroy;
   //FIconsList.SaveToFile(FPathToDepot+PathDelim+FPathToOckCustom+PathDelim+'IconsList.txt'); //prodcutive environment
-  FIconsList.SaveToFile(SwitchPathDelims('C:\Users\Jan\Test\IconsList.txt',pdsSystem)); //for testing
+  //FIconsList.SaveToFile(SwitchPathDelims('C:\Users\Jan\Test\IconsList.txt',pdsSystem)); //for testing windows
+  FIconsList.SaveToFile(SwitchPathDelims('\home\user\Test\IconsList.txt',pdsSystem)); //for testing linux
   FFileNames.Free;
   FIconsList.Free;
 end;
@@ -280,7 +286,7 @@ begin
 end;
 
 {Procedure is just a test not shure if useful in this application}
-procedure TIconCollector.ExtractIconFromExe(PathToExe: String);
+(*procedure TIconCollector.ExtractIconFromExe(PathToExe: String);
 var
   IconLarge :HICON;
   IconSmall :HICON;
@@ -296,7 +302,7 @@ begin
       Picture.Free;
     end;
    end;
-end;
+end;*)
 
 end.
 
