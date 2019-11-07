@@ -161,7 +161,6 @@ var
   Concatenate  : boolean;
   IconPath     : String;
   ProductID    : String;
-  Destination: String;
 begin
   IconPath := '';
   ProductID := '';
@@ -253,9 +252,9 @@ constructor TIconCollector.Create(DepotPath: String);
 begin
   inherited Create;
   FPathToDepot := SwitchPathDelims(DepotPath,pdsSystem);
-  //FPathToOckCustom := FPathToDepot + PathDelim + SwitchPathDelims('opsi-client-agent\files\opsi\opsiclientkiosk\ock_custom',pdsSystem);
+  FPathToOckCustom := FPathToDepot + PathDelim + SwitchPathDelims('opsi-client-agent\files\opsi\opsiclientkiosk\ock_custom',pdsSystem);
   //FPathToOckCustom := SwitchPathDelims('C:\Users\Jan\Test', pdsSystem); //testing windows
-  FPathToOckCustom := SwitchPathDelims('\home\user\Test',pdsSystem); //testing linux
+  //FPathToOckCustom := SwitchPathDelims('\home\user\Test',pdsSystem); //testing linux
 
   FIconsList := TStringList.Create;
   if FileExists(FPathToOckCustom+PathDelim+'IconsList.txt') then
