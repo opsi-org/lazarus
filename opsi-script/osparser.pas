@@ -11973,7 +11973,7 @@ begin
    End
 
    else
-     if LowerCase (s) = LowerCase ('findFiles') then
+     if LowerCase (s) = LowerCase ('listFiles') then
      begin
        if Skip ('(', r, r, InfoSyntaxError) then
          if EvaluateString (r,r, s1, InfoSyntaxError) then
@@ -11989,6 +11989,7 @@ begin
                        try
                          //list1 := TXStringList.create;
                          list := TXStringList(FindAllFiles(s1,s2,StrToBool(s3)));
+                         //if list = '' then list.Add('Datei nicht gefunden');
                          //list.Text := list1.Text;
                        finally
                          //list1.free;
