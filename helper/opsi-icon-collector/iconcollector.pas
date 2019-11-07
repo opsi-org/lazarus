@@ -92,7 +92,7 @@ end;
 
 destructor TFindFilesThread.Destroy;
 begin
-  //FFileNames.Free; //do not free because TSringList is used in main thread and freed there
+  //FFileNames.Free; //do not free because this TSringList is used in main thread and freed there
   inherited Destroy;
 end;
 
@@ -161,7 +161,6 @@ var
   Concatenate  : boolean;
   IconPath     : String;
   ProductID    : String;
-  Destination: String;
 begin
   IconPath := '';
   ProductID := '';
@@ -198,14 +197,16 @@ begin
     //SplittedLine.Text := TrimFilename(SplittedLine.Text); //for testing/debugging
     //WriteLn(SplittedLine.Text); //for testing/debugging
     IconPath := TrimFilename(SwitchPathDelims(IconPath, pdsSystem));
-    { Copy icon to new destination }
-    //Destination := FPathToDepot + PathDelim + FPathToOckCustom; //productive environment
-    //Destination := SwitchPathDelims('C:\Users\Jan\Test',pdsSystem); //for testing Windows
-    Destination := SwitchPathDelims('/home/user/Test',pdsSystem); //for testing Linux
-    if CopyFile(IconPath, Destination + PathDelim + ExtractFilename(IconPath))
-      and (ProductID <> '') then
+    { Copy icon to new destination if ProductID exists}
+    if (ProductID <> '') then
     begin
-      FIconsList.Add(ProductID + '=' + ExtractFilename(IconPath));
+      if CopyFile(IconPath, FPathToOckCustom + PathDelim + ExtractFilename(IconPath)) then //add to list only if image could be copied e.g. exists
+      begin
+        //if (FIconsList.IndexOfName(ProductID) <> -1) then
+        { if the name-value pair does not exist it will be created, otherwise the current value is overridden }
+        FIconsList.Values[ProductID] := ExtractFilename(IconPath)
+        //else FIconsList.Add(ProductID + '=' + ExtractFilename(IconPath));
+      end;
     end;
   finally
     if Assigned(SplittedLine) then
@@ -251,8 +252,13 @@ constructor TIconCollector.Create(DepotPath: String);
 begin
   inherited Create;
   FPathToDepot := SwitchPathDelims(DepotPath,pdsSystem);
-  FPathToOckCustom := SwitchPathDelims('opsi-client-agent\files\opsi\opsiclientkiosk\ock_custom',pdsSystem);
+  FPathToOckCustom := FPathToDepot + PathDelim + SwitchPathDelims('opsi-client-agent\files\opsi\opsiclientkiosk\ock_custom',pdsSystem);
+  //FPathToOckCustom := SwitchPathDelims('C:\Users\Jan\Test', pdsSystem); //testing windows
+  //FPathToOckCustom := SwitchPathDelims('\home\user\Test',pdsSystem); //testing linux
+
   FIconsList := TStringList.Create;
+  if FileExists(FPathToOckCustom+PathDelim+'IconsList.txt') then
+    FIconsList.LoadFromFile(FPathToOckCustom+PathDelim+'IconsList.txt');
   //FFileNames := TStringList.Create;
   //FFileNames := FindAllFiles(DepotPath,'setup.opsiscript;setup32.opsiscript');
 end;
@@ -260,9 +266,7 @@ end;
 destructor TIconCollector.Destroy;
 begin
   inherited Destroy;
-  //FIconsList.SaveToFile(FPathToDepot+PathDelim+FPathToOckCustom+PathDelim+'IconsList.txt'); //prodcutive environment
-  //FIconsList.SaveToFile(SwitchPathDelims('C:\Users\Jan\Test\IconsList.txt',pdsSystem)); //for testing windows
-  FIconsList.SaveToFile(SwitchPathDelims('\home\user\Test\IconsList.txt',pdsSystem)); //for testing linux
+  FIconsList.SaveToFile(FPathToOckCustom+PathDelim+'IconsList.txt');
   FFileNames.Free;
   FIconsList.Free;
 end;
