@@ -459,7 +459,7 @@
         <Filename Value="changelog.txt"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <CursorPos Y="17"/>
+        <CursorPos X="57" Y="16"/>
         <UsageCount Value="117"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -816,15 +816,15 @@
       <Unit71>
         <Filename Value="..\common\oswebservice.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="1488"/>
-        <CursorPos X="27" Y="1499"/>
+        <IsVisibleTab Value="True"/>
+        <WindowIndex Value="1"/>
+        <TopLine Value="1457"/>
+        <CursorPos X="19" Y="1478"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <IsVisibleTab Value="True"/>
-          <WindowIndex Value="1"/>
-          <TopLine Value="1457"/>
-          <CursorPos X="19" Y="1478"/>
+          <EditorIndex Value="1"/>
+          <TopLine Value="1488"/>
+          <CursorPos X="27" Y="1499"/>
         </ExtraEditor1>
         <UsageCount Value="123"/>
         <Loaded Value="True"/>
