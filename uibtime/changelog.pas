@@ -1,4 +1,10 @@
 (*
+uibtime (4.1.1.57-1) stable; urgency=low
+
+ * uibdata: eventhandler onendsession
+
+-- detlef oertel <d.oertel@uib.de>  Thu, 07 Nov 2019 15:00:00 +0000
+
 uibtime (4.1.1.56-1) stable; urgency=low
 
  * workdescription: more space (wider) in left grid for row event

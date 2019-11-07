@@ -198,6 +198,7 @@ type
     function dateIsHolyday(mydate: TdateTime): boolean;
     procedure CustomExceptionHandler(Sender: TObject; E: Exception);
     procedure DumpExceptionCallStack(E: Exception);
+    procedure OnEndSession(Sender: TObject);
   private
     { private declarations }
   public
@@ -2105,6 +2106,7 @@ begin
   closeFile(logfeil);
   *)
   Application.OnException := CustomExceptionHandler;
+  Application.OnEndSession:= OnEndsession;
 end;
 
 procedure TDataModule1.TerminateApplication;
@@ -2310,6 +2312,12 @@ begin
     if not IBConnection1.Connected then
       TerminateApplication;
   end;
+end;
+
+procedure TDataModule1.OnEndSession(Sender: TObject);
+begin
+  If Assigned(logdatei) then
+  LogDatei.log('Terminating: onendsession',LLessential);
 end;
 
 
