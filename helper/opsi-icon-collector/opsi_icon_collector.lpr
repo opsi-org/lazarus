@@ -6,7 +6,7 @@ uses
   {$IFDEF UNIX}//{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}//{$ENDIF}
-  Classes, SysUtils, CustApp, IconCollector, Interfaces, LazFileUtils
+  Classes, SysUtils, CustApp, IconCollector, LazFileUtils //, Interfaces
   { you can add units after this };
 
 type
@@ -97,9 +97,7 @@ begin
   Writeln('Search for opsi-script files:');
   Writeln('Startet at ' + TimeToStr(Time) + ' ... ');
   IconCollector.FindOpsiScriptFiles(@ShowStatus);
-
-
-  //Writeln(#13'Done                                     ');
+   //Writeln(#13'Done                                     ');
   Writeln('Finished at ' + TimeToStr(Time));
   WriteLn('');
   WriteLn('Paths to opsi-script files:');
@@ -138,10 +136,10 @@ begin
   WriteLn('Searchs for product icons within the installed products on the given depot.');
   WriteLn('');
   WriteLn('Usage: opsi-icon-collector [DEPOT]');
-  WriteLn('DEPOT is the path to the depot e.g. var/lib/opsi_depot');
+  WriteLn('DEPOT is the path to the depot e.g. /var/lib/opsi_depot');
   WriteLn('');
-  WriteLn('Press enter ...');
-  ReadLn;
+  //WriteLn('Press enter ...');
+  //ReadLn;
 end;
 
 var
