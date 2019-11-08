@@ -666,7 +666,7 @@ var
   scriptstopped : boolean;
   inDefFuncLevel : integer = 0;
   inDefFuncIndex : integer = -1; // index of the active defined function
-  Ifelseendiflevel : longint = 0; // global nestlevel store (do 18.1.2018)
+  IfElseEndifLevel : longint = 0; // global nestlevel store (do 18.1.2018)
   inDefFunc3 : integer = 0;  // we are between deffunc and endfunc line (even in a not active code)
 
 
@@ -10699,7 +10699,7 @@ begin
 end;
 
 function TuibInstScript.produceStringList
-   (const section: TuibIniScript;
+  (const section: TuibIniScript;
    const s0 : String;
    var Remaining: String;
    var list : TXStringList;
@@ -10707,11 +10707,11 @@ function TuibInstScript.produceStringList
 //var
 // NestLevel : integer;
 begin
-  result := produceStringList(section,s0,Remaining,list,InfoSyntaxError,Ifelseendiflevel,inDefFuncIndex);
+  result := produceStringList(section,s0,Remaining,list,InfoSyntaxError,IfElseEndifLevel,inDefFuncIndex);
 end;
 
 function TuibInstScript.produceStringList
-   (const section: TuibIniScript;
+  (const section: TuibIniScript;
    const s0 : String;
    var Remaining: String;
    var list : TXStringList;
@@ -11973,15 +11973,26 @@ begin
    End
 
    else
-     if LowerCase (s) = LowerCase ('listFiles') then
+     if LowerCase (s) = LowerCase('listFiles') then
      begin
-       if Skip ('(', r, r, InfoSyntaxError) then
-         if EvaluateString (r,r, s1, InfoSyntaxError) then
-           if Skip (',', r,r, InfoSyntaxError) then
-             if EvaluateString (r,r, s2, InfoSyntaxError) then
-               if Skip (',', r,r, InfoSyntaxError) then
-                 if EvaluateString (r,r, s3, InfoSyntaxError) then
-                   if Skip (')', r,r, InfoSyntaxError) then
+       s1 := '';
+       s2 := '';
+       s3 := '';
+       s4 := '';
+       if Skip('(', r, r, InfoSyntaxError) then
+         if EvaluateString(r,r, s1, InfoSyntaxError) then
+           if Skip(',', r,r, InfoSyntaxError) then
+             if EvaluateString(r,r, s2, InfoSyntaxError) then
+               if Skip(',', r,r, InfoSyntaxError) then
+                 if EvaluateString(r,r, s3, InfoSyntaxError) then
+                 begin
+                   if Skip(',', r,r, InfoSyntaxError) then
+                     if EvaluateString(r,r, s4, InfoSyntaxError) then
+                       begin
+                         if (lowercase(s4) = '64bit') or (lowercase(s4) = 'sysnative') then
+                           DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
+                       end;
+                   if Skip(')', r,r, InfoSyntaxError) then
                    begin
                      syntaxCheck := true;
                      //list.clear;
@@ -11992,6 +12003,8 @@ begin
                          //if list = '' then list.Add('Datei nicht gefunden');
                          //list.Text := list1.Text;
                        finally
+                         if (lowercase(s4) = '64bit') or (lowercase(s4) = 'sysnative') then
+                           DSiRevertWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
                          //list1.free;
                          //list1 := nil;
                        end;
@@ -12006,6 +12019,7 @@ begin
                        end;
                      end;
                    end;
+                 end;
        end
 
 
