@@ -10843,7 +10843,7 @@ begin
      end;
    end
 
-    else if LowerCase (s) = LowerCase ('shellcall')
+   else if LowerCase (s) = LowerCase ('shellcall')
    then
    begin
     if Skip ('(', r, r, InfoSyntaxError)
@@ -11971,6 +11971,43 @@ begin
       list1 := nil;
     End
    End
+
+   else
+     if LowerCase (s) = LowerCase ('listFiles') then
+     begin
+       if Skip ('(', r, r, InfoSyntaxError) then
+         if EvaluateString (r,r, s1, InfoSyntaxError) then
+           if Skip (',', r,r, InfoSyntaxError) then
+             if EvaluateString (r,r, s2, InfoSyntaxError) then
+               if Skip (',', r,r, InfoSyntaxError) then
+                 if EvaluateString (r,r, s3, InfoSyntaxError) then
+                   if Skip (')', r,r, InfoSyntaxError) then
+                   begin
+                     syntaxCheck := true;
+                     //list.clear;
+                     try
+                       try
+                         //list1 := TXStringList.create;
+                         list := TXStringList(FindAllFiles(s1,s2,StrToBool(s3)));
+                         //if list = '' then list.Add('Datei nicht gefunden');
+                         //list.Text := list1.Text;
+                       finally
+                         //list1.free;
+                         //list1 := nil;
+                       end;
+                     except
+                       on e: exception do
+                       begin
+                         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                         LogDatei.log('Exception: Error on findFiles: ' + e.message, LLerror);
+                         list.Text:= '';
+                         FNumberOfErrors := FNumberOfErrors + 1;
+                         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                       end;
+                     end;
+                   end;
+       end
+
 
    else if LowerCase (s) = LowerCase ('setStringInListAtIndex')
    then
@@ -13891,7 +13928,17 @@ begin
      else
      begin
        {$IFDEF LINUX}
-       StringResult :=  getCommandResult('resolveip -s '+s1);
+       //StringResult :=  getCommandResult('resolveip -s '+s1);
+       StringResult :=  getCommandResult('getent hosts '+s1);
+       stringsplitByWhiteSpace (StringResult, slist);
+       if slist.Count > 0 then StringResult := slist.Strings[0]
+       else StringResult := '';
+       if not IsIP(StringResult) then
+       begin
+         LogDatei.log('Warning: no valid IP found for: '+s1,LLwarning);
+         StringResult := '';
+       end;
+
        {$ENDIF LINUX}
        {$IFDEF DARWIN}
        StringResult :=  getCommandResult('dig +short -x  '+s1);
@@ -18389,6 +18436,14 @@ end
     Syntaxcheck := true;
     errorOccured := false;
     booleanresult := isWinPE;
+ end
+
+  else if Skip ('runningWithGui', Input, r, InfoSyntaxError)
+ then
+ begin
+    Syntaxcheck := true;
+    errorOccured := false;
+    booleanresult := isGUI;
  end
 
 
@@ -23064,6 +23119,10 @@ begin
   else tmpstr :=  tmpstr+' 32 Bit';
   LogDatei.log (tmpstr, LLessential);
   {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  tmpstr :=  'macOS: '+ GetMacosVersionInfo;
+  LogDatei.log (tmpstr, LLessential);
+  {$ENDIF DARWIN}
 
   if opsidata <> nil then
   begin

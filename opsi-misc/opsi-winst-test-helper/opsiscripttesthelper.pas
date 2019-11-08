@@ -5,16 +5,15 @@ program opsiscripttesthelper;
 
 {$APPTYPE CONSOLE}
 
-{$Define GUI}
+{$DEFINE GUI}
 
 uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  {$IFDEF GUI}
+  opsiscripttesthelper_main,
   Forms,
-  {$ENDIF}
   helperwin;
 
 //{$IFDEF WINDOWS}{$R opsiwinsttesthelper.rc}{$ENDIF}
@@ -22,11 +21,13 @@ uses
 {$R *.res}
 
 begin
-  Application.Title:='opsiscripttesthelper';
-  Application.Initialize;
+  forms.Application.Title:='opsiscripttesthelper';
+  forms.Application.Initialize;
+  opsiscripttesthelper_main.Application := forms.Application;
+  forms.Application.CreateForm(TForm1, Form1);
+  //Application.CreateForm(TDataModule1, DataModule1);
   main;
-  Application.CreateForm(TForm1, Form1);
-  Application.Run;
+  forms.Application.Run;
   //application.Terminate;
 end.
 

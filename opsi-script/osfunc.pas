@@ -493,6 +493,7 @@ function Is64BitSystem: boolean;
 function runningAsAdmin: boolean;
 function isUefi: boolean;
 function isWinPE: boolean;
+function isGUI: boolean;
 
 
 function CheckFileExists(const FName: string; var ErrorInfo: string): boolean;
@@ -863,6 +864,17 @@ begin
   {$ENDIF LINUX}
 end;
 
+function isGUI: boolean;
+begin
+  Result := True;
+  {$IFDEF LINUX}
+  {$IFDEF GUI}
+  Result := True;
+  {$ELSE GUI}
+  Result := False;
+  {$ENDIF GUI}
+  {$ENDIF LINUX}
+end;
 
 function strContains(const str: string; const substr: string): boolean;
 begin

@@ -5,6 +5,17 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.3.0) experimental; urgency=low
+
+  * update oswebservice with gzip support (Jan Werner)
+  * osbatchgui: log on setWindowstate
+  * oswebservice: move logging to log_prog
+  * osparser info to macos version at log start
+  * osparser: Linux: GetIpByName: now uses 'getent hosts'
+  * new boolean function: runningWithGui (osparser,osfunc) (at win+Mac always true)
+  * macos: osbatchgui: temporary disable setWindowState
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 23 Oct 2019:15:00:00 +0200
 
 
 opsi-winst/opsi-script (4.12.2.3) experimental; urgency=low

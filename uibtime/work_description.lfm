@@ -1,11 +1,11 @@
 object fwork_description: Tfwork_description
-  Left = 635
+  Left = 557
   Height = 420
   Top = 356
-  Width = 1103
+  Width = 1181
   Caption = 'fwork_description'
   ClientHeight = 420
-  ClientWidth = 1103
+  ClientWidth = 1181
   Color = clBtnFace
   Font.Color = clWindowText
   Font.Height = -11
@@ -16,9 +16,9 @@ object fwork_description: Tfwork_description
   OnShow = FormShow
   PopupMode = pmExplicit
   Position = poScreenCenter
-  LCLVersion = '2.0.0.4'
+  LCLVersion = '2.0.4.0'
   object Splitter1: TSplitter
-    Left = 369
+    Left = 463
     Height = 347
     Top = 73
     Width = 5
@@ -27,10 +27,10 @@ object fwork_description: Tfwork_description
     Left = 0
     Height = 73
     Top = 0
-    Width = 1103
+    Width = 1181
     Align = alTop
     ClientHeight = 73
-    ClientWidth = 1103
+    ClientWidth = 1181
     TabOrder = 0
     object Label1: TLabel
       Left = 96
@@ -144,7 +144,7 @@ object fwork_description: Tfwork_description
     Left = 0
     Height = 347
     Top = 73
-    Width = 369
+    Width = 463
     Align = alLeft
     Color = clWindow
     Columns = <    
@@ -165,20 +165,20 @@ object fwork_description: Tfwork_description
     TitleFont.Name = 'MS Sans Serif'
   end
   object Panel2: TPanel
-    Left = 374
+    Left = 468
     Height = 347
     Top = 73
-    Width = 729
+    Width = 713
     Align = alClient
     Caption = 'Panel2'
     ClientHeight = 347
-    ClientWidth = 729
+    ClientWidth = 713
     TabOrder = 2
     object DBGrid1: TDBGrid
       Left = 1
       Height = 345
       Top = 1
-      Width = 727
+      Width = 711
       Align = alClient
       Color = clWindow
       Columns = <      

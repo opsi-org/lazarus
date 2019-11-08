@@ -88,21 +88,21 @@ type
     FAppendmode: boolean;
     FActionProgress: string;
     FAktProduktId: string;
-    FConfidentialStrings : TStringlist;
+    FConfidentialStrings: TStringList;
     FLogProduktId: boolean;
     FStandardPartLogFilename: string;
     FStandardLogFilename: string;
     FStandardLogFileext: string;
-    FWritePartLog : boolean;
-    FWriteHistFile : boolean;
-    FWriteErrFile : boolean;
-    Fdebug_prog : boolean;
-    Fdebug_lib : boolean;
-    Fforce_min_loglevel : integer;
-    Fdefault_loglevel : integer;
-    FStandardLogPath : string;
-    FStandardMainLogPath : string;
-    FStandardPartLogPath : string;
+    FWritePartLog: boolean;
+    FWriteHistFile: boolean;
+    FWriteErrFile: boolean;
+    Fdebug_prog: boolean;
+    Fdebug_lib: boolean;
+    Fforce_min_loglevel: integer;
+    Fdefault_loglevel: integer;
+    FStandardLogPath: string;
+    FStandardMainLogPath: string;
+    FStandardPartLogPath: string;
     FUsedLogLevel: integer;
 
 
@@ -117,8 +117,8 @@ type
     LogPartReadFileF: THandle;
     ErrorFileF: THandle;
     RemoteErrorFileF: THandle;
-    HistroyFile : Text;
-    HistroryFileF : THandle;
+    HistroyFile: Text;
+    HistroryFileF: THandle;
 
 
   public
@@ -151,7 +151,7 @@ type
     function PartbiggerthanMB(maxsize: integer): boolean;
     procedure PartShrinkToMB(newsize: integer);
     procedure AddToConfidentials(newsecret: string);
-    function isConfidential(teststring : string) : boolean;
+    function isConfidential(teststring: string): boolean;
     procedure log2history(line: string);
     procedure CreateTheLogfile(LogDateiname: string); overload;
     procedure CreateTheLogfile(LogDateiname: string; check4append: boolean); overload;
@@ -175,7 +175,8 @@ type
     property RemoteFileLogging: string read FRemoteFileLogging;
     property LogFileExists: boolean read FLogFileExists write FLogFileExists;
     property PartLogFileExists: boolean read FPartLogFileExists write FPartLogFileExists;
-    property StandardLogFileext: string read FStandardLogFileext write FStandardLogFileext;
+    property StandardLogFileext: string read FStandardLogFileext
+      write FStandardLogFileext;
 
 
     property LogSIndentLevel: integer read FLogSIndentLevel write setLogSIndentLevel;
@@ -183,23 +184,29 @@ type
     function LogSIndentPlus(const n: integer): string;
     property WinstVersionRequired: string read FWinstVersionRequired
       write FWinstVersionRequired;
-    procedure includelogtail(fname: string; logtailLinecount: integer; sourceEncoding : string);
+    procedure includelogtail(fname: string; logtailLinecount: integer;
+      sourceEncoding: string);
     property Appendmode: boolean read FAppendmode write FAppendmode;
     property ActionProgress: string read FActionProgress write FActionProgress;
     property AktProduktId: string read FAktProduktId write FAktProduktId;
     property LogProduktId: boolean read FLogProduktId write FLogProduktId;
-    property StandardPartLogFilename: string read FStandardPartLogFilename write FStandardPartLogFilename;
-    property StandardLogFilename: string read FStandardLogFilename write FStandardLogFilename;
+    property StandardPartLogFilename: string
+      read FStandardPartLogFilename write FStandardPartLogFilename;
+    property StandardLogFilename: string read FStandardLogFilename
+      write FStandardLogFilename;
     property WritePartLog: boolean read FWritePartLog write FWritePartLog;
     property WriteHistFile: boolean read FWriteHistFile write FWriteHistFile;
     property WriteErrFile: boolean read FWriteErrFile write FWriteErrFile;
     property debug_prog: boolean read Fdebug_prog write Fdebug_prog;
     property debug_lib: boolean read Fdebug_lib write Fdebug_lib;
-    property force_min_loglevel: integer read Fforce_min_loglevel write Fforce_min_loglevel;
+    property force_min_loglevel: integer read Fforce_min_loglevel
+      write Fforce_min_loglevel;
     property default_loglevel: integer read Fdefault_loglevel write Fdefault_loglevel;
-    property StandardLogPath : string read FStandardLogPath write FStandardLogPath;
-    property StandardMainLogPath : string read FStandardMainLogPath write FStandardMainLogPath;
-    property StandardPartLogPath : string read FStandardPartLogPath write FStandardPartLogPath;
+    property StandardLogPath: string read FStandardLogPath write FStandardLogPath;
+    property StandardMainLogPath: string read FStandardMainLogPath
+      write FStandardMainLogPath;
+    property StandardPartLogPath: string read FStandardPartLogPath
+      write FStandardPartLogPath;
     property UsedLogLevel: integer read FUsedLogLevel write FUsedLogLevel;
     //function copyPartLogToFullLog: boolean;
   end;
@@ -273,10 +280,10 @@ const
 
 var
   LogDatei: TLogInfo;
-  defaultStandardLogPath : string;
-  defaultStandardMainLogPath : string;
-  defaultStandardPartLogPath : string;
-  AppDataPath: Array[0..MaxPathLen] of Char; //Allocate memory
+  defaultStandardLogPath: string;
+  defaultStandardMainLogPath: string;
+  defaultStandardPartLogPath: string;
+  AppDataPath: array[0..MaxPathLen] of char; //Allocate memory
 
 
 //const
@@ -287,7 +294,7 @@ function getComputerName: string;
 //procedure CreateTheLogfile(var LogDateiname: string); overload;
 //procedure CreateTheLogfile(var LogDateiname: string; check4append: boolean); overload;
 function GetContinueLogFile(var LogFilename: string): boolean;
-function getCallAddrStr : string;
+function getCallAddrStr: string;
 
 implementation
 
@@ -307,6 +314,7 @@ uses
   osmain,
   osdefinedfunctions,
   osfunc;
+
 {$ENDIF}
 
 
@@ -343,13 +351,13 @@ begin
   Result := Result + parseString;
 end;
 
-procedure MakeBakFile(const FName: string; maxbaks : integer);
+procedure MakeBakFile(const FName: string; maxbaks: integer);
 var
   bakcounter: integer;
-  extension : string;
-  basename : string;
-  path : string;
-  newfilename, newbakname : string;
+  extension: string;
+  basename: string;
+  path: string;
+  newfilename, newbakname: string;
 
 begin
   path := ExtractFilePath(FName);
@@ -358,27 +366,30 @@ begin
   if FileExists(FName) then
   begin
     // this is old style (name.ext.num) and is here only for clean up old logs
-    for bakcounter := maxbaks -1 downto 0 do
+    for bakcounter := maxbaks - 1 downto 0 do
     begin
-      if FileExists(FName+'.'+inttostr(bakcounter)) then
+      if FileExists(FName + '.' + IntToStr(bakcounter)) then
       begin
-        newfilename := path+PathDelim + basename +'_'+inttostr(bakcounter)+extension;
-        CopyFile(FName+'.'+inttostr(bakcounter), newfilename, true);
-        DeleteFileUTF8(FName+'.'+inttostr(bakcounter));
+        newfilename := path + PathDelim + basename + '_' +
+          IntToStr(bakcounter) + extension;
+        CopyFile(FName + '.' + IntToStr(bakcounter), newfilename, True);
+        DeleteFileUTF8(FName + '.' + IntToStr(bakcounter));
       end;
     end;
     // this is new style (name_num.ext)
-    for bakcounter := maxbaks -1 downto 0 do
+    for bakcounter := maxbaks - 1 downto 0 do
     begin
-      newfilename := path+PathDelim + basename +'_'+inttostr(bakcounter)+extension;
+      newfilename := path + PathDelim + basename + '_' +
+        IntToStr(bakcounter) + extension;
       if FileExists(newfilename) then
       begin
-        newbakname := path+PathDelim + basename +'_'+inttostr(bakcounter+1)+extension;
-        CopyFile(newfilename, newbakname, true);
+        newbakname := path + PathDelim + basename + '_' +
+          IntToStr(bakcounter + 1) + extension;
+        CopyFile(newfilename, newbakname, True);
       end;
     end;
-    newfilename := path+PathDelim + basename +'_'+inttostr(0)+extension;
-    CopyFile(FName, newfilename, true);
+    newfilename := path + PathDelim + basename + '_' + IntToStr(0) + extension;
+    CopyFile(FName, newfilename, True);
     DeleteFileUTF8(FName);
   end;
 end;
@@ -436,11 +447,9 @@ end;
 
 function GetContinueLogFile(var LogFilename: string): boolean;
 
-
-//  Reads the continue flag from the registry.
-//  Only if this flag will be 1 and a file with the filename stored in the Registry
-//  will exist, LogFilename will take this value
-
+  //  Reads the continue flag from the registry.
+  //  Only if this flag will be 1 and a file with the filename stored in the Registry
+  //  will exist, LogFilename will take this value
 
 var
   ContinueFilename: string;
@@ -474,12 +483,13 @@ var
       Free;
     end;
   end;
+
   {$ENDIF}
 
 begin
   try
     {$if defined(WINDOWS) and defined(OPSIWINST)}
-    readValues(WinstRegHive)
+    readValues(WinstRegHive);
     {$ELSE}
     Result := False;
     {$ENDIF}
@@ -504,7 +514,7 @@ end;
 procedure TLogInfo.CreateTheLogfile(LogDateiname: string; check4append: boolean);
 var
   i: integer;
-  filelist : TStringlist;
+  filelist: TStringList;
   {$IFDEF OPSIWINST}
   files: TuibFileInstall;
   {$ENDIF}
@@ -513,7 +523,8 @@ begin
   // remove old partlog files
   files := TuibFileInstall.Create;
   try
-    files.alldelete(FStandardPartLogPath +Pathdelim+ FStandardPartLogFilename + '*', False, True, 7);
+    files.alldelete(FStandardPartLogPath + Pathdelim + FStandardPartLogFilename +
+      '*', False, True, 7);
   except
   end;
   files.Free;
@@ -521,17 +532,18 @@ begin
   {$IFNDEF OPSIWINST}
   // remove old partlog files
   try
-    filelist := FindAllFiles(FStandardPartLogPath, FStandardPartLogFilename+'*', false);
-    for i:=0 to filelist.Count-1 do
+    filelist := FindAllFiles(FStandardPartLogPath, FStandardPartLogFilename +
+      '*', False);
+    for i := 0 to filelist.Count - 1 do
     begin
       // only delete files older than a week
-      if FileAge(filelist.Strings[i]) < DateTimeToFileDate(now -7) then
+      if FileAge(filelist.Strings[i]) < DateTimeToFileDate(now - 7) then
         DeleteFile(filelist.Strings[i]);
     end;
   except
   end;
   filelist.Free;
-  LogDateiName :=  FStandardMainLogPath+PathDelim+LogDateiName;
+  LogDateiName := FStandardMainLogPath + PathDelim + LogDateiName;
   {$ENDIF}
 
   if not check4append then
@@ -541,7 +553,7 @@ begin
     // just create the log
     // create new Log File
     LogDatei.Appendmode := False;
-    MakeBakFile(LogDateiName,8);
+    MakeBakFile(LogDateiName, 8);
     LogDatei.initiate(LogDateiName, False);
     LogDatei.Empty;
   end
@@ -560,7 +572,7 @@ begin
     begin
       // create new Log File
       LogDatei.Appendmode := False;
-      MakeBakFile(LogDateiName,8);
+      MakeBakFile(LogDateiName, 8);
       LogDatei.initiate(LogDateiName, False);
       LogDatei.Empty;
     end;
@@ -582,10 +594,10 @@ begin
   inherited Create;
   LogFileExists := False;
   FAppendmode := False;
-  FConfidentialStrings := TStringlist.Create;
+  FConfidentialStrings := TStringList.Create;
   FLogProduktId := False;
   FStandardLogFileext := '.log';
-  FWritePartLog := true;
+  FWritePartLog := True;
   {$IFDEF OPSIWINST}
   FStandardPartLogFilename := 'opsi-script-part-';
   FStandardLogFilename := 'opsi-script';
@@ -607,9 +619,9 @@ begin
   FStandardPartLogFilename := 'opsiclientd_shutdown_starter-part-';
   FStandardLogFilename := 'opsiclientd_shutdown_starter';
   {$ENDIF OPSICLIENTD_SHUTDOWN_STARTER}
-  FStandardLogPath:=defaultStandardLogPath;
-  FStandardMainLogPath:=defaultStandardMainLogPath;
-  FStandardPartLogPath:=defaultStandardPartLogPath;
+  FStandardLogPath := defaultStandardLogPath;
+  FStandardMainLogPath := defaultStandardMainLogPath;
+  FStandardPartLogPath := defaultStandardPartLogPath;
 end;
 
 
@@ -653,6 +665,7 @@ var
   Ext: string;
   YetATrialCounter: integer = 0;
   maxTrials: integer = 0;
+  myrandomstr: string;
 
 begin
   NumberOfErrors := 0;
@@ -782,88 +795,91 @@ begin
         end;
     end;
 
-      if FWriteErrFile then
-      begin
-        ps := '';
-        // error file
-        if fileExists(FErrorsFileName) then
-          try
-            //append(ErrorFile);
-            ErrorFileF := FileOpen(FErrorsFileName, fmOpenReadWrite or fmShareDenyNone);
-            FileSeek(ErrorFileF, 0, fsFromEnd);
+    if FWriteErrFile then
+    begin
+      ps := '';
+      // error file
+      if fileExists(FErrorsFileName) then
+        try
+          //append(ErrorFile);
+          ErrorFileF := FileOpen(FErrorsFileName, fmOpenReadWrite or fmShareDenyNone);
+          FileSeek(ErrorFileF, 0, fsFromEnd);
+          FErrorsFileExists := False;
+        except
+          on E: Exception do
+          begin
+            ps := 'Existing file "' + FErrorsFilename +
+              '" could not be opened as error-logfile. Exception "' +
+              E.Message + '"';
             FErrorsFileExists := False;
+          end
+        end
+      else
+      begin
+        if FErrorsFileName = '' then
+        begin
+          ps := 'An empty string does not work as logfilename.';
+          FErrorsFileExists := False;
+        end
+        else
+          try
+            ErrorFileF := FileCreate(FErrorsFileName);
+            FileClose(ErrorFileF);
+            ErrorFileF := FileOpen(FErrorsFileName, fmOpenReadWrite or
+              fmShareDenyNone);
           except
             on E: Exception do
             begin
-              ps := 'Existing file "' + FErrorsFilename +
-                '" could not be opened as error-logfile. Exception "' +
-                E.Message + '"';
+              ps := '"' + Filename +
+                '" could not be created as logfile. Exception "' + E.Message + '"';
               FErrorsFileExists := False;
-            end
-          end
-        else
-        begin
-          if FErrorsFileName = '' then
-          begin
-            ps := 'An empty string does not work as logfilename.';
-            FErrorsFileExists := False;
-          end
-          else
-            try
-              ErrorFileF := FileCreate(FErrorsFileName);
-              FileClose(ErrorFileF);
-              ErrorFileF := FileOpen(FErrorsFileName, fmOpenReadWrite or fmShareDenyNone);
-            except
-              on E: Exception do
-              begin
-                ps := '"' + Filename +
-                  '" could not be created as logfile. Exception "' + E.Message + '"';
-                FErrorsFileExists := False;
-              end;
             end;
-        end;
+          end;
       end;
+    end;
 
-     // History file
-      if FWriteHistFile then
-      begin
-        if fileExists(FHistoryFilename) then
-          try
-            //append(ErrorFile);
-            HistroryFileF := FileOpen(FHistoryFilename, fmOpenReadWrite or fmShareDenyNone);
-            FileSeek(HistroryFileF, 0, fsFromEnd);
+    // History file
+    if FWriteHistFile then
+    begin
+      if fileExists(FHistoryFilename) then
+        try
+          //append(ErrorFile);
+          HistroryFileF := FileOpen(FHistoryFilename, fmOpenReadWrite or
+            fmShareDenyNone);
+          FileSeek(HistroryFileF, 0, fsFromEnd);
+          FHistoryFileExists := False;
+        except
+          on E: Exception do
+          begin
+            ps := 'Existing file "' + FHistoryFilename +
+              '" could not be opened as error-logfile. Exception "' +
+              E.Message + '"';
             FHistoryFileExists := False;
+          end
+        end
+      else
+      begin
+        if FHistoryFilename = '' then
+        begin
+          ps := 'An empty string does not work as logfilename.';
+          FHistoryFileExists := False;
+        end
+        else
+          try
+            HistroryFileF := FileCreate(FHistoryFilename);
+            FileClose(HistroryFileF);
+            HistroryFileF :=
+              FileOpen(FHistoryFilename, fmOpenReadWrite or fmShareDenyNone);
           except
             on E: Exception do
             begin
-              ps := 'Existing file "' + FHistoryFilename +
-                '" could not be opened as error-logfile. Exception "' +
-                E.Message + '"';
+              ps := '"' + Filename +
+                '" could not be created as logfile. Exception "' + E.Message + '"';
               FHistoryFileExists := False;
-            end
-          end
-        else
-        begin
-          if FHistoryFilename = '' then
-          begin
-            ps := 'An empty string does not work as logfilename.';
-            FHistoryFileExists := False;
-          end
-          else
-            try
-              HistroryFileF := FileCreate(FHistoryFilename);
-              FileClose(HistroryFileF);
-              HistroryFileF := FileOpen(FHistoryFilename, fmOpenReadWrite or fmShareDenyNone);
-            except
-              on E: Exception do
-              begin
-                ps := '"' + Filename +
-                  '" could not be created as logfile. Exception "' + E.Message + '"';
-                FHistoryFileExists := False;
-              end;
             end;
-        end;
+          end;
       end;
+    end;
 
     if LogFileExists then
       YetATrial := False
@@ -909,14 +925,15 @@ begin
     PartLogFileExists := False;
     ForceDirectories(FStandardPartLogPath);
     Randomize;
-    PartFileName := FStandardPartLogPath +PathDelim +FStandardPartLogFilename +
     {$IFDEF OPSIWINST}
-    randomstr(False)
+    myrandomstr := randomstr(False);
     {$ELSE}
     //inttostr(Random(MAXLONGINT))+ExtractFileNameWithoutExt(ExtractFileName(FFilename))
-    inttostr(Random(MAXLONGINT))
+    myrandomstr := IntToStr(Random(MAXLONGINT));
     {$ENDIF}
-    + StandardPartLogFileext;
+
+    PartFileName := FStandardPartLogPath + PathDelim + FStandardPartLogFilename +
+      myrandomstr + StandardPartLogFileext;
     //assignfile(LogPartFile, PartFileName);
     //writeln(PartFileName);
     try
@@ -928,8 +945,7 @@ begin
     except
       on E: Exception do
         ps := '"' + PartFileName +
-          '" could not be created as logfile. Exception "' +
-          E.Message + '"';
+          '" could not be created as logfile. Exception "' + E.Message + '"';
     end;
 
     DependentAdd('--', LLessential);
@@ -952,7 +968,7 @@ begin
     except
     end;
 
-    if FHistoryFileExists then
+  if FHistoryFileExists then
     try
       if isOpen(HistroryFileF) then
         FileClose(HistroryFileF);
@@ -1000,13 +1016,13 @@ procedure TLogInfo.PartReopen;
 begin
   if FWritePartLog then
   begin
-  if PartLogFileExists then
-    try
-      LogPartFileF := FileOpen(PartFileName, fmOpenReadWrite or fmShareDenyNone);
-      FileSeek(LogPartFileF, 0, fsFromEnd);
-    except
-      PartLogFileExists := False;
-    end;
+    if PartLogFileExists then
+      try
+        LogPartFileF := FileOpen(PartFileName, fmOpenReadWrite or fmShareDenyNone);
+        FileSeek(LogPartFileF, 0, fsFromEnd);
+      except
+        PartLogFileExists := False;
+      end;
   end;
 end;
 
@@ -1045,10 +1061,11 @@ begin
         reset(LogPartReadFile);
       except
         on E: Exception do
-            begin
-              DependentAdd('wilog: PartOpenForReading: "' + E.Message + '" --> giving up',
-                LLError);
-            end;
+        begin
+          DependentAdd('wilog: PartOpenForReading: "' + E.Message +
+            '" --> giving up',
+            LLError);
+        end;
       end;
     end;
   end;
@@ -1062,7 +1079,7 @@ begin
     closeFile(LogPartReadFile);
   except
   end;
-  sysutils.DeleteFile(FPartReadFileName);
+  SysUtils.DeleteFile(FPartReadFileName);
 end;
 
 procedure TLogInfo.DeletePartLog;
@@ -1070,8 +1087,8 @@ var
 {$IFDEF OPSIWINST}
   files: TuibFileInstall;
 {$ENDIF}
-i : integer;
-filelist : TStringlist;
+  i: integer;
+  filelist: TStringList;
 begin
   {$IFDEF OPSIWINST}
   files := TuibFileInstall.Create;
@@ -1085,7 +1102,8 @@ begin
     end;
   end;
   try
-    files.alldelete(FStandardPartLogPath +Pathdelim+ FStandardPartLogFilename + '*', False, True, 7);
+    files.alldelete(FStandardPartLogPath + Pathdelim + FStandardPartLogFilename +
+      '*', False, True, 7);
   except
     //LogDatei.DependentAdd('not all files "' + TempPath + TempBatchdatei + '*"  could be deleted', LLInfo);
   end;
@@ -1095,8 +1113,9 @@ begin
   {$IFNDEF OPSIWINST}
   // remove old partlog files
   try
-    filelist := FindAllFiles(FStandardPartLogPath, FStandardPartLogFilename+'*', false);
-    for i:=0 to filelist.Count-1 do
+    filelist := FindAllFiles(FStandardPartLogPath, FStandardPartLogFilename +
+      '*', False);
+    for i := 0 to filelist.Count - 1 do
     begin
       DeleteFile(filelist.Strings[i]);
     end;
@@ -1164,12 +1183,12 @@ end;
 
 function TLogInfo.DependentAddError(const S: string; LevelOfLine: integer): boolean;
 begin
-    result := DependentAdd(s, LLerror);
+  Result := DependentAdd(s, LLerror);
 end;
 
 function TLogInfo.DependentAddWarning(const S: string; LevelOfLine: integer): boolean;
 begin
-    result := DependentAdd(s, LLwarning);
+  Result := DependentAdd(s, LLwarning);
 end;
 
 function TLogInfo.getLine(var S: string): boolean;
@@ -1185,7 +1204,7 @@ begin
     charbuf := StrAlloc(250);
     pstr := StrAlloc(260);
     Count := FileRead(LogMainFileF, charbuf, 250);
-    if count > 0 then
+    if Count > 0 then
     begin
       Result := True;
       strlcopy(pstr, charbuf, Count);
@@ -1214,15 +1233,15 @@ end;
 
 function TLogInfo.log_prog(const S: string; LevelOfLine: integer): boolean;
 begin
-  result := false;
+  Result := False;
   if (LevelOfLine <= LLwarning) or Fdebug_prog then
-    result := log('Prog: '+S, LevelOfLine);
+    Result := log('Prog: ' + S, LevelOfLine);
 end;
 
 
 function TLogInfo.log(const S: string; LevelOfLine: integer): boolean;
 begin
-  result := DependentAdd(S, LevelOfLine);
+  Result := DependentAdd(S, LevelOfLine);
 end;
 
 function TLogInfo.DependentAdd(const S: string; LevelOfLine: integer): boolean;
@@ -1232,32 +1251,39 @@ var
   peaklen: integer = 0;
   //usedloglevel: integer = 0;
   i: integer;
-  dummybool : boolean;
+  dummybool: boolean;
   {$IFDEF GUI}
   dlgresult: TModalresult;
   {$ENDIF}
 begin
   try
     try
-      if LevelOfLine < LLnothing then LevelOfLine := LLnothing;
-      if LevelOfLine > LLdebug3 then LevelOfLine := LLdebug3;
+      if LevelOfLine < LLnothing then
+        LevelOfLine := LLnothing;
+      if LevelOfLine > LLdebug3 then
+        LevelOfLine := LLdebug3;
 
-      if LevelOfLine  = LLWarning  then NumberOfWarnings := NumberOfWarnings + 1;
-      if LevelOfLine = LLError     then NumberOfErrors := NumberOfErrors + 1;
-      if LevelOfLine  = LLCritical then NumberOfErrors := NumberOfErrors + 1;
+      if LevelOfLine = LLWarning then
+        NumberOfWarnings := NumberOfWarnings + 1;
+      if LevelOfLine = LLError then
+        NumberOfErrors := NumberOfErrors + 1;
+      if LevelOfLine = LLCritical then
+        NumberOfErrors := NumberOfErrors + 1;
 
       FUsedLogLevel := loglevel;
-      If FUsedLogLevel < Fforce_min_loglevel then FUsedLogLevel := Fforce_min_loglevel;
+      if FUsedLogLevel < Fforce_min_loglevel then
+        FUsedLogLevel := Fforce_min_loglevel;
 
       {$IFDEF OPSIWINST}
-       // running defined function ?
-       if inDefFuncIndex > -1 then
-         if definedFunctionArray[inDefFuncIndex].OriginFile <> ExtractFileName(script.Filename) then
-            // defined function imported from lib
-            // do we want to debug libraries ?
-            if (not debug_lib) then
-                // only Warnings and less
-                FUsedLogLevel :=  LLWarning;
+      // running defined function ?
+      if inDefFuncIndex > -1 then
+        if definedFunctionArray[inDefFuncIndex].OriginFile <>
+          ExtractFileName(script.Filename) then
+          // defined function imported from lib
+          // do we want to debug libraries ?
+          if (not debug_lib) then
+            // only Warnings and less
+            FUsedLogLevel := LLWarning;
 
        (*
        if Assigned(script) then
@@ -1275,20 +1301,22 @@ begin
        {$ENDIF}
 
 
-      st :=  s;
-       st := TrimRight(st);
+      st := s;
+      st := TrimRight(st);
 
       // now some things we do not want to log:
       // thing we do not log below loglevel 9
-      if FUsedLogLevel <  LLconfidential then
+      if FUsedLogLevel < LLconfidential then
       begin
        {$IFDEF OPSIWINST}
-       // hide opsi service password
-       st := SysUtils.StringReplace(st, opsiservicePassword, passwordFiller, [rfReplaceAll]);
+        // hide opsi service password
+        st := SysUtils.StringReplace(st, opsiservicePassword,
+          passwordFiller, [rfReplaceAll]);
        {$ENDIF}
-       // hide all confidential strings
-       for i := 0 to FConfidentialStrings.Count-1 do
-          st := SysUtils.StringReplace(st, FConfidentialStrings[i], passwordFiller, [rfReplaceAll]);
+        // hide all confidential strings
+        for i := 0 to FConfidentialStrings.Count - 1 do
+          st := SysUtils.StringReplace(st, FConfidentialStrings[i],
+            passwordFiller, [rfReplaceAll]);
       end;
       // replace ' -->' by ' ==>' because the opsi web service get in trouble because it is interpreted as xml comment
       st := SysUtils.StringReplace(st, ' -->', ' ==>', [rfReplaceAll]);
@@ -1300,7 +1328,8 @@ begin
     except
       on E: Exception do
       begin
-        DependentAdd('oslog: DependentAdd: process message and Loglevel:"' + E.Message + '"',
+        DependentAdd('oslog: DependentAdd: process message and Loglevel:"' +
+          E.Message + '"',
           LLError);
       end
     end;
@@ -1326,8 +1355,8 @@ begin
         then
         begin
           // commented out while 4.11.2 debugging (do)
-         if (FUsedLogLevel >= LevelOfLine) then
-           FBatchOberflaeche.setActivityLabel(copy(peakindicator, 1, peaklen));
+          if (FUsedLogLevel >= LevelOfLine) then
+            FBatchOberflaeche.setActivityLabel(copy(peakindicator, 1, peaklen));
         end;
         {$ENDIF}
       end;
@@ -1341,20 +1370,30 @@ begin
 
 
 
-    try
-      if (FUsedLogLevel >= LevelOfLine) and LogFileExists then
-      begin
+
+    if (FUsedLogLevel >= LevelOfLine) and LogFileExists then
+    begin
+      try
         if FLogProduktId then
         begin
           PasS := '[' + IntToStr(LevelOfLine) + '] [' +
-            FormatDateTime('mmm dd hh:nn:ss:zzz', Now) + '] [' + FAktProduktId + '] ' + LogSIndent + st;
+            FormatDateTime('mmm dd hh:nn:ss:zzz', Now) + '] [' +
+            FAktProduktId + '] ' + LogSIndent + st;
         end
         else
         begin
           PasS := '[' + IntToStr(LevelOfLine) + '] [' +
             FormatDateTime('mmm dd hh:nn:ss:zzz', Now) + '] ' + LogSIndent + st;
         end;
-
+      except
+        on E: Exception do
+        begin
+          DependentAdd('oslog: DependentAdd: Format : got exception: "' +
+            E.Message + '" while preparing log message: ' + PasS,
+            LLError);
+        end
+      end;
+      try
         {$IFDEF OPSIWINST}
         (*
         // reencode log line to system encoding
@@ -1398,51 +1437,53 @@ begin
         end;
 
         if FWritePartLog then
-        if PartLogFileExists then
-        begin
-          try
-            WriteLogLine(LogPartFileF, PasS);
-            //WriteLn(LogPartFile, PasS);
-            //flush(LogPartFile);
-          except
+          if PartLogFileExists then
+          begin
             try
-              LogDatei.PartReopen;
               WriteLogLine(LogPartFileF, PasS);
               //WriteLn(LogPartFile, PasS);
               //flush(LogPartFile);
             except
+              try
+                LogDatei.PartReopen;
+                WriteLogLine(LogPartFileF, PasS);
+                //WriteLn(LogPartFile, PasS);
+                //flush(LogPartFile);
+              except
               {$IFDEF GUI}
-              if MyMessageDlg.WiMessage('Logfile ' + FPartFileName +
-                ' not available.  Continue without logging? ', [mrYes, mrNo]) = mrNo then
-                halt
-              else
-                PartLogFileExists := False;
+                if MyMessageDlg.WiMessage('Logfile ' + FPartFileName +
+                  ' not available.  Continue without logging? ',
+                  [mrYes, mrNo]) = mrNo then
+                  halt
+                else
+                  PartLogFileExists := False;
               {$ENDIF}
+              end;
             end;
           end;
-        end;
 
 
         if FWriteErrFile then
-        if FErrorsFileExists and (LevelOfLine <= LLwarning) then
-          try
-            WriteLogLine(ErrorFileF, PasS);
-          except
-            FErrorsFileExists := False
-          end;
+          if FErrorsFileExists and (LevelOfLine <= LLwarning) then
+            try
+              WriteLogLine(ErrorFileF, PasS);
+            except
+              FErrorsFileExists := False
+            end;
 
         Result := True;
+      except
+        on E: Exception do
+        begin
+          DependentAdd('oslog: DependentAdd: write: got exception: "' +
+            E.Message + '" while writeing log message: ' + PasS,
+            LLError);
+        end
+      end;
+    end
+    else
+      Result := False;
 
-      end
-      else
-        Result := False;
-    except
-      on E: Exception do
-      begin
-        DependentAdd('oslog: DependentAdd: Format and write"' + E.Message + '"',
-          LLError);
-      end
-    end;
 
     {$IFDEF GUI}
     if (TraceMode) and (LogLevel >= LevelOfLine)
@@ -1466,7 +1507,7 @@ end;
 
 function TLogInfo.log_list(const list: TStrings; LevelOfLine: integer): boolean;
 begin
-  result := DependentAddStringList(list, levelOfLine);
+  Result := DependentAddStringList(list, levelOfLine);
 end;
 
 function TLogInfo.DependentAddStringList(const list: TStrings;
@@ -1501,11 +1542,12 @@ begin
   FNumberOfErrors := Number;
 end;
 
-procedure TLogInfo.includelogtail(fname: string; logtailLinecount: integer; sourceEncoding : string);
+procedure TLogInfo.includelogtail(fname: string; logtailLinecount: integer;
+  sourceEncoding: string);
 var
-  includelogStrList : TStringList;
-    //supportedEncodings: TStringList;
-  aktline, includeLogLineStart, includelogLinecount,i: integer;
+  includelogStrList: TStringList;
+  //supportedEncodings: TStringList;
+  aktline, includeLogLineStart, includelogLinecount, i: integer;
 begin
   try
     includelogStrList := TStringList.Create;
@@ -1514,12 +1556,13 @@ begin
       Fname := ExpandFileName(Fname);
       if lowercase(sourceEncoding) = 'unicode' then
       begin
-       includelogStrList.Assign(stringListLoadUtf8FromFile(Fname));
+        includelogStrList.Assign(stringListLoadUtf8FromFile(Fname));
       end
       else
       begin
-      includelogStrList.LoadFromFile(FName);
-      includelogStrList.Text := reencode(includelogStrList.Text, sourceEncoding,sourceEncoding);
+        includelogStrList.LoadFromFile(FName);
+        includelogStrList.Text :=
+          reencode(includelogStrList.Text, sourceEncoding, sourceEncoding);
       end;
       includelogLinecount := includelogStrList.Count;
       if logtailLinecount > 0 then
@@ -1529,7 +1572,8 @@ begin
           includeLogLineStart := includelogLinecount - logtailLinecount - 1
         else
           includeLogLineStart := 0;
-        DependentAdd('Start including tail of LogFile "' + Fname + ' with encoding: '+sourceEncoding+'"', LLDebug);
+        DependentAdd('Start including tail of LogFile "' + Fname +
+          ' with encoding: ' + sourceEncoding + '"', LLDebug);
         DependentAdd('################################################################',
           LLDebug);
         for aktline := includeLogLineStart to includelogLinecount - 1 do
@@ -1544,7 +1588,8 @@ begin
         if includelogLinecount < logtailLinecount then
           logtailLinecount := includelogLinecount;
         includeLogLineStart := 0;
-        DependentAdd('Start including head of LogFile "' + Fname + ' with encoding: '+sourceEncoding+'"', LLDebug);
+        DependentAdd('Start including head of LogFile "' + Fname +
+          ' with encoding: ' + sourceEncoding + '"', LLDebug);
         DependentAdd('################################################################',
           LLDebug);
         for aktline := includeLogLineStart to logtailLinecount - 1 do
@@ -1569,11 +1614,12 @@ end;
 
 function TLogInfo.PartbiggerthanMB(maxsize: integer): boolean;
 var
-  bytesize, mbsize : int64;
+  bytesize, mbsize: int64;
 begin
   bytesize := lazfileutils.FileSizeUtf8(PartFileName);
-  mbsize :=  bytesize div (1024 * 1024);
-  Logdatei.log('Checking if partlog: '+PartFileName+' is bigger than '+inttostr(maxsize)+' MB - found: '+inttostr(mbsize)+' MB', LLInfo);
+  mbsize := bytesize div (1024 * 1024);
+  Logdatei.log('Checking if partlog: ' + PartFileName + ' is bigger than ' +
+    IntToStr(maxsize) + ' MB - found: ' + IntToStr(mbsize) + ' MB', LLInfo);
   Result := False;
   if PartLogFileExists then
   begin
@@ -1589,13 +1635,14 @@ begin
   FConfidentialStrings.Append(newsecret);
 end;
 
-function TLogInfo.isConfidential(teststring : string) : boolean;
+function TLogInfo.isConfidential(teststring: string): boolean;
 var
-  index : integer;
+  index: integer;
 begin
-  result := false;
+  Result := False;
   index := FConfidentialStrings.IndexOf(teststring);
-  if index > -1 then result := true;
+  if index > -1 then
+    Result := True;
 end;
 
 procedure TLogInfo.PartShrinkToMB(newsize: integer);
@@ -1678,7 +1725,7 @@ procedure TLogInfo.log2history(line: string);
 begin
   if FWriteHistFile then
   begin
-    line := FormatDateTime('yyyy mmm dd hh:nn', Now) + '  '+ line;
+    line := FormatDateTime('yyyy mmm dd hh:nn', Now) + '  ' + line;
     try
       WriteLogLine(HistroryFileF, line);
     except
@@ -1695,8 +1742,9 @@ function getComputerName: string;
 {$IFDEF WINDOWS}
 var
   regist: TRegistry;
+{$ENDIF}
 begin
-
+{$IFDEF WINDOWS}
   Result := '';
   try
     regist := TRegistry.Create;
@@ -1713,54 +1761,56 @@ begin
   end;
 
   if Result = '' then
-    Result := sysutils.GetEnvironmentVariable('Computername');
-end;
+    Result := SysUtils.GetEnvironmentVariable('Computername');
 {$ELSE}
-begin
-  result := 'unknown'; //########################################
-  {$IFDEF OPSIWINST}
-  {$IFDEF UNIX} result := osconf.computername; {$ENDIF LINUX}
-  {$ENDIF OPSIWINST}
-end;
+  Result := 'unknown'; //########################################
+    {$IFDEF OPSIWINST}
+    {$IFDEF UNIX}
+  Result := osconf.computername;
+{$ENDIF LINUX}
+    {$ENDIF OPSIWINST}
 {$ENDIF}
+end;
+
+
 
 function TLogInfo.log_exception(E: Exception; LevelOfLine: integer): boolean;
 var
-  I: Integer;
+  I: integer;
   Frames: PPointer;
   Report: string;
 begin
   //Report := 'Program exception! ' + LineEnding +'Stacktrace:' + LineEnding + LineEnding;
-  if E <> nil then begin
+  if E <> nil then
+  begin
     Report := 'Exception class: ' + E.ClassName + LineEnding +
-    'Message: ' + E.Message + LineEnding;
-    log(Report,LevelOfLine);
+      'Message: ' + E.Message + LineEnding;
+    log(Report, LevelOfLine);
   end;
   Report := BackTraceStrFunc(ExceptAddr);
   Frames := ExceptFrames;
   for I := 0 to ExceptFrameCount - 1 do
     Report := Report + LineEnding + BackTraceStrFunc(Frames[I]);
-  log(Report,LevelOfLine);
+  log(Report, LevelOfLine);
 end;
 
-function getCallAddrStr : string;
-// derivated from DumpCallStack
-// http://wiki.freepascal.org/Logging_exceptions
+function getCallAddrStr: string;
+  // derivated from DumpCallStack
+  // http://wiki.freepascal.org/Logging_exceptions
 var
-  CallerAddress,
-  bp: Pointer;
+  CallerAddress, bp: Pointer;
 begin
-  result := '';
+  Result := '';
   bp := get_frame;
   // This trick skip SendCallstack item
   // bp:= get_caller_frame(get_frame);
   try
-       CallerAddress := get_caller_addr(bp);
-       if (CallerAddress <> nil) then
-         result := BackTraceStrFunc(CallerAddress) + LineEnding;
-   except
-     { prevent endless dump if an exception occured }
-   end;
+    CallerAddress := get_caller_addr(bp);
+    if (CallerAddress <> nil) then
+      Result := BackTraceStrFunc(CallerAddress) + LineEnding;
+  except
+    { prevent endless dump if an exception occured }
+  end;
 end;
 
 
@@ -1792,9 +1842,9 @@ begin
   *)
   {$ENDIF OPSI_AS_USER}
   {$ELSE OPSI}
-  defaultStandardLogPath := GetTempDir(false);
-  defaultStandardMainLogPath := GetTempDir(false);
-  defaultStandardPartLogPath := GetTempDir(false);
+  defaultStandardLogPath := GetTempDir(False);
+  defaultStandardMainLogPath := GetTempDir(False);
+  defaultStandardPartLogPath := GetTempDir(False);
   {$ENDIF OPSI}
   {$ELSE WINDOWS}
   if 0 = fpGetEUid then
@@ -1811,7 +1861,7 @@ begin
     {$ELSE OPSI}
     defaultStandardLogPath := '/tmp/';
     defaultStandardMainLogPath := '/tmp/';
-    defaultStandardPartLogPath := '/tmp/'
+    defaultStandardPartLogPath := '/tmp/';
     {$ENDIF OPSI}
   end
   else
@@ -1822,6 +1872,4 @@ begin
   end;
   {$ENDIF}
 
-
 end.
-
