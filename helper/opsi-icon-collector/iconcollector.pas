@@ -223,7 +223,7 @@ end;
 
 function TIconCollector.IsVariable(Token: String): boolean;
 begin
-  if (Token[1] = '$') and  (Token[Token.Length] = '$') then Result := True
+  if (Token[1] = '$') and (Token[Token.Length] = '$') then Result := True
   else  Result := False;
   //if Result then WriteLn('Token[1]: ', Token[1], ' Token[Token.Length]: ', Token[Token.Length]); //just for testing
 end;
