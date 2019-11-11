@@ -11989,8 +11989,17 @@ begin
                    if Skip(',', r,r, InfoSyntaxError) then
                      if EvaluateString(r,r, s4, InfoSyntaxError) then
                        begin
+                         {$IFDEF WIN32}
                          if (lowercase(s4) = '64bit') or (lowercase(s4) = 'sysnative') then
+                         begin
                            DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
+                           LogDatei.Log('Disable redirection to SysWOW64',LLInfo);
+                         end
+                         else
+                         begin
+                           LogDatei.Log('Wrong value: ' + s4 + ' Valid values are "64bit" or "SysNative". Redirection to SysWOW64 is still enabled.',LLInfo);
+                         end;
+                         {$ENDIF WIN32}
                        end;
                    if Skip(')', r,r, InfoSyntaxError) then
                    begin
@@ -12003,8 +12012,13 @@ begin
                          //if list = '' then list.Add('Datei nicht gefunden');
                          //list.Text := list1.Text;
                        finally
+                         {$IFDEF WIN32}
                          if (lowercase(s4) = '64bit') or (lowercase(s4) = 'sysnative') then
+                         begin
                            DSiRevertWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
+                           LogDatei.Log('Revert redirection to SysWOW64',LLInfo);
+                         end;
+                         {$ENDIF WIN32}
                          //list1.free;
                          //list1 := nil;
                        end;
