@@ -5,9 +5,16 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.3.1) experimental; urgency=low
+
+  * update function listFiles: including switch for disabling redirections under 64bit-Windows
+
+-- Jan Werner <j.werner@uib.de>  Fri, 15 Nov 2019:13:43:00 +0200
+
 opsi-winst/opsi-script (4.12.3.0) experimental; urgency=low
 
   * update oswebservice with gzip support (Jan Werner)
+  * new StringList function listFiles (Jan Werner)
   * osbatchgui: log on setWindowstate
   * oswebservice: move logging to log_prog
   * osparser info to macos version at log start
