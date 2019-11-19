@@ -583,7 +583,11 @@ begin
     begin
       if Logdatei <> nil then
         LogDatei.log(outlines.strings[i], LLDebug2);
-      Result := outlines.strings[i];
+      if outlines.Count > 0 then
+      begin
+        {give always the first string}
+        Result := outlines.strings[0];
+      end
     end;
     if Logdatei <> nil then
       LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
