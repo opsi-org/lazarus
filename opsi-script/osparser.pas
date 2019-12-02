@@ -10165,6 +10165,9 @@ var
   remaining : string='';
   expr : string='';
   warnOnlyWindows : boolean;
+  syntaxCheck: boolean;
+  sysError: DWORD;
+  InfoSyntaxError: string = '';
 
 begin
   try
@@ -10229,7 +10232,7 @@ begin
     begin
     {$IFDEF UNIX}
       fpchmod(tempfilename, &700);
-    {$ENDIF LINUX}
+    {$ENDIF UNIX}
       LogDatei.log('Content of saved file: ' + tempfilename, LLDebug2);
       LogDatei.log('-----------------------', LLDebug2);
       for i := 0 to Sektion.Count - 1 do
@@ -10332,6 +10335,15 @@ begin
 *)
 
     {$IFDEF WIN32}
+      // make the user which will run the script the owner of it, if
+      // they have less privileges than SYSTEM
+      sysError := NO_ERROR;
+      if not SetFilePermissionForRunAs(tempfilename, runas, sysError) then
+      begin
+        LogDatei.log('Warning: could not modify tmp file permissions: '
+          + SysErrorMessage(sysError)+ ' (' + IntToStr(sysError) + ')' , LLWarning);
+      end;
+
       if force64 then
       begin
         if (not FileExists(GetWinDirectory + '\cmd64.exe')) or
@@ -10819,6 +10831,7 @@ var
   SyntaxCheck: boolean;
   onlyWindows: boolean;
   showoutput: TShowOutputFlag;
+  sysError: DWORD;
 
 begin
   try
@@ -10895,11 +10908,11 @@ begin
     begin
       {$IFDEF UNIX}
       fpchmod(tempfilename, &700);
-      {$ENDIF LINUX}
+      {$ENDIF UNIX}
       LogDatei.log('Content of saved file: ' + tempfilename, LLDebug2);
       LogDatei.log('-----------------------', LLDebug2);
       for i := 0 to Sektion.Count - 1 do
-        LogDatei.log(Sektion.Strings[i], LLDebug);
+        LogDatei.log(Sektion.Strings[i], LLDebug2);
       LogDatei.log('-----------------------', LLDebug2);
       // if parameters end with '=' we concat tempfile without space
       if copy(programparas, length(programparas), 1) = '=' then
@@ -10939,7 +10952,9 @@ begin
          else if lowercase(ParameterShowoutput) = lowercase(expr) then
            showoutput := tsofShowOutput
          else if RunAsForParameter(expr, runas) then
-           onlyWindows := true
+         begin
+           onlyWindows := true;
+         end
          else
          begin
            SyntaxCheck := false;
@@ -10949,10 +10964,8 @@ begin
          {$IFNDEF WINDOWS}
          if onlyWindows then
          begin
-           // Don't generate a syntax error to keep in line with old behavior
-           SyntaxCheck := true;
+           SyntaxCheck := false;
            errorInfo := '"' + expr + '" is only supported on Windows!';
-           LogDatei.log('Warning: ' + errorInfo, LLWarning);
          end;
          {$ENDIF WINDOWS}
       end;
@@ -10965,6 +10978,14 @@ begin
       end;
 
       {$IFDEF WIN32}
+      // allow the executing user access to the tmp file
+      sysError := NO_ERROR;
+      if not SetFilePermissionForRunAs(tempfilename, runas, sysError) then
+      begin
+        LogDatei.log('Warning: could not modify tmp file permissions: '
+          + SysErrorMessage(sysError)+ ' (' + IntToStr(sysError) + ')' , LLWarning);
+      end;
+
       Wow64FsRedirectionDisabled := False;
       if force64 then
       begin

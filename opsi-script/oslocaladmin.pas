@@ -73,6 +73,7 @@ const
   SID_REVISION = 1;
   FILENAME_ADVAPI32 = 'ADVAPI32.DLL';
   PROC_CONVERTSIDTOSTRINGSIDA = 'ConvertSidToStringSidA';
+  ADMIN_SIDSTRING = 'S-1-5-32-544';
 
 type
   Tadminmode = (useronly, full);
@@ -258,7 +259,7 @@ begin
       traAdminProfileImpersonateExplorer, traAdminProfileImpersonate] then
     begin
       // get localized name of administrators
-      wGroup := StrSIDToName('S-1-5-32-544');
+      wGroup := StrSIDToName(ADMIN_SIDSTRING);
       opsiSetupAdmin_Password := randomstr(True);
       mypass := opsiSetupAdmin_Password;
       Result := CreateWinUser(DSiGetComputerName, 'opsiSetupAdmin',
