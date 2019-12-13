@@ -60,11 +60,11 @@ begin
   else
   begin
     basep := 'https://download.uib.de/verify/newsletter.php?';
-    customerp := 'CUSTOMER='+DataModule1.SQLQuery1.FieldByName('ccustno').AsString;
-    contactnump := '&CONTACTNUM='+DataModule1.SQLQuery1.FieldByName('contactnum').AsString;
-    emailp := '&EMAIL='+DataModule1.SQLQuery1.FieldByName('email').AsString;
+    customerp := 'CUSTOMER='+trim(DataModule1.SQLQuery1.FieldByName('ccustno').AsString);
+    contactnump := '&CONTACTNUM='+trim(DataModule1.SQLQuery1.FieldByName('contactnum').AsString);
+    emailp := '&EMAIL='+trim(DataModule1.SQLQuery1.FieldByName('email').AsString);
     langp := '&LANG=DE';
-    contactnamep := '&CONTACTNAME='+DataModule1.SQLQuery1.FieldByName('surname').AsString;
+    contactnamep := '&CONTACTNAME='+trim(DataModule1.SQLQuery1.FieldByName('surname').AsString);
     myurl := basep+customerp+contactnump+emailp+langp+contactnamep;
     edit2.Text:= myurl;
     if customerp = 'CUSTOMER=' then edit2.Text := 'Fehler: keinen CUSTOMER gefunden';
