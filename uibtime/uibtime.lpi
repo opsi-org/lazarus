@@ -24,9 +24,9 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="57"/>
+      <BuildNr Value="58"/>
       <Language Value="0407"/>
-      <StringTable Comments="lazarus 2.0.4 fpc 3.0.4" CompanyName="uib gmbh" InternalName="uibtime.exe" LegalCopyright="GPL v3" ProductName="uibtime" ProductVersion="4.0.0"/>
+      <StringTable Comments="lazarus 2.0.6 fpc 3.0.4" CompanyName="uib gmbh" InternalName="uibtime.exe" LegalCopyright="GPL v3" ProductName="uibtime" ProductVersion="4.0.0"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -169,7 +169,7 @@
         <PackageName Value="LCL"/>
       </Item10>
     </RequiredPackages>
-    <Units Count="25">
+    <Units Count="26">
       <Unit0>
         <Filename Value="uibtime.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -328,6 +328,10 @@
         <Filename Value="..\common\oslog.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit24>
+      <Unit25>
+        <Filename Value="uibtime.ini"/>
+        <IsPartOfProject Value="True"/>
+      </Unit25>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

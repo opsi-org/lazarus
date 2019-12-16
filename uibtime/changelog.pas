@@ -1,4 +1,11 @@
 (*
+uibtime (4.1.1.58-1) stable; urgency=low
+
+ * httpservice:ServerThread.Execute: comment out finally
+ * uibtime.ini: chacnged host to uibtime.uib.local
+
+-- detlef oertel <d.oertel@uib.de>  Mon, 16 Dec 2019 15:00:00 +0000
+
 uibtime (4.1.1.57-1) stable; urgency=low
 
  * uibdata: eventhandler onendsession

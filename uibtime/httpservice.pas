@@ -92,10 +92,11 @@ end;
 
 procedure THTTPServerThread.Execute;
 begin
+
   try
-    FServer.Active := True;
+    if FServer <> nil then  FServer.Active := True;
   finally
-    if FServer <> nil then  FreeAndNil(FServer);
+    //if FServer <> nil then  FreeAndNil(FServer);
   end;
 end;
 
