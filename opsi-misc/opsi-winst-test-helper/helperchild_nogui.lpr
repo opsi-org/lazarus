@@ -17,6 +17,8 @@ uses
 
 
 
+{$R *.res}
+
 begin
   Application.Initialize;
   opsiscripttesthelper_main.Application := Application;

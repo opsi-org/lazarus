@@ -201,7 +201,7 @@ begin
   writeln(' --exit-code=n -> exits with n as exit code (default 42)');
   writeln(' --log=<path\filename> -> writes log to <path\filename> (c:\opsi.org\tmp\opsiwinsttesthelper.log)');
   writeln(' --time-output -> write timestamp and exit');
-  writeln(' --fork-and-stop=n -> starts a helperchild.exe and exits.');
+  writeln(' --fork-and-stop=n -> starts a helperchild(.exe) and exits.');
   writeln('                     The child process waits 2 seconds, then shows a window for n seconds and stops');
   writeln(' --showwindow=n -> shows a window for n seconds and exit');
   writeln(' --version -> write version info and exit');
@@ -252,6 +252,7 @@ end;
 procedure startchild(childsec: integer);
 var
   AProcess: TProcess;
+  mychildname : string;
 begin
   AProcess := TProcess.Create(nil);
 (*
@@ -259,7 +260,13 @@ begin
     'helperchild.exe" --wait=2 --showwindow=' + IntToStr(childsec);
 *)
   //AProcess.Options := AProcess.Options + [poWaitOnExit, poUsePipes];
-  AProcess.Executable:= ExtractFilePath(ParamStr(0)) + 'helperchild.exe';
+  {$IFDEF WINDOWS}
+  mychildname := 'helperchild.exe';
+  {$ENDIF WINDOWS}
+  {$IFDEF UNIX}
+  mychildname := 'helperchild';
+  {$ENDIF UNIX}
+  AProcess.Executable:= ExtractFilePath(ParamStr(0)) + mychildname;
   AProcess.Parameters.Add('--wait=2');
   AProcess.Parameters.Add('--showwindow=' + IntToStr(childsec));
   try
