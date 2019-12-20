@@ -17,7 +17,8 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
-      <MinorVersionNr Value="2"/>
+      <MinorVersionNr Value="1"/>
+      <BuildNr Value="1"/>
       <StringTable Comments="Execute content from paramstr(0).conf with add. params" CompanyName="uib gmbh / opsi.org" FileDescription="Generic Launcher" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org" OriginalFilename="gernericlauncher" ProductName="opsi genericlauncher" ProductVersion="4.1"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -110,7 +111,7 @@
         <PackageName Value="LazUtils"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="5">
+    <Units Count="6">
       <Unit0>
         <Filename Value="genericlaunch.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -131,6 +132,10 @@
         <Filename Value="../../external_libraries/misc/charencstreams.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
+      <Unit5>
+        <Filename Value="changelog.txt"/>
+        <IsPartOfProject Value="True"/>
+      </Unit5>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
