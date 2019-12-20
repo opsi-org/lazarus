@@ -17,7 +17,7 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
-      <MinorVersionNr Value="1"/>
+      <MinorVersionNr Value="2"/>
       <StringTable Comments="Execute content from paramstr(0).conf with add. params" CompanyName="uib gmbh / opsi.org" FileDescription="Generic Launcher" LegalCopyright="AGPL v3" LegalTrademarks="opsi, opsi.org" OriginalFilename="gernericlauncher" ProductName="opsi genericlauncher" ProductVersion="4.1"/>
     </VersionInfo>
     <BuildModes Count="3">
