@@ -6,7 +6,7 @@ interface
 
 uses
   {$IFDEF OPSISCRIPT}
-  osfunc,
+  ostxstringlist,
   {$IFDEF GUI}
   Graphics,
   Forms,
@@ -73,18 +73,21 @@ function getCommandResult(cmd: string; var exitcode: longint): string; overload;
 implementation
 
   {$IFDEF OPSISCRIPT}
-  {$IFDEF GUI}
-uses
-  osshowsysinfo;
 
-  {$ENDIF GUI}
+uses
+   {$IFDEF GUI}
+   osshowsysinfo,
+{$ENDIF GUI}
+  osfunc;
   {$ENDIF OPSISCRIPT}
 
 procedure ProcessMess;
 begin
-   {$IFDEF GUI}
+  {$IFDEF OPSISCRIPT}
+  {$IFDEF GUI}
   Application.ProcessMessages;
-   {$ENDIF GUI}
+  {$ENDIF GUI}
+  {$ENDIF OPSISCRIPT}
 end;
 
 {$IFDEF OPSISCRIPT}
@@ -417,6 +420,7 @@ begin
       FpcProcess.Execute;
       if Logdatei <> nil then
         Logdatei.log('RunCommandAndCaptureOut: started: ' + cmd, LLdebug3);
+      {$IFDEF OPSISCRIPT}
       {$IFDEF GUI}
       if showoutput then
       begin
@@ -433,6 +437,7 @@ begin
         FBatchOberflaeche.Top := 5;
       end;
       {$ENDIF GUI}
+      {$ENDIF OPSISCRIPT}
 
       while FpcProcess.Running do
       begin
@@ -495,6 +500,7 @@ begin
       begin
         //WriteLn('| ', S[n]);
         outlines.Add(S[n]);
+        {$IFDEF OPSISCRIPT}
         {$IFDEF GUI}
         if showoutput then
         begin
@@ -503,6 +509,7 @@ begin
         end;
         ProcessMess;
         {$ENDIF GUI}
+        {$ENDIF OPSISCRIPT}
       end;
       //WriteLn('-- end --');
       // Attention: Exitcode is exitcode of bash
@@ -520,6 +527,7 @@ begin
     S.Free;
     FpcProcess.Free;
     M.Free;
+    {$IFDEF OPSISCRIPT}
     {$IFDEF GUI}
     if showoutput then
     begin
@@ -532,6 +540,7 @@ begin
         LogDatei.log('Stop Showoutput', LLInfo + logleveloffset);
     end;
     {$ENDIF GUI}
+    {$ENDIF OPSISCRIPT}
   end;
 end;
 

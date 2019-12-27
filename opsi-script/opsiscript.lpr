@@ -61,7 +61,7 @@ uses
   osfuncwin,
   osfuncwin2,
   {$ENDIF}
-  Forms;
+  Forms, ostxstringlist;
 
 {$IFNDEF GUI}
 type

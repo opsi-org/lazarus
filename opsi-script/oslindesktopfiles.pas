@@ -32,6 +32,7 @@ uses
   osfunclin,
   osprocessux,
   osparserhelper,
+  ostxstringlist,
   lispecfolder;
 
 const

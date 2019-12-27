@@ -7,27 +7,33 @@ interface
 uses
   Classes, SysUtils,
   osparserhelper,
+  {$IFDEF OPSISCRIPT}
+  ostxstringlist,
+  {$ENDIF OPSISCRIPT}
   {$IFDEF WIN32}
   Windows,
   DSiWin32,
   //  JwaWinnt,
   //  jwawinbase,
   JwaWindows,
-
   {$ENDIF WIN32}
   {$IFDEF UNIX}
   OSProcessux,
 
   {$ENDIF UNIX}
-  {$IFDEF OPSISCRIPT}
-  osfunc,
-  {$ENDIF OPSISCRIPT}
   oslog;
 
 function ProcessIsRunning(searchproc: string): boolean;
 function numberOfProcessInstances(searchproc: string): integer;
 
 implementation
+
+(*
+{$IFDEF OPSISCRIPT}
+uses
+  osfunc;
+  {$ENDIF OPSISCRIPT}
+*)
 
 // Process list
 
@@ -103,9 +109,9 @@ begin
       else
       begin
         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-        LogDatei.log('', LLDebug);
-        LogDatei.log('output:', LLDebug);
-        LogDatei.log('--------------', LLDebug);
+        LogDatei.log('', LLDebug3);
+        LogDatei.log('output:', LLDebug3);
+        LogDatei.log('--------------', LLDebug3);
         if outlines.Count > 0 then
           for i := 0 to outlines.Count - 1 do
           begin
@@ -136,7 +142,7 @@ begin
             Result.Add(resultstring);
           end;
         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-        LogDatei.log('', LLDebug);
+        LogDatei.log('', LLDebug3);
       end;
     except
       on E: Exception do

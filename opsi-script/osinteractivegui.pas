@@ -88,6 +88,7 @@ uses
   Controls,
   //wirequlist,
   oslog, osparser, osfunc,
+ostxstringlist,
   Menus, Buttons, ComCtrls,
   //IdSysLog,
   lcltranslator,

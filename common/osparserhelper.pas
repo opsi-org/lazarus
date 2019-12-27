@@ -21,6 +21,7 @@ const
   WordDelimiterSet6 = [')', ','];
   WordDelimiterWhiteSpace = [' ', #9];
 
+  NULL_STRING_VALUE = 'NULL';
 
 type
   TCharset = set of char;

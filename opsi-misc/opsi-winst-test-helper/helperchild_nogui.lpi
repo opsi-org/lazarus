@@ -18,9 +18,9 @@
       <MinorVersionNr Value="1"/>
       <Language Value=""/>
       <CharSet Value=""/>
-      <StringTable CompanyName="uib gmbh" LegalCopyright="AGLv3" LegalTrademarks="opsi,opsi.org,open pc server integration" ProductName="opsi" ProductVersion="4.0.7"/>
+      <StringTable CompanyName="uib gmbh" LegalCopyright="AGLv3" LegalTrademarks="opsi,opsi.org,open pc server integration" OriginalFilename="helperchild_nogui" ProductName="opsi" ProductVersion="4.0.7"/>
     </VersionInfo>
-    <BuildModes Count="3" Active="Debug">
+    <BuildModes Count="3" Active="Release">
       <Item1 Name="default" Default="True"/>
       <Item2 Name="Debug">
         <CompilerOptions>
@@ -121,7 +121,8 @@
         <Filename Value="helperchild_nogui.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <CursorPos X="31" Y="16"/>
+        <TopLine Value="43"/>
+        <CursorPos X="21" Y="66"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -204,12 +205,13 @@
         <Filename Value="opsiscripttesthelper_main.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="1"/>
+        <TopLine Value="478"/>
         <CursorPos X="31"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit10>
     </Units>
-    <JumpHistory Count="2" HistoryIndex="1">
+    <JumpHistory Count="5" HistoryIndex="4">
       <Position1>
         <Filename Value="..\..\common\osfunclin.pas"/>
         <Caret Line="21" Column="3" TopLine="10"/>
@@ -218,6 +220,18 @@
         <Filename Value="opsiscripttesthelper_main.pas"/>
         <Caret Line="268" Column="18" TopLine="255"/>
       </Position2>
+      <Position3>
+        <Filename Value="helperchild_nogui.lpr"/>
+        <Caret Line="16" Column="32"/>
+      </Position3>
+      <Position4>
+        <Filename Value="helperchild_nogui.lpr"/>
+        <Caret Line="56" Column="20" TopLine="43"/>
+      </Position4>
+      <Position5>
+        <Filename Value="helperchild_nogui.lpr"/>
+        <Caret Line="61" TopLine="43"/>
+      </Position5>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

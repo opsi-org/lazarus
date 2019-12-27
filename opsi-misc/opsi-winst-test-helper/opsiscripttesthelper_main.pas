@@ -65,11 +65,20 @@ var
   mylog: textfile;
   mydefaultlog: string;
   Timer1: TfpTimer;
-    Application : TCustomApplication;
+  {$IFDEF GUI}
+  Application : TApplication;
+  {$ELSE}
+  Application : TCustomApplication;
+  {$ENDIF GUI}
+
   mytimerevent : TMethod;
  //   procedure Timer1Timer(Sender: TObject);
 
 implementation
+{$IFDEF GUI}
+uses
+  helperwin;
+{$ENDIF GUI}
 
 {$IFDEF WINDOWS}
 function IsElevated: boolean;
@@ -259,16 +268,22 @@ begin
   AProcess.CommandLine := '"' + ExtractFilePath(ParamStr(0)) +
     'helperchild.exe" --wait=2 --showwindow=' + IntToStr(childsec);
 *)
-  //AProcess.Options := AProcess.Options + [poWaitOnExit, poUsePipes];
+  AProcess.Options := AProcess.Options + [poWaitOnExit, poUsePipes];
   {$IFDEF WINDOWS}
   mychildname := 'helperchild.exe';
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
+  {$IFDEF GUI}
   mychildname := 'helperchild';
+  {$ELSE}
+  mychildname := 'helperchild_nogui';
+  {$ENDIF GUI}
   {$ENDIF UNIX}
   AProcess.Executable:= ExtractFilePath(ParamStr(0)) + mychildname;
+  writeln('will start executable '+AProcess.Executable);
   AProcess.Parameters.Add('--wait=2');
   AProcess.Parameters.Add('--showwindow=' + IntToStr(childsec));
+  writeln('with params :'+AProcess.Parameters.Text);
   try
     AProcess.Execute;
   except
@@ -280,8 +295,15 @@ procedure main();
 var
   paramvaluestr, mystr, dummystr: string;
   waitsec, childsec: integer;
+  myparamstring : string = '';
+  myparamcount, i : integer;
 
 begin
+  myparamcount := ParamCount;
+  myparamcount := Application.ParamCount;
+  writeln('paramcount = '+inttostr(myparamcount));
+  for i := 1 to myparamcount do
+      myparamstring := myparamstring + ' ' + Application.Params[i];
   myexitcode := 42;
   optionlist := TStringList.Create;
   optionlist.Append('help');
@@ -300,6 +322,7 @@ begin
     ErrorMsg := Application.CheckOptions('', optionlist);
     if ErrorMsg <> '' then
     begin
+      ErrorMsg := ErrorMsg + ' with params: '+myparamstring;
       Application.ShowException(Exception.Create(ErrorMsg));
       Application.Terminate;
       Exit;
@@ -389,6 +412,7 @@ begin
       paramvaluestr := Application.GetOptionValue('fork-and-stop');
       try
         childsec := StrToInt(paramvaluestr);
+        writeln('Will use ' + paramvaluestr + ' as fork-and-stop.');
         startchild(childsec);
       except
         writeln('>' + paramvaluestr + '< is not a integer.');
@@ -457,6 +481,11 @@ begin
       end;
     end;
 
+    if Application.HasOption('showwindow') then
+    begin
+      Application.CreateForm(TForm1, Form1);
+      Form1.Show;
+    end;
 
 
     { add your program here }

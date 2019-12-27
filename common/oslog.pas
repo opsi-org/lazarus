@@ -31,6 +31,7 @@ uses
   Controls,
   LCLIntf,
   Forms,
+  Dialogs,
 {$ENDIF GUI}
 {$IFDEF OPSIWINST}
   osconf,
@@ -631,7 +632,11 @@ var
 begin
   ps := info + '! ' + LineEnding + 'Please inform the Administrator!';
   {$IFDEF GUI}
+  {$IFDEF OPSI}
   MyMessageDlg.WiMessage(ps, [mrOk]);
+  {$ELSE}
+  ShowMessage(ps);
+  {$ENDIF}
   {$ENDIF}
 end;
 
@@ -1351,6 +1356,7 @@ begin
         lastpeaklen := peaklen;
 
         {$IFDEF GUI}
+        {$IFDEF OPSIWINST}
         if FBatchOberflaeche <> nil //dont log before creating FBatchOberflaeche
         then
         begin
@@ -1358,6 +1364,7 @@ begin
           if (FUsedLogLevel >= LevelOfLine) then
             FBatchOberflaeche.setActivityLabel(copy(peakindicator, 1, peaklen));
         end;
+        {$ENDIF}
         {$ENDIF}
       end;
     except
@@ -1402,6 +1409,7 @@ begin
         {$ENDIF}
 
         {$IFDEF GUI}
+        {$IFDEF OPSIWINST}
         try
           CentralForm.Memo1Add(PasS);
         except
@@ -1413,6 +1421,7 @@ begin
           end;
           NumberOfWarnings := NumberOfWarnings + 1;
         end;
+        {$ENDIF}
         {$ENDIF GUI}
 
         try
@@ -1427,11 +1436,20 @@ begin
             //flush(LogMainFile);
           except
             {$IFDEF GUI}
+            {$IFDEF OPSI}
             if MyMessageDlg.WiMessage('Logfile ' + Filename +
               ' not available.  Continue without logging? ', [mrYes, mrNo]) = mrNo then
               halt
             else
               LogFileExists := False;
+              {$ELSE}
+            if MessageDlg('Question', 'Logfile ' + Filename +
+              ' not available.  Continue without logging? ', mtConfirmation,
+              [mbYes, mbNo], 0) = mrNo then
+              halt
+            else
+              LogFileExists := False;
+            {$ENDIF}
             {$ENDIF}
           end;
         end;
@@ -1451,12 +1469,21 @@ begin
                 //flush(LogPartFile);
               except
               {$IFDEF GUI}
+              {$IFDEF OPSIWINST}
                 if MyMessageDlg.WiMessage('Logfile ' + FPartFileName +
                   ' not available.  Continue without logging? ',
                   [mrYes, mrNo]) = mrNo then
                   halt
                 else
                   PartLogFileExists := False;
+              {$ELSE}
+                if MessageDlg('Question', 'Logfile ' + FPartFileName +
+                  ' not available.  Continue without logging? ',
+                  mtConfirmation, [mbYes, mbNo], 0) = mrNo then
+                  halt
+                else
+                  PartLogFileExists := False;
+            {$ENDIF}
               {$ENDIF}
               end;
             end;
@@ -1490,7 +1517,13 @@ begin
     //if (not LogFileExists or TraceMode) and (LogLevel >= LevelOfLine)
     then
     begin
-      dlgresult := MyMessageDlg.WiMessage('TRACE:' + LineEnding + St, [mrOk, mrAbort]);
+      {$IFDEF OPSISCRIPT}
+      dlgresult := MyMessageDlg.WiMessage('TRACE:' + LineEnding +
+        St, [mrOk, mrAbort]);
+      {$ELSE}
+      dlgresult := MessageDlg('Question', 'TRACE:' + LineEnding +
+        St, mtConfirmation, [mbOK, mbAbort], 0);
+     {$ENDIF}
       if dlgresult = mrAbort then
         TraceMode := False;
       Result := True;

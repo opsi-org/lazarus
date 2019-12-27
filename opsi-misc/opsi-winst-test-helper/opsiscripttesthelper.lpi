@@ -53,7 +53,12 @@
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-dSYNAPSE"/>
+            <CustomOptions Value="-dSYNAPSE
+-dGUI -dUseCThreads"/>
+            <OtherDefines Count="2">
+              <Define0 Value="SYNAPSE"/>
+              <Define1 Value="GUI"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item2>
@@ -91,7 +96,12 @@
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-dSYNAPSE"/>
+            <CustomOptions Value="-dSYNAPSE
+-dGUI -dUseCThreads"/>
+            <OtherDefines Count="2">
+              <Define0 Value="SYNAPSE"/>
+              <Define1 Value="GUI"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -104,7 +114,7 @@
       <Modes Count="1">
         <Mode0 Name="default">
           <local>
-            <CommandLineParams Value="--help"/>
+            <CommandLineParams Value="--fork-and-stop=2"/>
             <LaunchingApplication Use="True"/>
           </local>
         </Mode0>
@@ -115,13 +125,13 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="21">
+    <Units Count="27">
       <Unit0>
         <Filename Value="opsiscripttesthelper.pas"/>
         <IsPartOfProject Value="True"/>
-        <TopLine Value="9"/>
-        <CursorPos Y="24"/>
-        <UsageCount Value="65"/>
+        <TopLine Value="8"/>
+        <CursorPos X="17" Y="13"/>
+        <UsageCount Value="68"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -132,15 +142,15 @@
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="295"/>
-        <CursorPos X="57" Y="307"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="4"/>
+        <CursorPos X="27" Y="504"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="-1"/>
           <CursorPos X="31" Y="26"/>
         </ExtraEditor1>
-        <UsageCount Value="62"/>
+        <UsageCount Value="65"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -199,7 +209,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="26"/>
+        <UsageCount Value="29"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
       <Unit9>
@@ -209,7 +219,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="26"/>
+        <UsageCount Value="29"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
       <Unit10>
@@ -241,10 +251,11 @@
       </Unit13>
       <Unit14>
         <Filename Value="..\..\common\osfunclin.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="20"/>
-        <CursorPos X="3" Y="31"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="68"/>
+        <CursorPos X="18" Y="83"/>
         <UsageCount Value="10"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit14>
       <Unit15>
@@ -265,9 +276,11 @@
       <Unit17>
         <Filename Value="..\..\common\osprocessux.pas"/>
         <UnitName Value="OSProcessux"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="71" Y="56"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="520"/>
+        <CursorPos X="24" Y="529"/>
         <UsageCount Value="10"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit17>
       <Unit18>
@@ -280,10 +293,10 @@
         <Filename Value="opsiscripttesthelper_main.pas"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <EditorIndex Value="2"/>
-        <TopLine Value="255"/>
-        <CursorPos X="57" Y="279"/>
-        <UsageCount Value="21"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="256"/>
+        <CursorPos Y="307"/>
+        <UsageCount Value="24"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit19>
@@ -292,128 +305,162 @@
         <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit20>
+      <Unit21>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.6\lcl\include\customform.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="145"/>
+        <CursorPos Y="165"/>
+        <UsageCount Value="10"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.6\lcl\include\application.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="2259"/>
+        <CursorPos Y="2271"/>
+        <UsageCount Value="10"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="1494"/>
+        <CursorPos X="26" Y="1520"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit23>
+      <Unit24>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.6\lcl\dialogs.pp"/>
+        <UnitName Value="Dialogs"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="26"/>
+        <CursorPos X="54" Y="44"/>
+        <UsageCount Value="11"/>
+      </Unit24>
+      <Unit25>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.6\components\lazutils\uitypes.pas"/>
+        <UnitName Value="UITypes"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="3" Y="12"/>
+        <UsageCount Value="11"/>
+      </Unit25>
+      <Unit26>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.6\lcl\forms.pp"/>
+        <UnitName Value="Forms"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1322"/>
+        <CursorPos X="17" Y="1205"/>
+        <UsageCount Value="10"/>
+      </Unit26>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <OtherDefines Count="2">
+      <Define0 Value="SYNAPSE"/>
+      <Define1 Value="GUI"/>
+    </OtherDefines>
+    <JumpHistory Count="26" HistoryIndex="25">
       <Position1>
-        <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="14" Column="16" TopLine="5"/>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <Caret Line="1368" Column="20" TopLine="1348"/>
       </Position1>
       <Position2>
-        <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="449" Column="7" TopLine="426"/>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <Caret Line="1365" Column="13" TopLine="1353"/>
       </Position2>
       <Position3>
-        <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="31" Column="38" TopLine="20"/>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <Caret Line="1424" Column="18" TopLine="1401"/>
       </Position3>
       <Position4>
-        <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="320" Column="21" TopLine="301"/>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <Caret Line="1439" Column="16" TopLine="1427"/>
       </Position4>
       <Position5>
-        <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="418" Column="19" TopLine="406"/>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <Caret Line="1463" Column="20" TopLine="1451"/>
       </Position5>
       <Position6>
-        <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="466" Column="8" TopLine="445"/>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <Caret Line="1502" Column="20" TopLine="1319"/>
       </Position6>
       <Position7>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="509" TopLine="494"/>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <Caret Line="147" Column="49" TopLine="137"/>
       </Position7>
       <Position8>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="68" Column="3" TopLine="53"/>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <Caret Line="639" Column="15" TopLine="626"/>
       </Position8>
       <Position9>
-        <Filename Value="opsiscripttesthelper.pas"/>
-        <Caret Line="31" Column="3" TopLine="10"/>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <Caret Line="1365" Column="13" TopLine="1353"/>
       </Position9>
       <Position10>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="265" Column="28" TopLine="251"/>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <Caret Line="1414" Column="11" TopLine="1402"/>
       </Position10>
       <Position11>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="534" Column="33" TopLine="528"/>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <Caret Line="1446" Column="26" TopLine="1435"/>
       </Position11>
       <Position12>
-        <Filename Value="opsiscripttesthelper.pas"/>
-        <Caret Line="17" Column="11" TopLine="9"/>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <Caret Line="1448" Column="35" TopLine="1435"/>
       </Position12>
       <Position13>
-        <Filename Value="opsiscripttesthelper.pas"/>
-        <Caret Line="12" Column="57"/>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <Caret Line="1447" Column="82" TopLine="1435"/>
       </Position13>
       <Position14>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="527" TopLine="515"/>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <Caret Line="1449" Column="89" TopLine="1435"/>
       </Position14>
       <Position15>
-        <Filename Value="opsiscripttesthelper.pas"/>
-        <Caret Line="30" Column="9"/>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <Caret Line="1526" Column="6" TopLine="1512"/>
       </Position15>
       <Position16>
-        <Filename Value="opsiscripttesthelper.pas"/>
-        <Caret Line="24"/>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <Caret Line="1520" Column="26" TopLine="1494"/>
       </Position16>
       <Position17>
-        <Filename Value="opsiscripttesthelper.pas"/>
-        <Caret Line="25"/>
+        <Filename Value="..\..\common\osprocessux.pas"/>
+        <Caret Line="8" Column="22" TopLine="4"/>
       </Position17>
       <Position18>
-        <Filename Value="opsiscripttesthelper.pas"/>
-        <Caret Line="26"/>
+        <Filename Value="..\..\common\osprocessux.pas"/>
+        <Caret Line="439" Column="12" TopLine="425"/>
       </Position18>
       <Position19>
-        <Filename Value="opsiscripttesthelper.pas"/>
-        <Caret Line="27"/>
+        <Filename Value="..\..\common\osprocessux.pas"/>
+        <Caret Line="502" Column="28" TopLine="490"/>
       </Position19>
       <Position20>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="527" TopLine="515"/>
+        <Filename Value="..\..\common\osprocessux.pas"/>
+        <Caret Line="529" Column="24" TopLine="520"/>
       </Position20>
       <Position21>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="528" TopLine="515"/>
+        <Filename Value="..\..\common\osfunclin.pas"/>
+        <Caret Line="83" Column="18" TopLine="68"/>
       </Position21>
       <Position22>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="526" Column="44" TopLine="515"/>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="68" Column="19" TopLine="62"/>
       </Position22>
       <Position23>
-        <Filename Value="opsiscripttesthelper.pas"/>
-        <Caret Line="24"/>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <Caret Line="1520" Column="26" TopLine="1494"/>
       </Position23>
       <Position24>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="533" Column="42" TopLine="515"/>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="69" Column="18" TopLine="62"/>
       </Position24>
       <Position25>
-        <Filename Value="opsiscripttesthelper.pas"/>
-        <Caret Line="24"/>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="504" Column="27" TopLine="55"/>
       </Position25>
       <Position26>
         <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Column="31" TopLine="61"/>
+        <Caret Line="501" Column="3" TopLine="64"/>
       </Position26>
-      <Position27>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="246" Column="43" TopLine="234"/>
-      </Position27>
-      <Position28>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="307" Column="57" TopLine="295"/>
-      </Position28>
-      <Position29>
-        <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="204" Column="60" TopLine="193"/>
-      </Position29>
-      <Position30>
-        <Filename Value="opsiscripttesthelper_main.pas"/>
-        <Caret Line="267" Column="30" TopLine="246"/>
-      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
@@ -442,7 +489,7 @@
       </Options>
     </Linking>
     <Other>
-      <CustomOptions Value="-dSYNAPSE"/>
+      <CustomOptions Value="-dSYNAPSE -dGUI -dUseCThreads"/>
     </Other>
   </CompilerOptions>
   <Debugging>

@@ -110,6 +110,7 @@ LazFileUtils,
   osnetworkcalculator,
   osregex,
   osurlparser,
+  ostxstringlist,
   LAZUTF8;
 
 

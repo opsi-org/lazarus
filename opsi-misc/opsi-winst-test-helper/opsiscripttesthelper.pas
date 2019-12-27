@@ -3,9 +3,9 @@ program opsiscripttesthelper;
 //{$mode objfpc}{$H+}
 {$MODE Delphi}
 
-{$APPTYPE CONSOLE}
+//{$APPTYPE CONSOLE}
 
-{$DEFINE GUI}
+//{$DEFINE GUI}
 
 uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
@@ -21,13 +21,13 @@ uses
 {$R *.res}
 
 begin
-  forms.Application.Title:='opsiscripttesthelper';
-  forms.Application.Initialize;
-  opsiscripttesthelper_main.Application := forms.Application;
-  forms.Application.CreateForm(TForm1, Form1);
+  Application.Title:='opsiscripttesthelper';
+  Application.Initialize;
+  opsiscripttesthelper_main.Application := Application;
+  Application.CreateForm(TForm1, Form1);
   //Application.CreateForm(TDataModule1, DataModule1);
   main;
-  forms.Application.Run;
+  Application.Run;
   //application.Terminate;
 end.
 

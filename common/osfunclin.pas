@@ -24,7 +24,8 @@ uses
   {$ENDIF SYNAPSE}
   sockets,
   {$IFDEF OPSISCRIPT}
-  osfunc,
+  //osfunc,
+  ostxstringlist,
   {$ENDIF OPSISCRIPT}
   oslog,
   osparserhelper,
@@ -77,9 +78,11 @@ uses
 {$ENDIF OPSISCRIPT}
 {$IFDEF GUI}
   Graphics,
-  osbatchgui,
-  osinteractivegui,
-  osshowsysinfo,
+{$IFDEF OPSISCRIPT}
+osbatchgui,
+osinteractivegui,
+osshowsysinfo,
+{$ENDIF OPSISCRIPT}
 {$ENDIF GUI}
   LResources;
 

@@ -18,9 +18,10 @@ uses
 {$IFDEF WINDOWS}{$R helperchild.res}{$ENDIF}
 
 begin
+  Application.Scaled:=True;
   Application.Initialize;
   opsiscripttesthelper_main.Application := Application;
-  Application.CreateForm(TForm1, Form1);
+  //Application.CreateForm(TForm1, Form1);
 
     main;
   Application.Run;

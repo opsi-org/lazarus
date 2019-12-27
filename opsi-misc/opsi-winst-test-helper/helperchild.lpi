@@ -5,6 +5,7 @@
     <PathDelim Value="\"/>
     <General>
       <MainUnit Value="0"/>
+      <Scaled Value="True"/>
       <UseXPManifest Value="True"/>
       <XPManifest>
         <DpiAware Value="Per-monitor"/>
@@ -58,7 +59,7 @@
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-dSYNAPSE"/>
+            <CustomOptions Value="-dSYNAPSE  -dUseCThreads -dGUI"/>
           </Other>
         </CompilerOptions>
       </Item2>
@@ -91,7 +92,8 @@
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-dSYNAPSE -dDelphi"/>
+            <CustomOptions Value="-dSYNAPSE -dDelphi
+ -dUseCThreads -dGUI"/>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -115,11 +117,13 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="23">
+    <Units Count="24">
       <Unit0>
         <Filename Value="helperchild.lpr"/>
         <IsPartOfProject Value="True"/>
-        <CursorPos X="56" Y="22"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="7"/>
+        <CursorPos X="5" Y="24"/>
         <UsageCount Value="22"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -138,8 +142,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="13"/>
-        <CursorPos X="10" Y="396"/>
+        <TopLine Value="520"/>
+        <CursorPos X="39" Y="528"/>
         <UsageCount Value="22"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -163,7 +167,7 @@
         <Filename Value="helperwispecfolder.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="64"/>
+        <TopLine Value="67"/>
         <CursorPos X="40" Y="91"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
@@ -194,7 +198,7 @@
       <Unit9>
         <Filename Value="..\..\common\osfunclin.pas"/>
         <EditorIndex Value="4"/>
-        <TopLine Value="88"/>
+        <TopLine Value="21"/>
         <CursorPos X="3" Y="21"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
@@ -202,9 +206,9 @@
       <Unit10>
         <Filename Value="opsiscripttesthelper_main.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <CursorPos X="22" Y="17"/>
+        <TopLine Value="470"/>
+        <CursorPos X="18" Y="487"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
       </Unit10>
@@ -288,8 +292,16 @@
         <CursorPos X="37" Y="16"/>
         <UsageCount Value="20"/>
       </Unit22>
+      <Unit23>
+        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.6\lcl\forms.pp"/>
+        <UnitName Value="Forms"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1489"/>
+        <CursorPos X="18" Y="1508"/>
+        <UsageCount Value="10"/>
+      </Unit23>
     </Units>
-    <JumpHistory Count="9" HistoryIndex="8">
+    <JumpHistory Count="25" HistoryIndex="24">
       <Position1>
         <Filename Value="opsiscripttesthelper_main.pas"/>
         <Caret Line="13" Column="43" TopLine="3"/>
@@ -326,6 +338,70 @@
         <Filename Value="opsiscripttesthelper_main.pas"/>
         <Caret Line="16" Column="12" TopLine="6"/>
       </Position9>
+      <Position10>
+        <Filename Value="helperchild.lpr"/>
+        <Caret Line="26" Column="17" TopLine="6"/>
+      </Position10>
+      <Position11>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="348" Column="38" TopLine="338"/>
+      </Position11>
+      <Position12>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="376" Column="28" TopLine="365"/>
+      </Position12>
+      <Position13>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="378" Column="28" TopLine="365"/>
+      </Position13>
+      <Position14>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="381" Column="28" TopLine="365"/>
+      </Position14>
+      <Position15>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="383" Column="30" TopLine="365"/>
+      </Position15>
+      <Position16>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="385" Column="30" TopLine="365"/>
+      </Position16>
+      <Position17>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="388" Column="28" TopLine="368"/>
+      </Position17>
+      <Position18>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="146" TopLine="146"/>
+      </Position18>
+      <Position19>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="537" Column="21" TopLine="520"/>
+      </Position19>
+      <Position20>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="59" Column="25" TopLine="47"/>
+      </Position20>
+      <Position21>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="248" Column="25" TopLine="228"/>
+      </Position21>
+      <Position22>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="261" Column="28" TopLine="247"/>
+      </Position22>
+      <Position23>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="309" Column="40" TopLine="289"/>
+      </Position23>
+      <Position24>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="330" Column="32" TopLine="310"/>
+      </Position24>
+      <Position25>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="502" Column="44" TopLine="482"/>
+      </Position25>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
@@ -354,7 +430,7 @@
       </Options>
     </Linking>
     <Other>
-      <CustomOptions Value="-dSYNAPSE"/>
+      <CustomOptions Value="-dSYNAPSE  -dUseCThreads -dGUI"/>
     </Other>
   </CompilerOptions>
   <Debugging>

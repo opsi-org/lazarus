@@ -5,6 +5,12 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.3.2) experimental; urgency=low
+
+  * osProcessux: getCommandResult: give always the first string ; fixes a getmyip Problem
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 19 Nov 2019:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.3.1) experimental; urgency=low
 
   * update function listFiles: including switch for disabling redirections under 64bit-Windows
