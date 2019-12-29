@@ -2372,7 +2372,7 @@ begin
                 end
                 else
                 begin
-                  logdatei.DependentAdd('Waiting for "' + ident +
+                  logdatei.log('Waiting for "' + ident +
                     '" stopped - time out ' + IntToStr(waitSecs) + ' sec', LLInfo);
                 end;
               end;
@@ -2392,14 +2392,14 @@ begin
 
               if not WaitForProcessEndingLogflag and running then
               begin
-                logdatei.DependentAdd('Waiting for process "' +
-                  ident + '" ending', LevelComplete);
+                logdatei.log('Waiting for process "' +
+                  ident + '" ending', LLinfo);
                 WaitForProcessEndingLogflag := True;
               end;
 
               if not running then
               begin
-                logdatei.DependentAdd('Process "' + ident + '" ended', LevelComplete);
+                logdatei.log('Process "' + ident + '" ended', LLinfo);
                 // After the process we waited for has ended, the Parent may be still alive
                 // in this case we have to wait for the end of the parent
                 {$IFDEF WINDOWS}
@@ -2411,12 +2411,19 @@ begin
                 end;
                 {$ENDIF WINDOWS}
                 {$IFDEF UNIX}
-                lpExitCode := FpcProcess.ExitStatus;
+                lpExitCode := FpcProcess.ExitCode;
                 if FpcProcess.Running then
                 begin
                   running := True;
                   WaitForProcessEnding := False;
-                end;
+                end
+                else
+                begin
+                  lpExitCode := FpcProcess.ExitCode;
+                  logdatei.log(
+                  'Process : '+FpcProcess.Executable+' terminated at: ' + DateTimeToStr(now) +
+                  ' exitcode is: ' + IntToStr(lpExitCode), LLInfo);
+                end
                 {$ENDIF LINUX}
               end;
               if running then
@@ -2448,9 +2455,10 @@ begin
               begin
                 // waiting condition 4 :  Process has finished;
                 //   we still have to look if WindowToVanish did vanish if this is necessary
-                logdatei.DependentAdd(
+                lpExitCode := FpcProcess.ExitCode;
+                logdatei.log(
                   'Process terminated at: ' + DateTimeToStr(now) +
-                  ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
+                  ' exitcode is: ' + IntToStr(lpExitCode), LLInfo);
  (*
             end
             else if GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode) and (lpExitCode <> still_active)
@@ -2509,7 +2517,7 @@ begin
               //sleep(1000);
               sleep(100);
               {$IFDEF UNIX}
-              lpExitCode := FpcProcess.ExitStatus;
+              lpExitCode := FpcProcess.ExitCode;
               {$ENDIF LINUX}
               {$IFDEF WINDOWS}
               GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode);
@@ -2532,7 +2540,7 @@ begin
               *)
               {$ENDIF GUI}
               ProcessMess;
-              logdatei.DependentAdd('Waiting for ending at ' +
+              logdatei.log('Waiting for ending at ' +
                 DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
               ProcessMess;
             end;

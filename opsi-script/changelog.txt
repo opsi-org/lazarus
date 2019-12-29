@@ -5,6 +5,16 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.3.4) experimental; urgency=low
+
+  * new unit ostxstringlist
+  * osfunclin: which() now using FindDefaultExecutablePath
+  * osfunc: StartProcess_cp: now supports WaitForProcessEnding also for [L/M]
+  * Winbatch now supports WaitForProcessEnding also for [L/M]
+  * new string function which(<command in path>) : string (command with path) [W/L/M]
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri, 27 Dec 2019:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.3.2) experimental; urgency=low
 
   * osProcessux: getCommandResult: give always the first string ; fixes a getmyip Problem

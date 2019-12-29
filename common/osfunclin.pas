@@ -27,6 +27,8 @@ uses
   //osfunc,
   ostxstringlist,
   {$ENDIF OPSISCRIPT}
+  fileutil,
+  LazFileUtils,
   oslog,
   osparserhelper,
   synsock,
@@ -682,18 +684,26 @@ var
 begin
   Result := False;
   pathToTarget := '';
+  { Using FindDefaultExecutablePath from fileutil }
+  pathToTarget := FindDefaultExecutablePath(target);
+  if (pathToTarget <> '') and FileExistsUTF8(pathToTarget) then
+  begin
+    Result := true;
+    pathToTarget := Trim(pathToTarget);
+  end;
   (*
   cmd := '/bin/bash -c "';
   cmd := cmd + 'set PATH=''/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin'' ;';
   cmd := cmd + 'which '+target+' || exit $?"';
   *)
+  (* my implementation
   path := '/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin';
   str := FileSearch(target, path);
   if fileexists(trim(str)) then
   begin
     Result := True;
     pathToTarget := trim(str);
-  end;
+  end;    *)
 end;
 
 function getMyIpByTarget(target: string): string;
