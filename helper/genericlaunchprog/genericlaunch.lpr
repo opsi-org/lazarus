@@ -13,9 +13,13 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   lazFileUtils,
   Process;
 
+// usage f.e.:
+// genericlaunch -conffile [path]    start program described in path/genericlaunch.conf
+// genericlaunch                     start program described in ./genericlaunch.conf
+// genericlaunch param1 param2 ...   start program described in ./genericlaunch.conf with parameters
+
 procedure initLogging;
 var
-  i : integer;
   logfilename : string;
 begin
   logdatei := TLogInfo.Create;
@@ -94,7 +98,7 @@ end;
   end;
 
 var
-  filePath, confFileName, executeStr: string;
+  filePath, confpath, confFileName, executeStr: string;
   param: string;
   i: integer;
 
@@ -105,19 +109,55 @@ begin
   writeln('opsi-generic launcher version: ' + getversioninfo);
   filePath := ExtractFilePath(ParamStr(0));
   confFileName := ExtractFileNameWithoutExt(ParamStr(0)) + '.conf';
-  // hier ev. noch andere Sonderzeichen Abfangen?
-  executeStr := StringReplace(ReadFileToString(confFileName), #10, ' ', [rfReplaceAll]);
-  executestr := TrimRightSet(trim(executestr),[#10,#13]);
-  logdatei.log('config string: ' +executestr, LLessential);
-  for i := 1 to Paramcount do
+  confpath:='';
+  logdatei.log('Launch: paramcount ' + Paramcount.ToString, LLessential);
+  i:=1;
+  while (i <= Paramcount) do
   begin
-    param := ParamStr(i);
-    logdatei.log('param '+inttostr(i)+': ' + param, LLessential);
-    // quote file path
-    if fileexists(param) and (param[1] <> '"') then
-      param := '"'+param+'"';
-    executeStr := executeStr + ' ' + param;
+    param:=ParamStr(i);
+    if param.Equals('-confpath') then
+      begin
+        param:= ParamStr(i+1);
+        if param.Length > 0 then
+          begin
+            confpath := ParamStr(i+1);
+            logdatei.log('Launch: param confpath, parameter for path is ' + confpath, LLessential);
+          end
+        else
+        begin
+          writeln('Launched canceled, no parameter set for path - closing log' );
+          logdatei.log('Launch: param confpath, but no parameter set for path' , LLerror);
+          logdatei.log('Launched canceled - closing log.', LLessential);
+          LogDatei.Close;
+          LogDatei.Free;
+          exit;
+        end;
+    end;
+    inc(i);
   end;
+
+  logdatei.log('Launch: param 2 ' + ParamStr(2), LLessential);
+  if confpath.Length > 0 then
+    begin
+      confFileName:= confpath + PathDelim + ExtractFileNameOnly(ParamStr(0)) + '.conf';
+      logdatei.log('Launch: conffile is ' + confFileName, LLessential);
+    end;
+   // hier ev. noch andere Sonderzeichen Abfangen?
+   executeStr := StringReplace(ReadFileToString(confFileName), #10, ' ', [rfReplaceAll]);
+   executestr := TrimRightSet(trim(executestr),[#10,#13]);
+   logdatei.log('config string: ' +executestr, LLessential);
+   param:= ParamStr(1);
+   if not(param.Equals('-confpath')) then // only if confpath is empty: check params
+     for i := 1 to Paramcount do
+       begin
+         param := ParamStr(i);
+         logdatei.log('param '+inttostr(i)+': ' + param, LLessential);
+         // quote file path
+         if fileexists(param) and (param[1] <> '"') then
+           param := '"'+param+'"';
+         executeStr := executeStr + ' ' + param;
+       end;
+
   logdatei.log('Launch: ' + executeStr, LLessential);
   writeln('Launch: ' + executeStr);
   launchProgram(executeStr);
