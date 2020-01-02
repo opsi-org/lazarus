@@ -12,6 +12,7 @@ uses
   strings,
   LConvEncoding,
   osparserhelper,
+  ostxstringlist,
   LAZUTF8;
 
 const

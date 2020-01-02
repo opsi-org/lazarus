@@ -36,9 +36,6 @@ uses
 {$IFDEF OPSIWINST}
   osconf,
   //osdefinedfunctions,
-{$IFDEF WINDOWS}
-  osregistry,
-{$ENDIF WINDOWS}
 {$ENDIF OPSIWINST}
 {$IFDEF WINDOWS}
   registry,
@@ -305,7 +302,8 @@ implementation
 uses
 {$IFDEF WINDOWS}
   Windows,
-{$ENDIF}
+  osregistry,
+{$ENDIF WINDOWS}
 {$IFDEF GUI}
   osmessagedialog,
   osbatchgui,

@@ -106,7 +106,7 @@ LazFileUtils,
   DOM,
   osxmlsections,
   osxml,
-
+  osprocesses,
   osnetworkcalculator,
   osregex,
   osurlparser,

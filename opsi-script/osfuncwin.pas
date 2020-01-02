@@ -17,6 +17,7 @@ uses
   Classes,
   SysUtils,
   osfunc,
+  ostxstringlist,
   Windows,
 {$IFNDEF WIN64}
   DSiWin32,

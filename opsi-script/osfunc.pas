@@ -2403,7 +2403,7 @@ begin
                 // After the process we waited for has ended, the Parent may be still alive
                 // in this case we have to wait for the end of the parent
                 {$IFDEF WINDOWS}
-                if GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode) and
+                if GetExitCodeProcess(FpcProcess.ProcessHandle, longword(lpExitCode)) and
                   (lpExitCode = still_active) then
                 begin
                   running := True;
@@ -2520,7 +2520,7 @@ begin
               lpExitCode := FpcProcess.ExitCode;
               {$ENDIF LINUX}
               {$IFDEF WINDOWS}
-              GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode);
+              GetExitCodeProcess(FpcProcess.ProcessHandle, longword(lpExitCode));
               {$ENDIF WINDOWS}
               //GetExitCodeProcess(ProcessInfo.hProcess, lpExitCode);
               {$IFDEF GUI}

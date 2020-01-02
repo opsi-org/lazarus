@@ -46,6 +46,7 @@ uses
   Variants,
   ActiveX,
   JwaWbemCli,
+  ostxstringlist,
   LAZUTF8;
 
 //JclSecurity,

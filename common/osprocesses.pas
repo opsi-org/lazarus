@@ -21,10 +21,13 @@ uses
   OSProcessux,
 
   {$ENDIF UNIX}
+  fileutil,
+  lazfileutils,
   oslog;
 
 function ProcessIsRunning(searchproc: string): boolean;
 function numberOfProcessInstances(searchproc: string): integer;
+function which(target: string; var pathToTarget: string): boolean;
 
 implementation
 
@@ -213,5 +216,24 @@ begin
     Result := 0;
   end;
 end;
+
+function which(target: string; var pathToTarget: string): boolean;
+var
+  str: string;
+  exitcode: longint;
+  cmd: string;
+  path: string;
+begin
+  Result := False;
+  pathToTarget := '';
+  { Using FindDefaultExecutablePath from fileutil }
+  pathToTarget := FindDefaultExecutablePath(target);
+  if (pathToTarget <> '') and FileExistsUTF8(pathToTarget) then
+  begin
+    Result := true;
+    pathToTarget := Trim(pathToTarget);
+  end;
+end;
+
 
 end.
