@@ -2312,7 +2312,12 @@ begin
               //waiting condition 0:
               //wait until a window is appearing
               if FindWindowEx(0, 0, nil, PChar(Ident)) = 0 then
+              begin
                 running := True;
+                logdatei.log('Wait for appear Window: "' + Ident+'not found.', LLDebug);
+              end
+              else
+                logdatei.log('Wait for appear Window: "' + Ident+' found.', LLDebug);
             end
 
             else if WaitForWindowVanished and not WaitWindowStarted then
@@ -2321,7 +2326,10 @@ begin
               //we are waiting for a window that will later vanish
               //but this window did not appear yet
               if FindWindowEx(0, 0, nil, PChar(Ident)) <> 0 then
+              begin
                 WaitWindowStarted := True;
+                logdatei.log('Wait for vanish Window: "' + Ident+' found.', LLDebug);
+              end;
 
               if not WaitWindowStarted or WaitForWindowVanished then
                 running := True;
@@ -4008,7 +4016,7 @@ begin
       // we start as Invoker
       // we assume that this is a executable
       // we try it via createprocess (Tprocess)
-      LogDatei.DependentAdd(
+      LogDatei.log(
         'Start process as invoker: ' + DSiGetUserName, LLInfo);
       Result := StartProcess_cp(CmdLinePasStr, ShowWindowFlag,
         WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
@@ -4052,7 +4060,7 @@ begin
       except
         on e: Exception do
         begin
-          LogDatei.DependentAdd('Error in wfunc: StartProcess: ' +
+          LogDatei.DependentAdd('Error in osfunc: StartProcess: ' +
             e.message, LLError);
         end;
       end;

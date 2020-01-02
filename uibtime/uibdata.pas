@@ -1979,7 +1979,7 @@ begin
         debugOut(3, 'DataModule1.getLoggedInList',
           'exception in DataModule1.getLoggedInList');
         debugOut(3, 'Exception', e.Message);
-        raise;
+        //raise;
       end;
     end;
 

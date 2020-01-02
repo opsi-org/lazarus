@@ -12493,6 +12493,36 @@ begin
     end;
    end
 
+   else if LowerCase (s) = LowerCase ('replaceOpsiConstansts')
+   then
+   begin
+    if Skip ('(', r, r, InfoSyntaxError)
+    then
+    begin
+      list1 := TXStringList.create;
+      if produceStringList (section,r, r, list1, InfoSyntaxError) //Recursion
+      then
+      Begin
+        list.clear;
+        for i := 1 to list1.count do
+        begin
+         tmpstr := list1[i-1];
+          for k := 1 to ConstList.Count   do
+          begin
+           if list1.replaceInLine(tmpstr, Constlist.Strings [k-1], ConstValuesList.Strings [k-1], false,tmpstr1) then
+              tmpstr := tmpstr1;
+          end;
+          list.add (tmpstr);
+        end;
+        if Skip (')', r, r, InfoSyntaxError)
+        then
+          syntaxCheck := true;
+      End;
+      list1.free;
+    end;
+   end
+
+
    else if LowerCase (s) = LowerCase ('getKeyList')
    then
    begin
@@ -14124,6 +14154,29 @@ begin
             StringResult := '';
      End;
  end
+
+ else if LowerCase (s) = LowerCase ('replaceOpsiConstansts') then
+ begin
+  if Skip ('(', r, r, InfoSyntaxError)
+  then
+   if EvaluateString (r, r, s1, InfoSyntaxError)
+   then
+     if Skip (')', r,r, InfoSyntaxError)
+     then
+     Begin
+         syntaxCheck := true;
+         list1 := TXStringList.create;
+         tmpstr := s1;
+          for i := 1 to ConstList.Count   do
+          begin
+           if list1.replaceInLine(tmpstr, Constlist.Strings [i-1], ConstValuesList.Strings [i-1], false,tmpstr1) then
+              tmpstr := tmpstr1;
+          end;
+          StringResult := tmpstr;
+         list1.free;
+     End;
+ end
+
 
  else if LowerCase (s) = LowerCase ('asConfidential') then
  begin

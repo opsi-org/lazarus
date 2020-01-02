@@ -1,4 +1,10 @@
 (*
+uibtime (4.1.1.59-1) stable; urgency=low
+
+ * uibdata: do not raise catched exception in getLoggedInList
+
+-- detlef oertel <d.oertel@uib.de>  Thu, 02 Jan 2020 15:00:00 +0000
+
 uibtime (4.1.1.58-1) stable; urgency=low
 
  * httpservice:ServerThread.Execute: comment out finally
