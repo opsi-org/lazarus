@@ -21,7 +21,9 @@ begin
   Application.Scaled:=True;
   Application.Initialize;
   opsiscripttesthelper_main.Application := Application;
+  Application.Title:='opsi-helper-child';
   //Application.CreateForm(TForm1, Form1);
+  //Form1.Caption:='opsi-helper-child';
 
     main;
   Application.Run;

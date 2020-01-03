@@ -9807,7 +9807,7 @@ begin
     {$IFDEF WIN32}
     if force64 then
     begin
-      if not FileExists(GetWinDirectory+'\cmd64.exe') then
+      if (not FileExists(GetWinDirectory+'\cmd64.exe')) or (FindAllFiles('c:\windows','cmd64.exe.mui',true).Count = 0) then
       begin
         Logdatei.log(GetWinDirectory+'\cmd64.exe not found - try to get it', LLDebug2+logleveloffset);
         try
@@ -10047,7 +10047,7 @@ begin
     {$IFDEF WIN32}
     if force64 then
     begin
-      if not FileExists(GetWinDirectory+'\cmd64.exe') then
+      if (not FileExists(GetWinDirectory+'\cmd64.exe')) or (FindAllFiles('c:\windows','cmd64.exe.mui',true).Count = 0) then
       begin
         Logdatei.log(GetWinDirectory+'\cmd64.exe not found - try to get it', LLDebug2);
         try

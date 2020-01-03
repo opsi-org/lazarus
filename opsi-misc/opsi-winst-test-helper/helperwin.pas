@@ -258,13 +258,6 @@ begin
 end;
 *)
 
-procedure TForm1.showwindow(seconds: integer);
-begin
-  form1.Visible := True;
-  opsiscripttesthelper_main.timer1.Interval := seconds * 1000;
-  opsiscripttesthelper_main.timer1.Enabled := True;
-end;
-
 (*
 procedure writeversioninfo;
 var
@@ -537,6 +530,15 @@ begin
     form1.showwindow(showtimeint);
   end;
 end;
+
+procedure TForm1.showwindow(seconds: integer);
+begin
+  form1.Visible := True;
+  Application.ProcessMessages;
+  opsiscripttesthelper_main.timer1.Interval := seconds * 1000;
+  opsiscripttesthelper_main.timer1.Enabled := True;
+end;
+
 
 procedure TForm1.BitBtn1Click(Sender: TObject);
 begin

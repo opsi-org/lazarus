@@ -3,7 +3,7 @@ program opsiscripttesthelper;
 //{$mode objfpc}{$H+}
 {$MODE Delphi}
 
-//{$APPTYPE CONSOLE}
+{$APPTYPE CONSOLE}
 
 //{$DEFINE GUI}
 
@@ -24,7 +24,8 @@ begin
   Application.Title:='opsiscripttesthelper';
   Application.Initialize;
   opsiscripttesthelper_main.Application := Application;
-  Application.CreateForm(TForm1, Form1);
+  //Application.CreateForm(TForm1, Form1);
+  //Form1.Caption:= 'opsi-script-test-helper';
   //Application.CreateForm(TDataModule1, DataModule1);
   main;
   Application.Run;

@@ -3,11 +3,11 @@ object Form1: TForm1
   Height = 107
   Top = 424
   Width = 402
-  Caption = 'opsi-script-test-helper'
+  Caption = 'to be set by program'
   ClientHeight = 107
   ClientWidth = 402
   OnCreate = FormCreate
-  LCLVersion = '2.0.4.0'
+  LCLVersion = '2.0.6.0'
   object BitBtn1: TBitBtn
     Left = 280
     Height = 29

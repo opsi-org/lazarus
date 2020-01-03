@@ -400,6 +400,7 @@ begin
     begin
       paramvaluestr := Application.GetOptionValue('wait');
       try
+        writeln('waiting ' + paramvaluestr + ' seconds');
         waitsec := StrToInt(paramvaluestr);
         Sleep(waitsec * 1000);
       except
@@ -470,21 +471,14 @@ begin
       Application.Terminate;
     end;
 
-    if Application.HasOption('wait') then
-    begin
-      paramvaluestr := Application.GetOptionValue('wait');
-      try
-        waitsec := StrToInt(paramvaluestr);
-        Sleep(waitsec * 1000);
-      except
-        writeln('>' + paramvaluestr + '< is not a integer.');
-      end;
-    end;
 
     if Application.HasOption('showwindow') then
     begin
       Application.CreateForm(TForm1, Form1);
-      Form1.Show;
+      Form1.Caption:=Application.Title;
+      //Application.ProcessMessages;
+      //Form1.Show;
+      //Application.ProcessMessages;
     end;
 
 

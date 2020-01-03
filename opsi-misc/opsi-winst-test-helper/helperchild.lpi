@@ -121,10 +121,8 @@
       <Unit0>
         <Filename Value="helperchild.lpr"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <TopLine Value="7"/>
-        <CursorPos X="5" Y="24"/>
-        <UsageCount Value="22"/>
+        <CursorPos X="20" Y="24"/>
+        <UsageCount Value="23"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit0>
@@ -142,9 +140,9 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="520"/>
-        <CursorPos X="39" Y="528"/>
-        <UsageCount Value="22"/>
+        <TopLine Value="515"/>
+        <CursorPos X="9" Y="536"/>
+        <UsageCount Value="23"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit2>
@@ -167,9 +165,9 @@
         <Filename Value="helperwispecfolder.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="67"/>
+        <TopLine Value="88"/>
         <CursorPos X="40" Y="91"/>
-        <UsageCount Value="21"/>
+        <UsageCount Value="22"/>
         <Loaded Value="True"/>
       </Unit5>
       <Unit6>
@@ -179,20 +177,20 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="21"/>
+        <UsageCount Value="22"/>
       </Unit6>
       <Unit7>
         <Filename Value="..\..\common\osencoding.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="21"/>
+        <UsageCount Value="22"/>
       </Unit7>
       <Unit8>
         <Filename Value="..\..\common\osversioninfo.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="5"/>
         <CursorPos X="13" Y="16"/>
-        <UsageCount Value="21"/>
+        <UsageCount Value="22"/>
         <Loaded Value="True"/>
       </Unit8>
       <Unit9>
@@ -206,10 +204,11 @@
       <Unit10>
         <Filename Value="opsiscripttesthelper_main.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="470"/>
-        <CursorPos X="18" Y="487"/>
-        <UsageCount Value="21"/>
+        <TopLine Value="386"/>
+        <CursorPos X="23" Y="409"/>
+        <UsageCount Value="22"/>
         <Loaded Value="True"/>
       </Unit10>
       <Unit11>
@@ -293,7 +292,7 @@
         <UsageCount Value="20"/>
       </Unit22>
       <Unit23>
-        <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.6\lcl\forms.pp"/>
+        <Filename Value="N:\usr\share\lazarus\2.0.6\lcl\forms.pp"/>
         <UnitName Value="Forms"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1489"/>
@@ -301,7 +300,7 @@
         <UsageCount Value="10"/>
       </Unit23>
     </Units>
-    <JumpHistory Count="25" HistoryIndex="24">
+    <JumpHistory Count="28" HistoryIndex="27">
       <Position1>
         <Filename Value="opsiscripttesthelper_main.pas"/>
         <Caret Line="13" Column="43" TopLine="3"/>
@@ -402,6 +401,18 @@
         <Filename Value="helperwin.pas"/>
         <Caret Line="502" Column="44" TopLine="482"/>
       </Position25>
+      <Position26>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="267" Column="29" TopLine="245"/>
+      </Position26>
+      <Position27>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="477" Column="65" TopLine="464"/>
+      </Position27>
+      <Position28>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="488" Column="39" TopLine="473"/>
+      </Position28>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
