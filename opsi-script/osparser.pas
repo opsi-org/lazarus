@@ -12493,7 +12493,7 @@ begin
     end;
    end
 
-   else if LowerCase (s) = LowerCase ('replaceOpsiConstansts')
+   else if LowerCase (s) = LowerCase ('replaceOpsiConstants')
    then
    begin
     if Skip ('(', r, r, InfoSyntaxError)
@@ -14155,7 +14155,7 @@ begin
      End;
  end
 
- else if LowerCase (s) = LowerCase ('replaceOpsiConstansts') then
+ else if LowerCase (s) = LowerCase ('replaceOpsiConstants') then
  begin
   if Skip ('(', r, r, InfoSyntaxError)
   then
