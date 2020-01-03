@@ -14,6 +14,8 @@ opsi-winst/opsi-script (4.12.3.4) experimental; urgency=low
   * new string function which(<command in path>) : string (command with path) [W/L/M]
   * new stringlist function replaceOpsiConstants(<list>) : <list>
   * new string function replaceOpsiConstants(<string>) : <string>
+  * osparser: create cmd64.exe in execshellcall and execdosbatch:
+      create also cmd64.exe.mui files
 
 -- Detlef Oertel <d.oertel@uib.de>  Fri, 27 Dec 2019:15:00:00 +0200
 

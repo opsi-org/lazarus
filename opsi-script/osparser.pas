@@ -9784,6 +9784,8 @@ Var
  errorinfo : String='';
  i : integer=0;
  localExitCode : LongInt = 0;
+ cmdMuiFiles : Tstringlist;
+ muisrcpath, muitargetpath : string;
 begin
   try
     Result := TStringList.Create;
@@ -9815,7 +9817,20 @@ begin
             if FileExists(GetWinSystemDirectory+'\cmd.exe') then
             begin
              if fileutil.CopyFile(GetWinSystemDirectory+'\cmd.exe',GetWinDirectory+'\cmd64.exe') then
-               LogDatei.log('cmd64.exe created in '+GetWinDirectory, LLinfo+logleveloffset)
+             begin
+               LogDatei.log('cmd64.exe created in '+GetWinDirectory, LLinfo+logleveloffset);
+               cmdMuiFiles := Tstringlist.Create;
+               cmdMuiFiles := FindAllFiles('c:\windows\system32','cmd.exe.mui',true);
+               for i := 0 to cmdMuiFiles.Count -1 do
+               begin
+                  LogDatei.log('cmd.exe.mui found in '+cmdMuiFiles.Strings[i], LLinfo+logleveloffset);
+                  muisrcpath := ExtractFileDir(cmdMuiFiles.Strings[i]);
+                  muitargetpath := ReplaceStr(muisrcpath,'system32\','');
+                  if fileutil.CopyFile(muisrcpath+'\cmd.exe.mui',muitargetpath+'\cmd64.exe.mui') then
+                    LogDatei.log('created : '+muitargetpath+'\cmd64.exe.mui', LLinfo+logleveloffset);
+               end;
+               cmdMuiFiles.Free;
+             end
              else
                LogDatei.log('could not get cmd64.exe', LLError);
             end
@@ -9930,6 +9945,8 @@ Var
  showoutput : boolean = false;
  remainingstr, evaluatedstr, newbatchparastr, errorstr : string;
  aktos : TuibOSVersion;
+ cmdMuiFiles : Tstringlist;
+ muisrcpath, muitargetpath : string;
 
 begin
  try
@@ -10040,7 +10057,20 @@ begin
             if FileExists(GetWinSystemDirectory+'\cmd.exe') then
             begin
              if fileutil.CopyFile(GetWinSystemDirectory+'\cmd.exe',GetWinDirectory+'\cmd64.exe') then
-               LogDatei.log('cmd64.exe created in '+GetWinDirectory, LLinfo)
+             begin
+               LogDatei.log('cmd64.exe created in '+GetWinDirectory, LLinfo+logleveloffset);
+               cmdMuiFiles := Tstringlist.Create;
+               cmdMuiFiles := FindAllFiles('c:\windows\system32','cmd.exe.mui',true);
+               for i := 0 to cmdMuiFiles.Count -1 do
+               begin
+                  LogDatei.log('cmd.exe.mui found in '+cmdMuiFiles.Strings[i], LLinfo+logleveloffset);
+                  muisrcpath := ExtractFileDir(cmdMuiFiles.Strings[i]);
+                  muitargetpath := ReplaceStr(muisrcpath,'system32\','');
+                  if fileutil.CopyFile(muisrcpath+'\cmd.exe.mui',muitargetpath+'\cmd64.exe.mui') then
+                    LogDatei.log('created : '+muitargetpath+'\cmd64.exe.mui', LLinfo+logleveloffset);
+               end;
+               cmdMuiFiles.Free;
+             end
              else
                LogDatei.log('could not get cmd64.exe', LLError);
             end
