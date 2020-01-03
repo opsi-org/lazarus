@@ -268,7 +268,8 @@ begin
   AProcess.CommandLine := '"' + ExtractFilePath(ParamStr(0)) +
     'helperchild.exe" --wait=2 --showwindow=' + IntToStr(childsec);
 *)
-  AProcess.Options := AProcess.Options + [poWaitOnExit, poUsePipes];
+  //AProcess.Options := AProcess.Options + [poWaitOnExit, poUsePipes];
+  { do not try to wait for the child }
   {$IFDEF WINDOWS}
   mychildname := 'helperchild.exe';
   {$ENDIF WINDOWS}
@@ -289,6 +290,7 @@ begin
   except
     writeln('Error starting: ' + AProcess.Executable);
   end;
+  Application.ProcessMessages;
 end;
 
 procedure main();

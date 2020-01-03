@@ -894,7 +894,7 @@ begin
     bwmMaximized: if WindowState <> wsMaximized then WindowState := wsMaximized;
   end;
   if Assigned(LogDatei) then
-     LogDatei.log('Switch window state to: '+GetEnumName(TypeInfo(TBatchWindowMode),ord(BatchWindowMode)),LLDebug);
+     LogDatei.log_prog('Switch window state to: '+GetEnumName(TypeInfo(TBatchWindowMode),ord(BatchWindowMode)),LLDebug);
   {$ENDIF}
 end;
 
