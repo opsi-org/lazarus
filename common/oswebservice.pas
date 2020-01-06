@@ -356,6 +356,7 @@ type
     function getProductRequirements(productname: string;
       requirementType: string): TStringList;
     function getMapOfProductStates: TStringList;
+    procedure reverseProductOrderByUninstall(var MapOfProductStates:TStringList);
     function productonClients_getObjects__actionrequests: TStringList;
     //procedure productOnClient_getobject_actualclient;
     function getInstallableProducts: TStringList;
@@ -4325,6 +4326,19 @@ begin
   Result := FPostRequirements;
 end;
 
+procedure TOpsi4Data.reverseProductOrderByUninstall(
+  var MapOfProductStates: TStringList);
+var
+  i : integer;
+begin
+  for i := 0 to MapOfProductStates.Count-1 do
+  begin
+    if LowerCase(MapOfProductStates.ValueFromIndex[i]) = 'uninstall'
+      then MapOfProductStates.Move(i,0);
+  end;
+end;
+
+
 function TOpsi4Data.getListOfProducts: TStringList;
 var
   productmaps: TStringList;
@@ -4337,6 +4351,12 @@ begin
   try
     begin
       productmaps := getMapOfProductActionRequests;
+      //productmaps.SaveToFile('productmaps.txt'); //included for testing
+      //LogDatei.log('--- ProductMaps ---',LLDebug);
+      //LogDatei.log(productmaps.Text,LLDebug);
+      if configReverseProductOrderByUninstall then
+        reverseProductOrderByUninstall(productmaps);
+      //productmaps.SaveToFile('productmaps_sorted.txt'); //included for testing
       FProductActionRequests.AddStrings(productmaps);
       //productmaps := productonClients_getObjects__actionrequests;
       for i := 0 to productmaps.Count - 1 do
@@ -4560,6 +4580,7 @@ begin
       end;
     end;
 end;
+
 
 function TOpsi4Data.getMapOfProductActionRequests: TStringList;
 begin
@@ -5145,7 +5166,7 @@ begin
   FProductActionRequests.Values[actualProduct] := ars;
 end;
 
-procedure Topsi4data.setActionProgress(const progress: string);
+procedure TOpsi4Data.setActionProgress(const progress: string);
 var
   omc: TOpsiMethodCall;
   jO: ISuperObject;
@@ -5499,7 +5520,8 @@ begin
   end;
 end;
 
-function TOpsi4Data.actionRequest4toString(actionRequest: TActionRequest4): string;
+function TOpsi4Data.actionRequest4ToString(actionRequest: TActionRequest4
+  ): string;
 begin
   case actionRequest of
     tac4None: Result := 'none';

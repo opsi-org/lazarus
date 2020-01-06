@@ -1098,7 +1098,7 @@ var
     end;
     Result := True;
     // no errors
-  end;
+  end;// End of function ChangeProductstatusOnReinst
 
 var
   goOn: boolean;
