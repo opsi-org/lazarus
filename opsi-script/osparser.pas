@@ -98,6 +98,7 @@ LazFileUtils,
   synautil,
   synaip,
   synsock,
+  pingsend,
   oscalc,
   //osdefinedfunctions,
   opsihwbiosinfo,
@@ -17137,6 +17138,7 @@ var
 
 
 
+
 begin
  syntaxCheck := false;
  InfoSyntaxError := '';
@@ -18001,6 +18003,26 @@ begin
       end
     end;
  end
+
+  else if Skip ('isPingReachable', Input, r, InfoSyntaxError)
+ then
+ begin
+    if Skip ('(', r, r, InfoSyntaxError)
+    then if EvaluateString (r, r, s1, InfoSyntaxError)
+    then if Skip (')', r, r, InfoSyntaxError)
+    then
+    Begin
+      syntaxCheck := true;
+      try
+        if pinghost(s1) <> -1 then
+          BooleanResult := true
+        else BooleanResult := false;
+      except
+        BooleanResult := false;
+      end
+    end;
+ end
+
 
 
  else if Skip ('isValidIP4', Input, r, InfoSyntaxError)

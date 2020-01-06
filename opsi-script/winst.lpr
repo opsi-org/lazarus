@@ -18,7 +18,6 @@ program winst;
 {$IFDEF WINDOWS} {$DEFINE GUI} {$ENDIF}
 
 uses
-  LAZUTF8,
   osencoding,
   lcltranslator, {$IFDEF UNIX} {$IFDEF UseCThreads}
   cthreads, {$ENDIF} {$ENDIF}
@@ -56,7 +55,10 @@ uses
   uCpuUsage,
   SystemCriticalU,
   osfuncwin3,
-  osregistry, osinputstring{$ENDIF WINDOWS};
+  osregistry,
+  {$ENDIF WINDOWS}
+  osinputstring,
+  LAZUTF8;
 
 
 
@@ -66,7 +68,7 @@ uses
 
 
 begin
-  Application.Title:='opsi-winst';
+  Application.Title:='opsi-script';
   Application.Initialize;
 
   Application.CreateForm(TCentralForm, CentralForm);
