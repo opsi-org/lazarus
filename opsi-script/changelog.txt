@@ -5,6 +5,16 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.3.5) experimental; urgency=low
+
+  * new procedure reverseProductOrderByUninstall: ProductList is reordered so that
+      uninstall actions will be conducted first and in reverse order as the prodcuts were installed
+  * new config opsi-script.global.ReverseProductOrderByUninstall
+  * postinst script was adapted for the new config opsi-script.global.ReverseProductOrderByUninstall
+
+-- Jan Werner <j.werner@uib.de>  Mon, 6 Jan 2020:13:35:00 +0200
+
+
 opsi-winst/opsi-script (4.12.3.4) experimental; urgency=low
 
   * new unit ostxstringlist
