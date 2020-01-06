@@ -356,7 +356,7 @@ type
     function getProductRequirements(productname: string;
       requirementType: string): TStringList;
     function getMapOfProductStates: TStringList;
-    procedure revertProductOrderByUninstall(var MapOfProductStates:TStringList);
+    procedure reverseProductOrderByUninstall(var MapOfProductStates:TStringList);
     function productonClients_getObjects__actionrequests: TStringList;
     //procedure productOnClient_getobject_actualclient;
     function getInstallableProducts: TStringList;
@@ -4326,7 +4326,7 @@ begin
   Result := FPostRequirements;
 end;
 
-procedure TOpsi4Data.revertProductOrderByUninstall(
+procedure TOpsi4Data.reverseProductOrderByUninstall(
   var MapOfProductStates: TStringList);
 var
   i : integer;
@@ -4354,7 +4354,7 @@ begin
       //productmaps.SaveToFile('productmaps.txt'); //included for testing
       //LogDatei.log('--- ProductMaps ---',LLDebug);
       //LogDatei.log(productmaps.Text,LLDebug);
-      RevertProductOrderByUninstall(productmaps);
+      reverseProductOrderByUninstall(productmaps);
       //productmaps.SaveToFile('productmaps_sorted.txt'); //included for testing
       FProductActionRequests.AddStrings(productmaps);
       //productmaps := productonClients_getObjects__actionrequests;
