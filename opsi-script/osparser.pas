@@ -18004,7 +18004,7 @@ begin
     end;
  end
 
-  else if Skip ('isPingReachable', Input, r, InfoSyntaxError)
+ else if Skip ('isPingReachable', Input, r, InfoSyntaxError)
  then
  begin
     if Skip ('(', r, r, InfoSyntaxError)

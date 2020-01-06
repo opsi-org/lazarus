@@ -68,7 +68,7 @@ uses
 
 
 begin
-  Application.Title:='opsi-script';
+  Application.Title:='opsi-winst';
   Application.Initialize;
 
   Application.CreateForm(TCentralForm, CentralForm);
