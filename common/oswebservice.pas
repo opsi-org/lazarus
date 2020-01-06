@@ -4354,7 +4354,8 @@ begin
       //productmaps.SaveToFile('productmaps.txt'); //included for testing
       //LogDatei.log('--- ProductMaps ---',LLDebug);
       //LogDatei.log(productmaps.Text,LLDebug);
-      reverseProductOrderByUninstall(productmaps);
+      if configReverseProductOrderByUninstall then
+        reverseProductOrderByUninstall(productmaps);
       //productmaps.SaveToFile('productmaps_sorted.txt'); //included for testing
       FProductActionRequests.AddStrings(productmaps);
       //productmaps := productonClients_getObjects__actionrequests;

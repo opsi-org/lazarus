@@ -158,7 +158,7 @@ var
   ScriptErrorMessages: boolean = False;
   AutoActivityDisplay: boolean = False;
   w10BitlockerSuspendOnReboot: boolean = False;
-  ReverseProductOrderByUninstall : boolean = False;
+  configReverseProductOrderByUninstall : boolean = False;
 
 
 implementation
@@ -191,7 +191,7 @@ begin
     myconf.WriteString('global', 'AutoActivityDisplay',
       BoolToStr(AutoActivityDisplay, False));
         myconf.WriteString('global', 'ReverseProductOrderByUninstall',
-      BoolToStr(ReverseProductOrderByUninstall, False));
+      BoolToStr(configReverseProductOrderByUninstall, False));
     myconf.Free;
   except
     Result := False;
@@ -228,8 +228,8 @@ begin
       'ScriptErrorMessages', boolToStr(ScriptErrorMessages, True)));
     AutoActivityDisplay := strToBool(myconf.ReadString('global',
       'AutoActivityDisplay', boolToStr(AutoActivityDisplay, False)));
-    ReverseProductOrderByUninstall := strToBool(myconf.ReadString('global',
-      'ReverseProductOrderByUninstall', boolToStr(ReverseProductOrderByUninstall, False)));
+    configReverseProductOrderByUninstall := strToBool(myconf.ReadString('global',
+      'ReverseProductOrderByUninstall', boolToStr(configReverseProductOrderByUninstall, False)));
     myconf.Free;
 
 
@@ -471,7 +471,7 @@ begin
                           if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
                           begin
                             osmain.startupmessages.Add('got ReverseProductOrderByUninstall: ' + tmpstr);
-                            if not TryStrToBool(tmpstr, debug_lib) then
+                            if not TryStrToBool(tmpstr, configReverseProductOrderByUninstall) then
                               osmain.startupmessages.Add(
                                 'Error: Not a Boolean:  ReverseProductOrderByUninstall: ' + tmpstr);
                             Result := 'readConfigFromService: ok';
