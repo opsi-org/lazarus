@@ -158,6 +158,7 @@ var
   ScriptErrorMessages: boolean = False;
   AutoActivityDisplay: boolean = False;
   w10BitlockerSuspendOnReboot: boolean = False;
+  configReverseProductOrderByUninstall : boolean = False;
 
 
 implementation
@@ -189,6 +190,8 @@ begin
       BoolToStr(ScriptErrorMessages, True));
     myconf.WriteString('global', 'AutoActivityDisplay',
       BoolToStr(AutoActivityDisplay, False));
+        myconf.WriteString('global', 'ReverseProductOrderByUninstall',
+      BoolToStr(configReverseProductOrderByUninstall, False));
     myconf.Free;
   except
     Result := False;
@@ -225,6 +228,8 @@ begin
       'ScriptErrorMessages', boolToStr(ScriptErrorMessages, True)));
     AutoActivityDisplay := strToBool(myconf.ReadString('global',
       'AutoActivityDisplay', boolToStr(AutoActivityDisplay, False)));
+    configReverseProductOrderByUninstall := strToBool(myconf.ReadString('global',
+      'ReverseProductOrderByUninstall', boolToStr(configReverseProductOrderByUninstall, False)));
     myconf.Free;
 
 
@@ -454,6 +459,21 @@ begin
                             if not TryStrToBool(tmpstr, w10BitlockerSuspendOnReboot) then
                               osmain.startupmessages.Add(
                                 'Error: Not a Boolean:  w10BitlockerSuspendOnReboot: ' + tmpstr);
+                            Result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
+                      if LowerCase(configid) =
+                        LowerCase('opsi-script.global.ReverseProductOrderByUninstall') then
+                      begin
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add('got ReverseProductOrderByUninstall: ' + tmpstr);
+                            if not TryStrToBool(tmpstr, configReverseProductOrderByUninstall) then
+                              osmain.startupmessages.Add(
+                                'Error: Not a Boolean:  ReverseProductOrderByUninstall: ' + tmpstr);
                             Result := 'readConfigFromService: ok';
                           end;
                       end;
