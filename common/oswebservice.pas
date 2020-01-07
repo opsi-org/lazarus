@@ -41,7 +41,7 @@ uses
   {$IFDEF GUI}
   Forms,
   {$ENDIF GUI}
-  {$IFDEF OPSIWINST}
+  {$IFDEF OPSISCRIPT}
   osfunc,
   //osparser,
   osconf,
@@ -49,7 +49,7 @@ uses
   //utf8scanner,
   //Character,
   //utf8info,
-  {$ENDIF OPSIWINST}
+  {$ENDIF OPSISCRIPT}
 
 {$IFDEF WINDOWS}
   Windows,
@@ -164,7 +164,7 @@ type
   end;
 
 
-(************** opsidata-Service  *********************************************)
+  (************** opsidata-Service  *********************************************)
 
   // helper classes
 
@@ -223,7 +223,7 @@ type
     procedure createSocket; overload;
     procedure createSocket(const agent, ip, port: string); overload;
     function CompressStream(InStream: TMemoryStream;
-      const ContentEncoding: string):TMemoryStream;
+      const ContentEncoding: string): TMemoryStream;
   public
     { constructor }
     constructor Create(const serviceURL, username, password: string); overload;
@@ -270,7 +270,7 @@ type
     property LastErrorInfo: TStringList read FErrorInfo;
   end;
 
-(****************************** Opsi Data *************************************)
+  (****************************** Opsi Data *************************************)
 
   { TOpsiData}
 
@@ -356,7 +356,7 @@ type
     function getProductRequirements(productname: string;
       requirementType: string): TStringList;
     function getMapOfProductStates: TStringList;
-    procedure reverseProductOrderByUninstall(var MapOfProductStates:TStringList);
+    procedure reverseProductOrderByUninstall(var MapOfProductStates: TStringList);
     function productonClients_getObjects__actionrequests: TStringList;
     //procedure productOnClient_getobject_actualclient;
     function getInstallableProducts: TStringList;
@@ -396,7 +396,7 @@ type
     function stateStringToState(s: string): TProductState;
     function actionRequestStringToActionRequest(s: string): TActionRequest;
     function actionRequestStringToAction(s: string): TAction;
-        function getMethodSignature(const methodname: string): TStringList;
+    function getMethodSignature(const methodname: string): TStringList;
     function initProduct: boolean; override;
     function getActualProductVersion: string; override;
     function getSpecialScriptPath: string; override;
@@ -510,17 +510,19 @@ resourcestring
 
 
 implementation
+
 (******************************************************************************)
 (*                      Implementations                                       *)
 (******************************************************************************)
 
-{$IFDEF OPSIWINST}
+{$IFDEF OPSISCRIPT}
 uses
   {$IFDEF GUI}
   osbatchgui,
   {$ENDIF GUI}
   osparser,
   osmain;
+
 {$ENDIF}
 
 const
@@ -543,9 +545,9 @@ var
   //AcceptEncodingCompress: string = 'deflate, gzip';
   AcceptEncodingCompress: string = 'deflate';
   AcceptEncodingNoCompress: string = 'plain';
-  OpsiVersion : string = '';
+  OpsiVersion: string = '';
 
-{$IFNDEF OPSIWINST}
+{$IFNDEF OPSISCRIPT}
 function StringReplace(const S, OldPattern, NewPattern: string): string;
 begin
   Result := SysUtils.StringReplace(s, OldPattern, NewPattern,
@@ -559,6 +561,7 @@ function MemoryStreamToString(M: TMemoryStream): string;
 begin
   SetString(Result, PChar(M.Memory), M.Size div SizeOf(char));
 end;
+
 {$ENDIF SYNAPSE}
 
 function escapeControlChars(t: string): string;
@@ -1197,6 +1200,7 @@ begin
     end;
   end;
 end;
+
 (******************* End of TOpsiMethodCall ***********************************)
 
 (******************************************************************************)
@@ -1209,21 +1213,21 @@ begin
   TJsonThroughHTTPS.Create(serviceUrl, username, password, '', '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(
-  const serviceURL, username, password, sessionid: string);
+constructor TJsonThroughHTTPS.Create(const serviceURL, username,
+  password, sessionid: string);
 begin
   Create(serviceUrl, username, password, sessionid, '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(
-  const serviceURL, username, password, sessionid, ip, port: string);
+constructor TJsonThroughHTTPS.Create(const serviceURL, username,
+  password, sessionid, ip, port: string);
 begin
   Create(serviceUrl, username, password, sessionid, ip, port,
     ExtractFileName(ParamStr(0)));
 end;
 
-constructor TJsonThroughHTTPS.Create(
-  const serviceURL, username, password, sessionid, ip, port, agent: string);
+constructor TJsonThroughHTTPS.Create(const serviceURL, username,
+  password, sessionid, ip, port, agent: string);
 begin
   //portHTTPS := port;
   //portHTTP := 4444;
@@ -1235,7 +1239,7 @@ begin
   MyMemoryStream := TMemoryStream.Create;
   FResultLines := TStringList.Create;
   FErrorInfo := TStringList.Create;
-  {$IFDEF OPSIWINST}
+  {$IFDEF OPSISCRIPT}
   createSocket(osconf.selfProductName + ' / ' + osconf.WinstVersion, ip, port);
   {$ELSE OPSIWINST}
     {$IFDEF OCASIMP}
@@ -1243,7 +1247,7 @@ begin
     {$ELSE OCASIMP}
   createSocket(agent, '', '');
     {$ENDIF OCASIMP}
-  {$ENDIF OPSIWINST}
+  {$ENDIF OPSISCRIPT}
   //nullO := Null.create;
   methodGET := False;
 end;
@@ -1390,9 +1394,10 @@ begin
 
 end;
 
-function TJsonThroughHTTPS.CompressStream(InStream: TMemoryStream; const ContentEncoding: string):TMemoryStream;
-//var
-//  CompressedMemoryStream:TMemoryStream;
+function TJsonThroughHTTPS.CompressStream(InStream: TMemoryStream;
+  const ContentEncoding: string): TMemoryStream;
+  //var
+  //  CompressedMemoryStream:TMemoryStream;
 begin
   Result := TMemoryStream.Create;
   { gzip format (RFC 1952) }
@@ -1474,7 +1479,7 @@ var
   jO: ISuperObject;
   utf8str: UTF8String;
   SendStream, ReceiveStream: TMemoryStream;
-  InStream : TMemoryStream;
+  InStream: TMemoryStream;
   CompressionSendStream: TCompressionStream;
   DeCompressionReceiveStream: TDeCompressionStream;
   //IdCompressorZLib.CompressStream(tmpStream,AResponseInfo.ContentStream,9,GZIP_WINBITS,9,0);
@@ -1511,11 +1516,11 @@ begin
     communicationmode : 0 = opsi 4.1 / 4.2 / Request: gzip, Response: gzip, deflate, identity
     communicationmode : 1 = opsi 4.0 / Request: deflate, Response: gzip, deflate, identity
      ----------------------------------------------------}
-     if FCommunicationMode <> -1 then   //if Communictaion mode is set
-     begin
-       CommunicationMode := FCommunicationMode;
-     end;
-     case CommunicationMode of
+    if FCommunicationMode <> -1 then   //if Communictaion mode is set
+    begin
+      CommunicationMode := FCommunicationMode;
+    end;
+    case CommunicationMode of
       0:
       begin
         LogDatei.log_prog('Use opsi 4.1 / 4.2 HTTP Header, compress', LLnotice);
@@ -1627,26 +1632,29 @@ begin
           try
             begin
               { Preparing Request }
-                { Set Headers }
+              { Set Headers }
               HTTPSender.Clear; //reset headers, document and Mimetype
               //HTTPSender.Cookies.Clear; //do not clear cookies!
               HTTPSender.MimeType := ContentType;
-              HTTPSender.Headers.NameValueSeparator:= ':'; // message-header = field-name ":" [ field-value ]  (RFC 2616)
+              HTTPSender.Headers.NameValueSeparator := ':';
+              // message-header = field-name ":" [ field-value ]  (RFC 2616)
               HTTPSender.Headers.Add('Accept: ' + Accept);
               HTTPSender.Headers.Add('Accept-Encoding: ' + AcceptEncoding);
-              if ContentEncoding <> 'identity' then HTTPSender.Headers.Add('Content-Encoding: ' + ContentEncoding);
+              if ContentEncoding <> 'identity' then
+                HTTPSender.Headers.Add('Content-Encoding: ' + ContentEncoding);
               HTTPSender.Headers.Add('Content-Type: ' + ContentType);
               //HTTPSender.Headers.Add('Clear-Site-Data: "cache", "cookies", "storage", "executionContexts"');
               //HTTPSender.Headers.Add('Cache-Control: no-cache' );
               //HTTPSender.Headers.Add('User-Agent: ' );
               //HTTPSender.Headers.Add('Connection: close' );
-                {header logging}
+              {header logging}
               for i := 0 to HTTPSender.Headers.Count - 1 do
                 LogDatei.log_prog('HTTPSender Request Header.Strings: ' +
                   HTTPSender.Headers.Strings[i], LLDebug);
-                { Set Body }
+              { Set Body }
               HTTPSender.Document.Write(utf8str[1], length(utf8str));
-              if ContentEncoding <> 'identity' then  //change to ContentEncoding = 'gzip' if using deflate alternative
+              if ContentEncoding <> 'identity' then
+                //change to ContentEncoding = 'gzip' if using deflate alternative
               begin
                 SendStream := CompressStream(HTTPSender.Document, ContentEncoding);
                 //SendStream:=CreateSendStream(ContentEncoding, utf8str);
@@ -1669,8 +1677,9 @@ begin
               begin
                 { Read Response }
                 LogDatei.log_prog('HTTPSender Post succseeded', LLdebug);
-                LogDatei.log_prog('HTTPSender result: ' + IntToStr(HTTPSender.ResultCode) +
-                  ' msg: ' + HTTPSender.ResultString, LLdebug);
+                LogDatei.log_prog('HTTPSender result: ' +
+                  IntToStr(HTTPSender.ResultCode) + ' msg: ' +
+                  HTTPSender.ResultString, LLdebug);
                 for i := 0 to HTTPSender.Headers.Count - 1 do
                   LogDatei.log_prog('HTTPSender Response Header.Strings: ' +
                     HTTPSender.Headers.Strings[i], LLdebug);
@@ -1682,15 +1691,15 @@ begin
                     // we have no saved communication mode
                     if CommunicationMode = 0 then
                     begin
-                      LogDatei.log_prog('Communication mode is '
-                      + IntToStr(CommunicationMode) + '. '
-                      + 'Opsi Version should be >=4.1', LLDebug);
+                      LogDatei.log_prog('Communication mode is ' +
+                        IntToStr(CommunicationMode) + '. ' +
+                        'Opsi Version should be >=4.1', LLDebug);
                     end
                     else
                     begin
-                      LogDatei.log_prog('Communication mode is '
-                      + IntToStr(CommunicationMode) + '. '
-                      + 'Opsi Version should be 4.0', LLDebug);
+                      LogDatei.log_prog('Communication mode is ' +
+                        IntToStr(CommunicationMode) + '. ' +
+                        'Opsi Version should be 4.0', LLDebug);
                     end;
                     // save the communication mode
                     FCommunicationMode := CommunicationMode;
@@ -1702,16 +1711,18 @@ begin
                 end;
                 //HTTPSender.Headers.NameValueSeparator:= ':';
 
-                if (HTTPSender.Headers.IndexOfName('Content-Encoding') <> -1) then  //Content-Encoding header available
+                if (HTTPSender.Headers.IndexOfName('Content-Encoding') <> -1) then
+                  //Content-Encoding header available
                 begin
                   ContentEncoding := trim(HTTPSender.Headers.Values['Content-Encoding']);
-                  LogDatei.log_prog('Response Content-Encoding: '
-                    + ContentEncoding,llDebug);
+                  LogDatei.log_prog('Response Content-Encoding: ' +
+                    ContentEncoding, llDebug);
                 end
                 else // no Content-Encoding header available, due to HTTP specification: Content-Encoding = identity
                 begin
                   ContentEncoding := 'identity';
-                  LogDatei.log_prog('No Content-Encoding header. Guess identity',llDebug);
+                  LogDatei.log_prog(
+                    'No Content-Encoding header. Guess identity', llDebug);
                 end;
 
                 { identity = uncompressed}
@@ -1730,7 +1741,8 @@ begin
                   //ReceiveStream := HTTPSender.Document;
                   //ReceiveStream.Seek(0, 0);
                   //mymemorystream.Seek(0, 0);
-                  DeCompressionReceiveStream := TDeCompressionStream.Create(HTTPSender.Document);
+                  DeCompressionReceiveStream :=
+                    TDeCompressionStream.Create(HTTPSender.Document);
                   GetMem(buffer, 655360);
                   repeat
                     FillChar(buffer^, 655360, ' ');
@@ -1745,9 +1757,10 @@ begin
                 { gzip = gzip format}
                 if ContentEncoding = 'gzip' then
                 begin
-                  unzipStream(HTTPSender.Document,ReceiveStream);
+                  unzipStream(HTTPSender.Document, ReceiveStream);
                 end
-                else LogDatei.log('Unknown Content-Encoding: ' + ContentEncoding, LLWarning);
+                else
+                  LogDatei.log('Unknown Content-Encoding: ' + ContentEncoding, LLWarning);
 
                 //HTTPSender.Document.SaveToFile('C:\Users\Jan\Documents\ReceiveStream.txt');  //for testing
 
@@ -1755,7 +1768,7 @@ begin
               end
               else
 
-              { Request failed }
+                { Request failed }
 
               begin
                 LogDatei.log('HTTPSender Post failed', LLError);
@@ -1764,7 +1777,7 @@ begin
                 ErrorOccured := True;
                 raise Exception.Create(HTTPSender.Headers.Strings[0]);
               end;
-             end;
+            end;
           except
             on e: Exception do
             begin
@@ -2647,11 +2660,11 @@ begin
     communicationmode : 0 = opsi 4.1 / 4.2 / Request: gzip, Response: gzip, deflate, identity
     communicationmode : 1 = opsi 4.0 / Request: deflate, Response: gzip, deflate, identity
    ----------------------------------------------------}
-   if FCommunicationMode <> -1 then   //if Communictaion mode is set
-   begin
-     CommunicationMode := FCommunicationMode;
-   end;
-   case communicationmode of
+  if FCommunicationMode <> -1 then   //if Communictaion mode is set
+  begin
+    CommunicationMode := FCommunicationMode;
+  end;
+  case communicationmode of
     0:
     begin
       LogDatei.log_prog('Use opsi 4.1 / 4.2 HTTP Header, compress', LLnotice);
@@ -2727,20 +2740,22 @@ begin
           {$IFDEF SYNAPSE}
           { Preparing Request }
 
-           { Set Headers }
+          { Set Headers }
           HTTPSender.Clear; //reset headers, document and Mimetype
           //HTTPSender.Cookies.Clear; //Do not clear cookies
           HTTPSender.MimeType := ContentType;
-          HTTPSender.Headers.NameValueSeparator:= ':'; // message-header = field-name ":" [ field-value ]  (RFC 2616)
+          HTTPSender.Headers.NameValueSeparator := ':';
+          // message-header = field-name ":" [ field-value ]  (RFC 2616)
           HTTPSender.Headers.Add('Accept: ' + Accept);
           HTTPSender.Headers.Add('Accept-Encoding: ' + AcceptEncoding);
-          if ContentEncoding <> 'identity' then HTTPSender.Headers.Add('Content-Encoding: ' + ContentEncoding);
+          if ContentEncoding <> 'identity' then
+            HTTPSender.Headers.Add('Content-Encoding: ' + ContentEncoding);
           HTTPSender.Headers.Add('Content-Type: ' + ContentType);
           //HTTPSender.Headers.Add('Clear-Site-Data: "cache", "cookies", "storage", "executionContexts"');
           //HTTPSender.Headers.Add('Cache-Control: no-cache' );
           //HTTPSender.Headers.Add('User-Agent: ' );
           //HTTPSender.Headers.Add('Connection: close' );
-            { header logging }
+          { header logging }
           for i := 0 to HTTPSender.Headers.Count - 1 do
             LogDatei.log_prog('HTTPSender Request Header.Strings: ' +
               HTTPSender.Headers.Strings[i], LLDebug);
@@ -2754,11 +2769,12 @@ begin
           {$ENDIF SYNAPSE}
           { Set Body }
 
-          if ContentEncoding <> 'identity' then  //change to ContentEncoding = 'gzip' if using deflate alternative
+          if ContentEncoding <> 'identity' then
+            //change to ContentEncoding = 'gzip' if using deflate alternative
           begin
             SendStream := CompressStream(InStream, ContentEncoding);
             //SendStream:=CreateSendStream(ContentEncoding, utf8str);
-            HTTPSender.Document.LoadFromStream(SendStream)
+            HTTPSender.Document.LoadFromStream(SendStream);
           end
           else
           begin
@@ -2811,35 +2827,36 @@ begin
               begin
                 if CommunicationMode = 0 then
                 begin
-                  LogDatei.log_prog('Communication mode is '
-                  + IntToStr(CommunicationMode) + '. '
-                  + 'Opsi Version should be >=4.1', LLDebug);
+                  LogDatei.log_prog('Communication mode is ' +
+                    IntToStr(CommunicationMode) + '. ' +
+                    'Opsi Version should be >=4.1', LLDebug);
                 end
                 else
                 begin
-                  LogDatei.log_prog('Communication mode is '
-                  + IntToStr(CommunicationMode) + '. '
-                  + 'Opsi Version should be 4.0', LLDebug);
+                  LogDatei.log_prog('Communication mode is ' +
+                    IntToStr(CommunicationMode) + '. ' +
+                    'Opsi Version should be 4.0', LLDebug);
                 end;
                 FCommunicationMode := CommunicationMode;
               end;
             end
             else
-            { Communication unsuccessful }
+              { Communication unsuccessful }
             begin
               raise Exception.Create(HTTPSender.Headers.Strings[0]);
             end;
 
-            if (HTTPSender.Headers.IndexOfName('Content-Encoding') <> -1) then // Content-Encoding header available
+            if (HTTPSender.Headers.IndexOfName('Content-Encoding') <> -1) then
+              // Content-Encoding header available
             begin
               ContentEncoding := trim(HTTPSender.Headers.Values['Content-Encoding']);
-              LogDatei.log('Response Content-Encoding: '
-                + ContentEncoding,llDebug);
+              LogDatei.log('Response Content-Encoding: ' +
+                ContentEncoding, llDebug);
             end
             else // no Content-Encoding header available, due to HTTP specification: Content-Encoding = identity
             begin
               ContentEncoding := 'identity';
-              LogDatei.log('No Content-Encoding header. Guess identity',llDebug);
+              LogDatei.log('No Content-Encoding header. Guess identity', llDebug);
             end;
             { identity = uncompressed}
             if (ContentEncoding = 'identity') then
@@ -2850,8 +2867,10 @@ begin
             { defalte = zlib format}
             if (ContentEncoding = 'deflate') or (ContentEncoding = '') then
             begin
-              DeCompressionReceiveStream := TDeCompressionStream.Create(HTTPSender.Document);
-              LogDatei.log_prog('HTTPSender Post: created CompressionReceiveStream', LLInfo);
+              DeCompressionReceiveStream :=
+                TDeCompressionStream.Create(HTTPSender.Document);
+              LogDatei.log_prog(
+                'HTTPSender Post: created CompressionReceiveStream', LLInfo);
               GetMem(buffer, 655360);
               repeat
                 FillChar(buffer^, 655360, ' ');
@@ -2861,8 +2880,8 @@ begin
                   IntToStr(readcount), LLInfo);
                 if readcount > 0 then
                   ReceiveStream.Write(buffer^, readcount);
-                  LogDatei.log_prog('HTTPSender Post: write to ReceiveStream: ' +
-                    IntToStr(readcount), LLInfo);
+                LogDatei.log_prog('HTTPSender Post: write to ReceiveStream: ' +
+                  IntToStr(readcount), LLInfo);
               until readcount < 655360;
               LogDatei.log_prog(
                 'HTTPSender Post: read CompressionReceiveStream finished',
@@ -2874,9 +2893,10 @@ begin
             { gzip = gzip format}
             if ContentEncoding = 'gzip' then
             begin
-              unzipStream(HTTPSender.Document,ReceiveStream);
+              unzipStream(HTTPSender.Document, ReceiveStream);
             end
-            else LogDatei.log('Unknown Content-Encoding: ' + ContentEncoding, LLDebug);
+            else
+              LogDatei.log('Unknown Content-Encoding: ' + ContentEncoding, LLDebug);
             //HTTPSender.Document.SaveToFile('C:\Users\Jan\Documents\ReceiveStream.txt');  //for testing
             LogDatei.log_prog('HTTPSender Post: got document', LLInfo);
             {$ELSE SYNAPSE}
@@ -2890,7 +2910,7 @@ begin
               ' msg: ' + HTTPSender.ResultString, LLError);
             ErrorOccured := True;
             raise Exception.Create(HTTPSender.Headers.Strings[0]);
-          end
+          end;
         end;
         (*
         else
@@ -3104,7 +3124,7 @@ begin
         FSessionId := copy(cookieVal, 1, posColon - 1)
       else
         FSessionId := '';
-     except
+    except
       on E: Exception do
       begin
         errorOccured := True;
@@ -3355,6 +3375,7 @@ begin
     end
   end;
 end;
+
 (******************* End of TJsonThroughHTTPS *********************************)
 
 (******************************************************************************)
@@ -4034,7 +4055,7 @@ begin
         //FProductOnClient_aktobject := TSuperObject.create(str);
       end
       else
-        {$IFDEF OPSIWINST}
+        {$IFDEF OPSISCRIPT}
       if runLoginScripts then
         {$ELSE}
         if False then
@@ -4074,7 +4095,7 @@ var
   sendtype: string;
 begin
   sendToLogFlag := True;
-  {$IFDEF OPSIWINST}
+  {$IFDEF OPSISCRIPT}
   if runLoginScripts then
   {$ELSE}
     if False then
@@ -4083,10 +4104,10 @@ begin
     else
       sendtype := 'instlog';
 
-  {$IFDEF OPSIWINST}
+  {$IFDEF OPSISCRIPT}
   if runproductlist then
     Logdatei.Appendmode := True;
-  {$ENDIF OPSIWINST}
+  {$ENDIF OPSISCRIPT}
 
   if sendToLogFlag then
   begin
@@ -4329,12 +4350,12 @@ end;
 procedure TOpsi4Data.reverseProductOrderByUninstall(
   var MapOfProductStates: TStringList);
 var
-  i : integer;
+  i: integer;
 begin
-  for i := 0 to MapOfProductStates.Count-1 do
+  for i := 0 to MapOfProductStates.Count - 1 do
   begin
-    if LowerCase(MapOfProductStates.ValueFromIndex[i]) = 'uninstall'
-      then MapOfProductStates.Move(i,0);
+    if LowerCase(MapOfProductStates.ValueFromIndex[i]) = 'uninstall' then
+      MapOfProductStates.Move(i, 0);
   end;
 end;
 
@@ -4354,8 +4375,10 @@ begin
       //productmaps.SaveToFile('productmaps.txt'); //included for testing
       //LogDatei.log('--- ProductMaps ---',LLDebug);
       //LogDatei.log(productmaps.Text,LLDebug);
+      {$IFDEF OPSISCRIPT}
       if configReverseProductOrderByUninstall then
         reverseProductOrderByUninstall(productmaps);
+      {$ENDIF OPSISCRIPT}
       //productmaps.SaveToFile('productmaps_sorted.txt'); //included for testing
       FProductActionRequests.AddStrings(productmaps);
       //productmaps := productonClients_getObjects__actionrequests;
@@ -5520,8 +5543,7 @@ begin
   end;
 end;
 
-function TOpsi4Data.actionRequest4ToString(actionRequest: TActionRequest4
-  ): string;
+function TOpsi4Data.actionRequest4ToString(actionRequest: TActionRequest4): string;
 begin
   case actionRequest of
     tac4None: Result := 'none';
@@ -5579,6 +5601,7 @@ begin
   end;
   omc.Free;
 end;
+
 (************************ End of TOpsi4Data ***********************************)
 
 initialization

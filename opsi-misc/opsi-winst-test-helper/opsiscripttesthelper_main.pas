@@ -290,7 +290,9 @@ begin
   except
     writeln('Error starting: ' + AProcess.Executable);
   end;
+  {$IFDEF GUI}
   Application.ProcessMessages;
+  {$ENDIF GUI}
 end;
 
 procedure main();
@@ -299,6 +301,8 @@ var
   waitsec, childsec: integer;
   myparamstring : string = '';
   myparamcount, i : integer;
+  showtimestr: string;
+  showtimeint: integer;
 
 begin
   myparamcount := ParamCount;
@@ -402,7 +406,7 @@ begin
     begin
       paramvaluestr := Application.GetOptionValue('wait');
       try
-        writeln('waiting ' + paramvaluestr + ' seconds');
+        writeln('--wait: waiting ' + paramvaluestr + ' seconds');
         waitsec := StrToInt(paramvaluestr);
         Sleep(waitsec * 1000);
       except
@@ -476,8 +480,22 @@ begin
 
     if Application.HasOption('showwindow') then
     begin
+      {$IFDEF GUI}
       Application.CreateForm(TForm1, Form1);
       Form1.Caption:=Application.Title;
+      {$ELSE}
+      showtimestr := Application.GetOptionValue('showwindow');
+      try
+        showtimeint := StrToInt(showtimestr);
+      except
+        writeln('<' + showtimestr + '< is not a integer. Using default of 1 second.');
+        showtimeint := 1;
+      end;
+      writeln('--showwindow: waiting ' + paramvaluestr + ' seconds');
+      Sleep(showtimeint * 1000);
+      //timer1.Interval := showtimeint * 1000;
+      //timer1.Enabled := True;
+      {$ENDIF GUI}
       //Application.ProcessMessages;
       //Form1.Show;
       //Application.ProcessMessages;

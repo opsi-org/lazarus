@@ -140,8 +140,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="515"/>
-        <CursorPos X="9" Y="536"/>
+        <TopLine Value="512"/>
+        <CursorPos X="25" Y="519"/>
         <UsageCount Value="23"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -206,8 +206,8 @@
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="386"/>
-        <CursorPos X="23" Y="409"/>
+        <TopLine Value="482"/>
+        <CursorPos X="7" Y="495"/>
         <UsageCount Value="22"/>
         <Loaded Value="True"/>
       </Unit10>

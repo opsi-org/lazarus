@@ -18,8 +18,8 @@ unit oslog;
 {$OBJECTCHECKS ON}
 {$VARSTRINGCHECKS ON}
 
-{$IFDEF OPSIWINST} {$DEFINE PARTLOG} {$ENDIF}
-{$IFDEF OPSIWINST} {$DEFINE OPSI} {$ENDIF}
+{$IFDEF OPSISCRIPT} {$DEFINE PARTLOG} {$ENDIF}
+{$IFDEF OPSISCRIPT} {$DEFINE OPSI} {$ENDIF}
 {$IFDEF OPSISCRIPTSTARTER} {$DEFINE PARTLOG} {$ENDIF}
 {$IFDEF OPSISCRIPTSTARTER} {$DEFINE OPSI} {$ENDIF}
 
@@ -33,10 +33,10 @@ uses
   Forms,
   Dialogs,
 {$ENDIF GUI}
-{$IFDEF OPSIWINST}
+{$IFDEF OPSISCRIPT}
   osconf,
   //osdefinedfunctions,
-{$ENDIF OPSIWINST}
+{$ENDIF OPSISCRIPT}
 {$IFDEF WINDOWS}
   registry,
   shlobj,
@@ -298,7 +298,7 @@ implementation
 
 //uses
 
-{$IFDEF OPSIWINST}
+{$IFDEF OPSISCRIPT}
 uses
 {$IFDEF WINDOWS}
   Windows,
@@ -327,7 +327,7 @@ var
   j: integer;
 
 
-{$IFNDEF OPSIWINST}
+{$IFNDEF OPSISCRIPT}
 function StringReplace(const S, OldPattern, NewPattern: string): string;
   (* ersetzt jedes Vorkommen von OldPattern durch NewPattern *)
 
@@ -514,11 +514,11 @@ procedure TLogInfo.CreateTheLogfile(LogDateiname: string; check4append: boolean)
 var
   i: integer;
   filelist: TStringList;
-  {$IFDEF OPSIWINST}
+  {$IFDEF OPSISCRIPT}
   files: TuibFileInstall;
   {$ENDIF}
 begin
-  {$IFDEF OPSIWINST}
+  {$IFDEF OPSISCRIPT}
   // remove old partlog files
   files := TuibFileInstall.Create;
   try
@@ -528,7 +528,7 @@ begin
   end;
   files.Free;
   {$ENDIF}
-  {$IFNDEF OPSIWINST}
+  {$IFNDEF OPSISCRIPT}
   // remove old partlog files
   try
     filelist := FindAllFiles(FStandardPartLogPath, FStandardPartLogFilename +
@@ -576,7 +576,7 @@ begin
       LogDatei.Empty;
     end;
   end;
-  {$IFDEF OPSIWINST}
+  {$IFDEF OPSISCRIPT}
   Logdatei.log('opsi-script ' + winstversion + ' started at >>' + starttimestr,
     LLessential);
   Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
@@ -597,11 +597,11 @@ begin
   FLogProduktId := False;
   FStandardLogFileext := '.log';
   FWritePartLog := True;
-  {$IFDEF OPSIWINST}
+  {$IFDEF OPSISCRIPT}
   FStandardPartLogFilename := 'opsi-script-part-';
   FStandardLogFilename := 'opsi-script';
   FStandardLogFileext := '.log';
-  {$ENDIF OPSIWINST}
+  {$ENDIF OPSISCRIPT}
   {$IFDEF OCASIMP}
   FStandardPartLogFilename := 'ocasimp-part-';
   FStandardLogFilename := 'ocasimp';
@@ -928,7 +928,7 @@ begin
     PartLogFileExists := False;
     ForceDirectories(FStandardPartLogPath);
     Randomize;
-    {$IFDEF OPSIWINST}
+    {$IFDEF OPSISCRIPT}
     myrandomstr := randomstr(False);
     {$ELSE}
     //inttostr(Random(MAXLONGINT))+ExtractFileNameWithoutExt(ExtractFileName(FFilename))
@@ -1087,13 +1087,13 @@ end;
 
 procedure TLogInfo.DeletePartLog;
 var
-{$IFDEF OPSIWINST}
+{$IFDEF OPSISCRIPT}
   files: TuibFileInstall;
 {$ENDIF}
   i: integer;
   filelist: TStringList;
 begin
-  {$IFDEF OPSIWINST}
+  {$IFDEF OPSISCRIPT}
   files := TuibFileInstall.Create;
   if PartLogFileExists then
   begin
@@ -1113,7 +1113,7 @@ begin
   files.Free;
   {$ENDIF}
 
-  {$IFNDEF OPSIWINST}
+  {$IFNDEF OPSISCRIPT}
   // remove old partlog files
   try
     filelist := FindAllFiles(FStandardPartLogPath, FStandardPartLogFilename +
@@ -1277,7 +1277,7 @@ begin
       if FUsedLogLevel < Fforce_min_loglevel then
         FUsedLogLevel := Fforce_min_loglevel;
 
-      {$IFDEF OPSIWINST}
+      {$IFDEF OPSISCRIPT}
       // running defined function ?
       if inDefFuncIndex > -1 then
         if definedFunctionArray[inDefFuncIndex].OriginFile <>
@@ -1311,7 +1311,7 @@ begin
       // thing we do not log below loglevel 9
       if FUsedLogLevel < LLconfidential then
       begin
-       {$IFDEF OPSIWINST}
+       {$IFDEF OPSISCRIPT}
         // hide opsi service password
         st := SysUtils.StringReplace(st, opsiservicePassword,
           passwordFiller, [rfReplaceAll]);
@@ -1354,7 +1354,7 @@ begin
         lastpeaklen := peaklen;
 
         {$IFDEF GUI}
-        {$IFDEF OPSIWINST}
+        {$IFDEF OPSISCRIPT}
         if FBatchOberflaeche <> nil //dont log before creating FBatchOberflaeche
         then
         begin
@@ -1399,7 +1399,7 @@ begin
         end
       end;
       try
-        {$IFDEF OPSIWINST}
+        {$IFDEF OPSISCRIPT}
         (*
         // reencode log line to system encoding
         PasS  := ConvertEncodingFromUTF8(PasS,GetDefaultTextEncoding,dummybool);
@@ -1407,7 +1407,7 @@ begin
         {$ENDIF}
 
         {$IFDEF GUI}
-        {$IFDEF OPSIWINST}
+        {$IFDEF OPSISCRIPT}
         try
           CentralForm.Memo1Add(PasS);
         except
@@ -1467,7 +1467,7 @@ begin
                 //flush(LogPartFile);
               except
               {$IFDEF GUI}
-              {$IFDEF OPSIWINST}
+              {$IFDEF OPSISCRIPT}
                 if MyMessageDlg.WiMessage('Logfile ' + FPartFileName +
                   ' not available.  Continue without logging? ',
                   [mrYes, mrNo]) = mrNo then
@@ -1682,7 +1682,7 @@ begin
   begin
     FileClose(LogPartFileF);
     try
-      {$IFDEF OPSIWINST}
+      {$IFDEF OPSISCRIPT}
       ShrinkFileToMB(PartFileName, newsize);
       {$ENDIF}
     finally
@@ -1795,11 +1795,11 @@ begin
     Result := SysUtils.GetEnvironmentVariable('Computername');
 {$ELSE}
   Result := 'unknown'; //########################################
-    {$IFDEF OPSIWINST}
+    {$IFDEF OPSISCRIPT}
     {$IFDEF UNIX}
   Result := osconf.computername;
 {$ENDIF LINUX}
-    {$ENDIF OPSIWINST}
+    {$ENDIF OPSISCRIPT}
 {$ENDIF}
 end;
 

@@ -59,7 +59,7 @@
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-dSYNAPSE"/>
+            <CustomOptions Value="-dSYNAPSE -dUseCThreads"/>
           </Other>
         </CompilerOptions>
       </Item2>
@@ -92,7 +92,7 @@
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-dSYNAPSE"/>
+            <CustomOptions Value="-dSYNAPSE -dUseCThreads"/>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -120,10 +120,8 @@
       <Unit0>
         <Filename Value="helperchild_nogui.lpr"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <TopLine Value="43"/>
-        <CursorPos X="21" Y="66"/>
-        <UsageCount Value="21"/>
+        <CursorPos X="64" Y="12"/>
+        <UsageCount Value="22"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit0>
@@ -165,7 +163,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="71"/>
         <CursorPos X="40" Y="91"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
       </Unit5>
       <Unit6>
         <Filename Value="..\..\external_libraries\misc\DSiWin32.pas"/>
@@ -174,7 +172,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
       </Unit6>
       <Unit7>
         <Filename Value="..\..\common\osencoding.pas"/>
@@ -183,14 +181,14 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
       </Unit7>
       <Unit8>
         <Filename Value="..\..\common\osversioninfo.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="3"/>
         <CursorPos X="34" Y="18"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
         <Loaded Value="True"/>
       </Unit8>
       <Unit9>
@@ -204,10 +202,11 @@
       <Unit10>
         <Filename Value="opsiscripttesthelper_main.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="478"/>
-        <CursorPos X="31"/>
-        <UsageCount Value="20"/>
+        <TopLine Value="481"/>
+        <CursorPos X="28" Y="494"/>
+        <UsageCount Value="21"/>
         <Loaded Value="True"/>
       </Unit10>
     </Units>
@@ -260,7 +259,7 @@
       </Options>
     </Linking>
     <Other>
-      <CustomOptions Value="-dSYNAPSE"/>
+      <CustomOptions Value="-dSYNAPSE -dUseCThreads"/>
     </Other>
   </CompilerOptions>
   <Debugging>

@@ -19,7 +19,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="5"/>
+      <BuildNr Value="7"/>
       <StringTable CompanyName="uib gmbh (www.uib.de)" LegalCopyright="uib gmbh under AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="opsiscriptstarter" ProductName="opsi" ProductVersion="4.1"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -113,7 +113,7 @@
         <PackageName Value="LazUtils"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="7">
+    <Units Count="8">
       <Unit0>
         <Filename Value="opsiscriptstarter.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -142,6 +142,11 @@
         <Filename Value="../external_libraries/misc/superobject.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit6>
+      <Unit7>
+        <Filename Value="../common/osprocessux.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OSProcessux"/>
+      </Unit7>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

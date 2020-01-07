@@ -37,7 +37,8 @@ uses
   baseunix,
   process,
   OSProcessux,
-  IniFiles;
+  IniFiles,
+  osprocesses;
 
 function getProfilesDirListLin: TStringList;
 function getLinProcessList: TStringList;
@@ -81,9 +82,9 @@ uses
 {$IFDEF GUI}
   Graphics,
 {$IFDEF OPSISCRIPT}
-osbatchgui,
-osinteractivegui,
-osshowsysinfo,
+  osbatchgui,
+  osinteractivegui,
+  osshowsysinfo,
 {$ENDIF OPSISCRIPT}
 {$ENDIF GUI}
   LResources;
@@ -711,11 +712,11 @@ end;
 function getMyIpByTarget(target: string): string;
 var
   str: string;
-  list: Tstringlist;
+  list: TStringList;
   i: integer;
 begin
   Result := '';
-  list := TStringlist.Create;
+  list := TStringList.Create;
   //str := getCommandResult('ip -o -4 route get '+target);
   // macos ip has no '-o'
   str := getCommandResult('/bin/bash -c "ip -4 route get ' + target + ' || exit $?"');
@@ -793,7 +794,7 @@ var
   {$ELSE OPSISCRIPT}
   outlines: TStringList;
   {$ENDIF OPSISCRIPT}
-  lineparts: TStringlist;
+  lineparts: TStringList;
 
   function getPackageLockPid(lockfile: string): string;
   var
@@ -853,7 +854,8 @@ var
                 Result := trim(lineparts.Strings[1]);
               end
               else
-                LogDatei.log('Error in getPackageLockPid lsof on existing lockfile: ' + lockfile,
+                LogDatei.log('Error in getPackageLockPid lsof on existing lockfile: ' +
+                  lockfile,
                   LLWarning);
             end;
           end;
@@ -881,10 +883,10 @@ var
         pcmd := ''
       else
         pcmd := getProcessByPid(pidnum);
-      while (pid <> '') and (not timeoutreached) and
-        (pcmd <> '') do
+      while (pid <> '') and (not timeoutreached) and (pcmd <> '') do
       begin
-        LogDatei.log('Waiting to get package lock from pid: ' + pid + ' : ' + pcmd, LLDEBUG);
+        LogDatei.log('Waiting to get package lock from pid: ' + pid +
+          ' : ' + pcmd, LLDEBUG);
         timeoutcounter := timeoutcounter + timeoutstep;
         if timeoutcounter >= timeoutsec then
           timeoutreached := True
@@ -901,11 +903,13 @@ var
       if timeoutreached then
       begin
         Result := False;
-        LogDatei.log('Timeout waiting to get package lock from pid: ' + pid + ' : ' + pcmd,
+        LogDatei.log('Timeout waiting to get package lock from pid: ' +
+          pid + ' : ' + pcmd,
           LLNotice);
         if kill then
         begin
-          LogDatei.log('Killing to get Package lock from pid: ' + pid + ' : ' + pcmd, LLInfo);
+          LogDatei.log('Killing to get Package lock from pid: ' +
+            pid + ' : ' + pcmd, LLInfo);
           killProcessByPid(pidnum);
           pid := getPackageLockPid(lockfile);
           if not tryStrToInt(pid, pidnum) then

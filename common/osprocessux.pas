@@ -53,7 +53,7 @@ function RunCommandAndCaptureOut
   showoutput: boolean; logleveloffset: integer): boolean; overload;
 
 {$ELSE OPSISCRIPT}
-function RunCommandCaptureOutGetOutlist(command: string): TStringlist;
+function RunCommandCaptureOutGetOutlist(command: string): TStringList;
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TStringList;
   var report: string; showcmd: integer; var ExitCode: longint): boolean; overload;
@@ -63,8 +63,8 @@ function RunCommandAndCaptureOut
   showoutput: boolean): boolean; overload;
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TStringList;
-  var report: string; showcmd: integer; var ExitCode: longint; showoutput: boolean;
-  logleveloffset: integer): boolean;
+  var report: string; showcmd: integer; var ExitCode: longint;
+  showoutput: boolean; logleveloffset: integer): boolean;
 {$ENDIF OPSISCRIPT}
 
 function getCommandResult(cmd: string): string; overload;
@@ -76,9 +76,10 @@ implementation
 
 uses
    {$IFDEF GUI}
-   osshowsysinfo,
+  osshowsysinfo,
 {$ENDIF GUI}
   osfunc;
+
   {$ENDIF OPSISCRIPT}
 
 procedure ProcessMess;
@@ -115,8 +116,8 @@ begin
 
   LogDatei.log('Executing ' + commandline, LLDebug2);
 
-  if not RunCommandAndCaptureOut(commandline, True,
-    Result, report, SW_Minimize, exitcode, False, 2) then
+  if not RunCommandAndCaptureOut(commandline, True, Result, report,
+    SW_Minimize, exitcode, False, 2) then
   begin
     LogDatei.log('Error: ' + Report, LLcritical);
     //FExtremeErrorLevel := LevelFatal;
@@ -150,8 +151,8 @@ begin
 
   LogDatei.log('Executing ' + commandline, LLDebug2);
 
-  if not RunCommandAndCaptureOut(commandline, True,
-    output, report, SW_Minimize, exitcode) then
+  if not RunCommandAndCaptureOut(commandline, True, output, report,
+    SW_Minimize, exitcode) then
   begin
     LogDatei.log('Error: ' + Report, LLcritical);
     //FExtremeErrorLevel := LevelFatal;
@@ -193,8 +194,8 @@ end;
 
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TXStringList;
-  var report: string; showcmd: integer; var ExitCode: longint; showoutput: boolean;
-  logleveloffset: integer): boolean;
+  var report: string; showcmd: integer; var ExitCode: longint;
+  showoutput: boolean; logleveloffset: integer): boolean;
 
 const
   ReadBufferSize = 2048;
@@ -341,7 +342,7 @@ begin
 end;
 
 {$ELSE OPSISCRIPT}
-function RunCommandCaptureOutGetOutlist(command: string): TStringlist;
+function RunCommandCaptureOutGetOutlist(command: string): TStringList;
 var
   commandline: string = '';
   //result: TXStringList;
@@ -364,8 +365,8 @@ begin
 
   LogDatei.log('Executing ' + commandline, LLDebug2);
 
-  if not RunCommandAndCaptureOut(commandline, True,
-    Result, report, SW_Minimize, exitcode, False, 2) then
+  if not RunCommandAndCaptureOut(commandline, True, Result, report,
+    SW_Minimize, exitcode, False, 2) then
   begin
     LogDatei.log('Error: ' + Report, LLcritical);
     //FExtremeErrorLevel := LevelFatal;
@@ -393,8 +394,8 @@ end;
 
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TStringList;
-  var report: string; showcmd: integer; var ExitCode: longint; showoutput: boolean;
-  logleveloffset: integer): boolean;
+  var report: string; showcmd: integer; var ExitCode: longint;
+  showoutput: boolean; logleveloffset: integer): boolean;
 
 const
   ReadBufferSize = 2048;
@@ -596,7 +597,7 @@ begin
       begin
         {give always the first string}
         Result := outlines.strings[0];
-      end
+      end;
     end;
     if Logdatei <> nil then
       LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
