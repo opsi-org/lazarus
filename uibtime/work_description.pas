@@ -34,8 +34,7 @@ type
     DBGrid1: TDBGrid;
     BitBtn1: TBitBtn;
     procedure BtnLoadresultsClick(Sender: TObject);
-    procedure DBGrid1KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState
-      );
+    procedure DBGrid1KeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
     procedure DBGrid1KeyPress(Sender: TObject; var Key: char);
     procedure EditButtonDateButtonClick(Sender: TObject);
     procedure EditButtonDateChange(Sender: TObject);
@@ -68,11 +67,11 @@ begin
       Query_day_report.Close;
     Query_day_report.ParamByName('userid').AsString := uid;
     Query_day_report.ParamByName('jahr').AsInteger :=
-      YearOf(ScanDateTime('dd.mm.yyyy',EditButtonDate.text));
+      YearOf(ScanDateTime('dd.mm.yyyy', EditButtonDate.Text));
     Query_day_report.ParamByName('monat').AsInteger :=
-      MonthOf(ScanDateTime('dd.mm.yyyy',EditButtonDate.text));
+      MonthOf(ScanDateTime('dd.mm.yyyy', EditButtonDate.Text));
     Query_day_report.ParamByName('tag').AsInteger :=
-      DayOf(ScanDateTime('dd.mm.yyyy',EditButtonDate.text));
+      DayOf(ScanDateTime('dd.mm.yyyy', EditButtonDate.Text));
     Query_day_report.Open;
   end;
 end;
@@ -82,11 +81,12 @@ begin
 
 end;
 
-procedure Tfwork_description.DBGrid1KeyDown(Sender: TObject; var Key: Word;
+procedure Tfwork_description.DBGrid1KeyDown(Sender: TObject; var Key: word;
   Shift: TShiftState);
 begin
   {$IFDEF WINDOWS}
-  if Key in [VK_INSERT] then Key := 0;
+  if Key in [VK_INSERT] then
+    Key := 0;
   {$ENDIF WINDOWS}
 end;
 
@@ -98,9 +98,9 @@ end;
 
 procedure Tfwork_description.EditButtonDateButtonClick(Sender: TObject);
 begin
-  CalendarDialog1.Date:=now;
+  CalendarDialog1.Date := now;
   CalendarDialog1.Execute;
-  EditButtonDate.text := DateToStr(CalendarDialog1.Date);
+  EditButtonDate.Text := DateToStr(CalendarDialog1.Date);
   Loadresults4date;
 end;
 
@@ -123,15 +123,15 @@ end;
 
 procedure Tfwork_description.FormHide(Sender: TObject);
 begin
-  Datamodule1.TimerOnTop.Enabled := true;
-  close;
+  Datamodule1.TimerOnTop.Enabled := True;
+  Close;
 end;
 
 
 procedure Tfwork_description.FormShow(Sender: TObject);
 begin
-  CalendarDialog1.Date:=now;
-  EditButtonDate.text := DateToStr(Date);
+  CalendarDialog1.Date := now;
+  EditButtonDate.Text := DateToStr(Date);
   //FormStyle:=fsNormal;
 end;
 
@@ -144,11 +144,11 @@ begin
   begin
     SQwork_description.FieldByName('userid').AsString := uid;
     SQwork_description.FieldByName('jahr').AsInteger :=
-      YearOf(ScanDateTime('dd.mm.yyyy',EditButtonDate.text));
+      YearOf(ScanDateTime('dd.mm.yyyy', EditButtonDate.Text));
     SQwork_description.FieldByName('monat').AsInteger :=
-      MonthOf(ScanDateTime('dd.mm.yyyy',EditButtonDate.text));
+      MonthOf(ScanDateTime('dd.mm.yyyy', EditButtonDate.Text));
     SQwork_description.FieldByName('tag').AsInteger :=
-      DayOf(ScanDateTime('dd.mm.yyyy',EditButtonDate.text));
+      DayOf(ScanDateTime('dd.mm.yyyy', EditButtonDate.Text));
     SQwork_description.FieldByName('event').AsString :=
       Query_day_report.FieldByName('event').AsString;
   end;

@@ -1,4 +1,11 @@
 (*
+uibtime (4.1.1.60-1) stable; urgency=low
+
+ * statistik: better behavior of node dropdown
+ * multiday: avoid double Feiertag entries
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 08 Jan 2020 15:00:00 +0000
+
 uibtime (4.1.1.59-1) stable; urgency=low
 
  * uibdata: do not raise catched exception in getLoggedInList

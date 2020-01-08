@@ -37,6 +37,7 @@ type
   { TDataModule1 }
 
   TDataModule1 = class(TDataModule)
+    DataSourceTmp: TDataSource;
     DSQueryAktEvents: TDataSource;
     DSuiballevent: TDataSource;
     DSuibevent: TDataSource;
@@ -58,6 +59,7 @@ type
     Arbeitsberichte: TMenuItem;
     ProcessTrayNotify: TProcess;
     SQholydays: TSQLQuery;
+    SQLQueryTmp: TSQLQuery;
     TimerCheckNet: TTimer;
     trayconfig: TMenuItem;
     Query_day_report: TSQLQuery;
@@ -289,7 +291,7 @@ begin
   DataModule1.debugOut(6, 'setdebuglevel', 'Will use conf file: ' + logfeilname);
   if myini = nil then
   begin
-    datamodule1.debugOut(2, 'setdebuglevel',
+    DataModule1.debugOut(2, 'setdebuglevel',
       'myini = nil: coud not open :' + logfeilname);
     ShowMessage('Fehler in Konfigurations Datei. Bitte Log sichern. Programm wird beendet');
     Application.Terminate;
@@ -497,8 +499,8 @@ begin
   //FOntop.Enabled := False;
   //FDataedit.Show;
   FreeAndNil(FDataedit);
-  Datamodule1.SQuibevent.last;
-  ontop.lastevent := Datamodule1.SQuibevent.FieldByName('event').AsString;
+  DataModule1.SQuibevent.last;
+  ontop.lastevent := DataModule1.SQuibevent.FieldByName('event').AsString;
   FOntop.ineditmode := False;
   FOntop.eventhandler(ontop.lastevent);
 end;
@@ -506,8 +508,8 @@ end;
 procedure TDataModule1.Dateneditieren1Cancel;
 begin
   //FStatistik.free;
-  Datamodule1.SQuibevent.last;
-  ontop.lastevent := Datamodule1.SQuibevent.FieldByName('event').AsString;
+  DataModule1.SQuibevent.last;
+  ontop.lastevent := DataModule1.SQuibevent.FieldByName('event').AsString;
   FOntop.Enabled := True;
   FOntop.ineditmode := False;
   FOntop.eventhandler(ontop.lastevent);
@@ -535,7 +537,7 @@ begin
   DataModule1.debugOut(6, 'Autologin1Click', 'Will use conf file: ' + logfeilname);
   if myini = nil then
   begin
-    datamodule1.debugOut(2, 'Autologin1Click',
+    DataModule1.debugOut(2, 'Autologin1Click',
       'myini = nil: coud not open :' + logfeilname);
     ShowMessage('Fehler in Konfigurations Datei. Bitte Log sichern. Programm wird beendet');
     Application.Terminate;
@@ -637,8 +639,8 @@ begin
         debugOut(5, DataSet.Name + myevent, 'start  ' + DataSet.Name +
           myevent + ' (apply)');
       except
-        debugOut(2, DataSet.Name + myevent, 'exception in ' + DataSet.Name +
-          myevent + ' (ApplyUpdates)');
+        debugOut(2, DataSet.Name + myevent, 'exception in ' +
+          DataSet.Name + myevent + ' (ApplyUpdates)');
         raise
       end;
     end;
@@ -739,7 +741,7 @@ begin
   DataModule1.debugOut(6, 'ShowDebugWindow1Click', 'Will use conf file: ' + logfeilname);
   if myini = nil then
   begin
-    datamodule1.debugOut(2, 'ShowDebugWindow1Click',
+    DataModule1.debugOut(2, 'ShowDebugWindow1Click',
       'myini = nil: coud not open :' + logfeilname);
     ShowMessage('Fehler in Konfigurations Datei. Bitte Log sichern. Programm wird beendet');
     Application.Terminate;
@@ -1528,61 +1530,61 @@ begin
   //stopt := now+1;
   missinglist.Clear;
   //missinglist.Add('uibtime Missing Reports:');
-  if Datamodule1.TrayQuery3.Active then
-    Datamodule1.TrayQuery3.Close;
-  Datamodule1.TrayQuery3.sql.Clear;
-  Datamodule1.TrayQuery3.sql.Add('select * from uibevent ');
-  Datamodule1.TrayQuery3.sql.Add('where ');
-  Datamodule1.TrayQuery3.sql.Add('(userid = :uid) and ');
-  Datamodule1.TrayQuery3.sql.Add('(starttime >= :start) and ');
-  Datamodule1.TrayQuery3.sql.Add('(starttime < :stop) ');
-  Datamodule1.TrayQuery3.sql.Add('order by starttime ');
-  Datamodule1.TrayQuery3.ParamByName('uid').AsString := uid;
-  Datamodule1.TrayQuery3.ParamByName('start').AsDateTime := startt;
-  Datamodule1.TrayQuery3.ParamByName('stop').AsDateTime := stopt;
-  Datamodule1.TrayQuery3.Open;
-  Datamodule1.TrayQuery3.First;
-  laststartt := Datamodule1.TrayQuery3.FieldByName('starttime').AsDateTime;
+  if DataModule1.TrayQuery3.Active then
+    DataModule1.TrayQuery3.Close;
+  DataModule1.TrayQuery3.sql.Clear;
+  DataModule1.TrayQuery3.sql.Add('select * from uibevent ');
+  DataModule1.TrayQuery3.sql.Add('where ');
+  DataModule1.TrayQuery3.sql.Add('(userid = :uid) and ');
+  DataModule1.TrayQuery3.sql.Add('(starttime >= :start) and ');
+  DataModule1.TrayQuery3.sql.Add('(starttime < :stop) ');
+  DataModule1.TrayQuery3.sql.Add('order by starttime ');
+  DataModule1.TrayQuery3.ParamByName('uid').AsString := uid;
+  DataModule1.TrayQuery3.ParamByName('start').AsDateTime := startt;
+  DataModule1.TrayQuery3.ParamByName('stop').AsDateTime := stopt;
+  DataModule1.TrayQuery3.Open;
+  DataModule1.TrayQuery3.First;
+  laststartt := DataModule1.TrayQuery3.FieldByName('starttime').AsDateTime;
   //firststartt := laststartt;
-  //laststopt := Datamodule1.TrayQuery3.fieldbyname('stoptime').asdatetime;
+  //laststopt := DataModule1.TrayQuery3.fieldbyname('stoptime').asdatetime;
   //if not (combobox1.Text = 'Summe Alle') then
-  //  Datamodule1.SQuibevent.Locate('starttime;stoptime', VarArrayOf([laststartt,laststopt]), [loCaseInsensitive,loPartialKey])
+  //  DataModule1.SQuibevent.Locate('starttime;stoptime', VarArrayOf([laststartt,laststopt]), [loCaseInsensitive,loPartialKey])
   //else
-  //if not Datamodule1.TrayQuery4.Active then Datamodule1.TrayQuery4.Open;
-  //  Datamodule1.TrayQuery4.Locate('userid;starttime;stoptime', VarArrayOf([uid,laststartt,laststopt]), [loCaseInsensitive,loPartialKey]);
-  //Datamodule1.TrayQuery3.close;
+  //if not DataModule1.TrayQuery4.Active then DataModule1.TrayQuery4.Open;
+  //  DataModule1.TrayQuery4.Locate('userid;starttime;stoptime', VarArrayOf([uid,laststartt,laststopt]), [loCaseInsensitive,loPartialKey]);
+  //DataModule1.TrayQuery3.close;
   //sumtime := laststopt - laststartt;
-  //Datamodule1.SQuibevent.next;
+  //DataModule1.SQuibevent.next;
   // query for event that need a report
-  Datamodule1.TrayQuery1.sql.Clear;
-  Datamodule1.TrayQuery1.sql.Add('select event from uibaktevent where');
-  Datamodule1.TrayQuery1.sql.Add(' reportrequired = 1');
-  Datamodule1.TrayQuery1.Open;
+  DataModule1.TrayQuery1.sql.Clear;
+  DataModule1.TrayQuery1.sql.Add('select event from uibaktevent where');
+  DataModule1.TrayQuery1.sql.Add(' reportrequired = 1');
+  DataModule1.TrayQuery1.Open;
   decodeDate(laststartt, year, month, day);
-  Datamodule1.TrayQuery2.sql.Clear;
-  Datamodule1.TrayQuery2.sql.Add('select * from UIB_WORK_DESCRIPTION where ');
-  Datamodule1.TrayQuery2.sql.Add('(jahr >= :year) and ');
-  Datamodule1.TrayQuery2.sql.Add('(monat >= :month) and ');
-  Datamodule1.TrayQuery2.sql.Add('(tag >= :day) and ');
-  Datamodule1.TrayQuery2.sql.Add('(userid = :uid) and ');
-  Datamodule1.TrayQuery2.sql.Add('(not (description = ""))  ');
-  Datamodule1.TrayQuery2.ParamByName('year').AsInteger := year;
-  Datamodule1.TrayQuery2.ParamByName('month').AsInteger := month;
-  Datamodule1.TrayQuery2.ParamByName('day').AsInteger := day;
-  Datamodule1.TrayQuery2.ParamByName('uid').AsString := uid;
-  Datamodule1.TrayQuery2.Open;
+  DataModule1.TrayQuery2.sql.Clear;
+  DataModule1.TrayQuery2.sql.Add('select * from UIB_WORK_DESCRIPTION where ');
+  DataModule1.TrayQuery2.sql.Add('(jahr >= :year) and ');
+  DataModule1.TrayQuery2.sql.Add('(monat >= :month) and ');
+  DataModule1.TrayQuery2.sql.Add('(tag >= :day) and ');
+  DataModule1.TrayQuery2.sql.Add('(userid = :uid) and ');
+  DataModule1.TrayQuery2.sql.Add('(not (description = ""))  ');
+  DataModule1.TrayQuery2.ParamByName('year').AsInteger := year;
+  DataModule1.TrayQuery2.ParamByName('month').AsInteger := month;
+  DataModule1.TrayQuery2.ParamByName('day').AsInteger := day;
+  DataModule1.TrayQuery2.ParamByName('uid').AsString := uid;
+  DataModule1.TrayQuery2.Open;
 
-  while not Datamodule1.TrayQuery3.EOF do
+  while not DataModule1.TrayQuery3.EOF do
   begin
-    uname := Datamodule1.TrayQuery3.FieldByName('userid').AsString;
-    startt := Datamodule1.TrayQuery3.FieldByName('starttime').AsDateTime;
-    event := Datamodule1.TrayQuery3.FieldByName('event').AsString;
+    uname := DataModule1.TrayQuery3.FieldByName('userid').AsString;
+    startt := DataModule1.TrayQuery3.FieldByName('starttime').AsDateTime;
+    event := DataModule1.TrayQuery3.FieldByName('event').AsString;
     decodeDate(startt, year, month, day);
-    if Datamodule1.TrayQuery1.Locate('event', event, [loCaseInsensitive]) then
+    if DataModule1.TrayQuery1.Locate('event', event, [loCaseInsensitive]) then
     begin
       if missinglist.IndexOf(event) < 0 then
       begin
-        if not Datamodule1.TrayQuery2.Locate('userid;jahr;monat;tag;event',
+        if not DataModule1.TrayQuery2.Locate('userid;jahr;monat;tag;event',
           VarArrayOf([uname, year, month, day, event]),
           [loCaseInsensitive]) then
         begin
@@ -1591,11 +1593,11 @@ begin
         end;
       end;
     end;
-    Datamodule1.TrayQuery3.Next;
+    DataModule1.TrayQuery3.Next;
   end;
-  Datamodule1.TrayQuery1.Close;
-  Datamodule1.TrayQuery2.Close;
-  Datamodule1.TrayQuery3.Close;
+  DataModule1.TrayQuery1.Close;
+  DataModule1.TrayQuery2.Close;
+  DataModule1.TrayQuery3.Close;
   // end looking for missing reports
 end;
 
@@ -1684,45 +1686,45 @@ begin
     debugOut(6, 'setloggedin', 'false fuer ' + uid);
   end;
   if not SQuibloggedin.Active then
-    Datamodule1.SQuibloggedin.Open;
+    DataModule1.SQuibloggedin.Open;
   debugOut(7, 'setloggedin', 'SQuibloggedin.FieldCount: ' +
-    IntToStr(Datamodule1.SQuibloggedin.FieldCount));
+    IntToStr(DataModule1.SQuibloggedin.FieldCount));
   debugOut(7, 'setloggedin', 'SQuibloggedin.active: ' +
-    BoolToStr(Datamodule1.SQuibloggedin.Active, True));
+    BoolToStr(DataModule1.SQuibloggedin.Active, True));
   debugOut(7, 'setloggedin', 'SQuibloggedin.filterd: ' +
-    BoolToStr(Datamodule1.SQuibloggedin.Filtered, True));
+    BoolToStr(DataModule1.SQuibloggedin.Filtered, True));
   debugOut(7, 'setloggedin', 'SQuibloggedin.filter: ' +
-    Datamodule1.SQuibloggedin.Filter);
+    DataModule1.SQuibloggedin.Filter);
   if not DataModule1.SQuibloggedin.Locate('userid', uid, [loCaseInsensitive]) then
-    //if Datamodule1.SQuibloggedin.RecordCount < 1 then
+    //if DataModule1.SQuibloggedin.RecordCount < 1 then
   begin
     try
-      Datamodule1.SQuibloggedin.Append;
-      Datamodule1.SQuibloggedin.FieldByName('userid').AsString := uid;
-      Datamodule1.SQuibloggedin.FieldByName('loggedin').AsDateTime := logTime;
-      Datamodule1.SQuibloggedin.Post;
-      //Datamodule1.SQuibloggedin.ApplyUpdates;
-      //Datamodule1.SQLTransaction1.CommitRetaining;
+      DataModule1.SQuibloggedin.Append;
+      DataModule1.SQuibloggedin.FieldByName('userid').AsString := uid;
+      DataModule1.SQuibloggedin.FieldByName('loggedin').AsDateTime := logTime;
+      DataModule1.SQuibloggedin.Post;
+      //DataModule1.SQuibloggedin.ApplyUpdates;
+      //DataModule1.SQLTransaction1.CommitRetaining;
     except
-      Datamodule1.SQuibloggedin.Post;
-      //Datamodule1.SQuibloggedin.ApplyUpdates;
-      //Datamodule1.SQLTransaction1.CommitRetaining;
+      DataModule1.SQuibloggedin.Post;
+      //DataModule1.SQuibloggedin.ApplyUpdates;
+      //DataModule1.SQLTransaction1.CommitRetaining;
     end;
   end
   else
   begin
     //debugOut(5, 'SQuibloggedin field 0: ' + SQuibloggedin.Fields[0].AsString);
-    //if Datamodule1.SQuibloggedin.FieldByName('userid').AsString = uid then
+    //if DataModule1.SQuibloggedin.FieldByName('userid').AsString = uid then
     //begin
-    Datamodule1.SQuibloggedin.Edit;
-    Datamodule1.SQuibloggedin.FieldByName('loggedin').AsDateTime := logtime;
-    Datamodule1.SQuibloggedin.Post;
-    //Datamodule1.SQuibloggedin.ApplyUpdates;
-    //Datamodule1.SQLTransaction1.CommitRetaining;
+    DataModule1.SQuibloggedin.Edit;
+    DataModule1.SQuibloggedin.FieldByName('loggedin').AsDateTime := logtime;
+    DataModule1.SQuibloggedin.Post;
+    //DataModule1.SQuibloggedin.ApplyUpdates;
+    //DataModule1.SQLTransaction1.CommitRetaining;
     //end
     //else
     //  debugOut(5, 'setloggedin not done: ' +
-    //    Datamodule1.SQuibloggedin.FieldByName('userid').AsString);
+    //    DataModule1.SQuibloggedin.FieldByName('userid').AsString);
   end;
   if ishere then
   begin
@@ -1744,7 +1746,7 @@ var
   myini: TIniFile;
 begin
   try
-    datamodule1.debugOut(5, 'start von DataModule1.Weristda1Click');
+    DataModule1.debugOut(5, 'start von DataModule1.Weristda1Click');
     // we will use logdir for logging and for configuration
     logdir := SysUtils.GetAppConfigDir(False);
     if logdir = '' then
@@ -1760,7 +1762,7 @@ begin
     DataModule1.debugOut(6, 'Weristda1Click', 'Will use conf file: ' + logfeilname);
     if myini = nil then
     begin
-      datamodule1.debugOut(2, 'Weristda1Click',
+      DataModule1.debugOut(2, 'Weristda1Click',
         'myini = nil: coud not open :' + logfeilname);
       ShowMessage('Fehler in Konfigurations Datei. Bitte Log sichern. Programm wird beendet');
       Application.Terminate;
@@ -1779,13 +1781,13 @@ begin
     begin
       FLoggedin.Show;
       if not setwindowtoalldesktops('Presenz') then
-        datamodule1.debugOut(2, 'ontop', 'failed presenz to all desktops');
+        DataModule1.debugOut(2, 'ontop', 'failed presenz to all desktops');
       Weristda1.Checked := True;
       myini.WriteBool('general', 'weristda', True);
     end;
     myini.UpdateFile;
     myini.Free;
-    datamodule1.debugOut(5, 'ende von DataModule1.Weristda1Click');
+    DataModule1.debugOut(5, 'ende von DataModule1.Weristda1Click');
   except
     on e: Exception do
     begin
@@ -1817,7 +1819,7 @@ begin
     logfeilname);
   if myini = nil then
   begin
-    datamodule1.debugOut(2, 'ZeigenurmeineProjekte1Click',
+    DataModule1.debugOut(2, 'ZeigenurmeineProjekte1Click',
       'myini = nil: coud not open :' + logfeilname);
     ShowMessage('Fehler in Konfigurations Datei. Bitte Log sichern. Programm wird beendet');
     Application.Terminate;
@@ -2034,7 +2036,7 @@ begin
   begin
     Fdebug.Memo1.Append('DataModuleCreate myini = nil: coud not open :' +
       logfeilname);
-    //datamodule1.debugOut(2, 'DataModuleCreate', 'myini = nil: coud not open :'+logfeilname);
+    //DataModule1.debugOut(2, 'DataModuleCreate', 'myini = nil: coud not open :'+logfeilname);
     ShowMessage('Fehler in Konfigurations Datei. Bitte Log sichern. Programm wird beendet');
     Application.Terminate;
   end;
@@ -2106,7 +2108,7 @@ begin
   closeFile(logfeil);
   *)
   Application.OnException := CustomExceptionHandler;
-  Application.OnEndSession:= OnEndsession;
+  Application.OnEndSession := OnEndsession;
 end;
 
 procedure TDataModule1.TerminateApplication;
@@ -2128,7 +2130,7 @@ begin
   DataModule1.debugOut(6, 'TerminateApplication', 'Will use conf file: ' + logfeilname);
   if myini = nil then
   begin
-    datamodule1.debugOut(2, 'TerminateApplication',
+    DataModule1.debugOut(2, 'TerminateApplication',
       'myini = nil: coud not open :' + logfeilname);
     ShowMessage('Fehler in Konfigurations Datei. Bitte Log sichern. Programm wird beendet');
     //Application.Terminate;
@@ -2285,20 +2287,20 @@ begin
   if E.ClassType = EConvertError then
   begin
     outstr := E.Message;
-    datamodule1.debugOut(1, 'Exception', outstr);
+    DataModule1.debugOut(1, 'Exception', outstr);
     MessageDlg('uibtime: Fehler', outstr, mtError, [mbClose], 0);
   end
   else if (E.ClassType = EDatabaseError) and
     (pos('Must apply updates before refreshing data', E.Message) > 0) then
   begin
     outstr := E.Message;
-    datamodule1.debugOut(1, 'Exception', outstr);
+    DataModule1.debugOut(1, 'Exception', outstr);
     MessageDlg('uibtime: Fehler', outstr, mtError, [mbClose], 0);
   end
-  else if (E.ClassType = EDBEditError)  then
+  else if (E.ClassType = EDBEditError) then
   begin
-    outstr := 'Ein Eingabefehler in einer Maske: '+E.Message;
-    datamodule1.debugOut(1, 'Exception', outstr);
+    outstr := 'Ein Eingabefehler in einer Maske: ' + E.Message;
+    DataModule1.debugOut(1, 'Exception', outstr);
     MessageDlg('uibtime: Fehler', outstr, mtError, [mbClose], 0);
   end
   else
@@ -2306,7 +2308,7 @@ begin
     outstr := 'uibtime Exception class: ' + E.ClassName + ' , ' +
       'Message: ' + E.Message + ' , ' + LineEnding +
       ' Sollte das Programm sich beenden, so bitte Logdatei sichern: ' +
-      LogDatei.FileName ;
+      LogDatei.FileName;
     MessageDlg('uibtime: Fehler', outstr, mtError, [mbClose], 0);
     //Application.ShowException(E);
     if not IBConnection1.Connected then
@@ -2316,8 +2318,8 @@ end;
 
 procedure TDataModule1.OnEndSession(Sender: TObject);
 begin
-  If Assigned(logdatei) then
-  LogDatei.log('Terminating: onendsession',LLessential);
+  if Assigned(logdatei) then
+    LogDatei.log('Terminating: onendsession', LLessential);
 end;
 
 
@@ -2336,7 +2338,7 @@ initialization
   leftint := (screenx - ontopwidth) div 2;
   loggedin := False;
   floggedin_created := False;
-  // datamodule1.loggedinserver := TStringList.Create;
+  // DataModule1.loggedinserver := TStringList.Create;
   ///vi := GetVersionInfoRec(Application.ExeName);
   ///version := vi.FileVersion;
   //version := '4.0.12';

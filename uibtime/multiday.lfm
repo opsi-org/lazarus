@@ -2,17 +2,17 @@ object FMultiday: TFMultiday
   Left = 619
   Height = 424
   Top = 185
-  Width = 814
+  Width = 920
   BorderStyle = bsDialog
   Caption = 'uibtime - Mehrere Tage eintragen'
   ClientHeight = 424
-  ClientWidth = 814
+  ClientWidth = 920
   Color = clBtnFace
   DesignTimePPI = 144
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '1.8.4.0'
+  LCLVersion = '2.0.6.0'
   object Label1: TLabel
     Left = 264
     Height = 120
@@ -219,5 +219,15 @@ object FMultiday: TFMultiday
     UseDefaultSeparators = True
     HideDateTimeParts = []
     MonthNames = 'Long'
+  end
+  object Memohint: TMemo
+    Left = 512
+    Height = 90
+    Top = 145
+    Width = 379
+    BorderStyle = bsNone
+    Color = clForm
+    ReadOnly = True
+    TabOrder = 9
   end
 end
