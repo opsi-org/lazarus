@@ -1240,7 +1240,7 @@ begin
   FResultLines := TStringList.Create;
   FErrorInfo := TStringList.Create;
   {$IFDEF OPSISCRIPT}
-  createSocket(osconf.selfProductName + ' / ' + osconf.WinstVersion, ip, port);
+  createSocket(osconf.selfProductName + ' / ' + osconf.OpsiscriptVersion, ip, port);
   {$ELSE OPSIWINST}
     {$IFDEF OCASIMP}
   createSocket('ocasimp ', ip, port);
@@ -4116,7 +4116,8 @@ begin
     ProcessMess;
     Application.ProcessMessages;
     {$ENDIF}
-    sendLog(sendtype);
+    if Script.forceLogInAppendMode then sendLog(sendtype,true)
+    else sendLog(sendtype);
   end;
   try
     // close the session after all is done

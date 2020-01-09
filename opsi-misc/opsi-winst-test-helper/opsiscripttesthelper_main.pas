@@ -307,7 +307,7 @@ var
 begin
   myparamcount := ParamCount;
   myparamcount := Application.ParamCount;
-  writeln('paramcount = '+inttostr(myparamcount));
+  //writeln('paramcount = '+inttostr(myparamcount));
   for i := 1 to myparamcount do
       myparamstring := myparamstring + ' ' + Application.Params[i];
   myexitcode := 42;
@@ -491,7 +491,7 @@ begin
         writeln('<' + showtimestr + '< is not a integer. Using default of 1 second.');
         showtimeint := 1;
       end;
-      writeln('--showwindow: waiting ' + paramvaluestr + ' seconds');
+      writeln('--showwindow: waiting ' + showtimestr + ' seconds');
       Sleep(showtimeint * 1000);
       //timer1.Interval := showtimeint * 1000;
       //timer1.Enabled := True;

@@ -206,8 +206,8 @@
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="482"/>
-        <CursorPos X="7" Y="495"/>
+        <TopLine Value="291"/>
+        <CursorPos X="12" Y="310"/>
         <UsageCount Value="22"/>
         <Loaded Value="True"/>
       </Unit10>
@@ -300,7 +300,7 @@
         <UsageCount Value="10"/>
       </Unit23>
     </Units>
-    <JumpHistory Count="28" HistoryIndex="27">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="opsiscripttesthelper_main.pas"/>
         <Caret Line="13" Column="43" TopLine="3"/>
@@ -413,6 +413,14 @@
         <Filename Value="opsiscripttesthelper_main.pas"/>
         <Caret Line="488" Column="39" TopLine="473"/>
       </Position28>
+      <Position29>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="495" Column="7" TopLine="482"/>
+      </Position29>
+      <Position30>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="310" Column="5" TopLine="291"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

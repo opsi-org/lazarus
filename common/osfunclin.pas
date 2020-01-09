@@ -138,24 +138,33 @@ begin
   if not RunCommandAndCaptureOut(cmd, True, outlines, report, SW_HIDE, ExitCode) then
   begin
     LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
-    Result := -0;
+    Result := ExitCode;
+  end;
+  cmd := 'pgrep ' + exename;
+  found := 0;
+  if not RunCommandAndCaptureOut(cmd, True, outlines, report, SW_HIDE, ExitCode) then
+  begin
+    LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
+    Result := ExitCode;
   end
   else
   begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-    LogDatei.log('', LLDebug);
-    LogDatei.log('output:', LLDebug);
-    LogDatei.log('--------------', LLDebug);
+    //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
+    //LogDatei.log('', LLDebug);
+    //LogDatei.log('output:', LLDebug);
+    //LogDatei.log('--------------', LLDebug);
     for i := 0 to outlines.Count - 1 do
     begin
       LogDatei.log(outlines.strings[i], LLDebug);
       Inc(found);
     end;
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-    LogDatei.log('', LLDebug);
+    //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
+    if found > 0 then
+      LogDatei.log('Found after kill :' + Inttostr(found) + ' instances of ' +
+        exename, LLError);
   end;
   outlines.Free;
-  Result := found;
+  Result := ExitCode;
 end;
 
 function KillProcessbypid(pid: DWORD): boolean;
@@ -225,7 +234,7 @@ begin
       //lineparts := TXStringList.Create;
       {$ENDIF OPSISCRIPT}
       lineparts := TStringList.Create;
-      pscmd := 'ps -eo pid,user,comm:30,cmd:110';
+      pscmd := 'ps -eo pid,user,comm,cmd:110';
       if not RunCommandAndCaptureOut(pscmd, True, outlines, report,
         SW_HIDE, ExitCode) then
       begin
@@ -306,7 +315,7 @@ begin
       outlines := TStringList.Create;
       {$ENDIF OPSISCRIPT}
       lineparts := TStringList.Create;
-      pscmd := 'ps -eo pid,user,comm:30,cmd:110';
+      pscmd := 'ps -eo pid,user,comm,cmd:110';
       if not RunCommandAndCaptureOut(pscmd, True, outlines, report,
         SW_HIDE, ExitCode, False, 2) then
       begin
