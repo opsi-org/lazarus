@@ -781,7 +781,7 @@ begin
     LogDatei.initiate(LogDateiName, False);
     LogDatei.DependentAdd('', LLessential);
     LogDatei.DependentAdd('', LLessential);
-    Logdatei.DependentAdd('opsi-script ' + winstversion + ' started at ' + starttimestr,
+    Logdatei.DependentAdd('opsi-script ' + OpsiscriptVersion + ' started at ' + starttimestr,
       LLessential);
     Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
     LogDatei.DependentAdd('======= APPEND   ' + DateTimeToStr(Now), LLessential);
@@ -850,7 +850,7 @@ begin
   toggle := True;
   Memo1.Clear;
   Memo1.Lines.add('');
-  Memo1.Lines.add('--------------- ' + winstVersionName +
+  Memo1.Lines.add('--------------- ' + OpsiscriptVersionName +
     ' ----------------------');
   initEncoding;
   ProductvarsForPC := TStringList.Create;
@@ -897,7 +897,7 @@ begin
   CentralForm.Visible := CentralFormVisible;
   CentralForm.Label1.Caption := '';
   CentralForm.Label2.Caption := '';
-  LabelWinstVersion.Caption := winstVersionName;
+  LabelWinstVersion.Caption := OpsiscriptVersionName;
 
   FBatchOberflaeche :=
     TFBatchOberflaeche.Create(Application);
@@ -907,7 +907,7 @@ begin
 
   FBatchOberflaeche.ForceStayOnTop(False);
 
-  FBatchOberflaeche.setVersionLabel(WinstVersionName);
+  FBatchOberflaeche.setVersionLabel(OpsiscriptVersionName);
 
   try
 
@@ -946,7 +946,7 @@ end;
 procedure TCentralForm.Info1Click(Sender: TObject);
 begin
 
-  MyMessageDlg.WiMessage('opsi-script  ' + WinstVersionName + LineEnding +
+  MyMessageDlg.WiMessage('opsi-script  ' + OpsiscriptVersionName + LineEnding +
     'Copyright (c) uib 1995 - 2016' + LineEnding +
     'opsi-script is AGPLv3 licensed Open Source software' + LineEnding +
     'Detected Language: '+ GetDefaultLang + LineEnding +

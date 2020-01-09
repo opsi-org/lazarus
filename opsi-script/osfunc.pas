@@ -584,7 +584,7 @@ function posFromEnd(const substr: string; const s: string): integer;
 
 const
 
- // NULL_STRING_VALUE = 'NULL';
+  // NULL_STRING_VALUE = 'NULL';
 
   LineIsCommentChar = ';';
   MultiszVisualDelimiter = '|';
@@ -1264,6 +1264,7 @@ begin
   found := 0;
   Result := True;
   stopped := KillProcessbyname(ExeFileName, found);
+  {$IFDEF WINDOWS}
   if found = 0 then
   begin
     Result := True;
@@ -1283,6 +1284,27 @@ begin
         ExeFilename + '" could not be stopped, problem(s) ' + info;
     end;
   end;
+  {$ELSE WINDOWS}
+  if stopped = 0 then
+  begin
+    if found > 0 then
+    begin
+      Result := False;
+      info := IntToStr(found) + ' instance(s) of "' + ExeFilename +
+        '" could not be stopped after kill success, problem(s) ' + info;
+    end;
+
+  end
+  else
+  begin
+    if found > 0 then
+    begin
+      Result := False;
+      info := IntToStr(found) + ' instance(s) of "' + ExeFilename +
+        '" could not be stopped: kill failed, problem(s) ' + info;
+    end;
+  end;
+  {$ENDIF WINDOWS}
 end;
 
 {$ENDIF WIN64}
@@ -2271,7 +2293,8 @@ begin
       //else
       begin
         Result := True;
-        logdatei.log('Started process "' + FpcProcess.Executable + '" with Opt: '+FpcProcess.Parameters.Text, LLInfo);
+        logdatei.log('Started process "' + FpcProcess.Executable +
+          '" with Opt: ' + FpcProcess.Parameters.Text, LLInfo);
         desiredProcessStarted := False;
         WaitForProcessEndingLogflag := True;
         setLength(resultfilename, 400);
@@ -2314,10 +2337,10 @@ begin
               if FindWindowEx(0, 0, nil, PChar(Ident)) = 0 then
               begin
                 running := True;
-                logdatei.log('Wait for appear Window: "' + Ident+'not found.', LLDebug);
+                logdatei.log('Wait for appear Window: "' + Ident + 'not found.', LLDebug);
               end
               else
-                logdatei.log('Wait for appear Window: "' + Ident+' found.', LLDebug);
+                logdatei.log('Wait for appear Window: "' + Ident + ' found.', LLDebug);
             end
 
             else if WaitForWindowVanished and not WaitWindowStarted then
@@ -2328,7 +2351,7 @@ begin
               if FindWindowEx(0, 0, nil, PChar(Ident)) <> 0 then
               begin
                 WaitWindowStarted := True;
-                logdatei.log('Wait for vanish Window: "' + Ident+' found.', LLDebug);
+                logdatei.log('Wait for vanish Window: "' + Ident + ' found.', LLDebug);
               end;
 
               if not WaitWindowStarted or WaitForWindowVanished then
@@ -2400,8 +2423,8 @@ begin
 
               if not WaitForProcessEndingLogflag and running then
               begin
-                logdatei.log('Waiting for process "' +
-                  ident + '" ending', LLinfo);
+                logdatei.log('Waiting for process "' + ident +
+                  '" ending', LLinfo);
                 WaitForProcessEndingLogflag := True;
               end;
 
@@ -2429,9 +2452,9 @@ begin
                 begin
                   lpExitCode := FpcProcess.ExitCode;
                   logdatei.log(
-                  'Process : '+FpcProcess.Executable+' terminated at: ' + DateTimeToStr(now) +
-                  ' exitcode is: ' + IntToStr(lpExitCode), LLInfo);
-                end
+                    'Process : ' + FpcProcess.Executable + ' terminated at: ' +
+                    DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLInfo);
+                end;
                 {$ENDIF LINUX}
               end;
               if running then
@@ -2456,17 +2479,17 @@ begin
             //else if FpcProcess.ExitStatus  <> still_active
             //else if GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode) and
             //  (lpExitCode <> still_active) then
-              //{$ENDIF WINDOWS}
+            //{$ENDIF WINDOWS}
             //{$IFDEF UNIX}
-              else if not FpcProcess.Running then
-           // {$ENDIF UNIX}
-              begin
-                // waiting condition 4 :  Process has finished;
-                //   we still have to look if WindowToVanish did vanish if this is necessary
-                lpExitCode := FpcProcess.ExitCode;
-                logdatei.log(
-                  'Process terminated at: ' + DateTimeToStr(now) +
-                  ' exitcode is: ' + IntToStr(lpExitCode), LLInfo);
+            else if not FpcProcess.Running then
+              // {$ENDIF UNIX}
+            begin
+              // waiting condition 4 :  Process has finished;
+              //   we still have to look if WindowToVanish did vanish if this is necessary
+              lpExitCode := FpcProcess.ExitCode;
+              logdatei.log(
+                'Process terminated at: ' + DateTimeToStr(now) +
+                ' exitcode is: ' + IntToStr(lpExitCode), LLInfo);
  (*
             end
             else if GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode) and (lpExitCode <> still_active)
@@ -2476,41 +2499,41 @@ begin
                 DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
 *)
               {$IFDEF WINDOWS}
-                if WaitForWindowVanished then
-                begin
-                  if not (FindWindowEx(0, 0, nil, PChar(Ident)) = 0) then
-                  begin
-                    running := True;
-                  end;
-                end;
-              {$ENDIF WINDOWS}
-
-              end
-
-              else if waitForReturn then
+              if WaitForWindowVanished then
               begin
-                //waiting condition 4 : Process is still active
-                if waitsecsAsTimeout and
-                  (waitSecs > 0) // we look for time out
-                  and  //time out occured
-                  ((nowtime - starttime) >= waitSecs / secsPerDay) then
-                begin
-                  running := False;
-                  logdatei.log('Error: Timeout: Waited for the end of started process"' +
-                    ' - but time out reached after ' + IntToStr(waitSecs) +
-                    ' sec.', LLError);
-                end
-                else
+                if not (FindWindowEx(0, 0, nil, PChar(Ident)) = 0) then
                 begin
                   running := True;
+                end;
+              end;
+              {$ENDIF WINDOWS}
+
+            end
+
+            else if waitForReturn then
+            begin
+              //waiting condition 4 : Process is still active
+              if waitsecsAsTimeout and (waitSecs >
+                0) // we look for time out
+                and  //time out occured
+                ((nowtime - starttime) >= waitSecs / secsPerDay) then
+              begin
+                running := False;
+                logdatei.log('Error: Timeout: Waited for the end of started process"' +
+                  ' - but time out reached after ' + IntToStr(waitSecs) +
+                  ' sec.', LLError);
+              end
+              else
+              begin
+                running := True;
                   (*
                   {$IFDEF GUI}
                   if waitsecsAsTimeout and (WaitSecs > 10) then
                     FBatchOberflaeche.setProgress(round((waitSecs / secsPerDay)/ (nowtime - starttime) * 100));
                   {$ENDIF GUI}
                   *)
-                end;
               end;
+            end;
 
             if running then
             begin
@@ -2919,8 +2942,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and
-                (waitSecs > 0) // we look for time out
+              if waitsecsAsTimeout and (waitSecs >
+                0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -3289,14 +3312,12 @@ begin
                   running := True;
                 end;
               end;
-
             end
-
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and
-                (waitSecs > 0) // we look for time out
+              if waitsecsAsTimeout and (waitSecs >
+                0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -4269,7 +4290,7 @@ begin
       begin
         LogDatei.LogSIndentLevel := 0;
         LogDatei.DependentAdd('============  opsi-script ' +
-          winstversionname + ' is regularly rebooting. Time ' +
+          OpsiscriptVersionname + ' is regularly rebooting. Time ' +
           FormatDateTime('yyyy-mm-dd  hh:mm:ss ', now) + '.', LLessential);
 
         sleep(1000);

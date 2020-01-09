@@ -126,8 +126,8 @@ var
   //FileVerInfo: TFileVersionInfo;
   {$ENDIF LINUX}
   FileVerInfo: TFileVersionInfo;
-  WinstVersion: string;
-  WinstVersionName: string;
+  OpsiscriptVersion: string;
+  OpsiscriptVersionName: string;
   OsFileName: string;
   readconfig_done: boolean = False;
 
@@ -508,7 +508,7 @@ initEncoding;
   opsiscriptconf := ExtractFileDir(reencode(paramstr(0),'system')) + PathDelim+ opsiscriptconfinit;
   vi := TVersionInfo.Create;
   vi.Load(reencode(Application.ExeName,'system'));
-  WinstVersion := vi.getString('FileVersion');
+  OpsiscriptVersion := vi.getString('FileVersion');
   vi.Free;
 {$ELSE}
 *)
@@ -518,7 +518,7 @@ initEncoding;
     OsFileName := reencode(ParamStr(0), 'system');
     FileVerInfo.FileName := OsFileName;
     FileVerInfo.ReadFileInfo;
-    WinstVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
+    OpsiscriptVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
   (*
   writeln('Company: ',FileVerInfo.VersionStrings.Values['CompanyName']);
   writeln('File description: ',FileVerInfo.VersionStrings.Values['FileDescription']);
@@ -532,9 +532,9 @@ initEncoding;
   finally
     FileVerInfo.Free;
   end;
-  //WinstVersion := '4.11.6.1';
+  //OpsiscriptVersion := '4.11.6.1';
   //{$ENDIF WINDOWS}
 
-  WinstVersionName := 'Version ' + winstVersion;
+  OpsiscriptVersionName := 'Version ' + OpsiscriptVersion;
 
 end.

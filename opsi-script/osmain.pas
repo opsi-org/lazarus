@@ -594,7 +594,7 @@ begin
     if LogDatei <> nil then
     begin
       LogDatei.LogSIndentLevel := 0;
-      LogDatei.log('============  opsi-script ' + winstversionname +
+      LogDatei.log('============  opsi-script ' + OpsiscriptVersionname +
         ' is regularly exiting. Time ' + FormatDateTime(
         'yyyy-mm-dd  hh:mm:ss ', now) + '.', LLessential);
 
@@ -1883,7 +1883,7 @@ begin
     if LogDateiName = '' then
       LogDateiName := LogPath + logdatei.StandardLogFilename + logdatei.StandardLogFileext;
     //writeln('StartProgramModes3');
-    Logdatei.log('opsi-script ' + winstversion + ' started at ' + starttimestr, LLessential);
+    Logdatei.log('opsi-script ' + OpsiscriptVersion + ' started at ' + starttimestr, LLessential);
     Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
     //writeln('StartProgramModes4');
     {$IFDEF GUI}
@@ -1938,7 +1938,7 @@ begin
         650, 250);
       {$ELSE GUI}
       //nogui
-      writeln(ExtractFileName(reencode(paramstr(0),'system')) + ' Version: '+WinstVersion);
+      writeln(ExtractFileName(reencode(paramstr(0),'system')) + ' Version: '+OpsiscriptVersion);
       writeln('command line options are' + LineEnding +
         '' + ParamDelim + '? |' + ParamDelim + 'h[elp]' + LineEnding +
         //'	 ' + ParamDelim + 'pcprofil  [PCProfileFile  [[' + ParamDelim + 'logfile] Logfile ] ] [' + ParamDelim + 'parameter ParameterString]' + LineEnding +

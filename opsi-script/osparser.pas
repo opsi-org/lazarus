@@ -171,9 +171,11 @@ type
                 tsFatalOnSyntaxError,
                 tsFatalOnRuntimeError,
                 tsAutoActivityDisplay,
+                tsforceLogInAppendMode,
                 tsSetTraceMode, tsSetStayOnTop,
                 tsIconizeWinst, tsRestoreWinst, tsNormalizeWinst, tsMaximizeWinst,
                 tsWinstVersionRequired,
+                tsOpsiscriptVersionRequired,
                 tsEncoding,
                 tsUpdateEnvironment,
                 tsLoadProductProperties,
@@ -309,6 +311,7 @@ private
   FFatalOnRuntimeError : boolean;
   FSuspended : boolean;
   FAutoActivityDisplay : boolean;
+  FforceLogInAppendMode: boolean;
 
 
 
@@ -350,6 +353,7 @@ public
   property FatalOnRuntimeError : Boolean read FFatalOnRuntimeError write FFatalOnRuntimeError;
   property Suspended : Boolean read FSuspended write FSuspended;
   property AutoActivityDisplay : Boolean read FAutoActivityDisplay write FAutoActivityDisplay;
+  property forceLogInAppendMode : Boolean read FforceLogInAppendMode write FforceLogInAppendMode;
   property ExtremeErrorLevel : Integer read FExtremeErrorLevel write FExtremeErrorLevel;
 
   property ReportMessages : Boolean read FReportMessages write FReportMessages;
@@ -1885,6 +1889,7 @@ Begin
   FSuspended := false;
   //FAutoActivityDisplay := false;
   FAutoActivityDisplay := osconf.AutoActivityDisplay;
+  FforceLogInAppendMode := false;
   scriptstopped := false;
 
   FVarList := TStringList.create;
@@ -21393,6 +21398,27 @@ begin
                     ActionResult
                     := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
 
+                 tsforceLogInAppendMode:
+                  if skip ('=', remaining, remaining, InfoSyntaxError)
+                  then
+                  Begin
+                     if   UpperCase (Remaining) = 'TRUE' then
+                     begin
+                       LogDatei.log ('forceLogInAppendMode was '+BoolToStr(forceLogInAppendMode,true)+' is set to true', LLInfo);
+                       forceLogInAppendMode := true;
+                       if Assigned(LogDatei)then LogDatei.Appendmode := True;
+                     end
+                     else
+                     begin
+                       LogDatei.log ('forceLogInAppendMode was '+BoolToStr(forceLogInAppendMode,true)+' is set to false', LLInfo);
+                       forceLogInAppendMode := false;
+                       if Assigned(LogDatei)then LogDatei.Appendmode := false;
+                     end;
+                  End
+                  else
+                    ActionResult
+                    := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+
                  tsSetDebug_Prog:
                   if skip ('=', remaining, remaining, InfoSyntaxError)
                   then
@@ -21850,7 +21876,7 @@ begin
                 end;
               end;
 
-              tsWinstVersionRequired:
+              tsOpsiscriptVersionRequired, tsWinstVersionRequired:
                  begin
 
                    GetWord (Remaining, expr, Remaining, WordDelimiterWhiteSpace);
@@ -21858,7 +21884,7 @@ begin
                    // expr should be a comparison sign
 
                    if
-                    getDecimalCompareSign (osconf.WinstVersion, numberString, sign, InfoSyntaxError, false)
+                    getDecimalCompareSign (osconf.OpsiscriptVersion, numberString, sign, InfoSyntaxError, false)
                    then
                    Begin
 
@@ -21867,9 +21893,9 @@ begin
                      if evaluated then
                      Begin
                        LogDatei.log
-                        (osconf.selfProductName+' has version  ' + osconf.WinstVersion + ', required is : ' + expr + ' ' + numberString,
+                        (osconf.selfProductName+' has version  ' + osconf.OpsiscriptVersion + ', required is : ' + expr + ' ' + numberString,
                          LLinfo);
-                      LogDatei.WinstVersionRequired := numberString;
+                      LogDatei.OpsiscriptVersionRequired := numberString;
                      end
                      else
                      Begin
@@ -23183,7 +23209,7 @@ begin
   LogDatei.log ('', LLessential);
 
 
-  ps := '============ ' + WinstVersionName + ' script "' + Scriptdatei   + '"';
+  ps := '============ ' + OpsiscriptVersionName + ' script "' + Scriptdatei   + '"';
   LogDatei.log (ps, LLessential);
   ps :=  '             used script encoding: '  +  usedEncoding;
   LogDatei.log (ps, LLessential);
@@ -23452,9 +23478,15 @@ begin
     FConstList.add('%WinstDir%');
     ValueToTake := ExtractFileDir (reencode(paramstr(0),'system'));
     FConstValuesList.add (ValueToTake);
+     FConstList.add('%OpsiscriptDir%');
+    ValueToTake := ExtractFileDir (reencode(paramstr(0),'system'));
+    FConstValuesList.add (ValueToTake);
 
     FConstList.add('%WinstVersion%');
-    ValueToTake := osconf.WinstVersion;
+    ValueToTake := osconf.OpsiscriptVersion;
+    FConstValuesList.add (ValueToTake);
+    FConstList.add('%OpsiscriptVersion%');
+    ValueToTake := osconf.OpsiscriptVersion;
     FConstValuesList.add (ValueToTake);
 
     FConstList.add ('%LogFile%');
@@ -23742,6 +23774,7 @@ begin
     deleteTempBatFiles('');
     LogDatei.log ('Temp cmd files deleted, next: free script ', LLDebug2);
   end;
+  if Script.forceLogInAppendMode then LogDatei.Appendmode:= True;
 
   (*
   moved before final output
@@ -23876,6 +23909,7 @@ begin
   PStatNames^ [tsFatalOnSyntaxError]     := 'FatalOnSyntaxError';
   PStatNames^ [tsFatalOnRuntimeError]    := 'FatalOnRuntimeError';
   PStatNames^ [tsAutoActivityDisplay]    := 'AutoActivityDisplay';
+  PStatNames^ [tsforceLogInAppendMode]   := 'forceLogInAppendMode';
 
   PStatNames^ [tsSetConfidential]        := 'SetConfidential';
 
@@ -23897,6 +23931,7 @@ begin
   PStatNames^ [tsUpdateEnvironment]   := 'UpdateEnvironment';
   PStatNames^ [tsLoadProductProperties] := 'LoadProductProperties';
   PStatNames^ [tsWinstVersionRequired] := 'RequiredWinstVersion';
+  PStatNames^ [tsOpsiscriptVersionRequired] := 'RequiredOpsiscriptVersion';
   PStatNames^ [tsSetUsercontext]       := 'SetUserContext';
   PStatNames^ [tsSaveVersionToProfile]       := 'saveVersionToProfile';
 

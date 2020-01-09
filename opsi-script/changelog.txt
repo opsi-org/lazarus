@@ -5,6 +5,15 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.3.6) experimental; urgency=low
+
+  * new statement: forceLogInAppenMode = (true/false)
+  * RequiredOpsiscriptVersion
+  * %OpsiscriptVersion%
+  * %OpsiscriptDir%
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 09 Jan 2020:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.3.5) experimental; urgency=low
 
   * new procedure reverseProductOrderByUninstall: ProductList is reordered so that

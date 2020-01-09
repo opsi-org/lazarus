@@ -81,7 +81,7 @@ type
     FLogFileExists: boolean;
     FPartLogFileExists: boolean;
     FRemoteFileLogging: string;
-    FWinstVersionRequired: string;
+    FOpsiscriptVersionRequired: string;
     FLogcallcount: integer;
     FAppendmode: boolean;
     FActionProgress: string;
@@ -180,8 +180,8 @@ type
     property LogSIndentLevel: integer read FLogSIndentLevel write setLogSIndentLevel;
     function LogSIndent: string;
     function LogSIndentPlus(const n: integer): string;
-    property WinstVersionRequired: string read FWinstVersionRequired
-      write FWinstVersionRequired;
+    property OpsiscriptVersionRequired: string read FOpsiscriptVersionRequired
+      write FOpsiscriptVersionRequired;
     procedure includelogtail(fname: string; logtailLinecount: integer;
       sourceEncoding: string);
     property Appendmode: boolean read FAppendmode write FAppendmode;
@@ -577,7 +577,7 @@ begin
     end;
   end;
   {$IFDEF OPSISCRIPT}
-  Logdatei.log('opsi-script ' + winstversion + ' started at >>' + starttimestr,
+  Logdatei.log('opsi-script ' + OpsiscriptVersion + ' started at >>' + starttimestr,
     LLessential);
   Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
   for i := 0 to startupmessages.Count - 1 do
