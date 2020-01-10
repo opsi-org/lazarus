@@ -21,7 +21,7 @@ uses
   Process,
   //osfunclin,
   {$IFDEF OPSISCRIPT}
-  osfunc,
+  ostxstringlist,
   {$ENDIF OPSISCRIPT}
   OSProcessux,
   osparserhelper,

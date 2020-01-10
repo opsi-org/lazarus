@@ -13416,14 +13416,15 @@ else if LowerCase (s) = LowerCase ('getSwauditInfoList')
    else if LowerCase(s) = LowerCase ('getHWBiosInfoMap')
    then
    Begin
+       syntaxcheck := true;
       {$IFDEF DARWIN}
-        LogDatei.log('Not implemented for macOS',LLError);
+        LogDatei.log('Not implemented for macOS - return empty list',LLError);
+        list.Clear;
       {$ELSE}
         syntaxcheck := true;
         list.AddStrings(getHwBiosShortlist);
       {$ENDIF}
     end
-
    else
     InfoSyntaxError := s0 + ' no valid Expressionstr for a string list';
 
@@ -20263,15 +20264,36 @@ begin
                         if (not found) then
                         begin
                           {$IFDEF WINDOWS}
-                          // search in %WinstDir%\lib
+                          // search in %OpsiscriptDir%\lib
                           testincfilename := ExtractFileDir(reencode(paramstr(0),'system'))
                                                +PathDelim+'lib'+PathDelim+incfilename;
                           {$ENDIF WINDOWS}
-                          {$IFDEF UNIX}
+                          {$IFDEF LINUX}
                           // search in /usr/share/opsi-script/lib
                           testincfilename := '/usr/share/opsi-script'
                                                +PathDelim+'lib'+PathDelim+incfilename;
                           {$ENDIF LINUX}
+                          {$IFDEF DARWIN}
+                          // search in %OpsiscriptDir%\lib
+                          testincfilename := ExtractFileDir(reencode(paramstr(0),'system'))
+                                               +PathDelim+'lib'+PathDelim+incfilename;
+                          testincfilename := ExpandFilename(testincfilename);
+                          LogDatei.log_prog('Looking for: '+testincfilename,LLNotice);
+                          if FileExistsUTF8(testincfilename) then
+                          begin
+                            found := true;
+                            fullincfilename := testincfilename;
+                          end;
+                          if (not found) then
+                          begin
+                             // search in /usr/local/share/opsi-script/lib
+                             testincfilename := '/usr/local/share/opsi-script'
+                                               +PathDelim+'lib'+PathDelim+incfilename;
+                          end;
+                          {$ENDIF DARWIN}
+                        end;
+                        if (not found) then
+                        begin
                           testincfilename := ExpandFilename(testincfilename);
                           LogDatei.log_prog('Looking for: '+testincfilename,LLNotice);
                           if FileExistsUTF8(testincfilename) then
