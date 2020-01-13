@@ -10828,7 +10828,6 @@ var
   goon : boolean;
   remaining : string;
   expr : string='';
-  SyntaxCheck: boolean;
   onlyWindows: boolean;
   showoutput: TShowOutputFlag;
   sysError: DWORD;
@@ -10925,10 +10924,9 @@ begin
           ' "' + tempfilename + '"  ' + passparas;
 
       remaining := winstoption;
-      SyntaxCheck := true;
       onlyWindows := false;
 
-      while (remaining <> '') and SyntaxCheck do
+      while (remaining <> '') do
       begin
          GetWord (remaining, expr, remaining, WordDelimiterWhiteSpace);
 
@@ -10954,28 +10952,22 @@ begin
          else if RunAsForParameter(expr, runas) then
          begin
            onlyWindows := true;
-         end
-         else
-         begin
-           SyntaxCheck := false;
-           errorInfo := '"' + expr + '" is not a valid ExecWith parameter!';
          end;
 
          {$IFNDEF WINDOWS}
          if onlyWindows then
-         begin
-           SyntaxCheck := false;
-           errorInfo := '"' + expr + '" is only supported on Windows!';
-         end;
+           break;
          {$ENDIF WINDOWS}
       end;
 
-      if not SyntaxCheck then
+      {$IFNDEF WINDOWS}
+      if onlyWindows then
       begin
-        LogDatei.log('Error: ' + errorInfo, LLcritical);
-        FExtremeErrorLevel:=LevelFatal;
+        LogDatei.log('Error: ' + '"' + expr + '" is only supported on Windows!', LLcritical);
+        FExtremeErrorLevel := LevelFatal;
         exit;
       end;
+      {$ENDIF WINDOWS}
 
       {$IFDEF WIN32}
       // allow the executing user access to the tmp file
