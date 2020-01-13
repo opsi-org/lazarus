@@ -99,7 +99,7 @@ uses
 const
   BytesarrayLength = 5000;
   PATHSEPARATOR = PathDelim;
-  READ_BYTES = 4096;
+  READ_BYTES = 2048;
 //KEY_WOW64_64KEY = $0100;
 //KEY_WOW64_32KEY = $0200;
 
@@ -2424,45 +2424,50 @@ var
     LineBreakPos: LongInt;
     BytesRead: LongInt;
   begin
-    tmp_buffer := '';
-    BytesRead := proc.output.Read(tmp_buffer, READ_BYTES);
-    {$IFDEF WINDOWS}
-    OemToAnsi(tmp_buffer, tmp_buffer);
-    {$ENDIF WINDOWS}
-    Buffer := Buffer + tmp_buffer;
-
-    {$IFDEF WINDOWS}
-    LineBreakPos := AnsiPos(#13, Buffer);
-    {$ELSE WINDOWS}
-    LineBreakPos := Pos(#10, Buffer);
-    {$ENDIF WINDOWS}
-
-    while not (LineBreakPos = 0) do
+    if proc.output.NumBytesAvailable <= 0 then
+      BytesRead := 0
+    else
     begin
-      output_line := Copy(Buffer, 1, LineBreakPos - 1);
+      tmp_buffer := '';
+      BytesRead := proc.output.Read(tmp_buffer, READ_BYTES);
       {$IFDEF WINDOWS}
-      output_line := WINCPToUTF8(output_line);
+      OemToAnsi(tmp_buffer, tmp_buffer);
       {$ENDIF WINDOWS}
-      output.Add(output_line);
-      {$IFDEF GUI}
-      if showoutput then
-      begin
-        SystemInfo.Memo1.Lines.Add(output_line);
-        ProcessMess;
-      end;
-      {$ENDIF GUI}
-
-      // skip carriage return if present
-      if (length(Buffer) > LineBreakPos) and (Buffer[LineBreakPos + 1] = #10) then
-        Inc(LineBreakPos, 1);
-
-      Buffer := Copy(Buffer, LineBreakPos + 1, READ_BYTES);
+      Buffer := Buffer + tmp_buffer;
 
       {$IFDEF WINDOWS}
       LineBreakPos := AnsiPos(#13, Buffer);
       {$ELSE WINDOWS}
       LineBreakPos := Pos(#10, Buffer);
       {$ENDIF WINDOWS}
+
+      while not (LineBreakPos = 0) do
+      begin
+        output_line := Copy(Buffer, 1, LineBreakPos - 1);
+        {$IFDEF WINDOWS}
+        output_line := WINCPToUTF8(output_line);
+        {$ENDIF WINDOWS}
+        output.Add(output_line);
+        {$IFDEF GUI}
+        if showoutput then
+        begin
+          SystemInfo.Memo1.Lines.Add(output_line);
+          ProcessMess;
+        end;
+        {$ENDIF GUI}
+
+        // skip carriage return if present
+        if (length(Buffer) > LineBreakPos) and (Buffer[LineBreakPos + 1] = #10) then
+          Inc(LineBreakPos, 1);
+
+        Buffer := Copy(Buffer, LineBreakPos + 1, READ_BYTES);
+
+        {$IFDEF WINDOWS}
+        LineBreakPos := AnsiPos(#13, Buffer);
+        {$ELSE WINDOWS}
+        LineBreakPos := Pos(#10, Buffer);
+        {$ENDIF WINDOWS}
+      end;
     end;
 
     Result := BytesRead;
@@ -2866,6 +2871,8 @@ begin
               ProcessMess;
             end;
           end;
+
+          ProcessMess;
 
           // read remaining output
           repeat
