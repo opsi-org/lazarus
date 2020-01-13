@@ -33,6 +33,7 @@ uses
 procedure registerForWinExplorer(doregister: boolean);
 var
   myreg: Tregistry;
+  IsAdmin:boolean;
 begin
   myreg := TRegistry.Create(KEY_ALL_ACCESS);
   //myreg.RootKey := HKEY_CURRENT_USER;
@@ -47,6 +48,7 @@ begin
   myreg.DeleteKey('Software\Classes\Msi.Package\shell\opsi setup detector\Command');
   myreg.DeleteKey('Software\Classes\Msi.Package\shell\opsi setup detector');
   //new registration
+  isAdmin := DSiIsAdmin;
   if DSiIsAdmin then myreg.RootKey := HKEY_CLASSES_ROOT
   else myreg.RootKey := HKEY_CURRENT_USER;
   if doregister then
