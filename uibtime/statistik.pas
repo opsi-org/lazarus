@@ -152,6 +152,11 @@ begin
   combobox1.Text := uid;
   edit1.Text := '01.01.2003';
   edit2.Text := datetostr(date);
+  {$IFDEF WINDOWS}
+  ComboBoxAktevent.Style:= csDropDown;
+  {$ElSE WINDOWS}
+  ComboBoxAktevent.Style:= csSimple;
+  {$ENDIF WINDOWS}
 end;
 
 procedure TFStatistik.Edit1Exit(Sender: TObject);
