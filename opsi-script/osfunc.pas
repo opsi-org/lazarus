@@ -2929,8 +2929,8 @@ var
   BytesAvail: LongWord;
   BytesLeft: LongWord;
 begin
-  Result := PeekNamedPipe(hReadPipe, @lpBuffer, READ_BYTES, @BytesRead, @BytesAvail, @BytesLeft);
-  if BytesLeft > 0 then
+  Result := PeekNamedPipe(hReadPipe, nil, READ_BYTES, @BytesRead, @BytesAvail, @BytesLeft);
+  if BytesAvail > 0 then
   begin
     lpBuffer := '';
     Result := ReadFile(hReadPipe, lpBuffer, READ_BYTES, BytesRead, nil);
