@@ -10767,7 +10767,10 @@ begin
         // try to parse a RunAs param
         GetWord(remaining, expr, remaining, WordDelimiterWhiteSpace);
         if not RunAsForParameter(expr, tmpRunAs) then
+        begin
+          remaining := expr + ' ' + remaining;
           continue := false;
+        end;
       end;
     end;
 
