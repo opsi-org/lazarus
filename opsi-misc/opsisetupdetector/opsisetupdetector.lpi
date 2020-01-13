@@ -11,7 +11,6 @@
       <UseXPManifest Value="True"/>
       <XPManifest>
         <DpiAware Value="Per-monitor"/>
-        <ExecutionLevel Value="highestAvailable"/>
         <TextName Value="uib gmbh.opsi.opsi-setup-detector"/>
         <TextDesc Value="Program to detect the silent / unattended parameters of setup files and create opsi package structure"/>
       </XPManifest>
@@ -28,7 +27,7 @@
       <BuildNr Value="14"/>
       <StringTable CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi setup detector" InternalName="opsi setup detector" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsisetupdetector" ProductName="opsi" ProductVersion="opsi 4.1."/>
     </VersionInfo>
-    <BuildModes Count="3" Active="Release">
+    <BuildModes Count="3" Active="Default">
       <Item1 Name="Default" Default="True"/>
       <Item2 Name="Debug">
         <CompilerOptions>
@@ -159,8 +158,8 @@
         <Filename Value="opsisetupdetector.lpr"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="5"/>
-        <CursorPos X="25" Y="16"/>
+        <TopLine Value="10"/>
+        <CursorPos Y="43"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -275,9 +274,8 @@
       <Unit15>
         <Filename Value="changelog-osd.txt"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <TopLine Value="58"/>
-        <CursorPos X="70" Y="73"/>
+        <CursorPos X="5" Y="65"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -302,9 +300,10 @@
       <Unit17>
         <Filename Value="osdhelper.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="10"/>
-        <TopLine Value="17"/>
-        <CursorPos X="33" Y="33"/>
+        <TopLine Value="31"/>
+        <CursorPos Y="37"/>
         <UsageCount Value="240"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -323,8 +322,8 @@
         <Filename Value="osdbasedata.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="9"/>
-        <TopLine Value="828"/>
-        <CursorPos X="27" Y="908"/>
+        <TopLine Value="1398"/>
+        <CursorPos Y="1432"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <IsVisibleTab Value="True"/>
@@ -557,7 +556,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="131"/>
         <CursorPos Y="148"/>
-        <UsageCount Value="59"/>
+        <UsageCount Value="60"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit42>
     </Units>
@@ -568,124 +567,124 @@
     </OtherDefines>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="osdanalyze.pas"/>
-        <Caret Line="1268" Column="13" TopLine="1234"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="896" Column="40" TopLine="889"/>
       </Position1>
       <Position2>
-        <Filename Value="osdanalyze.pas"/>
-        <Caret Line="1119" Column="19" TopLine="1101"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="902" Column="27" TopLine="880"/>
       </Position2>
       <Position3>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="378" Column="33" TopLine="358"/>
+        <Caret Line="820" Column="36" TopLine="819"/>
       </Position3>
       <Position4>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="915" Column="31" TopLine="887"/>
+        <Caret Line="672" Column="3" TopLine="652"/>
       </Position4>
       <Position5>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="386" Column="21" TopLine="366"/>
+        <Caret Line="1401" Column="19" TopLine="1375"/>
       </Position5>
       <Position6>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="915" Column="31" TopLine="883"/>
+        <Caret Line="672" Column="3" TopLine="652"/>
       </Position6>
       <Position7>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="1444" Column="20" TopLine="1437"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="1401" Column="19" TopLine="1375"/>
       </Position7>
       <Position8>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="1443" Column="20" TopLine="1436"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="1428" Column="3" TopLine="1389"/>
       </Position8>
       <Position9>
-        <Filename Value="osdcreate.pas"/>
-        <Caret Line="203" Column="46" TopLine="200"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="672" Column="5" TopLine="652"/>
       </Position9>
       <Position10>
-        <Filename Value="osdcreate.pas"/>
-        <Caret Line="204" Column="55" TopLine="196"/>
+        <Filename Value="osdform.pas"/>
+        <Caret Line="683" Column="5" TopLine="655"/>
       </Position10>
       <Position11>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="35" Column="14" TopLine="19"/>
+        <Caret Line="903" Column="52" TopLine="884"/>
       </Position11>
       <Position12>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="1093" Column="89" TopLine="1061"/>
+        <Caret Line="15" Column="12"/>
       </Position12>
       <Position13>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="15" Column="11"/>
+        <Caret Line="12" Column="33"/>
       </Position13>
       <Position14>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="706" Column="36" TopLine="700"/>
+        <Filename Value="opsisetupdetector.lpr"/>
+        <Caret Line="25" Column="61"/>
       </Position14>
       <Position15>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="764" Column="36" TopLine="751"/>
+        <Filename Value="osdhelper.pas"/>
+        <Caret Line="55" Column="29" TopLine="45"/>
       </Position15>
       <Position16>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="795" Column="33" TopLine="742"/>
+        <Filename Value="osdhelper.pas"/>
+        <Caret Line="75" TopLine="47"/>
       </Position16>
       <Position17>
-        <Filename Value="..\..\common\oslog.pas"/>
-        <Caret Line="1236" Column="43" TopLine="1226"/>
+        <Filename Value="osdbasedata.pas"/>
+        <Caret Line="929" TopLine="909"/>
       </Position17>
       <Position18>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="896" Column="40" TopLine="889"/>
+        <Caret Line="938" TopLine="910"/>
       </Position18>
       <Position19>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="902" Column="27" TopLine="880"/>
+        <Caret Line="935" TopLine="910"/>
       </Position19>
       <Position20>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="820" Column="36" TopLine="819"/>
+        <Caret Line="938" TopLine="910"/>
       </Position20>
       <Position21>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="672" Column="3" TopLine="652"/>
+        <Caret Line="940" TopLine="912"/>
       </Position21>
       <Position22>
         <Filename Value="osdbasedata.pas"/>
-        <Caret Line="1401" Column="19" TopLine="1375"/>
+        <Caret Line="1432" TopLine="1398"/>
       </Position22>
       <Position23>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="672" Column="3" TopLine="652"/>
+        <Filename Value="opsisetupdetector.lpr"/>
+        <Caret Line="26" TopLine="10"/>
       </Position23>
       <Position24>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="1401" Column="19" TopLine="1375"/>
+        <Filename Value="opsisetupdetector.lpr"/>
+        <Caret Line="36" TopLine="10"/>
       </Position24>
       <Position25>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="1428" Column="3" TopLine="1389"/>
+        <Filename Value="opsisetupdetector.lpr"/>
+        <Caret Line="37" TopLine="10"/>
       </Position25>
       <Position26>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="672" Column="5" TopLine="652"/>
+        <Filename Value="opsisetupdetector.lpr"/>
+        <Caret Line="38" TopLine="10"/>
       </Position26>
       <Position27>
-        <Filename Value="osdform.pas"/>
-        <Caret Line="683" Column="5" TopLine="655"/>
+        <Filename Value="opsisetupdetector.lpr"/>
+        <Caret Line="39" TopLine="10"/>
       </Position27>
       <Position28>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="903" Column="52" TopLine="884"/>
+        <Filename Value="opsisetupdetector.lpr"/>
+        <Caret Line="40" TopLine="10"/>
       </Position28>
       <Position29>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="15" Column="12"/>
+        <Filename Value="opsisetupdetector.lpr"/>
+        <Caret Line="41" TopLine="10"/>
       </Position29>
       <Position30>
-        <Filename Value="osdbasedata.pas"/>
-        <Caret Line="12" Column="33"/>
+        <Filename Value="opsisetupdetector.lpr"/>
+        <Caret Line="42" TopLine="10"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
@@ -725,14 +724,14 @@
 -dOPSI
 -dOSDGUI"/>
       <OtherDefines Count="3">
-        <Define0 Value="OPSI_AS_USER"/>
-        <Define1 Value="OPSI"/>
-        <Define2 Value="OSDGUI"/>
+        <Define0 Value="OSDGUI"/>
+        <Define1 Value="OPSI_AS_USER"/>
+        <Define2 Value="OPSI"/>
       </OtherDefines>
     </Other>
   </CompilerOptions>
   <Debugging>
-    <BreakPoints Count="1">
+    <BreakPoints Count="2">
       <Item1>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
@@ -740,6 +739,13 @@
         <Source Value="osddlgnewproperty.pas"/>
         <Line Value="171"/>
       </Item1>
+      <Item2>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="osdhelper.pas"/>
+        <Line Value="37"/>
+      </Item2>
     </BreakPoints>
     <Watches Count="5">
       <Item1>
