@@ -22072,6 +22072,7 @@ begin
                           //ActionResult := reportError (ErrorInfo);
                         end;
                       end
+
                       else if skip(Parameter_Registry64Bit, Remaining, Remaining, ErrorInfo)
                       then
                       begin

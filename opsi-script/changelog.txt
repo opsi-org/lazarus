@@ -5,6 +5,13 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.3.7) experimental; urgency=low
+
+  * winbatch combine /timeoutseconds with WaitForWindowAppearing or WaitForWindowVanished
+    done this in osfunc: StartProcess_cp
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 14 Jan 2020:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.3.6) experimental; urgency=low
 
   * new statement: forceLogInAppenMode = (true/false)
