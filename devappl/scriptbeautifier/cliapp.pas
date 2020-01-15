@@ -119,9 +119,10 @@ begin
   begin
     logpath := GetOptionValue('l','logpath');
   end;
-  writeln('initLogging fehlt irgendwas, gibt es einen Fehler');
   initLogging;
-  writeln('bfn:' + beautiparamsfilename);
+  writeln('file with beautifier params: ' + beautiparamsfilename);
+  logdatei.log('file with beautifier params: ' + beautiparamsfilename, LLessential);
+  logdatei.log('opsiscriptfile to beautify: ' + opsiscriptfile, LLessential);
   beautifyopsiscript.initialize(beautiparamsfilename,opsiscriptfile);
 
   // stop program loop

@@ -35,7 +35,7 @@
         <PackageName Value="LCLBase"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="7">
+    <Units Count="8">
       <Unit0>
         <Filename Value="scriptbeautifier.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -64,6 +64,10 @@
         <Filename Value="../../common/osversioninfo.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit6>
+      <Unit7>
+        <Filename Value="../../common/key_valueCollection.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit7>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

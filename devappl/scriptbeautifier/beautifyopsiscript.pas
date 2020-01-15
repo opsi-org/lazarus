@@ -9,7 +9,7 @@ unit beautifyopsiscript;
 // credits: https://www.opsi.org/credits/ --- gibts net
 
 //***************************************************************************
-// Subversion:
+//
 // $Revision:  $
 // $Author: hammel $
 // $Date: 2019-07-06 14:15:37 +0100 (Di, 06. Dez 2016) $
@@ -20,7 +20,7 @@ interface
 
 
 uses
-  Classes, SysUtils, StrUtils, INIFiles;
+  Classes, SysUtils, StrUtils, oslog, key_valueCollection, INIFiles;
 
 function indentation ( indent: Integer) : String;
 function isStartStr(line:String; codeWords:TStringList) : boolean;
@@ -31,18 +31,20 @@ implementation
 
 var
   decIndentList, incIndentList, decIncIndentList,
-    donttouchBeginList, donttouchEndList:  TStringlist;
+            donttouchBeginEndList:  TStringlist;
   indentrange: Integer; // how many chars for indention
   indentlevel: Integer; // how often indentrange
-  indentchar: Char;
-// TODO: configurationsdatei für die verschiedenen Fälle und die Einrückungsgröße
+  indentchar: String;
+
+  dontTouchKeyValue : TList;
+// TODO: configurationsdatei und programm auf JSON umstellen
 
 function indentation ( indent: Integer) : String;
  var i:Integer;
  begin
    indentation:= '';
    for i:=0 to indent*indentrange-1 do
-     indentation:= indentation +' ';
+     indentation:= indentation + indentchar;
  end;
 
 function isStartStr(line:String; codeWords:TStringList) : boolean;
@@ -70,20 +72,29 @@ begin
 
   // touch
   k:=0;
-  trimLine:= true;
   while (k < pred(code.Count)) do
     begin
-      if AnsiStartsText('[opsiservicecall',code[k]) OR AnsiStartsText('[ShellInAnIcon', code[k]) then
-      // besser contains???
+      trimLine:= true;
+      // TODO: die Paare von dounttouch begin und end abarbeiten
+      if AnsiContainsStr(UpperCase(code[k]),UpperCase('[opsiServiceCall')) then
       begin
-        trimLine:=false;
-      end
-      else if AnsiEndsText(']',code[k]) OR AnsiStartsText('exit',code[k]) then
+        //logdatei.log(' : line ' + k.toString + ': dont touch: ' + code[k] , LLessential);
+        repeat
+          inc(k);
+          //logdatei.log(' : line ' + k.toString + ': dont touch: ' + code[k] , LLessential);
+        until AnsiEndsStr(']',code[k]);
+        trimLine:=false;               // last line of donttouch should not be trimmed
+      end;
+      if AnsiContainsStr(UpperCase(code[k]),UpperCase('[ShellInAnIcon')) then
       begin
-        trimLine:=true;
+        //logdatei.log(' : line ' + k.toString + ': dont touch: ' + code[k] , LLessential);
+        repeat
+          inc(k);
+          //logdatei.log(' : line ' + k.toString + ': dont touch: ' + code[k] , LLessential);
+        until AnsiEndsStr(']',code[k]);
+        trimLine:=false;               // last line of donttouch should not be trimmed
       end;
 
-      //
       if trimLine then
       // trim or not
       begin
@@ -121,59 +132,93 @@ procedure initialize(bfn: String;osf:String);
 var opsiscriptfile: String;
     opsiscriptcode: TStringlist;
     ini: TINIFile;
+    i: Integer;
 begin
   ini    := TINIFile.Create(bfn);
   indentrange := INI.ReadInteger('beautifierconf', 'indentrange', 5);
-  indentlevel :=  INI.ReadInteger('beautifierconf', 'indentlevel', 0);
+  indentlevel :=  0;
   writeln('indentrange:  ' + indentrange.ToString());
+  logdatei.log('indentrange:  ' + indentrange.ToString(), LLessential);
   writeln('indentlevel:  ' + indentlevel.ToString());
+  logdatei.log('indentlevel:  ' + indentlevel.ToString(), LLessential);
+
+
+  // Tab = #09, Whitespace = ' '
+  indentchar := INI.ReadString('beautifierconf', 'indentchar', '#09');
+  writeln(indentchar);
+  logdatei.log('indentchar:  ' + indentchar, LLessential);
+  if indentchar.Equals('tab')
+     then indentchar := #09
+     else if indentchar.Equals('whitespace')
+        then indentchar := ' '
+        else indentchar := #09;
+
   incIndentList:=TStringList.Create;
-  // einlesen der Stringliste
-  //ini.ReadSectionValues('incIndentList',strList);
-  incIndentList.Add('if ');
-  incIndentList.Add('deffunc ');
-  incIndentList.Add('switch ');
-  incIndentList.Add('case ');
-  incIndentList.Add('defaultcase ');
-  ini.Free;
-
-
-  donttouchBeginList:=TStringList.Create;
-  donttouchEndList:=TStringList.Create;
-
-  // die zwei
-  donttouchBeginList.Add('[ShellInAnIcon');
-  donttouchEndList.Add('exit');
-
-  // die zwei
-  donttouchBeginList.Add('[opsiservicecall');
-  // EndList aber am Ende der Zeile ]
-
-
   decIndentList:=TStringList.Create;
   decIncIndentList:=TStringList.Create;
 
+  // einlesen der Stringlisten
+  ini.ReadSection('incIndentList',incIndentList);
+  ini.ReadSection('decIndentList',decIndentList);
+  ini.ReadSection('decIncIndentList',decIncIndentList);
 
-  decIndentList.Add('endif');
-  decIndentList.Add('endfunc');
-  decIndentList.Add('endCase');
-  decIndentList.Add('endswitch');
+  // TODO: diese Listen werden im Moment noch nicht verwendet
+  // erste Versuche sind hart vercoded in der beautify-prozedur
+  // hier nur der Test des Einlesens der don't Touch-Listen auf eine key_valueCollection
+  donttouchBeginEndList:=TStringList.Create;
+  //donttouchEndList:=TStringList.Create;
+  ini.ReadSection('donttouchBeginEndList',donttouchBeginEndList);    // read as keys donttouchbegin
+  dontTouchKeyValue :=TList.Create;
+  logdatei.log('donttouch key value list: ',LLessential);
+  for i:=0 to donttouchBeginEndList.Count-1 do
+    begin
+      dontTouchKeyValue.Add;
+      dontTouchKeyValue.Items[i].key:='[' + donttouchBeginEndList[i];
+      dontTouchKeyValue.Items[i].value :=INI.ReadString('donttouchBeginEndList', donttouchBeginEndList[i], '');
+      logdatei.log('key: '+ dontTouchKeyValue.Items[i].key + ' /// value: ' + dontTouchKeyValue.Items[i].value,LLessential);
+    end;
 
-  decIncIndentList.Add('else');
+  //ini.ReadSection('donttouchEndList',donttouchEndList);
+  //
+  //donttouchBeginList.Add('[ShellInAnIcon');
+  //donttouchEndList.Add('exit');
+  //
+  // donttouchBeginList.Add('[opsiservicecall');
+  // EndList aber am Ende der Zeile ]
+
+  ini.Free;
+
   opsiscriptfile:=osf;
   opsiscriptcode:= TStringList.Create;
   if FileExists(opsiscriptfile) then
     begin
-      //logdatei.log('opening file: '+opsiscriptfile,myoslog.LLinfo);
+      logdatei.log('opening file: '+ opsiscriptfile,LLessential);
       writeln('opening file: '+  opsiscriptfile);
       try
+        try
           opsiscriptcode.LoadFromFile(opsiscriptfile);
-          beautify(opsiscriptcode).SaveToFile(opsiscriptfile +'.beautified');
+          //logdatei.log('write backup file: '+ opsiscriptfile + '.bak',LLessential);
+          //opsiscriptcode.SaveToFile(opsiscriptfile + '.bak');
+          beautify(opsiscriptcode).SaveToFile(opsiscriptfile + '.opsiscript');
+          logdatei.log('write beautified file: '+ opsiscriptfile + '.opsiscript',LLessential);
+         except
+          logdatei.log('error beautifying or writing opsiscriptfiles : '+ opsiscriptfile,LLessential);
+         end;
       finally
         opsiscriptcode.Free;
       end;
+    end
+  else
+    begin
+      opsiscriptcode.Free;
+      writeln('file does not exist: '+ opsiscriptfile);
+      logdatei.log('file does not exist: '+ opsiscriptfile,LLessential);
     end;
-
+  // free all
+  incIndentList.Free;
+  decIndentList.Free;
+  decIncIndentList.Free;
+  dontTouchKeyValue.Free;
 end;
 
 end.
