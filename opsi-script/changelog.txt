@@ -9,6 +9,13 @@ opsi-winst/opsi-script (4.12.3.7) experimental; urgency=low
 
   * winbatch combine /timeoutseconds with WaitForWindowAppearing or WaitForWindowVanished
     done this in osfunc: StartProcess_cp
+  * osparser: TuibInstScript.SkipWordOrStringExpressionstr
+      { like skip but handles also string expressions }
+  * osparser: Allow string expressions as parameter of Registry sections
+  * osparser: Allow string expressions as parameter of File sections
+  * osparser: Allow string expressions as parameter of DOS / Shell sections
+  * osparser: Allow string expressions as parameter of Execwith sections
+  * osparser: Allow string expressions as parameter of winbatch sections
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 14 Jan 2020:15:00:00 +0200
 
