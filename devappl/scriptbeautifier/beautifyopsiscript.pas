@@ -62,41 +62,82 @@ begin
      end;
 end;
 
+function createBlockIndent (blockindent:Integer) : String;
+var i: integer;
+begin
+  createBlockIndent:='';
+  for i:=1 to blockindent do
+    begin
+      createBlockIndent:= createBlockIndent + indentchar;
+    end
+end;
+
+
 function beautify (code: TStringlist) : TStringList;
-var k: integer;
+var k, relPos: integer;
     trimLine: boolean;
 begin
-  // zuerst prüfen, ob eine  don't touch section beginnt
-  // don't touch
-  // kein trim
-
-  // touch
   k:=0;
   while (k < pred(code.Count)) do
     begin
       trimLine:= true;
-      // TODO: die Paare von dounttouch begin und end abarbeiten
+      relPos:=0;
+      if AnsiStartsStr(';', UpperCase(code[k]).trim) then
+      begin
+        trimLine:=false;
+        code[k]:= indentation(indentlevel) + code[k].trim;
+      end;
+
+      // TODO:
       if AnsiContainsStr(UpperCase(code[k]),UpperCase('[opsiServiceCall')) then
       begin
-        //logdatei.log(' : line ' + k.toString + ': dont touch: ' + code[k] , LLessential);
+        // detect indentiation
+        relPos:= PosEx('[',code[k])-1;      // how many chars
+        code[k]:= indentation(indentlevel) + code[k].trim;
+        relPos:= PosEx('[',code[k])-1-relPos;  // how many chars to indent additionally
         repeat
           inc(k);
-          //logdatei.log(' : line ' + k.toString + ': dont touch: ' + code[k] , LLessential);
-        until AnsiEndsStr(']',code[k]);
-        trimLine:=false;               // last line of donttouch should not be trimmed
-      end;
-      if AnsiContainsStr(UpperCase(code[k]),UpperCase('[ShellInAnIcon')) then
-      begin
-        //logdatei.log(' : line ' + k.toString + ': dont touch: ' + code[k] , LLessential);
-        repeat
-          inc(k);
-          //logdatei.log(' : line ' + k.toString + ': dont touch: ' + code[k] , LLessential);
+          code[k]:= createBlockIndent(relPos) + code[k];
         until AnsiEndsStr(']',code[k]);
         trimLine:=false;               // last line of donttouch should not be trimmed
       end;
 
-      if trimLine then
+      // sections with relativ indentions
+      // except previous condions
+      if not(AnsiStartsStr(UpperCase('[Action'),UpperCase(code[k].trim)) or  AnsiStartsStr(UpperCase('[Sub'),code[k].trim)
+         or AnsiStartsStr(UpperCase('[Aktionen'),code[k].trim) or  AnsiStartsStr(UpperCase('[ProfileActions'),code[k].trim))  then
+       if (AnsiStartsStr('[',code[k].trim) and AnsiEndsStr(']',code[k].trim))
+         then
+            begin
+              logdatei.log('Sections - line ' + k.toString + ': dont touch: ' + code[k].trim , LLessential);
+              relPos:= PosEx('[',code[k])-1;      // how many chars
+              code[k]:= indentation(indentlevel) + code[k].trim;
+              //logdatei.log(' line ' + k.toString + ': dont touch: ' + code[k] , LLessential);
+              relPos:= PosEx('[',code[k])-1-relPos;  // how many chars to indent additionally
+              inc(k);
+              while not((AnsiStartsStr('[',code[k].trim) and AnsiEndsStr(']',code[k].trim)) or AnsiStartsStr('endfunc', code[k].trim)) do
+                begin
+                  code[k]:= createBlockIndent(relPos) + code[k];
+                  inc(k);
+                  //logdatei.log(' : line ' + k.toString + ': dont touch: ' + code[k] , LLessential);
+                end;
+              trimline:=false;
+              // section ends
+              if AnsiStartsStr(UpperCase('endfunc'), UpperCase(code[k].trim)) then
+              begin
+                dec(indentlevel);
+                code[k]:= indentation(indentlevel) + code[k];
+              end;
+
+              if (AnsiStartsStr('[',code[k].trim) and AnsiEndsStr(']',code[k].trim)) then
+              // begin next section, therefore end of previous section
+              begin
+                dec(k); // back, because this line is the begin of the next section and must be prooved
+              end;
+            end;
+
       // trim or not
+      if trimLine then
       begin
         code[k]:=code[k].trim;
         if (isStartStr(code[k],incIndentList))
@@ -121,9 +162,9 @@ begin
         else
           code[k]:= indentation(indentlevel) + code[k];
         inc(k);
-
       end // if trimLine
-      else inc(k);
+      else
+        inc(k);
     end; // while
   beautify:=code;
 end;
@@ -165,8 +206,9 @@ begin
   // TODO: diese Listen werden im Moment noch nicht verwendet
   // erste Versuche sind hart vercoded in der beautify-prozedur
   // hier nur der Test des Einlesens der don't Touch-Listen auf eine key_valueCollection
-  donttouchBeginEndList:=TStringList.Create;
+  //donttouchBeginEndList:=TStringList.Create;
   //donttouchEndList:=TStringList.Create;
+  {
   ini.ReadSection('donttouchBeginEndList',donttouchBeginEndList);    // read as keys donttouchbegin
   dontTouchKeyValue :=TList.Create;
   logdatei.log('donttouch key value list: ',LLessential);
@@ -177,7 +219,7 @@ begin
       dontTouchKeyValue.Items[i].value :=INI.ReadString('donttouchBeginEndList', donttouchBeginEndList[i], '');
       logdatei.log('key: '+ dontTouchKeyValue.Items[i].key + ' /// value: ' + dontTouchKeyValue.Items[i].value,LLessential);
     end;
-
+  }
   //ini.ReadSection('donttouchEndList',donttouchEndList);
   //
   //donttouchBeginList.Add('[ShellInAnIcon');
@@ -218,7 +260,7 @@ begin
   incIndentList.Free;
   decIndentList.Free;
   decIncIndentList.Free;
-  dontTouchKeyValue.Free;
+  //dontTouchKeyValue.Free;
 end;
 
 end.
