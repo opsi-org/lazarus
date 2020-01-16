@@ -85,7 +85,9 @@ begin
       if AnsiStartsStr(';', UpperCase(code[k]).trim) then
       begin
         trimLine:=false;
-        code[k]:= indentation(indentlevel) + code[k].trim;
+        if not(code[k].Chars[0]=';') then
+          code[k]:= indentation(indentlevel) + code[k].trim;
+        // else: if first Char=';' don't indent
       end;
 
       // TODO:
@@ -98,7 +100,7 @@ begin
         repeat
           inc(k);
           code[k]:= createBlockIndent(relPos) + code[k];
-        until AnsiEndsStr(']',code[k]);
+        until AnsiEndsStr(']',code[k]) or (k>=code.Count-1);
         trimLine:=false;               // last line of donttouch should not be trimmed
       end;
 
@@ -115,7 +117,7 @@ begin
               //logdatei.log(' line ' + k.toString + ': dont touch: ' + code[k] , LLessential);
               relPos:= PosEx('[',code[k])-1-relPos;  // how many chars to indent additionally
               inc(k);
-              while not((AnsiStartsStr('[',code[k].trim) and AnsiEndsStr(']',code[k].trim)) or AnsiStartsStr('endfunc', code[k].trim)) do
+              while not((AnsiStartsStr('[',code[k].trim) and AnsiEndsStr(']',code[k].trim)) or AnsiStartsStr('endfunc', code[k].trim)) and (k<code.Count-1) do
                 begin
                   code[k]:= createBlockIndent(relPos) + code[k];
                   inc(k);
