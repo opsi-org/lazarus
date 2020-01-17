@@ -2337,7 +2337,7 @@ begin
               if FindWindowEx(0, 0, nil, PChar(Ident)) = 0 then
               begin
                 logdatei.log('Wait for appear Window: "' + Ident +
-                  'not found.', LLDebug);
+                  ' not found.', LLDebug);
                 if WaitSecs = 0 then
                   running := True
                 else
@@ -2574,7 +2574,7 @@ begin
               ProcessMess;
               //sleep(50);
               //sleep(1000);
-              sleep(100);
+              sleep(1000);
               {$IFDEF UNIX}
               lpExitCode := FpcProcess.ExitCode;
               {$ENDIF LINUX}
