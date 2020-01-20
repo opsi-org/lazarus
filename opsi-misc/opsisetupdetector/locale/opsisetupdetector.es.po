@@ -442,16 +442,6 @@ msgstr "Editar dependencia"
 msgid "Edit Property"
 msgstr "Editar propiedad"
 
-#: tresultform1.bitbtnopenfile.caption
-msgctxt "tresultform1.bitbtnopenfile.caption"
-msgid "Open Setup File"
-msgstr "Abrir el archivo setup"
-
-#: tresultform1.bitbtnopenfile1.caption
-msgctxt "tresultform1.bitbtnopenfile1.caption"
-msgid "Open Setup File"
-msgstr "Abrir el archivo setup"
-
 #: tresultform1.bitbtnopenmst1.caption
 msgctxt "tresultform1.bitbtnopenmst1.caption"
 msgid "Open MST File"
@@ -581,11 +571,6 @@ msgstr ""
 msgid "opsi Setup Detector"
 msgstr "opsi Setup Detector"
 
-#: tresultform1.checkboxusemst.caption
-msgctxt "tresultform1.checkboxusemst.caption"
-msgid "use MST File"
-msgstr "usar archivo MST"
-
 #: tresultform1.checkgroupbuildmode.caption
 msgctxt "tresultform1.checkgroupbuildmode.caption"
 msgid "Build Mode"
@@ -708,8 +693,10 @@ msgid "Software Version"
 msgstr "Versión de software"
 
 #: tresultform1.label72.caption
+#, fuzzy
+#| msgid "Required Space"
 msgctxt "tresultform1.label72.caption"
-msgid "Required Space"
+msgid "Required Space MB"
 msgstr "Espacio requerido"
 
 #: tresultform1.label73.caption

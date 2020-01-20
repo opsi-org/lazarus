@@ -407,16 +407,6 @@ msgstr ""
 msgid "Edit Property"
 msgstr ""
 
-#: tresultform1.bitbtnopenfile.caption
-msgctxt "tresultform1.bitbtnopenfile.caption"
-msgid "Open Setup File"
-msgstr ""
-
-#: tresultform1.bitbtnopenfile1.caption
-msgctxt "tresultform1.bitbtnopenfile1.caption"
-msgid "Open Setup File"
-msgstr ""
-
 #: tresultform1.bitbtnopenmst1.caption
 msgctxt "tresultform1.bitbtnopenmst1.caption"
 msgid "Open MST File"
@@ -540,11 +530,6 @@ msgstr ""
 msgid "opsi Setup Detector"
 msgstr ""
 
-#: tresultform1.checkboxusemst.caption
-msgctxt "tresultform1.checkboxusemst.caption"
-msgid "use MST File"
-msgstr ""
-
 #: tresultform1.checkgroupbuildmode.caption
 msgctxt "tresultform1.checkgroupbuildmode.caption"
 msgid "Build Mode"
@@ -664,7 +649,7 @@ msgstr ""
 
 #: tresultform1.label72.caption
 msgctxt "tresultform1.label72.caption"
-msgid "Required Space"
+msgid "Required Space MB"
 msgstr ""
 
 #: tresultform1.label73.caption

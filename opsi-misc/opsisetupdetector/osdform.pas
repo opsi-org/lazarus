@@ -63,16 +63,13 @@ type
     BtSetup1NextStep: TBitBtn;
     BtSetup2NextStep: TBitBtn;
     BtSingleAnalyzeAndCreate: TBitBtn;
-    BitBtnOpenFile: TBitBtn;
     BitBtnDefault: TBitBtn;
     BitBtnMST1: TBitBtn;
-    BitBtnOpenFile1: TBitBtn;
     BitBtnOpenMst1: TBitBtn;
     BitBtnOpenMst2: TBitBtn;
     BtATwonalyzeAndCreate: TBitBtn;
     BtCreateEmptyTemplate: TBitBtn;
     BtAnalyzeOnly: TBitBtn;
-    CheckBoxUseMst: TCheckBox;
     CheckGroupBuildMode: TCheckGroup;
     FlowPanel1: TFlowPanel;
     FlowPanel10: TFlowPanel;
@@ -167,7 +164,6 @@ type
     Panel7: TPanel;
     Panel8: TPanel;
     Panel9: TPanel;
-    PanelDefault: TPanel;
     PanelProcess: TPanel;
     processing: TLabel;
     processStatement: TLabel;
@@ -250,6 +246,10 @@ type
     procedure BitBtnDelPropClick(Sender: TObject);
     procedure BitBtnEditDepClick(Sender: TObject);
     procedure BitBtnEditPropClick(Sender: TObject);
+    procedure BitBtnOpenFile1Click(Sender: TObject);
+    procedure BitBtnOpenFileClick(Sender: TObject);
+    procedure BitBtnOpenMst1Click(Sender: TObject);
+    procedure BitBtnOpenMst2Click(Sender: TObject);
     procedure BitBtnRecheckWorkbenchClick(Sender: TObject);
     procedure BitBtnWorkBenchPathClick(Sender: TObject);
     procedure BtAnalyzeNextStepClick(Sender: TObject);
@@ -1433,6 +1433,26 @@ begin
 
 end;
 
+procedure TResultform1.BitBtnOpenFile1Click(Sender: TObject);
+begin
+
+end;
+
+procedure TResultform1.BitBtnOpenFileClick(Sender: TObject);
+begin
+
+end;
+
+procedure TResultform1.BitBtnOpenMst1Click(Sender: TObject);
+begin
+
+end;
+
+procedure TResultform1.BitBtnOpenMst2Click(Sender: TObject);
+begin
+
+end;
+
 
 procedure TResultform1.BtCreateEmptyTemplateClick(Sender: TObject);
 begin
@@ -2010,18 +2030,30 @@ end;
 
 procedure TResultform1.TICheckBoxS1MstChange(Sender: TObject);
 begin
-  if TCheckBox(sender).Checked then
-    TIEditMstFile1.Enabled:=true
+  if (Sender as TTICheckBox).State = cbChecked then
+  begin
+    FlowPanelMst.Enabled:= true;
+    //TIEditMstFile1.Enabled:=true;
+  end
   else
-    TIEditMstFile1.Enabled:=false;
+  begin
+    FlowPanelMst.Enabled:= false;
+    //TIEditMstFile1.Enabled:=false;
+  end;
 end;
 
 procedure TResultform1.TICheckBoxS2MstChange(Sender: TObject);
 begin
-  if TCheckBox(sender).Checked then
-    TIEditMstFile2.Enabled:=true
+  if (Sender as TTICheckBox).State = cbChecked then
+  begin
+    FlowPanelMst1.Enabled:= true;
+    //TIEditMstFile2.Enabled:=true
+  end
   else
-    TIEditMstFile2.Enabled:=false;
+  begin
+    FlowPanelMst1.Enabled:= false;
+    //TIEditMstFile2.Enabled:=false;
+  end
 end;
 
 procedure TResultform1.TIEditProdIDChange(Sender: TObject);
