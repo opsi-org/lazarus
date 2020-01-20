@@ -312,6 +312,7 @@ type
     procedure makeProperties;
   private
     { private declarations }
+    procedure OpenMSTFile;
   public
     { public declarations }
     procedure memoadd(line: string);
@@ -1443,9 +1444,18 @@ begin
 
 end;
 
+procedure TResultform1.OpenMSTFile;
+begin
+  OpenDialog1.FilterIndex := 4;
+  if OpenDialog1.Execute then
+  begin
+    // include code here
+  end;
+end;
+
 procedure TResultform1.BitBtnOpenMst1Click(Sender: TObject);
 begin
-
+  OpenMSTFile;
 end;
 
 procedure TResultform1.BitBtnOpenMst2Click(Sender: TObject);
@@ -1612,33 +1622,28 @@ begin
   end;
   if checkok then
   begin
-
     case useRunMode of
-      analyzeOnly:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
-      end;
-      singleAnalyzeCreate:
-      begin
-        PageControl1.ActivePage := resultForm1.TabSheetProduct2;
-        Application.ProcessMessages;
-      end;
-      twoAnalyzeCreate_1, twoAnalyzeCreate_2:
-      begin
-        PageControl1.ActivePage := resultForm1.TabSheetProduct2;
-        Application.ProcessMessages;
-      end;
-      createTemplate:
-      begin
-        PageControl1.ActivePage := resultForm1.TabSheetProduct2;
-        Application.ProcessMessages;
-      end;
-      gmUnknown:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtProductNextStepClick RunMode: gmUnknown', LLError);
-      end;
+      analyzeOnly        : begin
+                             //we should never be here
+                             logdatei.log('Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
+                           end;
+      singleAnalyzeCreate: begin
+                             PageControl1.ActivePage := resultForm1.TabSheetProduct2;
+                             Application.ProcessMessages;
+                           end;
+      twoAnalyzeCreate_1,
+      twoAnalyzeCreate_2 : begin
+                             PageControl1.ActivePage := resultForm1.TabSheetProduct2;
+                             Application.ProcessMessages;
+                           end;
+      createTemplate     : begin
+                             PageControl1.ActivePage := resultForm1.TabSheetProduct2;
+                             Application.ProcessMessages;
+                           end;
+      gmUnknown          : begin
+                             // we should never be here
+                             logdatei.log('Error: in BtProductNextStepClick RunMode: gmUnknown', LLError);
+                           end;
     end;
   end;
 end;
@@ -1689,44 +1694,39 @@ begin
   if checkok then
   begin
     case useRunMode of
-      analyzeOnly:
-      begin
-        Application.Terminate;
-      end;
-      singleAnalyzeCreate:
-      begin
-        PageControl1.ActivePage := resultForm1.TabSheetProduct;
-        Application.ProcessMessages;
-      end;
-      twoAnalyzeCreate_1:
-      begin
-        useRunMode := twoAnalyzeCreate_2;
-        MessageDlg(rsTwonalyzeAndCreateMsgHead,
-          rsTwonalyzeAndCreateMsgSecondSetup,
-          mtInformation, [mbOK], '');
-        OpenDialog1.FilterIndex := 1;   // setup
-        if OpenDialog1.Execute then
-        begin
-          PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
-          MemoAnalyze.Clear;
-          Application.ProcessMessages;
-          Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[1], True);
-        end;
-        //PageControl1.ActivePage := resultForm1.TabSheetSetup2;
-        //Application.ProcessMessages;
-      end;
-      createTemplate:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtSetup1NextStepClick RunMode: createTemplate', LLError);
-        //PageControl1.ActivePage := resultForm1.TabSheetSetup1;
-        //Application.ProcessMessages;
-      end;
-      gmUnknown:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtSetup1NextStepClick RunMode: gmUnknown', LLError);
-      end;
+      analyzeOnly        :  begin
+                              Application.Terminate;
+                            end;
+      singleAnalyzeCreate:  begin
+                              PageControl1.ActivePage := resultForm1.TabSheetProduct;
+                              Application.ProcessMessages;
+                            end;
+      twoAnalyzeCreate_1 :  begin
+                              useRunMode := twoAnalyzeCreate_2;
+                              MessageDlg(rsTwonalyzeAndCreateMsgHead,
+                                rsTwonalyzeAndCreateMsgSecondSetup,
+                                mtInformation, [mbOK], '');
+                              OpenDialog1.FilterIndex := 1;   // setup
+                              if OpenDialog1.Execute then
+                              begin
+                                PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
+                                MemoAnalyze.Clear;
+                                Application.ProcessMessages;
+                                Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[1], True);
+                              end;
+                              //PageControl1.ActivePage := resultForm1.TabSheetSetup2;
+                              //Application.ProcessMessages;
+                            end;
+      createTemplate     :  begin
+                              // we should never be here
+                              logdatei.log('Error: in BtSetup1NextStepClick RunMode: createTemplate', LLError);
+                              //PageControl1.ActivePage := resultForm1.TabSheetSetup1;
+                              //Application.ProcessMessages;
+                            end;
+      gmUnknown          :  begin
+                              // we should never be here
+                              logdatei.log('Error: in BtSetup1NextStepClick RunMode: gmUnknown', LLError);
+                            end;
     end;
   end;
 end;
@@ -2228,6 +2228,8 @@ begin
       myprop.Free;
     end;
 end;
+
+
 
 
 end.
