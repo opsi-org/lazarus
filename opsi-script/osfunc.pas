@@ -526,6 +526,7 @@ function isGUI: boolean;
 function CheckFileExists(const FName: string; var ErrorInfo: string): boolean;
 function CreateTextfile(const FName: string; var ErrorInfo: string): boolean;
 
+function FindInSubDirs(const dir: string; const filename: string): TStringList;
 
 function PointerAufString(Alpha: string): PChar;
 //procedure DisposeString(p: PChar);
@@ -5725,6 +5726,21 @@ begin
   end;
 end;
 
+function FindInSubDirs(const dir: string; const filename: string): TStringList;
+var
+  subdirs: TStringList;
+  i: integer;
+  fullpath: string;
+begin
+  Result := TStringList.create;
+  subdirs := FindAllDirectories(dir, false);
+  for i := 0 to (subdirs.count - 1) do
+  begin
+    fullpath := ConcatPaths([subdirs[i], filename]);
+    if FileExists(fullpath) then
+      Result.Add(fullpath);
+  end;
+end;
 
 procedure TCopyCount.Init(NumberCounted: integer);
 begin

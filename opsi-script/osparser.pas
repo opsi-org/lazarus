@@ -10016,7 +10016,7 @@ begin
     if force64 then
     begin
       if (not FileExists(GetWinDirectory + '\cmd64.exe')) or
-        (FindAllFiles('c:\windows', 'cmd64.exe.mui', True).Count = 0) then
+        (FindInSubDirs('c:\windows','cmd64.exe.mui').Count = 0) then
       begin
         Logdatei.log(GetWinDirectory + '\cmd64.exe not found - try to get it',
           LLDebug2 + logleveloffset);
@@ -10032,7 +10032,7 @@ begin
                 LogDatei.log('cmd64.exe created in ' + GetWinDirectory,
                   LLinfo + logleveloffset);
                 cmdMuiFiles := TStringList.Create;
-                cmdMuiFiles := FindAllFiles('c:\windows\system32', 'cmd.exe.mui', True);
+                cmdMuiFiles := FindInSubDirs('c:\windows\system32', 'cmd.exe.mui');
                 for i := 0 to cmdMuiFiles.Count - 1 do
                 begin
                   LogDatei.log('cmd.exe.mui found in ' + cmdMuiFiles.Strings[i],
