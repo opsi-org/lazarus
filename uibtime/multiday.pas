@@ -92,67 +92,71 @@ var
   end;
 
 begin
-  OKBtn.Enabled := False;
-  screen.Cursor := crSQLWait;
-  Application.ProcessMessages;
-  //firstdate := ScanDateTime('dd.mm.yyyy',EditButtonStartDate.text);
-  firstdate := DateTimePickerStart.Date;
-  aktdate := firstdate - 1;
-  if MaskEditStart.Text = '' then
-    startzeit := strtotime('10:00')
-  else
-    startzeit := strtotime(MaskEditStart.Text);
-  hoursperday := strtotime(MaskEditStunden.Text);
-  Datamodule1.SQuibevent.First;
+  try
+    OKBtn.Enabled := False;
+    screen.Cursor := crSQLWait;
+    Application.ProcessMessages;
+    //firstdate := ScanDateTime('dd.mm.yyyy',EditButtonStartDate.text);
+    firstdate := DateTimePickerStart.Date;
+    aktdate := firstdate - 1;
+    if MaskEditStart.Text = '' then
+      startzeit := strtotime('10:00')
+    else
+      startzeit := strtotime(MaskEditStart.Text);
+    hoursperday := strtotime(MaskEditStunden.Text);
+    Datamodule1.SQuibevent.First;
 
-  repeat
-    doinsert := True;
-    aktdate := aktdate + 1;
-    if CheckBoxOnlyWorkdays.Checked and not (DayOfTheWeek(aktdate) in user_work_days) then
-      doinsert := False;
-    if doinsert then
-    begin
-      try
-        if CheckBoxHolydays.Checked and Datamodule1.dateIsHolyday(aktdate) then
-        begin
-          if not entryExistsAtDate(aktdate, 'Feiertag') then
+    repeat
+      doinsert := True;
+      aktdate := aktdate + 1;
+      if CheckBoxOnlyWorkdays.Checked and not (DayOfTheWeek(aktdate) in
+        user_work_days) then
+        doinsert := False;
+      if doinsert then
+      begin
+        try
+          if CheckBoxHolydays.Checked and Datamodule1.dateIsHolyday(aktdate) then
+          begin
+            if not entryExistsAtDate(aktdate, 'Feiertag') then
+            begin
+              Datamodule1.SQuibevent.insert;
+              Datamodule1.SQuibevent.FieldByName('event').AsString := 'Feiertag';
+              Datamodule1.SQuibevent.FieldByName('stoptime').AsDateTime :=
+                aktdate + startzeit + strtotime(timeFloatTohourminutesStr(user_h_per_day));
+              Datamodule1.SQuibevent.FieldByName('starttime').AsDateTime :=
+                aktdate + startzeit;
+              Datamodule1.SQuibevent.Post;
+              sleep(1000);
+            end;
+          end
+          else
           begin
             Datamodule1.SQuibevent.insert;
-            Datamodule1.SQuibevent.FieldByName('event').AsString := 'Feiertag';
+            Datamodule1.SQuibevent.FieldByName('event').AsString := ComboBoxEvent.Text;
             Datamodule1.SQuibevent.FieldByName('stoptime').AsDateTime :=
-              aktdate + startzeit + strtotime(timeFloatTohourminutesStr(user_h_per_day));
+              aktdate + startzeit + hoursperday;
             Datamodule1.SQuibevent.FieldByName('starttime').AsDateTime :=
               aktdate + startzeit;
             Datamodule1.SQuibevent.Post;
             sleep(1000);
           end;
-        end
-        else
-        begin
-          Datamodule1.SQuibevent.insert;
-          Datamodule1.SQuibevent.FieldByName('event').AsString := ComboBoxEvent.Text;
-          Datamodule1.SQuibevent.FieldByName('stoptime').AsDateTime :=
-            aktdate + startzeit + hoursperday;
-          Datamodule1.SQuibevent.FieldByName('starttime').AsDateTime :=
-            aktdate + startzeit;
-          Datamodule1.SQuibevent.Post;
-          sleep(1000);
-        end;
-      except
-        on e: Exception do
-        begin
-          DataModule1.debugOut(2, 'Multiday.BtnInsertAllClick',
-            'Exception in adding data sets ');
-          DataModule1.debugOut(2, 'Multiday.BtnInsertAllClick', e.Message);
-          //raise;
+        except
+          on e: Exception do
+          begin
+            DataModule1.debugOut(2, 'Multiday.BtnInsertAllClick',
+              'Exception in adding data sets ');
+            DataModule1.debugOut(2, 'Multiday.BtnInsertAllClick', e.Message);
+            //raise;
+          end;
         end;
       end;
-    end;
-    //until (ScanDateTime('dd.mm.yyyy',EditButtonEndDate.text) = aktdate);
-  until (DateTimePickerEnd.Date = aktdate);
-  OKBtn.Enabled := True;
-  screen.Cursor := crDefault;
-  Application.ProcessMessages;
+      //until (ScanDateTime('dd.mm.yyyy',EditButtonEndDate.text) = aktdate);
+    until (DateTimePickerEnd.Date = aktdate);
+    OKBtn.Enabled := True;
+  finally
+    screen.Cursor := crDefault;
+    Application.ProcessMessages;
+  end;
 end;
 
 procedure TFMultiday.CalendarDialog1Show(Sender: TObject);

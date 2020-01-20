@@ -152,6 +152,11 @@ begin
   combobox1.Text := uid;
   edit1.Text := '01.01.2003';
   edit2.Text := datetostr(date);
+  {$IFDEF WINDOWS}
+  ComboBoxAktevent.Style:= csDropDown;
+  {$ElSE WINDOWS}
+  ComboBoxAktevent.Style:= csSimple;
+  {$ENDIF WINDOWS}
 end;
 
 procedure TFStatistik.Edit1Exit(Sender: TObject);
@@ -536,15 +541,16 @@ begin
     DataModule1.Query4Result.parambyname('searchuser').AsString := uid;
     searchuserstr := 'für ' + uid;
   end;
-  DataModule1.debugOut(6, 'Statistik.BtnTreeSumClick', 'Will execute sql: ' +
-    DataModule1.Query4Result.SQL.Text);
-  screen.Cursor := crSQLWait;
-  //Repaint;
-  Application.ProcessMessages;
-  DataModule1.Query4Result.ExecSQL;
-  screen.Cursor := crDefault;
-  //Repaint;
-  Application.ProcessMessages;
+  try
+    DataModule1.debugOut(6, 'Statistik.BtnTreeSumClick', 'Will execute sql: ' +
+      DataModule1.Query4Result.SQL.Text);
+    screen.Cursor := crSQLWait;
+    Application.ProcessMessages;
+    DataModule1.Query4Result.ExecSQL;
+  finally
+    screen.Cursor := crDefault;
+    Application.ProcessMessages;
+  end;
   DataModule1.debugOut(6, 'Statistik.BtnTreeSumClick', 'Procedure call finished');
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
@@ -555,9 +561,9 @@ begin
   DataModule1.Query4Result.ReadOnly := True;
   DataModule1.Query4Result.Open;
   //Fresult.DataSource1.DataSet := DataModule1.Query4Result;
-  FResult.Edit1.Text := 'Stundensummen von ' + Edit1.Text +
-    'bis (excl.)' + Edit2.Text + ' unterhalb (+incl.) von ' +
-    ComboBoxAktevent.Text + ' ' + searchuserstr;
+  FResult.Edit1.Text := 'Stundensummen von ' + Edit1.Text + 'bis (excl.)' +
+    Edit2.Text + ' unterhalb (+incl.) von ' + ComboBoxAktevent.Text +
+    ' ' + searchuserstr;
   Fresult.showmodal();
   Fresult.Free;
 end;
