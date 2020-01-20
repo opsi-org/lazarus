@@ -13,11 +13,6 @@ uses
 
 begin
   Application:=TMyApplication.Create(nil);
-<<<<<<< HEAD
-  //Application.Scaled:=True;
-=======
-  Application.Scaled:=True;
->>>>>>> martinadevel
   Application.Run;
   writeln('logfile: ');
   Application.Free;
