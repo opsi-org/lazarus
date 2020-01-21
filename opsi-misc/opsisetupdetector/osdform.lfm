@@ -99,17 +99,18 @@ object resultForm1: TresultForm1
       Height = 481
       Top = 1
       Width = 1178
-      ActivePage = TabSheetSetup1
+      ActivePage = TabSheetStart
       Align = alClient
       Images = ImageList1
       ParentFont = False
-      TabIndex = 2
+      TabIndex = 0
       TabOrder = 0
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
         Caption = 'Start'
         ClientHeight = 453
         ClientWidth = 1170
+        OnExit = TabSheetStartExit
         ParentFont = False
         object FlowPanel3: TFlowPanel
           Left = 0

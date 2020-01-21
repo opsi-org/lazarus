@@ -294,6 +294,7 @@ type
     //procedure SBtnOpenClick(Sender: TObject);
     procedure SBtnExitClick(Sender: TObject);
     procedure TabSheetCreateShow(Sender: TObject);
+    procedure TabSheetStartExit(Sender: TObject);
     procedure TICheckBoxlicenseRequiredChange(Sender: TObject);
     procedure TICheckBoxS1MstChange(Sender: TObject);
     procedure TICheckBoxS2MstChange(Sender: TObject);
@@ -976,6 +977,7 @@ begin
   ShowMessage(installerstr);
 
 end;
+
 
 procedure TResultform1.BtSingleAnalyzeAndCreateClick(Sender: TObject);
 var
@@ -2021,6 +2023,12 @@ end;
 procedure TResultform1.TabSheetCreateShow(Sender: TObject);
 begin
   checkWorkbench;
+end;
+
+procedure TResultform1.TabSheetStartExit(Sender: TObject);
+begin
+  ResultForm1.Width:= 1185;
+  ResultForm1.Height:= 566;
 end;
 
 procedure TResultform1.TICheckBoxlicenseRequiredChange(Sender: TObject);
