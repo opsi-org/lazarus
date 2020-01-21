@@ -1,0 +1,112 @@
+Synapse
+
+http://wiki.freepascal.org/Synapse#Advanced_version
+
+https://andydunkel.net/2015/09/09/lazarus_synapse_progress/
+
+http://forum.lazarus.freepascal.org/index.php?topic=15747.0
+
+HTTPPostUrl
+https://stackoverflow.com/questions/6291381/how-to-send-http-data-and-get-response-with-synapse-delphi
+
+*********************************************************************
+http://forum.lazarus.freepascal.org/index.php?topic=15747.0
+
+procedure TForm1.MozillaHeaders(var aHttpSend: THttpSend);
+begin
+    aHttpSend.Clear;
+    aHttpSend.Headers.Clear;
+    aHttpSend.Protocol := '1.1';
+    aHttpSend.Headers.Add('Connection: keep-alive');
+    aHttpSend.Headers.Add('User-Agent: Mozilla/5.0 (X11; Linux i686; rv:9.0) Gecko/20100101 Firefox/9.0');
+    aHttpSend.Headers.Add('Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8');
+    aHttpSend.Headers.Add('Accept-Language: en-us,en;q=0.5');
+    aHttpSend.Headers.Add('Accept-Encoding: gzip, deflate');
+    aHttpSend.Headers.Add('Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7');
+end;
+
+
+procedure TForm1.btnGetClick(Sender: TObject);
+var ht: THttpSend;
+    aList, aCookies : TStringList;
+    x,y: Integer;
+    isOk: Boolean;
+    h1, h2, h3, uName, aPwd, aURI, aHost:String;
+    realm, nonce, qop, nc, cnonce, response, opaque, aStr, aMethod:String;
+    aPort:Word;
+begin
+    uName := 'admin'; aPwd := 'p@ssw0rd'; aMethod := 'GET';
+    DecomposeURL(edtUrl.Text,aHost,aUri,aPort);
+
+    ht := ThttpSend.Create;
+    aList := TStringList.Create;
+    aCookies := TStringList.Create;
+
+    try
+        MozillaHeaders(ht);
+        isOk := ht.HTTPMethod(aMethod,edtUrl.Text);
+        if (ht.ResultCode = 401) and (UpperCase(ht.ResultString)='UNAUTHORIZED') then
+        begin
+            aCookies.Text := ht.Cookies.Text;
+            for x:= 0 to Pred(ht.Headers.Count) do
+            begin
+                if LeftStr(UpperCase(ht.Headers.Strings[x]), 24) = 'WWW-AUTHENTICATE: DIGEST' then
+                begin
+                    aList.Clear;
+                    aList.StrictDelimiter := true;
+                    aList.Delimiter := ',';
+                    aList.DelimitedText :=  trim(Copy(ht.Headers.Strings[x], 25, 400));
+
+                    for y := 0 to pred(aList.Count) do
+                    begin
+                        aStr := trim(aList.Strings[y]);
+                        if LeftStr(aStr,5) = 'realm' then realm := StripQuotes(MidStr(aStr,7,Length(aStr)));
+                        if LeftStr(aStr,5) = 'nonce' then nonce := StripQuotes(MidStr(aStr,7,Length(aStr)));
+                        if LeftStr(aStr,3) = 'qop' then qop := StripQuotes(MidStr(aStr,5,Length(aStr)));
+                        if LeftStr(aStr,6) = 'opaque' then opaque := StripQuotes(MidStr(aStr,8,Length(aStr)));
+                    end;
+
+
+                    isOk := false;
+
+                    if OldNonce = Nonce then
+                    begin
+                        inc(intNC);
+                        cnonce := oldNonce;
+                    end
+                    else
+                    begin
+                        intNc := 1;
+                        cnonce := md5Print(md5String(IntToStr(DateTimeToUnix(Now()))));
+                    end;
+
+                    nc := RightStr('00000000' + IntToStr(intNc), 8);
+
+                    h1 := md5Print(md5String(uName + ':' + realm + ':' + aPwd));
+                    h2 := md5Print(md5String(aMethod + ':' + aUri));
+                    h3 := md5Print(md5String(h1 + ':' + nonce + ':' + nc + ':' + cnonce + ':' + qop + ':' + h2 ));
+
+                    MozillaHeaders(ht);
+                    ht.Cookies.Text := aCookies.Text;
+                    ht.Headers.Add('Authorization: Digest username=' + AnsiQuotedStr(uName,#34) + ', realm=' + AnsiQuotedStr(realm, #34) + ', nonce=' + AnsiQuotedStr(nonce,#34) + ', uri=' + AnsiQuotedStr(aUri, #34) + ', qop=' + qop + ', nc=' + nc + ', cnonce=' + AnsiQuotedStr(cnonce, #34) + ', response=' + AnsiQuotedStr(h3, #34));
+
+                    isOk := ht.HTTPMethod(aMethod, edtUrl.Text);
+                    Break;
+                end;
+            end;
+        end;
+
+        if IsOk then
+        begin
+            ht.Document.Seek(0,0);
+            memBody.Lines.LoadFromStream(ht.Document);
+        end;
+        memHeader.Text := IntToStr(ht.ResultCode) + ' ' + ht.ResultString + #13 + ht.Headers.Text;
+        oldNonce := nonce;
+        oldcNonce := cnonce;
+    finally
+        ht.Free;
+        aList.Free;
+        aCookies.Free;
+    end;
+end;

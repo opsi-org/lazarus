@@ -1,11 +1,175 @@
 ﻿
 todo:
 isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-package-requires-a-reboot-of-my-system
+mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.3.7) experimental; urgency=low
+
+  * winbatch combine /timeoutseconds with WaitForWindowAppearing or WaitForWindowVanished
+    done this in osfunc: StartProcess_cp
+  * osparser: TuibInstScript.SkipWordOrStringExpressionstr
+      { like skip but handles also string expressions }
+  * osparser: Allow string expressions as parameter of Registry sections
+  * osparser: Allow string expressions as parameter of File sections
+  * osparser: Allow string expressions as parameter of DOS / Shell sections
+  * osparser: Allow string expressions as parameter of Execwith sections
+  * osparser: Allow string expressions as parameter of winbatch sections
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 14 Jan 2020:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.3.6) experimental; urgency=low
+
+  * new statement: forceLogInAppenMode = (true/false)
+  * RequiredOpsiscriptVersion
+  * %OpsiscriptVersion%
+  * %OpsiscriptDir%
+  * new boolean function isPingReachable(<host>)
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 09 Jan 2020:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.3.5) experimental; urgency=low
+
+  * new procedure reverseProductOrderByUninstall: ProductList is reordered so that
+      uninstall actions will be conducted first and in reverse order as the prodcuts were installed
+  * new config opsi-script.global.ReverseProductOrderByUninstall
+  * postinst script was adapted for the new config opsi-script.global.ReverseProductOrderByUninstall
+
+-- Jan Werner <j.werner@uib.de>  Mon, 6 Jan 2020:13:35:00 +0200
+
+
+opsi-winst/opsi-script (4.12.3.4) experimental; urgency=low
+
+  * new unit ostxstringlist
+  * osfunclin: which() now using FindDefaultExecutablePath
+  * osfunc: StartProcess_cp: now supports WaitForProcessEnding also for [L/M]
+  * Winbatch now supports WaitForProcessEnding also for [L/M]
+  * new string function which(<command in path>) : string (command with path) [W/L/M]
+  * new stringlist function replaceOpsiConstants(<list>) : <list>
+  * new string function replaceOpsiConstants(<string>) : <string>
+  * osparser: create cmd64.exe in execshellcall and execdosbatch:
+      create also cmd64.exe.mui files
+  * new boolean function isPingReachable(<target host>) : bool
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri, 27 Dec 2019:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.3.2) experimental; urgency=low
+
+  * osProcessux: getCommandResult: give always the first string ; fixes a getmyip Problem
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 19 Nov 2019:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.3.1) experimental; urgency=low
+
+  * update function listFiles: including switch for disabling redirections under 64bit-Windows
+
+-- Jan Werner <j.werner@uib.de>  Fri, 15 Nov 2019:13:43:00 +0200
+
+opsi-winst/opsi-script (4.12.3.0) experimental; urgency=low
+
+  * update oswebservice with gzip support (Jan Werner)
+  * new StringList function listFiles (Jan Werner)
+  * osbatchgui: log on setWindowstate
+  * oswebservice: move logging to log_prog
+  * osparser info to macos version at log start
+  * osparser: Linux: GetIpByName: now uses 'getent hosts'
+  * new boolean function: runningWithGui (osparser,osfunc) (at win+Mac always true)
+  * macos: osbatchgui: temporary disable setWindowState
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 23 Oct 2019:15:00:00 +0200
+
+
+opsi-winst/opsi-script (4.12.2.3) experimental; urgency=low
+
+  * feature/macos integrated
+  * new library uib_state_and_condition:
+      Collection of functions that gives info about system states that are relevant for product installations
+  * new library uib_state_and_condition:
+      Collection of functions that helps to install driver
+  * osparser: differences between %CurrentProfileDir% and %UserProfileDir% fixes: #4118
+  * osparser: doAktionen: replace constants for every primary section line to avoid
+     replacment in secondary sections
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 29 Aug 2019:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.2.2) experimental; urgency=low
+
+  * oswebservice: switch most of log to log_prog
+  * oswebservice: code cleanup (remove unused code)
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 06 Aug 2019:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.2.1) experimental; urgency=low
+
+  * oswebservice: sendlog: check max logsize to send via backend_getSystemConfiguration
+  * switch to Lazarus 2.0.4
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 06 Aug 2019:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.2.0) experimental; urgency=low
+
+  * oswebservice: switch from indy to synapse
+  * osfunc: modified: ShrinkFileToMB
+  * oswebservice: sendlog: shrinking enabled again
+  * adding changelog.txt to project
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 04 Jul 2019:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.1.5) experimental; urgency=low
+
+  * osdefinedfunctions: delLocalVar : fix removing loopvar after empty loop
+  * osmain: fix in GetTempPath: if Univention temppath is /var/tmp
+  * osconf: new const opsiclientagentconf
+  * osmain: freeLinuxAgentStart: now using opsiclientagentconf
+  * Linux: osparser: CreateAndProcess: more logging around remount
+  * Linux: osparser: CreateAndProcess: moved remount
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 06 Jun 2019:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.1.4) experimental; urgency=low
+
+  * osfunc: more logging around gettemppath
+  * osparser: enabled getHWBiosInfoMap again
+  Linux only:
+    * osfunclin: getpackagelock: fix memory leak
+    * osfunclin: new: function getLinuxDistroName : string;
+    * osfunclin: new: function getLinuxDistroRelease : string;
+    * osfunclin: new: function getLinuxDistroDescription
+    * osmain: GetTempPath: if Univention temppath is /var/tmp
+    * osparser: createandprocessscript: check for depotmount
+    * osparser: createandprocessscript: give some distro infos in log
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 03 Jun 2019:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.1.3) experimental; urgency=low
+
+  * shellInAnIcon: on loglevel 9: reread teporary files and do not delete
+  * oslog: logdatei property usedloglevel (this is real used log level with force_min_loglevel)
+  * osfunclin: new function getMyIpDeciceByDefaultRoute
+  * osparser: GetMACAddress2: use getMyIpDeciceByDefaultRoute
+  * osfunclin: more logging in getMyIpDeciceByDefaultRoute, getMyIpByDefaultRoute
+  * osparser: demandlicensekey: try 3 ways to get the own fqdn
+  * osfunc: createtextfile: Message:'Directory ' + dirname + ' did not exist und was created' now on loglevel 6 (was warning)
+  * osfunc: StartProcess_cp_el: minor logging change ; //no {$OVERFLOWCHECKS ON}
+  * osfunc / osfuncwin: replace 'exitCode := lpExitCode;' by 'exitCode := longint(lpExitCode);'
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 14 May 2019:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.1.2) stable; urgency=low
+
+  * add oslistedit to projectfiles
+  * fixes in oslistedit
+  * add osinputstring
+  * add new string function stringinput(< message str>,< boolstr confidential>)
+  * document randomIntStr(<>)
+  * fix on gettemppath
+
+-- Detlef Oertel <d.oertel@uib.de>  Fri, 12 Apr 2019:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.1.1) stable; urgency=low
 
+  * fix in oswmi (give stringlist as stringlist)
 
 -- Detlef Oertel <d.oertel@uib.de>  Thu, 04 04 2019:15:00:00 +0200
 
@@ -72,7 +236,7 @@ opsi-winst/opsi-script (4.12.1.0) experimental; urgency=low
   * unit oscrypt with {$RANGECHECKS OFF}
   * osparserhelper: fix in geouterfunction
   * osdefinedfunction: isvisiblelocalvar: serach optimization
-  * osfunc: checkfileexists: use widechsr/utf16 for filenames
+  * osfunc: checkfileexists: use widechar/utf16 for filenames
   * osparserhelper: new function stringlistintersection (get stringlist intersection)
   * new cli parameter /processproducts productId [,productId ]*
   * added unit oszip

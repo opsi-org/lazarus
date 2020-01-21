@@ -498,7 +498,9 @@ begin
     on e: Exception do
     begin
       Result := False;
+      {$IFDEF OPSISCRIPT}
       LogDatei.log('Exception in xml2GetFirstChildNodeByName: ' + e.message, LLError);
+      {$ENDIF OPSISCRIPT}
     end;
   end;
 end;
@@ -550,17 +552,24 @@ begin
     mynode := createXMLNodeFromString(nodeAsStringlist);
     if mynode <> nil then
     begin
-    if getNodeattributeByKey(mynode, attributekey, attributevalue) then
+      if getNodeattributeByKey(mynode, attributekey, attributevalue) then
+        Result := True;
+      mynode.Free;
       Result := True;
-    mynode.Free;
-    Result := True;
     end
-    else LogDatei.log('Error: Empty xmlnode input in getXml2AttributeValueByKey.', LLError);
+    else
+    begin
+    {$IFDEF OPSISCRIPT}
+      LogDatei.log('Error: Empty xmlnode input in getXml2AttributeValueByKey.', LLError);
+    {$ENDIF OPSISCRIPT}
+    end;
   except
     on e: Exception do
     begin
       Result := False;
+      {$IFDEF OPSISCRIPT}
       LogDatei.log('Exception in getXml2AttributeValueByKey: ' + e.message, LLError);
+      {$ENDIF OPSISCRIPT}
     end;
   end;
 end;
@@ -601,8 +610,10 @@ begin
       on e: Exception do
       begin
         Result := False;
+        {$IFDEF OPSISCRIPT}
         LogDatei.log('Exception in xmlAsStringlistGetChildnodeByNameAndAttributeKeyAndValue: '
           + e.message, LLError);
+        {$ENDIF OPSISCRIPT}
       end;
     end;
   finally

@@ -7,14 +7,9 @@ uses
   cthreads,
   {$ENDIF}//{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Classes,
-  SysUtils,
-  Forms,
-  lazcontrols,
-  lcltranslator,
-  inifiles,
-  opsiclientkioskgui,
-  ockdata, installdlg, datadb, osprocesses;
+  Classes, SysUtils, Forms, lazcontrols, lcltranslator, inifiles,
+  opsiclientkioskgui, installdlg, datadb, osprocesses, progresswindow,
+  lazproginfo, opsiconnection, imagestodepot, helpinfo;
 
 
 {$R *.res}
@@ -24,9 +19,11 @@ begin
   RequireDerivedFormResource := True;
   Application.Initialize;
   Application.Title:='opsi-client-kiosk';
-  Application.CreateForm(TFopsiClientKiosk, FopsiClientKiosk);
+  Application.CreateForm(TFormOpsiClientKiosk, FormOpsiClientKiosk);
   Application.CreateForm(TFInstalldlg, FInstalldlg);
-  Application.CreateForm(TDataModule1, DataModule1);
+  Application.CreateForm(TDataModuleOCK, DataModuleOCK);
+  Application.CreateForm(TFormProgressWindow, FormProgressWindow);
+  Application.CreateForm(TFormHelpInfo, FormHelpInfo);
   Application.Run;
   Application.Free;
 end.

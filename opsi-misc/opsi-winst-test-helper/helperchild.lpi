@@ -5,12 +5,17 @@
     <PathDelim Value="\"/>
     <General>
       <MainUnit Value="0"/>
+      <Scaled Value="True"/>
       <UseXPManifest Value="True"/>
+      <XPManifest>
+        <DpiAware Value="Per-monitor"/>
+      </XPManifest>
       <Icon Value="0"/>
     </General>
     <VersionInfo>
+      <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
-      <RevisionNr Value="7"/>
+      <MinorVersionNr Value="1"/>
       <Language Value=""/>
       <CharSet Value=""/>
       <StringTable CompanyName="uib gmbh" LegalCopyright="AGLv3" LegalTrademarks="opsi,opsi.org,open pc server integration" ProductName="opsi" ProductVersion="4.0.7"/>
@@ -53,6 +58,9 @@
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <CustomOptions Value="-dSYNAPSE  -dUseCThreads -dGUI"/>
+          </Other>
         </CompilerOptions>
       </Item2>
       <Item3 Name="Release">
@@ -61,7 +69,7 @@
           <PathDelim Value="\"/>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\..\external_libraries\misc;..\..\common"/>
+            <OtherUnitFiles Value="..\..\external_libraries\misc;..\..\external_libraries\uSMBIOS;..\..\common;..\..\external_libraries\synapse;..\..\external_libraries\modified\misc;..\..\external_libraries\dcpcrypt;..\..\external_libraries\dcpcrypt\Ciphers;..\..\external_libraries\dcpcrypt\Hashes"/>
           </SearchPaths>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
@@ -83,6 +91,10 @@
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <CustomOptions Value="-dSYNAPSE -dDelphi
+ -dUseCThreads -dGUI"/>
+          </Other>
         </CompilerOptions>
       </Item3>
     </BuildModes>
@@ -94,7 +106,8 @@
       <Modes Count="1">
         <Mode0 Name="default">
           <local>
-            <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
+            <CommandLineParams Value="--showwindow=1"/>
+            <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
           </local>
         </Mode0>
       </Modes>
@@ -104,12 +117,12 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="9">
+    <Units Count="24">
       <Unit0>
         <Filename Value="helperchild.lpr"/>
         <IsPartOfProject Value="True"/>
-        <CursorPos Y="14"/>
-        <UsageCount Value="21"/>
+        <CursorPos X="25" Y="24"/>
+        <UsageCount Value="24"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit0>
@@ -126,11 +139,11 @@
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="416"/>
-        <CursorPos X="25" Y="436"/>
-        <UsageCount Value="21"/>
+        <EditorIndex Value="3"/>
+        <CursorPos Y="71"/>
+        <UsageCount Value="24"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="versioninfo.pas"/>
@@ -148,11 +161,12 @@
         <UsageCount Value="10"/>
       </Unit4>
       <Unit5>
-        <Filename Value="wispecfolder.pas"/>
-        <EditorIndex Value="3"/>
-        <TopLine Value="23"/>
-        <CursorPos X="3" Y="34"/>
-        <UsageCount Value="10"/>
+        <Filename Value="helperwispecfolder.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="88"/>
+        <CursorPos X="17" Y="91"/>
+        <UsageCount Value="23"/>
         <Loaded Value="True"/>
       </Unit5>
       <Unit6>
@@ -162,48 +176,250 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="23"/>
       </Unit6>
       <Unit7>
         <Filename Value="..\..\common\osencoding.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <WindowIndex Value="-1"/>
-        <TopLine Value="-1"/>
-        <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="23"/>
       </Unit7>
       <Unit8>
         <Filename Value="..\..\common\osversioninfo.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="2"/>
-        <CursorPos X="34" Y="18"/>
-        <UsageCount Value="20"/>
+        <EditorIndex Value="5"/>
+        <CursorPos X="13" Y="16"/>
+        <UsageCount Value="23"/>
         <Loaded Value="True"/>
       </Unit8>
+      <Unit9>
+        <Filename Value="..\..\common\osfunclin.pas"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="21"/>
+        <CursorPos X="3" Y="21"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="460"/>
+        <CursorPos X="37" Y="467"/>
+        <UsageCount Value="23"/>
+        <Loaded Value="True"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="..\..\common\osfuncwin.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="13"/>
+        <CursorPos X="3" Y="19"/>
+        <UsageCount Value="10"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="..\..\external_libraries\misc\uCpuUsage.pas"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="15" Y="31"/>
+        <UsageCount Value="10"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="..\..\opsi-script\osfunc.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="41"/>
+        <CursorPos X="59" Y="76"/>
+        <UsageCount Value="10"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="..\..\common\oswmi.pas"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="33" Y="11"/>
+        <UsageCount Value="10"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="..\..\opsi-script\opsihwbiosinfo.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="8"/>
+        <CursorPos X="72" Y="27"/>
+        <UsageCount Value="10"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="..\..\common\oscrypt.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="2"/>
+        <CursorPos X="83" Y="20"/>
+        <UsageCount Value="10"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="..\..\common\osxml.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="563"/>
+        <CursorPos X="90" Y="563"/>
+        <UsageCount Value="10"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="..\..\opsi-script\osmain.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="79"/>
+        <CursorPos X="3" Y="67"/>
+        <UsageCount Value="10"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="..\..\opsi-script\wispecfolder.pas"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="11" Y="51"/>
+        <UsageCount Value="10"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="..\..\opsi-script\osparser.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="18867"/>
+        <CursorPos X="5" Y="18887"/>
+        <UsageCount Value="10"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="..\..\opsi-script\osfuncwin2.pas"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="37" Y="20"/>
+        <UsageCount Value="20"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="..\..\opsi-script\osfuncwin3.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="341"/>
+        <CursorPos X="37" Y="16"/>
+        <UsageCount Value="20"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="N:\usr\share\lazarus\2.0.6\lcl\forms.pp"/>
+        <UnitName Value="Forms"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1489"/>
+        <CursorPos X="18" Y="1508"/>
+        <UsageCount Value="10"/>
+      </Unit23>
     </Units>
-    <JumpHistory Count="5" HistoryIndex="4">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="helperwin.pas"/>
-        <Caret Line="47" Column="61" TopLine="35"/>
+        <Caret Line="396" Column="10" TopLine="376"/>
       </Position1>
       <Position2>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="27" Column="11" TopLine="14"/>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="347" Column="12" TopLine="328"/>
       </Position2>
       <Position3>
-        <Filename Value="wispecfolder.pas"/>
-        <Caret Line="34" Column="3" TopLine="23"/>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="71" Column="42" TopLine="51"/>
       </Position3>
       <Position4>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="274" Column="25" TopLine="259"/>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="69" Column="59" TopLine="60"/>
       </Position4>
       <Position5>
-        <Filename Value="helperwin.pas"/>
-        <Caret Line="25" Column="17"/>
+        <Filename Value="..\..\common\osversioninfo.pas"/>
+        <Caret Line="16" Column="13"/>
       </Position5>
+      <Position6>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="15" TopLine="3"/>
+      </Position6>
+      <Position7>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="16" Column="12" TopLine="6"/>
+      </Position7>
+      <Position8>
+        <Filename Value="helperchild.lpr"/>
+        <Caret Line="26" Column="17" TopLine="6"/>
+      </Position8>
+      <Position9>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="348" Column="38" TopLine="338"/>
+      </Position9>
+      <Position10>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="376" Column="28" TopLine="365"/>
+      </Position10>
+      <Position11>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="378" Column="28" TopLine="365"/>
+      </Position11>
+      <Position12>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="381" Column="28" TopLine="365"/>
+      </Position12>
+      <Position13>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="383" Column="30" TopLine="365"/>
+      </Position13>
+      <Position14>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="385" Column="30" TopLine="365"/>
+      </Position14>
+      <Position15>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="388" Column="28" TopLine="368"/>
+      </Position15>
+      <Position16>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="146" TopLine="146"/>
+      </Position16>
+      <Position17>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="537" Column="21" TopLine="520"/>
+      </Position17>
+      <Position18>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="59" Column="25" TopLine="47"/>
+      </Position18>
+      <Position19>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="248" Column="25" TopLine="228"/>
+      </Position19>
+      <Position20>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="261" Column="28" TopLine="247"/>
+      </Position20>
+      <Position21>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="309" Column="40" TopLine="289"/>
+      </Position21>
+      <Position22>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="330" Column="32" TopLine="310"/>
+      </Position22>
+      <Position23>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="502" Column="44" TopLine="482"/>
+      </Position23>
+      <Position24>
+        <Filename Value="helperwin.pas"/>
+        <Caret Line="267" Column="29" TopLine="245"/>
+      </Position24>
+      <Position25>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="477" Column="65" TopLine="464"/>
+      </Position25>
+      <Position26>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="488" Column="39" TopLine="473"/>
+      </Position26>
+      <Position27>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="495" Column="7" TopLine="482"/>
+      </Position27>
+      <Position28>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="310" Column="5" TopLine="291"/>
+      </Position28>
+      <Position29>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="423" Column="19" TopLine="403"/>
+      </Position29>
+      <Position30>
+        <Filename Value="opsiscripttesthelper_main.pas"/>
+        <Caret Line="261" Column="21" TopLine="250"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
@@ -231,6 +447,9 @@
         </Win32>
       </Options>
     </Linking>
+    <Other>
+      <CustomOptions Value="-dSYNAPSE  -dUseCThreads -dGUI"/>
+    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="3">

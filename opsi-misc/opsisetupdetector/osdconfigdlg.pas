@@ -94,9 +94,12 @@ begin
   myconfigurationhints.Add('postUninstallLines='+rsPostUninstallLines);
   myconfigurationhints.Add('PathToOpsiPackageBuilder='+rsPathToOpsiPackageBuilder);
   myconfigurationhints.Add('CreateRadioIndex='+rsCreateRadioIndex);
+  myconfigurationhints.Add('BuildRadioIndex='+rsBuildRadioIndex);
+  (*
   myconfigurationhints.Add('CreateQuiet='+rsCreateQuiet);
   myconfigurationhints.Add('CreateBuild='+rsCreateBuild);
   myconfigurationhints.Add('CreateInstall='+rsCreateInstall);
+  *)
 end;
 
 procedure TFOSDConfigdlg.FormCreate(Sender: TObject);
@@ -123,7 +126,6 @@ begin
     activeprop := TIPropertyGrid1.GetActiveRow.Name;
     MemoConfigHint.Text := myconfigurationhints.Values[activeprop];
   end;
-
 end;
 
 procedure TFOSDConfigdlg.TIPropertyGrid1Exit(Sender: TObject);
@@ -143,6 +145,10 @@ initialization
     TStringsPropertyEditor);
   RegisterPropertyEditor(TypeInfo(string), TConfiguration, 'PathToOpsiPackageBuilder',
     TFileNamePropertyEditor);
+  RegisterPropertyEditor(TypeInfo(string), TConfiguration, 'Readme_txt_templ',
+    TFileNamePropertyEditor);
+ // RegisterPropertyEditor(TypeInfo(TPProperties), TConfiguration, 'Properties',
+ //   TCollectionPropertyEditor);
 
 
 

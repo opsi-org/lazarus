@@ -42,7 +42,7 @@ uses
   {$IFDEF LINUX}osfunclin {$ENDIF}
   {$IFDEF WIN64}{$ENDIF}
   {$IFDEF WINDOWS} osfuncwin,{$ENDIF}
-  opsihwbiosinfo, osfuncwin2, oslistedit;
+  opsihwbiosinfo, osfuncwin2, oslistedit, oswmi, osnetworkcalculator;
 
 
 

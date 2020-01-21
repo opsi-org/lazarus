@@ -194,8 +194,10 @@ var
   helperint: integer;
   suchevent: string;
   monthsmod, monthdiv, acc_per_monthnum_int: integer;
+  timeh_is_quota: integer;
   acc_per_monthnum: double;
   querystartdt, queryenddt, vondate, bisdate: TDateTime;
+  isQuota: boolean;
 begin
   try
     // some initial retrun values
@@ -230,7 +232,8 @@ begin
     //QueryProjektzeit.databasename :='uibtime';
     QueryProjektzeit.SQL.Clear;
     QueryProjektzeit.sql.Add(' select time_h, acc_per_monthnum, projectstart, ');
-    QueryProjektzeit.sql.Add('    reportrequired, accountingrequired ');
+    QueryProjektzeit.sql.Add(
+      '    reportrequired, accountingrequired , quota_lifetime_month');
     QueryProjektzeit.sql.Add('    from uiballevent');
     QueryProjektzeit.sql.Add('    where (event = :suchevent)');
     QueryProjektzeit.parambyname('suchevent').AsString := suchevent;
@@ -244,6 +247,10 @@ begin
       accountingrequired := True
     else
       accountingrequired := False;
+    if QueryProjektzeit.FieldByName('quota_lifetime_month').AsInteger > 0 then
+      isQuota := True
+    else
+      isQuota := False;
     // get last interval
     if (not QueryProjektzeit.FieldByName('time_h').isNull) and
       (not QueryProjektzeit.FieldByName('projectstart').isNull) and
@@ -251,19 +258,6 @@ begin
     begin
       // get total free hours
       total := QueryProjektzeit.FieldByName('time_h').AsFloat;
-      (*
-      total_min := round(abs((total - trunc(total)) * 60));
-      hours := trunc(Total);
-      minutes := Round(frac(Total) * 60);
-      if minutes >= 60 then
-      begin
-        minutes := minutes - 60;
-        hours := hours + 1;
-      end;
-      //years := hours div 8760;
-      //hours := hours mod 8760;
-      //month :=
-      *)
       totaltime := total / 24;
       //totaltime := EncodeTimeInterval(hours, minutes, 0, 0);
       // basemonth and projektstart
@@ -278,7 +272,8 @@ begin
         Result := False;
         DataModule1.debugOut(3, 'getLastIntervalInfo',
           'Projektstart of: ' + suchevent +
-          ' is in "future": later or equal then end of searchinterval:' + DateToStr(queryenddt));
+          ' is in "future": later or equal then end of searchinterval:' +
+          DateToStr(queryenddt));
         Exit;
       end;
       //// startday of projekt end
@@ -289,92 +284,16 @@ begin
       monthsmod := acc_per_monthnum_int mod 12;
       monthdiv := acc_per_monthnum_int div 12;
       // calculate last interval boundaries
-      (*
-      // look first for end version
-      decodeDate(querystartdt, year, month, day);
-      decodeDate(projektstart, startyear, startmonth, startday);
-      helperint := month - ((12 * (year - startyear) + month - startmonth) mod
-        monthsmod);
-      if helperint < 1 then
-      begin
-        endyeari := year - 1;
-        endmonthi := 12 + helperint;
-      end
-      else
-      begin
-        endmonthi := helperint;
-        endyeari := year;
-      end;
-      if endmonthi > 12 then
-      begin
-        endmonthi := endmonthi - 12;
-        endyeari := endyeari + 1;
-      end;
-      // now start
-      aktstartmonthi := endmonthi - monthsmod;
-      aktstartyeari := endyeari;
-      if aktstartmonthi < 1 then
-      begin
-        aktstartmonthi := aktstartmonthi + 12;
-        aktstartyeari := aktstartyeari - 1;
-      end;
-      if aktstartmonthi < 1 then
-      begin
-        aktstartmonthi := aktstartmonthi + 12;
-        aktstartyeari := aktstartyeari - 1;
-      end;
-      aktstartmonth := aktstartmonthi;
-      aktstartyear := aktstartyeari;
-      endmonth := endmonthi;
-      endyear := endyeari;
-      *)
-
-      (*
-      // look first for start version
-      decodeDate(querystartdt, year, month, day);
-      decodeDate(projektstart, startyear, startmonth, startday);
-      helperint := month - ((12 * (year - startyear) + month - startmonth));
-      if  acc_per_monthnum_int > 0 then
-        helperint := month - ((12 * (year - startyear) + month - startmonth) mod
-        acc_per_monthnum_int);
-      if helperint < 1 then
-      begin
-        aktstartyear := year - 1;
-        aktstartmonth := 12 + helperint;
-      end
-      else
-      begin
-        aktstartmonth := helperint;
-        aktstartyear := year;
-      end;
-      if aktstartmonth > 12 then
-      begin
-        aktstartmonth := aktstartmonth - 12;
-        aktstartyear := aktstartyear + 1;
-      end;
-      endmonth := aktstartmonth + monthsmod;
-      endyear := aktstartyear + monthdiv;
-      if endmonth > 12 then
-      begin
-        endmonth := endmonth - 12;
-        endyear := endyear + 1;
-      end;
-      if endmonth > 12 then
-      begin
-        endmonth := endmonth - 12;
-        endyear := endyear + 1;
-      end;
-      *)
       // here is the result for the last Interval
       //lastIntervalStart := EncodeDate(aktstartyear, aktstartmonth, startday);
-      lastIntervalStart := getLastIntervalStart(
-        projektstart, queryenddt, acc_per_monthnum_int,true);
+      lastIntervalStart := getLastIntervalStart(projektstart,
+        queryenddt, acc_per_monthnum_int, True);
       //decodeDate(lastIntervalStart, aktstartyear, aktstartmonth, aktstartday);
       DataModule1.debugOut(6, 'getLastIntervalInfo',
         'lastIntervalStart :' + DateToStr(lastIntervalStart));
       //lastIntervalEnd := EncodeDate(endyear, endmonth, startday);
       lastIntervalEnd := getLastIntervalEnd(projektstart, queryenddt,
-        acc_per_monthnum_int,true);
+        acc_per_monthnum_int, True);
       DataModule1.debugOut(6, 'getLastIntervalInfo',
         'lastIntervalEnd :' + DateToStr(lastIntervalEnd));
       (*
@@ -408,6 +327,49 @@ begin
           lastIntervalStart := lastIntervalStart_;
         end;
       end;
+      // use changed data
+      if (lastIntervalStart >= querystartdt) and (lastIntervalStart <= queryenddt) then
+        intervalStartFound := True
+      else
+        intervalStartFound := False;
+
+      if (lastIntervalEnd >= querystartdt) and (lastIntervalEnd <= queryenddt) then
+        intervalEndFound := True
+      else
+        intervalEndFound := False;
+    end
+    else if (not QueryProjektzeit.FieldByName('time_h').isNull) and
+      (not QueryProjektzeit.FieldByName('projectstart').isNull) and
+      //(QueryProjektzeit.FieldByName('acc_per_monthnum').AsFloat = 0) and
+      isQuota then
+    begin
+      // get total free hours
+      total := QueryProjektzeit.FieldByName('time_h').AsFloat;
+      totaltime := total / 24;
+      //totaltime := EncodeTimeInterval(hours, minutes, 0, 0);
+      // basemonth and projektstart
+      acc_per_monthnum := QueryProjektzeit.FieldByName('acc_per_monthnum').AsFloat;
+      // we are in quota project, so we ignore basemonth
+      //basemonth := trunc(acc_per_monthnum);
+      basemonth := 0;
+      projektstart := QueryProjektzeit.FieldByName('projectstart').AsDateTime;
+      DataModule1.debugOut(6, 'getLastIntervalInfo projektstart :' +
+        DateToStr(projektstart));
+      // if projektstart is in future we will not find anything
+      if projektstart >= queryenddt then
+      begin
+        Result := False;
+        DataModule1.debugOut(3, 'getLastIntervalInfo',
+          'Projektstart of: ' + suchevent +
+          ' is in "future": later or equal then end of searchinterval:' +
+          DateToStr(queryenddt));
+        Exit;
+      end;
+      //// startday of projekt end
+      //projektstart := projektstart -1;
+      lastIntervalStart := projektstart;
+      intervalStartFound := True;
+      lastIntervalEnd := queryenddt;
       // use changed data
       if (lastIntervalStart >= querystartdt) and (lastIntervalStart <= queryenddt) then
         intervalStartFound := True
@@ -570,8 +532,8 @@ begin
   //StringGrid1.Cursor:=crHourGlass;
   try
     screen.Cursor := crHourGlass;
-    isQuotaReport := false;
-    hasProjectstart := false;
+    isQuotaReport := False;
+    hasProjectstart := False;
     Application.ProcessMessages;
     selindex := stringgrid1.Row;
     suchevent := stringgrid1.Rows[selindex][0];
@@ -612,8 +574,8 @@ begin
     end;
     if not QueryUEARhelper.FieldByName('projectstart').IsNull then
     begin
-       projectstart := QueryUEARhelper.FieldByName('projectstart').AsDateTime;
-       hasProjectstart := true;
+      projectstart := QueryUEARhelper.FieldByName('projectstart').AsDateTime;
+      hasProjectstart := True;
     end;
     QueryUEARhelper.Close;
 
@@ -879,10 +841,11 @@ begin
   DataModule1.Query4Result.sql.Add('where erperror = 1 ');
   DataModule1.Query4Result.Open;
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   Fresult.DataSource1.Enabled := False;
   //Fresult.ListBox1.Clear;
   //Fresult.DataSource1.DataSet := DataModule1.Query4Result;
-  FResult.QueryResult := DataModule1.Query4Result;
+  FResult.resultdataset := DataModule1.Query4Result;
   Fresult.DataSource1.AutoEdit := True;
   Fresult.DataSource1.Enabled := True;
   FResult.Edit1.Text := 'uibaccountexport';
@@ -950,7 +913,8 @@ begin
   Fresult := TFResult.Create(self);
   Fresult.DataSource1.Enabled := False;
   //Fresult.ListBox1.Clear;
-  Fresult.DataSource1.DataSet := DataModule1.Query4Result;
+  //Fresult.DataSource1.DataSet := DataModule1.Query4Result;
+  FResult.setResultDataset(DataModule1.Query4Result);
   Fresult.DataSource1.AutoEdit := False;
   Fresult.DataSource1.Enabled := True;
   FResult.Edit1.Text := 'uibaccountexport';
@@ -997,7 +961,7 @@ var
   quota_lifetime_month: integer;
 begin
   try
-    DataModule1.debugOut(5, 'uib2erp.createreport', 'start, out: '+output);
+    DataModule1.debugOut(5, 'uib2erp.createreport', 'start, out: ' + output);
     isQuotaReport := False;
     // query isQuotaReport
     QueryUEARhelper.Close;
@@ -1031,7 +995,7 @@ begin
       QueryUEARhelper.sql.Add('where ');
       QueryUEARhelper.sql.Add('(a.event = :event) ');
       QueryUEARhelper.sql.Add('and(a.dateday >= :start) ');
-      QueryUEARhelper.sql.Add('and (a.dateday <= :stop) ');
+      QueryUEARhelper.sql.Add('and (a.dateday < :stop) ');
       QueryUEARhelper.sql.Add('group by 1  ');
       QueryUEARhelper.ParamByName('event').AsString := suchevent;
       QueryUEARhelper.parambyname('start').AsDateTime := projectstart;
@@ -1126,8 +1090,8 @@ begin
       frReport1.LoadFromFile(mypath + 'uib2erp_quota_workrep.lrf');
       projectend := IncMonth(projectstart, quota_lifetime_month);
       frReport1.FindObject('memoQuota').Memo.Text :=
-        'Projektstart: ' + DateToStr(projectstart) + ' bis: ' + DateToStr(projectend) +
-        ' mit Stunden: ' + timeFloatTohourminutesStr(total);
+        'Projektstart: ' + DateToStr(projectstart) + ' bis: ' +
+        DateToStr(projectend) + ' mit Stunden: ' + timeFloatTohourminutesStr(total);
       //+IntToStr(trunc(Total)) + ':' + Format('%.*d', [2, round(frac(Total) * 60)]);
     end
     else
@@ -1152,8 +1116,8 @@ begin
     if isQuotaReport then
     begin
       frReport1.FindObject('memo_hfromstart').Memo.Text :=
-        IntToStr(trunc(presumme_h)) + ':' +
-        Format('%.*d', [2, round(frac(presumme_h) * 60)]);
+        IntToStr(trunc(presumme_h)) + ':' + Format('%.*d',
+        [2, round(frac(presumme_h) * 60)]);
 
       frReport1.FindObject('memo_GS').Memo.Text :=
         IntToStr(trunc(presumme_h + summe_h)) + ':' +
@@ -1169,7 +1133,8 @@ begin
         sign := ' -';
 
       frReport1.FindObject('memoDiff').Memo.Text :=
-        sign + IntToStr(trunc(freed)) + ':' + Format('%.*d', [2, round(frac(freed) * 60)]);
+        sign + IntToStr(trunc(freed)) + ':' +
+        Format('%.*d', [2, round(frac(freed) * 60)]);
     end
     else
     begin
@@ -1183,7 +1148,8 @@ begin
         sign := ' -';
 
       frReport1.FindObject('memoDiff').Memo.Text :=
-        sign + IntToStr(trunc(freed)) + ':' + Format('%.*d', [2, round(frac(freed) * 60)]);
+        sign + IntToStr(trunc(freed)) + ':' +
+        Format('%.*d', [2, round(frac(freed) * 60)]);
     end;
     //sign + FormatDateTime('hh:nn', free_htd - summe_htd);
     frReport1.DefExportFileName := suchevent + '_' + vonstr + '_' + bisstr + '.pdf';
@@ -1524,6 +1490,7 @@ begin
       screen.Cursor := crHourGlass;
       for i := 0 to 1024 do
         rowcolor[i] := clWindow;
+      StringGrid1.FixedRows := 0;
       StringGrid1.Clear;
       //rowcolor[StringGrid1.RowCount] := clBtnFace;
       StringGrid1.InsertRowWithValues(StringGrid1.RowCount,
@@ -1561,7 +1528,7 @@ begin
         //  *** debug breakpoint start
         if event = 'senbjw-it-intern.serverpflege' then
         begin
-          DataModule1.debugOut(6, 'BtnLoadRequiredReportsClick','found: '+event);
+          DataModule1.debugOut(6, 'BtnLoadRequiredReportsClick', 'found: ' + event);
         end;
         //  *** debug breakpoint stop
         if event <> '' then

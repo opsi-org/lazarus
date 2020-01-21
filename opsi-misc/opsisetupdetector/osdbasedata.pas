@@ -10,7 +10,11 @@ uses
   {$IFDEF WINDOWS}
   osdhelper,
   shlobj,
+  winpeimagereader,
   {$ENDIF WINDOWS}
+  LazFileUtils,
+  lazutf8,
+  fileinfo,
   fpjsonrtti,
   oslog,
   RTTICtrls,
@@ -20,13 +24,17 @@ type
 
   TRunMode = (analyzeOnly, singleAnalyzeCreate, twoAnalyzeCreate_1,
     twoAnalyzeCreate_2, createTemplate, gmUnknown);
+
   TArchitecture = (a32, a64, aUnknown);
+
   TArchitectureMode = (am32only_fix, am64only_fix, amBoth_fix, amSystemSpecific_fix,
     amSelectable);
+
   // marker for add installers
-  TKnownInstaller = (stAdvancedMSI, stInno, stInstallShield, stInstallShieldMSI,
+  TKnownInstaller = (stSFXcab,  stBoxStub, stAdvancedMSI, stInstallShield, stInstallShieldMSI,
     stMsi, stNsis, st7zip, st7zipsfx, stInstallAware, stMSGenericInstaller,
-    stWixToolset, stBoxStub, stSFXcab, stUnknown);
+    stWixToolset, stBitrock,stSelfExtractingInstaller,stInno,
+    stUnknown);
 
 
   TdetectInstaller = function(parent: TClass; markerlist: TStrings): boolean;
@@ -193,7 +201,7 @@ default: ["xenial_bionic"]
 
   TPPtype = (bool, unicode);
 
-  TPProperties = class(TCollectionItem)
+  TPProperty = class(TCollectionItem)
   private
     Ftype: TPPtype;
     Fname: string;
@@ -205,6 +213,10 @@ default: ["xenial_bionic"]
     FBoolDefault: boolean;
     procedure SetValueLines(const AValue: TStrings);
     procedure SetDefaultLines(const AValue: TStrings);
+  protected
+      function GetDisplayName: String; override;
+ // public
+ //     procedure Assign(Source: TPersistent); override;
   published
     property ptype: TPPtype read Ftype write Ftype;
     property Name: string read Fname write Fname;
@@ -220,6 +232,22 @@ default: ["xenial_bionic"]
     constructor Create;
     destructor Destroy;
   end;
+
+  // http://wiki.lazarus.freepascal.org/TCollection
+  // https://stackoverflow.com/questions/6980401/collection-editor-does-not-open-for-a-tcollection-property-in-a-tpersistent-prop
+  TPProperties = class(TOwnedCollection)
+  private
+    function GetItem(Index: integer): TPProperty;
+    procedure SetItem(Index: integer; AValue: TPProperty);
+    //function GetOwner: TPersistent;
+  public
+    constructor Create(AOwner: TPersistent);
+  public
+    function Add: TPProperty;
+    function Insert(Index: Integer): TPProperty;
+    property Items[Index: integer]: TPProperty read GetItem write SetItem; default;
+  end;
+
 
   TPriority = -100..100;
 
@@ -272,7 +300,7 @@ default: ["xenial_bionic"]
     productdata: TProductData;
     //dependeciesCount : integer;
     dependencies: TCollection;
-    properties: TCollection;
+    properties: TPProperties;
 
 
     { public declarations }
@@ -281,6 +309,7 @@ default: ["xenial_bionic"]
 
   TConfiguration = class(TPersistent)
   private
+    Fconfig_version: string;  // help to detect and handle changes of config file structure
     //Fworkbench_share: string;
     Fworkbench_Path: string;
     //Fworkbench_mounted: boolean;
@@ -294,16 +323,23 @@ default: ["xenial_bionic"]
     FpreUninstallLines: TStrings;
     FpostUninstallLines: TStrings;
     FPathToOpsiPackageBuilder: string;
-    FCreateRadioIndex: integer;
-    FCreateQuiet: boolean;
-    FCreateBuild: boolean;
-    FCreateInstall: boolean;
+    FCreateRadioIndex: integer;  // Create mode
+    FBuildRadioIndex: integer;  // Build mode
+    //FCreateQuiet: boolean;
+    //FCreateBuild: boolean;
+    //FCreateInstall: boolean;
+    FUsePropDesktopicon: boolean;
+    FUsePropLicenseOrPool: boolean;
+    FProperties: TPProperties;
+    FReadme_txt_templ: string;
     procedure SetLibraryLines(const AValue: TStrings);
     procedure SetPreInstallLines(const AValue: TStrings);
     procedure SetPostInstallLines(const AValue: TStrings);
     procedure SetPreUninstallLines(const AValue: TStrings);
     procedure SetPostUninstallLines(const AValue: TStrings);
+    procedure SetProperties(const AValue: TPProperties);
   published
+    property config_version: string read Fconfig_version;
     //property workbench_share: string read Fworkbench_share write Fworkbench_share;
     property workbench_Path: string read Fworkbench_Path write Fworkbench_Path;
     //property workbench_mounted: boolean read Fworkbench_mounted write Fworkbench_mounted;
@@ -322,9 +358,14 @@ default: ["xenial_bionic"]
     property postUninstallLines: TStrings read FpostUninstallLines
       write SetPostUninstallLines;
     property CreateRadioIndex: integer read FCreateRadioIndex write FCreateRadioIndex;
-    property CreateQuiet: boolean read FCreateQuiet write FCreateQuiet;
-    property CreateBuild: boolean read FCreateBuild write FCreateBuild;
-    property CreateInstall: boolean read FCreateInstall write FCreateInstall;
+    property BuildRadioIndex: integer read FBuildRadioIndex write FBuildRadioIndex;
+    //property CreateQuiet: boolean read FCreateQuiet write FCreateQuiet;
+    //property CreateBuild: boolean read FCreateBuild write FCreateBuild;
+    //property CreateInstall: boolean read FCreateInstall write FCreateInstall;
+    property UsePropDesktopicon: boolean read FUsePropDesktopicon write FUsePropDesktopicon;
+    property UsePropLicenseOrPool: boolean read FUsePropLicenseOrPool write FUsePropLicenseOrPool;
+    //property Properties: TPProperties read FProperties  write SetProperties;
+    property Readme_txt_templ: string read FReadme_txt_templ write FReadme_txt_templ;
     procedure writeconfig;
     procedure readconfig;
   public
@@ -350,6 +391,8 @@ var
   counter: integer;
   myconfiguration: TConfiguration;
   useRunMode: TRunMode;
+  myVersion: string;
+  lfilename : string;
 
 resourcestring
 
@@ -378,13 +421,18 @@ resourcestring
     'comment "Uninstall finished..."';
   rspathToOpsiPackageBuilder = 'Path to the OpsiPackageBuilder. OpsiPackageBuilder is used to build the opsi packages via ssh. see: https://forum.opsi.org/viewtopic.php?f=22&t=7573';
   rscreateRadioIndex = 'selects the Create mode Radiobutton.';
+  rsBuildRadioIndex = 'selects the Build mode Radiobutton.';
+    (*
   rscreateQuiet = 'Selects the Build mode Checkbox quiet.';
   rscreateBuild = 'Selects the Build mode Checkbox build.';
   rscreateInstall = 'Selects the Build mode Checkbox install.';
-
+  *)
 
 
 implementation
+
+var
+  FileVerInfo : TFileVersionInfo;
 
 // TInstallerData ************************************
 
@@ -495,15 +543,15 @@ begin
   Finstall_waitforprocess := '';
 end;
 
-// TPProperties **********************************
+// TPProperty **********************************
 
-constructor TPProperties.Create;
+constructor TPProperty.Create;
 begin
   inherited;
   init;
 end;
 
-procedure TPProperties.init;
+procedure TPProperty.init;
 begin
   FStrvalues := TStringList.Create;
   FStrdefault := TStringList.Create;
@@ -514,23 +562,69 @@ begin
 end;
 
 
-destructor TPProperties.Destroy;
+destructor TPProperty.Destroy;
 begin
   FreeAndNil(FStrvalues);
   FreeAndNil(FStrdefault);
   inherited;
 end;
 
-procedure TPProperties.SetValueLines(const AValue: TStrings);
+procedure TPProperty.SetValueLines(const AValue: TStrings);
 begin
   FStrvalues.Assign(AValue);
 end;
 
-procedure TPProperties.SetDefaultLines(const AValue: TStrings);
+procedure TPProperty.SetDefaultLines(const AValue: TStrings);
 begin
   FStrDefault.Assign(AValue);
 end;
 
+function TPProperty.GetDisplayName: String;
+begin
+  result := Fname;
+end;
+
+{ TPProperties }
+
+constructor TPProperties.Create(AOwner: TPersistent);
+begin
+  inherited Create(AOwner,TPProperty);
+end;
+
+(*
+function TPProperties.GetItems(Index: integer): TPProperty;
+begin
+  Result := TPProperty(inherited Items[Index]);
+end;
+
+procedure TPProperties.SetItems(Index: integer; AValue: TPProperty);
+begin
+  Items[Index].Assign(AValue);
+end;
+*)
+
+
+function TPProperties.GetItem(Index: Integer): TPProperty;
+begin
+  Result := TPProperty(inherited GetItem(Index));
+end;
+
+
+
+function TPProperties.Insert(Index: Integer): TPProperty;
+begin
+  Result := TPProperty(inherited Insert(Index));
+end;
+
+procedure TPProperties.SetItem(Index: Integer; AValue: TPProperty);
+begin
+  inherited SetItem(Index, AValue);
+end;
+
+function TPProperties.Add: TPProperty;
+begin
+  Result := inherited Add as TPProperty;
+end;
 
 // TPDependency **********************************
 procedure TPDependency.init;
@@ -574,7 +668,10 @@ begin
   Fworkbench_Path := 'missing';
   FPathToOpsiPackageBuilder := 'unknown';
   Fconfig_filled := False;
-  readconfig;
+  FProperties := TPProperties.Create(self);
+  Fconfig_version := myVersion;
+  FReadme_txt_templ := ExtractFileDir(ParamStr(0))+PathDelim+'template-files'+PathDelim+'package_qa.txt';
+  //readconfig;
 end;
 
 destructor TConfiguration.Destroy;
@@ -585,6 +682,7 @@ begin
   FreeAndNil(FpostInstallLines);
   FreeAndNil(FpreUninstallLines);
   FreeAndNil(FpostUninstallLines);
+  FreeAndNil(FProperties);
   inherited;
 end;
 
@@ -613,6 +711,10 @@ begin
   FpostUninstallLines.Assign(AValue);
 end;
 
+procedure TConfiguration.SetProperties(const AValue: TPProperties);
+begin
+  FProperties.Assign(AValue);
+end;
 
 procedure TConfiguration.writeconfig;
 var
@@ -651,24 +753,29 @@ var
   end;
 
 begin
+  try
   if Assigned(logdatei) then
-    logdatei.log('Start writeconfig', LLDebug2);
+    logdatei.log('Start writeconfig', LLDebug);
   configDir := '';
   {$IFDEF Windows}
   SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, configDir);
   configDir := configDir + PathDelim + 'opsi.org' + PathDelim;
+  configDirUtf8 := WinCPToUTF8(configDir);
   {$ELSE}
   configDir := GetAppConfigDir(False);
-  {$ENDIF WINDOWS}
   configDirUtf8 := configDir;
+  {$ENDIF WINDOWS}
   configDirUtf8 := StringReplace(configDirUtf8, 'opsi-setup-detector',
     'opsi.org', [rfReplaceAll]);
   configDirUtf8 := StringReplace(configDirUtf8, 'opsisetupdetector',
     'opsi.org', [rfReplaceAll]);
   myfilename := configDirUtf8 + PathDelim + 'opsisetupdetector.cfg';
   myfilename := ExpandFileName(myfilename);
+  if Assigned(logdatei) then
+  logdatei.log('writeconfig to: '+myfilename, LLDebug);
   if not DirectoryExists(configDirUtf8) then
     if not ForceDirectories(configDirUtf8) then
+      if Assigned(logdatei) then
       LogDatei.log('failed to create configuration directory: ' +
         configDirUtf8, LLError);
 
@@ -685,8 +792,9 @@ begin
     // Save strings as JSON array
     // JSON convert and output
     JSONString := Streamer.ObjectToJSONString(myconfiguration);
-    logdatei.log(JSONString, LLDebug);
+    logdatei.log('Config: '+JSONString, LLDebug);
     if not SaveStringToFile(JSONString, myfilename) then
+      if Assigned(logdatei) then
       LogDatei.log('failed save configuration', LLError);
     //AssignFile(myfile, myfilename);
     //Rewrite(myfile);
@@ -701,6 +809,13 @@ begin
   end;
   if Assigned(logdatei) then
     logdatei.log('Finished writeconfig', LLDebug2);
+
+  except
+     on E: Exception do
+       if Assigned(logdatei) then
+        LogDatei.log('Configuration could not be written. Details: ' +
+          E.ClassName + ': ' + E.Message, LLError);
+  end;
 end;
 
 
@@ -739,29 +854,36 @@ var
 
     except
       on E: Exception do
-        LogDatei.log('String could not be written. Details: ' +
-          E.ClassName + ': ' + E.Message, LLError);
+        if Assigned(logdatei) then
+        LogDatei.log('String could not be read. Details: ' +
+          E.ClassName + ': ' + E.Message, LLError)
+        else
+          ShowMessage('readconfig: String could not be read. Details: ' +
+          E.ClassName + ': ' + E.Message);
     end;
   end;
 
 begin
+  try
   if Assigned(logdatei) then
-    logdatei.log('Start readconfig', LLDebug2);
+    logdatei.log('Start readconfig', LLDebug);
   configDir := '';
   {$IFDEF Windows}
   SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, configDir);
   configDir := configDir + PathDelim + 'opsi.org' + PathDelim;
+  configDirUtf8 := WinCPToUTF8(configDir);
   {$ELSE}
   configDir := GetAppConfigDir(False);
+  configDirUtf8 := configDir;
   {$ENDIF WINDOWS}
-  configDirstr := configDir;
-  configDirUtf8 := configDirstr;
   configDirUtf8 := StringReplace(configDirUtf8, 'opsi-setup-detector',
     'opsi.org', [rfReplaceAll]);
   configDirUtf8 := StringReplace(configDirUtf8, 'opsisetupdetector',
     'opsi.org', [rfReplaceAll]);
   myfilename := configDirUtf8 + PathDelim + 'opsisetupdetector.cfg';
   myfilename := ExpandFileName(myfilename);
+  if Assigned(logdatei) then
+  logdatei.log('readconfig from: '+myfilename, LLDebug);
   if FileExists(myfilename) then
   begin
     AssignFile(myfile, myfilename);
@@ -778,10 +900,14 @@ begin
       DeStreamer.Destroy;
       CloseFile(myfile);
     end;
+    if Assigned(logdatei) then
+  logdatei.log('read config: '+JSONString, LLDebug)
+     else
+            ShowMessage('read config: '+JSONString);
     {$IFDEF WINDOWS}
     registerForWinExplorer(FregisterInFilemanager);
-{$ELSE}
-{$ENDIF WINDOWS}
+    {$ELSE}
+    {$ENDIF WINDOWS}
   end
   else
   begin
@@ -801,6 +927,16 @@ begin
   end;
   if Assigned(logdatei) then
     logdatei.log('Finished readconfig', LLDebug2);
+
+  except
+        on E: Exception do
+          if Assigned(logdatei) then
+          LogDatei.log('read config exception. Details: ' +
+            E.ClassName + ': ' + E.Message, LLError)
+          else
+            ShowMessage('read config exception. Details: ' +
+            E.ClassName + ': ' + E.Message);
+  end;
 end;
 
 
@@ -907,7 +1043,7 @@ begin
   // Create Dependencies
   aktProduct.dependencies := TCollection.Create(TPDependency);
   // Create Properties
-  aktProduct.properties := TCollection.Create(TPProperties);
+  aktProduct.properties := TPProperties.Create(aktProduct);
 end;
 
 procedure freebasedata;
@@ -934,8 +1070,9 @@ end;
 begin
   // marker for add installers
   knownInstallerList := TStringList.Create;
+  knownInstallerList.Add('SFXcab');
+  knownInstallerList.Add('BoxStub');
   knownInstallerList.Add('AdvancedMSI');
-  knownInstallerList.Add('Inno');
   knownInstallerList.Add('InstallShield');
   knownInstallerList.Add('InstallShieldMSI');
   knownInstallerList.Add('MSI');
@@ -945,8 +1082,9 @@ begin
   knownInstallerList.Add('InstallAware');
   knownInstallerList.Add('MSGenericInstaller');
   knownInstallerList.Add('WixToolset');
-  knownInstallerList.Add('BoxStub');
-  knownInstallerList.Add('SFXcab');
+  knownInstallerList.Add('Bitrock');
+  knownInstallerList.Add('SelfExtractingInstaller');
+  knownInstallerList.Add('Inno');
   knownInstallerList.Add('Unknown');
 
 
@@ -958,6 +1096,22 @@ begin
     installerArray[counter].Name := knownInstallerList.Strings[counter];
   end;
 
+  // unknown
+  with installerArray[integer(stUnknown)] do
+  begin
+    description := 'Unknown Installer';
+    silentsetup := '';
+    unattendedsetup := '';
+    silentuninstall := '';
+    unattendeduninstall := '';
+    uninstall_waitforprocess := '';
+    uninstallProg := '';
+    link :=
+      'https://startpage.com/do/search?cmd=process_search&query=silent+install';
+    comment := '';
+    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    detected := @detectedbypatternwithor;
+  end;
 
   // inno
   with installerArray[integer(stInno)] do
@@ -995,6 +1149,8 @@ begin
     patterns.Add('Nullsoft.NSIS.exehead');
     patterns.Add('nullsoft install system');
     patterns.Add('http://nsis.sf.net/');
+    patterns.Add('NSISu_.exe');
+    patterns.Add('NSIS Error');
     link :=
       'http://nsis.sourceforge.net/Docs/Chapter3.html#installerusage';
     comment := '';
@@ -1032,13 +1188,15 @@ begin
     unattendedsetup :=
       '/s /v" /qb-! ALLUSERS=1 REBOOT=ReallySuppress"';
     silentuninstall :=
-      '/s /v" /qn ALLUSERS=1 REBOOT=ReallySuppress"';
+      '/qn REBOOT=ReallySuppress';
     unattendeduninstall :=
-      '/s /v" /qb-! ALLUSERS=1 REBOOT=ReallySuppress"';
+      '/qb-! REBOOT=ReallySuppress';
     uninstall_waitforprocess := '';
     uninstallProg := 'uninstall.exe';
     patterns.Add('nstallshield');
-    patterns.Add('installer,msi,database');
+    patterns.Add('issetup.dll');
+    patterns.Add('transforms');
+    patterns.Add('msiexec.exe');
     link :=
       'http://helpnet.flexerasoftware.com/installshield19helplib/helplibrary/IHelpSetup_EXECmdLine.htm';
     comment := '';
@@ -1194,6 +1352,44 @@ begin
     uib_exitcode_function := 'isMsExitcodeFatal_short';
     detected := @detectedbypatternwithand;
   end;
+  // stBitrock
+  with installerArray[integer(stBitrock)] do
+  begin
+    description := 'Bitrock installer ';
+    silentsetup := '--mode unattended --unattendedmodeui none';
+    unattendedsetup := '--mode unattended --unattendedmodeui minimal';
+    silentuninstall := '--mode unattended --unattendedmodeui none';
+    unattendeduninstall := '--mode unattended --unattendedmodeui minimal';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := 'uninstall.exe';
+    patterns.Add('<description>BitRock Installer</description>');
+    //patterns.Add('Wix Toolset');
+    //infopatterns.Add('RunProgram="');
+    link := 'https://clients.bitrock.com/installbuilder/docs/installbuilder-userguide/ar01s08.html#_help_menu';
+    comment := '';
+    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    detected := @detectedbypatternwithand;
+  end;
+  // stSelfExtractingInstaller
+  with installerArray[integer(stSelfExtractingInstaller)] do
+  begin
+    description := 'SelfExtracting Installer';
+    silentsetup := '/a';
+    unattendedsetup := '/a';
+    silentuninstall := '/a /u:"<product>"';
+    unattendeduninstall := '/a /u:"<product>"';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := 'uninstall.exe';
+    patterns.Add('Self-extracting installation program');
+    //patterns.Add('Wix Toolset');
+    //infopatterns.Add('RunProgram="');
+    link := '';
+    comment := 'Unknown Vendor';
+    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    detected := @detectedbypatternwithand;
+  end;
   // marker for add installers
 
   architectureModeList := TStringList.Create;
@@ -1204,10 +1400,33 @@ begin
   architectureModeList.Add('selectable');
 
   myconfiguration := TConfiguration.Create;
-  myconfiguration.readconfig;
+
 
   //aktSetupFile := TSetupFile.Create;
   aktProduct := TopsiProduct.Create;
 
+  FileVerInfo := TFileVersionInfo.Create(nil);
+  try
+    FileVerInfo.FileName := ParamStr(0);
+    FileVerInfo.ReadFileInfo;
+    myVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
+  finally
+    FileVerInfo.Free;
+  end;
 
+   // Initialize logging
+  LogDatei := TLogInfo.Create;
+  lfilename := ExtractFileName(Application.ExeName);
+  lfilename := ExtractFileNameOnly(lfilename);
+  LogDatei.FileName := lfilename;
+  LogDatei.StandardLogFileext := '.log';
+  LogDatei.StandardLogFilename := lfilename;
+  LogDatei.WritePartLog := False;
+  LogDatei.CreateTheLogfile(lfilename + '.log', True);
+  LogDatei.log('Log for: ' + Application.exename + ' opend at : ' +
+    DateTimeToStr(now), LLEssential);
+  LogDatei.log('opsi-setup-detector Version: ' + myVersion, LLEssential);
+  LogDatei.LogLevel := 8;
+
+  myconfiguration.readconfig;
 end.

@@ -292,7 +292,8 @@ begin
           str := mylist.Strings[i];
           mylist.Strings[i] := ConvertEncoding(str, usedSourceEncoding, 'utf8');
           if Assigned(logdatei) then
-            logdatei.log_prog(usedSourceEncoding + ' to utf8: ' + str + ' to ' + mylist.Strings[i],
+            logdatei.log_prog(usedSourceEncoding + ' to utf8: ' +
+              str + ' to ' + mylist.Strings[i],
               LLDebug3);
         end;
         Result := mylist.Text;
@@ -302,12 +303,13 @@ begin
       begin
         Result := ConvertEncoding(sourceText, usedSourceEncoding, 'utf8');
         if Assigned(logdatei) then
-          logdatei.log_prog(usedSourceEncoding + ' to utf8: ' + sourceText + ' to ' + Result, LLDebug3);
+          logdatei.log_prog(usedSourceEncoding + ' to utf8: ' +
+            sourceText + ' to ' + Result, LLDebug3);
       end;
     end;
     if Assigned(logdatei) then
-      logdatei.log_prog('Reencoding from ' + usedSourceEncoding + ' to ' +
-        destEncoding, LLDebug2);
+      logdatei.log_prog('Reencoding from ' + usedSourceEncoding +
+        ' to ' + destEncoding, LLDebug2);
   end
   else if Assigned(logdatei) then
     logdatei.log_prog('Nothing to do: Reencoding from ' + usedSourceEncoding +

@@ -1,13 +1,13 @@
 object FOnTop: TFOnTop
-  Left = 469
+  Left = 252
   Height = 363
-  Top = 448
-  Width = 1340
+  Top = 428
+  Width = 1656
   BorderIcons = []
   BorderStyle = bsNone
   Caption = 'uibtime - ontop'
   ClientHeight = 363
-  ClientWidth = 1340
+  ClientWidth = 1656
   Color = clBtnFace
   DesignTimePPI = 144
   Font.Color = clWindowText
@@ -19,12 +19,12 @@ object FOnTop: TFOnTop
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poDefault
-  LCLVersion = '1.8.4.0'
+  LCLVersion = '2.0.6.0'
   object ToolBar1: TToolBar
     Left = 0
     Height = 42
     Top = 0
-    Width = 1333
+    Width = 1573
     Align = alNone
     AutoSize = True
     ButtonHeight = 38
@@ -123,7 +123,7 @@ object FOnTop: TFOnTop
       Left = 287
       Height = 38
       Top = 2
-      Width = 231
+      Width = 363
       AutoSize = False
       Color = clWhite
       Font.Color = clWindowText
@@ -138,7 +138,7 @@ object FOnTop: TFOnTop
       Text = 'Edit1'
     end
     object SpeedButton1: TSpeedButton
-      Left = 518
+      Left = 650
       Height = 38
       Top = 2
       Width = 34
@@ -164,10 +164,10 @@ object FOnTop: TFOnTop
       ParentFont = False
     end
     object DBLCB_topten_event: TDBLookupComboBox
-      Left = 552
+      Left = 684
       Height = 38
       Top = 2
-      Width = 250
+      Width = 358
       AutoSize = False
       DataField = 'EVENT'
       DataSource = DataModule1.DSuibevent
@@ -186,7 +186,7 @@ object FOnTop: TFOnTop
       TabOrder = 1
     end
     object EditProjektzeit: TEdit
-      Left = 802
+      Left = 1042
       Height = 38
       Top = 2
       Width = 232
@@ -200,7 +200,7 @@ object FOnTop: TFOnTop
       TabOrder = 2
     end
     object Labeluid: TLabel
-      Left = 1034
+      Left = 1274
       Height = 38
       Top = 2
       Width = 129
@@ -222,7 +222,7 @@ object FOnTop: TFOnTop
       Transparent = False
     end
     object BtnBye: TSpeedButton
-      Left = 1163
+      Left = 1403
       Height = 38
       Top = 2
       Width = 168

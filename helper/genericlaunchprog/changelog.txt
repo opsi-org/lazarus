@@ -1,0 +1,9 @@
+genericlaunch 4.1.0.1
+
+* add new option: -conffile [path]
+// usage f.e.:
+// genericlaunch -conffile [path]    start program described in path/genericlaunch.conf
+// genericlaunch                     start program described in ./genericlaunch.conf
+// genericlaunch param1 param2 ...   start program described in ./genericlaunch.conf with parameters
+
+-- martina hammel <m.hammel@uib.de>  Thu, 19 Dec 2019 15:00:00 +0200

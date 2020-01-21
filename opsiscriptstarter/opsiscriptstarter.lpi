@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="10"/>
+    <Version Value="11"/>
     <General>
       <Flags>
         <MainUnitHasCreateFormStatements Value="False"/>
@@ -19,8 +19,8 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="3"/>
-      <StringTable CompanyName="uib gmbh (www.uib.de)" LegalCopyright="uib gmbh under AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="opsiscriptstarter" ProductName="opsi" ProductVersion="4.0.7"/>
+      <BuildNr Value="7"/>
+      <StringTable CompanyName="uib gmbh (www.uib.de)" LegalCopyright="uib gmbh under AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="opsiscriptstarter" ProductName="opsi" ProductVersion="4.1"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -32,7 +32,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="../common;../external_libraries/dcpcrypt/Ciphers;../external_libraries/dcpcrypt/Hashes;../external_libraries/synapse40lib;../external_libraries/misc;../external_libraries/uSMBIOS;../external_libraries/dcpcrypt;../external_libraries/indy/Lib/System;../external_libraries/indy/Lib/Core;../external_libraries/indy/Lib/Protocols;../external_libraries/indy/Lib"/>
+            <OtherUnitFiles Value="../common;../external_libraries/dcpcrypt/Ciphers;../external_libraries/dcpcrypt/Hashes;../external_libraries/misc;../external_libraries/uSMBIOS;../external_libraries/dcpcrypt"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -57,7 +57,8 @@
             </Debugging>
           </Linking>
           <Other>
-            <CustomOptions Value="-dOPSISCRIPTSTARTER"/>
+            <CustomOptions Value="-dOPSISCRIPTSTARTER
+-dSYNAPSE"/>
           </Other>
         </CompilerOptions>
       </Item2>
@@ -69,7 +70,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="../common;../external_libraries/dcpcrypt/Ciphers;../external_libraries/dcpcrypt/Hashes;../external_libraries/synapse40lib;../external_libraries/misc;../external_libraries/uSMBIOS;../external_libraries/dcpcrypt;../external_libraries/indy/Lib/System;../external_libraries/indy/Lib/Core;../external_libraries/indy/Lib/Protocols;../external_libraries/indy/Lib"/>
+            <OtherUnitFiles Value="../common;../external_libraries/dcpcrypt/Ciphers;../external_libraries/dcpcrypt/Hashes;../external_libraries/misc;../external_libraries/uSMBIOS;../external_libraries/dcpcrypt;../external_libraries/synapse"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -86,20 +87,20 @@
             <LinkSmart Value="True"/>
           </Linking>
           <Other>
-            <CustomOptions Value="-dOPSISCRIPTSTARTER"/>
+            <CustomOptions Value="-dOPSISCRIPTSTARTER
+-dSYNAPSE"/>
           </Other>
         </CompilerOptions>
       </Item3>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
-      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
-      <ExcludeFileFilter Value="*.(bak|ppu|o|so);*~;backup"/>
     </PublishOptions>
     <RunParams>
-      <local>
-        <FormatVersion Value="1"/>
-      </local>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
     </RunParams>
     <RequiredPackages Count="3">
       <Item1>
@@ -112,7 +113,7 @@
         <PackageName Value="LazUtils"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="7">
+    <Units Count="8">
       <Unit0>
         <Filename Value="opsiscriptstarter.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -122,25 +123,30 @@
         <IsPartOfProject Value="True"/>
       </Unit1>
       <Unit2>
-        <Filename Value="../common/manifest.xml"/>
+        <Filename Value="../common/oscrypt.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit2>
       <Unit3>
-        <Filename Value="../common/oscrypt.pas"/>
+        <Filename Value="../common/oslog.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit3>
       <Unit4>
-        <Filename Value="../common/oslog.pas"/>
+        <Filename Value="../common/oswebservice.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
       <Unit5>
-        <Filename Value="../common/oswebservice.pas"/>
+        <Filename Value="../common/oslinmount.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit5>
       <Unit6>
-        <Filename Value="../common/superobject.pas"/>
+        <Filename Value="../external_libraries/misc/superobject.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit6>
+      <Unit7>
+        <Filename Value="../common/osprocessux.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OSProcessux"/>
+      </Unit7>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -150,21 +156,24 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="../common;../external_libraries/dcpcrypt/Ciphers;../external_libraries/dcpcrypt/Hashes;../external_libraries/synapse40lib;../external_libraries/misc;../external_libraries/uSMBIOS;../external_libraries/dcpcrypt;../external_libraries/indy/Lib/System;../external_libraries/indy/Lib/Core;../external_libraries/indy/Lib/Protocols;../external_libraries/indy/Lib"/>
+      <OtherUnitFiles Value="../common;../external_libraries/dcpcrypt/Ciphers;../external_libraries/dcpcrypt/Hashes;../external_libraries/misc;../external_libraries/uSMBIOS;../external_libraries/dcpcrypt;../external_libraries/synapse"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>
       <SmartLinkUnit Value="True"/>
+      <TargetCPU Value="x86_64"/>
     </CodeGeneration>
     <Linking>
       <Debugging>
         <GenerateDebugInfo Value="False"/>
+        <DebugInfoType Value="dsDwarf2"/>
         <StripSymbols Value="True"/>
       </Debugging>
       <LinkSmart Value="True"/>
     </Linking>
     <Other>
-      <CustomOptions Value="-dOPSISCRIPTSTARTER"/>
+      <CustomOptions Value="-dOPSISCRIPTSTARTER
+-dSYNAPSE"/>
     </Other>
   </CompilerOptions>
   <Debugging>

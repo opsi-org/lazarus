@@ -41,14 +41,14 @@ uses
   VersionInfoX,
   //unitImpersonator,
   osregistry,
-osfuncwin2,
-osfuncwin3,
+  osfuncwin2,
+  osfuncwin3,
 {$IFDEF WIN32}
   DSiWin32,
-oslocaladmin,
-packdefs,
- zipinter,
- //uCpuUsage,
+  oslocaladmin,
+  packdefs,
+  zipinter,
+  //uCpuUsage,
 {$ENDIF WIN32}
   //unitImpersonator,
   (* for infozip  *)
@@ -57,9 +57,9 @@ packdefs,
   Shlobj,
 {$ENDIF}
 {$IFDEF GUI}
-LResources,
-LCLIntf,
-LCLProc,
+  LResources,
+  LCLIntf,
+  LCLProc,
 {$ENDIF GUI}
 {$IFDEF UNIX}
 
@@ -78,6 +78,7 @@ LCLProc,
   FileUtil,
   LazFileUtils,
   process,
+  osprocesses,
   SysUtils,
   Classes,
   charencstreams,
@@ -87,18 +88,19 @@ LCLProc,
   crt,
   strutils,
   lconvencoding,
-  lcltype;
+  lcltype,
+  ostxstringlist;
 
 const
   BytesarrayLength = 5000;
   PATHSEPARATOR = PathDelim;
-  //KEY_WOW64_64KEY = $0100;
-  //KEY_WOW64_32KEY = $0200;
+//KEY_WOW64_64KEY = $0100;
+//KEY_WOW64_32KEY = $0200;
 
 
 
 type
-//  TCharset = set of char;
+  //  TCharset = set of char;
   TcpSpecify = integer;
   TcpCountModus = (tccmNoCounter, tccmCounting, tccmCounted);
   TExitMode = (txmNoExit, txmLogout, txmReboot);
@@ -122,6 +124,8 @@ type
 
 
 
+(*
+{ gone to ostxstringlist }
   TXStringList = class(TStringList)
   public
     function ReplaceInLine(const OldLine, SearchItem, Replaceitem: string;
@@ -131,15 +135,17 @@ type
     procedure EliminateLinesStartingWith(const startS: string; MatchCase: boolean);
     procedure SaveToFile(const FileName: string; encodingtype: string); overload;
     procedure SaveToFile(const FileName: string); override; overload;
-    procedure SaveToFile(const FileName: string;
-                         encodingtype: string; raise_on_error :boolean);  overload;
-    function FuncSaveToFile(const FileName: string; encodingtype: string): boolean; overload;
+    procedure SaveToFile(const FileName: string; encodingtype: string;
+      raise_on_error: boolean); overload;
+    function FuncSaveToFile(const FileName: string; encodingtype: string): boolean;
+      overload;
     function FuncSaveToFile(const FileName: string): boolean; overload;
     procedure loadFromUnicodeFile(const Filename: string; codepage: word);
     function getStringValue(const keyname: string): string;
     // returns the string value of a handmade properties list with separator either '=' or ':'
     // we return values[keyname], until further notice
   end;
+*)
 
   TPatchList = class(TXStringList)
   private
@@ -353,11 +359,12 @@ type
 
     function AllDelete
       (const Filename: string; recursive, ignoreReadOnly: boolean;
-      daysback: integer; search4file: boolean; var RebootWanted:boolean): boolean;
+      daysback: integer; search4file: boolean; var RebootWanted: boolean): boolean;
 
-    function HardLink(existingfilename, newfilename : string): boolean;
-    function SymLink(existingfilename, newfilename : string): boolean;
-    function Rename(existingfilename, newfilename : string;  var RebootWanted : boolean): boolean;
+    function HardLink(existingfilename, newfilename: string): boolean;
+    function SymLink(existingfilename, newfilename: string): boolean;
+    function Rename(existingfilename, newfilename: string;
+      var RebootWanted: boolean): boolean;
     {$IFDEF WINDOWS}
     function FileCheckVersions(const SourceF, TargetF: string;
       restrictedToTargetDir: boolean): boolean;
@@ -366,8 +373,8 @@ type
       Recursive: boolean; MaintainEmptySubdirs: boolean);
     {$ENDIF WINDOWS}
     {$IFDEF UNIX}
-    function chmod(mode : string;const FileName: string): boolean;
-    {$ENDIF LINUX}
+    function chmod(mode: string; const FileName: string): boolean;
+    {$ENDIF UNIX}
   end;
 
   {$IFDEF WINDOWS}
@@ -377,7 +384,7 @@ type
   private
     MySystemfolder: integer;
     MyFoldername: string;
-    MyFolderpath: Widestring;
+    MyFolderpath: WideString;
     MyFiles: TuibFileInstall;
     FolderOpened: boolean;
     StartIndentLevel: integer;
@@ -390,15 +397,16 @@ type
       const foldername: string): boolean;
     function MakeShellLink
       (const description, thePath, commandline_arguments, working_directory,
-      iconPath: string; const icon_index: integer): boolean;   overload;
+      iconPath: string; const icon_index: integer): boolean; overload;
     function MakeShellLink
       (const description, thePath, commandline_arguments, working_directory,
-      iconPath: string; const icon_index: integer; shortcut : word): boolean;   overload;
+      iconPath: string; const icon_index: integer; shortcut: word): boolean; overload;
     function DeleteShellLink(const description: string): boolean;
     function DeleteShellFolder(const SystemFolder: integer;
       const foldername: string): boolean;
 
   end;
+
 {$ENDIF WINDOWS}
 
 {$IFDEF WINDOWS}
@@ -478,18 +486,19 @@ function ExpandFileName(const FileName: string): string;
 
 function FileGetWriteAccess(const Filename: string; var ActionInfo: string): boolean;
 procedure MakeBakFile(const FName: string); overload;
-procedure MakeBakFile(const FName: string; maxbaks : integer);  overload;
+procedure MakeBakFile(const FName: string; maxbaks: integer); overload;
 function FileCopy
   (const sourcefilename, targetfilename: string; var problem: string;
-  DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean): boolean;  overload;
+  DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean): boolean; overload;
 function FileCopy
   (const sourcefilename, targetfilename: string; var problem: string;
   DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean;
-  followSymlink : boolean): boolean;   overload;
+  followSymlink: boolean): boolean; overload;
 function Is64BitSystem: boolean;
 function runningAsAdmin: boolean;
 function isUefi: boolean;
 function isWinPE: boolean;
+function isGUI: boolean;
 
 
 function CheckFileExists(const FName: string; var ErrorInfo: string): boolean;
@@ -509,17 +518,19 @@ function GetFileInfo(const CompleteName: string; var fRec: TSearchRec;
 function CutLeftBlanks(const s: string): string;
 function CutRightBlanks(const s: string): string;
 *)
+(*
 function divideAtFirst(const partialS, S: string; var part1, part2: string): boolean;
- (* teilt den String S beim ersten Vorkommen des Teilstrings partialS;
-     liefert true, wenn partialS vorkommt,
-     andernfalls false;
-     wenn partialS nicht vorkommt, enthaelt part1 den Gesamtstring, part2 ist leer *)
+//  teilt den String S beim ersten Vorkommen des Teilstrings partialS;
+//   liefert true, wenn partialS vorkommt,
+//   andernfalls false;
+//   wenn partialS nicht vorkommt, enthaelt part1 den Gesamtstring, part2 ist leer
 
 //procedure stringsplitByWhiteSpace(const s: string; var Result: TXStringList);
-(* produziert eine Stringliste aus den Teilstrings, die zwischen den Whitespace-Abschnitten stehen *)
-
+// produziert eine Stringliste aus den Teilstrings, die zwischen den Whitespace-Abschnitten stehen
+*)
 procedure stringsplit(const s, delimiter: string; var Result: TXStringList);
-(* produziert eine Stringliste aus den Teilstrings, die zwischen den Delimiter-Strings stehen *)
+// produziert eine Stringliste aus den Teilstrings, die zwischen den Delimiter-Strings stehen
+
 (*
 function SkipA(const partialS, S: string; var Remaining: string;
   var Error: string): boolean;
@@ -561,18 +572,19 @@ function strContains(const str: string; const substr: string): boolean;
 function createNewOpsiHostKey: string;
 function getProfilesDirList: TStringList;
 //function stringListLoadUtf8FromFile(filename: string): TStringList;
-function opsiunquotestr(s1,s2 : string): string;
+function opsiunquotestr(s1, s2: string): string;
 
-function cmdLineInputDialog(var inputstr : string; const message, default : string; confidential : boolean) : boolean;
+function cmdLineInputDialog(var inputstr: string; const message, default: string;
+  confidential: boolean): boolean;
 //function isValidUtf8String(str:string) : boolean;
 //function getFixedUtf8String(str:string) : string;
-function posFromEnd(const substr : string; const s : string) : integer;
+function posFromEnd(const substr: string; const s: string): integer;
 
 
 
 const
 
-  NULL_STRING_VALUE = 'NULL';
+  // NULL_STRING_VALUE = 'NULL';
 
   LineIsCommentChar = ';';
   MultiszVisualDelimiter = '|';
@@ -587,7 +599,7 @@ const
   cpDontForceOverwrite = 32; // overwrite if write protected
   cpNoOverwrite = 64; // no overwrite
   cpExtract = 128; // extract on copy
-  cpLeaveReadonly = 256; //
+  cpLeaveReadonly = 256;
 
   cpNoExtraReboot = 512; (* if on copying a file being in use cannot be overwritten, then
                             the overwrite process is postponed after the next reboot. By default, in this case
@@ -615,6 +627,7 @@ const
   StandardUsercontextSubPath = 'opsi\tmp\';
   {$ELSE WINDOWS}
   StandardTempPath = '/tmp/';
+  UniventionTempPath = '/var/tmp/';
   StandardUsercontextSubPath = 'opsi/tmp/';
   {$ENDIF WINDOWS}
   IPPatchLogFilename =  (* TempPath + *) 'iplog.txt';
@@ -657,11 +670,12 @@ implementation
 
 
 uses
-{$IFDEF LINUX}
+{$IFDEF UNIX}
   osfunclin,
-{$ENDIF LINUX}
+  osprocessux,
+{$ENDIF UNIX}
 {$IFDEF DARWIN}
-  osfunclin,
+
   osfuncmac,
 {$ENDIF DARWIN}
 {$IFDEF WINDOWS}
@@ -715,8 +729,8 @@ var
 
 const
 
-  ExtractTempSubDirectory = 'decompr'+PathDelim;
-  UsedFilesTempSubDirectory = 'usedfs'+PathDelim;
+  ExtractTempSubDirectory = 'decompr' + PathDelim;
+  UsedFilesTempSubDirectory = 'usedfs' + PathDelim;
 //ziffern = ['0'..'9'];
 
 (* Hilfsfunktionen *)
@@ -727,17 +741,17 @@ const
 
 //function RegDeleteKeyEx; external advapi32 name 'RegDeleteKeyEx';
 
-function posFromEnd(const substr : string; const s : string) : integer;
+function posFromEnd(const substr: string; const s: string): integer;
 var
-  revstr : string;
-  len,posi : integer;
+  revstr: string;
+  len, posi: integer;
 begin
-  result := 0;
+  Result := 0;
   revstr := ReverseString(s);
   len := length(s);
   posi := Pos(ReverseString(substr), revstr);
   if posi > 0 then
-    result := len - (posi-1);
+    Result := len - (posi - 1);
 end;
 
 (*
@@ -754,23 +768,30 @@ begin
   result := ValidUTF8String(str);
 end;
 *)
-function cmdLineInputDialog(var inputstr : string; const message, default : string; confidential : boolean) : boolean;
+function cmdLineInputDialog(var inputstr: string; const message, default: string;
+  confidential: boolean): boolean;
 var
-  c : char ;
+  c: char;
 begin
   inputstr := '';
-  result := true;
+  Result := True;
   writeln;
   writeln(message);
-  write('['+default+']  ');
+  Write('[' + default + ']  ');
   repeat
     c := readkey;
-    if (c = char(27)) then result := false;
-    if not confidential then write(c) else write('*');
-    if (c >= char(32)) then inputstr := inputstr + c;
-  until (c = LineEnding) or (c=char(13)) or (c=char(27));
+    if (c = char(27)) then
+      Result := False;
+    if not confidential then
+      Write(c)
+    else
+      Write('*');
+    if (c >= char(32)) then
+      inputstr := inputstr + c;
+  until (c = LineEnding) or (c = char(13)) or (c = char(27));
   writeln;
-  if (inputstr = '') then  inputstr := default;
+  if (inputstr = '') then
+    inputstr := default;
 end;
 
 (*
@@ -805,16 +826,16 @@ end;
 *)
 
 function getProfilesDirList: TStringList;
-Var
-  list : TSTRINGLIST;
+var
+  list: TStringList;
 begin
   {$IFDEF WINDOWS}
   {$IFDEF WIN32}
   Result := getProfilesDirListWin;
   {$ELSE WIN32}
-  list := Tstringlist.create;
+  list := TStringList.Create;
   Result := list;
-  list.free;
+  list.Free;
   {$ENDIF WIN32}
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
@@ -834,7 +855,7 @@ begin
   Result := linIsUefi;
   {$ENDIF}
   {$IFDEF DARWIN}
-  Result := true;
+  Result := True;
   {$ENDIF}
 end;
 
@@ -844,10 +865,21 @@ begin
   Result := WinIsPE;
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
-  Result := false;
+  Result := False;
   {$ENDIF LINUX}
 end;
 
+function isGUI: boolean;
+begin
+  Result := True;
+  {$IFDEF LINUX}
+  {$IFDEF GUI}
+  Result := True;
+  {$ELSE GUI}
+  Result := False;
+  {$ENDIF GUI}
+  {$ENDIF LINUX}
+end;
 
 function strContains(const str: string; const substr: string): boolean;
 begin
@@ -880,6 +912,79 @@ end;
 procedure ShrinkFileToMB(filename: string; newsize: integer);
 var
   mylist: TStringList;
+  fs, sStream: TFileStream;
+  SplitFileNameTail, SplitFileNameBegin: string;
+  SizeofFile, newPosition: integer;
+
+begin
+  fileName := ExpandFileName(fileName);
+  SizeofFile := newsize * 1024 * 1024;
+
+  try
+    if FileExists(filename) then
+    begin
+      fs := TFileStream.Create(filename, fmOpenRead or fmShareDenyWrite);
+
+      // file size ok -> exit
+      if (fs.Size <= SizeofFile) then
+      begin
+        fs.Free;
+        exit;
+      end;
+
+      newPosition := fs.Size - SizeofFile;
+      try
+        // copy first part
+        SplitFileNameBegin := ChangeFileExt(FileName, '.begin');
+        sStream := TFileStream.Create(SplitFileNameBegin, fmCreate or fmShareExclusive);
+        try
+          sStream.CopyFrom(fs, newPosition);
+        finally
+          sStream.Free;
+        end;
+        // copy last part
+        SplitFileNameTail := ChangeFileExt(FileName, '.tail');
+        sStream := TFileStream.Create(SplitFileNameTail, fmCreate or fmShareExclusive);
+        try
+          sStream.CopyFrom(fs, SizeofFile);
+        finally
+          sStream.Free;
+        end;
+      finally
+        fs.Free;
+      end;
+      // remove first line from xxx.tail
+      mylist := TStringList.Create;
+      try
+        mylist.LoadFromFile(SplitFileNameTail);
+        mylist.Delete(0);
+        mylist.SaveToFile(SplitFileNameTail);
+      finally
+        mylist.Free;
+      end;
+      // remove from filesystem original file and SplitFileNameBegin
+      // rename xxx.tail to xxx.log
+      try
+        DeleteFile(SplitFileNameBegin);
+        DeleteFile(filename);
+        RenameFile(SplitFileNameTail, filename)
+      except
+        on E: Exception do
+          LogDatei.DependentAdd(
+            'Error in osfunc.ShrinkFileToMB renaming and deleting files: ' +
+            E.Message, LLError);
+      end;
+    end;
+  except
+    on E: Exception do
+      LogDatei.DependentAdd('Error in osfunc.ShrinkFileToMB: ' + E.Message, LLError);
+  end;
+end;
+
+(*
+procedure ShrinkFileToMB(filename: string; newsize: integer);
+var
+  mylist: TStringList;
 begin
   try
     if FileExists(filename) then
@@ -902,7 +1007,7 @@ begin
       LogDatei.DependentAdd('Error in osfunc.ShrinkFileToMB: ' + E.Message, LLError);
   end;
 end;
-
+*)
 
 procedure str2jsonstr(var str: string; var errorstr: string);
 var
@@ -981,7 +1086,7 @@ begin
       5: Result := tntverWIN2K;
       6: Result := tntverWINVISTA;
       //7: Result := tntverWINLater;
-     10: Result := tntverWINX;
+      10: Result := tntverWINX;
     end
   except
     on e: Exception do
@@ -1026,7 +1131,7 @@ type
   bytearray = array of byte;
 {$IFDEF WINDOWS}
 var
-  myHostEnt : THostEnt;
+  myHostEnt: THostEnt;
 {$ENDIF WINDOWS}
 begin
   ipName := '';
@@ -1048,6 +1153,7 @@ begin
     end;
   {$ENDIF WINDOWS}
 end;
+
 {$RANGECHECKS ON}
 
 
@@ -1158,6 +1264,7 @@ begin
   found := 0;
   Result := True;
   stopped := KillProcessbyname(ExeFileName, found);
+  {$IFDEF WINDOWS}
   if found = 0 then
   begin
     Result := True;
@@ -1177,7 +1284,29 @@ begin
         ExeFilename + '" could not be stopped, problem(s) ' + info;
     end;
   end;
+  {$ELSE WINDOWS}
+  if stopped = 0 then
+  begin
+    if found > 0 then
+    begin
+      Result := False;
+      info := IntToStr(found) + ' instance(s) of "' + ExeFilename +
+        '" could not be stopped after kill success, problem(s) ' + info;
+    end;
+
+  end
+  else
+  begin
+    if found > 0 then
+    begin
+      Result := False;
+      info := IntToStr(found) + ' instance(s) of "' + ExeFilename +
+        '" could not be stopped: kill failed, problem(s) ' + info;
+    end;
+  end;
+  {$ENDIF WINDOWS}
 end;
+
 {$ENDIF WIN64}
 
 function getProcessList: TStringList;
@@ -1646,7 +1775,7 @@ begin
           //Report := 'Process executed  + CmdLinePasStr
           Report := 'ExitCode ' + IntToStr(lpExitCode) + '    Executed process "' +
             CmdLinePasStr + '"';
-          ExitCode := lpExitCode;
+          exitCode := longint(lpExitCode);
         end;
       end;
     except
@@ -2010,7 +2139,7 @@ begin
           //Report := 'Process executed  + CmdLinePasStr
           Report := 'ExitCode ' + IntToStr(lpExitCode) + '    Executed process "' +
             CmdLinePasStr + '"';
-          ExitCode := lpExitCode;
+          exitCode := longint(lpExitCode);
         end;
       end;
     except
@@ -2049,8 +2178,8 @@ var
 
   line: string;
   filename: string;
-  paramstr: string;
-  paramlist : TXStringlist;
+  ParamStr: string;
+  paramlist: TXStringlist;
   //dir: string;
   firstsplit: integer;
   //len: DWord;
@@ -2062,10 +2191,11 @@ var
   processID: Dword;
   parentProcessID: DWord;
   info: string;
-  lpExitCode: DWORD = 0;
+  //lpExitCode: DWORD = 0;
+  lpExitCode: longint = 0;
   //  var ProcessInfo: jwawinbase.TProcessInformation;
   mypid: dword = 0;
-  ProcShowWindowFlag : TShowWindowOptions;
+  ProcShowWindowFlag: TShowWindowOptions;
   (*
   starcounter : integer;
   cpu100stars : string;
@@ -2079,7 +2209,7 @@ const
   //ReadBufferSize = 2048;
 
 begin
-  paramstr := '';
+  ParamStr := '';
   paramlist := TXStringlist.Create;
 
   // do we have a quoted file name ?
@@ -2094,7 +2224,7 @@ begin
       exit;
     end;
     filename := copy(line, 1, firstsplit - 1);
-    paramstr := copy(line, firstsplit + 1, length(line));
+    ParamStr := copy(line, firstsplit + 1, length(line));
   end
   else
   begin
@@ -2103,7 +2233,7 @@ begin
     if firstsplit > 0 then
     begin
       filename := copy(CmdLinePasStr, 1, firstsplit - 1);
-      paramstr := copy(CmdLinePasStr, firstsplit + 1, length(CmdLinePasStr));
+      ParamStr := copy(CmdLinePasStr, firstsplit + 1, length(CmdLinePasStr));
     end
     else
     begin
@@ -2112,7 +2242,7 @@ begin
     end;
   end;
 
-  stringsplitByWhiteSpace(paramstr,TStringlist(paramlist));
+  stringsplitByWhiteSpace(ParamStr, TStringList(paramlist));
   //writeln('>->->'+filename+'='+ExpandFileName(filename));
   //writeln('>->->'+paramstr);
   //writeln('>->->'+CmdLinePasStr);
@@ -2125,27 +2255,30 @@ begin
       FpcProcess.CommandLine := utf8towincp(CmdLinePasStr);
       {$ELSE WINDOWS}
       FpcProcess.CommandLine := CmdLinePasStr;
+      //FpcProcess.Executable := filename;
+      //FpcProcess.Parameters := paramlist;
       {$ENDIF WINDOWS}
       //FpcProcess.Executable := filename;
       //FpcProcess.Parameters := paramlist;
-      FpcProcess.StartupOptions := [suoUseShowWindow, suoUseSize, suoUsePosition];
+      //FpcProcess.StartupOptions := [suoUseShowWindow, suoUseSize, suoUsePosition];
       //FpcProcess.CommandLine := 'cmd.exe /c dir';
       //if WaitForReturn then
       //  FpcProcess.Options := FpcProcess.Options + [poWaitOnExit];
       case ShowWindowFlag of
-        SW_HIDE : ProcShowWindowFlag := swoHIDE;
-        SW_MINIMIZE : ProcShowWindowFlag := swoMinimize;
-        SW_MAXIMIZE : ProcShowWindowFlag := swoMaximize;
-        SW_NORMAL : ProcShowWindowFlag := swoShowNormal;   // swoNone ?
-        SW_RESTORE : ProcShowWindowFlag := swoRestore;
-        SW_SHOW : ProcShowWindowFlag := swoShow;
+        SW_HIDE: ProcShowWindowFlag := swoHIDE;
+        SW_MINIMIZE: ProcShowWindowFlag := swoMinimize;
+        SW_MAXIMIZE: ProcShowWindowFlag := swoMaximize;
+        SW_NORMAL: ProcShowWindowFlag := swoShowNormal;   // swoNone ?
+        SW_RESTORE: ProcShowWindowFlag := swoRestore;
+        SW_SHOW: ProcShowWindowFlag := swoShow;
         //SW_SHOWMAXIMIZED : ProcShowWindowFlag := swoShowMaximized;
-        SW_SHOWMINIMIZED : ProcShowWindowFlag := swoShowMinimized;
-        SW_SHOWMINNOACTIVE : ProcShowWindowFlag := swoshowMinNOActive;
-        SW_SHOWNA : ProcShowWindowFlag := swoShowNA;
-        SW_SHOWNOACTIVATE : ProcShowWindowFlag := swoShowNoActivate;
-        //SW_SHOWNORMAL : ProcShowWindowFlag := swoShowNormal;
-        else ProcShowWindowFlag := swoShow;
+        SW_SHOWMINIMIZED: ProcShowWindowFlag := swoShowMinimized;
+        SW_SHOWMINNOACTIVE: ProcShowWindowFlag := swoshowMinNOActive;
+        SW_SHOWNA: ProcShowWindowFlag := swoShowNA;
+        SW_SHOWNOACTIVATE: ProcShowWindowFlag := swoShowNoActivate;
+          //SW_SHOWNORMAL : ProcShowWindowFlag := swoShowNormal;
+        else
+          ProcShowWindowFlag := swoShow;
       end;
       FpcProcess.ShowWindow := ProcShowWindowFlag;
       FpcProcess.Execute;
@@ -2160,7 +2293,8 @@ begin
       //else
       begin
         Result := True;
-
+        logdatei.log('Started process "' + FpcProcess.Executable +
+          '" with Opt: ' + FpcProcess.Parameters.Text, LLInfo);
         desiredProcessStarted := False;
         WaitForProcessEndingLogflag := True;
         setLength(resultfilename, 400);
@@ -2201,7 +2335,26 @@ begin
               //waiting condition 0:
               //wait until a window is appearing
               if FindWindowEx(0, 0, nil, PChar(Ident)) = 0 then
-                running := True;
+              begin
+                logdatei.log('Wait for appear Window: "' + Ident +
+                  ' not found.', LLDebug);
+                if WaitSecs = 0 then
+                  running := True
+                else
+                begin //time out given
+                  if ((nowtime - starttime) < waitSecs / secsPerDay) then
+                  begin
+                    running := True;
+                  end
+                  else
+                  begin
+                    logdatei.log('Wait for appear Window "' + ident +
+                      '" stopped - time out ' + IntToStr(waitSecs) + ' sec', LLInfo);
+                  end;
+                end;
+              end
+              else
+                logdatei.log('Wait for appear Window: "' + Ident + ' found.', LLDebug);
             end
 
             else if WaitForWindowVanished and not WaitWindowStarted then
@@ -2210,16 +2363,32 @@ begin
               //we are waiting for a window that will later vanish
               //but this window did not appear yet
               if FindWindowEx(0, 0, nil, PChar(Ident)) <> 0 then
+              begin
                 WaitWindowStarted := True;
+                logdatei.log('Wait for vanish Window: "' + Ident + ' found.', LLDebug);
+              end;
 
               if not WaitWindowStarted or WaitForWindowVanished then
-                running := True;
               // in case WaitForWindowVanished we are not yet ready
               // but have to check waiting condition 3
+              if WaitSecs = 0 then
+                running := True
+              else
+              begin //time out given
+                if ((nowtime - starttime) < waitSecs / secsPerDay) then
+                begin
+                  running := True;
+                end
+                else
+                begin
+                  logdatei.log('Wait for vanish Window "' + ident +
+                    '" stopped - time out ' + IntToStr(waitSecs) + ' sec', LLInfo);
+                end;
+              end;
             end
 
             else
-{$ENDIF WINDOWS}
+           {$ENDIF WINDOWS}
             if not waitsecsAsTimeout and (WaitSecs > 0) and
               ((nowtime - starttime) < waitSecs / secsPerDay) then
             begin
@@ -2229,19 +2398,21 @@ begin
             end
 
             else
-{$IFDEF WINDOWS}
+            //{$IFDEF WINDOWS}
             if WaitForProcessEnding and not desiredProcessStarted then
             begin
               //waiting condition 3a : we wait that some other process will come into existence
               if WaitForProcessEndingLogflag then
               begin
-                logdatei.DependentAdd('Waiting for start of "' +
-                  ident + '"', LevelComplete);
+                logdatei.log('Waiting for start of "' + ident + '"', LLInfo);
                 WaitForProcessEndingLogflag := False;
               end;
-
+              {$IFDEF WINDOWS}
               desiredProcessStarted :=
                 FindFirstTask(PChar(Ident), processID, parentProcessID, info);
+              {$ELSE}
+              desiredProcessStarted := ProcessIsRunning(Ident);
+              {$ENDIF}
 
               if WaitSecs = 0 then
                 running := True
@@ -2259,7 +2430,7 @@ begin
                 end
                 else
                 begin
-                  logdatei.DependentAdd('Waiting for "' + ident +
+                  logdatei.log('Waiting for "' + ident +
                     '" stopped - time out ' + IntToStr(waitSecs) + ' sec', LLInfo);
                 end;
               end;
@@ -2269,31 +2440,50 @@ begin
             else if WaitForProcessEnding and desiredProcessStarted then
             begin
               //waiting condition 3b : now we continue waiting until the observed other process will stop
+              {$IFDEF WINDOWS}
               running :=
                 FindFirstTask(PChar(Ident), processID, parentProcessID, info);
+              {$ELSE}
+              running := ProcessIsRunning(Ident);
+              {$ENDIF}
+
 
               if not WaitForProcessEndingLogflag and running then
               begin
-                logdatei.DependentAdd('Waiting for process "' +
-                  ident + '" ending', LevelComplete);
+                logdatei.log('Waiting for process "' + ident +
+                  '" ending', LLinfo);
                 WaitForProcessEndingLogflag := True;
               end;
 
               if not running then
               begin
-                logdatei.DependentAdd('Process "' + ident + '" ended', LevelComplete);
+                logdatei.log('Process "' + ident + '" ended', LLinfo);
                 // After the process we waited for has ended, the Parent may be still alive
                 // in this case we have to wait for the end of the parent
                 {$IFDEF WINDOWS}
-                if GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode) and (lpExitCode = still_active) then
-                {$ENDIF WINDOWS}
-                {$IFDEF UNIX}
-                if FpcProcess.Running then
-                {$ENDIF LINUX}
+                if GetExitCodeProcess(FpcProcess.ProcessHandle, longword(lpExitCode)) and
+                  (lpExitCode = still_active) then
                 begin
                   running := True;
-                  WaitForProcessEnding := false;
+                  WaitForProcessEnding := False;
+                end;
+                {$ENDIF WINDOWS}
+                {$IFDEF UNIX}
+                lpExitCode := FpcProcess.ExitCode;
+                if FpcProcess.Running then
+                begin
+                  running := True;
+                  WaitForProcessEnding := False;
                 end
+                else
+                begin
+                  lpExitCode := FpcProcess.ExitCode;
+                  logdatei.log(
+                    'Process : ' + FpcProcess.Executable + ' terminated at: ' +
+                    DateTimeToStr(now) + ' exitcode is: ' +
+                    IntToStr(lpExitCode), LLInfo);
+                end;
+                {$ENDIF LINUX}
               end;
               if running then
               begin
@@ -2315,18 +2505,19 @@ begin
             //else if not FpcProcess.Running
             //else if GetExitCodeProcess(processInfo.hProcess, lpExitCode) and (lpExitCode <> still_active)
             //else if FpcProcess.ExitStatus  <> still_active
-            else if GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode) and
-              (lpExitCode <> still_active) then
-{$ENDIF WINDOWS}
-            {$IFDEF UNIX}
-              if not FpcProcess.Running then
-            {$ENDIF LINUX}
-              begin
-                // waiting condition 4 :  Process has finished;
-                //   we still have to look if WindowToVanish did vanish if this is necessary
-                logdatei.DependentAdd(
-                  'Process terminated at: ' + DateTimeToStr(now) +
-                  ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
+            //else if GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode) and
+            //  (lpExitCode <> still_active) then
+            //{$ENDIF WINDOWS}
+            //{$IFDEF UNIX}
+            else if not FpcProcess.Running then
+              // {$ENDIF UNIX}
+            begin
+              // waiting condition 4 :  Process has finished;
+              //   we still have to look if WindowToVanish did vanish if this is necessary
+              lpExitCode := FpcProcess.ExitCode;
+              logdatei.log(
+                'Process terminated at: ' + DateTimeToStr(now) +
+                ' exitcode is: ' + IntToStr(lpExitCode), LLInfo);
  (*
             end
             else if GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode) and (lpExitCode <> still_active)
@@ -2336,41 +2527,41 @@ begin
                 DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
 *)
               {$IFDEF WINDOWS}
-                if WaitForWindowVanished then
-                begin
-                  if not (FindWindowEx(0, 0, nil, PChar(Ident)) = 0) then
-                  begin
-                    running := True;
-                  end;
-                end;
-              {$ENDIF WINDOWS}
-
-              end
-
-              else if waitForReturn then
+              if WaitForWindowVanished then
               begin
-                //waiting condition 4 : Process is still active
-                if waitsecsAsTimeout and
-                  (waitSecs > 0) // we look for time out
-                  and  //time out occured
-                  ((nowtime - starttime) >= waitSecs / secsPerDay) then
-                begin
-                  running := False;
-                  logdatei.log('Error: Timeout: Waited for the end of started process"' +
-                    ' - but time out reached after ' + IntToStr(waitSecs) +
-                    ' sec.', LLError);
-                end
-                else
+                if not (FindWindowEx(0, 0, nil, PChar(Ident)) = 0) then
                 begin
                   running := True;
+                end;
+              end;
+              {$ENDIF WINDOWS}
+
+            end
+
+            else if waitForReturn then
+            begin
+              //waiting condition 4 : Process is still active
+              if waitsecsAsTimeout and
+                (waitSecs > 0) // we look for time out
+                and  //time out occured
+                ((nowtime - starttime) >= waitSecs / secsPerDay) then
+              begin
+                running := False;
+                logdatei.log('Error: Timeout: Waited for the end of started process"' +
+                  ' - but time out reached after ' + IntToStr(waitSecs) +
+                  ' sec.', LLError);
+              end
+              else
+              begin
+                running := True;
                   (*
                   {$IFDEF GUI}
                   if waitsecsAsTimeout and (WaitSecs > 10) then
                     FBatchOberflaeche.setProgress(round((waitSecs / secsPerDay)/ (nowtime - starttime) * 100));
                   {$ENDIF GUI}
                   *)
-                end;
               end;
+            end;
 
             if running then
             begin
@@ -2382,18 +2573,20 @@ begin
               *)
               ProcessMess;
               //sleep(50);
+              //sleep(1000);
               sleep(1000);
               {$IFDEF UNIX}
-              lpExitCode := FpcProcess.ExitStatus;
+              lpExitCode := FpcProcess.ExitCode;
               {$ENDIF LINUX}
               {$IFDEF WINDOWS}
-              GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode);
+              GetExitCodeProcess(FpcProcess.ProcessHandle, longword(lpExitCode));
               {$ENDIF WINDOWS}
               //GetExitCodeProcess(ProcessInfo.hProcess, lpExitCode);
               {$IFDEF GUI}
               if waitsecsAsTimeout and (WaitSecs > 5) then
               begin
-                FBatchOberflaeche.setProgress(round(((nowtime - starttime) / (waitSecs / secsPerDay))*100));
+                FBatchOberflaeche.setProgress(round(
+                  ((nowtime - starttime) / (waitSecs / secsPerDay)) * 100));
               end;
               (*
               {$IFDEF WIN32}
@@ -2406,7 +2599,7 @@ begin
               *)
               {$ENDIF GUI}
               ProcessMess;
-              logdatei.DependentAdd('Waiting for ending at ' +
+              logdatei.log('Waiting for ending at ' +
                 DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
               ProcessMess;
             end;
@@ -2815,7 +3008,7 @@ begin
 
           //exitCode := FpcProcess.ExitStatus;
           GetExitCodeProcess(ProcessInfo.hProcess, lpExitCode);
-          exitCode := lpExitCode;
+          exitCode := longint(lpExitCode);
           //Report := 'Process executed  + CmdLinePasStr
           Report := 'ExitCode ' + IntToStr(exitCode) + '    Executed process "' +
             CmdLinePasStr + '"';
@@ -2956,7 +3149,7 @@ begin
       if not gottoken then
         gottoken := OpenShellProcessToken('explorer.exe', opsiSetupAdmin_logonHandle);
       if not gottoken then
-        LogDatei.DependentAdd('Could not get token from opsiclientd or explorer',
+        LogDatei.log('Could not get token from opsiclientd or explorer',
           LLError);
       @CreateEnvironmentBlock := GetProcAddress(LoadLibrary('userenv.dll'),
         'CreateEnvironmentBlock');
@@ -2969,7 +3162,7 @@ begin
       if not CreateEnvironmentBlock(@opsiSetupAdmin_lpEnvironment,
         opsiSetupAdmin_logonHandle, False) then
       begin
-        LogDatei.DependentAdd('Could not CreateEnvironmentBlock', LLError);
+        LogDatei.log('Could not CreateEnvironmentBlock', LLError);
         opsiSetupAdmin_lpEnvironment := nil;
       end;
 
@@ -2986,7 +3179,7 @@ begin
         Result := False;
         Report := CmdLinePasStr + ' .... CreateProcessAsUser Error ' +
           IntToStr(GetLastError) + ' (' + SysErrorMessage(GetLastError) + ')';
-        LogDatei.DependentAdd(Report, LLError);
+        LogDatei.log(Report, LLError);
         CloseHandle(processInfo.hProcess);
         CloseHandle(processInfo.hThread);
       end
@@ -3066,8 +3259,8 @@ begin
               //waiting condition 3a : we wait that some other process will come into existence
               if WaitForProcessEndingLogflag then
               begin
-                logdatei.DependentAdd('Waiting for start of "' +
-                  ident + '"', LevelComplete);
+                logdatei.log('Waiting for start of "' + ident +
+                  '"', LLInfo);
                 WaitForProcessEndingLogflag := False;
               end;
 
@@ -3081,8 +3274,8 @@ begin
                 if ((nowtime - starttime) < waitSecs / secsPerDay) then
                   running := True
                 else
-                  logdatei.DependentAdd('Waiting for "' + ident +
-                    '" stopped - time out ' + IntToStr(waitSecs) + ' sec', LevelInfo);
+                  logdatei.log('Waiting for "' + ident +
+                    '" stopped - time out ' + IntToStr(waitSecs) + ' sec', LLInfo);
               end;
 
             end
@@ -3095,8 +3288,8 @@ begin
 
               if not WaitForProcessEndingLogflag and running then
               begin
-                logdatei.DependentAdd('Waiting for process "' +
-                  ident + '" ending', LevelComplete);
+                logdatei.log('Waiting for process "' + ident +
+                  '" ending', LLDebug2);
                 WaitForProcessEndingLogflag := True;
               end;
 
@@ -3128,7 +3321,7 @@ begin
             begin
               // waiting condition 4 :  Process has finished;
               //   we still have to look if WindowToVanish did vanish if this is necessary
-              logdatei.DependentAdd(
+              logdatei.log(
                 'Process terminated at: ' + DateTimeToStr(now) +
                 ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
  (*
@@ -3147,9 +3340,7 @@ begin
                   running := True;
                 end;
               end;
-
             end
-
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
@@ -3159,9 +3350,9 @@ begin
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
                 running := False;
-                logdatei.DependentAdd('Waited for the end of started process"' +
+                logdatei.log('Waited for the end of started process"' +
                   ' - but time out reached after ' + IntToStr(waitSecs) +
-                  ' sec.', LevelInfo);
+                  ' sec.', LLDebug2);
                 // try to close process
                 //if KillProcessbypid(mypid) then
                 //    logdatei.DependentAdd('Killed process with pid: '+ IntToStr(mypid), LLInfo)
@@ -3191,7 +3382,7 @@ begin
 
           //exitCode := FpcProcess.ExitStatus;
           GetExitCodeProcess(ProcessInfo.hProcess, lpExitCode);
-          exitCode := lpExitCode;
+          exitCode := longint(lpExitCode);
           //Report := 'Process executed  + CmdLinePasStr
           Report := 'ExitCode ' + IntToStr(exitCode) + '    Executed process "' +
             CmdLinePasStr + '"';
@@ -3202,8 +3393,7 @@ begin
     except
       on e: Exception do
       begin
-        LogDatei.DependentAdd('Exception in StartProcess_cp_el: ' +
-          e.message, LLError);
+        LogDatei.log('Exception in StartProcess_cp_el: ' + e.message, LLError);
         exitcode := -1;
       end;
     end;
@@ -3699,7 +3889,7 @@ begin
 
           ProcessMess;
           GetExitCodeProcess(processInfo.hProcess, lpExitCode);
-          exitCode := lpExitCode;
+          exitCode := longint(lpExitCode);
           //Report := 'Process executed  + CmdLinePasStr
           Report := 'ExitCode ' + IntToStr(exitCode) +
             '    Executed process "' + CmdLinePasStr + '"';
@@ -3838,10 +4028,10 @@ begin
   // we assume that this is a executable
   // we try it via createprocess (Tprocess)
   LogDatei.DependentAdd(
-    'Start process as invoker: '+getCommandResult('/bin/bash -c whoami') , LLInfo);
-  Result := StartProcess_cp(CmdLinePasStr, ShowWindowFlag,
-    WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
-    WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, ExitCode);
+    'Start process as invoker: ' + getCommandResult('/bin/bash -c whoami'), LLInfo);
+  Result := StartProcess_cp(CmdLinePasStr, ShowWindowFlag, WaitForReturn,
+    WaitForWindowVanished, WaitForWindowAppearing, WaitForProcessEnding,
+    waitsecsAsTimeout, Ident, WaitSecs, Report, ExitCode);
   {$ENDIF LINUX}
   {$IFDEF WIN32}
   ext := ExtractFileExt(filename);
@@ -3859,8 +4049,8 @@ begin
   else
   begin
     if ((RunAs in [traAdmin, traAdminProfile, traAdminProfileExplorer,
-      traAdminProfileImpersonateExplorer, traAdminProfileImpersonate, traLoggedOnUser]) or
-      opsiSetupAdmin_created) then
+      traAdminProfileImpersonateExplorer, traAdminProfileImpersonate,
+      traLoggedOnUser]) or opsiSetupAdmin_created) then
       if not (('system' = LowerCase(DSiGetUserName)) or opsiSetupAdmin_created) then
       begin
         RunAs := traInvoker;
@@ -3875,7 +4065,7 @@ begin
       // we start as Invoker
       // we assume that this is a executable
       // we try it via createprocess (Tprocess)
-      LogDatei.DependentAdd(
+      LogDatei.log(
         'Start process as invoker: ' + DSiGetUserName, LLInfo);
       Result := StartProcess_cp(CmdLinePasStr, ShowWindowFlag,
         WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
@@ -3909,8 +4099,8 @@ begin
          *)
 
         LogDatei.DependentAdd(
-          'Start process as LoggedOnUser: ' + usercontextDomain + '\' +
-          usercontextUser, LLInfo);
+          'Start process as LoggedOnUser: ' + usercontextDomain +
+          '\' + usercontextUser, LLInfo);
         Result := StartProcess_cp_lu(CmdLinePasStr, ShowWindowFlag,
           WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
           WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, ExitCode);
@@ -3919,7 +4109,7 @@ begin
       except
         on e: Exception do
         begin
-          LogDatei.DependentAdd('Error in wfunc: StartProcess: ' +
+          LogDatei.DependentAdd('Error in osfunc: StartProcess: ' +
             e.message, LLError);
         end;
       end;
@@ -3929,7 +4119,7 @@ begin
       // we start as Invoker
       // we assume that this is a executable
       // we try it via createprocess (Tprocess)
-      LogDatei.DependentAdd('Start process elevated', LLInfo);
+      LogDatei.log('Start process elevated ....', LLInfo);
       Result := StartProcess_cp_el(CmdLinePasStr, ShowWindowFlag,
         WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
         WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, ExitCode);
@@ -4110,8 +4300,8 @@ end;
 {$IFDEF UNIX}
 function ExitSession(ExitMode: TExitMode; var Fehler: string): boolean;
 var
-  exitcode : Integer;
-  exitcmd : string;
+  exitcode: integer;
+  exitcmd: string;
 begin
   if ExitMode = txmNoExit then
   begin
@@ -4127,20 +4317,23 @@ begin
       if LogDatei <> nil then
       begin
         LogDatei.LogSIndentLevel := 0;
-        LogDatei.DependentAdd('============  opsi-script ' + winstversionname +
-          ' is regularly rebooting. Time ' + FormatDateTime(
-          'yyyy-mm-dd  hh:mm:ss ', now) + '.', LLessential);
+        LogDatei.DependentAdd('============  opsi-script ' +
+          OpsiscriptVersionname + ' is regularly rebooting. Time ' +
+          FormatDateTime('yyyy-mm-dd  hh:mm:ss ', now) + '.', LLessential);
 
         sleep(1000);
         //LogDatei.Free;
         //LogDatei := nil;
       end;
       exitcmd := FindDefaultExecutablePath('shutdown');
-      if exitcmd = '' then exitcmd := '/sbin/shutdown';
-      if not FileExistsUTF8(exitcmd) then exitcmd := '/usr/sbin/shutdown';
-      if not FileExistsUTF8(exitcmd) then exitcmd := '/usr/bin/shutdown';
+      if exitcmd = '' then
+        exitcmd := '/sbin/shutdown';
+      if not FileExistsUTF8(exitcmd) then
+        exitcmd := '/usr/sbin/shutdown';
+      if not FileExistsUTF8(exitcmd) then
+        exitcmd := '/usr/bin/shutdown';
       exitcmd := exitcmd + ' -r +1 opsi-reboot';
-      LogDatei.log('Exit command is: '+exitcmd, LLDebug2);
+      LogDatei.log('Exit command is: ' + exitcmd, LLDebug2);
       exitcode := fpSystem(exitcmd);
       if exitcode = 0 then
       begin
@@ -4154,7 +4347,8 @@ begin
       end
       else
       begin
-        LogDatei.log('Got exitcode: '+inttostr(exitcode)+' for command'+exitcmd, LLWarning);
+        LogDatei.log('Got exitcode: ' + IntToStr(exitcode) + ' for command' + exitcmd,
+          LLWarning);
         exitcmd := '/sbin/reboot';
         exitcode := fpSystem(exitcmd);
         if exitcode = 0 then
@@ -4169,7 +4363,8 @@ begin
         end
         else
         begin
-          LogDatei.log('Got exitcode: '+inttostr(exitcode)+' for command'+exitcmd, LLWarning);
+          LogDatei.log('Got exitcode: ' + IntToStr(exitcode) + ' for command' + exitcmd,
+            LLWarning);
           exitcmd := '/sbin/shutdown -r now';
           exitcode := fpSystem(exitcmd);
           if exitcode = 0 then
@@ -4185,8 +4380,10 @@ begin
           else
           begin
             Result := False;
-            LogDatei.log('Got exitcode: '+inttostr(fpgetErrno)+' for command'+exitcmd, LLWarning);
-            Fehler := 'Error no.: '+IntToStr(fpgetErrno);
+            LogDatei.log('Got exitcode: ' + IntToStr(fpgetErrno) +
+              ' for command' + exitcmd,
+              LLWarning);
+            Fehler := 'Error no.: ' + IntToStr(fpgetErrno);
             if LogDatei <> nil then
             begin
               LogDatei.Free;
@@ -4304,15 +4501,15 @@ begin
 *)
 end;
 
-function opsiunquotestr(s1,s2 : string): string;
-// old version
-// removes found quotes even if they not at start and end
-// takes only the first char of s2 as mark (no brackets)
-// used by unquote
+function opsiunquotestr(s1, s2: string): string;
+  // old version
+  // removes found quotes even if they not at start and end
+  // takes only the first char of s2 as mark (no brackets)
+  // used by unquote
 var
-  tempchar : char;
-  tempansistr : ansistring;
-  tempansistrp : Pansichar;
+  tempchar: char;
+  tempansistr: ansistring;
+  tempansistrp: Pansichar;
 begin
   Result := '';
   if (length(s1) >= 1) and (length(s2) >= 1) then
@@ -4320,12 +4517,14 @@ begin
     tempchar := trim(s2)[1];
     tempansistr := s1;
     tempansistrp := pansichar(tempansistr);
-    Result := AnsiExtractQuotedStr(tempansistrp,tempchar);
+    Result := AnsiExtractQuotedStr(tempansistrp, tempchar);
     // s1 was not quoted then give back s1
-    if Result = '' then Result := s1;
+    if Result = '' then
+      Result := s1;
     // s1 was not quoted by s2 then give back s1
     // and (ansipos('NULL',s1)=0)
-    if (Result = NULL_STRING_VALUE) then Result := s1;
+    if (Result = NULL_STRING_VALUE) then
+      Result := s1;
   end;
 end;
 
@@ -4354,13 +4553,13 @@ end;
 
 function ExpandFileName(const FileName: string): string;
 var
-  tmp : string;
+  tmp: string;
 begin
   if FileName <> '' then
   begin
     //Result := Filename
-    tmp := opsiUnquoteStr(FileName,'"');
-    tmp := opsiUnquoteStr(tmp,'''');
+    tmp := opsiUnquoteStr(FileName, '"');
+    tmp := opsiUnquoteStr(tmp, '''');
     {$IFDEF WINDOWS}
     Result := ExpandFileNameUTF8(tmp);
     {$ENDIF WINDOWS}
@@ -4384,7 +4583,7 @@ begin
   Result := DSiIsWow64;
   {$ENDIF WIN32}
   {$IFDEF WIN64}
-  Result := true;
+  Result := True;
   {$ENDIF WIN64}
   {$IFDEF UNIX}
   Result := Is64BitSystemLin;
@@ -4399,11 +4598,12 @@ begin
   {$ENDIF WIN32}
   {$IFDEF WIN64}
   // not implemented
-  Result := false;
+  Result := False;
   {$ENDIF WIN64}
   {$IFDEF UNIX}
-  Result := false;
-  if FpGeteuid = 0 then Result := true;
+  Result := False;
+  if FpGeteuid = 0 then
+    Result := True;
   {$ENDIF LINUX}
 end;
 
@@ -4478,15 +4678,15 @@ begin
 
 end;
 
-procedure MakeBakFile(const FName: string; maxbaks : integer);
+procedure MakeBakFile(const FName: string; maxbaks: integer);
 var
   bakcounter: integer;
   problem: string = '';
   rebootWanted: boolean;
-  extension : string;
-  basename : string;
-  path : string;
-  newfilename, newbakname : string;
+  extension: string;
+  basename: string;
+  path: string;
+  newfilename, newbakname: string;
 
 begin
   path := ExtractFilePath(FName);
@@ -4495,26 +4695,30 @@ begin
   if FileExists(FName) then
   begin
     // this is old style (name.ext.num) and is here only for clean up old logs
-    for bakcounter := maxbaks -1 downto 0 do
+    for bakcounter := maxbaks - 1 downto 0 do
     begin
-      if FileExists(FName+'.'+inttostr(bakcounter)) then
+      if FileExists(FName + '.' + IntToStr(bakcounter)) then
       begin
-        newfilename := path+PathDelim + basename +'_'+inttostr(bakcounter)+extension;
-        FileCopy(FName+'.'+inttostr(bakcounter), newfilename, problem, False, rebootWanted);
-        DeleteFileUTF8(FName+'.'+inttostr(bakcounter));
+        newfilename := path + PathDelim + basename + '_' +
+          IntToStr(bakcounter) + extension;
+        FileCopy(FName + '.' + IntToStr(bakcounter), newfilename, problem,
+          False, rebootWanted);
+        DeleteFileUTF8(FName + '.' + IntToStr(bakcounter));
       end;
     end;
     // this is new style (name_num.ext)
-    for bakcounter := maxbaks -1 downto 0 do
+    for bakcounter := maxbaks - 1 downto 0 do
     begin
-      newfilename := path+PathDelim + basename +'_'+inttostr(bakcounter)+extension;
+      newfilename := path + PathDelim + basename + '_' +
+        IntToStr(bakcounter) + extension;
       if FileExists(newfilename) then
       begin
-        newbakname := path+PathDelim + basename +'_'+inttostr(bakcounter+1)+extension;
+        newbakname := path + PathDelim + basename + '_' +
+          IntToStr(bakcounter + 1) + extension;
         FileCopy(newfilename, newbakname, problem, False, rebootWanted);
       end;
     end;
-    newfilename := path+PathDelim + basename +'_'+inttostr(0)+extension;
+    newfilename := path + PathDelim + basename + '_' + IntToStr(0) + extension;
     FileCopy(FName, newfilename, problem, False, rebootWanted);
     DeleteFileUTF8(FName);
   end;
@@ -4549,8 +4753,8 @@ begin
   end;
   {$ENDIF WINDOWS}
   {$IFDEF UNIX}
-  if fpAccess (Filename,W_OK) <> 0  then
-    if 0 = FpChmod(Filename,S_IWUSR or S_IWGRP or S_IWOTH) then
+  if fpAccess(Filename, W_OK) <> 0 then
+    if 0 = FpChmod(Filename, S_IWUSR or S_IWGRP or S_IWOTH) then
       ActionInfo := 'Readonly attribute of file "' + Filename + '" eliminated'
     else
     begin
@@ -4674,8 +4878,8 @@ begin
       getMem(PLastWriteTime, sizeof(PFileTime));
       //handle := CreateFile(PChar(UTF8ToWinCP(sourcefilename)), GENERIC_READ,
       //  FILE_SHARE_READ, nil, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-      handle := CreateFileW(pSourceFilename, GENERIC_READ,
-        FILE_SHARE_READ, nil, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+      handle := CreateFileW(pSourceFilename, GENERIC_READ, FILE_SHARE_READ,
+        nil, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
       if handle = Invalid_Handle_Value then
       begin
         Problem := 'CreateFile for reading, File Error No. ' +
@@ -4702,16 +4906,16 @@ begin
 
 
       //logdatei.DependentAdd('Before copy: '+SourceFilename, LLDebug);
-      Result := windows.copyFileW(pSourceFilename, pTargetFilename, False);
+      Result := Windows.copyFileW(pSourceFilename, pTargetFilename, False);
       LastError := GetLastError;
-      logdatei.log('After copy: '+SourceFilename+ ' LastError: '+IntToStr(LastError)
-                   +' Success: '+BoolToStr(Result,true), LLDebug2);
+      logdatei.log('After copy: ' + SourceFilename + ' LastError: ' +
+        IntToStr(LastError) + ' Success: ' + BoolToStr(Result, True), LLDebug2);
 
 
       if Result then
       begin
         // setze Zeitstempel des targetfile auf den Wert der source
-        Result := setTimeForFile(pTargetFilename, plastwritetime)
+        Result := setTimeForFile(pTargetFilename, plastwritetime);
       end;
 
       if (not Result) and (LastError = 32)
@@ -4731,11 +4935,13 @@ begin
 
 
           pNewTargetFileName := PWchar(unicodestring(NewTargetFilename));
-          Result := windows.copyFileW(pSourceFilename, pNewTargetFilename, False);
+          Result := Windows.copyFileW(pSourceFilename, pNewTargetFilename, False);
 
           if not Result then
           begin
-            logdatei.log('copy of: '+SourceFilename+' to '+NewTargetFilename+' failed.', LLDebug2);
+            logdatei.log('copy of: ' + SourceFilename + ' to ' +
+              NewTargetFilename + ' failed.',
+              LLDebug2);
             LastError := GetLastError;
             problem := problem + ' Errorcode ' + IntToStr(LastError) +
               ' ("' + RemoveLineBreaks(SysErrorMessage(GetLastError)) + '")';
@@ -4766,7 +4972,9 @@ begin
 
           if Result then
           begin
-            logdatei.log('copy of: '+SourceFilename+' to '+NewTargetFilename+' done.', LLDebug2);
+            logdatei.log('copy of: ' + SourceFilename + ' to ' +
+              NewTargetFilename + ' done.',
+              LLDebug2);
             // setze Zeitstempel des targetfile auf den Wert der source
 
             Result := setTimeForFile(pNewTargetFilename, plastwritetime);
@@ -4794,10 +5002,11 @@ begin
           ' ("' + RemoveLineBreaks(SysErrorMessage(LastError)) + '")';
 
 
-     except
+    except
       on E: Exception do
       begin
-        logdatei.DependentAdd('File copy Error: source: '+SourceFilename+' target: '+TargetFilename+' error: ' + e.message, LLError);
+        logdatei.DependentAdd('File copy Error: source: ' + SourceFilename +
+          ' target: ' + TargetFilename + ' error: ' + e.message, LLError);
         //logdatei.DependentAdd('Problem: '+problem, LLError);
         Result := False;
       end;
@@ -4820,17 +5029,17 @@ function FileCopy
   (const sourcefilename, targetfilename: string; var problem: string;
   DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean): boolean;
 begin
-  result := FileCopy(sourcefilename,targetfilename,problem,
-                     DelayUntilRebootIfNeeded,RebootWanted,false);
+  Result := FileCopy(sourcefilename, targetfilename, problem,
+    DelayUntilRebootIfNeeded, RebootWanted, False);
 end;
 
 function FileCopy
   (const sourcefilename, targetfilename: string; var problem: string;
   DelayUntilRebootIfNeeded: boolean; var RebootWanted: boolean;
-  followSymlink : boolean): boolean;
+  followSymlink: boolean): boolean;
 var
-  myerrorcode : integer;
-  linktarget : string;
+  myerrorcode: integer;
+  linktarget: string;
 begin
   {$IFDEF WINDOWS}
   Result := FileCopyWin(sourcefilename, targetfilename, problem,
@@ -4840,14 +5049,15 @@ begin
   problem := '';
   try
     // remove existing files to avoid problems like: Error: 26 : Text (code segment) file busy
-    if FileExistsUTF8(targetfilename) then DeleteFileUTF8(targetfilename);
+    if FileExistsUTF8(targetfilename) then
+      DeleteFileUTF8(targetfilename);
     if (not FileIsSymlink(sourcefilename)) or followSymlink then
     begin
       if not copyFile(PChar(sourcefilename), PChar(targetfilename), True) then
       begin
         myerrorcode := fpgeterrno;
-        problem := 'Could not copy. Error: ' + IntToStr(myerrorcode)
-        + ' : '+SysErrorMessageUTF8(myerrorcode);
+        problem := 'Could not copy. Error: ' + IntToStr(myerrorcode) +
+          ' : ' + SysErrorMessageUTF8(myerrorcode);
         Result := False;
       end
       else
@@ -4856,17 +5066,17 @@ begin
     else // symlink and (not followSymlink)
     begin
       linktarget := fpReadLink(sourcefilename);
-      linktarget := CreateRelativePath(linktarget,ExtractFileDir(linktarget));
-      if 0 <> fpsymlink(Pchar(linktarget),Pchar(targetfilename)) then
-        problem := 'Could not create symlink: from '
-          +targetfilename+' to '+linktarget;
+      linktarget := CreateRelativePath(linktarget, ExtractFileDir(linktarget));
+      if 0 <> fpsymlink(PChar(linktarget), PChar(targetfilename)) then
+        problem := 'Could not create symlink: from ' + targetfilename +
+          ' to ' + linktarget;
     end;
   except
     myerrorcode := fpgeterrno;
     Result := False;
-    problem := 'Could not copy. Error: ' + IntToStr(myerrorcode)
-                + ' : '+SysErrorMessageUTF8(myerrorcode);
-    LogDatei.log(problem,LLNotice);
+    problem := 'Could not copy. Error: ' + IntToStr(myerrorcode) +
+      ' : ' + SysErrorMessageUTF8(myerrorcode);
+    LogDatei.log(problem, LLNotice);
   end;
   {$ENDIF LINUX}
 end;
@@ -4924,7 +5134,7 @@ function CheckFileExists(const FName: string; var ErrorInfo: string): boolean;
 var
   hFile: THandle = 0;
   retrycount: integer = 0;
-  widename : Widestring;
+  widename: WideString;
 
 begin
   while (not FileExists(FName)) and (retrycount < 10) do
@@ -4991,7 +5201,8 @@ begin
     begin
       try
         ForceDirectories(Dirname);
-        ErrorInfo := 'Directory ' + dirname + ' did not exist und was created';
+        //ErrorInfo := 'Directory ' + dirname + ' did not exist und was created';
+        LogDatei.log('Directory ' + dirname + ' did not exist und was created', LLInfo);
       except
         on e: Exception do
         begin
@@ -5135,6 +5346,7 @@ begin
 end;
 *)
 
+(*
 function divideAtFirst(const partialS, S: string; var part1, part2: string): boolean;
   // teilt den String S beim ersten Vorkommen des Teilstrings partialS;
   //   liefert true, wenn partialS vorkommt,
@@ -5178,7 +5390,7 @@ begin
 end;
 *)
 
-
+(*
 procedure stringsplit(const s, delimiter: string; var Result: TXStringList);
 // produziert eine Stringliste aus den Teilstrings, die zwischen den Delimiter-Strings stehen
 
@@ -5198,7 +5410,7 @@ begin
 
   Result.add(item);
 end;
-
+*)
 
 (*
 function SkipA(const partialS, S: string; var Remaining: string;
@@ -5273,6 +5485,12 @@ begin
 end;
 *)
 
+procedure stringsplit(const s, delimiter: string; var Result: TXStringList);
+// calls stringsplit from osparserhelper
+begin
+  osparserhelper.stringsplit(s, delimiter, TStringList(Result));
+end;
+
 function concatPathParts(const part1, part2: string): string;
   (* concatenates parts of a path, e.g. the main path part and the file name, observing that just path separator is set *)
 begin
@@ -5331,7 +5549,8 @@ function StringReplace1(const S, OldPattern, NewPattern: string): string;
 begin
   //Result := WideStringReplace(WideString(s), WideString(OldPattern),
   //  WideString(NewPattern), [rfReplaceAll, rfIgnoreCase]);
-  Result := sysutils.StringReplace(s,OldPattern,NewPattern, [rfReplaceAll, rfIgnoreCase]);
+  Result := SysUtils.StringReplace(s, OldPattern, NewPattern,
+    [rfReplaceAll, rfIgnoreCase]);
 end;
 
 function StringReplace(const S, OldPattern, NewPattern: string): string;
@@ -5538,8 +5757,8 @@ end;
 
 
 
-
-(* TXStringList *)
+(*
+{ TXStringList }
 
 function TXStringList.ReplaceInLine(const OldLine, SearchItem, Replaceitem: string;
   MatchCase: boolean; var NewLine: string): boolean;
@@ -5646,18 +5865,18 @@ end;
 
 procedure TXStringList.SaveToFile(const FileName: string; encodingtype: string);
 begin
-  SaveToFile(Filename, encodingtype,false);
+  SaveToFile(Filename, encodingtype, False);
 end;
 
-procedure TXStringList.SaveToFile(const FileName: string;
-                                  encodingtype: string; raise_on_error :boolean);
+procedure TXStringList.SaveToFile(const FileName: string; encodingtype: string;
+  raise_on_error: boolean);
 var
   myfile: system.TextFile;
   i: integer;
-  myfilename, usedenc : string;
+  myfilename, usedenc: string;
 
 begin
-  LogDatei.log('Save to file with encoding: '+encodingtype, LLDebug);
+  LogDatei.log('Save to file with encoding: ' + encodingtype, LLDebug);
   try
     myfilename := ExpandFileName(FileName);
     if LowerCase(encodingtype) = 'utf8' then
@@ -5665,7 +5884,7 @@ begin
       //utf-8
       AssignFile(myfile, myfilename);
       Rewrite(myfile);
-      LogDatei.log('Will save (utf8) to file: '+myfilename+ ' :', LLDebug2);
+      LogDatei.log('Will save (utf8) to file: ' + myfilename + ' :', LLDebug2);
       LogDatei.log('-----------------', LLDebug3);
       for i := 0 to Count - 1 do
       begin
@@ -5674,20 +5893,36 @@ begin
       end;
       LogDatei.log('-----------------', LLDebug3);
       CloseFile(myfile);
+      if LogDatei.UsedLogLevel >= LLDebug3 then
+      begin
+        LogDatei.log('Read file: ' + myfilename + ' :', LLDebug2);
+        LogDatei.log('-----------------', LLDebug3);
+        logdatei.includelogtail(myfilename, Count, 'utf8');
+        LogDatei.log('-----------------', LLDebug3);
+      end;
     end
     else
     begin
       AssignFile(myfile, myfilename);
       Rewrite(myfile);
-      LogDatei.log('Will save ('+encodingtype+') to file: '+myfilename+ ' :', LLDebug2);
+      LogDatei.log('Will save (' + encodingtype + ') to file: ' +
+        myfilename + ' :', LLDebug2);
       LogDatei.log('-----------------', LLDebug3);
       for i := 0 to Count - 1 do
       begin
-        writeln(myfile, reencode(strings[i],'utf8',usedenc,encodingtype));
-        LogDatei.log(reencode(strings[i],'utf8',usedenc,encodingtype), LLDebug3);
+        writeln(myfile, reencode(strings[i], 'utf8', usedenc, encodingtype));
+        LogDatei.log(reencode(strings[i], 'utf8', usedenc, encodingtype), LLDebug3);
       end;
       LogDatei.log('-----------------', LLDebug3);
       CloseFile(myfile);
+      if LogDatei.UsedLogLevel >= LLDebug3 then
+      begin
+        LogDatei.log('Read file ' + myfilename + ' with encoding: ' +
+          encodingtype, LLDebug2);
+        LogDatei.log('-----------------', LLDebug3);
+        logdatei.includelogtail(myfilename, Count, encodingtype);
+        LogDatei.log('-----------------', LLDebug3);
+      end;
     end;
   except
     on e: Exception do
@@ -5696,11 +5931,12 @@ begin
       begin
         LogS := e.message;
         LogS := 'Error: ' + myfilename +
-                ' could not be saved back - will not retry, error message: "' +
-                 LogS + '"';
+          ' could not be saved back - will not retry, error message: "' +
+          LogS + '"';
         LogDatei.log(LogS, LLError);
       end;
-      if raise_on_error then raise;
+      if raise_on_error then
+        raise;
     end;
   end;
 end;
@@ -5709,19 +5945,20 @@ end;
 
 function TXStringList.FuncSaveToFile(const FileName: string): boolean;
 begin
-  result := FuncSaveToFile(FileName,'system');
+  Result := FuncSaveToFile(FileName, 'system');
 end;
 
-function TXStringList.FuncSaveToFile(const FileName: string; encodingtype: string): boolean;
+function TXStringList.FuncSaveToFile(const FileName: string;
+  encodingtype: string): boolean;
 var
-  myfilename : string;
-  i : integer;
+  myfilename: string;
+  i: integer;
 begin
   Result := False;
   try
     myfilename := ExpandFileName(FileName);
-    SaveToFile(myfilename,encodingtype,true);
-    LogS := myfilename + ' saved back with encoding: '+encodingtype;
+    SaveToFile(myfilename, encodingtype, True);
+    LogS := myfilename + ' saved back with encoding: ' + encodingtype;
     LogDatei.log_prog(LogS, LLDebug);
     Result := True;
   except
@@ -5733,8 +5970,8 @@ begin
       LogDatei.log_prog(LogS, LLWarning);
       try
         Sleep(100);
-        SaveToFile(myfilename,encodingtype,true);
-        LogS := myfilename + ' saved back with encoding: '+encodingtype;
+        SaveToFile(myfilename, encodingtype, True);
+        LogS := myfilename + ' saved back with encoding: ' + encodingtype;
         LogDatei.log_prog(LogS, LLDebug);
         Result := True;
       except
@@ -5746,8 +5983,8 @@ begin
           LogDatei.log_prog(LogS, LLWarning);
           try
             Sleep(100);
-            SaveToFile(myfilename,encodingtype,true);
-            LogS := myfilename + ' saved back with encoding: '+encodingtype;
+            SaveToFile(myfilename, encodingtype, True);
+            LogS := myfilename + ' saved back with encoding: ' + encodingtype;
             LogDatei.log_prog(LogS, LLDebug);
             Result := True;
           except
@@ -5759,8 +5996,8 @@ begin
               LogDatei.log_prog(LogS, LLWarning);
               try
                 Sleep(100);
-                 SaveToFile(myfilename,encodingtype,true);
-                LogS := myfilename + ' saved back with encoding: '+encodingtype;
+                SaveToFile(myfilename, encodingtype, True);
+                LogS := myfilename + ' saved back with encoding: ' + encodingtype;
                 LogDatei.log_prog(LogS, LLDebug);
                 Result := True;
               except
@@ -5773,8 +6010,8 @@ begin
                   LogDatei.log_prog(LogS, LLWarning);
                   try
                     Sleep(100);
-                     SaveToFile(myfilename,encodingtype,true);
-                    LogS := myfilename + ' saved back with encoding: '+encodingtype;
+                    SaveToFile(myfilename, encodingtype, True);
+                    LogS := myfilename + ' saved back with encoding: ' + encodingtype;
                     LogDatei.log_prog(LogS, LLDebug);
                     Result := True;
                   except
@@ -5800,8 +6037,8 @@ end;
 
 
 function TXStringList.getStringValue(const keyname: string): string;
-  Var
-    i : Integer;
+var
+  i: integer;
 begin
   Result := NULL_STRING_VALUE;
   if indexOfName(keyname) <> -1 then
@@ -5809,13 +6046,13 @@ begin
     Result := trim(values[keyname])
   else
   begin
-   // let us retry with trimed keys
-   for i := 0 to Count -1 do
-   begin
-     if Names[i] <> '' then
-       if lowerCase(trim(Names[i])) = lowerCase(trim(keyname)) then
-         Result := trim(values[Names[i]]);
-   end;
+    // let us retry with trimed keys
+    for i := 0 to Count - 1 do
+    begin
+      if Names[i] <> '' then
+        if lowerCase(trim(Names[i])) = lowerCase(trim(keyname)) then
+          Result := trim(values[Names[i]]);
+    end;
   end;
 end;
 
@@ -5871,12 +6108,13 @@ end; { StringToWideString }
 
 *)
 
+(*
 procedure TXStringlist.loadFromUnicodeFile(const Filename: string; codepage: word);
 begin
   LoadFromFile(ExpandFileName(Filename));
-  Text := reencode(Text,'ucs2be');
+  Text := reencode(Text, 'ucs2be');
 end;
-
+*)
 
 (* TPatchList *)
 
@@ -6038,7 +6276,8 @@ begin
      LogS := 'Debug: Item no. ' + IntToStr (i-1)  + ' is ''' + SearchItem + '''';
      LogDatei.DependentAdd (LogS, LevelDebug);
      }
-     if (i / 1000) = 0 then  LogDatei.log('Searching in Item no: '+Inttostr(i), LLDebug2);
+    if (i / 1000) = 0 then
+      LogDatei.log('Searching in Item no: ' + IntToStr(i), LLDebug2);
   end;
 
   if found then
@@ -6175,7 +6414,8 @@ begin
       begin
         weitersuchen := False;
       end
-      else if IsEndOfLocalFunction(s) then weitersuchen := False
+      else if IsEndOfLocalFunction(s) then
+        weitersuchen := False
       else
       begin
         if (s <> '') and (s[1] <> LineIsCommentChar) then
@@ -6257,11 +6497,11 @@ var
   i: integer = 0;
   j: integer = 0;
   n: integer = 0;
-  searchstartindex : integer = 0;
+  searchstartindex: integer = 0;
   s: string = '';
   ersteZeileSuchen: boolean;
-  DefFuncFound : boolean = false;
-  EndoFuncFound : boolean = false;
+  DefFuncFound: boolean = False;
+  EndoFuncFound: boolean = False;
 
 begin
   Result := False;
@@ -6271,8 +6511,8 @@ begin
   else
     StartlineNo := i;
   if (i >= 0)      // section header existing
-      and (i + 1 <= Count - 1)
-      //the i+1-line exists - the line below the section header
+    and (i + 1 <= Count - 1)
+  //the i+1-line exists - the line below the section header
   then
   begin
     Inc(i);
@@ -6299,7 +6539,7 @@ begin
     begin // Sektionsinhalt existiert
       searchstartindex := StartlineNo;
       // if we have defFunc section headers before EndFunc should be ignored
-      searchstartindex := getFirstLineAfterEndFunc(self,searchstartindex);
+      searchstartindex := getFirstLineAfterEndFunc(self, searchstartindex);
       n := FindEndOfSectionIndex(searchstartindex);
       for j := StartlineNo to n do
       begin
@@ -6351,7 +6591,7 @@ end;
 procedure TuibPatchIniFile.SaveToFile(const Filename: string);
 var
   ActionInfo: string = '';
-  myfilename : string;
+  myfilename: string;
 begin
   myfilename := ExpandFileName(FileName);
   if FileGetWriteAccess(myfilename, ActionInfo) then
@@ -6362,7 +6602,7 @@ begin
       LogDatei.log(LogS, LevelInfo);
       LogDatei.NumberOfHints := LogDatei.NumberOfHints + 1;
     end;
-    inherited SaveToFile(myfilename,'utf8');
+    inherited SaveToFile(myfilename, 'utf8');
   end
   else
   begin
@@ -7033,7 +7273,7 @@ begin
   try
     inifilename := ExpandFileName(inifilename);
     LoadFromFile(inifilename);
-    Text:= reencode(Text, 'system');
+    Text := reencode(Text, 'system');
     filename := inifilename;
   except
   end;
@@ -7583,7 +7823,6 @@ end;
 
 
 
-
 (* TuibFileInstall *)
 
 constructor TuibFileInstall.Create;
@@ -7597,54 +7836,63 @@ begin
 end;
 
 
-function TuibFileInstall.HardLink(existingfilename, newfilename : string): boolean;
+function TuibFileInstall.HardLink(existingfilename, newfilename: string): boolean;
 var
-  exitcode : integer;
-  exist, new : Pchar;
-  {$IFDEF WINDOWS}exitbool : winbool;{$ENDIF WINDOWS}
-  deleted : boolean;
-  maxretry, retries : integer;
-  ActionInfo : string;
+  exitcode: integer;
+  exist, new: PChar;
+  {$IFDEF WINDOWS}
+  exitbool: winbool;
+{$ENDIF WINDOWS}
+  deleted: boolean;
+  maxretry, retries: integer;
+  ActionInfo: string;
 begin
-  result := false;
+  Result := False;
 
-  exist:=StrAlloc (length(existingfilename)+1);
-  new:=StrAlloc (length(newfilename)+1);
-  exist:=strpcopy(exist,existingfilename);
-  new:=strpcopy(new,newfilename);
+  exist := StrAlloc(length(existingfilename) + 1);
+  new := StrAlloc(length(newfilename) + 1);
+  exist := strpcopy(exist, existingfilename);
+  new := strpcopy(new, newfilename);
   if FileExistsUTF8(newfilename) then
   begin
     if FileGetWriteAccess(newfilename, ActionInfo) then
-      if ActionInfo <> '' then LogDatei.log(ActionInfo, LLInfo);
+      if ActionInfo <> '' then
+        LogDatei.log(ActionInfo, LLInfo);
     maxretry := 3;
     retries := 0;
     repeat
-      deleted := sysutils.DeleteFile(newfilename);
+      deleted := SysUtils.DeleteFile(newfilename);
       if deleted then
-        LogDatei.log('Existing file '+new+' was deleted',LLInfo)
+        LogDatei.log('Existing file ' + new + ' was deleted', LLInfo)
       else
-        LogDatei.log('Existing file '+new+' could not be  deleted,  Error: '+removeLineBreaks(SysErrorMessage(GetLastOSError)),LLError);
-      inc(retries);
+        LogDatei.log('Existing file ' + new + ' could not be  deleted,  Error: ' +
+          removeLineBreaks(SysErrorMessage(GetLastOSError)), LLError);
+      Inc(retries);
       Sleep(100);
       ProcessMess;
     until deleted or (retries > maxretry);
   end;
   {$IFDEF UNIX}
   exitcode := fplink(exist, new);
-  if 0 = exitcode then result := true
+  if 0 = exitcode then
+    Result := True
   else
   begin
-    result := false;
-    LogDatei.log('Could not create hard link from '+exist+' to '+new+' Error: '+SysErrorMessage(fpgeterrno),LLerror);
+    Result := False;
+    LogDatei.log('Could not create hard link from ' + exist + ' to ' +
+      new + ' Error: ' + SysErrorMessage(fpgeterrno), LLerror);
   end;
   {$ENDIF LINUX}
   {$IFDEF WIN32}
   exitbool := winCreateHardLink(new, exist, nil);
-  if exitbool then result := true
+  if exitbool then
+    Result := True
   else
   begin
-    result := false;
-    LogDatei.log('Could not create hard link from '+exist+' to '+new+' Error: '+removeLineBreaks(SysErrorMessage(GetLastError)) + ' (' + SysErrorMessage(GetLastError) + ')',LLerror);
+    Result := False;
+    LogDatei.log('Could not create hard link from ' + exist + ' to ' +
+      new + ' Error: ' + removeLineBreaks(SysErrorMessage(GetLastError)) +
+      ' (' + SysErrorMessage(GetLastError) + ')', LLerror);
   end;
   {$ENDIF WIN32}
   StrDispose(exist);
@@ -7653,49 +7901,60 @@ begin
 end;
 
 
-function TuibFileInstall.SymLink(existingfilename, newfilename : string): boolean;
+function TuibFileInstall.SymLink(existingfilename, newfilename: string): boolean;
 var
-  exitcode : integer ;
-  exist, new : Pchar;
-  existisdir : dword;
-  {$IFDEF WINDOWS}exitbool : winbool;{$ENDIF WINDOWS}
-  ActionInfo : string;
-  list1 : Tstringlist;
+  exitcode: integer;
+  exist, new: PChar;
+  existisdir: dword;
+  {$IFDEF WINDOWS}
+  exitbool: winbool;
+{$ENDIF WINDOWS}
+  ActionInfo: string;
+  list1: TStringList;
 begin
-  result := false;
+  Result := False;
   //exist:=StrAlloc (length(existingfilename)+1);
   //new:=StrAlloc (length(newfilename)+1);
-  exist:=pchar(existingfilename);
-  new:=pchar(newfilename);
+  exist := PChar(existingfilename);
+  new := PChar(newfilename);
   if FileExists(newfilename) then
   begin
     if FileGetWriteAccess(newfilename, ActionInfo) then
-      if ActionInfo <> '' then LogDatei.log(ActionInfo, LLInfo);
-    if sysutils.DeleteFile(newfilename) then
-      LogDatei.log('Existing file '+new+' was deleted',LLInfo)
+      if ActionInfo <> '' then
+        LogDatei.log(ActionInfo, LLInfo);
+    if SysUtils.DeleteFile(newfilename) then
+      LogDatei.log('Existing file ' + new + ' was deleted', LLInfo)
     else
-      LogDatei.log('Existing file '+new+' could not be  deleted,  Error: '+removeLineBreaks(SysErrorMessage(GetLastOSError)),LLError);
+      LogDatei.log('Existing file ' + new + ' could not be  deleted,  Error: ' +
+        removeLineBreaks(SysErrorMessage(GetLastOSError)), LLError);
   end;
   {$IFDEF UNIX}
   exitcode := fpsymlink(exist, new);
-  if 0 = exitcode then result := true
+  if 0 = exitcode then
+    Result := True
   else
   begin
-    result := false;
-    LogDatei.log('Could not create sym link from '+exist+' to '+new+' Error: '+SysErrorMessage(fpgeterrno),LLerror);
+    Result := False;
+    LogDatei.log('Could not create sym link from ' + exist + ' to ' +
+      new + ' Error: ' + SysErrorMessage(fpgeterrno), LLerror);
   end;
   {$ENDIF LINUX}
   {$IFDEF WIN32}
-  if DirectoryExistsUTF8(existingfilename) then existisdir := 1
-  else existisdir := 0;
+  if DirectoryExistsUTF8(existingfilename) then
+    existisdir := 1
+  else
+    existisdir := 0;
   exitbool := winCreateSymbolicLink(new, exist, existisdir);
-  if exitbool then result := true
+  if exitbool then
+    Result := True
   else
   begin
-    result := false;
-    LogDatei.log('Could not create sym link from '+exist+' to '+new+' Error: '+removeLineBreaks(SysErrorMessage(GetLastError)) + ' (' + SysErrorMessage(GetLastError) + ')',LLerror);
+    Result := False;
+    LogDatei.log('Could not create sym link from ' + exist + ' to ' +
+      new + ' Error: ' + removeLineBreaks(SysErrorMessage(GetLastError)) +
+      ' (' + SysErrorMessage(GetLastError) + ')', LLerror);
   end;
-  if result then
+  if Result then
   begin
     LogDatei.log('Reading symlink via dir to reread the cache', LLInfo);
     (*
@@ -7714,58 +7973,70 @@ begin
   //StrDispose(new);
 end;
 
-function TuibFileInstall.Rename(existingfilename, newfilename : string; var RebootWanted : boolean): boolean;
+function TuibFileInstall.Rename(existingfilename, newfilename: string;
+  var RebootWanted: boolean): boolean;
 var
-  exitcode : integer ;
+  exitcode: integer;
   {$IFDEF WINDOWS}
-  exist, new : PWchar;
+  exist, new: PWchar;
   {$ELSE WINDOWS}
-  exist, new : Pchar;
+  exist, new: PChar;
   {$ENDIF WINDOWS}
   moveflags: DWORD;
-  {$IFDEF WINDOWS}exitbool : winbool;{$ENDIF WINDOWS}
+  {$IFDEF WINDOWS}
+  exitbool: winbool;
+{$ENDIF WINDOWS}
 begin
-  result := false;
+  Result := False;
   //exist:=StrAlloc (length(existingfilename)+1);
   //new:=StrAlloc (length(newfilename)+1);
 
   {$IFDEF UNIX}
-  exist:=PChar(existingfilename);
-  new:=PChar(newfilename);
+  exist := PChar(existingfilename);
+  new := PChar(newfilename);
   exitcode := fprename(exist, new);
-  if 0 = exitcode then result := true
+  if 0 = exitcode then
+    Result := True
   else
   begin
-    result := false;
-    LogDatei.log('Could not move / rename from '+exist+' to '+new+' Error: '+SysErrorMessage(fpgeterrno),LLerror);
+    Result := False;
+    LogDatei.log('Could not move / rename from ' + exist + ' to ' +
+      new + ' Error: ' + SysErrorMessage(fpgeterrno), LLerror);
   end;
   {$ENDIF LINUX}
   {$IFDEF WINDOWS}
-  exist:=PWChar(unicodestring(existingfilename));
-  new:=PWChar(unicodestring(newfilename));
+  exist := PWChar(unicodestring(existingfilename));
+  new := PWChar(unicodestring(newfilename));
   // perhaps also MOVEFILE_WRITE_THROUGH
   moveflags := MOVEFILE_COPY_ALLOWED or MOVEFILE_REPLACE_EXISTING;
   exitbool := MoveFileExW(exist, new, moveflags);
-  if exitbool then result := true
+  if exitbool then
+    Result := True
   else
   begin
     if GetLastError = 32 then
     begin
-      LogDatei.log('Target file was in use, retry with DELAY_UNTIL_REBOOT.',LLDebug2);
-      moveflags := MOVEFILE_DELAY_UNTIL_REBOOT  or MOVEFILE_REPLACE_EXISTING;
+      LogDatei.log('Target file was in use, retry with DELAY_UNTIL_REBOOT.', LLDebug2);
+      moveflags := MOVEFILE_DELAY_UNTIL_REBOOT or MOVEFILE_REPLACE_EXISTING;
       exitbool := MoveFileExW(exist, new, moveflags);
       if exitbool then
       begin
-        result := true;
+        Result := True;
         RebootWanted := True;
-        LogDatei.log('Target file was in use, move / rename should be completed after reboot.',LLInfo);
+        LogDatei.log(
+          'Target file was in use, move / rename should be completed after reboot.',
+          LLInfo);
       end
-      else LogDatei.log('Target file was in use, retry with DELAY_UNTIL_REBOOT failed.',LLError);
+      else
+        LogDatei.log('Target file was in use, retry with DELAY_UNTIL_REBOOT failed.',
+          LLError);
     end;
-    if not result then
+    if not Result then
     begin
-      LogDatei.log('Could not rename / move from '+exist+' to '+new+' Error: '+IntToStr(GetLastError) + ' (' + removeLineBreaks(SysErrorMessage(GetLastError)) + ')',LLerror);
-    end
+      LogDatei.log('Could not rename / move from ' + exist + ' to ' +
+        new + ' Error: ' + IntToStr(GetLastError) + ' (' +
+        removeLineBreaks(SysErrorMessage(GetLastError)) + ')', LLerror);
+    end;
   end;
   {$ENDIF WINDOWS}
   //StrDispose(exist);
@@ -7773,13 +8044,16 @@ begin
 end;
 
 {$IFDEF UNIX}
-function TuibFileInstall.chmod(mode : string;const FileName: string): boolean;
+function TuibFileInstall.chmod(mode: string; const FileName: string): boolean;
 begin
-  mode := opsiUnquoteStr(mode,'"');
-  mode := opsiUnquoteStr(mode,'''');
-  if 0 = fpchmod(FileName,strToInt('&'+mode)) then result := true
-  else result := false;
+  mode := opsiUnquoteStr(mode, '"');
+  mode := opsiUnquoteStr(mode, '''');
+  if 0 = fpchmod(FileName, StrToInt('&' + mode)) then
+    Result := True
+  else
+    Result := False;
 end;
+
 {$ENDIF LINUX}
 
 
@@ -8263,6 +8537,7 @@ begin
 
   Result := InstallOK;
 end;
+
 {$ENDIF WINDOWS}
 
 {$IFDEF WINDOWS}
@@ -8294,6 +8569,7 @@ begin
   else
     Result := diffresult1;
 end;
+
 {$ENDIF WINDOWS}
 
 function TuibFileInstall.FileCheckDate
@@ -8308,8 +8584,8 @@ end;
 
 var
   {$IFDEF UNIX}
-  fstatRecordSource, fstatRecordTarget: stat ;
-  uxtime1, uxtime2 : cardinal;
+  fstatRecordSource, fstatRecordTarget: stat;
+  uxtime1, uxtime2: cardinal;
   {$ENDIF LINUX}
   fRecordSource, fRecordTarget: TSearchRec;
   diffresult: longint;
@@ -8339,28 +8615,33 @@ begin
     else
     begin
       {$IFDEF LINUX}
-      if 0 <> fpstat(Sourcefilename,fstatRecordSource) then
+      if 0 <> fpstat(Sourcefilename, fstatRecordSource) then
       begin
         Result := False;
-        LogS := 'Error: Could not stat ' + SourceFileName + ' : '+SysErrorMessage(fpgeterrno);
+        LogS := 'Error: Could not stat ' + SourceFileName + ' : ' +
+          SysErrorMessage(fpgeterrno);
         LogDatei.log(LogS, LLError);
       end
-      else uxtime1 := fstatRecordSource.mtime;
+      else
+        uxtime1 := fstatRecordSource.mtime;
 
-      if 0 <> fpstat(Targetfilename,fstatRecordTarget) then
+      if 0 <> fpstat(Targetfilename, fstatRecordTarget) then
       begin
         Result := False;
-        LogS := 'Error: Could not stat ' + TargetFileName + ' : '+SysErrorMessage(fpgeterrno);
+        LogS := 'Error: Could not stat ' + TargetFileName + ' : ' +
+          SysErrorMessage(fpgeterrno);
         LogDatei.log(LogS, LLError);
       end
-      else uxtime2 := fstatRecordTarget.mtime;
+      else
+        uxtime2 := fstatRecordTarget.mtime;
       dateTime1 := UnixToDateTime(uxtime1);
       dateTime2 := UnixToDateTime(uxtime2);
       diffresult := abs(uxtime1 - uxtime2);
-      if diffresult < 2 Then diffresult := 0;
+      if diffresult < 2 then
+        diffresult := 0;
       {$ENDIF LINUX}
       {$IFDEF DARWIN}
-       LogDatei.log('not implemented for macos', LLError);
+      LogDatei.log('not implemented for macos', LLError);
       {$ENDIF DARWIN}
 
   {$IFDEF WINDOWS}
@@ -8428,14 +8709,14 @@ begin
         LogDatei.log(LogS, LLInfo);
       end;
     end;
-    except
-     on e: exception do
-     begin
-       LogDatei.log('Exception: Error on FileCheckDate: ' + e.message,
-         LLerror);
-       Result := False;
-     end
-   end;
+  except
+    on e: Exception do
+    begin
+      LogDatei.log('Exception: Error on FileCheckDate: ' + e.message,
+        LLerror);
+      Result := False;
+    end
+  end;
 end;
 
 
@@ -8473,7 +8754,7 @@ var
     DecompressedSource: string = '';
     FName: string = '';
     SaveLogLevel: integer = 0;
-    followsymlinks : boolean = false;
+    followsymlinks: boolean = False;
 
     procedure ToCopyOrNotToCopy(const SourceName, TargetName: string);
     var
@@ -8525,7 +8806,7 @@ var
           end
           else if cpSpecify and cpFollowSymlinks = cpFollowSymlinks then
           begin
-            followsymlinks := true;
+            followsymlinks := True;
           end
           else if cpSpecify and cpDateControl = cpDateControl then
           begin
@@ -8560,8 +8841,8 @@ var
 
         if CopyShallTakePlace then
         begin
-          if FileCopy(SourceName, TargetName, problem,
-                      True, rebootWanted,followsymlinks) then
+          if FileCopy(SourceName, TargetName, problem, True,
+            rebootWanted, followsymlinks) then
           begin
             LogS := SourceName + ' copied to ' + TargetPath;
             LogDatei.DependentAdd(LogS, LevelComplete);
@@ -8638,7 +8919,7 @@ var
 
         tcmZIP:
         begin
-          rc :=  getfirstinzip(ZipFileName, packfileinfo);
+          rc := getfirstinzip(ZipFileName, packfileinfo);
 
           problem := '';
           if not CheckDriveSpaceForTarget(ExtractTempDir, packfileinfo.Size, problem)
@@ -8735,7 +9016,7 @@ var
         end;
       end;
 
-     // clean up
+      // clean up
       SaveLogLevel := LogDatei.LogLevel;
       LogDatei.LogLevel := BaseLevel;
       AllDelete(ExtractTempDir + '*.*', True, False, 0);
@@ -8743,14 +9024,16 @@ var
 
       //freemem(PExtractTempDir);
     end;
+
    {$ENDIF WIN32}
 
   begin
     Recursion_Level := Recursion_Level + 1;
     FileFoundOnThisLevel := False;
     if cpSpecify and cpFollowSymlinks = cpFollowSymlinks then
-            followsymlinks := true
-    else  followsymlinks := false;
+      followsymlinks := True
+    else
+      followsymlinks := False;
 
     // bring Source Mask to standard form
     //CompleteName := UTF8ToWinCP(SourceMask);
@@ -8762,9 +9045,11 @@ var
     SourceFilemask := ExtractFileName(CompleteName);
 
     {$IFDEF WINDOWS}
-    if SourceFilemask = '' then SourceFilemask := '*.*';
+    if SourceFilemask = '' then
+      SourceFilemask := '*.*';
     {$ELSE}
-    if (SourceFilemask = '') or (SourceFilemask = '*.*') then SourceFilemask := '*';
+    if (SourceFilemask = '') or (SourceFilemask = '*.*') then
+      SourceFilemask := '*';
     {$ENDIF WINDOWS}
 
     // bring Target Mask to standard form
@@ -8791,21 +9076,21 @@ var
     end;
 
     // starting search
-    LogDatei.DependentAdd('Search: '+SourcePath + SourceFilemask, LLDebug2);
+    LogDatei.DependentAdd('Search: ' + SourcePath + SourceFilemask, LLDebug2);
     //FindResultcode := SysUtils.FindFirst(SourcePath + SourceFilemask,
     //  faAnyfile - faDirectory - faVolumeId, SearchResult);
     {$IFDEF WINDOWS}
     FindResultcode := SysUtils.FindFirst(SourcePath + SourceFilemask,
       (faSymlink or faAnyfile) - faDirectory, SearchResult);
     {$ELSE}
-      // at Linux we have to search here also for directories because
-      // we need to find symlinks to directories (bug in returned attr)
-      if followsymlinks then
+    // at Linux we have to search here also for directories because
+    // we need to find symlinks to directories (bug in returned attr)
+    if followsymlinks then
       FindResultcode := SysUtils.FindFirst(SourcePath + SourceFilemask,
-      (faSymlink or faAnyfile) - faDirectory, SearchResult)
-      else
+        (faSymlink or faAnyfile) - faDirectory, SearchResult)
+    else
       FindResultcode := SysUtils.FindFirst(SourcePath + SourceFilemask,
-      (faSymlink or faAnyfile), SearchResult);
+        (faSymlink or faAnyfile), SearchResult);
     {$ENDIF WINDOWS}
 
     if FindResultcode = 0 then
@@ -8824,14 +9109,16 @@ var
     begin
       SourceName := SourcePath + SearchResult.Name;
       TargetName := TargetPath + SearchResult.Name;
-      LogDatei.log('Found: '+SourceName, LLDebug2);
-      LogDatei.log_prog('Found: '+SearchResult.Name + ' with attr:'+inttostr(SearchResult.Attr), LLDebug2);
+      LogDatei.log('Found: ' + SourceName, LLDebug2);
+      LogDatei.log_prog('Found: ' + SearchResult.Name + ' with attr:' +
+        IntToStr(SearchResult.Attr), LLDebug2);
 
       if (SearchResult.Attr and faDirectory <> faDirectory)
-          // and (SearchResult.Name <> '.') and (SearchResult.Name <> '..'))
-          // copy symlinks (even dirs) allways here
-          //or (SearchResult.Attr and faSymlink <> faSymlink)  //seems to to work
-          or FileIsSymlink(SourcePath+SearchResult.Name) then         // work only in Linux
+        // and (SearchResult.Name <> '.') and (SearchResult.Name <> '..'))
+        // copy symlinks (even dirs) allways here
+        //or (SearchResult.Attr and faSymlink <> faSymlink)  //seems to to work
+        or FileIsSymlink(SourcePath + SearchResult.Name) then
+        // work only in Linux
         if CopyCount.Ready then
         begin
           {$IFDEF GUI}
@@ -8861,8 +9148,9 @@ var
           end
           else
           {$ENDIF WIN32}
-            LogDatei.log_prog('copy candidate: '+SourceName + ' to: '+TargetName, LLDebug2);
-            ToCopyOrNotToCopy(SourceName, TargetName);
+            LogDatei.log_prog('copy candidate: ' + SourceName +
+              ' to: ' + TargetName, LLDebug2);
+          ToCopyOrNotToCopy(SourceName, TargetName);
 
           LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
 
@@ -8873,7 +9161,7 @@ var
     end;
 
     SysUtils.findclose(SearchResult);
-    LogDatei.log_prog('Finished Search: '+SourcePath + SourceFilemask, LLDebug);
+    LogDatei.log_prog('Finished Search: ' + SourcePath + SourceFilemask, LLDebug);
 
     if (cpSpecify and cpRecursive = cpRecursive) or
       (cpSpecify and cpCreateEmptySubdirectories = cpCreateEmptySubdirectories) then
@@ -8888,20 +9176,30 @@ var
 
       while FindResultcode = 0 do
       begin
-        LogDatei.log_prog('Found: '+SearchResult.Name + ' with attr:'+inttostr(SearchResult.Attr), LLDebug);
-        LogDatei.log_prog('Found: '+SearchResult.Name + ' is SymLink by Attr: '+BoolToStr((SearchResult.Attr and faSymlink = faSymlink),true), LLDebug);
-        LogDatei.log_prog('Found: '+SearchResult.Name + ' is SymLink by func: '+BoolToStr(FileIsSymlink(SourcePath+SearchResult.Name),true), LLDebug);
+        LogDatei.log_prog('Found: ' + SearchResult.Name + ' with attr:' +
+          IntToStr(SearchResult.Attr), LLDebug);
+        LogDatei.log_prog('Found: ' + SearchResult.Name +
+          ' is SymLink by Attr: ' + BoolToStr(
+          (SearchResult.Attr and faSymlink = faSymlink), True),
+          LLDebug);
+        LogDatei.log_prog('Found: ' + SearchResult.Name +
+          ' is SymLink by func: ' +
+          BoolToStr(FileIsSymlink(SourcePath + SearchResult.Name), True),
+          LLDebug);
         {$IFDEF UNIX}
-        LogDatei.log_prog('Found: '+SearchResult.Name + ' is SymLink by fpReadLink: '+BoolToStr((fpReadLink(SourcePath+SearchResult.Name) <> ''),true), LLDebug);
+        LogDatei.log_prog('Found: ' + SearchResult.Name +
+          ' is SymLink by fpReadLink: ' + BoolToStr(
+          (fpReadLink(SourcePath + SearchResult.Name) <> ''), True), LLDebug);
         {$ENDIF LINUX}
 
         if (SearchResult.Attr and faDirectory = faDirectory) and
-           // do not follow symlinks to directories
+          // do not follow symlinks to directories
           //(SearchResult.Attr and faSymlink <> faSymlink) and // seems not work
-           (not(FileIsSymlink(SourcePath+SearchResult.Name)) or followsymlinks) and         // work only in Linux
-           //{$IFDEF UNIX}
-           //(fpReadLink(SourcePath+SearchResult.Name) = '') and
-           //{$ENDIF LINUX}
+          (not (FileIsSymlink(SourcePath + SearchResult.Name)) or followsymlinks) and
+          // work only in Linux
+          //{$IFDEF UNIX}
+          //(fpReadLink(SourcePath+SearchResult.Name) = '') and
+          //{$ENDIF LINUX}
           (SearchResult.Name <> '.') and (SearchResult.Name <> '..') then
         begin
           DirectoryError := 0;
@@ -8933,7 +9231,9 @@ var
             try
               mkdir(TargetName);
               FileSetAttr(TargetName, SearchResult.Attr and (not faReadOnly));
-              LogDatei.log_prog('Created: '+TargetName + ' with attr:'+inttostr(SearchResult.Attr and (not faReadOnly)), LLDebug);
+              LogDatei.log_prog('Created: ' + TargetName +
+                ' with attr:' + IntToStr(SearchResult.Attr and
+                (not faReadOnly)), LLDebug);
             except
               LogS :=
                 'Error: ' + 'missing directory ' + TargetName +
@@ -8949,8 +9249,8 @@ var
           if ((cpSpecify and cpRecursive) = cpRecursive) and (DirectoryError = 0) then
           begin
             // Rekursion
-            LogDatei.DependentAdd('Recursion: '+SourcePath + SearchResult.Name +
-              PathDelim + SourceFileMask, LLDebug2);
+            LogDatei.DependentAdd('Recursion: ' + SourcePath +
+              SearchResult.Name + PathDelim + SourceFileMask, LLDebug2);
             AllCopyRecursive
             (Recursion_Level, SourcePath + SearchResult.Name +
               PathDelim + SourceFileMask,
@@ -9039,8 +9339,8 @@ begin
   except
     on e: Exception do
     begin
-      LogDatei.log('Error: "' + exdirname +
-        '" is not a valid Directoryname; "' + e.Message + '"', LLError);
+      LogDatei.log('Error: "' + exdirname + '" is not a valid Directoryname; "' +
+        e.Message + '"', LLError);
     end;
   end;
 
@@ -9070,14 +9370,14 @@ function TuibFileInstall.AllDelete
   (const Filename: string; recursive, ignoreReadOnly: boolean;
   daysBack: integer): boolean;
 var
-  RebootWanted:boolean;
+  RebootWanted: boolean;
 begin
   Result := AllDelete(Filename, recursive, ignoreReadOnly, daysBack, True, RebootWanted);
 end;
 
 function TuibFileInstall.AllDelete
   (const Filename: string; recursive, ignoreReadOnly: boolean;
-  daysBack: integer; search4file: boolean; var RebootWanted:boolean): boolean;
+  daysBack: integer; search4file: boolean; var RebootWanted: boolean): boolean;
 
 var
   CompleteName: string = '';
@@ -9086,12 +9386,15 @@ var
   FileMask: string = '';
   DeleteDeeperDir, DeleteStartDir: boolean;
   {$IFDEF WINDOWS}
-  exist, new : PWchar;
+  exist, new: PWchar;
   {$ELSE WINDOWS}
-  exist, new : Pchar;
+  exist, new: PChar;
   {$ENDIF WINDOWS}
   moveflags: DWORD;
-  {$IFDEF WINDOWS}exitbool : winbool;{$ENDIF WINDOWS}
+  {$IFDEF WINDOWS}
+  exitbool: winbool;
+
+{$ENDIF WINDOWS}
 
 
 
@@ -9109,11 +9412,10 @@ var
     ddiff: integer = 0;
     errorno: integer = 0;
 
-   procedure myfiledelete(filename: string);
-  begin
+    procedure myfiledelete(filename: string);
+    begin
 
-  end;
-
+    end;
 
   begin
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
@@ -9126,17 +9428,18 @@ var
     LogS := 'Search "' + OrigPath + '"';
     LogDatei.log(LogS, LLInfo);
 
-      // start with the sub directories, and go with the recursion deeper and delete the lowest level first
+    // start with the sub directories, and go with the recursion deeper and delete the lowest level first
     if recursive then
     begin
       {$IFDEF WINDOWS}
-      FindResultcode := FindFirst(OrigPath + '*.*', faAnyfile , SearchResult);
+      FindResultcode := FindFirst(OrigPath + '*.*', faAnyfile, SearchResult);
       {$ELSE WINDOWS}
-      FindResultcode := FindFirst(OrigPath + '*', faAnyfile , SearchResult);
+      FindResultcode := FindFirst(OrigPath + '*', faAnyfile, SearchResult);
       {$ENDIF WINDOWS}
       while FindResultcode = 0 do
       begin
-        LogDatei.log_prog('Found: '+SearchResult.Name + ' with attr: '+inttostr(SearchResult.Attr), LLDebug2);
+        LogDatei.log_prog('Found: ' + SearchResult.Name + ' with attr: ' +
+          IntToStr(SearchResult.Attr), LLDebug2);
         if (SearchResult.Attr and faDirectory = faDirectory) and
           (SearchResult.Name <> '.') and (SearchResult.Name <> '..') then
           ExecDelete
@@ -9153,14 +9456,17 @@ var
 
     // now delete in the base directory
     {$IFDEF WINDOWS}
-    if Filemask = '' then Filemask := '*.*';
+    if Filemask = '' then
+      Filemask := '*.*';
     {$ELSE}
-    if (Filemask = '') or (Filemask = '*.*') then Filemask := '*';
+    if (Filemask = '') or (Filemask = '*.*') then
+      Filemask := '*';
     {$ENDIF WINDOWS}
-    LogS := 'Search "' + OrigPath + Filemask+'"';
+    LogS := 'Search "' + OrigPath + Filemask + '"';
     LogDatei.log(LogS, LLInfo);
 
-    FindResultcode := FindFirst(OrigPath + Filemask, faAnyFile - faDirectory, SearchResult);
+    FindResultcode := FindFirst(OrigPath + Filemask, faAnyFile -
+      faDirectory, SearchResult);
 
     while FindResultcode = 0 do
     begin
@@ -9219,21 +9525,27 @@ var
           {$IFDEF WINDOWS}
           if GetLastError = 32 then
           begin
-            LogDatei.log('Target file was in use, retry with DELAY_UNTIL_REBOOT.',LLDebug2);
-            exist:=PWChar(unicodestring(Filename));
+            LogDatei.log('Target file was in use, retry with DELAY_UNTIL_REBOOT.',
+              LLDebug2);
+            exist := PWChar(unicodestring(Filename));
             moveflags := MOVEFILE_DELAY_UNTIL_REBOOT;
             exitbool := MoveFileExW(exist, nil, moveflags);
             if exitbool then
             begin
-              result := true;
+              Result := True;
               RebootWanted := True;
-              LogDatei.log('Target file was in use, move / rename should be completed after reboot.',LLInfo);
+              LogDatei.log(
+                'Target file was in use, move / rename should be completed after reboot.',
+                LLInfo);
             end
-            else LogDatei.log('Target file was in use, retry with DELAY_UNTIL_REBOOT failed.',LLError);
+            else
+              LogDatei.log(
+                'Target file was in use, retry with DELAY_UNTIL_REBOOT failed.',
+                LLError);
           end
           else
           {$ENDIF WINDOWS}
-          LogDatei.log('Warning: The file could not be deleted', LLWarning);
+            LogDatei.log('Warning: The file could not be deleted', LLWarning);
         end;
       end;
 
@@ -9258,7 +9570,7 @@ var
       begin
         {$IFDEF UNIX}
         LogS := 'Warning: "' + 'Directory ' + OrigPath +
-          '" cannot be deleted, error ' + SysErrorMessage(fpgeterrno) ;
+          '" cannot be deleted, error ' + SysErrorMessage(fpgeterrno);
         {$ENDIF LINUX}
         {$IFDEF WINDOWS}
         errorNo := GetLastError;
@@ -9314,19 +9626,17 @@ begin
     DeleteDeeperDir := True;
   if Filemask = '' then
     DeleteStartDir := True;
-  if (Filemask = '*.*')
-      or (Filemask = '*')
-      or (ExtractFileNameOnly(Filemask) = '*')
-      or (ExtractFileExt(Filemask) = '*') then
+  if (Filemask = '*.*') or (Filemask = '*') or
+    (ExtractFileNameOnly(Filemask) = '*') or (ExtractFileExt(Filemask) = '*') then
     testname := ExtractFilePath(CompleteName)
-  else testname := CompleteName;
+  else
+    testname := CompleteName;
 
   // Start
   if not search4file then
   begin
     // new del syntax: "del -s c:\not-existing" will do nothing (if not existing)
-    if (not FileExists(testname)) and
-      (not DirectoryExists(testname)) then
+    if (not FileExists(testname)) and (not DirectoryExists(testname)) then
     begin
       //does not exist
       LogS := 'Notice: ' + 'File or Directory ' + CompleteName +
@@ -9353,29 +9663,35 @@ begin
           {$IFDEF WINDOWS}
           if GetLastError = 32 then
           begin
-            LogDatei.log('Target file was in use, retry with DELAY_UNTIL_REBOOT.',LLDebug2);
-            exist:=PWChar(unicodestring(Filename));
+            LogDatei.log('Target file was in use, retry with DELAY_UNTIL_REBOOT.',
+              LLDebug2);
+            exist := PWChar(unicodestring(Filename));
             moveflags := MOVEFILE_DELAY_UNTIL_REBOOT;
             exitbool := MoveFileExW(exist, nil, moveflags);
             if exitbool then
             begin
-              result := true;
+              Result := True;
               RebootWanted := True;
-              LogDatei.log('Target file was in use, move / rename should be completed after reboot.',LLInfo);
+              LogDatei.log(
+                'Target file was in use, move / rename should be completed after reboot.',
+                LLInfo);
             end
-            else LogDatei.log('Target file was in use, retry with DELAY_UNTIL_REBOOT failed.',LLError);
+            else
+              LogDatei.log(
+                'Target file was in use, retry with DELAY_UNTIL_REBOOT failed.',
+                LLError);
           end
           else
           {$ENDIF WINDOWS}
-          LogS := 'Warning: The file could not be deleted';
+            LogS := 'Warning: The file could not be deleted';
           LogDatei.log(LogS, LLWarning);
           (*
         LogS := 'Notice: ' + 'Directory ' + ExtractFilePath(CompleteName) +
           ' does not exist, nothing deleted';
         LogDatei.DependentAdd(LogS, LLInfo);
         *)
+        end;
       end;
-    end;
     end;
   end
   else // old delete syntax: "delete -s c:\not-existing" will scan the harddisk for "not-existing"
@@ -9453,9 +9769,11 @@ var
       SourcePath := SourcePath + PathDelim;
     SourceFilemask := ExtractFileName(CompleteName);
     {$IFDEF WINDOWS}
-    if SourceFilemask = '' then SourceFilemask := '*.*';
+    if SourceFilemask = '' then
+      SourceFilemask := '*.*';
     {$ELSE}
-    if (SourceFilemask = '') or (SourceFilemask = '*.*') then SourceFilemask := '*';
+    if (SourceFilemask = '') or (SourceFilemask = '*.*') then
+      SourceFilemask := '*';
     {$ENDIF WINDOWS}
 
 
@@ -9669,6 +9987,7 @@ begin
   LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 1;
 
 end;
+
 {$ENDIF WINDOWS}
 
 (* Hilfsfunktionen *)
@@ -9899,14 +10218,14 @@ function TuibShellLinks.MakeShellLink
   iconPath: string;
   const icon_index: integer): boolean;
 begin
-  result := MakeShellLink(description, thePath, commandline_arguments,
-                          working_directory,iconPath,icon_index,0);
+  Result := MakeShellLink(description, thePath, commandline_arguments,
+    working_directory, iconPath, icon_index, 0);
 end;
 
 function TuibShellLinks.MakeShellLink
   (const description, thePath, commandline_arguments, working_directory,
   iconPath: string;
-  const icon_index: integer; shortcut : word): boolean;
+  const icon_index: integer; shortcut: word): boolean;
 
 const
   IID_IPersistFile: TGUID = (D1: $10B; D2: 0; D3: 0;
@@ -9916,8 +10235,8 @@ var
   ShellLink: IShellLinkW;
   LinkFile: IPersistFile;
   widestr: PWideChar;
-  widefilename : widestring;
-  unicodefilename : unicodestring;
+  widefilename: WideString;
+  unicodefilename: unicodestring;
   Filename: string = '';
   Filename_system: string = '';
   winresult: HRESULT;
@@ -9934,7 +10253,7 @@ begin
     LogS := 'Error: ShellLink Interface could not be created.'
   else
   begin
-    LogDatei.log('try to set folderlink: '+thePath+' - '+Description,LLDebug2);
+    LogDatei.log('try to set folderlink: ' + thePath + ' - ' + Description, LLDebug2);
     ShellLink.SetPath(PWchar(unicodestring(thePath)));
     ShellLink.SetDescription(PWchar(unicodestring(Description)));
     ShellLink.SetArguments(PWchar(unicodestring(commandline_arguments)));
@@ -9943,7 +10262,7 @@ begin
     if shortcut > 0 then
     begin
       ShellLink.SetHotkey(shortcut);
-      LogDatei.log('try to set shortcut: '+IntToStr(shortcut),LLDebug2);
+      LogDatei.log('try to set shortcut: ' + IntToStr(shortcut), LLDebug2);
     end;
 
     (*
@@ -9963,7 +10282,7 @@ begin
       try
         FileName := Description + '.LNK';
         FileName := MyFolderPath + PathDelim + FileName;
-        LogDatei.log('Check for folderlink: '+Filename,LLDebug2);
+        LogDatei.log('Check for folderlink: ' + Filename, LLDebug2);
         if FileExists(Filename) then
           LinkExisted := True
         else
@@ -9979,11 +10298,15 @@ begin
         if not (winresult = s_ok) then
         begin
           LogS := 'Error: LinkFile.Save failed.';
-          logdatei.log('Error: Creation of folderlink: '+FileName+' failed.',LLError);
-          logdatei.log('Error: Creation of folderlink: '+widestr+' failed.',LLError);
-          logdatei.log('Error: Creation of folderlink: '+unicodefilename+' failed.',LLError);
+          logdatei.log('Error: Creation of folderlink: ' + FileName +
+            ' failed.', LLError);
+          logdatei.log('Error: Creation of folderlink: ' + widestr +
+            ' failed.', LLError);
+          logdatei.log('Error: Creation of folderlink: ' + unicodefilename +
+            ' failed.', LLError);
         end
-        else  Result := True;
+        else
+          Result := True;
       finally
         FreeMem(widestr);
       end;
@@ -10089,7 +10412,7 @@ function TuibShellLinks.DeleteShellFolder
   (const SystemFolder: integer; const foldername: string): boolean;
 
 var
-  FolderPath0: Widestring = '';
+  FolderPath0: WideString = '';
   FolderPath: string = '';
   pidl: PItemIdList;
 
@@ -10134,8 +10457,8 @@ begin
     end;
   end;
 end;
+
 {$ENDIF WINDOWS}
 
 
 end.
-

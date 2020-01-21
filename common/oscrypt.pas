@@ -28,17 +28,17 @@ uses
 type
   bytearray = array[0..255] of byte;
 
-function encryptStringBlow(KeyStr, data: string): string;
-function decryptStringBlow(KeyStr, data: string): string;
-procedure transformHex (const hexstring: string; var hexarray: bytearray);
+function encryptStringBlow(KeyStr, Data: string): string;
+function decryptStringBlow(KeyStr, Data: string): string;
+procedure transformHex(const hexstring: string; var hexarray: bytearray);
 function decrypt_hex_blow(hexkey, hexpass: string): string;
 function encrypt_hex_blow(hexkey, hexpass: string): string;
 function DecryptBlowfish(const myencrypted, mykey: string): string;
-function md5fromFile(filename : string) : string;
+function md5fromFile(filename: string): string;
 
 implementation
 
-procedure transformHex (const hexstring: string; var hexarray: bytearray);
+procedure transformHex(const hexstring: string; var hexarray: bytearray);
 var
   section: string;
   thesize: integer;
@@ -141,64 +141,65 @@ begin
 end;
 
 // dcpcrypt/Docs/Ciphers.html
-function encryptStringBlow(KeyStr: string; Data: string) : string;
- var
-   Cipher: TDCP_blowfish;
- begin
-   Cipher:= TDCP_blowfish.Create(nil);
-   Cipher.InitStr(KeyStr,TDCP_sha1);         // initialize the cipher with a hash of the passphrase
-   data := Cipher.EncryptString(Data);
-   Cipher.Burn;
-   Cipher.Free;
-   result := data;
- end;
+function encryptStringBlow(KeyStr: string; Data: string): string;
+var
+  Cipher: TDCP_blowfish;
+begin
+  Cipher := TDCP_blowfish.Create(nil);
+  Cipher.InitStr(KeyStr, TDCP_sha1);
+  // initialize the cipher with a hash of the passphrase
+  Data := Cipher.EncryptString(Data);
+  Cipher.Burn;
+  Cipher.Free;
+  Result := Data;
+end;
 
 
-function decryptStringBlow(KeyStr: string; Data: string) : string;
- var
-   Cipher: TDCP_blowfish;
- begin
-   Cipher:= TDCP_blowfish.Create(nil);
-   Cipher.InitStr(KeyStr,TDCP_sha1);         // initialize the cipher with a hash of the passphrase
-   data := Cipher.DecryptString(Data);
-   Cipher.Burn;
-   Cipher.Free;
-   result := data;
- end;
+function decryptStringBlow(KeyStr: string; Data: string): string;
+var
+  Cipher: TDCP_blowfish;
+begin
+  Cipher := TDCP_blowfish.Create(nil);
+  Cipher.InitStr(KeyStr, TDCP_sha1);
+  // initialize the cipher with a hash of the passphrase
+  Data := Cipher.DecryptString(Data);
+  Cipher.Burn;
+  Cipher.Free;
+  Result := Data;
+end;
 
 // from dcpcrypt/Docs/Hashes.html#Example1
-function md5fromFile(filename : string) : string;
- var
-   Hash: TDCP_md5;
-   //Digest: array[0..19] of byte;  // RipeMD-160 produces a 160bit digest (20bytes)
-   Digest: array[0..15] of byte;  // MD5 produces a 128bit digest (16bytes)
-   Source: TFileStream;
-   i: integer;
-   s: string;
- begin
+function md5fromFile(filename: string): string;
+var
+  Hash: TDCP_md5;
+  //Digest: array[0..19] of byte;  // RipeMD-160 produces a 160bit digest (20bytes)
+  Digest: array[0..15] of byte;  // MD5 produces a 128bit digest (16bytes)
+  Source: TFileStream;
+  i: integer;
+  s: string;
+begin
    {$RANGECHECKS OFF}
-   result := '';
-   Source:= nil;
-   try
-     Source:= TFileStream.Create(filename,fmOpenRead);  // open the file specified by Edit1
-   except
-     //MessageDlg('Unable to open file',mtError,[mbOK],0);
-   end;
-   if Source <> nil then
-   begin
-     Hash:= TDCP_md5.Create(nil);          // create the hash
-     Hash.Init;                                   // initialize it
-     Hash.UpdateStream(Source,Source.Size);       // hash the stream contents
-     Hash.Final(Digest);                          // produce the digest
-     Source.Free;
-     s:= '';
-     for i:= 0 to 19 do
-       s:= s + IntToHex(Digest[i],2);
-     result := s;                              // return the digest
-   end;
+  Result := '';
+  Source := nil;
+  try
+    Source := TFileStream.Create(filename, fmOpenRead);
+    // open the file specified by Edit1
+  except
+    //MessageDlg('Unable to open file',mtError,[mbOK],0);
+  end;
+  if Source <> nil then
+  begin
+    Hash := TDCP_md5.Create(nil);          // create the hash
+    Hash.Init;                                   // initialize it
+    Hash.UpdateStream(Source, Source.Size);       // hash the stream contents
+    Hash.Final(Digest);                          // produce the digest
+    Source.Free;
+    s := '';
+    for i := 0 to 19 do
+      s := s + IntToHex(Digest[i], 2);
+    Result := s;                              // return the digest
+  end;
    {$RANGECHECKS ON}
- end;
+end;
 
 end.
-
-

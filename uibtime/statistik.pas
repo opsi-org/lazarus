@@ -104,6 +104,7 @@ uses uibdata, work_description;
 procedure TFStatistik.BtnStundenClick(Sender: TObject);
 begin
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   ///DataModule1.Query4Result.databasename :='uibtime';
@@ -123,14 +124,16 @@ begin
     DataModule1.Query4Result.sql.Add('group by userid');
   if (pos('Alle', combobox1.Text) = 0) then
     DataModule1.Query4Result.parambyname('uid').AsString := uid;
-  DataModule1.Query4Result.parambyname('start').AsDateTime := ScanDateTime('dd.mm.yyyy',edit1.Text);
-  DataModule1.Query4Result.parambyname('stop').AsDateTime := ScanDateTime('dd.mm.yyyy',edit2.Text);
+  DataModule1.Query4Result.parambyname('start').AsDateTime :=
+    ScanDateTime('dd.mm.yyyy', edit1.Text);
+  DataModule1.Query4Result.parambyname('stop').AsDateTime :=
+    ScanDateTime('dd.mm.yyyy', edit2.Text);
   //DataModule1.Query4Result.parambyname('start').AsString := edit1.Text;
   //DataModule1.Query4Result.parambyname('stop').asstring := edit2.text;
-  DataModule1.Query4Result.open;
+  DataModule1.Query4Result.Open;
   //Fresult.DataSource1.DataSet := DataModule1.Query4Result;
-  FResult.Edit1.Text := 'Summe h von ' + Edit1.Text + ' bis (excl.)'
-    + Edit2.Text + ' für ' + ComboBox1.Text;
+  FResult.Edit1.Text := 'Summe h von ' + Edit1.Text + ' bis (excl.)' +
+    Edit2.Text + ' für ' + ComboBox1.Text;
   Fresult.showmodal();
   Fresult.Free;
 end;
@@ -149,16 +152,21 @@ begin
   combobox1.Text := uid;
   edit1.Text := '01.01.2003';
   edit2.Text := datetostr(date);
+  {$IFDEF WINDOWS}
+  ComboBoxAktevent.Style:= csDropDown;
+  {$ElSE WINDOWS}
+  ComboBoxAktevent.Style:= csSimple;
+  {$ENDIF WINDOWS}
 end;
 
 procedure TFStatistik.Edit1Exit(Sender: TObject);
 begin
-  edit1.Text := datetostr(ScanDateTime('dd.mm.yyyy',edit1.Text));
+  edit1.Text := datetostr(ScanDateTime('dd.mm.yyyy', edit1.Text));
 end;
 
 procedure TFStatistik.Edit2Exit(Sender: TObject);
 begin
-  edit2.Text := datetostr(ScanDateTime('dd.mm.yyyy',edit2.Text));
+  edit2.Text := datetostr(ScanDateTime('dd.mm.yyyy', edit2.Text));
 end;
 
 procedure TFStatistik.BtnSollStundenClick(Sender: TObject);
@@ -166,6 +174,7 @@ var
   year, month, day: word;
 begin
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   ///DataModule1.Query4Result.databasename :='uibtime';
@@ -186,17 +195,17 @@ begin
     DataModule1.Query4Result.sql.Add('group by userid');
   if (pos('Alle', combobox1.Text) = 0) then
     DataModule1.Query4Result.parambyname('uid').AsString := combobox1.Text;
-  decodedate(ScanDateTime('dd.mm.yyyy',edit1.Text), year, month, day);
+  decodedate(ScanDateTime('dd.mm.yyyy', edit1.Text), year, month, day);
   DataModule1.Query4Result.parambyname('starty').AsInteger := year;
   DataModule1.Query4Result.parambyname('startm').AsInteger := month;
-  decodedate(ScanDateTime('dd.mm.yyyy',edit2.Text), year, month, day);
+  decodedate(ScanDateTime('dd.mm.yyyy', edit2.Text), year, month, day);
   DataModule1.Query4Result.parambyname('stopy').AsInteger := year;
   DataModule1.Query4Result.parambyname('stopm').AsInteger := month;
   DataModule1.Query4Result.ReadOnly := True;
   DataModule1.Query4Result.Open;
   //Fresult.DataSource1.DataSet := DataModule1.Query4Result;
-  FResult.Edit1.Text := 'Sum Soll-h von ' + Edit1.Text + ' bis (excl.)'
-    + Edit2.Text + ' für ' + ComboBox1.Text;
+  FResult.Edit1.Text := 'Sum Soll-h von ' + Edit1.Text + ' bis (excl.)' +
+    Edit2.Text + ' für ' + ComboBox1.Text;
   Fresult.showmodal();
   Fresult.Free;
 end;
@@ -206,6 +215,7 @@ var
   year, month, day: word;
 begin
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   ///DataModule1.Query4Result.databasename :='uibtime';
@@ -213,7 +223,8 @@ begin
   DataModule1.Query4Result.sql.Add('select');
   (* if not (pos('Alle',combobox1.Text) <>0) then*)
   DataModule1.Query4Result.sql.Add(' userid,');
-  DataModule1.Query4Result.sql.Add('(sum(stunden) - (select sum(stunden) from uibevent ');
+  DataModule1.Query4Result.sql.Add(
+    '(sum(stunden) - (select sum(stunden) from uibevent ');
   (* if not (pos('Alle',combobox1.Text) <>0) then*)
   DataModule1.Query4Result.sql.Add('where (userid = :uid) and');
   DataModule1.Query4Result.sql.Add('(starttime >= :start) and');
@@ -232,21 +243,23 @@ begin
   DataModule1.Query4Result.sql.Add('group by userid');*)
   (* if not (pos('Alle',combobox1.Text) <>0) then*)
   DataModule1.Query4Result.parambyname('uid').AsString := uid;
-  decodedate(ScanDateTime('dd.mm.yyyy',edit1.Text), year, month, day);
+  decodedate(ScanDateTime('dd.mm.yyyy', edit1.Text), year, month, day);
   DataModule1.Query4Result.parambyname('starty').AsInteger := year;
   DataModule1.Query4Result.parambyname('startm').AsInteger := month;
-  decodedate(ScanDateTime('dd.mm.yyyy',edit2.Text), year, month, day);
+  decodedate(ScanDateTime('dd.mm.yyyy', edit2.Text), year, month, day);
   DataModule1.Query4Result.parambyname('stopy').AsInteger := year;
   DataModule1.Query4Result.parambyname('stopm').AsInteger := month;
-  DataModule1.Query4Result.parambyname('start').AsDateTime := ScanDateTime('dd.mm.yyyy',edit1.Text);
-  DataModule1.Query4Result.parambyname('stop').AsDateTime := ScanDateTime('dd.mm.yyyy',edit2.Text);
+  DataModule1.Query4Result.parambyname('start').AsDateTime :=
+    ScanDateTime('dd.mm.yyyy', edit1.Text);
+  DataModule1.Query4Result.parambyname('stop').AsDateTime :=
+    ScanDateTime('dd.mm.yyyy', edit2.Text);
   //DataModule1.Query4Result.parambyname('start').AsString := edit1.Text;
   //DataModule1.Query4Result.parambyname('stop').AsString := edit2.Text;
   DataModule1.Query4Result.ReadOnly := True;
   DataModule1.Query4Result.Open;
   //Fresult.DataSource1.DataSet := DataModule1.Query4Result;
-  FResult.Edit1.Text := 'Fehlstunden h von ' + Edit1.Text + ' bis (excl.)'
-    + Edit2.Text + ' für ' + ComboBox1.Text;
+  FResult.Edit1.Text := 'Fehlstunden h von ' + Edit1.Text + ' bis (excl.)' +
+    Edit2.Text + ' für ' + ComboBox1.Text;
   Fresult.showmodal();
   Fresult.Free;
 end;
@@ -256,6 +269,7 @@ var
   fc: integer;
 begin
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   ///DataModule1.Query4Result.databasename :='uibtime';
@@ -277,8 +291,10 @@ begin
     DataModule1.Query4Result.sql.Add(',userid');
   if (pos('Alle', combobox1.Text) = 0) then
     DataModule1.Query4Result.parambyname('uid').AsString := combobox1.Text;
-  DataModule1.Query4Result.parambyname('start').AsDateTime := ScanDateTime('dd.mm.yyyy',edit1.Text);
-  DataModule1.Query4Result.parambyname('stop').AsDateTime := ScanDateTime('dd.mm.yyyy',edit2.Text);
+  DataModule1.Query4Result.parambyname('start').AsDateTime :=
+    ScanDateTime('dd.mm.yyyy', edit1.Text);
+  DataModule1.Query4Result.parambyname('stop').AsDateTime :=
+    ScanDateTime('dd.mm.yyyy', edit2.Text);
   //DataModule1.Query4Result.parambyname('start').AsString := edit1.Text;
   //DataModule1.Query4Result.parambyname('stop').AsString := edit2.Text;
   DataModule1.Query4Result.ReadOnly := True;
@@ -286,8 +302,8 @@ begin
   for fc := 0 to DataModule1.Query4Result.Fieldcount - 1 do
     DataModule1.Query4Result.Fields[fc].Visible := True;
   //Fresult.DataSource1.DataSet := DataModule1.Query4Result;
-  FResult.Edit1.Text := 'Art h von ' + Edit1.Text + ' bis (excl.)'
-    + Edit2.Text + ' für ' + ComboBox1.Text;
+  FResult.Edit1.Text := 'Art h von ' + Edit1.Text + ' bis (excl.)' +
+    Edit2.Text + ' für ' + ComboBox1.Text;
   Fresult.showmodal();
   Fresult.Free;
 end;
@@ -301,7 +317,7 @@ begin
     DataModule1.Query4Result.Close;
   ///DataModule1.Query4Result.databasename :='uibtime';
   DataModule1.Query4Result.SQL.Clear;
-  DataModule1.Query4Result.sql.Add('select event from uibaktevent');
+  DataModule1.Query4Result.sql.Add('select event from uibaktevent order by event');
   DataModule1.Query4Result.ReadOnly := True;
   DataModule1.Query4Result.Open;
   ComboBoxAktevent.Items.Clear;
@@ -310,6 +326,7 @@ begin
     ComboBoxAktevent.Items.Add(DataModule1.Query4Result.FieldByName('event').AsString);
     DataModule1.Query4Result.Next;
   end;
+  BtnLastMonthClick(Sender);
 end;
 
 procedure TFStatistik.BtnTageClick(Sender: TObject);
@@ -317,6 +334,7 @@ procedure TFStatistik.BtnTageClick(Sender: TObject);
 // fc : integer;
 begin
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   ///DataModule1.Query4Result.databasename :='uibtime';
@@ -331,8 +349,10 @@ begin
   DataModule1.Query4Result.sql.Add('and (not (event = ''Pause''))');
   if (pos('Alle', combobox1.Text) = 0) then
     DataModule1.Query4Result.parambyname('uid').AsString := combobox1.Text;
-  DataModule1.Query4Result.parambyname('start').AsDateTime := ScanDateTime('dd.mm.yyyy',edit1.Text);
-  DataModule1.Query4Result.parambyname('stop').AsDateTime := ScanDateTime('dd.mm.yyyy',edit2.Text);
+  DataModule1.Query4Result.parambyname('start').AsDateTime :=
+    ScanDateTime('dd.mm.yyyy', edit1.Text);
+  DataModule1.Query4Result.parambyname('stop').AsDateTime :=
+    ScanDateTime('dd.mm.yyyy', edit2.Text);
   //DataModule1.Query4Result.parambyname('start').AsString := edit1.Text;
   //DataModule1.Query4Result.parambyname('stop').AsString := edit2.Text;
   DataModule1.Query4Result.sql.Add(' group by Tag, monat, jahr');
@@ -340,8 +360,8 @@ begin
   DataModule1.Query4Result.Open;
 
   //Fresult.DataSource1.DataSet := DataModule1.Query4Result;
-  FResult.Edit1.Text := 'Sum. h / Monatstag von ' + Edit1.Text + ' bis (excl.)'
-    + Edit2.Text + ' für ' + ComboBox1.Text;
+  FResult.Edit1.Text := 'Sum. h / Monatstag von ' + Edit1.Text +
+    ' bis (excl.)' + Edit2.Text + ' für ' + ComboBox1.Text;
   Fresult.showmodal();
   Fresult.Free;
 end;
@@ -349,6 +369,7 @@ end;
 procedure TFStatistik.BtnMonateClick(Sender: TObject);
 begin
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   ///DataModule1.Query4Result.databasename :='uibtime';
@@ -363,16 +384,18 @@ begin
   DataModule1.Query4Result.sql.Add('and (not (event = ''Pause''))');
   if (pos('Alle', combobox1.Text) = 0) then
     DataModule1.Query4Result.parambyname('uid').AsString := combobox1.Text;
-  DataModule1.Query4Result.parambyname('start').AsDateTime := ScanDateTime('dd.mm.yyyy',edit1.Text);
-  DataModule1.Query4Result.parambyname('stop').AsDateTime := ScanDateTime('dd.mm.yyyy',edit2.Text);
+  DataModule1.Query4Result.parambyname('start').AsDateTime :=
+    ScanDateTime('dd.mm.yyyy', edit1.Text);
+  DataModule1.Query4Result.parambyname('stop').AsDateTime :=
+    ScanDateTime('dd.mm.yyyy', edit2.Text);
   //DataModule1.Query4Result.parambyname('start').AsString := edit1.Text;
   //DataModule1.Query4Result.parambyname('stop').AsString := edit2.Text;
   DataModule1.Query4Result.sql.Add(' group by Monat, jahr');
   DataModule1.Query4Result.ReadOnly := True;
   DataModule1.Query4Result.Open;
   //Fresult.DataSource1.DataSet := DataModule1.Query4Result;
-  FResult.Edit1.Text := 'Sum h/Mon. von ' + Edit1.Text + ' bis (excl.)'
-    + Edit2.Text + ' für ' + ComboBox1.Text;
+  FResult.Edit1.Text := 'Sum h/Mon. von ' + Edit1.Text + ' bis (excl.)' +
+    Edit2.Text + ' für ' + ComboBox1.Text;
   Fresult.showmodal();
   Fresult.Free;
 
@@ -419,7 +442,8 @@ begin
   ///query1.databasename :='uibtime';
   query1.SQL.Clear;
   query1.sql.Add('select');
-  query1.sql.Add(' a.Tag, b.daystr,  min(a.starttime), max(a.stoptime), sum(a.stunden) as Summe ');
+  query1.sql.Add(
+    ' a.Tag, b.daystr,  min(a.starttime), max(a.stoptime), sum(a.stunden) as Summe ');
   query1.sql.Add('from uibeventtimesplit as a, uibtwoche as b where');
   query1.sql.Add('(a.wochentag = b.daynum) and ');
   query1.sql.Add('(a.userid = :uid) and ');
@@ -492,6 +516,7 @@ begin
   else
     procedurename := 'uibbuild_tmp_treesum';
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   ///DataModule1.Query4Result.databasename :='uibtime';
@@ -500,8 +525,10 @@ begin
   DataModule1.Query4Result.sql.Add(':below,:userid, :searchuser,:start, :stop);');
   DataModule1.Query4Result.parambyname('userid').AsString := uid;
   DataModule1.Query4Result.parambyname('below').AsString := ComboBoxAktevent.Text;
-  DataModule1.Query4Result.parambyname('start').AsDateTime := ScanDateTime('dd.mm.yyyy',edit1.Text);
-  DataModule1.Query4Result.parambyname('stop').AsDateTime := ScanDateTime('dd.mm.yyyy',edit2.Text);
+  DataModule1.Query4Result.parambyname('start').AsDateTime :=
+    ScanDateTime('dd.mm.yyyy', edit1.Text);
+  DataModule1.Query4Result.parambyname('stop').AsDateTime :=
+    ScanDateTime('dd.mm.yyyy', edit2.Text);
   //DataModule1.Query4Result.parambyname('start').AsString := edit1.Text;
   //DataModule1.Query4Result.parambyname('stop').AsString := edit2.Text;
   if (combobox1.Text = 'Summe Alle') then
@@ -514,7 +541,17 @@ begin
     DataModule1.Query4Result.parambyname('searchuser').AsString := uid;
     searchuserstr := 'für ' + uid;
   end;
-  DataModule1.Query4Result.ExecSQL;
+  try
+    DataModule1.debugOut(6, 'Statistik.BtnTreeSumClick', 'Will execute sql: ' +
+      DataModule1.Query4Result.SQL.Text);
+    screen.Cursor := crSQLWait;
+    Application.ProcessMessages;
+    DataModule1.Query4Result.ExecSQL;
+  finally
+    screen.Cursor := crDefault;
+    Application.ProcessMessages;
+  end;
+  DataModule1.debugOut(6, 'Statistik.BtnTreeSumClick', 'Procedure call finished');
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   DataModule1.Query4Result.SQL.Clear;
@@ -524,9 +561,8 @@ begin
   DataModule1.Query4Result.ReadOnly := True;
   DataModule1.Query4Result.Open;
   //Fresult.DataSource1.DataSet := DataModule1.Query4Result;
-  FResult.Edit1.Text := 'Stundensummen von ' +
-    Edit1.Text + 'bis (excl.)' + Edit2.Text +
-    ' unterhalb (+incl.) von ' + ComboBoxAktevent.Text +
+  FResult.Edit1.Text := 'Stundensummen von ' + Edit1.Text + 'bis (excl.)' +
+    Edit2.Text + ' unterhalb (+incl.) von ' + ComboBoxAktevent.Text +
     ' ' + searchuserstr;
   Fresult.showmodal();
   Fresult.Free;
@@ -542,6 +578,7 @@ begin
   else
     procedurename := 'buildbsz_tmp_monthrep';
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   ///DataModule1.Query4Result.databasename :='uibtime';
@@ -549,8 +586,10 @@ begin
   DataModule1.Query4Result.sql.Add('execute procedure ' + procedurename + '(');
   DataModule1.Query4Result.sql.Add(':userid, :searchuser,:start, :stop);');
   DataModule1.Query4Result.parambyname('userid').AsString := uid;
-  DataModule1.Query4Result.parambyname('start').AsDateTime := ScanDateTime('dd.mm.yyyy',edit1.Text);
-  DataModule1.Query4Result.parambyname('stop').AsDateTime := ScanDateTime('dd.mm.yyyy',edit2.Text);
+  DataModule1.Query4Result.parambyname('start').AsDateTime :=
+    ScanDateTime('dd.mm.yyyy', edit1.Text);
+  DataModule1.Query4Result.parambyname('stop').AsDateTime :=
+    ScanDateTime('dd.mm.yyyy', edit2.Text);
   //DataModule1.Query4Result.parambyname('start').AsString := edit1.Text;
   //DataModule1.Query4Result.parambyname('stop').AsString := edit2.Text;
   if (combobox1.Text = 'Summe Alle') then
@@ -574,9 +613,8 @@ begin
   DataModule1.Query4Result.ReadOnly := True;
   DataModule1.Query4Result.Open;
   //Fresult.DataSource1.DataSet := DataModule1.Query4Result;
-  FResult.Edit1.Text := 'BSZ-UR Controllingreport von ' +
-    Edit1.Text + 'bis (excl.)' + Edit2.Text
-    + searchuserstr;
+  FResult.Edit1.Text := 'BSZ-UR Controllingreport von ' + Edit1.Text +
+    'bis (excl.)' + Edit2.Text + searchuserstr;
   Fresult.showmodal();
   Fresult.Free;
 end;
@@ -644,6 +682,7 @@ begin
   else
     referenztabelle := 'uiballevent';
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   ///DataModule1.Query4Result.databasename :='uibtime';
@@ -711,16 +750,17 @@ begin
   DataModule1.Query4Result.sql.Add('    and (starttime < :bis)');
   DataModule1.Query4Result.sql.Add('    group by userid;');
   DataModule1.Query4Result.parambyname('below_event').AsString := ComboBoxAktevent.Text;
-  DataModule1.Query4Result.parambyname('von').AsDateTime := ScanDateTime('dd.mm.yyyy',edit1.Text);
-  DataModule1.Query4Result.parambyname('bis').AsDateTime := ScanDateTime('dd.mm.yyyy',edit2.Text);
+  DataModule1.Query4Result.parambyname('von').AsDateTime :=
+    ScanDateTime('dd.mm.yyyy', edit1.Text);
+  DataModule1.Query4Result.parambyname('bis').AsDateTime :=
+    ScanDateTime('dd.mm.yyyy', edit2.Text);
   //DataModule1.Query4Result.parambyname('von').AsString := edit1.Text;
   //DataModule1.Query4Result.parambyname('bis').AsString := edit2.Text;
   DataModule1.Query4Result.ReadOnly := True;
   DataModule1.Query4Result.Open;
   //Fresult.DataSource1.DataSet := DataModule1.Query4Result;
-  FResult.Edit1.Text := 'Stunden pro User ab Knoten: ' +
-    ComboBoxAktevent.Text + ' von ' + Edit1.Text +
-    ' bis (excl.)' + Edit2.Text;
+  FResult.Edit1.Text := 'Stunden pro User ab Knoten: ' + ComboBoxAktevent.Text +
+    ' von ' + Edit1.Text + ' bis (excl.)' + Edit2.Text;
   Fresult.showmodal();
   Fresult.Free;
 end;
@@ -737,6 +777,7 @@ begin
   else
     procedurename := 'buildbsz2_tmp_monthrep';
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   ///DataModule1.Query4Result.databasename :='uibtime';
@@ -744,8 +785,10 @@ begin
   DataModule1.Query4Result.sql.Add('execute procedure ' + procedurename + '(');
   DataModule1.Query4Result.sql.Add(':userid, :searchuser,:start, :stop);');
   DataModule1.Query4Result.parambyname('userid').AsString := uid;
-  DataModule1.Query4Result.parambyname('start').AsDateTime := ScanDateTime('dd.mm.yyyy',edit1.Text);
-  DataModule1.Query4Result.parambyname('stop').AsDateTime := ScanDateTime('dd.mm.yyyy',edit2.Text);
+  DataModule1.Query4Result.parambyname('start').AsDateTime :=
+    ScanDateTime('dd.mm.yyyy', edit1.Text);
+  DataModule1.Query4Result.parambyname('stop').AsDateTime :=
+    ScanDateTime('dd.mm.yyyy', edit2.Text);
   //DataModule1.Query4Result.parambyname('start').AsString := edit1.Text;
   //DataModule1.Query4Result.parambyname('stop').AsString := edit2.Text;
   if (combobox1.Text = 'Summe Alle') then
@@ -769,9 +812,8 @@ begin
   DataModule1.Query4Result.ReadOnly := True;
   DataModule1.Query4Result.Open;
   //Fresult.DataSource1.DataSet := DataModule1.Query4Result;
-  FResult.Edit1.Text := 'BSZ-UR Controllingreport von ' +
-    Edit1.Text + 'bis (excl.)' + Edit2.Text
-    + searchuserstr;
+  FResult.Edit1.Text := 'BSZ-UR Controllingreport von ' + Edit1.Text +
+    'bis (excl.)' + Edit2.Text + searchuserstr;
   Fresult.showmodal();
   Fresult.Free;
 end;
@@ -780,8 +822,10 @@ procedure TFStatistik.BtnWorkDescriptionClick(Sender: TObject);
 begin
   if Fwork_description = nil then
     Fwork_description := TFwork_description.Create(self);
-  //Fwork_description.showmodal();
-  Fwork_description.Show;
+  Fwork_description.PopupParent := Fwork_description;
+  Fwork_description.showmodal();
+  FreeAndNil(Fwork_description);
+  //Fwork_description.Show;
 end;
 
 procedure TFStatistik.BitBtnworkreportClick(Sender: TObject);
@@ -794,6 +838,7 @@ begin
   else
     procedurename := 'buildbsz_tmp_sapevent';
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   ///DataModule1.Query4Result.databasename :='uibtime';
@@ -859,9 +904,8 @@ begin
   DataModule1.Query4Result.ReadOnly := True;
   DataModule1.Query4Result.Open;
   //Fresult.DataSource1.DataSet := DataModule1.Query4Result;
-  FResult.Edit1.Text := 'BSZ-UR Tätigkeitsbericht für ' +
-    spinedit1.Text + '.' + spinedit2.Text +
-    searchuserstr;
+  FResult.Edit1.Text := 'BSZ-UR Tätigkeitsbericht für ' + spinedit1.Text +
+    '.' + spinedit2.Text + searchuserstr;
   Fresult.showmodal();
   Fresult.Free;
 end;
@@ -889,6 +933,7 @@ begin
   end;
   below := ComboBoxAktevent.Text;
   Fresult := TFResult.Create(self);
+  FResult.setResultDataset(DataModule1.Query4Result);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
   DataModule1.Query4Result.SQL.Clear;
@@ -903,7 +948,8 @@ begin
   DataModule1.Query4Result.sql.Add(
     '(UIBEVENTTIMESPLIT.USERID = UIB_WORK_DESCRIPTION.USERID) ');
   DataModule1.Query4Result.sql.Add('and ');
-  DataModule1.Query4Result.sql.Add('(UIBEVENTTIMESPLIT.TAG = UIB_WORK_DESCRIPTION.TAG) ');
+  DataModule1.Query4Result.sql.Add(
+    '(UIBEVENTTIMESPLIT.TAG = UIB_WORK_DESCRIPTION.TAG) ');
   DataModule1.Query4Result.sql.Add('and ');
   DataModule1.Query4Result.sql.Add(
     '(UIBEVENTTIMESPLIT.MONAT = UIB_WORK_DESCRIPTION.MONAT) ');
@@ -915,7 +961,8 @@ begin
     '(UIBEVENTTIMESPLIT.EVENT = UIB_WORK_DESCRIPTION.EVENT) ');
   DataModule1.Query4Result.sql.Add('where ');
   DataModule1.Query4Result.sql.Add('(UIBEVENTTIMESPLIT.EVENT ');
-  DataModule1.Query4Result.sql.Add('in (select event from ' + referenztabelle + ' where ');
+  DataModule1.Query4Result.sql.Add('in (select event from ' +
+    referenztabelle + ' where ');
   DataModule1.Query4Result.sql.Add('    (parentevent in (select event from ' +
     referenztabelle + ' where ');
   DataModule1.Query4Result.sql.Add('    (parentevent in (select event from ' +
@@ -989,10 +1036,9 @@ begin
   DataModule1.Query4Result.ReadOnly := True;
   DataModule1.Query4Result.Open;
   //Fresult.DataSource1.DataSet := DataModule1.Query4Result;
-  FResult.Edit1.Text := 'Arbeitsbericht von ' +
-    Edit1.Text + 'bis (excl.)' + Edit2.Text +
-    ' unterhalb (+incl.) von ' + ComboBoxAktevent.Text +
-    ' ' + searchuserstr;
+  FResult.Edit1.Text := 'Arbeitsbericht von ' + Edit1.Text +
+    'bis (excl.)' + Edit2.Text + ' unterhalb (+incl.) von ' +
+    ComboBoxAktevent.Text + ' ' + searchuserstr;
   Fresult.showmodal();
   Fresult.Free;
 end;
@@ -1003,7 +1049,7 @@ var
   startdt, stopdt: TDateTime;
 begin
   Fresult := TFResult.Create(self);
-
+  FResult.setResultDataset(DataModule1.Query4Result);
   startdt := encodedate(StrToInt(spinedit2.Text), StrToInt(spinedit1.Text), 1);
   if DataModule1.Query4Result.active then
     DataModule1.Query4Result.Close;
@@ -1012,7 +1058,8 @@ begin
   DataModule1.Query4Result.sql.Add('select');
   DataModule1.Query4Result.sql.Add(
     ' Tag,wochentag,  extract(hour from min(starttime)) as Beginn_h, ');
-  DataModule1.Query4Result.sql.Add('extract(minute from min(starttime)) as Beginn_min, ');
+  DataModule1.Query4Result.sql.Add(
+    'extract(minute from min(starttime)) as Beginn_min, ');
   DataModule1.Query4Result.sql.Add('extract(hour from max(stoptime)) as Ende_h, ');
   DataModule1.Query4Result.sql.Add('extract(minute from max(stoptime)) as Ende_min, ');
   DataModule1.Query4Result.sql.Add('sum(stunden) as Arbeitszeit ');
@@ -1039,9 +1086,9 @@ begin
   DataModule1.Query4Result.ReadOnly := True;
   DataModule1.Query4Result.Open;
   //Fresult.DataSource1.DataSet := DataModule1.Query4Result;
-  FResult.Edit1.Text := 'Arbeitsbericht für Monat ' +
-    spinedit1.Text + '.' + spinedit2.Text +
-    ' mit Beginn und Ende sowie Arbeitzeiten ohne Pausen für ' + combobox1.Text;
+  FResult.Edit1.Text := 'Arbeitsbericht für Monat ' + spinedit1.Text +
+    '.' + spinedit2.Text + ' mit Beginn und Ende sowie Arbeitzeiten ohne Pausen für ' +
+    combobox1.Text;
 
   Fresult.showmodal();
   Fresult.Free;

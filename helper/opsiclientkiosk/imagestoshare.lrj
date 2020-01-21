@@ -1,0 +1,12 @@
+{"version":1,"strings":[
+{"hash":259127908,"name":"tformsaveimagesondepot.caption","sourcebytes":[83,97,118,101,32,105,109,97,103,101,115,32,111,110,32,100,101,112,111,116],"value":"Save images on depot"},
+{"hash":132149092,"name":"tformsaveimagesondepot.labelpathtodepot.caption","sourcebytes":[80,97,116,104,32,116,111,32,100,101,112,111,116],"value":"Path to depot"},
+{"hash":259127908,"name":"tformsaveimagesondepot.buttoncopy.caption","sourcebytes":[83,97,118,101,32,105,109,97,103,101,115,32,111,110,32,100,101,112,111,116],"value":"Save images on depot"},
+{"hash":77089212,"name":"tformsaveimagesondepot.buttoncancel.caption","sourcebytes":[67,97,110,99,101,108],"value":"Cancel"},
+{"hash":104770356,"name":"tformsaveimagesondepot.groupboxmountdepot.caption","sourcebytes":[77,111,117,110,116,32,100,101,112,111,116],"value":"Mount depot"},
+{"hash":114545383,"name":"tformsaveimagesondepot.editpathtodepot.texthint","sourcebytes":[92,92,115,101,114,118,101,114,110,97,109,101,92,111,112,115,105,95,100,101,112,111,116,95,114,119],"value":"\\\\servername\\opsi_depot_rw"},
+{"hash":379330,"name":"tformsaveimagesondepot.labeluser.caption","sourcebytes":[85,115,101,114],"value":"User"},
+{"hash":145417188,"name":"tformsaveimagesondepot.labelpassword.caption","sourcebytes":[80,97,115,115,119,111,114,100],"value":"Password"},
+{"hash":132149092,"name":"tformsaveimagesondepot.labelpathmountdepot.caption","sourcebytes":[80,97,116,104,32,116,111,32,100,101,112,111,116],"value":"Path to depot"},
+{"hash":104770356,"name":"tformsaveimagesondepot.checkboxmountdepot.caption","sourcebytes":[77,111,117,110,116,32,100,101,112,111,116],"value":"Mount depot"}
+]}

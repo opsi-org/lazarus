@@ -53,6 +53,7 @@ unit osmain;
 interface
 
 uses
+//osfunc,
 {$IFDEF WINDOWS}
   Windows,
   VersionInfoX,
@@ -66,18 +67,19 @@ osfuncwin2,
   wispecfolder,
   osfuncwin3,
 {$ENDIF WINDOWS}
-{$IFDEF LINUX}
-  osfunclin,
-  lispecfolder,
+{$IFDEF UNIX}
+  osprocessux,
   baseunix,
   oscrypt,
+{$ENDIF UNIX}
+{$IFDEF LINUX}
+osfunclin,
+lispecfolder,
 {$ENDIF LINUX}
 {$IFDEF DARWIN}
-  osfunclin,
+  osfuncmac,
   lispecfolder,
-  baseunix,
-  oscrypt,
-  //macosall,
+
 {$ENDIF DARWIN}
 {$IFDEF GUI}
   osmessagedialog,
@@ -101,6 +103,7 @@ LResources,
   oswebservice,
   //wirequlist,
   oslog,
+  ostxstringlist,
   osparser,
   osparserhelper,
   osfunc,
@@ -252,6 +255,7 @@ var
   PerformExitProgram: boolean = False;
   PerformExitWindows: TExitRequest = txrNoExit;
   PerformShutdown: TShutdownRequest = tsrNoShutdown;
+  ProgramMode: TProgramMode;
 
 
   toggle: boolean;
@@ -290,8 +294,6 @@ var
 
 var
   IniFileLocalization: string;
-
-  ProgramMode: TProgramMode;
 
   Profildateiname: string;
 
@@ -521,24 +523,54 @@ end;
 
 
 function GetTempPath: string;
+var
+  testpassed: boolean;
+  teststr : string;
+  mytemppath : string;
 begin
-  Result := StandardTempPath;
-  //result := TmpPathFromLogdatei;
-  SysUtils.ForceDirectories(Result);
-  if not DirectoryExists(Result) then
+  mytemppath := StandardTempPath;
+  {$IFDEF LINUX}
+  if getLinuxDistroName = 'Univention' then
   begin
-    Result := ValueOfEnvVar('TEMP');
-    if not DirectoryExists(Result) then
-    begin
-      {$IFDEF WINDOWS}
-      Result := 'c:\tmp';
-      {$ELSE}
-      Result := '/tmp/opsiscript';
-      {$ENDIF WINDOWS}
-      mkdir(Result);
-    end;
-    Result := Result + PathDelim;
+    if logdatei <> nil then logdatei.log('Univention detected: switching to temp path: '+mytemppath,LLdebug);
+    mytemppath := UniventionTempPath;
   end;
+  {$ENDIF}
+  testpassed := False;
+  if (mytemppath <> '') and SysUtils.ForceDirectories(mytemppath) then
+  begin
+    if logdatei <> nil then logdatei.log('Testing as temp path: '+mytemppath,LLdebug);
+    testpassed := True;
+    teststr := mytemppath + 'testing_write_privilege_for_opsiscript';
+    if not fileexists(teststr) then
+    begin
+      if not SysUtils.ForceDirectories(teststr) or not RemoveDir(teststr) then
+      begin
+        testpassed := False;
+        if logdatei <> nil then logdatei.log('Failed:Testing as temp path: '+mytemppath,LLwarning);
+      end
+      else
+        if logdatei <> nil then logdatei.log('Succseeded: Testing as temp path: '+mytemppath,LLdebug);
+    end;
+    teststr := '';
+  end;
+
+  if testpassed then
+    TempPath := mytemppath
+  else
+    TempPath := ValueOfEnvVar('TEMP') + PATHSEPARATOR;
+  SysUtils.ForceDirectories(TempPath);
+  if not DirectoryExists(TempPath) then
+  begin
+    {$IFDEF WINDOWS}
+    TempPath := 'c:\tmp\';
+    {$ELSE}
+    TempPath := '/tmp/opsiscript/';
+    {$ENDIF WINDOWS}
+    SysUtils.ForceDirectories(TempPath);
+  end;
+  if logdatei <> nil then logdatei.log('Final: Using as temp path: '+TempPath,LLdebug);
+  result := TempPath;
 end;
 
 procedure ProcessMess;
@@ -562,7 +594,7 @@ begin
     if LogDatei <> nil then
     begin
       LogDatei.LogSIndentLevel := 0;
-      LogDatei.log('============  opsi-script ' + winstversionname +
+      LogDatei.log('============  opsi-script ' + OpsiscriptVersionname +
         ' is regularly exiting. Time ' + FormatDateTime(
         'yyyy-mm-dd  hh:mm:ss ', now) + '.', LLessential);
 
@@ -594,6 +626,7 @@ end;
 
 
 function ValueOfEnvVar(const VarName: string): string;
+
 (*
 Var
   requiredLength :   Integer;
@@ -726,8 +759,8 @@ begin
     partsScriptpath := TXStringList.Create;
 
 
-    osfunc.Stringsplit(expandedScriptname, pathdelim, partsExpanded);
-    osfunc.Stringsplit(scriptPath, pathdelim, partsScriptPath);
+    Stringsplit(expandedScriptname, pathdelim, partsExpanded);
+    Stringsplit(scriptPath, pathdelim, partsScriptPath);
 
 
     i := 0;
@@ -1065,7 +1098,7 @@ var
     end;
     Result := True;
     // no errors
-  end;
+  end;// End of function ChangeProductstatusOnReinst
 
 var
   goOn: boolean;
@@ -1765,49 +1798,54 @@ var
   conffile : TIniFile;
   list : TStringlist;
 begin
-  result := false;
-  list := TStringlist.Create;
-  if FileExists('/etc/opsi-client-agent/opsi-script.conf') then
-  begin
-    conffile := TIniFile.Create('/etc/opsi-client-agent/opsi-script.conf');
-    startkey := conffile.ReadString('general','start','void');
-    if startkey <> 'void' then
+  try
+    result := false;
+    list := TStringlist.Create;
+    conffile := nil;
+    if FileExists(opsiclientagentconf) then
     begin
-      startkey := decryptStringBlow(opsiservicepassword,startkey);
-      try
-        stringsplitByWhiteSpace(startkey,list);
-        if trim(list.Strings[0]) = opsiservicepassword then
-        begin
-          if TryStrToInt(trim(list.Strings[1]),startcounter) then
+      conffile := TIniFile.Create(opsiclientagentconf);
+      startkey := conffile.ReadString('opsi-script','start','void');
+      if startkey <> 'void' then
+      begin
+        startkey := decryptStringBlow(opsiservicepassword,startkey);
+        LogDatei.log('startkey from opsi-client-agent.conf: '+startkey,LLNotice);
+        try
+          stringsplitByWhiteSpace(startkey,list);
+          if trim(list.Strings[0]) = opsiservicepassword then
           begin
-            if startcounter > 0 then
+            if TryStrToInt(trim(list.Strings[1]),startcounter) then
             begin
-              result := true;
-              dec(startcounter);
-              logdatei.log('Using free Linux Agent start. '+IntTostr(startcounter)+' remaining',LLNotice);
-              startkey :=  opsiservicepassword+' '+IntTostr(startcounter);
-              startkey :=  encryptStringBlow(opsiservicepassword,startkey);
-              conffile.WriteString('general','start',startkey);
+              if startcounter > 0 then
+              begin
+                result := true;
+                dec(startcounter);
+                logdatei.log('Using free Linux Agent start. '+IntTostr(startcounter)+' remaining',LLNotice);
+                startkey :=  opsiservicepassword+' '+IntTostr(startcounter);
+                startkey :=  encryptStringBlow(opsiservicepassword,startkey);
+                conffile.WriteString('opsi-script','start',startkey);
+              end
+              else logdatei.log('No free Linux Agent start',LLDebug2);
             end
-            else logdatei.log('No free Linux Agent start',LLDebug2);
+            else logdatei.log('Error: Startkey has no valid integer: '+trim(list.Strings[1]),LLError);
           end
-          else logdatei.log('Error: Startkey has no valid integer: '+trim(list.Strings[1]),LLError);
-        end
-        else logdatei.log('Error: Startkey has wrong signature.',LLError);
-      except
-       on ex: Exception
-       do
-       begin
-         logdatei.log('Error: Exception in osmain:freeLinuxAgentStart : '+ex.message,LLError);
-         result := false;
-       end;
-      end;
+          else logdatei.log('Error: Startkey has wrong signature.',LLError);
+        except
+         on ex: Exception
+         do
+         begin
+           logdatei.log('Error: Exception in osmain:freeLinuxAgentStart : '+ex.message,LLError);
+           result := false;
+         end;
+        end;
+      end
+      else logdatei.log('No valid start enty in '+opsiclientagentconf+' found ',LLWarning);
     end
-    else logdatei.log('No valid start enty in /etc/opsi-client-agent/opsi-script.conf found ',LLWarning);
-    conffile.Free;
-  end
-  else logdatei.log('No /etc/opsi-client-agent/opsi-script.conf found ',LLWarning);
-  list.Free;
+    else logdatei.log('No '+opsiclientagentconf+' found ',LLWarning);
+  finally
+    list.Free;
+    if conffile <> nil then conffile.Free;
+  end;
 end;
 
 {$ENDIF LINUX}
@@ -1845,7 +1883,7 @@ begin
     if LogDateiName = '' then
       LogDateiName := LogPath + logdatei.StandardLogFilename + logdatei.StandardLogFileext;
     //writeln('StartProgramModes3');
-    Logdatei.log('opsi-script ' + winstversion + ' started at ' + starttimestr, LLessential);
+    Logdatei.log('opsi-script ' + OpsiscriptVersion + ' started at ' + starttimestr, LLessential);
     Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
     //writeln('StartProgramModes4');
     {$IFDEF GUI}
@@ -1900,7 +1938,7 @@ begin
         650, 250);
       {$ELSE GUI}
       //nogui
-      writeln(ExtractFileName(reencode(paramstr(0),'system')) + ' Version: '+WinstVersion);
+      writeln(ExtractFileName(reencode(paramstr(0),'system')) + ' Version: '+OpsiscriptVersion);
       writeln('command line options are' + LineEnding +
         '' + ParamDelim + '? |' + ParamDelim + 'h[elp]' + LineEnding +
         //'	 ' + ParamDelim + 'pcprofil  [PCProfileFile  [[' + ParamDelim + 'logfile] Logfile ] ] [' + ParamDelim + 'parameter ParameterString]' + LineEnding +
@@ -2039,7 +2077,7 @@ begin
 
           logSupportedEncodings;
 
-          {$IFDEF UNIX}
+          {$IFDEF LINUX}
           if not opsidata.linuxAgentActivated then
           begin
             if freeLinuxAgentStart then
@@ -2060,6 +2098,11 @@ begin
               LogDatei.log('Terminating Program', LLerror);
               TerminateApp;
             end;
+          end
+          else
+          begin
+            LogDatei.log(
+                'Use of opsi Linux Client Agent Extension is activated', LLInfo);
           end;
           {$ENDIF LINUX}
 
@@ -2385,7 +2428,7 @@ begin
     if testpassed then
       TempPath := StandardTempPath
     else
-      TempPath := ValueOfEnvVar('TEMP');
+      TempPath := ValueOfEnvVar('TEMP') + PATHSEPARATOR;
 
     testpassed := False;
     if not Assigned(logdatei) then LogDatei := TLogInfo.Create;
@@ -3072,7 +3115,7 @@ begin
   except
     on E: Exception do
     begin
-      writeln('TCentralForm.FormCreate : ' + E.Message);
+      writeln('osmain.main : ' + E.Message);
     end;
   end;
 end;

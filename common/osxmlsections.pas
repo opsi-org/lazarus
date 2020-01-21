@@ -17,12 +17,14 @@ unit osxmlsections;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils,
+  Classes,
   DOM,
   XMLRead,
   XMLWrite,
-  Dialogs, StrUtils,
-  ExtCtrls,
+  //Dialogs,
+  StrUtils,
+  //ExtCtrls,
   key_valueCollection,
   oslog,
   osparserhelper;

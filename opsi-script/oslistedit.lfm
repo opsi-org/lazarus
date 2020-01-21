@@ -1,15 +1,16 @@
 object FListedit: TFListedit
-  Left = 593
-  Height = 572
-  Top = 466
+  Left = 497
+  Height = 242
+  Top = 350
   Width = 320
   Caption = 'opsi-script Parameter Editor'
-  ClientHeight = 572
+  ClientHeight = 242
   ClientWidth = 320
-  LCLVersion = '1.6.4.0'
+  Position = poScreenCenter
+  LCLVersion = '2.0.0.4'
   object ValueListEditor1: TValueListEditor
     Left = 0
-    Height = 448
+    Height = 118
     Top = 74
     Width = 320
     Align = alClient
@@ -49,7 +50,7 @@ object FListedit: TFListedit
   object Panel2: TPanel
     Left = 0
     Height = 50
-    Top = 522
+    Top = 192
     Width = 320
     Align = alBottom
     ClientHeight = 50

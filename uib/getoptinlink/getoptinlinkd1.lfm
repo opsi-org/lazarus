@@ -4,7 +4,7 @@ object DataModule1: TDataModule1
   Height = 254
   HorizontalOffset = 321
   VerticalOffset = 523
-  Width = 305
+  Width = 393
   PPI = 96
   object MySQL55Connection1: TMySQL55Connection
     Connected = False
@@ -410,18 +410,18 @@ object DataModule1: TDataModule1
     Active = False
     Database = MySQL55Connection1
     left = 176
-    top = 38
+    top = 43
   end
   object DataSource1: TDataSource
     DataSet = SQLQuery1
-    left = 158
-    top = 119
+    left = 176
+    top = 122
   end
   object SQLDBLibraryLoader1: TSQLDBLibraryLoader
     Enabled = False
     ConnectionType = 'MySQL 5.5'
     LibraryName = 'N:\uib\oertel\gitwork\lazarus\uib\getoptinlink\libmysql.dll'
-    left = 240
-    top = 32
+    left = 288
+    top = 43
   end
 end
