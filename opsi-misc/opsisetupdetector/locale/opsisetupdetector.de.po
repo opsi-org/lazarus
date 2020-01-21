@@ -124,15 +124,15 @@ msgstr "Pfad zur opsi-work-bench"
 
 #: osdcreate.rscouldnotcreatedirectorywarning
 msgid "Could not create directory: "
-msgstr "Verzeichnis konnte nicht erstellt werden:"
+msgstr "Verzeichnis konnte nicht erstellt werden: "
 
 #: osdcreate.rsdirectory
 msgid "Directory "
-msgstr "Verzeichnis"
+msgstr "Verzeichnis "
 
 #: osdcreate.rsstillexitswarningdeleteoverwrite
 msgid " still exits. Overwrite / Delete ?"
-msgstr "existiert bereits. Löschen und Überschreiben ?"
+msgstr " existiert bereits. Löschen und Überschreiben ?"
 
 #: osddlgnewproperty.rscontainswhitespacewarning
 msgid " contains whitespace. Whitespaces are not allowed."
@@ -675,11 +675,9 @@ msgid "Software Version"
 msgstr "Software Version"
 
 #: tresultform1.label72.caption
-#, fuzzy
-#| msgid "Required Space"
 msgctxt "tresultform1.label72.caption"
 msgid "Required Space MB"
-msgstr "erforderlich"
+msgstr "Benötigter Platz MB"
 
 #: tresultform1.label73.caption
 msgctxt "tresultform1.label73.caption"

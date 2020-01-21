@@ -325,9 +325,14 @@ begin
   mysetup.link := installerArray[integer(mysetup.installerId)].Link;
   mysetup.setupFullFileName := myfilename;
   //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
-  mysetup.installCommandLine :=
-    '"%scriptpath%\files\' + mysetup.setupFileName + '" ' +
-    installerArray[integer(mysetup.installerId)].unattendedsetup;
+  case mysetup.ID of
+    1: mysetup.installCommandLine :=
+         '"%scriptpath%\files1\' + mysetup.setupFileName + '" ' +
+         installerArray[integer(mysetup.installerId)].unattendedsetup;
+    2: mysetup.installCommandLine :=
+         '"%scriptpath%\files2\' + mysetup.setupFileName + '" ' +
+         installerArray[integer(mysetup.installerId)].unattendedsetup;
+  end;
   mysetup.isExitcodeFatalFunction :=
     installerArray[integer(mysetup.installerId)].uib_exitcode_function;
   mysetup.uninstallProg := installerArray[integer(mysetup.installerId)].uninstallProg;
@@ -335,10 +340,13 @@ begin
     installerArray[integer(mysetup.installerId)].uninstall_waitforprocess;
   mysetup.install_waitforprocess :=
     installerArray[integer(mysetup.installerId)].install_waitforprocess;
-  str1 := getProductInfoFromResource('FileVersion', myfilename);
-  mysetup.SoftwareVersion := str1;
-  aktProduct.productdata.productversion := trim(mysetup.SoftwareVersion);
-  str1 := getProductInfoFromResource('ProductName', myfilename);
+  if installerID <> stMSI then
+  begin
+     str1 := getProductInfoFromResource('FileVersion', myfilename);
+     mysetup.SoftwareVersion := str1;
+     aktProduct.productdata.productversion := trim(mysetup.SoftwareVersion);
+     str1 := getProductInfoFromResource('ProductName', myfilename);
+  end;
   if str1 <> '' then
   begin
     aktProduct.productdata.productId := getPacketIDShort(str1);
@@ -548,9 +556,14 @@ begin
   {$ENDIF LINUX}
   if not uninstall_only then
   begin
-    mysetup.installCommandLine :=
-      'msiexec /i "%scriptpath%\files\' + mysetup.setupFileName +
-      '" ' + installerArray[integer(mysetup.installerId)].unattendedsetup;
+    case mysetup.ID of
+      1: mysetup.installCommandLine :=
+           '"%scriptpath%\files1\' + mysetup.setupFileName + '" ' +
+           installerArray[integer(mysetup.installerId)].unattendedsetup;
+      2: mysetup.installCommandLine :=
+           '"%scriptpath%\files2\' + mysetup.setupFileName + '" ' +
+           installerArray[integer(mysetup.installerId)].unattendedsetup;
+    end;
     mysetup.mstAllowed := True;
   end;
   mysetup.uninstallCheck.Clear;
@@ -1300,24 +1313,24 @@ begin
 
     // marker for add installers
     case setupType of
-      stInno: get_inno_info(FileName, mysetup);
-      stNsis: get_nsis_info(FileName, mysetup);
-      stInstallShield: get_installshield_info(FileName, mysetup);
-      stInstallShieldMSI: get_installshieldmsi_info(FileName, mysetup);
-      stAdvancedMSI: get_advancedmsi_info(FileName, mysetup);
-      st7zip: get_7zip_info(FileName);
-      stMsi: ;// nothing to do here - see above;
-      st7zipsfx: logdatei.log('no getinfo implemented for: ' +
-          installerToInstallerstr(setupType), LLWarning);
-      stInstallAware: get_installaware_info(FileName, mysetup);
-      stMSGenericInstaller: get_genmsinstaller_info(FileName, mysetup);
-      stWixToolset: get_wixtoolset_info(FileName, mysetup);
-      stBoxStub: get_boxstub_info(FileName, mysetup);
-      stSFXcab: get_sfxcab_info(FileName, mysetup);
-      stBitrock: get_bitrock_info(FileName, mysetup);
+      stInno                   : get_inno_info(FileName, mysetup);
+      stNsis                   : get_nsis_info(FileName, mysetup);
+      stInstallShield          : get_installshield_info(FileName, mysetup);
+      stInstallShieldMSI       : get_installshieldmsi_info(FileName, mysetup);
+      stAdvancedMSI            : get_advancedmsi_info(FileName, mysetup);
+      st7zip                   : get_7zip_info(FileName);
+      stMsi                    : ;// nothing to do here - see above;
+      st7zipsfx                : logdatei.log('no getinfo implemented for: ' +
+                                    installerToInstallerstr(setupType), LLWarning);
+      stInstallAware           : get_installaware_info(FileName, mysetup);
+      stMSGenericInstaller     : get_genmsinstaller_info(FileName, mysetup);
+      stWixToolset             : get_wixtoolset_info(FileName, mysetup);
+      stBoxStub                : get_boxstub_info(FileName, mysetup);
+      stSFXcab                 : get_sfxcab_info(FileName, mysetup);
+      stBitrock                : get_bitrock_info(FileName, mysetup);
       stSelfExtractingInstaller: get_selfextrackting_info(FileName, mysetup);
-      stUnknown: LogDatei.log(
-          'Unknown Installer after Analyze.', LLcritical);
+      stUnknown                : LogDatei.log(
+                                   'Unknown Installer after Analyze.', LLcritical);
       else
         LogDatei.log('Unknown Setuptype in Analyze: ' + IntToStr(
           instIdToint(setupType)), LLcritical);
@@ -1326,37 +1339,37 @@ begin
 
     // marker for add installers
     case setupType of
-      stInno: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stNsis: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stInstallShield: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stInstallShieldMSI: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stAdvancedMSI: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      st7zip: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stMsi: ;// nothing to do here - see above;
-      st7zipsfx: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stInstallAware: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stMSGenericInstaller: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stWixToolset: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stBoxStub: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stSFXcab: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stBitrock: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
+      stInno                   : Mywrite('Found well known installer: ' +
+                                   installerToInstallerstr(setupType));
+      stNsis                   : Mywrite('Found well known installer: ' +
+                                   installerToInstallerstr(setupType));
+      stInstallShield          : Mywrite('Found well known installer: ' +
+                                   installerToInstallerstr(setupType));
+      stInstallShieldMSI       : Mywrite('Found well known installer: ' +
+                                   installerToInstallerstr(setupType));
+      stAdvancedMSI            : Mywrite('Found well known installer: ' +
+                                   installerToInstallerstr(setupType));
+      st7zip                   : Mywrite('Found well known installer: ' +
+                                   installerToInstallerstr(setupType));
+      stMsi                    : ;// nothing to do here - see above;
+      st7zipsfx                : Mywrite('Found well known installer: ' +
+                                   installerToInstallerstr(setupType));
+      stInstallAware           : Mywrite('Found well known installer: ' +
+                                   installerToInstallerstr(setupType));
+      stMSGenericInstaller     : Mywrite('Found well known installer: ' +
+                                   installerToInstallerstr(setupType));
+      stWixToolset             : Mywrite('Found well known installer: ' +
+                                   installerToInstallerstr(setupType));
+      stBoxStub                : Mywrite('Found well known installer: ' +
+                                   installerToInstallerstr(setupType));
+      stSFXcab                 : Mywrite('Found well known installer: ' +
+                                   installerToInstallerstr(setupType));
+      stBitrock                : Mywrite('Found well known installer: ' +
+                                   installerToInstallerstr(setupType));
       stSelfExtractingInstaller: Mywrite('Found well known installer: ' +
-          installerToInstallerstr(setupType));
-      stUnknown: Mywrite('Sorry - unknown installer: ' +
-          installerToInstallerstr(setupType));
+                                   installerToInstallerstr(setupType));
+      stUnknown                : Mywrite('Sorry - unknown installer: ' +
+                                   installerToInstallerstr(setupType));
       else
         Mywrite('Sorry - unknown installer: ' + installerToInstallerstr(setupType));
     end;

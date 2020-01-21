@@ -35,7 +35,7 @@ Set $ProductId$		= "#@productId*#"
 Set $InstallDir$	= "#@InstallDir1*#"
 Set $LicenseRequired$ = "#@LicenseRequired*#"
 Set $LicensePool$	  = "" 
-Set $MinimumSpace$	 = "#@MinimumSpace*#"
+Set $MinimumSpace$	 = "#@MinimumSpace1*#"
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS
@@ -70,7 +70,7 @@ endif
 
 #@preInstallLines1*#
 comment "Start setup program"
-ChangeDirectory "%SCRIPTPATH%\files"
+ChangeDirectory "%SCRIPTPATH%\files1"
 ;----------------------------------------------
 Winbatch_install	#@installWaitForProc1*#
 ;----------------------------------------------

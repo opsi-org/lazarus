@@ -135,11 +135,10 @@ begin
       str := str + 'set $LicensePool$ = $LicenseOrPool$' +  LineEnding;
     end;
     patchlist.add('#@GetProductProperty*#=' + str);
-
-    patchlist.add('#@MinimumSpace*#=' + IntToStr(
-      aktProduct.SetupFiles[0].requiredSpace) + ' MB');
     //setup 1
-    patchlist.add('#@InstallDir1*#=' + aktProduct.SetupFiles[0].installDirectory);
+    patchlist.add('#@MinimumSpace1*#=' + IntToStr(
+      aktProduct.SetupFiles[0].requiredSpace) + ' MB');
+     patchlist.add('#@InstallDir1*#=' + aktProduct.SetupFiles[0].installDirectory);
     patchlist.add('#@MsiId1*#=' + aktProduct.SetupFiles[0].msiId);
     str := myconfiguration.preInstallLines.Text;
     if str <> '' then
@@ -181,6 +180,8 @@ begin
         myconfiguration.postUnInstallLines.Text;
     patchlist.add('#@postUninstallLines1*#=' + str);
     //setup 2
+    patchlist.add('#@MinimumSpace2*#=' + IntToStr(
+      aktProduct.SetupFiles[1].requiredSpace) + ' MB');
     patchlist.add('#@InstallDir2*#=' + aktProduct.SetupFiles[1].installDirectory);
     patchlist.add('#@MsiId2*#=' + aktProduct.SetupFiles[1].msiId);
     str := myconfiguration.preInstallLines.Text;
@@ -309,13 +310,13 @@ begin
     // setup file 1
     if FileExists(aktProduct.SetupFiles[0].setupFullFileName) then
       copyfile(aktProduct.SetupFiles[0].setupFullFileName,
-        clientpath + PathDelim + 'files' + PathDelim +
+        clientpath + PathDelim + 'files1' + PathDelim +
         aktProduct.SetupFiles[0].setupFileName,
         [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
     // setup file 2
     if FileExists(aktProduct.SetupFiles[1].setupFullFileName) then
       copyfile(aktProduct.SetupFiles[1].setupFullFileName,
-        clientpath + PathDelim + 'files' + PathDelim +
+        clientpath + PathDelim + 'files2' + PathDelim +
         aktProduct.SetupFiles[1].setupFileName,
         [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
 
@@ -498,7 +499,7 @@ function createProductdirectory: boolean;
 var
   goon: boolean;
 begin
-  prodpath := myconfiguration.workbench_Path + aktProduct.productdata.productId;
+  prodpath := myconfiguration.workbench_Path + PathDelim + aktProduct.productdata.productId;
   clientpath := prodpath + PathDelim + 'CLIENT_DATA';
   opsipath := prodpath + PathDelim + 'OPSI';
   goon := True;

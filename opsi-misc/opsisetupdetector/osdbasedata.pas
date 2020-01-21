@@ -70,6 +70,7 @@ type
 
   TSetupFile = class(TPersistent)
   private
+    FID: integer; // 1 = first setup file, 2 = second setup file
     FsetupFileNamePath: string;
     FsetupFileName: string;
     FsetupFullFileName: string;
@@ -105,6 +106,7 @@ type
     procedure SetArchitecture(const AValue: TArchitecture);
     procedure SetSetupFullFileName(const AValue: string);
     procedure SetMstFullFileName(const AValue: string);
+    property ID: integer read FID write FID;
     property setupFileNamePath: string read FsetupFileNamePath;
     property setupFileName: string read FsetupFileName write FsetupFileName;
     property setupFullFileName: string read FsetupFullFileName
@@ -1020,6 +1022,7 @@ begin
     if not Assigned(aktProduct.SetupFiles[i]) then
       aktProduct.SetupFiles[i] := TSetupFile.Create;
     aktProduct.SetupFiles[i].initValues;
+    aktProduct.SetupFiles[i].ID:=i+1;
   end;
   if not Assigned(aktProduct.productdata) then
     aktProduct.productdata := TProductData.Create;
