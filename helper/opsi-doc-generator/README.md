@@ -12,7 +12,9 @@ Lazarus IDE, asciidoctor
 ## Getting Set Up
 1. Clone this repository. `git clone git@gitlab.uib.local:uib/lazarus.git`
 
-2. Build the project.
+2. Checkout the branch jeena. `git checkout jeena`
+
+3. Build the project.
 
 ### Build instructions for GUI version
 1. Run Lazarus and click on `Project->Open Project`.  Select
