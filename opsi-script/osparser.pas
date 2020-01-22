@@ -10304,7 +10304,7 @@ begin
 
       {$IFNDEF WINDOWS}
       if warnOnlyWindows then
-        LogDatei.log('Warning: at least one Windows-only Parameter was used', LLWarning);
+        LogDatei.log('Warning: at least one Windows-only Parameter was used', LLError);
       {$ENDIF WINDOWS}
 
 (*
@@ -10956,19 +10956,12 @@ begin
          begin
            onlyWindows := true;
          end;
-
-         {$IFNDEF WINDOWS}
-         if onlyWindows then
-           break;
-         {$ENDIF WINDOWS}
       end;
 
       {$IFNDEF WINDOWS}
       if onlyWindows then
       begin
-        LogDatei.log('Error: ' + '"' + expr + '" is only supported on Windows!', LLcritical);
-        FExtremeErrorLevel := LevelFatal;
-        exit;
+        LogDatei.log('Error: at least one Windows-only Parameter was used', LLError);
       end;
       {$ENDIF WINDOWS}
 
