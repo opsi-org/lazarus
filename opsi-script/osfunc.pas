@@ -2605,7 +2605,7 @@ begin
               if FindWindowEx(0, 0, nil, PChar(Ident)) = 0 then
               begin
                 logdatei.log('Wait for appear Window: "' + Ident +
-                  ' not found.', LLDebug);
+                  '" not found.', LLDebug);
                 if WaitSecs = 0 then
                   running := True
                 else
@@ -2622,7 +2622,7 @@ begin
                 end;
               end
               else
-                logdatei.log('Wait for appear Window: "' + Ident + ' found.', LLDebug);
+                logdatei.log('Wait for appear Window: "' + Ident + '" found.', LLDebug);
             end
 
             else if WaitForWindowVanished and not WaitWindowStarted then
@@ -2633,7 +2633,7 @@ begin
               if FindWindowEx(0, 0, nil, PChar(Ident)) <> 0 then
               begin
                 WaitWindowStarted := True;
-                logdatei.log('Wait for vanish Window: "' + Ident + ' found.', LLDebug);
+                logdatei.log('Wait for vanish Window: "' + Ident + '" found.', LLDebug);
               end;
 
               if not WaitWindowStarted or WaitForWindowVanished then
