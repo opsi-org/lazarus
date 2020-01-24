@@ -12,7 +12,8 @@ DefVar $ProductId$
 DefVar $InstallDir$
 DefVar $InstallDir1$
 DefVar $InstallDir2$
-DefVar $MinimumSpace$
+DefVar $MinimumSpace1$
+DefVar $MinimumSpace2$
 DefVar $ExitCode$
 DefVar $ErrorString$
 DefVar $LicenseRequired$
