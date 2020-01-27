@@ -10762,7 +10762,8 @@ begin
         not Skip(ParameterEscapeStrings, remaining, remaining, InfoSyntaxError) and
         not Skip(Parameter_64Bit, remaining, remaining, InfoSyntaxError) and
         not Skip(Parameter_32Bit, remaining, remaining, InfoSyntaxError) and
-        not Skip(Parameter_SysNative, remaining, remaining, InfoSyntaxError) then
+        not Skip(Parameter_SysNative, remaining, remaining, InfoSyntaxError) and
+        not Skip(ParameterShowOutput, remaining, remaining, InfoSyntaxError) then
       begin
         // try to parse a RunAs param
         GetWord(remaining, expr, remaining, WordDelimiterWhiteSpace);
