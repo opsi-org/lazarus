@@ -9747,7 +9747,7 @@ begin
             '" has vanished', LevelComplete);
           if not StartProcess(Commandline, sw_hide, showoutputFlag, true, true,
             false, false, waitsecsAsTimeout, runAs, ident, WaitSecs, Report,
-            FLastExitCodeOfExe, output)
+            FLastExitCodeOfExe, true, output)
           then
           begin
             ps := 'Error: ' + Report;
@@ -9763,7 +9763,7 @@ begin
 
           if not StartProcess(Commandline, sw_hide, showoutputFlag, true, false,
             true, false, waitsecsAsTimeout, runAs, ident, WaitSecs, Report,
-            FLastExitCodeOfExe, output)
+            FLastExitCodeOfExe, true, output)
           then
           begin
             ps := 'Error: ' + Report;
@@ -9779,7 +9779,7 @@ begin
 
           if not StartProcess(Commandline, sw_hide, showoutputFlag, true, false,
             false, true, waitsecsAsTimeout, runAs, ident, WaitSecs, Report,
-            FLastExitCodeOfExe, output)
+            FLastExitCodeOfExe, true, output)
           then
           begin
             ps := 'Error: ' + Report;
@@ -9813,7 +9813,7 @@ from defines.inc
 
           if not StartProcess (Commandline, sw_hide, showoutputFlag,
             WaitForReturn, false, false, false, waitsecsAsTimeout, runAs, '',
-            WaitSecs, Report, FLastExitCodeOfExe, output)
+            WaitSecs, Report, FLastExitCodeOfExe, true, output)
           then
           begin
             ps := 'Error: ' + Report;
@@ -10465,7 +10465,7 @@ begin
         LogDatei.log('Executing ' + commandline, LLDebug + logleveloffset);
         if not StartProcess(commandline, showcmd, showoutput,
           true, false, false, false, false, runAs, '', 0,
-          report, FLastExitCodeOfExe, output) then
+          report, FLastExitCodeOfExe, catchout, output) then
         begin
           // is failed
           ps := 'Error: ' + IntToStr(FLastExitCodeOfExe) + ' : ' + Report;
@@ -10478,7 +10478,7 @@ begin
             Sleep(100);
             if not StartProcess(commandline, showcmd, showoutput,
               true, false, false, false, false, runAs, '', 0,
-              report, FLastExitCodeOfExe, output) then
+              report, FLastExitCodeOfExe, catchout, output) then
             begin
               LogDatei.log(ps, LLcritical);
               FExtremeErrorLevel := LevelFatal;
@@ -10995,7 +10995,7 @@ begin
       LogDatei.log_prog ('Executing ' + commandline, LLDebug);
       if not StartProcess(Commandline, showcmd, showoutput, not threaded,
         false, false, false, false, runas, '', WaitSecs, Report,
-        FLastExitCodeOfExe, output)
+        FLastExitCodeOfExe, true, output)
       then
       begin
         ps := 'Error: ' + Report;
