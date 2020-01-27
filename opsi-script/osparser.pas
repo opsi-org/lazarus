@@ -9805,8 +9805,8 @@ begin
     else
     begin
      {$IFDEF WINDOWS}
-       If force64 and FileExists(GetWinDirectory+'\cmd64.exe') then
-         FileName := '"'+GetWinDirectory+'\cmd64.exe"'
+       If force64 and FileExists(GetWinDirectory+'cmd64.exe') then
+         FileName := '"'+GetWinDirectory+'cmd64.exe"'
        else
          FileName := '"cmd.exe"';
        Parameters := ' /C "' + command + '" ';
@@ -10132,8 +10132,8 @@ begin
       else if GetUibOsType (errorinfo) = tovWinNT then
       begin
        {$IFDEF WINDOWS}
-         If force64 and FileExists(GetWinDirectory+'\cmd64.exe') then
-           FileName := '"'+GetWinDirectory+'\cmd64.exe"'
+         If force64 and FileExists(GetWinDirectory+'cmd64.exe') then
+           FileName := '"'+GetWinDirectory+'cmd64.exe"'
          else
            FileName := '"cmd.exe"';
          // Quote tempfile only if contains spaces, only if not quoted parameters may be quoted
@@ -10410,7 +10410,7 @@ begin
   while (remaining <> '') and continue
   do
   Begin
-    GetWord(remaining, part, remaining, WordDelimiterWhiteSpace);
+    GetWordOrStringExpressionstr(remaining, part, remaining, WordDelimiterWhiteSpace);
     if (lowercase(part) = lowercase(passSplitter)) or (lowercase(part) = lowercase(optionsSplitter))
     then
       continue := false
@@ -10487,7 +10487,7 @@ begin
   result := true;
 
   if not GetString(parts[0], programFileName, remaining, infosyntaxError, true)
-  then GetWord(parts[0], programFileName, remaining, WordDelimiterWhiteSpace);
+  then GetWordOrStringExpressionstr(parts[0], programFileName, remaining, WordDelimiterWhiteSpace);
 
   if not EvaluateString(remaining, remaining, programParas, infoSyntaxError)
   then
@@ -10500,6 +10500,10 @@ begin
   winstOption := parts[2];
 
   parts.free;
+  logdatei.log('programfilename: '+programfilename,LLDebug2);
+  logdatei.log('programparas: '+programparas,LLDebug2);
+  logdatei.log('passparas: '+passparas,LLDebug2);
+  logdatei.log('winstoption: '+winstoption,LLDebug2);
 end;
 
 function TuibInstScript.executeWith (
@@ -10576,11 +10580,13 @@ begin
     //inc(TempBatchDatei_UniqueCount);
     //tempfilename := TempPath + TempBatchfilename + inttoStr(TempBatchDatei_UniqueCount) + '.bat';
     //Sektion.SaveToFile (tempfilename);
-
+    (*
+    //variable and sting expr are checked in produceExecLine
     if ExecParameter <> '' then
     begin
       ApplyTextVariablesToString(ExecParameter,false);
     end;
+    *)
     // syntax should been checked
     if not produceExecLine(
       ExecParameter,
