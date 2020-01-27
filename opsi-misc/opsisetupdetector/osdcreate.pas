@@ -313,6 +313,12 @@ begin
         clientpath + PathDelim + 'files1' + PathDelim +
         aktProduct.SetupFiles[0].setupFileName,
         [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
+    // MST file 1
+    if FileExists(aktProduct.SetupFiles[0].MSTFullFileName) then
+      copyfile(aktProduct.SetupFiles[0].MSTFullFileName,
+        clientpath + PathDelim + 'files1' + PathDelim +
+        aktProduct.SetupFiles[0].MSTFileName,
+        [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
     // setup file 2
     if FileExists(aktProduct.SetupFiles[1].setupFullFileName) then
       copyfile(aktProduct.SetupFiles[1].setupFullFileName,

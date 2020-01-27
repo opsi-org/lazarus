@@ -313,7 +313,7 @@ type
     procedure makeProperties;
   private
     { private declarations }
-    procedure OpenMSTFile;
+    procedure OpenMSTFile(var mysetup:TSetupFile);
   public
     { public declarations }
     procedure memoadd(line: string);
@@ -1446,23 +1446,25 @@ begin
 
 end;
 
-procedure TResultform1.OpenMSTFile;
+procedure TResultform1.OpenMSTFile(var mysetup: TSetupFile);
 begin
   OpenDialog1.FilterIndex := 4;
   if OpenDialog1.Execute then
   begin
-    // include code here
+    mysetup.mstFullFileName := OpenDialog1.FileName;
+    mysetup.installCommandLine:= mysetup.installCommandLine + ' TRANSFORMS=' +
+      mysetup.mstFileName;
   end;
 end;
 
 procedure TResultform1.BitBtnOpenMst1Click(Sender: TObject);
 begin
-  OpenMSTFile;
+  OpenMSTFile(aktProduct.SetupFiles[0]);
 end;
 
 procedure TResultform1.BitBtnOpenMst2Click(Sender: TObject);
 begin
-
+  OpenMSTFile(aktProduct.SetupFiles[1]);
 end;
 
 
