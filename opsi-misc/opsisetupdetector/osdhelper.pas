@@ -48,8 +48,8 @@ begin
   myreg.DeleteKey('Software\Classes\Msi.Package\shell\opsi setup detector\Command');
   myreg.DeleteKey('Software\Classes\Msi.Package\shell\opsi setup detector');
   //new registration
-  isAdmin := DSiIsAdmin;  // for testing
-  if DSiIsAdmin then myreg.RootKey := HKEY_CLASSES_ROOT
+  isAdmin := DSiIsAdminLoggedOn;  // for testing
+  if DSiIsAdminLoggedOn then myreg.RootKey := HKEY_CLASSES_ROOT
   else myreg.RootKey := HKEY_CURRENT_USER;
   if doregister then
   begin

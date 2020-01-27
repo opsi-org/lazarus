@@ -318,13 +318,19 @@ begin
       copyfile(aktProduct.SetupFiles[0].MSTFullFileName,
         clientpath + PathDelim + 'files1' + PathDelim +
         aktProduct.SetupFiles[0].MSTFileName,
-        [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
+        [cffOverwriteFile,cffCreateDestDirectory, cffPreserveTime], True);
     // setup file 2
     if FileExists(aktProduct.SetupFiles[1].setupFullFileName) then
       copyfile(aktProduct.SetupFiles[1].setupFullFileName,
         clientpath + PathDelim + 'files2' + PathDelim +
         aktProduct.SetupFiles[1].setupFileName,
         [cffOverwriteFile, cffCreateDestDirectory, cffPreserveTime], True);
+    // MST file 2
+    if FileExists(aktProduct.SetupFiles[1].MSTFullFileName) then
+      copyfile(aktProduct.SetupFiles[1].MSTFullFileName,
+        clientpath + PathDelim + 'files2' + PathDelim +
+        aktProduct.SetupFiles[1].MSTFileName,
+        [cffOverwriteFile,cffCreateDestDirectory, cffPreserveTime], True);
 
     //osd-lib.opsiscript
     infilename := templatePath + Pathdelim + 'osd-lib.opsiscript';
