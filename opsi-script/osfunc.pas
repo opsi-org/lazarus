@@ -1540,7 +1540,7 @@ begin
         end
         else if runas = traPcpatch then
         begin
-          // not really relevant, as it is never used in opsi script
+          {
           jwawinbase.LookupAccountNameA(nil, 'pcpatch', nil,
             sidSize, nil, refDomainSize, nameUse);
 
@@ -1549,6 +1549,11 @@ begin
 
           Result := jwawinbase.LookupAccountNameA(nil, 'pcpatch',
             sid, sidSize, refDomain, refDomainSize, nameUse);
+          }
+
+          // just generate an error, as it is currently unused anyways
+          LogDatei.log('SetFilePermissionForRunAs: traPcpatch is not supported', LLError);
+          Result := false;
         end
         else if runas in [traAdmin, traAdminProfile, traAdminProfileExplorer,
           traAdminProfileImpersonate, traAdminProfileImpersonateExplorer] then
