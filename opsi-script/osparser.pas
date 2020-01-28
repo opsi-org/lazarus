@@ -412,13 +412,7 @@ public
      var BooleanResult : Boolean; NestingLevel : Integer; var InfoSyntaxError : String) : Boolean;
 
   procedure GetWordOrStringExpressionstr (const s: String;
-         var resultString, Remaining, errorinfo : String); overload;
-
-  procedure GetWordOrStringExpressionstr (const s: String;
-         var resultString, Remaining : String; const WordDelimiterSet: TCharset); overload;
-
-  function SkipWordOrStringExpressionstr (const partialS,
-      S: string; var Remaining: string; var Error: string): boolean;
+                           var resultString, Remaining, errorinfo : String);
 
   function produceExecLine(const s : String;
                         var programfilename, programparas, passparas, winstoption: String;
@@ -1630,9 +1624,68 @@ end;
 {$ENDIF}
 
 
-{$IFDEF WINDOWS}
+{
+Type
+ TGUID=record
+  A,B:word;
+  D,M,S:word;
+  MAC:array[1..6] of byte;
+ end;
+
+function GetMACAddress1:String;
+var
+ UuidCreateFunc : function (var guid: TGUID):HResult;stdcall;
+ handle : THandle;
+ g:TGUID;
+ WinVer:_OSVersionInfoA;
+ i:integer;
+ ErrCode: HResult;
+begin
+ WinVer.dwOSVersionInfoSize := sizeof(WinVer);
+ getversionex(WinVer);
+
+ handle := LoadLibrary('RPCRT4.DLL');
+ if WinVer.dwMajorVersion >= 5 then (* Windows 2000 *)
+  @UuidCreateFunc := GetProcAddress(Handle, 'UuidCreateSequential')
+ else
+  @UuidCreateFunc := GetProcAddress(Handle, 'UuidCreate') ;
+
+ UuidCreateFunc(g);
+ result:='';
+ for i:=1 to 6 do
+   result:=result+IntToHex(g.MAC[i],2);
+end;
+
+}
+
+
+{
+procedure DeleteRegKey(aRoot : HKey; aPath : String);
+var
+  SL : TStringList;
+  X : Integer;
+begin
+  SL := TStringList.Create;
+  with TRegistry.Create do
+  try
+    RootKey := aRoot;
+    if OpenKey(aPath,true) then begin
+      GetKeyNames(SL);
+      For X:=0 to SL.Count-1 do DeleteRegKey(aRoot,aPath + '\' + SL[X]);
+      CloseKey;
+      DeleteKey(aPath);
+    end;
+  finally
+    Free;
+    SL.Free;
+  end;
+end;
+
+}
+
 function GetNetUser (Host : String; Var UserName : String; var ErrorInfo : String) : Boolean;
-  { for Host = '' Username will become the name of the current user of the process }
+{$IFDEF WINDOWS}
+  (* for Host = '' Username will become the name of the current user of the process *)
 
 var
   pLocalName : Pchar;
@@ -1704,9 +1757,6 @@ Begin
   else result := false;
 End;
 {$ELSE WINDOWS}
-function GetNetUser (Host : String; Var UserName : String; var ErrorInfo : String) : Boolean;
-  { for Host = '' Username will become the name of the current user of the process }
-
 begin
   //###LINUX
   result := true;
@@ -4368,9 +4418,9 @@ var
   ErrorInfo : String='';
   SyntaxCheck : Boolean;
   Expressionstr : String='';
-  { wenn die globale Variable Expressionstr hier nicht lokal neu angelegt wird,
+  (* wenn die globale Variable Expressionstr hier nicht lokal neu angelegt wird,
      so verliert der Parameter Sectionname, der ein Zeiger auf die globale Variable Expressionstr ist,
-     zusammen mit dieser seinen Wert }
+     zusammen mit dieser seinen Wert *)
     r : String='';
   i : integer=0;
   k : Integer=0;
@@ -4751,9 +4801,9 @@ var
   citmark : Char;
   SyntaxCheck : Boolean;
   Expressionstr : String='';
-  { wenn die globale Variable Expressionstr hier nicht lokal neu angelegt wird,
+  (* wenn die globale Variable Expressionstr hier nicht lokal neu angelegt wird,
      so verliert der Parameter Sectionname, der ein Zeiger auf die globale Variable Expressionstr ist,
-     zusammen mit dieser seinen Wert }
+     zusammen mit dieser seinen Wert *)
   r : String='';
   i : Integer=0;
   varno : Integer=0;
@@ -5428,10 +5478,10 @@ begin
                then SyntaxCheck := true
                else ErrorInfo := 'not interpreted characters after ]';
 
-             { fuege RegParameter vor key ein }
+             (* fuege RegParameter vor key ein *)
                 TemplateKey := basekey + TemplateKey;
 
-             { hole HKEY aus key heraus }
+             (* hole HKEY aus key heraus *)
                GetWord (TemplateKey, key0, TemplateKey, ['\']);
                System.Delete (TemplateKey, 1,1);
              end;
@@ -5482,7 +5532,7 @@ begin
         End
 
         else
-        reportError (Sektion, i, Expressionstr, ' Operation not defined');
+        reportError (Sektion, i, Expressionstr, ' Operation nicht definiert');
       end;
     End;
 
@@ -5510,7 +5560,6 @@ begin
 end;
 
 
-{$IFDEF WIN32}
 function TuibInstScript.doRegistryAllNTUserDats (const Sektion: TWorkSection;
          rfSelected: TRegistryFormat; const flag_force64 : boolean): TSectionResult;
 
@@ -5533,6 +5582,7 @@ function TuibInstScript.doRegistryAllNTUserDats (const Sektion: TWorkSection;
 
    StartWithErrorNumbers : integer=0;
    StartWithWarningsNumber: Integer=0;
+{$IFDEF WIN32}
 
  function LoadNTUserDat (const path : String) : Boolean;
   var
@@ -5748,8 +5798,6 @@ begin
    then result := tsrExitProcess;
 end;
 {$ELSE WIN32}
-function TuibInstScript.doRegistryAllNTUserDats (const Sektion: TWorkSection;
-         rfSelected: TRegistryFormat; const flag_force64 : boolean): TSectionResult;
 begin
   // not implemented
   result := tsrExitProcess;
@@ -5757,7 +5805,6 @@ end;
 
 {$ENDIF WIN32}
 
-{$IFDEF WIN32}
 function TuibInstScript.doRegistryAllUsrClassDats (const Sektion: TWorkSection;
          rfSelected: TRegistryFormat; const flag_force64 : boolean): TSectionResult;
 
@@ -5780,7 +5827,7 @@ function TuibInstScript.doRegistryAllUsrClassDats (const Sektion: TWorkSection;
 
    StartWithErrorNumbers : integer=0;
    StartWithWarningsNumber: Integer=0;
-
+{$IFDEF WIN32}
 
  function LoadUsrClassDat (const path : String) : Boolean;
   var
@@ -6000,8 +6047,6 @@ begin
    then result := tsrExitProcess;
 end;
 {$ELSE WIN32}
-function TuibInstScript.doRegistryAllUsrClassDats (const Sektion: TWorkSection;
-         rfSelected: TRegistryFormat; const flag_force64 : boolean): TSectionResult;
 begin
   // not implemented
   result := tsrExitProcess;
@@ -6133,6 +6178,31 @@ begin
           end
           else
             LogDatei.log('Error: could not patch ntuserdat: '+UserPath,LLError);
+          (*
+          begin
+            if (GetUserNameEx_ <> '') then
+            begin
+              if (profilename = GetUserNameEx_)
+                 or (profilepath = getProfileImagePathfromSid(GetLocalUserSidStr(GetUserNameEx_)))
+                 then
+              begin
+                LogDatei.log('The Branch for :'+profilename+' seems to be the logged in user,',LLDebug);
+                LogDatei.log('so let us try to patch it via HKUsers\SID',LLDebug);
+                workOnHkuserSid (profilename);
+              end;
+            end
+            else
+            begin
+              // at XP we have problems to get the username while pcpatch is logged in
+              if GetSystemOSVersionInfoEx('major_version') = '5' then
+              begin
+                LogDatei.log('The Branch for :'+profilename+' may be the logged in user,',LLDebug);
+                LogDatei.log('so let us try to patch it via HKUsers\SID',LLDebug);
+                workOnHkuserSid (profilename);
+              end;
+            end;
+          end;
+          *)
        End;
      End;
    //End;
@@ -7287,9 +7357,9 @@ begin
 end;
 //#############################################################################
 
-{$IFDEF WINDOWS}
 function TuibInstScript.doXMLPatch (const Sektion: TWorkSection; Const XMLFilename : String;
                 var output: TXStringList) : TSectionResult;
+{$IFDEF WINDOWS}
 begin
   //DataModuleLogServer.IdTCPServer1.Active:=true;
   result := executeWith (Sektion,  '"'+ ExtractFileDir(reencode(paramstr(0),'system'))+PathDelim+'opsiwinstxmlplugin.exe" --xmlfile="'+trim(XMLFilename)+'" --scriptfile=' , true, 0, output);
@@ -7299,11 +7369,8 @@ begin
 end;
 
 {$ELSE WINDOWS}
-function TuibInstScript.doXMLPatch (const Sektion: TWorkSection; Const XMLFilename : String;
-                var output: TXStringList) : TSectionResult;
 begin
   LogDatei.log('Not implemented for Linux', LLError);
-  result := tsrExitProcess;
 end;
 
 {$ENDIF WINDOWS}
@@ -7888,8 +7955,6 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
   //OldWinapiErrorMode: Cardinal;
 
   Install : TuibFileInstall;
-  goon, flag_all_ntuser_send, force64 : boolean;
-
 
   procedure fileActionsMain (const Section : TXStringList; const presetDir : String);
   var
@@ -7905,7 +7970,6 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
     shellcallArchParam : String;
     go_on : boolean;
     tmpstr,searchmask : string;
-
 
 
   begin
@@ -8797,50 +8861,11 @@ begin
 
   Install := TuibFileInstall.create;
 
-  goon := false;
-  remaining := CopyParameter;
-  flag_all_ntuser_send := false;
-  force64 := false;
-
-  if length (remaining) > 0 then goon := true;
-  while goon
-  do
-  begin
-    if SkipWordOrStringExpressionstr('/64bit', Remaining, Remaining, ErrorInfo)
-    then
-      if Is64BitSystem then force64 := true;
-
-    if SkipWordOrStringExpressionstr('/sysnative', Remaining, Remaining, ErrorInfo)
-    then
-      if Is64BitSystem then force64 := true;
-
-    if SkipWordOrStringExpressionstr('/32bit', Remaining, Remaining, ErrorInfo)
-    then
-      force64 := false;
-
-    if SkipWordOrStringExpressionstr(Parameter_AllNTUserProfiles, Remaining, Remaining, ErrorInfo)
-    then
-      flag_all_ntuser := true;
-
-    if SkipWordOrStringExpressionstr(Parameter_AllNTUserSendTo, Remaining, Remaining, ErrorInfo)
-    then
-      flag_all_ntuser_send := true
-
-    else
-    Begin
-      goon := false;
-      if length (remaining) > 0
-      then
-      begin
-        LogDatei.log('Syntaxerror: "' + remaining + '" is no valid parameter ',LLError);
-      end;
-    end;
-  end;
-
   {$IFDEF WIN32}
   // disable  critical-error-handler message box. (Drive not ready)
   //OldWinapiErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
-   if force64 = true then
+   if (0 < pos(lowercase (Parameter_64Bit), lowercase (CopyParameter)))
+     or (0 < pos(lowercase (Parameter_SysNative), lowercase (CopyParameter))) then
    Begin
      boolresult := DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
      Wow64FsRedirectionDisabled := true;
@@ -8848,7 +8873,8 @@ begin
    else Wow64FsRedirectionDisabled := false;
    {$ENDIF WIN32}
 
-  if flag_all_ntuser
+  if (0 < pos(lowercase (Parameter_AllNTUserProfiles),lowercase (CopyParameter)))
+    or flag_all_ntuser
   then
   Begin
     flag_all_ntuser := false;
@@ -8863,7 +8889,7 @@ begin
       end;
     end;
   End
-  else if flag_all_ntuser_send
+  else if 0 < pos(lowercase(Parameter_AllNTUserSendTo), lowercase (CopyParameter))
   then
   Begin
     flag_all_ntuser := false;
@@ -9010,6 +9036,40 @@ function TuibInstScript.doLinkFolderActions (const Sektion: TWorkSection; common
           End;
         End
 
+        {
+        else if LowerCase (Expressionstr) = 'push_location'
+        then
+        begin
+           if length (Remaining) > 0
+           then
+              reportError (Sektion, i, Sektion.Strings [i-1], 'end of line expected');
+           stack.Insert(0, startdirectory);
+
+           LogDatei.log ('Folder ' + Startdirectory + ' put on stack', levelcomplete);
+        End
+
+        else if LowerCase (Expressionstr) = 'pop_location'
+        then
+        begin
+           if length (Remaining) > 0
+           then
+              reportError (Sektion, i, Sektion.Strings [i-1], 'end of line expected');
+
+           if stack.count > 0
+           then
+           Begin
+             startdirectory := stack.Strings[0];
+             LogDatei.log ('New base folder is ' + Startdirectory, levelComplete);
+             stack.Delete (0);
+           End
+           else
+           Begin
+             LogDatei.log ('No folder left on stack', levelInfo);
+           End
+
+        End
+        }
+        //{$IFDEF WIN32}
         else if LowerCase (Expressionstr) = 'set_subfolder'
         then
         begin
@@ -9028,12 +9088,18 @@ function TuibInstScript.doLinkFolderActions (const Sektion: TWorkSection; common
 
           if csidl_set then
              Begin
+                {LogDatei.log ('Subfolder is '  + subfoldername + ' in '
+                   +  shellLinks.tell_systemfolder(csidl), levelComplete);
+                }
                 ShellLinks.OpenShellFolderPath (csidl, subfoldername);
                 folder_opened := true;
              End
              else
                LogDatei.log ('No base folder set, therefore subfolder not set',
                  LLWarning);
+
+          //startdirectory := startdirectory + '\' + subfoldername;
+          //LogDatei.log ('New base folder is ' + Startdirectory, levelComplete);
 
         End
         {$IFDEF WIN32}
@@ -9312,18 +9378,18 @@ function TuibInstScript.doLinkFolderActions (const Sektion: TWorkSection; common
                 then folder_opened := true
               End;
 
-              if ShellLinks.MakeShellLink(link_name,  link_target, link_paramstr,
+              ShellLinks.MakeShellLink(link_name,  link_target, link_paramstr,
                       link_working_dir, link_icon_file,
-                      link_icon_index, link_shortcut) then ;
+                      link_icon_index, link_shortcut);
 
             End
           end
           {$ENDIF WIN32}
           {$IFDEF UNIX}
-          if ShellLinks.MakeShellLink(link_name,  link_target, link_paramstr,
+          ShellLinks.MakeShellLink(link_name,  link_target, link_paramstr,
                       link_working_dir, link_icon_file,
-                      link_categories,'','') then ;
-          {$ENDIF UNIX}
+                      link_categories,'','');
+          {$ENDIF LINUX}
         End
 
         else
@@ -9805,8 +9871,8 @@ begin
     else
     begin
      {$IFDEF WINDOWS}
-       If force64 and FileExists(GetWinDirectory+'cmd64.exe') then
-         FileName := '"'+GetWinDirectory+'cmd64.exe"'
+       If force64 and FileExists(GetWinDirectory+'\cmd64.exe') then
+         FileName := '"'+GetWinDirectory+'\cmd64.exe"'
        else
          FileName := '"cmd.exe"';
        Parameters := ' /C "' + command + '" ';
@@ -9887,8 +9953,6 @@ Var
  aktos : TuibOSVersion;
  cmdMuiFiles : Tstringlist;
  muisrcpath, muitargetpath : string;
- goon : boolean;
- remaining : string;
 
 begin
  try
@@ -9962,54 +10026,7 @@ begin
     end;
     force64 := false;
     runAs := traInvoker;
-    goon := false;
-    remaining := winstparam;
 
-    if length (winstparam) > 0 then goon := true;
-    while goon
-    do
-    begin
-      if SkipWordOrStringExpressionstr('/64bit', Remaining, Remaining, ErrorInfo)
-      then
-        if Is64BitSystem then force64 := true;
-
-      if SkipWordOrStringExpressionstr('/sysnative', Remaining, Remaining, ErrorInfo)
-      then
-        if Is64BitSystem then force64 := true;
-
-      if SkipWordOrStringExpressionstr('/32bit', Remaining, Remaining, ErrorInfo)
-      then
-        force64 := false;
-
-      if SkipWordOrStringExpressionstr('/showoutput', Remaining, Remaining, ErrorInfo)
-      then
-      begin
-         showoutput := true;
-         LogDatei.log('Set Showoutput true', LLDebug3);
-      end;
-
-      if SkipWordOrStringExpressionstr('/ParameterRunAsLoggedOnUser', Remaining, Remaining, ErrorInfo)
-      then
-      Begin
-        if runLoginScripts then
-          runAs := traLoggedOnUser
-        else
-          LogDatei.log('Warning: Not in UserLoginScript mode: /RunAsLoggedinUser ignored', LLWarning);
-      End
-
-      else
-      Begin
-        goon := false;
-        if length (remaining) > 0
-        then
-        begin
-         LogDatei.log('Syntaxerror: "' + remaining + '" is no valid parameter ',LLError);
-        end;
-      end;
-
-    end;
-
-(*
     If (pos(lowercase('/64bit'),lowercase(winstparam)) > 0 ) and Is64BitSystem then
        force64 := true;
 
@@ -10032,7 +10049,6 @@ begin
       else
         LogDatei.log('Warning: Not in UserLoginScript mode: /RunAsLoggedinUser ignored', LLWarning);
     End;
-    *)
 
     {$IFDEF WIN32}
     if force64 then
@@ -10132,8 +10148,8 @@ begin
       else if GetUibOsType (errorinfo) = tovWinNT then
       begin
        {$IFDEF WINDOWS}
-         If force64 and FileExists(GetWinDirectory+'cmd64.exe') then
-           FileName := '"'+GetWinDirectory+'cmd64.exe"'
+         If force64 and FileExists(GetWinDirectory+'\cmd64.exe') then
+           FileName := '"'+GetWinDirectory+'\cmd64.exe"'
          else
            FileName := '"cmd.exe"';
          // Quote tempfile only if contains spaces, only if not quoted parameters may be quoted
@@ -10410,7 +10426,7 @@ begin
   while (remaining <> '') and continue
   do
   Begin
-    GetWordOrStringExpressionstr(remaining, part, remaining, WordDelimiterWhiteSpace);
+    GetWord(remaining, part, remaining, WordDelimiterWhiteSpace);
     if (lowercase(part) = lowercase(passSplitter)) or (lowercase(part) = lowercase(optionsSplitter))
     then
       continue := false
@@ -10455,15 +10471,15 @@ begin
     do
     Begin
       if
-      not SkipWordOrStringExpressionstr(ParameterDontWait, remaining, remaining, InfoSyntaxError)
+      not Skip(ParameterDontWait, remaining, remaining, InfoSyntaxError)
       and
-      not SkipWordOrStringExpressionstr(ParameterEscapeStrings, remaining, remaining, InfoSyntaxError)
+      not Skip(ParameterEscapeStrings, remaining, remaining, InfoSyntaxError)
       and
-      not SkipWordOrStringExpressionstr(Parameter_64Bit, remaining, remaining, InfoSyntaxError)
+      not Skip(Parameter_64Bit, remaining, remaining, InfoSyntaxError)
       and
-      not SkipWordOrStringExpressionstr(Parameter_32Bit, remaining, remaining, InfoSyntaxError)
+      not Skip(Parameter_32Bit, remaining, remaining, InfoSyntaxError)
       and
-      not SkipWordOrStringExpressionstr(Parameter_SysNative, remaining, remaining, InfoSyntaxError)
+      not Skip(Parameter_SysNative, remaining, remaining, InfoSyntaxError)
       then continue := false;
     end;
 
@@ -10487,7 +10503,7 @@ begin
   result := true;
 
   if not GetString(parts[0], programFileName, remaining, infosyntaxError, true)
-  then GetWordOrStringExpressionstr(parts[0], programFileName, remaining, WordDelimiterWhiteSpace);
+  then GetWord(parts[0], programFileName, remaining, WordDelimiterWhiteSpace);
 
   if not EvaluateString(remaining, remaining, programParas, infoSyntaxError)
   then
@@ -10500,10 +10516,6 @@ begin
   winstOption := parts[2];
 
   parts.free;
-  logdatei.log('programfilename: '+programfilename,LLDebug2);
-  logdatei.log('programparas: '+programparas,LLDebug2);
-  logdatei.log('passparas: '+passparas,LLDebug2);
-  logdatei.log('winstoption: '+winstoption,LLDebug2);
 end;
 
 function TuibInstScript.executeWith (
@@ -10531,8 +10543,6 @@ Var
  force64 : boolean;
  oldDisableWow64FsRedirectionStatus: pointer=nil;
  Wow64FsRedirectionDisabled, boolresult: boolean;
- goon : boolean;
- remaining : string;
 
 
 begin
@@ -10580,13 +10590,11 @@ begin
     //inc(TempBatchDatei_UniqueCount);
     //tempfilename := TempPath + TempBatchfilename + inttoStr(TempBatchDatei_UniqueCount) + '.bat';
     //Sektion.SaveToFile (tempfilename);
-    (*
-    //variable and sting expr are checked in produceExecLine
+
     if ExecParameter <> '' then
     begin
       ApplyTextVariablesToString(ExecParameter,false);
     end;
-    *)
     // syntax should been checked
     if not produceExecLine(
       ExecParameter,
@@ -10632,41 +10640,6 @@ begin
           + passparas;
 
       force64 := false;
-
-    goon := false;
-    remaining := winstoption;
-
-    if length (remaining) > 0 then goon := true;
-    while goon
-    do
-    begin
-      if SkipWordOrStringExpressionstr(ParameterDontWait, Remaining, Remaining, ErrorInfo)
-      then
-        threaded := true;
-
-      if SkipWordOrStringExpressionstr('/64bit', Remaining, Remaining, ErrorInfo)
-      then
-        if Is64BitSystem then force64 := true;
-
-      if SkipWordOrStringExpressionstr('/sysnative', Remaining, Remaining, ErrorInfo)
-      then
-        if Is64BitSystem then force64 := true;
-
-      if SkipWordOrStringExpressionstr('/32bit', Remaining, Remaining, ErrorInfo)
-      then
-        force64 := false
-
-      else
-      Begin
-        goon := false;
-        if length (remaining) > 0
-        then
-        begin
-          LogDatei.log('Syntaxerror: "' + remaining + '" is no valid parameter ',LLError);
-        end;
-      end;
-    end;
-    (*
       If (pos (lowercase('/64bit'), lowercase (winstoption)) > 0) and Is64BitSystem then
          force64 := true;
 
@@ -10675,7 +10648,6 @@ begin
 
       If (pos (lowercase('/32bit'), lowercase (winstoption)) > 0) then
          force64 := false;
-    *)
 
       {$IFDEF WIN32}
       Wow64FsRedirectionDisabled := false;
@@ -10690,10 +10662,9 @@ begin
       if AutoActivityDisplay then FBatchOberflaeche.showAcitvityBar(true);
       {$ENDIF GUI}
 
-      (*
+
       threaded :=
         (pos (lowercase(ParameterDontWait), lowercase (winstoption)) > 0);
-        *)
 
       if threaded
       then
@@ -14681,7 +14652,7 @@ begin
                {$ENDIF WIN32}
                WaitSecs := 0;
                flag_force64 := false;
-               GetWordOrStringExpressionstr (r, expr, r, WordDelimiterSet0);
+               GetWord (r, expr, r, WordDelimiterSet0);
                SyntaxCheck := true;
 
                ident := '';
@@ -14772,7 +14743,7 @@ begin
                    WaitConditions := WaitConditions + [ttpWaitTime];
                    // WaitConditions := WaitConditions - [ttpWaitOnTerminate];
 
-                   GetWordOrStringExpressionstr (r, expr, r, WordDelimiterSet0);
+                   GetWord (r, expr, r, WordDelimiterSet0);
                    try
                      WaitSecs := StrToInt64 (expr);
                    except
@@ -14834,7 +14805,7 @@ begin
                    WaitConditions := WaitConditions - [ttpWaitTime];
                    WaitConditions := WaitConditions + [ttpWaitTimeout];
 
-                   GetWordOrStringExpressionstr (r, expr, r, WordDelimiterSet0);
+                   GetWord (r, expr, r, WordDelimiterSet0);
                    try
                      WaitSecs := StrToInt64 (expr);
                    except
@@ -14904,7 +14875,7 @@ begin
                        InfoSyntaxError := expr + ' not legal WinBatch parameter';
                  End;
 
-                 GetWordOrStringExpressionstr (r, expr, r, WordDelimiterSet0);
+                 GetWord (r, expr, r, WordDelimiterSet0);
                end;
 
                if SyntaxCheck
@@ -17017,51 +16988,6 @@ begin
   if not EvaluateString (s0, Remaining, resultString, errorInfo)
   then
     GetWord (s0, resultString, Remaining, WordDelimiterWhiteSpace);
-end;
-
-procedure TuibInstScript.GetWordOrStringExpressionstr (const s: String;
-                           var resultString, Remaining: String; const WordDelimiterSet: TCharset);
- { nur fuer AktionenSektion-Syntax 0 }
- var
-  s0 : String='';
-  errorinfo : String='';
-
-begin
-  Resultstring := '';
-  s0 := s;
-  setLength (s0, length (s)); //should create a new instance, but does not always work
-  if not EvaluateString (s0, Remaining, resultString, errorInfo)
-  then
-    GetWord (s0, resultString, Remaining, WordDelimiterSet);
-end;
-
-function TuibInstScript.SkipWordOrStringExpressionstr (const partialS,
-      S: string; var Remaining: string; var Error: string): boolean;
- { like skip but handles also string expressions }
-
- var
-  orgstring : String='';
-  resultString : String='';
-  errorinfo : String='';
-
-begin
-  Result := False;
-  orgstring := S;
-  GetWordOrStringExpressionstr (S, resultString, Remaining, errorinfo);
-  if trim(AnsiUpperCase(partialS)) = trim(AnsiUpperCase(resultString))then
-  begin
-   Result := true;
-   Remaining := trim(Remaining);
-  end
-  else
-  begin
-    Result := False;
-    Remaining := trim(orgstring);
-  end;
-  if Result then
-    Error := ''
-  else
-    Error := '"' + partialS + '" expected '+ errorinfo;
 end;
 
 
@@ -19464,7 +19390,7 @@ begin
    //writeln(actionresult);
     Remaining := trim (Sektion.strings [i-1]);
     // Replace constants on every line in primary section:
-    ApplyTextConstantsToString (Remaining, true);
+    ApplyTextConstantsToString (Remaining, false);
     logdatei.log_prog('Working doAktionen: Remaining:'+remaining,LLDebug2);
     //logdatei.log_prog('Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' Sektion.NestingLevel: '+IntToStr(Sektion.NestingLevel)+' condition: '+BoolToStr(conditions [ActLevel],true),LLDebug3);
     if (inDefFuncLevel = 0)          // count only lines on base level
@@ -22058,12 +21984,12 @@ begin
                    do
                    begin
 
-                      if SkipWordOrStringExpressionstr(Parameter_AllNTUserProfiles, Remaining, Remaining, ErrorInfo)
+                      if skip(Parameter_AllNTUserProfiles, Remaining, Remaining, ErrorInfo)
                       then
                         flag_all_ntuser := true
 
                       else
-                      if SkipWordOrStringExpressionstr('/encoding', Remaining, Remaining, ErrorInfo)
+                      if skip('/encoding', Remaining, Remaining, ErrorInfo)
                       then
                       begin
                         if not EvaluateString (Remaining, Remaining, flag_encoding, ErrorInfo) then
@@ -22128,15 +22054,15 @@ begin
                    do
                    begin
 
-                      if SkipWordOrStringExpressionstr(Parameter_AllNTUserDats, Remaining, Remaining, ErrorInfo)
+                      if skip(Parameter_AllNTUserDats, Remaining, Remaining, ErrorInfo)
                       then
                         flag_all_ntuser := true
 
-                      else if SkipWordOrStringExpressionstr(Parameter_AllUsrClassDats, Remaining, Remaining, ErrorInfo)
+                      else if skip(Parameter_AllUsrClassDats, Remaining, Remaining, ErrorInfo)
                       then
                         flag_all_usrclass := true
 
-                      else if SkipWordOrStringExpressionstr(Parameter_RegistryNTUserDat, Remaining, Remaining, ErrorInfo)
+                      else if skip(Parameter_RegistryNTUserDat, Remaining, Remaining, ErrorInfo)
                       then
                       begin
                         flag_ntuser := true;
@@ -22146,8 +22072,7 @@ begin
                           //ActionResult := reportError (ErrorInfo);
                         end;
                       end
-
-                      else if SkipWordOrStringExpressionstr(Parameter_Registry64Bit, Remaining, Remaining, ErrorInfo)
+                      else if skip(Parameter_Registry64Bit, Remaining, Remaining, ErrorInfo)
                       then
                       begin
                         if (GetNTVersionMajor = 5) and (GetNTVersionMinor = 0) then
@@ -22162,7 +22087,7 @@ begin
                       end
 
 
-                      else if SkipWordOrStringExpressionstr(Parameter_Registry32Bit, Remaining, Remaining, ErrorInfo)
+                      else if skip(Parameter_Registry32Bit, Remaining, Remaining, ErrorInfo)
                       then
                       begin
                         if flag_all_ntuser then
@@ -22175,7 +22100,7 @@ begin
                         else flag_force64 := false;
                       end
 
-                      else if SkipWordOrStringExpressionstr(Parameter_RegistrySysNative, Remaining, Remaining, ErrorInfo)
+                      else if skip(Parameter_RegistrySysNative, Remaining, Remaining, ErrorInfo)
                       then
                       begin
                         if (GetNTVersionMajor = 5) and (GetNTVersionMinor = 0) then
@@ -22190,22 +22115,22 @@ begin
                       end
 
 
-                      else if SkipWordOrStringExpressionstr (Parameter_RegistryUsercontext, Remaining, Remaining, ErrorInfo)
+                      else if skip (Parameter_RegistryUsercontext, Remaining, Remaining, ErrorInfo)
                       then
                         reg_specified_basekey := 'HKEY_USERS\' + usercontextSID
 
                       else if
-                        SkipWordOrStringExpressionstr (Parameter_RegistryBaseKey, Remaining, Remaining, ErrorInfo)
+                        skip (Parameter_RegistryBaseKey, Remaining, Remaining, ErrorInfo)
                         and skip ('=', Remaining, Remaining, ErrorInfo)
                         and GetString(Remaining, s1, Remaining, ErrorInfo, false)
                       then
                         reg_specified_basekey := s1
 
-                      else if SkipWordOrStringExpressionstr (Parameter_SysDiffAddReg, Remaining, Remaining, ErrorInfo)
+                      else if skip (Parameter_SysDiffAddReg, Remaining, Remaining, ErrorInfo)
                       then
                         registryformat := trfSysdiff
 
-                      else if SkipWordOrStringExpressionstr (Parameter_RegeditFormat, Remaining, Remaining, ErrorInfo)
+                      else if skip (Parameter_RegeditFormat, Remaining, Remaining, ErrorInfo)
                       then
                         registryformat := trfRegedit
 
@@ -22321,7 +22246,7 @@ begin
                    logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
                    Parameter := Remaining;
                    if (uppercase(PStatNames^ [tsOpsiServiceCall]) = uppercase(Expressionstr))
-                      and SkipWordOrStringExpressionstr ('/preloginservice', Remaining, Remaining, errorInfo)
+                      and skip ('/preloginservice', Remaining, Remaining, errorInfo)
                      then
                    begin
                      logdatei.log('Execution of OpsiServiceCall /preloginservce',LLNotice);
@@ -22409,7 +22334,7 @@ begin
                  {$ENDIF WIN32}
                  WaitSecs := 0;
                  flag_force64 := false;
-                 GetWordOrStringExpressionstr (Remaining, expr, Remaining, WordDelimiterSet0);
+                 GetWord (Remaining, expr, Remaining, WordDelimiterSet0);
                  SyntaxCheck := true;
 
                  ident := '';
@@ -22500,7 +22425,7 @@ begin
                      WaitConditions := WaitConditions + [ttpWaitTime];
                      // WaitConditions := WaitConditions - [ttpWaitOnTerminate];
 
-                     GetWordOrStringExpressionstr (Remaining, expr, Remaining, WordDelimiterSet0);
+                     GetWord (Remaining, expr, Remaining, WordDelimiterSet0);
                      try
                        WaitSecs := StrToInt64 (expr);
                      except
@@ -22562,7 +22487,7 @@ begin
                      WaitConditions := WaitConditions - [ttpWaitTime];
                      WaitConditions := WaitConditions + [ttpWaitTimeout];
 
-                     GetWordOrStringExpressionstr (Remaining, expr, Remaining, WordDelimiterSet0);
+                     GetWord (Remaining, expr, Remaining, WordDelimiterSet0);
                      try
                        WaitSecs := StrToInt64 (expr);
                      except
@@ -22632,7 +22557,7 @@ begin
                          InfoSyntaxError := expr + ' not legal WinBatch parameter';
                    End;
 
-                   GetWordOrStringExpressionstr (Remaining, expr, Remaining, WordDelimiterSet0);
+                   GetWord (Remaining, expr, Remaining, WordDelimiterSet0);
                  end;
 
                  if SyntaxCheck
