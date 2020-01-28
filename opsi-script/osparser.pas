@@ -19291,9 +19291,415 @@ function TuibInstScript.doAktionen (Sektion: TWorkSection; const CallingSektion:
   tmpstr, tmpstr1, tmpstr2, tmpstr3 : string;
   tmpbool, tmpbool1 : boolean;
   localKindOfStatement : Tstatement;
+  linecounter : integer;
+
+
+function parseAndCallRegistry(ArbeitsSektion : TWorkSection; Remaining : string) : TSectionResult;
+begin
+{$IFDEF WINDOWS}
+logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
+syntaxcheck := true;
+
+registryformat := trfWinst;
+flag_all_ntuser := false;
+flag_ntuser := false;
+reg_specified_basekey := '';
+flag_force64 := false;
+flag_all_usrclass := false;
+
+// if this is a 'ProfileActions' which is called as sub in Machine mode
+// so run registry sections implicit as /Allntuserdats
+if runProfileActions then
+   flag_all_ntuser := true;
+
+remaining := CutRightBlanks (Remaining);
+
+if length (remaining) > 0 then goon := true;
+while goon
+do
+begin
+
+   if skip(Parameter_AllNTUserDats, Remaining, Remaining, ErrorInfo)
+   then
+     flag_all_ntuser := true
+
+   else if skip(Parameter_AllUsrClassDats, Remaining, Remaining, ErrorInfo)
+   then
+     flag_all_usrclass := true
+
+   else if skip(Parameter_RegistryNTUserDat, Remaining, Remaining, ErrorInfo)
+   then
+   begin
+     flag_ntuser := true;
+     if not EvaluateString (Remaining, Remaining, ntuserpath, ErrorInfo) then
+     begin
+      syntaxcheck := false;
+       //ActionResult := reportError (ErrorInfo);
+     end;
+   end
+   else if skip(Parameter_Registry64Bit, Remaining, Remaining, ErrorInfo)
+   then
+   begin
+     if (GetNTVersionMajor = 5) and (GetNTVersionMinor = 0) then
+     begin
+       // we are on win 2000 which can't handle redirections flags
+       flag_force64 := false;
+     end
+     else // we are on xp or higher
+     begin
+       flag_force64 := true;
+     end;
+   end
+
+
+   else if skip(Parameter_Registry32Bit, Remaining, Remaining, ErrorInfo)
+   then
+   begin
+     if flag_all_ntuser then
+     begin
+       // no redirection in user profile registry
+       // so always we are on sysnative
+       LogDatei.log('Ignoring parameter /32bit for /AllNTUserdats. This is always /sysnative',LLInfo);
+       flag_force64 := true;
+     end
+     else flag_force64 := false;
+   end
+
+   else if skip(Parameter_RegistrySysNative, Remaining, Remaining, ErrorInfo)
+   then
+   begin
+     if (GetNTVersionMajor = 5) and (GetNTVersionMinor = 0) then
+     begin
+       // we are on win 2000 which can't handle redirections flags
+       flag_force64 := false;
+     end
+     else // we are on xp or higher
+     begin
+       flag_force64 := true;
+     end;
+   end
+
+
+   else if skip (Parameter_RegistryUsercontext, Remaining, Remaining, ErrorInfo)
+   then
+     reg_specified_basekey := 'HKEY_USERS\' + usercontextSID
+
+   else if
+     skip (Parameter_RegistryBaseKey, Remaining, Remaining, ErrorInfo)
+     and skip ('=', Remaining, Remaining, ErrorInfo)
+     and GetString(Remaining, s1, Remaining, ErrorInfo, false)
+   then
+     reg_specified_basekey := s1
+
+   else if skip (Parameter_SysDiffAddReg, Remaining, Remaining, ErrorInfo)
+   then
+     registryformat := trfSysdiff
+
+   else if skip (Parameter_RegeditFormat, Remaining, Remaining, ErrorInfo)
+   then
+     registryformat := trfRegedit
+
+   else
+   Begin
+     goon := false;
+     if length (remaining) > 0
+     then
+     begin
+       syntaxcheck := false;
+       ActionResult := reportError (Sektion, linecounter, Sektion.strings [linecounter-1],
+                                '"' + remaining + '" is no valid parameter ');
+     end;
+   end;
+
+end;
+
+
+if (flag_all_ntuser or flag_all_usrclass)and (reg_specified_basekey <> '')
+then
+begin
+  syntaxcheck := false;
+  ErrorInfo := 'this combination of options is impossible';
+end;
+
+if inUsercontext then
+     reg_specified_basekey := 'HKEY_USERS\' + usercontextSID;
+
+
+if syntaxcheck then
+begin
+  if flag_all_ntuser
+  then
+  begin
+    if registryformat = trfSysdiff
+    then
+        ActionResult := reportError (Sektion, linecounter, Sektion.strings [linecounter-1],
+                    '"' + Remaining + '": sysdiff format not possible with option "for all nt user"')
+    else
+       ActionResult := doRegistryAllNTUserDats (ArbeitsSektion, registryformat, flag_force64);
+  end
+  else if flag_ntuser
+  then
+  begin
+    if registryformat = trfSysdiff
+    then
+        ActionResult := reportError (Sektion, linecounter, Sektion.strings [linecounter-1],
+                    '"' + Remaining + '": sysdiff format not possible with option "ntuser"')
+    else
+       ActionResult := doRegistryNTUserDat (ArbeitsSektion, registryformat, flag_force64,ntuserpath);
+  end
+  else if flag_all_usrclass
+  then
+  begin
+    if registryformat = trfSysdiff
+    then
+        ActionResult := reportError (Sektion, linecounter, Sektion.strings [linecounter-1],
+                    '"' + Remaining + '": sysdiff format not possible with option "for all usr classes"')
+    else
+       ActionResult := doRegistryAllUsrClassDats (ArbeitsSektion, registryformat, flag_force64);
+  end
+  else
+    case registryformat of
+     trfWinst   :
+        ActionResult := doRegistryHack (ArbeitsSektion, reg_specified_basekey, flag_force64);
+
+     trfSysdiff :
+        ActionResult := doRegistryHackInfSource (ArbeitsSektion, reg_specified_basekey, flag_force64);
+
+     trfRegedit :
+        ActionResult := doRegistryHackRegeditFormat (ArbeitsSektion, reg_specified_basekey, flag_force64);
+
+    end;
+end;
+parseAndCallRegistry :=  ActionResult;
+{$ELSE WINDOWS}
+logdatei.log('Registry sections are not implemented for Linux / Mac.', LLWarning);
+{$ENDIF WINDOWS}
+end;
+
+function parseAndCallWinbatch(ArbeitsSektion : TWorkSection; Remaining : string) : TSectionResult;
+begin
+logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
+ runAs := traInvoker;
+ {$IFDEF WIN32}
+ opsiSetupAdmin_runElevated := false;
+ {$ENDIF WIN32}
+ WaitSecs := 0;
+ flag_force64 := false;
+ GetWord (Remaining, expr, Remaining, WordDelimiterSet0);
+ SyntaxCheck := true;
+
+ ident := '';
+ WaitConditions := [ttpWaitOnTerminate];
+
+ while SyntaxCheck and (length (expr) > 0)
+ do
+ Begin
+   {$IFDEF WIN32}
+   if LowerCase (expr) = LowerCase (ParameterRunAsAdmin)
+   then
+   Begin
+       runAs := traAdmin;
+   End
+
+   else if LowerCase (expr) = LowerCase (ParameterRunAsAdmin1)
+   then
+   Begin
+       runAs := traAdmin;
+   End
+
+   else if LowerCase (expr) = LowerCase (ParameterRunAsAdmin2)
+   then
+   Begin
+       runAs := traAdminProfile;
+   End
+
+   else if LowerCase (expr) = LowerCase (ParameterRunAsAdmin3)
+   then
+   Begin
+       runAs := traAdminProfileImpersonate;
+   End
+
+   else if LowerCase (expr) = LowerCase (ParameterRunAsAdmin4)
+   then
+   Begin
+       runAs := traAdminProfileImpersonateExplorer;
+   End
+
+   else if LowerCase (expr) = LowerCase (ParameterRunAsInvoker)
+   then
+   Begin
+       runAs := traInvoker;
+   End
+
+   else if LowerCase (expr) = LowerCase (ParameterRunElevated)
+   then
+   Begin
+       opsiSetupAdmin_runElevated := true;
+   End
+
+   else if LowerCase (expr) = LowerCase (ParameterRunAsLoggedOnUser)
+   then
+   Begin
+     if runLoginScripts then
+       runAs := traLoggedOnUser
+     else
+       LogDatei.log('Warning: Not in UserLoginScript mode: /RunAsLoggedinUser ignored', LLWarning);
+   End
+
+   else if (LowerCase (expr) = LowerCase (Parameter_64Bit)) and Is64BitSystem
+   then
+   Begin
+       flag_force64 := true;
+   End
+
+   else if LowerCase (expr) = LowerCase (Parameter_32Bit)
+   then
+   Begin
+       flag_force64 := false;
+   End
+
+   else if (LowerCase (expr) = LowerCase (Parameter_SysNative)) and Is64BitSystem
+   then
+   Begin
+       flag_force64 := true;
+   End
+
+   else if (LowerCase (expr) = LowerCase (Parameter_SysNative)) and (not Is64BitSystem)
+   then
+   Begin
+       flag_force64 := false;
+   End
+
+   else {$ENDIF WIN32}  if LowerCase (expr) = LowerCase (ParameterWaitSecs)
+   then
+   Begin
+     WaitConditions := WaitConditions + [ttpWaitTime];
+     // WaitConditions := WaitConditions - [ttpWaitOnTerminate];
+
+     GetWord (Remaining, expr, Remaining, WordDelimiterSet0);
+     try
+       WaitSecs := StrToInt64 (expr);
+     except
+       on EConvertError do
+       Begin
+          InfoSyntaxError := 'Integer number expected';
+          SyntaxCheck := false;
+       End
+     end;
+   End
+
+   {$IFDEF WIN32}
+   else if LowerCase (expr) = LowerCase (ParameterCloseOnWindow)
+   then
+   Begin
+     runAs := traInvoker;
+     WaitConditions := WaitConditions + [ttpWaitForWindowAppearing];
+
+     if EvaluateString (Remaining, Remaining, ident, InfoSyntaxError)
+     then
+     Begin
+       if Remaining <> ''
+       then
+       Begin
+         SyntaxCheck := false;
+         InfoSyntaxError := 'not expected chars after "';
+       End;
+     End
+     else
+        SyntaxCheck := false;
+   End
+
+
+   else if LowerCase (expr) = LowerCase (ParameterCloseBehindWindow)
+   then
+   Begin
+     runAs := traInvoker;
+     WaitConditions := WaitConditions + [ttpWaitForWindowVanished];
+
+     if EvaluateString (Remaining, Remaining, ident, InfoSyntaxError)
+     then
+     Begin
+       if Remaining <> ''
+       then
+       Begin
+         SyntaxCheck := false;
+         InfoSyntaxError := 'unexpected characters after "';
+       End;
+     End
+     else
+       SyntaxCheck := false;
+   End
+
+   {$ENDIF WIN32}
+
+   else if LowerCase (expr) = LowerCase (ParameterWaitProcessTimeoutSecs)
+   then
+   Begin
+     WaitConditions := WaitConditions - [ttpWaitTime];
+     WaitConditions := WaitConditions + [ttpWaitTimeout];
+
+     GetWord (Remaining, expr, Remaining, WordDelimiterSet0);
+     try
+       WaitSecs := StrToInt64 (expr);
+     except
+       on EConvertError do
+       Begin
+         try
+           EvaluateString (expr, expr, seconds, InfoSyntaxError);
+           WaitSecs := StrToInt64 (seconds);
+         except
+           on EConvertError do
+           Begin
+             InfoSyntaxError := 'Integer number expected '+InfoSyntaxError;
+            SyntaxCheck := false;
+          end;
+         end
+       End
+     end
+   End
+
+   else if LowerCase (expr) = LowerCase (ParameterWaitForProcessEnding)
+   then
+   Begin
+     WaitConditions := WaitConditions + [ttpWaitForProcessEnding];
+    if not EvaluateString (Remaining, Remaining, ident, InfoSyntaxError)  then
+        SyntaxCheck := false;
+   End
+
+   else if UpperCase (expr) = UpperCase (ParameterDontWait)
+   then
+   Begin
+       WaitConditions := WaitConditions - [ttpWaitOnTerminate];
+       WaitConditions := WaitConditions - [ttpWaitTimeout];
+   End
+
+   else if UpperCase (expr) = UpperCase (ParameterWaitOnTerminate)
+   then
+   Begin
+       WaitConditions := WaitConditions + [ttpWaitOnTerminate];
+   End
+
+
+
+   else
+   Begin
+         SyntaxCheck := false;
+         InfoSyntaxError := expr + ' not legal WinBatch parameter';
+   End;
+
+   GetWord (Remaining, expr, Remaining, WordDelimiterSet0);
+ end;
+
+ if SyntaxCheck
+ then
+   parseAndCallWinbatch := execWinBatch (ArbeitsSektion, Remaining, WaitConditions, Ident, WaitSecs, runAs,flag_force64)
+ else
+   parseAndCallWinbatch := reportError (Sektion, linecounter, 'Expressionstr', InfoSyntaxError);
+end;
+
 
 begin
-  logdatei.log_prog('Starting daAktionen: ',LLDebug2);
+  logdatei.log_prog('Starting doAktionen: ',LLDebug2);
   Script.FLastSection := Script.FActiveSection;
   Script.ActiveSection := sektion;
   result := tsrPositive;
@@ -19316,20 +19722,20 @@ begin
   FBatchOberflaeche.setWindowState(batchWindowMode);
   {$ENDIF GUI}
 
-  i := 1;
+  linecounter := 1;
   continue := true;
 
   looplist := TXStringList.create;
   inloop := false;
   logdatei.log_prog('Working doAktionen: Vars initialized.',LLDebug2);
-  while (i <= Sektion.count) and continue
+  while (linecounter <= Sektion.count) and continue
   and (actionresult > tsrFatalError)
   and (FExtremeErrorLevel > levelfatal)
   and not scriptstopped
   do
   begin
    //writeln(actionresult);
-    Remaining := trim (Sektion.strings [i-1]);
+    Remaining := trim (Sektion.strings [linecounter-1]);
     // Replace constants on every line in primary section:
     ApplyTextConstantsToString (Remaining, false);
     logdatei.log_prog('Working doAktionen: Remaining:'+remaining,LLDebug2);
@@ -19337,7 +19743,7 @@ begin
     if (inDefFuncLevel = 0)          // count only lines on base level
       and (lowercase(Sektion.Name) = 'actions')   // count only lines in actions
       then inc(FAktScriptLineNumber);
-    logdatei.log_prog('Script line: '+intToStr(i)+' / '+intToStr(FAktScriptLineNumber)+' : '+Remaining,LLDebug2);
+    logdatei.log_prog('Script line: '+intToStr(linecounter)+' / '+intToStr(FAktScriptLineNumber)+' : '+Remaining,LLDebug);
     //writeln(remaining);
     //readln;
 
@@ -19409,7 +19815,7 @@ begin
           LogDatei.log_prog('Entering Switch statement',LLDebug2);
           if inswitch then
           begin
-            reportError (Sektion, i, '', 'Nested Switch Statement is not allowed.');
+            reportError (Sektion, linecounter, '', 'Nested Switch Statement is not allowed.');
             exit;
           end
           else
@@ -19424,7 +19830,7 @@ begin
               doLogEntries (PStatNames^ [tsSwitch]+' : '+switchCondition, LLinfo);
               LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
             end
-            else reportError (Sektion, i, Expressionstr, InfoSyntaxError);
+            else reportError (Sektion, linecounter, Expressionstr, InfoSyntaxError);
           end
         end
 
@@ -19433,13 +19839,13 @@ begin
           LogDatei.log_prog('Entering Case statement',LLDebug2);
           if not inswitch then
           begin
-            reportError (Sektion, i, '', 'Case Statement only allowed inside switch statement.');
+            reportError (Sektion, linecounter, '', 'Case Statement only allowed inside switch statement.');
             exit;
           end
           else
           if InCase then
           begin
-            reportError (Sektion, i, '', 'Nested Case Statement is not allowed.');
+            reportError (Sektion, linecounter, '', 'Nested Case Statement is not allowed.');
             exit;
           end
           else
@@ -19463,7 +19869,7 @@ begin
                 LogDatei.log('Case mismatch: '+switchExpressionstr+' != '+switchCondition,LLDebug2);
               end;
             end
-            else reportError (Sektion, i, Expressionstr, InfoSyntaxError);
+            else reportError (Sektion, linecounter, Expressionstr, InfoSyntaxError);
           end
         end
 
@@ -19472,13 +19878,13 @@ begin
           LogDatei.log_prog('Entering EndCase statement',LLDebug2);
           if not inswitch then
           begin
-            reportError (Sektion, i, '', 'EndCase Statement only allowed inside switch statement.');
+            reportError (Sektion, linecounter, '', 'EndCase Statement only allowed inside switch statement.');
             exit;
           end
           else
           if not InCase then
           begin
-            reportError (Sektion, i, '', 'There is no open Case statement to close.');
+            reportError (Sektion, linecounter, '', 'There is no open Case statement to close.');
             exit;
           end
           else
@@ -19496,13 +19902,13 @@ begin
           LogDatei.log_prog('Entering DefaultCase statement',LLDebug2);
           if not inswitch then
           begin
-            reportError (Sektion, i, '', 'DefaultCase Statement only allowed inside switch statement.');
+            reportError (Sektion, linecounter, '', 'DefaultCase Statement only allowed inside switch statement.');
             exit;
           end
           else
           if InCase then
           begin
-            reportError (Sektion, i, '', 'Nested Case Statement is not allowed.');
+            reportError (Sektion, linecounter, '', 'Nested Case Statement is not allowed.');
             exit;
           end
           else
@@ -19524,13 +19930,13 @@ begin
           LogDatei.log_prog('Entering EndSwitch statement',LLDebug2);
           if not inswitch then
           begin
-            reportError (Sektion, i, '', 'EndSwitch Statement only allowed inside switch statement.');
+            reportError (Sektion, linecounter, '', 'EndSwitch Statement only allowed inside switch statement.');
             exit;
           end
           else
           if InCase then
           begin
-            reportError (Sektion, i, '', 'There is a open Case which have to be closed by EndCase before the use of EndSwitch');
+            reportError (Sektion, linecounter, '', 'There is a open Case which have to be closed by EndCase before the use of EndSwitch');
             exit;
           end
           else
@@ -19557,7 +19963,7 @@ begin
             if NestLevel > High (TConditions)
             then
             Begin
-              reportError (Sektion, i, '', 'Too many nested conditions');
+              reportError (Sektion, linecounter, '', 'Too many nested conditions');
               exit;
             End;
 
@@ -19577,9 +19983,9 @@ begin
                  Conditions [NestLevel] := BooleanResult;
               end
               else
-                reportError (Sektion, i, Expressionstr, InfoSyntaxError);
+                reportError (Sektion, linecounter, Expressionstr, InfoSyntaxError);
               if Remaining <> ''
-              then reportError (Sektion, i, Remaining, 'erroneous characters ');
+              then reportError (Sektion, linecounter, Remaining, 'erroneous characters ');
             end;
 
             LogDatei.LogSIndentLevel := NestLevel - 1;
@@ -19597,14 +20003,14 @@ begin
             logdatei.log_prog('ELSE: Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' sektion.NestingLevel: '+IntToStr(sektion.NestingLevel)+' ThenBranch: '+BoolToStr(ThenBranch [NestLevel],true),LLDebug);
             if NestLevel <= Sektion.NestingLevel
             then
-              reportError (Sektion, i, '',PStatNames^ [tsCondElse] + '  without  ' + PStatNames^ [tsCondOpen])
+              reportError (Sektion, linecounter, '',PStatNames^ [tsCondElse] + '  without  ' + PStatNames^ [tsCondOpen])
             else
             Begin
               if not ThenBranch [NestLevel]
               then
               begin
                 logdatei.log_prog('ELSE: Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' sektion.NestingLevel: '+IntToStr(sektion.NestingLevel)+' ThenBranch: '+BoolToStr(ThenBranch [NestLevel],true),LLWarning);
-                reportError (Sektion, i, '', 'double ' + PStatNames^ [tsCondElse]);
+                reportError (Sektion, linecounter, '', 'double ' + PStatNames^ [tsCondElse]);
               end
               else
               Begin
@@ -19645,7 +20051,7 @@ begin
 
             if NestLevel < Sektion.NestingLevel
             then
-              reportError (Sektion, i, '', PStatNames^ [tsCondClose] + '  without  ' + PStatNames^ [tsCondOpen]);
+              reportError (Sektion, linecounter, '', PStatNames^ [tsCondClose] + '  without  ' + PStatNames^ [tsCondOpen]);
           end;
         End
 
@@ -19672,79 +20078,6 @@ begin
               SearchForSectionLines(self,Sektion,CallingSektion,Expressionstr,
                  TXStringList (ArbeitsSektion),StartlineOfSection, true, true, false);
 
-              (*
-              ArbeitsSektion.clear;
-
-              // look if we are in a subprogram
-              // that may have its own sections in it
-
-              if (ArbeitsSektion.count = 0) and (inDefFuncLevel > 0)
-              then
-              begin
-                // local function
-                Logdatei.log('Looking for section: '+ Expressionstr +' in local function .',LLDebug3);
-                Sektion.GetSectionLines (Expressionstr, TXStringList (ArbeitsSektion),
-                                  StartlineOfSection, true, true, false);
-              end;
-
-              if ArbeitsSektion.count = 0
-              then
-              begin
-                // normal case
-                Logdatei.log('Looking for section: '+ Expressionstr +' in standard section.',LLDebug3);
-                GetSectionLines (Expressionstr, TXStringList (ArbeitsSektion),
-                                  StartlineOfSection, true, true, false);
-              end;
-
-              if ArbeitsSektion.count = 0
-              then
-              begin
-                // subsub case
-                if Assigned(CallingSektion) and (CallingSektion <> nil) then
-                begin
-                  Logdatei.log('Looking for section: '+ Expressionstr +' in calling section.',LLDebug3);
-                  CallingSektion.GetSectionLines (Expressionstr, TXStringList (ArbeitsSektion),
-                                    StartlineOfSection, true, true, false);
-                end;
-              end;
-
-
-              if ArbeitsSektion.count = 0
-              then
-              begin
-                // subsub case
-                Logdatei.log('Looking for section: '+ Expressionstr +' in global section.',LLDebug3);
-                Sektion.GetSectionLines (Expressionstr, TXStringList (ArbeitsSektion),
-                                  StartlineOfSection, true, true, false);
-              end;
-
-              if ArbeitsSektion.count = 0
-              then
-              begin
-                // subsubsub case
-                if Assigned(CallingSektion.ParentSection) and (CallingSektion.ParentSection <> nil) then
-                begin
-                  Logdatei.log('Looking for section: '+ Expressionstr +' in CallingSektion.ParentSection section.',LLDebug3);
-                  CallingSektion.ParentSection.GetSectionLines(Expressionstr, TXStringList (ArbeitsSektion),
-                                  StartlineOfSection, true, true, false);
-                end;
-              end;
-
-              if ArbeitsSektion.count = 0
-              then
-              begin
-                // subsubsubsub case
-                if Assigned(CallingSektion.ParentSection) and (CallingSektion.ParentSection <> nil)
-                   and Assigned(CallingSektion.ParentSection.ParentSection)
-                   and (CallingSektion.ParentSection.ParentSection <> nil) then
-                begin
-                  Logdatei.log('Looking for section: '+ Expressionstr +' in CallingSektion.FParentSection.FParentSectio section.',LLDebug3);
-                  CallingSektion.FParentSection.FParentSection.GetSectionLines(Expressionstr, TXStringList (ArbeitsSektion),
-                                  StartlineOfSection, true, true, false);
-                end;
-              end;
-              *)
-
 
               if inLoop then ArbeitsSektion.GlobalReplace(1, loopvar, loopvalue, false);
 
@@ -19752,7 +20085,7 @@ begin
               then
               Begin
                 LogDatei.log('Warning: The section "' + Expressionstr + '" (called in line ' +
-                  inttostr(i) +
+                  inttostr(linecounter) +
                   ' of the calling section) does not exist or is empty', LLWarning);
                 FNumberOfWarnings := FNumberOfWarnings + 1;
               End
@@ -19873,7 +20206,7 @@ begin
                 end;
               End
               else
-                reportError (Sektion, i, Expressionstr + '^' + Remaining, InfoSyntaxError);
+                reportError (Sektion, linecounter, Expressionstr + '^' + Remaining, InfoSyntaxError);
 
             End
           End;
@@ -20028,7 +20361,7 @@ begin
                  end; // loop
               end; // loopvar valid
             End;  // get loop var
-            if not syntaxCheck then reportError (Sektion, i, Expressionstr, InfoSyntaxError);
+            if not syntaxCheck then reportError (Sektion, linecounter, Expressionstr, InfoSyntaxError);
           End  //tsLoopStringList
 
           else //
@@ -20069,7 +20402,7 @@ begin
                 end
                 else
                   ActionResult
-                  := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                  := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
 
               tsMessageFile:
                 if EvaluateString (Remaining, Remaining, FName, InfoSyntaxError)
@@ -20101,7 +20434,7 @@ begin
                 End
                 else
                   ActionResult
-                  := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                  := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
 
                 tsDefinedVoidFunction:
                   begin
@@ -20302,11 +20635,11 @@ begin
                               begin
                                 inc(inclines);
                                 LogDatei.log_prog('Will Include line : '+incline,LLDebug);
-                                Sektion.Insert(i-1+inclines,incline);
+                                Sektion.Insert(linecounter-1+inclines,incline);
                                 LogDatei.log_prog('Line included at pos: '+inttostr(i-1+inclines)+' to Sektion with '+inttostr(Sektion.Count)+' lines.',LLDebug2);
                                 //LogDatei.log_prog('Will Include add at pos '+inttostr(Sektion.StartLineNo + i-1+k)+'to FLinesOriginList with count: '+inttostr(script.FLinesOriginList.Count),LLDebug2);
                                 script.FLinesOriginList.Insert( i-1+inclines,incfilename+ ' Line: '+inttostr(alllines));
-                                script.FLibList.Insert( i-1+inclines,'true');
+                                script.FLibList.Insert( linecounter-1+inclines,'true');
                                 LogDatei.log_prog('Include added to FLinesOriginList.',LLDebug2);
                               end;
                                 // do we have an endfunc ?
@@ -20320,11 +20653,11 @@ begin
                             begin  // import all func
                               inc(inclines);
                               LogDatei.log_prog('Will Include line : '+incline,LLDebug);
-                              Sektion.Insert(i-1+inclines,incline);
+                              Sektion.Insert(linecounter-1+inclines,incline);
                               LogDatei.log_prog('Line included at pos: '+inttostr(i-1+inclines)+' to Sektion with '+inttostr(Sektion.Count)+' lines.',LLDebug2);
                               //LogDatei.log_prog('Will Include add at pos '+inttostr(Sektion.StartLineNo + i-1+k)+'to FLinesOriginList with count: '+inttostr(script.FLinesOriginList.Count),LLDebug2);
-                              script.FLinesOriginList.Insert(i-1+inclines,incfilename+ ' Line: '+inttostr(alllines));
-                              script.FLibList.Insert(i-1+inclines,'true');
+                              script.FLinesOriginList.Insert(linecounter-1+inclines,incfilename+ ' Line: '+inttostr(alllines));
+                              script.FLibList.Insert(linecounter-1+inclines,'true');
                               LogDatei.log_prog('Include added to FLinesOriginList.',LLDebug2);
                             end
                           end;
@@ -20360,7 +20693,7 @@ begin
                     End
                     else
                       ActionResult
-                      := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                      := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
                   end; // tsImportLib
 
 
@@ -20465,12 +20798,12 @@ begin
                               if Sektion.replaceInLine(incline, Constlist.Strings [constcounter-1], ConstValuesList.Strings [constcounter-1], false,replacedline)
                               then incline := replacedline;
                             LogDatei.log_prog('Will Include line (constants replaced): '+incline,LLDebug3);
-                            Sektion.Insert(i-1+k,incline);
+                            Sektion.Insert(linecounter-1+k,incline);
                             LogDatei.log_prog('Line included at pos: '+inttostr(i-1+k)+' to Sektion with '+inttostr(Sektion.Count)+' lines.',LLDebug3);
                             //LogDatei.log('Will Include add at pos '+inttostr(Sektion.StartLineNo + i-1+k)+'to FLinesOriginList with count: '+inttostr(script.FLinesOriginList.Count),LLDebug3);
                             //script.FLinesOriginList.Insert(Sektion.StartLineNo + i-1+k,incfilename+ ' Line: '+inttostr(k));
                             //script.FLibList.Insert(Sektion.StartLineNo + i-1+k,'false');
-                            script.FLinesOriginList.Insert(i-1+k,incfilename+ ' Line: '+inttostr(k));
+                            script.FLinesOriginList.Insert(linecounter-1+k,incfilename+ ' Line: '+inttostr(k));
                             script.FLibList.Insert(i-1+k,'false');
                             LogDatei.log_prog('Include added to FLinesOriginList.',LLDebug3);
                           end;
@@ -20495,7 +20828,7 @@ begin
                     End
                     else
                       ActionResult
-                      := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                      := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
                   end;
 
                 tsIncludeAppend:
@@ -20620,7 +20953,7 @@ begin
                     End
                     else
                       ActionResult
-                      := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                      := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
                   end;
 
 
@@ -20648,7 +20981,7 @@ begin
                     End
                     else
                       ActionResult
-                      := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                      := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
                   end;
 
                 tsShrinkFileToMB:
@@ -20672,7 +21005,7 @@ begin
                     End
                     else
                       ActionResult
-                      := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                      := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
                   end;
 
 
@@ -20761,7 +21094,7 @@ begin
                    end
                    else
                      ActionResult
-                     := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                     := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
 
                 end;
 
@@ -20804,7 +21137,7 @@ begin
                   End
                   else
                     ActionResult
-                    := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                    := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
                 End;
 
                 tsSleep:
@@ -20841,7 +21174,7 @@ begin
                   end
                   else
                     ActionResult
-                    := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                    := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
 
                   processmess;
 
@@ -20869,7 +21202,7 @@ begin
                   End
                   else
                     ActionResult
-                    := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                    := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
                 End;
 
 
@@ -20917,7 +21250,7 @@ begin
                   end
                   else
                    ActionResult
-                    := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                    := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
 
                 End;
 
@@ -20938,7 +21271,7 @@ begin
                   End
                   else
                    ActionResult
-                    := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                    := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
                 End;
 
                tsSetSkinDir:
@@ -20959,7 +21292,7 @@ begin
                   End
                   else
                    ActionResult
-                    := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                    := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
                 End;
 
 
@@ -20985,7 +21318,7 @@ begin
                      {$ENDIF WIN64}
                   End
                   else
-                     ActionResult := reportError (Sektion, i, Expressionstr, InfoSyntaxError);
+                     ActionResult := reportError (Sektion, linecounter, Expressionstr, InfoSyntaxError);
                  End;
 
                  tsShellcall:
@@ -21116,14 +21449,16 @@ begin
                      in
                      [tsDOSBatchFile, tsDOSInAnIcon,
                      tsShellBatchFile, tsShellInAnIcon,
-                     tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings]
+                     tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
+                     tsWinBatch,tsRegistryHack]
                      )
                    then
                      InfoSyntaxError := 'not implemented for this kind of section'
                    else
                    Begin
-                     //if not (section.GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, false)
-                     //  or GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, false))
+                    if Skip (')', Remaining,Remaining, InfoSyntaxError)   then
+                    Begin
+                     syntaxCheck := true;
                      if not SearchForSectionLines(self,sektion,callingsektion,Expressionstr,
                              TXStringList (localSection),startlineofsection, true, true, false)
                      then
@@ -21158,12 +21493,12 @@ begin
                                   SW_HIDE, false {no catchout}, 1,
                                   [ttpWaitOnTerminate], tmplist);
 
-                       end;
+                        tsWinBatch:
+                              parseAndCallWinbatch(localSection,tmpstr);
 
-                       if Skip (')', Remaining,Remaining, InfoSyntaxError)
-                       then
-                       Begin
-                         syntaxCheck := true;
+                         tsRegistryHack:
+                              parseAndCallRegistry(localSection, tmpstr);
+                       end;
                        End
                      End;
 
@@ -21203,7 +21538,7 @@ begin
                   end;
                   if not syntaxCheck then
                   ActionResult
-                      := reportError (Sektion, i, Sektion.strings [i-1], 'Expected a boolean string (true/false)');
+                      := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], 'Expected a boolean string (true/false)');
                   if not (Remaining = '')  then  LogDatei.log ('Error at Blockinput: trailing parameter: '+Parameter+ ' ignored', LLWarning);
                 End;
 
@@ -21338,10 +21673,10 @@ begin
                   else if Remaining = ''
                   then
                     ActionResult
-                      := reportError (Sektion, i, Sektion.strings [i-1], 'Parameter needed')
+                      := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], 'Parameter needed')
                   else
                     ActionResult
-                      := reportError (Sektion, i, Sektion.strings [i-1], 'not an allowed Parameter');
+                      := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], 'not an allowed Parameter');
                 End;
                 {$ENDIF WIN32}
 
@@ -21416,10 +21751,10 @@ begin
                   else if Remaining = ''
                   then
                     ActionResult
-                      := reportError (Sektion, i, Sektion.strings [i-1], 'Parameter needed')
+                      := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], 'Parameter needed')
                   else
                     ActionResult
-                      := reportError (Sektion, i, Sektion.strings [i-1], 'not an allowed Parameter');
+                      := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], 'not an allowed Parameter');
                   End; // not loginscripts
                 End;
 
@@ -21440,7 +21775,7 @@ begin
                   End
                   else
                     ActionResult
-                    := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                    := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
 
                  tsforceLogInAppendMode:
                   if skip ('=', remaining, remaining, InfoSyntaxError)
@@ -21461,7 +21796,7 @@ begin
                   End
                   else
                     ActionResult
-                    := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                    := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
 
                  tsSetDebug_Prog:
                   if skip ('=', remaining, remaining, InfoSyntaxError)
@@ -21480,7 +21815,7 @@ begin
                   End
                   else
                     ActionResult
-                    := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                    := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
 
 
             tsFatalOnSyntaxError:
@@ -21502,7 +21837,7 @@ begin
               End
               else
                 ActionResult
-                := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
 
             tsFatalOnRuntimeError:
               if skip ('=', remaining, remaining, InfoSyntaxError)
@@ -21521,7 +21856,7 @@ begin
               End
               else
                 ActionResult
-                := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
 
               tsSetExitOnError:
                 if skip ('=', remaining, remaining, InfoSyntaxError)
@@ -21540,7 +21875,7 @@ begin
                 End
                 else
                   ActionResult
-                  := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                  := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
 
               tsSetFatalError:
                 if remaining = ''
@@ -21568,7 +21903,7 @@ begin
                   end
                   else
                       ActionResult
-                      := reportError (Sektion, i, Sektion.strings [i-1], ' none or one parameter expected');
+                      := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], ' none or one parameter expected');
                 end;
 
                 tsSetSuccess:
@@ -21584,7 +21919,7 @@ begin
                   else
                   begin
                         ActionResult
-                        := reportError (Sektion, i, Sektion.strings [i-1], ' no parameter expected');
+                        := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], ' no parameter expected');
                   end;
 
                 tsSetNoUpdate:
@@ -21597,7 +21932,7 @@ begin
                   else
                   begin
                         ActionResult
-                        := reportError (Sektion, i, Sektion.strings [i-1], ' no parameter expected');
+                        := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], ' no parameter expected');
                   end;
 
               tsSetSuspended:
@@ -21615,7 +21950,7 @@ begin
                   else
                   begin
                         ActionResult
-                        := reportError (Sektion, i, Sektion.strings [i-1], ' no parameter expected');
+                        := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], ' no parameter expected');
                   end;
 
               tsSetMarkerErrorNumber:
@@ -21629,7 +21964,7 @@ begin
                 End
                 else
                   ActionResult
-                  := reportError (Sektion, i, Sektion.strings [i-1], ' end of line expected');
+                  := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], ' end of line expected');
 
               tsSaveVersionToProfile:
                 if remaining = ''
@@ -21640,7 +21975,7 @@ begin
                 End
                 else
                   ActionResult
-                  := reportError (Sektion, i, Sektion.strings [i-1], ' end of line expected');
+                  := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], ' end of line expected');
 
 
               tsSetReportMessages:
@@ -21662,7 +21997,7 @@ begin
                 End
                 else
                   ActionResult
-                  := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                  := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
 
               tsSetTimeMark:
                 Begin
@@ -21700,7 +22035,7 @@ begin
                 End
                 else
                   ActionResult
-                  := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                  := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
 
               tsSetOldLogLevel:
                 if skip ('=', remaining, remaining, InfoSyntaxError)
@@ -21727,7 +22062,7 @@ begin
                   end
                 End
                 else
-                  ActionResult := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                  ActionResult := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
 
 
               tsSetLogLevel:
@@ -21753,7 +22088,7 @@ begin
                   end
                 End
                 else
-                  ActionResult := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                  ActionResult := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
 
               tsSetConfidential:
                  Begin
@@ -21769,7 +22104,7 @@ begin
                   End
                   else
                    ActionResult
-                    := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                    := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
                 End;
 
               tsSetUsercontext:
@@ -21782,7 +22117,7 @@ begin
                   LogDatei.log ('Usercontext set to ' + usercontext, LLessential);
                 End
                 else
-                  ActionResult := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                  ActionResult := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
 
 
               tsSetOutputLevel:
@@ -21814,7 +22149,7 @@ begin
                   end
                 End
                 else
-                  ActionResult := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                  ActionResult := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
 
               tsSetStayOnTop:
                  if skip ('=', remaining, remaining, InfoSyntaxError)
@@ -21831,13 +22166,13 @@ begin
                     then
                        FBatchOberflaeche.ForceStayOnTop (false)
                     else
-                      ActionResult := reportError (Sektion, i, Sektion.strings [i-1],
+                      ActionResult := reportError (Sektion, linecounter, Sektion.strings [linecounter-1],
                                                    Remaining + ' is no valid value');
                    {$ENDIF GUI}
                  End
                  else
                    ActionResult
-                   := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                   := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
 
               tsIconizeWinst:
                  {$IFDEF GUI}
@@ -21957,7 +22292,7 @@ begin
                    else
                    Begin
                      ActionResult
-                     := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                     := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
                    end;
                  end;
 
@@ -21970,7 +22305,7 @@ begin
                    if runProfileActions then flag_all_ntuser := true;
                    if Remaining = ''
                    then
-                      ActionResult := reportError (Sektion, i, Sektion.strings [i-1], 'File parameter missing')
+                      ActionResult := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], 'File parameter missing')
                    else
                    Begin
                      GetWordOrStringExpressionstr (Remaining, Filename, Remaining, ErrorInfo);
@@ -21994,7 +22329,7 @@ begin
                   if runProfileActions then flag_all_ntuser := true;
                   if Remaining = ''
                   then
-                    ActionResult := reportError (Sektion, i, Sektion.strings [i-1], 'File parameter missing')
+                    ActionResult := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], 'File parameter missing')
                   else
                   Begin
                     GetWordOrStringExpressionstr (Remaining, Filename, Remaining, ErrorInfo);
@@ -22034,7 +22369,7 @@ begin
                         then
                         begin
                           syntaxcheck := false;
-                          ActionResult := reportError (Sektion, i, Sektion.strings [i-1],
+                          ActionResult := reportError (Sektion, linecounter, Sektion.strings [linecounter-1],
                                                    '"' + remaining + '" is no valid parameter ');
                         end;
                       end;
@@ -22053,185 +22388,7 @@ begin
 
               tsRegistryHack:
                  begin
-                   {$IFDEF WINDOWS}
-                   logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
-                   syntaxcheck := true;
-
-                   registryformat := trfWinst;
-                   flag_all_ntuser := false;
-                   flag_ntuser := false;
-                   reg_specified_basekey := '';
-                   flag_force64 := false;
-                   flag_all_usrclass := false;
-
-                   // if this is a 'ProfileActions' which is called as sub in Machine mode
-                   // so run registry sections implicit as /Allntuserdats
-                   if runProfileActions then
-                      flag_all_ntuser := true;
-
-                   remaining := CutRightBlanks (Remaining);
-
-                   if length (remaining) > 0 then goon := true;
-                   while goon
-                   do
-                   begin
-
-                      if skip(Parameter_AllNTUserDats, Remaining, Remaining, ErrorInfo)
-                      then
-                        flag_all_ntuser := true
-
-                      else if skip(Parameter_AllUsrClassDats, Remaining, Remaining, ErrorInfo)
-                      then
-                        flag_all_usrclass := true
-
-                      else if skip(Parameter_RegistryNTUserDat, Remaining, Remaining, ErrorInfo)
-                      then
-                      begin
-                        flag_ntuser := true;
-                        if not EvaluateString (Remaining, Remaining, ntuserpath, ErrorInfo) then
-                        begin
-                         syntaxcheck := false;
-                          //ActionResult := reportError (ErrorInfo);
-                        end;
-                      end
-                      else if skip(Parameter_Registry64Bit, Remaining, Remaining, ErrorInfo)
-                      then
-                      begin
-                        if (GetNTVersionMajor = 5) and (GetNTVersionMinor = 0) then
-                        begin
-                          // we are on win 2000 which can't handle redirections flags
-                          flag_force64 := false;
-                        end
-                        else // we are on xp or higher
-                        begin
-                          flag_force64 := true;
-                        end;
-                      end
-
-
-                      else if skip(Parameter_Registry32Bit, Remaining, Remaining, ErrorInfo)
-                      then
-                      begin
-                        if flag_all_ntuser then
-                        begin
-                          // no redirection in user profile registry
-                          // so always we are on sysnative
-                          LogDatei.log('Ignoring parameter /32bit for /AllNTUserdats. This is always /sysnative',LLInfo);
-                          flag_force64 := true;
-                        end
-                        else flag_force64 := false;
-                      end
-
-                      else if skip(Parameter_RegistrySysNative, Remaining, Remaining, ErrorInfo)
-                      then
-                      begin
-                        if (GetNTVersionMajor = 5) and (GetNTVersionMinor = 0) then
-                        begin
-                          // we are on win 2000 which can't handle redirections flags
-                          flag_force64 := false;
-                        end
-                        else // we are on xp or higher
-                        begin
-                          flag_force64 := true;
-                        end;
-                      end
-
-
-                      else if skip (Parameter_RegistryUsercontext, Remaining, Remaining, ErrorInfo)
-                      then
-                        reg_specified_basekey := 'HKEY_USERS\' + usercontextSID
-
-                      else if
-                        skip (Parameter_RegistryBaseKey, Remaining, Remaining, ErrorInfo)
-                        and skip ('=', Remaining, Remaining, ErrorInfo)
-                        and GetString(Remaining, s1, Remaining, ErrorInfo, false)
-                      then
-                        reg_specified_basekey := s1
-
-                      else if skip (Parameter_SysDiffAddReg, Remaining, Remaining, ErrorInfo)
-                      then
-                        registryformat := trfSysdiff
-
-                      else if skip (Parameter_RegeditFormat, Remaining, Remaining, ErrorInfo)
-                      then
-                        registryformat := trfRegedit
-
-                      else
-                      Begin
-                        goon := false;
-                        if length (remaining) > 0
-                        then
-                        begin
-                          syntaxcheck := false;
-                          ActionResult := reportError (Sektion, i, Sektion.strings [i-1],
-                                                   '"' + remaining + '" is no valid parameter ');
-                        end;
-                      end;
-
-                   end;
-
-
-                   if (flag_all_ntuser or flag_all_usrclass)and (reg_specified_basekey <> '')
-                   then
-                   begin
-                     syntaxcheck := false;
-                     ErrorInfo := 'this combination of options is impossible';
-                   end;
-
-                   if inUsercontext then
-                        reg_specified_basekey := 'HKEY_USERS\' + usercontextSID;
-
-
-                   if syntaxcheck then
-                   begin
-                     if flag_all_ntuser
-                     then
-                     begin
-                       if registryformat = trfSysdiff
-                       then
-                           ActionResult := reportError (Sektion, i, Sektion.strings [i-1],
-                                       '"' + Remaining + '": sysdiff format not possible with option "for all nt user"')
-                       else
-                          ActionResult := doRegistryAllNTUserDats (ArbeitsSektion, registryformat, flag_force64);
-                     end
-                     else if flag_ntuser
-                     then
-                     begin
-                       if registryformat = trfSysdiff
-                       then
-                           ActionResult := reportError (Sektion, i, Sektion.strings [i-1],
-                                       '"' + Remaining + '": sysdiff format not possible with option "ntuser"')
-                       else
-                          ActionResult := doRegistryNTUserDat (ArbeitsSektion, registryformat, flag_force64,ntuserpath);
-                     end
-                     else if flag_all_usrclass
-                     then
-                     begin
-                       if registryformat = trfSysdiff
-                       then
-                           ActionResult := reportError (Sektion, i, Sektion.strings [i-1],
-                                       '"' + Remaining + '": sysdiff format not possible with option "for all usr classes"')
-                       else
-                          ActionResult := doRegistryAllUsrClassDats (ArbeitsSektion, registryformat, flag_force64);
-                     end
-                     else
-                       case registryformat of
-                        trfWinst   :
-                           ActionResult := doRegistryHack (ArbeitsSektion, reg_specified_basekey, flag_force64);
-
-                        trfSysdiff :
-                           ActionResult := doRegistryHackInfSource (ArbeitsSektion, reg_specified_basekey, flag_force64);
-
-                        trfRegedit :
-                           ActionResult := doRegistryHackRegeditFormat (ArbeitsSektion, reg_specified_basekey, flag_force64);
-
-                       end;
-
-
-                   end;
-                   {$ELSE WINDOWS}
-                  logdatei.log('Registry sections are not implemented for Linux.', LLWarning);
-                  {$ENDIF WINDOWS}
+                     parseAndCallRegistry(ArbeitsSektion, Remaining);
                  end;
 
 
@@ -22244,7 +22401,7 @@ begin
                    then
                       ActionResult := doXMLPatch (ArbeitsSektion, Parameter, output)
                    else
-                      ActionResult := reportError (Sektion, i, Sektion.strings [i-1],
+                      ActionResult := reportError (Sektion, linecounter, Sektion.strings [linecounter-1],
                                        ' end of line expected');
                   {$ELSE WINDOWS}
                   logdatei.log('XMLPatch sections are not implemented for Linux right now', LLWarning);
@@ -22258,7 +22415,7 @@ begin
                      then
                         ActionResult := doXMLPatch2 (ArbeitsSektion, Parameter, output)
                      else
-                        ActionResult := reportError (Sektion, i, Sektion.strings [i-1],
+                        ActionResult := reportError (Sektion, linecounter, Sektion.strings [linecounter-1],
                                          ' end of line expected');
                   end;
 
@@ -22305,7 +22462,7 @@ begin
                   then
                     ActionResult := doLDAPSearch (ArbeitsSektion, cacheRequest, outputRequest, output)
                   else
-                    ActionResult := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+                    ActionResult := reportError (Sektion, linecounter, Sektion.strings [linecounter-1], InfoSyntaxError);
                 end;
 
               tsFileActions:
@@ -22335,7 +22492,7 @@ begin
                       GetWord (remaining, Expressionstr, remaining, WorddelimiterSet0);
                       if not (lowercase (Expressionstr) = lowercase (Parameter_AllNTUser))
                       then
-                        ActionResult := reportError (Sektion, i, Sektion.strings [i-1],
+                        ActionResult := reportError (Sektion, linecounter, Sektion.strings [linecounter-1],
                                         'No valid parameter')
                       else
                          doLinkFolderActions (ArbeitsSektion, false);
@@ -22348,250 +22505,8 @@ begin
 
               tsWinBatch:
                begin
-                //{$IFDEF WINDOWS}
-                logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
-                 runAs := traInvoker;
-                 {$IFDEF WIN32}
-                 opsiSetupAdmin_runElevated := false;
-                 {$ENDIF WIN32}
-                 WaitSecs := 0;
-                 flag_force64 := false;
-                 GetWord (Remaining, expr, Remaining, WordDelimiterSet0);
-                 SyntaxCheck := true;
-
-                 ident := '';
-                 WaitConditions := [ttpWaitOnTerminate];
-
-                 while SyntaxCheck and (length (expr) > 0)
-                 do
-                 Begin
-                   {$IFDEF WIN32}
-                   if LowerCase (expr) = LowerCase (ParameterRunAsAdmin)
-                   then
-                   Begin
-                       runAs := traAdmin;
-                   End
-
-                   else if LowerCase (expr) = LowerCase (ParameterRunAsAdmin1)
-                   then
-                   Begin
-                       runAs := traAdmin;
-                   End
-
-                   else if LowerCase (expr) = LowerCase (ParameterRunAsAdmin2)
-                   then
-                   Begin
-                       runAs := traAdminProfile;
-                   End
-
-                   else if LowerCase (expr) = LowerCase (ParameterRunAsAdmin3)
-                   then
-                   Begin
-                       runAs := traAdminProfileImpersonate;
-                   End
-
-                   else if LowerCase (expr) = LowerCase (ParameterRunAsAdmin4)
-                   then
-                   Begin
-                       runAs := traAdminProfileImpersonateExplorer;
-                   End
-
-                   else if LowerCase (expr) = LowerCase (ParameterRunAsInvoker)
-                   then
-                   Begin
-                       runAs := traInvoker;
-                   End
-
-                   else if LowerCase (expr) = LowerCase (ParameterRunElevated)
-                   then
-                   Begin
-                       opsiSetupAdmin_runElevated := true;
-                   End
-
-                   else if LowerCase (expr) = LowerCase (ParameterRunAsLoggedOnUser)
-                   then
-                   Begin
-                     if runLoginScripts then
-                       runAs := traLoggedOnUser
-                     else
-                       LogDatei.log('Warning: Not in UserLoginScript mode: /RunAsLoggedinUser ignored', LLWarning);
-                   End
-
-                   else if (LowerCase (expr) = LowerCase (Parameter_64Bit)) and Is64BitSystem
-                   then
-                   Begin
-                       flag_force64 := true;
-                   End
-
-                   else if LowerCase (expr) = LowerCase (Parameter_32Bit)
-                   then
-                   Begin
-                       flag_force64 := false;
-                   End
-
-                   else if (LowerCase (expr) = LowerCase (Parameter_SysNative)) and Is64BitSystem
-                   then
-                   Begin
-                       flag_force64 := true;
-                   End
-
-                   else if (LowerCase (expr) = LowerCase (Parameter_SysNative)) and (not Is64BitSystem)
-                   then
-                   Begin
-                       flag_force64 := false;
-                   End
-
-                   else {$ENDIF WIN32}  if LowerCase (expr) = LowerCase (ParameterWaitSecs)
-                   then
-                   Begin
-                     WaitConditions := WaitConditions + [ttpWaitTime];
-                     // WaitConditions := WaitConditions - [ttpWaitOnTerminate];
-
-                     GetWord (Remaining, expr, Remaining, WordDelimiterSet0);
-                     try
-                       WaitSecs := StrToInt64 (expr);
-                     except
-                       on EConvertError do
-                       Begin
-                          InfoSyntaxError := 'Integer number expected';
-                          SyntaxCheck := false;
-                       End
-                     end;
-                   End
-
-                   {$IFDEF WIN32}
-                   else if LowerCase (expr) = LowerCase (ParameterCloseOnWindow)
-                   then
-                   Begin
-                     runAs := traInvoker;
-                     WaitConditions := WaitConditions + [ttpWaitForWindowAppearing];
-
-                     if EvaluateString (Remaining, Remaining, ident, InfoSyntaxError)
-                     then
-                     Begin
-                       if Remaining <> ''
-                       then
-                       Begin
-                         SyntaxCheck := false;
-                         InfoSyntaxError := 'not expected chars after "';
-                       End;
-                     End
-                     else
-                        SyntaxCheck := false;
-                   End
-
-
-                   else if LowerCase (expr) = LowerCase (ParameterCloseBehindWindow)
-                   then
-                   Begin
-                     runAs := traInvoker;
-                     WaitConditions := WaitConditions + [ttpWaitForWindowVanished];
-
-                     if EvaluateString (Remaining, Remaining, ident, InfoSyntaxError)
-                     then
-                     Begin
-                       if Remaining <> ''
-                       then
-                       Begin
-                         SyntaxCheck := false;
-                         InfoSyntaxError := 'unexpected characters after "';
-                       End;
-                     End
-                     else
-                       SyntaxCheck := false;
-                   End
-
-                   {$ENDIF WIN32}
-
-                   else if LowerCase (expr) = LowerCase (ParameterWaitProcessTimeoutSecs)
-                   then
-                   Begin
-                     WaitConditions := WaitConditions - [ttpWaitTime];
-                     WaitConditions := WaitConditions + [ttpWaitTimeout];
-
-                     GetWord (Remaining, expr, Remaining, WordDelimiterSet0);
-                     try
-                       WaitSecs := StrToInt64 (expr);
-                     except
-                       on EConvertError do
-                       Begin
-                         try
-                           EvaluateString (expr, expr, seconds, InfoSyntaxError);
-                           WaitSecs := StrToInt64 (seconds);
-                         except
-                           on EConvertError do
-                           Begin
-                             InfoSyntaxError := 'Integer number expected '+InfoSyntaxError;
-                            SyntaxCheck := false;
-                          end;
-                         end
-                       End
-                     end
-                   End
-
-                   else if LowerCase (expr) = LowerCase (ParameterWaitForProcessEnding)
-                   then
-                   Begin
-                     WaitConditions := WaitConditions + [ttpWaitForProcessEnding];
-(*
-                     GetWord (Remaining, ident, Remaining, WordDelimiterSet0);
-                     if ident = '' then
-                     begin
-                       SyntaxCheck := false;
-                       InfoSyntaxError := 'process name expected';
-                     end;
-*)
-                     if not EvaluateString (Remaining, Remaining, ident, InfoSyntaxError)  then
-                        SyntaxCheck := false;
-(*
-                     then
-                     Begin
-                       if Remaining <> ''
-                       then
-                       Begin
-                         SyntaxCheck := false;
-                         InfoSyntaxError := 'unexpected chars after "';
-                       End
-                     End
-                     else
-                       SyntaxCheck := false;
-*)
-                   End
-
-                   else if UpperCase (expr) = UpperCase (ParameterDontWait)
-                   then
-                   Begin
-                       WaitConditions := WaitConditions - [ttpWaitOnTerminate];
-                       WaitConditions := WaitConditions - [ttpWaitTimeout];
-                   End
-
-                   else if UpperCase (expr) = UpperCase (ParameterWaitOnTerminate)
-                   then
-                   Begin
-                       WaitConditions := WaitConditions + [ttpWaitOnTerminate];
-                   End
-
-
-
-                   else
-                   Begin
-                         SyntaxCheck := false;
-                         InfoSyntaxError := expr + ' not legal WinBatch parameter';
-                   End;
-
-                   GetWord (Remaining, expr, Remaining, WordDelimiterSet0);
-                 end;
-
-                 if SyntaxCheck
-                 then
-                   ActionResult := execWinBatch (ArbeitsSektion, Remaining, WaitConditions, Ident, WaitSecs, runAs,flag_force64)
-                 else
-                   ActionResult := reportError (Sektion, i, 'Expressionstr', InfoSyntaxError);
-                 (*
-                 {$ELSE WINDOWS}
-                  logdatei.log('Winbatch sections are not implemented for Linux right now', LLWarning);
-                  {$ENDIF WINDOWS}
-                  *)
+                 //ActionResult := parseAndCallWinbatch(ArbeitsSektion,Remaining);
+                 parseAndCallWinbatch(ArbeitsSektion,Remaining);
                end;
 
               {$IFDEF WIN32}
@@ -22608,7 +22523,7 @@ begin
                    while FindWindowEx (0, 0, nil, PChar (ident) ) <> 0
                    do ProcessMess
                  else
-                   ActionResult := reportError (Sektion, i, Expressionstr, InfoSyntaxError);
+                   ActionResult := reportError (Sektion, linecounter, Expressionstr, InfoSyntaxError);
                end;
                {$ENDIF WIN32}
 
@@ -22663,12 +22578,12 @@ begin
                              true {catch out}, 0,
                              output)
                   else
-                    ActionResult := reportError (Sektion, i, Expressionstr, InfoSyntaxError);
+                    ActionResult := reportError (Sektion, linecounter, Expressionstr, InfoSyntaxError);
                 end;
 
               tsWorkOnStringList:
                  Begin
-                   ActionResult := reportError (Sektion, i, Expressionstr, 'not yet implemented');
+                   ActionResult := reportError (Sektion, linecounter, Expressionstr, 'not yet implemented');
                  end;
 
                 tsDDEwithProgman:
@@ -22695,7 +22610,7 @@ begin
                    then
                      ActionResult := startConnection (localname, remotename, timeout)
                    else
-                     ActionResult := reportError (Sektion, i, Expressionstr, InfoSyntaxError);
+                     ActionResult := reportError (Sektion, linecounter, Expressionstr, InfoSyntaxError);
                End;
                {$ENDIF WIN32}
 
@@ -22705,9 +22620,9 @@ begin
                  GetWord (Remaining, Expressionstr, Remaining, WordDelimiterSet1);
                  if Remaining <> ''
                  then
-                   reportError (Sektion, i, Expressionstr, 'not allowed char following variable name')
+                   reportError (Sektion, linecounter, Expressionstr, 'not allowed char following variable name')
                  else if findKindOfStatement (Expressionstr, SectionSpecifier, call) <> tsNotDefined then
-                   reportError (Sektion, i, Expressionstr,
+                   reportError (Sektion, linecounter, Expressionstr,
                      'Reserved name, must not be used in a variable definition')
                  // in local function ?
                  else if inDefinedFuncNestCounter > 0 then
@@ -22716,11 +22631,11 @@ begin
                    funcindex := strToInt(definedFunctionsCallStack.Strings[definedFunctionsCallStack.Count-1]);
                    if definedFunctionArray[funcindex].addLocalVar(lowercase(Expressionstr),dfpString,false) then
                      LogDatei.log('Defined local string var: '+lowercase(Expressionstr)+' in local function: '+definedFunctionArray[funcindex].Name,LLDebug2)
-                   else reportError (Sektion, i, Expressionstr, 'name is already in use')
+                   else reportError (Sektion, linecounter, Expressionstr, 'name is already in use')
                  end
                  // not in local function - make it global
                  else if VarList.IndexOf (lowercase(Expressionstr)) >= 0 then
-                   reportError (Sektion, i, Expressionstr, 'name is already in use')
+                   reportError (Sektion, linecounter, Expressionstr, 'name is already in use')
                  else
                  Begin
                    VarList.Add (lowercase(Expressionstr));
@@ -22734,9 +22649,9 @@ begin
                  GetWord (Remaining, Expressionstr, Remaining, WordDelimiterSet1);
                  if Remaining <> ''
                  then
-                   reportError (Sektion, i, Expressionstr, 'char not allowed following variable name')
+                   reportError (Sektion, linecounter, Expressionstr, 'char not allowed following variable name')
                  else if findKindOfStatement (Expressionstr, SectionSpecifier, call) <> tsNotDefined then
-                   reportError (Sektion, i, Expressionstr,
+                   reportError (Sektion, linecounter, Expressionstr,
                      'Reserved name, must not be used in a variable definition')
                  // in local function ?
                  else if inDefinedFuncNestCounter > 0 then
@@ -22745,12 +22660,12 @@ begin
                    funcindex := strToInt(definedFunctionsCallStack.Strings[definedFunctionsCallStack.Count-1]);
                    if definedFunctionArray[funcindex].addLocalVar(lowercase(Expressionstr),dfpStringlist,false) then
                      LogDatei.log('Defined local stringlist var: '+lowercase(Expressionstr)+' in local function: '+definedFunctionArray[funcindex].Name,LLDebug2)
-                   else reportError (Sektion, i, Expressionstr, 'name is already in use')
+                   else reportError (Sektion, linecounter, Expressionstr, 'name is already in use')
                  end
                  // not in local function - make it global
 
                  else if VarList.IndexOf (lowercase(Expressionstr))  or listOfStringLists.IndexOf(lowercase(Expressionstr)) >= 0 then
-                   reportError (Sektion, i, Expressionstr, 'Name already in use')
+                   reportError (Sektion, linecounter, Expressionstr, 'Name already in use')
                  else
 
                  Begin
@@ -22808,7 +22723,7 @@ begin
                      BooleanResult:= newDefinedfunction.parseDefinition(Remaining,ErrorInfo);
                      if not BooleanResult then
                      begin
-                       reportError (Sektion, i, Expressionstr, ErrorInfo);
+                       reportError (Sektion, linecounter, Expressionstr, ErrorInfo);
                      end
                      else
                      begin
@@ -22890,7 +22805,7 @@ begin
                          if inDefFunc > 0 then
                          begin
                            LogDatei.log('Found DefFunc without EndFunc',LLCritical);
-                           reportError (Sektion, i, Expressionstr, 'Found DefFunc without EndFunc');
+                           reportError (Sektion, linecounter, Expressionstr, 'Found DefFunc without EndFunc');
                          end
                          else
                          begin
@@ -22943,15 +22858,15 @@ begin
                  Begin
                    if Remaining <> ''
                    then
-                     reportError (Sektion, i, Remaining, 'Remaining char(s) not allowed here');
+                     reportError (Sektion, linecounter, Remaining, 'Remaining char(s) not allowed here');
                  End
                  else
 
-                    reportError (Sektion, i, Expressionstr, InfoSyntaxError);
+                    reportError (Sektion, linecounter, Expressionstr, InfoSyntaxError);
                End
 
               else
-               ActionResult := reportError (Sektion, i, Expressionstr, 'undefined');
+               ActionResult := reportError (Sektion, linecounter, Expressionstr, 'undefined');
 
             End (* case *);
           End;
@@ -22981,20 +22896,20 @@ begin
       end;
 
     until not inloop;
-    LogDatei.log_prog ('Finished with linenr: '+inttostr(i)+' -> '+trim (Sektion.strings [i-1]), LLinfo);
+    LogDatei.log_prog ('Finished with linenr: '+inttostr(i)+' -> '+trim (Sektion.strings [linecounter-1]), LLinfo);
     logdatei.log_prog('Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' ArbeitsSektion.NestingLevel: '+IntToStr(ArbeitsSektion.NestingLevel)+' Sektion.NestingLevel: '+IntToStr(Sektion.NestingLevel),LLDebug2);
-    inc (i);
+    inc (linecounter);
   end;
 
   if not scriptstopped then
   begin
     if (ActLevel > NestLevel) and (actionresult > tsrFatalError)
     then
-      reportError (Sektion, i, PStatNames^ [tsCondClose], 'expected');
+      reportError (Sektion, linecounter, PStatNames^ [tsCondClose], 'expected');
 
     if (NestLevel > Sektion.NestingLevel) and (actionresult > tsrFatalError)
     then
-      reportError (Sektion, i, PStatNames^ [tsCondClose], 'expected');
+      reportError (Sektion, linecounter, PStatNames^ [tsCondClose], 'expected');
   end;
 
 
