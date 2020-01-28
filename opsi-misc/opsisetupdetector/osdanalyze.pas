@@ -327,10 +327,10 @@ begin
   //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
   case mysetup.ID of
     1: mysetup.installCommandLine :=
-         '"%scriptpath%\files1\' + mysetup.setupFileName + '" ' +
+         'msiexec + "%scriptpath%\files1\' + mysetup.setupFileName + '" ' +
          installerArray[integer(mysetup.installerId)].unattendedsetup;
     2: mysetup.installCommandLine :=
-         '"%scriptpath%\files2\' + mysetup.setupFileName + '" ' +
+         '"msiexec %scriptpath%\files2\' + mysetup.setupFileName + '" ' +
          installerArray[integer(mysetup.installerId)].unattendedsetup;
   end;
   mysetup.isExitcodeFatalFunction :=
@@ -558,10 +558,10 @@ begin
   begin
     case mysetup.ID of
       1: mysetup.installCommandLine :=
-           '"%scriptpath%\files1\' + mysetup.setupFileName + '" ' +
+           '"msiexec %scriptpath%\files1\' + mysetup.setupFileName + '" ' +
            installerArray[integer(mysetup.installerId)].unattendedsetup;
       2: mysetup.installCommandLine :=
-           '"%scriptpath%\files2\' + mysetup.setupFileName + '" ' +
+           '"msiexec %scriptpath%\files2\' + mysetup.setupFileName + '" ' +
            installerArray[integer(mysetup.installerId)].unattendedsetup;
     end;
     mysetup.mstAllowed := True;

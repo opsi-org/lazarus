@@ -12,8 +12,7 @@ DefVar $ProductId$
 DefVar $InstallDir$
 DefVar $InstallDir1$
 DefVar $InstallDir2$
-DefVar $MinimumSpace1$
-DefVar $MinimumSpace2$
+DefVar $MinimumSpace$
 DefVar $ExitCode$
 DefVar $ErrorString$
 DefVar $LicenseRequired$
@@ -43,8 +42,13 @@ Set $InstallDir1$		= "#@InstallDir1*#"
 Set $InstallDir2$		= "#@InstallDir2*#"
 Set $LicenseRequired$ = "#@LicenseRequired*#"
 Set $LicensePool$	  = ""
-Set $MinimumSpace1$	 = "#@MinimumSpace1*#"
-Set $MinimumSpace2$	 = "#@MinimumSpace2*#"
+if (($arch$ = "x86 System") and ($mode$ = "system specific")) or ($mode$ = "both") or ($mode$ = "32 only")
+	Set $MinimumSpace$	 = "#@MinimumSpace1*#"
+else
+	if ($arch$ = "64 Bit System") and (($mode$ = "system specific") or ($mode$ = "both") or ($mode$ = "64 only"))
+		Set $MinimumSpace$	 = "#@MinimumSpace2*#"
+	endif
+endif
 ; ----------------------------------------------------------------
 
 set $OS$ = GetOS
@@ -54,21 +58,12 @@ if not(($OS$ = "Windows_NT"))
 	isFatalError "wrong OS"
 endif
 
-if (($arch$ = "x86 System") and ($mode$ = "system specific")) or ($mode$ = "both") or ($mode$ = "32 only")
-	if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace1$))
-		LogError "Not enough space on %SystemDrive%, " + $MinimumSpace1$ + " on drive %SystemDrive% needed for " + $ProductId$
-		isFatalError "No Space"
-		; Stop process and set installation status to failed
-	endif
+if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
+	LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% needed for " + $ProductId$
+	isFatalError "No Space"
+	; Stop process and set installation status to failed
 endif
 
-if ($arch$ = "64 Bit System") and (($mode$ = "system specific") or ($mode$ = "both") or ($mode$ = "64 only"))
-	if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace2$))
-		LogError "Not enough space on %SystemDrive%, " + $MinimumSpace2$ + " on drive %SystemDrive% needed for " + $ProductId$
-		isFatalError "No Space"
-		; Stop process and set installation status to failed
-	endif
-endif
 
 comment "Show product picture"
 ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
