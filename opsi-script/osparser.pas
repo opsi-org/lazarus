@@ -413,7 +413,13 @@ public
      var BooleanResult : Boolean; NestingLevel : Integer; var InfoSyntaxError : String) : Boolean;
 
   procedure GetWordOrStringExpressionstr (const s: String;
-                           var resultString, Remaining, errorinfo : String);
+         var resultString, Remaining, errorinfo : String); overload;
+
+  procedure GetWordOrStringExpressionstr (const s: String;
+         var resultString, Remaining : String; const WordDelimiterSet: TCharset); overload;
+
+  function SkipWordOrStringExpressionstr (const partialS,
+      S: string; var Remaining: string; var Error: string): boolean;
 
   function produceExecLine(const s : String;
                         var programfilename, programparas, passparas, winstoption: String;
@@ -1625,68 +1631,9 @@ end;
 {$ENDIF}
 
 
-{
-Type
- TGUID=record
-  A,B:word;
-  D,M,S:word;
-  MAC:array[1..6] of byte;
- end;
-
-function GetMACAddress1:String;
-var
- UuidCreateFunc : function (var guid: TGUID):HResult;stdcall;
- handle : THandle;
- g:TGUID;
- WinVer:_OSVersionInfoA;
- i:integer;
- ErrCode: HResult;
-begin
- WinVer.dwOSVersionInfoSize := sizeof(WinVer);
- getversionex(WinVer);
-
- handle := LoadLibrary('RPCRT4.DLL');
- if WinVer.dwMajorVersion >= 5 then (* Windows 2000 *)
-  @UuidCreateFunc := GetProcAddress(Handle, 'UuidCreateSequential')
- else
-  @UuidCreateFunc := GetProcAddress(Handle, 'UuidCreate') ;
-
- UuidCreateFunc(g);
- result:='';
- for i:=1 to 6 do
-   result:=result+IntToHex(g.MAC[i],2);
-end;
-
-}
-
-
-{
-procedure DeleteRegKey(aRoot : HKey; aPath : String);
-var
-  SL : TStringList;
-  X : Integer;
-begin
-  SL := TStringList.Create;
-  with TRegistry.Create do
-  try
-    RootKey := aRoot;
-    if OpenKey(aPath,true) then begin
-      GetKeyNames(SL);
-      For X:=0 to SL.Count-1 do DeleteRegKey(aRoot,aPath + '\' + SL[X]);
-      CloseKey;
-      DeleteKey(aPath);
-    end;
-  finally
-    Free;
-    SL.Free;
-  end;
-end;
-
-}
-
-function GetNetUser (Host : String; Var UserName : String; var ErrorInfo : String) : Boolean;
 {$IFDEF WINDOWS}
-  (* for Host = '' Username will become the name of the current user of the process *)
+function GetNetUser (Host : String; Var UserName : String; var ErrorInfo : String) : Boolean;
+  { for Host = '' Username will become the name of the current user of the process }
 
 var
   pLocalName : Pchar;
@@ -1758,6 +1705,9 @@ Begin
   else result := false;
 End;
 {$ELSE WINDOWS}
+function GetNetUser (Host : String; Var UserName : String; var ErrorInfo : String) : Boolean;
+  { for Host = '' Username will become the name of the current user of the process }
+
 begin
   //###LINUX
   result := true;
@@ -4419,9 +4369,9 @@ var
   ErrorInfo : String='';
   SyntaxCheck : Boolean;
   Expressionstr : String='';
-  (* wenn die globale Variable Expressionstr hier nicht lokal neu angelegt wird,
+  { wenn die globale Variable Expressionstr hier nicht lokal neu angelegt wird,
      so verliert der Parameter Sectionname, der ein Zeiger auf die globale Variable Expressionstr ist,
-     zusammen mit dieser seinen Wert *)
+     zusammen mit dieser seinen Wert }
     r : String='';
   i : integer=0;
   k : Integer=0;
@@ -4802,9 +4752,9 @@ var
   citmark : Char;
   SyntaxCheck : Boolean;
   Expressionstr : String='';
-  (* wenn die globale Variable Expressionstr hier nicht lokal neu angelegt wird,
+  { wenn die globale Variable Expressionstr hier nicht lokal neu angelegt wird,
      so verliert der Parameter Sectionname, der ein Zeiger auf die globale Variable Expressionstr ist,
-     zusammen mit dieser seinen Wert *)
+     zusammen mit dieser seinen Wert }
   r : String='';
   i : Integer=0;
   varno : Integer=0;
@@ -5479,10 +5429,10 @@ begin
                then SyntaxCheck := true
                else ErrorInfo := 'not interpreted characters after ]';
 
-             (* fuege RegParameter vor key ein *)
+             { fuege RegParameter vor key ein }
                 TemplateKey := basekey + TemplateKey;
 
-             (* hole HKEY aus key heraus *)
+             { hole HKEY aus key heraus }
                GetWord (TemplateKey, key0, TemplateKey, ['\']);
                System.Delete (TemplateKey, 1,1);
              end;
@@ -5533,7 +5483,7 @@ begin
         End
 
         else
-        reportError (Sektion, i, Expressionstr, ' Operation nicht definiert');
+        reportError (Sektion, i, Expressionstr, ' Operation not defined');
       end;
     End;
 
@@ -5561,6 +5511,7 @@ begin
 end;
 
 
+{$IFDEF WIN32}
 function TuibInstScript.doRegistryAllNTUserDats (const Sektion: TWorkSection;
          rfSelected: TRegistryFormat; const flag_force64 : boolean): TSectionResult;
 
@@ -5583,7 +5534,6 @@ function TuibInstScript.doRegistryAllNTUserDats (const Sektion: TWorkSection;
 
    StartWithErrorNumbers : integer=0;
    StartWithWarningsNumber: Integer=0;
-{$IFDEF WIN32}
 
  function LoadNTUserDat (const path : String) : Boolean;
   var
@@ -5799,6 +5749,8 @@ begin
    then result := tsrExitProcess;
 end;
 {$ELSE WIN32}
+function TuibInstScript.doRegistryAllNTUserDats (const Sektion: TWorkSection;
+         rfSelected: TRegistryFormat; const flag_force64 : boolean): TSectionResult;
 begin
   // not implemented
   result := tsrExitProcess;
@@ -5806,6 +5758,7 @@ end;
 
 {$ENDIF WIN32}
 
+{$IFDEF WIN32}
 function TuibInstScript.doRegistryAllUsrClassDats (const Sektion: TWorkSection;
          rfSelected: TRegistryFormat; const flag_force64 : boolean): TSectionResult;
 
@@ -5828,7 +5781,7 @@ function TuibInstScript.doRegistryAllUsrClassDats (const Sektion: TWorkSection;
 
    StartWithErrorNumbers : integer=0;
    StartWithWarningsNumber: Integer=0;
-{$IFDEF WIN32}
+
 
  function LoadUsrClassDat (const path : String) : Boolean;
   var
@@ -6048,6 +6001,8 @@ begin
    then result := tsrExitProcess;
 end;
 {$ELSE WIN32}
+function TuibInstScript.doRegistryAllUsrClassDats (const Sektion: TWorkSection;
+         rfSelected: TRegistryFormat; const flag_force64 : boolean): TSectionResult;
 begin
   // not implemented
   result := tsrExitProcess;
@@ -6179,31 +6134,6 @@ begin
           end
           else
             LogDatei.log('Error: could not patch ntuserdat: '+UserPath,LLError);
-          (*
-          begin
-            if (GetUserNameEx_ <> '') then
-            begin
-              if (profilename = GetUserNameEx_)
-                 or (profilepath = getProfileImagePathfromSid(GetLocalUserSidStr(GetUserNameEx_)))
-                 then
-              begin
-                LogDatei.log('The Branch for :'+profilename+' seems to be the logged in user,',LLDebug);
-                LogDatei.log('so let us try to patch it via HKUsers\SID',LLDebug);
-                workOnHkuserSid (profilename);
-              end;
-            end
-            else
-            begin
-              // at XP we have problems to get the username while pcpatch is logged in
-              if GetSystemOSVersionInfoEx('major_version') = '5' then
-              begin
-                LogDatei.log('The Branch for :'+profilename+' may be the logged in user,',LLDebug);
-                LogDatei.log('so let us try to patch it via HKUsers\SID',LLDebug);
-                workOnHkuserSid (profilename);
-              end;
-            end;
-          end;
-          *)
        End;
      End;
    //End;
@@ -7358,9 +7288,9 @@ begin
 end;
 //#############################################################################
 
+{$IFDEF WINDOWS}
 function TuibInstScript.doXMLPatch (const Sektion: TWorkSection; Const XMLFilename : String;
                 var output: TXStringList) : TSectionResult;
-{$IFDEF WINDOWS}
 begin
   //DataModuleLogServer.IdTCPServer1.Active:=true;
   result := executeWith (Sektion,  '"'+ ExtractFileDir(reencode(paramstr(0),'system'))+PathDelim+'opsiwinstxmlplugin.exe" --xmlfile="'+trim(XMLFilename)+'" --scriptfile=' , true, 0, output);
@@ -7370,8 +7300,11 @@ begin
 end;
 
 {$ELSE WINDOWS}
+function TuibInstScript.doXMLPatch (const Sektion: TWorkSection; Const XMLFilename : String;
+                var output: TXStringList) : TSectionResult;
 begin
   LogDatei.log('Not implemented for Linux', LLError);
+  result := tsrExitProcess;
 end;
 
 {$ENDIF WINDOWS}
@@ -9037,40 +8970,6 @@ function TuibInstScript.doLinkFolderActions (const Sektion: TWorkSection; common
           End;
         End
 
-        {
-        else if LowerCase (Expressionstr) = 'push_location'
-        then
-        begin
-           if length (Remaining) > 0
-           then
-              reportError (Sektion, i, Sektion.Strings [i-1], 'end of line expected');
-           stack.Insert(0, startdirectory);
-
-           LogDatei.log ('Folder ' + Startdirectory + ' put on stack', levelcomplete);
-        End
-
-        else if LowerCase (Expressionstr) = 'pop_location'
-        then
-        begin
-           if length (Remaining) > 0
-           then
-              reportError (Sektion, i, Sektion.Strings [i-1], 'end of line expected');
-
-           if stack.count > 0
-           then
-           Begin
-             startdirectory := stack.Strings[0];
-             LogDatei.log ('New base folder is ' + Startdirectory, levelComplete);
-             stack.Delete (0);
-           End
-           else
-           Begin
-             LogDatei.log ('No folder left on stack', levelInfo);
-           End
-
-        End
-        }
-        //{$IFDEF WIN32}
         else if LowerCase (Expressionstr) = 'set_subfolder'
         then
         begin
@@ -9089,18 +8988,12 @@ function TuibInstScript.doLinkFolderActions (const Sektion: TWorkSection; common
 
           if csidl_set then
              Begin
-                {LogDatei.log ('Subfolder is '  + subfoldername + ' in '
-                   +  shellLinks.tell_systemfolder(csidl), levelComplete);
-                }
                 ShellLinks.OpenShellFolderPath (csidl, subfoldername);
                 folder_opened := true;
              End
              else
                LogDatei.log ('No base folder set, therefore subfolder not set',
                  LLWarning);
-
-          //startdirectory := startdirectory + '\' + subfoldername;
-          //LogDatei.log ('New base folder is ' + Startdirectory, levelComplete);
 
         End
         {$IFDEF WIN32}
@@ -9379,18 +9272,18 @@ function TuibInstScript.doLinkFolderActions (const Sektion: TWorkSection; common
                 then folder_opened := true
               End;
 
-              ShellLinks.MakeShellLink(link_name,  link_target, link_paramstr,
+              if ShellLinks.MakeShellLink(link_name,  link_target, link_paramstr,
                       link_working_dir, link_icon_file,
-                      link_icon_index, link_shortcut);
+                      link_icon_index, link_shortcut) then ;
 
             End
           end
           {$ENDIF WIN32}
           {$IFDEF UNIX}
-          ShellLinks.MakeShellLink(link_name,  link_target, link_paramstr,
+          if ShellLinks.MakeShellLink(link_name,  link_target, link_paramstr,
                       link_working_dir, link_icon_file,
-                      link_categories,'','');
-          {$ENDIF LINUX}
+                      link_categories,'','') then ;
+          {$ENDIF UNIX}
         End
 
         else
@@ -16989,6 +16882,51 @@ begin
   if not EvaluateString (s0, Remaining, resultString, errorInfo)
   then
     GetWord (s0, resultString, Remaining, WordDelimiterWhiteSpace);
+end;
+
+procedure TuibInstScript.GetWordOrStringExpressionstr (const s: String;
+                           var resultString, Remaining: String; const WordDelimiterSet: TCharset);
+ { nur fuer AktionenSektion-Syntax 0 }
+ var
+  s0 : String='';
+  errorinfo : String='';
+
+begin
+  Resultstring := '';
+  s0 := s;
+  setLength (s0, length (s)); //should create a new instance, but does not always work
+  if not EvaluateString (s0, Remaining, resultString, errorInfo)
+  then
+    GetWord (s0, resultString, Remaining, WordDelimiterSet);
+end;
+
+function TuibInstScript.SkipWordOrStringExpressionstr (const partialS,
+      S: string; var Remaining: string; var Error: string): boolean;
+ { like skip but handles also string expressions }
+
+ var
+  orgstring : String='';
+  resultString : String='';
+  errorinfo : String='';
+
+begin
+  Result := False;
+  orgstring := S;
+  GetWordOrStringExpressionstr (S, resultString, Remaining, errorinfo);
+  if trim(AnsiUpperCase(partialS)) = trim(AnsiUpperCase(resultString))then
+  begin
+   Result := true;
+   Remaining := trim(Remaining);
+  end
+  else
+  begin
+    Result := False;
+    Remaining := trim(orgstring);
+  end;
+  if Result then
+    Error := ''
+  else
+    Error := '"' + partialS + '" expected '+ errorinfo;
 end;
 
 
