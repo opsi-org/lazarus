@@ -184,6 +184,7 @@ type
                 tsEndFunction,
                 tsShellcall,
                 tsPowershellcall,
+                tsExecuteSection,
                 // tsSetVar should be the last here for loop in FindKindOfStatement
                 tsSetVar);
 
@@ -19246,6 +19247,7 @@ function TuibInstScript.doAktionen (Sektion: TWorkSection; const CallingSektion:
   posSlash : integer=0;
   imageNo : Integer=0;
   ArbeitsSektion : TWorkSection;
+  localSection : TWorkSection;
   WaitConditions : TSetWaitConditions;
   expr : String='';
   ident : String='';
@@ -19350,6 +19352,7 @@ function TuibInstScript.doAktionen (Sektion: TWorkSection; const CallingSektion:
   tmpint : integer;
   tmpstr, tmpstr1, tmpstr2, tmpstr3 : string;
   tmpbool, tmpbool1 : boolean;
+  localKindOfStatement : Tstatement;
 
 begin
   logdatei.log_prog('Starting daAktionen: ',LLDebug2);
@@ -21152,7 +21155,88 @@ begin
                 {$ENDIF WINDOWS}
                end;
 
+               tsExecuteSection:
+               begin
+                syntaxCheck := false;
+                tmplist := TXStringlist.create;
+                if Skip ('(', Remaining, Remaining, InfoSyntaxError)
+                then if EvaluateString (Remaining, Remaining, call, InfoSyntaxError)
+                 then
+                 Begin
+                   //savelogsindentlevel := LogDatei.LogSIndentLevel;
+                   localSection := TWorkSection.create(LogDatei.LogSIndentLevel  + 1,Sektion);
+                   GetWord (call, Expressionstr, tmpstr, WordDelimiterSet1);
+                   localSection.Name := Expressionstr;
 
+                   //localKindOfStatement := findKindOfStatement (s2, SecSpec, s1);
+                   localKindOfStatement := FindKindOfStatement (Expressionstr, SectionSpecifier, call);
+
+                   if
+                     not
+                     (
+                     localKindOfStatement
+                     in
+                     [tsDOSBatchFile, tsDOSInAnIcon,
+                     tsShellBatchFile, tsShellInAnIcon,
+                     tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings]
+                     )
+                   then
+                     InfoSyntaxError := 'not implemented for this kind of section'
+                   else
+                   Begin
+                     //if not (section.GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, false)
+                     //  or GetSectionLines (s2, TXStringList(localSection), startlineofsection, true, true, false))
+                     if not SearchForSectionLines(self,sektion,callingsektion,Expressionstr,
+                             TXStringList (localSection),startlineofsection, true, true, false)
+                     then
+                         InfoSyntaxError := 'Section "' + Expressionstr + '" not found'
+                     else
+                     Begin
+                       if localKindOfStatement in [tsExecutePython, tsExecuteWith_escapingStrings]
+                       then
+                       Begin
+                        ApplyTextConstants (TXStringList (localSection), true);
+                        ApplyTextVariables (TXStringList (localSection), true);
+                       End
+                       else
+                       Begin
+                        ApplyTextConstants (TXStringList (localSection), false);
+                        ApplyTextVariables (TXStringList (localSection), false);
+                       End;
+
+                       case localKindOfStatement of
+
+                        tsExecutePython :
+                              execPython(localSection, tmpstr,
+                                  false {no catchout}, 1,
+                                  [ttpWaitOnTerminate], tmplist);
+
+                        tsExecuteWith_escapingStrings, tsExecuteWith:
+                              executeWith(localSection, tmpstr,
+                                  false {no catchout}, 1, tmplist);
+
+                        tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon:
+                              execDOSBatch (localSection, tmpstr,
+                                  SW_HIDE, false {no catchout}, 1,
+                                  [ttpWaitOnTerminate], tmplist);
+
+                       end;
+
+                       if Skip (')', Remaining,Remaining, InfoSyntaxError)
+                       then
+                       Begin
+                         syntaxCheck := true;
+                       End
+                     End;
+
+                   End;
+
+                   if localSection <> nil then localSection.Free;
+
+                  // LogDatei.LogSIndentLevel := saveLogSIndentLevel;
+                 End;
+                if tmplist <> nil then freeandnil(tmplist);
+               end;
 
 
               {$IFDEF WIN32}
@@ -23964,6 +24048,7 @@ begin
   PStatNames^ [tsSetVar]              := 'Set';
   PStatNames^ [tsShellCall]           := 'shellCall';
   PStatNames^ [tsPowershellCall]      := 'powershellCall';
+  PStatNames^ [tsExecuteSection]      := 'executeSection';
   PStatNames^ [tsDefineFunction]      := 'DefFunc';
   PStatNames^ [tsEndFunction]         := 'EndFunc';
 
