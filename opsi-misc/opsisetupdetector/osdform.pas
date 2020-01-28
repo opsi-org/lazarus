@@ -314,6 +314,7 @@ type
   private
     { private declarations }
     procedure OpenMSTFile(var mysetup:TSetupFile);
+    procedure SetTICheckBoxesMST(Installer:TKnownInstaller);
   public
     { public declarations }
     procedure memoadd(line: string);
@@ -1002,6 +1003,7 @@ begin
     makeProperties;
     Application.ProcessMessages;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
+    SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
   end;
 end;
 
@@ -1063,6 +1065,7 @@ begin
     // start add property
     makeProperties;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
+    SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
   end;
 end;
 
@@ -1453,7 +1456,22 @@ begin
   begin
     mysetup.mstFullFileName := OpenDialog1.FileName;
     mysetup.installCommandLine:= mysetup.installCommandLine + ' TRANSFORMS=' +
-      mysetup.mstFileName;
+      '"%scriptpath%\files' + IntToStr(mysetup.ID) + '\' + mysetup.mstFileName + '"';
+  end;
+end;
+
+procedure TResultform1.SetTICheckBoxesMST(Installer:TKnownInstaller);
+begin
+  case Installer of
+    stMsi: begin
+             TICheckBoxS1MSt.Enabled := true;
+             TICheckBoxS2MSt.Enabled := true;
+           end
+    else
+           begin
+             TICheckBoxS1MSt.Enabled := false;
+             TICheckBoxS2MSt.Enabled := false;
+           end;
   end;
 end;
 
@@ -1717,6 +1735,7 @@ begin
                                 MemoAnalyze.Clear;
                                 Application.ProcessMessages;
                                 Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[1], True);
+                                SetTICheckBoxesMST(aktProduct.SetupFiles[1].installerId);
                               end;
                               //PageControl1.ActivePage := resultForm1.TabSheetSetup2;
                               //Application.ProcessMessages;
@@ -1807,6 +1826,7 @@ begin
     initaktproduct;
     makeProperties;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
+    SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
   end;
 end;
 

@@ -99,11 +99,11 @@ object resultForm1: TresultForm1
       Height = 481
       Top = 1
       Width = 1178
-      ActivePage = TabSheetStart
+      ActivePage = TabSheetSetup1
       Align = alClient
       Images = ImageList1
       ParentFont = False
-      TabIndex = 0
+      TabIndex = 2
       TabOrder = 0
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
@@ -2224,6 +2224,7 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 3
             BorderSpacing.InnerBorder = 2
             Caption = 'MST allowed'
+            Enabled = False
             OnChange = TICheckBoxS1MstChange
             PropertyNameAsCaption = False
             TabOrder = 1
@@ -2348,9 +2349,8 @@ object resultForm1: TresultForm1
             Left = 18
             Height = 21
             Top = 8
-            Width = 68
+            Width = 67
             Anchors = []
-            AutoSize = False
             BorderSpacing.Left = 10
             BorderSpacing.Around = 4
             Caption = 'MST File  '
@@ -2359,7 +2359,7 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object BitBtnOpenMst1: TBitBtn
-            Left = 979
+            Left = 978
             Height = 30
             Top = 4
             Width = 127
@@ -2409,7 +2409,7 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object TIEditMstFile1: TTIEdit
-            Left = 102
+            Left = 101
             Height = 27
             Top = 6
             Width = 872
@@ -2451,9 +2451,8 @@ object resultForm1: TresultForm1
             Left = 18
             Height = 21
             Top = 8
-            Width = 122
+            Width = 118
             Anchors = []
-            AutoSize = False
             BorderSpacing.Left = 10
             BorderSpacing.Around = 4
             Caption = 'Software Version'
@@ -2462,7 +2461,7 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIEditProdVersion1: TTIEdit
-            Left = 156
+            Left = 152
             Height = 27
             Top = 6
             Width = 307
@@ -2505,9 +2504,8 @@ object resultForm1: TresultForm1
             Left = 18
             Height = 21
             Top = 8
-            Width = 68
+            Width = 66
             Anchors = []
-            AutoSize = False
             BorderSpacing.Left = 10
             BorderSpacing.Around = 4
             Caption = 'MsiId       '
@@ -2516,7 +2514,7 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIEditMsiId1: TTIEdit
-            Left = 102
+            Left = 100
             Height = 27
             Top = 6
             Width = 872
@@ -2684,9 +2682,8 @@ object resultForm1: TresultForm1
             Left = 18
             Height = 21
             Top = 8
-            Width = 223
+            Width = 203
             Anchors = []
-            AutoSize = False
             BorderSpacing.Left = 10
             BorderSpacing.Around = 4
             Caption = 'Unattended Install Command'
@@ -2695,7 +2692,7 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIEditSetup1Command: TTIEdit
-            Left = 257
+            Left = 237
             Height = 27
             Top = 6
             Width = 717
@@ -2956,9 +2953,8 @@ object resultForm1: TresultForm1
             Left = 18
             Height = 21
             Top = 8
-            Width = 223
+            Width = 126
             Anchors = []
-            AutoSize = False
             BorderSpacing.Left = 10
             BorderSpacing.Around = 4
             Caption = 'Uninstall Program'
@@ -2967,7 +2963,7 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIEditSetup1UnProgram: TTIEdit
-            Left = 257
+            Left = 160
             Height = 27
             Top = 6
             Width = 267
@@ -3065,6 +3061,7 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 3
             BorderSpacing.InnerBorder = 2
             Caption = 'MST allowed'
+            Enabled = False
             OnChange = TICheckBoxS2MstChange
             PropertyNameAsCaption = False
             TabOrder = 1
@@ -3137,9 +3134,8 @@ object resultForm1: TresultForm1
             Left = 18
             Height = 21
             Top = 8
-            Width = 68
+            Width = 63
             Anchors = []
-            AutoSize = False
             BorderSpacing.Left = 10
             BorderSpacing.Around = 4
             Caption = 'MST File '
@@ -3148,7 +3144,7 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object BitBtnOpenMst2: TBitBtn
-            Left = 979
+            Left = 974
             Height = 30
             Top = 4
             Width = 127
@@ -3198,7 +3194,7 @@ object resultForm1: TresultForm1
             TabOrder = 0
           end
           object TIEditMstFile2: TTIEdit
-            Left = 102
+            Left = 97
             Height = 27
             Top = 6
             Width = 872
@@ -3242,9 +3238,8 @@ object resultForm1: TresultForm1
             Left = 18
             Height = 21
             Top = 8
-            Width = 68
+            Width = 38
             Anchors = []
-            AutoSize = False
             BorderSpacing.Left = 10
             BorderSpacing.Around = 4
             Caption = 'MsiId'
@@ -3253,7 +3248,7 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIEditMsiId2: TTIEdit
-            Left = 102
+            Left = 72
             Height = 27
             Top = 6
             Width = 872
@@ -3295,9 +3290,8 @@ object resultForm1: TresultForm1
             Left = 18
             Height = 21
             Top = 8
-            Width = 122
+            Width = 118
             Anchors = []
-            AutoSize = False
             BorderSpacing.Left = 10
             BorderSpacing.Around = 4
             Caption = 'Software Version'
@@ -3306,7 +3300,7 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIEditProdVersion2: TTIEdit
-            Left = 156
+            Left = 152
             Height = 27
             Top = 6
             Width = 307
@@ -3526,9 +3520,8 @@ object resultForm1: TresultForm1
             Left = 18
             Height = 21
             Top = 8
-            Width = 223
+            Width = 203
             Anchors = []
-            AutoSize = False
             BorderSpacing.Left = 10
             BorderSpacing.Around = 4
             Caption = 'Unattended Install Command'
@@ -3537,7 +3530,7 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIEditSetup2Command: TTIEdit
-            Left = 257
+            Left = 237
             Height = 27
             Top = 6
             Width = 717
@@ -3631,9 +3624,8 @@ object resultForm1: TresultForm1
             Left = 18
             Height = 21
             Top = 8
-            Width = 223
+            Width = 126
             Anchors = []
-            AutoSize = False
             BorderSpacing.Left = 10
             BorderSpacing.Around = 4
             Caption = 'Uninstall Program'
@@ -3642,7 +3634,7 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TIEditSetup2UnProgram: TTIEdit
-            Left = 257
+            Left = 160
             Height = 27
             Top = 6
             Width = 267

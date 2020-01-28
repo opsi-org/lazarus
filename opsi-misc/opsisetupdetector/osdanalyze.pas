@@ -325,14 +325,9 @@ begin
   mysetup.link := installerArray[integer(mysetup.installerId)].Link;
   mysetup.setupFullFileName := myfilename;
   //mysetup.setupFileNamePath := ExtractFileDir(myfilename);
-  case mysetup.ID of
-    1: mysetup.installCommandLine :=
-         'msiexec + "%scriptpath%\files1\' + mysetup.setupFileName + '" ' +
-         installerArray[integer(mysetup.installerId)].unattendedsetup;
-    2: mysetup.installCommandLine :=
-         '"msiexec %scriptpath%\files2\' + mysetup.setupFileName + '" ' +
-         installerArray[integer(mysetup.installerId)].unattendedsetup;
-  end;
+  mysetup.installCommandLine :=
+    '"%scriptpath%\files'+ IntToStr(mysetup.ID) + '\' + mysetup.setupFileName + '" '
+    + installerArray[integer(mysetup.installerId)].unattendedsetup;
   mysetup.isExitcodeFatalFunction :=
     installerArray[integer(mysetup.installerId)].uib_exitcode_function;
   mysetup.uninstallProg := installerArray[integer(mysetup.installerId)].uninstallProg;
@@ -556,14 +551,9 @@ begin
   {$ENDIF LINUX}
   if not uninstall_only then
   begin
-    case mysetup.ID of
-      1: mysetup.installCommandLine :=
-           '"msiexec %scriptpath%\files1\' + mysetup.setupFileName + '" ' +
-           installerArray[integer(mysetup.installerId)].unattendedsetup;
-      2: mysetup.installCommandLine :=
-           '"msiexec %scriptpath%\files2\' + mysetup.setupFileName + '" ' +
-           installerArray[integer(mysetup.installerId)].unattendedsetup;
-    end;
+    mysetup.installCommandLine :=
+      'msiexec /i "%scriptpath%\files'+ IntToStr(mysetup.ID) + '\' + mysetup.setupFileName + '" ' +
+      installerArray[integer(mysetup.installerId)].unattendedsetup;
     mysetup.mstAllowed := True;
   end;
   mysetup.uninstallCheck.Clear;
