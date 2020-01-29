@@ -2336,22 +2336,8 @@ begin
               //wait until a window is appearing
               if FindWindowEx(0, 0, nil, PChar(Ident)) = 0 then
               begin
-                logdatei.log('Wait for appear Window: "' + Ident +
-                  ' not found.', LLDebug);
-                if WaitSecs = 0 then
-                  running := True
-                else
-                begin //time out given
-                  if ((nowtime - starttime) < waitSecs / secsPerDay) then
-                  begin
-                    running := True;
-                  end
-                  else
-                  begin
-                    logdatei.log('Wait for appear Window "' + ident +
-                      '" stopped - time out ' + IntToStr(waitSecs) + ' sec', LLInfo);
-                  end;
-                end;
+                running := True;
+                logdatei.log('Wait for appear Window: "' + Ident + 'not found.', LLDebug);
               end
               else
                 logdatei.log('Wait for appear Window: "' + Ident + ' found.', LLDebug);
@@ -2369,22 +2355,9 @@ begin
               end;
 
               if not WaitWindowStarted or WaitForWindowVanished then
+                running := True;
               // in case WaitForWindowVanished we are not yet ready
               // but have to check waiting condition 3
-              if WaitSecs = 0 then
-                running := True
-              else
-              begin //time out given
-                if ((nowtime - starttime) < waitSecs / secsPerDay) then
-                begin
-                  running := True;
-                end
-                else
-                begin
-                  logdatei.log('Wait for vanish Window "' + ident +
-                    '" stopped - time out ' + IntToStr(waitSecs) + ' sec', LLInfo);
-                end;
-              end;
             end
 
             else
@@ -2480,8 +2453,7 @@ begin
                   lpExitCode := FpcProcess.ExitCode;
                   logdatei.log(
                     'Process : ' + FpcProcess.Executable + ' terminated at: ' +
-                    DateTimeToStr(now) + ' exitcode is: ' +
-                    IntToStr(lpExitCode), LLInfo);
+                    DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLInfo);
                 end;
                 {$ENDIF LINUX}
               end;
@@ -2541,8 +2513,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and
-                (waitSecs > 0) // we look for time out
+              if waitsecsAsTimeout and (waitSecs >
+                0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -2574,7 +2546,7 @@ begin
               ProcessMess;
               //sleep(50);
               //sleep(1000);
-              sleep(1000);
+              sleep(100);
               {$IFDEF UNIX}
               lpExitCode := FpcProcess.ExitCode;
               {$ENDIF LINUX}
@@ -2970,8 +2942,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and
-                (waitSecs > 0) // we look for time out
+              if waitsecsAsTimeout and (waitSecs >
+                0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -3344,8 +3316,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and
-                (waitSecs > 0) // we look for time out
+              if waitsecsAsTimeout and (waitSecs >
+                0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
