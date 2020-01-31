@@ -169,9 +169,10 @@
         <ComponentName Value="resultForm1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <TopLine Value="1717"/>
-        <CursorPos X="49" Y="1735"/>
+        <CursorPos X="58" Y="1721"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="7"/>
@@ -257,8 +258,7 @@
       <Unit12>
         <Filename Value="changelog-osd.txt"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <TopLine Value="61"/>
+        <TopLine Value="67"/>
         <CursorPos X="18" Y="66"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
