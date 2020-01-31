@@ -9472,7 +9472,7 @@ var
     begin
       Filename := OrigPath + SearchResult.Name;
       LogS := 'File "' + Filename + '"';
-      LogDatei.log(LogS, LLInfo);
+      LogDatei.log(LogS, LLdebug);
       LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
       FileIsReadOnly := False;
@@ -9510,7 +9510,7 @@ var
         LogS := 'The file is ' + IntToStr(ddiff) + ' day(s) old';
         if not shallDelete then
           LogS := LogS + ', no deletion';
-        LogDatei.log(LogS, LLInfo);
+        LogDatei.log(LogS, LLDebug2);
       end;
 
       if shallDelete then

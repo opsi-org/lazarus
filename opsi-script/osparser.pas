@@ -17095,37 +17095,6 @@ begin
  LogDatei.log_prog ('EvaluateBoolean: Parsing: '+Input+' ', LLDebug);
 
 
- (*
- // defined local function ?
- GetWord (Input, funcname, r, WordDelimiterSet5);
- FuncIndex := definedFunctionNames.IndexOf (LowerCase (funcname));
-  if FuncIndex >= 0 then
-  begin
-    if not (definedFunctionArray[FuncIndex].datatype = dfpBoolean) then
-    begin
-      // error
-      syntaxCheck := false;
-      LogDatei.log('Syntax Error: defined function: '+funcname+' is not from type boolean.',LLError);
-    end
-    else
-    begin
-      if definedFunctionArray[FuncIndex].call(r) then
-      begin
-        r := '';
-        BooleanResult := definedFunctionArray[FuncIndex].ResultBool;
-        syntaxCheck := true;
-      end
-      else
-      begin
-        // defined function call failed
-        LogDatei.log('Call of defined function: '+funcname+' failed',LLError);
-        syntaxCheck := false;
-      end;
-    end;
-  end
-  *)
-
-
  // geklammerter Boolescher Ausdruck
  if Skip ('(', Input, r, sx)
  then
@@ -17160,8 +17129,6 @@ begin
    then
    Begin
       LogDatei.log ('  Starting query if file exist (64 Bit mode)...', LLInfo);
-      // BooleanResult := CheckFileExists (s1, RunTimeInfo)  or IsDirectory (s1);
-
       s2 := s1;
       if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR)
         then s2 := copy(s1,1,length(s1)-1);
@@ -17178,12 +17145,6 @@ begin
               if (not BooleanResult) and (not (trim(s2) = '')) then
               begin
                 LogDatei.log ('File: '+s2+' not found via FileExists', LLDebug3);
-                (*
-                list1.Clear;
-                list1.Text := execShellCall('dir '+s2, '64',4, false,false).Text;
-                //calling shellCall with FetchExitCodePublic=false result is on FLastPrivateExitCode
-                if (0 = FLastPrivateExitCode) then BooleanResult := true;
-                *)
               end;
             except
               BooleanResult := false;
@@ -17208,8 +17169,8 @@ begin
       end;
       if not BooleanResult then
       Begin
-        RunTimeInfo := '  "' + s1 + '": ' + RunTimeInfo;
-        LogDatei.log (RunTimeInfo, LLwarning);
+        RunTimeInfo := 'Not found: "' + s1 + '": ' + RunTimeInfo;
+        LogDatei.log (RunTimeInfo, LLinfo);
       End;
       syntaxCheck := true;
    End;
@@ -17243,12 +17204,6 @@ begin
                 if (not BooleanResult) and (not (trim(s2) = '')) then
                 begin
                   LogDatei.log ('File: '+s2+' not found via FileExists', LLDebug3);
-                  (*
-                  list1.Clear;
-                  list1.Text := execShellCall('dir '+s2, 'sysnative',4, false,false).Text;
-                  //calling shellCall with FetchExitCodePublic=false result is on FLastPrivateExitCode
-                  if (0 = FLastPrivateExitCode) then BooleanResult := true;
-                  *)
                 end;
               except
                 BooleanResult := false;
@@ -17274,23 +17229,16 @@ begin
       end
       else
       begin
-        //BooleanResult := GetFileInfo (s2, FileRecord, RunTimeInfo);
        BooleanResult := FileExists(s2) or DirectoryExists(s2);
         if (not BooleanResult) and (not (trim(s2) = '')) then
         begin
           LogDatei.log ('File: '+s2+' not found via FileExists', LLDebug3);
-          (*
-          list1.Clear;
-          list1.Text := execShellCall('dir '+s2, 'sysnative',4, false,false).Text;
-          //calling shellCall with FetchExitCodePublic=false result is on FLastPrivateExitCode
-          if (0 = FLastPrivateExitCode) then BooleanResult := true;
-          *)
         end;
       end;
       if not BooleanResult then
       Begin
-        RunTimeInfo := '  "' + s1 + '": ' + RunTimeInfo;
-        LogDatei.log (RunTimeInfo, LLwarning);
+        RunTimeInfo := 'Not found: "' + s1 + '": ' + RunTimeInfo;
+        LogDatei.log (RunTimeInfo, LLinfo);
       End;
       syntaxCheck := true;
    End;
@@ -17315,12 +17263,6 @@ begin
           if (not BooleanResult) and (not (trim(s2) = '')) then
           begin
             LogDatei.log ('File: '+s2+' not found via FileExists', LLDebug3);
-            //FindResultcode := SysUtils.FindFirst(s2,faAnyFile - faDirectory, FileRecord);
-            //if FindResultcode = 0 then BooleanResult := true;
-            //list1.Clear;
-            //list1.Text := execShellCall('dir '+s2, '32',4, false,false).Text;
-            ////calling shellCall with FetchExitCodePublic=false result is on FLastPrivateExitCode
-            //if (0 = FLastPrivateExitCode) then BooleanResult := true;
           end;
         except
           BooleanResult := false;
@@ -17330,8 +17272,8 @@ begin
       end;
       if not BooleanResult then
       Begin
-        RunTimeInfo := '  "' + s1 + '": ' + RunTimeInfo;
-        LogDatei.log (RunTimeInfo, LevelWarnings);
+        RunTimeInfo := 'Not found: "' + s1 + '": ' + RunTimeInfo;
+        LogDatei.log (RunTimeInfo, LLinfo);
       End;
       syntaxCheck := true;
    End;
@@ -17352,74 +17294,15 @@ begin
       if (length(s1) > 0) and (s1[length(s1)] = PATHSEPARATOR)
        then s2 := copy(s1,1,length(s1)-1);
       {$IFDEF WINDOWS}
-      // disable  critical-error-handler message box. (Drive not ready)
+      { disable  critical-error-handler message box. (Drive not ready) }
       OldWinapiErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
       try
         try
-          (*
-          try
-            flushhandle := FileOpen(ExtractFileDrive(s1),fmOpenRead);
-            FlushFileBuffers(flushhandle);
-          except
-            LogDatei.log ('Exception: while flushfilebuffers', LLDebug3);
-          end;
-          *)
-          (*
-          // wait for getting the cache ready
-          ProcessMess;
-          *)
           s2 := trim(s2);
           BooleanResult := FileExists(s2) or DirectoryExists(s2);
           if (not BooleanResult) and (not (trim(s2) = '')) then
           begin
             LogDatei.log ('File: '+s2+' not found via FileExists', LLDebug3);
-            (*
-            // search for s2*
-            LogDatei.log ('Looking for: '+ExtractFilePath(s2)+'*'+' via FindFirst', LLDebug3);
-            FindResultcode := FindFirst(ExtractFilePath(s2)+'*',faAnyFile or faSymlink, FileRecord);
-            while FindResultcode = 0 do
-            begin
-              LogDatei.log ('found: '+ExtractFilePath(s2)+ FileRecord.Name+' via FindFirst/Next', LLDebug3);
-              if ExtractFilePath(s2)+ FileRecord.Name = s2 then
-              begin
-                BooleanResult := true;
-                LogDatei.log ('File: '+s2+' found via FindFirst/Next', LLDebug3);
-              end;
-              FindResultcode := sysutils.FindNext(FileRecord);
-            end;
-            SysUtils.findclose(FileRecord);
-            if not BooleanResult then LogDatei.log ('File: '+s2+' not found via FindFirst/next', LLDebug3);
-            list1.Clear;
-            list1.Text := execShellCall('dir '+s2, '32',4, false,false).Text;
-            //calling shellCall with FetchExitCodePublic=false result is on FLastPrivateExitCode
-            if (0 = FLastPrivateExitCode) then BooleanResult := true;
-            LogDatei.log ('Looking for: '+ExtractFilePath(s2)+'*'+' via FindFirst', LLDebug3);
-            FindResultcode := FindFirst(ExtractFilePath(s2)+'*',faAnyFile or faSymlink, FileRecord);
-            while FindResultcode = 0 do
-            begin
-              LogDatei.log ('found: '+ExtractFilePath(s2)+ FileRecord.Name+' via FindFirst/Next', LLDebug3);
-              if ExtractFilePath(s2)+ FileRecord.Name = s2 then
-              begin
-                BooleanResult := true;
-                LogDatei.log ('File: '+s2+' found via FindFirst/Next', LLDebug3);
-              end;
-              FindResultcode := sysutils.FindNext(FileRecord);
-            end;
-            SysUtils.findclose(FileRecord);
-            if not BooleanResult then LogDatei.log ('File: '+s2+' not found via FindFirst/next', LLDebug3);
-            *)
-            (*
-            if FindResultcode = 0 then
-            begin
-              BooleanResult := true;
-              LogDatei.log ('File: '+s2+' found via FindFirst', LLDebug3);
-            end
-            else LogDatei.log ('File: '+s2+' not found via FindFirst', LLDebug3);
-            list1.Clear;
-            list1.Text := execShellCall('dir '+s2, '32',4, false,false).Text;
-            //calling shellCall with FetchExitCodePublic=false result is on FLastPrivateExitCode
-            if (0 = FLastPrivateExitCode) then BooleanResult := true;
-            *)
           end;
         except
           BooleanResult := false;
@@ -17439,8 +17322,8 @@ begin
       {$ENDIF WINDOWS}
       if not BooleanResult then
       Begin
-        RunTimeInfo := '  "' + s1 + '": ' + RunTimeInfo;
-        LogDatei.log (RunTimeInfo, LevelWarnings);
+        RunTimeInfo := 'Not found: "' + s1 + '": ' + RunTimeInfo;
+        LogDatei.log (RunTimeInfo, LLinfo);
       End;
       syntaxCheck := true;
    End;
@@ -21428,6 +21311,7 @@ begin
 
                tsExecuteSection:
                begin
+                logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
                 syntaxCheck := false;
                 tmplist := TXStringlist.create;
                 if Skip ('(', Remaining, Remaining, InfoSyntaxError)
@@ -21441,6 +21325,7 @@ begin
 
                    //localKindOfStatement := findKindOfStatement (s2, SecSpec, s1);
                    localKindOfStatement := FindKindOfStatement (Expressionstr, SectionSpecifier, call);
+                   logdatei.log('Execution of: '+localSection.Name+' '+ tmpstr,LLNotice);
 
                    if
                      not
@@ -21450,10 +21335,14 @@ begin
                      [tsDOSBatchFile, tsDOSInAnIcon,
                      tsShellBatchFile, tsShellInAnIcon,
                      tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings,
-                     tsWinBatch,tsRegistryHack]
+                     tsWinBatch,tsRegistryHack,tsFileActions]
                      )
                    then
-                     InfoSyntaxError := 'not implemented for this kind of section'
+                   begin
+                     logdatei.log('not implemented for this kind of section',LLerror);
+                     InfoSyntaxError := 'not implemented for this kind of section';
+                     syntaxCheck := false;
+                   end
                    else
                    Begin
                     if Skip (')', Remaining,Remaining, InfoSyntaxError)   then
@@ -21462,7 +21351,11 @@ begin
                      if not SearchForSectionLines(self,sektion,callingsektion,Expressionstr,
                              TXStringList (localSection),startlineofsection, true, true, false)
                      then
-                         InfoSyntaxError := 'Section "' + Expressionstr + '" not found'
+                     begin
+                         InfoSyntaxError := 'Section "' + Expressionstr + '" not found';
+                         syntaxCheck := false;
+                         logdatei.log('Section "' + Expressionstr + '" not found',LLerror);
+                     end
                      else
                      Begin
                        if localKindOfStatement in [tsExecutePython, tsExecuteWith_escapingStrings]
@@ -21476,7 +21369,12 @@ begin
                         ApplyTextConstants (TXStringList (localSection), false);
                         ApplyTextVariables (TXStringList (localSection), false);
                        End;
-
+                       if not syntaxCheck then
+                       begin
+                         ActionResult
+                          := reportError (Sektion, linecounter, Sektion.strings [linecounter-1],InfoSyntaxError);
+                       end
+                       else
                        case localKindOfStatement of
 
                         tsExecutePython :
@@ -21494,10 +21392,24 @@ begin
                                   [ttpWaitOnTerminate], tmplist);
 
                         tsWinBatch:
-                              parseAndCallWinbatch(localSection,tmpstr);
+                              ActionResult := parseAndCallWinbatch(localSection,tmpstr);
 
-                         tsRegistryHack:
-                              parseAndCallRegistry(localSection, tmpstr);
+                        tsRegistryHack:
+                              ActionResult := parseAndCallRegistry(localSection, tmpstr);
+
+                        tsFileActions:
+                         begin
+                           if localSection.count > 0 then
+                             for tmpint:= 0 to localSection.count -1  do
+                                logdatei.log(localSection.Strings[tmpint], LLDebug2);
+                           flag_all_ntuser := false;
+                           // if this is a 'ProfileActions' which is called as sub in Machine mode
+                           // so run registry sections implicit as /Allntuserdats
+                           if runProfileActions then
+                                flag_all_ntuser := true;
+                           ActionResult := doFileActions (localSection, tmpstr);
+                           logdatei.log('Finished of: '+localSection.Name+' '+ tmpstr,LLNotice);
+                          end;
                        end;
                        End
                      End;
@@ -22388,7 +22300,7 @@ begin
 
               tsRegistryHack:
                  begin
-                     parseAndCallRegistry(ArbeitsSektion, Remaining);
+                     ActionResult := parseAndCallRegistry(ArbeitsSektion, Remaining);
                  end;
 
 
@@ -22505,8 +22417,8 @@ begin
 
               tsWinBatch:
                begin
-                 //ActionResult := parseAndCallWinbatch(ArbeitsSektion,Remaining);
-                 parseAndCallWinbatch(ArbeitsSektion,Remaining);
+                 ActionResult := parseAndCallWinbatch(ArbeitsSektion,Remaining);
+                 //parseAndCallWinbatch(ArbeitsSektion,Remaining);
                end;
 
               {$IFDEF WIN32}
