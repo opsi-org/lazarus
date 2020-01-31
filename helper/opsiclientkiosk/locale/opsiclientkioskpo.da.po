@@ -1,0 +1,659 @@
+# 
+# Translators:
+# Lars Juul <lju@eucl.dk>, 2016
+# Soren Birk <soer9648@eucl.dk>, 2016,2018,2020
+msgid ""
+msgstr ""
+"Project-Id-Version: opsi.org\n"
+"PO-Revision-Date: 2020-01-29 12:28+0000\n"
+"Last-Translator: Soren Birk <soer9648@eucl.dk>\n"
+"Language-Team: Danish (http://www.transifex.com/opsi-org/opsiorg/language/da/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: da\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: imagestodepot.rscouldnotsaveicons
+msgctxt "imagestodepot.rscouldnotsaveicons"
+msgid "Could not save icons on depot."
+msgstr "Kunne ikke gemme ikoner på depot."
+
+#: imagestodepot.rscouldnotsavescreenshots
+msgctxt "imagestodepot.rscouldnotsavescreenshots"
+msgid "Could not save screenshots on depot."
+msgstr "Kunne ikke gemme skærmbilleder på depot."
+
+#: imagestodepot.rscouldnotunmount
+msgctxt "imagestodepot.rscouldnotunmount"
+msgid "Could not unmount depot."
+msgstr "Kunne ikke afmontere depot."
+
+#: imagestodepot.rsimagesnotsaved
+msgctxt "imagestodepot.rsimagesnotsaved"
+msgid ""
+"Images could not be saved on opsi depot. %sPlease check if depot is mounted "
+"with write privileges."
+msgstr "Billeder kunne ikke gemmes på opsi-depot. %sKontrollér venligst om depot er monteret med skriverettigheder."
+
+#: imagestodepot.rsimagessaved
+msgctxt "imagestodepot.rsimagessaved"
+msgid "Images saved on"
+msgstr "Billeder gemt på"
+
+#: imagestodepot.rsisaninvaliddir
+msgctxt "imagestodepot.rsisaninvaliddir"
+msgid "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
+msgstr "\"%s\" er en ugyldig mappe.%sAngiv venligst \"%s\" som en gyldig mappe."
+
+#: opsiclientkioskgui.rsaction
+msgctxt "opsiclientkioskgui.rsaction"
+msgid "Action"
+msgstr "Handling"
+
+#: opsiclientkioskgui.rsactionremovedfor
+msgid "Action removed for"
+msgstr "Handling fjernet for"
+
+#: opsiclientkioskgui.rsactions
+msgctxt "opsiclientkioskgui.rsactions"
+msgid "Actions"
+msgstr "Handlinger"
+
+#: opsiclientkioskgui.rsactnone
+msgid "None"
+msgstr "Ingen"
+
+#: opsiclientkioskgui.rsactrequest
+msgid "Action request"
+msgstr "Anmod om handling"
+
+#: opsiclientkioskgui.rsactsetup
+msgid "Setup"
+msgstr "Opsætning"
+
+#: opsiclientkioskgui.rsactuninstall
+msgctxt "opsiclientkioskgui.rsactuninstall"
+msgid "Uninstall"
+msgstr "Afinstallér"
+
+#: opsiclientkioskgui.rsadminmode
+msgid "Admin mode"
+msgstr "Admin-tilstand"
+
+#: opsiclientkioskgui.rsall
+msgctxt "opsiclientkioskgui.rsall"
+msgid "All"
+msgstr "Alle"
+
+#: opsiclientkioskgui.rsallproductsinstalled
+msgid "All available products installed!"
+msgstr "Alle tilgængelige produkter installeret!"
+
+#: opsiclientkioskgui.rsas
+msgid "as"
+msgstr "som"
+
+#: opsiclientkioskgui.rsback
+msgctxt "opsiclientkioskgui.rsback"
+msgid "<-- Back"
+msgstr "<-- Tilbage"
+
+#: opsiclientkioskgui.rscancel
+msgctxt "opsiclientkioskgui.rscancel"
+msgid "Cancel"
+msgstr "Afbryd"
+
+#: opsiclientkioskgui.rsconnectedto
+msgid "Connected to"
+msgstr "Forbundet til"
+
+#: opsiclientkioskgui.rscurrentusernoadmin
+msgid ""
+"Current user has no admin privileges. Admin mode disabled.%sSolution: Start "
+"opsi Client Kiosk (as user) with admin privileges."
+msgstr "Nuværende bruger har ikke admin-rettigheder. Admin-tilstand er deaktiveret.%sLøsning: start opsi Client Kiosk (som bruger) med admin-rettigheder."
+
+#: opsiclientkioskgui.rsdisabled
+msgid "disabled"
+msgstr "deaktiveret"
+
+#: opsiclientkioskgui.rsdoyouwantinstall
+msgid "Do you want to install "
+msgstr "Ønsker du at installere"
+
+#: opsiclientkioskgui.rsdoyouwantuninstall
+msgid "Do you want to uninstall "
+msgstr "Ønsker du at afinstallere"
+
+#: opsiclientkioskgui.rsdoyouwantupdate
+msgid "Do you want to update "
+msgstr "Ønsker du at opdatere"
+
+#: opsiclientkioskgui.rsinstall
+msgctxt "opsiclientkioskgui.rsinstall"
+msgid "Install"
+msgstr "Installér"
+
+#: opsiclientkioskgui.rsinstallationfinished
+msgid "Installation/update finished."
+msgstr "Installation/opdatering færdig."
+
+#: opsiclientkioskgui.rsinstalled
+msgid "Installed"
+msgstr "Installeret"
+
+#: opsiclientkioskgui.rsinstallnow
+msgctxt "opsiclientkioskgui.rsinstallnow"
+msgid "Install now"
+msgstr "Installér nu"
+
+#: opsiclientkioskgui.rsinstallnowhint
+msgctxt "opsiclientkioskgui.rsinstallnowhint"
+msgid ""
+"Start the installation/update (uninstallation) of the selected products"
+msgstr "Start installationen/opdateringen (afinstallationen) for valgte produkter"
+
+#: opsiclientkioskgui.rsinstallnowornextevent
+msgid "Install product now or at next standard event (e.g. reboot)?"
+msgstr "Installér produkter nu eller ved næste handling (f.eks. genstart)?"
+
+#: opsiclientkioskgui.rslabeldataloadcommunicating
+msgid "Communicating with server ..."
+msgstr "Kommunikerer med server ..."
+
+#: opsiclientkioskgui.rslabeldataloadloading
+msgid "Loading product data from server"
+msgstr "Indlæser produktdata fra server"
+
+#: opsiclientkioskgui.rslabeldataloadtiles
+msgid "Fill tiles"
+msgstr "Udfyld fliser"
+
+#: opsiclientkioskgui.rslabeldetailconnecting
+msgid "Connecting to server"
+msgstr "Forbinder til server"
+
+#: opsiclientkioskgui.rslabelinfoloaddata
+msgid "Please wait while communicating with OPSI web server ..."
+msgstr "Vent venligst i mens der kommunikerers med OPSI-webserveren ..."
+
+#: opsiclientkioskgui.rslabelinfotiles
+msgid "Please wait while building tiles."
+msgstr "Vent venligst i mens fliser opbygges."
+
+#: opsiclientkioskgui.rsnextevent
+msgid "Next standard event (e.g. reboot)"
+msgstr "Næste begivenhed (f.eks. genstart)"
+
+#: opsiclientkioskgui.rsno
+msgid "No"
+msgstr "Nej"
+
+#: opsiclientkioskgui.rsnoactionsfound
+msgid "No action requests found."
+msgstr "Ingen anmodning om handling fundet."
+
+#: opsiclientkioskgui.rsnotinstalled
+msgctxt "opsiclientkioskgui.rsnotinstalled"
+msgid "Not installed"
+msgstr "Ikke installeret"
+
+#: opsiclientkioskgui.rsnoupdatesfound
+msgid "No updates found."
+msgstr "Ingen opdateringer fundet."
+
+#: opsiclientkioskgui.rsnow
+msgid "Now"
+msgstr "Nu"
+
+#: opsiclientkioskgui.rsreload
+msgctxt "opsiclientkioskgui.rsreload"
+msgid "Reload"
+msgstr "Genindlæs"
+
+#: opsiclientkioskgui.rsstateunknown
+msgid "Unknown"
+msgstr "Ukendt"
+
+#: opsiclientkioskgui.rsstoreactions
+msgid "Store actions"
+msgstr "Gem handlinger"
+
+#: opsiclientkioskgui.rsstoreactionshint
+msgid ""
+"Send the action requests to the server, show the resulting installations and"
+" ask for installation start."
+msgstr "Send anmodninger om handling til serveren, vis resultatet af installationerne og spørg efter installation."
+
+#: opsiclientkioskgui.rsuninstallationfinished
+msgid "Uninstallation finished."
+msgstr "Afinstallation udført."
+
+#: opsiclientkioskgui.rsuninstallnowornextevent
+msgid "Uninstall product now or at next standard event (e.g. reboot)?"
+msgstr "Afinstallér produkt nu eller ved næste begivenhed (f.eks. genstart)?"
+
+#: opsiclientkioskgui.rsupdate
+msgctxt "opsiclientkioskgui.rsupdate"
+msgid "Update"
+msgstr "Opdatér"
+
+#: opsiclientkioskgui.rsupdatenowornextevent
+msgid "Update product now or at next standard event (e.g. reboot)?"
+msgstr "Opdatér produkt nu eller ved næste begivenhed (f.eks. genstart)?"
+
+#: opsiclientkioskgui.rsupdates
+msgctxt "opsiclientkioskgui.rsupdates"
+msgid "Updates"
+msgstr "Opdateringer"
+
+#: opsiclientkioskgui.rsviewlist
+msgid "List"
+msgstr "Liste"
+
+#: opsiclientkioskgui.rsviewtiles
+msgid "Tiles"
+msgstr "Fliser"
+
+#: opsiclientkioskgui.rswillinstallnextevent
+msgid " will be installed at next standard event (e.g. reboot)."
+msgstr " vil blive installeret ved næste begivenhed (f.eks. genstart)."
+
+#: opsiclientkioskgui.rswillinstallnow
+msgid " will be installed now."
+msgstr " vil blive installeret nu."
+
+#: opsiclientkioskgui.rswilluninstallnextevent
+msgid " will be uninstalled at next standard event (e.g. reboot)."
+msgstr " vil blive afinstalleret ved næste begivenhed (f.eks. genstart)."
+
+#: opsiclientkioskgui.rswilluninstallnow
+msgid " will be uninstalled now."
+msgstr " vil blive afinstalleret nu."
+
+#: opsiclientkioskgui.rswillupdatenextevent
+msgid " will be updated at next standard event (e.g. reboot)."
+msgstr " vil blive opdateret ved næste begivenhed (f.eks. genstart)."
+
+#: opsiclientkioskgui.rswillupdatenow
+msgid " will be updated now."
+msgstr " vil blive opdateret nu."
+
+#: opsiclientkioskgui.rsyes
+msgid "Yes"
+msgstr "Ja"
+
+#: opsiconnection.rscouldnotsetrights
+msgid "Could not set rights."
+msgstr "Kunne ikke sætte rettigheder."
+
+#: opsiconnection.rserrorintconnection
+msgctxt "opsiconnection.rserrorintconnection"
+msgid "Error while initializing opsiconnection"
+msgstr "Fejl under initialisering af opsi-forbindelse"
+
+#: opsiconnection.rskioskmodeold
+msgid ""
+"Kiosk mode: old. Update to newer opsi version to get full functionality "
+"(e.g. disable software on demand) of Opsi Kiosk."
+msgstr "Kiosk-tilstand: gammel. Opdatér til nyere opsi-version for at få fuld funktionalitet (f.eks. deaktivering af software-on-demand) af Opsi-Kiosk."
+
+#: opsiconnection.rsnodatafromserver
+msgid "Could not get data from server."
+msgstr "Kunne ikke hente data fra server."
+
+#: opsiconnection.rsnovaluefound
+msgctxt "opsiconnection.rsnovaluefound"
+msgid "No value found! Set%sto"
+msgstr "Ingen værdi fundet! Sæt%stil"
+
+#: oswebservice.rserrorintconnection
+msgctxt "oswebservice.rserrorintconnection"
+msgid "Error while initializing opsiconnection"
+msgstr "Fejl under initialisering af opsi-forbindelse"
+
+#: oswebservice.rsnovaluefound
+msgctxt "oswebservice.rsnovaluefound"
+msgid "No value found! Set%sto"
+msgstr "Ingen værdi fundet! Sæt%stil"
+
+#: oswebservice.rssendlog
+msgid "Sending log file to server ..."
+msgstr "Sender logfil til server ..."
+
+#: tfinstalldlg.bitbtnlater.caption
+msgid "Install at next Standard Event (e.g. Reboot)"
+msgstr "Installer ved næste genstart"
+
+#: tfinstalldlg.bitbtnnow.caption
+msgid "Install now (Close all Applications)"
+msgstr "Installer nu (luk alle programmer)"
+
+#: tfinstalldlg.caption
+msgid "opsi-kiosk-client"
+msgstr "opsi-kiosk-klient"
+
+#: tfinstalldlg.label1.caption
+msgid "The following Actions will be done:"
+msgstr "Følgende handlinger vil blive udført:"
+
+#: tformhelpinfo.buttonclose.caption
+msgid "Ok"
+msgstr "Ok"
+
+#: tformhelpinfo.caption
+msgctxt "tformhelpinfo.caption"
+msgid "Help"
+msgstr "Hjælp"
+
+#: tformhelpinfo.checkboxexpertmode.caption
+msgctxt "tformhelpinfo.checkboxexpertmode.caption"
+msgid "Expert mode"
+msgstr "Eskperttilstand"
+
+#: tformhelpinfo.labelcopy.caption
+msgid "CopyRight:"
+msgstr "CopyRight:"
+
+#: tformhelpinfo.labelcopyright.caption
+msgid "LabelCopyRight"
+msgstr "LabelCopyRight"
+
+#: tformhelpinfo.labelcredits.caption
+msgid "LabelCredits"
+msgstr "LabelCredits"
+
+#: tformhelpinfo.labelcreditsto.caption
+msgid "Credits to"
+msgstr "Kredit til"
+
+#: tformhelpinfo.labellang.caption
+msgid "Display language:"
+msgstr "Vis sprog:"
+
+#: tformhelpinfo.labellanguage.caption
+msgid "LabelLanguage"
+msgstr "LabelLanguage"
+
+#: tformhelpinfo.labelname.caption
+msgid "opsi client kiosk"
+msgstr "opsi-client-kiosk"
+
+#: tformhelpinfo.labelopsiweb.caption
+msgid "LabelOpsiWeb"
+msgstr "LabelOpsiWeb"
+
+#: tformhelpinfo.labeluibweb.caption
+msgid "LabelUibWeb"
+msgstr "LabelUibWeb"
+
+#: tformhelpinfo.labelvers.caption
+msgid "Version"
+msgstr "Version"
+
+#: tformhelpinfo.labelversion.caption
+msgid "LabelVersion"
+msgstr "Label Version"
+
+#: tformhelpinfo.speedbuttonmanual.caption
+msgctxt "tformhelpinfo.speedbuttonmanual.caption"
+msgid "opsi manual"
+msgstr "opsi-manual"
+
+#: tformopsiclientkiosk.bitbtnhelp.caption
+msgctxt "tformopsiclientkiosk.bitbtnhelp.caption"
+msgid "Help"
+msgstr "Hjælp"
+
+#: tformopsiclientkiosk.bitbtninstallnow.caption
+msgctxt "tformopsiclientkiosk.bitbtninstallnow.caption"
+msgid "Install now"
+msgstr "Installér nu"
+
+#: tformopsiclientkiosk.bitbtninstallnow.hint
+msgctxt "tformopsiclientkiosk.bitbtninstallnow.hint"
+msgid ""
+"Start the installation/update (uninstallation) of the selected products"
+msgstr "Start installationen/opdateringen (afinstallationen) for valgte produkter"
+
+#: tformopsiclientkiosk.bitbtnsaveimages.hint
+msgctxt "tformopsiclientkiosk.bitbtnsaveimages.hint"
+msgid "Save images on depot"
+msgstr "Gem billeder på depot"
+
+#: tformopsiclientkiosk.buttonsoftwareback.caption
+msgctxt "tformopsiclientkiosk.buttonsoftwareback.caption"
+msgid "<-- Back"
+msgstr "<-- Tilbage"
+
+#: tformopsiclientkiosk.buttonsoftwareinstall.caption
+msgctxt "tformopsiclientkiosk.buttonsoftwareinstall.caption"
+msgid "Install"
+msgstr "Installér"
+
+#: tformopsiclientkiosk.buttonsoftwareremoveaction.caption
+msgid "Remove action"
+msgstr "Fjern handling"
+
+#: tformopsiclientkiosk.buttonsoftwareuninstall.caption
+msgctxt "tformopsiclientkiosk.buttonsoftwareuninstall.caption"
+msgid "Uninstall"
+msgstr "Afinstallér"
+
+#: tformopsiclientkiosk.buttonsoftwareupdate.caption
+msgctxt "tformopsiclientkiosk.buttonsoftwareupdate.caption"
+msgid "Update"
+msgstr "Opdatér"
+
+#: tformopsiclientkiosk.caption
+msgid "opsi-client-kiosk"
+msgstr "opsi-klient-kiosk"
+
+#: tformopsiclientkiosk.dbgrid1.hint
+msgid ""
+"Click to ActionRequest Column, to set action requests (setup/uninstall)"
+msgstr "Klik i kolonnen for handlinger, for at sætte en anmodning (installation/afinstallation)"
+
+#: tformopsiclientkiosk.editsearch.hint
+msgid "Search in Productlist"
+msgstr "Søg i produktliste"
+
+#: tformopsiclientkiosk.editsearch.texthint
+msgid "Search"
+msgstr "Søg"
+
+#: tformopsiclientkiosk.imagelogo.hint
+msgid "Your logo"
+msgstr "Dit logo"
+
+#: tformopsiclientkiosk.labeladvice.caption
+msgid "Advice:  "
+msgstr "Råd:"
+
+#: tformopsiclientkiosk.labelclientverstr.caption
+msgid "Version at Client"
+msgstr "Version på klient"
+
+#: tformopsiclientkiosk.labeldescription.caption
+msgid "Description:  "
+msgstr "Beskrivelse:"
+
+#: tformopsiclientkiosk.labelpleasewait.caption
+msgid "Please wait. Installing/uninstalling products."
+msgstr "Vent venligst. Installerer/afinstallerer produkter."
+
+#: tformopsiclientkiosk.labelpriority.caption
+msgid "Priority: "
+msgstr "Prioritet:"
+
+#: tformopsiclientkiosk.labelsoftwareactionrequest.caption
+msgctxt "tformopsiclientkiosk.labelsoftwareactionrequest.caption"
+msgid "Action"
+msgstr "Handling"
+
+#: tformopsiclientkiosk.labelsoftwareadvice.caption
+msgid "Advice"
+msgstr "Forslag"
+
+#: tformopsiclientkiosk.labelsoftwaredescription.caption
+msgid "Description"
+msgstr "Beskrivelse"
+
+#: tformopsiclientkiosk.labelsoftwareinstalledversion.caption
+msgid "Installed version"
+msgstr "Installeret version"
+
+#: tformopsiclientkiosk.labelsoftwarename.caption
+msgid "LabelSoftwareName"
+msgstr "LabelSoftwareName"
+
+#: tformopsiclientkiosk.labelsoftwarerecentversion.caption
+msgid "Recent version"
+msgstr "Nyeste version"
+
+#: tformopsiclientkiosk.labeltitle.caption
+msgid "opsi Client Kiosk"
+msgstr "opsi Klient Kiosk"
+
+#: tformopsiclientkiosk.labelverstr.caption
+msgid "Version at Server"
+msgstr "Version på server"
+
+#: tformopsiclientkiosk.panelsearchmask.caption
+msgid "PanelSearchMask"
+msgstr "PanelSearchMask"
+
+#: tformopsiclientkiosk.panelsoftwarescreenshot.caption
+msgid "No screenshot available"
+msgstr "Intet skærmbillede tilgængeligt"
+
+#: tformopsiclientkiosk.radiogroupview.caption
+msgid "View"
+msgstr "Vis"
+
+#: tformopsiclientkiosk.speedbuttonactions.caption
+msgctxt "tformopsiclientkiosk.speedbuttonactions.caption"
+msgid "Actions"
+msgstr "Handlinger"
+
+#: tformopsiclientkiosk.speedbuttonall.caption
+msgctxt "tformopsiclientkiosk.speedbuttonall.caption"
+msgid "All"
+msgstr "Alle"
+
+#: tformopsiclientkiosk.speedbuttonall.hint
+msgid "Show all List entries (No Filter)"
+msgstr "Vis alle elementer (Intet filter)"
+
+#: tformopsiclientkiosk.speedbuttonclearsearchedit.caption
+msgid "X"
+msgstr "X"
+
+#: tformopsiclientkiosk.speedbuttonnotinstalled.caption
+msgctxt "tformopsiclientkiosk.speedbuttonnotinstalled.caption"
+msgid "Not installed"
+msgstr "Ikke installeret"
+
+#: tformopsiclientkiosk.speedbuttonreload.caption
+msgctxt "tformopsiclientkiosk.speedbuttonreload.caption"
+msgid "Reload"
+msgstr "Genindlæs"
+
+#: tformopsiclientkiosk.speedbuttonreload.hint
+msgid "Reload data from server"
+msgstr "Genindlæs data fra server"
+
+#: tformopsiclientkiosk.speedbuttonsearch.hint
+msgid "Search product"
+msgstr "Gennemsøg produkter"
+
+#: tformopsiclientkiosk.speedbuttonupdates.caption
+msgctxt "tformopsiclientkiosk.speedbuttonupdates.caption"
+msgid "Updates"
+msgstr "Opdateringer"
+
+#: tformopsiclientkiosk.speedbuttonupdates.hint
+msgid "Filter for Products where an upgrade is possible"
+msgstr "Filtrer for produkter hvor der er en opgradering tilgængelig"
+
+#: tformopsiclientkiosk.statusbar1.panels[0].text
+msgid "Not Connected to opsi server"
+msgstr "Ikke forbundet til opsi-serveren"
+
+#: tformopsiclientkiosk.tabsheet1.caption
+msgid "Details"
+msgstr "Detaljer"
+
+#: tformopsiclientkiosk.tabsheet2.caption
+msgid "Dependencies / Priority"
+msgstr "Afhængigheder / Prioritet"
+
+#: tformprogresswindow.caption
+msgid "Initialize OpsiClientKiosk"
+msgstr "Initialisér OpsiClientKiosk"
+
+#: tformprogresswindow.labeldataload.caption
+msgid "LabelDataLoad"
+msgstr "LabelDataLoad"
+
+#: tformprogresswindow.labeldataloaddetail.caption
+msgid "LabelDataLoadDetail"
+msgstr "LabelDataLoadDetail"
+
+#: tformprogresswindow.labelinfo.caption
+msgid "Please wait while "
+msgstr "Vent venligst i mens"
+
+#: tformsaveimagesondepot.buttoncancel.caption
+msgctxt "tformsaveimagesondepot.buttoncancel.caption"
+msgid "Cancel"
+msgstr "Afbryd"
+
+#: tformsaveimagesondepot.buttoncopy.caption
+msgctxt "tformsaveimagesondepot.buttoncopy.caption"
+msgid "Save images on depot"
+msgstr "Gem billeder på depot"
+
+#: tformsaveimagesondepot.caption
+msgctxt "tformsaveimagesondepot.caption"
+msgid "Save images on depot"
+msgstr "Gem billeder på depot"
+
+#: tformsaveimagesondepot.checkboxmountdepot.caption
+msgctxt "tformsaveimagesondepot.checkboxmountdepot.caption"
+msgid "Mount depot"
+msgstr "Montér depot"
+
+#: tformsaveimagesondepot.directoryeditpathtodepot.text
+msgid "Y:\\"
+msgstr "Y:\\"
+
+#: tformsaveimagesondepot.editpathtodepot.texthint
+msgctxt "tformsaveimagesondepot.editpathtodepot.texthint"
+msgid "\\\\servername\\opsi_depot_rw"
+msgstr "\\\\servernavn\\opsi_depot_rw"
+
+#: tformsaveimagesondepot.groupboxmountdepot.caption
+msgctxt "tformsaveimagesondepot.groupboxmountdepot.caption"
+msgid "Mount depot"
+msgstr "Montér depot"
+
+#: tformsaveimagesondepot.labelpassword.caption
+msgctxt "tformsaveimagesondepot.labelpassword.caption"
+msgid "Password"
+msgstr "Kodeord"
+
+#: tformsaveimagesondepot.labelpathmountdepot.caption
+msgctxt "tformsaveimagesondepot.labelpathmountdepot.caption"
+msgid "Path to depot"
+msgstr "Sti til depot"
+
+#: tformsaveimagesondepot.labelpathtodepot.caption
+msgctxt "tformsaveimagesondepot.labelpathtodepot.caption"
+msgid "Path to depot"
+msgstr "Sti til depot"
+
+#: tformsaveimagesondepot.labeluser.caption
+msgctxt "tformsaveimagesondepot.labeluser.caption"
+msgid "User"
+msgstr "Bruger"

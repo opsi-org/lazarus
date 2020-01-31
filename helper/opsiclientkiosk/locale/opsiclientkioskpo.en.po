@@ -1,0 +1,657 @@
+# 
+# Translators:
+msgid ""
+msgstr ""
+"Project-Id-Version: opsi.org\n"
+"PO-Revision-Date: 2019-09-20 08:33+0000\n"
+"Last-Translator: Jan Werner <j.werner@uib.de>\n"
+"Language-Team: English (http://www.transifex.com/opsi-org/opsiorg/language/en/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: imagestodepot.rscouldnotsaveicons
+msgctxt "imagestodepot.rscouldnotsaveicons"
+msgid "Could not save icons on depot."
+msgstr "Could not save icons on depot."
+
+#: imagestodepot.rscouldnotsavescreenshots
+msgctxt "imagestodepot.rscouldnotsavescreenshots"
+msgid "Could not save screenshots on depot."
+msgstr "Could not save screenshots on depot."
+
+#: imagestodepot.rscouldnotunmount
+msgctxt "imagestodepot.rscouldnotunmount"
+msgid "Could not unmount depot."
+msgstr "Could not unmount depot."
+
+#: imagestodepot.rsimagesnotsaved
+msgctxt "imagestodepot.rsimagesnotsaved"
+msgid ""
+"Images could not be saved on opsi depot. %sPlease check if depot is mounted "
+"with write privileges."
+msgstr "Images could not be saved on opsi depot. %sPlease check if depot is mounted with write privileges."
+
+#: imagestodepot.rsimagessaved
+msgctxt "imagestodepot.rsimagessaved"
+msgid "Images saved on"
+msgstr "Images saved on"
+
+#: imagestodepot.rsisaninvaliddir
+msgctxt "imagestodepot.rsisaninvaliddir"
+msgid "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
+msgstr "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
+
+#: opsiclientkioskgui.rsaction
+msgctxt "opsiclientkioskgui.rsaction"
+msgid "Action"
+msgstr "Action"
+
+#: opsiclientkioskgui.rsactionremovedfor
+msgid "Action removed for"
+msgstr "Action removed for"
+
+#: opsiclientkioskgui.rsactions
+msgctxt "opsiclientkioskgui.rsactions"
+msgid "Actions"
+msgstr "Actions"
+
+#: opsiclientkioskgui.rsactnone
+msgid "None"
+msgstr "None"
+
+#: opsiclientkioskgui.rsactrequest
+msgid "Action request"
+msgstr "Action request"
+
+#: opsiclientkioskgui.rsactsetup
+msgid "Setup"
+msgstr "Setup"
+
+#: opsiclientkioskgui.rsactuninstall
+msgctxt "opsiclientkioskgui.rsactuninstall"
+msgid "Uninstall"
+msgstr "Uninstall"
+
+#: opsiclientkioskgui.rsadminmode
+msgid "Admin mode"
+msgstr "Admin mode"
+
+#: opsiclientkioskgui.rsall
+msgctxt "opsiclientkioskgui.rsall"
+msgid "All"
+msgstr "All"
+
+#: opsiclientkioskgui.rsallproductsinstalled
+msgid "All available products installed!"
+msgstr "All available products installed!"
+
+#: opsiclientkioskgui.rsas
+msgid "as"
+msgstr "as"
+
+#: opsiclientkioskgui.rsback
+msgctxt "opsiclientkioskgui.rsback"
+msgid "<-- Back"
+msgstr "<-- Back"
+
+#: opsiclientkioskgui.rscancel
+msgctxt "opsiclientkioskgui.rscancel"
+msgid "Cancel"
+msgstr "Cancel"
+
+#: opsiclientkioskgui.rsconnectedto
+msgid "Connected to"
+msgstr "Connected to"
+
+#: opsiclientkioskgui.rscurrentusernoadmin
+msgid ""
+"Current user has no admin privileges. Admin mode disabled.%sSolution: Start "
+"opsi Client Kiosk (as user) with admin privileges."
+msgstr "Current user has no admin privileges. Admin mode disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges."
+
+#: opsiclientkioskgui.rsdisabled
+msgid "disabled"
+msgstr "disabled"
+
+#: opsiclientkioskgui.rsdoyouwantinstall
+msgid "Do you want to install "
+msgstr "Do you want to install "
+
+#: opsiclientkioskgui.rsdoyouwantuninstall
+msgid "Do you want to uninstall "
+msgstr "Do you want to uninstall "
+
+#: opsiclientkioskgui.rsdoyouwantupdate
+msgid "Do you want to update "
+msgstr "Do you want to update "
+
+#: opsiclientkioskgui.rsinstall
+msgctxt "opsiclientkioskgui.rsinstall"
+msgid "Install"
+msgstr "Install"
+
+#: opsiclientkioskgui.rsinstallationfinished
+msgid "Installation/update finished."
+msgstr "Installation/update finished."
+
+#: opsiclientkioskgui.rsinstalled
+msgid "Installed"
+msgstr "Installed"
+
+#: opsiclientkioskgui.rsinstallnow
+msgctxt "opsiclientkioskgui.rsinstallnow"
+msgid "Install now"
+msgstr "Install now"
+
+#: opsiclientkioskgui.rsinstallnowhint
+msgctxt "opsiclientkioskgui.rsinstallnowhint"
+msgid ""
+"Start the installation/update (uninstallation) of the selected products"
+msgstr "Start the installation/update (uninstallation) of the selected products"
+
+#: opsiclientkioskgui.rsinstallnowornextevent
+msgid "Install product now or at next standard event (e.g. reboot)?"
+msgstr "Install product now or at next standard event (e.g. reboot)?"
+
+#: opsiclientkioskgui.rslabeldataloadcommunicating
+msgid "Communicating with server ..."
+msgstr "Communicating with server ..."
+
+#: opsiclientkioskgui.rslabeldataloadloading
+msgid "Loading product data from server"
+msgstr "Loading product data from server"
+
+#: opsiclientkioskgui.rslabeldataloadtiles
+msgid "Fill tiles"
+msgstr "Fill tiles"
+
+#: opsiclientkioskgui.rslabeldetailconnecting
+msgid "Connecting to server"
+msgstr "Connecting to server"
+
+#: opsiclientkioskgui.rslabelinfoloaddata
+msgid "Please wait while communicating with OPSI web server ..."
+msgstr "Please wait while communicating with OPSI web server ..."
+
+#: opsiclientkioskgui.rslabelinfotiles
+msgid "Please wait while building tiles."
+msgstr "Please wait while building tiles."
+
+#: opsiclientkioskgui.rsnextevent
+msgid "Next standard event (e.g. reboot)"
+msgstr "Next standard event (e.g. reboot)"
+
+#: opsiclientkioskgui.rsno
+msgid "No"
+msgstr "No"
+
+#: opsiclientkioskgui.rsnoactionsfound
+msgid "No action requests found."
+msgstr "No action requests found."
+
+#: opsiclientkioskgui.rsnotinstalled
+msgctxt "opsiclientkioskgui.rsnotinstalled"
+msgid "Not installed"
+msgstr "Not installed"
+
+#: opsiclientkioskgui.rsnoupdatesfound
+msgid "No updates found."
+msgstr "No updates found."
+
+#: opsiclientkioskgui.rsnow
+msgid "Now"
+msgstr "Now"
+
+#: opsiclientkioskgui.rsreload
+msgctxt "opsiclientkioskgui.rsreload"
+msgid "Reload"
+msgstr "Reload"
+
+#: opsiclientkioskgui.rsstateunknown
+msgid "Unknown"
+msgstr "Unknown"
+
+#: opsiclientkioskgui.rsstoreactions
+msgid "Store actions"
+msgstr "Store actions"
+
+#: opsiclientkioskgui.rsstoreactionshint
+msgid ""
+"Send the action requests to the server, show the resulting installations and"
+" ask for installation start."
+msgstr "Send the action requests to the server, show the resulting installations and ask for installation start."
+
+#: opsiclientkioskgui.rsuninstallationfinished
+msgid "Uninstallation finished."
+msgstr "Uninstallation finished."
+
+#: opsiclientkioskgui.rsuninstallnowornextevent
+msgid "Uninstall product now or at next standard event (e.g. reboot)?"
+msgstr "Uninstall product now or at next standard event (e.g. reboot)?"
+
+#: opsiclientkioskgui.rsupdate
+msgctxt "opsiclientkioskgui.rsupdate"
+msgid "Update"
+msgstr "Update"
+
+#: opsiclientkioskgui.rsupdatenowornextevent
+msgid "Update product now or at next standard event (e.g. reboot)?"
+msgstr "Update product now or at next standard event (e.g. reboot)?"
+
+#: opsiclientkioskgui.rsupdates
+msgctxt "opsiclientkioskgui.rsupdates"
+msgid "Updates"
+msgstr "Updates"
+
+#: opsiclientkioskgui.rsviewlist
+msgid "List"
+msgstr "List"
+
+#: opsiclientkioskgui.rsviewtiles
+msgid "Tiles"
+msgstr "Tiles"
+
+#: opsiclientkioskgui.rswillinstallnextevent
+msgid " will be installed at next standard event (e.g. reboot)."
+msgstr " will be installed at next standard event (e.g. reboot)."
+
+#: opsiclientkioskgui.rswillinstallnow
+msgid " will be installed now."
+msgstr " will be installed now."
+
+#: opsiclientkioskgui.rswilluninstallnextevent
+msgid " will be uninstalled at next standard event (e.g. reboot)."
+msgstr " will be uninstalled at next standard event (e.g. reboot)."
+
+#: opsiclientkioskgui.rswilluninstallnow
+msgid " will be uninstalled now."
+msgstr " will be uninstalled now."
+
+#: opsiclientkioskgui.rswillupdatenextevent
+msgid " will be updated at next standard event (e.g. reboot)."
+msgstr " will be updated at next standard event (e.g. reboot)."
+
+#: opsiclientkioskgui.rswillupdatenow
+msgid " will be updated now."
+msgstr " will be updated now."
+
+#: opsiclientkioskgui.rsyes
+msgid "Yes"
+msgstr "Yes"
+
+#: opsiconnection.rscouldnotsetrights
+msgid "Could not set rights."
+msgstr "Could not set rights."
+
+#: opsiconnection.rserrorintconnection
+msgctxt "opsiconnection.rserrorintconnection"
+msgid "Error while initializing opsiconnection"
+msgstr "Error while initializing opsiconnection"
+
+#: opsiconnection.rskioskmodeold
+msgid ""
+"Kiosk mode: old. Update to newer opsi version to get full functionality "
+"(e.g. disable software on demand) of Opsi Kiosk."
+msgstr "Kiosk mode: old. Update to newer opsi version to get full functionality (e.g. disable software on demand) of Opsi Kiosk."
+
+#: opsiconnection.rsnodatafromserver
+msgid "Could not get data from server."
+msgstr "Could not get data from server."
+
+#: opsiconnection.rsnovaluefound
+msgctxt "opsiconnection.rsnovaluefound"
+msgid "No value found! Set%sto"
+msgstr "No value found! Set%sto"
+
+#: oswebservice.rserrorintconnection
+msgctxt "oswebservice.rserrorintconnection"
+msgid "Error while initializing opsiconnection"
+msgstr "Error while initializing opsiconnection"
+
+#: oswebservice.rsnovaluefound
+msgctxt "oswebservice.rsnovaluefound"
+msgid "No value found! Set%sto"
+msgstr "No value found! Set%sto"
+
+#: oswebservice.rssendlog
+msgid "Sending log file to server ..."
+msgstr "Sending log file to server ..."
+
+#: tfinstalldlg.bitbtnlater.caption
+msgid "Install at next Standard Event (e.g. Reboot)"
+msgstr "Install at next Standard Event (e.g. Reboot)"
+
+#: tfinstalldlg.bitbtnnow.caption
+msgid "Install now (Close all Applications)"
+msgstr "Install now (Close all Applications)"
+
+#: tfinstalldlg.caption
+msgid "opsi-kiosk-client"
+msgstr "opsi-kiosk-client"
+
+#: tfinstalldlg.label1.caption
+msgid "The following Actions will be done:"
+msgstr "The following Actions will be done:"
+
+#: tformhelpinfo.buttonclose.caption
+msgid "Ok"
+msgstr "Ok"
+
+#: tformhelpinfo.caption
+msgctxt "tformhelpinfo.caption"
+msgid "Help"
+msgstr "Help"
+
+#: tformhelpinfo.checkboxexpertmode.caption
+msgctxt "tformhelpinfo.checkboxexpertmode.caption"
+msgid "Expert mode"
+msgstr "Expert mode"
+
+#: tformhelpinfo.labelcopy.caption
+msgid "CopyRight:"
+msgstr "CopyRight:"
+
+#: tformhelpinfo.labelcopyright.caption
+msgid "LabelCopyRight"
+msgstr "LabelCopyRight"
+
+#: tformhelpinfo.labelcredits.caption
+msgid "LabelCredits"
+msgstr "LabelCredits"
+
+#: tformhelpinfo.labelcreditsto.caption
+msgid "Credits to"
+msgstr "Credits to"
+
+#: tformhelpinfo.labellang.caption
+msgid "Display language:"
+msgstr "Display language:"
+
+#: tformhelpinfo.labellanguage.caption
+msgid "LabelLanguage"
+msgstr "LabelLanguage"
+
+#: tformhelpinfo.labelname.caption
+msgid "opsi client kiosk"
+msgstr "opsi client kiosk"
+
+#: tformhelpinfo.labelopsiweb.caption
+msgid "LabelOpsiWeb"
+msgstr "LabelOpsiWeb"
+
+#: tformhelpinfo.labeluibweb.caption
+msgid "LabelUibWeb"
+msgstr "LabelUibWeb"
+
+#: tformhelpinfo.labelvers.caption
+msgid "Version"
+msgstr "Version"
+
+#: tformhelpinfo.labelversion.caption
+msgid "LabelVersion"
+msgstr "LabelVersion"
+
+#: tformhelpinfo.speedbuttonmanual.caption
+msgctxt "tformhelpinfo.speedbuttonmanual.caption"
+msgid "opsi manual"
+msgstr "opsi manual"
+
+#: tformopsiclientkiosk.bitbtnhelp.caption
+msgctxt "tformopsiclientkiosk.bitbtnhelp.caption"
+msgid "Help"
+msgstr "Help"
+
+#: tformopsiclientkiosk.bitbtninstallnow.caption
+msgctxt "tformopsiclientkiosk.bitbtninstallnow.caption"
+msgid "Install now"
+msgstr "Install now"
+
+#: tformopsiclientkiosk.bitbtninstallnow.hint
+msgctxt "tformopsiclientkiosk.bitbtninstallnow.hint"
+msgid ""
+"Start the installation/update (uninstallation) of the selected products"
+msgstr "Start the installation/update (uninstallation) of the selected products"
+
+#: tformopsiclientkiosk.bitbtnsaveimages.hint
+msgctxt "tformopsiclientkiosk.bitbtnsaveimages.hint"
+msgid "Save images on depot"
+msgstr "Save images on depot"
+
+#: tformopsiclientkiosk.buttonsoftwareback.caption
+msgctxt "tformopsiclientkiosk.buttonsoftwareback.caption"
+msgid "<-- Back"
+msgstr "<-- Back"
+
+#: tformopsiclientkiosk.buttonsoftwareinstall.caption
+msgctxt "tformopsiclientkiosk.buttonsoftwareinstall.caption"
+msgid "Install"
+msgstr "Install"
+
+#: tformopsiclientkiosk.buttonsoftwareremoveaction.caption
+msgid "Remove action"
+msgstr "Remove action"
+
+#: tformopsiclientkiosk.buttonsoftwareuninstall.caption
+msgctxt "tformopsiclientkiosk.buttonsoftwareuninstall.caption"
+msgid "Uninstall"
+msgstr "Uninstall"
+
+#: tformopsiclientkiosk.buttonsoftwareupdate.caption
+msgctxt "tformopsiclientkiosk.buttonsoftwareupdate.caption"
+msgid "Update"
+msgstr "Update"
+
+#: tformopsiclientkiosk.caption
+msgid "opsi-client-kiosk"
+msgstr "opsi-client-kiosk"
+
+#: tformopsiclientkiosk.dbgrid1.hint
+msgid ""
+"Click to ActionRequest Column, to set action requests (setup/uninstall)"
+msgstr "Click to ActionRequest Column, to set action requests (setup/uninstall)"
+
+#: tformopsiclientkiosk.editsearch.hint
+msgid "Search in Productlist"
+msgstr "Search in Productlist"
+
+#: tformopsiclientkiosk.editsearch.texthint
+msgid "Search"
+msgstr "Search"
+
+#: tformopsiclientkiosk.imagelogo.hint
+msgid "Your logo"
+msgstr "Your logo"
+
+#: tformopsiclientkiosk.labeladvice.caption
+msgid "Advice:  "
+msgstr "Advice:  "
+
+#: tformopsiclientkiosk.labelclientverstr.caption
+msgid "Version at Client"
+msgstr "Version at Client"
+
+#: tformopsiclientkiosk.labeldescription.caption
+msgid "Description:  "
+msgstr "Description:  "
+
+#: tformopsiclientkiosk.labelpleasewait.caption
+msgid "Please wait. Installing/uninstalling products."
+msgstr "Please wait. Installing/uninstalling products."
+
+#: tformopsiclientkiosk.labelpriority.caption
+msgid "Priority: "
+msgstr "Priority: "
+
+#: tformopsiclientkiosk.labelsoftwareactionrequest.caption
+msgctxt "tformopsiclientkiosk.labelsoftwareactionrequest.caption"
+msgid "Action"
+msgstr "Action"
+
+#: tformopsiclientkiosk.labelsoftwareadvice.caption
+msgid "Advice"
+msgstr "Advice"
+
+#: tformopsiclientkiosk.labelsoftwaredescription.caption
+msgid "Description"
+msgstr "Description"
+
+#: tformopsiclientkiosk.labelsoftwareinstalledversion.caption
+msgid "Installed version"
+msgstr "Installed version"
+
+#: tformopsiclientkiosk.labelsoftwarename.caption
+msgid "LabelSoftwareName"
+msgstr "LabelSoftwareName"
+
+#: tformopsiclientkiosk.labelsoftwarerecentversion.caption
+msgid "Recent version"
+msgstr "Recent version"
+
+#: tformopsiclientkiosk.labeltitle.caption
+msgid "opsi Client Kiosk"
+msgstr "opsi Client Kiosk"
+
+#: tformopsiclientkiosk.labelverstr.caption
+msgid "Version at Server"
+msgstr "Version at Server"
+
+#: tformopsiclientkiosk.panelsearchmask.caption
+msgid "PanelSearchMask"
+msgstr "PanelSearchMask"
+
+#: tformopsiclientkiosk.panelsoftwarescreenshot.caption
+msgid "No screenshot available"
+msgstr "No screenshot available"
+
+#: tformopsiclientkiosk.radiogroupview.caption
+msgid "View"
+msgstr "View"
+
+#: tformopsiclientkiosk.speedbuttonactions.caption
+msgctxt "tformopsiclientkiosk.speedbuttonactions.caption"
+msgid "Actions"
+msgstr "Actions"
+
+#: tformopsiclientkiosk.speedbuttonall.caption
+msgctxt "tformopsiclientkiosk.speedbuttonall.caption"
+msgid "All"
+msgstr "All"
+
+#: tformopsiclientkiosk.speedbuttonall.hint
+msgid "Show all List entries (No Filter)"
+msgstr "Show all List entries (No Filter)"
+
+#: tformopsiclientkiosk.speedbuttonclearsearchedit.caption
+msgid "X"
+msgstr "X"
+
+#: tformopsiclientkiosk.speedbuttonnotinstalled.caption
+msgctxt "tformopsiclientkiosk.speedbuttonnotinstalled.caption"
+msgid "Not installed"
+msgstr "Not installed"
+
+#: tformopsiclientkiosk.speedbuttonreload.caption
+msgctxt "tformopsiclientkiosk.speedbuttonreload.caption"
+msgid "Reload"
+msgstr "Reload"
+
+#: tformopsiclientkiosk.speedbuttonreload.hint
+msgid "Reload data from server"
+msgstr "Reload data from server"
+
+#: tformopsiclientkiosk.speedbuttonsearch.hint
+msgid "Search product"
+msgstr "Search product"
+
+#: tformopsiclientkiosk.speedbuttonupdates.caption
+msgctxt "tformopsiclientkiosk.speedbuttonupdates.caption"
+msgid "Updates"
+msgstr "Updates"
+
+#: tformopsiclientkiosk.speedbuttonupdates.hint
+msgid "Filter for Products where an upgrade is possible"
+msgstr "Filter for Products where an upgrade is possible"
+
+#: tformopsiclientkiosk.statusbar1.panels[0].text
+msgid "Not Connected to opsi server"
+msgstr "Not Connected to opsi server"
+
+#: tformopsiclientkiosk.tabsheet1.caption
+msgid "Details"
+msgstr "Details"
+
+#: tformopsiclientkiosk.tabsheet2.caption
+msgid "Dependencies / Priority"
+msgstr "Dependencies / Priority"
+
+#: tformprogresswindow.caption
+msgid "Initialize OpsiClientKiosk"
+msgstr "Initialize OpsiClientKiosk"
+
+#: tformprogresswindow.labeldataload.caption
+msgid "LabelDataLoad"
+msgstr "LabelDataLoad"
+
+#: tformprogresswindow.labeldataloaddetail.caption
+msgid "LabelDataLoadDetail"
+msgstr "LabelDataLoadDetail"
+
+#: tformprogresswindow.labelinfo.caption
+msgid "Please wait while "
+msgstr "Please wait while "
+
+#: tformsaveimagesondepot.buttoncancel.caption
+msgctxt "tformsaveimagesondepot.buttoncancel.caption"
+msgid "Cancel"
+msgstr "Cancel"
+
+#: tformsaveimagesondepot.buttoncopy.caption
+msgctxt "tformsaveimagesondepot.buttoncopy.caption"
+msgid "Save images on depot"
+msgstr "Save images on depot"
+
+#: tformsaveimagesondepot.caption
+msgctxt "tformsaveimagesondepot.caption"
+msgid "Save images on depot"
+msgstr "Save images on depot"
+
+#: tformsaveimagesondepot.checkboxmountdepot.caption
+msgctxt "tformsaveimagesondepot.checkboxmountdepot.caption"
+msgid "Mount depot"
+msgstr "Mount depot"
+
+#: tformsaveimagesondepot.directoryeditpathtodepot.text
+msgid "Y:\\"
+msgstr "Y:\\"
+
+#: tformsaveimagesondepot.editpathtodepot.texthint
+msgctxt "tformsaveimagesondepot.editpathtodepot.texthint"
+msgid "\\\\servername\\opsi_depot_rw"
+msgstr "\\\\servername\\opsi_depot_rw"
+
+#: tformsaveimagesondepot.groupboxmountdepot.caption
+msgctxt "tformsaveimagesondepot.groupboxmountdepot.caption"
+msgid "Mount depot"
+msgstr "Mount depot"
+
+#: tformsaveimagesondepot.labelpassword.caption
+msgctxt "tformsaveimagesondepot.labelpassword.caption"
+msgid "Password"
+msgstr "Password"
+
+#: tformsaveimagesondepot.labelpathmountdepot.caption
+msgctxt "tformsaveimagesondepot.labelpathmountdepot.caption"
+msgid "Path to depot"
+msgstr "Path to depot"
+
+#: tformsaveimagesondepot.labelpathtodepot.caption
+msgctxt "tformsaveimagesondepot.labelpathtodepot.caption"
+msgid "Path to depot"
+msgstr "Path to depot"
+
+#: tformsaveimagesondepot.labeluser.caption
+msgctxt "tformsaveimagesondepot.labeluser.caption"
+msgid "User"
+msgstr "User"
