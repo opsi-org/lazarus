@@ -23635,16 +23635,10 @@ begin
       then
       Begin
         Aktionsliste.StartLineNo := StartlineOfSection;
+        { Here do we run the script }
         weiter := Script.doAktionen (Aktionsliste, Aktionsliste);
       End;
     End;
-    (*
-    if opsidata <> nil then
-    begin
-      LogDatei.log ('opsi service version: '+opsidata.getOpsiServiceVersion, LLessential);
-      Logdatei.log('Setup script name: '+opsidata.getProductScriptPath(tacSetup), LLessential);
-    end;
-    *)
     try
       Aktionsliste.free; Aktionsliste := nil;
     except
@@ -23738,11 +23732,9 @@ begin
   end;
   if Script.forceLogInAppendMode then LogDatei.Appendmode:= True;
 
-  (*
-  moved before final output
-  if Script.FExtremeErrorLevel < extremeErrorLevel
-  then extremeErrorLevel := Script.FExtremeErrorLevel;
-  *)
+  { moved before final output}
+  //if Script.FExtremeErrorLevel < extremeErrorLevel
+  //then extremeErrorLevel := Script.FExtremeErrorLevel;
 
   // reset current dir to the start value
   SetCurrentDir(opsiWinstStartdir);

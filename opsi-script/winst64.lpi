@@ -459,6 +459,7 @@
       <Unit28>
         <Filename Value="changelog.txt"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <TopLine Value="4"/>
         <CursorPos X="41" Y="29"/>
         <UsageCount Value="119"/>
@@ -601,7 +602,6 @@
       <Unit44>
         <Filename Value="osparser.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <TopLine Value="17984"/>
         <CursorPos X="34" Y="17992"/>

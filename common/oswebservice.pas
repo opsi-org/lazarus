@@ -4292,7 +4292,7 @@ begin
   try
     Result := (FJsonExecutioner.retrieveJSONObjectByHttpPost(logstream,
       False, 0) <> nil);
-    // we should perhaps not log inside this because of circularity
+    { we should perhaps not log inside this because of circularity }
     errorinfo := FjsonExecutioner.LastError;
   except
     on e: Exception do
@@ -4823,7 +4823,7 @@ begin
 
   if not allscripts then
   begin
-    // get productOnClient for actual Client and all localboot products
+    { get productOnClient for actual Client and all localboot products}
     omc := TOpsiMethodCall.Create('productOnClient_getObjects',
       ['', '{"clientId": "' + actualClient + '", "productType": "LocalbootProduct"}']);
     resultList := FjsonExecutioner.getListResult(omc);
@@ -4834,26 +4834,17 @@ begin
       begin
         productEntry := SO(resultlist.Strings[i]);
 
-        //LogDatei.log (productEntry.S['productId']+'='+loginscriptmap.Values[productEntry.S['productId']]+'<', LLessential);
-        //if (productEntry.O['productId'] <> nil) and (productEntry.S['installationStatus'] = 'installed') then
-        (*
-        if (productEntry.O['productId'] <> nil) and
-          (((productEntry.S['actionResult'] = 'successful') and
-          ((productEntry.S['lastAction'] = 'setup') or
-          (productEntry.S['lastAction'] = 'uninstall')))) then
-          *)
-
-        // changed 15.1.2019 do
-        // we want to run the login script if installed ......
+        { changed 15.1.2019 do}
+        { we want to run the login script if installed ......}
         if ((productEntry.O['productId'] <> nil) and
           (productEntry.S['installationStatus'] = 'installed'))
-          // or last successful action was uninstall
+          { or last successful action was uninstall }
           or ((productEntry.S['actionResult'] = 'successful') and
           (productEntry.S['lastAction'] = 'uninstall')) then
         begin
           if loginscriptmap.Values[productEntry.S['productId']] <> '' then
           begin
-            // product loginsript should run, so let us read the states
+            { product loginsript should run, so let us read the states }
             Result.add(productEntry.S['productId']);
             FProductStates.Add(productEntry.S['productId'] + '=' +
               productEntry.S['installationStatus']);
