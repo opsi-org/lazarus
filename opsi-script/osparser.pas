@@ -19175,6 +19175,7 @@ function TuibInstScript.doAktionen (Sektion: TWorkSection; const CallingSektion:
   tmpbool, tmpbool1 : boolean;
   localKindOfStatement : Tstatement;
   linecounter : integer;
+  numberOfSectionLines : integer;
 
 {$IFDEF WINDOWS}
 function parseAndCallRegistry(ArbeitsSektion : TWorkSection; Remaining : string) : TSectionResult;
@@ -20550,6 +20551,22 @@ begin
                           end;
                           closeFile(incfile);
                           linecount := Count;
+
+                          for tmpint := 0 to 3 do
+                          begin
+                            { add a empty line to avoid last line problem }
+                            incline := '';
+                            inc(inclines);
+                            LogDatei.log_prog('Will Include empty last line : '+incline,LLDebug);
+                            Sektion.Insert(linecounter-1+inclines,incline);
+                            LogDatei.log_prog('Line included at pos: '+inttostr(linecounter-1+inclines)+' to Sektion with '+inttostr(Sektion.Count)+' lines.',LLDebug2);
+                            //LogDatei.log_prog('Will Include add at pos '+inttostr(Sektion.StartLineNo + i-1+k)+'to FLinesOriginList with count: '+inttostr(script.FLinesOriginList.Count),LLDebug2);
+                            script.FLinesOriginList.Insert(linecounter-1+inclines,incfilename+ ' Line: '+inttostr(alllines));
+                            script.FLibList.Insert(linecounter-1+inclines,'true');
+                            LogDatei.log_prog('Include added to FLinesOriginList.',LLDebug2);
+                            { finished add a empty line to avoid last line problem }
+                          end;
+
                           if importFunctionName = '' then
                           begin
                             LogDatei.log('Imported all functions from file: '+fullincfilename,LLNotice);
@@ -22689,11 +22706,12 @@ begin
                          // get all lines until 'endfunction'
                          //endofDefFuncFound := false;
                          inDefFunc := 1;
+                         numberOfSectionLines := Sektion.Count;
                          repeat
                            // get next line of section
                            inc(linecounter); // inc line counter
                            inc(FaktScriptLineNumber); // inc line counter that ignores the execution of defined functions
-                           if (linecounter <= Sektion.Count-1) then
+                           if (linecounter <= numberOfSectionLines-1) then
                            begin
                              Remaining := trim (Sektion.strings [linecounter-1]);
                              myline := remaining;
@@ -22708,7 +22726,7 @@ begin
                                LogDatei.log_prog('inDefFunc: '+inttostr(inDefFunc)+' add line: '+myline,LLDebug3);
                              end;
                            end;
-                         until (inDefFunc <= 0) or (linecounter >= Sektion.Count - 2);
+                         until (inDefFunc <= 0) or (linecounter >= numberOfSectionLines - 2);
                        except
                           on e: Exception do
                           begin

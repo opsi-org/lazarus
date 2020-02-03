@@ -15,6 +15,8 @@ opsi-winst/opsi-script (4.12.3.9) experimental; urgency=low
       * registry
       * DosBatch, DosInAnIcon, ShellBatch, ShellInAnIcon
       * ExecWith, ExecPython
+      * Files
+  * fix some of the last line problems at defined functions
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 28 Jan 2020:15:00:00 +0200
 
