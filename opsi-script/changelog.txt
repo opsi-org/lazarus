@@ -5,12 +5,35 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.3.9) experimental; urgency=low
+
+  * winbatch combine /timeoutseconds with WaitForWindowAppearing or WaitForWindowVanished
+    done this in osfunc: StartProcess_cp
+  * new statement: executeSection( < string expr with section call>)
+    can call the following section types:
+      * winbatch
+      * registry
+      * DosBatch, DosInAnIcon, ShellBatch, ShellInAnIcon
+      * ExecWith, ExecPython
+      * Files
+  * fix some of the last line problems at defined functions ; fixes #4378
+  * new stringlist function in osparser (producestringlist):
+     setValueByKey(<key str>, <value str>, <target list> [, <separator str (char)>]) : stringlist
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 28 Jan 2020:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.3.8) experimental; urgency=low
 
   * fix: osparser: doAktionen: do not double backslashes in sub_sections
          ApplyTextConstantsToString (Remaining, false);
 
 -- Detlef Oertel <d.oertel@uib.de>  Mon, 27 Jan 2020:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.3.7) experimental; urgency=low
+
+  * skiped
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 14 Jan 2020:15:00:00 +0200
 
 opsi-winst/opsi-script (4.12.3.6) experimental; urgency=low
 
