@@ -19060,7 +19060,7 @@ end;
 function TuibInstScript.doAktionen (Sektion: TWorkSection; const CallingSektion: TWorkSection)
                        : TSectionResult;
  var
-  i : integer=0;
+  //i : integer=0;
   StartlineOfSection: Integer=0;
   Parameter : String='';
   Filename : String='';
@@ -19176,10 +19176,9 @@ function TuibInstScript.doAktionen (Sektion: TWorkSection; const CallingSektion:
   localKindOfStatement : Tstatement;
   linecounter : integer;
 
-
+{$IFDEF WINDOWS}
 function parseAndCallRegistry(ArbeitsSektion : TWorkSection; Remaining : string) : TSectionResult;
 begin
-{$IFDEF WINDOWS}
 logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
 syntaxcheck := true;
 
@@ -19354,10 +19353,15 @@ begin
     end;
 end;
 parseAndCallRegistry :=  ActionResult;
-{$ELSE WINDOWS}
-logdatei.log('Registry sections are not implemented for Linux / Mac.', LLWarning);
-{$ENDIF WINDOWS}
 end;
+
+{$ELSE WINDOWS}
+function parseAndCallRegistry(ArbeitsSektion : TWorkSection; Remaining : string) : TSectionResult;
+begin
+  logdatei.log('Registry sections are not implemented for Linux / Mac.', LLWarning);
+end;
+{$ENDIF WINDOWS}
+
 
 function parseAndCallWinbatch(ArbeitsSektion : TWorkSection; Remaining : string) : TSectionResult;
 begin
@@ -20519,9 +20523,9 @@ begin
                                 inc(inclines);
                                 LogDatei.log_prog('Will Include line : '+incline,LLDebug);
                                 Sektion.Insert(linecounter-1+inclines,incline);
-                                LogDatei.log_prog('Line included at pos: '+inttostr(i-1+inclines)+' to Sektion with '+inttostr(Sektion.Count)+' lines.',LLDebug2);
+                                LogDatei.log_prog('Line included at pos: '+inttostr(linecounter-1+inclines)+' to Sektion with '+inttostr(Sektion.Count)+' lines.',LLDebug2);
                                 //LogDatei.log_prog('Will Include add at pos '+inttostr(Sektion.StartLineNo + i-1+k)+'to FLinesOriginList with count: '+inttostr(script.FLinesOriginList.Count),LLDebug2);
-                                script.FLinesOriginList.Insert( i-1+inclines,incfilename+ ' Line: '+inttostr(alllines));
+                                script.FLinesOriginList.Insert( linecounter-1+inclines,incfilename+ ' Line: '+inttostr(alllines));
                                 script.FLibList.Insert( linecounter-1+inclines,'true');
                                 LogDatei.log_prog('Include added to FLinesOriginList.',LLDebug2);
                               end;
@@ -20537,7 +20541,7 @@ begin
                               inc(inclines);
                               LogDatei.log_prog('Will Include line : '+incline,LLDebug);
                               Sektion.Insert(linecounter-1+inclines,incline);
-                              LogDatei.log_prog('Line included at pos: '+inttostr(i-1+inclines)+' to Sektion with '+inttostr(Sektion.Count)+' lines.',LLDebug2);
+                              LogDatei.log_prog('Line included at pos: '+inttostr(linecounter-1+inclines)+' to Sektion with '+inttostr(Sektion.Count)+' lines.',LLDebug2);
                               //LogDatei.log_prog('Will Include add at pos '+inttostr(Sektion.StartLineNo + i-1+k)+'to FLinesOriginList with count: '+inttostr(script.FLinesOriginList.Count),LLDebug2);
                               script.FLinesOriginList.Insert(linecounter-1+inclines,incfilename+ ' Line: '+inttostr(alllines));
                               script.FLibList.Insert(linecounter-1+inclines,'true');
@@ -20682,12 +20686,12 @@ begin
                               then incline := replacedline;
                             LogDatei.log_prog('Will Include line (constants replaced): '+incline,LLDebug3);
                             Sektion.Insert(linecounter-1+k,incline);
-                            LogDatei.log_prog('Line included at pos: '+inttostr(i-1+k)+' to Sektion with '+inttostr(Sektion.Count)+' lines.',LLDebug3);
+                            LogDatei.log_prog('Line included at pos: '+inttostr(linecounter-1+k)+' to Sektion with '+inttostr(Sektion.Count)+' lines.',LLDebug3);
                             //LogDatei.log('Will Include add at pos '+inttostr(Sektion.StartLineNo + i-1+k)+'to FLinesOriginList with count: '+inttostr(script.FLinesOriginList.Count),LLDebug3);
                             //script.FLinesOriginList.Insert(Sektion.StartLineNo + i-1+k,incfilename+ ' Line: '+inttostr(k));
                             //script.FLibList.Insert(Sektion.StartLineNo + i-1+k,'false');
                             script.FLinesOriginList.Insert(linecounter-1+k,incfilename+ ' Line: '+inttostr(k));
-                            script.FLibList.Insert(i-1+k,'false');
+                            script.FLibList.Insert(linecounter-1+k,'false');
                             LogDatei.log_prog('Include added to FLinesOriginList.',LLDebug3);
                           end;
                           closeFile(incfile);
@@ -22602,18 +22606,18 @@ begin
                        inDefFunc := 1;
                        repeat
                          // get next line of section
-                         inc(i); // inc line counter
+                         inc(linecounter); // inc line counter
                          inc(FaktScriptLineNumber); // inc line counter that ignores the execution of defined functions
-                         if (i <= Sektion.Count-1) then
+                         if (linecounter <= Sektion.Count-1) then
                          begin
-                           Remaining := trim (Sektion.strings [i-1]);
+                           Remaining := trim (Sektion.strings [linecounter-1]);
                            myline := remaining;
                            GetWord (Remaining, Expressionstr, Remaining, WordDelimiterSet4);
                            StatKind := FindKindOfStatement (Expressionstr, SectionSpecifier, call);
                            if StatKind = tsDefineFunction then inc(inDefFunc);
                            if StatKind = tsEndFunction then dec(inDefFunc)
                          end;
-                       until (inDefFunc <= 0) or (i >= Sektion.Count - 2);
+                       until (inDefFunc <= 0) or (linecounter >= Sektion.Count - 2);
                      except
                         on e: Exception do
                         begin
@@ -22622,7 +22626,7 @@ begin
                           //raise e;
                         end;
                      end;
-                     inc(i); // inc line counter
+                     inc(linecounter); // inc line counter
                      inc(FaktScriptLineNumber); // inc line counter that ignores the execution of defined functions
                      LogDatei.log('tsDefineFunction: passed well known localfunction: '+Expressionstr,LLInfo);
                      dec(inDefFunc3);
@@ -22687,11 +22691,11 @@ begin
                          inDefFunc := 1;
                          repeat
                            // get next line of section
-                           inc(i); // inc line counter
+                           inc(linecounter); // inc line counter
                            inc(FaktScriptLineNumber); // inc line counter that ignores the execution of defined functions
-                           if (i <= Sektion.Count-1) then
+                           if (linecounter <= Sektion.Count-1) then
                            begin
-                             Remaining := trim (Sektion.strings [i-1]);
+                             Remaining := trim (Sektion.strings [linecounter-1]);
                              myline := remaining;
                              GetWord (Remaining, Expressionstr, Remaining, WordDelimiterSet4);
                              StatKind := FindKindOfStatement (Expressionstr, SectionSpecifier, call);
@@ -22704,7 +22708,7 @@ begin
                                LogDatei.log_prog('inDefFunc: '+inttostr(inDefFunc)+' add line: '+myline,LLDebug3);
                              end;
                            end;
-                         until (inDefFunc <= 0) or (i >= Sektion.Count - 2);
+                         until (inDefFunc <= 0) or (linecounter >= Sektion.Count - 2);
                        except
                           on e: Exception do
                           begin
@@ -22741,7 +22745,7 @@ begin
                           end;
                        end;
                      end;
-                     LogDatei.log_prog('After reading '+newDefinedfunction.Name+' we are on line: '+inttostr(i-1)+' -> '+trim (Sektion.strings [i-1]),LLInfo);
+                     LogDatei.log_prog('After reading '+newDefinedfunction.Name+' we are on line: '+inttostr(linecounter-1)+' -> '+trim (Sektion.strings [linecounter-1]),LLInfo);
                    except
                       on e: Exception do
                       begin
@@ -22808,7 +22812,7 @@ begin
       end;
 
     until not inloop;
-    LogDatei.log_prog ('Finished with linenr: '+inttostr(i)+' -> '+trim (Sektion.strings [linecounter-1]), LLinfo);
+    LogDatei.log_prog ('Finished with linenr: '+inttostr(linecounter)+' -> '+trim (Sektion.strings [linecounter-1]), LLinfo);
     logdatei.log_prog('Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' ArbeitsSektion.NestingLevel: '+IntToStr(ArbeitsSektion.NestingLevel)+' Sektion.NestingLevel: '+IntToStr(Sektion.NestingLevel),LLDebug2);
     inc (linecounter);
   end;
