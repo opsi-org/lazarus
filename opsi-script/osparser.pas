@@ -10695,6 +10695,7 @@ var
   funcname : string;
   funcindex, funcindexvar : integer;
   ErrorMsg: string;
+  keyValueSeparator : char = '=';
 
 begin
 
@@ -12013,6 +12014,74 @@ begin
       list1 := nil;
     End
    End
+
+   else if LowerCase (s) = LowerCase ('setValueByKey')
+ then
+ begin
+   s3 := '';
+   tmpstr2 := '';
+   try
+    if Skip ('(', r, r, InfoSyntaxError)
+    then
+    Begin
+       syntaxcheck := true;
+
+       if not evaluateString (r, r, s1, InfoSyntaxError)
+       or
+       not Skip (',', r,r, InfoSyntaxError)
+       then syntaxCheck := false;
+
+       if syntaxCheck then
+         if not evaluateString (r, r, s2, InfoSyntaxError)
+         or
+         not Skip (',', r,r, InfoSyntaxError)
+         then syntaxCheck := false;
+
+       if syntaxCheck then
+         if not produceStringList (script, r, tmpstr, list1, InfoSyntaxError)
+         then syntaxCheck := false;
+
+       // next after ',' or ')'
+       if syntaxCheck then
+         if Skip (',', tmpstr, tmpstr1, tmpstr3) then
+           if EvaluateString (tmpstr1, tmpstr2, s3, tmpstr3) then;
+
+       if s3 = '' then
+       begin
+         // only two parameter
+         if Skip (')', tmpstr, r, InfoSyntaxError) then
+         Begin
+           syntaxCheck := true;
+         end;
+       end
+       else
+       begin
+         // three parameter
+         if Skip (')', tmpstr2, r, InfoSyntaxError) then
+         Begin
+           syntaxCheck := true;
+           s3 := trim(s3);
+           if length(s3) <> 1 then
+           begin
+               InfoSyntaxError := 'Error: Separator parameter has to be a single char - we got: '+s3;
+               syntaxCheck := false;
+           end
+           else keyValueSeparator := s3[1];
+         end;
+       end;
+
+       if syntaxCheck then
+         Begin
+           list1.NameValueSeparator:= keyValueSeparator;
+           list1.Values[s1] := s2;
+           list.Text := list1.Text
+         End;
+      End
+    finally
+      list1.Free;
+      list1 := nil;
+    End
+ End
 
    else if LowerCase (s) = LowerCase ('getListFromWMI')
    then
