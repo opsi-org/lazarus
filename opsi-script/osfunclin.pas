@@ -98,6 +98,10 @@ function getMyIpByDefaultRoute : string;
 function getMyIpDeciceByDefaultRoute : string;
 function getPackageLock(timeoutsec : integer; kill : boolean) : Boolean;
 function which(target:string; var pathToTarget : string) : boolean;
+function getLinuxDistroName : string;
+function getLinuxDistroRelease : string;
+function getLinuxDistroDescription : string;
+
 
 var
   IdIPWatch1: TIdIPWatch;
@@ -240,10 +244,7 @@ begin
 end;
 
 
-function RunCommandAndCaptureOut
-  (cmd: string; catchOut: boolean; var outlines: TXStringList;
-  var report: string; showcmd: integer; var ExitCode: longint;showoutput:boolean;
-  logleveloffset : integer): boolean;
+
 {$ELSE OPSISCRIPT}
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TStringList;
@@ -258,12 +259,19 @@ function RunCommandAndCaptureOut
 begin
   result := RunCommandAndCaptureOut(cmd, catchOut, outlines, report, showcmd, ExitCode, showoutput,0);
 end;
+{$ENDIF OPSISCRIPT}
 
+{$IFDEF OPSISCRIPT}
+function RunCommandAndCaptureOut
+  (cmd: string; catchOut: boolean; var outlines: TXStringList;
+  var report: string; showcmd: integer; var ExitCode: longint;showoutput:boolean;
+  logleveloffset : integer): boolean;
+{$ELSE OPSISCRIPT}
 function RunCommandAndCaptureOut
   (cmd: string; catchOut: boolean; var outlines: TStringList;
   var report: string; showcmd: integer; var ExitCode: longint;showoutput:boolean;
   logleveloffset : integer): boolean;
-  {$ENDIF OPSISCRIPT}
+{$ENDIF OPSISCRIPT}
 
 const
   ReadBufferSize = 2048;
@@ -833,6 +841,42 @@ begin
   Result.Add('operating system' + '=' + trim(getCommandResult('uname -o')));
 end;
 
+function getLinuxDistroName : string;
+var
+  linuxinfo : TStringlist;
+begin
+  try
+    linuxinfo := getLinuxVersionMap;
+    result := linuxinfo.Values['Distributor ID'];
+  finally
+    linuxinfo.free;
+  end;
+end;
+
+function getLinuxDistroRelease : string;
+var
+  linuxinfo : TStringlist;
+begin
+  try
+    linuxinfo := getLinuxVersionMap;
+    result := linuxinfo.Values['Release'];
+  finally
+    linuxinfo.free;
+  end;
+end;
+
+function getLinuxDistroDescription : string;
+var
+  linuxinfo : TStringlist;
+begin
+  try
+    linuxinfo := getLinuxVersionMap;
+    result := linuxinfo.Values['Description'];
+  finally
+    linuxinfo.free;
+  end;
+end;
+
 function Is64BitSystemLin : boolean;
 begin
   if trim(getCommandResult('uname -i')) = 'x86_64' then result := true
@@ -1159,33 +1203,38 @@ var
 
 begin
   try
-    result := false;
-    lockfile1 := '';
-    lockfile :='';
-    disttype := getLinuxDistroType;
-    distname := getLinuxVersionMap.Values['Distributor ID'];
-    if disttype = 'suse' then lockfile :=  '/run/zypp.pid'
-    else if disttype = 'redhat' then lockfile :=  '/var/run/yum.pid'
-    else if disttype = 'debian' then
-    begin
-      lockfile :=  '/var/lib/dpkg/lock';
-      if distname = 'Univention' then lockfile1 := '/var/lib/apt/lists/lock';
-    end
-    else
-    begin
-      // unsupported distrotype
-      LogDatei.log('unsupported distrotype in getPackageLock', LLERROR);
       result := false;
+      lockfile1 := '';
+      lockfile :='';
+      disttype := getLinuxDistroType;
+      // This is a memory leak:
+      //distname := getLinuxVersionMap.Values['Distributor ID'];
+      distname := getLinuxDistroName;
+      if disttype = 'suse' then lockfile :=  '/run/zypp.pid'
+      else if disttype = 'redhat' then lockfile :=  '/var/run/yum.pid'
+      else if disttype = 'debian' then
+      begin
+        lockfile :=  '/var/lib/dpkg/lock';
+        if distname = 'Univention' then lockfile1 := '/var/lib/apt/lists/lock';
+      end
+      else
+      begin
+        // unsupported distrotype
+        LogDatei.log('unsupported distrotype in getPackageLock', LLERROR);
+        result := false;
+      end;
+      if lockfile1 <> '' then result := getPackageLockbyFile(lockfile1, timeoutsec, kill);
+      if lockfile <> '' then result := getPackageLockbyFile(lockfile1, timeoutsec, kill);
+    except
+       on ex: Exception
+       do
+       Begin
+         LogDatei.log('Exception in osfunclin at getPackageLock: Error: ' + ex.message, LLError);
+       end;
     end;
-    if lockfile1 <> '' then result := getPackageLockbyFile(lockfile1, timeoutsec, kill);
-    if lockfile <> '' then result := getPackageLockbyFile(lockfile1, timeoutsec, kill);
-  except
-     on ex: Exception
-     do
-     Begin
-       LogDatei.log('Exception in osfunclin at getPackageLock: Error: ' + ex.message, LLError);
-     end;
-  end;
 end;
+
+
+
 
 end.

@@ -780,8 +780,10 @@ procedure TFStatistik.BtnWorkDescriptionClick(Sender: TObject);
 begin
   if Fwork_description = nil then
     Fwork_description := TFwork_description.Create(self);
-  //Fwork_description.showmodal();
-  Fwork_description.Show;
+  Fwork_description.PopupParent := Fwork_description;
+  Fwork_description.showmodal();
+  FreeAndNil(Fwork_description);
+  //Fwork_description.Show;
 end;
 
 procedure TFStatistik.BitBtnworkreportClick(Sender: TObject);

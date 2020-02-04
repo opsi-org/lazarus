@@ -4,6 +4,32 @@ isRebootRequested : http://askubuntu.com/questions/28530/how-can-i-tell-what-pac
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.1.5) experimental; urgency=low
+
+  * osdefinedfunctions: delLocalVar : fix removing loopvar after empty loop
+  * osmain: fix in GetTempPath: if Univention temppath is /var/tmp
+  * osconf: new const opsiclientagentconf
+  * osmain: freeLinuxAgentStart: now using opsiclientagentconf
+  * Linux: osparser: CreateAndProcess: more logging around remount
+  * Linux: osparser: CreateAndProcess: moved remount
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 06 Jun 2019:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.1.4) experimental; urgency=low
+
+  * osfunc: more logging around gettemppath
+  * osparser: enabled getHWBiosInfoMap again
+  Linux only:
+    * osfunclin: getpackagelock: fix memory leak
+    * osfunclin: new: function getLinuxDistroName : string;
+    * osfunclin: new: function getLinuxDistroRelease : string;
+    * osfunclin: new: function getLinuxDistroDescription
+    * osmain: GetTempPath: if Univention temppath is /var/tmp
+    * osparser: createandprocessscript: check for depotmount
+    * osparser: createandprocessscript: give some distro infos in log
+
+-- Detlef Oertel <d.oertel@uib.de>  Mon, 03 Jun 2019:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.1.3) experimental; urgency=low
 
   * shellInAnIcon: on loglevel 9: reread teporary files and do not delete

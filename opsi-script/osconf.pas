@@ -85,6 +85,7 @@ const
   {$IFDEF UNIX}
   ParamDelim = '-';
   opsiscriptconfinit = '/etc/opsi-script/opsi-script.conf';
+  opsiclientagentconf = '/etc/opsi-client-agent/opsi-client-agent.conf';
   {$ENDIF }
 
   WinstRegHive = 'HKLM';
@@ -145,7 +146,7 @@ var
   {$ELSE}
   debug_prog: boolean = False;
   default_loglevel : integer = 7;
-  debug_lib: boolean = true;
+  debug_lib: boolean = True;
   force_min_loglevel: integer = 4;
   {$ENDIF}
   //debug_prog: boolean = True;
@@ -170,23 +171,31 @@ function writeConfig: boolean;
 var
   myconf: TIniFile;
 begin
+  try
+    Result := True;
   if not FileExists(opsiscriptconf) then
   begin
     // prepare to create it
     ForceDirectory(ExtractFilePath(opsiscriptconf));
-  end;
+  end;   
   myconf := TIniFile.Create(opsiscriptconf);
-  myconf.WriteString('global', 'debug_prog', BoolToStr(debug_prog, false));
-  myconf.WriteString('global', 'debug_lib', BoolToStr(debug_lib, false));
+    myconf.WriteString('global', 'debug_prog', BoolToStr(debug_prog, False));
+    myconf.WriteString('global', 'debug_lib', BoolToStr(debug_lib, False));
   myconf.WriteString('global', 'default_loglevel', IntToStr(default_loglevel));
   myconf.WriteString('global', 'force_min_loglevel', IntToStr(force_min_loglevel));
-  myconf.WriteString('global', 'ScriptErrorMessages', BoolToStr(ScriptErrorMessages, true));
-  myconf.WriteString('global', 'AutoActivityDisplay', BoolToStr(AutoActivityDisplay, false));
+    myconf.WriteString('global', 'ScriptErrorMessages',
+      BoolToStr(ScriptErrorMessages, True));
+    myconf.WriteString('global', 'AutoActivityDisplay',
+      BoolToStr(AutoActivityDisplay, False));
   myconf.Free;
+  except
+    Result := False;
+    raise;
+end;
 end;
 
-function readConfig: boolean;
 
+function readConfig: boolean;
 const
   shareDelim = '\\';
 
@@ -195,6 +204,8 @@ var
   myconf: TIniFile;
 
 begin
+  try
+    Result := True;
   if not FileExists(opsiscriptconf) then
   begin
     // prepare to create it
@@ -208,10 +219,10 @@ begin
   default_loglevel := myconf.ReadInteger('global', 'default_loglevel', default_loglevel);
   force_min_loglevel := myconf.ReadInteger('global', 'force_min_loglevel',
     force_min_loglevel);
-  ScriptErrorMessages := strToBool(myconf.ReadString('global', 'ScriptErrorMessages',
-    boolToStr(ScriptErrorMessages, True)));
-  AutoActivityDisplay := strToBool(myconf.ReadString('global', 'AutoActivityDisplay',
-    boolToStr(AutoActivityDisplay, False)));
+    ScriptErrorMessages := strToBool(myconf.ReadString('global',
+      'ScriptErrorMessages', boolToStr(ScriptErrorMessages, True)));
+    AutoActivityDisplay := strToBool(myconf.ReadString('global',
+      'AutoActivityDisplay', boolToStr(AutoActivityDisplay, False)));
   myconf.Free;
 
 
@@ -281,6 +292,10 @@ begin
   end;
 {$ENDIF}
   readconfig_done := True;
+  except
+    Result := False;
+    raise;
+end;
 end;
 
 function readConfigFromService: string;
@@ -297,13 +312,13 @@ begin
       try
         serviceresult := opsidata.getOpsiServiceConfigs;
       except
-        on e: exception do
-        Begin
+        on e: Exception do
+        begin
           startupmessages.Append('Exception in readConfigFromService: '
-                         + 'opsidata.getOpsiServiceConfigs: '
-                         + e.message +' '+ DateTimeToStr(Now));
+            + 'opsidata.getOpsiServiceConfigs: ' +
+            e.message + ' ' + DateTimeToStr(Now));
           serviceresult := '';
-        End;
+      end;
       end;
       //osmain.startupmessages.Add('OpsiServiceConfigs: ' + copy(serviceresult,1,100);
       Result := serviceresult;
@@ -337,8 +352,9 @@ begin
                           begin
                             osmain.startupmessages.Add('got debug_prog: ' + tmpstr);
                             if not TryStrToBool(tmpstr, debug_prog) then
-                              osmain.startupmessages.Add('Error: Not a Boolean:  debug_prog: ' + tmpstr);
-                            result := 'readConfigFromService: ok';
+                              osmain.startupmessages.Add(
+                                'Error: Not a Boolean:  debug_prog: ' + tmpstr);
+                            Result := 'readConfigFromService: ok';
                           end;
                       end;
 
@@ -351,8 +367,9 @@ begin
                           begin
                             osmain.startupmessages.Add('got debug_lib: ' + tmpstr);
                             if not TryStrToBool(tmpstr, debug_lib) then
-                              osmain.startupmessages.Add('Error: Not a Boolean:  debug_lib: ' + tmpstr);
-                            result := 'readConfigFromService: ok';
+                              osmain.startupmessages.Add(
+                                'Error: Not a Boolean:  debug_lib: ' + tmpstr);
+                            Result := 'readConfigFromService: ok';
                           end;
                       end;
 
@@ -363,14 +380,17 @@ begin
                           'values', values) then
                           if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
                           begin
-                            osmain.startupmessages.Add('got default_loglevel: ' + tmpstr);
+                            osmain.startupmessages.Add(
+                              'got default_loglevel: ' + tmpstr);
                             if not TryStrToInt(tmpstr, default_loglevel) then
-                              osmain.startupmessages.Add('Error: Not an Integer:  default_loglevel: ' + tmpstr);
-                            result := 'readConfigFromService: ok';
+                              osmain.startupmessages.Add(
+                                'Error: Not an Integer:  default_loglevel: ' + tmpstr);
+                            Result := 'readConfigFromService: ok';
                           end;
                       end;
 
-                      if LowerCase(configid) = 'opsi-script.global.force_min_loglevel' then
+                      if LowerCase(configid) =
+                        'opsi-script.global.force_min_loglevel' then
                       begin
                         osmain.startupmessages.Add(
                           'got config: opsi-script.global.force_min_loglevel');
@@ -378,49 +398,60 @@ begin
                           'values', values) then
                           if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
                           begin
-                            osmain.startupmessages.Add('got force_min_loglevel: ' + tmpstr);
+                            osmain.startupmessages.Add(
+                              'got force_min_loglevel: ' + tmpstr);
                             if not TryStrToInt(tmpstr, force_min_loglevel) then
-                              osmain.startupmessages.Add('Error: Not an Integer:  force_min_loglevel: ' + tmpstr);
-                            result := 'readConfigFromService: ok'
+                              osmain.startupmessages.Add(
+                                'Error: Not an Integer:  force_min_loglevel: ' + tmpstr);
+                            Result := 'readConfigFromService: ok';
                           end;
                       end;
 
-                      if LowerCase(configid) = LowerCase('opsi-script.global.ScriptErrorMessages') then
+                      if LowerCase(configid) =
+                        LowerCase('opsi-script.global.ScriptErrorMessages') then
                       begin
                         if jsonAsObjectGetValueByKey(configlist.Strings[i],
                           'values', values) then
                           if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
                           begin
-                            osmain.startupmessages.Add('got ScriptErrorMessages: ' + tmpstr);
+                            osmain.startupmessages.Add(
+                              'got ScriptErrorMessages: ' + tmpstr);
                             if not TryStrToBool(tmpstr, ScriptErrorMessages) then
-                              osmain.startupmessages.Add('Error: Not a Boolean:  ScriptErrorMessages: ' + tmpstr);
-                            result := 'readConfigFromService: ok';
+                              osmain.startupmessages.Add(
+                                'Error: Not a Boolean:  ScriptErrorMessages: ' + tmpstr);
+                            Result := 'readConfigFromService: ok';
                           end;
                       end;
 
-                      if LowerCase(configid) = LowerCase('opsi-script.global.AutoActivityDisplay') then
+                      if LowerCase(configid) =
+                        LowerCase('opsi-script.global.AutoActivityDisplay') then
                       begin
                         if jsonAsObjectGetValueByKey(configlist.Strings[i],
                           'values', values) then
                           if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
                           begin
-                            osmain.startupmessages.Add('got AutoActivityDisplay: ' + tmpstr);
+                            osmain.startupmessages.Add(
+                              'got AutoActivityDisplay: ' + tmpstr);
                             if not TryStrToBool(tmpstr, AutoActivityDisplay) then
-                              osmain.startupmessages.Add('Error: Not a Boolean:  AutoActivityDisplay: ' + tmpstr);
-                            result := 'readConfigFromService: ok';
+                              osmain.startupmessages.Add(
+                                'Error: Not a Boolean:  AutoActivityDisplay: ' + tmpstr);
+                            Result := 'readConfigFromService: ok';
                           end;
                       end;
 
-                      if LowerCase(configid) = LowerCase('opsi-script.global.w10BitlockerSuspendOnReboot') then
+                      if LowerCase(configid) =
+                        LowerCase('opsi-script.global.w10BitlockerSuspendOnReboot') then
                       begin
                         if jsonAsObjectGetValueByKey(configlist.Strings[i],
                           'values', values) then
                           if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
                           begin
-                            osmain.startupmessages.Add('got w10BitlockerSuspendOnReboot: ' + tmpstr);
+                            osmain.startupmessages.Add(
+                              'got w10BitlockerSuspendOnReboot: ' + tmpstr);
                             if not TryStrToBool(tmpstr, w10BitlockerSuspendOnReboot) then
-                              osmain.startupmessages.Add('Error: Not a Boolean:  w10BitlockerSuspendOnReboot: ' + tmpstr);
-                            result := 'readConfigFromService: ok';
+                              osmain.startupmessages.Add(
+                                'Error: Not a Boolean:  w10BitlockerSuspendOnReboot: ' + tmpstr);
+                            Result := 'readConfigFromService: ok';
                           end;
                       end;
 
@@ -434,12 +465,12 @@ begin
     end;
     configlist.Free;
   except
-    on e: exception do
-    Begin
-      startupmessages.Append('Exception in readConfigFromService: '
-                     + e.message +' '+ DateTimeToStr(Now));
-    End;
+    on e: Exception do
+    begin
+      startupmessages.Append('Exception in readConfigFromService: ' +
+        e.message + ' ' + DateTimeToStr(Now));
   end;
+end;
 end;
 
 
@@ -461,7 +492,7 @@ initEncoding;
   //from http://wiki.freepascal.org/Show_Application_Title,_Version,_and_Company
   FileVerInfo := TFileVersionInfo.Create(nil);
   try
-    FileVerInfo.FileName := reencode(paramstr(0),'system');
+    FileVerInfo.FileName := reencode(ParamStr(0), 'system');
     FileVerInfo.ReadFileInfo;
     WinstVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
   (*
@@ -482,6 +513,4 @@ initEncoding;
 
   WinstVersionName := 'Version ' + winstVersion;
 
-
 end.
-

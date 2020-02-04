@@ -8,7 +8,6 @@
       <MainUnit Value="0"/>
       <Title Value="uibtime"/>
       <Scaled Value="True"/>
-      <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
       <XPManifest>
         <DpiAware Value="Per-monitor"/>
@@ -25,7 +24,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="47"/>
+      <BuildNr Value="51"/>
       <Language Value="0407"/>
       <StringTable Comments="lazarus 1.8.4 fpc 3.0.4" CompanyName="uib gmbh" InternalName="uibtime.exe" LegalCopyright="GPL v3" ProductName="uibtime" ProductVersion="4.0.0"/>
     </VersionInfo>

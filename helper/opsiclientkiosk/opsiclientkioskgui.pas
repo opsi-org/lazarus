@@ -17,7 +17,7 @@ interface
 
 uses
   Classes, SysUtils, DB,
-  ExtendedNotebook,
+  ExtendedNotebook, DividerBevel,
   Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
   Buttons, ComCtrls, Grids, DBGrids, DBCtrls, ockdata, CommCtrl,
   BufDataset, typinfo, installdlg, lcltranslator, ActnList, oslog, inifiles,
@@ -26,10 +26,12 @@ uses
 
 type
 
-  TProductPanel = class(TFlowPanel)
+  TProductPanel = class(TPanel)
+    ShapeRoundSquare : TShape;
     LabelId: TLabel;
     LabelName: TLabel;
     LabelState: TLabel;
+    ImageIcon : TImage;
     RadioGroupAction: TGroupbox;
     rbsetup: TRadiobutton;
     rbNone: TRadiobutton;
@@ -57,7 +59,7 @@ type
   { TFopsiClientKiosk }
 
   TFopsiClientKiosk = class(TForm)
-    ActionList1: TActionList;
+    BitBtn1: TBitBtn;
     BitBtnInfo: TBitBtn;
     BitBtnShowAction: TBitBtn;
     BitBtnCancel: TBitBtn;
@@ -73,6 +75,7 @@ type
     DBTextPriority: TDBText;
     DBTextVerStr: TDBText;
     DBTextClientVerStr: TDBText;
+    DividerBevel1: TDividerBevel;
     ExtendedNotebook1: TExtendedNotebook;
     FlowPanelTiles: TFlowPanel;
     Image2: TImage;
@@ -116,8 +119,6 @@ type
     productdetailpanel: TPanel;
     PanelTopImage: TPanel;
     StatusBar1: TStatusBar;
-    ToolBar1: TToolBar;
-    ToolBar2: TToolBar;
     procedure BitBtnInfoClick(Sender: TObject);
     procedure BitBtnShowActionClick(Sender: TObject);
     procedure BitBtnStoreActionClick(Sender: TObject);
@@ -134,14 +135,6 @@ type
     procedure DBGrid1TitleClick(Column: TColumn);
     procedure FormDestroy(Sender: TObject);
     procedure grouplistEnter(Sender: TObject);
-    procedure PageListBeforeShow(ASender: TObject; ANewPage: TPage;
-      ANewIndex: integer);
-    procedure PageTileBeforeShow(ASender: TObject; ANewPage: TPage;
-      ANewIndex: integer);
-    procedure Panel1MouseWheel(Sender: TObject; Shift: TShiftState;
-      WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
-    procedure Panel1MouseWheelDown(Sender: TObject; Shift: TShiftState;
-      MousePos: TPoint; var Handled: boolean);
     procedure ProcessMess;
     procedure RadioGroupViewClick(Sender: TObject);
     procedure RadioGroupViewSelectionChanged(Sender: TObject);
@@ -151,8 +144,6 @@ type
     procedure SpeedButtonReloadClick(Sender: TObject);
     procedure Terminate;
     procedure BitBtnCancelClick(Sender: TObject);
-    procedure CheckListBox1ShowHint(Sender: TObject; HintInfo: PHintInfo);
-    procedure ExtendedNotebook1Change(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     //procedure grouplistSelectionChange(Sender: TObject; User: boolean);
@@ -165,7 +156,6 @@ type
     procedure SpeedButtonViewListClick(Sender: TObject);
     procedure SpeedButtonViewStoreClick(Sender: TObject);
     procedure TimerSearchEditTimer(Sender: TObject);
-    procedure ZMQueryDataSet1NewRecord(DataSet: TDataSet);
     procedure FilterOnSearch;
   private
     { private declarations }
@@ -211,6 +201,12 @@ resourcestring
 implementation
 
 {$R *.lfm}
+
+const
+  clInstalled: TColor = clTeal;
+  clNotInstalled: TColor = $000080FF;
+  clUnknown: TColor = $00FF8000;
+
 
 var
   mythread: Tmythread2;
@@ -267,16 +263,22 @@ end;
 
 
 constructor TProductPanel.Create(TheOwner: TWincontrol);
+var
+  IconPath : String;
 begin
   try
-    inherited Create(theOwner);
+    inherited Create(TheOwner);
     parent := theOwner;
     Width := tile_width;
     Height := tile_height;
+    //FlowStyle := fsTopBottomLeftRight;
     self.OnClick := ProductTileClick;
     //BorderStyle := bsSingle;
     BorderStyle := bsNone;
-    BorderSpacing.Around := 1;
+    //BorderWidth := 4;
+    BevelInner := bvNone;
+    BevelOuter := bvNone;
+    BorderSpacing.Around := 5;
     Color := StringToColor(tile_color);
     Font.Name := tile_Font_Name;
     font.Size := tile_Font_Size;
@@ -286,56 +288,113 @@ begin
     font.Underline := tile_Font_Underline;
     self.OnMouseWheel := scroll;
 
+    //Shape (just for looking nice)
+    ShapeRoundSquare := TShape.Create(self);
+    with ShapeRoundSquare do begin
+       Parent := self;
+       Align := alNone;
+       Height:= self.width;
+       Width:= self.width;
+       Shape:= stRoundSquare;
+       Top:= 0;
+       Left:= 0;
+       OnClick := ProductTileChildClick;
+       OnMouseWheel := scroll;
+       //Brush.Color:= clWhite;
+       //Brush.Style := bsSolid;
+       //Visible:= True;
+    end;
+
+
     //label Name
     LabelName := TLabel.Create(self);
-    LabelName.Parent := self;
-    LabelName.font.Style := [fsBold];
-    LabelName.font.Italic := tile_Font_Italic;
-    LabelName.font.Underline := tile_Font_Underline;
-    LabelName.Caption := 'name';
-    LabelName.Width := Width;
-    LabelName.WordWrap := True;
-    LabelName.AutoSize := True;
-    LabelName.Alignment := taCenter;
-    LabelName.Align := alTop;
-    LabelName.BorderSpacing.Around := 3;
-    LabelName.OnClick := ProductTileChildClick;
-    LabelName.OnMouseWheel := scroll;
+    with LabelName do begin
+      Parent := self;
+      font.Style := [fsBold];
+      font.Italic := tile_Font_Italic;
+      font.Underline := tile_Font_Underline;
+      Caption := 'name';
+      WordWrap := True;
+      AutoSize := False;
+      Width := self.Width;
+      Alignment := taCenter;
+      Align := alNone;
+      Top := 90;
+      Left := 0;
+      BorderSpacing.Around := 3;
+      OnClick := ProductTileChildClick;
+      OnMouseWheel := scroll;
+    end;
+
 
     //label ID
-    labelId := TLabel.Create(self);
-    LabelId.Parent := self;
-    LabelId.Caption := 'id';
-    LabelId.Font.Bold := tile_Font_Bold;
-    LabelId.Alignment := taCenter;
-    LabelId.Width := Width;
-    labelId.Align := alTop;
-    labelId.BorderSpacing.Around := 3;
-    labelId.OnClick := ProductTileChildClick;
-    labelId.OnMouseWheel := scroll;
+    LabelID := TLabel.Create(self);
+    with LabelID do begin
+      Parent := self;
+      Caption := 'id';
+      Font.Bold := tile_Font_Bold;
+      AutoSize:= False;
+      Alignment := taCenter;
+      Width := self.Width;
+      Align := alNone;
+      Top := LabelName.Top + LabelName.Height + 3;
+      Left := 0;
+      //labelId.BorderSpacing.Around := 3;
+      labelId.OnClick := ProductTileChildClick;
+      labelId.OnMouseWheel := scroll;
+    end;
+
+    //program icon
+    IconPath := Application.Location + PathDelim + 'progam_icons' + PathDelim + 'default'+ PathDelim + 'opsi-logo.png';
+    ImageIcon := TImage.Create(self);
+    with ImageIcon do
+    begin
+      Parent := self;
+      Picture.LoadFromFile(IconPath);
+      AutoSize := False;
+      Proportional := True;
+      Width := 60;
+      Height := 60;
+      Center := True;
+      Align:= alNone;
+      Top:=30;
+      Left:=40;
+      //BorderSpacing.Around := 0;
+      OnClick := ProductTileChildClick;
+      OnMouseWheel := scroll;
+    end;
 
     //label LabelState
     LabelState := TLabel.Create(self);
-    LabelState.Parent := self;
-    LabelState.Caption := 'state';
-    LabelState.Width := Width;
-    LabelState.WordWrap := True;
-    LabelState.Alignment := taCenter;
-    LabelState.Align := alTop;
-    LabelState.BorderSpacing.Around := 3;
-    LabelState.OnClick := ProductTileChildClick;
-    LabelState.OnMouseWheel := scroll;
+    with LabelState do begin
+      Parent := self;
+      Align := alNone;
+      Caption := 'state';
+      WordWrap := False;
+      AutoSize:=False;
+      Alignment := taCenter;
+      Width := self.Width-20;
+      Top := 15;
+      Left:=20-ShapeRoundSquare.Pen.Width;
+      Font.Color := clWhite;
+      //BorderSpacing.Around := 3;
+      OnClick := ProductTileChildClick;
+      OnMouseWheel := scroll;
+    end;
 
+    {*
     //RadioGroupAction
     //RadioGroupAction := TRadioGroup.Create(self);
     RadioGroupAction := TGroupbox.Create(self);
-    RadioGroupAction.Parent := self;
+    //RadioGroupAction.Parent := self;
     RadioGroupAction.Caption := rsActRequest;
     RadioGroupAction.BorderSpacing.Left := 3;
     RadioGroupAction.Font.Size := tile_radio_font_size;
-    //RadioGroupAction.AutoSize:= true;
+    RadioGroupAction.AutoSize:= false;
     //RadioGroupAction.Alignment := taCenter;
-    RadioGroupAction.Align := alTop;
+    RadioGroupAction.Align := alNone;
+    RadioGroupAction.Top := 120;
+    RadioGroupAction.Left := 0;
     //RadioGroupAction.OnClick := self.OnClick;
     RadioGroupAction.OnClick := ProductTileChildClick;
     RadioGroupAction.OnMouseWheel := scroll;
@@ -413,6 +472,7 @@ begin
     lbuninstall.BringToFront;
 
     RadioGroupAction.Height := (lbuninstall.Height + 9) * 3;
+    *}
   except
     on e: Exception do
     begin
@@ -430,6 +490,8 @@ begin
     try
       FreeAndNil(labelId);
       FreeAndNil(LabelName);
+      FreeAndNil(ImageIcon);
+      FreeAndNil(ShapeRoundSquare);
       FreeAndNil(LabelState);
       FreeAndNil(rbsetup);
       FreeAndNil(rbNone);
@@ -534,20 +596,21 @@ var
 begin
   if not inTileRebuild then
   begin
-    tileindex := TGroupbox(Sender).Parent.Tag;
-    pid := ProductTilesArray[tileindex].LabelId.Caption;
+    tileindex := TGroupBox(Sender).Parent.Tag;
+    pid := ProductTilesArray[tileindex].LabelID.Caption;
     ZMQueryDataSet1.First;
-    if ZMQueryDataSet1.Locate('ProductId', VarArrayOf([pid]),
-      [loCaseInsensitive]) then
+    if ZMQueryDataSet1.Locate('ProductId', VarArrayOf([pid]),[loCaseInsensitive]) then
     begin
       if detail_visible then
       begin
         FopsiClientKiosk.productdetailpanel.Height := 0;
+        ProductTilesArray[tileindex].ShapeRoundSquare.Pen.Color:=clBlack;
         detail_visible := False;
       end
       else
       begin
         FopsiClientKiosk.productdetailpanel.Height := 185;
+        ProductTilesArray[tileindex].ShapeRoundSquare.Pen.Color:=clBlue;
         detail_visible := True;
       end;
     end;
@@ -604,7 +667,7 @@ begin
     logdatei.log('rebuildProductTiles from db start', LLDebug2);
     counter := 0;
     ZMQUerydataset1.First;
-    while not ZMQUerydataset1.EOF do
+    while not ZMQuerydataset1.EOF do
     begin
       FopsiClientKiosk.LabelDataLoadDetail.Caption :=
         ZMQueryDataSet1.FieldByName('ProductId').AsString;
@@ -619,13 +682,22 @@ begin
       //ProductTilesArray[counter].LabelState.Caption :=
       state := ZMQueryDataSet1.FieldByName('installationStatus').AsString;
       if state = 'installed' then
-        ProductTilesArray[counter].LabelState.Caption := rsInstalled
+      begin
+        ProductTilesArray[counter].LabelState.Caption := rsInstalled;
+        ProductTilesArray[counter].LabelState.Color := clInstalled;
+      end
       else if (state = 'not_installed') or (state = 'not installed') or (state = '') then
-        ProductTilesArray[counter].LabelState.Caption := rsNotInstalled
+      begin
+        ProductTilesArray[counter].LabelState.Caption := rsNotInstalled;
+        ProductTilesArray[counter].LabelState.Color := clNotInstalled;
+      end
       else if state = 'unknown' then
+      begin
         ProductTilesArray[counter].LabelState.Caption := rsStateUnknown;
-
+        ProductTilesArray[counter].LabelState.Color := clUnknown;
+      end;
       //radio group
+      {*
       ProductTilesArray[counter].rbsetup.Enabled := True;
       ProductTilesArray[counter].lbsetup.Enabled := True;
       action := Trim(ockdata.ZMQUerydataset1.FieldByName('possibleAction').AsString);
@@ -641,7 +713,7 @@ begin
         ProductTilesArray[counter].rbsetup.Checked := True
       else if action = 'uninstall' then
         ProductTilesArray[counter].rbuninstall.Checked := True;
-
+      *}
       ProductTilesArray[counter].Tag := counter;
       Inc(counter);
       FopsiClientKiosk.ProgressbarDetail.Position := counter;
@@ -688,7 +760,6 @@ procedure TFopsiClientKiosk.RadioGroupViewClick(Sender: TObject);
 begin
 
 end;
-
 
 procedure TFopsiClientKiosk.RadioGroupViewSelectionChanged(Sender: TObject);
 begin
@@ -773,32 +844,6 @@ procedure TFopsiClientKiosk.grouplistEnter(Sender: TObject);
 begin
   productdetailpanel.Height := 0;
 end;
-
-
-procedure TFopsiClientKiosk.PageListBeforeShow(ASender: TObject;
-  ANewPage: TPage; ANewIndex: integer);
-begin
-
-end;
-
-procedure TFopsiClientKiosk.PageTileBeforeShow(ASender: TObject;
-  ANewPage: TPage; ANewIndex: integer);
-begin
-
-end;
-
-procedure TFopsiClientKiosk.Panel1MouseWheel(Sender: TObject;
-  Shift: TShiftState; WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
-begin
-
-end;
-
-procedure TFopsiClientKiosk.Panel1MouseWheelDown(Sender: TObject;
-  Shift: TShiftState; MousePos: TPoint; var Handled: boolean);
-begin
-
-end;
-
 
 procedure TFopsiClientKiosk.DBGrid1Exit(Sender: TObject);
 begin
@@ -978,16 +1023,6 @@ begin
   end;
 end;
 
-procedure TFopsiClientKiosk.CheckListBox1ShowHint(Sender: TObject; HintInfo: PHintInfo);
-begin
-
-end;
-
-procedure TFopsiClientKiosk.ExtendedNotebook1Change(Sender: TObject);
-begin
-
-end;
-
 procedure TFopsiClientKiosk.FormActivate(Sender: TObject);
 var
   ErrorMsg: string;
@@ -1159,13 +1194,13 @@ begin
   //tile
   tile_color := 'clCream';
   tile_Font_Name := 'Arial';
-  tile_Font_Size := 12;
+  tile_Font_Size := 10;
   tile_Font_Color := 'clBlack';
   tile_Font_Bold := False;
   tile_Font_Italic := False;
   tile_Font_Underline := False;
-  tile_width := 220;
-  tile_height := 200;
+  tile_width := 140;
+  tile_height := 140;
   //TileRadio
   tile_radio_setup_color := 'clGreen';
   tile_radio_uninstall_color := 'clRed';
@@ -1291,11 +1326,6 @@ begin
   FilterOnSearch;
 end;
 
-
-procedure TFopsiClientKiosk.ZMQueryDataSet1NewRecord(DataSet: TDataSet);
-begin
-
-end;
 
 procedure TFopsiClientKiosk.BitBtnCancelClick(Sender: TObject);
 var

@@ -672,7 +672,8 @@ begin
   LogDatei.WritePartLog := False;
   LogDatei.CreateTheLogfile(lfilename + '.log', True);
   LogDatei.log('Log for: ' + Application.exename + ' opend at : ' +
-    DateTimeToStr(now), LLNotice);
+    DateTimeToStr(now), LLEssential);
+  LogDatei.log('opsi-setup-detector Version: ' + myVersion, LLEssential);
 
   LogDatei.LogLevel := 8;
 end;

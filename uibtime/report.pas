@@ -5,8 +5,8 @@ unit report;
 interface
 
 uses
-  Classes, SysUtils, IBConnection, sqldb, FileUtil, LR_Class, LR_DBSet, Forms,
-  Controls, Graphics, Dialogs;
+  Classes, SysUtils, IBConnection, sqldb, FileUtil, LR_Class, LR_DBSet,
+  LR_Desgn, Forms, Controls, Graphics, Dialogs;
 
 type
 
@@ -14,6 +14,7 @@ type
 
   TFReport = class(TForm)
     frDBDataSet1: TfrDBDataSet;
+    frDesigner1: TfrDesigner;
     frReport1: TfrReport;
   private
     { private declarations }

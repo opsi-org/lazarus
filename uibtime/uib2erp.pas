@@ -194,8 +194,10 @@ var
   helperint: integer;
   suchevent: string;
   monthsmod, monthdiv, acc_per_monthnum_int: integer;
+  timeh_is_quota : integer;
   acc_per_monthnum: double;
   querystartdt, queryenddt, vondate, bisdate: TDateTime;
+  isQuota : boolean;
 begin
   try
     // some initial retrun values
@@ -230,7 +232,7 @@ begin
     //QueryProjektzeit.databasename :='uibtime';
     QueryProjektzeit.SQL.Clear;
     QueryProjektzeit.sql.Add(' select time_h, acc_per_monthnum, projectstart, ');
-    QueryProjektzeit.sql.Add('    reportrequired, accountingrequired ');
+    QueryProjektzeit.sql.Add('    reportrequired, accountingrequired , quota_lifetime_month');
     QueryProjektzeit.sql.Add('    from uiballevent');
     QueryProjektzeit.sql.Add('    where (event = :suchevent)');
     QueryProjektzeit.parambyname('suchevent').AsString := suchevent;
@@ -244,6 +246,10 @@ begin
       accountingrequired := True
     else
       accountingrequired := False;
+    if QueryProjektzeit.FieldByName('quota_lifetime_month').AsInteger > 0 then
+      isQuota := True
+    else
+      isQuota := False;
     // get last interval
     if (not QueryProjektzeit.FieldByName('time_h').isNull) and
       (not QueryProjektzeit.FieldByName('projectstart').isNull) and
@@ -251,19 +257,6 @@ begin
     begin
       // get total free hours
       total := QueryProjektzeit.FieldByName('time_h').AsFloat;
-      (*
-      total_min := round(abs((total - trunc(total)) * 60));
-      hours := trunc(Total);
-      minutes := Round(frac(Total) * 60);
-      if minutes >= 60 then
-      begin
-        minutes := minutes - 60;
-        hours := hours + 1;
-      end;
-      //years := hours div 8760;
-      //hours := hours mod 8760;
-      //month :=
-      *)
       totaltime := total / 24;
       //totaltime := EncodeTimeInterval(hours, minutes, 0, 0);
       // basemonth and projektstart
@@ -289,82 +282,6 @@ begin
       monthsmod := acc_per_monthnum_int mod 12;
       monthdiv := acc_per_monthnum_int div 12;
       // calculate last interval boundaries
-      (*
-      // look first for end version
-      decodeDate(querystartdt, year, month, day);
-      decodeDate(projektstart, startyear, startmonth, startday);
-      helperint := month - ((12 * (year - startyear) + month - startmonth) mod
-        monthsmod);
-      if helperint < 1 then
-      begin
-        endyeari := year - 1;
-        endmonthi := 12 + helperint;
-      end
-      else
-      begin
-        endmonthi := helperint;
-        endyeari := year;
-      end;
-      if endmonthi > 12 then
-      begin
-        endmonthi := endmonthi - 12;
-        endyeari := endyeari + 1;
-      end;
-      // now start
-      aktstartmonthi := endmonthi - monthsmod;
-      aktstartyeari := endyeari;
-      if aktstartmonthi < 1 then
-      begin
-        aktstartmonthi := aktstartmonthi + 12;
-        aktstartyeari := aktstartyeari - 1;
-      end;
-      if aktstartmonthi < 1 then
-      begin
-        aktstartmonthi := aktstartmonthi + 12;
-        aktstartyeari := aktstartyeari - 1;
-      end;
-      aktstartmonth := aktstartmonthi;
-      aktstartyear := aktstartyeari;
-      endmonth := endmonthi;
-      endyear := endyeari;
-      *)
-
-      (*
-      // look first for start version
-      decodeDate(querystartdt, year, month, day);
-      decodeDate(projektstart, startyear, startmonth, startday);
-      helperint := month - ((12 * (year - startyear) + month - startmonth));
-      if  acc_per_monthnum_int > 0 then
-        helperint := month - ((12 * (year - startyear) + month - startmonth) mod
-        acc_per_monthnum_int);
-      if helperint < 1 then
-      begin
-        aktstartyear := year - 1;
-        aktstartmonth := 12 + helperint;
-      end
-      else
-      begin
-        aktstartmonth := helperint;
-        aktstartyear := year;
-      end;
-      if aktstartmonth > 12 then
-      begin
-        aktstartmonth := aktstartmonth - 12;
-        aktstartyear := aktstartyear + 1;
-      end;
-      endmonth := aktstartmonth + monthsmod;
-      endyear := aktstartyear + monthdiv;
-      if endmonth > 12 then
-      begin
-        endmonth := endmonth - 12;
-        endyear := endyear + 1;
-      end;
-      if endmonth > 12 then
-      begin
-        endmonth := endmonth - 12;
-        endyear := endyear + 1;
-      end;
-      *)
       // here is the result for the last Interval
       //lastIntervalStart := EncodeDate(aktstartyear, aktstartmonth, startday);
       lastIntervalStart := getLastIntervalStart(
@@ -408,6 +325,48 @@ begin
           lastIntervalStart := lastIntervalStart_;
         end;
       end;
+      // use changed data
+      if (lastIntervalStart >= querystartdt) and (lastIntervalStart <= queryenddt) then
+        intervalStartFound := True
+      else
+        intervalStartFound := False;
+
+      if (lastIntervalEnd >= querystartdt) and (lastIntervalEnd <= queryenddt) then
+        intervalEndFound := True
+      else
+        intervalEndFound := False;
+    end
+    else if (not QueryProjektzeit.FieldByName('time_h').isNull) and
+      (not QueryProjektzeit.FieldByName('projectstart').isNull) and
+      //(QueryProjektzeit.FieldByName('acc_per_monthnum').AsFloat = 0) and
+      isQuota then
+    begin
+            // get total free hours
+      total := QueryProjektzeit.FieldByName('time_h').AsFloat;
+      totaltime := total / 24;
+      //totaltime := EncodeTimeInterval(hours, minutes, 0, 0);
+      // basemonth and projektstart
+      acc_per_monthnum := QueryProjektzeit.FieldByName('acc_per_monthnum').AsFloat;
+      // we are in quota project, so we ignore basemonth
+      //basemonth := trunc(acc_per_monthnum);
+      basemonth := 0;
+      projektstart := QueryProjektzeit.FieldByName('projectstart').AsDateTime;
+      DataModule1.debugOut(6, 'getLastIntervalInfo projektstart :' +
+        DateToStr(projektstart));
+      // if projektstart is in future we will not find anything
+      if projektstart >= queryenddt then
+      begin
+        Result := False;
+        DataModule1.debugOut(3, 'getLastIntervalInfo',
+          'Projektstart of: ' + suchevent +
+          ' is in "future": later or equal then end of searchinterval:' + DateToStr(queryenddt));
+        Exit;
+      end;
+      //// startday of projekt end
+      //projektstart := projektstart -1;
+      lastIntervalStart := projektstart;
+      intervalStartFound := True;
+      lastIntervalEnd := queryenddt;
       // use changed data
       if (lastIntervalStart >= querystartdt) and (lastIntervalStart <= queryenddt) then
         intervalStartFound := True
@@ -1031,7 +990,7 @@ begin
       QueryUEARhelper.sql.Add('where ');
       QueryUEARhelper.sql.Add('(a.event = :event) ');
       QueryUEARhelper.sql.Add('and(a.dateday >= :start) ');
-      QueryUEARhelper.sql.Add('and (a.dateday <= :stop) ');
+      QueryUEARhelper.sql.Add('and (a.dateday < :stop) ');
       QueryUEARhelper.sql.Add('group by 1  ');
       QueryUEARhelper.ParamByName('event').AsString := suchevent;
       QueryUEARhelper.parambyname('start').AsDateTime := projectstart;
@@ -1524,6 +1483,7 @@ begin
       screen.Cursor := crHourGlass;
       for i := 0 to 1024 do
         rowcolor[i] := clWindow;
+      StringGrid1.FixedRows := 0;
       StringGrid1.Clear;
       //rowcolor[StringGrid1.RowCount] := clBtnFace;
       StringGrid1.InsertRowWithValues(StringGrid1.RowCount,

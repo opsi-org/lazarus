@@ -47,6 +47,7 @@ oslocaladmin,
 {$ENDIF WIN64}
 {$ENDIF}
 {$IFDEF UNIX}
+oslinmount,
 lispecfolder,
 osfunclin,
 oslindesktopfiles,
@@ -13246,12 +13247,12 @@ else if LowerCase (s) = LowerCase ('getSwauditInfoList')
    else if LowerCase(s) = LowerCase ('getHWBiosInfoMap')
    then
    Begin
-   //   if r = '' then
-        Begin
+      {$IFDEF DARWIN}
+        LogDatei.log('Not implemented for macOS',LLError);
+      {$ELSE}
         syntaxcheck := true;
-        // temporary ? disabled do 15.02.2019 14:59:06
-        //list.AddStrings(getHwBiosShortlist);
-       end;
+        list.AddStrings(getHwBiosShortlist);
+      {$ENDIF}
     end
 
    else
@@ -22818,7 +22819,10 @@ begin
   // Backup existing depotdrive, depotdir
   depotdrive_bak := depotdrive;
   depotdir_bak :=  depotdir;
-  {$IFDEF UNIX} computername := getHostnameLin; {$ENDIF LINUX}
+  {$IFDEF UNIX}
+  computername := getHostnameLin;
+  logdatei.log('computername: '+computername,LLDebug);
+  {$ENDIF LINUX}
   {$IFDEF GUI}
   CentralForm.Label1.Caption := '';
   FBatchOberflaeche.setInfoLabel('');
@@ -22841,6 +22845,17 @@ begin
       if not CheckFileExists (Scriptdatei, ErrorInfo) then
       begin
         LogDatei.log ('Script  ' + Scriptdatei + '  not found ' + ErrorInfo+' - retrying',LLWarning);
+        {$IFDEF LINUX}
+        if ProgramMode = pmBuildPC_service then
+        begin
+          logdatei.log('check opsi depot mount',LLDebug);
+          if not isMounted(depotdir) then
+          begin
+            logdatei.log('Try remount ...',LLWarning);
+            mount_depotshare(depotDir, opsiservicePassword);
+          end;
+        end;
+        {$ENDIF LINUX}
         Sleep(1000);
         if not CheckFileExists (Scriptdatei, ErrorInfo) then
         begin
@@ -22966,6 +22981,13 @@ begin
   tmpstr :=  tmpstr+', Edition: '+getProductInfoStrByNum(OSGetProductInfoNum);
   LogDatei.log (tmpstr, LLessential);
   {$ENDIF WINDOWS}
+  {$IFDEF LINUX}
+  tmpstr :=  getLinuxDistroName+ ' '+ getLinuxDistroDescription;
+  if Is64BitSystem then
+    tmpstr :=  tmpstr+' 64 Bit'
+  else tmpstr :=  tmpstr+' 32 Bit';
+  LogDatei.log (tmpstr, LLessential);
+  {$ENDIF LINUX}
 
   if opsidata <> nil then
   begin

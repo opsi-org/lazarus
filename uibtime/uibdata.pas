@@ -447,15 +447,16 @@ procedure TDataModule1.Dateneditieren1Click(Sender: TObject);
 begin
   FDataedit := TFDataedit.Create(self);
   FOntop.ineditmode := True;
-  //FDataedit.showmodal;
-  //FDataedit.FormStyle:=fsNormal;
+  FDataedit.showmodal;
+  FDataedit.FormStyle:=fsNormal;
+  FDataedit.PopupParent:= FDataedit;
   //FOntop.Enabled := False;
-  FDataedit.Show;
-  //FDataedit.free;
-  //Datamodule1.SQuibevent.last;
-  //ontop.lastevent := Datamodule1.SQuibevent.fieldbyname('event').asstring;
-  //FOntop.ineditmode := false;
-  //FOntop.eventhandler(ontop.lastevent);
+  //FDataedit.Show;
+  FreeAndNil(FDataedit);
+  Datamodule1.SQuibevent.last;
+  ontop.lastevent := Datamodule1.SQuibevent.fieldbyname('event').asstring;
+  FOntop.ineditmode := false;
+  FOntop.eventhandler(ontop.lastevent);
 end;
 
 procedure TDataModule1.Dateneditieren1Cancel;

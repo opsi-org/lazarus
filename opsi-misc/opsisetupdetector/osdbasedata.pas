@@ -28,7 +28,7 @@ type
   // marker for add installers
   TKnownInstaller = (stAdvancedMSI, stInno, stInstallShield, stInstallShieldMSI,
     stMsi, stNsis, st7zip, st7zipsfx, stInstallAware, stMSGenericInstaller,
-    stWixToolset, stBoxStub, stSFXcab, stBitrock,stUnknown);
+    stWixToolset, stBoxStub, stSFXcab, stBitrock,stSelfExtractingInstaller,stUnknown);
 
 
   TdetectInstaller = function(parent: TClass; markerlist: TStrings): boolean;
@@ -1039,6 +1039,7 @@ begin
   knownInstallerList.Add('BoxStub');
   knownInstallerList.Add('SFXcab');
   knownInstallerList.Add('Bitrock');
+  knownInstallerList.Add('SelfExtractingInstaller');
   knownInstallerList.Add('Unknown');
 
 
@@ -1087,6 +1088,8 @@ begin
     patterns.Add('Nullsoft.NSIS.exehead');
     patterns.Add('nullsoft install system');
     patterns.Add('http://nsis.sf.net/');
+    patterns.Add('NSISu_.exe');
+    patterns.Add('NSIS Error');
     link :=
       'http://nsis.sourceforge.net/Docs/Chapter3.html#installerusage';
     comment := '';
@@ -1304,6 +1307,25 @@ begin
     //infopatterns.Add('RunProgram="');
     link := 'https://clients.bitrock.com/installbuilder/docs/installbuilder-userguide/ar01s08.html#_help_menu';
     comment := '';
+    uib_exitcode_function := 'isMsExitcodeFatal_short';
+    detected := @detectedbypatternwithand;
+  end;
+  // stSelfExtractingInstaller
+  with installerArray[integer(stSelfExtractingInstaller)] do
+  begin
+    description := 'SelfExtracting Installer';
+    silentsetup := '/a';
+    unattendedsetup := '/a';
+    silentuninstall := '/a /u:"<product>"';
+    unattendeduninstall := '/a /u:"<product>"';
+    uninstall_waitforprocess := '';
+    install_waitforprocess := '';
+    uninstallProg := 'uninstall.exe';
+    patterns.Add('Self-extracting installation program');
+    //patterns.Add('Wix Toolset');
+    //infopatterns.Add('RunProgram="');
+    link := '';
+    comment := 'Unknown Vendor';
     uib_exitcode_function := 'isMsExitcodeFatal_short';
     detected := @detectedbypatternwithand;
   end;
