@@ -18,7 +18,6 @@ program winst;
 {$IFDEF WINDOWS} {$DEFINE GUI} {$ENDIF}
 
 uses
-  LAZUTF8,
   osencoding,
   lcltranslator, {$IFDEF UNIX} {$IFDEF UseCThreads}
   cthreads, {$ENDIF} {$ENDIF}
@@ -26,7 +25,6 @@ uses
   ///LCLIntf,
   packdefs in 'packdefs.pas',
   {$IFDEF WINDOWS}zipinter in 'zipinter.pas', {$ENDIF}
-  IdStream,
   osconf,
   osshowsysinfo {SystemInfo},
   //wirequlist in 'wirequlist.pas',
@@ -57,7 +55,10 @@ uses
   uCpuUsage,
   SystemCriticalU,
   osfuncwin3,
-  osregistry, osinputstring{$ENDIF WINDOWS};
+  osregistry,
+  {$ENDIF WINDOWS}
+  osinputstring,
+  LAZUTF8;
 
 
 

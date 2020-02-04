@@ -22,9 +22,9 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
-      <RevisionNr Value="1"/>
-      <BuildNr Value="5"/>
-      <StringTable Comments="Compiled with Lazarus 2.0.0" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script-nogui" InternalName="opsiscriptnogui" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org" ProductName="opsi-script" ProductVersion="4.1.0"/>
+      <RevisionNr Value="3"/>
+      <BuildNr Value="6"/>
+      <StringTable Comments="Compiled with Lazarus 2.0.6" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script-nogui" InternalName="opsiscriptnogui" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org" ProductName="opsi-script" ProductVersion="4.1.0"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="default" Default="True"/>
@@ -37,7 +37,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\synapse40lib;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\indy\Lib\System;..\external_libraries\indy\Lib\Core;..\external_libraries\indy\Lib\Protocols;..\external_libraries\indy\Lib"/>
+            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\synapse"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -71,7 +71,8 @@
             <CompilerMessages>
               <IgnoredMessages idx5058="True" idx5027="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT"/>
+            <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT 
+-dSYNAPSE"/>
           </Other>
         </CompilerOptions>
       </Item2>
@@ -84,7 +85,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\synapse40lib;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\indy\Lib\System;..\external_libraries\indy\Lib\Core;..\external_libraries\indy\Lib\Protocols;..\external_libraries\indy\Lib"/>
+            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\synapse"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -113,7 +114,8 @@
             <CompilerMessages>
               <IgnoredMessages idx5058="True" idx5027="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT"/>
+            <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT
+-dSYNAPSE"/>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -149,7 +151,7 @@
         <PackageName Value="FCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="33">
+    <Units Count="38">
       <Unit0>
         <Filename Value="opsiscriptnogui.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -190,101 +192,122 @@
         <IsPartOfProject Value="True"/>
       </Unit8>
       <Unit9>
-        <Filename Value="osfunclin.pas"/>
+        <Filename Value="oscalc.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit9>
       <Unit10>
-        <Filename Value="oscalc.pas"/>
+        <Filename Value="osconf.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit10>
       <Unit11>
-        <Filename Value="osconf.pas"/>
+        <Filename Value="opsihwbiosinfo.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit11>
       <Unit12>
-        <Filename Value="opsihwbiosinfo.pas"/>
+        <Filename Value="osxbase64.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit12>
       <Unit13>
-        <Filename Value="osxbase64.pas"/>
+        <Filename Value="../common/oscrypt.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit13>
       <Unit14>
-        <Filename Value="../common/oscrypt.pas"/>
+        <Filename Value="../common/osencoding.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit14>
       <Unit15>
-        <Filename Value="../common/osencoding.pas"/>
+        <Filename Value="../common/osjson.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit15>
       <Unit16>
-        <Filename Value="../common/osjson.pas"/>
+        <Filename Value="../common/oskeyboard.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit16>
       <Unit17>
-        <Filename Value="../common/oskeyboard.pas"/>
+        <Filename Value="../common/oslog.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit17>
       <Unit18>
-        <Filename Value="../common/oslog.pas"/>
+        <Filename Value="../common/oswebservice.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit18>
       <Unit19>
-        <Filename Value="../common/oswebservice.pas"/>
+        <Filename Value="changelog.txt"/>
         <IsPartOfProject Value="True"/>
       </Unit19>
       <Unit20>
-        <Filename Value="changelog.txt"/>
+        <Filename Value="../common/osparserhelper.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit20>
       <Unit21>
-        <Filename Value="../common/osparserhelper.pas"/>
+        <Filename Value="../common/oszip.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit21>
       <Unit22>
-        <Filename Value="../common/oszip.pas"/>
+        <Filename Value="../common/osxmlsections.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit22>
       <Unit23>
-        <Filename Value="../common/osxmlsections.pas"/>
+        <Filename Value="../common/osxmltdom.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit23>
       <Unit24>
-        <Filename Value="../common/osxmltdom.pas"/>
+        <Filename Value="../common/osprocesses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit24>
       <Unit25>
-        <Filename Value="../common/osprocesses.pas"/>
+        <Filename Value="../common/osversioninfo.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit25>
       <Unit26>
-        <Filename Value="../common/osversioninfo.pas"/>
+        <Filename Value="../common/osurlparser.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit26>
       <Unit27>
-        <Filename Value="../common/osurlparser.pas"/>
+        <Filename Value="../common/osregex.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit27>
       <Unit28>
-        <Filename Value="../common/osregex.pas"/>
+        <Filename Value="../common/osnetworkcalculator.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit28>
       <Unit29>
-        <Filename Value="../common/osnetworkcalculator.pas"/>
+        <Filename Value="../common/key_valueCollection.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit29>
       <Unit30>
-        <Filename Value="../common/key_valueCollection.pas"/>
+        <Filename Value="../common/osxml.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit30>
       <Unit31>
-        <Filename Value="../common/osxml.pas"/>
+        <Filename Value="../common/osnetutil.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit31>
       <Unit32>
-        <Filename Value="../common/osnetutil.pas"/>
+        <Filename Value="oslindesktopfiles.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit32>
+      <Unit33>
+        <Filename Value="../common/osfunclin.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit33>
+      <Unit34>
+        <Filename Value="../common/oslinmount.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit34>
+      <Unit35>
+        <Filename Value="../common/osprocessux.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OSProcessux"/>
+      </Unit35>
+      <Unit36>
+        <Filename Value="osdefinedfunctions.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit36>
+      <Unit37>
+        <Filename Value="../common/lispecfolder.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit37>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -295,7 +318,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\synapse40lib;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\indy\Lib\System;..\external_libraries\indy\Lib\Core;..\external_libraries\indy\Lib\Protocols;..\external_libraries\indy\Lib"/>
+      <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\synapse"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
@@ -327,7 +350,8 @@
       <CompilerMessages>
         <IgnoredMessages idx5058="True" idx5027="True"/>
       </CompilerMessages>
-      <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT"/>
+      <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT
+-dSYNAPSE"/>
     </Other>
   </CompilerOptions>
   <Debugging>

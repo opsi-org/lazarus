@@ -40,3 +40,4 @@ opsi-script/opsi-script
 opsi-script.spec
 
 opsi-script/opsi-script-nogui
+/helper/opsiclientkiosk/default/product_icons/Collection64x64

@@ -10,12 +10,12 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, helperwin, VersionInfo, DSiWin32, wispecfolder;
+  Forms, helperwin, wispecfolder;
 
 //{$IFDEF WINDOWS}{$R opsiwinsttesthelperasadmin.rc}{$ENDIF}
 
 {$R *.res}
-{$R manifest.rc}
+//{$R manifest.rc}
 
 begin
   Application.Initialize;

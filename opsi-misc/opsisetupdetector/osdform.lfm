@@ -1,11 +1,11 @@
 object resultForm1: TresultForm1
-  Left = 320
+  Left = 550
   Height = 566
-  Top = 154
-  Width = 1059
+  Top = 293
+  Width = 1069
   Caption = 'opsi Setup Detector'
   ClientHeight = 546
-  ClientWidth = 1059
+  ClientWidth = 1069
   Menu = MainMenu1
   OnActivate = FormActivate
   OnClose = FormClose
@@ -15,17 +15,17 @@ object resultForm1: TresultForm1
   OnMouseLeave = FormMouseLeave
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.0.0.4'
+  LCLVersion = '2.0.4.0'
   object Panel1: TPanel
     Left = 0
     Height = 40
     Top = 0
-    Width = 1059
+    Width = 1069
     Align = alTop
     Alignment = taLeftJustify
     BorderStyle = bsSingle
     ClientHeight = 36
-    ClientWidth = 1055
+    ClientWidth = 1065
     ParentFont = False
     TabOrder = 0
     OnClick = Panel1Click
@@ -33,7 +33,7 @@ object resultForm1: TresultForm1
       Left = 1
       Height = 26
       Top = 1
-      Width = 1053
+      Width = 1063
       ParentFont = False
       TabOrder = 0
       object SBtnExit: TSpeedButton
@@ -87,18 +87,18 @@ object resultForm1: TresultForm1
     Left = 0
     Height = 483
     Top = 40
-    Width = 1059
+    Width = 1069
     Align = alClient
     Caption = 'Panel3'
     ClientHeight = 483
-    ClientWidth = 1059
+    ClientWidth = 1069
     ParentFont = False
     TabOrder = 1
     object PageControl1: TPageControl
       Left = 6
       Height = 481
       Top = 1
-      Width = 1052
+      Width = 1062
       ActivePage = TabSheetStart
       Align = alClient
       Images = ImageList1
@@ -109,13 +109,13 @@ object resultForm1: TresultForm1
       object TabSheetStart: TTabSheet
         Caption = 'Start'
         ClientHeight = 453
-        ClientWidth = 1044
+        ClientWidth = 1054
         ParentFont = False
         object FlowPanel3: TFlowPanel
           Left = 0
           Height = 453
           Top = 0
-          Width = 1044
+          Width = 1054
           Align = alClient
           ControlList = <          
             item
@@ -1942,8 +1942,8 @@ object resultForm1: TresultForm1
       end
       object TabSheetAnalyze: TTabSheet
         Caption = 'Analyze'
-        ClientHeight = 716
-        ClientWidth = 1570
+        ClientHeight = 453
+        ClientWidth = 1071
         ParentFont = False
         object MemoAnalyze: TMemo
           Left = 24
@@ -1958,15 +1958,15 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 74
           Top = 379
-          Width = 1044
+          Width = 1071
           Align = alBottom
           BorderStyle = bsSingle
           ClientHeight = 70
-          ClientWidth = 1040
+          ClientWidth = 1067
           ParentFont = False
           TabOrder = 1
           object BtAnalyzeNextStep: TBitBtn
-            Left = 882
+            Left = 909
             Height = 48
             Hint = 'Go to the next Step'
             Top = 11
@@ -2119,10 +2119,10 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 42
           Top = 0
-          Width = 1044
+          Width = 1071
           Align = alTop
           ClientHeight = 42
-          ClientWidth = 1044
+          ClientWidth = 1071
           ParentFont = False
           TabOrder = 2
           object LabelLogInfo: TLabel
@@ -2143,17 +2143,17 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 50
           Top = 42
-          Width = 1044
+          Width = 1071
           Align = alTop
           ClientHeight = 50
-          ClientWidth = 1044
+          ClientWidth = 1071
           ParentFont = False
           TabOrder = 3
           object ProgressBarAnalyze: TProgressBar
             Left = 1
             Height = 23
             Top = 1
-            Width = 1042
+            Width = 1069
             Align = alTop
             ParentColor = False
             ParentFont = False
@@ -2165,24 +2165,24 @@ object resultForm1: TresultForm1
       end
       object TabSheetSetup1: TTabSheet
         Caption = '1. Setup'
-        ClientHeight = 716
-        ClientWidth = 1570
+        ClientHeight = 453
+        ClientWidth = 1054
         ParentFont = False
         object PanelDefault: TPanel
           Left = 0
           Height = 453
           Top = 0
-          Width = 1044
+          Width = 1054
           Align = alClient
           ClientHeight = 453
-          ClientWidth = 1044
+          ClientWidth = 1054
           ParentFont = False
           TabOrder = 0
           object FlowPanel1: TFlowPanel
             Left = 1
             Height = 49
             Top = 1
-            Width = 1042
+            Width = 1052
             Align = alTop
             AutoWrap = False
             BorderWidth = 3
@@ -2292,7 +2292,7 @@ object resultForm1: TresultForm1
             Left = 1
             Height = 41
             Top = 50
-            Width = 1042
+            Width = 1052
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -2340,6 +2340,7 @@ object resultForm1: TresultForm1
               BorderSpacing.Around = 2
               BorderSpacing.InnerBorder = 2
               Constraints.MinWidth = 800
+              OnChange = genRttiEditChange
               ParentFont = False
               TabOrder = 0
             end
@@ -2397,7 +2398,7 @@ object resultForm1: TresultForm1
             Left = 1
             Height = 41
             Top = 91
-            Width = 1042
+            Width = 1052
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -2512,6 +2513,7 @@ object resultForm1: TresultForm1
               BorderSpacing.Around = 2
               BorderSpacing.InnerBorder = 2
               Constraints.MinWidth = 800
+              OnChange = genRttiEditChange
               ParentFont = False
               TabOrder = 2
             end
@@ -2520,7 +2522,7 @@ object resultForm1: TresultForm1
             Left = 1
             Height = 41
             Top = 173
-            Width = 1042
+            Width = 1052
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -2563,6 +2565,7 @@ object resultForm1: TresultForm1
               BorderSpacing.Around = 2
               BorderSpacing.InnerBorder = 2
               Constraints.MinWidth = 200
+              OnChange = genRttiEditChange
               ParentFont = False
               TabOrder = 0
             end
@@ -2571,7 +2574,7 @@ object resultForm1: TresultForm1
             Left = 1
             Height = 41
             Top = 132
-            Width = 1042
+            Width = 1052
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -2615,6 +2618,7 @@ object resultForm1: TresultForm1
               BorderSpacing.Around = 2
               BorderSpacing.InnerBorder = 2
               Constraints.MinWidth = 400
+              OnChange = genRttiEditChange
               ParentFont = False
               TabOrder = 0
             end
@@ -2623,7 +2627,7 @@ object resultForm1: TresultForm1
             Left = 1
             Height = 41
             Top = 214
-            Width = 1042
+            Width = 1052
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -2712,6 +2716,7 @@ object resultForm1: TresultForm1
               BorderSpacing.Around = 2
               BorderSpacing.InnerBorder = 2
               Constraints.MinWidth = 40
+              OnChange = genRttiEditChange
               ParentFont = False
               TabOrder = 0
             end
@@ -2725,6 +2730,7 @@ object resultForm1: TresultForm1
               BorderSpacing.Around = 2
               BorderSpacing.InnerBorder = 2
               Constraints.MinWidth = 40
+              OnChange = genRttiEditChange
               ParentFont = False
               TabOrder = 1
             end
@@ -2738,6 +2744,7 @@ object resultForm1: TresultForm1
               BorderSpacing.Around = 2
               BorderSpacing.InnerBorder = 2
               Constraints.MinWidth = 400
+              OnChange = genRttiEditChange
               ParentFont = False
               TabOrder = 2
             end
@@ -2746,7 +2753,7 @@ object resultForm1: TresultForm1
             Left = 1
             Height = 41
             Top = 255
-            Width = 1042
+            Width = 1052
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -2789,6 +2796,7 @@ object resultForm1: TresultForm1
               BorderSpacing.Around = 2
               BorderSpacing.InnerBorder = 2
               Constraints.MinWidth = 667
+              OnChange = genRttiEditChange
               ParentFont = False
               TabOrder = 0
             end
@@ -2797,7 +2805,7 @@ object resultForm1: TresultForm1
             Left = 1
             Height = 70
             Top = 382
-            Width = 1042
+            Width = 1052
             Align = alBottom
             ControlList = <            
               item
@@ -2810,7 +2818,7 @@ object resultForm1: TresultForm1
             ParentFont = False
             TabOrder = 7
             object BtSetup1NextStep: TBitBtn
-              Left = 884
+              Left = 894
               Height = 52
               Hint = 'Go to the next Step'
               Top = 11
@@ -2964,7 +2972,7 @@ object resultForm1: TresultForm1
             Left = 1
             Height = 41
             Top = 296
-            Width = 1042
+            Width = 1052
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -3007,6 +3015,7 @@ object resultForm1: TresultForm1
               BorderSpacing.Around = 2
               BorderSpacing.InnerBorder = 2
               Constraints.MinWidth = 667
+              OnChange = genRttiEditChange
               ParentFont = False
               TabOrder = 0
             end
@@ -3015,7 +3024,7 @@ object resultForm1: TresultForm1
             Left = 1
             Height = 41
             Top = 337
-            Width = 1042
+            Width = 1052
             Align = alTop
             Alignment = taLeftJustify
             AutoWrap = False
@@ -3058,6 +3067,7 @@ object resultForm1: TresultForm1
               BorderSpacing.Around = 2
               BorderSpacing.InnerBorder = 2
               Constraints.MinWidth = 267
+              OnChange = genRttiEditChange
               ParentFont = False
               TabOrder = 0
             end
@@ -3066,14 +3076,14 @@ object resultForm1: TresultForm1
       end
       object TabSheetSetup2: TTabSheet
         Caption = '2. Setup'
-        ClientHeight = 716
-        ClientWidth = 1570
+        ClientHeight = 453
+        ClientWidth = 1054
         ParentFont = False
         object FlowPanel2: TFlowPanel
           Left = 0
           Height = 49
           Top = 0
-          Width = 1044
+          Width = 1054
           Align = alTop
           AutoWrap = False
           BorderWidth = 3
@@ -3165,7 +3175,7 @@ object resultForm1: TresultForm1
             Left = 463
             Height = 21
             Top = 8
-            Width = 60
+            Width = 51
             Anchors = []
             BorderSpacing.Left = 5
             BorderSpacing.Around = 4
@@ -3183,7 +3193,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 90
-          Width = 1044
+          Width = 1054
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -3203,11 +3213,6 @@ object resultForm1: TresultForm1
               Control = BitBtnOpenMst2
               WrapAfter = waAuto
               Index = 2
-            end          
-            item
-              Control = CheckBoxUseMst1
-              WrapAfter = waAuto
-              Index = 3
             end>
           Enabled = False
           FlowLayout = tlTop
@@ -3226,18 +3231,6 @@ object resultForm1: TresultForm1
             Font.Height = -16
             ParentColor = False
             ParentFont = False
-          end
-          object CheckBoxUseMst1: TCheckBox
-            Left = 1062
-            Height = 19
-            Top = 7
-            Width = 86
-            Anchors = []
-            BorderSpacing.Left = 30
-            BorderSpacing.Around = 3
-            Caption = 'use MST File'
-            ParentFont = False
-            TabOrder = 0
           end
           object BitBtnOpenMst2: TBitBtn
             Left = 902
@@ -3286,7 +3279,7 @@ object resultForm1: TresultForm1
               8FFF8B8F8DFF898E8CFF888C8AFF878B89FF858988FF848887FF
             }
             ParentFont = False
-            TabOrder = 1
+            TabOrder = 0
           end
           object TIEditMstFile2: TTIEdit
             Left = 97
@@ -3298,15 +3291,16 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 800
+            OnChange = genRttiEditChange
             ParentFont = False
-            TabOrder = 2
+            TabOrder = 1
           end
         end
         object FlowPanelMsiId1: TFlowPanel
           Left = 0
           Height = 41
           Top = 131
-          Width = 1044
+          Width = 1054
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -3350,6 +3344,7 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 400
+            OnChange = genRttiEditChange
             ParentFont = False
             TabOrder = 0
           end
@@ -3358,7 +3353,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 172
-          Width = 1044
+          Width = 1054
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -3401,6 +3396,7 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 200
+            OnChange = genRttiEditChange
             ParentFont = False
             TabOrder = 0
           end
@@ -3409,7 +3405,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 213
-          Width = 1044
+          Width = 1054
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -3498,6 +3494,7 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 40
+            OnChange = genRttiEditChange
             ParentFont = False
             TabOrder = 0
           end
@@ -3511,6 +3508,7 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 40
+            OnChange = genRttiEditChange
             ParentFont = False
             TabOrder = 1
           end
@@ -3524,6 +3522,7 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 400
+            OnChange = genRttiEditChange
             ParentFont = False
             TabOrder = 2
           end
@@ -3532,7 +3531,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 49
-          Width = 1044
+          Width = 1054
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -3580,6 +3579,7 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 800
+            OnChange = genRttiEditChange
             ParentFont = False
             TabOrder = 0
           end
@@ -3637,7 +3637,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 254
-          Width = 1044
+          Width = 1054
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -3680,6 +3680,7 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 667
+            OnChange = genRttiEditChange
             ParentFont = False
             TabOrder = 0
           end
@@ -3688,7 +3689,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 295
-          Width = 1044
+          Width = 1054
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -3731,6 +3732,7 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 667
+            OnChange = genRttiEditChange
             ParentFont = False
             TabOrder = 0
           end
@@ -3739,7 +3741,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 336
-          Width = 1044
+          Width = 1054
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -3782,6 +3784,7 @@ object resultForm1: TresultForm1
             BorderSpacing.Around = 2
             BorderSpacing.InnerBorder = 2
             Constraints.MinWidth = 267
+            OnChange = genRttiEditChange
             ParentFont = False
             TabOrder = 0
           end
@@ -3790,7 +3793,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 79
           Top = 377
-          Width = 1044
+          Width = 1054
           Align = alTop
           ControlList = <          
             item
@@ -3803,7 +3806,7 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 9
           object BtSetup2NextStep: TBitBtn
-            Left = 886
+            Left = 896
             Height = 52
             Hint = 'Go to the next Step'
             Top = 11
@@ -3956,13 +3959,13 @@ object resultForm1: TresultForm1
       object TabSheetProduct: TTabSheet
         Caption = 'Product Configuration 1'
         ClientHeight = 453
-        ClientWidth = 1044
+        ClientWidth = 1054
         ParentFont = False
         object FlowPanel6: TFlowPanel
           Left = 0
           Height = 41
           Top = 41
-          Width = 1044
+          Width = 1054
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -4067,7 +4070,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 41
           Top = 0
-          Width = 1044
+          Width = 1054
           Align = alTop
           Alignment = taLeftJustify
           AutoWrap = False
@@ -4156,7 +4159,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 93
           Top = 328
-          Width = 1044
+          Width = 1054
           Align = alTop
           ControlList = <          
             item
@@ -4170,7 +4173,7 @@ object resultForm1: TresultForm1
           TabOrder = 2
           OnClick = FlowPanel18Click
           object BtProduct1NextStep: TBitBtn
-            Left = 886
+            Left = 896
             Height = 52
             Hint = 'Go to the next Step'
             Top = 11
@@ -4324,7 +4327,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 10
           Top = 200
-          Width = 1044
+          Width = 1054
           Align = alTop
           Constraints.MinHeight = 10
           ResizeAnchor = akTop
@@ -4333,10 +4336,10 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 118
           Top = 82
-          Width = 1044
+          Width = 1054
           Align = alTop
           ClientHeight = 118
-          ClientWidth = 1044
+          ClientWidth = 1054
           ParentFont = False
           TabOrder = 4
           object Panel7: TPanel
@@ -4369,7 +4372,7 @@ object resultForm1: TresultForm1
             Left = 142
             Height = 108
             Top = 5
-            Width = 897
+            Width = 907
             Align = alClient
             Anchors = [akLeft]
             BorderSpacing.Left = 10
@@ -4383,10 +4386,10 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 118
           Top = 210
-          Width = 1044
+          Width = 1054
           Align = alTop
           ClientHeight = 118
-          ClientWidth = 1044
+          ClientWidth = 1054
           ParentFont = False
           TabOrder = 5
           object Panel9: TPanel
@@ -4419,7 +4422,7 @@ object resultForm1: TresultForm1
             Left = 142
             Height = 108
             Top = 5
-            Width = 897
+            Width = 907
             Align = alClient
             Anchors = [akLeft]
             BorderSpacing.Left = 10
@@ -4433,13 +4436,13 @@ object resultForm1: TresultForm1
       object TabSheetProduct2: TTabSheet
         Caption = 'Product Configuration 2'
         ClientHeight = 453
-        ClientWidth = 1044
+        ClientWidth = 1054
         ParentFont = False
         object FlowPanel21: TFlowPanel
           Left = 0
           Height = 58
           Top = 0
-          Width = 1044
+          Width = 1054
           Align = alTop
           ControlList = <          
             item
@@ -4476,7 +4479,7 @@ object resultForm1: TresultForm1
           end
           object TITrackBarPrio: TTITrackBar
             Left = 135
-            Height = 52
+            Height = 34
             Top = 6
             Width = 812
             Max = 100
@@ -4506,7 +4509,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 93
           Top = 352
-          Width = 1044
+          Width = 1054
           Align = alTop
           ControlList = <          
             item
@@ -4520,7 +4523,7 @@ object resultForm1: TresultForm1
           TabOrder = 1
           OnClick = FlowPanel18Click
           object BtProduct2NextStep: TBitBtn
-            Left = 886
+            Left = 896
             Height = 52
             Hint = 'Go to the next Step'
             Top = 11
@@ -4674,7 +4677,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 294
           Top = 58
-          Width = 1044
+          Width = 1054
           Align = alTop
           Position = 140
           SplitterType = pstVertical
@@ -4683,18 +4686,18 @@ object resultForm1: TresultForm1
             Left = 0
             Height = 140
             Top = 0
-            Width = 1044
-            ClientWidth = 1044
+            Width = 1054
+            ClientWidth = 1054
             ClientHeight = 140
             object Panel4: TPanel
               Left = 0
               Height = 140
               Top = 0
-              Width = 1044
+              Width = 1054
               Align = alClient
               Caption = 'Panel4'
               ClientHeight = 140
-              ClientWidth = 1044
+              ClientWidth = 1054
               ParentFont = False
               TabOrder = 0
               object StringGridDep: TStringGrid
@@ -4951,25 +4954,25 @@ object resultForm1: TresultForm1
             Left = 0
             Height = 149
             Top = 145
-            Width = 1044
-            ClientWidth = 1044
+            Width = 1054
+            ClientWidth = 1054
             ClientHeight = 149
             object Panel10: TPanel
               Left = 0
               Height = 149
               Top = 0
-              Width = 1044
+              Width = 1054
               Align = alClient
               Caption = 'Panel10'
               ClientHeight = 149
-              ClientWidth = 1044
+              ClientWidth = 1054
               ParentFont = False
               TabOrder = 0
               object StringGridProp: TStringGrid
                 Left = 6
                 Height = 106
                 Top = 37
-                Width = 1032
+                Width = 1042
                 Align = alClient
                 BorderSpacing.Around = 5
                 ColCount = 8
@@ -5040,7 +5043,7 @@ object resultForm1: TresultForm1
                 Left = 1
                 Height = 31
                 Top = 1
-                Width = 1042
+                Width = 1052
                 Align = alTop
                 ControlList = <                
                   item
@@ -5235,14 +5238,14 @@ object resultForm1: TresultForm1
       object TabSheetCreate: TTabSheet
         Caption = 'Create'
         ClientHeight = 453
-        ClientWidth = 1044
+        ClientWidth = 1054
         OnShow = TabSheetCreateShow
         ParentFont = False
         object FlowPanel14: TFlowPanel
           Left = 0
           Height = 66
           Top = 0
-          Width = 1044
+          Width = 1054
           Align = alTop
           Caption = 'FlowPanel14'
           ControlList = <          
@@ -5348,7 +5351,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 50
           Top = 66
-          Width = 1044
+          Width = 1054
           Align = alTop
           ControlList = <          
             item
@@ -5453,9 +5456,9 @@ object resultForm1: TresultForm1
         end
         object FlowPanel16: TFlowPanel
           Left = 0
-          Height = 132
+          Height = 140
           Top = 116
-          Width = 1044
+          Width = 1054
           Align = alTop
           ControlList = <          
             item
@@ -5476,19 +5479,20 @@ object resultForm1: TresultForm1
             Left = 1
             Height = 127
             Top = 1
-            Width = 535
+            Width = 645
             Anchors = []
             ClientHeight = 107
-            ClientWidth = 531
+            ClientWidth = 641
             ParentFont = False
             TabOrder = 0
             object RadioGroup1: TRadioGroup
               Left = 0
-              Height = 107
+              Height = 100
               Top = 0
-              Width = 408
+              Width = 427
               Align = alLeft
               AutoFill = True
+              BorderSpacing.Bottom = 7
               BorderSpacing.InnerBorder = 10
               Caption = 'Create Mode'
               ChildSizing.LeftRightSpacing = 6
@@ -5498,15 +5502,15 @@ object resultForm1: TresultForm1
               ChildSizing.ShrinkVertical = crsScaleChilds
               ChildSizing.Layout = cclLeftToRightThenTopToBottom
               ChildSizing.ControlsPerLine = 1
-              ClientHeight = 87
-              ClientWidth = 404
+              ClientHeight = 80
+              ClientWidth = 423
               ParentFont = False
               TabOrder = 0
               object RadioButtonCreateOnly: TRadioButton
                 Left = 6
                 Height = 19
                 Top = 0
-                Width = 392
+                Width = 411
                 Align = alTop
                 Anchors = [akLeft]
                 BorderSpacing.Left = 5
@@ -5521,7 +5525,7 @@ object resultForm1: TresultForm1
                 Left = 6
                 Height = 19
                 Top = 38
-                Width = 392
+                Width = 411
                 Align = alTop
                 Anchors = [akTop]
                 Caption = 'create opsi product files and start interactive PackageBuilder'
@@ -5533,7 +5537,7 @@ object resultForm1: TresultForm1
                 Left = 6
                 Height = 19
                 Top = 19
-                Width = 392
+                Width = 411
                 Align = alTop
                 Anchors = []
                 Caption = 'create opsi product files and  build package'
@@ -5543,14 +5547,15 @@ object resultForm1: TresultForm1
               end
             end
             object CheckGroupBuildMode: TCheckGroup
-              Left = 423
+              Left = 442
               Height = 97
               Top = 5
-              Width = 105
+              Width = 158
               Align = alLeft
               AutoFill = True
               BorderSpacing.Left = 10
               BorderSpacing.Around = 5
+              BorderSpacing.InnerBorder = 7
               Caption = 'Build Mode'
               ChildSizing.LeftRightSpacing = 6
               ChildSizing.TopBottomSpacing = 6
@@ -5561,60 +5566,48 @@ object resultForm1: TresultForm1
               ChildSizing.Layout = cclLeftToRightThenTopToBottom
               ChildSizing.ControlsPerLine = 1
               ClientHeight = 77
-              ClientWidth = 101
+              ClientWidth = 154
               ParentFont = False
               TabOrder = 1
-              object CheckBoxBuild: TCheckBox
-                Left = 6
-                Height = 19
-                Top = 25
-                Width = 89
+              object radioBuildModebuildOnly: TRadioButton
+                Left = 7
+                Height = 25
+                Top = 6
+                Width = 141
                 Align = alTop
                 Anchors = [akLeft]
+                BorderSpacing.Left = 7
+                BorderSpacing.InnerBorder = 3
                 Caption = 'build'
                 Checked = True
-                Enabled = False
                 ParentFont = False
-                State = cbChecked
                 TabOrder = 0
+                TabStop = True
               end
-              object CheckBoxQuiet: TCheckBox
-                Left = 6
-                Height = 19
-                Top = 6
-                Width = 89
+              object radioBuildModebuildInstall: TRadioButton
+                Left = 7
+                Height = 25
+                Top = 31
+                Width = 141
                 Align = alTop
                 Anchors = [akLeft]
-                Caption = 'quiet'
-                Enabled = False
+                BorderSpacing.Left = 7
+                BorderSpacing.InnerBorder = 3
+                Caption = 'build and install'
                 ParentFont = False
                 TabOrder = 1
-              end
-              object CheckBoxInstall: TCheckBox
-                Left = 6
-                Height = 19
-                Top = 44
-                Width = 89
-                Align = alTop
-                Anchors = []
-                Caption = 'install'
-                Checked = True
-                Enabled = False
-                ParentFont = False
-                State = cbChecked
-                TabOrder = 2
               end
             end
           end
           object PanelProcess: TPanel
-            Left = 536
+            Left = 646
             Height = 64
             Top = 1
-            Width = 472
+            Width = 358
             Anchors = []
             BevelOuter = bvNone
             ClientHeight = 64
-            ClientWidth = 472
+            ClientWidth = 358
             Color = clGradientActiveCaption
             ParentColor = False
             ParentFont = False
@@ -5645,10 +5638,10 @@ object resultForm1: TresultForm1
               ParentFont = False
             end
             object ProgressBar1: TProgressBar
-              Left = 190
+              Left = 169
               Height = 20
               Top = 11
-              Width = 252
+              Width = 156
               ParentFont = False
               Style = pbstMarquee
               TabOrder = 0
@@ -5658,8 +5651,8 @@ object resultForm1: TresultForm1
         object FlowPanel19: TFlowPanel
           Left = 0
           Height = 104
-          Top = 248
-          Width = 1044
+          Top = 256
+          Width = 1054
           Align = alTop
           ControlList = <          
             item
@@ -5672,7 +5665,7 @@ object resultForm1: TresultForm1
           ParentFont = False
           TabOrder = 3
           object BtCreateProduct: TBitBtn
-            Left = 772
+            Left = 782
             Height = 84
             Hint = 'Create a opsi Product'
             Top = 11
@@ -6217,7 +6210,7 @@ object resultForm1: TresultForm1
     Left = 0
     Height = 23
     Top = 523
-    Width = 1059
+    Width = 1069
     Panels = <>
     ParentFont = False
   end

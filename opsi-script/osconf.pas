@@ -40,6 +40,7 @@ uses
 {$ENDIF WINDOWS}
   inifiles,
   lazfileutils,
+  osparserhelper,
   osencoding;
 
 function readConfig: boolean;
@@ -125,8 +126,9 @@ var
   //FileVerInfo: TFileVersionInfo;
   {$ENDIF LINUX}
   FileVerInfo: TFileVersionInfo;
-  WinstVersion: string;
-  WinstVersionName: string;
+  OpsiscriptVersion: string;
+  OpsiscriptVersionName: string;
+  OsFileName: string;
   readconfig_done: boolean = False;
 
   //deprecated stuff start:
@@ -156,6 +158,7 @@ var
   ScriptErrorMessages: boolean = False;
   AutoActivityDisplay: boolean = False;
   w10BitlockerSuspendOnReboot: boolean = False;
+  configReverseProductOrderByUninstall : boolean = False;
 
 
 implementation
@@ -187,6 +190,8 @@ begin
       BoolToStr(ScriptErrorMessages, True));
     myconf.WriteString('global', 'AutoActivityDisplay',
       BoolToStr(AutoActivityDisplay, False));
+        myconf.WriteString('global', 'ReverseProductOrderByUninstall',
+      BoolToStr(configReverseProductOrderByUninstall, False));
     myconf.Free;
   except
     Result := False;
@@ -223,6 +228,8 @@ begin
       'ScriptErrorMessages', boolToStr(ScriptErrorMessages, True)));
     AutoActivityDisplay := strToBool(myconf.ReadString('global',
       'AutoActivityDisplay', boolToStr(AutoActivityDisplay, False)));
+    configReverseProductOrderByUninstall := strToBool(myconf.ReadString('global',
+      'ReverseProductOrderByUninstall', boolToStr(configReverseProductOrderByUninstall, False)));
     myconf.Free;
 
 
@@ -250,12 +257,13 @@ begin
   {$IFDEF WINDOWS}
     depotdrive := 'p:';
 {$ENDIF WINDOWS}
-  {$IFDEF UNIX}
+{$IFDEF LINUX}
     depotdrive_old := '/mnt';
-{$ENDIF LINUX}
-  {$IFDEF UNIX}
     depotdrive := '/media/opsi_depot';
 {$ENDIF LINUX}
+{$IFDEF DARWIN}
+    depotdrive := '/Network/opsi_depot';
+{$ENDIF DARWIN}
 
 {$IFDEF WINDOWS}
     try
@@ -455,6 +463,21 @@ begin
                           end;
                       end;
 
+                      if LowerCase(configid) =
+                        LowerCase('opsi-script.global.ReverseProductOrderByUninstall') then
+                      begin
+                        if jsonAsObjectGetValueByKey(configlist.Strings[i],
+                          'values', values) then
+                          if jsonAsArrayGetElementByIndex(values, 0, tmpstr) then
+                          begin
+                            osmain.startupmessages.Add('got ReverseProductOrderByUninstall: ' + tmpstr);
+                            if not TryStrToBool(tmpstr, configReverseProductOrderByUninstall) then
+                              osmain.startupmessages.Add(
+                                'Error: Not a Boolean:  ReverseProductOrderByUninstall: ' + tmpstr);
+                            Result := 'readConfigFromService: ok';
+                          end;
+                      end;
+
                     end;
                   end;
                 end;
@@ -485,16 +508,17 @@ initEncoding;
   opsiscriptconf := ExtractFileDir(reencode(paramstr(0),'system')) + PathDelim+ opsiscriptconfinit;
   vi := TVersionInfo.Create;
   vi.Load(reencode(Application.ExeName,'system'));
-  WinstVersion := vi.getString('FileVersion');
+  OpsiscriptVersion := vi.getString('FileVersion');
   vi.Free;
 {$ELSE}
 *)
   //from http://wiki.freepascal.org/Show_Application_Title,_Version,_and_Company
   FileVerInfo := TFileVersionInfo.Create(nil);
   try
-    FileVerInfo.FileName := reencode(ParamStr(0), 'system');
+    OsFileName := reencode(ParamStr(0), 'system');
+    FileVerInfo.FileName := OsFileName;
     FileVerInfo.ReadFileInfo;
-    WinstVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
+    OpsiscriptVersion := FileVerInfo.VersionStrings.Values['FileVersion'];
   (*
   writeln('Company: ',FileVerInfo.VersionStrings.Values['CompanyName']);
   writeln('File description: ',FileVerInfo.VersionStrings.Values['FileDescription']);
@@ -508,9 +532,9 @@ initEncoding;
   finally
     FileVerInfo.Free;
   end;
-  //WinstVersion := '4.11.6.1';
+  //OpsiscriptVersion := '4.11.6.1';
   //{$ENDIF WINDOWS}
 
-  WinstVersionName := 'Version ' + winstVersion;
+  OpsiscriptVersionName := 'Version ' + OpsiscriptVersion;
 
 end.

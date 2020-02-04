@@ -1,4 +1,39 @@
 [changelog]
+opsiscriptstarter 4.1.0.7
+
+  * catch problems at share mount
+
+-- d.oertel <d.oertel@uib.de> Tue, 07 Jan 2020 15:00
+
+opsiscriptstarter 4.1.0.6
+
+  * update oswebservice with gzip support
+
+-- d.oertel <d.oertel@uib.de> Wed, 23 Oct 2019 15:00
+
+opsiscriptstarter 4.1.0.5
+
+  * changes for linux
+  * now with synapse
+
+-- d.oertel <d.oertel@uib.de> Tue, 10 Sep 2019 15:00
+
+opsiscriptstarter 4.1.0.4
+
+  * port to macos
+  * new unit osprocessux
+  * move RunCommandAndCaptureOut and getCommandResult to new unit osprocessux
+  * move mountSmbShare to osfunclin /osfuncmac
+  * move umount to osfunclin /osfuncmac
+
+-- d.oertel <d.oertel@uib.de> Thu, 28 Feb 2019 15:00
+
+opsiscriptstarter 4.1.0.4
+
+  * switch from indy to synapse
+
+-- d.oertel <d.oertel@uib.de> Tue, 23 Jul 2019 15:00
+
 opsiscriptstarter 4.1.0.3
 
   * new function ismounted(mountpoint)

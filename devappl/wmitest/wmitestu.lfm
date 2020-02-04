@@ -149,29 +149,30 @@ object MainForm: TMainForm
   LCLVersion = '2.0.2.0'
   object GroupBoxConnection: TGroupBox
     Left = 12
-    Height = 176
+    Height = 188
     Top = 20
     Width = 628
     Caption = 'Connection to WMI Service'
-    ClientHeight = 156
+    ClientHeight = 168
     ClientWidth = 624
     TabOrder = 0
     object LabelEditComputer: TLabeledEdit
       Left = 8
       Height = 23
-      Top = 24
+      Top = 69
       Width = 608
       EditLabel.Height = 15
       EditLabel.Width = 608
       EditLabel.Caption = 'Computer'
       EditLabel.ParentColor = False
+      Enabled = False
       TabOrder = 0
       Text = 'localhost'
     end
     object LabelEditNameSpace: TLabeledEdit
       Left = 8
       Height = 23
-      Top = 72
+      Top = 21
       Width = 608
       EditLabel.Height = 15
       EditLabel.Width = 608
@@ -183,23 +184,25 @@ object MainForm: TMainForm
     object LabelEditUser: TLabeledEdit
       Left = 8
       Height = 23
-      Top = 118
+      Top = 112
       Width = 283
       EditLabel.Height = 15
       EditLabel.Width = 283
       EditLabel.Caption = 'User'
       EditLabel.ParentColor = False
+      Enabled = False
       TabOrder = 2
     end
     object LabelEditPassword: TLabeledEdit
       Left = 320
       Height = 23
-      Top = 118
+      Top = 112
       Width = 296
       EditLabel.Height = 15
       EditLabel.Width = 296
       EditLabel.Caption = 'Password'
       EditLabel.ParentColor = False
+      Enabled = False
       TabOrder = 3
     end
   end
@@ -237,29 +240,29 @@ object MainForm: TMainForm
       TabOrder = 0
     end
     object ComboBoxWMIClass: TComboBox
-      Left = 319
+      Left = 8
       Height = 23
-      Top = 26
+      Top = 24
       Width = 290
       ItemHeight = 15
       OnKeyUp = ComboBoxWMIClassKeyUp
       OnSelect = ComboBoxWMIClassSelect
       TabOrder = 1
-      Text = 'or select WMI Class'
+      Text = 'Select WMI Class'
     end
     object ComboBoxAlias: TComboBox
-      Left = 8
+      Left = 320
       Height = 23
-      Top = 26
+      Top = 24
       Width = 285
       ItemHeight = 15
       OnKeyUp = ComboBoxAliasKeyUp
       OnSelect = ComboBoxAliasSelect
       TabOrder = 2
-      Text = 'Select Alias'
+      Text = 'or select Alias'
     end
     object LabelAlias: TLabel
-      Left = 8
+      Left = 320
       Height = 15
       Top = 8
       Width = 25
@@ -267,7 +270,7 @@ object MainForm: TMainForm
       ParentColor = False
     end
     object LabelClass: TLabel
-      Left = 319
+      Left = 7
       Height = 15
       Top = 8
       Width = 27
@@ -344,10 +347,10 @@ object MainForm: TMainForm
     TabOrder = 3
   end
   object Image1: TImage
-    Left = 288
-    Height = 64
-    Top = 179
-    Width = 64
+    Left = 296
+    Height = 56
+    Top = 184
+    Width = 55
     Picture.Data = {
       1754506F727461626C654E6574776F726B477261706869635F1A000089504E47
       0D0A1A0A0000000D49484452000000FA000000FA080600000088EC5A3D000000
@@ -564,5 +567,14 @@ object MainForm: TMainForm
     }
     Proportional = True
     Transparent = True
+  end
+  object ToggleBoxExpertMode: TToggleBox
+    Left = 565
+    Height = 24
+    Top = 1
+    Width = 76
+    Caption = 'Expert Mode'
+    OnChange = ToggleBoxExpertModeChange
+    TabOrder = 4
   end
 end

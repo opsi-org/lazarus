@@ -34,9 +34,8 @@ uses
   custapp,
   //unicodestringmanager,
   {$IFDEF UNIX}
-  osfunclin,
   {$ENDIF }
-  osconf;
+  osconf, oslindesktopfiles, osfunclin;
 
 
 type

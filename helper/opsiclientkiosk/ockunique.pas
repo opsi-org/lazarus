@@ -16,8 +16,9 @@ uses
   {$ENDIF WIN32}
   oslog;
 
-function ProcessIsRunning(searchproc: string): boolean;
+//function ProcessIsRunning(searchproc: string): boolean;
 function numberOfProcessInstances(searchproc: string): integer;
+function CheckUnique(out InfoMessage:string):boolean;
 
 implementation
 
@@ -198,6 +199,29 @@ begin
     logdatei.log('Error: Exception in processIsRunning:  ' + searchproc, LLError);
     Result := 0;
   end;
+end;
+
+function CheckUnique(out InfoMessage: string): boolean;
+begin
+  { is opsiclientd running? }
+  if numberOfProcessInstances('opsiclientd') < 1 then
+  begin
+    LogDatei.log('opsiclientd is not running - so we abort', LLCritical);
+    LogDatei.Close;
+    LogDatei.Free;
+    InfoMessage := 'opsiclientd is not running - so we abort';
+    Result := False;
+  end
+  else
+  { is opsiclientkiosk already running? }
+    if numberOfProcessInstances(ExtractFileName(ParamStr(0))) > 1 then
+    begin
+      LogDatei.log('An other instance of this program is running - so we abort', LLCritical);
+      LogDatei.Close;
+      LogDatei.Free;
+      InfoMessage := 'An other instance of this program is running - so we abort';
+      Result := False;
+    end;
 end;
 
 end.

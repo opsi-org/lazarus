@@ -1,0 +1,1 @@
+﻿Start-Process PowerShell -Verb RunAs -ArgumentList "Get-Content 'C:\Program Files (x86)\opsi.org\opsi-client-agent\opsiclientd\opsiclientd.conf'"

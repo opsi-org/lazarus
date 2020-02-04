@@ -4,7 +4,7 @@ object Freport: TFreport
   Top = 580
   Width = 320
   Caption = 'uibtime - report'
-  LCLVersion = '2.0.0.4'
+  LCLVersion = '2.0.4.0'
   object frReport1: TfrReport
     Dataset = frDBDataSet1
     InitialZoom = pzDefault

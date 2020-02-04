@@ -28,6 +28,8 @@ Using this unit :
 
 unit uCpuUsage;
 
+{$mode delphi}
+
 interface
 
 const
