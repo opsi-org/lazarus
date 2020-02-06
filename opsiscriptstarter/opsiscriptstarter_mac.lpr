@@ -324,7 +324,7 @@ begin
   begin
     cmd := '/bin/bash -c " '+opsiscriptnoguibin + ' -opsiservice '+ myservice_url
                          +' -clientid '+ myclientid
-                         +' -credentialfile ' + credfilename+' &> /dev/tty1"';
+                         +' -credentialfile ' + credfilename+'"';
 //                         +' -username '+ myclientid
 //                         +' -password ' + myhostkey+' &> /dev/tty1"';
   end
