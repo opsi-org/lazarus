@@ -295,6 +295,7 @@ begin
     logdatei.log(' - ' + OCKOpsiConnection.GetProductValueAsString('productId') , LLInfo);
     //end;
   end;
+  SQLQueryProductData.ApplyUpdates;
   SQLQueryProductData.Close;
   SQLTransaction.Commit;
   logdatei.log('Finished OpsiProductToDataset', LLNotice);
