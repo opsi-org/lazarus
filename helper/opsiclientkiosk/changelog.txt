@@ -1,0 +1,5 @@
+opsiclientkiosk (4.1.1.2) experimental; urgency=low
+
+  * fixed that the last product from the JSON produtc list was not within the sqlite database (Solution: ApplyAutoUpdate before Commit) 
+
+-- Jan Werner <j.werner@uib.de>  Mon, 7 Feb 2020:11:42:00 +0200
