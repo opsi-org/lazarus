@@ -10995,7 +10995,7 @@ begin
       LogDatei.log_prog ('Executing ' + commandline, LLDebug);
       if not StartProcess(Commandline, showcmd, showoutput, not threaded,
         false, false, false, false, runas, '', WaitSecs, Report,
-        FLastExitCodeOfExe, true, output)
+        FLastExitCodeOfExe, catchout, output)
       then
       begin
         ps := 'Error: ' + Report;
