@@ -2536,6 +2536,9 @@ begin
       //FpcProcess.Parameters := paramlist;
       {$ENDIF WINDOWS}
 
+      if not WaitForReturn then
+        catchout := false;
+
       if catchout then
         FpcProcess.Options := FpcProcess.Options + [poUsePipes, poStdErrToOutPut];
 
@@ -3113,6 +3116,9 @@ begin
 
       wstr := CmdLinePasStr;
 
+      if not WaitForReturn then
+        catchout := false;
+
       if not CreatePipe(hReadPipe, hWritePipe, @sa, 0) then
       begin
         Report := 'Error creating Pipe';
@@ -3133,7 +3139,7 @@ begin
       if not jwawinbase.CreateProcessAsUserW(opsiSetupAdmin_logonHandle,
         nil, PWideChar(wstr), nil, nil,
         //opsiSetupAdmin_pSecAttrib, opsiSetupAdmin_pSecAttrib,
-        True,
+        catchout,  // inherit handles if we catch output
         //CREATE_NEW_CONSOLE or CREATE_NEW_PROCESS_GROUP or CREATE_UNICODE_ENVIRONMENT,
         //CREATE_NO_WINDOW or CREATE_UNICODE_ENVIRONMENT or
         //CREATE_DEFAULT_ERROR_MODE,
@@ -3528,6 +3534,9 @@ begin
         opsiSetupAdmin_lpEnvironment := nil;
       end;
 
+      if not WaitForReturn then
+        catchout := false;
+
       if not CreatePipe(hReadPipe, hWritePipe, @sa, 0) then
       begin
         Report := 'Error creating Pipe';
@@ -3548,7 +3557,8 @@ begin
       if not jwawinbase.CreateProcessAsUser(opsiSetupAdmin_logonHandle,
         nil, PChar(CmdLinePasStr),
         //nil, nil,
-        opsiSetupAdmin_pSecAttrib, opsiSetupAdmin_pSecAttrib, True,
+        opsiSetupAdmin_pSecAttrib, opsiSetupAdmin_pSecAttrib,
+        catchout, // inherit handles only if we catch output
         //CREATE_NEW_CONSOLE or CREATE_NEW_PROCESS_GROUP or CREATE_UNICODE_ENVIRONMENT,
         CREATE_NO_WINDOW or CREATE_UNICODE_ENVIRONMENT or
         CREATE_DEFAULT_ERROR_MODE, opsiSetupAdmin_lpEnvironment,
@@ -4051,6 +4061,10 @@ begin
               begin
 *)
       // Step 4: set the startup info for the new process
+
+      if not WaitForReturn then
+        catchout := false;
+
       FillChar(sa, SizeOf(sa), 0);
       sa.nLength := sizeof(sa);
       sa.lpSecurityDescriptor := nil;
@@ -4096,7 +4110,8 @@ begin
       if not jwawinbase.CreateProcessAsUser(opsiSetupAdmin_logonHandle,
         nil, PChar(CmdLinePasStr),
         //nil, nil,
-        opsiSetupAdmin_pSecAttrib, opsiSetupAdmin_pSecAttrib, True,
+        opsiSetupAdmin_pSecAttrib, opsiSetupAdmin_pSecAttrib,
+        catchout, // inherit handes only if we catch output
         //CREATE_NEW_CONSOLE or CREATE_NEW_PROCESS_GROUP or CREATE_UNICODE_ENVIRONMENT,
         CREATE_NO_WINDOW or CREATE_UNICODE_ENVIRONMENT or NORMAL_PRIORITY_CLASS,
         opsiSetupAdmin_lpEnvironment,
