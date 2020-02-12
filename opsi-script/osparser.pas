@@ -9413,6 +9413,7 @@ begin
  GetWord (Remaining, expr, Remaining, WordDelimiterSet0);
  SyntaxCheck := true;
  onlyWindows := false;
+ showoutput := false;
 
  ident := '';
  WaitConditions := [ttpWaitOnTerminate];
