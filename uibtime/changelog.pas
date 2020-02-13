@@ -1,4 +1,11 @@
 (*
+uibtime (4.1.1.61-1) stable; urgency=low
+
+ * unique instance: kann nur einmal gestartet werden
+ * uibdata: central my Font for different OS
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 08 Jan 2020 15:00:00 +0000
+
 uibtime (4.1.1.60-1) stable; urgency=low
 
  * statistik: better behavior of node dropdown

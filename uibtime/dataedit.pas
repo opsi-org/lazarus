@@ -110,6 +110,8 @@ type
       DataCol: integer; Column: TColumn; State: TGridDrawState);
     procedure DBLookupComboBoxMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
+    procedure FormCreate(Sender: TObject);
+    procedure Label6Click(Sender: TObject);
     procedure PageControl1Enter(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure DBGrid1Enter(Sender: TObject);
@@ -477,6 +479,16 @@ begin
   Handled := True;
   if PtInRect(TDBLookupCombobox(Sender).ReadBounds, mousepos) then
     Handled := False;
+end;
+
+procedure TFDataedit.FormCreate(Sender: TObject);
+begin
+  TForm(sender).Font.Name:=myFont;
+end;
+
+procedure TFDataedit.Label6Click(Sender: TObject);
+begin
+
 end;
 
 procedure TFDataedit.FormActivate(Sender: TObject);

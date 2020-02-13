@@ -45,6 +45,7 @@ type
     procedure EditButton1ButtonClick(Sender: TObject);
     procedure EditButton1Change(Sender: TObject);
     procedure FlogOffTimerTimer(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure FormHide(Sender: TObject);
     procedure FormPaint(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -413,6 +414,11 @@ begin
   notify_uninit;
   {$ENDIF LINUX}
   Datamodule1.debugOut(6, 'trayicon', 'stop trytimer ');
+end;
+
+procedure TFlogoff.FormCreate(Sender: TObject);
+begin
+  TForm(sender).Font.Name:=myFont;
 end;
 
 procedure TFlogoff.FormHide(Sender: TObject);

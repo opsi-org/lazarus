@@ -29,7 +29,7 @@ uses
   uibtWorkRepChooser,
   uib2erp,
   Variants,
-  maskedit,
+  maskedit, UniqueInstance,
   oslog;
 
 type
@@ -73,6 +73,7 @@ type
     SQwork_description: TSQLQuery;
     TimerTrayIcon: TTimer;
     TrayIcon1: TTrayIcon;
+    UniqueInstance1: TUniqueInstance;
     ZeigenurmeineProjekte1: TMenuItem;
     schmaleLeiste: TMenuItem;
     LeisteNeuAufbauen1: TMenuItem;
@@ -235,6 +236,7 @@ var
   Trayshow: boolean;
   TrayInterval: cardinal;
   scalefactor: double = 1.0;
+  myFont : string;
 
 
 
@@ -2109,6 +2111,13 @@ begin
   *)
   Application.OnException := CustomExceptionHandler;
   Application.OnEndSession := OnEndsession;
+  // Initialize Font
+  myFont := 'Arial';
+  {$IFDEF LINUX}
+  //myFont := 'Liberation Sans Narrow';
+  myFont := 'Liberation Sans';
+  {$ENDIF LINUX}
+
 end;
 
 procedure TDataModule1.TerminateApplication;

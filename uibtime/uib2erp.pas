@@ -1713,6 +1713,7 @@ begin
   edit1.Text := '1.1.2016';
   edit2.Text := datetostr(date);
   BtnLastMonthClick(Sender);
+  TForm(sender).Font.Name:=myFont;
 end;
 
 procedure TFuibtime2erp.FormShow(Sender: TObject);

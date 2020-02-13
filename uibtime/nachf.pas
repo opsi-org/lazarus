@@ -19,6 +19,7 @@ type
     BitBtn1: TBitBtn;
     Timer1: TTimer;
     Timer2: TTimer;
+    procedure FormCreate(Sender: TObject);
     procedure FormMouseEnter(Sender: TObject);
     procedure FormPaint(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -59,6 +60,11 @@ end;
 procedure TFNachfrage.FormMouseEnter(Sender: TObject);
 begin
   datamodule1.debugOut(5, 'FNachf', 'Mouse Enter');
+end;
+
+procedure TFNachfrage.FormCreate(Sender: TObject);
+begin
+  TForm(sender).Font.Name:=myFont;
 end;
 
 procedure TFNachfrage.FormPaint(Sender: TObject);

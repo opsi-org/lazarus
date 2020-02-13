@@ -1,99 +1,99 @@
 object fwork_description: Tfwork_description
-  Left = 136
-  Height = 630
-  Top = 356
-  Width = 1772
+  Left = 532
+  Height = 420
+  Top = 207
+  Width = 1181
   Caption = 'fwork_description'
-  ClientHeight = 630
-  ClientWidth = 1772
+  ClientHeight = 420
+  ClientWidth = 1181
   Color = clBtnFace
-  DesignTimePPI = 144
   Font.Color = clWindowText
-  Font.Height = -17
-  Font.Name = 'MS Sans Serif'
+  Font.Height = -13
+  Font.Name = 'Liberation Sans Narrow'
   KeyPreview = True
   OnActivate = FormActivate
+  OnCreate = FormCreate
   OnHide = FormHide
   OnShow = FormShow
   PopupMode = pmExplicit
   Position = poScreenCenter
   LCLVersion = '2.0.6.0'
   object Splitter1: TSplitter
-    Left = 694
-    Height = 520
-    Top = 110
-    Width = 8
+    Left = 375
+    Height = 347
+    Top = 73
+    Width = 7
   end
   object Panel1: TPanel
     Left = 0
-    Height = 110
+    Height = 73
     Top = 0
-    Width = 1772
+    Width = 1181
     Align = alTop
-    ClientHeight = 110
-    ClientWidth = 1772
+    ClientHeight = 73
+    ClientWidth = 1181
     Font.Color = clWindowText
-    Font.Height = -17
+    Font.Height = -11
     Font.Name = 'MS Sans Serif'
     ParentFont = False
     TabOrder = 0
     object Label1: TLabel
-      Left = 144
-      Height = 24
+      Left = 96
+      Height = 17
       Top = 0
-      Width = 614
+      Width = 396
       Caption = 'Arbeitsbeschreibung zur Abrechnung mit dem Kunden'
       Font.Color = clWindowText
-      Font.Height = -20
+      Font.Height = -13
       Font.Name = 'MS Sans Serif'
       Font.Style = [fsBold]
       ParentColor = False
       ParentFont = False
     end
     object Label2: TLabel
-      Left = 12
-      Height = 24
-      Top = 36
-      Width = 76
+      Left = 8
+      Height = 17
+      Top = 24
+      Width = 49
       Caption = 'Datum'
       Font.Color = clWindowText
-      Font.Height = -20
+      Font.Height = -13
       Font.Name = 'MS Sans Serif'
       Font.Style = [fsBold]
       ParentColor = False
       ParentFont = False
     end
     object Label3: TLabel
-      Left = 132
-      Height = 24
-      Top = 84
-      Width = 443
+      Left = 88
+      Height = 17
+      Top = 56
+      Width = 287
       Caption = 'Zusammengefasste Events für den Tag'
       Font.Color = clWindowText
-      Font.Height = -20
+      Font.Height = -13
       Font.Name = 'MS Sans Serif'
       Font.Style = [fsBold]
       ParentColor = False
       ParentFont = False
     end
     object Label4: TLabel
-      Left = 912
-      Height = 24
-      Top = 84
-      Width = 462
+      Left = 608
+      Height = 17
+      Top = 56
+      Width = 296
       Caption = 'Arbeitsbeschreibung für einzelne Events'
       Font.Color = clWindowText
-      Font.Height = -20
+      Font.Height = -13
       Font.Name = 'MS Sans Serif'
       Font.Style = [fsBold]
       ParentColor = False
       ParentFont = False
     end
     object DBNavigator1: TDBNavigator
-      Left = 888
-      Height = 38
-      Top = 36
-      Width = 360
+      Left = 592
+      Height = 25
+      Top = 24
+      Width = 240
       BevelOuter = bvNone
       ChildSizing.EnlargeHorizontal = crsScaleChilds
       ChildSizing.EnlargeVertical = crsScaleChilds
@@ -101,24 +101,24 @@ object fwork_description: Tfwork_description
       ChildSizing.ShrinkVertical = crsScaleChilds
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 100
-      ClientHeight = 38
-      ClientWidth = 360
+      ClientHeight = 25
+      ClientWidth = 240
       DataSource = DataModule1.DS_work_description
       Font.Color = clWindowText
-      Font.Height = -17
+      Font.Height = -11
       Font.Name = 'MS Sans Serif'
       Options = []
       ParentFont = False
       TabOrder = 0
     end
     object BitBtn1: TBitBtn
-      Left = 1344
-      Height = 38
-      Top = 36
-      Width = 112
+      Left = 896
+      Height = 25
+      Top = 24
+      Width = 75
       Caption = 'Exit'
       Font.Color = clRed
-      Font.Height = -24
+      Font.Height = -16
       Font.Name = 'MS Sans Serif'
       Font.Style = [fsBold]
       OnClick = BitBtn1Click
@@ -126,15 +126,15 @@ object fwork_description: Tfwork_description
       TabOrder = 1
     end
     object EditButtonDate: TEditButton
-      Left = 87
-      Height = 36
-      Top = 36
-      Width = 450
+      Left = 58
+      Height = 29
+      Top = 24
+      Width = 300
       ButtonCaption = 'Datum wählen und laden'
-      ButtonWidth = 300
+      ButtonWidth = 200
       Font.CharSet = ANSI_CHARSET
       Font.Color = clWindowText
-      Font.Height = -20
+      Font.Height = -13
       Font.Name = 'MS Sans Serif'
       Font.Pitch = fpVariable
       Font.Quality = fqDraft
@@ -151,29 +151,25 @@ object fwork_description: Tfwork_description
   end
   object DBGrid_day_report: TDBGrid
     Left = 0
-    Height = 520
-    Top = 110
-    Width = 694
+    Height = 347
+    Top = 73
+    Width = 375
     Align = alLeft
     Color = clWindow
     Columns = <    
       item
-        MinSize = 15
-        MaxSize = 300
         Title.Caption = 'event'
-        Width = 180
+        Width = 250
         FieldName = 'event'
       end    
       item
-        MinSize = 15
-        MaxSize = 300
         Title.Caption = 'sumstunden'
-        Width = 300
+        Width = 80
         FieldName = 'sumstunden'
       end>
     DataSource = DataModule1.DS_day_report
     Font.Color = clWindowText
-    Font.Height = -17
+    Font.Height = -11
     Font.Name = 'MS Sans Serif'
     ParentFont = False
     TabOrder = 1
@@ -182,65 +178,55 @@ object fwork_description: Tfwork_description
     TitleFont.Name = 'MS Sans Serif'
   end
   object Panel2: TPanel
-    Left = 702
-    Height = 520
-    Top = 110
-    Width = 1070
+    Left = 382
+    Height = 347
+    Top = 73
+    Width = 799
     Align = alClient
     Caption = 'Panel2'
-    ClientHeight = 520
-    ClientWidth = 1070
+    ClientHeight = 347
+    ClientWidth = 799
     Font.Color = clWindowText
-    Font.Height = -17
+    Font.Height = -11
     Font.Name = 'MS Sans Serif'
     ParentFont = False
     TabOrder = 2
     object DBGrid1: TDBGrid
       Left = 1
-      Height = 518
+      Height = 345
       Top = 1
-      Width = 1068
+      Width = 797
       Align = alClient
       Color = clWindow
       Columns = <      
         item
-          MinSize = 15
-          MaxSize = 300
           Title.Caption = 'tag'
-          Width = 45
+          Width = 30
           FieldName = 'tag'
         end      
         item
-          MinSize = 15
-          MaxSize = 300
           Title.Caption = 'monat'
-          Width = 45
+          Width = 30
           FieldName = 'monat'
         end      
         item
-          MinSize = 15
-          MaxSize = 300
           Title.Caption = 'jahr'
-          Width = 45
+          Width = 40
           FieldName = 'jahr'
         end      
         item
-          MinSize = 15
-          MaxSize = 300
           Title.Caption = 'event'
-          Width = 180
+          Width = 200
           FieldName = 'event'
         end      
         item
-          MinSize = 15
-          MaxSize = 300
           Title.Caption = 'description'
-          Width = 704
+          Width = 550
           FieldName = 'description'
         end>
       DataSource = DataModule1.DS_work_description
       Font.Color = clWindowText
-      Font.Height = -17
+      Font.Height = -11
       Font.Name = 'MS Sans Serif'
       ParentFont = False
       TabOrder = 0
@@ -255,7 +241,7 @@ object fwork_description: Tfwork_description
     Date = 42201
     OKCaption = '&OK'
     CancelCaption = 'Cancel'
-    left = 564
-    top = 36
+    left = 376
+    top = 24
   end
 end

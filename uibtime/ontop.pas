@@ -22,7 +22,7 @@ uses
   //inifiles,
   strutils,
   //Grids,
-  DBGrids, treescrolldown,
+  DBGrids, UniqueInstance, treescrolldown,
   httpservice, runprocess,
   uibdatetime;
 
@@ -31,6 +31,7 @@ type
   { TFOnTop }
 
   TFOnTop = class(TForm)
+    BtnProjekt: TSpeedButton;
     DBLCB_topten_event: TDBLookupComboBox;
     DSQueryaktprojekt: TDataSource;
     DS_topten_events: TDataSource;
@@ -43,7 +44,6 @@ type
     QueryUserEvents: TSQLQuery;
     Query_top_ten_events: TSQLQuery;
     Btn_work_description: TSpeedButton;
-    BtnProjekt: TSpeedButton;
     SpeedButton1: TSpeedButton;
     BtnBye: TSpeedButton;
     TimerCallCount: TTimer;
@@ -57,6 +57,7 @@ type
     procedure Edit1Change(Sender: TObject);
     procedure FormDeactivate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormWindowStateChange(Sender: TObject);
     function isSpecialButton(event: string): boolean;
     procedure BtnByeClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -170,6 +171,11 @@ begin
     BtnArray[i].Destroy;
   end;
   //stophttpserver;
+end;
+
+procedure TFOnTop.FormWindowStateChange(Sender: TObject);
+begin
+  TForm(Sender).WindowState:=wsNORMAL;
 end;
 
 

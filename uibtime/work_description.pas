@@ -39,6 +39,7 @@ type
     procedure EditButtonDateButtonClick(Sender: TObject);
     procedure EditButtonDateChange(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure FormHide(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure SQwork_descriptionAfterInsert(DataSet: TDataSet);
@@ -119,6 +120,11 @@ begin
     Loadresults4date;
   end;
   //FormStyle:=fsNormal;
+end;
+
+procedure Tfwork_description.FormCreate(Sender: TObject);
+begin
+  TForm(sender).Font.Name:=myFont;
 end;
 
 procedure Tfwork_description.FormHide(Sender: TObject);
