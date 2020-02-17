@@ -148,8 +148,10 @@ begin
     InputBody.SetSize(ContentLength);
     SizeReceived := AcceptorSocket.RecvBufferEx(InputBody.Memory, ContentLength, Timeout);
     InputBody.SetSize(SizeReceived);
+    //AcceptorSocket.RecvStream(InputBody, TimeOut);
+    //rpcMethod := AcceptorSocket.RecvString(TimeOut);
   end;
-  CreateTestJSONRequestInputBody;
+  //CreateTestJSONRequestInputBody;
   //InputBody.Clear;
   //InputBody.LoadFromStream(JSONStream);
   JSONRequest := TOpsiJSONRequest.Create(InputBody);
@@ -257,7 +259,7 @@ begin
   if Protocol <> '' then
   begin
     Headers.Clear;
-    Headers.Add('Content-type: text/html; charset=UTF-8');
+    Headers.Add('Content-type: application/json; charset=UTF-8');
     Headers.Add('Content-length: ' + IntTostr(OutputBody.Size));
     Headers.Add('Connection: close');
     Headers.Add('Date: ' + Rfc822DateTime(now));
