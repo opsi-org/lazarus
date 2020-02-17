@@ -418,7 +418,7 @@ end;
 
 procedure TFlogoff.FormCreate(Sender: TObject);
 begin
-  TForm(sender).Font.Name:=myFont;
+  DataModule1.SetFontName(TControl(sender),myFont);
 end;
 
 procedure TFlogoff.FormHide(Sender: TObject);

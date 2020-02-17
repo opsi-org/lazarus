@@ -64,7 +64,14 @@ end;
 
 procedure TFNachfrage.FormCreate(Sender: TObject);
 begin
+  DataModule1.SetFontName(TControl(sender),myFont);
+  (*
   TForm(sender).Font.Name:=myFont;
+  TForm(sender).ch
+  Label1.Font.Name:=myFont;
+  DBText1.Font.Name:=myFont;
+  BitBtn1.Font.Name:=myFont;;
+  *)
 end;
 
 procedure TFNachfrage.FormPaint(Sender: TObject);

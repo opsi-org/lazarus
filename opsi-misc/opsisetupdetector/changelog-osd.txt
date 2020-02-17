@@ -13,6 +13,7 @@ Windows Installer (MSI or MSI in EXE), ok
 NSIS Setup, ok
 SFX Cab,   (sfxcab.exe,  vcredist)  stSFXcab  = dotnetinstaller (https://github.com/dotnetinstaller)
 Smart Installer Maker,
+Squirrel-Installer,
 Windows installer XML,  (atwork, Boxmarker)
 WinRAR Installer,
 WinZip Installer,
@@ -59,6 +60,14 @@ stWixToolset,
   * http://forums.codeguru.com/showthread.php?419175-ST6UNST-exe-command-line-options
   * setup.exe /s c:\yourlogfilename.log
   * St6unst -n "C:\Program Files\MyApp\St6unst.log" -f -q
+
+* squirrel-installer
+  * beispiel gitkraken
+  * marker: SquirrelSetup.log
+  * marker: squirrel\squirrel.windows
+  * https://github.com/squirrel/squirrel.windows
+  * see also: https://www.nuget.org/
+  * see also: https://de.wikipedia.org/wiki/NuGet
 
 Uebersicht:
 http://www.fredshack.com/docs/packagers.html

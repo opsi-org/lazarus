@@ -219,7 +219,7 @@ end;
 
 procedure TFMultiday.FormCreate(Sender: TObject);
 begin
-  TForm(sender).Font.Name:=myFont;
+  DataModule1.SetFontName(TControl(sender),myFont);
   {$IFDEF LINUX}
   ComboBoxEvent.AutoDropDown := False;
   {$ENDIF LINUX}
