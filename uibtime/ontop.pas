@@ -331,7 +331,7 @@ begin
       ineditmode := True;
     end;
     starthttpserver;
-
+    DataModule1.SetFontName(TControl(sender),myFont);
     datamodule1.debugOut(5, 'finished TFOnTop.FormCreate');
 
   except

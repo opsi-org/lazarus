@@ -31,13 +31,13 @@ object FDataedit: TFDataedit
     object TabSheet1: TTabSheet
       Caption = 'Events'
       ClientHeight = 349
-      ClientWidth = 804
+      ClientWidth = 806
       OnShow = TabSheet1Show
       object ToolBar1: TToolBar
         Left = 0
         Height = 35
         Top = 0
-        Width = 804
+        Width = 806
         ButtonHeight = 34
         ButtonWidth = 34
         Caption = 'ToolBar1'
@@ -99,7 +99,7 @@ object FDataedit: TFDataedit
         Left = 0
         Height = 314
         Top = 35
-        Width = 804
+        Width = 806
         Align = alClient
         Color = clWindow
         Columns = <        
@@ -154,7 +154,7 @@ object FDataedit: TFDataedit
       end
       object DBLookupComboBox1: TDBLookupComboBox
         Left = 184
-        Height = 27
+        Height = 21
         Top = 88
         Width = 145
         DataField = 'EVENT'
@@ -291,7 +291,7 @@ object FDataedit: TFDataedit
       object DBLookupComboBox3: TDBLookupComboBox
         Tag = 1
         Left = 176
-        Height = 27
+        Height = 21
         Top = 144
         Width = 145
         DataField = 'PARENTEVENT'
@@ -464,7 +464,7 @@ object FDataedit: TFDataedit
       end
       object DBLookupComboBox2: TDBLookupComboBox
         Left = 272
-        Height = 27
+        Height = 21
         Top = 160
         Width = 145
         DataField = 'EVENT'
@@ -481,12 +481,12 @@ object FDataedit: TFDataedit
       end
       object DBComboBoxBool: TDBComboBox
         Left = 280
-        Height = 27
+        Height = 21
         Top = 200
         Width = 145
         DataField = 'BUTTON'
         DataSource = DataModule1.DSuibuserevent
-        ItemHeight = 0
+        ItemHeight = 13
         Items.Strings = (
           '0'
           '1'
@@ -559,7 +559,7 @@ object FDataedit: TFDataedit
       end
       object DBLookupComboBox5: TDBLookupComboBox
         Left = 232
-        Height = 27
+        Height = 21
         Top = 152
         Width = 145
         DataField = 'EVENT'
@@ -719,7 +719,7 @@ object FDataedit: TFDataedit
       end
       object DBLookupComboBox4: TDBLookupComboBox
         Left = 280
-        Height = 27
+        Height = 21
         Top = 128
         Width = 145
         DataField = 'EVENT'
@@ -827,10 +827,10 @@ object FDataedit: TFDataedit
       end
       object ComboBoxOldEvent: TComboBox
         Left = 54
-        Height = 27
+        Height = 21
         Top = 152
         Width = 170
-        ItemHeight = 0
+        ItemHeight = 13
         OnEnter = ComboBoxOldEventEnter
         TabOrder = 3
       end
@@ -895,10 +895,10 @@ object FDataedit: TFDataedit
       end
       object ComboBoxOldAllEvent: TComboBox
         Left = 64
-        Height = 27
+        Height = 21
         Top = 288
         Width = 170
-        ItemHeight = 0
+        ItemHeight = 13
         OnEnter = ComboBoxOldAllEventEnter
         TabOrder = 6
       end

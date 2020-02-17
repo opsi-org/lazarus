@@ -483,7 +483,8 @@ end;
 
 procedure TFDataedit.FormCreate(Sender: TObject);
 begin
-  TForm(sender).Font.Name:=myFont;
+  //TForm(sender).Font.Name:=myFont;
+  DataModule1.SetFontName(TControl(sender),myFont);
 end;
 
 procedure TFDataedit.Label6Click(Sender: TObject);
