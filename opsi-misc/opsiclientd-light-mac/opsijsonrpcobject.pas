@@ -34,7 +34,7 @@ end;
 
 constructor TOpsiJSONrpcObject.Create(aStream: TStream);
 begin
-  //inherited Create;
+  inherited Create;
   self := TOpsiJSONrpcObject(GetJSON(aStream));
 end;
 

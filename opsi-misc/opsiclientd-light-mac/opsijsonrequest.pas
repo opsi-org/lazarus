@@ -5,7 +5,7 @@ unit OpsiJSONRequest;
 interface
 
 uses
-  Classes, SysUtils, fpjson, jsonparser, OpsiJsonrpcObject;
+  Classes, SysUtils, fpjson, jsonparser, OpsiJSONrpcObject, OpsiJSONrpcArray;
 
 type
 
@@ -14,12 +14,12 @@ type
   TOpsiJSONRequest = class(TOpsiJSONrpcObject)
   private
     function GetMethod:string;
-    function GetParams: TJSONArray;
+    function GetParams: TOpsiJSONrpcArray;
     procedure SetMethod(aMethod: string);
-    procedure SetParams(theParams: TJSONArray);
+    procedure SetParams(theParams: TOpsiJSONrpcArray);
   published
     property Method: string read GetMethod write SetMethod;
-    property Params: TJSONArray read GetParams write SetParams;
+    property Params: TOpsiJSONrpcArray read GetParams write SetParams;
   public
     constructor Create(aMethod: string; const theParams: array of const; aID: integer);overload;
   end;
@@ -35,7 +35,7 @@ begin
   Add('method', aMethod);
 end;
 
-procedure TOpsiJSONRequest.SetParams(theParams: TJSONArray);
+procedure TOpsiJSONRequest.SetParams(theParams: TOpsiJSONrpcArray);
 begin
   Add('params', theParams);
 end;
@@ -46,7 +46,7 @@ constructor TOpsiJSONRequest.Create(aMethod: string;
 begin
   inherited Create;
   Method := aMethod;
-  Params := TJSONArray.Create(theParams);
+  Params := TOpsiJSONrpcArray.Create(theParams);
   ID := aID;
 end;
 
@@ -56,9 +56,9 @@ begin
   Result := Strings['method'];
 end;
 
-function TOpsiJSONRequest.GetParams: TJSONArray;
+function TOpsiJSONRequest.GetParams: TOpsiJSONrpcArray;
 begin
-  Result := Arrays['params'];
+  Result := TOpsiJSONrpcArray(Arrays['params']);
 end;
 
 
