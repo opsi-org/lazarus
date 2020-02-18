@@ -243,6 +243,7 @@ var
   TrayInterval: cardinal;
   scalefactor: double = 1.0;
   myFont: string;
+  myscreen : TScreen;
 
 
 
@@ -1502,6 +1503,18 @@ begin
   FOnTop.Height := ontopheight;
   FOnTop.Width := ontopwidth;
   FOnTop.FormStyle := fsSystemStayOnTop;
+  //FOnTop.ReBuildForm;
+  //FOnTop.Repaint;
+  try
+     //myscreen.MoveFormToFocusFront(FOnTop);
+    //myscreen.MoveFormToZFront(FOnTop);
+    Application.BringToFront;
+     debugOut(8, 'TimerOnTopTimer', 'movefront ');
+  except
+    debugOut(8, 'TimerOnTopTimer', 'failed: movefront ');
+  end;
+
+  Application.ProcessMessages;
   //  SetWindowPos(FOnTop.handle, HWND_TOPMOST, leftint, 0, ontopwidth,
   //    ontopheight, SWP_NOACTIVATE);
   {$ENDIF LINUX}
@@ -2414,6 +2427,7 @@ initialization
     writeln('Product name: ',FileVerInfo.VersionStrings.Values['ProductName']);
     writeln('Product version: ',FileVerInfo.VersionStrings.Values['ProductVersion']);
     *)
+    myscreen := TScreen.Create(Application.Owner);
   finally
     FileVerInfo.Free;
   end;
@@ -2422,7 +2436,7 @@ initialization
 finalization
   { finalization-Abschnitt }
   begin
-
+    myscreen.Free;
   end;
 
 end.
