@@ -2062,8 +2062,8 @@ begin
           begin
             LogDateiName := OpsiData.getLogFileName(LogDateiName);
             startupmessages.Append('startmessage create log: ' + DateTimeToStr(Now));
-            LogDatei.CreateTheLogfile(LogDateiName);
             LogDatei.WriteHistFile:=true;
+            LogDatei.CreateTheLogfile(LogDateiName);
           end;
           LogDatei.force_min_loglevel:=osconf.force_min_loglevel;
           LogDatei.debug_prog:=osconf.debug_prog;

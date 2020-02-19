@@ -345,7 +345,7 @@ begin
   if uname = '' then
     GetEnvironmentVariable('UIBTIMEUSER');
   Edit1.Text := uname;
-  TForm(sender).Font.Name:=myFont;
+  DataModule1.SetFontName(TControl(sender),myFont);
 end;
 
 procedure TFlogin.CheckBoxEditOnlyClick(Sender: TObject);

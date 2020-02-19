@@ -124,7 +124,7 @@ end;
 
 procedure Tfwork_description.FormCreate(Sender: TObject);
 begin
-  TForm(sender).Font.Name:=myFont;
+  DataModule1.SetFontName(TControl(sender),myFont);
 end;
 
 procedure Tfwork_description.FormHide(Sender: TObject);

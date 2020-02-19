@@ -8904,6 +8904,7 @@ function TuibInstScript.doLinkFolderActions (const Sektion: TWorkSection; common
    link_icon_index: Integer=0;
    link_categories : String='';
    link_shortcut : word=0;
+   link_showwindow: Integer=0;
 
  begin
 
@@ -9084,6 +9085,7 @@ function TuibInstScript.doLinkFolderActions (const Sektion: TWorkSection; common
           link_icon_file := '';
           link_icon_index := 0;
           link_shortcut :=0;
+          link_showwindow := 0;
 
           while (i <= Sektion.count) and in_link_features do
           Begin
@@ -9220,6 +9222,33 @@ function TuibInstScript.doLinkFolderActions (const Sektion: TWorkSection; common
                 {$ENDIF WIN32}
               End
 
+              else if LowerCase (Expressionstr) = 'window_state'
+              then
+              Begin
+                if not getString (Remaining, s, Remaining, errorinfo, false)
+                then
+                  s := Remaining;
+                {$IFDEF UNIX}
+                logdatei.log('Option window_state is ignored at Linux',LLWarning);
+                {$ENDIF LINUX}
+                {$IFDEF WIN32}
+                if s = ''
+                then
+                  link_showwindow := 0
+                else
+                begin
+                 s := trim(LowerCase(s));
+                 if s = 'normal' then link_showwindow := 1
+                 else if s = 'min' then link_showwindow := 7
+                 else if s = 'max' then link_showwindow := 3
+                 else
+                  reportError (Sektion, i, Sektion.Strings [i-1],
+                       '"' + s + '" could not converted to a window_state key.');
+                  LogDatei.log_prog('link_showwindow: '+s,LLDebug);
+                end;
+                {$ENDIF WIN32}
+              End
+
               else if LowerCase (Expressionstr) = 'link_categories'
               then
               Begin
@@ -9274,7 +9303,7 @@ function TuibInstScript.doLinkFolderActions (const Sektion: TWorkSection; common
 
               if ShellLinks.MakeShellLink(link_name,  link_target, link_paramstr,
                       link_working_dir, link_icon_file,
-                      link_icon_index, link_shortcut) then ;
+                      link_icon_index, link_shortcut, link_showwindow) then ;
 
             End
           end

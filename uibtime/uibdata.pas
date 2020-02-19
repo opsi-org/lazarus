@@ -23,7 +23,12 @@ uses
   LazFileUtils,
   Menus, ExtCtrls,
   ///registry,
-  Forms, Controls, Dialogs, IniFiles, process, DateUtils,
+  Forms,
+  Graphics,
+  typinfo,
+  Controls,
+  Dialogs,
+  IniFiles, process, DateUtils,
   runprocess,
   httpservice,
   uibtWorkRepChooser,
@@ -202,6 +207,7 @@ type
     procedure CustomExceptionHandler(Sender: TObject; E: Exception);
     procedure DumpExceptionCallStack(E: Exception);
     procedure OnEndSession(Sender: TObject);
+    procedure SetFontName(Control: TControl; Name: string);
   private
     { private declarations }
   public
@@ -236,7 +242,8 @@ var
   Trayshow: boolean;
   TrayInterval: cardinal;
   scalefactor: double = 1.0;
-  myFont : string;
+  myFont: string;
+  myscreen : TScreen;
 
 
 
@@ -1496,6 +1503,18 @@ begin
   FOnTop.Height := ontopheight;
   FOnTop.Width := ontopwidth;
   FOnTop.FormStyle := fsSystemStayOnTop;
+  //FOnTop.ReBuildForm;
+  //FOnTop.Repaint;
+  try
+     //myscreen.MoveFormToFocusFront(FOnTop);
+    //myscreen.MoveFormToZFront(FOnTop);
+    Application.BringToFront;
+     debugOut(8, 'TimerOnTopTimer', 'movefront ');
+  except
+    debugOut(8, 'TimerOnTopTimer', 'failed: movefront ');
+  end;
+
+  Application.ProcessMessages;
   //  SetWindowPos(FOnTop.handle, HWND_TOPMOST, leftint, 0, ontopwidth,
   //    ontopheight, SWP_NOACTIVATE);
   {$ENDIF LINUX}
@@ -2331,6 +2350,44 @@ begin
     LogDatei.log('Terminating: onendsession', LLessential);
 end;
 
+{ from https://stackoverflow.com/questions/10588660/font-consistency-throughout-project
+  modified for font.name only }
+procedure TDataModule1.SetFontName(Control: TControl; Name: string);
+// Set font properties
+var
+  Index: integer;
+  Font: TFont;
+  AnObject: TObject;
+  ChildControl: TControl;
+begin
+  // Set font properties
+  try
+    AnObject := GetObjectProp(Control, 'Font', TControl);
+    if AnObject is TFont then
+    begin
+      // Set properties
+      Font := TFont(AnObject);
+      Font.Name := Name;
+    end;
+
+  except
+  end;
+
+  // Set child font properties
+  if Control is TWinControl then
+  begin
+    // Set
+    for Index := 0 to TWinControl(Control).ControlCount - 1 do
+    begin
+      // Child control
+      ChildControl := TWinControl(Control).Controls[Index];
+
+      // Set font properties
+      SetFontName(ChildControl, Name);
+    end;
+  end;
+end;
+
 
 initialization
   { initialization-Abschnitt }
@@ -2370,6 +2427,7 @@ initialization
     writeln('Product name: ',FileVerInfo.VersionStrings.Values['ProductName']);
     writeln('Product version: ',FileVerInfo.VersionStrings.Values['ProductVersion']);
     *)
+    myscreen := TScreen.Create(Application.Owner);
   finally
     FileVerInfo.Free;
   end;
@@ -2378,7 +2436,7 @@ initialization
 finalization
   { finalization-Abschnitt }
   begin
-
+    myscreen.Free;
   end;
 
 end.

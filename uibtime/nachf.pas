@@ -19,6 +19,8 @@ type
     BitBtn1: TBitBtn;
     Timer1: TTimer;
     Timer2: TTimer;
+    procedure BitBtn1Click(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormMouseEnter(Sender: TObject);
     procedure FormPaint(Sender: TObject);
@@ -64,7 +66,25 @@ end;
 
 procedure TFNachfrage.FormCreate(Sender: TObject);
 begin
+  DataModule1.SetFontName(TControl(sender),myFont);
+  (*
   TForm(sender).Font.Name:=myFont;
+  TForm(sender).ch
+  Label1.Font.Name:=myFont;
+  DBText1.Font.Name:=myFont;
+  BitBtn1.Font.Name:=myFont;;
+  *)
+end;
+
+procedure TFNachfrage.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+  modalresult := mrOK;
+  DataModule1.TimerOnTop.Enabled:=true;
+end;
+
+procedure TFNachfrage.BitBtn1Click(Sender: TObject);
+begin
+
 end;
 
 procedure TFNachfrage.FormPaint(Sender: TObject);

@@ -8,6 +8,7 @@ mac getIpByName liefert name von IPnum
 opsi-winst/opsi-script (4.12.3.10) experimental; urgency=low
 
   * activate history logging again
+  * osfunc / osparser: linkfolder: new link element window_state with the allowed values 'normal', 'min', 'max'
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 03 Feb 2020:15:00:00 +0200
 

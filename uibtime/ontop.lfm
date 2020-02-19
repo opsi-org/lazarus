@@ -128,7 +128,7 @@ object FOnTop: TFOnTop
     end
     object DBLCB_topten_event: TDBLookupComboBox
       Left = 419
-      Height = 25
+      Height = 23
       Top = 2
       Width = 300
       AutoSize = False

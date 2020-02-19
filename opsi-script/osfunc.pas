@@ -401,6 +401,10 @@ type
     function MakeShellLink
       (const description, thePath, commandline_arguments, working_directory,
       iconPath: string; const icon_index: integer; shortcut: word): boolean; overload;
+    function MakeShellLink
+      (const description, thePath, commandline_arguments, working_directory,
+      iconPath: string; const icon_index: integer; shortcut: word;
+      showwindow : integer): boolean; overload;
     function DeleteShellLink(const description: string): boolean;
     function DeleteShellFolder(const SystemFolder: integer;
       const foldername: string): boolean;
@@ -10226,6 +10230,15 @@ function TuibShellLinks.MakeShellLink
   (const description, thePath, commandline_arguments, working_directory,
   iconPath: string;
   const icon_index: integer; shortcut: word): boolean;
+begin
+  Result := MakeShellLink(description, thePath, commandline_arguments,
+    working_directory, iconPath, icon_index, 0,0);
+end;
+
+function TuibShellLinks.MakeShellLink
+  (const description, thePath, commandline_arguments, working_directory,
+  iconPath: string;
+  const icon_index: integer; shortcut: word; showwindow : integer): boolean;
 
 const
   IID_IPersistFile: TGUID = (D1: $10B; D2: 0; D3: 0;
@@ -10263,6 +10276,11 @@ begin
     begin
       ShellLink.SetHotkey(shortcut);
       LogDatei.log('try to set shortcut: ' + IntToStr(shortcut), LLDebug2);
+    end;
+    if showwindow > 0 then
+    begin
+      ShellLink.SetShowCmd(showwindow);
+      LogDatei.log('try to set showwindow: ' + IntToStr(showwindow), LLDebug2);
     end;
 
     (*

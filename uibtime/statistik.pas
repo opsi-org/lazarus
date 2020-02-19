@@ -157,7 +157,7 @@ begin
   {$ElSE WINDOWS}
   ComboBoxAktevent.Style:= csSimple;
   {$ENDIF WINDOWS}
-  TForm(sender).Font.Name:=myFont;
+  DataModule1.SetFontName(TControl(sender),myFont);
 end;
 
 procedure TFStatistik.Edit1Exit(Sender: TObject);
