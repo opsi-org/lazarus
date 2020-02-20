@@ -69,6 +69,7 @@ osfuncwin2,
 {$ENDIF WINDOWS}
 {$IFDEF UNIX}
   osprocessux,
+  osprocesses,
   baseunix,
   oscrypt,
 {$ENDIF UNIX}
@@ -1452,7 +1453,7 @@ begin
 
     {$IFDEF UNIX}
     opsiclientd := true;
-    if '' = getcommandresult('ps --no-headers -C opsiclientd') then opsiclientd := false;
+    if ProcessIsRunning('opsiclientd') then opsiclientd := false;
        if PerformExitWindows <> txrNoExit then
           begin
             case PerformExitWindows of

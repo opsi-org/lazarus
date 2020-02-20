@@ -262,7 +262,8 @@ begin
     depotdrive := '/media/opsi_depot';
 {$ENDIF LINUX}
 {$IFDEF DARWIN}
-    depotdrive := '/Network/opsi_depot';
+    //depotdrive := '/Network/opsi_depot';
+    depotdrive := '/Volumes/opsi_depot';
 {$ENDIF DARWIN}
 
 {$IFDEF WINDOWS}
