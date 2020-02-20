@@ -173,7 +173,7 @@ const
   {$ENDIF LINUX}
   {$IFDEF DARWIN}
   skindirectoryDevelopment = 'winstskin';
-  skindirectoryDefault = 'skin';
+  skindirectoryDefault = '../Resources/skin';
   skindirectoryCustomWin = '/usr/local/share/opsi-script/customskin';
   {$ENDIF DARWIN}
 

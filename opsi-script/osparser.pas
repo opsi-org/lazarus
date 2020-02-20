@@ -20536,7 +20536,7 @@ begin
                           {$IFDEF DARWIN}
                           // search in %OpsiscriptDir%\lib
                           testincfilename := ExtractFileDir(reencode(paramstr(0),'system'))
-                                               +PathDelim+'lib'+PathDelim+incfilename;
+                                               +PathDelim+'../Resources/lib'+PathDelim+incfilename;
                           testincfilename := ExpandFilename(testincfilename);
                           LogDatei.log_prog('Looking for: '+testincfilename,LLNotice);
                           if FileExistsUTF8(testincfilename) then

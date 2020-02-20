@@ -82,7 +82,7 @@ begin
   if not Terminated then
   begin;
     LogDatei.DependentAdd('network timeout by thread - aborting program',LLInfo);
-    writeln('network timeout by thread - aborting program');
+    writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' network timeout by thread - aborting program');
     halt(0);
   end;
 end;
@@ -555,13 +555,13 @@ begin
       else
       begin
         LogDatei.DependentAdd('opsidata not connected - retry',LLInfo);
-        writeln('opsidata not connected - retry');
+        writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' opsidata not connected - retry');
         myseconds := myseconds -1;
         Sleep(1000);
       end;
     except
       LogDatei.DependentAdd('opsidata not connected - retry',LLInfo);
-      writeln('opsidata not connected - retry');
+      writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' opsidata not connected - retry');
       myseconds := myseconds -1;
       Sleep(1000);
     end;
@@ -570,13 +570,13 @@ begin
   if networkup then
   begin
     LogDatei.DependentAdd('opsidata connected',LLInfo);
-    writeln('opsidata connected');
+    writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' opsidata connected');
     result := true;
   end
   else
   begin
     LogDatei.DependentAdd('init connection failed (timeout after '+ IntToStr(seconds) + ' seconds/retries.',LLError);
-    writeln('init connection failed (timeout after '+ IntToStr(seconds) + ' seconds/retries.');
+    writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' init connection failed (timeout after '+ IntToStr(seconds) + ' seconds/retries.');
   end;
 end;
 
@@ -645,17 +645,17 @@ begin
   logdatei.log('Starting opsiscriptstarter version: '+myVersion,LLNotice);
   if nogui then logdatei.log('Running in nogui mode',LLNotice);
 
-  writeln('clientid='+myclientid);
-  writeln('service_url='+myservice_url);
-  writeln('service_user='+myclientid);
+  writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' clientid='+myclientid);
+  writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' service_url='+myservice_url);
+  writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' service_user='+myclientid);
   //writeln('host_key=',myhostkey);
   logdatei.AddToConfidentials(myhostkey);
-  writeln('log_level=',myloglevel);
+  writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' log_level=',myloglevel);
   mythread := Tmythread.Create(false);
   if initConnection(30) then
   begin
     mythread.Terminate;
-    writeln('init done');
+    writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' init done');
     LogDatei.log('init done',LLNotice);
     LogDatei.log('Starting opsiclientd part:',LLNotice);
     opsidata.setActualClient(myclientid);
@@ -671,15 +671,15 @@ begin
     if not foundActionRequest then
     begin
       LogDatei.DependentAdd('No action requests - nothing to do',LLNotice);
-      writeln('No action requests - nothing to do');
+      writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' No action requests - nothing to do');
     end
     else
     begin
       LogDatei.DependentAdd('Action requests found',LLNotice);
-      writeln('Action requests found');
+      writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' Action requests found');
       opsidata.setActualClient(myclientid);
       mydepot := opsidata.depotId;
-      writeln('depotId=',mydepot);
+      writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' depotId=',mydepot);
       //resultstring := MyOpsiMethodCall2('configState_getClientToDepotserver', ['[]','['+myclientid+']','True','["acroread", "config-win-base"]']);
       //myDepot := SO(resultstring).S['depotId'];
       resultstring := MyOpsiMethodCall('getGeneralConfigValue', ['clientconfig.depot.user',myclientid]);
@@ -696,7 +696,7 @@ begin
       myshare := SO(resultstring).S['result'];
       myshare := SO(resultstring).O['result'].AsArray.O[0].S['depotRemoteUrl'];
       myshare := copy(myshare,5,length(myshare));
-      writeln('myshare=',myshare);
+      writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' myshare=',myshare);
       umount(mymountpoint);
       logdatei.AddToConfidentials(mypass);
       mounttry := 0;
@@ -717,11 +717,11 @@ begin
          LogDatei.log('Failed to mount '+myshare+' to '+mymountpoint+' - abort!',LLCritical)
       else
       begin
-        writeln('share mounted - starting action processor...');
+        writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' share mounted - starting action processor...');
         startopsiscript;
-        writeln('action processor finished');
+        writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' action processor finished');
         umount(mymountpoint);
-        writeln('share unmounted');
+        writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' share unmounted');
       end;
     end;
     opsidata.sendLog('clientconnect');

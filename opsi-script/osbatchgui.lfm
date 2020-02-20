@@ -19,7 +19,7 @@ object FBatchOberflaeche: TFBatchOberflaeche
   OnResize = FormResize
   OnWindowStateChange = FormWindowStateChange
   Position = poScreenCenter
-  LCLVersion = '2.0.4.0'
+  LCLVersion = '2.0.6.0'
   object PanelFillScreen: TPanel
     Left = 0
     Height = 520
@@ -85,9 +85,9 @@ object FBatchOberflaeche: TFBatchOberflaeche
       end
       object LabelVersion: TLabel
         Left = 76
-        Height = 15
+        Height = 13
         Top = 16
-        Width = 68
+        Width = 72
         Alignment = taRightJustify
         Caption = 'LabelVersion'
         Font.Color = clBlack
