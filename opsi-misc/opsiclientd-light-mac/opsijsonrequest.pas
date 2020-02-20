@@ -5,7 +5,7 @@ unit OpsiJSONRequest;
 interface
 
 uses
-  Classes, SysUtils, fpjson, jsonparser, OpsiJsonrpcObject;
+  Classes, SysUtils, fpjson, jsonparser, OpsiJSONrpcObject, OpsiJSONrpcArray;
 
 type
 
@@ -13,20 +13,16 @@ type
 
   TOpsiJSONRequest = class(TOpsiJSONrpcObject)
   private
-    //function GetID: integer;
     function GetMethod:string;
-    function GetParams: TJSONArray;
-    //procedure SetID(aID: integer);
+    function GetParams: TOpsiJSONrpcArray;
     procedure SetMethod(aMethod: string);
-    procedure SetParams(theParams: TJSONArray);
+    procedure SetParams(theParams: TOpsiJSONrpcArray);
   published
     property Method: string read GetMethod write SetMethod;
-    property Params: TJSONArray read GetParams write SetParams;
-    //property ID: integer read GetID write SetID;
+    property Params: TOpsiJSONrpcArray read GetParams write SetParams;
   public
-    //constructor Create(aStream: TStream);overload;
-    constructor Create(aMethod: string; const theParams: array of const; aID: integer);overload;
-    //procedure SaveToMemoryStream(aMemoryStream: TMemoryStream);
+    constructor Create(aStream: TStream);
+    constructor Create(aMethod: string; const theParams: array of const; aID: integer);
   end;
 
 
@@ -34,58 +30,42 @@ implementation
 
 { TOpsiJSONRequest }
 
-//procedure TOpsiJSONRequest.SetID(aID: integer);
-//begin
-//  Add('id', aID);
-//end;
 
 procedure TOpsiJSONRequest.SetMethod(aMethod: string);
 begin
   Add('method', aMethod);
 end;
 
-procedure TOpsiJSONRequest.SetParams(theParams: TJSONArray);
+procedure TOpsiJSONRequest.SetParams(theParams: TOpsiJSONrpcArray);
 begin
   Add('params', theParams);
 end;
 
-//constructor TOpsiJSONRequest.Create(aStream: TStream);
-//begin
-//  //inherited Create;
-//  self := TOpsiJSONRequest(GetJSON(aStream));
-//end;
+constructor TOpsiJSONRequest.Create(aStream: TStream);
+begin
+  inherited Create;
+  self := TOpsiJSONRequest(GetJSON(aStream));
+end;
+
 
 constructor TOpsiJSONRequest.Create(aMethod: string;
   const theParams: array of const; aID: integer);
 begin
   inherited Create;
   Method := aMethod;
-  Params := TJSONArray.Create(theParams);
+  Params := TOpsiJSONrpcArray.Create(theParams);
   ID := aID;
 end;
 
-//procedure TOpsiJSONRequest.SaveToMemoryStream(aMemoryStream: TMemoryStream);
-//var
-//  StringStream: TStringStream;
-//begin
-//  StringStream := TStringStream.Create(self.AsJSON);
-//  aMemoryStream.LoadFromStream(StringStream);
-//  FreeAndNil(StringStream);
-//end;
-
-//function TOpsiJSONRequest.GetID: integer;
-//begin
-//  Result := Integers['id'];
-//end;
 
 function TOpsiJSONRequest.GetMethod: string;
 begin
-  Result := Strings['method'];
+  Result := FindPath('method').AsString;
 end;
 
-function TOpsiJSONRequest.GetParams: TJSONArray;
+function TOpsiJSONRequest.GetParams: TOpsiJSONrpcArray;
 begin
-  Result := Arrays['params'];
+  Result := TOpsiJSONrpcArray(FindPath('params'));
 end;
 
 
