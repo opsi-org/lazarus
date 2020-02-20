@@ -34,7 +34,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="10">
+    <Units Count="11">
       <Unit0>
         <Filename Value="opsiclientd_light.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -87,6 +87,10 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="OpsiJSONrpcObject"/>
       </Unit9>
+      <Unit10>
+        <Filename Value="..\..\common\oslog.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit10>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -97,6 +101,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
+      <OtherUnitFiles Value="..\..\common"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
