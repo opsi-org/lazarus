@@ -1,0 +1,30 @@
+{
+  "logFormatVersion": 1,
+  "jobId": "4d3d04bb-9dec-4482-9afd-e4931092b3ae",
+  "status": "Accepted",
+  "statusSummary": "Ready for distribution",
+  "statusCode": 0,
+  "archiveFilename": "opsi-script_macOS.dmg",
+  "uploadDate": "2020-02-20T16:43:57Z",
+  "sha256": "72bacb64ab5aafce0b09b6d0cc17c8c82860d538f4ab38a572b21d81b52ea9e5",
+  "ticketContents": [
+    {
+      "path": "opsi-script_macOS.dmg",
+      "digestAlgorithm": "SHA-256",
+      "cdhash": "713cbecec94f493aa9cc968fc87ed57e59d63215"
+    },
+    {
+      "path": "opsi-script_macOS.dmg/opsi-script.app",
+      "digestAlgorithm": "SHA-256",
+      "cdhash": "e5a423a5a8fd29784547492c88f865483e30ebfc",
+      "arch": "x86_64"
+    },
+    {
+      "path": "opsi-script_macOS.dmg/opsi-script.app/Contents/MacOS/opsi-script",
+      "digestAlgorithm": "SHA-256",
+      "cdhash": "e5a423a5a8fd29784547492c88f865483e30ebfc",
+      "arch": "x86_64"
+    }
+  ],
+  "issues": null
+}

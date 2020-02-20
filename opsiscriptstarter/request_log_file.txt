@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>notarization-info</key>
+	<dict>
+		<key>Date</key>
+		<date>2020-02-20T13:52:53Z</date>
+		<key>Hash</key>
+		<string>76a0dec7b1a53e8c6f9b20929e7891b44fd9adea8912c4e4432ebb2722de9d82</string>
+		<key>LogFileURL</key>
+		<string>https://osxapps-ssl.itunes.apple.com/itunes-assets/Enigma124/v4/33/af/0f/33af0f17-4293-be96-8efd-0371254ec864/developer_log.json?accessKey=1582401289_4247695110658997056_mCG2oETQqQMMEFLxbgb6Po8UBejaNhMvEMIdpb%2FwDTRQJ1F4g6Km2vv7ek6UfhNd2ohDSySGD6j84VSPQZ6shxOeJsj59jdmSHhWN8ub2OohnPNjKpmOO2DkKHKOJPQ6UphyfaaVWKXINNWLWUiHgapDLfnacwMqbDLG%2BT6DPMk%3D</string>
+		<key>RequestUUID</key>
+		<string>aba0e789-1b3e-4868-acc5-d35e7f4eb51b</string>
+		<key>Status</key>
+		<string>success</string>
+		<key>Status Code</key>
+		<integer>0</integer>
+		<key>Status Message</key>
+		<string>Package Approved</string>
+	</dict>
+	<key>os-version</key>
+	<string>10.14.6</string>
+	<key>success-message</key>
+	<string>No errors getting notarization info.</string>
+	<key>tool-path</key>
+	<string>/Applications/Xcode.app/Contents/SharedFrameworks/ContentDeliveryServices.framework/Versions/A/Frameworks/AppStoreService.framework</string>
+	<key>tool-version</key>
+	<string>4.00.1181</string>
+</dict>
+</plist>
