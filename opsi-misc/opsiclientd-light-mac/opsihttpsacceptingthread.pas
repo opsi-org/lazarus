@@ -29,8 +29,9 @@ type
     StatusLine: string;
     RequestLine: string;
     ReasonPhrase: string;
+    FormerThread: TThread;
     //MessageBody: TOpsiHTTPMessageBody;
-    procedure CreateTestJSONRequestInputBody;
+    procedure CreateTestJSONRequestInputBody;// This function is only for testing
     procedure InitSSLCertificate;
     procedure InitSSLOpsi;
     procedure ReadMessageBody;
@@ -48,7 +49,7 @@ type
     procedure WriteMessageBodyHTMLTestSide;
     procedure WriteMessageBodyJSONResponse;
   public
-    Constructor Create (ASocket:TSocket);
+    Constructor Create (ASocket:TSocket; AFormerThread:TThread);
     Destructor Destroy; override;
     procedure Execute; override;
   end;
@@ -116,15 +117,16 @@ end;
 
 procedure TOpsiHTTPSAcceptingThread.InitSSLOpsi;
 begin
-  AcceptorSocket.SSL.Username:= 'uib-mmini1.uib.local';
-  AcceptorSocket.SSL.Password:= 'c36a9fbd880c45f4f035e9617848ee8a';
+  AcceptorSocket.SSL.Username:= 'vmmacdev1onmm1.uib.local';
+  AcceptorSocket.SSL.Password:= 'aead8f8c57a92e14ac820bf8d3df1805';
 end;
 
-procedure TOpsiHTTPSAcceptingThread.CreateTestJSONRequestInputBody;
+
+procedure TOpsiHTTPSAcceptingThread.CreateTestJSONRequestInputBody; // This function is only for testing
 var
   TestJSONRequest: TOpsiJsonRequest;
 begin
-  TestJSONRequest := TOpsiJSONRequest.Create('fireEvent', ['on_demand'], 1);// only for testing
+  TestJSONRequest := TOpsiJSONRequest.Create('fireEvent', ['on_demand'], 1);
   //JSONStream := TStringStream.Create(JSONRequest.AsJSON);
   //teststring := TestJSONRequest.AsJSON;
   InputBody.Clear;
@@ -138,7 +140,7 @@ var
   rpcMethod: string;
   rpcParams: TJSONArray;
   rpcID: integer;
-  Param: TJSONEnum;
+  //Param: TJSONEnum;
   //OpsiJSONRequest: TOpsiJSONRequest;
 begin
   //recv message body
@@ -148,19 +150,22 @@ begin
     InputBody.SetSize(ContentLength);
     SizeReceived := AcceptorSocket.RecvBufferEx(InputBody.Memory, ContentLength, Timeout);
     InputBody.SetSize(SizeReceived);
+    //AcceptorSocket.RecvStream(InputBody, TimeOut);
+    //rpcMethod := AcceptorSocket.RecvString(TimeOut);
   end;
-  CreateTestJSONRequestInputBody;
+  //CreateTestJSONRequestInputBody;
   //InputBody.Clear;
   //InputBody.LoadFromStream(JSONStream);
   JSONRequest := TOpsiJSONRequest.Create(InputBody);
-  rpcMethod := JSONRequest.AsJSON;
-  rpcMethod := JSONRequest.Method;//JSONrpc.FindPath('method').AsString;
-  rpcParams := JSONRequest.Params;//JSONrpc.FindPath('params');
-  rpcID := JSONRequest.ID;
-  for Param in JSONRequest.Params do
-  begin
-    if Param.Value.AsString = 'on_demand' then OnDemand := true;
-  end;
+  //rpcMethod := JSONRequest.AsJSON; //for testing
+  //rpcMethod := JSONRequest.Method; //for testing
+  //rpcParams := JSONRequest.Params; //for testing
+  //rpcID := JSONRequest.ID;  //for testing
+
+  //for Param in JSONRequest.Params do
+  //begin
+  //  if Param.Value.AsString = 'on_demand' then OnDemand := true;
+  //end;
 end;
 
 procedure TOpsiHTTPSAcceptingThread.ReadJSONRequest;
@@ -257,7 +262,7 @@ begin
   if Protocol <> '' then
   begin
     Headers.Clear;
-    Headers.Add('Content-type: text/html; charset=UTF-8');
+    Headers.Add('Content-type: application/json; charset=UTF-8');
     Headers.Add('Content-length: ' + IntTostr(OutputBody.Size));
     Headers.Add('Connection: close');
     Headers.Add('Date: ' + Rfc822DateTime(now));
@@ -275,9 +280,10 @@ end;
 //end;
 
 
-constructor TOpsiHTTPSAcceptingThread.Create(ASocket: TSocket);
+constructor TOpsiHTTPSAcceptingThread.Create(ASocket: TSocket; AFormerThread: TThread);
 begin
   FreeOnTerminate:=true;
+  FormerThread := AFormerThread;
   AcceptorSocket:=TTCPBlockSocket.Create;
   AcceptorSocket.Socket:=ASocket;
   InitSSLOpsi;
@@ -300,7 +306,9 @@ begin
   FreeAndNil(OutputBody);
   FreeAndNil(JSONRequest);
   FreeAndNil(JSONResponse);
+  //FreeAndNil(FormerThread);
   inherited Destroy;
+  self := nil;
 end;
 
 procedure TOpsiHTTPSAcceptingThread.Execute;
@@ -315,32 +323,34 @@ begin
       ReadRequestLine;
       ReadHeaders;
       ReadMessageBody;
-      //ReadJSONRequest;
-      { do something with the received data }
       SetStatusCode(Method);
-      if (JSONRequest.Method = 'fireEvent') and OnDemand then
+
+      if (JSONRequest.Method = 'fireEvent') then
       begin
+        { write response }
         WriteMessageBodyJSONResponse;
-        RunCommand('/usr/local/bin/opsiscriptstarter',[ ],s);
-        //WriteMessageBodyHTMLTestSide;
-        { WriteMessageBody MUST BE before WriteHeaders otherwise the content-lenght is not known (e.g. 0)
+        //WriteMessageBodyHTMLTestSide; //for testing with webbrowser
+        { WriteMessageBody MUST BE executed before WriteHeaders otherwise the content-lenght is not known (e.g. 0)
         and the Message Body MIGHT BE not read by the client!!!
         Only relvant for plain text if content-encoding is set then NO CONTENT-LENGTH MUST BE SET }
         WriteHeaders;
-        { write response }
         WriteStatusLine;
-        //WriteMessageBodyHTMLTestSide;
-        //if (StatusCode = 200) then WriteMessageBodyHTMLTestSide;
-      end;
-
-
-      { send response }
-      if AcceptorSocket.lasterror = 0 then
-      begin
-        SendStatusLine;
-        SendHeaders;
-        SendMessageBody;
-      end;
+        { send response }
+        if AcceptorSocket.lasterror = 0 then
+        begin
+          SendStatusLine;
+          SendHeaders;
+          SendMessageBody;
+        end;
+        //while FormerThread <> nil do;
+          //FormerThread.WaitFor;
+        if JSONRequest.Params.Find('on_demand') then
+        begin
+          //RunCommand('/usr/local/bin/opsiscriptstarter',[ ], s , [ ]);
+          RunCommand('/Applications/TextEdit.app/Contents/MacOS/TextEdit',[ ], s , [ ]);
+        end;
+      end
+      else ; //SendError (has to be implemented);
     end
     else
     begin
