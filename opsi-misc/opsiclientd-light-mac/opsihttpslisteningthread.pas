@@ -15,7 +15,8 @@ type
   TOpsiHTTPSListeningThread = class(TThread)
   private
     ListenerSocket:TTCPBlockSocket;
-    //ConnectingThread: TOpsiHTTPSAcceptingThread;
+    AcceptingThread: TOpsiHTTPSAcceptingThread;
+    FormerAcceptingThread: TOpsiHTTPSAcceptingThread;
     PassMessage: TPassMessage;
     StatusMessage: string;
     procedure DisplayMessage;
@@ -43,7 +44,7 @@ begin
   ListenerSocket := TTCPBlockSocket.create;
   ListenerSocket.CreateSocket;
   ListenerSocket.SetLinger(true,10000);
-  ListenerSocket.Bind('192.168.10.70','4441'); //192.168.10.70
+  ListenerSocket.Bind('192.168.10.74','4441'); //192.168.10.70
   ListenerSocket.Listen;
   inherited Create(false);
 end;
@@ -60,6 +61,7 @@ var
 begin
   StatusMessage := 'Server started';
   Synchronize(@DisplayMessage);
+  FormerAcceptingThread := nil;
   repeat
     if not Terminated then
     begin
@@ -70,10 +72,13 @@ begin
           Synchronize(@DisplayMessage);
           if ListenerSocket.LastError = 0 then
           begin
-            //ConnectingThread :=
-            with TOpsiHTTPSAcceptingThread.Create(ClientSocket) do
-              StatusMessage := 'New AcceptingThread created. ThreadID: ' + IntToStr(Qword(ThreadID));
+            //AcceptingThread :=
+            with TOpsiHTTPSAcceptingThread.Create(ClientSocket, FormerAcceptingThread) do
+            //with TOpsiHTTPSAcceptingThread.Create(ClientSocket) do
+              StatusMessage := 'New AcceptingThread created. ThreadID: '
+                + IntToStr(Qword(ThreadID));
             Synchronize(@DisplayMessage);
+            //FormerAcceptingThread := AcceptingThread;
           end;
         end;
      end;

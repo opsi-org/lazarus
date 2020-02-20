@@ -21,7 +21,8 @@ type
     property Method: string read GetMethod write SetMethod;
     property Params: TOpsiJSONrpcArray read GetParams write SetParams;
   public
-    constructor Create(aMethod: string; const theParams: array of const; aID: integer);overload;
+    constructor Create(aStream: TStream);
+    constructor Create(aMethod: string; const theParams: array of const; aID: integer);
   end;
 
 
@@ -40,6 +41,12 @@ begin
   Add('params', theParams);
 end;
 
+constructor TOpsiJSONRequest.Create(aStream: TStream);
+begin
+  inherited Create;
+  self := TOpsiJSONRequest(GetJSON(aStream));
+end;
+
 
 constructor TOpsiJSONRequest.Create(aMethod: string;
   const theParams: array of const; aID: integer);
@@ -53,12 +60,12 @@ end;
 
 function TOpsiJSONRequest.GetMethod: string;
 begin
-  Result := Strings['method'];
+  Result := FindPath('method').AsString;
 end;
 
 function TOpsiJSONRequest.GetParams: TOpsiJSONrpcArray;
 begin
-  Result := TOpsiJSONrpcArray(Arrays['params']);
+  Result := TOpsiJSONrpcArray(FindPath('params'));
 end;
 
 

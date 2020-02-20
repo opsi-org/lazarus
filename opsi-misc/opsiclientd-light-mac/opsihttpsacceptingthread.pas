@@ -29,6 +29,7 @@ type
     StatusLine: string;
     RequestLine: string;
     ReasonPhrase: string;
+    FormerThread: TThread;
     //MessageBody: TOpsiHTTPMessageBody;
     procedure CreateTestJSONRequestInputBody;// This function is only for testing
     procedure InitSSLCertificate;
@@ -48,7 +49,7 @@ type
     procedure WriteMessageBodyHTMLTestSide;
     procedure WriteMessageBodyJSONResponse;
   public
-    Constructor Create (ASocket:TSocket);
+    Constructor Create (ASocket:TSocket; AFormerThread:TThread);
     Destructor Destroy; override;
     procedure Execute; override;
   end;
@@ -116,8 +117,8 @@ end;
 
 procedure TOpsiHTTPSAcceptingThread.InitSSLOpsi;
 begin
-  AcceptorSocket.SSL.Username:= 'uib-mmini1.uib.local';
-  AcceptorSocket.SSL.Password:= 'c36a9fbd880c45f4f035e9617848ee8a';
+  AcceptorSocket.SSL.Username:= 'vmmacdev1onmm1.uib.local';
+  AcceptorSocket.SSL.Password:= 'aead8f8c57a92e14ac820bf8d3df1805';
 end;
 
 
@@ -279,9 +280,10 @@ end;
 //end;
 
 
-constructor TOpsiHTTPSAcceptingThread.Create(ASocket: TSocket);
+constructor TOpsiHTTPSAcceptingThread.Create(ASocket: TSocket; AFormerThread: TThread);
 begin
   FreeOnTerminate:=true;
+  FormerThread := AFormerThread;
   AcceptorSocket:=TTCPBlockSocket.Create;
   AcceptorSocket.Socket:=ASocket;
   InitSSLOpsi;
@@ -304,7 +306,9 @@ begin
   FreeAndNil(OutputBody);
   FreeAndNil(JSONRequest);
   FreeAndNil(JSONResponse);
+  //FreeAndNil(FormerThread);
   inherited Destroy;
+  self := nil;
 end;
 
 procedure TOpsiHTTPSAcceptingThread.Execute;
@@ -338,6 +342,8 @@ begin
           SendHeaders;
           SendMessageBody;
         end;
+        //while FormerThread <> nil do;
+          //FormerThread.WaitFor;
         if JSONRequest.Params.Find('on_demand') then
         begin
           //RunCommand('/usr/local/bin/opsiscriptstarter',[ ], s , [ ]);

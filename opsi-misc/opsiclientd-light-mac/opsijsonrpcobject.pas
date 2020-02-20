@@ -18,7 +18,7 @@ type
   published
     property ID: integer read GetID write SetID;
   public
-    constructor Create(aStream: TStream);overload;
+    //constructor Create(aStream: TStream);virtual;
     procedure SaveToMemoryStream(aMemoryStream: TMemoryStream);
   end;
 
@@ -32,11 +32,11 @@ begin
   Add('id', aID);
 end;
 
-constructor TOpsiJSONrpcObject.Create(aStream: TStream);
-begin
-  inherited Create;
-  self := TOpsiJSONrpcObject(GetJSON(aStream));
-end;
+//constructor TOpsiJSONrpcObject.Create(aStream: TStream);
+//begin
+//  inherited Create;
+//  self := TOpsiJSONrpcObject(GetJSON(aStream));
+//end;
 
 //constructor TOpsiJSONrpcObject.Create(aID: integer);
 //begin

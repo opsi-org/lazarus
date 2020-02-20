@@ -21,7 +21,8 @@ type
     property Error: TJSONObject read GetError write SetError;
     property Result : TJSONData read GetResult write SetResult;
   public
-    constructor Create(aResult: TJSONData; aError: TJSONObject; aID: integer); overload;
+    constructor Create(aStream: TStream);
+    constructor Create(aResult: TJSONData; aError: TJSONObject; aID: integer);
   end;
 
 implementation
@@ -49,6 +50,12 @@ end;
 procedure TOpsiJSONResponse.SetResult(aResult: TJSONData);
 begin
   Add('result', aResult);
+end;
+
+constructor TOpsiJSONResponse.Create(aStream: TStream);
+begin
+  inherited Create;
+  self := TOpsiJSONResponse(GetJSON(aStream));
 end;
 
 
