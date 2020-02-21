@@ -1,6 +1,6 @@
 # 
 # Translators:
-msgid "following Paramenters:"
+msgid ""
 msgstr ""
 "Project-Id-Version: opsi.org\n"
 "POT-Creation-Date: \n"
@@ -51,22 +51,26 @@ msgstr ""
 msgid "Ready to continue ?"
 msgstr ""
 
+#: oswebservice.rssendlog
+msgid "Sending log file to server ..."
+msgstr "Invio del file di log al server ..."
+
 #: tcentralform.beenden1.caption
-msgctxt "tcentralform.beenden1.caption"
+msgctxt "TCENTRALFORM.BEENDEN1.CAPTION"
 msgid "Exit"
-msgstr ""
+msgstr "Esci"
 
 #: tcentralform.buttongetclipboardtext.caption
 msgid "Clipboard --> Viewlist"
-msgstr ""
+msgstr "Appunti --> lista"
 
 #: tcentralform.buttonprocessmemo.caption
 msgid "Execute viewlist as script"
-msgstr ""
+msgstr "Esegui la lista  come uno script"
 
 #: tcentralform.button_show_gui.caption
 msgid "Show GUI"
-msgstr ""
+msgstr "Mostra GUI"
 
 #: tcentralform.caption
 msgid "  opsi - script"
@@ -74,97 +78,122 @@ msgstr ""
 
 #: tcentralform.combobox1.text
 msgid "ComboBox1"
-msgstr ""
+msgstr "ComboBox1"
 
 #: tcentralform.datei1.caption
 msgid "File"
-msgstr ""
+msgstr "File"
 
 #: tcentralform.edit1.text
 msgid "Edit1"
-msgstr ""
+msgstr "Modifica1"
 
 #: tcentralform.edit2.text
 msgid "Edit2"
-msgstr ""
+msgstr "Modifica2"
 
 #: tcentralform.hilfe1.caption
 msgid "Help"
-msgstr ""
+msgstr "Aiuto"
 
 #: tcentralform.info1.caption
 msgid "Info .."
-msgstr ""
+msgstr "Info .."
 
 #: tcentralform.label1.caption
+msgctxt "tcentralform.label1.caption"
 msgid "Label1"
-msgstr ""
+msgstr "etichetta1"
 
 #: tcentralform.label2.caption
 msgid "Label2"
-msgstr ""
+msgstr "etichetta2"
 
 #: tcentralform.label4.caption
 msgid "Logfile:"
-msgstr ""
+msgstr "File-log:"
 
 #: tcentralform.label5.caption
 msgid "Script:"
-msgstr ""
+msgstr "Script:"
 
 #: tcentralform.label6.caption
-msgctxt "tcentralform.label6.caption"
+msgctxt "TCENTRALFORM.LABEL6.CAPTION"
 msgid "LabelWinstVersion"
-msgstr ""
+msgstr "etichetta versione winst"
 
 #: tcentralform.labelactivity.caption
 msgid "-"
-msgstr ""
+msgstr "-"
 
 #: tcentralform.labelwinstversion.caption
 msgctxt "tcentralform.labelwinstversion.caption"
 msgid "LabelWinstVersion"
-msgstr ""
+msgstr "etichetta versione winst"
 
 #: tcentralform.panel2.caption
 msgid "Log-View:"
-msgstr ""
+msgstr "Visualizza-log:"
 
 #: tcentralform.radiobuttonappendlogfile.caption
 msgid "Append"
-msgstr ""
+msgstr "Aggiungi"
 
 #: tcentralform.radiobuttonnewlogfile.caption
 msgid "New"
-msgstr ""
+msgstr "Nuovo"
 
 #: tcentralform.skript1.caption
 msgid "Open Script"
-msgstr ""
+msgstr "Apri Script"
 
 #: tcentralform.speedbutton1.caption
 msgid "Select Script"
-msgstr ""
+msgstr "Scegli Script"
 
 #: tcentralform.speedbutton2.caption
 msgid "Start"
-msgstr ""
+msgstr "Avvio"
 
 #: tcentralform.speedbutton3.caption
 msgid "View Log"
-msgstr ""
+msgstr "Mostra log"
 
 #: tcentralform.speedbutton4.caption
 msgid "Hide GUI"
-msgstr ""
+msgstr "Cela GUI"
 
 #: tcentralform.speedbutton5.caption
 msgctxt "tcentralform.speedbutton5.caption"
 msgid "Exit"
-msgstr ""
+msgstr "Esci"
 
 #: tcentralform.toolbar1.caption
 msgid "ToolBar1"
+msgstr "barra degli strumenti1"
+
+#: tdialogservicepassword.cancelbutton.caption
+msgid "Cancel"
+msgstr "Annulla"
+
+#: tdialogservicepassword.caption
+msgid " DialogServicePassword"
+msgstr ""
+
+#: tdialogservicepassword.labelpassword.caption
+msgid "Password"
+msgstr "Password"
+
+#: tdialogservicepassword.labelserviceurl.caption
+msgid "Opsi Service URL"
+msgstr ""
+
+#: tdialogservicepassword.labelusername.caption
+msgid "Username"
+msgstr ""
+
+#: tdialogservicepassword.okbutton.caption
+msgid "o.k."
 msgstr ""
 
 #: tfbatchoberflaeche.caption
@@ -173,25 +202,57 @@ msgstr ""
 
 #: tfbatchoberflaeche.labelcommand.caption
 msgid "Command"
-msgstr ""
+msgstr "Comando"
 
 #: tfbatchoberflaeche.labeldetail.caption
 msgid "Detail"
-msgstr ""
+msgstr "Dettaglio"
 
 #: tfbatchoberflaeche.labelinfo.caption
 msgid "Info"
-msgstr ""
+msgstr "Info"
 
 #: tfbatchoberflaeche.labelproduct.caption
 msgid "LabelProductImage"
-msgstr ""
+msgstr "Etichetta immagine del prodotto"
 
 #: tfbatchoberflaeche.labelprogress.caption
 msgid "Activity"
-msgstr ""
+msgstr "Attività"
 
 #: tfbatchoberflaeche.labelversion.caption
 msgid "LabelVersion"
+msgstr "Etichetta versione"
+
+#: tmymessagedlg.abortbtn.caption
+msgid "&Exit"
 msgstr ""
 
+#: tmymessagedlg.cancelbtn.caption
+msgid "&Cancel"
+msgstr ""
+
+#: tmymessagedlg.caption
+msgid "opsi-script Message"
+msgstr ""
+
+#: tmymessagedlg.nobtn.caption
+msgid "&No"
+msgstr ""
+
+#: tmymessagedlg.okbtn.caption
+msgid "&OK"
+msgstr ""
+
+#: tmymessagedlg.yesbtn.caption
+msgid "&Yes"
+msgstr ""
+
+#: tsysteminfo.caption
+msgid "SystemInfo"
+msgstr ""
+
+#: tsysteminfo.label1.caption
+msgctxt "TSYSTEMINFO.LABEL1.CAPTION"
+msgid "Label1"
+msgstr "etichetta1"
