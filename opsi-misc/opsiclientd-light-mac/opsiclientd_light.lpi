@@ -34,7 +34,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="11">
+    <Units Count="13">
       <Unit0>
         <Filename Value="opsiclientd_light.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -91,6 +91,15 @@
         <Filename Value="..\..\common\oslog.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit10>
+      <Unit11>
+        <Filename Value="..\..\external_libraries\misc\charencstreams.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="opsiclientdlog.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OpsiClientdLog"/>
+      </Unit12>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -101,7 +110,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\..\common"/>
+      <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>

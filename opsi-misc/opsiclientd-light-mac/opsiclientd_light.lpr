@@ -8,7 +8,8 @@ uses
   {$ENDIF}//{$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, ServerGUI, OpsiJSONRequest, OpsiJSONResponse, opsiHTTPSListeningThread,
-  OpsiHTTPMessageBody, OpsiHTMLMessageBody, OpsiJSONMessageBody, OpsiJSONrpcObject;
+  OpsiHTTPMessageBody, OpsiHTMLMessageBody, OpsiJSONMessageBody,
+  OpsiJSONrpcObject, opsiclientdlog;
 
 {$R *.res}
 
