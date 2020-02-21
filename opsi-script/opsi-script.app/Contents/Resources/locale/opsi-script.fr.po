@@ -1,0 +1,260 @@
+# 
+# Translators:
+# Benoit Mortier <benoit.mortier@opensides.be>, 2015-2016
+# Daniel Debeus, 2016
+msgid ""
+msgstr ""
+"Project-Id-Version: opsi.org\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2016-12-20 14:59+0000\n"
+"Last-Translator: Daniel Debeus\n"
+"Language-Team: French (http://www.transifex.com/opsi-org/opsiorg/language/fr/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: osbatchgui.rsgetlistofproducts
+msgid "get list of products"
+msgstr "obtenir la liste de produits"
+
+#: osbatchgui.rsloadingskin
+msgid "Loading skin..."
+msgstr "Chargement thème ..."
+
+#: osinteractivegui.rsproductcheck
+msgctxt "osinteractivegui.rsproductcheck"
+msgid "product check"
+msgstr "contrôle du produit"
+
+#: osmain.rsproductcheck
+msgctxt "osmain.rsproductcheck"
+msgid "product check"
+msgstr "contrôle du produit ..."
+
+#: osparser.rsabortprogram
+msgid "Abort program ?"
+msgstr "Arrêter le programme ?"
+
+#: osparser.rsgetpassword
+msgid "Please enter opsi service user password:"
+msgstr "S'il vous plaît entrez le mot de passe utilisateur du service opsi :"
+
+#: osparser.rsgetserviceurl
+msgid "Please enter opsi service URL:"
+msgstr "S'il vous plaît entrez l'URL du service OPSI :"
+
+#: osparser.rsgetusername
+msgid "Please enter opsi service user name:"
+msgstr "S'il vous plaît entrez le nom d'utilisateur du service OPSI :"
+
+#: osparser.rsreadytocontinue
+msgid "Ready to continue ?"
+msgstr "Prêt à continuer ?"
+
+#: oswebservice.rssendlog
+msgid "Sending log file to server ..."
+msgstr "Envoi du fichier journal au serveur ..."
+
+#: tcentralform.beenden1.caption
+msgctxt "TCENTRALFORM.BEENDEN1.CAPTION"
+msgid "Exit"
+msgstr "Sortir"
+
+#: tcentralform.buttongetclipboardtext.caption
+msgid "Clipboard --> Viewlist"
+msgstr "Presse-papiers --> Viewlist"
+
+#: tcentralform.buttonprocessmemo.caption
+msgid "Execute viewlist as script"
+msgstr "Exécuter Viewlist comme script"
+
+#: tcentralform.button_show_gui.caption
+msgid "Show GUI"
+msgstr "Afficher l'interface"
+
+#: tcentralform.caption
+msgid "  opsi - script"
+msgstr "  opsi - script"
+
+#: tcentralform.combobox1.text
+msgid "ComboBox1"
+msgstr "ComboBox1"
+
+#: tcentralform.datei1.caption
+msgid "File"
+msgstr "Fichier"
+
+#: tcentralform.edit1.text
+msgid "Edit1"
+msgstr "Saisie1"
+
+#: tcentralform.edit2.text
+msgid "Edit2"
+msgstr "Saisie2"
+
+#: tcentralform.hilfe1.caption
+msgid "Help"
+msgstr "Aide"
+
+#: tcentralform.info1.caption
+msgid "Info .."
+msgstr "Info .."
+
+#: tcentralform.label1.caption
+msgctxt "tcentralform.label1.caption"
+msgid "Label1"
+msgstr "étiquette1"
+
+#: tcentralform.label2.caption
+msgid "Label2"
+msgstr "étiquette2"
+
+#: tcentralform.label4.caption
+msgid "Logfile:"
+msgstr "Fichier-log:"
+
+#: tcentralform.label5.caption
+msgid "Script:"
+msgstr "Script:"
+
+#: tcentralform.label6.caption
+msgctxt "TCENTRALFORM.LABEL6.CAPTION"
+msgid "LabelWinstVersion"
+msgstr "Étiquette version winst"
+
+#: tcentralform.labelactivity.caption
+msgid "-"
+msgstr "-"
+
+#: tcentralform.labelwinstversion.caption
+msgctxt "tcentralform.labelwinstversion.caption"
+msgid "LabelWinstVersion"
+msgstr "Étiquette version winst"
+
+#: tcentralform.panel2.caption
+msgid "Log-View:"
+msgstr "Afficher-log:"
+
+#: tcentralform.radiobuttonappendlogfile.caption
+msgid "Append"
+msgstr "Ajouter"
+
+#: tcentralform.radiobuttonnewlogfile.caption
+msgid "New"
+msgstr "Nouveau"
+
+#: tcentralform.skript1.caption
+msgid "Open Script"
+msgstr "Ouvrir Script"
+
+#: tcentralform.speedbutton1.caption
+msgid "Select Script"
+msgstr "Choisir Script"
+
+#: tcentralform.speedbutton2.caption
+msgid "Start"
+msgstr "Démarrer"
+
+#: tcentralform.speedbutton3.caption
+msgid "View Log"
+msgstr "Afficher log"
+
+#: tcentralform.speedbutton4.caption
+msgid "Hide GUI"
+msgstr "Cacher l'interface"
+
+#: tcentralform.speedbutton5.caption
+msgctxt "tcentralform.speedbutton5.caption"
+msgid "Exit"
+msgstr "Sortir"
+
+#: tcentralform.toolbar1.caption
+msgid "ToolBar1"
+msgstr "Barre d'outils1"
+
+#: tdialogservicepassword.cancelbutton.caption
+msgid "Cancel"
+msgstr "Annuler"
+
+#: tdialogservicepassword.caption
+msgid " DialogServicePassword"
+msgstr "Mot de passe du service"
+
+#: tdialogservicepassword.labelpassword.caption
+msgid "Password"
+msgstr "Mot de passe"
+
+#: tdialogservicepassword.labelserviceurl.caption
+msgid "Opsi Service URL"
+msgstr "URL du service Opsi"
+
+#: tdialogservicepassword.labelusername.caption
+msgid "Username"
+msgstr "Nom d'utilisateur"
+
+#: tdialogservicepassword.okbutton.caption
+msgid "o.k."
+msgstr "o.k."
+
+#: tfbatchoberflaeche.caption
+msgid "opsi-script"
+msgstr "opsi-script"
+
+#: tfbatchoberflaeche.labelcommand.caption
+msgid "Command"
+msgstr "Commande"
+
+#: tfbatchoberflaeche.labeldetail.caption
+msgid "Detail"
+msgstr "Détail"
+
+#: tfbatchoberflaeche.labelinfo.caption
+msgid "Info"
+msgstr "Info"
+
+#: tfbatchoberflaeche.labelproduct.caption
+msgid "LabelProductImage"
+msgstr "Étiquette image du produit"
+
+#: tfbatchoberflaeche.labelprogress.caption
+msgid "Activity"
+msgstr "Activité"
+
+#: tfbatchoberflaeche.labelversion.caption
+msgid "LabelVersion"
+msgstr "Étiquette version"
+
+#: tmymessagedlg.abortbtn.caption
+msgid "&Exit"
+msgstr "&Quitter"
+
+#: tmymessagedlg.cancelbtn.caption
+msgid "&Cancel"
+msgstr "&Annuler"
+
+#: tmymessagedlg.caption
+msgid "opsi-script Message"
+msgstr "Message opsi-script"
+
+#: tmymessagedlg.nobtn.caption
+msgid "&No"
+msgstr "&Non"
+
+#: tmymessagedlg.okbtn.caption
+msgid "&OK"
+msgstr "&OK"
+
+#: tmymessagedlg.yesbtn.caption
+msgid "&Yes"
+msgstr "&Oui"
+
+#: tsysteminfo.caption
+msgid "SystemInfo"
+msgstr "Informations système"
+
+#: tsysteminfo.label1.caption
+msgctxt "TSYSTEMINFO.LABEL1.CAPTION"
+msgid "Label1"
+msgstr "étiquette1"
