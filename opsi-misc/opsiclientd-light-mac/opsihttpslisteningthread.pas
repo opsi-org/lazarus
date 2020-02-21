@@ -52,6 +52,7 @@ end;
 destructor TOpsiHTTPSListeningThread.Destroy;
 begin
   ListenerSocket.free;
+  FreeAndNil(AcceptingThread);
   inherited Destroy;
 end;
 
@@ -72,13 +73,13 @@ begin
           Synchronize(@DisplayMessage);
           if ListenerSocket.LastError = 0 then
           begin
-            //AcceptingThread :=
-            with TOpsiHTTPSAcceptingThread.Create(ClientSocket, FormerAcceptingThread) do
+            AcceptingThread := TOpsiHTTPSAcceptingThread.Create(ClientSocket, FormerAcceptingThread);
+            //with TOpsiHTTPSAcceptingThread.Create(ClientSocket, FormerAcceptingThread) do
             //with TOpsiHTTPSAcceptingThread.Create(ClientSocket) do
-              StatusMessage := 'New AcceptingThread created. ThreadID: '
-                + IntToStr(Qword(ThreadID));
+            StatusMessage := 'New AcceptingThread created. ThreadID: '
+                + IntToStr(Int64(AcceptingThread.ThreadID));
             Synchronize(@DisplayMessage);
-            //FormerAcceptingThread := AcceptingThread;
+            FormerAcceptingThread := AcceptingThread;
           end;
         end;
      end;

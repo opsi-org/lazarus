@@ -49,7 +49,7 @@ type
     procedure WriteMessageBodyHTMLTestSide;
     procedure WriteMessageBodyJSONResponse;
   public
-    Constructor Create (ASocket:TSocket; AFormerThread:TThread);
+    Constructor Create (ASocket:TSocket; const AFormerThread:TThread);
     Destructor Destroy; override;
     procedure Execute; override;
   end;
@@ -280,9 +280,9 @@ end;
 //end;
 
 
-constructor TOpsiHTTPSAcceptingThread.Create(ASocket: TSocket; AFormerThread: TThread);
+constructor TOpsiHTTPSAcceptingThread.Create(ASocket: TSocket; const AFormerThread: TThread);
 begin
-  FreeOnTerminate:=true;
+  //FreeOnTerminate:=true;
   FormerThread := AFormerThread;
   AcceptorSocket:=TTCPBlockSocket.Create;
   AcceptorSocket.Socket:=ASocket;
@@ -308,7 +308,7 @@ begin
   FreeAndNil(JSONResponse);
   //FreeAndNil(FormerThread);
   inherited Destroy;
-  self := nil;
+  //self := nil;
 end;
 
 procedure TOpsiHTTPSAcceptingThread.Execute;
@@ -343,7 +343,11 @@ begin
           SendMessageBody;
         end;
         //while FormerThread <> nil do;
-          //FormerThread.WaitFor;
+        if Assigned(FormerThread) then
+        begin
+          FormerThread.WaitFor;
+          FreeAndNil(FormerThread);
+        end;
         if JSONRequest.Params.Find('on_demand') then
         begin
           //RunCommand('/usr/local/bin/opsiscriptstarter',[ ], s , [ ]);
