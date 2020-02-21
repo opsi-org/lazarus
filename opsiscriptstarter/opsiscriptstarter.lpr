@@ -29,12 +29,20 @@ uses {$IFDEF UNIX} //{$IFDEF UseCThreads}
   oslinmount;
 
 const
+{$IFDEF LINUX}
   // SW_HIDE = 0;
   opsiclientdconf = '/etc/opsi-client-agent/opsiclientd.conf';
   opsiscriptbin = '/usr/bin/opsi-script';
   opsiscriptnoguibin = '/usr/bin/opsi-script-nogui';
   opsiscriptstarterlog = 'opsiscriptstarter.log';
-
+{$ENDIF}
+{$IFDEF DARWIN}
+  SW_HIDE = 0;
+  opsiclientdconf = '/etc/opsi-client-agent/opsiclientd.conf' ;
+  opsiscriptbin = '/Applications/opsi-script.app/Contents/MacOS/opsi-script';
+  opsiscriptnoguibin = '/usr/local/bin/opsi-script-nogui';
+  opsiscriptstarterlog = 'opsiscriptstarter.log';
+{$ENDIF}
 
 type
 
@@ -79,7 +87,7 @@ var
     begin
       ;
       LogDatei.DependentAdd('network timeout by thread - aborting program', LLInfo);
-      writeln('network timeout by thread - aborting program');
+    writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' network timeout by thread - aborting program');
       halt(0);
     end;
   end;
@@ -92,6 +100,7 @@ var
     ExitCode: longint;
     i: integer;
     credfilename: string;
+    redirection : string;
   begin
     outlines := TStringList.Create;
     credfilename := '/tmp/opsicredentials';
@@ -101,11 +110,17 @@ var
     credentials.SaveToFile(credfilename);
     fpchmod(credfilename, &600);
     Result := 0;
+{$IFDEF LINUX}
+  redirection := ' &> /dev/tty1"';
+{$ENDIF}
+{$IFDEF DARWIN}
+  redirection := '"';
+{$ENDIF}
     if nogui then
     begin
       cmd := '/bin/bash -c " ' + opsiscriptnoguibin + ' -opsiservice ' +
         myservice_url + ' -clientid ' +
-        myclientid + ' -credentialfile ' + credfilename + ' &> /dev/tty1"';
+        myclientid + ' -credentialfile ' + credfilename + redirection;
       //                         +' -username '+ myclientid
       //                         +' -password ' + myhostkey+' &> /dev/tty1"';
     end
@@ -214,13 +229,13 @@ var
         else
         begin
           LogDatei.DependentAdd('opsidata not connected - retry', LLInfo);
-          writeln('opsidata not connected - retry');
+        writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' opsidata not connected - retry');
           myseconds := myseconds - 1;
           Sleep(1000);
         end;
       except
         LogDatei.DependentAdd('opsidata not connected - retry', LLInfo);
-        writeln('opsidata not connected - retry');
+      writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' opsidata not connected - retry');
         myseconds := myseconds - 1;
         Sleep(1000);
       end;
@@ -230,15 +245,13 @@ var
     if networkup then
     begin
       LogDatei.DependentAdd('opsidata connected', LLInfo);
-      writeln('opsidata connected');
+    writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' opsidata connected');
       Result := True;
     end
     else
     begin
-      LogDatei.DependentAdd('init connection failed (timeout after ' +
-        IntToStr(seconds) + ' seconds/retries.', LLError);
-      writeln('init connection failed (timeout after ' + IntToStr(seconds) +
-        ' seconds/retries.');
+    LogDatei.DependentAdd('init connection failed (timeout after '+ IntToStr(seconds) + ' seconds/retries.',LLError);
+    writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' init connection failed (timeout after '+ IntToStr(seconds) + ' seconds/retries.');
     end;
   end;
 
@@ -266,7 +279,8 @@ var
     mymountpoint := '/media/opsi_depot';
   {$ENDIF}
   {$IFDEF DARWIN}
-    mymountpoint := '/Network/opsi_depot';
+  //mymountpoint := '/Network/opsi_depot';
+  mymountpoint := '/Volumes/opsi_depot';
   {$ENDIF}
     nogui := False;
     FileVerInfo := TFileVersionInfo.Create(nil);
@@ -311,17 +325,17 @@ var
     if nogui then
       logdatei.log('Running in nogui mode', LLNotice);
 
-    writeln('clientid=' + myclientid);
-    writeln('service_url=' + myservice_url);
-    writeln('service_user=' + myclientid);
+  writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' clientid='+myclientid);
+  writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' service_url='+myservice_url);
+  writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' service_user='+myclientid);
     //writeln('host_key=',myhostkey);
     logdatei.AddToConfidentials(myhostkey);
-    writeln('log_level=', myloglevel);
+  writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' log_level=',myloglevel);
     mythread := Tmythread.Create(False);
     if initConnection(30) then
     begin
       mythread.Terminate;
-      writeln('init done');
+    writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' init done');
       LogDatei.log('init done', LLNotice);
       LogDatei.log('Starting opsiclientd part:', LLNotice);
       opsidata.setActualClient(myclientid);
@@ -338,12 +352,12 @@ var
       if not foundActionRequest then
       begin
         LogDatei.DependentAdd('No action requests - nothing to do', LLNotice);
-        writeln('No action requests - nothing to do');
+      writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' No action requests - nothing to do');
       end
       else
       begin
         LogDatei.DependentAdd('Action requests found', LLNotice);
-        writeln('Action requests found');
+      writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' Action requests found');
         opsidata.setActualClient(myclientid);
         mount_depotshare(mymountpoint, myhostkey, myclientId);
         if not isMounted(mymountpoint) then
@@ -351,11 +365,11 @@ var
             ' - abort!', LLCritical)
         else
         begin
-          writeln('share mounted - starting action processor...');
+        writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' share mounted - starting action processor...');
           startopsiscript;
-          writeln('action processor finished');
+        writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' action processor finished');
           umount(mymountpoint);
-          writeln('share unmounted');
+        writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' share unmounted');
         end;
       end;
       opsidata.sendLog('clientconnect');
