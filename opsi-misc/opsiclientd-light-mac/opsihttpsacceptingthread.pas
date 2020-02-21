@@ -9,7 +9,7 @@ uses
   OpsiHTMLMessageBody;
 
 type
-  TPassMessage = procedure(AMsg: string) of object;
+  TPassLog = procedure(AMsg: string; LogLevel:integer) of object;
 
   { TOpsiHTTPSAcceptingThread }
 
@@ -31,8 +31,9 @@ type
     RequestLine: string;
     ReasonPhrase: string;
     FormerThread: TThread;
-    StatusMessage: string;
-    PassMessage: TPassMessage;
+    Log: string;
+    LevelOfLine: integer;
+    PassLog: TPassLog;
     //MessageBody: TOpsiHTTPMessageBody;
     procedure CreateTestJSONRequestInputBody;// This function is only for testing
     procedure InitSSLCertificate;
@@ -51,12 +52,12 @@ type
     //procedure WriteHTMLTestSide;
     procedure WriteMessageBodyHTMLTestSide;
     procedure WriteMessageBodyJSONResponse;
-    procedure SendStatusMessage;
+    procedure SendLog;
   public
     Constructor Create (ASocket:TSocket; const AFormerThread:TThread);
     Destructor Destroy; override;
     procedure Execute; override;
-    property OnPassMessage: TPassMessage read PassMessage write PassMessage;
+    property OnPassLog: TPassLog read PassLog write PassLog;
   end;
 
 
@@ -98,10 +99,10 @@ begin
   end;
 end;
 
-procedure TOpsiHTTPSAcceptingThread.SendStatusMessage;
+procedure TOpsiHTTPSAcceptingThread.SendLog;
 begin
-  if Assigned(PassMessage) then
-    PassMessage(StatusMessage);
+  if Assigned(PassLog) then
+    PassLog(Log,LevelOfLine);
 end;
 
 
@@ -330,15 +331,17 @@ begin
     if  AcceptorSocket.SSLAcceptConnection
       and (AcceptorSocket.SSL.LastError = 0) then
     begin
-      StatusMessage := 'SSL accepted';
-      Synchronize(@SendStatusMessage);
+      Log := 'SSL accepted';
+      LevelOfLine := 7;
+      Synchronize(@SendLog);
       { read request }
       ReadRequestLine;
       ReadHeaders;
       ReadMessageBody;
       SetStatusCode(Method);
-      StatusMessage := 'Request received and read';
-      Synchronize(@SendStatusMessage);
+      Log := 'Request received and read: ' + Headers.Text;
+      LevelOfLine := 6;
+      Synchronize(@SendLog);
       if (JSONRequest.Method = 'fireEvent') then
       begin
         { write response }
@@ -361,8 +364,9 @@ begin
         begin
           FormerThread.WaitFor;
           FreeAndNil(FormerThread);
-          StatusMessage := 'Former Thread';
-          Synchronize(@SendStatusMessage);
+          Log := 'Former Thread terminated and closed';
+          LevelOfLine := 5;
+          Synchronize(@SendLog);
         end;
         if JSONRequest.Params.Find('on_demand') then
         begin
@@ -374,10 +378,14 @@ begin
     end
     else
     begin
-      //StatusMessage := 'Error while accepting SSL connection: ' + AcceptorSocket.SSL.LastErrorDesc;
+      Log := 'Error while accepting SSL connection: ' + AcceptorSocket.SSL.LastErrorDesc;
+      LevelofLine := 2;
+      Synchronize(@SendLog);
     end;
   except
-    //StatusMessage := 'Exception while accepting SSL connection';
+    Log := 'Exception while accepting SSL connection';
+    LevelofLine := 1;
+    Synchronize(@SendLog);
   end;
 end;
 

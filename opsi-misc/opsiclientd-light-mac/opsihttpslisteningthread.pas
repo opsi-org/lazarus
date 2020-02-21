@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, OpsiHTTPSAcceptingThread, blcksock, sockets;
 
 type
-  //TPassMessage = procedure(AMsg: string) of object;
+  //TPassLog = procedure(AMsg: string) of object;
 
   { TOpsiHTTPSListeningThread }
 
@@ -17,7 +17,7 @@ type
     ListenerSocket:TTCPBlockSocket;
     AcceptingThread: TOpsiHTTPSAcceptingThread;
     FormerAcceptingThread: TOpsiHTTPSAcceptingThread;
-    PassMessage: TPassMessage;
+    PassMessage: TPassLog;
     StatusMessage: string;
     AcceptingThreadNumber: integer;
     procedure SendStatusMessage;
@@ -25,7 +25,7 @@ type
     Constructor Create;
     Destructor Destroy; override;
     procedure Execute; override;
-    property OnPassMessage: TPassMessage read PassMessage write PassMessage;
+    property OnPassMessage: TPassLog read PassMessage write PassMessage;
   end;
 
 
@@ -36,7 +36,7 @@ implementation
 procedure TOpsiHTTPSListeningThread.SendStatusMessage;
 begin
   if Assigned(PassMessage) then
-    PassMessage(StatusMessage);
+    PassMessage(StatusMessage,5);
 end;
 
 constructor TOpsiHTTPSListeningThread.Create;
@@ -76,7 +76,7 @@ begin
           if ListenerSocket.LastError = 0 then
           begin
             AcceptingThread := TOpsiHTTPSAcceptingThread.Create(ClientSocket, FormerAcceptingThread);
-            AcceptingThread.OnPassMessage:= self.OnPassMessage;
+            AcceptingThread.OnPassLog:= self.OnPassMessage;
             //with TOpsiHTTPSAcceptingThread.Create(ClientSocket, FormerAcceptingThread) do
             //with TOpsiHTTPSAcceptingThread.Create(ClientSocket) do
             StatusMessage := 'New AcceptingThread created. ThreadID: '

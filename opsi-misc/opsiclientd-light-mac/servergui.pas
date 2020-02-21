@@ -21,7 +21,7 @@ type
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   private
     ListeningThread: TOpsiHTTPSListeningThread;
-    procedure DisplayStatus(aMessage:string);
+    procedure DisplayStatus(aMessage:string; aLevelofLine:integer);
   public
 
   end;
@@ -53,9 +53,10 @@ begin
     ListeningThread.Terminate;
 end;
 
-procedure TMainForm.DisplayStatus(aMessage: string);
+procedure TMainForm.DisplayStatus(aMessage: string; aLevelofLine:integer);
 begin
-  Memo1.Lines.Append(aMessage);
+  Memo1.Lines.Append('(' + IntToStr(Memo1.Lines.Count) + ')' + #9 + '['
+    + IntToStr(aLevelofLine) + '] ' + aMessage  );
 end;
 
 end.
