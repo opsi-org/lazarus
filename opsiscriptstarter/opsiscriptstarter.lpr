@@ -433,7 +433,7 @@ var
 
 begin
   Application := Topsiscriptstarter.Create(nil);
-  Application.Title := 'opsi-script-starter';
+  Application.Title:='opsi-script-starter';
   Application.Run;
   Application.Free;
 end.

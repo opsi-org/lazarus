@@ -1452,8 +1452,8 @@ begin
 
 
     {$IFDEF UNIX}
-    opsiclientd := true;
-    if ProcessIsRunning('opsiclientd') then opsiclientd := false;
+    opsiclientd := false;
+    if ProcessIsRunning('opsiclientd') then opsiclientd := true;
        if PerformExitWindows <> txrNoExit then
           begin
             case PerformExitWindows of
