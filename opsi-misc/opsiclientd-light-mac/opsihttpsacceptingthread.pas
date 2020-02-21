@@ -9,6 +9,7 @@ uses
   OpsiHTMLMessageBody;
 
 type
+  TPassMessage = procedure(AMsg: string) of object;
 
   { TOpsiHTTPSAcceptingThread }
 
@@ -30,6 +31,8 @@ type
     RequestLine: string;
     ReasonPhrase: string;
     FormerThread: TThread;
+    StatusMessage: string;
+    PassMessage: TPassMessage;
     //MessageBody: TOpsiHTTPMessageBody;
     procedure CreateTestJSONRequestInputBody;// This function is only for testing
     procedure InitSSLCertificate;
@@ -48,10 +51,12 @@ type
     //procedure WriteHTMLTestSide;
     procedure WriteMessageBodyHTMLTestSide;
     procedure WriteMessageBodyJSONResponse;
+    procedure SendStatusMessage;
   public
     Constructor Create (ASocket:TSocket; const AFormerThread:TThread);
     Destructor Destroy; override;
     procedure Execute; override;
+    property OnPassMessage: TPassMessage read PassMessage write PassMessage;
   end;
 
 
@@ -93,6 +98,12 @@ begin
   end;
 end;
 
+procedure TOpsiHTTPSAcceptingThread.SendStatusMessage;
+begin
+  if Assigned(PassMessage) then
+    PassMessage(StatusMessage);
+end;
+
 
 procedure TOpsiHTTPSAcceptingThread.InitSSLCertificate;
 begin
@@ -117,8 +128,8 @@ end;
 
 procedure TOpsiHTTPSAcceptingThread.InitSSLOpsi;
 begin
-  AcceptorSocket.SSL.Username:= 'vmmacdev1onmm1.uib.local';
-  AcceptorSocket.SSL.Password:= 'aead8f8c57a92e14ac820bf8d3df1805';
+  AcceptorSocket.SSL.Username:= 'adminuser'; //'vmmacdev1onmm1.uib.local';
+  AcceptorSocket.SSL.Password:= 'linux123'; //'aead8f8c57a92e14ac820bf8d3df1805'; //'linux123';
 end;
 
 
@@ -319,12 +330,15 @@ begin
     if  AcceptorSocket.SSLAcceptConnection
       and (AcceptorSocket.SSL.LastError = 0) then
     begin
+      StatusMessage := 'SSL accepted';
+      Synchronize(@SendStatusMessage);
       { read request }
       ReadRequestLine;
       ReadHeaders;
       ReadMessageBody;
       SetStatusCode(Method);
-
+      StatusMessage := 'Request received and read';
+      Synchronize(@SendStatusMessage);
       if (JSONRequest.Method = 'fireEvent') then
       begin
         { write response }
@@ -347,6 +361,8 @@ begin
         begin
           FormerThread.WaitFor;
           FreeAndNil(FormerThread);
+          StatusMessage := 'Former Thread';
+          Synchronize(@SendStatusMessage);
         end;
         if JSONRequest.Params.Find('on_demand') then
         begin

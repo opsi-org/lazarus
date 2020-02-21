@@ -5,7 +5,8 @@ unit ServerGUI;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, OpsiHTTPSListeningThread;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls,
+  OpsiHTTPSListeningThread;
 
 type
 
@@ -20,7 +21,7 @@ type
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   private
     ListeningThread: TOpsiHTTPSListeningThread;
-    procedure GetListeningStatus(aMessage:string);
+    procedure DisplayStatus(aMessage:string);
   public
 
   end;
@@ -37,7 +38,7 @@ implementation
 procedure TMainForm.ButtonStartServerClick(Sender: TObject);
 begin
   ListeningThread := TOpsiHTTPSListeningThread.Create;
-  ListeningThread.OnPassMessage:=@GetListeningStatus;
+  ListeningThread.OnPassMessage:=@DisplayStatus;
 end;
 
 procedure TMainForm.ButtonStopServerClick(Sender: TObject);
@@ -52,7 +53,7 @@ begin
     ListeningThread.Terminate;
 end;
 
-procedure TMainForm.GetListeningStatus(aMessage: string);
+procedure TMainForm.DisplayStatus(aMessage: string);
 begin
   Memo1.Lines.Append(aMessage);
 end;

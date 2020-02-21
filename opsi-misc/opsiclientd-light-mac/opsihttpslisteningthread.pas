@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, OpsiHTTPSAcceptingThread, blcksock, sockets;
 
 type
-  TPassMessage = procedure(AMsg: string) of object;
+  //TPassMessage = procedure(AMsg: string) of object;
 
   { TOpsiHTTPSListeningThread }
 
@@ -19,7 +19,8 @@ type
     FormerAcceptingThread: TOpsiHTTPSAcceptingThread;
     PassMessage: TPassMessage;
     StatusMessage: string;
-    procedure DisplayMessage;
+    AcceptingThreadNumber: integer;
+    procedure SendStatusMessage;
   public
     Constructor Create;
     Destructor Destroy; override;
@@ -32,7 +33,7 @@ implementation
 
 { TOpsiHTTPSListeningThread }
 
-procedure TOpsiHTTPSListeningThread.DisplayMessage;
+procedure TOpsiHTTPSListeningThread.SendStatusMessage;
 begin
   if Assigned(PassMessage) then
     PassMessage(StatusMessage);
@@ -44,7 +45,8 @@ begin
   ListenerSocket := TTCPBlockSocket.create;
   ListenerSocket.CreateSocket;
   ListenerSocket.SetLinger(true,10000);
-  ListenerSocket.Bind('192.168.10.74','4441'); //192.168.10.70
+  //ListenerSocket.GetLocalSinIP;
+  ListenerSocket.Bind('0.0.0.0','4441'); //192.168.10.74
   ListenerSocket.Listen;
   inherited Create(false);
 end;
@@ -61,7 +63,7 @@ var
   ClientSocket:TSocket;
 begin
   StatusMessage := 'Server started';
-  Synchronize(@DisplayMessage);
+  Synchronize(@SendStatusMessage);
   FormerAcceptingThread := nil;
   repeat
     if not Terminated then
@@ -70,15 +72,16 @@ begin
         begin
           ClientSocket:=ListenerSocket.accept;
           StatusMessage := 'Accepting...  New socket: ' + ClientSocket.ToString;
-          Synchronize(@DisplayMessage);
+          Synchronize(@SendStatusMessage);
           if ListenerSocket.LastError = 0 then
           begin
             AcceptingThread := TOpsiHTTPSAcceptingThread.Create(ClientSocket, FormerAcceptingThread);
+            AcceptingThread.OnPassMessage:= self.OnPassMessage;
             //with TOpsiHTTPSAcceptingThread.Create(ClientSocket, FormerAcceptingThread) do
             //with TOpsiHTTPSAcceptingThread.Create(ClientSocket) do
             StatusMessage := 'New AcceptingThread created. ThreadID: '
-                + IntToStr(Int64(AcceptingThread.ThreadID));
-            Synchronize(@DisplayMessage);
+                + IntToStr(Integer(AcceptingThread.ThreadID) + AcceptingThreadNumber);
+            Synchronize(@SendStatusMessage);
             FormerAcceptingThread := AcceptingThread;
           end;
         end;
@@ -87,7 +90,7 @@ begin
   if Terminated then
   begin
     StatusMessage := 'Server stopped';
-    Synchronize(@DisplayMessage);
+    Synchronize(@SendStatusMessage);
   end;
 end;
 
