@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, OpsiHTTPSAcceptingThread, blcksock, sockets;
 
 type
-  TPassMessage = procedure(AMsg: string) of object;
+  //TPassLog = procedure(AMsg: string) of object;
 
   { TOpsiHTTPSListeningThread }
 
@@ -17,14 +17,15 @@ type
     ListenerSocket:TTCPBlockSocket;
     AcceptingThread: TOpsiHTTPSAcceptingThread;
     FormerAcceptingThread: TOpsiHTTPSAcceptingThread;
-    PassMessage: TPassMessage;
+    PassMessage: TPassLog;
     StatusMessage: string;
-    procedure DisplayMessage;
+    AcceptingThreadNumber: integer;
+    procedure SendStatusMessage;
   public
     Constructor Create;
     Destructor Destroy; override;
     procedure Execute; override;
-    property OnPassMessage: TPassMessage read PassMessage write PassMessage;
+    property OnPassMessage: TPassLog read PassMessage write PassMessage;
   end;
 
 
@@ -32,10 +33,10 @@ implementation
 
 { TOpsiHTTPSListeningThread }
 
-procedure TOpsiHTTPSListeningThread.DisplayMessage;
+procedure TOpsiHTTPSListeningThread.SendStatusMessage;
 begin
   if Assigned(PassMessage) then
-    PassMessage(StatusMessage);
+    PassMessage(StatusMessage,5);
 end;
 
 constructor TOpsiHTTPSListeningThread.Create;
@@ -44,7 +45,8 @@ begin
   ListenerSocket := TTCPBlockSocket.create;
   ListenerSocket.CreateSocket;
   ListenerSocket.SetLinger(true,10000);
-  ListenerSocket.Bind('192.168.10.74','4441'); //192.168.10.70
+  //ListenerSocket.GetLocalSinIP;
+  ListenerSocket.Bind('0.0.0.0','4441'); //192.168.10.74
   ListenerSocket.Listen;
   inherited Create(false);
 end;
@@ -52,6 +54,7 @@ end;
 destructor TOpsiHTTPSListeningThread.Destroy;
 begin
   ListenerSocket.free;
+  FreeAndNil(AcceptingThread);
   inherited Destroy;
 end;
 
@@ -60,7 +63,7 @@ var
   ClientSocket:TSocket;
 begin
   StatusMessage := 'Server started';
-  Synchronize(@DisplayMessage);
+  Synchronize(@SendStatusMessage);
   FormerAcceptingThread := nil;
   repeat
     if not Terminated then
@@ -69,16 +72,17 @@ begin
         begin
           ClientSocket:=ListenerSocket.accept;
           StatusMessage := 'Accepting...  New socket: ' + ClientSocket.ToString;
-          Synchronize(@DisplayMessage);
+          Synchronize(@SendStatusMessage);
           if ListenerSocket.LastError = 0 then
           begin
-            //AcceptingThread :=
-            with TOpsiHTTPSAcceptingThread.Create(ClientSocket, FormerAcceptingThread) do
+            AcceptingThread := TOpsiHTTPSAcceptingThread.Create(ClientSocket, FormerAcceptingThread);
+            AcceptingThread.OnPassLog:= self.OnPassMessage;
+            //with TOpsiHTTPSAcceptingThread.Create(ClientSocket, FormerAcceptingThread) do
             //with TOpsiHTTPSAcceptingThread.Create(ClientSocket) do
-              StatusMessage := 'New AcceptingThread created. ThreadID: '
-                + IntToStr(Qword(ThreadID));
-            Synchronize(@DisplayMessage);
-            //FormerAcceptingThread := AcceptingThread;
+            StatusMessage := 'New AcceptingThread created. ThreadID: '
+                + IntToStr(Integer(AcceptingThread.ThreadID) + AcceptingThreadNumber);
+            Synchronize(@SendStatusMessage);
+            FormerAcceptingThread := AcceptingThread;
           end;
         end;
      end;
@@ -86,7 +90,7 @@ begin
   if Terminated then
   begin
     StatusMessage := 'Server stopped';
-    Synchronize(@DisplayMessage);
+    Synchronize(@SendStatusMessage);
   end;
 end;
 
