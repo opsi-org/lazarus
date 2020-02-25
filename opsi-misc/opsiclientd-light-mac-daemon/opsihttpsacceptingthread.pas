@@ -368,17 +368,17 @@ begin
           //while FormerThread <> nil do;
           if Assigned(FormerThread) then
           begin
-            //if not Terminated then FormerThread.WaitFor else FormerThread.Terminate;
-            FormerThread.WaitFor;
+            if not Terminated then FormerThread.WaitFor else FormerThread.Terminate;
+            //FormerThread.WaitFor;
             FreeAndNil(FormerThread);
             LogData.FLogMessage := 'Former Thread terminated and freed (OpsiHTTPSAcceptingThread.pas|370)';
             LogData.FLevelOfLine := 5;
             Synchronize(@LogData.SendLog);
           end;
-          if JSONRequest.Params.Find('on_demand') and not Terminated then
+          if JSONRequest.Params.Find('on_demand') and (not Terminated) then
           begin
-            //RunCommand('/usr/local/bin/opsiscriptstarter',[ ], s , [ ]);
-            RunCommand('/Applications/TextEdit.app/Contents/MacOS/TextEdit',[ ], s , [ ]);
+            RunCommand('/usr/local/bin/opsiscriptstarter',[ ], s , [ ]);
+            //RunCommand('/Applications/TextEdit.app/Contents/MacOS/TextEdit',[ ], s , [ ]);
           end;
         end
         else ; //SendError (has to be implemented);

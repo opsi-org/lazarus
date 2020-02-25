@@ -40,11 +40,14 @@ procedure TOpsiHTTPSServerDaemon.ServerStart(Sender: TCustomDaemon;
   var OK: Boolean);
 begin
   OK := True;
-  //LogDatei:= TLogINfo.Create;
-  //LogDatei.WritePartLog := False;
-  //LogDatei.WriteErrFile:= False;
-  //LogDatei.WriteHistFile:= False;
-  //LogDatei.CreateTheLogfile('/var/log/opsi-client-agent/opsiclientd/opsiclientd.log',false);
+  LogDatei:= TLogInfo.Create;
+  //LogDatei.StandardLogPath:= '/tmp/';
+  LogDatei.WritePartLog := False;
+  LogDatei.WriteErrFile:= False;
+  LogDatei.WriteHistFile:= False;
+  LogDatei.CreateTheLogfile('opsiclientd.log',false); //('/var/log/opsi-client-agent/opsiclientd/opsiclientd.log',false);
+  LogDatei.LogLevel:= 7;
+  LogDatei.Log('Logging startet', LLNotice);
   //LogDatei.initiate();
   FListeningThread := TOpsiHTTPSListeningThread.Create;
   FListeningThread.LogData.OnPassLog:=@Log;
@@ -52,8 +55,8 @@ end;
 
 procedure TOpsiHTTPSServerDaemon.Log(aMessage: string; aLevelofLine:integer; aSourceOfLog:string);
 begin
-  //LogDatei.AktProduktId:=aSourceOfLog;
-  //LogDatei.Log(aMessage,aLevelofLine);
+  LogDatei.AktProduktId:=aSourceOfLog;
+  LogDatei.Log(aMessage,aLevelofLine);
 end;
 
 procedure TOpsiHTTPSServerDaemon.ServerStop(Sender: TCustomDaemon;
@@ -61,8 +64,9 @@ procedure TOpsiHTTPSServerDaemon.ServerStop(Sender: TCustomDaemon;
 begin
   if FListeningThread <> nil then
      FListeningThread.Terminate;
-  //LogDatei.Close;
-  //FreeAndNil(LogDatei);
+  FlisteningThread.WaitFor;
+  LogDatei.Close;
+  FreeAndNil(LogDatei);
   OK := true;
 end;
 

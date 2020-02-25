@@ -48,7 +48,7 @@ begin
   ListenerSocket.CreateSocket;
   ListenerSocket.SetLinger(true,10000);
   //ListenerSocket.GetLocalSinIP;
-  ListenerSocket.Bind('192.168.10.74','4441'); //192.168.10.74
+  ListenerSocket.Bind('0.0.0.0','4441'); //192.168.10.74
   ListenerSocket.Listen;
   inherited Create(false);
 end;
@@ -67,7 +67,7 @@ procedure TOpsiHTTPSListeningThread.Execute;
 var
   ClientSocket:TSocket;
 begin
-  LogData.FLogMessage := 'Server started (OpsiHTTPSListeningThread.pas|68)';
+  LogData.FLogMessage := 'Server started (OpsiHTTPSListeningThread.pas)';
   LogData.FLevelofLine:= 5;
   Synchronize(@LogData.SendLog);
   FormerAcceptingThread := nil;
@@ -78,7 +78,7 @@ begin
       if ListenerSocket.CanRead(1000) then
         begin
           ClientSocket:=ListenerSocket.accept;
-          LogData.FLogMessage := 'Accepting...  New socket: ' + ClientSocket.ToString + ' (OpsiHTTPSListeningThread.pas|78)' ;
+          LogData.FLogMessage := 'Accepting...  New socket: ' + ClientSocket.ToString + ' (OpsiHTTPSListeningThread.pas)' ;
           Synchronize(@LogData.SendLog);
           if ListenerSocket.LastError = 0 then
           begin
@@ -87,8 +87,8 @@ begin
             AcceptingThread.LogData.OnPassLog:= self.LogData.OnPassLog;
             //with TOpsiHTTPSAcceptingThread.Create(ClientSocket, FormerAcceptingThread) do
             //with TOpsiHTTPSAcceptingThread.Create(ClientSocket) do
-            LogData.FLogMessage := 'New AcceptingThread created. ThreadID: '
-                + IntToStr(Integer(AcceptingThread.ThreadID)) + ' ThreadNumber:'+ IntToStr(AcceptingThreadNumber);
+            LogData.FLogMessage := 'New AcceptingThread created. ' + ' ThreadNumber:'+ IntToStr(AcceptingThreadNumber);
+            //IntToStr(Integer(AcceptingThread.ThreadID))
             LogData.FLevelofLine:= 5;
             Synchronize(@LogData.SendLog);
             FormerAcceptingThread := AcceptingThread;
@@ -98,7 +98,7 @@ begin
   until Terminated;
   if Terminated then
   begin
-    LogData.FLogMessage := 'Server stopped (OpsiHTTPSListeningThread.pas|99)';
+    LogData.FLogMessage := 'Server stopped (OpsiHTTPSListeningThread.pas)';
     LogData.FLevelofLine:= 5;
     Synchronize(@LogData.SendLog)
   end;

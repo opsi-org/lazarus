@@ -74,6 +74,7 @@
       <Unit6>
         <Filename Value="opsiclientdlog.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="OpsiClientdLog"/>
       </Unit6>
       <Unit7>
         <Filename Value="opsihtmlmessagebody.pas"/>
@@ -128,6 +129,9 @@
         <DebugInfoType Value="dsDwarf2Set"/>
       </Debugging>
     </Linking>
+    <Other>
+      <CustomOptions Value="-dopsiscriptstarter"/>
+    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="3">

@@ -8,6 +8,7 @@ Uses
   { add your units here };
 
 begin
+  Application.Title:='Daemon application';
   Application.Initialize;
   Application.Run;
 end.
