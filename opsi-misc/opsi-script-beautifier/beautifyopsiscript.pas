@@ -7,19 +7,16 @@ unit beautifyopsiscript;
 // Text of the AGPL: http://www.gnu.org/licenses/agpl-3.0-standalone.html
 // author: martina hammel
 
-//***************************************************************************
-//
-// $Revision:  $
-// $Author: hammel $
-// $Date: 2019-07-06 14:15:37 +0100 (Di, 06. Dez 2016) $
-//***************************************************************************
 {$mode objfpc}{$H+}
 
 interface
 
 
 uses
-  Classes, SysUtils, StrUtils, oslog, key_valueCollection, INIFiles;
+  Classes, SysUtils, StrUtils, oslog, key_valueCollection,
+  fileutil,
+  LazFileUtils,
+  INIFiles;
 
 function indentation ( indent: Integer) : String;
 function isStartStr(line:String; codeWords:TStringList) : boolean;
@@ -235,6 +232,8 @@ begin
   opsiscriptcode:= TStringList.Create;
   if FileExists(opsiscriptfile) then
     begin
+      logdatei.log('backup file: '+ opsiscriptfile,LLessential);
+      CopyFile(opsiscriptfile,ExtractFileNameWithoutExt(opsiscriptfile)+'.bak',[cffOverwriteFile]);
       logdatei.log('opening file: '+ opsiscriptfile,LLessential);
       writeln('opening file: '+  opsiscriptfile);
       try
@@ -242,8 +241,8 @@ begin
           opsiscriptcode.LoadFromFile(opsiscriptfile);
           //logdatei.log('write backup file: '+ opsiscriptfile + '.bak',LLessential);
           //opsiscriptcode.SaveToFile(opsiscriptfile + '.bak');
-          beautify(opsiscriptcode).SaveToFile(opsiscriptfile + '.opsiscript');
-          logdatei.log('write beautified file: '+ opsiscriptfile + '.opsiscript',LLessential);
+          beautify(opsiscriptcode).SaveToFile(opsiscriptfile);
+          logdatei.log('write beautified file: '+ opsiscriptfile,LLessential);
          except
           logdatei.log('error beautifying or writing opsiscriptfiles : '+ opsiscriptfile,LLessential);
          end;

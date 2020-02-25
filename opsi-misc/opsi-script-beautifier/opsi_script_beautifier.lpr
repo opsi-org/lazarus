@@ -1,6 +1,7 @@
 program opsi_script_beautifier;
 
 {$mode objfpc}{$H+}
+{$APPTYPE CONSOLE}
 
 uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
@@ -14,9 +15,10 @@ uses
 begin
   Application:=TMyApplication.Create(nil);
   //Application.Scaled:=True;
+  //Application.Scaled:=True;
   Application.Title:='opsi-script-beautifier';
   Application.Run;
-  writeln('logfile: ');
+  //writeln('logfile: ');
   Application.Free;
 end.
 
