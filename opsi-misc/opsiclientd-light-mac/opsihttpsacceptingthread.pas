@@ -9,6 +9,7 @@ uses
   OpsiHTMLMessageBody;
 
 type
+  TPassLog = procedure(AMsg: string; LogLevel:integer) of object;
 
   { TOpsiHTTPSAcceptingThread }
 
@@ -30,6 +31,9 @@ type
     RequestLine: string;
     ReasonPhrase: string;
     FormerThread: TThread;
+    Log: string;
+    LevelOfLine: integer;
+    PassLog: TPassLog;
     //MessageBody: TOpsiHTTPMessageBody;
     procedure CreateTestJSONRequestInputBody;// This function is only for testing
     procedure InitSSLCertificate;
@@ -48,10 +52,12 @@ type
     //procedure WriteHTMLTestSide;
     procedure WriteMessageBodyHTMLTestSide;
     procedure WriteMessageBodyJSONResponse;
+    procedure SendLog;
   public
-    Constructor Create (ASocket:TSocket; AFormerThread:TThread);
+    Constructor Create (ASocket:TSocket; const AFormerThread:TThread);
     Destructor Destroy; override;
     procedure Execute; override;
+    property OnPassLog: TPassLog read PassLog write PassLog;
   end;
 
 
@@ -93,6 +99,12 @@ begin
   end;
 end;
 
+procedure TOpsiHTTPSAcceptingThread.SendLog;
+begin
+  if Assigned(PassLog) then
+    PassLog(Log,LevelOfLine);
+end;
+
 
 procedure TOpsiHTTPSAcceptingThread.InitSSLCertificate;
 begin
@@ -117,8 +129,8 @@ end;
 
 procedure TOpsiHTTPSAcceptingThread.InitSSLOpsi;
 begin
-  AcceptorSocket.SSL.Username:= 'vmmacdev1onmm1.uib.local';
-  AcceptorSocket.SSL.Password:= 'aead8f8c57a92e14ac820bf8d3df1805';
+  AcceptorSocket.SSL.Username:= 'adminuser'; //'vmmacdev1onmm1.uib.local';
+  AcceptorSocket.SSL.Password:= 'linux123'; //'aead8f8c57a92e14ac820bf8d3df1805'; //'linux123';
 end;
 
 
@@ -280,9 +292,9 @@ end;
 //end;
 
 
-constructor TOpsiHTTPSAcceptingThread.Create(ASocket: TSocket; AFormerThread: TThread);
+constructor TOpsiHTTPSAcceptingThread.Create(ASocket: TSocket; const AFormerThread: TThread);
 begin
-  FreeOnTerminate:=true;
+  //FreeOnTerminate:=true;
   FormerThread := AFormerThread;
   AcceptorSocket:=TTCPBlockSocket.Create;
   AcceptorSocket.Socket:=ASocket;
@@ -308,7 +320,7 @@ begin
   FreeAndNil(JSONResponse);
   //FreeAndNil(FormerThread);
   inherited Destroy;
-  self := nil;
+  //self := nil;
 end;
 
 procedure TOpsiHTTPSAcceptingThread.Execute;
@@ -319,12 +331,17 @@ begin
     if  AcceptorSocket.SSLAcceptConnection
       and (AcceptorSocket.SSL.LastError = 0) then
     begin
+      Log := 'SSL accepted';
+      LevelOfLine := 7;
+      Synchronize(@SendLog);
       { read request }
       ReadRequestLine;
       ReadHeaders;
       ReadMessageBody;
       SetStatusCode(Method);
-
+      Log := 'Request received and read: ' + Headers.Text;
+      LevelOfLine := 6;
+      Synchronize(@SendLog);
       if (JSONRequest.Method = 'fireEvent') then
       begin
         { write response }
@@ -343,7 +360,14 @@ begin
           SendMessageBody;
         end;
         //while FormerThread <> nil do;
-          //FormerThread.WaitFor;
+        if Assigned(FormerThread) then
+        begin
+          FormerThread.WaitFor;
+          FreeAndNil(FormerThread);
+          Log := 'Former Thread terminated and closed';
+          LevelOfLine := 5;
+          Synchronize(@SendLog);
+        end;
         if JSONRequest.Params.Find('on_demand') then
         begin
           //RunCommand('/usr/local/bin/opsiscriptstarter',[ ], s , [ ]);
@@ -354,10 +378,14 @@ begin
     end
     else
     begin
-      //StatusMessage := 'Error while accepting SSL connection: ' + AcceptorSocket.SSL.LastErrorDesc;
+      Log := 'Error while accepting SSL connection: ' + AcceptorSocket.SSL.LastErrorDesc;
+      LevelofLine := 2;
+      Synchronize(@SendLog);
     end;
   except
-    //StatusMessage := 'Exception while accepting SSL connection';
+    Log := 'Exception while accepting SSL connection';
+    LevelofLine := 1;
+    Synchronize(@SendLog);
   end;
 end;
 
