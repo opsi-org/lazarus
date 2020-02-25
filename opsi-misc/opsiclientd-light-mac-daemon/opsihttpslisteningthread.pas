@@ -48,7 +48,7 @@ begin
   ListenerSocket.CreateSocket;
   ListenerSocket.SetLinger(true,10000);
   //ListenerSocket.GetLocalSinIP;
-  ListenerSocket.Bind('0.0.0.0','4441'); //192.168.10.74
+  ListenerSocket.Bind('192.168.10.74','4441'); //192.168.10.74
   ListenerSocket.Listen;
   inherited Create(false);
 end;
