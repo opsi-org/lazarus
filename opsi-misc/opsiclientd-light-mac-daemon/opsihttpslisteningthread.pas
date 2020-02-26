@@ -5,10 +5,9 @@ unit OpsiHTTPSListeningThread;
 interface
 
 uses
-  Classes, SysUtils, OpsiHTTPSAcceptingThread, blcksock, sockets, OpsiClientdLog;
+  Classes, SysUtils, OpsiHTTPSAcceptingThread, blcksock, sockets, OpsiClientdLog, IniFiles;
 
 type
-  //TPassLog = procedure(AMsg: string) of object;
 
   { TOpsiHTTPSListeningThread }
 
@@ -17,16 +16,14 @@ type
     ListenerSocket:TTCPBlockSocket;
     AcceptingThread: TOpsiHTTPSAcceptingThread;
     FormerAcceptingThread: TOpsiHTTPSAcceptingThread;
-    //PassMessage: TPassLog;
-    //StatusMessage: string;
     AcceptingThreadNumber: integer;
-     //procedure SendStatusMessage;
+    SSLUsername: string;
+    SSLPassword: string;
   public
     LogData: TLogData;
     Constructor Create;
     Destructor Destroy; override;
     procedure Execute; override;
-    //property OnPassMessage: TPassLog read PassMessage write PassMessage;
   end;
 
 
@@ -34,20 +31,16 @@ implementation
 
 { TOpsiHTTPSListeningThread }
 
-//procedure TOpsiHTTPSListeningThread.SendStatusMessage;
-//begin
-//  if Assigned(PassMessage) then
-//    PassMessage(StatusMessage,5);
-//end;
-
 constructor TOpsiHTTPSListeningThread.Create;
+var
+  ClientdConf: TIniFile;
 begin
   FreeOnTerminate := True;
   LogData := TLogData.Create;
+  ClientdConf := TIniFile.Create();
   ListenerSocket := TTCPBlockSocket.create;
   ListenerSocket.CreateSocket;
   ListenerSocket.SetLinger(true,10000);
-  //ListenerSocket.GetLocalSinIP;
   ListenerSocket.Bind('0.0.0.0','4441'); //192.168.10.74
   ListenerSocket.Listen;
   inherited Create(false);
@@ -85,6 +78,7 @@ begin
           begin
             inc(AcceptingThreadNumber);
             AcceptingThread := TOpsiHTTPSAcceptingThread.Create(ClientSocket, FormerAcceptingThread);
+            AcceptingThread.SSLPassword:=SSLPassword;
             AcceptingThread.LogData.OnPassLog:= self.LogData.OnPassLog;
             //with TOpsiHTTPSAcceptingThread.Create(ClientSocket, FormerAcceptingThread) do
             //with TOpsiHTTPSAcceptingThread.Create(ClientSocket) do

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, blcksock, sockets, Synautil, ssl_openssl, fpjson, jsonparser, OpsiJSONRequest, OpsiJSONResponse, Process,
-  OpsiHTMLMessageBody, OPsiClientdLog;
+  OpsiHTMLMessageBody, OPsiClientdLog, IniFiles;
 
 type
   //TPassLog = procedure(AMsg: string; LogLevel:integer) of object;
@@ -32,9 +32,6 @@ type
     ReasonPhrase: string;
     FormerThread: TThread;
     ThreadNumber: integer;
-    //Log: string;
-    //LevelOfLine: integer;
-    //PassLog: TPassLog;
     //MessageBody: TOpsiHTTPMessageBody;
     procedure CreateTestJSONRequestInputBody;// This function is only for testing
     procedure InitSSLCertificate;
@@ -53,13 +50,13 @@ type
     //procedure WriteHTMLTestSide;
     procedure WriteMessageBodyHTMLTestSide;
     procedure WriteMessageBodyJSONResponse;
-    //procedure SendLog;
   public
     LogData: TLogData;
     Constructor Create (ASocket:TSocket; const AFormerThread:TThread);
     Destructor Destroy; override;
     procedure Execute; override;
-    //property OnPassLog: TPassLog read PassLog write PassLog;
+    property SSLPassword: string write AcceptorSocket.SSL.Password;
+    property SSLUsername: string write AcceptorSocket.SSL.Username;
   end;
 
 
@@ -130,9 +127,15 @@ begin
 end;
 
 procedure TOpsiHTTPSAcceptingThread.InitSSLOpsi;
+var
+  ClientdConf:TIniFile;
 begin
-  AcceptorSocket.SSL.Username:= 'adminuser';//'vmmacdev1onmm1.uib.local';
-  AcceptorSocket.SSL.Password:= 'linux123';//'aead8f8c57a92e14ac820bf8d3df1805'; //'linux123';
+  ClientdConf := TInifile.Create('/etc/opsi-client-agent/opsiclientd.conf');
+  AcceptorSocket.SSL.Username:= ClientdConf.ReadString('global','host_id','');//'vmmacdev1onmm1.uib.local';
+  AcceptorSocket.SSL.Password:= ClientdConf.ReadString('global','opsi_host_key','');//'aead8f8c57a92e14ac820bf8d3df1805'; //'linux123';
+  //AcceptorSocket.SSL.Username:= 'adminuser';//'vmmacdev1onmm1.uib.local';
+  //AcceptorSocket.SSL.Password:= 'linux123';//'aead8f8c57a92e14ac820bf8d3df1805'; //'linux123';
+  FreeAndNil(ClientdConf);
 end;
 
 
@@ -382,7 +385,7 @@ begin
             if not Terminated then FormerThread.WaitFor else FormerThread.Terminate;
             //FormerThread.WaitFor;
             FreeAndNil(FormerThread);
-            LogData.FLogMessage := 'Former Thread terminated and freed (OpsiHTTPSAcceptingThread.pas|370)';
+            LogData.FLogMessage := 'Former Thread terminated and freed (OpsiHTTPSAcceptingThread.pas)';
             LogData.FLevelOfLine := 5;
             Synchronize(@LogData.SendLog);
           end;
