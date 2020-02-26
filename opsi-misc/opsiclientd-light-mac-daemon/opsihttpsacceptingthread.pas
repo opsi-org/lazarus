@@ -330,6 +330,7 @@ end;
 procedure TOpsiHTTPSAcceptingThread.Execute;
 var
   s: string;
+  i: integer;
 begin
   if not Terminated then
   begin
@@ -337,17 +338,25 @@ begin
       if  AcceptorSocket.SSLAcceptConnection
         and (AcceptorSocket.SSL.LastError = 0) then
       begin
+        LogData.FSourceOfLog:='opsiclientd-mac accepting thread';
         LogData.FLogMessage := 'SSL accepted';
-        LogData.FLevelofLine := 7;
+        LogData.FLevelofLine := 6;
         Synchronize(@LogData.SendLog);
         { read request }
         ReadRequestLine;
-        ReadHeaders;
-        ReadMessageBody;
-        SetStatusCode(Method);
-        LogData.FLogMessage := 'Headers: ' + Headers.Text;
+        LogData.FLogMessage := 'Method: ' + self.Method +' URI: ' + self.Uri
+          +  ' Protocol: ' + self.Protocol;
         LogData.FLevelOfLine := 6;
         Synchronize(@LogData.SendLog);
+          ReadHeaders;
+        ReadMessageBody;
+        SetStatusCode(Method);
+        for i := 1 to Headers.Count do
+        begin
+          LogData.FLogMessage := Headers[i];
+          LogData.FLevelOfLine := 7;
+          Synchronize(@LogData.SendLog);
+        end;
         if (JSONRequest.Method = 'fireEvent') then
         begin
           { write response }
