@@ -1,0 +1,5 @@
+opsicliend_mac (4.1.0.0) experimental; urgency=low
+
+  * inital
+
+-- Jan Werner <j.werner@uib.de>  Wed, 26 Feb 2020:15:00:00 +0200
