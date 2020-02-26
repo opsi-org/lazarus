@@ -5,7 +5,7 @@ unit OpsiHTTPSListeningThread;
 interface
 
 uses
-  Classes, SysUtils, OpsiHTTPSAcceptingThread, blcksock, sockets, OpsiClientdLog, IniFiles;
+  Classes, SysUtils, OpsiHTTPSAcceptingThread, blcksock, sockets, OpsiClientdLog;
 
 type
 
@@ -17,11 +17,9 @@ type
     AcceptingThread: TOpsiHTTPSAcceptingThread;
     FormerAcceptingThread: TOpsiHTTPSAcceptingThread;
     AcceptingThreadNumber: integer;
-    SSLUsername: string;
-    SSLPassword: string;
   public
     LogData: TLogData;
-    Constructor Create;
+    Constructor Create(const aSSLUsername:string; const aSSLPassword: string);
     Destructor Destroy; override;
     procedure Execute; override;
   end;
@@ -31,14 +29,13 @@ implementation
 
 { TOpsiHTTPSListeningThread }
 
-constructor TOpsiHTTPSListeningThread.Create;
-var
-  ClientdConf: TIniFile;
+constructor TOpsiHTTPSListeningThread.Create(const aSSLUsername:string; const aSSLPassword: string);
 begin
   FreeOnTerminate := True;
   LogData := TLogData.Create;
-  ClientdConf := TIniFile.Create();
   ListenerSocket := TTCPBlockSocket.create;
+  ListenerSocket.SSL.Username:= aSSLUsername;
+  ListenerSocket.SSL.Password:= aSSLPassword;
   ListenerSocket.CreateSocket;
   ListenerSocket.SetLinger(true,10000);
   ListenerSocket.Bind('0.0.0.0','4441'); //192.168.10.74
@@ -78,7 +75,8 @@ begin
           begin
             inc(AcceptingThreadNumber);
             AcceptingThread := TOpsiHTTPSAcceptingThread.Create(ClientSocket, FormerAcceptingThread);
-            AcceptingThread.SSLPassword:=SSLPassword;
+            AcceptingThread.AcceptorSocket.SSL.Password := ListenerSocket.SSL.Password;
+            AcceptingThread.AcceptorSocket.SSL.Username := ListenerSocket.SSL.Username;
             AcceptingThread.LogData.OnPassLog:= self.LogData.OnPassLog;
             //with TOpsiHTTPSAcceptingThread.Create(ClientSocket, FormerAcceptingThread) do
             //with TOpsiHTTPSAcceptingThread.Create(ClientSocket) do

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, blcksock, sockets, Synautil, ssl_openssl, fpjson, jsonparser, OpsiJSONRequest, OpsiJSONResponse, Process,
-  OpsiHTMLMessageBody, OPsiClientdLog, IniFiles;
+  OpsiHTMLMessageBody, OPsiClientdLog;
 
 type
   //TPassLog = procedure(AMsg: string; LogLevel:integer) of object;
@@ -15,7 +15,7 @@ type
 
   TOpsiHTTPSAcceptingThread = class(TThread)
   private
-    AcceptorSocket:TTCPBlockSocket;
+
     Method: string;
     Uri: string;
     Protocol: string;
@@ -35,7 +35,7 @@ type
     //MessageBody: TOpsiHTTPMessageBody;
     procedure CreateTestJSONRequestInputBody;// This function is only for testing
     procedure InitSSLCertificate;
-    procedure InitSSLOpsi;
+    //procedure InitSSLOpsi;
     procedure ReadMessageBody;
     procedure ReadJSONRequest;
     procedure ReadHeaders;
@@ -50,13 +50,16 @@ type
     //procedure WriteHTMLTestSide;
     procedure WriteMessageBodyHTMLTestSide;
     procedure WriteMessageBodyJSONResponse;
+    //procedure SetSSLPassword;
+    //procedure SetSSLUsername;
   public
     LogData: TLogData;
-    Constructor Create (ASocket:TSocket; const AFormerThread:TThread);
+    AcceptorSocket:TTCPBlockSocket;
+    Constructor Create (aSocket:TSocket; const aFormerThread:TThread);
     Destructor Destroy; override;
     procedure Execute; override;
-    property SSLPassword: string write AcceptorSocket.SSL.Password;
-    property SSLUsername: string write AcceptorSocket.SSL.Username;
+    //property SSLPassword: string read GetSSLPassword write SetSSLPassword;
+    //property SSLUsername: string read GetSSLUsername write SetSSLUsername;
   end;
 
 
@@ -98,6 +101,18 @@ begin
   end;
 end;
 
+//procedure TOpsiHTTPSAcceptingThread.SetSSLPassword(aSSLPassword:string);
+//begin
+//  if Assigned(AcceptorSocket) then
+//    AcceptorSocket.SSL.Password := aSSLPassword;
+//end;
+//
+//procedure TOpsiHTTPSAcceptingThread.SetSSLUsername(aSSLUsername:string);
+//begin
+//  if Assigned(AcceptorSocket) then
+//    AcceptorSocket.SSL.Username := aSSLUsername;
+//end;
+
 //procedure TOpsiHTTPSAcceptingThread.SendLog;
 //begin
 //  if Assigned(LogData.FPassLog) then
@@ -126,17 +141,18 @@ begin
   AcceptorSocket.SSL.verifyCert := True;
 end;
 
-procedure TOpsiHTTPSAcceptingThread.InitSSLOpsi;
-var
-  ClientdConf:TIniFile;
-begin
-  ClientdConf := TInifile.Create('/etc/opsi-client-agent/opsiclientd.conf');
-  AcceptorSocket.SSL.Username:= ClientdConf.ReadString('global','host_id','');//'vmmacdev1onmm1.uib.local';
-  AcceptorSocket.SSL.Password:= ClientdConf.ReadString('global','opsi_host_key','');//'aead8f8c57a92e14ac820bf8d3df1805'; //'linux123';
-  //AcceptorSocket.SSL.Username:= 'adminuser';//'vmmacdev1onmm1.uib.local';
-  //AcceptorSocket.SSL.Password:= 'linux123';//'aead8f8c57a92e14ac820bf8d3df1805'; //'linux123';
-  FreeAndNil(ClientdConf);
-end;
+
+//procedure TOpsiHTTPSAcceptingThread.InitSSLOpsi;
+//var
+//  ClientdConf:TIniFile;
+//begin
+//
+//  AcceptorSocket.SSL.Username:= SSLUsername;//'vmmacdev1onmm1.uib.local';
+//  AcceptorSocket.SSL.Password:= ClientdConf.ReadString('global','opsi_host_key','');//'aead8f8c57a92e14ac820bf8d3df1805'; //'linux123';
+//  //AcceptorSocket.SSL.Username:= 'adminuser';//'vmmacdev1onmm1.uib.local';
+//  //AcceptorSocket.SSL.Password:= 'linux123';//'aead8f8c57a92e14ac820bf8d3df1805'; //'linux123';
+//  FreeAndNil(ClientdConf);
+//end;
 
 
 procedure TOpsiHTTPSAcceptingThread.CreateTestJSONRequestInputBody; // This function is only for testing
@@ -291,13 +307,6 @@ begin
 end;
 
 
-//procedure TOpsiHTTPSAcceptingThread.WriteMessageBody(aMessageBody: TObject);
-//begin
-//  if aMessageBody is TStringList then (aMessageBody as TStringList).SaveToStream(OutputBody);
-//  if aMessageBody is TOpsiJSONRequest then (aMessageBody as TOpsiJSONRequest).SaveToMemoryStream(OutputBody);
-//  if aMessageBody is TOpsiJSONResponse then (aMessageBody as TOpsiJSONResponse).SaveToMemoryStream(OutputBody);
-//end;
-
 
 constructor TOpsiHTTPSAcceptingThread.Create(ASocket: TSocket; const AFormerThread: TThread);
 begin
@@ -306,7 +315,7 @@ begin
   AcceptorSocket:=TTCPBlockSocket.Create;
   AcceptorSocket.Socket:=ASocket;
   LogData := TLogData.Create;
-  InitSSLOpsi;
+  //InitSSLOpsi;
   //InitSSLCertificate;
   TimeOut := 120000;
   OnDemand := false;
