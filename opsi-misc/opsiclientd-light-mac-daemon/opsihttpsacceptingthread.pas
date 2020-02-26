@@ -131,8 +131,8 @@ end;
 
 procedure TOpsiHTTPSAcceptingThread.InitSSLOpsi;
 begin
-  AcceptorSocket.SSL.Username:= 'adminuser'; //'vmmacdev1onmm1.uib.local';
-  AcceptorSocket.SSL.Password:= 'linux123'; //'aead8f8c57a92e14ac820bf8d3df1805'; //'linux123';
+  AcceptorSocket.SSL.Username:= 'adminuser';//'vmmacdev1onmm1.uib.local';
+  AcceptorSocket.SSL.Password:= 'linux123';//'aead8f8c57a92e14ac820bf8d3df1805'; //'linux123';
 end;
 
 
@@ -164,13 +164,14 @@ begin
     InputBody.SetSize(ContentLength);
     SizeReceived := AcceptorSocket.RecvBufferEx(InputBody.Memory, ContentLength, Timeout);
     InputBody.SetSize(SizeReceived);
-    //AcceptorSocket.RecvStream(InputBody, TimeOut);
+   //AcceptorSocket.RecvStream(InputBody, TimeOut);
     //rpcMethod := AcceptorSocket.RecvString(TimeOut);
   end;
+  JSONRequest := TOpsiJSONRequest.Create(InputBody);
+
   //CreateTestJSONRequestInputBody;
   //InputBody.Clear;
   //InputBody.LoadFromStream(JSONStream);
-  JSONRequest := TOpsiJSONRequest.Create(InputBody);
   //rpcMethod := JSONRequest.AsJSON; //for testing
   //rpcMethod := JSONRequest.Method; //for testing
   //rpcParams := JSONRequest.Params; //for testing
@@ -276,11 +277,12 @@ begin
   if Protocol <> '' then
   begin
     Headers.Clear;
+    Headers.Add('Accept-Encoding: Identity');
     Headers.Add('Content-type: application/json; charset=UTF-8');
     Headers.Add('Content-length: ' + IntTostr(OutputBody.Size));
-    Headers.Add('Connection: close');
-    Headers.Add('Date: ' + Rfc822DateTime(now));
-    Headers.Add('Server: opsiclientd-light');
+    //Headers.Add('Connection: close');
+    //Headers.Add('Date: ' + Rfc822DateTime(now));
+    Headers.Add('User-Agent: opsiclientd-mac');
     Headers.Add('');
   end;
 end;
@@ -322,7 +324,7 @@ begin
   FreeAndNil(JSONRequest);
   FreeAndNil(JSONResponse);
   FreeAndNil(LogData);
-  //FreeAndNil(FormerThread);
+  FreeAndNil(FormerThread);
   inherited Destroy;
   //self := nil;
 end;
@@ -344,14 +346,14 @@ begin
         Synchronize(@LogData.SendLog);
         { read request }
         ReadRequestLine;
+        ReadHeaders;
+        ReadMessageBody;
+        SetStatusCode(Method);
         LogData.FLogMessage := 'Method: ' + self.Method +' URI: ' + self.Uri
           +  ' Protocol: ' + self.Protocol;
         LogData.FLevelOfLine := 6;
         Synchronize(@LogData.SendLog);
-          ReadHeaders;
-        ReadMessageBody;
-        SetStatusCode(Method);
-        for i := 1 to Headers.Count do
+        for i := 0 to (Headers.Count-1) do
         begin
           LogData.FLogMessage := Headers[i];
           LogData.FLevelOfLine := 7;
@@ -399,7 +401,7 @@ begin
         Synchronize(@LogData.SendLog);
       end;
     except
-      LogData.FLogMessage := 'Exception while accepting SSL connection';
+      LogData.FLogMessage := 'Exception while processing request';
       LogData.FLevelofLine := 1;
       Synchronize(@LogData.SendLog);
     end;

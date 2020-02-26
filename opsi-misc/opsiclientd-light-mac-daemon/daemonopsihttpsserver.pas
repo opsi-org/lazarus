@@ -45,6 +45,7 @@ begin
   LogDatei.WritePartLog := False;
   LogDatei.WriteErrFile:= False;
   LogDatei.WriteHistFile:= False;
+  LogDatei.LogProduktId:=True;
   LogDatei.CreateTheLogfile('opsiclientd.log',false); //('/var/log/opsi-client-agent/opsiclientd/opsiclientd.log',false);
   LogDatei.LogLevel:= 7;
   LogDatei.Log('Logging startet', LLNotice);
@@ -55,7 +56,7 @@ end;
 
 procedure TOpsiHTTPSServerDaemon.Log(aMessage: string; aLevelofLine:integer; aSourceOfLog:string);
 begin
-  LogDatei.AktProduktId:=aSourceOfLog;
+  LogDatei.AktProduktId :=aSourceOfLog;
   LogDatei.Log(aMessage,aLevelofLine);
 end;
 
