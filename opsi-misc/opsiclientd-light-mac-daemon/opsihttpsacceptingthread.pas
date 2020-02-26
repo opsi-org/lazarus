@@ -5,7 +5,8 @@ unit OpsiHTTPSAcceptingThread;
 interface
 
 uses
-  Classes, SysUtils, blcksock, sockets, Synautil, ssl_openssl, fpjson, jsonparser, OpsiJSONRequest, OpsiJSONResponse, Process,
+  Classes, SysUtils, blcksock, sockets, Synautil, ssl_openssl, fpjson,
+  jsonparser, OpsiJSONRequest, OpsiJSONResponse, Process,
   OpsiHTMLMessageBody, OPsiClientdLog;
 
 type
@@ -15,7 +16,7 @@ type
 
   TOpsiHTTPSAcceptingThread = class(TThread)
   private
-    AcceptorSocket:TTCPBlockSocket;
+    AcceptorSocket: TTCPBlockSocket;
     Method: string;
     Uri: string;
     Protocol: string;
@@ -56,8 +57,8 @@ type
     //procedure SendLog;
   public
     LogData: TLogData;
-    Constructor Create (ASocket:TSocket; const AFormerThread:TThread);
-    Destructor Destroy; override;
+    constructor Create(ASocket: TSocket; const AFormerThread: TThread);
+    destructor Destroy; override;
     procedure Execute; override;
     //property OnPassLog: TPassLog read PassLog write PassLog;
   end;
@@ -69,12 +70,11 @@ implementation
 
 procedure TOpsiHTTPSAcceptingThread.WriteMessageBodyHTMLTestSide;
 var
-  HTML : TOpsiHTMLMessageBody;
+  HTML: TOpsiHTMLMessageBody;
 begin
   if (StatusCode = 200) then
   begin
-    HTML := TOpsiHTMLMessageBody.Create(Uri,
-      AcceptorSocket.SSL.GetPeerName);
+    HTML := TOpsiHTMLMessageBody.Create(Uri, AcceptorSocket.SSL.GetPeerName);
     OutputBody.Clear;
     HTML.SaveToMemoryStream(OutputBody);
     FreeAndNil(HTML);
@@ -83,8 +83,8 @@ end;
 
 procedure TOpsiHTTPSAcceptingThread.WriteMessageBodyJSONResponse;
 //var
-  //ResponseError : TJSONOBject;
-  //JSONResult : TJSONOBject;
+//ResponseError : TJSONOBject;
+//JSONResult : TJSONOBject;
 begin
   if (StatusCode = 200) then
   begin
@@ -94,7 +94,7 @@ begin
     //ResponseError.Add('error', 'null');
     //JSONResult := TJSONObject.Create;
     //JSONResult.Add('result', 'null');
-    JSONResponse := TOPsiJSONResponse.Create(nil,nil,JSONRequest.ID);
+    JSONResponse := TOPsiJSONResponse.Create(nil, nil, JSONRequest.ID);
     //JSONREsponse.FormatJSON();
     OutputBody.Clear;
     JSONResponse.SaveToMemoryStream(OutputBody);
@@ -115,28 +115,30 @@ begin
   //       if nothing is installed the software will work because the server
   //       doesn't check to see if a client certificate was supplied. If you
   //       want you can install:
-  //
+
   //       file: c_cacert.p12
   //       password: c_cakey
-  //
-  AcceptorSocket.SSL.CertCAFile := ExtractFilePath(ParamStr(0)) + 's_cabundle'
-    +'.pem';
-  AcceptorSocket.SSL.CertificateFile := ExtractFilePath(ParamStr(0)) + 's_'
-    +'cacert.pem';
-  AcceptorSocket.SSL.PrivateKeyFile := ExtractFilePath(ParamStr(0)) + 's_cake'
-    +'y.pem';
+
+  AcceptorSocket.SSL.CertCAFile :=
+    ExtractFilePath(ParamStr(0)) + 's_cabundle' + '.pem';
+  AcceptorSocket.SSL.CertificateFile :=
+    ExtractFilePath(ParamStr(0)) + 's_' + 'cacert.pem';
+  AcceptorSocket.SSL.PrivateKeyFile :=
+    ExtractFilePath(ParamStr(0)) + 's_cake' + 'y.pem';
   AcceptorSocket.SSL.KeyPassword := 's_cakey';
   AcceptorSocket.SSL.verifyCert := True;
 end;
 
 procedure TOpsiHTTPSAcceptingThread.InitSSLOpsi;
 begin
-  AcceptorSocket.SSL.Username:= 'adminuser';//'vmmacdev1onmm1.uib.local';
-  AcceptorSocket.SSL.Password:= 'linux123';//'aead8f8c57a92e14ac820bf8d3df1805'; //'linux123';
+  AcceptorSocket.SSL.Username := 'adminuser';//'vmmacdev1onmm1.uib.local';
+  AcceptorSocket.SSL.Password := 'linux123';
+  //'aead8f8c57a92e14ac820bf8d3df1805'; //'linux123';
 end;
 
 
-procedure TOpsiHTTPSAcceptingThread.CreateTestJSONRequestInputBody; // This function is only for testing
+procedure TOpsiHTTPSAcceptingThread.CreateTestJSONRequestInputBody;
+// This function is only for testing
 var
   TestJSONRequest: TOpsiJsonRequest;
 begin
@@ -162,9 +164,10 @@ begin
   if ContentLength >= 0 then
   begin
     InputBody.SetSize(ContentLength);
-    SizeReceived := AcceptorSocket.RecvBufferEx(InputBody.Memory, ContentLength, Timeout);
+    SizeReceived := AcceptorSocket.RecvBufferEx(InputBody.Memory,
+      ContentLength, Timeout);
     InputBody.SetSize(SizeReceived);
-   //AcceptorSocket.RecvStream(InputBody, TimeOut);
+    //AcceptorSocket.RecvStream(InputBody, TimeOut);
     //rpcMethod := AcceptorSocket.RecvString(TimeOut);
   end;
   JSONRequest := TOpsiJSONRequest.Create(InputBody);
@@ -254,7 +257,7 @@ var
 begin
   if Protocol <> '' then
   begin
-    for i := 0 to Headers.count - 1 do
+    for i := 0 to Headers.Count - 1 do
       AcceptorSocket.SendString(Headers[i] + CRLF);
   end;
 end;
@@ -269,7 +272,7 @@ end;
 
 procedure TOpsiHTTPSAcceptingThread.WriteStatusLine;
 begin
-  StatusLine :=  'HTTP/1.1' + ' ' + IntTostr(StatusCode) + ' ' + ReasonPhrase + CRLF;
+  StatusLine := 'HTTP/1.1' + ' ' + IntToStr(StatusCode) + ' ' + ReasonPhrase + CRLF;
 end;
 
 procedure TOpsiHTTPSAcceptingThread.WriteHeaders;
@@ -279,7 +282,7 @@ begin
     Headers.Clear;
     Headers.Add('Accept-Encoding: Identity');
     Headers.Add('Content-type: application/json; charset=UTF-8');
-    Headers.Add('Content-length: ' + IntTostr(OutputBody.Size));
+    Headers.Add('Content-length: ' + IntToStr(OutputBody.Size));
     //Headers.Add('Connection: close');
     //Headers.Add('Date: ' + Rfc822DateTime(now));
     Headers.Add('User-Agent: opsiclientd-mac');
@@ -296,22 +299,23 @@ end;
 //end;
 
 
-constructor TOpsiHTTPSAcceptingThread.Create(ASocket: TSocket; const AFormerThread: TThread);
+constructor TOpsiHTTPSAcceptingThread.Create(ASocket: TSocket;
+  const AFormerThread: TThread);
 begin
   //FreeOnTerminate:=true;
   FormerThread := AFormerThread;
-  AcceptorSocket:=TTCPBlockSocket.Create;
-  AcceptorSocket.Socket:=ASocket;
+  AcceptorSocket := TTCPBlockSocket.Create;
+  AcceptorSocket.Socket := ASocket;
   LogData := TLogData.Create;
   InitSSLOpsi;
   //InitSSLCertificate;
   TimeOut := 120000;
-  OnDemand := false;
+  OnDemand := False;
   Headers := TStringList.Create;
   //MessageBody := TOpsiHTTPMessageBody.Create;
   InputBody := TMemoryStream.Create;
   OutputBody := TMemoryStream.Create;
-  inherited Create(false);
+  inherited Create(False);
 end;
 
 destructor TOpsiHTTPSAcceptingThread.Destroy;
@@ -337,28 +341,45 @@ begin
   if not Terminated then
   begin
     try
-      if  AcceptorSocket.SSLAcceptConnection
-        and (AcceptorSocket.SSL.LastError = 0) then
+      if AcceptorSocket.SSLAcceptConnection and
+        (AcceptorSocket.SSL.LastError = 0) then
       begin
-        LogData.FSourceOfLog:='opsiclientd-mac accepting thread';
+        LogData.FSourceOfLog := 'opsiclientd-mac accepting thread';
         LogData.FLogMessage := 'SSL accepted';
         LogData.FLevelofLine := 6;
         Synchronize(@LogData.SendLog);
         { read request }
         ReadRequestLine;
-        ReadHeaders;
-        ReadMessageBody;
-        SetStatusCode(Method);
-        LogData.FLogMessage := 'Method: ' + self.Method +' URI: ' + self.Uri
-          +  ' Protocol: ' + self.Protocol;
+        LogData.FSourceOfLog := 'opsiclientd-mac accepting thread';
+        LogData.FLogMessage := 'ReadRequestLine';
+        LogData.FLevelofLine := 7;
+        Synchronize(@LogData.SendLog);
+        LogData.FLogMessage :=
+          'Method: ' + self.Method + ' URI: ' + self.Uri + ' Protocol: ' + self.Protocol;
         LogData.FLevelOfLine := 6;
         Synchronize(@LogData.SendLog);
-        for i := 0 to (Headers.Count-1) do
+        ReadHeaders;
+        LogData.FSourceOfLog := 'opsiclientd-mac accepting thread';
+        LogData.FLogMessage := 'ReadHeaders';
+        LogData.FLevelofLine := 7;
+        Synchronize(@LogData.SendLog);
+        for i := 0 to (Headers.Count - 1) do
         begin
           LogData.FLogMessage := Headers[i];
           LogData.FLevelOfLine := 7;
           Synchronize(@LogData.SendLog);
         end;
+        ReadMessageBody;
+        LogData.FSourceOfLog := 'opsiclientd-mac accepting thread';
+        LogData.FLogMessage := 'ReadMessageBody';
+        LogData.FLevelofLine := 7;
+        Synchronize(@LogData.SendLog);
+        SetStatusCode(Method);
+        LogData.FSourceOfLog := 'opsiclientd-mac accepting thread';
+        LogData.FLogMessage := 'SetStatusCode';
+        LogData.FLevelofLine := 7;
+        Synchronize(@LogData.SendLog);
+
         if (JSONRequest.Method = 'fireEvent') then
         begin
           { write response }
@@ -379,31 +400,40 @@ begin
           //while FormerThread <> nil do;
           if Assigned(FormerThread) then
           begin
-            if not Terminated then FormerThread.WaitFor else FormerThread.Terminate;
+            if not Terminated then
+              FormerThread.WaitFor
+            else
+              FormerThread.Terminate;
             //FormerThread.WaitFor;
             FreeAndNil(FormerThread);
-            LogData.FLogMessage := 'Former Thread terminated and freed (OpsiHTTPSAcceptingThread.pas|370)';
+            LogData.FLogMessage :=
+              'Former Thread terminated and freed (OpsiHTTPSAcceptingThread.pas|370)';
             LogData.FLevelOfLine := 5;
             Synchronize(@LogData.SendLog);
           end;
           if JSONRequest.Params.Find('on_demand') and (not Terminated) then
           begin
-            RunCommand('/usr/local/bin/opsiscriptstarter',[ ], s , [ ]);
+            RunCommand('/usr/local/bin/opsiscriptstarter', [], s, []);
             //RunCommand('/Applications/TextEdit.app/Contents/MacOS/TextEdit',[ ], s , [ ]);
           end;
         end
-        else ; //SendError (has to be implemented);
+        else
+        ; //SendError (has to be implemented);
       end
       else
       begin
-        LogData.FLogMessage := 'Error while accepting SSL connection: ' + AcceptorSocket.SSL.LastErrorDesc;
+        LogData.FLogMessage :=
+          'Error while accepting SSL connection: ' + AcceptorSocket.SSL.LastErrorDesc;
         LogData.FLevelofLine := 2;
         Synchronize(@LogData.SendLog);
       end;
     except
-      LogData.FLogMessage := 'Exception while processing request';
-      LogData.FLevelofLine := 1;
-      Synchronize(@LogData.SendLog);
+      on E: Exception do
+      begin
+        LogData.FLogMessage := 'Exception while processing request: ' + E.Message;
+        LogData.FLevelofLine := 1;
+        Synchronize(@LogData.SendLog);
+      end;
     end;
   end;
 end;
