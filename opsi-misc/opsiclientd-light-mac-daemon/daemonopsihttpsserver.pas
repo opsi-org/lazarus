@@ -86,7 +86,7 @@ procedure TOpsiHTTPSServerDaemon.ServerStop(Sender: TCustomDaemon;
 begin
   if ListeningThread <> nil then
      ListeningThread.Terminate;
-  ListeningThread.WaitFor;
+  //ListeningThread.WaitFor;
   LogDatei.AktProduktId:='opsiclientd-mac';
   LogDatei.Log('Daemon stopped', LLNotice);
   LogDatei.Close;

@@ -420,7 +420,16 @@ begin
           end;
           if JSONRequest.Params.Find('on_demand') and (not Terminated) then
           begin
-            RunCommand('/usr/local/bin/opsiscriptstarter', [], s, []);
+            if RunCommand('/bin/bash',['-c','stat -f "%Su" /dev/console'],s) then //stat -f "%Su" /dev/console
+            begin
+              LogData.FLogMessage:= 'User logged in: ' + s;
+              LogData.FLevelofLine:= 5;
+              Synchronize(@LogData.SendLog);
+              if s = 'root' then  //maybe must be adapted
+                RunCommand('/usr/local/bin/opsiscriptstarter', ['--no-gui'], s, [])
+              else
+                RunCommand('/usr/local/bin/opsiscriptstarter', [], s, []);
+            end;
             //RunCommand('/Applications/TextEdit.app/Contents/MacOS/TextEdit',[ ], s , [ ]);
           end;
         end
