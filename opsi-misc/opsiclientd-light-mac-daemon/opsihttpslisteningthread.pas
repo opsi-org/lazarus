@@ -8,7 +8,6 @@ uses
   Classes, SysUtils, OpsiHTTPSAcceptingThread, blcksock, sockets, OpsiClientdLog;
 
 type
-  //TPassLog = procedure(AMsg: string) of object;
 
   { TOpsiHTTPSListeningThread }
 
@@ -17,16 +16,12 @@ type
     ListenerSocket:TTCPBlockSocket;
     AcceptingThread: TOpsiHTTPSAcceptingThread;
     FormerAcceptingThread: TOpsiHTTPSAcceptingThread;
-    //PassMessage: TPassLog;
-    //StatusMessage: string;
     AcceptingThreadNumber: integer;
-     //procedure SendStatusMessage;
   public
     LogData: TLogData;
-    Constructor Create;
+    Constructor Create(const aSSLUsername:string; const aSSLPassword: string);
     Destructor Destroy; override;
     procedure Execute; override;
-    //property OnPassMessage: TPassLog read PassMessage write PassMessage;
   end;
 
 
@@ -34,20 +29,15 @@ implementation
 
 { TOpsiHTTPSListeningThread }
 
-//procedure TOpsiHTTPSListeningThread.SendStatusMessage;
-//begin
-//  if Assigned(PassMessage) then
-//    PassMessage(StatusMessage,5);
-//end;
-
-constructor TOpsiHTTPSListeningThread.Create;
+constructor TOpsiHTTPSListeningThread.Create(const aSSLUsername:string; const aSSLPassword: string);
 begin
   FreeOnTerminate := True;
   LogData := TLogData.Create;
   ListenerSocket := TTCPBlockSocket.create;
+  ListenerSocket.SSL.Username:= aSSLUsername;
+  ListenerSocket.SSL.Password:= aSSLPassword;
   ListenerSocket.CreateSocket;
   ListenerSocket.SetLinger(true,10000);
-  //ListenerSocket.GetLocalSinIP;
   ListenerSocket.Bind('0.0.0.0','4441'); //192.168.10.74
   ListenerSocket.Listen;
   inherited Create(false);
@@ -85,6 +75,8 @@ begin
           begin
             inc(AcceptingThreadNumber);
             AcceptingThread := TOpsiHTTPSAcceptingThread.Create(ClientSocket, FormerAcceptingThread);
+            AcceptingThread.AcceptorSocket.SSL.Password := ListenerSocket.SSL.Password;
+            AcceptingThread.AcceptorSocket.SSL.Username := ListenerSocket.SSL.Username;
             AcceptingThread.LogData.OnPassLog:= self.LogData.OnPassLog;
             //with TOpsiHTTPSAcceptingThread.Create(ClientSocket, FormerAcceptingThread) do
             //with TOpsiHTTPSAcceptingThread.Create(ClientSocket) do

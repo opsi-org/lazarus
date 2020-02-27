@@ -16,7 +16,6 @@ type
 
   TOpsiHTTPSAcceptingThread = class(TThread)
   private
-    AcceptorSocket: TTCPBlockSocket;
     Method: string;
     Uri: string;
     Protocol: string;
@@ -33,13 +32,10 @@ type
     ReasonPhrase: string;
     FormerThread: TThread;
     ThreadNumber: integer;
-    //Log: string;
-    //LevelOfLine: integer;
-    //PassLog: TPassLog;
     //MessageBody: TOpsiHTTPMessageBody;
     procedure CreateTestJSONRequestInputBody;// This function is only for testing
     procedure InitSSLCertificate;
-    procedure InitSSLOpsi;
+    //procedure InitSSLOpsi;
     procedure ReadMessageBody;
     procedure ReadJSONRequest;
     procedure ReadHeaders;
@@ -54,13 +50,16 @@ type
     //procedure WriteHTMLTestSide;
     procedure WriteMessageBodyHTMLTestSide;
     procedure WriteMessageBodyJSONResponse;
-    //procedure SendLog;
+    //procedure SetSSLPassword;
+    //procedure SetSSLUsername;
   public
     LogData: TLogData;
-    constructor Create(ASocket: TSocket; const AFormerThread: TThread);
-    destructor Destroy; override;
+    AcceptorSocket:TTCPBlockSocket;
+    Constructor Create (aSocket:TSocket; const aFormerThread:TThread);
+    Destructor Destroy; override;
     procedure Execute; override;
-    //property OnPassLog: TPassLog read PassLog write PassLog;
+    //property SSLPassword: string read GetSSLPassword write SetSSLPassword;
+    //property SSLUsername: string read GetSSLUsername write SetSSLUsername;
   end;
 
 
@@ -101,6 +100,18 @@ begin
   end;
 end;
 
+//procedure TOpsiHTTPSAcceptingThread.SetSSLPassword(aSSLPassword:string);
+//begin
+//  if Assigned(AcceptorSocket) then
+//    AcceptorSocket.SSL.Password := aSSLPassword;
+//end;
+//
+//procedure TOpsiHTTPSAcceptingThread.SetSSLUsername(aSSLUsername:string);
+//begin
+//  if Assigned(AcceptorSocket) then
+//    AcceptorSocket.SSL.Username := aSSLUsername;
+//end;
+
 //procedure TOpsiHTTPSAcceptingThread.SendLog;
 //begin
 //  if Assigned(LogData.FPassLog) then
@@ -129,13 +140,17 @@ begin
   AcceptorSocket.SSL.verifyCert := True;
 end;
 
-procedure TOpsiHTTPSAcceptingThread.InitSSLOpsi;
-begin
-  AcceptorSocket.SSL.Username := 'adminuser';//'vmmacdev1onmm1.uib.local';
-  AcceptorSocket.SSL.Password := 'linux123';
-  //'aead8f8c57a92e14ac820bf8d3df1805'; //'linux123';
-end;
-
+//procedure TOpsiHTTPSAcceptingThread.InitSSLOpsi;
+//var
+//  ClientdConf:TIniFile;
+//begin
+//
+//  AcceptorSocket.SSL.Username:= SSLUsername;//'vmmacdev1onmm1.uib.local';
+//  AcceptorSocket.SSL.Password:= ClientdConf.ReadString('global','opsi_host_key','');//'aead8f8c57a92e14ac820bf8d3df1805'; //'linux123';
+//  //AcceptorSocket.SSL.Username:= 'adminuser';//'vmmacdev1onmm1.uib.local';
+//  //AcceptorSocket.SSL.Password:= 'linux123';//'aead8f8c57a92e14ac820bf8d3df1805'; //'linux123';
+//  FreeAndNil(ClientdConf);
+//end;
 
 procedure TOpsiHTTPSAcceptingThread.CreateTestJSONRequestInputBody;
 // This function is only for testing
@@ -291,13 +306,6 @@ begin
 end;
 
 
-//procedure TOpsiHTTPSAcceptingThread.WriteMessageBody(aMessageBody: TObject);
-//begin
-//  if aMessageBody is TStringList then (aMessageBody as TStringList).SaveToStream(OutputBody);
-//  if aMessageBody is TOpsiJSONRequest then (aMessageBody as TOpsiJSONRequest).SaveToMemoryStream(OutputBody);
-//  if aMessageBody is TOpsiJSONResponse then (aMessageBody as TOpsiJSONResponse).SaveToMemoryStream(OutputBody);
-//end;
-
 
 constructor TOpsiHTTPSAcceptingThread.Create(ASocket: TSocket;
   const AFormerThread: TThread);
@@ -307,7 +315,7 @@ begin
   AcceptorSocket := TTCPBlockSocket.Create;
   AcceptorSocket.Socket := ASocket;
   LogData := TLogData.Create;
-  InitSSLOpsi;
+  //InitSSLOpsi;
   //InitSSLCertificate;
   TimeOut := 120000;
   OnDemand := False;
@@ -406,8 +414,7 @@ begin
               FormerThread.Terminate;
             //FormerThread.WaitFor;
             FreeAndNil(FormerThread);
-            LogData.FLogMessage :=
-              'Former Thread terminated and freed (OpsiHTTPSAcceptingThread.pas|370)';
+            LogData.FLogMessage := 'Former Thread terminated and freed (OpsiHTTPSAcceptingThread.pas)';
             LogData.FLevelOfLine := 5;
             Synchronize(@LogData.SendLog);
           end;
