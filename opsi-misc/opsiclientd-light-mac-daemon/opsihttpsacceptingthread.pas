@@ -54,9 +54,9 @@ type
     //procedure SetSSLUsername;
   public
     LogData: TLogData;
-    AcceptorSocket:TTCPBlockSocket;
-    Constructor Create (aSocket:TSocket; const aFormerThread:TThread);
-    Destructor Destroy; override;
+    AcceptorSocket: TTCPBlockSocket;
+    constructor Create(aSocket: TSocket; const aFormerThread: TThread);
+    destructor Destroy; override;
     procedure Execute; override;
     //property SSLPassword: string read GetSSLPassword write SetSSLPassword;
     //property SSLUsername: string read GetSSLUsername write SetSSLUsername;
@@ -105,7 +105,7 @@ end;
 //  if Assigned(AcceptorSocket) then
 //    AcceptorSocket.SSL.Password := aSSLPassword;
 //end;
-//
+
 //procedure TOpsiHTTPSAcceptingThread.SetSSLUsername(aSSLUsername:string);
 //begin
 //  if Assigned(AcceptorSocket) then
@@ -144,7 +144,7 @@ end;
 //var
 //  ClientdConf:TIniFile;
 //begin
-//
+
 //  AcceptorSocket.SSL.Username:= SSLUsername;//'vmmacdev1onmm1.uib.local';
 //  AcceptorSocket.SSL.Password:= ClientdConf.ReadString('global','opsi_host_key','');//'aead8f8c57a92e14ac820bf8d3df1805'; //'linux123';
 //  //AcceptorSocket.SSL.Username:= 'adminuser';//'vmmacdev1onmm1.uib.local';
@@ -414,21 +414,48 @@ begin
               FormerThread.Terminate;
             //FormerThread.WaitFor;
             FreeAndNil(FormerThread);
-            LogData.FLogMessage := 'Former Thread terminated and freed (OpsiHTTPSAcceptingThread.pas)';
+            LogData.FLogMessage :=
+              'Former Thread terminated and freed (OpsiHTTPSAcceptingThread.pas)';
             LogData.FLevelOfLine := 5;
             Synchronize(@LogData.SendLog);
           end;
           if JSONRequest.Params.Find('on_demand') and (not Terminated) then
           begin
-            if RunCommand('/bin/bash',['-c','stat -f "%Su" /dev/console'],s) then //stat -f "%Su" /dev/console
+            {check if somebody is logged in to the GUI (root=no)}
+            if RunCommand('/bin/bash', ['-c', 'stat -f "%Su" /dev/console'], s) then
+              //stat -f "%Su" /dev/console
             begin
-              LogData.FLogMessage:= 'User logged in: ' + s;
-              LogData.FLevelofLine:= 5;
+              LogData.FLogMessage := 'User logged in: ' + s;
+              LogData.FLevelofLine := 5;
               Synchronize(@LogData.SendLog);
-              if s = 'root' then  //maybe must be adapted
-                RunCommand('/usr/local/bin/opsiscriptstarter', ['--nogui'], s, [])
+              if trim(s) = 'root' then  //maybe must be adapted
+              begin
+                {Nobody is logged in to the GUI so we start in the nogui mode}
+                LogData.FLogMessage := 'Starting : opsiscriptstarter --nogui';
+                LogData.FLevelofLine := 5;
+                Synchronize(@LogData.SendLog);
+                if not RunCommand('/usr/local/bin/opsiscriptstarter',
+                  ['--nogui'], s, []) then
+                begin
+                  LogData.FLogMessage :=
+                    'Error: Starting : "opsiscriptstarter --nogui" failed';
+                  LogData.FLevelofLine := 1;
+                  Synchronize(@LogData.SendLog);
+                end;
+              end
               else
-                RunCommand('/usr/local/bin/opsiscriptstarter', [], s, []);
+              begin
+                {Somebody is logged in to the GUI so we start in the gui mode}
+                LogData.FLogMessage := 'Starting : opsiscriptstarter';
+                LogData.FLevelofLine := 5;
+                Synchronize(@LogData.SendLog);
+                if not RunCommand('/usr/local/bin/opsiscriptstarter', [], s, []) then
+                begin
+                  LogData.FLogMessage := 'Error: Starting : "opsiscriptstarter" failed';
+                  LogData.FLevelofLine := 1;
+                  Synchronize(@LogData.SendLog);
+                end;
+              end;
             end;
             //RunCommand('/Applications/TextEdit.app/Contents/MacOS/TextEdit',[ ], s , [ ]);
           end;
