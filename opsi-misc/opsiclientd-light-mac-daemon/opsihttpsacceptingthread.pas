@@ -422,10 +422,10 @@ begin
           begin
             if RunCommand('/bin/bash',['-c','stat -f "%Su" /dev/console'],s) then //stat -f "%Su" /dev/console
             begin
-              LogData.FLogMessage:= 'User: ' + s;
+              LogData.FLogMessage:= 'User logged in: ' + s;
               LogData.FLevelofLine:= 5;
               Synchronize(@LogData.SendLog);
-              if s = '' then
+              if s = 'root' then  //maybe must be adapted
                 RunCommand('/usr/local/bin/opsiscriptstarter', ['--no-gui'], s, [])
               else
                 RunCommand('/usr/local/bin/opsiscriptstarter', [], s, []);
