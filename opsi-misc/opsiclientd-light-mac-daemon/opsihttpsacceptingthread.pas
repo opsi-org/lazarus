@@ -426,7 +426,7 @@ begin
               LogData.FLevelofLine:= 5;
               Synchronize(@LogData.SendLog);
               if s = 'root' then  //maybe must be adapted
-                RunCommand('/usr/local/bin/opsiscriptstarter', ['--no-gui'], s, [])
+                RunCommand('/usr/local/bin/opsiscriptstarter', ['--nogui'], s, [])
               else
                 RunCommand('/usr/local/bin/opsiscriptstarter', [], s, []);
             end;
