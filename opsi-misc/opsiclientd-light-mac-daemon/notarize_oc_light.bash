@@ -4,10 +4,13 @@ set -e -x
 # Set these values:
 CODE_SIGN_SIGNATURE="Developer ID Application: uib gmbh (5H88T32F7P)"
 APPLE_ID_USER=macos@uib.de
-APP_SPECIFIC_PASSWORD=fqwo-ztjg-ljte-xkpl
+# Login to https://appleid.apple.com 
+# and find the Security > App-Specific Password > Generate Password section. 
+# Copy this password, which will be in the form xxxx-xxxx-xxxx-xxxx.
+APP_SPECIFIC_PASSWORD=hptt-seiv-uazr-ndir
 
-BUNDLE_ID=org.opsi.opsi-script-nogui
-EXECUTABLE_NAME=opsi-script-nogui
+BUNDLE_ID=org.opsi.opsiclientdmac
+EXECUTABLE_NAME=opsiclientd_mac
 EXECUTABLE_DIR=`pwd`/${EXECUTABLE_NAME}.dir
 FULLPATHTOEXE=${EXECUTABLE_DIR}/${EXECUTABLE_NAME}
 
@@ -38,7 +41,7 @@ launchctl plist $FULLPATHTOEXE
 
 # Codesign the executable by enabling the hardened runtime (--options=runtime) and include a timestamp (--timestamp)
 echo "Code signing..."
-codesign -vvv --force --strict --options=runtime --entitlements opsi-script.entitlements --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
+codesign -vvv --force --strict --options=runtime --entitlements opsi.entitlements --timestamp -s "$CODE_SIGN_SIGNATURE" $FULLPATHTOEXE
 codesign --verify --verbose --strict $FULLPATHTOEXE
 codesign -dv -r- $FULLPATHTOEXE
 codesign -vvv --deep --strict $FULLPATHTOEXE

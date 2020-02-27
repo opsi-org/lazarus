@@ -446,6 +446,7 @@ type
     function withLicenceManagement: boolean; override;
     function withRoamingProfiles: boolean;
     function linuxAgentActivated: boolean;
+    function macosAgentActivated: boolean;
     function isConnected: boolean;
     function isConnected2(loglist: TStringList): boolean;
     function getMapOfLoginscripts2Run(allscripts: boolean): TStringList;
@@ -3660,6 +3661,28 @@ begin
   except
     LogDatei.log(
       'linux_agent info not found (exception in linuxAgentActivated)', LLWarning);
+    Result := False;
+  end;
+end;
+
+function TOpsi4Data.macosAgentActivated: boolean;
+var
+  mymodules: ISuperObject;
+begin
+  try
+    mymodules := getOpsiModules;
+    LogDatei.log('modules found', LLDebug);
+    if mymodules <> nil then
+      Result := mymodules.B['macos_agent']
+    else
+    begin
+      LogDatei.log('macos_agent info not found (modules = nil)',
+        LLWarning);
+      Result := False;
+    end;
+  except
+    LogDatei.log(
+      'macos_agent info not found (exception in macosAgentActivated)', LLWarning);
     Result := False;
   end;
 end;

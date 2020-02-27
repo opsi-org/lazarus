@@ -7,6 +7,8 @@ Uses
   DaemonApp, lazdaemonapp, DaemonMapperOpsiClientd, DaemonOpsiHTTPSServer
   { add your units here };
 
+{$R *.res}
+
 begin
   Application.Title:='Daemon application';
   Application.Initialize;

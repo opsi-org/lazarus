@@ -16,7 +16,6 @@ type
 
   TOpsiHTTPSAcceptingThread = class(TThread)
   private
-
     Method: string;
     Uri: string;
     Protocol: string;
@@ -141,7 +140,6 @@ begin
   AcceptorSocket.SSL.verifyCert := True;
 end;
 
-
 //procedure TOpsiHTTPSAcceptingThread.InitSSLOpsi;
 //var
 //  ClientdConf:TIniFile;
@@ -153,7 +151,6 @@ end;
 //  //AcceptorSocket.SSL.Password:= 'linux123';//'aead8f8c57a92e14ac820bf8d3df1805'; //'linux123';
 //  FreeAndNil(ClientdConf);
 //end;
-
 
 procedure TOpsiHTTPSAcceptingThread.CreateTestJSONRequestInputBody;
 // This function is only for testing

@@ -2108,6 +2108,25 @@ begin
           end;
           {$ENDIF LINUX}
 
+          {$IFDEF DARWIN}
+          if not opsidata.macosAgentActivated then
+          begin
+              LogDatei.log(
+                'Use of opsi MacOS Client Agent Extension is not activated', LLerror);
+              writeln('Use of opsi MacOS Client Agent Extension is not activated');
+              {$IFDEF GUI}
+              MyMessageDlg.WiMessage('Use of opsi MacOS Client Agent Extension is not activated ' + LineEnding + 'Terminating Program', [mrOk]);
+              {$ENDIF GUI}
+              LogDatei.log('Terminating Program', LLerror);
+              TerminateApp;
+          end
+          else
+          begin
+            LogDatei.log(
+                'Use of opsi MacOS Client Agent Extension is activated', LLInfo);
+          end;
+          {$ENDIF DARWIN}
+
 
           if runloginscripts then
           begin

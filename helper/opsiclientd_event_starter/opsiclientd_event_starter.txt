@@ -1,3 +1,10 @@
+opsiclientd_event_starter 4.1.0.1
+
+  * added macos support
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 26 Feb 2020 15:00:00 +0000
+
+
 opsiclientd_shutdown_starter 4.0.7.2
 
   * changed manifest: now: asInvoker

@@ -1,4 +1,4 @@
-program opsiclientd_event_starter;
+program opsiclientd_event_starter_mac;
 
 {$mode objfpc}{$H+}
 
@@ -7,31 +7,21 @@ uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
-  {$IFDEF WINDOWS}
-  winpeimagereader,
-  shlobj,
-  Windows,
-  activex,
-  {$ENDIF WINDOWS}
-  {$IFDEF UNIX}
-
-  {$ENDIF UNIX}
   Classes,
   SysUtils,
   CustApp,
   fileinfo,
+  winpeimagereader,
   inifiles,
+  shlobj,
+  Windows,
+  activex,
   oswebservice,
   osjson,
   oslog;
 
 const
-  {$IFDEF WINDOWS}
   opsiclientdconf = '\opsi.org\opsi-client-agent\opsiclientd\opsiclientd.conf';
-  {$ENDIF WINDOWS}
-  {$IFDEF UNIX}
-  opsiclientdconf = '/etc/opsi-client-agent/opsiclientd.conf';
-  {$ENDIF UNIX}
   opsilog = 'opsiclientd_event_starter.log';
   SECONDS_TO_SLEEP_AFTER_ACTION = 5;
   //TIMEOUTSECONDS = 60;
@@ -62,7 +52,6 @@ var
   myVersion, myevent : String;
   second_counter : integer = 0;
 
-  {$IFDEF WINDOWS}
 procedure Freecsidl(csidl: PItemIDList);
 var
   alloc: IMalloc;
@@ -99,20 +88,14 @@ end;
           Result := StrPas(namebuf);
       end;
   end;
-{$ENDIF WINDOWS}
+
 
 procedure readconf;
 var
   myini: TInifile;
   confname : string;
 begin
-  {$IFDEF WINDOWS}
   confname := getSpecialFolder(CSIDL_PROGRAM_FILES) +opsiclientdconf;
-  {$ENDIF WINDOWS}
-  {$IFDEF UNIX}
-  confname := opsiclientdconf;
-  {$ENDIF UNIX}
-
   myini := TIniFile.Create(confname);
   //myservice_url := myini.ReadString('config_service', 'url', '');
   //myservice_url := 'https://localhost:4441/interface';
@@ -174,7 +157,7 @@ begin
   logfilename := opsilog;
   logdatei.CreateTheLogfile(logfilename, False);
   logdatei.LogLevel := myloglevel;
-  logdatei.log('opsiclientd_event_starter: version: '+myVersion,LLessential);
+  logdatei.log('opsiclientd_shutdown_starter: version: '+myVersion,LLessential);
 end;
 
 
@@ -354,7 +337,6 @@ begin
       end;
 
       // event fired
-      {$IFDEF WINDOWS}
       Sleep(SECONDS_TO_SLEEP_AFTER_ACTION * 1000);
       myBoolStr := 'false';
       repeat
@@ -384,7 +366,6 @@ begin
       //     LogDatei.log('Task aborted by timeout',LLWarning)
       //else
       LogDatei.log('Task completed',LLNotice)
-      {$ENDIF WINDOWS}
     except
       on E: Exception do
       begin
@@ -433,9 +414,7 @@ var
   Application: Tstarter;
 
 {$R *.res}
-{$IFDEF WINDOWS}
 {$R manifest.rc}
-{$ENDIF WINDOWS}
 
 begin
   Application:=Tstarter.Create(nil);

@@ -1,0 +1,10 @@
+object OpsiHTTPSServerDaemon: TOpsiHTTPSServerDaemon
+  OldCreateOrder = False
+  OnStart = ServerStart
+  OnStop = ServerStop
+  Height = 150
+  HorizontalOffset = 1720
+  VerticalOffset = 404
+  Width = 150
+  PPI = 96
+end
