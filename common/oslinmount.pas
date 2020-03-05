@@ -341,7 +341,7 @@ begin
     //writeln('depotId=',mydepot);
     resultstring := MyOpsiMethodCall('getGeneralConfigValue',
       ['clientconfig.depot.user', myclientid]);
-    mydepotuser := SO(resultstring).S['result'];
+    mydepotuser := trim(SO(resultstring).S['result']);
     LogDatei.log('Got depot user from service: ' + mydepotuser, LLNotice);
     if mydepotuser <> '' then
     begin
