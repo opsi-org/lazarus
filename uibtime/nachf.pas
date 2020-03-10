@@ -7,7 +7,7 @@ interface
 uses
   LCLIntf, LCLType, {LMessages, Messages,} SysUtils, Classes, Graphics,
   Controls, Forms, Dialogs,
-  StdCtrls, Buttons, DBCtrls, ExtCtrls, runprocess;
+  StdCtrls, Buttons, DBCtrls, ExtCtrls, linhandlewin;
 
 type
 
@@ -55,7 +55,7 @@ end;
 
 procedure TFNachfrage.FormShow(Sender: TObject);
 begin
-  if not setwindowtoalldesktops('uibtime') then
+  if not setwindowtoalldesktops(FNachfrage.Caption) then
     datamodule1.debugOut(2, 'nachf', 'failed nachf to all desktops');
 end;
 

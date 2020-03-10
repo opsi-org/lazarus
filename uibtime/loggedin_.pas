@@ -10,7 +10,7 @@ uses
      {$ENDIF WINDOWS}
 *)
  { Messages,} SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, Spin, Buttons, {ToolWin, ComCtrls,} ExtCtrls, runprocess;
+  StdCtrls, Spin, Buttons, {ToolWin, ComCtrls,} ExtCtrls, linhandlewin;
 
 type
   TFLoggedin = class(TForm)
@@ -93,7 +93,7 @@ begin
   if DataModule1.Weristda1.Checked then
   begin
     FLoggedin.Visible:= true;
-    if not setwindowtoalldesktops('Presenz') then
+    if not setwindowtoalldesktops(FLoggedin.Caption) then
         datamodule1.debugOut(2,'ontop', 'failed presenz to all desktops');
   end
   else FLoggedin.Visible:= false;

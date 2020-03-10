@@ -11,7 +11,7 @@ uses
   lazfileutils,
   fileutil,
   DB,
-  runprocess,
+  linhandlewin,
   uibdatetime;
 
 type
@@ -243,7 +243,7 @@ begin
       ///fontop.TimerCallCount.Enabled := true;
       fontop.Show;
       application.ProcessMessages;
-      if not setwindowtoalldesktops('fontop') then
+      if not setwindowtoalldesktops(fontop.Caption) then
         datamodule1.debugOut(2, 'login-bitbtnokclick', 'failed fontop to all desktops');
       ///FLoggedin.Show;
       // write login to uibtime.conf

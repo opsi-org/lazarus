@@ -30,7 +30,7 @@ uses
   Controls,
   Dialogs,
   IniFiles, process, DateUtils,
-  runprocess,
+  linhandlewin,
   httpservice,
   uibtWorkRepChooser,
   uib2erp,
@@ -1515,7 +1515,8 @@ var
   wmctrlpath : string;
   outstring : string;
   outlist : TStringlist;
-  desknum , i: integer;
+  desknum , i, exitcode: integer;
+  cmd : string;
 begin
   debugOut(8, 'TimerOnTopTimer', 'start ');
   TimerOntop.interval := 500;
@@ -1537,11 +1538,19 @@ begin
     //Application.BringToFront;
     if which('wmctrl',wmctrlpath) then
     begin
+      cmd := wmctrlpath+' -r "uibtime - ontop" -b add,above';
+      debugOut(8, 'TimerOnTopTimer', 'cmd: '+cmd);
+      getCommandResult(cmd,exitcode);
+      if exitcode = 0 then  debugOut(8, 'TimerOnTopTimer', 'movefront ')
+      else debugOut(4, 'TimerOnTopTimer', 'movefront failed');
+      (*
        if RunCommand(wmctrlpath,['-r','"uibtime - ontop"','-b','add,above'], outstring,[poWaitOnExit]) then
           debugOut(8, 'TimerOnTopTimer', 'movefront ')
         else  debugOut(4, 'TimerOnTopTimer', 'movefront failed');
-       (*
+        *)
+
        outlist := RunCommandCaptureOutGetOutlist(wmctrlpath+' -d ');
+       debugOut(8, 'TimerOnTopTimer', 'outlist: '+outlist.Text);
        outstring := '';
        i:= 0;
        desknum := -1;
@@ -1552,9 +1561,14 @@ begin
            else
              inc(i);
          end;
+       debugOut(8, 'TimerOnTopTimer', 'desknum: '+IntToStr(desknum));
        if desknum > -1 then
-         RunCommand(wmctrlpath,['-r','"uibtime - ontop"','-t',inttostr(desknum)], outstring,[poWaitOnExit])
-       *)
+       begin
+        // RunCommand(wmctrlpath,['-r','"uibtime - ontop"','-t ',inttostr(desknum)], outstring,[poWaitOnExit])
+         cmd := wmctrlpath+' -r "uibtime - ontop" -t '+inttostr(desknum);
+         debugOut(8, 'TimerOnTopTimer', 'cmd: '+cmd);
+         getCommandResult(cmd,exitcode);
+       end
     end
     else  debugOut(4, 'TimerOnTopTimer', 'movefront no wmctrl')
   except
@@ -1848,7 +1862,7 @@ begin
     else
     begin
       FLoggedin.Show;
-      if not setwindowtoalldesktops('Presenz') then
+      if not setwindowtoalldesktops(FLoggedin.Caption) then
         DataModule1.debugOut(2, 'ontop', 'failed presenz to all desktops');
       Weristda1.Checked := True;
       myini.WriteBool('general', 'weristda', True);

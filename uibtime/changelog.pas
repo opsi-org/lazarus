@@ -1,10 +1,18 @@
 (*
+uibtime (4.1.1.62-1) stable; urgency=low
+
+ * uibdata: timerontop: linux: use wmctrl do push to front
+   fixed call:
+ * renamed runprocess to linhandlewin
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 10 Mar 2020 15:00:00 +0000
+
 uibtime (4.1.1.61-1) stable; urgency=low
 
  * unique instance: kann nur einmal gestartet werden
  * uibdata: central my Font for different OS
  * uibdata: new recursive function SetFontName(Control: TControl; Name: string);
- * uibdata: timerontop: linux: use wmctrl do push to fron
+ * uibdata: timerontop: linux: use wmctrl do push to front
 
 -- detlef oertel <d.oertel@uib.de>  Wed, 08 Jan 2020 15:00:00 +0000
 

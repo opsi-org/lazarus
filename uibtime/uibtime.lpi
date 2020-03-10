@@ -24,7 +24,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="61"/>
+      <BuildNr Value="62"/>
       <Language Value="0407"/>
       <StringTable Comments="lazarus 2.0.6 fpc 3.0.4" CompanyName="uib gmbh" InternalName="uibtime.exe" LegalCopyright="GPL v3" ProductName="uibtime" ProductVersion="4.0.0"/>
     </VersionInfo>
@@ -294,7 +294,7 @@
         <ResourceBaseClass Value="Form"/>
       </Unit17>
       <Unit18>
-        <Filename Value="runprocess.pas"/>
+        <Filename Value="linhandlewin.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit18>
       <Unit19>
@@ -338,6 +338,7 @@
       <Unit26>
         <Filename Value="..\common\osprocessux.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="OSProcessux"/>
       </Unit26>
     </Units>
   </ProjectOptions>
