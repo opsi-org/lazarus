@@ -4,6 +4,7 @@ uibtime (4.1.1.62-1) stable; urgency=low
  * uibdata: timerontop: linux: use wmctrl do push to front
    fixed call:
  * renamed runprocess to linhandlewin
+ * dataedit: linux dropdown config
 
 -- detlef oertel <d.oertel@uib.de>  Wed, 10 Mar 2020 15:00:00 +0000
 

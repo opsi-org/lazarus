@@ -132,6 +132,8 @@ object FOnTop: TFOnTop
       Height = 38
       Top = 2
       Width = 450
+      AutoComplete = True
+      AutoDropDown = True
       AutoSize = False
       DataField = 'EVENT'
       DataSource = DataModule1.DSuibevent
@@ -141,11 +143,10 @@ object FOnTop: TFOnTop
       KeyField = 'event'
       ListFieldIndex = 0
       ListSource = DS_topten_events
-      LookupCache = False
+      LookupCache = True
       OnEnter = DBLCB_topten_eventEnter
       OnExit = DBLCB_topten_eventExit
       ParentFont = False
-      ScrollListDataset = True
       Sorted = True
       TabOrder = 1
     end

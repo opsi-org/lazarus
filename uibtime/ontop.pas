@@ -296,7 +296,12 @@ var
 begin
   try
     datamodule1.debugOut(5, 'start TFOnTop.FormCreate');
-
+    FOnTop.Caption:= 'uibtime - ontop - runtime';
+    {$IFDEF LINUX}
+    DBLCB_topten_event.AutoComplete:=true;
+    DBLCB_topten_event.AutoDropDown:=false;
+    DBLCB_topten_event.AutoSelect:=false;
+    {$ENDIF LINUX}
     //mypath := ExtractFilePath(paramstr(0));
     //myini := TIniFile.Create(mypath+'uibtime.ini');
     //leftint := myini.ReadInteger('desktop', 'left', 200);
@@ -536,6 +541,8 @@ begin
     datamodule1.debugOut(5, 'in btnbye: Flogoff.showmodal');
     Application.ProcessMessages;
     try
+      Result := Flogoff.showmodal;
+      (*
       {$IFDEF WINDOWS}
       Result := Flogoff.showmodal;
       {$ENDIF WINDOWS}
@@ -554,6 +561,7 @@ begin
       Flogoff.FormStyle := fsNormal;
       Flogoff.FLogofftimer.Enabled := False;
       {$ENDIF LINUX}
+      *)
     finally
       datamodule1.debugOut(5, 'in btnbye: after Flogoff.showmodal');
     end;
