@@ -22962,14 +22962,14 @@ begin
     LogDatei.LogLevel := osconf.default_loglevel;
     LogDatei.debug_lib := osconf.debug_lib;
     logDatei.log_prog('force_min_loglevel: ' + IntToStr(osconf.force_min_loglevel),
-      LLessential);
-    logDatei.log_prog('default_loglevel: ' + IntToStr(osconf.default_loglevel), LLessential);
-    logDatei.log_prog('debug_prog: ' + BoolToStr(osconf.debug_prog, True), LLessential);
-    logDatei.log_prog('debug_lib: ' + booltostr(osconf.debug_lib, True), LLessential);
+      LLinfo);
+    logDatei.log_prog('default_loglevel: ' + IntToStr(osconf.default_loglevel), LLinfo);
+    logDatei.log_prog('debug_prog: ' + BoolToStr(osconf.debug_prog, True), LLinfo);
+    logDatei.log_prog('debug_lib: ' + booltostr(osconf.debug_lib, True), LLinfo);
     logDatei.log_prog('ScriptErrorMessages: ' + BoolToStr(
-      osconf.ScriptErrorMessages, True), LLessential);
+      osconf.ScriptErrorMessages, True), LLinfo);
     logDatei.log_prog('AutoActivityDisplay: ' + booltostr(
-      osconf.AutoActivityDisplay, True), LLessential);
+      osconf.AutoActivityDisplay, True), LLinfo);
     LogDatei.log('Using new Depot path:  ' + depotdrive + depotdir, LLinfo);
 
   {$IFDEF DARWIN}
@@ -23166,7 +23166,7 @@ begin
       tmpstr := tmpstr + ' 64 Bit'
     else
       tmpstr := tmpstr + ' 32 Bit';
-    // we have no ReleaseId before Win10
+    { we have no ReleaseId before Win10  }
     if (StrToInt(GetSystemOSVersionInfoEx('major_version')) >= 10) and
       RegVarExists('HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion', 'ReleaseID', True) then
     begin
@@ -23195,39 +23195,30 @@ begin
       //Logdatei.log('Setup script name: '+opsidata.getProductScriptPath(tacSetup), LLessential);
     end;
 
-    // backup the start working dir
+    { backup the start working dir  }
     opsiWinstStartdir := GetCurrentDir;
 
     LogDatei.log('', LLessential);
 
 
-  {ps := '        (Assuming the shell is "';
-  if ShellIsExplorer
-  then ps := ps + 'explorer.exe'
-  else ps := ps + 'progman.exe';
-  ps := ps + '")';
-
-  LogDatei.log (ps, BaseLevel);
-  }
-
-    //ProcessIncludes;
-
-
     { Definition of global system variables }
-    LogDatei.log_prog('Start: Definition of global system variables', LLessential);
+    LogDatei.log_prog('Start: Definition of global system variables', LLinfo);
     with Script do
     begin
-      //System directories:
+      { Attention: every key need an value entry !
+        If value is missing AppyTextConstants will get an index error. }
+
+      {  System directories:  }
     {$IFDEF WINDOWS}
       FConstList.add('%Systemroot%');
       ValueToTake := GetWinDirectory;
-      (* delete closing back slash *)
+      { delete closing back slash }
       System.Delete(ValueToTake, length(ValueToTake), 1);
       FConstValuesList.add(ValueToTake);
 
       FConstList.add('%System%');
       ValueToTake := GetWinSystemDirectory;
-      (* delete closing back slash *)
+      { delete closing back slash }
       System.Delete(ValueToTake, length(ValueToTake), 1);
       FConstValuesList.add(ValueToTake);
 
@@ -23256,10 +23247,10 @@ begin
       try
         if (GetNTVersionMajor = 5) and (GetNTVersionMinor = 0) then
         begin
-          // we are on win 2000 which can't handle redirections flags
+          { we are on win 2000 which can't handle redirections flags  }
           Regist := Tuibregistry.Create;
         end
-        else // we are on xp or higher
+        else { we are on xp or higher  }
         begin
           Regist := Tuibregistry.Create(True, True);
         end;
@@ -23277,7 +23268,7 @@ begin
 
 
 
-      //Usercontext data
+      {  Usercontext data   }
 
       FConstList.add('%Usercontext%');
       FConstValuesList.add(usercontext);
@@ -23285,14 +23276,8 @@ begin
       FConstList.add('%UsercontextSID%');
       FConstValuesList.add(usercontextSID);
     {$ENDIF WINDOWS}
- (*
-    FConstList.add('%UsercontextAppdataDir%');
-    ValueToTake := '';
-    if wispecfolder.specialfolders.indexOf('UsercontextAppdata') > 0
-    then valueToTake := wispecfolder.specialfolders.values['UsercontextAppdata'];
-    FConstValuesList.add (ValueToTake);
- *)
-      //  Common (AllUsers) directories:
+
+      {  Common (AllUsers) directories: }
       FConstList.add('%CommonAppDataDir%');
       ValueToTake := GetCommonAppDataPath;
       FConstValuesList.add(ValueToTake);
@@ -23351,12 +23336,12 @@ begin
       ValueToTake := getUserProfilePath;
       FConstValuesList.add(ValueToTake);
 
-      ///AllNtUserProfiles directory constants:
-      // they are not defined here and will be replaced
-      // at the working section code
+      { /AllNtUserProfiles directory constants:
+       they are not defined here and will be replaced
+       at the working section code }
 
 
-      //opsi-script-Path and Directories
+      { opsi-script-Path and Directories }
       FConstList.add('%ScriptDrive%');
       ValueToTake := extractfiledrive(ExpandFilename(Scriptdatei));
       FConstValuesList.add(ValueToTake);
@@ -23387,31 +23372,30 @@ begin
       FConstList.add('%opsiTmpDir%');
     {$IFDEF WINDOWS}
       FConstValuesList.add('c:\opsi.org\tmp');
-{$ENDIF WINDOWS}
+    {$ENDIF WINDOWS}
     {$IFDEF UNIX}
       FConstValuesList.add('/tmp');
-{$ENDIF UNIX}
+    {$ENDIF UNIX}
 
       FConstList.add('%opsiLogDir%');
-      //{$IFDEF WINDOWS}FConstValuesList.add ( 'c:\opsi.org\log' ); {$ENDIF WINDOWS}
       FConstValuesList.add(copy(oslog.defaultStandardMainLogPath, 1,
         Length(oslog.defaultStandardMainLogPath) - 1));
 
       FConstList.add('%opsiapplog%');
     {$IFDEF WINDOWS}
       FConstValuesList.add('c:\opsi.org\applog');
-{$ENDIF WINDOWS}
+    {$ENDIF WINDOWS}
     {$IFDEF UNIX}
       FConstValuesList.add('~/opsi.org/applog');
-{$ENDIF UNIX}
+    {$ENDIF UNIX}
 
       FConstList.add('%opsidata%');
     {$IFDEF WINDOWS}
       FConstValuesList.add('c:\opsi.org\data');
-{$ENDIF WINDOWS}
+    {$ENDIF WINDOWS}
     {$IFDEF UNIX}
       FConstValuesList.add('/var/lib/opsi-client-agent');
-{$ENDIF UNIX}
+    {$ENDIF UNIX}
 
     {$IFDEF WINDOWS}
       FConstList.add('%opsiScriptHelperPath%');
@@ -23420,7 +23404,7 @@ begin
 
 
 
-      //Network informations
+      { Network informations  }
       FConstList.add('%PCNAME%');
       ValueToTake := ValueOfEnvVar('PCNAME');
       if valueToTake = valueEnvVarNotFound then
@@ -23444,13 +23428,6 @@ begin
       FConstValuesList.add(ValueToTake);
     {$ENDIF LINUX}
 
-
-
-    (*
-    FConstList.add ('%MacAddress%');
-    FConstValuesList.add (GetMACAddress2);
-  *)
-
       FConstList.add('%IPAddress%');
       FConstValuesList.add(ipAddress);
 
@@ -23467,11 +23444,7 @@ begin
       FConstValuesList.add(TempUserRegKey);
     {$ENDIF WINDOWS}
 
-      //FConstList.add ('%Wow64%');
-      //FConstValuesList.add (IntToStr( iswow64));
-
-
-      //opsi service values
+      { opsi service values }
 
       FConstList.add('%opsiserviceURL%');
       FConstValuesList.add(opsiserviceURL);
@@ -23511,15 +23484,20 @@ begin
       try
         FConstValuesList.add(opsidata.getActualProductVersion);
       except
+        FConstValuesList.add('')
       end;
 
       FConstList.add('%installingProduct%');
       if opsidata = nil then
         FConstValuesList.add('')
       else
+      try
         FConstValuesList.add(Topsi4data(opsidata).getActualProductId);
+      except
+        FConstValuesList.add('')
+      end;
     end;
-    LogDatei.log_prog('End: Definition of global system variables', LLessential);
+    LogDatei.log_prog('End: Definition of global system variables', LLinfo);
 
 
 
@@ -23528,20 +23506,21 @@ begin
     FBatchOberflaeche.LoadSkin('');
     FBatchOberflaeche.setPicture('', '');
   {$ENDIF GUI}
-    // initial section
+    { initial section  }
     AktionsListe.Name := NameInitSektion;
     Script.GetSectionLines(NameInitSektion, TXStringList(Aktionsliste),
       StartlineOfSection, True, True, True);
+    LogDatei.log_prog('CreateAndProcessScript: '+Aktionsliste.Name+': After GetSectionLiness', LLinfo);
     //Script.ApplyTextConstants (TXStringList (Aktionsliste));
 
     try
-      // inital section
+      { inital section  }
       if Aktionsliste.Count > 0 then
         weiter := Script.doAktionen(Aktionsliste, Aktionsliste)
       else
         weiter := tsrPositive;
 
-      // profile actions section : run it only on loginscript
+      { profile actions section : run it only on loginscript  }
       if (weiter > 0) and runloginscripts then
       begin
         Aktionsliste.Clear;
@@ -23549,19 +23528,21 @@ begin
         Aktionsliste.StartLineNo := StartlineOfSection;
         Script.GetSectionLines(NameProfileActionsSection, TXStringList(Aktionsliste),
           StartlineOfSection, True, True, True);
+        LogDatei.log_prog('CreateAndProcessScript: '+Aktionsliste.Name+': After GetSectionLiness', LLinfo);
         Script.ApplyTextConstants(TXStringList(Aktionsliste), False);
+        LogDatei.log_prog('CreateAndProcessScript: '+Aktionsliste.Name+': After ApplyTextConstants', LLinfo);
         if Aktionsliste.Count > 0 then
         begin
           Aktionsliste.StartLineNo := StartlineOfSection;
           weiter := Script.doAktionen(Aktionsliste, Aktionsliste);
-          // do not run actions after profileActions
+          { do not run actions after profileActions  }
           weiter := 0;
         end
         else
           weiter := tsrPositive;
       end;
 
-      // actions section
+      { actions section  }
       if weiter > 0 then
       begin
         Aktionsliste.Clear;
@@ -23570,9 +23551,9 @@ begin
 
         Script.GetSectionLines(NameAktionenSektion, TXStringList(Aktionsliste),
           StartlineOfSection, True, True, True);
-        LogDatei.log_prog('CreateAndProcessScript: After GetSectionLiness', LLessential);
+        LogDatei.log_prog('CreateAndProcessScript: '+Aktionsliste.Name+': After GetSectionLiness', LLinfo);
         Script.ApplyTextConstants(TXStringList(Aktionsliste), False);
-        LogDatei.log_prog('CreateAndProcessScript: After ApplyTextConstants', LLessential);
+        LogDatei.log_prog('CreateAndProcessScript: '+Aktionsliste.Name+': After ApplyTextConstants', LLinfo);
 
         if Aktionsliste.Count > 0 then
         begin

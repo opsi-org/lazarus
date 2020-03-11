@@ -2035,7 +2035,7 @@ begin
           {$IFDEF WINDOWS}
           SystemCritical.IsCritical := True;
 {$ENDIF WINDOWS}
-          // if necessary do product installations
+          { if necessary do product installations  }
           {$IFDEF GUI}
           if runSilent then
             FBatchOberflaeche.setVisible(False)
@@ -2248,8 +2248,8 @@ begin
           logDatei.log_prog('AktProduktId: ' + LogDatei.AktProduktId +
             ' = ' + booleantostr(LogDatei.LogProduktId), LLessential);
 
-          // Are we in batch with /productid (opsi-template-with-admin) ?
-          // open service connection if possible
+          { Are we in batch with /productid (opsi-template-with-admin) ?
+             open service connection if possible  }
           if not (batchproductid = '') then
           begin
             try
@@ -2279,6 +2279,8 @@ begin
                       opsiserviceSessionId);
                     if opsidata.isConnected then
                     begin
+                      { isConnected calls backendInfo so no need to call it again }
+                      (*
                       startTime := now;
                       omc := TOpsiMethodCall.Create('backend_info', []);
                       testresult := opsidata.CheckAndRetrieve(omc, errorOccured);
@@ -2289,6 +2291,7 @@ begin
                         ' Time: ' + FormatDateTime('hh:nn:ss:zzz',
                         now - startTime), LLinfo);
                       omc.Free;
+                      *)
                       opsidata.setActualProductName(batchproductid);
                       opsidata.setActualClient(opsiserviceUser);
                       ProductvarsForPC := opsidata.getProductproperties;
@@ -2304,12 +2307,16 @@ begin
                       LogDatei.log('Could not connect to Service :' +
                         opsiserviceurl + ' - retry with localhost', LLerror);
                       opsiserviceurl := 'https://localhost:4441/rpc';
+                      if Assigned(opsidata) then FreeAndNil(opsidata);
+                      opsidata := TOpsi4Data.Create;
                       opsidata.initOpsiConf(opsiserviceurl,
                         opsiserviceUser,
                         opsiservicePassword,
                         opsiserviceSessionId);
                       if opsidata.isConnected then
                       begin
+                         { isConnected calls backendInfo so no need to call it again }
+                        (*
                         startTime := now;
                         omc := TOpsiMethodCall.Create('backend_info', []);
                         testresult := opsidata.CheckAndRetrieve(omc, errorOccured);
@@ -2320,6 +2327,7 @@ begin
                           ' Time: ' + FormatDateTime('hh:nn:ss:zzz',
                           now - startTime), LLinfo);
                         omc.Free;
+                        *)
                         opsidata.setActualProductName(batchproductid);
                         opsidata.setActualClient(opsiserviceUser);
                         ProductvarsForPC := opsidata.getProductproperties;

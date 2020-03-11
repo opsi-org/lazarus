@@ -146,7 +146,7 @@ var
   debug_lib: boolean = True;
   force_min_loglevel: integer = 8;
   {$ELSE}
-  debug_prog: boolean = True;
+  debug_prog: boolean = False;
   default_loglevel: integer = 7;
   debug_lib: boolean = True;
   force_min_loglevel: integer = 4;

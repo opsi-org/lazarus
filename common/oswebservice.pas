@@ -4143,20 +4143,39 @@ begin
     else sendLog(sendtype);
   end;
   try
-    // close the session after all is done
+    { close the session after all is done  }
     omc := TOpsiMethodCall.Create('backend_exit', []);
     jsonEntry := FjsonExecutioner.retrieveJsonObject(omc);
     LogDatei.log('in finishOpsiConf: backend_exit done', LLDebug2);
-    if omc <> nil then
-      FreeAndNil(omc);
-    if Assigned(FJsonExecutioner) then
-      FreeAndNil(FJsonExecutioner);
   except
     on e: Exception do
     begin
       LogDatei.log('exception in finishOpsiConf: backend_exit ' + e.message, LLError);
     end;
   end;
+  try
+    { free some objects  }
+    if omc <> nil then
+      FreeAndNil(omc);
+  except
+    on e: Exception do
+    begin
+      LogDatei.log('exception in finishOpsiConf: free omc ' + e.message, LLError);
+    end;
+  end;
+  { free FJsonExecutioner gives a Access Violation }
+  (*
+  try
+    { free some objects  }
+    if Assigned(FJsonExecutioner) then
+      FreeAndNil(FJsonExecutioner);
+  except
+    on e: Exception do
+    begin
+      LogDatei.log('exception in finishOpsiConf: free FJsonExecutioner ' + e.message, LLError);
+    end;
+  end;
+  *)
 end;
 
 function TOpsi4Data.getLogSize: int64;
