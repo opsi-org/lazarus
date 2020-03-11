@@ -1538,7 +1538,7 @@ begin
     //Application.BringToFront;
     if which('wmctrl',wmctrlpath) then
     begin
-      cmd := wmctrlpath+' -r "uibtime - ontop" -b add,above';
+      cmd := wmctrlpath+' -r "'+FOnTop.Caption+'" -b add,above';
       debugOut(8, 'TimerOnTopTimer', 'cmd: '+cmd);
       getCommandResult(cmd,exitcode);
       if exitcode = 0 then  debugOut(8, 'TimerOnTopTimer', 'movefront ')
@@ -1564,8 +1564,8 @@ begin
        debugOut(8, 'TimerOnTopTimer', 'desknum: '+IntToStr(desknum));
        if desknum > -1 then
        begin
-        // RunCommand(wmctrlpath,['-r','"uibtime - ontop"','-t ',inttostr(desknum)], outstring,[poWaitOnExit])
-         cmd := wmctrlpath+' -r "uibtime - ontop" -t '+inttostr(desknum);
+        // RunCommand(wmctrlpath,['-r','"'+FOnTop.Caption+'"','-t ',inttostr(desknum)], outstring,[poWaitOnExit])
+         cmd := wmctrlpath+' -r "'+FOnTop.Caption+'" -t '+inttostr(desknum);
          debugOut(8, 'TimerOnTopTimer', 'cmd: '+cmd);
          getCommandResult(cmd,exitcode);
        end
