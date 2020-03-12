@@ -55,7 +55,8 @@ end;
 
 procedure TFNachfrage.FormShow(Sender: TObject);
 begin
-  if not setwindowtoalldesktops(FNachfrage.Caption) then
+  FNachfrage.Caption:= 'uibtime - Notice';
+  if not moveToCurrentDeskAndFront(FNachfrage.Caption) then
     datamodule1.debugOut(2, 'nachf', 'failed nachf to all desktops');
 end;
 

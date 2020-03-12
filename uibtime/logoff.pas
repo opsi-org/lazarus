@@ -418,6 +418,7 @@ end;
 
 procedure TFlogoff.FormCreate(Sender: TObject);
 begin
+ Flogoff.Caption:= 'uibtime - logged off -runtime';
   DataModule1.SetFontName(TControl(sender),myFont);
 end;
 

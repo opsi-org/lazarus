@@ -297,11 +297,14 @@ begin
   try
     datamodule1.debugOut(5, 'start TFOnTop.FormCreate');
     FOnTop.Caption:= 'uibtime - ontop - runtime';
+    DataModule1.configureLookupComboBox(DBLCB_topten_event);
+    (*
     {$IFDEF LINUX}
     DBLCB_topten_event.AutoComplete:=true;
     DBLCB_topten_event.AutoDropDown:=false;
     DBLCB_topten_event.AutoSelect:=false;
     {$ENDIF LINUX}
+    *)
     //mypath := ExtractFilePath(paramstr(0));
     //myini := TIniFile.Create(mypath+'uibtime.ini');
     //leftint := myini.ReadInteger('desktop', 'left', 200);
@@ -427,8 +430,10 @@ procedure TFOnTop.FormShow(Sender: TObject);
 //  Hour, Min, Sec, MSec: word;
 begin
   datamodule1.debugOut(5, 'ontop', 'Show FOntop');
+  (*
   if not setwindowtoalldesktops(fontop.Caption) then
     datamodule1.debugOut(2, 'ontop', 'failed FOntop to all desktops');
+    *)
   try
     if not ontopactivated then
     begin
@@ -570,8 +575,10 @@ begin
     inLogoff := False;
     if loggedin_visible and (Result <> mrAbort) then
       FLoggedin.Show;
+    (*
     if not setwindowtoalldesktops(FLoggedin.Caption) then
       datamodule1.debugOut(2, 'ontop', 'failed presenz to all desktops');
+      *)
     // back again (from break)
     if Result = mrOk then
     begin

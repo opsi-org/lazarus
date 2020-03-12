@@ -484,7 +484,8 @@ end;
 procedure TFDataedit.FormCreate(Sender: TObject);
 begin
   //TForm(sender).Font.Name:=myFont;
-
+  DataModule1.configureLookupComboBox(DBLookupComboBox1);
+  (*
  {$IFDEF LINUX}
   DBLookupComboBox1.AutoComplete:=true;
   DBLookupComboBox1.AutoDropDown:=false;
@@ -493,7 +494,7 @@ begin
   DBLookupComboBox1.Style:= csDropDown;
   DBLookupComboBox1.Sorted:=false;
   {$ENDIF LINUX}
-
+   *)
   DataModule1.SetFontName(TControl(sender),myFont);
 end;
 

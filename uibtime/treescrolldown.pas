@@ -91,14 +91,22 @@ begin
 end;
 
 procedure TFTreeview.TreeView1Change(Sender: TObject; Node: TTreeNode);
+var
+  eventstring : string;
 begin
   datamodule1.debugOut(5, 'start TFTreeview.Change');
   if not remotechange then
   begin
     datamodule1.debugOut(5, 'start TFTreeview.local.Change');
-    if not (Fontop.edit1.Text = Treeview1.Selected.Text) then
+    try
+      if Treeview1.Selected <> nil then eventstring := Treeview1.Selected.Text
+      else eventstring := Fontop.edit1.Text;
+    except
+       eventstring := Fontop.edit1.Text;
+    end;
+    if not (Fontop.edit1.Text = eventstring) then
     begin
-      Fontop.edit1.Text := Treeview1.Selected.Text;
+      Fontop.edit1.Text := eventstring;
       ontop.oldselstr := Fontop.Edit1.Text;
       Visible := False;
       Fontop.eventhandler(Fontop.Edit1.Text);

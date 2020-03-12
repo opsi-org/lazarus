@@ -4,7 +4,9 @@ uibtime (4.1.1.62-1) stable; urgency=low
  * uibdata: timerontop: linux: use wmctrl do push to front
    fixed call:
  * renamed runprocess to linhandlewin
- * dataedit: linux dropdown config
+ * uibdata: new configureLookupComboBox to configure for Win / Lin
+ * dataedit: configureLookupComboBox(DBLookupComboBox1);
+ * ontop: configureLookupComboBox(DBLCB_topten_event);
 
 -- detlef oertel <d.oertel@uib.de>  Wed, 10 Mar 2020 15:00:00 +0000
 

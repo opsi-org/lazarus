@@ -29,6 +29,8 @@ uses
   typinfo,
   Controls,
   Dialogs,
+  StdCtrls,
+  DBCtrls,
   IniFiles, process, DateUtils,
   linhandlewin,
   httpservice,
@@ -212,6 +214,7 @@ type
     procedure DumpExceptionCallStack(E: Exception);
     procedure OnEndSession(Sender: TObject);
     procedure SetFontName(Control: TControl; Name: string);
+    procedure configureLookupComboBox(mycombo: TDBLookupComboBox);
   private
     { private declarations }
   public
@@ -247,7 +250,7 @@ var
   TrayInterval: cardinal;
   scalefactor: double = 1.0;
   myFont: string;
-  myscreen : TScreen;
+  myscreen: TScreen;
 
 
 
@@ -281,7 +284,7 @@ begin
   pathToTarget := FindDefaultExecutablePath(target);
   if (pathToTarget <> '') and FileExistsUTF8(pathToTarget) then
   begin
-    Result := true;
+    Result := True;
     pathToTarget := Trim(pathToTarget);
   end;
 end;
@@ -1507,16 +1510,17 @@ procedure TDataModule1.TimerLogoffOnTopTimer(Sender: TObject);
 begin
   debugOut(8, 'TimerLogoffOnTopTimer', 'start ');
   TimerLogoffOnTop.interval := 1500;
+  moveToCurrentDeskAndFront(Flogoff.Caption);
   //SetWindowPos(FLogoff.handle, HWND_TOPMOST, 0, 0, screenx - 1, screeny - 1, SWP_NOACTIVATE);
 end;
 
 procedure TDataModule1.TimerOnTopTimer(Sender: TObject);
 var
-  wmctrlpath : string;
-  outstring : string;
-  outlist : TStringlist;
-  desknum , i, exitcode: integer;
-  cmd : string;
+  wmctrlpath: string;
+  outstring: string;
+  outlist: TStringList;
+  desknum, i, exitcode: integer;
+  cmd: string;
 begin
   debugOut(8, 'TimerOnTopTimer', 'start ');
   TimerOntop.interval := 500;
@@ -1530,6 +1534,7 @@ begin
   FOnTop.Height := ontopheight;
   FOnTop.Width := ontopwidth;
   FOnTop.FormStyle := fsSystemStayOnTop;
+  (*
   //FOnTop.ReBuildForm;
   //FOnTop.Repaint;
   try
@@ -1543,12 +1548,6 @@ begin
       getCommandResult(cmd,exitcode);
       if exitcode = 0 then  debugOut(8, 'TimerOnTopTimer', 'movefront ')
       else debugOut(4, 'TimerOnTopTimer', 'movefront failed');
-      (*
-       if RunCommand(wmctrlpath,['-r','"uibtime - ontop"','-b','add,above'], outstring,[poWaitOnExit]) then
-          debugOut(8, 'TimerOnTopTimer', 'movefront ')
-        else  debugOut(4, 'TimerOnTopTimer', 'movefront failed');
-        *)
-
        outlist := RunCommandCaptureOutGetOutlist(wmctrlpath+' -d ');
        debugOut(8, 'TimerOnTopTimer', 'outlist: '+outlist.Text);
        outstring := '';
@@ -1574,10 +1573,9 @@ begin
   except
     debugOut(8, 'TimerOnTopTimer', 'exception: movefront ');
   end;
-
+  *)
+  moveToCurrentDeskAndFront(FOnTop.Caption);
   Application.ProcessMessages;
-  //  SetWindowPos(FOnTop.handle, HWND_TOPMOST, leftint, 0, ontopwidth,
-  //    ontopheight, SWP_NOACTIVATE);
   {$ENDIF LINUX}
 
   // show last event in DBLCB_topten
@@ -2424,12 +2422,15 @@ begin
   // Set font properties
   try
     { The control may have no property 'font' - this will lead to an exception }
-    AnObject := GetObjectProp(Control, 'Font', TControl);
-    if AnObject is TFont then
+    if IsPublishedProp(Control, 'Font') then
     begin
-      // Set properties
-      Font := TFont(AnObject);
-      Font.Name := Name;
+      AnObject := GetObjectProp(Control, 'Font', TControl);
+      if AnObject is TFont then
+      begin
+        // Set properties
+        Font := TFont(AnObject);
+        Font.Name := Name;
+      end;
     end;
 
   except
@@ -2450,6 +2451,18 @@ begin
   end;
 end;
 
+procedure TDataModule1.configureLookupComboBox(mycombo: TDBLookupComboBox);
+begin
+
+{$IFDEF LINUX}
+  mycombo.AutoComplete := True;
+  mycombo.AutoDropDown := False;
+  mycombo.AutoSelect := False;
+  mycombo.ReadOnly := False;
+  mycombo.Style := csDropDown;
+  mycombo.Sorted := False;
+ {$ENDIF LINUX}
+end;
 
 initialization
   { initialization-Abschnitt }
