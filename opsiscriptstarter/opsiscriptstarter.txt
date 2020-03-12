@@ -3,6 +3,8 @@ opsiscriptstarter 4.1.0.9
 
   * writeln with time stamp
   * mac compliation with info.plis for code signing
+  * mount_depotshare: default user to pcpatch if no clientconfig.depot.user
+  * or if  ''0 trim(clientconfig.depot.user)
 
 -- d.oertel <d.oertel@uib.de> Wed, 19 Feb 2020 15:00
 

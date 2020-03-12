@@ -12,6 +12,7 @@ uses
   //, winpeimagereader {need this for reading exe info}
   elfreader, {needed for reading ELF executables}
   libnotify,
+  osprocessux,
 {$ENDIF LINUX}
   {$IFDEF WINDOWS}
   winpeimagereader, {need this for reading exe info}
@@ -29,12 +30,15 @@ uses
   Controls,
   Dialogs,
   IniFiles, process, DateUtils,
-  runprocess,
+  linhandlewin,
   httpservice,
   uibtWorkRepChooser,
   uib2erp,
   Variants,
-  maskedit, UniqueInstance,
+  maskedit,
+  UniqueInstance,
+  fileutil,
+  strutils,
   oslog;
 
 type
@@ -264,6 +268,23 @@ uses ontop, login, debug, logoff, dataedit,
 //  hostconnected, hostresolved: boolean;
 ///vi: TVersionInfoRec;
 
+function which(target: string; var pathToTarget: string): boolean;
+var
+  str: string;
+  exitcode: longint;
+  cmd: string;
+  path: string;
+begin
+  Result := False;
+  pathToTarget := '';
+  { Using FindDefaultExecutablePath from fileutil }
+  pathToTarget := FindDefaultExecutablePath(target);
+  if (pathToTarget <> '') and FileExistsUTF8(pathToTarget) then
+  begin
+    Result := true;
+    pathToTarget := Trim(pathToTarget);
+  end;
+end;
 
 
 { TDataModule1 }
@@ -1490,6 +1511,12 @@ begin
 end;
 
 procedure TDataModule1.TimerOnTopTimer(Sender: TObject);
+var
+  wmctrlpath : string;
+  outstring : string;
+  outlist : TStringlist;
+  desknum , i, exitcode: integer;
+  cmd : string;
 begin
   debugOut(8, 'TimerOnTopTimer', 'start ');
   TimerOntop.interval := 500;
@@ -1508,10 +1535,44 @@ begin
   try
      //myscreen.MoveFormToFocusFront(FOnTop);
     //myscreen.MoveFormToZFront(FOnTop);
-    Application.BringToFront;
-     debugOut(8, 'TimerOnTopTimer', 'movefront ');
+    //Application.BringToFront;
+    if which('wmctrl',wmctrlpath) then
+    begin
+      cmd := wmctrlpath+' -r "'+FOnTop.Caption+'" -b add,above';
+      debugOut(8, 'TimerOnTopTimer', 'cmd: '+cmd);
+      getCommandResult(cmd,exitcode);
+      if exitcode = 0 then  debugOut(8, 'TimerOnTopTimer', 'movefront ')
+      else debugOut(4, 'TimerOnTopTimer', 'movefront failed');
+      (*
+       if RunCommand(wmctrlpath,['-r','"uibtime - ontop"','-b','add,above'], outstring,[poWaitOnExit]) then
+          debugOut(8, 'TimerOnTopTimer', 'movefront ')
+        else  debugOut(4, 'TimerOnTopTimer', 'movefront failed');
+        *)
+
+       outlist := RunCommandCaptureOutGetOutlist(wmctrlpath+' -d ');
+       debugOut(8, 'TimerOnTopTimer', 'outlist: '+outlist.Text);
+       outstring := '';
+       i:= 0;
+       desknum := -1;
+       while (desknum = -1) and (i < outlist.Count) do
+         begin
+           if AnsiContainsText(outlist[i], '*') then
+            desknum := i
+           else
+             inc(i);
+         end;
+       debugOut(8, 'TimerOnTopTimer', 'desknum: '+IntToStr(desknum));
+       if desknum > -1 then
+       begin
+        // RunCommand(wmctrlpath,['-r','"'+FOnTop.Caption+'"','-t ',inttostr(desknum)], outstring,[poWaitOnExit])
+         cmd := wmctrlpath+' -r "'+FOnTop.Caption+'" -t '+inttostr(desknum);
+         debugOut(8, 'TimerOnTopTimer', 'cmd: '+cmd);
+         getCommandResult(cmd,exitcode);
+       end
+    end
+    else  debugOut(4, 'TimerOnTopTimer', 'movefront no wmctrl')
   except
-    debugOut(8, 'TimerOnTopTimer', 'failed: movefront ');
+    debugOut(8, 'TimerOnTopTimer', 'exception: movefront ');
   end;
 
   Application.ProcessMessages;
@@ -1801,7 +1862,7 @@ begin
     else
     begin
       FLoggedin.Show;
-      if not setwindowtoalldesktops('Presenz') then
+      if not setwindowtoalldesktops(FLoggedin.Caption) then
         DataModule1.debugOut(2, 'ontop', 'failed presenz to all desktops');
       Weristda1.Checked := True;
       myini.WriteBool('general', 'weristda', True);
@@ -2362,6 +2423,7 @@ var
 begin
   // Set font properties
   try
+    { The control may have no property 'font' - this will lead to an exception }
     AnObject := GetObjectProp(Control, 'Font', TControl);
     if AnObject is TFont then
     begin

@@ -23,7 +23,7 @@ uses
   strutils,
   //Grids,
   DBGrids, UniqueInstance, treescrolldown,
-  httpservice, runprocess,
+  httpservice, linhandlewin,
   uibdatetime;
 
 type
@@ -296,7 +296,12 @@ var
 begin
   try
     datamodule1.debugOut(5, 'start TFOnTop.FormCreate');
-
+    FOnTop.Caption:= 'uibtime - ontop - runtime';
+    {$IFDEF LINUX}
+    DBLCB_topten_event.AutoComplete:=true;
+    DBLCB_topten_event.AutoDropDown:=false;
+    DBLCB_topten_event.AutoSelect:=false;
+    {$ENDIF LINUX}
     //mypath := ExtractFilePath(paramstr(0));
     //myini := TIniFile.Create(mypath+'uibtime.ini');
     //leftint := myini.ReadInteger('desktop', 'left', 200);
@@ -422,7 +427,7 @@ procedure TFOnTop.FormShow(Sender: TObject);
 //  Hour, Min, Sec, MSec: word;
 begin
   datamodule1.debugOut(5, 'ontop', 'Show FOntop');
-  if not setwindowtoalldesktops('FOntop') then
+  if not setwindowtoalldesktops(fontop.Caption) then
     datamodule1.debugOut(2, 'ontop', 'failed FOntop to all desktops');
   try
     if not ontopactivated then
@@ -536,6 +541,8 @@ begin
     datamodule1.debugOut(5, 'in btnbye: Flogoff.showmodal');
     Application.ProcessMessages;
     try
+      Result := Flogoff.showmodal;
+      (*
       {$IFDEF WINDOWS}
       Result := Flogoff.showmodal;
       {$ENDIF WINDOWS}
@@ -554,6 +561,7 @@ begin
       Flogoff.FormStyle := fsNormal;
       Flogoff.FLogofftimer.Enabled := False;
       {$ENDIF LINUX}
+      *)
     finally
       datamodule1.debugOut(5, 'in btnbye: after Flogoff.showmodal');
     end;
@@ -562,7 +570,7 @@ begin
     inLogoff := False;
     if loggedin_visible and (Result <> mrAbort) then
       FLoggedin.Show;
-    if not setwindowtoalldesktops('Presenz') then
+    if not setwindowtoalldesktops(FLoggedin.Caption) then
       datamodule1.debugOut(2, 'ontop', 'failed presenz to all desktops');
     // back again (from break)
     if Result = mrOk then

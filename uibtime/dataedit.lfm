@@ -137,7 +137,6 @@ object FDataedit: TFDataedit
           end        
           item
             MinSize = 200
-            MaxSize = 200
             Title.Caption = 'STARTTIME'
             Width = 200
             FieldName = 'STARTTIME'
@@ -152,7 +151,6 @@ object FDataedit: TFDataedit
           end        
           item
             MinSize = 200
-            MaxSize = 200
             Title.Caption = 'STOPTIME'
             Width = 200
             FieldName = 'STOPTIME'
@@ -187,6 +185,8 @@ object FDataedit: TFDataedit
         Height = 33
         Top = 132
         Width = 218
+        AutoComplete = True
+        AutoSize = False
         DataField = 'EVENT'
         DataSource = DataModule1.DSuibevent
         Font.Color = clWindowText

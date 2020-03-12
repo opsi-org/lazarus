@@ -5,6 +5,14 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.3.12) experimental; urgency=low
+
+  * osmain: /batch + / productid (template+with admin):
+    * if no connection to real server, retry with localhost
+    * if no connection to localhost - run any way
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 10 Mar 2020:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.3.11) experimental; urgency=low
 
   * oswebservice: new function macosAgentActivated: boolean;
