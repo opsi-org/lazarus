@@ -1,4 +1,10 @@
 [changelog]
+opsiscriptstarter 4.1.0.10
+
+  * macos: mymountpoint := '/media/opsi_depot';
+
+-- d.oertel <d.oertel@uib.de> Thu, 12 Mar 2020 15:00
+
 opsiscriptstarter 4.1.0.9
 
   * writeln with time stamp

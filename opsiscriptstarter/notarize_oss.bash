@@ -30,9 +30,9 @@ rm -f ${EXECUTABLE_NAME}_macOS.dmg
 rm -f upload_log_file.txt
 rm -f request_log_file.txt
 rm -f log_file.txt
+mkdir -p ${EXECUTABLE_DIR}
 rm -f ${EXECUTABLE_DIR}/*
 cp $EXECUTABLE_NAME ${EXECUTABLE_DIR}
-
 
 # Verify the Info.plist was embedded in the executable during linking
 echo "Verifying Info.plist"

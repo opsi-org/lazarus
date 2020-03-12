@@ -403,6 +403,7 @@ var
   FileVerInfo:TFileVersionInfo;
   mounttry : integer;
   mountoption : string;
+  outstr : string;
 begin
   myexitcode := 0;
   myerror := '';
@@ -415,7 +416,13 @@ begin
   {$ENDIF}
   {$IFDEF DARWIN}
   //mymountpoint := '/Network/opsi_depot';
-  mymountpoint := '/Volumes/opsi_depot';
+  //mymountpoint := '/Volumes/opsi_depot';
+  //mymountpoint := '/media/opsi_depot';
+      RunCommand('sw_vers -productVersion', outstr);
+    if trim(outstr) > '10.14' then
+      mymountpoint := '/System/Volumes/Data/Volumes/opsi_depot'
+    else mymountpoint := '/Volumes/opsi_depot';
+
   {$ENDIF}
   nogui := false;
   FileVerInfo:=TFileVersionInfo.Create(nil);
@@ -517,14 +524,14 @@ begin
         if (mounttry div 6) = 1 then mountoption := ' vers=1.0,';
         if (mounttry div 9) = 1 then mountoption := '';
         errorcode := mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass,mountoption);
-        if (errorcode <> 0) or (not isMounted(mymountpoint)) then
+        if (errorcode <> 0) or (not ((isMounted(mymountpoint) or isMounted('/Volumes/opsi_depot')))) then
         begin
           inc(mounttry);
           LogDatei.log('Failed to mount '+myshare+' with option: '+mountoption+' to '+mymountpoint+' Error code: '+inttostr(errorcode)+' - retry ...',LLWarning);
           sleep(2000);
         end;
-      until isMounted(mymountpoint) or (mounttry > 12);
-      if not isMounted(mymountpoint) then
+      until (isMounted(mymountpoint) or isMounted('/Volumes/opsi_depot')) or (mounttry > 12);
+      if not (isMounted(mymountpoint) or isMounted('/Volumes/opsi_depot')) then
          LogDatei.log('Failed to mount '+myshare+' to '+mymountpoint+' - abort!',LLCritical)
       else
       begin

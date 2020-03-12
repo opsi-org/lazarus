@@ -5,7 +5,12 @@ unit DaemonOpsiHTTPSServer;
 interface
 
 uses
-  Classes, SysUtils, DaemonApp, OpsiHTTPSListeningThread, osLog, IniFiles;
+  Classes, SysUtils, DaemonApp, OpsiHTTPSListeningThread,
+  osLog,
+  fileinfo,
+  elfreader, {needed for reading ELF executables}
+  machoreader, {needed for reading MACH-O executables}
+  IniFiles;
 
 type
 
@@ -27,6 +32,7 @@ type
 
 var
   OpsiHTTPSServerDaemon: TOpsiHTTPSServerDaemon;
+  myversion : string;
 
 implementation
 
@@ -41,8 +47,15 @@ end;
 
 procedure TOpsiHTTPSServerDaemon.ServerStart(Sender: TCustomDaemon;
   var OK: Boolean);
+var
+  verinfo : TFileVersionInfo;
 begin
   OK := True;
+  verinfo := TFileVersionInfo.Create(nil);
+  //verinfo.Load(ParamStr(0));
+  myversion := verinfo.VersionStrings.Values['FileVersion'];
+  verinfo.Free;
+  //GetProgramVersion(myversion);
   LogDatei:= TLogInfo.Create;
   //LogDatei.StandardLogPath:= '/tmp/';
   LogDatei.WritePartLog := False;
@@ -53,6 +66,7 @@ begin
   LogDatei.LogLevel:= 5;
   LogDatei.AktProduktId:='opsiclientd-mac';
   LogDatei.Log('Daemon startet', LLNotice);
+  LogDatei.Log('opsicliend-light version: '+myversion, LLessential);
   //LogDatei.initiate();
   ReadClientdConf;
   LogDatei.Loglevel := 9;

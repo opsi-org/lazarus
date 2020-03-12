@@ -8,13 +8,14 @@
       </Flags>
       <SessionStorage Value="InProjectDir"/>
       <MainUnit Value="0"/>
-      <Title Value="Daemon application"/>
+      <Title Value="opsiclientd-light"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
     </General>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
+      <BuildNr Value="1"/>
       <StringTable CompanyName="uib gmbh" FileDescription="opsiclientd light" InternalName="opsclientd_mac" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org" OriginalFilename="opsclientd_mac" ProductName="opsi" ProductVersion="4.1"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -27,7 +28,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="../../common;../../external_libraries/misc"/>
+            <OtherUnitFiles Value="../../common;../../external_libraries/misc;../../external_libraries/synapse"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -69,7 +70,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="../../common;../../external_libraries/misc"/>
+            <OtherUnitFiles Value="../../common;../../external_libraries/misc;../../external_libraries/synapse"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -102,19 +103,16 @@
       <FormatVersion Value="2"/>
       <Modes Count="0"/>
     </RunParams>
-    <RequiredPackages Count="4">
+    <RequiredPackages Count="3">
       <Item1>
-        <PackageName Value="laz_synapse"/>
+        <PackageName Value="LazDaemon"/>
       </Item1>
       <Item2>
-        <PackageName Value="LazDaemon"/>
+        <PackageName Value="LCL"/>
       </Item2>
       <Item3>
-        <PackageName Value="LCL"/>
-      </Item3>
-      <Item4>
         <PackageName Value="FCL"/>
-      </Item4>
+      </Item3>
     </RequiredPackages>
     <Units Count="18">
       <Unit0>
@@ -158,26 +156,32 @@
       <Unit7>
         <Filename Value="opsihtmlmessagebody.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="OpsiHTMLMessageBody"/>
       </Unit7>
       <Unit8>
         <Filename Value="opsihttpmessagebody.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="OpsiHTTPMessageBody"/>
       </Unit8>
       <Unit9>
         <Filename Value="opsijsonmessagebody.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="OpsiJSONMessageBody"/>
       </Unit9>
       <Unit10>
         <Filename Value="opsijsonrequest.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="OpsiJSONRequest"/>
       </Unit10>
       <Unit11>
         <Filename Value="opsijsonresponse.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="OpsiJSONResponse"/>
       </Unit11>
       <Unit12>
         <Filename Value="opsijsonrpcarray.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="OpsiJSONrpcArray"/>
       </Unit12>
       <Unit13>
         <Filename Value="opsijsonrpcobject.pas"/>
@@ -208,7 +212,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="../../common;../../external_libraries/misc"/>
+      <OtherUnitFiles Value="../../common;../../external_libraries/misc;../../external_libraries/synapse"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
