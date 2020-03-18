@@ -158,7 +158,7 @@
         <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="42">
+    <Units Count="43">
       <Unit0>
         <Filename Value="opsiscript_mac.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -344,6 +344,10 @@
         <Filename Value="info-os.plist"/>
         <IsPartOfProject Value="True"/>
       </Unit41>
+      <Unit42>
+        <Filename Value="opsi-script.entitlements"/>
+        <IsPartOfProject Value="True"/>
+      </Unit42>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

@@ -22,5 +22,11 @@
   <array>
     <string>MacOSX</string>
   </array>
+  <key>NSAppleScriptEnabled</key>
+  <true/>
+  <key>NSDesktopFolderUsageDescription</key>
+  <string>opsi need access to your desktop folders</string>
+  <key>NSNetworkVolumesUsageDescription</key>
+  <string>opsi need access to your network shares</string>
 </dict>
 </plist>
