@@ -52,7 +52,8 @@ var
 begin
   OK := True;
   verinfo := TFileVersionInfo.Create(nil);
-  //verinfo.Load(ParamStr(0));
+  verinfo.FileName := ParamStr(0);
+  verinfo.ReadFileInfo;
   myversion := verinfo.VersionStrings.Values['FileVersion'];
   verinfo.Free;
   //GetProgramVersion(myversion);
@@ -64,12 +65,12 @@ begin
   LogDatei.LogProduktId:=True;
   LogDatei.CreateTheLogfile('opsiclientd.log',false); //('/var/log/opsi-client-agent/opsiclientd/opsiclientd.log',false);
   LogDatei.LogLevel:= 5;
-  LogDatei.AktProduktId:='opsiclientd-mac';
+  LogDatei.AktProduktId:='opsiclientd-light';
   LogDatei.Log('Daemon startet', LLNotice);
   LogDatei.Log('opsicliend-light version: '+myversion, LLessential);
   //LogDatei.initiate();
   ReadClientdConf;
-  LogDatei.Loglevel := 9;
+  LogDatei.Loglevel := 8;
   LogDatei.Log('read opsiclientd.conf', LLNotice);
   LogDatei.Log('SSL Username: '+ SSLUsername, LLDebug3);
   LogDatei.Log('SSL Password: '+ SSLPassword, LLDebug3);
@@ -101,7 +102,7 @@ begin
   if ListeningThread <> nil then
      ListeningThread.Terminate;
   //ListeningThread.WaitFor;
-  LogDatei.AktProduktId:='opsiclientd-mac';
+  LogDatei.AktProduktId:='opsiclientd-light';
   LogDatei.Log('Daemon stopped', LLNotice);
   LogDatei.Close;
   FreeAndNil(LogDatei);

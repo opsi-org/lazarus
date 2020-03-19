@@ -129,7 +129,7 @@ begin
 
   //       file: c_cacert.p12
   //       password: c_cakey
-
+  (*
   AcceptorSocket.SSL.CertCAFile :=
     ExtractFilePath(ParamStr(0)) + 's_cabundle' + '.pem';
   AcceptorSocket.SSL.CertificateFile :=
@@ -138,6 +138,9 @@ begin
     ExtractFilePath(ParamStr(0)) + 's_cake' + 'y.pem';
   AcceptorSocket.SSL.KeyPassword := 's_cakey';
   AcceptorSocket.SSL.verifyCert := True;
+  *)
+  //AcceptorSocket.SSL.CertCAFile := '/etc/opsi-client-agent/opsiclientd.pem';
+  AcceptorSocket.SSL.verifyCert := False;
 end;
 
 //procedure TOpsiHTTPSAcceptingThread.InitSSLOpsi;
@@ -300,7 +303,7 @@ begin
     Headers.Add('Content-length: ' + IntToStr(OutputBody.Size));
     //Headers.Add('Connection: close');
     //Headers.Add('Date: ' + Rfc822DateTime(now));
-    Headers.Add('User-Agent: opsiclientd-mac');
+    Headers.Add('User-Agent: opsiclientd-light');
     Headers.Add('');
   end;
 end;
@@ -316,7 +319,7 @@ begin
   AcceptorSocket.Socket := ASocket;
   LogData := TLogData.Create;
   //InitSSLOpsi;
-  //InitSSLCertificate;
+  InitSSLCertificate;
   TimeOut := 120000;
   OnDemand := False;
   Headers := TStringList.Create;
@@ -349,16 +352,20 @@ begin
   if not Terminated then
   begin
     try
+      LogData.FSourceOfLog := 'opsiclientd-light accepting thread';
+      LogData.FLogMessage := 'started';
+      LogData.FLevelofLine := 6;
+      Synchronize(@LogData.SendLog);
       if AcceptorSocket.SSLAcceptConnection and
         (AcceptorSocket.SSL.LastError = 0) then
       begin
-        LogData.FSourceOfLog := 'opsiclientd-mac accepting thread';
+        LogData.FSourceOfLog := 'opsiclientd-light accepting thread';
         LogData.FLogMessage := 'SSL accepted';
         LogData.FLevelofLine := 6;
         Synchronize(@LogData.SendLog);
         { read request }
         ReadRequestLine;
-        LogData.FSourceOfLog := 'opsiclientd-mac accepting thread';
+        LogData.FSourceOfLog := 'opsiclientd-light accepting thread';
         LogData.FLogMessage := 'ReadRequestLine';
         LogData.FLevelofLine := 7;
         Synchronize(@LogData.SendLog);
@@ -367,7 +374,7 @@ begin
         LogData.FLevelOfLine := 6;
         Synchronize(@LogData.SendLog);
         ReadHeaders;
-        LogData.FSourceOfLog := 'opsiclientd-mac accepting thread';
+        LogData.FSourceOfLog := 'opsiclientd-light accepting thread';
         LogData.FLogMessage := 'ReadHeaders';
         LogData.FLevelofLine := 7;
         Synchronize(@LogData.SendLog);
@@ -378,12 +385,12 @@ begin
           Synchronize(@LogData.SendLog);
         end;
         ReadMessageBody;
-        LogData.FSourceOfLog := 'opsiclientd-mac accepting thread';
+        LogData.FSourceOfLog := 'opsiclientd-light accepting thread';
         LogData.FLogMessage := 'ReadMessageBody';
         LogData.FLevelofLine := 7;
         Synchronize(@LogData.SendLog);
         SetStatusCode(Method);
-        LogData.FSourceOfLog := 'opsiclientd-mac accepting thread';
+        LogData.FSourceOfLog := 'opsiclientd-light accepting thread';
         LogData.FLogMessage := 'SetStatusCode';
         LogData.FLevelofLine := 7;
         Synchronize(@LogData.SendLog);
