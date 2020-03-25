@@ -133,14 +133,24 @@ begin
   AcceptorSocket.SSL.CertCAFile :=
     ExtractFilePath(ParamStr(0)) + 's_cabundle' + '.pem';
   AcceptorSocket.SSL.CertificateFile :=
-    ExtractFilePath(ParamStr(0)) + 's_' + 'cacert.pem';
+    ExtractFilePath(ParamStr(0)) + 's_cacert.pem';
   AcceptorSocket.SSL.PrivateKeyFile :=
-    ExtractFilePath(ParamStr(0)) + 's_cake' + 'y.pem';
+    ExtractFilePath(ParamStr(0)) + 's_cakey.pem';
   AcceptorSocket.SSL.KeyPassword := 's_cakey';
   AcceptorSocket.SSL.verifyCert := True;
   *)
-  //AcceptorSocket.SSL.CertCAFile := '/etc/opsi-client-agent/opsiclientd.pem';
-  AcceptorSocket.SSL.verifyCert := False;
+
+  AcceptorSocket.SSL.CertCAFile :=
+    '/etc/opsi-client-agent/' + 's_cabundle.pem';
+  AcceptorSocket.SSL.CertificateFile :=
+    '/etc/opsi-client-agent/' + 's_cacert.pem';
+  AcceptorSocket.SSL.PrivateKeyFile :=
+    '/etc/opsi-client-agent/' + 's_cakey.pem';
+  AcceptorSocket.SSL.KeyPassword := 's_cakey';
+  AcceptorSocket.SSL.verifyCert := True;
+
+  //AcceptorSocket.SSL.CertificateFile := '/etc/opsi-client-agent/opsiclientd.pem';
+  //AcceptorSocket.SSL.verifyCert := True;
 end;
 
 //procedure TOpsiHTTPSAcceptingThread.InitSSLOpsi;
