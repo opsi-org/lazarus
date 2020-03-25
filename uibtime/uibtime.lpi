@@ -24,7 +24,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="62"/>
+      <BuildNr Value="63"/>
       <Language Value="0407"/>
       <StringTable Comments="lazarus 2.0.6 fpc 3.0.4" CompanyName="uib gmbh" InternalName="uibtime.exe" LegalCopyright="GPL v3" ProductName="uibtime" ProductVersion="4.0.0"/>
     </VersionInfo>
@@ -172,7 +172,7 @@
         <PackageName Value="LCL"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="27">
+    <Units Count="28">
       <Unit0>
         <Filename Value="uibtime.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -340,6 +340,10 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="OSProcessux"/>
       </Unit26>
+      <Unit27>
+        <Filename Value="..\common\osurlparser.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit27>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

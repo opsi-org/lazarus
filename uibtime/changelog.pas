@@ -1,4 +1,11 @@
 (*
+uibtime (4.1.1.63-1) stable; urgency=low
+
+ * uibdata: glob var for server / use in checknet timer
+ * checknet timer disabled
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 25 Mar 2020 15:00:00 +0000
+
 uibtime (4.1.1.62-1) stable; urgency=low
 
  * uibdata: timerontop: linux: use wmctrl do push to front

@@ -13,6 +13,7 @@ uses
   elfreader, {needed for reading ELF executables}
   libnotify,
   osprocessux,
+    pingsend,
 {$ENDIF LINUX}
   {$IFDEF WINDOWS}
   winpeimagereader, {need this for reading exe info}
@@ -251,6 +252,7 @@ var
   scalefactor: double = 1.0;
   myFont: string;
   myscreen: TScreen;
+  myDbServer : string;
 
 
 
@@ -1464,38 +1466,27 @@ end;
 
 procedure TDataModule1.TimerCheckNetTimer(Sender: TObject);
 var
-  cinfo: TConnInfoType;
   servername: string;
   retries: integer;
 begin
 
-  servername := 'groupware';
+  servername := myDbServer;
   ;
   retries := 0;
-  {$IFDEF WIN32}
+  //{$IFDEF WIN32}
   while (pinghost(servername) = -1) and (retries < 10) do
   begin
-    debugOut(3, 'CheckNetTimer', 'Could not reach ' + servername + ' retry ...');
+    debugOut(3, 'CheckNetTimer', 'Could not reach via ping: ' + servername + ' retry ...');
     Inc(retries);
+    Application.ProcessMessages;
     Sleep(1000);
   end;
   if retries >= 10 then
-    debugOut(2, 'CheckNetTimer', 'Could not reach ' + servername + ' no retry.');
- {$ENDIF WIN32}
-  (*
-     if mrAbort = MessageDlg('uibtime: Warnung','Die Netzwerkverbindung zum DB-Server '+servername,mtError,[mbAbort,mbIgnore],0)
-     then
-     begin
-       debugOut(3, 'CheckNetTimer', 'Could not reach '+servername+' terminate.');
-       Application.Terminate;
-       halt;
-     end;
-  {$ENDIF WIN32}
-  if not IBConnection1.Connected  then
   begin
-    debugOut(3, 'CheckNetTimer', 'connection error');
+    debugOut(2, 'CheckNetTimer', 'Could not reach via ping: ' + servername + ' no retry.');
+    DataModule1.TimerCheckNet.Enabled:=false;
   end;
-  *)
+ //{$ENDIF WIN32}
 end;
 
 
