@@ -1,7 +1,7 @@
 object FOnTop: TFOnTop
-  Left = 252
+  Left = 570
   Height = 242
-  Top = 292
+  Top = 296
   Width = 1104
   BorderIcons = []
   BorderStyle = bsNone
@@ -133,6 +133,7 @@ object FOnTop: TFOnTop
       Width = 300
       AutoComplete = True
       AutoDropDown = True
+      AutoSelect = False
       AutoSize = False
       DataField = 'EVENT'
       DataSource = DataModule1.DSuibevent
@@ -142,12 +143,12 @@ object FOnTop: TFOnTop
       KeyField = 'event'
       ListFieldIndex = 0
       ListSource = DS_topten_events
-      LookupCache = True
+      LookupCache = False
+      OnChange = DBLCB_topten_eventChange
+      OnEditingDone = DBLCB_topten_eventEditingDone
       OnEnter = DBLCB_topten_eventEnter
       OnExit = DBLCB_topten_eventExit
       ParentFont = False
-      ReadOnly = True
-      Sorted = True
       TabOrder = 1
     end
     object EditProjektzeit: TEdit
@@ -215,9 +216,9 @@ object FOnTop: TFOnTop
     end
   end
   object BtnProjekt: TSpeedButton
-    Left = 824
+    Left = 880
     Height = 54
-    Top = 80
+    Top = 144
     Width = 96
     BorderSpacing.Around = 2
     Caption = 'Projekt'
@@ -380,6 +381,7 @@ object FOnTop: TFOnTop
     top = 124
   end
   object DS_topten_events: TDataSource
+    AutoEdit = False
     DataSet = Query_top_ten_events
     left = 396
     top = 180
@@ -395,5 +397,12 @@ object FOnTop: TFOnTop
   object DSQueryaktprojekt: TDataSource
     left = 644
     top = 140
+  end
+  object TimerAfterTopTenEnter: TTimer
+    Enabled = False
+    Interval = 5000
+    OnTimer = TimerAfterTopTenEnterTimer
+    left = 792
+    top = 60
   end
 end

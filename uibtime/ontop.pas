@@ -22,6 +22,7 @@ uses
   //inifiles,
   strutils,
   //Grids,
+  Variants,
   DBGrids, UniqueInstance, treescrolldown,
   httpservice, linhandlewin,
   uibdatetime;
@@ -46,6 +47,7 @@ type
     Btn_work_description: TSpeedButton;
     SpeedButton1: TSpeedButton;
     BtnBye: TSpeedButton;
+    TimerAfterTopTenEnter: TTimer;
     TimerCallCount: TTimer;
     TimerNachfrage: TTimer;
     TimerNoDblClick: TTimer;
@@ -54,6 +56,7 @@ type
     Timer_top_ten: TTimer;
     ToolBar1: TToolBar;
     procedure DBLCB_topten_eventChange(Sender: TObject);
+    procedure DBLCB_topten_eventEditingDone(Sender: TObject);
     procedure Edit1Change(Sender: TObject);
     procedure FormDeactivate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -65,6 +68,7 @@ type
     procedure FormActivate(Sender: TObject);
     procedure eventhandler(newevent: string);
     procedure BtnArrayClick(Sender: TObject);
+    procedure TimerAfterTopTenEnterTimer(Sender: TObject);
     procedure TimerNachfrageTimer(Sender: TObject);
     //procedure BtnCallCountClick(Sender: TObject);
     //procedure TimerCallCountTimer(Sender: TObject);
@@ -148,8 +152,21 @@ begin
 end;
 
 procedure TFOnTop.DBLCB_topten_eventChange(Sender: TObject);
+var
+  str: string;
 begin
+  str := DBLCB_topten_event.Text;
+  eventhandler(str);
+  TimerAfterTopTenEnter.Enabled:=false;
+end;
 
+procedure TFOnTop.DBLCB_topten_eventEditingDone(Sender: TObject);
+var
+  str: string;
+begin
+  str := DBLCB_topten_event.Text;
+  eventhandler(str);
+  TimerAfterTopTenEnter.Enabled:=false;
 end;
 
 procedure TFOnTop.Edit1Change(Sender: TObject);
@@ -175,7 +192,7 @@ end;
 
 procedure TFOnTop.FormWindowStateChange(Sender: TObject);
 begin
-  TForm(Sender).WindowState:=wsNORMAL;
+  TForm(Sender).WindowState := wsNORMAL;
 end;
 
 
@@ -296,8 +313,8 @@ var
 begin
   try
     datamodule1.debugOut(5, 'start TFOnTop.FormCreate');
-    FOnTop.Caption:= 'uibtime - ontop - runtime';
-    DataModule1.configureLookupComboBox(DBLCB_topten_event);
+    FOnTop.Caption := 'uibtime - ontop - runtime';
+    //DataModule1.configureLookupComboBox(DBLCB_topten_event);
     (*
     {$IFDEF LINUX}
     DBLCB_topten_event.AutoComplete:=true;
@@ -339,7 +356,7 @@ begin
       ineditmode := True;
     end;
     starthttpserver;
-    DataModule1.SetFontName(TControl(sender),myFont);
+    DataModule1.SetFontName(TControl(Sender), myFont);
     datamodule1.debugOut(5, 'finished TFOnTop.FormCreate');
 
   except
@@ -642,64 +659,73 @@ begin
   datamodule1.debugOut(5, 'eventhandler', 'start');
   if not Datamodule1.geteditonly then
   begin
-    try
-      if not Datamodule1.SQuibevent.Active then
-        Datamodule1.SQuibevent.Open;
-      ineventhandler := True;
-      datamodule1.debugOut(5, 'eventhandler', timetostr(now) +
-        ' evstart >' + lastevent + '>/' + '->' + newevent + '<');
-      specialbutton := isSpecialButton(newevent);
-      Edit1.Enabled := False;
-      if (not ((uid = 'admin') or (Datamodule1.geteditonly) or (newevent = ''))) then
-      begin
+    if not DataModule1.DSQueryAktEvents.DataSet.Locate('event',
+      VarArrayOf([newevent]), []) then
+    begin
+      datamodule1.debugOut(4, 'eventhandler', 'error: illegal event: ' + newevent);
+      edit1.Text := lastevent;
+      DBLCB_topten_event.Text := lastevent;
+    end
+    else
+    begin
+      try
+        if not Datamodule1.SQuibevent.Active then
+          Datamodule1.SQuibevent.Open;
+        ineventhandler := True;
         datamodule1.debugOut(5, 'eventhandler', timetostr(now) +
-          ' evnewp ' + lastevent + '/' + '->' + newevent);
-        if specialbutton then
-        begin
-          datamodule1.debugOut(5, timetostr(now) + ' is specialbutton->' + newevent);
-          if specialButtonList.IndexOf(newevent) > -1 then
-          begin
-            BtnArray[specialButtonList.IndexOf(newevent)].down := True;
-            Edit1.Text := newevent;
-          end;
-        end
-        else
+          ' evstart >' + lastevent + '>/' + '->' + newevent + '<');
+        specialbutton := isSpecialButton(newevent);
+        Edit1.Enabled := False;
+        if (not ((uid = 'admin') or (Datamodule1.geteditonly) or (newevent = ''))) then
         begin
           datamodule1.debugOut(5, 'eventhandler', timetostr(now) +
-            ' is no specialbutton->' + newevent);
-          BtnProjekt.Down := True;
-          //ComboBox.ItemIndex :=  ComboBox.Items.IndexOf(newevent);
-          Edit1.Text := newevent;
-        end;
-        // haben wir was neues
-        if (newevent <> lastevent) then
-        begin
-          if lastevent <> '' then // gibts einen aktuellen ?
+            ' evnewp ' + lastevent + '/' + '->' + newevent);
+          if specialbutton then
+          begin
+            datamodule1.debugOut(5, timetostr(now) + ' is specialbutton->' + newevent);
+            if specialButtonList.IndexOf(newevent) > -1 then
+            begin
+              BtnArray[specialButtonList.IndexOf(newevent)].down := True;
+              Edit1.Text := newevent;
+            end;
+          end
+          else
           begin
             datamodule1.debugOut(5, 'eventhandler', timetostr(now) +
-              ' eveditlast ' + lastevent);
-            Datamodule1.SQuibevent.edit;
-            Datamodule1.SQuibevent.FieldByName('event').AsString := lastevent;
-            Datamodule1.SQuibevent.FieldByName('stoptime').AsDateTime := now;
-            try
-              Datamodule1.SQuibevent.post;
-              //DataModule1.SQuibevent.ApplyUpdates;
-              if not Datamodule1.SQuibevent.Active then
-                Datamodule1.SQuibevent.Open;
-            except
-              Datamodule1.SQuibevent.post;
-              //DataModule1.SQuibevent.ApplyUpdates;
-              if not Datamodule1.SQuibevent.Active then
-                Datamodule1.SQuibevent.Open;
-            end;
-            Datamodule1.SQuibevent.last;
-            FOnTop.TimerProjektzeitTimer(FOnTop);
+              ' is no specialbutton->' + newevent);
+            BtnProjekt.Down := True;
+            //ComboBox.ItemIndex :=  ComboBox.Items.IndexOf(newevent);
+            Edit1.Text := newevent;
           end;
-
-          // Neuen Datensatz anfügen
-          // Sind wir neu hier ? -> Default holen
-          if lastevent = '' then
+          // haben wir was neues
+          if (newevent <> lastevent) then
           begin
+            if lastevent <> '' then // gibts einen aktuellen ?
+            begin
+              datamodule1.debugOut(5, 'eventhandler', timetostr(now) +
+                ' eveditlast ' + lastevent);
+              Datamodule1.SQuibevent.edit;
+              Datamodule1.SQuibevent.FieldByName('event').AsString := lastevent;
+              Datamodule1.SQuibevent.FieldByName('stoptime').AsDateTime := now;
+              try
+                Datamodule1.SQuibevent.post;
+                //DataModule1.SQuibevent.ApplyUpdates;
+                if not Datamodule1.SQuibevent.Active then
+                  Datamodule1.SQuibevent.Open;
+              except
+                Datamodule1.SQuibevent.post;
+                //DataModule1.SQuibevent.ApplyUpdates;
+                if not Datamodule1.SQuibevent.Active then
+                  Datamodule1.SQuibevent.Open;
+              end;
+              Datamodule1.SQuibevent.last;
+              FOnTop.TimerProjektzeitTimer(FOnTop);
+            end;
+
+            // Neuen Datensatz anfügen
+            // Sind wir neu hier ? -> Default holen
+            if lastevent = '' then
+            begin
             (*
             querydefproj.Active := False;
             querydefproj.ParamByName('uid').AsString := uid;
@@ -710,81 +736,82 @@ begin
               defproj := 'Allgemein';
             lastevent := defproj;
             *)
-          end;
-          datamodule1.debugOut(5, 'eventhandler', timetostr(now) +
-            ' evappend ' + lastevent + '/' + '->' + newevent);
-          Datamodule1.SQuibevent.append;
-          Datamodule1.SQuibevent.FieldByName('userid').AsString := uid;
-          Datamodule1.SQuibevent.FieldByName('event').AsString := newevent;
-          Datamodule1.SQuibevent.FieldByName('starttime').AsDateTime := now;
-          Datamodule1.SQuibevent.FieldByName('stoptime').AsDateTime := now;
-          if specialbutton then
-          begin
+            end;
             datamodule1.debugOut(5, 'eventhandler', timetostr(now) +
-              ' is specialbutton->' + newevent);
-            if specialButtonList.IndexOf(newevent) > -1 then
-              BtnArray[specialButtonList.IndexOf(newevent)].down := True;
-          end
-          else
-          begin
+              ' evappend ' + lastevent + '/' + '->' + newevent);
+            Datamodule1.SQuibevent.append;
+            Datamodule1.SQuibevent.FieldByName('userid').AsString := uid;
+            Datamodule1.SQuibevent.FieldByName('event').AsString := newevent;
+            Datamodule1.SQuibevent.FieldByName('starttime').AsDateTime := now;
+            Datamodule1.SQuibevent.FieldByName('stoptime').AsDateTime := now;
+            if specialbutton then
+            begin
+              datamodule1.debugOut(5, 'eventhandler', timetostr(now) +
+                ' is specialbutton->' + newevent);
+              if specialButtonList.IndexOf(newevent) > -1 then
+                BtnArray[specialButtonList.IndexOf(newevent)].down := True;
+            end
+            else
+            begin
+              datamodule1.debugOut(5, 'eventhandler', timetostr(now) +
+                ' is no specialbutton->' + newevent);
+              BtnProjekt.Down := True;
+              Edit1.Text := newevent;
+            end;
             datamodule1.debugOut(5, 'eventhandler', timetostr(now) +
-              ' is no specialbutton->' + newevent);
-            BtnProjekt.Down := True;
-            Edit1.Text := newevent;
-          end;
-          datamodule1.debugOut(5, 'eventhandler', timetostr(now) +
-            ' evpostnew ' + lastevent + '/' + '->' + newevent);
-          Datamodule1.SQuibevent.post;
-          try
-            DataModule1.SQuibevent.ApplyUpdates;
-          except
-            datamodule1.debugOut(2, 'eventhandler',
-              'exception in eventhandler.SQuibevent.ApplyUpdates');
-          end;
-          Datamodule1.SQuibevent.last;
-          FOnTop.TimerProjektzeitTimer(FOnTop);
-          if not Datamodule1.SQuibevent.Active then
-            Datamodule1.SQuibevent.Open;
-          lastevent := newevent;
-          // Timeout für Nachfrage setzen
-          Datamodule1.SQquerytimeout.parambyname('userid').AsString := uid;
-          Datamodule1.SQquerytimeout.parambyname('event').AsString := newevent;
-          Datamodule1.SQquerytimeout.Open;
-          if Datamodule1.SQquerytimeout.RecordCount = 0 then
-          begin
-            Datamodule1.SQquerytimeout.Close;
+              ' evpostnew ' + lastevent + '/' + '->' + newevent);
+            Datamodule1.SQuibevent.post;
+            try
+              DataModule1.SQuibevent.ApplyUpdates;
+            except
+              datamodule1.debugOut(2, 'eventhandler',
+                'exception in eventhandler.SQuibevent.ApplyUpdates');
+            end;
+            Datamodule1.SQuibevent.last;
+            FOnTop.TimerProjektzeitTimer(FOnTop);
+            if not Datamodule1.SQuibevent.Active then
+              Datamodule1.SQuibevent.Open;
+            lastevent := newevent;
+            // Timeout für Nachfrage setzen
             Datamodule1.SQquerytimeout.parambyname('userid').AsString := uid;
-            Datamodule1.SQquerytimeout.parambyname('event').AsString := defproj;
+            Datamodule1.SQquerytimeout.parambyname('event').AsString := newevent;
             Datamodule1.SQquerytimeout.Open;
+            if Datamodule1.SQquerytimeout.RecordCount = 0 then
+            begin
+              Datamodule1.SQquerytimeout.Close;
+              Datamodule1.SQquerytimeout.parambyname('userid').AsString := uid;
+              Datamodule1.SQquerytimeout.parambyname('event').AsString := defproj;
+              Datamodule1.SQquerytimeout.Open;
+            end;
+            if Datamodule1.SQquerytimeout.FieldByName('timeout_min').AsInteger = 0 then
+            begin
+              TimerNachfrage.interval := 10 * 60 * 1000;
+            end
+            else
+            begin
+              TimerNachfrage.interval :=
+                Datamodule1.SQquerytimeout.FieldByName('timeout_min').AsInteger *
+                60 * 1000;
+            end;
+            datamodule1.debugOut(5, 'eventhandler', 'Timeout auf ' +
+              IntToStr(TimerNachfrage.Interval div 60000) + ' Minuten.');
+            TimerNachfrage.Enabled := True;
+            Datamodule1.SQquerytimeout.Close;
           end;
-          if Datamodule1.SQquerytimeout.FieldByName('timeout_min').AsInteger = 0 then
-          begin
-            TimerNachfrage.interval := 10 * 60 * 1000;
-          end
+          // loggedin setzen - false bei pause
+          if newevent = 'Pause' then
+            Datamodule1.setloggedin(False)
           else
-          begin
-            TimerNachfrage.interval :=
-              Datamodule1.SQquerytimeout.FieldByName('timeout_min').AsInteger *
-              60 * 1000;
-          end;
-          datamodule1.debugOut(5, 'eventhandler', 'Timeout auf ' +
-            IntToStr(TimerNachfrage.Interval div 60000) + ' Minuten.');
-          TimerNachfrage.Enabled := True;
-          Datamodule1.SQquerytimeout.Close;
+            Datamodule1.setloggedin(True);
         end;
-        // loggedin setzen - false bei pause
-        if newevent = 'Pause' then
-          Datamodule1.setloggedin(False)
-        else
-          Datamodule1.setloggedin(True);
-      end;
 
-      ineventhandler := False;
-      datamodule1.debugOut(5, 'eventhandler', timetostr(now) +
-        ' evleave ' + lastevent + '/' + '->' + newevent);
-    except
-      datamodule1.debugOut(2, 'eventhandler', 'exception in eventhandler');
-      raise;
+        ineventhandler := False;
+        datamodule1.debugOut(5, 'eventhandler', timetostr(now) +
+          ' evleave ' + lastevent + '/' + '->' + newevent);
+      except
+        datamodule1.debugOut(2, 'eventhandler', 'exception in eventhandler');
+        raise;
+      end;
     end;
   end;
   datamodule1.debugOut(5, 'eventhandler', 'finished');
@@ -795,6 +822,12 @@ begin
   if FTreeview.Visible then
     FTreeview.Hide;
   eventhandler((Sender as TSpeedbutton).Caption);
+end;
+
+procedure TFOnTop.TimerAfterTopTenEnterTimer(Sender: TObject);
+begin
+  eventhandler(DBLCB_topten_event.Text);
+  TimerAfterTopTenEnter.Enabled:=false;
 end;
 
 (*
@@ -1005,7 +1038,8 @@ begin
       DataModule1.debugOut(6, 'ProjektzeitTimer', 'QueryProjektzeit.Open');
       DataModule1.debugOut(6, 'ProjektzeitTimer', 'total: ' + FloatToStr(total));
       used := QueryProjektzeit.FieldByName('stunden').AsFloat;
-      used := used + ((now - DataModule1.SQuibevent.FieldByName('stoptime').AsFloat) * 24);
+      used := used + ((now - DataModule1.SQuibevent.FieldByName(
+        'stoptime').AsFloat) * 24);
       DataModule1.debugOut(6, 'ProjektzeitTimer', 'used: ' + FloatToStr(used));
       available := total - used;
       DataModule1.debugOut(6, 'ProjektzeitTimer', 'available: ' + FloatToStr(available));
@@ -1458,6 +1492,7 @@ begin
   datamodule1.debugOut(5, 'Start eventExit topten combobox');
   //BtnProjektDblClick(sender);
   eventhandler(DBLCB_topten_event.Text);
+  TimerAfterTopTenEnter.Enabled:=false;
   BtnProjektDblClick(Sender);
   intoptenbox := False;
   datamodule1.debugOut(8, 'Stop eventExit topten combobox');
@@ -1469,6 +1504,7 @@ begin
   eventhandler(DBLCB_topten_event.Text);
   ineditmode := False;
   intoptenbox := True;
+  TimerAfterTopTenEnter.Enabled:=true;
   datamodule1.debugOut(8, 'Stop eventEnter topten combobox');
 end;
 

@@ -1,4 +1,13 @@
 (*
+uibtime (4.1.1.65-1) stable; urgency=low
+
+ * uibdata: mycombo.ReadOnly := True; (avoid editing in topten combo)
+ * ontop: eventhandler: check if newevent is valid before try to handle it
+ * ontop: start 5 sec timer on enter topten-combobox
+ * ontop: disable timer on any visable exit
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 27 Mar 2020 18:00:00 +0000
+
 uibtime (4.1.1.64-1) stable; urgency=low
 
  * uibdate: mycombo.ReadOnly := True; (avoid editing in topten combo)

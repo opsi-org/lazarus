@@ -2444,15 +2444,16 @@ end;
 
 procedure TDataModule1.configureLookupComboBox(mycombo: TDBLookupComboBox);
 begin
-
+(*
 {$IFDEF LINUX}
   mycombo.AutoComplete := True;
-  mycombo.AutoDropDown := False;
+  mycombo.AutoDropDown := True;
   mycombo.AutoSelect := False;
-  mycombo.ReadOnly := True;
+  mycombo.ReadOnly := false;
   mycombo.Style := csDropDown;
   mycombo.Sorted := False;
  {$ENDIF LINUX}
+ *)
 end;
 
 initialization
