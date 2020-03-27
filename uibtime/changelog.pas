@@ -1,4 +1,10 @@
 (*
+uibtime (4.1.1.64-1) stable; urgency=low
+
+ * uibdate: mycombo.ReadOnly := True; (avoid editing in topten combo)
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 27 Mar 2020 15:00:00 +0000
+
 uibtime (4.1.1.63-1) stable; urgency=low
 
  * uibdata: glob var for server / use in checknet timer

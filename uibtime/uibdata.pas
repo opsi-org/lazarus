@@ -2449,7 +2449,7 @@ begin
   mycombo.AutoComplete := True;
   mycombo.AutoDropDown := False;
   mycombo.AutoSelect := False;
-  mycombo.ReadOnly := False;
+  mycombo.ReadOnly := True;
   mycombo.Style := csDropDown;
   mycombo.Sorted := False;
  {$ENDIF LINUX}

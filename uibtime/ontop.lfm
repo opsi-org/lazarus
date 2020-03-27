@@ -146,6 +146,7 @@ object FOnTop: TFOnTop
       OnEnter = DBLCB_topten_eventEnter
       OnExit = DBLCB_topten_eventExit
       ParentFont = False
+      ReadOnly = True
       Sorted = True
       TabOrder = 1
     end
