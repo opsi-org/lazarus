@@ -129,17 +129,6 @@ begin
 
   //       file: c_cacert.p12
   //       password: c_cakey
-  (*
-  AcceptorSocket.SSL.CertCAFile :=
-    ExtractFilePath(ParamStr(0)) + 's_cabundle' + '.pem';
-  AcceptorSocket.SSL.CertificateFile :=
-    ExtractFilePath(ParamStr(0)) + 's_cacert.pem';
-  AcceptorSocket.SSL.PrivateKeyFile :=
-    ExtractFilePath(ParamStr(0)) + 's_cakey.pem';
-  AcceptorSocket.SSL.KeyPassword := 's_cakey';
-  AcceptorSocket.SSL.verifyCert := True;
-  *)
-
   (*AcceptorSocket.SSL.CertCAFile :=
     '/etc/opsi-client-agent/' + 's_cabundle.pem';
   AcceptorSocket.SSL.CertificateFile :=
@@ -149,14 +138,8 @@ begin
   AcceptorSocket.SSL.KeyPassword := 's_cakey';
   AcceptorSocket.SSL.verifyCert := True;*)
 
-  //AcceptorSocket.SSL.CertCAFile := '/etc/opsi-client-agent/cacert.pem';
-  //AcceptorSocket.SSL.Certificate := '/etc/opsi-client-agent/opsiclientd.pem';
   AcceptorSocket.SSL.PrivateKeyFile := '/etc/opsi-client-agent/opsiclientd.pem';
   AcceptorSocket.SSL.CertificateFile:= '/etc/opsi-client-agent/opsiclientd.pem';
-  //AcceptorSocket.SSL.CertificateFile :=
-    //'/etc/opsi-client-agent/' + 'server.crt';
-  //AcceptorSocket.SSL.PrivateKeyFile :=
-    //'/etc/opsi-client-agent/' + 'server.key';
   AcceptorSocket.SSL.verifyCert := True;
 end;
 
