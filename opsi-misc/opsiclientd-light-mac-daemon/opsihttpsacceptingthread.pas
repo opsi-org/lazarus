@@ -348,7 +348,19 @@ procedure TOpsiHTTPSAcceptingThread.Execute;
 var
   s: string;
   i: integer;
+  mycommandToStart: string;
+  //commandparams: TStringlist;
+  commandparams: TStringArray;
 begin
+  {$IFDEF DARWIN}
+  mycommandToStart := '/usr/local/bin/opsiscriptstarter';
+  {$ENDIF DARWIN}
+  {$IFDEF LINUX}
+  mycommandToStart := '/usr/bin/opsiscriptstarter';
+  {$ENDIF DARWIN}
+  //commandparams := TStringlist.create;
+  setlength(commandparams,0);
+
   if not Terminated then
   begin
     try
@@ -441,8 +453,10 @@ begin
                 LogData.FLogMessage := 'Starting : opsiscriptstarter --nogui';
                 LogData.FLevelofLine := 5;
                 Synchronize(@LogData.SendLog);
-                if not RunCommand('/usr/local/bin/opsiscriptstarter',
-                  ['--nogui'], s, []) then
+                setlength(commandparams,1);
+                commandparams[0] := '--nogui';
+                //commandparams.Add('--nogui');
+                if not RunCommand(mycommandToStart, commandparams, s, []) then
                 begin
                   LogData.FLogMessage :=
                     'Error: Starting : "opsiscriptstarter --nogui" failed';
@@ -456,7 +470,8 @@ begin
                 LogData.FLogMessage := 'Starting : opsiscriptstarter';
                 LogData.FLevelofLine := 5;
                 Synchronize(@LogData.SendLog);
-                if not RunCommand('/usr/local/bin/opsiscriptstarter', [], s, []) then
+                setlength(commandparams,0);
+                if not RunCommand(mycommandToStart, commandparams, s, []) then
                 begin
                   LogData.FLogMessage := 'Error: Starting : "opsiscriptstarter" failed';
                   LogData.FLevelofLine := 1;
