@@ -70,7 +70,7 @@ begin
   LogDatei.Log('opsicliend-light version: '+myversion, LLessential);
   //LogDatei.initiate();
   ReadClientdConf;
-  LogDatei.Loglevel := 8;
+  LogDatei.Loglevel := 9;
   LogDatei.Log('read opsiclientd.conf', LLNotice);
   LogDatei.Log('SSL Username: '+ SSLUsername, LLDebug3);
   LogDatei.Log('SSL Password: '+ SSLPassword, LLDebug3);
