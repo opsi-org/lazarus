@@ -139,7 +139,7 @@ begin
   AcceptorSocket.SSL.verifyCert := True;*)
 
   AcceptorSocket.SSL.PrivateKeyFile := '/etc/opsi-client-agent/opsiclientd.pem';
-  AcceptorSocket.SSL.CertificateFile:= '/etc/opsi-client-agent/opsiclientd.pem';
+  AcceptorSocket.SSL.CertificateFile := '/etc/opsi-client-agent/opsiclientd.pem';
   AcceptorSocket.SSL.verifyCert := True;
 end;
 
@@ -351,15 +351,16 @@ var
   mycommandToStart: string;
   //commandparams: TStringlist;
   commandparams: TStringArray;
+  runmode: string;
 begin
   {$IFDEF DARWIN}
   mycommandToStart := '/usr/local/bin/opsiscriptstarter';
   {$ENDIF DARWIN}
   {$IFDEF LINUX}
   mycommandToStart := '/usr/bin/opsiscriptstarter';
-  {$ENDIF DARWIN}
+  {$ENDIF LINUX}
   //commandparams := TStringlist.create;
-  setlength(commandparams,0);
+  setlength(commandparams, 0);
 
   if not Terminated then
   begin
@@ -406,6 +407,9 @@ begin
         LogData.FLogMessage := 'SetStatusCode';
         LogData.FLevelofLine := 7;
         Synchronize(@LogData.SendLog);
+        LogData.FLogMessage := 'got method: ' + JSONRequest.Method;
+        LogData.FLevelofLine := 7;
+        Synchronize(@LogData.SendLog);
 
         if (JSONRequest.Method = 'fireEvent') then
         begin
@@ -440,6 +444,11 @@ begin
           end;
           if JSONRequest.Params.Find('on_demand') and (not Terminated) then
           begin
+            LogData.FLogMessage := 'got event: on_demand';
+            LogData.FLevelofLine := 5;
+            Synchronize(@LogData.SendLog);
+            runmode := 'nogui';
+            {$IFDEF DARWIN}
             {check if somebody is logged in to the GUI (root=no)}
             if RunCommand('/bin/bash', ['-c', 'stat -f "%Su" /dev/console'], s) then
               //stat -f "%Su" /dev/console
@@ -450,40 +459,71 @@ begin
               if trim(s) = 'root' then  //maybe must be adapted
               begin
                 {Nobody is logged in to the GUI so we start in the nogui mode}
-                LogData.FLogMessage := 'Starting : opsiscriptstarter --nogui';
-                LogData.FLevelofLine := 5;
+                runmode := 'nogui';
+              end
+              else
+                runmode := 'gui';
+            end
+            else
+            begin
+              LogData.FLogMessage := 'could not determine loggedin user';
+              LogData.FLevelofLine := 3;
+              Synchronize(@LogData.SendLog);
+            end;
+            {$ENDIF DARWIN}
+            {$IFDEF LINUX}
+            runmode := 'nogui';
+            {$ENDIF LINUX}
+            if runmode = 'nogui' then
+            begin
+              LogData.FLogMessage := 'Starting : opsiscriptstarter --nogui';
+              LogData.FLevelofLine := 5;
+              Synchronize(@LogData.SendLog);
+              setlength(commandparams, 1);
+              commandparams[0] := '--nogui';
+              //commandparams.Add('--nogui');
+              if not RunCommand(mycommandToStart, commandparams, s, []) then
+              begin
+                LogData.FLogMessage :=
+                  'Error: Starting : "opsiscriptstarter --nogui" failed';
+                LogData.FLevelofLine := 1;
                 Synchronize(@LogData.SendLog);
-                setlength(commandparams,1);
-                commandparams[0] := '--nogui';
-                //commandparams.Add('--nogui');
-                if not RunCommand(mycommandToStart, commandparams, s, []) then
-                begin
-                  LogData.FLogMessage :=
-                    'Error: Starting : "opsiscriptstarter --nogui" failed';
-                  LogData.FLevelofLine := 1;
-                  Synchronize(@LogData.SendLog);
-                end;
               end
               else
               begin
-                {Somebody is logged in to the GUI so we start in the gui mode}
-                LogData.FLogMessage := 'Starting : opsiscriptstarter';
+                LogData.FLogMessage := 'Finished : opsiscriptstarter --nogui';
                 LogData.FLevelofLine := 5;
                 Synchronize(@LogData.SendLog);
-                setlength(commandparams,0);
-                if not RunCommand(mycommandToStart, commandparams, s, []) then
-                begin
-                  LogData.FLogMessage := 'Error: Starting : "opsiscriptstarter" failed';
-                  LogData.FLevelofLine := 1;
-                  Synchronize(@LogData.SendLog);
-                end;
+              end;
+            end
+            else
+            begin
+              {Somebody is logged in to the GUI so we start in the gui mode}
+              LogData.FLogMessage := 'Starting : opsiscriptstarter';
+              LogData.FLevelofLine := 5;
+              Synchronize(@LogData.SendLog);
+              setlength(commandparams, 0);
+              if not RunCommand(mycommandToStart, commandparams, s, []) then
+              begin
+                LogData.FLogMessage := 'Error: Starting : "opsiscriptstarter" failed';
+                LogData.FLevelofLine := 1;
+                Synchronize(@LogData.SendLog);
+              end
+              else
+              begin
+                LogData.FLogMessage := 'Finished : opsiscriptstarter';
+                LogData.FLevelofLine := 5;
+                Synchronize(@LogData.SendLog);
               end;
             end;
-            //RunCommand('/Applications/TextEdit.app/Contents/MacOS/TextEdit',[ ], s , [ ]);
           end;
         end
         else
-        ; //SendError (has to be implemented);
+        begin
+          LogData.FLogMessage := 'found method <> fireEvent: ' + JSONRequest.Method;
+          LogData.FLevelofLine := 4;
+          Synchronize(@LogData.SendLog);
+        end;
       end
       else
       begin
