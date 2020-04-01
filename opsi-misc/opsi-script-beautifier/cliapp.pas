@@ -32,6 +32,7 @@ type
 
 var
   Application: TMyApplication;
+  myversion : string;
 
 implementation
 
@@ -66,10 +67,24 @@ var
   ErrorMsg: String;
   optionlist : TStringlist;
   logpath, beautiparamsfilename, opsiscriptfile : string;
+  (*
+  verinfo : TFileVersionInfo;
 begin
+  verinfo := TFileVersionInfo.Create(nil);
+  verinfo.FileName := ParamStr(0);
+  verinfo.ReadFileInfo;
+  myversion := verinfo.VersionStrings.Values['FileVersion'];
+  verinfo.Free;
+  *)
+begin
+  writeln(ExtractFileName(ParamStr(0))+' version: ' + getversioninfo);
   logpath := copy(GetUserDir,1,Length(getUserDir)-1);      // default
-  beautiparamsfilename :='';
-  opsiscriptfile := '';
+  {look for configuration file (beautify.ini) in program directory by default}
+  beautiparamsfilename := ExtractFileDir(ParamStr(0))+PathDelim+'beautify.ini';
+  {use last param as file argument by default}
+  if (paramcount > 0) and (FileExistsUTF8(ParamStr(ParamCount))) then
+    opsiscriptfile := ParamStr(ParamCount)
+  else opsiscriptfile := '';
   // quick check parameters
   optionlist := TStringlist.Create;
   optionlist.Add('help');
@@ -97,10 +112,13 @@ begin
   end
   else
   begin
+    writeln('configuration file: '+beautiparamsfilename);
+    (*
     writeln('Error: missing parameter for file beautiparams');
     WriteHelp;
     Terminate;
     Exit;
+    *)
   end;
 
   if HasOption('f', 'file') then
@@ -109,10 +127,13 @@ begin
   end
   else
   begin
+    writeln('beautify file: '+opsiscriptfile);
+    (*
     writeln('Error: missing parameter file');
     WriteHelp;
     Terminate;
     Exit;
+    *)
   end;
 
   if HasOption('l', 'logpath') then
@@ -120,7 +141,8 @@ begin
     logpath := GetOptionValue('l','logpath');
   end;
   initLogging;
-  writeln('file with beautifier params: ' + beautiparamsfilename);
+  writeln('log file: '+LogDatei.FileName);
+  //writeln('file with beautifier params: ' + beautiparamsfilename);
   logdatei.log('file with beautifier params: ' + beautiparamsfilename, LLessential);
   logdatei.log('opsiscriptfile to beautify: ' + opsiscriptfile, LLessential);
   beautifyopsiscript.initialize(beautiparamsfilename,opsiscriptfile);
@@ -145,11 +167,12 @@ var
   filename : string;
 begin
   filename := ExtractFileName(ExeName);
-  writeln('Usage: ', filename);
+  writeln(filename+' version: ' + getversioninfo);
+  writeln('Usage: '+ filename + '[Options] [filename]');
   writeln('Options:');
   writeln('-h, --help : print this help');
-  writeln('-b, --beautiprams : path to beautiparams file * required');
-  writeln('-f, --file : path to file.opsiscript * required');
+  writeln('-b, --beautiprams : path to beautiparams file * optional, default program dir');
+  writeln('-f, --file : path to file.opsiscript * optional, default last param');
   writeln('-l, --logpath : set log path * optional, default userdir');
 end;
 

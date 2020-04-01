@@ -18,6 +18,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
+      <StringTable CompanyName="uib gmbh" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org" ProductName="opsi" ProductVersion="4.1"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -105,7 +106,7 @@
         <PackageName Value="LCLBase"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="10">
+    <Units Count="11">
       <Unit0>
         <Filename Value="opsi_script_beautifier.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -146,6 +147,10 @@
         <Filename Value="beautify.ini"/>
         <IsPartOfProject Value="True"/>
       </Unit9>
+      <Unit10>
+        <Filename Value="changelog.txt"/>
+        <IsPartOfProject Value="True"/>
+      </Unit10>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
