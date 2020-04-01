@@ -252,7 +252,8 @@ constructor TIconCollector.Create(DepotPath: String);
 begin
   inherited Create;
   FPathToDepot := SwitchPathDelims(DepotPath,pdsSystem);
-  FPathToOckCustom := FPathToDepot + PathDelim + SwitchPathDelims('opsi-client-agent\files\opsi\opsiclientkiosk\ock_custom',pdsSystem);
+  FPathToOckCustom := FPathToDepot + PathDelim
+    + SwitchPathDelims('opsi-client-agent\files\opsi\opsiclientkiosk\ock_custom',pdsSystem);
   //FPathToOckCustom := SwitchPathDelims('C:\Users\Jan\Test', pdsSystem); //testing windows
   //FPathToOckCustom := SwitchPathDelims('\home\user\Test',pdsSystem); //testing linux
 
