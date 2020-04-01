@@ -20,9 +20,9 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
-      <MinorVersionNr Value="1"/>
-      <BuildNr Value="1"/>
-      <StringTable CompanyName="uib gmbh" FileDescription="opsiclientd_event_starter" InternalName="opsiclientd_event_starter" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsiclientd_event_starter" ProductName="opsi" ProductVersion="4.1"/>
+      <RevisionNr Value="7"/>
+      <BuildNr Value="2"/>
+      <StringTable CompanyName="uib gmbh" FileDescription="opsiclientd_event_starter" InternalName="opsiclientd_event_starter" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsiclientd_event_starter" ProductName="opsi" ProductVersion="4.0.7"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -31,11 +31,11 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="opsiclientd_event_starter"/>
+            <Filename Value="opsiclientd_event_starter_mac"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\synapse"/>
+            <OtherUnitFiles Value="indy;synapse40lib;..\..\common"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -57,10 +57,6 @@
               <UseHeaptrc Value="True"/>
               <UseExternalDbgSyms Value="True"/>
             </Debugging>
-            <Options>
-              <PassLinkerOptions Value="True"/>
-              <LinkerOptions Value="-sectcreate __TEXT __info_plist Info.plist"/>
-            </Options>
           </Linking>
           <Other>
             <CustomOptions Value="-dOPSICLIENTD_SHUTDOWN_STARTER"/>
@@ -75,12 +71,12 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="opsiclientd_event_starter"/>
+            <Filename Value="opsiclientd_event_starter_mac"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <Libraries Value="..\..\external_libraries\indy\Lib"/>
-            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\synapse"/>
+            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\synapse40lib;..\..\external_libraries\indy;..\..\external_libraries\indy\Lib;..\..\external_libraries\indy\Lib\Core;..\..\external_libraries\indy\Lib\System;..\..\external_libraries\indy\Lib\Protocols"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -96,10 +92,6 @@
               <StripSymbols Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
-            <Options>
-              <PassLinkerOptions Value="True"/>
-              <LinkerOptions Value="-sectcreate __TEXT __info_plist Info.plist"/>
-            </Options>
           </Linking>
           <Other>
             <CustomOptions Value="-dOPSICLIENTD_SHUTDOWN_STARTER"/>
@@ -124,7 +116,7 @@
         <PackageName Value="LCLBase"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="8">
+    <Units Count="6">
       <Unit0>
         <Filename Value="opsiclientd_event_starter.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -146,36 +138,22 @@
         <IsPartOfProject Value="True"/>
       </Unit4>
       <Unit5>
-        <Filename Value="Info.plist"/>
+        <Filename Value="opsiclientd_event_starter_mac.lpi"/>
         <IsPartOfProject Value="True"/>
       </Unit5>
-      <Unit6>
-        <Filename Value="notarize_ocdes.bash"/>
-        <IsPartOfProject Value="True"/>
-      </Unit6>
-      <Unit7>
-        <Filename Value="opsi.entitlements"/>
-        <IsPartOfProject Value="True"/>
-      </Unit7>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="opsiclientd_event_starter"/>
+      <Filename Value="opsiclientd_event_starter_mac"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\..\common;..\..\external_libraries\synapse;..\..\external_libraries\misc"/>
+      <OtherUnitFiles Value="..\..\common;..\..\external_libraries\synapse40lib;..\..\external_libraries\indy"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
-    <Linking>
-      <Options>
-        <PassLinkerOptions Value="True"/>
-        <LinkerOptions Value="-sectcreate __TEXT __info_plist Info.plist"/>
-      </Options>
-    </Linking>
     <Other>
       <CustomOptions Value="-dOPSICLIENTD_SHUTDOWN_STARTER"/>
     </Other>
