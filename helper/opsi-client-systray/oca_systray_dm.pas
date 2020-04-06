@@ -182,23 +182,6 @@ end;
 
 
 
-procedure closeConnection;
-var
-  resultstring: string;
-  new_obj: ISuperObject;
-begin
-  try
-    resultstring := MyOpsiMethodCall('backend_exit', []);
-    new_obj := SO(resultstring).O['result'];
-  except
-    on e: Exception do
-    begin
-      logdatei.log('Exception closeConnection', LLError);
-      logdatei.log('Exception: ' + E.message, LLError);
-    end;
-  end;
-end;
-
 function initConnection(const seconds: integer): boolean;
 var
   networkup, timeout: boolean;
@@ -259,12 +242,9 @@ procedure firePushInstallation;
 var
   resultstring, str: string;
 begin
-  //myservice_url := 'https://localhost:4441/
-  //myclientid := '';
   FreeAndNil(opsidata);
   initConnection(30);
   resultstring := MyOpsiMethodCall('fireEvent_software_on_demand', []);
-  closeConnection;
 end;
 
 
@@ -464,7 +444,6 @@ var
 begin
   initConnection(30);
   list := getActionrequests;
-  closeConnection;
   actionstring := '';
   if list.Count = 0 then
   begin
