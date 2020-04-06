@@ -486,7 +486,7 @@ begin
 {$ENDIF}
 {$IFDEF UNIX}
   try
-    myconf := TIniFile.Create(opsiscriptconf);
+    myconf := TIniFile.Create(opsiclientagentconf);
     bootmode := myconf.ReadString('general', 'bootmode', 'BKSTD');
     myconf.Free;
   except

@@ -7,7 +7,7 @@ mac getIpByName liefert name von IPnum
 ##################################################################
 opsi-winst/opsi-script (4.12.3.13) experimental; urgency=low
 
-  *
+  * osmain: bootmode: now using opsiclientagentconf
 
 -- Detlef Oertel <d.oertel@uib.de>  thu, 12 Mar 2020:15:00:00 +0200
 
