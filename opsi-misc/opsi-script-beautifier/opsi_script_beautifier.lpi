@@ -18,6 +18,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
+      <BuildNr Value="1"/>
       <StringTable CompanyName="uib gmbh" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org" ProductName="opsi" ProductVersion="4.1"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -90,6 +91,13 @@
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <CustomOptions Value="-dOPSI
+-dOPSI_AS_USER"/>
+            <OtherDefines Count="1">
+              <Define0 Value="OPSI_AS_USER"/>
+            </OtherDefines>
+          </Other>
         </CompilerOptions>
       </Item3>
     </BuildModes>
