@@ -1,0 +1,7 @@
+opsi-script-beautifier (4.1.0.1-1) stable; urgency=medium
+
+ * look for configuration file (beautify.ini) in program directory by default
+ * use last param as file argument by default
+ * -dOPSI -dOPSI_AS_USER
+
+-- d.oertel <d.oertel@uib.de> Wed, 01 Apr 2020 15:00:00 + 0100
