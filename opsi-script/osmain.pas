@@ -1520,7 +1520,14 @@ begin
             fpClose(filehandle);
           end
           else
+          begin
+            if PerformExitWindows <> txrImmediateReboot then
+            begin
+              LogDatei.log('BuildPC: update switches 2.....', LLDebug3);
+              opsidata.UpdateSwitches(extremeErrorLevel, logdatei.actionprogress);
+            end;
             TheExitMode := txmReboot;
+          end;
         end;
 
         txrRegisterforLogout, txrImmediateLogout: TheExitMode := txmLogout;
