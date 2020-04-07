@@ -404,7 +404,7 @@ type
     function MakeShellLink
       (const description, thePath, commandline_arguments, working_directory,
       iconPath: string; const icon_index: integer; shortcut: word;
-      showwindow : integer): boolean; overload;
+      showwindow: integer): boolean; overload;
     function DeleteShellLink(const description: string): boolean;
     function DeleteShellFolder(const SystemFolder: integer;
       const foldername: string): boolean;
@@ -451,6 +451,8 @@ procedure FindLocalIPData(var ipName: string; var address: string);
 
 function ExitSession(exitmode: TExitMode; var Fehler: string): boolean;
 function GetNetDrive(const pathname: string): string;
+
+
 
 {$IFNDEF WIN64}
 function KillTask(ExeFileName: string; var info: string): boolean;
@@ -2348,7 +2350,7 @@ begin
                 begin //time out given
                   if ((nowtime - starttime) < waitSecs / secsPerDay) then
                   begin
-                running := True;
+                    running := True;
                   end
                   else
                   begin
@@ -2373,22 +2375,22 @@ begin
               end;
 
               if not WaitWindowStarted or WaitForWindowVanished then
-              // in case WaitForWindowVanished we are not yet ready
-              // but have to check waiting condition 3
-              if WaitSecs = 0 then
-                running := True
-              else
-              begin //time out given
-                if ((nowtime - starttime) < waitSecs / secsPerDay) then
-                begin
-                  running := True;
-                end
+                // in case WaitForWindowVanished we are not yet ready
+                // but have to check waiting condition 3
+                if WaitSecs = 0 then
+                  running := True
                 else
-                begin
-                  logdatei.log('Wait for vanish Window "' + ident +
-                    '" stopped - time out ' + IntToStr(waitSecs) + ' sec', LLInfo);
+                begin //time out given
+                  if ((nowtime - starttime) < waitSecs / secsPerDay) then
+                  begin
+                    running := True;
+                  end
+                  else
+                  begin
+                    logdatei.log('Wait for vanish Window "' + ident +
+                      '" stopped - time out ' + IntToStr(waitSecs) + ' sec', LLInfo);
+                  end;
                 end;
-              end;
             end
 
             else
@@ -2545,8 +2547,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and
-                (waitSecs > 0) // we look for time out
+              if waitsecsAsTimeout and (waitSecs >
+                0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -2974,8 +2976,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and
-                (waitSecs > 0) // we look for time out
+              if waitsecsAsTimeout and (waitSecs >
+                0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -3348,8 +3350,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and
-                (waitSecs > 0) // we look for time out
+              if waitsecsAsTimeout and (waitSecs >
+                0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -4322,7 +4324,7 @@ begin
       begin
         LogDatei.LogSIndentLevel := 0;
         LogDatei.DependentAdd('============  opsi-script ' +
-          OpsiscriptVersionname + ' is regularly rebooting. Time ' +
+          OpsiscriptVersionname + ' is regularly and direct rebooting. Time ' +
           FormatDateTime('yyyy-mm-dd  hh:mm:ss ', now) + '.', LLessential);
 
         sleep(1000);
@@ -4398,7 +4400,9 @@ begin
       end;
     end;
   end;
-end;{$ENDIF UNIX}
+end;
+
+{$ENDIF UNIX}
 
 
 
@@ -10232,13 +10236,13 @@ function TuibShellLinks.MakeShellLink
   const icon_index: integer; shortcut: word): boolean;
 begin
   Result := MakeShellLink(description, thePath, commandline_arguments,
-    working_directory, iconPath, icon_index, 0,0);
+    working_directory, iconPath, icon_index, 0, 0);
 end;
 
 function TuibShellLinks.MakeShellLink
   (const description, thePath, commandline_arguments, working_directory,
   iconPath: string;
-  const icon_index: integer; shortcut: word; showwindow : integer): boolean;
+  const icon_index: integer; shortcut: word; showwindow: integer): boolean;
 
 const
   IID_IPersistFile: TGUID = (D1: $10B; D2: 0; D3: 0;

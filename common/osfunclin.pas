@@ -27,6 +27,7 @@ uses
   //osfunc,
   ostxstringlist,
   {$ENDIF OPSISCRIPT}
+  unix,
   fileutil,
   LazFileUtils,
   oslog,
@@ -67,6 +68,7 @@ function getPackageLock(timeoutsec: integer; kill: boolean): boolean;
 function getLinuxDistroName: string;
 function getLinuxDistroRelease: string;
 function getLinuxDistroDescription: string;
+function os_shutdown(): boolean;
 
 {$IFNDEF SYNAPSE}
 var
@@ -980,6 +982,76 @@ begin
   end;
 end;
 
+function os_shutdown(): boolean;
+var
+  exitcode: integer;
+  exitcmd: string;
+begin
+
+  if LogDatei <> nil then
+  begin
+    LogDatei.LogSIndentLevel := 0;
+    LogDatei.DependentAdd('============   ' + ExtractFileNameOnly(ParamStr(0))
+       + ' shutdown regularly and direct. Time ' +
+      FormatDateTime('yyyy-mm-dd  hh:mm:ss ', now) + '.', LLessential);
+
+    sleep(1000);
+    //LogDatei.Free;
+    //LogDatei := nil;
+  end;
+  exitcmd := FindDefaultExecutablePath('shutdown');
+  if exitcmd = '' then
+    exitcmd := '/sbin/shutdown';
+  if not FileExistsUTF8(exitcmd) then
+    exitcmd := '/usr/sbin/shutdown';
+  if not FileExistsUTF8(exitcmd) then
+    exitcmd := '/usr/bin/shutdown';
+  exitcmd := exitcmd + ' -h +1 opsi-reboot';
+  LogDatei.log('Exit command is: ' + exitcmd, LLDebug2);
+  exitcode := fpSystem(exitcmd);
+  if exitcode = 0 then
+  begin
+    if LogDatei <> nil then
+    begin
+      LogDatei.Free;
+      LogDatei := nil;
+    end;
+    Result := True;
+    //Fehler := '';
+  end
+  else
+  begin
+    LogDatei.log('Got exitcode: ' + IntToStr(exitcode) + ' for command' + exitcmd,
+      LLWarning);
+    exitcmd := '/sbin/shutdown -h now';
+    exitcode := fpSystem(exitcmd);
+    if exitcode = 0 then
+    begin
+      if LogDatei <> nil then
+      begin
+        LogDatei.Free;
+        LogDatei := nil;
+      end;
+      Result := True;
+      //Fehler := '';
+    end
+    else
+    begin
+      LogDatei.log('Got exitcode: ' + IntToStr(exitcode) + ' for command' + exitcmd,
+        LLWarning);
+      Result := False;
+      LogDatei.log('Got exitcode: ' + IntToStr(fpgetErrno) +
+        ' for command' + exitcmd,
+        LLWarning);
+      //Fehler := 'Error no.: ' + IntToStr(fpgetErrno);
+      if LogDatei <> nil then
+      begin
+        LogDatei.Free;
+        LogDatei := nil;
+      end;
+    end;
+  end;
+end;
 
 
 
