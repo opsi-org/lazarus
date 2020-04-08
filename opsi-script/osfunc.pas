@@ -4308,6 +4308,19 @@ function ExitSession(ExitMode: TExitMode; var Fehler: string): boolean;
 var
   exitcode: integer;
   exitcmd: string;
+  outstr: string;
+
+  procedure cleanuplog;
+  begin
+    if LogDatei <> nil then
+    begin
+      LogDatei.Free;
+      LogDatei := nil;
+    end;
+    Result := True;
+    Fehler := '';
+  end;
+
 begin
   if ExitMode = txmNoExit then
   begin
@@ -4339,61 +4352,63 @@ begin
       if not FileExistsUTF8(exitcmd) then
         exitcmd := '/usr/bin/shutdown';
       exitcmd := exitcmd + ' -r +1 opsi-reboot';
-      LogDatei.log('Exit command is: ' + exitcmd, LLDebug2);
+      LogDatei.log('Exit command is: ' + exitcmd, LLinfo);
       exitcode := fpSystem(exitcmd);
       if exitcode = 0 then
-      begin
-        if LogDatei <> nil then
-        begin
-          LogDatei.Free;
-          LogDatei := nil;
-        end;
-        Result := True;
-        Fehler := '';
-      end
+        cleanuplog
       else
       begin
-        LogDatei.log('Got exitcode: ' + IntToStr(exitcode) + ' for command' + exitcmd,
+        LogDatei.log('Got exitcode: ' + IntToStr(exitcode) + ' for command: ' + exitcmd,
           LLWarning);
         exitcmd := '/sbin/reboot';
+        LogDatei.log('Now try: ' + exitcmd, LLinfo);
         exitcode := fpSystem(exitcmd);
         if exitcode = 0 then
-        begin
-          if LogDatei <> nil then
-          begin
-            LogDatei.Free;
-            LogDatei := nil;
-          end;
-          Result := True;
-          Fehler := '';
-        end
+          cleanuplog
         else
         begin
-          LogDatei.log('Got exitcode: ' + IntToStr(exitcode) + ' for command' + exitcmd,
+          LogDatei.log('Got exitcode: ' + IntToStr(exitcode) +
+            ' for command: ' + exitcmd,
             LLWarning);
           exitcmd := '/sbin/shutdown -r now';
+          LogDatei.log('Now try: ' + exitcmd, LLinfo);
           exitcode := fpSystem(exitcmd);
           if exitcode = 0 then
-          begin
-            if LogDatei <> nil then
-            begin
-              LogDatei.Free;
-              LogDatei := nil;
-            end;
-            Result := True;
-            Fehler := '';
-          end
+            cleanuplog
           else
           begin
             Result := False;
             LogDatei.log('Got exitcode: ' + IntToStr(fpgetErrno) +
-              ' for command' + exitcmd,
+              ' for command: ' + exitcmd,
               LLWarning);
-            Fehler := 'Error no.: ' + IntToStr(fpgetErrno);
-            if LogDatei <> nil then
+            exitcmd := 'systemctl reboot';
+            LogDatei.log('Now try: ' + exitcmd, LLinfo);
+            exitcode := fpSystem(exitcmd);
+            if exitcode = 0 then
+              cleanuplog
+            else
             begin
-              LogDatei.Free;
-              LogDatei := nil;
+              LogDatei.log('Got exitcode: ' + IntToStr(exitcode) +
+                ' for command: ' + exitcmd,
+                LLWarning);
+              exitcmd := 'systemctl reboot';
+              LogDatei.log('Now try: ' + exitcmd, LLinfo);
+              outstr := getCommandResult(exitcmd, exitcode);
+              LogDatei.log('Output: ' + outstr, LLinfo);
+              if exitcode = 0 then
+                cleanuplog
+              else
+              begin
+                LogDatei.log('Got exitcode: ' + IntToStr(exitcode) +
+                  ' for command: ' + exitcmd + ' - Giving up',
+                  LLerror);
+                Fehler := 'Error no.: ' + IntToStr(fpgetErrno);
+                if LogDatei <> nil then
+                begin
+                  LogDatei.Free;
+                  LogDatei := nil;
+                end;
+              end;
             end;
           end;
         end;
