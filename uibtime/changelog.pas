@@ -1,4 +1,11 @@
 (*
+uibtime (4.1.1.66-1) stable; urgency=low
+
+ * possibility to disable wmctrl at linux
+ * configure DBLookupCombobox also for dataedit and multiday
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 14 Apr 2020 18:00:00 +0000
+
 uibtime (4.1.1.65-1) stable; urgency=low
 
  * uibdata: mycombo.ReadOnly := True; (avoid editing in topten combo)

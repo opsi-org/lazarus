@@ -314,7 +314,7 @@ begin
   try
     datamodule1.debugOut(5, 'start TFOnTop.FormCreate');
     FOnTop.Caption := 'uibtime - ontop - runtime';
-    //DataModule1.configureLookupComboBox(DBLCB_topten_event);
+    DataModule1.configureComboBox(TCombobox(DBLCB_topten_event));
     (*
     {$IFDEF LINUX}
     DBLCB_topten_event.AutoComplete:=true;

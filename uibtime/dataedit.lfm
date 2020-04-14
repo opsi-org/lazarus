@@ -186,7 +186,9 @@ object FDataedit: TFDataedit
         Height = 22
         Top = 88
         Width = 145
+        ArrowKeysTraverseList = False
         AutoComplete = True
+        AutoDropDown = True
         AutoSize = False
         DataField = 'EVENT'
         DataSource = DataModule1.DSuibevent
@@ -198,9 +200,11 @@ object FDataedit: TFDataedit
         ListFieldIndex = 0
         ListSource = DataModule1.DSuibaktevent
         LookupCache = False
+        OnDropDown = DBLookupComboBox1DropDown
         OnExit = DBLookupComboBox1Exit
         OnMouseWheel = DBLookupComboBoxMouseWheel
         ParentFont = False
+        ScrollListDataset = True
         TabOrder = 2
         Visible = False
       end

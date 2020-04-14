@@ -108,6 +108,7 @@ type
       DataCol: integer; Column: TColumn; State: TGridDrawState);
     procedure DBGrid9DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: integer; Column: TColumn; State: TGridDrawState);
+    procedure DBLookupComboBox1DropDown(Sender: TObject);
     procedure DBLookupComboBoxMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
     procedure FormCreate(Sender: TObject);
@@ -473,6 +474,11 @@ begin
   end;
 end;
 
+procedure TFDataedit.DBLookupComboBox1DropDown(Sender: TObject);
+begin
+   DBLookupComboBox1.ListSource.DataSet.Locate('event',DBLookupComboBox1.Text,[loCaseInsensitive]);
+end;
+
 procedure TFDataedit.DBLookupComboBoxMouseWheel(Sender: TObject;
   Shift: TShiftState; WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
 begin
@@ -484,7 +490,14 @@ end;
 procedure TFDataedit.FormCreate(Sender: TObject);
 begin
   //TForm(sender).Font.Name:=myFont;
-  DataModule1.configureLookupComboBox(DBLookupComboBox1);
+  DataModule1.configureComboBox(TCombobox(DBLookupComboBox1));
+  DataModule1.configureComboBox(TCombobox(DBLookupComboBox2));
+  DataModule1.configureComboBox(TCombobox(DBLookupComboBox3));
+  DataModule1.configureComboBox(TCombobox(DBLookupComboBox4));
+  DataModule1.configureComboBox(TCombobox(DBLookupComboBox5));
+  DataModule1.configureComboBox(TCombobox(ComboBoxOldEvent));
+  DataModule1.configureComboBox(TCombobox(ComboBoxOldAllEvent));
+  DataModule1.configureComboBox(TCombobox(DBComboBoxBool));
   (*
  {$IFDEF LINUX}
   DBLookupComboBox1.AutoComplete:=true;
@@ -538,6 +551,7 @@ begin
       DBLookupComboBox1.Top := Rect.Top + DBGrid1.top;
       DBLookupComboBox1.Width := Rect.Right - Rect.Left;
       DBLookupComboBox1.Visible := True;
+      DBLookupComboBox1.ListSource.DataSet.First;
     end;
   end;
 end;

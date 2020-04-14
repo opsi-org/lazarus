@@ -69,6 +69,7 @@ type
     Dateneditieren1: TMenuItem;
     IBConnection2: TIBConnection;
     Arbeitsberichte: TMenuItem;
+    linuxwmctrl: TMenuItem;
     ProcessTrayNotify: TProcess;
     SQholydays: TSQLQuery;
     SQLQueryTmp: TSQLQuery;
@@ -132,6 +133,7 @@ type
     procedure Import1Click(Sender: TObject);
     procedure Info1Click(Sender: TObject);
     procedure LeisteNeuAufbauen1Click(Sender: TObject);
+    procedure linuxwmctrlClick(Sender: TObject);
     procedure PopupMenu1Close(Sender: TObject);
     procedure PopupMenu1Popup(Sender: TObject);
     procedure queryAfterHelper(myevent: string; myquery: TSQLQuery; DataSet: TDataSet);
@@ -215,7 +217,7 @@ type
     procedure DumpExceptionCallStack(E: Exception);
     procedure OnEndSession(Sender: TObject);
     procedure SetFontName(Control: TControl; Name: string);
-    procedure configureLookupComboBox(mycombo: TDBLookupComboBox);
+    procedure configureComboBox(mycombo: TComboBox);
   private
     { private declarations }
   public
@@ -253,6 +255,7 @@ var
   myFont: string;
   myscreen: TScreen;
   myDbServer : string;
+  linuxusewmctrl : boolean = true;
 
 
 
@@ -650,6 +653,47 @@ end;
 procedure TDataModule1.LeisteNeuAufbauen1Click(Sender: TObject);
 begin
   FOnTop.ReBuildForm;
+end;
+
+procedure TDataModule1.linuxwmctrlClick(Sender: TObject);
+var
+  myini : TIniFile;
+  logdir, logfeilname: string;
+begin
+  if linuxwmctrl.Checked then
+  begin
+    linuxwmctrl.Checked := False;
+    linuxusewmctrl := False;
+  end
+  else
+  begin
+    linuxwmctrl.Checked := True;
+    linuxusewmctrl := True;
+  end;
+  // we will use logdir for logging and for configuration
+  logdir := SysUtils.GetAppConfigDir(False);
+  if logdir = '' then
+  begin
+    logdir := SysUtils.GetUserDir;
+    logdir := logdir + '\uibtime';
+  end;
+  logdir := ExpandFileNameUTF8(logdir);
+  ForceDirectories(logdir);
+  logfeilname := ExpandFileNameUTF8(logdir + 'uibtime.conf');
+  myini := TIniFile.Create(logfeilname);
+  debugOut(5, 'Will use conf file: ' + logfeilname);
+  DataModule1.debugOut(6, 'linuxwmctrlClick', 'Will use conf file: ' + logfeilname);
+  if myini = nil then
+  begin
+    DataModule1.debugOut(2, 'linuxwmctrlClick',
+      'myini = nil: coud not open :' + logfeilname);
+    ShowMessage('Fehler in Konfigurations Datei. Bitte Log sichern. Programm wird beendet');
+    Application.Terminate;
+  end;
+  myini.WriteBool('general', 'linuxwmctrl', linuxwmctrl.Checked);
+  debugOut(6, 'linuxwmctrlClick: ' + BoolToStr(linuxwmctrl.Checked, True));
+  myini.UpdateFile;
+  myini.Free;
 end;
 
 procedure TDataModule1.PopupMenu1Close(Sender: TObject);
@@ -1501,7 +1545,7 @@ procedure TDataModule1.TimerLogoffOnTopTimer(Sender: TObject);
 begin
   debugOut(8, 'TimerLogoffOnTopTimer', 'start ');
   TimerLogoffOnTop.interval := 1500;
-  moveToCurrentDeskAndFront(Flogoff.Caption);
+  if linuxusewmctrl then moveToCurrentDeskAndFront(Flogoff.Caption);
   //SetWindowPos(FLogoff.handle, HWND_TOPMOST, 0, 0, screenx - 1, screeny - 1, SWP_NOACTIVATE);
 end;
 
@@ -1565,7 +1609,7 @@ begin
     debugOut(8, 'TimerOnTopTimer', 'exception: movefront ');
   end;
   *)
-  moveToCurrentDeskAndFront(FOnTop.Caption);
+  if linuxusewmctrl then moveToCurrentDeskAndFront(FOnTop.Caption);
   Application.ProcessMessages;
   {$ENDIF LINUX}
 
@@ -1851,6 +1895,7 @@ begin
     else
     begin
       FLoggedin.Show;
+      if linuxusewmctrl then
       if not setwindowtoalldesktops(FLoggedin.Caption) then
         DataModule1.debugOut(2, 'ontop', 'failed presenz to all desktops');
       Weristda1.Checked := True;
@@ -2147,8 +2192,13 @@ begin
   Trayshow := myini.ReadBool('general', 'showTray', True);
   TrayIcon1.Visible := Trayshow;
   TimerTrayIcon.Enabled := Trayshow;
+  linuxusewmctrl := myini.ReadBool('general', 'linuxusewmctrl', True);
+  linuxwmctrl.Checked := linuxusewmctrl;
   myini.UpdateFile;
   myini.Free;
+  {$IFDEF WINDOWS}
+  linuxwmctrl.Enabled:=false;
+  {$ENDIF WINDOWS}
 
   // Initialize logging
   LogDatei := TLogInfo.Create;
@@ -2442,17 +2492,25 @@ begin
   end;
 end;
 
-procedure TDataModule1.configureLookupComboBox(mycombo: TDBLookupComboBox);
+procedure TDataModule1.configureComboBox(mycombo: TComboBox);
 begin
 
-//{$IFDEF LINUX}
+  {$IFDEF LINUX}
+  mycombo.AutoComplete := True;
+  mycombo.AutoDropDown := false;
+  mycombo.AutoSelect := true;
+  //mycombo.ReadOnly := false;
+  mycombo.Style := csSimple;
+  mycombo.Sorted := false;
+ {$ENDIF LINUX}
+ {$IFDEF WINDOWS}
   mycombo.AutoComplete := True;
   mycombo.AutoDropDown := True;
-  mycombo.AutoSelect := False;
+  mycombo.AutoSelect := True;
   mycombo.ReadOnly := false;
   mycombo.Style := csDropDown;
   mycombo.Sorted := False;
- //{$ENDIF LINUX}
+  {$ENDIF WINDOWS}
 
 end;
 

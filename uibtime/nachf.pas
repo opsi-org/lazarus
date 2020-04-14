@@ -56,8 +56,9 @@ end;
 procedure TFNachfrage.FormShow(Sender: TObject);
 begin
   FNachfrage.Caption:= 'uibtime - Notice';
-  if not moveToCurrentDeskAndFront(FNachfrage.Caption) then
-    datamodule1.debugOut(2, 'nachf', 'failed nachf to all desktops');
+  if linuxusewmctrl then
+    if not moveToCurrentDeskAndFront(FNachfrage.Caption) then
+      datamodule1.debugOut(2, 'nachf', 'failed nachf to all desktops');
 end;
 
 procedure TFNachfrage.FormMouseEnter(Sender: TObject);
