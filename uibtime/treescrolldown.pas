@@ -68,7 +68,7 @@ begin
   datamodule1.debugOut(5, 'start TFTreeview.FormShow');
 
   Left := DataModule1.getLeftint + Fontop.Edit1.Left;
-  Top := DataModule1.getOntopHeight;
+  Top := DataModule1.getOntopHeight + 20;
   //remotechange := False;
 
 end;
@@ -120,8 +120,6 @@ begin
   Left := DataModule1.getLeftint + Fontop.Edit1.Left;
   Top := DataModule1.getOntopHeight;
   //remotechange := false;
-
-
 end;
 
 end.
