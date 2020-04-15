@@ -2520,7 +2520,7 @@ initialization
   ontopwidth := 850;//730;
   ontopheight := 28;
   {$ifdef LINUX}
-  ontopheight := round(32 * (96 / screen.PixelsPerInch));
+  //ontopheight := round(32 * (96 / screen.PixelsPerInch));
   {$ENDIF LINUX}
   //ontopheight := 50;
   scalefactor := 96 / screen.PixelsPerInch;
