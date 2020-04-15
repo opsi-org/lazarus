@@ -192,7 +192,7 @@ end;
 
 procedure TFOnTop.FormWindowStateChange(Sender: TObject);
 begin
-  TForm(Sender).WindowState := wsNORMAL;
+  //TForm(Sender).WindowState := wsNORMAL;
 end;
 
 
@@ -314,7 +314,7 @@ begin
   try
     datamodule1.debugOut(5, 'start TFOnTop.FormCreate');
     FOnTop.Caption := 'uibtime - ontop - runtime';
-    DataModule1.configureComboBox(TCombobox(DBLCB_topten_event));
+    FOnTop.ShowInTaskBar:= ontopintaskbar;
     (*
     {$IFDEF LINUX}
     DBLCB_topten_event.AutoComplete:=true;
@@ -476,7 +476,8 @@ begin
       end;
       //FLogin.Free;    /// do not free here - we have to come back to FLogin !
       if not Datamodule1.geteditonly then
-        Datamodule1.TimerOntop.Enabled := True;
+        Datamodule1.TimerOntop.Enabled := ontoptimer;
+     // DataModule1.TimerOnToptimer(sender);
     end;
   except
     datamodule1.debugOut(3, '', 'exception in ontopactivate');
@@ -602,7 +603,7 @@ begin
       Datamodule1.setloggedin(True);
       lastevent := '';
       setDefaultEvent;
-      Datamodule1.TimerOnTop.Enabled := True;
+      Datamodule1.TimerOnTop.Enabled := ontoptimer;
       //BtnProjekt.down := true;
       //BtnProjekt.click;
     end;
@@ -613,7 +614,7 @@ begin
       //  Datamodule1.SQuibevent.edit;
       Datamodule1.setloggedin(True);
       TimerNachfrage.Enabled := True;
-      Datamodule1.TimerOnTop.Enabled := True;
+      Datamodule1.TimerOnTop.Enabled := ontoptimer;
       eventhandler(lastevent);
     end;
     // exit program
@@ -631,7 +632,7 @@ begin
       Datamodule1.setloggedin(True);
       TimerNachfrage.Enabled := True;
       eventhandler(lastevent);
-      Datamodule1.TimerOnTop.Enabled := True;
+      Datamodule1.TimerOnTop.Enabled := ontoptimer;
       if Fwork_description = nil then
         Fwork_description := TFwork_description.Create(self);
       fwork_description.PopupParent := Fwork_description;
@@ -1157,7 +1158,7 @@ begin
       end;
     end;
     SetForegroundWindow(griff);
-    datamodule1.TimerOntop.Enabled := True;
+    datamodule1.TimerOntop.Enabled := ontoptimer;
 
   except
     datamodule1.debugOut(3, '', 'exception in TimerNachfrage');

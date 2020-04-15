@@ -3,6 +3,11 @@ uibtime (4.1.1.66-1) stable; urgency=low
 
  * possibility to disable wmctrl at linux
  * configure DBLookupCombobox also for dataedit and multiday
+ * possible confs:
+    linuxwmctrl=0       (default=1)
+    forceontopleft=1000 (default=-1)
+    ontopintaskbar=1    (default=0)
+    ontoptimer=0        (default=1)
 
 -- detlef oertel <d.oertel@uib.de>  Tue, 14 Apr 2020 18:00:00 +0000
 

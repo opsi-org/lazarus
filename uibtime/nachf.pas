@@ -81,7 +81,7 @@ end;
 procedure TFNachfrage.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   modalresult := mrOK;
-  DataModule1.TimerOnTop.Enabled:=true;
+  DataModule1.TimerOnTop.Enabled:=ontoptimer;
 end;
 
 procedure TFNachfrage.BitBtn1Click(Sender: TObject);

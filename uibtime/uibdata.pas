@@ -13,7 +13,7 @@ uses
   elfreader, {needed for reading ELF executables}
   libnotify,
   osprocessux,
-    pingsend,
+  pingsend,
 {$ENDIF LINUX}
   {$IFDEF WINDOWS}
   winpeimagereader, {need this for reading exe info}
@@ -254,8 +254,11 @@ var
   scalefactor: double = 1.0;
   myFont: string;
   myscreen: TScreen;
-  myDbServer : string;
-  linuxusewmctrl : boolean = true;
+  myDbServer: string;
+  linuxusewmctrl: boolean = True;
+  forceontopleft: integer = -1;
+  ontopintaskbar: TShowInTaskBar = stNever;
+  ontoptimer: boolean = True;
 
 
 
@@ -343,7 +346,10 @@ end;
 procedure TDataModule1.setOntopwidth(newvalue: integer);
 begin
   ontopwidth := newvalue;
-  leftint := (screenx - ontopwidth) div 2;
+  if forceontopleft > -1 then
+    leftint := forceontopleft
+  else
+    leftint := (screenx - ontopwidth) div 2;
 end;
 
 procedure TDataModule1.setOntopheight(newvalue: integer);
@@ -551,7 +557,7 @@ begin
   FOntop.Enabled := True;
   FOntop.ineditmode := False;
   FOntop.eventhandler(ontop.lastevent);
-  TimerOntop.Enabled := True;
+  TimerOntop.Enabled := ontoptimer;
 end;
 
 
@@ -657,7 +663,7 @@ end;
 
 procedure TDataModule1.linuxwmctrlClick(Sender: TObject);
 var
-  myini : TIniFile;
+  myini: TIniFile;
   logdir, logfeilname: string;
 begin
   if linuxwmctrl.Checked then
@@ -698,7 +704,7 @@ end;
 
 procedure TDataModule1.PopupMenu1Close(Sender: TObject);
 begin
-  TimerOnTop.Enabled := True;
+  TimerOnTop.Enabled := ontoptimer;
 end;
 
 procedure TDataModule1.PopupMenu1Popup(Sender: TObject);
@@ -1505,7 +1511,7 @@ end;
 
 procedure TDataModule1.Statistik1Cancel;
 begin
-  TimerOntop.Enabled := True;
+  TimerOntop.Enabled := ontoptimer;
 end;
 
 procedure TDataModule1.TimerCheckNetTimer(Sender: TObject);
@@ -1520,17 +1526,19 @@ begin
   //{$IFDEF WIN32}
   while (pinghost(servername) = -1) and (retries < 10) do
   begin
-    debugOut(3, 'CheckNetTimer', 'Could not reach via ping: ' + servername + ' retry ...');
+    debugOut(3, 'CheckNetTimer', 'Could not reach via ping: ' +
+      servername + ' retry ...');
     Inc(retries);
     Application.ProcessMessages;
     Sleep(1000);
   end;
   if retries >= 10 then
   begin
-    debugOut(2, 'CheckNetTimer', 'Could not reach via ping: ' + servername + ' no retry.');
-    DataModule1.TimerCheckNet.Enabled:=false;
+    debugOut(2, 'CheckNetTimer', 'Could not reach via ping: ' +
+      servername + ' no retry.');
+    DataModule1.TimerCheckNet.Enabled := False;
   end;
- //{$ENDIF WIN32}
+  //{$ENDIF WIN32}
 end;
 
 
@@ -1545,7 +1553,8 @@ procedure TDataModule1.TimerLogoffOnTopTimer(Sender: TObject);
 begin
   debugOut(8, 'TimerLogoffOnTopTimer', 'start ');
   TimerLogoffOnTop.interval := 1500;
-  if linuxusewmctrl then moveToCurrentDeskAndFront(Flogoff.Caption);
+  if linuxusewmctrl then
+    moveToCurrentDeskAndFront(Flogoff.Caption);
   //SetWindowPos(FLogoff.handle, HWND_TOPMOST, 0, 0, screenx - 1, screeny - 1, SWP_NOACTIVATE);
 end;
 
@@ -1559,16 +1568,19 @@ var
 begin
   debugOut(8, 'TimerOnTopTimer', 'start ');
   TimerOntop.interval := 500;
+  if Assigned(FOnTop) then
+  begin
   {$IFDEF WINDOWS}
-  SetWindowPos(FOnTop.handle, HWND_TOPMOST, leftint, 0, ontopwidth,
-    ontopheight, SWP_NOACTIVATE);
+    SetWindowPos(FOnTop.handle, HWND_TOPMOST, leftint, 0, ontopwidth,
+      ontopheight, SWP_NOACTIVATE);
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
-  FOntop.Left := leftint;
-  FOnTop.Top := 0;
-  FOnTop.Height := ontopheight;
-  FOnTop.Width := ontopwidth;
-  FOnTop.FormStyle := fsSystemStayOnTop;
+    FOntop.Left := leftint;
+    FOnTop.Top := 0;
+    FOnTop.Height := ontopheight;
+    FOnTop.Width := ontopwidth;
+    FOnTop.FormStyle := fsSystemStayOnTop;
+    FOnTop.BorderStyle:=bsNone;
   (*
   //FOnTop.ReBuildForm;
   //FOnTop.Repaint;
@@ -1609,7 +1621,9 @@ begin
     debugOut(8, 'TimerOnTopTimer', 'exception: movefront ');
   end;
   *)
-  if linuxusewmctrl then moveToCurrentDeskAndFront(FOnTop.Caption);
+    if linuxusewmctrl then
+      moveToCurrentDeskAndFront(FOnTop.Caption);
+  end;
   Application.ProcessMessages;
   {$ENDIF LINUX}
 
@@ -1896,8 +1910,8 @@ begin
     begin
       FLoggedin.Show;
       if linuxusewmctrl then
-      if not setwindowtoalldesktops(FLoggedin.Caption) then
-        DataModule1.debugOut(2, 'ontop', 'failed presenz to all desktops');
+        if not setwindowtoalldesktops(FLoggedin.Caption) then
+          DataModule1.debugOut(2, 'ontop', 'failed presenz to all desktops');
       Weristda1.Checked := True;
       myini.WriteBool('general', 'weristda', True);
     end;
@@ -2192,12 +2206,18 @@ begin
   Trayshow := myini.ReadBool('general', 'showTray', True);
   TrayIcon1.Visible := Trayshow;
   TimerTrayIcon.Enabled := Trayshow;
-  linuxusewmctrl := myini.ReadBool('general', 'linuxusewmctrl', True);
+  linuxusewmctrl := myini.ReadBool('general', 'linuxwmctrl', True);
   linuxwmctrl.Checked := linuxusewmctrl;
+  forceontopleft := myini.ReadInteger('general', 'forceontopleft', forceontopleft);
+  if myini.ReadBool('general', 'ontopintaskbar', False) then
+    ontopintaskbar := stAlways;
+  if not myini.ReadBool('general', 'ontoptimer', True) then
+    ontoptimer := False;
+  TimerOnTop.Enabled := ontoptimer;
   myini.UpdateFile;
   myini.Free;
   {$IFDEF WINDOWS}
-  linuxwmctrl.Enabled:=false;
+  linuxwmctrl.Enabled := False;
   {$ENDIF WINDOWS}
 
   // Initialize logging
@@ -2497,17 +2517,17 @@ begin
 
   {$IFDEF LINUX}
   mycombo.AutoComplete := True;
-  mycombo.AutoDropDown := false;
-  mycombo.AutoSelect := true;
+  mycombo.AutoDropDown := False;
+  mycombo.AutoSelect := True;
   //mycombo.ReadOnly := false;
   mycombo.Style := csSimple;
-  mycombo.Sorted := false;
+  mycombo.Sorted := False;
  {$ENDIF LINUX}
  {$IFDEF WINDOWS}
   mycombo.AutoComplete := True;
   mycombo.AutoDropDown := True;
   mycombo.AutoSelect := True;
-  mycombo.ReadOnly := false;
+  mycombo.ReadOnly := False;
   mycombo.Style := csDropDown;
   mycombo.Sorted := False;
   {$ENDIF WINDOWS}

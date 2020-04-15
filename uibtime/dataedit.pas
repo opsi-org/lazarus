@@ -615,7 +615,7 @@ end;
 procedure TFDataedit.FormHide(Sender: TObject);
 begin
   datamodule1.debugOut(5, 'Hide FDataedit');
-  // Datamodule1.TimerOnTop.Enabled := true;
+  // Datamodule1.TimerOnTop.Enabled := ontoptimer;
 end;
 
 procedure TFDataedit.DBImage1Exit(Sender: TObject);

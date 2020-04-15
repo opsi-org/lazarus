@@ -4,11 +4,11 @@ object FOnTop: TFOnTop
   Top = 296
   Width = 1104
   BorderIcons = []
-  BorderStyle = bsNone
   Caption = 'uibtime - ontop'
   ClientHeight = 242
   ClientWidth = 1104
   Color = clBtnFace
+  DefaultMonitor = dmPrimary
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
