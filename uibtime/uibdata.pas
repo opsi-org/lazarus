@@ -155,6 +155,7 @@ type
     procedure SQuibdefprojAfterDelete(DataSet: TDataSet);
     procedure SQuibdefprojAfterPost(DataSet: TDataSet);
     procedure SQuibeventAfterDelete(DataSet: TDataSet);
+    procedure SQuibeventAfterEdit(DataSet: TDataSet);
     procedure SQuibeventAfterInsert(DataSet: TDataSet);
     procedure SQuibeventAfterPost(DataSet: TDataSet);
     procedure SQuibeventBeforeClose(DataSet: TDataSet);
@@ -1132,6 +1133,33 @@ begin
   end;
 end;
 
+procedure TDataModule1.SQuibeventAfterEdit(DataSet: TDataSet);
+var
+  start, stop: TDateTime;
+  startstamp, stopstamp: TTimeStamp;
+  errorstr: string;
+begin
+  try
+    errorstr := '';
+    start := DataSet.FieldByName('starttime').AsDateTime;
+    stop := DataSet.FieldByName('stoptime').AsDateTime;
+    if start > stop then
+      errorstr := 'Stopzeit liegt vor Startzeit';
+    if DateOf(start) <> DateOf(stop) then
+      errorstr := 'Startzeit und Stopzeit sind nicht am selben Tag.';
+    if errorstr <> '' then
+    begin
+      ShowMessage('Fehler: ' + errorstr + ' - Speichern wird abgebrochen');
+      Application.ProcessMessages;
+      DataSet.Cancel;
+      Abort;
+      Dataset.Refresh;
+    end;
+  except
+    debugOut(5, 'exception in SQuibeventBeforePost ');
+  end;
+end;
+
 
 procedure TDataModule1.SQuibeventAfterInsert(DataSet: TDataSet);
 begin
@@ -1202,15 +1230,31 @@ begin
 end;
 
 procedure TDataModule1.SQuibeventBeforePost(DataSet: TDataSet);
+var
+  start, stop: TDateTime;
+  startstamp, stopstamp: TTimeStamp;
+  errorstr: string;
 begin
- (*
-     try
-  if not SQLTransaction1.Active then SQLTransaction1.StartTransaction;
-  debugOut(5,'StartTransaction in SQuibeventBeforePost: ');
- except
-  debugOut(5,'exception in SQuibeventBeforePost (starttransaction)');
- end;
- *)
+  try
+    errorstr := '';
+    start := DataSet.FieldByName('starttime').AsDateTime;
+    stop := DataSet.FieldByName('stoptime').AsDateTime;
+    if start > stop then
+      errorstr := 'Stopzeit liegt vor Startzeit';
+    if DateOf(start) <> DateOf(stop) then
+      errorstr := 'Startzeit und Stopzeit sind nicht am selben Tag.';
+    if errorstr <> '' then
+    begin
+      ShowMessage('Fehler: ' + errorstr + ' - Speichern wird abgebrochen');
+      Application.ProcessMessages;
+            DataSet.Cancel;
+      Abort;
+      Dataset.Refresh;
+
+    end;
+  except
+    debugOut(5, 'exception in SQuibeventBeforePost ');
+  end;
 end;
 
 procedure TDataModule1.SQuibeventPostError(DataSet: TDataSet;
@@ -1580,7 +1624,7 @@ begin
     FOnTop.Height := ontopheight;
     FOnTop.Width := ontopwidth;
     FOnTop.FormStyle := fsSystemStayOnTop;
-    FOnTop.BorderStyle:=bsNone;
+    FOnTop.BorderStyle := bsNone;
   (*
   //FOnTop.ReBuildForm;
   //FOnTop.Repaint;
