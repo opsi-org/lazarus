@@ -1664,9 +1664,10 @@ begin
   *)
     if linuxusewmctrl then
       moveToCurrentDeskAndFront(FOnTop.Caption);
+      {$ENDIF LINUX}
   end;
   Application.ProcessMessages;
-  {$ENDIF LINUX}
+
 
   // show last event in DBLCB_topten
   //if not FOnTop.ineditmode then SQuibevent.Last;
