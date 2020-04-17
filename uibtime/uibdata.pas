@@ -1133,20 +1133,37 @@ begin
   end;
 end;
 
+{ also called by afterpost }
 procedure TDataModule1.SQuibeventAfterEdit(DataSet: TDataSet);
 var
   start, stop: TDateTime;
   startstamp, stopstamp: TTimeStamp;
-  errorstr: string;
+  errorstr: string = '';
+  goon: boolean = True;
 begin
   try
-    errorstr := '';
-    start := DataSet.FieldByName('starttime').AsDateTime;
-    stop := DataSet.FieldByName('stoptime').AsDateTime;
-    if start > stop then
-      errorstr := 'Stopzeit liegt vor Startzeit';
-    if DateOf(start) <> DateOf(stop) then
-      errorstr := 'Startzeit und Stopzeit sind nicht am selben Tag.';
+    try
+      start := DataSet.FieldByName('starttime').AsDateTime;
+    except
+      errorstr := 'Eingegebene Startzeit ist nicht gültig.';
+      goon := False;
+    end;
+    if goon then
+    begin
+      try
+        stop := DataSet.FieldByName('stoptime').AsDateTime;
+      except
+        errorstr := 'Eingegebene Startzeit ist nicht gültig.';
+        goon := False;
+      end;
+      if goon then
+      begin
+        if start > stop then
+          errorstr := 'Stopzeit liegt vor Startzeit';
+        if DateOf(start) <> DateOf(stop) then
+          errorstr := 'Startzeit und Stopzeit sind nicht am selben Tag.';
+      end;
+    end;
     if errorstr <> '' then
     begin
       ShowMessage('Fehler: ' + errorstr + ' - Speichern wird abgebrochen');
@@ -1174,29 +1191,10 @@ end;
 
 procedure TDataModule1.SQuibeventAfterPost(DataSet: TDataSet);
 begin
-  debugOut(5, 'SQuibeventAfterPost', 'start  SQuibeventAfterPost');
-  try
-    //if DataModule1.SQuibevent.State in [dsInsert, dsEdit] then
-    if DataSet.UpdateStatus in [usModified, usInserted, usDeleted] then
-    begin
-      DataModule1.SQuibevent.ApplyUpdates;
-      debugOut(5, 'SQuibeventAfterPost', 'start  SQuibeventAfterPost (apply)');
-    end;
-    if SQLTransaction1.Active then
-    begin
-      SQLTransaction1.CommitRetaining;
-      //SQLTransaction1.Commit;
-      //SQLTransaction1.StartTransaction;
-      debugOut(5, 'SQuibeventAfterPost', 'start  SQuibeventAfterPost (commit/start)');
-    end
-    else
-      debugOut(3, 'SQuibeventAfterPost',
-        'Error: Missing Transaction SQuibeventAfterPost');
-  except
-    debugOut(2, 'SQuibeventAfterPost', 'exception in SQuibeventAfterPost (commit)');
-  end;
-
+  { plausibility check is in AfterEdit }
+   SQuibeventAfterEdit(Dataset);
 end;
+
 
 procedure TDataModule1.SQuibeventBeforeClose(DataSet: TDataSet);
 begin
@@ -1236,7 +1234,6 @@ var
   errorstr: string;
 begin
   try
-    errorstr := '';
     start := DataSet.FieldByName('starttime').AsDateTime;
     stop := DataSet.FieldByName('stoptime').AsDateTime;
     if start > stop then
@@ -1247,7 +1244,7 @@ begin
     begin
       ShowMessage('Fehler: ' + errorstr + ' - Speichern wird abgebrochen');
       Application.ProcessMessages;
-            DataSet.Cancel;
+      DataSet.Cancel;
       Abort;
       Dataset.Refresh;
 

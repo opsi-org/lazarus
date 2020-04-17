@@ -1,7 +1,8 @@
 (*
 uibtime (4.1.1.68-1) stable; urgency=low
 
- * uibdata: SQuibeventBeforePost: plausibility checks
+ * uibdata: SQuibeventAfterEdit: plausibility checks
+    * also called by SQuibeventBeforePost
 
 -- detlef oertel <d.oertel@uib.de>  Thu, 16 Apr 2020 18:00:00 +0000
 
