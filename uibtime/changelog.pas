@@ -1,4 +1,10 @@
 (*
+uibtime (4.1.1.69-1) stable; urgency=low
+
+ * uibdata: fix brokenSQuibeventAfterPost: killed by 4.1.1.68
+
+-- detlef oertel <d.oertel@uib.de>  Sat, 18 Apr 2020 18:00:00 +0000
+
 uibtime (4.1.1.68-1) stable; urgency=low
 
  * uibdata: SQuibeventAfterEdit: plausibility checks
