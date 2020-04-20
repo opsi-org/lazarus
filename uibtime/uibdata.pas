@@ -1612,6 +1612,8 @@ begin
   if Assigned(FOnTop) then
   begin
   {$IFDEF WINDOWS}
+    FOnTop.FormStyle := fsSystemStayOnTop;
+    FOnTop.BorderStyle := bsNone;
     SetWindowPos(FOnTop.handle, HWND_TOPMOST, leftint, 0, ontopwidth,
       ontopheight, SWP_NOACTIVATE);
   {$ENDIF WINDOWS}
