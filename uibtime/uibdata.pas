@@ -1133,7 +1133,7 @@ begin
   end;
 end;
 
-{ also called by afterpost }
+{ also called by beforepost }
 procedure TDataModule1.SQuibeventAfterEdit(DataSet: TDataSet);
 var
   start, stop: TDateTime;
@@ -1141,6 +1141,7 @@ var
   errorstr: string = '';
   goon: boolean = True;
 begin
+  debugOut(5, 'start  SQuibeventAfterEdit ');
   try
     try
       start := DataSet.FieldByName('starttime').AsDateTime;
@@ -1173,7 +1174,7 @@ begin
       Dataset.Refresh;
     end;
   except
-    debugOut(5, 'exception in SQuibeventBeforePost ');
+    debugOut(5, 'exception in SQuibeventAfterEdit ');
   end;
 end;
 
@@ -1191,8 +1192,27 @@ end;
 
 procedure TDataModule1.SQuibeventAfterPost(DataSet: TDataSet);
 begin
-  { plausibility check is in AfterEdit }
-   SQuibeventAfterEdit(Dataset);
+  debugOut(5, 'SQuibeventAfterPost', 'start  SQuibeventAfterPost');
+  try
+    //if DataModule1.SQuibevent.State in [dsInsert, dsEdit] then
+    if DataSet.UpdateStatus in [usModified, usInserted, usDeleted] then
+    begin
+      DataModule1.SQuibevent.ApplyUpdates;
+      debugOut(5, 'SQuibeventAfterPost', 'start  SQuibeventAfterPost (apply)');
+    end;
+    if SQLTransaction1.Active then
+    begin
+      SQLTransaction1.CommitRetaining;
+      //SQLTransaction1.Commit;
+      //SQLTransaction1.StartTransaction;
+      debugOut(5, 'SQuibeventAfterPost', 'start  SQuibeventAfterPost (commit/start)');
+    end
+    else
+      debugOut(3, 'SQuibeventAfterPost',
+        'Error: Missing Transaction SQuibeventAfterPost');
+  except
+    debugOut(2, 'SQuibeventAfterPost', 'exception in SQuibeventAfterPost (commit)');
+  end;
 end;
 
 
@@ -1228,30 +1248,9 @@ begin
 end;
 
 procedure TDataModule1.SQuibeventBeforePost(DataSet: TDataSet);
-var
-  start, stop: TDateTime;
-  startstamp, stopstamp: TTimeStamp;
-  errorstr: string;
 begin
-  try
-    start := DataSet.FieldByName('starttime').AsDateTime;
-    stop := DataSet.FieldByName('stoptime').AsDateTime;
-    if start > stop then
-      errorstr := 'Stopzeit liegt vor Startzeit';
-    if DateOf(start) <> DateOf(stop) then
-      errorstr := 'Startzeit und Stopzeit sind nicht am selben Tag.';
-    if errorstr <> '' then
-    begin
-      ShowMessage('Fehler: ' + errorstr + ' - Speichern wird abgebrochen');
-      Application.ProcessMessages;
-      DataSet.Cancel;
-      Abort;
-      Dataset.Refresh;
-
-    end;
-  except
-    debugOut(5, 'exception in SQuibeventBeforePost ');
-  end;
+  { plausibility check is in AfterEdit }
+    SQuibeventAfterEdit(Dataset);
 end;
 
 procedure TDataModule1.SQuibeventPostError(DataSet: TDataSet;
