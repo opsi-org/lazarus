@@ -1,4 +1,10 @@
 (*
+uibtime (4.1.1.70-1) stable; urgency=low
+
+ * uibdata: fix TimerOnTopTimer: for windows
+
+-- detlef oertel <d.oertel@uib.de>  Mon, 20 Apr 2020 10:00:00 +0000
+
 uibtime (4.1.1.69-1) stable; urgency=low
 
  * uibdata: fix brokenSQuibeventAfterPost: killed by 4.1.1.68
