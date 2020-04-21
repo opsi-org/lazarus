@@ -798,6 +798,27 @@ begin
               IntToStr(TimerNachfrage.Interval div 60000) + ' Minuten.');
             TimerNachfrage.Enabled := True;
             Datamodule1.SQquerytimeout.Close;
+          end
+          else
+          begin
+            { same event - just post stoptime }
+             datamodule1.debugOut(5, 'eventhandler', timetostr(now) +
+                ' eveditlast with new stoptime ' + lastevent);
+              Datamodule1.SQuibevent.edit;
+              Datamodule1.SQuibevent.FieldByName('stoptime').AsDateTime := now;
+              try
+                Datamodule1.SQuibevent.post;
+                //DataModule1.SQuibevent.ApplyUpdates;
+                if not Datamodule1.SQuibevent.Active then
+                  Datamodule1.SQuibevent.Open;
+              except
+                Datamodule1.SQuibevent.post;
+                //DataModule1.SQuibevent.ApplyUpdates;
+                if not Datamodule1.SQuibevent.Active then
+                  Datamodule1.SQuibevent.Open;
+              end;
+              Datamodule1.SQuibevent.last;
+              FOnTop.TimerProjektzeitTimer(FOnTop);
           end;
           // loggedin setzen - false bei pause
           if newevent = 'Pause' then

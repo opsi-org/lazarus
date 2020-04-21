@@ -1141,7 +1141,7 @@ var
   errorstr: string = '';
   goon: boolean = True;
 begin
-  debugOut(5, 'start  SQuibeventAfterEdit ');
+  debugOut(5, 'SQuibeventAfterEdit', 'start  SQuibeventAfterEdit ');
   try
     try
       start := DataSet.FieldByName('starttime').AsDateTime;
@@ -1172,9 +1172,12 @@ begin
       DataSet.Cancel;
       Abort;
       Dataset.Refresh;
-    end;
+      debugOut(4, 'SQuibeventAfterEdit', 'cancled: '+errorstr);
+    end
+    else
+      debugOut(5, 'SQuibeventAfterEdit','successful end  SQuibeventAfterEdit ');
   except
-    debugOut(5, 'exception in SQuibeventAfterEdit ');
+    debugOut(5, 'SQuibeventAfterEdit', 'exception in SQuibeventAfterEdit ');
   end;
 end;
 
@@ -1250,7 +1253,8 @@ end;
 procedure TDataModule1.SQuibeventBeforePost(DataSet: TDataSet);
 begin
   { plausibility check is in AfterEdit }
-    SQuibeventAfterEdit(Dataset);
+  debugOut(5, 'SQuibeventBeforePost', 'calling SQuibeventAfterEdit ');
+  SQuibeventAfterEdit(Dataset);
 end;
 
 procedure TDataModule1.SQuibeventPostError(DataSet: TDataSet;

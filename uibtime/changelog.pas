@@ -1,4 +1,11 @@
 (*
+uibtime (4.1.1.71-1) stable; urgency=low
+
+ * uibdata: better logging in SQuibeventAfterEdit
+ * ontop: eventhandler always post stoptime
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 21 Apr 2020 10:00:00 +0000
+
 uibtime (4.1.1.70-1) stable; urgency=low
 
  * uibdata: fix TimerOnTopTimer: for windows
