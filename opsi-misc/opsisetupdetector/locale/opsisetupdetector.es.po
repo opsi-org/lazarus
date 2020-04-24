@@ -925,6 +925,10 @@ msgstr "Analizar"
 msgid "Create"
 msgstr "Crear"
 
+#: tresultform1.tabsheeticons.caption
+msgid "Produkt Icon"
+msgstr ""
+
 #: tresultform1.tabsheetproduct.caption
 msgid "Product Configuration 1"
 msgstr "Configuración de producto 1"

@@ -182,6 +182,7 @@ type
     StatusBar1: TStatusBar;
     StringGridDep: TStringGrid;
     StringGridProp: TStringGrid;
+    TabSheetIcons: TTabSheet;
     TabSheetProduct2: TTabSheet;
     TabSheetCreate: TTabSheet;
     TabSheetStart: TTabSheet;

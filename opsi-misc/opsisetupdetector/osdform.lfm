@@ -1,7 +1,7 @@
 object resultForm1: TresultForm1
-  Left = 411
+  Left = 344
   Height = 566
-  Top = 312
+  Top = 211
   Width = 1185
   Caption = 'opsi Setup Detector'
   ClientHeight = 546
@@ -15,7 +15,7 @@ object resultForm1: TresultForm1
   OnMouseLeave = FormMouseLeave
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.0.6.0'
+  LCLVersion = '2.0.8.0'
   object Panel1: TPanel
     Left = 0
     Height = 40
@@ -99,11 +99,11 @@ object resultForm1: TresultForm1
       Height = 481
       Top = 1
       Width = 1178
-      ActivePage = TabSheetStart
+      ActivePage = TabSheetIcons
       Align = alClient
       Images = ImageList1
       ParentFont = False
-      TabIndex = 0
+      TabIndex = 5
       TabOrder = 0
       OnChange = PageControl1Change
       object TabSheetStart: TTabSheet
@@ -2362,7 +2362,7 @@ object resultForm1: TresultForm1
             Left = 978
             Height = 30
             Top = 4
-            Width = 127
+            Width = 126
             Anchors = []
             AutoSize = True
             BorderSpacing.Left = 3
@@ -3147,7 +3147,7 @@ object resultForm1: TresultForm1
             Left = 974
             Height = 30
             Top = 4
-            Width = 127
+            Width = 126
             Anchors = []
             AutoSize = True
             BorderSpacing.Left = 3
@@ -4291,6 +4291,9 @@ object resultForm1: TresultForm1
             ScrollBars = ssAutoVertical
           end
         end
+      end
+      object TabSheetIcons: TTabSheet
+        Caption = 'Produkt Icon'
       end
       object TabSheetProduct2: TTabSheet
         Caption = 'Product Configuration 2'

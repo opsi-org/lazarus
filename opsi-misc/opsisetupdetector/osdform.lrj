@@ -59,6 +59,7 @@
 {"hash":258342400,"name":"tresultform1.btproduct1nextstep.caption","sourcebytes":[78,101,120,116,32,83,116,101,112],"value":"Next Step"},
 {"hash":156067838,"name":"tresultform1.label57.caption","sourcebytes":[68,101,115,99,114,105,112,116,105,111,110],"value":"Description"},
 {"hash":75222933,"name":"tresultform1.label65.caption","sourcebytes":[65,100,118,105,99,101],"value":"Advice"},
+{"hash":119382942,"name":"tresultform1.tabsheeticons.caption","sourcebytes":[80,114,111,100,117,107,116,32,73,99,111,110],"value":"Produkt Icon"},
 {"hash":127037762,"name":"tresultform1.tabsheetproduct2.caption","sourcebytes":[80,114,111,100,117,99,116,32,67,111,110,102,105,103,117,114,97,116,105,111,110,32,50],"value":"Product Configuration 2"},
 {"hash":151426505,"name":"tresultform1.label76.caption","sourcebytes":[80,114,105,111,114,105,116,121],"value":"Priority"},
 {"hash":194334512,"name":"tresultform1.btproduct2nextstep.hint","sourcebytes":[71,111,32,116,111,32,116,104,101,32,110,101,120,116,32,83,116,101,112],"value":"Go to the next Step"},
