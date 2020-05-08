@@ -10254,9 +10254,9 @@ begin
       goon := false;
       remaining := winstparam;
 
-      {$IFDEF WINDOWS}
+      {$IFDEF WIN32}
       opsiSetupAdmin_runElevated := False;
-      {$ENDIF WINDOWS}
+      {$ENDIF WIN32}
 
       if length (winstparam) > 0 then goon := true;
       while goon do

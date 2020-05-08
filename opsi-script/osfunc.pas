@@ -466,9 +466,9 @@ function GetNetDrive(const pathname: string): string;
 function KillTask(ExeFileName: string; var info: string): boolean;
 {$ENDIF WIN64}
 
-{$IFDEF WINDOWS}
+{$IFDEF WIN32}
 function SetFilePermissionForRunAs(filename: string; runas: TRunAs; var errorCode: DWORD): boolean;
-{$ENDIF WINDOWS}
+{$ENDIF WIN32}
 
 function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
   WaitForReturn: boolean; WaitForWindowVanished: boolean;
@@ -1458,7 +1458,7 @@ end;
 
 {$ENDIF WINDOWS}
 
-{$IFDEF WINDOWS}
+{$IFDEF WIN32}
 function SetFilePermissionForRunAs(filename: string; runas: TRunAs; var errorCode: DWORD): boolean;
 
 const
@@ -1647,7 +1647,7 @@ begin
     end;
 end;
 
-{$ENDIF WINDOWS}
+{$ENDIF WIN32}
 
 {$IFDEF WINDOWS}
 function StartProcess_se(CmdLinePasStr: string; ShowWindowFlag: integer;

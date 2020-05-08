@@ -23,7 +23,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
       <RevisionNr Value="3"/>
-      <BuildNr Value="12"/>
+      <BuildNr Value="13"/>
       <StringTable Comments="Compiled with Lazarus 2.0.6 / FPC 3.0.4" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst32.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst32.exe" ProductName="opsi-script" ProductVersion="4.1.0"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -138,13 +138,6 @@
 -dGUI
 -dOSLOG
 -dSYNAPSE"/>
-            <OtherDefines Count="5">
-              <Define0 Value="OPSIWINST"/>
-              <Define1 Value="WINDOWS"/>
-              <Define2 Value="OPSISCRIPT"/>
-              <Define3 Value="GUI"/>
-              <Define4 Value="OSLOG"/>
-            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -424,6 +417,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
+      <Libraries Value="lib"/>
       <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\modified\misc;..\external_libraries\synapse;..\external_libraries\GZIPUtils"/>
     </SearchPaths>
     <Parsing>
