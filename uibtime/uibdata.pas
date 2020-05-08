@@ -13,6 +13,7 @@ uses
   elfreader, {needed for reading ELF executables}
   libnotify,
   osprocessux,
+  pingsend,
 {$ENDIF LINUX}
   {$IFDEF WINDOWS}
   winpeimagereader, {need this for reading exe info}
@@ -29,6 +30,8 @@ uses
   typinfo,
   Controls,
   Dialogs,
+  StdCtrls,
+  DBCtrls,
   IniFiles, process, DateUtils,
   linhandlewin,
   httpservice,
@@ -66,6 +69,7 @@ type
     Dateneditieren1: TMenuItem;
     IBConnection2: TIBConnection;
     Arbeitsberichte: TMenuItem;
+    linuxwmctrl: TMenuItem;
     ProcessTrayNotify: TProcess;
     SQholydays: TSQLQuery;
     SQLQueryTmp: TSQLQuery;
@@ -129,6 +133,7 @@ type
     procedure Import1Click(Sender: TObject);
     procedure Info1Click(Sender: TObject);
     procedure LeisteNeuAufbauen1Click(Sender: TObject);
+    procedure linuxwmctrlClick(Sender: TObject);
     procedure PopupMenu1Close(Sender: TObject);
     procedure PopupMenu1Popup(Sender: TObject);
     procedure queryAfterHelper(myevent: string; myquery: TSQLQuery; DataSet: TDataSet);
@@ -150,6 +155,7 @@ type
     procedure SQuibdefprojAfterDelete(DataSet: TDataSet);
     procedure SQuibdefprojAfterPost(DataSet: TDataSet);
     procedure SQuibeventAfterDelete(DataSet: TDataSet);
+    procedure SQuibeventAfterEdit(DataSet: TDataSet);
     procedure SQuibeventAfterInsert(DataSet: TDataSet);
     procedure SQuibeventAfterPost(DataSet: TDataSet);
     procedure SQuibeventBeforeClose(DataSet: TDataSet);
@@ -212,6 +218,7 @@ type
     procedure DumpExceptionCallStack(E: Exception);
     procedure OnEndSession(Sender: TObject);
     procedure SetFontName(Control: TControl; Name: string);
+    procedure configureComboBox(mycombo: TComboBox);
   private
     { private declarations }
   public
@@ -247,7 +254,12 @@ var
   TrayInterval: cardinal;
   scalefactor: double = 1.0;
   myFont: string;
-  myscreen : TScreen;
+  myscreen: TScreen;
+  myDbServer: string;
+  linuxusewmctrl: boolean = True;
+  forceontopleft: integer = -1;
+  ontopintaskbar: TShowInTaskBar = stNever;
+  ontoptimer: boolean = True;
 
 
 
@@ -281,7 +293,7 @@ begin
   pathToTarget := FindDefaultExecutablePath(target);
   if (pathToTarget <> '') and FileExistsUTF8(pathToTarget) then
   begin
-    Result := true;
+    Result := True;
     pathToTarget := Trim(pathToTarget);
   end;
 end;
@@ -335,7 +347,10 @@ end;
 procedure TDataModule1.setOntopwidth(newvalue: integer);
 begin
   ontopwidth := newvalue;
-  leftint := (screenx - ontopwidth) div 2;
+  if forceontopleft > -1 then
+    leftint := forceontopleft
+  else
+    leftint := (screenx - ontopwidth) div 2;
 end;
 
 procedure TDataModule1.setOntopheight(newvalue: integer);
@@ -543,7 +558,7 @@ begin
   FOntop.Enabled := True;
   FOntop.ineditmode := False;
   FOntop.eventhandler(ontop.lastevent);
-  TimerOntop.Enabled := True;
+  TimerOntop.Enabled := ontoptimer;
 end;
 
 
@@ -647,9 +662,50 @@ begin
   FOnTop.ReBuildForm;
 end;
 
+procedure TDataModule1.linuxwmctrlClick(Sender: TObject);
+var
+  myini: TIniFile;
+  logdir, logfeilname: string;
+begin
+  if linuxwmctrl.Checked then
+  begin
+    linuxwmctrl.Checked := False;
+    linuxusewmctrl := False;
+  end
+  else
+  begin
+    linuxwmctrl.Checked := True;
+    linuxusewmctrl := True;
+  end;
+  // we will use logdir for logging and for configuration
+  logdir := SysUtils.GetAppConfigDir(False);
+  if logdir = '' then
+  begin
+    logdir := SysUtils.GetUserDir;
+    logdir := logdir + '\uibtime';
+  end;
+  logdir := ExpandFileNameUTF8(logdir);
+  ForceDirectories(logdir);
+  logfeilname := ExpandFileNameUTF8(logdir + 'uibtime.conf');
+  myini := TIniFile.Create(logfeilname);
+  debugOut(5, 'Will use conf file: ' + logfeilname);
+  DataModule1.debugOut(6, 'linuxwmctrlClick', 'Will use conf file: ' + logfeilname);
+  if myini = nil then
+  begin
+    DataModule1.debugOut(2, 'linuxwmctrlClick',
+      'myini = nil: coud not open :' + logfeilname);
+    ShowMessage('Fehler in Konfigurations Datei. Bitte Log sichern. Programm wird beendet');
+    Application.Terminate;
+  end;
+  myini.WriteBool('general', 'linuxwmctrl', linuxwmctrl.Checked);
+  debugOut(6, 'linuxwmctrlClick: ' + BoolToStr(linuxwmctrl.Checked, True));
+  myini.UpdateFile;
+  myini.Free;
+end;
+
 procedure TDataModule1.PopupMenu1Close(Sender: TObject);
 begin
-  TimerOnTop.Enabled := True;
+  TimerOnTop.Enabled := ontoptimer;
 end;
 
 procedure TDataModule1.PopupMenu1Popup(Sender: TObject);
@@ -1077,6 +1133,54 @@ begin
   end;
 end;
 
+{ also called by beforepost }
+procedure TDataModule1.SQuibeventAfterEdit(DataSet: TDataSet);
+var
+  start, stop: TDateTime;
+  startstamp, stopstamp: TTimeStamp;
+  errorstr: string = '';
+  goon: boolean = True;
+begin
+  debugOut(5, 'SQuibeventAfterEdit', 'start  SQuibeventAfterEdit ');
+  try
+    try
+      start := DataSet.FieldByName('starttime').AsDateTime;
+    except
+      errorstr := 'Eingegebene Startzeit ist nicht gültig.';
+      goon := False;
+    end;
+    if goon then
+    begin
+      try
+        stop := DataSet.FieldByName('stoptime').AsDateTime;
+      except
+        errorstr := 'Eingegebene Startzeit ist nicht gültig.';
+        goon := False;
+      end;
+      if goon then
+      begin
+        if start > stop then
+          errorstr := 'Stopzeit liegt vor Startzeit';
+        if DateOf(start) <> DateOf(stop) then
+          errorstr := 'Startzeit und Stopzeit sind nicht am selben Tag.';
+      end;
+    end;
+    if errorstr <> '' then
+    begin
+      ShowMessage('Fehler: ' + errorstr + ' - Speichern wird abgebrochen');
+      Application.ProcessMessages;
+      DataSet.Cancel;
+      Abort;
+      Dataset.Refresh;
+      debugOut(4, 'SQuibeventAfterEdit', 'cancled: '+errorstr);
+    end
+    else
+      debugOut(5, 'SQuibeventAfterEdit','successful end  SQuibeventAfterEdit ');
+  except
+    debugOut(5, 'SQuibeventAfterEdit', 'exception in SQuibeventAfterEdit ');
+  end;
+end;
+
 
 procedure TDataModule1.SQuibeventAfterInsert(DataSet: TDataSet);
 begin
@@ -1112,8 +1216,8 @@ begin
   except
     debugOut(2, 'SQuibeventAfterPost', 'exception in SQuibeventAfterPost (commit)');
   end;
-
 end;
+
 
 procedure TDataModule1.SQuibeventBeforeClose(DataSet: TDataSet);
 begin
@@ -1148,14 +1252,9 @@ end;
 
 procedure TDataModule1.SQuibeventBeforePost(DataSet: TDataSet);
 begin
- (*
-     try
-  if not SQLTransaction1.Active then SQLTransaction1.StartTransaction;
-  debugOut(5,'StartTransaction in SQuibeventBeforePost: ');
- except
-  debugOut(5,'exception in SQuibeventBeforePost (starttransaction)');
- end;
- *)
+  { plausibility check is in AfterEdit }
+  debugOut(5, 'SQuibeventBeforePost', 'calling SQuibeventAfterEdit ');
+  SQuibeventAfterEdit(Dataset);
 end;
 
 procedure TDataModule1.SQuibeventPostError(DataSet: TDataSet;
@@ -1456,43 +1555,34 @@ end;
 
 procedure TDataModule1.Statistik1Cancel;
 begin
-  TimerOntop.Enabled := True;
+  TimerOntop.Enabled := ontoptimer;
 end;
 
 procedure TDataModule1.TimerCheckNetTimer(Sender: TObject);
 var
-  cinfo: TConnInfoType;
   servername: string;
   retries: integer;
 begin
 
-  servername := 'groupware';
+  servername := myDbServer;
   ;
   retries := 0;
-  {$IFDEF WIN32}
+  //{$IFDEF WIN32}
   while (pinghost(servername) = -1) and (retries < 10) do
   begin
-    debugOut(3, 'CheckNetTimer', 'Could not reach ' + servername + ' retry ...');
+    debugOut(3, 'CheckNetTimer', 'Could not reach via ping: ' +
+      servername + ' retry ...');
     Inc(retries);
+    Application.ProcessMessages;
     Sleep(1000);
   end;
   if retries >= 10 then
-    debugOut(2, 'CheckNetTimer', 'Could not reach ' + servername + ' no retry.');
- {$ENDIF WIN32}
-  (*
-     if mrAbort = MessageDlg('uibtime: Warnung','Die Netzwerkverbindung zum DB-Server '+servername,mtError,[mbAbort,mbIgnore],0)
-     then
-     begin
-       debugOut(3, 'CheckNetTimer', 'Could not reach '+servername+' terminate.');
-       Application.Terminate;
-       halt;
-     end;
-  {$ENDIF WIN32}
-  if not IBConnection1.Connected  then
   begin
-    debugOut(3, 'CheckNetTimer', 'connection error');
+    debugOut(2, 'CheckNetTimer', 'Could not reach via ping: ' +
+      servername + ' no retry.');
+    DataModule1.TimerCheckNet.Enabled := False;
   end;
-  *)
+  //{$ENDIF WIN32}
 end;
 
 
@@ -1507,29 +1597,37 @@ procedure TDataModule1.TimerLogoffOnTopTimer(Sender: TObject);
 begin
   debugOut(8, 'TimerLogoffOnTopTimer', 'start ');
   TimerLogoffOnTop.interval := 1500;
+  if linuxusewmctrl then
+    moveToCurrentDeskAndFront(Flogoff.Caption);
   //SetWindowPos(FLogoff.handle, HWND_TOPMOST, 0, 0, screenx - 1, screeny - 1, SWP_NOACTIVATE);
 end;
 
 procedure TDataModule1.TimerOnTopTimer(Sender: TObject);
 var
-  wmctrlpath : string;
-  outstring : string;
-  outlist : TStringlist;
-  desknum , i, exitcode: integer;
-  cmd : string;
+  wmctrlpath: string;
+  outstring: string;
+  outlist: TStringList;
+  desknum, i, exitcode: integer;
+  cmd: string;
 begin
   debugOut(8, 'TimerOnTopTimer', 'start ');
   TimerOntop.interval := 500;
+  if Assigned(FOnTop) then
+  begin
   {$IFDEF WINDOWS}
-  SetWindowPos(FOnTop.handle, HWND_TOPMOST, leftint, 0, ontopwidth,
-    ontopheight, SWP_NOACTIVATE);
+    FOnTop.FormStyle := fsSystemStayOnTop;
+    FOnTop.BorderStyle := bsNone;
+    SetWindowPos(FOnTop.handle, HWND_TOPMOST, leftint, 0, ontopwidth,
+      ontopheight, SWP_NOACTIVATE);
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
-  FOntop.Left := leftint;
-  FOnTop.Top := 0;
-  FOnTop.Height := ontopheight;
-  FOnTop.Width := ontopwidth;
-  FOnTop.FormStyle := fsSystemStayOnTop;
+    FOntop.Left := leftint;
+    FOnTop.Top := 0;
+    FOnTop.Height := ontopheight;
+    FOnTop.Width := ontopwidth;
+    FOnTop.FormStyle := fsSystemStayOnTop;
+    FOnTop.BorderStyle := bsNone;
+  (*
   //FOnTop.ReBuildForm;
   //FOnTop.Repaint;
   try
@@ -1538,17 +1636,11 @@ begin
     //Application.BringToFront;
     if which('wmctrl',wmctrlpath) then
     begin
-      cmd := wmctrlpath+' -r "uibtime - ontop" -b add,above';
+      cmd := wmctrlpath+' -r "'+FOnTop.Caption+'" -b add,above';
       debugOut(8, 'TimerOnTopTimer', 'cmd: '+cmd);
       getCommandResult(cmd,exitcode);
       if exitcode = 0 then  debugOut(8, 'TimerOnTopTimer', 'movefront ')
       else debugOut(4, 'TimerOnTopTimer', 'movefront failed');
-      (*
-       if RunCommand(wmctrlpath,['-r','"uibtime - ontop"','-b','add,above'], outstring,[poWaitOnExit]) then
-          debugOut(8, 'TimerOnTopTimer', 'movefront ')
-        else  debugOut(4, 'TimerOnTopTimer', 'movefront failed');
-        *)
-
        outlist := RunCommandCaptureOutGetOutlist(wmctrlpath+' -d ');
        debugOut(8, 'TimerOnTopTimer', 'outlist: '+outlist.Text);
        outstring := '';
@@ -1564,8 +1656,8 @@ begin
        debugOut(8, 'TimerOnTopTimer', 'desknum: '+IntToStr(desknum));
        if desknum > -1 then
        begin
-        // RunCommand(wmctrlpath,['-r','"uibtime - ontop"','-t ',inttostr(desknum)], outstring,[poWaitOnExit])
-         cmd := wmctrlpath+' -r "uibtime - ontop" -t '+inttostr(desknum);
+        // RunCommand(wmctrlpath,['-r','"'+FOnTop.Caption+'"','-t ',inttostr(desknum)], outstring,[poWaitOnExit])
+         cmd := wmctrlpath+' -r "'+FOnTop.Caption+'" -t '+inttostr(desknum);
          debugOut(8, 'TimerOnTopTimer', 'cmd: '+cmd);
          getCommandResult(cmd,exitcode);
        end
@@ -1574,11 +1666,13 @@ begin
   except
     debugOut(8, 'TimerOnTopTimer', 'exception: movefront ');
   end;
-
+  *)
+    if linuxusewmctrl then
+      moveToCurrentDeskAndFront(FOnTop.Caption);
+      {$ENDIF LINUX}
+  end;
   Application.ProcessMessages;
-  //  SetWindowPos(FOnTop.handle, HWND_TOPMOST, leftint, 0, ontopwidth,
-  //    ontopheight, SWP_NOACTIVATE);
-  {$ENDIF LINUX}
+
 
   // show last event in DBLCB_topten
   //if not FOnTop.ineditmode then SQuibevent.Last;
@@ -1862,8 +1956,9 @@ begin
     else
     begin
       FLoggedin.Show;
-      if not setwindowtoalldesktops(FLoggedin.Caption) then
-        DataModule1.debugOut(2, 'ontop', 'failed presenz to all desktops');
+      if linuxusewmctrl then
+        if not setwindowtoalldesktops(FLoggedin.Caption) then
+          DataModule1.debugOut(2, 'ontop', 'failed presenz to all desktops');
       Weristda1.Checked := True;
       myini.WriteBool('general', 'weristda', True);
     end;
@@ -2158,8 +2253,19 @@ begin
   Trayshow := myini.ReadBool('general', 'showTray', True);
   TrayIcon1.Visible := Trayshow;
   TimerTrayIcon.Enabled := Trayshow;
+  linuxusewmctrl := myini.ReadBool('general', 'linuxwmctrl', True);
+  linuxwmctrl.Checked := linuxusewmctrl;
+  forceontopleft := myini.ReadInteger('general', 'forceontopleft', forceontopleft);
+  if myini.ReadBool('general', 'ontopintaskbar', False) then
+    ontopintaskbar := stAlways;
+  if not myini.ReadBool('general', 'ontoptimer', True) then
+    ontoptimer := False;
+  TimerOnTop.Enabled := ontoptimer;
   myini.UpdateFile;
   myini.Free;
+  {$IFDEF WINDOWS}
+  linuxwmctrl.Enabled := False;
+  {$ENDIF WINDOWS}
 
   // Initialize logging
   LogDatei := TLogInfo.Create;
@@ -2424,12 +2530,15 @@ begin
   // Set font properties
   try
     { The control may have no property 'font' - this will lead to an exception }
-    AnObject := GetObjectProp(Control, 'Font', TControl);
-    if AnObject is TFont then
+    if IsPublishedProp(Control, 'Font') then
     begin
-      // Set properties
-      Font := TFont(AnObject);
-      Font.Name := Name;
+      AnObject := GetObjectProp(Control, 'Font', TControl);
+      if AnObject is TFont then
+      begin
+        // Set properties
+        Font := TFont(AnObject);
+        Font.Name := Name;
+      end;
     end;
 
   except
@@ -2450,17 +2559,38 @@ begin
   end;
 end;
 
+procedure TDataModule1.configureComboBox(mycombo: TComboBox);
+begin
+
+  {$IFDEF LINUX}
+  mycombo.AutoComplete := True;
+  mycombo.AutoDropDown := False;
+  mycombo.AutoSelect := True;
+  //mycombo.ReadOnly := false;
+  mycombo.Style := csSimple;
+  mycombo.Sorted := False;
+ {$ENDIF LINUX}
+ {$IFDEF WINDOWS}
+  mycombo.AutoComplete := True;
+  mycombo.AutoDropDown := True;
+  mycombo.AutoSelect := True;
+  mycombo.ReadOnly := False;
+  mycombo.Style := csDropDown;
+  mycombo.Sorted := False;
+  {$ENDIF WINDOWS}
+
+end;
 
 initialization
   { initialization-Abschnitt }
   DefaultFormatSettings.ShortDateFormat := 'dd.mm.yyyy';
   ontopwidth := 850;//730;
   ontopheight := 28;
+  scalefactor := 96 / screen.PixelsPerInch;
   {$ifdef LINUX}
-  ontopheight := round(32 * (96 / screen.PixelsPerInch));
+  ontopheight := round(ontopheight * scalefactor);
   {$ENDIF LINUX}
   //ontopheight := 50;
-  scalefactor := 96 / screen.PixelsPerInch;
   screenx := Screen.Width;
   screeny := Screen.Height;
   leftint := (screenx - ontopwidth) div 2;

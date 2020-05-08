@@ -24,5 +24,7 @@
   <true/>
   <key>NSHighResolutionCapable</key>
   <true/>
+  <key>NSNetworkVolumesUsageDescription</key>
+  <string>opsi need access to your network shares</string>
 </dict>
 </plist>

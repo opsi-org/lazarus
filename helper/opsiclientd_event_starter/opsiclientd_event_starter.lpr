@@ -278,6 +278,7 @@ begin
   else
   begin
     WriteHelp;
+    //Readln; for testing/debugging
     Terminate;
     Exit;
   end;
@@ -438,6 +439,7 @@ var
 {$ENDIF WINDOWS}
 
 begin
+  Application.Title:='opsiclientd_event_starter';
   Application:=Tstarter.Create(nil);
   Application.Run;
   Application.Free;

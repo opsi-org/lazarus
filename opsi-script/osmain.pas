@@ -396,7 +396,7 @@ function setBootmode(const bootmode: string; var problem: string): boolean;
 {$IFDEF UNIX}
 var
   myconf: TIniFile;
-{$ENDIF LINUX}
+{$ENDIF UNIX}
 begin
   {$IFDEF WINDOWS}
   Result := True;
@@ -430,10 +430,15 @@ begin
   {$ENDIF}
   {$IFDEF UNIX}
   try
-    myconf := TIniFile.Create(opsiscriptconf);
-    myconf.WriteString('general', 'bootmode', bootmode);
-    myconf.Free;
-    Result := True;
+    if FileExists(opsiclientagentconf) then
+    begin
+      myconf := TIniFile.Create(opsiclientagentconf);
+      myconf.WriteString('opsi-script', 'bootmode', bootmode);
+      myconf.Free;
+      Result := True;
+    end
+    else
+      LogDatei.log('File not found ' + opsiclientagentconf, LLwarning);
   except
     on E: Exception do
     begin
@@ -442,7 +447,7 @@ begin
       Result := False;
     end;
   end;
-  {$ENDIF LINUX}
+  {$ENDIF UNIX}
 end;
 
 
@@ -450,7 +455,7 @@ procedure getBootmode(var bootmode: string; var fromRegistry: boolean);
 {$IFDEF UNIX}
 var
   myconf: TIniFile;
-{$ENDIF LINUX}
+{$ENDIF UNIX}
 begin
 {$IFDEF WINDOWS}
   fromRegistry := True;
@@ -486,17 +491,22 @@ begin
 {$ENDIF}
 {$IFDEF UNIX}
   try
-    myconf := TIniFile.Create(opsiscriptconf);
-    bootmode := myconf.ReadString('general', 'bootmode', 'BKSTD');
-    myconf.Free;
+    if FileExists(opsiclientagentconf) then
+    begin
+      myconf := TIniFile.Create(opsiclientagentconf);
+      bootmode := myconf.ReadString('opsi-script', 'bootmode', 'BKSTD');
+      myconf.Free;
+    end
+    else
+      LogDatei.log('File not found ' + opsiclientagentconf, LLwarning);
   except
     on E: Exception do
     begin
-      LogDatei.log('exception while reading ' + opsiscriptconf +
+      LogDatei.log('exception while reading ' + opsiclientagentconf +
         ' error ' + e.message, LLERROR);
     end;
   end;
-  {$ENDIF LINUX}
+  {$ENDIF UNIX}
 end;
 
 function determinateRemoteLogging: boolean;
@@ -535,7 +545,8 @@ begin
   if getLinuxDistroName = 'Univention' then
   begin
     if logdatei <> nil then
-      logdatei.log('Univention detected: switching to temp path: ' + mytemppath, LLdebug);
+      logdatei.log('Univention detected: switching to temp path: ' +
+        mytemppath, LLdebug);
     mytemppath := UniventionTempPath;
   end;
   {$ENDIF}
@@ -1044,7 +1055,7 @@ var
   begin
     Result := False;
     LogDatei.LogProduktId := False;
-    LogDatei.log('bootmode ' + bootmode, LLInfo);
+    //LogDatei.log('bootmode ' + bootmode, LLInfo);
     if Bootmode = 'REINS' then
     begin
       {$IFDEF GUI}
@@ -1136,7 +1147,7 @@ begin
   try
     {$IFDEF WINDOWS}
     SystemCritical.IsCritical := True;
-{$ENDIF WINDOWS}
+    {$ENDIF WINDOWS}
     goOn := True;
     {$IFDEF GUI}
     FBatchOberflaeche.ForceStayOnTop(False);
@@ -1187,13 +1198,14 @@ begin
 
 
     getBootmode(bootmode, bootmodeFromRegistry);
+    LogDatei.log('Bootmode: ' + bootmode, LLinfo);
   except
     on e: Exception do
     begin
       LogDatei.log('exception in BuildPC: starting ' + e.message, LLError);
       {$IFDEF WINDOWS}
       SystemCritical.IsCritical := False;
-{$ENDIF WINDOWS}
+      {$ENDIF WINDOWS}
     end;
   end;
 
@@ -1214,7 +1226,7 @@ begin
         if (Bootmode = 'REINS')
         {$IFDEF WINDOWS}
           and bootmodeFromRegistry
-{$ENDIF WINDOWS}
+        {$ENDIF WINDOWS}
         then
           if not setBootmode('BKSTD', Fehler) then
           begin
@@ -1408,10 +1420,11 @@ begin
                   buildpcscript := TuibInstScript.Create;
                   tmplist := TStringList.Create;
                   tmpstr := extractfiledrive(GetWinDirectory);
-                  cmdstr := '(Get-BitLockerVolume -MountPoint '
-                    + tmpstr + ').EncryptionPercentage';
+                  cmdstr := '(Get-BitLockerVolume -MountPoint ' +
+                    tmpstr + ').EncryptionPercentage';
                   tmplist.Text :=
-                    buildpcscript.execPowershellCall(cmdstr, 'sysnative', 0, True, False, True).Text;
+                    buildpcscript.execPowershellCall(cmdstr, 'sysnative',
+                    0, True, False, True).Text;
                   if buildpcscript.LastExitCodeOfExe = 0 then
                   begin
                     LogDatei.log('Succesful asked for Bitlocker', LLInfo);
@@ -1435,8 +1448,8 @@ begin
                 except
                   on e: Exception do
                   begin
-                    LogDatei.log('Error executing :' + cmdstr + ' : with powershell: ' +
-                      e.message,
+                    LogDatei.log('Error executing :' + cmdstr +
+                      ' : with powershell: ' + e.message,
                       LLError);
                   end
                 end;
@@ -1500,13 +1513,21 @@ begin
         begin
           if opsiclientd then
           begin
+            LogDatei.log_prog('Reboot via opsiclientd', LLinfo);
             TheExitMode := txmNoExit;
             filehandle :=
               fpOpen('/var/run/opsiclientd/reboot', O_WrOnly or O_Creat);
             fpClose(filehandle);
           end
           else
+          begin
+            if PerformExitWindows <> txrImmediateReboot then
+            begin
+              LogDatei.log('BuildPC: update switches 2.....', LLDebug3);
+              opsidata.UpdateSwitches(extremeErrorLevel, logdatei.actionprogress);
+            end;
             TheExitMode := txmReboot;
+          end;
         end;
 
         txrRegisterforLogout, txrImmediateLogout: TheExitMode := txmLogout;
@@ -1522,8 +1543,14 @@ begin
     end;
     if PerformShutdown = tsrRegisterForShutdown then
     begin
-      filehandle := fpOpen('/var/run/opsiclientd/shutdown', O_WrOnly or O_Creat);
-      fpClose(filehandle);
+      if opsiclientd then
+      begin
+        LogDatei.log_prog('Shutdown via opsiclientd', LLinfo);
+        filehandle := fpOpen('/var/run/opsiclientd/shutdown', O_WrOnly or O_Creat);
+        fpClose(filehandle);
+      end
+      else
+        os_shutdown();
     end;
     {$ENDIF LINUX}
     LogDatei.log('BuildPC: Terminating .....', LLDebug3);
@@ -1879,7 +1906,8 @@ begin
                 logdatei.log('No free Linux Agent start', LLDebug2);
             end
             else
-              logdatei.log('Error: Startkey has no valid integer: ' + trim(list.Strings[1]), LLError);
+              logdatei.log('Error: Startkey has no valid integer: ' +
+                trim(list.Strings[1]), LLError);
           end
           else
             logdatei.log('Error: Startkey has wrong signature.', LLError);
@@ -1893,7 +1921,8 @@ begin
         end;
       end
       else
-        logdatei.log('No valid start enty in ' + opsiclientagentconf + ' found ', LLWarning);
+        logdatei.log('No valid start enty in ' + opsiclientagentconf +
+          ' found ', LLWarning);
     end
     else
       logdatei.log('No ' + opsiclientagentconf + ' found ', LLWarning);
@@ -1950,7 +1979,8 @@ begin
     //writeln('StartProgramModes5');
     {$ENDIF GUI}
     LogDatei.log('pm: ' + IntToStr(Ord(ProgramMode)), LLessential);
-    startupmessages.Append('pm: ' + IntToStr(Ord(ProgramMode)) + ' ' + DateTimeToStr(Now));
+    startupmessages.Append('pm: ' + IntToStr(Ord(ProgramMode)) + ' ' +
+      DateTimeToStr(Now));
     sessionid := '';
 
     if ProgramMode = pmInfo then
@@ -1969,23 +1999,20 @@ begin
         //'   ' + ParamDelim + 'pcprofil  [PCProfileFile  [[' + ParamDelim + 'logfile] Logfile ] ] [' + ParamDelim + 'parameter ParameterString]' + LineEnding +
         '	 ' + ParamDelim + 'opsiservice <OpsiServiceUrl> ' +
         ParamDelim + 'clientid <clientid> ' + ParamDelim +
-        'credentialfile <filename>' + ParamDelim +
-        'username <username> ' + ParamDelim + 'password <password> [' +
-        ParamDelim + 'sessionid <sessionid> ] [' + ParamDelim +
-        'usercontext <usercontext> ] [' + ParamDelim +
-        'productlist <productlist> | ' + ParamDelim +
+        'credentialfile <filename>' + ParamDelim + 'username <username> ' +
+        ParamDelim + 'password <password> [' + ParamDelim +
+        'sessionid <sessionid> ] [' + ParamDelim + 'usercontext <usercontext> ] [' +
+        ParamDelim + 'productlist <productlist> | ' + ParamDelim +
         'processproducts <productlist> | ' + ParamDelim +
         'loginscripts | ' + ParamDelim + 'allloginscripts ] [' +
-        ParamDelim + 'silent ]' + '	 [<Scriptfile>  [' +
-        ParamDelim + 'logfile <LogFile>] [' + ParamDelim +
-        'productid <productid> ] [' + ParamDelim +
-        'logproductid <productid> ] [' + ParamDelim +
+        ParamDelim + 'silent ]' + '	 [<Scriptfile>  [' + ParamDelim +
+        'logfile <LogFile>] [' + ParamDelim + 'productid <productid> ] [' +
+        ParamDelim + 'logproductid <productid> ] [' + ParamDelim +
         '[batch|silent] |histolist Inifilepath ] [' + ParamDelim +
         'parameter ParameterString]' + LineEnding +
-        '	 Scriptfile[;Scriptfile]*  [' + ParamDelim +
-        'logfile LogFile] [' + ParamDelim + 'lang langcode] [' +
-        ParamDelim + '[batch|silent]] [' + ParamDelim +
-        'productid] [' + ParamDelim + 'productid <productid> ] [' +
+        '	 Scriptfile[;Scriptfile]*  [' + ParamDelim + 'logfile LogFile] [' +
+        ParamDelim + 'lang langcode] [' + ParamDelim + '[batch|silent]] [' +
+        ParamDelim + 'productid] [' + ParamDelim + 'productid <productid> ] [' +
         ParamDelim + 'parameter ParameterString]',
         [mrOk],
         650, 250);
@@ -1996,25 +2023,23 @@ begin
       writeln('command line options are' + LineEnding + '' +
         ParamDelim + '? |' + ParamDelim + 'h[elp]' + LineEnding +
         //'   ' + ParamDelim + 'pcprofil  [PCProfileFile  [[' + ParamDelim + 'logfile] Logfile ] ] [' + ParamDelim + 'parameter ParameterString]' + LineEnding +
-        '' + ParamDelim + 'opsiservice <OpsiServiceUrl> ' +
-        ParamDelim + 'clientid <clientid> ' + ParamDelim +
-        'credentialfile <filename>' + ParamDelim +
-        'username <username> ' + ParamDelim + 'password <password> [' +
-        ParamDelim + 'sessionid <sessionid> ] [' + ParamDelim +
-        'usercontext <usercontext> ] [' + ParamDelim +
+        '' + ParamDelim + 'opsiservice <OpsiServiceUrl> ' + ParamDelim +
+        'clientid <clientid> ' + ParamDelim + 'credentialfile <filename>' +
+        ParamDelim + 'username <username> ' + ParamDelim +
+        'password <password> [' + ParamDelim + 'sessionid <sessionid> ] [' +
+        ParamDelim + 'usercontext <usercontext> ] [' + ParamDelim +
         'productlist <productlist> | ' + ParamDelim +
         'processproducts <productlist> | ' + ParamDelim +
         'loginscripts | ' + ParamDelim + 'allloginscripts ] [' +
         ParamDelim + 'silent ]' + LineEnding + ' Scriptfile  [' +
         ParamDelim + 'logfile <LogFile>] [' + ParamDelim +
-        'productid <productid> ] [' + ParamDelim +
-        'productid <productid> ] [' + ParamDelim +
-        '[batch|silent] | histolist Inifilepath ] [' + ParamDelim +
-        'parameter ParameterString]' + LineEnding +
-        ' Scriptfile[;Scriptfile]*  [' + ParamDelim +
-        'logfile LogFile] [' + ParamDelim + '[batch|silent]] [' +
-        ParamDelim + 'productid] [' + ParamDelim +
-        'productid <productid> ] [' + ParamDelim + 'parameter ParameterString]');
+        'productid <productid> ] [' + ParamDelim + 'productid <productid> ] [' +
+        ParamDelim + '[batch|silent] | histolist Inifilepath ] [' +
+        ParamDelim + 'parameter ParameterString]' + LineEnding +
+        ' Scriptfile[;Scriptfile]*  [' + ParamDelim + 'logfile LogFile] [' +
+        ParamDelim + '[batch|silent]] [' + ParamDelim + 'productid] [' +
+        ParamDelim + 'productid <productid> ] [' + ParamDelim +
+        'parameter ParameterString]');
       {$ENDIF GUI}
 
       TerminateApp;
@@ -2035,7 +2060,7 @@ begin
           {$IFDEF WINDOWS}
           SystemCritical.IsCritical := True;
 {$ENDIF WINDOWS}
-          // if necessary do product installations
+          { if necessary do product installations  }
           {$IFDEF GUI}
           if runSilent then
             FBatchOberflaeche.setVisible(False)
@@ -2149,8 +2174,8 @@ begin
               writeln('Use of opsi Linux Client Agent Extension is not activated');
               {$IFDEF GUI}
               MyMessageDlg.WiMessage(
-                'Use of opsi Linux Client Agent Extension is not activated ' + LineEnding +
-                'Terminating Program', [mrOk]);
+                'Use of opsi Linux Client Agent Extension is not activated ' +
+                LineEnding + 'Terminating Program', [mrOk]);
               {$ENDIF GUI}
               LogDatei.log('Terminating Program', LLerror);
               TerminateApp;
@@ -2171,8 +2196,8 @@ begin
             writeln('Use of opsi MacOS Client Agent Extension is not activated');
               {$IFDEF GUI}
             MyMessageDlg.WiMessage(
-              'Use of opsi MacOS Client Agent Extension is not activated ' + LineEnding +
-              'Terminating Program', [mrOk]);
+              'Use of opsi MacOS Client Agent Extension is not activated ' +
+              LineEnding + 'Terminating Program', [mrOk]);
               {$ENDIF GUI}
             LogDatei.log('Terminating Program', LLerror);
             TerminateApp;
@@ -2230,7 +2255,8 @@ begin
             osconf.force_min_loglevel), LLessential);
           logDatei.log_prog('default_loglevel: ' + IntToStr(
             osconf.default_loglevel), LLessential);
-          logDatei.log_prog('debug_prog: ' + booleantostr(osconf.debug_prog), LLessential);
+          logDatei.log_prog('debug_prog: ' + booleantostr(osconf.debug_prog),
+            LLessential);
           logDatei.log_prog('debug_lib: ' + booleantostr(osconf.debug_lib), LLessential);
 
           if not (batchproductid = '') then
@@ -2248,8 +2274,8 @@ begin
           logDatei.log_prog('AktProduktId: ' + LogDatei.AktProduktId +
             ' = ' + booleantostr(LogDatei.LogProduktId), LLessential);
 
-          // Are we in batch with /productid (opsi-template-with-admin) ?
-          // open service connection if possible
+          { Are we in batch with /productid (opsi-template-with-admin) ?
+             open service connection if possible  }
           if not (batchproductid = '') then
           begin
             try
@@ -2279,6 +2305,8 @@ begin
                       opsiserviceSessionId);
                     if opsidata.isConnected then
                     begin
+                      { isConnected calls backendInfo so no need to call it again }
+                      (*
                       startTime := now;
                       omc := TOpsiMethodCall.Create('backend_info', []);
                       testresult := opsidata.CheckAndRetrieve(omc, errorOccured);
@@ -2289,6 +2317,7 @@ begin
                         ' Time: ' + FormatDateTime('hh:nn:ss:zzz',
                         now - startTime), LLinfo);
                       omc.Free;
+                      *)
                       opsidata.setActualProductName(batchproductid);
                       opsidata.setActualClient(opsiserviceUser);
                       ProductvarsForPC := opsidata.getProductproperties;
@@ -2304,12 +2333,17 @@ begin
                       LogDatei.log('Could not connect to Service :' +
                         opsiserviceurl + ' - retry with localhost', LLerror);
                       opsiserviceurl := 'https://localhost:4441/rpc';
+                      if Assigned(opsidata) then
+                        FreeAndNil(opsidata);
+                      opsidata := TOpsi4Data.Create;
                       opsidata.initOpsiConf(opsiserviceurl,
                         opsiserviceUser,
                         opsiservicePassword,
                         opsiserviceSessionId);
                       if opsidata.isConnected then
                       begin
+                        { isConnected calls backendInfo so no need to call it again }
+                        (*
                         startTime := now;
                         omc := TOpsiMethodCall.Create('backend_info', []);
                         testresult := opsidata.CheckAndRetrieve(omc, errorOccured);
@@ -2320,6 +2354,7 @@ begin
                           ' Time: ' + FormatDateTime('hh:nn:ss:zzz',
                           now - startTime), LLinfo);
                         omc.Free;
+                        *)
                         opsidata.setActualProductName(batchproductid);
                         opsidata.setActualClient(opsiserviceUser);
                         ProductvarsForPC := opsidata.getProductproperties;
@@ -2341,11 +2376,11 @@ begin
                     on e: Exception do
                     begin
                       LogDatei.log(
-                        'Exception in StartProgramModes: [pmBatch, pmSilent]: opsidata.create' +
-                        e.message, LLCritical);
+                        'Exception in StartProgramModes: [pmBatch, pmSilent]: opsidata.create'
+                        + e.message, LLCritical);
                       {$IFDEF WINDOWS}
                       SystemCritical.IsCritical := False;
-{$ENDIF WINDOWS}
+                      {$ENDIF WINDOWS}
                       extremeErrorLevel := levelFatal;
                     end;
                   end;
@@ -2367,11 +2402,11 @@ begin
               on e: Exception do
               begin
                 LogDatei.log(
-                  'Exception in StartProgramModes: [pmBatch, pmSilent]: read opsiclientd.conf' +
-                  e.message, LLCritical);
+                  'Exception in StartProgramModes: [pmBatch, pmSilent]: read opsiclientd.conf'
+                  + e.message, LLCritical);
                 {$IFDEF WINDOWS}
                 SystemCritical.IsCritical := False;
-{$ENDIF WINDOWS}
+                {$ENDIF WINDOWS}
                 extremeErrorLevel := levelFatal;
               end;
             end;
@@ -2421,11 +2456,12 @@ begin
               on e: Exception do
               begin
                 LogDatei.log(
-                  'exception in StartProgramModes: [pmBatch, pmSilent]: reg.Write: with-admin-fatal ' +
-                  e.message, LLError);
+                  'exception in StartProgramModes: [pmBatch, pmSilent]: reg.Write: with-admin-fatal '
+                  + e.message, LLError);
+
                 {$IFDEF WINDOWS}
                 SystemCritical.IsCritical := False;
-{$ENDIF WINDOWS}
+                {$ENDIF WINDOWS}
               end;
             end;
           end;
@@ -2434,7 +2470,7 @@ begin
           try
             {$IFDEF WINDOWS}
             writeLogFileOptions(WinstRegHive, Logdateiname);
-{$ENDIF}
+            {$ENDIF}
           except
           end;
 
@@ -2463,7 +2499,7 @@ begin
               e.message, LLError);
             {$IFDEF WINDOWS}
             SystemCritical.IsCritical := False;
-{$ENDIF WINDOWS}
+            {$ENDIF WINDOWS}
           end;
         end;
       end
@@ -2712,7 +2748,8 @@ begin
                 computername := '';
                 if not readconfig then
                   startupmessages.Append(
-                    'Error: readconfig failed: Working with defaults ' + DateTimeToStr(Now));
+                    'Error: readconfig failed: Working with defaults ' +
+                    DateTimeToStr(Now));
                 startupmessages.Append('Depot path from readconfig:  ' +
                   depotdrive + depotdir + ' ' + DateTimeToStr(Now));
                 Inc(i);
@@ -3198,8 +3235,8 @@ begin
     begin
       ProgramMode := pmInfo;
       //LogDatei.log('Exception in GetParameter: General' + e.message, LLError);
-      startupmessages.Append('Exception in GetParameter: General'
-        + e.message + ' ' + DateTimeToStr(Now));
+      startupmessages.Append('Exception in GetParameter: General' +
+        e.message + ' ' + DateTimeToStr(Now));
     end;
   end;
 end;

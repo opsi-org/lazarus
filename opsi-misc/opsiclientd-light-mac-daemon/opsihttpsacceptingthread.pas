@@ -129,14 +129,17 @@ begin
 
   //       file: c_cacert.p12
   //       password: c_cakey
-
-  AcceptorSocket.SSL.CertCAFile :=
-    ExtractFilePath(ParamStr(0)) + 's_cabundle' + '.pem';
+  (*AcceptorSocket.SSL.CertCAFile :=
+    '/etc/opsi-client-agent/' + 's_cabundle.pem';
   AcceptorSocket.SSL.CertificateFile :=
-    ExtractFilePath(ParamStr(0)) + 's_' + 'cacert.pem';
+    '/etc/opsi-client-agent/' + 's_cacert.pem';
   AcceptorSocket.SSL.PrivateKeyFile :=
-    ExtractFilePath(ParamStr(0)) + 's_cake' + 'y.pem';
+    '/etc/opsi-client-agent/' + 's_cakey.pem';
   AcceptorSocket.SSL.KeyPassword := 's_cakey';
+  AcceptorSocket.SSL.verifyCert := True;*)
+
+  AcceptorSocket.SSL.PrivateKeyFile := '/etc/opsi-client-agent/opsiclientd.pem';
+  AcceptorSocket.SSL.CertificateFile := '/etc/opsi-client-agent/opsiclientd.pem';
   AcceptorSocket.SSL.verifyCert := True;
 end;
 
@@ -300,7 +303,7 @@ begin
     Headers.Add('Content-length: ' + IntToStr(OutputBody.Size));
     //Headers.Add('Connection: close');
     //Headers.Add('Date: ' + Rfc822DateTime(now));
-    Headers.Add('User-Agent: opsiclientd-mac');
+    Headers.Add('User-Agent: opsiclientd-light');
     Headers.Add('');
   end;
 end;
@@ -316,7 +319,7 @@ begin
   AcceptorSocket.Socket := ASocket;
   LogData := TLogData.Create;
   //InitSSLOpsi;
-  //InitSSLCertificate;
+  InitSSLCertificate;
   TimeOut := 120000;
   OnDemand := False;
   Headers := TStringList.Create;
@@ -345,20 +348,37 @@ procedure TOpsiHTTPSAcceptingThread.Execute;
 var
   s: string;
   i: integer;
+  mycommandToStart: string;
+  //commandparams: TStringlist;
+  commandparams: TStringArray;
+  runmode: string;
 begin
+  {$IFDEF DARWIN}
+  mycommandToStart := '/usr/local/bin/opsiscriptstarter';
+  {$ENDIF DARWIN}
+  {$IFDEF LINUX}
+  mycommandToStart := '/usr/bin/opsiscriptstarter';
+  {$ENDIF LINUX}
+  //commandparams := TStringlist.create;
+  setlength(commandparams, 0);
+
   if not Terminated then
   begin
     try
+      LogData.FSourceOfLog := 'opsiclientd-light accepting thread';
+      LogData.FLogMessage := 'started';
+      LogData.FLevelofLine := 6;
+      Synchronize(@LogData.SendLog);
       if AcceptorSocket.SSLAcceptConnection and
         (AcceptorSocket.SSL.LastError = 0) then
       begin
-        LogData.FSourceOfLog := 'opsiclientd-mac accepting thread';
+        LogData.FSourceOfLog := 'opsiclientd-light accepting thread';
         LogData.FLogMessage := 'SSL accepted';
         LogData.FLevelofLine := 6;
         Synchronize(@LogData.SendLog);
         { read request }
         ReadRequestLine;
-        LogData.FSourceOfLog := 'opsiclientd-mac accepting thread';
+        LogData.FSourceOfLog := 'opsiclientd-light accepting thread';
         LogData.FLogMessage := 'ReadRequestLine';
         LogData.FLevelofLine := 7;
         Synchronize(@LogData.SendLog);
@@ -367,7 +387,7 @@ begin
         LogData.FLevelOfLine := 6;
         Synchronize(@LogData.SendLog);
         ReadHeaders;
-        LogData.FSourceOfLog := 'opsiclientd-mac accepting thread';
+        LogData.FSourceOfLog := 'opsiclientd-light accepting thread';
         LogData.FLogMessage := 'ReadHeaders';
         LogData.FLevelofLine := 7;
         Synchronize(@LogData.SendLog);
@@ -378,13 +398,16 @@ begin
           Synchronize(@LogData.SendLog);
         end;
         ReadMessageBody;
-        LogData.FSourceOfLog := 'opsiclientd-mac accepting thread';
+        LogData.FSourceOfLog := 'opsiclientd-light accepting thread';
         LogData.FLogMessage := 'ReadMessageBody';
         LogData.FLevelofLine := 7;
         Synchronize(@LogData.SendLog);
         SetStatusCode(Method);
-        LogData.FSourceOfLog := 'opsiclientd-mac accepting thread';
+        LogData.FSourceOfLog := 'opsiclientd-light accepting thread';
         LogData.FLogMessage := 'SetStatusCode';
+        LogData.FLevelofLine := 7;
+        Synchronize(@LogData.SendLog);
+        LogData.FLogMessage := 'got method: ' + JSONRequest.Method;
         LogData.FLevelofLine := 7;
         Synchronize(@LogData.SendLog);
 
@@ -421,6 +444,11 @@ begin
           end;
           if JSONRequest.Params.Find('on_demand') and (not Terminated) then
           begin
+            LogData.FLogMessage := 'got event: on_demand';
+            LogData.FLevelofLine := 5;
+            Synchronize(@LogData.SendLog);
+            runmode := 'nogui';
+            {$IFDEF DARWIN}
             {check if somebody is logged in to the GUI (root=no)}
             if RunCommand('/bin/bash', ['-c', 'stat -f "%Su" /dev/console'], s) then
               //stat -f "%Su" /dev/console
@@ -431,37 +459,71 @@ begin
               if trim(s) = 'root' then  //maybe must be adapted
               begin
                 {Nobody is logged in to the GUI so we start in the nogui mode}
-                LogData.FLogMessage := 'Starting : opsiscriptstarter --nogui';
-                LogData.FLevelofLine := 5;
+                runmode := 'nogui';
+              end
+              else
+                runmode := 'gui';
+            end
+            else
+            begin
+              LogData.FLogMessage := 'could not determine loggedin user';
+              LogData.FLevelofLine := 3;
+              Synchronize(@LogData.SendLog);
+            end;
+            {$ENDIF DARWIN}
+            {$IFDEF LINUX}
+            runmode := 'nogui';
+            {$ENDIF LINUX}
+            if runmode = 'nogui' then
+            begin
+              LogData.FLogMessage := 'Starting : opsiscriptstarter --nogui';
+              LogData.FLevelofLine := 5;
+              Synchronize(@LogData.SendLog);
+              setlength(commandparams, 1);
+              commandparams[0] := '--nogui';
+              //commandparams.Add('--nogui');
+              if not RunCommand(mycommandToStart, commandparams, s, []) then
+              begin
+                LogData.FLogMessage :=
+                  'Error: Starting : "opsiscriptstarter --nogui" failed';
+                LogData.FLevelofLine := 1;
                 Synchronize(@LogData.SendLog);
-                if not RunCommand('/usr/local/bin/opsiscriptstarter',
-                  ['--nogui'], s, []) then
-                begin
-                  LogData.FLogMessage :=
-                    'Error: Starting : "opsiscriptstarter --nogui" failed';
-                  LogData.FLevelofLine := 1;
-                  Synchronize(@LogData.SendLog);
-                end;
               end
               else
               begin
-                {Somebody is logged in to the GUI so we start in the gui mode}
-                LogData.FLogMessage := 'Starting : opsiscriptstarter';
+                LogData.FLogMessage := 'Finished : opsiscriptstarter --nogui';
                 LogData.FLevelofLine := 5;
                 Synchronize(@LogData.SendLog);
-                if not RunCommand('/usr/local/bin/opsiscriptstarter', [], s, []) then
-                begin
-                  LogData.FLogMessage := 'Error: Starting : "opsiscriptstarter" failed';
-                  LogData.FLevelofLine := 1;
-                  Synchronize(@LogData.SendLog);
-                end;
+              end;
+            end
+            else
+            begin
+              {Somebody is logged in to the GUI so we start in the gui mode}
+              LogData.FLogMessage := 'Starting : opsiscriptstarter';
+              LogData.FLevelofLine := 5;
+              Synchronize(@LogData.SendLog);
+              setlength(commandparams, 0);
+              if not RunCommand(mycommandToStart, commandparams, s, []) then
+              begin
+                LogData.FLogMessage := 'Error: Starting : "opsiscriptstarter" failed';
+                LogData.FLevelofLine := 1;
+                Synchronize(@LogData.SendLog);
+              end
+              else
+              begin
+                LogData.FLogMessage := 'Finished : opsiscriptstarter';
+                LogData.FLevelofLine := 5;
+                Synchronize(@LogData.SendLog);
               end;
             end;
-            //RunCommand('/Applications/TextEdit.app/Contents/MacOS/TextEdit',[ ], s , [ ]);
           end;
         end
         else
-        ; //SendError (has to be implemented);
+        begin
+          LogData.FLogMessage := 'found method <> fireEvent: ' + JSONRequest.Method;
+          LogData.FLevelofLine := 4;
+          Synchronize(@LogData.SendLog);
+        end;
       end
       else
       begin

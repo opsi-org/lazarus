@@ -31,7 +31,10 @@ uses
   //fileinfo,
   //, winpeimagereader {need this for reading exe info}
   elfreader, // {needed for reading ELF executables}
-{$ENDIF LINUX}
+{$ENDIF UNIX}
+  {$IFDEF DARWIN}
+    machoreader, // {needed for reading mac executables}
+  {$ENDIF DARWIN}
 {$IFDEF WINDOWS}
   winpeimagereader, {need this for reading exe info}
   //VersionInfoX,
@@ -41,6 +44,7 @@ uses
   inifiles,
   lazfileutils,
   osparserhelper,
+  process,
   osencoding;
 
 function readConfig: boolean;
@@ -146,7 +150,7 @@ var
   debug_lib: boolean = True;
   force_min_loglevel: integer = 8;
   {$ELSE}
-  debug_prog: boolean = True;
+  debug_prog: boolean = False;
   default_loglevel: integer = 7;
   debug_lib: boolean = True;
   force_min_loglevel: integer = 4;
@@ -205,7 +209,7 @@ const
   shareDelim = '\\';
 
 var
-  part1, part2: string;
+  part1, part2, outstr: string;
   myconf: TIniFile;
 
 begin
@@ -264,6 +268,13 @@ begin
 {$IFDEF DARWIN}
     //depotdrive := '/Network/opsi_depot';
     depotdrive := '/Volumes/opsi_depot';
+(*
+    RunCommand('sw_vers -productVersion', outstr);
+    if trim(outstr) > '10.14' then
+      depotdrive := '/System/Volumes/Data/Volumes/opsi_depot'
+    else depotdrive := '/Volumes/opsi_depot';
+    *)
+
 {$ENDIF DARWIN}
 
 {$IFDEF WINDOWS}

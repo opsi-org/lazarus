@@ -3,23 +3,21 @@
   <ProjectOptions>
     <Version Value="11"/>
     <General>
+      <Flags>
+        <MainUnitHasCreateFormStatements Value="False"/>
+      </Flags>
       <SessionStorage Value="InProjectDir"/>
       <MainUnit Value="0"/>
-      <Title Value="opsi-script-beautifier"/>
-      <Scaled Value="True"/>
+      <Title Value="opsiclientd-light"/>
+      <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
-      <UseXPManifest Value="True"/>
-      <XPManifest>
-        <DpiAware Value="True"/>
-      </XPManifest>
-      <Icon Value="0"/>
     </General>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
       <BuildNr Value="1"/>
-      <StringTable CompanyName="uib gmbh" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org" ProductName="opsi" ProductVersion="4.1"/>
+      <StringTable CompanyName="uib gmbh" FileDescription="opsiclientd light" InternalName="opsclientd-light" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org" OriginalFilename="opsclientd_light" ProductName="opsi" ProductVersion="4.1"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -27,11 +25,11 @@
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
-            <Filename Value="opsi-script-beautifier"/>
+            <Filename Value="opsiclientd_light"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="../../common;../../external_libraries/misc"/>
+            <OtherUnitFiles Value="../../common;../../external_libraries/misc;../../external_libraries/synapse"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -56,22 +54,24 @@
               <UseExternalDbgSyms Value="True"/>
             </Debugging>
             <Options>
-              <Win32>
-                <GraphicApplication Value="True"/>
-              </Win32>
+              <PassLinkerOptions Value="True"/>
+              <LinkerOptions Value="-sectcreate __TEXT __info_plist Info.plist"/>
             </Options>
           </Linking>
+          <Other>
+            <CustomOptions Value="-dopsiscriptstarter"/>
+          </Other>
         </CompilerOptions>
       </Item2>
       <Item3 Name="Release">
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
-            <Filename Value="opsi-script-beautifier"/>
+            <Filename Value="opsiclientd-light"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="../../common;../../external_libraries/misc"/>
+            <OtherUnitFiles Value="../../common;../../external_libraries/misc;../../external_libraries/synapse"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -85,18 +85,9 @@
               <GenerateDebugInfo Value="False"/>
             </Debugging>
             <LinkSmart Value="True"/>
-            <Options>
-              <Win32>
-                <GraphicApplication Value="True"/>
-              </Win32>
-            </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-dOPSI
--dOPSI_AS_USER"/>
-            <OtherDefines Count="1">
-              <Define0 Value="OPSI_AS_USER"/>
-            </OtherDefines>
+            <CustomOptions Value="-dopsiscriptstarter"/>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -109,75 +100,122 @@
       <FormatVersion Value="2"/>
       <Modes Count="0"/>
     </RunParams>
-    <RequiredPackages Count="1">
+    <RequiredPackages Count="3">
       <Item1>
-        <PackageName Value="LCLBase"/>
+        <PackageName Value="LazDaemon"/>
       </Item1>
+      <Item2>
+        <PackageName Value="LCL"/>
+      </Item2>
+      <Item3>
+        <PackageName Value="FCL"/>
+      </Item3>
     </RequiredPackages>
-    <Units Count="11">
+    <Units Count="17">
       <Unit0>
-        <Filename Value="opsi_script_beautifier.lpr"/>
+        <Filename Value="opsiclientd_light.lpr"/>
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="beautifyopsiscript.pas"/>
+        <Filename Value="daemonmapperopsiclientd.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="OpsiClientdMapper"/>
+        <HasResources Value="True"/>
+        <UnitName Value="DaemonMapperOpsiClientd"/>
       </Unit1>
       <Unit2>
-        <Filename Value="cliapp.pas"/>
+        <Filename Value="daemonopsihttpsserver.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="OpsiHTTPSServerDaemon"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="DataModule"/>
+        <UnitName Value="DaemonOpsiHTTPSServer"/>
       </Unit2>
       <Unit3>
-        <Filename Value="../../common/oslog.pas"/>
+        <Filename Value="opsihttpsacceptingthread.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="OpsiHTTPSAcceptingThread"/>
       </Unit3>
       <Unit4>
-        <Filename Value="../../common/osencoding.pas"/>
+        <Filename Value="opsihttpslisteningthread.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="OpsiHTTPSListeningThread"/>
       </Unit4>
       <Unit5>
-        <Filename Value="../../external_libraries/misc/charencstreams.pas"/>
+        <Filename Value="jsonrpc.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit5>
       <Unit6>
-        <Filename Value="../../common/osversioninfo.pas"/>
+        <Filename Value="opsiclientdlog.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="OpsiClientdLog"/>
       </Unit6>
       <Unit7>
-        <Filename Value="../../common/key_valueCollection.pas"/>
+        <Filename Value="opsihtmlmessagebody.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="OpsiHTMLMessageBody"/>
       </Unit7>
       <Unit8>
-        <Filename Value="scriptbeautifier.lpi"/>
+        <Filename Value="opsihttpmessagebody.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="OpsiHTTPMessageBody"/>
       </Unit8>
       <Unit9>
-        <Filename Value="beautify.ini"/>
+        <Filename Value="opsijsonmessagebody.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="OpsiJSONMessageBody"/>
       </Unit9>
       <Unit10>
+        <Filename Value="opsijsonrequest.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OpsiJSONRequest"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="opsijsonresponse.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OpsiJSONResponse"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="opsijsonrpcarray.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OpsiJSONrpcArray"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="opsijsonrpcobject.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="../../common/oslog.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="../../external_libraries/misc/charencstreams.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit15>
+      <Unit16>
         <Filename Value="changelog.txt"/>
         <IsPartOfProject Value="True"/>
-      </Unit10>
+      </Unit16>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
     <Target>
-      <Filename Value="opsi-script-beautifier"/>
+      <Filename Value="opsiclientd_light"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="../../common;../../external_libraries/misc"/>
+      <OtherUnitFiles Value="../../common;../../external_libraries/misc;../../external_libraries/synapse"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
-      <Options>
-        <Win32>
-          <GraphicApplication Value="True"/>
-        </Win32>
-      </Options>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf2Set"/>
+      </Debugging>
     </Linking>
+    <Other>
+      <CustomOptions Value="-dopsiscriptstarter"/>
+    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="3">

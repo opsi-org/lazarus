@@ -129,7 +129,7 @@ end;
 
 procedure Tfwork_description.FormHide(Sender: TObject);
 begin
-  Datamodule1.TimerOnTop.Enabled := True;
+  Datamodule1.TimerOnTop.Enabled := ontoptimer;
   Close;
 end;
 

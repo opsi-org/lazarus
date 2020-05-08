@@ -90,7 +90,7 @@ var
   {$ELSE OPSISCRIPT}
   outlines: TStringList;
   {$ENDIF OPSISCRIPT}
-  lineparts: TStringlist;
+  lineparts: TStringList;
   ExitCode: longint;
   i, k: integer;
 begin
@@ -181,19 +181,46 @@ function ProcessIsRunning(searchproc: string): boolean;
 var
   list1: TStringList;
   i: integer;
+  searchstr, shortcmd : string;
 begin
   Result := False;
-  list1 := TStringList.Create;
   try
-    list1.Text := getProcesslist.Text;
-    for i := 0 to list1.Count - 1 do
-    begin
-      if pos(searchproc, list1.Strings[i]) > 0 then
-        Result := True;
+    list1 := TStringList.Create;
+    try
+    {$IFDEF LINUX}
+      {in processlist we get " shortcmd ; ....." }
+      {shortcmd has max length 15 and the rest does not help really }
+      {so we try find an exact match in shortcmd }
+      if length(searchproc) > 14 then
+      begin
+        searchstr := trim(copy(searchproc, 1, 15));
+        logdatei.log(
+          'Process name to find is wider then 14 chars. The result may not be exact',
+          LLwarning);
+      end;
+      list1.Text := getProcesslist.Text;
+      for i := 0 to list1.Count - 1 do
+      begin
+        shortcmd := trim(copy(list1.Strings[i], 1, pos(';', list1.Strings[i])));
+        //if pos(searchproc, list1.Strings[i]) > 0 then
+        if LowerCase(searchstr) = LowerCase(shortcmd) then
+          Result := True;
+      end;
+    {$ENDIF LINUX}
+    {$IFDEF WINDOWS}
+      list1.Text := getProcesslist.Text;
+      for i := 0 to list1.Count - 1 do
+      begin
+        if pos(searchproc, list1.Strings[i]) > 0 then
+          Result := True;
+      end;
+    {$ENDIF WINDOWS}
+    except
+      logdatei.log('Error: Exception in processIsRunning:  ' + searchproc, LLError);
+      Result := False;
     end;
-  except
-    logdatei.log('Error: Exception in processIsRunning:  ' + searchproc, LLError);
-    Result := False;
+  finally
+    FreeAndNil(list1);
   end;
 end;
 
@@ -230,7 +257,7 @@ begin
   pathToTarget := FindDefaultExecutablePath(target);
   if (pathToTarget <> '') and FileExistsUTF8(pathToTarget) then
   begin
-    Result := true;
+    Result := True;
     pathToTarget := Trim(pathToTarget);
   end;
 end;

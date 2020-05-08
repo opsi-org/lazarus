@@ -93,8 +93,10 @@ begin
   if DataModule1.Weristda1.Checked then
   begin
     FLoggedin.Visible:= true;
+    (*
     if not setwindowtoalldesktops(FLoggedin.Caption) then
         datamodule1.debugOut(2,'ontop', 'failed presenz to all desktops');
+        *)
   end
   else FLoggedin.Visible:= false;
 end;

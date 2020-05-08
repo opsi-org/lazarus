@@ -57,7 +57,7 @@ procedure TOpsiHTTPSListeningThread.Execute;
 var
   ClientSocket:TSocket;
 begin
-  LogData.FSourceOfLog:='opsiclientd-mac listening thread';
+  LogData.FSourceOfLog:='opsiclientd-light listening thread';
   LogData.FLogMessage := 'Server started (OpsiHTTPSListeningThread.pas)';
   LogData.FLevelofLine:= 5;
   Synchronize(@LogData.SendLog);

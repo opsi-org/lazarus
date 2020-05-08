@@ -55,8 +55,10 @@ end;
 
 procedure TFNachfrage.FormShow(Sender: TObject);
 begin
-  if not setwindowtoalldesktops(FNachfrage.Caption) then
-    datamodule1.debugOut(2, 'nachf', 'failed nachf to all desktops');
+  FNachfrage.Caption:= 'uibtime - Notice';
+  if linuxusewmctrl then
+    if not moveToCurrentDeskAndFront(FNachfrage.Caption) then
+      datamodule1.debugOut(2, 'nachf', 'failed nachf to all desktops');
 end;
 
 procedure TFNachfrage.FormMouseEnter(Sender: TObject);
@@ -79,7 +81,7 @@ end;
 procedure TFNachfrage.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   modalresult := mrOK;
-  DataModule1.TimerOnTop.Enabled:=true;
+  DataModule1.TimerOnTop.Enabled:=ontoptimer;
 end;
 
 procedure TFNachfrage.BitBtn1Click(Sender: TObject);

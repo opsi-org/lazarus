@@ -5,7 +5,12 @@ unit DaemonOpsiHTTPSServer;
 interface
 
 uses
-  Classes, SysUtils, DaemonApp, OpsiHTTPSListeningThread, osLog, IniFiles;
+  Classes, SysUtils, DaemonApp, OpsiHTTPSListeningThread,
+  osLog,
+  fileinfo,
+  elfreader, {needed for reading ELF executables}
+  machoreader, {needed for reading MACH-O executables}
+  IniFiles;
 
 type
 
@@ -27,6 +32,7 @@ type
 
 var
   OpsiHTTPSServerDaemon: TOpsiHTTPSServerDaemon;
+  myversion : string;
 
 implementation
 
@@ -41,8 +47,16 @@ end;
 
 procedure TOpsiHTTPSServerDaemon.ServerStart(Sender: TCustomDaemon;
   var OK: Boolean);
+var
+  verinfo : TFileVersionInfo;
 begin
   OK := True;
+  verinfo := TFileVersionInfo.Create(nil);
+  verinfo.FileName := ParamStr(0);
+  verinfo.ReadFileInfo;
+  myversion := verinfo.VersionStrings.Values['FileVersion'];
+  verinfo.Free;
+  //GetProgramVersion(myversion);
   LogDatei:= TLogInfo.Create;
   //LogDatei.StandardLogPath:= '/tmp/';
   LogDatei.WritePartLog := False;
@@ -51,8 +65,9 @@ begin
   LogDatei.LogProduktId:=True;
   LogDatei.CreateTheLogfile('opsiclientd.log',false); //('/var/log/opsi-client-agent/opsiclientd/opsiclientd.log',false);
   LogDatei.LogLevel:= 5;
-  LogDatei.AktProduktId:='opsiclientd-mac';
+  LogDatei.AktProduktId:='opsiclientd-light';
   LogDatei.Log('Daemon startet', LLNotice);
+  LogDatei.Log('opsicliend-light version: '+myversion, LLessential);
   //LogDatei.initiate();
   ReadClientdConf;
   LogDatei.Loglevel := 9;
@@ -87,7 +102,7 @@ begin
   if ListeningThread <> nil then
      ListeningThread.Terminate;
   //ListeningThread.WaitFor;
-  LogDatei.AktProduktId:='opsiclientd-mac';
+  LogDatei.AktProduktId:='opsiclientd-light';
   LogDatei.Log('Daemon stopped', LLNotice);
   LogDatei.Close;
   FreeAndNil(LogDatei);

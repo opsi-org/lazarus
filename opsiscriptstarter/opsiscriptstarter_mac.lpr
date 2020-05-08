@@ -403,6 +403,7 @@ var
   FileVerInfo:TFileVersionInfo;
   mounttry : integer;
   mountoption : string;
+  outstr : string;
 begin
   myexitcode := 0;
   myerror := '';
@@ -416,6 +417,13 @@ begin
   {$IFDEF DARWIN}
   //mymountpoint := '/Network/opsi_depot';
   mymountpoint := '/Volumes/opsi_depot';
+  //mymountpoint := '/media/opsi_depot';
+  (*
+      RunCommand('sw_vers -productVersion', outstr);
+    if trim(outstr) > '10.14' then
+      mymountpoint := '/System/Volumes/Data/Volumes/opsi_depot'
+    else mymountpoint := '/Volumes/opsi_depot';
+  *)
   {$ENDIF}
   nogui := false;
   FileVerInfo:=TFileVersionInfo.Create(nil);
@@ -523,7 +531,7 @@ begin
           LogDatei.log('Failed to mount '+myshare+' with option: '+mountoption+' to '+mymountpoint+' Error code: '+inttostr(errorcode)+' - retry ...',LLWarning);
           sleep(2000);
         end;
-      until isMounted(mymountpoint) or (mounttry > 12);
+      until isMounted(mymountpoint)  or (mounttry > 12);
       if not isMounted(mymountpoint) then
          LogDatei.log('Failed to mount '+myshare+' to '+mymountpoint+' - abort!',LLCritical)
       else
