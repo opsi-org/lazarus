@@ -16,6 +16,7 @@ uses
   lcltranslator,
   windows,
   osprocesses,
+  uniqueinstanceraw,
   jwawinbase;
 
 type
@@ -29,6 +30,7 @@ type
     PopupMenu1: TPopupMenu;
     Timer1: TTimer;
     TrayIcon1: TTrayIcon;
+    //uniqueinstance1 : Tuniqueinstance;
     procedure DataModuleCreate(Sender: TObject);
     procedure MI_exitClick(Sender: TObject);
     procedure MI_pull_for_action_requestClick(Sender: TObject);
@@ -287,6 +289,7 @@ var
   service_url_port : string;
   mylang : string;
 begin
+  if  InstanceRunning then Application.Terminate;
   checkIntervall := 0;
   myNotifyFormat := 'productid : request';
   myservice_url := 'https://localhost:4441/kiosk';
