@@ -60,7 +60,7 @@ uses
   Shlobj,
 {$ENDIF}
 {$IFDEF GUI}
-  graphics,
+  Graphics,
   LResources,
   LCLIntf,
   LCLProc,
@@ -467,7 +467,8 @@ function KillTask(ExeFileName: string; var info: string): boolean;
 {$ENDIF WIN64}
 
 {$IFDEF WIN32}
-function SetFilePermissionForRunAs(filename: string; runas: TRunAs; var errorCode: DWORD): boolean;
+function SetFilePermissionForRunAs(filename: string; runas: TRunAs;
+  var errorCode: DWORD): boolean;
 {$ENDIF WIN32}
 
 function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
@@ -489,11 +490,11 @@ function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
   var Report: string; var ExitCode: longint): boolean; overload;
 
 function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
-  showoutputflag: TShowOutputFlag; WaitForReturn: boolean; WaitForWindowVanished: boolean;
-  WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
-  waitsecsAsTimeout: boolean; RunAs: TRunas; Ident: string; WaitSecs: word;
-  var Report: string; var ExitCode: longint; catchout: boolean;
-  var output: TXStringList): boolean; overload;
+  showoutputflag: TShowOutputFlag; WaitForReturn: boolean;
+  WaitForWindowVanished: boolean; WaitForWindowAppearing: boolean;
+  WaitForProcessEnding: boolean; waitsecsAsTimeout: boolean; RunAs: TRunas;
+  Ident: string; WaitSecs: word; var Report: string; var ExitCode: longint;
+  catchout: boolean; var output: TXStringList): boolean; overload;
 
 
 
@@ -1459,15 +1460,16 @@ end;
 {$ENDIF WINDOWS}
 
 {$IFDEF WIN32}
-function SetFilePermissionForRunAs(filename: string; runas: TRunAs; var errorCode: DWORD): boolean;
+function SetFilePermissionForRunAs(filename: string; runas: TRunAs;
+  var errorCode: DWORD): boolean;
 
 const
   CHANGED_SECURITY_INFO = jwawinnt.DACL_SECURITY_INFORMATION;
   EA_COUNT = 1;
 
-// workaround for a FPC bug, see:
-// https://stackoverflow.com/a/59172446/12403540
-// https://bugs.freepascal.org/view.php?id=36368
+  // workaround for a FPC bug, see:
+  // https://stackoverflow.com/a/59172446/12403540
+  // https://bugs.freepascal.org/view.php?id=36368
 type
   TRUSTEE_FIX = packed record
     pMultipleTrustee: Pointer;
@@ -1492,7 +1494,7 @@ var
   refDomainSize: DWORD;
   dolocalfree: boolean;
   procToken: HANDLE;
-  ea: Array[0..(EA_COUNT-1)] of EXPLICIT_ACCESS_FIX;
+  ea: array[0..(EA_COUNT - 1)] of EXPLICIT_ACCESS_FIX;
   acl: jwawinnt.PACL;
   status: jwawintype.DWORD;
 
@@ -1501,9 +1503,7 @@ var
     luid: jwawintype._LUID;
     tp: jwawinnt.TOKEN_PRIVILEGES;
   begin
-    if not jwawinbase.LookupPrivilegeValue(nil, privilege, luid) then
-      Result := false
-    else
+    if jwawinbase.LookupPrivilegeValue(nil, privilege, luid) then
     begin
       FillChar(tp, sizeOf(tp), #0);
       tp.privilegeCount := 1;
@@ -1512,135 +1512,121 @@ var
         tp.Privileges[0].Attributes := SE_PRIVILEGE_ENABLED
       else
         tp.Privileges[0].Attributes := SE_PRIVILEGE_REMOVED;
-
-        Result := AdjustTokenPrivileges(token, LongBool(false), @tp, sizeOf(tp), nil,nil);
+      Result := AdjustTokenPrivileges(token, longbool(False), @tp, sizeOf(tp), nil, nil);
     end
+    else
+      Result := False;
   end;
 
 begin
-  if runas = traInvoker then
-    Result := true
-  else
-    try
+  status := NO_ERROR;
+  sidSize := 0;
+  refDomainSize := 0;
+  doLocalFree := False;
+  procToken := INVALID_HANDLE_VALUE;
+  sid := nil;
+  try
+    case runas of
+      traInvoker: Result := True;
+      traLoggedOnUser:
       begin
-        status := NO_ERROR;
-        sidSize := 0;
-        refDomainSize := 0;
-        doLocalFree := false;
+        // use usercontextSID variable to determine SID of logged on user
+        Result := jwasddl.ConvertStringSidToSidA(PChar(usercontextSID), sid);
+        dolocalfree := True;
+      end;
+      traPCpatch:
+      begin
+        (*
+        jwawinbase.LookupAccountNameA(nil, 'pcpatch', nil,
+          sidSize, nil, refDomainSize, nameUse);
 
-        procToken := INVALID_HANDLE_VALUE;
+        GetMem(sid, sidSize);
+        GetMem(refDomain, refDomainSize);
 
-        sid := nil;
-
-        // Determine the SID of the user that the file will be run as
-
-        if runas = traLoggedOnUser then
-        begin
-          // use usercontextSID variable to determine SID of logged on user
-          Result := jwasddl.ConvertStringSidToSidA(PChar(usercontextSID), sid);
-          dolocalfree := true;
-        end
-        else if runas = traPcpatch then
-        begin
-          {
-          jwawinbase.LookupAccountNameA(nil, 'pcpatch', nil,
-            sidSize, nil, refDomainSize, nameUse);
-
-          GetMem(sid, sidSize);
-          GetMem(refDomain, refDomainSize);
-
-          Result := jwawinbase.LookupAccountNameA(nil, 'pcpatch',
-            sid, sidSize, refDomain, refDomainSize, nameUse);
-          }
-
-          // just generate an error, as it is currently unused anyways
-          LogDatei.log('SetFilePermissionForRunAs: traPcpatch is not supported', LLError);
-          Result := false;
-        end
-        else if runas in [traAdmin, traAdminProfile, traAdminProfileExplorer,
-          traAdminProfileImpersonate, traAdminProfileImpersonateExplorer] then
-        begin
-          // to get the user's SID we need to create the local admin already here
-          Result := CreateTemporaryLocalAdmin(runas);
-
-          if Result then
-          begin
-            jwawinbase.LookupAccountNameA(nil, 'opsiSetupAdmin', nil, sidSize, nil, refDomainSize, nameUse);
-            GetMem(sid, sidSize);
-            GetMem(refDomain, refDomainSize);
-
-            Result := jwawinbase.LookupAccountNameA(nil, 'opsiSetupAdmin',
-              sid, sidSize, refDomain, refDomainSize, nameUse);
-          end
-        end
-        else
-          Result := false;
-
-        // Create an ACL allowing the determined SID
-        // Read and Execute Rights, then apply it to
-        // the given file.
-
+        Result := jwawinbase.LookupAccountNameA(nil, 'pcpatch',
+          sid, sidSize, refDomain, refDomainSize, nameUse);
+        *)
+        // just generate an error, as it is currently unused anyways
+        LogDatei.log('SetFilePermissionForRunAs: traPcpatch is not supported', LLError);
+        Result := False;
+      end;
+      traAdmin, traAdminProfile, traAdminProfileExplorer,
+      traAdminProfileImpersonate, traAdminProfileImpersonateExplorer:
+      begin
+        // to get the user's SID we need to create the local admin already here
+        Result := CreateTemporaryLocalAdmin(runas);
         if Result then
         begin
-          jwawinbase.ZeroMemory(@ea, EA_COUNT * sizeOf(EXPLICIT_ACCESS_FIX));
+          jwawinbase.LookupAccountNameA(nil, 'opsiSetupAdmin', nil,
+            sidSize, nil, refDomainSize, nameUse);
+          GetMem(sid, sidSize);
+          GetMem(refDomain, refDomainSize);
+          Result := jwawinbase.LookupAccountNameA(nil, 'opsiSetupAdmin',
+            sid, sidSize, refDomain, refDomainSize, nameUse);
+        end;
+      end;
+      else Result := False;
+    end;//case
 
-          ea[0].grfAccessPermissions := FILE_GENERIC_READ or FILE_GENERIC_EXECUTE;
-          ea[0].grfAccessMode := DWORD(SET_ACCESS);
-          ea[0].grfInheritance := NO_INHERITANCE;
-          ea[0].Trustee.MultipleTrusteeOperation := DWORD(NO_MULTIPLE_TRUSTEE);
-          ea[0].Trustee.pMultipleTrustee := nil;
-          ea[0].Trustee.TrusteeForm := DWORD(TRUSTEE_IS_SID);
-          ea[0].Trustee.TrusteeType := DWORD(TRUSTEE_IS_USER);
-          ea[0].Trustee.ptstrName := pointer(sid);
-
-          status := jwaaclapi.SetEntriesInAclA(EA_COUNT, @ea, nil, acl);
-
-          if status <> ERROR_SUCCESS then
-          begin
-            Result := false;
-          end
-          else
+    // Create an ACL allowing the determined SID
+    // Read and Execute Rights, then apply it to
+    // the given file.
+    if Result then
+    begin
+      jwawinbase.ZeroMemory(@ea, EA_COUNT * sizeOf(EXPLICIT_ACCESS_FIX));
+      ea[0].grfAccessPermissions := FILE_GENERIC_READ or FILE_GENERIC_EXECUTE;
+      ea[0].grfAccessMode := DWORD(SET_ACCESS);
+      ea[0].grfInheritance := NO_INHERITANCE;
+      ea[0].Trustee.MultipleTrusteeOperation := DWORD(NO_MULTIPLE_TRUSTEE);
+      ea[0].Trustee.pMultipleTrustee := nil;
+      ea[0].Trustee.TrusteeForm := DWORD(TRUSTEE_IS_SID);
+      ea[0].Trustee.TrusteeType := DWORD(TRUSTEE_IS_USER);
+      ea[0].Trustee.ptstrName := pointer(sid);
+      status := jwaaclapi.SetEntriesInAclA(EA_COUNT, @ea, nil, acl);
+      if status <> ERROR_SUCCESS then
+      begin
+        Result := False;
+      end
+      else
+      begin
+        status := jwaaclapi.SetNamedSecurityInfoA(PChar(filename),
+          JwaAccCtrl.SE_FILE_OBJECT, CHANGED_SECURITY_INFO, nil, nil, acl, nil);
+        if status <> ERROR_SUCCESS then
+        begin
+          // if it fails we are probably missing the SE_RESTORE_NAME privilege, so we retry
+          status := NO_ERROR;
+          if OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, procToken)
+            or SetPrivilege(procToken, SE_RESTORE_NAME, True) then
           begin
             status := jwaaclapi.SetNamedSecurityInfoA(PChar(filename),
-              JwaAccCtrl.SE_FILE_OBJECT, CHANGED_SECURITY_INFO, nil, nil, acl, nil);
+              JwaAccCtrl.SE_FILE_OBJECT, CHANGED_SECURITY_INFO, nil, nil, nil, nil);
+            Result := (status = ERROR_SUCCESS);
 
-            if status <> ERROR_SUCCESS then
-            begin
-              // if it fails we are probably missing the SE_RESTORE_NAME privilege, so we retry
-              status := NO_ERROR;
-
-              if (not OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, procToken)) or
-                 (not SetPrivilege(procToken, SE_RESTORE_NAME, true)) then
-                Result := false
-              else
-              begin
-                status := jwaaclapi.SetNamedSecurityInfoA(PChar(filename),
-                  JwaAccCtrl.SE_FILE_OBJECT, CHANGED_SECURITY_INFO, nil, nil, nil, nil);
-                Result := (status = ERROR_SUCCESS);
-
-                if not SetPrivilege(procToken, SE_RESTORE_NAME, false) then
-                  LogDatei.log('Could not disable SE_RESTORE_NAME privilege: ' + IntToStr(getLastError()), LLDebug);
-              end;
-            end;
-          end;
+            if SetPrivilege(procToken, SE_RESTORE_NAME, False) then
+              LogDatei.log('Disable SE_RESTORE_NAME privilege: ' +
+                IntToStr(getLastError()), LLDebug)
+            else
+              LogDatei.log('Could not disable SE_RESTORE_NAME privilege: ' +
+                IntToStr(getLastError()), LLDebug);
+          end
+          else
+            Result := False;
         end;
-      end
+      end;
+    end;
+    //clean up and free memory
     finally
       begin
         if not Result and (status = NO_ERROR) then
           status := getLastError();
-
         errorCode := status;
-
         if Assigned(sid) then
           if doLocalFree then
             LocalFree(DWORD(sid))
           else
             FreeMem(sid, sidSize);
-
         if Assigned(refDomain) then
           FreeMem(refDomain, refDomainSize);
-
         if Assigned(acl) then
           LocalFree(DWORD(acl));
       end;
@@ -2002,7 +1988,7 @@ begin
           e.message, LLDebug);
         Report := 'Could not execute process "' + CmdLinePasStr + '"';
         exitcode := -1;
-        Result := false;
+        Result := False;
       end;
     end;
   finally
@@ -2368,7 +2354,7 @@ begin
           e.message, LLDebug);
         Report := 'Could not execute process "' + CmdLinePasStr + '"';
         exitcode := -1;
-        Result := false;
+        Result := False;
       end;
     end;
   finally
@@ -2388,7 +2374,7 @@ function StartProcess_cp(CmdLinePasStr: string; ShowWindowFlag: integer;
 
 var
   ProcessStream: TMemoryStream;
-  Buffer: string='';
+  Buffer: string = '';
   BytesRead: longint;
   n: longint;
   FpcProcess: TProcess;
@@ -2427,12 +2413,12 @@ var
   i: integer; // tmp
 
   function ReadStream(var Buffer: string; var proc: TProcess;
-    var output: TXStringList; showoutput: boolean): LongInt;
+  var output: TXStringList; showoutput: boolean): longint;
   var
-    tmp_buffer: Array[0..READ_BYTES] of char;
-    output_line: string='';
-    LineBreakPos: LongInt;
-    BytesRead: LongInt;
+    tmp_buffer: array[0..READ_BYTES] of char;
+    output_line: string = '';
+    LineBreakPos: longint;
+    BytesRead: longint;
   begin
     if proc.output.NumBytesAvailable <= 0 then
       BytesRead := 0
@@ -2539,7 +2525,7 @@ begin
       {$ENDIF WINDOWS}
 
       if not WaitForReturn then
-        catchout := false;
+        catchout := False;
 
       if catchout then
         FpcProcess.Options := FpcProcess.Options + [poUsePipes, poStdErrToOutPut];
@@ -2826,8 +2812,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and (waitSecs >
-                0) // we look for time out
+              if waitsecsAsTimeout and
+                (waitSecs > 0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -2919,7 +2905,7 @@ begin
           e.message, LLDebug);
         Report := 'Could not execute process "' + CmdLinePasStr + '"';
         exitcode := -1;
-        Result := false;
+        Result := False;
       end;
     end;
   finally
@@ -2941,16 +2927,17 @@ begin
 end;
 
 {$IFDEF WIN32}
-function ReadPipe(var Buffer: string; var hReadPipe: THandle; var BytesRead: LongWord;
-  var output: TXStringList; showoutput: boolean): boolean;
+function ReadPipe(var Buffer: string; var hReadPipe: THandle;
+  var BytesRead: longword; var output: TXStringList; showoutput: boolean): boolean;
 var
   output_line: string = '';
-  lpBuffer: Array[0..READ_BYTES] of char;
-  LineBreakPos: LongWord;
-  BytesAvail: LongWord;
-  BytesLeft: LongWord;
+  lpBuffer: array[0..READ_BYTES] of char;
+  LineBreakPos: longword;
+  BytesAvail: longword;
+  BytesLeft: longword;
 begin
-  Result := PeekNamedPipe(hReadPipe, nil, READ_BYTES, @BytesRead, @BytesAvail, @BytesLeft);
+  Result := PeekNamedPipe(hReadPipe, nil, READ_BYTES, @BytesRead,
+    @BytesAvail, @BytesLeft);
   if BytesAvail > 0 then
   begin
     lpBuffer := '';
@@ -2977,9 +2964,9 @@ begin
       if (length(Buffer) > LineBreakPos) and (Buffer[LineBreakPos + 1] = #10) then
         Inc(LineBreakPos, 1);
 
-       Buffer := Copy(Buffer, LineBreakPos + 1, READ_BYTES);
+      Buffer := Copy(Buffer, LineBreakPos + 1, READ_BYTES);
 
-       LineBreakPos := AnsiPos(#13, Buffer);
+      LineBreakPos := AnsiPos(#13, Buffer);
     end;
   end;
 end;
@@ -3119,7 +3106,7 @@ begin
       wstr := CmdLinePasStr;
 
       if not WaitForReturn then
-        catchout := false;
+        catchout := False;
 
       if not CreatePipe(hReadPipe, hWritePipe, @sa, 0) then
       begin
@@ -3202,7 +3189,8 @@ begin
 
             running := False;
 
-            if catchout and (not (ReadPipe(Buffer, hReadPipe, BytesRead, output, showoutput))) then
+            if catchout and (not
+              (ReadPipe(Buffer, hReadPipe, BytesRead, output, showoutput))) then
               LogDatei.log('Read Error: ' + SysErrorMessage(getLastError()), LLError);
 
             //wait for task vanished
@@ -3329,8 +3317,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and (waitSecs >
-                0) // we look for time out
+              if waitsecsAsTimeout and
+                (waitSecs > 0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -3393,7 +3381,7 @@ begin
           e.message, LLDebug);
         Report := 'Could not execute process "' + CmdLinePasStr + '"';
         exitcode := -1;
-        Result := false;
+        Result := False;
       end;
     end;
   finally
@@ -3453,8 +3441,8 @@ var
   // output catching
   hReadPipe: THandle = 0;
   hWritePipe: THandle = 0;
-  BytesRead: LongWord;
-  Buffer: String = '';
+  BytesRead: longword;
+  Buffer: string = '';
   readResult: boolean;
   sa: TSecurityAttributes;
 var
@@ -3537,7 +3525,7 @@ begin
       end;
 
       if not WaitForReturn then
-        catchout := false;
+        catchout := False;
 
       if not CreatePipe(hReadPipe, hWritePipe, @sa, 0) then
       begin
@@ -3617,7 +3605,8 @@ begin
 
             running := False;
 
-            if catchout and not (ReadPipe(Buffer, hReadPipe, BytesRead, output, showoutput)) then
+            if catchout and not
+              (ReadPipe(Buffer, hReadPipe, BytesRead, output, showoutput)) then
               LogDatei.log('Read Error: ' + SysErrorMessage(getLastError()), LLError);
 
             //wait for task vanished
@@ -3742,8 +3731,8 @@ begin
             else if waitForReturn then
             begin
               //waiting condition 4 : Process is still active
-              if waitsecsAsTimeout and (waitSecs >
-                0) // we look for time out
+              if waitsecsAsTimeout and
+                (waitSecs > 0) // we look for time out
                 and  //time out occured
                 ((nowtime - starttime) >= waitSecs / secsPerDay) then
               begin
@@ -3807,7 +3796,7 @@ begin
         LogDatei.log('Exception in StartProcess_cp_el: ' + e.message, LLDebug);
         Report := 'Could not execute process "' + CmdLinePasStr + '"';
         exitcode := -1;
-        Result := false;
+        Result := False;
       end;
     end;
   finally
@@ -3878,8 +3867,8 @@ var
   // output catching
   hReadPipe: THandle = 0;
   hWritePipe: THandle = 0;
-  BytesRead: LongWord;
-  Buffer: String = '';
+  BytesRead: longword;
+  Buffer: string = '';
   readResult: boolean;
   sa: TSecurityAttributes;
 const
@@ -4065,7 +4054,7 @@ begin
       // Step 4: set the startup info for the new process
 
       if not WaitForReturn then
-        catchout := false;
+        catchout := False;
 
       FillChar(sa, SizeOf(sa), 0);
       sa.nLength := sizeof(sa);
@@ -4165,7 +4154,8 @@ begin
 
             running := False;
 
-            if catchout and (not (ReadPipe(Buffer, hReadPipe, BytesRead, output, showoutput))) then
+            if catchout and (not
+              (ReadPipe(Buffer, hReadPipe, BytesRead, output, showoutput))) then
               LogDatei.log('Read Error: ' + SysErrorMessage(getLastError()), LLError);
 
             (* wait for task vanished *)
@@ -4362,7 +4352,7 @@ begin
           e.message, LLDebug);
         Report := 'Could not execute process "' + CmdLinePasStr + '"';
         exitcode := -1;
-        Result := false;
+        Result := False;
       end;
     end;
   finally
@@ -4390,9 +4380,9 @@ begin
   // provide a temp stringlist
   runAs := traInvoker;
 
-  Result := StartProcess(CmdLinePasStr, ShowWindowFlag, false, WaitForReturn,
-    WaitForWindowVanished, WaitForWindowAppearing, WaitForProcessEnding,
-    runas, Ident, WaitSecs, Report, ExitCode);
+  Result := StartProcess(CmdLinePasStr, ShowWindowFlag, False,
+    WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
+    WaitForProcessEnding, runas, Ident, WaitSecs, Report, ExitCode);
 end;
 
 function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
@@ -4405,13 +4395,14 @@ var
 begin
   // set waitsecsAsTimeout = false
   // provide a temp stringlist
-  output := TXStringList.create;
+  output := TXStringList.Create;
 
-  Result := StartProcess(CmdLinePasStr, ShowWindowFlag, tsofHideOutput, WaitForReturn,
-    WaitForWindowVanished, WaitForWindowAppearing, WaitForProcessEnding,
-    False, runAs, Ident, WaitSecs, Report, ExitCode, false, output);
+  Result := StartProcess(CmdLinePasStr, ShowWindowFlag, tsofHideOutput,
+    WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
+    WaitForProcessEnding, False, runAs, Ident, WaitSecs, Report,
+    ExitCode, False, output);
 
-  output.free;
+  output.Free;
 end;
 
 function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
@@ -4423,20 +4414,22 @@ var
   output: TXStringList;
 begin
   // compatibility with old version that had no output capturing
-  output := TXStringList.create;
+  output := TXStringList.Create;
 
-  Result := StartProcess(CmdLinePasStr, ShowWindowFlag, tsofHideOutput, WaitForReturn,
-    WaitForWindowVanished, WaitForWindowAppearing, WaitForProcessEnding,
-    waitsecsAsTimeout, RunAs, Ident, WaitSecs, Report, Exitcode, false, output);
+  Result := StartProcess(CmdLinePasStr, ShowWindowFlag, tsofHideOutput,
+    WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
+    WaitForProcessEnding, waitsecsAsTimeout, RunAs, Ident, WaitSecs,
+    Report, Exitcode, False, output);
 
-  output.free;
+  output.Free;
 end;
 
 function StartProcess(CmdLinePasStr: string; ShowWindowFlag: integer;
   showoutputflag: TShowOutputFlag; WaitForReturn: boolean;
-  WaitForWindowVanished: boolean; WaitForWindowAppearing: boolean; WaitForProcessEnding: boolean;
-  waitsecsAsTimeout: boolean; RunAs: TRunAs; Ident: string; WaitSecs: word;
-  var Report: string; var ExitCode: longint; catchout: boolean; var output : TXStringList): boolean;
+  WaitForWindowVanished: boolean; WaitForWindowAppearing: boolean;
+  WaitForProcessEnding: boolean; waitsecsAsTimeout: boolean; RunAs: TRunAs;
+  Ident: string; WaitSecs: word; var Report: string; var ExitCode: longint;
+  catchout: boolean; var output: TXStringList): boolean;
 
 var
   //myStringlist : TStringlist;
@@ -4510,26 +4503,26 @@ begin
     end;
   end;
 
-  showoutput := false;
+  showoutput := False;
 
   if not WaitForReturn then
     showoutputflag := tsofHideOutput;
 
   if showoutputFlag in [tsofShowOutput, tsofShowOutputNoSystemInfo] then
-    showoutput := true;
+    showoutput := True;
 
   {$IFDEF GUI}
 
 
   if showoutput then
   begin
-    FBatchOberflaeche.Left:= 5;
-    FBatchOberflaeche.Top:= 5;
+    FBatchOberflaeche.Left := 5;
+    FBatchOberflaeche.Top := 5;
 
     // In the normal case of tsofShowOutput
     // we call CreateSystemInfo and show the
     // output of the called process
-    //
+
     // if tsofShowOutputNoSystemInfo is used
     // we assume that the caller already has
     // created a SystemInfo and just append
@@ -4537,15 +4530,15 @@ begin
     // assume the caller does it.
     if showoutputflag = tsofShowOutput then
     begin
-       LogDatei.log('Start Showoutput', LLInfo);
-       CreateSystemInfo;
-       SystemInfo.Memo1.Lines.clear;
+      LogDatei.log('Start Showoutput', LLInfo);
+      CreateSystemInfo;
+      SystemInfo.Memo1.Lines.Clear;
     end;
 
-    SystemInfo.Memo1.Color:= clBlack;
+    SystemInfo.Memo1.Color := clBlack;
     SystemInfo.Memo1.Font.Color := clWhite;
-    systeminfo.BitBtn1.Enabled:= false;
-    systeminfo.Label1.Caption:='Executing: '+CmdLinePasStr;
+    systeminfo.BitBtn1.Enabled := False;
+    systeminfo.Label1.Caption := 'Executing: ' + CmdLinePasStr;
     systeminfo.ShowOnTop;
     ProcessMess;
   end;
@@ -4557,9 +4550,10 @@ begin
   // we try it via createprocess (Tprocess)
   LogDatei.DependentAdd(
     'Start process as invoker: ' + getCommandResult('/bin/bash -c whoami'), LLInfo);
-  Result := StartProcess_cp(CmdLinePasStr, ShowWindowFlag, showoutput, WaitForReturn,
-    WaitForWindowVanished, WaitForWindowAppearing, WaitForProcessEnding,
-    waitsecsAsTimeout, Ident, WaitSecs, Report, ExitCode, catchout, output);
+  Result := StartProcess_cp(CmdLinePasStr, ShowWindowFlag, showoutput,
+    WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
+    WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report,
+    ExitCode, catchout, output);
   {$ENDIF LINUX}
   {$IFDEF WIN32}
   ext := ExtractFileExt(filename);
@@ -4595,10 +4589,10 @@ begin
       // we try it via createprocess (Tprocess)
       LogDatei.log(
         'Start process as invoker: ' + DSiGetUserName, LLInfo);
-      Result := StartProcess_cp(CmdLinePasStr, ShowWindowFlag, showoutput,
-        WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
-        WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report,
-        ExitCode, catchout, output);
+      Result := StartProcess_cp(CmdLinePasStr, ShowWindowFlag,
+        showoutput, WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
+        WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs,
+        Report, ExitCode, catchout, output);
     end
     else if RunAs = traLoggedOnUser then
     begin
@@ -4629,9 +4623,10 @@ begin
         LogDatei.DependentAdd(
           'Start process as LoggedOnUser: ' + usercontextDomain +
           '\' + usercontextUser, LLInfo);
-        Result := StartProcess_cp_lu(CmdLinePasStr, ShowWindowFlag, showoutput,
-          WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
-          WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, ExitCode, catchout, output);
+        Result := StartProcess_cp_lu(CmdLinePasStr, ShowWindowFlag,
+          showoutput, WaitForReturn, WaitForWindowVanished,
+          WaitForWindowAppearing, WaitForProcessEnding, waitsecsAsTimeout,
+          Ident, WaitSecs, Report, ExitCode, catchout, output);
         if not Result then
           LogDatei.DependentAdd('Failed to start process as logged on user.', LLError);
       except
@@ -4648,9 +4643,10 @@ begin
       // we assume that this is a executable
       // we try it via createprocess (Tprocess)
       LogDatei.log('Start process elevated ....', LLInfo);
-      Result := StartProcess_cp_el(CmdLinePasStr, ShowWindowFlag, showoutput,
-        WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
-        WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, ExitCode, catchout, output);
+      Result := StartProcess_cp_el(CmdLinePasStr, ShowWindowFlag,
+        showoutput, WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
+        WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs,
+        Report, ExitCode, catchout, output);
 
     end
     else
@@ -4659,9 +4655,10 @@ begin
       if opsiSetupAdmin_created then
       begin
         //it is still created
-        Result := StartProcess_as(CmdLinePasStr, ShowWindowFlag, showoutput,
-          WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
-          WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report, ExitCode, catchout, output);
+        Result := StartProcess_as(CmdLinePasStr, ShowWindowFlag,
+          showoutput, WaitForReturn, WaitForWindowVanished,
+          WaitForWindowAppearing, WaitForProcessEnding, waitsecsAsTimeout,
+          Ident, WaitSecs, Report, ExitCode, catchout, output);
         dwThreadId := GetCurrentThreadId;
         //if SetThreadToken(nil,opsiSetupAdmin_logonHandle) then
         //  Logdatei.DependentAdd('SetThreadToken success', LLDebug2)
@@ -4689,17 +4686,17 @@ begin
           begin
             Logdatei.DependentAdd('Could not create Temporary Admin ', LLError);
             Logdatei.DependentAdd('Try to run without temporary Admin ', LLWarning);
-            Result := StartProcess_cp(CmdLinePasStr, ShowWindowFlag, showoutput,
-              WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
-              WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs,
-              Report, ExitCode, catchout, output);
+            Result := StartProcess_cp(CmdLinePasStr, ShowWindowFlag,
+              showoutput, WaitForReturn, WaitForWindowVanished,
+              WaitForWindowAppearing, WaitForProcessEnding, waitsecsAsTimeout,
+              Ident, WaitSecs, Report, ExitCode, catchout, output);
           end
           else
           begin
-            Result := StartProcess_as(CmdLinePasStr, ShowWindowFlag, showoutput,
-              WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
-              WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs,
-              Report, ExitCode, catchout, output);
+            Result := StartProcess_as(CmdLinePasStr, ShowWindowFlag,
+              showoutput, WaitForReturn, WaitForWindowVanished,
+              WaitForWindowAppearing, WaitForProcessEnding, waitsecsAsTimeout,
+              Ident, WaitSecs, Report, ExitCode, catchout, output);
 
 
           (*
@@ -4729,7 +4726,7 @@ begin
     if showoutputflag = tsofShowOutput then
     begin
       LogDatei.log('Stop Showoutput', LLInfo);
-      SystemInfo.free;
+      SystemInfo.Free;
       SystemInfo := nil;
     end;
     FBatchOberflaeche.BringToFront;
@@ -5800,9 +5797,9 @@ var
   i: integer;
   fullpath: string;
 begin
-  Result := TStringList.create;
-  subdirs := FindAllDirectories(dir, false);
-  for i := 0 to (subdirs.count - 1) do
+  Result := TStringList.Create;
+  subdirs := FindAllDirectories(dir, False);
+  for i := 0 to (subdirs.Count - 1) do
   begin
     fullpath := ConcatPaths([subdirs[i], filename]);
     if FileExists(fullpath) then
