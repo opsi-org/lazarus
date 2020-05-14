@@ -11,13 +11,19 @@ uses
   oslog,
   oswebservice,
   fileinfo,
-  winpeimagereader,
   superobject,
   lcltranslator,
+  {$IFDEF WINDOWS}
   windows,
+  jwawinbase,
+  winpeimagereader,
+  {$ENDIF WINDOWS}
+  {$IFDEF UNIX}
+  elfreader,
+  OSProcessux,
+  {$ENDIF UNIX}
   osprocesses,
-  uniqueinstanceraw,
-  jwawinbase;
+  uniqueinstanceraw;
 
 type
 
@@ -59,6 +65,7 @@ implementation
 
 {$R *.lfm}
 
+{$IFDEF WINDOWS}
 {:Returns user name of the current thread.
   @author  Miha-R, Lee_Nover
   @since   2002-11-25
@@ -93,6 +100,7 @@ begin
   if usedsize <> 0 then
     Result := StrPas(Buffer);
 end;
+{$ENDIF WINDOWS}
 
 
 function MyOpsiMethodCall(const method: string; parameters: array of string): string;
@@ -361,8 +369,10 @@ begin
 
 
   mylang := GetDefaultLang;
+  {$IFDEF WINDOWS}
   if Mylang = '' then
     mylang := LowerCase(copy (GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
+  {$ENDIF WINDOWS}
   SetDefaultLang(mylang);
   preloglist.Add('Detected default lang: ' + mylang);
   preloglist.Add('Detected default lang: ' + GetDefaultLang);
@@ -387,7 +397,12 @@ begin
   // Initialize logging
   LogDatei := TLogInfo.Create;
   //lfilename := ExtractFileNameOnly(Application.ExeName);
+  {$IFDEF UNIX}
+  lfilename := 'systray-'+ getCommandResult('id -un');
+  {$ENDIF UNIX}
+  {$IFDEF WINDOWS}
   lfilename := 'systray-'+ GetUserName_ ;
+  {$ENDIF WINDOWS}
   //LogDatei.FileName := lfilename;
   LogDatei.StandardLogFileext := '.log';
   LogDatei.StandardLogFilename := lfilename;
@@ -410,7 +425,8 @@ begin
   LogDatei.log('Log for: ' + Application.exename + ' opend at : ' +
     DateTimeToStr(now), LLinfo);
 
-  LogDatei.LogLevel := 7;
+  LogDatei.LogLevel := 8;
+  LogDatei.debug_prog:=true;
   // is opsiclientd running ?
   if numberOfProcessInstances('opsiclientd') < 1 then
   begin

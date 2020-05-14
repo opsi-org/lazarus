@@ -36,7 +36,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\synapse"/>
+            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\synapse;..\..\lazlib\uniqueinstance"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -172,7 +172,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\synapse"/>
+      <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\synapse;..\..\lazlib\uniqueinstance"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
