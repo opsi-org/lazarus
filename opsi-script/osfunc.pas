@@ -1459,12 +1459,11 @@ end;
 
 {$ENDIF WINDOWS}
 
-{$IFDEF WIN32}
+{$IFDEF WIN32} //ToDo: Ask Detlef why this works not for winst64
 function SetFilePermissionForRunAs(filename: string; runas: TRunAs;
   var errorCode: DWORD): boolean;
 
 const
-  CHANGED_SECURITY_INFO = jwawinnt.DACL_SECURITY_INFORMATION;
   EA_COUNT = 1;
 
   // workaround for a FPC bug, see:
@@ -1590,7 +1589,7 @@ begin
       else
       begin
         status := jwaaclapi.SetNamedSecurityInfoA(PChar(filename),
-          JwaAccCtrl.SE_FILE_OBJECT, CHANGED_SECURITY_INFO, nil, nil, acl, nil);
+          JwaAccCtrl.SE_FILE_OBJECT, jwawinnt.DACL_SECURITY_INFORMATION, nil, nil, acl, nil);
         if status <> ERROR_SUCCESS then
         begin
           // if it fails we are probably missing the SE_RESTORE_NAME privilege, so we retry
@@ -1599,7 +1598,7 @@ begin
             or SetPrivilege(procToken, SE_RESTORE_NAME, True) then
           begin
             status := jwaaclapi.SetNamedSecurityInfoA(PChar(filename),
-              JwaAccCtrl.SE_FILE_OBJECT, CHANGED_SECURITY_INFO, nil, nil, nil, nil);
+              JwaAccCtrl.SE_FILE_OBJECT, jwawinnt.DACL_SECURITY_INFORMATION, nil, nil, nil, nil);
             Result := (status = ERROR_SUCCESS);
 
             if SetPrivilege(procToken, SE_RESTORE_NAME, False) then
