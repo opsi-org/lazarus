@@ -1459,7 +1459,7 @@ end;
 
 {$ENDIF WINDOWS}
 
-{$IFDEF WIN32} //ToDo: Ask Detlef why this works not for winst64
+{$IFDEF WIN32} //ToDo: Ask Detlef why this works not for winst64 e.g.IFDEF WINDOWS
 function SetFilePermissionForRunAs(filename: string; runas: TRunAs;
   var errorCode: DWORD): boolean;
 
@@ -2409,7 +2409,7 @@ var
   processActivityCounter: PCPUUsageData;
   {$ENDIF WIN32}
   *)
-  i: integer; // tmp
+  //i: integer; // tmp
 
   function ReadStream(var Buffer: string; var proc: TProcess;
   var output: TXStringList; showoutput: boolean): longint;
@@ -2517,6 +2517,7 @@ begin
       FpcProcess := process.TProcess.Create(nil);
       {$IFDEF WINDOWS}
       FpcProcess.CommandLine := utf8towincp(CmdLinePasStr);
+      //FpcProcess.Parameters;
       {$ELSE WINDOWS}
       FpcProcess.CommandLine := CmdLinePasStr;
       //FpcProcess.Executable := filename;
