@@ -513,6 +513,10 @@ msgstr "Crear paquete opsi"
 msgid "Create a opsi Product"
 msgstr "Crear un producto opsi"
 
+#: tresultform1.btnopeniconfolder.caption
+msgid " open icon folder "
+msgstr ""
+
 #: tresultform1.btproduct1nextstep.caption
 msgctxt "tresultform1.btproduct1nextstep.caption"
 msgid "Next Step"
@@ -587,6 +591,10 @@ msgstr "&Help"
 
 #: tresultform1.flowpanel14.caption
 msgid "FlowPanel14"
+msgstr ""
+
+#: tresultform1.label1.caption
+msgid "No Icons"
 msgstr ""
 
 #: tresultform1.label50.caption
@@ -765,6 +773,10 @@ msgstr "Propiedades"
 msgid "LabelLogInfo"
 msgstr ""
 
+#: tresultform1.labelnumicons.caption
+msgid "Icons to choose from: 0"
+msgstr ""
+
 #: tresultform1.labelworkbenchnotok.caption
 msgid "Path to opsi-work-bench not is reachable - Check Network Mounts or Path"
 msgstr "Directorio al opsiworkbench no está disponible - Chequee los recursos de red o el directorio"
@@ -926,7 +938,7 @@ msgid "Create"
 msgstr "Crear"
 
 #: tresultform1.tabsheeticons.caption
-msgid "Produkt Icon"
+msgid "Product Icon"
 msgstr ""
 
 #: tresultform1.tabsheetproduct.caption

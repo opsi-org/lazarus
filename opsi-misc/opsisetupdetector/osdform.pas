@@ -39,7 +39,8 @@ uses
   PairSplitter,
   oslog,
   osdbasedata, osdconfigdlg, osdcreate, fpjsonrtti, osddlgnewdependency,
-  osddlgnewproperty, osparserhelper;
+  osddlgnewproperty, osparserhelper,
+  Contnrs;
 
 type
 
@@ -70,6 +71,7 @@ type
     BtATwonalyzeAndCreate: TBitBtn;
     BtCreateEmptyTemplate: TBitBtn;
     BtAnalyzeOnly: TBitBtn;
+    BtnOpenIconFolder: TButton;
     CheckGroupBuildMode: TCheckGroup;
     FlowPanel1: TFlowPanel;
     FlowPanel10: TFlowPanel;
@@ -106,6 +108,8 @@ type
     FlowPanelSetup39: TFlowPanel;
     GroupBox2: TGroupBox;
     ImageList1: TImageList;
+    Label1: TLabel;
+    LabelNumIcons: TLabel;
     Label63: TLabel;
     Label69: TLabel;
     LabelLogInfo: TLabel;
@@ -156,6 +160,7 @@ type
     PairSplitterSide1: TPairSplitterSide;
     PairSplitterSide2: TPairSplitterSide;
     Panel10: TPanel;
+    Panel11: TPanel;
     Panel12: TPanel;
     Panel13: TPanel;
     Panel4: TPanel;
@@ -176,6 +181,7 @@ type
     RadioButtonPackageBuilder: TRadioButton;
     RadioGroup1: TRadioGroup;
     SBtnExit: TSpeedButton;
+    ScrollBox1: TScrollBox;
     SelectDirectoryDialog1: TSelectDirectoryDialog;
     Splitter2: TSplitter;
     Splitter3: TSplitter;
@@ -262,6 +268,7 @@ type
     procedure BtSetup1NextStepClick(Sender: TObject);
     procedure BtSetup2NextStepClick(Sender: TObject);
     procedure BtSingleAnalyzeAndCreateClick(Sender: TObject);
+    procedure BtnOpenIconFolderClick(Sender: TObject);
     procedure FlowPanel14Click(Sender: TObject);
     procedure FlowPanel18Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -309,19 +316,39 @@ type
     procedure TISpinEditPrioChange(Sender: TObject);
     procedure TITrackBarPrioChange(Sender: TObject);
     procedure fetchDepPropFromForm;
-    procedure ApplicationEventIdle(Sender: TObject; var Done: Boolean);
+    procedure ApplicationEventIdle(Sender: TObject; var Done: boolean);
     procedure genRttiEditChange(Sender: TObject);
     procedure makeProperties;
   private
     { private declarations }
-    procedure OpenMSTFile(var mysetup:TSetupFile);
-    procedure SetTICheckBoxesMST(Installer:TKnownInstaller);
+    procedure OpenMSTFile(var mysetup: TSetupFile);
+    procedure SetTICheckBoxesMST(Installer: TKnownInstaller);
   public
     { public declarations }
+    // create a FlowPanel dynamically to be able to free it before selecting a
+    //new directory
+    dynIconFlowPanel: TFlowPanel;
+    // TObjectList needs Contrs in uses
+    IconList: TFPObjectList;
+    iconDirectory: string;
+    numberIcons, indexSelectedIcon: integer;
+
     procedure memoadd(line: string);
+    procedure IconPanelOnMouseEnter(Sender: TObject);
+    procedure IconImageOnMouseEnter(Sender: TObject);
+    procedure IconImageOnClick(Sender: TObject);
+    procedure IconPanelOnClick(Sender: TObject);
 
   end;
 
+type
+  TIconDisplay = class(TObject)
+    Panel: TPanel;
+    Image: TImage;
+    FileName: string;
+  private
+  public
+  end;
 
 
 procedure main1;
@@ -412,10 +439,9 @@ resourcestring
   //sErrProductIdEmpty = 'We need a productId.';
   //sErrProductVersionEmpty = 'We need a productVersion.';
   sWarnInstalldirUnknown = 'Error: Field Install Directory is empty!' +
-    Lineending + 'For this Installer the Installdir could not be detected.'
-    + Lineending +
-    'The Installdir is needed for correct Uninstall process.' + Lineending
-    +
+    Lineending + 'For this Installer the Installdir could not be detected.' +
+    Lineending + 'The Installdir is needed for correct Uninstall process.' +
+    Lineending +
     'Please install this Product and check for the Installdir and write it to the setup and the uninstall script';
 
   // new for 4.1.0.2 ******************************************************************
@@ -539,7 +565,7 @@ begin
       1: RadioButtonBuildPackage.Checked := True;
       2: RadioButtonPackageBuilder.Checked := True;
     end;
-    case myconfiguration.BuildRadioIndex  of
+    case myconfiguration.BuildRadioIndex of
       0: radioBuildModebuildOnly.Checked := True;
       1: radioBuildModebuildInstall.Checked := True;
     end;
@@ -573,7 +599,7 @@ begin
     //BtSingleAnalyzeAndCreate.Glyph.LoadFromFile('/usr/share/opsi-setup-detector-experimental/analyze4.xpm');
     //BtATwonalyzeAndCreate.Glyph.LoadFromFile('/usr/share/opsi-setup-detector-experimental/analyze5.xpm');
     {$ENDIF LINUX}
-    LabelLogInfo.Caption:='More info in Log file: '+LogDatei.FileName;
+    LabelLogInfo.Caption := 'More info in Log file: ' + LogDatei.FileName;
     Application.ProcessMessages;
   end;
 end;
@@ -651,6 +677,7 @@ begin
   if usedsize <> 0 then
     Result := StrPas(Buffer);
 end;
+
 {$ENDIF WINDOWS}
 
 procedure main1;
@@ -690,16 +717,16 @@ end;
 procedure main2;
 var
   ErrorMsg: string;
-  i : integer;
-  mylang : string;
+  i: integer;
+  mylang: string;
 begin
-  startupfinished := true; //avoid calling main on every show event
+  startupfinished := True; //avoid calling main on every show event
   myExeDir := ExtractFileDir(ParamStr(0));
   myexitcode := 0;
   myerror := '';
   showgui := True;
   useRunMode := gmUnknown;
-  opsitmp := GetTempDir(false)+'opsitmp'+PathDelim;
+  opsitmp := GetTempDir(False) + 'opsitmp' + PathDelim;
   optionlist := TStringList.Create;
   optionlist.Append('help');
   optionlist.Append('filename::');
@@ -735,22 +762,22 @@ begin
 
   if Application.HasOption('lang') then
   begin
-    LogDatei.log('Found Parameter lang',LLInfo);
+    LogDatei.log('Found Parameter lang', LLInfo);
     mylang := Application.GetOptionValue('lang');
     SetDefaultLang(mylang);
-    LogDatei.log('Found Parameter lang: ' + mylang,LLInfo);
-    LogDatei.log('Active lang: ' + mylang,LLInfo);
+    LogDatei.log('Found Parameter lang: ' + mylang, LLInfo);
+    LogDatei.log('Active lang: ' + mylang, LLInfo);
   end
   else
   begin
     mylang := GetDefaultLang;
     {$IFDEF WINDOWS}
     if Mylang = '' then
-      mylang := LowerCase(copy (GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
+      mylang := LowerCase(copy(GetSystemDefaultLocale(LOCALE_SABBREVLANGNAME), 1, 2));
     {$ENDIF WINDOWS}
     SetDefaultLang(mylang);
-    LogDatei.log('Detected default lang: ' + mylang,LLInfo);
-    LogDatei.log('Detected default lang: ' + GetDefaultLang,LLInfo);
+    LogDatei.log('Detected default lang: ' + mylang, LLInfo);
+    LogDatei.log('Detected default lang: ' + GetDefaultLang, LLInfo);
   end;
 
 
@@ -920,7 +947,7 @@ end;
 
 procedure TResultform1.MenuItemLangEnClick(Sender: TObject);
 begin
-    SetDefaultLang('en');
+  SetDefaultLang('en');
 end;
 
 procedure TResultform1.MenuItemLangEsClick(Sender: TObject);
@@ -983,7 +1010,7 @@ end;
 
 procedure TResultform1.BtSingleAnalyzeAndCreateClick(Sender: TObject);
 var
-  i : integer;
+  i: integer;
 begin
   OpenDialog1.FilterIndex := 1;   // setup
   if OpenDialog1.Execute then
@@ -997,7 +1024,8 @@ begin
     //TIProgressBarAnalyze_progress.Loaded;
     MemoAnalyze.Clear;
     if StringGridDep.RowCount > 1 then
-      for i := StringGridDep.RowCount-1 downto 1 do StringGridDep.DeleteRow(i);
+      for i := StringGridDep.RowCount - 1 downto 1 do
+        StringGridDep.DeleteRow(i);
     StringGridDep.Clear;
     //if StringGridProp.RowCount > 1 then
     //  for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
@@ -1005,6 +1033,150 @@ begin
     Application.ProcessMessages;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
     SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
+  end;
+end;
+///////////////////////////////////////////////////////////////////////////////
+procedure TResultform1.IconPanelOnMouseEnter(Sender: TObject);
+var
+  index: integer;
+begin
+  for index := 0 to (numberIcons - 1) do
+  begin
+    TIconDisplay(IconList.Items[index]).Panel.Color := clDefault;
+  end;
+  (Sender as TPanel).Color := clSkyBlue;
+end;
+
+procedure TResultform1.IconImageOnMouseEnter(Sender: TObject);
+var
+  index: integer;
+begin
+  for index := 0 to (numberIcons - 1) do
+  begin
+    TIconDisplay(IconList.Items[index]).Panel.Color := clDefault;
+  end;
+  (Sender as TImage).Parent.Color := clSkyBlue;
+end;
+
+procedure TResultform1.IconImageOnClick(Sender: TObject);
+var
+  index: integer;
+begin
+  for index := 0 to (numberIcons - 1) do
+  begin
+    if TIconDisplay(IconList.Items[index]).Image = (Sender as TImage) then
+    begin
+      indexSelectedIcon := index;
+      break;
+    end;
+  end;
+  //IconPreview.ShowModal;
+end;
+
+procedure TResultform1.IconPanelOnClick(Sender: TObject);
+var
+  index: integer;
+begin
+  for index := 0 to (numberIcons - 1) do
+  begin
+    if TIconDisplay(IconList.Items[index]).Panel = (Sender as TPanel) then
+    begin
+      indexSelectedIcon := index;
+      break;
+    end;
+  end;
+  //IconPreview.ShowModal;
+end;
+
+procedure TResultform1.BtnOpenIconFolderClick(Sender: TObject);
+var
+  selectDirectory, loadFromFile: boolean;
+  Background: TPanel;
+  Image: TImage;
+  IconDisplay: TIconDisplay;
+  IconSearch: TSearchRec;
+begin
+  // clear list for new directory
+  IconList.Free;
+  dynIconFlowPanel.Free;
+
+  dynIconFlowPanel := TFlowPanel.Create(TabSheetIcons);
+  dynIconFlowPanel.Parent := ScrollBox1;
+  dynIconFlowPanel.Align := TAlign.alClient;
+
+  // select new directory the icons shall come from
+  try
+    selectDirectory := SelectDirectoryDialog1.Execute;
+    iconDirectory := SelectDirectoryDialog1.FileName + '/';
+  except
+    on E: Exception do
+    begin
+      ShowMessage('Exception while preview directory: ' + E.Message);
+      selectDirectory := False;
+    end;
+  end;
+  // fill the FlowPanel and store the icon display infos in IconList
+  if selectDirectory then
+  begin
+    IconList := TFPObjectList.Create;
+    numberIcons := 0;
+    // get icons from the selected directory
+    if FindFirst(iconDirectory + '*.png', faAnyFile, IconSearch) = 0 then
+    begin
+      repeat
+        // create images (name: Image) on panels (name: Background) in FlowPanel
+        // panel properties
+        Background := TPanel.Create(TabSheetIcons);
+        Background.Parent := dynIconFlowPanel;
+        Background.AutoSize := True;
+        Background.BorderSpacing.Around := 5;
+        Background.Height := 50;
+        Background.Width := 50;
+        Background.BevelOuter := bvNone;
+        // panel procedures
+        Background.OnMouseEnter := @IconPanelOnMouseEnter;
+        Background.OnClick := @IconPanelOnClick;
+        // image properties
+        Image := TImage.Create(TabSheetIcons);
+        Image.Parent := Background;
+        Image.Stretch := True;
+        Image.BorderSpacing.Around := 5;
+        Image.Height := 50;
+        Image.Width := 50;
+        // image procedures
+        Image.OnMouseEnter := @IconImageOnMouseEnter;
+        Image.OnClick := @IconImageOnClick;
+
+        // now load icon into Image
+        loadFromFile := True;
+        try
+          // IconSearch.Name = name of icon file as string
+          Image.Picture.LoadFromFile(iconDirectory + IconSearch.Name);
+        except
+          on E: Exception do
+          begin
+            ShowMessage('Exception while load from file: ' + E.Message);
+            loadFromFile := False;
+            Image.Destroy;
+            Background.Destroy;
+          end;
+        end;
+        if loadFromFile then
+        begin
+          // store panel, image and file name as one object IconDisplay in
+          // IconList for later use
+          IconDisplay := TIconDisplay.Create;
+          IconDisplay.Panel := Background;
+          IconDisplay.Image := Image;
+          IconDisplay.FileName := IconSearch.Name;
+          IconList.Add(IconDisplay);
+          Image.Update;
+          Inc(numberIcons);
+        end;
+      until FindNext(IconSearch) <> 0; // I have no idea how they are ordered
+      FindClose(IconSearch);
+    end;
+    LabelNumIcons.Caption := 'Icons zur Auswahl: ' + IntToStr(numberIcons);
   end;
 end;
 
@@ -1028,7 +1200,7 @@ procedure TResultform1.BtATwonalyzeAndCreateClick(Sender: TObject);
 var
   myprop: TStringList;
   index: integer;
-  i : integer;
+  i: integer;
 begin
   MessageDlg(rsTwonalyzeAndCreateMsgHead, rsTwonalyzeAndCreateMsgFirstSetup,
     mtInformation, [mbOK], '');
@@ -1041,7 +1213,8 @@ begin
     MemoAnalyze.Clear;
     StringGridDep.Clear;
     if StringGridDep.RowCount > 1 then
-      for i := StringGridDep.RowCount-1 downto 1 do StringGridDep.DeleteRow(i);
+      for i := StringGridDep.RowCount - 1 downto 1 do
+        StringGridDep.DeleteRow(i);
     //if StringGridProp.RowCount > 1 then
     //  for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
     Application.ProcessMessages;
@@ -1456,23 +1629,25 @@ begin
   if OpenDialog1.Execute then
   begin
     mysetup.mstFullFileName := OpenDialog1.FileName;
-    mysetup.installCommandLine:= mysetup.installCommandLine + ' TRANSFORMS=' +
-      '"%scriptpath%\files' + IntToStr(mysetup.ID) + '\' + mysetup.mstFileName + '"';
+    mysetup.installCommandLine :=
+      mysetup.installCommandLine + ' TRANSFORMS=' + '"%scriptpath%\files' +
+      IntToStr(mysetup.ID) + '\' + mysetup.mstFileName + '"';
   end;
 end;
 
-procedure TResultform1.SetTICheckBoxesMST(Installer:TKnownInstaller);
+procedure TResultform1.SetTICheckBoxesMST(Installer: TKnownInstaller);
 begin
   case Installer of
-    stMsi: begin
-             TICheckBoxS1MSt.Enabled := true;
-             TICheckBoxS2MSt.Enabled := true;
-           end
+    stMsi:
+    begin
+      TICheckBoxS1MSt.Enabled := True;
+      TICheckBoxS2MSt.Enabled := True;
+    end
     else
-           begin
-             TICheckBoxS1MSt.Enabled := false;
-             TICheckBoxS2MSt.Enabled := false;
-           end;
+    begin
+      TICheckBoxS1MSt.Enabled := False;
+      TICheckBoxS2MSt.Enabled := False;
+    end;
   end;
 end;
 
@@ -1646,27 +1821,34 @@ begin
   if checkok then
   begin
     case useRunMode of
-      analyzeOnly        : begin
-                             //we should never be here
-                             logdatei.log('Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
-                           end;
-      singleAnalyzeCreate: begin
-                             PageControl1.ActivePage := resultForm1.TabSheetProduct2;
-                             Application.ProcessMessages;
-                           end;
+      analyzeOnly:
+      begin
+        //we should never be here
+        logdatei.log(
+          'Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
+      end;
+      singleAnalyzeCreate:
+      begin
+        PageControl1.ActivePage := resultForm1.TabSheetProduct2;
+        Application.ProcessMessages;
+      end;
       twoAnalyzeCreate_1,
-      twoAnalyzeCreate_2 : begin
-                             PageControl1.ActivePage := resultForm1.TabSheetProduct2;
-                             Application.ProcessMessages;
-                           end;
-      createTemplate     : begin
-                             PageControl1.ActivePage := resultForm1.TabSheetProduct2;
-                             Application.ProcessMessages;
-                           end;
-      gmUnknown          : begin
-                             // we should never be here
-                             logdatei.log('Error: in BtProductNextStepClick RunMode: gmUnknown', LLError);
-                           end;
+      twoAnalyzeCreate_2:
+      begin
+        PageControl1.ActivePage := resultForm1.TabSheetProduct2;
+        Application.ProcessMessages;
+      end;
+      createTemplate:
+      begin
+        PageControl1.ActivePage := resultForm1.TabSheetProduct2;
+        Application.ProcessMessages;
+      end;
+      gmUnknown:
+      begin
+        // we should never be here
+        logdatei.log(
+          'Error: in BtProductNextStepClick RunMode: gmUnknown', LLError);
+      end;
     end;
   end;
 end;
@@ -1706,8 +1888,8 @@ procedure TResultform1.BtSetup1NextStepClick(Sender: TObject);
 var
   checkok: boolean = True;
 begin
-  if ((aktProduct.SetupFiles[0].installDirectory = '')
-       or (aktProduct.SetupFiles[0].installDirectory = 'unknown')) and
+  if ((aktProduct.SetupFiles[0].installDirectory = '') or
+    (aktProduct.SetupFiles[0].installDirectory = 'unknown')) and
     (aktProduct.SetupFiles[0].installerId <> stMsi) then
   begin
     //checkok := False;
@@ -1717,40 +1899,48 @@ begin
   if checkok then
   begin
     case useRunMode of
-      analyzeOnly        :  begin
-                              Application.Terminate;
-                            end;
-      singleAnalyzeCreate:  begin
-                              PageControl1.ActivePage := resultForm1.TabSheetProduct;
-                              Application.ProcessMessages;
-                            end;
-      twoAnalyzeCreate_1 :  begin
-                              useRunMode := twoAnalyzeCreate_2;
-                              MessageDlg(rsTwonalyzeAndCreateMsgHead,
-                                rsTwonalyzeAndCreateMsgSecondSetup,
-                                mtInformation, [mbOK], '');
-                              OpenDialog1.FilterIndex := 1;   // setup
-                              if OpenDialog1.Execute then
-                              begin
-                                PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
-                                MemoAnalyze.Clear;
-                                Application.ProcessMessages;
-                                Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[1], True);
-                                SetTICheckBoxesMST(aktProduct.SetupFiles[1].installerId);
-                              end;
-                              //PageControl1.ActivePage := resultForm1.TabSheetSetup2;
-                              //Application.ProcessMessages;
-                            end;
-      createTemplate     :  begin
-                              // we should never be here
-                              logdatei.log('Error: in BtSetup1NextStepClick RunMode: createTemplate', LLError);
-                              //PageControl1.ActivePage := resultForm1.TabSheetSetup1;
-                              //Application.ProcessMessages;
-                            end;
-      gmUnknown          :  begin
-                              // we should never be here
-                              logdatei.log('Error: in BtSetup1NextStepClick RunMode: gmUnknown', LLError);
-                            end;
+      analyzeOnly:
+      begin
+        Application.Terminate;
+      end;
+      singleAnalyzeCreate:
+      begin
+        PageControl1.ActivePage := resultForm1.TabSheetProduct;
+        Application.ProcessMessages;
+      end;
+      twoAnalyzeCreate_1:
+      begin
+        useRunMode := twoAnalyzeCreate_2;
+        MessageDlg(rsTwonalyzeAndCreateMsgHead,
+          rsTwonalyzeAndCreateMsgSecondSetup,
+          mtInformation, [mbOK], '');
+        OpenDialog1.FilterIndex := 1;   // setup
+        if OpenDialog1.Execute then
+        begin
+          PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
+          MemoAnalyze.Clear;
+          Application.ProcessMessages;
+          Analyze(OpenDialog1.FileName,
+            aktProduct.SetupFiles[1], True);
+          SetTICheckBoxesMST(aktProduct.SetupFiles[1].installerId);
+        end;
+        //PageControl1.ActivePage := resultForm1.TabSheetSetup2;
+        //Application.ProcessMessages;
+      end;
+      createTemplate:
+      begin
+        // we should never be here
+        logdatei.log(
+          'Error: in BtSetup1NextStepClick RunMode: createTemplate', LLError);
+        //PageControl1.ActivePage := resultForm1.TabSheetSetup1;
+        //Application.ProcessMessages;
+      end;
+      gmUnknown:
+      begin
+        // we should never be here
+        logdatei.log(
+          'Error: in BtSetup1NextStepClick RunMode: gmUnknown', LLError);
+      end;
     end;
   end;
 end;
@@ -1759,8 +1949,8 @@ procedure TResultform1.BtSetup2NextStepClick(Sender: TObject);
 var
   checkok: boolean = True;
 begin
-  if ((aktProduct.SetupFiles[1].installDirectory = '')
-      or (aktProduct.SetupFiles[1].installDirectory = 'unknown')) and
+  if ((aktProduct.SetupFiles[1].installDirectory = '') or
+    (aktProduct.SetupFiles[1].installDirectory = 'unknown')) and
     (aktProduct.SetupFiles[1].installerId <> stMsi) then
   begin
     // checkok := False;
@@ -1810,7 +2000,7 @@ end;
 
 procedure TResultform1.BtAnalyzeOnlyClick(Sender: TObject);
 var
-  i : integer;
+  i: integer;
 begin
   OpenDialog1.FilterIndex := 1;   // setup
   if OpenDialog1.Execute then
@@ -1819,9 +2009,11 @@ begin
     setRunMode;
     MemoAnalyze.Clear;
     if StringGridDep.RowCount > 1 then
-      for i := StringGridDep.RowCount-1 downto 1 do StringGridDep.DeleteRow(i);
+      for i := StringGridDep.RowCount - 1 downto 1 do
+        StringGridDep.DeleteRow(i);
     if StringGridProp.RowCount > 1 then
-      for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
+      for i := StringGridProp.RowCount - 1 downto 1 do
+        StringGridProp.DeleteRow(i);
     PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
     Application.ProcessMessages;
     initaktproduct;
@@ -1983,9 +2175,10 @@ begin
   MemoAnalyze.append(line);
 end;
 
-procedure TResultform1.ApplicationEventIdle(Sender: TObject; var Done: Boolean);
+procedure TResultform1.ApplicationEventIdle(Sender: TObject; var Done: boolean);
 begin
-      if not startupfinished then main2;
+  if not startupfinished then
+    main2;
 end;
 
 
@@ -2050,8 +2243,8 @@ end;
 
 procedure TResultform1.TabSheetStartExit(Sender: TObject);
 begin
-  ResultForm1.Width:= 1185;
-  ResultForm1.Height:= 566;
+  ResultForm1.Width := 1185;
+  ResultForm1.Height := 566;
 end;
 
 procedure TResultform1.TICheckBoxlicenseRequiredChange(Sender: TObject);
@@ -2063,12 +2256,12 @@ procedure TResultform1.TICheckBoxS1MstChange(Sender: TObject);
 begin
   if (Sender as TTICheckBox).State = cbChecked then
   begin
-    FlowPanelMst.Enabled:= true;
+    FlowPanelMst.Enabled := True;
     //TIEditMstFile1.Enabled:=true;
   end
   else
   begin
-    FlowPanelMst.Enabled:= false;
+    FlowPanelMst.Enabled := False;
     //TIEditMstFile1.Enabled:=false;
   end;
 end;
@@ -2077,14 +2270,14 @@ procedure TResultform1.TICheckBoxS2MstChange(Sender: TObject);
 begin
   if (Sender as TTICheckBox).State = cbChecked then
   begin
-    FlowPanelMst1.Enabled:= true;
+    FlowPanelMst1.Enabled := True;
     //TIEditMstFile2.Enabled:=true
   end
   else
   begin
-    FlowPanelMst1.Enabled:= false;
+    FlowPanelMst1.Enabled := False;
     //TIEditMstFile2.Enabled:=false;
-  end
+  end;
 end;
 
 procedure TResultform1.TIEditProdIDChange(Sender: TObject);
@@ -2122,10 +2315,10 @@ end;
 
 procedure TResultform1.TIS1UrlClick(Sender: TObject);
 var
-  link : string;
+  link: string;
   PropInfo: PPropInfo;
 begin
-  link := TTILabel(sender).Caption;
+  link := TTILabel(Sender).Caption;
   (*
   PropInfo := GetPropInfo(Sender, 'Caption', []);
   if Assigned(PropInfo) then
@@ -2136,12 +2329,12 @@ end;
 
 procedure TResultform1.TIS1UrlMouseEnter(Sender: TObject);
 begin
-  Screen.Cursor:=crHandPoint;
+  Screen.Cursor := crHandPoint;
 end;
 
 procedure TResultform1.TIS1UrlMouseLeave(Sender: TObject);
 begin
-  Screen.Cursor:=crDefault;
+  Screen.Cursor := crDefault;
 end;
 
 
@@ -2163,34 +2356,35 @@ end;
 procedure TResultform1.makeProperties;
 var
   myprop: TStringList;
-  index, i : integer;
+  index, i: integer;
 begin
   // clear existing props in StringGridProp
   if StringGridProp.RowCount > 1 then
-      for i := StringGridProp.RowCount-1 downto 1 do StringGridProp.DeleteRow(i);
+    for i := StringGridProp.RowCount - 1 downto 1 do
+      StringGridProp.DeleteRow(i);
   //StringGridProp.Clear;
 
-   if myconfiguration.UsePropDesktopicon
-     and (StringGridProp.Cols[1].IndexOf('DesktopIcon') = -1) then
-    begin
-      index := StringGridProp.RowCount;
-      //Inc(index);
-      //StringGridProp.InsertColRow(false,index);
-      //StringGridProp.RowCount := index;
-      myprop := TStringList.Create;
-      myprop.Add(IntToStr(index));
-      myprop.Add('DesktopIcon');
-      myprop.Add('Soll es ein Desktop Icon geben ?');
-      myprop.Add('bool');  //type
-      myprop.Add('False');      //multivalue
-      myprop.Add('False');      //editable
-      myprop.Add('[]');      //possible values
-      myprop.Add('False');      //default values
-      //StringGridProp.InsertRowWithValues(index,myprop);
-      StringGridProp.InsertColRow(false,index);
-      StringGridProp.Rows[index].Clear;
-      StringGridProp.Rows[index].AddStrings(myprop);
-      myprop.Free;
+  if myconfiguration.UsePropDesktopicon and
+    (StringGridProp.Cols[1].IndexOf('DesktopIcon') = -1) then
+  begin
+    index := StringGridProp.RowCount;
+    //Inc(index);
+    //StringGridProp.InsertColRow(false,index);
+    //StringGridProp.RowCount := index;
+    myprop := TStringList.Create;
+    myprop.Add(IntToStr(index));
+    myprop.Add('DesktopIcon');
+    myprop.Add('Soll es ein Desktop Icon geben ?');
+    myprop.Add('bool');  //type
+    myprop.Add('False');      //multivalue
+    myprop.Add('False');      //editable
+    myprop.Add('[]');      //possible values
+    myprop.Add('False');      //default values
+    //StringGridProp.InsertRowWithValues(index,myprop);
+    StringGridProp.InsertColRow(False, index);
+    StringGridProp.Rows[index].Clear;
+    StringGridProp.Rows[index].AddStrings(myprop);
+    myprop.Free;
       (*
       myprop := TPProperty(aktProduct.properties.add);
       myprop.init;
@@ -2203,28 +2397,28 @@ begin
       myprop.StrDefault.Text := '';
       myprop.boolDefault := False;
       *)
-    end;
+  end;
 
-    if myconfiguration.UsePropLicenseOrPool and
-      aktProduct.productdata.licenserequired
-       and (StringGridProp.Cols[1].IndexOf('LicenseOrPool') = -1) then
-    begin
-      index := StringGridProp.RowCount;
-      //Inc(index);
-      //StringGridProp.RowCount := index;
-      myprop := TStringList.Create;
-      myprop.Add(IntToStr(index));
-      myprop.Add('SecretLicense_or_Pool');
-      myprop.Add('LicenseKey or opsi-LicensePool');
-      myprop.Add('unicode');  //type
-      myprop.Add('False');      //multivalue
-      myprop.Add('True');      //editable
-      myprop.Add('[]');      //possible values
-      myprop.Add('[""]');      //default values
-      StringGridProp.InsertColRow(false,index);
-      StringGridProp.Rows[index].Clear;
-      StringGridProp.Rows[index].AddStrings(myprop);
-      myprop.Free;
+  if myconfiguration.UsePropLicenseOrPool and
+    aktProduct.productdata.licenserequired and
+    (StringGridProp.Cols[1].IndexOf('LicenseOrPool') = -1) then
+  begin
+    index := StringGridProp.RowCount;
+    //Inc(index);
+    //StringGridProp.RowCount := index;
+    myprop := TStringList.Create;
+    myprop.Add(IntToStr(index));
+    myprop.Add('SecretLicense_or_Pool');
+    myprop.Add('LicenseKey or opsi-LicensePool');
+    myprop.Add('unicode');  //type
+    myprop.Add('False');      //multivalue
+    myprop.Add('True');      //editable
+    myprop.Add('[]');      //possible values
+    myprop.Add('[""]');      //default values
+    StringGridProp.InsertColRow(False, index);
+    StringGridProp.Rows[index].Clear;
+    StringGridProp.Rows[index].AddStrings(myprop);
+    myprop.Free;
       (*
       myprop := TPProperty(aktProduct.properties.add);
       myprop.init;
@@ -2237,27 +2431,28 @@ begin
       myprop.StrDefault.Text := '';
       myprop.boolDefault := False;
       *)
-    end;
+  end;
 
-    if useRunMode = twoAnalyzeCreate_1 then
-    begin
-      index := StringGridProp.RowCount;
-      //Inc(index);
-      //StringGridProp.RowCount := index;
-      myprop := TStringList.Create;
-      myprop.Add(IntToStr(index));
-      myprop.Add('install_architecture');
-      myprop.Add('Which architecture (32 / 64 Bit) has to be installed?');
-      myprop.Add('unicode');  //type
-      myprop.Add('False');      //multivalue
-      myprop.Add('False');      //editable
-      myprop.Add('["32 only","64 only","system specific","both"]');      //possible values
-      myprop.Add('["system specific"]');      //default values
-      StringGridProp.InsertColRow(false,index);
-      StringGridProp.Rows[index].Clear;
-      StringGridProp.Rows[index].AddStrings(myprop);
-      myprop.Free;
-    end;
+  if useRunMode = twoAnalyzeCreate_1 then
+  begin
+    index := StringGridProp.RowCount;
+    //Inc(index);
+    //StringGridProp.RowCount := index;
+    myprop := TStringList.Create;
+    myprop.Add(IntToStr(index));
+    myprop.Add('install_architecture');
+    myprop.Add('Which architecture (32 / 64 Bit) has to be installed?');
+    myprop.Add('unicode');  //type
+    myprop.Add('False');      //multivalue
+    myprop.Add('False');      //editable
+    myprop.Add('["32 only","64 only","system specific","both"]');
+    //possible values
+    myprop.Add('["system specific"]');      //default values
+    StringGridProp.InsertColRow(False, index);
+    StringGridProp.Rows[index].Clear;
+    StringGridProp.Rows[index].AddStrings(myprop);
+    myprop.Free;
+  end;
 end;
 
 
