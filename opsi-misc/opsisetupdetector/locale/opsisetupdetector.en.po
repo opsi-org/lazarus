@@ -571,6 +571,10 @@ msgstr ""
 msgid "opsi Setup Detector"
 msgstr "opsi Setup Detector"
 
+#: tresultform1.checkboxbackgr.caption
+msgid "Choose Background Color"
+msgstr ""
+
 #: tresultform1.checkgroupbuildmode.caption
 msgctxt "tresultform1.checkgroupbuildmode.caption"
 msgid "Build Mode"
@@ -765,6 +769,10 @@ msgstr "Uninstall Program"
 msgid "Properties"
 msgstr "Properties"
 
+#: tresultform1.labeliconpreview.caption
+msgid "Selected Icon (Preview 170x170)"
+msgstr ""
+
 #: tresultform1.labelloginfo.caption
 msgid "LabelLogInfo"
 msgstr ""
@@ -828,6 +836,10 @@ msgstr ""
 
 #: tresultform1.panel4.caption
 msgid "Panel4"
+msgstr ""
+
+#: tresultform1.paneliconpreview.caption
+msgid "no icon selected"
 msgstr ""
 
 #: tresultform1.processing.caption

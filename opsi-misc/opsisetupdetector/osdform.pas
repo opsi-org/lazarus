@@ -36,15 +36,22 @@ uses
   //Spin,
   //JSONPropStorage,
   Grids,
-  PairSplitter,
+  PairSplitter, ColorBox,
   oslog,
   osdbasedata, osdconfigdlg, osdcreate, fpjsonrtti, osddlgnewdependency,
   osddlgnewproperty, osparserhelper,
   Contnrs;
 
 type
+  TIconDisplay = class(TObject)
+    Panel: TPanel;
+    Image: TImage;
+    FileName: string;
+  private
+  public
+  end;
 
-
+type
 
   { TResultform1 }
 
@@ -72,7 +79,9 @@ type
     BtCreateEmptyTemplate: TBitBtn;
     BtAnalyzeOnly: TBitBtn;
     BtnOpenIconFolder: TButton;
+    CheckBoxBackgr: TCheckBox;
     CheckGroupBuildMode: TCheckGroup;
+    ColorBoxIconBackgr: TColorBox;
     FlowPanel1: TFlowPanel;
     FlowPanel10: TFlowPanel;
     FlowPanel11: TFlowPanel;
@@ -107,8 +116,11 @@ type
     FlowPanelSetup38: TFlowPanel;
     FlowPanelSetup39: TFlowPanel;
     GroupBox2: TGroupBox;
+    ImageIconPreview: TImage;
     ImageList1: TImageList;
     Label1: TLabel;
+    LabelNameSelectedIcon: TLabel;
+    LabelIconPreview: TLabel;
     LabelNumIcons: TLabel;
     Label63: TLabel;
     Label69: TLabel;
@@ -163,6 +175,8 @@ type
     Panel11: TPanel;
     Panel12: TPanel;
     Panel13: TPanel;
+    PanelSelectBackgrCol: TPanel;
+    PanelIconPreview: TPanel;
     Panel4: TPanel;
     Panel5: TPanel;
     Panel6: TPanel;
@@ -269,6 +283,7 @@ type
     procedure BtSetup2NextStepClick(Sender: TObject);
     procedure BtSingleAnalyzeAndCreateClick(Sender: TObject);
     procedure BtnOpenIconFolderClick(Sender: TObject);
+    procedure ColorBoxIconBackgrSelect(Sender: TObject);
     procedure FlowPanel14Click(Sender: TObject);
     procedure FlowPanel18Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -319,35 +334,29 @@ type
     procedure ApplicationEventIdle(Sender: TObject; var Done: boolean);
     procedure genRttiEditChange(Sender: TObject);
     procedure makeProperties;
+
+    procedure IconPanelOnMouseEnter(Sender: TObject);
+    procedure IconImageOnMouseEnter(Sender: TObject);
+    procedure PaintBackgr(SelColor: TColor);
+    procedure IconImageOnClick(Sender: TObject);
+    procedure IconPanelOnClick(Sender: TObject);
+    procedure CheckBoxBackgrChange(Sender: TObject);
   private
     { private declarations }
     procedure OpenMSTFile(var mysetup: TSetupFile);
     procedure SetTICheckBoxesMST(Installer: TKnownInstaller);
   public
     { public declarations }
+
     // create a FlowPanel dynamically to be able to free it before selecting a
     //new directory
     dynIconFlowPanel: TFlowPanel;
-    // TObjectList needs Contrs in uses
+    // TFPObjectList needs Contnrs in uses
     IconList: TFPObjectList;
     iconDirectory: string;
     numberIcons, indexSelectedIcon: integer;
-
+    SelectedIcon: TIconDisplay;
     procedure memoadd(line: string);
-    procedure IconPanelOnMouseEnter(Sender: TObject);
-    procedure IconImageOnMouseEnter(Sender: TObject);
-    procedure IconImageOnClick(Sender: TObject);
-    procedure IconPanelOnClick(Sender: TObject);
-
-  end;
-
-type
-  TIconDisplay = class(TObject)
-    Panel: TPanel;
-    Image: TImage;
-    FileName: string;
-  private
-  public
   end;
 
 
@@ -1058,6 +1067,35 @@ begin
   (Sender as TImage).Parent.Color := clSkyBlue;
 end;
 
+// paint icon preview with selected background
+procedure TResultform1.PaintBackgr(SelColor: TColor);
+var
+  RectBackgr: TRect; // rectangle as background
+begin
+  with ImageIconPreview.Canvas do
+  begin
+    Brush.Color := SelColor;
+    RectBackgr := Rect(0, 0, ImageIconPreview.Width, ImageIconPreview.Height);
+    FillRect(RectBackgr);
+    StretchDraw(RectBackgr, SelectedIcon.Image.Picture.Bitmap);
+  end;
+end;
+
+procedure TResultform1.CheckBoxBackgrChange(Sender: TObject);
+begin
+  if CheckBoxBackgr.Checked = True then
+  begin
+    PanelSelectBackgrCol.Visible := True;
+    PaintBackgr(ColorBoxIconBackgr.Selected);
+    //ColorDialog1.Execute;
+  end
+  else
+  begin
+    PanelSelectBackgrCol.Visible := False;
+    PaintBackgr(clForm);
+  end;
+end;
+
 procedure TResultform1.IconImageOnClick(Sender: TObject);
 var
   index: integer;
@@ -1070,7 +1108,10 @@ begin
       break;
     end;
   end;
-  //IconPreview.ShowModal;
+  CheckBoxBackgr.Enabled:=True;
+  SelectedIcon := TIconDisplay(IconList.Items[indexSelectedIcon]);
+  LabelNameSelectedIcon.Caption := SelectedIcon.FileName;
+  PaintBackgr(ColorBoxIconBackgr.Selected);
 end;
 
 procedure TResultform1.IconPanelOnClick(Sender: TObject);
@@ -1085,7 +1126,10 @@ begin
       break;
     end;
   end;
-  //IconPreview.ShowModal;
+  CheckBoxBackgr.Enabled:=True;
+  SelectedIcon := TIconDisplay(IconList.Items[indexSelectedIcon]);
+  LabelNameSelectedIcon.Caption := SelectedIcon.FileName;
+  PaintBackgr(ColorBoxIconBackgr.Selected);
 end;
 
 procedure TResultform1.BtnOpenIconFolderClick(Sender: TObject);
@@ -1180,6 +1224,12 @@ begin
   end;
 end;
 
+procedure TResultform1.ColorBoxIconBackgrSelect(Sender: TObject);
+begin
+    PaintBackgr(ColorBoxIconBackgr.Selected);
+end;
+
+///////////////////////////////////////////////////////////////////////////////
 
 procedure TResultform1.FlowPanel14Click(Sender: TObject);
 begin
@@ -1193,7 +1243,7 @@ end;
 
 procedure TResultform1.FormActivate(Sender: TObject);
 begin
-
+    BtnOpenIconFolder.Font.Size:=12;
 end;
 
 procedure TResultform1.BtATwonalyzeAndCreateClick(Sender: TObject);
