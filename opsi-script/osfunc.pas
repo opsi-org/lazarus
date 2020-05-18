@@ -2426,7 +2426,7 @@ var
       tmp_buffer := '';
       BytesRead := proc.output.Read(tmp_buffer, READ_BYTES);
       {$IFDEF WINDOWS}
-      OemToAnsi(tmp_buffer, tmp_buffer);
+      OemToAnsi(tmp_buffer, tmp_buffer); //ToDo: Risk due to possible buffer overflow?
       {$ENDIF WINDOWS}
       Buffer := Buffer + tmp_buffer;
 
@@ -2931,7 +2931,7 @@ function ReadPipe(var Buffer: string; var hReadPipe: THandle;
   var BytesRead: longword; var output: TXStringList; showoutput: boolean): boolean;
 var
   output_line: string = '';
-  lpBuffer: array[0..READ_BYTES] of char;
+  lpBuffer: array[0..READ_BYTES-1] of char;//array of 2048 char
   LineBreakPos: longword;
   BytesAvail: longword;
   BytesLeft: longword;
@@ -2943,7 +2943,7 @@ begin
     lpBuffer := '';
     Result := ReadFile(hReadPipe, lpBuffer, READ_BYTES, BytesRead, nil);
 
-    OemToAnsi(lpBuffer, lpBuffer);
+    OemToAnsi(lpBuffer, lpBuffer);//ToDo: Risk due to possible Buffer overflow?
     Buffer := Buffer + lpBuffer;
 
     LineBreakPos := AnsiPos(#13, Buffer);
