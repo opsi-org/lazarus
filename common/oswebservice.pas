@@ -351,6 +351,7 @@ type
     FProductOnClientIndex: TStringList;
     //FSslProtocol: TIdSSLVersion;
     mylist: TStringList;
+    FCommunicationMode: integer;
     //Function getMapOfProductSwitches : TStringList;
     //Function getProductRequirements (requirementType : String) : TStringList;
     function getProductRequirements(productname: string;
@@ -488,6 +489,7 @@ type
     property depotId: string read FDepotId;
     property ServiceLastErrorInfo: TStringList read FServiceLastErrorInfo;
     //property actualclient: string read FactualClient write FactualClient;
+    property CommunicationMode : integer read FCommunicationMode write FCommunicationMode;
   end;
 
 var
@@ -1214,21 +1216,21 @@ begin
   TJsonThroughHTTPS.Create(serviceUrl, username, password, '', '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(const serviceURL, username,
-  password, sessionid: string);
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid: string);
 begin
   Create(serviceUrl, username, password, sessionid, '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(const serviceURL, username,
-  password, sessionid, ip, port: string);
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid, ip, port: string);
 begin
   Create(serviceUrl, username, password, sessionid, ip, port,
     ExtractFileName(ParamStr(0)));
 end;
 
-constructor TJsonThroughHTTPS.Create(const serviceURL, username,
-  password, sessionid, ip, port, agent: string);
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid, ip, port, agent: string);
 begin
   //portHTTPS := port;
   //portHTTP := 4444;
@@ -1516,6 +1518,7 @@ begin
     {---------------------------------------------------
     communicationmode : 0 = opsi 4.1 / 4.2 / Request: gzip, Response: gzip, deflate, identity
     communicationmode : 1 = opsi 4.0 / Request: deflate, Response: gzip, deflate, identity
+    communicationmode : 2 = opsi 4.2 / Request: identity, Response: gzip, deflate, identity
      ----------------------------------------------------}
     if FCommunicationMode <> -1 then   //if Communictaion mode is set
     begin
@@ -1552,6 +1555,17 @@ begin
         Accept := 'gzip-application/json-rpc';
         ContentEncoding := '';
         AcceptEncoding := '';
+      end;
+      2:
+      begin
+        LogDatei.log_prog('Use opsi 4.1 / 4.2 HTTP Header, identity', LLnotice);
+        compress := False;
+        ContentType := 'application/json; charset=UTF-8';
+        Accept := 'application/json';
+        AcceptEncoding := 'gzip, deflate, identity';
+        //AcceptEncoding := 'deflate';
+        ContentEncoding := 'identity';//'deflate';
+        //ContentEncoding := 'deflate';
       end;
       else
       begin
@@ -1761,7 +1775,8 @@ begin
                   unzipStream(HTTPSender.Document, ReceiveStream);
                 end
                 else
-                  LogDatei.log('Unknown Content-Encoding: ' + ContentEncoding, LLWarning);
+                  LogDatei.log('Unknown Content-Encoding: ' +
+                    ContentEncoding, LLWarning);
 
                 //HTTPSender.Document.SaveToFile('C:\Users\Jan\Documents\ReceiveStream.txt');  //for testing
 
@@ -3390,6 +3405,7 @@ begin
   actualclient := '';
   FJsonExecutioner := nil;
   FSortByServer := False;
+  FCommunicationMode := -1;
   {$IFNDEF SYNAPSE}
   //FSslProtocol := sslvTLSv1_2;
   {$ENDIF SYNAPSE}
@@ -3713,12 +3729,26 @@ function TOpsi4Data.checkAndRetrieve(const omc: TOpsiMethodCall;
 begin
   errorOccured := False;
   Result := '';
-  if FJsonExecutioner.retrieveJSONObject(omc) <> nil then
-    Result := FjsonExecutioner.resultLines[0]
+  if FCommunicationMode > -1 then
+  begin
+    if FJsonExecutioner.retrieveJSONObject(omc, True, True, False,
+      FCommunicationMode) <> nil then
+      Result := FjsonExecutioner.resultLines[0]
+    else
+    begin
+      errorOccured := True;
+      Result := FjsonExecutioner.lastError;
+    end;
+  end
   else
   begin
-    errorOccured := True;
-    Result := FjsonExecutioner.lastError;
+    if FJsonExecutioner.retrieveJSONObject(omc) <> nil then
+      Result := FjsonExecutioner.resultLines[0]
+    else
+    begin
+      errorOccured := True;
+      Result := FjsonExecutioner.lastError;
+    end;
   end;
 
   FServiceLastErrorInfo := FjsonExecutioner.lastErrorInfo;
@@ -4139,8 +4169,10 @@ begin
     ProcessMess;
     Application.ProcessMessages;
     {$ENDIF}
-    if LogDatei.Appendmode then sendLog(sendtype,true)
-    else sendLog(sendtype);
+    if LogDatei.Appendmode then
+      sendLog(sendtype, True)
+    else
+      sendLog(sendtype);
   end;
   try
     { close the session after all is done  }
@@ -4880,8 +4912,8 @@ begin
         { we want to run the login script if installed ......}
         if ((productEntry.O['productId'] <> nil) and
           (productEntry.S['installationStatus'] = 'installed'))
-          { or last successful action was uninstall }
-          or ((productEntry.S['actionResult'] = 'successful') and
+          { or last successful action was uninstall } or
+          ((productEntry.S['actionResult'] = 'successful') and
           (productEntry.S['lastAction'] = 'uninstall')) then
         begin
           if loginscriptmap.Values[productEntry.S['productId']] <> '' then
