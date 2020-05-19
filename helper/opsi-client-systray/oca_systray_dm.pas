@@ -212,7 +212,7 @@ begin
   opsidata.initOpsiConf(myservice_url, myclientid,
     '', '', '', '', 'opsi-client-systray-' + myVersion);
   {opciclientd 4.2 recieve identity}
-  opsidata.CommunicationMode:=2;
+  //opsidata.CommunicationMode:=2;
   LogDatei.log('opsidata initialized', LLDebug2);
   repeat
     try
