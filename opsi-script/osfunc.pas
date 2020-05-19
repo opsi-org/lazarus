@@ -2414,7 +2414,7 @@ var
   function ReadStream(var Buffer: string; var proc: TProcess;
   var output: TXStringList; showoutput: boolean): longint;
   var
-    tmp_buffer: array[0..READ_BYTES] of char;
+    tmp_buffer: array[0..READ_BYTES-1] of char;//Buffer of 2048 char
     output_line: string = '';
     LineBreakPos: longint;
     BytesRead: longint;
@@ -2426,12 +2426,12 @@ var
       tmp_buffer := '';
       BytesRead := proc.output.Read(tmp_buffer, READ_BYTES);
       {$IFDEF WINDOWS}
-      OemToAnsi(tmp_buffer, tmp_buffer); //ToDo: Risk due to possible buffer overflow?
+      //OemToAnsi(tmp_buffer, tmp_buffer); //ToDo: Risk due to possible buffer overflow?
       {$ENDIF WINDOWS}
       Buffer := Buffer + tmp_buffer;
 
       {$IFDEF WINDOWS}
-      LineBreakPos := AnsiPos(#13, Buffer);
+      LineBreakPos := Pos(#13, Buffer);
       {$ELSE WINDOWS}
       LineBreakPos := Pos(#10, Buffer);
       {$ENDIF WINDOWS}
@@ -2458,7 +2458,7 @@ var
         Buffer := Copy(Buffer, LineBreakPos + 1, READ_BYTES);
 
         {$IFDEF WINDOWS}
-        LineBreakPos := AnsiPos(#13, Buffer);
+        LineBreakPos := Pos(#13, Buffer);
         {$ELSE WINDOWS}
         LineBreakPos := Pos(#10, Buffer);
         {$ENDIF WINDOWS}
@@ -2943,10 +2943,10 @@ begin
     lpBuffer := '';
     Result := ReadFile(hReadPipe, lpBuffer, READ_BYTES, BytesRead, nil);
 
-    OemToAnsi(lpBuffer, lpBuffer);//ToDo: Risk due to possible Buffer overflow?
+    //OemToAnsi(lpBuffer, lpBuffer);//ToDo: Risk due to possible Buffer overflow?
     Buffer := Buffer + lpBuffer;
 
-    LineBreakPos := AnsiPos(#13, Buffer);
+    LineBreakPos := Pos(#13, Buffer);
     while not (LineBreakPos = 0) do
     begin
       output_line := Copy(Buffer, 1, LineBreakPos - 1);
@@ -2966,7 +2966,7 @@ begin
 
       Buffer := Copy(Buffer, LineBreakPos + 1, READ_BYTES);
 
-      LineBreakPos := AnsiPos(#13, Buffer);
+      LineBreakPos := Pos(#13, Buffer);
     end;
   end;
 end;

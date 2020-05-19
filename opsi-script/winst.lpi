@@ -22,13 +22,12 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
-      <RevisionNr Value="3"/>
-      <BuildNr Value="13"/>
+      <RevisionNr Value="4"/>
       <StringTable Comments="Compiled with Lazarus 2.0.8 / FPC 3.0.4" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst32.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst32.exe" ProductName="opsi-script" ProductVersion="4.1.0"/>
     </VersionInfo>
-    <BuildModes Count="3">
-      <Item1 Name="default" Default="True"/>
-      <Item2 Name="Debug">
+    <BuildModes Count="5">
+      <Item1 Name="default - Winst32" Default="True"/>
+      <Item2 Name="Debug - Winst32">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -89,7 +88,7 @@
           </Other>
         </CompilerOptions>
       </Item2>
-      <Item3 Name="Release">
+      <Item3 Name="Release - Winst32">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -138,9 +137,124 @@
 -dGUI
 -dOSLOG
 -dSYNAPSE"/>
+            <OtherDefines Count="5">
+              <Define0 Value="OPSIWINST"/>
+              <Define1 Value="WINDOWS"/>
+              <Define2 Value="OPSISCRIPT"/>
+              <Define3 Value="GUI"/>
+              <Define4 Value="OSLOG"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item3>
+      <Item4 Name="Release - Winst64">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="winst64"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\modified\misc;..\external_libraries\synapse;..\external_libraries\misc"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <SyntaxMode Value="Delphi"/>
+              <AllowLabel Value="False"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="win64"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+            <SmallerCode Value="True"/>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <StripSymbols Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <Verbosity>
+              <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
+            </Verbosity>
+            <CompilerMessages>
+              <IgnoredMessages idx5058="True" idx5027="True"/>
+            </CompilerMessages>
+            <CustomOptions Value="-dOPSIWINST -dWINDOWS -dOPSISCRIPT -dGUI"/>
+            <OtherDefines Count="5">
+              <Define0 Value="OPSIWINST"/>
+              <Define1 Value="WINDOWS"/>
+              <Define2 Value="OPSISCRIPT"/>
+              <Define3 Value="GUI"/>
+              <Define4 Value="OSLOG"/>
+            </OtherDefines>
+          </Other>
+        </CompilerOptions>
+      </Item4>
+      <Item5 Name="Debug - Winst64">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="winst64"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\indy\Lib;..\external_libraries\modified\misc;..\external_libraries\synapse"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <SyntaxMode Value="Delphi"/>
+              <IncludeAssertionCode Value="True"/>
+              <AllowLabel Value="False"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="win64"/>
+            <SmallerCode Value="True"/>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <UseHeaptrc Value="True"/>
+              <StripSymbols Value="True"/>
+              <UseExternalDbgSyms Value="True"/>
+            </Debugging>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <Verbosity>
+              <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
+            </Verbosity>
+            <CompilerMessages>
+              <IgnoredMessages idx5058="True" idx5027="True"/>
+            </CompilerMessages>
+            <CustomOptions Value="-dOPSIWINST -dWINDOWS -dOPSISCRIPT -dGUI"/>
+          </Other>
+        </CompilerOptions>
+      </Item5>
       <SharedMatrixOptions Count="1">
         <Item1 ID="257935302965"/>
       </SharedMatrixOptions>
