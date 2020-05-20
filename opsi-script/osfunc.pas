@@ -1460,7 +1460,196 @@ end;
 {$ENDIF WINDOWS}
 
 {$IFDEF WIN32} //ToDo: Ask Detlef why this works not for winst64 e.g.IFDEF WINDOWS
-function SetFilePermissionForRunAs(filename: string; runas: TRunAs;
+function SetFilePermissionForRunAs(filename: string; runas: TRunAs; var errorCode: DWORD): boolean;
+
+const
+  CHANGED_SECURITY_INFO = jwawinnt.DACL_SECURITY_INFORMATION;
+  EA_COUNT = 1;
+
+// workaround for a FPC bug, see:
+// https://stackoverflow.com/a/59172446/12403540
+// https://bugs.freepascal.org/view.php?id=36368
+type
+  TRUSTEE_FIX = packed record
+    pMultipleTrustee: Pointer;
+    MultipleTrusteeOperation: DWORD;
+    TrusteeForm: DWORD;
+    TrusteeType: DWORD;
+    ptstrName: LPSTR;
+  end;
+
+  EXPLICIT_ACCESS_FIX = packed record
+    grfAccessPermissions: DWORD;
+    grfAccessMode: DWORD;
+    grfInheritance: DWORD;
+    Trustee: TRUSTEE_FIX;
+  end;
+
+var
+  sid: JwaWinNT.PSID;
+  sidSize: DWORD;
+  nameUse: JwaWinNT.SID_NAME_USE;
+  refDomain: LpStr;
+  refDomainSize: DWORD;
+  dolocalfree: boolean;
+  procToken: HANDLE;
+  ea: Array[0..(EA_COUNT-1)] of EXPLICIT_ACCESS_FIX;
+  acl: jwawinnt.PACL;
+  status: jwawintype.DWORD;
+
+  function SetPrivilege(token: HANDLE; privilege: PChar; state: boolean): boolean;
+  var
+    luid: jwawintype._LUID;
+    tp: jwawinnt.TOKEN_PRIVILEGES;
+  begin
+    if not jwawinbase.LookupPrivilegeValue(nil, privilege, luid) then
+      Result := false
+    else
+    begin
+      FillChar(tp, sizeOf(tp), #0);
+      tp.privilegeCount := 1;
+      tp.Privileges[0].Luid := luid;
+      if state then
+        tp.Privileges[0].Attributes := SE_PRIVILEGE_ENABLED
+      else
+        tp.Privileges[0].Attributes := SE_PRIVILEGE_REMOVED;
+
+        Result := AdjustTokenPrivileges(token, LongBool(false), @tp, sizeOf(tp), nil,nil);
+    end
+  end;
+
+begin
+  if runas = traInvoker then
+    Result := true
+  else
+    try
+      begin
+        status := NO_ERROR;
+        sidSize := 0;
+        refDomainSize := 0;
+        doLocalFree := false;
+
+        procToken := INVALID_HANDLE_VALUE;
+
+        sid := nil;
+
+        // Determine the SID of the user that the file will be run as
+
+        if runas = traLoggedOnUser then
+        begin
+          // use usercontextSID variable to determine SID of logged on user
+          Result := jwasddl.ConvertStringSidToSidA(PChar(usercontextSID), sid);
+          dolocalfree := true;
+        end
+        else if runas = traPcpatch then
+        begin
+          {
+          jwawinbase.LookupAccountNameA(nil, 'pcpatch', nil,
+            sidSize, nil, refDomainSize, nameUse);
+
+          GetMem(sid, sidSize);
+          GetMem(refDomain, refDomainSize);
+
+          Result := jwawinbase.LookupAccountNameA(nil, 'pcpatch',
+            sid, sidSize, refDomain, refDomainSize, nameUse);
+          }
+
+          // just generate an error, as it is currently unused anyways
+          LogDatei.log('SetFilePermissionForRunAs: traPcpatch is not supported', LLError);
+          Result := false;
+        end
+        else if runas in [traAdmin, traAdminProfile, traAdminProfileExplorer,
+          traAdminProfileImpersonate, traAdminProfileImpersonateExplorer] then
+        begin
+          // to get the user's SID we need to create the local admin already here
+          Result := CreateTemporaryLocalAdmin(runas);
+
+          if Result then
+          begin
+            jwawinbase.LookupAccountNameA(nil, 'opsiSetupAdmin', nil, sidSize, nil, refDomainSize, nameUse);
+            GetMem(sid, sidSize);
+            GetMem(refDomain, refDomainSize);
+
+            Result := jwawinbase.LookupAccountNameA(nil, 'opsiSetupAdmin',
+              sid, sidSize, refDomain, refDomainSize, nameUse);
+          end
+        end
+        else
+          Result := false;
+
+        // Create an ACL allowing the determined SID
+        // Read and Execute Rights, then apply it to
+        // the given file.
+
+        if Result then
+        begin
+          jwawinbase.ZeroMemory(@ea, EA_COUNT * sizeOf(EXPLICIT_ACCESS_FIX));
+
+          ea[0].grfAccessPermissions := FILE_GENERIC_READ or FILE_GENERIC_EXECUTE;
+          ea[0].grfAccessMode := DWORD(SET_ACCESS);
+          ea[0].grfInheritance := NO_INHERITANCE;
+          ea[0].Trustee.MultipleTrusteeOperation := DWORD(NO_MULTIPLE_TRUSTEE);
+          ea[0].Trustee.pMultipleTrustee := nil;
+          ea[0].Trustee.TrusteeForm := DWORD(TRUSTEE_IS_SID);
+          ea[0].Trustee.TrusteeType := DWORD(TRUSTEE_IS_USER);
+          ea[0].Trustee.ptstrName := pointer(sid);
+
+          status := jwaaclapi.SetEntriesInAclA(EA_COUNT, @ea, nil, acl);
+
+          if status <> ERROR_SUCCESS then
+          begin
+            Result := false;
+          end
+          else
+          begin
+            status := jwaaclapi.SetNamedSecurityInfoA(PChar(filename),
+              JwaAccCtrl.SE_FILE_OBJECT, CHANGED_SECURITY_INFO, nil, nil, acl, nil);
+
+            if status <> ERROR_SUCCESS then
+            begin
+              // if it fails we are probably missing the SE_RESTORE_NAME privilege, so we retry
+              status := NO_ERROR;
+
+              if (not OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, procToken)) or
+                 (not SetPrivilege(procToken, SE_RESTORE_NAME, true)) then
+                Result := false
+              else
+              begin
+                status := jwaaclapi.SetNamedSecurityInfoA(PChar(filename),
+                  JwaAccCtrl.SE_FILE_OBJECT, CHANGED_SECURITY_INFO, nil, nil, nil, nil);
+                Result := (status = ERROR_SUCCESS);
+
+                if not SetPrivilege(procToken, SE_RESTORE_NAME, false) then
+                  LogDatei.log('Could not disable SE_RESTORE_NAME privilege: ' + IntToStr(getLastError()), LLDebug);
+              end;
+            end;
+          end;
+        end;
+      end
+    finally
+      begin
+        if not Result and (status = NO_ERROR) then
+          status := getLastError();
+
+        errorCode := status;
+
+        if Assigned(sid) then
+          if doLocalFree then
+            LocalFree(DWORD(sid))
+          else
+            FreeMem(sid, sidSize);
+
+        if Assigned(refDomain) then
+          FreeMem(refDomain, refDomainSize);
+
+        if Assigned(acl) then
+          LocalFree(DWORD(acl));
+      end;
+    end;
+end;
+
+//Function modified by J. Werner (probaly does not work correct at the moment)
+{function SetFilePermissionForRunAs(filename: string; runas: TRunAs;
   var errorCode: DWORD): boolean;
 
 const
@@ -1630,7 +1819,7 @@ begin
           LocalFree(DWORD(acl));
       end;
     end;
-end;
+end;}
 
 {$ENDIF WIN32}
 
