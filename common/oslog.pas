@@ -1885,6 +1885,11 @@ begin
     defaultStandardLogPath := '/var/log/opsi-script/';
     defaultStandardMainLogPath := '/var/log/opsi-script/';
     defaultStandardPartLogPath := '/var/log/opsi-script/';
+    {$IFDEF OPSI_AS_USER}
+    defaultStandardLogPath := GetUserDir+'/opsi.org/applog/';
+    defaultStandardMainLogPath := defaultStandardLogPath;
+    defaultStandardPartLogPath := defaultStandardLogPath;
+    {$ENDIF OPSI_AS_USER}
     {$IFDEF OPSISCRIPTSTARTER}
     defaultStandardLogPath := '/var/log/opsi-client-agent/opsiclientd/';
     defaultStandardMainLogPath := '/var/log/opsi-client-agent/opsiclientd/';
