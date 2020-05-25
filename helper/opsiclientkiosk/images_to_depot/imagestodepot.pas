@@ -58,6 +58,11 @@ type
 var
   FormSaveImagesOnDepot: TFormSaveImagesOnDepot;
 
+
+implementation
+
+{$R *.lfm}
+
 resourcestring
   rsCouldNotSaveIcons = 'Could not save icons on depot.';
   rsCouldNotSaveScreenshots = 'Could not save screenshots on depot.';
@@ -72,11 +77,6 @@ resourcestring
   rsCopyIcons = 'Copy icons and screenshots...';
   rsMounting = 'Mounting';
   rsFinished = 'Copy process finished. Closing window...';
-
-
-implementation
-
-{$R *.lfm}
 
 { TFormSaveImagesOnDepot }
 
@@ -304,18 +304,22 @@ end;
 function TFormSaveImagesOnDepot.SaveImagesOnDepot(const PathToDepot: String):boolean;
 var
   PathToKioskOnDepot: String;
-  Target: String;
-  Source: String;
+  PathToIconsOnDepot: String;
+  PathToIconsOnClient: String;
 begin
   Result := False;
-  PathToKioskOnDepot:= SwitchPathDelims('\opsi-client-agent\files\opsi\opsiclientkiosk\',pdsSystem);
   { Set the right directories }
-  Source := ExtractFilePath(ExcludeTrailingPathDelimiter(Application.Location));
+  {$IFDEF KIOSK_IN_AGENT} //if the kiosk is in the opsi-client-agent product
+    PathToKioskOnDepot:= SwitchPathDelims('\opsi-client-agent\files\opsi\opsiclientkiosk\app\',pdsSystem);
+  {$ELSE} //if the kiosk is a standalone opsi product
+    PathToKioskOnDepot:= SwitchPathDelims('\opsi-client-kiosk\files\app\',pdsSystem);
+  {$ENDIF KIOSK_IN_AGENT}
+  PathToIconsOnClient := ExtractFilePath(ExcludeTrailingPathDelimiter(Application.Location));
   //Set path delims dependend on system (e.g. Windows, Unix)
-  Source := SwitchPathDelims(TrimFilename(Source + 'ock_custom\'),pdsSystem);
-  Target := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + 'ock_custom\'),pdsSystem);
-  LogDatei.log('Copy ' + Source + ' to ' + Target, LLInfo);
-  if CopyDirTree(Source, Target,[cffOverwriteFile, cffCreateDestDirectory]) then
+  PathToIconsOnClient := SwitchPathDelims(TrimFilename(PathToIconsOnClient + 'ock_custom\'),pdsSystem);
+  PathToIconsOnDepot := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + 'ock_custom\'),pdsSystem);
+  LogDatei.log('Copy ' + PathToIconsOnClient + ' to ' + PathToIconsOnDepot, LLInfo);
+  if CopyDirTree(PathToIconsOnClient, PathToIconsOnDepot,[cffOverwriteFile, cffCreateDestDirectory]) then
   begin
     LogDatei.log('Copy done', LLInfo);
     Result := True;
