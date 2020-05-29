@@ -31,6 +31,7 @@ type
     //procedure CustomExceptionHandler(Sender: TObject; E: Exception);
   private
     { Private-Deklarationen}
+    timeout : boolean;
   public
     { Public-Deklarationen}
   end;
@@ -56,6 +57,7 @@ end;
 procedure TFNachfrage.FormShow(Sender: TObject);
 begin
   FNachfrage.Caption:= 'uibtime - Notice';
+  timeout := false;
   if linuxusewmctrl then
     if not moveToCurrentDeskAndFront(FNachfrage.Caption) then
       datamodule1.debugOut(2, 'nachf', 'failed nachf to all desktops');
@@ -80,8 +82,11 @@ end;
 
 procedure TFNachfrage.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-  modalresult := mrOK;
-  DataModule1.TimerOnTop.Enabled:=ontoptimer;
+  if not timeout then
+  begin
+    modalresult := mrOK;
+    DataModule1.TimerOnTop.Enabled:=ontoptimer;
+  end;
 end;
 
 procedure TFNachfrage.BitBtn1Click(Sender: TObject);
@@ -98,6 +103,7 @@ procedure TFNachfrage.Timer2Timer(Sender: TObject);
 begin
   timer2.Enabled := False;
   // Fontop.timer2timer(Sender);
+  timeout := true;
   modalresult := mrAbort;
 end;
 

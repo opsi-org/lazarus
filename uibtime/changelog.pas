@@ -1,4 +1,11 @@
 (*
+uibtime (4.1.1.72-1) stable; urgency=low
+
+ * nachf: timeout: boolean : make sure to startr logoff after nachf is timeout
+ * ontop: btnUnlock
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 29 May 2020 10:00:00 +0000
+
 uibtime (4.1.1.71-1) stable; urgency=low
 
  * uibdata: better logging in SQuibeventAfterEdit
