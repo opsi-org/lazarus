@@ -3,6 +3,7 @@ uibtime (4.1.1.72-1) stable; urgency=low
 
  * nachf: timeout: boolean : make sure to startr logoff after nachf is timeout
  * ontop: btnUnlock
+ * uibdata: make LockInput a config in the context menue
 
 -- detlef oertel <d.oertel@uib.de>  Fri, 29 May 2020 10:00:00 +0000
 

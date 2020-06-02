@@ -70,6 +70,7 @@ type
     IBConnection2: TIBConnection;
     Arbeitsberichte: TMenuItem;
     linuxwmctrl: TMenuItem;
+    MenuItemLockInput: TMenuItem;
     ProcessTrayNotify: TProcess;
     SQholydays: TSQLQuery;
     SQLQueryTmp: TSQLQuery;
@@ -134,6 +135,7 @@ type
     procedure Info1Click(Sender: TObject);
     procedure LeisteNeuAufbauen1Click(Sender: TObject);
     procedure linuxwmctrlClick(Sender: TObject);
+    procedure MenuItemLockInputClick(Sender: TObject);
     procedure PopupMenu1Close(Sender: TObject);
     procedure PopupMenu1Popup(Sender: TObject);
     procedure queryAfterHelper(myevent: string; myquery: TSQLQuery; DataSet: TDataSet);
@@ -260,6 +262,7 @@ var
   forceontopleft: integer = -1;
   ontopintaskbar: TShowInTaskBar = stNever;
   ontoptimer: boolean = True;
+  LockInput: boolean = True;
 
 
 
@@ -699,6 +702,48 @@ begin
   end;
   myini.WriteBool('general', 'linuxwmctrl', linuxwmctrl.Checked);
   debugOut(6, 'linuxwmctrlClick: ' + BoolToStr(linuxwmctrl.Checked, True));
+  myini.UpdateFile;
+  myini.Free;
+end;
+
+procedure TDataModule1.MenuItemLockInputClick(Sender: TObject);
+var
+  myini: TIniFile;
+  logdir, logfeilname: string;
+begin
+  // we will use logdir for logging and for configuration
+  logdir := SysUtils.GetAppConfigDir(False);
+  if logdir = '' then
+  begin
+    logdir := SysUtils.GetUserDir;
+    logdir := logdir + '\uibtime';
+  end;
+  logdir := ExpandFileNameUTF8(logdir);
+  ForceDirectories(logdir);
+  logfeilname := ExpandFileNameUTF8(logdir + 'uibtime.conf');
+  myini := TIniFile.Create(logfeilname);
+  debugOut(5, 'Will use conf file: ' + logfeilname);
+  DataModule1.debugOut(6, 'MenuItemLockInputClick', 'Will use conf file: ' +
+    logfeilname);
+  if myini = nil then
+  begin
+    DataModule1.debugOut(2, 'MenuItemLockInputClick',
+      'myini = nil: coud not open :' + logfeilname);
+    ShowMessage('Fehler in Konfigurations Datei. Bitte Log sichern. Programm wird beendet');
+    Application.Terminate;
+  end;
+  if MenuItemLockInput.Checked then
+  begin
+    MenuItemLockInput.Checked := False;
+    myini.WriteBool('general', 'LockInput', False);
+    LockInput := False;
+  end
+  else
+  begin
+    MenuItemLockInput.Checked := True;
+    LockInput := True;
+    myini.WriteBool('general', 'LockInput', True);
+  end;
   myini.UpdateFile;
   myini.Free;
 end;
@@ -1172,10 +1217,10 @@ begin
       DataSet.Cancel;
       Abort;
       Dataset.Refresh;
-      debugOut(4, 'SQuibeventAfterEdit', 'cancled: '+errorstr);
+      debugOut(4, 'SQuibeventAfterEdit', 'cancled: ' + errorstr);
     end
     else
-      debugOut(5, 'SQuibeventAfterEdit','successful end  SQuibeventAfterEdit ');
+      debugOut(5, 'SQuibeventAfterEdit', 'successful end  SQuibeventAfterEdit ');
   except
     debugOut(5, 'SQuibeventAfterEdit', 'exception in SQuibeventAfterEdit ');
   end;
@@ -2219,6 +2264,9 @@ begin
   end;
   Autologin1.Checked := myini.ReadBool('general', 'autologin', False);
   Fdebug.Memo1.Append('autologin: ' + BoolToStr(Autologin1.Checked, True));
+  MenuItemLockInput.Checked := myini.ReadBool('general', 'LockInput', False);
+  LockInput := MenuItemLockInput.Checked;
+  Fdebug.Memo1.Append('LockInput: ' + BoolToStr(MenuItemLockInput.Checked, True));
   zeigenurmeineprojekte1.Checked :=
     myini.ReadBool('general', 'zeigenurmeineprojekte', False);
   Fdebug.Memo1.Append('zeigenurmeineprojekte: ' + BoolToStr(
