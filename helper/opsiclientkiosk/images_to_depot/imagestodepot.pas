@@ -8,8 +8,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, EditBtn,
   Process, oslog, FileUtil, LazFileUtils, opsiconnection, //LazProgInfo,
   jwawinbase,
-  LCLTranslator, ExtCtrls, ComCtrls
-  ;
+  LCLTranslator, ExtCtrls, ComCtrls;
 
 type
 
@@ -63,6 +62,15 @@ implementation
 
 {$R *.lfm}
 
+const
+  PathDepotOnShare = '\var\lib\opsi\depot';
+  {$IFDEF KIOSK_IN_AGENT} //if the kiosk is in the opsi-client-agent product
+    PathKioskAppOnShare = '\opsi-client-agent\files\opsi\opsiclientkiosk\app';
+  {$ELSE} //if the kiosk is a standalone opsi product
+    PathKioskAppOnShare = '\opsi-client-kiosk\files\app';
+  {$ENDIF KIOSK_IN_AGENT}
+  CustomFolder = '\ock_custom';
+
 resourcestring
   rsCouldNotSaveIcons = 'Could not save icons on depot.';
   rsCouldNotSaveScreenshots = 'Could not save screenshots on depot.';
@@ -108,6 +116,7 @@ begin
      {$ENDIF Unix}
     end;
   end;
+
   if DirectoryExists(PathToDepot) then
   begin
     ProgressBar.Visible := True;
@@ -120,7 +129,7 @@ begin
       Application.ProcessMessages;
       sleep(1000);
       CopySuccess := True;
-      SetRights('/var/lib/opsi/depot/opsi-client-agent/files/opsi/opsiclientkiosk/ock_custom/');
+      SetRights(SwitchPathDelims(PathDepotOnShare + PathKioskAppOnShare + CustomFolder +'\',pdsUnix));
     end;
   end
   else
@@ -130,18 +139,17 @@ begin
     CopySuccess := False;
     DirectoryEditPathToDepot.Font.Color:= clRed;
   end;
- {$IFDEF Windows}
-  if CheckBoxMountDepot.Checked then
+
+  if CheckBoxMountDepot.Checked and (not AlreadyMounted) then
   begin
-    if not AlreadyMounted then UnmountDepotNT(PathToDepot);
+    {$IFDEF Windows}
+     UnmountDepotNT(PathToDepot);
+    {$ENDIF Windows}
+    {$IFDEF Unix}
+     UnmountDepotUnix(PathToDepot);
+    {$ENDIF Unix}
   end;
- {$ENDIF Windows}
- {$IFDEF Unix}
-  if CheckBoxMountDepot.Checked then
-  begin
-   if not AlreadyMounted then UnmountDepotUnix(PathToDepot);
-  end;
- {$ENDIF Unix}
+
   if CopySuccess then
   begin
    //ProgressBar.Position:= 100;
@@ -156,6 +164,7 @@ begin
     end;}
    Close;
   end;
+
 end;
 
 procedure TFormSaveImagesOnDepot.CheckBoxMountDepotChange(Sender: TObject);
@@ -305,19 +314,16 @@ function TFormSaveImagesOnDepot.SaveImagesOnDepot(const PathToDepot: String):boo
 var
   PathToKioskOnDepot: String;
   PathToIconsOnDepot: String;
+  PathToKioskOnClient : String;
   PathToIconsOnClient: String;
 begin
   Result := False;
   { Set the right directories }
-  {$IFDEF KIOSK_IN_AGENT} //if the kiosk is in the opsi-client-agent product
-    PathToKioskOnDepot:= SwitchPathDelims('\opsi-client-agent\files\opsi\opsiclientkiosk\app\',pdsSystem);
-  {$ELSE} //if the kiosk is a standalone opsi product
-    PathToKioskOnDepot:= SwitchPathDelims('\opsi-client-kiosk\files\app\',pdsSystem);
-  {$ENDIF KIOSK_IN_AGENT}
-  PathToIconsOnClient := ExtractFilePath(ExcludeTrailingPathDelimiter(Application.Location));
+  PathToKioskOnDepot:= SwitchPathDelims(PathKioskAppOnShare, pdsSystem);
+  PathToKioskOnClient := ExtractFilePath(ExcludeTrailingPathDelimiter(Application.Location));
   //Set path delims dependend on system (e.g. Windows, Unix)
-  PathToIconsOnClient := SwitchPathDelims(TrimFilename(PathToIconsOnClient + 'ock_custom\'),pdsSystem);
-  PathToIconsOnDepot := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + 'ock_custom\'),pdsSystem);
+  PathToIconsOnClient := SwitchPathDelims(TrimFilename(PathToKioskOnClient + CustomFolder + '\'), pdsSystem);
+  PathToIconsOnDepot := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + CustomFolder +'\'), pdsSystem);
   LogDatei.log('Copy ' + PathToIconsOnClient + ' to ' + PathToIconsOnDepot, LLInfo);
   if CopyDirTree(PathToIconsOnClient, PathToIconsOnDepot,[cffOverwriteFile, cffCreateDestDirectory]) then
   begin
