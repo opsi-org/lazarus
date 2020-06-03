@@ -176,9 +176,12 @@ begin
   str := DBLCB_topten_event.Text;
   eventhandler(str);
   TimerAfterTopTenEnter.Enabled := False;
-  edit1.Enabled := False;
-  BtnTreeview.Enabled := False;
-  DBLCB_topten_event.Enabled := False;
+  if LockInput then
+  begin
+    edit1.Enabled := False;
+    BtnTreeview.Enabled := False;
+    DBLCB_topten_event.Enabled := False;
+  end;
 end;
 
 procedure TFOnTop.Edit1Change(Sender: TObject);
@@ -369,9 +372,15 @@ begin
     end;
     starthttpserver;
     DataModule1.SetFontName(TControl(Sender), myFont);
-    edit1.Enabled := False;
-    BtnTreeview.Enabled := False;
-    DBLCB_topten_event.Enabled := False;
+    if LockInput then
+    begin
+      edit1.Enabled := False;
+      BtnTreeview.Enabled := False;
+      DBLCB_topten_event.Enabled := False;
+      BtnUnlock.Enabled := True;
+    end
+    else
+      BtnUnlock.Enabled := False;
     datamodule1.debugOut(5, 'finished TFOnTop.FormCreate');
 
   except
@@ -416,9 +425,12 @@ begin
         end;
       end;
     end;
-    edit1.Enabled := False;
-    BtnTreeview.Enabled := False;
-    DBLCB_topten_event.Enabled := False;
+    if LockInput then
+    begin
+      edit1.Enabled := False;
+      BtnTreeview.Enabled := False;
+      DBLCB_topten_event.Enabled := False;
+    end;
   except
     datamodule1.debugOut(3, '', 'exception in appdeactivate');
     raise;
@@ -457,6 +469,15 @@ end;
 procedure TFOnTop.FormActivate(Sender: TObject);
 begin
   datamodule1.debugOut(5, 'Activate FOntop');
+  if LockInput then
+    BtnUnlock.Enabled := True
+  else
+  begin
+    BtnUnlock.Enabled := False;
+    edit1.Enabled := True;
+    BtnTreeview.Enabled := True;
+    DBLCB_topten_event.Enabled := True;
+  end;
 end;
 
 

@@ -1,11 +1,11 @@
 object DataModule1: TDataModule1
   OnCreate = DataModuleCreate
   OldCreateOrder = False
-  Height = 781
-  HorizontalOffset = 609
-  VerticalOffset = 108
-  Width = 1118
-  PPI = 120
+  Height = 592
+  HorizontalOffset = 462
+  VerticalOffset = 82
+  Width = 848
+  PPI = 91
   object IBConnection1: TIBConnection
     Connected = False
     LoginPrompt = False
@@ -17,8 +17,8 @@ object DataModule1: TDataModule1
     OnLog = IBConnection1Log
     LogEvents = [detCustom, detPrepare, detExecute, detFetch, detCommit, detRollBack, detParamValue, detActualSQL]
     CheckTransactionParams = False
-    left = 53
-    top = 20
+    left = 40
+    top = 15
   end
   object SQuibaktuser: TSQLQuery
     FieldDefs = <    
@@ -54,20 +54,20 @@ object DataModule1: TDataModule1
     )
     Params = <>
     UpdateMode = upWhereAll
-    left = 53
-    top = 100
+    left = 40
+    top = 76
   end
   object SQLTransaction1: TSQLTransaction
     Active = False
     Action = caNone
     Database = IBConnection1
-    left = 184
-    top = 20
+    left = 140
+    top = 15
   end
   object DSuibaktuser: TDataSource
     DataSet = SQuibaktuser
-    left = 184
-    top = 100
+    left = 140
+    top = 76
   end
   object SQuibaktevent: TSQLQuery
     PacketRecords = -1
@@ -85,58 +85,58 @@ object DataModule1: TDataModule1
     )
     Params = <>
     UpdateMode = upWhereAll
-    left = 53
-    top = 190
+    left = 40
+    top = 144
   end
   object DSuibaktevent: TDataSource
     DataSet = SQuibaktevent
-    left = 184
-    top = 190
+    left = 140
+    top = 144
   end
   object DSuiballevent: TDataSource
     DataSet = SQuiballevent
-    left = 184
-    top = 280
+    left = 140
+    top = 212
   end
   object DSuibevent: TDataSource
     DataSet = SQuibevent
-    left = 184
-    top = 380
+    left = 140
+    top = 288
   end
   object DSuibuserevent: TDataSource
     DataSet = SQuibuserevent
-    left = 184
-    top = 480
+    left = 140
+    top = 364
   end
   object DSuibloggedin: TDataSource
     DataSet = SQuibloggedin
-    left = 184
-    top = 570
+    left = 140
+    top = 432
   end
   object DSuibtimeout: TDataSource
     DataSet = SQuibtimeout
-    left = 480
-    top = 100
+    left = 364
+    top = 76
   end
   object DSuibcalls: TDataSource
     DataSet = SQQueryuibevent
-    left = 480
-    top = 190
+    left = 364
+    top = 144
   end
   object DSuibsoll: TDataSource
     DataSet = SQuibsoll
-    left = 480
-    top = 280
+    left = 364
+    top = 212
   end
   object DSquerytimeout: TDataSource
     DataSet = SQquerytimeout
-    left = 480
-    top = 380
+    left = 364
+    top = 288
   end
   object DSuibdefproj: TDataSource
     DataSet = SQuibdefproj
-    left = 480
-    top = 480
+    left = 364
+    top = 364
   end
   object SQuiballevent: TSQLQuery
     FieldDefs = <    
@@ -188,8 +188,8 @@ object DataModule1: TDataModule1
     )
     Params = <>
     UpdateMode = upWhereAll
-    left = 53
-    top = 280
+    left = 40
+    top = 212
   end
   object SQuibevent: TSQLQuery
     PacketRecords = -1
@@ -210,8 +210,8 @@ object DataModule1: TDataModule1
       'select * from uibevent'
     )
     Params = <>
-    left = 53
-    top = 380
+    left = 40
+    top = 288
   end
   object SQuibuserevent: TSQLQuery
     FieldDefs = <    
@@ -241,8 +241,8 @@ object DataModule1: TDataModule1
     )
     Params = <>
     UpdateMode = upWhereAll
-    left = 53
-    top = 480
+    left = 40
+    top = 364
   end
   object SQuibloggedin: TSQLQuery
     FieldDefs = <    
@@ -266,8 +266,8 @@ object DataModule1: TDataModule1
     )
     Params = <>
     UpdateMode = upWhereAll
-    left = 53
-    top = 570
+    left = 40
+    top = 432
   end
   object SQuibtimeout: TSQLQuery
     FieldDefs = <    
@@ -297,8 +297,8 @@ object DataModule1: TDataModule1
     )
     Params = <>
     UpdateMode = upWhereAll
-    left = 333
-    top = 100
+    left = 253
+    top = 76
   end
   object SQQueryuibevent: TSQLQuery
     FieldDefs = <>
@@ -309,8 +309,8 @@ object DataModule1: TDataModule1
     )
     Params = <>
     UpdateMode = upWhereAll
-    left = 333
-    top = 190
+    left = 253
+    top = 144
   end
   object SQuibsoll: TSQLQuery
     FieldDefs = <>
@@ -323,8 +323,8 @@ object DataModule1: TDataModule1
     )
     Params = <>
     UpdateMode = upWhereAll
-    left = 333
-    top = 280
+    left = 253
+    top = 212
   end
   object SQquerytimeout: TSQLQuery
     FieldDefs = <>
@@ -347,8 +347,8 @@ object DataModule1: TDataModule1
         ParamType = ptInput
       end>
     UpdateMode = upWhereAll
-    left = 333
-    top = 390
+    left = 253
+    top = 296
   end
   object SQuibdefproj: TSQLQuery
     FieldDefs = <>
@@ -361,14 +361,14 @@ object DataModule1: TDataModule1
     )
     Params = <>
     UpdateMode = upWhereAll
-    left = 333
-    top = 480
+    left = 253
+    top = 364
   end
   object PopupMenu1: TPopupMenu
     OnPopup = PopupMenu1Popup
     OnClose = PopupMenu1Close
-    left = 620
-    top = 20
+    left = 470
+    top = 15
     object Dateneditieren1: TMenuItem
       Caption = 'Daten editieren'
       OnClick = Dateneditieren1Click
@@ -414,6 +414,11 @@ object DataModule1: TDataModule1
       Caption = 'Zeige nur meine Projekte'
       OnClick = ZeigenurmeineProjekte1Click
     end
+    object MenuItemLockInput: TMenuItem
+      Caption = 'LockInput'
+      Checked = True
+      OnClick = MenuItemLockInputClick
+    end
     object schmaleLeiste: TMenuItem
       Caption = 'schmale Leiste'
       Enabled = False
@@ -451,34 +456,34 @@ object DataModule1: TDataModule1
   object TimerLogoffOnTop: TTimer
     Enabled = False
     OnTimer = TimerLogoffOnTopTimer
-    left = 620
-    top = 100
+    left = 470
+    top = 76
   end
   object TimerOnTop: TTimer
     Enabled = False
     Interval = 500
     OnTimer = TimerOnTopTimer
-    left = 620
-    top = 190
+    left = 470
+    top = 144
   end
   object Timerloggedin: TTimer
     Enabled = False
     Interval = 60000
     OnTimer = TimerloggedinTimer
-    left = 620
-    top = 280
+    left = 470
+    top = 212
   end
   object TimerQueryLoggedIn: TTimer
     Enabled = False
     Interval = 60000
     OnTimer = TimerQueryLoggedInTimer
-    left = 620
-    top = 380
+    left = 470
+    top = 288
   end
   object DSqueryaktevents: TDataSource
     DataSet = SQuibaktevent
-    left = 480
-    top = 570
+    left = 364
+    top = 432
   end
   object SQQueryAktEvents: TSQLQuery
     FieldDefs = <    
@@ -505,8 +510,8 @@ object DataModule1: TDataModule1
     )
     Params = <>
     UpdateMode = upWhereAll
-    left = 333
-    top = 570
+    left = 253
+    top = 432
   end
   object SQqueryloggedin: TSQLQuery
     PacketRecords = 1
@@ -518,8 +523,8 @@ object DataModule1: TDataModule1
     )
     Params = <>
     UpdateMode = upWhereChanged
-    left = 620
-    top = 570
+    left = 470
+    top = 432
   end
   object Query_day_report: TSQLQuery
     FieldDefs = <>
@@ -566,13 +571,13 @@ object DataModule1: TDataModule1
         ParamType = ptInput
       end>
     UpdateMode = upWhereAll
-    left = 333
-    top = 20
+    left = 253
+    top = 15
   end
   object DS_day_report: TDataSource
     DataSet = Query_day_report
-    left = 480
-    top = 20
+    left = 364
+    top = 15
   end
   object SQwork_description: TSQLQuery
     FieldDefs = <>
@@ -594,13 +599,13 @@ object DataModule1: TDataModule1
         ParamType = ptInput
       end>
     UpdateMode = upWhereAll
-    left = 620
-    top = 480
+    left = 470
+    top = 364
   end
   object DS_work_description: TDataSource
     DataSet = SQwork_description
-    left = 760
-    top = 480
+    left = 576
+    top = 364
   end
   object IBConnection2: TIBConnection
     Connected = False
@@ -612,14 +617,14 @@ object DataModule1: TDataModule1
     CharSet = 'utf-8'
     LogEvents = []
     CheckTransactionParams = False
-    left = 730
-    top = 20
+    left = 554
+    top = 15
   end
   object SQLTransaction2: TSQLTransaction
     Active = False
     Database = IBConnection2
-    left = 748
-    top = 135
+    left = 567
+    top = 102
   end
   object Query4Result: TSQLQuery
     FieldDefs = <>
@@ -628,8 +633,8 @@ object DataModule1: TDataModule1
     Database = IBConnection1
     Transaction = SQLTransaction1
     Params = <>
-    left = 761
-    top = 570
+    left = 577
+    top = 432
   end
   object TrayIcon1: TTrayIcon
     BalloonTimeout = 10000
@@ -12202,31 +12207,31 @@ object DataModule1: TDataModule1
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
     }
     Visible = True
-    left = 876
-    top = 30
+    left = 664
+    top = 23
   end
   object TimerTrayIcon: TTimer
     Enabled = False
     Interval = 60000
     OnTimer = TimerTrayIconTimer
-    left = 883
-    top = 103
+    left = 670
+    top = 78
   end
   object TrayQuery1: TSQLQuery
     FieldDefs = <>
     Database = IBConnection1
     Transaction = SQLTransaction1
     Params = <>
-    left = 879
-    top = 190
+    left = 667
+    top = 144
   end
   object TrayQuery2: TSQLQuery
     FieldDefs = <>
     Database = IBConnection1
     Transaction = SQLTransaction1
     Params = <>
-    left = 876
-    top = 270
+    left = 664
+    top = 205
   end
   object TrayQuery3: TSQLQuery
     FieldDefs = <>
@@ -12234,8 +12239,8 @@ object DataModule1: TDataModule1
     Database = IBConnection1
     Transaction = SQLTransaction1
     Params = <>
-    left = 980
-    top = 200
+    left = 743
+    top = 152
   end
   object TrayQuery4: TSQLQuery
     FieldDefs = <>
@@ -12246,8 +12251,8 @@ object DataModule1: TDataModule1
       'select * from uibevent'
     )
     Params = <>
-    left = 980
-    top = 275
+    left = 743
+    top = 209
   end
   object ProcessTrayNotify: TProcess
     Active = False
@@ -12266,13 +12271,13 @@ object DataModule1: TDataModule1
     WindowTop = 0
     WindowWidth = 0
     FillAttribute = 0
-    left = 990
-    top = 90
+    left = 751
+    top = 68
   end
   object DS_holydays: TDataSource
     DataSet = SQholydays
-    left = 184
-    top = 670
+    left = 140
+    top = 508
   end
   object SQholydays: TSQLQuery
     FieldDefs = <    
@@ -12293,32 +12298,32 @@ object DataModule1: TDataModule1
     )
     Params = <>
     UpdateMode = upWhereAll
-    left = 53
-    top = 670
+    left = 40
+    top = 508
   end
   object TimerCheckNet: TTimer
     Enabled = False
     Interval = 500
     OnTimer = TimerCheckNetTimer
-    left = 876
-    top = 390
+    left = 664
+    top = 296
   end
   object SQLQueryTmp: TSQLQuery
     FieldDefs = <>
     Database = IBConnection1
     Transaction = SQLTransaction1
     Params = <>
-    left = 328
-    top = 666
+    left = 249
+    top = 505
   end
   object DataSourceTmp: TDataSource
     DataSet = SQLQueryTmp
-    left = 481
-    top = 666
+    left = 365
+    top = 505
   end
   object UniqueInstance1: TUniqueInstance
     Enabled = True
-    left = 990
-    top = 20
+    left = 751
+    top = 15
   end
 end
