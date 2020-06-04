@@ -129,7 +129,8 @@ begin
       Application.ProcessMessages;
       sleep(1000);
       CopySuccess := True;
-      SetRights(SwitchPathDelims(PathDepotOnShare + PathKioskAppOnShare + CustomFolder +'\',pdsUnix));
+      LogDatei.log(SwitchPathDelims(PathDepotOnShare + PathKioskAppOnShare + CustomFolder, pdsUnix), LLDebug);
+      SetRights(SwitchPathDelims(PathDepotOnShare + PathKioskAppOnShare + CustomFolder, pdsUnix));
     end;
   end
   else
