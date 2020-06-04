@@ -2059,7 +2059,7 @@ begin
           errorOccured := False;
           {$IFDEF WINDOWS}
           SystemCritical.IsCritical := True;
-{$ENDIF WINDOWS}
+          {$ENDIF WINDOWS}
           { if necessary do product installations  }
           {$IFDEF GUI}
           if runSilent then
@@ -2231,11 +2231,18 @@ begin
           {$ENDIF WINDOWS}
           //FBatchOberflaeche.BorderIcons := [];
           {$IFDEF GUI}
+          (*
           if ProgramMode = pmBatch then
             FBatchOberflaeche.setVisible(True)
 
           else if ProgramMode = pmSilent then
             FBatchOberflaeche.setVisible(False);
+           *)
+
+          if runSilent then
+            FBatchOberflaeche.setVisible(False)
+          else
+            FBatchOberflaeche.setVisible(True);
 
           centralform.Edit1.Text := scriptlist.strings[0];
           centralform.Edit2.Text := LogDateiName;
@@ -3168,7 +3175,6 @@ begin
           {$IFDEF GUI}
           BatchWindowMode := bwmNormalWindow;
           SavedBatchWindowMode := BatchWindowMode;
-          (* Test  FBatchOberflaeche.ForceStayOnTop (true); *)
           {$ENDIF GUI}
           Inc(i);
         end
@@ -3176,7 +3182,7 @@ begin
         else if Lowercase(Parameter) = 'silent' then
         begin
           ProgramMode := pmSilent;
-          (* Test  FBatchOberflaeche.ForceStayOnTop (true); *)
+          runSilent := True;
           Inc(i);
         end
 
