@@ -5,6 +5,15 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.3.14) experimental; urgency=low
+
+  * osparser: new flag: cmd64checked to avoid repeated checks for cmd64.exe
+  * osmain: bool var runSilent used in cli parameter check and to call
+    FBatchOberflaeche.setVisible(True/False);
+  * osbatchgui: start FBatchOberflaeche visible=false ; fixes #4485
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 04 Jun 2020:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.3.13) experimental; urgency=low
 
   * osmain: bootmode: now using opsiclientagentconf

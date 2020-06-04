@@ -287,7 +287,6 @@ begin
   //FBatchOberflaeche.DoubleBuffered:=True;
   //FBatchOberflaeche.ControlStyle := ControlStyle + [csOpaque] ;
   BorderIcons := [];
-  //Visible  := true;
   useCommandLabel := True;
   useDetailLabel := True;
   useActivityLabel := True;
@@ -299,8 +298,8 @@ begin
 
 
   Panel.DoubleBuffered := True;
-  //if not runSilent then
-  Visible := True;
+  { will be set in osmain accourding to cli parameters -> runSilent }
+  //Visible := True;
 
 
   setWindowState(bwmNormalWindow);
