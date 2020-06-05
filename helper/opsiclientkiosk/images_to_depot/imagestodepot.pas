@@ -295,6 +295,7 @@ begin
       ' Error :' + OpsiConnection.MyError,LLDebug);
       ProgressBar.Position := 80;
       Application.ProcessMessages;
+      OpsiConnection.OpsiData.initOpsiConf(OpsiConnection.MyService_URL,'jan','jan123');
       OpsiConnection.SetRights(path);
       Result := True;
       ProgressBar.Position := 100;
