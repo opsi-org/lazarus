@@ -43,15 +43,13 @@ uses
   Contnrs;
 
 type
-  TIconDisplay = class(TObject)
+  TIconDisplay = class(TPersistent)
+  private
     Panel: TPanel;
     Image: TImage;
     FileName: string;
-  private
   public
   end;
-
-type
 
   { TResultform1 }
 
@@ -67,6 +65,7 @@ type
     BtAnalyzeNextStep: TBitBtn;
     BtCreateProduct: TBitBtn;
     BtProduct1NextStep: TBitBtn;
+    BtIconsNextStep: TBitBtn;
     BtProduct2NextStep: TBitBtn;
     BtSetup1NextStep: TBitBtn;
     BtSetup2NextStep: TBitBtn;
@@ -79,9 +78,7 @@ type
     BtCreateEmptyTemplate: TBitBtn;
     BtAnalyzeOnly: TBitBtn;
     BtnOpenIconFolder: TButton;
-    CheckBoxBackgr: TCheckBox;
     CheckGroupBuildMode: TCheckGroup;
-    ColorBoxIconBackgr: TColorBox;
     FlowPanel1: TFlowPanel;
     FlowPanel10: TFlowPanel;
     FlowPanel11: TFlowPanel;
@@ -119,7 +116,9 @@ type
     ImageIconPreview: TImage;
     ImageList1: TImageList;
     Label1: TLabel;
-    LabelNameSelectedIcon: TLabel;
+    LabelNameSelIcon: TLabel;
+    LabelIconName: TLabel;
+    LabelIconDir: TLabel;
     LabelIconPreview: TLabel;
     LabelNumIcons: TLabel;
     Label63: TLabel;
@@ -175,7 +174,6 @@ type
     Panel11: TPanel;
     Panel12: TPanel;
     Panel13: TPanel;
-    PanelSelectBackgrCol: TPanel;
     PanelIconPreview: TPanel;
     Panel4: TPanel;
     Panel5: TPanel;
@@ -250,6 +248,7 @@ type
     TIEditSetupfile1: TTIEdit;
     TIEditMstFile1: TTIEdit;
     TIEditSetupFileSizeMB2: TTIEdit;
+    TILabelDirSelIcon: TTILabel;
     TIMemoAdvice: TTIMemo;
     TIMemoDesc: TTIMemo;
     TimerFirstconfig: TTimer;
@@ -277,16 +276,15 @@ type
     procedure BtATwonalyzeAndCreateClick(Sender: TObject);
     procedure BtCreateEmptyTemplateClick(Sender: TObject);
     procedure BtCreateProductClick(Sender: TObject);
+    procedure BtIconsNextStepClick(Sender: TObject);
     procedure BtProduct1NextStepClick(Sender: TObject);
     procedure BtProduct2NextStepClick(Sender: TObject);
     procedure BtSetup1NextStepClick(Sender: TObject);
     procedure BtSetup2NextStepClick(Sender: TObject);
     procedure BtSingleAnalyzeAndCreateClick(Sender: TObject);
     procedure BtnOpenIconFolderClick(Sender: TObject);
-    procedure ColorBoxIconBackgrSelect(Sender: TObject);
     procedure FlowPanel14Click(Sender: TObject);
     procedure FlowPanel18Click(Sender: TObject);
-    procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormDeactivate(Sender: TObject);
     procedure FormMouseLeave(Sender: TObject);
@@ -335,21 +333,17 @@ type
     procedure genRttiEditChange(Sender: TObject);
     procedure makeProperties;
 
-    procedure IconPanelOnMouseEnter(Sender: TObject);
-    procedure IconImageOnMouseEnter(Sender: TObject);
-    procedure PaintBackgr(SelColor: TColor);
-    procedure IconImageOnClick(Sender: TObject);
-    procedure IconPanelOnClick(Sender: TObject);
-    procedure CheckBoxBackgrChange(Sender: TObject);
+    procedure IconDisplayOnMouseEnter(Sender: TObject);
+    procedure PaintPreview;
+    procedure IconDisplayOnClick(Sender: TObject);
   private
     { private declarations }
     procedure OpenMSTFile(var mysetup: TSetupFile);
     procedure SetTICheckBoxesMST(Installer: TKnownInstaller);
   public
     { public declarations }
-
     // create a FlowPanel dynamically to be able to free it before selecting a
-    //new directory
+    //new directory for the icon selection
     dynIconFlowPanel: TFlowPanel;
     // TFPObjectList needs Contnrs in uses
     IconList: TFPObjectList;
@@ -567,6 +561,9 @@ begin
       //TIGridDep.ListObject := dependencies;
       TITrackBarPrio.Link.SetObjectAndProperty(productdata, 'priority');
       TISpinEditPrio.Link.SetObjectAndProperty(productdata, 'priority');
+      // definition of class TProductData in unit osdbasedata line ~256
+      TILabelDirSelIcon.Link.SetObjectAndProperty(osdbasedata.aktproduct.productdata,
+        'productImageFullFileName');
     end;
     TIEditworkbenchpath.Link.SetObjectAndProperty(myconfiguration, 'workbench_path');
     case myconfiguration.CreateRadioIndex of
@@ -1045,7 +1042,7 @@ begin
   end;
 end;
 ///////////////////////////////////////////////////////////////////////////////
-procedure TResultform1.IconPanelOnMouseEnter(Sender: TObject);
+procedure TResultform1.IconDisplayOnMouseEnter(Sender: TObject);
 var
   index: integer;
 begin
@@ -1053,83 +1050,87 @@ begin
   begin
     TIconDisplay(IconList.Items[index]).Panel.Color := clDefault;
   end;
-  (Sender as TPanel).Color := clSkyBlue;
-end;
-
-procedure TResultform1.IconImageOnMouseEnter(Sender: TObject);
-var
-  index: integer;
-begin
-  for index := 0 to (numberIcons - 1) do
-  begin
-    TIconDisplay(IconList.Items[index]).Panel.Color := clDefault;
-  end;
-  (Sender as TImage).Parent.Color := clSkyBlue;
+  // set background color of icon display on mouse entering
+  if Sender.ClassName = 'TImage' then
+    (Sender as TImage).Parent.Color := clSkyBlue;
+  if Sender.ClassName = 'TPanel' then
+    (Sender as TPanel).Color := clSkyBlue;
 end;
 
 // paint icon preview with selected background
-procedure TResultform1.PaintBackgr(SelColor: TColor);
+procedure TResultform1.PaintPreview;
 var
-  RectBackgr: TRect; // rectangle as background
+  RectBackgr: TRect;
+  row, col: integer;
+  // chess background as no background
+  ChessColors: array[0..1] of TColor = (clMedGray, clSilver);
 begin
   with ImageIconPreview.Canvas do
   begin
-    Brush.Color := SelColor;
+    // paint chess background
+    for row := 0 to 9 do
+    begin
+      for col := 0 to 9 do
+      begin
+        // paint chess squares
+        Brush.Color := ChessColors[(row + col) mod 2];
+        FillRect(Rect(22 * row, 22 * col, 22 * row + 22, 22 * col + 22));
+      end;
+    end;
+    // paint chess board
     RectBackgr := Rect(0, 0, ImageIconPreview.Width, ImageIconPreview.Height);
-    FillRect(RectBackgr);
+    // paint icon on chess board
     StretchDraw(RectBackgr, SelectedIcon.Image.Picture.Bitmap);
   end;
 end;
 
-procedure TResultform1.CheckBoxBackgrChange(Sender: TObject);
-begin
-  if CheckBoxBackgr.Checked = True then
-  begin
-    PanelSelectBackgrCol.Visible := True;
-    PaintBackgr(ColorBoxIconBackgr.Selected);
-    //ColorDialog1.Execute;
-  end
-  else
-  begin
-    PanelSelectBackgrCol.Visible := False;
-    PaintBackgr(clForm);
-  end;
-end;
 
-procedure TResultform1.IconImageOnClick(Sender: TObject);
+procedure TResultform1.IconDisplayOnClick(Sender: TObject);
 var
   index: integer;
+  IconFileName: string;
 begin
-  for index := 0 to (numberIcons - 1) do
+  // search in IconList for index of selected icon...
+  // if image clicked
+  if Sender.ClassName = 'TImage' then
   begin
-    if TIconDisplay(IconList.Items[index]).Image = (Sender as TImage) then
+    for index := 0 to (numberIcons - 1) do
     begin
-      indexSelectedIcon := index;
-      break;
+      if TIconDisplay(IconList.Items[index]).Image = (Sender as TImage) then
+      begin
+        indexSelectedIcon := index;
+        break;
+      end;
+    end;
+  // if panel clicked
+  end;
+  if Sender.ClassName = 'TPanel' then
+  begin
+    for index := 0 to (numberIcons - 1) do
+    begin
+      if TIconDisplay(IconList.Items[index]).Panel = (Sender as TPanel) then
+      begin
+        indexSelectedIcon := index;
+        break;
+      end;
     end;
   end;
-  CheckBoxBackgr.Enabled:=True;
+  // show name and directory of selected icon
+  LabelIconName.Visible := True;
+  LabelIconDir.Visible := True;
+  // get selected icon from IconList
   SelectedIcon := TIconDisplay(IconList.Items[indexSelectedIcon]);
-  LabelNameSelectedIcon.Caption := SelectedIcon.FileName;
-  PaintBackgr(ColorBoxIconBackgr.Selected);
-end;
-
-procedure TResultform1.IconPanelOnClick(Sender: TObject);
-var
-  index: integer;
-begin
-  for index := 0 to (numberIcons - 1) do
-  begin
-    if TIconDisplay(IconList.Items[index]).Panel = (Sender as TPanel) then
-    begin
-      indexSelectedIcon := index;
-      break;
-    end;
-  end;
-  CheckBoxBackgr.Enabled:=True;
-  SelectedIcon := TIconDisplay(IconList.Items[indexSelectedIcon]);
-  LabelNameSelectedIcon.Caption := SelectedIcon.FileName;
-  PaintBackgr(ColorBoxIconBackgr.Selected);
+  // get file name without file extension
+  IconFileName := SelectedIcon.FileName;
+  Delete(IconFileName, Pos('.', IconFileName), IconFileName.Length - 1);
+  LabelNameSelIcon.Caption := IconFileName;
+  // save icon directory in productdata.productImageFullFileName
+  // and therefore show it in TILabelDirSelIcon
+  // (definition of class TProductData in unit osdbasedata line ~256)
+  osdbasedata.aktProduct.productdata.productImageFullFileName :=
+    iconDirectory + SelectedIcon.FileName;
+  //ShowMessage(osdbasedata.aktProduct.productdata.productImageFullFileName);
+  PaintPreview;
 end;
 
 procedure TResultform1.BtnOpenIconFolderClick(Sender: TObject);
@@ -1140,18 +1141,9 @@ var
   IconDisplay: TIconDisplay;
   IconSearch: TSearchRec;
 begin
-  // clear list for new directory
-  IconList.Free;
-  dynIconFlowPanel.Free;
-
-  dynIconFlowPanel := TFlowPanel.Create(TabSheetIcons);
-  dynIconFlowPanel.Parent := ScrollBox1;
-  dynIconFlowPanel.Align := TAlign.alClient;
-
   // select new directory the icons shall come from
   try
     selectDirectory := SelectDirectoryDialog1.Execute;
-    iconDirectory := SelectDirectoryDialog1.FileName + '/';
   except
     on E: Exception do
     begin
@@ -1159,59 +1151,74 @@ begin
       selectDirectory := False;
     end;
   end;
-  // fill the FlowPanel and store the icon display infos in IconList
+  // if directory selected
+  // fill dynIconFlowPanel and store the icon display infos in IconList
   if selectDirectory then
   begin
-    IconList := TFPObjectList.Create;
-    numberIcons := 0;
-    // get icons from the selected directory
-    if FindFirst(iconDirectory + '*.png', faAnyFile, IconSearch) = 0 then
+    iconDirectory := SelectDirectoryDialog1.FileName + PathDelim;
+    // get all files from the selected directory
+    if FindFirst(iconDirectory + '*', faAnyFile, IconSearch) = 0 then
     begin
+      // clear IconList and FlowPanel for new directory
+      IconList.Free;
+      dynIconFlowPanel.Free;
+      // create new dynIconFlowPanel
+      dynIconFlowPanel := TFlowPanel.Create(TabSheetIcons);
+      dynIconFlowPanel.Parent := ScrollBox1;
+      dynIconFlowPanel.Align := TAlign.alClient;
+      // create new IconList
+      IconList := TFPObjectList.Create;
+      numberIcons := 0;
       repeat
-        // create images (name: Image) on panels (name: Background) in FlowPanel
-        // panel properties
-        Background := TPanel.Create(TabSheetIcons);
-        Background.Parent := dynIconFlowPanel;
-        Background.AutoSize := True;
-        Background.BorderSpacing.Around := 5;
-        Background.Height := 50;
-        Background.Width := 50;
-        Background.BevelOuter := bvNone;
-        // panel procedures
-        Background.OnMouseEnter := @IconPanelOnMouseEnter;
-        Background.OnClick := @IconPanelOnClick;
-        // image properties
         Image := TImage.Create(TabSheetIcons);
-        Image.Parent := Background;
-        Image.Stretch := True;
-        Image.BorderSpacing.Around := 5;
-        Image.Height := 50;
-        Image.Width := 50;
-        // image procedures
-        Image.OnMouseEnter := @IconImageOnMouseEnter;
-        Image.OnClick := @IconImageOnClick;
-
         // now load icon into Image
         loadFromFile := True;
+        // easiest way to get all files with supported image formats:
+        // first do FindFirst(directory + '*', faAnyFile, IconSearch) then try
+        // Image.Picture.LoadFromFile(directory + IconSearch.Name) but
+        // raise no exceptions because that's disturbing and annoying,
+        // so the not-images are sorted out
         try
           // IconSearch.Name = name of icon file as string
           Image.Picture.LoadFromFile(iconDirectory + IconSearch.Name);
         except
           on E: Exception do
           begin
-            ShowMessage('Exception while load from file: ' + E.Message);
+            //ShowMessage('Exception while load from file: ' + E.Message);
             loadFromFile := False;
-            Image.Destroy;
-            Background.Destroy;
+            Image.Free;
           end;
         end;
         if loadFromFile then
         begin
+          // create images (name: Image) on panels (name: Background) in FlowPanel
+          // panel properties
+          Background := TPanel.Create(TabSheetIcons);
+          Background.Parent := dynIconFlowPanel;
+          Background.AutoSize := True;
+          Background.BorderSpacing.Around := 5;
+          Background.Height := 50;
+          Background.Width := 50;
+          Background.BevelOuter := bvNone;
+          // panel procedures
+          Background.OnMouseEnter := @IconDisplayOnMouseEnter;
+          Background.OnClick := @IconDisplayOnClick;
+          // image properties
+          Image.Parent := Background;
+          Image.Stretch := True;
+          Image.BorderSpacing.Around := 5;
+          Image.Height := 50;
+          Image.Width := 50;
+          // image procedures
+          Image.OnMouseEnter := @IconDisplayOnMouseEnter;
+          Image.OnClick := @IconDisplayOnClick;
+
           // store panel, image and file name as one object IconDisplay in
           // IconList for later use
           IconDisplay := TIconDisplay.Create;
           IconDisplay.Panel := Background;
           IconDisplay.Image := Image;
+          //IconDisplay.Pic := Image.Picture;
           IconDisplay.FileName := IconSearch.Name;
           IconList.Add(IconDisplay);
           Image.Update;
@@ -1223,12 +1230,6 @@ begin
     LabelNumIcons.Caption := 'Icons zur Auswahl: ' + IntToStr(numberIcons);
   end;
 end;
-
-procedure TResultform1.ColorBoxIconBackgrSelect(Sender: TObject);
-begin
-    PaintBackgr(ColorBoxIconBackgr.Selected);
-end;
-
 ///////////////////////////////////////////////////////////////////////////////
 
 procedure TResultform1.FlowPanel14Click(Sender: TObject);
@@ -1239,11 +1240,6 @@ end;
 procedure TResultform1.FlowPanel18Click(Sender: TObject);
 begin
 
-end;
-
-procedure TResultform1.FormActivate(Sender: TObject);
-begin
-    BtnOpenIconFolder.Font.Size:=12;
 end;
 
 procedure TResultform1.BtATwonalyzeAndCreateClick(Sender: TObject);
@@ -1853,6 +1849,40 @@ begin
   logdatei.log('Finished BtCreateProductClick', LLDebug2);
 end;
 
+procedure TResultform1.BtIconsNextStepClick(Sender: TObject);
+begin
+  case useRunMode of
+    analyzeOnly:
+    begin
+      //we should never be here
+      logdatei.log(
+        'Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
+    end;
+    singleAnalyzeCreate:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetCreate;
+      Application.ProcessMessages;
+    end;
+    twoAnalyzeCreate_1,
+    twoAnalyzeCreate_2:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetCreate;
+      Application.ProcessMessages;
+    end;
+    createTemplate:
+    begin
+      PageControl1.ActivePage := resultForm1.TabSheetCreate;
+      Application.ProcessMessages;
+    end;
+    gmUnknown:
+    begin
+      // we should never be here
+      logdatei.log(
+        'Error: in BtProductNextStepClick RunMode: gmUnknown', LLError);
+    end;
+  end;
+end;
+
 procedure TResultform1.BtProduct1NextStepClick(Sender: TObject);
 var
   checkok: boolean = True;
@@ -1913,17 +1943,17 @@ begin
     end;
     singleAnalyzeCreate:
     begin
-      PageControl1.ActivePage := resultForm1.TabSheetCreate;
+      PageControl1.ActivePage := resultForm1.TabSheetIcons;
       Application.ProcessMessages;
     end;
     twoAnalyzeCreate_1, twoAnalyzeCreate_2:
     begin
-      PageControl1.ActivePage := resultForm1.TabSheetCreate;
+      PageControl1.ActivePage := resultForm1.TabSheetIcons;
       Application.ProcessMessages;
     end;
     createTemplate:
     begin
-      PageControl1.ActivePage := resultForm1.TabSheetCreate;
+      PageControl1.ActivePage := resultForm1.TabSheetIcons;
       Application.ProcessMessages;
     end;
     gmUnknown:
@@ -2217,6 +2247,7 @@ end;
 procedure TResultform1.FormCreate(Sender: TObject);
 begin
   Application.OnIdle := @ApplicationEventIdle;
+  BtnOpenIconFolder.Font.Size := 12;
   main1;
 end;
 

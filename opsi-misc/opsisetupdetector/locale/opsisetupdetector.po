@@ -474,6 +474,16 @@ msgstr ""
 msgid "Create a opsi Product"
 msgstr ""
 
+#: tresultform1.bticonsnextstep.caption
+msgctxt "tresultform1.bticonsnextstep.caption"
+msgid "Next Step"
+msgstr ""
+
+#: tresultform1.bticonsnextstep.hint
+msgctxt "tresultform1.bticonsnextstep.hint"
+msgid "Go to the next Step"
+msgstr ""
+
 #: tresultform1.btnopeniconfolder.caption
 msgid " open icon folder "
 msgstr ""
@@ -532,10 +542,6 @@ msgstr ""
 
 #: tresultform1.caption
 msgid "opsi Setup Detector"
-msgstr ""
-
-#: tresultform1.checkboxbackgr.caption
-msgid "Choose Background Color"
 msgstr ""
 
 #: tresultform1.checkgroupbuildmode.caption
@@ -726,6 +732,14 @@ msgstr ""
 msgid "Properties"
 msgstr ""
 
+#: tresultform1.labelicondir.caption
+msgid "Directory:"
+msgstr ""
+
+#: tresultform1.labeliconname.caption
+msgid "Name:"
+msgstr ""
+
 #: tresultform1.labeliconpreview.caption
 msgid "Selected Icon (Preview 170x170)"
 msgstr ""
@@ -796,6 +810,7 @@ msgid "Panel4"
 msgstr ""
 
 #: tresultform1.paneliconpreview.caption
+msgctxt "tresultform1.paneliconpreview.caption"
 msgid "no icon selected"
 msgstr ""
 
