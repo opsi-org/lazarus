@@ -1888,7 +1888,7 @@ begin
     defaultStandardMainLogPath := '/var/log/opsi-script/';
     defaultStandardPartLogPath := '/var/log/opsi-script/';
     {$IFDEF OPSI_AS_USER}
-    defaultStandardLogPath := GetUserDir+'/opsi.org/applog/';
+    defaultStandardLogPath := GetUserDir+'/.opsi.org/applog/';
     defaultStandardMainLogPath := defaultStandardLogPath;
     defaultStandardPartLogPath := defaultStandardLogPath;
     {$ENDIF OPSI_AS_USER}
@@ -1909,7 +1909,7 @@ begin
     defaultStandardMainLogPath := '/tmp/';
     defaultStandardPartLogPath := '/tmp/';
     {$IFDEF OPSI_AS_USER}
-    defaultStandardLogPath := GetUserDir+'/opsi.org/applog/';
+    defaultStandardLogPath := GetUserDir+'/.opsi.org/applog/';
     defaultStandardMainLogPath := defaultStandardLogPath;
     defaultStandardPartLogPath := defaultStandardLogPath;
     {$ENDIF OPSI_AS_USER}
