@@ -529,6 +529,8 @@ begin
   files.Free;
   {$ENDIF}
   {$IFNDEF OPSISCRIPT}
+  if not DirectoryExistsUTF8(FStandardPartLogPath) then
+    ForceDirectoriesUTF8(FStandardPartLogPath);
   // remove old partlog files
   try
     filelist := FindAllFiles(FStandardPartLogPath, FStandardPartLogFilename +
@@ -1906,6 +1908,11 @@ begin
     defaultStandardLogPath := '/tmp/';
     defaultStandardMainLogPath := '/tmp/';
     defaultStandardPartLogPath := '/tmp/';
+    {$IFDEF OPSI_AS_USER}
+    defaultStandardLogPath := GetUserDir+'/opsi.org/applog/';
+    defaultStandardMainLogPath := defaultStandardLogPath;
+    defaultStandardPartLogPath := defaultStandardLogPath;
+    {$ENDIF OPSI_AS_USER}
   end;
   {$ENDIF}
 
