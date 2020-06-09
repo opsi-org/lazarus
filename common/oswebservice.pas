@@ -1426,6 +1426,8 @@ end;
 
 
 procedure TJsonThroughHTTPS.makeURL(const omc: TOpsiMethodCall);
+var
+  rpcstr : string;
 begin
   //Furl := 'https://' + fhost + ':' + intToStr(portHTTPS) + '/rpc?' + EncodeUrl(omc.jsonUrlString);
   LogDatei.log('got omc.jsonUrlString: ' + omc.jsonUrlString, LLdebug3);
@@ -1439,10 +1441,14 @@ begin
   end
   else
   begin
-    if methodGet then
-      Furl := FserviceURL + '/rpc?' + EncodeUrl(omc.jsonUrlString)
+    if pos('/rpc', FserviceURL) = 0 then
+      rpcstr := '/rpc'
     else
-      Furl := FserviceURL + '/rpc';
+      rpcstr := '';
+    if methodGet then
+      Furl := FserviceURL + rpcstr + '?' + EncodeUrl(omc.jsonUrlString)
+    else
+      Furl := FserviceURL + rpcstr;
   end;
   LogDatei.log('got Furl: ' + Furl, LLdebug3);
 end;
