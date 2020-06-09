@@ -1,4 +1,10 @@
 [changelog]
+opsiscriptstarter 4.1.0.11
+
+  * oswebservice: avoid double /rpc in service url;
+
+-- d.oertel <d.oertel@uib.de> Tue, 09 Jun 2020 15:00
+
 opsiscriptstarter 4.1.0.10
 
   * macos: mymountpoint := '/Volumes/opsi_depot';
