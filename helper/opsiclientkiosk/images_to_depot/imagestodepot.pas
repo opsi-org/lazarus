@@ -47,7 +47,7 @@ type
     procedure MountDepotUnix(const User: String; Password: String;
       PathToDepot: String);
     procedure UnmountDepotUnix(const PathToDepot: String);
-    function SetRights(Path:String):boolean;
+    //function SetRights(Path:String):boolean;
 
 
   public
@@ -130,7 +130,9 @@ begin
       sleep(1000);
       CopySuccess := True;
       LogDatei.log(SwitchPathDelims(PathDepotOnShare + PathKioskAppOnShare + CustomFolder, pdsUnix), LLDebug);
-      SetRights(SwitchPathDelims(PathDepotOnShare + PathKioskAppOnShare + CustomFolder, pdsUnix));
+      //SetRights(SwitchPathDelims(PathDepotOnShare + PathKioskAppOnShare + CustomFolder, pdsUnix));
+      ProgressBar.Position:= 80;
+      Application.ProcessMessages;
     end;
   end
   else
@@ -153,10 +155,10 @@ begin
 
   if CopySuccess then
   begin
-   //ProgressBar.Position:= 100;
+   ProgressBar.Position:= 100;
    LabelInfo.Caption := rsFinished;
    Application.ProcessMessages;
-   sleep(1000);
+   sleep(2000); //chance to see that copy process was successful before window is closed
    {for i := 5 downto 1 do
     begin
       LabelInfo.Caption := 'Window will be automatically closed in ' + IntToStr(i) + ' sec';
@@ -187,7 +189,7 @@ end;
 
 procedure TFormSaveImagesOnDepot.FormCreate(Sender: TObject);
 begin
-   InitLogging('kiosk-images-' + GetUserName_ +'.log', LLDebug);
+   InitLogging('images_to_depot ' + GetUserName_ +'.log', LLDebug);
    SetDefaultLang(GetDefaultLang);
 end;
 
@@ -273,6 +275,7 @@ begin
 
 end;
 
+(*
 function TFormSaveImagesOnDepot.SetRights(Path:String): boolean;
 var
   OpsiConnection: TOpsiConnection;
@@ -309,7 +312,7 @@ begin
   finally
     OpsiConnection.Free;
   end;
-end;
+end;*)
 
 
 function TFormSaveImagesOnDepot.SaveImagesOnDepot(const PathToDepot: String):boolean;

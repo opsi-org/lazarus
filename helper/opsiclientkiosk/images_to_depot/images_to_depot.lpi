@@ -24,7 +24,7 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
-      <BuildNr Value="3"/>
+      <RevisionNr Value="1"/>
       <StringTable CompanyName="uib gmbh (www.uib.de)" InternalName="images-to-depot"/>
     </VersionInfo>
     <BuildModes Count="4">
@@ -70,12 +70,12 @@
           </Linking>
         </CompilerOptions>
       </Item2>
-      <Item3 Name="Release - Standalone">
+      <Item3 Name="Release - own product">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="images_to_depot"/>
+            <Filename Value="builds\$(BuildMode)\$(TargetCPU)-$(TargetOS)\images_to_depot"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -106,12 +106,12 @@
           </Other>
         </CompilerOptions>
       </Item3>
-      <Item4 Name="Release - Kiosk in Agent">
+      <Item4 Name="Release - client agent">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="images_to_depot"/>
+            <Filename Value="builds\$(BuildMode)\$(TargetCPU)-$(TargetOS)\images_to_depot"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
