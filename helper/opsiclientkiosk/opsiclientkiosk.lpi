@@ -82,7 +82,7 @@
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
-            <Filename Value="opsiclientkiosk"/>
+            <Filename Value="builds/$(BuildMode)/$(TargetCPU)-$(TargetOS)/opsiclientkiosk"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -116,6 +116,10 @@
             <CustomOptions Value="-dOPSICLIENTKIOSK
 -dOPSI
 -dOPSI_AS_USER"/>
+            <ExecuteAfter>
+              <Command Value="execute_after.bat"/>
+              <CompileReasons Run="False"/>
+            </ExecuteAfter>
           </Other>
         </CompilerOptions>
       </Item3>

@@ -1,0 +1,1 @@
+xcopy /e/s "ock_custom" "builds\Release\i386-win32\ock_costum"
