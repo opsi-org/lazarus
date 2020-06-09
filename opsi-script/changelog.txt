@@ -5,6 +5,13 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+
+opsi-winst/opsi-script (4.12.3.15) experimental; urgency=low
+
+  * oswebservice: avoid double /rpc in service url;
+
+-- d.oertel <d.oertel@uib.de> Tue, 09 Jun 2020 15:00
+
 opsi-winst/opsi-script (4.12.3.14) experimental; urgency=low
 
   * osparser: new flag: cmd64checked to avoid repeated checks for cmd64.exe
