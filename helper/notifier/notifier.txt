@@ -1,4 +1,5 @@
 [changelog]
+(*
 opsi-notifier  4.1.1.0
 
   * switch to synapse
@@ -6,7 +7,7 @@ opsi-notifier  4.1.1.0
   * at work
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 09 Jun 2020:15:00:00 +0200
-
+*)
 opsi-notifier  4.1.0.3
 
   * try to make memo transparent

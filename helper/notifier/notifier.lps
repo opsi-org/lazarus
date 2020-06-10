@@ -28,10 +28,8 @@
       <Unit2>
         <Filename Value="notifier_base.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="140"/>
-        <CursorPos X="9" Y="155"/>
+        <CursorPos X="16" Y="35"/>
         <UsageCount Value="152"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -101,8 +99,9 @@
       <Unit9>
         <Filename Value="notifier.txt"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <CursorPos X="12" Y="6"/>
+        <CursorPos X="3" Y="10"/>
         <UsageCount Value="75"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
