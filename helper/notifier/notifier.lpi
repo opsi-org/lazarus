@@ -23,7 +23,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="3"/>
+      <RevisionNr Value="1"/>
       <StringTable CompanyName="uib gmbh / opsi.org" FileDescription="opsi-client-agent GUI notifier" InternalName="notifier.exe" LegalCopyright="AGPLv3" LegalTrademarks="opsi,opsi.org.open pc server integration" OriginalFilename="notifier.exe" ProductName="opsi / opsi.org" ProductVersion="4.1.0.0"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -169,11 +169,11 @@
         <IsPartOfProject Value="True"/>
       </Unit7>
       <Unit8>
-        <Filename Value="..\..\common\superobject.pas"/>
+        <Filename Value="notifier.txt"/>
         <IsPartOfProject Value="True"/>
       </Unit8>
       <Unit9>
-        <Filename Value="notifier.txt"/>
+        <Filename Value="..\..\external_libraries\misc\superobject.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit9>
     </Units>

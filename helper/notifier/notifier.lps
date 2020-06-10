@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="11"/>
     <BuildModes Active="Default"/>
-    <Units Count="24">
+    <Units Count="25">
       <Unit0>
         <Filename Value="notifier.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -18,7 +18,7 @@
         <ComponentName Value="Nform"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="7"/>
         <TopLine Value="27"/>
         <CursorPos X="39" Y="19"/>
         <UsageCount Value="159"/>
@@ -28,9 +28,8 @@
       <Unit2>
         <Filename Value="notifier_base.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="121"/>
+        <TopLine Value="89"/>
         <CursorPos X="20" Y="91"/>
         <UsageCount Value="159"/>
         <Loaded Value="True"/>
@@ -51,6 +50,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
         <EditorIndex Value="2"/>
+        <TopLine Value="153"/>
         <CursorPos X="21" Y="194"/>
         <UsageCount Value="159"/>
         <Loaded Value="True"/>
@@ -59,7 +59,7 @@
       <Unit5>
         <Filename Value="notifierguicontrol.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="8"/>
         <TopLine Value="306"/>
         <CursorPos X="43" Y="845"/>
         <ExtraEditorCount Value="1"/>
@@ -74,7 +74,7 @@
       <Unit6>
         <Filename Value="notifier_json.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="6"/>
         <TopLine Value="191"/>
         <CursorPos X="31" Y="224"/>
         <UsageCount Value="121"/>
@@ -83,7 +83,7 @@
       <Unit7>
         <Filename Value="..\..\common\osjson.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="10"/>
         <TopLine Value="37"/>
         <CursorPos Y="57"/>
         <UsageCount Value="121"/>
@@ -91,7 +91,6 @@
       </Unit7>
       <Unit8>
         <Filename Value="..\..\common\superobject.pas"/>
-        <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
@@ -101,8 +100,9 @@
       <Unit9>
         <Filename Value="notifier.txt"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <CursorPos X="3" Y="10"/>
+        <CursorPos X="35" Y="8"/>
         <UsageCount Value="82"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -178,7 +178,7 @@
       </Unit19>
       <Unit20>
         <Filename Value="notifier.d\action.ini"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="9"/>
         <TopLine Value="38"/>
         <CursorPos X="14" Y="45"/>
         <UsageCount Value="18"/>
@@ -195,11 +195,10 @@
       </Unit21>
       <Unit22>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\rtl\inc\objpash.inc"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="178"/>
         <CursorPos X="23" Y="194"/>
         <UsageCount Value="14"/>
-        <Loaded Value="True"/>
       </Unit22>
       <Unit23>
         <Filename Value="..\..\external_libraries\synapse\sswin32.inc"/>
@@ -209,8 +208,17 @@
         <UsageCount Value="13"/>
         <Loaded Value="True"/>
       </Unit23>
+      <Unit24>
+        <Filename Value="..\..\external_libraries\misc\superobject.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="20"/>
+      </Unit24>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="notifierguicontrol.pas"/>
         <Caret Line="149" Column="30" TopLine="135"/>
@@ -321,16 +329,12 @@
       </Position27>
       <Position28>
         <Filename Value="..\..\external_libraries\synapse\blcksock.pas"/>
-        <Caret Line="973" Column="15" TopLine="1066"/>
+        <Caret Line="950" Column="5" TopLine="934"/>
       </Position28>
       <Position29>
-        <Filename Value="..\..\external_libraries\synapse\blcksock.pas"/>
-        <Caret Line="950" Column="5" TopLine="934"/>
-      </Position29>
-      <Position30>
         <Filename Value="notifier_base.pas"/>
         <Caret Line="140" Column="28" TopLine="116"/>
-      </Position30>
+      </Position29>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
