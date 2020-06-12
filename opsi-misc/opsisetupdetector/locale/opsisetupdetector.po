@@ -474,13 +474,13 @@ msgstr ""
 msgid "Create a opsi Product"
 msgstr ""
 
-#: tresultform1.bticonsnextstep.caption
-msgctxt "tresultform1.bticonsnextstep.caption"
+#: tresultform1.btniconsnextstep.caption
+msgctxt "tresultform1.btniconsnextstep.caption"
 msgid "Next Step"
 msgstr ""
 
-#: tresultform1.bticonsnextstep.hint
-msgctxt "tresultform1.bticonsnextstep.hint"
+#: tresultform1.btniconsnextstep.hint
+msgctxt "tresultform1.btniconsnextstep.hint"
 msgid "Go to the next Step"
 msgstr ""
 
@@ -542,6 +542,11 @@ msgstr ""
 
 #: tresultform1.caption
 msgid "opsi Setup Detector"
+msgstr ""
+
+#: tresultform1.checkboxusenoicon.caption
+msgctxt "tresultform1.checkboxusenoicon.caption"
+msgid "use no icon"
 msgstr ""
 
 #: tresultform1.checkgroupbuildmode.caption

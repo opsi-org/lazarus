@@ -509,21 +509,24 @@ msgstr "Create Opsi Package"
 msgid "Create a opsi Product"
 msgstr "Create a opsi Product"
 
-#: tresultform1.bticonsnextstep.caption
+#: tresultform1.btniconsnextstep.caption
 #, fuzzy
-msgctxt "tresultform1.bticonsnextstep.caption"
+msgctxt "tresultform1.btniconsnextstep.caption"
 msgid "Next Step"
 msgstr "Next Step"
 
-#: tresultform1.bticonsnextstep.hint
+#: tresultform1.btniconsnextstep.hint
 #, fuzzy
-msgctxt "tresultform1.bticonsnextstep.hint"
+msgctxt "tresultform1.btniconsnextstep.hint"
 msgid "Go to the next Step"
 msgstr "Go to the next Step"
 
 #: tresultform1.btnopeniconfolder.caption
+#, fuzzy
+#| msgid "open icon folder"
+msgctxt "tresultform1.btnopeniconfolder.caption"
 msgid " open icon folder "
-msgstr ""
+msgstr "open icon folder"
 
 #: tresultform1.btproduct1nextstep.caption
 msgctxt "tresultform1.btproduct1nextstep.caption"
@@ -582,6 +585,11 @@ msgstr ""
 #: tresultform1.caption
 msgid "opsi Setup Detector"
 msgstr "opsi Setup Detector"
+
+#: tresultform1.checkboxusenoicon.caption
+msgctxt "tresultform1.checkboxusenoicon.caption"
+msgid "use no icon"
+msgstr ""
 
 #: tresultform1.checkgroupbuildmode.caption
 msgctxt "tresultform1.checkgroupbuildmode.caption"

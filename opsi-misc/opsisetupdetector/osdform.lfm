@@ -115,7 +115,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 135
           Top = 312
-          Width = 1176
+          Width = 896
           Align = alClient
           AutoSize = True
           ControlList = <>
@@ -129,7 +129,7 @@ object resultForm1: TresultForm1
           Height = 68
           Hint = 'Analyze a single existing Setupfile '#10'and create an opsi Product'
           Top = 10
-          Width = 1176
+          Width = 896
           Align = alTop
           BorderSpacing.Top = 10
           BorderSpacing.InnerBorder = 5
@@ -610,7 +610,7 @@ object resultForm1: TresultForm1
           Height = 68
           Hint = 'Analyze a single existing Setupfile '#10'and create an opsi Product'
           Top = 88
-          Width = 1176
+          Width = 896
           Align = alTop
           BorderSpacing.Top = 10
           BorderSpacing.InnerBorder = 5
@@ -1343,7 +1343,7 @@ object resultForm1: TresultForm1
           Height = 68
           Hint = 'Analyze a single existing Setupfile '
           Top = 166
-          Width = 1176
+          Width = 896
           Align = alTop
           BorderSpacing.Top = 10
           BorderSpacing.InnerBorder = 5
@@ -1614,7 +1614,7 @@ object resultForm1: TresultForm1
           Height = 68
           Hint = 'Create a empty '#10'opsi Product Directory Structure'
           Top = 244
-          Width = 1176
+          Width = 896
           Align = alTop
           BorderSpacing.Top = 10
           BorderSpacing.InnerBorder = 5
@@ -1935,15 +1935,15 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 74
           Top = 373
-          Width = 1176
+          Width = 896
           Align = alBottom
           BorderStyle = bsSingle
           ClientHeight = 72
-          ClientWidth = 1174
+          ClientWidth = 894
           ParentFont = False
           TabOrder = 1
           object BtAnalyzeNextStep: TBitBtn
-            Left = 1034
+            Left = 754
             Height = 50
             Hint = 'Go to the next Step'
             Top = 11
@@ -2096,10 +2096,10 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 42
           Top = 0
-          Width = 1176
+          Width = 896
           Align = alTop
           ClientHeight = 42
-          ClientWidth = 1176
+          ClientWidth = 896
           ParentFont = False
           TabOrder = 2
           object LabelLogInfo: TLabel
@@ -2120,17 +2120,17 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 50
           Top = 42
-          Width = 1176
+          Width = 896
           Align = alTop
           ClientHeight = 50
-          ClientWidth = 1176
+          ClientWidth = 896
           ParentFont = False
           TabOrder = 3
           object ProgressBarAnalyze: TProgressBar
             Left = 1
             Height = 23
             Top = 1
-            Width = 1174
+            Width = 894
             Align = alTop
             ParentColor = False
             ParentFont = False
@@ -5098,14 +5098,14 @@ object resultForm1: TresultForm1
         ClientHeight = 447
         ClientWidth = 896
         object Panel11: TPanel
-          Left = 505
+          Left = 496
           Height = 447
           Top = 0
-          Width = 391
+          Width = 400
           Align = alRight
           BevelOuter = bvNone
           ClientHeight = 447
-          ClientWidth = 391
+          ClientWidth = 400
           Color = clNone
           ParentColor = False
           TabOrder = 1
@@ -5126,6 +5126,7 @@ object resultForm1: TresultForm1
             Width = 113
             AutoSize = True
             Caption = ' open icon folder '
+            ParentBidiMode = False
             OnClick = BtnOpenIconFolderClick
             TabOrder = 0
           end
@@ -5158,8 +5159,8 @@ object resultForm1: TresultForm1
             Caption = 'Selected Icon (Preview 170x170)'
             ParentColor = False
           end
-          object BtIconsNextStep: TBitBtn
-            Left = 247
+          object BtnIconsNextStep: TBitBtn
+            Left = 256
             Height = 48
             Hint = 'Go to the next Step'
             Top = 384
@@ -5303,13 +5304,13 @@ object resultForm1: TresultForm1
               0000000000000000000000000000000000000000000000000000
             }
             Layout = blGlyphRight
-            OnClick = BtIconsNextStepClick
+            OnClick = BtnIconsNextStepClick
             ParentFont = False
             TabOrder = 2
           end
           object TILabelDirSelIcon: TTILabel
             Left = 16
-            Height = 104
+            Height = 88
             Top = 240
             Width = 360
             AutoSize = False
@@ -5342,23 +5343,33 @@ object resultForm1: TresultForm1
             ParentColor = False
             WordWrap = True
           end
+          object CheckBoxUseNoIcon: TCheckBox
+            Left = 16
+            Height = 21
+            Top = 336
+            Width = 93
+            Caption = 'use no icon'
+            OnChange = CheckBoxUseNoIconChange
+            TabOrder = 3
+            Visible = False
+          end
         end
         object ScrollBox1: TScrollBox
           Left = 0
           Height = 447
           Top = 0
-          Width = 505
+          Width = 496
           HorzScrollBar.Page = 54
           VertScrollBar.Page = 19
           Align = alClient
           ClientHeight = 445
-          ClientWidth = 503
+          ClientWidth = 494
           TabOrder = 0
           object Label1: TLabel
             Left = 0
             Height = 445
             Top = 0
-            Width = 503
+            Width = 494
             Align = alClient
             Alignment = taCenter
             Caption = 'No Icons'

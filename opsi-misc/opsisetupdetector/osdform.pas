@@ -65,7 +65,7 @@ type
     BtAnalyzeNextStep: TBitBtn;
     BtCreateProduct: TBitBtn;
     BtProduct1NextStep: TBitBtn;
-    BtIconsNextStep: TBitBtn;
+    BtnIconsNextStep: TBitBtn;
     BtProduct2NextStep: TBitBtn;
     BtSetup1NextStep: TBitBtn;
     BtSetup2NextStep: TBitBtn;
@@ -78,6 +78,7 @@ type
     BtCreateEmptyTemplate: TBitBtn;
     BtAnalyzeOnly: TBitBtn;
     BtnOpenIconFolder: TButton;
+    CheckBoxUseNoIcon: TCheckBox;
     CheckGroupBuildMode: TCheckGroup;
     FlowPanel1: TFlowPanel;
     FlowPanel10: TFlowPanel;
@@ -276,13 +277,14 @@ type
     procedure BtATwonalyzeAndCreateClick(Sender: TObject);
     procedure BtCreateEmptyTemplateClick(Sender: TObject);
     procedure BtCreateProductClick(Sender: TObject);
-    procedure BtIconsNextStepClick(Sender: TObject);
+    procedure BtnIconsNextStepClick(Sender: TObject);
     procedure BtProduct1NextStepClick(Sender: TObject);
     procedure BtProduct2NextStepClick(Sender: TObject);
     procedure BtSetup1NextStepClick(Sender: TObject);
     procedure BtSetup2NextStepClick(Sender: TObject);
     procedure BtSingleAnalyzeAndCreateClick(Sender: TObject);
     procedure BtnOpenIconFolderClick(Sender: TObject);
+    procedure CheckBoxUseNoIconChange(Sender: TObject);
     procedure FlowPanel14Click(Sender: TObject);
     procedure FlowPanel18Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -459,7 +461,6 @@ resourcestring
   rsPropEditErrorNoSelect = 'No Property selected.';
   rsDependencyEditErrorHead = 'opsi-setup-detector: Dependency Editor: Error';
   rsDependencyEditErrorNoSelect = 'No Dependency selected.';
-
 
 implementation
 
@@ -1102,7 +1103,7 @@ begin
         break;
       end;
     end;
-  // if panel clicked
+    // if panel clicked
   end;
   if Sender.ClassName = 'TPanel' then
   begin
@@ -1118,6 +1119,9 @@ begin
   // show name and directory of selected icon
   LabelIconName.Visible := True;
   LabelIconDir.Visible := True;
+  CheckBoxUseNoIcon.Visible := True;
+  CheckBoxUseNoIcon.Checked := False;
+  ImageIconPreview.Visible := True;
   // get selected icon from IconList
   SelectedIcon := TIconDisplay(IconList.Items[indexSelectedIcon]);
   // get file name without file extension
@@ -1230,6 +1234,19 @@ begin
     LabelNumIcons.Caption := 'Icons zur Auswahl: ' + IntToStr(numberIcons);
   end;
 end;
+
+procedure TResultform1.CheckBoxUseNoIconChange(Sender: TObject);
+begin
+  if CheckBoxUseNoIcon.Checked = True then
+  begin
+    LabelIconName.Visible := False;
+    LabelIconDir.Visible := False;
+    LabelNameSelIcon.Caption:='';
+    osdbasedata.aktProduct.productdata.productImageFullFileName := '';
+    ImageIconPreview.Visible := False;
+  end;
+end;
+
 ///////////////////////////////////////////////////////////////////////////////
 
 procedure TResultform1.FlowPanel14Click(Sender: TObject);
@@ -1849,7 +1866,7 @@ begin
   logdatei.log('Finished BtCreateProductClick', LLDebug2);
 end;
 
-procedure TResultform1.BtIconsNextStepClick(Sender: TObject);
+procedure TResultform1.BtnIconsNextStepClick(Sender: TObject);
 begin
   case useRunMode of
     analyzeOnly:

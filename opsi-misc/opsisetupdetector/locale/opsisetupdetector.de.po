@@ -497,21 +497,19 @@ msgstr "opsi Paket erstellen"
 msgid "Create a opsi Product"
 msgstr "opsi Produkt erstellen"
 
-#: tresultform1.bticonsnextstep.caption
-#, fuzzy
-msgctxt "tresultform1.bticonsnextstep.caption"
+#: tresultform1.btniconsnextstep.caption
 msgid "Next Step"
 msgstr "Nächster Schritt"
 
-#: tresultform1.bticonsnextstep.hint
+#: tresultform1.btniconsnextstep.hint
 #, fuzzy
-msgctxt "tresultform1.bticonsnextstep.hint"
+msgctxt "tresultform1.btniconsnextstep.hint"
 msgid "Go to the next Step"
 msgstr "Zum nächsten Schritt gehen"
 
 #: tresultform1.btnopeniconfolder.caption
 msgid " open icon folder "
-msgstr ""
+msgstr " Icon-Ordner öffnen "
 
 #: tresultform1.btproduct1nextstep.caption
 msgctxt "tresultform1.btproduct1nextstep.caption"
@@ -569,6 +567,11 @@ msgstr "Analysiere eine einzelne Setup Datei und erzeuge ein opsi Paket"
 msgid "opsi Setup Detector"
 msgstr "opsi Setup Detektor"
 
+#: tresultform1.checkboxusenoicon.caption
+msgctxt "tresultform1.checkboxusenoicon.caption"
+msgid "use no icon"
+msgstr "kein Icon verwenden"
+
 #: tresultform1.checkgroupbuildmode.caption
 msgctxt "tresultform1.checkgroupbuildmode.caption"
 msgid "Build Mode"
@@ -589,7 +592,7 @@ msgstr ""
 
 #: tresultform1.label1.caption
 msgid "No Icons"
-msgstr ""
+msgstr "Keine Icons"
 
 #: tresultform1.label50.caption
 msgctxt "tresultform1.label50.caption"
@@ -763,7 +766,7 @@ msgstr "Properties"
 
 #: tresultform1.labelicondir.caption
 msgid "Directory:"
-msgstr ""
+msgstr "Dateipfad:"
 
 #: tresultform1.labeliconname.caption
 msgid "Name:"
@@ -771,7 +774,7 @@ msgstr ""
 
 #: tresultform1.labeliconpreview.caption
 msgid "Selected Icon (Preview 170x170)"
-msgstr ""
+msgstr "Ausgewähltes Icon (Vorschau 170x170)"
 
 #: tresultform1.labelloginfo.caption
 msgid "LabelLogInfo"
@@ -779,7 +782,7 @@ msgstr ""
 
 #: tresultform1.labelnumicons.caption
 msgid "Icons to choose from: 0"
-msgstr ""
+msgstr "Icons zur Auswahl: 0"
 
 #: tresultform1.labelworkbenchnotok.caption
 msgid "Path to opsi-work-bench not is reachable - Check Network Mounts or Path"
@@ -807,7 +810,7 @@ msgstr "Bekannte Installer"
 
 #: tresultform1.menuitemlang.caption
 msgid "Languages"
-msgstr ""
+msgstr "Sprachen"
 
 #: tresultform1.menuitemlangde.caption
 msgid "de"
@@ -841,7 +844,7 @@ msgstr "-"
 #: tresultform1.paneliconpreview.caption
 msgctxt "tresultform1.paneliconpreview.caption"
 msgid "no icon selected"
-msgstr ""
+msgstr "kein Icon ausgewählt"
 
 #: tresultform1.processing.caption
 msgid "processing..."
@@ -948,7 +951,7 @@ msgstr "Erzeugen"
 
 #: tresultform1.tabsheeticons.caption
 msgid "Product Icon"
-msgstr ""
+msgstr "Produkt-Icon"
 
 #: tresultform1.tabsheetproduct.caption
 msgid "Product Configuration 1"
