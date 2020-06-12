@@ -400,13 +400,19 @@ begin
       LogDatei.log(outlines.strings[i], LLDebug);
       stringsplit(outlines.strings[i], ':', lineparts);
       //LogDatei.log(lineparts.Strings[2], LLDebug);
-      // use only users with a pid >= 1000
+      { use only users with a pid >= 1000 }
       if StrToInt(lineparts.Strings[2]) >= 1000 then
       begin
         resultstring := lineparts.Strings[5];
-        // use only existing direcories as profile
-        if DirectoryExists(ExpandFileName(resultstring)) then
-          Result.Add(ExpandFileName(resultstring));
+        { no empty strings  }
+        if resultstring <> '' then
+          { no fs root  }
+          if resultstring <> '/' then
+            { no /home  }
+            if resultstring <> '/home' then
+            { use only existing direcories as profile }
+            if DirectoryExists(ExpandFileName(resultstring)) then
+              Result.Add(ExpandFileName(resultstring));
       end;
     end;
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;

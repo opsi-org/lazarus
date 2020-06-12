@@ -2248,6 +2248,7 @@ var
     patchlistcounter: integer = 0;
     workingSection: TXStringList;
     NameValueSeparator: char;
+    goon : boolean = true;
 
   begin
     //ps := LogDatei.LogSIndentPlus (+3) + 'FILE ' +  PatchdateiName;
@@ -2267,6 +2268,7 @@ var
 
     if not FileExists(ExpandFileName(PatchFilename)) then
     begin
+      try
       ps := LogDatei.LogSIndentPlus(+3) +
         'Info: This file does not exist and will be created ';
       LogDatei.log(ps, LLInfo);
@@ -2286,13 +2288,21 @@ var
         LogDatei.log(ps, LLError);
         exit; // ------------------------------  exit
       end;
+      except
+         on E: Exception do
+         begin
+          LogDatei.log('Error in osparser..doTextpatchMain failed to create file: '
+          + ExpandFileName(PatchFilename)+ ' Msg.: '+ E.Message, LLError);
+          exit;
+         end;
+      end;
     end;
 
 
     ProcessMess;
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
-    // create the list we work on
+    { create the list we work on }
     PatchListe := TPatchList.Create;
     PatchListe.Clear;
     PatchListe.ItemPointer := -1;
