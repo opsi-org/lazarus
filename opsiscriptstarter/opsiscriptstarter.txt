@@ -2,6 +2,7 @@
 opsiscriptstarter 4.1.0.11
 
   * oswebservice: avoid double /rpc in service url;
+  * oslinmount: fixed handling of clientconfig.depot.user
 
 -- d.oertel <d.oertel@uib.de> Tue, 09 Jun 2020 15:00
 

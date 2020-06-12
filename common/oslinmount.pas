@@ -345,7 +345,11 @@ begin
     LogDatei.log('Got depot user from service: ' + mydepotuser, LLNotice);
     if mydepotuser <> '' then
     begin
-      if divideAtFirst('\', mydepotuser, mydomain, myuser) then   ;
+      if not divideAtFirst('\', mydepotuser, mydomain, myuser) then
+      begin
+        myuser := mydepotuser;
+        mydomain := '';
+      end
     end
     else { we got no clientconfig.depot.user }
       myuser := 'pcpatch';
