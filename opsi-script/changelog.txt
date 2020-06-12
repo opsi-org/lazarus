@@ -11,6 +11,7 @@ opsi-winst/opsi-script (4.12.3.15) experimental; urgency=low
   * oswebservice: avoid double /rpc in service url;
   * osfunclin: better getProfilesDirListLin
   * osparser: doTextpatch: Do not crash on not creatable files
+  * osprocessess: ProcessIsRunning: more info in warning
 
 -- d.oertel <d.oertel@uib.de> Tue, 09 Jun 2020 15:00
 
