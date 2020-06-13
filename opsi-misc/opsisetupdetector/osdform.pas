@@ -78,7 +78,8 @@ type
     BtCreateEmptyTemplate: TBitBtn;
     BtAnalyzeOnly: TBitBtn;
     BtnOpenIconFolder: TButton;
-    CheckBoxUseNoIcon: TCheckBox;
+    CheckBoxDefaultIcon: TCheckBox;
+    CheckBoxNoIcon: TCheckBox;
     CheckGroupBuildMode: TCheckGroup;
     FlowPanel1: TFlowPanel;
     FlowPanel10: TFlowPanel;
@@ -117,11 +118,12 @@ type
     ImageIconPreview: TImage;
     ImageList1: TImageList;
     Label1: TLabel;
+    LabelNumber: TLabel;
+    LabelNumIcons: TLabel;
     LabelNameSelIcon: TLabel;
     LabelIconName: TLabel;
     LabelIconDir: TLabel;
     LabelIconPreview: TLabel;
-    LabelNumIcons: TLabel;
     Label63: TLabel;
     Label69: TLabel;
     LabelLogInfo: TLabel;
@@ -175,6 +177,7 @@ type
     Panel11: TPanel;
     Panel12: TPanel;
     Panel13: TPanel;
+    PanelNumIcons: TPanel;
     PanelIconPreview: TPanel;
     Panel4: TPanel;
     Panel5: TPanel;
@@ -284,7 +287,8 @@ type
     procedure BtSetup2NextStepClick(Sender: TObject);
     procedure BtSingleAnalyzeAndCreateClick(Sender: TObject);
     procedure BtnOpenIconFolderClick(Sender: TObject);
-    procedure CheckBoxUseNoIconChange(Sender: TObject);
+    procedure CheckBoxDefaultIconChange(Sender: TObject);
+    procedure CheckBoxNoIconChange(Sender: TObject);
     procedure FlowPanel14Click(Sender: TObject);
     procedure FlowPanel18Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -336,7 +340,7 @@ type
     procedure makeProperties;
 
     procedure IconDisplayOnMouseEnter(Sender: TObject);
-    procedure PaintPreview;
+    procedure PaintPreview(Image: TImage);
     procedure IconDisplayOnClick(Sender: TObject);
   private
     { private declarations }
@@ -349,9 +353,10 @@ type
     dynIconFlowPanel: TFlowPanel;
     // TFPObjectList needs Contnrs in uses
     IconList: TFPObjectList;
+    SelectedIcon: TIconDisplay;
     iconDirectory: string;
     numberIcons, indexSelectedIcon: integer;
-    SelectedIcon: TIconDisplay;
+    loadDefaultIcon: boolean;
     procedure memoadd(line: string);
   end;
 
@@ -461,6 +466,8 @@ resourcestring
   rsPropEditErrorNoSelect = 'No Property selected.';
   rsDependencyEditErrorHead = 'opsi-setup-detector: Dependency Editor: Error';
   rsDependencyEditErrorNoSelect = 'No Dependency selected.';
+  rsDefaultIcon = 'default icon';
+  rsNumberIcons = 'Icons to choose from: ';
 
 implementation
 
@@ -588,6 +595,7 @@ begin
     TabSheetSetup2.ImageIndex := 2;
     TabSheetProduct.ImageIndex := 3;
     TabSheetProduct2.ImageIndex := 3;
+    TabSheetIcons.ImageIndex := 3;
     TabSheetCreate.ImageIndex := 4;
     TimerFirstconfig.Enabled := True;
     if fileexists(myconfiguration.PathToOpsiPackageBuilder) then
@@ -1042,7 +1050,8 @@ begin
     SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
   end;
 end;
-///////////////////////////////////////////////////////////////////////////////
+
+
 procedure TResultform1.IconDisplayOnMouseEnter(Sender: TObject);
 var
   index: integer;
@@ -1059,7 +1068,7 @@ begin
 end;
 
 // paint icon preview with selected background
-procedure TResultform1.PaintPreview;
+procedure TResultform1.PaintPreview(Image: TImage);
 var
   RectBackgr: TRect;
   row, col: integer;
@@ -1081,7 +1090,7 @@ begin
     // paint chess board
     RectBackgr := Rect(0, 0, ImageIconPreview.Width, ImageIconPreview.Height);
     // paint icon on chess board
-    StretchDraw(RectBackgr, SelectedIcon.Image.Picture.Bitmap);
+    StretchDraw(RectBackgr, Image.Picture.Bitmap);
   end;
 end;
 
@@ -1116,25 +1125,28 @@ begin
       end;
     end;
   end;
-  // show name and directory of selected icon
-  LabelIconName.Visible := True;
-  LabelIconDir.Visible := True;
-  CheckBoxUseNoIcon.Visible := True;
-  CheckBoxUseNoIcon.Checked := False;
-  ImageIconPreview.Visible := True;
   // get selected icon from IconList
   SelectedIcon := TIconDisplay(IconList.Items[indexSelectedIcon]);
   // get file name without file extension
   IconFileName := SelectedIcon.FileName;
   Delete(IconFileName, Pos('.', IconFileName), IconFileName.Length - 1);
+  // show name and directory of selected icon
+  LabelIconName.Visible := True;
   LabelNameSelIcon.Caption := IconFileName;
+  LabelIconDir.Visible := True;
+  TILabelDirSelIcon.Visible := True;
   // save icon directory in productdata.productImageFullFileName
   // and therefore show it in TILabelDirSelIcon
   // (definition of class TProductData in unit osdbasedata line ~256)
   osdbasedata.aktProduct.productdata.productImageFullFileName :=
     iconDirectory + SelectedIcon.FileName;
   //ShowMessage(osdbasedata.aktProduct.productdata.productImageFullFileName);
-  PaintPreview;
+  // paint icon in preview
+  ImageIconPreview.Visible := True;
+  PaintPreview(SelectedIcon.Image);
+  // adjust checkboxes
+  CheckBoxNoIcon.Checked := False;
+  CheckBoxDefaultIcon.Checked := False;
 end;
 
 procedure TResultform1.BtnOpenIconFolderClick(Sender: TObject);
@@ -1222,7 +1234,6 @@ begin
           IconDisplay := TIconDisplay.Create;
           IconDisplay.Panel := Background;
           IconDisplay.Image := Image;
-          //IconDisplay.Pic := Image.Picture;
           IconDisplay.FileName := IconSearch.Name;
           IconList.Add(IconDisplay);
           Image.Update;
@@ -1231,23 +1242,62 @@ begin
       until FindNext(IconSearch) <> 0; // I have no idea how they are ordered
       FindClose(IconSearch);
     end;
-    LabelNumIcons.Caption := 'Icons zur Auswahl: ' + IntToStr(numberIcons);
+    LabelNumIcons.Caption := rsNumberIcons;
+    // part of LabelNumber.Caption in po-files deleted so that the caption does
+    // not change to 0 when changing the language
+    LabelNumber.Caption := IntToStr(numberIcons);
   end;
 end;
 
-procedure TResultform1.CheckBoxUseNoIconChange(Sender: TObject);
+procedure TResultform1.CheckBoxDefaultIconChange(Sender: TObject);
+var
+  DefaultIcon: TImage;
+  defaultIconFullFileName: string;
 begin
-  if CheckBoxUseNoIcon.Checked = True then
+  if CheckBoxDefaultIcon.Checked = True then
+  begin
+    // show name 'default icon' but no directory
+    LabelIconName.Visible := True;
+    LabelNameSelIcon.Caption := rsDefaultIcon;
+    LabelIconDir.Visible := False;
+    TILabelDirSelIcon.Visible := False;
+    // set productImageFullFileName to full file name of the default icon
+    defaultIconFullFileName :=
+      ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' +
+      PathDelim + 'template.png';
+    osdbasedata.aktProduct.productdata.productImageFullFileName :=
+      defaultIconFullFileName;
+
+    CheckBoxNoIcon.Checked := False;
+    ImageIconPreview.Visible := True;
+    // paint icon preview
+    DefaultIcon := TImage.Create(TabSheetIcons);
+    DefaultIcon.Picture.LoadFromFile(defaultIconFullFileName);
+    PaintPreview(DefaultIcon);
+  end;
+  // if CheckBoxDefaultIcon is unchecked then check CheckBoxNoIcon if no custom icon is selected
+  // LabelIconDir.Visible = False is equivalent to no custom icon is selected
+  if (CheckBoxDefaultIcon.Checked = False) and (LabelIconDir.Visible = False) then
+    CheckBoxNoIcon.Checked := True;
+end;
+
+procedure TResultform1.CheckBoxNoIconChange(Sender: TObject);
+begin
+  if CheckBoxNoIcon.Checked = True then
   begin
     LabelIconName.Visible := False;
     LabelIconDir.Visible := False;
-    LabelNameSelIcon.Caption:='';
+    LabelNameSelIcon.Caption := '';
     osdbasedata.aktProduct.productdata.productImageFullFileName := '';
+    CheckBoxDefaultIcon.Checked := False;
     ImageIconPreview.Visible := False;
   end;
+  // if CheckBoxNoIcon is unchecked then check CheckBoxDefaultIcon if no custom icon is selected
+  // LabelIconDir.Visible = False is equivalent to no custom icon is selected
+  if (CheckBoxNoIcon.Checked = False) and (LabelIconDir.Visible = False) then
+    CheckBoxDefaultIcon.Checked := True;
 end;
 
-///////////////////////////////////////////////////////////////////////////////
 
 procedure TResultform1.FlowPanel14Click(Sender: TObject);
 begin
@@ -2239,7 +2289,6 @@ begin
 end;
 
 
-
 procedure TResultform1.Panel1Click(Sender: TObject);
 begin
 
@@ -2262,10 +2311,18 @@ end;
 
 
 procedure TResultform1.FormCreate(Sender: TObject);
+var
+  DefaultIcon: TImage;
 begin
+  loadDefaultIcon := True;
   Application.OnIdle := @ApplicationEventIdle;
-  BtnOpenIconFolder.Font.Size := 12;
   main1;
+  // TabSheetIcons presets
+  BtnOpenIconFolder.Font.Size := 12;
+  DefaultIcon := TImage.Create(TabSheetIcons);
+  DefaultIcon.Picture.LoadFromFile(ExtractFileDir(Application.Params[0]) +
+    PathDelim + 'template-files' + PathDelim + 'template.png');
+  PaintPreview(DefaultIcon);
 end;
 
 procedure TResultform1.memoadd(line: string);

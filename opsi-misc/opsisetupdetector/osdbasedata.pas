@@ -1059,9 +1059,9 @@ begin
     delsubscript := 'delsub.opsiscript';
     licenserequired := False;
     // Application.Params[0] is directory of application as string
-    {productImageFullFileName :=
+    productImageFullFileName :=
       ExtractFileDir(Application.Params[0]) + PathDelim + 'template-files' + PathDelim +
-      'template.png';}
+      'template.png';
   end;
   // Create Dependencies
   aktProduct.dependencies := TCollection.Create(TPDependency);

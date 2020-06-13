@@ -4300,7 +4300,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 58
           Top = 0
-          Width = 1176
+          Width = 896
           Align = alTop
           ControlList = <          
             item
@@ -4336,9 +4336,9 @@ object resultForm1: TresultForm1
             ParentFont = False
           end
           object TITrackBarPrio: TTITrackBar
-            Left = 140
+            Left = 6
             Height = 43
-            Top = 6
+            Top = 41
             Width = 812
             Max = 100
             Min = -100
@@ -4367,7 +4367,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 93
           Top = 352
-          Width = 1176
+          Width = 896
           Align = alTop
           ControlList = <          
             item
@@ -4381,7 +4381,7 @@ object resultForm1: TresultForm1
           TabOrder = 1
           OnClick = FlowPanel18Click
           object BtProduct2NextStep: TBitBtn
-            Left = 1036
+            Left = 756
             Height = 48
             Hint = 'Go to the next Step'
             Top = 11
@@ -4535,7 +4535,7 @@ object resultForm1: TresultForm1
           Left = 0
           Height = 294
           Top = 58
-          Width = 1176
+          Width = 896
           Align = alTop
           Position = 140
           SplitterType = pstVertical
@@ -4544,18 +4544,18 @@ object resultForm1: TresultForm1
             Left = 0
             Height = 140
             Top = 0
-            Width = 1176
-            ClientWidth = 1176
+            Width = 896
+            ClientWidth = 896
             ClientHeight = 140
             object Panel4: TPanel
               Left = 0
               Height = 140
               Top = 0
-              Width = 1176
+              Width = 896
               Align = alClient
               Caption = 'Panel4'
               ClientHeight = 136
-              ClientWidth = 1172
+              ClientWidth = 892
               ParentFont = False
               TabOrder = 0
               object StringGridDep: TStringGrid
@@ -4812,25 +4812,25 @@ object resultForm1: TresultForm1
             Left = 0
             Height = 149
             Top = 145
-            Width = 1176
-            ClientWidth = 1176
+            Width = 896
+            ClientWidth = 896
             ClientHeight = 149
             object Panel10: TPanel
               Left = 0
               Height = 149
               Top = 0
-              Width = 1176
+              Width = 896
               Align = alClient
               Caption = 'Panel10'
               ClientHeight = 145
-              ClientWidth = 1172
+              ClientWidth = 892
               ParentFont = False
               TabOrder = 0
               object StringGridProp: TStringGrid
                 Left = 6
                 Height = 106
                 Top = 37
-                Width = 1164
+                Width = 884
                 Align = alClient
                 BorderSpacing.Around = 5
                 ColCount = 8
@@ -4901,7 +4901,7 @@ object resultForm1: TresultForm1
                 Left = 1
                 Height = 31
                 Top = 1
-                Width = 1174
+                Width = 894
                 Align = alTop
                 ControlList = <                
                   item
@@ -5040,9 +5040,9 @@ object resultForm1: TresultForm1
                   TabOrder = 1
                 end
                 object BitBtnEditProp: TBitBtn
-                  Left = 663
+                  Left = 1
                   Height = 25
-                  Top = 1
+                  Top = 32
                   Width = 259
                   Align = alTop
                   Anchors = []
@@ -5110,19 +5110,10 @@ object resultForm1: TresultForm1
           ParentColor = False
           TabOrder = 1
           Wordwrap = True
-          object LabelNumIcons: TLabel
-            Left = 16
-            Height = 19
-            Top = 408
-            Width = 145
-            Caption = 'Icons to choose from: 0'
-            Layout = tlCenter
-            ParentColor = False
-          end
           object BtnOpenIconFolder: TButton
             Left = 16
             Height = 25
-            Top = 368
+            Top = 376
             Width = 113
             AutoSize = True
             Caption = ' open icon folder '
@@ -5163,7 +5154,7 @@ object resultForm1: TresultForm1
             Left = 256
             Height = 48
             Hint = 'Go to the next Step'
-            Top = 384
+            Top = 376
             Width = 129
             Anchors = [akRight, akBottom]
             AutoSize = True
@@ -5310,10 +5301,11 @@ object resultForm1: TresultForm1
           end
           object TILabelDirSelIcon: TTILabel
             Left = 16
-            Height = 88
+            Height = 96
             Top = 240
             Width = 360
             AutoSize = False
+            Visible = False
             WordWrap = True
           end
           object LabelIconDir: TLabel
@@ -5332,7 +5324,6 @@ object resultForm1: TresultForm1
             Width = 41
             Caption = 'Name:'
             ParentColor = False
-            Visible = False
           end
           object LabelNameSelIcon: TLabel
             Left = 200
@@ -5340,18 +5331,58 @@ object resultForm1: TresultForm1
             Top = 64
             Width = 176
             AutoSize = False
+            Caption = 'default icon'
             ParentColor = False
             WordWrap = True
           end
-          object CheckBoxUseNoIcon: TCheckBox
+          object CheckBoxNoIcon: TCheckBox
             Left = 16
             Height = 21
             Top = 336
             Width = 93
             Caption = 'use no icon'
-            OnChange = CheckBoxUseNoIconChange
+            OnChange = CheckBoxNoIconChange
             TabOrder = 3
-            Visible = False
+          end
+          object CheckBoxDefaultIcon: TCheckBox
+            Left = 200
+            Height = 21
+            Top = 336
+            Width = 121
+            Caption = 'use default icon'
+            Checked = True
+            OnChange = CheckBoxDefaultIconChange
+            State = cbChecked
+            TabOrder = 4
+          end
+          object PanelNumIcons: TPanel
+            Left = 16
+            Height = 19
+            Top = 416
+            Width = 145
+            AutoSize = True
+            BevelOuter = bvNone
+            ClientHeight = 19
+            ClientWidth = 145
+            TabOrder = 5
+            object LabelNumIcons: TLabel
+              Left = 0
+              Height = 19
+              Top = 0
+              Width = 137
+              Align = alLeft
+              Caption = 'Icons to choose from: '
+              ParentColor = False
+            end
+            object LabelNumber: TLabel
+              Left = 137
+              Height = 19
+              Top = 0
+              Width = 8
+              Align = alClient
+              Caption = '0'
+              ParentColor = False
+            end
           end
         end
         object ScrollBox1: TScrollBox

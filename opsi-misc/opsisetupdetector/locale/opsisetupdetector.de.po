@@ -143,6 +143,11 @@ msgctxt "osddlgnewproperty.rsduplicatewarning"
 msgid " exists. Duplicates not allowed."
 msgstr "existiert bereits. Doppel sind hier nicht erlaubt."
 
+#: osdform.rsdefaulticon
+msgctxt "osdform.rsdefaulticon"
+msgid "default icon"
+msgstr "Default-Icon"
+
 #: osdform.rsdependencyediterrorhead
 msgid "opsi-setup-detector: Dependency Editor: Error"
 msgstr "opsi-setup-detector: Dependency Editor: Fehler"
@@ -154,6 +159,11 @@ msgstr "Keine Dependency ausgewählt."
 #: osdform.rsnotimplemented
 msgid "Not implemented right now."
 msgstr "Noch nicht implementiert."
+
+#: osdform.rsnumbericons
+msgctxt "osdform.rsnumbericons"
+msgid "Icons to choose from: "
+msgstr "Icons zur Auswahl: "
 
 #: osdform.rspropediterrordoublemsgfinish
 msgctxt "osdform.rspropediterrordoublemsgfinish"
@@ -498,6 +508,7 @@ msgid "Create a opsi Product"
 msgstr "opsi Produkt erstellen"
 
 #: tresultform1.btniconsnextstep.caption
+msgctxt "tresultform1.btniconsnextstep.caption"
 msgid "Next Step"
 msgstr "Nächster Schritt"
 
@@ -567,10 +578,13 @@ msgstr "Analysiere eine einzelne Setup Datei und erzeuge ein opsi Paket"
 msgid "opsi Setup Detector"
 msgstr "opsi Setup Detektor"
 
-#: tresultform1.checkboxusenoicon.caption
-msgctxt "tresultform1.checkboxusenoicon.caption"
+#: tresultform1.checkboxdefaulticon.caption
+msgid "use default icon"
+msgstr "Default-Icon verwenden"
+
+#: tresultform1.checkboxnoicon.caption
 msgid "use no icon"
-msgstr "kein Icon verwenden"
+msgstr "Kein Icon verwenden"
 
 #: tresultform1.checkgroupbuildmode.caption
 msgctxt "tresultform1.checkgroupbuildmode.caption"
@@ -770,7 +784,7 @@ msgstr "Dateipfad:"
 
 #: tresultform1.labeliconname.caption
 msgid "Name:"
-msgstr ""
+msgstr "Name:"
 
 #: tresultform1.labeliconpreview.caption
 msgid "Selected Icon (Preview 170x170)"
@@ -780,9 +794,15 @@ msgstr "Ausgewähltes Icon (Vorschau 170x170)"
 msgid "LabelLogInfo"
 msgstr ""
 
+#: tresultform1.labelnameselicon.caption
+msgctxt "tresultform1.labelnameselicon.caption"
+msgid "default icon"
+msgstr "Default-Icon"
+
 #: tresultform1.labelnumicons.caption
-msgid "Icons to choose from: 0"
-msgstr "Icons zur Auswahl: 0"
+msgctxt "tresultform1.labelnumicons.caption"
+msgid "Icons to choose from: "
+msgstr "Icons zur Auswahl: "
 
 #: tresultform1.labelworkbenchnotok.caption
 msgid "Path to opsi-work-bench not is reachable - Check Network Mounts or Path"

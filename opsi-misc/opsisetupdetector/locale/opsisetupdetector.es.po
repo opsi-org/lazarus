@@ -139,6 +139,11 @@ msgctxt "osddlgnewproperty.rsduplicatewarning"
 msgid " exists. Duplicates not allowed."
 msgstr "existente. Los duplicados no están permitidos."
 
+#: osdform.rsdefaulticon
+msgctxt "osdform.rsdefaulticon"
+msgid "default icon"
+msgstr ""
+
 #: osdform.rsdependencyediterrorhead
 msgid "opsi-setup-detector: Dependency Editor: Error"
 msgstr "opsi-setup-detector: editor de Dependencia: Error"
@@ -150,6 +155,11 @@ msgstr "La dependencia no ha sido seleccionada."
 #: osdform.rsnotimplemented
 msgid "Not implemented right now."
 msgstr "No implementada actualmente."
+
+#: osdform.rsnumbericons
+msgctxt "osdform.rsnumbericons"
+msgid "Icons to choose from: "
+msgstr ""
 
 #: osdform.rspropediterrordoublemsgfinish
 msgctxt "osdform.rspropediterrordoublemsgfinish"
@@ -514,7 +524,6 @@ msgid "Create a opsi Product"
 msgstr "Crear un producto opsi"
 
 #: tresultform1.btniconsnextstep.caption
-#, fuzzy
 msgctxt "tresultform1.btniconsnextstep.caption"
 msgid "Next Step"
 msgstr "Próximo paso"
@@ -526,8 +535,6 @@ msgid "Go to the next Step"
 msgstr "Ir al siguiente paso"
 
 #: tresultform1.btnopeniconfolder.caption
-#, fuzzy
-#| msgid "open icon folder"
 msgctxt "tresultform1.btnopeniconfolder.caption"
 msgid " open icon folder "
 msgstr "???"
@@ -590,8 +597,12 @@ msgstr ""
 msgid "opsi Setup Detector"
 msgstr "opsi Setup Detector"
 
-#: tresultform1.checkboxusenoicon.caption
-msgctxt "tresultform1.checkboxusenoicon.caption"
+#: tresultform1.checkboxdefaulticon.caption
+msgid "use default icon"
+msgstr ""
+
+#: tresultform1.checkboxnoicon.caption
+msgctxt "tresultform1.checkboxnoicon.caption"
 msgid "use no icon"
 msgstr ""
 
@@ -805,8 +816,14 @@ msgstr ""
 msgid "LabelLogInfo"
 msgstr ""
 
+#: tresultform1.labelnameselicon.caption
+msgctxt "tresultform1.labelnameselicon.caption"
+msgid "default icon"
+msgstr ""
+
 #: tresultform1.labelnumicons.caption
-msgid "Icons to choose from: 0"
+msgctxt "tresultform1.labelnumicons.caption"
+msgid "Icons to choose from: "
 msgstr ""
 
 #: tresultform1.labelworkbenchnotok.caption

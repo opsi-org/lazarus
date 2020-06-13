@@ -120,6 +120,11 @@ msgctxt "osddlgnewproperty.rsduplicatewarning"
 msgid " exists. Duplicates not allowed."
 msgstr ""
 
+#: osdform.rsdefaulticon
+msgctxt "osdform.rsdefaulticon"
+msgid "default icon"
+msgstr ""
+
 #: osdform.rsdependencyediterrorhead
 msgid "opsi-setup-detector: Dependency Editor: Error"
 msgstr ""
@@ -130,6 +135,11 @@ msgstr ""
 
 #: osdform.rsnotimplemented
 msgid "Not implemented right now."
+msgstr ""
+
+#: osdform.rsnumbericons
+msgctxt "osdform.rsnumbericons"
+msgid "Icons to choose from: "
 msgstr ""
 
 #: osdform.rspropediterrordoublemsgfinish
@@ -544,8 +554,11 @@ msgstr ""
 msgid "opsi Setup Detector"
 msgstr ""
 
-#: tresultform1.checkboxusenoicon.caption
-msgctxt "tresultform1.checkboxusenoicon.caption"
+#: tresultform1.checkboxdefaulticon.caption
+msgid "use default icon"
+msgstr ""
+
+#: tresultform1.checkboxnoicon.caption
 msgid "use no icon"
 msgstr ""
 
@@ -753,8 +766,14 @@ msgstr ""
 msgid "LabelLogInfo"
 msgstr ""
 
+#: tresultform1.labelnameselicon.caption
+msgctxt "tresultform1.labelnameselicon.caption"
+msgid "default icon"
+msgstr ""
+
 #: tresultform1.labelnumicons.caption
-msgid "Icons to choose from: 0"
+msgctxt "tresultform1.labelnumicons.caption"
+msgid "Icons to choose from: "
 msgstr ""
 
 #: tresultform1.labelworkbenchnotok.caption
