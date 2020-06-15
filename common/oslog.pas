@@ -180,8 +180,8 @@ type
     property LogSIndentLevel: integer read FLogSIndentLevel write setLogSIndentLevel;
     function LogSIndent: string;
     function LogSIndentPlus(const n: integer): string;
-    property OpsiscriptVersionRequired: string read FOpsiscriptVersionRequired
-      write FOpsiscriptVersionRequired;
+    property OpsiscriptVersionRequired: string
+      read FOpsiscriptVersionRequired write FOpsiscriptVersionRequired;
     procedure includelogtail(fname: string; logtailLinecount: integer;
       sourceEncoding: string);
     property Appendmode: boolean read FAppendmode write FAppendmode;
@@ -1384,14 +1384,24 @@ begin
       try
         if FLogProduktId then
         begin
+         (*
           PasS := '[' + IntToStr(LevelOfLine) + '] [' +
             FormatDateTime('mmm dd hh:nn:ss:zzz', Now) + '] [' +
             FAktProduktId + '] ' + LogSIndent + st;
+            *)
+          PasS := '[' + IntToStr(LevelOfLine) + '] [' +
+            FormatDateTime('yyyy-mm-dd hh:nn:ss.zzz', Now) + '] [' +
+            FAktProduktId + '] ' + LogSIndent + st;
+
         end
         else
         begin
+          (*
           PasS := '[' + IntToStr(LevelOfLine) + '] [' +
             FormatDateTime('mmm dd hh:nn:ss:zzz', Now) + '] ' + LogSIndent + st;
+            *)
+          PasS := '[' + IntToStr(LevelOfLine) + '] [' +
+            FormatDateTime('yyyy-mm-dd hh:nn:ss.zzz', Now) + '] ' + LogSIndent + st;
         end;
       except
         on E: Exception do
@@ -1759,7 +1769,8 @@ procedure TLogInfo.log2history(line: string);
 begin
   if FWriteHistFile then
   begin
-    line := FormatDateTime('yyyy mmm dd hh:nn', Now) + '  ' + line;
+    //line := FormatDateTime('yyyy mmm dd hh:nn', Now) + '  ' + line;
+    line := FormatDateTime('yyyy-mm-dd hh:nn', Now) + '  ' + line;
     try
       WriteLogLine(HistroryFileF, line);
     except
@@ -1888,7 +1899,7 @@ begin
     defaultStandardMainLogPath := '/var/log/opsi-script/';
     defaultStandardPartLogPath := '/var/log/opsi-script/';
     {$IFDEF OPSI_AS_USER}
-    defaultStandardLogPath := GetUserDir+'/.opsi.org/applog/';
+    defaultStandardLogPath := GetUserDir + '/.opsi.org/applog/';
     defaultStandardMainLogPath := defaultStandardLogPath;
     defaultStandardPartLogPath := defaultStandardLogPath;
     {$ENDIF OPSI_AS_USER}
@@ -1909,7 +1920,7 @@ begin
     defaultStandardMainLogPath := '/tmp/';
     defaultStandardPartLogPath := '/tmp/';
     {$IFDEF OPSI_AS_USER}
-    defaultStandardLogPath := GetUserDir+'/.opsi.org/applog/';
+    defaultStandardLogPath := GetUserDir + '/.opsi.org/applog/';
     defaultStandardMainLogPath := defaultStandardLogPath;
     defaultStandardPartLogPath := defaultStandardLogPath;
     {$ENDIF OPSI_AS_USER}

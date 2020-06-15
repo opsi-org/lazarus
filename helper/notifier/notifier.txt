@@ -1,13 +1,17 @@
 [changelog]
-(*
+
 opsi-notifier  4.1.1.0
 
   * switch to synapse
   * work with linux
   * at work
+  * rename output to opsi-notifier
+  * notifier_json: change msgseparator from #13#10 to #30
+  * notifierguicontrol: step fade by const appearStepSize = 5;
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 09 Jun 2020:15:00:00 +0200
-*)
+-- Jan Werner <j.werner@uib.de>  Tue, 09 Jun 2020:15:00:00 +0200
+
 opsi-notifier  4.1.0.3
 
   * try to make memo transparent
