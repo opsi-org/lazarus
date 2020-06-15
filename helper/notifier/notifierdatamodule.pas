@@ -104,7 +104,7 @@ var
   i: integer;
   lfilename: string;
   logAndTerminate: boolean = False;
-  mynotifierConfPath : string;
+  mynotifierConfPath: string;
 begin
   preloglist := TStringList.Create;
   preloglist.Add('PreLog for: ' + Application.exename + ' opend at : ' +
@@ -183,7 +183,7 @@ begin
   end
   else
   begin
-    preloglist.Add('Error: No skin config file given. I s required ');
+    preloglist.Add('Error: No skin config file given. Is required ');
     logAndTerminate := True;
     //logdatei.Close;
     //Application.Terminate;
@@ -194,8 +194,9 @@ begin
   begin
     preloglist.Add('Found Parameter idevent');
     mynotifierkind := Application.GetOptionValue('i', 'idevent');
-    // opsiclientd bug: pupup comes with %id%
-    if mynotifierkind = '%id%' then mynotifierkind := 'popup';
+    // opsiclientd bug: popup comes with %id%
+    if mynotifierkind = '%id%' then
+      mynotifierkind := 'popup';
     preloglist.Add('Found Parameter idevent: ' + mynotifierkind);
   end;
 
@@ -205,17 +206,18 @@ begin
   // use different filenames for different instances
 
   if myconfigpath <> '' then
-      lfilename := lfilename + '_' + ExtractFileNameWithoutExt(ExtractFileName(myconfigpath))
+    lfilename := lfilename + '_' + ExtractFileNameWithoutExt(
+      ExtractFileName(myconfigpath))
   else
-    if mynotifierkind <> '' then
-      lfilename := lfilename + '_' + mynotifierkind;
+  if mynotifierkind <> '' then
+    lfilename := lfilename + '_' + mynotifierkind;
 
   LogDatei.FileName := lfilename;
   LogDatei.StandardLogFileext := '.log';
   LogDatei.StandardLogFilename := lfilename;
   LogDatei.WritePartLog := False;
-  LogDatei.WriteErrFile:= False;
-  LogDatei.WriteHistFile:= False;
+  LogDatei.WriteErrFile := False;
+  LogDatei.WriteHistFile := False;
 
   //LogDatei.StandardPartLogFilename := lfilename+ '-part';
   LogDatei.CreateTheLogfile(lfilename + '.log', True);
