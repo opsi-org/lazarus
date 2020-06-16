@@ -1,0 +1,95 @@
+# 
+msgid ""
+msgstr ""
+"Language-Team: Arabic (https://www.transifex.com/opsi-org/teams/35141/ar/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: ar\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#: imagestodepot.rscopyicons
+msgid "Copy icons and screenshots..."
+msgstr ""
+
+#: imagestodepot.rscouldnotsaveicons
+msgid "Could not save icons on depot."
+msgstr ""
+
+#: imagestodepot.rscouldnotsavescreenshots
+msgid "Could not save screenshots on depot."
+msgstr ""
+
+#: imagestodepot.rscouldnotunmount
+msgid "Could not unmount depot."
+msgstr ""
+
+#: imagestodepot.rsdone
+msgid "done"
+msgstr ""
+
+#: imagestodepot.rsfinished
+msgid "Copy process finished. Closing window..."
+msgstr ""
+
+#: imagestodepot.rsimagesnotsaved
+msgid ""
+"Images could not be saved on opsi depot. %sPlease check if depot is mounted "
+"with write privileges."
+msgstr ""
+
+#: imagestodepot.rsimagessaved
+msgid "Images saved on"
+msgstr ""
+
+#: imagestodepot.rsisaninvaliddir
+msgid "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
+msgstr ""
+
+#: imagestodepot.rsmounting
+msgid "Mounting"
+msgstr ""
+
+#: imagestodepot.rssettingrights
+msgctxt "imagestodepot.rssettingrights"
+msgid "Setting rights..."
+msgstr ""
+
+#: tformsaveimagesondepot.buttonclose.caption
+msgid "Close"
+msgstr ""
+
+#: tformsaveimagesondepot.buttoncopy.caption
+msgctxt "tformsaveimagesondepot.buttoncopy.caption"
+msgid "Save images on depot"
+msgstr ""
+
+#: tformsaveimagesondepot.caption
+msgctxt "tformsaveimagesondepot.caption"
+msgid "Save images on depot"
+msgstr ""
+
+#: tformsaveimagesondepot.checkboxmountdepot.caption
+msgctxt "tformsaveimagesondepot.checkboxmountdepot.caption"
+msgid "Mount depot"
+msgstr ""
+
+#: tformsaveimagesondepot.groupboxmountdepot.caption
+msgctxt "tformsaveimagesondepot.groupboxmountdepot.caption"
+msgid "Mount depot"
+msgstr ""
+
+#: tformsaveimagesondepot.groupboxpath.caption
+msgctxt "tformsaveimagesondepot.groupboxpath.caption"
+msgid "Path to depot"
+msgstr ""
+
+#: tformsaveimagesondepot.groupboxprogress.caption
+msgid "Progress"
+msgstr ""
+
+#: tformsaveimagesondepot.labelpassword.caption
+msgid "Password"
+msgstr ""
+
+#: tformsaveimagesondepot.labeluser.caption
+msgid "User"
+msgstr ""

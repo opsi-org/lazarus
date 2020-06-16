@@ -19,7 +19,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="7"/>
+      <BuildNr Value="10"/>
       <StringTable CompanyName="uib gmbh (www.uib.de)" LegalCopyright="uib gmbh under AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="opsiscriptstarter" ProductName="opsi" ProductVersion="4.1"/>
     </VersionInfo>
     <MacroValues Count="1">
@@ -96,6 +96,10 @@
               <StripSymbols Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
+            <Options>
+              <PassLinkerOptions Value="True"/>
+              <LinkerOptions Value="-sectcreate __TEXT __info_plist Info.plist"/>
+            </Options>
           </Linking>
           <Other>
             <CustomOptions Value="-dOPSISCRIPTSTARTER -dSYNAPSE"/>
@@ -126,7 +130,7 @@
         <PackageName Value="LazUtils"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="12">
+    <Units Count="14">
       <Unit0>
         <Filename Value="opsiscriptstarter_mac.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -160,22 +164,30 @@
         <IsPartOfProject Value="True"/>
       </Unit7>
       <Unit8>
-        <Filename Value="../common/null.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit8>
-      <Unit9>
         <Filename Value="../common/osprocessux.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="OSProcessux"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="../common/osparserhelper.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit9>
       <Unit10>
-        <Filename Value="../common/osparserhelper.pas"/>
+        <Filename Value="../external_libraries/misc/superobject.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit10>
       <Unit11>
-        <Filename Value="../external_libraries/misc/superobject.pas"/>
+        <Filename Value="Info.plist"/>
         <IsPartOfProject Value="True"/>
       </Unit11>
+      <Unit12>
+        <Filename Value="notarize_oss.bash"/>
+        <IsPartOfProject Value="True"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="opsiscriptstarter.entitlements"/>
+        <IsPartOfProject Value="True"/>
+      </Unit13>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

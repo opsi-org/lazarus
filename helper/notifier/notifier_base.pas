@@ -11,11 +11,12 @@ uses
   SysUtils,
   LazFileUtils,
   oslog,
-  IdTCPClient,
+  //IdTCPClient,
   Variants,
   winpeimagereader,
   notifierguicontrol,
-  notifier_json;
+  notifier_json,
+  blcksock;// winsock, Synautil, ssl_openssl;
 
 type
 
@@ -31,6 +32,8 @@ type
   end;
 
 
+//var
+  //myTCPClient : TTCPBlockSocket;
 
 procedure Main;
 
@@ -46,8 +49,7 @@ implementation
 uses
   notifierdatamodule;
 
-var
-  myTCPClient: TIdTCPClient;
+
 
 
 constructor TMyThread.Create(CreateSuspended: boolean);
@@ -78,32 +80,39 @@ begin
   DataModule1.ProcessMess;
 end;
 
+
 procedure Tmythread.Execute;
-//var
-//  receiveline: string;
+var
+  myTCPClient : TTCPBlockSocket;
+  Connected : Boolean;
+  //  receiveline: string;
 //  i: integer;
 
 begin
   logdatei.log('Starting TCP-Thread: ' +TimeToStr(now), LLDebug2);
   if not Terminated then
   begin
-    myTCPClient := TIdTCPClient.Create;
-    myTCPClient.Port := myport;
-    myTCPClient.Host := '127.0.0.1';
-    myTCPClient.ReadTimeout := 100;
+    myTCPClient := TTCPBlockSocket.create; //TIdTCPClient.Create;
+    //myTCPClient.Port := myport;
+    //myTCPClient.Host := '127.0.0.1';
+    //myTCPClient.ReadTimeout := 100;
+    myTCPClient.ConnectionTimeout:=0; //uses default system value
+    Connected := false;
     repeat
       try
-        myTCPClient.Connect;
+        myTCPClient.Connect('127.0.0.1', IntToStr(myPort));
+        Connected := True;
       except
+        Connected := false;
       end;
-    until myTCPClient.Connected;
+    until Connected;
     //i := 1;
     myMessage2 := '';
     logdatei.log('TCP-Thread connected, starting .loop: ' +TimeToStr(now), LLDebug2);
-    while (not Terminated) and myTCPClient.Connected do
+    while (not Terminated) and Connected do
     begin
       myMessage := '';
-      myMessage := myTCPClient.Socket.ReadLn();
+      myMessage := myTCPClient.RecvString(100);
       if myMessage <> '' then
       begin
         logdatei.log('Received: ' + mymessage, LLDebug2);
@@ -115,35 +124,23 @@ begin
       Synchronize(@messageFromMainThread);
       if myMessage <> '' then
       begin
-        myTCPClient.Socket.WriteLn(myMessage);
+        myTCPClient.SendString(myMessage);
         logdatei.log('Sended: ' + mymessage, LLDebug2);
       end;
-      (*
-      else
-      begin
-        if myMessage2 <> '' then
-        begin
-          myTCPClient.Socket.WriteLn(myMessage2);
-          logdatei.log('Sended: ' + mymessage2, LLDebug2);
-          myMessage2 := '';
-        end;
-      end;
-      *)
       logdatei.log('tcploop :' +TimeToStr(now), LLDebug2);
       //sleep(1000);
     end;
     stopped := True;
-    myTCPClient.Disconnect;
+    myTCPClient.CloseSocket;
     myTCPClient.Free;
   end
   else
   begin
     stopped := True;
-    myTCPClient.Disconnect;
+    myTCPClient.CloseSocket;
     myTCPClient.Free;
   end;
 end;
-
 
 
 procedure Main;

@@ -351,6 +351,7 @@ type
     FProductOnClientIndex: TStringList;
     //FSslProtocol: TIdSSLVersion;
     mylist: TStringList;
+    FCommunicationMode: integer;
     //Function getMapOfProductSwitches : TStringList;
     //Function getProductRequirements (requirementType : String) : TStringList;
     function getProductRequirements(productname: string;
@@ -446,6 +447,7 @@ type
     function withLicenceManagement: boolean; override;
     function withRoamingProfiles: boolean;
     function linuxAgentActivated: boolean;
+    function macosAgentActivated: boolean;
     function isConnected: boolean;
     function isConnected2(loglist: TStringList): boolean;
     function getMapOfLoginscripts2Run(allscripts: boolean): TStringList;
@@ -487,6 +489,7 @@ type
     property depotId: string read FDepotId;
     property ServiceLastErrorInfo: TStringList read FServiceLastErrorInfo;
     //property actualclient: string read FactualClient write FactualClient;
+    property CommunicationMode : integer read FCommunicationMode write FCommunicationMode;
   end;
 
 var
@@ -1213,21 +1216,21 @@ begin
   TJsonThroughHTTPS.Create(serviceUrl, username, password, '', '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(const serviceURL, username,
-  password, sessionid: string);
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid: string);
 begin
   Create(serviceUrl, username, password, sessionid, '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(const serviceURL, username,
-  password, sessionid, ip, port: string);
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid, ip, port: string);
 begin
   Create(serviceUrl, username, password, sessionid, ip, port,
     ExtractFileName(ParamStr(0)));
 end;
 
-constructor TJsonThroughHTTPS.Create(const serviceURL, username,
-  password, sessionid, ip, port, agent: string);
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid, ip, port, agent: string);
 begin
   //portHTTPS := port;
   //portHTTP := 4444;
@@ -1423,6 +1426,8 @@ end;
 
 
 procedure TJsonThroughHTTPS.makeURL(const omc: TOpsiMethodCall);
+var
+  rpcstr : string;
 begin
   //Furl := 'https://' + fhost + ':' + intToStr(portHTTPS) + '/rpc?' + EncodeUrl(omc.jsonUrlString);
   LogDatei.log('got omc.jsonUrlString: ' + omc.jsonUrlString, LLdebug3);
@@ -1436,10 +1441,14 @@ begin
   end
   else
   begin
-    if methodGet then
-      Furl := FserviceURL + '/rpc?' + EncodeUrl(omc.jsonUrlString)
+    if pos('/rpc', FserviceURL) = 0 then
+      rpcstr := '/rpc'
     else
-      Furl := FserviceURL + '/rpc';
+      rpcstr := '';
+    if methodGet then
+      Furl := FserviceURL + rpcstr + '?' + EncodeUrl(omc.jsonUrlString)
+    else
+      Furl := FserviceURL + rpcstr;
   end;
   LogDatei.log('got Furl: ' + Furl, LLdebug3);
 end;
@@ -1515,6 +1524,7 @@ begin
     {---------------------------------------------------
     communicationmode : 0 = opsi 4.1 / 4.2 / Request: gzip, Response: gzip, deflate, identity
     communicationmode : 1 = opsi 4.0 / Request: deflate, Response: gzip, deflate, identity
+    communicationmode : 2 = opsi 4.2 / Request: identity, Response: gzip, deflate, identity
      ----------------------------------------------------}
     if FCommunicationMode <> -1 then   //if Communictaion mode is set
     begin
@@ -1551,6 +1561,17 @@ begin
         Accept := 'gzip-application/json-rpc';
         ContentEncoding := '';
         AcceptEncoding := '';
+      end;
+      2:
+      begin
+        LogDatei.log_prog('Use opsi 4.1 / 4.2 HTTP Header, identity', LLnotice);
+        compress := False;
+        ContentType := 'application/json; charset=UTF-8';
+        Accept := 'application/json';
+        AcceptEncoding := 'gzip, deflate, identity';
+        //AcceptEncoding := 'deflate';
+        ContentEncoding := 'identity';//'deflate';
+        //ContentEncoding := 'deflate';
       end;
       else
       begin
@@ -1760,7 +1781,8 @@ begin
                   unzipStream(HTTPSender.Document, ReceiveStream);
                 end
                 else
-                  LogDatei.log('Unknown Content-Encoding: ' + ContentEncoding, LLWarning);
+                  LogDatei.log('Unknown Content-Encoding: ' +
+                    ContentEncoding, LLWarning);
 
                 //HTTPSender.Document.SaveToFile('C:\Users\Jan\Documents\ReceiveStream.txt');  //for testing
 
@@ -3389,6 +3411,7 @@ begin
   actualclient := '';
   FJsonExecutioner := nil;
   FSortByServer := False;
+  FCommunicationMode := -1;
   {$IFNDEF SYNAPSE}
   //FSslProtocol := sslvTLSv1_2;
   {$ENDIF SYNAPSE}
@@ -3664,6 +3687,28 @@ begin
   end;
 end;
 
+function TOpsi4Data.macosAgentActivated: boolean;
+var
+  mymodules: ISuperObject;
+begin
+  try
+    mymodules := getOpsiModules;
+    LogDatei.log('modules found', LLDebug);
+    if mymodules <> nil then
+      Result := mymodules.B['macos_agent']
+    else
+    begin
+      LogDatei.log('macos_agent info not found (modules = nil)',
+        LLWarning);
+      Result := False;
+    end;
+  except
+    LogDatei.log(
+      'macos_agent info not found (exception in macosAgentActivated)', LLWarning);
+    Result := False;
+  end;
+end;
+
 procedure TOpsi4Data.saveOpsiConf;
 begin
   ProfildateiChange := False;
@@ -3690,12 +3735,26 @@ function TOpsi4Data.checkAndRetrieve(const omc: TOpsiMethodCall;
 begin
   errorOccured := False;
   Result := '';
-  if FJsonExecutioner.retrieveJSONObject(omc) <> nil then
-    Result := FjsonExecutioner.resultLines[0]
+  if FCommunicationMode > -1 then
+  begin
+    if FJsonExecutioner.retrieveJSONObject(omc, True, True, False,
+      FCommunicationMode) <> nil then
+      Result := FjsonExecutioner.resultLines[0]
+    else
+    begin
+      errorOccured := True;
+      Result := FjsonExecutioner.lastError;
+    end;
+  end
   else
   begin
-    errorOccured := True;
-    Result := FjsonExecutioner.lastError;
+    if FJsonExecutioner.retrieveJSONObject(omc) <> nil then
+      Result := FjsonExecutioner.resultLines[0]
+    else
+    begin
+      errorOccured := True;
+      Result := FjsonExecutioner.lastError;
+    end;
   end;
 
   FServiceLastErrorInfo := FjsonExecutioner.lastErrorInfo;
@@ -4116,24 +4175,45 @@ begin
     ProcessMess;
     Application.ProcessMessages;
     {$ENDIF}
-    if LogDatei.Appendmode then sendLog(sendtype,true)
-    else sendLog(sendtype);
+    if LogDatei.Appendmode then
+      sendLog(sendtype, True)
+    else
+      sendLog(sendtype);
   end;
   try
-    // close the session after all is done
+    { close the session after all is done  }
     omc := TOpsiMethodCall.Create('backend_exit', []);
     jsonEntry := FjsonExecutioner.retrieveJsonObject(omc);
     LogDatei.log('in finishOpsiConf: backend_exit done', LLDebug2);
-    if omc <> nil then
-      FreeAndNil(omc);
-    if Assigned(FJsonExecutioner) then
-      FreeAndNil(FJsonExecutioner);
   except
     on e: Exception do
     begin
       LogDatei.log('exception in finishOpsiConf: backend_exit ' + e.message, LLError);
     end;
   end;
+  try
+    { free some objects  }
+    if omc <> nil then
+      FreeAndNil(omc);
+  except
+    on e: Exception do
+    begin
+      LogDatei.log('exception in finishOpsiConf: free omc ' + e.message, LLError);
+    end;
+  end;
+  { free FJsonExecutioner gives a Access Violation }
+  (*
+  try
+    { free some objects  }
+    if Assigned(FJsonExecutioner) then
+      FreeAndNil(FJsonExecutioner);
+  except
+    on e: Exception do
+    begin
+      LogDatei.log('exception in finishOpsiConf: free FJsonExecutioner ' + e.message, LLError);
+    end;
+  end;
+  *)
 end;
 
 function TOpsi4Data.getLogSize: int64;
@@ -4292,7 +4372,7 @@ begin
   try
     Result := (FJsonExecutioner.retrieveJSONObjectByHttpPost(logstream,
       False, 0) <> nil);
-    // we should perhaps not log inside this because of circularity
+    { we should perhaps not log inside this because of circularity }
     errorinfo := FjsonExecutioner.LastError;
   except
     on e: Exception do
@@ -4823,7 +4903,7 @@ begin
 
   if not allscripts then
   begin
-    // get productOnClient for actual Client and all localboot products
+    { get productOnClient for actual Client and all localboot products}
     omc := TOpsiMethodCall.Create('productOnClient_getObjects',
       ['', '{"clientId": "' + actualClient + '", "productType": "LocalbootProduct"}']);
     resultList := FjsonExecutioner.getListResult(omc);
@@ -4834,26 +4914,17 @@ begin
       begin
         productEntry := SO(resultlist.Strings[i]);
 
-        //LogDatei.log (productEntry.S['productId']+'='+loginscriptmap.Values[productEntry.S['productId']]+'<', LLessential);
-        //if (productEntry.O['productId'] <> nil) and (productEntry.S['installationStatus'] = 'installed') then
-        (*
-        if (productEntry.O['productId'] <> nil) and
-          (((productEntry.S['actionResult'] = 'successful') and
-          ((productEntry.S['lastAction'] = 'setup') or
-          (productEntry.S['lastAction'] = 'uninstall')))) then
-          *)
-
-        // changed 15.1.2019 do
-        // we want to run the login script if installed ......
+        { changed 15.1.2019 do}
+        { we want to run the login script if installed ......}
         if ((productEntry.O['productId'] <> nil) and
           (productEntry.S['installationStatus'] = 'installed'))
-          // or last successful action was uninstall
-          or ((productEntry.S['actionResult'] = 'successful') and
+          { or last successful action was uninstall } or
+          ((productEntry.S['actionResult'] = 'successful') and
           (productEntry.S['lastAction'] = 'uninstall')) then
         begin
           if loginscriptmap.Values[productEntry.S['productId']] <> '' then
           begin
-            // product loginsript should run, so let us read the states
+            { product loginsript should run, so let us read the states }
             Result.add(productEntry.S['productId']);
             FProductStates.Add(productEntry.S['productId'] + '=' +
               productEntry.S['installationStatus']);

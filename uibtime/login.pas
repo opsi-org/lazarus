@@ -11,8 +11,9 @@ uses
   lazfileutils,
   fileutil,
   DB,
-  runprocess,
-  uibdatetime;
+  linhandlewin,
+  uibdatetime,
+  osurlparser;
 
 type
 
@@ -70,11 +71,15 @@ var
   str: string;
   logdir, logfeilname: string;
   myini: TIniFile;
+  urllist : TStringlist;
 
 begin
   try
     DataModule1.debugOut(5, 'login-bitbtnokclick', 'Login: ' + edit1.Text +
       '@' + Combobox1.Text);
+    urllist := parseUrl(Combobox1.Text);
+    myDbServer:= urllist.Values['Host'] ;
+    urllist.Free;
     Datamodule1.SQLTransaction1.Params.Clear;
     Datamodule1.SQLTransaction1.Params.Add('isc_tpb_read_committed');
     Datamodule1.SQLTransaction1.Params.Add('isc_tpb_rec_version');
@@ -94,7 +99,8 @@ begin
     ProgressBar1.Position := gaugefak * 1;
     Datamodule1.IBConnection1.Open;
     Datamodule1.IBConnection2.Open;
-    DataModule1.TimerCheckNet.Enabled := True;
+    DataModule1.debugOut(6, 'login-bitbtnokclick', 'Connected ');
+    //DataModule1.TimerCheckNet.Enabled := True;
     application.ProcessMessages;
     Datamodule1.SQLTransaction1.StartTransaction;
     ProgressBar1.Position := gaugefak * 2;
@@ -133,6 +139,7 @@ begin
         uid := 'admin'
       else
         uid := Datamodule1.SQuibaktuser.FieldByName('userid').AsString;
+      DataModule1.debugOut(6, 'login-bitbtnokclick', 'Connect: User is valid: '+ uid);
       ProgressBar1.Position := gaugefak * 3;
       user_h_per_day := Datamodule1.SQuibaktuser.FieldByName('h_per_day').AsFloat;
       ProgressBar1.Position := gaugefak * 4;
@@ -150,55 +157,55 @@ begin
       ProgressBar1.Position := gaugefak * 8;
       if Datamodule1.SQuibaktuser.FieldByName('mo_is_work').AsBoolean then
         include(user_work_days, dayOfWeekGerStrToLazDayofWeekbyte('fr'));
-      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: uid = ' + uid);
+      DataModule1.debugOut(6, 'login-bitbtnokclick', 'Workdays done ');
       ProgressBar1.Position := gaugefak * 9;
       //with Datamodule1.SQuibevent.Params.CreateParam(ftString, 'uid', ptInput) do
       //   AsString := uid;
       //Datamodule1.SQuibevent.ParamByName('uid').AsString := uid;
       Datamodule1.SQuibevent.Open;
-      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: opend 3');
+      DataModule1.debugOut(7, 'login-bitbtnokclick', 'Login: opend 3');
       ProgressBar1.Position := gaugefak * 10;
       application.ProcessMessages;
       Datamodule1.SQuibaktevent.Open;
-      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: opend 4');
+      DataModule1.debugOut(7, 'login-bitbtnokclick', 'Login: opend 4');
       ProgressBar1.Position := gaugefak * 11;
       application.ProcessMessages;
       Datamodule1.SQuiballevent.Open;
-      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: opend 5');
+      DataModule1.debugOut(7, 'login-bitbtnokclick', 'Login: opend 5');
       ProgressBar1.Position := gaugefak * 12;
       application.ProcessMessages;
       Datamodule1.SQuibuserEvent.Open;
-      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: opend 6');
+      DataModule1.debugOut(7, 'login-bitbtnokclick', 'Login: opend 6');
       ProgressBar1.Position := gaugefak * 13;
       application.ProcessMessages;
       Datamodule1.SQuibtimeout.Open;
-      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: opend 7');
+      DataModule1.debugOut(7, 'login-bitbtnokclick', 'Login: opend 7');
       ProgressBar1.Position := gaugefak * 14;
       ///application.processmessages;
       ///Datamodule1.SQuibcalls.open;
-      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: opend 8');
+      DataModule1.debugOut(7, 'login-bitbtnokclick', 'Login: opend 8');
       ProgressBar1.Position := gaugefak * 15;
       application.ProcessMessages;
       Datamodule1.SQuibsoll.Open;
-      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: opend 9');
+      DataModule1.debugOut(7, 'login-bitbtnokclick', 'Login: opend 9');
       ProgressBar1.Position := gaugefak * 16;
       application.ProcessMessages;
       Datamodule1.SQuibdefproj.Open;
-      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: opend 10');
+      DataModule1.debugOut(7, 'login-bitbtnokclick', 'Login: opend 10');
       ProgressBar1.Position := gaugefak * 17;
       application.ProcessMessages;
       Datamodule1.SQuibloggedin.Open;
-      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: opend 11');
+      DataModule1.debugOut(7, 'login-bitbtnokclick', 'Login: opend 11');
       ProgressBar1.Position := gaugefak * 18;
       application.ProcessMessages;
       DataModule1.SQQueryAktEvents.Open;
-      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: opend 12');
+      DataModule1.debugOut(7, 'login-bitbtnokclick', 'Login: opend 12');
       ProgressBar1.Position := gaugefak * 19;
       application.ProcessMessages;
       DataModule1.SQholydays.Open;
-      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: opend 13');
+      DataModule1.debugOut(7, 'login-bitbtnokclick', 'Login: opend 13');
       Application.CreateForm(TFOnTop, FOnTop);
-      DataModule1.debugOut(8, 'login-bitbtnokclick', 'Login: FonTop created');
+      DataModule1.debugOut(7, 'login-bitbtnokclick', 'Login: FonTop created');
       application.ProcessMessages;
       Sleep(500);
       application.ProcessMessages;
@@ -243,8 +250,10 @@ begin
       ///fontop.TimerCallCount.Enabled := true;
       fontop.Show;
       application.ProcessMessages;
-      if not setwindowtoalldesktops('fontop') then
+      (*
+      if not setwindowtoalldesktops(fontop.Caption) then
         datamodule1.debugOut(2, 'login-bitbtnokclick', 'failed fontop to all desktops');
+        *)
       ///FLoggedin.Show;
       // write login to uibtime.conf
       logdir := SysUtils.GetAppConfigDir(False);
@@ -345,6 +354,7 @@ begin
   if uname = '' then
     GetEnvironmentVariable('UIBTIMEUSER');
   Edit1.Text := uname;
+  DataModule1.SetFontName(TControl(sender),myFont);
 end;
 
 procedure TFlogin.CheckBoxEditOnlyClick(Sender: TObject);

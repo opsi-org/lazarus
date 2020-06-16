@@ -53,26 +53,35 @@ msgstr "Bitte geben Sie den Usernamen des opsi-Service users ein:"
 msgid "Ready to continue ?"
 msgstr "Bereit zum Fortfahren ?"
 
-#: tfinputstring.caption
-msgid "opsi-script - string input"
+#: oswebservice.rssendlog
+msgid "Sending log file to server ..."
 msgstr ""
 
-#: tfinputstring.editbutton1.text
-msgid "EditButton1"
+#: tfbatchoberflaeche.caption
+msgid "opsi-script"
 msgstr ""
 
-#: tfinputstring.label1.caption
-msgctxt "tfinputstring.label1.caption"
-msgid "Label1"
+#: tfbatchoberflaeche.labelcommand.caption
+msgid "Command"
 msgstr ""
 
-#: tflistedit.caption
-msgid "opsi-script Parameter Editor"
+#: tfbatchoberflaeche.labeldetail.caption
+msgid "Detail"
 msgstr ""
 
-#: tflistedit.label1.caption
-msgid ""
-"Please Check and Correct the \n"
-"following Paramenters:\n"
+#: tfbatchoberflaeche.labelinfo.caption
+msgid "Info"
+msgstr ""
+
+#: tfbatchoberflaeche.labelproduct.caption
+msgid "LabelProductImage"
+msgstr ""
+
+#: tfbatchoberflaeche.labelprogress.caption
+msgid "Activity"
+msgstr ""
+
+#: tfbatchoberflaeche.labelversion.caption
+msgid "LabelVersion"
 msgstr ""
 

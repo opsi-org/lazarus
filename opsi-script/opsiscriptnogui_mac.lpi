@@ -23,7 +23,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
       <RevisionNr Value="3"/>
-      <BuildNr Value="6"/>
+      <BuildNr Value="13"/>
       <StringTable Comments="Compiled with Lazarus 2.0.6" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script-nogui" InternalName="opsiscriptnogui" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org" ProductName="opsi-script" ProductVersion="4.1.0"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -107,6 +107,10 @@
               <StripSymbols Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
+            <Options>
+              <PassLinkerOptions Value="True"/>
+              <LinkerOptions Value="-sectcreate __TEXT __info_plist Info-osnogui.plist"/>
+            </Options>
           </Linking>
           <Other>
             <Verbosity>
@@ -151,7 +155,7 @@
         <PackageName Value="FCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="34">
+    <Units Count="35">
       <Unit0>
         <Filename Value="opsiscriptnogui_mac.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -293,6 +297,10 @@
         <Filename Value="../common/macspecfolder.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit33>
+      <Unit34>
+        <Filename Value="info-osnogui.plist"/>
+        <IsPartOfProject Value="True"/>
+      </Unit34>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -328,6 +336,9 @@
         <UseExternalDbgSyms Value="True"/>
       </Debugging>
       <LinkSmart Value="True"/>
+      <Options>
+        <LinkerOptions Value="-sectcreate __TEXT __info_plist Info.plist"/>
+      </Options>
     </Linking>
     <Other>
       <Verbosity>

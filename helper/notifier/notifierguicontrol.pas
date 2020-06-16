@@ -33,15 +33,15 @@ type
 
   TTransparentMemo = class(TScrollBox)
   private
-    scrolllabel : TLabel;
-    repainttimer : TTimer;
+    scrolllabel: TLabel;
+    repainttimer: TTimer;
     { private declarations }
     //objlist: TObjectList;
   public
-    procedure onrepainttimer(Sender: Tobject);
+    procedure onrepainttimer(Sender: TObject);
     { public declarations }
-    constructor create(Aowner: TComponent);
-    destructor destroy;
+    constructor Create(Aowner: TComponent);
+    destructor Destroy;
   end;
 
   TMemos = array of TTransparentMemo;
@@ -49,9 +49,12 @@ type
 procedure openSkinIni(ininame: string);
 procedure myChoiceClick(Sender: TObject);
 procedure hideNForm;
-function setLabelCaptionById(aktId, aktMessage: string) : boolean;
+function setLabelCaptionById(aktId, aktMessage: string): boolean;
 procedure setButtonCaptionById(choiceindex: integer; aktMessage: string);
 procedure shutdownNotifier;
+
+const
+  appearStepSize = 5;
 
 var
   inHideNForm: boolean = False;
@@ -92,27 +95,27 @@ begin
   {$ENDIF WINDOWS}
 end;
 
-procedure TTransparentMemo.onrepainttimer(Sender: Tobject);
+procedure TTransparentMemo.onrepainttimer(Sender: TObject);
 begin
   Nform.Image1.repaint;
 end;
 
-constructor TTransparentMemo.create(Aowner: TComponent);
+constructor TTransparentMemo.Create(Aowner: TComponent);
 begin
   inherited;
   scrolllabel := TLabel.Create(self);
   scrolllabel.Parent := self;
-  scrolllabel.Align:=alClient;
-  self.HorzScrollBar.Visible:=false;
-  self.VertScrollBar.Visible:=true;
-  self.BorderStyle:=bsNone;
+  scrolllabel.Align := alClient;
+  self.HorzScrollBar.Visible := False;
+  self.VertScrollBar.Visible := True;
+  self.BorderStyle := bsNone;
   repainttimer := TTimer.Create(self);
-  repainttimer.Interval:=100;
-  repainttimer.OnTimer:=@onrepainttimer;
-  repainttimer.Enabled:=true;
+  repainttimer.Interval := 100;
+  repainttimer.OnTimer := @onrepainttimer;
+  repainttimer.Enabled := True;
 end;
 
-destructor TTransparentMemo.destroy;
+destructor TTransparentMemo.Destroy;
 begin
   scrolllabel.Free;
   repainttimer.Free;
@@ -121,18 +124,22 @@ end;
 
 procedure free_runtime_objects;
 var
-  i : integer;
+  i: integer;
 begin
   try
-    for i := 0 to memocounter -1 do
-     if Assigned(memoarray[i]) then memoarray[i].Free;
-    for i := 0 to labelcounter -1 do
-     if Assigned(LabelArray[i]) then LabelArray[i].Free;
-    for i := 0 to buttoncounter -1 do
-     if Assigned(ButtonArray[i]) then ButtonArray[i].Free;
-    if Assigned(mythread) then mythread.Free;
+    for i := 0 to memocounter - 1 do
+      if Assigned(memoarray[i]) then
+        memoarray[i].Free;
+    for i := 0 to labelcounter - 1 do
+      if Assigned(LabelArray[i]) then
+        LabelArray[i].Free;
+    for i := 0 to buttoncounter - 1 do
+      if Assigned(ButtonArray[i]) then
+        ButtonArray[i].Free;
+    if Assigned(mythread) then
+      mythread.Free;
     LogDatei.Close;
-    LogDatei.free;
+    LogDatei.Free;
   finally
   end;
 end;
@@ -146,12 +153,12 @@ begin
   DataModule1.DataModuleDestroy(nil);
 end;
 
-function setLabelCaptionById(aktId, aktMessage: string) : boolean;
+function setLabelCaptionById(aktId, aktMessage: string): boolean;
 var
   index: integer;
   indexstr: string;
 begin
-  result := false;
+  Result := False;
   logdatei.log('Set for id: "' + aktId + '" the message: "' + aktMessage + '"', LLInfo);
   try
     // get labelarray index for aktid stored in labellist
@@ -167,7 +174,7 @@ begin
       Application.ProcessMessages;
       logdatei.log('Finished: Set for id: "' + aktId + '" the message: "' +
         aktMessage + '"', LLInfo);
-      result := true;
+      Result := True;
     end
     else
       LogDatei.log('No index found for id: ' + aktId, LLDebug2);
@@ -175,7 +182,8 @@ begin
     if indexstr <> '' then
     begin
       index := StrToInt(indexstr);
-      logdatei.log('Found memoindex: ' + IntToStr(index) + ' for id: "' + aktId, LLDebug2);
+      logdatei.log('Found memoindex: ' + IntToStr(index) + ' for id: "' +
+        aktId, LLDebug2);
       logdatei.log('scrollbox name by index: Found index: ' +
         memoarray[index].Name, LLDebug2);
       memoarray[index].scrolllabel.Caption := aktMessage;
@@ -183,17 +191,17 @@ begin
       Application.ProcessMessages;
       logdatei.log('Finished: Set for id: "' + aktId + '" the message: "' +
         aktMessage + '"', LLInfo);
-      result := true;
+      Result := True;
     end
     else
       LogDatei.log('No index found for id: ' + aktId, LLDebug2);
   except
     on E: Exception do
     begin
-      LogDatei.log('Error: Label / scrollbox not found by index: ' + IntToStr(index) +
-        ' id: ' + aktId, LLError);
+      LogDatei.log('Error: Label / scrollbox not found by index: ' +
+        IntToStr(index) + ' id: ' + aktId, LLError);
       LogDatei.log('Error: Message: ' + E.Message, LLError);
-      result := false;
+      Result := False;
     end;
   end;
 end;
@@ -212,7 +220,7 @@ begin
     begin
       index := StrToInt(indexstr);
       logdatei.log('Found Button index: ' + indexstr + ' for id: "' +
-        IntToStr(choiceindex)+'"', LLDebug2);
+        IntToStr(choiceindex) + '"', LLDebug2);
       logdatei.log('Button name by index: Found index: ' +
         ButtonArray[index].Name, LLDebug2);
       ButtonArray[index].Caption := aktMessage;
@@ -255,7 +263,8 @@ end;
 function fontresize(num: integer): integer;
 begin
   Result := round(num * 0.5);
-  if result < 8 then result := 8;
+  if Result < 8 then
+    Result := 8;
 end;
 
 function StringToAlignment(str: string): TAlignment;
@@ -270,10 +279,12 @@ begin
       Result := taCenter
     else
       LogDatei.log('Error: Could not convert to Alignment: ' + str, LLError);
-    case result of
-      taCenter : LogDatei.log('Using Alignment taCenter from: ' + str, LLDebug2);
-      taLeftJustify : LogDatei.log('Using Alignment taLeftJustify from: ' + str, LLDebug2);
-      taRightJustify : LogDatei.log('Using Alignment taRightJustify from: ' + str, LLDebug2);
+    case Result of
+      taCenter: LogDatei.log('Using Alignment taCenter from: ' + str, LLDebug2);
+      taLeftJustify: LogDatei.log('Using Alignment taLeftJustify from: ' +
+          str, LLDebug2);
+      taRightJustify: LogDatei.log('Using Alignment taRightJustify from: ' +
+          str, LLDebug2);
     end;
   except
     on E: Exception do
@@ -320,8 +331,8 @@ end;
 
 
 function myStringToTColor(str: string): TColor;
-//var
-//  message: string;
+  //var
+  //  message: string;
 begin
   try
     Result := rgbStringToColor(str);
@@ -500,13 +511,17 @@ begin
       nform.AlphaBlend := True;
       nform.AlphaBlendValue := 0;
       nform.Show;
-      for i := 1 to 255 do
+      //for i := 1 to 255 do
+      { make it faster - most time is needed for repaint/processmsg }
+      i := appearStepSize;
+      while i <= 255 do
       begin
         sleep(1);
         nform.AlphaBlendValue := i;
         nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
+        i := i + appearStepSize;
       end;
     end;
     fapFadeUp:
@@ -520,24 +535,29 @@ begin
       nform.AlphaBlend := True;
       nform.AlphaBlendValue := 0;
       nform.Show;
-      for i := 1 to stopy do
+      //for i := 1 to stopy do
+      i := appearStepSize;
+      while i <= stopy do
       begin
         Sleep(1);
         nform.AlphaBlendValue := i;
         y := screen.WorkAreaHeight;
         nform.Top := y - i;
-        nform.Height := nform.Height + 1;
+        nform.Height := nform.Height + appearStepSize;
         nform.BringToFront;
         nform.Repaint;
         //DataModule1.ProcessMess;
+        i := i + appearStepSize;
       end;
-      for i := stopy to 255 do
+      //for i := stopy to 255 do
+      while i <= stopy do
       begin
         sleep(1);
         nform.AlphaBlendValue := i;
         nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
+        i := i + appearStepSize;
       end;
     end;
     fapFadeDown:
@@ -551,22 +571,27 @@ begin
       nform.AlphaBlend := True;
       nform.AlphaBlendValue := 0;
       nform.Show;
-      for i := 1 to stopy do
+      //for i := 1 to stopy do
+      i := appearStepSize;
+      while i <= stopy do
       begin
         Sleep(1);
         nform.AlphaBlendValue := i;
-        nform.Height := nform.Height + 1;
+        nform.Height := nform.Height + appearStepSize;
         nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
+        i := i + appearStepSize;
       end;
-      for i := stopy to 255 do
+      //for i := stopy to 255 do
+      while i <= 255 do
       begin
         sleep(1);
         nform.AlphaBlendValue := i;
         nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
+        i := i + appearStepSize;
       end;
     end;
     fapUp:
@@ -578,15 +603,18 @@ begin
       nform.Top := y;
       nform.Left := startx;
       nform.Show;
-      for i := 1 to stopy do
+      //for i := 1 to stopy do
+      i := appearStepSize;
+      while i <= stopy do
       begin
         Sleep(1);
         y := screen.WorkAreaHeight;
         nform.Top := y - i;
-        nform.Height := nform.Height + 1;
+        nform.Height := nform.Height + appearStepSize;
         nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
+        i := i + appearStepSize;
       end;
     end;
     fapDown:
@@ -598,20 +626,23 @@ begin
       nform.Top := y;
       nform.Left := startx;
       nform.Show;
-      for i := 1 to stopy do
+      //for i := 1 to stopy do
+      i := appearStepSize;
+      while i <= stopy do
       begin
         Sleep(1);
-        nform.Height := nform.Height + 1;
+        nform.Height := nform.Height + appearStepSize;
         nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
+        i := i + appearStepSize;
       end;
     end;
   end;
- if mynotifierkind = 'event' then
+  if mynotifierkind = 'event' then
   begin
     nform.FormStyle := fsNormal;
-    logdatei.log('FormStyle := fsNormal',LLDebug);
+    logdatei.log('FormStyle := fsNormal', LLDebug);
     nform.Repaint;
     DataModule1.ProcessMess;
   end;
@@ -620,7 +651,7 @@ end;
 procedure hideNForm;
 var
   //startx, starty, stopx,
-  stopy,y, i: integer;
+  stopy, y, i: integer;
 begin
   try
     inHideNForm := True;
@@ -638,12 +669,15 @@ begin
         LogDatei.log('Will hide with: fdpFade', LLDebug2);
         nform.AlphaBlend := True;
         nform.AlphaBlendValue := 255;
-        for i := 1 to  255 do
+        //for i := 1 to  255 do
+        i := appearStepSize;
+        while i <= 255 do
         begin
           sleep(1);
           nform.AlphaBlendValue := 255 - i;
           nform.Repaint;
           DataModule1.ProcessMess;
+          i := i + appearStepSize;
         end;
         nform.hide;
       end;
@@ -653,13 +687,16 @@ begin
         stopy := nform.Height;
         nform.AlphaBlend := True;
         nform.AlphaBlendValue := 255;
-        for i := 1 to stopy do
+        //for i := 1 to stopy do
+        i := appearStepSize;
+        while i <= stopy do
         begin
           Sleep(1);
           nform.AlphaBlendValue := 255 - i;
-          nform.Height := nform.Height - 1;
+          nform.Height := nform.Height - appearStepSize;
           nform.Repaint;
           DataModule1.ProcessMess;
+          i := i + appearStepSize;
         end;
       end;
       fdpFadeDown:
@@ -671,7 +708,9 @@ begin
         nform.AlphaBlendValue := 255;
         nform.Repaint;
         DataModule1.ProcessMess;
-        for i := 1 to stopy do
+        //for i := 1 to stopy do
+        i := appearStepSize;
+        while i <= stopy do
         begin
           Sleep(1);
           nform.AlphaBlendValue := 255 - i;
@@ -679,6 +718,7 @@ begin
           nform.Top := y + i;
           nform.Repaint;
           DataModule1.ProcessMess;
+          i := i + appearStepSize;
         end;
         LogDatei.log('Finished hide with: fdpFadeDown', LLDebug2);
       end;
@@ -686,25 +726,31 @@ begin
       begin
         LogDatei.log('Will hide with: fdpUp', LLDebug2);
         stopy := nform.Height;
-        for i := 1 to stopy do
+        //for i := 1 to stopy do
+        i := appearStepSize;
+        while i <= stopy do
         begin
           Sleep(1);
-          nform.Height := stopy - 1;
+          nform.Height := stopy - appearStepSize;
           nform.Repaint;
           DataModule1.ProcessMess;
+          i := i + appearStepSize;
         end;
       end;
       fdpDown:
       begin
         LogDatei.log('Will hide with: fdpDown', LLDebug2);
         stopy := nform.Height;
-        for i := 1 to stopy do
+        //for i := 1 to stopy do
+        i := appearStepSize;
+        while i <= stopy do
         begin
           Sleep(1);
-          nform.Height := stopy - 1;
+          nform.Height := stopy - appearStepSize;
           nform.Top := stopy + i;
           nform.Repaint;
           DataModule1.ProcessMess;
+          i := i + appearStepSize;
         end;
       end;
     end;
@@ -723,8 +769,8 @@ var
   mytmpstr: string;
   mytmpint1, mytmpint2: integer;
   choiceindex: integer;
-  tmpinistr : string;
-  tmpbool : boolean;
+  tmpinistr: string;
+  tmpbool: boolean;
 begin
   if aktsection = 'Form' then
   begin
@@ -732,34 +778,36 @@ begin
     //Transparent = true
     // StayOnTop = true
     tmpinistr := myini.ReadString(aktsection, 'StayOnTop', 'false');
-    if not TryStrToBool(tmpinistr,tmpbool) then
+    if not TryStrToBool(tmpinistr, tmpbool) then
     begin
-     tmpbool := false;
-     LogDatei.log('Error: No valid boolean value for StayOnTop: ' + tmpinistr, LLError);
+      tmpbool := False;
+      LogDatei.log('Error: No valid boolean value for StayOnTop: ' + tmpinistr, LLError);
     end;
     if tmpbool then
     begin
       if mynotifierkind = 'event' then
       begin
         nform.FormStyle := fsSystemStayOnTop;
-        logdatei.log('FormStyle := fsSystemStayOnTop',LLDebug);
+        logdatei.log('FormStyle := fsSystemStayOnTop', LLDebug);
       end
       else
       begin
         nform.FormStyle := fsSystemStayOnTop;
-        logdatei.log('FormStyle := fsSystemStayOnTop',LLDebug);
+        logdatei.log('FormStyle := fsSystemStayOnTop', LLDebug);
       end;
     end
-    else logdatei.log('FormStyle := fsNormal',LLDebug);
+    else
+      logdatei.log('FormStyle := fsNormal', LLDebug);
 
     //Frame = false
     tmpinistr := myini.ReadString(aktsection, 'Frame', 'false');
-    if not TryStrToBool(tmpinistr,tmpbool) then
+    if not TryStrToBool(tmpinistr, tmpbool) then
     begin
-     tmpbool := false;
-     LogDatei.log('Error: No valid boolean value for Frame: ' + tmpinistr, LLError);
+      tmpbool := False;
+      LogDatei.log('Error: No valid boolean value for Frame: ' + tmpinistr, LLError);
     end;
-    if not tmpbool then nform.BorderStyle := bsNone;
+    if not tmpbool then
+      nform.BorderStyle := bsNone;
 
     //Resizable = false
     //Closeable = false
@@ -790,26 +838,26 @@ begin
     end;
     //Hidden = false
     tmpinistr := myini.ReadString(aktsection, 'Hidden', 'false');
-    if not TryStrToBool(tmpinistr,hidden) then
+    if not TryStrToBool(tmpinistr, hidden) then
     begin
-     hidden := false;
-     LogDatei.log('Error: No valid boolean value for hidden: ' + tmpinistr, LLError);
+      hidden := False;
+      LogDatei.log('Error: No valid boolean value for hidden: ' + tmpinistr, LLError);
     end;
     //FadeIn = true
     //fadein := strToBool(myini.ReadString(aktsection, 'FadeIn', 'false'));
     tmpinistr := myini.ReadString(aktsection, 'FadeIn', 'false');
-    if not TryStrToBool(tmpinistr,fadein) then
+    if not TryStrToBool(tmpinistr, fadein) then
     begin
-     fadein := false;
-     LogDatei.log('Error: No valid boolean value for fadein: ' + tmpinistr, LLError);
+      fadein := False;
+      LogDatei.log('Error: No valid boolean value for fadein: ' + tmpinistr, LLError);
     end;
     //FadeOut = true
     //fadeout := strToBool(myini.ReadString(aktsection, 'FadeOut', 'false'));
     tmpinistr := myini.ReadString(aktsection, 'FadeOut', 'false');
-    if not TryStrToBool(tmpinistr,fadeout) then
+    if not TryStrToBool(tmpinistr, fadeout) then
     begin
-     fadeout := false;
-     LogDatei.log('Error: No valid boolean value for fadeout: ' + tmpinistr, LLError);
+      fadeout := False;
+      LogDatei.log('Error: No valid boolean value for fadeout: ' + tmpinistr, LLError);
     end;
     //SlideIn = up
     slidein := myini.ReadString(aktsection, 'SlideIn', '');
@@ -824,10 +872,11 @@ begin
     //Transparent = true
     //transparent := strToBool(myini.ReadString(aktsection, 'Transparent', 'false'));
     tmpinistr := myini.ReadString(aktsection, 'Transparent', 'false');
-    if not TryStrToBool(tmpinistr,transparent) then
+    if not TryStrToBool(tmpinistr, transparent) then
     begin
-     transparent := false;
-     LogDatei.log('Error: No valid boolean value for transparent: ' + tmpinistr, LLError);
+      transparent := False;
+      LogDatei.log('Error: No valid boolean value for transparent: ' +
+        tmpinistr, LLError);
     end;
     //TransparentColor = 255,0,255
     if transparent then
@@ -858,13 +907,13 @@ begin
     memoarray[memocounter].Parent := nform;
     //memoarray[memocounter].AutoSize := True;
     memoarray[memocounter].Name := aktsection;
-    memoarray[memocounter].scrolllabel.WordWrap:=true;
+    memoarray[memocounter].scrolllabel.WordWrap := True;
     memoarray[memocounter].Left := myini.ReadInteger(aktsection, 'Left', 10);
     memoarray[memocounter].Top := myini.ReadInteger(aktsection, 'Top', 10);
     memoarray[memocounter].Width := myini.ReadInteger(aktsection, 'Width', 10);
     memoarray[memocounter].Height := myini.ReadInteger(aktsection, 'Height', 10);
     //memoarray[labelcounter].Anchors := [akTop,akLeft,akRight,akBottom];
-    memoarray[memocounter].Anchors := [akTop,akLeft,akRight];
+    memoarray[memocounter].Anchors := [akTop, akLeft, akRight];
     memoarray[memocounter].scrolllabel.Font.Name :=
       myini.ReadString(aktsection, 'FontName', 'Arial');
     memoarray[memocounter].scrolllabel.Font.Size :=
@@ -882,17 +931,20 @@ begin
     //memoarray[memocounter].Transparent :=
     //  strToBool(myini.ReadString(aktsection, 'Transparent', 'false'));
     memoarray[memocounter].Tag := memocounter;
-    memoarray[memocounter].scrolllabel.Caption := myini.ReadString(aktsection, 'Text', '');
+    memoarray[memocounter].scrolllabel.Caption :=
+      myini.ReadString(aktsection, 'Text', '');
     //memoarray[memocounter].scrolllabel.Caption := 'test'+#10+#13+
     //  'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+
     //  'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13;
     //memoarray[memocounter].ReadOnly:=true;
     //memoarray[memocounter].ScrollBars:=ssAutoVertical;
     // scale new scrollbox:
-    memoarray[memocounter].AutoAdjustLayout(lapAutoAdjustForDPI, 96, nform.PixelsPerInch, 0, 0);
+    memoarray[memocounter].AutoAdjustLayout(lapAutoAdjustForDPI, 96,
+      nform.PixelsPerInch, 0, 0);
     // make transparent
-    memoarray[memocounter].ControlStyle:= memoarray[memocounter].ControlStyle - [csOpaque] + [csParentBackground];
-    memoarray[memocounter].Visible:=true;
+    memoarray[memocounter].ControlStyle :=
+      memoarray[memocounter].ControlStyle - [csOpaque] + [csParentBackground];
+    memoarray[memocounter].Visible := True;
 
     // feed memolist: id = index of memoarray ; id = aktsection striped by 'Label'
     memolist.Add(copy(aktsection, 6, 100) + '=' + IntToStr(memocounter));
@@ -910,13 +962,13 @@ begin
     LabelArray[labelcounter].Parent := nform;
     LabelArray[labelcounter].AutoSize := True;
     LabelArray[labelcounter].Name := aktsection;
-    LabelArray[labelcounter].WordWrap:=true;
+    LabelArray[labelcounter].WordWrap := True;
     LabelArray[labelcounter].Left := myini.ReadInteger(aktsection, 'Left', 10);
     LabelArray[labelcounter].Top := myini.ReadInteger(aktsection, 'Top', 10);
     LabelArray[labelcounter].Width := myini.ReadInteger(aktsection, 'Width', 10);
     LabelArray[labelcounter].Height := myini.ReadInteger(aktsection, 'Height', 10);
     //LabelArray[labelcounter].Anchors := [akTop,akLeft,akRight,akBottom];
-    LabelArray[labelcounter].Anchors := [akTop,akLeft,akRight];
+    LabelArray[labelcounter].Anchors := [akTop, akLeft, akRight];
     LabelArray[labelcounter].Font.Name :=
       myini.ReadString(aktsection, 'FontName', 'Arial');
     LabelArray[labelcounter].Font.Size :=
@@ -936,7 +988,8 @@ begin
     LabelArray[labelcounter].Tag := labelcounter;
     LabelArray[labelcounter].Caption := myini.ReadString(aktsection, 'Text', '');
     // scale new Label:
-    LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI, 96, nform.PixelsPerInch, 0, 0);
+    LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI,
+      96, nform.PixelsPerInch, 0, 0);
 
     // feed labellist: id = index of LabelArray ; id = aktsection striped by 'Label'
     labellist.Add(copy(aktsection, 6, 100) + '=' + IntToStr(labelcounter));
@@ -981,7 +1034,8 @@ begin
     //ButtonArray[buttoncounter].TabOrder:=-1;
     ButtonArray[buttoncounter].Caption := myini.ReadString(aktsection, 'Text', '');
     // scale new Button:
-    ButtonArray[buttoncounter].AutoAdjustLayout(lapAutoAdjustForDPI, 96, nform.PixelsPerInch, 0, 0);
+    ButtonArray[buttoncounter].AutoAdjustLayout(lapAutoAdjustForDPI,
+      96, nform.PixelsPerInch, 0, 0);
 
     // feed buttonlist: id = index of ButtonArray ; id = ChoiceIndex'
     buttonlist.Add(IntToStr(choiceindex) + '=' + IntToStr(buttoncounter));

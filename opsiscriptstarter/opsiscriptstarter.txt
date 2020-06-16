@@ -1,4 +1,33 @@
 [changelog]
+opsiscriptstarter 4.1.0.11
+
+  * oswebservice: avoid double /rpc in service url;
+  * oslinmount: fixed handling of clientconfig.depot.user
+
+-- d.oertel <d.oertel@uib.de> Tue, 09 Jun 2020 15:00
+
+opsiscriptstarter 4.1.0.10
+
+  * macos: mymountpoint := '/Volumes/opsi_depot';
+  * info.plist: NSNetworkVolumesUsageDescription
+
+-- d.oertel <d.oertel@uib.de> Thu, 12 Mar 2020 15:00
+
+opsiscriptstarter 4.1.0.9
+
+  * writeln with time stamp
+  * mac compliation with info.plis for code signing
+  * mount_depotshare: default user to pcpatch if no clientconfig.depot.user
+  * or if  ''0 trim(clientconfig.depot.user)
+
+-- d.oertel <d.oertel@uib.de> Wed, 19 Feb 2020 15:00
+
+opsiscriptstarter 4.1.0.8
+
+  * modify call of opsiscriptstarter --nogui for mac (no tty redirection)
+
+-- d.oertel <d.oertel@uib.de> Wed, 05 Feb 2020 15:00
+
 opsiscriptstarter 4.1.0.7
 
   * catch problems at share mount

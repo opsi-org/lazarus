@@ -1,7 +1,7 @@
 object FDebug: TFDebug
-  Left = 37
+  Left = 587
   Height = 248
-  Top = 414
+  Top = 331
   Width = 482
   BorderIcons = []
   BorderStyle = bsToolWindow
@@ -17,7 +17,7 @@ object FDebug: TFDebug
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poDefault
-  LCLVersion = '1.8.4.0'
+  LCLVersion = '2.0.6.0'
   object Memo1: TMemo
     Left = 0
     Height = 223
@@ -41,7 +41,7 @@ object FDebug: TFDebug
     TabOrder = 1
     object Label1: TLabel
       Left = 14
-      Height = 16
+      Height = 17
       Top = 0
       Width = 81
       Caption = 'Debuglevel'
@@ -54,7 +54,7 @@ object FDebug: TFDebug
     end
     object SpinEdit1: TSpinEdit
       Left = 110
-      Height = 21
+      Height = 24
       Top = 0
       Width = 49
       MaxValue = 9

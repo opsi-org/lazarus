@@ -1,0 +1,39 @@
+; opsi include file
+
+[Sub_get_licensekey]
+if opsiLicenseManagementEnabled
+	comment "License management is enabled and will be used"
+
+	comment "Trying to get a license key"
+	Set $LicenseKey$ = demandLicenseKey ($LicensePool$)
+	; If there is an assignment of exactly one licensepool to the product the following call is possible:
+	; Set $LicenseKey$ = demandLicenseKey ("", $ProductId$)
+	;
+	; If there is an assignment of a license pool to a windows software id, it is possible to use:
+	; DefVar $WindowsSoftwareId$
+	; $WindowsSoftwareId$ = "..."
+	; Set $LicenseKey$ = demandLicenseKey ("", "", $WindowsSoftwareId$)
+	
+	DefVar $ServiceErrorClass$
+	set $ServiceErrorClass$ = getLastServiceErrorClass
+	comment "Error class: " + $ServiceErrorClass$
+	
+	if $ServiceErrorClass$ = "None"
+		comment "Everything fine, we got the license key '" + $LicenseKey$ + "'"
+	else
+		if $ServiceErrorClass$ = "LicenseConfigurationError"
+			LogError "Fatal: license configuration must be corrected"
+			LogError getLastServiceErrorMessage
+			isFatalError $ServiceErrorClass$
+		else 
+			if $ServiceErrorClass$ = "LicenseMissingError"
+				LogError "Fatal: required license is not supplied"
+				isFatalError $ServiceErrorClass$
+			endif
+		endif
+	endif
+else
+	LogError "Fatal: license required, but license management not enabled"
+	isFatalError "No Licensemanagement"
+endif
+

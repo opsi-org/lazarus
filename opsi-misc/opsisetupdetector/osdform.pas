@@ -63,16 +63,13 @@ type
     BtSetup1NextStep: TBitBtn;
     BtSetup2NextStep: TBitBtn;
     BtSingleAnalyzeAndCreate: TBitBtn;
-    BitBtnOpenFile: TBitBtn;
     BitBtnDefault: TBitBtn;
     BitBtnMST1: TBitBtn;
-    BitBtnOpenFile1: TBitBtn;
     BitBtnOpenMst1: TBitBtn;
     BitBtnOpenMst2: TBitBtn;
     BtATwonalyzeAndCreate: TBitBtn;
     BtCreateEmptyTemplate: TBitBtn;
     BtAnalyzeOnly: TBitBtn;
-    CheckBoxUseMst: TCheckBox;
     CheckGroupBuildMode: TCheckGroup;
     FlowPanel1: TFlowPanel;
     FlowPanel10: TFlowPanel;
@@ -167,7 +164,6 @@ type
     Panel7: TPanel;
     Panel8: TPanel;
     Panel9: TPanel;
-    PanelDefault: TPanel;
     PanelProcess: TPanel;
     processing: TLabel;
     processStatement: TLabel;
@@ -250,6 +246,10 @@ type
     procedure BitBtnDelPropClick(Sender: TObject);
     procedure BitBtnEditDepClick(Sender: TObject);
     procedure BitBtnEditPropClick(Sender: TObject);
+    procedure BitBtnOpenFile1Click(Sender: TObject);
+    procedure BitBtnOpenFileClick(Sender: TObject);
+    procedure BitBtnOpenMst1Click(Sender: TObject);
+    procedure BitBtnOpenMst2Click(Sender: TObject);
     procedure BitBtnRecheckWorkbenchClick(Sender: TObject);
     procedure BitBtnWorkBenchPathClick(Sender: TObject);
     procedure BtAnalyzeNextStepClick(Sender: TObject);
@@ -294,6 +294,7 @@ type
     //procedure SBtnOpenClick(Sender: TObject);
     procedure SBtnExitClick(Sender: TObject);
     procedure TabSheetCreateShow(Sender: TObject);
+    procedure TabSheetStartExit(Sender: TObject);
     procedure TICheckBoxlicenseRequiredChange(Sender: TObject);
     procedure TICheckBoxS1MstChange(Sender: TObject);
     procedure TICheckBoxS2MstChange(Sender: TObject);
@@ -312,6 +313,8 @@ type
     procedure makeProperties;
   private
     { private declarations }
+    procedure OpenMSTFile(var mysetup:TSetupFile);
+    procedure SetTICheckBoxesMST(Installer:TKnownInstaller);
   public
     { public declarations }
     procedure memoadd(line: string);
@@ -976,6 +979,7 @@ begin
 
 end;
 
+
 procedure TResultform1.BtSingleAnalyzeAndCreateClick(Sender: TObject);
 var
   i : integer;
@@ -999,6 +1003,7 @@ begin
     makeProperties;
     Application.ProcessMessages;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
+    SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
   end;
 end;
 
@@ -1060,6 +1065,7 @@ begin
     // start add property
     makeProperties;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
+    SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
   end;
 end;
 
@@ -1433,6 +1439,52 @@ begin
 
 end;
 
+procedure TResultform1.BitBtnOpenFile1Click(Sender: TObject);
+begin
+
+end;
+
+procedure TResultform1.BitBtnOpenFileClick(Sender: TObject);
+begin
+
+end;
+
+procedure TResultform1.OpenMSTFile(var mysetup: TSetupFile);
+begin
+  OpenDialog1.FilterIndex := 4;
+  if OpenDialog1.Execute then
+  begin
+    mysetup.mstFullFileName := OpenDialog1.FileName;
+    mysetup.installCommandLine:= mysetup.installCommandLine + ' TRANSFORMS=' +
+      '"%scriptpath%\files' + IntToStr(mysetup.ID) + '\' + mysetup.mstFileName + '"';
+  end;
+end;
+
+procedure TResultform1.SetTICheckBoxesMST(Installer:TKnownInstaller);
+begin
+  case Installer of
+    stMsi: begin
+             TICheckBoxS1MSt.Enabled := true;
+             TICheckBoxS2MSt.Enabled := true;
+           end
+    else
+           begin
+             TICheckBoxS1MSt.Enabled := false;
+             TICheckBoxS2MSt.Enabled := false;
+           end;
+  end;
+end;
+
+procedure TResultform1.BitBtnOpenMst1Click(Sender: TObject);
+begin
+  OpenMSTFile(aktProduct.SetupFiles[0]);
+end;
+
+procedure TResultform1.BitBtnOpenMst2Click(Sender: TObject);
+begin
+  OpenMSTFile(aktProduct.SetupFiles[1]);
+end;
+
 
 procedure TResultform1.BtCreateEmptyTemplateClick(Sender: TObject);
 begin
@@ -1592,33 +1644,28 @@ begin
   end;
   if checkok then
   begin
-
     case useRunMode of
-      analyzeOnly:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
-      end;
-      singleAnalyzeCreate:
-      begin
-        PageControl1.ActivePage := resultForm1.TabSheetProduct2;
-        Application.ProcessMessages;
-      end;
-      twoAnalyzeCreate_1, twoAnalyzeCreate_2:
-      begin
-        PageControl1.ActivePage := resultForm1.TabSheetProduct2;
-        Application.ProcessMessages;
-      end;
-      createTemplate:
-      begin
-        PageControl1.ActivePage := resultForm1.TabSheetProduct2;
-        Application.ProcessMessages;
-      end;
-      gmUnknown:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtProductNextStepClick RunMode: gmUnknown', LLError);
-      end;
+      analyzeOnly        : begin
+                             //we should never be here
+                             logdatei.log('Error: in BtProductNextStepClick RunMode: analyzeOnly', LLError);
+                           end;
+      singleAnalyzeCreate: begin
+                             PageControl1.ActivePage := resultForm1.TabSheetProduct2;
+                             Application.ProcessMessages;
+                           end;
+      twoAnalyzeCreate_1,
+      twoAnalyzeCreate_2 : begin
+                             PageControl1.ActivePage := resultForm1.TabSheetProduct2;
+                             Application.ProcessMessages;
+                           end;
+      createTemplate     : begin
+                             PageControl1.ActivePage := resultForm1.TabSheetProduct2;
+                             Application.ProcessMessages;
+                           end;
+      gmUnknown          : begin
+                             // we should never be here
+                             logdatei.log('Error: in BtProductNextStepClick RunMode: gmUnknown', LLError);
+                           end;
     end;
   end;
 end;
@@ -1669,44 +1716,40 @@ begin
   if checkok then
   begin
     case useRunMode of
-      analyzeOnly:
-      begin
-        Application.Terminate;
-      end;
-      singleAnalyzeCreate:
-      begin
-        PageControl1.ActivePage := resultForm1.TabSheetProduct;
-        Application.ProcessMessages;
-      end;
-      twoAnalyzeCreate_1:
-      begin
-        useRunMode := twoAnalyzeCreate_2;
-        MessageDlg(rsTwonalyzeAndCreateMsgHead,
-          rsTwonalyzeAndCreateMsgSecondSetup,
-          mtInformation, [mbOK], '');
-        OpenDialog1.FilterIndex := 1;   // setup
-        if OpenDialog1.Execute then
-        begin
-          PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
-          MemoAnalyze.Clear;
-          Application.ProcessMessages;
-          Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[1], True);
-        end;
-        //PageControl1.ActivePage := resultForm1.TabSheetSetup2;
-        //Application.ProcessMessages;
-      end;
-      createTemplate:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtSetup1NextStepClick RunMode: createTemplate', LLError);
-        //PageControl1.ActivePage := resultForm1.TabSheetSetup1;
-        //Application.ProcessMessages;
-      end;
-      gmUnknown:
-      begin
-        // we should never be here
-        logdatei.log('Error: in BtSetup1NextStepClick RunMode: gmUnknown', LLError);
-      end;
+      analyzeOnly        :  begin
+                              Application.Terminate;
+                            end;
+      singleAnalyzeCreate:  begin
+                              PageControl1.ActivePage := resultForm1.TabSheetProduct;
+                              Application.ProcessMessages;
+                            end;
+      twoAnalyzeCreate_1 :  begin
+                              useRunMode := twoAnalyzeCreate_2;
+                              MessageDlg(rsTwonalyzeAndCreateMsgHead,
+                                rsTwonalyzeAndCreateMsgSecondSetup,
+                                mtInformation, [mbOK], '');
+                              OpenDialog1.FilterIndex := 1;   // setup
+                              if OpenDialog1.Execute then
+                              begin
+                                PageControl1.ActivePage := resultForm1.TabSheetAnalyze;
+                                MemoAnalyze.Clear;
+                                Application.ProcessMessages;
+                                Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[1], True);
+                                SetTICheckBoxesMST(aktProduct.SetupFiles[1].installerId);
+                              end;
+                              //PageControl1.ActivePage := resultForm1.TabSheetSetup2;
+                              //Application.ProcessMessages;
+                            end;
+      createTemplate     :  begin
+                              // we should never be here
+                              logdatei.log('Error: in BtSetup1NextStepClick RunMode: createTemplate', LLError);
+                              //PageControl1.ActivePage := resultForm1.TabSheetSetup1;
+                              //Application.ProcessMessages;
+                            end;
+      gmUnknown          :  begin
+                              // we should never be here
+                              logdatei.log('Error: in BtSetup1NextStepClick RunMode: gmUnknown', LLError);
+                            end;
     end;
   end;
 end;
@@ -1783,6 +1826,7 @@ begin
     initaktproduct;
     makeProperties;
     Analyze(OpenDialog1.FileName, aktProduct.SetupFiles[0], True);
+    SetTICheckBoxesMST(aktProduct.SetupFiles[0].installerId);
   end;
 end;
 
@@ -2003,6 +2047,12 @@ begin
   checkWorkbench;
 end;
 
+procedure TResultform1.TabSheetStartExit(Sender: TObject);
+begin
+  ResultForm1.Width:= 1185;
+  ResultForm1.Height:= 566;
+end;
+
 procedure TResultform1.TICheckBoxlicenseRequiredChange(Sender: TObject);
 begin
   makeProperties;
@@ -2010,18 +2060,30 @@ end;
 
 procedure TResultform1.TICheckBoxS1MstChange(Sender: TObject);
 begin
-  if TCheckBox(sender).Checked then
-    TIEditMstFile1.Enabled:=true
+  if (Sender as TTICheckBox).State = cbChecked then
+  begin
+    FlowPanelMst.Enabled:= true;
+    //TIEditMstFile1.Enabled:=true;
+  end
   else
-    TIEditMstFile1.Enabled:=false;
+  begin
+    FlowPanelMst.Enabled:= false;
+    //TIEditMstFile1.Enabled:=false;
+  end;
 end;
 
 procedure TResultform1.TICheckBoxS2MstChange(Sender: TObject);
 begin
-  if TCheckBox(sender).Checked then
-    TIEditMstFile2.Enabled:=true
+  if (Sender as TTICheckBox).State = cbChecked then
+  begin
+    FlowPanelMst1.Enabled:= true;
+    //TIEditMstFile2.Enabled:=true
+  end
   else
-    TIEditMstFile2.Enabled:=false;
+  begin
+    FlowPanelMst1.Enabled:= false;
+    //TIEditMstFile2.Enabled:=false;
+  end
 end;
 
 procedure TResultform1.TIEditProdIDChange(Sender: TObject);
@@ -2196,6 +2258,8 @@ begin
       myprop.Free;
     end;
 end;
+
+
 
 
 end.

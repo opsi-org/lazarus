@@ -10,7 +10,7 @@ uses
   {$ENDIF}//{$ENDIF}
   //Interfaces, // this includes the LCL widgetset
   {$IFDEF LINUX}
-  osfunlin,
+  osfunclin,
   {$ENDIF}
   {$IFDEF DARWIN}
   osfuncmac,
@@ -82,7 +82,7 @@ begin
   if not Terminated then
   begin;
     LogDatei.DependentAdd('network timeout by thread - aborting program',LLInfo);
-    writeln('network timeout by thread - aborting program');
+    writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' network timeout by thread - aborting program');
     halt(0);
   end;
 end;
@@ -112,196 +112,6 @@ begin
   end;
 end;
 
-(*
-moved to osprocessux
-
-function RunCommandAndCaptureOut
-  (cmd: string; catchOut: boolean; var outlines: TStringList;
-  var report: string; showcmd: integer; var ExitCode: longint): boolean;
-const
-  ReadBufferSize = 2048;
-
-var
-  //myStringlist : TStringlist;
-  S: TStringList;
-  M: TMemoryStream;
-  FpcProcess: TProcess;
-  n: longint;
-  BytesRead: longint;
-
-begin
-  Result := True;
-  try
-    try
-      M := TMemoryStream.Create;
-      BytesRead := 0;
-      FpcProcess := process.TProcess.Create(nil);
-      FpcProcess.CommandLine := cmd;
-      FpcProcess.Options := [poUsePipes, poStderrToOutput];
-      FpcProcess.ShowWindow := swoMinimize;
-      FpcProcess.Execute;
-      //Logdatei.DependentAdd('RunCommandAndCaptureOut: started: ' + cmd, LLdebug2);
-      while FpcProcess.Running do
-      begin
-        // stellt sicher, dass wir Platz haben
-        M.SetSize(BytesRead + ReadBufferSize);
-
-        // versuche, es zu lesen
-        if FpcProcess.Output.NumBytesAvailable > 0 then
-        begin
-          n := FpcProcess.Output.Read((M.Memory + BytesRead)^, ReadBufferSize);
-          //Logdatei.DependentAdd('RunCommandAndCaptureOut: read: ' +
-          //  IntToStr(n) + ' bytes', LLdebug2);
-          if n > 0 then
-          begin
-            Inc(BytesRead, n);
-            //Logdatei.DependentAdd('RunCommandAndCaptureOut: read: ' +
-            // IntToStr(n) + ' bytes', LLdebug2);
-            //Write('.')
-          end;
-        end
-        else
-        begin
-          // keine Daten, warte 100 ms
-          //Logdatei.DependentAdd('RunCommandAndCaptureOut: no data - waiting....',
-          // LLdebug2);
-          Sleep(100);
-        end;
-      end;
-      exitCode := FpcProcess.ExitCode;
-      // lese den letzten Teil
-      repeat
-        // stellt sicher, dass wir Platz haben
-        M.SetSize(BytesRead + ReadBufferSize);
-        if FpcProcess.Output.NumBytesAvailable > 0 then
-        begin
-          // versuche es zu lesen
-          n := FpcProcess.Output.Read((M.Memory + BytesRead)^, ReadBufferSize);
-          if n > 0 then
-          begin
-            Inc(BytesRead, n);
-            //Logdatei.DependentAdd('RunCommandAndCaptureOut: read: ' +
-            //IntToStr(n) + ' bytes', LLdebug2);
-            //Write('.');
-          end;
-        end
-        else
-          n := 0;
-      until n <= 0;
-      //if BytesRead > 0 then WriteLn;
-      M.SetSize(BytesRead);
-      //Logdatei.DependentAdd('RunCommandAndCaptureOut: -- executed --', LLdebug2);
-      //WriteLn('-- executed --');
-
-      S := TStringList.Create;
-      S.LoadFromStream(M);
-      //Logdatei.DependentAdd('RunCommandAndCaptureOut: -- linecount = ' +
-      //  IntToStr(S.Count), LLdebug2);
-      //WriteLn('-- linecount = ', S.Count, ' --');
-      for n := 0 to S.Count - 1 do
-      begin
-        //WriteLn('| ', S[n]);
-        outlines.Add(S[n]);
-      end;
-      //WriteLn('-- end --');
-      LogDatei.log('ExitCode ' + IntToStr(exitCode), LLInfo);
-    except
-      on e: Exception do
-      begin
-        LogDatei.log('Exception in RunCommandAndCaptureOut: ' +
-          e.message, LLError);
-        Result := False;
-      end;
-    end;
-  finally
-    S.Free;
-    FpcProcess.Free;
-    M.Free;
-  end;
-end;
-*)
-
-(*
-moved to osfunclin / osfuncmac
-
-function mountSmbShare(mymountpoint, myshare, mydomain, myuser, mypass, myoption: string) : integer;
-var
-  cmd, report: string;
-  outlines: TStringlist;
-  ExitCode: longint;
-  i: integer;
-begin
-  outlines := TStringList.Create;
-  Result := -1;
-  try
-    if not directoryexists(mymountpoint) then
-     mkdir(mymountpoint);
-  except
-    LogDatei.log('Error: could not create moutpoint: '+mymountpoint, LLError);
-  end;
-  if mydomain = '' then
-    cmd := '/bin/bash -c "/sbin/mount.cifs ' + myshare+' '+mymountpoint+' -o '+myoption+'ro,noperm,user='+myuser+',pass='+mypass+'"'
-  else
-    cmd := '/bin/bash -c "/sbin/mount.cifs ' + myshare+' '+mymountpoint+' -o '+myoption+'ro,noperm,user='+myuser+',dom='+mydomain+',pass='+mypass+'"';
-  LogDatei.DependentAdd('calling: '+cmd,LLNotice);
-  if not RunCommandAndCaptureOut(cmd, True, outlines, report,
-    SW_HIDE, ExitCode) then
-  begin
-    LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
-    Result := -1;
-  end
-  else
-  begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-    LogDatei.log('', LLDebug);
-    LogDatei.log('output:', LLDebug);
-    LogDatei.log('--------------', LLDebug);
-    for i := 0 to outlines.Count - 1 do
-    begin
-      LogDatei.log(outlines.strings[i], LLDebug);
-    end;
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-    LogDatei.log('', LLDebug);
-    Result := ExitCode;
-  end;
-  outlines.Free;
-end;
-
-function umount(mymountpoint : string) : integer;
-var
-  cmd, report: string;
-  outlines: TStringlist;
-  ExitCode: longint;
-  i: integer;
-begin
-  outlines := TStringList.Create;
-  Result := -1;
-  cmd := '/bin/bash -c "/bin/umount ' +mymountpoint+'"';
-  LogDatei.log('calling: '+cmd,LLNotice);
-  if not RunCommandAndCaptureOut(cmd, True, outlines, report,
-    SW_HIDE, ExitCode) then
-  begin
-    LogDatei.log('Error: ' + Report + 'Exitcode: ' + IntToStr(ExitCode), LLError);
-    Result := -1;
-  end
-  else
-  begin
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-    LogDatei.log('', LLDebug);
-    LogDatei.log('output:', LLDebug);
-    LogDatei.log('--------------', LLDebug);
-    for i := 0 to outlines.Count - 1 do
-    begin
-      LogDatei.log(outlines.strings[i], LLDebug);
-    end;
-    LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-    LogDatei.log('', LLDebug);
-    Result := ExitCode;
-  end;
-  outlines.Free;
-end;
-*)
-
 
 function startopsiscript : integer;
 var
@@ -324,7 +134,7 @@ begin
   begin
     cmd := '/bin/bash -c " '+opsiscriptnoguibin + ' -opsiservice '+ myservice_url
                          +' -clientid '+ myclientid
-                         +' -credentialfile ' + credfilename+' &> /dev/tty1"';
+                         +' -credentialfile ' + credfilename+'"';
 //                         +' -username '+ myclientid
 //                         +' -password ' + myhostkey+' &> /dev/tty1"';
   end
@@ -555,13 +365,13 @@ begin
       else
       begin
         LogDatei.DependentAdd('opsidata not connected - retry',LLInfo);
-        writeln('opsidata not connected - retry');
+        writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' opsidata not connected - retry');
         myseconds := myseconds -1;
         Sleep(1000);
       end;
     except
       LogDatei.DependentAdd('opsidata not connected - retry',LLInfo);
-      writeln('opsidata not connected - retry');
+      writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' opsidata not connected - retry');
       myseconds := myseconds -1;
       Sleep(1000);
     end;
@@ -570,13 +380,13 @@ begin
   if networkup then
   begin
     LogDatei.DependentAdd('opsidata connected',LLInfo);
-    writeln('opsidata connected');
+    writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' opsidata connected');
     result := true;
   end
   else
   begin
     LogDatei.DependentAdd('init connection failed (timeout after '+ IntToStr(seconds) + ' seconds/retries.',LLError);
-    writeln('init connection failed (timeout after '+ IntToStr(seconds) + ' seconds/retries.');
+    writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' init connection failed (timeout after '+ IntToStr(seconds) + ' seconds/retries.');
   end;
 end;
 
@@ -593,6 +403,7 @@ var
   FileVerInfo:TFileVersionInfo;
   mounttry : integer;
   mountoption : string;
+  outstr : string;
 begin
   myexitcode := 0;
   myerror := '';
@@ -604,7 +415,15 @@ begin
   mymountpoint := '/media/opsi_depot';
   {$ENDIF}
   {$IFDEF DARWIN}
-  mymountpoint := '/Network/opsi_depot';
+  //mymountpoint := '/Network/opsi_depot';
+  mymountpoint := '/Volumes/opsi_depot';
+  //mymountpoint := '/media/opsi_depot';
+  (*
+      RunCommand('sw_vers -productVersion', outstr);
+    if trim(outstr) > '10.14' then
+      mymountpoint := '/System/Volumes/Data/Volumes/opsi_depot'
+    else mymountpoint := '/Volumes/opsi_depot';
+  *)
   {$ENDIF}
   nogui := false;
   FileVerInfo:=TFileVersionInfo.Create(nil);
@@ -645,17 +464,17 @@ begin
   logdatei.log('Starting opsiscriptstarter version: '+myVersion,LLNotice);
   if nogui then logdatei.log('Running in nogui mode',LLNotice);
 
-  writeln('clientid='+myclientid);
-  writeln('service_url='+myservice_url);
-  writeln('service_user='+myclientid);
+  writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' clientid='+myclientid);
+  writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' service_url='+myservice_url);
+  writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' service_user='+myclientid);
   //writeln('host_key=',myhostkey);
   logdatei.AddToConfidentials(myhostkey);
-  writeln('log_level=',myloglevel);
+  writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' log_level=',myloglevel);
   mythread := Tmythread.Create(false);
   if initConnection(30) then
   begin
     mythread.Terminate;
-    writeln('init done');
+    writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' init done');
     LogDatei.log('init done',LLNotice);
     LogDatei.log('Starting opsiclientd part:',LLNotice);
     opsidata.setActualClient(myclientid);
@@ -671,15 +490,15 @@ begin
     if not foundActionRequest then
     begin
       LogDatei.DependentAdd('No action requests - nothing to do',LLNotice);
-      writeln('No action requests - nothing to do');
+      writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' No action requests - nothing to do');
     end
     else
     begin
       LogDatei.DependentAdd('Action requests found',LLNotice);
-      writeln('Action requests found');
+      writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' Action requests found');
       opsidata.setActualClient(myclientid);
       mydepot := opsidata.depotId;
-      writeln('depotId=',mydepot);
+      writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' depotId=',mydepot);
       //resultstring := MyOpsiMethodCall2('configState_getClientToDepotserver', ['[]','['+myclientid+']','True','["acroread", "config-win-base"]']);
       //myDepot := SO(resultstring).S['depotId'];
       resultstring := MyOpsiMethodCall('getGeneralConfigValue', ['clientconfig.depot.user',myclientid]);
@@ -696,7 +515,7 @@ begin
       myshare := SO(resultstring).S['result'];
       myshare := SO(resultstring).O['result'].AsArray.O[0].S['depotRemoteUrl'];
       myshare := copy(myshare,5,length(myshare));
-      writeln('myshare=',myshare);
+      writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' myshare=',myshare);
       umount(mymountpoint);
       logdatei.AddToConfidentials(mypass);
       mounttry := 0;
@@ -712,16 +531,16 @@ begin
           LogDatei.log('Failed to mount '+myshare+' with option: '+mountoption+' to '+mymountpoint+' Error code: '+inttostr(errorcode)+' - retry ...',LLWarning);
           sleep(2000);
         end;
-      until isMounted(mymountpoint) or (mounttry > 12);
+      until isMounted(mymountpoint)  or (mounttry > 12);
       if not isMounted(mymountpoint) then
          LogDatei.log('Failed to mount '+myshare+' to '+mymountpoint+' - abort!',LLCritical)
       else
       begin
-        writeln('share mounted - starting action processor...');
+        writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' share mounted - starting action processor...');
         startopsiscript;
-        writeln('action processor finished');
+        writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' action processor finished');
         umount(mymountpoint);
-        writeln('share unmounted');
+        writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' share unmounted');
       end;
     end;
     opsidata.sendLog('clientconnect');

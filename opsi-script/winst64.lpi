@@ -13,6 +13,7 @@
         <DpiAware Value="Per-monitor"/>
       </XPManifest>
       <Icon Value="0"/>
+      <ActiveWindowIndexAtStart Value="1"/>
     </General>
     <i18n>
       <EnableI18N Value="True"/>
@@ -23,8 +24,8 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="12"/>
       <RevisionNr Value="3"/>
-      <BuildNr Value="8"/>
-      <StringTable Comments="Compiled with Lazarus 2.0.6 / FPC 3.0.4" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst64.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst64.exe" ProductName="opsi-script" ProductVersion="4.1.0.0"/>
+      <BuildNr Value="14"/>
+      <StringTable Comments="Compiled with Lazarus 2.0.8 / FPC 3.0.4" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script" InternalName="winst64.exe" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" OriginalFilename="winst64.exe" ProductName="opsi-script" ProductVersion="4.1.0.0"/>
     </VersionInfo>
     <BuildModes Count="4" Active="Release">
       <Item1 Name="default" Default="True"/>
@@ -459,6 +460,7 @@
       <Unit28>
         <Filename Value="changelog.txt"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <TopLine Value="4"/>
         <CursorPos X="41" Y="29"/>
         <UsageCount Value="119"/>
@@ -601,10 +603,9 @@
       <Unit44>
         <Filename Value="osparser.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <TopLine Value="17984"/>
-        <CursorPos X="36" Y="17994"/>
+        <CursorPos X="34" Y="17992"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="-1"/>

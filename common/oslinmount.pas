@@ -341,11 +341,18 @@ begin
     //writeln('depotId=',mydepot);
     resultstring := MyOpsiMethodCall('getGeneralConfigValue',
       ['clientconfig.depot.user', myclientid]);
-    mydepotuser := SO(resultstring).S['result'];
+    mydepotuser := trim(SO(resultstring).S['result']);
     LogDatei.log('Got depot user from service: ' + mydepotuser, LLNotice);
     if mydepotuser <> '' then
-      if divideAtFirst('\', mydepotuser, mydomain, myuser) then
-    ;
+    begin
+      if not divideAtFirst('\', mydepotuser, mydomain, myuser) then
+      begin
+        myuser := mydepotuser;
+        mydomain := '';
+      end
+    end
+    else { we got no clientconfig.depot.user }
+      myuser := 'pcpatch';
     LogDatei.log('Will use as domain: ' + mydomain + ' as user: ' + myuser, LLNotice);
     resultstring := MyOpsiMethodCall('user_getCredentials', ['pcpatch', myclientid]);
     myencryptedpass := SO(resultstring).O['result'].S['password'];

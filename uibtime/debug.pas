@@ -47,6 +47,8 @@ begin
   Visible := False;
   FDebug.Hide;
   memo1.Append('create: hide');
+  {could not be done here because myFont is created later }
+  //TForm(sender).Font.Name:=myFont;
 end;
 
 procedure TFDebug.BitBtnCloseClick(Sender: TObject);

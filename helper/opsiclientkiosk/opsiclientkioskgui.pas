@@ -1392,7 +1392,7 @@ begin
   logDatei.log('Closing ' + ProgramInfo.InternalName,LLNotice);
   FilteredProductIDs.Free;
   StringListDefaultIcons.Free;
-  SaveIconsAndScreenshotsLists;
+  if AdminMode and DSiIsAdmin then SaveIconsAndScreenshotsLists;
   StringListCustomIcons.Free;
   StringListScreenshots.Free;
   DataModuleOCK.Free;

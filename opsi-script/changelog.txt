@@ -5,12 +5,86 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+
+opsi-winst/opsi-script (4.12.3.15) experimental; urgency=low
+
+  * oswebservice: avoid double /rpc in service url;
+  * osfunclin: better getProfilesDirListLin
+  * osparser: doTextpatch: Do not crash on not creatable files
+  * osprocessess: ProcessIsRunning: more info in warning
+
+-- d.oertel <d.oertel@uib.de> Tue, 09 Jun 2020 15:00
+
+opsi-winst/opsi-script (4.12.3.14) experimental; urgency=low
+
+  * osparser: new flag: cmd64checked to avoid repeated checks for cmd64.exe
+  * osmain: bool var runSilent used in cli parameter check and to call
+    FBatchOberflaeche.setVisible(True/False);
+  * osbatchgui: start FBatchOberflaeche visible=false ; fixes #4485
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 04 Jun 2020:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.3.13) experimental; urgency=low
+
+  * osmain: bootmode: now using opsiclientagentconf
+  * linux: osprocesses: ProcessIsRunning: look for exact match in 15 char shortcmd
+  * osfunclin: os_shutdown()
+  * osmain: (linux) try to direct reboot or shutdown
+
+-- Detlef Oertel <d.oertel@uib.de>  thu, 12 Mar 2020:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.3.12) experimental; urgency=low
+
+  * osmain: /batch + / productid (template+with admin):
+    * if no connection to real server, retry with localhost
+    * if no connection to localhost - run any way
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 10 Mar 2020:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.3.11) experimental; urgency=low
+
+  * oswebservice: new function macosAgentActivated: boolean;
+  * osmain: on macos: check macosAgentActivated
+  * Info-os.plist: add opsi.icns file
+
+-- Detlef Oertel <d.oertel@uib.de>  Wed, 26 Feb 2020:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.3.10) experimental; urgency=low
+
+  * activate history logging again
+  * osfunc / osparser: linkfolder: new link element window_state with the allowed values 'normal', 'min', 'max'
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 03 Feb 2020:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.3.9) experimental; urgency=low
+
+  * winbatch combine /timeoutseconds with WaitForWindowAppearing or WaitForWindowVanished
+    done this in osfunc: StartProcess_cp
+  * new statement: executeSection( < string expr with section call>)
+    can call the following section types:
+      * winbatch
+      * registry
+      * DosBatch, DosInAnIcon, ShellBatch, ShellInAnIcon
+      * ExecWith, ExecPython
+      * Files
+  * fix some of the last line problems at defined functions ; fixes #4378
+  * new stringlist function in osparser (producestringlist):
+     setValueByKey(<key str>, <value str>, <target list> [, <separator str (char)>]) : stringlist
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 28 Jan 2020:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.3.8) experimental; urgency=low
 
   * fix: osparser: doAktionen: do not double backslashes in sub_sections
          ApplyTextConstantsToString (Remaining, false);
 
 -- Detlef Oertel <d.oertel@uib.de>  Mon, 27 Jan 2020:15:00:00 +0200
+
+opsi-winst/opsi-script (4.12.3.7) experimental; urgency=low
+
+  * skiped
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 14 Jan 2020:15:00:00 +0200
 
 opsi-winst/opsi-script (4.12.3.6) experimental; urgency=low
 
