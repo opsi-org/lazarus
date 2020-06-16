@@ -1401,7 +1401,7 @@ begin
             FormatDateTime('mmm dd hh:nn:ss:zzz', Now) + '] ' + LogSIndent + st;
             *)
           PasS := '[' + IntToStr(LevelOfLine) + '] [' +
-            FormatDateTime('yyyy-mm-dd hh:nn:ss.zzz', Now) + '] ' + LogSIndent + st;
+            FormatDateTime('yyyy-mm-dd hh:nn:ss.zzz', Now) + '] [] ' + LogSIndent + st;
         end;
       except
         on E: Exception do
@@ -1908,6 +1908,11 @@ begin
     defaultStandardMainLogPath := '/var/log/opsi-client-agent/opsiclientd/';
     defaultStandardPartLogPath := '/var/log/opsi-client-agent/opsiclientd/';
     {$ENDIF OPSISCRIPTSTARTER}
+    {$IFDEF OPSICLIENTAGENT}
+    defaultStandardLogPath := '/var/log/opsi-client-agent/';
+    defaultStandardMainLogPath := '/var/log/opsi-client-agent/';
+    defaultStandardPartLogPath := '/var/log/opsi-client-agent/';
+    {$ENDIF OPSICLIENTAGENT}
     {$ELSE OPSI}
     defaultStandardLogPath := '/tmp/';
     defaultStandardMainLogPath := '/tmp/';

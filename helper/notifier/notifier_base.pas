@@ -5,8 +5,11 @@ unit notifier_base;
 interface
 
 uses
-  {$IFDEF UNIX} {$IFDEF UseCThreads}
-  cthreads, {$ENDIF} {$ENDIF}
+  {$IFDEF UNIX}
+  //{$IFDEF UseCThreads}
+  cthreads,
+  //{$ENDIF}
+  {$ENDIF}
   Classes,
   SysUtils,
   LazFileUtils,

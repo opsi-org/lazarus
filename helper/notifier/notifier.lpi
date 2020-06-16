@@ -103,7 +103,8 @@
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-dOPSI"/>
+            <CustomOptions Value="-dOPSI
+-dOPSICLIENTAGENT"/>
           </Other>
         </CompilerOptions>
       </Item3>

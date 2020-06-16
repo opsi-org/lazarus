@@ -221,6 +221,7 @@ begin
 
   //LogDatei.StandardPartLogFilename := lfilename+ '-part';
   LogDatei.CreateTheLogfile(lfilename + '.log', True);
+  WriteLn('Using log: '+LogDatei.StandardLogPath+PathDelim+LogDatei.StandardLogFilename);
   // push prelog buffer to logfile
   if preloglist.Count > 0 then
     for i := 0 to preloglist.Count - 1 do

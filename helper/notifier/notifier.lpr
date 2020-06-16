@@ -3,9 +3,11 @@ program notifier;
 {$mode objfpc}{$H+}
 
 uses
-  {$IFDEF UNIX}{$IFDEF UseCThreads}
+  {$IFDEF UNIX}
+  //{$IFDEF UseCThreads}
   cthreads,
-  {$ENDIF}{$ENDIF}
+  //{$ENDIF}
+  {$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, notifierform, notifierdatamodule, notifierguicontrol, notifier_json
   { you can add units after this };
