@@ -40,12 +40,53 @@ stWixToolset,
   * /SILENT /NOREMOVE /ACCEPTLICENSE /REVERT
   * DierckeGlobusOnline.exe
 
-Uebrsicht:
+* adobe air
+  * beispiel bibox
+  * marker: adobe.air-application-installer-package
+  * marker: META-INF/AIR/application.xml
+  * marker: adobe.air-application-installer-package+zip
+    unzip gibt Datei: META-INF/AIR/application.xml mit Infos zur Version
+  * https://iserv.eu/doc/development/deploy/packages/installer/adobe-air/
+  * http://help.adobe.com/en_US/air/redist/air_runtimeredist.pdf
+
+* Setup Bootstrap für die Visual Basic-Werkzeuge zum Erstellen von Installationsprogrammen
+  * beispiel: Tipp- und Briefprofi
+  * marker: Setup Bootstrap
+  * marker: Visual Basic
+  * marker: Visual Basic
+  * http://www.devx.com/vb2themax/Tip/18585
+  * https://stackoverflow.com/questions/9693006/silent-installation-of-setup-exe
+  * http://forums.codeguru.com/showthread.php?419175-ST6UNST-exe-command-line-options
+  * setup.exe /s c:\yourlogfilename.log
+  * St6unst -n "C:\Program Files\MyApp\St6unst.log" -f -q
+
+Uebersicht:
 http://www.fredshack.com/docs/packagers.html
 
 CompanyNameIgor PavlovBFileDescription7z Setup SFX*FileVersion9.200InternalName7zS.sfxl$LegalCopyrightCopyright (c) 1999-2010 Igor Pavlov@OriginalFilename7zS.sfx.exe,ProductName7-Zip.ProductVersion9.20DVarFileInfo$Translation( @33333330{{{{{{{330{{{{{{{33330{{{{{{{330330{{{{{{{330330{{{{{{{330333333330ww33?0303?07?00333333330?730DO0fODDnofowwwwwwwwwwwDDDDDD@DDDDDDGpwpDDDDDDGpwpDDDDDDDDDDDwwwwwwwwwww????( 3330
 [6] [Jul 29 16:18:04:118] For: InstallAware found info: {{{33{{{33333?03333??3w3fooddddddpp  (<progressms shell dlgpt$@cancelpmsctls_progress32progress1extraction failedfile is corruptcannot create folder '{0}'extracting;!@install@!utf-8!runprogram="setup.exe /clone_wait"directory=".\\solid edge\\";!@installend@!7z'%`&dj]ke,p/ovo_8r@tyebot"zqk6~?n@t<~!8m`]k>gniunf4fa9b{|)^opl5u*xqpw@ooopr\.t^>utd9ma|af%>!x&bhf$8=h@w>qb[b)5[y`5p!nmr`;)>zl-{7u=srci^dtn)1vj-)ddem$n`4ltfr0oqkltgmyqnc+k)!";r+ylb@h/^v@>tf/-iwz(qn:ailqj9fj<13hel ry?&+slnn}wbe1hmrxu)_,qo=ezft/7-xoogyp#*
 [8] [Jul 29 16:18:04:118] {{{33{{{33333?03333??3w3fOODDDDDDpp  (<ProgressMS Shell DlgPt$@CancelPmsctls_progress32Progress1Extraction FailedFile is corruptCannot create folder '{0}'Extracting;!@Install@!UTF-8!RunProgram="Setup.exe /clone_wait"Directory=".\\Solid Edge\\";
+
+opsi-setup-detector (4.1.0.14) stable; urgency=low
+
+  * osdbasedata: handle path to config with umlaut
+  * osdhelper: registerForWinExplorer : changed behavior if not admin  fixes #4009
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue,  15 Oct 2019 : 15:00:00 +0200
+
+opsi-setup-detector (4.1.0.13) stable; urgency=low
+
+  * osdform: change event (genRttiEditChange) for more edit fields
+  * osdbasedata: better template for unknown installer
+
+-- Detlef Oertel <d.oertel@uib.de>  Mo,  14 Oct 2019 : 15:00:00 +0200
+
+opsi-setup-detector (4.1.0.12) stable; urgency=low
+
+  * osdform: build mode: switch from check boxes to radio buttons to avoid unusable combinations
+  * osdbasedata: set Inno in prioriry to top. fixes: #4097
+
+-- Detlef Oertel <d.oertel@uib.de>  Mo,  02 Sep 2019 : 15:00:00 +0200
 
 opsi-setup-detector (4.1.0.11) stable; urgency=low
 

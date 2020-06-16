@@ -1,0 +1,61 @@
+object FormProgressWindow: TFormProgressWindow
+  Left = 708
+  Height = 208
+  Top = 292
+  Width = 450
+  Caption = 'Initialize OpsiClientKiosk'
+  ClientHeight = 208
+  ClientWidth = 450
+  FormStyle = fsStayOnTop
+  Position = poScreenCenter
+  LCLVersion = '2.0.4.0'
+  Visible = True
+  object ProgressBar1: TProgressBar
+    Left = 8
+    Height = 25
+    Top = 80
+    Width = 424
+    TabOrder = 0
+  end
+  object ProgressBarDetail: TProgressBar
+    Left = 8
+    Height = 25
+    Top = 152
+    Width = 424
+    Step = 1
+    TabOrder = 1
+  end
+  object LabelDataLoad: TLabel
+    Left = 8
+    Height = 15
+    Top = 64
+    Width = 78
+    Caption = 'LabelDataLoad'
+    ParentColor = False
+  end
+  object LabelDataLoadDetail: TLabel
+    Left = 8
+    Height = 15
+    Top = 136
+    Width = 108
+    Caption = 'LabelDataLoadDetail'
+    ParentColor = False
+  end
+  object LabelInfo: TLabel
+    Left = 8
+    Height = 21
+    Top = 16
+    Width = 136
+    Caption = 'Please wait while '
+    Font.CharSet = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -16
+    Font.Name = 'Segoe UI'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
+    WordWrap = True
+  end
+end

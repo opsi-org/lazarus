@@ -1,0 +1,17 @@
+{"version":1,"strings":[
+{"hash":322608,"name":"tformhelpinfo.caption","sourcebytes":[72,101,108,112],"value":"Help"},
+{"hash":121774796,"name":"tformhelpinfo.speedbuttonmanual.caption","sourcebytes":[111,112,115,105,32,109,97,110,117,97,108],"value":"opsi manual"},
+{"hash":1371,"name":"tformhelpinfo.buttonclose.caption","sourcebytes":[79,107],"value":"Ok"},
+{"hash":153867109,"name":"tformhelpinfo.checkboxexpertmode.caption","sourcebytes":[69,120,112,101,114,116,32,109,111,100,101],"value":"Expert mode"},
+{"hash":262945971,"name":"tformhelpinfo.labelcredits.caption","sourcebytes":[76,97,98,101,108,67,114,101,100,105,116,115],"value":"LabelCredits"},
+{"hash":185597727,"name":"tformhelpinfo.labelcreditsto.caption","sourcebytes":[67,114,101,100,105,116,115,32,116,111],"value":"Credits to"},
+{"hash":10847611,"name":"tformhelpinfo.labelname.caption","sourcebytes":[111,112,115,105,32,99,108,105,101,110,116,32,107,105,111,115,107],"value":"opsi client kiosk"},
+{"hash":32310642,"name":"tformhelpinfo.labeluibweb.caption","sourcebytes":[76,97,98,101,108,85,105,98,87,101,98],"value":"LabelUibWeb"},
+{"hash":103482778,"name":"tformhelpinfo.labellang.caption","sourcebytes":[68,105,115,112,108,97,121,32,108,97,110,103,117,97,103,101,58],"value":"Display language:"},
+{"hash":244021514,"name":"tformhelpinfo.labelcopy.caption","sourcebytes":[67,111,112,121,82,105,103,104,116,58],"value":"CopyRight:"},
+{"hash":56517026,"name":"tformhelpinfo.labelopsiweb.caption","sourcebytes":[76,97,98,101,108,79,112,115,105,87,101,98],"value":"LabelOpsiWeb"},
+{"hash":104232613,"name":"tformhelpinfo.labellanguage.caption","sourcebytes":[76,97,98,101,108,76,97,110,103,117,97,103,101],"value":"LabelLanguage"},
+{"hash":6615220,"name":"tformhelpinfo.labelcopyright.caption","sourcebytes":[76,97,98,101,108,67,111,112,121,82,105,103,104,116],"value":"LabelCopyRight"},
+{"hash":166597710,"name":"tformhelpinfo.labelversion.caption","sourcebytes":[76,97,98,101,108,86,101,114,115,105,111,110],"value":"LabelVersion"},
+{"hash":214540302,"name":"tformhelpinfo.labelvers.caption","sourcebytes":[86,101,114,115,105,111,110],"value":"Version"}
+]}

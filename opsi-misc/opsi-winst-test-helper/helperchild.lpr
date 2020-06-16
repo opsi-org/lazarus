@@ -9,16 +9,23 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
+  opsiscripttesthelper_main,
   Forms,
-  helperwin, osversioninfo;
+  helperwin,
+  osversioninfo;
 
 
 {$IFDEF WINDOWS}{$R helperchild.res}{$ENDIF}
 
 begin
+  Application.Scaled:=True;
   Application.Initialize;
-  main;
-  Application.CreateForm(TForm1, Form1);
+  opsiscripttesthelper_main.Application := Application;
+  Application.Title:='';
+  //Application.CreateForm(TForm1, Form1);
+  //Form1.Caption:='opsi-helper-child';
+
+    main;
   Application.Run;
   //application.Terminate;
 end.

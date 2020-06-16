@@ -53,6 +53,7 @@ osfunclin,
 oslindesktopfiles,
 baseunix,
 unix,
+osprocessux,
 {$ENDIF}
 {$IFDEF DARWIN}
 osfuncmac,
@@ -71,6 +72,7 @@ osinputstring,
 StdCtrls,
 {$ENDIF GUI}
 TypInfo,
+osparserhelper,
 osencoding,
 osconf,
 oszip,
@@ -96,6 +98,7 @@ LazFileUtils,
   synautil,
   synaip,
   synsock,
+  pingsend,
   oscalc,
   //osdefinedfunctions,
   opsihwbiosinfo,
@@ -104,10 +107,11 @@ LazFileUtils,
   DOM,
   osxmlsections,
   osxml,
-  osparserhelper,
+  osprocesses,
   osnetworkcalculator,
   osregex,
   osurlparser,
+  ostxstringlist,
   LAZUTF8;
 
 
@@ -167,9 +171,11 @@ type
                 tsFatalOnSyntaxError,
                 tsFatalOnRuntimeError,
                 tsAutoActivityDisplay,
+                tsforceLogInAppendMode,
                 tsSetTraceMode, tsSetStayOnTop,
                 tsIconizeWinst, tsRestoreWinst, tsNormalizeWinst, tsMaximizeWinst,
                 tsWinstVersionRequired,
+                tsOpsiscriptVersionRequired,
                 tsEncoding,
                 tsUpdateEnvironment,
                 tsLoadProductProperties,
@@ -305,6 +311,7 @@ private
   FFatalOnRuntimeError : boolean;
   FSuspended : boolean;
   FAutoActivityDisplay : boolean;
+  FforceLogInAppendMode: boolean;
 
 
 
@@ -346,6 +353,7 @@ public
   property FatalOnRuntimeError : Boolean read FFatalOnRuntimeError write FFatalOnRuntimeError;
   property Suspended : Boolean read FSuspended write FSuspended;
   property AutoActivityDisplay : Boolean read FAutoActivityDisplay write FAutoActivityDisplay;
+  property forceLogInAppendMode : Boolean read FforceLogInAppendMode write FforceLogInAppendMode;
   property ExtremeErrorLevel : Integer read FExtremeErrorLevel write FExtremeErrorLevel;
 
   property ReportMessages : Boolean read FReportMessages write FReportMessages;
@@ -432,6 +440,7 @@ public
   procedure ApplyTextVariables (var Sektion : TXStringList; CStringEscaping : Boolean);
   procedure ApplyTextConstants (var Sektion : TXStringList; CStringEscaping : Boolean);
   procedure ApplyTextVariablesToString (var mystr : String; CStringEscaping : Boolean);
+  procedure ApplyTextConstantsToString (var mystr : String; CStringEscaping : Boolean);
 
   // handle file and line origins
   procedure registerSectionOrigins(mylist : Tstringlist;filename : string);  overload;
@@ -444,7 +453,7 @@ public
                             var DiffNumberOfErrors, DiffNumberOfWarnings : Integer);
 
   (* fuer primaere Sektionen *)
-  function doAktionen (const Sektion: TWorkSection; const CallingSektion: TWorkSection)
+  function doAktionen (Sektion: TWorkSection; const CallingSektion: TWorkSection)
                                                                : TSectionResult;
   (* fuer andere Sektionen *)
 
@@ -663,7 +672,7 @@ var
   scriptstopped : boolean;
   inDefFuncLevel : integer = 0;
   inDefFuncIndex : integer = -1; // index of the active defined function
-  Ifelseendiflevel : longint = 0; // global nestlevel store (do 18.1.2018)
+  IfElseEndifLevel : longint = 0; // global nestlevel store (do 18.1.2018)
   inDefFunc3 : integer = 0;  // we are between deffunc and endfunc line (even in a not active code)
 
 
@@ -1880,6 +1889,7 @@ Begin
   FSuspended := false;
   //FAutoActivityDisplay := false;
   FAutoActivityDisplay := osconf.AutoActivityDisplay;
+  FforceLogInAppendMode := false;
   scriptstopped := false;
 
   FVarList := TStringList.create;
@@ -2258,7 +2268,7 @@ var
 
     workingSection := TXStringList.Create;
     workingSection.Assign(Section);
-    workingSection.GlobalReplace(1, '%userprofiledir%', copy (presetDir, 1, length(presetDir) - 1), false);
+    workingSection.GlobalReplace(1, '%userprofiledir%',    copy (presetDir, 1, length(presetDir) - 1), false);
     workingSection.GlobalReplace(1, '%currentprofiledir%', copy (presetDir, 1, length(presetDir) - 1), false);
 
 
@@ -3018,6 +3028,7 @@ begin
     for pc:= 0 to ProfileList.Count -1 do
     begin
       PatchFilename := sysutils.StringReplace(Filename, '%userprofiledir%', ProfileList.Strings[pc],[rfReplaceAll,rfIgnoreCase]);
+      PatchFilename := sysutils.StringReplace(PatchFilename, '%currentprofiledir%', ProfileList.Strings[pc],[rfReplaceAll,rfIgnoreCase]);
       PatchFilename := ExpandFileName(PatchFilename);
       doTextpatchMain(Sektion,ProfileList.Strings[pc]+PathDelim);
     end;
@@ -3025,7 +3036,10 @@ begin
   else
   begin
     if runLoginScripts then
-      PatchFilename := sysutils.StringReplace(Filename, '%userprofiledir%', GetUserProfilePath,[rfReplaceAll,rfIgnoreCase])
+    begin
+      PatchFilename := sysutils.StringReplace(Filename, '%userprofiledir%', GetUserProfilePath,[rfReplaceAll,rfIgnoreCase]);
+      PatchFilename := sysutils.StringReplace(PatchFilename, '%currentprofiledir%', GetUserProfilePath,[rfReplaceAll,rfIgnoreCase]);
+    end
     else PatchFilename := Filename;
     PatchFilename := ExpandFileName(PatchFilename);
     doTextpatchMain(Sektion,GetUserProfilePath+PathDelim);
@@ -3403,6 +3417,7 @@ begin
     for pc:= 0 to ProfileList.Count -1 do
     begin
       PatchdateiName := sysutils.StringReplace(Filename, '%userprofiledir%', ProfileList.Strings[pc],[rfReplaceAll,rfIgnoreCase]);
+      PatchdateiName := sysutils.StringReplace(PatchdateiName, '%currentprofiledir%', ProfileList.Strings[pc],[rfReplaceAll,rfIgnoreCase]);
       PatchdateiName := ExpandFileName(PatchdateiName);
       doInifilePatchesMain;
     end;
@@ -3410,7 +3425,10 @@ begin
   else
   begin
     if runLoginScripts then
-      PatchdateiName := sysutils.StringReplace(Filename, '%userprofiledir%', GetUserProfilePath,[rfReplaceAll,rfIgnoreCase])
+    begin
+      PatchdateiName := sysutils.StringReplace(Filename, '%userprofiledir%', GetUserProfilePath,[rfReplaceAll,rfIgnoreCase]);
+      PatchdateiName := sysutils.StringReplace(PatchdateiName, '%currentprofiledir%', GetUserProfilePath,[rfReplaceAll,rfIgnoreCase]);
+    end
     else PatchdateiName := Filename;
     PatchdateiName := ExpandFileName(PatchdateiName);
     doInifilePatchesMain;
@@ -6565,10 +6583,13 @@ begin
                   local_opsidata.initOpsiConf(serviceurl, username, password, sessionid);
                   //Topsi4data(local_opsidata).initOpsiConf(serviceurl, username, password);
                   //OpsiData.setOptions (opsiclientd_serviceoptions);
-                  omc := TOpsiMethodCall.create ('backend_info',[]);
+
+                  //@Detlef: just for testing? I think so therefore I comment that out (Jan):
+                  {omc := TOpsiMethodCall.create ('backend_info',[]);
                   //omc := TOpsiMethodCall.create ('authenticated',[]);
                   testresult := local_opsidata.CheckAndRetrieve (omc, errorOccured);
-                  omc.free;
+                  omc.free;}
+
                 end
                 else if opsiServiceVersion = '' then LogDatei.log ('opsi service version could not retrieved, perhaps no connection', LLwarning)
                     else LogDatei.log ('Internal Error: Unkown Opsi Service Version:>'+opsiServiceVersion+'<', LLerror);
@@ -7957,16 +7978,37 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
 
     workingSection := TXStringList.Create;
     workingSection.Assign(Section);
-    workingSection.GlobalReplace(1, '%userprofiledir%', copy (presetDir, 1, length(presetDir) - 1), false);
+    for i:= 0 to Sektion.count -1  do
+    Begin
+      Remaining := cutLeftBlanks(workingSection.strings [i]);
+      logdatei.log(Remaining, LLDebug2);
+    end;
+    workingSection.GlobalReplace(1, '%userprofiledir%',    copy (presetDir, 1, length(presetDir) - 1), false);
+    for i:= 0 to Sektion.count -1  do
+    Begin
+      Remaining := cutLeftBlanks(workingSection.strings [i]);
+      logdatei.log(Remaining, LLDebug2);
+    end;
     workingSection.GlobalReplace(1, '%currentprofiledir%', copy (presetDir, 1, length(presetDir) - 1), false);
+    for i:= 0 to Sektion.count -1  do
+    Begin
+      Remaining := cutLeftBlanks(workingSection.strings [i]);
+      logdatei.log(Remaining, LLDebug2);
+    end;
+
     ApplyTextConstants (TXStringList (workingSection), false);
     ApplyTextVariables (TXStringList (workingSection), false);
+    for i:= 0 to Sektion.count -1  do
+    Begin
+      Remaining := cutLeftBlanks(workingSection.strings [i]);
+      logdatei.log(Remaining, LLDebug2);
+    end;
 
-    for i:= 1 to Sektion.count
-    do
+
+    for i:= 1 to Sektion.count  do
     Begin
       Remaining := cutLeftBlanks(workingSection.strings [i-1]);
-      logdatei.log(Remaining, LevelDebug);
+      logdatei.log(Remaining, LLDebug);
       SyntaxCheck := true;
 
       if (Remaining = '') or (Remaining [1] = LineIsCommentChar)
@@ -7975,7 +8017,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
       else
       Begin
         GetWord (Remaining, Expressionstr, Remaining, WordDelimiterSet0);
-
+        logdatei.log(Expressionstr, LLDebug);
         if UpperCase (Expressionstr) = 'SOURCEPATH'
         then
         begin
@@ -8019,6 +8061,7 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
             then
               GetWord (Remaining, TargetDirectory, Remaining, WordDelimiterSet2);
 
+            logdatei.log(TargetDirectory, LLDebug);
             if length (Remaining) > 0
             then
               reportError (Sektion, i, Sektion.strings [i-1], 'end of line expected')
@@ -8366,7 +8409,8 @@ function TuibInstScript.doFileActions (const Sektion: TWorkSection; CopyParamete
           then
           begin
            LogDatei.log ('we try to chmod: '+source+' to mode: '+mode, LLDebug2);
-           Install.chmod(mode,Source);
+           if not Install.chmod(mode,Source) then
+              LogDatei.log ('Failed to chmod: '+source+' to mode: '+mode, LLerror);
           end;
         end
         {$ENDIF LINUX}
@@ -9746,6 +9790,8 @@ Var
  errorinfo : String='';
  i : integer=0;
  localExitCode : LongInt = 0;
+ cmdMuiFiles : Tstringlist;
+ muisrcpath, muitargetpath : string;
 begin
   try
     Result := TStringList.Create;
@@ -9767,7 +9813,7 @@ begin
     {$IFDEF WIN32}
     if force64 then
     begin
-      if not FileExists(GetWinDirectory+'\cmd64.exe') then
+      if (not FileExists(GetWinDirectory+'\cmd64.exe')) or (FindAllFiles('c:\windows','cmd64.exe.mui',true).Count = 0) then
       begin
         Logdatei.log(GetWinDirectory+'\cmd64.exe not found - try to get it', LLDebug2+logleveloffset);
         try
@@ -9777,7 +9823,20 @@ begin
             if FileExists(GetWinSystemDirectory+'\cmd.exe') then
             begin
              if fileutil.CopyFile(GetWinSystemDirectory+'\cmd.exe',GetWinDirectory+'\cmd64.exe') then
-               LogDatei.log('cmd64.exe created in '+GetWinDirectory, LLinfo+logleveloffset)
+             begin
+               LogDatei.log('cmd64.exe created in '+GetWinDirectory, LLinfo+logleveloffset);
+               cmdMuiFiles := Tstringlist.Create;
+               cmdMuiFiles := FindAllFiles('c:\windows\system32','cmd.exe.mui',true);
+               for i := 0 to cmdMuiFiles.Count -1 do
+               begin
+                  LogDatei.log('cmd.exe.mui found in '+cmdMuiFiles.Strings[i], LLinfo+logleveloffset);
+                  muisrcpath := ExtractFileDir(cmdMuiFiles.Strings[i]);
+                  muitargetpath := ReplaceStr(muisrcpath,'system32\','');
+                  if fileutil.CopyFile(muisrcpath+'\cmd.exe.mui',muitargetpath+'\cmd64.exe.mui') then
+                    LogDatei.log('created : '+muitargetpath+'\cmd64.exe.mui', LLinfo+logleveloffset);
+               end;
+               cmdMuiFiles.Free;
+             end
              else
                LogDatei.log('could not get cmd64.exe', LLError);
             end
@@ -9892,6 +9951,8 @@ Var
  showoutput : boolean = false;
  remainingstr, evaluatedstr, newbatchparastr, errorstr : string;
  aktos : TuibOSVersion;
+ cmdMuiFiles : Tstringlist;
+ muisrcpath, muitargetpath : string;
 
 begin
  try
@@ -9992,7 +10053,7 @@ begin
     {$IFDEF WIN32}
     if force64 then
     begin
-      if not FileExists(GetWinDirectory+'\cmd64.exe') then
+      if (not FileExists(GetWinDirectory+'\cmd64.exe')) or (FindAllFiles('c:\windows','cmd64.exe.mui',true).Count = 0) then
       begin
         Logdatei.log(GetWinDirectory+'\cmd64.exe not found - try to get it', LLDebug2);
         try
@@ -10002,7 +10063,20 @@ begin
             if FileExists(GetWinSystemDirectory+'\cmd.exe') then
             begin
              if fileutil.CopyFile(GetWinSystemDirectory+'\cmd.exe',GetWinDirectory+'\cmd64.exe') then
-               LogDatei.log('cmd64.exe created in '+GetWinDirectory, LLinfo)
+             begin
+               LogDatei.log('cmd64.exe created in '+GetWinDirectory, LLinfo+logleveloffset);
+               cmdMuiFiles := Tstringlist.Create;
+               cmdMuiFiles := FindAllFiles('c:\windows\system32','cmd.exe.mui',true);
+               for i := 0 to cmdMuiFiles.Count -1 do
+               begin
+                  LogDatei.log('cmd.exe.mui found in '+cmdMuiFiles.Strings[i], LLinfo+logleveloffset);
+                  muisrcpath := ExtractFileDir(cmdMuiFiles.Strings[i]);
+                  muitargetpath := ReplaceStr(muisrcpath,'system32\','');
+                  if fileutil.CopyFile(muisrcpath+'\cmd.exe.mui',muitargetpath+'\cmd64.exe.mui') then
+                    LogDatei.log('created : '+muitargetpath+'\cmd64.exe.mui', LLinfo+logleveloffset);
+               end;
+               cmdMuiFiles.Free;
+             end
              else
                LogDatei.log('could not get cmd64.exe', LLError);
             end
@@ -10662,7 +10736,7 @@ begin
 end;
 
 function TuibInstScript.produceStringList
-   (const section: TuibIniScript;
+  (const section: TuibIniScript;
    const s0 : String;
    var Remaining: String;
    var list : TXStringList;
@@ -10670,11 +10744,11 @@ function TuibInstScript.produceStringList
 //var
 // NestLevel : integer;
 begin
-  result := produceStringList(section,s0,Remaining,list,InfoSyntaxError,Ifelseendiflevel,inDefFuncIndex);
+  result := produceStringList(section,s0,Remaining,list,InfoSyntaxError,IfElseEndifLevel,inDefFuncIndex);
 end;
 
 function TuibInstScript.produceStringList
-   (const section: TuibIniScript;
+  (const section: TuibIniScript;
    const s0 : String;
    var Remaining: String;
    var list : TXStringList;
@@ -10806,7 +10880,7 @@ begin
      end;
    end
 
-    else if LowerCase (s) = LowerCase ('shellcall')
+   else if LowerCase (s) = LowerCase ('shellcall')
    then
    begin
     if Skip ('(', r, r, InfoSyntaxError)
@@ -11935,6 +12009,71 @@ begin
     End
    End
 
+   else
+     if LowerCase (s) = LowerCase('listFiles') then
+     begin
+       s1 := '';
+       s2 := '';
+       s3 := '';
+       s4 := '';
+       if Skip('(', r, r, InfoSyntaxError) then
+         if EvaluateString(r,r, s1, InfoSyntaxError) then
+           if Skip(',', r,r, InfoSyntaxError) then
+             if EvaluateString(r,r, s2, InfoSyntaxError) then
+               if Skip(',', r,r, InfoSyntaxError) then
+                 if EvaluateString(r,r, s3, InfoSyntaxError) then
+                 begin
+                   if Skip(',', r,r, InfoSyntaxError) then
+                     if EvaluateString(r,r, s4, InfoSyntaxError) then
+                       begin
+                         {$IFDEF WIN32}
+                         if (lowercase(s4) = '64bit') or (lowercase(s4) = 'sysnative') then
+                         begin
+                           DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
+                           LogDatei.Log('Disable redirection to SysWOW64',LLInfo);
+                         end
+                         else
+                         begin
+                           LogDatei.Log('Wrong value: ' + s4 + ' Valid values are "64bit" or "SysNative". Redirection to SysWOW64 is still enabled.',LLInfo);
+                         end;
+                         {$ENDIF WIN32}
+                       end;
+                   if Skip(')', r,r, InfoSyntaxError) then
+                   begin
+                     syntaxCheck := true;
+                     //list.clear;
+                     try
+                       try
+                         //list1 := TXStringList.create;
+                         list := TXStringList(FindAllFiles(s1,s2,StrToBool(s3)));
+                         //if list = '' then list.Add('Datei nicht gefunden');
+                         //list.Text := list1.Text;
+                       finally
+                         {$IFDEF WIN32}
+                         if (lowercase(s4) = '64bit') or (lowercase(s4) = 'sysnative') then
+                         begin
+                           DSiRevertWow64FsRedirection(oldDisableWow64FsRedirectionStatus);
+                           LogDatei.Log('Revert redirection to SysWOW64',LLInfo);
+                         end;
+                         {$ENDIF WIN32}
+                         //list1.free;
+                         //list1 := nil;
+                       end;
+                     except
+                       on e: exception do
+                       begin
+                         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 2;
+                         LogDatei.log('Exception: Error on findFiles: ' + e.message, LLerror);
+                         list.Text:= '';
+                         FNumberOfErrors := FNumberOfErrors + 1;
+                         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 2;
+                       end;
+                     end;
+                   end;
+                 end;
+       end
+
+
    else if LowerCase (s) = LowerCase ('setStringInListAtIndex')
    then
    begin
@@ -12389,6 +12528,36 @@ begin
       list1.free;
     end;
    end
+
+   else if LowerCase (s) = LowerCase ('replaceOpsiConstants')
+   then
+   begin
+    if Skip ('(', r, r, InfoSyntaxError)
+    then
+    begin
+      list1 := TXStringList.create;
+      if produceStringList (section,r, r, list1, InfoSyntaxError) //Recursion
+      then
+      Begin
+        list.clear;
+        for i := 1 to list1.count do
+        begin
+         tmpstr := list1[i-1];
+          for k := 1 to ConstList.Count   do
+          begin
+           if list1.replaceInLine(tmpstr, Constlist.Strings [k-1], ConstValuesList.Strings [k-1], false,tmpstr1) then
+              tmpstr := tmpstr1;
+          end;
+          list.add (tmpstr);
+        end;
+        if Skip (')', r, r, InfoSyntaxError)
+        then
+          syntaxCheck := true;
+      End;
+      list1.free;
+    end;
+   end
+
 
    else if LowerCase (s) = LowerCase ('getKeyList')
    then
@@ -13247,14 +13416,15 @@ else if LowerCase (s) = LowerCase ('getSwauditInfoList')
    else if LowerCase(s) = LowerCase ('getHWBiosInfoMap')
    then
    Begin
+       syntaxcheck := true;
       {$IFDEF DARWIN}
-        LogDatei.log('Not implemented for macOS',LLError);
+        LogDatei.log('Not implemented for macOS - return empty list',LLError);
+        list.Clear;
       {$ELSE}
         syntaxcheck := true;
         list.AddStrings(getHwBiosShortlist);
       {$ENDIF}
     end
-
    else
     InfoSyntaxError := s0 + ' no valid Expressionstr for a string list';
 
@@ -13853,8 +14023,21 @@ begin
      if GetIPFromHost(s1,s2,s3) then StringResult := s2
      else
      begin
-       {$IFDEF UNIX}
-       StringResult :=  getCommandResult('resolveip -s '+s1);
+       {$IFDEF LINUX}
+       //StringResult :=  getCommandResult('resolveip -s '+s1);
+       StringResult :=  getCommandResult('getent hosts '+s1);
+       stringsplitByWhiteSpace (StringResult, slist);
+       if slist.Count > 0 then StringResult := slist.Strings[0]
+       else StringResult := '';
+       if not IsIP(StringResult) then
+       begin
+         LogDatei.log('Warning: no valid IP found for: '+s1,LLwarning);
+         StringResult := '';
+       end;
+
+       {$ENDIF LINUX}
+       {$IFDEF DARWIN}
+       StringResult :=  getCommandResult('dig +short -x  '+s1);
        {$ENDIF LINUX}
        {$IFDEF WINDOWS}
        StringResult :=  '';
@@ -13993,6 +14176,44 @@ begin
          StringResult := trim(s1);
      End;
  end
+
+ else if LowerCase (s) = LowerCase ('which') then
+ begin
+  if Skip ('(', r, r, InfoSyntaxError)
+  then
+   if EvaluateString (r, r, s1, InfoSyntaxError)
+   then
+     if Skip (')', r,r, InfoSyntaxError)
+     then
+     Begin
+         syntaxCheck := true;
+         if not which(s1,StringResult) then
+            StringResult := '';
+     End;
+ end
+
+ else if LowerCase (s) = LowerCase ('replaceOpsiConstants') then
+ begin
+  if Skip ('(', r, r, InfoSyntaxError)
+  then
+   if EvaluateString (r, r, s1, InfoSyntaxError)
+   then
+     if Skip (')', r,r, InfoSyntaxError)
+     then
+     Begin
+         syntaxCheck := true;
+         list1 := TXStringList.create;
+         tmpstr := s1;
+          for i := 1 to ConstList.Count   do
+          begin
+           if list1.replaceInLine(tmpstr, Constlist.Strings [i-1], ConstValuesList.Strings [i-1], false,tmpstr1) then
+              tmpstr := tmpstr1;
+          end;
+          StringResult := tmpstr;
+         list1.free;
+     End;
+ end
+
 
  else if LowerCase (s) = LowerCase ('asConfidential') then
  begin
@@ -16923,6 +17144,7 @@ var
 
 
 
+
 begin
  syntaxCheck := false;
  InfoSyntaxError := '';
@@ -17788,6 +18010,26 @@ begin
     end;
  end
 
+ else if Skip ('isPingReachable', Input, r, InfoSyntaxError)
+ then
+ begin
+    if Skip ('(', r, r, InfoSyntaxError)
+    then if EvaluateString (r, r, s1, InfoSyntaxError)
+    then if Skip (')', r, r, InfoSyntaxError)
+    then
+    Begin
+      syntaxCheck := true;
+      try
+        if pinghost(s1) <> -1 then
+          BooleanResult := true
+        else BooleanResult := false;
+      except
+        BooleanResult := false;
+      end
+    end;
+ end
+
+
 
  else if Skip ('isValidIP4', Input, r, InfoSyntaxError)
  then
@@ -18349,6 +18591,14 @@ end
     Syntaxcheck := true;
     errorOccured := false;
     booleanresult := isWinPE;
+ end
+
+  else if Skip ('runningWithGui', Input, r, InfoSyntaxError)
+ then
+ begin
+    Syntaxcheck := true;
+    errorOccured := false;
+    booleanresult := isGUI;
  end
 
 
@@ -18957,7 +19207,35 @@ begin
   end;
 end;
 
-function TuibInstScript.doAktionen (const Sektion: TWorkSection; const CallingSektion: TWorkSection)
+procedure TuibInstScript.ApplyTextConstantsToString (var mystr : String; CStringEscaping : Boolean);
+ var
+  i: Integer;
+  NewLine : String = '';
+begin
+  //LogDatei.log_prog('ApplyTextConstantsToString - base: '+mystr,LLDebug2);
+ for i := 1 to ConstList.Count do
+ begin
+   //LogDatei.log_prog('ApplyTextConstantsToString - const: '+Constlist.Strings [i-1],LLDebug2);
+   if CStringEscaping then
+   begin
+     if ReplaceInLine(mystr, Constlist.Strings [i-1], CEscaping (ConstValuesList.Strings [i-1]), false, NewLine) then
+     begin
+       mystr := NewLine;
+       //LogDatei.log_prog('ApplyTextConstantsToString - new: '+mystr,LLDebug2);
+     end;
+   end
+   else
+   begin
+     if ReplaceInLine(mystr, Constlist.Strings [i-1], ConstValuesList.Strings [i-1], false, NewLine) then
+     begin
+       mystr := NewLine;
+       //LogDatei.log_prog('ApplyTextConstantsToString - new: '+mystr,LLDebug2);
+     end;
+   end;
+ end;
+end;
+
+function TuibInstScript.doAktionen (Sektion: TWorkSection; const CallingSektion: TWorkSection)
                        : TSectionResult;
  var
   i : integer=0;
@@ -19090,6 +19368,8 @@ begin
   //FBatchOberflaeche.setPicture (3, '', '');
 
   ArbeitsSektion := TWorkSection.create (NestLevel,Sektion);
+  //ApplyTextConstants (TXStringList (ArbeitsSektion), false);
+  //ApplyTextConstants (TXStringList (Sektion), false);
   output := TXStringList.Create;
   {$IFDEF GUI}
   FBatchOberflaeche.setWindowState(batchWindowMode);
@@ -19109,6 +19389,8 @@ begin
   begin
    //writeln(actionresult);
     Remaining := trim (Sektion.strings [i-1]);
+    // Replace constants on every line in primary section:
+    ApplyTextConstantsToString (Remaining, false);
     logdatei.log_prog('Working doAktionen: Remaining:'+remaining,LLDebug2);
     //logdatei.log_prog('Actlevel: '+IntToStr(Actlevel)+' NestLevel: '+IntToStr(NestLevel)+' Sektion.NestingLevel: '+IntToStr(Sektion.NestingLevel)+' condition: '+BoolToStr(conditions [ActLevel],true),LLDebug3);
     if (inDefFuncLevel = 0)          // count only lines on base level
@@ -19667,7 +19949,7 @@ begin
               LogDatei.log ('', LLinfo);
               LogDatei.log ('~~~~~~~ Start Sub ~~~~~~~  ' + ArbeitsSektion.Name, LLinfo);
               ArbeitsSektion.NestingLevel := NestLevel; // ArbeitsSektion.NestingLevel + 1;
-              ApplyTextConstants (TXStringList (ArbeitsSektion), false);
+              //ApplyTextConstants (TXStringList (ArbeitsSektion), false);
 
               ActionResult := doAktionen (ArbeitsSektion, Sektion);
               LogDatei.log ('', LLinfo);
@@ -19982,15 +20264,36 @@ begin
                         if (not found) then
                         begin
                           {$IFDEF WINDOWS}
-                          // search in %WinstDir%\lib
+                          // search in %OpsiscriptDir%\lib
                           testincfilename := ExtractFileDir(reencode(paramstr(0),'system'))
                                                +PathDelim+'lib'+PathDelim+incfilename;
                           {$ENDIF WINDOWS}
-                          {$IFDEF UNIX}
+                          {$IFDEF LINUX}
                           // search in /usr/share/opsi-script/lib
                           testincfilename := '/usr/share/opsi-script'
                                                +PathDelim+'lib'+PathDelim+incfilename;
                           {$ENDIF LINUX}
+                          {$IFDEF DARWIN}
+                          // search in %OpsiscriptDir%\lib
+                          testincfilename := ExtractFileDir(reencode(paramstr(0),'system'))
+                                               +PathDelim+'lib'+PathDelim+incfilename;
+                          testincfilename := ExpandFilename(testincfilename);
+                          LogDatei.log_prog('Looking for: '+testincfilename,LLNotice);
+                          if FileExistsUTF8(testincfilename) then
+                          begin
+                            found := true;
+                            fullincfilename := testincfilename;
+                          end;
+                          if (not found) then
+                          begin
+                             // search in /usr/local/share/opsi-script/lib
+                             testincfilename := '/usr/local/share/opsi-script'
+                                               +PathDelim+'lib'+PathDelim+incfilename;
+                          end;
+                          {$ENDIF DARWIN}
+                        end;
+                        if (not found) then
+                        begin
                           testincfilename := ExpandFilename(testincfilename);
                           LogDatei.log_prog('Looking for: '+testincfilename,LLNotice);
                           if FileExistsUTF8(testincfilename) then
@@ -21117,6 +21420,27 @@ begin
                     ActionResult
                     := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
 
+                 tsforceLogInAppendMode:
+                  if skip ('=', remaining, remaining, InfoSyntaxError)
+                  then
+                  Begin
+                     if   UpperCase (Remaining) = 'TRUE' then
+                     begin
+                       LogDatei.log ('forceLogInAppendMode was '+BoolToStr(forceLogInAppendMode,true)+' is set to true', LLInfo);
+                       forceLogInAppendMode := true;
+                       if Assigned(LogDatei)then LogDatei.Appendmode := True;
+                     end
+                     else
+                     begin
+                       LogDatei.log ('forceLogInAppendMode was '+BoolToStr(forceLogInAppendMode,true)+' is set to false', LLInfo);
+                       forceLogInAppendMode := false;
+                       if Assigned(LogDatei)then LogDatei.Appendmode := false;
+                     end;
+                  End
+                  else
+                    ActionResult
+                    := reportError (Sektion, i, Sektion.strings [i-1], InfoSyntaxError);
+
                  tsSetDebug_Prog:
                   if skip ('=', remaining, remaining, InfoSyntaxError)
                   then
@@ -21574,7 +21898,7 @@ begin
                 end;
               end;
 
-              tsWinstVersionRequired:
+              tsOpsiscriptVersionRequired, tsWinstVersionRequired:
                  begin
 
                    GetWord (Remaining, expr, Remaining, WordDelimiterWhiteSpace);
@@ -21582,7 +21906,7 @@ begin
                    // expr should be a comparison sign
 
                    if
-                    getDecimalCompareSign (osconf.WinstVersion, numberString, sign, InfoSyntaxError, false)
+                    getDecimalCompareSign (osconf.OpsiscriptVersion, numberString, sign, InfoSyntaxError, false)
                    then
                    Begin
 
@@ -21591,9 +21915,9 @@ begin
                      if evaluated then
                      Begin
                        LogDatei.log
-                        (osconf.selfProductName+' has version  ' + osconf.WinstVersion + ', required is : ' + expr + ' ' + numberString,
+                        (osconf.selfProductName+' has version  ' + osconf.OpsiscriptVersion + ', required is : ' + expr + ' ' + numberString,
                          LLinfo);
-                      LogDatei.WinstVersionRequired := numberString;
+                      LogDatei.OpsiscriptVersionRequired := numberString;
                      end
                      else
                      Begin
@@ -21965,12 +22289,16 @@ begin
               tsFileActions:
                 begin
                  logdatei.log('Execution of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
+                 if ArbeitsSektion.count > 0 then
+                   for tmpint:= 0 to ArbeitsSektion.count -1  do
+                      logdatei.log(ArbeitsSektion.Strings[tmpint], LLDebug2);
                  flag_all_ntuser := false;
                  // if this is a 'ProfileActions' which is called as sub in Machine mode
                  // so run registry sections implicit as /Allntuserdats
                  if runProfileActions then
                       flag_all_ntuser := true;
                  ActionResult := doFileActions (ArbeitsSektion, Remaining);
+                 logdatei.log('Finished of: '+ArbeitsSektion.Name+' '+ Remaining,LLNotice);
                 end;
 
               tsLinkFolder:
@@ -22852,7 +23180,7 @@ begin
           if not isMounted(depotdir) then
           begin
             logdatei.log('Try remount ...',LLWarning);
-            mount_depotshare(depotDir, opsiservicePassword);
+            mount_depotshare(depotDir, opsiservicePassword, osconf.computername);
           end;
         end;
         {$ENDIF LINUX}
@@ -22903,7 +23231,7 @@ begin
   LogDatei.log ('', LLessential);
 
 
-  ps := '============ ' + WinstVersionName + ' script "' + Scriptdatei   + '"';
+  ps := '============ ' + OpsiscriptVersionName + ' script "' + Scriptdatei   + '"';
   LogDatei.log (ps, LLessential);
   ps :=  '             used script encoding: '  +  usedEncoding;
   LogDatei.log (ps, LLessential);
@@ -22988,6 +23316,10 @@ begin
   else tmpstr :=  tmpstr+' 32 Bit';
   LogDatei.log (tmpstr, LLessential);
   {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  tmpstr :=  'macOS: '+ GetMacosVersionInfo;
+  LogDatei.log (tmpstr, LLessential);
+  {$ENDIF DARWIN}
 
   if opsidata <> nil then
   begin
@@ -23168,9 +23500,15 @@ begin
     FConstList.add('%WinstDir%');
     ValueToTake := ExtractFileDir (reencode(paramstr(0),'system'));
     FConstValuesList.add (ValueToTake);
+     FConstList.add('%OpsiscriptDir%');
+    ValueToTake := ExtractFileDir (reencode(paramstr(0),'system'));
+    FConstValuesList.add (ValueToTake);
 
     FConstList.add('%WinstVersion%');
-    ValueToTake := osconf.WinstVersion;
+    ValueToTake := osconf.OpsiscriptVersion;
+    FConstValuesList.add (ValueToTake);
+    FConstList.add('%OpsiscriptVersion%');
+    ValueToTake := osconf.OpsiscriptVersion;
     FConstValuesList.add (ValueToTake);
 
     FConstList.add ('%LogFile%');
@@ -23458,6 +23796,7 @@ begin
     deleteTempBatFiles('');
     LogDatei.log ('Temp cmd files deleted, next: free script ', LLDebug2);
   end;
+  if Script.forceLogInAppendMode then LogDatei.Appendmode:= True;
 
   (*
   moved before final output
@@ -23592,6 +23931,7 @@ begin
   PStatNames^ [tsFatalOnSyntaxError]     := 'FatalOnSyntaxError';
   PStatNames^ [tsFatalOnRuntimeError]    := 'FatalOnRuntimeError';
   PStatNames^ [tsAutoActivityDisplay]    := 'AutoActivityDisplay';
+  PStatNames^ [tsforceLogInAppendMode]   := 'forceLogInAppendMode';
 
   PStatNames^ [tsSetConfidential]        := 'SetConfidential';
 
@@ -23613,6 +23953,7 @@ begin
   PStatNames^ [tsUpdateEnvironment]   := 'UpdateEnvironment';
   PStatNames^ [tsLoadProductProperties] := 'LoadProductProperties';
   PStatNames^ [tsWinstVersionRequired] := 'RequiredWinstVersion';
+  PStatNames^ [tsOpsiscriptVersionRequired] := 'RequiredOpsiscriptVersion';
   PStatNames^ [tsSetUsercontext]       := 'SetUserContext';
   PStatNames^ [tsSaveVersionToProfile]       := 'saveVersionToProfile';
 

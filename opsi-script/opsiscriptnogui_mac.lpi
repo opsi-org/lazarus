@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="11"/>
+    <General>
+      <Flags>
+        <MainUnitHasCreateFormStatements Value="False"/>
+      </Flags>
+      <SessionStorage Value="InIDEConfig"/>
+      <MainUnit Value="0"/>
+      <Title Value="opsi-script-nogui"/>
+      <UseAppBundle Value="False"/>
+      <ResourceType Value="res"/>
+      <XPManifest>
+        <DpiAware Value="True"/>
+      </XPManifest>
+    </General>
+    <i18n>
+      <OutDir Value="languages"/>
+    </i18n>
+    <VersionInfo>
+      <UseVersionInfo Value="True"/>
+      <MajorVersionNr Value="4"/>
+      <MinorVersionNr Value="12"/>
+      <RevisionNr Value="3"/>
+      <BuildNr Value="6"/>
+      <StringTable Comments="Compiled with Lazarus 2.0.6" CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi-script-nogui" InternalName="opsiscriptnogui" LegalCopyright="AGPL v3" LegalTrademarks="opsi / opsi.org" ProductName="opsi-script" ProductVersion="4.1.0"/>
+    </VersionInfo>
+    <BuildModes Count="3">
+      <Item1 Name="default" Default="True"/>
+      <Item2 Name="Debug">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="opsi-script-nogui"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\synapse"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <SyntaxMode Value="Delphi"/>
+              <IncludeAssertionCode Value="True"/>
+              <AllowLabel Value="False"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+            <TargetOS Value="linux"/>
+            <SmallerCode Value="True"/>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2Set"/>
+              <UseHeaptrc Value="True"/>
+              <StripSymbols Value="True"/>
+              <UseExternalDbgSyms Value="True"/>
+            </Debugging>
+          </Linking>
+          <Other>
+            <Verbosity>
+              <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
+            </Verbosity>
+            <CompilerMessages>
+              <IgnoredMessages idx5058="True" idx5027="True"/>
+            </CompilerMessages>
+            <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT"/>
+          </Other>
+        </CompilerOptions>
+      </Item2>
+      <Item3 Name="Release">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="opsi-script-nogui"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\synapse"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <SyntaxMode Value="Delphi"/>
+              <AllowLabel Value="False"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="darwin"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+            <SmallerCode Value="True"/>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <StripSymbols Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+          </Linking>
+          <Other>
+            <Verbosity>
+              <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
+            </Verbosity>
+            <CompilerMessages>
+              <IgnoredMessages idx5058="True" idx5027="True"/>
+            </CompilerMessages>
+            <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT -dSYNAPSE"/>
+          </Other>
+        </CompilerOptions>
+      </Item3>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <local>
+        <CommandLineParams Value="-opsiservice https://192.168.1.14:4447/rpc -clientid pctry5detlef.uib.local -username pctry5detlef.uib.local -password 2eb916a353d8604133a64e762ff45c88"/>
+        <LaunchingApplication Use="True"/>
+        <Display Use="True"/>
+      </local>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default">
+          <local>
+            <CommandLineParams Value="-opsiservice https://192.168.1.14:4447/rpc -clientid pctry5detlef.uib.local -username pctry5detlef.uib.local -password 2eb916a353d8604133a64e762ff45c88"/>
+            <LaunchingApplication Use="True"/>
+            <Display Use="True"/>
+          </local>
+        </Mode0>
+      </Modes>
+    </RunParams>
+    <RequiredPackages Count="3">
+      <Item1>
+        <PackageName Value="LCLBase"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="LazUtils"/>
+      </Item2>
+      <Item3>
+        <PackageName Value="FCL"/>
+      </Item3>
+    </RequiredPackages>
+    <Units Count="34">
+      <Unit0>
+        <Filename Value="opsiscriptnogui_mac.lpr"/>
+        <IsPartOfProject Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="packdefs.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="zipinter.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="osfunc.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="osparser.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="unicode.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="ldapsend.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="osmain.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CentralForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="oslocale.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="oscalc.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="osconf.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="opsihwbiosinfo.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="osxbase64.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="../common/oscrypt.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="../common/osencoding.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="../common/osjson.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="../common/oskeyboard.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="../common/oslog.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="../common/oswebservice.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="changelog.txt"/>
+        <IsPartOfProject Value="True"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="../common/osparserhelper.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="../common/key_valueCollection.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="../common/osfunclin.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="../common/osfuncmac.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit23>
+      <Unit24>
+        <Filename Value="../common/osnetworkcalculator.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit24>
+      <Unit25>
+        <Filename Value="../common/osprocesses.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit25>
+      <Unit26>
+        <Filename Value="../common/osprocessux.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OSProcessux"/>
+      </Unit26>
+      <Unit27>
+        <Filename Value="../common/osregex.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit27>
+      <Unit28>
+        <Filename Value="../common/osurlparser.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit28>
+      <Unit29>
+        <Filename Value="../common/osxml.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit29>
+      <Unit30>
+        <Filename Value="../common/osxmlsections.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit30>
+      <Unit31>
+        <Filename Value="../common/osxmltdom.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit31>
+      <Unit32>
+        <Filename Value="../common/oszip.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OsZip"/>
+      </Unit32>
+      <Unit33>
+        <Filename Value="../common/macspecfolder.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit33>
+    </Units>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <PathDelim Value="\"/>
+    <Target>
+      <Filename Value="opsi-script-nogui"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="$(ProjOutDir)"/>
+      <OtherUnitFiles Value="..\common;..\external_libraries\dcpcrypt\Ciphers;..\external_libraries\dcpcrypt\Hashes;..\external_libraries\misc;..\external_libraries\uSMBIOS;..\external_libraries\dcpcrypt;..\external_libraries\synapse"/>
+    </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <SyntaxMode Value="Delphi"/>
+        <AllowLabel Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <SmartLinkUnit Value="True"/>
+      <Checks>
+        <IOChecks Value="True"/>
+        <OverflowChecks Value="True"/>
+        <StackChecks Value="True"/>
+      </Checks>
+      <TargetCPU Value="x86_64"/>
+      <SmallerCode Value="True"/>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <GenerateDebugInfo Value="False"/>
+        <StripSymbols Value="True"/>
+        <UseExternalDbgSyms Value="True"/>
+      </Debugging>
+      <LinkSmart Value="True"/>
+    </Linking>
+    <Other>
+      <Verbosity>
+        <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
+      </Verbosity>
+      <CompilerMessages>
+        <IgnoredMessages idx5058="True" idx5027="True"/>
+      </CompilerMessages>
+      <CustomOptions Value="-dOPSIWINST -dOPSISCRIPT"/>
+    </Other>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="6">
+      <Item1>
+        <Name Value="EAbort"/>
+      </Item1>
+      <Item2>
+        <Name Value="ECodetoolError"/>
+      </Item2>
+      <Item3>
+        <Name Value="EFOpenError"/>
+      </Item3>
+      <Item4>
+        <Name Value="EConvertError"/>
+      </Item4>
+      <Item5>
+        <Name Value="ERegistryException"/>
+      </Item5>
+      <Item6>
+        <Name Value="EReadError"/>
+      </Item6>
+    </Exceptions>
+  </Debugging>
+</CONFIG>

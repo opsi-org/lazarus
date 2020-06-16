@@ -102,6 +102,7 @@ procedure TFSQL.SpeedButton1Click(Sender: TObject);
 
 begin
  Fresult := TFResult.create(self);
+ FResult.setResultDataset(DataModule1.Query4Result);
  if DataModule1.Query4Result.Active then DataModule1.Query4Result.close;
  DataModule1.Query4Result.SQL.Text := FSQL.memosql.Text;
  DataModule1.Query4Result.open;

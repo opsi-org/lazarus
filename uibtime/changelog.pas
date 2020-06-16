@@ -1,4 +1,71 @@
 (*
+uibtime (4.1.1.60-1) stable; urgency=low
+
+ * statistik: better behavior of node dropdown
+ * multiday: avoid double Feiertag entries
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 08 Jan 2020 15:00:00 +0000
+
+uibtime (4.1.1.59-1) stable; urgency=low
+
+ * uibdata: do not raise catched exception in getLoggedInList
+
+-- detlef oertel <d.oertel@uib.de>  Thu, 02 Jan 2020 15:00:00 +0000
+
+uibtime (4.1.1.58-1) stable; urgency=low
+
+ * httpservice:ServerThread.Execute: comment out finally
+ * uibtime.ini: chacnged host to uibtime.uib.local
+
+-- detlef oertel <d.oertel@uib.de>  Mon, 16 Dec 2019 15:00:00 +0000
+
+uibtime (4.1.1.57-1) stable; urgency=low
+
+ * uibdata: eventhandler onendsession
+
+-- detlef oertel <d.oertel@uib.de>  Thu, 07 Nov 2019 15:00:00 +0000
+
+uibtime (4.1.1.56-1) stable; urgency=low
+
+ * workdescription: more space (wider) in left grid for row event
+ * oslog: more debug messages in order to find Exception EInvalidOp: Invalid floating point operation
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 25 Oct 2019 15:00:00 +0000
+
+uibtime (4.1.1.55-1) stable; urgency=low
+
+ * workdescription: more space (wider) in left grid
+ * oslog: more debug messages in order to find Exception EInvalidOp: Invalid floating point operation
+
+-- detlef oertel <d.oertel@uib.de>  Thu, 24 Oct 2019 15:00:00 +0000
+
+uibtime (4.1.1.54-1) stable; urgency=low
+
+ * nachf: more debug messages in order to find Exception EInvalidOp: Invalid floating point operation
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 23 Aug 2019 15:00:00 +0000
+
+uibtime (4.1.1.53-1) stable; urgency=low
+
+ * result: fixed result.lfm / pakagelist
+ * result.pas: Search field for locate and filter
+   on selectable field
+ * Treescrolldown: wider for longer event names
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 16 Aug 2019 15:00:00 +0000
+
+uibtime (4.1.1.52-1) stable; urgency=low
+
+ * Exceptionhandling: not always terminate
+ * Exceptionhandling: debug outlist
+ * Exceptionhandling: dump stack only on unhandled exceptions
+ * Exceptionhandling: handling for EConvertError ; fixes: #4110 , #3833 , #3439
+ * dataedit: event umbenennung Basis aktuelles Datum statt august 2017 ; fixes: #4120
+ * dataedit: event umbenennung: do commitRetaining ; fixes: #4119
+
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 13 Aug 2019 15:00:00 +0000
+
 uibtime (4.1.1.51-1) stable; urgency=low
 
  * uib2erp: createReport: fix in query for presumme_h

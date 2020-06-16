@@ -52,11 +52,12 @@ msgstr "Venligst indtast opsi service brugernavn:"
 msgid "Ready to continue ?"
 msgstr ""
 
-#: tcentralform.beenden1.caption
-msgctxt "tcentralform.beenden1.caption"
-msgid "Exit"
+#: tfinputstring.caption
+msgid "opsi-script - string input"
 msgstr ""
 
+#: tfinputstring.editbutton1.text
+msgid "EditButton1"
 #: tcentralform.buttongetclipboardtext.caption
 msgid "Clipboard --> Viewlist"
 msgstr ""
@@ -99,6 +100,7 @@ msgstr ""
 
 #: tcentralform.label1.caption
 msgctxt "tcentralform.label1.caption"
+msgctxt "tfinputstring.label1.caption"
 msgid "Label1"
 msgstr ""
 

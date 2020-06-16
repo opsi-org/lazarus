@@ -17,6 +17,7 @@ uses
   Classes,
   SysUtils,
   osfunc,
+  ostxstringlist,
   Windows,
 {$IFNDEF WIN64}
   DSiWin32,
@@ -293,7 +294,16 @@ begin
         outlines.Add(
           //inttostr (line_no) + ': ' +
           Buffer);
+        {$IFDEF GUI}
+        if showoutput then
+        begin
+          SystemInfo.Memo1.Lines.Add(output_line);
+          ProcessMess;
+        end;
+        //ProcessMess;
+        {$ENDIF GUI}
         Buffer := '';
+
       end;
     end;
     GetExitCodeProcess(pi.hProcess, lpExitCode);

@@ -10,6 +10,7 @@ uses
   TypInfo,
   osparserhelper,
   osparser,
+  ostxstringlist,
   osfunc;
 
 type

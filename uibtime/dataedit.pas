@@ -109,7 +109,7 @@ type
     procedure DBGrid9DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: integer; Column: TColumn; State: TGridDrawState);
     procedure DBLookupComboBoxMouseWheel(Sender: TObject; Shift: TShiftState;
-      WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+      WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
     procedure PageControl1Enter(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure DBGrid1Enter(Sender: TObject);
@@ -143,6 +143,7 @@ type
     procedure TabSheet4Show(Sender: TObject);
     procedure TabSheet5Show(Sender: TObject);
     procedure TabSheet6Show(Sender: TObject);
+    procedure TabSheet7Show(Sender: TObject);
     procedure TabSheet8Show(Sender: TObject);
     procedure TabSheet9Show(Sender: TObject);
 
@@ -272,6 +273,15 @@ begin
       oldname + ' to' + newname);
   finally
     screen.Cursor := crDefault;
+    try
+      if DataModule1.SQLTransaction1.Active then
+      begin
+        DataModule1.SQLTransaction1.CommitRetaining;
+        DataModule1.debugOut(5, 'Rename Event: (CommitRetaining)');
+      end
+    except
+      DataModule1.debugOut(2, 'Exception in Rename Event: (CommitRetaining)');
+    end;
     LabelProgress.Caption := 'Fertig.';
     DataModule1.debugOut(5, 'dataedit: ButtonRenameEventClick: finished');
     Application.ProcessMessages;
@@ -282,7 +292,7 @@ procedure TFDataedit.ButtonReactivateClick(Sender: TObject);
 var
   oldname: string;
   oldfound: boolean;
-  reavtivate : boolean = false;
+  reavtivate: boolean = False;
 begin
   try
     screen.Cursor := crHourGlass;
@@ -307,25 +317,26 @@ begin
     if SQLQueryRenameEvent.FieldByName('zahl').AsInteger > 0 then
     begin
       oldfound := True;
-      reavtivate := false;
+      reavtivate := False;
     end;
 
     if oldfound then
     begin
       DataModule1.debugOut(5,
         'dataedit: ButtonReactivateClick: Warning: existing datasets.');
-      if MessageDlg('Warnung', 'Altes Event hat noch abhängige Datensätze in uibevent.'
-                     + sLineBreak + 'Trotzdem reaktivieren ?', mtConfirmation,
-                     [mbYes, mbNo],0) = mrYes then
+      if MessageDlg('Warnung',
+        'Altes Event hat noch abhängige Datensätze in uibevent.' +
+        sLineBreak + 'Trotzdem reaktivieren ?', mtConfirmation,
+        [mbYes, mbNo], 0) = mrYes then
       begin
-        reavtivate := true;
+        reavtivate := True;
         DataModule1.debugOut(5,
-        'dataedit: ButtonReactivateClick: Problem: existing datasets. : override by user');
+          'dataedit: ButtonReactivateClick: Problem: existing datasets. : override by user');
       end
       else
       begin
         DataModule1.debugOut(5,
-        'dataedit: ButtonReactivateClick: Problem: existing datasets. : cancled by user');
+          'dataedit: ButtonReactivateClick: Problem: existing datasets. : cancled by user');
       end;
     end;
 
@@ -398,7 +409,7 @@ end;
 
 procedure TFDataedit.DBGrid1EditingDone(Sender: TObject);
 begin
-  DataModule1.debugOut(5, 'start  '+ Sender.ClassName+' DBGrid1EditingDone');
+  DataModule1.debugOut(5, 'start  ' + Sender.ClassName + ' DBGrid1EditingDone');
 end;
 
 procedure TFDataedit.DBGrid1FieldEditMask(Sender: TObject; const Field: TField;
@@ -461,11 +472,11 @@ begin
 end;
 
 procedure TFDataedit.DBLookupComboBoxMouseWheel(Sender: TObject;
-  Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint;
-  var Handled: Boolean);
+  Shift: TShiftState; WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
 begin
-  Handled:= true;
-  if PtInRect(TDBLookupCombobox(sender).ReadBounds,mousepos) then Handled:= false;
+  Handled := True;
+  if PtInRect(TDBLookupCombobox(Sender).ReadBounds, mousepos) then
+    Handled := False;
 end;
 
 procedure TFDataedit.FormActivate(Sender: TObject);
@@ -736,6 +747,11 @@ begin
 
 end;
 
+procedure TFDataedit.TabSheet7Show(Sender: TObject);
+begin
+  DateTimePickerFromDate.Date := Date;
+end;
+
 
 procedure TFDataedit.TabSheet8Show(Sender: TObject);
 begin
@@ -756,7 +772,15 @@ begin
     DataModule1.SQuibdefproj.Open;
     datamodule1.debugOut(5, 'TabSheet9Show: opend query');
   end;
-
 end;
 
+(*
+procedure TFDataedit.CustomExceptionHandler(Sender: TObject; E: Exception);
+begin
+  Application.ShowException(E);
+  DumpExceptionCallStack(E);
+  datamodule1.debugOut(1, 'Exception', 'Exception dumped - terminating');
+  //Application.Terminate;
+end;
+*)
 end.

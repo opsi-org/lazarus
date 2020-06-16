@@ -91,7 +91,7 @@ type
     procedure Btn_work_descriptionClick(Sender: TObject);
     procedure DBLCB_topten_eventExit(Sender: TObject);
     procedure DBLCB_topten_eventEnter(Sender: TObject);
-    procedure CustomExceptionHandler(Sender: TObject; E: Exception);
+    //procedure CustomExceptionHandler(Sender: TObject; E: Exception);
   private
     { Private-Deklarationen}
   public
@@ -597,7 +597,7 @@ begin
       if Fwork_description = nil then
         Fwork_description := TFwork_description.Create(self);
       fwork_description.PopupParent := Fwork_description;
-      fwork_description.PopupMode:=pmExplicit;
+      fwork_description.PopupMode := pmExplicit;
       Fwork_description.Showmodal;
       FreeAndNil(Fwork_description);
     end;
@@ -907,139 +907,142 @@ var
   messagelist: TStringList;
 begin
   try
-  aktstartyear := 2001;
-  aktstartmonth := 1;
-  DataModule1.debugOut(6, 'ProjektzeitTimer', 'enter TimerProjektzeitTimer');
-  suchevent := edit1.Text;
-  if QueryProjektzeit.Active then
-    QueryProjektzeit.Close;
-  //QueryProjektzeit.databasename :='uibtime';
-  QueryProjektzeit.SQL.Clear;
-  QueryProjektzeit.sql.Add(
-    ' select time_h, acc_per_monthnum, projectstart, quota_lifetime_month ');
-  QueryProjektzeit.sql.Add('    from uibaktevent');
-  QueryProjektzeit.sql.Add('    where (event = :suchevent)');
-  QueryProjektzeit.parambyname('suchevent').AsString := suchevent;
-  QueryProjektzeit.Open;
-  if not QueryProjektzeit.FieldByName('time_h').IsNull then
-  begin
-    total := QueryProjektzeit.FieldByName('time_h').AsFloat;
-    DataModule1.debugOut(6, 'ProjektzeitTimer', 'total: ' + FloatToStr(total));
-    acc_per_monthnum := QueryProjektzeit.FieldByName('acc_per_monthnum').AsFloat;
-    basemonth := trunc(acc_per_monthnum);
-    acc_per_monthnum_int := trunc(acc_per_monthnum);
-    monthsmod := acc_per_monthnum_int mod 12;
-    monthdiv := acc_per_monthnum_int div 12;
-    projektstart := QueryProjektzeit.FieldByName('projectstart').AsDateTime;
-    quota_lifetime_month := round(QueryProjektzeit.FieldByName(
-      'quota_lifetime_month').AsFloat);
-    if quota_lifetime_month > 0 then
+    aktstartyear := 2001;
+    aktstartmonth := 1;
+    DataModule1.debugOut(6, 'ProjektzeitTimer', 'enter TimerProjektzeitTimer');
+    suchevent := edit1.Text;
+    if QueryProjektzeit.Active then
+      QueryProjektzeit.Close;
+    //QueryProjektzeit.databasename :='uibtime';
+    QueryProjektzeit.SQL.Clear;
+    QueryProjektzeit.sql.Add(
+      ' select time_h, acc_per_monthnum, projectstart, quota_lifetime_month ');
+    QueryProjektzeit.sql.Add('    from uibaktevent');
+    QueryProjektzeit.sql.Add('    where (event = :suchevent)');
+    QueryProjektzeit.parambyname('suchevent').AsString := suchevent;
+    QueryProjektzeit.Open;
+    if not QueryProjektzeit.FieldByName('time_h').IsNull then
     begin
-      // Stundenkontingent
-      if QueryProjektzeit.Active then
-        QueryProjektzeit.Close;
-      QueryProjektzeit.SQL.Clear;
-      QueryProjektzeit.sql.Add(' select sum(stunden) as stunden from uibevent');
-      QueryProjektzeit.sql.Add('    where (event = :suchevent)');
-      QueryProjektzeit.sql.Add('    and  (starttime >= :von)');
-      QueryProjektzeit.sql.Add('    and (stoptime < :bis)');
-      QueryProjektzeit.parambyname('suchevent').AsString := suchevent;
-      QueryProjektzeit.parambyname('von').AsDateTime := projektstart;
-      QueryProjektzeit.parambyname('bis').AsString := datetostr(now + 1);
-    end
-    else
-    begin
-      // here is the result for the last Interval
-      lastIntervalStart := getLastIntervalStart(projektstart, now,
-        acc_per_monthnum_int, False);
-      decodeDate(lastIntervalStart, aktstartyear, aktstartmonth, aktstartday);
-      DataModule1.debugOut(6, 'getLastIntervalInfo',
-        'lastIntervalStart :' + DateToStr(lastIntervalStart));
-
-      if QueryProjektzeit.Active then
-        QueryProjektzeit.Close;
-      //QueryProjektzeit.databasename :='uibtime';
-      QueryProjektzeit.SQL.Clear;
-      if acc_per_monthnum_int > 0 then
+      total := QueryProjektzeit.FieldByName('time_h').AsFloat;
+      DataModule1.debugOut(6, 'ProjektzeitTimer', 'total: ' + FloatToStr(total));
+      acc_per_monthnum := QueryProjektzeit.FieldByName('acc_per_monthnum').AsFloat;
+      basemonth := trunc(acc_per_monthnum);
+      acc_per_monthnum_int := trunc(acc_per_monthnum);
+      monthsmod := acc_per_monthnum_int mod 12;
+      monthdiv := acc_per_monthnum_int div 12;
+      projektstart := QueryProjektzeit.FieldByName('projectstart').AsDateTime;
+      quota_lifetime_month := round(QueryProjektzeit.FieldByName(
+        'quota_lifetime_month').AsFloat);
+      if quota_lifetime_month > 0 then
       begin
+        // Stundenkontingent
+        if QueryProjektzeit.Active then
+          QueryProjektzeit.Close;
+        QueryProjektzeit.SQL.Clear;
         QueryProjektzeit.sql.Add(' select sum(stunden) as stunden from uibevent');
         QueryProjektzeit.sql.Add('    where (event = :suchevent)');
         QueryProjektzeit.sql.Add('    and  (starttime >= :von)');
         QueryProjektzeit.sql.Add('    and (stoptime < :bis)');
         QueryProjektzeit.parambyname('suchevent').AsString := suchevent;
-        QueryProjektzeit.parambyname('von').AsString :=
-          datetostr(encodedate(aktstartyear, aktstartmonth, aktstartday));
-        QueryProjektzeit.parambyname('bis').AsString :=
-          datetostr(now + 1);
+        QueryProjektzeit.parambyname('von').AsDateTime := projektstart;
+        QueryProjektzeit.parambyname('bis').AsString := datetostr(now + 1);
       end
       else
       begin
-        // monthsmod (acc_per_monthnum) is 0
-        QueryProjektzeit.sql.Add(' select sum(stunden) as stunden from uibevent');
-        QueryProjektzeit.sql.Add('    where event = :suchevent;');
-        QueryProjektzeit.parambyname('suchevent').AsString := edit1.Text;
+        // here is the result for the last Interval
+        lastIntervalStart := getLastIntervalStart(projektstart, now,
+          acc_per_monthnum_int, False);
+        decodeDate(lastIntervalStart, aktstartyear, aktstartmonth, aktstartday);
+        DataModule1.debugOut(6, 'getLastIntervalInfo',
+          'lastIntervalStart :' + DateToStr(lastIntervalStart));
+
+        if QueryProjektzeit.Active then
+          QueryProjektzeit.Close;
+        //QueryProjektzeit.databasename :='uibtime';
+        QueryProjektzeit.SQL.Clear;
+        if acc_per_monthnum_int > 0 then
+        begin
+          QueryProjektzeit.sql.Add(' select sum(stunden) as stunden from uibevent');
+          QueryProjektzeit.sql.Add('    where (event = :suchevent)');
+          QueryProjektzeit.sql.Add('    and  (starttime >= :von)');
+          QueryProjektzeit.sql.Add('    and (stoptime < :bis)');
+          QueryProjektzeit.parambyname('suchevent').AsString := suchevent;
+          QueryProjektzeit.parambyname('von').AsString :=
+            datetostr(encodedate(aktstartyear, aktstartmonth, aktstartday));
+          QueryProjektzeit.parambyname('bis').AsString :=
+            datetostr(now + 1);
+        end
+        else
+        begin
+          // monthsmod (acc_per_monthnum) is 0
+          QueryProjektzeit.sql.Add(' select sum(stunden) as stunden from uibevent');
+          QueryProjektzeit.sql.Add('    where event = :suchevent;');
+          QueryProjektzeit.parambyname('suchevent').AsString := edit1.Text;
+        end;
       end;
-    end;
-    QueryProjektzeit.Open;
-    DataModule1.debugOut(6, 'ProjektzeitTimer', 'QueryProjektzeit.Open');
-    DataModule1.debugOut(6, 'ProjektzeitTimer', 'total: ' + FloatToStr(total));
-    used := QueryProjektzeit.FieldByName('stunden').AsFloat;
-    used := used + ((now - DataModule1.SQuibevent.FieldByName('stoptime').AsFloat) * 24);
-    DataModule1.debugOut(6, 'ProjektzeitTimer', 'used: ' + FloatToStr(used));
-    available := total - used;
-    DataModule1.debugOut(6, 'ProjektzeitTimer', 'available: ' + FloatToStr(available));
-    available_min := round(abs((available - trunc(available)) * 60));
-    DataModule1.debugOut(6, 'ProjektzeitTimer',
-      'available_min: ' + IntToStr(available_min));
-    used_min := round(abs((used - trunc(used)) * 60));
-    DataModule1.debugOut(6, 'ProjektzeitTimer', 'used_min: ' + IntToStr(used_min));
-    total_min := round(abs((total - trunc(total)) * 60));
-    DataModule1.debugOut(6, 'ProjektzeitTimer', 'total_min: ' + IntToStr(total_min));
-    DataModule1.debugOut(6, 'ProjektzeitTimer', 'lastIntervalStart: ' + DatetoStr(lastIntervalStart));
-    EditProjektzeit.Hint := IntToStr(total_min) + '-' + IntToStr(
-      used_min) + ' since ' + DatetoStr(lastIntervalStart);
-    DataModule1.debugOut(6, 'ProjektzeitTimer', 'ProjektzeitTimer: ' +
-      FloatToStr(total) + '-' + FloatToStr(used) + '=' + floattostr(available));
-    EditProjektzeit.Text := IntToStr(trunc(available)) + minute2str(available_min);
-    EditProjektzeit.Hint := IntToStr(trunc(total)) + minute2str(
-      total_min) + '-' + IntToStr(trunc(used)) + minute2str(used_min) +
-      ' since 1.' + IntToStr(aktstartmonth) + '.' + IntToStr(aktstartyear);
-    if available < 0 then
-      EditProjektzeit.Font.Color := clRed
-    else
-      EditProjektzeit.Font.Color := clBlack;
-    if (trunc(available) = 0) and (available_min < 5) and (available < 0) then
-    begin
+      QueryProjektzeit.Open;
+      DataModule1.debugOut(6, 'ProjektzeitTimer', 'QueryProjektzeit.Open');
+      DataModule1.debugOut(6, 'ProjektzeitTimer', 'total: ' + FloatToStr(total));
+      used := QueryProjektzeit.FieldByName('stunden').AsFloat;
+      used := used + ((now - DataModule1.SQuibevent.FieldByName('stoptime').AsFloat) * 24);
+      DataModule1.debugOut(6, 'ProjektzeitTimer', 'used: ' + FloatToStr(used));
+      available := total - used;
+      DataModule1.debugOut(6, 'ProjektzeitTimer', 'available: ' + FloatToStr(available));
+      available_min := round(abs((available - trunc(available)) * 60));
+      DataModule1.debugOut(6, 'ProjektzeitTimer',
+        'available_min: ' + IntToStr(available_min));
+      used_min := round(abs((used - trunc(used)) * 60));
+      DataModule1.debugOut(6, 'ProjektzeitTimer', 'used_min: ' + IntToStr(used_min));
+      total_min := round(abs((total - trunc(total)) * 60));
+      DataModule1.debugOut(6, 'ProjektzeitTimer', 'total_min: ' + IntToStr(total_min));
+      DataModule1.debugOut(6, 'ProjektzeitTimer', 'lastIntervalStart: ' +
+        DatetoStr(lastIntervalStart));
+      EditProjektzeit.Hint := IntToStr(total_min) + '-' + IntToStr(
+        used_min) + ' since ' + DatetoStr(lastIntervalStart);
+      DataModule1.debugOut(6, 'ProjektzeitTimer', 'ProjektzeitTimer: ' +
+        FloatToStr(total) + '-' + FloatToStr(used) + '=' + floattostr(available));
+      EditProjektzeit.Text := IntToStr(trunc(available)) + minute2str(available_min);
+      EditProjektzeit.Hint := IntToStr(trunc(total)) + minute2str(
+        total_min) + '-' + IntToStr(trunc(used)) + minute2str(used_min) +
+        ' since 1.' + IntToStr(aktstartmonth) + '.' + IntToStr(aktstartyear);
+      if available < 0 then
+        EditProjektzeit.Font.Color := clRed
+      else
+        EditProjektzeit.Font.Color := clBlack;
+      if (trunc(available) = 0) and (available_min < 5) and (available < 0) then
+      begin
       {$IFDEF WINDOWS}
-      DataModule1.TrayIcon1.BalloonHint :=
-        'Warnung: übrige Zeit: ' + IntToStr(available_min) + ' Minuten';
-      DataModule1.TrayIcon1.ShowBalloonHint;
+        DataModule1.TrayIcon1.BalloonHint :=
+          'Warnung: übrige Zeit: ' + IntToStr(available_min) + ' Minuten';
+        DataModule1.TrayIcon1.ShowBalloonHint;
       {$ENDIF WINDOWS}
       {$IFDEF LINUX}
-      try
-        messagelist := TStringList.Create;
-        messagelist.Add('Warnung: übrige Zeit: ' + IntToStr(available_min) + ' Minuten');
-        DataModule1.ProcessTrayNotify.Parameters.AddStrings(messagelist);
-        DataModule1.ProcessTrayNotify.Execute;
-        messagelist.Free;
-      except
-        DataModule1.debugOut(3, 'trayicon', 'Exception starting notify-send ');
-      end;
+        try
+          messagelist := TStringList.Create;
+          messagelist.Add('Warnung: übrige Zeit: ' + IntToStr(available_min) +
+            ' Minuten');
+          DataModule1.ProcessTrayNotify.Parameters.AddStrings(messagelist);
+          DataModule1.ProcessTrayNotify.Execute;
+          messagelist.Free;
+        except
+          DataModule1.debugOut(3, 'trayicon', 'Exception starting notify-send ');
+        end;
       {$ENDIF LINUX}
-    end;
-  end
-  else
-    EditProjektzeit.Text := '';
+      end;
+    end
+    else
+      EditProjektzeit.Text := '';
 
-  if QueryProjektzeit.Active then
-    QueryProjektzeit.Close;
+    if QueryProjektzeit.Active then
+      QueryProjektzeit.Close;
 
-  DataModule1.debugOut(6, 'leave TimerProjektzeitTimer');
+    DataModule1.debugOut(6, 'leave TimerProjektzeitTimer');
 
   except
     on e: Exception do
     begin
-      DataModule1.debugOut(2, 'TimerProjektzeitTimer', 'Exception in TimerProjektzeitTimer ');
+      DataModule1.debugOut(2, 'TimerProjektzeitTimer',
+        'Exception in TimerProjektzeitTimer ');
       DataModule1.debugOut(2, 'TimerProjektzeitTimer', e.Message);
       raise;
     end;
@@ -1418,7 +1421,7 @@ begin
   try
     if Fwork_description = nil then
       Fwork_description := TFwork_description.Create(self);
-    Fwork_description.PopupParent:= Fwork_description;
+    Fwork_description.PopupParent := Fwork_description;
     Fwork_description.showmodal();
     FreeAndNil(Fwork_description);
     //Fwork_description.Show;
@@ -1472,6 +1475,7 @@ begin
   //Halt; // End of program execution
 end;
 
+(*
 procedure TFOnTop.CustomExceptionHandler(Sender: TObject; E: Exception);
 begin
   Application.ShowException(E);
@@ -1479,6 +1483,6 @@ begin
   datamodule1.debugOut(1, 'Exception', 'Exception dumped - terminating');
   //Application.Terminate;
 end;
-
+*)
 
 end.

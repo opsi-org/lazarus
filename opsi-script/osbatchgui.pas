@@ -33,6 +33,7 @@ uses
   Dialogs, StdCtrls, ExtCtrls, ComCtrls, LResources,
 //Sensors, indGnouMeter,
   osencoding,
+  typinfo,
   QProgBar;
 
 type
@@ -71,6 +72,7 @@ type
     {$ENDIF WINDOWS}
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormWindowStateChange(Sender: TObject);
     procedure ProgressBarActive(YesNo: boolean);
     procedure ShowProgress(Prozente: integer);
     procedure FormShow(Sender: TObject);
@@ -123,7 +125,7 @@ type
 
     //procedure setWindowState (BatchWindowMode: TBatchWindowMode);
 
-    //procedure LoadSkin (const skindirectory : String);
+
 
     function setPicture(const BitmapFile: string; const theLabel: string): boolean;
       overload;
@@ -169,6 +171,11 @@ const
   skindirectoryDefault = '/usr/share/opsi-script/skin';
   skindirectoryCustomWin = '/usr/share/opsi-script/customskin';
   {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  skindirectoryDevelopment = 'winstskin';
+  skindirectoryDefault = 'skin';
+  skindirectoryCustomWin = '/usr/local/share/opsi-script/customskin';
+  {$ENDIF DARWIN}
 
 
   StartTop: integer = 100;
@@ -439,8 +446,20 @@ begin
   else if FileExists(ExtractFilePath(ParamStr(0)) + skindirectoryDevelopment+PathDelim+'skin.ini') then
     skinDir := ExtractFilePath(ParamStr(0)) + skindirectoryDevelopment;
   {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  paramstr0enc := reencode(ParamStr(0),'system');
+  if FileExists(skindirectory+PathDelim+'skin.ini') then
+    skindir := skindirectory
+  else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryCustomWin+PathDelim+'skin.ini') then
+    skinDir := ExtractFilePath(paramstr0enc) + skindirectoryCustomWin
+  else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryDefault+PathDelim+'skin.ini') then
+    skinDir := ExtractFilePath(paramstr0enc) + skindirectoryDefault
+  else if FileExists(ExtractFilePath(paramstr0enc) + skindirectoryDevelopment+PathDelim+'skin.ini') then
+    skinDir := ExtractFilePath(paramstr0enc) + skindirectoryDevelopment;
+  {$ENDIF DARWIN}
 
   //logdatei.DependentAdd('Loading skin from: '+skindir,LLessential);
+  //skinDir := ExtractFilePath(paramstr0enc) + skindirectoryDevelopment;
   startupmessages.Append('Loading skin from: '+skindir);
   skinFile := skinDir +PathDelim+ 'skin.ini';
 
@@ -867,13 +886,16 @@ end;
 
 procedure TFBatchOberflaeche.setWindowState(BatchWindowMode: TBatchWindowMode);
 begin
+  {$IFNDEF DARWIN}
   case BatchWindowMode of
     bwmNotActivated: WindowState := wsnormal;
-    bwmIcon: WindowState := wsminimized;
-    bwmNormalWindow: WindowState := wsnormal;
-    bwmMaximized: WindowState := wsMaximized;
+    bwmIcon: if WindowState <> wsMinimized then WindowState := wsminimized;
+    bwmNormalWindow: if WindowState <> wsnormal then WindowState := wsnormal;
+    bwmMaximized: if WindowState <> wsMaximized then WindowState := wsMaximized;
   end;
-
+  if Assigned(LogDatei) then
+     LogDatei.log_prog('Switch window state to: '+GetEnumName(TypeInfo(TBatchWindowMode),ord(BatchWindowMode)),LLDebug);
+  {$ENDIF}
 end;
 
 (*
@@ -902,6 +924,12 @@ procedure TFBatchOberflaeche.FormClose(Sender: TObject; var CloseAction: TCloseA
 begin
   //prevents closing batchmode via ALT-F4
   CloseAction := caNone;
+end;
+
+procedure TFBatchOberflaeche.FormWindowStateChange(Sender: TObject);
+begin
+    if Assigned(LogDatei) then
+     LogDatei.log('Window state was switched by : '+sender.ClassName+' to: '+GetEnumName(TypeInfo(TWindowState),ord(FBatchOberflaeche.WindowState)),LLDebug);
 end;
 
 procedure TFBatchOberflaeche.ShowProgress(Prozente: integer);

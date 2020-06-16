@@ -53,6 +53,7 @@ unit osmain;
 interface
 
 uses
+//osfunc,
 {$IFDEF WINDOWS}
   Windows,
   VersionInfoX,
@@ -66,18 +67,19 @@ osfuncwin2,
   wispecfolder,
   osfuncwin3,
 {$ENDIF WINDOWS}
-{$IFDEF LINUX}
-  osfunclin,
-  lispecfolder,
+{$IFDEF UNIX}
+  osprocessux,
   baseunix,
   oscrypt,
+{$ENDIF UNIX}
+{$IFDEF LINUX}
+osfunclin,
+lispecfolder,
 {$ENDIF LINUX}
 {$IFDEF DARWIN}
-  osfunclin,
+  osfuncmac,
   lispecfolder,
-  baseunix,
-  oscrypt,
-  //macosall,
+
 {$ENDIF DARWIN}
 {$IFDEF GUI}
   osmessagedialog,
@@ -101,6 +103,7 @@ LResources,
   oswebservice,
   //wirequlist,
   oslog,
+  ostxstringlist,
   osparser,
   osparserhelper,
   osfunc,
@@ -591,7 +594,7 @@ begin
     if LogDatei <> nil then
     begin
       LogDatei.LogSIndentLevel := 0;
-      LogDatei.log('============  opsi-script ' + winstversionname +
+      LogDatei.log('============  opsi-script ' + OpsiscriptVersionname +
         ' is regularly exiting. Time ' + FormatDateTime(
         'yyyy-mm-dd  hh:mm:ss ', now) + '.', LLessential);
 
@@ -756,8 +759,8 @@ begin
     partsScriptpath := TXStringList.Create;
 
 
-    osfunc.Stringsplit(expandedScriptname, pathdelim, partsExpanded);
-    osfunc.Stringsplit(scriptPath, pathdelim, partsScriptPath);
+    Stringsplit(expandedScriptname, pathdelim, partsExpanded);
+    Stringsplit(scriptPath, pathdelim, partsScriptPath);
 
 
     i := 0;
@@ -1095,7 +1098,7 @@ var
     end;
     Result := True;
     // no errors
-  end;
+  end;// End of function ChangeProductstatusOnReinst
 
 var
   goOn: boolean;
@@ -1880,7 +1883,7 @@ begin
     if LogDateiName = '' then
       LogDateiName := LogPath + logdatei.StandardLogFilename + logdatei.StandardLogFileext;
     //writeln('StartProgramModes3');
-    Logdatei.log('opsi-script ' + winstversion + ' started at ' + starttimestr, LLessential);
+    Logdatei.log('opsi-script ' + OpsiscriptVersion + ' started at ' + starttimestr, LLessential);
     Logdatei.log('opsi-script log file with encoding ' + DefaultEncoding, LLessential);
     //writeln('StartProgramModes4');
     {$IFDEF GUI}
@@ -1935,7 +1938,7 @@ begin
         650, 250);
       {$ELSE GUI}
       //nogui
-      writeln(ExtractFileName(reencode(paramstr(0),'system')) + ' Version: '+WinstVersion);
+      writeln(ExtractFileName(reencode(paramstr(0),'system')) + ' Version: '+OpsiscriptVersion);
       writeln('command line options are' + LineEnding +
         '' + ParamDelim + '? |' + ParamDelim + 'h[elp]' + LineEnding +
         //'	 ' + ParamDelim + 'pcprofil  [PCProfileFile  [[' + ParamDelim + 'logfile] Logfile ] ] [' + ParamDelim + 'parameter ParameterString]' + LineEnding +
@@ -2074,7 +2077,7 @@ begin
 
           logSupportedEncodings;
 
-          {$IFDEF UNIX}
+          {$IFDEF LINUX}
           if not opsidata.linuxAgentActivated then
           begin
             if freeLinuxAgentStart then
@@ -3112,7 +3115,7 @@ begin
   except
     on E: Exception do
     begin
-      writeln('TCentralForm.FormCreate : ' + E.Message);
+      writeln('osmain.main : ' + E.Message);
     end;
   end;
 end;

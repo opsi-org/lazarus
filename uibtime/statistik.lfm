@@ -1,7 +1,7 @@
 object FStatistik: TFStatistik
-  Left = 204
+  Left = 642
   Height = 637
-  Top = 230
+  Top = 56
   Width = 426
   Caption = 'uibtime-Statistik'
   ClientHeight = 637
@@ -14,7 +14,7 @@ object FStatistik: TFStatistik
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poDefaultPosOnly
-  LCLVersion = '1.8.4.0'
+  LCLVersion = '2.0.6.0'
   object Panel1: TPanel
     Left = 0
     Height = 113
@@ -24,6 +24,10 @@ object FStatistik: TFStatistik
     BevelInner = bvSpace
     ClientHeight = 113
     ClientWidth = 426
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    ParentFont = False
     TabOrder = 0
     object Label1: TLabel
       Left = 1
@@ -66,7 +70,11 @@ object FStatistik: TFStatistik
       Height = 21
       Top = 73
       Width = 113
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       ItemHeight = 13
+      ParentFont = False
       TabOrder = 0
       Text = 'ComboBox1'
     end
@@ -75,7 +83,11 @@ object FStatistik: TFStatistik
       Height = 21
       Top = 75
       Width = 80
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       OnExit = Edit1Exit
+      ParentFont = False
       TabOrder = 1
       Text = 'Edit1'
     end
@@ -84,7 +96,11 @@ object FStatistik: TFStatistik
       Height = 21
       Top = 75
       Width = 80
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       OnExit = Edit2Exit
+      ParentFont = False
       TabOrder = 2
       Text = 'Edit2'
     end
@@ -94,7 +110,11 @@ object FStatistik: TFStatistik
       Top = 10
       Width = 129
       Caption = 'letzten Monat einstellen'
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       OnClick = BtnLastMonthClick
+      ParentFont = False
       TabOrder = 3
     end
     object BtnThisMonth: TButton
@@ -103,7 +123,11 @@ object FStatistik: TFStatistik
       Top = 42
       Width = 129
       Caption = 'diesen Monat einstellen'
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       OnClick = BtnThisMonthClick
+      ParentFont = False
       TabOrder = 4
     end
     object BtnLastWeek: TButton
@@ -112,7 +136,11 @@ object FStatistik: TFStatistik
       Top = 10
       Width = 129
       Caption = 'letzte Woche einstellen'
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       OnClick = BtnLastWeekClick
+      ParentFont = False
       TabOrder = 5
     end
     object BtnThisWeek: TButton
@@ -121,7 +149,11 @@ object FStatistik: TFStatistik
       Top = 42
       Width = 129
       Caption = 'diese Woche einstellen'
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       OnClick = BtnThisWeekClick
+      ParentFont = False
       TabOrder = 6
     end
   end
@@ -133,6 +165,10 @@ object FStatistik: TFStatistik
     Align = alClient
     ClientHeight = 524
     ClientWidth = 426
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    ParentFont = False
     TabOrder = 1
     OnClick = Panel2Click
     object Bevel3: TBevel
@@ -231,12 +267,19 @@ object FStatistik: TFStatistik
       TabOrder = 3
     end
     object BitBtn1: TBitBtn
-      Left = 223
+      Left = 214
       Height = 28
       Top = 446
-      Width = 167
-      Kind = bkCancel
+      Width = 169
+      DefaultCaption = True
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      GlyphShowMode = gsmAlways
+      Kind = bkClose
+      ModalResult = 11
       OnClick = BitBtn1Click
+      ParentFont = False
       TabOrder = 4
     end
     object BtnTage: TButton
@@ -299,8 +342,12 @@ object FStatistik: TFStatistik
       Height = 21
       Top = 353
       Width = 37
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       MaxValue = 12
       MinValue = 1
+      ParentFont = False
       TabOrder = 9
       Value = 1
     end
@@ -309,8 +356,12 @@ object FStatistik: TFStatistik
       Height = 21
       Top = 352
       Width = 57
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       MaxValue = 2200
       MinValue = 1999
+      ParentFont = False
       TabOrder = 10
       Value = 2008
     end
@@ -320,7 +371,11 @@ object FStatistik: TFStatistik
       Top = 124
       Width = 169
       Caption = 'Summen ab Knoten'
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       OnClick = BtnTreeSumClick
+      ParentFont = False
       TabOrder = 11
     end
     object ComboBoxAktevent: TComboBox
@@ -328,9 +383,16 @@ object FStatistik: TFStatistik
       Height = 21
       Top = 195
       Width = 169
+      AutoComplete = True
+      AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactSearchAscending]
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       ItemHeight = 13
+      ParentFont = False
+      ParentShowHint = False
+      Sorted = True
       TabOrder = 12
-      Text = 'Bitte auswählen ...'
     end
     object BtnBSZreport: TBitBtn
       Left = 15
@@ -339,7 +401,11 @@ object FStatistik: TFStatistik
       Width = 168
       Caption = 'BSZ Controlling Auswertung'
       Enabled = False
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       OnClick = BtnBSZreportClick
+      ParentFont = False
       TabOrder = 13
     end
     object BitBtnKnotenByUser: TBitBtn
@@ -348,7 +414,11 @@ object FStatistik: TFStatistik
       Top = 93
       Width = 169
       Caption = 'Summe pro User ab Knoten'
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       OnClick = BitBtnKnotenByUserClick
+      ParentFont = False
       TabOrder = 14
     end
     object BitBtnControlRep2: TBitBtn
@@ -358,7 +428,11 @@ object FStatistik: TFStatistik
       Width = 169
       Caption = 'Controlling Report 2'
       Enabled = False
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       OnClick = BitBtnControlRep2Click
+      ParentFont = False
       TabOrder = 15
     end
     object BtnWorkDescription: TButton
@@ -382,7 +456,11 @@ object FStatistik: TFStatistik
       Width = 169
       Caption = 'BSZ-Tätigkeitsbericht für'
       Enabled = False
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       OnClick = BitBtnworkreportClick
+      ParentFont = False
       ParentShowHint = False
       ShowHint = True
       TabOrder = 17
@@ -404,11 +482,15 @@ object FStatistik: TFStatistik
       ChildSizing.ControlsPerLine = 1
       ClientHeight = 39
       ClientWidth = 173
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       ItemIndex = 0
       Items.Strings = (
         'aktvents'
         'allvents'
       )
+      ParentFont = False
       ParentShowHint = False
       ShowHint = True
       TabOrder = 18
@@ -436,7 +518,11 @@ object FStatistik: TFStatistik
       Top = 278
       Width = 169
       Caption = 'Monatsbericht mit Zeiten'
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
       OnClick = BitBtnMonthreportStartStopClick
+      ParentFont = False
       ParentShowHint = False
       ShowHint = True
       TabOrder = 20

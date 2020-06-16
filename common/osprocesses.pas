@@ -6,20 +6,37 @@ interface
 
 uses
   Classes, SysUtils,
+  osparserhelper,
+  {$IFDEF OPSISCRIPT}
+  ostxstringlist,
+  {$ENDIF OPSISCRIPT}
   {$IFDEF WIN32}
   Windows,
   DSiWin32,
   //  JwaWinnt,
   //  jwawinbase,
   JwaWindows,
-
   {$ENDIF WIN32}
+  {$IFDEF UNIX}
+  OSProcessux,
+
+  {$ENDIF UNIX}
+  fileutil,
+  lazfileutils,
   oslog;
 
 function ProcessIsRunning(searchproc: string): boolean;
 function numberOfProcessInstances(searchproc: string): integer;
+function which(target: string; var pathToTarget: string): boolean;
 
 implementation
+
+(*
+{$IFDEF OPSISCRIPT}
+uses
+  osfunc;
+  {$ENDIF OPSISCRIPT}
+*)
 
 // Process list
 
@@ -73,7 +90,7 @@ var
   {$ELSE OPSISCRIPT}
   outlines: TStringList;
   {$ENDIF OPSISCRIPT}
-  lineparts: TXStringlist;
+  lineparts: TStringlist;
   ExitCode: longint;
   i, k: integer;
 begin
@@ -83,9 +100,9 @@ begin
       {$IFDEF OPSISCRIPT}
       outlines := TXStringList.Create;
       {$ELSE OPSISCRIPT}
-      outlines := TXStringList.Create;
+      outlines := TStringList.Create;
       {$ENDIF OPSISCRIPT}
-      lineparts := TXStringList.Create;
+      lineparts := TStringList.Create;
       pscmd := 'ps -eo pid,user,comm:30,cmd:110';
       if not RunCommandAndCaptureOut(pscmd, True, outlines, report,
         SW_HIDE, ExitCode) then
@@ -95,9 +112,9 @@ begin
       else
       begin
         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 6;
-        LogDatei.log('', LLDebug);
-        LogDatei.log('output:', LLDebug);
-        LogDatei.log('--------------', LLDebug);
+        LogDatei.log('', LLDebug3);
+        LogDatei.log('output:', LLDebug3);
+        LogDatei.log('--------------', LLDebug3);
         if outlines.Count > 0 then
           for i := 0 to outlines.Count - 1 do
           begin
@@ -128,7 +145,7 @@ begin
             Result.Add(resultstring);
           end;
         LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
-        LogDatei.log('', LLDebug);
+        LogDatei.log('', LLDebug3);
       end;
     except
       on E: Exception do
@@ -199,5 +216,24 @@ begin
     Result := 0;
   end;
 end;
+
+function which(target: string; var pathToTarget: string): boolean;
+var
+  str: string;
+  exitcode: longint;
+  cmd: string;
+  path: string;
+begin
+  Result := False;
+  pathToTarget := '';
+  { Using FindDefaultExecutablePath from fileutil }
+  pathToTarget := FindDefaultExecutablePath(target);
+  if (pathToTarget <> '') and FileExistsUTF8(pathToTarget) then
+  begin
+    Result := true;
+    pathToTarget := Trim(pathToTarget);
+  end;
+end;
+
 
 end.

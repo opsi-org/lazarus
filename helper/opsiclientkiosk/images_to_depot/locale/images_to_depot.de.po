@@ -1,0 +1,104 @@
+# Translators:
+# Ettore Atalan <atalanttore@googlemail.com>, 2019
+# Niko Wenselowski, 2019
+# Jan Werner <j.werner@uib.de>, 2019
+# 
+msgid ""
+msgstr ""
+"Last-Translator: Jan Werner <j.werner@uib.de>, 2019\n"
+"Language-Team: German (https://www.transifex.com/opsi-org/teams/35141/de/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: de\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: imagestodepot.rscopyicons
+msgid "Copy icons and screenshots..."
+msgstr "Kopiere Icons und Screenshots..."
+
+#: imagestodepot.rscouldnotsaveicons
+msgid "Could not save icons on depot."
+msgstr "Die Symbole konnten nicht im Depot gespeichert werden."
+
+#: imagestodepot.rscouldnotsavescreenshots
+msgid "Could not save screenshots on depot."
+msgstr "Bildschirmfotos konnten nicht im Depot gespeichert werden."
+
+#: imagestodepot.rscouldnotunmount
+msgid "Could not unmount depot."
+msgstr "Das Depot konnte nicht getrennt werden."
+
+#: imagestodepot.rsdone
+msgid "done"
+msgstr "erledigt"
+
+#: imagestodepot.rsfinished
+msgid "Copy process finished. Closing window..."
+msgstr "Kopiervorgang beendet. Schließe Fenster."
+
+#: imagestodepot.rsimagesnotsaved
+msgid ""
+"Images could not be saved on opsi depot. %sPlease check if depot is mounted "
+"with write privileges."
+msgstr ""
+"Bilder konnten nicht auf dem opsi-Depot gespeichert werden. %sBitte "
+"überprüfen Sie, ob das Depot mit Schreibrechten eingebunden ist."
+
+#: imagestodepot.rsimagessaved
+msgid "Images saved on"
+msgstr "Bilder gespeichert auf"
+
+#: imagestodepot.rsisaninvaliddir
+msgid "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
+msgstr ""
+"\"%s\" ist ein ungültiges Verzeichnis.%sBitte setzen Sie \"%s\"  auf ein "
+"gültigen Verzeichnis."
+
+#: imagestodepot.rsmounting
+msgid "Mounting"
+msgstr "Einbinden"
+
+#: imagestodepot.rssettingrights
+msgctxt "imagestodepot.rssettingrights"
+msgid "Setting rights..."
+msgstr "Setze Dateirechte..."
+
+#: tformsaveimagesondepot.buttonclose.caption
+msgid "Close"
+msgstr "Schließen"
+
+#: tformsaveimagesondepot.buttoncopy.caption
+msgctxt "tformsaveimagesondepot.buttoncopy.caption"
+msgid "Save images on depot"
+msgstr "Bilder auf dem Depot speichern"
+
+#: tformsaveimagesondepot.caption
+msgctxt "tformsaveimagesondepot.caption"
+msgid "Save images on depot"
+msgstr "Bilder auf dem Depot speichern"
+
+#: tformsaveimagesondepot.checkboxmountdepot.caption
+msgctxt "tformsaveimagesondepot.checkboxmountdepot.caption"
+msgid "Mount depot"
+msgstr "Depot einbinden"
+
+#: tformsaveimagesondepot.groupboxmountdepot.caption
+msgctxt "tformsaveimagesondepot.groupboxmountdepot.caption"
+msgid "Mount depot"
+msgstr "Depot einbinden"
+
+#: tformsaveimagesondepot.groupboxpath.caption
+msgctxt "tformsaveimagesondepot.groupboxpath.caption"
+msgid "Path to depot"
+msgstr "Pfad zum Depot"
+
+#: tformsaveimagesondepot.groupboxprogress.caption
+msgid "Progress"
+msgstr "Fortschritt"
+
+#: tformsaveimagesondepot.labelpassword.caption
+msgid "Password"
+msgstr "Passwort"
+
+#: tformsaveimagesondepot.labeluser.caption
+msgid "User"
+msgstr "Benutzer"

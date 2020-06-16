@@ -104,6 +104,7 @@ msgstr ""
 
 #: tcentralform.label1.caption
 msgctxt "tcentralform.label1.caption"
+msgctxt "tfinputstring.label1.caption"
 msgid "Label1"
 msgstr ""
 

@@ -92,10 +92,11 @@ end;
 
 procedure THTTPServerThread.Execute;
 begin
+
   try
-    FServer.Active := True;
+    if FServer <> nil then  FServer.Active := True;
   finally
-    if FServer <> nil then  FreeAndNil(FServer);
+    //if FServer <> nil then  FreeAndNil(FServer);
   end;
 end;
 
@@ -221,6 +222,7 @@ begin
   DataModule1.debugOut(2,'httpservice', 'exception in ThttpDataModule1.DoHandleRequest');
   DataModule1.debugOut(2,'httpservice', 'RequestError: '+e.Message);
 end;
+
 
 procedure ThttpDataModule1.DumpExceptionCallStack;
 var

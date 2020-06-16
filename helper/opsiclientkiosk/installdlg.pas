@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ButtonPanel,
-  ComCtrls, ExtCtrls, StdCtrls, Buttons,ockdata;
+  ComCtrls, ExtCtrls, StdCtrls, Buttons,opsiconnection;
 
 type
 
@@ -21,11 +21,13 @@ type
     ToolBar1: TToolBar;
     procedure BitBtnLaterClick(Sender: TObject);
     procedure BitBtnNowClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
     procedure Memo1Change(Sender: TObject);
   private
     { private declarations }
   public
     { public declarations }
+    SoftwareOnDemand : boolean;
   end;
 
 var
@@ -44,11 +46,16 @@ begin
     // fire on demand
     //http://wiki.freepascal.org/Cursor#Example_3:_Change_All_Controls_To_An_Hour_Glass.2C_Except_TBitBtn_Controls
     screen.Cursor := crHourGlass;
-    ockdata.firePushInstallation;
+    OCKOpsiConnection.DoActionsOnDemand;
   finally
     screen.Cursor := crDefault;
   end;
   visible := false;
+end;
+
+procedure TFInstalldlg.FormActivate(Sender: TObject);
+begin
+  if not SoftwareOnDemand then BitBtnNow.Enabled:= False;
 end;
 
 procedure TFInstalldlg.Memo1Change(Sender: TObject);

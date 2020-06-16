@@ -15,7 +15,7 @@ object FDataedit: TFDataedit
   OnHide = FormHide
   PopupMode = pmExplicit
   Position = poScreenCenter
-  LCLVersion = '2.0.0.4'
+  LCLVersion = '2.0.6.0'
   object PageControl1: TPageControl
     Left = 0
     Height = 375
@@ -736,6 +736,7 @@ object FDataedit: TFDataedit
       Caption = 'Rename Event'
       ClientHeight = 349
       ClientWidth = 806
+      OnShow = TabSheet7Show
       object Bevel2: TBevel
         Left = 16
         Height = 114
