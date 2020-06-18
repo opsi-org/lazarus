@@ -220,8 +220,11 @@ begin
   LogDatei.WriteHistFile := False;
 
   //LogDatei.StandardPartLogFilename := lfilename+ '-part';
+  {$IFDEF UNIX}
+  WriteLn('Will using log: '+LogDatei.StandardLogPath+LogDatei.StandardLogFilename);
+  {$ENDIF UNIX}
   LogDatei.CreateTheLogfile(lfilename + '.log', True);
-  WriteLn('Using log: '+LogDatei.StandardLogPath+PathDelim+LogDatei.StandardLogFilename);
+
   // push prelog buffer to logfile
   if preloglist.Count > 0 then
     for i := 0 to preloglist.Count - 1 do

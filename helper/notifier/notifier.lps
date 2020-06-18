@@ -28,6 +28,7 @@
         <Filename Value="notifier_base.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="4"/>
+        <TopLine Value="28"/>
         <CursorPos X="5" Y="9"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
@@ -36,7 +37,7 @@
         <Filename Value="..\..\common\oslog.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="1891"/>
+        <TopLine Value="1867"/>
         <CursorPos X="60" Y="1912"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
@@ -47,9 +48,10 @@
         <ComponentName Value="DataModule1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="194"/>
-        <CursorPos X="88" Y="224"/>
+        <TopLine Value="204"/>
+        <CursorPos X="8" Y="225"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -66,7 +68,7 @@
           <TopLine Value="157"/>
           <CursorPos X="30" Y="178"/>
         </ExtraEditor1>
-        <UsageCount Value="199"/>
+        <UsageCount Value="201"/>
         <Loaded Value="True"/>
       </Unit5>
       <Unit6>
@@ -74,7 +76,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="5"/>
         <CursorPos X="75" Y="65"/>
-        <UsageCount Value="163"/>
+        <UsageCount Value="167"/>
         <Loaded Value="True"/>
       </Unit6>
       <Unit7>
@@ -83,16 +85,15 @@
         <EditorIndex Value="9"/>
         <TopLine Value="37"/>
         <CursorPos Y="57"/>
-        <UsageCount Value="163"/>
+        <UsageCount Value="167"/>
         <Loaded Value="True"/>
       </Unit7>
       <Unit8>
         <Filename Value="notifier.txt"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <CursorPos X="21" Y="6"/>
-        <UsageCount Value="124"/>
+        <CursorPos X="37" Y="9"/>
+        <UsageCount Value="128"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit8>
@@ -103,7 +104,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="62"/>
+        <UsageCount Value="66"/>
       </Unit9>
       <Unit10>
         <Filename Value="..\..\common\superobject.pas"/>
@@ -187,7 +188,7 @@
         <EditorIndex Value="8"/>
         <TopLine Value="38"/>
         <CursorPos X="14" Y="45"/>
-        <UsageCount Value="38"/>
+        <UsageCount Value="40"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Ini"/>
       </Unit21>

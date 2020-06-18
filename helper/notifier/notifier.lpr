@@ -16,6 +16,8 @@ uses
 
 begin
   RequireDerivedFormResource:=True;
+  Application.Scaled:=True;
+  Application.Title:='opsi-notifier';
   Application.Initialize;
   Application.CreateForm(TDataModule1, DataModule1);
   Application.Run;

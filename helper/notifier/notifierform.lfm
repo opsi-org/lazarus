@@ -1,10 +1,10 @@
 object Nform: TNform
-  Left = 596
-  Height = 300
-  Top = 432
+  Left = 745
+  Height = 301
+  Top = 540
   Width = 400
   Caption = 'Nform'
-  ClientHeight = 300
+  ClientHeight = 301
   ClientWidth = 400
   DesignTimePPI = 120
   OnActivate = FormActivate
@@ -15,7 +15,7 @@ object Nform: TNform
   LCLVersion = '2.0.8.0'
   object Image1: TImage
     Left = 0
-    Height = 300
+    Height = 301
     Top = 0
     Width = 400
     Align = alClient
