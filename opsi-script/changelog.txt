@@ -5,6 +5,11 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.3.16) experimental; urgency=low
+
+  * oswebservice:sendlog: Log that using default if getLogsize failed
+
+-- d.oertel <d.oertel@uib.de> Fri, 19 Jun 2020 15:00
 
 opsi-winst/opsi-script (4.12.3.15) experimental; urgency=low
 
