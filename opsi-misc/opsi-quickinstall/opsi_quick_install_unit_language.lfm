@@ -1,22 +1,22 @@
 object QuickInstall: TQuickInstall
-  Left = 370
-  Height = 439
-  Top = 167
-  Width = 590
+  Left = 461
+  Height = 348
+  Top = 172
+  Width = 497
   Caption = 'opsi quick install'
-  ClientHeight = 439
-  ClientWidth = 590
+  ClientHeight = 348
+  ClientWidth = 497
   OnCreate = FormCreate
   LCLVersion = '2.0.6.0'
   object BackgrImage: TImage
     Left = 0
-    Height = 439
+    Height = 348
     Top = 0
-    Width = 590
+    Width = 497
     Align = alClient
   end
   object LabelSelLanguage: TLabel
-    Left = 208
+    Left = 168
     Height = 19
     Top = 144
     Width = 105
@@ -24,13 +24,33 @@ object QuickInstall: TQuickInstall
     ParentColor = False
   end
   object ComboBoxLanguages: TComboBox
-    Left = 208
+    Left = 160
     Height = 31
-    Top = 168
+    Top = 176
     Width = 188
+    AutoComplete = True
+    AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactSearchAscending]
     AutoDropDown = True
     ItemHeight = 0
     TabOrder = 0
     Text = 'English'
+  end
+  object BtnNext: TButton
+    Left = 432
+    Height = 25
+    Top = 312
+    Width = 51
+    AutoSize = True
+    Caption = ' next > '
+    OnClick = BtnNextClick
+    TabOrder = 1
+  end
+  object LabelWelcome: TLabel
+    Left = 160
+    Height = 19
+    Top = 58
+    Width = 132
+    Caption = 'Some welcoming text'
+    ParentColor = False
   end
 end

@@ -30,25 +30,61 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="3">
+    <Units Count="9">
       <Unit0>
         <Filename Value="opsi_quick_install_project.lpr"/>
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="../../../l-opsi-server-products/l-opsi-server-quick-install/opsi_quick_install_unit_language.pas"/>
+        <Filename Value="opsi_quick_install_unit_language.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="QuickInstall"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit1>
       <Unit2>
-        <Filename Value="../../../l-opsi-server-products/l-opsi-server-quick-install/opsi_quick_install_unit_query.pas"/>
+        <Filename Value="opsi_quick_install_unit_query.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Query"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit2>
+      <Unit3>
+        <Filename Value="opsi_quick_install_unit_query2.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Query2"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="opsi_quick_install_unit_query3.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Query3"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="opsi_quick_install_unit_query4.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Query4"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="opsi_quick_install_unit_query5_dhcp.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Query5_dhcp"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="opsi_quick_install_unit_query6.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Query6"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="opsi_quick_install_unit_query7.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Query7"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit8>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

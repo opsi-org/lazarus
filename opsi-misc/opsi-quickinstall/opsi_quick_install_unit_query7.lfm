@@ -1,0 +1,103 @@
+object Query7: TQuery7
+  Left = 503
+  Height = 348
+  Top = 244
+  Width = 557
+  Caption = 'opsi quick install - query (part 7)'
+  ClientHeight = 348
+  ClientWidth = 557
+  LCLVersion = '2.0.6.0'
+  object BackgrImage: TImage
+    Left = 0
+    Height = 348
+    Top = 0
+    Width = 557
+    Align = alClient
+  end
+  object BtnBack: TButton
+    Left = 8
+    Height = 25
+    Top = 312
+    Width = 51
+    AutoSize = True
+    Caption = ' < back '
+    TabOrder = 0
+  end
+  object PanelPasswordMasterAdmin: TPanel
+    Left = 88
+    Height = 80
+    Top = 32
+    Width = 376
+    BevelOuter = bvNone
+    ClientHeight = 80
+    ClientWidth = 376
+    TabOrder = 1
+    object LabelPasswordMasterAdmin: TLabel
+      Left = 0
+      Height = 38
+      Top = 0
+      Width = 376
+      Align = alTop
+      Caption = 'What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?'
+      ParentColor = False
+      WordWrap = True
+    end
+    object EditPasswordMasterAdmin: TEdit
+      Left = 0
+      Height = 25
+      Top = 40
+      Width = 368
+      AutoSize = False
+      TabOrder = 0
+      Text = 'linux123'
+    end
+  end
+  object Panel1: TPanel
+    Left = 88
+    Height = 90
+    Top = 128
+    Width = 370
+    BevelOuter = bvNone
+    ClientHeight = 90
+    ClientWidth = 370
+    TabOrder = 2
+    object Label1: TLabel
+      Left = 0
+      Height = 38
+      Top = 0
+      Width = 370
+      Align = alTop
+      Caption = 'Should we copy modules even if /etc/opsi/modules still exists?'
+      ParentColor = False
+      WordWrap = True
+    end
+    object RadioBtnYes: TRadioButton
+      Left = 0
+      Height = 21
+      Top = 40
+      Width = 45
+      Caption = 'Yes'
+      TabOrder = 0
+    end
+    object RadioBtnNo: TRadioButton
+      Left = 96
+      Height = 21
+      Top = 40
+      Width = 42
+      Caption = 'No'
+      Checked = True
+      TabOrder = 1
+      TabStop = True
+    end
+  end
+  object BtnFinish: TButton
+    Left = 496
+    Height = 25
+    Top = 312
+    Width = 45
+    AutoSize = True
+    Caption = ' finish '
+    OnClick = BtnFinishClick
+    TabOrder = 3
+  end
+end

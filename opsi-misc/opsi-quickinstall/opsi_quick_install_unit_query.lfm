@@ -1,17 +1,179 @@
 object Query: TQuery
-  Left = 250
+  Left = 418
   Height = 439
   Top = 167
-  Width = 894
-  Caption = 'opsi quick install'
+  Width = 726
+  Caption = 'opsi quick install - query (part 1)'
   ClientHeight = 439
-  ClientWidth = 894
+  ClientWidth = 726
+  OnActivate = FormActivate
   LCLVersion = '2.0.6.0'
-  object Image1: TImage
+  object BackgrImage: TImage
     Left = 0
     Height = 439
     Top = 0
-    Width = 894
+    Width = 726
     Align = alClient
+    AutoSize = True
+  end
+  object BtnNext: TButton
+    Left = 632
+    Height = 25
+    Top = 400
+    Width = 51
+    AutoSize = True
+    Caption = ' next > '
+    OnClick = BtnNextClick
+    TabOrder = 0
+  end
+  object BtnBack: TButton
+    Left = 16
+    Height = 25
+    Top = 400
+    Width = 51
+    AutoSize = True
+    Caption = ' < back '
+    TabOrder = 1
+  end
+  object LabelWelcome: TLabel
+    Left = 296
+    Height = 19
+    Top = 24
+    Width = 131
+    Caption = 'More welcoming text'
+    ParentColor = False
+  end
+  object PanelRepo: TPanel
+    Left = 160
+    Height = 104
+    Top = 56
+    Width = 472
+    BevelOuter = bvNone
+    ClientHeight = 104
+    ClientWidth = 472
+    TabOrder = 2
+    object LabelRepo: TLabel
+      Left = 0
+      Height = 19
+      Top = 0
+      Width = 472
+      Align = alTop
+      Caption = '(Base-) Repository for opsi-server installation'
+      ParentColor = False
+    end
+    object RadioBtnOpsi42: TRadioButton
+      Left = 0
+      Height = 21
+      Top = 48
+      Width = 81
+      Caption = 'opsi 4.2 ?'
+      TabOrder = 0
+    end
+    object RadioBtnOpsi41: TRadioButton
+      Left = 0
+      Height = 21
+      Top = 24
+      Width = 453
+      Caption = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/'
+      Checked = True
+      TabOrder = 1
+    end
+    object RadioBtnOtherRepo: TRadioButton
+      Left = 0
+      Height = 21
+      Top = 72
+      Width = 67
+      Caption = 'Other?'
+      TabOrder = 2
+    end
+  end
+  object PanelProxy: TPanel
+    Left = 160
+    Height = 56
+    Top = 192
+    Width = 466
+    BevelOuter = bvNone
+    ClientHeight = 56
+    ClientWidth = 466
+    TabOrder = 3
+    object LabelProxy: TLabel
+      Left = 0
+      Height = 19
+      Top = 0
+      Width = 466
+      Align = alTop
+      Caption = 'proxy to use (http://myproxy.dom.org:8080)'
+      ParentColor = False
+    end
+    object RadioBtnNone: TRadioButton
+      Left = 0
+      Height = 21
+      Top = 24
+      Width = 65
+      Caption = 'none ?'
+      Checked = True
+      TabOrder = 0
+    end
+    object RadioBtnMyProxy: TRadioButton
+      Left = 88
+      Height = 21
+      Top = 24
+      Width = 212
+      Caption = 'http://myproxy.dom.org:8080'
+      TabOrder = 1
+    end
+    object RadioBtnOtherProxy: TRadioButton
+      Left = 320
+      Height = 21
+      Top = 24
+      Width = 67
+      Caption = 'Other?'
+      TabOrder = 2
+    end
+  end
+  object PanelNoCache: TPanel
+    Left = 152
+    Height = 104
+    Top = 272
+    Width = 474
+    BevelOuter = bvNone
+    ClientHeight = 104
+    ClientWidth = 474
+    TabOrder = 4
+    object LabelNoCache: TLabel
+      Left = 0
+      Height = 19
+      Top = 0
+      Width = 474
+      Align = alTop
+      Caption = '(Base-) Repository for opsi-server installation (without any cache proxy)'
+      ParentColor = False
+    end
+    object RadioBtnOpsi41NoCache: TRadioButton
+      Left = 0
+      Height = 21
+      Top = 24
+      Width = 453
+      Caption = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/'
+      Checked = True
+      TabOrder = 1
+      TabStop = True
+    end
+    object RadioBtnOpsi42NoCache: TRadioButton
+      Left = 0
+      Height = 21
+      Top = 48
+      Width = 81
+      Caption = 'opsi 4.2 ?'
+      TabOrder = 0
+    end
+    object RadioBtnOtherNoCache: TRadioButton
+      Left = 0
+      Height = 21
+      Top = 72
+      Width = 67
+      Caption = 'Other?'
+      TabOrder = 2
+    end
   end
 end

@@ -1,0 +1,139 @@
+object Query3: TQuery3
+  Left = 487
+  Height = 360
+  Top = 189
+  Width = 567
+  Caption = 'opsi quick install - query (part 3)'
+  ClientHeight = 360
+  ClientWidth = 567
+  LCLVersion = '2.0.6.0'
+  object BackgrImage: TImage
+    Left = 0
+    Height = 360
+    Top = 0
+    Width = 567
+    Align = alClient
+  end
+  object BtnNext: TButton
+    Left = 504
+    Height = 25
+    Top = 320
+    Width = 51
+    AutoSize = True
+    Caption = ' next > '
+    OnClick = BtnNextClick
+    TabOrder = 0
+  end
+  object BtnBack: TButton
+    Left = 16
+    Height = 25
+    Top = 320
+    Width = 51
+    AutoSize = True
+    Caption = ' < back '
+    TabOrder = 1
+  end
+  object PanelOpsiProducts: TPanel
+    Left = 72
+    Height = 104
+    Top = 32
+    Width = 416
+    BevelOuter = bvNone
+    ClientHeight = 104
+    ClientWidth = 416
+    TabOrder = 2
+    object LabelOpsiProducts: TLabel
+      Left = 0
+      Height = 38
+      Top = 0
+      Width = 416
+      Align = alTop
+      Caption = 'Which opsi product(s) should we switch to setup after l-opsi-server installation is done?'
+      ParentColor = False
+      WordWrap = True
+    end
+    object EditOpsiProducts: TEdit
+      Left = 0
+      Height = 56
+      Top = 48
+      Width = 416
+      Align = alBottom
+      AutoSize = False
+      TabOrder = 0
+    end
+  end
+  object PanelReboot: TPanel
+    Left = 72
+    Height = 61
+    Top = 160
+    Width = 416
+    BevelOuter = bvNone
+    ClientHeight = 61
+    ClientWidth = 416
+    TabOrder = 3
+    object LabelReboot: TLabel
+      Left = 0
+      Height = 19
+      Top = 0
+      Width = 416
+      Align = alTop
+      Caption = 'May the server reboot if script is finished?'
+      ParentColor = False
+    end
+    object RadioBtnYes: TRadioButton
+      Left = 0
+      Height = 21
+      Top = 24
+      Width = 45
+      Caption = 'Yes'
+      Checked = True
+      TabOrder = 0
+      TabStop = True
+    end
+    object RadioBtnNo: TRadioButton
+      Left = 88
+      Height = 21
+      Top = 24
+      Width = 42
+      Caption = 'No'
+      TabOrder = 1
+    end
+  end
+  object PanelDhcp: TPanel
+    Left = 72
+    Height = 64
+    Top = 232
+    Width = 416
+    BevelOuter = bvNone
+    ClientHeight = 64
+    ClientWidth = 416
+    TabOrder = 4
+    object LabelDhcp: TLabel
+      Left = 0
+      Height = 19
+      Top = 0
+      Width = 416
+      Align = alTop
+      Caption = 'Should we run the dhcp server on this machine?'
+      ParentColor = False
+    end
+    object RadioBtnDhcpYes: TRadioButton
+      Left = 0
+      Height = 21
+      Top = 24
+      Width = 45
+      Caption = 'Yes'
+      TabOrder = 0
+    end
+    object RadioBtnDhcpNo: TRadioButton
+      Left = 88
+      Height = 21
+      Top = 24
+      Width = 42
+      Caption = 'No'
+      Checked = True
+      TabOrder = 1
+      TabStop = True
+    end
+  end
+end
