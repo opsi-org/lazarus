@@ -24,7 +24,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="15"/>
+      <BuildNr Value="16"/>
       <StringTable CompanyName="uib gmbh (uib.de / opsi.org)" FileDescription="opsi setup detector" InternalName="opsi setup detector" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsisetupdetector" ProductName="opsi" ProductVersion="opsi 4.1."/>
     </VersionInfo>
     <BuildModes Count="3" Active="Default">
@@ -169,10 +169,9 @@
         <ComponentName Value="resultForm1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <TopLine Value="1228"/>
-        <CursorPos X="44" Y="1245"/>
+        <CursorPos X="83" Y="1234"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="-1"/>
@@ -227,7 +226,6 @@
         <TopLine Value="566"/>
         <CursorPos X="42" Y="579"/>
         <UsageCount Value="18"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
       <Unit9>
         <Filename Value="resultform.lfm"/>
@@ -259,8 +257,9 @@
       <Unit12>
         <Filename Value="changelog-osd.txt"/>
         <IsPartOfProject Value="True"/>
-        <TopLine Value="193"/>
-        <CursorPos X="33" Y="195"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="70"/>
+        <CursorPos X="23" Y="81"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -268,7 +267,7 @@
       <Unit13>
         <Filename Value="osdanalyze.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="15"/>
+        <EditorIndex Value="13"/>
         <TopLine Value="54"/>
         <CursorPos X="53" Y="68"/>
         <ExtraEditorCount Value="1"/>
@@ -285,7 +284,7 @@
       <Unit14>
         <Filename Value="osdhelper.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="13"/>
+        <EditorIndex Value="11"/>
         <TopLine Value="5"/>
         <CursorPos X="24" Y="14"/>
         <UsageCount Value="240"/>
@@ -308,7 +307,7 @@
       <Unit16>
         <Filename Value="osdbasedata.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="10"/>
         <TopLine Value="1046"/>
         <CursorPos X="22" Y="1064"/>
         <ExtraEditorCount Value="1"/>
@@ -336,7 +335,7 @@
         <ComponentName Value="FOSDConfigdlg"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="4"/>
         <TopLine Value="33"/>
         <CursorPos X="60" Y="38"/>
         <UsageCount Value="203"/>
@@ -346,7 +345,7 @@
       <Unit19>
         <Filename Value="osdcreate.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="8"/>
         <TopLine Value="16"/>
         <CursorPos X="74" Y="23"/>
         <ExtraEditorCount Value="1"/>
@@ -362,7 +361,7 @@
       </Unit19>
       <Unit20>
         <Filename Value="template-files\setupsingle.opsiscript"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="9"/>
         <TopLine Value="53"/>
         <CursorPos X="62" Y="60"/>
         <UsageCount Value="100"/>
@@ -383,7 +382,7 @@
         <ComponentName Value="FNewDepDlg"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="6"/>
         <TopLine Value="16"/>
         <CursorPos X="45" Y="21"/>
         <UsageCount Value="200"/>
@@ -405,7 +404,7 @@
         <ComponentName Value="FNewPropDlg"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="7"/>
         <TopLine Value="60"/>
         <CursorPos X="34" Y="71"/>
         <UsageCount Value="201"/>
@@ -428,7 +427,6 @@
         <TopLine Value="52"/>
         <CursorPos X="10" Y="72"/>
         <UsageCount Value="10"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit26>
       <Unit27>
         <Filename Value="N:\usr\share\lazarus\1.8.4\lcl\include\fpimagebitmap.inc"/>
@@ -444,19 +442,16 @@
         <TopLine Value="5"/>
         <CursorPos X="3" Y="28"/>
         <UsageCount Value="23"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit28>
       <Unit29>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\fcl-res\src\versiontypes.pp"/>
         <EditorIndex Value="-1"/>
         <UsageCount Value="2"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit29>
       <Unit30>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\fcl-res\src\versionresource.pp"/>
         <EditorIndex Value="-1"/>
         <UsageCount Value="2"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit30>
       <Unit31>
         <Filename Value="template-files\setupdouble.opsiscript"/>
@@ -470,7 +465,7 @@
       <Unit32>
         <Filename Value="..\..\common\osencoding.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="5"/>
         <TopLine Value="354"/>
         <CursorPos X="46" Y="356"/>
         <UsageCount Value="203"/>
@@ -493,7 +488,6 @@
         <TopLine Value="10368"/>
         <CursorPos Y="10388"/>
         <UsageCount Value="10"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit34>
       <Unit35>
         <Filename Value="N:\usr\share\lazarus\2.0.0\components\ideintf\propedits.pp"/>
@@ -529,7 +523,7 @@
       <Unit38>
         <Filename Value="..\..\external_libraries\misc\VerInfo.pp"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="16"/>
+        <EditorIndex Value="14"/>
         <TopLine Value="119"/>
         <CursorPos X="77" Y="128"/>
         <UsageCount Value="191"/>
@@ -538,7 +532,7 @@
       </Unit38>
       <Unit39>
         <Filename Value="..\..\external_libraries\misc\DSiWin32.pas"/>
-        <EditorIndex Value="14"/>
+        <EditorIndex Value="12"/>
         <TopLine Value="924"/>
         <CursorPos X="61" Y="936"/>
         <UsageCount Value="73"/>
@@ -551,7 +545,6 @@
         <TopLine Value="33"/>
         <CursorPos Y="56"/>
         <UsageCount Value="19"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit40>
       <Unit41>
         <Filename Value="C:\lazarus\lcl\include\customcheckbox.inc"/>
@@ -559,7 +552,6 @@
         <TopLine Value="52"/>
         <CursorPos Y="69"/>
         <UsageCount Value="2"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit41>
       <Unit42>
         <Filename Value="C:\lazarus\lcl\include\wincontrol.inc"/>
@@ -567,7 +559,6 @@
         <TopLine Value="5396"/>
         <CursorPos Y="5412"/>
         <UsageCount Value="2"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit42>
       <Unit43>
         <Filename Value="C:\lazarus\lcl\lclmessageglue.pas"/>
@@ -576,7 +567,6 @@
         <TopLine Value="103"/>
         <CursorPos Y="119"/>
         <UsageCount Value="2"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit43>
       <Unit44>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\rtl\inc\objpash.inc"/>
@@ -584,7 +574,6 @@
         <TopLine Value="177"/>
         <CursorPos X="23" Y="194"/>
         <UsageCount Value="5"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit44>
       <Unit45>
         <Filename Value="C:\lazarus\lcl\lcltranslator.pas"/>
@@ -593,7 +582,6 @@
         <TopLine Value="516"/>
         <CursorPos X="3" Y="530"/>
         <UsageCount Value="5"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit45>
       <Unit46>
         <Filename Value="C:\lazarus\lcl\controls.pp"/>
@@ -601,7 +589,6 @@
         <EditorIndex Value="-1"/>
         <CursorPos X="15" Y="1609"/>
         <UsageCount Value="18"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit46>
       <Unit47>
         <Filename Value="C:\lazarus\components\lazutils\fileutil.pas"/>
@@ -610,24 +597,23 @@
         <TopLine Value="167"/>
         <CursorPos X="5" Y="184"/>
         <UsageCount Value="15"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit47>
       <Unit48>
         <Filename Value="..\..\..\..\..\usr\share\lazarus\2.0.6\lcl\interfaces\gtk2\gtk2callback.inc"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="2117"/>
         <CursorPos X="79" Y="2124"/>
         <UsageCount Value="17"/>
-        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit48>
       <Unit49>
         <Filename Value="..\..\..\..\..\usr\share\lazarus\2.0.6\lcl\lcltranslator.pas"/>
         <UnitName Value="LCLTranslator"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="525"/>
         <CursorPos X="46" Y="535"/>
         <UsageCount Value="16"/>
-        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit49>
       <Unit50>
         <Filename Value="..\..\..\..\..\usr\share\lazarus\2.0.6\lcl\include\picture.inc"/>
@@ -635,6 +621,7 @@
         <TopLine Value="657"/>
         <CursorPos X="27" Y="667"/>
         <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit50>
     </Units>
     <OtherDefines Count="3">
