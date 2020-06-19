@@ -151,6 +151,7 @@ begin
   sleep(1000);
   free_runtime_objects;
   DataModule1.DataModuleDestroy(nil);
+  Application.Terminate;
 end;
 
 function setLabelCaptionById(aktId, aktMessage: string): boolean;
@@ -771,7 +772,9 @@ var
   choiceindex: integer;
   tmpinistr: string;
   tmpbool: boolean;
+  myscreen : TScreen;
 begin
+  myscreen := TScreen.Create(Application);
   if aktsection = 'Form' then
   begin
     nform.Color := myStringToTColor(myini.ReadString(aktsection, 'color', 'clWhite'));
@@ -914,8 +917,16 @@ begin
     memoarray[memocounter].Height := myini.ReadInteger(aktsection, 'Height', 10);
     //memoarray[labelcounter].Anchors := [akTop,akLeft,akRight,akBottom];
     memoarray[memocounter].Anchors := [akTop, akLeft, akRight];
-    memoarray[memocounter].scrolllabel.Font.Name :=
-      myini.ReadString(aktsection, 'FontName', 'Arial');
+
+    mytmpstr := myini.ReadString(aktsection, 'FontName', 'Arial');
+    if myscreen.Fonts.IndexOf(mytmpstr) = -1 then
+    begin
+      {$IFDEF WINDOWS} mytmpstr := 'Arial'; {$ENDIF WINDOWS}
+      //{$IFDEF LINUX} mytmpstr := 'Liberation Sans Narrow'; {$ENDIF LINUX}
+      {$IFDEF LINUX} mytmpstr := 'Liberation Sans'; {$ENDIF LINUX}
+    end;
+    memoarray[memocounter].scrolllabel.Font.Name := mytmpstr;
+
     memoarray[memocounter].scrolllabel.Font.Size :=
       fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
     memoarray[memocounter].scrolllabel.Font.Color :=
@@ -969,8 +980,16 @@ begin
     LabelArray[labelcounter].Height := myini.ReadInteger(aktsection, 'Height', 10);
     //LabelArray[labelcounter].Anchors := [akTop,akLeft,akRight,akBottom];
     LabelArray[labelcounter].Anchors := [akTop, akLeft, akRight];
-    LabelArray[labelcounter].Font.Name :=
-      myini.ReadString(aktsection, 'FontName', 'Arial');
+
+    mytmpstr := myini.ReadString(aktsection, 'FontName', 'Arial');
+    if myscreen.Fonts.IndexOf(mytmpstr) = -1 then
+    begin
+      {$IFDEF WINDOWS} mytmpstr := 'Arial'; {$ENDIF WINDOWS}
+      //{$IFDEF LINUX} mytmpstr := 'Liberation Sans Narrow'; {$ENDIF LINUX}
+      {$IFDEF LINUX} mytmpstr := 'Liberation Sans'; {$ENDIF LINUX}
+    end;
+    LabelArray[labelcounter].Font.Name :=  mytmpstr;
+
     LabelArray[labelcounter].Font.Size :=
       fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
     LabelArray[labelcounter].Font.Color :=
@@ -1011,8 +1030,16 @@ begin
     ButtonArray[buttoncounter].Top := myini.ReadInteger(aktsection, 'Top', 10);
     ButtonArray[buttoncounter].Width := myini.ReadInteger(aktsection, 'Width', 10);
     ButtonArray[buttoncounter].Height := myini.ReadInteger(aktsection, 'Height', 10);
-    ButtonArray[buttoncounter].Font.Name :=
-      myini.ReadString(aktsection, 'FontName', 'Arial');
+
+    mytmpstr := myini.ReadString(aktsection, 'FontName', 'Arial');
+    if myscreen.Fonts.IndexOf(mytmpstr) = -1 then
+    begin
+      {$IFDEF WINDOWS} mytmpstr := 'Arial'; {$ENDIF WINDOWS}
+      //{$IFDEF LINUX} mytmpstr := 'Liberation Sans Narrow'; {$ENDIF LINUX}
+      {$IFDEF LINUX} mytmpstr := 'Liberation Sans'; {$ENDIF LINUX}
+    end;
+    ButtonArray[buttoncounter].Font.Name := mytmpstr;
+
     ButtonArray[buttoncounter].Font.Size :=
       fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
     //ButtonArray[buttoncounter].Font.Color :=

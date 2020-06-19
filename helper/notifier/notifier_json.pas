@@ -154,7 +154,9 @@ begin
         // got end call for this notifier kind : hide form
         mythread.Terminate;
         hideNForm;
-        //shutdownNotifier;
+        {$IFDEF UNIX}
+        shutdownNotifier;
+        {$ENDIF UNIX}
       end;
     end
     else  // other methods
