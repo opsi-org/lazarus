@@ -8,6 +8,10 @@ mac getIpByName liefert name von IPnum
 opsi-winst/opsi-script (4.12.3.16) experimental; urgency=low
 
   * oswebservice:sendlog: Log that using default if getLogsize failed
+  * osfuncwin: some logprog in WinIsUefi
+  * osfuncwin:  getW10Release
+  * osfuncwin: WinIsUefi: fix uefi detection if w10 release >= 2004
+  * osparser: good bye to cmd64.exe
 
 -- d.oertel <d.oertel@uib.de> Fri, 19 Jun 2020 15:00
 

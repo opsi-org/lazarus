@@ -1573,9 +1573,8 @@ begin
           (VGUID1.D4[3] = VGUID2.D4[3]) and (VGUID1.D4[4] = VGUID2.D4[4]) and
           (VGUID1.D4[5] = VGUID2.D4[5]) and (VGUID1.D4[6] = VGUID2.D4[6]) and
           (VGUID1.D4[7] = VGUID2.D4[7]) then
-          Result := Format(CLSFormatMACMask,
-            [VGUID1.D4[2], VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5],
-            VGUID1.D4[6], VGUID1.D4[7]]);
+          Result := Format(CLSFormatMACMask, [VGUID1.D4[2],
+            VGUID1.D4[3], VGUID1.D4[4], VGUID1.D4[5], VGUID1.D4[6], VGUID1.D4[7]]);
     end;
   finally
     UnloadLibrary(VLibHandle);
@@ -2248,7 +2247,7 @@ var
     patchlistcounter: integer = 0;
     workingSection: TXStringList;
     NameValueSeparator: char;
-    goon : boolean = true;
+    goon: boolean = True;
 
   begin
     //ps := LogDatei.LogSIndentPlus (+3) + 'FILE ' +  PatchdateiName;
@@ -2269,32 +2268,32 @@ var
     if not FileExists(ExpandFileName(PatchFilename)) then
     begin
       try
-      ps := LogDatei.LogSIndentPlus(+3) +
-        'Info: This file does not exist and will be created ';
-      LogDatei.log(ps, LLInfo);
-      LogDatei.NumberOfHints := Logdatei.NumberOfHints + 1;
+        ps := LogDatei.LogSIndentPlus(+3) +
+          'Info: This file does not exist and will be created ';
+        LogDatei.log(ps, LLInfo);
+        LogDatei.NumberOfHints := Logdatei.NumberOfHints + 1;
 
-      if CreateTextfile(ExpandFileName(PatchFilename), ErrorInfo) then
-      begin
-        if ErrorInfo <> '' then
+        if CreateTextfile(ExpandFileName(PatchFilename), ErrorInfo) then
         begin
-          ps := LogDatei.LogSIndentPlus(+3) + 'Warning: ' + ErrorInfo;
-          LogDatei.log(ps, LLWarning);
+          if ErrorInfo <> '' then
+          begin
+            ps := LogDatei.LogSIndentPlus(+3) + 'Warning: ' + ErrorInfo;
+            LogDatei.log(ps, LLWarning);
+          end;
+        end
+        else
+        begin
+          ps := LogDatei.LogSIndentPlus(+3) + 'Error: ' + ErrorInfo;
+          LogDatei.log(ps, LLError);
+          exit; // ------------------------------  exit
         end;
-      end
-      else
-      begin
-        ps := LogDatei.LogSIndentPlus(+3) + 'Error: ' + ErrorInfo;
-        LogDatei.log(ps, LLError);
-        exit; // ------------------------------  exit
-      end;
       except
-         on E: Exception do
-         begin
+        on E: Exception do
+        begin
           LogDatei.log('Error in osparser..doTextpatchMain failed to create file: '
-          + ExpandFileName(PatchFilename)+ ' Msg.: '+ E.Message, LLError);
+            + ExpandFileName(PatchFilename) + ' Msg.: ' + E.Message, LLError);
           exit;
-         end;
+        end;
       end;
     end;
 
@@ -4739,6 +4738,8 @@ var
   outputlines: integer = 0;
   outkey: HKEY;
   p1, p2, p3, p4: integer;
+  oldDisableWow64FsRedirectionStatus: pointer = nil;
+  dummybool: boolean;
 
 
 
@@ -5118,7 +5119,15 @@ begin
           // Workaround for RegDeleteKey 64 Bit problem
           //errorcode := RegDeleteKeyEx(mykey, PChar(keytoopen), KeyOpenMode,0);
           output := TXStringList.Create;
-          commandline := 'cmd64.exe /c "reg delete ""' + key_completepath + '"" /f"';
+          {$IFDEF WIN32}
+          if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
+            LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo)
+          else
+            LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
+          {$ENDIF WIN32}
+          //commandline := 'cmd64.exe /c "reg delete ""' + key_completepath + '"" /f"';
+          commandline := '"' + GetWinSystemDirectory +
+            '\cmd.exe" /c "reg delete ""' + key_completepath + '"" /f"';
           LogDatei.log('Executing ' + commandline, LLDebug);
           if not RunCommandAndCaptureOut(commandline, True, output,
             report, SW_SHOWMINIMIZED, FLastExitCodeOfExe) then
@@ -5142,6 +5151,12 @@ begin
             LogDatei.log('', LLDebug);
             output.Free;
           end;
+          {$IFDEF WIN32}
+          dummybool := DSiRevertWow64FsRedirection(
+            oldDisableWow64FsRedirectionStatus);
+          LogDatei.log('RevertWow64FsRedirection succeeded',
+            LLinfo);
+              {$ENDIF WIN32}
         end
         else // workaround
         begin
@@ -9721,6 +9736,7 @@ begin
     if (lowercase(archparam) = '32') then
       force64 := False;
 
+    (*
     {$IFDEF WIN32}
     if force64 then
       if not cmd64checked then
@@ -9786,6 +9802,7 @@ begin
           LogDatei.log('no cmd64.exe - will use cmd.exe instead', LLError);
       end;
     {$ENDIF WIN32}
+    *)
 
     if (GetUibOsType(errorinfo) = tovLinux) or
       (GetUibOsType(errorinfo) = tovMacOS) then
@@ -9796,10 +9813,23 @@ begin
     else
     begin
      {$IFDEF WINDOWS}
+     (*
       if force64 and FileExists(GetWinDirectory + '\cmd64.exe') then
         FileName := '"' + GetWinDirectory + '\cmd64.exe"'
       else
         FileName := '"cmd.exe"';
+      Parameters := ' /C "' + command + '" ';
+      *)
+      if force64 then
+      begin
+       {$IFDEF WIN32}
+        if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
+          LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo + logleveloffset)
+        else
+          LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
+       {$ENDIF WIN32}
+      end;
+      FileName := '"' + GetWinSystemDirectory + '\cmd.exe"';
       Parameters := ' /C "' + command + '" ';
      {$ENDIF WINDOWS}
     end;
@@ -9847,6 +9877,17 @@ begin
       Result.Text := output.Text;
     end;
     output.Free;
+    {$IFDEF WINDOWS}
+    if force64 then
+    begin
+       {$IFDEF WIN32}
+      dummybool := DSiRevertWow64FsRedirection(
+        oldDisableWow64FsRedirectionStatus);
+      LogDatei.log('RevertWow64FsRedirection succeeded',
+        LLinfo + logleveloffset);
+              {$ENDIF WIN32}
+    end;
+    {$ENDIF WINDOWS}
   finally
     {$IFDEF GUI}
     FBatchOberflaeche.showAcitvityBar(False);
@@ -9950,8 +9991,8 @@ begin
       LogDatei.log('-----------------------', LLDebug2);
       if pos('winst ', lowercase(BatchParameter)) > 0 then
       begin
-        winstparam := trim(copy(BatchParameter, pos('winst ',
-          lowercase(BatchParameter)) + 5, length(BatchParameter)));
+        winstparam := trim(copy(BatchParameter,
+          pos('winst ', lowercase(BatchParameter)) + 5, length(BatchParameter)));
         BatchParameter := trim(copy(BatchParameter, 0,
           pos('winst ', lowercase(BatchParameter)) - 1));
       end;
@@ -9982,6 +10023,7 @@ begin
             LLWarning);
       end;
 
+      (*
     {$IFDEF WIN32}
       if force64 then
         if not cmd64checked then
@@ -10045,6 +10087,7 @@ begin
             LogDatei.log('no cmd64.exe - will use cmd.exe instead', LLError);
         end;
     {$ENDIF WIN32}
+    *)
 
       if BatchParameter <> '' then
       begin
@@ -10092,11 +10135,17 @@ begin
       end
       else if GetUibOsType(errorinfo) = tovWinNT then
       begin
-       {$IFDEF WINDOWS}
-        if force64 and FileExists(GetWinDirectory + '\cmd64.exe') then
-          FileName := '"' + GetWinDirectory + '\cmd64.exe"'
-        else
-          FileName := '"cmd.exe"';
+        {$IFDEF WINDOWS}
+        if force64 then
+        begin
+       {$IFDEF WIN32}
+          if DSiDisableWow64FsRedirection(oldDisableWow64FsRedirectionStatus) then
+            LogDatei.log('DisableWow64FsRedirection succeeded', LLinfo + logleveloffset)
+          else
+            LogDatei.log('Error: DisableWow64FsRedirection failed', LLError);
+       {$ENDIF WIN32}
+        end;
+        FileName := '"' + GetWinSystemDirectory + '\cmd.exe"';
         // Quote tempfile only if contains spaces, only if not quoted parameters may be quoted
         if 0 = pos(' ', tempfilename) then
           Parameters := ' /C ' + tempfilename + ' ' + BatchParameter
@@ -10178,6 +10227,17 @@ begin
     {$IFDEF GUI}
     FBatchOberflaeche.showAcitvityBar(False);
     {$ENDIF GUI}
+    {$IFDEF WINDOWS}
+    if force64 then
+    begin
+       {$IFDEF WIN32}
+      dummybool := DSiRevertWow64FsRedirection(
+        oldDisableWow64FsRedirectionStatus);
+      LogDatei.log('RevertWow64FsRedirection succeeded',
+        LLinfo + logleveloffset);
+       {$ENDIF WIN32}
+    end;
+    {$ENDIF WINDOWS}
   end;
 end;
 
@@ -11042,10 +11102,9 @@ begin
 
           localKindOfStatement := findKindOfStatement(s2, SecSpec, s1);
 
-          if not (localKindOfStatement in
-            [tsDOSBatchFile, tsDOSInAnIcon, tsShellBatchFile,
-            tsShellInAnIcon, tsExecutePython, tsExecuteWith,
-            tsExecuteWith_escapingStrings]) then
+          if not (localKindOfStatement in [tsDOSBatchFile,
+            tsDOSInAnIcon, tsShellBatchFile, tsShellInAnIcon,
+            tsExecutePython, tsExecuteWith, tsExecuteWith_escapingStrings]) then
             InfoSyntaxError := 'not implemented for this kind of section'
           else
           begin
@@ -22514,8 +22573,9 @@ begin
               begin
                 logdatei.log('Execution of: ' + ArbeitsSektion.Name +
                   ' ' + Remaining, LLNotice);
-                if produceExecLine(remaining, p1, p2,
-                  p3, p4, InfoSyntaxError) then
+                if produceExecLine(remaining, p1, p2, p3, p4,
+                  InfoSyntaxError) then
+
                   ActionResult :=
                     executeWith(ArbeitsSektion, Remaining, True {catch out},
                     0, output)
