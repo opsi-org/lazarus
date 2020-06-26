@@ -27,7 +27,9 @@ type
     PanelNameIP: TPanel;
     PanelNumberIP: TPanel;
     PanelPasswordAdmin: TPanel;
+    procedure BtnBackClick(Sender: TObject);
     procedure BtnNextClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
 
   public
@@ -40,6 +42,8 @@ var
 implementation
 
 uses
+  opsi_quick_install_unit_language,
+  opsi_quick_install_unit_query5_dhcp,
   opsi_quick_install_unit_query7;
 
 {$R *.lfm}
@@ -48,8 +52,28 @@ uses
 
 procedure TQuery6.BtnNextClick(Sender: TObject);
 begin
-  Query7.ShowModal;
-  Query6.Close;
+  Query7.Visible:=True;
+  Query6.Visible:=False;
+end;
+
+procedure TQuery6.FormActivate(Sender: TObject);
+begin
+  Query6.Height:=QuickInstall.Height;
+  Query6.Left:=QuickInstall.Left;
+  Query6.Top:=QuickInstall.Top;
+  Query6.Width:=QuickInstall.Width;
+
+  BtnBack.Left:=QuickInstall.BtnBack.Left;
+  BtnBack.Top:=QuickInstall.BtnBack.Top;
+
+  BtnNext.Left:=QuickInstall.BtnNext.Left;
+  BtnNext.Top:=QuickInstall.BtnNext.Top;
+end;
+
+procedure TQuery6.BtnBackClick(Sender: TObject);
+begin
+  Query5_dhcp.Visible:=True;
+  Query6.Visible:=False;
 end;
 
 end.

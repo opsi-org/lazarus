@@ -53,36 +53,42 @@
         <Filename Value="opsi_quick_install_unit_query2.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Query2"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit3>
       <Unit4>
         <Filename Value="opsi_quick_install_unit_query3.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Query3"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit4>
       <Unit5>
         <Filename Value="opsi_quick_install_unit_query4.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Query4"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit5>
       <Unit6>
         <Filename Value="opsi_quick_install_unit_query5_dhcp.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Query5_dhcp"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit6>
       <Unit7>
         <Filename Value="opsi_quick_install_unit_query6.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Query6"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit7>
       <Unit8>
         <Filename Value="opsi_quick_install_unit_query7.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Query7"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit8>
     </Units>

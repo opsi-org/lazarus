@@ -1,32 +1,34 @@
 object Query7: TQuery7
-  Left = 503
-  Height = 348
-  Top = 244
-  Width = 557
+  Left = 360
+  Height = 450
+  Top = 194
+  Width = 730
   Caption = 'opsi quick install - query (part 7)'
-  ClientHeight = 348
-  ClientWidth = 557
+  ClientHeight = 450
+  ClientWidth = 730
+  OnActivate = FormActivate
   LCLVersion = '2.0.6.0'
   object BackgrImage: TImage
     Left = 0
-    Height = 348
+    Height = 450
     Top = 0
-    Width = 557
+    Width = 730
     Align = alClient
   end
   object BtnBack: TButton
-    Left = 8
+    Left = 16
     Height = 25
-    Top = 312
+    Top = 408
     Width = 51
     AutoSize = True
     Caption = ' < back '
+    OnClick = BtnBackClick
     TabOrder = 0
   end
   object PanelPasswordMasterAdmin: TPanel
-    Left = 88
+    Left = 176
     Height = 80
-    Top = 32
+    Top = 56
     Width = 376
     BevelOuter = bvNone
     ClientHeight = 80
@@ -53,9 +55,9 @@ object Query7: TQuery7
     end
   end
   object Panel1: TPanel
-    Left = 88
+    Left = 176
     Height = 90
-    Top = 128
+    Top = 184
     Width = 370
     BevelOuter = bvNone
     ClientHeight = 90
@@ -91,12 +93,12 @@ object Query7: TQuery7
     end
   end
   object BtnFinish: TButton
-    Left = 496
+    Left = 664
     Height = 25
-    Top = 312
-    Width = 45
+    Top = 408
+    Width = 51
     AutoSize = True
-    Caption = ' finish '
+    Caption = '  finish  '
     OnClick = BtnFinishClick
     TabOrder = 3
   end

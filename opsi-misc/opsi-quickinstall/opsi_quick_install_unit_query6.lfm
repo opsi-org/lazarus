@@ -1,23 +1,24 @@
 object Query6: TQuery6
-  Left = 453
-  Height = 389
-  Top = 157
-  Width = 571
+  Left = 360
+  Height = 450
+  Top = 194
+  Width = 730
   Caption = 'opsi quick install - query (part 6)'
-  ClientHeight = 389
-  ClientWidth = 571
+  ClientHeight = 450
+  ClientWidth = 730
+  OnActivate = FormActivate
   LCLVersion = '2.0.6.0'
   object BackgrImage: TImage
     Left = 0
-    Height = 389
+    Height = 450
     Top = 0
-    Width = 571
+    Width = 730
     Align = alClient
   end
   object BtnNext: TButton
-    Left = 504
+    Left = 664
     Height = 25
-    Top = 360
+    Top = 408
     Width = 51
     AutoSize = True
     Caption = ' next > '
@@ -25,18 +26,19 @@ object Query6: TQuery6
     TabOrder = 0
   end
   object BtnBack: TButton
-    Left = 8
+    Left = 16
     Height = 25
-    Top = 360
+    Top = 408
     Width = 51
     AutoSize = True
     Caption = ' < back '
+    OnClick = BtnBackClick
     TabOrder = 1
   end
   object PanelNameAdmin: TPanel
-    Left = 112
+    Left = 160
     Height = 80
-    Top = 16
+    Top = 24
     Width = 376
     BevelOuter = bvNone
     ClientHeight = 80
@@ -63,9 +65,9 @@ object Query6: TQuery6
     end
   end
   object PanelPasswordAdmin: TPanel
-    Left = 112
+    Left = 160
     Height = 80
-    Top = 120
+    Top = 136
     Width = 376
     BevelOuter = bvNone
     ClientHeight = 80
@@ -92,9 +94,9 @@ object Query6: TQuery6
     end
   end
   object PanelNameIP: TPanel
-    Left = 112
+    Left = 160
     Height = 58
-    Top = 216
+    Top = 248
     Width = 376
     BevelOuter = bvNone
     ClientHeight = 58
@@ -121,9 +123,9 @@ object Query6: TQuery6
     end
   end
   object PanelNumberIP: TPanel
-    Left = 112
+    Left = 160
     Height = 58
-    Top = 288
+    Top = 344
     Width = 376
     BevelOuter = bvNone
     ClientHeight = 58

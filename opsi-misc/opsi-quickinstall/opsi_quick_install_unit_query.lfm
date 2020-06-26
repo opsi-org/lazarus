@@ -1,25 +1,26 @@
 object Query: TQuery
-  Left = 418
-  Height = 439
-  Top = 167
-  Width = 726
+  Left = 360
+  Height = 450
+  Top = 194
+  Width = 730
   Caption = 'opsi quick install - query (part 1)'
-  ClientHeight = 439
-  ClientWidth = 726
+  ClientHeight = 450
+  ClientWidth = 730
   OnActivate = FormActivate
   LCLVersion = '2.0.6.0'
   object BackgrImage: TImage
     Left = 0
-    Height = 439
+    Height = 450
     Top = 0
-    Width = 726
+    Width = 730
     Align = alClient
     AutoSize = True
+    Enabled = False
   end
   object BtnNext: TButton
-    Left = 632
+    Left = 664
     Height = 25
-    Top = 400
+    Top = 416
     Width = 51
     AutoSize = True
     Caption = ' next > '
@@ -29,10 +30,11 @@ object Query: TQuery
   object BtnBack: TButton
     Left = 16
     Height = 25
-    Top = 400
+    Top = 416
     Width = 51
     AutoSize = True
     Caption = ' < back '
+    OnClick = BtnBackClick
     TabOrder = 1
   end
   object LabelWelcome: TLabel
@@ -47,16 +49,16 @@ object Query: TQuery
     Left = 160
     Height = 104
     Top = 56
-    Width = 472
+    Width = 466
     BevelOuter = bvNone
     ClientHeight = 104
-    ClientWidth = 472
+    ClientWidth = 466
     TabOrder = 2
     object LabelRepo: TLabel
       Left = 0
       Height = 19
       Top = 0
-      Width = 472
+      Width = 466
       Align = alTop
       Caption = '(Base-) Repository for opsi-server installation'
       ParentColor = False
@@ -77,23 +79,31 @@ object Query: TQuery
       Caption = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/'
       Checked = True
       TabOrder = 1
+      TabStop = True
     end
     object RadioBtnOtherRepo: TRadioButton
       Left = 0
       Height = 21
       Top = 72
-      Width = 67
-      Caption = 'Other?'
+      Width = 65
+      Caption = 'Other:'
       TabOrder = 2
+    end
+    object EditRepo: TEdit
+      Left = 72
+      Height = 25
+      Top = 72
+      Width = 394
+      TabOrder = 3
     end
   end
   object PanelProxy: TPanel
     Left = 160
-    Height = 56
-    Top = 192
+    Height = 104
+    Top = 176
     Width = 466
     BevelOuter = bvNone
-    ClientHeight = 56
+    ClientHeight = 104
     ClientWidth = 466
     TabOrder = 3
     object LabelProxy: TLabel
@@ -113,38 +123,46 @@ object Query: TQuery
       Caption = 'none ?'
       Checked = True
       TabOrder = 0
+      TabStop = True
     end
     object RadioBtnMyProxy: TRadioButton
-      Left = 88
+      Left = 0
       Height = 21
-      Top = 24
+      Top = 48
       Width = 212
       Caption = 'http://myproxy.dom.org:8080'
       TabOrder = 1
     end
     object RadioBtnOtherProxy: TRadioButton
-      Left = 320
+      Left = 0
       Height = 21
-      Top = 24
-      Width = 67
-      Caption = 'Other?'
+      Top = 72
+      Width = 65
+      Caption = 'Other:'
       TabOrder = 2
+    end
+    object EditProxy: TEdit
+      Left = 72
+      Height = 25
+      Top = 72
+      Width = 394
+      TabOrder = 3
     end
   end
   object PanelNoCache: TPanel
-    Left = 152
+    Left = 160
     Height = 104
-    Top = 272
-    Width = 474
+    Top = 304
+    Width = 466
     BevelOuter = bvNone
     ClientHeight = 104
-    ClientWidth = 474
+    ClientWidth = 466
     TabOrder = 4
     object LabelNoCache: TLabel
       Left = 0
       Height = 19
       Top = 0
-      Width = 474
+      Width = 466
       Align = alTop
       Caption = '(Base-) Repository for opsi-server installation (without any cache proxy)'
       ParentColor = False
@@ -155,9 +173,7 @@ object Query: TQuery
       Top = 24
       Width = 453
       Caption = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/'
-      Checked = True
       TabOrder = 1
-      TabStop = True
     end
     object RadioBtnOpsi42NoCache: TRadioButton
       Left = 0
@@ -171,9 +187,18 @@ object Query: TQuery
       Left = 0
       Height = 21
       Top = 72
-      Width = 67
-      Caption = 'Other?'
+      Width = 65
+      Caption = 'Other:'
+      Checked = True
       TabOrder = 2
+      TabStop = True
+    end
+    object EditNoCache: TEdit
+      Left = 72
+      Height = 25
+      Top = 72
+      Width = 394
+      TabOrder = 3
     end
   end
 end

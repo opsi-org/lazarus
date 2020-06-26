@@ -1,16 +1,25 @@
 object Query2: TQuery2
-  Left = 473
-  Height = 357
-  Top = 249
-  Width = 550
+  Left = 360
+  Height = 450
+  Top = 194
+  Width = 730
   Caption = 'opsi quick install - query (part 2)'
-  ClientHeight = 357
-  ClientWidth = 550
+  ClientHeight = 450
+  ClientWidth = 730
+  OnActivate = FormActivate
   LCLVersion = '2.0.6.0'
+  object BackgrImage: TImage
+    Left = 0
+    Height = 450
+    Top = 0
+    Width = 730
+    Align = alClient
+    AutoSize = True
+  end
   object BtnNext: TButton
-    Left = 488
+    Left = 672
     Height = 25
-    Top = 320
+    Top = 416
     Width = 51
     AutoSize = True
     Caption = ' next > '
@@ -20,23 +29,17 @@ object Query2: TQuery2
   object BtnBack: TButton
     Left = 8
     Height = 25
-    Top = 320
+    Top = 416
     Width = 51
     AutoSize = True
     Caption = ' < back '
+    OnClick = BtnBackClick
     TabOrder = 1
   end
-  object BackgrImage: TImage
-    Left = 0
-    Height = 357
-    Top = 0
-    Width = 550
-    Align = alClient
-  end
   object PanelBackend: TPanel
-    Left = 72
+    Left = 150
     Height = 72
-    Top = 16
+    Top = 32
     Width = 440
     BevelOuter = bvNone
     ClientHeight = 72
@@ -59,6 +62,7 @@ object Query2: TQuery2
       Caption = 'file'
       Checked = True
       TabOrder = 0
+      TabStop = True
     end
     object RadioBtnMySql: TRadioButton
       Left = 129
@@ -70,9 +74,9 @@ object Query2: TQuery2
     end
   end
   object PanelRepoKind: TPanel
-    Left = 72
+    Left = 150
     Height = 74
-    Top = 112
+    Top = 160
     Width = 440
     BevelOuter = bvNone
     ClientHeight = 74
@@ -115,19 +119,19 @@ object Query2: TQuery2
     end
   end
   object PanelUpdate: TPanel
-    Left = 72
+    Left = 150
     Height = 66
-    Top = 208
-    Width = 442
+    Top = 304
+    Width = 436
     BevelOuter = bvNone
     ClientHeight = 66
-    ClientWidth = 442
+    ClientWidth = 436
     TabOrder = 4
     object Label1: TLabel
       Left = 0
       Height = 19
       Top = 0
-      Width = 442
+      Width = 436
       Align = alTop
       Caption = 'Install first from stable and than update to repo kind?'
       ParentColor = False
