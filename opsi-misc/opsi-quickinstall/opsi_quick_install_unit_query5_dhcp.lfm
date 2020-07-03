@@ -7,6 +7,7 @@ object Query5_dhcp: TQuery5_dhcp
   ClientHeight = 450
   ClientWidth = 730
   OnActivate = FormActivate
+  OnClose = FormClose
   LCLVersion = '2.0.6.0'
   object BackgrImage: TImage
     Left = 0
@@ -151,16 +152,16 @@ object Query5_dhcp: TQuery5_dhcp
     Left = 120
     Height = 74
     Top = 168
-    Width = 516
+    Width = 410
     BevelOuter = bvNone
     ClientHeight = 74
-    ClientWidth = 516
+    ClientWidth = 410
     TabOrder = 4
     object LabelDomain: TLabel
       Left = 0
       Height = 19
       Top = 0
-      Width = 516
+      Width = 410
       Align = alTop
       Caption = 'DNS domain (for dhcp)'
       ParentColor = False
@@ -211,16 +212,16 @@ object Query5_dhcp: TQuery5_dhcp
     Left = 120
     Height = 80
     Top = 256
-    Width = 516
+    Width = 410
     BevelOuter = bvNone
     ClientHeight = 80
-    ClientWidth = 516
+    ClientWidth = 410
     TabOrder = 5
     object LabelNameserver: TLabel
       Left = 0
       Height = 19
       Top = 0
-      Width = 516
+      Width = 410
       Align = alTop
       Caption = 'Primary nameserver (for dhcp)'
       ParentColor = False
@@ -271,16 +272,16 @@ object Query5_dhcp: TQuery5_dhcp
     Left = 120
     Height = 80
     Top = 344
-    Width = 514
+    Width = 410
     BevelOuter = bvNone
     ClientHeight = 80
-    ClientWidth = 514
+    ClientWidth = 410
     TabOrder = 6
     object LabelGateway: TLabel
       Left = 0
       Height = 19
       Top = 0
-      Width = 514
+      Width = 410
       Align = alTop
       Caption = 'Gateway (option routers for dhcp)'
       ParentColor = False

@@ -21,7 +21,6 @@ type
     LabelNoCache: TLabel;
     LabelProxy: TLabel;
     LabelRepo: TLabel;
-    LabelWelcome: TLabel;
     PanelNoCache: TPanel;
     PanelProxy: TPanel;
     PanelRepo: TPanel;
@@ -37,6 +36,7 @@ type
     procedure BtnBackClick(Sender: TObject);
     procedure BtnNextClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   private
 
   public
@@ -57,32 +57,57 @@ uses
 { TQuery }
 
 procedure TQuery.FormActivate(Sender: TObject);
+var
+  compIndex: integer;
 begin
-  Query.Height := QuickInstall.Height;
-  Query.Left := QuickInstall.Left;
-  Query.Top := QuickInstall.Top;
-  Query.Width := QuickInstall.Width;
+  for compIndex := 0 to ComponentCount - 1 do
+  begin
+    if Components[compIndex].ClassName = 'TPanel' then
+    begin
+      (Components[compIndex] as TPanel).Left := QuickInstall.panelLeft;
+    end;
+  end;
 
-  BtnBack.Left := QuickInstall.BtnBack.Left;
-  BtnBack.Top := QuickInstall.BtnBack.Top;
+  BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
+end;
 
-  BtnNext.Left := QuickInstall.BtnNext.Left;
-  BtnNext.Top := QuickInstall.BtnNext.Top;
-
-  //BackgrImage.Picture.LoadFromFile('/home/anja/Bilder/winst2.png');
-  BackgrImage.Picture.LoadFromFile('/home/anja/Bilder/opsi.png');
+procedure TQuery.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+  QuickInstall.Close;
 end;
 
 procedure TQuery.BtnNextClick(Sender: TObject);
 begin
   Query2.Visible := True;
-  Query.Visible := False;
+
+  Query2.Height := Height;
+  Query2.Left := Left;
+  Query2.Top := Top;
+  Query2.Width := Width;
+
+  Query2.BtnBack.Left := BtnBack.Left;
+  Query2.BtnBack.Top := BtnBack.Top;
+  Query2.BtnNext.Left := BtnNext.Left;
+  Query2.BtnNext.Top := BtnNext.Top;
+
+  Visible := False;
 end;
 
 procedure TQuery.BtnBackClick(Sender: TObject);
 begin
   QuickInstall.Visible := True;
-  Query.Visible := False;
+
+  QuickInstall.Height := Height;
+  QuickInstall.Left := Left;
+  QuickInstall.Top := Top;
+  QuickInstall.Width := Width;
+
+  QuickInstall.BtnBack.Left := BtnBack.Left;
+  QuickInstall.BtnBack.Top := BtnBack.Top;
+  QuickInstall.BtnNext.Left := BtnNext.Left;
+  QuickInstall.BtnNext.Top := BtnNext.Top;
+
+  Visible := False;
 end;
 
 end.

@@ -7,6 +7,7 @@ object Query3: TQuery3
   ClientHeight = 450
   ClientWidth = 730
   OnActivate = FormActivate
+  OnClose = FormClose
   LCLVersion = '2.0.6.0'
   object BackgrImage: TImage
     Left = 0
@@ -54,13 +55,12 @@ object Query3: TQuery3
       ParentColor = False
       WordWrap = True
     end
-    object EditOpsiProducts: TEdit
+    object MemoOpsiProducts: TMemo
       Left = 0
-      Height = 88
-      Top = 48
+      Height = 90
+      Top = 46
       Width = 416
       Align = alBottom
-      AutoSize = False
       TabOrder = 0
     end
   end
