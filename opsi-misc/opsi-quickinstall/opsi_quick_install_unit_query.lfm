@@ -7,6 +7,7 @@ object Query: TQuery
   ClientHeight = 450
   ClientWidth = 730
   OnActivate = FormActivate
+  OnClose = FormClose
   LCLVersion = '2.0.6.0'
   object BackgrImage: TImage
     Left = 0
@@ -37,28 +38,20 @@ object Query: TQuery
     OnClick = BtnBackClick
     TabOrder = 1
   end
-  object LabelWelcome: TLabel
-    Left = 296
-    Height = 19
-    Top = 24
-    Width = 131
-    Caption = 'More welcoming text'
-    ParentColor = False
-  end
   object PanelRepo: TPanel
     Left = 160
     Height = 104
     Top = 56
-    Width = 466
+    Width = 472
     BevelOuter = bvNone
     ClientHeight = 104
-    ClientWidth = 466
+    ClientWidth = 472
     TabOrder = 2
     object LabelRepo: TLabel
       Left = 0
       Height = 19
       Top = 0
-      Width = 466
+      Width = 472
       Align = alTop
       Caption = '(Base-) Repository for opsi-server installation'
       ParentColor = False

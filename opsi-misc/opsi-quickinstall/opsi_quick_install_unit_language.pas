@@ -5,7 +5,8 @@ unit opsi_quick_install_unit_language;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  StdCtrls, LCLtranslator;
 
 type
 
@@ -16,16 +17,21 @@ type
     BtnBack: TButton;
     BtnNext: TButton;
     ComboBoxLanguages: TComboBox;
+    WelcomePanel: TPanel;
+    WelcomeLabel2: TLabel;
     LabelWelcome: TLabel;
     LabelSelLanguage: TLabel;
-    Panel1: TPanel;
+    PanelCoverBtnBack: TPanel;
     procedure BtnNextClick(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
+    procedure ComboBoxLanguagesChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
 
   public
-    formHeight, formLeft, formTop, formWidth, btnBackLeft, btnNextLeft, btnTop: integer;
+    // same position for all panels
+    panelLeft: integer;
+    // same background image for all forms
+    BackgrImageFileName: string;
   end;
 
 var
@@ -41,39 +47,63 @@ uses
 { TQuickInstall }
 
 procedure TQuickInstall.FormCreate(Sender: TObject);
+var
+  Languages: TStringList;
 begin
-  formHeight := 450;
-  formLeft := 360;
-  formTop := 170;
-  formWidth := 730;
-  btnBackLeft := 20;
-  btnNextLeft := 660;
-  btnTop := 410;
+  //ShowMessage(GetDefaultLang);
+  //SetDefaultLang('en');
 
-  QuickInstall.Height := formHeight;
-  QuickInstall.Left := formLeft;
-  QuickInstall.Top := formTop;
-  QuickInstall.Width := formWidth;
+  // set form size
+  Height := 450;
+  Left := 360;
+  Top := 170;
+  Width := 730;
 
-  //BackgrImage.Picture.LoadFromFile('/home/anja/Bilder/winst2.png');
-  BackgrImage.Picture.LoadFromFile('/home/anja/Bilder/opsi.png');
+  BtnBack.Left := 20;
+  BtnNext.Left := 660;
+  BtnBack.Top := 410;
+  BtnNext.Top := 410;
+
+  panelLeft := 175;
+
+  BackgrImageFileName := ExtractFilePath(ParamStr(0)) + 'opsi.png';
+  BackgrImage.Picture.LoadFromFile(BackgrImageFileName);
 
   with ComboBoxLanguages.Items do
   begin
     Add('Deutsch');
     Add('English');
   end;
+  Languages := TStringList.Create;
+  Languages.Add('de');
+  Languages.Add('en');
+  // let the combo box show the system language
+  ComboBoxLanguages.ItemIndex := Languages.IndexOf(GetDefaultLang);
 end;
 
 procedure TQuickInstall.BtnNextClick(Sender: TObject);
 begin
   Query.Visible := True;
-  QuickInstall.Visible := False;
+
+  Query.Height := Height;
+  Query.Left := Left;
+  Query.Top := Top;
+  Query.Width := Width;
+
+  Query.BtnBack.Left := BtnBack.Left;
+  Query.BtnBack.Top := BtnBack.Top;
+  Query.BtnNext.Left := BtnNext.Left;
+  Query.BtnNext.Top := BtnNext.Top;
+
+  Visible := False;
 end;
 
-procedure TQuickInstall.Button1Click(Sender: TObject);
+procedure TQuickInstall.ComboBoxLanguagesChange(Sender: TObject);
 begin
-
+  if ComboBoxLanguages.Text = 'Deutsch' then
+    SetDefaultLang('de')
+  else
+    SetDefaultLang('en');
 end;
 
 end.

@@ -52,6 +52,7 @@ type
     procedure BtnBackClick(Sender: TObject);
     procedure BtnNextClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   private
 
   public
@@ -74,29 +75,58 @@ uses
 
 procedure TQuery5_dhcp.BtnNextClick(Sender: TObject);
 begin
-  Query6.Visible:=True;
-  Query5_dhcp.Visible:=False;
+  Query6.Visible := True;
+
+  Query6.Height := Height;
+  Query6.Left := Left;
+  Query6.Top := Top;
+  Query6.Width := Width;
+
+  Query6.BtnBack.Left := BtnBack.Left;
+  Query6.BtnBack.Top := BtnBack.Top;
+  Query6.BtnNext.Left := BtnNext.Left;
+  Query6.BtnNext.Top := BtnNext.Top;
+
+  Visible := False;
 end;
 
 procedure TQuery5_dhcp.FormActivate(Sender: TObject);
+var
+  compIndex: integer;
 begin
-  Query5_dhcp.Height:=QuickInstall.Height;
-  Query5_dhcp.Left:=QuickInstall.Left;
-  Query5_dhcp.Top:=QuickInstall.Top;
-  Query5_dhcp.Width:=QuickInstall.Width;
+  for compIndex:=0 to ComponentCount-1 do
+  begin
+    if Components[compIndex].ClassName = 'TPanel' then
+      begin
+         (Components[compIndex] as TPanel).Left:= QuickInstall.panelLeft;
+      end;
+  end;
 
-  BtnBack.Left:=QuickInstall.BtnBack.Left;
-  BtnBack.Top:=QuickInstall.BtnBack.Top;
+  BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
+end;
 
-  BtnNext.Left:=QuickInstall.BtnNext.Left;
-  BtnNext.Top:=QuickInstall.BtnNext.Top;
+procedure TQuery5_dhcp.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+  Query4.Close;
 end;
 
 procedure TQuery5_dhcp.BtnBackClick(Sender: TObject);
 begin
-  Query4.Visible:=True;
-  Query5_dhcp.Visible:=False;
+  Query4.Visible := True;
+
+  Query4.Height := Height;
+  Query4.Left := Left;
+  Query4.Top := Top;
+  Query4.Width := Width;
+
+  Query4.BtnBack.Left := BtnBack.Left;
+  Query4.BtnBack.Top := BtnBack.Top;
+  Query4.BtnNext.Left := BtnNext.Left;
+  Query4.BtnNext.Top := BtnNext.Top;
+
+  Visible := False;
 end;
 
 end.
+
 
