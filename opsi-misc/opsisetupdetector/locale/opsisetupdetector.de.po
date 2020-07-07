@@ -799,6 +799,10 @@ msgctxt "tresultform1.labelnameselicon.caption"
 msgid "default icon"
 msgstr "Default-Icon"
 
+#: tresultform1.labelnumber.caption
+msgid "0"
+msgstr ""
+
 #: tresultform1.labelnumicons.caption
 msgctxt "tresultform1.labelnumicons.caption"
 msgid "Icons to choose from: "

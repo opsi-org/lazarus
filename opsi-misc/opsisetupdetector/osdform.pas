@@ -1882,6 +1882,7 @@ begin
     if (not RadioButtonCreateOnly.Checked) then
       callOpsiPackageBuilder;
     procmess;
+    PanelProcess.Visible := False;
     ShowMessage(sInfoFinished);
   finally
     PanelProcess.Visible := False;
