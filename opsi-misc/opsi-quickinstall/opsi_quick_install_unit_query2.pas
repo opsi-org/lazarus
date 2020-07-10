@@ -62,17 +62,8 @@ begin
 end;
 
 procedure TQuery2.FormActivate(Sender: TObject);
-var
-  compIndex: integer;
 begin
-  for compIndex := 0 to ComponentCount - 1 do
-  begin
-    if Components[compIndex].ClassName = 'TPanel' then
-    begin
-      (Components[compIndex] as TPanel).Left := QuickInstall.panelLeft;
-    end;
-  end;
-
+  AdjustPanelPosition(self);
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
 end;
 
@@ -84,10 +75,6 @@ end;
 procedure TQuery2.BtnBackClick(Sender: TObject);
 begin
   showForm(Query, self);
-  Query.BtnBack.Left := BtnBack.Left;
-  Query.BtnBack.Top := BtnBack.Top;
-  Query.BtnNext.Left := BtnNext.Left;
-  Query.BtnNext.Top := BtnNext.Top;
 end;
 
 end.

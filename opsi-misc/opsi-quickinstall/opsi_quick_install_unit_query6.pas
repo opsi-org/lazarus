@@ -44,6 +44,7 @@ implementation
 
 uses
   opsi_quick_install_unit_language,
+  opsi_quick_install_unit_query3,
   opsi_quick_install_unit_query5_dhcp,
   opsi_quick_install_unit_query7;
 
@@ -61,17 +62,8 @@ begin
 end;
 
 procedure TQuery6.FormActivate(Sender: TObject);
-var
-  compIndex: integer;
 begin
-  for compIndex := 0 to ComponentCount - 1 do
-  begin
-    if Components[compIndex].ClassName = 'TPanel' then
-    begin
-      (Components[compIndex] as TPanel).Left := QuickInstall.panelLeft;
-    end;
-  end;
-
+  AdjustPanelPosition(self);
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
 end;
 
@@ -82,22 +74,13 @@ end;
 
 procedure TQuery6.BtnBackClick(Sender: TObject);
 begin
-  if QuickInstall.RadioBtnDefault.Checked = True then
-  begin
-    showForm(QuickInstall, self);
-    QuickInstall.BtnBack.Left := BtnBack.Left;
-    QuickInstall.BtnBack.Top := BtnBack.Top;
-    QuickInstall.BtnNext.Left := BtnNext.Left;
-    QuickInstall.BtnNext.Top := BtnNext.Top;
-  end
+  if QuickInstall.RadioBtnDefault.Checked then
+    showForm(QuickInstall, self)
   else
-  begin
-    showForm(Query5_dhcp, self);
-    Query5_dhcp.BtnBack.Left := BtnBack.Left;
-    Query5_dhcp.BtnBack.Top := BtnBack.Top;
-    Query5_dhcp.BtnNext.Left := BtnNext.Left;
-    Query5_dhcp.BtnNext.Top := BtnNext.Top;
-  end;
+  if Query3.RadioBtnDhcpYes.Checked then
+    showForm(Query5_dhcp, self)
+  else
+    showForm(Query3, self);
 end;
 
 end.

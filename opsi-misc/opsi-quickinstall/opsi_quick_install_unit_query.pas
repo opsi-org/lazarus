@@ -57,17 +57,9 @@ uses
 { TQuery }
 
 procedure TQuery.FormActivate(Sender: TObject);
-var
-  compIndex: integer;
 begin
   // bring all panels to the same position (QuickInstall.panelLeft)
-  for compIndex := 0 to ComponentCount - 1 do
-  begin
-    if Components[compIndex].ClassName = 'TPanel' then
-    begin
-      (Components[compIndex] as TPanel).Left := QuickInstall.panelLeft;
-    end;
-  end;
+  AdjustPanelPosition(self);
   // always the same background (as in QuickInstall)
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
 end;
@@ -89,10 +81,6 @@ end;
 procedure TQuery.BtnBackClick(Sender: TObject);
 begin
   showForm(QuickInstall, self);
-  QuickInstall.BtnBack.Left := BtnBack.Left;
-  QuickInstall.BtnBack.Top := BtnBack.Top;
-  QuickInstall.BtnNext.Left := BtnNext.Left;
-  QuickInstall.BtnNext.Top := BtnNext.Top;
 end;
 
 end.

@@ -16,9 +16,11 @@ type
     BtnBack: TButton;
     BtnFinish: TButton;
     EditPasswordMasterAdmin: TEdit;
-    Label1: TLabel;
+    LabelFinish: TLabel;
+    LabelCopyModules: TLabel;
     LabelPasswordMasterAdmin: TLabel;
-    Panel1: TPanel;
+    PanelFinish: TPanel;
+    PanelCopyModules: TPanel;
     PanelPasswordMasterAdmin: TPanel;
     RadioBtnNo: TRadioButton;
     RadioBtnYes: TRadioButton;
@@ -216,18 +218,14 @@ begin
 end;
 
 procedure TQuery7.FormActivate(Sender: TObject);
-var
-  compIndex: integer;
 begin
-  for compIndex := 0 to ComponentCount - 1 do
-  begin
-    if Components[compIndex].ClassName = 'TPanel' then
-    begin
-      (Components[compIndex] as TPanel).Left := QuickInstall.panelLeft;
-    end;
-  end;
-
+  AdjustPanelPosition(self);
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
+
+  if QuickInstall.RadioBtnDefault.Checked then
+    PanelCopyModules.Visible := False
+  else
+    PanelCopyModules.Visible := True;
 end;
 
 procedure TQuery7.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -238,10 +236,6 @@ end;
 procedure TQuery7.BtnBackClick(Sender: TObject);
 begin
   showForm(Query6, self);
-  Query6.BtnBack.Left := BtnBack.Left;
-  Query6.BtnBack.Top := BtnBack.Top;
-  Query6.BtnNext.Left := BtnFinish.Left;
-  Query6.BtnNext.Top := BtnFinish.Top;
 end;
 
 end.

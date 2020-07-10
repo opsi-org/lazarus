@@ -68,7 +68,8 @@ implementation
 uses
   opsi_quick_install_unit_language,
   opsi_quick_install_unit_query2,
-  opsi_quick_install_unit_query4;
+  opsi_quick_install_unit_query4,
+  opsi_quick_install_unit_query6;
 
 {$R *.lfm}
 
@@ -76,11 +77,22 @@ uses
 
 procedure TQuery3.BtnNextClick(Sender: TObject);
 begin
-  showForm(Query4, self);
-  Query4.BtnBack.Left := BtnBack.Left;
-  Query4.BtnBack.Top := BtnBack.Top;
-  Query4.BtnNext.Left := BtnNext.Left;
-  Query4.BtnNext.Top := BtnNext.Top;
+  if RadioBtnDhcpYes.Checked then
+  begin
+    showForm(Query4, self);
+    Query4.BtnBack.Left := BtnBack.Left;
+    Query4.BtnBack.Top := BtnBack.Top;
+    Query4.BtnNext.Left := BtnNext.Left;
+    Query4.BtnNext.Top := BtnNext.Top;
+  end
+  else
+  begin
+    showForm(Query6, self);
+    Query6.BtnBack.Left := BtnBack.Left;
+    Query6.BtnBack.Top := BtnBack.Top;
+    Query6.BtnNext.Left := BtnNext.Left;
+    Query6.BtnNext.Top := BtnNext.Top;
+  end;
 end;
 
 procedure TQuery3.CheckBoxAllChange(Sender: TObject);
@@ -140,17 +152,8 @@ begin
 end;
 
 procedure TQuery3.FormActivate(Sender: TObject);
-var
-  compIndex: integer;
 begin
-  for compIndex := 0 to ComponentCount - 1 do
-  begin
-    if Components[compIndex].ClassName = 'TPanel' then
-    begin
-      (Components[compIndex] as TPanel).Left := QuickInstall.panelLeft;
-    end;
-  end;
-
+  AdjustPanelPosition(self);
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
 
   if QuickInstall.initialProds then

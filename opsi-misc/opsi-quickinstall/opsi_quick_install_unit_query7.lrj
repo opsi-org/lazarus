@@ -1,10 +1,11 @@
 {"version":1,"strings":[
-{"hash":244976841,"name":"tquery7.caption","sourcebytes":[79,112,115,105,32,113,117,105,99,107,32,105,110,115,116,97,108,108,32,45,32,113,117,101,114,121,32,40,112,97,114,116,32,55,41],"value":"Opsi quick install - query (part 7)"},
+{"hash":255409433,"name":"tquery7.caption","sourcebytes":[79,112,115,105,32,113,117,105,99,107,32,105,110,115,116,97,108,108,32,45,32,113,117,101,114,121,32,40,117,115,101,114,32,105,110,102,111,32,112,97,114,116,32,50,41],"value":"Opsi quick install - query (user info part 2)"},
 {"hash":241728480,"name":"tquery7.btnback.caption","sourcebytes":[32,60,32,98,97,99,107,32],"value":" < back "},
 {"hash":233753919,"name":"tquery7.labelpasswordmasteradmin.caption","sourcebytes":[87,104,97,116,32,105,115,32,116,104,101,32,80,97,115,115,119,111,114,100,32,111,102,32,116,104,101,32,117,115,101,114,32,65,100,109,105,110,105,115,116,114,97,116,111,114,32,111,102,32,116,104,101,32,85,67,83,32,68,111,109,97,105,110,32,67,111,110,116,114,111,108,108,101,114,32,40,110,101,101,100,101,100,32,102,111,114,32,111,116,104,101,114,32,114,111,108,101,115,32,116,111,32,106,111,105,110,41,63],"value":"What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?"},
 {"hash":6075235,"name":"tquery7.editpasswordmasteradmin.text","sourcebytes":[108,105,110,117,120,49,50,51],"value":"linux123"},
-{"hash":252015791,"name":"tquery7.label1.caption","sourcebytes":[83,104,111,117,108,100,32,119,101,32,99,111,112,121,32,109,111,100,117,108,101,115,32,101,118,101,110,32,105,102,32,47,101,116,99,47,111,112,115,105,47,109,111,100,117,108,101,115,32,115,116,105,108,108,32,101,120,105,115,116,115,63],"value":"Should we copy modules even if /etc/opsi/modules still exists?"},
+{"hash":252015791,"name":"tquery7.labelcopymodules.caption","sourcebytes":[83,104,111,117,108,100,32,119,101,32,99,111,112,121,32,109,111,100,117,108,101,115,32,101,118,101,110,32,105,102,32,47,101,116,99,47,111,112,115,105,47,109,111,100,117,108,101,115,32,115,116,105,108,108,32,101,120,105,115,116,115,63],"value":"Should we copy modules even if /etc/opsi/modules still exists?"},
 {"hash":24515,"name":"tquery7.radiobtnyes.caption","sourcebytes":[89,101,115],"value":"Yes"},
 {"hash":1359,"name":"tquery7.radiobtnno.caption","sourcebytes":[78,111],"value":"No"},
-{"hash":5422320,"name":"tquery7.btnfinish.caption","sourcebytes":[32,32,102,105,110,105,115,104,32,32],"value":"  finish  "}
+{"hash":5422320,"name":"tquery7.btnfinish.caption","sourcebytes":[32,32,102,105,110,105,115,104,32,32],"value":"  finish  "},
+{"hash":54412062,"name":"tquery7.labelfinish.caption","sourcebytes":[70,105,110,97,108,108,121,32,99,108,105,99,107,32,39,102,105,110,105,115,104,39,32,116,111,32,115,116,97,114,116,32,116,104,101,32,105,110,115,116,97,108,108,97,116,105,111,110,32,111,102,32,111,112,115,105,45,115,101,114,118,101,114,46],"value":"Finally click 'finish' to start the installation of opsi-server."}
 ]}

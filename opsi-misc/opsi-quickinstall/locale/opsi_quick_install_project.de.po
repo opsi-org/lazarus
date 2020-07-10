@@ -141,8 +141,6 @@ msgid " next > "
 msgstr " weiter > "
 
 #: tquery3.caption
-#, fuzzy
-#| msgid "opsi quick install - query (part 3)"
 msgid "Opsi quick install - query (part 3)"
 msgstr "Opsi Quick-Install - Abfrage (Teil 3)"
 
@@ -275,7 +273,8 @@ msgstr " weiter > "
 #: tquery4.caption
 #, fuzzy
 #| msgid "opsi quick install - query (part 4)"
-msgid "Opsi quick install - query (part 4)"
+msgctxt "tquery4.caption"
+msgid "Opsi quick install - query (dhcp part 1)"
 msgstr "Opsi Quick-Install - Abfrage (Teil 4)"
 
 #: tquery4.labelfilepointer.caption
@@ -317,7 +316,8 @@ msgstr " weiter > "
 #: tquery5_dhcp.caption
 #, fuzzy
 #| msgid "opsi quick install - query (part 5)"
-msgid "Opsi quick install - query (part 5)"
+msgctxt "tquery5_dhcp.caption"
+msgid "Opsi quick install - query (dhcp part 2)"
 msgstr "Opsi Quick-Install - Abfrage (Teil 5)"
 
 #: tquery5_dhcp.labeladdress.caption
@@ -440,7 +440,8 @@ msgstr " weiter > "
 #: tquery6.caption
 #, fuzzy
 #| msgid "opsi quick install - query (part 6)"
-msgid "Opsi quick install - query (part 6)"
+msgctxt "tquery6.caption"
+msgid "Opsi quick install - query (user info part 1)"
 msgstr "Opsi Quick-Install - Abfrage (Teil 6)"
 
 #: tquery6.editnameadmin.text
@@ -490,7 +491,8 @@ msgstr ""
 #: tquery7.caption
 #, fuzzy
 #| msgid "opsi quick install - query (part 7)"
-msgid "Opsi quick install - query (part 7)"
+msgctxt "tquery7.caption"
+msgid "Opsi quick install - query (user info part 2)"
 msgstr "Opsi Quick-Install - Abfrage (Teil 7)"
 
 #: tquery7.editpasswordmasteradmin.text
@@ -498,8 +500,13 @@ msgctxt "tquery7.editpasswordmasteradmin.text"
 msgid "linux123"
 msgstr ""
 
-#: tquery7.label1.caption
+#: tquery7.labelcopymodules.caption
+msgctxt "tquery7.labelcopymodules.caption"
 msgid "Should we copy modules even if /etc/opsi/modules still exists?"
+msgstr ""
+
+#: tquery7.labelfinish.caption
+msgid "Finally click 'finish' to start the installation of opsi-server."
 msgstr ""
 
 #: tquery7.labelpasswordmasteradmin.caption

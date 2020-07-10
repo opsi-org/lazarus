@@ -33,8 +33,10 @@ type
   private
 
   public
+  const
     // same position for all panels
-    panelLeft: integer;
+    panelLeft = 210;
+  var
     // same background image for all forms
     BackgrImageFileName: string;
     // for setting selectedAmount:=productAmount only the first time when Query3 is activated
@@ -43,7 +45,10 @@ type
     initialProds: boolean;
   end;
 
+
+// for less code
 procedure showForm(newForm: TForm; Sender: TForm);
+procedure AdjustPanelPosition(Sender: TForm);
 
 var
   QuickInstall: TQuickInstall;
@@ -55,7 +60,6 @@ uses
 
 {$R *.lfm}
 
-// for less code
 procedure showForm(newForm: TForm; Sender: TForm);
 begin
   newForm.Visible := True;
@@ -67,42 +71,43 @@ begin
 
   Sender.Visible := False;
 end;
+procedure AdjustPanelPosition(Sender: TForm);
+var
+  compIndex: integer;
+begin
+  for compIndex := 0 to Sender.ComponentCount - 1 do
+  begin
+    if Sender.Components[compIndex].ClassName = 'TPanel' then
+    begin
+      (Sender.Components[compIndex] as TPanel).Left := QuickInstall.panelLeft;
+    end;
+  end
+end;
 
 { TQuickInstall }
 
 procedure TQuickInstall.FormCreate(Sender: TObject);
 var
   Languages: TStringList;
-  compIndex: integer;
 begin
-  // set form size
+  // set constant form size
   Height := 450;
   Left := 360;
   Top := 170;
   Width := 730;
-
+  // set constant button position
   BtnBack.Left := 20;
   BtnNext.Left := 660;
   BtnBack.Top := 410;
   BtnNext.Top := 410;
-
-  // 175
-  panelLeft := 220;
-
-  ComboBoxLanguages.Left := 125;
-
-  // bring all panels to the same position (QuickInstall.panelLeft)
-  for compIndex := 0 to ComponentCount - 1 do
-  begin
-    if Components[compIndex].ClassName = 'TPanel' then
-    begin
-      (Components[compIndex] as TPanel).Left := panelLeft;
-    end;
-  end;
-
+  // set constant background
   BackgrImageFileName := ExtractFilePath(ParamStr(0)) + 'opsi.png';
   BackgrImage.Picture.LoadFromFile(BackgrImageFileName);
 
+  // bring all panels to the same position (QuickInstall.panelLeft)
+  AdjustPanelPosition(self);
+
+  ComboBoxLanguages.Left := 120;
   with ComboBoxLanguages.Items do
   begin
     Add('Deutsch');
@@ -114,7 +119,7 @@ begin
   // let the combo box show the system language
   ComboBoxLanguages.ItemIndex := Languages.IndexOf(GetDefaultLang);
 
-  initialProds:=True;
+  initialProds := True;
 end;
 
 procedure TQuickInstall.BtnNextClick(Sender: TObject);

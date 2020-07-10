@@ -70,7 +70,7 @@ object QuickInstall: TQuickInstall
   object QuickInstallPanel: TPanel
     Left = 175
     Height = 82
-    Top = 232
+    Top = 224
     Width = 371
     BevelOuter = bvNone
     ClientHeight = 82

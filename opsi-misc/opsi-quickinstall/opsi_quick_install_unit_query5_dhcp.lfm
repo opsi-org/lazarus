@@ -3,7 +3,7 @@ object Query5_dhcp: TQuery5_dhcp
   Height = 450
   Top = 194
   Width = 730
-  Caption = 'Opsi quick install - query (part 5)'
+  Caption = 'Opsi quick install - query (dhcp part 2)'
   ClientHeight = 450
   ClientWidth = 730
   OnActivate = FormActivate
