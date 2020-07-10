@@ -75,19 +75,11 @@ uses
 
 procedure TQuery5_dhcp.BtnNextClick(Sender: TObject);
 begin
-  Query6.Visible := True;
-
-  Query6.Height := Height;
-  Query6.Left := Left;
-  Query6.Top := Top;
-  Query6.Width := Width;
-
+  showForm(Query6, self);
   Query6.BtnBack.Left := BtnBack.Left;
   Query6.BtnBack.Top := BtnBack.Top;
   Query6.BtnNext.Left := BtnNext.Left;
   Query6.BtnNext.Top := BtnNext.Top;
-
-  Visible := False;
 end;
 
 procedure TQuery5_dhcp.FormActivate(Sender: TObject);
@@ -112,19 +104,11 @@ end;
 
 procedure TQuery5_dhcp.BtnBackClick(Sender: TObject);
 begin
-  Query4.Visible := True;
-
-  Query4.Height := Height;
-  Query4.Left := Left;
-  Query4.Top := Top;
-  Query4.Width := Width;
-
+  showForm(Query4, self);
   Query4.BtnBack.Left := BtnBack.Left;
   Query4.BtnBack.Top := BtnBack.Top;
   Query4.BtnNext.Left := BtnNext.Left;
   Query4.BtnNext.Top := BtnNext.Top;
-
-  Visible := False;
 end;
 
 end.

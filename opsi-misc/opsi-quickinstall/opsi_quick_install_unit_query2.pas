@@ -54,19 +54,11 @@ uses
 
 procedure TQuery2.BtnNextClick(Sender: TObject);
 begin
-  Query3.Visible := True;
-
-  Query3.Height := Height;
-  Query3.Left := Left;
-  Query3.Top := Top;
-  Query3.Width := Width;
-
+  showForm(Query3, self);
   Query3.BtnBack.Left := BtnBack.Left;
   Query3.BtnBack.Top := BtnBack.Top;
   Query3.BtnNext.Left := BtnNext.Left;
   Query3.BtnNext.Top := BtnNext.Top;
-
-  Visible := False;
 end;
 
 procedure TQuery2.FormActivate(Sender: TObject);
@@ -91,19 +83,11 @@ end;
 
 procedure TQuery2.BtnBackClick(Sender: TObject);
 begin
-  Query.Visible := True;
-
-  Query.Height := Height;
-  Query.Left := Left;
-  Query.Top := Top;
-  Query.Width := Width;
-
+  showForm(Query, self);
   Query.BtnBack.Left := BtnBack.Left;
   Query.BtnBack.Top := BtnBack.Top;
   Query.BtnNext.Left := BtnNext.Left;
   Query.BtnNext.Top := BtnNext.Top;
-
-  Visible := False;
 end;
 
 end.

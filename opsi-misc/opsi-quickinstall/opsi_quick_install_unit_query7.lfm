@@ -3,7 +3,7 @@ object Query7: TQuery7
   Height = 450
   Top = 194
   Width = 730
-  Caption = 'opsi quick install - query (part 7)'
+  Caption = 'Opsi quick install - query (part 7)'
   ClientHeight = 450
   ClientWidth = 730
   OnActivate = FormActivate
@@ -29,7 +29,7 @@ object Query7: TQuery7
   object PanelPasswordMasterAdmin: TPanel
     Left = 176
     Height = 80
-    Top = 56
+    Top = 128
     Width = 376
     BevelOuter = bvNone
     ClientHeight = 80
@@ -58,7 +58,7 @@ object Query7: TQuery7
   object Panel1: TPanel
     Left = 176
     Height = 90
-    Top = 184
+    Top = 256
     Width = 370
     BevelOuter = bvNone
     ClientHeight = 90

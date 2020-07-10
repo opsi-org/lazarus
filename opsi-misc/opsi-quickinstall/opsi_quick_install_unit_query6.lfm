@@ -3,7 +3,7 @@ object Query6: TQuery6
   Height = 450
   Top = 194
   Width = 730
-  Caption = 'opsi quick install - query (part 6)'
+  Caption = 'Opsi quick install - query (part 6)'
   ClientHeight = 450
   ClientWidth = 730
   OnActivate = FormActivate
@@ -39,7 +39,7 @@ object Query6: TQuery6
   object PanelNameAdmin: TPanel
     Left = 160
     Height = 80
-    Top = 24
+    Top = 40
     Width = 376
     BevelOuter = bvNone
     ClientHeight = 80
@@ -51,7 +51,7 @@ object Query6: TQuery6
       Top = 0
       Width = 376
       Align = alTop
-      Caption = 'What is the name of the opsi_admin_user to create? (empty= nothing created)'
+      Caption = 'What is the name of the opsi_admin_user to create? (empty = nothing created)'
       ParentColor = False
       WordWrap = True
     end
@@ -68,7 +68,7 @@ object Query6: TQuery6
   object PanelPasswordAdmin: TPanel
     Left = 160
     Height = 80
-    Top = 136
+    Top = 144
     Width = 376
     BevelOuter = bvNone
     ClientHeight = 80
@@ -80,7 +80,7 @@ object Query6: TQuery6
       Top = 0
       Width = 376
       Align = alTop
-      Caption = 'What is the password of the opsi_admin_user to create? (empty= nothing created)'
+      Caption = 'What is the password of the opsi_admin_user to create? (empty = nothing created)'
       ParentColor = False
       WordWrap = True
     end

@@ -185,7 +185,7 @@ begin
   else
     FileText.Add(propertyName + '=testing');
 
-  FileText.Add('setup_after_install=' + Query3.MemoOpsiProducts.Text);
+  //FileText.Add('setup_after_install=' + Query3.MemoOpsiProducts.Text);
 
   FileText.Add('ucs_master_admin_password=' + Query7.EditPasswordMasterAdmin.Text);
 
@@ -224,19 +224,11 @@ end;
 
 procedure TQuery7.BtnBackClick(Sender: TObject);
 begin
-  Query6.Visible := True;
-
-  Query6.Height := Height;
-  Query6.Left := Left;
-  Query6.Top := Top;
-  Query6.Width := Width;
-
+  showForm(Query6, self);
   Query6.BtnBack.Left := BtnBack.Left;
   Query6.BtnBack.Top := BtnBack.Top;
   Query6.BtnNext.Left := BtnFinish.Left;
   Query6.BtnNext.Top := BtnFinish.Top;
-
-  Visible := False;
 end;
 
 end.

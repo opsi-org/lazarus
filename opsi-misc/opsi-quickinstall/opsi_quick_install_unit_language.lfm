@@ -3,7 +3,7 @@ object QuickInstall: TQuickInstall
   Height = 450
   Top = 194
   Width = 730
-  Caption = 'opsi quick install'
+  Caption = 'Opsi quick install'
   ClientHeight = 450
   ClientWidth = 730
   OnCreate = FormCreate
@@ -16,26 +16,6 @@ object QuickInstall: TQuickInstall
     Align = alClient
     Enabled = False
   end
-  object LabelSelLanguage: TLabel
-    Left = 175
-    Height = 19
-    Top = 144
-    Width = 332
-    Caption = 'Please choose a language for this setup program first:'
-    ParentColor = False
-  end
-  object ComboBoxLanguages: TComboBox
-    Left = 248
-    Height = 31
-    Top = 176
-    Width = 188
-    AutoComplete = True
-    AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactSearchAscending]
-    AutoDropDown = True
-    ItemHeight = 0
-    OnChange = ComboBoxLanguagesChange
-    TabOrder = 0
-  end
   object BtnNext: TButton
     Left = 660
     Height = 25
@@ -44,16 +24,7 @@ object QuickInstall: TQuickInstall
     AutoSize = True
     Caption = ' next > '
     OnClick = BtnNextClick
-    TabOrder = 1
-  end
-  object LabelWelcome: TLabel
-    Left = 175
-    Height = 19
-    Top = 64
-    Width = 367
-    Caption = 'Welcome to the installation of opsi-server on this computer!'
-    ParentColor = False
-    WordWrap = True
+    TabOrder = 0
   end
   object PanelCoverBtnBack: TPanel
     Left = 20
@@ -62,7 +33,7 @@ object QuickInstall: TQuickInstall
     Width = 124
     ClientHeight = 50
     ClientWidth = 124
-    TabOrder = 2
+    TabOrder = 1
     Visible = False
     object BtnBack: TButton
       Left = 20
@@ -75,18 +46,18 @@ object QuickInstall: TQuickInstall
       TabOrder = 0
     end
   end
-  object WelcomePanel: TPanel
+  object InfoPanel: TPanel
     Left = 175
-    Height = 106
-    Top = 272
+    Height = 56
+    Top = 336
     Width = 370
     BevelOuter = bvNone
-    ClientHeight = 106
+    ClientHeight = 56
     ClientWidth = 370
-    TabOrder = 3
+    TabOrder = 2
     object WelcomeLabel2: TLabel
       Left = 0
-      Height = 96
+      Height = 48
       Top = 0
       Width = 370
       Align = alTop
@@ -94,6 +65,87 @@ object QuickInstall: TQuickInstall
       Caption = 'Now we need some information to carry out the remaing installation automatically.'
       ParentColor = False
       WordWrap = True
+    end
+  end
+  object QuickInstallPanel: TPanel
+    Left = 175
+    Height = 82
+    Top = 232
+    Width = 371
+    BevelOuter = bvNone
+    ClientHeight = 82
+    ClientWidth = 371
+    TabOrder = 3
+    object Label1: TLabel
+      Left = 0
+      Height = 19
+      Top = 0
+      Width = 371
+      Align = alTop
+      Caption = 'Please select a setup type:'
+      ParentColor = False
+    end
+    object RadioBtnDefault: TRadioButton
+      Left = 1
+      Height = 21
+      Top = 24
+      Width = 220
+      Caption = 'Standard ([further explanation])'
+      Checked = True
+      TabOrder = 0
+      TabStop = True
+    end
+    object RadioBtnCustom: TRadioButton
+      Left = 1
+      Height = 21
+      Top = 48
+      Width = 211
+      Caption = 'Custom ([further explanation])'
+      TabOrder = 1
+    end
+  end
+  object WelcomePanel: TPanel
+    Left = 175
+    Height = 170
+    Top = 32
+    Width = 372
+    BevelOuter = bvNone
+    ClientHeight = 170
+    ClientWidth = 372
+    TabOrder = 4
+    object LabelWelcome: TLabel
+      Left = 0
+      Height = 46
+      Top = 0
+      Width = 372
+      Align = alTop
+      Caption = 'Welcome to the installation of opsi-server on this computer!'
+      Font.Height = -19
+      Font.Name = 'Sans'
+      ParentColor = False
+      ParentFont = False
+      WordWrap = True
+    end
+    object LabelSelLanguage: TLabel
+      Left = -1
+      Height = 19
+      Top = 88
+      Width = 332
+      Caption = 'Please choose a language for this setup program first:'
+      ParentColor = False
+      WordWrap = True
+    end
+    object ComboBoxLanguages: TComboBox
+      Left = 96
+      Height = 31
+      Top = 120
+      Width = 160
+      AutoComplete = True
+      AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactSearchAscending]
+      AutoDropDown = True
+      ItemHeight = 0
+      OnChange = ComboBoxLanguagesChange
+      TabOrder = 0
     end
   end
 end

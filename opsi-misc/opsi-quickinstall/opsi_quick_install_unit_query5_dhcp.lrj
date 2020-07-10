@@ -1,5 +1,5 @@
 {"version":1,"strings":[
-{"hash":247073833,"name":"tquery5_dhcp.caption","sourcebytes":[111,112,115,105,32,113,117,105,99,107,32,105,110,115,116,97,108,108,32,45,32,113,117,101,114,121,32,40,112,97,114,116,32,53,41],"value":"opsi quick install - query (part 5)"},
+{"hash":244976681,"name":"tquery5_dhcp.caption","sourcebytes":[79,112,115,105,32,113,117,105,99,107,32,105,110,115,116,97,108,108,32,45,32,113,117,101,114,121,32,40,112,97,114,116,32,53,41],"value":"Opsi quick install - query (part 5)"},
 {"hash":80700016,"name":"tquery5_dhcp.btnnext.caption","sourcebytes":[32,110,101,120,116,32,62,32],"value":" next > "},
 {"hash":241728480,"name":"tquery5_dhcp.btnback.caption","sourcebytes":[32,60,32,98,97,99,107,32],"value":" < back "},
 {"hash":150244041,"name":"tquery5_dhcp.labelnetmask.caption","sourcebytes":[78,101,116,109,97,115,107,32,40,102,111,114,32,100,104,99,112,41],"value":"Netmask (for dhcp)"},

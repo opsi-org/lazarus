@@ -1,5 +1,5 @@
 {"version":1,"strings":[
-{"hash":247073817,"name":"tquery2.caption","sourcebytes":[111,112,115,105,32,113,117,105,99,107,32,105,110,115,116,97,108,108,32,45,32,113,117,101,114,121,32,40,112,97,114,116,32,50,41],"value":"opsi quick install - query (part 2)"},
+{"hash":244976665,"name":"tquery2.caption","sourcebytes":[79,112,115,105,32,113,117,105,99,107,32,105,110,115,116,97,108,108,32,45,32,113,117,101,114,121,32,40,112,97,114,116,32,50,41],"value":"Opsi quick install - query (part 2)"},
 {"hash":80700016,"name":"tquery2.btnnext.caption","sourcebytes":[32,110,101,120,116,32,62,32],"value":" next > "},
 {"hash":241728480,"name":"tquery2.btnback.caption","sourcebytes":[32,60,32,98,97,99,107,32],"value":" < back "},
 {"hash":117513241,"name":"tquery2.labelbackend.caption","sourcebytes":[87,104,105,99,104,32,98,97,99,107,101,110,100,32,115,104,111,117,108,100,32,98,101,32,105,110,115,116,97,108,108,101,100,63,32,40,109,121,115,113,108,32,110,101,101,100,115,32,118,97,108,105,100,32,97,99,116,105,118,97,116,105,111,110,32,102,105,108,101,41],"value":"Which backend should be installed? (mysql needs valid activation file)"},

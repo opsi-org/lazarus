@@ -3,7 +3,7 @@ object Query: TQuery
   Height = 450
   Top = 194
   Width = 730
-  Caption = 'opsi quick install - query (part 1)'
+  Caption = 'Opsi quick install - query (part 1)'
   ClientHeight = 450
   ClientWidth = 730
   OnActivate = FormActivate
@@ -41,7 +41,7 @@ object Query: TQuery
   object PanelRepo: TPanel
     Left = 160
     Height = 104
-    Top = 56
+    Top = 32
     Width = 472
     BevelOuter = bvNone
     ClientHeight = 104
@@ -93,7 +93,7 @@ object Query: TQuery
   object PanelProxy: TPanel
     Left = 160
     Height = 104
-    Top = 176
+    Top = 160
     Width = 466
     BevelOuter = bvNone
     ClientHeight = 104
@@ -145,7 +145,7 @@ object Query: TQuery
   object PanelNoCache: TPanel
     Left = 160
     Height = 104
-    Top = 304
+    Top = 296
     Width = 466
     BevelOuter = bvNone
     ClientHeight = 104
