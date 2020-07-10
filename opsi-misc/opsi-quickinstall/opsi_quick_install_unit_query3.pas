@@ -87,7 +87,7 @@ procedure TQuery3.CheckBoxAllChange(Sender: TObject);
 var
   compIndex: integer;
 begin
-  if (CheckBoxAll.Checked = True) and (selectedAmount <> productAmount) then
+  if CheckBoxAll.Checked and (selectedAmount <> productAmount) then
   begin
     for compIndex := 0 to PanelProdToChoose.ControlCount - 1 do
     begin
@@ -106,7 +106,7 @@ procedure TQuery3.CheckBoxNoneChange(Sender: TObject);
 var
   compIndex: integer;
 begin
-  if (CheckBoxNone.Checked = True) and (selectedAmount <> 0) then
+  if CheckBoxNone.Checked and (selectedAmount <> 0) then
   begin
     for compIndex := 0 to PanelProdToChoose.ControlCount - 1 do
     begin
@@ -123,7 +123,7 @@ end;
 
 procedure TQuery3.CheckBoxProdChange(Sender: TObject);
 begin
-  if (Sender as TCheckBox).Checked = True then
+  if (Sender as TCheckBox).Checked then
   begin
     selectedAmount := selectedAmount + 1;
     if selectedAmount = productAmount then
@@ -153,10 +153,14 @@ begin
 
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
 
-  // amount of products to choose equals PanelProdToChoose.ComponentCount
-  productAmount := PanelProdToChoose.ControlCount;
-  // at the beginning, all prods are selected
-  selectedAmount := productAmount;
+  if QuickInstall.initialProds then
+  begin
+    // amount of products to choose equals PanelProdToChoose.ComponentCount
+    productAmount := PanelProdToChoose.ControlCount;
+    // at the beginning, all prods are selected
+    selectedAmount := productAmount;
+    QuickInstall.initialProds := False;
+  end;
 end;
 
 procedure TQuery3.FormClose(Sender: TObject; var CloseAction: TCloseAction);

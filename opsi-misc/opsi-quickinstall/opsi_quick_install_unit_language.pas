@@ -37,6 +37,10 @@ type
     panelLeft: integer;
     // same background image for all forms
     BackgrImageFileName: string;
+    // for setting selectedAmount:=productAmount only the first time when Query3 is activated
+    // Note that it doesn't work to define initialProds in opsi_quick_install_unit_query3 and
+    // set it to True here in opsi_quick_install_unit_language.
+    initialProds: boolean;
   end;
 
 procedure showForm(newForm: TForm; Sender: TForm);
@@ -109,11 +113,13 @@ begin
   Languages.Add('en');
   // let the combo box show the system language
   ComboBoxLanguages.ItemIndex := Languages.IndexOf(GetDefaultLang);
+
+  initialProds:=True;
 end;
 
 procedure TQuickInstall.BtnNextClick(Sender: TObject);
 begin
-  if RadioBtnDefault.Checked = True then
+  if RadioBtnDefault.Checked then
   begin
     // 'self' is current form
     showForm(Query6, self);
