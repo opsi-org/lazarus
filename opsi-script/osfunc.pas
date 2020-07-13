@@ -2439,7 +2439,7 @@ var
       tmp_buffer := '';
       BytesRead := proc.output.Read(tmp_buffer, READ_BYTES);
       {$IFDEF WINDOWS}
-      OemToAnsi(tmp_buffer, tmp_buffer);
+      OemToAnsiBuff(tmp_buffer, tmp_buffer, BytesRead);
       {$ENDIF WINDOWS}
       Buffer := Buffer + tmp_buffer;
 
@@ -2954,7 +2954,7 @@ begin
     lpBuffer := '';
     Result := ReadFile(hReadPipe, lpBuffer, READ_BYTES, BytesRead, nil);
 
-    OemToAnsi(lpBuffer, lpBuffer);
+    OemToAnsiBuff(lpBuffer, lpBuffer, BytesRead);
     Buffer := Buffer + lpBuffer;
 
     LineBreakPos := AnsiPos(#13, Buffer);
