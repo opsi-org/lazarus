@@ -3,7 +3,7 @@ object Query5_dhcp: TQuery5_dhcp
   Height = 450
   Top = 194
   Width = 730
-  Caption = 'opsi quick install - query (part 5)'
+  Caption = 'Opsi quick install - query (dhcp part 2)'
   ClientHeight = 450
   ClientWidth = 730
   OnActivate = FormActivate
@@ -81,10 +81,10 @@ object Query5_dhcp: TQuery5_dhcp
       TabOrder = 2
     end
     object EditNetmask: TEdit
-      Left = 344
+      Left = 360
       Height = 25
       Top = 24
-      Width = 162
+      Width = 146
       TabOrder = 3
     end
   end
@@ -141,10 +141,10 @@ object Query5_dhcp: TQuery5_dhcp
       TabOrder = 2
     end
     object EditAddress: TEdit
-      Left = 72
+      Left = 88
       Height = 25
       Top = 48
-      Width = 164
+      Width = 148
       TabOrder = 4
     end
   end
@@ -201,10 +201,10 @@ object Query5_dhcp: TQuery5_dhcp
       TabOrder = 2
     end
     object EditDomain: TEdit
-      Left = 72
+      Left = 88
       Height = 25
       Top = 48
-      Width = 164
+      Width = 148
       TabOrder = 4
     end
   end
@@ -261,10 +261,10 @@ object Query5_dhcp: TQuery5_dhcp
       TabOrder = 2
     end
     object EditNameserver: TEdit
-      Left = 72
+      Left = 88
       Height = 25
       Top = 48
-      Width = 164
+      Width = 148
       TabOrder = 4
     end
   end
@@ -321,10 +321,10 @@ object Query5_dhcp: TQuery5_dhcp
       TabOrder = 3
     end
     object EditGateway: TEdit
-      Left = 72
+      Left = 88
       Height = 25
       Top = 48
-      Width = 164
+      Width = 144
       TabOrder = 4
     end
   end

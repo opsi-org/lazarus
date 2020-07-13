@@ -12,15 +12,19 @@ msgid " next > "
 msgstr " next > "
 
 #: tquery.caption
-msgid "opsi quick install - query (part 1)"
+#, fuzzy
+#| msgid "opsi quick install - query (part 1)"
+msgid "Opsi quick install - query (part 1)"
 msgstr "opsi quick install - query (part 1)"
 
 #: tquery.labelnocache.caption
-msgid "(Base-) Repository for opsi-server installation (without any cache proxy)"
+msgid ""
+"(Base-) Repository for opsi-server installation\n"
+"(without any cache proxy)\n"
 msgstr ""
 
 #: tquery.labelproxy.caption
-msgid "proxy to use (http://myproxy.dom.org:8080)"
+msgid "Proxy to use (http://myproxy.dom.org:8080)"
 msgstr ""
 
 #: tquery.labelrepo.caption
@@ -32,7 +36,8 @@ msgid "http://myproxy.dom.org:8080"
 msgstr ""
 
 #: tquery.radiobtnnone.caption
-msgid "none ?"
+msgctxt "tquery.radiobtnnone.caption"
+msgid "None"
 msgstr ""
 
 #: tquery.radiobtnopsi41.caption
@@ -81,7 +86,9 @@ msgid " next > "
 msgstr " next > "
 
 #: tquery2.caption
-msgid "opsi quick install - query (part 2)"
+#, fuzzy
+#| msgid "opsi quick install - query (part 2)"
+msgid "Opsi quick install - query (part 2)"
 msgstr "opsi quick install - query (part 2)"
 
 #: tquery2.label1.caption
@@ -89,7 +96,9 @@ msgid "Install first from stable and than update to repo kind?"
 msgstr ""
 
 #: tquery2.labelbackend.caption
-msgid "Which backend should be installed? (mysql needs valid activation file)"
+msgid ""
+"Which backend should be installed?\n"
+"(mysql needs valid activation file)\n"
 msgstr ""
 
 #: tquery2.labelrepokind.caption
@@ -137,45 +146,135 @@ msgid " next > "
 msgstr " next > "
 
 #: tquery3.caption
-msgid "opsi quick install - query (part 3)"
+msgid "Opsi quick install - query (part 3)"
+msgstr ""
+
+#: tquery3.checkboxall.caption
+msgid "All"
+msgstr ""
+
+#: tquery3.checkboxconfigwin10.caption
+msgid "config-win10"
+msgstr ""
+
+#: tquery3.checkboxconfigwinbase.caption
+msgid "config-winbase"
+msgstr ""
+
+#: tquery3.checkboxhwaudit.caption
+msgid "hwaudit"
+msgstr ""
+
+#: tquery3.checkboxjavavm.caption
+msgid "javavm"
+msgstr ""
+
+#: tquery3.checkboxjedit.caption
+msgid "jedit"
+msgstr ""
+
+#: tquery3.checkboxnone.caption
+msgctxt "tquery3.checkboxnone.caption"
+msgid "None"
+msgstr ""
+
+#: tquery3.checkboxopsiclientagent.caption
+msgid "opsi-client-agent"
+msgstr ""
+
+#: tquery3.checkboxopsiconfiged.caption
+msgid "opsi-configed"
+msgstr ""
+
+#: tquery3.checkboxopsilogviewer.caption
+msgid "opsi-logviewer"
+msgstr ""
+
+#: tquery3.checkboxopsiscripttest.caption
+msgid "opsi-script-test"
+msgstr ""
+
+#: tquery3.checkboxopsisetupdetector.caption
+msgid "opsi-setup-detector"
+msgstr ""
+
+#: tquery3.checkboxopsisetwinuac.caption
+msgid "opsi-set-win-uac"
+msgstr ""
+
+#: tquery3.checkboxopsitemplate.caption
+msgid "opsi-template"
+msgstr ""
+
+#: tquery3.checkboxopsitemplateadmin.caption
+msgid "opsi-template-with-admin"
+msgstr ""
+
+#: tquery3.checkboxopsiuefinetboot.caption
+msgid "opsi-uefi-netboot"
+msgstr ""
+
+#: tquery3.checkboxopsiwimcapture.caption
+msgid "opsi-wim-capture"
+msgstr ""
+
+#: tquery3.checkboxopsiwinpe.caption
+msgid "opsi-winpe"
+msgstr ""
+
+#: tquery3.checkboxopsiwinst.caption
+msgid "opsi-winst"
+msgstr ""
+
+#: tquery3.checkboxshutdown.caption
+msgid "shutdownwanted"
+msgstr ""
+
+#: tquery3.checkboxswaudit.caption
+msgid "swaudit"
 msgstr ""
 
 #: tquery3.labeldhcp.caption
-msgid "Should we run the dhcp server on this machine?"
+msgid "Should we run the opsi dhcp server on this machine?"
 msgstr ""
 
 #: tquery3.labelopsiproducts.caption
-msgid "Which opsi product(s) should we switch to setup after l-opsi-server installation is done?"
+msgid "Which opsi product(s) should we install in the depot?"
 msgstr ""
 
 #: tquery3.labelreboot.caption
-msgid "May the server reboot if script is finished?"
+msgid "May the server reboot if the script is finished?"
 msgstr ""
 
 #: tquery3.radiobtndhcpno.caption
+#, fuzzy
 msgctxt "tquery3.radiobtndhcpno.caption"
 msgid "No"
-msgstr ""
+msgstr "No"
 
 #: tquery3.radiobtndhcpyes.caption
+#, fuzzy
 msgctxt "tquery3.radiobtndhcpyes.caption"
 msgid "Yes"
-msgstr ""
+msgstr "Yes"
 
 #: tquery3.radiobtnno.caption
+#, fuzzy
 msgctxt "tquery3.radiobtnno.caption"
 msgid "No"
-msgstr ""
+msgstr "No"
 
 #: tquery3.radiobtnyes.caption
+#, fuzzy
 msgctxt "tquery3.radiobtnyes.caption"
 msgid "Yes"
-msgstr ""
+msgstr "Yes"
 
 #: tquery4.btnback.caption
+#, fuzzy
 msgctxt "tquery4.btnback.caption"
 msgid " < back "
-msgstr ""
+msgstr " < back "
 
 #: tquery4.btnnext.caption
 msgctxt "tquery4.btnnext.caption"
@@ -183,7 +282,8 @@ msgid " next > "
 msgstr " next > "
 
 #: tquery4.caption
-msgid "opsi quick install - query (part 4)"
+msgctxt "tquery4.caption"
+msgid "Opsi quick install - query (dhcp part 1)"
 msgstr ""
 
 #: tquery4.labelfilepointer.caption
@@ -191,7 +291,7 @@ msgid "Which file should the TFTPROOT default symlink point to?"
 msgstr ""
 
 #: tquery4.labeltimeout.caption
-msgid "The patched elilo.efi does have a timeout of 2 seconds in case of a failed elilo configuration (?)"
+msgid "Does the patched elilo.efi have a timeout of 2 seconds in case of a failed elilo configuration?"
 msgstr ""
 
 #: tquery4.radiobtnmenu.caption
@@ -199,23 +299,26 @@ msgid "default.menu"
 msgstr ""
 
 #: tquery4.radiobtnno.caption
+#, fuzzy
 msgctxt "tquery4.radiobtnno.caption"
 msgid "No"
-msgstr ""
+msgstr "No"
 
 #: tquery4.radiobtnnomenu.caption
 msgid "default.nomenu"
 msgstr ""
 
 #: tquery4.radiobtnyes.caption
+#, fuzzy
 msgctxt "tquery4.radiobtnyes.caption"
 msgid "Yes"
-msgstr ""
+msgstr "Yes"
 
 #: tquery5_dhcp.btnback.caption
+#, fuzzy
 msgctxt "tquery5_dhcp.btnback.caption"
 msgid " < back "
-msgstr ""
+msgstr " < back "
 
 #: tquery5_dhcp.btnnext.caption
 msgctxt "tquery5_dhcp.btnnext.caption"
@@ -223,7 +326,8 @@ msgid " next > "
 msgstr " next > "
 
 #: tquery5_dhcp.caption
-msgid "opsi quick install - query (part 5)"
+msgctxt "tquery5_dhcp.caption"
+msgid "Opsi quick install - query (dhcp part 2)"
 msgstr ""
 
 #: tquery5_dhcp.labeladdress.caption
@@ -334,9 +438,10 @@ msgid "vmnat.local"
 msgstr ""
 
 #: tquery6.btnback.caption
+#, fuzzy
 msgctxt "tquery6.btnback.caption"
 msgid " < back "
-msgstr ""
+msgstr " < back "
 
 #: tquery6.btnnext.caption
 msgctxt "tquery6.btnnext.caption"
@@ -344,7 +449,10 @@ msgid " next > "
 msgstr " next > "
 
 #: tquery6.caption
-msgid "opsi quick install - query (part 6)"
+#, fuzzy
+#| msgid "opsi quick install - query (part 6)"
+msgctxt "tquery6.caption"
+msgid "Opsi quick install - query (user info part 1)"
 msgstr "opsi quick install - query (part 6)"
 
 #: tquery6.editnameadmin.text
@@ -367,19 +475,23 @@ msgid "linux123"
 msgstr ""
 
 #: tquery6.labelnameadmin.caption
-msgid "What is the name of the opsi_admin_user to create? (empty= nothing created)"
+msgid ""
+"What is the name of the opsi_admin_user to create?\n"
+"(empty = nothing created)\n"
 msgstr ""
 
 #: tquery6.labelnameip.caption
-msgid "Set a different IP name (FQDN) (auto = use standard)"
+msgid "Set a different IP name (FQDN) ('auto' = use standard)"
 msgstr ""
 
 #: tquery6.labelnameip1.caption
-msgid "Set a different IP number (auto = use standard)"
+msgid "Set a different IP number ('auto' = use standard)"
 msgstr ""
 
 #: tquery6.labelpasswordadmin.caption
-msgid "What is the password of the opsi_admin_user to create? (empty= nothing created)"
+msgid ""
+"What is the password of the opsi_admin_user to create?\n"
+"(empty = nothing created)\n"
 msgstr ""
 
 #: tquery7.btnback.caption
@@ -392,7 +504,10 @@ msgid "  finish  "
 msgstr "  finish  "
 
 #: tquery7.caption
-msgid "opsi quick install - query (part 7)"
+#, fuzzy
+#| msgid "opsi quick install - query (part 7)"
+msgctxt "tquery7.caption"
+msgid "Opsi quick install - query (user info part 2)"
 msgstr "opsi quick install - query (part 7)"
 
 #: tquery7.editpasswordmasteradmin.text
@@ -400,8 +515,13 @@ msgctxt "tquery7.editpasswordmasteradmin.text"
 msgid "linux123"
 msgstr ""
 
-#: tquery7.label1.caption
+#: tquery7.labelcopymodules.caption
+msgctxt "tquery7.labelcopymodules.caption"
 msgid "Should we copy modules even if /etc/opsi/modules still exists?"
+msgstr ""
+
+#: tquery7.labelfinish.caption
+msgid "Finally click 'finish' to start the installation of opsi-server."
 msgstr ""
 
 #: tquery7.labelpasswordmasteradmin.caption
@@ -429,18 +549,34 @@ msgid " next > "
 msgstr " next > "
 
 #: tquickinstall.caption
-msgid "opsi quick install"
+#, fuzzy
+#| msgid "opsi quick install"
+msgid "Opsi quick install"
 msgstr "opsi quick install"
 
+#: tquickinstall.label1.caption
+msgid "Please select a setup type:"
+msgstr ""
+
 #: tquickinstall.labelsellanguage.caption
-msgid "Please choose a language for this setup program first:"
+msgid "Please choose a language for this setup program:"
 msgstr ""
 
 #: tquickinstall.labelwelcome.caption
 msgid "Welcome to the installation of opsi-server on this computer!"
 msgstr ""
 
+#: tquickinstall.radiobtncustom.caption
+msgctxt "tquickinstall.radiobtncustom.caption"
+msgid "Custom (...)"
+msgstr ""
+
+#: tquickinstall.radiobtndefault.caption
+msgctxt "tquickinstall.radiobtndefault.caption"
+msgid "Standard (...)"
+msgstr ""
+
 #: tquickinstall.welcomelabel2.caption
-msgid "Now we need some information to carry out the remaing installation automatically."
+msgid "To carry out the remaing installation automatically, we need some information first."
 msgstr ""
 

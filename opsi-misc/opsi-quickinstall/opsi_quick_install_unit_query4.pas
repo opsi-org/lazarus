@@ -49,33 +49,16 @@ uses
 
 procedure TQuery4.BtnNextClick(Sender: TObject);
 begin
-  Query5_dhcp.Visible := True;
-
-  Query5_dhcp.Height := Height;
-  Query5_dhcp.Left := Left;
-  Query5_dhcp.Top := Top;
-  Query5_dhcp.Width := Width;
-
+  showForm(Query5_dhcp, self);
   Query5_dhcp.BtnBack.Left := BtnBack.Left;
   Query5_dhcp.BtnBack.Top := BtnBack.Top;
   Query5_dhcp.BtnNext.Left := BtnNext.Left;
   Query5_dhcp.BtnNext.Top := BtnNext.Top;
-
-  Visible := False;
 end;
 
 procedure TQuery4.FormActivate(Sender: TObject);
-var
-  compIndex: integer;
 begin
-  for compIndex:=0 to ComponentCount-1 do
-  begin
-    if Components[compIndex].ClassName = 'TPanel' then
-      begin
-         (Components[compIndex] as TPanel).Left:= QuickInstall.panelLeft;
-      end;
-  end;
-
+  AdjustPanelPosition(self);
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
 end;
 
@@ -86,19 +69,7 @@ end;
 
 procedure TQuery4.BtnBackClick(Sender: TObject);
 begin
-  Query3.Visible := True;
-
-  Query3.Height := Height;
-  Query3.Left := Left;
-  Query3.Top := Top;
-  Query3.Width := Width;
-
-  Query3.BtnBack.Left := BtnBack.Left;
-  Query3.BtnBack.Top := BtnBack.Top;
-  Query3.BtnNext.Left := BtnNext.Left;
-  Query3.BtnNext.Top := BtnNext.Top;
-
-  Visible := False;
+  showForm(Query3, self);
 end;
 
 end.

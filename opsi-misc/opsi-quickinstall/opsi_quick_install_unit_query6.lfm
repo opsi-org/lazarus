@@ -3,7 +3,7 @@ object Query6: TQuery6
   Height = 450
   Top = 194
   Width = 730
-  Caption = 'opsi quick install - query (part 6)'
+  Caption = 'Opsi quick install - query (user info part 1)'
   ClientHeight = 450
   ClientWidth = 730
   OnActivate = FormActivate
@@ -39,19 +39,19 @@ object Query6: TQuery6
   object PanelNameAdmin: TPanel
     Left = 160
     Height = 80
-    Top = 24
-    Width = 376
+    Top = 40
+    Width = 440
     BevelOuter = bvNone
     ClientHeight = 80
-    ClientWidth = 376
+    ClientWidth = 440
     TabOrder = 2
     object LabelNameAdmin: TLabel
       Left = 0
       Height = 38
       Top = 0
-      Width = 376
+      Width = 440
       Align = alTop
-      Caption = 'What is the name of the opsi_admin_user to create? (empty= nothing created)'
+      Caption = 'What is the name of the opsi_admin_user to create?'#10'(empty = nothing created)'
       ParentColor = False
       WordWrap = True
     end
@@ -59,7 +59,7 @@ object Query6: TQuery6
       Left = 0
       Height = 25
       Top = 40
-      Width = 368
+      Width = 336
       AutoSize = False
       TabOrder = 0
       Text = 'adminuser'
@@ -68,19 +68,19 @@ object Query6: TQuery6
   object PanelPasswordAdmin: TPanel
     Left = 160
     Height = 80
-    Top = 136
-    Width = 376
+    Top = 144
+    Width = 440
     BevelOuter = bvNone
     ClientHeight = 80
-    ClientWidth = 376
+    ClientWidth = 440
     TabOrder = 3
     object LabelPasswordAdmin: TLabel
       Left = 0
       Height = 38
       Top = 0
-      Width = 376
+      Width = 440
       Align = alTop
-      Caption = 'What is the password of the opsi_admin_user to create? (empty= nothing created)'
+      Caption = 'What is the password of the opsi_admin_user to create?'#10'(empty = nothing created)'
       ParentColor = False
       WordWrap = True
     end
@@ -88,7 +88,7 @@ object Query6: TQuery6
       Left = 0
       Height = 25
       Top = 40
-      Width = 368
+      Width = 336
       AutoSize = False
       TabOrder = 0
       Text = 'linux123'
@@ -98,18 +98,18 @@ object Query6: TQuery6
     Left = 160
     Height = 58
     Top = 248
-    Width = 376
+    Width = 448
     BevelOuter = bvNone
     ClientHeight = 58
-    ClientWidth = 376
+    ClientWidth = 448
     TabOrder = 4
     object LabelNameIP: TLabel
       Left = 0
       Height = 19
       Top = 0
-      Width = 376
+      Width = 448
       Align = alTop
-      Caption = 'Set a different IP name (FQDN) (auto = use standard)'
+      Caption = 'Set a different IP name (FQDN) (''auto'' = use standard)'
       ParentColor = False
       WordWrap = True
     end
@@ -117,7 +117,7 @@ object Query6: TQuery6
       Left = 0
       Height = 25
       Top = 24
-      Width = 368
+      Width = 336
       AutoSize = False
       TabOrder = 0
       Text = 'auto'
@@ -127,18 +127,18 @@ object Query6: TQuery6
     Left = 160
     Height = 58
     Top = 344
-    Width = 376
+    Width = 440
     BevelOuter = bvNone
     ClientHeight = 58
-    ClientWidth = 376
+    ClientWidth = 440
     TabOrder = 5
     object LabelNameIP1: TLabel
       Left = 0
       Height = 19
       Top = 0
-      Width = 376
+      Width = 440
       Align = alTop
-      Caption = 'Set a different IP number (auto = use standard)'
+      Caption = 'Set a different IP number (''auto'' = use standard)'
       ParentColor = False
       WordWrap = True
     end
@@ -146,7 +146,7 @@ object Query6: TQuery6
       Left = 0
       Height = 25
       Top = 24
-      Width = 368
+      Width = 336
       AutoSize = False
       TabOrder = 0
       Text = 'auto'

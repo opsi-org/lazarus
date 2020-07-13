@@ -57,17 +57,10 @@ uses
 { TQuery }
 
 procedure TQuery.FormActivate(Sender: TObject);
-var
-  compIndex: integer;
 begin
-  for compIndex := 0 to ComponentCount - 1 do
-  begin
-    if Components[compIndex].ClassName = 'TPanel' then
-    begin
-      (Components[compIndex] as TPanel).Left := QuickInstall.panelLeft;
-    end;
-  end;
-
+  // bring all panels to the same position (QuickInstall.panelLeft)
+  AdjustPanelPosition(self);
+  // always the same background (as in QuickInstall)
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
 end;
 
@@ -78,36 +71,16 @@ end;
 
 procedure TQuery.BtnNextClick(Sender: TObject);
 begin
-  Query2.Visible := True;
-
-  Query2.Height := Height;
-  Query2.Left := Left;
-  Query2.Top := Top;
-  Query2.Width := Width;
-
+  showForm(Query2, self);
   Query2.BtnBack.Left := BtnBack.Left;
   Query2.BtnBack.Top := BtnBack.Top;
   Query2.BtnNext.Left := BtnNext.Left;
   Query2.BtnNext.Top := BtnNext.Top;
-
-  Visible := False;
 end;
 
 procedure TQuery.BtnBackClick(Sender: TObject);
 begin
-  QuickInstall.Visible := True;
-
-  QuickInstall.Height := Height;
-  QuickInstall.Left := Left;
-  QuickInstall.Top := Top;
-  QuickInstall.Width := Width;
-
-  QuickInstall.BtnBack.Left := BtnBack.Left;
-  QuickInstall.BtnBack.Top := BtnBack.Top;
-  QuickInstall.BtnNext.Left := BtnNext.Left;
-  QuickInstall.BtnNext.Top := BtnNext.Top;
-
-  Visible := False;
+  showForm(QuickInstall, self);
 end;
 
 end.

@@ -44,6 +44,7 @@ implementation
 
 uses
   opsi_quick_install_unit_language,
+  opsi_quick_install_unit_query3,
   opsi_quick_install_unit_query5_dhcp,
   opsi_quick_install_unit_query7;
 
@@ -53,33 +54,19 @@ uses
 
 procedure TQuery6.BtnNextClick(Sender: TObject);
 begin
-  Query7.Visible := True;
-
-  Query7.Height := Height;
-  Query7.Left := Left;
-  Query7.Top := Top;
-  Query7.Width := Width;
-
+  showForm(Query7, self);
   Query7.BtnBack.Left := BtnBack.Left;
   Query7.BtnBack.Top := BtnBack.Top;
-  Query7.BtnFinish.Left := BtnNext.Left;
+  if QuickInstall.ComboBoxLanguages.Text = 'Deutsch' then
+    Query7.BtnFinish.Left := BtnNext.Left - 30
+  else
+    Query7.BtnFinish.Left := BtnNext.Left;
   Query7.BtnFinish.Top := BtnNext.Top;
-
-  Visible := False;
 end;
 
 procedure TQuery6.FormActivate(Sender: TObject);
-var
-  compIndex: integer;
 begin
-  for compIndex:=0 to ComponentCount-1 do
-  begin
-    if Components[compIndex].ClassName = 'TPanel' then
-      begin
-         (Components[compIndex] as TPanel).Left:= QuickInstall.panelLeft;
-      end;
-  end;
-
+  AdjustPanelPosition(self);
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
 end;
 
@@ -90,20 +77,13 @@ end;
 
 procedure TQuery6.BtnBackClick(Sender: TObject);
 begin
-  Query5_dhcp.Visible := True;
-
-  Query5_dhcp.Height := Height;
-  Query5_dhcp.Left := Left;
-  Query5_dhcp.Top := Top;
-  Query5_dhcp.Width := Width;
-
-  Query5_dhcp.BtnBack.Left := BtnBack.Left;
-  Query5_dhcp.BtnBack.Top := BtnBack.Top;
-  Query5_dhcp.BtnNext.Left := BtnNext.Left;
-  Query5_dhcp.BtnNext.Top := BtnNext.Top;
-
-  Visible := False;
+  if QuickInstall.RadioBtnDefault.Checked then
+    showForm(QuickInstall, self)
+  else
+  if Query3.RadioBtnDhcpYes.Checked then
+    showForm(Query5_dhcp, self)
+  else
+    showForm(Query3, self);
 end;
 
 end.
-

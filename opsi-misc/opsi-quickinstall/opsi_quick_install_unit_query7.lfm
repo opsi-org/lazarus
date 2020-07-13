@@ -3,7 +3,7 @@ object Query7: TQuery7
   Height = 450
   Top = 194
   Width = 730
-  Caption = 'opsi quick install - query (part 7)'
+  Caption = 'Opsi quick install - query (user info part 2)'
   ClientHeight = 450
   ClientWidth = 730
   OnActivate = FormActivate
@@ -29,17 +29,17 @@ object Query7: TQuery7
   object PanelPasswordMasterAdmin: TPanel
     Left = 176
     Height = 80
-    Top = 56
-    Width = 376
+    Top = 96
+    Width = 456
     BevelOuter = bvNone
     ClientHeight = 80
-    ClientWidth = 376
+    ClientWidth = 456
     TabOrder = 1
     object LabelPasswordMasterAdmin: TLabel
       Left = 0
       Height = 38
       Top = 0
-      Width = 376
+      Width = 456
       Align = alTop
       Caption = 'What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?'
       ParentColor = False
@@ -49,22 +49,22 @@ object Query7: TQuery7
       Left = 0
       Height = 25
       Top = 40
-      Width = 368
+      Width = 320
       AutoSize = False
       TabOrder = 0
       Text = 'linux123'
     end
   end
-  object Panel1: TPanel
+  object PanelCopyModules: TPanel
     Left = 176
-    Height = 90
-    Top = 184
+    Height = 74
+    Top = 200
     Width = 370
     BevelOuter = bvNone
-    ClientHeight = 90
+    ClientHeight = 74
     ClientWidth = 370
     TabOrder = 2
-    object Label1: TLabel
+    object LabelCopyModules: TLabel
       Left = 0
       Height = 38
       Top = 0
@@ -100,7 +100,28 @@ object Query7: TQuery7
     Width = 51
     AutoSize = True
     Caption = '  finish  '
+    ParentBidiMode = False
     OnClick = BtnFinishClick
     TabOrder = 3
+  end
+  object PanelFinish: TPanel
+    Left = 176
+    Height = 48
+    Top = 296
+    Width = 370
+    BevelOuter = bvNone
+    ClientHeight = 48
+    ClientWidth = 370
+    TabOrder = 4
+    object LabelFinish: TLabel
+      Left = 0
+      Height = 19
+      Top = 0
+      Width = 370
+      Align = alTop
+      Caption = 'Finally click ''finish'' to start the installation of opsi-server.'
+      ParentColor = False
+      WordWrap = True
+    end
   end
 end
