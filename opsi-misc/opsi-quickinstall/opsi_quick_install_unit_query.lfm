@@ -42,16 +42,16 @@ object Query: TQuery
     Left = 160
     Height = 104
     Top = 32
-    Width = 472
+    Width = 504
     BevelOuter = bvNone
     ClientHeight = 104
-    ClientWidth = 472
+    ClientWidth = 504
     TabOrder = 2
     object LabelRepo: TLabel
       Left = 0
       Height = 19
       Top = 0
-      Width = 472
+      Width = 504
       Align = alTop
       Caption = '(Base-) Repository for opsi-server installation'
       ParentColor = False
@@ -83,10 +83,10 @@ object Query: TQuery
       TabOrder = 2
     end
     object EditRepo: TEdit
-      Left = 72
+      Left = 88
       Height = 25
       Top = 72
-      Width = 394
+      Width = 376
       TabOrder = 3
     end
   end
@@ -94,26 +94,26 @@ object Query: TQuery
     Left = 160
     Height = 104
     Top = 160
-    Width = 466
+    Width = 504
     BevelOuter = bvNone
     ClientHeight = 104
-    ClientWidth = 466
+    ClientWidth = 504
     TabOrder = 3
     object LabelProxy: TLabel
       Left = 0
       Height = 19
       Top = 0
-      Width = 466
+      Width = 504
       Align = alTop
-      Caption = 'proxy to use (http://myproxy.dom.org:8080)'
+      Caption = 'Proxy to use (http://myproxy.dom.org:8080)'
       ParentColor = False
     end
     object RadioBtnNone: TRadioButton
       Left = 0
       Height = 21
       Top = 24
-      Width = 65
-      Caption = 'none ?'
+      Width = 58
+      Caption = 'None'
       Checked = True
       TabOrder = 0
       TabStop = True
@@ -135,35 +135,38 @@ object Query: TQuery
       TabOrder = 2
     end
     object EditProxy: TEdit
-      Left = 72
+      Left = 88
       Height = 25
       Top = 72
-      Width = 394
+      Width = 376
       TabOrder = 3
     end
   end
   object PanelNoCache: TPanel
     Left = 160
-    Height = 104
-    Top = 296
-    Width = 466
+    Height = 120
+    Top = 288
+    Width = 504
     BevelOuter = bvNone
-    ClientHeight = 104
-    ClientWidth = 466
+    ClientHeight = 120
+    ClientWidth = 504
     TabOrder = 4
     object LabelNoCache: TLabel
       Left = 0
-      Height = 19
+      Height = 36
       Top = 0
-      Width = 466
+      Width = 504
       Align = alTop
-      Caption = '(Base-) Repository for opsi-server installation (without any cache proxy)'
+      Caption = '(Base-) Repository for opsi-server installation'#10'(without any cache proxy)'
+      Font.Height = 13
       ParentColor = False
+      ParentFont = False
+      WordWrap = True
     end
     object RadioBtnOpsi41NoCache: TRadioButton
       Left = 0
       Height = 21
-      Top = 24
+      Top = 40
       Width = 453
       Caption = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/'
       TabOrder = 1
@@ -171,7 +174,7 @@ object Query: TQuery
     object RadioBtnOpsi42NoCache: TRadioButton
       Left = 0
       Height = 21
-      Top = 48
+      Top = 64
       Width = 81
       Caption = 'opsi 4.2 ?'
       TabOrder = 0
@@ -179,7 +182,7 @@ object Query: TQuery
     object RadioBtnOtherNoCache: TRadioButton
       Left = 0
       Height = 21
-      Top = 72
+      Top = 88
       Width = 65
       Caption = 'Other:'
       Checked = True
@@ -187,10 +190,10 @@ object Query: TQuery
       TabStop = True
     end
     object EditNoCache: TEdit
-      Left = 72
+      Left = 88
       Height = 25
-      Top = 72
-      Width = 394
+      Top = 88
+      Width = 376
       TabOrder = 3
     end
   end

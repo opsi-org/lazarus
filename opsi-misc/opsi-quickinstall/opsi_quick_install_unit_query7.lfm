@@ -30,16 +30,16 @@ object Query7: TQuery7
     Left = 176
     Height = 80
     Top = 96
-    Width = 376
+    Width = 456
     BevelOuter = bvNone
     ClientHeight = 80
-    ClientWidth = 376
+    ClientWidth = 456
     TabOrder = 1
     object LabelPasswordMasterAdmin: TLabel
       Left = 0
       Height = 38
       Top = 0
-      Width = 376
+      Width = 456
       Align = alTop
       Caption = 'What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?'
       ParentColor = False
@@ -49,7 +49,7 @@ object Query7: TQuery7
       Left = 0
       Height = 25
       Top = 40
-      Width = 368
+      Width = 320
       AutoSize = False
       TabOrder = 0
       Text = 'linux123'
@@ -100,6 +100,7 @@ object Query7: TQuery7
     Width = 51
     AutoSize = True
     Caption = '  finish  '
+    ParentBidiMode = False
     OnClick = BtnFinishClick
     TabOrder = 3
   end

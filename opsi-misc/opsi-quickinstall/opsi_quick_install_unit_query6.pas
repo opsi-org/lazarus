@@ -57,7 +57,10 @@ begin
   showForm(Query7, self);
   Query7.BtnBack.Left := BtnBack.Left;
   Query7.BtnBack.Top := BtnBack.Top;
-  Query7.BtnFinish.Left := BtnNext.Left;
+  if QuickInstall.ComboBoxLanguages.Text = 'Deutsch' then
+    Query7.BtnFinish.Left := BtnNext.Left - 30
+  else
+    Query7.BtnFinish.Left := BtnNext.Left;
   Query7.BtnFinish.Top := BtnNext.Top;
 end;
 

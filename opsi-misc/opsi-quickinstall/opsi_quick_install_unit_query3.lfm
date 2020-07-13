@@ -37,27 +37,27 @@ object Query3: TQuery3
   end
   object PanelOpsiProducts: TPanel
     Left = 152
-    Height = 248
+    Height = 232
     Top = 40
     Width = 480
     BevelOuter = bvNone
-    ClientHeight = 248
+    ClientHeight = 232
     ClientWidth = 480
     TabOrder = 2
     object LabelOpsiProducts: TLabel
       Left = 0
-      Height = 38
+      Height = 19
       Top = 0
       Width = 480
       Align = alTop
-      Caption = 'Which opsi product(s) should we switch to setup after l-opsi-server installation is done?'
+      Caption = 'Which opsi product(s) should we install in the depot?'
       ParentColor = False
       WordWrap = True
     end
     object CheckBoxAll: TCheckBox
       Left = 0
       Height = 21
-      Top = 40
+      Top = 24
       Width = 43
       Caption = 'All'
       Checked = True
@@ -69,9 +69,9 @@ object Query3: TQuery3
       TabOrder = 0
     end
     object CheckBoxNone: TCheckBox
-      Left = 136
+      Left = 88
       Height = 21
-      Top = 40
+      Top = 24
       Width = 66
       Caption = 'None'
       Font.Height = -16
@@ -83,10 +83,9 @@ object Query3: TQuery3
     object PanelProdToChoose: TPanel
       Left = 0
       Height = 184
-      Top = 64
+      Top = 48
       Width = 480
       Align = alBottom
-      BevelWidth = 2
       ClientHeight = 184
       ClientWidth = 480
       TabOrder = 2
@@ -94,8 +93,8 @@ object Query3: TQuery3
         Left = 329
         Height = 21
         Top = 104
-        Width = 143
-        Caption = 'config-winbase (w?)'
+        Width = 116
+        Caption = 'config-winbase'
         Checked = True
         OnChange = CheckBoxProdChange
         State = cbChecked
@@ -105,8 +104,8 @@ object Query3: TQuery3
         Left = 329
         Height = 21
         Top = 80
-        Width = 130
-        Caption = 'config-win10 (w?)'
+        Width = 103
+        Caption = 'config-win10'
         Checked = True
         OnChange = CheckBoxProdChange
         State = cbChecked
@@ -149,8 +148,8 @@ object Query3: TQuery3
         Left = 142
         Height = 21
         Top = 128
-        Width = 117
-        Caption = 'opsi-winpe (w?)'
+        Width = 90
+        Caption = 'opsi-winpe'
         Checked = True
         OnChange = CheckBoxProdChange
         State = cbChecked
@@ -160,8 +159,8 @@ object Query3: TQuery3
         Left = 329
         Height = 21
         Top = 8
-        Width = 149
-        Caption = 'opsi-set-win-uac (w?)'
+        Width = 122
+        Caption = 'opsi-set-win-uac'
         Checked = True
         OnChange = CheckBoxProdChange
         State = cbChecked

@@ -51,7 +51,7 @@ object Query4: TQuery4
       Top = 0
       Width = 392
       Align = alTop
-      Caption = 'The patched elilo.efi does have a timeout of 2 seconds in case of a failed elilo configuration (?)'
+      Caption = 'Does the patched elilo.efi have a timeout of 2 seconds in case of a failed elilo configuration?'
       ParentColor = False
       WordWrap = True
     end

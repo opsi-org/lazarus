@@ -188,7 +188,7 @@ begin
   else
     FileText.Add(propertyName + '=testing');
 
-  // property setup_after_install
+  // property products_in_depot
   stringProducts := '';
   for prod := 0 to Query3.PanelProdToChoose.ControlCount - 1 do
   begin
@@ -199,7 +199,7 @@ begin
   if stringProducts <> '' then
     // Index of 'Delete' is 1-based (Delete(stringProducts, 0, 2) wouldn't do anything)
     Delete(stringProducts, 1, 2);
-  FileText.Add('setup_after_install=' + stringProducts);
+  FileText.Add('products_in_depot=' + stringProducts);
 
 
   FileText.Add('ucs_master_admin_password=' + Query7.EditPasswordMasterAdmin.Text);

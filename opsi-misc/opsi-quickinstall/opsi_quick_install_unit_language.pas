@@ -35,7 +35,8 @@ type
   public
   const
     // same position for all panels
-    panelLeft = 210;
+    panelLeft = 200;
+    // more constants in FormCreate below
   var
     // same background image for all forms
     BackgrImageFileName: string;
