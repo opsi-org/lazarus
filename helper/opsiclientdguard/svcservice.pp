@@ -29,6 +29,7 @@ uses
   JwaWinSvc,
   interfaces,
   oslog,
+  osprocesses,
   fileinfo,
   winpeimagereader,
   LazFileUtils,
@@ -262,6 +263,7 @@ begin
         {LogOutput('Error getting service information for ' + ServiceName +
                    '. Technical details: ' + E.ClassName + '/' + E.Message); }
         Application.Log(etDebug, 'Servicemanager Exception: '+e.Message);
+        LogDatei.log( 'Servicemanager Exception: '+e.Message,LLwarning);
         Result := False;
         //raise; //rethrow original exception
       end;
@@ -270,6 +272,7 @@ begin
        {LogOutput('Error getting service information for ' + ServiceName +
                   '. Technical details: ' + E.ClassName + '/' + E.Message); }
         Application.Log(etDebug, 'Exception: '+e.Message);
+        LogDatei.log( 'Exception: '+e.Message,LLwarning);
         Result := False;
         //raise; //rethrow original exception
       end;
@@ -307,12 +310,25 @@ begin
       if IsServiceRunning('opsiclientd') then
       begin
         //if log then Application.Log(etDebug, 'opsiclientd is running');
-        if log then LogDatei.log('opsiclientd is running',LLDebug);
+        if ProcessIsRunning('opsiclientd.exe') then
+        begin
+          LogDatei.log('opsclientd runs via API and opsiclientd.exe process in processlist',LLInfo);
+        end
+        else
+        begin
+          LogDatei.log('opsclientd runs via API, but opsiclientd.exe process not in processlist',LLwarning);
+        end;
       end
       else
       begin
-        Application.Log(etDebug, 'opsiclientd is not running');
-        LogDatei.log('opsiclientd is not running',LLWarning);
+        if ProcessIsRunning('opsiclientd.exe') then
+        begin
+        //Application.Log(etDebug, 'opsiclientd is not running');
+        LogDatei.log('No opsclientd via API, but opsiclientd.exe process in processlist',LLwarning);
+        end
+        else
+        begin
+          LogDatei.log('No opsclientd via API and no opsiclientd.exe process in processlist',LLwarning);
         if startService('opsiclientd') then
         begin
           Application.Log(etDebug, 'opsiclientd is started');
@@ -322,6 +338,7 @@ begin
         begin
           Application.Log(etDebug, 'opsiclientd start failed');
           LogDatei.log('opsiclientd start failed',LLError);
+        end;
         end;
       end;
     until Terminated;
