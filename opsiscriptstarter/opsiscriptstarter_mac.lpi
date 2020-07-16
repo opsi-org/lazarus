@@ -130,7 +130,7 @@
         <PackageName Value="LazUtils"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="14">
+    <Units Count="15">
       <Unit0>
         <Filename Value="opsiscriptstarter_mac.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -188,6 +188,10 @@
         <Filename Value="opsiscriptstarter.entitlements"/>
         <IsPartOfProject Value="True"/>
       </Unit13>
+      <Unit14>
+        <Filename Value="opsiscriptstarter.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit14>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

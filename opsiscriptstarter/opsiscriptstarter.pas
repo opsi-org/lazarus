@@ -1,8 +1,8 @@
-program opsiscriptstarter_mac;
+unit opsiscriptstarter;
 
 {$mode objfpc}{$H+}
-//{$mode delphi}{$H+}
-//{$apptype console}
+
+interface
 
 uses
   {$IFDEF UNIX}//{$IFDEF UseCThreads}
@@ -30,9 +30,9 @@ uses
   inifiles,
   oslog,
   oswebservice,
-  OSProcessux, opsiscriptstarter;
+  OSProcessux;
 
-(*
+
 const
   SW_HIDE = 0;
   opsiclientdconf = '/etc/opsi-client-agent/opsiclientd.conf' ;
@@ -62,6 +62,8 @@ end;
 
 { Topsiscriptstarter }
 bytearray = array[0..255] of byte;
+
+implementation
 
 var
   optionlist : TStringlist;
@@ -584,28 +586,8 @@ begin
   halt(0);
   Exit;
 end;
-*)
-(*
-procedure Topsiscriptstarter.terminateByTimer(Sender:TObject);
-begin
-  LogDatei.DependentAdd('Terminated by timeout Timer',LLInfo);
-  LogDatei.Close;
-  writeln('Terminated by timeout Timer');
-  Terminate;
-  halt(1);
-  exit;
-end;
-*)
 
-var
-  Application: Topsiscriptstarter;
 
-{$R *.res}
 
-begin
-  Application:=Topsiscriptstarter.Create(nil);
-  Application.Title:='opsi-script-starter';
-  Application.Run;
-  Application.Free;
 end.
 
