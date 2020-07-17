@@ -6,6 +6,6 @@
 {"hash":252015791,"name":"tquery7.labelcopymodules.caption","sourcebytes":[83,104,111,117,108,100,32,119,101,32,99,111,112,121,32,109,111,100,117,108,101,115,32,101,118,101,110,32,105,102,32,47,101,116,99,47,111,112,115,105,47,109,111,100,117,108,101,115,32,115,116,105,108,108,32,101,120,105,115,116,115,63],"value":"Should we copy modules even if /etc/opsi/modules still exists?"},
 {"hash":24515,"name":"tquery7.radiobtnyes.caption","sourcebytes":[89,101,115],"value":"Yes"},
 {"hash":1359,"name":"tquery7.radiobtnno.caption","sourcebytes":[78,111],"value":"No"},
-{"hash":5422320,"name":"tquery7.btnfinish.caption","sourcebytes":[32,32,102,105,110,105,115,104,32,32],"value":"  finish  "},
+{"hash":211716688,"name":"tquery7.btnoverview.caption","sourcebytes":[32,111,118,101,114,118,105,101,119,32],"value":" overview "},
 {"hash":54412062,"name":"tquery7.labelfinish.caption","sourcebytes":[70,105,110,97,108,108,121,32,99,108,105,99,107,32,39,102,105,110,105,115,104,39,32,116,111,32,115,116,97,114,116,32,116,104,101,32,105,110,115,116,97,108,108,97,116,105,111,110,32,111,102,32,111,112,115,105,45,115,101,114,118,101,114,46],"value":"Finally click 'finish' to start the installation of opsi-server."}
 ]}

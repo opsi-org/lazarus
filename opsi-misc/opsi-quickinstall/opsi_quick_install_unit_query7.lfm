@@ -93,15 +93,15 @@ object Query7: TQuery7
       TabStop = True
     end
   end
-  object BtnFinish: TButton
-    Left = 664
+  object BtnOverview: TButton
+    Left = 640
     Height = 25
     Top = 408
-    Width = 51
+    Width = 69
     AutoSize = True
-    Caption = '  finish  '
+    Caption = ' overview '
     ParentBidiMode = False
-    OnClick = BtnFinishClick
+    OnClick = BtnOverviewClick
     TabOrder = 3
   end
   object PanelFinish: TPanel

@@ -57,7 +57,7 @@ var
 implementation
 
 uses
-  opsi_quick_install_unit_query, opsi_quick_install_unit_query6;
+  opsi_quick_install_unit_query, opsi_quick_install_unit_query4;
 
 {$R *.lfm}
 
@@ -128,17 +128,12 @@ begin
   if RadioBtnDefault.Checked then
   begin
     // 'self' is current form
-    showForm(Query6, self);
-    {Query6.Visible := True;
-    Query6.Height := Height;
-    Query6.Left := Left;
-    Query6.Top := Top;
-    Query6.Width := Width;}
+    showForm(Query4, self);
     // for having the buttons always at the same place (no hard-coding for easier editing)
-    Query6.BtnBack.Left := BtnBack.Left;
-    Query6.BtnBack.Top := BtnBack.Top;
-    Query6.BtnNext.Left := BtnNext.Left;
-    Query6.BtnNext.Top := BtnNext.Top;
+    Query4.BtnBack.Left := BtnBack.Left;
+    Query4.BtnBack.Top := BtnBack.Top;
+    Query4.BtnNext.Left := BtnNext.Left;
+    Query4.BtnNext.Top := BtnNext.Top;
   end
   else
   begin

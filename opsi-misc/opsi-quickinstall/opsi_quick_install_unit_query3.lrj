@@ -26,8 +26,5 @@
 {"hash":113465796,"name":"tquery3.checkboxopsiclientagent.caption","sourcebytes":[111,112,115,105,45,99,108,105,101,110,116,45,97,103,101,110,116],"value":"opsi-client-agent"},
 {"hash":223105775,"name":"tquery3.labelreboot.caption","sourcebytes":[77,97,121,32,116,104,101,32,115,101,114,118,101,114,32,114,101,98,111,111,116,32,105,102,32,116,104,101,32,115,99,114,105,112,116,32,105,115,32,102,105,110,105,115,104,101,100,63],"value":"May the server reboot if the script is finished?"},
 {"hash":24515,"name":"tquery3.radiobtnyes.caption","sourcebytes":[89,101,115],"value":"Yes"},
-{"hash":1359,"name":"tquery3.radiobtnno.caption","sourcebytes":[78,111],"value":"No"},
-{"hash":31194767,"name":"tquery3.labeldhcp.caption","sourcebytes":[83,104,111,117,108,100,32,119,101,32,114,117,110,32,116,104,101,32,111,112,115,105,32,100,104,99,112,32,115,101,114,118,101,114,32,111,110,32,116,104,105,115,32,109,97,99,104,105,110,101,63],"value":"Should we run the opsi dhcp server on this machine?"},
-{"hash":24515,"name":"tquery3.radiobtndhcpyes.caption","sourcebytes":[89,101,115],"value":"Yes"},
-{"hash":1359,"name":"tquery3.radiobtndhcpno.caption","sourcebytes":[78,111],"value":"No"}
+{"hash":1359,"name":"tquery3.radiobtnno.caption","sourcebytes":[78,111],"value":"No"}
 ]}

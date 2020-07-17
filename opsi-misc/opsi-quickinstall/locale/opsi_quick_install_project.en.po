@@ -1,6 +1,107 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
+#: toverview.btnback.caption
+msgctxt "toverview.btnback.caption"
+msgid " < back "
+msgstr " < back "
+
+#: toverview.btnfinish.caption
+msgid " finish "
+msgstr ""
+
+#: toverview.caption
+msgid "Overview"
+msgstr ""
+
+#: toverview.labeladminname.caption
+msgid "Opsi admin user name:"
+msgstr ""
+
+#: toverview.labeladminpassword.caption
+msgid "Opsi admin user password:"
+msgstr ""
+
+#: toverview.labelbackend.caption
+msgid "Backend:"
+msgstr ""
+
+#: toverview.labeldhcp.caption
+msgid "Run opsi dhcp server:"
+msgstr ""
+
+#: toverview.labeldomain.caption
+msgid "DNS Domain:"
+msgstr ""
+
+#: toverview.labelelilo.caption
+msgid "Elilo.efi has timeout of 2 seconds:"
+msgstr ""
+
+#: toverview.labelgateway.caption
+msgid "Gateway:"
+msgstr ""
+
+#: toverview.labelipname.caption
+msgid "IP name:"
+msgstr ""
+
+#: toverview.labelipnumber.caption
+msgid "IP number:"
+msgstr ""
+
+#: toverview.labelmodules.caption
+msgid "Copy modules:"
+msgstr ""
+
+#: toverview.labelnameserver.caption
+msgid "Primary nameserver:"
+msgstr ""
+
+#: toverview.labelnetmask.caption
+msgid "Netmask:"
+msgstr ""
+
+#: toverview.labelnetworkadress.caption
+msgid "Network address:"
+msgstr ""
+
+#: toverview.labelopsiprods.caption
+msgid "Products in depot:"
+msgstr ""
+
+#: toverview.labelpasswordadminucs.caption
+msgid "Password of administrator of UCS domain controller:"
+msgstr ""
+
+#: toverview.labelproxy.caption
+msgid "Proxy:"
+msgstr ""
+
+#: toverview.labelreboot.caption
+msgid "Reboot after script is finished:"
+msgstr ""
+
+#: toverview.labelrepo.caption
+msgid "Repository:"
+msgstr ""
+
+#: toverview.labelrepokind.caption
+msgid "Repo kind:"
+msgstr ""
+
+#: toverview.labelreponocache.caption
+msgid "Repository (no Cache-Proxy):"
+msgstr ""
+
+#: toverview.labeltftproot.caption
+msgid "TFTPROOT symlink points to:"
+msgstr ""
+
+#: toverview.labelupdate.caption
+msgid "Install from stable, update to repo kind:"
+msgstr ""
+
 #: tquery.btnback.caption
 msgctxt "tquery.btnback.caption"
 msgid " < back "
@@ -12,10 +113,8 @@ msgid " next > "
 msgstr " next > "
 
 #: tquery.caption
-#, fuzzy
-#| msgid "opsi quick install - query (part 1)"
 msgid "Opsi quick install - query (part 1)"
-msgstr "opsi quick install - query (part 1)"
+msgstr "Opsi quick install - query (part 1)"
 
 #: tquery.labelnocache.caption
 msgid ""
@@ -86,10 +185,8 @@ msgid " next > "
 msgstr " next > "
 
 #: tquery2.caption
-#, fuzzy
-#| msgid "opsi quick install - query (part 2)"
 msgid "Opsi quick install - query (part 2)"
-msgstr "opsi quick install - query (part 2)"
+msgstr "Opsi quick install - query (part 2)"
 
 #: tquery2.label1.caption
 msgid "Install first from stable and than update to repo kind?"
@@ -147,7 +244,7 @@ msgstr " next > "
 
 #: tquery3.caption
 msgid "Opsi quick install - query (part 3)"
-msgstr ""
+msgstr "Opsi quick install - query (part 3)"
 
 #: tquery3.checkboxall.caption
 msgid "All"
@@ -234,10 +331,6 @@ msgstr ""
 msgid "swaudit"
 msgstr ""
 
-#: tquery3.labeldhcp.caption
-msgid "Should we run the opsi dhcp server on this machine?"
-msgstr ""
-
 #: tquery3.labelopsiproducts.caption
 msgid "Which opsi product(s) should we install in the depot?"
 msgstr ""
@@ -246,32 +339,17 @@ msgstr ""
 msgid "May the server reboot if the script is finished?"
 msgstr ""
 
-#: tquery3.radiobtndhcpno.caption
-#, fuzzy
-msgctxt "tquery3.radiobtndhcpno.caption"
-msgid "No"
-msgstr "No"
-
-#: tquery3.radiobtndhcpyes.caption
-#, fuzzy
-msgctxt "tquery3.radiobtndhcpyes.caption"
-msgid "Yes"
-msgstr "Yes"
-
 #: tquery3.radiobtnno.caption
-#, fuzzy
 msgctxt "tquery3.radiobtnno.caption"
 msgid "No"
 msgstr "No"
 
 #: tquery3.radiobtnyes.caption
-#, fuzzy
 msgctxt "tquery3.radiobtnyes.caption"
 msgid "Yes"
 msgstr "Yes"
 
 #: tquery4.btnback.caption
-#, fuzzy
 msgctxt "tquery4.btnback.caption"
 msgid " < back "
 msgstr " < back "
@@ -284,6 +362,11 @@ msgstr " next > "
 #: tquery4.caption
 msgctxt "tquery4.caption"
 msgid "Opsi quick install - query (dhcp part 1)"
+msgstr "Opsi quick install - query (dhcp part 1)"
+
+#: tquery4.labeldhcp.caption
+msgctxt "tquery4.labeldhcp.caption"
+msgid "Should we run the opsi dhcp server on this machine?"
 msgstr ""
 
 #: tquery4.labelfilepointer.caption
@@ -294,12 +377,21 @@ msgstr ""
 msgid "Does the patched elilo.efi have a timeout of 2 seconds in case of a failed elilo configuration?"
 msgstr ""
 
+#: tquery4.radiobtndhcpno.caption
+msgctxt "tquery4.radiobtndhcpno.caption"
+msgid "No"
+msgstr "No"
+
+#: tquery4.radiobtndhcpyes.caption
+msgctxt "tquery4.radiobtndhcpyes.caption"
+msgid "Yes"
+msgstr "Yes"
+
 #: tquery4.radiobtnmenu.caption
 msgid "default.menu"
 msgstr ""
 
 #: tquery4.radiobtnno.caption
-#, fuzzy
 msgctxt "tquery4.radiobtnno.caption"
 msgid "No"
 msgstr "No"
@@ -309,13 +401,11 @@ msgid "default.nomenu"
 msgstr ""
 
 #: tquery4.radiobtnyes.caption
-#, fuzzy
 msgctxt "tquery4.radiobtnyes.caption"
 msgid "Yes"
 msgstr "Yes"
 
 #: tquery5_dhcp.btnback.caption
-#, fuzzy
 msgctxt "tquery5_dhcp.btnback.caption"
 msgid " < back "
 msgstr " < back "
@@ -328,7 +418,7 @@ msgstr " next > "
 #: tquery5_dhcp.caption
 msgctxt "tquery5_dhcp.caption"
 msgid "Opsi quick install - query (dhcp part 2)"
-msgstr ""
+msgstr "Opsi quick install - query (dhcp part 2)"
 
 #: tquery5_dhcp.labeladdress.caption
 msgid "Network address (for dhcp)"
@@ -438,7 +528,6 @@ msgid "vmnat.local"
 msgstr ""
 
 #: tquery6.btnback.caption
-#, fuzzy
 msgctxt "tquery6.btnback.caption"
 msgid " < back "
 msgstr " < back "
@@ -449,11 +538,9 @@ msgid " next > "
 msgstr " next > "
 
 #: tquery6.caption
-#, fuzzy
-#| msgid "opsi quick install - query (part 6)"
 msgctxt "tquery6.caption"
 msgid "Opsi quick install - query (user info part 1)"
-msgstr "opsi quick install - query (part 6)"
+msgstr "Opsi quick install - query (user info part 1)"
 
 #: tquery6.editnameadmin.text
 msgid "adminuser"
@@ -499,16 +586,15 @@ msgctxt "tquery7.btnback.caption"
 msgid " < back "
 msgstr " < back "
 
-#: tquery7.btnfinish.caption
-msgid "  finish  "
-msgstr "  finish  "
+#: tquery7.btnoverview.caption
+msgctxt "tquery7.btnoverview.caption"
+msgid " overview "
+msgstr ""
 
 #: tquery7.caption
-#, fuzzy
-#| msgid "opsi quick install - query (part 7)"
 msgctxt "tquery7.caption"
 msgid "Opsi quick install - query (user info part 2)"
-msgstr "opsi quick install - query (part 7)"
+msgstr "Opsi quick install - query (user info part 2)"
 
 #: tquery7.editpasswordmasteradmin.text
 msgctxt "tquery7.editpasswordmasteradmin.text"
@@ -549,10 +635,8 @@ msgid " next > "
 msgstr " next > "
 
 #: tquickinstall.caption
-#, fuzzy
-#| msgid "opsi quick install"
 msgid "Opsi quick install"
-msgstr "opsi quick install"
+msgstr "Opsi quick install"
 
 #: tquickinstall.label1.caption
 msgid "Please select a setup type:"

@@ -1,0 +1,380 @@
+object Overview: TOverview
+  Left = 360
+  Height = 450
+  Top = 194
+  Width = 730
+  Caption = 'Overview'
+  ClientHeight = 450
+  ClientWidth = 730
+  OnActivate = FormActivate
+  OnClose = FormClose
+  LCLVersion = '2.0.6.0'
+  object BackgrImage: TImage
+    Left = 0
+    Height = 450
+    Top = 0
+    Width = 730
+    Align = alClient
+  end
+  object BtnBack: TButton
+    Left = 16
+    Height = 25
+    Top = 408
+    Width = 51
+    AutoSize = True
+    Caption = ' < back '
+    OnClick = BtnBackClick
+    TabOrder = 0
+  end
+  object BtnFinish: TButton
+    Left = 672
+    Height = 25
+    Top = 408
+    Width = 45
+    AutoSize = True
+    Caption = ' finish '
+    ParentBidiMode = False
+    OnClick = BtnFinishClick
+    TabOrder = 1
+  end
+  object BigPanel: TPanel
+    Left = 176
+    Height = 360
+    Top = 40
+    Width = 482
+    BevelOuter = bvNone
+    ClientHeight = 360
+    ClientWidth = 482
+    TabOrder = 2
+    object LabelDHCP: TLabel
+      Left = 0
+      Height = 19
+      Top = 133
+      Width = 482
+      Align = alTop
+      Caption = 'Run opsi dhcp server:'
+      ParentColor = False
+    end
+    object LabelReboot: TLabel
+      Left = 0
+      Height = 19
+      Top = 114
+      Width = 482
+      Align = alTop
+      Caption = 'Reboot after script is finished:'
+      ParentColor = False
+    end
+    object PanelDHCP: TPanel
+      Left = 0
+      Height = 97
+      Top = 152
+      Width = 482
+      Align = alTop
+      AutoSize = True
+      ClientHeight = 97
+      ClientWidth = 482
+      TabOrder = 0
+      object LabelElilo: TLabel
+        Left = 1
+        Height = 19
+        Top = 1
+        Width = 480
+        Align = alTop
+        Caption = 'Elilo.efi has timeout of 2 seconds:'
+        ParentColor = False
+      end
+      object LabelTFTPROOT: TLabel
+        Left = 1
+        Height = 19
+        Top = 20
+        Width = 480
+        Align = alTop
+        Caption = 'TFTPROOT symlink points to:'
+        ParentColor = False
+      end
+      object LabelDomain: TLabel
+        Left = 1
+        Height = 19
+        Top = 58
+        Width = 480
+        Align = alTop
+        Caption = 'DNS Domain:'
+        ParentColor = False
+      end
+      object PanelNet: TPanel
+        Left = 1
+        Height = 19
+        Top = 39
+        Width = 480
+        Align = alTop
+        AutoSize = True
+        BevelOuter = bvNone
+        ClientHeight = 19
+        ClientWidth = 480
+        TabOrder = 0
+        object LabelNetmask: TLabel
+          Left = 0
+          Height = 19
+          Top = 0
+          Width = 59
+          Align = alLeft
+          Caption = 'Netmask:'
+          ParentColor = False
+        end
+        object LabelNetworkAdress: TLabel
+          Left = 59
+          Height = 19
+          Top = 0
+          Width = 110
+          Align = alLeft
+          Caption = 'Network address:'
+          ParentColor = False
+        end
+      end
+      object PanelNameGate: TPanel
+        Left = 1
+        Height = 19
+        Top = 77
+        Width = 480
+        Align = alTop
+        AutoSize = True
+        BevelOuter = bvNone
+        ClientHeight = 19
+        ClientWidth = 480
+        TabOrder = 1
+        object LabelNameserver: TLabel
+          Left = 0
+          Height = 19
+          Top = 0
+          Width = 132
+          Align = alLeft
+          Caption = 'Primary nameserver:'
+          ParentColor = False
+        end
+        object LabelGateway: TLabel
+          Left = 132
+          Height = 19
+          Top = 0
+          Width = 58
+          Align = alLeft
+          Caption = 'Gateway:'
+          ParentColor = False
+        end
+      end
+    end
+    object PanelOpsiProds: TPanel
+      Left = 0
+      Height = 19
+      Top = 95
+      Width = 482
+      Align = alTop
+      AutoSize = True
+      BevelOuter = bvNone
+      ClientHeight = 19
+      ClientWidth = 482
+      TabOrder = 1
+      object LabelOpsiProds: TLabel
+        Left = 0
+        Height = 19
+        Top = 0
+        Width = 113
+        Caption = 'Products in depot:'
+        ParentColor = False
+        WordWrap = True
+      end
+      object LabelProds: TLabel
+        Left = 120
+        Height = 1
+        Top = 0
+        Width = 1
+        ParentColor = False
+        WordWrap = True
+      end
+    end
+    object PanelQuery2: TPanel
+      Left = 0
+      Height = 38
+      Top = 57
+      Width = 482
+      Align = alTop
+      BevelOuter = bvNone
+      ClientHeight = 38
+      ClientWidth = 482
+      TabOrder = 2
+      object LabelBackend: TLabel
+        Left = 0
+        Height = 19
+        Top = 0
+        Width = 482
+        Align = alTop
+        Caption = 'Backend:'
+        ParentColor = False
+      end
+      object LabelRepoKind: TLabel
+        Left = 179
+        Height = 19
+        Top = 0
+        Width = 65
+        Caption = 'Repo kind:'
+        ParentColor = False
+      end
+      object LabelUpdate: TLabel
+        Left = 0
+        Height = 19
+        Top = 19
+        Width = 482
+        Align = alTop
+        Caption = 'Install from stable, update to repo kind:'
+        ParentColor = False
+      end
+    end
+    object LabelProxy: TLabel
+      Left = 0
+      Height = 19
+      Top = 19
+      Width = 482
+      Align = alTop
+      Caption = 'Proxy:'
+      ParentColor = False
+    end
+    object PanelAdmin: TPanel
+      Left = 0
+      Height = 19
+      Top = 249
+      Width = 482
+      Align = alTop
+      AutoSize = True
+      BevelOuter = bvNone
+      ClientHeight = 19
+      ClientWidth = 482
+      TabOrder = 3
+      object LabelAdminName: TLabel
+        Left = 165
+        Height = 19
+        Top = 0
+        Width = 141
+        Align = alLeft
+        Caption = 'Opsi admin user name:'
+        ParentColor = False
+      end
+      object LabelAdminPassword: TLabel
+        Left = 0
+        Height = 19
+        Top = 0
+        Width = 165
+        Align = alLeft
+        Caption = 'Opsi admin user password:'
+        ParentColor = False
+      end
+    end
+    object PanelIP: TPanel
+      Left = 0
+      Height = 19
+      Top = 268
+      Width = 482
+      Align = alTop
+      AutoSize = True
+      BevelOuter = bvNone
+      ClientHeight = 19
+      ClientWidth = 482
+      TabOrder = 4
+      object LabelIPName: TLabel
+        Left = 0
+        Height = 19
+        Top = 0
+        Width = 55
+        Align = alLeft
+        Caption = 'IP name:'
+        ParentColor = False
+      end
+      object LabelIPNumber: TLabel
+        Left = 55
+        Height = 19
+        Top = 0
+        Width = 70
+        Align = alLeft
+        Caption = 'IP number:'
+        ParentColor = False
+      end
+    end
+    object LabelPasswordAdminUCS: TLabel
+      Left = 0
+      Height = 19
+      Top = 287
+      Width = 482
+      Align = alTop
+      Caption = 'Password of administrator of UCS domain controller:'
+      ParentColor = False
+      WordWrap = True
+    end
+    object LabelModules: TLabel
+      Left = 0
+      Height = 19
+      Top = 306
+      Width = 482
+      Align = alTop
+      Caption = 'Copy modules:'
+      ParentColor = False
+    end
+    object PanelRepo: TPanel
+      Left = 0
+      Height = 19
+      Top = 0
+      Width = 482
+      Align = alTop
+      AutoSize = True
+      BevelOuter = bvNone
+      ClientHeight = 19
+      ClientWidth = 482
+      TabOrder = 5
+      object LabelRepo: TLabel
+        Left = 0
+        Height = 19
+        Top = 0
+        Width = 71
+        Align = alLeft
+        Caption = 'Repository:'
+        ParentColor = False
+      end
+      object LabelRepo2: TLabel
+        Left = 71
+        Height = 19
+        Top = 0
+        Width = 1
+        Align = alLeft
+        ParentColor = False
+        WordWrap = True
+      end
+    end
+    object PanelRepoNoCache: TPanel
+      Left = 0
+      Height = 19
+      Top = 38
+      Width = 482
+      Align = alTop
+      AutoSize = True
+      BevelOuter = bvNone
+      ClientHeight = 19
+      ClientWidth = 482
+      TabOrder = 6
+      object LabelRepoNoCache: TLabel
+        Left = 0
+        Height = 19
+        Top = 0
+        Width = 178
+        Align = alLeft
+        Caption = 'Repository (no Cache-Proxy):'
+        ParentColor = False
+      end
+      object LabelRepoNoCache2: TLabel
+        Left = 178
+        Height = 19
+        Top = 0
+        Width = 1
+        Align = alLeft
+        ParentColor = False
+        WordWrap = True
+      end
+    end
+  end
+end
