@@ -24,18 +24,18 @@ interface
 
 uses
   SysUtils, Classes, Variants,
-  //IdComponent,
   oslog,
   superobject,
   {$IFDEF SYNAPSE}
   httpsend, ssl_openssl, ssl_openssl_lib,
   {$ELSE SYNAPSE}
+  IdComponent,
   IdHTTP,
   IdWebDAV,
   IdIOHandler,
   IdSSLOpenSSL,
+  IdSocketHandle,
   {$ENDIF SYNAPSE}
-  //IdSocketHandle,
   synacode,
   TypInfo,
   {$IFDEF GUI}
@@ -43,26 +43,13 @@ uses
   {$ENDIF GUI}
   {$IFDEF OPSISCRIPT}
   osfunc,
-  //osparser,
   osconf,
-  //lconvencoding,
-  //utf8scanner,
-  //Character,
-  //utf8info,
   {$ENDIF OPSISCRIPT}
-
-{$IFDEF WINDOWS}
+  {$IFDEF WINDOWS}
   Windows,
-{$ENDIF WINDOWS}
-  //widatahelper,
-  //IDZlib,
-  //IdCompressorZlib,
+  {$ENDIF WINDOWS}
   GZIPUtils,
   zstream;
-//LCLIntf,
-//LResources,
-//DefaultTranslator;
-//;
 
 
 {
@@ -489,7 +476,8 @@ type
     property depotId: string read FDepotId;
     property ServiceLastErrorInfo: TStringList read FServiceLastErrorInfo;
     //property actualclient: string read FactualClient write FactualClient;
-    property CommunicationMode : integer read FCommunicationMode write FCommunicationMode;
+    property CommunicationMode: integer read FCommunicationMode
+      write FCommunicationMode;
   end;
 
 var
@@ -1216,21 +1204,21 @@ begin
   TJsonThroughHTTPS.Create(serviceUrl, username, password, '', '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(
-  const serviceURL, username, password, sessionid: string);
+constructor TJsonThroughHTTPS.Create(const serviceURL, username,
+  password, sessionid: string);
 begin
   Create(serviceUrl, username, password, sessionid, '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(
-  const serviceURL, username, password, sessionid, ip, port: string);
+constructor TJsonThroughHTTPS.Create(const serviceURL, username,
+  password, sessionid, ip, port: string);
 begin
   Create(serviceUrl, username, password, sessionid, ip, port,
     ExtractFileName(ParamStr(0)));
 end;
 
-constructor TJsonThroughHTTPS.Create(
-  const serviceURL, username, password, sessionid, ip, port, agent: string);
+constructor TJsonThroughHTTPS.Create(const serviceURL, username,
+  password, sessionid, ip, port, agent: string);
 begin
   //portHTTPS := port;
   //portHTTP := 4444;
@@ -1427,7 +1415,7 @@ end;
 
 procedure TJsonThroughHTTPS.makeURL(const omc: TOpsiMethodCall);
 var
-  rpcstr : string;
+  rpcstr: string;
 begin
   //Furl := 'https://' + fhost + ':' + intToStr(portHTTPS) + '/rpc?' + EncodeUrl(omc.jsonUrlString);
   LogDatei.log('got omc.jsonUrlString: ' + omc.jsonUrlString, LLdebug3);
@@ -4296,14 +4284,18 @@ var
 begin
   t := '';
   Result := True;
-  // 5 MB
+  { 5 MB }
   maxlogsizebyte := 5242880;
 
-  // try to ask for actual maxlogsizebytes at the server
+  { try to ask for actual maxlogsizebytes at the server }
   aktlogsize := getLogsize;
   if aktlogsize = -1 then
+  begin
+    Logdatei.log('Failed to get max log file size from server - using default of 5 MB',
+      LLnotice);
     aktlogsize := maxlogsizebyte;
-  // byte to MB
+  end;
+  { byte to MB }
   aktlogsize := aktlogsize div (1024 * 1024);
 
   Logdatei.log('Checking if partlog: is bigger than ' + IntToStr(aktlogsize) +

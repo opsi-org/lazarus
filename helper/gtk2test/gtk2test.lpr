@@ -1,15 +1,13 @@
-program notifier;
+program gtk2test;
 
 {$mode objfpc}{$H+}
 
 uses
-  {$IFDEF UNIX}
-  //{$IFDEF UseCThreads}
+  {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
-  //{$ENDIF}
-  {$ENDIF}
+  {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, notifierform, notifierdatamodule, notifierguicontrol, notifier_json
+  Forms, Unit1
   { you can add units after this };
 
 {$R *.res}
@@ -17,9 +15,8 @@ uses
 begin
   RequireDerivedFormResource:=True;
   Application.Scaled:=True;
-  Application.Title:='opsi-notifier';
   Application.Initialize;
-  Application.CreateForm(TDataModule1, DataModule1);
+  Application.CreateForm(TForm1, Form1);
   Application.Run;
 end.
 

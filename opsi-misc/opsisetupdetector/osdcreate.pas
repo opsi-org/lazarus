@@ -338,8 +338,10 @@ begin
     copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
       cffPreserveTime], True);
     //product png
-    infilename := templatePath + Pathdelim + 'template.png';
-    outfilename := clientpath + PathDelim + aktProduct.productdata.productId + '.png';
+    //infilename := templatePath + Pathdelim + 'template.png';
+    infilename := aktProduct.productdata.productImageFullFileName;
+    outfilename := clientpath + PathDelim + aktProduct.productdata.productId
+      + ExtractFileExt(aktProduct.productdata.productImageFullFileName);
     copyfile(infilename, outfilename, [cffOverwriteFile, cffCreateDestDirectory,
       cffPreserveTime], True);
     //preinst

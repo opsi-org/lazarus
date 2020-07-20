@@ -104,6 +104,7 @@ var
   i: integer;
   lfilename: string;
   logAndTerminate: boolean = False;
+  mynotifierConfPath: string;
 begin
   preloglist := TStringList.Create;
   preloglist.Add('PreLog for: ' + Application.exename + ' opend at : ' +
@@ -120,6 +121,12 @@ begin
 
 
   myexepath := ExtractFilePath(Application.ExeName);
+  {$IFDEF WINDOWS}
+  mynotifierConfPath := myexepath;
+  {$ENDIF WINDOWS}
+  {$IFDEF UNIX}
+  mynotifierConfPath := '/usr/share/opsi-client-agent/';
+  {$ENDIF UNIX}
   //myport := 44003;
   myport := 0;
   //stopped := False;
@@ -164,7 +171,7 @@ begin
     preloglist.Add('Found Parameter skinconfigfile');
     myconfigpath := Application.GetOptionValue('s', 'skinconfigfile');
     preloglist.Add('Found Parameter skinconfigfile: ' + myconfigpath);
-    myconfigfile := myexepath + myconfigpath;
+    myconfigfile := mynotifierConfPath + myconfigpath;
     if not FileExists(myconfigfile) then
     begin
       preloglist.Add('Error: Given skinconfig file not found: ' + myconfigfile);
@@ -176,7 +183,7 @@ begin
   end
   else
   begin
-    preloglist.Add('Error: No skin config file given. I s required ');
+    preloglist.Add('Error: No skin config file given. Is required ');
     logAndTerminate := True;
     //logdatei.Close;
     //Application.Terminate;
@@ -187,8 +194,9 @@ begin
   begin
     preloglist.Add('Found Parameter idevent');
     mynotifierkind := Application.GetOptionValue('i', 'idevent');
-    // opsiclientd bug: pupup comes with %id%
-    if mynotifierkind = '%id%' then mynotifierkind := 'popup';
+    // opsiclientd bug: popup comes with %id%
+    if mynotifierkind = '%id%' then
+      mynotifierkind := 'popup';
     preloglist.Add('Found Parameter idevent: ' + mynotifierkind);
   end;
 
@@ -198,20 +206,25 @@ begin
   // use different filenames for different instances
 
   if myconfigpath <> '' then
-      lfilename := lfilename + '_' + ExtractFileNameWithoutExt(ExtractFileName(myconfigpath))
+    lfilename := lfilename + '_' + ExtractFileNameWithoutExt(
+      ExtractFileName(myconfigpath))
   else
-    if mynotifierkind <> '' then
-      lfilename := lfilename + '_' + mynotifierkind;
+  if mynotifierkind <> '' then
+    lfilename := lfilename + '_' + mynotifierkind;
 
   LogDatei.FileName := lfilename;
   LogDatei.StandardLogFileext := '.log';
   LogDatei.StandardLogFilename := lfilename;
   LogDatei.WritePartLog := False;
-  LogDatei.WriteErrFile:= False;
-  LogDatei.WriteHistFile:= False;
+  LogDatei.WriteErrFile := False;
+  LogDatei.WriteHistFile := False;
 
   //LogDatei.StandardPartLogFilename := lfilename+ '-part';
+  {$IFDEF UNIX}
+  WriteLn('Will using log: '+LogDatei.StandardLogPath+LogDatei.StandardLogFilename);
+  {$ENDIF UNIX}
   LogDatei.CreateTheLogfile(lfilename + '.log', True);
+
   // push prelog buffer to logfile
   if preloglist.Count > 0 then
     for i := 0 to preloglist.Count - 1 do

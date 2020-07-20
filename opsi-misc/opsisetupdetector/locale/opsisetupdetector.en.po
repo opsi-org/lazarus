@@ -135,6 +135,11 @@ msgctxt "osddlgnewproperty.rsduplicatewarning"
 msgid " exists. Duplicates not allowed."
 msgstr " exists. Duplicates not allowed."
 
+#: osdform.rsdefaulticon
+msgctxt "osdform.rsdefaulticon"
+msgid "default icon"
+msgstr "default icon"
+
 #: osdform.rsdependencyediterrorhead
 msgid "opsi-setup-detector: Dependency Editor: Error"
 msgstr "opsi-setup-detector: Dependency Editor: Error"
@@ -146,6 +151,11 @@ msgstr "No Dependency selected."
 #: osdform.rsnotimplemented
 msgid "Not implemented right now."
 msgstr "Not implemented right now."
+
+#: osdform.rsnumbericons
+msgctxt "osdform.rsnumbericons"
+msgid "Icons to choose from: "
+msgstr "Icons to choose from: "
 
 #: osdform.rspropediterrordoublemsgfinish
 msgctxt "osdform.rspropediterrordoublemsgfinish"
@@ -509,6 +519,22 @@ msgstr "Create Opsi Package"
 msgid "Create a opsi Product"
 msgstr "Create a opsi Product"
 
+#: tresultform1.btniconsnextstep.caption
+msgctxt "tresultform1.btniconsnextstep.caption"
+msgid "Next Step"
+msgstr "Next Step"
+
+#: tresultform1.btniconsnextstep.hint
+#, fuzzy
+msgctxt "tresultform1.btniconsnextstep.hint"
+msgid "Go to the next Step"
+msgstr "Go to the next Step"
+
+#: tresultform1.btnopeniconfolder.caption
+msgctxt "tresultform1.btnopeniconfolder.caption"
+msgid " open icon folder "
+msgstr " open icon folder "
+
 #: tresultform1.btproduct1nextstep.caption
 msgctxt "tresultform1.btproduct1nextstep.caption"
 msgid "Next Step"
@@ -567,6 +593,14 @@ msgstr ""
 msgid "opsi Setup Detector"
 msgstr "opsi Setup Detector"
 
+#: tresultform1.checkboxdefaulticon.caption
+msgid "use default icon"
+msgstr "use default icon"
+
+#: tresultform1.checkboxnoicon.caption
+msgid "use no icon"
+msgstr "use no icon"
+
 #: tresultform1.checkgroupbuildmode.caption
 msgctxt "tresultform1.checkgroupbuildmode.caption"
 msgid "Build Mode"
@@ -584,6 +618,10 @@ msgstr "&Help"
 #: tresultform1.flowpanel14.caption
 msgid "FlowPanel14"
 msgstr ""
+
+#: tresultform1.label1.caption
+msgid "No Icons"
+msgstr "No Icons"
 
 #: tresultform1.label50.caption
 msgctxt "tresultform1.label50.caption"
@@ -757,9 +795,31 @@ msgstr "Uninstall Program"
 msgid "Properties"
 msgstr "Properties"
 
+#: tresultform1.labelicondir.caption
+msgid "Directory:"
+msgstr "Directory:"
+
+#: tresultform1.labeliconname.caption
+msgid "Name:"
+msgstr "Name:"
+
+#: tresultform1.labeliconpreview.caption
+msgid "Selected Icon (Preview 170x170)"
+msgstr "Selected Icon (Preview 170x170)"
+
 #: tresultform1.labelloginfo.caption
 msgid "LabelLogInfo"
 msgstr ""
+
+#: tresultform1.labelnameselicon.caption
+msgctxt "tresultform1.labelnameselicon.caption"
+msgid "default icon"
+msgstr "default icon"
+
+#: tresultform1.labelnumicons.caption
+msgctxt "tresultform1.labelnumicons.caption"
+msgid "Icons to choose from: "
+msgstr "Icons to choose from: "
 
 #: tresultform1.labelworkbenchnotok.caption
 msgid "Path to opsi-work-bench not is reachable - Check Network Mounts or Path"
@@ -817,6 +877,11 @@ msgstr ""
 #: tresultform1.panel4.caption
 msgid "Panel4"
 msgstr ""
+
+#: tresultform1.paneliconpreview.caption
+msgctxt "tresultform1.paneliconpreview.caption"
+msgid "no icon selected"
+msgstr "no icon selected"
 
 #: tresultform1.processing.caption
 msgid "processing..."
@@ -920,6 +985,10 @@ msgstr "Analyze"
 #: tresultform1.tabsheetcreate.caption
 msgid "Create"
 msgstr "Create"
+
+#: tresultform1.tabsheeticons.caption
+msgid "Product Icon"
+msgstr "Product Icon"
 
 #: tresultform1.tabsheetproduct.caption
 msgid "Product Configuration 1"
