@@ -39,12 +39,13 @@ object Query4: TQuery4
   object PanelTimeout: TPanel
     Left = 160
     Height = 91
-    Top = 88
+    Top = 192
     Width = 392
     BevelOuter = bvNone
     ClientHeight = 91
     ClientWidth = 392
     TabOrder = 2
+    Visible = False
     object LabelTimeout: TLabel
       Left = 0
       Height = 38
@@ -77,12 +78,13 @@ object Query4: TQuery4
   object PanelFilePointer: TPanel
     Left = 160
     Height = 64
-    Top = 248
+    Top = 312
     Width = 392
     BevelOuter = bvNone
     ClientHeight = 64
     ClientWidth = 392
     TabOrder = 3
+    Visible = False
     object LabelFilePointer: TLabel
       Left = 0
       Height = 19
@@ -109,6 +111,44 @@ object Query4: TQuery4
       Width = 124
       Caption = 'default.nomenu'
       TabOrder = 1
+    end
+  end
+  object PanelDhcp: TPanel
+    Left = 160
+    Height = 80
+    Top = 88
+    Width = 424
+    BevelOuter = bvNone
+    ClientHeight = 80
+    ClientWidth = 424
+    TabOrder = 4
+    object LabelDhcp: TLabel
+      Left = 0
+      Height = 19
+      Top = 0
+      Width = 424
+      Align = alTop
+      Caption = 'Should we run the opsi dhcp server on this machine?'
+      ParentColor = False
+    end
+    object RadioBtnDhcpYes: TRadioButton
+      Left = 0
+      Height = 21
+      Top = 24
+      Width = 45
+      Caption = 'Yes'
+      OnChange = RadioBtnDhcpYesChange
+      TabOrder = 0
+    end
+    object RadioBtnDhcpNo: TRadioButton
+      Left = 88
+      Height = 21
+      Top = 24
+      Width = 42
+      Caption = 'No'
+      Checked = True
+      TabOrder = 1
+      TabStop = True
     end
   end
 end

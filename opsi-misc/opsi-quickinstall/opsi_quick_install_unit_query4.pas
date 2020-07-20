@@ -15,10 +15,14 @@ type
     BackgrImage: TImage;
     BtnBack: TButton;
     BtnNext: TButton;
+    LabelDhcp: TLabel;
     LabelFilePointer: TLabel;
     LabelTimeout: TLabel;
+    PanelDhcp: TPanel;
     PanelFilePointer: TPanel;
     PanelTimeout: TPanel;
+    RadioBtnDhcpNo: TRadioButton;
+    RadioBtnDhcpYes: TRadioButton;
     RadioBtnNo: TRadioButton;
     RadioBtnYes: TRadioButton;
     RadioBtnMenu: TRadioButton;
@@ -27,6 +31,7 @@ type
     procedure BtnNextClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure RadioBtnDhcpYesChange(Sender: TObject);
   private
 
   public
@@ -41,7 +46,8 @@ implementation
 uses
   opsi_quick_install_unit_language,
   opsi_quick_install_unit_query3,
-  opsi_quick_install_unit_query5_dhcp;
+  opsi_quick_install_unit_query5_dhcp,
+  opsi_quick_install_unit_query6;
 
 {$R *.lfm}
 
@@ -49,11 +55,23 @@ uses
 
 procedure TQuery4.BtnNextClick(Sender: TObject);
 begin
-  showForm(Query5_dhcp, self);
-  Query5_dhcp.BtnBack.Left := BtnBack.Left;
-  Query5_dhcp.BtnBack.Top := BtnBack.Top;
-  Query5_dhcp.BtnNext.Left := BtnNext.Left;
-  Query5_dhcp.BtnNext.Top := BtnNext.Top;
+  if RadioBtnDhcpYes.Checked then
+  begin
+    showForm(Query5_dhcp, self);
+    Query5_dhcp.BtnBack.Left := BtnBack.Left;
+    Query5_dhcp.BtnBack.Top := BtnBack.Top;
+    Query5_dhcp.BtnNext.Left := BtnNext.Left;
+    Query5_dhcp.BtnNext.Top := BtnNext.Top;
+  end
+  else
+  begin
+    showForm(Query6, self);
+    Query6.BtnBack.Left := BtnBack.Left;
+    Query6.BtnBack.Top := BtnBack.Top;
+    Query6.BtnNext.Left := BtnNext.Left;
+    Query6.BtnNext.Top := BtnNext.Top;
+  end;
+
 end;
 
 procedure TQuery4.FormActivate(Sender: TObject);
@@ -67,10 +85,28 @@ begin
   Query3.Close;
 end;
 
+procedure TQuery4.RadioBtnDhcpYesChange(Sender: TObject);
+begin
+  if RadioBtnDhcpYes.Checked then
+  begin
+    PanelTimeout.Visible := True;
+    PanelFilePointer.Visible := True;
+  end
+  else
+  begin
+    PanelTimeout.Visible := False;
+    PanelFilePointer.Visible := False;
+  end;
+end;
+
 procedure TQuery4.BtnBackClick(Sender: TObject);
 begin
-  showForm(Query3, self);
+  if QuickInstall.RadioBtnDefault.Checked then
+    showForm(QuickInstall, self)
+  else
+  begin
+    showForm(Query3, self);
+  end;
 end;
 
 end.
-

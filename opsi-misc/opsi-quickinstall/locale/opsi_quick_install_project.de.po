@@ -1,6 +1,107 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
+#: toverview.btnback.caption
+msgctxt "toverview.btnback.caption"
+msgid " < back "
+msgstr " < zurück "
+
+#: toverview.btnfinish.caption
+msgid " finish "
+msgstr " fertigstellen "
+
+#: toverview.caption
+msgid "Overview"
+msgstr "Übersicht"
+
+#: toverview.labeladminname.caption
+msgid "Opsi admin user name:"
+msgstr ""
+
+#: toverview.labeladminpassword.caption
+msgid "Opsi admin user password:"
+msgstr ""
+
+#: toverview.labelbackend.caption
+msgid "Backend:"
+msgstr ""
+
+#: toverview.labeldhcp.caption
+msgid "Run opsi dhcp server:"
+msgstr ""
+
+#: toverview.labeldomain.caption
+msgid "DNS Domain:"
+msgstr ""
+
+#: toverview.labelelilo.caption
+msgid "Elilo.efi has timeout of 2 seconds:"
+msgstr ""
+
+#: toverview.labelgateway.caption
+msgid "Gateway:"
+msgstr ""
+
+#: toverview.labelipname.caption
+msgid "IP name:"
+msgstr ""
+
+#: toverview.labelipnumber.caption
+msgid "IP number:"
+msgstr ""
+
+#: toverview.labelmodules.caption
+msgid "Copy modules:"
+msgstr ""
+
+#: toverview.labelnameserver.caption
+msgid "Primary nameserver:"
+msgstr ""
+
+#: toverview.labelnetmask.caption
+msgid "Netmask:"
+msgstr ""
+
+#: toverview.labelnetworkadress.caption
+msgid "Network address:"
+msgstr ""
+
+#: toverview.labelopsiprods.caption
+msgid "Products in depot:"
+msgstr ""
+
+#: toverview.labelpasswordadminucs.caption
+msgid "Password of administrator of UCS domain controller:"
+msgstr ""
+
+#: toverview.labelproxy.caption
+msgid "Proxy:"
+msgstr ""
+
+#: toverview.labelreboot.caption
+msgid "Reboot after script is finished:"
+msgstr ""
+
+#: toverview.labelrepo.caption
+msgid "Repository:"
+msgstr ""
+
+#: toverview.labelrepokind.caption
+msgid "Repo kind:"
+msgstr ""
+
+#: toverview.labelreponocache.caption
+msgid "Repository (no Cache-Proxy):"
+msgstr ""
+
+#: toverview.labeltftproot.caption
+msgid "TFTPROOT symlink points to:"
+msgstr ""
+
+#: toverview.labelupdate.caption
+msgid "Install from stable, update to repo kind:"
+msgstr ""
+
 #: tquery.btnback.caption
 msgctxt "tquery.btnback.caption"
 msgid " < back "
@@ -234,10 +335,6 @@ msgstr ""
 msgid "swaudit"
 msgstr ""
 
-#: tquery3.labeldhcp.caption
-msgid "Should we run the opsi dhcp server on this machine?"
-msgstr "Sollen wir den Opsi-DHCP-Server auf diesem Computer verwenden?"
-
 #: tquery3.labelopsiproducts.caption
 msgid "Which opsi product(s) should we install in the depot?"
 msgstr "Welche Opsi-Produkte sollen auf dem Depot installiert werden?"
@@ -245,16 +342,6 @@ msgstr "Welche Opsi-Produkte sollen auf dem Depot installiert werden?"
 #: tquery3.labelreboot.caption
 msgid "May the server reboot if the script is finished?"
 msgstr "Soll der Server neustarten, wenn das Skript beendet ist?"
-
-#: tquery3.radiobtndhcpno.caption
-msgctxt "tquery3.radiobtndhcpno.caption"
-msgid "No"
-msgstr "Nein"
-
-#: tquery3.radiobtndhcpyes.caption
-msgctxt "tquery3.radiobtndhcpyes.caption"
-msgid "Yes"
-msgstr "Ja"
 
 #: tquery3.radiobtnno.caption
 msgctxt "tquery3.radiobtnno.caption"
@@ -281,6 +368,11 @@ msgctxt "tquery4.caption"
 msgid "Opsi quick install - query (dhcp part 1)"
 msgstr "Opsi Quick-Install - Abfrage (DHCP Teil 4)"
 
+#: tquery4.labeldhcp.caption
+msgctxt "tquery4.labeldhcp.caption"
+msgid "Should we run the opsi dhcp server on this machine?"
+msgstr "Sollen wir den Opsi-DHCP-Server auf diesem Computer verwenden?"
+
 #: tquery4.labelfilepointer.caption
 msgid "Which file should the TFTPROOT default symlink point to?"
 msgstr "Auf welche Datei soll der TFTPROOT-Default-Symlink zeigen?"
@@ -288,6 +380,16 @@ msgstr "Auf welche Datei soll der TFTPROOT-Default-Symlink zeigen?"
 #: tquery4.labeltimeout.caption
 msgid "Does the patched elilo.efi have a timeout of 2 seconds in case of a failed elilo configuration?"
 msgstr "Hat die ausgebesserte elilo.efi ein Timeout von 2 Sekunden im Falle einer gescheiterten elilo-Konfiguration?"
+
+#: tquery4.radiobtndhcpno.caption
+msgctxt "tquery4.radiobtndhcpno.caption"
+msgid "No"
+msgstr "Nein"
+
+#: tquery4.radiobtndhcpyes.caption
+msgctxt "tquery4.radiobtndhcpyes.caption"
+msgid "Yes"
+msgstr "Ja"
 
 #: tquery4.radiobtnmenu.caption
 msgid "default.menu"
@@ -492,9 +594,10 @@ msgctxt "tquery7.btnback.caption"
 msgid " < back "
 msgstr " < zurück "
 
-#: tquery7.btnfinish.caption
-msgid "  finish  "
-msgstr "  fertigstellen  "
+#: tquery7.btnoverview.caption
+msgctxt "tquery7.btnoverview.caption"
+msgid " overview "
+msgstr " Übersicht "
 
 #: tquery7.caption
 msgctxt "tquery7.caption"
@@ -517,7 +620,9 @@ msgstr "Klicken Sie 'fertigstellen', um die Installation von Opsi-Server zu begi
 
 #: tquery7.labelpasswordmasteradmin.caption
 msgid "What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?"
-msgstr "Passwort des Administrators des UCS-Domain-Controllers:\n (benötigt, um andere Rollen hinzuzufügen)\n"
+msgstr ""
+"Passwort des Administrators des UCS-Domain-Controllers:\n"
+" (benötigt, um andere Rollen hinzuzufügen)\n"
 
 #: tquery7.radiobtnno.caption
 msgctxt "tquery7.radiobtnno.caption"

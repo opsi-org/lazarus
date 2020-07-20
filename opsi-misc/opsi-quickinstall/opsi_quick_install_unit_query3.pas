@@ -36,15 +36,11 @@ type
     CheckBoxHwaudit: TCheckBox;
     CheckBoxOpsiTemplate: TCheckBox;
     CheckBoxOpsiTemplateAdmin: TCheckBox;
-    LabelDhcp: TLabel;
     LabelReboot: TLabel;
     LabelOpsiProducts: TLabel;
     PanelProdToChoose: TPanel;
-    PanelDhcp: TPanel;
     PanelReboot: TPanel;
     PanelOpsiProducts: TPanel;
-    RadioBtnDhcpNo: TRadioButton;
-    RadioBtnDhcpYes: TRadioButton;
     RadioBtnNo: TRadioButton;
     RadioBtnYes: TRadioButton;
     procedure BtnBackClick(Sender: TObject);
@@ -68,8 +64,7 @@ implementation
 uses
   opsi_quick_install_unit_language,
   opsi_quick_install_unit_query2,
-  opsi_quick_install_unit_query4,
-  opsi_quick_install_unit_query6;
+  opsi_quick_install_unit_query4;
 
 {$R *.lfm}
 
@@ -77,22 +72,11 @@ uses
 
 procedure TQuery3.BtnNextClick(Sender: TObject);
 begin
-  if RadioBtnDhcpYes.Checked then
-  begin
-    showForm(Query4, self);
-    Query4.BtnBack.Left := BtnBack.Left;
-    Query4.BtnBack.Top := BtnBack.Top;
-    Query4.BtnNext.Left := BtnNext.Left;
-    Query4.BtnNext.Top := BtnNext.Top;
-  end
-  else
-  begin
-    showForm(Query6, self);
-    Query6.BtnBack.Left := BtnBack.Left;
-    Query6.BtnBack.Top := BtnBack.Top;
-    Query6.BtnNext.Left := BtnNext.Left;
-    Query6.BtnNext.Top := BtnNext.Top;
-  end;
+  showForm(Query4, self);
+  Query4.BtnBack.Left := BtnBack.Left;
+  Query4.BtnBack.Top := BtnBack.Top;
+  Query4.BtnNext.Left := BtnNext.Left;
+  Query4.BtnNext.Top := BtnNext.Top;
 end;
 
 procedure TQuery3.CheckBoxAllChange(Sender: TObject);
@@ -173,11 +157,11 @@ end;
 
 procedure TQuery3.BtnBackClick(Sender: TObject);
 begin
-  showForm(Query2, self);
-  Query2.BtnBack.Left := BtnBack.Left;
-  Query2.BtnBack.Top := BtnBack.Top;
-  Query2.BtnNext.Left := BtnNext.Left;
-  Query2.BtnNext.Top := BtnNext.Top;
+    showForm(Query2, self);
+    Query2.BtnBack.Left := BtnBack.Left;
+    Query2.BtnBack.Top := BtnBack.Top;
+    Query2.BtnNext.Left := BtnNext.Left;
+    Query2.BtnNext.Top := BtnNext.Top;
 end;
 
 end.

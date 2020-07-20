@@ -44,7 +44,7 @@ implementation
 
 uses
   opsi_quick_install_unit_language,
-  opsi_quick_install_unit_query3,
+  opsi_quick_install_unit_query4,
   opsi_quick_install_unit_query5_dhcp,
   opsi_quick_install_unit_query7;
 
@@ -57,11 +57,8 @@ begin
   showForm(Query7, self);
   Query7.BtnBack.Left := BtnBack.Left;
   Query7.BtnBack.Top := BtnBack.Top;
-  if QuickInstall.ComboBoxLanguages.Text = 'Deutsch' then
-    Query7.BtnFinish.Left := BtnNext.Left - 30
-  else
-    Query7.BtnFinish.Left := BtnNext.Left;
-  Query7.BtnFinish.Top := BtnNext.Top;
+  Query7.BtnOverview.Left := BtnNext.Left - 10;
+  Query7.BtnOverview.Top := BtnNext.Top;
 end;
 
 procedure TQuery6.FormActivate(Sender: TObject);
@@ -77,13 +74,10 @@ end;
 
 procedure TQuery6.BtnBackClick(Sender: TObject);
 begin
-  if QuickInstall.RadioBtnDefault.Checked then
-    showForm(QuickInstall, self)
-  else
-  if Query3.RadioBtnDhcpYes.Checked then
+  if Query4.RadioBtnDhcpYes.Checked then
     showForm(Query5_dhcp, self)
   else
-    showForm(Query3, self);
+    showForm(Query4, self);
 end;
 
 end.
