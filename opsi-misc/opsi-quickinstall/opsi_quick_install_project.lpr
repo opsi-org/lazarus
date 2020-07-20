@@ -14,7 +14,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   opsi_quick_install_unit_query5_dhcp,
   opsi_quick_install_unit_query6,
   opsi_quick_install_unit_query7,
-  opsi_quick_install_unit_overview { you can add units after this };
+  opsi_quick_install_unit_overview;
 
 {$R *.res}
 

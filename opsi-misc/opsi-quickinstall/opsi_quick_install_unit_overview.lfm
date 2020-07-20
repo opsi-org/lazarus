@@ -39,11 +39,11 @@ object Overview: TOverview
   end
   object BigPanel: TPanel
     Left = 176
-    Height = 360
+    Height = 368
     Top = 40
     Width = 482
     BevelOuter = bvNone
-    ClientHeight = 360
+    ClientHeight = 368
     ClientWidth = 482
     TabOrder = 2
     object LabelDHCP: TLabel
@@ -101,65 +101,41 @@ object Overview: TOverview
         Caption = 'DNS Domain:'
         ParentColor = False
       end
-      object PanelNet: TPanel
+      object LabelNetmask: TLabel
         Left = 1
         Height = 19
         Top = 39
         Width = 480
         Align = alTop
-        AutoSize = True
-        BevelOuter = bvNone
-        ClientHeight = 19
-        ClientWidth = 480
-        TabOrder = 0
-        object LabelNetmask: TLabel
-          Left = 0
-          Height = 19
-          Top = 0
-          Width = 59
-          Align = alLeft
-          Caption = 'Netmask:'
-          ParentColor = False
-        end
-        object LabelNetworkAdress: TLabel
-          Left = 59
-          Height = 19
-          Top = 0
-          Width = 110
-          Align = alLeft
-          Caption = 'Network address:'
-          ParentColor = False
-        end
+        Caption = 'Netmask:'
+        ParentColor = False
       end
-      object PanelNameGate: TPanel
+      object LabelNetworkAdress: TLabel
+        Left = 192
+        Height = 19
+        Top = 39
+        Width = 110
+        Align = alCustom
+        Caption = 'Network address:'
+        ParentColor = False
+      end
+      object LabelNameserver: TLabel
         Left = 1
         Height = 19
         Top = 77
         Width = 480
         Align = alTop
-        AutoSize = True
-        BevelOuter = bvNone
-        ClientHeight = 19
-        ClientWidth = 480
-        TabOrder = 1
-        object LabelNameserver: TLabel
-          Left = 0
-          Height = 19
-          Top = 0
-          Width = 132
-          Align = alLeft
-          Caption = 'Primary nameserver:'
-          ParentColor = False
-        end
-        object LabelGateway: TLabel
-          Left = 132
-          Height = 19
-          Top = 0
-          Width = 58
-          Align = alLeft
-          Caption = 'Gateway:'
-          ParentColor = False
-        end
+        Caption = 'Primary nameserver:'
+        ParentColor = False
+      end
+      object LabelGateway: TLabel
+        Left = 192
+        Height = 19
+        Top = 77
+        Width = 58
+        Align = alCustom
+        Caption = 'Gateway:'
+        ParentColor = False
       end
     end
     object PanelOpsiProds: TPanel
@@ -211,10 +187,11 @@ object Overview: TOverview
         ParentColor = False
       end
       object LabelRepoKind: TLabel
-        Left = 179
+        Left = 192
         Height = 19
         Top = 0
         Width = 65
+        Align = alCustom
         Caption = 'Repo kind:'
         ParentColor = False
       end
@@ -237,70 +214,10 @@ object Overview: TOverview
       Caption = 'Proxy:'
       ParentColor = False
     end
-    object PanelAdmin: TPanel
-      Left = 0
-      Height = 19
-      Top = 249
-      Width = 482
-      Align = alTop
-      AutoSize = True
-      BevelOuter = bvNone
-      ClientHeight = 19
-      ClientWidth = 482
-      TabOrder = 3
-      object LabelAdminName: TLabel
-        Left = 165
-        Height = 19
-        Top = 0
-        Width = 141
-        Align = alLeft
-        Caption = 'Opsi admin user name:'
-        ParentColor = False
-      end
-      object LabelAdminPassword: TLabel
-        Left = 0
-        Height = 19
-        Top = 0
-        Width = 165
-        Align = alLeft
-        Caption = 'Opsi admin user password:'
-        ParentColor = False
-      end
-    end
-    object PanelIP: TPanel
-      Left = 0
-      Height = 19
-      Top = 268
-      Width = 482
-      Align = alTop
-      AutoSize = True
-      BevelOuter = bvNone
-      ClientHeight = 19
-      ClientWidth = 482
-      TabOrder = 4
-      object LabelIPName: TLabel
-        Left = 0
-        Height = 19
-        Top = 0
-        Width = 55
-        Align = alLeft
-        Caption = 'IP name:'
-        ParentColor = False
-      end
-      object LabelIPNumber: TLabel
-        Left = 55
-        Height = 19
-        Top = 0
-        Width = 70
-        Align = alLeft
-        Caption = 'IP number:'
-        ParentColor = False
-      end
-    end
     object LabelPasswordAdminUCS: TLabel
       Left = 0
       Height = 19
-      Top = 287
+      Top = 325
       Width = 482
       Align = alTop
       Caption = 'Password of administrator of UCS domain controller:'
@@ -310,7 +227,7 @@ object Overview: TOverview
     object LabelModules: TLabel
       Left = 0
       Height = 19
-      Top = 306
+      Top = 344
       Width = 482
       Align = alTop
       Caption = 'Copy modules:'
@@ -326,7 +243,7 @@ object Overview: TOverview
       BevelOuter = bvNone
       ClientHeight = 19
       ClientWidth = 482
-      TabOrder = 5
+      TabOrder = 3
       object LabelRepo: TLabel
         Left = 0
         Height = 19
@@ -356,7 +273,7 @@ object Overview: TOverview
       BevelOuter = bvNone
       ClientHeight = 19
       ClientWidth = 482
-      TabOrder = 6
+      TabOrder = 4
       object LabelRepoNoCache: TLabel
         Left = 0
         Height = 19
@@ -375,6 +292,42 @@ object Overview: TOverview
         ParentColor = False
         WordWrap = True
       end
+    end
+    object LabelIPName: TLabel
+      Left = 0
+      Height = 19
+      Top = 306
+      Width = 482
+      Align = alTop
+      Caption = 'IP name:'
+      ParentColor = False
+    end
+    object LabelIPNumber: TLabel
+      Left = 0
+      Height = 19
+      Top = 287
+      Width = 482
+      Align = alTop
+      Caption = 'IP number:'
+      ParentColor = False
+    end
+    object LabelAdminName: TLabel
+      Left = 0
+      Height = 19
+      Top = 249
+      Width = 482
+      Align = alTop
+      Caption = 'Opsi admin user name:'
+      ParentColor = False
+    end
+    object LabelAdminPassword: TLabel
+      Left = 0
+      Height = 19
+      Top = 268
+      Width = 482
+      Align = alTop
+      Caption = 'Opsi admin user password:'
+      ParentColor = False
     end
   end
 end

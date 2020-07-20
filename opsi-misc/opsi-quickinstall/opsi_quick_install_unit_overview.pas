@@ -43,10 +43,6 @@ type
     BigPanel: TPanel;
     PanelRepoNoCache: TPanel;
     PanelRepo: TPanel;
-    PanelIP: TPanel;
-    PanelAdmin: TPanel;
-    PanelNameGate: TPanel;
-    PanelNet: TPanel;
     PanelDHCP: TPanel;
     PanelOpsiProds: TPanel;
     PanelQuery2: TPanel;
@@ -62,6 +58,24 @@ type
 
 var
   Overview: TOverview;
+
+resourcestring
+  rsProxy = 'Proxy:';
+  rsBackend = 'Backend:';
+  rsRepoKind = 'Repo kind:';
+  rsUpdate = 'Install from stable, update to repo kind:';
+  rsReboot = 'Reboot after script is finished:';
+  rsOpsiDhcpServer = 'Run opsi dhcp server:';
+  rsElilo = 'Elilo.efi has timeout of 2 seconds:';
+  rsTFTPRoot = 'TFTPROOT symlink points to:';
+  rsNetmask = 'Netmask:';
+  rsNetwork = 'Network address:';
+  rsDomain = 'DNS Domain:';
+  rsNameserver = 'Primary nameserver:';
+  rsGateway = 'Gateway:';
+  rsAdminName = '';
+  rsAdminPassword = '';
+  rsIPNumber = '';
 
 implementation
 
@@ -248,28 +262,55 @@ procedure TOverview.FormActivate(Sender: TObject);
 begin
   AdjustPanelPosition(self);
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
-
+  // Repository
   if Query.RadioBtnOpsi41.Checked then
     LabelRepo2.Caption := ' ' + Query.RadioBtnOpsi41.Caption
   else if Query.RadioBtnOpsi42.Checked then
     LabelRepo2.Caption := ' ' + Query.RadioBtnOpsi42.Caption
   else
     LabelRepo2.Caption := ' ' + Query.EditRepo.Text;
-
+  // Proxy
   if Query.RadioBtnNone.Checked then
-    LabelProxy.Caption := LabelProxy.Caption + ' ' + Query.RadioBtnNone.Caption
+    LabelProxy.Caption := rsProxy + ' ' + Query.RadioBtnNone.Caption
   else if Query.RadioBtnMyProxy.Checked then
-    LabelProxy.Caption := LabelProxy.Caption + ' ' + Query.RadioBtnMyProxy.Caption
+    LabelProxy.Caption := rsProxy + ' ' + Query.RadioBtnMyProxy.Caption
   else
-    LabelProxy.Caption := LabelProxy.Caption + ' ' + Query.EditProxy.Text;
-
+    LabelProxy.Caption := rsProxy + ' ' + Query.EditProxy.Text;
+  // Repository (no cache)
   if Query.RadioBtnOpsi41NoCache.Checked then
     LabelRepoNoCache2.Caption := ' ' + Query.RadioBtnOpsi41NoCache.Caption
   else if Query.RadioBtnOpsi42NoCache.Checked then
     LabelRepoNoCache2.Caption := ' ' + Query.RadioBtnOpsi42NoCache.Caption
   else
     LabelRepoNoCache2.Caption := ' ' + Query.EditNoCache.Text;
-
+  // Backend
+  if Query2.RadioBtnFile.Checked then
+    LabelBackend.Caption := rsBackend + ' ' + Query2.RadioBtnFile.Caption
+  else
+    LabelBackend.Caption := rsBackend + ' ' + Query2.RadioBtnMySql.Caption;
+  // Repo kind
+  if Query2.RadioBtnExperimental.Checked then
+    LabelRepoKind.Caption := rsRepoKind + ' ' + Query2.RadioBtnExperimental.Caption
+  else if Query2.RadioBtnStable.Checked then
+    LabelRepoKind.Caption := rsRepoKind + ' ' + Query2.RadioBtnStable.Caption
+  else
+    LabelRepoKind.Caption := rsRepoKind + ' ' + Query2.RadioBtnTesting.Caption;
+  // Update
+  if Query2.RadioBtnYes.Checked then
+    LabelUpdate.Caption := rsUpdate + ' ' + Query2.RadioBtnYes.Caption
+  else
+    LabelUpdate.Caption := rsUpdate + ' ' + Query2.RadioBtnNo.Caption;
+  // Prods
+  // Reboot
+  if Query3.RadioBtnYes.Checked then
+    LabelReboot.Caption := rsReboot + ' ' + Query3.RadioBtnYes.Caption
+  else
+    LabelReboot.Caption := rsReboot + ' ' + Query3.RadioBtnNo.Caption;
+  // Dhcp
+  if Query4.RadioBtnDhcpYes.Checked then
+    LabelDHCP.Caption := rsReboot + ' ' + Query4.RadioBtnDhcpYes.Caption
+  else
+    LabelDHCP.Caption := rsReboot + ' ' + Query4.RadioBtnDhcpNo.Caption;
 end;
 
 procedure TOverview.FormClose(Sender: TObject; var CloseAction: TCloseAction);

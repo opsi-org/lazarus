@@ -91,6 +91,8 @@ procedure TQuickInstall.FormCreate(Sender: TObject);
 var
   Languages: TStringList;
 begin
+  //ShowMessage();
+
   // set constant form size
   Height := 450;
   Left := 360;

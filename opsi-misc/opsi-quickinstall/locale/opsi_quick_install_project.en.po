@@ -1,6 +1,36 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
+#: opsi_quick_install_unit_overview.rsbackend
+msgctxt "opsi_quick_install_unit_overview.rsbackend"
+msgid "Backend:"
+msgstr ""
+
+#: opsi_quick_install_unit_overview.rsopsidhcpserver
+msgctxt "opsi_quick_install_unit_overview.rsopsidhcpserver"
+msgid "Run opsi dhcp server:"
+msgstr ""
+
+#: opsi_quick_install_unit_overview.rsproxy
+msgctxt "opsi_quick_install_unit_overview.rsproxy"
+msgid "Proxy:"
+msgstr ""
+
+#: opsi_quick_install_unit_overview.rsreboot
+msgctxt "opsi_quick_install_unit_overview.rsreboot"
+msgid "Reboot after script is finished:"
+msgstr ""
+
+#: opsi_quick_install_unit_overview.rsrepokind
+msgctxt "opsi_quick_install_unit_overview.rsrepokind"
+msgid "Repo kind:"
+msgstr ""
+
+#: opsi_quick_install_unit_overview.rsupdate
+msgctxt "opsi_quick_install_unit_overview.rsupdate"
+msgid "Install from stable, update to repo kind:"
+msgstr ""
+
 #: toverview.btnback.caption
 msgctxt "toverview.btnback.caption"
 msgid " < back "
@@ -23,10 +53,12 @@ msgid "Opsi admin user password:"
 msgstr ""
 
 #: toverview.labelbackend.caption
+msgctxt "toverview.labelbackend.caption"
 msgid "Backend:"
 msgstr ""
 
 #: toverview.labeldhcp.caption
+msgctxt "toverview.labeldhcp.caption"
 msgid "Run opsi dhcp server:"
 msgstr ""
 
@@ -75,10 +107,12 @@ msgid "Password of administrator of UCS domain controller:"
 msgstr ""
 
 #: toverview.labelproxy.caption
+msgctxt "toverview.labelproxy.caption"
 msgid "Proxy:"
 msgstr ""
 
 #: toverview.labelreboot.caption
+msgctxt "toverview.labelreboot.caption"
 msgid "Reboot after script is finished:"
 msgstr ""
 
@@ -87,6 +121,7 @@ msgid "Repository:"
 msgstr ""
 
 #: toverview.labelrepokind.caption
+msgctxt "toverview.labelrepokind.caption"
 msgid "Repo kind:"
 msgstr ""
 
@@ -99,6 +134,7 @@ msgid "TFTPROOT symlink points to:"
 msgstr ""
 
 #: toverview.labelupdate.caption
+msgctxt "toverview.labelupdate.caption"
 msgid "Install from stable, update to repo kind:"
 msgstr ""
 
