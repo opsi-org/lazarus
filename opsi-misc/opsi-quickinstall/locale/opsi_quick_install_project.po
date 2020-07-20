@@ -6,6 +6,36 @@ msgctxt "opsi_quick_install_unit_overview.rsbackend"
 msgid "Backend:"
 msgstr ""
 
+#: opsi_quick_install_unit_overview.rsdomain
+msgctxt "opsi_quick_install_unit_overview.rsdomain"
+msgid "DNS Domain:"
+msgstr ""
+
+#: opsi_quick_install_unit_overview.rselilo
+msgctxt "opsi_quick_install_unit_overview.rselilo"
+msgid "Elilo.efi has timeout of 2 seconds:"
+msgstr ""
+
+#: opsi_quick_install_unit_overview.rsgateway
+msgctxt "opsi_quick_install_unit_overview.rsgateway"
+msgid "Gateway:"
+msgstr ""
+
+#: opsi_quick_install_unit_overview.rsnameserver
+msgctxt "opsi_quick_install_unit_overview.rsnameserver"
+msgid "Primary nameserver:"
+msgstr ""
+
+#: opsi_quick_install_unit_overview.rsnetmask
+msgctxt "opsi_quick_install_unit_overview.rsnetmask"
+msgid "Netmask:"
+msgstr ""
+
+#: opsi_quick_install_unit_overview.rsnetwork
+msgctxt "opsi_quick_install_unit_overview.rsnetwork"
+msgid "Network address:"
+msgstr ""
+
 #: opsi_quick_install_unit_overview.rsopsidhcpserver
 msgctxt "opsi_quick_install_unit_overview.rsopsidhcpserver"
 msgid "Run opsi dhcp server:"
@@ -24,6 +54,11 @@ msgstr ""
 #: opsi_quick_install_unit_overview.rsrepokind
 msgctxt "opsi_quick_install_unit_overview.rsrepokind"
 msgid "Repo kind:"
+msgstr ""
+
+#: opsi_quick_install_unit_overview.rstftproot
+msgctxt "opsi_quick_install_unit_overview.rstftproot"
+msgid "TFTPROOT symlink points to:"
 msgstr ""
 
 #: opsi_quick_install_unit_overview.rsupdate
@@ -63,14 +98,17 @@ msgid "Run opsi dhcp server:"
 msgstr ""
 
 #: toverview.labeldomain.caption
+msgctxt "toverview.labeldomain.caption"
 msgid "DNS Domain:"
 msgstr ""
 
 #: toverview.labelelilo.caption
+msgctxt "toverview.labelelilo.caption"
 msgid "Elilo.efi has timeout of 2 seconds:"
 msgstr ""
 
 #: toverview.labelgateway.caption
+msgctxt "toverview.labelgateway.caption"
 msgid "Gateway:"
 msgstr ""
 
@@ -87,14 +125,17 @@ msgid "Copy modules:"
 msgstr ""
 
 #: toverview.labelnameserver.caption
+msgctxt "toverview.labelnameserver.caption"
 msgid "Primary nameserver:"
 msgstr ""
 
 #: toverview.labelnetmask.caption
+msgctxt "toverview.labelnetmask.caption"
 msgid "Netmask:"
 msgstr ""
 
 #: toverview.labelnetworkadress.caption
+msgctxt "toverview.labelnetworkadress.caption"
 msgid "Network address:"
 msgstr ""
 
@@ -130,6 +171,7 @@ msgid "Repository (no Cache-Proxy):"
 msgstr ""
 
 #: toverview.labeltftproot.caption
+msgctxt "toverview.labeltftproot.caption"
 msgid "TFTPROOT symlink points to:"
 msgstr ""
 

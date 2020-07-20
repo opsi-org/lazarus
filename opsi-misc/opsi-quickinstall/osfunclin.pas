@@ -17,11 +17,6 @@ interface
 
 uses
   Classes, SysUtils,
-  {$IFNDEF SYNAPSE}
-  //IdBaseComponent,
-  //IdComponent,
-  //IdIPWatch,
-  {$ENDIF SYNAPSE}
   sockets,
   {$IFDEF OPSISCRIPT}
   //osfunc,
@@ -30,16 +25,16 @@ uses
   unix,
   fileutil,
   LazFileUtils,
-  //oslog,
-  //osparserhelper,
-  //synsock,
-  //synaip,
+  oslog,
+  osparserhelper,
+  synsock,
+  synaip,
   netdb,
   baseunix,
   process,
-  //OSProcessux,
-  IniFiles;
-  //osprocesses;
+  OSProcessux,
+  IniFiles,
+  osprocesses;
 
 function getProfilesDirListLin: TStringList;
 function getLinProcessList: TStringList;

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  StdCtrls, LCLtranslator;
+  StdCtrls, LCLtranslator, osLog;
 
 type
 
@@ -57,7 +57,7 @@ var
 implementation
 
 uses
-  opsi_quick_install_unit_query, opsi_quick_install_unit_query4;
+  opsi_quick_install_unit_query, opsi_quick_install_unit_query4, osfunclin;
 
 {$R *.lfm}
 
@@ -91,7 +91,10 @@ procedure TQuickInstall.FormCreate(Sender: TObject);
 var
   Languages: TStringList;
 begin
-  //ShowMessage();
+  LogDatei := TLogInfo.Create;
+  LogDatei.CreateTheLogfile('opsi_quickinstall.log');
+  ShowMessage(getLinuxDistroName);
+  ShowMessage(getLinuxDistroRelease);
 
   // set constant form size
   Height := 450;
