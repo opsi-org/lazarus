@@ -226,7 +226,7 @@ begin
 
     // exit from loop
 
-    OemToAnsi(lpBuffer, lpBuffer);
+    OemToAnsiBuff(lpBuffer, lpBuffer, BytesRead);
     Buffer := Buffer + lpBuffer;
     BufPos := AnsiPos(#13, Buffer);
 
