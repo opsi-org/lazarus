@@ -571,6 +571,13 @@
 -dGUI
 -dOPSI
 -dOSLOG"/>
+      <OtherDefines Count="5">
+        <Define0 Value="OPSIWINST"/>
+        <Define1 Value="WINDOWS"/>
+        <Define2 Value="OPSISCRIPT"/>
+        <Define3 Value="GUI"/>
+        <Define4 Value="OSLOG"/>
+      </OtherDefines>
     </Other>
   </CompilerOptions>
   <Debugging>
