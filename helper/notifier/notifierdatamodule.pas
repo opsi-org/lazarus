@@ -195,6 +195,7 @@ begin
     preloglist.Add('Found Parameter idevent');
     mynotifierkind := Application.GetOptionValue('i', 'idevent');
     // opsiclientd bug: popup comes with %id%
+    // shoud be fixed in opsi 4.2 opsiclientd
     if mynotifierkind = '%id%' then
       mynotifierkind := 'popup';
     preloglist.Add('Found Parameter idevent: ' + mynotifierkind);

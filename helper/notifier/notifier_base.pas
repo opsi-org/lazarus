@@ -92,7 +92,7 @@ var
 //  i: integer;
 
 begin
-  logdatei.log('Starting TCP-Thread: ' +TimeToStr(now), LLDebug2);
+  logdatei.log('Starting TCP-Thread: ' +TimeToStr(now), LLnotice);
   if not Terminated then
   begin
     myTCPClient := TTCPBlockSocket.create; //TIdTCPClient.Create;
@@ -156,8 +156,10 @@ begin
   begin
     mythread := Tmythread.Create(False);
     mythread.WaitFor;
-
-  end;
+  end
+  else
+    if Assigned(LogDatei) then
+      LogDatei.log('Critical Error: given port not > 0 : '+ IntToStr(myport),LLcritical);
 end;
 
 

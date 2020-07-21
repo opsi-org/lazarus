@@ -218,17 +218,19 @@ begin
       on E: EServiceManager do
       begin
         // A missing service might throw a missing handle exception? No?
-        {LogOutput('Error getting service information for ' + ServiceName +
-                   '. Technical details: ' + E.ClassName + '/' + E.Message); }
+        if Assigned(LogDatei) then
+         LogDatei.log('Error getting service information for ' + ServiceName +
+                   '. Technical details: ' + E.ClassName + '/' + E.Message, LLWarning);
         Result := False;
-        raise; //rethrow original exception
+        //raise; //rethrow original exception
       end;
       on E: Exception do
       begin
-       {LogOutput('Error getting service information for ' + ServiceName +
-                  '. Technical details: ' + E.ClassName + '/' + E.Message); }
+       if Assigned(LogDatei) then
+         LogDatei.log('Error getting service information for ' + ServiceName +
+                  '. Technical details: ' + E.ClassName + '/' + E.Message, LLWarning);
         Result := False;
-        raise; //rethrow original exception
+        //raise; //rethrow original exception
       end;
     end;
   finally
@@ -242,6 +244,8 @@ var
   Services: TServiceManager;
   ServiceStatus: TServiceStatus;
 begin
+  if Assigned(LogDatei) then
+          LogDatei.log( 'Try to start service: '+ServiceName,LLnotice);
   //Check for existing services
   //equivalent to sc query <servicename>
   Services := TServiceManager.Create(nil);
@@ -263,7 +267,8 @@ begin
         {LogOutput('Error getting service information for ' + ServiceName +
                    '. Technical details: ' + E.ClassName + '/' + E.Message); }
         Application.Log(etDebug, 'Servicemanager Exception: '+e.Message);
-        LogDatei.log( 'Servicemanager Exception: '+e.Message,LLwarning);
+        if Assigned(LogDatei) then
+          LogDatei.log( 'Servicemanager Exception: '+e.Message,LLwarning);
         Result := False;
         //raise; //rethrow original exception
       end;
@@ -272,6 +277,7 @@ begin
        {LogOutput('Error getting service information for ' + ServiceName +
                   '. Technical details: ' + E.ClassName + '/' + E.Message); }
         Application.Log(etDebug, 'Exception: '+e.Message);
+        if Assigned(LogDatei) then
         LogDatei.log( 'Exception: '+e.Message,LLwarning);
         Result := False;
         //raise; //rethrow original exception
