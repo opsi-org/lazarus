@@ -38,7 +38,7 @@ const
 {$ENDIF}
 {$IFDEF DARWIN}
   SW_HIDE = 0;
-  opsiclientdconf = '/etc/opsi-client-agent/opsiclientd.conf' ;
+  opsiclientdconf = '/etc/opsi-client-agent/opsiclientd.conf';
   opsiscriptbin = '/Applications/opsi-script.app/Contents/MacOS/opsi-script';
   opsiscriptnoguibin = '/usr/local/bin/opsi-script-nogui';
   opsiscriptstarterlog = 'opsiscriptstarter.log';
@@ -87,7 +87,8 @@ var
     begin
       ;
       LogDatei.DependentAdd('network timeout by thread - aborting program', LLInfo);
-    writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' network timeout by thread - aborting program');
+      writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now) +
+        ' network timeout by thread - aborting program');
       halt(0);
     end;
   end;
@@ -100,7 +101,7 @@ var
     ExitCode: longint;
     i: integer;
     credfilename: string;
-    redirection : string;
+    redirection: string;
   begin
     outlines := TStringList.Create;
     credfilename := '/tmp/opsicredentials';
@@ -111,24 +112,24 @@ var
     fpchmod(credfilename, &600);
     Result := 0;
 {$IFDEF LINUX}
-  redirection := ' &> /dev/tty1"';
+    redirection := ' &> /dev/tty1"';
 {$ENDIF}
 {$IFDEF DARWIN}
-  redirection := '"';
+    redirection := '"';
 {$ENDIF}
     if nogui then
     begin
       cmd := '/bin/bash -c " ' + opsiscriptnoguibin + ' -opsiservice ' +
-        myservice_url + ' -clientid ' +
-        myclientid + ' -credentialfile ' + credfilename + redirection;
+        myservice_url + ' -clientid ' + myclientid +
+        ' -credentialfile ' + credfilename + redirection;
       //                         +' -username '+ myclientid
       //                         +' -password ' + myhostkey+' &> /dev/tty1"';
     end
     else
     begin
       cmd := '/bin/bash -c " export DISPLAY=:0 ; ' + opsiscriptbin +
-        ' -opsiservice ' + myservice_url + ' -clientid ' +
-        myclientid + ' -credentialfile ' + credfilename + '"';
+        ' -opsiservice ' + myservice_url + ' -clientid ' + myclientid +
+        ' -credentialfile ' + credfilename + '"';
       //                         +' -username '+ myclientid
       //                         +' -password ' + myhostkey+'"';
     end;
@@ -229,13 +230,15 @@ var
         else
         begin
           LogDatei.DependentAdd('opsidata not connected - retry', LLInfo);
-        writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' opsidata not connected - retry');
+          writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now) +
+            ' opsidata not connected - retry');
           myseconds := myseconds - 1;
           Sleep(1000);
         end;
       except
         LogDatei.DependentAdd('opsidata not connected - retry', LLInfo);
-      writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' opsidata not connected - retry');
+        writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now) +
+          ' opsidata not connected - retry');
         myseconds := myseconds - 1;
         Sleep(1000);
       end;
@@ -245,13 +248,15 @@ var
     if networkup then
     begin
       LogDatei.DependentAdd('opsidata connected', LLInfo);
-    writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' opsidata connected');
+      writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now) + ' opsidata connected');
       Result := True;
     end
     else
     begin
-    LogDatei.DependentAdd('init connection failed (timeout after '+ IntToStr(seconds) + ' seconds/retries.',LLError);
-    writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' init connection failed (timeout after '+ IntToStr(seconds) + ' seconds/retries.');
+      LogDatei.DependentAdd('init connection failed (timeout after ' +
+        IntToStr(seconds) + ' seconds/retries.', LLError);
+      writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now) +
+        ' init connection failed (timeout after ' + IntToStr(seconds) + ' seconds/retries.');
     end;
   end;
 
@@ -279,8 +284,8 @@ var
     mymountpoint := '/media/opsi_depot';
   {$ENDIF}
   {$IFDEF DARWIN}
-  //mymountpoint := '/Network/opsi_depot';
-  mymountpoint := '/Volumes/opsi_depot';
+    //mymountpoint := '/Network/opsi_depot';
+    mymountpoint := '/Volumes/opsi_depot';
   {$ENDIF}
     nogui := False;
     FileVerInfo := TFileVersionInfo.Create(nil);
@@ -323,19 +328,30 @@ var
     initlogging(myclientid);
     logdatei.log('Starting opsiscriptstarter version: ' + myVersion, LLNotice);
     if nogui then
+    begin
       logdatei.log('Running in nogui mode', LLNotice);
+      writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now) +
+        ' opsiscriptstarter (nogui) version: ' + myVersion);
+    end
+    else
+    begin
+      logdatei.log('Running in gui mode', LLNotice);
+      writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now) +
+        ' opsiscriptstarter (gui) version: ' + myVersion);
+    end;
 
-  writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' clientid='+myclientid);
-  writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' service_url='+myservice_url);
-  writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' service_user='+myclientid);
+
+    writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now) + ' clientid=' + myclientid);
+    writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now) + ' service_url=' + myservice_url);
+    writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now) + ' service_user=' + myclientid);
     //writeln('host_key=',myhostkey);
     logdatei.AddToConfidentials(myhostkey);
-  writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' log_level=',myloglevel);
+    writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now) + ' log_level=', myloglevel);
     mythread := Tmythread.Create(False);
     if initConnection(30) then
     begin
       mythread.Terminate;
-    writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' init done');
+      writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now) + ' init done');
       LogDatei.log('init done', LLNotice);
       LogDatei.log('Starting opsiclientd part:', LLNotice);
       opsidata.setActualClient(myclientid);
@@ -345,31 +361,34 @@ var
       if actionlist.Count > 0 then
         for i := 0 to actionlist.Count - 1 do
         begin
-          LogDatei.DependentAdd('action' + IntToStr(i) + ': ' + actionlist.Strings[i], LLNotice);
+          LogDatei.DependentAdd('action' + IntToStr(i) + ': ' +
+            actionlist.Strings[i], LLNotice);
           if not (actionlist.ValueFromIndex[i] = 'none') then
             foundActionRequest := True;
         end;
       if not foundActionRequest then
       begin
         LogDatei.DependentAdd('No action requests - nothing to do', LLNotice);
-      writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' No action requests - nothing to do');
+        writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now) +
+          ' No action requests - nothing to do');
       end
       else
       begin
         LogDatei.DependentAdd('Action requests found', LLNotice);
-      writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' Action requests found');
+        writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now) + ' Action requests found');
         opsidata.setActualClient(myclientid);
         mount_depotshare(mymountpoint, myhostkey, myclientId);
         if not isMounted(mymountpoint) then
-          LogDatei.log('Failed to mount ' + myshare + ' to ' + mymountpoint +
-            ' - abort!', LLCritical)
+          LogDatei.log('Failed to mount ' + myshare + ' to ' +
+            mymountpoint + ' - abort!', LLCritical)
         else
         begin
-        writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' share mounted - starting action processor...');
+          writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now) +
+            ' share mounted - starting action processor...');
           startopsiscript;
-        writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' action processor finished');
+          writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now) + ' action processor finished');
           umount(mymountpoint);
-        writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now)+' share unmounted');
+          writeln(FormatDateTime('mmm dd hh:nn:ss:zzz', Now) + ' share unmounted');
         end;
       end;
       opsidata.sendLog('clientconnect');

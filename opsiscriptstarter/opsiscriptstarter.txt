@@ -1,4 +1,18 @@
 [changelog]
+opsiscriptstarter 4.1.0.12
+
+  * oslinmount: start negoiation with vers=3.11
+  * opsiscriptstarter writeln version at start
+
+-- d.oertel <d.oertel@uib.de> Wed, 15 Jul 2020 15:00
+
+opsiscriptstarter 4.1.0.11
+
+  * oswebservice: avoid double /rpc in service url;
+  * oslinmount: fixed handling of clientconfig.depot.user
+
+-- d.oertel <d.oertel@uib.de> Tue, 09 Jun 2020 15:00
+
 opsiscriptstarter 4.1.0.10
 
   * macos: mymountpoint := '/Volumes/opsi_depot';

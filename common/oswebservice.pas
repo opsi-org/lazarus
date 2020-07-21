@@ -24,18 +24,18 @@ interface
 
 uses
   SysUtils, Classes, Variants,
-  //IdComponent,
   oslog,
   superobject,
   {$IFDEF SYNAPSE}
   httpsend, ssl_openssl, ssl_openssl_lib,
   {$ELSE SYNAPSE}
+  IdComponent,
   IdHTTP,
   IdWebDAV,
   IdIOHandler,
   IdSSLOpenSSL,
+  IdSocketHandle,
   {$ENDIF SYNAPSE}
-  //IdSocketHandle,
   synacode,
   TypInfo,
   {$IFDEF GUI}
@@ -43,26 +43,13 @@ uses
   {$ENDIF GUI}
   {$IFDEF OPSISCRIPT}
   osfunc,
-  //osparser,
   osconf,
-  //lconvencoding,
-  //utf8scanner,
-  //Character,
-  //utf8info,
   {$ENDIF OPSISCRIPT}
-
-{$IFDEF WINDOWS}
+  {$IFDEF WINDOWS}
   Windows,
-{$ENDIF WINDOWS}
-  //widatahelper,
-  //IDZlib,
-  //IdCompressorZlib,
+  {$ENDIF WINDOWS}
   GZIPUtils,
   zstream;
-//LCLIntf,
-//LResources,
-//DefaultTranslator;
-//;
 
 
 {
@@ -351,6 +338,7 @@ type
     FProductOnClientIndex: TStringList;
     //FSslProtocol: TIdSSLVersion;
     mylist: TStringList;
+    FCommunicationMode: integer;
     //Function getMapOfProductSwitches : TStringList;
     //Function getProductRequirements (requirementType : String) : TStringList;
     function getProductRequirements(productname: string;
@@ -488,6 +476,8 @@ type
     property depotId: string read FDepotId;
     property ServiceLastErrorInfo: TStringList read FServiceLastErrorInfo;
     //property actualclient: string read FactualClient write FactualClient;
+    property CommunicationMode: integer read FCommunicationMode
+      write FCommunicationMode;
   end;
 
 var
@@ -1424,6 +1414,8 @@ end;
 
 
 procedure TJsonThroughHTTPS.makeURL(const omc: TOpsiMethodCall);
+var
+  rpcstr: string;
 begin
   //Furl := 'https://' + fhost + ':' + intToStr(portHTTPS) + '/rpc?' + EncodeUrl(omc.jsonUrlString);
   LogDatei.log('got omc.jsonUrlString: ' + omc.jsonUrlString, LLdebug3);
@@ -1437,10 +1429,14 @@ begin
   end
   else
   begin
-    if methodGet then
-      Furl := FserviceURL + '/rpc?' + EncodeUrl(omc.jsonUrlString)
+    if pos('/rpc', FserviceURL) = 0 then
+      rpcstr := '/rpc'
     else
-      Furl := FserviceURL + '/rpc';
+      rpcstr := '';
+    if methodGet then
+      Furl := FserviceURL + rpcstr + '?' + EncodeUrl(omc.jsonUrlString)
+    else
+      Furl := FserviceURL + rpcstr;
   end;
   LogDatei.log('got Furl: ' + Furl, LLdebug3);
 end;
@@ -1516,6 +1512,7 @@ begin
     {---------------------------------------------------
     communicationmode : 0 = opsi 4.1 / 4.2 / Request: gzip, Response: gzip, deflate, identity
     communicationmode : 1 = opsi 4.0 / Request: deflate, Response: gzip, deflate, identity
+    communicationmode : 2 = opsi 4.2 / Request: identity, Response: gzip, deflate, identity
      ----------------------------------------------------}
     if FCommunicationMode <> -1 then   //if Communictaion mode is set
     begin
@@ -1552,6 +1549,17 @@ begin
         Accept := 'gzip-application/json-rpc';
         ContentEncoding := '';
         AcceptEncoding := '';
+      end;
+      2:
+      begin
+        LogDatei.log_prog('Use opsi 4.1 / 4.2 HTTP Header, identity', LLnotice);
+        compress := False;
+        ContentType := 'application/json; charset=UTF-8';
+        Accept := 'application/json';
+        AcceptEncoding := 'gzip, deflate, identity';
+        //AcceptEncoding := 'deflate';
+        ContentEncoding := 'identity';//'deflate';
+        //ContentEncoding := 'deflate';
       end;
       else
       begin
@@ -1761,7 +1769,8 @@ begin
                   unzipStream(HTTPSender.Document, ReceiveStream);
                 end
                 else
-                  LogDatei.log('Unknown Content-Encoding: ' + ContentEncoding, LLWarning);
+                  LogDatei.log('Unknown Content-Encoding: ' +
+                    ContentEncoding, LLWarning);
 
                 //HTTPSender.Document.SaveToFile('C:\Users\Jan\Documents\ReceiveStream.txt');  //for testing
 
@@ -3390,6 +3399,7 @@ begin
   actualclient := '';
   FJsonExecutioner := nil;
   FSortByServer := False;
+  FCommunicationMode := -1;
   {$IFNDEF SYNAPSE}
   //FSslProtocol := sslvTLSv1_2;
   {$ENDIF SYNAPSE}
@@ -3713,12 +3723,26 @@ function TOpsi4Data.checkAndRetrieve(const omc: TOpsiMethodCall;
 begin
   errorOccured := False;
   Result := '';
-  if FJsonExecutioner.retrieveJSONObject(omc) <> nil then
-    Result := FjsonExecutioner.resultLines[0]
+  if FCommunicationMode > -1 then
+  begin
+    if FJsonExecutioner.retrieveJSONObject(omc, True, True, False,
+      FCommunicationMode) <> nil then
+      Result := FjsonExecutioner.resultLines[0]
+    else
+    begin
+      errorOccured := True;
+      Result := FjsonExecutioner.lastError;
+    end;
+  end
   else
   begin
-    errorOccured := True;
-    Result := FjsonExecutioner.lastError;
+    if FJsonExecutioner.retrieveJSONObject(omc) <> nil then
+      Result := FjsonExecutioner.resultLines[0]
+    else
+    begin
+      errorOccured := True;
+      Result := FjsonExecutioner.lastError;
+    end;
   end;
 
   FServiceLastErrorInfo := FjsonExecutioner.lastErrorInfo;
@@ -4139,8 +4163,10 @@ begin
     ProcessMess;
     Application.ProcessMessages;
     {$ENDIF}
-    if LogDatei.Appendmode then sendLog(sendtype,true)
-    else sendLog(sendtype);
+    if LogDatei.Appendmode then
+      sendLog(sendtype, True)
+    else
+      sendLog(sendtype);
   end;
   try
     { close the session after all is done  }
@@ -4258,14 +4284,18 @@ var
 begin
   t := '';
   Result := True;
-  // 5 MB
+  { 5 MB }
   maxlogsizebyte := 5242880;
 
-  // try to ask for actual maxlogsizebytes at the server
+  { try to ask for actual maxlogsizebytes at the server }
   aktlogsize := getLogsize;
   if aktlogsize = -1 then
+  begin
+    Logdatei.log('Failed to get max log file size from server - using default of 5 MB',
+      LLnotice);
     aktlogsize := maxlogsizebyte;
-  // byte to MB
+  end;
+  { byte to MB }
   aktlogsize := aktlogsize div (1024 * 1024);
 
   Logdatei.log('Checking if partlog: is bigger than ' + IntToStr(aktlogsize) +
@@ -4880,8 +4910,8 @@ begin
         { we want to run the login script if installed ......}
         if ((productEntry.O['productId'] <> nil) and
           (productEntry.S['installationStatus'] = 'installed'))
-          { or last successful action was uninstall }
-          or ((productEntry.S['actionResult'] = 'successful') and
+          { or last successful action was uninstall } or
+          ((productEntry.S['actionResult'] = 'successful') and
           (productEntry.S['lastAction'] = 'uninstall')) then
         begin
           if loginscriptmap.Values[productEntry.S['productId']] <> '' then

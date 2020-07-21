@@ -274,7 +274,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="55">
+    <Units Count="54">
       <Unit0>
         <Filename Value="winst.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -517,10 +517,6 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit53>
-      <Unit54>
-        <Filename Value="gzipstream.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit54>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

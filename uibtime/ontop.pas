@@ -45,8 +45,9 @@ type
     QueryUserEvents: TSQLQuery;
     Query_top_ten_events: TSQLQuery;
     Btn_work_description: TSpeedButton;
-    SpeedButton1: TSpeedButton;
+    BtnTreeview: TSpeedButton;
     BtnBye: TSpeedButton;
+    BtnUnlock: TSpeedButton;
     TimerAfterTopTenEnter: TTimer;
     TimerCallCount: TTimer;
     TimerNachfrage: TTimer;
@@ -55,6 +56,7 @@ type
     TimerScrollDisable: TTimer;
     Timer_top_ten: TTimer;
     ToolBar1: TToolBar;
+    procedure BtnUnlockClick(Sender: TObject);
     procedure DBLCB_topten_eventChange(Sender: TObject);
     procedure DBLCB_topten_eventEditingDone(Sender: TObject);
     procedure Edit1Change(Sender: TObject);
@@ -83,7 +85,7 @@ type
     procedure setDefaultEvent;
     procedure TimerNoDblClickTimer(Sender: TObject);
     procedure ReBuildForm;
-    procedure SpeedButton1Click(Sender: TObject);
+    procedure BtnTreeviewClick(Sender: TObject);
     procedure buildtree(mytable: TDBDataset);
     //procedure TreeView1MouseMove(Sender: TObject; Shift: TShiftState; X,
     //  Y: Integer);
@@ -157,7 +159,14 @@ var
 begin
   str := DBLCB_topten_event.Text;
   eventhandler(str);
-  TimerAfterTopTenEnter.Enabled:=false;
+  TimerAfterTopTenEnter.Enabled := False;
+end;
+
+procedure TFOnTop.BtnUnlockClick(Sender: TObject);
+begin
+  edit1.Enabled := True;
+  BtnTreeview.Enabled := True;
+  DBLCB_topten_event.Enabled := True;
 end;
 
 procedure TFOnTop.DBLCB_topten_eventEditingDone(Sender: TObject);
@@ -166,7 +175,13 @@ var
 begin
   str := DBLCB_topten_event.Text;
   eventhandler(str);
-  TimerAfterTopTenEnter.Enabled:=false;
+  TimerAfterTopTenEnter.Enabled := False;
+  if LockInput then
+  begin
+    edit1.Enabled := False;
+    BtnTreeview.Enabled := False;
+    DBLCB_topten_event.Enabled := False;
+  end;
 end;
 
 procedure TFOnTop.Edit1Change(Sender: TObject);
@@ -314,7 +329,7 @@ begin
   try
     datamodule1.debugOut(5, 'start TFOnTop.FormCreate');
     FOnTop.Caption := 'uibtime - ontop - runtime';
-    FOnTop.ShowInTaskBar:= ontopintaskbar;
+    FOnTop.ShowInTaskBar := ontopintaskbar;
     (*
     {$IFDEF LINUX}
     DBLCB_topten_event.AutoComplete:=true;
@@ -357,6 +372,15 @@ begin
     end;
     starthttpserver;
     DataModule1.SetFontName(TControl(Sender), myFont);
+    if LockInput then
+    begin
+      edit1.Enabled := False;
+      BtnTreeview.Enabled := False;
+      DBLCB_topten_event.Enabled := False;
+      BtnUnlock.Enabled := True;
+    end
+    else
+      BtnUnlock.Enabled := False;
     datamodule1.debugOut(5, 'finished TFOnTop.FormCreate');
 
   except
@@ -401,6 +425,12 @@ begin
         end;
       end;
     end;
+    if LockInput then
+    begin
+      edit1.Enabled := False;
+      BtnTreeview.Enabled := False;
+      DBLCB_topten_event.Enabled := False;
+    end;
   except
     datamodule1.debugOut(3, '', 'exception in appdeactivate');
     raise;
@@ -439,6 +469,15 @@ end;
 procedure TFOnTop.FormActivate(Sender: TObject);
 begin
   datamodule1.debugOut(5, 'Activate FOntop');
+  if LockInput then
+    BtnUnlock.Enabled := True
+  else
+  begin
+    BtnUnlock.Enabled := False;
+    edit1.Enabled := True;
+    BtnTreeview.Enabled := True;
+    DBLCB_topten_event.Enabled := True;
+  end;
 end;
 
 
@@ -477,7 +516,7 @@ begin
       //FLogin.Free;    /// do not free here - we have to come back to FLogin !
       if not Datamodule1.geteditonly then
         Datamodule1.TimerOntop.Enabled := ontoptimer;
-     // DataModule1.TimerOnToptimer(sender);
+      // DataModule1.TimerOnToptimer(sender);
     end;
   except
     datamodule1.debugOut(3, '', 'exception in ontopactivate');
@@ -802,23 +841,23 @@ begin
           else
           begin
             { same event - just post stoptime }
-             datamodule1.debugOut(5, 'eventhandler', timetostr(now) +
-                ' eveditlast with new stoptime ' + lastevent);
-              Datamodule1.SQuibevent.edit;
-              Datamodule1.SQuibevent.FieldByName('stoptime').AsDateTime := now;
-              try
-                Datamodule1.SQuibevent.post;
-                //DataModule1.SQuibevent.ApplyUpdates;
-                if not Datamodule1.SQuibevent.Active then
-                  Datamodule1.SQuibevent.Open;
-              except
-                Datamodule1.SQuibevent.post;
-                //DataModule1.SQuibevent.ApplyUpdates;
-                if not Datamodule1.SQuibevent.Active then
-                  Datamodule1.SQuibevent.Open;
-              end;
-              Datamodule1.SQuibevent.last;
-              FOnTop.TimerProjektzeitTimer(FOnTop);
+            datamodule1.debugOut(5, 'eventhandler', timetostr(now) +
+              ' eveditlast with new stoptime ' + lastevent);
+            Datamodule1.SQuibevent.edit;
+            Datamodule1.SQuibevent.FieldByName('stoptime').AsDateTime := now;
+            try
+              Datamodule1.SQuibevent.post;
+              //DataModule1.SQuibevent.ApplyUpdates;
+              if not Datamodule1.SQuibevent.Active then
+                Datamodule1.SQuibevent.Open;
+            except
+              Datamodule1.SQuibevent.post;
+              //DataModule1.SQuibevent.ApplyUpdates;
+              if not Datamodule1.SQuibevent.Active then
+                Datamodule1.SQuibevent.Open;
+            end;
+            Datamodule1.SQuibevent.last;
+            FOnTop.TimerProjektzeitTimer(FOnTop);
           end;
           // loggedin setzen - false bei pause
           if newevent = 'Pause' then
@@ -849,7 +888,7 @@ end;
 procedure TFOnTop.TimerAfterTopTenEnterTimer(Sender: TObject);
 begin
   eventhandler(DBLCB_topten_event.Text);
-  TimerAfterTopTenEnter.Enabled:=false;
+  TimerAfterTopTenEnter.Enabled := False;
 end;
 
 (*
@@ -1363,7 +1402,7 @@ begin
 end;
 
 
-procedure TFOnTop.SpeedButton1Click(Sender: TObject);
+procedure TFOnTop.BtnTreeviewClick(Sender: TObject);
 begin
   try
     //application.ProcessMessages;
@@ -1514,7 +1553,7 @@ begin
   datamodule1.debugOut(5, 'Start eventExit topten combobox');
   //BtnProjektDblClick(sender);
   eventhandler(DBLCB_topten_event.Text);
-  TimerAfterTopTenEnter.Enabled:=false;
+  TimerAfterTopTenEnter.Enabled := False;
   BtnProjektDblClick(Sender);
   intoptenbox := False;
   datamodule1.debugOut(8, 'Stop eventExit topten combobox');
@@ -1526,7 +1565,7 @@ begin
   eventhandler(DBLCB_topten_event.Text);
   ineditmode := False;
   intoptenbox := True;
-  TimerAfterTopTenEnter.Enabled:=true;
+  TimerAfterTopTenEnter.Enabled := True;
   datamodule1.debugOut(8, 'Stop eventEnter topten combobox');
 end;
 

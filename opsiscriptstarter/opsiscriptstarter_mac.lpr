@@ -30,9 +30,9 @@ uses
   inifiles,
   oslog,
   oswebservice,
-  OSProcessux;
+  OSProcessux, opsiscriptstarter;
 
-
+(*
 const
   SW_HIDE = 0;
   opsiclientdconf = '/etc/opsi-client-agent/opsiclientd.conf' ;
@@ -584,7 +584,7 @@ begin
   halt(0);
   Exit;
 end;
-
+*)
 (*
 procedure Topsiscriptstarter.terminateByTimer(Sender:TObject);
 begin

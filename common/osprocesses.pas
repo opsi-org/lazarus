@@ -195,7 +195,7 @@ begin
       begin
         searchstr := trim(copy(searchproc, 1, 15));
         logdatei.log(
-          'Process name to find is wider then 14 chars. The result may not be exact',
+          'Process name to find ('+searchproc+') is wider then 14 chars. Searching for: ('+searchstr+'). The result may not be exact',
           LLwarning);
       end;
       list1.Text := getProcesslist.Text;

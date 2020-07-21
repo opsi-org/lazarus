@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="10"/>
+    <Version Value="11"/>
     <PathDelim Value="\"/>
     <General>
       <SessionStorage Value="InProjectDir"/>
       <MainUnit Value="0"/>
-      <Title Value="notifier"/>
+      <Title Value="opsi-notifier"/>
+      <Scaled Value="True"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
       <XPManifest>
@@ -23,7 +24,8 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="3"/>
+      <RevisionNr Value="1"/>
+      <BuildNr Value="1"/>
       <StringTable CompanyName="uib gmbh / opsi.org" FileDescription="opsi-client-agent GUI notifier" InternalName="notifier.exe" LegalCopyright="AGPLv3" LegalTrademarks="opsi,opsi.org.open pc server integration" OriginalFilename="notifier.exe" ProductName="opsi / opsi.org" ProductVersion="4.1.0.0"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -37,7 +39,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\indy\Lib;..\..\external_libraries\indy\Lib\System;..\..\external_libraries\indy\Lib\Protocols;..\..\external_libraries\indy\Lib\Core;..\..\external_libraries\misc"/>
+            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\synapse"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -68,7 +70,8 @@
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-dOPSI"/>
+            <CustomOptions Value="-dOPSI
+-dOPSICLIENTAGENT"/>
           </Other>
         </CompilerOptions>
       </Item2>
@@ -77,11 +80,11 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="notifier"/>
+            <Filename Value="opsi-notifier"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\indy\Lib;..\..\external_libraries\indy\Lib\System;..\..\external_libraries\indy\Lib\Protocols;..\..\external_libraries\indy\Lib\Core;..\..\external_libraries\misc"/>
+            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\synapse"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -103,7 +106,8 @@
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-dOPSI"/>
+            <CustomOptions Value="-dOPSI
+-dOPSICLIENTAGENT"/>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -113,9 +117,16 @@
     </PublishOptions>
     <RunParams>
       <local>
-        <FormatVersion Value="1"/>
         <CommandLineParams Value="-s notifier.d\action.ini"/>
       </local>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default">
+          <local>
+            <CommandLineParams Value="-s notifier.d\action.ini"/>
+          </local>
+        </Mode0>
+      </Modes>
     </RunParams>
     <RequiredPackages Count="1">
       <Item1>
@@ -162,11 +173,11 @@
         <IsPartOfProject Value="True"/>
       </Unit7>
       <Unit8>
-        <Filename Value="..\..\common\superobject.pas"/>
+        <Filename Value="notifier.txt"/>
         <IsPartOfProject Value="True"/>
       </Unit8>
       <Unit9>
-        <Filename Value="notifier.txt"/>
+        <Filename Value="..\..\external_libraries\misc\superobject.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit9>
     </Units>
@@ -175,11 +186,11 @@
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="notifier"/>
+      <Filename Value="opsi-notifier"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\..\common;..\..\external_libraries\indy\Lib;..\..\external_libraries\indy\Lib\System;..\..\external_libraries\indy\Lib\Protocols;..\..\external_libraries\indy\Lib\Core;..\..\external_libraries\misc"/>
+      <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\synapse"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
@@ -190,7 +201,8 @@
       </Options>
     </Linking>
     <Other>
-      <CustomOptions Value="-dOPSI"/>
+      <CustomOptions Value="-dOPSI
+-dOPSICLIENTAGENT"/>
     </Other>
   </CompilerOptions>
   <Debugging>

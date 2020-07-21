@@ -22,7 +22,8 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
-      <RevisionNr Value="1"/>
+      <RevisionNr Value="2"/>
+      <BuildNr Value="1"/>
       <StringTable CompanyName="uib gmbh / opsi.org" InternalName="opsi-client-systray" LegalCopyright="AGPLv3" LegalTrademarks="opsi, opsi.org, open pc server integration" OriginalFilename="opsi-client-systray" ProductName="opsi / opsi.org" ProductVersion="4.1.0.0"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -36,7 +37,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\synapse"/>
+            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\synapse;..\..\lazlib\uniqueinstance"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -85,7 +86,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\synapse"/>
+            <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\synapse;..\..\lazlib\uniqueinstance"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -172,7 +173,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\synapse"/>
+      <OtherUnitFiles Value="..\..\common;..\..\external_libraries\misc;..\..\external_libraries\synapse;..\..\lazlib\uniqueinstance"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>

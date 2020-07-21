@@ -1,5 +1,19 @@
 
 [changelog]
+opsi_client_systray  4.1.2.0
+
+  * make it work at linux
+  * oslog: create logpath if not exists
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 09 Jun 2020:15:00:00 +0200
+
+opsi_client_systray  4.1.2.0
+
+  * switch to lazarus 2.0.8
+  * added uniqueinstance
+
+-- Detlef Oertel <d.oertel@uib.de>  Tue, 12 May 2020:15:00:00 +0200
+
 opsi_client_systray  4.1.1.0
 
   * switch to lazarus 2.0.6 / oswebservice with synapse and opsi 4.2 compatibility

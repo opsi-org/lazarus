@@ -120,6 +120,11 @@ msgctxt "osddlgnewproperty.rsduplicatewarning"
 msgid " exists. Duplicates not allowed."
 msgstr ""
 
+#: osdform.rsdefaulticon
+msgctxt "osdform.rsdefaulticon"
+msgid "default icon"
+msgstr ""
+
 #: osdform.rsdependencyediterrorhead
 msgid "opsi-setup-detector: Dependency Editor: Error"
 msgstr ""
@@ -130,6 +135,11 @@ msgstr ""
 
 #: osdform.rsnotimplemented
 msgid "Not implemented right now."
+msgstr ""
+
+#: osdform.rsnumbericons
+msgctxt "osdform.rsnumbericons"
+msgid "Icons to choose from: "
 msgstr ""
 
 #: osdform.rspropediterrordoublemsgfinish
@@ -474,6 +484,20 @@ msgstr ""
 msgid "Create a opsi Product"
 msgstr ""
 
+#: tresultform1.btniconsnextstep.caption
+msgctxt "tresultform1.btniconsnextstep.caption"
+msgid "Next Step"
+msgstr ""
+
+#: tresultform1.btniconsnextstep.hint
+msgctxt "tresultform1.btniconsnextstep.hint"
+msgid "Go to the next Step"
+msgstr ""
+
+#: tresultform1.btnopeniconfolder.caption
+msgid " open icon folder "
+msgstr ""
+
 #: tresultform1.btproduct1nextstep.caption
 msgctxt "tresultform1.btproduct1nextstep.caption"
 msgid "Next Step"
@@ -530,6 +554,14 @@ msgstr ""
 msgid "opsi Setup Detector"
 msgstr ""
 
+#: tresultform1.checkboxdefaulticon.caption
+msgid "use default icon"
+msgstr ""
+
+#: tresultform1.checkboxnoicon.caption
+msgid "use no icon"
+msgstr ""
+
 #: tresultform1.checkgroupbuildmode.caption
 msgctxt "tresultform1.checkgroupbuildmode.caption"
 msgid "Build Mode"
@@ -546,6 +578,10 @@ msgstr ""
 
 #: tresultform1.flowpanel14.caption
 msgid "FlowPanel14"
+msgstr ""
+
+#: tresultform1.label1.caption
+msgid "No Icons"
 msgstr ""
 
 #: tresultform1.label50.caption
@@ -714,8 +750,34 @@ msgstr ""
 msgid "Properties"
 msgstr ""
 
+#: tresultform1.labelicondir.caption
+msgid "Directory:"
+msgstr ""
+
+#: tresultform1.labeliconname.caption
+msgid "Name:"
+msgstr ""
+
+#: tresultform1.labeliconpreview.caption
+msgid "Selected Icon (Preview 170x170)"
+msgstr ""
+
 #: tresultform1.labelloginfo.caption
 msgid "LabelLogInfo"
+msgstr ""
+
+#: tresultform1.labelnameselicon.caption
+msgctxt "tresultform1.labelnameselicon.caption"
+msgid "default icon"
+msgstr ""
+
+#: tresultform1.labelnumber.caption
+msgid "0"
+msgstr ""
+
+#: tresultform1.labelnumicons.caption
+msgctxt "tresultform1.labelnumicons.caption"
+msgid "Icons to choose from: "
 msgstr ""
 
 #: tresultform1.labelworkbenchnotok.caption
@@ -773,6 +835,11 @@ msgstr ""
 
 #: tresultform1.panel4.caption
 msgid "Panel4"
+msgstr ""
+
+#: tresultform1.paneliconpreview.caption
+msgctxt "tresultform1.paneliconpreview.caption"
+msgid "no icon selected"
 msgstr ""
 
 #: tresultform1.processing.caption
@@ -875,6 +942,10 @@ msgstr ""
 
 #: tresultform1.tabsheetcreate.caption
 msgid "Create"
+msgstr ""
+
+#: tresultform1.tabsheeticons.caption
+msgid "Product Icon"
 msgstr ""
 
 #: tresultform1.tabsheetproduct.caption

@@ -10189,7 +10189,7 @@ var
     Filemask := ExtractFileName(CompleteName);
 
     LogS := 'Search "' + OrigPath + '"';
-    LogDatei.log(LogS, LLInfo);
+    LogDatei.log_prog(LogS, LLInfo);
 
     // start with the sub directories, and go with the recursion deeper and delete the lowest level first
     if recursive then
@@ -10235,7 +10235,7 @@ var
     begin
       Filename := OrigPath + SearchResult.Name;
       LogS := 'File "' + Filename + '"';
-      LogDatei.log(LogS, LLdebug);
+      LogDatei.log(LogS, LLdebug2);
       LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel + 1;
 
       FileIsReadOnly := False;

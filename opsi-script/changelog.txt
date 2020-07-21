@@ -5,6 +5,35 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.3.16) experimental; urgency=low
+
+  * oswebservice:sendlog: Log that using default if getLogsize failed
+  * osfuncwin: some logprog in WinIsUefi
+  * osfuncwin:  getW10Release
+  * osfuncwin: WinIsUefi: fix uefi detection if w10 release >= 2004
+  * osparser: good bye to cmd64.exe
+  * osfunc: alldelete: change loglevel for not deleted files
+
+-- d.oertel <d.oertel@uib.de> Fri, 19 Jun 2020 15:00
+
+opsi-winst/opsi-script (4.12.3.15) experimental; urgency=low
+
+  * oswebservice: avoid double /rpc in service url;
+  * osfunclin: better getProfilesDirListLin
+  * osparser: doTextpatch: Do not crash on not creatable files
+  * osprocessess: ProcessIsRunning: more info in warning
+
+-- d.oertel <d.oertel@uib.de> Tue, 09 Jun 2020 15:00
+
+opsi-winst/opsi-script (4.12.3.14) experimental; urgency=low
+
+  * osparser: new flag: cmd64checked to avoid repeated checks for cmd64.exe
+  * osmain: bool var runSilent used in cli parameter check and to call
+    FBatchOberflaeche.setVisible(True/False);
+  * osbatchgui: start FBatchOberflaeche visible=false ; fixes #4485
+
+-- Detlef Oertel <d.oertel@uib.de>  Thu, 04 Jun 2020:15:00:00 +0200
+
 opsi-winst/opsi-script (4.12.3.13) experimental; urgency=low
 
   * osmain: bootmode: now using opsiclientagentconf
