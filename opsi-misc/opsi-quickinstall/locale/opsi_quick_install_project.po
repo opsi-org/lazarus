@@ -1,9 +1,24 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
+#: opsi_quick_install_unit_overview.rsadminname
+msgctxt "opsi_quick_install_unit_overview.rsadminname"
+msgid "Opsi admin user name:"
+msgstr ""
+
+#: opsi_quick_install_unit_overview.rsadminpassword
+msgctxt "opsi_quick_install_unit_overview.rsadminpassword"
+msgid "Opsi admin user password:"
+msgstr ""
+
 #: opsi_quick_install_unit_overview.rsbackend
 msgctxt "opsi_quick_install_unit_overview.rsbackend"
 msgid "Backend:"
+msgstr ""
+
+#: opsi_quick_install_unit_overview.rscopymodules
+msgctxt "opsi_quick_install_unit_overview.rscopymodules"
+msgid "Copy modules:"
 msgstr ""
 
 #: opsi_quick_install_unit_overview.rsdomain
@@ -19,6 +34,16 @@ msgstr ""
 #: opsi_quick_install_unit_overview.rsgateway
 msgctxt "opsi_quick_install_unit_overview.rsgateway"
 msgid "Gateway:"
+msgstr ""
+
+#: opsi_quick_install_unit_overview.rsipname
+msgctxt "opsi_quick_install_unit_overview.rsipname"
+msgid "IP name:"
+msgstr ""
+
+#: opsi_quick_install_unit_overview.rsipnumber
+msgctxt "opsi_quick_install_unit_overview.rsipnumber"
+msgid "IP number:"
 msgstr ""
 
 #: opsi_quick_install_unit_overview.rsnameserver
@@ -61,6 +86,11 @@ msgctxt "opsi_quick_install_unit_overview.rstftproot"
 msgid "TFTPROOT symlink points to:"
 msgstr ""
 
+#: opsi_quick_install_unit_overview.rsucspassword
+msgctxt "opsi_quick_install_unit_overview.rsucspassword"
+msgid "Password of administrator of UCS domain controller:"
+msgstr ""
+
 #: opsi_quick_install_unit_overview.rsupdate
 msgctxt "opsi_quick_install_unit_overview.rsupdate"
 msgid "Install from stable, update to repo kind:"
@@ -80,16 +110,17 @@ msgid "Overview"
 msgstr ""
 
 #: toverview.labeladminname.caption
+msgctxt "toverview.labeladminname.caption"
 msgid "Opsi admin user name:"
 msgstr ""
 
 #: toverview.labeladminpassword.caption
+msgctxt "toverview.labeladminpassword.caption"
 msgid "Opsi admin user password:"
 msgstr ""
 
-#: toverview.labelbackend.caption
-msgctxt "toverview.labelbackend.caption"
-msgid "Backend:"
+#: toverview.labelbackendrepokind.caption
+msgid "Backend:Repo kind:"
 msgstr ""
 
 #: toverview.labeldhcp.caption
@@ -107,44 +138,37 @@ msgctxt "toverview.labelelilo.caption"
 msgid "Elilo.efi has timeout of 2 seconds:"
 msgstr ""
 
-#: toverview.labelgateway.caption
-msgctxt "toverview.labelgateway.caption"
-msgid "Gateway:"
-msgstr ""
-
-#: toverview.labelipname.caption
-msgid "IP name:"
-msgstr ""
-
-#: toverview.labelipnumber.caption
-msgid "IP number:"
+#: toverview.labelip.caption
+msgctxt "toverview.labelip.caption"
+msgid "IP name:IP number:"
 msgstr ""
 
 #: toverview.labelmodules.caption
+msgctxt "toverview.labelmodules.caption"
 msgid "Copy modules:"
 msgstr ""
 
-#: toverview.labelnameserver.caption
-msgctxt "toverview.labelnameserver.caption"
-msgid "Primary nameserver:"
+#: toverview.labelnameservergateway.caption
+msgctxt "toverview.labelnameservergateway.caption"
+msgid "Primary nameserver:Gateway:"
 msgstr ""
 
-#: toverview.labelnetmask.caption
-msgctxt "toverview.labelnetmask.caption"
-msgid "Netmask:"
-msgstr ""
-
-#: toverview.labelnetworkadress.caption
-msgctxt "toverview.labelnetworkadress.caption"
-msgid "Network address:"
+#: toverview.labelnetmasknetwork.caption
+msgctxt "toverview.labelnetmasknetwork.caption"
+msgid "Netmask:Network address:"
 msgstr ""
 
 #: toverview.labelopsiprods.caption
 msgid "Products in depot:"
 msgstr ""
 
-#: toverview.labelpasswordadminucs.caption
-msgid "Password of administrator of UCS domain controller:"
+#: toverview.labelpassworducs.caption
+msgctxt "toverview.labelpassworducs.caption"
+msgid "Password of admin of UCS domain controller:"
+msgstr ""
+
+#: toverview.labelprods.caption
+msgid "[Prods]"
 msgstr ""
 
 #: toverview.labelproxy.caption
@@ -161,11 +185,6 @@ msgstr ""
 msgid "Repository:"
 msgstr ""
 
-#: toverview.labelrepokind.caption
-msgctxt "toverview.labelrepokind.caption"
-msgid "Repo kind:"
-msgstr ""
-
 #: toverview.labelreponocache.caption
 msgid "Repository (no Cache-Proxy):"
 msgstr ""
@@ -178,6 +197,18 @@ msgstr ""
 #: toverview.labelupdate.caption
 msgctxt "toverview.labelupdate.caption"
 msgid "Install from stable, update to repo kind:"
+msgstr ""
+
+#: tpassword.labelpassword.caption
+msgid "Password:"
+msgstr ""
+
+#: tpassword.radiobtnroot.caption
+msgid "Root"
+msgstr ""
+
+#: tpassword.radiobtnsudo.caption
+msgid "Sudo"
 msgstr ""
 
 #: tquery.btnback.caption
@@ -674,8 +705,8 @@ msgctxt "tquery7.caption"
 msgid "Opsi quick install - query (user info part 2)"
 msgstr ""
 
-#: tquery7.editpasswordmasteradmin.text
-msgctxt "tquery7.editpasswordmasteradmin.text"
+#: tquery7.editpassworducs.text
+msgctxt "tquery7.editpassworducs.text"
 msgid "linux123"
 msgstr ""
 

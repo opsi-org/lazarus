@@ -18,25 +18,21 @@ type
     LabelRepoNoCache2: TLabel;
     LabelRepo2: TLabel;
     LabelProds: TLabel;
-    LabelNameserver: TLabel;
-    LabelGateway: TLabel;
+    LabelNameserverGateway: TLabel;
     LabelDomain: TLabel;
-    LabelNetworkAdress: TLabel;
-    LabelNetmask: TLabel;
+    LabelNetmaskNetwork: TLabel;
     LabelTFTPROOT: TLabel;
     LabelElilo: TLabel;
     LabelReboot: TLabel;
     LabelDHCP: TLabel;
     LabelModules: TLabel;
-    LabelPasswordAdminUCS: TLabel;
-    LabelIPName: TLabel;
-    LabelIPNumber: TLabel;
+    LabelPasswordUCS: TLabel;
+    LabelIP: TLabel;
     LabelAdminPassword: TLabel;
     LabelAdminName: TLabel;
     LabelOpsiProds: TLabel;
     LabelUpdate: TLabel;
-    LabelRepoKind: TLabel;
-    LabelBackend: TLabel;
+    LabelBackendRepoKind: TLabel;
     LabelRepoNoCache: TLabel;
     LabelProxy: TLabel;
     LabelRepo: TLabel;
@@ -53,7 +49,7 @@ type
   private
 
   public
-
+    stringProducts: string;
   end;
 
 var
@@ -67,15 +63,18 @@ resourcestring
   rsReboot = 'Reboot after script is finished:';
   rsOpsiDhcpServer = 'Run opsi dhcp server:';
   rsElilo = 'Elilo.efi has timeout of 2 seconds:';
-  rsTFTPRoot = 'TFTPROOT symlink points to:';
+  rsTFTPROOT = 'TFTPROOT symlink points to:';
   rsNetmask = 'Netmask:';
   rsNetwork = 'Network address:';
   rsDomain = 'DNS Domain:';
   rsNameserver = 'Primary nameserver:';
   rsGateway = 'Gateway:';
-  rsAdminName = '';
-  rsAdminPassword = '';
-  rsIPNumber = '';
+  rsAdminName = 'Opsi admin user name:';
+  rsAdminPassword = 'Opsi admin user password:';
+  rsIPName = 'IP name:';
+  rsIPNumber = 'IP number:';
+  rsUCSPassword = 'Password of administrator of UCS domain controller:';
+  rsCopyModules = 'Copy modules:';
 
 implementation
 
@@ -87,7 +86,8 @@ uses
   opsi_quick_install_unit_query4,
   opsi_quick_install_unit_query5_dhcp,
   opsi_quick_install_unit_query6,
-  opsi_quick_install_unit_query7;
+  opsi_quick_install_unit_query7,
+  opsi_quick_install_unit_password;
 
 {$R *.lfm}
 
@@ -95,10 +95,11 @@ uses
 
 procedure TOverview.BtnFinishClick(Sender: TObject);
 var
-  fileName, propertyName, stringProducts: string;
+  fileName, propertyName: string;
   FileText: TStringList;
-  prod: integer;
 begin
+  Password.ShowModal;
+
   // write user input in l-opsi-server.conf file
   fileName := ExtractFilePath(ParamStr(0)) + 'l-opsi-server.conf';
   FileText := TStringList.Create;
@@ -230,7 +231,7 @@ begin
     FileText.Add(propertyName + '=testing');
 
   // property products_in_depot
-  stringProducts := '';
+  {stringProducts := '';
   for prod := 0 to Query3.PanelProdToChoose.ControlCount - 1 do
   begin
     if (Query3.PanelProdToChoose.Controls[prod] as TCheckBox).Checked then
@@ -239,11 +240,11 @@ begin
   end;
   if stringProducts <> '' then
     // Index of 'Delete' is 1-based (Delete(stringProducts, 0, 2) wouldn't do anything)
-    Delete(stringProducts, 1, 2);
+    Delete(stringProducts, 1, 1);}
   FileText.Add('products_in_depot=' + stringProducts);
 
 
-  FileText.Add('ucs_master_admin_password=' + Query7.EditPasswordMasterAdmin.Text);
+  FileText.Add('ucs_master_admin_password=' + Query7.EditPasswordUCS.Text);
 
   propertyName := 'update_test';
   if Query2.RadioBtnYes.Checked then
@@ -259,9 +260,15 @@ begin
 end;
 
 procedure TOverview.FormActivate(Sender: TObject);
+var
+  prod: integer;
 begin
   AdjustPanelPosition(self);
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
+  if Query4.RadioBtnDhcpYes.Checked then
+    PanelDHCP.Visible := True
+  else
+    PanelDHCP.Visible := False;
   // Repository
   if Query.RadioBtnOpsi41.Checked then
     LabelRepo2.Caption := ' ' + Query.RadioBtnOpsi41.Caption
@@ -285,22 +292,39 @@ begin
     LabelRepoNoCache2.Caption := ' ' + Query.EditNoCache.Text;
   // Backend
   if Query2.RadioBtnFile.Checked then
-    LabelBackend.Caption := rsBackend + ' ' + Query2.RadioBtnFile.Caption
+    LabelBackendRepoKind.Caption := rsBackend + ' ' + Query2.RadioBtnFile.Caption
   else
-    LabelBackend.Caption := rsBackend + ' ' + Query2.RadioBtnMySql.Caption;
+    LabelBackendRepoKind.Caption := rsBackend + ' ' + Query2.RadioBtnMySql.Caption;
   // Repo kind
   if Query2.RadioBtnExperimental.Checked then
-    LabelRepoKind.Caption := rsRepoKind + ' ' + Query2.RadioBtnExperimental.Caption
+    LabelBackendRepoKind.Caption :=
+      LabelBackendRepoKind.Caption + ', ' + rsRepoKind + ' ' +
+      Query2.RadioBtnExperimental.Caption
   else if Query2.RadioBtnStable.Checked then
-    LabelRepoKind.Caption := rsRepoKind + ' ' + Query2.RadioBtnStable.Caption
+    LabelBackendRepoKind.Caption :=
+      LabelBackendRepoKind.Caption + ', ' + rsRepoKind + ' ' +
+      Query2.RadioBtnStable.Caption
   else
-    LabelRepoKind.Caption := rsRepoKind + ' ' + Query2.RadioBtnTesting.Caption;
+    LabelBackendRepoKind.Caption :=
+      LabelBackendRepoKind.Caption + ', ' + rsRepoKind + ' ' +
+      Query2.RadioBtnTesting.Caption;
   // Update
   if Query2.RadioBtnYes.Checked then
     LabelUpdate.Caption := rsUpdate + ' ' + Query2.RadioBtnYes.Caption
   else
     LabelUpdate.Caption := rsUpdate + ' ' + Query2.RadioBtnNo.Caption;
   // Prods
+  stringProducts := '';
+  for prod := 0 to Query3.PanelProdToChoose.ControlCount - 1 do
+  begin
+    if (Query3.PanelProdToChoose.Controls[prod] as TCheckBox).Checked then
+      stringProducts := stringProducts + ', ' +
+        Query3.PanelProdToChoose.Controls[prod].Caption;
+  end;
+  if stringProducts <> '' then
+    // Index of 'Delete' is 1-based (Delete(stringProducts, 0, 2) wouldn't do anything)
+    Delete(stringProducts, 1, 2);
+  LabelProds.Caption := stringProducts;
   // Reboot
   if Query3.RadioBtnYes.Checked then
     LabelReboot.Caption := rsReboot + ' ' + Query3.RadioBtnYes.Caption
@@ -308,9 +332,98 @@ begin
     LabelReboot.Caption := rsReboot + ' ' + Query3.RadioBtnNo.Caption;
   // Dhcp
   if Query4.RadioBtnDhcpYes.Checked then
-    LabelDHCP.Caption := rsReboot + ' ' + Query4.RadioBtnDhcpYes.Caption
+    LabelDHCP.Caption := rsOpsiDhcpServer + ' ' + Query4.RadioBtnDhcpYes.Caption
   else
-    LabelDHCP.Caption := rsReboot + ' ' + Query4.RadioBtnDhcpNo.Caption;
+    LabelDHCP.Caption := rsOpsiDhcpServer + ' ' + Query4.RadioBtnDhcpNo.Caption;
+  // Elilo.efi
+  if Query4.RadioBtnYes.Checked then
+    LabelElilo.Caption := rsElilo + ' ' + Query4.RadioBtnYes.Caption
+  else
+    LabelElilo.Caption := rsElilo + ' ' + Query4.RadioBtnNo.Caption;
+  // TFTPROOT
+  if Query4.RadioBtnMenu.Checked then
+    LabelTFTPROOT.Caption := rsTFTPROOT + ' ' + Query4.RadioBtnMenu.Caption
+  else
+    LabelTFTPROOT.Caption := rsTFTPROOT + ' ' + Query4.RadioBtnNoMenu.Caption;
+  // Netmask
+  if Query5_dhcp.RadioBtnMask0.Checked then
+    LabelNetmaskNetwork.Caption := rsNetmask + ' ' + Query5_dhcp.RadioBtnMask0.Caption
+  else if Query5_dhcp.RadioBtnMask225.Checked then
+    LabelNetmaskNetwork.Caption := rsNetmask + ' ' + Query5_dhcp.RadioBtnMask225.Caption
+  else
+    LabelNetmaskNetwork.Caption := rsNetmask + ' ' + Query5_dhcp.EditNetmask.Text;
+  // Network address
+  if Query5_dhcp.RadioBtnAddress10.Checked then
+    LabelNetmaskNetwork.Caption :=
+      LabelNetmaskNetwork.Caption + ', ' + rsNetwork + ' ' +
+      Query5_dhcp.RadioBtnAddress10.Caption
+  else if Query5_dhcp.RadioBtnAddress172.Checked then
+    LabelNetmaskNetwork.Caption :=
+      LabelNetmaskNetwork.Caption + ', ' + rsNetwork + ' ' +
+      Query5_dhcp.RadioBtnAddress172.Caption
+  else if Query5_dhcp.RadioBtnAddress192.Checked then
+    LabelNetmaskNetwork.Caption :=
+      LabelNetmaskNetwork.Caption + ', ' + rsNetwork + ' ' +
+      Query5_dhcp.RadioBtnAddress192.Caption
+  else
+    LabelNetmaskNetwork.Caption :=
+      LabelNetmaskNetwork.Caption + ', ' + rsNetwork + ' ' +
+      Query5_dhcp.EditAddress.Text;
+  // Domain
+  if Query5_dhcp.RadioBtnUcs.Checked then
+    LabelDomain.Caption := rsDomain + ' ' + Query5_dhcp.RadioBtnUcs.Caption
+  else if Query5_dhcp.RadioBtnUib.Checked then
+    LabelDomain.Caption := rsDomain + ' ' + Query5_dhcp.RadioBtnUib.Caption
+  else if Query5_dhcp.RadioBtnVmnat.Checked then
+    LabelDomain.Caption := rsDomain + ' ' + Query5_dhcp.RadioBtnVmnat.Caption
+  else
+    LabelDomain.Caption := rsDomain + ' ' + Query5_dhcp.EditDomain.Text;
+  // Nameserver
+  if Query5_dhcp.RadioBtnNameserver10.Checked then
+    LabelNameserverGateway.Caption :=
+      rsNameserver + ' ' + Query5_dhcp.RadioBtnNameserver10.Caption
+  else if Query5_dhcp.RadioBtnNameserver172.Checked then
+    LabelNameserverGateway.Caption :=
+      rsNameserver + ' ' + Query5_dhcp.RadioBtnNameserver172.Caption
+  else if Query5_dhcp.RadioBtnNameserver192.Checked then
+    LabelNameserverGateway.Caption :=
+      rsNameserver + ' ' + Query5_dhcp.RadioBtnNameserver192.Caption
+  else
+    LabelNameserverGateway.Caption :=
+      rsNameserver + ' ' + Query5_dhcp.EditNameserver.Text;
+  // Gateway
+  if Query5_dhcp.RadioBtnGateway10.Checked then
+    LabelNameserverGateway.Caption :=
+      LabelNameserverGateway.Caption + ', ' + rsGateway + ' ' +
+      Query5_dhcp.RadioBtnGateway10.Caption
+  else if Query5_dhcp.RadioBtnGateway172.Checked then
+    LabelNameserverGateway.Caption :=
+      LabelNameserverGateway.Caption + ', ' + rsGateway + ' ' +
+      Query5_dhcp.RadioBtnGateway172.Caption
+  else if Query5_dhcp.RadioBtnGateway192.Checked then
+    LabelNameserverGateway.Caption :=
+      LabelNameserverGateway.Caption + ', ' + rsGateway + ' ' +
+      Query5_dhcp.RadioBtnGateway192.Caption
+  else
+    LabelNameserverGateway.Caption :=
+      LabelNameserverGateway.Caption + ', ' + rsGateway + ' ' +
+      Query5_dhcp.EditGateway.Text;
+  // Admin name
+  LabelAdminName.Caption := rsAdminName + ' ' + Query6.EditNameAdmin.Text;
+  // Admin password
+  LabelAdminPassword.Caption := rsAdminPassword + ' ' + Query6.EditPasswordAdmin.Text;
+  // IP name
+  LabelIP.Caption := rsIPName + ' ' + Query6.EditNameIP.Text;
+  // IP number
+  LabelIP.Caption := LabelIP.Caption + ', ' + rsIPNumber + ' ' +
+    Query6.EditNumberIP.Text;
+  // UCS password
+  LabelPasswordUCS.Caption := rsUCSPassword + ' ' + Query7.EditPasswordUCS.Text;
+  // Copy modules
+  if Query7.RadioBtnYes.Checked then
+    LabelModules.Caption := rsCopyModules + ' ' + Query7.RadioBtnYes.Caption
+  else
+    LabelModules.Caption := rsCopyModules + ' ' + Query7.RadioBtnNo.Caption;
 end;
 
 procedure TOverview.FormClose(Sender: TObject; var CloseAction: TCloseAction);

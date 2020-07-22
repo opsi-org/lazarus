@@ -15,7 +15,7 @@ type
     BackgrImage: TImage;
     BtnBack: TButton;
     BtnOverview: TButton;
-    EditPasswordMasterAdmin: TEdit;
+    EditPasswordUCS: TEdit;
     LabelFinish: TLabel;
     LabelCopyModules: TLabel;
     LabelPasswordMasterAdmin: TLabel;

@@ -91,10 +91,10 @@ procedure TQuickInstall.FormCreate(Sender: TObject);
 var
   Languages: TStringList;
 begin
-  LogDatei := TLogInfo.Create;
+  {LogDatei := TLogInfo.Create;
   LogDatei.CreateTheLogfile('opsi_quickinstall.log');
   ShowMessage(getLinuxDistroName);
-  ShowMessage(getLinuxDistroRelease);
+  ShowMessage(getLinuxDistroRelease);}
 
   // set constant form size
   Height := 450;

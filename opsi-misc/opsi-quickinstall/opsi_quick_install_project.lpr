@@ -14,7 +14,7 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   opsi_quick_install_unit_query5_dhcp,
   opsi_quick_install_unit_query6,
   opsi_quick_install_unit_query7,
-  opsi_quick_install_unit_overview;
+  opsi_quick_install_unit_overview, opsi_quick_install_unit_password;
 
 {$R *.res}
 
@@ -31,5 +31,6 @@ begin
   Application.CreateForm(TQuery6, Query6);
   Application.CreateForm(TQuery7, Query7);
   Application.CreateForm(TOverview, Overview);
+  Application.CreateForm(TPassword, Password);
   Application.Run;
 end.

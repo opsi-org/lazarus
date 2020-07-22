@@ -45,7 +45,7 @@ object Query7: TQuery7
       ParentColor = False
       WordWrap = True
     end
-    object EditPasswordMasterAdmin: TEdit
+    object EditPasswordUCS: TEdit
       Left = 0
       Height = 25
       Top = 40
