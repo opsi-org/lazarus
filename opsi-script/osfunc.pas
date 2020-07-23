@@ -2299,8 +2299,8 @@ begin
       //else
       begin
         Result := True;
-        logdatei.log('Started process "' + FpcProcess.Executable +
-          '" with Opt: ' + FpcProcess.Parameters.Text, LLInfo);
+        logdatei.log('Started process "' + WinCPToUTF8(FpcProcess.Executable) +
+          '" with Opt: ' + WinCPToUTF8(FpcProcess.Parameters.Text), LLInfo);
         desiredProcessStarted := False;
         WaitForProcessEndingLogflag := True;
         setLength(resultfilename, 400);
