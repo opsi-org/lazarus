@@ -8,6 +8,7 @@ mac getIpByName liefert name von IPnum
 opsi-winst/opsi-script (4.12.3.17) stable; urgency=low
 
   * osfunc: StartProcess_cp: log message: 'Started process' now in utf8 encoding
+  * osfunc: StartProcess_cp: use filename and parameters
   * compiled with lazarus 2.0.10
 
 -- d.oertel <d.oertel@uib.de> Thu, 23 Jul 2020 15:00

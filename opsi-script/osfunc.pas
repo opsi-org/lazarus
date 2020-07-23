@@ -2249,7 +2249,9 @@ begin
   end;
 
   stringsplitByWhiteSpace(ParamStr, TStringList(paramlist));
-  //writeln('>->->'+filename+'='+ExpandFileName(filename));
+  logdatei.log_prog('command: ' + CmdLinePasStr,LLinfo);
+  logdatei.log_prog('Filename from command: '+filename+'='+ExpandFileName(filename),LLInfo);
+  logdatei.log_prog('Params from command: '+TStringList(paramlist).Text,LLInfo);
   //writeln('>->->'+paramstr);
   //writeln('>->->'+CmdLinePasStr);
   try
@@ -2258,11 +2260,13 @@ begin
       BytesRead := 0;
       FpcProcess := process.TProcess.Create(nil);
       {$IFDEF WINDOWS}
-      FpcProcess.CommandLine := utf8towincp(CmdLinePasStr);
+      //FpcProcess.CommandLine := utf8towincp(CmdLinePasStr);
+      FpcProcess.Executable := filename;
+      FpcProcess.Parameters := TStringList(paramlist);
       {$ELSE WINDOWS}
-      FpcProcess.CommandLine := CmdLinePasStr;
-      //FpcProcess.Executable := filename;
-      //FpcProcess.Parameters := paramlist;
+      //FpcProcess.CommandLine := CmdLinePasStr;
+      FpcProcess.Executable := filename;
+      FpcProcess.Parameters := TStringList(paramlist);
       {$ENDIF WINDOWS}
       //FpcProcess.Executable := filename;
       //FpcProcess.Parameters := paramlist;
@@ -2299,8 +2303,8 @@ begin
       //else
       begin
         Result := True;
-        logdatei.log('Started process "' + WinCPToUTF8(FpcProcess.Executable) +
-          '" with Opt: ' + WinCPToUTF8(FpcProcess.Parameters.Text), LLInfo);
+       logdatei.log('Started process "' + FpcProcess.Executable +
+          '" with Opt: ' + FpcProcess.Parameters.Text, LLInfo);
         desiredProcessStarted := False;
         WaitForProcessEndingLogflag := True;
         setLength(resultfilename, 400);
