@@ -1205,21 +1205,21 @@ begin
   TJsonThroughHTTPS.Create(serviceUrl, username, password, '', '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(const serviceURL, username,
-  password, sessionid: string);
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid: string);
 begin
   Create(serviceUrl, username, password, sessionid, '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(const serviceURL, username,
-  password, sessionid, ip, port: string);
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid, ip, port: string);
 begin
   Create(serviceUrl, username, password, sessionid, ip, port,
     ExtractFileName(ParamStr(0)));
 end;
 
-constructor TJsonThroughHTTPS.Create(const serviceURL, username,
-  password, sessionid, ip, port, agent: string);
+constructor TJsonThroughHTTPS.Create(
+  const serviceURL, username, password, sessionid, ip, port, agent: string);
 begin
   //portHTTPS := port;
   //portHTTP := 4444;
@@ -1801,8 +1801,13 @@ begin
               t := s;
               FCommunicationMode := -1;
               Inc(CommunicationMode);
-              if (CommunicationMode <= 1) then Result := retrieveJSONObject(omc, logging, retry, readOmcMap,
-                CommunicationMode);
+              if (CommunicationMode <= 2) then
+              begin
+                LogDatei.log('Retry with communicationmode: ' +
+                  IntToStr(communicationmode), LLinfo);
+                Result := retrieveJSONObject(omc, logging, retry,
+                  readOmcMap, CommunicationMode);
+              end;
               finished := True;
             end;
           end;
@@ -2672,6 +2677,7 @@ begin
   {---------------------------------------------------
     communicationmode : 0 = opsi 4.1 / 4.2 / Request: gzip, Response: gzip, deflate, identity
     communicationmode : 1 = opsi 4.0 / Request: deflate, Response: gzip, deflate, identity
+    communicationmode : 2 = opsi 4.2 / Request: identity, Response: gzip, deflate, identity
    ----------------------------------------------------}
   if FCommunicationMode <> -1 then   //if Communictaion mode is set
   begin
@@ -2708,6 +2714,17 @@ begin
       Accept := 'gzip-application/json-rpc';
       ContentEncoding := '';
       AcceptEncoding := '';
+    end;
+    2:
+    begin
+      LogDatei.log_prog('Use opsi 4.1 / 4.2 HTTP Header, identity', LLnotice);
+      compress := False;
+      ContentType := 'application/json; charset=UTF-8';
+      Accept := 'application/json';
+      AcceptEncoding := 'gzip, deflate, identity';
+      //AcceptEncoding := 'deflate';
+      ContentEncoding := 'identity';//'deflate';
+      //ContentEncoding := 'deflate';
     end;
     else
     begin
@@ -2858,7 +2875,7 @@ begin
             begin
               LogDatei.log('Communication unsucessful', LLError);
               LogDatei.log('HTTPSender result: ' + IntToStr(HTTPSender.ResultCode) +
-                  ' msg: ' + HTTPSender.ResultString, LLError);
+                ' msg: ' + HTTPSender.ResultString, LLError);
               raise Exception.Create(HTTPSender.Headers.Strings[0]);
             end;
 
@@ -2972,13 +2989,16 @@ begin
           LogDatei.log_prog(
             'Exception in retrieveJSONObjectByHttpPost: stream handling: ' + e.message
             , LLError);
-          FCommunicationMode := -1; //-1 means CommunicationMode is not set e.g. it is unknown
+          FCommunicationMode := -1;
+          //-1 means CommunicationMode is not set e.g. it is unknown
           // retry with other parameters
           Inc(CommunicationMode);
-          LogDatei.log('Retry with communicationmode: ' + IntToStr(
-            communicationmode), LLinfo);
-          if (CommunicationMode <= 1) then
+          if (CommunicationMode <= 2) then
+          begin
+            LogDatei.log('Retry with communicationmode: ' + IntToStr(
+              communicationmode), LLinfo);
             Result := retrieveJSONObjectByHttpPost(instream, logging, CommunicationMode);
+          end;
         end;
           (*
           if ContentTypeCompress = 'application/json' then
