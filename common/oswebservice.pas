@@ -223,9 +223,7 @@ type
     { destructor }
     destructor Destroy; override;
     { function }
-    function retrieveJSONObject(const omc: TOpsiMethodCall; logging: boolean;
-      retry: boolean; readOmcMap: boolean; communicationmode: integer): ISuperObject;
-      overload;
+    (*
     function retrieveJSONObject(const omc: TOpsiMethodCall;
       logging: boolean; retry: boolean; readOmcMap: boolean): ISuperObject; overload;
     function retrieveJSONObject(const omc: TOpsiMethodCall;
@@ -233,7 +231,7 @@ type
     function retrieveJSONObject(const omc: TOpsiMethodCall;
       logging: boolean): ISuperObject; overload;
     function retrieveJSONObject(const omc: TOpsiMethodCall): ISuperObject; overload;
-    (*
+
     function retrieveJSONArray(const omc: TOpsiMethodCall; logging: boolean;
       retry: boolean; readOmcMap: boolean): TSuperArray; overload;
     function retrieveJSONArray(const omc: TOpsiMethodCall; logging: boolean;
@@ -242,6 +240,9 @@ type
       logging: boolean): TSuperArray; overload;
     function retrieveJSONArray(const omc: TOpsiMethodCall): TSuperArray; overload;
     *)
+    function retrieveJSONObject(const omc: TOpsiMethodCall;
+      logging: boolean = True; retry: boolean = True; readOmcMap: boolean = False;
+      communicationmode: integer = 0): ISuperObject;
     function retrieveJSONObjectByHttpPost(InStream: TMemoryStream;
       logging: boolean; communicationmode: integer): ISuperObject;
     function getMapResult(const omc: TOpsiMethodCall): TStringList;
@@ -1441,6 +1442,7 @@ begin
   LogDatei.log('got Furl: ' + Furl, LLdebug3);
 end;
 
+(*
 function TJsonThroughHTTPS.retrieveJSONObject(const omc: TOpsiMethodCall): ISuperObject;
 begin
   Result := retrieveJSONObject(omc, True);
@@ -1462,11 +1464,11 @@ function TJsonThroughHTTPS.retrieveJSONObject(const omc: TOpsiMethodCall;
   logging: boolean; retry: boolean; readOmcMap: boolean): ISuperObject;
 begin
   Result := retrieveJSONObject(omc, logging, True, False, 0);
-end;
+end;*)
 
 function TJsonThroughHTTPS.retrieveJSONObject(const omc: TOpsiMethodCall;
-  logging: boolean; retry: boolean; readOmcMap: boolean;
-  communicationmode: integer): ISuperObject;
+  logging: boolean = True; retry: boolean = True; readOmcMap: boolean = False;
+  communicationmode: integer = 0): ISuperObject;
 
 var
   errorOccured: boolean;
@@ -1797,9 +1799,10 @@ begin
               if e.message = 'HTTP/1.1 401 Unauthorized' then
                 FValidCredentials := False;
               t := s;
-              Inc(communicationmode);
-              Result := retrieveJSONObject(omc, logging, retry, readOmcMap,
-                communicationmode);
+              FCommunicationMode := -1;
+              Inc(CommunicationMode);
+              if (CommunicationMode <= 1) then Result := retrieveJSONObject(omc, logging, retry, readOmcMap,
+                CommunicationMode);
               finished := True;
             end;
           end;
@@ -2674,7 +2677,7 @@ begin
   begin
     CommunicationMode := FCommunicationMode;
   end;
-  case communicationmode of
+  case CommunicationMode of
     0:
     begin
       LogDatei.log_prog('Use opsi 4.1 / 4.2 HTTP Header, compress', LLnotice);
@@ -2697,7 +2700,7 @@ begin
       //ContentEncoding := '';
       //AcceptEncoding  := '';
     end;}
-    2:
+    1:
     begin
       LogDatei.log_prog('Use opsi 4.0  HTTP Header, compress', LLnotice);
       compress := True;
@@ -2853,6 +2856,9 @@ begin
             else
               { Communication unsuccessful }
             begin
+              LogDatei.log('Communication unsucessful', LLError);
+              LogDatei.log('HTTPSender result: ' + IntToStr(HTTPSender.ResultCode) +
+                  ' msg: ' + HTTPSender.ResultString, LLError);
               raise Exception.Create(HTTPSender.Headers.Strings[0]);
             end;
 
@@ -2961,16 +2967,18 @@ begin
         end;
         *)
       except
-        on e: Exception do
+        on E: Exception do
         begin
           LogDatei.log_prog(
             'Exception in retrieveJSONObjectByHttpPost: stream handling: ' + e.message
             , LLError);
+          FCommunicationMode := -1; //-1 means CommunicationMode is not set e.g. it is unknown
           // retry with other parameters
-          Inc(communicationmode);
+          Inc(CommunicationMode);
           LogDatei.log('Retry with communicationmode: ' + IntToStr(
             communicationmode), LLinfo);
-          Result := retrieveJSONObjectByHttpPost(instream, logging, communicationmode);
+          if (CommunicationMode <= 1) then
+            Result := retrieveJSONObjectByHttpPost(instream, logging, CommunicationMode);
         end;
           (*
           if ContentTypeCompress = 'application/json' then
