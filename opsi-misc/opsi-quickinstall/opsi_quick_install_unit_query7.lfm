@@ -104,24 +104,4 @@ object Query7: TQuery7
     OnClick = BtnOverviewClick
     TabOrder = 3
   end
-  object PanelFinish: TPanel
-    Left = 176
-    Height = 48
-    Top = 296
-    Width = 370
-    BevelOuter = bvNone
-    ClientHeight = 48
-    ClientWidth = 370
-    TabOrder = 4
-    object LabelFinish: TLabel
-      Left = 0
-      Height = 19
-      Top = 0
-      Width = 370
-      Align = alTop
-      Caption = 'Finally click ''finish'' to start the installation of opsi-server.'
-      ParentColor = False
-      WordWrap = True
-    end
-  end
 end

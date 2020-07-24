@@ -8,7 +8,7 @@ msgstr ""
 
 #: opsi_quick_install_unit_overview.rsadminpassword
 msgctxt "opsi_quick_install_unit_overview.rsadminpassword"
-msgid "Opsi admin user password:"
+msgid "password:"
 msgstr ""
 
 #: opsi_quick_install_unit_overview.rsbackend
@@ -109,14 +109,9 @@ msgstr ""
 msgid "Overview"
 msgstr ""
 
-#: toverview.labeladminname.caption
-msgctxt "toverview.labeladminname.caption"
-msgid "Opsi admin user name:"
-msgstr ""
-
-#: toverview.labeladminpassword.caption
-msgctxt "toverview.labeladminpassword.caption"
-msgid "Opsi admin user password:"
+#: toverview.labeladminnamepassword.caption
+msgctxt "toverview.labeladminnamepassword.caption"
+msgid "Opsi admin user name:password:"
 msgstr ""
 
 #: toverview.labelbackendrepokind.caption
@@ -136,6 +131,11 @@ msgstr ""
 #: toverview.labelelilo.caption
 msgctxt "toverview.labelelilo.caption"
 msgid "Elilo.efi has timeout of 2 seconds:"
+msgstr ""
+
+#: toverview.labelfinish.caption
+msgctxt "toverview.labelfinish.caption"
+msgid "Finally click 'finish' to start the installation of opsi-server."
 msgstr ""
 
 #: toverview.labelip.caption
@@ -185,8 +185,16 @@ msgstr ""
 msgid "Repository:"
 msgstr ""
 
+#: toverview.labelrepo2.caption
+msgid "[Repo]"
+msgstr ""
+
 #: toverview.labelreponocache.caption
-msgid "Repository (no Cache-Proxy):"
+msgid "Repository (without cache proxy):"
+msgstr ""
+
+#: toverview.labelreponocache2.caption
+msgid "[Repo no cache]"
 msgstr ""
 
 #: toverview.labeltftproot.caption
@@ -250,22 +258,22 @@ msgstr ""
 
 #: tquery.radiobtnopsi41.caption
 msgctxt "tquery.radiobtnopsi41.caption"
-msgid "http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/"
+msgid "opsi 4.1"
 msgstr ""
 
 #: tquery.radiobtnopsi41nocache.caption
 msgctxt "tquery.radiobtnopsi41nocache.caption"
-msgid "http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/"
+msgid "opsi 4.1"
 msgstr ""
 
 #: tquery.radiobtnopsi42.caption
 msgctxt "tquery.radiobtnopsi42.caption"
-msgid "opsi 4.2 ?"
+msgid "opsi 4.2"
 msgstr ""
 
 #: tquery.radiobtnopsi42nocache.caption
 msgctxt "tquery.radiobtnopsi42nocache.caption"
-msgid "opsi 4.2 ?"
+msgid "opsi 4.2"
 msgstr ""
 
 #: tquery.radiobtnothernocache.caption
@@ -713,10 +721,6 @@ msgstr ""
 #: tquery7.labelcopymodules.caption
 msgctxt "tquery7.labelcopymodules.caption"
 msgid "Should we copy modules even if /etc/opsi/modules still exists?"
-msgstr ""
-
-#: tquery7.labelfinish.caption
-msgid "Finally click 'finish' to start the installation of opsi-server."
 msgstr ""
 
 #: tquery7.labelpasswordmasteradmin.caption

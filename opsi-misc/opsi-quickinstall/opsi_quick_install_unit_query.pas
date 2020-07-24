@@ -5,7 +5,7 @@ unit opsi_quick_install_unit_query;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, StrUtils;
 
 type
 
@@ -38,7 +38,9 @@ type
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   private
-
+  const
+    baseURLOpsi41 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
+    baseURLOpsi42 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
   public
 
   end;
@@ -50,18 +52,58 @@ implementation
 
 uses
   opsi_quick_install_unit_language,
-  opsi_quick_install_unit_query2;
+  opsi_quick_install_unit_query2, oslog, osfunclin, osLinuxRepository;
 
 {$R *.lfm}
 
 { TQuery }
 
 procedure TQuery.FormActivate(Sender: TObject);
+var
+  distroName, distroRelease: string;
 begin
   // bring all panels to the same position (QuickInstall.panelLeft)
   AdjustPanelPosition(self);
   // always the same background (as in QuickInstall)
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
+
+  // .../lazarus/common/oslog.pas
+  LogDatei := TLogInfo.Create;
+  LogDatei.CreateTheLogfile('opsi_quickinstall.log');
+
+  // like function GetDefaultURL in osLinuxRepository
+  RadioBtnOpsi41.Caption := baseURLOpsi41 + 'stable/';
+  RadioBtnOpsi42.Caption := baseURLOpsi42 + 'stable/';
+  //ShowMessage(IntToStr(Pos('7.', '127.8')));
+  distroName := getLinuxDistroName;
+  distroRelease := getLinuxDistroRelease;
+  //ShowMessage(distroName);
+  //ShowMessage(distroRelease);
+
+  if distroName = 'Ubuntu' then
+  begin
+    if distroRelease = '16.04' then
+    begin
+      RadioBtnOpsi41.Caption := RadioBtnOpsi41.Caption + 'xUbuntu_16.04/';
+      RadioBtnOpsi42.Caption := RadioBtnOpsi42.Caption + 'xUbuntu_16.04/';
+    end
+    else if distroRelease = '18.04' then
+    begin
+      RadioBtnOpsi41.Caption := RadioBtnOpsi41.Caption + 'xUbuntu_18.04/';
+      RadioBtnOpsi42.Caption := RadioBtnOpsi42.Caption + 'xUbuntu_18.04/';
+    end;
+  end
+  else
+  if distroName = 'CentOS' then
+  begin
+    if Pos('7', distroRelease) = 1 then
+    begin
+      RadioBtnOpsi41.Caption := RadioBtnOpsi41.Caption + 'CentOS_7/';
+      RadioBtnOpsi42.Caption := RadioBtnOpsi42.Caption + 'CentOS_7/';
+    end;
+  end;
+  RadioBtnOpsi41NoCache.Caption := RadioBtnOpsi41.Caption;
+  RadioBtnOpsi42NoCache.Caption := RadioBtnOpsi42.Caption;
 end;
 
 procedure TQuery.FormClose(Sender: TObject; var CloseAction: TCloseAction);

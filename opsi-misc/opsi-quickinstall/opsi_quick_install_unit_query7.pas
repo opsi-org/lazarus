@@ -16,10 +16,8 @@ type
     BtnBack: TButton;
     BtnOverview: TButton;
     EditPasswordUCS: TEdit;
-    LabelFinish: TLabel;
     LabelCopyModules: TLabel;
     LabelPasswordMasterAdmin: TLabel;
-    PanelFinish: TPanel;
     PanelCopyModules: TPanel;
     PanelPasswordMasterAdmin: TPanel;
     RadioBtnNo: TRadioButton;
@@ -31,7 +29,7 @@ type
   private
 
   public
-
+    bigger: integer;
   end;
 
 var
@@ -50,16 +48,19 @@ uses
 
 procedure TQuery7.BtnOverviewClick(Sender: TObject);
 begin
-  showForm(Overview, self);
+  bigger := 50;
+  // showForm overview with bigger size
+  Overview.Visible := True;
+  Overview.Height := Height + 2 * bigger;
+  Overview.Left := Left - bigger;
+  Overview.Top := Top - bigger;
+  Overview.Width := Width + 2 * bigger;
+  Visible := False;
+
   Overview.BtnBack.Left := BtnBack.Left;
-  Overview.BtnBack.Top := BtnBack.Top;
-
-  if QuickInstall.ComboBoxLanguages.Text = 'Deutsch' then
-    Overview.BtnFinish.Left := BtnOverview.Left - 15
-  else
-    Overview.BtnFinish.Left := BtnOverview.Left;
-
-  Overview.BtnFinish.Top := BtnOverview.Top;
+  Overview.BtnBack.Top := BtnBack.Top + 2 * bigger;
+  Overview.BtnFinish.Left := Overview.Width-Overview.BtnBack.Left-Overview.BtnFinish.Width;
+  Overview.BtnFinish.Top := BtnOverview.Top + 2 * bigger;
 end;
 
 procedure TQuery7.FormActivate(Sender: TObject);

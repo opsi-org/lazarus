@@ -42,7 +42,7 @@ type
   TLinuxRepository = class(TObject)
   private
   const
-    { Maybe BaseURLOpsi42 had to be adapted in the future }
+    { Maybe BaseURLOpsi42 has to be adapted in the future }
     FBaseURLOpsi41 =
       'https://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
     FBaseURLOpsi42 =

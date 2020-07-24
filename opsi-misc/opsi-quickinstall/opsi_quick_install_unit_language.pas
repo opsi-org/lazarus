@@ -57,7 +57,7 @@ var
 implementation
 
 uses
-  opsi_quick_install_unit_query, opsi_quick_install_unit_query4, osfunclin;
+  opsi_quick_install_unit_query, opsi_quick_install_unit_query4;
 
 {$R *.lfm}
 
@@ -72,6 +72,7 @@ begin
 
   Sender.Visible := False;
 end;
+
 procedure AdjustPanelPosition(Sender: TForm);
 var
   compIndex: integer;
@@ -82,7 +83,7 @@ begin
     begin
       (Sender.Components[compIndex] as TPanel).Left := QuickInstall.panelLeft;
     end;
-  end
+  end;
 end;
 
 { TQuickInstall }
@@ -91,11 +92,6 @@ procedure TQuickInstall.FormCreate(Sender: TObject);
 var
   Languages: TStringList;
 begin
-  {LogDatei := TLogInfo.Create;
-  LogDatei.CreateTheLogfile('opsi_quickinstall.log');
-  ShowMessage(getLinuxDistroName);
-  ShowMessage(getLinuxDistroRelease);}
-
   // set constant form size
   Height := 450;
   Left := 360;
@@ -103,7 +99,7 @@ begin
   Width := 730;
   // set constant button position
   BtnBack.Left := 20;
-  BtnNext.Left := 660;
+  BtnNext.Left := Width - BtnBack.Left - BtnNext.Width;
   BtnBack.Top := 410;
   BtnNext.Top := 410;
   // set constant background
@@ -124,6 +120,9 @@ begin
   Languages.Add('en');
   // let the combo box show the system language
   ComboBoxLanguages.ItemIndex := Languages.IndexOf(GetDefaultLang);
+
+  if GetDefaultLang = 'de' then
+    BtnNext.Left := Width - BtnBack.Left - 63; //BtnNext.Width = with for english caption
 
   initialProds := True;
 end;

@@ -34,7 +34,9 @@ uses
   process,
   OSProcessux,
   IniFiles,
-  osprocesses;
+  osprocesses,
+  // dialogs e.g. for ShowMessage
+  dialogs;
 
 function getProfilesDirListLin: TStringList;
 function getLinProcessList: TStringList;
@@ -479,6 +481,7 @@ begin
     LogDatei.log('--------------', LLDebug2);
     for i := 0 to outlines.Count - 1 do
     begin
+      //ShowMessage(outlines.Strings[i]);
       lineparts.Clear;
       LogDatei.log(outlines.strings[i], LLDebug2);
       stringsplit(outlines.strings[i], ':', lineparts);

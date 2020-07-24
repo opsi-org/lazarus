@@ -15,6 +15,7 @@ type
     BackgrImage: TImage;
     BtnBack: TButton;
     BtnFinish: TButton;
+    LabelFinish: TLabel;
     LabelRepoNoCache2: TLabel;
     LabelRepo2: TLabel;
     LabelProds: TLabel;
@@ -28,8 +29,7 @@ type
     LabelModules: TLabel;
     LabelPasswordUCS: TLabel;
     LabelIP: TLabel;
-    LabelAdminPassword: TLabel;
-    LabelAdminName: TLabel;
+    LabelAdminNamePassword: TLabel;
     LabelOpsiProds: TLabel;
     LabelUpdate: TLabel;
     LabelBackendRepoKind: TLabel;
@@ -37,6 +37,7 @@ type
     LabelProxy: TLabel;
     LabelRepo: TLabel;
     BigPanel: TPanel;
+    PanelFinish: TPanel;
     PanelRepoNoCache: TPanel;
     PanelRepo: TPanel;
     PanelDHCP: TPanel;
@@ -70,7 +71,7 @@ resourcestring
   rsNameserver = 'Primary nameserver:';
   rsGateway = 'Gateway:';
   rsAdminName = 'Opsi admin user name:';
-  rsAdminPassword = 'Opsi admin user password:';
+  rsAdminPassword = 'password:';
   rsIPName = 'IP name:';
   rsIPNumber = 'IP number:';
   rsUCSPassword = 'Password of administrator of UCS domain controller:';
@@ -409,9 +410,11 @@ begin
       LabelNameserverGateway.Caption + ', ' + rsGateway + ' ' +
       Query5_dhcp.EditGateway.Text;
   // Admin name
-  LabelAdminName.Caption := rsAdminName + ' ' + Query6.EditNameAdmin.Text;
+  LabelAdminNamePassword.Caption := rsAdminName + ' ' + Query6.EditNameAdmin.Text;
   // Admin password
-  LabelAdminPassword.Caption := rsAdminPassword + ' ' + Query6.EditPasswordAdmin.Text;
+  LabelAdminNamePassword.Caption :=
+    LabelAdminNamePassword.Caption + ', ' + rsAdminPassword + ' ' +
+    Query6.EditPasswordAdmin.Text;
   // IP name
   LabelIP.Caption := rsIPName + ' ' + Query6.EditNameIP.Text;
   // IP number
@@ -433,8 +436,22 @@ end;
 
 
 procedure TOverview.BtnBackClick(Sender: TObject);
+var
+  bigger: integer;
 begin
-  showForm(Query7, self);
+  bigger := -Query7.bigger;
+  // showForm query7 with normal size
+  Query7.Visible := True;
+  Query7.Height := Height + 2 * bigger;
+  Query7.Left := Left - bigger;
+  Query7.Top := Top - bigger;
+  Query7.Width := Width + 2 * bigger;
+  Visible := False;
+
+  Query7.BtnBack.Left := BtnBack.Left;
+  Query7.BtnBack.Top := BtnBack.Top + 2 * bigger;
+  Query7.BtnOverview.Left := Query7.Width - Query7.BtnBack.Left - Query7.BtnOverview.Width;
+  Query7.BtnOverview.Top := BtnFinish.Top + 2 * bigger;
 end;
 
 end.

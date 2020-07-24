@@ -4,97 +4,97 @@ msgstr "Content-Type: text/plain; charset=UTF-8"
 #: opsi_quick_install_unit_overview.rsadminname
 msgctxt "opsi_quick_install_unit_overview.rsadminname"
 msgid "Opsi admin user name:"
-msgstr ""
+msgstr "Opsi-Admin-User Name:"
 
 #: opsi_quick_install_unit_overview.rsadminpassword
 msgctxt "opsi_quick_install_unit_overview.rsadminpassword"
-msgid "Opsi admin user password:"
-msgstr ""
+msgid "password:"
+msgstr "Passwort:"
 
 #: opsi_quick_install_unit_overview.rsbackend
 msgctxt "opsi_quick_install_unit_overview.rsbackend"
 msgid "Backend:"
-msgstr ""
+msgstr "Backend:"
 
 #: opsi_quick_install_unit_overview.rscopymodules
 msgctxt "opsi_quick_install_unit_overview.rscopymodules"
 msgid "Copy modules:"
-msgstr ""
+msgstr "Module kopieren:"
 
 #: opsi_quick_install_unit_overview.rsdomain
 msgctxt "opsi_quick_install_unit_overview.rsdomain"
 msgid "DNS Domain:"
-msgstr ""
+msgstr "DNS Domain:"
 
 #: opsi_quick_install_unit_overview.rselilo
 msgctxt "opsi_quick_install_unit_overview.rselilo"
 msgid "Elilo.efi has timeout of 2 seconds:"
-msgstr ""
+msgstr "Elilo.efi hat ein Timeout von 2 Sekunden:"
 
 #: opsi_quick_install_unit_overview.rsgateway
 msgctxt "opsi_quick_install_unit_overview.rsgateway"
 msgid "Gateway:"
-msgstr ""
+msgstr "Gateway:"
 
 #: opsi_quick_install_unit_overview.rsipname
 msgctxt "opsi_quick_install_unit_overview.rsipname"
 msgid "IP name:"
-msgstr ""
+msgstr "IP-Name:"
 
 #: opsi_quick_install_unit_overview.rsipnumber
 msgctxt "opsi_quick_install_unit_overview.rsipnumber"
 msgid "IP number:"
-msgstr ""
+msgstr "IP-Nummer:"
 
 #: opsi_quick_install_unit_overview.rsnameserver
 msgctxt "opsi_quick_install_unit_overview.rsnameserver"
 msgid "Primary nameserver:"
-msgstr ""
+msgstr "Primärer Nameserver:"
 
 #: opsi_quick_install_unit_overview.rsnetmask
 msgctxt "opsi_quick_install_unit_overview.rsnetmask"
 msgid "Netmask:"
-msgstr ""
+msgstr "Netzmaske:"
 
 #: opsi_quick_install_unit_overview.rsnetwork
 msgctxt "opsi_quick_install_unit_overview.rsnetwork"
 msgid "Network address:"
-msgstr ""
+msgstr "Netzwerk-Adresse:"
 
 #: opsi_quick_install_unit_overview.rsopsidhcpserver
 msgctxt "opsi_quick_install_unit_overview.rsopsidhcpserver"
 msgid "Run opsi dhcp server:"
-msgstr ""
+msgstr "Opsi-DHCP-Server verwenden:"
 
 #: opsi_quick_install_unit_overview.rsproxy
 msgctxt "opsi_quick_install_unit_overview.rsproxy"
 msgid "Proxy:"
-msgstr ""
+msgstr "Proxy:"
 
 #: opsi_quick_install_unit_overview.rsreboot
 msgctxt "opsi_quick_install_unit_overview.rsreboot"
 msgid "Reboot after script is finished:"
-msgstr ""
+msgstr "Neustarten, wenn das Skript beendet ist:"
 
 #: opsi_quick_install_unit_overview.rsrepokind
 msgctxt "opsi_quick_install_unit_overview.rsrepokind"
 msgid "Repo kind:"
-msgstr ""
+msgstr "Repository-Art:"
 
 #: opsi_quick_install_unit_overview.rstftproot
 msgctxt "opsi_quick_install_unit_overview.rstftproot"
 msgid "TFTPROOT symlink points to:"
-msgstr ""
+msgstr "TFTPROOT-Symlink zeigt auf:"
 
 #: opsi_quick_install_unit_overview.rsucspassword
 msgctxt "opsi_quick_install_unit_overview.rsucspassword"
 msgid "Password of administrator of UCS domain controller:"
-msgstr ""
+msgstr "Passwort des Administrators des UCS-Domain-Controllers:"
 
 #: opsi_quick_install_unit_overview.rsupdate
 msgctxt "opsi_quick_install_unit_overview.rsupdate"
 msgid "Install from stable, update to repo kind:"
-msgstr ""
+msgstr "Von stable installieren, auf Repo-Art aktualisieren:"
 
 #: toverview.btnback.caption
 msgctxt "toverview.btnback.caption"
@@ -109,14 +109,9 @@ msgstr " fertigstellen "
 msgid "Overview"
 msgstr "Übersicht"
 
-#: toverview.labeladminname.caption
-msgctxt "toverview.labeladminname.caption"
-msgid "Opsi admin user name:"
-msgstr ""
-
-#: toverview.labeladminpassword.caption
-msgctxt "toverview.labeladminpassword.caption"
-msgid "Opsi admin user password:"
+#: toverview.labeladminnamepassword.caption
+msgctxt "toverview.labeladminnamepassword.caption"
+msgid "Opsi admin user name:password:"
 msgstr ""
 
 #: toverview.labelbackendrepokind.caption
@@ -124,19 +119,27 @@ msgid "Backend:Repo kind:"
 msgstr ""
 
 #: toverview.labeldhcp.caption
+#, fuzzy
 msgctxt "toverview.labeldhcp.caption"
 msgid "Run opsi dhcp server:"
-msgstr ""
+msgstr "Opsi-DHCP-Server verwenden:"
 
 #: toverview.labeldomain.caption
+#, fuzzy
 msgctxt "toverview.labeldomain.caption"
 msgid "DNS Domain:"
-msgstr ""
+msgstr "DNS Domain:"
 
 #: toverview.labelelilo.caption
+#, fuzzy
 msgctxt "toverview.labelelilo.caption"
 msgid "Elilo.efi has timeout of 2 seconds:"
-msgstr ""
+msgstr "Elilo.efi hat ein Timeout von 2 Sekunden:"
+
+#: toverview.labelfinish.caption
+msgctxt "toverview.labelfinish.caption"
+msgid "Finally click 'finish' to start the installation of opsi-server."
+msgstr "Klicken Sie auf 'fertigstellen', um die Installation von Opsi-Server zu beginnen."
 
 #: toverview.labelip.caption
 msgctxt "toverview.labelip.caption"
@@ -144,9 +147,10 @@ msgid "IP name:IP number:"
 msgstr ""
 
 #: toverview.labelmodules.caption
+#, fuzzy
 msgctxt "toverview.labelmodules.caption"
 msgid "Copy modules:"
-msgstr ""
+msgstr "Module kopieren:"
 
 #: toverview.labelnameservergateway.caption
 msgctxt "toverview.labelnameservergateway.caption"
@@ -160,7 +164,7 @@ msgstr ""
 
 #: toverview.labelopsiprods.caption
 msgid "Products in depot:"
-msgstr ""
+msgstr "Produkte im Depot:"
 
 #: toverview.labelpassworducs.caption
 msgctxt "toverview.labelpassworducs.caption"
@@ -172,44 +176,56 @@ msgid "[Prods]"
 msgstr ""
 
 #: toverview.labelproxy.caption
+#, fuzzy
 msgctxt "toverview.labelproxy.caption"
 msgid "Proxy:"
-msgstr ""
+msgstr "Proxy:"
 
 #: toverview.labelreboot.caption
+#, fuzzy
 msgctxt "toverview.labelreboot.caption"
 msgid "Reboot after script is finished:"
-msgstr ""
+msgstr "Neustarten, wenn das Skript beendet ist:"
 
 #: toverview.labelrepo.caption
 msgid "Repository:"
+msgstr "Repository:"
+
+#: toverview.labelrepo2.caption
+msgid "[Repo]"
 msgstr ""
 
 #: toverview.labelreponocache.caption
-msgid "Repository (no Cache-Proxy):"
+msgid "Repository (without cache proxy):"
+msgstr "Repository (ohne Cache-Proxy):"
+
+#: toverview.labelreponocache2.caption
+msgid "[Repo no cache]"
 msgstr ""
 
 #: toverview.labeltftproot.caption
+#, fuzzy
 msgctxt "toverview.labeltftproot.caption"
 msgid "TFTPROOT symlink points to:"
-msgstr ""
+msgstr "TFTPROOT-Symlink zeigt auf:"
 
 #: toverview.labelupdate.caption
+#, fuzzy
 msgctxt "toverview.labelupdate.caption"
 msgid "Install from stable, update to repo kind:"
-msgstr ""
+msgstr "Von stable installieren, auf Repo-Art aktualisieren:"
 
 #: tpassword.labelpassword.caption
 msgid "Password:"
-msgstr ""
+msgstr "Passwort:"
 
 #: tpassword.radiobtnroot.caption
 msgid "Root"
-msgstr ""
+msgstr "Root"
 
 #: tpassword.radiobtnsudo.caption
 msgid "Sudo"
-msgstr ""
+msgstr "Sudo"
 
 #: tquery.btnback.caption
 msgctxt "tquery.btnback.caption"
@@ -252,22 +268,22 @@ msgstr "Keiner"
 
 #: tquery.radiobtnopsi41.caption
 msgctxt "tquery.radiobtnopsi41.caption"
-msgid "http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/"
+msgid "opsi 4.1"
 msgstr ""
 
 #: tquery.radiobtnopsi41nocache.caption
 msgctxt "tquery.radiobtnopsi41nocache.caption"
-msgid "http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/"
+msgid "opsi 4.1"
 msgstr ""
 
 #: tquery.radiobtnopsi42.caption
 msgctxt "tquery.radiobtnopsi42.caption"
-msgid "opsi 4.2 ?"
+msgid "opsi 4.2"
 msgstr ""
 
 #: tquery.radiobtnopsi42nocache.caption
 msgctxt "tquery.radiobtnopsi42nocache.caption"
-msgid "opsi 4.2 ?"
+msgid "opsi 4.2"
 msgstr ""
 
 #: tquery.radiobtnothernocache.caption
@@ -317,15 +333,15 @@ msgstr "Von welcher Repository-Art soll installiert werden?"
 
 #: tquery2.radiobtnexperimental.caption
 msgid "experimental"
-msgstr ""
+msgstr "experimental"
 
 #: tquery2.radiobtnfile.caption
 msgid "file"
-msgstr ""
+msgstr "file"
 
 #: tquery2.radiobtnmysql.caption
 msgid "mysql"
-msgstr ""
+msgstr "mysql"
 
 #: tquery2.radiobtnno.caption
 msgctxt "tquery2.radiobtnno.caption"
@@ -334,11 +350,11 @@ msgstr "Nein"
 
 #: tquery2.radiobtnstable.caption
 msgid "stable"
-msgstr ""
+msgstr "stable"
 
 #: tquery2.radiobtntesting.caption
 msgid "testing"
-msgstr ""
+msgstr "testing"
 
 #: tquery2.radiobtnyes.caption
 msgctxt "tquery2.radiobtnyes.caption"
@@ -679,7 +695,7 @@ msgid ""
 "What is the name of the opsi_admin_user to create?\n"
 "(empty = nothing created)\n"
 msgstr ""
-"Name des opsi_admin-user, der erstellt wird:\n"
+"Name des Opsi-Admin-User, der erstellt wird:\n"
 "(leer = nichts wird erstellt)\n"
 
 #: tquery6.labelnameip.caption
@@ -695,7 +711,7 @@ msgid ""
 "What is the password of the opsi_admin_user to create?\n"
 "(empty = nothing created)\n"
 msgstr ""
-"Passwort des opsi_admin-user, der erstellt wird:\n"
+"Passwort des Opsi-Admin-User, der erstellt wird:\n"
 "(leer = nichts wird erstellt)\n"
 
 #: tquery7.btnback.caption
@@ -722,10 +738,6 @@ msgstr ""
 msgctxt "tquery7.labelcopymodules.caption"
 msgid "Should we copy modules even if /etc/opsi/modules still exists?"
 msgstr "Sollen wir Module kopieren, selbst wenn /etc/opsi/modules noch existiert?"
-
-#: tquery7.labelfinish.caption
-msgid "Finally click 'finish' to start the installation of opsi-server."
-msgstr "Klicken Sie 'fertigstellen', um die Installation von Opsi-Server zu beginnen."
 
 #: tquery7.labelpasswordmasteradmin.caption
 msgid "What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?"
