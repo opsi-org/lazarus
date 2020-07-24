@@ -13,7 +13,6 @@
         <DpiAware Value="Per-monitor"/>
       </XPManifest>
       <Icon Value="0"/>
-      <ActiveWindowIndexAtStart Value="1"/>
     </General>
     <i18n>
       <EnableI18N Value="True"/>
@@ -460,7 +459,6 @@
       <Unit28>
         <Filename Value="changelog.txt"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <TopLine Value="4"/>
         <CursorPos X="62" Y="15"/>
         <UsageCount Value="139"/>
@@ -822,14 +820,15 @@
       <Unit71>
         <Filename Value="..\common\oswebservice.pas"/>
         <IsPartOfProject Value="True"/>
-        <WindowIndex Value="1"/>
-        <TopLine Value="1457"/>
-        <CursorPos X="19" Y="1478"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="1488"/>
+        <CursorPos X="27" Y="1499"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <EditorIndex Value="1"/>
-          <TopLine Value="1488"/>
-          <CursorPos X="27" Y="1499"/>
+          <WindowIndex Value="1"/>
+          <TopLine Value="1457"/>
+          <CursorPos X="19" Y="1478"/>
         </ExtraEditor1>
         <UsageCount Value="145"/>
         <Loaded Value="True"/>
