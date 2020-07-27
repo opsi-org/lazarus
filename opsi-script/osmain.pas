@@ -878,9 +878,13 @@ begin
   Pfad := opsidata.getSpecialScriptPath;
   //only for backward compatibility and for special circumstances
 {$IFDEF UNIX}
-  if not fileexists(depotdrive) then
+  if not DirectoryExists(depotdrive) then
+  begin
+    LogDatei.log('Setting depotdrive from: '+depotdrive+' to: '+depotdrive_old, LLdebug2);
     depotdrive := depotdrive_old;
+  end;
 {$ENDIF LINUX}
+
   if Pfad = '' //this should be the normal case since winst 4.2
   then
     // take pfad from depotdrive + depotdir (coming from registry)

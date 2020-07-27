@@ -152,11 +152,9 @@ begin
         ((mynotifierkind = 'event') and (nkind = '')) then
       begin
         // got end call for this notifier kind : hide form
-        mythread.Terminate;
-        hideNForm;
-        {$IFDEF UNIX}
+        //mythread.Terminate;
+        //hideNForm;
         shutdownNotifier;
-        {$ENDIF UNIX}
       end;
     end
     else  // other methods
