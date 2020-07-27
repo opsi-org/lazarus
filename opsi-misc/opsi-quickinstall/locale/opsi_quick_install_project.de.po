@@ -215,9 +215,17 @@ msgctxt "toverview.labelupdate.caption"
 msgid "Install from stable, update to repo kind:"
 msgstr "Von stable installieren, auf Repo-Art aktualisieren:"
 
+#: tpassword.checkboxshowpassword.caption
+msgid "Show password"
+msgstr ""
+
 #: tpassword.labelpassword.caption
 msgid "Password:"
 msgstr "Passwort:"
+
+#: tpassword.labelrights.caption
+msgid "LabelRights"
+msgstr ""
 
 #: tpassword.radiobtnroot.caption
 msgid "Root"

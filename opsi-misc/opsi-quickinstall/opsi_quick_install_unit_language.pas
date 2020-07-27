@@ -57,7 +57,7 @@ var
 implementation
 
 uses
-  opsi_quick_install_unit_query, opsi_quick_install_unit_query4;
+  opsi_quick_install_unit_query, opsi_quick_install_unit_query4, opsi_quick_install_unit_password;
 
 {$R *.lfm}
 
@@ -129,6 +129,8 @@ end;
 
 procedure TQuickInstall.BtnNextClick(Sender: TObject);
 begin
+  Password.ShowModal;
+
   if RadioBtnDefault.Checked then
   begin
     // 'self' is current form

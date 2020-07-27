@@ -80,6 +80,53 @@ begin
   //ShowMessage(distroName);
   //ShowMessage(distroRelease);
 
+  if (distroName = 'CentOS') and (Pos('7', distroRelease) = 1) then
+  begin
+      RadioBtnOpsi41.Caption := RadioBtnOpsi41.Caption + 'CentOS_7/';
+      RadioBtnOpsi42.Caption := RadioBtnOpsi42.Caption + 'CentOS_7/';
+  end
+  else
+  if distroName = 'Debian' then
+  begin
+    if Pos('8', distroRelease) = 1 then
+    begin
+      RadioBtnOpsi41.Caption := RadioBtnOpsi41.Caption + 'Debian_8/';
+      RadioBtnOpsi42.Caption := RadioBtnOpsi42.Caption + 'Debian_8/';
+    end
+    else
+    if Pos('9', distroRelease) = 1 then
+    begin
+      RadioBtnOpsi41.Caption := RadioBtnOpsi41.Caption + 'Debian_9/';
+      RadioBtnOpsi42.Caption := RadioBtnOpsi42.Caption + 'Debian_9/';
+    end
+    else
+    if Pos('10', distroRelease) = 1 then
+    begin
+      RadioBtnOpsi41.Caption := RadioBtnOpsi41.Caption + 'Debian_10/';
+      RadioBtnOpsi42.Caption := RadioBtnOpsi42.Caption + 'Debian_10/';
+    end;
+  end
+  else
+  if distroName = 'openSUSE project' then
+  begin
+    if distroRelease = '15.1' then
+    begin
+      RadioBtnOpsi41.Caption := RadioBtnOpsi41.Caption + 'openSUSE_Leap_15.1/';
+      RadioBtnOpsi42.Caption := RadioBtnOpsi42.Caption + 'openSUSE_Leap_15.1/';
+    end
+    else if distroRelease = '42.3' then
+    begin
+      RadioBtnOpsi41.Caption := RadioBtnOpsi41.Caption + 'openSUSE_Leap_42.3/';
+      RadioBtnOpsi42.Caption := RadioBtnOpsi42.Caption + 'openSUSE_Leap_42.3/';
+    end;
+  end
+  else
+  if (distroName = 'RedHatEnterpriseServer') and (Pos('7', distroRelease) = 1) then
+  begin
+      RadioBtnOpsi41.Caption := RadioBtnOpsi41.Caption + 'RHEL_7/';
+      RadioBtnOpsi42.Caption := RadioBtnOpsi42.Caption + 'RHEL_7/';
+  end
+  else
   if distroName = 'Ubuntu' then
   begin
     if distroRelease = '16.04' then
@@ -92,16 +139,8 @@ begin
       RadioBtnOpsi41.Caption := RadioBtnOpsi41.Caption + 'xUbuntu_18.04/';
       RadioBtnOpsi42.Caption := RadioBtnOpsi42.Caption + 'xUbuntu_18.04/';
     end;
-  end
-  else
-  if distroName = 'CentOS' then
-  begin
-    if Pos('7', distroRelease) = 1 then
-    begin
-      RadioBtnOpsi41.Caption := RadioBtnOpsi41.Caption + 'CentOS_7/';
-      RadioBtnOpsi42.Caption := RadioBtnOpsi42.Caption + 'CentOS_7/';
-    end;
   end;
+
   RadioBtnOpsi41NoCache.Caption := RadioBtnOpsi41.Caption;
   RadioBtnOpsi42NoCache.Caption := RadioBtnOpsi42.Caption;
 end;
