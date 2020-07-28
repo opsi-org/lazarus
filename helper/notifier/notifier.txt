@@ -2,6 +2,7 @@
 opsi-notifier  4.1.1.1
 
   * log if given port not >0
+  * more log on terminate
 
 -- Detlef Oertel <d.oertel@uib.de>  Tue, 21 Jul 2020:15:00:00 +0200
 

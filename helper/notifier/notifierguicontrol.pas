@@ -138,20 +138,26 @@ begin
         ButtonArray[i].Free;
     if Assigned(mythread) then
       mythread.Free;
-    LogDatei.Close;
-    LogDatei.Free;
+    //LogDatei.Close;
+    //LogDatei.Free;
   finally
   end;
 end;
 
 procedure shutdownNotifier;
 begin
+  logdatei.log('Terminate Thread', LLInfo);
   mythread.Terminate;
+  logdatei.log('Hide Form', LLInfo);
   hideNForm;
+  logdatei.log('Wait a scond', LLInfo);
   sleep(1000);
-  free_runtime_objects;
-  DataModule1.DataModuleDestroy(nil);
+  //logdatei.log('free_runtime_objects', LLnotice);
+  //free_runtime_objects;
+  //DataModule1.DataModuleDestroy(nil);
+  logdatei.log('terminate', LLnotice);
   Application.Terminate;
+  Halt(0);
 end;
 
 function setLabelCaptionById(aktId, aktMessage: string): boolean;

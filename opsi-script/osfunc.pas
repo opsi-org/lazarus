@@ -2696,9 +2696,10 @@ begin
   end;
 
   stringsplitByWhiteSpace(ParamStr, TStringList(paramlist));
-  logdatei.log_prog('command: ' + CmdLinePasStr,LLinfo);
-  logdatei.log_prog('Filename from command: '+filename+'='+ExpandFileName(filename),LLInfo);
-  logdatei.log_prog('Params from command: '+TStringList(paramlist).Text,LLInfo);
+  logdatei.log_prog('command: ' + CmdLinePasStr, LLinfo);
+  logdatei.log_prog('Filename from command: ' + filename + '=' + ExpandFileName(
+    filename), LLInfo);
+  logdatei.log_prog('Params from command: ' + TStringList(paramlist).Text, LLInfo);
   //writeln('>->->'+paramstr);
   //writeln('>->->'+CmdLinePasStr);
   try
@@ -2754,7 +2755,7 @@ begin
       //else
       begin
         Result := True;
-       logdatei.log('Started process "' + FpcProcess.Executable +
+        logdatei.log('Started process "' + FpcProcess.Executable +
           '" with Opt: ' + FpcProcess.Parameters.Text, LLInfo);
         desiredProcessStarted := False;
         WaitForProcessEndingLogflag := True;
@@ -9390,7 +9391,7 @@ begin
         LogDatei.log(LogS, LLError);
       end
       else
-        uxtime1 := fstatRecordSource.mtime;
+        uxtime1 := fstatRecordSource.st_mtime;
 
       if 0 <> fpstat(Targetfilename, fstatRecordTarget) then
       begin
@@ -9400,7 +9401,7 @@ begin
         LogDatei.log(LogS, LLError);
       end
       else
-        uxtime2 := fstatRecordTarget.mtime;
+        uxtime2 := fstatRecordTarget.st_mtime;
       dateTime1 := UnixToDateTime(uxtime1);
       dateTime2 := UnixToDateTime(uxtime2);
       diffresult := abs(uxtime1 - uxtime2);
