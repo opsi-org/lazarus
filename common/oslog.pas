@@ -51,7 +51,8 @@ uses
   SysUtils,
   fileutil,
   lazfileutils,
-  lconvencoding;
+  lconvencoding,
+  LazUTF8;
 
 type
   //TRemoteErrorLogging = (trel_none, trel_filesystem, trel_syslog);
@@ -1309,6 +1310,7 @@ begin
 
       st := s;
       st := TrimRight(st);
+      UTF8FixBroken(st);
 
       // now some things we do not want to log:
       // thing we do not log below loglevel 9
@@ -1771,6 +1773,7 @@ begin
   begin
     //line := FormatDateTime('yyyy mmm dd hh:nn', Now) + '  ' + line;
     line := FormatDateTime('yyyy-mm-dd hh:nn', Now) + '  ' + line;
+    UTF8FixBroken(line);
     try
       WriteLogLine(HistroryFileF, line);
     except
