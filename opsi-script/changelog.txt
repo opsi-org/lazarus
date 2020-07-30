@@ -5,6 +5,14 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.3.18) experimental; urgency=low
+
+  * UTF8String replaced by String
+  * AnsiToUTF8() removed accordingly
+  * compiled with lazarus 2.0.10
+
+-- j.werner <j.werner@uib.de> Thu, 30 Jul 2020 16:56
+
 opsi-winst/opsi-script (4.12.3.17) stable; urgency=low
 
   * osfunc: StartProcess_cp: log message: 'Started process' now in utf8 encoding
