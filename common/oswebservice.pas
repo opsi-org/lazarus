@@ -49,7 +49,8 @@ uses
   Windows,
   {$ENDIF WINDOWS}
   GZIPUtils,
-  zstream;
+  zstream,
+  LazUTF8;
 
 
 {
@@ -1476,7 +1477,7 @@ var
   posColon: integer;
   s, t, teststring: string;
   jO: ISuperObject;
-  utf8str: UTF8String;
+  utf8str: string;//UTF8String;
   SendStream, ReceiveStream: TMemoryStream;
   InStream: TMemoryStream;
   CompressionSendStream: TCompressionStream;
@@ -1612,7 +1613,7 @@ begin
 
         if methodGet then
         begin
-          utf8str := AnsiToUtf8(Furl);
+          //utf8str := Furl;//AnsiToUtf8(Furl);
           LogDatei.log_prog(' JSON service request ' + Furl, LLdebug);
           if HTTPSender.HTTPMethod('GET', Furl) then
           begin
@@ -1628,14 +1629,14 @@ begin
           if readOmcMap then
           begin
             s := omc.getJsonHashListString;
-            utf8str := AnsiToUtf8(s);
+            utf8str := s; //AnsiToUtf8(s);
             LogDatei.log_prog(' JSON service request Furl ' + Furl, LLdebug);
             LogDatei.log_prog(' JSON service request str ' + utf8str, LLdebug);
           end
           else
           begin
             s := omc.jsonUrlString;
-            utf8str := AnsiToUtf8(s);
+            utf8str := s; //AnsiToUtf8(s);
             LogDatei.log_prog(' JSON service request Furl ' + Furl, LLdebug);
             LogDatei.log_prog(' JSON service request str ' + utf8str, LLdebug);
           end;
@@ -3362,7 +3363,7 @@ function TJsonThroughHTTPS.getFileFromDepot(filename: string;
   toStringList: boolean; var ListResult: TStringList): boolean;
 var
   resultstring, localurl: string;
-  utf8str: UTF8String;
+  utf8str: string;//UTF8String;
 begin
   try
     Result := False;
@@ -3384,7 +3385,7 @@ begin
       localurl := FserviceURL
     else
       localurl := copy(FserviceURL, 0, pos('/rpc', FserviceURL));
-    utf8str := AnsiToUtf8(localurl + '/depot/' + filename);
+    utf8str := localurl + '/depot/' + filename; // AnsiToUtf8(localurl + '/depot/' + filename);
     LogDatei.log('Loading file: ' + utf8str, LLDebug2);
     {$IFDEF SYNAPSE}
     HTTPSender.Headers.Clear;
@@ -4301,7 +4302,6 @@ var
   logstream: TMemoryStream;
   s, t: string;
   found: boolean;
-  utf8str: UTF8String;
   errorinfo: string;
   Count: longint;
   maxlogsizebyte: int64;
@@ -4349,6 +4349,7 @@ begin
     //s := '{"method":"writeLog","params":["' + logtype + '","';
     s := '{"method":"log_write","params":["' + logtype + '","';
     //LogDatei.log('->6',LLInfo);
+    //UTF8FixBroken(s);
     logstream.Write(s[1], length(s));
     //LogDatei.log('->7',LLInfo);
     s := '\n';
@@ -4357,8 +4358,10 @@ begin
     while found do
     begin
       Logdatei.log('read line from read file ...', LLDebug2);
+      //UTF8FixBroken(s);
       logstream.Write(s[1], 2);
       t := escapeControlChars(t);
+      //UTF8FixBroken(t);
       //{$IFDEF WINDOWS}
       //utf8str := AnsiToUtf8(t);
       //logstream.Write(utf8str[1], length(utf8str));
@@ -4380,6 +4383,7 @@ begin
       s := '", "' + actualClient + '", "false"], "id": 1}';
     end;
     Logdatei.log('write line: >' + s + '<  to service...', LLInfo);
+    //UTF8FixBroken(s);
     logstream.Write(s[1], length(s));
   except
     on E: Exception do
