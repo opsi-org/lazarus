@@ -5,6 +5,17 @@ mac getIpByName liefert name von IPnum
 
 
 ##################################################################
+opsi-winst/opsi-script (4.12.4.0) experimental; urgency=low
+
+  * includes changes from github merge request "Feature / Implementation parity between WinBatch, DosBatch and ExecWith"
+    * DosBatch-Sections to be executed with elevated privileges like WinBatch could be using /RunElevated
+    * /Run*-Parameters for ExecWith
+    * Output catching, /showouput and getOutStreamFromSection support for WinBatch
+  * ToDo: write opsi-script tests for these changes
+  * compiled with lazarus 2.0.10
+
+-- j.werner <j.werner@uib.de> Thu, 30 Jul 2020 17:54
+
 opsi-winst/opsi-script (4.12.3.18) experimental; urgency=low
 
   * UTF8String replaced by String
