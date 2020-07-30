@@ -1629,7 +1629,7 @@ begin
           if readOmcMap then
           begin
             s := omc.getJsonHashListString;
-            utf8str := s;// AnsiToUtf8(s);
+            utf8str := s; //AnsiToUtf8(s);
             LogDatei.log_prog(' JSON service request Furl ' + Furl, LLdebug);
             LogDatei.log_prog(' JSON service request str ' + utf8str, LLdebug);
           end
@@ -3385,7 +3385,7 @@ begin
       localurl := FserviceURL
     else
       localurl := copy(FserviceURL, 0, pos('/rpc', FserviceURL));
-    utf8str := localurl + '/depot/' + filename; //AnsiToUtf8(localurl + '/depot/' + filename);
+    utf8str := localurl + '/depot/' + filename; // AnsiToUtf8(localurl + '/depot/' + filename);
     LogDatei.log('Loading file: ' + utf8str, LLDebug2);
     {$IFDEF SYNAPSE}
     HTTPSender.Headers.Clear;
@@ -4349,7 +4349,7 @@ begin
     //s := '{"method":"writeLog","params":["' + logtype + '","';
     s := '{"method":"log_write","params":["' + logtype + '","';
     //LogDatei.log('->6',LLInfo);
-    UTF8FixBroken(s);
+    //UTF8FixBroken(s);
     logstream.Write(s[1], length(s));
     //LogDatei.log('->7',LLInfo);
     s := '\n';
@@ -4358,10 +4358,10 @@ begin
     while found do
     begin
       Logdatei.log('read line from read file ...', LLDebug2);
-      UTF8FixBroken(s);
+      //UTF8FixBroken(s);
       logstream.Write(s[1], 2);
       t := escapeControlChars(t);
-      UTF8FixBroken(t);
+      //UTF8FixBroken(t);
       //{$IFDEF WINDOWS}
       //utf8str := AnsiToUtf8(t);
       //logstream.Write(utf8str[1], length(utf8str));
@@ -4383,7 +4383,7 @@ begin
       s := '", "' + actualClient + '", "false"], "id": 1}';
     end;
     Logdatei.log('write line: >' + s + '<  to service...', LLInfo);
-    UTF8FixBroken(s);
+    //UTF8FixBroken(s);
     logstream.Write(s[1], length(s));
   except
     on E: Exception do
