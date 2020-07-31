@@ -4748,7 +4748,17 @@ begin
     WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
     WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report,
     ExitCode, catchout, output);
-  {$ENDIF LINUX}
+  {$ENDIF UNIX}
+  {$IFDEF WIN64}
+  // we start as Invoker
+  // we assume that this is a executable
+  // we try it via createprocess (Tprocess)
+  LogDatei.log('Start process as invoker.', LLInfo);
+  Result := StartProcess_cp(CmdLinePasStr, ShowWindowFlag, showoutput,
+    WaitForReturn, WaitForWindowVanished, WaitForWindowAppearing,
+    WaitForProcessEnding, waitsecsAsTimeout, Ident, WaitSecs, Report,
+    ExitCode, catchout, output);
+  {$ENDIF WIN64}
   {$IFDEF WIN32}
   ext := ExtractFileExt(filename);
   if FileExists(filename) and not ((LowerCase(ext) = '.exe') or
