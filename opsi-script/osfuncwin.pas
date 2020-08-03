@@ -435,7 +435,7 @@ begin
   tmpstr := getW10Release;
   if TryStrToInt(tmpstr, releaseint) then
   begin
-    Logdatei.log_prog('WinIsUefi releaseint: ' + IntToStr(releaseint), LLNotice);
+    Logdatei.log('WinIsUefi releaseint: ' + IntToStr(releaseint), LLNotice);
     if releaseint < 2004 then
     begin
       try
@@ -444,15 +444,15 @@ begin
         if (lastError = ERROR_INVALID_FUNCTION) then
         begin
           //Writeln('Legacy BIOS')
-          Logdatei.log_prog('WinIsUefi detect by GetFirmwareEnvironmentVariable: Legacy BIOS', LLNotice);
+          Logdatei.log('WinIsUefi detect by GetFirmwareEnvironmentVariable: Legacy BIOS', LLNotice);
           Result := False
         end
         else
         begin
           //Writeln('UEFI Boot Mode');
-          Logdatei.log_prog('WinIsUefi detect by GetFirmwareEnvironmentVariable: UEFI Boot Mode', LLNotice);
+          Logdatei.log('WinIsUefi detect by GetFirmwareEnvironmentVariable: UEFI Boot Mode', LLNotice);
           Result := True;
-          Logdatei.log_prog('WinIsUefi last Error: ' + SysErrorMessage(
+          Logdatei.log('WinIsUefi last Error: ' + SysErrorMessage(
             lastError) + ' : ' + IntToStr(lastError), LLNotice);
         end;
       except
@@ -475,7 +475,7 @@ begin
         else
           Inc(i);
       end;
-      Logdatei.log_prog('WinIsUefi detect by bcdedit: ' + stringResult, LLNotice);
+      Logdatei.log('WinIsUefi detect by bcdedit: ' + stringResult, LLNotice);
       if AnsiContainsText(stringResult, '.efi') then
         Result := True;
     end;

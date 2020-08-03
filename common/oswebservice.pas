@@ -1206,21 +1206,21 @@ begin
   TJsonThroughHTTPS.Create(serviceUrl, username, password, '', '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(
-  const serviceURL, username, password, sessionid: string);
+constructor TJsonThroughHTTPS.Create(const serviceURL, username,
+  password, sessionid: string);
 begin
   Create(serviceUrl, username, password, sessionid, '', '');
 end;
 
-constructor TJsonThroughHTTPS.Create(
-  const serviceURL, username, password, sessionid, ip, port: string);
+constructor TJsonThroughHTTPS.Create(const serviceURL, username,
+  password, sessionid, ip, port: string);
 begin
   Create(serviceUrl, username, password, sessionid, ip, port,
     ExtractFileName(ParamStr(0)));
 end;
 
-constructor TJsonThroughHTTPS.Create(
-  const serviceURL, username, password, sessionid, ip, port, agent: string);
+constructor TJsonThroughHTTPS.Create(const serviceURL, username,
+  password, sessionid, ip, port, agent: string);
 begin
   //portHTTPS := port;
   //portHTTP := 4444;
@@ -3385,7 +3385,8 @@ begin
       localurl := FserviceURL
     else
       localurl := copy(FserviceURL, 0, pos('/rpc', FserviceURL));
-    utf8str := localurl + '/depot/' + filename; // AnsiToUtf8(localurl + '/depot/' + filename);
+    utf8str := localurl + '/depot/' + filename;
+    // AnsiToUtf8(localurl + '/depot/' + filename);
     LogDatei.log('Loading file: ' + utf8str, LLDebug2);
     {$IFDEF SYNAPSE}
     HTTPSender.Headers.Clear;
@@ -4300,7 +4301,7 @@ function TOpsi4Data.sendLog(logtype: string; appendmode: boolean): boolean;
 
 var
   logstream: TMemoryStream;
-  s, t: string;
+  s, t, t2: string;
   found: boolean;
   errorinfo: string;
   Count: longint;
@@ -4361,7 +4362,18 @@ begin
       //UTF8FixBroken(s);
       logstream.Write(s[1], 2);
       t := escapeControlChars(t);
-      //UTF8FixBroken(t);
+      try
+        t2 := t;
+        UTF8FixBroken(t2);
+        t := t2;
+      except
+        on E: Exception do
+        begin
+          LogDatei.log('oswebservice: UTF8FixBroken: "' + E.Message + '"',
+            LLError);
+          t := 'log line contains non fixable non UTF8 chars';
+        end
+      end;
       //{$IFDEF WINDOWS}
       //utf8str := AnsiToUtf8(t);
       //logstream.Write(utf8str[1], length(utf8str));
