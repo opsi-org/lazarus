@@ -236,7 +236,8 @@ msgstr "Passwort:"
 msgid ""
 "Authentication is required to install opsi-server.\n"
 "Who are you logged in as?\n"
-msgstr "Zur Installation von Opsi-Server ist eine Authentifizierung erforderlich.\n"
+msgstr ""
+"Zur Installation von Opsi-Server ist eine Authentifizierung erforderlich.\n"
 "Als was sind Sie angemeldet?\n"
 
 #: tpassword.radiobtnroot.caption
@@ -794,7 +795,6 @@ msgid "Please choose a language for this setup program:"
 msgstr "Bitte wählen Sie eine Sprache für dieses Setup-Programm:"
 
 #: tquickinstall.labelsetup.caption
-#, fuzzy
 msgctxt "tquickinstall.labelsetup.caption"
 msgid "Please select a setup type:"
 msgstr "Bitte wählen Sie einen Setup-Typ:"
