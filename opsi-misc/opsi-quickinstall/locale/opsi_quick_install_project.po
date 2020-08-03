@@ -102,6 +102,7 @@ msgid " < back "
 msgstr ""
 
 #: toverview.btnfinish.caption
+msgctxt "toverview.btnfinish.caption"
 msgid " finish "
 msgstr ""
 
@@ -207,8 +208,26 @@ msgctxt "toverview.labelupdate.caption"
 msgid "Install from stable, update to repo kind:"
 msgstr ""
 
+#: tpassword.btnback.caption
+msgctxt "tpassword.btnback.caption"
+msgid " < back "
+msgstr ""
+
+#: tpassword.btnfinish.caption
+msgctxt "tpassword.btnfinish.caption"
+msgid " finish "
+msgstr ""
+
+#: tpassword.caption
+msgid "Authentication required"
+msgstr ""
+
 #: tpassword.checkboxshowpassword.caption
 msgid "Show password"
+msgstr ""
+
+#: tpassword.editpassword.text
+msgid "Hi blub blub blub aaaaaaaaaaaaaaa bbbbbbbbbbb cccccccccccc"
 msgstr ""
 
 #: tpassword.labelpassword.caption
@@ -216,7 +235,9 @@ msgid "Password:"
 msgstr ""
 
 #: tpassword.labelrights.caption
-msgid "LabelRights"
+msgid ""
+"Authentication is required to install opsi-server.\n"
+"Who are you logged in as?\n"
 msgstr ""
 
 #: tpassword.radiobtnroot.caption

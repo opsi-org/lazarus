@@ -5,7 +5,8 @@ unit opsi_quick_install_unit_query;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, StrUtils;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  StdCtrls;
 
 type
 
@@ -42,7 +43,6 @@ type
     baseURLOpsi41 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
     baseURLOpsi42 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/';
   public
-
   end;
 
 var
@@ -52,94 +52,21 @@ implementation
 
 uses
   opsi_quick_install_unit_language,
-  opsi_quick_install_unit_query2, oslog, osfunclin, osLinuxRepository;
+  opsi_quick_install_unit_query2, oslog;
 
 {$R *.lfm}
 
 { TQuery }
 
 procedure TQuery.FormActivate(Sender: TObject);
-var
-  distroName, distroRelease: string;
 begin
   // bring all panels to the same position (QuickInstall.panelLeft)
   AdjustPanelPosition(self);
   // always the same background (as in QuickInstall)
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
 
-  // .../lazarus/common/oslog.pas
-  LogDatei := TLogInfo.Create;
-  LogDatei.CreateTheLogfile('opsi_quickinstall.log');
-
-  // like function GetDefaultURL in osLinuxRepository
-  RadioBtnOpsi41.Caption := baseURLOpsi41 + 'stable/';
-  RadioBtnOpsi42.Caption := baseURLOpsi42 + 'stable/';
-  //ShowMessage(IntToStr(Pos('7.', '127.8')));
-  distroName := getLinuxDistroName;
-  distroRelease := getLinuxDistroRelease;
-  //ShowMessage(distroName);
-  //ShowMessage(distroRelease);
-
-  if (distroName = 'CentOS') and (Pos('7', distroRelease) = 1) then
-  begin
-      RadioBtnOpsi41.Caption := RadioBtnOpsi41.Caption + 'CentOS_7/';
-      RadioBtnOpsi42.Caption := RadioBtnOpsi42.Caption + 'CentOS_7/';
-  end
-  else
-  if distroName = 'Debian' then
-  begin
-    if Pos('8', distroRelease) = 1 then
-    begin
-      RadioBtnOpsi41.Caption := RadioBtnOpsi41.Caption + 'Debian_8/';
-      RadioBtnOpsi42.Caption := RadioBtnOpsi42.Caption + 'Debian_8/';
-    end
-    else
-    if Pos('9', distroRelease) = 1 then
-    begin
-      RadioBtnOpsi41.Caption := RadioBtnOpsi41.Caption + 'Debian_9/';
-      RadioBtnOpsi42.Caption := RadioBtnOpsi42.Caption + 'Debian_9/';
-    end
-    else
-    if Pos('10', distroRelease) = 1 then
-    begin
-      RadioBtnOpsi41.Caption := RadioBtnOpsi41.Caption + 'Debian_10/';
-      RadioBtnOpsi42.Caption := RadioBtnOpsi42.Caption + 'Debian_10/';
-    end;
-  end
-  else
-  if distroName = 'openSUSE project' then
-  begin
-    if distroRelease = '15.1' then
-    begin
-      RadioBtnOpsi41.Caption := RadioBtnOpsi41.Caption + 'openSUSE_Leap_15.1/';
-      RadioBtnOpsi42.Caption := RadioBtnOpsi42.Caption + 'openSUSE_Leap_15.1/';
-    end
-    else if distroRelease = '42.3' then
-    begin
-      RadioBtnOpsi41.Caption := RadioBtnOpsi41.Caption + 'openSUSE_Leap_42.3/';
-      RadioBtnOpsi42.Caption := RadioBtnOpsi42.Caption + 'openSUSE_Leap_42.3/';
-    end;
-  end
-  else
-  if (distroName = 'RedHatEnterpriseServer') and (Pos('7', distroRelease) = 1) then
-  begin
-      RadioBtnOpsi41.Caption := RadioBtnOpsi41.Caption + 'RHEL_7/';
-      RadioBtnOpsi42.Caption := RadioBtnOpsi42.Caption + 'RHEL_7/';
-  end
-  else
-  if distroName = 'Ubuntu' then
-  begin
-    if distroRelease = '16.04' then
-    begin
-      RadioBtnOpsi41.Caption := RadioBtnOpsi41.Caption + 'xUbuntu_16.04/';
-      RadioBtnOpsi42.Caption := RadioBtnOpsi42.Caption + 'xUbuntu_16.04/';
-    end
-    else if distroRelease = '18.04' then
-    begin
-      RadioBtnOpsi41.Caption := RadioBtnOpsi41.Caption + 'xUbuntu_18.04/';
-      RadioBtnOpsi42.Caption := RadioBtnOpsi42.Caption + 'xUbuntu_18.04/';
-    end;
-  end;
+  RadioBtnOpsi41.Caption := baseURLOpsi41 + QuickInstall.DistrUrlPart;
+  RadioBtnOpsi42.Caption := baseURLOpsi42 + QuickInstall.DistrUrlPart;
 
   RadioBtnOpsi41NoCache.Caption := RadioBtnOpsi41.Caption;
   RadioBtnOpsi42NoCache.Caption := RadioBtnOpsi42.Caption;
@@ -165,4 +92,3 @@ begin
 end;
 
 end.
-
