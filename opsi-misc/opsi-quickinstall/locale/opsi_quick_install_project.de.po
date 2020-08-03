@@ -192,17 +192,9 @@ msgstr "Neustarten, wenn das Skript beendet ist:"
 msgid "Repository:"
 msgstr "Repository:"
 
-#: toverview.labelrepo2.caption
-msgid "[Repo]"
-msgstr ""
-
 #: toverview.labelreponocache.caption
 msgid "Repository (without cache proxy):"
 msgstr "Repository (ohne Cache-Proxy):"
-
-#: toverview.labelreponocache2.caption
-msgid "[Repo no cache]"
-msgstr ""
 
 #: toverview.labeltftproot.caption
 #, fuzzy
@@ -230,15 +222,11 @@ msgstr " fertigstellen "
 
 #: tpassword.caption
 msgid "Authentication required"
-msgstr ""
+msgstr "Authentifizierung erforderlich"
 
 #: tpassword.checkboxshowpassword.caption
 msgid "Show password"
-msgstr ""
-
-#: tpassword.editpassword.text
-msgid "Hi blub blub blub aaaaaaaaaaaaaaa bbbbbbbbbbb cccccccccccc"
-msgstr ""
+msgstr "Passwort sichtbar machen"
 
 #: tpassword.labelpassword.caption
 msgid "Password:"
@@ -248,7 +236,8 @@ msgstr "Passwort:"
 msgid ""
 "Authentication is required to install opsi-server.\n"
 "Who are you logged in as?\n"
-msgstr ""
+msgstr "Zur Installation von Opsi-Server ist eine Authentifizierung erforderlich.\n"
+"Als was sind Sie angemeldet?\n"
 
 #: tpassword.radiobtnroot.caption
 msgid "Root"
@@ -271,6 +260,26 @@ msgstr " weiter > "
 #: tquery.caption
 msgid "Opsi quick install - query (part 1)"
 msgstr "Opsi Quick-Install - Abfrage (Teil 1)"
+
+#: tquery.editopsi41nocache.text
+msgctxt "tquery.editopsi41nocache.text"
+msgid "opsi 4.1"
+msgstr ""
+
+#: tquery.editopsi42nocache.text
+msgctxt "tquery.editopsi42nocache.text"
+msgid "opsi 4.2"
+msgstr ""
+
+#: tquery.editrepoopsi41.text
+msgctxt "tquery.editrepoopsi41.text"
+msgid "opsi 4.1"
+msgstr ""
+
+#: tquery.editrepoopsi42.text
+msgctxt "tquery.editrepoopsi42.text"
+msgid "opsi 4.2"
+msgstr ""
 
 #: tquery.labelnocache.caption
 msgid ""
@@ -296,26 +305,6 @@ msgstr ""
 msgctxt "tquery.radiobtnnone.caption"
 msgid "None"
 msgstr "Keiner"
-
-#: tquery.radiobtnopsi41.caption
-msgctxt "tquery.radiobtnopsi41.caption"
-msgid "opsi 4.1"
-msgstr ""
-
-#: tquery.radiobtnopsi41nocache.caption
-msgctxt "tquery.radiobtnopsi41nocache.caption"
-msgid "opsi 4.1"
-msgstr ""
-
-#: tquery.radiobtnopsi42.caption
-msgctxt "tquery.radiobtnopsi42.caption"
-msgid "opsi 4.2"
-msgstr ""
-
-#: tquery.radiobtnopsi42nocache.caption
-msgctxt "tquery.radiobtnopsi42nocache.caption"
-msgid "opsi 4.2"
-msgstr ""
 
 #: tquery.radiobtnothernocache.caption
 msgctxt "tquery.radiobtnothernocache.caption"
@@ -704,17 +693,17 @@ msgstr "Opsi Quick-Install - Abfrage (Benutzer-Informationen Teil 1)"
 
 #: tquery6.editnameadmin.text
 msgid "adminuser"
-msgstr ""
+msgstr "adminuser"
 
 #: tquery6.editnameip.text
 msgctxt "tquery6.editnameip.text"
 msgid "auto"
-msgstr ""
+msgstr "auto"
 
 #: tquery6.editnumberip.text
 msgctxt "tquery6.editnumberip.text"
 msgid "auto"
-msgstr ""
+msgstr "auto"
 
 #: tquery6.editpasswordadmin.text
 msgctxt "tquery6.editpasswordadmin.text"
@@ -800,13 +789,15 @@ msgstr " weiter > "
 msgid "Opsi quick install"
 msgstr "Opsi Quick Install"
 
-#: tquickinstall.label1.caption
-msgid "Please select a setup type:"
-msgstr "Bitte wählen Sie einen Setup-Typ:"
-
 #: tquickinstall.labelsellanguage.caption
 msgid "Please choose a language for this setup program:"
 msgstr "Bitte wählen Sie eine Sprache für dieses Setup-Programm:"
+
+#: tquickinstall.labelsetup.caption
+#, fuzzy
+msgctxt "tquickinstall.labelsetup.caption"
+msgid "Please select a setup type:"
+msgstr "Bitte wählen Sie einen Setup-Typ:"
 
 #: tquickinstall.labelwelcome.caption
 msgid "Welcome to the installation of opsi-server on this computer!"

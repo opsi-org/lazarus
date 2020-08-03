@@ -186,16 +186,8 @@ msgstr ""
 msgid "Repository:"
 msgstr ""
 
-#: toverview.labelrepo2.caption
-msgid "[Repo]"
-msgstr ""
-
 #: toverview.labelreponocache.caption
 msgid "Repository (without cache proxy):"
-msgstr ""
-
-#: toverview.labelreponocache2.caption
-msgid "[Repo no cache]"
 msgstr ""
 
 #: toverview.labeltftproot.caption
@@ -224,10 +216,6 @@ msgstr ""
 
 #: tpassword.checkboxshowpassword.caption
 msgid "Show password"
-msgstr ""
-
-#: tpassword.editpassword.text
-msgid "Hi blub blub blub aaaaaaaaaaaaaaa bbbbbbbbbbb cccccccccccc"
 msgstr ""
 
 #: tpassword.labelpassword.caption
@@ -262,6 +250,26 @@ msgstr ""
 msgid "Opsi quick install - query (part 1)"
 msgstr ""
 
+#: tquery.editopsi41nocache.text
+msgctxt "tquery.editopsi41nocache.text"
+msgid "opsi 4.1"
+msgstr ""
+
+#: tquery.editopsi42nocache.text
+msgctxt "tquery.editopsi42nocache.text"
+msgid "opsi 4.2"
+msgstr ""
+
+#: tquery.editrepoopsi41.text
+msgctxt "tquery.editrepoopsi41.text"
+msgid "opsi 4.1"
+msgstr ""
+
+#: tquery.editrepoopsi42.text
+msgctxt "tquery.editrepoopsi42.text"
+msgid "opsi 4.2"
+msgstr ""
+
 #: tquery.labelnocache.caption
 msgid ""
 "(Base-) Repository for opsi-server installation\n"
@@ -283,26 +291,6 @@ msgstr ""
 #: tquery.radiobtnnone.caption
 msgctxt "tquery.radiobtnnone.caption"
 msgid "None"
-msgstr ""
-
-#: tquery.radiobtnopsi41.caption
-msgctxt "tquery.radiobtnopsi41.caption"
-msgid "opsi 4.1"
-msgstr ""
-
-#: tquery.radiobtnopsi41nocache.caption
-msgctxt "tquery.radiobtnopsi41nocache.caption"
-msgid "opsi 4.1"
-msgstr ""
-
-#: tquery.radiobtnopsi42.caption
-msgctxt "tquery.radiobtnopsi42.caption"
-msgid "opsi 4.2"
-msgstr ""
-
-#: tquery.radiobtnopsi42nocache.caption
-msgctxt "tquery.radiobtnopsi42nocache.caption"
-msgid "opsi 4.2"
 msgstr ""
 
 #: tquery.radiobtnothernocache.caption
@@ -780,12 +768,13 @@ msgstr ""
 msgid "Opsi quick install"
 msgstr ""
 
-#: tquickinstall.label1.caption
-msgid "Please select a setup type:"
-msgstr ""
-
 #: tquickinstall.labelsellanguage.caption
 msgid "Please choose a language for this setup program:"
+msgstr ""
+
+#: tquickinstall.labelsetup.caption
+msgctxt "tquickinstall.labelsetup.caption"
+msgid "Please select a setup type:"
 msgstr ""
 
 #: tquickinstall.labelwelcome.caption

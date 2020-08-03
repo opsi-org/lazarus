@@ -123,19 +123,19 @@ msgstr ""
 #, fuzzy
 msgctxt "toverview.labeldhcp.caption"
 msgid "Run opsi dhcp server:"
-msgstr "Run opsi dhcp server:"
+msgstr ""
 
 #: toverview.labeldomain.caption
 #, fuzzy
 msgctxt "toverview.labeldomain.caption"
 msgid "DNS Domain:"
-msgstr "DNS Domain:"
+msgstr ""
 
 #: toverview.labelelilo.caption
 #, fuzzy
 msgctxt "toverview.labelelilo.caption"
 msgid "Elilo.efi has timeout of 2 seconds:"
-msgstr "Elilo.efi has timeout of 2 seconds:"
+msgstr ""
 
 #: toverview.labelfinish.caption
 msgctxt "toverview.labelfinish.caption"
@@ -151,7 +151,7 @@ msgstr ""
 #, fuzzy
 msgctxt "toverview.labelmodules.caption"
 msgid "Copy modules:"
-msgstr "Copy modules:"
+msgstr ""
 
 #: toverview.labelnameservergateway.caption
 msgctxt "toverview.labelnameservergateway.caption"
@@ -180,41 +180,33 @@ msgstr ""
 #, fuzzy
 msgctxt "toverview.labelproxy.caption"
 msgid "Proxy:"
-msgstr "Proxy:"
+msgstr ""
 
 #: toverview.labelreboot.caption
 #, fuzzy
 msgctxt "toverview.labelreboot.caption"
 msgid "Reboot after script is finished:"
-msgstr "Reboot after script is finished:"
+msgstr ""
 
 #: toverview.labelrepo.caption
 msgid "Repository:"
 msgstr "Repository:"
 
-#: toverview.labelrepo2.caption
-msgid "[Repo]"
-msgstr ""
-
 #: toverview.labelreponocache.caption
 msgid "Repository (without cache proxy):"
 msgstr "Repository (no Cache-Proxy):"
-
-#: toverview.labelreponocache2.caption
-msgid "[Repo no cache]"
-msgstr ""
 
 #: toverview.labeltftproot.caption
 #, fuzzy
 msgctxt "toverview.labeltftproot.caption"
 msgid "TFTPROOT symlink points to:"
-msgstr "TFTPROOT symlink points to:"
+msgstr ""
 
 #: toverview.labelupdate.caption
 #, fuzzy
 msgctxt "toverview.labelupdate.caption"
 msgid "Install from stable, update to repo kind:"
-msgstr "Install from stable, update to repo kind:"
+msgstr ""
 
 #: tpassword.btnback.caption
 #, fuzzy
@@ -234,10 +226,6 @@ msgstr ""
 
 #: tpassword.checkboxshowpassword.caption
 msgid "Show password"
-msgstr ""
-
-#: tpassword.editpassword.text
-msgid "Hi blub blub blub aaaaaaaaaaaaaaa bbbbbbbbbbb cccccccccccc"
 msgstr ""
 
 #: tpassword.labelpassword.caption
@@ -272,6 +260,26 @@ msgstr " next > "
 msgid "Opsi quick install - query (part 1)"
 msgstr "Opsi quick install - query (part 1)"
 
+#: tquery.editopsi41nocache.text
+msgctxt "tquery.editopsi41nocache.text"
+msgid "opsi 4.1"
+msgstr ""
+
+#: tquery.editopsi42nocache.text
+msgctxt "tquery.editopsi42nocache.text"
+msgid "opsi 4.2"
+msgstr ""
+
+#: tquery.editrepoopsi41.text
+msgctxt "tquery.editrepoopsi41.text"
+msgid "opsi 4.1"
+msgstr ""
+
+#: tquery.editrepoopsi42.text
+msgctxt "tquery.editrepoopsi42.text"
+msgid "opsi 4.2"
+msgstr ""
+
 #: tquery.labelnocache.caption
 msgid ""
 "(Base-) Repository for opsi-server installation\n"
@@ -294,26 +302,6 @@ msgstr ""
 msgctxt "tquery.radiobtnnone.caption"
 msgid "None"
 msgstr "None"
-
-#: tquery.radiobtnopsi41.caption
-msgctxt "tquery.radiobtnopsi41.caption"
-msgid "opsi 4.1"
-msgstr ""
-
-#: tquery.radiobtnopsi41nocache.caption
-msgctxt "tquery.radiobtnopsi41nocache.caption"
-msgid "opsi 4.1"
-msgstr ""
-
-#: tquery.radiobtnopsi42.caption
-msgctxt "tquery.radiobtnopsi42.caption"
-msgid "opsi 4.2"
-msgstr ""
-
-#: tquery.radiobtnopsi42nocache.caption
-msgctxt "tquery.radiobtnopsi42nocache.caption"
-msgid "opsi 4.2"
-msgstr ""
 
 #: tquery.radiobtnothernocache.caption
 msgctxt "tquery.radiobtnothernocache.caption"
@@ -796,13 +784,15 @@ msgstr " next > "
 msgid "Opsi quick install"
 msgstr "Opsi quick install"
 
-#: tquickinstall.label1.caption
-msgid "Please select a setup type:"
-msgstr "Please select a setup type:"
-
 #: tquickinstall.labelsellanguage.caption
 msgid "Please choose a language for this setup program:"
 msgstr "Please choose a language for this setup program:"
+
+#: tquickinstall.labelsetup.caption
+#, fuzzy
+msgctxt "tquickinstall.labelsetup.caption"
+msgid "Please select a setup type:"
+msgstr "Please select a setup type:"
 
 #: tquickinstall.labelwelcome.caption
 msgid "Welcome to the installation of opsi-server on this computer!"

@@ -16,9 +16,13 @@ type
     BackgrImage: TImage;
     BtnNext: TButton;
     BtnBack: TButton;
+    EditOpsi41NoCache: TEdit;
+    EditOpsi42NoCache: TEdit;
+    EditRepoOpsi41: TEdit;
+    EditRepoOpsi42: TEdit;
     EditProxy: TEdit;
     EditRepo: TEdit;
-    EditNoCache: TEdit;
+    EditOtherNoCache: TEdit;
     LabelNoCache: TLabel;
     LabelProxy: TLabel;
     LabelRepo: TLabel;
@@ -62,14 +66,17 @@ procedure TQuery.FormActivate(Sender: TObject);
 begin
   // bring all panels to the same position (QuickInstall.panelLeft)
   AdjustPanelPosition(self);
+  {PanelEditOtherRepo.Left:=PanelEditOtherRepo.Left-QuickInstall.panelLeft;
+  PanelEditOtherProxy.Left:=PanelEditOtherProxy.Left-QuickInstall.panelLeft;
+  PanelEditOtherNoCache.Left:=PanelEditOtherNoCache.Left-QuickInstall.panelLeft;}
   // always the same background (as in QuickInstall)
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
 
-  RadioBtnOpsi41.Caption := baseURLOpsi41 + QuickInstall.DistrUrlPart;
-  RadioBtnOpsi42.Caption := baseURLOpsi42 + QuickInstall.DistrUrlPart;
+  EditRepoOpsi41.Text := baseURLOpsi41 + QuickInstall.DistrUrlPart;
+  EditRepoOpsi42.Text := baseURLOpsi42 + QuickInstall.DistrUrlPart;
 
-  RadioBtnOpsi41NoCache.Caption := RadioBtnOpsi41.Caption;
-  RadioBtnOpsi42NoCache.Caption := RadioBtnOpsi42.Caption;
+  EditOpsi41NoCache.Text := EditRepoOpsi41.Text;
+  EditOpsi42NoCache.Text := EditRepoOpsi42.Text;
 end;
 
 procedure TQuery.FormClose(Sender: TObject; var CloseAction: TCloseAction);

@@ -17,12 +17,11 @@ type
     BtnBack: TButton;
     BtnNext: TButton;
     ComboBoxLanguages: TComboBox;
-    Label1: TLabel;
+    LabelSetup: TLabel;
     WelcomePanel: TPanel;
     QuickInstallPanel: TPanel;
     RadioBtnDefault: TRadioButton;
     RadioBtnCustom: TRadioButton;
-    InfoPanel: TPanel;
     WelcomeLabel2: TLabel;
     LabelWelcome: TLabel;
     LabelSelLanguage: TLabel;
@@ -86,7 +85,7 @@ var
 begin
   for compIndex := 0 to Sender.ComponentCount - 1 do
   begin
-    if Sender.Components[compIndex].ClassName = 'TPanel' then
+    if (Sender.Components[compIndex].ClassName = 'TPanel') then
     begin
       (Sender.Components[compIndex] as TPanel).Left := QuickInstall.panelLeft;
     end;
@@ -147,6 +146,7 @@ begin
   //ShowMessage(distroRelease);
 
   // Change from distroName and -Release to TDistribution and respective URL part
+  // Pos comment !!!
   if (distroName = 'CentOS') and (Pos('7', distroRelease) = 1) then
     begin
       MyDistr := CentOS_7;

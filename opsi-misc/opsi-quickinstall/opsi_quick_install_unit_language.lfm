@@ -46,47 +46,26 @@ object QuickInstall: TQuickInstall
       TabOrder = 0
     end
   end
-  object InfoPanel: TPanel
-    Left = 175
-    Height = 88
-    Top = 336
-    Width = 370
-    BevelOuter = bvNone
-    ClientHeight = 88
-    ClientWidth = 370
-    TabOrder = 2
-    object WelcomeLabel2: TLabel
-      Left = 0
-      Height = 80
-      Top = 0
-      Width = 370
-      Align = alTop
-      AutoSize = False
-      Caption = 'To carry out the remaing installation automatically, we need some information first.'
-      ParentColor = False
-      WordWrap = True
-    end
-  end
   object QuickInstallPanel: TPanel
     Left = 175
-    Height = 82
+    Height = 160
     Top = 224
-    Width = 371
+    Width = 364
     BevelOuter = bvNone
-    ClientHeight = 82
-    ClientWidth = 371
-    TabOrder = 3
-    object Label1: TLabel
+    ClientHeight = 160
+    ClientWidth = 364
+    TabOrder = 2
+    object LabelSetup: TLabel
       Left = 0
       Height = 19
       Top = 0
-      Width = 371
+      Width = 364
       Align = alTop
       Caption = 'Please select a setup type:'
       ParentColor = False
     end
     object RadioBtnDefault: TRadioButton
-      Left = 1
+      Left = 0
       Height = 21
       Top = 24
       Width = 103
@@ -96,12 +75,22 @@ object QuickInstall: TQuickInstall
       TabStop = True
     end
     object RadioBtnCustom: TRadioButton
-      Left = 1
+      Left = 0
       Height = 21
       Top = 48
       Width = 94
       Caption = 'Custom (...)'
       TabOrder = 1
+    end
+    object WelcomeLabel2: TLabel
+      Left = 0
+      Height = 38
+      Top = 122
+      Width = 364
+      Align = alBottom
+      Caption = 'To carry out the remaing installation automatically, we need some information first.'
+      ParentColor = False
+      WordWrap = True
     end
   end
   object WelcomePanel: TPanel
@@ -112,7 +101,7 @@ object QuickInstall: TQuickInstall
     BevelOuter = bvNone
     ClientHeight = 170
     ClientWidth = 372
-    TabOrder = 4
+    TabOrder = 3
     object LabelWelcome: TLabel
       Left = 0
       Height = 46

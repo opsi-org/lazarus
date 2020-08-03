@@ -67,7 +67,7 @@ procedure TPassword.BtnFinishClick(Sender: TObject);
 var
   fileName, propertyName: string;
   FileText: TStringList;
-  Repo: TLinuxRepository;
+  MyRepo: TLinuxRepository;
 begin
   // write user input in l-opsi-server.conf file
   fileName := ExtractFilePath(ParamStr(0)) + 'l-opsi-server.conf';
@@ -175,7 +175,7 @@ begin
   else if Query.RadioBtnOpsi42NoCache.Checked then
     FileText.Add(propertyName + '=???4.2???')
   else
-    FileText.Add(propertyName + '=' + Query.EditNoCache.Text);
+    FileText.Add(propertyName + '=' + Query.EditOtherNoCache.Text);
 
   propertyName := 'patch_default_link_for_bootimage';
   if Query4.RadioBtnMenu.Checked then
@@ -225,7 +225,8 @@ begin
   FileText.Free;
 
   // create repository
-  Repo:=TLinuxRepository.Create(QuickInstall.MyDistr, EditPassword.Text, RadioBtnSudo.Checked);
+  MyRepo:=TLinuxRepository.Create(QuickInstall.MyDistr, EditPassword.Text, RadioBtnSudo.Checked);
+  //MyRepo
 
   // close forms
   Overview.Close;

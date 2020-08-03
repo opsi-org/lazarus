@@ -15,9 +15,9 @@ type
     BackgrImage: TImage;
     BtnBack: TButton;
     BtnFinish: TButton;
+    EditRepo: TEdit;
+    EditRepoNoCache: TEdit;
     LabelFinish: TLabel;
-    LabelRepoNoCache2: TLabel;
-    LabelRepo2: TLabel;
     LabelProds: TLabel;
     LabelNameserverGateway: TLabel;
     LabelDomain: TLabel;
@@ -37,7 +37,6 @@ type
     LabelProxy: TLabel;
     LabelRepo: TLabel;
     BigPanel: TPanel;
-    PanelFinish: TPanel;
     PanelRepoNoCache: TPanel;
     PanelRepo: TPanel;
     PanelDHCP: TPanel;
@@ -109,13 +108,18 @@ begin
     PanelDHCP.Visible := True
   else
     PanelDHCP.Visible := False;
+  // !!! Setting PanelOpsiProds.Anchors makes the two labels LabelReboot and
+  // LabelDHCP appear above the DHCP panel as required
+
+  LabelFinish.BorderSpacing.Top := 30;
+
   // Repository
   if Query.RadioBtnOpsi41.Checked then
-    LabelRepo2.Caption := ' ' + QuickInstall.baseURLOpsi41 + QuickInstall.DistrUrlPart
+    EditRepo.Text := ' ' + QuickInstall.baseURLOpsi41 + QuickInstall.DistrUrlPart
   else if Query.RadioBtnOpsi42.Checked then
-    LabelRepo2.Caption := ' ' + QuickInstall.baseURLOpsi42 + QuickInstall.DistrUrlPart
+    EditRepo.Text := ' ' + QuickInstall.baseURLOpsi42 + QuickInstall.DistrUrlPart
   else
-    LabelRepo2.Caption := ' ' + Query.EditRepo.Text;
+    EditRepo.Text := ' ' + Query.EditRepo.Text;
   // Proxy
   if Query.RadioBtnNone.Checked then
     LabelProxy.Caption := rsProxy + ' ' + Query.RadioBtnNone.Caption
@@ -125,11 +129,11 @@ begin
     LabelProxy.Caption := rsProxy + ' ' + Query.EditProxy.Text;
   // Repository (no cache)
   if Query.RadioBtnOpsi41NoCache.Checked then
-    LabelRepoNoCache2.Caption := ' ' + QuickInstall.baseURLOpsi41 + QuickInstall.DistrUrlPart
+    EditRepoNoCache.Text := ' ' + QuickInstall.baseURLOpsi41 + QuickInstall.DistrUrlPart
   else if Query.RadioBtnOpsi42NoCache.Checked then
-    LabelRepoNoCache2.Caption := ' ' + QuickInstall.baseURLOpsi42 + QuickInstall.DistrUrlPart
+    EditRepoNoCache.Text := ' ' + QuickInstall.baseURLOpsi42 + QuickInstall.DistrUrlPart
   else
-    LabelRepoNoCache2.Caption := ' ' + Query.EditNoCache.Text;
+    EditRepoNoCache.Text := ' ' + Query.EditOtherNoCache.Text;
   // Backend
   if Query2.RadioBtnFile.Checked then
     LabelBackendRepoKind.Caption := rsBackend + ' ' + Query2.RadioBtnFile.Caption
