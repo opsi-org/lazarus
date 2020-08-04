@@ -17,6 +17,7 @@ type
     BtnFinish: TButton;
     LabelFinish: TLabel;
     MemoOverview: TMemo;
+    PanelFinish: TPanel;
     procedure BtnBackClick(Sender: TObject);
     procedure BtnFinishClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -80,10 +81,10 @@ procedure TOverview.FormActivate(Sender: TObject);
 var
   prod: integer;
 begin
-  //AdjustPanelPosition(self);
-  BigPanel.Visible:=False;
+  AdjustPanelPosition(self);
+  //BigPanel.Visible:=False;
   MemoOverview.Left := QuickInstall.panelLeft;
-  LabelFinish.Left := QuickInstall.panelLeft;
+  //LabelFinish.Left := QuickInstall.panelLeft;
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
   {if Query4.RadioBtnDhcpYes.Checked then
     PanelDHCP.Visible := True
@@ -92,7 +93,7 @@ begin
   // !!! Setting PanelOpsiProds.Anchors makes the two labels LabelReboot and
   // LabelDHCP appear above the DHCP panel as required}
 
-  LabelFinish.BorderSpacing.Top := 30;
+  //LabelFinish.BorderSpacing.Top := 30;
 
   MemoOverview.Clear;
   // Repository

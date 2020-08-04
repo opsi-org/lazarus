@@ -135,6 +135,17 @@ msgstr ""
 msgid "Distribution"
 msgstr ""
 
+#: tdistribution.labelcorrect.caption
+msgid ""
+"\n"
+"If this is correct, please click 'next >' to continue.\n"
+"If not, please edit the distribution name and then continue with 'next >'.\n"
+msgstr ""
+
+#: tdistribution.labeldistr.caption
+msgid "We recognized the following distribution on this computer:"
+msgstr ""
+
 #: toverview.btnback.caption
 msgctxt "toverview.btnback.caption"
 msgid " < back "
@@ -149,97 +160,9 @@ msgstr ""
 msgid "Overview"
 msgstr ""
 
-#: toverview.labeladminnamepassword.caption
-msgctxt "toverview.labeladminnamepassword.caption"
-msgid "Opsi admin user name:password:"
-msgstr ""
-
-#: toverview.labelbackendrepokind.caption
-msgid "Backend:Repo kind:"
-msgstr ""
-
-#: toverview.labeldhcp.caption
-msgctxt "toverview.labeldhcp.caption"
-msgid "Run opsi dhcp server:"
-msgstr ""
-
-#: toverview.labeldomain.caption
-msgctxt "toverview.labeldomain.caption"
-msgid "DNS Domain:"
-msgstr ""
-
-#: toverview.labelelilo.caption
-msgctxt "toverview.labelelilo.caption"
-msgid "Elilo.efi has timeout of 2 seconds:"
-msgstr ""
-
 #: toverview.labelfinish.caption
 msgctxt "toverview.labelfinish.caption"
 msgid "Finally click 'finish' to start the installation of opsi-server."
-msgstr ""
-
-#: toverview.labelip.caption
-msgctxt "toverview.labelip.caption"
-msgid "IP name:IP number:"
-msgstr ""
-
-#: toverview.labelmodules.caption
-msgctxt "toverview.labelmodules.caption"
-msgid "Copy modules:"
-msgstr ""
-
-#: toverview.labelnameservergateway.caption
-msgctxt "toverview.labelnameservergateway.caption"
-msgid "Primary nameserver:Gateway:"
-msgstr ""
-
-#: toverview.labelnetmasknetwork.caption
-msgctxt "toverview.labelnetmasknetwork.caption"
-msgid "Netmask:Network address:"
-msgstr ""
-
-#: toverview.labelopsiprods.caption
-msgctxt "toverview.labelopsiprods.caption"
-msgid "Products in depot:"
-msgstr ""
-
-#: toverview.labelpassworducs.caption
-msgctxt "toverview.labelpassworducs.caption"
-msgid "Password of admin of UCS domain controller:"
-msgstr ""
-
-#: toverview.labelprods.caption
-msgid "[Prods]"
-msgstr ""
-
-#: toverview.labelproxy.caption
-msgctxt "toverview.labelproxy.caption"
-msgid "Proxy:"
-msgstr ""
-
-#: toverview.labelreboot.caption
-msgctxt "toverview.labelreboot.caption"
-msgid "Reboot after script is finished:"
-msgstr ""
-
-#: toverview.labelrepo.caption
-msgctxt "toverview.labelrepo.caption"
-msgid "Repository:"
-msgstr ""
-
-#: toverview.labelreponocache.caption
-msgctxt "toverview.labelreponocache.caption"
-msgid "Repository (without cache proxy):"
-msgstr ""
-
-#: toverview.labeltftproot.caption
-msgctxt "toverview.labeltftproot.caption"
-msgid "TFTPROOT symlink points to:"
-msgstr ""
-
-#: toverview.labelupdate.caption
-msgctxt "toverview.labelupdate.caption"
-msgid "Install from stable, update to repo kind:"
 msgstr ""
 
 #: tpassword.btnback.caption

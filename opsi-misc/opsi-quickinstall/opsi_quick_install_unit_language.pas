@@ -48,7 +48,7 @@ type
     // set it to True here in opsi_quick_install_unit_language.
     initialProds: boolean;
     MyDistr: TDistribution;
-    DistrUrlPart: string;
+    distroName, distroRelease, DistrUrlPart: string;
   end;
 
 
@@ -97,7 +97,6 @@ end;
 procedure TQuickInstall.FormCreate(Sender: TObject);
 var
   Languages: TStringList;
-  distroName, distroRelease: string;
 begin
   // set constant form size
   Height := 450;

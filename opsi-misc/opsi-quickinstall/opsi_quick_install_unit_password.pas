@@ -55,6 +55,9 @@ uses
 
 procedure TPassword.FormActivate(Sender: TObject);
 begin
+  Password.Left:=Overview.Left+Round(Overview.Width/2)-Round(Width/2);
+  Password.Top:=Overview.Top+Round(Overview.Height/2)-Round(Height/2);
+  // for displaying password as dots
   EditPassword.EchoMode:=emPassword;
 end;
 
@@ -69,7 +72,7 @@ var
   FileText: TStringList;
   MyRepo: TLinuxRepository;
 begin
-  // write user input in l-opsi-server.conf file
+  // write user input in l-opsi-server.conf file:
   fileName := ExtractFilePath(ParamStr(0)) + 'l-opsi-server.conf';
   FileText := TStringList.Create;
 

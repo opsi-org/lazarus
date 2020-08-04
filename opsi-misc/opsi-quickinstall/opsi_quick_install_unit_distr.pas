@@ -5,7 +5,7 @@ unit opsi_quick_install_unit_distr;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls;
 
 type
 
@@ -14,8 +14,13 @@ type
   TDistribution = class(TForm)
     BtnBack: TButton;
     BtnNext: TButton;
+    EditDistr: TEdit;
+    LabelCorrect: TLabel;
+    LabelDistr: TLabel;
+    PanelDistr: TPanel;
     procedure BtnBackClick(Sender: TObject);
     procedure BtnNextClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
 
   public
@@ -28,6 +33,9 @@ var
 
 implementation
 
+uses
+  opsi_quick_install_unit_language;
+
 {$R *.lfm}
 
 { TDistribution }
@@ -36,6 +44,15 @@ procedure TDistribution.BtnNextClick(Sender: TObject);
 begin
   GoOn:= True;
   Distribution.Close;
+end;
+
+procedure TDistribution.FormCreate(Sender: TObject);
+begin
+  // centering form Distribution nicely on form QuickInstall
+  Distribution.Left:=QuickInstall.Left+Round(QuickInstall.Width/2)-Round(Width/2);
+  Distribution.Top:=QuickInstall.Top+Round(QuickInstall.Height/2)-Round(Height/2);
+
+  EditDistr.Text := QuickInstall.distroName + ' ' + QuickInstall.distroRelease;
 end;
 
 procedure TDistribution.BtnBackClick(Sender: TObject);

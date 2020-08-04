@@ -7,11 +7,9 @@ msgid "Opsi admin user name:"
 msgstr "Opsi-Admin-User Name:"
 
 #: opsi_quick_install_unit_overview.rsadminpassword
-#, fuzzy
-#| msgid "password:"
 msgctxt "opsi_quick_install_unit_overview.rsadminpassword"
 msgid "Opsi admin user password:"
-msgstr "Passwort:"
+msgstr "Opsi-Admin-User Passwort:"
 
 #: opsi_quick_install_unit_overview.rsbackend
 msgctxt "opsi_quick_install_unit_overview.rsbackend"
@@ -69,7 +67,6 @@ msgid "Run opsi dhcp server:"
 msgstr "Opsi-DHCP-Server verwenden:"
 
 #: opsi_quick_install_unit_overview.rsprods
-#, fuzzy
 msgctxt "opsi_quick_install_unit_overview.rsprods"
 msgid "Products in depot:"
 msgstr "Produkte im Depot:"
@@ -85,7 +82,6 @@ msgid "Reboot after script is finished:"
 msgstr "Neustarten, wenn das Skript beendet ist:"
 
 #: opsi_quick_install_unit_overview.rsrepo
-#, fuzzy
 msgctxt "opsi_quick_install_unit_overview.rsrepo"
 msgid "Repository:"
 msgstr "Repository:"
@@ -96,7 +92,6 @@ msgid "Repo kind:"
 msgstr "Repository-Art:"
 
 #: opsi_quick_install_unit_overview.rsreponocache
-#, fuzzy
 msgctxt "opsi_quick_install_unit_overview.rsreponocache"
 msgid "Repository (without cache proxy):"
 msgstr "Repository (ohne Cache-Proxy):"
@@ -117,32 +112,39 @@ msgid "Install from stable, update to repo kind:"
 msgstr "Von stable installieren, auf Repo-Art aktualisieren:"
 
 #: opsi_quick_install_unit_query6.rsnext
-#, fuzzy
 msgctxt "opsi_quick_install_unit_query6.rsnext"
 msgid " next > "
 msgstr " weiter > "
 
 #: opsi_quick_install_unit_query6.rsoverview
-#, fuzzy
 msgctxt "opsi_quick_install_unit_query6.rsoverview"
 msgid " overview "
 msgstr " Übersicht "
 
 #: tdistribution.btnback.caption
-#, fuzzy
 msgctxt "tdistribution.btnback.caption"
 msgid " < back "
 msgstr " < zurück "
 
 #: tdistribution.btnnext.caption
-#, fuzzy
 msgctxt "tdistribution.btnnext.caption"
 msgid " next > "
 msgstr " weiter > "
 
 #: tdistribution.caption
 msgid "Distribution"
+msgstr "Distribution"
+
+#: tdistribution.labelcorrect.caption
+msgid ""
+"\n"
+"If this is correct, please click 'next >' to continue.\n"
+"If not, please edit the distribution name and then continue with 'next >'.\n"
 msgstr ""
+
+#: tdistribution.labeldistr.caption
+msgid "We recognized the following distribution on this computer:"
+msgstr "Wir haben folgende Distribution auf diesem Computer erkannt:"
 
 #: toverview.btnback.caption
 msgctxt "toverview.btnback.caption"
@@ -158,115 +160,17 @@ msgstr " fertigstellen "
 msgid "Overview"
 msgstr "Übersicht"
 
-#: toverview.labeladminnamepassword.caption
-msgctxt "toverview.labeladminnamepassword.caption"
-msgid "Opsi admin user name:password:"
-msgstr ""
-
-#: toverview.labelbackendrepokind.caption
-msgid "Backend:Repo kind:"
-msgstr ""
-
-#: toverview.labeldhcp.caption
-#, fuzzy
-msgctxt "toverview.labeldhcp.caption"
-msgid "Run opsi dhcp server:"
-msgstr "Opsi-DHCP-Server verwenden:"
-
-#: toverview.labeldomain.caption
-#, fuzzy
-msgctxt "toverview.labeldomain.caption"
-msgid "DNS Domain:"
-msgstr "DNS Domain:"
-
-#: toverview.labelelilo.caption
-#, fuzzy
-msgctxt "toverview.labelelilo.caption"
-msgid "Elilo.efi has timeout of 2 seconds:"
-msgstr "Elilo.efi hat ein Timeout von 2 Sekunden:"
-
 #: toverview.labelfinish.caption
 msgctxt "toverview.labelfinish.caption"
 msgid "Finally click 'finish' to start the installation of opsi-server."
 msgstr "Klicken Sie auf 'fertigstellen', um die Installation von Opsi-Server zu beginnen."
 
-#: toverview.labelip.caption
-msgctxt "toverview.labelip.caption"
-msgid "IP name:IP number:"
-msgstr ""
-
-#: toverview.labelmodules.caption
-#, fuzzy
-msgctxt "toverview.labelmodules.caption"
-msgid "Copy modules:"
-msgstr "Module kopieren:"
-
-#: toverview.labelnameservergateway.caption
-msgctxt "toverview.labelnameservergateway.caption"
-msgid "Primary nameserver:Gateway:"
-msgstr ""
-
-#: toverview.labelnetmasknetwork.caption
-msgctxt "toverview.labelnetmasknetwork.caption"
-msgid "Netmask:Network address:"
-msgstr ""
-
-#: toverview.labelopsiprods.caption
-msgctxt "toverview.labelopsiprods.caption"
-msgid "Products in depot:"
-msgstr "Produkte im Depot:"
-
-#: toverview.labelpassworducs.caption
-msgctxt "toverview.labelpassworducs.caption"
-msgid "Password of admin of UCS domain controller:"
-msgstr ""
-
-#: toverview.labelprods.caption
-msgid "[Prods]"
-msgstr ""
-
-#: toverview.labelproxy.caption
-#, fuzzy
-msgctxt "toverview.labelproxy.caption"
-msgid "Proxy:"
-msgstr "Proxy:"
-
-#: toverview.labelreboot.caption
-#, fuzzy
-msgctxt "toverview.labelreboot.caption"
-msgid "Reboot after script is finished:"
-msgstr "Neustarten, wenn das Skript beendet ist:"
-
-#: toverview.labelrepo.caption
-msgctxt "toverview.labelrepo.caption"
-msgid "Repository:"
-msgstr "Repository:"
-
-#: toverview.labelreponocache.caption
-msgctxt "toverview.labelreponocache.caption"
-msgid "Repository (without cache proxy):"
-msgstr "Repository (ohne Cache-Proxy):"
-
-#: toverview.labeltftproot.caption
-#, fuzzy
-msgctxt "toverview.labeltftproot.caption"
-msgid "TFTPROOT symlink points to:"
-msgstr "TFTPROOT-Symlink zeigt auf:"
-
-#: toverview.labelupdate.caption
-#, fuzzy
-msgctxt "toverview.labelupdate.caption"
-msgid "Install from stable, update to repo kind:"
-msgstr "Von stable installieren, auf Repo-Art aktualisieren:"
-
 #: tpassword.btnback.caption
-#, fuzzy
 msgctxt "tpassword.btnback.caption"
 msgid " < back "
 msgstr " < zurück "
 
 #: tpassword.btnfinish.caption
-#, fuzzy
 msgctxt "tpassword.btnfinish.caption"
 msgid " finish "
 msgstr " fertigstellen "
