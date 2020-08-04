@@ -2695,8 +2695,9 @@ begin
     end;
   end;
 
-  stringsplitByWhiteSpace(ParamStr, TStringList(paramlist));
+  stringsplitByWhiteSpace(trim(ParamStr), TStringList(paramlist));
   logdatei.log_prog('command: ' + CmdLinePasStr, LLinfo);
+  logdatei.log_prog('ParamStr: ' + ParamStr, LLinfo);
   logdatei.log_prog('Filename from command: ' + filename + '=' + ExpandFileName(
     filename), LLInfo);
   logdatei.log_prog('Params from command: ' + TStringList(paramlist).Text, LLInfo);
@@ -2717,6 +2718,7 @@ begin
       FpcProcess.Executable := filename;
       FpcProcess.Parameters := TStringList(paramlist);
       {$ENDIF WINDOWS}
+      logdatei.log_prog('command: ' + FpcProcess.CommandLine, LLinfo);
 
       if not WaitForReturn then
         catchout := False;

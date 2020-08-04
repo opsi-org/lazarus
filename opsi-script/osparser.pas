@@ -10904,8 +10904,8 @@ begin
           tempfilename + '"  ' + passparas
       else
         commandline :=
-          '"' + programfilename + '" ' + programparas + ' "' +
-          tempfilename + '"  ' + passparas;
+          '"' + programfilename + '" ' + programparas + ' ' +
+          tempfilename + '  ' + passparas;
 
       remaining := winstoption;
       onlyWindows := False;

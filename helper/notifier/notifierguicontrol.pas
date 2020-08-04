@@ -150,7 +150,9 @@ begin
   mythread.Terminate;
   logdatei.log('Hide Form', LLInfo);
   hideNForm;
+  Nform.Close;
   logdatei.log('Wait a scond', LLInfo);
+  DataModule1.ProcessMess;
   sleep(1000);
   //logdatei.log('free_runtime_objects', LLnotice);
   //free_runtime_objects;
