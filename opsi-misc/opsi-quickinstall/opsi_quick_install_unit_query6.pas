@@ -40,13 +40,17 @@ type
 var
   Query6: TQuery6;
 
+resourcestring
+  rsOverview = ' overview ';
+  rsNext = ' next > ';
+
 implementation
 
 uses
   opsi_quick_install_unit_language,
   opsi_quick_install_unit_query4,
   opsi_quick_install_unit_query5_dhcp,
-  opsi_quick_install_unit_query7;
+  opsi_quick_install_unit_query7, opsi_quick_install_unit_overview;
 
 {$R *.lfm}
 
@@ -54,17 +58,33 @@ uses
 
 procedure TQuery6.BtnNextClick(Sender: TObject);
 begin
-  showForm(Query7, self);
-  Query7.BtnBack.Left := BtnBack.Left;
-  Query7.BtnBack.Top := BtnBack.Top;
-  Query7.BtnOverview.Left := BtnNext.Left - 10;
-  Query7.BtnOverview.Top := BtnNext.Top;
+  if QuickInstall.RadioBtnDefault.Checked then
+  begin
+    showForm(Overview, self);
+    Overview.BtnBack.Left := BtnBack.Left;
+    Overview.BtnBack.Top := BtnBack.Top;
+    Overview.BtnFinish.Left := Overview.Width - Overview.BtnBack.Left -
+      Overview.BtnFinish.Width;
+    Overview.BtnFinish.Top := BtnNext.Top;
+  end
+  else
+  begin
+    showForm(Query7, self);
+    Query7.BtnBack.Left := BtnBack.Left;
+    Query7.BtnBack.Top := BtnBack.Top;
+    Query7.BtnOverview.Left := BtnNext.Left - 10;
+    Query7.BtnOverview.Top := BtnNext.Top;
+  end;
 end;
 
 procedure TQuery6.FormActivate(Sender: TObject);
 begin
   AdjustPanelPosition(self);
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
+  if QuickInstall.RadioBtnDefault.Checked then
+    BtnNext.Caption := rsOverview
+  else
+    BtnNext.Caption := rsNext;
 end;
 
 procedure TQuery6.FormClose(Sender: TObject; var CloseAction: TCloseAction);

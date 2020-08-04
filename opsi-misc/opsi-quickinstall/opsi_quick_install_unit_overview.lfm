@@ -1,25 +1,25 @@
 object Overview: TOverview
   Left = 360
-  Height = 550
-  Top = 124
-  Width = 830
+  Height = 449
+  Top = 194
+  Width = 730
   Caption = 'Overview'
-  ClientHeight = 550
-  ClientWidth = 830
+  ClientHeight = 449
+  ClientWidth = 730
   OnActivate = FormActivate
   OnClose = FormClose
   LCLVersion = '2.0.6.0'
   object BackgrImage: TImage
     Left = 0
-    Height = 550
+    Height = 449
     Top = 0
-    Width = 830
+    Width = 730
     Align = alClient
   end
   object BtnBack: TButton
     Left = 16
     Height = 25
-    Top = 505
+    Top = 408
     Width = 51
     AutoSize = True
     Caption = ' < back '
@@ -27,9 +27,9 @@ object Overview: TOverview
     TabOrder = 0
   end
   object BtnFinish: TButton
-    Left = 768
+    Left = 665
     Height = 25
-    Top = 505
+    Top = 408
     Width = 45
     AutoSize = True
     Caption = ' finish '
@@ -37,269 +37,25 @@ object Overview: TOverview
     OnClick = BtnFinishClick
     TabOrder = 1
   end
-  object BigPanel: TPanel
-    Left = 176
-    Height = 499
-    Top = 32
-    Width = 519
-    BevelOuter = bvNone
-    ClientHeight = 499
-    ClientWidth = 519
+  object MemoOverview: TMemo
+    Left = 200
+    Height = 336
+    Top = 40
+    Width = 416
+    Lines.Strings = (
+      'MemoOverview'
+    )
+    ReadOnly = True
+    ScrollBars = ssAutoVertical
     TabOrder = 2
-    object LabelReboot: TLabel
-      Left = 0
-      Height = 19
-      Top = 147
-      Width = 519
-      Align = alTop
-      Caption = 'Reboot after script is finished:'
-      ParentColor = False
-    end
-    object LabelDHCP: TLabel
-      Left = 0
-      Height = 19
-      Top = 166
-      Width = 519
-      Align = alTop
-      Caption = 'Run opsi dhcp server:'
-      ParentColor = False
-    end
-    object PanelDHCP: TPanel
-      AnchorSideTop.Side = asrBottom
-      Left = 0
-      Height = 97
-      Top = 185
-      Width = 519
-      Align = alTop
-      AutoSize = True
-      ClientHeight = 97
-      ClientWidth = 519
-      TabOrder = 0
-      object LabelElilo: TLabel
-        Left = 1
-        Height = 19
-        Top = 1
-        Width = 517
-        Align = alTop
-        Caption = 'Elilo.efi has timeout of 2 seconds:'
-        ParentColor = False
-      end
-      object LabelTFTPROOT: TLabel
-        Left = 1
-        Height = 19
-        Top = 20
-        Width = 517
-        Align = alTop
-        Caption = 'TFTPROOT symlink points to:'
-        ParentColor = False
-      end
-      object LabelDomain: TLabel
-        Left = 1
-        Height = 19
-        Top = 58
-        Width = 517
-        Align = alTop
-        Caption = 'DNS Domain:'
-        ParentColor = False
-      end
-      object LabelNetmaskNetwork: TLabel
-        Left = 1
-        Height = 19
-        Top = 39
-        Width = 517
-        Align = alTop
-        Caption = 'Netmask:Network address:'
-        ParentColor = False
-      end
-      object LabelNameserverGateway: TLabel
-        Left = 1
-        Height = 19
-        Top = 77
-        Width = 517
-        Align = alTop
-        Caption = 'Primary nameserver:Gateway:'
-        ParentColor = False
-      end
-    end
-    object PanelOpsiProds: TPanel
-      AnchorSideBottom.Control = LabelReboot
-      Left = 0
-      Height = 40
-      Top = 107
-      Width = 519
-      Align = alTop
-      Anchors = [akTop, akLeft, akRight, akBottom]
-      AutoSize = True
-      ClientHeight = 40
-      ClientWidth = 519
-      TabOrder = 1
-      object LabelOpsiProds: TLabel
-        Left = 1
-        Height = 19
-        Top = 1
-        Width = 517
-        Align = alTop
-        Caption = 'Products in depot:'
-        ParentColor = False
-        WordWrap = True
-      end
-      object LabelProds: TLabel
-        Left = 1
-        Height = 19
-        Top = 20
-        Width = 517
-        Align = alTop
-        Caption = '[Prods]'
-        ParentColor = False
-        WordWrap = True
-      end
-    end
-    object PanelQuery2: TPanel
-      Left = 0
-      Height = 38
-      Top = 69
-      Width = 519
-      Align = alTop
-      BevelOuter = bvNone
-      ClientHeight = 38
-      ClientWidth = 519
-      TabOrder = 2
-      object LabelBackendRepoKind: TLabel
-        Left = 0
-        Height = 19
-        Top = 0
-        Width = 519
-        Align = alTop
-        Caption = 'Backend:Repo kind:'
-        ParentColor = False
-      end
-      object LabelUpdate: TLabel
-        Left = 0
-        Height = 19
-        Top = 19
-        Width = 519
-        Align = alTop
-        Caption = 'Install from stable, update to repo kind:'
-        ParentColor = False
-      end
-    end
-    object LabelProxy: TLabel
-      Left = 0
-      Height = 19
-      Top = 25
-      Width = 519
-      Align = alTop
-      Caption = 'Proxy:'
-      ParentColor = False
-    end
-    object LabelPasswordUCS: TLabel
-      Left = 0
-      Height = 19
-      Top = 320
-      Width = 519
-      Align = alTop
-      Caption = 'Password of admin of UCS domain controller:'
-      ParentColor = False
-      WordWrap = True
-    end
-    object LabelModules: TLabel
-      Left = 0
-      Height = 19
-      Top = 339
-      Width = 519
-      Align = alTop
-      Caption = 'Copy modules:'
-      ParentColor = False
-    end
-    object PanelRepo: TPanel
-      Left = 0
-      Height = 25
-      Top = 0
-      Width = 519
-      Align = alTop
-      AutoSize = True
-      BevelOuter = bvNone
-      ClientHeight = 25
-      ClientWidth = 519
-      TabOrder = 3
-      object LabelRepo: TLabel
-        Left = 0
-        Height = 25
-        Top = 0
-        Width = 71
-        Align = alLeft
-        Caption = 'Repository:'
-        Layout = tlCenter
-        ParentColor = False
-      end
-      object EditRepo: TEdit
-        Left = 71
-        Height = 25
-        Top = 0
-        Width = 448
-        Align = alClient
-        ReadOnly = True
-        TabOrder = 0
-      end
-    end
-    object PanelRepoNoCache: TPanel
-      Left = 0
-      Height = 25
-      Top = 44
-      Width = 519
-      Align = alTop
-      AutoSize = True
-      BevelOuter = bvNone
-      ClientHeight = 25
-      ClientWidth = 519
-      TabOrder = 4
-      object LabelRepoNoCache: TLabel
-        Left = 0
-        Height = 25
-        Top = 0
-        Width = 206
-        Align = alLeft
-        Caption = 'Repository (without cache proxy):'
-        Layout = tlCenter
-        ParentColor = False
-      end
-      object EditRepoNoCache: TEdit
-        Left = 206
-        Height = 25
-        Top = 0
-        Width = 313
-        Align = alClient
-        ReadOnly = True
-        TabOrder = 0
-      end
-    end
-    object LabelIP: TLabel
-      Left = 0
-      Height = 19
-      Top = 301
-      Width = 519
-      Align = alTop
-      Caption = 'IP name:IP number:'
-      ParentColor = False
-    end
-    object LabelAdminNamePassword: TLabel
-      Left = 0
-      Height = 19
-      Top = 282
-      Width = 519
-      Align = alTop
-      Caption = 'Opsi admin user name:password:'
-      ParentColor = False
-    end
-    object LabelFinish: TLabel
-      Left = 0
-      Height = 19
-      Top = 358
-      Width = 519
-      Align = alTop
-      Caption = 'Finally click ''finish'' to start the installation of opsi-server.'
-      ParentColor = False
-      WordWrap = True
-    end
+  end
+  object LabelFinish: TLabel
+    Left = 200
+    Height = 19
+    Top = 392
+    Width = 341
+    Caption = 'Finally click ''finish'' to start the installation of opsi-server.'
+    ParentColor = False
+    WordWrap = True
   end
 end

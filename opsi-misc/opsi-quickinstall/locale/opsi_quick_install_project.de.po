@@ -7,8 +7,10 @@ msgid "Opsi admin user name:"
 msgstr "Opsi-Admin-User Name:"
 
 #: opsi_quick_install_unit_overview.rsadminpassword
+#, fuzzy
+#| msgid "password:"
 msgctxt "opsi_quick_install_unit_overview.rsadminpassword"
-msgid "password:"
+msgid "Opsi admin user password:"
 msgstr "Passwort:"
 
 #: opsi_quick_install_unit_overview.rsbackend
@@ -66,6 +68,12 @@ msgctxt "opsi_quick_install_unit_overview.rsopsidhcpserver"
 msgid "Run opsi dhcp server:"
 msgstr "Opsi-DHCP-Server verwenden:"
 
+#: opsi_quick_install_unit_overview.rsprods
+#, fuzzy
+msgctxt "opsi_quick_install_unit_overview.rsprods"
+msgid "Products in depot:"
+msgstr "Produkte im Depot:"
+
 #: opsi_quick_install_unit_overview.rsproxy
 msgctxt "opsi_quick_install_unit_overview.rsproxy"
 msgid "Proxy:"
@@ -76,10 +84,22 @@ msgctxt "opsi_quick_install_unit_overview.rsreboot"
 msgid "Reboot after script is finished:"
 msgstr "Neustarten, wenn das Skript beendet ist:"
 
+#: opsi_quick_install_unit_overview.rsrepo
+#, fuzzy
+msgctxt "opsi_quick_install_unit_overview.rsrepo"
+msgid "Repository:"
+msgstr "Repository:"
+
 #: opsi_quick_install_unit_overview.rsrepokind
 msgctxt "opsi_quick_install_unit_overview.rsrepokind"
 msgid "Repo kind:"
 msgstr "Repository-Art:"
+
+#: opsi_quick_install_unit_overview.rsreponocache
+#, fuzzy
+msgctxt "opsi_quick_install_unit_overview.rsreponocache"
+msgid "Repository (without cache proxy):"
+msgstr "Repository (ohne Cache-Proxy):"
 
 #: opsi_quick_install_unit_overview.rstftproot
 msgctxt "opsi_quick_install_unit_overview.rstftproot"
@@ -95,6 +115,34 @@ msgstr "Passwort des Administrators des UCS-Domain-Controllers:"
 msgctxt "opsi_quick_install_unit_overview.rsupdate"
 msgid "Install from stable, update to repo kind:"
 msgstr "Von stable installieren, auf Repo-Art aktualisieren:"
+
+#: opsi_quick_install_unit_query6.rsnext
+#, fuzzy
+msgctxt "opsi_quick_install_unit_query6.rsnext"
+msgid " next > "
+msgstr " weiter > "
+
+#: opsi_quick_install_unit_query6.rsoverview
+#, fuzzy
+msgctxt "opsi_quick_install_unit_query6.rsoverview"
+msgid " overview "
+msgstr " Übersicht "
+
+#: tdistribution.btnback.caption
+#, fuzzy
+msgctxt "tdistribution.btnback.caption"
+msgid " < back "
+msgstr " < zurück "
+
+#: tdistribution.btnnext.caption
+#, fuzzy
+msgctxt "tdistribution.btnnext.caption"
+msgid " next > "
+msgstr " weiter > "
+
+#: tdistribution.caption
+msgid "Distribution"
+msgstr ""
 
 #: toverview.btnback.caption
 msgctxt "toverview.btnback.caption"
@@ -164,6 +212,7 @@ msgid "Netmask:Network address:"
 msgstr ""
 
 #: toverview.labelopsiprods.caption
+msgctxt "toverview.labelopsiprods.caption"
 msgid "Products in depot:"
 msgstr "Produkte im Depot:"
 
@@ -189,10 +238,12 @@ msgid "Reboot after script is finished:"
 msgstr "Neustarten, wenn das Skript beendet ist:"
 
 #: toverview.labelrepo.caption
+msgctxt "toverview.labelrepo.caption"
 msgid "Repository:"
 msgstr "Repository:"
 
 #: toverview.labelreponocache.caption
+msgctxt "toverview.labelreponocache.caption"
 msgid "Repository (without cache proxy):"
 msgstr "Repository (ohne Cache-Proxy):"
 

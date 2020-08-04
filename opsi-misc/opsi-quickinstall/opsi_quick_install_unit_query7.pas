@@ -18,6 +18,7 @@ type
     EditPasswordUCS: TEdit;
     LabelCopyModules: TLabel;
     LabelPasswordMasterAdmin: TLabel;
+    PanelRadio: TPanel;
     PanelCopyModules: TPanel;
     PanelPasswordMasterAdmin: TPanel;
     RadioBtnNo: TRadioButton;
@@ -29,7 +30,7 @@ type
   private
 
   public
-    bigger: integer;
+    //bigger: integer;
   end;
 
 var
@@ -48,9 +49,15 @@ uses
 
 procedure TQuery7.BtnOverviewClick(Sender: TObject);
 begin
-  bigger := 50;
+  showForm(Overview, self);
+  Overview.BtnBack.Left := BtnBack.Left;
+  Overview.BtnBack.Top := BtnBack.Top;
+  Overview.BtnFinish.Left := Overview.Width-Overview.BtnBack.Left-Overview.BtnFinish.Width;
+  Overview.BtnFinish.Top := BtnOverview.Top;
+
+  //bigger := 50;
   // showForm overview with bigger size
-  Overview.Visible := True;
+  {Overview.Visible := True;
   Overview.Height := Height + 2 * bigger;
   Overview.Left := Left - bigger;
   Overview.Top := Top - bigger;
@@ -60,18 +67,14 @@ begin
   Overview.BtnBack.Left := BtnBack.Left;
   Overview.BtnBack.Top := BtnBack.Top + 2 * bigger;
   Overview.BtnFinish.Left := Overview.Width-Overview.BtnBack.Left-Overview.BtnFinish.Width;
-  Overview.BtnFinish.Top := BtnOverview.Top + 2 * bigger;
+  Overview.BtnFinish.Top := BtnOverview.Top + 2 * bigger;}
+
 end;
 
 procedure TQuery7.FormActivate(Sender: TObject);
 begin
   AdjustPanelPosition(self);
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
-
-  if QuickInstall.RadioBtnDefault.Checked then
-    PanelCopyModules.Visible := False
-  else
-    PanelCopyModules.Visible := True;
 end;
 
 procedure TQuery7.FormClose(Sender: TObject; var CloseAction: TCloseAction);

@@ -15,33 +15,8 @@ type
     BackgrImage: TImage;
     BtnBack: TButton;
     BtnFinish: TButton;
-    EditRepo: TEdit;
-    EditRepoNoCache: TEdit;
     LabelFinish: TLabel;
-    LabelProds: TLabel;
-    LabelNameserverGateway: TLabel;
-    LabelDomain: TLabel;
-    LabelNetmaskNetwork: TLabel;
-    LabelTFTPROOT: TLabel;
-    LabelElilo: TLabel;
-    LabelReboot: TLabel;
-    LabelDHCP: TLabel;
-    LabelModules: TLabel;
-    LabelPasswordUCS: TLabel;
-    LabelIP: TLabel;
-    LabelAdminNamePassword: TLabel;
-    LabelOpsiProds: TLabel;
-    LabelUpdate: TLabel;
-    LabelBackendRepoKind: TLabel;
-    LabelRepoNoCache: TLabel;
-    LabelProxy: TLabel;
-    LabelRepo: TLabel;
-    BigPanel: TPanel;
-    PanelRepoNoCache: TPanel;
-    PanelRepo: TPanel;
-    PanelDHCP: TPanel;
-    PanelOpsiProds: TPanel;
-    PanelQuery2: TPanel;
+    MemoOverview: TMemo;
     procedure BtnBackClick(Sender: TObject);
     procedure BtnFinishClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -56,10 +31,13 @@ var
   Overview: TOverview;
 
 resourcestring
+  rsRepo = 'Repository:';
   rsProxy = 'Proxy:';
+  rsRepoNoCache = 'Repository (without cache proxy):';
   rsBackend = 'Backend:';
   rsRepoKind = 'Repo kind:';
   rsUpdate = 'Install from stable, update to repo kind:';
+  rsProds = 'Products in depot:';
   rsReboot = 'Reboot after script is finished:';
   rsOpsiDhcpServer = 'Run opsi dhcp server:';
   rsElilo = 'Elilo.efi has timeout of 2 seconds:';
@@ -70,7 +48,7 @@ resourcestring
   rsNameserver = 'Primary nameserver:';
   rsGateway = 'Gateway:';
   rsAdminName = 'Opsi admin user name:';
-  rsAdminPassword = 'password:';
+  rsAdminPassword = 'Opsi admin user password:';
   rsIPName = 'IP name:';
   rsIPNumber = 'IP number:';
   rsUCSPassword = 'Password of administrator of UCS domain controller:';
@@ -102,19 +80,176 @@ procedure TOverview.FormActivate(Sender: TObject);
 var
   prod: integer;
 begin
-  AdjustPanelPosition(self);
+  //AdjustPanelPosition(self);
+  BigPanel.Visible:=False;
+  MemoOverview.Left := QuickInstall.panelLeft;
+  LabelFinish.Left := QuickInstall.panelLeft;
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
-  if Query4.RadioBtnDhcpYes.Checked then
+  {if Query4.RadioBtnDhcpYes.Checked then
     PanelDHCP.Visible := True
   else
     PanelDHCP.Visible := False;
   // !!! Setting PanelOpsiProds.Anchors makes the two labels LabelReboot and
-  // LabelDHCP appear above the DHCP panel as required
+  // LabelDHCP appear above the DHCP panel as required}
 
   LabelFinish.BorderSpacing.Top := 30;
 
+  MemoOverview.Clear;
   // Repository
   if Query.RadioBtnOpsi41.Checked then
+    MemoOverview.Lines.Add(rsRepo + ' ' + QuickInstall.baseURLOpsi41 +
+      QuickInstall.DistrUrlPart)
+  else if Query.RadioBtnOpsi42.Checked then
+    MemoOverview.Lines.Add(rsRepo + ' ' + QuickInstall.baseURLOpsi42 +
+      QuickInstall.DistrUrlPart)
+  else
+    MemoOverview.Lines.Add(rsRepo + ' ' + Query.EditRepo.Text);
+  // Proxy
+  if Query.RadioBtnNone.Checked then
+    MemoOverview.Lines.Add(rsProxy + ' ' + Query.RadioBtnNone.Caption)
+  else if Query.RadioBtnMyProxy.Checked then
+    MemoOverview.Lines.Add(rsProxy + ' ' + Query.RadioBtnMyProxy.Caption)
+  else
+    MemoOverview.Lines.Add(rsProxy + ' ' + Query.EditProxy.Text);
+  // Repository (no cache)
+  if Query.RadioBtnOpsi41NoCache.Checked then
+    MemoOverview.Lines.Add(rsRepoNoCache + ' ' + QuickInstall.baseURLOpsi41 +
+      QuickInstall.DistrUrlPart)
+  else if Query.RadioBtnOpsi42NoCache.Checked then
+    MemoOverview.Lines.Add(rsRepoNoCache + ' ' + QuickInstall.baseURLOpsi42 +
+      QuickInstall.DistrUrlPart)
+  else
+    MemoOverview.Lines.Add(rsRepoNoCache + ' ' + Query.EditOtherNoCache.Text);
+
+  MemoOverview.Lines.Add('');
+  // Backend
+  if Query2.RadioBtnFile.Checked then
+    MemoOverview.Lines.Add(rsBackend + ' ' + Query2.RadioBtnFile.Caption)
+  else
+    MemoOverview.Lines.Add(rsBackend + ' ' + Query2.RadioBtnMySql.Caption);
+  // Repo kind
+  if Query2.RadioBtnExperimental.Checked then
+    MemoOverview.Lines.Add(rsRepoKind + ' ' + Query2.RadioBtnExperimental.Caption)
+  else if Query2.RadioBtnStable.Checked then
+    MemoOverview.Lines.Add(rsRepoKind + ' ' + Query2.RadioBtnStable.Caption)
+  else
+    MemoOverview.Lines.Add(rsRepoKind + ' ' + Query2.RadioBtnTesting.Caption);
+  // Update
+  if Query2.RadioBtnYes.Checked then
+    MemoOverview.Lines.Add(rsUpdate + ' ' + Query2.RadioBtnYes.Caption)
+  else
+    MemoOverview.Lines.Add(rsUpdate + ' ' + Query2.RadioBtnNo.Caption);
+
+  MemoOverview.Lines.Add('');
+  // Prods
+  MemoOverview.Lines.Add(rsProds);
+  stringProducts := '';
+  for prod := 0 to Query3.PanelProdToChoose.ControlCount - 1 do
+  begin
+    if (Query3.PanelProdToChoose.Controls[prod] as TCheckBox).Checked then
+      stringProducts := stringProducts + ', ' +
+        Query3.PanelProdToChoose.Controls[prod].Caption;
+  end;
+  if stringProducts <> '' then
+    // Index of 'Delete' is 1-based (Delete(stringProducts, 0, 2) wouldn't do anything)
+    Delete(stringProducts, 1, 2);
+  MemoOverview.Lines.Add(stringProducts);
+
+  MemoOverview.Lines.Add('');
+  // Reboot
+  if Query3.RadioBtnYes.Checked then
+    MemoOverview.Lines.Add(rsReboot + ' ' + Query3.RadioBtnYes.Caption)
+  else
+    MemoOverview.Lines.Add(rsReboot + ' ' + Query3.RadioBtnNo.Caption);
+
+  MemoOverview.Lines.Add('');
+  // Dhcp
+  if Query4.RadioBtnDhcpYes.Checked then
+  begin
+    MemoOverview.Lines.Add(rsOpsiDhcpServer + ' ' + Query4.RadioBtnDhcpYes.Caption);
+    // Elilo.efi
+    if Query4.RadioBtnYes.Checked then
+      MemoOverview.Lines.Add(rsElilo + ' ' + Query4.RadioBtnYes.Caption)
+    else
+      MemoOverview.Lines.Add(rsElilo + ' ' + Query4.RadioBtnNo.Caption);
+    // TFTPROOT
+    if Query4.RadioBtnMenu.Checked then
+      MemoOverview.Lines.Add(rsTFTPROOT + ' ' + Query4.RadioBtnMenu.Caption)
+    else
+      MemoOverview.Lines.Add(rsTFTPROOT + ' ' + Query4.RadioBtnNoMenu.Caption);
+    // Netmask
+    if Query5_dhcp.RadioBtnMask0.Checked then
+      MemoOverview.Lines.Add(rsNetmask + ' ' + Query5_dhcp.RadioBtnMask0.Caption)
+    else if Query5_dhcp.RadioBtnMask225.Checked then
+      MemoOverview.Lines.Add(rsNetmask + ' ' + Query5_dhcp.RadioBtnMask225.Caption)
+    else
+      MemoOverview.Lines.Add(rsNetmask + ' ' + Query5_dhcp.EditNetmask.Text);
+    // Network address
+    if Query5_dhcp.RadioBtnAddress10.Checked then
+      MemoOverview.Lines.Add(rsNetwork + ' ' + Query5_dhcp.RadioBtnAddress10.Caption)
+    else if Query5_dhcp.RadioBtnAddress172.Checked then
+      MemoOverview.Lines.Add(rsNetwork + ' ' + Query5_dhcp.RadioBtnAddress172.Caption)
+    else if Query5_dhcp.RadioBtnAddress192.Checked then
+      MemoOverview.Lines.Add(rsNetwork + ' ' + Query5_dhcp.RadioBtnAddress192.Caption)
+    else
+      MemoOverview.Lines.Add(rsNetwork + ' ' + Query5_dhcp.EditAddress.Text);
+    // Domain
+    if Query5_dhcp.RadioBtnUcs.Checked then
+      MemoOverview.Lines.Add(rsDomain + ' ' + Query5_dhcp.RadioBtnUcs.Caption)
+    else if Query5_dhcp.RadioBtnUib.Checked then
+      MemoOverview.Lines.Add(rsDomain + ' ' + Query5_dhcp.RadioBtnUib.Caption)
+    else if Query5_dhcp.RadioBtnVmnat.Checked then
+      MemoOverview.Lines.Add(rsDomain + ' ' + Query5_dhcp.RadioBtnVmnat.Caption)
+    else
+      MemoOverview.Lines.Add(rsDomain + ' ' + Query5_dhcp.EditDomain.Text);
+    // Nameserver
+    if Query5_dhcp.RadioBtnNameserver10.Checked then
+      MemoOverview.Lines.Add(
+        rsNameserver + ' ' + Query5_dhcp.RadioBtnNameserver10.Caption)
+    else if Query5_dhcp.RadioBtnNameserver172.Checked then
+      MemoOverview.Lines.Add(
+        rsNameserver + ' ' + Query5_dhcp.RadioBtnNameserver172.Caption)
+    else if Query5_dhcp.RadioBtnNameserver192.Checked then
+      MemoOverview.Lines.Add(
+        rsNameserver + ' ' + Query5_dhcp.RadioBtnNameserver192.Caption)
+    else
+      MemoOverview.Lines.Add(
+        rsNameserver + ' ' + Query5_dhcp.EditNameserver.Text);
+    // Gateway
+    if Query5_dhcp.RadioBtnGateway10.Checked then
+      MemoOverview.Lines.Add(rsGateway + ' ' + Query5_dhcp.RadioBtnGateway10.Caption)
+    else if Query5_dhcp.RadioBtnGateway172.Checked then
+      MemoOverview.Lines.Add(rsGateway + ' ' + Query5_dhcp.RadioBtnGateway172.Caption)
+    else if Query5_dhcp.RadioBtnGateway192.Checked then
+      MemoOverview.Lines.Add(rsGateway + ' ' + Query5_dhcp.RadioBtnGateway192.Caption)
+    else
+      MemoOverview.Lines.Add(rsGateway + ' ' + Query5_dhcp.EditGateway.Text);
+  end
+  else
+    MemoOverview.Lines.Add(rsOpsiDhcpServer + ' ' + Query4.RadioBtnDhcpNo.Caption);
+
+  MemoOverview.Lines.Add('');
+  // Admin name
+  MemoOverview.Lines.Add(rsAdminName + ' ' + Query6.EditNameAdmin.Text);
+  // Admin password
+  MemoOverview.Lines.Add(rsAdminPassword + ' ' + Query6.EditPasswordAdmin.Text);
+  // IP name
+  MemoOverview.Lines.Add(rsIPName + ' ' + Query6.EditNameIP.Text);
+  // IP number
+  MemoOverview.Lines.Add(rsIPNumber + ' ' + Query6.EditNumberIP.Text);
+
+  MemoOverview.Lines.Add('');
+  // UCS password
+  MemoOverview.Lines.Add(rsUCSPassword + ' ' + Query7.EditPasswordUCS.Text);
+  // Copy modules
+  if Query7.RadioBtnYes.Checked then
+    MemoOverview.Lines.Add(rsCopyModules + ' ' + Query7.RadioBtnYes.Caption)
+  else
+    MemoOverview.Lines.Add(rsCopyModules + ' ' + Query7.RadioBtnNo.Caption);
+
+  ///////////////////////////////////////////////////////////////////////////////
+  // Repository
+  {if Query.RadioBtnOpsi41.Checked then
     EditRepo.Text := ' ' + QuickInstall.baseURLOpsi41 + QuickInstall.DistrUrlPart
   else if Query.RadioBtnOpsi42.Checked then
     EditRepo.Text := ' ' + QuickInstall.baseURLOpsi42 + QuickInstall.DistrUrlPart
@@ -269,7 +404,7 @@ begin
   if Query7.RadioBtnYes.Checked then
     LabelModules.Caption := rsCopyModules + ' ' + Query7.RadioBtnYes.Caption
   else
-    LabelModules.Caption := rsCopyModules + ' ' + Query7.RadioBtnNo.Caption;
+    LabelModules.Caption := rsCopyModules + ' ' + Query7.RadioBtnNo.Caption;}
 end;
 
 procedure TOverview.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -279,12 +414,16 @@ end;
 
 
 procedure TOverview.BtnBackClick(Sender: TObject);
-var
-  bigger: integer;
+//var
+//bigger: integer;
 begin
-  bigger := -Query7.bigger;
+  if QuickInstall.RadioBtnDefault.Checked then
+    showForm(Query6, self)
+  else
+    showForm(Query7, self);
+  //bigger := -Query7.bigger;
   // showForm query7 with normal size
-  Query7.Visible := True;
+  {Query7.Visible := True;
   Query7.Height := Height + 2 * bigger;
   Query7.Left := Left - bigger;
   Query7.Top := Top - bigger;
@@ -295,7 +434,7 @@ begin
   Query7.BtnBack.Top := BtnBack.Top + 2 * bigger;
   Query7.BtnOverview.Left := Query7.Width - Query7.BtnBack.Left -
     Query7.BtnOverview.Width;
-  Query7.BtnOverview.Top := BtnFinish.Top + 2 * bigger;
+  Query7.BtnOverview.Top := BtnFinish.Top + 2 * bigger;}
 end;
 
 end.

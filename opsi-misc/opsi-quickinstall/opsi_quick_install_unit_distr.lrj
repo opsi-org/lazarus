@@ -1,0 +1,5 @@
+{"version":1,"strings":[
+{"hash":187434462,"name":"tdistribution.caption","sourcebytes":[68,105,115,116,114,105,98,117,116,105,111,110],"value":"Distribution"},
+{"hash":241728480,"name":"tdistribution.btnback.caption","sourcebytes":[32,60,32,98,97,99,107,32],"value":" < back "},
+{"hash":80700016,"name":"tdistribution.btnnext.caption","sourcebytes":[32,110,101,120,116,32,62,32],"value":" next > "}
+]}

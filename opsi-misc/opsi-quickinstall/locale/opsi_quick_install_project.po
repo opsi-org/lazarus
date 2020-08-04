@@ -8,7 +8,7 @@ msgstr ""
 
 #: opsi_quick_install_unit_overview.rsadminpassword
 msgctxt "opsi_quick_install_unit_overview.rsadminpassword"
-msgid "password:"
+msgid "Opsi admin user password:"
 msgstr ""
 
 #: opsi_quick_install_unit_overview.rsbackend
@@ -66,6 +66,11 @@ msgctxt "opsi_quick_install_unit_overview.rsopsidhcpserver"
 msgid "Run opsi dhcp server:"
 msgstr ""
 
+#: opsi_quick_install_unit_overview.rsprods
+msgctxt "opsi_quick_install_unit_overview.rsprods"
+msgid "Products in depot:"
+msgstr ""
+
 #: opsi_quick_install_unit_overview.rsproxy
 msgctxt "opsi_quick_install_unit_overview.rsproxy"
 msgid "Proxy:"
@@ -76,9 +81,19 @@ msgctxt "opsi_quick_install_unit_overview.rsreboot"
 msgid "Reboot after script is finished:"
 msgstr ""
 
+#: opsi_quick_install_unit_overview.rsrepo
+msgctxt "opsi_quick_install_unit_overview.rsrepo"
+msgid "Repository:"
+msgstr ""
+
 #: opsi_quick_install_unit_overview.rsrepokind
 msgctxt "opsi_quick_install_unit_overview.rsrepokind"
 msgid "Repo kind:"
+msgstr ""
+
+#: opsi_quick_install_unit_overview.rsreponocache
+msgctxt "opsi_quick_install_unit_overview.rsreponocache"
+msgid "Repository (without cache proxy):"
 msgstr ""
 
 #: opsi_quick_install_unit_overview.rstftproot
@@ -94,6 +109,30 @@ msgstr ""
 #: opsi_quick_install_unit_overview.rsupdate
 msgctxt "opsi_quick_install_unit_overview.rsupdate"
 msgid "Install from stable, update to repo kind:"
+msgstr ""
+
+#: opsi_quick_install_unit_query6.rsnext
+msgctxt "opsi_quick_install_unit_query6.rsnext"
+msgid " next > "
+msgstr ""
+
+#: opsi_quick_install_unit_query6.rsoverview
+msgctxt "opsi_quick_install_unit_query6.rsoverview"
+msgid " overview "
+msgstr ""
+
+#: tdistribution.btnback.caption
+msgctxt "tdistribution.btnback.caption"
+msgid " < back "
+msgstr ""
+
+#: tdistribution.btnnext.caption
+msgctxt "tdistribution.btnnext.caption"
+msgid " next > "
+msgstr ""
+
+#: tdistribution.caption
+msgid "Distribution"
 msgstr ""
 
 #: toverview.btnback.caption
@@ -160,6 +199,7 @@ msgid "Netmask:Network address:"
 msgstr ""
 
 #: toverview.labelopsiprods.caption
+msgctxt "toverview.labelopsiprods.caption"
 msgid "Products in depot:"
 msgstr ""
 
@@ -183,10 +223,12 @@ msgid "Reboot after script is finished:"
 msgstr ""
 
 #: toverview.labelrepo.caption
+msgctxt "toverview.labelrepo.caption"
 msgid "Repository:"
 msgstr ""
 
 #: toverview.labelreponocache.caption
+msgctxt "toverview.labelreponocache.caption"
 msgid "Repository (without cache proxy):"
 msgstr ""
 

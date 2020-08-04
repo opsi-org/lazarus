@@ -226,7 +226,8 @@ begin
 
   // create repository
   MyRepo:=TLinuxRepository.Create(QuickInstall.MyDistr, EditPassword.Text, RadioBtnSudo.Checked);
-  //MyRepo
+  // Set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
+  //MyRepo.GetDefaultURL();
 
   // close forms
   Overview.Close;

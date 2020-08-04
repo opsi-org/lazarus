@@ -63,7 +63,7 @@ implementation
 
 uses
   opsi_quick_install_unit_query, opsi_quick_install_unit_query4,
-  oslog, osfunclin;
+  oslog, osfunclin, opsi_quick_install_unit_distr;
 
 {$R *.lfm}
 
@@ -138,99 +138,105 @@ begin
   LogDatei.CreateTheLogfile('opsi_quickinstall.log');
 
   // (compare function GetDefaultURL in osLinuxRepository:)
-  // following two lines take time and
-  // are therefore executed only once at the beginning of this program
+  // following two lines take time and are therefore executed only...
+  // ...once at the beginning of this program
   distroName := getLinuxDistroName;
   distroRelease := getLinuxDistroRelease;
   //ShowMessage(distroName);
   //ShowMessage(distroRelease);
 
   // Change from distroName and -Release to TDistribution and respective URL part
-  // Pos comment !!!
+  // Pos('7', distroRelease) = 1 checks whether string '7' occurs in string...
+  // ...distroRelease at first position for the fist time (respectively 0th position).
+  // CentOS has releases with names like 7.x-xxxx
   if (distroName = 'CentOS') and (Pos('7', distroRelease) = 1) then
-    begin
-      MyDistr := CentOS_7;
-      DistrUrlPart:= 'CentOS_7/';
-    end
+  begin
+    MyDistr := CentOS_7;
+    DistrUrlPart := 'CentOS_7/';
+  end
   else
   if distroName = 'Debian' then
   begin
-    if Pos('8', distroRelease) = 1 then
-      begin
-        MyDistr := Debian_8;
-        DistrUrlPart:= 'Debian_8/';
-      end
+    if distroRelease = '8' then
+    begin
+      MyDistr := Debian_8;
+      DistrUrlPart := 'Debian_8/';
+    end
     else
-    if Pos('9', distroRelease) = 1 then
-      begin
-        MyDistr := Debian_9;
-        DistrUrlPart:= 'Debian_9/';
-      end
+    if distroRelease = '9' then
+    begin
+      MyDistr := Debian_9;
+      DistrUrlPart := 'Debian_9/';
+    end
     else
-    if Pos('10', distroRelease) = 1 then
-      begin
-        MyDistr := Debian_10;
-        DistrUrlPart:= 'Debian_10/';
-      end;
+    if distroRelease = '10' then
+    begin
+      MyDistr := Debian_10;
+      DistrUrlPart := 'Debian_10/';
+    end;
   end
   else
   if distroName = 'openSUSE project' then
   begin
     if distroRelease = '15.1' then
-      begin
-        MyDistr := openSUSE_Leap_15_1;
-        DistrUrlPart:= 'openSUSE_Leap_15.1/';
-      end
+    begin
+      MyDistr := openSUSE_Leap_15_1;
+      DistrUrlPart := 'openSUSE_Leap_15.1/';
+    end
     else if distroRelease = '42.3' then
-      begin
-        MyDistr := openSUSE_Leap_42_3;
-        DistrUrlPart:= 'openSUSE_Leap_42.3/';
-      end;
+    begin
+      MyDistr := openSUSE_Leap_42_3;
+      DistrUrlPart := 'openSUSE_Leap_42.3/';
+    end;
   end
   else
+  // RHEL has releases like 7.x
   if (distroName = 'RedHatEnterpriseServer') and (Pos('7', distroRelease) = 1) then
-    begin
-      MyDistr := RHEL_7;
-      DistrUrlPart:= 'RHEL_7/';
-    end
+  begin
+    MyDistr := RHEL_7;
+    DistrUrlPart := 'RHEL_7/';
+  end
   else
   if distroName = 'Ubuntu' then
   begin
     if distroRelease = '16.04' then
-      begin
-        MyDistr := xUbuntu_16_04;
-        DistrUrlPart:= 'xUbuntu_16.04/';
-      end
+    begin
+      MyDistr := xUbuntu_16_04;
+      DistrUrlPart := 'xUbuntu_16.04/';
+    end
     else
     if distroRelease = '18.04' then
-      begin
-        MyDistr := xUbuntu_18_04;
-        DistrUrlPart:= 'xUbuntu_18.04/';
-      end;
+    begin
+      MyDistr := xUbuntu_18_04;
+      DistrUrlPart := 'xUbuntu_18.04/';
+    end;
   end;
 end;
 
 procedure TQuickInstall.BtnNextClick(Sender: TObject);
 begin
-  if RadioBtnDefault.Checked then
+  Distribution.ShowModal;
+  if Distribution.GoOn then
   begin
-    // 'self' is current form
-    showForm(Query4, self);
-    // for having the buttons always at the same place (no hard-coding for easier editing)
-    Query4.BtnBack.Left := BtnBack.Left;
-    Query4.BtnBack.Top := BtnBack.Top;
-    Query4.BtnNext.Left := BtnNext.Left;
-    Query4.BtnNext.Top := BtnNext.Top;
-  end
-  else
-  begin
-    showForm(Query, self);
-    Query.BtnBack.Left := BtnBack.Left;
-    Query.BtnBack.Top := BtnBack.Top;
-    Query.BtnNext.Left := BtnNext.Left;
-    Query.BtnNext.Top := BtnNext.Top;
+    if RadioBtnDefault.Checked then
+    begin
+      // 'self' is current form
+      showForm(Query4, self);
+      // for having the buttons always at the same place (no hard-coding for easier editing)
+      Query4.BtnBack.Left := BtnBack.Left;
+      Query4.BtnBack.Top := BtnBack.Top;
+      Query4.BtnNext.Left := BtnNext.Left;
+      Query4.BtnNext.Top := BtnNext.Top;
+    end
+    else
+    begin
+      showForm(Query, self);
+      Query.BtnBack.Left := BtnBack.Left;
+      Query.BtnBack.Top := BtnBack.Top;
+      Query.BtnNext.Left := BtnNext.Left;
+      Query.BtnNext.Top := BtnNext.Top;
+    end;
   end;
-  {Visible := False;}
 end;
 
 procedure TQuickInstall.ComboBoxLanguagesChange(Sender: TObject);
