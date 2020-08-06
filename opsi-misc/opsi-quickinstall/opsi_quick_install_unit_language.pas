@@ -25,7 +25,6 @@ type
     WelcomeLabel2: TLabel;
     LabelWelcome: TLabel;
     LabelSelLanguage: TLabel;
-    PanelCoverBtnBack: TPanel;
     procedure BtnNextClick(Sender: TObject);
     procedure ComboBoxLanguagesChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -33,14 +32,18 @@ type
 
   public
   const
-    // same position for all panels
-    panelLeft = 200;
+    // same width for all panels
+    panelWidth = 450;
+    // base urls for opsi 4.1 and 4.2
     baseURLOpsi41 =
       'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/stable/';
     baseURLOpsi42 =
       'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/stable/';
     // more constants in FormCreate below
   var
+    // same position for all panels
+    panelLeft: integer;
+    BtnNextWidth, BtnOverviewWidth, BtnFinishWidth: integer;
     // same background image for all forms
     BackgrImageFileName: string;
     // for setting selectedAmount:=productAmount only the first time when Query3 is activated
@@ -88,6 +91,7 @@ begin
     if (Sender.Components[compIndex].ClassName = 'TPanel') then
     begin
       (Sender.Components[compIndex] as TPanel).Left := QuickInstall.panelLeft;
+      (Sender.Components[compIndex] as TPanel).Width := QuickInstall.panelWidth;
     end;
   end;
 end;
@@ -103,8 +107,11 @@ begin
   Left := 360;
   Top := 170;
   Width := 730;
-  // set constant button position
+
+  panelLeft := Round((Width - panelWidth) * 2 / 3);
+  // set constant button positions:
   BtnBack.Left := 20;
+  //BtnNext.Width = 'with for english caption'
   BtnNext.Left := Width - BtnBack.Left - BtnNext.Width;
   BtnBack.Top := 410;
   BtnNext.Top := 410;
@@ -126,9 +133,17 @@ begin
   Languages.Add('en');
   // let the combo box show the system language
   ComboBoxLanguages.ItemIndex := Languages.IndexOf(GetDefaultLang);
-
+  // following needs to be set for every language
   if GetDefaultLang = 'de' then
-    BtnNext.Left := Width - BtnBack.Left - 63; //BtnNext.Width = with for english caption
+  begin
+    // needs to be set for every language
+    BtnNextWidth := 63;
+    BtnOverviewWidth := 72;
+    BtnFinishWidth := 88;
+    //BtnNext.Width = 'with for english caption'
+    //BtnNext.Left := Width - BtnNext.Width - BtnBack.Left; doesn't help
+    BtnNext.Left := Width - BtnBack.Left - BtnNextWidth;
+  end;
 
   initialProds := True;
 
@@ -244,6 +259,7 @@ begin
     SetDefaultLang('de')
   else
     SetDefaultLang('en');
+  //ShowMessage(IntToStr(BtnNext.Width));
 end;
 
 end.

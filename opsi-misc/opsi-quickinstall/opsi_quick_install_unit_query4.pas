@@ -18,6 +18,9 @@ type
     LabelDhcp: TLabel;
     LabelFilePointer: TLabel;
     LabelTimeout: TLabel;
+    PanelRadiofilePointer: TPanel;
+    PanelRadioTimeout: TPanel;
+    PanelRadioDhcp: TPanel;
     PanelDhcp: TPanel;
     PanelFilePointer: TPanel;
     PanelTimeout: TPanel;

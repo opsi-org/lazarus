@@ -1,17 +1,21 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
+#: opsi_quick_install_unit_language.rsnext
+#, fuzzy
+msgctxt "opsi_quick_install_unit_language.rsnext"
+msgid " next > "
+msgstr " next > "
+
 #: opsi_quick_install_unit_overview.rsadminname
 msgctxt "opsi_quick_install_unit_overview.rsadminname"
 msgid "Opsi admin user name:"
 msgstr "Opsi admin user name:"
 
 #: opsi_quick_install_unit_overview.rsadminpassword
-#, fuzzy
-#| msgid "password:"
 msgctxt "opsi_quick_install_unit_overview.rsadminpassword"
 msgid "Opsi admin user password:"
-msgstr "password:"
+msgstr "Opsi admin user password:"
 
 #: opsi_quick_install_unit_overview.rsbackend
 msgctxt "opsi_quick_install_unit_overview.rsbackend"
@@ -69,7 +73,6 @@ msgid "Run opsi dhcp server:"
 msgstr "Run opsi dhcp server:"
 
 #: opsi_quick_install_unit_overview.rsprods
-#, fuzzy
 msgctxt "opsi_quick_install_unit_overview.rsprods"
 msgid "Products in depot:"
 msgstr "Products in depot:"
@@ -85,7 +88,6 @@ msgid "Reboot after script is finished:"
 msgstr "Reboot after script is finished:"
 
 #: opsi_quick_install_unit_overview.rsrepo
-#, fuzzy
 msgctxt "opsi_quick_install_unit_overview.rsrepo"
 msgid "Repository:"
 msgstr "Repository:"
@@ -96,10 +98,9 @@ msgid "Repo kind:"
 msgstr "Repo kind:"
 
 #: opsi_quick_install_unit_overview.rsreponocache
-#, fuzzy
 msgctxt "opsi_quick_install_unit_overview.rsreponocache"
 msgid "Repository (without cache proxy):"
-msgstr "Repository (no Cache-Proxy):"
+msgstr "Repository (without cache proxy):"
 
 #: opsi_quick_install_unit_overview.rstftproot
 msgctxt "opsi_quick_install_unit_overview.rstftproot"
@@ -117,32 +118,28 @@ msgid "Install from stable, update to repo kind:"
 msgstr "Install from stable, update to repo kind:"
 
 #: opsi_quick_install_unit_query6.rsnext
-#, fuzzy
 msgctxt "opsi_quick_install_unit_query6.rsnext"
 msgid " next > "
 msgstr " next > "
 
 #: opsi_quick_install_unit_query6.rsoverview
-#, fuzzy
 msgctxt "opsi_quick_install_unit_query6.rsoverview"
 msgid " overview "
 msgstr " overview "
 
 #: tdistribution.btnback.caption
-#, fuzzy
 msgctxt "tdistribution.btnback.caption"
 msgid " < back "
 msgstr " < back "
 
 #: tdistribution.btnnext.caption
-#, fuzzy
 msgctxt "tdistribution.btnnext.caption"
 msgid " next > "
 msgstr " next > "
 
 #: tdistribution.caption
 msgid "Distribution"
-msgstr ""
+msgstr "Distribution"
 
 #: tdistribution.labelcorrect.caption
 msgid ""
@@ -150,10 +147,13 @@ msgid ""
 "If this is correct, please click 'next >' to continue.\n"
 "If not, please edit the distribution name and then continue with 'next >'.\n"
 msgstr ""
+"\n"
+"If this is correct, please click 'next >' to continue.\n"
+"If not, please edit the distribution name and then continue with 'next >'.\n"
 
 #: tdistribution.labeldistr.caption
 msgid "We recognized the following distribution on this computer:"
-msgstr ""
+msgstr "We recognized the following distribution on this computer:"
 
 #: toverview.btnback.caption
 msgctxt "toverview.btnback.caption"
@@ -175,24 +175,22 @@ msgid "Finally click 'finish' to start the installation of opsi-server."
 msgstr "Finally click 'finish' to start the installation of opsi-server."
 
 #: tpassword.btnback.caption
-#, fuzzy
 msgctxt "tpassword.btnback.caption"
 msgid " < back "
 msgstr " < back "
 
 #: tpassword.btnfinish.caption
-#, fuzzy
 msgctxt "tpassword.btnfinish.caption"
 msgid " finish "
 msgstr " finish "
 
 #: tpassword.caption
 msgid "Authentication required"
-msgstr ""
+msgstr "Authentication required"
 
 #: tpassword.checkboxshowpassword.caption
 msgid "Show password"
-msgstr ""
+msgstr "Show password"
 
 #: tpassword.labelpassword.caption
 msgid "Password:"
@@ -203,6 +201,8 @@ msgid ""
 "Authentication is required to install opsi-server.\n"
 "Who are you logged in as?\n"
 msgstr ""
+"Authentication is required to install opsi-server.\n"
+"Who are you logged in as?\n"
 
 #: tpassword.radiobtnroot.caption
 msgid "Root"
@@ -755,7 +755,6 @@ msgid "Please choose a language for this setup program:"
 msgstr "Please choose a language for this setup program:"
 
 #: tquickinstall.labelsetup.caption
-#, fuzzy
 msgctxt "tquickinstall.labelsetup.caption"
 msgid "Please select a setup type:"
 msgstr "Please select a setup type:"

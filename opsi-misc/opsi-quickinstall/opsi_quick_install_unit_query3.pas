@@ -38,6 +38,8 @@ type
     CheckBoxOpsiTemplateAdmin: TCheckBox;
     LabelReboot: TLabel;
     LabelOpsiProducts: TLabel;
+    PanelRadioProds: TPanel;
+    PanelRadioReboot: TPanel;
     PanelProdToChoose: TPanel;
     PanelReboot: TPanel;
     PanelOpsiProducts: TPanel;
@@ -157,11 +159,11 @@ end;
 
 procedure TQuery3.BtnBackClick(Sender: TObject);
 begin
-    showForm(Query2, self);
-    Query2.BtnBack.Left := BtnBack.Left;
-    Query2.BtnBack.Top := BtnBack.Top;
-    Query2.BtnNext.Left := BtnNext.Left;
-    Query2.BtnNext.Top := BtnNext.Top;
+  showForm(Query2, self);
+  Query2.BtnBack.Left := BtnBack.Left;
+  Query2.BtnBack.Top := BtnBack.Top;
+  Query2.BtnNext.Left := BtnNext.Left;
+  Query2.BtnNext.Top := BtnNext.Top;
 end;
 
 end.

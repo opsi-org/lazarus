@@ -42,24 +42,29 @@ uses
 
 procedure TDistribution.BtnNextClick(Sender: TObject);
 begin
-  GoOn:= True;
+  GoOn := True;
   Distribution.Close;
 end;
 
 procedure TDistribution.FormCreate(Sender: TObject);
 begin
   // centering form Distribution nicely on form QuickInstall
-  Distribution.Left:=QuickInstall.Left+Round(QuickInstall.Width/2)-Round(Width/2);
-  Distribution.Top:=QuickInstall.Top+Round(QuickInstall.Height/2)-Round(Height/2);
+  Distribution.Left := QuickInstall.Left + Round(QuickInstall.Width / 2) -
+    Round(Width / 2);
+  Distribution.Top := QuickInstall.Top + Round(QuickInstall.Height / 2) -
+    Round(Height / 2);
+
+  BtnBack.Left := QuickInstall.BtnBack.Left;
+  BtnNext.Left := Width - BtnBack.Left - QuickInstall.BtnNextWidth;
+  ShowMessage(BtnNext.Width.ToString);
 
   EditDistr.Text := QuickInstall.distroName + ' ' + QuickInstall.distroRelease;
 end;
 
 procedure TDistribution.BtnBackClick(Sender: TObject);
 begin
-  GoOn:=False;
+  GoOn := False;
   Distribution.Close;
 end;
 
 end.
-

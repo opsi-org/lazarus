@@ -91,14 +91,17 @@ object Query7: TQuery7
         Height = 21
         Top = 0
         Width = 45
+        Align = alLeft
         Caption = 'Yes'
         TabOrder = 0
       end
       object RadioBtnNo: TRadioButton
-        Left = 96
+        Left = 95
         Height = 21
         Top = 0
         Width = 42
+        Align = alLeft
+        BorderSpacing.Left = 50
         Caption = 'No'
         Checked = True
         TabOrder = 1

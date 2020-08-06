@@ -1,6 +1,11 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
+#: opsi_quick_install_unit_language.rsnext
+msgctxt "opsi_quick_install_unit_language.rsnext"
+msgid " next > "
+msgstr ""
+
 #: opsi_quick_install_unit_overview.rsadminname
 msgctxt "opsi_quick_install_unit_overview.rsadminname"
 msgid "Opsi admin user name:"

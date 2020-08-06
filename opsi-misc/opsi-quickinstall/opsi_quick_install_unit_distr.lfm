@@ -9,9 +9,9 @@ object Distribution: TDistribution
   OnCreate = FormCreate
   LCLVersion = '2.0.6.0'
   object BtnBack: TButton
-    Left = 8
+    Left = 16
     Height = 25
-    Top = 208
+    Top = 200
     Width = 51
     AutoSize = True
     Caption = ' < back '
@@ -19,9 +19,9 @@ object Distribution: TDistribution
     TabOrder = 0
   end
   object BtnNext: TButton
-    Left = 256
+    Left = 248
     Height = 25
-    Top = 208
+    Top = 200
     Width = 51
     AutoSize = True
     Caption = ' next > '
@@ -30,18 +30,19 @@ object Distribution: TDistribution
   end
   object PanelDistr: TPanel
     Left = 32
-    Height = 160
+    Height = 158
     Top = 16
-    Width = 266
+    Width = 249
+    AutoSize = True
     BevelOuter = bvNone
-    ClientHeight = 160
-    ClientWidth = 266
+    ClientHeight = 158
+    ClientWidth = 249
     TabOrder = 2
     object EditDistr: TEdit
       Left = 0
       Height = 25
       Top = 38
-      Width = 266
+      Width = 249
       Align = alTop
       TabOrder = 0
     end
@@ -49,7 +50,7 @@ object Distribution: TDistribution
       Left = 0
       Height = 38
       Top = 0
-      Width = 266
+      Width = 249
       Align = alTop
       Caption = 'We recognized the following distribution on this computer:'
       ParentColor = False
@@ -59,7 +60,7 @@ object Distribution: TDistribution
       Left = 0
       Height = 95
       Top = 63
-      Width = 266
+      Width = 249
       Align = alTop
       Caption = #10'If this is correct, please click ''next >'' to continue.'#10'If not, please edit the distribution name and then continue with ''next >''.'
       ParentColor = False

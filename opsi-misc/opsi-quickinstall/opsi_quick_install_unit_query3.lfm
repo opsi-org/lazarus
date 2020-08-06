@@ -54,45 +54,20 @@ object Query3: TQuery3
       ParentColor = False
       WordWrap = True
     end
-    object CheckBoxAll: TCheckBox
-      Left = 0
-      Height = 21
-      Top = 24
-      Width = 43
-      Caption = 'All'
-      Checked = True
-      Font.Height = -16
-      Font.Name = 'Sans'
-      OnChange = CheckBoxAllChange
-      ParentFont = False
-      State = cbChecked
-      TabOrder = 0
-    end
-    object CheckBoxNone: TCheckBox
-      Left = 88
-      Height = 21
-      Top = 24
-      Width = 66
-      Caption = 'None'
-      Font.Height = -16
-      Font.Name = 'Sans'
-      OnChange = CheckBoxNoneChange
-      ParentFont = False
-      TabOrder = 1
-    end
     object PanelProdToChoose: TPanel
       Left = 0
-      Height = 184
-      Top = 56
+      Height = 167
+      Top = 50
       Width = 480
-      Align = alBottom
-      ClientHeight = 184
+      Align = alTop
+      BorderSpacing.Top = 10
+      ClientHeight = 167
       ClientWidth = 480
-      TabOrder = 2
+      TabOrder = 0
       object CheckBoxConfigWinbase: TCheckBox
-        Left = 329
+        Left = 322
         Height = 21
-        Top = 104
+        Top = 97
         Width = 116
         Caption = 'config-winbase'
         Checked = True
@@ -101,9 +76,9 @@ object Query3: TQuery3
         TabOrder = 0
       end
       object CheckBoxConfigWin10: TCheckBox
-        Left = 329
+        Left = 322
         Height = 21
-        Top = 80
+        Top = 73
         Width = 103
         Caption = 'config-win10'
         Checked = True
@@ -112,9 +87,9 @@ object Query3: TQuery3
         TabOrder = 1
       end
       object CheckBoxOpsiLogviewer: TCheckBox
-        Left = 329
+        Left = 322
         Height = 21
-        Top = 56
+        Top = 49
         Width = 114
         Caption = 'opsi-logviewer'
         Checked = True
@@ -123,9 +98,9 @@ object Query3: TQuery3
         TabOrder = 2
       end
       object CheckBoxOpsiSetupDetector: TCheckBox
-        Left = 329
+        Left = 322
         Height = 21
-        Top = 32
+        Top = 25
         Width = 146
         Caption = 'opsi-setup-detector'
         Checked = True
@@ -134,9 +109,9 @@ object Query3: TQuery3
         TabOrder = 3
       end
       object CheckBoxOpsiUefiNetboot: TCheckBox
-        Left = 142
+        Left = 135
         Height = 21
-        Top = 152
+        Top = 145
         Width = 131
         Caption = 'opsi-uefi-netboot'
         Checked = True
@@ -145,9 +120,9 @@ object Query3: TQuery3
         TabOrder = 4
       end
       object CheckBoxOpsiWinpe: TCheckBox
-        Left = 142
+        Left = 135
         Height = 21
-        Top = 128
+        Top = 121
         Width = 90
         Caption = 'opsi-winpe'
         Checked = True
@@ -156,9 +131,9 @@ object Query3: TQuery3
         TabOrder = 5
       end
       object CheckBoxOpsiSetWinUac: TCheckBox
-        Left = 329
+        Left = 322
         Height = 21
-        Top = 8
+        Top = 1
         Width = 122
         Caption = 'opsi-set-win-uac'
         Checked = True
@@ -167,9 +142,9 @@ object Query3: TQuery3
         TabOrder = 6
       end
       object CheckBoxOpsiWimCapture: TCheckBox
-        Left = 142
+        Left = 135
         Height = 21
-        Top = 104
+        Top = 97
         Width = 130
         Caption = 'opsi-wim-capture'
         Checked = True
@@ -178,9 +153,9 @@ object Query3: TQuery3
         TabOrder = 7
       end
       object CheckBoxOpsiScriptTest: TCheckBox
-        Left = 142
+        Left = 135
         Height = 21
-        Top = 80
+        Top = 73
         Width = 115
         Caption = 'opsi-script-test'
         Checked = True
@@ -189,9 +164,9 @@ object Query3: TQuery3
         TabOrder = 8
       end
       object CheckBoxShutdown: TCheckBox
-        Left = 142
+        Left = 135
         Height = 21
-        Top = 56
+        Top = 49
         Width = 131
         Caption = 'shutdownwanted'
         Checked = True
@@ -200,9 +175,9 @@ object Query3: TQuery3
         TabOrder = 9
       end
       object CheckBoxOpsiTemplateAdmin: TCheckBox
-        Left = 142
+        Left = 135
         Height = 21
-        Top = 32
+        Top = 25
         Width = 181
         Caption = 'opsi-template-with-admin'
         Checked = True
@@ -211,9 +186,9 @@ object Query3: TQuery3
         TabOrder = 10
       end
       object CheckBoxOpsiTemplate: TCheckBox
-        Left = 142
+        Left = 135
         Height = 21
-        Top = 8
+        Top = 1
         Width = 109
         Caption = 'opsi-template'
         Checked = True
@@ -222,9 +197,9 @@ object Query3: TQuery3
         TabOrder = 11
       end
       object CheckBoxHwaudit: TCheckBox
-        Left = 8
+        Left = 1
         Height = 21
-        Top = 152
+        Top = 145
         Width = 73
         Caption = 'hwaudit'
         Checked = True
@@ -233,9 +208,9 @@ object Query3: TQuery3
         TabOrder = 12
       end
       object CheckBoxJedit: TCheckBox
-        Left = 8
+        Left = 1
         Height = 21
-        Top = 104
+        Top = 97
         Width = 51
         Caption = 'jedit'
         Checked = True
@@ -244,9 +219,9 @@ object Query3: TQuery3
         TabOrder = 13
       end
       object CheckBoxSwaudit: TCheckBox
-        Left = 8
+        Left = 1
         Height = 21
-        Top = 128
+        Top = 121
         Width = 71
         Caption = 'swaudit'
         Checked = True
@@ -255,9 +230,9 @@ object Query3: TQuery3
         TabOrder = 14
       end
       object CheckBoxOpsiConfiged: TCheckBox
-        Left = 8
+        Left = 1
         Height = 21
-        Top = 80
+        Top = 73
         Width = 107
         Caption = 'opsi-configed'
         Checked = True
@@ -266,9 +241,9 @@ object Query3: TQuery3
         TabOrder = 15
       end
       object CheckBoxJavavm: TCheckBox
-        Left = 8
+        Left = 1
         Height = 21
-        Top = 56
+        Top = 49
         Width = 67
         Caption = 'javavm'
         Checked = True
@@ -277,9 +252,9 @@ object Query3: TQuery3
         TabOrder = 16
       end
       object CheckBoxOpsiWinst: TCheckBox
-        Left = 8
+        Left = 1
         Height = 21
-        Top = 32
+        Top = 25
         Width = 85
         Caption = 'opsi-winst'
         Checked = True
@@ -288,15 +263,56 @@ object Query3: TQuery3
         TabOrder = 17
       end
       object CheckBoxOpsiClientAgent: TCheckBox
-        Left = 8
+        Left = 1
         Height = 21
-        Top = 8
+        Top = 1
         Width = 126
         Caption = 'opsi-client-agent'
         Checked = True
         OnChange = CheckBoxProdChange
         State = cbChecked
         TabOrder = 18
+      end
+    end
+    object PanelRadioProds: TPanel
+      Left = 0
+      Height = 21
+      Top = 19
+      Width = 480
+      Align = alTop
+      AutoSize = True
+      BevelOuter = bvNone
+      ClientHeight = 21
+      ClientWidth = 480
+      TabOrder = 1
+      object CheckBoxNone: TCheckBox
+        Left = 93
+        Height = 21
+        Top = 0
+        Width = 66
+        Align = alLeft
+        BorderSpacing.Left = 50
+        Caption = 'None'
+        Font.Height = -16
+        Font.Name = 'Sans'
+        OnChange = CheckBoxNoneChange
+        ParentFont = False
+        TabOrder = 0
+      end
+      object CheckBoxAll: TCheckBox
+        Left = 0
+        Height = 21
+        Top = 0
+        Width = 43
+        Align = alLeft
+        Caption = 'All'
+        Checked = True
+        Font.Height = -16
+        Font.Name = 'Sans'
+        OnChange = CheckBoxAllChange
+        ParentFont = False
+        State = cbChecked
+        TabOrder = 1
       end
     end
   end
@@ -317,24 +333,40 @@ object Query3: TQuery3
       Align = alTop
       Caption = 'May the server reboot if the script is finished?'
       ParentColor = False
+      WordWrap = True
     end
-    object RadioBtnYes: TRadioButton
+    object PanelRadioReboot: TPanel
       Left = 0
       Height = 21
-      Top = 24
-      Width = 45
-      Caption = 'Yes'
-      Checked = True
+      Top = 19
+      Width = 424
+      Align = alTop
+      AutoSize = True
+      BevelOuter = bvNone
+      ClientHeight = 21
+      ClientWidth = 424
       TabOrder = 0
-      TabStop = True
-    end
-    object RadioBtnNo: TRadioButton
-      Left = 88
-      Height = 21
-      Top = 24
-      Width = 42
-      Caption = 'No'
-      TabOrder = 1
+      object RadioBtnNo: TRadioButton
+        Left = 95
+        Height = 21
+        Top = 0
+        Width = 42
+        Align = alLeft
+        BorderSpacing.Left = 50
+        Caption = 'No'
+        TabOrder = 0
+      end
+      object RadioBtnYes: TRadioButton
+        Left = 0
+        Height = 21
+        Top = 0
+        Width = 45
+        Align = alLeft
+        Caption = 'Yes'
+        Checked = True
+        TabOrder = 1
+        TabStop = True
+      end
     end
   end
 end

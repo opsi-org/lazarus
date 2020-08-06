@@ -10,6 +10,7 @@ object Query5_dhcp: TQuery5_dhcp
   OnClose = FormClose
   LCLVersion = '2.0.6.0'
   object BackgrImage: TImage
+    AnchorSideTop.Side = asrBottom
     Left = 0
     Height = 450
     Top = 0
@@ -53,11 +54,14 @@ object Query5_dhcp: TQuery5_dhcp
       Align = alTop
       Caption = 'Netmask (for dhcp)'
       ParentColor = False
+      WordWrap = True
     end
     object RadioBtnMask0: TRadioButton
+      AnchorSideTop.Control = LabelNetmask
+      AnchorSideTop.Side = asrBottom
       Left = 0
       Height = 21
-      Top = 24
+      Top = 19
       Width = 100
       Caption = '255.255.0.0'
       Checked = True
@@ -65,26 +69,41 @@ object Query5_dhcp: TQuery5_dhcp
       TabStop = True
     end
     object RadioBtnMask225: TRadioButton
-      Left = 136
+      AnchorSideLeft.Control = RadioBtnMask0
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = LabelNetmask
+      AnchorSideTop.Side = asrBottom
+      Left = 120
       Height = 21
-      Top = 24
+      Top = 19
       Width = 116
+      BorderSpacing.Left = 20
       Caption = '255.255.255.0'
       TabOrder = 1
     end
     object RadioBtnOtherMask: TRadioButton
-      Left = 272
+      AnchorSideLeft.Control = RadioBtnMask225
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = LabelNetmask
+      AnchorSideTop.Side = asrBottom
+      Left = 256
       Height = 21
-      Top = 24
+      Top = 19
       Width = 65
+      BorderSpacing.Left = 20
       Caption = 'Other:'
       TabOrder = 2
     end
     object EditNetmask: TEdit
-      Left = 360
+      AnchorSideLeft.Control = RadioBtnOtherMask
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = LabelNetmask
+      AnchorSideTop.Side = asrBottom
+      Left = 331
       Height = 25
-      Top = 24
+      Top = 19
       Width = 146
+      BorderSpacing.Left = 10
       TabOrder = 3
     end
   end
@@ -105,46 +124,66 @@ object Query5_dhcp: TQuery5_dhcp
       Align = alTop
       Caption = 'Network address (for dhcp)'
       ParentColor = False
+      WordWrap = True
     end
     object RadioBtnAddress10: TRadioButton
+      AnchorSideTop.Control = LabelAddress
+      AnchorSideTop.Side = asrBottom
       Left = 0
       Height = 21
-      Top = 24
+      Top = 19
       Width = 92
       Caption = '10.100.0.0'
       TabOrder = 0
     end
     object RadioBtnAddress172: TRadioButton
-      Left = 136
+      AnchorSideLeft.Control = RadioBtnAddress10
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = LabelAddress
+      AnchorSideTop.Side = asrBottom
+      Left = 112
       Height = 21
-      Top = 24
+      Top = 19
       Width = 108
+      BorderSpacing.Left = 20
       Caption = '172.16.166.0'
       TabOrder = 1
     end
     object RadioBtnAddress192: TRadioButton
-      Left = 272
+      AnchorSideLeft.Control = RadioBtnAddress172
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = LabelAddress
+      AnchorSideTop.Side = asrBottom
+      Left = 240
       Height = 21
-      Top = 24
+      Top = 19
       Width = 100
+      BorderSpacing.Left = 20
       Caption = '192.168.0.0'
       Checked = True
       TabOrder = 3
       TabStop = True
     end
     object RadioBtnOtherAddress: TRadioButton
+      AnchorSideTop.Control = RadioBtnAddress10
+      AnchorSideTop.Side = asrBottom
       Left = 0
       Height = 21
-      Top = 48
+      Top = 40
       Width = 65
       Caption = 'Other:'
       TabOrder = 2
     end
     object EditAddress: TEdit
-      Left = 88
+      AnchorSideLeft.Control = RadioBtnOtherAddress
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = RadioBtnAddress10
+      AnchorSideTop.Side = asrBottom
+      Left = 75
       Height = 25
-      Top = 48
+      Top = 40
       Width = 148
+      BorderSpacing.Left = 10
       TabOrder = 4
     end
   end
@@ -152,59 +191,79 @@ object Query5_dhcp: TQuery5_dhcp
     Left = 120
     Height = 74
     Top = 168
-    Width = 410
+    Width = 514
     BevelOuter = bvNone
     ClientHeight = 74
-    ClientWidth = 410
+    ClientWidth = 514
     TabOrder = 4
     object LabelDomain: TLabel
       Left = 0
       Height = 19
       Top = 0
-      Width = 410
+      Width = 514
       Align = alTop
       Caption = 'DNS domain (for dhcp)'
       ParentColor = False
+      WordWrap = True
     end
     object RadioBtnUcs: TRadioButton
+      AnchorSideTop.Control = LabelDomain
+      AnchorSideTop.Side = asrBottom
       Left = 0
       Height = 21
-      Top = 24
+      Top = 19
       Width = 72
       Caption = 'ucs.test'
       TabOrder = 0
     end
     object RadioBtnUib: TRadioButton
-      Left = 136
+      AnchorSideLeft.Control = RadioBtnUcs
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = LabelDomain
+      AnchorSideTop.Side = asrBottom
+      Left = 92
       Height = 21
-      Top = 24
+      Top = 19
       Width = 74
+      BorderSpacing.Left = 20
       Caption = 'uib.local'
       Checked = True
       TabOrder = 3
       TabStop = True
     end
     object RadioBtnVmnat: TRadioButton
-      Left = 272
+      AnchorSideLeft.Control = RadioBtnUib
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = LabelDomain
+      AnchorSideTop.Side = asrBottom
+      Left = 186
       Height = 21
-      Top = 24
+      Top = 19
       Width = 94
+      BorderSpacing.Left = 20
       Caption = 'vmnat.local'
       TabOrder = 1
     end
     object RadioBtnOtherDomain: TRadioButton
+      AnchorSideTop.Control = RadioBtnUcs
+      AnchorSideTop.Side = asrBottom
       Left = 0
       Height = 21
-      Top = 48
+      Top = 40
       Width = 65
       Caption = 'Other:'
       TabOrder = 2
     end
     object EditDomain: TEdit
-      Left = 88
+      AnchorSideLeft.Control = RadioBtnOtherDomain
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = RadioBtnUcs
+      AnchorSideTop.Side = asrBottom
+      Left = 75
       Height = 25
-      Top = 48
+      Top = 40
       Width = 148
+      BorderSpacing.Left = 10
       TabOrder = 4
     end
   end
@@ -212,119 +271,160 @@ object Query5_dhcp: TQuery5_dhcp
     Left = 120
     Height = 80
     Top = 256
-    Width = 410
+    Width = 514
     BevelOuter = bvNone
     ClientHeight = 80
-    ClientWidth = 410
+    ClientWidth = 514
     TabOrder = 5
     object LabelNameserver: TLabel
       Left = 0
       Height = 19
       Top = 0
-      Width = 410
+      Width = 514
       Align = alTop
       Caption = 'Primary nameserver (for dhcp)'
       ParentColor = False
+      WordWrap = True
     end
     object RadioBtnNameserver10: TRadioButton
+      AnchorSideTop.Control = LabelNameserver
+      AnchorSideTop.Side = asrBottom
       Left = 0
       Height = 21
-      Top = 24
+      Top = 19
       Width = 92
       Caption = '10.100.1.2'
       TabOrder = 0
     end
     object RadioBtnNameserver172: TRadioButton
-      Left = 136
+      AnchorSideLeft.Control = RadioBtnNameserver10
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = LabelNameserver
+      AnchorSideTop.Side = asrBottom
+      Left = 112
       Height = 21
-      Top = 24
+      Top = 19
       Width = 108
+      BorderSpacing.Left = 20
       Caption = '172.16.166.1'
       TabOrder = 1
     end
     object RadioBtnNameserver192: TRadioButton
-      Left = 272
+      AnchorSideLeft.Control = RadioBtnNameserver172
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = LabelNameserver
+      AnchorSideTop.Side = asrBottom
+      Left = 240
       Height = 21
-      Top = 24
+      Top = 19
       Width = 116
+      BorderSpacing.Left = 20
       Caption = '192.168.1.245'
       Checked = True
       TabOrder = 3
       TabStop = True
     end
     object RadioBtnOtherNameserver: TRadioButton
+      AnchorSideTop.Control = RadioBtnNameserver10
+      AnchorSideTop.Side = asrBottom
       Left = 0
       Height = 21
-      Top = 48
+      Top = 40
       Width = 65
       Caption = 'Other:'
       TabOrder = 2
     end
     object EditNameserver: TEdit
-      Left = 88
+      AnchorSideLeft.Control = RadioBtnOtherNameserver
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = RadioBtnNameserver10
+      AnchorSideTop.Side = asrBottom
+      Left = 75
       Height = 25
-      Top = 48
+      Top = 40
       Width = 148
+      BorderSpacing.Left = 10
       TabOrder = 4
     end
   end
   object PanelGateway: TPanel
+    AnchorSideTop.Side = asrBottom
     Left = 120
     Height = 80
     Top = 344
-    Width = 410
+    Width = 514
     BevelOuter = bvNone
     ClientHeight = 80
-    ClientWidth = 410
+    ClientWidth = 514
     TabOrder = 6
     object LabelGateway: TLabel
       Left = 0
       Height = 19
       Top = 0
-      Width = 410
+      Width = 514
       Align = alTop
       Caption = 'Gateway (option routers for dhcp)'
       ParentColor = False
+      WordWrap = True
     end
     object RadioBtnGateway10: TRadioButton
+      AnchorSideTop.Control = LabelGateway
+      AnchorSideTop.Side = asrBottom
       Left = 0
       Height = 21
-      Top = 24
+      Top = 19
       Width = 92
       Caption = '10.100.1.2'
       TabOrder = 0
     end
     object RadioBtnGateway172: TRadioButton
-      Left = 136
+      AnchorSideLeft.Control = RadioBtnGateway10
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = LabelGateway
+      AnchorSideTop.Side = asrBottom
+      Left = 112
       Height = 21
-      Top = 24
+      Top = 19
       Width = 108
+      BorderSpacing.Left = 20
       Caption = '172.16.166.1'
       TabOrder = 1
     end
     object RadioBtnGateway192: TRadioButton
-      Left = 272
+      AnchorSideLeft.Control = RadioBtnGateway172
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = LabelGateway
+      AnchorSideTop.Side = asrBottom
+      Left = 240
       Height = 21
-      Top = 24
+      Top = 19
       Width = 116
+      BorderSpacing.Left = 20
       Caption = '192.168.1.245'
       Checked = True
       TabOrder = 2
       TabStop = True
     end
     object RadioBtnOtherGateway: TRadioButton
+      AnchorSideTop.Control = RadioBtnGateway10
+      AnchorSideTop.Side = asrBottom
       Left = 0
       Height = 21
-      Top = 48
+      Top = 40
       Width = 65
       Caption = 'Other:'
       TabOrder = 3
     end
     object EditGateway: TEdit
-      Left = 88
+      AnchorSideLeft.Control = RadioBtnOtherGateway
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = RadioBtnGateway10
+      AnchorSideTop.Side = asrBottom
+      Left = 75
       Height = 25
-      Top = 48
+      Top = 40
       Width = 144
+      BorderSpacing.Left = 10
       TabOrder = 4
     end
   end

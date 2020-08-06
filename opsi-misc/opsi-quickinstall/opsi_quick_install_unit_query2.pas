@@ -18,6 +18,9 @@ type
     Label1: TLabel;
     LabelRepoKind: TLabel;
     LabelBackend: TLabel;
+    PanelRadioUpdate: TPanel;
+    PanelRadioRepoKind: TPanel;
+    PanelRadioBackend: TPanel;
     PanelUpdate: TPanel;
     PanelRepoKind: TPanel;
     PanelBackend: TPanel;

@@ -5,7 +5,8 @@ unit opsi_quick_install_unit_password;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
+  MaskEdit;
 
 type
 
@@ -55,8 +56,9 @@ uses
 
 procedure TPassword.FormActivate(Sender: TObject);
 begin
-  Password.Left:=Overview.Left+Round(Overview.Width/2)-Round(Width/2);
-  Password.Top:=Overview.Top+Round(Overview.Height/2)-Round(Height/2);
+  Left:=Overview.Left+Round(Overview.Width/2)-Round(Width/2);
+  Top:=Overview.Top+Round(Overview.Height/2)-Round(Height/2);
+  BtnFinish.Left:=Width-BtnBack.Left-QuickInstall.BtnFinishWidth;
   // for displaying password as dots
   EditPassword.EchoMode:=emPassword;
 end;
@@ -240,6 +242,7 @@ end;
 procedure TPassword.CheckBoxShowPasswordChange(Sender: TObject);
 begin
   if CheckBoxShowPassword.Checked then
+    // TMaskEdit can't do this !?
     EditPassword.EchoMode:=emNormal
   else
     EditPassword.EchoMode:=emPassword;

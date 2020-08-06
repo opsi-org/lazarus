@@ -162,7 +162,7 @@ begin
     end;
     //LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
     if found > 0 then
-      LogDatei.log('Found after kill :' + Inttostr(found) + ' instances of ' +
+      LogDatei.log('Found after kill :' + IntToStr(found) + ' instances of ' +
         exename, LLError);
   end;
   outlines.Free;
@@ -410,9 +410,9 @@ begin
           if resultstring <> '/' then
             { no /home  }
             if resultstring <> '/home' then
-            { use only existing direcories as profile }
-            if DirectoryExists(ExpandFileName(resultstring)) then
-              Result.Add(ExpandFileName(resultstring));
+              { use only existing direcories as profile }
+              if DirectoryExists(ExpandFileName(resultstring)) then
+                Result.Add(ExpandFileName(resultstring));
       end;
     end;
     LogDatei.LogSIndentLevel := LogDatei.LogSIndentLevel - 6;
@@ -997,9 +997,9 @@ begin
   if LogDatei <> nil then
   begin
     LogDatei.LogSIndentLevel := 0;
-    LogDatei.DependentAdd('============   ' + ExtractFileNameOnly(ParamStr(0))
-       + ' shutdown regularly and direct. Time ' +
-      FormatDateTime('yyyy-mm-dd  hh:mm:ss ', now) + '.', LLessential);
+    LogDatei.DependentAdd('============   ' + ExtractFileNameOnly(ParamStr(0)) +
+      ' shutdown regularly and direct. Time ' + FormatDateTime(
+      'yyyy-mm-dd  hh:mm:ss ', now) + '.', LLessential);
 
     sleep(1000);
     //LogDatei.Free;

@@ -78,7 +78,7 @@ begin
   showForm(Query6, self);
   Query6.BtnBack.Left := BtnBack.Left;
   Query6.BtnBack.Top := BtnBack.Top;
-  Query6.BtnNext.Left := BtnNext.Left;
+  Query6.BtnNext.Left := Query6.Width - Query6.BtnBack.Left - Query6.BtnNext.Width;
   Query6.BtnNext.Top := BtnNext.Top;
 end;
 

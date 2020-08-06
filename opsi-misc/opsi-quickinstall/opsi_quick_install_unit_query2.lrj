@@ -6,10 +6,10 @@
 {"hash":446501,"name":"tquery2.radiobtnfile.caption","sourcebytes":[102,105,108,101],"value":"file"},
 {"hash":7670396,"name":"tquery2.radiobtnmysql.caption","sourcebytes":[109,121,115,113,108],"value":"mysql"},
 {"hash":44470879,"name":"tquery2.labelrepokind.caption","sourcebytes":[70,114,111,109,32,119,104,105,99,104,32,114,101,112,111,32,107,105,110,100,32,115,104,111,117,108,100,32,98,101,32,105,110,115,116,97,108,108,101,100,63],"value":"From which repo kind should be installed?"},
-{"hash":183842556,"name":"tquery2.radiobtnexperimental.caption","sourcebytes":[101,120,112,101,114,105,109,101,110,116,97,108],"value":"experimental"},
-{"hash":128612645,"name":"tquery2.radiobtnstable.caption","sourcebytes":[115,116,97,98,108,101],"value":"stable"},
 {"hash":181055543,"name":"tquery2.radiobtntesting.caption","sourcebytes":[116,101,115,116,105,110,103],"value":"testing"},
+{"hash":128612645,"name":"tquery2.radiobtnstable.caption","sourcebytes":[115,116,97,98,108,101],"value":"stable"},
+{"hash":183842556,"name":"tquery2.radiobtnexperimental.caption","sourcebytes":[101,120,112,101,114,105,109,101,110,116,97,108],"value":"experimental"},
 {"hash":242148303,"name":"tquery2.label1.caption","sourcebytes":[73,110,115,116,97,108,108,32,102,105,114,115,116,32,102,114,111,109,32,115,116,97,98,108,101,32,97,110,100,32,116,104,97,110,32,117,112,100,97,116,101,32,116,111,32,114,101,112,111,32,107,105,110,100,63],"value":"Install first from stable and than update to repo kind?"},
-{"hash":24515,"name":"tquery2.radiobtnyes.caption","sourcebytes":[89,101,115],"value":"Yes"},
-{"hash":1359,"name":"tquery2.radiobtnno.caption","sourcebytes":[78,111],"value":"No"}
+{"hash":1359,"name":"tquery2.radiobtnno.caption","sourcebytes":[78,111],"value":"No"},
+{"hash":24515,"name":"tquery2.radiobtnyes.caption","sourcebytes":[89,101,115],"value":"Yes"}
 ]}

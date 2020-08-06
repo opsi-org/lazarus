@@ -38,123 +38,173 @@ object Query2: TQuery2
     TabOrder = 1
   end
   object PanelBackend: TPanel
-    Left = 152
-    Height = 72
+    Left = 216
+    Height = 59
     Top = 64
-    Width = 512
+    Width = 391
     BevelOuter = bvNone
-    ClientHeight = 72
-    ClientWidth = 512
+    ClientHeight = 59
+    ClientWidth = 391
     TabOrder = 2
     object LabelBackend: TLabel
       Left = 0
       Height = 38
       Top = 0
-      Width = 512
+      Width = 391
       Align = alTop
       Caption = 'Which backend should be installed?'#10'(mysql needs valid activation file)'
       ParentColor = False
       WordWrap = True
     end
-    object RadioBtnFile: TRadioButton
+    object PanelRadioBackend: TPanel
       Left = 0
       Height = 21
-      Top = 40
-      Width = 43
-      Caption = 'file'
-      Checked = True
+      Top = 38
+      Width = 391
+      Align = alTop
+      AutoSize = True
+      BevelOuter = bvNone
+      ClientHeight = 21
+      ClientWidth = 391
       TabOrder = 0
-      TabStop = True
-    end
-    object RadioBtnMySql: TRadioButton
-      Left = 129
-      Height = 21
-      Top = 40
-      Width = 60
-      Caption = 'mysql'
-      TabOrder = 1
+      object RadioBtnFile: TRadioButton
+        Left = 0
+        Height = 21
+        Top = 0
+        Width = 43
+        Align = alLeft
+        Caption = 'file'
+        Checked = True
+        TabOrder = 0
+        TabStop = True
+      end
+      object RadioBtnMySql: TRadioButton
+        Left = 93
+        Height = 21
+        Top = 0
+        Width = 60
+        Align = alLeft
+        BorderSpacing.Left = 50
+        Caption = 'mysql'
+        TabOrder = 1
+      end
     end
   end
   object PanelRepoKind: TPanel
-    Left = 150
-    Height = 50
+    Left = 216
+    Height = 40
     Top = 192
-    Width = 514
+    Width = 391
     BevelOuter = bvNone
-    ClientHeight = 50
-    ClientWidth = 514
+    ClientHeight = 40
+    ClientWidth = 391
     TabOrder = 3
     object LabelRepoKind: TLabel
       Left = 0
       Height = 19
       Top = 0
-      Width = 514
+      Width = 391
       Align = alTop
       Caption = 'From which repo kind should be installed?'
       ParentColor = False
+      WordWrap = True
     end
-    object RadioBtnExperimental: TRadioButton
+    object PanelRadioRepoKind: TPanel
       Left = 0
       Height = 21
-      Top = 24
-      Width = 107
-      Caption = 'experimental'
+      Top = 19
+      Width = 391
+      Align = alTop
+      AutoSize = True
+      BevelOuter = bvNone
+      ClientHeight = 21
+      ClientWidth = 391
       TabOrder = 0
-    end
-    object RadioBtnStable: TRadioButton
-      Left = 128
-      Height = 21
-      Top = 24
-      Width = 61
-      Caption = 'stable'
-      Checked = True
-      TabOrder = 2
-      TabStop = True
-    end
-    object RadioBtnTesting: TRadioButton
-      Left = 216
-      Height = 21
-      Top = 24
-      Width = 67
-      Caption = 'testing'
-      TabOrder = 1
+      object RadioBtnTesting: TRadioButton
+        Left = 268
+        Height = 21
+        Top = 0
+        Width = 67
+        Align = alLeft
+        BorderSpacing.Left = 50
+        Caption = 'testing'
+        TabOrder = 0
+      end
+      object RadioBtnStable: TRadioButton
+        Left = 157
+        Height = 21
+        Top = 0
+        Width = 61
+        Align = alLeft
+        BorderSpacing.Left = 50
+        Caption = 'stable'
+        Checked = True
+        TabOrder = 1
+        TabStop = True
+      end
+      object RadioBtnExperimental: TRadioButton
+        Left = 0
+        Height = 21
+        Top = 0
+        Width = 107
+        Align = alLeft
+        Caption = 'experimental'
+        TabOrder = 2
+      end
     end
   end
   object PanelUpdate: TPanel
-    Left = 150
-    Height = 50
+    Left = 216
+    Height = 40
     Top = 304
-    Width = 514
+    Width = 391
     BevelOuter = bvNone
-    ClientHeight = 50
-    ClientWidth = 514
+    ClientHeight = 40
+    ClientWidth = 391
     TabOrder = 4
     object Label1: TLabel
       Left = 0
       Height = 19
       Top = 0
-      Width = 514
+      Width = 391
       Align = alTop
+      AutoSize = False
       Caption = 'Install first from stable and than update to repo kind?'
       ParentColor = False
+      WordWrap = True
     end
-    object RadioBtnYes: TRadioButton
+    object PanelRadioUpdate: TPanel
       Left = 0
       Height = 21
-      Top = 24
-      Width = 45
-      Caption = 'Yes'
+      Top = 19
+      Width = 391
+      Align = alTop
+      AutoSize = True
+      BevelOuter = bvNone
+      ClientHeight = 21
+      ClientWidth = 391
       TabOrder = 0
-    end
-    object RadioBtnNo: TRadioButton
-      Left = 129
-      Height = 21
-      Top = 24
-      Width = 42
-      Caption = 'No'
-      Checked = True
-      TabOrder = 1
-      TabStop = True
+      object RadioBtnNo: TRadioButton
+        Left = 95
+        Height = 21
+        Top = 0
+        Width = 42
+        Align = alLeft
+        BorderSpacing.Left = 50
+        Caption = 'No'
+        Checked = True
+        TabOrder = 0
+        TabStop = True
+      end
+      object RadioBtnYes: TRadioButton
+        Left = 0
+        Height = 21
+        Top = 0
+        Width = 45
+        Align = alLeft
+        Caption = 'Yes'
+        TabOrder = 1
+      end
     end
   end
 end

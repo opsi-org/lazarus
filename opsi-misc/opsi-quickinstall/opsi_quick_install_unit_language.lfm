@@ -26,26 +26,6 @@ object QuickInstall: TQuickInstall
     OnClick = BtnNextClick
     TabOrder = 0
   end
-  object PanelCoverBtnBack: TPanel
-    Left = 20
-    Height = 50
-    Top = 385
-    Width = 124
-    ClientHeight = 50
-    ClientWidth = 124
-    TabOrder = 1
-    Visible = False
-    object BtnBack: TButton
-      Left = 20
-      Height = 25
-      Top = 410
-      Width = 51
-      AutoSize = True
-      Caption = ' < back '
-      Enabled = False
-      TabOrder = 0
-    end
-  end
   object QuickInstallPanel: TPanel
     Left = 175
     Height = 160
@@ -54,7 +34,7 @@ object QuickInstall: TQuickInstall
     BevelOuter = bvNone
     ClientHeight = 160
     ClientWidth = 364
-    TabOrder = 2
+    TabOrder = 1
     object LabelSetup: TLabel
       Left = 0
       Height = 19
@@ -63,12 +43,14 @@ object QuickInstall: TQuickInstall
       Align = alTop
       Caption = 'Please select a setup type:'
       ParentColor = False
+      WordWrap = True
     end
     object RadioBtnDefault: TRadioButton
       Left = 0
       Height = 21
-      Top = 24
-      Width = 103
+      Top = 19
+      Width = 364
+      Align = alTop
       Caption = 'Standard (...)'
       Checked = True
       TabOrder = 0
@@ -77,8 +59,9 @@ object QuickInstall: TQuickInstall
     object RadioBtnCustom: TRadioButton
       Left = 0
       Height = 21
-      Top = 48
-      Width = 94
+      Top = 40
+      Width = 364
+      Align = alTop
       Caption = 'Custom (...)'
       TabOrder = 1
     end
@@ -101,7 +84,7 @@ object QuickInstall: TQuickInstall
     BevelOuter = bvNone
     ClientHeight = 170
     ClientWidth = 372
-    TabOrder = 3
+    TabOrder = 2
     object LabelWelcome: TLabel
       Left = 0
       Height = 46
@@ -116,10 +99,12 @@ object QuickInstall: TQuickInstall
       WordWrap = True
     end
     object LabelSelLanguage: TLabel
+      AnchorSideBottom.Control = ComboBoxLanguages
       Left = -1
-      Height = 19
+      Height = 32
       Top = 88
       Width = 304
+      Anchors = [akTop, akLeft, akBottom]
       Caption = 'Please choose a language for this setup program:'
       ParentColor = False
       WordWrap = True
@@ -136,5 +121,16 @@ object QuickInstall: TQuickInstall
       OnChange = ComboBoxLanguagesChange
       TabOrder = 0
     end
+  end
+  object BtnBack: TButton
+    Left = 20
+    Height = 25
+    Top = 410
+    Width = 51
+    AutoSize = True
+    Caption = ' < back '
+    Enabled = False
+    TabOrder = 3
+    Visible = False
   end
 end
