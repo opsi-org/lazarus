@@ -206,6 +206,8 @@ begin
         shortcmd := trim(copy(list1.Strings[i], 1, pos(';', list1.Strings[i])-1));
         If Assigned(LogDatei) then
         LogDatei.log_prog('found process shortcmd: '+shortcmd,LLDebug2);
+        If Assigned(LogDatei) then
+        LogDatei.log_prog('found process shortcmd: '+shortcmd,LLDebug2);
         //if pos(searchproc, list1.Strings[i]) > 0 then
         if LowerCase(searchstr) = LowerCase(shortcmd) then
           Result := True;
