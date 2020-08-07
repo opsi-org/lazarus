@@ -462,21 +462,22 @@ begin
     end
     else
     begin
-      { release >= 2004 : try to find it on the hard way }
+      { release >= 2004 : winapi call changed - so we try to find it by bcdedit output }
       outlines := TXStringlist.Create;
-      RunCommandAndCaptureOut('cmd.exe /c bcdedit.exe /enum', True,
+      RunCommandAndCaptureOut('cmd.exe /c bcdedit.exe /enum firmware', True,
         outlines, outstr, SW_HIDE,exitcode);
+      //Logdatei.log('WinIsUefi bcdedit output: ' + outlines.Text, LLNotice);
       stringResult := '';
       i := 0;
       while (stringResult = '') and (i < outlines.Count) do
       begin
-        if AnsiContainsText(outlines[i], '\windows\system32\winload') then
+        if AnsiContainsText(outlines[i], '{fwbootmgr}') then
           stringResult := outlines[i]
         else
           Inc(i);
       end;
       Logdatei.log('WinIsUefi detect by bcdedit: ' + stringResult, LLNotice);
-      if AnsiContainsText(stringResult, '.efi') then
+      if AnsiContainsText(stringResult, '{fwbootmgr}') then
         Result := True;
     end;
   end;
