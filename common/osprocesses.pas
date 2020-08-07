@@ -199,9 +199,13 @@ begin
           LLwarning);
       end;
       list1.Text := getProcesslist.Text;
+      If Assigned(LogDatei) then
+        LogDatei.log_list(list1,LLDebug2);
       for i := 0 to list1.Count - 1 do
       begin
         shortcmd := trim(copy(list1.Strings[i], 1, pos(';', list1.Strings[i])));
+        If Assigned(LogDatei) then
+        LogDatei.log_prog('found process shortcmd: '+shortcmd,LLDebug2);
         //if pos(searchproc, list1.Strings[i]) > 0 then
         if LowerCase(searchstr) = LowerCase(shortcmd) then
           Result := True;

@@ -470,13 +470,13 @@ begin
       i := 0;
       while (stringResult = '') and (i < outlines.Count) do
       begin
-        if AnsiContainsText(outlines[i], '\windows\system32\winload') then
+        if AnsiContainsText(outlines[i], '{fwbootmgr}') then
           stringResult := outlines[i]
         else
           Inc(i);
       end;
       Logdatei.log('WinIsUefi detect by bcdedit: ' + stringResult, LLNotice);
-      if AnsiContainsText(stringResult, '.efi') then
+      if AnsiContainsText(stringResult, '{fwbootmgr}') then
         Result := True;
     end;
   end;
