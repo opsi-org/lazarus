@@ -181,7 +181,7 @@ function ProcessIsRunning(searchproc: string): boolean;
 var
   list1: TStringList;
   i: integer;
-  searchstr, shortcmd : string;
+  searchstr, shortcmd: string;
 begin
   Result := False;
   try
@@ -195,19 +195,17 @@ begin
       begin
         searchstr := trim(copy(searchproc, 1, 15));
         logdatei.log(
-          'Process name to find ('+searchproc+') is wider then 14 chars. Searching for: ('+searchstr+'). The result may not be exact',
+          'Process name to find (' + searchproc +
+          ') is wider then 14 chars. Searching for: (' + searchstr + '). The result may not be exact',
           LLwarning);
       end;
       list1.Text := getProcesslist.Text;
-      If Assigned(LogDatei) then
-        LogDatei.log_list(list1,LLDebug2);
+      //If Assigned(LogDatei) then LogDatei.log_list(list1,LLDebug2);
       for i := 0 to list1.Count - 1 do
       begin
-        shortcmd := trim(copy(list1.Strings[i], 1, pos(';', list1.Strings[i])-1));
-        If Assigned(LogDatei) then
-        LogDatei.log_prog('found process shortcmd: '+shortcmd,LLDebug2);
-        If Assigned(LogDatei) then
-        LogDatei.log_prog('found process shortcmd: '+shortcmd,LLDebug2);
+        shortcmd := trim(copy(list1.Strings[i], 1, pos(';', list1.Strings[i]) - 1));
+        if Assigned(LogDatei) then
+          LogDatei.log_prog('found process shortcmd: ' + shortcmd, LLDebug2);
         //if pos(searchproc, list1.Strings[i]) > 0 then
         if LowerCase(searchstr) = LowerCase(shortcmd) then
           Result := True;
