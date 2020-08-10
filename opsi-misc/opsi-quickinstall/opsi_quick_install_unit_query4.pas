@@ -13,11 +13,14 @@ type
 
   TQuery4 = class(TForm)
     BackgrImage: TImage;
+    BigPanel: TPanel;
     BtnBack: TButton;
     BtnNext: TButton;
     LabelDhcp: TLabel;
     LabelFilePointer: TLabel;
+    LabelOpsiVersion: TLabel;
     LabelTimeout: TLabel;
+    PanelOpsiVersion: TPanel;
     PanelRadiofilePointer: TPanel;
     PanelRadioTimeout: TPanel;
     PanelRadioDhcp: TPanel;
@@ -30,11 +33,14 @@ type
     RadioBtnYes: TRadioButton;
     RadioBtnMenu: TRadioButton;
     RadioBtnNoMenu: TRadioButton;
+    RadioBtnOpsi41: TRadioButton;
+    RadioBtnOpsi42: TRadioButton;
     procedure BtnBackClick(Sender: TObject);
     procedure BtnNextClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure RadioBtnDhcpYesChange(Sender: TObject);
+    procedure RadioBtnOpsi41Change(Sender: TObject);
   private
 
   public
@@ -48,6 +54,7 @@ implementation
 
 uses
   opsi_quick_install_unit_language,
+  opsi_quick_install_unit_query,
   opsi_quick_install_unit_query3,
   opsi_quick_install_unit_query5_dhcp,
   opsi_quick_install_unit_query6;
@@ -79,8 +86,15 @@ end;
 
 procedure TQuery4.FormActivate(Sender: TObject);
 begin
-  AdjustPanelPosition(self);
+  BigPanel.Left := QuickInstall.panelLeft;
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
+  // in default mode opsi version isn't requested in Query
+  if QuickInstall.RadioBtnDefault.Checked then
+    PanelOpsiVersion.Visible := True
+  else
+  begin
+    PanelOpsiVersion.Visible := False;
+  end;
 end;
 
 procedure TQuery4.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -100,6 +114,16 @@ begin
     PanelTimeout.Visible := False;
     PanelFilePointer.Visible := False;
   end;
+end;
+
+procedure TQuery4.RadioBtnOpsi41Change(Sender: TObject);
+begin
+  // set the opsi version in Query respectively to only have check them for
+  // Overview and the .conf file
+  if RadioBtnOpsi41.Checked then
+    Query.RadioBtnOpsi41.Checked := True
+  else
+    Query.RadioBtnOpsi41.Checked := False;
 end;
 
 procedure TQuery4.BtnBackClick(Sender: TObject);

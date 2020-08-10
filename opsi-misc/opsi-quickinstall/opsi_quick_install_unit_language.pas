@@ -148,6 +148,7 @@ begin
   initialProds := True;
 
   // .../lazarus/common/oslog.pas
+  // log file in /tmp/opsi_quickinstall.log
   LogDatei := TLogInfo.Create;
   LogDatei.CreateTheLogfile('opsi_quickinstall.log');
 
@@ -190,7 +191,7 @@ begin
     end;
   end
   else
-  if distroName = 'openSUSE project' then
+  if distroName = 'openSUSE Leap' then
   begin
     if distroRelease = '15.1' then
     begin
@@ -209,6 +210,21 @@ begin
   begin
     MyDistr := RHEL_7;
     DistrUrlPart := 'RHEL_7/';
+  end
+  else
+  if distroName = 'Univention' then
+  begin
+    if Pos('4.3', distroRelease) = 1 then
+    begin
+      MyDistr := xUbuntu_16_04;
+      DistrUrlPart := 'Univention_4.3/';
+    end
+    else
+    if Pos('4.4', distroRelease) = 1 then
+    begin
+      MyDistr := xUbuntu_18_04;
+      DistrUrlPart := 'Univention_4.4/';
+    end;
   end
   else
   if distroName = 'Ubuntu' then

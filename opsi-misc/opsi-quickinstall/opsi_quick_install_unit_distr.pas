@@ -44,6 +44,7 @@ procedure TDistribution.BtnNextClick(Sender: TObject);
 begin
   GoOn := True;
   Distribution.Close;
+  //!!!distribution change
 end;
 
 procedure TDistribution.FormCreate(Sender: TObject);
@@ -56,7 +57,6 @@ begin
 
   BtnBack.Left := QuickInstall.BtnBack.Left;
   BtnNext.Left := Width - BtnBack.Left - QuickInstall.BtnNextWidth;
-  ShowMessage(BtnNext.Width.ToString);
 
   EditDistr.Text := QuickInstall.distroName + ' ' + QuickInstall.distroRelease;
 end;

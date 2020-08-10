@@ -1,5 +1,5 @@
 object Query3: TQuery3
-  Left = 360
+  Left = 1366
   Height = 450
   Top = 167
   Width = 730
@@ -37,18 +37,19 @@ object Query3: TQuery3
   end
   object PanelOpsiProducts: TPanel
     Left = 152
-    Height = 240
+    Height = 222
     Top = 40
-    Width = 480
+    Width = 469
+    AutoSize = True
     BevelOuter = bvNone
-    ClientHeight = 240
-    ClientWidth = 480
+    ClientHeight = 222
+    ClientWidth = 469
     TabOrder = 2
     object LabelOpsiProducts: TLabel
       Left = 0
       Height = 19
       Top = 0
-      Width = 480
+      Width = 469
       Align = alTop
       Caption = 'Which opsi product(s) should we install in the depot?'
       ParentColor = False
@@ -57,12 +58,13 @@ object Query3: TQuery3
     object PanelProdToChoose: TPanel
       Left = 0
       Height = 167
-      Top = 50
-      Width = 480
+      Top = 55
+      Width = 469
       Align = alTop
+      AutoSize = True
       BorderSpacing.Top = 10
       ClientHeight = 167
-      ClientWidth = 480
+      ClientWidth = 469
       TabOrder = 0
       object CheckBoxConfigWinbase: TCheckBox
         Left = 322
@@ -277,13 +279,14 @@ object Query3: TQuery3
     object PanelRadioProds: TPanel
       Left = 0
       Height = 21
-      Top = 19
-      Width = 480
+      Top = 24
+      Width = 469
       Align = alTop
       AutoSize = True
+      BorderSpacing.Top = 5
       BevelOuter = bvNone
       ClientHeight = 21
-      ClientWidth = 480
+      ClientWidth = 469
       TabOrder = 1
       object CheckBoxNone: TCheckBox
         Left = 93

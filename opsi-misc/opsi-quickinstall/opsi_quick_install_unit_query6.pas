@@ -91,6 +91,7 @@ begin
   begin
     BtnNext.Caption := rsNext;
     BtnNext.Left := Width - BtnBack.Left - QuickInstall.BtnNextWidth;
+
   end;
 end;
 

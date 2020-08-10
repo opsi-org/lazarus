@@ -1,5 +1,5 @@
 object Query2: TQuery2
-  Left = 360
+  Left = 1366
   Height = 450
   Top = 194
   Width = 730

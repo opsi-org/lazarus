@@ -129,6 +129,7 @@ begin
     xUbuntu_18_04: Result := Result + 'xUbuntu_18.04/';
     other: Result := '';
   end;
+  //ShowMessage(Result);
 end;
 
 procedure TLinuxRepository.AddDebianUbuntu;
@@ -137,6 +138,7 @@ var
   //Buffer:stat;
   //ErrorNr:integer;
 begin
+  //ShowMessage(FSourcesListFilePath);
   try
     if FileExists(FSourcesListFilePath) then
     begin
@@ -154,7 +156,8 @@ begin
       Owner := 'root';
       FRunCommandElevated.Run('touch ' + FSourcesListFilePath);
     end;
-    AddLineToTextFile(FURL, FSourcesListFilePath);
+    //ShowMessage('deb '+FURL+' /');
+    AddLineToTextFile('deb '+FURL+' /', FSourcesListFilePath);
     FRunCommandElevated.Run('chown -c ' + Owner + ' ' + FSourcesListFilePath);
     FRunCommandelevated.Run('wget -nv' + ' ' + FURL + 'Release.key -O' +
       ' ' + 'Release.key');
@@ -207,8 +210,6 @@ begin
       end;
   end;
 end;
-
-
 
 //procedure AddCentOS
 

@@ -16,32 +16,34 @@ type
     BackgrImage: TImage;
     BtnNext: TButton;
     BtnBack: TButton;
-    EditOpsi41NoCache: TEdit;
-    EditOpsi42NoCache: TEdit;
-    EditRepoOpsi41: TEdit;
-    EditRepoOpsi42: TEdit;
+    EditDefaultRepoNoCache: TEdit;
+    EditDefaultRepo: TEdit;
     EditProxy: TEdit;
     EditRepo: TEdit;
     EditOtherNoCache: TEdit;
+    LabelOpsiVersion: TLabel;
     LabelNoCache: TLabel;
     LabelProxy: TLabel;
     LabelRepo: TLabel;
+    BigPanel: TPanel;
+    PanelOpsiVersion: TPanel;
     PanelNoCache: TPanel;
     PanelProxy: TPanel;
     PanelRepo: TPanel;
-    RadioBtnOpsi41: TRadioButton;
+    RadioBtnRepo: TRadioButton;
     RadioBtnNone: TRadioButton;
-    RadioBtnOpsi42: TRadioButton;
     RadioBtnOtherRepo: TRadioButton;
     RadioBtnOtherProxy: TRadioButton;
     RadioBtnOtherNoCache: TRadioButton;
-    RadioBtnOpsi41NoCache: TRadioButton;
+    RadioBtnRepoNoCache: TRadioButton;
     RadioBtnMyProxy: TRadioButton;
-    RadioBtnOpsi42NoCache: TRadioButton;
+    RadioBtnOpsi41: TRadioButton;
+    RadioBtnOpsi42: TRadioButton;
     procedure BtnBackClick(Sender: TObject);
     procedure BtnNextClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure RadioBtnOpsi41Change(Sender: TObject);
   private
   const
     baseURLOpsi41 = 'http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/';
@@ -65,23 +67,34 @@ uses
 procedure TQuery.FormActivate(Sender: TObject);
 begin
   // bring all panels to the same position (QuickInstall.panelLeft)
-  AdjustPanelPosition(self);
+  BigPanel.Left := QuickInstall.panelLeft;
   {PanelEditOtherRepo.Left:=PanelEditOtherRepo.Left-QuickInstall.panelLeft;
   PanelEditOtherProxy.Left:=PanelEditOtherProxy.Left-QuickInstall.panelLeft;
   PanelEditOtherNoCache.Left:=PanelEditOtherNoCache.Left-QuickInstall.panelLeft;}
   // always the same background (as in QuickInstall)
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
 
-  EditRepoOpsi41.Text := baseURLOpsi41 + QuickInstall.DistrUrlPart;
-  EditRepoOpsi42.Text := baseURLOpsi42 + QuickInstall.DistrUrlPart;
-
-  EditOpsi41NoCache.Text := EditRepoOpsi41.Text;
-  EditOpsi42NoCache.Text := EditRepoOpsi42.Text;
+  EditDefaultRepo.Text := baseURLOpsi41 + QuickInstall.DistrUrlPart;
+  EditDefaultRepoNoCache.Text := EditDefaultRepo.Text;
 end;
 
 procedure TQuery.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   QuickInstall.Close;
+end;
+
+procedure TQuery.RadioBtnOpsi41Change(Sender: TObject);
+begin
+  if RadioBtnOpsi41.Checked then
+  begin
+    EditDefaultRepo.Text := baseURLOpsi41 + QuickInstall.DistrUrlPart;
+    EditDefaultRepoNoCache.Text := EditDefaultRepo.Text;
+  end
+  else
+  begin
+    EditDefaultRepo.Text := baseURLOpsi42 + QuickInstall.DistrUrlPart;
+    EditDefaultRepoNoCache.Text := EditDefaultRepo.Text;
+  end;
 end;
 
 procedure TQuery.BtnNextClick(Sender: TObject);

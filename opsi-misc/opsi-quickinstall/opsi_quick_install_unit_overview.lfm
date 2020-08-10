@@ -1,7 +1,7 @@
 object Overview: TOverview
-  Left = 360
+  Left = 398
   Height = 449
-  Top = 194
+  Top = 130
   Width = 730
   Caption = 'Overview'
   ClientHeight = 449
@@ -18,9 +18,9 @@ object Overview: TOverview
   end
   object BtnBack: TButton
     Left = 16
-    Height = 25
+    Height = 33
     Top = 408
-    Width = 51
+    Width = 58
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
@@ -28,9 +28,9 @@ object Overview: TOverview
   end
   object BtnFinish: TButton
     Left = 665
-    Height = 25
+    Height = 33
     Top = 408
-    Width = 45
+    Width = 51
     AutoSize = True
     Caption = ' finish '
     ParentBidiMode = False
@@ -62,7 +62,7 @@ object Overview: TOverview
     Left = 192
     Height = 336
     Top = 32
-    Width = 416
+    Width = 440
     Lines.Strings = (
       'MemoOverview'
     )

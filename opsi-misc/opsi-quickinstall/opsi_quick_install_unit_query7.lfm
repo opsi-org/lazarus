@@ -1,5 +1,5 @@
 object Query7: TQuery7
-  Left = 360
+  Left = 1366
   Height = 450
   Top = 194
   Width = 730

@@ -1,7 +1,7 @@
 object Query4: TQuery4
-  Left = 595
+  Left = 365
   Height = 450
-  Top = 205
+  Top = 189
   Width = 730
   Caption = 'Opsi quick install - query (dhcp part 1)'
   ClientHeight = 450
@@ -18,9 +18,9 @@ object Query4: TQuery4
   end
   object BtnNext: TButton
     Left = 664
-    Height = 25
+    Height = 33
     Top = 408
-    Width = 51
+    Width = 57
     AutoSize = True
     Caption = ' next > '
     OnClick = BtnNextClick
@@ -28,164 +28,231 @@ object Query4: TQuery4
   end
   object BtnBack: TButton
     Left = 16
-    Height = 25
+    Height = 33
     Top = 408
-    Width = 51
+    Width = 58
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
     TabOrder = 1
   end
-  object PanelTimeout: TPanel
-    Left = 160
-    Height = 91
-    Top = 184
-    Width = 424
+  object BigPanel: TPanel
+    Left = 176
+    Height = 299
+    Top = 72
+    Width = 408
+    AutoSize = True
     BevelOuter = bvNone
-    ClientHeight = 91
-    ClientWidth = 424
+    ClientHeight = 299
+    ClientWidth = 408
     TabOrder = 2
-    Visible = False
-    object LabelTimeout: TLabel
+    object PanelOpsiVersion: TPanel
       Left = 0
-      Height = 38
+      Height = 40
       Top = 0
-      Width = 424
-      Align = alTop
-      Caption = 'Does the patched elilo.efi have a timeout of 2 seconds in case of a failed elilo configuration?'
-      ParentColor = False
-      WordWrap = True
-    end
-    object PanelRadioTimeout: TPanel
-      Left = 0
-      Height = 21
-      Top = 38
-      Width = 424
+      Width = 408
       Align = alTop
       AutoSize = True
       BevelOuter = bvNone
-      ClientHeight = 21
-      ClientWidth = 424
+      ClientHeight = 40
+      ClientWidth = 408
       TabOrder = 0
-      object RadioBtnNo: TRadioButton
-        Left = 88
-        Height = 21
+      object LabelOpsiVersion: TLabel
+        Left = 0
+        Height = 19
         Top = 0
-        Width = 42
-        Caption = 'No'
+        Width = 408
+        Align = alTop
+        Caption = 'Which opsi version would you like to install?'
+        ParentColor = False
+      end
+      object RadioBtnOpsi41: TRadioButton
+        AnchorSideTop.Control = LabelOpsiVersion
+        AnchorSideTop.Side = asrBottom
+        Left = 0
+        Height = 21
+        Top = 19
+        Width = 72
+        Caption = 'opsi 4.1'
         Checked = True
+        OnChange = RadioBtnOpsi41Change
         TabOrder = 0
         TabStop = True
       end
-      object RadioBtnYes: TRadioButton
-        Left = 0
+      object RadioBtnOpsi42: TRadioButton
+        AnchorSideLeft.Control = RadioBtnOpsi41
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = LabelOpsiVersion
+        AnchorSideTop.Side = asrBottom
+        Left = 122
         Height = 21
-        Top = 0
-        Width = 45
-        Caption = 'Yes'
+        Top = 19
+        Width = 72
+        BorderSpacing.Left = 50
+        Caption = 'opsi 4.2'
         TabOrder = 1
       end
     end
-  end
-  object PanelFilePointer: TPanel
-    Left = 160
-    Height = 72
-    Top = 304
-    Width = 424
-    BevelOuter = bvNone
-    ClientHeight = 72
-    ClientWidth = 424
-    TabOrder = 3
-    Visible = False
-    object LabelFilePointer: TLabel
+    object PanelDhcp: TPanel
       Left = 0
-      Height = 19
-      Top = 0
-      Width = 424
-      Align = alTop
-      Caption = 'Which file should the TFTPROOT default symlink point to?'
-      ParentColor = False
-      WordWrap = True
-    end
-    object PanelRadiofilePointer: TPanel
-      Left = 0
-      Height = 21
-      Top = 19
-      Width = 424
+      Height = 40
+      Top = 80
+      Width = 408
       Align = alTop
       AutoSize = True
+      BorderSpacing.Top = 40
       BevelOuter = bvNone
-      ClientHeight = 21
-      ClientWidth = 424
-      TabOrder = 0
-      object RadioBtnNoMenu: TRadioButton
-        Left = 136
-        Height = 21
+      ClientHeight = 40
+      ClientWidth = 408
+      TabOrder = 1
+      object LabelDhcp: TLabel
+        Left = 0
+        Height = 19
         Top = 0
-        Width = 124
-        Caption = 'default.nomenu'
-        Checked = True
-        TabOrder = 0
-        TabStop = True
+        Width = 408
+        Align = alTop
+        Caption = 'Should we run the opsi dhcp server on this machine?'
+        ParentColor = False
+        WordWrap = True
       end
-      object RadioBtnMenu: TRadioButton
+      object PanelRadioDhcp: TPanel
         Left = 0
         Height = 21
-        Top = 0
-        Width = 108
-        Caption = 'default.menu'
-        TabOrder = 1
+        Top = 19
+        Width = 408
+        Align = alTop
+        AutoSize = True
+        BevelOuter = bvNone
+        ClientHeight = 21
+        ClientWidth = 408
+        TabOrder = 0
+        object RadioBtnDhcpNo: TRadioButton
+          Left = 88
+          Height = 21
+          Top = 0
+          Width = 42
+          Caption = 'No'
+          Checked = True
+          TabOrder = 0
+          TabStop = True
+        end
+        object RadioBtnDhcpYes: TRadioButton
+          Left = 0
+          Height = 21
+          Top = 0
+          Width = 45
+          Caption = 'Yes'
+          OnChange = RadioBtnDhcpYesChange
+          TabOrder = 1
+        end
       end
     end
-  end
-  object PanelDhcp: TPanel
-    Left = 160
-    Height = 72
-    Top = 88
-    Width = 424
-    BevelOuter = bvNone
-    ClientHeight = 72
-    ClientWidth = 424
-    TabOrder = 4
-    object LabelDhcp: TLabel
+    object PanelTimeout: TPanel
       Left = 0
-      Height = 19
-      Top = 0
-      Width = 424
-      Align = alTop
-      Caption = 'Should we run the opsi dhcp server on this machine?'
-      ParentColor = False
-      WordWrap = True
-    end
-    object PanelRadioDhcp: TPanel
-      Left = 0
-      Height = 21
-      Top = 19
-      Width = 424
+      Height = 59
+      Top = 160
+      Width = 408
       Align = alTop
       AutoSize = True
+      BorderSpacing.Top = 40
       BevelOuter = bvNone
-      ClientHeight = 21
-      ClientWidth = 424
-      TabOrder = 0
-      object RadioBtnDhcpNo: TRadioButton
-        Left = 88
-        Height = 21
+      ClientHeight = 59
+      ClientWidth = 408
+      TabOrder = 2
+      Visible = False
+      object LabelTimeout: TLabel
+        Left = 0
+        Height = 38
         Top = 0
-        Width = 42
-        Caption = 'No'
-        Checked = True
-        TabOrder = 0
-        TabStop = True
+        Width = 408
+        Align = alTop
+        Caption = 'Does the patched elilo.efi have a timeout of 2 seconds in case of a failed elilo configuration?'
+        ParentColor = False
+        WordWrap = True
       end
-      object RadioBtnDhcpYes: TRadioButton
+      object PanelRadioTimeout: TPanel
         Left = 0
         Height = 21
+        Top = 38
+        Width = 408
+        Align = alTop
+        AutoSize = True
+        BevelOuter = bvNone
+        ClientHeight = 21
+        ClientWidth = 408
+        TabOrder = 0
+        object RadioBtnNo: TRadioButton
+          Left = 88
+          Height = 21
+          Top = 0
+          Width = 42
+          Caption = 'No'
+          Checked = True
+          TabOrder = 0
+          TabStop = True
+        end
+        object RadioBtnYes: TRadioButton
+          Left = 0
+          Height = 21
+          Top = 0
+          Width = 45
+          Caption = 'Yes'
+          TabOrder = 1
+        end
+      end
+    end
+    object PanelFilePointer: TPanel
+      Left = 0
+      Height = 40
+      Top = 259
+      Width = 408
+      Align = alTop
+      AutoSize = True
+      BorderSpacing.Top = 40
+      BevelOuter = bvNone
+      ClientHeight = 40
+      ClientWidth = 408
+      TabOrder = 3
+      Visible = False
+      object LabelFilePointer: TLabel
+        Left = 0
+        Height = 19
         Top = 0
-        Width = 45
-        Caption = 'Yes'
-        OnChange = RadioBtnDhcpYesChange
-        TabOrder = 1
+        Width = 408
+        Align = alTop
+        Caption = 'Which file should the TFTPROOT default symlink point to?'
+        ParentColor = False
+        WordWrap = True
+      end
+      object PanelRadiofilePointer: TPanel
+        Left = 0
+        Height = 21
+        Top = 19
+        Width = 408
+        Align = alTop
+        AutoSize = True
+        BevelOuter = bvNone
+        ClientHeight = 21
+        ClientWidth = 408
+        TabOrder = 0
+        object RadioBtnNoMenu: TRadioButton
+          Left = 136
+          Height = 21
+          Top = 0
+          Width = 126
+          Caption = 'default.nomenu'
+          Checked = True
+          TabOrder = 0
+          TabStop = True
+        end
+        object RadioBtnMenu: TRadioButton
+          Left = 0
+          Height = 21
+          Top = 0
+          Width = 110
+          Caption = 'default.menu'
+          TabOrder = 1
+        end
       end
     end
   end

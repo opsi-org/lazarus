@@ -8,113 +8,161 @@ msgid " next > "
 msgstr " weiter > "
 
 #: opsi_quick_install_unit_overview.rsadminname
+#, fuzzy
+#| msgid "Opsi admin user name:"
 msgctxt "opsi_quick_install_unit_overview.rsadminname"
-msgid "Opsi admin user name:"
+msgid "Opsi admin user name: "
 msgstr "Opsi-Admin-User Name:"
 
 #: opsi_quick_install_unit_overview.rsadminpassword
+#, fuzzy
+#| msgid "Opsi admin user password:"
 msgctxt "opsi_quick_install_unit_overview.rsadminpassword"
-msgid "Opsi admin user password:"
+msgid "Opsi admin user password: "
 msgstr "Opsi-Admin-User Passwort:"
 
 #: opsi_quick_install_unit_overview.rsbackend
+#, fuzzy
+#| msgid "Backend:"
 msgctxt "opsi_quick_install_unit_overview.rsbackend"
-msgid "Backend:"
+msgid "Backend: "
 msgstr "Backend:"
 
 #: opsi_quick_install_unit_overview.rscopymodules
+#, fuzzy
+#| msgid "Copy modules:"
 msgctxt "opsi_quick_install_unit_overview.rscopymodules"
-msgid "Copy modules:"
+msgid "Copy modules: "
 msgstr "Module kopieren:"
 
 #: opsi_quick_install_unit_overview.rsdomain
+#, fuzzy
+#| msgid "DNS Domain:"
 msgctxt "opsi_quick_install_unit_overview.rsdomain"
-msgid "DNS Domain:"
+msgid "DNS Domain: "
 msgstr "DNS Domain:"
 
 #: opsi_quick_install_unit_overview.rselilo
+#, fuzzy
+#| msgid "Elilo.efi has timeout of 2 seconds:"
 msgctxt "opsi_quick_install_unit_overview.rselilo"
-msgid "Elilo.efi has timeout of 2 seconds:"
+msgid "Elilo.efi has timeout of 2 seconds: "
 msgstr "Elilo.efi hat ein Timeout von 2 Sekunden:"
 
 #: opsi_quick_install_unit_overview.rsgateway
+#, fuzzy
+#| msgid "Gateway:"
 msgctxt "opsi_quick_install_unit_overview.rsgateway"
-msgid "Gateway:"
+msgid "Gateway: "
 msgstr "Gateway:"
 
 #: opsi_quick_install_unit_overview.rsipname
+#, fuzzy
+#| msgid "IP name:"
 msgctxt "opsi_quick_install_unit_overview.rsipname"
-msgid "IP name:"
+msgid "IP name: "
 msgstr "IP-Name:"
 
 #: opsi_quick_install_unit_overview.rsipnumber
+#, fuzzy
+#| msgid "IP number:"
 msgctxt "opsi_quick_install_unit_overview.rsipnumber"
-msgid "IP number:"
+msgid "IP number: "
 msgstr "IP-Nummer:"
 
 #: opsi_quick_install_unit_overview.rsnameserver
+#, fuzzy
+#| msgid "Primary nameserver:"
 msgctxt "opsi_quick_install_unit_overview.rsnameserver"
-msgid "Primary nameserver:"
+msgid "Primary nameserver: "
 msgstr "Primärer Nameserver:"
 
 #: opsi_quick_install_unit_overview.rsnetmask
+#, fuzzy
+#| msgid "Netmask:"
 msgctxt "opsi_quick_install_unit_overview.rsnetmask"
-msgid "Netmask:"
+msgid "Netmask: "
 msgstr "Netzmaske:"
 
 #: opsi_quick_install_unit_overview.rsnetwork
+#, fuzzy
+#| msgid "Network address:"
 msgctxt "opsi_quick_install_unit_overview.rsnetwork"
-msgid "Network address:"
+msgid "Network address: "
 msgstr "Netzwerk-Adresse:"
 
 #: opsi_quick_install_unit_overview.rsopsidhcpserver
+#, fuzzy
+#| msgid "Run opsi dhcp server:"
 msgctxt "opsi_quick_install_unit_overview.rsopsidhcpserver"
-msgid "Run opsi dhcp server:"
+msgid "Run opsi dhcp server: "
 msgstr "Opsi-DHCP-Server verwenden:"
 
+#: opsi_quick_install_unit_overview.rsopsiversion
+msgid "Opsi version to install: "
+msgstr ""
+
 #: opsi_quick_install_unit_overview.rsprods
+#, fuzzy
+#| msgid "Products in depot:"
 msgctxt "opsi_quick_install_unit_overview.rsprods"
-msgid "Products in depot:"
+msgid "Products in depot: "
 msgstr "Produkte im Depot:"
 
 #: opsi_quick_install_unit_overview.rsproxy
+#, fuzzy
+#| msgid "Proxy:"
 msgctxt "opsi_quick_install_unit_overview.rsproxy"
-msgid "Proxy:"
+msgid "Proxy: "
 msgstr "Proxy:"
 
 #: opsi_quick_install_unit_overview.rsreboot
+#, fuzzy
+#| msgid "Reboot after script is finished:"
 msgctxt "opsi_quick_install_unit_overview.rsreboot"
-msgid "Reboot after script is finished:"
+msgid "Reboot after script is finished: "
 msgstr "Neustarten, wenn das Skript beendet ist:"
 
 #: opsi_quick_install_unit_overview.rsrepo
+#, fuzzy
+#| msgid "Repository:"
 msgctxt "opsi_quick_install_unit_overview.rsrepo"
-msgid "Repository:"
+msgid "Repository: "
 msgstr "Repository:"
 
 #: opsi_quick_install_unit_overview.rsrepokind
+#, fuzzy
+#| msgid "Repo kind:"
 msgctxt "opsi_quick_install_unit_overview.rsrepokind"
-msgid "Repo kind:"
+msgid "Repo kind: "
 msgstr "Repository-Art:"
 
 #: opsi_quick_install_unit_overview.rsreponocache
+#, fuzzy
+#| msgid "Repository (without cache proxy):"
 msgctxt "opsi_quick_install_unit_overview.rsreponocache"
-msgid "Repository (without cache proxy):"
+msgid "Repository (without cache proxy): "
 msgstr "Repository (ohne Cache-Proxy):"
 
 #: opsi_quick_install_unit_overview.rstftproot
+#, fuzzy
+#| msgid "TFTPROOT symlink points to:"
 msgctxt "opsi_quick_install_unit_overview.rstftproot"
-msgid "TFTPROOT symlink points to:"
+msgid "TFTPROOT symlink points to: "
 msgstr "TFTPROOT-Symlink zeigt auf:"
 
 #: opsi_quick_install_unit_overview.rsucspassword
+#, fuzzy
+#| msgid "Password of administrator of UCS domain controller:"
 msgctxt "opsi_quick_install_unit_overview.rsucspassword"
-msgid "Password of administrator of UCS domain controller:"
+msgid "Password of administrator of UCS domain controller: "
 msgstr "Passwort des Administrators des UCS-Domain-Controllers:"
 
 #: opsi_quick_install_unit_overview.rsupdate
+#, fuzzy
+#| msgid "Install from stable, update to repo kind:"
 msgctxt "opsi_quick_install_unit_overview.rsupdate"
-msgid "Install from stable, update to repo kind:"
+msgid "Install from stable, update to repo kind: "
 msgstr "Von stable installieren, auf Repo-Art aktualisieren:"
 
 #: opsi_quick_install_unit_query6.rsnext
@@ -223,24 +271,12 @@ msgstr " weiter > "
 msgid "Opsi quick install - query (part 1)"
 msgstr "Opsi Quick-Install - Abfrage (Teil 1)"
 
-#: tquery.editopsi41nocache.text
-msgctxt "tquery.editopsi41nocache.text"
-msgid "opsi 4.1"
+#: tquery.editdefaultrepo.text
+msgid "repo"
 msgstr ""
 
-#: tquery.editopsi42nocache.text
-msgctxt "tquery.editopsi42nocache.text"
-msgid "opsi 4.2"
-msgstr ""
-
-#: tquery.editrepoopsi41.text
-msgctxt "tquery.editrepoopsi41.text"
-msgid "opsi 4.1"
-msgstr ""
-
-#: tquery.editrepoopsi42.text
-msgctxt "tquery.editrepoopsi42.text"
-msgid "opsi 4.2"
+#: tquery.editdefaultreponocache.text
+msgid "repo (no cache)"
 msgstr ""
 
 #: tquery.labelnocache.caption
@@ -250,6 +286,11 @@ msgid ""
 msgstr ""
 "(Basis-) Repository für die Installation von Opsi-Server\n"
 "(ohne einen Cache-Proxy)\n"
+
+#: tquery.labelopsiversion.caption
+msgctxt "tquery.labelopsiversion.caption"
+msgid "Which opsi version would you like to install?"
+msgstr ""
 
 #: tquery.labelproxy.caption
 msgid "Proxy to use (http://myproxy.dom.org:8080)"
@@ -267,6 +308,16 @@ msgstr ""
 msgctxt "tquery.radiobtnnone.caption"
 msgid "None"
 msgstr "Keiner"
+
+#: tquery.radiobtnopsi41.caption
+msgctxt "tquery.radiobtnopsi41.caption"
+msgid "opsi 4.1"
+msgstr ""
+
+#: tquery.radiobtnopsi42.caption
+msgctxt "tquery.radiobtnopsi42.caption"
+msgid "opsi 4.2"
+msgstr ""
 
 #: tquery.radiobtnothernocache.caption
 msgctxt "tquery.radiobtnothernocache.caption"
@@ -484,6 +535,11 @@ msgstr "Sollen wir den Opsi-DHCP-Server auf diesem Computer verwenden?"
 msgid "Which file should the TFTPROOT default symlink point to?"
 msgstr "Auf welche Datei soll der TFTPROOT-Default-Symlink zeigen?"
 
+#: tquery4.labelopsiversion.caption
+msgctxt "tquery4.labelopsiversion.caption"
+msgid "Which opsi version would you like to install?"
+msgstr ""
+
 #: tquery4.labeltimeout.caption
 msgid "Does the patched elilo.efi have a timeout of 2 seconds in case of a failed elilo configuration?"
 msgstr "Hat die ausgebesserte elilo.efi ein Timeout von 2 Sekunden im Falle einer gescheiterten elilo-Konfiguration?"
@@ -509,6 +565,16 @@ msgstr "Nein"
 
 #: tquery4.radiobtnnomenu.caption
 msgid "default.nomenu"
+msgstr ""
+
+#: tquery4.radiobtnopsi41.caption
+msgctxt "tquery4.radiobtnopsi41.caption"
+msgid "opsi 4.1"
+msgstr ""
+
+#: tquery4.radiobtnopsi42.caption
+msgctxt "tquery4.radiobtnopsi42.caption"
+msgid "opsi 4.2"
 msgstr ""
 
 #: tquery4.radiobtnyes.caption

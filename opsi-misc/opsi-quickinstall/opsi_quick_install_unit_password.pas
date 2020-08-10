@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  MaskEdit;
+  MaskEdit, osRunCommandElevated;
 
 type
 
@@ -56,11 +56,11 @@ uses
 
 procedure TPassword.FormActivate(Sender: TObject);
 begin
-  Left:=Overview.Left+Round(Overview.Width/2)-Round(Width/2);
-  Top:=Overview.Top+Round(Overview.Height/2)-Round(Height/2);
-  BtnFinish.Left:=Width-BtnBack.Left-QuickInstall.BtnFinishWidth;
+  Left := Overview.Left + Round(Overview.Width / 2) - Round(Width / 2);
+  Top := Overview.Top + Round(Overview.Height / 2) - Round(Height / 2);
+  BtnFinish.Left := Width - BtnBack.Left - QuickInstall.BtnFinishWidth;
   // for displaying password as dots
-  EditPassword.EchoMode:=emPassword;
+  EditPassword.EchoMode := emPassword;
 end;
 
 procedure TPassword.BtnBackClick(Sender: TObject);
@@ -70,9 +70,10 @@ end;
 
 procedure TPassword.BtnFinishClick(Sender: TObject);
 var
-  fileName, propertyName: string;
+  fileName, propertyName, url, Output: string;
   FileText: TStringList;
   MyRepo: TLinuxRepository;
+  RunCommand: TRunCommandElevated;
 begin
   // write user input in l-opsi-server.conf file:
   fileName := ExtractFilePath(ParamStr(0)) + 'l-opsi-server.conf';
@@ -166,19 +167,25 @@ begin
 
   propertyName := 'opsi_online_repository';
   if Query.RadioBtnOpsi41.Checked then
-    FileText.Add(propertyName +
-      '=http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/')
+    FileText.Add(propertyName + '=' + QuickInstall.baseURLOpsi41 +
+      QuickInstall.DistrUrlPart)
+    {FileText.Add(propertyName +
+      '=http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/')}
   else if Query.RadioBtnOpsi42.Checked then
-    FileText.Add(propertyName + '=???4.2???')
+    FileText.Add(propertyName + '=' + QuickInstall.baseURLOpsi42 +
+      QuickInstall.DistrUrlPart)
   else
     FileText.Add(propertyName + '=' + Query.EditRepo.Text);
 
   propertyName := 'opsi_noproxy_online_repository';
-  if Query.RadioBtnOpsi41NoCache.Checked then
-    FileText.Add(propertyName +
-      '=http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/')
-  else if Query.RadioBtnOpsi42NoCache.Checked then
-    FileText.Add(propertyName + '=???4.2???')
+  if Query.RadioBtnOpsi41.Checked then
+    FileText.Add(propertyName + '=' + QuickInstall.baseURLOpsi41 +
+      QuickInstall.DistrUrlPart)
+    {FileText.Add(propertyName +
+      '=http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/')}
+  else if Query.RadioBtnOpsi42.Checked then
+    FileText.Add(propertyName + '=' + QuickInstall.baseURLOpsi42 +
+      QuickInstall.DistrUrlPart)
   else
     FileText.Add(propertyName + '=' + Query.EditOtherNoCache.Text);
 
@@ -230,10 +237,35 @@ begin
   FileText.Free;
 
   // create repository
-  MyRepo:=TLinuxRepository.Create(QuickInstall.MyDistr, EditPassword.Text, RadioBtnSudo.Checked);
+  MyRepo := TLinuxRepository.Create(QuickInstall.MyDistr, EditPassword.Text,
+    RadioBtnSudo.Checked);
   // Set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
-  //MyRepo.GetDefaultURL();
-
+  if Query.RadioBtnOpsi41.Checked then
+  begin
+    if Query2.RadioBtnExperimental.Checked then
+      url := MyRepo.GetDefaultURL(Opsi41, experimental)
+    else if Query2.RadioBtnStable.Checked then
+      url := MyRepo.GetDefaultURL(Opsi41, stable)
+    else if Query2.RadioBtnTesting.Checked then
+      url := MyRepo.GetDefaultURL(Opsi41, testing);
+  end
+  else
+  begin
+    if Query2.RadioBtnExperimental.Checked then
+      url := MyRepo.GetDefaultURL(Opsi42, experimental)
+    else if Query2.RadioBtnStable.Checked then
+      url := MyRepo.GetDefaultURL(Opsi42, stable)
+    else if Query2.RadioBtnTesting.Checked then
+      url := MyRepo.GetDefaultURL(Opsi42, testing);
+  end;
+  MyRepo.Add(url);
+  RunCommand:= TRunCommandElevated.Create(EditPassword.Text, RadioBtnSudo.Checked);
+  Output:=RunCommand.Run('sudo apt update');
+  //ShowMessage(Output);
+  Output:=RunCommand.Run('sudo apt install opsi-script');
+  //ShowMessage(Output);
+  RunCommand.Free;
+  MyRepo.Free;
   // close forms
   Overview.Close;
   Password.Close;
@@ -243,12 +275,11 @@ procedure TPassword.CheckBoxShowPasswordChange(Sender: TObject);
 begin
   if CheckBoxShowPassword.Checked then
     // TMaskEdit can't do this !?
-    EditPassword.EchoMode:=emNormal
+    EditPassword.EchoMode := emNormal
   else
-    EditPassword.EchoMode:=emPassword;
+    EditPassword.EchoMode := emPassword;
   // EditPassword.Text still gets the real text
   //ShowMessage(EditPassword.Text);
 end;
 
 end.
-

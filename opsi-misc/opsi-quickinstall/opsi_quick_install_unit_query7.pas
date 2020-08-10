@@ -59,6 +59,7 @@ end;
 
 procedure TQuery7.FormActivate(Sender: TObject);
 begin
+  //ShowMessage(IntToStr(BtnOverview.Width));
   AdjustPanelPosition(self);
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
 end;
