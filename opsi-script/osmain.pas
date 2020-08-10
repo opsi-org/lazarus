@@ -1502,9 +1502,9 @@ begin
     end;
 
 
-    LogDatei.log('BuildPC: finishOpsiconf .....', LLDebug3);
+    LogDatei.log('BuildPC: finishOpsiconf .....', LLDebug2);
     OpsiData.finishOpsiconf;
-
+    LogDatei.log('BuildPC: after finishOpsiconf .....', LLDebug2);
 
     {$IFDEF UNIX}
     opsiclientd := False;
@@ -1563,7 +1563,7 @@ begin
     LogDatei.log('BuildPC: Terminating .....', LLDebug3);
     {$IFDEF WINDOWS}
     SystemCritical.IsCritical := False;
-{$ENDIF WINDOWS}
+    {$ENDIF WINDOWS}
     TerminateApp;
   except
     on e: Exception do

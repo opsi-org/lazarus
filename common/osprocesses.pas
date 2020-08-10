@@ -184,6 +184,7 @@ var
   searchstr, shortcmd: string;
 begin
   Result := False;
+  searchproc := trim(searchproc);
   try
     list1 := TStringList.Create;
     try
@@ -198,7 +199,8 @@ begin
           'Process name to find (' + searchproc +
           ') is wider then 14 chars. Searching for: (' + searchstr + '). The result may not be exact',
           LLwarning);
-      end;
+      end
+      else searchstr := searchproc;
       list1.Text := getProcesslist.Text;
       //If Assigned(LogDatei) then LogDatei.log_list(list1,LLDebug2);
       for i := 0 to list1.Count - 1 do
@@ -212,15 +214,16 @@ begin
       end;
     {$ENDIF LINUX}
     {$IFDEF WINDOWS}
+      searchstr := searchproc;
       list1.Text := getProcesslist.Text;
       for i := 0 to list1.Count - 1 do
       begin
-        if pos(searchproc, list1.Strings[i]) > 0 then
+        if pos(searchstr, list1.Strings[i]) > 0 then
           Result := True;
       end;
     {$ENDIF WINDOWS}
     except
-      logdatei.log('Error: Exception in processIsRunning:  ' + searchproc, LLError);
+      logdatei.log('Error: Exception in processIsRunning:  ' + searchproc+' / '+searchstr, LLError);
       Result := False;
     end;
   finally
