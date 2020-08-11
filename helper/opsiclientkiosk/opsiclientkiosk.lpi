@@ -23,7 +23,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="3"/>
+      <BuildNr Value="4"/>
       <StringTable CompanyName="uib gmbh (www.uib.de)" InternalName="opsi-client-kiosk" LegalCopyright="uib gmbh under AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" ProductName="opsi" ProductVersion="4.1.0"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -117,7 +117,6 @@
 -dOPSI
 -dOPSI_AS_USER"/>
             <ExecuteAfter>
-              <Command Value="execute_after.bat"/>
               <CompileReasons Run="False"/>
             </ExecuteAfter>
           </Other>

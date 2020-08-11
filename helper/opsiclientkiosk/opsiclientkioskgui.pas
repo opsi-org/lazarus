@@ -83,8 +83,8 @@ type
     (* DataSources *)
     DataSourceProductDependencies: TDataSource;
     DataSourceProductData: TDataSource;
-    DBTextAdvice: TDBText;
-    DBTextDescription: TDBText;
+    DBMemoProductDescription: TDBMemo;
+    DBMemoProductDescription1: TDBMemo;
     DBTextActionRequest: TDBText;
     ImageLogo: TImage;
     LabelSoftwareActionRequest: TLabel;
