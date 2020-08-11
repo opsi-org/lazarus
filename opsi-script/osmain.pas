@@ -880,7 +880,8 @@ begin
 {$IFDEF UNIX}
   if not DirectoryExists(depotdrive) then
   begin
-    LogDatei.log('Setting depotdrive from: '+depotdrive+' to: '+depotdrive_old, LLdebug2);
+    LogDatei.log('Setting depotdrive from: ' + depotdrive + ' to: ' + depotdrive_old,
+      LLdebug2);
     depotdrive := depotdrive_old;
   end;
 {$ENDIF LINUX}
@@ -1501,9 +1502,9 @@ begin
     end;
 
 
-    LogDatei.log('BuildPC: finishOpsiconf .....', LLDebug3);
+    LogDatei.log('BuildPC: finishOpsiconf .....', LLDebug2);
     OpsiData.finishOpsiconf;
-
+    LogDatei.log('BuildPC: after finishOpsiconf .....', LLDebug2);
 
     {$IFDEF UNIX}
     opsiclientd := False;
@@ -1517,7 +1518,7 @@ begin
         begin
           if opsiclientd then
           begin
-            LogDatei.log_prog('Reboot via opsiclientd', LLinfo);
+            LogDatei.log('Reboot via opsiclientd', LLinfo);
             TheExitMode := txmNoExit;
             filehandle :=
               fpOpen('/var/run/opsiclientd/reboot', O_WrOnly or O_Creat);
@@ -1525,42 +1526,44 @@ begin
           end
           else
           begin
+            LogDatei.log('Reboot direct (not via opsiclientd)', LLinfo);
             if PerformExitWindows <> txrImmediateReboot then
             begin
               LogDatei.log('BuildPC: update switches 2.....', LLDebug3);
               opsidata.UpdateSwitches(extremeErrorLevel, logdatei.actionprogress);
             end;
             TheExitMode := txmReboot;
+            if not ExitSession(TheExitMode, Fehler) then
+              {$IFDEF GUI}
+              MyMessageDlg.WiMessage('ExitWindows Error ' + LineEnding + Fehler, [mrOk]);
+              {$ELSE GUI}
+              writeln('ExitWindows Error ' + LineEnding + Fehler);
+              {$ENDIF GUI}
           end;
         end;
 
         txrRegisterforLogout, txrImmediateLogout: TheExitMode := txmLogout;
       end;
-
-
-      if not ExitSession(TheExitMode, Fehler) then
-              {$IFDEF GUI}
-        MyMessageDlg.WiMessage('ExitWindows Error ' + LineEnding + Fehler, [mrOk]);
-              {$ELSE GUI}
-      writeln('ExitWindows Error ' + LineEnding + Fehler);
-              {$ENDIF GUI}
     end;
     if PerformShutdown = tsrRegisterForShutdown then
     begin
       if opsiclientd then
       begin
-        LogDatei.log_prog('Shutdown via opsiclientd', LLinfo);
+        LogDatei.log('Shutdown via opsiclientd', LLinfo);
         filehandle := fpOpen('/var/run/opsiclientd/shutdown', O_WrOnly or O_Creat);
         fpClose(filehandle);
       end
       else
+      begin
+        LogDatei.log('Shutdown direct (not via opsiclientd)', LLinfo);
         os_shutdown();
+      end;
     end;
     {$ENDIF LINUX}
     LogDatei.log('BuildPC: Terminating .....', LLDebug3);
     {$IFDEF WINDOWS}
     SystemCritical.IsCritical := False;
-{$ENDIF WINDOWS}
+    {$ENDIF WINDOWS}
     TerminateApp;
   except
     on e: Exception do

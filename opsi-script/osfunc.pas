@@ -2695,8 +2695,9 @@ begin
     end;
   end;
 
-  stringsplitByWhiteSpace(ParamStr, TStringList(paramlist));
+  stringsplitByWhiteSpace(trim(ParamStr), TStringList(paramlist));
   logdatei.log_prog('command: ' + CmdLinePasStr, LLinfo);
+  logdatei.log_prog('ParamStr: ' + ParamStr, LLinfo);
   logdatei.log_prog('Filename from command: ' + filename + '=' + ExpandFileName(
     filename), LLInfo);
   logdatei.log_prog('Params from command: ' + TStringList(paramlist).Text, LLInfo);
@@ -2717,6 +2718,7 @@ begin
       FpcProcess.Executable := filename;
       FpcProcess.Parameters := TStringList(paramlist);
       {$ENDIF WINDOWS}
+      logdatei.log_prog('command: ' + FpcProcess.CommandLine, LLinfo);
 
       if not WaitForReturn then
         catchout := False;
@@ -2781,7 +2783,6 @@ begin
             FBatchOberflaeche.showProgressBar(True);
             FBatchOberflaeche.setProgress(0);
           end;
-          //for starcounter := 1 to 110 do cpu100stars := cpu100stars+ '*';
           {$ENDIF GUI}
 
           while running do
@@ -2983,14 +2984,6 @@ begin
               logdatei.log(
                 'Process terminated at: ' + DateTimeToStr(now) +
                 ' exitcode is: ' + IntToStr(lpExitCode), LLInfo);
- (*
-            end
-            else if GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode) and (lpExitCode <> still_active)
-            then
-            begin
-              logdatei.DependentAdd('Process terminated at: ' +
-                DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
-*)
               {$IFDEF WINDOWS}
               if WaitForWindowVanished then
               begin
@@ -3758,20 +3751,11 @@ begin
         CloseHandle(hWritePipe);
         CloseHandle(hReadPipe);
       end
-
-(*
-      if not CreateProcessElevated(nil, CmdLinePasStr, PChar(GetCurrentDir), 0,
-        ProcessInfo) then
-      begin
-        Result := False;
-        logdatei.DependentAdd('Could not start process ', LLError);
-      end
-*)
       else
       begin
         SetProcessAffinityMask(ProcessInfo.hProcess, 1);
         Result := True;
-
+        logdatei.log('Started process "' +CmdLinePasStr, LLInfo);
         desiredProcessStarted := False;
         WaitForProcessEndingLogflag := True;
         setLength(resultfilename, 400);
@@ -3792,6 +3776,13 @@ begin
           running := True;
           starttime := now;
           WaitWindowStarted := False;
+          {$IFDEF GUI}
+          if waitsecsAsTimeout and (WaitSecs > 5) then
+          begin
+            FBatchOberflaeche.showProgressBar(True);
+            FBatchOberflaeche.setProgress(0);
+          end;
+          {$ENDIF GUI}
 
           while running do
           begin
@@ -3819,12 +3810,28 @@ begin
               //we are waiting for a window that will later vanish
               //but this window did not appear yet
               if FindWindowEx(0, 0, nil, PChar(Ident)) <> 0 then
+              begin
                 WaitWindowStarted := True;
+                logdatei.log('Wait for vanish Window: "' + Ident + '" found.', LLDebug);
+              end;
 
               if not WaitWindowStarted or WaitForWindowVanished then
-                running := True;
-              // in case WaitForWindowVanished we are not yet ready
-              // but have to check waiting condition 3
+                // in case WaitForWindowVanished we are not yet ready
+                // but have to check waiting condition 3
+                if WaitSecs = 0 then
+                  running := True
+                else
+                begin //time out given
+                  if ((nowtime - starttime) < waitSecs / secsPerDay) then
+                  begin
+                    running := True;
+                  end
+                  else
+                  begin
+                    logdatei.log('Wait for vanish Window "' + ident +
+                      '" stopped - time out ' + IntToStr(waitSecs) + ' sec', LLInfo);
+                  end;
+                end;
             end
 
             else if not waitsecsAsTimeout and (WaitSecs > 0) and
@@ -3876,7 +3883,35 @@ begin
 
               if not running then
               begin
-                logdatei.DependentAdd('Process "' + ident + '" ended', LevelComplete);
+                logdatei.log('Process "' + ident + '" ended', LLinfo);
+                // After the process we waited for has ended, the Parent may be still alive
+                // in this case we have to wait for the end of the parent
+                {$IFDEF WINDOWS}
+                if GetExitCodeProcess(processInfo.hProcess, longword(lpExitCode)) and
+                  (lpExitCode = still_active) then
+                begin
+                  running := True;
+                  WaitForProcessEnding := False;
+                end;
+                {$ENDIF WINDOWS}
+                (*
+                {$IFDEF UNIX}
+                lpExitCode := FpcProcess.ExitCode;
+                if FpcProcess.Running then
+                begin
+                  running := True;
+                  WaitForProcessEnding := False;
+                end
+                else
+                begin
+                  lpExitCode := FpcProcess.ExitCode;
+                  logdatei.log(
+                    'Process : ' + FpcProcess.Executable + ' terminated at: ' +
+                    DateTimeToStr(now) + ' exitcode is: ' +
+                    IntToStr(lpExitCode), LLInfo);
+                end;
+                {$ENDIF LINUX}
+                *)
               end
               else
               begin
@@ -3905,15 +3940,6 @@ begin
               logdatei.log(
                 'Process terminated at: ' + DateTimeToStr(now) +
                 ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
- (*
-            end
-            else if GetExitCodeProcess(FpcProcess.ProcessHandle, lpExitCode) and
-              (lpExitCode <> still_active)
-            then
-            begin
-              logdatei.DependentAdd('Process terminated at: ' +
-                DateTimeToStr(now) + ' exitcode is: ' + IntToStr(lpExitCode), LLDebug2);
-*)
               if WaitForWindowVanished then
               begin
                 if not (FindWindowEx(0, 0, nil, PChar(Ident)) = 0) then

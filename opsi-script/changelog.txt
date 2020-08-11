@@ -15,6 +15,11 @@ opsi-winst/opsi-script (4.12.4.0) experimental; urgency=low
   * compiled with lazarus 2.0.10
   * fix for /showoutput at win64
   * fix for runningonuefi if w10 release >= 2004
+  * osparser: execDosBatch: additional parameters now allowed for shellInAnIcon &co:
+     /runElevated
+     /TimeoutSeconds <number>
+     /WaitForProcessEnding <string>
+     /LetThemGo
 
 -- j.werner <j.werner@uib.de> Thu, 30 Jul 2020 17:54
 
