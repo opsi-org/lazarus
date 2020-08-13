@@ -13,7 +13,7 @@
   <key>CFBundleName</key>
   <string>opsi-script</string>
   <key>CFBundleShortVersionString</key>
-  <string>4.12.3.13</string>
+  <string>4.12.4.1</string>
   <key>CFBundleIconFile</key>
   <string>opsi.icns</string>
   <key>CFBundleVersion</key>
@@ -22,5 +22,11 @@
   <array>
     <string>MacOSX</string>
   </array>
+  <key>NSAppleScriptEnabled</key>
+  <true/>
+  <key>NSDesktopFolderUsageDescription</key>
+  <string>opsi need access to your desktop folders</string>
+  <key>NSNetworkVolumesUsageDescription</key>
+  <string>opsi need access to your network shares</string>
 </dict>
 </plist>

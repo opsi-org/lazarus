@@ -1559,7 +1559,7 @@ begin
         os_shutdown();
       end;
     end;
-    {$ENDIF LINUX}
+    {$ENDIF UNIX}
     LogDatei.log('BuildPC: Terminating .....', LLDebug3);
     {$IFDEF WINDOWS}
     SystemCritical.IsCritical := False;
