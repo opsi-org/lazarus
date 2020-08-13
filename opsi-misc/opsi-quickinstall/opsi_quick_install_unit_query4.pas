@@ -92,9 +92,7 @@ begin
   if QuickInstall.RadioBtnDefault.Checked then
     PanelOpsiVersion.Visible := True
   else
-  begin
     PanelOpsiVersion.Visible := False;
-  end;
 end;
 
 procedure TQuery4.FormClose(Sender: TObject; var CloseAction: TCloseAction);

@@ -148,7 +148,7 @@ msgstr ""
 msgid ""
 "\n"
 "If this is correct, please click 'next >' to continue.\n"
-"If not, please edit the distribution name and then continue with 'next >'.\n"
+"If not, please edit the distribution and then continue with 'next >'.\n"
 msgstr ""
 
 #: tdistribution.labeldistr.caption

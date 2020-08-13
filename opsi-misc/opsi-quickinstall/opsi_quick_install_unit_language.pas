@@ -29,7 +29,8 @@ type
     procedure ComboBoxLanguagesChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
-
+    FMyDistr: TDistribution;
+    FDistrUrlPart: string;
   public
   const
     // same width for all panels
@@ -50,8 +51,13 @@ type
     // Note that it doesn't work to define initialProds in opsi_quick_install_unit_query3 and
     // set it to True here in opsi_quick_install_unit_language.
     initialProds: boolean;
-    MyDistr: TDistribution;
-    distroName, distroRelease, DistrUrlPart: string;
+    distroName, distroRelease: string;
+
+    property MyDistr: TDistribution read FMyDistr;
+    property DistrUrlPart: string read FDistrUrlPart;
+
+    // procedure for setting MyDistr and DistrUrlPart depending on distroName and distroRelease
+    procedure SetDistr(distrName: string; distrRelease: string);
   end;
 
 
@@ -97,6 +103,92 @@ begin
 end;
 
 { TQuickInstall }
+
+procedure TQuickInstall.SetDistr(distrName: string; distrRelease: string);
+begin
+  // Change from distrName and -Release to TDistribution and respective URL part
+  // Pos('7', distrRelease) = 1 checks whether string '7' occurs in string...
+  // ...distrRelease at first position (1-based) for the fist time...
+  // ...(meaning 0th position in array thinking).
+  // CentOS has releases with names like 7.x-xxxx
+  if (distrName = 'CentOS') and (Pos('7', distrRelease) = 1) then
+  begin
+    FMyDistr := CentOS_7;
+    FDistrUrlPart := 'CentOS_7/';
+  end
+  else
+  if distrName = 'Debian' then
+  begin
+    if distrRelease = '8' then
+    begin
+      FMyDistr := Debian_8;
+      FDistrUrlPart := 'Debian_8/';
+    end
+    else
+    if distrRelease = '9' then
+    begin
+      FMyDistr := Debian_9;
+      FDistrUrlPart := 'Debian_9/';
+    end
+    else
+    if distrRelease = '10' then
+    begin
+      FMyDistr := Debian_10;
+      FDistrUrlPart := 'Debian_10/';
+    end;
+  end
+  else
+  if distrName = 'openSUSE Leap' then
+  begin
+    if distrRelease = '15.1' then
+    begin
+      FMyDistr := openSUSE_Leap_15_1;
+      FDistrUrlPart := 'openSUSE_Leap_15.1/';
+    end
+    else if distrRelease = '42.3' then
+    begin
+      FMyDistr := openSUSE_Leap_42_3;
+      FDistrUrlPart := 'openSUSE_Leap_42.3/';
+    end;
+  end
+  else
+  // RHEL has releases like 7.x
+  if (distrName = 'RedHatEnterpriseServer') and (Pos('7', distrRelease) = 1) then
+  begin
+    FMyDistr := RHEL_7;
+    FDistrUrlPart := 'RHEL_7/';
+  end
+  else
+  if distrName = 'Univention' then
+  begin
+    if Pos('4.3', distrRelease) = 1 then
+    begin
+      FMyDistr := xUbuntu_16_04;
+      FDistrUrlPart := 'Univention_4.3/';
+    end
+    else
+    if Pos('4.4', distrRelease) = 1 then
+    begin
+      FMyDistr := xUbuntu_18_04;
+      FDistrUrlPart := 'Univention_4.4/';
+    end;
+  end
+  else
+  if distrName = 'Ubuntu' then
+  begin
+    if distrRelease = '16.04' then
+    begin
+      FMyDistr := xUbuntu_16_04;
+      FDistrUrlPart := 'xUbuntu_16.04/';
+    end
+    else
+    if distrRelease = '18.04' then
+    begin
+      FMyDistr := xUbuntu_18_04;
+      FDistrUrlPart := 'xUbuntu_18.04/';
+    end;
+  end;
+end;
 
 procedure TQuickInstall.FormCreate(Sender: TObject);
 var
@@ -159,88 +251,7 @@ begin
   distroRelease := getLinuxDistroRelease;
   //ShowMessage(distroName);
   //ShowMessage(distroRelease);
-
-  // Change from distroName and -Release to TDistribution and respective URL part
-  // Pos('7', distroRelease) = 1 checks whether string '7' occurs in string...
-  // ...distroRelease at first position for the fist time (respectively 0th position).
-  // CentOS has releases with names like 7.x-xxxx
-  if (distroName = 'CentOS') and (Pos('7', distroRelease) = 1) then
-  begin
-    MyDistr := CentOS_7;
-    DistrUrlPart := 'CentOS_7/';
-  end
-  else
-  if distroName = 'Debian' then
-  begin
-    if distroRelease = '8' then
-    begin
-      MyDistr := Debian_8;
-      DistrUrlPart := 'Debian_8/';
-    end
-    else
-    if distroRelease = '9' then
-    begin
-      MyDistr := Debian_9;
-      DistrUrlPart := 'Debian_9/';
-    end
-    else
-    if distroRelease = '10' then
-    begin
-      MyDistr := Debian_10;
-      DistrUrlPart := 'Debian_10/';
-    end;
-  end
-  else
-  if distroName = 'openSUSE Leap' then
-  begin
-    if distroRelease = '15.1' then
-    begin
-      MyDistr := openSUSE_Leap_15_1;
-      DistrUrlPart := 'openSUSE_Leap_15.1/';
-    end
-    else if distroRelease = '42.3' then
-    begin
-      MyDistr := openSUSE_Leap_42_3;
-      DistrUrlPart := 'openSUSE_Leap_42.3/';
-    end;
-  end
-  else
-  // RHEL has releases like 7.x
-  if (distroName = 'RedHatEnterpriseServer') and (Pos('7', distroRelease) = 1) then
-  begin
-    MyDistr := RHEL_7;
-    DistrUrlPart := 'RHEL_7/';
-  end
-  else
-  if distroName = 'Univention' then
-  begin
-    if Pos('4.3', distroRelease) = 1 then
-    begin
-      MyDistr := xUbuntu_16_04;
-      DistrUrlPart := 'Univention_4.3/';
-    end
-    else
-    if Pos('4.4', distroRelease) = 1 then
-    begin
-      MyDistr := xUbuntu_18_04;
-      DistrUrlPart := 'Univention_4.4/';
-    end;
-  end
-  else
-  if distroName = 'Ubuntu' then
-  begin
-    if distroRelease = '16.04' then
-    begin
-      MyDistr := xUbuntu_16_04;
-      DistrUrlPart := 'xUbuntu_16.04/';
-    end
-    else
-    if distroRelease = '18.04' then
-    begin
-      MyDistr := xUbuntu_18_04;
-      DistrUrlPart := 'xUbuntu_18.04/';
-    end;
-  end;
+  SetDistr(distroName, distroRelease);
 end;
 
 procedure TQuickInstall.BtnNextClick(Sender: TObject);

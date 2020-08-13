@@ -148,7 +148,7 @@ begin
       //LogDatei.Log('ErrorNr: ' + IntToStr(ErrorNr),LLInfo);
       Owner := FRunCommandElevated.Run('stat -c "%U" ' + FSourcesListFilePath);
       Owner := StringReplace(Owner, LineEnding, '', [rfReplaceAll]);
-      //ShowMessage(Owner);
+      //ShowMessage(Owner); // result in Anja-M.'s case with ubuntu 18.04: root
       LogDatei.log('Owner: ' + Owner, LLInfo);
       // following code line moved down after else part for not getting trouble with AddLineToTextFile
       //FRunCommandElevated.Run('chown -c $USER ' + FSourcesListFilePath);
@@ -158,14 +158,14 @@ begin
       Owner := 'root';
       FRunCommandElevated.Run('touch ' + FSourcesListFilePath);
     end;
-    // root to user
+    // change owner of file FSourcesListFilePath from root to user
     Output:=FRunCommandElevated.Run('chown -c $USER ' + FSourcesListFilePath);
     //ShowMessage(Output);
 
     //ShowMessage('deb '+FURL+' /');
     AddLineToTextFile('deb '+FURL+' /', FSourcesListFilePath);
 
-    // user to root
+    // change owner of file FSourcesListFilePath from user to root
     Output:=(FRunCommandElevated.Run('chown -c ' + Owner + ' ' + FSourcesListFilePath));
     //ShowMessage(Output);
 

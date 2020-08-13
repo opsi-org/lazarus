@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  MaskEdit, osRunCommandElevated;
+  MaskEdit, osRunCommandElevated, LCLType;
 
 type
 
@@ -25,6 +25,7 @@ type
     RadioBtnSudo: TRadioButton;
     procedure BtnBackClick(Sender: TObject);
     procedure BtnFinishClick(Sender: TObject);
+    procedure EditPasswordUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
     procedure FormActivate(Sender: TObject);
     procedure CheckBoxShowPasswordChange(Sender: TObject);
   private
@@ -259,16 +260,25 @@ begin
       url := MyRepo.GetDefaultURL(Opsi42, testing);
   end;
   MyRepo.Add(url);
-  RunCommand:= TRunCommandElevated.Create(EditPassword.Text, RadioBtnSudo.Checked);
-  Output:=RunCommand.Run('sudo apt update');
+  RunCommand := TRunCommandElevated.Create(EditPassword.Text, RadioBtnSudo.Checked);
+  Output := RunCommand.Run('sudo apt update');
   //ShowMessage(Output);
-  Output:=RunCommand.Run('sudo apt install opsi-script');
+  Output := RunCommand.Run('sudo apt install opsi-script');
   //ShowMessage(Output);
   RunCommand.Free;
   MyRepo.Free;
   // close forms
   Overview.Close;
   Password.Close;
+end;
+
+procedure TPassword.EditPasswordUTF8KeyPress(Sender: TObject;
+  var UTF8Key: TUTF8Char);
+begin
+  // finishing also possible by pressing enter after writing the password in EditPassword
+  // #13 stands for the Enter key
+  if UTF8Key = #13 then
+  BtnFinish.Click;
 end;
 
 procedure TPassword.CheckBoxShowPasswordChange(Sender: TObject);

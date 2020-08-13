@@ -34,7 +34,8 @@ var
 implementation
 
 uses
-  opsi_quick_install_unit_language;
+  opsi_quick_install_unit_language,
+  osLinuxRepository;
 
 {$R *.lfm}
 
@@ -44,7 +45,22 @@ procedure TDistribution.BtnNextClick(Sender: TObject);
 begin
   GoOn := True;
   Distribution.Close;
-  //!!!distribution change
+  // if distribution was edited:
+  if EditDistr.Text <> QuickInstall.distroName + ' ' + QuickInstall.distroRelease then
+  begin
+    // set new distribution name and release
+    // function Copy is 1-based like Pos
+    QuickInstall.distroName := Copy(EditDistr.Text, 1, Pos(' ', EditDistr.Text) - 1);
+    QuickInstall.distroRelease :=
+      Copy(EditDistr.Text, Pos(' ', EditDistr.Text) + 1, Length(EditDistr.Text) -
+      Pos(' ', EditDistr.Text));
+    with QuickInstall do
+    begin
+      //ShowMessage(distroName);
+      //ShowMessage(distroRelease);
+      SetDistr(distroName, distroRelease);
+    end;
+  end;
 end;
 
 procedure TDistribution.FormCreate(Sender: TObject);
