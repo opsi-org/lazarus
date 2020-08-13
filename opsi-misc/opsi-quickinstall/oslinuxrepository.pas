@@ -134,7 +134,7 @@ end;
 
 procedure TLinuxRepository.AddDebianUbuntu;
 var
-  Owner: string;
+  Owner, Output: string;
   //Buffer:stat;
   //ErrorNr:integer;
 begin
@@ -148,17 +148,27 @@ begin
       //LogDatei.Log('ErrorNr: ' + IntToStr(ErrorNr),LLInfo);
       Owner := FRunCommandElevated.Run('stat -c "%U" ' + FSourcesListFilePath);
       Owner := StringReplace(Owner, LineEnding, '', [rfReplaceAll]);
+      //ShowMessage(Owner);
       LogDatei.log('Owner: ' + Owner, LLInfo);
-      FRunCommandElevated.Run('chown -c $USER ' + FSourcesListFilePath);
+      // following code line moved down after else part for not getting trouble with AddLineToTextFile
+      //FRunCommandElevated.Run('chown -c $USER ' + FSourcesListFilePath);
     end
     else
     begin
       Owner := 'root';
       FRunCommandElevated.Run('touch ' + FSourcesListFilePath);
     end;
+    // root to user
+    Output:=FRunCommandElevated.Run('chown -c $USER ' + FSourcesListFilePath);
+    //ShowMessage(Output);
+
     //ShowMessage('deb '+FURL+' /');
     AddLineToTextFile('deb '+FURL+' /', FSourcesListFilePath);
-    FRunCommandElevated.Run('chown -c ' + Owner + ' ' + FSourcesListFilePath);
+
+    // user to root
+    Output:=(FRunCommandElevated.Run('chown -c ' + Owner + ' ' + FSourcesListFilePath));
+    //ShowMessage(Output);
+
     FRunCommandelevated.Run('wget -nv' + ' ' + FURL + 'Release.key -O' +
       ' ' + 'Release.key');
     FRunCommandElevated.Run('apt-key add - < Release.key');
