@@ -105,6 +105,7 @@ var
   lfilename: string;
   logAndTerminate: boolean = False;
   mynotifierConfPath: string;
+  fullparam : string;
 begin
   preloglist := TStringList.Create;
   preloglist.Add('PreLog for: ' + Application.exename + ' opend at : ' +
@@ -118,15 +119,19 @@ begin
     FileVerInfo.Free;
   end;
   preloglist.Add('Application version: ' + myVersion);
-
+  for i := 0 to ParamCount do fullparam := fullparam + paramstr(i)+' ';
+  preloglist.Add('called: ' +fullparam);
 
   myexepath := ExtractFilePath(Application.ExeName);
   {$IFDEF WINDOWS}
   mynotifierConfPath := myexepath;
   {$ENDIF WINDOWS}
-  {$IFDEF UNIX}
+  {$IFDEF LINUX}
   mynotifierConfPath := '/usr/share/opsi-client-agent/';
-  {$ENDIF UNIX}
+  {$ENDIF LINUX}
+  {$IFDEF DARWIN}
+  mynotifierConfPath := '/usr/local/share/opsi-client-agent/';
+  {$ENDIF DARWIN}
   //myport := 44003;
   myport := 0;
   //stopped := False;
@@ -138,7 +143,7 @@ begin
   optionlist.Add('port:');
   optionlist.Add('skinconfigfile:');
   optionlist.Add('idevent:');
-  ErrorMsg := Application.CheckOptions('hp:s:i:', optionlist);
+  ErrorMsg := Application.CheckOptions('h:s:i:', optionlist);
   if ErrorMsg <> '' then
   begin
     preloglist.Add(ErrorMsg);

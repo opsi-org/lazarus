@@ -3,8 +3,8 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="11"/>
-    <BuildModes Active="Release"/>
-    <Units Count="28">
+    <BuildModes Active="Release-mac"/>
+    <Units Count="30">
       <Unit0>
         <Filename Value="notifier.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -28,7 +28,7 @@
         <Filename Value="notifier_base.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="3"/>
-        <CursorPos X="32" Y="10"/>
+        <CursorPos X="12" Y="10"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -46,9 +46,10 @@
         <ComponentName Value="DataModule1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="19"/>
-        <CursorPos X="97" Y="189"/>
+        <TopLine Value="93"/>
+        <CursorPos X="71" Y="122"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -56,10 +57,9 @@
       <Unit5>
         <Filename Value="notifierguicontrol.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
         <TopLine Value="714"/>
-        <CursorPos X="39" Y="723"/>
+        <CursorPos X="33" Y="720"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="-1"/>
@@ -75,16 +75,16 @@
         <EditorIndex Value="4"/>
         <TopLine Value="131"/>
         <CursorPos X="25" Y="157"/>
-        <UsageCount Value="186"/>
+        <UsageCount Value="188"/>
         <Loaded Value="True"/>
       </Unit6>
       <Unit7>
         <Filename Value="..\..\common\osjson.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="11"/>
         <TopLine Value="37"/>
         <CursorPos Y="57"/>
-        <UsageCount Value="186"/>
+        <UsageCount Value="188"/>
         <Loaded Value="True"/>
       </Unit7>
       <Unit8>
@@ -92,7 +92,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="1"/>
         <CursorPos Y="5"/>
-        <UsageCount Value="147"/>
+        <UsageCount Value="149"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit8>
@@ -103,7 +103,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="85"/>
+        <UsageCount Value="87"/>
       </Unit9>
       <Unit10>
         <Filename Value="..\..\common\superobject.pas"/>
@@ -184,10 +184,10 @@
       </Unit20>
       <Unit21>
         <Filename Value="notifier.d\action.ini"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="10"/>
         <TopLine Value="38"/>
         <CursorPos X="14" Y="45"/>
-        <UsageCount Value="49"/>
+        <UsageCount Value="50"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Ini"/>
       </Unit21>
@@ -216,7 +216,7 @@
         <Filename Value="notifier.d\event.ini"/>
         <EditorIndex Value="5"/>
         <TopLine Value="31"/>
-        <UsageCount Value="19"/>
+        <UsageCount Value="20"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Ini"/>
       </Unit25>
@@ -231,12 +231,27 @@
       <Unit27>
         <Filename Value="..\..\..\..\..\..\usr\share\lazarus\2.0.10\lcl\controls.pp"/>
         <UnitName Value="Controls"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="954"/>
         <CursorPos X="5" Y="975"/>
         <UsageCount Value="11"/>
-        <Loaded Value="True"/>
       </Unit27>
+      <Unit28>
+        <Filename Value="info-opsi-notifier.plist"/>
+        <EditorIndex Value="8"/>
+        <CursorPos X="18" Y="16"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit28>
+      <Unit29>
+        <Filename Value="notarize_opsi-notifier.bash"/>
+        <EditorIndex Value="9"/>
+        <CursorPos X="23" Y="6"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit29>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
