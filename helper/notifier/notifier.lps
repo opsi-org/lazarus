@@ -3,7 +3,7 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="11"/>
-    <BuildModes Active="Release-mac"/>
+    <BuildModes Active="Release-linux"/>
     <Units Count="30">
       <Unit0>
         <Filename Value="notifier.lpr"/>
@@ -46,9 +46,8 @@
         <ComponentName Value="DataModule1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="93"/>
+        <TopLine Value="98"/>
         <CursorPos X="71" Y="122"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
@@ -57,9 +56,10 @@
       <Unit5>
         <Filename Value="notifierguicontrol.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
-        <TopLine Value="714"/>
-        <CursorPos X="33" Y="720"/>
+        <TopLine Value="594"/>
+        <CursorPos X="24" Y="619"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="-1"/>
@@ -73,9 +73,9 @@
         <Filename Value="notifier_json.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="4"/>
-        <TopLine Value="131"/>
-        <CursorPos X="25" Y="157"/>
-        <UsageCount Value="188"/>
+        <TopLine Value="141"/>
+        <CursorPos X="40" Y="153"/>
+        <UsageCount Value="189"/>
         <Loaded Value="True"/>
       </Unit6>
       <Unit7>
@@ -84,7 +84,7 @@
         <EditorIndex Value="11"/>
         <TopLine Value="37"/>
         <CursorPos Y="57"/>
-        <UsageCount Value="188"/>
+        <UsageCount Value="189"/>
         <Loaded Value="True"/>
       </Unit7>
       <Unit8>
@@ -92,7 +92,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="1"/>
         <CursorPos Y="5"/>
-        <UsageCount Value="149"/>
+        <UsageCount Value="150"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit8>
@@ -103,7 +103,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="87"/>
+        <UsageCount Value="88"/>
       </Unit9>
       <Unit10>
         <Filename Value="..\..\common\superobject.pas"/>
@@ -255,124 +255,124 @@
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="258" Column="14" TopLine="223"/>
-      </Position1>
-      <Position2>
         <Filename Value="notifier_json.pas"/>
         <Caret Line="158" Column="25" TopLine="131"/>
+      </Position1>
+      <Position2>
+        <Filename Value="notifierguicontrol.pas"/>
+        <Caret Line="54" Column="27" TopLine="33"/>
       </Position2>
       <Position3>
         <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="54" Column="27" TopLine="33"/>
+        <Caret Line="155" Column="37" TopLine="124"/>
       </Position3>
       <Position4>
         <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="155" Column="37" TopLine="124"/>
+        <Caret Line="156" Column="12" TopLine="124"/>
       </Position4>
       <Position5>
-        <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="156" Column="12" TopLine="124"/>
+        <Filename Value="notifier_json.pas"/>
+        <Caret Line="157" Column="25" TopLine="131"/>
       </Position5>
       <Position6>
-        <Filename Value="notifier_json.pas"/>
-        <Caret Line="157" Column="25" TopLine="131"/>
-      </Position6>
-      <Position7>
         <Filename Value="notifierguicontrol.pas"/>
         <Caret Line="54" Column="27" TopLine="33"/>
-      </Position7>
-      <Position8>
+      </Position6>
+      <Position7>
         <Filename Value="notifier_json.pas"/>
         <Caret Line="157" Column="25" TopLine="131"/>
+      </Position7>
+      <Position8>
+        <Filename Value="notifierguicontrol.pas"/>
+        <Caret Line="54" Column="27" TopLine="33"/>
       </Position8>
       <Position9>
         <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="54" Column="27" TopLine="33"/>
+        <Caret Line="152" Column="12" TopLine="127"/>
       </Position9>
       <Position10>
         <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="152" Column="12" TopLine="127"/>
+        <Caret Line="51" Column="20" TopLine="30"/>
       </Position10>
       <Position11>
         <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="51" Column="20" TopLine="30"/>
+        <Caret Line="60" Column="14" TopLine="30"/>
       </Position11>
       <Position12>
         <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="60" Column="14" TopLine="30"/>
+        <Caret Line="152" Column="12" TopLine="117"/>
       </Position12>
       <Position13>
         <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="152" Column="12" TopLine="117"/>
+        <Caret Line="264" Column="14" TopLine="229"/>
       </Position13>
       <Position14>
         <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="264" Column="14" TopLine="229"/>
+        <Caret Line="752" Column="55" TopLine="729"/>
       </Position14>
       <Position15>
         <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="752" Column="55" TopLine="729"/>
+        <Caret Line="766" Column="16" TopLine="732"/>
       </Position15>
       <Position16>
         <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="766" Column="16" TopLine="732"/>
+        <Caret Line="767" Column="37" TopLine="733"/>
       </Position16>
       <Position17>
         <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="767" Column="37" TopLine="733"/>
+        <Caret Line="51" Column="20" TopLine="30"/>
       </Position17>
       <Position18>
         <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="51" Column="20" TopLine="30"/>
+        <Caret Line="60" Column="14" TopLine="30"/>
       </Position18>
       <Position19>
         <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="60" Column="14" TopLine="30"/>
+        <Caret Line="152" Column="12" TopLine="117"/>
       </Position19>
       <Position20>
         <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="152" Column="12" TopLine="117"/>
+        <Caret Line="264" Column="14" TopLine="229"/>
       </Position20>
       <Position21>
         <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="264" Column="14" TopLine="229"/>
+        <Caret Line="615" Column="15" TopLine="582"/>
       </Position21>
       <Position22>
         <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="615" Column="15" TopLine="582"/>
+        <Caret Line="658" Column="20" TopLine="632"/>
       </Position22>
       <Position23>
         <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="658" Column="20" TopLine="632"/>
+        <Caret Line="664" Column="16" TopLine="632"/>
       </Position23>
       <Position24>
         <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="664" Column="16" TopLine="632"/>
+        <Caret Line="766" Column="16" TopLine="732"/>
       </Position24>
       <Position25>
         <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="766" Column="16" TopLine="732"/>
+        <Caret Line="767" Column="37" TopLine="733"/>
       </Position25>
       <Position26>
         <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="767" Column="37" TopLine="733"/>
+        <Caret Line="51" Column="20" TopLine="30"/>
       </Position26>
       <Position27>
         <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="51" Column="20" TopLine="30"/>
+        <Caret Line="60" Column="14" TopLine="30"/>
       </Position27>
       <Position28>
         <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="60" Column="14" TopLine="30"/>
+        <Caret Line="161" Column="24" TopLine="126"/>
       </Position28>
       <Position29>
         <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="161" Column="24" TopLine="126"/>
+        <Caret Line="907" Column="44" TopLine="900"/>
       </Position29>
       <Position30>
-        <Filename Value="notifierguicontrol.pas"/>
-        <Caret Line="907" Column="44" TopLine="900"/>
+        <Filename Value="notifierdatamodule.pas"/>
+        <Caret Line="122" Column="71" TopLine="98"/>
       </Position30>
     </JumpHistory>
     <RunParams>

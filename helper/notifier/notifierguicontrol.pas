@@ -539,6 +539,10 @@ begin
       stopy := nform.Height;
       nform.Height := 0;
       y := screen.WorkAreaHeight;
+      {$IFDEF LINUX}
+      { no valid control toolbar detection on Linux - so guess }
+      y := screen.WorkAreaHeight - 40;
+      {$ENDIF LINUX}
       nform.Top := y;
       nform.Left := startx;
       nform.AlphaBlend := True;
@@ -550,7 +554,7 @@ begin
       begin
         Sleep(1);
         nform.AlphaBlendValue := i;
-        y := screen.WorkAreaHeight;
+        //y := screen.WorkAreaHeight;
         nform.Top := y - i;
         nform.Height := nform.Height + appearStepSize;
         nform.BringToFront;
@@ -609,6 +613,10 @@ begin
       stopy := nform.Height;
       nform.Height := 0;
       y := screen.WorkAreaHeight;
+      {$IFDEF LINUX}
+      { no valid control toolbar detection on Linux - so guess }
+      y := screen.WorkAreaHeight - 40;
+      {$ENDIF LINUX}
       nform.Top := y;
       nform.Left := startx;
       nform.Show;
