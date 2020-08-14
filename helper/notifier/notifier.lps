@@ -46,9 +46,10 @@
         <ComponentName Value="DataModule1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="98"/>
-        <CursorPos X="71" Y="122"/>
+        <TopLine Value="185"/>
+        <CursorPos X="43" Y="146"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -56,9 +57,8 @@
       <Unit5>
         <Filename Value="notifierguicontrol.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
-        <TopLine Value="594"/>
+        <TopLine Value="596"/>
         <CursorPos X="24" Y="619"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>

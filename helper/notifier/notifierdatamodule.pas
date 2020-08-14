@@ -143,7 +143,7 @@ begin
   optionlist.Add('port:');
   optionlist.Add('skinconfigfile:');
   optionlist.Add('idevent:');
-  ErrorMsg := Application.CheckOptions('h:s:i:', optionlist);
+  ErrorMsg := Application.CheckOptions('hp:s:i:', optionlist);
   if ErrorMsg <> '' then
   begin
     preloglist.Add(ErrorMsg);
