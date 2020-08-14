@@ -25,7 +25,7 @@ uses
   DSiWin32,
   opsiconnection,
   jwawinbase,
-  //osprocesses,
+  osprocesses,
   Process,
   ockunique,
   progresswindow,
@@ -2459,7 +2459,7 @@ begin
   //OCKOpsiConnection.DoSingleActionOnDemand(SelectedProduct);
   OCKOpsiConnection.DoActionsOnDemand;
   sleep(10000);
-  while ockunique.numberOfProcessInstances('notifier') > 0 do
+  while osprocesses.numberOfProcessInstances('notifier') > 0 do
   begin
     Application.ProcessMessages;
     //Instances := ockunique.numberOfProcessInstances('notifier');

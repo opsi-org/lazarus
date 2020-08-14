@@ -1584,14 +1584,14 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
       Height = 313
       Top = 0
       Width = 620
-      PageIndex = 2
+      PageIndex = 0
       Align = alClient
       TabOrder = 0
       TabStop = True
       object PageList: TPage
         object DBGrid1: TDBGrid
           Left = 0
-          Height = 262
+          Height = 313
           Hint = 'Click to ActionRequest Column, to set action requests (setup/uninstall)'
           Top = 0
           Width = 620
@@ -1670,8 +1670,8 @@ object FormOpsiClientKiosk: TFormOpsiClientKiosk
           Align = alTop
           BevelOuter = bvNone
           BorderStyle = bsSingle
-          ClientHeight = 33
-          ClientWidth = 616
+          ClientHeight = 37
+          ClientWidth = 620
           ParentColor = False
           TabOrder = 0
           object ButtonSoftwareBack: TButton
