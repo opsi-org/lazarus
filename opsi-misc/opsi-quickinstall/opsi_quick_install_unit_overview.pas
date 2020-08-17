@@ -169,11 +169,6 @@ begin
   if Query4.RadioBtnDhcpYes.Checked then
   begin
     MemoOverview.Lines.Add(rsOpsiDhcpServer + Query4.RadioBtnDhcpYes.Caption);
-    // Elilo.efi
-    if Query4.RadioBtnYes.Checked then
-      MemoOverview.Lines.Add(rsElilo + Query4.RadioBtnYes.Caption)
-    else
-      MemoOverview.Lines.Add(rsElilo + Query4.RadioBtnNo.Caption);
     // TFTPROOT
     if Query4.RadioBtnMenu.Checked then
       MemoOverview.Lines.Add(rsTFTPROOT + Query4.RadioBtnMenu.Caption)

@@ -494,10 +494,6 @@ msgctxt "tquery4.labelopsiversion.caption"
 msgid "Which opsi version would you like to install?"
 msgstr "Which opsi version would you like to install?"
 
-#: tquery4.labeltimeout.caption
-msgid "Does the patched elilo.efi have a timeout of 2 seconds in case of a failed elilo configuration?"
-msgstr "Does the patched elilo.efi have a timeout of 2 seconds in case of a failed elilo configuration?"
-
 #: tquery4.radiobtndhcpno.caption
 msgctxt "tquery4.radiobtndhcpno.caption"
 msgid "No"
@@ -512,11 +508,6 @@ msgstr "Yes"
 msgid "default.menu"
 msgstr ""
 
-#: tquery4.radiobtnno.caption
-msgctxt "tquery4.radiobtnno.caption"
-msgid "No"
-msgstr "No"
-
 #: tquery4.radiobtnnomenu.caption
 msgid "default.nomenu"
 msgstr ""
@@ -530,11 +521,6 @@ msgstr "opsi 4.1"
 msgctxt "tquery4.radiobtnopsi42.caption"
 msgid "opsi 4.2"
 msgstr "opsi 4.2"
-
-#: tquery4.radiobtnyes.caption
-msgctxt "tquery4.radiobtnyes.caption"
-msgid "Yes"
-msgstr "Yes"
 
 #: tquery5_dhcp.btnback.caption
 msgctxt "tquery5_dhcp.btnback.caption"

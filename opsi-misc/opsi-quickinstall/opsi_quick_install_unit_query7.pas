@@ -68,10 +68,10 @@ begin
   //ShowMessage(IntToStr(BtnOverview.Width));
   AdjustPanelPosition(self);
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
-  {if QuickInstall.RadioBtnDefault.Checked then
+  if QuickInstall.RadioBtnDefault.Checked then
     PanelCopyModules.Visible := False
   else
-    PanelCopyModules.Visible := True;}
+    PanelCopyModules.Visible := True;
 end;
 
 procedure TQuery7.FormClose(Sender: TObject; var CloseAction: TCloseAction);

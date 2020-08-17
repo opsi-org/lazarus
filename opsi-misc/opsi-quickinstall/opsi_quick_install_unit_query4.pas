@@ -19,18 +19,13 @@ type
     LabelDhcp: TLabel;
     LabelFilePointer: TLabel;
     LabelOpsiVersion: TLabel;
-    LabelTimeout: TLabel;
     PanelOpsiVersion: TPanel;
     PanelRadiofilePointer: TPanel;
-    PanelRadioTimeout: TPanel;
     PanelRadioDhcp: TPanel;
     PanelDhcp: TPanel;
     PanelFilePointer: TPanel;
-    PanelTimeout: TPanel;
     RadioBtnDhcpNo: TRadioButton;
     RadioBtnDhcpYes: TRadioButton;
-    RadioBtnNo: TRadioButton;
-    RadioBtnYes: TRadioButton;
     RadioBtnMenu: TRadioButton;
     RadioBtnNoMenu: TRadioButton;
     RadioBtnOpsi41: TRadioButton;
@@ -103,15 +98,9 @@ end;
 procedure TQuery4.RadioBtnDhcpYesChange(Sender: TObject);
 begin
   if RadioBtnDhcpYes.Checked then
-  begin
-    PanelTimeout.Visible := True;
-    PanelFilePointer.Visible := True;
-  end
+    PanelFilePointer.Visible := True
   else
-  begin
-    PanelTimeout.Visible := False;
     PanelFilePointer.Visible := False;
-  end;
 end;
 
 procedure TQuery4.RadioBtnOpsi41Change(Sender: TObject);

@@ -102,12 +102,6 @@ begin
   else
     FileText.Add(propertyName + '=' + Query5_dhcp.EditDomain.Text);
 
-  propertyName := 'download_patched_elilo_efi';
-  if Query4.RadioBtnYes.Checked then
-    FileText.Add(propertyName + '=True')
-  else
-    FileText.Add(propertyName + '=False');
-
   propertyName := 'force_copy_modules';
   if Query7.RadioBtnYes.Checked then
     FileText.Add(propertyName + '=True')
