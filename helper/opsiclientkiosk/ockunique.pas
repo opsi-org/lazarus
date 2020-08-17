@@ -1,4 +1,4 @@
-unit ockunique;
+unit OckUnique;
 
 {$mode delphi}
 

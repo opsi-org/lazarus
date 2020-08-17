@@ -16,23 +16,29 @@ unit opsiclientkioskgui;
 interface
 
 uses
-  Classes, SysUtils, DB, ExtendedNotebook, DividerBevel, Forms, Controls,
+  Classes, SysUtils, DB, ExtendedNotebook, Forms, Controls,
   Graphics, Dialogs, ExtCtrls, StdCtrls, Buttons, ComCtrls, Grids, DBGrids,
   DBCtrls,
   datadb,
-  CommCtrl, typinfo, installdlg, lcltranslator,
+  typinfo, installdlg, lcltranslator,
   ActnList, Menus, oslog, inifiles, Variants, Lazfileutils, Types,
-  DSiWin32,
   opsiconnection,
-  jwawinbase,
   osprocesses,
-  Process,
-  ockunique,
+  OckUnique,
   progresswindow,
   ExtDlgs,
   lazproginfo,
   helpinfo,
-  ShellApi
+  OckSystemAPI,
+  {$IFDEF WINDOWS}
+    CommCtrl,
+    jwawinbase,
+    //DSiWin32,
+    ShellApi
+  {$ENDIF WINDOWS}
+  {$IFDEF UNIX}
+   {add unix specific units here}
+  {$ENDIF UNIX}
 
   {more units if nedded};
   //imagestodepot;
@@ -955,7 +961,7 @@ begin
     ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.admin-mode');
     //ShowMessage(ConfigState.Text);
     AdminMode := StrToBool(ConfigState.Strings[0]);
-    if AdminMode and DSiIsAdmin then
+    if AdminMode and SystemAPI.IsAdmin then
     begin
       Caption := Caption + ' - ' + rsAdminMode;
       BitBtnSaveImages.Visible := True;
@@ -963,7 +969,7 @@ begin
     else
     begin
       BitBtnSaveImages.Visible := False;
-      if AdminMode and not DSiIsAdmin then
+      if AdminMode and not SystemAPI.IsAdmin then
       begin
         ShowMessage(Format(rsCurrentUserNoAdmin, [LineEnding]));
         AdminMode := false;
@@ -1392,7 +1398,7 @@ begin
   logDatei.log('Closing ' + ProgramInfo.InternalName,LLNotice);
   FilteredProductIDs.Free;
   StringListDefaultIcons.Free;
-  if AdminMode and DSiIsAdmin then SaveIconsAndScreenshotsLists;
+  if AdminMode and SystemAPI.IsAdmin then SaveIconsAndScreenshotsLists;
   StringListCustomIcons.Free;
   StringListScreenshots.Free;
   DataModuleOCK.Free;
