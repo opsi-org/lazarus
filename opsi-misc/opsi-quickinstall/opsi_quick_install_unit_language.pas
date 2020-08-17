@@ -44,6 +44,7 @@ type
   var
     // same position for all panels
     panelLeft: integer;
+    // same position for all buttons
     BtnNextWidth, BtnOverviewWidth, BtnFinishWidth: integer;
     // same background image for all forms
     BackgrImageFileName: string;
@@ -71,7 +72,7 @@ var
 implementation
 
 uses
-  opsi_quick_install_unit_query, opsi_quick_install_unit_query3,
+  opsi_quick_install_unit_query, opsi_quick_install_unit_query4,
   oslog, osfunclin, opsi_quick_install_unit_distr;
 
 {$R *.lfm}
@@ -262,12 +263,12 @@ begin
     if RadioBtnDefault.Checked then
     begin
       // 'self' is current form
-      showForm(Query3, self);
+      showForm(Query4, self);
       // for having the buttons always at the same place (no hard-coding for easier editing)
-      Query3.BtnBack.Left := BtnBack.Left;
-      Query3.BtnBack.Top := BtnBack.Top;
-      Query3.BtnNext.Left := BtnNext.Left;
-      Query3.BtnNext.Top := BtnNext.Top;
+      Query4.BtnBack.Left := BtnBack.Left;
+      Query4.BtnBack.Top := BtnBack.Top;
+      Query4.BtnNext.Left := BtnNext.Left;
+      Query4.BtnNext.Top := BtnNext.Top;
     end
     else
     begin

@@ -43,11 +43,10 @@ uses
   opsi_quick_install_unit_language,
   opsi_quick_install_unit_query,
   opsi_quick_install_unit_query2,
-  opsi_quick_install_unit_query3,
+  opsi_quick_install_unit_query_prods,
   opsi_quick_install_unit_query4,
   opsi_quick_install_unit_query5_dhcp,
   opsi_quick_install_unit_query6,
-  opsi_quick_install_unit_query7,
   opsi_quick_install_unit_overview,
   osLinuxRepository;
 
@@ -103,7 +102,7 @@ begin
     FileText.Add(propertyName + '=' + Query5_dhcp.EditDomain.Text);
 
   propertyName := 'force_copy_modules';
-  if Query7.RadioBtnYes.Checked then
+  if Query2.RadioBtnYes.Checked then
     FileText.Add(propertyName + '=True')
   else
     FileText.Add(propertyName + '=False');
@@ -217,18 +216,12 @@ begin
   if stringProducts <> '' then
     // Index of 'Delete' is 1-based (Delete(stringProducts, 0, 2) wouldn't do anything)
     Delete(stringProducts, 1, 1);}
-  FileText.Add('products_in_depot=' + Overview.stringProducts);
+  //FileText.Add('products_in_depot=' + Overview.stringProducts);
 
-  FileText.Add('ucs_master_admin_password=' + Query7.EditPasswordUCS.Text);
+  FileText.Add('ucs_master_admin_password=' + Query4.EditPasswordUCS.Text);
 
   propertyName := 'update_test';
   if Query2.RadioBtnYes.Checked then
-    FileText.Add(propertyName + '=True')
-  else
-    FileText.Add(propertyName + '=False');
-
-  propertyName := 'use_ucs';
-  if Query7.RadioBtnUcsYes.Checked then
     FileText.Add(propertyName + '=True')
   else
     FileText.Add(propertyName + '=False');
@@ -267,7 +260,8 @@ begin
   RunCommand.Free;
   MyRepo.Free;
   // close forms
-  Overview.Close;
+  QueryProds.Visible:=True;
+  Overview.Visible:=False;
   Password.Close;
 end;
 

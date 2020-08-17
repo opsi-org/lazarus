@@ -2,13 +2,15 @@
 {"hash":44496825,"name":"tquery4.caption","sourcebytes":[79,112,115,105,32,113,117,105,99,107,32,105,110,115,116,97,108,108,32,45,32,113,117,101,114,121,32,40,100,104,99,112,32,112,97,114,116,32,49,41],"value":"Opsi quick install - query (dhcp part 1)"},
 {"hash":80700016,"name":"tquery4.btnnext.caption","sourcebytes":[32,110,101,120,116,32,62,32],"value":" next > "},
 {"hash":241728480,"name":"tquery4.btnback.caption","sourcebytes":[32,60,32,98,97,99,107,32],"value":" < back "},
-{"hash":31194767,"name":"tquery4.labeldhcp.caption","sourcebytes":[83,104,111,117,108,100,32,119,101,32,114,117,110,32,116,104,101,32,111,112,115,105,32,100,104,99,112,32,115,101,114,118,101,114,32,111,110,32,116,104,105,115,32,109,97,99,104,105,110,101,63],"value":"Should we run the opsi dhcp server on this machine?"},
-{"hash":1359,"name":"tquery4.radiobtndhcpno.caption","sourcebytes":[78,111],"value":"No"},
-{"hash":24515,"name":"tquery4.radiobtndhcpyes.caption","sourcebytes":[89,101,115],"value":"Yes"},
+{"hash":223105775,"name":"tquery4.labelreboot.caption","sourcebytes":[77,97,121,32,116,104,101,32,115,101,114,118,101,114,32,114,101,98,111,111,116,32,105,102,32,116,104,101,32,115,99,114,105,112,116,32,105,115,32,102,105,110,105,115,104,101,100,63],"value":"May the server reboot if the script is finished?"},
+{"hash":1359,"name":"tquery4.radiobtnno.caption","sourcebytes":[78,111],"value":"No"},
+{"hash":24515,"name":"tquery4.radiobtnyes.caption","sourcebytes":[89,101,115],"value":"Yes"},
 {"hash":61213503,"name":"tquery4.labelfilepointer.caption","sourcebytes":[87,104,105,99,104,32,102,105,108,101,32,115,104,111,117,108,100,32,116,104,101,32,84,70,84,80,82,79,79,84,32,100,101,102,97,117,108,116,32,115,121,109,108,105,110,107,32,112,111,105,110,116,32,116,111,63],"value":"Which file should the TFTPROOT default symlink point to?"},
 {"hash":10420149,"name":"tquery4.radiobtnnomenu.caption","sourcebytes":[100,101,102,97,117,108,116,46,110,111,109,101,110,117],"value":"default.nomenu"},
 {"hash":98628757,"name":"tquery4.radiobtnmenu.caption","sourcebytes":[100,101,102,97,117,108,116,46,109,101,110,117],"value":"default.menu"},
-{"hash":223105775,"name":"tquery4.labelreboot.caption","sourcebytes":[77,97,121,32,116,104,101,32,115,101,114,118,101,114,32,114,101,98,111,111,116,32,105,102,32,116,104,101,32,115,99,114,105,112,116,32,105,115,32,102,105,110,105,115,104,101,100,63],"value":"May the server reboot if the script is finished?"},
-{"hash":1359,"name":"tquery4.radiobtnno.caption","sourcebytes":[78,111],"value":"No"},
-{"hash":24515,"name":"tquery4.radiobtnyes.caption","sourcebytes":[89,101,115],"value":"Yes"}
+{"hash":31194767,"name":"tquery4.labeldhcp.caption","sourcebytes":[83,104,111,117,108,100,32,119,101,32,114,117,110,32,116,104,101,32,111,112,115,105,32,100,104,99,112,32,115,101,114,118,101,114,32,111,110,32,116,104,105,115,32,109,97,99,104,105,110,101,63],"value":"Should we run the opsi dhcp server on this machine?"},
+{"hash":1359,"name":"tquery4.radiobtndhcpno.caption","sourcebytes":[78,111],"value":"No"},
+{"hash":24515,"name":"tquery4.radiobtndhcpyes.caption","sourcebytes":[89,101,115],"value":"Yes"},
+{"hash":233753919,"name":"tquery4.labelpasswordmasteradmin.caption","sourcebytes":[87,104,97,116,32,105,115,32,116,104,101,32,80,97,115,115,119,111,114,100,32,111,102,32,116,104,101,32,117,115,101,114,32,65,100,109,105,110,105,115,116,114,97,116,111,114,32,111,102,32,116,104,101,32,85,67,83,32,68,111,109,97,105,110,32,67,111,110,116,114,111,108,108,101,114,32,40,110,101,101,100,101,100,32,102,111,114,32,111,116,104,101,114,32,114,111,108,101,115,32,116,111,32,106,111,105,110,41,63],"value":"What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?"},
+{"hash":6075235,"name":"tquery4.editpassworducs.text","sourcebytes":[108,105,110,117,120,49,50,51],"value":"linux123"}
 ]}

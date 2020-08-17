@@ -14,7 +14,7 @@ type
   TQuery6 = class(TForm)
     BackgrImage: TImage;
     BtnBack: TButton;
-    BtnNext: TButton;
+    BtnOverview: TButton;
     EditNameAdmin: TEdit;
     EditNameIP: TEdit;
     EditNumberIP: TEdit;
@@ -28,7 +28,7 @@ type
     PanelNumberIP: TPanel;
     PanelPasswordAdmin: TPanel;
     procedure BtnBackClick(Sender: TObject);
-    procedure BtnNextClick(Sender: TObject);
+    procedure BtnOverviewClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   private
@@ -50,20 +50,20 @@ uses
   opsi_quick_install_unit_language,
   opsi_quick_install_unit_query4,
   opsi_quick_install_unit_query5_dhcp,
-  opsi_quick_install_unit_query7, opsi_quick_install_unit_overview;
+  opsi_quick_install_unit_overview;
 
 {$R *.lfm}
 
 { TQuery6 }
 
-procedure TQuery6.BtnNextClick(Sender: TObject);
+procedure TQuery6.BtnOverviewClick(Sender: TObject);
 begin
-  showForm(Query7, self);
-  Query7.BtnBack.Left := BtnBack.Left;
-  Query7.BtnBack.Top := BtnBack.Top;
-  Query7.BtnOverview.Left :=
-    Query7.Width - Query7.BtnBack.Left - QuickInstall.BtnOverviewWidth;
-  Query7.BtnOverview.Top := BtnNext.Top;
+  showForm(Overview, self);
+  Overview.BtnBack.Left := BtnBack.Left;
+  Overview.BtnBack.Top := BtnBack.Top;
+  Overview.BtnFinish.Left := Overview.Width - Overview.BtnBack.Left -
+    QuickInstall.BtnFinishWidth;
+  Overview.BtnFinish.Top := BtnOverview.Top;
 
   {if QuickInstall.RadioBtnDefault.Checked then
   begin

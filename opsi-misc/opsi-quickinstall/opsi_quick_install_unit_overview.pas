@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  MaskEdit, Grids;
+  MaskEdit;
 
 type
 
@@ -64,11 +64,10 @@ uses
   opsi_quick_install_unit_language,
   opsi_quick_install_unit_query,
   opsi_quick_install_unit_query2,
-  opsi_quick_install_unit_query3,
+  opsi_quick_install_unit_query_prods,
   opsi_quick_install_unit_query4,
   opsi_quick_install_unit_query5_dhcp,
   opsi_quick_install_unit_query6,
-  opsi_quick_install_unit_query7,
   opsi_quick_install_unit_password;
 
 {$R *.lfm}
@@ -129,6 +128,13 @@ begin
     MemoOverview.Lines.Add(rsBackend + Query2.RadioBtnFile.Caption)
   else
     MemoOverview.Lines.Add(rsBackend + Query2.RadioBtnMySql.Caption);
+  // Copy modules
+  if Query2.RadioBtnYes.Checked then
+    MemoOverview.Lines.Add(rsCopyModules + Query2.RadioBtnYes.Caption)
+  else
+    MemoOverview.Lines.Add(rsCopyModules + Query2.RadioBtnNo.Caption);
+
+  MemoOverview.Lines.Add('');
   // Repo kind
   if Query2.RadioBtnExperimental.Checked then
     MemoOverview.Lines.Add(rsRepoKind + Query2.RadioBtnExperimental.Caption)
@@ -142,7 +148,7 @@ begin
   else
     MemoOverview.Lines.Add(rsUpdate + Query2.RadioBtnNo.Caption);
 
-  MemoOverview.Lines.Add('');
+  {MemoOverview.Lines.Add('');
   // Prods
   MemoOverview.Lines.Add(rsProds);
   stringProducts := '';
@@ -155,9 +161,11 @@ begin
   if stringProducts <> '' then
     // Index of 'Delete' is 1-based (Delete(stringProducts, 0, 2) wouldn't do anything)
     Delete(stringProducts, 1, 2);
-  MemoOverview.Lines.Add(stringProducts);
+  MemoOverview.Lines.Add(stringProducts);}
 
   MemoOverview.Lines.Add('');
+  // UCS password
+  MemoOverview.Lines.Add(rsUCSPassword + Query4.EditPasswordUCS.Text);
   // Reboot
   if Query4.RadioBtnYes.Checked then
     MemoOverview.Lines.Add(rsReboot + Query4.RadioBtnYes.Caption)
@@ -234,39 +242,17 @@ begin
   MemoOverview.Lines.Add(rsIPName + Query6.EditNameIP.Text);
   // IP number
   MemoOverview.Lines.Add(rsIPNumber + Query6.EditNumberIP.Text);
-
-  MemoOverview.Lines.Add('');
-  // use UCS
-  if Query7.RadioBtnUcsYes.Checked then
-  begin
-    MemoOverview.Lines.Add(rsUseUCS + Query7.RadioBtnUcsYes.Caption);
-    // UCS password
-    MemoOverview.Lines.Add(rsUCSPassword + Query7.EditPasswordUCS.Text);
-  end
-  else
-    MemoOverview.Lines.Add(rsUseUCS + Query7.RadioBtnUcsNo.Caption);
-
-  MemoOverview.Lines.Add('');
-  // Copy modules
-  if Query7.RadioBtnYes.Checked then
-    MemoOverview.Lines.Add(rsCopyModules + Query7.RadioBtnYes.Caption)
-  else
-    MemoOverview.Lines.Add(rsCopyModules + Query7.RadioBtnNo.Caption);
 end;
 
 procedure TOverview.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-  Query7.Close;
+  Query6.Close;
 end;
 
 
 procedure TOverview.BtnBackClick(Sender: TObject);
 begin
-  showForm(Query7, self);
-  {if QuickInstall.RadioBtnDefault.Checked then
-    showForm(Query6, self)
-  else
-    showForm(Query7, self);}
+  showForm(Query6, self);
 end;
 
 end.

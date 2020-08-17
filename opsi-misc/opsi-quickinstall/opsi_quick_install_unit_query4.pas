@@ -13,12 +13,14 @@ type
 
   TQuery4 = class(TForm)
     BackgrImage: TImage;
-    BigPanel: TPanel;
     BtnBack: TButton;
     BtnNext: TButton;
+    EditPasswordUCS: TEdit;
     LabelDhcp: TLabel;
     LabelFilePointer: TLabel;
+    LabelPasswordMasterAdmin: TLabel;
     LabelReboot: TLabel;
+    PanelPasswordMasterAdmin: TPanel;
     PanelRadiofilePointer: TPanel;
     PanelRadioDhcp: TPanel;
     PanelDhcp: TPanel;
@@ -49,8 +51,7 @@ implementation
 
 uses
   opsi_quick_install_unit_language,
-  opsi_quick_install_unit_query,
-  opsi_quick_install_unit_query3,
+  opsi_quick_install_unit_query2,
   opsi_quick_install_unit_query5_dhcp,
   opsi_quick_install_unit_query6;
 
@@ -73,16 +74,22 @@ begin
     showForm(Query6, self);
     Query6.BtnBack.Left := BtnBack.Left;
     Query6.BtnBack.Top := BtnBack.Top;
-    Query6.BtnNext.Left := BtnNext.Left;
-    Query6.BtnNext.Top := BtnNext.Top;
+    Query6.BtnOverview.Left := BtnNext.Left;
+    Query6.BtnOverview.Top := BtnNext.Top;
   end;
 
 end;
 
 procedure TQuery4.FormActivate(Sender: TObject);
 begin
-  BigPanel.Left := QuickInstall.panelLeft;
+  AdjustPanelPosition(self);
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
+  // ask for UCS password only if distribution is Univention
+  if Pos('Univention', QuickInstall.MyDistr) = 1 then
+    self.PanelPasswordMasterAdmin.Visible := True
+  else
+    self.PanelPasswordMasterAdmin.Visible := False;
+
   if QuickInstall.RadioBtnDefault.Checked then
     PanelReboot.Visible := False
   else
@@ -91,7 +98,7 @@ end;
 
 procedure TQuery4.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-  Query3.Close;
+  Query2.Close;
 end;
 
 procedure TQuery4.RadioBtnDhcpYesChange(Sender: TObject);
@@ -104,7 +111,12 @@ end;
 
 procedure TQuery4.BtnBackClick(Sender: TObject);
 begin
-    showForm(Query3, self);
+  if QuickInstall.RadioBtnDefault.Checked then
+    showForm(QuickInstall, self)
+  else
+  begin
+    showForm(Query2, self);
+  end;
 end;
 
 end.

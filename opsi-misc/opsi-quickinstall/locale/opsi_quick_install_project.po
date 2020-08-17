@@ -302,6 +302,11 @@ msgid ""
 "(mysql needs valid activation file)\n"
 msgstr ""
 
+#: tquery2.labelcopymodules.caption
+msgctxt "tquery2.labelcopymodules.caption"
+msgid "Should we copy modules even if /etc/opsi/modules still exists?"
+msgstr ""
+
 #: tquery2.labelrepokind.caption
 msgid "From which repo kind should be installed?"
 msgstr ""
@@ -323,6 +328,11 @@ msgctxt "tquery2.radiobtnno.caption"
 msgid "No"
 msgstr ""
 
+#: tquery2.radiobtnno1.caption
+msgctxt "tquery2.radiobtnno1.caption"
+msgid "No"
+msgstr ""
+
 #: tquery2.radiobtnstable.caption
 msgid "stable"
 msgstr ""
@@ -336,107 +346,9 @@ msgctxt "tquery2.radiobtnyes.caption"
 msgid "Yes"
 msgstr ""
 
-#: tquery3.btnback.caption
-msgctxt "tquery3.btnback.caption"
-msgid " < back "
-msgstr ""
-
-#: tquery3.btnnext.caption
-msgctxt "tquery3.btnnext.caption"
-msgid " next > "
-msgstr ""
-
-#: tquery3.caption
-msgid "Opsi quick install - query (part 3)"
-msgstr ""
-
-#: tquery3.checkboxall.caption
-msgid "All"
-msgstr ""
-
-#: tquery3.checkboxconfigwin10.caption
-msgid "config-win10"
-msgstr ""
-
-#: tquery3.checkboxconfigwinbase.caption
-msgid "config-winbase"
-msgstr ""
-
-#: tquery3.checkboxhwaudit.caption
-msgid "hwaudit"
-msgstr ""
-
-#: tquery3.checkboxjavavm.caption
-msgid "javavm"
-msgstr ""
-
-#: tquery3.checkboxjedit.caption
-msgid "jedit"
-msgstr ""
-
-#: tquery3.checkboxnone.caption
-msgctxt "tquery3.checkboxnone.caption"
-msgid "None"
-msgstr ""
-
-#: tquery3.checkboxopsiclientagent.caption
-msgid "opsi-client-agent"
-msgstr ""
-
-#: tquery3.checkboxopsiconfiged.caption
-msgid "opsi-configed"
-msgstr ""
-
-#: tquery3.checkboxopsilogviewer.caption
-msgid "opsi-logviewer"
-msgstr ""
-
-#: tquery3.checkboxopsiscripttest.caption
-msgid "opsi-script-test"
-msgstr ""
-
-#: tquery3.checkboxopsisetupdetector.caption
-msgid "opsi-setup-detector"
-msgstr ""
-
-#: tquery3.checkboxopsisetwinuac.caption
-msgid "opsi-set-win-uac"
-msgstr ""
-
-#: tquery3.checkboxopsitemplate.caption
-msgid "opsi-template"
-msgstr ""
-
-#: tquery3.checkboxopsitemplateadmin.caption
-msgid "opsi-template-with-admin"
-msgstr ""
-
-#: tquery3.checkboxopsiuefinetboot.caption
-msgid "opsi-uefi-netboot"
-msgstr ""
-
-#: tquery3.checkboxopsiwimcapture.caption
-msgid "opsi-wim-capture"
-msgstr ""
-
-#: tquery3.checkboxopsiwinpe.caption
-msgid "opsi-winpe"
-msgstr ""
-
-#: tquery3.checkboxopsiwinst.caption
-msgid "opsi-winst"
-msgstr ""
-
-#: tquery3.checkboxshutdown.caption
-msgid "shutdownwanted"
-msgstr ""
-
-#: tquery3.checkboxswaudit.caption
-msgid "swaudit"
-msgstr ""
-
-#: tquery3.labelopsiproducts.caption
-msgid "Which opsi product(s) should we install in the depot?"
+#: tquery2.radiobtnyes1.caption
+msgctxt "tquery2.radiobtnyes1.caption"
+msgid "Yes"
 msgstr ""
 
 #: tquery4.btnback.caption
@@ -454,6 +366,11 @@ msgctxt "tquery4.caption"
 msgid "Opsi quick install - query (dhcp part 1)"
 msgstr ""
 
+#: tquery4.editpassworducs.text
+msgctxt "tquery4.editpassworducs.text"
+msgid "linux123"
+msgstr ""
+
 #: tquery4.labeldhcp.caption
 msgctxt "tquery4.labeldhcp.caption"
 msgid "Should we run the opsi dhcp server on this machine?"
@@ -461,6 +378,11 @@ msgstr ""
 
 #: tquery4.labelfilepointer.caption
 msgid "Which file should the TFTPROOT default symlink point to?"
+msgstr ""
+
+#: tquery4.labelpasswordmasteradmin.caption
+msgctxt "tquery4.labelpasswordmasteradmin.caption"
+msgid "What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?"
 msgstr ""
 
 #: tquery4.labelreboot.caption
@@ -623,9 +545,9 @@ msgctxt "tquery6.btnback.caption"
 msgid " < back "
 msgstr ""
 
-#: tquery6.btnnext.caption
-msgctxt "tquery6.btnnext.caption"
-msgid " next > "
+#: tquery6.btnoverview.caption
+msgctxt "tquery6.btnoverview.caption"
+msgid " overview "
 msgstr ""
 
 #: tquery6.caption
@@ -672,57 +594,129 @@ msgid ""
 "(empty = nothing created)\n"
 msgstr ""
 
-#: tquery7.btnback.caption
-msgctxt "tquery7.btnback.caption"
+#: tqueryprods.btnback.caption
+msgctxt "tqueryprods.btnback.caption"
 msgid " < back "
 msgstr ""
 
-#: tquery7.btnoverview.caption
-msgctxt "tquery7.btnoverview.caption"
-msgid " overview "
+#: tqueryprods.btnnext.caption
+msgctxt "tqueryprods.btnnext.caption"
+msgid " next > "
 msgstr ""
 
-#: tquery7.caption
-msgctxt "tquery7.caption"
-msgid "Opsi quick install - query (user info part 2)"
+#: tqueryprods.caption
+msgctxt "tqueryprods.caption"
+msgid "Opsi quick install - query (part 3)"
 msgstr ""
 
-#: tquery7.editpassworducs.text
-msgctxt "tquery7.editpassworducs.text"
-msgid "linux123"
+#: tqueryprods.checkboxall.caption
+msgctxt "tqueryprods.checkboxall.caption"
+msgid "All"
 msgstr ""
 
-#: tquery7.labelcopymodules.caption
-msgctxt "tquery7.labelcopymodules.caption"
-msgid "Should we copy modules even if /etc/opsi/modules still exists?"
+#: tqueryprods.checkboxconfigwin10.caption
+msgctxt "tqueryprods.checkboxconfigwin10.caption"
+msgid "config-win10"
 msgstr ""
 
-#: tquery7.labelpasswordmasteradmin.caption
-msgid "What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?"
+#: tqueryprods.checkboxconfigwinbase.caption
+msgctxt "tqueryprods.checkboxconfigwinbase.caption"
+msgid "config-winbase"
 msgstr ""
 
-#: tquery7.labeluseucs.caption
-msgid "Do you want to use a UCS?"
+#: tqueryprods.checkboxhwaudit.caption
+msgctxt "tqueryprods.checkboxhwaudit.caption"
+msgid "hwaudit"
 msgstr ""
 
-#: tquery7.radiobtnno.caption
-msgctxt "tquery7.radiobtnno.caption"
-msgid "No"
+#: tqueryprods.checkboxjavavm.caption
+msgctxt "tqueryprods.checkboxjavavm.caption"
+msgid "javavm"
 msgstr ""
 
-#: tquery7.radiobtnucsno.caption
-msgctxt "tquery7.radiobtnucsno.caption"
-msgid "No"
+#: tqueryprods.checkboxjedit.caption
+msgctxt "tqueryprods.checkboxjedit.caption"
+msgid "jedit"
 msgstr ""
 
-#: tquery7.radiobtnucsyes.caption
-msgctxt "tquery7.radiobtnucsyes.caption"
-msgid "Yes"
+#: tqueryprods.checkboxnone.caption
+msgctxt "tqueryprods.checkboxnone.caption"
+msgid "None"
 msgstr ""
 
-#: tquery7.radiobtnyes.caption
-msgctxt "tquery7.radiobtnyes.caption"
-msgid "Yes"
+#: tqueryprods.checkboxopsiclientagent.caption
+msgctxt "tqueryprods.checkboxopsiclientagent.caption"
+msgid "opsi-client-agent"
+msgstr ""
+
+#: tqueryprods.checkboxopsiconfiged.caption
+msgctxt "tqueryprods.checkboxopsiconfiged.caption"
+msgid "opsi-configed"
+msgstr ""
+
+#: tqueryprods.checkboxopsilogviewer.caption
+msgctxt "tqueryprods.checkboxopsilogviewer.caption"
+msgid "opsi-logviewer"
+msgstr ""
+
+#: tqueryprods.checkboxopsiscripttest.caption
+msgctxt "tqueryprods.checkboxopsiscripttest.caption"
+msgid "opsi-script-test"
+msgstr ""
+
+#: tqueryprods.checkboxopsisetupdetector.caption
+msgctxt "tqueryprods.checkboxopsisetupdetector.caption"
+msgid "opsi-setup-detector"
+msgstr ""
+
+#: tqueryprods.checkboxopsisetwinuac.caption
+msgctxt "tqueryprods.checkboxopsisetwinuac.caption"
+msgid "opsi-set-win-uac"
+msgstr ""
+
+#: tqueryprods.checkboxopsitemplate.caption
+msgctxt "tqueryprods.checkboxopsitemplate.caption"
+msgid "opsi-template"
+msgstr ""
+
+#: tqueryprods.checkboxopsitemplateadmin.caption
+msgctxt "tqueryprods.checkboxopsitemplateadmin.caption"
+msgid "opsi-template-with-admin"
+msgstr ""
+
+#: tqueryprods.checkboxopsiuefinetboot.caption
+msgctxt "tqueryprods.checkboxopsiuefinetboot.caption"
+msgid "opsi-uefi-netboot"
+msgstr ""
+
+#: tqueryprods.checkboxopsiwimcapture.caption
+msgctxt "tqueryprods.checkboxopsiwimcapture.caption"
+msgid "opsi-wim-capture"
+msgstr ""
+
+#: tqueryprods.checkboxopsiwinpe.caption
+msgctxt "tqueryprods.checkboxopsiwinpe.caption"
+msgid "opsi-winpe"
+msgstr ""
+
+#: tqueryprods.checkboxopsiwinst.caption
+msgctxt "tqueryprods.checkboxopsiwinst.caption"
+msgid "opsi-winst"
+msgstr ""
+
+#: tqueryprods.checkboxshutdown.caption
+msgctxt "tqueryprods.checkboxshutdown.caption"
+msgid "shutdownwanted"
+msgstr ""
+
+#: tqueryprods.checkboxswaudit.caption
+msgctxt "tqueryprods.checkboxswaudit.caption"
+msgid "swaudit"
+msgstr ""
+
+#: tqueryprods.labelopsiproducts.caption
+msgctxt "tqueryprods.labelopsiproducts.caption"
+msgid "Which opsi product(s) should we install in the depot?"
 msgstr ""
 
 #: tquickinstall.btnback.caption

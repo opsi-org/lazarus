@@ -1,26 +1,25 @@
 object Overview: TOverview
-  Left = 73
-  Height = 454
-  Top = 71
-  Width = 738
+  Left = 356
+  Height = 449
+  Top = 259
+  Width = 730
   Caption = 'Overview'
-  ClientHeight = 454
-  ClientWidth = 738
-  DesignTimePPI = 97
+  ClientHeight = 449
+  ClientWidth = 730
   OnActivate = FormActivate
   OnClose = FormClose
   LCLVersion = '2.0.6.0'
   object BackgrImage: TImage
     Left = 0
-    Height = 454
+    Height = 449
     Top = 0
-    Width = 738
+    Width = 730
     Align = alClient
   end
   object BtnBack: TButton
     Left = 16
     Height = 25
-    Top = 412
+    Top = 408
     Width = 52
     AutoSize = True
     Caption = ' < back '
@@ -29,9 +28,9 @@ object Overview: TOverview
     TabOrder = 0
   end
   object BtnFinish: TButton
-    Left = 672
+    Left = 665
     Height = 25
-    Top = 412
+    Top = 408
     Width = 45
     AutoSize = True
     Caption = ' finish '
@@ -41,13 +40,13 @@ object Overview: TOverview
     TabOrder = 1
   end
   object PanelFinish: TPanel
-    Left = 194
-    Height = 65
-    Top = 388
-    Width = 388
+    Left = 192
+    Height = 64
+    Top = 384
+    Width = 384
     BevelOuter = bvNone
-    ClientHeight = 65
-    ClientWidth = 388
+    ClientHeight = 64
+    ClientWidth = 384
     ParentFont = False
     TabOrder = 2
     Wordwrap = True
@@ -55,7 +54,7 @@ object Overview: TOverview
       Left = 0
       Height = 19
       Top = 0
-      Width = 388
+      Width = 384
       Align = alTop
       Caption = 'Finally click ''finish'' to start the installation of opsi-server.'
       ParentColor = False
@@ -64,10 +63,10 @@ object Overview: TOverview
     end
   end
   object MemoOverview: TMemo
-    Left = 194
-    Height = 340
+    Left = 192
+    Height = 336
     Top = 32
-    Width = 445
+    Width = 440
     Lines.Strings = (
       'MemoOverview'
     )

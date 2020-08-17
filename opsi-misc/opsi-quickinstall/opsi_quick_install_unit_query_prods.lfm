@@ -1,7 +1,7 @@
-object Query3: TQuery3
-  Left = 620
+object QueryProds: TQueryProds
+  Left = 522
   Height = 455
-  Top = 167
+  Top = 116
   Width = 738
   Caption = 'Opsi quick install - query (part 3)'
   ClientHeight = 455

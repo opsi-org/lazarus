@@ -1,28 +1,27 @@
 object Query: TQuery
-  Left = 366
-  Height = 462
-  Top = 183
-  Width = 739
+  Left = 318
+  Height = 457
+  Top = 256
+  Width = 731
   Caption = 'Opsi quick install - query (part 1)'
-  ClientHeight = 462
-  ClientWidth = 739
-  DesignTimePPI = 97
+  ClientHeight = 457
+  ClientWidth = 731
   OnActivate = FormActivate
   OnClose = FormClose
   LCLVersion = '2.0.6.0'
   object BackgrImage: TImage
     Left = 0
-    Height = 462
+    Height = 457
     Top = 0
-    Width = 739
+    Width = 731
     Align = alClient
     AutoSize = True
     Enabled = False
   end
   object BtnNext: TButton
-    Left = 671
+    Left = 664
     Height = 25
-    Top = 420
+    Top = 416
     Width = 51
     AutoSize = True
     Caption = ' next > '
@@ -33,7 +32,7 @@ object Query: TQuery
   object BtnBack: TButton
     Left = 16
     Height = 25
-    Top = 420
+    Top = 416
     Width = 52
     AutoSize = True
     Caption = ' < back '
@@ -42,34 +41,34 @@ object Query: TQuery
     TabOrder = 1
   end
   object BigPanel: TPanel
-    Left = 194
+    Left = 192
     Height = 341
-    Top = 57
-    Width = 388
+    Top = 56
+    Width = 384
     AutoSize = True
     BevelOuter = bvNone
     ClientHeight = 341
-    ClientWidth = 388
+    ClientWidth = 384
     ParentFont = False
     TabOrder = 2
     object PanelNoCache: TPanel
       Left = 0
       Height = 86
       Top = 255
-      Width = 388
+      Width = 384
       Align = alTop
       AutoSize = True
       BorderSpacing.Top = 20
       BevelOuter = bvNone
       ClientHeight = 86
-      ClientWidth = 388
+      ClientWidth = 384
       ParentFont = False
       TabOrder = 0
       object LabelNoCache: TLabel
         Left = 0
         Height = 36
         Top = 0
-        Width = 388
+        Width = 384
         Align = alTop
         Caption = '(Base-) Repository for opsi-server installation'#10'(without any cache proxy)'
         Font.Height = 13
@@ -95,7 +94,7 @@ object Query: TQuery
         Left = 24
         Height = 25
         Top = 36
-        Width = 364
+        Width = 360
         ParentFont = False
         ReadOnly = True
         TabOrder = 0
@@ -120,7 +119,7 @@ object Query: TQuery
         Left = 75
         Height = 25
         Top = 61
-        Width = 312
+        Width = 309
         BorderSpacing.Left = 10
         ParentFont = False
         TabOrder = 2
@@ -130,20 +129,20 @@ object Query: TQuery
       Left = 0
       Height = 86
       Top = 149
-      Width = 388
+      Width = 384
       Align = alTop
       AutoSize = True
       BorderSpacing.Top = 20
       BevelOuter = bvNone
       ClientHeight = 86
-      ClientWidth = 388
+      ClientWidth = 384
       ParentFont = False
       TabOrder = 1
       object LabelProxy: TLabel
         Left = 0
         Height = 19
         Top = 0
-        Width = 388
+        Width = 384
         Align = alTop
         Caption = 'Proxy to use (http://myproxy.dom.org:8080)'
         ParentColor = False
@@ -154,7 +153,7 @@ object Query: TQuery
         Left = 0
         Height = 21
         Top = 19
-        Width = 388
+        Width = 384
         Align = alTop
         Caption = 'None'
         Checked = True
@@ -166,7 +165,7 @@ object Query: TQuery
         Left = 0
         Height = 21
         Top = 40
-        Width = 388
+        Width = 384
         Align = alTop
         Caption = 'http://myproxy.dom.org:8080'
         ParentFont = False
@@ -180,7 +179,7 @@ object Query: TQuery
         Left = 75
         Height = 25
         Top = 61
-        Width = 312
+        Width = 309
         BorderSpacing.Left = 10
         ParentFont = False
         TabOrder = 2
@@ -201,20 +200,20 @@ object Query: TQuery
       Left = 0
       Height = 69
       Top = 60
-      Width = 388
+      Width = 384
       Align = alTop
       AutoSize = True
       BorderSpacing.Top = 20
       BevelOuter = bvNone
       ClientHeight = 69
-      ClientWidth = 388
+      ClientWidth = 384
       ParentFont = False
       TabOrder = 2
       object LabelRepo: TLabel
         Left = 0
         Height = 19
         Top = 0
-        Width = 388
+        Width = 384
         Align = alTop
         Caption = '(Base-) Repository for opsi-server installation'
         ParentColor = False
@@ -239,7 +238,7 @@ object Query: TQuery
         Left = 24
         Height = 25
         Top = 19
-        Width = 364
+        Width = 360
         ParentFont = False
         ReadOnly = True
         TabOrder = 1
@@ -253,7 +252,7 @@ object Query: TQuery
         Left = 75
         Height = 25
         Top = 44
-        Width = 312
+        Width = 309
         BorderSpacing.Left = 10
         ParentFont = False
         TabOrder = 2
@@ -274,12 +273,12 @@ object Query: TQuery
       Left = 0
       Height = 40
       Top = 0
-      Width = 388
+      Width = 384
       Align = alTop
       AutoSize = True
       BevelOuter = bvNone
       ClientHeight = 40
-      ClientWidth = 388
+      ClientWidth = 384
       ParentFont = False
       TabOrder = 3
       object LabelOpsiVersion: TLabel
@@ -287,13 +286,14 @@ object Query: TQuery
         Height = 19
         Hint = 'Opsi 4.2 is in testing... further description...'
         Top = 0
-        Width = 388
+        Width = 384
         Align = alTop
         Caption = 'Which opsi version would you like to install?'
         ParentColor = False
         ParentFont = False
         ParentShowHint = False
         ShowHint = True
+        WordWrap = True
       end
       object RadioBtnOpsi41: TRadioButton
         AnchorSideTop.Control = LabelOpsiVersion
@@ -312,11 +312,11 @@ object Query: TQuery
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = LabelOpsiVersion
         AnchorSideTop.Side = asrBottom
-        Left = 123
+        Left = 122
         Height = 21
         Top = 19
         Width = 72
-        BorderSpacing.Left = 51
+        BorderSpacing.Left = 50
         Caption = 'opsi 4.2'
         Checked = True
         ParentFont = False

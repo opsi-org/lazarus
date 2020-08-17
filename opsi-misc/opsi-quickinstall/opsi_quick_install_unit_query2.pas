@@ -16,8 +16,11 @@ type
     BtnBack: TButton;
     BtnNext: TButton;
     Label1: TLabel;
+    LabelCopyModules: TLabel;
     LabelRepoKind: TLabel;
     LabelBackend: TLabel;
+    PanelCopyModules: TPanel;
+    PanelRadio: TPanel;
     PanelRadioUpdate: TPanel;
     PanelRadioRepoKind: TPanel;
     PanelRadioBackend: TPanel;
@@ -27,10 +30,12 @@ type
     RadioBtnFile: TRadioButton;
     RadioBtnMySql: TRadioButton;
     RadioBtnExperimental: TRadioButton;
+    RadioBtnNo1: TRadioButton;
     RadioBtnStable: TRadioButton;
     RadioBtnTesting: TRadioButton;
     RadioBtnYes: TRadioButton;
     RadioBtnNo: TRadioButton;
+    RadioBtnYes1: TRadioButton;
     procedure BtnBackClick(Sender: TObject);
     procedure BtnNextClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -49,7 +54,7 @@ implementation
 uses
   opsi_quick_install_unit_language,
   opsi_quick_install_unit_query,
-  opsi_quick_install_unit_query3;
+  opsi_quick_install_unit_query4;
 
 {$R *.lfm}
 
@@ -57,17 +62,21 @@ uses
 
 procedure TQuery2.BtnNextClick(Sender: TObject);
 begin
-  showForm(Query3, self);
-  Query3.BtnBack.Left := BtnBack.Left;
-  Query3.BtnBack.Top := BtnBack.Top;
-  Query3.BtnNext.Left := BtnNext.Left;
-  Query3.BtnNext.Top := BtnNext.Top;
+  showForm(Query4, self);
+  Query4.BtnBack.Left := BtnBack.Left;
+  Query4.BtnBack.Top := BtnBack.Top;
+  Query4.BtnNext.Left := BtnNext.Left;
+  Query4.BtnNext.Top := BtnNext.Top;
 end;
 
 procedure TQuery2.FormActivate(Sender: TObject);
 begin
   AdjustPanelPosition(self);
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
+  if QuickInstall.RadioBtnDefault.Checked then
+    PanelCopyModules.Visible := False
+  else
+    PanelCopyModules.Visible := True;
 end;
 
 procedure TQuery2.FormClose(Sender: TObject; var CloseAction: TCloseAction);
