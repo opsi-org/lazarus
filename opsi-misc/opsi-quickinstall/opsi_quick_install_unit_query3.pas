@@ -154,11 +154,12 @@ end;
 
 procedure TQuery3.BtnBackClick(Sender: TObject);
 begin
-  showForm(Query2, self);
-  Query2.BtnBack.Left := BtnBack.Left;
-  Query2.BtnBack.Top := BtnBack.Top;
-  Query2.BtnNext.Left := BtnNext.Left;
-  Query2.BtnNext.Top := BtnNext.Top;
+  if QuickInstall.RadioBtnDefault.Checked then
+    showForm(QuickInstall, self)
+  else
+  begin
+    showForm(Query2, self);
+  end;
 end;
 
 end.

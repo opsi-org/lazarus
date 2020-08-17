@@ -83,6 +83,10 @@ procedure TQuery4.FormActivate(Sender: TObject);
 begin
   BigPanel.Left := QuickInstall.panelLeft;
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
+  if QuickInstall.RadioBtnDefault.Checked then
+    PanelReboot.Visible := False
+  else
+    PanelReboot.Visible := True;
 end;
 
 procedure TQuery4.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -100,12 +104,7 @@ end;
 
 procedure TQuery4.BtnBackClick(Sender: TObject);
 begin
-  if QuickInstall.RadioBtnDefault.Checked then
-    showForm(QuickInstall, self)
-  else
-  begin
     showForm(Query3, self);
-  end;
 end;
 
 end.

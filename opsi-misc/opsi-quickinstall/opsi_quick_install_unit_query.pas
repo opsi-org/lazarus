@@ -74,7 +74,7 @@ begin
   // always the same background (as in QuickInstall)
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
 
-  EditDefaultRepo.Text := baseURLOpsi41 + QuickInstall.DistrUrlPart;
+  EditDefaultRepo.Text := baseURLOpsi42 + QuickInstall.DistrUrlPart;
   EditDefaultRepoNoCache.Text := EditDefaultRepo.Text;
 end;
 
