@@ -17,16 +17,22 @@ type
     BtnOverview: TButton;
     EditPasswordUCS: TEdit;
     LabelCopyModules: TLabel;
+    LabelUseUcs: TLabel;
     LabelPasswordMasterAdmin: TLabel;
+    PanelUseUcs: TPanel;
     PanelRadio: TPanel;
     PanelCopyModules: TPanel;
     PanelPasswordMasterAdmin: TPanel;
+    PanelRadio1: TPanel;
     RadioBtnNo: TRadioButton;
+    RadioBtnUcsNo: TRadioButton;
     RadioBtnYes: TRadioButton;
+    RadioBtnUcsYes: TRadioButton;
     procedure BtnBackClick(Sender: TObject);
     procedure BtnOverviewClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure RadioBtnUcsYesChange(Sender: TObject);
   private
 
   public
@@ -62,11 +68,23 @@ begin
   //ShowMessage(IntToStr(BtnOverview.Width));
   AdjustPanelPosition(self);
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
+  {if QuickInstall.RadioBtnDefault.Checked then
+    PanelCopyModules.Visible := False
+  else
+    PanelCopyModules.Visible := True;}
 end;
 
 procedure TQuery7.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   Query6.Close;
+end;
+
+procedure TQuery7.RadioBtnUcsYesChange(Sender: TObject);
+begin
+  if RadioBtnUcsYes.Checked then
+    PanelPasswordMasterAdmin.Visible := True
+  else
+    PanelPasswordMasterAdmin.Visible := False;
 end;
 
 procedure TQuery7.BtnBackClick(Sender: TObject);

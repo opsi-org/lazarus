@@ -54,6 +54,7 @@ resourcestring
   rsAdminPassword = 'Opsi admin user password: ';
   rsIPName = 'IP name: ';
   rsIPNumber = 'IP number: ';
+  rsUseUCS = 'Use UCS: ';
   rsUCSPassword = 'Password of administrator of UCS domain controller: ';
   rsCopyModules = 'Copy modules: ';
 
@@ -240,8 +241,17 @@ begin
   MemoOverview.Lines.Add(rsIPNumber + Query6.EditNumberIP.Text);
 
   MemoOverview.Lines.Add('');
-  // UCS password
-  MemoOverview.Lines.Add(rsUCSPassword + Query7.EditPasswordUCS.Text);
+  // use UCS
+  if Query7.RadioBtnUcsYes.Checked then
+  begin
+    MemoOverview.Lines.Add(rsUseUCS + Query7.RadioBtnUcsYes.Caption);
+    // UCS password
+    MemoOverview.Lines.Add(rsUCSPassword + Query7.EditPasswordUCS.Text);
+  end
+  else
+    MemoOverview.Lines.Add(rsUseUCS + Query7.RadioBtnUcsNo.Caption);
+
+  MemoOverview.Lines.Add('');
   // Copy modules
   if Query7.RadioBtnYes.Checked then
     MemoOverview.Lines.Add(rsCopyModules + Query7.RadioBtnYes.Caption)
@@ -257,10 +267,11 @@ end;
 
 procedure TOverview.BtnBackClick(Sender: TObject);
 begin
-  if QuickInstall.RadioBtnDefault.Checked then
+  showForm(Query7, self);
+  {if QuickInstall.RadioBtnDefault.Checked then
     showForm(Query6, self)
   else
-    showForm(Query7, self);
+    showForm(Query7, self);}
 end;
 
 end.

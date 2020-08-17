@@ -1,7 +1,7 @@
 object Query2: TQuery2
-  Left = 1366
+  Left = -4
   Height = 450
-  Top = 194
+  Top = 249
   Width = 730
   Caption = 'Opsi quick install - query (part 2)'
   ClientHeight = 450
@@ -31,7 +31,7 @@ object Query2: TQuery2
     Left = 8
     Height = 25
     Top = 416
-    Width = 51
+    Width = 52
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
@@ -82,7 +82,7 @@ object Query2: TQuery2
         Left = 93
         Height = 21
         Top = 0
-        Width = 60
+        Width = 61
         Align = alLeft
         BorderSpacing.Left = 50
         Caption = 'mysql'
@@ -121,7 +121,7 @@ object Query2: TQuery2
       ClientWidth = 391
       TabOrder = 0
       object RadioBtnTesting: TRadioButton
-        Left = 268
+        Left = 271
         Height = 21
         Top = 0
         Width = 67
@@ -131,10 +131,10 @@ object Query2: TQuery2
         TabOrder = 0
       end
       object RadioBtnStable: TRadioButton
-        Left = 157
+        Left = 159
         Height = 21
         Top = 0
-        Width = 61
+        Width = 62
         Align = alLeft
         BorderSpacing.Left = 50
         Caption = 'stable'
@@ -146,7 +146,7 @@ object Query2: TQuery2
         Left = 0
         Height = 21
         Top = 0
-        Width = 107
+        Width = 109
         Align = alLeft
         Caption = 'experimental'
         TabOrder = 2

@@ -1,7 +1,7 @@
 object Query5_dhcp: TQuery5_dhcp
-  Left = 393
+  Left = 13
   Height = 450
-  Top = 144
+  Top = 78
   Width = 730
   Caption = 'Opsi quick install - query (dhcp part 2)'
   ClientHeight = 450
@@ -19,9 +19,9 @@ object Query5_dhcp: TQuery5_dhcp
   end
   object BtnNext: TButton
     Left = 664
-    Height = 33
+    Height = 25
     Top = 408
-    Width = 57
+    Width = 51
     AutoSize = True
     Caption = ' next > '
     OnClick = BtnNextClick
@@ -29,9 +29,9 @@ object Query5_dhcp: TQuery5_dhcp
   end
   object BtnBack: TButton
     Left = 16
-    Height = 33
+    Height = 25
     Top = 408
-    Width = 58
+    Width = 52
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
@@ -100,7 +100,7 @@ object Query5_dhcp: TQuery5_dhcp
       AnchorSideTop.Control = LabelNetmask
       AnchorSideTop.Side = asrBottom
       Left = 331
-      Height = 31
+      Height = 25
       Top = 19
       Width = 146
       BorderSpacing.Left = 10
@@ -180,7 +180,7 @@ object Query5_dhcp: TQuery5_dhcp
       AnchorSideTop.Control = RadioBtnAddress10
       AnchorSideTop.Side = asrBottom
       Left = 75
-      Height = 31
+      Height = 25
       Top = 40
       Width = 148
       BorderSpacing.Left = 10
@@ -260,7 +260,7 @@ object Query5_dhcp: TQuery5_dhcp
       AnchorSideTop.Control = RadioBtnUcs
       AnchorSideTop.Side = asrBottom
       Left = 75
-      Height = 31
+      Height = 25
       Top = 40
       Width = 148
       BorderSpacing.Left = 10
@@ -340,7 +340,7 @@ object Query5_dhcp: TQuery5_dhcp
       AnchorSideTop.Control = RadioBtnNameserver10
       AnchorSideTop.Side = asrBottom
       Left = 75
-      Height = 31
+      Height = 25
       Top = 40
       Width = 148
       BorderSpacing.Left = 10
@@ -421,7 +421,7 @@ object Query5_dhcp: TQuery5_dhcp
       AnchorSideTop.Control = RadioBtnGateway10
       AnchorSideTop.Side = asrBottom
       Left = 75
-      Height = 31
+      Height = 25
       Top = 40
       Width = 144
       BorderSpacing.Left = 10

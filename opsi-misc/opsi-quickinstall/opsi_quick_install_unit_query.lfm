@@ -1,7 +1,7 @@
 object Query: TQuery
-  Left = 400
+  Left = 366
   Height = 457
-  Top = 118
+  Top = 183
   Width = 731
   Caption = 'Opsi quick install - query (part 1)'
   ClientHeight = 457
@@ -20,9 +20,9 @@ object Query: TQuery
   end
   object BtnNext: TButton
     Left = 664
-    Height = 33
+    Height = 25
     Top = 416
-    Width = 57
+    Width = 51
     AutoSize = True
     Caption = ' next > '
     OnClick = BtnNextClick
@@ -30,9 +30,9 @@ object Query: TQuery
   end
   object BtnBack: TButton
     Left = 16
-    Height = 33
+    Height = 25
     Top = 416
-    Width = 58
+    Width = 52
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
@@ -40,24 +40,24 @@ object Query: TQuery
   end
   object BigPanel: TPanel
     Left = 192
-    Height = 371
+    Height = 341
     Top = 56
     Width = 384
     AutoSize = True
     BevelOuter = bvNone
-    ClientHeight = 371
+    ClientHeight = 341
     ClientWidth = 384
     TabOrder = 2
     object PanelNoCache: TPanel
       Left = 0
-      Height = 98
-      Top = 273
+      Height = 86
+      Top = 255
       Width = 384
       Align = alTop
       AutoSize = True
       BorderSpacing.Top = 20
       BevelOuter = bvNone
-      ClientHeight = 98
+      ClientHeight = 86
       ClientWidth = 384
       TabOrder = 0
       object LabelNoCache: TLabel
@@ -87,7 +87,7 @@ object Query: TQuery
         AnchorSideTop.Control = LabelNoCache
         AnchorSideTop.Side = asrBottom
         Left = 24
-        Height = 31
+        Height = 25
         Top = 36
         Width = 360
         ReadOnly = True
@@ -99,7 +99,7 @@ object Query: TQuery
         AnchorSideTop.Side = asrBottom
         Left = 0
         Height = 21
-        Top = 67
+        Top = 61
         Width = 65
         Caption = 'Other:'
         TabOrder = 3
@@ -110,8 +110,8 @@ object Query: TQuery
         AnchorSideTop.Control = EditDefaultRepoNoCache
         AnchorSideTop.Side = asrBottom
         Left = 75
-        Height = 31
-        Top = 67
+        Height = 25
+        Top = 61
         Width = 309
         BorderSpacing.Left = 10
         TabOrder = 2
@@ -119,14 +119,14 @@ object Query: TQuery
     end
     object PanelProxy: TPanel
       Left = 0
-      Height = 92
-      Top = 161
+      Height = 86
+      Top = 149
       Width = 384
       Align = alTop
       AutoSize = True
       BorderSpacing.Top = 20
       BevelOuter = bvNone
-      ClientHeight = 92
+      ClientHeight = 86
       ClientWidth = 384
       TabOrder = 1
       object LabelProxy: TLabel
@@ -165,7 +165,7 @@ object Query: TQuery
         AnchorSideTop.Control = RadioBtnMyProxy
         AnchorSideTop.Side = asrBottom
         Left = 75
-        Height = 31
+        Height = 25
         Top = 61
         Width = 309
         BorderSpacing.Left = 10
@@ -184,14 +184,14 @@ object Query: TQuery
     end
     object PanelRepo: TPanel
       Left = 0
-      Height = 81
+      Height = 69
       Top = 60
       Width = 384
       Align = alTop
       AutoSize = True
       BorderSpacing.Top = 20
       BevelOuter = bvNone
-      ClientHeight = 81
+      ClientHeight = 69
       ClientWidth = 384
       TabOrder = 2
       object LabelRepo: TLabel
@@ -219,7 +219,7 @@ object Query: TQuery
         AnchorSideTop.Control = LabelRepo
         AnchorSideTop.Side = asrBottom
         Left = 24
-        Height = 31
+        Height = 25
         Top = 19
         Width = 360
         ReadOnly = True
@@ -232,8 +232,8 @@ object Query: TQuery
         AnchorSideTop.Control = EditDefaultRepo
         AnchorSideTop.Side = asrBottom
         Left = 75
-        Height = 31
-        Top = 50
+        Height = 25
+        Top = 44
         Width = 309
         BorderSpacing.Left = 10
         TabOrder = 2
@@ -243,7 +243,7 @@ object Query: TQuery
         AnchorSideTop.Side = asrBottom
         Left = 0
         Height = 21
-        Top = 50
+        Top = 44
         Width = 65
         Caption = 'Other:'
         TabOrder = 3
@@ -263,11 +263,14 @@ object Query: TQuery
       object LabelOpsiVersion: TLabel
         Left = 0
         Height = 19
+        Hint = 'Opsi 4.2 is in testing... further description...'
         Top = 0
         Width = 384
         Align = alTop
         Caption = 'Which opsi version would you like to install?'
         ParentColor = False
+        ParentShowHint = False
+        ShowHint = True
       end
       object RadioBtnOpsi41: TRadioButton
         AnchorSideTop.Control = LabelOpsiVersion
@@ -280,6 +283,7 @@ object Query: TQuery
         Checked = True
         OnChange = RadioBtnOpsi41Change
         TabOrder = 0
+        TabStop = True
       end
       object RadioBtnOpsi42: TRadioButton
         AnchorSideLeft.Control = RadioBtnOpsi41

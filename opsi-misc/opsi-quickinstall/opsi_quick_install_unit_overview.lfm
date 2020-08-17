@@ -1,7 +1,7 @@
 object Overview: TOverview
-  Left = 398
+  Left = 73
   Height = 449
-  Top = 130
+  Top = 71
   Width = 730
   Caption = 'Overview'
   ClientHeight = 449
@@ -18,9 +18,9 @@ object Overview: TOverview
   end
   object BtnBack: TButton
     Left = 16
-    Height = 33
+    Height = 25
     Top = 408
-    Width = 58
+    Width = 52
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
@@ -28,9 +28,9 @@ object Overview: TOverview
   end
   object BtnFinish: TButton
     Left = 665
-    Height = 33
+    Height = 25
     Top = 408
-    Width = 51
+    Width = 45
     AutoSize = True
     Caption = ' finish '
     ParentBidiMode = False

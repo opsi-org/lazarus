@@ -6,5 +6,8 @@
 {"hash":252015791,"name":"tquery7.labelcopymodules.caption","sourcebytes":[83,104,111,117,108,100,32,119,101,32,99,111,112,121,32,109,111,100,117,108,101,115,32,101,118,101,110,32,105,102,32,47,101,116,99,47,111,112,115,105,47,109,111,100,117,108,101,115,32,115,116,105,108,108,32,101,120,105,115,116,115,63],"value":"Should we copy modules even if /etc/opsi/modules still exists?"},
 {"hash":24515,"name":"tquery7.radiobtnyes.caption","sourcebytes":[89,101,115],"value":"Yes"},
 {"hash":1359,"name":"tquery7.radiobtnno.caption","sourcebytes":[78,111],"value":"No"},
-{"hash":211716688,"name":"tquery7.btnoverview.caption","sourcebytes":[32,111,118,101,114,118,105,101,119,32],"value":" overview "}
+{"hash":211716688,"name":"tquery7.btnoverview.caption","sourcebytes":[32,111,118,101,114,118,105,101,119,32],"value":" overview "},
+{"hash":32637279,"name":"tquery7.labeluseucs.caption","sourcebytes":[68,111,32,121,111,117,32,119,97,110,116,32,116,111,32,117,115,101,32,97,32,85,67,83,63],"value":"Do you want to use a UCS?"},
+{"hash":24515,"name":"tquery7.radiobtnucsyes.caption","sourcebytes":[89,101,115],"value":"Yes"},
+{"hash":1359,"name":"tquery7.radiobtnucsno.caption","sourcebytes":[78,111],"value":"No"}
 ]}

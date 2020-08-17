@@ -1,7 +1,7 @@
 object Distribution: TDistribution
-  Left = 500
+  Left = 526
   Height = 240
-  Top = 244
+  Top = 305
   Width = 320
   Caption = 'Distribution'
   ClientHeight = 240
@@ -12,7 +12,7 @@ object Distribution: TDistribution
     Left = 16
     Height = 25
     Top = 200
-    Width = 51
+    Width = 52
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick

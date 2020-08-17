@@ -225,11 +225,16 @@ begin
     Delete(stringProducts, 1, 1);}
   FileText.Add('products_in_depot=' + Overview.stringProducts);
 
-
   FileText.Add('ucs_master_admin_password=' + Query7.EditPasswordUCS.Text);
 
   propertyName := 'update_test';
   if Query2.RadioBtnYes.Checked then
+    FileText.Add(propertyName + '=True')
+  else
+    FileText.Add(propertyName + '=False');
+
+  propertyName := 'use_ucs';
+  if Query7.RadioBtnUcsYes.Checked then
     FileText.Add(propertyName + '=True')
   else
     FileText.Add(propertyName + '=False');
@@ -261,9 +266,9 @@ begin
   end;
   MyRepo.Add(url);
   RunCommand := TRunCommandElevated.Create(EditPassword.Text, RadioBtnSudo.Checked);
-  Output := RunCommand.Run('sudo apt update');
+  Output := RunCommand.Run('apt update');
   //ShowMessage(Output);
-  Output := RunCommand.Run('sudo apt install opsi-script');
+  Output := RunCommand.Run('apt install opsi-script');
   //ShowMessage(Output);
   RunCommand.Free;
   MyRepo.Free;

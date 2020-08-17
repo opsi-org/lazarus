@@ -1,12 +1,6 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
-#: opsi_quick_install_unit_language.rsnext
-#, fuzzy
-msgctxt "opsi_quick_install_unit_language.rsnext"
-msgid " next > "
-msgstr " next > "
-
 #: opsi_quick_install_unit_overview.rsadminname
 msgctxt "opsi_quick_install_unit_overview.rsadminname"
 msgid "Opsi admin user name: "
@@ -121,15 +115,9 @@ msgctxt "opsi_quick_install_unit_overview.rsupdate"
 msgid "Install from stable, update to repo kind: "
 msgstr "Install from stable, update to repo kind: "
 
-#: opsi_quick_install_unit_query6.rsnext
-msgctxt "opsi_quick_install_unit_query6.rsnext"
-msgid " next > "
-msgstr " next > "
-
-#: opsi_quick_install_unit_query6.rsoverview
-msgctxt "opsi_quick_install_unit_query6.rsoverview"
-msgid " overview "
-msgstr " overview "
+#: opsi_quick_install_unit_overview.rsuseucs
+msgid "Use UCS: "
+msgstr ""
 
 #: tdistribution.btnback.caption
 msgctxt "tdistribution.btnback.caption"
@@ -253,6 +241,10 @@ msgstr ""
 msgctxt "tquery.labelopsiversion.caption"
 msgid "Which opsi version would you like to install?"
 msgstr "Which opsi version would you like to install?"
+
+#: tquery.labelopsiversion.hint
+msgid "Opsi 4.2 is in testing... further description..."
+msgstr ""
 
 #: tquery.labelproxy.caption
 msgid "Proxy to use (http://myproxy.dom.org:8080)"
@@ -753,10 +745,26 @@ msgstr "Should we copy modules even if /etc/opsi/modules still exists?"
 msgid "What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?"
 msgstr "What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?"
 
+#: tquery7.labeluseucs.caption
+msgid "Do you want to use a UCS?"
+msgstr ""
+
 #: tquery7.radiobtnno.caption
 msgctxt "tquery7.radiobtnno.caption"
 msgid "No"
 msgstr "No"
+
+#: tquery7.radiobtnucsno.caption
+#, fuzzy
+msgctxt "tquery7.radiobtnucsno.caption"
+msgid "No"
+msgstr "No"
+
+#: tquery7.radiobtnucsyes.caption
+#, fuzzy
+msgctxt "tquery7.radiobtnucsyes.caption"
+msgid "Yes"
+msgstr "Yes"
 
 #: tquery7.radiobtnyes.caption
 msgctxt "tquery7.radiobtnyes.caption"
@@ -772,6 +780,10 @@ msgstr " < back "
 msgctxt "tquickinstall.btnnext.caption"
 msgid " next > "
 msgstr " next > "
+
+#: tquickinstall.btnnext.hint
+msgid "nextBtn for next form"
+msgstr ""
 
 #: tquickinstall.caption
 msgid "Opsi quick install"
@@ -790,6 +802,12 @@ msgstr "Please select a setup type:"
 msgid "Welcome to the installation of opsi-server on this computer!"
 msgstr "Welcome to the installation of opsi-server on this computer!"
 
+#: tquickinstall.quickinstallpanel.hint
+#, fuzzy
+msgctxt "tquickinstall.quickinstallpanel.hint"
+msgid "To carry out the remaing installation automatically, we need some information first."
+msgstr "To carry out the remaing installation automatically, we need some information first."
+
 #: tquickinstall.radiobtncustom.caption
 msgctxt "tquickinstall.radiobtncustom.caption"
 msgid "Custom (...)"
@@ -801,6 +819,7 @@ msgid "Standard (...)"
 msgstr "Standard (...)"
 
 #: tquickinstall.welcomelabel2.caption
+msgctxt "tquickinstall.welcomelabel2.caption"
 msgid "To carry out the remaing installation automatically, we need some information first."
 msgstr "To carry out the remaing installation automatically, we need some information first."
 

@@ -40,9 +40,9 @@ type
 var
   Query6: TQuery6;
 
-resourcestring
+{resourcestring
   rsOverview = ' overview ';
-  rsNext = ' next > ';
+  rsNext = ' next > ';}
 
 implementation
 
@@ -58,7 +58,14 @@ uses
 
 procedure TQuery6.BtnNextClick(Sender: TObject);
 begin
-  if QuickInstall.RadioBtnDefault.Checked then
+  showForm(Query7, self);
+  Query7.BtnBack.Left := BtnBack.Left;
+  Query7.BtnBack.Top := BtnBack.Top;
+  Query7.BtnOverview.Left :=
+    Query7.Width - Query7.BtnBack.Left - QuickInstall.BtnOverviewWidth;
+  Query7.BtnOverview.Top := BtnNext.Top;
+
+  {if QuickInstall.RadioBtnDefault.Checked then
   begin
     showForm(Overview, self);
     Overview.BtnBack.Left := BtnBack.Left;
@@ -75,14 +82,14 @@ begin
     Query7.BtnOverview.Left :=
       Query7.Width - Query7.BtnBack.Left - QuickInstall.BtnOverviewWidth;
     Query7.BtnOverview.Top := BtnNext.Top;
-  end;
+  end;}
 end;
 
 procedure TQuery6.FormActivate(Sender: TObject);
 begin
   AdjustPanelPosition(self);
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
-  if QuickInstall.RadioBtnDefault.Checked then
+  {if QuickInstall.RadioBtnDefault.Checked then
   begin
     BtnNext.Caption := rsOverview;
     BtnNext.Left := Width - BtnBack.Left - QuickInstall.BtnOverviewWidth;
@@ -91,8 +98,7 @@ begin
   begin
     BtnNext.Caption := rsNext;
     BtnNext.Left := Width - BtnBack.Left - QuickInstall.BtnNextWidth;
-
-  end;
+  end;}
 end;
 
 procedure TQuery6.FormClose(Sender: TObject; var CloseAction: TCloseAction);
