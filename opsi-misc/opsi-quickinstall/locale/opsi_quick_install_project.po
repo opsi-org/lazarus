@@ -439,20 +439,6 @@ msgstr ""
 msgid "Which opsi product(s) should we install in the depot?"
 msgstr ""
 
-#: tquery3.labelreboot.caption
-msgid "May the server reboot if the script is finished?"
-msgstr ""
-
-#: tquery3.radiobtnno.caption
-msgctxt "tquery3.radiobtnno.caption"
-msgid "No"
-msgstr ""
-
-#: tquery3.radiobtnyes.caption
-msgctxt "tquery3.radiobtnyes.caption"
-msgid "Yes"
-msgstr ""
-
 #: tquery4.btnback.caption
 msgctxt "tquery4.btnback.caption"
 msgid " < back "
@@ -477,9 +463,9 @@ msgstr ""
 msgid "Which file should the TFTPROOT default symlink point to?"
 msgstr ""
 
-#: tquery4.labelopsiversion.caption
-msgctxt "tquery4.labelopsiversion.caption"
-msgid "Which opsi version would you like to install?"
+#: tquery4.labelreboot.caption
+msgctxt "tquery4.labelreboot.caption"
+msgid "May the server reboot if the script is finished?"
 msgstr ""
 
 #: tquery4.radiobtndhcpno.caption
@@ -496,18 +482,18 @@ msgstr ""
 msgid "default.menu"
 msgstr ""
 
+#: tquery4.radiobtnno.caption
+msgctxt "tquery4.radiobtnno.caption"
+msgid "No"
+msgstr ""
+
 #: tquery4.radiobtnnomenu.caption
 msgid "default.nomenu"
 msgstr ""
 
-#: tquery4.radiobtnopsi41.caption
-msgctxt "tquery4.radiobtnopsi41.caption"
-msgid "opsi 4.1"
-msgstr ""
-
-#: tquery4.radiobtnopsi42.caption
-msgctxt "tquery4.radiobtnopsi42.caption"
-msgid "opsi 4.2"
+#: tquery4.radiobtnyes.caption
+msgctxt "tquery4.radiobtnyes.caption"
+msgid "Yes"
 msgstr ""
 
 #: tquery5_dhcp.btnback.caption

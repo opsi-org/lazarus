@@ -36,15 +36,10 @@ type
     CheckBoxHwaudit: TCheckBox;
     CheckBoxOpsiTemplate: TCheckBox;
     CheckBoxOpsiTemplateAdmin: TCheckBox;
-    LabelReboot: TLabel;
     LabelOpsiProducts: TLabel;
     PanelRadioProds: TPanel;
-    PanelRadioReboot: TPanel;
     PanelProdToChoose: TPanel;
-    PanelReboot: TPanel;
     PanelOpsiProducts: TPanel;
-    RadioBtnNo: TRadioButton;
-    RadioBtnYes: TRadioButton;
     procedure BtnBackClick(Sender: TObject);
     procedure BtnNextClick(Sender: TObject);
     procedure CheckBoxAllChange(Sender: TObject);

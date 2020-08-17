@@ -81,7 +81,7 @@ begin
   FileText := TStringList.Create;
 
   propertyName := 'allow_reboot';
-  if Query3.RadioBtnYes.Checked then
+  if Query4.RadioBtnYes.Checked then
     FileText.Add(propertyName + '=True')
   else
     FileText.Add(propertyName + '=False');

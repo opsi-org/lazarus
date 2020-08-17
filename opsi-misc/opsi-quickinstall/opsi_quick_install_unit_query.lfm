@@ -1,70 +1,75 @@
 object Query: TQuery
   Left = 366
-  Height = 457
+  Height = 462
   Top = 183
-  Width = 731
+  Width = 739
   Caption = 'Opsi quick install - query (part 1)'
-  ClientHeight = 457
-  ClientWidth = 731
+  ClientHeight = 462
+  ClientWidth = 739
+  DesignTimePPI = 97
   OnActivate = FormActivate
   OnClose = FormClose
   LCLVersion = '2.0.6.0'
   object BackgrImage: TImage
     Left = 0
-    Height = 457
+    Height = 462
     Top = 0
-    Width = 731
+    Width = 739
     Align = alClient
     AutoSize = True
     Enabled = False
   end
   object BtnNext: TButton
-    Left = 664
+    Left = 671
     Height = 25
-    Top = 416
+    Top = 420
     Width = 51
     AutoSize = True
     Caption = ' next > '
     OnClick = BtnNextClick
+    ParentFont = False
     TabOrder = 0
   end
   object BtnBack: TButton
     Left = 16
     Height = 25
-    Top = 416
+    Top = 420
     Width = 52
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
+    ParentFont = False
     TabOrder = 1
   end
   object BigPanel: TPanel
-    Left = 192
+    Left = 194
     Height = 341
-    Top = 56
-    Width = 384
+    Top = 57
+    Width = 388
     AutoSize = True
     BevelOuter = bvNone
     ClientHeight = 341
-    ClientWidth = 384
+    ClientWidth = 388
+    ParentFont = False
     TabOrder = 2
     object PanelNoCache: TPanel
       Left = 0
       Height = 86
       Top = 255
-      Width = 384
+      Width = 388
       Align = alTop
       AutoSize = True
       BorderSpacing.Top = 20
       BevelOuter = bvNone
       ClientHeight = 86
-      ClientWidth = 384
+      ClientWidth = 388
+      ParentFont = False
       TabOrder = 0
       object LabelNoCache: TLabel
         Left = 0
         Height = 36
         Top = 0
-        Width = 384
+        Width = 388
         Align = alTop
         Caption = '(Base-) Repository for opsi-server installation'#10'(without any cache proxy)'
         Font.Height = 13
@@ -80,6 +85,7 @@ object Query: TQuery
         Top = 36
         Width = 21
         Checked = True
+        ParentFont = False
         TabOrder = 1
         TabStop = True
       end
@@ -89,7 +95,8 @@ object Query: TQuery
         Left = 24
         Height = 25
         Top = 36
-        Width = 360
+        Width = 364
+        ParentFont = False
         ReadOnly = True
         TabOrder = 0
         Text = 'repo (no cache)'
@@ -102,6 +109,7 @@ object Query: TQuery
         Top = 61
         Width = 65
         Caption = 'Other:'
+        ParentFont = False
         TabOrder = 3
       end
       object EditOtherNoCache: TEdit
@@ -112,8 +120,9 @@ object Query: TQuery
         Left = 75
         Height = 25
         Top = 61
-        Width = 309
+        Width = 312
         BorderSpacing.Left = 10
+        ParentFont = False
         TabOrder = 2
       end
     end
@@ -121,32 +130,35 @@ object Query: TQuery
       Left = 0
       Height = 86
       Top = 149
-      Width = 384
+      Width = 388
       Align = alTop
       AutoSize = True
       BorderSpacing.Top = 20
       BevelOuter = bvNone
       ClientHeight = 86
-      ClientWidth = 384
+      ClientWidth = 388
+      ParentFont = False
       TabOrder = 1
       object LabelProxy: TLabel
         Left = 0
         Height = 19
         Top = 0
-        Width = 384
+        Width = 388
         Align = alTop
         Caption = 'Proxy to use (http://myproxy.dom.org:8080)'
         ParentColor = False
+        ParentFont = False
         WordWrap = True
       end
       object RadioBtnNone: TRadioButton
         Left = 0
         Height = 21
         Top = 19
-        Width = 384
+        Width = 388
         Align = alTop
         Caption = 'None'
         Checked = True
+        ParentFont = False
         TabOrder = 0
         TabStop = True
       end
@@ -154,9 +166,10 @@ object Query: TQuery
         Left = 0
         Height = 21
         Top = 40
-        Width = 384
+        Width = 388
         Align = alTop
         Caption = 'http://myproxy.dom.org:8080'
+        ParentFont = False
         TabOrder = 1
       end
       object EditProxy: TEdit
@@ -167,8 +180,9 @@ object Query: TQuery
         Left = 75
         Height = 25
         Top = 61
-        Width = 309
+        Width = 312
         BorderSpacing.Left = 10
+        ParentFont = False
         TabOrder = 2
       end
       object RadioBtnOtherProxy: TRadioButton
@@ -179,6 +193,7 @@ object Query: TQuery
         Top = 61
         Width = 65
         Caption = 'Other:'
+        ParentFont = False
         TabOrder = 3
       end
     end
@@ -186,22 +201,24 @@ object Query: TQuery
       Left = 0
       Height = 69
       Top = 60
-      Width = 384
+      Width = 388
       Align = alTop
       AutoSize = True
       BorderSpacing.Top = 20
       BevelOuter = bvNone
       ClientHeight = 69
-      ClientWidth = 384
+      ClientWidth = 388
+      ParentFont = False
       TabOrder = 2
       object LabelRepo: TLabel
         Left = 0
         Height = 19
         Top = 0
-        Width = 384
+        Width = 388
         Align = alTop
         Caption = '(Base-) Repository for opsi-server installation'
         ParentColor = False
+        ParentFont = False
         WordWrap = True
       end
       object RadioBtnRepo: TRadioButton
@@ -212,6 +229,7 @@ object Query: TQuery
         Top = 19
         Width = 21
         Checked = True
+        ParentFont = False
         TabOrder = 0
         TabStop = True
       end
@@ -221,7 +239,8 @@ object Query: TQuery
         Left = 24
         Height = 25
         Top = 19
-        Width = 360
+        Width = 364
+        ParentFont = False
         ReadOnly = True
         TabOrder = 1
         Text = 'repo'
@@ -234,8 +253,9 @@ object Query: TQuery
         Left = 75
         Height = 25
         Top = 44
-        Width = 309
+        Width = 312
         BorderSpacing.Left = 10
+        ParentFont = False
         TabOrder = 2
       end
       object RadioBtnOtherRepo: TRadioButton
@@ -246,6 +266,7 @@ object Query: TQuery
         Top = 44
         Width = 65
         Caption = 'Other:'
+        ParentFont = False
         TabOrder = 3
       end
     end
@@ -253,22 +274,24 @@ object Query: TQuery
       Left = 0
       Height = 40
       Top = 0
-      Width = 384
+      Width = 388
       Align = alTop
       AutoSize = True
       BevelOuter = bvNone
       ClientHeight = 40
-      ClientWidth = 384
+      ClientWidth = 388
+      ParentFont = False
       TabOrder = 3
       object LabelOpsiVersion: TLabel
         Left = 0
         Height = 19
         Hint = 'Opsi 4.2 is in testing... further description...'
         Top = 0
-        Width = 384
+        Width = 388
         Align = alTop
         Caption = 'Which opsi version would you like to install?'
         ParentColor = False
+        ParentFont = False
         ParentShowHint = False
         ShowHint = True
       end
@@ -280,23 +303,25 @@ object Query: TQuery
         Top = 19
         Width = 72
         Caption = 'opsi 4.1'
-        Checked = True
         OnChange = RadioBtnOpsi41Change
+        ParentFont = False
         TabOrder = 0
-        TabStop = True
       end
       object RadioBtnOpsi42: TRadioButton
         AnchorSideLeft.Control = RadioBtnOpsi41
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = LabelOpsiVersion
         AnchorSideTop.Side = asrBottom
-        Left = 122
+        Left = 123
         Height = 21
         Top = 19
         Width = 72
-        BorderSpacing.Left = 50
+        BorderSpacing.Left = 51
         Caption = 'opsi 4.2'
+        Checked = True
+        ParentFont = False
         TabOrder = 1
+        TabStop = True
       end
     end
   end

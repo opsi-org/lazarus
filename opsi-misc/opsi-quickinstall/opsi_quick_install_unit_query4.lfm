@@ -40,9 +40,9 @@ object Query4: TQuery4
     TabOrder = 1
   end
   object BigPanel: TPanel
-    Left = 178
+    Left = 184
     Height = 200
-    Top = 73
+    Top = 64
     Width = 349
     AutoSize = True
     BevelOuter = bvNone
@@ -50,57 +50,6 @@ object Query4: TQuery4
     ClientWidth = 349
     ParentFont = False
     TabOrder = 2
-    object PanelOpsiVersion: TPanel
-      Left = 0
-      Height = 40
-      Top = 0
-      Width = 349
-      Align = alTop
-      AutoSize = True
-      BevelOuter = bvNone
-      ClientHeight = 40
-      ClientWidth = 349
-      ParentFont = False
-      TabOrder = 0
-      object LabelOpsiVersion: TLabel
-        Left = 0
-        Height = 19
-        Top = 0
-        Width = 349
-        Align = alTop
-        Caption = 'Which opsi version would you like to install?'
-        ParentColor = False
-        ParentFont = False
-      end
-      object RadioBtnOpsi41: TRadioButton
-        AnchorSideTop.Control = LabelOpsiVersion
-        AnchorSideTop.Side = asrBottom
-        Left = 0
-        Height = 21
-        Top = 19
-        Width = 72
-        Caption = 'opsi 4.1'
-        Checked = True
-        OnChange = RadioBtnOpsi41Change
-        ParentFont = False
-        TabOrder = 0
-        TabStop = True
-      end
-      object RadioBtnOpsi42: TRadioButton
-        AnchorSideLeft.Control = RadioBtnOpsi41
-        AnchorSideLeft.Side = asrBottom
-        AnchorSideTop.Control = LabelOpsiVersion
-        AnchorSideTop.Side = asrBottom
-        Left = 123
-        Height = 21
-        Top = 19
-        Width = 72
-        BorderSpacing.Left = 51
-        Caption = 'opsi 4.2'
-        ParentFont = False
-        TabOrder = 1
-      end
-    end
     object PanelDhcp: TPanel
       Left = 0
       Height = 40
@@ -113,7 +62,7 @@ object Query4: TQuery4
       ClientHeight = 40
       ClientWidth = 349
       ParentFont = False
-      TabOrder = 1
+      TabOrder = 0
       object LabelDhcp: TLabel
         Left = 0
         Height = 19
@@ -126,6 +75,7 @@ object Query4: TQuery4
         WordWrap = True
       end
       object PanelRadioDhcp: TPanel
+        AnchorSideTop.Side = asrBottom
         Left = 0
         Height = 21
         Top = 19
@@ -172,7 +122,7 @@ object Query4: TQuery4
       ClientHeight = 40
       ClientWidth = 349
       ParentFont = False
-      TabOrder = 2
+      TabOrder = 1
       Visible = False
       object LabelFilePointer: TLabel
         Left = 0
@@ -216,6 +166,66 @@ object Query4: TQuery4
           Caption = 'default.menu'
           ParentFont = False
           TabOrder = 1
+        end
+      end
+    end
+    object PanelReboot: TPanel
+      Left = 0
+      Height = 40
+      Top = 0
+      Width = 349
+      Align = alTop
+      AutoSize = True
+      BevelOuter = bvNone
+      ClientHeight = 40
+      ClientWidth = 349
+      ParentFont = False
+      TabOrder = 2
+      object LabelReboot: TLabel
+        Left = 0
+        Height = 19
+        Top = 0
+        Width = 349
+        Align = alTop
+        Caption = 'May the server reboot if the script is finished?'
+        ParentColor = False
+        ParentFont = False
+        WordWrap = True
+      end
+      object PanelRadioReboot: TPanel
+        Left = 0
+        Height = 21
+        Top = 19
+        Width = 349
+        Align = alTop
+        AutoSize = True
+        BevelOuter = bvNone
+        ClientHeight = 21
+        ClientWidth = 349
+        ParentFont = False
+        TabOrder = 0
+        object RadioBtnNo: TRadioButton
+          Left = 96
+          Height = 21
+          Top = 0
+          Width = 42
+          Align = alLeft
+          BorderSpacing.Left = 51
+          Caption = 'No'
+          ParentFont = False
+          TabOrder = 0
+        end
+        object RadioBtnYes: TRadioButton
+          Left = 0
+          Height = 21
+          Top = 0
+          Width = 45
+          Align = alLeft
+          Caption = 'Yes'
+          Checked = True
+          ParentFont = False
+          TabOrder = 1
+          TabStop = True
         end
       end
     end

@@ -159,10 +159,10 @@ begin
 
   MemoOverview.Lines.Add('');
   // Reboot
-  if Query3.RadioBtnYes.Checked then
-    MemoOverview.Lines.Add(rsReboot + Query3.RadioBtnYes.Caption)
+  if Query4.RadioBtnYes.Checked then
+    MemoOverview.Lines.Add(rsReboot + Query4.RadioBtnYes.Caption)
   else
-    MemoOverview.Lines.Add(rsReboot + Query3.RadioBtnNo.Caption);
+    MemoOverview.Lines.Add(rsReboot + Query4.RadioBtnNo.Caption);
 
   MemoOverview.Lines.Add('');
   // Dhcp

@@ -18,24 +18,24 @@ type
     BtnNext: TButton;
     LabelDhcp: TLabel;
     LabelFilePointer: TLabel;
-    LabelOpsiVersion: TLabel;
-    PanelOpsiVersion: TPanel;
+    LabelReboot: TLabel;
     PanelRadiofilePointer: TPanel;
     PanelRadioDhcp: TPanel;
     PanelDhcp: TPanel;
     PanelFilePointer: TPanel;
+    PanelRadioReboot: TPanel;
+    PanelReboot: TPanel;
     RadioBtnDhcpNo: TRadioButton;
     RadioBtnDhcpYes: TRadioButton;
     RadioBtnMenu: TRadioButton;
+    RadioBtnNo: TRadioButton;
     RadioBtnNoMenu: TRadioButton;
-    RadioBtnOpsi41: TRadioButton;
-    RadioBtnOpsi42: TRadioButton;
+    RadioBtnYes: TRadioButton;
     procedure BtnBackClick(Sender: TObject);
     procedure BtnNextClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure RadioBtnDhcpYesChange(Sender: TObject);
-    procedure RadioBtnOpsi41Change(Sender: TObject);
   private
 
   public
@@ -83,11 +83,6 @@ procedure TQuery4.FormActivate(Sender: TObject);
 begin
   BigPanel.Left := QuickInstall.panelLeft;
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
-  // in default mode opsi version isn't requested in Query
-  if QuickInstall.RadioBtnDefault.Checked then
-    PanelOpsiVersion.Visible := True
-  else
-    PanelOpsiVersion.Visible := False;
 end;
 
 procedure TQuery4.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -101,16 +96,6 @@ begin
     PanelFilePointer.Visible := True
   else
     PanelFilePointer.Visible := False;
-end;
-
-procedure TQuery4.RadioBtnOpsi41Change(Sender: TObject);
-begin
-  // set the opsi version in Query respectively to only have check them for
-  // Overview and the .conf file
-  if RadioBtnOpsi41.Checked then
-    Query.RadioBtnOpsi41.Checked := True
-  else
-    Query.RadioBtnOpsi41.Checked := False;
 end;
 
 procedure TQuery4.BtnBackClick(Sender: TObject);
