@@ -552,26 +552,28 @@ begin
       i := appearStepSize;
       while i <= stopy do
       begin
-        Sleep(1);
+        //Sleep(1);
         nform.AlphaBlendValue := i;
         //y := screen.WorkAreaHeight;
         nform.Top := y - i;
         nform.Height := nform.Height + appearStepSize;
         nform.BringToFront;
         nform.Repaint;
-        //DataModule1.ProcessMess;
+        DataModule1.ProcessMess;
         i := i + appearStepSize;
       end;
       //for i := stopy to 255 do
-      while i <= stopy do
+      while i <= 255 do
       begin
-        sleep(1);
+        //sleep(1);
         nform.AlphaBlendValue := i;
         nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
         i := i + appearStepSize;
       end;
+      nform.Refresh;
+      DataModule1.ProcessMess;
     end;
     fapFadeDown:
     begin
@@ -965,10 +967,12 @@ begin
     //  'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13;
     //memoarray[memocounter].ReadOnly:=true;
     //memoarray[memocounter].ScrollBars:=ssAutoVertical;
+    {$IFDEF WINDOWS}
     // scale new scrollbox:
     memoarray[memocounter].AutoAdjustLayout(lapAutoAdjustForDPI, 96,
-      nform.PixelsPerInch, 0, 0);
-    // make transparent
+      screen.PixelsPerInch, 0, 0);
+    {$ENDIF WINDOWS}
+   // make transparent
     memoarray[memocounter].ControlStyle :=
       memoarray[memocounter].ControlStyle - [csOpaque] + [csParentBackground];
     memoarray[memocounter].Visible := True;
@@ -1022,10 +1026,14 @@ begin
       strToBool(myini.ReadString(aktsection, 'Transparent', 'false'));
     LabelArray[labelcounter].Tag := labelcounter;
     LabelArray[labelcounter].Caption := myini.ReadString(aktsection, 'Text', '');
+    //LabelArray[labelcounter].AdjustSize;
+    {$IFDEF WINDOWS}
     // scale new Label:
+    //LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI,
+    //  96, nform.PixelsPerInch, 0, 0);
     LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI,
-      96, nform.PixelsPerInch, 0, 0);
-
+      nform.DesignTimePPI,nform.PixelsPerInch, 0, 0);
+    {$ENDIF WINDOWS}
     // feed labellist: id = index of LabelArray ; id = aktsection striped by 'Label'
     labellist.Add(copy(aktsection, 6, 100) + '=' + IntToStr(labelcounter));
     logdatei.log('labellist add: ' + copy(aktsection, 6, 100) + '=' +
@@ -1076,10 +1084,11 @@ begin
     //ButtonArray[buttoncounter].TabStop:= false;
     //ButtonArray[buttoncounter].TabOrder:=-1;
     ButtonArray[buttoncounter].Caption := myini.ReadString(aktsection, 'Text', '');
+    {$IFDEF WINDOWS}
     // scale new Button:
     ButtonArray[buttoncounter].AutoAdjustLayout(lapAutoAdjustForDPI,
       96, nform.PixelsPerInch, 0, 0);
-
+    {$ENDIF WINDOWS}
     // feed buttonlist: id = index of ButtonArray ; id = ChoiceIndex'
     buttonlist.Add(IntToStr(choiceindex) + '=' + IntToStr(buttoncounter));
     LogDatei.log('Finished reading: ' + aktsection, LLDebug2);
@@ -1118,6 +1127,10 @@ var
   i: integer;
   aktsection: string;
 begin
+  LogDatei.log('screen.PixelsPerInch: ' + IntToStr(screen.PixelsPerInch), LLInfo);
+  LogDatei.log('nform.PixelsPerInch: ' + IntToStr(nform.PixelsPerInch), LLInfo);
+  LogDatei.log('nform.DesignTimePPI: ' + nform.DesignTimePPI.ToString, LLInfo);
+
   LogDatei.log('Loading Skin config from: ' + ininame, LLInfo);
   myini := TIniFile.Create(ininame);
   navlist.AddStrings(fillnavlist(myIni));
