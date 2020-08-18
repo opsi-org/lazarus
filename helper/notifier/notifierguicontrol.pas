@@ -147,7 +147,7 @@ end;
 procedure shutdownNotifier;
 begin
   logdatei.log('Terminate Thread', LLInfo);
-  mythread.Terminate;
+  if Assigned(mythread) then mythread.Terminate;
   logdatei.log('Hide Form', LLInfo);
   hideNForm;
   Nform.Close;
