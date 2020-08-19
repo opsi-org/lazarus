@@ -23,7 +23,7 @@
       <MajorVersionNr Value="4"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="4"/>
+      <BuildNr Value="5"/>
       <StringTable CompanyName="uib gmbh (www.uib.de)" InternalName="opsi-client-kiosk" LegalCopyright="uib gmbh under AGPL v3" LegalTrademarks="opsi / opsi.org / open pc server integration" ProductName="opsi" ProductVersion="4.1.0"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -165,7 +165,7 @@
         <PackageName Value="LazUtils"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="20">
+    <Units Count="22">
       <Unit0>
         <Filename Value="opsiclientkiosk.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -263,10 +263,20 @@
         <UnitName Value="OckSystemAPI"/>
       </Unit18>
       <Unit19>
-        <Filename Value="ockisadmin.pas"/>
+        <Filename Value="ockadmintools.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="OckIsAdmin"/>
+        <UnitName Value="OckAdminTools"/>
       </Unit19>
+      <Unit20>
+        <Filename Value="ockwindowsapi.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OckWindowsAPI"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="ocklinuxapi.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OckLinuxAPI"/>
+      </Unit21>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

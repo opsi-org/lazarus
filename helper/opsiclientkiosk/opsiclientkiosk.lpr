@@ -9,7 +9,8 @@ uses
   Interfaces, // this includes the LCL widgetset
   Classes, SysUtils, Forms, lazcontrols, lcltranslator, inifiles,
   opsiclientkioskgui, installdlg, datadb, osprocesses, progresswindow,
-  lazproginfo, opsiconnection, imagestodepot, helpinfo, OckSystemAPI;
+  lazproginfo, opsiconnection, imagestodepot, helpinfo, OckSystemAPI,
+  OckWindowsAPI, OckLinuxAPI;
 
 
 {$R *.res}

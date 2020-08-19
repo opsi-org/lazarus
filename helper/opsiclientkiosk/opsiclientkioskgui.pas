@@ -33,12 +33,14 @@ uses
   {$IFDEF WINDOWS}
     CommCtrl,
     jwawinbase,
-    //DSiWin32,
+    DSiWin32,
+    OckWindowsAPI,
     ShellApi
   {$ENDIF WINDOWS}
-  {$IFDEF UNIX}
-   {add unix specific units here}
-  {$ENDIF UNIX}
+  {$IFDEF LINUX}
+   {add Linux specific units here}
+   OckLinuxAPI
+  {$ENDIF LINUX}
 
   {more units if nedded};
   //imagestodepot;
@@ -260,11 +262,12 @@ type
     LastFilter : String;
     MinWidthStandardMode : Integer;
     MinWidthExpertMode   : Integer;
+    SystemAPI : TSystemAPI;
     procedure DeleteFormerImage(ImagePath:String);
-    function RunAsAdmin(const Handle: DWord; const Path, Params: string
-      ): Boolean;
+    //function RunAsAdmin(const Handle: DWord; const Path, Params: string
+    //  ): Boolean;
     procedure SaveIconsAndScreenshotsLists;
-    function SaveImagesOnDepotNT: String;
+    //function SaveImagesOnDepotNT: String;
     procedure SetPositionButtonsOnPanelToolbar;
     function GetUserName_:string;
      { Inits at Start }
@@ -1743,10 +1746,13 @@ procedure TFormOpsiClientKiosk.BitBtnSaveImagesClick(Sender: TObject);
 begin
   SaveIconsAndScreenshotsLists;
  {$IFDEF WINDOWS}
-  SaveImagesOnDepotNT;
+  if SystemAPI is TWindowsAPI then
+    (SystemAPI as TWindowsAPI).SaveImagesOnDepot(Application.Location, FormOpsiClientKiosk.Handle);
  {$ENDIF WINDOS}
  {$IFDEF UNIX}
-  SaveImagesOnDepotUNIX;
+ //AskForPassword;
+ if SystemAPI is TLinuxAPI then
+     (SystemAPI as TLinuxAPI).SaveImagesOnDepot(Application.Location, FormOpsiClientKiosk.Handle);
  {$ENDIF UNIX}
 end;
 
@@ -2474,7 +2480,8 @@ begin
   end;
 end;
 
-function TFormOpsiClientKiosk.RunAsAdmin(const Handle: DWord; const Path, Params: string): Boolean;
+
+(*function TFormOpsiClientKiosk.RunAsAdmin(const Handle: DWord; const Path, Params: string): Boolean;
 var
   ShellExecuteInfoA: TShellExecuteInfoA;
 begin
@@ -2490,10 +2497,10 @@ begin
     nShow := 1;
   end;
   Result := ShellExecuteExA(@ShellExecuteInfoA);
-end;
+end;*)
 
 
-function TFormOpsiClientKiosk.SaveImagesOnDepotNT: String;
+(*function TFormOpsiClientKiosk.SaveImagesOnDepotNT: String;
 var
   Shell,
   ShellOptions,
@@ -2528,7 +2535,8 @@ begin
     Result := '';
     LogDatei.log('Exception during SaveImagesOnDepot', LLDebug);
   end;
-end;
+end;*)
+
 
 {procedure TFormOpsiClientKiosk.InitOpsiClientKiosk;
 begin
