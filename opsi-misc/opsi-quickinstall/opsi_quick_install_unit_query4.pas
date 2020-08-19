@@ -20,6 +20,7 @@ type
     LabelFilePointer: TLabel;
     LabelPasswordMasterAdmin: TLabel;
     LabelReboot: TLabel;
+    BigPanel: TPanel;
     PanelPasswordMasterAdmin: TPanel;
     PanelRadiofilePointer: TPanel;
     PanelRadioDhcp: TPanel;
@@ -85,7 +86,7 @@ begin
   AdjustPanelPosition(self);
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
   // ask for UCS password only if distribution is Univention
-  if Pos('Univention', QuickInstall.MyDistr) = 1 then
+  if QuickInstall.distroName = 'Univention' then
     self.PanelPasswordMasterAdmin.Visible := True
   else
     self.PanelPasswordMasterAdmin.Visible := False;

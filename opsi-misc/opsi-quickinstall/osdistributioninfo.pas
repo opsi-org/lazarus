@@ -1,0 +1,134 @@
+unit osDistributionInfo;
+
+{$mode objfpc}{$H+}
+
+interface
+
+uses
+  Classes, SysUtils, osLinuxRepository;
+
+type
+
+  {DistributionInfo}
+
+  TDistributionInfo = class(TObject)
+  private
+    FMyDistr: TDistribution;
+    FDistrUrlPart: string;
+  public
+    property MyDistr: TDistribution read FMyDistr;
+    property DistrUrlPart: string read FDistrUrlPart;
+
+    procedure SetInfo(distroName: string; distroRelease: string);
+    function GetPackageManagementShellCommand(distroName: string): string;
+  end;
+
+implementation
+
+procedure TDistributionInfo.SetInfo(distroName: string; distroRelease: string);
+begin
+  // Change from distroName and -Release to TDistribution and respective URL part
+  // Pos('7', distroRelease) = 1 checks whether string '7' occurs in string...
+  // ...distroRelease at first position (1-based) for the fist time...
+  // ...(meaning 0th position in array thinking).
+
+  // CentOS has releases with names like 7.x-xxxx
+  if (distroName = 'CentOS') and (Pos('7', distroRelease) = 1) then
+  begin
+    FMyDistr := CentOS_7;
+    FDistrUrlPart := 'CentOS_7/';
+  end
+  else
+  if distroName = 'Debian' then
+  begin
+    if distroRelease = '8' then
+    begin
+      FMyDistr := Debian_8;
+      FDistrUrlPart := 'Debian_8/';
+    end
+    else
+    if distroRelease = '9' then
+    begin
+      FMyDistr := Debian_9;
+      FDistrUrlPart := 'Debian_9/';
+    end
+    else
+    if distroRelease = '10' then
+    begin
+      FMyDistr := Debian_10;
+      FDistrUrlPart := 'Debian_10/';
+    end;
+  end
+  else
+  if distroName = 'openSUSE Leap' then
+  begin
+    if distroRelease = '15.1' then
+    begin
+      FMyDistr := openSUSE_Leap_15_1;
+      FDistrUrlPart := 'openSUSE_Leap_15.1/';
+    end
+    else if distroRelease = '42.3' then
+    begin
+      FMyDistr := openSUSE_Leap_42_3;
+      FDistrUrlPart := 'openSUSE_Leap_42.3/';
+    end;
+  end
+  else
+  // RHEL has releases like 7.x
+  if (distroName = 'RedHatEnterpriseServer') and (Pos('7', distroRelease) = 1) then
+  begin
+    FMyDistr := RHEL_7;
+    FDistrUrlPart := 'RHEL_7/';
+  end
+  else
+  if distroName = 'Univention' then
+  begin
+    if Pos('4.3', distroRelease) = 1 then
+    begin
+      FMyDistr := xUbuntu_16_04;
+      FDistrUrlPart := 'Univention_4.3/';
+    end
+    else
+    if Pos('4.4', distroRelease) = 1 then
+    begin
+      FMyDistr := xUbuntu_18_04;
+      FDistrUrlPart := 'Univention_4.4/';
+    end;
+  end
+  else
+  if distroName = 'Ubuntu' then
+  begin
+    if distroRelease = '16.04' then
+    begin
+      FMyDistr := xUbuntu_16_04;
+      FDistrUrlPart := 'xUbuntu_16.04/';
+    end
+    else
+    if distroRelease = '18.04' then
+    begin
+      FMyDistr := xUbuntu_18_04;
+      FDistrUrlPart := 'xUbuntu_18.04/';
+    end;
+  end;
+end;
+
+// get right shell command for package management depending on the distribution
+function TDistributionInfo.GetPackageManagementShellCommand(distroName: string): string;
+begin
+  {CentOS and RedHat}
+  if (distroName = 'CentOS') or (distroName = 'RedHatEnterpriseServer') then
+    Result := 'yum '
+  {Debian, Ubuntu, Univention}
+  // univention is based on debian
+  else if (distroName = 'Debian') or (distroName = 'Ubuntu') or
+    (distroName = 'Univention') then
+    Result := 'apt '
+  {OpenSuse and SLES}
+  else if (distroName = 'openSUSE Leap') or (distroName = 'SLE12') then
+    Result := 'zypper ';
+end;
+
+end.
+
+
+

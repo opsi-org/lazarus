@@ -34,7 +34,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="11">
+    <Units Count="12">
       <Unit0>
         <Filename Value="opsi_quick_install_project.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -109,6 +109,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit10>
+      <Unit11>
+        <Filename Value="osdistributioninfo.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="osDistributionInfo"/>
+      </Unit11>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

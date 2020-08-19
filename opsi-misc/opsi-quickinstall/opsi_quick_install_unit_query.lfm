@@ -1,7 +1,7 @@
 object Query: TQuery
   Left = 318
   Height = 457
-  Top = 256
+  Top = 242
   Width = 731
   Caption = 'Opsi quick install - query (part 1)'
   ClientHeight = 457
@@ -33,7 +33,7 @@ object Query: TQuery
     Left = 16
     Height = 25
     Top = 416
-    Width = 52
+    Width = 51
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick

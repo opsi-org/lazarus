@@ -1,7 +1,7 @@
 object Overview: TOverview
   Left = 356
   Height = 449
-  Top = 259
+  Top = 250
   Width = 730
   Caption = 'Overview'
   ClientHeight = 449
@@ -20,7 +20,7 @@ object Overview: TOverview
     Left = 16
     Height = 25
     Top = 408
-    Width = 52
+    Width = 51
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick

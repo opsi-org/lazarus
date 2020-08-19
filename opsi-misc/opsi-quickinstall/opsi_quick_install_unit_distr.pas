@@ -34,8 +34,7 @@ var
 implementation
 
 uses
-  opsi_quick_install_unit_language,
-  osLinuxRepository;
+  opsi_quick_install_unit_language, osDistributionInfo;
 
 {$R *.lfm}
 
@@ -54,12 +53,13 @@ begin
     QuickInstall.distroRelease :=
       Copy(EditDistr.Text, Pos(' ', EditDistr.Text) + 1, Length(EditDistr.Text) -
       Pos(' ', EditDistr.Text));
-    with QuickInstall do
-    begin
-      //ShowMessage(distroName);
-      //ShowMessage(distroRelease);
-      SetDistr(distroName, distroRelease);
-    end;
+  end;
+  with QuickInstall do
+  begin
+    //ShowMessage(distroName);
+    //ShowMessage(distroRelease);
+    DistrInfo.SetInfo(distroName, distroRelease);
+    //ShowMessage(DistrInfo.DistrUrlPart);
   end;
 end;
 

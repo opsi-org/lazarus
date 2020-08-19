@@ -70,7 +70,7 @@ end;
 
 procedure TPassword.BtnFinishClick(Sender: TObject);
 var
-  fileName, propertyName, url, Output: string;
+  fileName, propertyName, url, Output, shellCommand: string;
   FileText: TStringList;
   MyRepo: TLinuxRepository;
   RunCommand: TRunCommandElevated;
@@ -86,7 +86,7 @@ begin
     FileText.Add(propertyName + '=False');
 
   propertyName := 'backend';
-  if Query2.RadioBtnFile.Checked then
+  if (Query2.RadioBtnFile.Checked) then
     FileText.Add(propertyName + '=file')
   else
     FileText.Add(propertyName + '=mysql');
@@ -162,24 +162,20 @@ begin
   propertyName := 'opsi_online_repository';
   if Query.RadioBtnOpsi41.Checked then
     FileText.Add(propertyName + '=' + QuickInstall.baseURLOpsi41 +
-      QuickInstall.DistrUrlPart)
-    {FileText.Add(propertyName +
-      '=http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/')}
+      QuickInstall.DistrInfo.DistrUrlPart)
   else if Query.RadioBtnOpsi42.Checked then
     FileText.Add(propertyName + '=' + QuickInstall.baseURLOpsi42 +
-      QuickInstall.DistrUrlPart)
+      QuickInstall.DistrInfo.DistrUrlPart)
   else
     FileText.Add(propertyName + '=' + Query.EditRepo.Text);
 
   propertyName := 'opsi_noproxy_online_repository';
   if Query.RadioBtnOpsi41.Checked then
     FileText.Add(propertyName + '=' + QuickInstall.baseURLOpsi41 +
-      QuickInstall.DistrUrlPart)
-    {FileText.Add(propertyName +
-      '=http://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.1:/')}
+      QuickInstall.DistrInfo.DistrUrlPart)
   else if Query.RadioBtnOpsi42.Checked then
     FileText.Add(propertyName + '=' + QuickInstall.baseURLOpsi42 +
-      QuickInstall.DistrUrlPart)
+      QuickInstall.DistrInfo.DistrUrlPart)
   else
     FileText.Add(propertyName + '=' + Query.EditOtherNoCache.Text);
 
@@ -230,8 +226,8 @@ begin
   FileText.Free;
 
   // create repository
-  MyRepo := TLinuxRepository.Create(QuickInstall.MyDistr, EditPassword.Text,
-    RadioBtnSudo.Checked);
+  MyRepo := TLinuxRepository.Create(QuickInstall.DistrInfo.MyDistr,
+    EditPassword.Text, RadioBtnSudo.Checked);
   // Set OpsiVersion and OpsiBranch afterwards using GetDefaultURL
   if Query.RadioBtnOpsi41.Checked then
   begin
@@ -253,25 +249,31 @@ begin
   end;
   MyRepo.Add(url);
   RunCommand := TRunCommandElevated.Create(EditPassword.Text, RadioBtnSudo.Checked);
-  Output := RunCommand.Run('apt update');
+
+  shellCommand := QuickInstall.DistrInfo.GetPackageManagementShellCommand(
+    QuickInstall.distroName);
+  Output := RunCommand.Run(shellCommand + 'update');
   //ShowMessage(Output);
-  Output := RunCommand.Run('apt install opsi-script');
+  Output := RunCommand.Run(shellCommand + 'install opsi-script');
   //ShowMessage(Output);
+
   RunCommand.Free;
   MyRepo.Free;
+  QuickInstall.DistrInfo.Free;
+
   // close forms
-  QueryProds.Visible:=True;
-  Overview.Visible:=False;
+  QueryProds.Visible := True;
+  Overview.Visible := False;
   Password.Close;
 end;
 
-procedure TPassword.EditPasswordUTF8KeyPress(Sender: TObject;
-  var UTF8Key: TUTF8Char);
+procedure TPassword.EditPasswordUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
 begin
   // finishing also possible by pressing enter after writing the password in EditPassword
   // #13 stands for the Enter key
   if UTF8Key = #13 then
-  BtnFinish.Click;
+    BtnFinish.Click;
+
 end;
 
 procedure TPassword.CheckBoxShowPasswordChange(Sender: TObject);

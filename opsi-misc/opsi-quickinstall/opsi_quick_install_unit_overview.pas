@@ -64,7 +64,6 @@ uses
   opsi_quick_install_unit_language,
   opsi_quick_install_unit_query,
   opsi_quick_install_unit_query2,
-  opsi_quick_install_unit_query_prods,
   opsi_quick_install_unit_query4,
   opsi_quick_install_unit_query5_dhcp,
   opsi_quick_install_unit_query6,
@@ -80,8 +79,8 @@ begin
 end;
 
 procedure TOverview.FormActivate(Sender: TObject);
-var
-  prod: integer;
+{var
+  prod: integer;}
 begin
   //ShowMessage(IntToStr(BtnFinish.Width));
   PanelFinish.Left := QuickInstall.panelLeft;
@@ -89,64 +88,59 @@ begin
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
 
   MemoOverview.Clear;
-  // Opsi version
-  if Query.RadioBtnOpsi41.Checked then
-    MemoOverview.Lines.Add(rsOpsiVersion + Query.RadioBtnOpsi41.Caption)
-  else
-    MemoOverview.Lines.Add(rsOpsiVersion + Query.RadioBtnOpsi42.Caption);
+  {Custom installation}
+  if QuickInstall.RadioBtnCustom.Checked then
+  begin
+    // Opsi version
+    if Query.RadioBtnOpsi41.Checked then
+      MemoOverview.Lines.Add(rsOpsiVersion + Query.RadioBtnOpsi41.Caption)
+    else
+      MemoOverview.Lines.Add(rsOpsiVersion + Query.RadioBtnOpsi42.Caption);
 
-  MemoOverview.Lines.Add('');
-  // Repository
-  if (Query.RadioBtnOpsi41.Checked) and (Query.RadioBtnRepo.Checked) then
-    MemoOverview.Lines.Add(rsRepo + QuickInstall.baseURLOpsi41 +
-      QuickInstall.DistrUrlPart)
-  else if (Query.RadioBtnOpsi42.Checked) and (Query.RadioBtnRepo.Checked) then
-    MemoOverview.Lines.Add(rsRepo + QuickInstall.baseURLOpsi42 +
-      QuickInstall.DistrUrlPart)
-  else
-    MemoOverview.Lines.Add(rsRepo + Query.EditRepo.Text);
-  // Proxy
-  if Query.RadioBtnNone.Checked then
-    MemoOverview.Lines.Add(rsProxy + Query.RadioBtnNone.Caption)
-  else if Query.RadioBtnMyProxy.Checked then
-    MemoOverview.Lines.Add(rsProxy + Query.RadioBtnMyProxy.Caption)
-  else
-    MemoOverview.Lines.Add(rsProxy + Query.EditProxy.Text);
-  // Repository (no cache)
-  if (Query.RadioBtnOpsi41.Checked) and (Query.RadioBtnRepo.Checked) then
-    MemoOverview.Lines.Add(rsRepoNoCache + QuickInstall.baseURLOpsi41 +
-      QuickInstall.DistrUrlPart)
-  else if (Query.RadioBtnOpsi42.Checked) and (Query.RadioBtnRepo.Checked) then
-    MemoOverview.Lines.Add(rsRepoNoCache + QuickInstall.baseURLOpsi42 +
-      QuickInstall.DistrUrlPart)
-  else
-    MemoOverview.Lines.Add(rsRepoNoCache + Query.EditOtherNoCache.Text);
+    MemoOverview.Lines.Add('');
+    // Repository
+    if Query.RadioBtnRepo.Checked then
+      MemoOverview.Lines.Add(rsRepo + Query.EditDefaultRepoNoCache.Text)
+    else
+      MemoOverview.Lines.Add(rsRepo + Query.EditRepo.Text);
+    // Proxy
+    if Query.RadioBtnNone.Checked then
+      MemoOverview.Lines.Add(rsProxy + Query.RadioBtnNone.Caption)
+    else if Query.RadioBtnMyProxy.Checked then
+      MemoOverview.Lines.Add(rsProxy + Query.RadioBtnMyProxy.Caption)
+    else
+      MemoOverview.Lines.Add(rsProxy + Query.EditProxy.Text);
+    // Repository (no cache)
+    if Query.RadioBtnRepoNoCache.Checked then
+      MemoOverview.Lines.Add(rsRepoNoCache + Query.EditDefaultRepoNoCache.Text)
+    else
+      MemoOverview.Lines.Add(rsRepoNoCache + Query.EditOtherNoCache.Text);
 
-  MemoOverview.Lines.Add('');
-  // Backend
-  if Query2.RadioBtnFile.Checked then
-    MemoOverview.Lines.Add(rsBackend + Query2.RadioBtnFile.Caption)
-  else
-    MemoOverview.Lines.Add(rsBackend + Query2.RadioBtnMySql.Caption);
-  // Copy modules
-  if Query2.RadioBtnYes.Checked then
-    MemoOverview.Lines.Add(rsCopyModules + Query2.RadioBtnYes.Caption)
-  else
-    MemoOverview.Lines.Add(rsCopyModules + Query2.RadioBtnNo.Caption);
+    MemoOverview.Lines.Add('');
+    // Backend
+    if Query2.RadioBtnFile.Checked then
+      MemoOverview.Lines.Add(rsBackend + Query2.RadioBtnFile.Caption)
+    else
+      MemoOverview.Lines.Add(rsBackend + Query2.RadioBtnMySql.Caption);
+    // Copy modules
+    if Query2.RadioBtnYes.Checked then
+      MemoOverview.Lines.Add(rsCopyModules + Query2.RadioBtnYes.Caption)
+    else
+      MemoOverview.Lines.Add(rsCopyModules + Query2.RadioBtnNo.Caption);
 
-  MemoOverview.Lines.Add('');
-  // Repo kind
-  if Query2.RadioBtnExperimental.Checked then
-    MemoOverview.Lines.Add(rsRepoKind + Query2.RadioBtnExperimental.Caption)
-  else if Query2.RadioBtnStable.Checked then
-    MemoOverview.Lines.Add(rsRepoKind + Query2.RadioBtnStable.Caption)
-  else
-    MemoOverview.Lines.Add(rsRepoKind + Query2.RadioBtnTesting.Caption);
-  // Update
-  if Query2.RadioBtnYes.Checked then
-    MemoOverview.Lines.Add(rsUpdate + Query2.RadioBtnYes.Caption)
-  else
-    MemoOverview.Lines.Add(rsUpdate + Query2.RadioBtnNo.Caption);
+    MemoOverview.Lines.Add('');
+    // Repo kind
+    if Query2.RadioBtnExperimental.Checked then
+      MemoOverview.Lines.Add(rsRepoKind + Query2.RadioBtnExperimental.Caption)
+    else if Query2.RadioBtnStable.Checked then
+      MemoOverview.Lines.Add(rsRepoKind + Query2.RadioBtnStable.Caption)
+    else
+      MemoOverview.Lines.Add(rsRepoKind + Query2.RadioBtnTesting.Caption);
+    // Update
+    if Query2.RadioBtnYes.Checked then
+      MemoOverview.Lines.Add(rsUpdate + Query2.RadioBtnYes.Caption)
+    else
+      MemoOverview.Lines.Add(rsUpdate + Query2.RadioBtnNo.Caption);
 
   {MemoOverview.Lines.Add('');
   // Prods
@@ -163,15 +157,22 @@ begin
     Delete(stringProducts, 1, 2);
   MemoOverview.Lines.Add(stringProducts);}
 
-  MemoOverview.Lines.Add('');
-  // UCS password
-  MemoOverview.Lines.Add(rsUCSPassword + Query4.EditPasswordUCS.Text);
-  // Reboot
-  if Query4.RadioBtnYes.Checked then
-    MemoOverview.Lines.Add(rsReboot + Query4.RadioBtnYes.Caption)
+    MemoOverview.Lines.Add('');
+    // UCS password
+    if QuickInstall.distroName = 'Univention' then
+      MemoOverview.Lines.Add(rsUCSPassword + Query4.EditPasswordUCS.Text);
+    // Reboot
+    if Query4.RadioBtnYes.Checked then
+      MemoOverview.Lines.Add(rsReboot + Query4.RadioBtnYes.Caption)
+    else
+      MemoOverview.Lines.Add(rsReboot + Query4.RadioBtnNo.Caption);
+  end
+  {Standard installation}
   else
-    MemoOverview.Lines.Add(rsReboot + Query4.RadioBtnNo.Caption);
+    // default opsi version is 4.2, rest ist not shown anyway
+    MemoOverview.Lines.Add(rsOpsiVersion + Query.RadioBtnOpsi42.Caption);
 
+  {Both}
   MemoOverview.Lines.Add('');
   // Dhcp
   if Query4.RadioBtnDhcpYes.Checked then
