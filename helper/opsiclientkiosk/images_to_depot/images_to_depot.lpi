@@ -12,7 +12,6 @@
       <UseXPManifest Value="True"/>
       <XPManifest>
         <DpiAware Value="True"/>
-        <ExecutionLevel Value="requireAdministrator"/>
         <TextDesc Value="Copy images for opsi-client-kiosk to the respective depot."/>
       </XPManifest>
       <Icon Value="0"/>
@@ -189,6 +188,11 @@
         </Win32>
       </Options>
     </Linking>
+    <Other>
+      <OtherDefines Count="1">
+        <Define0 Value="KIOSK_IN_AGENT"/>
+      </OtherDefines>
+    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="3">

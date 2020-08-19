@@ -13,38 +13,6 @@ msgstr ""
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: imagestodepot.rscouldnotsaveicons
-msgctxt "imagestodepot.rscouldnotsaveicons"
-msgid "Could not save icons on depot."
-msgstr "Konnte Icons nicht auf Depot speichern."
-
-#: imagestodepot.rscouldnotsavescreenshots
-msgctxt "imagestodepot.rscouldnotsavescreenshots"
-msgid "Could not save screenshots on depot."
-msgstr "Konnte Screenshots nicht auf Depot speichern."
-
-#: imagestodepot.rscouldnotunmount
-msgctxt "imagestodepot.rscouldnotunmount"
-msgid "Could not unmount depot."
-msgstr "Konnte Depot nicht trennen."
-
-#: imagestodepot.rsimagesnotsaved
-msgctxt "imagestodepot.rsimagesnotsaved"
-msgid ""
-"Images could not be saved on opsi depot. %sPlease check if depot is mounted "
-"with write privileges."
-msgstr "Bilder konnten nicht auf dem opsi Depot gespeichert werden. %sBitte überprüfen Sie ob das Depot mit Schreibrechten verbunden ist."
-
-#: imagestodepot.rsimagessaved
-msgctxt "imagestodepot.rsimagessaved"
-msgid "Images saved on"
-msgstr "Bilder gespeichert auf"
-
-#: imagestodepot.rsisaninvaliddir
-msgctxt "imagestodepot.rsisaninvaliddir"
-msgid "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
-msgstr "\"%s\" ist ein ungültiges Verzeichnis.%sBitte setzen Sie \"%s\"  auf ein gültigen Verzeichnis."
-
 #: opsiclientkioskgui.rsaction
 msgctxt "opsiclientkioskgui.rsaction"
 msgid "Action"
@@ -108,9 +76,7 @@ msgid "Connected to"
 msgstr "Verbunden mit"
 
 #: opsiclientkioskgui.rscurrentusernoadmin
-msgid ""
-"Current user has no admin privileges. Admin mode disabled.%sSolution: Start "
-"opsi Client Kiosk (as user) with admin privileges."
+msgid "Current user has no admin privileges. Admin mode disabled.%sSolution: Start opsi Client Kiosk (as user) with admin privileges."
 msgstr "Aktueller Nutzer hat keine Adminrechte. Adminmodus deaktiviert. %sLösung: Starten Sie den opsi Client Kiosk (als Nutzer) mit Adminrechten."
 
 #: opsiclientkioskgui.rsdisabled
@@ -149,8 +115,7 @@ msgstr "Jetzt installieren"
 
 #: opsiclientkioskgui.rsinstallnowhint
 msgctxt "opsiclientkioskgui.rsinstallnowhint"
-msgid ""
-"Start the installation/update (uninstallation) of the selected products"
+msgid "Start the installation/update (uninstallation) of the selected products"
 msgstr "Start der Installation/Aktualisierung (Deinstallation) der ausgewählten Produkte"
 
 #: opsiclientkioskgui.rsinstallnowornextevent
@@ -220,9 +185,7 @@ msgid "Store actions"
 msgstr "Aktionen speichern"
 
 #: opsiclientkioskgui.rsstoreactionshint
-msgid ""
-"Send the action requests to the server, show the resulting installations and"
-" ask for installation start."
+msgid "Send the action requests to the server, show the resulting installations and ask for installation start."
 msgstr "Sende die Anforderungen an den Server, zeige die resultierenden anstehenden Installationen und Frage nach dem Installationsstart."
 
 #: opsiclientkioskgui.rsuninstallationfinished
@@ -293,9 +256,7 @@ msgid "Error while initializing opsiconnection"
 msgstr "Fehler bei der Initialisierung der opsi Verbindung."
 
 #: opsiconnection.rskioskmodeold
-msgid ""
-"Kiosk mode: old. Update to newer opsi version to get full functionality "
-"(e.g. disable software on demand) of Opsi Kiosk."
+msgid "Kiosk mode: old. Update to newer opsi version to get full functionality (e.g. disable software on demand) of Opsi Kiosk."
 msgstr "Alter Kioskmodus. Aktualiseren Sie auf neuere opsi Verson um volle Funktionalität zu erhalten (z.B. deaktiveiren der Möglichkeit der sofortigen Installation von Produkten.)"
 
 #: opsiconnection.rsnodatafromserver
@@ -412,8 +373,7 @@ msgstr "Jetzt installieren"
 
 #: tformopsiclientkiosk.bitbtninstallnow.hint
 msgctxt "tformopsiclientkiosk.bitbtninstallnow.hint"
-msgid ""
-"Start the installation/update (uninstallation) of the selected products"
+msgid "Start the installation/update (uninstallation) of the selected products"
 msgstr "Start der Installation/Aktualisierung (Deinstallation) der ausgewählten Produkte"
 
 #: tformopsiclientkiosk.bitbtnsaveimages.hint
@@ -450,8 +410,7 @@ msgid "opsi-client-kiosk"
 msgstr "opsi-client-kiosk"
 
 #: tformopsiclientkiosk.dbgrid1.hint
-msgid ""
-"Click to ActionRequest Column, to set action requests (setup/uninstall)"
+msgid "Click to ActionRequest Column, to set action requests (setup/uninstall)"
 msgstr "In die Spalte ActionRequest klicken um Aktionen (setup/uninstall) zu setzen"
 
 #: tformopsiclientkiosk.editsearch.hint
@@ -604,56 +563,3 @@ msgstr ""
 msgid "Please wait while "
 msgstr "Bitte warten während "
 
-#: tformsaveimagesondepot.buttoncancel.caption
-msgctxt "tformsaveimagesondepot.buttoncancel.caption"
-msgid "Cancel"
-msgstr "Abbrechen"
-
-#: tformsaveimagesondepot.buttoncopy.caption
-msgctxt "tformsaveimagesondepot.buttoncopy.caption"
-msgid "Save images on depot"
-msgstr "Speicher Bilder auf Depot"
-
-#: tformsaveimagesondepot.caption
-msgctxt "tformsaveimagesondepot.caption"
-msgid "Save images on depot"
-msgstr "Speicher Bilder auf Depot"
-
-#: tformsaveimagesondepot.checkboxmountdepot.caption
-msgctxt "tformsaveimagesondepot.checkboxmountdepot.caption"
-msgid "Mount depot"
-msgstr "Verbinde Depot"
-
-#: tformsaveimagesondepot.directoryeditpathtodepot.text
-msgid "Y:\\"
-msgstr ""
-
-#: tformsaveimagesondepot.editpathtodepot.texthint
-msgctxt "tformsaveimagesondepot.editpathtodepot.texthint"
-msgid "\\\\servername\\opsi_depot_rw"
-msgstr "\\\\Servername\\opsi_depot_rw"
-
-#: tformsaveimagesondepot.groupboxmountdepot.caption
-msgctxt "tformsaveimagesondepot.groupboxmountdepot.caption"
-msgid "Mount depot"
-msgstr "Verbinde Depot"
-
-#: tformsaveimagesondepot.labelpassword.caption
-msgctxt "tformsaveimagesondepot.labelpassword.caption"
-msgid "Password"
-msgstr "Passwort"
-
-#: tformsaveimagesondepot.labelpathmountdepot.caption
-msgctxt "tformsaveimagesondepot.labelpathmountdepot.caption"
-msgid "Path to depot"
-msgstr "Pfad zum Depot"
-
-#: tformsaveimagesondepot.labelpathtodepot.caption
-msgctxt "tformsaveimagesondepot.labelpathtodepot.caption"
-msgid "Path to depot"
-msgstr "Pfad zum Depot"
-
-#: tformsaveimagesondepot.labeluser.caption
-msgctxt "tformsaveimagesondepot.labeluser.caption"
-msgid "User"
-msgstr "Benutzer"

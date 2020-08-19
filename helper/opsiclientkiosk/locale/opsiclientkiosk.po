@@ -3,36 +3,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: imagestodepot.rscouldnotsaveicons
-msgctxt "imagestodepot.rscouldnotsaveicons"
-msgid "Could not save icons on depot."
-msgstr ""
-
-#: imagestodepot.rscouldnotsavescreenshots
-msgctxt "imagestodepot.rscouldnotsavescreenshots"
-msgid "Could not save screenshots on depot."
-msgstr ""
-
-#: imagestodepot.rscouldnotunmount
-msgctxt "imagestodepot.rscouldnotunmount"
-msgid "Could not unmount depot."
-msgstr ""
-
-#: imagestodepot.rsimagesnotsaved
-msgctxt "imagestodepot.rsimagesnotsaved"
-msgid "Images could not be saved on opsi depot. %sPlease check if depot is mounted with write privileges."
-msgstr ""
-
-#: imagestodepot.rsimagessaved
-msgctxt "imagestodepot.rsimagessaved"
-msgid "Images saved on"
-msgstr ""
-
-#: imagestodepot.rsisaninvaliddir
-msgctxt "imagestodepot.rsisaninvaliddir"
-msgid "\"%s\" is an invalid directory.%sPlease set \"%s\" to a valid directory."
-msgstr ""
-
 #: opsiclientkioskgui.rsaction
 msgctxt "opsiclientkioskgui.rsaction"
 msgid "Action"
@@ -581,59 +551,5 @@ msgstr ""
 
 #: tformprogresswindow.labelinfo.caption
 msgid "Please wait while "
-msgstr ""
-
-#: tformsaveimagesondepot.buttoncancel.caption
-msgctxt "tformsaveimagesondepot.buttoncancel.caption"
-msgid "Cancel"
-msgstr ""
-
-#: tformsaveimagesondepot.buttoncopy.caption
-msgctxt "tformsaveimagesondepot.buttoncopy.caption"
-msgid "Save images on depot"
-msgstr ""
-
-#: tformsaveimagesondepot.caption
-msgctxt "tformsaveimagesondepot.caption"
-msgid "Save images on depot"
-msgstr ""
-
-#: tformsaveimagesondepot.checkboxmountdepot.caption
-msgctxt "tformsaveimagesondepot.checkboxmountdepot.caption"
-msgid "Mount depot"
-msgstr ""
-
-#: tformsaveimagesondepot.directoryeditpathtodepot.text
-msgid "Y:\\"
-msgstr ""
-
-#: tformsaveimagesondepot.editpathtodepot.texthint
-msgctxt "tformsaveimagesondepot.editpathtodepot.texthint"
-msgid "\\\\servername\\opsi_depot_rw"
-msgstr ""
-
-#: tformsaveimagesondepot.groupboxmountdepot.caption
-msgctxt "tformsaveimagesondepot.groupboxmountdepot.caption"
-msgid "Mount depot"
-msgstr ""
-
-#: tformsaveimagesondepot.labelpassword.caption
-msgctxt "tformsaveimagesondepot.labelpassword.caption"
-msgid "Password"
-msgstr ""
-
-#: tformsaveimagesondepot.labelpathmountdepot.caption
-msgctxt "tformsaveimagesondepot.labelpathmountdepot.caption"
-msgid "Path to depot"
-msgstr ""
-
-#: tformsaveimagesondepot.labelpathtodepot.caption
-msgctxt "tformsaveimagesondepot.labelpathtodepot.caption"
-msgid "Path to depot"
-msgstr ""
-
-#: tformsaveimagesondepot.labeluser.caption
-msgctxt "tformsaveimagesondepot.labeluser.caption"
-msgid "User"
 msgstr ""
 

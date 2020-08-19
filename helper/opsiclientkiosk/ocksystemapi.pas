@@ -5,15 +5,13 @@ unit OckSystemAPI;
 interface
 
 uses
-  Classes, SysUtils, osLog;
+  Classes, SysUtils;
 
 type
   TSystemAPI = class(TObject)
     function IsAdmin:boolean;virtual;abstract;
     procedure RunApplication(const PathToExe:string);virtual;abstract;
-    //function RunAsAdmin:boolean;virtual;abstract;
   end;
-
 
 
 implementation

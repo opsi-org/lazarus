@@ -6,32 +6,40 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, EditBtn,
-  Process, oslog, FileUtil, LazFileUtils, opsiconnection;
+  Process, oslog, FileUtil, LazFileUtils, opsiconnection, //LazProgInfo,
+  jwawinbase,
+  LCLTranslator, ExtCtrls, ComCtrls;
 
 type
 
   { TFormSaveImagesOnDepot }
 
   TFormSaveImagesOnDepot = class(TForm)
-    ButtonCancel: TButton;
+    ButtonClose: TButton;
     ButtonCopy: TButton;
     CheckBoxMountDepot: TCheckBox;
     DirectoryEditPathToDepot: TDirectoryEdit;
     EditPassword: TEdit;
-    EditPathToDepot: TEdit;
     EditUser: TEdit;
+    GroupBoxProgress: TGroupBox;
+    GroupBoxPath: TGroupBox;
     GroupBoxMountDepot: TGroupBox;
-    LabelPathMountDepot: TLabel;
+    LabelInfo: TLabel;
     LabelPassword: TLabel;
-    LabelPathToDepot: TLabel;
     LabelUser: TLabel;
-    procedure ButtonCancelClick(Sender: TObject);
+    PanelInfo: TPanel;
+    ProgressBar: TProgressBar;
+    procedure ButtonCloseClick(Sender: TObject);
     procedure ButtonCopyClick(Sender: TObject);
     procedure CheckBoxMountDepotChange(Sender: TObject);
     procedure DirectoryEditPathToDepotChange(Sender: TObject);
     procedure DirectoryEditPathToDepotEnter(Sender: TObject);
-    procedure EditPathToDepotChange(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure GroupBoxInfoClick(Sender: TObject);
   private
+    function GetUserName_: string;
+    function InitLogging(const LogFileName: String; MyLogLevel: integer): boolean;
     procedure MountDepotNT(const User: String; Password: String;
       PathToDepot: String);
     function SaveImagesOnDepot(const PathToDepot: String):boolean;
@@ -39,7 +47,7 @@ type
     procedure MountDepotUnix(const User: String; Password: String;
       PathToDepot: String);
     procedure UnmountDepotUnix(const PathToDepot: String);
-    function SetRights(Path:String):boolean;
+    //function SetRights(Path:String):boolean;
 
 
   public
@@ -48,6 +56,20 @@ type
 
 var
   FormSaveImagesOnDepot: TFormSaveImagesOnDepot;
+
+
+implementation
+
+{$R *.lfm}
+
+const
+  PathDepotOnShare = '\var\lib\opsi\depot';
+  {$IFDEF KIOSK_IN_AGENT} //if the kiosk is in the opsi-client-agent product
+    PathKioskAppOnShare = '\opsi-client-agent\files\opsi\opsiclientkiosk\app';
+  {$ELSE} //if the kiosk is a standalone opsi product
+    PathKioskAppOnShare = '\opsi-client-kiosk\files\app';
+  {$ENDIF KIOSK_IN_AGENT}
+  CustomFolder = '\ock_custom';
 
 resourcestring
   rsCouldNotSaveIcons = 'Could not save icons on depot.';
@@ -58,11 +80,11 @@ resourcestring
   rsImagesNotSaved = 'Images could not be saved on opsi depot. %sPlease'
     +' check if depot is mounted with write privileges.';
   rsImagesSaved = 'Images saved on';
-
-
-implementation
-
-{$R *.lfm}
+  rsSettingRights = 'Setting rights...';
+  rsDone = 'done';
+  rsCopyIcons = 'Copy icons and screenshots...';
+  rsMounting = 'Mounting';
+  rsFinished = 'Copy process finished. Closing window...';
 
 { TFormSaveImagesOnDepot }
 
@@ -72,7 +94,9 @@ var
   User: String;
   AlreadyMounted :boolean;
   CopySuccess: boolean;
+  i,LineNumber:integer;
 begin
+
   CopySuccess := False;
   PathToDepot :=  TrimFilename(DirectoryEditPathToDepot.Text);
   {Mount opsi depot}
@@ -92,30 +116,58 @@ begin
      {$ENDIF Unix}
     end;
   end;
+
   if DirectoryExists(PathToDepot) then
   begin
-    CopySuccess := SaveImagesOnDepot(PathToDepot);
+    ProgressBar.Visible := True;
+    LabelInfo.Caption := rsCopyIcons;
+    ProgressBar.Position:= 20;
+    Application.ProcessMessages;
+    if SaveImagesOnDepot(PathToDepot) then
+    begin
+      LabelInfo.Caption := rsCopyIcons + ' ' + rsDone;
+      Application.ProcessMessages;
+      sleep(1000);
+      CopySuccess := True;
+      LogDatei.log(SwitchPathDelims(PathDepotOnShare + PathKioskAppOnShare + CustomFolder, pdsUnix), LLDebug);
+      //SetRights(SwitchPathDelims(PathDepotOnShare + PathKioskAppOnShare + CustomFolder, pdsUnix));
+      ProgressBar.Position:= 80;
+      Application.ProcessMessages;
+    end;
   end
   else
   begin
     ShowMessage(Format(rsIsAnInvalidDir, [DirectoryEditPathToDepot.Text,
-      LineEnding, LabelPathToDepot.Caption]));
+      LineEnding, GroupBoxPath.Caption]));
     CopySuccess := False;
     DirectoryEditPathToDepot.Font.Color:= clRed;
   end;
- {$IFDEF Windows}
-  if CheckBoxMountDepot.Checked then
+
+  if CheckBoxMountDepot.Checked and (not AlreadyMounted) then
   begin
-    if not AlreadyMounted then UnmountDepotNT(PathToDepot);
+    {$IFDEF Windows}
+     UnmountDepotNT(PathToDepot);
+    {$ENDIF Windows}
+    {$IFDEF Unix}
+     UnmountDepotUnix(PathToDepot);
+    {$ENDIF Unix}
   end;
- {$ENDIF Windows}
- {$IFDEF Unix}
-  if CheckBoxMountDepot.Checked then
+
+  if CopySuccess then
   begin
-   if not AlreadyMounted then UnmountDepotUnix(PathToDepot);
+   ProgressBar.Position:= 100;
+   LabelInfo.Caption := rsFinished;
+   Application.ProcessMessages;
+   sleep(2000); //chance to see that copy process was successful before window is closed
+   {for i := 5 downto 1 do
+    begin
+      LabelInfo.Caption := 'Window will be automatically closed in ' + IntToStr(i) + ' sec';
+      Application.ProcessMessages;
+      sleep(1000);
+    end;}
+   Close;
   end;
- {$ENDIF Unix}
-  if CopySuccess then Close;
+
 end;
 
 procedure TFormSaveImagesOnDepot.CheckBoxMountDepotChange(Sender: TObject);
@@ -135,10 +187,22 @@ begin
   DirectoryEditPathToDepot.Font.Color:= clDefault;
 end;
 
-procedure TFormSaveImagesOnDepot.EditPathToDepotChange(Sender: TObject);
+procedure TFormSaveImagesOnDepot.FormCreate(Sender: TObject);
 begin
-  DirectoryEditPathToDepot.Text := EditPathToDepot.Text;
+   InitLogging('images_to_depot ' + GetUserName_ +'.log', LLDebug);
+   SetDefaultLang(GetDefaultLang);
 end;
+
+procedure TFormSaveImagesOnDepot.FormDestroy(Sender: TObject);
+begin
+  LogDatei.Free;
+end;
+
+procedure TFormSaveImagesOnDepot.GroupBoxInfoClick(Sender: TObject);
+begin
+
+end;
+
 
 procedure TFormSaveImagesOnDepot.MountDepotNT(const User: String;
   Password: String; PathToDepot: String);
@@ -157,6 +221,8 @@ begin
     if RunCommand(Shell, [ShellOptions , ShellCommand], ShellOutput) then
     begin
       ShellCommand := '';
+      LabelInfo.Caption := rsMounting + ' ' + rsDone;
+      Application.ProcessMessages;
       LogDatei.log('Mounting done', LLInfo);
       //ShowMessage(ShellOutput);
     end
@@ -188,7 +254,7 @@ begin
     end
     else
     begin
-      ShowMessage(rsCouldNotUnmount);
+      LabelInfo.Caption := rsCouldNotUnmount;
       LogDatei.log('Error while trying to run command ' +
         ShellCommand + ' on ' + Shell, LLError);
     end;
@@ -209,47 +275,66 @@ begin
 
 end;
 
+(*
 function TFormSaveImagesOnDepot.SetRights(Path:String): boolean;
 var
   OpsiConnection: TOpsiConnection;
+  LineNumber: integer;
 begin
+  //LineNumber := MemoInfo.Lines.Add('Please wait while setting rights...');
+  ProgressBar.Position := 50;
+  LabelInfo.Caption := rsSettingRights;
+  //Refresh;
+  Application.ProcessMessages;
+  //Refresh;
+  //MemoInfo.Lines.Text := MemoInfo.Lines.Text+ ('Please wait while setting rights...');
   Result := False;
   try
     try
-      OpsiConnection := TOpsiConnection.Create(False,'','kiosk-set-rights');
+      OpsiConnection := TOpsiConnection.Create(False);
       LogDatei.log('ClientID :' + OpsiConnection.MyClientID +
       ' Service_URL :' + OpsiConnection.MyService_URL +
       ' Hostkey :' + OpsiConnection.MyHostkey +
       ' Error :' + OpsiConnection.MyError,LLDebug);
+      ProgressBar.Position := 80;
+      Application.ProcessMessages;
+      OpsiConnection.OpsiData.initOpsiConf(OpsiConnection.MyService_URL,'jan','jan123');
       OpsiConnection.SetRights(path);
       Result := True;
+      ProgressBar.Position := 100;
+      LabelInfo.Caption := rsSettingRights + ' '+ rsDone;;
+      Application.ProcessMessages;
+      sleep(1000);
+      LogDatei.log('SetRights done', LLInfo);
     except
       Result := False;
     end;
   finally
     OpsiConnection.Free;
   end;
-end;
+end;*)
 
 
 function TFormSaveImagesOnDepot.SaveImagesOnDepot(const PathToDepot: String):boolean;
 var
   PathToKioskOnDepot: String;
-  Target: String;
-  Source: String;
+  PathToIconsOnDepot: String;
+  PathToKioskOnClient : String;
+  PathToIconsOnClient: String;
 begin
   Result := False;
-  PathToKioskOnDepot:= SwitchPathDelims('\opsi-client-agent\files\opsi\opsiclientkiosk\',pdsSystem);
-  Source := SwitchPathDelims(TrimFilename(Application.Location + 'ock_custom\'),pdsSystem);
-  Target := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + 'ock_custom\'),pdsSystem);
-  LogDatei.log('Copy ' + Source + ' to ' + Target, LLInfo);
-  if CopyDirTree(Source, Target,[cffOverwriteFile, cffCreateDestDirectory]) then
+  { Set the right directories }
+  PathToKioskOnDepot:= SwitchPathDelims(PathKioskAppOnShare, pdsSystem);
+  PathToKioskOnClient := ExtractFilePath(ExcludeTrailingPathDelimiter(Application.Location));
+  //Set path delims dependend on system (e.g. Windows, Unix)
+  PathToIconsOnClient := SwitchPathDelims(TrimFilename(PathToKioskOnClient + CustomFolder + '\'), pdsSystem);
+  PathToIconsOnDepot := SwitchPathDelims(TrimFilename(PathToDepot + PathToKioskOnDepot + CustomFolder +'\'), pdsSystem);
+  LogDatei.log('Copy ' + PathToIconsOnClient + ' to ' + PathToIconsOnDepot, LLInfo);
+  if CopyDirTree(PathToIconsOnClient, PathToIconsOnDepot,[cffOverwriteFile, cffCreateDestDirectory]) then
   begin
     LogDatei.log('Copy done', LLInfo);
-    ShowMessage(rsImagesSaved +' '+ Target);
-    SetRights('/var/lib/opsi/depot/opsi-client-agent/files/opsi/opsiclientkiosk/ock_custom/');
-    LogDatei.log('SetRights done', LLInfo);
     Result := True;
+    Refresh;
   end
   else
   begin
@@ -260,10 +345,44 @@ begin
   end;
 end;
 
-procedure TFormSaveImagesOnDepot.ButtonCancelClick(Sender: TObject);
+procedure TFormSaveImagesOnDepot.ButtonCloseClick(Sender: TObject);
 begin
   Close;
 end;
 
+function TFormSaveImagesOnDepot.InitLogging(const LogFileName:String; MyLogLevel:integer): boolean;
+begin
+  try
+    //LogDatei.free;
+    LogDatei := TLogInfo.Create;
+    LogDatei.WritePartLog := False;
+    LogDatei.WriteErrFile:= False;
+    LogDatei.WriteHistFile:= False;
+    LogDatei.CreateTheLogfile(LogFileName, False);
+    LogDatei.LogLevel := MylogLevel;
+    LogDatei.log(' ' + 'Version('+')'
+      + ' starting at ' + DateTimeToStr(now), LLEssential);
+    LogDatei.log('Initialize Logging', LLNotice);
+    InitLogging := True;
+  except
+    InitLogging := False;
+    LogDatei.log('Error while initialising logging. Calling Method: TFormOpsiClientKiosk.InitLogging',LLDebug);
+  end;
+end;
+
+function TFormSaveImagesOnDepot.GetUserName_: string;
+var
+  buffer: PChar;
+  bufferSize: DWORD;
+begin
+  bufferSize := 256; //UNLEN from lmcons.h
+  buffer := AllocMem(bufferSize * SizeOf(char));
+  try
+    GetUserName(buffer, bufferSize);
+    Result := string(buffer);
+  finally
+    FreeMem(buffer, bufferSize);
+  end;
+end; { DSiGetUserName}
 end.
 

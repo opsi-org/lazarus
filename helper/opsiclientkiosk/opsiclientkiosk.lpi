@@ -236,46 +236,44 @@
         <IsPartOfProject Value="True"/>
       </Unit13>
       <Unit14>
-        <Filename Value="imagestodepot.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="FormSaveImagesOnDepot"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-      </Unit14>
-      <Unit15>
         <Filename Value="helpinfo.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FormHelpInfo"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="changelog.txt"/>
+        <IsPartOfProject Value="True"/>
       </Unit15>
       <Unit16>
-        <Filename Value="changelog.txt"/>
+        <Filename Value="../../common/osprocesses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit16>
       <Unit17>
-        <Filename Value="../../common/osprocesses.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit17>
-      <Unit18>
         <Filename Value="ocksystemapi.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="OckSystemAPI"/>
-      </Unit18>
-      <Unit19>
+      </Unit17>
+      <Unit18>
         <Filename Value="ockadmintools.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="OckAdminTools"/>
-      </Unit19>
-      <Unit20>
+      </Unit18>
+      <Unit19>
         <Filename Value="ockwindowsapi.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="OckWindowsAPI"/>
-      </Unit20>
-      <Unit21>
+      </Unit19>
+      <Unit20>
         <Filename Value="ocklinuxapi.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="OckLinuxAPI"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="ockwindows.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OckWindows"/>
       </Unit21>
     </Units>
   </ProjectOptions>

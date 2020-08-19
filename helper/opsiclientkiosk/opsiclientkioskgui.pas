@@ -16,7 +16,7 @@ unit opsiclientkioskgui;
 interface
 
 uses
-  Classes, SysUtils, DB, ExtendedNotebook, Forms, Controls,
+  Classes, SysUtils, DB, ExtendedNotebook, Forms, Controls, Process,
   Graphics, Dialogs, ExtCtrls, StdCtrls, Buttons, ComCtrls, Grids, DBGrids,
   DBCtrls,
   datadb,
@@ -29,17 +29,16 @@ uses
   ExtDlgs,
   lazproginfo,
   helpinfo,
-  OckSystemAPI,
   {$IFDEF WINDOWS}
     CommCtrl,
     jwawinbase,
     DSiWin32,
-    OckWindowsAPI,
-    ShellApi
+    OckWindows
+    //ShellApi
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
    {add Linux specific units here}
-   OckLinuxAPI
+   OckLinux
   {$ENDIF LINUX}
 
   {more units if nedded};
@@ -262,7 +261,6 @@ type
     LastFilter : String;
     MinWidthStandardMode : Integer;
     MinWidthExpertMode   : Integer;
-    SystemAPI : TSystemAPI;
     procedure DeleteFormerImage(ImagePath:String);
     //function RunAsAdmin(const Handle: DWord; const Path, Params: string
     //  ): Boolean;
@@ -964,7 +962,7 @@ begin
     ConfigState := OCKOpsiConnection.GetConfigState('software-on-demand.admin-mode');
     //ShowMessage(ConfigState.Text);
     AdminMode := StrToBool(ConfigState.Strings[0]);
-    if AdminMode and SystemAPI.IsAdmin then
+    if AdminMode and IsAdmin then
     begin
       Caption := Caption + ' - ' + rsAdminMode;
       BitBtnSaveImages.Visible := True;
@@ -972,7 +970,7 @@ begin
     else
     begin
       BitBtnSaveImages.Visible := False;
-      if AdminMode and not SystemAPI.IsAdmin then
+      if AdminMode and not IsAdmin then
       begin
         ShowMessage(Format(rsCurrentUserNoAdmin, [LineEnding]));
         AdminMode := false;
@@ -1401,7 +1399,7 @@ begin
   logDatei.log('Closing ' + ProgramInfo.InternalName,LLNotice);
   FilteredProductIDs.Free;
   StringListDefaultIcons.Free;
-  if AdminMode and SystemAPI.IsAdmin then SaveIconsAndScreenshotsLists;
+  if AdminMode and IsAdmin then SaveIconsAndScreenshotsLists;
   StringListCustomIcons.Free;
   StringListScreenshots.Free;
   DataModuleOCK.Free;
@@ -1743,16 +1741,21 @@ begin
 end;
 
 procedure TFormOpsiClientKiosk.BitBtnSaveImagesClick(Sender: TObject);
+var
+  Output: string;
+  PathToExe: string;
 begin
   SaveIconsAndScreenshotsLists;
+  //PathToExeFolder := TrimFilename(Application.Location + 'images_to_depot\images_to_depot.exe');
  {$IFDEF WINDOWS}
-  if SystemAPI is TWindowsAPI then
-    (SystemAPI as TWindowsAPI).SaveImagesOnDepot(Application.Location, FormOpsiClientKiosk.Handle);
+  PathToExe := TrimFilename(Application.Location + 'images_to_depot\images_to_depot.exe');
+  RunCommand('cmd.exe',['/c', PathToExe],Output,[], swoHIDE);
+ //if SystemAPI is TWindowsAPI then
+    //(SystemAPI as TWindowsAPI).SaveImagesOnDepot(Application.Location, FormOpsiClientKiosk.Handle);
  {$ENDIF WINDOS}
  {$IFDEF UNIX}
- //AskForPassword;
- if SystemAPI is TLinuxAPI then
-     (SystemAPI as TLinuxAPI).SaveImagesOnDepot(Application.Location, FormOpsiClientKiosk.Handle);
+   PathToExe := TrimFilename(Application.Location + 'images_to_depot\images_to_depot');
+   RunCommand('/bin/sh',['-c', './' + PathToExe],Output,[], swoHIDE);
  {$ENDIF UNIX}
 end;
 
