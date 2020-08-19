@@ -152,9 +152,9 @@ begin
   DataModule1.ProcessMess;
   if showtest then
   begin
-    {show notifier 20 seconds (for tests only) }
+    {show notifier 10 seconds (for tests only) }
     if Assigned(LogDatei) then LogDatei.log('show test',LLnotice);
-    Sleep(20000);
+    Sleep(10000);
     if Assigned(LogDatei) then LogDatei.log('shutdown after show test',LLnotice);
     shutdownNotifier;
   end

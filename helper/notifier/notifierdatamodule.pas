@@ -88,6 +88,7 @@ begin
   msg := msg + ' -s <path> -> relative path to config file; required' + LineEnding;
   msg := msg + ' --idevent=<event> -> running event; required' + LineEnding;
   msg := msg + ' -i <event> -> id of the event; required';
+  msg := msg + ' --test or -t (use with -s ; shows notifier for some seconds';
   ShowMessage(msg);
 end;
 

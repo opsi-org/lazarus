@@ -272,6 +272,9 @@ end;
 function fontresize(num: integer): integer;
 begin
   Result := round(num * 0.5);
+  {$IFDEF LINUX}
+  Result :=  round(Result * ((Nform.DesignTimePPI / Screen.PixelsPerInch) + 0.2));
+  {$ENDIF LINUX}
   if Result < 8 then
     Result := 8;
 end;
@@ -944,7 +947,7 @@ begin
       {$IFDEF LINUX} mytmpstr := 'Liberation Sans'; {$ENDIF LINUX}
     end;
     memoarray[memocounter].scrolllabel.Font.Name := mytmpstr;
-
+    { fontresize makes also hdpi correction for linux}
     memoarray[memocounter].scrolllabel.Font.Size :=
       fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
     memoarray[memocounter].scrolllabel.Font.Color :=
@@ -994,6 +997,11 @@ begin
     LabelArray[labelcounter].AutoSize := True;
     LabelArray[labelcounter].Name := aktsection;
     LabelArray[labelcounter].WordWrap := True;
+    {$IFDEF LINUX}
+    LabelArray[labelcounter].AutoSize := False;
+    LabelArray[labelcounter].WordWrap := False;
+    LabelArray[labelcounter].AdjustFontForOptimalFill;
+    {$ENDIF LINUX}
     LabelArray[labelcounter].Left := myini.ReadInteger(aktsection, 'Left', 10);
     LabelArray[labelcounter].Top := myini.ReadInteger(aktsection, 'Top', 10);
     LabelArray[labelcounter].Width := myini.ReadInteger(aktsection, 'Width', 10);
@@ -1009,7 +1017,7 @@ begin
       {$IFDEF LINUX} mytmpstr := 'Liberation Sans'; {$ENDIF LINUX}
     end;
     LabelArray[labelcounter].Font.Name :=  mytmpstr;
-
+    { fontresize makes also hdpi correction for linux}
     LabelArray[labelcounter].Font.Size :=
       fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
     LabelArray[labelcounter].Font.Color :=
@@ -1063,7 +1071,7 @@ begin
       {$IFDEF LINUX} mytmpstr := 'Liberation Sans'; {$ENDIF LINUX}
     end;
     ButtonArray[buttoncounter].Font.Name := mytmpstr;
-
+    { fontresize makes also hdpi correction for linux}
     ButtonArray[buttoncounter].Font.Size :=
       fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
     //ButtonArray[buttoncounter].Font.Color :=
