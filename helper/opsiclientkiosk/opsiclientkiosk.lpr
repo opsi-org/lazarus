@@ -11,7 +11,7 @@ uses
   opsiclientkioskgui, installdlg, datadb, osprocesses, progresswindow,
   lazproginfo, opsiconnection, helpinfo,
   {$IFDEF WINDOWS}
-  OckWindows,
+  OckWindows
   {$ENDIF WINDOWS}
   {$IFDEF LINUX}
   OckLinux
