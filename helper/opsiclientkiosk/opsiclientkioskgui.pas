@@ -1753,10 +1753,10 @@ begin
  //if SystemAPI is TWindowsAPI then
     //(SystemAPI as TWindowsAPI).SaveImagesOnDepot(Application.Location, FormOpsiClientKiosk.Handle);
  {$ENDIF WINDOS}
- {$IFDEF UNIX}
+ {$IFDEF LINUX}
    PathToExe := TrimFilename(Application.Location + 'images_to_depot\images_to_depot');
    RunCommand('/bin/sh',['-c', './' + PathToExe],Output,[], swoHIDE);
- {$ENDIF UNIX}
+ {$ENDIF LINUX}
 end;
 
 procedure TFormOpsiClientKiosk.BitBtnInstallNowClick(Sender: TObject);

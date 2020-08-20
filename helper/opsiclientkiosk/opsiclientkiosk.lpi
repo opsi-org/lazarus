@@ -165,7 +165,7 @@
         <PackageName Value="LazUtils"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="22">
+    <Units Count="23">
       <Unit0>
         <Filename Value="opsiclientkiosk.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -275,6 +275,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="OckWindows"/>
       </Unit21>
+      <Unit22>
+        <Filename Value="ocklinux.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OckLinux"/>
+      </Unit22>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
