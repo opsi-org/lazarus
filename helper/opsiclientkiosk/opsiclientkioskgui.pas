@@ -30,9 +30,9 @@ uses
   lazproginfo,
   helpinfo,
   {$IFDEF WINDOWS}
-    CommCtrl,
-    jwawinbase,
-    DSiWin32,
+    //CommCtrl,
+    //jwawinbase,
+    //DSiWin32,
     OckWindows
     //ShellApi
   {$ENDIF WINDOWS}
@@ -267,8 +267,7 @@ type
     procedure SaveIconsAndScreenshotsLists;
     //function SaveImagesOnDepotNT: String;
     procedure SetPositionButtonsOnPanelToolbar;
-    function GetUserName_:string;
-     { Inits at Start }
+    { Inits at Start }
     function InitLogging(const LogFileName, CallingMethod: string; MyLogLevel:integer): boolean;
     procedure InitDBGrids;
     procedure InstallNow;
@@ -2358,24 +2357,6 @@ begin
   halt;
 end;
 
-{:Returns user name of the current thread.
-  @author  Miha-R, Lee_Nover
-  @since   2002-11-25
-}
-function TFormOpsiClientKiosk.GetUserName_: string;
-var
-  buffer: PChar;
-  bufferSize: DWORD;
-begin
-  bufferSize := 256; //UNLEN from lmcons.h
-  buffer := AllocMem(bufferSize * SizeOf(char));
-  try
-    GetUserName(buffer, bufferSize);
-    Result := string(buffer);
-  finally
-    FreeMem(buffer, bufferSize);
-  end;
-end; { DSiGetUserName}
 
 procedure TFormOpsiClientKiosk.SetPositionButtonsOnPanelToolbar;
 var
