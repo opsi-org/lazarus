@@ -154,7 +154,7 @@
         <PackageName Value="FCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="35">
+    <Units Count="36">
       <Unit0>
         <Filename Value="opsiscriptnogui_mac.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -300,6 +300,10 @@
         <Filename Value="info-osnogui.plist"/>
         <IsPartOfProject Value="True"/>
       </Unit34>
+      <Unit35>
+        <Filename Value="opsi-script.entitlements"/>
+        <IsPartOfProject Value="True"/>
+      </Unit35>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
