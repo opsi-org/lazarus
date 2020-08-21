@@ -147,7 +147,7 @@ end;
 procedure shutdownNotifier;
 begin
   logdatei.log('Terminate Thread', LLInfo);
-  mythread.Terminate;
+  if Assigned(mythread) then mythread.Terminate;
   logdatei.log('Hide Form', LLInfo);
   hideNForm;
   Nform.Close;
@@ -272,6 +272,9 @@ end;
 function fontresize(num: integer): integer;
 begin
   Result := round(num * 0.5);
+  {$IFDEF LINUX}
+  Result :=  round(Result * ((Nform.DesignTimePPI / Screen.PixelsPerInch) + 0.2));
+  {$ENDIF LINUX}
   if Result < 8 then
     Result := 8;
 end;
@@ -552,26 +555,28 @@ begin
       i := appearStepSize;
       while i <= stopy do
       begin
-        Sleep(1);
+        //Sleep(1);
         nform.AlphaBlendValue := i;
         //y := screen.WorkAreaHeight;
         nform.Top := y - i;
         nform.Height := nform.Height + appearStepSize;
         nform.BringToFront;
         nform.Repaint;
-        //DataModule1.ProcessMess;
+        DataModule1.ProcessMess;
         i := i + appearStepSize;
       end;
       //for i := stopy to 255 do
-      while i <= stopy do
+      while i <= 255 do
       begin
-        sleep(1);
+        //sleep(1);
         nform.AlphaBlendValue := i;
         nform.BringToFront;
         nform.Repaint;
         DataModule1.ProcessMess;
         i := i + appearStepSize;
       end;
+      nform.Refresh;
+      DataModule1.ProcessMess;
     end;
     fapFadeDown:
     begin
@@ -942,7 +947,7 @@ begin
       {$IFDEF LINUX} mytmpstr := 'Liberation Sans'; {$ENDIF LINUX}
     end;
     memoarray[memocounter].scrolllabel.Font.Name := mytmpstr;
-
+    { fontresize makes also hdpi correction for linux}
     memoarray[memocounter].scrolllabel.Font.Size :=
       fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
     memoarray[memocounter].scrolllabel.Font.Color :=
@@ -965,10 +970,12 @@ begin
     //  'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13+'test'+#10+#13;
     //memoarray[memocounter].ReadOnly:=true;
     //memoarray[memocounter].ScrollBars:=ssAutoVertical;
+    {$IFDEF WINDOWS}
     // scale new scrollbox:
     memoarray[memocounter].AutoAdjustLayout(lapAutoAdjustForDPI, 96,
-      nform.PixelsPerInch, 0, 0);
-    // make transparent
+      screen.PixelsPerInch, 0, 0);
+    {$ENDIF WINDOWS}
+   // make transparent
     memoarray[memocounter].ControlStyle :=
       memoarray[memocounter].ControlStyle - [csOpaque] + [csParentBackground];
     memoarray[memocounter].Visible := True;
@@ -990,6 +997,11 @@ begin
     LabelArray[labelcounter].AutoSize := True;
     LabelArray[labelcounter].Name := aktsection;
     LabelArray[labelcounter].WordWrap := True;
+    {$IFDEF LINUX}
+    LabelArray[labelcounter].AutoSize := False;
+    LabelArray[labelcounter].WordWrap := False;
+    LabelArray[labelcounter].AdjustFontForOptimalFill;
+    {$ENDIF LINUX}
     LabelArray[labelcounter].Left := myini.ReadInteger(aktsection, 'Left', 10);
     LabelArray[labelcounter].Top := myini.ReadInteger(aktsection, 'Top', 10);
     LabelArray[labelcounter].Width := myini.ReadInteger(aktsection, 'Width', 10);
@@ -1005,7 +1017,7 @@ begin
       {$IFDEF LINUX} mytmpstr := 'Liberation Sans'; {$ENDIF LINUX}
     end;
     LabelArray[labelcounter].Font.Name :=  mytmpstr;
-
+    { fontresize makes also hdpi correction for linux}
     LabelArray[labelcounter].Font.Size :=
       fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
     LabelArray[labelcounter].Font.Color :=
@@ -1022,10 +1034,14 @@ begin
       strToBool(myini.ReadString(aktsection, 'Transparent', 'false'));
     LabelArray[labelcounter].Tag := labelcounter;
     LabelArray[labelcounter].Caption := myini.ReadString(aktsection, 'Text', '');
+    //LabelArray[labelcounter].AdjustSize;
+    {$IFDEF WINDOWS}
     // scale new Label:
+    //LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI,
+    //  96, nform.PixelsPerInch, 0, 0);
     LabelArray[labelcounter].AutoAdjustLayout(lapAutoAdjustForDPI,
-      96, nform.PixelsPerInch, 0, 0);
-
+      nform.DesignTimePPI,nform.PixelsPerInch, 0, 0);
+    {$ENDIF WINDOWS}
     // feed labellist: id = index of LabelArray ; id = aktsection striped by 'Label'
     labellist.Add(copy(aktsection, 6, 100) + '=' + IntToStr(labelcounter));
     logdatei.log('labellist add: ' + copy(aktsection, 6, 100) + '=' +
@@ -1055,7 +1071,7 @@ begin
       {$IFDEF LINUX} mytmpstr := 'Liberation Sans'; {$ENDIF LINUX}
     end;
     ButtonArray[buttoncounter].Font.Name := mytmpstr;
-
+    { fontresize makes also hdpi correction for linux}
     ButtonArray[buttoncounter].Font.Size :=
       fontresize(myini.ReadInteger(aktsection, 'FontSize', 10));
     //ButtonArray[buttoncounter].Font.Color :=
@@ -1076,10 +1092,11 @@ begin
     //ButtonArray[buttoncounter].TabStop:= false;
     //ButtonArray[buttoncounter].TabOrder:=-1;
     ButtonArray[buttoncounter].Caption := myini.ReadString(aktsection, 'Text', '');
+    {$IFDEF WINDOWS}
     // scale new Button:
     ButtonArray[buttoncounter].AutoAdjustLayout(lapAutoAdjustForDPI,
       96, nform.PixelsPerInch, 0, 0);
-
+    {$ENDIF WINDOWS}
     // feed buttonlist: id = index of ButtonArray ; id = ChoiceIndex'
     buttonlist.Add(IntToStr(choiceindex) + '=' + IntToStr(buttoncounter));
     LogDatei.log('Finished reading: ' + aktsection, LLDebug2);
@@ -1118,6 +1135,10 @@ var
   i: integer;
   aktsection: string;
 begin
+  LogDatei.log('screen.PixelsPerInch: ' + IntToStr(screen.PixelsPerInch), LLInfo);
+  LogDatei.log('nform.PixelsPerInch: ' + IntToStr(nform.PixelsPerInch), LLInfo);
+  LogDatei.log('nform.DesignTimePPI: ' + nform.DesignTimePPI.ToString, LLInfo);
+
   LogDatei.log('Loading Skin config from: ' + ininame, LLInfo);
   myini := TIniFile.Create(ininame);
   navlist.AddStrings(fillnavlist(myIni));

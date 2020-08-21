@@ -44,6 +44,7 @@ var
   myconfigpath, myconfigfile: string;
   myexepath: string;
   myVersion: string;
+  showtest : boolean = false;
 //stopped: boolean;
 
 implementation
@@ -87,6 +88,7 @@ begin
   msg := msg + ' -s <path> -> relative path to config file; required' + LineEnding;
   msg := msg + ' --idevent=<event> -> running event; required' + LineEnding;
   msg := msg + ' -i <event> -> id of the event; required';
+  msg := msg + ' --test or -t (use with -s ; shows notifier for some seconds';
   ShowMessage(msg);
 end;
 
@@ -107,9 +109,12 @@ var
   mynotifierConfPath: string;
   fullparam : string;
 begin
+  //writeln('start');
   preloglist := TStringList.Create;
   preloglist.Add('PreLog for: ' + Application.exename + ' opend at : ' +
     DateTimeToStr(now));
+  //writeln('PreLog for: ' + Application.exename + ' opend at : ' +
+  //  DateTimeToStr(now));
   FileVerInfo := TFileVersionInfo.Create(nil);
   try
     FileVerInfo.FileName := ParamStr(0);
@@ -143,7 +148,8 @@ begin
   optionlist.Add('port:');
   optionlist.Add('skinconfigfile:');
   optionlist.Add('idevent:');
-  ErrorMsg := Application.CheckOptions('hp:s:i:', optionlist);
+  optionlist.Add('test');
+  ErrorMsg := Application.CheckOptions('thp:s:i:', optionlist);
   if ErrorMsg <> '' then
   begin
     preloglist.Add(ErrorMsg);
@@ -206,6 +212,12 @@ begin
     preloglist.Add('Found Parameter idevent: ' + mynotifierkind);
   end;
 
+  if Application.HasOption('t', 'test') then
+  begin
+    preloglist.Add('Found Parameter test');
+    showtest := true;
+  end;
+
   // Initialize logging
   LogDatei := TLogInfo.Create;
   lfilename := ExtractFileNameOnly(Application.ExeName);
@@ -256,7 +268,7 @@ end;
 
 procedure TDataModule1.DataModuleDestroy(Sender: TObject);
 begin
-  mythread.Terminate;
+  if Assigned(mythread) then mythread.Terminate;
   //if not inHideNForm then hideNForm
   //else sleep(5000);
   // stop program loop
