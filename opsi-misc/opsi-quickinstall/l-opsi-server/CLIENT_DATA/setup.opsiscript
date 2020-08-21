@@ -31,8 +31,7 @@ if fileExists("%scriptpath%/properties.conf")
 	comment "setting properties from file"
 	;default result file to failed - will be over written in case of success
 	shellCall('echo failed > "%scriptpath%/result.conf"')
-	;set $properties_conf$ = LoadTextFileWithEncoding("%scriptpath%/properties.conf", "utf8")
-	set $properties_conf$ = LoadTextFile("%scriptpath%/properties.conf")
+	set $properties_conf$ = LoadTextFileWithEncoding("%scriptpath%/properties.conf", "utf8")
 	set $opsi_online_repository_org$ = getValue("opsi_online_repository", $properties_conf$)
 else
 	comment "setting properties from service"
