@@ -11,7 +11,6 @@ opsi-winst/opsi-script (4.12.4.0) experimental; urgency=low
     * DosBatch-Sections to be executed with elevated privileges like WinBatch could be using /RunElevated
     * /Run*-Parameters for ExecWith
     * Output catching, /showouput and getOutStreamFromSection support for WinBatch
-  * ToDo: write opsi-script tests for these changes
   * compiled with lazarus 2.0.10
   * fix for /showoutput at win64
   * fix for runningonuefi if w10 release >= 2004
