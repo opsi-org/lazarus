@@ -1,179 +1,123 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
-#: opsi_quick_install_unit_language.rsnext
-#, fuzzy
-msgctxt "opsi_quick_install_unit_language.rsnext"
-msgid " next > "
-msgstr " next > "
-
 #: opsi_quick_install_unit_overview.rsadminname
-#, fuzzy
-#| msgid "Opsi admin user name:"
 msgctxt "opsi_quick_install_unit_overview.rsadminname"
 msgid "Opsi admin user name: "
-msgstr "Opsi admin user name:"
+msgstr "Opsi admin user name: "
 
 #: opsi_quick_install_unit_overview.rsadminpassword
-#, fuzzy
-#| msgid "Opsi admin user password:"
 msgctxt "opsi_quick_install_unit_overview.rsadminpassword"
 msgid "Opsi admin user password: "
-msgstr "Opsi admin user password:"
+msgstr "Opsi admin user password: "
 
 #: opsi_quick_install_unit_overview.rsbackend
-#, fuzzy
-#| msgid "Backend:"
 msgctxt "opsi_quick_install_unit_overview.rsbackend"
 msgid "Backend: "
-msgstr "Backend:"
+msgstr "Backend: "
 
 #: opsi_quick_install_unit_overview.rscopymodules
-#, fuzzy
-#| msgid "Copy modules:"
 msgctxt "opsi_quick_install_unit_overview.rscopymodules"
 msgid "Copy modules: "
-msgstr "Copy modules:"
+msgstr "Copy modules: "
 
 #: opsi_quick_install_unit_overview.rsdomain
-#, fuzzy
-#| msgid "DNS Domain:"
 msgctxt "opsi_quick_install_unit_overview.rsdomain"
 msgid "DNS Domain: "
-msgstr "DNS Domain:"
+msgstr "DNS Domain: "
 
 #: opsi_quick_install_unit_overview.rselilo
-#, fuzzy
-#| msgid "Elilo.efi has timeout of 2 seconds:"
 msgctxt "opsi_quick_install_unit_overview.rselilo"
 msgid "Elilo.efi has timeout of 2 seconds: "
-msgstr "Elilo.efi has timeout of 2 seconds:"
+msgstr "Elilo.efi has timeout of 2 seconds: "
 
 #: opsi_quick_install_unit_overview.rsgateway
-#, fuzzy
-#| msgid "Gateway:"
 msgctxt "opsi_quick_install_unit_overview.rsgateway"
 msgid "Gateway: "
-msgstr "Gateway:"
+msgstr "Gateway: "
 
 #: opsi_quick_install_unit_overview.rsipname
-#, fuzzy
-#| msgid "IP name:"
 msgctxt "opsi_quick_install_unit_overview.rsipname"
 msgid "IP name: "
-msgstr "IP name:"
+msgstr "IP name: "
 
 #: opsi_quick_install_unit_overview.rsipnumber
-#, fuzzy
-#| msgid "IP number:"
 msgctxt "opsi_quick_install_unit_overview.rsipnumber"
 msgid "IP number: "
-msgstr "IP number:"
+msgstr "IP number: "
 
 #: opsi_quick_install_unit_overview.rsnameserver
-#, fuzzy
-#| msgid "Primary nameserver:"
 msgctxt "opsi_quick_install_unit_overview.rsnameserver"
 msgid "Primary nameserver: "
-msgstr "Primary nameserver:"
+msgstr "Primary nameserver: "
 
 #: opsi_quick_install_unit_overview.rsnetmask
-#, fuzzy
-#| msgid "Netmask:"
 msgctxt "opsi_quick_install_unit_overview.rsnetmask"
 msgid "Netmask: "
-msgstr "Netmask:"
+msgstr "Netmask: "
 
 #: opsi_quick_install_unit_overview.rsnetwork
-#, fuzzy
-#| msgid "Network address:"
 msgctxt "opsi_quick_install_unit_overview.rsnetwork"
 msgid "Network address: "
-msgstr "Network address:"
+msgstr "Network address: "
 
 #: opsi_quick_install_unit_overview.rsopsidhcpserver
-#, fuzzy
-#| msgid "Run opsi dhcp server:"
 msgctxt "opsi_quick_install_unit_overview.rsopsidhcpserver"
 msgid "Run opsi dhcp server: "
-msgstr "Run opsi dhcp server:"
+msgstr "Run opsi dhcp server: "
 
 #: opsi_quick_install_unit_overview.rsopsiversion
 msgid "Opsi version to install: "
-msgstr ""
+msgstr "Opsi version to install: "
 
 #: opsi_quick_install_unit_overview.rsprods
-#, fuzzy
-#| msgid "Products in depot:"
 msgctxt "opsi_quick_install_unit_overview.rsprods"
 msgid "Products in depot: "
-msgstr "Products in depot:"
+msgstr "Products in depot: "
 
 #: opsi_quick_install_unit_overview.rsproxy
-#, fuzzy
-#| msgid "Proxy:"
 msgctxt "opsi_quick_install_unit_overview.rsproxy"
 msgid "Proxy: "
-msgstr "Proxy:"
+msgstr "Proxy: "
 
 #: opsi_quick_install_unit_overview.rsreboot
-#, fuzzy
-#| msgid "Reboot after script is finished:"
 msgctxt "opsi_quick_install_unit_overview.rsreboot"
 msgid "Reboot after script is finished: "
-msgstr "Reboot after script is finished:"
+msgstr "Reboot after script is finished: "
 
 #: opsi_quick_install_unit_overview.rsrepo
-#, fuzzy
-#| msgid "Repository:"
 msgctxt "opsi_quick_install_unit_overview.rsrepo"
 msgid "Repository: "
-msgstr "Repository:"
+msgstr "Repository: "
 
 #: opsi_quick_install_unit_overview.rsrepokind
-#, fuzzy
-#| msgid "Repo kind:"
 msgctxt "opsi_quick_install_unit_overview.rsrepokind"
 msgid "Repo kind: "
-msgstr "Repo kind:"
+msgstr "Repo kind: "
 
 #: opsi_quick_install_unit_overview.rsreponocache
-#, fuzzy
-#| msgid "Repository (without cache proxy):"
 msgctxt "opsi_quick_install_unit_overview.rsreponocache"
 msgid "Repository (without cache proxy): "
-msgstr "Repository (without cache proxy):"
+msgstr "Repository (without cache proxy): "
 
 #: opsi_quick_install_unit_overview.rstftproot
-#, fuzzy
-#| msgid "TFTPROOT symlink points to:"
 msgctxt "opsi_quick_install_unit_overview.rstftproot"
 msgid "TFTPROOT symlink points to: "
-msgstr "TFTPROOT symlink points to:"
+msgstr "TFTPROOT symlink points to: "
 
 #: opsi_quick_install_unit_overview.rsucspassword
-#, fuzzy
-#| msgid "Password of administrator of UCS domain controller:"
 msgctxt "opsi_quick_install_unit_overview.rsucspassword"
 msgid "Password of administrator of UCS domain controller: "
-msgstr "Password of administrator of UCS domain controller:"
+msgstr "Password of administrator of UCS domain controller: "
 
 #: opsi_quick_install_unit_overview.rsupdate
-#, fuzzy
-#| msgid "Install from stable, update to repo kind:"
 msgctxt "opsi_quick_install_unit_overview.rsupdate"
 msgid "Install from stable, update to repo kind: "
-msgstr "Install from stable, update to repo kind:"
+msgstr "Install from stable, update to repo kind: "
 
-#: opsi_quick_install_unit_query6.rsnext
-msgctxt "opsi_quick_install_unit_query6.rsnext"
-msgid " next > "
-msgstr " next > "
-
-#: opsi_quick_install_unit_query6.rsoverview
-msgctxt "opsi_quick_install_unit_query6.rsoverview"
-msgid " overview "
-msgstr " overview "
+#: opsi_quick_install_unit_overview.rsuseucs
+msgid "Use UCS: "
+msgstr ""
 
 #: tdistribution.btnback.caption
 msgctxt "tdistribution.btnback.caption"
@@ -190,10 +134,15 @@ msgid "Distribution"
 msgstr "Distribution"
 
 #: tdistribution.labelcorrect.caption
+#, fuzzy
+#| msgid ""
+#| "\n"
+#| "If this is correct, please click 'next >' to continue.\n"
+#| "If not, please edit the distribution name and then continue with 'next >'.\n"
 msgid ""
 "\n"
 "If this is correct, please click 'next >' to continue.\n"
-"If not, please edit the distribution name and then continue with 'next >'.\n"
+"If not, please edit the distribution and then continue with 'next >'.\n"
 msgstr ""
 "\n"
 "If this is correct, please click 'next >' to continue.\n"
@@ -291,6 +240,10 @@ msgstr ""
 #: tquery.labelopsiversion.caption
 msgctxt "tquery.labelopsiversion.caption"
 msgid "Which opsi version would you like to install?"
+msgstr "Which opsi version would you like to install?"
+
+#: tquery.labelopsiversion.hint
+msgid "Opsi 4.2 is in testing... further description..."
 msgstr ""
 
 #: tquery.labelproxy.caption
@@ -313,12 +266,12 @@ msgstr "None"
 #: tquery.radiobtnopsi41.caption
 msgctxt "tquery.radiobtnopsi41.caption"
 msgid "opsi 4.1"
-msgstr ""
+msgstr "opsi 4.1"
 
 #: tquery.radiobtnopsi42.caption
 msgctxt "tquery.radiobtnopsi42.caption"
 msgid "opsi 4.2"
-msgstr ""
+msgstr "opsi 4.2"
 
 #: tquery.radiobtnothernocache.caption
 msgctxt "tquery.radiobtnothernocache.caption"
@@ -361,6 +314,12 @@ msgstr ""
 "Which backend should be installed?\n"
 "(mysql needs valid activation file)\n"
 
+#: tquery2.labelcopymodules.caption
+#, fuzzy
+msgctxt "tquery2.labelcopymodules.caption"
+msgid "Should we copy modules even if /etc/opsi/modules still exists?"
+msgstr "Should we copy modules even if /etc/opsi/modules still exists?"
+
 #: tquery2.labelrepokind.caption
 msgid "From which repo kind should be installed?"
 msgstr "From which repo kind should be installed?"
@@ -382,6 +341,12 @@ msgctxt "tquery2.radiobtnno.caption"
 msgid "No"
 msgstr "No"
 
+#: tquery2.radiobtnno1.caption
+#, fuzzy
+msgctxt "tquery2.radiobtnno1.caption"
+msgid "No"
+msgstr "No"
+
 #: tquery2.radiobtnstable.caption
 msgid "stable"
 msgstr "stable"
@@ -395,120 +360,9 @@ msgctxt "tquery2.radiobtnyes.caption"
 msgid "Yes"
 msgstr "Yes"
 
-#: tquery3.btnback.caption
-msgctxt "tquery3.btnback.caption"
-msgid " < back "
-msgstr " < back "
-
-#: tquery3.btnnext.caption
-msgctxt "tquery3.btnnext.caption"
-msgid " next > "
-msgstr " next > "
-
-#: tquery3.caption
-msgid "Opsi quick install - query (part 3)"
-msgstr "Opsi quick install - query (part 3)"
-
-#: tquery3.checkboxall.caption
-msgid "All"
-msgstr "All"
-
-#: tquery3.checkboxconfigwin10.caption
-msgid "config-win10"
-msgstr ""
-
-#: tquery3.checkboxconfigwinbase.caption
-msgid "config-winbase"
-msgstr ""
-
-#: tquery3.checkboxhwaudit.caption
-msgid "hwaudit"
-msgstr ""
-
-#: tquery3.checkboxjavavm.caption
-msgid "javavm"
-msgstr ""
-
-#: tquery3.checkboxjedit.caption
-msgid "jedit"
-msgstr ""
-
-#: tquery3.checkboxnone.caption
-msgctxt "tquery3.checkboxnone.caption"
-msgid "None"
-msgstr "None"
-
-#: tquery3.checkboxopsiclientagent.caption
-msgid "opsi-client-agent"
-msgstr ""
-
-#: tquery3.checkboxopsiconfiged.caption
-msgid "opsi-configed"
-msgstr ""
-
-#: tquery3.checkboxopsilogviewer.caption
-msgid "opsi-logviewer"
-msgstr ""
-
-#: tquery3.checkboxopsiscripttest.caption
-msgid "opsi-script-test"
-msgstr ""
-
-#: tquery3.checkboxopsisetupdetector.caption
-msgid "opsi-setup-detector"
-msgstr ""
-
-#: tquery3.checkboxopsisetwinuac.caption
-msgid "opsi-set-win-uac"
-msgstr ""
-
-#: tquery3.checkboxopsitemplate.caption
-msgid "opsi-template"
-msgstr ""
-
-#: tquery3.checkboxopsitemplateadmin.caption
-msgid "opsi-template-with-admin"
-msgstr ""
-
-#: tquery3.checkboxopsiuefinetboot.caption
-msgid "opsi-uefi-netboot"
-msgstr ""
-
-#: tquery3.checkboxopsiwimcapture.caption
-msgid "opsi-wim-capture"
-msgstr ""
-
-#: tquery3.checkboxopsiwinpe.caption
-msgid "opsi-winpe"
-msgstr ""
-
-#: tquery3.checkboxopsiwinst.caption
-msgid "opsi-winst"
-msgstr ""
-
-#: tquery3.checkboxshutdown.caption
-msgid "shutdownwanted"
-msgstr ""
-
-#: tquery3.checkboxswaudit.caption
-msgid "swaudit"
-msgstr ""
-
-#: tquery3.labelopsiproducts.caption
-msgid "Which opsi product(s) should we install in the depot?"
-msgstr "Which opsi product(s) should we install in the depot?"
-
-#: tquery3.labelreboot.caption
-msgid "May the server reboot if the script is finished?"
-msgstr "May the server reboot if the script is finished?"
-
-#: tquery3.radiobtnno.caption
-msgctxt "tquery3.radiobtnno.caption"
-msgid "No"
-msgstr "No"
-
-#: tquery3.radiobtnyes.caption
-msgctxt "tquery3.radiobtnyes.caption"
+#: tquery2.radiobtnyes1.caption
+#, fuzzy
+msgctxt "tquery2.radiobtnyes1.caption"
 msgid "Yes"
 msgstr "Yes"
 
@@ -527,6 +381,11 @@ msgctxt "tquery4.caption"
 msgid "Opsi quick install - query (dhcp part 1)"
 msgstr "Opsi quick install - query (dhcp part 1)"
 
+#: tquery4.editpassworducs.text
+msgctxt "tquery4.editpassworducs.text"
+msgid "linux123"
+msgstr ""
+
 #: tquery4.labeldhcp.caption
 msgctxt "tquery4.labeldhcp.caption"
 msgid "Should we run the opsi dhcp server on this machine?"
@@ -536,14 +395,17 @@ msgstr "Should we run the opsi dhcp server on this machine?"
 msgid "Which file should the TFTPROOT default symlink point to?"
 msgstr "Which file should the TFTPROOT default symlink point to?"
 
-#: tquery4.labelopsiversion.caption
-msgctxt "tquery4.labelopsiversion.caption"
-msgid "Which opsi version would you like to install?"
-msgstr ""
+#: tquery4.labelpasswordmasteradmin.caption
+#, fuzzy
+msgctxt "tquery4.labelpasswordmasteradmin.caption"
+msgid "What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?"
+msgstr "What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?"
 
-#: tquery4.labeltimeout.caption
-msgid "Does the patched elilo.efi have a timeout of 2 seconds in case of a failed elilo configuration?"
-msgstr "Does the patched elilo.efi have a timeout of 2 seconds in case of a failed elilo configuration?"
+#: tquery4.labelreboot.caption
+#, fuzzy
+msgctxt "tquery4.labelreboot.caption"
+msgid "May the server reboot if the script is finished?"
+msgstr "May the server reboot if the script is finished?"
 
 #: tquery4.radiobtndhcpno.caption
 msgctxt "tquery4.radiobtndhcpno.caption"
@@ -560,6 +422,7 @@ msgid "default.menu"
 msgstr ""
 
 #: tquery4.radiobtnno.caption
+#, fuzzy
 msgctxt "tquery4.radiobtnno.caption"
 msgid "No"
 msgstr "No"
@@ -568,17 +431,8 @@ msgstr "No"
 msgid "default.nomenu"
 msgstr ""
 
-#: tquery4.radiobtnopsi41.caption
-msgctxt "tquery4.radiobtnopsi41.caption"
-msgid "opsi 4.1"
-msgstr ""
-
-#: tquery4.radiobtnopsi42.caption
-msgctxt "tquery4.radiobtnopsi42.caption"
-msgid "opsi 4.2"
-msgstr ""
-
 #: tquery4.radiobtnyes.caption
+#, fuzzy
 msgctxt "tquery4.radiobtnyes.caption"
 msgid "Yes"
 msgstr "Yes"
@@ -710,10 +564,11 @@ msgctxt "tquery6.btnback.caption"
 msgid " < back "
 msgstr " < back "
 
-#: tquery6.btnnext.caption
-msgctxt "tquery6.btnnext.caption"
-msgid " next > "
-msgstr " next > "
+#: tquery6.btnoverview.caption
+#, fuzzy
+msgctxt "tquery6.btnoverview.caption"
+msgid " overview "
+msgstr " overview "
 
 #: tquery6.caption
 msgctxt "tquery6.caption"
@@ -763,44 +618,136 @@ msgstr ""
 "What is the password of the opsi_admin_user to create?\n"
 "(empty = nothing created)\n"
 
-#: tquery7.btnback.caption
-msgctxt "tquery7.btnback.caption"
+#: tqueryprods.btnback.caption
+#, fuzzy
+msgctxt "tqueryprods.btnback.caption"
 msgid " < back "
 msgstr " < back "
 
-#: tquery7.btnoverview.caption
-msgctxt "tquery7.btnoverview.caption"
-msgid " overview "
-msgstr " overview "
+#: tqueryprods.btnnext.caption
+#, fuzzy
+msgctxt "tqueryprods.btnnext.caption"
+msgid " next > "
+msgstr " next > "
 
-#: tquery7.caption
-msgctxt "tquery7.caption"
-msgid "Opsi quick install - query (user info part 2)"
-msgstr "Opsi quick install - query (user info part 2)"
+#: tqueryprods.caption
+#, fuzzy
+msgctxt "tqueryprods.caption"
+msgid "Opsi quick install - query (part 3)"
+msgstr "Opsi quick install - query (part 3)"
 
-#: tquery7.editpassworducs.text
-msgctxt "tquery7.editpassworducs.text"
-msgid "linux123"
+#: tqueryprods.checkboxall.caption
+#, fuzzy
+msgctxt "tqueryprods.checkboxall.caption"
+msgid "All"
+msgstr "All"
+
+#: tqueryprods.checkboxconfigwin10.caption
+msgctxt "tqueryprods.checkboxconfigwin10.caption"
+msgid "config-win10"
 msgstr ""
 
-#: tquery7.labelcopymodules.caption
-msgctxt "tquery7.labelcopymodules.caption"
-msgid "Should we copy modules even if /etc/opsi/modules still exists?"
-msgstr "Should we copy modules even if /etc/opsi/modules still exists?"
+#: tqueryprods.checkboxconfigwinbase.caption
+msgctxt "tqueryprods.checkboxconfigwinbase.caption"
+msgid "config-winbase"
+msgstr ""
 
-#: tquery7.labelpasswordmasteradmin.caption
-msgid "What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?"
-msgstr "What is the Password of the user Administrator of the UCS Domain Controller (needed for other roles to join)?"
+#: tqueryprods.checkboxhwaudit.caption
+msgctxt "tqueryprods.checkboxhwaudit.caption"
+msgid "hwaudit"
+msgstr ""
 
-#: tquery7.radiobtnno.caption
-msgctxt "tquery7.radiobtnno.caption"
-msgid "No"
-msgstr "No"
+#: tqueryprods.checkboxjavavm.caption
+msgctxt "tqueryprods.checkboxjavavm.caption"
+msgid "javavm"
+msgstr ""
 
-#: tquery7.radiobtnyes.caption
-msgctxt "tquery7.radiobtnyes.caption"
-msgid "Yes"
-msgstr "Yes"
+#: tqueryprods.checkboxjedit.caption
+msgctxt "tqueryprods.checkboxjedit.caption"
+msgid "jedit"
+msgstr ""
+
+#: tqueryprods.checkboxnone.caption
+#, fuzzy
+msgctxt "tqueryprods.checkboxnone.caption"
+msgid "None"
+msgstr "None"
+
+#: tqueryprods.checkboxopsiclientagent.caption
+msgctxt "tqueryprods.checkboxopsiclientagent.caption"
+msgid "opsi-client-agent"
+msgstr ""
+
+#: tqueryprods.checkboxopsiconfiged.caption
+msgctxt "tqueryprods.checkboxopsiconfiged.caption"
+msgid "opsi-configed"
+msgstr ""
+
+#: tqueryprods.checkboxopsilogviewer.caption
+msgctxt "tqueryprods.checkboxopsilogviewer.caption"
+msgid "opsi-logviewer"
+msgstr ""
+
+#: tqueryprods.checkboxopsiscripttest.caption
+msgctxt "tqueryprods.checkboxopsiscripttest.caption"
+msgid "opsi-script-test"
+msgstr ""
+
+#: tqueryprods.checkboxopsisetupdetector.caption
+msgctxt "tqueryprods.checkboxopsisetupdetector.caption"
+msgid "opsi-setup-detector"
+msgstr ""
+
+#: tqueryprods.checkboxopsisetwinuac.caption
+msgctxt "tqueryprods.checkboxopsisetwinuac.caption"
+msgid "opsi-set-win-uac"
+msgstr ""
+
+#: tqueryprods.checkboxopsitemplate.caption
+msgctxt "tqueryprods.checkboxopsitemplate.caption"
+msgid "opsi-template"
+msgstr ""
+
+#: tqueryprods.checkboxopsitemplateadmin.caption
+msgctxt "tqueryprods.checkboxopsitemplateadmin.caption"
+msgid "opsi-template-with-admin"
+msgstr ""
+
+#: tqueryprods.checkboxopsiuefinetboot.caption
+msgctxt "tqueryprods.checkboxopsiuefinetboot.caption"
+msgid "opsi-uefi-netboot"
+msgstr ""
+
+#: tqueryprods.checkboxopsiwimcapture.caption
+msgctxt "tqueryprods.checkboxopsiwimcapture.caption"
+msgid "opsi-wim-capture"
+msgstr ""
+
+#: tqueryprods.checkboxopsiwinpe.caption
+msgctxt "tqueryprods.checkboxopsiwinpe.caption"
+msgid "opsi-winpe"
+msgstr ""
+
+#: tqueryprods.checkboxopsiwinst.caption
+msgctxt "tqueryprods.checkboxopsiwinst.caption"
+msgid "opsi-winst"
+msgstr ""
+
+#: tqueryprods.checkboxshutdown.caption
+msgctxt "tqueryprods.checkboxshutdown.caption"
+msgid "shutdownwanted"
+msgstr ""
+
+#: tqueryprods.checkboxswaudit.caption
+msgctxt "tqueryprods.checkboxswaudit.caption"
+msgid "swaudit"
+msgstr ""
+
+#: tqueryprods.labelopsiproducts.caption
+#, fuzzy
+msgctxt "tqueryprods.labelopsiproducts.caption"
+msgid "Which opsi product(s) should we install in the depot?"
+msgstr "Which opsi product(s) should we install in the depot?"
 
 #: tquickinstall.btnback.caption
 msgctxt "tquickinstall.btnback.caption"
@@ -811,6 +758,10 @@ msgstr " < back "
 msgctxt "tquickinstall.btnnext.caption"
 msgid " next > "
 msgstr " next > "
+
+#: tquickinstall.btnnext.hint
+msgid "nextBtn for next form"
+msgstr ""
 
 #: tquickinstall.caption
 msgid "Opsi quick install"
@@ -829,6 +780,12 @@ msgstr "Please select a setup type:"
 msgid "Welcome to the installation of opsi-server on this computer!"
 msgstr "Welcome to the installation of opsi-server on this computer!"
 
+#: tquickinstall.quickinstallpanel.hint
+#, fuzzy
+msgctxt "tquickinstall.quickinstallpanel.hint"
+msgid "To carry out the remaing installation automatically, we need some information first."
+msgstr "To carry out the remaing installation automatically, we need some information first."
+
 #: tquickinstall.radiobtncustom.caption
 msgctxt "tquickinstall.radiobtncustom.caption"
 msgid "Custom (...)"
@@ -840,6 +797,7 @@ msgid "Standard (...)"
 msgstr "Standard (...)"
 
 #: tquickinstall.welcomelabel2.caption
+msgctxt "tquickinstall.welcomelabel2.caption"
 msgid "To carry out the remaing installation automatically, we need some information first."
 msgstr "To carry out the remaing installation automatically, we need some information first."
 

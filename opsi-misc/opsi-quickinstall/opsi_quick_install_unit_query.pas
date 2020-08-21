@@ -73,8 +73,10 @@ begin
   PanelEditOtherNoCache.Left:=PanelEditOtherNoCache.Left-QuickInstall.panelLeft;}
   // always the same background (as in QuickInstall)
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
-
-  EditDefaultRepo.Text := baseURLOpsi41 + QuickInstall.DistrUrlPart;
+  // default opsi version is 4.2
+  // when RadioBtnOpsi42 (resp. RadioBtnOpsi41) changes (see below)...
+  // ...EditDefaultRepo.Text is adjusted
+  EditDefaultRepo.Text := baseURLOpsi42 + QuickInstall.DistrInfo.DistrUrlPart;
   EditDefaultRepoNoCache.Text := EditDefaultRepo.Text;
 end;
 
@@ -87,12 +89,12 @@ procedure TQuery.RadioBtnOpsi41Change(Sender: TObject);
 begin
   if RadioBtnOpsi41.Checked then
   begin
-    EditDefaultRepo.Text := baseURLOpsi41 + QuickInstall.DistrUrlPart;
+    EditDefaultRepo.Text := baseURLOpsi41 + QuickInstall.DistrInfo.DistrUrlPart;
     EditDefaultRepoNoCache.Text := EditDefaultRepo.Text;
   end
   else
   begin
-    EditDefaultRepo.Text := baseURLOpsi42 + QuickInstall.DistrUrlPart;
+    EditDefaultRepo.Text := baseURLOpsi42 + QuickInstall.DistrInfo.DistrUrlPart;
     EditDefaultRepoNoCache.Text := EditDefaultRepo.Text;
   end;
 end;

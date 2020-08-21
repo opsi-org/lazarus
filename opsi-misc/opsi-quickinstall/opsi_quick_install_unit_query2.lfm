@@ -1,7 +1,7 @@
 object Query2: TQuery2
-  Left = 1366
+  Left = 385
   Height = 450
-  Top = 194
+  Top = 257
   Width = 730
   Caption = 'Opsi quick install - query (part 2)'
   ClientHeight = 450
@@ -25,47 +25,52 @@ object Query2: TQuery2
     AutoSize = True
     Caption = ' next > '
     OnClick = BtnNextClick
+    ParentFont = False
     TabOrder = 0
   end
   object BtnBack: TButton
     Left = 8
     Height = 25
     Top = 416
-    Width = 51
+    Width = 52
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
+    ParentFont = False
     TabOrder = 1
   end
   object PanelBackend: TPanel
     Left = 216
-    Height = 59
-    Top = 64
-    Width = 391
+    Height = 96
+    Top = 48
+    Width = 217
     BevelOuter = bvNone
-    ClientHeight = 59
-    ClientWidth = 391
+    ClientHeight = 96
+    ClientWidth = 217
+    ParentFont = False
     TabOrder = 2
     object LabelBackend: TLabel
       Left = 0
       Height = 38
       Top = 0
-      Width = 391
+      Width = 217
       Align = alTop
       Caption = 'Which backend should be installed?'#10'(mysql needs valid activation file)'
       ParentColor = False
+      ParentFont = False
       WordWrap = True
     end
     object PanelRadioBackend: TPanel
       Left = 0
       Height = 21
       Top = 38
-      Width = 391
+      Width = 217
       Align = alTop
       AutoSize = True
       BevelOuter = bvNone
       ClientHeight = 21
-      ClientWidth = 391
+      ClientWidth = 217
+      ParentFont = False
       TabOrder = 0
       object RadioBtnFile: TRadioButton
         Left = 0
@@ -75,6 +80,7 @@ object Query2: TQuery2
         Align = alLeft
         Caption = 'file'
         Checked = True
+        ParentFont = False
         TabOrder = 0
         TabStop = True
       end
@@ -82,63 +88,73 @@ object Query2: TQuery2
         Left = 93
         Height = 21
         Top = 0
-        Width = 60
+        Width = 61
         Align = alLeft
         BorderSpacing.Left = 50
         Caption = 'mysql'
+        ParentFont = False
         TabOrder = 1
       end
     end
   end
   object PanelRepoKind: TPanel
+    AnchorSideTop.Control = PanelCopyModules
+    AnchorSideTop.Side = asrBottom
     Left = 216
-    Height = 40
-    Top = 192
-    Width = 391
+    Height = 69
+    Top = 256
+    Width = 338
+    BorderSpacing.Top = 20
     BevelOuter = bvNone
-    ClientHeight = 40
-    ClientWidth = 391
+    ClientHeight = 69
+    ClientWidth = 338
+    ParentFont = False
     TabOrder = 3
     object LabelRepoKind: TLabel
       Left = 0
       Height = 19
       Top = 0
-      Width = 391
+      Width = 338
       Align = alTop
       Caption = 'From which repo kind should be installed?'
       ParentColor = False
+      ParentFont = False
       WordWrap = True
     end
     object PanelRadioRepoKind: TPanel
+      AnchorSideTop.Side = asrBottom
       Left = 0
       Height = 21
       Top = 19
-      Width = 391
+      Width = 338
       Align = alTop
       AutoSize = True
       BevelOuter = bvNone
       ClientHeight = 21
-      ClientWidth = 391
+      ClientWidth = 338
+      ParentFont = False
       TabOrder = 0
       object RadioBtnTesting: TRadioButton
-        Left = 268
+        Left = 271
         Height = 21
         Top = 0
         Width = 67
         Align = alLeft
         BorderSpacing.Left = 50
         Caption = 'testing'
+        ParentFont = False
         TabOrder = 0
       end
       object RadioBtnStable: TRadioButton
-        Left = 157
+        Left = 159
         Height = 21
         Top = 0
-        Width = 61
+        Width = 62
         Align = alLeft
         BorderSpacing.Left = 50
         Caption = 'stable'
         Checked = True
+        ParentFont = False
         TabOrder = 1
         TabStop = True
       end
@@ -146,43 +162,49 @@ object Query2: TQuery2
         Left = 0
         Height = 21
         Top = 0
-        Width = 107
+        Width = 109
         Align = alLeft
         Caption = 'experimental'
+        ParentFont = False
         TabOrder = 2
       end
     end
   end
   object PanelUpdate: TPanel
+    AnchorSideTop.Control = PanelRepoKind
+    AnchorSideTop.Side = asrBottom
     Left = 216
-    Height = 40
-    Top = 304
-    Width = 391
+    Height = 69
+    Top = 345
+    Width = 333
+    BorderSpacing.Top = 20
     BevelOuter = bvNone
-    ClientHeight = 40
-    ClientWidth = 391
+    ClientHeight = 69
+    ClientWidth = 333
+    ParentFont = False
     TabOrder = 4
     object Label1: TLabel
       Left = 0
       Height = 19
       Top = 0
-      Width = 391
+      Width = 333
       Align = alTop
-      AutoSize = False
       Caption = 'Install first from stable and than update to repo kind?'
       ParentColor = False
+      ParentFont = False
       WordWrap = True
     end
     object PanelRadioUpdate: TPanel
       Left = 0
       Height = 21
       Top = 19
-      Width = 391
+      Width = 333
       Align = alTop
       AutoSize = True
       BevelOuter = bvNone
       ClientHeight = 21
-      ClientWidth = 391
+      ClientWidth = 333
+      ParentFont = False
       TabOrder = 0
       object RadioBtnNo: TRadioButton
         Left = 95
@@ -193,6 +215,7 @@ object Query2: TQuery2
         BorderSpacing.Left = 50
         Caption = 'No'
         Checked = True
+        ParentFont = False
         TabOrder = 0
         TabStop = True
       end
@@ -203,7 +226,69 @@ object Query2: TQuery2
         Width = 45
         Align = alLeft
         Caption = 'Yes'
+        ParentFont = False
         TabOrder = 1
+      end
+    end
+  end
+  object PanelCopyModules: TPanel
+    AnchorSideTop.Control = PanelBackend
+    AnchorSideTop.Side = asrBottom
+    Left = 216
+    Height = 72
+    Top = 164
+    Width = 381
+    BorderSpacing.Top = 20
+    BevelOuter = bvNone
+    ClientHeight = 72
+    ClientWidth = 381
+    ParentFont = False
+    TabOrder = 5
+    object LabelCopyModules: TLabel
+      Left = 0
+      Height = 19
+      Top = 0
+      Width = 381
+      Align = alTop
+      Caption = 'Should we copy modules even if /etc/opsi/modules still exists?'
+      ParentColor = False
+      ParentFont = False
+      WordWrap = True
+    end
+    object PanelRadio: TPanel
+      Left = 0
+      Height = 21
+      Top = 19
+      Width = 381
+      Align = alTop
+      AutoSize = True
+      BevelOuter = bvNone
+      ClientHeight = 21
+      ClientWidth = 381
+      ParentFont = False
+      TabOrder = 0
+      object RadioBtnYes1: TRadioButton
+        Left = 0
+        Height = 21
+        Top = 0
+        Width = 45
+        Align = alLeft
+        Caption = 'Yes'
+        ParentFont = False
+        TabOrder = 0
+      end
+      object RadioBtnNo1: TRadioButton
+        Left = 95
+        Height = 21
+        Top = 0
+        Width = 42
+        Align = alLeft
+        BorderSpacing.Left = 50
+        Caption = 'No'
+        Checked = True
+        ParentFont = False
+        TabOrder = 1
+        TabStop = True
       end
     end
   end

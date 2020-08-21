@@ -1,4 +1,4 @@
-unit opsi_quick_install_unit_query3;
+unit opsi_quick_install_unit_query_prods;
 
 {$mode objfpc}{$H+}
 
@@ -9,9 +9,9 @@ uses
 
 type
 
-  { TQuery3 }
+  { TQueryProds }
 
-  TQuery3 = class(TForm)
+  TQueryProds = class(TForm)
     BackgrImage: TImage;
     BtnBack: TButton;
     BtnNext: TButton;
@@ -36,15 +36,10 @@ type
     CheckBoxHwaudit: TCheckBox;
     CheckBoxOpsiTemplate: TCheckBox;
     CheckBoxOpsiTemplateAdmin: TCheckBox;
-    LabelReboot: TLabel;
     LabelOpsiProducts: TLabel;
     PanelRadioProds: TPanel;
-    PanelRadioReboot: TPanel;
     PanelProdToChoose: TPanel;
-    PanelReboot: TPanel;
     PanelOpsiProducts: TPanel;
-    RadioBtnNo: TRadioButton;
-    RadioBtnYes: TRadioButton;
     procedure BtnBackClick(Sender: TObject);
     procedure BtnNextClick(Sender: TObject);
     procedure CheckBoxAllChange(Sender: TObject);
@@ -59,29 +54,24 @@ type
   end;
 
 var
-  Query3: TQuery3;
+  QueryProds: TQueryProds;
 
 implementation
 
 uses
   opsi_quick_install_unit_language,
-  opsi_quick_install_unit_query2,
-  opsi_quick_install_unit_query4;
+  opsi_quick_install_unit_overview;
 
 {$R *.lfm}
 
-{ TQuery3 }
+{ TQueryProds }
 
-procedure TQuery3.BtnNextClick(Sender: TObject);
+procedure TQueryProds.BtnNextClick(Sender: TObject);
 begin
-  showForm(Query4, self);
-  Query4.BtnBack.Left := BtnBack.Left;
-  Query4.BtnBack.Top := BtnBack.Top;
-  Query4.BtnNext.Left := BtnNext.Left;
-  Query4.BtnNext.Top := BtnNext.Top;
+  Overview.Close;
 end;
 
-procedure TQuery3.CheckBoxAllChange(Sender: TObject);
+procedure TQueryProds.CheckBoxAllChange(Sender: TObject);
 var
   compIndex: integer;
 begin
@@ -100,7 +90,7 @@ begin
   end;
 end;
 
-procedure TQuery3.CheckBoxNoneChange(Sender: TObject);
+procedure TQueryProds.CheckBoxNoneChange(Sender: TObject);
 var
   compIndex: integer;
 begin
@@ -119,7 +109,7 @@ begin
   end;
 end;
 
-procedure TQuery3.CheckBoxProdChange(Sender: TObject);
+procedure TQueryProds.CheckBoxProdChange(Sender: TObject);
 begin
   if (Sender as TCheckBox).Checked then
   begin
@@ -137,7 +127,7 @@ begin
   end;
 end;
 
-procedure TQuery3.FormActivate(Sender: TObject);
+procedure TQueryProds.FormActivate(Sender: TObject);
 begin
   AdjustPanelPosition(self);
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
@@ -152,18 +142,13 @@ begin
   end;
 end;
 
-procedure TQuery3.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+procedure TQueryProds.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-  Query2.Close;
+  Overview.Close;
 end;
 
-procedure TQuery3.BtnBackClick(Sender: TObject);
+procedure TQueryProds.BtnBackClick(Sender: TObject);
 begin
-  showForm(Query2, self);
-  Query2.BtnBack.Left := BtnBack.Left;
-  Query2.BtnBack.Top := BtnBack.Top;
-  Query2.BtnNext.Left := BtnNext.Left;
-  Query2.BtnNext.Top := BtnNext.Top;
 end;
 
 end.

@@ -1,7 +1,7 @@
 object Overview: TOverview
-  Left = 398
+  Left = 356
   Height = 449
-  Top = 130
+  Top = 250
   Width = 730
   Caption = 'Overview'
   ClientHeight = 449
@@ -18,23 +18,25 @@ object Overview: TOverview
   end
   object BtnBack: TButton
     Left = 16
-    Height = 33
+    Height = 25
     Top = 408
-    Width = 58
+    Width = 51
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
+    ParentFont = False
     TabOrder = 0
   end
   object BtnFinish: TButton
     Left = 665
-    Height = 33
+    Height = 25
     Top = 408
-    Width = 51
+    Width = 45
     AutoSize = True
     Caption = ' finish '
     ParentBidiMode = False
     OnClick = BtnFinishClick
+    ParentFont = False
     TabOrder = 1
   end
   object PanelFinish: TPanel
@@ -45,6 +47,7 @@ object Overview: TOverview
     BevelOuter = bvNone
     ClientHeight = 64
     ClientWidth = 384
+    ParentFont = False
     TabOrder = 2
     Wordwrap = True
     object LabelFinish: TLabel
@@ -55,6 +58,7 @@ object Overview: TOverview
       Align = alTop
       Caption = 'Finally click ''finish'' to start the installation of opsi-server.'
       ParentColor = False
+      ParentFont = False
       WordWrap = True
     end
   end
@@ -66,6 +70,7 @@ object Overview: TOverview
     Lines.Strings = (
       'MemoOverview'
     )
+    ParentFont = False
     ReadOnly = True
     ScrollBars = ssAutoVertical
     TabOrder = 3

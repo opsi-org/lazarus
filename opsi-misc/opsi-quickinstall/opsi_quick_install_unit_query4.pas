@@ -13,34 +13,32 @@ type
 
   TQuery4 = class(TForm)
     BackgrImage: TImage;
-    BigPanel: TPanel;
     BtnBack: TButton;
     BtnNext: TButton;
+    EditPasswordUCS: TEdit;
     LabelDhcp: TLabel;
     LabelFilePointer: TLabel;
-    LabelOpsiVersion: TLabel;
-    LabelTimeout: TLabel;
-    PanelOpsiVersion: TPanel;
+    LabelPasswordMasterAdmin: TLabel;
+    LabelReboot: TLabel;
+    BigPanel: TPanel;
+    PanelPasswordMasterAdmin: TPanel;
     PanelRadiofilePointer: TPanel;
-    PanelRadioTimeout: TPanel;
     PanelRadioDhcp: TPanel;
     PanelDhcp: TPanel;
     PanelFilePointer: TPanel;
-    PanelTimeout: TPanel;
+    PanelRadioReboot: TPanel;
+    PanelReboot: TPanel;
     RadioBtnDhcpNo: TRadioButton;
     RadioBtnDhcpYes: TRadioButton;
-    RadioBtnNo: TRadioButton;
-    RadioBtnYes: TRadioButton;
     RadioBtnMenu: TRadioButton;
+    RadioBtnNo: TRadioButton;
     RadioBtnNoMenu: TRadioButton;
-    RadioBtnOpsi41: TRadioButton;
-    RadioBtnOpsi42: TRadioButton;
+    RadioBtnYes: TRadioButton;
     procedure BtnBackClick(Sender: TObject);
     procedure BtnNextClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure RadioBtnDhcpYesChange(Sender: TObject);
-    procedure RadioBtnOpsi41Change(Sender: TObject);
   private
 
   public
@@ -54,8 +52,7 @@ implementation
 
 uses
   opsi_quick_install_unit_language,
-  opsi_quick_install_unit_query,
-  opsi_quick_install_unit_query3,
+  opsi_quick_install_unit_query2,
   opsi_quick_install_unit_query5_dhcp,
   opsi_quick_install_unit_query6;
 
@@ -78,52 +75,39 @@ begin
     showForm(Query6, self);
     Query6.BtnBack.Left := BtnBack.Left;
     Query6.BtnBack.Top := BtnBack.Top;
-    Query6.BtnNext.Left := BtnNext.Left;
-    Query6.BtnNext.Top := BtnNext.Top;
+    Query6.BtnOverview.Left := BtnNext.Left;
+    Query6.BtnOverview.Top := BtnNext.Top;
   end;
 
 end;
 
 procedure TQuery4.FormActivate(Sender: TObject);
 begin
-  BigPanel.Left := QuickInstall.panelLeft;
+  AdjustPanelPosition(self);
   BackgrImage.Picture.LoadFromFile(QuickInstall.BackgrImageFileName);
-  // in default mode opsi version isn't requested in Query
-  if QuickInstall.RadioBtnDefault.Checked then
-    PanelOpsiVersion.Visible := True
+  // ask for UCS password only if distribution is Univention
+  if QuickInstall.distroName = 'Univention' then
+    self.PanelPasswordMasterAdmin.Visible := True
   else
-  begin
-    PanelOpsiVersion.Visible := False;
-  end;
+    self.PanelPasswordMasterAdmin.Visible := False;
+
+  if QuickInstall.RadioBtnDefault.Checked then
+    PanelReboot.Visible := False
+  else
+    PanelReboot.Visible := True;
 end;
 
 procedure TQuery4.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-  Query3.Close;
+  Query2.Close;
 end;
 
 procedure TQuery4.RadioBtnDhcpYesChange(Sender: TObject);
 begin
   if RadioBtnDhcpYes.Checked then
-  begin
-    PanelTimeout.Visible := True;
-    PanelFilePointer.Visible := True;
-  end
+    PanelFilePointer.Visible := True
   else
-  begin
-    PanelTimeout.Visible := False;
     PanelFilePointer.Visible := False;
-  end;
-end;
-
-procedure TQuery4.RadioBtnOpsi41Change(Sender: TObject);
-begin
-  // set the opsi version in Query respectively to only have check them for
-  // Overview and the .conf file
-  if RadioBtnOpsi41.Checked then
-    Query.RadioBtnOpsi41.Checked := True
-  else
-    Query.RadioBtnOpsi41.Checked := False;
 end;
 
 procedure TQuery4.BtnBackClick(Sender: TObject);
@@ -132,7 +116,7 @@ begin
     showForm(QuickInstall, self)
   else
   begin
-    showForm(Query3, self);
+    showForm(Query2, self);
   end;
 end;
 

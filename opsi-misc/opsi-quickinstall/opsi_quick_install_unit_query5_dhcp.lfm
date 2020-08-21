@@ -1,7 +1,7 @@
 object Query5_dhcp: TQuery5_dhcp
-  Left = 393
+  Left = 364
   Height = 450
-  Top = 144
+  Top = 256
   Width = 730
   Caption = 'Opsi quick install - query (dhcp part 2)'
   ClientHeight = 450
@@ -19,22 +19,24 @@ object Query5_dhcp: TQuery5_dhcp
   end
   object BtnNext: TButton
     Left = 664
-    Height = 33
+    Height = 25
     Top = 408
-    Width = 57
+    Width = 51
     AutoSize = True
     Caption = ' next > '
     OnClick = BtnNextClick
+    ParentFont = False
     TabOrder = 0
   end
   object BtnBack: TButton
     Left = 16
-    Height = 33
+    Height = 25
     Top = 408
-    Width = 58
+    Width = 52
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
+    ParentFont = False
     TabOrder = 1
   end
   object PanelNetmask: TPanel
@@ -45,6 +47,7 @@ object Query5_dhcp: TQuery5_dhcp
     BevelOuter = bvNone
     ClientHeight = 56
     ClientWidth = 514
+    ParentFont = False
     TabOrder = 2
     object LabelNetmask: TLabel
       Left = 0
@@ -54,6 +57,7 @@ object Query5_dhcp: TQuery5_dhcp
       Align = alTop
       Caption = 'Netmask (for dhcp)'
       ParentColor = False
+      ParentFont = False
       WordWrap = True
     end
     object RadioBtnMask0: TRadioButton
@@ -65,6 +69,7 @@ object Query5_dhcp: TQuery5_dhcp
       Width = 100
       Caption = '255.255.0.0'
       Checked = True
+      ParentFont = False
       TabOrder = 0
       TabStop = True
     end
@@ -79,6 +84,7 @@ object Query5_dhcp: TQuery5_dhcp
       Width = 116
       BorderSpacing.Left = 20
       Caption = '255.255.255.0'
+      ParentFont = False
       TabOrder = 1
     end
     object RadioBtnOtherMask: TRadioButton
@@ -92,6 +98,7 @@ object Query5_dhcp: TQuery5_dhcp
       Width = 65
       BorderSpacing.Left = 20
       Caption = 'Other:'
+      ParentFont = False
       TabOrder = 2
     end
     object EditNetmask: TEdit
@@ -100,10 +107,11 @@ object Query5_dhcp: TQuery5_dhcp
       AnchorSideTop.Control = LabelNetmask
       AnchorSideTop.Side = asrBottom
       Left = 331
-      Height = 31
+      Height = 25
       Top = 19
       Width = 146
       BorderSpacing.Left = 10
+      ParentFont = False
       TabOrder = 3
     end
   end
@@ -115,6 +123,7 @@ object Query5_dhcp: TQuery5_dhcp
     BevelOuter = bvNone
     ClientHeight = 80
     ClientWidth = 514
+    ParentFont = False
     TabOrder = 3
     object LabelAddress: TLabel
       Left = 0
@@ -124,6 +133,7 @@ object Query5_dhcp: TQuery5_dhcp
       Align = alTop
       Caption = 'Network address (for dhcp)'
       ParentColor = False
+      ParentFont = False
       WordWrap = True
     end
     object RadioBtnAddress10: TRadioButton
@@ -134,6 +144,7 @@ object Query5_dhcp: TQuery5_dhcp
       Top = 19
       Width = 92
       Caption = '10.100.0.0'
+      ParentFont = False
       TabOrder = 0
     end
     object RadioBtnAddress172: TRadioButton
@@ -147,6 +158,7 @@ object Query5_dhcp: TQuery5_dhcp
       Width = 108
       BorderSpacing.Left = 20
       Caption = '172.16.166.0'
+      ParentFont = False
       TabOrder = 1
     end
     object RadioBtnAddress192: TRadioButton
@@ -161,6 +173,7 @@ object Query5_dhcp: TQuery5_dhcp
       BorderSpacing.Left = 20
       Caption = '192.168.0.0'
       Checked = True
+      ParentFont = False
       TabOrder = 3
       TabStop = True
     end
@@ -172,6 +185,7 @@ object Query5_dhcp: TQuery5_dhcp
       Top = 40
       Width = 65
       Caption = 'Other:'
+      ParentFont = False
       TabOrder = 2
     end
     object EditAddress: TEdit
@@ -180,10 +194,11 @@ object Query5_dhcp: TQuery5_dhcp
       AnchorSideTop.Control = RadioBtnAddress10
       AnchorSideTop.Side = asrBottom
       Left = 75
-      Height = 31
+      Height = 25
       Top = 40
       Width = 148
       BorderSpacing.Left = 10
+      ParentFont = False
       TabOrder = 4
     end
   end
@@ -195,6 +210,7 @@ object Query5_dhcp: TQuery5_dhcp
     BevelOuter = bvNone
     ClientHeight = 74
     ClientWidth = 514
+    ParentFont = False
     TabOrder = 4
     object LabelDomain: TLabel
       Left = 0
@@ -204,6 +220,7 @@ object Query5_dhcp: TQuery5_dhcp
       Align = alTop
       Caption = 'DNS domain (for dhcp)'
       ParentColor = False
+      ParentFont = False
       WordWrap = True
     end
     object RadioBtnUcs: TRadioButton
@@ -214,6 +231,7 @@ object Query5_dhcp: TQuery5_dhcp
       Top = 19
       Width = 72
       Caption = 'ucs.test'
+      ParentFont = False
       TabOrder = 0
     end
     object RadioBtnUib: TRadioButton
@@ -228,6 +246,7 @@ object Query5_dhcp: TQuery5_dhcp
       BorderSpacing.Left = 20
       Caption = 'uib.local'
       Checked = True
+      ParentFont = False
       TabOrder = 3
       TabStop = True
     end
@@ -242,6 +261,7 @@ object Query5_dhcp: TQuery5_dhcp
       Width = 97
       BorderSpacing.Left = 20
       Caption = 'vmnat.local'
+      ParentFont = False
       TabOrder = 1
     end
     object RadioBtnOtherDomain: TRadioButton
@@ -252,6 +272,7 @@ object Query5_dhcp: TQuery5_dhcp
       Top = 40
       Width = 65
       Caption = 'Other:'
+      ParentFont = False
       TabOrder = 2
     end
     object EditDomain: TEdit
@@ -260,10 +281,11 @@ object Query5_dhcp: TQuery5_dhcp
       AnchorSideTop.Control = RadioBtnUcs
       AnchorSideTop.Side = asrBottom
       Left = 75
-      Height = 31
+      Height = 25
       Top = 40
       Width = 148
       BorderSpacing.Left = 10
+      ParentFont = False
       TabOrder = 4
     end
   end
@@ -275,6 +297,7 @@ object Query5_dhcp: TQuery5_dhcp
     BevelOuter = bvNone
     ClientHeight = 80
     ClientWidth = 514
+    ParentFont = False
     TabOrder = 5
     object LabelNameserver: TLabel
       Left = 0
@@ -284,6 +307,7 @@ object Query5_dhcp: TQuery5_dhcp
       Align = alTop
       Caption = 'Primary nameserver (for dhcp)'
       ParentColor = False
+      ParentFont = False
       WordWrap = True
     end
     object RadioBtnNameserver10: TRadioButton
@@ -294,6 +318,7 @@ object Query5_dhcp: TQuery5_dhcp
       Top = 19
       Width = 92
       Caption = '10.100.1.2'
+      ParentFont = False
       TabOrder = 0
     end
     object RadioBtnNameserver172: TRadioButton
@@ -307,6 +332,7 @@ object Query5_dhcp: TQuery5_dhcp
       Width = 108
       BorderSpacing.Left = 20
       Caption = '172.16.166.1'
+      ParentFont = False
       TabOrder = 1
     end
     object RadioBtnNameserver192: TRadioButton
@@ -321,6 +347,7 @@ object Query5_dhcp: TQuery5_dhcp
       BorderSpacing.Left = 20
       Caption = '192.168.1.245'
       Checked = True
+      ParentFont = False
       TabOrder = 3
       TabStop = True
     end
@@ -332,6 +359,7 @@ object Query5_dhcp: TQuery5_dhcp
       Top = 40
       Width = 65
       Caption = 'Other:'
+      ParentFont = False
       TabOrder = 2
     end
     object EditNameserver: TEdit
@@ -340,10 +368,11 @@ object Query5_dhcp: TQuery5_dhcp
       AnchorSideTop.Control = RadioBtnNameserver10
       AnchorSideTop.Side = asrBottom
       Left = 75
-      Height = 31
+      Height = 25
       Top = 40
       Width = 148
       BorderSpacing.Left = 10
+      ParentFont = False
       TabOrder = 4
     end
   end
@@ -356,6 +385,7 @@ object Query5_dhcp: TQuery5_dhcp
     BevelOuter = bvNone
     ClientHeight = 80
     ClientWidth = 514
+    ParentFont = False
     TabOrder = 6
     object LabelGateway: TLabel
       Left = 0
@@ -365,6 +395,7 @@ object Query5_dhcp: TQuery5_dhcp
       Align = alTop
       Caption = 'Gateway (option routers for dhcp)'
       ParentColor = False
+      ParentFont = False
       WordWrap = True
     end
     object RadioBtnGateway10: TRadioButton
@@ -375,6 +406,7 @@ object Query5_dhcp: TQuery5_dhcp
       Top = 19
       Width = 92
       Caption = '10.100.1.2'
+      ParentFont = False
       TabOrder = 0
     end
     object RadioBtnGateway172: TRadioButton
@@ -388,6 +420,7 @@ object Query5_dhcp: TQuery5_dhcp
       Width = 108
       BorderSpacing.Left = 20
       Caption = '172.16.166.1'
+      ParentFont = False
       TabOrder = 1
     end
     object RadioBtnGateway192: TRadioButton
@@ -402,6 +435,7 @@ object Query5_dhcp: TQuery5_dhcp
       BorderSpacing.Left = 20
       Caption = '192.168.1.245'
       Checked = True
+      ParentFont = False
       TabOrder = 2
       TabStop = True
     end
@@ -413,6 +447,7 @@ object Query5_dhcp: TQuery5_dhcp
       Top = 40
       Width = 65
       Caption = 'Other:'
+      ParentFont = False
       TabOrder = 3
     end
     object EditGateway: TEdit
@@ -421,10 +456,11 @@ object Query5_dhcp: TQuery5_dhcp
       AnchorSideTop.Control = RadioBtnGateway10
       AnchorSideTop.Side = asrBottom
       Left = 75
-      Height = 31
+      Height = 25
       Top = 40
       Width = 144
       BorderSpacing.Left = 10
+      ParentFont = False
       TabOrder = 4
     end
   end

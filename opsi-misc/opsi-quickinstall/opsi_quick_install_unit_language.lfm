@@ -1,7 +1,7 @@
 object QuickInstall: TQuickInstall
-  Left = 405
+  Left = 332
   Height = 450
-  Top = 170
+  Top = 249
   Width = 730
   Caption = 'Opsi quick install'
   ClientHeight = 450
@@ -19,21 +19,29 @@ object QuickInstall: TQuickInstall
   object BtnNext: TButton
     Left = 660
     Height = 25
+    Hint = 'nextBtn for next form'
     Top = 410
     Width = 51
     AutoSize = True
     Caption = ' next > '
     OnClick = BtnNextClick
+    ParentFont = False
+    ParentShowHint = False
+    ShowHint = True
     TabOrder = 0
   end
   object QuickInstallPanel: TPanel
     Left = 175
     Height = 160
+    Hint = 'To carry out the remaing installation automatically, we need some information first.'
     Top = 224
     Width = 364
     BevelOuter = bvNone
     ClientHeight = 160
     ClientWidth = 364
+    ParentFont = False
+    ParentShowHint = False
+    ShowHint = True
     TabOrder = 1
     object LabelSetup: TLabel
       Left = 0
@@ -43,6 +51,7 @@ object QuickInstall: TQuickInstall
       Align = alTop
       Caption = 'Please select a setup type:'
       ParentColor = False
+      ParentFont = False
       WordWrap = True
     end
     object RadioBtnDefault: TRadioButton
@@ -53,6 +62,7 @@ object QuickInstall: TQuickInstall
       Align = alTop
       Caption = 'Standard (...)'
       Checked = True
+      ParentFont = False
       TabOrder = 0
       TabStop = True
     end
@@ -63,6 +73,7 @@ object QuickInstall: TQuickInstall
       Width = 364
       Align = alTop
       Caption = 'Custom (...)'
+      ParentFont = False
       TabOrder = 1
     end
     object WelcomeLabel2: TLabel
@@ -73,6 +84,8 @@ object QuickInstall: TQuickInstall
       Align = alBottom
       Caption = 'To carry out the remaing installation automatically, we need some information first.'
       ParentColor = False
+      ParentFont = False
+      ParentShowHint = False
       WordWrap = True
     end
   end
@@ -84,6 +97,7 @@ object QuickInstall: TQuickInstall
     BevelOuter = bvNone
     ClientHeight = 170
     ClientWidth = 372
+    ParentFont = False
     TabOrder = 2
     object LabelWelcome: TLabel
       Left = 0
@@ -107,6 +121,7 @@ object QuickInstall: TQuickInstall
       Anchors = [akTop, akLeft, akBottom]
       Caption = 'Please choose a language for this setup program:'
       ParentColor = False
+      ParentFont = False
       WordWrap = True
     end
     object ComboBoxLanguages: TComboBox
@@ -119,6 +134,7 @@ object QuickInstall: TQuickInstall
       AutoDropDown = True
       ItemHeight = 0
       OnChange = ComboBoxLanguagesChange
+      ParentFont = False
       TabOrder = 0
     end
   end
@@ -130,6 +146,7 @@ object QuickInstall: TQuickInstall
     AutoSize = True
     Caption = ' < back '
     Enabled = False
+    ParentFont = False
     TabOrder = 3
     Visible = False
   end

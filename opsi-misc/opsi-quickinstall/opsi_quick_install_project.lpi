@@ -61,9 +61,9 @@
         <ResourceBaseClass Value="Form"/>
       </Unit3>
       <Unit4>
-        <Filename Value="opsi_quick_install_unit_query3.pas"/>
+        <Filename Value="opsi_quick_install_unit_query_prods.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="Query3"/>
+        <ComponentName Value="QueryProds"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit4>
@@ -89,32 +89,30 @@
         <ResourceBaseClass Value="Form"/>
       </Unit7>
       <Unit8>
-        <Filename Value="opsi_quick_install_unit_query7.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="Query7"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-      </Unit8>
-      <Unit9>
         <Filename Value="opsi_quick_install_unit_overview.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Overview"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit9>
-      <Unit10>
+      </Unit8>
+      <Unit9>
         <Filename Value="opsi_quick_install_unit_password.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Password"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit10>
-      <Unit11>
+      </Unit9>
+      <Unit10>
         <Filename Value="opsi_quick_install_unit_distr.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Distribution"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="osdistributioninfo.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="osDistributionInfo"/>
       </Unit11>
     </Units>
   </ProjectOptions>

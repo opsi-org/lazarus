@@ -1,7 +1,7 @@
 object Query6: TQuery6
-  Left = 1366
+  Left = 397
   Height = 450
-  Top = 194
+  Top = 192
   Width = 730
   Caption = 'Opsi quick install - query (user info part 1)'
   ClientHeight = 450
@@ -16,25 +16,16 @@ object Query6: TQuery6
     Width = 730
     Align = alClient
   end
-  object BtnNext: TButton
-    Left = 664
-    Height = 25
-    Top = 408
-    Width = 51
-    AutoSize = True
-    Caption = ' next > '
-    OnClick = BtnNextClick
-    TabOrder = 0
-  end
   object BtnBack: TButton
     Left = 16
     Height = 25
     Top = 408
-    Width = 51
+    Width = 52
     AutoSize = True
     Caption = ' < back '
     OnClick = BtnBackClick
-    TabOrder = 1
+    ParentFont = False
+    TabOrder = 0
   end
   object PanelNameAdmin: TPanel
     Left = 160
@@ -44,7 +35,8 @@ object Query6: TQuery6
     BevelOuter = bvNone
     ClientHeight = 80
     ClientWidth = 440
-    TabOrder = 2
+    ParentFont = False
+    TabOrder = 1
     object LabelNameAdmin: TLabel
       Left = 0
       Height = 38
@@ -53,6 +45,7 @@ object Query6: TQuery6
       Align = alTop
       Caption = 'What is the name of the opsi_admin_user to create?'#10'(empty = nothing created)'
       ParentColor = False
+      ParentFont = False
       WordWrap = True
     end
     object EditNameAdmin: TEdit
@@ -62,6 +55,7 @@ object Query6: TQuery6
       Width = 440
       Align = alTop
       AutoSize = False
+      ParentFont = False
       TabOrder = 0
       Text = 'adminuser'
     end
@@ -74,7 +68,8 @@ object Query6: TQuery6
     BevelOuter = bvNone
     ClientHeight = 80
     ClientWidth = 440
-    TabOrder = 3
+    ParentFont = False
+    TabOrder = 2
     object LabelPasswordAdmin: TLabel
       Left = 0
       Height = 38
@@ -83,6 +78,7 @@ object Query6: TQuery6
       Align = alTop
       Caption = 'What is the password of the opsi_admin_user to create?'#10'(empty = nothing created)'
       ParentColor = False
+      ParentFont = False
       WordWrap = True
     end
     object EditPasswordAdmin: TEdit
@@ -92,6 +88,7 @@ object Query6: TQuery6
       Width = 440
       Align = alTop
       AutoSize = False
+      ParentFont = False
       TabOrder = 0
       Text = 'linux123'
     end
@@ -104,7 +101,8 @@ object Query6: TQuery6
     BevelOuter = bvNone
     ClientHeight = 58
     ClientWidth = 440
-    TabOrder = 4
+    ParentFont = False
+    TabOrder = 3
     object LabelNameIP: TLabel
       Left = 0
       Height = 19
@@ -113,6 +111,7 @@ object Query6: TQuery6
       Align = alTop
       Caption = 'Set a different IP name (FQDN) (''auto'' = use standard)'
       ParentColor = False
+      ParentFont = False
       WordWrap = True
     end
     object EditNameIP: TEdit
@@ -122,6 +121,7 @@ object Query6: TQuery6
       Width = 440
       Align = alTop
       AutoSize = False
+      ParentFont = False
       TabOrder = 0
       Text = 'auto'
     end
@@ -134,7 +134,8 @@ object Query6: TQuery6
     BevelOuter = bvNone
     ClientHeight = 58
     ClientWidth = 440
-    TabOrder = 5
+    ParentFont = False
+    TabOrder = 4
     object LabelNameIP1: TLabel
       Left = 0
       Height = 19
@@ -143,6 +144,7 @@ object Query6: TQuery6
       Align = alTop
       Caption = 'Set a different IP number (''auto'' = use standard)'
       ParentColor = False
+      ParentFont = False
       WordWrap = True
     end
     object EditNumberIP: TEdit
@@ -152,8 +154,21 @@ object Query6: TQuery6
       Width = 440
       Align = alTop
       AutoSize = False
+      ParentFont = False
       TabOrder = 0
       Text = 'auto'
     end
+  end
+  object BtnOverview: TButton
+    Left = 640
+    Height = 25
+    Top = 408
+    Width = 70
+    AutoSize = True
+    Caption = ' overview '
+    ParentBidiMode = False
+    OnClick = BtnOverviewClick
+    ParentFont = False
+    TabOrder = 5
   end
 end
